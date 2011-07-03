@@ -2,38 +2,45 @@ package com.bitfire.uracer;
 
 import com.badlogic.gdx.ApplicationListener;
 import com.badlogic.gdx.Gdx;
-import com.badlogic.gdx.graphics.GL20;
-import com.badlogic.gdx.graphics.g2d.BitmapFont;
-import com.badlogic.gdx.graphics.g2d.SpriteBatch;
+import com.badlogic.gdx.graphics.GL10;
+import com.bitfire.uracer.screen.GameScreen;
+import com.bitfire.uracer.screen.Screen;
 
 public class URacer implements ApplicationListener
 {
-	private BitmapFont font;
-	private SpriteBatch batch;
+	private boolean running = false;
+	private Screen screen;
+	private Input input = new Input();
+	private boolean started = false;
+
+
+	private final float timestepHz = 60.0f;
+	private final float oneOnTimestepHz = 1.0f / timestepHz;
+	private float timeAccumSecs = 0;
+	private float timeAliasingAlpha = 0;
 
 	@Override
 	public void create()
 	{
-		font = new BitmapFont();
-		batch = new SpriteBatch();
-	}
-
-	@Override
-	public void resume()
-	{
+		Gdx.input.setInputProcessor( input );
+		running = true;
+		setScreen( new GameScreen() );
 	}
 
 	@Override
 	public void render()
 	{
-		GL20 gl = Gdx.graphics.getGL20();
+		Gdx.gl.glClear( GL10.GL_COLOR_BUFFER_BIT );
+		timeAccumSecs += Gdx.graphics.getDeltaTime();
+		while( timeAccumSecs > oneOnTimestepHz )
+		{
+			screen.tick( input );
+			input.tick();
+			timeAccumSecs -= oneOnTimestepHz;
+		}
 
-		gl.glClearColor( 0.15f, 0.15f, 0.15f, 1 );
-		gl.glClear( GL20.GL_COLOR_BUFFER_BIT );
-
-		batch.begin();
-		font.draw( batch, "This is uRacer: The King Of The Drift!", 10, 25 );
-		batch.end();
+		timeAliasingAlpha = timeAccumSecs * timestepHz;	// opt away the divide-by-one-on-timestep
+		screen.render();
 	}
 
 	@Override
@@ -44,11 +51,29 @@ public class URacer implements ApplicationListener
 	@Override
 	public void pause()
 	{
+		running = false;
+	}
+
+	@Override
+	public void resume()
+	{
+		running = true;
 	}
 
 	@Override
 	public void dispose()
 	{
+	}
+
+	public void setScreen( Screen newScreen )
+	{
+		if( screen != null )
+			screen.removed();
+
+		screen = newScreen;
+
+		if( screen != null )
+			screen.init( this );
 	}
 
 }
