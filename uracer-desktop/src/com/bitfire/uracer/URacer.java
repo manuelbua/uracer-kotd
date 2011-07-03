@@ -22,8 +22,9 @@ public class URacer implements ApplicationListener
 	public void create()
 	{
 		Gdx.input.setInputProcessor( input );
-		running = true;
 		setScreen( new GameScreen() );
+		running = true;
+		started = true;
 	}
 
 	@Override
