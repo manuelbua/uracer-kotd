@@ -1,0 +1,455 @@
+
+tileset1.png
+format: RGBA8888
+filter: Nearest,Nearest
+repeat: none
+tileset
+  rotate: false
+  xy: 0, 0
+  size: 128, 128
+  orig: 128, 128
+  offset: 0, 0
+  index: 59
+tileset
+  rotate: false
+  xy: 130, 0
+  size: 128, 128
+  orig: 128, 128
+  offset: 0, 0
+  index: 58
+tileset
+  rotate: false
+  xy: 260, 0
+  size: 128, 128
+  orig: 128, 128
+  offset: 0, 0
+  index: 57
+tileset
+  rotate: false
+  xy: 0, 130
+  size: 128, 128
+  orig: 128, 128
+  offset: 0, 0
+  index: 56
+tileset
+  rotate: false
+  xy: 0, 260
+  size: 128, 128
+  orig: 128, 128
+  offset: 0, 0
+  index: 55
+tileset
+  rotate: false
+  xy: 130, 130
+  size: 128, 128
+  orig: 128, 128
+  offset: 0, 0
+  index: 54
+tileset
+  rotate: false
+  xy: 260, 130
+  size: 128, 128
+  orig: 128, 128
+  offset: 0, 0
+  index: 53
+tileset
+  rotate: false
+  xy: 130, 260
+  size: 128, 128
+  orig: 128, 128
+  offset: 0, 0
+  index: 52
+tileset
+  rotate: false
+  xy: 260, 260
+  size: 128, 128
+  orig: 128, 128
+  offset: 0, 0
+  index: 51
+
+tileset2.png
+format: RGBA8888
+filter: Nearest,Nearest
+repeat: none
+tileset
+  rotate: false
+  xy: 0, 0
+  size: 128, 128
+  orig: 128, 128
+  offset: 0, 0
+  index: 50
+tileset
+  rotate: false
+  xy: 130, 0
+  size: 128, 128
+  orig: 128, 128
+  offset: 0, 0
+  index: 49
+tileset
+  rotate: false
+  xy: 260, 0
+  size: 128, 128
+  orig: 128, 128
+  offset: 0, 0
+  index: 48
+tileset
+  rotate: false
+  xy: 0, 130
+  size: 128, 128
+  orig: 128, 128
+  offset: 0, 0
+  index: 47
+tileset
+  rotate: false
+  xy: 0, 260
+  size: 128, 128
+  orig: 128, 128
+  offset: 0, 0
+  index: 46
+tileset
+  rotate: false
+  xy: 130, 130
+  size: 128, 128
+  orig: 128, 128
+  offset: 0, 0
+  index: 45
+tileset
+  rotate: false
+  xy: 260, 130
+  size: 128, 128
+  orig: 128, 128
+  offset: 0, 0
+  index: 44
+tileset
+  rotate: false
+  xy: 130, 260
+  size: 128, 128
+  orig: 128, 128
+  offset: 0, 0
+  index: 43
+tileset
+  rotate: false
+  xy: 260, 260
+  size: 128, 128
+  orig: 128, 128
+  offset: 0, 0
+  index: 42
+
+tileset3.png
+format: RGBA8888
+filter: Nearest,Nearest
+repeat: none
+tileset
+  rotate: false
+  xy: 0, 0
+  size: 128, 128
+  orig: 128, 128
+  offset: 0, 0
+  index: 41
+tileset
+  rotate: false
+  xy: 130, 0
+  size: 128, 128
+  orig: 128, 128
+  offset: 0, 0
+  index: 40
+tileset
+  rotate: false
+  xy: 260, 0
+  size: 128, 128
+  orig: 128, 128
+  offset: 0, 0
+  index: 39
+tileset
+  rotate: false
+  xy: 0, 130
+  size: 128, 128
+  orig: 128, 128
+  offset: 0, 0
+  index: 38
+tileset
+  rotate: false
+  xy: 0, 260
+  size: 128, 128
+  orig: 128, 128
+  offset: 0, 0
+  index: 37
+tileset
+  rotate: false
+  xy: 130, 130
+  size: 128, 128
+  orig: 128, 128
+  offset: 0, 0
+  index: 36
+tileset
+  rotate: false
+  xy: 260, 130
+  size: 128, 128
+  orig: 128, 128
+  offset: 0, 0
+  index: 35
+tileset
+  rotate: false
+  xy: 130, 260
+  size: 128, 128
+  orig: 128, 128
+  offset: 0, 0
+  index: 34
+tileset
+  rotate: false
+  xy: 260, 260
+  size: 128, 128
+  orig: 128, 128
+  offset: 0, 0
+  index: 33
+
+tileset4.png
+format: RGBA8888
+filter: Nearest,Nearest
+repeat: none
+tileset
+  rotate: false
+  xy: 0, 0
+  size: 128, 128
+  orig: 128, 128
+  offset: 0, 0
+  index: 32
+tileset
+  rotate: false
+  xy: 130, 0
+  size: 128, 128
+  orig: 128, 128
+  offset: 0, 0
+  index: 31
+tileset
+  rotate: false
+  xy: 260, 0
+  size: 128, 128
+  orig: 128, 128
+  offset: 0, 0
+  index: 30
+tileset
+  rotate: false
+  xy: 0, 130
+  size: 128, 128
+  orig: 128, 128
+  offset: 0, 0
+  index: 29
+tileset
+  rotate: false
+  xy: 0, 260
+  size: 128, 128
+  orig: 128, 128
+  offset: 0, 0
+  index: 28
+tileset
+  rotate: false
+  xy: 130, 130
+  size: 128, 128
+  orig: 128, 128
+  offset: 0, 0
+  index: 27
+tileset
+  rotate: false
+  xy: 260, 130
+  size: 128, 128
+  orig: 128, 128
+  offset: 0, 0
+  index: 26
+tileset
+  rotate: false
+  xy: 130, 260
+  size: 128, 128
+  orig: 128, 128
+  offset: 0, 0
+  index: 25
+tileset
+  rotate: false
+  xy: 260, 260
+  size: 128, 128
+  orig: 128, 128
+  offset: 0, 0
+  index: 24
+
+tileset5.png
+format: RGBA8888
+filter: Nearest,Nearest
+repeat: none
+tileset
+  rotate: false
+  xy: 0, 0
+  size: 128, 128
+  orig: 128, 128
+  offset: 0, 0
+  index: 23
+tileset
+  rotate: false
+  xy: 130, 0
+  size: 128, 128
+  orig: 128, 128
+  offset: 0, 0
+  index: 22
+tileset
+  rotate: false
+  xy: 260, 0
+  size: 128, 128
+  orig: 128, 128
+  offset: 0, 0
+  index: 21
+tileset
+  rotate: false
+  xy: 0, 130
+  size: 128, 128
+  orig: 128, 128
+  offset: 0, 0
+  index: 20
+tileset
+  rotate: false
+  xy: 0, 260
+  size: 128, 128
+  orig: 128, 128
+  offset: 0, 0
+  index: 19
+tileset
+  rotate: false
+  xy: 130, 130
+  size: 128, 128
+  orig: 128, 128
+  offset: 0, 0
+  index: 18
+tileset
+  rotate: false
+  xy: 260, 130
+  size: 128, 128
+  orig: 128, 128
+  offset: 0, 0
+  index: 17
+tileset
+  rotate: false
+  xy: 130, 260
+  size: 128, 128
+  orig: 128, 128
+  offset: 0, 0
+  index: 16
+tileset
+  rotate: false
+  xy: 260, 260
+  size: 128, 128
+  orig: 128, 128
+  offset: 0, 0
+  index: 15
+
+tileset6.png
+format: RGBA8888
+filter: Nearest,Nearest
+repeat: none
+tileset
+  rotate: false
+  xy: 0, 0
+  size: 128, 128
+  orig: 128, 128
+  offset: 0, 0
+  index: 14
+tileset
+  rotate: false
+  xy: 130, 0
+  size: 128, 128
+  orig: 128, 128
+  offset: 0, 0
+  index: 13
+tileset
+  rotate: false
+  xy: 260, 0
+  size: 128, 128
+  orig: 128, 128
+  offset: 0, 0
+  index: 12
+tileset
+  rotate: false
+  xy: 0, 130
+  size: 128, 128
+  orig: 128, 128
+  offset: 0, 0
+  index: 11
+tileset
+  rotate: false
+  xy: 0, 260
+  size: 128, 128
+  orig: 128, 128
+  offset: 0, 0
+  index: 10
+tileset
+  rotate: false
+  xy: 130, 130
+  size: 128, 128
+  orig: 128, 128
+  offset: 0, 0
+  index: 9
+tileset
+  rotate: false
+  xy: 260, 130
+  size: 128, 128
+  orig: 128, 128
+  offset: 0, 0
+  index: 8
+tileset
+  rotate: false
+  xy: 130, 260
+  size: 128, 128
+  orig: 128, 128
+  offset: 0, 0
+  index: 7
+tileset
+  rotate: false
+  xy: 260, 260
+  size: 128, 128
+  orig: 128, 128
+  offset: 0, 0
+  index: 6
+
+tileset7.png
+format: RGBA8888
+filter: Nearest,Nearest
+repeat: none
+tileset
+  rotate: false
+  xy: 0, 0
+  size: 128, 128
+  orig: 128, 128
+  offset: 0, 0
+  index: 5
+tileset
+  rotate: false
+  xy: 130, 0
+  size: 128, 128
+  orig: 128, 128
+  offset: 0, 0
+  index: 4
+tileset
+  rotate: false
+  xy: 260, 0
+  size: 128, 128
+  orig: 128, 128
+  offset: 0, 0
+  index: 3
+tileset
+  rotate: false
+  xy: 0, 130
+  size: 128, 128
+  orig: 128, 128
+  offset: 0, 0
+  index: 2
+tileset
+  rotate: false
+  xy: 0, 260
+  size: 128, 128
+  orig: 128, 128
+  offset: 0, 0
+  index: 1
+tileset
+  rotate: false
+  xy: 130, 130
+  size: 128, 128
+  orig: 128, 128
+  offset: 0, 0
+  index: 0

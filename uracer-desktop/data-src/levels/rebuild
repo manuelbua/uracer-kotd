@@ -1,0 +1,14 @@
+#!/bin/bash
+
+DEST="../../data/levels"
+
+mkdir -p ${DEST}
+rm -f "${DEST}/*"
+
+CLASS_PATH="/home/manuel/dev/libgdx.git/target"
+TILED_PREP_PATH="/home/manuel/dev/libgdx.git/extensions/tiled-preprocessor/bin"
+JARS="${TILED_PREP_PATH}:${CLASS_PATH}/gdx.jar:${CLASS_PATH}/gdx-natives.jar:${CLASS_PATH}/gdx-backend-jogl.jar:${CLASS_PATH}/gdx-backend-jogl-natives.jar:${CLASS_PATH}/texture-packer.jar"
+
+CMD="java -classpath ${JARS} com.badlogic.gdx.tiledmappacker.TiledMapPacker $1 $2"
+#echo ${CMD}
+${CMD} ./ "${DEST}"
