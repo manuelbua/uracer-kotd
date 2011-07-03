@@ -1,4 +1,4 @@
-package com.bitfire.uracer.android;
+package com.bitfire.uracer;
 
 import android.os.Bundle;
 

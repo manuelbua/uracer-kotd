@@ -2,7 +2,7 @@ package com.bitfire.uracer;
 
 import com.badlogic.gdx.backends.jogl.JoglApplication;
 
-public class URacerDesktopLauncher
+public class URacerDesktop
 {
 	public static void main (String[] argv) {
 //		new JoglApplication(new TestTilemap(), "test-tilemap", 320, 480, true);

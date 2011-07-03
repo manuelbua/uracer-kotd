@@ -5,7 +5,7 @@
  * should not be modified by hand.
  */
 
-package com.bitfire.uracer.android;
+package com.bitfire.uracer;
 
 public final class R {
     public static final class attr {
