@@ -13,7 +13,6 @@ public class URacer implements ApplicationListener
 	private Input input = new Input();
 	private boolean started = false;
 
-
 	private final float timestepHz = 60.0f;
 	private final float oneOnTimestepHz = 1.0f / timestepHz;
 	private float timeAccumSecs = 0;
@@ -34,13 +33,14 @@ public class URacer implements ApplicationListener
 		timeAccumSecs += Gdx.graphics.getDeltaTime();
 		while( timeAccumSecs > oneOnTimestepHz )
 		{
-			screen.tick( input );
 			input.tick();
+			screen.tick( input );
+
 			timeAccumSecs -= oneOnTimestepHz;
 		}
 
-		timeAliasingAlpha = timeAccumSecs * timestepHz;	// opt away the divide-by-one-on-timestep
-		screen.render();
+		timeAliasingAlpha = timeAccumSecs * timestepHz; // opt away the divide-by-one-on-timestep
+		screen.render( timeAliasingAlpha );
 	}
 
 	@Override
