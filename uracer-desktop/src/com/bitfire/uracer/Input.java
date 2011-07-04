@@ -162,7 +162,8 @@ public class Input implements InputProcessor
 			if( buttons[DOWN] )
 				buttons[UP] = false;
 		}
-		System.out.println( "buttons: " + buttons[UP] + ", " + buttons[DOWN] );
+
+//		System.out.println( "buttons: " + buttons[UP] + ", " + buttons[DOWN] );
 		return false;
 	}
 
