@@ -2,8 +2,11 @@ package com.bitfire.uracer.screen;
 
 import java.util.Random;
 
+import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
+import com.badlogic.gdx.math.Matrix4;
+import com.bitfire.uracer.Art;
 import com.bitfire.uracer.Input;
 import com.bitfire.uracer.URacer;
 
@@ -17,6 +20,10 @@ public abstract class Screen
 	{
 		this.uracer = uracer;
 		spriteBatch = new SpriteBatch( 100 );
+
+		Matrix4 proj = new Matrix4();
+		proj.setToOrtho( 0, Gdx.graphics.getWidth(), Gdx.graphics.getHeight(), 0, 0, 100 );
+		spriteBatch.setProjectionMatrix( proj );
 	}
 
 	public void removed()
@@ -51,7 +58,7 @@ public abstract class Screen
 				int xs = chars[ys].indexOf( ch );
 				if( xs >= 0 )
 				{
-					// draw( Art.guys[xs][ys + 9], x + i * 6, y );
+					draw( Art.base6[xs][ys + 9], x + i * 6, y );
 				}
 			}
 		}

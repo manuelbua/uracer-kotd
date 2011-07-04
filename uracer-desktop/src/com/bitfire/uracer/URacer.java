@@ -21,6 +21,7 @@ public class URacer implements ApplicationListener
 	@Override
 	public void create()
 	{
+		Art.load();
 		Gdx.graphics.setVSync( true );
 		Gdx.input.setInputProcessor( input );
 		setScreen( new GameScreen() );
