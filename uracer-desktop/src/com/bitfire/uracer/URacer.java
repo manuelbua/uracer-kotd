@@ -21,6 +21,7 @@ public class URacer implements ApplicationListener
 	@Override
 	public void create()
 	{
+		Gdx.graphics.setVSync( true );
 		Gdx.input.setInputProcessor( input );
 		setScreen( new GameScreen() );
 		running = true;
@@ -31,7 +32,14 @@ public class URacer implements ApplicationListener
 	public void render()
 	{
 		Gdx.gl.glClear( GL10.GL_COLOR_BUFFER_BIT );
-		timeAccumSecs += Gdx.graphics.getDeltaTime();
+
+		float deltaTime = Gdx.graphics.getDeltaTime();
+
+		// avoid spiral of death
+		if( deltaTime > 0.25f )
+			deltaTime = 0.25f;
+
+		timeAccumSecs += deltaTime;
 		while( timeAccumSecs > oneOnTimestepHz )
 		{
 			input.tick();
