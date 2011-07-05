@@ -28,6 +28,8 @@ public class GameScreen extends Screen
 	{
 	}
 
+	static int ison = 0;
+
 	@Override
 	public void render(float timeAliasingFactor)
 	{
@@ -47,9 +49,14 @@ public class GameScreen extends Screen
 
 			// input test case
 			drawString( "[space] isOn = " + Input.isOn( Keys.SPACE ), 0, 100 );
+			if(Input.isOn( Keys.SPACE ))
+				System.out.println("isON"+ ison++);
+
 			drawString( "[space] isOff = " + Input.isOff( Keys.SPACE ), 0, 107 );
 			drawString( "[space] isPressed = " + Input.isPressed( Keys.SPACE ), 0, 114 );
 			drawString( "[space] isReleased = " + Input.isReleased( Keys.SPACE ), 0, 121 );
+			drawString( "[touch] x = " + Input.getX(), 0, 135 );
+			drawString( "[touch] y = " + Input.getY(), 0, 142 );
 
 			drawString( "gdx = " + Gdx.input.isKeyPressed( Keys.SPACE ), 0, 128 );
 

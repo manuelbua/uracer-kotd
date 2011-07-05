@@ -23,6 +23,7 @@ public class URacer implements ApplicationListener
 	{
 		Art.load();
 		Gdx.graphics.setVSync( true );
+		input.releaseAllKeys();
 		Gdx.input.setInputProcessor( input );
 		setScreen( new GameScreen() );
 		running = true;
