@@ -1,180 +1,160 @@
 package com.bitfire.uracer;
 
-import com.badlogic.gdx.Application.ApplicationType;
-import com.badlogic.gdx.Gdx;
-import com.badlogic.gdx.Input.Keys;
 import com.badlogic.gdx.InputProcessor;
 
 public class Input implements InputProcessor
 {
-	public static final int UP = 0;
-	public static final int DOWN = 1;
-	public static final int LEFT = 2;
-	public static final int RIGHT = 3;
+	// keys
+	private static int[] buttons = new int[ 256 ];
+	private static int[] old_buttons = new int[ 256 ];
 
-	public static final int JUMP = 4;
-	public static final int SHOOT = 5;
+	// touches
+	private static int touchX = 0;
+	private static int touchY = 0;
+	private static boolean is_touching = false;
+	private static boolean is_dragging = false;
 
-	public static final int ESCAPE = 6;
+	private static final int FLAG_REAL_ON = ( 1 << 0 );
+	private static final int FLAG_DELAY_ON = ( 1 << 1 );
+	private static final int FLAG_CUR_ON = ( 1 << 2 );
+	private static final int FLAG_LAST_ON = ( 1 << 3 );
 
-	public boolean[] buttons = new boolean[ 64 ];
-	public boolean[] oldButtons = new boolean[ 64 ];
 
-	public void set( int key, boolean down )
+	//
+	// game interface
+	//
+
+	public static boolean isTouching() { return is_touching; }
+	public static boolean isDragging() { return is_dragging; }
+	public static int getX() { return touchX; }
+	public static int getY() { return touchY; }
+
+	public static boolean isOn( int keycode )	{ return is(keycode, FLAG_CUR_ON) && !was(keycode, FLAG_CUR_ON); }
+	public static boolean isOff( int keycode )	{ return !is(keycode, FLAG_CUR_ON); }
+	public static boolean wasOn( int keycode )	{ return is(keycode, FLAG_LAST_ON); }
+	public static boolean wasOff( int keycode )	{ return !is(keycode, FLAG_LAST_ON); }
+
+	public static boolean isPressed( int keycode )	{ return( isOn(keycode) && wasOff(keycode) ); }
+	public static boolean isReleased( int keycode )	{ return( isOff(keycode) && wasOn(keycode) ); }
+
+	private static boolean is(int keycode, int flag)
 	{
-		int button = -1;
+		return ((buttons[keycode] & flag) == flag);
+	}
 
-		if( key == Keys.DPAD_UP )
-			button = UP;
-		if( key == Keys.DPAD_LEFT )
-			button = LEFT;
-		if( key == Keys.DPAD_DOWN )
-			button = DOWN;
-		if( key == Keys.DPAD_RIGHT )
-			button = RIGHT;
+	private static boolean was(int keycode, int flag)
+	{
+		return ((old_buttons[keycode] & flag) == flag);
+	}
 
-		if( key == Keys.Y )
-			button = JUMP;
-		if( key == Keys.Z )
-			button = JUMP;
-		if( key == Keys.X )
-			button = SHOOT;
-		if( key == Keys.C )
-			button = JUMP;
-		if( key == Keys.A )
-			button = JUMP;
-		if( key == Keys.S )
-			button = SHOOT;
-		if( key == Keys.D )
-			button = JUMP;
-
-		if( key == Keys.ESCAPE || key == Keys.MENU )
-			button = ESCAPE;
-
-		if( button >= 0 )
+	public Input()
+	{
+		for( int i = 0; i < buttons.length; i++ )
 		{
-			buttons[button] = down;
+			buttons[i] = old_buttons[i] = 0;
 		}
 	}
 
 	public void tick()
 	{
+		int flag;
+
 		for( int i = 0; i < buttons.length; i++ )
 		{
-			oldButtons[i] = buttons[i];
-		}
+			flag = buttons[i];
 
-		if( Gdx.app.getType() == ApplicationType.Android )
-		{
-			boolean left = false;
-			boolean right = false;
-			boolean z = false;
-			boolean s = false;
-
-			for( int i = 0; i < 2; i++ )
+			if( (flag & FLAG_CUR_ON) == FLAG_CUR_ON )
 			{
-				int x = (int)((Gdx.input.getX( i ) / (float)Gdx.graphics.getWidth()) * 320);
-				if( !Gdx.input.isTouched( i ) )
-					continue;
-				if( x < 32 )
-				{
-					set( Keys.DPAD_LEFT, true );
-					left |= true;
-				}
-				if( x > 32 && x < 90 )
-				{
-					set( Keys.DPAD_RIGHT, true );
-					right |= true;
-				}
-				if( x > 320 - 64 && x < 320 - 32 )
-				{
-					set( Keys.Z, true );
-					z |= true;
-				}
-				if( x > 320 - 32 && x < 320 )
-				{
-					set( Keys.X, true );
-					s |= true;
-				}
+				buttons[i] |= FLAG_LAST_ON;
+			}
+			else
+			{
+				buttons[i] &= ~FLAG_LAST_ON;
 			}
 
-			if( left == false )
-				set( Keys.DPAD_LEFT, false );
-			if( right == false )
-				set( Keys.DPAD_RIGHT, false );
-			if( z == false )
-				set( Keys.Z, false );
-			if( s == false )
-				set( Keys.X, false );
+		    if( (flag & (FLAG_DELAY_ON | FLAG_REAL_ON)) == (FLAG_DELAY_ON | FLAG_REAL_ON) )
+		    {
+		    	buttons[i] |= FLAG_CUR_ON;
+		    }
+		    else
+		    {
+		    	buttons[i] &= ~FLAG_CUR_ON;
+		    }
+
+		    buttons[i] &= ~FLAG_DELAY_ON;
+		}
+
+		for( int i = 0; i < buttons.length; i++ )
+		{
+			old_buttons[i] = buttons[i];
 		}
 	}
 
-	public void releaseAllKeys()
+	public static void releaseAllKeys()
 	{
 		for( int i = 0; i < buttons.length; i++ )
 		{
-			if( i == UP || i == DOWN )
-				continue;
-			buttons[i] = false;
+			buttons[i] = old_buttons[i] = 0;
 		}
 	}
+
+
+	//
+	// from InputProcessor
+	//
 
 	@Override
 	public boolean keyDown( int keycode )
 	{
-		set( keycode, true );
+//		buttons[ keycode ] |= (FLAG_REAL_ON | FLAG_DELAY_ON);
+		buttons[ keycode ] |= (FLAG_REAL_ON | FLAG_CUR_ON);
 		return false;
 	}
 
 	@Override
 	public boolean keyUp( int keycode )
 	{
-		set( keycode, false );
-		return false;
-	}
-
-	@Override
-	public boolean keyTyped( char character )
-	{
-		// TODO Auto-generated method stub
+		buttons[ keycode ] &= ~FLAG_REAL_ON;
 		return false;
 	}
 
 	@Override
 	public boolean touchDown( int x, int y, int pointer, int button )
 	{
-		return false;
-	}
-
-	@Override
-	public boolean touchUp( int x, int y, int pointer, int button )
-	{
-		x = (int)(x / (float)Gdx.graphics.getWidth() * 320);
-		if( x > 160 - 32 && x < 160 )
-		{
-			set( Keys.DPAD_UP, !buttons[UP] );
-			if( buttons[UP] )
-				buttons[DOWN] = false;
-		}
-		if( x > 160 && x < 160 + 32 )
-		{
-			set( Keys.DPAD_DOWN, !buttons[DOWN] );
-			if( buttons[DOWN] )
-				buttons[UP] = false;
-		}
-
-//		System.out.println( "buttons: " + buttons[UP] + ", " + buttons[DOWN] );
+		touchX = x;
+		touchY = y;
+		is_touching = true;
+		is_dragging = false;
 		return false;
 	}
 
 	@Override
 	public boolean touchDragged( int x, int y, int pointer )
 	{
+		touchX = x;
+		touchY = y;
+		is_dragging = true;
+		return false;
+	}
+
+	@Override
+	public boolean touchUp( int x, int y, int pointer, int button )
+	{
+		touchX = x;
+		touchY = y;
+		is_touching = false;
+		is_dragging = false;
 		return false;
 	}
 
 	@Override
 	public boolean touchMoved( int x, int y )
+	{
+		return false;
+	}
+
+	@Override
+	public boolean keyTyped( char character )
 	{
 		return false;
 	}
