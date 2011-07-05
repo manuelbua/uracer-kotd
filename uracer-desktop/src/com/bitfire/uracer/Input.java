@@ -6,7 +6,7 @@ public class Input implements InputProcessor
 {
 	// keys
 	private static int[] buttons = new int[ 256 ];
-	private static int[] old_buttons = new int[ 256 ];
+	private static int[] old_buttons = new int[ 256 ];	// unused
 
 	// touches
 	private static int touchX = 0;
@@ -29,10 +29,10 @@ public class Input implements InputProcessor
 	public static int getX() { return touchX; }
 	public static int getY() { return touchY; }
 
-	public static boolean isOn( int keycode )	{ return is(keycode, FLAG_CUR_ON) && !was(keycode, FLAG_CUR_ON); }
-	public static boolean isOff( int keycode )	{ return !is(keycode, FLAG_CUR_ON); }
+	public static boolean isOn( int keycode )	{ return is(keycode, FLAG_CUR_ON); }
+	public static boolean isOff( int keycode )	{ return !isOn(keycode); }
 	public static boolean wasOn( int keycode )	{ return is(keycode, FLAG_LAST_ON); }
-	public static boolean wasOff( int keycode )	{ return !is(keycode, FLAG_LAST_ON); }
+	public static boolean wasOff( int keycode )	{ return !wasOn(keycode); }
 
 	public static boolean isPressed( int keycode )	{ return( isOn(keycode) && wasOff(keycode) ); }
 	public static boolean isReleased( int keycode )	{ return( isOff(keycode) && wasOn(keycode) ); }
@@ -40,11 +40,6 @@ public class Input implements InputProcessor
 	private static boolean is(int keycode, int flag)
 	{
 		return ((buttons[keycode] & flag) == flag);
-	}
-
-	private static boolean was(int keycode, int flag)
-	{
-		return ((old_buttons[keycode] & flag) == flag);
 	}
 
 	public Input()
@@ -57,6 +52,11 @@ public class Input implements InputProcessor
 
 	public void tick()
 	{
+		for( int i = 0; i < buttons.length; i++ )
+		{
+			old_buttons[i] = buttons[i];
+		}
+
 		int flag;
 
 		for( int i = 0; i < buttons.length; i++ )
@@ -83,14 +83,9 @@ public class Input implements InputProcessor
 
 		    buttons[i] &= ~FLAG_DELAY_ON;
 		}
-
-		for( int i = 0; i < buttons.length; i++ )
-		{
-			old_buttons[i] = buttons[i];
-		}
 	}
 
-	public static void releaseAllKeys()
+	public void releaseAllKeys()
 	{
 		for( int i = 0; i < buttons.length; i++ )
 		{
@@ -106,8 +101,8 @@ public class Input implements InputProcessor
 	@Override
 	public boolean keyDown( int keycode )
 	{
-//		buttons[ keycode ] |= (FLAG_REAL_ON | FLAG_DELAY_ON);
-		buttons[ keycode ] |= (FLAG_REAL_ON | FLAG_CUR_ON);
+		buttons[ keycode ] |= (FLAG_REAL_ON | FLAG_DELAY_ON);
+//		buttons[ keycode ] |= (FLAG_REAL_ON | FLAG_CUR_ON);
 		return false;
 	}
 
