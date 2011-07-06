@@ -1,8 +1,9 @@
 package com.bitfire.uracer;
 
-import com.badlogic.gdx.InputProcessor;
+import com.badlogic.gdx.InputAdapter;
 
-public class Input implements InputProcessor
+
+public class Input extends InputAdapter
 {
 	// keys
 	private static int[] buttons = new int[ 256 ];
@@ -139,24 +140,6 @@ public class Input implements InputProcessor
 		touchY = y;
 		is_touching = false;
 		is_dragging = false;
-		return false;
-	}
-
-	@Override
-	public boolean touchMoved( int x, int y )
-	{
-		return false;
-	}
-
-	@Override
-	public boolean keyTyped( char character )
-	{
-		return false;
-	}
-
-	@Override
-	public boolean scrolled( int amount )
-	{
 		return false;
 	}
 }
