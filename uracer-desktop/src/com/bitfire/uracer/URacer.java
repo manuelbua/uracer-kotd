@@ -8,10 +8,9 @@ import com.bitfire.uracer.screen.Screen;
 
 public class URacer implements ApplicationListener
 {
-	private boolean running = false;
 	private Screen screen;
 	private Input input = new Input();
-	private boolean started = false;
+	private boolean running = false;
 
 	private final float timestepHz = 60.0f;
 	private final float oneOnTimestepHz = 1.0f / timestepHz;
@@ -26,8 +25,8 @@ public class URacer implements ApplicationListener
 		input.releaseAllKeys();
 		Gdx.input.setInputProcessor( input );
 		setScreen( new GameScreen() );
+
 		running = true;
-		started = true;
 	}
 
 	@Override
@@ -87,4 +86,8 @@ public class URacer implements ApplicationListener
 			screen.init( this );
 	}
 
+	public boolean isRunning()
+	{
+		return running;
+	}
 }
