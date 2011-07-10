@@ -4,7 +4,6 @@ import com.badlogic.gdx.graphics.Camera;
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.Sprite;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
-import com.badlogic.gdx.graphics.glutils.ImmediateModeRenderer20;
 import com.badlogic.gdx.math.MathUtils;
 import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.physics.box2d.Body;
@@ -20,24 +19,29 @@ import com.bitfire.uracer.Physics;
 
 public class TestRope
 {
+	private final float SegmentWidth = 2.15f;
+	private final float SegmentHeight = 1.5f;
+
 	private World world;
-	private int segments;
 	private Body ground;
+
+	private int segments;
 	private Array<Body> ropeSegments = new Array<Body>();
 	private SpriteBatch batch;
-	protected ImmediateModeRenderer20 renderer = new ImmediateModeRenderer20( false, true, 0 );
+
+	// graphics
 	private Sprite sprite;
 	private Texture tex;
 
-	TestRope( World world, int segments, Body ground )
+	TestRope( World b2dWorld, int numSegments, Body aGround )
 	{
-		this.world = world;
-		this.segments = segments;
-		this.ground = ground;
+		this.world = b2dWorld;
+		this.segments = numSegments;
+		this.ground = aGround;
 		this.batch = new SpriteBatch(100);
 
 		PolygonShape shape = new PolygonShape();
-		shape.setAsBox( 0.5f, 0.125f );
+		shape.setAsBox( SegmentWidth/2, SegmentHeight/2 );
 		FixtureDef fd = new FixtureDef();
 		fd.shape = shape;
 		fd.density = 20.0f;
@@ -51,25 +55,25 @@ public class TestRope
 		{
 			BodyDef bd = new BodyDef();
 			bd.type = BodyType.DynamicBody;
-			bd.position.set( -14.5f + 1.0f * i, 5.0f );
+			bd.position.set( -(SegmentWidth*(segments-1))/2 + SegmentWidth * i, 5.0f );
 			Body body = world.createBody( bd );
 			body.createFixture( fd );
 
-			Vector2 anchor = new Vector2( -15.0f + 1.0f * i, 5.0f );
+			Vector2 anchor = new Vector2( -(SegmentWidth*segments)/2 + SegmentWidth * i, 5.0f );
 			jd.initialize( prevBody, body, anchor );
 			world.createJoint( jd );
 			prevBody = body;
 			ropeSegments.add( body );
 		}
 
-		Vector2 anchor = new Vector2( -15.0f + 1.0f * this.segments, 5.0f );
+		Vector2 anchor = new Vector2( -(SegmentWidth*segments)/2 + SegmentWidth * this.segments, 5.0f );
 		jd.initialize( prevBody, ground, anchor );
 		world.createJoint( jd );
 		shape.dispose();
 
 		sprite = new Sprite();
 		sprite.setRegion( Art.rope );
-		sprite.setSize( Physics.w2s( 1 ), Physics.w2s( 0.25f ) );
+		sprite.setSize( Physics.w2s( SegmentWidth ), Physics.w2s( SegmentHeight ) );
 		sprite.setOrigin( sprite.getWidth()/2, sprite.getHeight()/2 );
 	}
 

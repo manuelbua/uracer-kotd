@@ -40,8 +40,6 @@ public class TestScreen extends Screen
 
 	private void createWorld()
 	{
-		int e_count = 30;
-
 		world = new World( new Vector2( 0, -10 ), true );
 
 		Body ground;
@@ -56,7 +54,7 @@ public class TestScreen extends Screen
 			shape.dispose();
 		}
 
-		rope = new TestRope( world, e_count, ground );
+		rope = new TestRope( world, 20, ground );
 	}
 
 	@Override
@@ -92,7 +90,6 @@ public class TestScreen extends Screen
 		camScreen.update();
 		camWorld.update();
 
-		// renderer.render( camWorld.combined, world );
 		rope.render( camScreen );
 
 
