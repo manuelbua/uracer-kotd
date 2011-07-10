@@ -11,11 +11,14 @@ public class Physics
 	public static final float timestepHz = 60.0f;
 	public static final float dt = 1.0f / timestepHz;
 
+
+
 	// convert world coords to screen coords
 	public static float w2s( float v )
 	{
 		return v * PixelsToMeter;
 	}
+
 
 	public static Vector2 w2s( Vector2 v )
 	{
@@ -30,6 +33,7 @@ public class Physics
 	{
 		return v / PixelsToMeter;
 	}
+
 
 	public static Vector2 s2w( Vector2 v )
 	{

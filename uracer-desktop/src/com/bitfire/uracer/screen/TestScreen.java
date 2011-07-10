@@ -1,10 +1,10 @@
 package com.bitfire.uracer.screen;
 
+import com.badlogic.gdx.Application.ApplicationType;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.FPSLogger;
 import com.badlogic.gdx.graphics.GL20;
 import com.badlogic.gdx.graphics.OrthographicCamera;
-import com.badlogic.gdx.graphics.g2d.BitmapFont;
 import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.physics.box2d.Body;
 import com.badlogic.gdx.physics.box2d.BodyDef;
@@ -13,25 +13,21 @@ import com.badlogic.gdx.physics.box2d.World;
 import com.bitfire.uracer.Art;
 import com.bitfire.uracer.Input;
 import com.bitfire.uracer.Physics;
-import com.bitfire.uracer.URacer;
-import com.bitfire.uracer.debug.Box2DDebugRenderer20;
+import com.bitfire.uracer.debug.Debug;
 
 public class TestScreen extends Screen
 {
-	private BitmapFont font;
 	private FPSLogger fpslog = new FPSLogger();
+	private Debug dbg;
 
-	private Box2DDebugRenderer20 renderer;
 	private World world;
 	private TestRope rope;
 	private OrthographicCamera camScreen, camWorld;
-	private long frameStart = System.nanoTime();
-	private float physicsTime, renderTime;
+
 
 	public TestScreen()
 	{
-		font = new BitmapFont( true );
-		renderer = new Box2DDebugRenderer20();
+		dbg = new Debug(this);
 
 		camWorld = new OrthographicCamera( Physics.s2w( Gdx.graphics.getWidth() ), Physics.s2w( Gdx.graphics.getHeight() ) );
 		camWorld.position.set( 0, 0, 0 );
@@ -67,9 +63,8 @@ public class TestScreen extends Screen
 	public void removed()
 	{
 		super.removed();
-		font.dispose();
-		renderer.dispose();
 		world.dispose();
+		dbg.dispose();
 	}
 
 	@Override
@@ -81,8 +76,6 @@ public class TestScreen extends Screen
 	@Override
 	public void render( float timeAliasingFactor )
 	{
-		long time = System.nanoTime();
-
 		GL20 gl = Gdx.graphics.getGL20();
 
 		gl.glClearColor( 1, 0.5f, 0, 1 );
@@ -102,17 +95,16 @@ public class TestScreen extends Screen
 		// renderer.render( camWorld.combined, world );
 		rope.render( camScreen );
 
+
 		// debug
 
-		if( time - frameStart > 1000000000 )
+		if(Gdx.app.getType() != ApplicationType.Android)
 		{
-			physicsTime = URacer.getPhysicsTime();
-			renderTime = URacer.getRenderTime();
-			frameStart = time;
+//			dbg.renderB2dWorld( world, camWorld.combined );
 		}
 
 		spriteBatch.begin();
-		drawString( "fps:" + Gdx.graphics.getFramesPerSecond() + ", physics: " + physicsTime + ", render: " + renderTime, 0, 130 );
+		dbg.renderFrameStats( timeAliasingFactor );
 		spriteBatch.end();
 
 		// fpslog.log();
