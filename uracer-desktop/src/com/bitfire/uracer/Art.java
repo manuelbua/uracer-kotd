@@ -8,11 +8,13 @@ public class Art
 {
 	public static TextureRegion[][] base6;
 	public static TextureRegion titleScreen;
+	public static TextureRegion quad;
 
 	public static void load()
 	{
 		titleScreen = load( "data/base/titlescreen.png", 480, 320 );
 		base6 = split( "data/base/base6.png", 6, 6 );
+		quad = new TextureRegion(base6[0][10], 0, 0, 18, 18);
 	}
 
 	private static TextureRegion[][] split( String name, int width, int height )

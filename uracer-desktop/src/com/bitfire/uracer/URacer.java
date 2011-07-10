@@ -11,10 +11,8 @@ public class URacer implements ApplicationListener
 	private Input input = new Input();
 	private boolean running = false;
 
-	public static final float timestepHz = 60.0f;
-	public static final float oneOnTimestepHz = 1.0f / timestepHz;
-	private float timeAccumSecs = 0;
 	private float timeAliasingAlpha = 0;
+	private float timeAccumSecs = 0;
 	private float oneOnOneBillion = 0;
 
 	// stats
@@ -32,6 +30,7 @@ public class URacer implements ApplicationListener
 
 		running = true;
 		oneOnOneBillion = 1.0f / 1000000000.0f;
+		timeAliasingAlpha = 0;
 	}
 
 	@Override
@@ -46,17 +45,17 @@ public class URacer implements ApplicationListener
 		long startTime = System.nanoTime();
 		{
 			timeAccumSecs += deltaTime;
-			while( timeAccumSecs > oneOnTimestepHz )
+			while( timeAccumSecs > Physics.dt )
 			{
 				input.tick();
 				screen.tick( input );
 
-				timeAccumSecs -= oneOnTimestepHz;
+				timeAccumSecs -= Physics.dt;
 			}
 		}
 		physicsTime = (System.nanoTime() - startTime) * oneOnOneBillion;
 
-		timeAliasingAlpha = timeAccumSecs * timestepHz; // opt away the divide-by-one-on-timestep
+		timeAliasingAlpha = timeAccumSecs * Physics.timestepHz; // opt away the divide-by-one-on-timestep
 
 		startTime = System.nanoTime();
 		{

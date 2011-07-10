@@ -6,7 +6,7 @@ public class Input extends InputAdapter
 {
 	// keys
 	private static int[] buttons = new int[ 256 ];
-	private static int[] old_buttons = new int[ 256 ]; // unused
+	//private static int[] old_buttons = new int[ 256 ]; // unused
 
 	// touches
 	private static int touchX = 0;
@@ -82,16 +82,16 @@ public class Input extends InputAdapter
 	{
 		for( int i = 0; i < buttons.length; i++ )
 		{
-			buttons[i] = old_buttons[i] = 0;
+			buttons[i] = /*old_buttons[i] =*/ 0;
 		}
 	}
 
 	public void tick()
 	{
-		for( int i = 0; i < buttons.length; i++ )
-		{
-			old_buttons[i] = buttons[i];
-		}
+//		for( int i = 0; i < buttons.length; i++ )
+//		{
+//			old_buttons[i] = buttons[i];
+//		}
 
 		int flag;
 
@@ -123,7 +123,7 @@ public class Input extends InputAdapter
 	{
 		for( int i = 0; i < buttons.length; i++ )
 		{
-			buttons[i] = old_buttons[i] = 0;
+			buttons[i] = /*old_buttons[i] =*/ 0;
 		}
 	}
 

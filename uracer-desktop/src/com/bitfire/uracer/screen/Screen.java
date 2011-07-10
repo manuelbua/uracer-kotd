@@ -19,8 +19,9 @@ public abstract class Screen
 	public final void init( URacer uracer )
 	{
 		this.uracer = uracer;
-		spriteBatch = new SpriteBatch( 100 );
+		spriteBatch = new SpriteBatch();
 
+		// y-flip
 		Matrix4 proj = new Matrix4();
 		proj.setToOrtho( 0, Gdx.graphics.getWidth(), Gdx.graphics.getHeight(), 0, 0, 100 );
 		spriteBatch.setProjectionMatrix( proj );
