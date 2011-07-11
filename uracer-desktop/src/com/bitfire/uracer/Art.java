@@ -10,6 +10,7 @@ public class Art
 	public static TextureRegion titleScreen;
 	public static TextureRegion quad;
 	public static TextureRegion rope;
+	public static TextureRegion disc;
 
 	public static void load()
 	{
@@ -17,6 +18,7 @@ public class Art
 		base6 = split( "data/base/base6.png", 6, 6 );
 		quad = new TextureRegion(base6[0][10], 0, 0, 18, 18);
 		rope = new TextureRegion( new Texture(Gdx.files.internal("data/base/rope.png")), 0, 0, 64, 18 );
+		disc = new TextureRegion( new Texture(Gdx.files.internal( "data/base/disc.png")), 0, 0, 256, 256 );
 	}
 
 	private static TextureRegion[][] split( String name, int width, int height )

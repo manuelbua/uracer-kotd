@@ -5,7 +5,6 @@ import java.util.List;
 
 import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.GL10;
-import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.graphics.glutils.ImmediateModeRenderer20;
 import com.badlogic.gdx.math.Matrix4;
 import com.badlogic.gdx.math.Vector2;
@@ -28,9 +27,6 @@ public class Box2DDebugRenderer20 {
 	protected ImmediateModeRenderer20 renderer;
 	private Matrix4 projView;
 
-	/** a spritebatch and a font for text rendering **/
-	public SpriteBatch batch;
-// public Font font;
 
 	/** vertices for polygon rendering **/
 	private static Vector2[] vertices = new Vector2[100];
@@ -40,8 +36,6 @@ public class Box2DDebugRenderer20 {
 		renderer = new ImmediateModeRenderer20(false, true, 0);
 
 		// next we create a SpriteBatch and a font
-		batch = new SpriteBatch();
-// font = Gdx.graphics.newFont("Arial", 12, FontStyle.Plain);
 		projView = new Matrix4();
 		projView.idt();
 
@@ -191,7 +185,5 @@ public class Box2DDebugRenderer20 {
 	}
 
 	public void dispose () {
-		batch.dispose();
-// font.dispose();
 	}
 }

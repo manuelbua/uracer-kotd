@@ -44,7 +44,7 @@ public class URacer implements ApplicationListener
 
 		long startTime = System.nanoTime();
 		{
-			timeAccumSecs += deltaTime;
+			timeAccumSecs += deltaTime * Physics.timeMultiplier;
 			while( timeAccumSecs > Physics.dt )
 			{
 				input.tick();
@@ -84,6 +84,7 @@ public class URacer implements ApplicationListener
 	@Override
 	public void dispose()
 	{
+		Physics.dispose();
 	}
 
 	public void setScreen( Screen newScreen )

@@ -5,47 +5,54 @@ import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.FPSLogger;
 import com.badlogic.gdx.graphics.GL20;
 import com.badlogic.gdx.graphics.OrthographicCamera;
+import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.physics.box2d.Body;
 import com.badlogic.gdx.physics.box2d.BodyDef;
 import com.badlogic.gdx.physics.box2d.PolygonShape;
-import com.badlogic.gdx.physics.box2d.World;
 import com.bitfire.uracer.Art;
 import com.bitfire.uracer.Input;
 import com.bitfire.uracer.Physics;
 import com.bitfire.uracer.debug.Debug;
+import com.bitfire.uracer.entities.Disc;
+import com.bitfire.uracer.entities.EntityManager;
+import com.bitfire.uracer.entities.Rope;
 
 public class TestScreen extends Screen
 {
 	private FPSLogger fpslog = new FPSLogger();
 	private Debug dbg;
 
-	private World world;
-	private TestRope rope;
 	private OrthographicCamera camScreen, camWorld;
+	private SpriteBatch entitiesBatch;
 
 
 	public TestScreen()
 	{
 		dbg = new Debug(this);
+		Physics.create( new Vector2(0, -10), true );
+		EntityManager.clear();
+		entitiesBatch = new SpriteBatch();
+
+		Vector2 campos = new Vector2();
+		campos.x = 0;
+		campos.y = 100;
 
 		camWorld = new OrthographicCamera( Physics.s2w( Gdx.graphics.getWidth() ), Physics.s2w( Gdx.graphics.getHeight() ) );
-		camWorld.position.set( 0, 0, 0 );
+		camWorld.position.set( Physics.s2w(campos.x), Physics.s2w(campos.y), 0 );
 
 		camScreen = new OrthographicCamera( Gdx.graphics.getWidth(), Gdx.graphics.getHeight() );
-		camScreen.position.set( 0, 0, 0 );
+		camScreen.position.set( campos.x, campos.y, 0 );
 
-		createWorld();
+		populateWorld();
 	}
 
-	private void createWorld()
+	private void populateWorld()
 	{
-		world = new World( new Vector2( 0, -10 ), true );
-
 		Body ground;
 		{
 			BodyDef bd = new BodyDef();
-			ground = world.createBody( bd );
+			ground = Physics.world.createBody( bd );
 
 			PolygonShape shape = new PolygonShape();
 			shape.setAsEdge( new Vector2( -40, 0 ), new Vector2( 40.0f, 0 ) );
@@ -54,29 +61,35 @@ public class TestScreen extends Screen
 			shape.dispose();
 		}
 
-		rope = new TestRope( world, 20, ground );
+		EntityManager.add( new Rope( 6, ground ) );
+		EntityManager.add( new Disc( new Vector2(0,2), 0.5f) );
+		EntityManager.add( new Disc( new Vector2(-1,3), 0.6f) );
+		EntityManager.add( new Disc( new Vector2(1,2.5f), 0.5f) );
+		EntityManager.add( new Disc( new Vector2(0,4.5f), 0.2f) );
+		EntityManager.add( new Disc( new Vector2(-1.25f,4.5f), 0.32f) );
 	}
 
 	@Override
 	public void removed()
 	{
 		super.removed();
-		world.dispose();
 		dbg.dispose();
 	}
 
 	@Override
 	public void tick( Input input )
 	{
-		world.step( Physics.dt, 10, 10 );
+		EntityManager.onBeforePhysicsSubstep();
+		Physics.world.step( Physics.dt, 10, 10 );
+		EntityManager.onAfterPhysicsSubstep();
 	}
 
 	@Override
-	public void render( float timeAliasingFactor )
+	public void render( float temporalAliasingFactor )
 	{
 		GL20 gl = Gdx.graphics.getGL20();
 
-		gl.glClearColor( 1, 0.5f, 0, 1 );
+		gl.glClearColor( 0, 0, 0, 1 );
 		gl.glClear( GL20.GL_COLOR_BUFFER_BIT );
 
 		// render background
@@ -90,20 +103,23 @@ public class TestScreen extends Screen
 		camScreen.update();
 		camWorld.update();
 
-		rope.render( camScreen );
-
+		entitiesBatch.setProjectionMatrix( camScreen.projection );
+		entitiesBatch.setTransformMatrix( camScreen.view );
+		entitiesBatch.begin();
+		EntityManager.onRender( entitiesBatch, camScreen, camWorld, temporalAliasingFactor );
+		entitiesBatch.end();
 
 		// debug
 
 		if(Gdx.app.getType() != ApplicationType.Android)
 		{
-//			dbg.renderB2dWorld( world, camWorld.combined );
+			dbg.renderB2dWorld( camWorld.combined );
+
+			spriteBatch.begin();
+			dbg.renderFrameStats( temporalAliasingFactor );
+			spriteBatch.end();
 		}
 
-		spriteBatch.begin();
-		dbg.renderFrameStats( timeAliasingFactor );
-		spriteBatch.end();
-
-		// fpslog.log();
+		fpslog.log();
 	}
 }
