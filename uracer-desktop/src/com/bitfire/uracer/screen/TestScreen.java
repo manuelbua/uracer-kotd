@@ -89,10 +89,13 @@ public class TestScreen extends Screen
 		Physics.world.step( Physics.dt, 10, 10 );
 		EntityManager.onAfterPhysicsSubstep();
 
-		gravity.x = Input.getAccelY();
-		gravity.y = -Input.getAccelX();
-		gravity.mul( 2.25f );
-		Physics.world.setGravity( gravity );
+		if(Gdx.app.getType() == ApplicationType.Android)
+		{
+			gravity.x = Input.getAccelY();
+			gravity.y = -Input.getAccelX();
+			gravity.mul( 2.25f );
+			Physics.world.setGravity( gravity );
+		}
 	}
 
 	@Override
