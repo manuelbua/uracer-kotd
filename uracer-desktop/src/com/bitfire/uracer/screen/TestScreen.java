@@ -14,6 +14,7 @@ import com.bitfire.uracer.Art;
 import com.bitfire.uracer.Input;
 import com.bitfire.uracer.Physics;
 import com.bitfire.uracer.debug.Debug;
+import com.bitfire.uracer.entities.Box2DFactory;
 import com.bitfire.uracer.entities.Disc;
 import com.bitfire.uracer.entities.EntityManager;
 import com.bitfire.uracer.entities.Rope;
@@ -26,11 +27,10 @@ public class TestScreen extends Screen
 	private OrthographicCamera camScreen, camWorld;
 	private SpriteBatch entitiesBatch;
 
-
 	public TestScreen()
 	{
-		dbg = new Debug(this);
-		Physics.create( new Vector2(0, -10), true );
+		dbg = new Debug( this );
+		Physics.create( new Vector2( 0, -10 ), false );
 		EntityManager.clear();
 		entitiesBatch = new SpriteBatch();
 
@@ -39,7 +39,7 @@ public class TestScreen extends Screen
 		campos.y = 100;
 
 		camWorld = new OrthographicCamera( Physics.s2w( Gdx.graphics.getWidth() ), Physics.s2w( Gdx.graphics.getHeight() ) );
-		camWorld.position.set( Physics.s2w(campos.x), Physics.s2w(campos.y), 0 );
+		camWorld.position.set( Physics.s2w( campos.x ), Physics.s2w( campos.y ), 0 );
 
 		camScreen = new OrthographicCamera( Gdx.graphics.getWidth(), Gdx.graphics.getHeight() );
 		camScreen.position.set( campos.x, campos.y, 0 );
@@ -61,12 +61,17 @@ public class TestScreen extends Screen
 			shape.dispose();
 		}
 
-		EntityManager.add( new Rope( 6, ground ) );
-		EntityManager.add( new Disc( new Vector2(0,2), 0.5f) );
-		EntityManager.add( new Disc( new Vector2(-1,3), 0.6f) );
-		EntityManager.add( new Disc( new Vector2(1,2.5f), 0.5f) );
-		EntityManager.add( new Disc( new Vector2(0,4.5f), 0.2f) );
-		EntityManager.add( new Disc( new Vector2(-1.25f,4.5f), 0.32f) );
+
+		Box2DFactory.createThinWall( Physics.world, -4.5f,0, -4.5f,5, 0.1f );
+		Box2DFactory.createThinWall( Physics.world, 4.5f,0, 4.5f,5, 0.1f );
+		Box2DFactory.createThinWall( Physics.world, -4.5f,5f, 4.5f,5f, 0.1f );
+
+		Rope.create( 6, ground );
+		Disc.create( new Vector2( 0, 2 ), 0.5f );
+		Disc.create( new Vector2( -1, 3 ), 0.5f );
+		Disc.create( new Vector2( 1, 2.5f ), 0.5f );
+		Disc.create( new Vector2( 0, 4.5f ), 0.2f );
+		Disc.create( new Vector2( -1.25f, 4.5f ), 0.32f );
 	}
 
 	@Override
@@ -76,19 +81,24 @@ public class TestScreen extends Screen
 		dbg.dispose();
 	}
 
+	private Vector2 gravity = new Vector2();
 	@Override
 	public void tick( Input input )
 	{
 		EntityManager.onBeforePhysicsSubstep();
 		Physics.world.step( Physics.dt, 10, 10 );
 		EntityManager.onAfterPhysicsSubstep();
+
+		gravity.x = Input.getAccelY();
+		gravity.y = -Input.getAccelX();
+		gravity.mul( 2.25f );
+		Physics.world.setGravity( gravity );
 	}
 
 	@Override
 	public void render( float temporalAliasingFactor )
 	{
 		GL20 gl = Gdx.graphics.getGL20();
-
 		gl.glClearColor( 0, 0, 0, 1 );
 		gl.glClear( GL20.GL_COLOR_BUFFER_BIT );
 
@@ -111,7 +121,7 @@ public class TestScreen extends Screen
 
 		// debug
 
-		if(Gdx.app.getType() != ApplicationType.Android)
+		if( Gdx.app.getType() != ApplicationType.Android )
 		{
 			dbg.renderB2dWorld( camWorld.combined );
 

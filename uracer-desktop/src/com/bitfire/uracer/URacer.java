@@ -22,6 +22,7 @@ public class URacer implements ApplicationListener
 	@Override
 	public void create()
 	{
+		Config.asDefault();
 		Art.load();
 		Gdx.graphics.setVSync( true );
 		input.releaseAllKeys();

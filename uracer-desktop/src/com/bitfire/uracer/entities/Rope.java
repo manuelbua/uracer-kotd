@@ -13,6 +13,7 @@ import com.badlogic.gdx.physics.box2d.PolygonShape;
 import com.badlogic.gdx.physics.box2d.joints.RevoluteJointDef;
 import com.badlogic.gdx.utils.Array;
 import com.bitfire.uracer.Art;
+import com.bitfire.uracer.Config;
 import com.bitfire.uracer.Physics;
 
 public class Rope extends Entity
@@ -60,12 +61,12 @@ public class Rope extends Entity
 		@Override
 		public boolean isSubframeInterpolated()
 		{
-			return true;
+			return Config.SubframeInterpolation;
 		}
 	}
 
 
-	public Rope( int numSegments, Body aGround )
+	private Rope( int numSegments, Body aGround )
 	{
 		this.segments = numSegments;
 		this.ground = aGround;
@@ -111,6 +112,13 @@ public class Rope extends Entity
 		sprite.setOrigin( sprite.getWidth()/2, sprite.getHeight()/2 );
 	}
 
+	// factory method
+	public static Rope create( int numSegments, Body aGround )
+	{
+		Rope rope = new Rope( numSegments, aGround );
+		EntityManager.add( rope );
+		return rope;
+	}
 
 	@Override
 	public void onRender( SpriteBatch batch, Camera screen, Camera world, float temporalAliasingFactor )

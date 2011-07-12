@@ -1,27 +1,40 @@
 package com.bitfire.uracer;
 
+import com.badlogic.gdx.Gdx;
+import com.badlogic.gdx.Input.Peripheral;
 import com.badlogic.gdx.InputAdapter;
 
 public class Input extends InputAdapter
 {
 	// keys
-	private static int[] buttons = new int[ 256 ];
-	//private static int[] old_buttons = new int[ 256 ]; // unused
+	private static int[] buttons;
 
 	// touches
-	private static int touchX = 0;
-	private static int touchY = 0;
-	private static boolean is_touching = false;
-	private static boolean is_dragging = false;
+	private static int touchX;
+	private static int touchY;
+	private static boolean is_touching;
+	private static boolean is_dragging;
 
-	private static final int FLAG_REAL_ON = (1 << 0);
-	private static final int FLAG_DELAY_ON = (1 << 1);
-	private static final int FLAG_CUR_ON = (1 << 2);
-	private static final int FLAG_LAST_ON = (1 << 3);
+	// accelerometer
+	private static float accelX, accelY, accelZ;
+
+	// flags
+	private static int FLAG_REAL_ON;
+	private static int FLAG_DELAY_ON;
+	private static int FLAG_CUR_ON;
+	private static int FLAG_LAST_ON;
 
 	//
 	// game interface
 	//
+
+	public static void create()
+	{
+	}
+
+	public static void dispose()
+	{
+	}
 
 	public static boolean isTouching()
 	{
@@ -41,6 +54,21 @@ public class Input extends InputAdapter
 	public static int getY()
 	{
 		return touchY;
+	}
+
+	public static float getAccelX()
+	{
+		return accelX;
+	}
+
+	public static float getAccelY()
+	{
+		return accelY;
+	}
+
+	public static float getAccelZ()
+	{
+		return accelZ;
 	}
 
 	public static boolean isOn( int keycode )
@@ -73,28 +101,34 @@ public class Input extends InputAdapter
 		return (isOff( keycode ) && wasOn( keycode ));
 	}
 
-	private static boolean is( int keycode, int flag )
-	{
-		return ((buttons[keycode] & flag) == flag);
-	}
-
 	public Input()
 	{
+		buttons = new int[ 256 ];
+		is_touching = is_dragging = false;
+		touchX = touchY = 0;
+		accelX = accelY = accelZ = 0;
+
+		FLAG_REAL_ON = (1 << 0);
+		FLAG_DELAY_ON = (1 << 1);
+		FLAG_CUR_ON = (1 << 2);
+		FLAG_LAST_ON = (1 << 3);
+
 		for( int i = 0; i < buttons.length; i++ )
 		{
-			buttons[i] = /*old_buttons[i] =*/ 0;
+			buttons[i] = 0;
 		}
 	}
 
 	public void tick()
 	{
-//		for( int i = 0; i < buttons.length; i++ )
-//		{
-//			old_buttons[i] = buttons[i];
-//		}
+		if( Gdx.input.isPeripheralAvailable( Peripheral.Accelerometer ) )
+		{
+			accelX = Gdx.input.getAccelerometerX();
+			accelY = Gdx.input.getAccelerometerY();
+			accelZ = Gdx.input.getAccelerometerZ();
+		}
 
 		int flag;
-
 		for( int i = 0; i < buttons.length; i++ )
 		{
 			flag = buttons[i];
@@ -123,7 +157,7 @@ public class Input extends InputAdapter
 	{
 		for( int i = 0; i < buttons.length; i++ )
 		{
-			buttons[i] = /*old_buttons[i] =*/ 0;
+			buttons[i] = /* old_buttons[i] = */0;
 		}
 	}
 
@@ -135,7 +169,6 @@ public class Input extends InputAdapter
 	public boolean keyDown( int keycode )
 	{
 		buttons[keycode] |= (FLAG_REAL_ON | FLAG_DELAY_ON);
-		// buttons[ keycode ] |= (FLAG_REAL_ON | FLAG_CUR_ON);
 		return false;
 	}
 
@@ -173,5 +206,14 @@ public class Input extends InputAdapter
 		is_touching = false;
 		is_dragging = false;
 		return false;
+	}
+
+	//
+	// helpers
+	//
+
+	private static boolean is( int keycode, int flag )
+	{
+		return ((buttons[keycode] & flag) == flag);
 	}
 }

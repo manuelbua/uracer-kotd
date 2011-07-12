@@ -7,6 +7,7 @@ import com.badlogic.gdx.math.MathUtils;
 import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.physics.box2d.Body;
 import com.bitfire.uracer.Art;
+import com.bitfire.uracer.Config;
 import com.bitfire.uracer.Physics;
 
 public class Disc extends SubframeInterpolableEntity
@@ -16,7 +17,7 @@ public class Disc extends SubframeInterpolableEntity
 	private Vector2 pos = new Vector2();
 	private EntityScreenState screenState = new EntityScreenState();
 
-	public Disc(Vector2 position, float radius)
+	private Disc(Vector2 position, float radius)
 	{
 		body = Box2DFactory.createCircle( Physics.world, position.x, position.y, radius, false );
 
@@ -26,11 +27,18 @@ public class Disc extends SubframeInterpolableEntity
 		sprite.setOrigin( sprite.getWidth()/2, sprite.getHeight()/2 );
 	}
 
+	// factory method
+	public static Disc create( Vector2 position, float radius )
+	{
+		Disc disc = new Disc( position, radius );
+		EntityManager.add( disc );
+		return disc;
+	}
 
 	@Override
 	public boolean isSubframeInterpolated()
 	{
-		return true;
+		return Config.SubframeInterpolation;
 	}
 
 

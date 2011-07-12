@@ -23,10 +23,10 @@ public class Physics
 
 	public static void create( Vector2 gravity, boolean sleepWhenPossible )
 	{
-		PixelsToMeter = 50.0f;
-		timestepHz = 60.0f;
+		PixelsToMeter = Config.PixelsToMeter;
+		timestepHz = Config.PhysicsTimestepHz;
 		dt = 1.0f / timestepHz;
-		timeMultiplier = 1.0f;
+		timeMultiplier = Config.PhysicsTimeMultiplier;
 
 		world = new World( gravity, sleepWhenPossible );
 		ret = new Vector2();
