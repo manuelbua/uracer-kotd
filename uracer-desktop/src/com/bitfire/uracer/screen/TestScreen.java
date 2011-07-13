@@ -8,16 +8,14 @@ import com.badlogic.gdx.graphics.OrthographicCamera;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.physics.box2d.Body;
-import com.badlogic.gdx.physics.box2d.BodyDef;
-import com.badlogic.gdx.physics.box2d.PolygonShape;
 import com.bitfire.uracer.Art;
 import com.bitfire.uracer.Input;
 import com.bitfire.uracer.Physics;
 import com.bitfire.uracer.debug.Debug;
-import com.bitfire.uracer.entities.Box2DFactory;
 import com.bitfire.uracer.entities.Disc;
 import com.bitfire.uracer.entities.EntityManager;
 import com.bitfire.uracer.entities.Rope;
+import com.bitfire.uracer.utils.Box2DFactory;
 
 public class TestScreen extends Screen
 {
@@ -36,7 +34,7 @@ public class TestScreen extends Screen
 
 		Vector2 campos = new Vector2();
 		campos.x = 0;
-		campos.y = 100;
+		campos.y = 0;
 
 		camWorld = new OrthographicCamera( Physics.s2w( Gdx.graphics.getWidth() ), Physics.s2w( Gdx.graphics.getHeight() ) );
 		camWorld.position.set( Physics.s2w( campos.x ), Physics.s2w( campos.y ), 0 );
@@ -49,22 +47,13 @@ public class TestScreen extends Screen
 
 	private void populateWorld()
 	{
-		Body ground;
-		{
-			BodyDef bd = new BodyDef();
-			ground = Physics.world.createBody( bd );
+		float w = Physics.s2w( Gdx.graphics.getWidth() );
+		float h = Physics.s2w( Gdx.graphics.getHeight() );
 
-			PolygonShape shape = new PolygonShape();
-			shape.setAsEdge( new Vector2( -40, 0 ), new Vector2( 40.0f, 0 ) );
-
-			ground.createFixture( shape, 0 );
-			shape.dispose();
-		}
-
-
-		Box2DFactory.createThinWall( Physics.world, -4.5f,0, -4.5f,5, 0.1f );
-		Box2DFactory.createThinWall( Physics.world, 4.5f,0, 4.5f,5, 0.1f );
-		Box2DFactory.createThinWall( Physics.world, -4.5f,5f, 4.5f,5f, 0.1f );
+		Box2DFactory.createThinWall( Physics.world, -w/2,-h/2, -w/2,h/2, 0.1f );
+		Box2DFactory.createThinWall( Physics.world, w/2,-h/2, w/2,h/2, 0.1f );
+		Body ground = Box2DFactory.createThinWall( Physics.world, -w/2,-h/2, w/2,-h/2, 0.1f );
+		Box2DFactory.createThinWall( Physics.world, -w/2,h/2, w/2,h/2, 0.1f );
 
 		Rope.create( 6, ground );
 		Disc.create( new Vector2( 0, 2 ), 0.5f );

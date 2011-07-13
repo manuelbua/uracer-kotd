@@ -9,6 +9,7 @@ import com.badlogic.gdx.physics.box2d.Body;
 import com.bitfire.uracer.Art;
 import com.bitfire.uracer.Config;
 import com.bitfire.uracer.Physics;
+import com.bitfire.uracer.utils.Box2DFactory;
 
 public class Disc extends SubframeInterpolableEntity
 {
