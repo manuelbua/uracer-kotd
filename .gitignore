@@ -1,3 +1,4 @@
 /uracer-desktop/bin
 /uracer-android/bin
 /uracer-android/gen
+*.so
