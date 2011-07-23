@@ -24,14 +24,15 @@ public class GameScreen extends Screen
 	}
 
 	@Override
-	public void tick( Input input )
+	public void tick()
 	{
-//		if(input.buttons[Input.JUMP] && !input.oldButtons[Input.JUMP])
-		if(Input.isOn( Keys.SPACE ))
-			System.out.println("JUMP"+ jump++);
+		if( Input.isOn( Keys.SPACE ) )
+		{
+			System.out.println( "JUMP" + jump++ );
+		}
 	}
-
 	static int jump = 0;
+
 
 	@Override
 	public void render(float timeAliasingFactor)
@@ -43,7 +44,7 @@ public class GameScreen extends Screen
 
 		spriteBatch.begin();
 
-		spriteBatch.draw( Art.titleScreen, 0, 0 );
+			spriteBatch.draw( Art.titleScreen, 0, 0 );
 
 			int h = Gdx.graphics.getHeight();
 			drawString( "FPS: " + Gdx.graphics.getFramesPerSecond(), 5, h-30 );

@@ -7,7 +7,6 @@ import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
 import com.badlogic.gdx.math.Matrix4;
 import com.bitfire.uracer.Art;
-import com.bitfire.uracer.Input;
 import com.bitfire.uracer.URacer;
 
 public abstract class Screen
@@ -16,13 +15,17 @@ public abstract class Screen
 	private URacer uracer;
 	public SpriteBatch spriteBatch;
 
+	private float Near = 0f;
+	private float Far = 100f;
+
 	public final void init( URacer uracer )
 	{
 		this.uracer = uracer;
-		spriteBatch = new SpriteBatch( 100 );
+		spriteBatch = new SpriteBatch();
 
+		// y-flip
 		Matrix4 proj = new Matrix4();
-		proj.setToOrtho( 0, Gdx.graphics.getWidth(), Gdx.graphics.getHeight(), 0, 0, 100 );
+		proj.setToOrtho( 0, Gdx.graphics.getWidth(), Gdx.graphics.getHeight(), 0, Near, Far );
 		spriteBatch.setProjectionMatrix( proj );
 	}
 
@@ -64,10 +67,9 @@ public abstract class Screen
 		}
 	}
 
-	public abstract void render(float timeAliasingFactor);
+	public abstract void render( float timeAliasingFactor );
 
-	public void tick( Input input )
+	public void tick()
 	{
 	}
-
 }

@@ -2,9 +2,8 @@ package com.bitfire.uracer;
 
 import com.badlogic.gdx.ApplicationListener;
 import com.badlogic.gdx.Gdx;
-import com.badlogic.gdx.graphics.GL10;
-import com.bitfire.uracer.screen.GameScreen;
 import com.bitfire.uracer.screen.Screen;
+import com.bitfire.uracer.screen.TestScreen;
 
 public class URacer implements ApplicationListener
 {
@@ -12,45 +11,60 @@ public class URacer implements ApplicationListener
 	private Input input = new Input();
 	private boolean running = false;
 
-	private final float timestepHz = 60.0f;
-	private final float oneOnTimestepHz = 1.0f / timestepHz;
-	private float timeAccumSecs = 0;
 	private float timeAliasingAlpha = 0;
+	private float timeAccumSecs = 0;
+	private float oneOnOneBillion = 0;
+
+	// stats
+	private static float graphicsTime = 0;
+	private static float physicsTime = 0;
 
 	@Override
 	public void create()
 	{
+		Config.asDefault();
 		Art.load();
-		Gdx.graphics.setVSync( true );
 		input.releaseAllKeys();
+
 		Gdx.input.setInputProcessor( input );
-		setScreen( new GameScreen() );
+		Gdx.graphics.setVSync( true );
 
 		running = true;
+		oneOnOneBillion = 1.0f / 1000000000.0f;
+		timeAliasingAlpha = 0;
+
+		setScreen( new TestScreen() );
 	}
 
 	@Override
 	public void render()
 	{
-		Gdx.gl.glClear( GL10.GL_COLOR_BUFFER_BIT );
-
 		float deltaTime = Gdx.graphics.getDeltaTime();
 
 		// avoid spiral of death
 		if( deltaTime > 0.25f )
 			deltaTime = 0.25f;
 
-		timeAccumSecs += deltaTime;
-		while( timeAccumSecs > oneOnTimestepHz )
+		long startTime = System.nanoTime();
 		{
-			input.tick();
-			screen.tick( input );
+			timeAccumSecs += deltaTime * Physics.timeMultiplier;
+			while( timeAccumSecs > Physics.dt )
+			{
+				input.tick();
+				screen.tick( /*input*/ );
 
-			timeAccumSecs -= oneOnTimestepHz;
+				timeAccumSecs -= Physics.dt;
+			}
 		}
+		physicsTime = (System.nanoTime() - startTime) * oneOnOneBillion;
 
-		timeAliasingAlpha = timeAccumSecs * timestepHz; // opt away the divide-by-one-on-timestep
-		screen.render( timeAliasingAlpha );
+		timeAliasingAlpha = timeAccumSecs * Physics.timestepHz; // opt away the divide-by-one-on-timestep
+
+		startTime = System.nanoTime();
+		{
+			screen.render( timeAliasingAlpha );
+		}
+		graphicsTime = (System.nanoTime() - startTime) * oneOnOneBillion;
 	}
 
 	@Override
@@ -73,6 +87,7 @@ public class URacer implements ApplicationListener
 	@Override
 	public void dispose()
 	{
+		Physics.dispose();
 	}
 
 	public void setScreen( Screen newScreen )
@@ -89,5 +104,15 @@ public class URacer implements ApplicationListener
 	public boolean isRunning()
 	{
 		return running;
+	}
+
+	public static float getRenderTime()
+	{
+		return graphicsTime;
+	}
+
+	public static float getPhysicsTime()
+	{
+		return physicsTime;
 	}
 }
