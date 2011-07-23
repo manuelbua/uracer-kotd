@@ -24,14 +24,16 @@ public class URacer implements ApplicationListener
 	{
 		Config.asDefault();
 		Art.load();
-		Gdx.graphics.setVSync( true );
 		input.releaseAllKeys();
+
 		Gdx.input.setInputProcessor( input );
-		setScreen( new TestScreen() );
+		Gdx.graphics.setVSync( true );
 
 		running = true;
 		oneOnOneBillion = 1.0f / 1000000000.0f;
 		timeAliasingAlpha = 0;
+
+		setScreen( new TestScreen() );
 	}
 
 	@Override
@@ -49,7 +51,7 @@ public class URacer implements ApplicationListener
 			while( timeAccumSecs > Physics.dt )
 			{
 				input.tick();
-				screen.tick( input );
+				screen.tick( /*input*/ );
 
 				timeAccumSecs -= Physics.dt;
 			}

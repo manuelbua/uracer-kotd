@@ -28,14 +28,6 @@ public class Input extends InputAdapter
 	// game interface
 	//
 
-	public static void create()
-	{
-	}
-
-	public static void dispose()
-	{
-	}
-
 	public static boolean isTouching()
 	{
 		return is_touching;

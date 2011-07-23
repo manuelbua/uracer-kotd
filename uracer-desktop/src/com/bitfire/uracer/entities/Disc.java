@@ -1,6 +1,5 @@
 package com.bitfire.uracer.entities;
 
-import com.badlogic.gdx.graphics.Camera;
 import com.badlogic.gdx.graphics.g2d.Sprite;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.math.MathUtils;
@@ -52,7 +51,7 @@ public class Disc extends SubframeInterpolableEntity
 
 
 	@Override
-	public void onRender( SpriteBatch batch, Camera screen, Camera world, float temporalAliasingFactor )
+	public void onRender( SpriteBatch batch, float temporalAliasingFactor )
 	{
 		screenState.set( getState() );
 

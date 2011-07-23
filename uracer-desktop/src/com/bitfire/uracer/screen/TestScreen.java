@@ -2,6 +2,7 @@ package com.bitfire.uracer.screen;
 
 import com.badlogic.gdx.Application.ApplicationType;
 import com.badlogic.gdx.Gdx;
+import com.badlogic.gdx.Input.Keys;
 import com.badlogic.gdx.graphics.FPSLogger;
 import com.badlogic.gdx.graphics.GL20;
 import com.badlogic.gdx.graphics.OrthographicCamera;
@@ -24,6 +25,7 @@ public class TestScreen extends Screen
 
 	private OrthographicCamera camScreen, camWorld;
 	private SpriteBatch entitiesBatch;
+	private Vector2 gravity = new Vector2();
 
 	public TestScreen()
 	{
@@ -50,17 +52,17 @@ public class TestScreen extends Screen
 		float w = Physics.s2w( Gdx.graphics.getWidth() );
 		float h = Physics.s2w( Gdx.graphics.getHeight() );
 
-		Box2DFactory.createThinWall( Physics.world, -w/2,-h/2, -w/2,h/2, 0.1f );
-		Box2DFactory.createThinWall( Physics.world, w/2,-h/2, w/2,h/2, 0.1f );
-		Body ground = Box2DFactory.createThinWall( Physics.world, -w/2,-h/2, w/2,-h/2, 0.1f );
-		Box2DFactory.createThinWall( Physics.world, -w/2,h/2, w/2,h/2, 0.1f );
+		Box2DFactory.createThinWall( Physics.world, -w / 2, -h / 2, -w / 2, h / 2, 0.1f );
+		Box2DFactory.createThinWall( Physics.world, w / 2, -h / 2, w / 2, h / 2, 0.1f );
+		Body ground = Box2DFactory.createThinWall( Physics.world, -w / 2, -h / 2, w / 2, -h / 2, 0.1f );
+		Box2DFactory.createThinWall( Physics.world, -w / 2, h / 2, w / 2, h / 2, 0.1f );
 
 		Rope.create( 6, ground );
 		Disc.create( new Vector2( 0, 2 ), 0.5f );
 		Disc.create( new Vector2( -1, 3 ), 0.5f );
 		Disc.create( new Vector2( 1, 2.5f ), 0.5f );
-		Disc.create( new Vector2( 0, 4.5f ), 0.2f );
-		Disc.create( new Vector2( -1.25f, 4.5f ), 0.32f );
+		Disc.create( new Vector2( 0, 0.5f ), 0.2f );
+		Disc.create( new Vector2( -1.25f, 0.5f ), 0.32f );
 	}
 
 	@Override
@@ -70,15 +72,17 @@ public class TestScreen extends Screen
 		dbg.dispose();
 	}
 
-	private Vector2 gravity = new Vector2();
 	@Override
-	public void tick( Input input )
+	public void tick()
 	{
-		EntityManager.onBeforePhysicsSubstep();
-		Physics.world.step( Physics.dt, 10, 10 );
-		EntityManager.onAfterPhysicsSubstep();
+		EntityManager.raiseOnTick();
 
-		if(Gdx.app.getType() == ApplicationType.Android)
+		if( Input.isOn( Keys.SPACE ) )
+		{
+			System.out.println( "JUMP" );
+		}
+
+		if( Gdx.app.getType() == ApplicationType.Android )
 		{
 			gravity.x = Input.getAccelY();
 			gravity.y = -Input.getAccelX();
@@ -105,10 +109,11 @@ public class TestScreen extends Screen
 		camScreen.update();
 		camWorld.update();
 
+		// all-in-EntityManager
 		entitiesBatch.setProjectionMatrix( camScreen.projection );
 		entitiesBatch.setTransformMatrix( camScreen.view );
 		entitiesBatch.begin();
-		EntityManager.onRender( entitiesBatch, camScreen, camWorld, temporalAliasingFactor );
+		EntityManager.raiseOnRender( entitiesBatch, temporalAliasingFactor );
 		entitiesBatch.end();
 
 		// debug

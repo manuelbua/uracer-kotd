@@ -1,6 +1,7 @@
 package com.bitfire.uracer;
 
 import com.badlogic.gdx.Gdx;
+import com.badlogic.gdx.graphics.Pixmap.Format;
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
 
@@ -16,9 +17,9 @@ public class Art
 	{
 		titleScreen = load( "data/base/titlescreen.png", 480, 320 );
 		base6 = split( "data/base/base6.png", 6, 6 );
-		quad = new TextureRegion(base6[0][10], 0, 0, 18, 18);
-		rope = new TextureRegion( new Texture(Gdx.files.internal("data/base/rope.png")), 0, 0, 64, 18 );
-		disc = new TextureRegion( new Texture(Gdx.files.internal( "data/base/disc.png")), 0, 0, 256, 256 );
+		quad = new TextureRegion( base6[0][10], 0, 0, 18, 18 );
+		rope = new TextureRegion( new Texture( Gdx.files.internal( "data/base/rope.png" ) ), 0, 0, 64, 18 );
+		disc = new TextureRegion( new Texture( Gdx.files.internal( "data/base/disc.png" ) ), 0, 0, 256, 256 );
 	}
 
 	private static TextureRegion[][] split( String name, int width, int height )
@@ -28,7 +29,7 @@ public class Art
 
 	private static TextureRegion[][] split( String name, int width, int height, boolean flipX, boolean flipY )
 	{
-		Texture texture = new Texture( Gdx.files.internal( name ) );
+		Texture texture = newTexture( name );
 		int xSlices = texture.getWidth() / width;
 		int ySlices = texture.getHeight() / height;
 		TextureRegion[][] res = new TextureRegion[ xSlices ][ ySlices ];
@@ -45,9 +46,14 @@ public class Art
 
 	public static TextureRegion load( String name, int width, int height )
 	{
-		Texture texture = new Texture( Gdx.files.internal( name ) );
+		Texture texture = newTexture( name );
 		TextureRegion region = new TextureRegion( texture, 0, 0, width, height );
 		region.flip( false, true );
 		return region;
+	}
+
+	private static Texture newTexture( String name )
+	{
+		return new Texture( Gdx.files.internal( name ), Format.RGB565, false );
 	}
 }
