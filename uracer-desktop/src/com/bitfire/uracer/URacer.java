@@ -47,18 +47,18 @@ public class URacer implements ApplicationListener
 
 		long startTime = System.nanoTime();
 		{
-			timeAccumSecs += deltaTime * Physics.timeMultiplier;
+			timeAccumSecs += deltaTime * Config.PhysicsTimeMultiplier;
 			while( timeAccumSecs > Physics.dt )
 			{
 				input.tick();
-				screen.tick( /*input*/ );
+				screen.tick( /* input */);
 
 				timeAccumSecs -= Physics.dt;
 			}
 		}
 		physicsTime = (System.nanoTime() - startTime) * oneOnOneBillion;
 
-		timeAliasingAlpha = timeAccumSecs * Physics.timestepHz; // opt away the divide-by-one-on-timestep
+		timeAliasingAlpha = timeAccumSecs * Config.PhysicsTimestepHz;
 
 		startTime = System.nanoTime();
 		{
@@ -93,12 +93,16 @@ public class URacer implements ApplicationListener
 	public void setScreen( Screen newScreen )
 	{
 		if( screen != null )
+		{
 			screen.removed();
+		}
 
 		screen = newScreen;
 
 		if( screen != null )
+		{
 			screen.init( this );
+		}
 	}
 
 	public boolean isRunning()

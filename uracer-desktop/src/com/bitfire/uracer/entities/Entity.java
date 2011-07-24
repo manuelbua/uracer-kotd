@@ -4,17 +4,18 @@ import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 
 public abstract class Entity
 {
-	protected EntityScreenState stateRender = new EntityScreenState();
+	// screen-coords
+	protected EntityState stateRender = new EntityState();
 
 	public void onTick()
 	{
 	}
 
-	public void onRender( SpriteBatch batch, float temporalAliasingFactor )
+	public void onRender( SpriteBatch batch )
 	{
 	}
 
-	public EntityScreenState getState()
+	public EntityState getState()
 	{
 		return stateRender;
 	}

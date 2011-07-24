@@ -42,9 +42,9 @@ public class GameScreen extends Screen
 		gl.glClearColor( 0.15f, 0.15f, 0.15f, 1 );
 		gl.glClear( GL20.GL_COLOR_BUFFER_BIT );
 
-		spriteBatch.begin();
+		batch.begin();
 
-			spriteBatch.draw( Art.titleScreen, 0, 0 );
+			batch.draw( Art.titleScreen, 0, 0 );
 
 			int h = Gdx.graphics.getHeight();
 			drawString( "FPS: " + Gdx.graphics.getFramesPerSecond(), 5, h-30 );
@@ -58,6 +58,6 @@ public class GameScreen extends Screen
 
 			drawString( "gdx = " + Gdx.input.isKeyPressed( Keys.SPACE ), 0, 128 );
 
-		spriteBatch.end();
+		batch.end();
 	}
 }

@@ -1,13 +1,16 @@
 package com.bitfire.uracer.entities;
 
+import com.badlogic.gdx.graphics.OrthographicCamera;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.utils.Array;
+import com.bitfire.uracer.Director;
 import com.bitfire.uracer.Physics;
 
 public class EntityManager
 {
-	private static Array<Entity> entities = new Array<Entity>();
-	private static Array<SubframeInterpolableEntity> sfi_entities = new Array<SubframeInterpolableEntity>();
+	private static SpriteBatch spriteBatch;
+	private static Array<Entity> entities;
+	private static Array<SubframeInterpolableEntity> sfi_entities;
 
 	public static void add( Entity ent )
 	{
@@ -16,7 +19,15 @@ public class EntityManager
 
 	public static void add( SubframeInterpolableEntity ent )
 	{
+		ent.resetState();
 		sfi_entities.add( ent );
+	}
+
+	public static void create()
+	{
+		entities = new Array<Entity>();
+		sfi_entities = new Array<SubframeInterpolableEntity>();
+		spriteBatch = new SpriteBatch();
 	}
 
 	public static void clear()
@@ -48,8 +59,7 @@ public class EntityManager
 	public static void raiseOnTick()
 	{
 		// intentionally avoid rising onTick on subframe interpolables since
-		// there is already plenty of chance to tick for the fucking tickin'
-		// entity
+		// there are plenty of chances to tick already
 
 		raiseOnBeforePhysicsSubstep();
 		Physics.world.step( Physics.dt, 10, 10 );
@@ -63,21 +73,29 @@ public class EntityManager
 		}
 	}
 
-	public static void raiseOnRender( SpriteBatch batch, float temporalAliasingFactor )
+	public static void raiseOnRender( float temporalAliasingFactor )
 	{
+		OrthographicCamera screen = Director.getScreenCam();
+
+		spriteBatch.setProjectionMatrix( screen.projection );
+		spriteBatch.setTransformMatrix( screen.view );
+		spriteBatch.begin();
+
 		int len = sfi_entities.size;
 		for( int i = 0; i < len; i++ )
 		{
 			SubframeInterpolableEntity e = sfi_entities.get( i );
 			e.onBeforeRender( temporalAliasingFactor );
-			e.onRender( batch, temporalAliasingFactor );
+			e.onRender( spriteBatch );
 		}
 
 		len = entities.size;
 		for( int i = 0; i < len; i++ )
 		{
 			Entity e = entities.get( i );
-			e.onRender( batch, temporalAliasingFactor );
+			e.onRender( spriteBatch );
 		}
+
+		spriteBatch.end();
 	}
 }

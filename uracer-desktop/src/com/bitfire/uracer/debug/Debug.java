@@ -5,6 +5,7 @@ import java.util.Locale;
 
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.math.Matrix4;
+import com.bitfire.uracer.Config;
 import com.bitfire.uracer.Physics;
 import com.bitfire.uracer.URacer;
 import com.bitfire.uracer.screen.Screen;
@@ -62,8 +63,8 @@ public class Debug
 		sb.setLength( 0 );
 		attachedTo.drawString( fmt.format(
 			"timemul: x%.02f, step: %.0fHz",
-			Physics.timeMultiplier,
-			Physics.timestepHz).toString()
+			Config.PhysicsTimeMultiplier,
+			Config.PhysicsTimestepHz).toString()
 		, 0, 6 );
 }
 

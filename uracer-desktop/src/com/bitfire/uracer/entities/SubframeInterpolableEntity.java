@@ -2,10 +2,11 @@ package com.bitfire.uracer.entities;
 
 public abstract class SubframeInterpolableEntity extends Entity
 {
-	protected EntityScreenState statePrevious = new EntityScreenState();
-	protected EntityScreenState stateCurrent = new EntityScreenState();
+	// world-coords
+	protected EntityState statePrevious = new EntityState();
+	protected EntityState stateCurrent = new EntityState();
 
-	public abstract void saveStateTo( EntityScreenState state );
+	public abstract void saveStateTo( EntityState state );
 	public abstract boolean isSubframeInterpolated();
 
 	protected void resetState()
@@ -29,11 +30,13 @@ public abstract class SubframeInterpolableEntity extends Entity
 	{
 		if( isSubframeInterpolated() )
 		{
-			stateRender.set( EntityScreenState.interpolate( statePrevious, stateCurrent, temporalAliasingFactor ) );
+			stateRender.set( EntityState.interpolate( statePrevious, stateCurrent, temporalAliasingFactor ) );
 		}
 		else
 		{
 			stateRender.set( stateCurrent );
 		}
+
+		stateRender.toScreen();
 	}
 }

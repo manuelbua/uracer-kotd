@@ -13,7 +13,7 @@ public abstract class Screen
 {
 	protected static Random random = new Random();
 	private URacer uracer;
-	public SpriteBatch spriteBatch;
+	protected SpriteBatch batch;
 
 	private float Near = 0f;
 	private float Far = 100f;
@@ -21,17 +21,17 @@ public abstract class Screen
 	public final void init( URacer uracer )
 	{
 		this.uracer = uracer;
-		spriteBatch = new SpriteBatch();
+		batch = new SpriteBatch();
 
 		// y-flip
 		Matrix4 proj = new Matrix4();
 		proj.setToOrtho( 0, Gdx.graphics.getWidth(), Gdx.graphics.getHeight(), 0, Near, Far );
-		spriteBatch.setProjectionMatrix( proj );
+		batch.setProjectionMatrix( proj );
 	}
 
 	public void removed()
 	{
-		spriteBatch.dispose();
+		batch.dispose();
 	}
 
 	protected void setScreen( Screen screen )
@@ -47,7 +47,12 @@ public abstract class Screen
 		if( width < 0 )
 			width = -width;
 
-		spriteBatch.draw( region, x, y, width, -region.getRegionHeight() );
+		batch.draw( region, x, y, width, -region.getRegionHeight() );
+	}
+
+	public void draw( TextureRegion region, int x, int y, int width, int height )
+	{
+		batch.draw( region, x, y, width, height );
 	}
 
 	public void drawString( String string, int x, int y )
