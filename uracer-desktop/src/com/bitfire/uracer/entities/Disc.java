@@ -17,7 +17,7 @@ public class Disc extends b2dEntity
 
 		sprite = new Sprite();
 		sprite.setRegion( Art.disc );
-		sprite.setSize( Physics.w2s( radius * 2 ), Physics.w2s( radius * 2 ) );
+		sprite.setSize( Physics.mt2px( radius * 2 ), Physics.mt2px( radius * 2 ) );
 		sprite.setOrigin( sprite.getWidth() / 2, sprite.getHeight() / 2 );
 	}
 

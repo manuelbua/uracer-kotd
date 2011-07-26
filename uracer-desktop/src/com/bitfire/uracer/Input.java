@@ -3,6 +3,7 @@ package com.bitfire.uracer;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Input.Peripheral;
 import com.badlogic.gdx.InputAdapter;
+import com.badlogic.gdx.math.Vector2;
 
 public class Input extends InputAdapter
 {
@@ -10,6 +11,7 @@ public class Input extends InputAdapter
 	private static int[] buttons;
 
 	// touches
+	private static Vector2 touchCoords;
 	private static int touchX;
 	private static int touchY;
 	private static boolean is_touching;
@@ -46,6 +48,11 @@ public class Input extends InputAdapter
 	public static int getY()
 	{
 		return touchY;
+	}
+
+	public static Vector2 getXY()
+	{
+		return touchCoords;
 	}
 
 	public static float getAccelX()
@@ -99,6 +106,7 @@ public class Input extends InputAdapter
 		is_touching = is_dragging = false;
 		touchX = touchY = 0;
 		accelX = accelY = accelZ = 0;
+		touchCoords = new Vector2(0,0);
 
 		FLAG_REAL_ON = (1 << 0);
 		FLAG_DELAY_ON = (1 << 1);
@@ -176,6 +184,8 @@ public class Input extends InputAdapter
 	{
 		touchX = x;
 		touchY = y;
+		touchCoords.set(x, y);
+
 		is_touching = true;
 		is_dragging = false;
 		return false;
@@ -186,6 +196,8 @@ public class Input extends InputAdapter
 	{
 		touchX = x;
 		touchY = y;
+		touchCoords.set(x, y);
+
 		is_dragging = true;
 		return false;
 	}
@@ -195,6 +207,8 @@ public class Input extends InputAdapter
 	{
 		touchX = x;
 		touchY = y;
+		touchCoords.set(x, y);
+
 		is_touching = false;
 		is_dragging = false;
 		return false;

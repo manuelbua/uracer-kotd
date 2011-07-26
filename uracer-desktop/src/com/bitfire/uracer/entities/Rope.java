@@ -81,7 +81,7 @@ public class Rope extends Entity
 		// build graphics
 		sprite = new Sprite();
 		sprite.setRegion( Art.rope );
-		sprite.setSize( Physics.w2s( SegmentWidth ), Physics.w2s( SegmentHeight ) );
+		sprite.setSize( Physics.mt2px( SegmentWidth ), Physics.mt2px( SegmentHeight ) );
 		sprite.setOrigin( sprite.getWidth() / 2, sprite.getHeight() / 2 );
 	}
 

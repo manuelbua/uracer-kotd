@@ -2,8 +2,8 @@ package com.bitfire.uracer;
 
 import com.badlogic.gdx.ApplicationListener;
 import com.badlogic.gdx.Gdx;
+import com.bitfire.uracer.screen.CarTestScreen;
 import com.bitfire.uracer.screen.Screen;
-import com.bitfire.uracer.screen.TestScreen;
 
 public class URacer implements ApplicationListener
 {
@@ -33,7 +33,7 @@ public class URacer implements ApplicationListener
 		oneOnOneBillion = 1.0f / 1000000000.0f;
 		timeAliasingAlpha = 0;
 
-		setScreen( new TestScreen() );
+		setScreen( new CarTestScreen() );
 	}
 
 	@Override

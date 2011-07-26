@@ -37,6 +37,6 @@ public abstract class SubframeInterpolableEntity extends Entity
 			stateRender.set( stateCurrent );
 		}
 
-		stateRender.toScreen();
+		stateRender.toPixels();
 	}
 }

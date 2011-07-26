@@ -12,7 +12,7 @@ import com.bitfire.uracer.screen.Screen;
 
 public class Debug
 {
-	private Screen attachedTo;
+	private static Screen attachedTo;
 
 	private StringBuilder sb;
 	private Formatter fmt;
@@ -26,20 +26,18 @@ public class Debug
 
 	public Debug( Screen attachedTo )
 	{
-		this.attachedTo = attachedTo;
+		Debug.attachedTo = attachedTo;
 		physicsTime = renderTime = 0;
 		b2drenderer = new Box2DDebugRenderer20();
 
 		sb = new StringBuilder();
-		fmt = new Formatter(sb, Locale.US);
+		fmt = new Formatter( sb, Locale.US );
 	}
-
 
 	public void dispose()
 	{
 		b2drenderer.dispose();
 	}
-
 
 	public void renderFrameStats( float temporalAliasingFactor )
 	{
@@ -53,21 +51,15 @@ public class Debug
 		}
 
 		sb.setLength( 0 );
-		attachedTo.drawString( fmt.format(
-			"fps: %d, physics: %.06f, graphics: %.06f",
-			Gdx.graphics.getFramesPerSecond(),
-			physicsTime,
-			renderTime).toString()
-		, 0, 0 );
+		attachedTo.drawString(
+				fmt.format( "fps: %d, physics: %.06f, graphics: %.06f", Gdx.graphics.getFramesPerSecond(), physicsTime,
+						renderTime ).toString(), 0, 0 );
 
 		sb.setLength( 0 );
-		attachedTo.drawString( fmt.format(
-			"timemul: x%.02f, step: %.0fHz",
-			Config.PhysicsTimeMultiplier,
-			Config.PhysicsTimestepHz).toString()
-		, 0, 6 );
-}
-
+		attachedTo.drawString(
+				fmt.format( "timemul: x%.02f, step: %.0fHz", Config.PhysicsTimeMultiplier, Config.PhysicsTimestepHz ).toString(),
+				0, 6 );
+	}
 
 	public void renderB2dWorld( Matrix4 modelViewProj )
 	{

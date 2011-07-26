@@ -5,7 +5,7 @@ import com.bitfire.uracer.Config;
 
 public class b2dEntity extends SubframeInterpolableEntity
 {
-	public Body body;
+	protected Body body;
 
 	@Override
 	public void saveStateTo( EntityState state )

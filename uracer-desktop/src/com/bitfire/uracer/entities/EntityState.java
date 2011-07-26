@@ -47,17 +47,23 @@ public class EntityState
 		return result;
 	}
 
-	public void toScreen()
+	public void toPixels()
 	{
-		this.position.x = Physics.w2s( this.position.x );
-		this.position.y = Physics.w2s( this.position.y );
+		this.position.x = Physics.mt2px( this.position.x );
+		this.position.y = Physics.mt2px( this.position.y );
 		this.orientation = this.orientation * MathUtils.radiansToDegrees;
 	}
 
-	public void toWorld()
+	public void toMeters()
 	{
-		this.position.x = Physics.s2w( this.position.x );
-		this.position.y = Physics.s2w( this.position.y );
+		this.position.x = Physics.px2mt( this.position.x );
+		this.position.y = Physics.px2mt( this.position.y );
 		this.orientation = this.orientation * MathUtils.degreesToRadians;
+	}
+
+	@Override
+	public String toString()
+	{
+		return position.toString() + ", orient=" + orientation;
 	}
 }

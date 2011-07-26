@@ -12,8 +12,8 @@ public class Director
 
 	public static void createFromPixels(int widthPx, int heightPx, Vector2 positionPx)
 	{
-		camWorld = new OrthographicCamera( Physics.s2w( widthPx ), Physics.s2w( heightPx ) );
-		camWorld.position.set( Physics.s2w( positionPx.x ), Physics.s2w( positionPx.y ), 0 );
+		camWorld = new OrthographicCamera( Physics.px2mt( widthPx ), Physics.px2mt( heightPx ) );
+		camWorld.position.set( Physics.px2mt( positionPx.x ), Physics.px2mt( positionPx.y ), 0 );
 
 		camScreen = new OrthographicCamera( Gdx.graphics.getWidth(), Gdx.graphics.getHeight() );
 		camScreen.position.set( positionPx.x, positionPx.y, 0 );
@@ -25,8 +25,7 @@ public class Director
 		camWorld.position.set( positionMt.x, positionMt.y, 0 );
 
 		camScreen = new OrthographicCamera( Gdx.graphics.getWidth(), Gdx.graphics.getHeight() );
-		camScreen.position.set( Physics.w2s(positionMt.x), Physics.w2s(positionMt.y), 0 );
-
+		camScreen.position.set( Physics.mt2px(positionMt.x), Physics.mt2px(positionMt.y), 0 );
 	}
 
 	public static OrthographicCamera getScreenCam()
@@ -43,5 +42,17 @@ public class Director
 	{
 		camScreen.update();
 		camWorld.update();
+	}
+
+	public static void setPositionPx(Vector2 pos)
+	{
+		camWorld.position.set( Physics.px2mt( pos.x ), Physics.px2mt( pos.y ), 0 );
+		camScreen.position.set( pos.x, pos.y, 0 );
+	}
+
+	public static void setPositionMt(Vector2 pos)
+	{
+		camWorld.position.set( pos.x, pos.y, 0 );
+		camScreen.position.set( Physics.mt2px(pos.x), Physics.mt2px(pos.y), 0 );
 	}
 }

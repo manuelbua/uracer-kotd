@@ -25,12 +25,12 @@ public class Physics
 	}
 
 	// convert world to screen
-	public static float w2s( float v )
+	public static float mt2px( float v )
 	{
 		return v * Config.PixelsPerMeter;
 	}
 
-	public static Vector2 w2s( Vector2 v )
+	public static Vector2 mt2px( Vector2 v )
 	{
 		ret.x = v.x * Config.PixelsPerMeter;
 		ret.y = v.y * Config.PixelsPerMeter;
@@ -38,12 +38,12 @@ public class Physics
 	}
 
 	// convert screen to world
-	public static float s2w( float v )
+	public static float px2mt( float v )
 	{
 		return v / Config.PixelsPerMeter;
 	}
 
-	public static Vector2 s2w( Vector2 v )
+	public static Vector2 px2mt( Vector2 v )
 	{
 		ret.x = v.x / Config.PixelsPerMeter;
 		ret.y = v.y / Config.PixelsPerMeter;

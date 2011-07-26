@@ -35,8 +35,8 @@ public class TestScreen extends Screen
 
 	private void populateWorld()
 	{
-		float w = Physics.s2w( Gdx.graphics.getWidth() );
-		float h = Physics.s2w( Gdx.graphics.getHeight() );
+		float w = Physics.px2mt( Gdx.graphics.getWidth() );
+		float h = Physics.px2mt( Gdx.graphics.getHeight() );
 
 		Box2DFactory.createThinWall( Physics.world, -w / 2, -h / 2, -w / 2, h / 2, 0.1f );
 		Box2DFactory.createThinWall( Physics.world, w / 2, -h / 2, w / 2, h / 2, 0.1f );
