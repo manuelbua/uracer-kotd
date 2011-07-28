@@ -29,7 +29,7 @@ public class TestScreen extends Screen
 		dbg = new Debug( this );
 		Physics.create( new Vector2( 0, -10 ), false );
 		EntityManager.create();
-		Director.createFromPixels( Gdx.graphics.getWidth(), Gdx.graphics.getHeight(), new Vector2( 0, 0 ) );
+		Director.createFromPixels( Gdx.graphics.getWidth(), Gdx.graphics.getHeight(), new Vector2( 0, 0 ), new Vector2(100,100) );
 		populateWorld();
 	}
 
@@ -108,7 +108,7 @@ public class TestScreen extends Screen
 
 		if( Gdx.app.getType() == ApplicationType.Desktop )
 		{
-			dbg.renderB2dWorld( Director.getWorldCam().combined );
+			dbg.renderB2dWorld( Director.getCamMeters().combined );
 		}
 
 		batch.begin();

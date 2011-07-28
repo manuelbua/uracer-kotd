@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<map version="1.0" orientation="orthogonal" width="9" height="6" tilewidth="192" tileheight="192">
+ <tileset firstgid="1" name="tileset" tilewidth="192" tileheight="192">
+  <image source="tilesets/nature/192.png" width="768" height="2880"/>
+ </tileset>
+ <layer name="Tile Layer 1" width="9" height="6">
+  <data encoding="base64" compression="gzip">
+   H4sIAAAAAAAAA3XMuQqAMBRE0WghthGXlzQGFBRU8P+/zhuYIkUsDm9hGO+c69HiQcSre0VCg4BRM2o3bNiLjK/0LJgxodMclAkVuevAqYzpb0Umd1y4f3o+2UKiIdgAAAA=
+  </data>
+ </layer>
+</map>

@@ -17,6 +17,10 @@ public class Input extends InputAdapter
 	private static boolean is_touching;
 	private static boolean is_dragging;
 
+	// mouse (desktop only)
+	private static int mouseX, mouseY;
+	private static Vector2 mouseCoords;
+
 	// accelerometer
 	private static float accelX, accelY, accelZ;
 
@@ -53,6 +57,21 @@ public class Input extends InputAdapter
 	public static Vector2 getXY()
 	{
 		return touchCoords;
+	}
+
+	public static int getMouseX()
+	{
+		return mouseX;
+	}
+
+	public static int getMouseY()
+	{
+		return mouseY;
+	}
+
+	public static Vector2 getMouseXY()
+	{
+		return mouseCoords;
 	}
 
 	public static float getAccelX()
@@ -107,6 +126,7 @@ public class Input extends InputAdapter
 		touchX = touchY = 0;
 		accelX = accelY = accelZ = 0;
 		touchCoords = new Vector2(0,0);
+		mouseCoords = new Vector2(0,0);
 
 		FLAG_REAL_ON = (1 << 0);
 		FLAG_DELAY_ON = (1 << 1);
@@ -127,6 +147,10 @@ public class Input extends InputAdapter
 			accelY = Gdx.input.getAccelerometerY();
 			accelZ = Gdx.input.getAccelerometerZ();
 		}
+
+		mouseX = Gdx.input.getX();
+		mouseY = Gdx.input.getY();
+		mouseCoords.set(mouseX, mouseY);
 
 		int flag;
 		for( int i = 0; i < buttons.length; i++ )

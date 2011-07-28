@@ -2,6 +2,8 @@ package com.bitfire.uracer.simulation;
 
 import com.badlogic.gdx.math.MathUtils;
 import com.badlogic.gdx.math.Vector2;
+import com.badlogic.gdx.physics.box2d.Body;
+import com.bitfire.uracer.Director;
 import com.bitfire.uracer.Input;
 import com.bitfire.uracer.Physics;
 import com.bitfire.uracer.utils.AMath;
@@ -41,8 +43,9 @@ public class CarSimulator
 		VMath.perp( side, heading );
 	}
 
-	public void acquireInput( Vector2 carScreenPos )
+	public void acquireInput( Body body )
 	{
+		Vector2 carScreenPos = Director.screenPosFor( body );
 		Vector2 touchPos = Input.getXY();
 
 		carInput.updated = Input.isTouching();
@@ -325,6 +328,7 @@ public class CarSimulator
 		carDesc.angularvelocity = 0;
 		carDesc.brake = 0;
 		carDesc.throttle = 0;
+		carDesc.steerangle = 0;
 		acceleration_wc.set( 0, 0 );
 		velocity.set( 0, 0 );
 	}

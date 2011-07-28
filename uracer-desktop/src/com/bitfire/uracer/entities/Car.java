@@ -1,6 +1,5 @@
 package com.bitfire.uracer.entities;
 
-import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.g2d.Sprite;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.math.Vector2;
@@ -10,6 +9,7 @@ import com.badlogic.gdx.physics.box2d.FixtureDef;
 import com.badlogic.gdx.physics.box2d.MassData;
 import com.badlogic.gdx.physics.box2d.PolygonShape;
 import com.bitfire.uracer.Art;
+import com.bitfire.uracer.Director;
 import com.bitfire.uracer.Input;
 import com.bitfire.uracer.Physics;
 import com.bitfire.uracer.screen.Screen;
@@ -64,7 +64,6 @@ public class Car extends b2dEntity
 		body.setMassData( md );
 		body.setBullet( true );
 
-
 		// build gfx
 		sprite = new Sprite();
 		sprite.setRegion( Art.cars.findRegion("electron") );
@@ -86,34 +85,33 @@ public class Car extends b2dEntity
 		carSim.resetPhysics();
 	}
 
-	public void setPosition( Vector2 worldPos )
-	{
-		setTransform( worldPos, body.getAngle() );
-	}
-
-	private Vector2 sp = new Vector2();
-	public Vector2 getScreenPos()
-	{
-		sp.x = Physics.mt2px(body.getPosition().x);
-		sp.y = Gdx.graphics.getHeight() - Physics.mt2px(body.getPosition().y);
-		return sp;
-	}
+//	public void setPosition( Vector2 worldPos )
+//	{
+//		setTransform( worldPos, body.getAngle() );
+//	}
 
 	// fixme
-	public void setOrientation( float orientRadians )
-	{
-		carDesc.angle = orientRadians;
-		carDesc.wrapped_angle = AMath.wrap2PI( orientRadians );
-		setTransform( body.getPosition(), carDesc.wrapped_angle );
-	}
+//	public void setOrientation( float orientRadians )
+//	{
+//		setTransform( body.getPosition(), orientRadians );
+//	}
 
 	// fixme
 	public void setTransform( Vector2 worldPos, float orientRadians )
 	{
-		body.setTransform( worldPos, orientRadians );
+		carDesc.angle = orientRadians;
+		carDesc.wrapped_angle = AMath.wrap2PI( orientRadians );
+		body.setTransform( worldPos, -orientRadians );
 		carSim.updateHeading();
+		System.out.println("car_xform=" + body.getPosition().toString());
 	}
 
+	private Vector2 wp = new Vector2();
+	public Vector2 getWorldPos()
+	{
+		wp.set( body.getPosition() );
+		return wp;
+	}
 
 	@Override
 	public void onBeforePhysicsSubstep()
@@ -121,7 +119,7 @@ public class Car extends b2dEntity
 		super.onBeforePhysicsSubstep();
 
 		if( isPlayer )
-			carSim.acquireInput( getScreenPos() );
+			carSim.acquireInput( body );
 		carSim.applyInput();
 		carSim.step();
 
@@ -143,21 +141,15 @@ public class Car extends b2dEntity
 
 	public void debug( Screen screen, SpriteBatch batch )
 	{
-		minSA = Math.min(minSA,carDesc.steerangle);
-		maxSA = Math.max(maxSA,carDesc.steerangle);
-
 		// dbg
 		screen.drawString( "vel_wc [x=" + carDesc.velocity_wc.x + ", y=" + carDesc.velocity_wc.y + "]", 0, 20 );
 		screen.drawString( "steerangle=" + carDesc.steerangle, 0, 27 );
 		screen.drawString( "throttle=" + carDesc.throttle, 0, 34 );
 		screen.drawString( "tx="+Input.getXY().x + ",ty=" +Input.getXY().y, 0, 41 );
-		screen.drawString( "cpx="+getScreenPos().x + ",cpy=" +getScreenPos().y, 0, 48 );
 		screen.drawString( "angle=" + body.getAngle(), 0, 55 );
 		screen.drawString( "cd.angle=" + carDesc.angle, 0, 62 );
 		screen.drawString( "cd.wangle=" + carDesc.wrapped_angle, 0, 69 );
-		screen.drawString( "minSA=" + minSA + ", maxSA=" + maxSA, 0, 76 );
+		screen.drawString( "screen x="+Director.screenPosFor( body ).x + ",y=" +Director.screenPosFor( body ).y, 0, 80 );
+		screen.drawString( "world x="+body.getPosition().x + ",y=" +body.getPosition().y, 0, 87 );
 	}
-
-	private float minSA = 0;
-	private float maxSA = 0;
 }
