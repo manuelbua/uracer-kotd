@@ -75,7 +75,7 @@ public class EntityManager
 
 	public static void raiseOnRender( float temporalAliasingFactor )
 	{
-		OrthographicCamera screen = Director.getCamPixels();
+		OrthographicCamera screen = Director.getCamera();
 
 		spriteBatch.setProjectionMatrix( screen.projection );
 		spriteBatch.setTransformMatrix( screen.view );

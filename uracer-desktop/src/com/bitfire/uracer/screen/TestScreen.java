@@ -108,7 +108,7 @@ public class TestScreen extends Screen
 
 		if( Gdx.app.getType() == ApplicationType.Desktop )
 		{
-			dbg.renderB2dWorld( Director.getCamMeters().combined );
+			dbg.renderB2dWorld( Director.getMatViewProjMt() );
 		}
 
 		batch.begin();

@@ -1,76 +1,82 @@
 package com.bitfire.uracer;
 
-import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.OrthographicCamera;
+import com.badlogic.gdx.math.Matrix4;
 import com.badlogic.gdx.math.Vector2;
+import com.badlogic.gdx.math.Vector3;
 import com.badlogic.gdx.physics.box2d.Body;
 
 public class Director
 {
-	private static OrthographicCamera camPixels, camMeters;
+	private static OrthographicCamera camera;
 	public static Vector2 worldSizePx, worldSizeMt;
 	private static Vector2 screenPosFor;
+	private static Matrix4 mvpMt, mvpPx;
 
 	public static void init()
 	{
 		worldSizePx = new Vector2();
 		worldSizeMt = new Vector2();
 		screenPosFor = new Vector2();
+		mvpMt = new Matrix4();
+		mvpPx = new Matrix4();
 	}
 
 	public static void createFromPixels( int widthPx, int heightPx, Vector2 positionPx, Vector2 worldSizePx )
 	{
 		init();
 
-		camMeters = new OrthographicCamera( Physics.px2mt( widthPx ), Physics.px2mt( heightPx ) );
-		camPixels = new OrthographicCamera( Gdx.graphics.getWidth(), Gdx.graphics.getHeight() );
+		camera = new OrthographicCamera( widthPx, heightPx );
 
 		Director.worldSizePx = worldSizePx;
 		Director.worldSizeMt = Physics.px2mt( worldSizePx );
 
 		setPositionPx( positionPx, true );
+		update();
 	}
 
 	public static void createFromMeters( float widthMt, float heightMt, Vector2 positionMt, Vector2 worldSizeMt )
 	{
 		init();
 
-		camMeters = new OrthographicCamera( widthMt, heightMt );
-		camPixels = new OrthographicCamera( Gdx.graphics.getWidth(), Gdx.graphics.getHeight() );
+		camera = new OrthographicCamera( Physics.mt2px(widthMt), Physics.mt2px(heightMt) );
 
 		Director.worldSizeMt = worldSizeMt;
 		Director.worldSizePx = Physics.mt2px( worldSizePx );
 
 		setPositionMt( positionMt, true );
+		update();
 	}
 
-	public static OrthographicCamera getCamPixels()
+	public static OrthographicCamera getCamera()
 	{
-		return camPixels;
-	}
-
-	public static OrthographicCamera getCamMeters()
-	{
-		return camMeters;
+		return camera;
 	}
 
 	public static void update()
 	{
-		camPixels.update();
-		camMeters.update();
+		camera.update();
+
+		mvpPx.set( camera.combined );
+		mvpMt.set( mvpPx );
+
+		// scale px to meters
+		// TODO: figure out why mt2px instead of px2mt..
+		mvpMt.val[Matrix4.M00] = Physics.mt2px(mvpPx.val[Matrix4.M00]);
+		mvpMt.val[Matrix4.M01] = Physics.mt2px(mvpPx.val[Matrix4.M01]);
+		mvpMt.val[Matrix4.M10] = Physics.mt2px(mvpPx.val[Matrix4.M10]);
+		mvpMt.val[Matrix4.M11] = Physics.mt2px(mvpPx.val[Matrix4.M11]);
 	}
 
 	public static void setPositionPx( Vector2 pos, boolean flipY )
 	{
 		if(flipY)
 		{
-			camMeters.position.set( Physics.px2mt( pos.x ), worldSizeMt.y - Physics.px2mt( pos.y ), 0 );
-			camPixels.position.set( pos.x, worldSizePx.y - pos.y, 0 );
+			camera.position.set( pos.x, worldSizePx.y - pos.y, 0 );
 		}
 		else
 		{
-			camMeters.position.set( Physics.px2mt( pos.x ), Physics.px2mt( pos.y ), 0 );
-			camPixels.position.set( pos.x, pos.y, 0 );
+			camera.position.set( pos.x, pos.y, 0 );
 		}
 	}
 
@@ -78,25 +84,38 @@ public class Director
 	{
 		if(flipY)
 		{
-			camMeters.position.set( pos.x, worldSizeMt.y - pos.y, 0 );
-			camPixels.position.set( Physics.mt2px( pos.x ), worldSizePx.y - Physics.mt2px( pos.y ), 0 );
+			camera.position.set( Physics.mt2px( pos.x ), worldSizePx.y - Physics.mt2px( pos.y ), 0 );
 		}
 		else
 		{
-			camMeters.position.set( pos.x, pos.y, 0 );
-			camPixels.position.set( Physics.mt2px( pos.x ), Physics.mt2px( pos.y ), 0 );
+			camera.position.set( Physics.mt2px( pos.x ), Physics.mt2px( pos.y ), 0 );
 
 		}
+	}
+
+	public static Vector3 pos()
+	{
+		return camera.position;
 	}
 
 	public static Vector2 screenPosFor( Body body )
 	{
 //		System.out.println(body.getPosition());
-		screenPosFor.x = Physics.mt2px(body.getPosition().x) - Director.getCamPixels().position.x + camPixels.viewportWidth/2f;
+		screenPosFor.x = Physics.mt2px(body.getPosition().x) - Director.getCamera().position.x + camera.viewportWidth/2f;
 //		screenPosFor.y = Physics.mt2px(worldSizeMt.y-body.getPosition().y) - (worldSizePx.y-Director.getCamPixels().position.y) + camPixels.viewportHeight/2f;
 //		screenPosFor.y = Physics.mt2px(body.getPosition().y) - Director.getCamPixels().position.y + camPixels.viewportHeight/2f;
-		screenPosFor.y = Director.getCamPixels().position.y - Physics.mt2px(body.getPosition().y) + camPixels.viewportHeight/2f;
+		screenPosFor.y = Director.getCamera().position.y - Physics.mt2px(body.getPosition().y) + camera.viewportHeight/2f;
 
 		return screenPosFor;
+	}
+
+	public static Matrix4 getMatViewProjPx()
+	{
+		return mvpPx;
+	}
+
+	public static Matrix4 getMatViewProjMt()
+	{
+		return mvpMt;
 	}
 }
