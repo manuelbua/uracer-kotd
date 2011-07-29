@@ -9,6 +9,7 @@ import com.badlogic.gdx.graphics.OrthographicCamera;
 import com.badlogic.gdx.graphics.PerspectiveCamera;
 import com.badlogic.gdx.math.MathUtils;
 import com.badlogic.gdx.math.Vector2;
+import com.badlogic.gdx.math.Vector3;
 import com.bitfire.testtilemap.TestTilemap;
 import com.bitfire.uracer.Director;
 import com.bitfire.uracer.Input;
@@ -44,10 +45,10 @@ public class CarTestScreen extends Screen
 //		Config.PixelsPerMeter *= tm.strategy.tileMapZoomFactor;
 //		System.out.println("px2mt=" + org + " ("+ Config.PixelsPerMeter + ")" + "["+tm.strategy.tileMapZoomFactor+"]");
 
-		float tmw = tm.map.width * tm.map.tileWidth;
-		float tmh = tm.map.height * tm.map.tileHeight;
+		float tmw = tm.map.width * tm.map.tileWidth / tm.strategy.tileMapZoomFactor;
+		float tmh = tm.map.height * tm.map.tileHeight / tm.strategy.tileMapZoomFactor;
 
-		Director.createFromPixels( Gdx.graphics.getWidth(), Gdx.graphics.getHeight(), new Vector2( 0, 0 ), new Vector2(tmw,tmh) );
+		Director.createFromPixels( tm.strategy, Gdx.graphics.getWidth(), Gdx.graphics.getHeight(), new Vector2( 0, 0 ), new Vector2(tmw,tmh) );
 //		System.out.println("px");
 //		System.out.println(Director.getCamPixels().combined.toString());
 //		System.out.println("mvpPx");
@@ -57,15 +58,13 @@ public class CarTestScreen extends Screen
 //		System.out.println("mvpMt");
 //		System.out.println(Director.getMatViewProjMt().toString());
 
-
-		Vector2 pos = tileToWorld(0,0);
+		Vector2 pos = tileToWorld(1,1);
 		Vector2 zero = new Vector2(0,0);
-//		pos.mul( 1f/tm.strategy.tileMapZoomFactorAtRef );
-		pos.mul( tm.strategy.tileMapZoomFactorAtRef );
-		car = Car.create( zero, true );
-//		car.setTransform( pos, 90 * MathUtils.degreesToRadians );
-		Director.setPositionMt( zero, false );
-//		Director.setPositionMt( car.getWorldPos(), false );
+//		pos.mul( tm.strategy.tileMapZoomFactor );
+		car = Car.create( pos, true );
+		car.setTransform( pos, 90 * MathUtils.degreesToRadians );
+//		Director.setPositionMt( zero, true );
+		Director.setPositionMt( car.getWorldPos(), false );
 	}
 
 	@Override
@@ -81,34 +80,46 @@ public class CarTestScreen extends Screen
 		if(Input.isOn( Keys.R ))
 		{
 			car.reset();
-//			car.setTransform( tileToWorld(0,0), 90 * MathUtils.degreesToRadians );
-			car.setTransform( new Vector2(0,0), 90 * MathUtils.degreesToRadians );
+			car.setTransform( tileToWorld(1,1), 90 * MathUtils.degreesToRadians );
 		}
 
 		OrthographicCamera cam = Director.getCamera();
-//		Vector3 pos = Director.pos();
+//		cam.zoom = tm.strategy.tileMapZoomFactor;
+
+		Vector3 pos = Director.pos();
+		if(Input.isOn( Keys.UP )) pos.y += 10;
+		if(Input.isOn( Keys.DOWN )) pos.y -= 10;
+		if(Input.isOn( Keys.LEFT)) pos.x -= 10;
+		if(Input.isOn( Keys.RIGHT )) pos.x += 10;
+
 
 		// follow the car
-//		Director.setPositionMt( car.getWorldPos(), false);
+		Director.setPositionMt( car.getWorldPos(), false);
 
-//		if(Input.isOn( Keys.UP ))
 
 
 		// move cam space origin to top-left
 		tmpcam.set( cam.position.x, /*Director.worldSizePx.y-*/cam.position.y );
 
 //		// enforce bounds at cam space
-		float minx = (cam.viewportWidth/2f) / tm.strategy.tileMapZoomFactorAtRef;
-		float miny = (cam.viewportHeight/2f) / tm.strategy.tileMapZoomFactorAtRef;
-		float maxx = tm.map.width*tm.map.tileWidth - minx;
-		float maxy = tm.map.height*tm.map.tileHeight - miny;
+		float minx = (cam.viewportWidth/2f);
+		float maxy = (cam.viewportHeight/2f);
+		float maxx = Director.worldSizePx.x - (cam.viewportWidth/2f);
+		float miny = Director.worldSizePx.y - (cam.viewportHeight/2f);
 		if(tmpcam.x < minx ) tmpcam.x = minx;
 		if(tmpcam.x > maxx ) tmpcam.x = maxx;
-		if(tmpcam.y < miny ) tmpcam.y = miny;
-		if(tmpcam.y > maxy ) tmpcam.y = maxy;
-//		Director.setPositionPx( tmpcam, false );
+
+		if(tmpcam.y > miny ) tmpcam.y = miny;
+		if(tmpcam.y < maxy ) tmpcam.y = maxy;
+		Director.setPositionPx( tmpcam, false );
 
 		Director.update();
+
+		// sync tilemap orthocamera to director's camera
+		OrthographicCamera oc = tm.orthoCam;
+		oc.position.set( Director.getCamera().position );
+		oc.position.mul( tm.strategy.tileMapZoomFactor );
+		tm.updateCams( Gdx.graphics.getWidth(), Gdx.graphics.getHeight() );
 
 		EntityManager.raiseOnTick();
 }
@@ -122,7 +133,8 @@ public class CarTestScreen extends Screen
 		tmptile2w = new Vector2(
 				tilex * tilesize + offx,
 				(mapH-tiley) * tilesize + offy);
-		return Physics.px2mt(tmptile2w);
+		return Physics.px2mt(tmptile2w).mul(1f/tm.strategy.tileMapZoomFactor);
+//		return Physics.px2mt(tmptile2w);
 	}
 
 	private Vector2 tmpcam = new Vector2();
@@ -133,13 +145,9 @@ public class CarTestScreen extends Screen
 		gl.glClearDepthf( 1 );
 		gl.glClear( GL20.GL_DEPTH_BUFFER_BIT | GL20.GL_COLOR_BUFFER_BIT );
 
-
 		// sync tilemap orthocamera to director's camera
 		OrthographicCamera oc = tm.orthoCam;
 		PerspectiveCamera pc = tm.perspCam;
-		oc.position.set( Director.getCamera().position );
-
-		tm.updateCams( Gdx.graphics.getWidth(), Gdx.graphics.getHeight() );
 
 		tm.tileMapRenderer.render( oc );
 		EntityManager.raiseOnRender( temporalAliasingFactor );

@@ -103,7 +103,7 @@ public class Car extends b2dEntity
 		carDesc.wrapped_angle = AMath.wrap2PI( orientRadians );
 		body.setTransform( worldPos, -orientRadians );
 		carSim.updateHeading();
-		System.out.println("car_xform=" + body.getPosition().toString());
+//		System.out.println("car_xform=" + body.getPosition().toString());
 	}
 
 	private Vector2 wp = new Vector2();
@@ -111,6 +111,11 @@ public class Car extends b2dEntity
 	{
 		wp.set( body.getPosition() );
 		return wp;
+	}
+
+	public float getOrientation()
+	{
+		return body.getAngle();
 	}
 
 	@Override

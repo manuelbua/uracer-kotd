@@ -5,6 +5,7 @@ import com.badlogic.gdx.math.Matrix4;
 import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.math.Vector3;
 import com.badlogic.gdx.physics.box2d.Body;
+import com.bitfire.testtilemap.ScalingStrategy;
 
 public class Director
 {
@@ -12,19 +13,21 @@ public class Director
 	public static Vector2 worldSizePx, worldSizeMt;
 	private static Vector2 screenPosFor;
 	private static Matrix4 mvpMt, mvpPx;
+	private static ScalingStrategy strategy;
 
-	public static void init()
+	public static void init(ScalingStrategy strategy_)
 	{
 		worldSizePx = new Vector2();
 		worldSizeMt = new Vector2();
 		screenPosFor = new Vector2();
 		mvpMt = new Matrix4();
 		mvpPx = new Matrix4();
+		strategy = strategy_;
 	}
 
-	public static void createFromPixels( int widthPx, int heightPx, Vector2 positionPx, Vector2 worldSizePx )
+	public static void createFromPixels( ScalingStrategy strategy, int widthPx, int heightPx, Vector2 positionPx, Vector2 worldSizePx )
 	{
-		init();
+		init(strategy);
 
 		camera = new OrthographicCamera( widthPx, heightPx );
 
@@ -35,9 +38,9 @@ public class Director
 		update();
 	}
 
-	public static void createFromMeters( float widthMt, float heightMt, Vector2 positionMt, Vector2 worldSizeMt )
+	public static void createFromMeters( ScalingStrategy strategy, float widthMt, float heightMt, Vector2 positionMt, Vector2 worldSizeMt )
 	{
-		init();
+		init(strategy);
 
 		camera = new OrthographicCamera( Physics.mt2px(widthMt), Physics.mt2px(heightMt) );
 
@@ -105,6 +108,8 @@ public class Director
 //		screenPosFor.y = Physics.mt2px(worldSizeMt.y-body.getPosition().y) - (worldSizePx.y-Director.getCamPixels().position.y) + camPixels.viewportHeight/2f;
 //		screenPosFor.y = Physics.mt2px(body.getPosition().y) - Director.getCamPixels().position.y + camPixels.viewportHeight/2f;
 		screenPosFor.y = Director.getCamera().position.y - Physics.mt2px(body.getPosition().y) + camera.viewportHeight/2f;
+
+//		if(strategy!=null) screenPosFor.mul( 1f/strategy.tileMapZoomFactorAtRef );
 
 		return screenPosFor;
 	}
