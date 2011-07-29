@@ -59,6 +59,9 @@ public class URacer implements ApplicationListener
 		physicsTime = (System.nanoTime() - startTime) * oneOnOneBillion;
 
 		timeAliasingAlpha = timeAccumSecs * Config.PhysicsTimestepHz;
+//		timeAliasingAlpha = timeAccumSecs / Physics.dt;
+
+		screen.beforeRender( timeAliasingAlpha );
 
 		startTime = System.nanoTime();
 		{

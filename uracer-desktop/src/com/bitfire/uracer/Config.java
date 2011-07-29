@@ -19,7 +19,7 @@ public class Config
 	public static void asDefault()
 	{
 		SubframeInterpolation = true;
-		PixelsPerMeter = 13.0f;
+		PixelsPerMeter = 9.0f;
 		PhysicsTimestepHz = 60.0f;
 		PhysicsTimeMultiplier = 1f;
 	}

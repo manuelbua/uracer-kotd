@@ -72,6 +72,10 @@ public abstract class Screen
 		}
 	}
 
+	public void beforeRender( float timeAliasingFactor )
+	{
+	}
+
 	public abstract void render( float timeAliasingFactor );
 
 	public void tick()

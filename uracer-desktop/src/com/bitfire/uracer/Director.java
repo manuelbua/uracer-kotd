@@ -23,6 +23,7 @@ public class Director
 		mvpMt = new Matrix4();
 		mvpPx = new Matrix4();
 		strategy = strategy_;
+		_pos2 = new Vector2();
 	}
 
 	public static void createFromPixels( ScalingStrategy strategy, int widthPx, int heightPx, Vector2 positionPx, Vector2 worldSizePx )
@@ -99,6 +100,13 @@ public class Director
 	public static Vector3 pos()
 	{
 		return camera.position;
+	}
+
+	private static Vector2 _pos2;
+	public static Vector2 pos2()
+	{
+		_pos2.set( camera.position.x, camera.position.y );
+		return _pos2;
 	}
 
 	public static Vector2 screenPosFor( Body body )
