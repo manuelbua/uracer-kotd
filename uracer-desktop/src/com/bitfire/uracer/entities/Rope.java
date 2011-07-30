@@ -99,7 +99,7 @@ public class Rope extends Entity
 	{
 		for( int i = 0; i < ropeSegments.size; i++ )
 		{
-			EntityState renderState = ropeSegments.get( i ).getState();
+			EntityState renderState = ropeSegments.get( i ).state();
 			sprite.setPosition( renderState.position.x - sprite.getOriginX(), renderState.position.y - sprite.getOriginY() );
 			sprite.setRotation( renderState.orientation );
 			sprite.draw( batch );

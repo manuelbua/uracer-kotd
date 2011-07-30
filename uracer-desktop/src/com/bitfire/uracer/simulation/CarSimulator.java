@@ -67,9 +67,7 @@ public class CarSimulator
 				lastTouchAngle = angle;
 			}
 
-			// TODO: optimization
-
-			float wrapped = AMath.wrap2PI(-body.getAngle());
+			float wrapped = -body.getAngle();
 
 			angle -= CS_PI;
 			angle += wrapped;	// to local

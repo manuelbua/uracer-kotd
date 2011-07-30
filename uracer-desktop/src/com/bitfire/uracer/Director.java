@@ -101,6 +101,7 @@ public class Director
 	{
 		screenPosFor.x = Convert.mt2px(body.getPosition().x) - Director.getCamera().position.x + halfViewport.x;
 		screenPosFor.y = Director.getCamera().position.y - Convert.mt2px(body.getPosition().y) + halfViewport.y;
+//		screenPosFor.y = Convert.mt2px(body.getPosition().y) - Director.getCamera().position.y + halfViewport.y;
 		return screenPosFor;
 	}
 

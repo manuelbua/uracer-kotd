@@ -4,6 +4,7 @@ import com.badlogic.gdx.graphics.g2d.tiled.TiledMap;
 import com.badlogic.gdx.math.Vector2;
 import com.bitfire.testtilemap.ScalingStrategy;
 import com.bitfire.uracer.Config;
+import com.bitfire.uracer.Director;
 
 public class Convert
 {
@@ -12,19 +13,23 @@ public class Convert
 	private static TiledMap tileMap;
 
 	private static float scaled_tilesize;
+	private static float invZoomFactor;
 
 	public static void init(ScalingStrategy s, TiledMap map)
 	{
 		strategy = s;
 		tileMap = map;
-		scaled_tilesize = tileMap.tileWidth / strategy.tileMapZoomFactor;
+		invZoomFactor = 1f / strategy.tileMapZoomFactor;
+		scaled_tilesize = tileMap.tileWidth * invZoomFactor;
 
 		ret = new Vector2();
 		retTile = new Vector2();
+		retPx = new Vector2();
 	}
 
 	//
 	// meters <-> pixels
+	// (pixels domain is scaled)
 	//
 
 	private static Vector2 ret;
@@ -40,4 +45,40 @@ public class Convert
 		return px2mt(retTile);
 	}
 
+	public static Vector2 tileToPx( int tilex, int tiley )
+	{
+		retTile.set( tilex * scaled_tilesize, (tileMap.height - tiley) * scaled_tilesize );
+		return retTile;
+	}
+
+	public static float scaledPixels( float pixels )
+	{
+		return pixels * invZoomFactor;
+	}
+
+	private static Vector2 retPx;
+	public static Vector2 scaledPixels(Vector2 pixels)
+	{
+		retPx.set(pixels);
+		retPx.mul( invZoomFactor );
+		return retPx;
+	}
+
+	public static Vector2 scaledPixels(float a, float b)
+	{
+		retPx.set( a, b );
+		return scaledPixels(retPx);
+	}
+
+	public static Vector2 scaledPosition( Vector2 position )
+	{
+		return scaledPosition(position.x, position.y);
+	}
+
+	public static Vector2 scaledPosition( float x, float y )
+	{
+		retPx = scaledPixels(retPx.set( x, y ));
+		retPx.y = Director.worldSizePx.y - retPx.y;
+		return retPx;
+	}
 }

@@ -7,7 +7,6 @@ import com.badlogic.gdx.graphics.FPSLogger;
 import com.badlogic.gdx.graphics.GL20;
 import com.badlogic.gdx.graphics.OrthographicCamera;
 import com.badlogic.gdx.graphics.PerspectiveCamera;
-import com.badlogic.gdx.math.MathUtils;
 import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.math.Vector3;
 import com.bitfire.testtilemap.TestTilemap;
@@ -50,10 +49,9 @@ public class CarTestScreen extends Screen
 		Physics.world.setContactListener( new CarContactListener() );
 		EntityManager.create();
 
-		Vector2 pos = Convert.tileToMt( 3, 1 );
-		car = Car.create( pos, 90 * MathUtils.degreesToRadians, true );
-//		Director.setPositionMt( car.getWorldPos(), false );
-		Director.setPositionMt( new Vector2(0,0), false );
+//		Vector2 pos = Convert.tileToPx( 0, 0 ).add( Convert.scaledPixels(64,-64) );
+		Vector2 pos = Convert.scaledPosition(64, 64);
+		car = Car.create( pos, 90, true );
 	}
 
 	@Override
@@ -69,7 +67,7 @@ public class CarTestScreen extends Screen
 		if( Input.isOn( Keys.R ) )
 		{
 			car.reset();
-			car.setTransform( Convert.tileToMt( 3, 1 ), 90 * MathUtils.degreesToRadians );
+			car.setTransform( Convert.tileToPx( 3, 1 ), 90);
 		}
 
 		Vector3 pos = Director.pos();
@@ -102,7 +100,7 @@ public class CarTestScreen extends Screen
 		gl.glClear( GL20.GL_DEPTH_BUFFER_BIT | GL20.GL_COLOR_BUFFER_BIT );
 
 		// follow the car
-		Director.setPositionMt( car.getState().position, false );
+		Director.setPositionPx( car.state().position, false );
 
 		Director.update();
 

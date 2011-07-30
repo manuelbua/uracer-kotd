@@ -15,7 +15,7 @@ public abstract class Entity
 	{
 	}
 
-	public EntityState getState()
+	public EntityState state()
 	{
 		return stateRender;
 	}

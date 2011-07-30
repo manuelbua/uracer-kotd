@@ -1,5 +1,6 @@
 package com.bitfire.uracer.entities;
 
+
 public abstract class SubframeInterpolableEntity extends Entity
 {
 	// world-coords
@@ -36,7 +37,5 @@ public abstract class SubframeInterpolableEntity extends Entity
 		{
 			stateRender.set( stateCurrent );
 		}
-
-//		stateRender.toPixels();
 	}
 }

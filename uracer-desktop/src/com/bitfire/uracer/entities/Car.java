@@ -28,7 +28,7 @@ public class Car extends b2dEntity
 
 	private PolygonShape shape;
 
-	private Car( Vector2 worldPos, float orientation, boolean isPlayer )
+	private Car( Vector2 position, float orientation, boolean isPlayer )
 	{
 		this.isPlayer = isPlayer;
 		carDesc = CarDescriptor.create();
@@ -69,7 +69,7 @@ public class Car extends b2dEntity
 		sprite.setSize( Convert.mt2px(half.x*2), Convert.mt2px(half.y*2) );
 		sprite.setOrigin( sprite.getWidth() / 2, sprite.getHeight() / 2 );
 
-		setTransform( worldPos, orientation );
+		setTransform( position, orientation );
 	}
 
 	// factory method
@@ -85,22 +85,11 @@ public class Car extends b2dEntity
 		carSim.resetPhysics();
 	}
 
-	public void setTransform( Vector2 pos_mt, float orient_radians )
+	@Override
+	public void setTransform( Vector2 position, float orient_degrees )
 	{
-		body.setTransform( pos_mt, -orient_radians );
+		super.setTransform( position, orient_degrees );
 		carSim.updateHeading(body);
-	}
-
-	private Vector2 wp = new Vector2();
-	public Vector2 getPosition()
-	{
-		wp.set( body.getPosition() );
-		return wp;
-	}
-
-	public float getOrientation()
-	{
-		return -body.getAngle();
 	}
 
 	@Override
@@ -108,21 +97,28 @@ public class Car extends b2dEntity
 	{
 		super.onBeforePhysicsSubstep();
 
-		if( isPlayer )
-			carSim.acquireInput( body );
+		// retrieve and apply input
+		if( isPlayer ) carSim.acquireInput( body );
 
 		carSim.applyInput();
 		carSim.step(body);
 
+		// setup forces
 		body.setAwake( true );
 		body.setLinearVelocity( carDesc.velocity_wc );
 		body.setAngularVelocity( -carDesc.angularvelocity );
 	}
 
 	@Override
+	public void onBeforeRender( float temporalAliasingFactor )
+	{
+		super.onBeforeRender( temporalAliasingFactor );
+		stateRender.toPixels();
+	}
+
+	@Override
 	public void onRender( SpriteBatch batch )
 	{
-		stateRender.toPixels();
 		sprite.setPosition( stateRender.position.x - sprite.getOriginX(), stateRender.position.y - sprite.getOriginY() );
 		sprite.setRotation( stateRender.orientation );
 		sprite.draw( batch );
