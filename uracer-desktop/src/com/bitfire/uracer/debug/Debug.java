@@ -53,12 +53,12 @@ public class Debug
 		sb.setLength( 0 );
 		attachedTo.drawString(
 				fmt.format( "fps: %d, physics: %.06f, graphics: %.06f", Gdx.graphics.getFramesPerSecond(), physicsTime,
-						renderTime ).toString(), 0, 0 );
+						renderTime ).toString(), 0, Gdx.graphics.getHeight()-6 );
 
 		sb.setLength( 0 );
 		attachedTo.drawString(
 				fmt.format( "timemul: x%.02f, step: %.0fHz", Config.PhysicsTimeMultiplier, Config.PhysicsTimestepHz ).toString(),
-				0, 6 );
+				0, Gdx.graphics.getHeight()-12 );
 	}
 
 	public void renderB2dWorld( Matrix4 modelViewProj )

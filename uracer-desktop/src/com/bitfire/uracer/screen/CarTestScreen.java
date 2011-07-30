@@ -14,6 +14,7 @@ import com.bitfire.uracer.Config;
 import com.bitfire.uracer.Director;
 import com.bitfire.uracer.Input;
 import com.bitfire.uracer.Physics;
+import com.bitfire.uracer.VersionInfo;
 import com.bitfire.uracer.debug.Debug;
 import com.bitfire.uracer.entities.Car;
 import com.bitfire.uracer.entities.EntityManager;
@@ -120,7 +121,7 @@ public class CarTestScreen extends Screen
 		// debug
 		//
 
-		// OrthographicCamera cam = Director.getCamera();
+		OrthographicCamera cam = Director.getCamera();
 
 		if( Gdx.app.getType() == ApplicationType.Desktop )
 		{
@@ -131,7 +132,7 @@ public class CarTestScreen extends Screen
 		dbg.renderFrameStats( temporalAliasingFactor );
 		car.debug( this, batch );
 
-		OrthographicCamera cam = Director.getCamera();
+		drawString( "uRacer " + VersionInfo.versionName, 0, 0 );
 		drawString( "cam x=" + cam.position.x + ", y=" + cam.position.y, 0, 200 );
 		drawString( "tmpcam x=" + tmpcam.x + ", y=" + tmpcam.y, 0, 207 );
 		drawString( "mouse x=" + Input.getMouseX() + ", y=" + Input.getMouseY(), 0, 214 );
