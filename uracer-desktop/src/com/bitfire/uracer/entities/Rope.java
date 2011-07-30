@@ -12,6 +12,7 @@ import com.badlogic.gdx.physics.box2d.joints.RevoluteJointDef;
 import com.badlogic.gdx.utils.Array;
 import com.bitfire.uracer.Art;
 import com.bitfire.uracer.Physics;
+import com.bitfire.uracer.utils.Convert;
 
 public class Rope extends Entity
 {
@@ -81,7 +82,7 @@ public class Rope extends Entity
 		// build graphics
 		sprite = new Sprite();
 		sprite.setRegion( Art.rope );
-		sprite.setSize( Physics.mt2px( SegmentWidth ), Physics.mt2px( SegmentHeight ) );
+		sprite.setSize( Convert.mt2px( SegmentWidth ), Convert.mt2px( SegmentHeight ) );
 		sprite.setOrigin( sprite.getWidth() / 2, sprite.getHeight() / 2 );
 	}
 

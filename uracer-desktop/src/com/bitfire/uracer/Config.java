@@ -16,10 +16,10 @@ public class Config
 	// defines time modifier
 	public static float PhysicsTimeMultiplier;
 
-	public static void asDefault()
+	public static void asDefault( float tileMapZoomFactor )
 	{
 		SubframeInterpolation = true;
-		PixelsPerMeter = 9.0f;
+		PixelsPerMeter = 9.0f / tileMapZoomFactor;
 		PhysicsTimestepHz = 60.0f;
 		PhysicsTimeMultiplier = 1f;
 	}

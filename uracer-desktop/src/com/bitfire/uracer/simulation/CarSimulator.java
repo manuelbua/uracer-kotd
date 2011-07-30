@@ -37,9 +37,9 @@ public class CarSimulator
 		carDesc.set( carDesc );
 	}
 
-	public void updateHeading()
+	public void updateHeading(Body body)
 	{
-		VMath.fromAngle( heading, carDesc.wrapped_angle );
+		VMath.fromAngle( heading, AMath.wrap2PI(body.getAngle()) );
 		VMath.perp( side, heading );
 	}
 
@@ -68,18 +68,17 @@ public class CarSimulator
 			}
 
 			// TODO: optimization
-//			float pa = angle;
+
+			float wrapped = AMath.wrap2PI(-body.getAngle());
 
 			angle -= CS_PI;
-			angle += carDesc.wrapped_angle;	// to local
+			angle += wrapped;	// to local
 			if( angle < 0 )
 				angle += CS_2PI;
 
 			angle = -(angle - CS_2PI);
 			if( angle > CS_PI )
 				angle = angle - CS_2PI;
-
-//			System.out.println("prev-a="+pa + ", a=" + angle);
 
 			carInput.steerAngle = angle;
 
@@ -175,10 +174,10 @@ public class CarSimulator
 		carDesc.throttle = AMath.clamp( carDesc.throttle, -maxForce, maxForce );
 	}
 
-	public void step()
+	public void step(Body body)
 	{
-		float sn = MathUtils.sin( carDesc.wrapped_angle );
-		float cs = MathUtils.cos( carDesc.wrapped_angle );
+		float sn = MathUtils.sin( -AMath.wrap2PI(body.getAngle()) );
+		float cs = MathUtils.cos( -AMath.wrap2PI(body.getAngle()) );
 
 		//
 		// SAE convention: x is to the front of the car, y is to the right, z is down
@@ -308,18 +307,18 @@ public class CarSimulator
 		carDesc.angularOrientation = Physics.dt * carDesc.angularvelocity;
 
 		// this angle is safe for subframe interpolation
-		carDesc.angle += carDesc.angularOrientation;
+//		carDesc.angle += carDesc.angularOrientation;
 
 		// this angle is *NOT* safe for subframe interpolation (wrapped, one border could get lerped)!
-		carDesc.wrapped_angle += carDesc.angularOrientation;
+//		carDesc.wrapped_angle += carDesc.angularOrientation;
 
-		if( carDesc.wrapped_angle > CS_2PI )
-			carDesc.wrapped_angle -= CS_2PI;
+//		if( carDesc.wrapped_angle > CS_2PI )
+//			carDesc.wrapped_angle -= CS_2PI;
 
-		if( carDesc.wrapped_angle < 0 )
-			carDesc.wrapped_angle += CS_2PI;
+//		if( carDesc.wrapped_angle < 0 )
+//			carDesc.wrapped_angle += CS_2PI;
 
-		updateHeading();
+		updateHeading(body);
 	}
 
 	public void resetPhysics()

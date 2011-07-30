@@ -22,7 +22,6 @@ public class URacer implements ApplicationListener
 	@Override
 	public void create()
 	{
-		Config.asDefault();
 		Art.load();
 		input.releaseAllKeys();
 

@@ -6,6 +6,7 @@ import com.badlogic.gdx.math.Vector2;
 import com.bitfire.uracer.Art;
 import com.bitfire.uracer.Physics;
 import com.bitfire.uracer.utils.Box2DFactory;
+import com.bitfire.uracer.utils.Convert;
 
 public class Disc extends b2dEntity
 {
@@ -17,7 +18,7 @@ public class Disc extends b2dEntity
 
 		sprite = new Sprite();
 		sprite.setRegion( Art.disc );
-		sprite.setSize( Physics.mt2px( radius * 2 ), Physics.mt2px( radius * 2 ) );
+		sprite.setSize( Convert.mt2px( radius * 2 ), Convert.mt2px( radius * 2 ) );
 		sprite.setOrigin( sprite.getWidth() / 2, sprite.getHeight() / 2 );
 	}
 

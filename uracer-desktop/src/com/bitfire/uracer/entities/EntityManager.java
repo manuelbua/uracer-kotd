@@ -1,7 +1,9 @@
 package com.bitfire.uracer.entities;
 
+import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.OrthographicCamera;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
+import com.badlogic.gdx.math.Matrix4;
 import com.badlogic.gdx.utils.Array;
 import com.bitfire.uracer.Director;
 import com.bitfire.uracer.Physics;
@@ -27,7 +29,13 @@ public class EntityManager
 	{
 		entities = new Array<Entity>();
 		sfi_entities = new Array<SubframeInterpolableEntity>();
+
 		spriteBatch = new SpriteBatch();
+
+		// y-flip
+		Matrix4 proj = new Matrix4();
+		proj.setToOrtho( 0, Gdx.graphics.getWidth(), Gdx.graphics.getHeight(), 0, 0f, 100f );
+//		spriteBatch.setProjectionMatrix( proj );
 	}
 
 	public static void clear()

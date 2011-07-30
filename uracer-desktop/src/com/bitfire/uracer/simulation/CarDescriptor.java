@@ -15,7 +15,7 @@ public class CarDescriptor
 {
 	public CarDescriptor()
 	{
-		angle = wrapped_angle = angularvelocity = steerangle = throttle = brake = angularOrientation = 0;
+		angularvelocity = steerangle = throttle = brake = angularOrientation = 0;
 		position_wc.set( 0, 0 );
 		velocity_wc.set( 0, 0 );
 	}
@@ -29,8 +29,6 @@ public class CarDescriptor
 	{
 		this.carModel = desc.carModel;
 
-		this.angle = desc.angle;
-		this.wrapped_angle = desc.wrapped_angle;
 		this.angularvelocity = desc.angularvelocity;
 		this.steerangle = desc.steerangle;
 		this.throttle = desc.throttle;
@@ -50,8 +48,6 @@ public class CarDescriptor
 	public Vector2 velocity_wc = new Vector2(); // velocity vector of car in world coordinates
 
 	// angle-related
-	public float angle; // angle of car body orientation (in rads)
-	public float wrapped_angle;
 	public float angularvelocity;
 	public float steerangle; // angle of steering (input)
 

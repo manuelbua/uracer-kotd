@@ -2,7 +2,7 @@ package com.bitfire.uracer.entities;
 
 import com.badlogic.gdx.math.MathUtils;
 import com.badlogic.gdx.math.Vector2;
-import com.bitfire.uracer.Physics;
+import com.bitfire.uracer.utils.Convert;
 
 public class EntityState
 {
@@ -49,15 +49,15 @@ public class EntityState
 
 	public void toPixels()
 	{
-		this.position.x = Physics.mt2px( this.position.x );
-		this.position.y = Physics.mt2px( this.position.y );
+		this.position.x = Convert.mt2px( this.position.x );
+		this.position.y = Convert.mt2px( this.position.y );
 		this.orientation = this.orientation * MathUtils.radiansToDegrees;
 	}
 
 	public void toMeters()
 	{
-		this.position.x = Physics.px2mt( this.position.x );
-		this.position.y = Physics.px2mt( this.position.y );
+		this.position.x = Convert.px2mt( this.position.x );
+		this.position.y = Convert.px2mt( this.position.y );
 		this.orientation = this.orientation * MathUtils.degreesToRadians;
 	}
 

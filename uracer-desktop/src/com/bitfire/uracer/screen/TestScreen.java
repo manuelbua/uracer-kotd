@@ -16,6 +16,7 @@ import com.bitfire.uracer.entities.Disc;
 import com.bitfire.uracer.entities.EntityManager;
 import com.bitfire.uracer.entities.Rope;
 import com.bitfire.uracer.utils.Box2DFactory;
+import com.bitfire.uracer.utils.Convert;
 
 public class TestScreen extends Screen
 {
@@ -29,14 +30,14 @@ public class TestScreen extends Screen
 		dbg = new Debug( this );
 		Physics.create( new Vector2( 0, -10 ), false );
 		EntityManager.create();
-		Director.createFromPixels( null, Gdx.graphics.getWidth(), Gdx.graphics.getHeight(), new Vector2( 0, 0 ), new Vector2(100,100) );
+		Director.createFromPixels( Gdx.graphics.getWidth(), Gdx.graphics.getHeight(), new Vector2( 0, 0 ), new Vector2(100,100) );
 		populateWorld();
 	}
 
 	private void populateWorld()
 	{
-		float w = Physics.px2mt( Gdx.graphics.getWidth() );
-		float h = Physics.px2mt( Gdx.graphics.getHeight() );
+		float w = Convert.px2mt( Gdx.graphics.getWidth() );
+		float h = Convert.px2mt( Gdx.graphics.getHeight() );
 
 		Box2DFactory.createThinWall( Physics.world, -w / 2, -h / 2, -w / 2, h / 2, 0.1f );
 		Box2DFactory.createThinWall( Physics.world, w / 2, -h / 2, w / 2, h / 2, 0.1f );

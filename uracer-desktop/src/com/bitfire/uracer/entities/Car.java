@@ -15,7 +15,7 @@ import com.bitfire.uracer.Physics;
 import com.bitfire.uracer.screen.Screen;
 import com.bitfire.uracer.simulation.CarDescriptor;
 import com.bitfire.uracer.simulation.CarSimulator;
-import com.bitfire.uracer.utils.AMath;
+import com.bitfire.uracer.utils.Convert;
 
 public class Car extends b2dEntity
 {
@@ -28,7 +28,7 @@ public class Car extends b2dEntity
 
 	private PolygonShape shape;
 
-	private Car( Vector2 worldPos, boolean isPlayer )
+	private Car( Vector2 worldPos, float orientation, boolean isPlayer )
 	{
 		this.isPlayer = isPlayer;
 		carDesc = CarDescriptor.create();
@@ -45,7 +45,6 @@ public class Car extends b2dEntity
 		BodyDef bd = new BodyDef();
 		bd.angle = 0;
 		bd.type = BodyType.DynamicBody;
-		bd.position.set( worldPos.x, worldPos.y );
 
 		body = Physics.world.createBody( bd );
 
@@ -67,15 +66,16 @@ public class Car extends b2dEntity
 		// build gfx
 		sprite = new Sprite();
 		sprite.setRegion( Art.cars.findRegion("electron") );
-		sprite.setSize( Physics.mt2px(half.x*2), Physics.mt2px(half.y*2) );
+		sprite.setSize( Convert.mt2px(half.x*2), Convert.mt2px(half.y*2) );
 		sprite.setOrigin( sprite.getWidth() / 2, sprite.getHeight() / 2 );
-		System.out.println("sprite_size = " + sprite.getWidth() + ", " + sprite.getHeight());
+
+		setTransform( worldPos, orientation );
 	}
 
 	// factory method
-	public static Car create( Vector2 position, boolean isPlayer )
+	public static Car create( Vector2 position, float orientation, boolean isPlayer )
 	{
-		Car car = new Car( position, isPlayer );
+		Car car = new Car( position, orientation, isPlayer );
 		EntityManager.add( car );
 		return car;
 	}
@@ -85,29 +85,14 @@ public class Car extends b2dEntity
 		carSim.resetPhysics();
 	}
 
-//	public void setPosition( Vector2 worldPos )
-//	{
-//		setTransform( worldPos, body.getAngle() );
-//	}
-
-	// fixme
-//	public void setOrientation( float orientRadians )
-//	{
-//		setTransform( body.getPosition(), orientRadians );
-//	}
-
-	// fixme
-	public void setTransform( Vector2 worldPos, float orientRadians )
+	public void setTransform( Vector2 pos_mt, float orient_radians )
 	{
-		carDesc.angle = orientRadians;
-		carDesc.wrapped_angle = AMath.wrap2PI( orientRadians );
-		body.setTransform( worldPos, -orientRadians );
-		carSim.updateHeading();
-//		System.out.println("car_xform=" + body.getPosition().toString());
+		body.setTransform( pos_mt, -orient_radians );
+		carSim.updateHeading(body);
 	}
 
 	private Vector2 wp = new Vector2();
-	public Vector2 getWorldPos()
+	public Vector2 getPosition()
 	{
 		wp.set( body.getPosition() );
 		return wp;
@@ -115,7 +100,7 @@ public class Car extends b2dEntity
 
 	public float getOrientation()
 	{
-		return body.getAngle();
+		return -body.getAngle();
 	}
 
 	@Override
@@ -125,14 +110,13 @@ public class Car extends b2dEntity
 
 		if( isPlayer )
 			carSim.acquireInput( body );
+
 		carSim.applyInput();
-		carSim.step();
+		carSim.step(body);
 
 		body.setAwake( true );
 		body.setLinearVelocity( carDesc.velocity_wc );
 		body.setAngularVelocity( -carDesc.angularvelocity );
-//		body.setTransform( body.getPosition(), -carDesc.angle );
-//		setOrientation( carDesc.angle );
 	}
 
 	@Override
@@ -142,7 +126,6 @@ public class Car extends b2dEntity
 		sprite.setPosition( stateRender.position.x - sprite.getOriginX(), stateRender.position.y - sprite.getOriginY() );
 		sprite.setRotation( stateRender.orientation );
 		sprite.draw( batch );
-//		System.out.println(stateRender);
 	}
 
 	public void debug( Screen screen, SpriteBatch batch )
@@ -152,10 +135,8 @@ public class Car extends b2dEntity
 		screen.drawString( "steerangle=" + carDesc.steerangle, 0, 27 );
 		screen.drawString( "throttle=" + carDesc.throttle, 0, 34 );
 		screen.drawString( "tx="+Input.getXY().x + ",ty=" +Input.getXY().y, 0, 41 );
-		screen.drawString( "angle=" + body.getAngle(), 0, 55 );
-		screen.drawString( "cd.angle=" + carDesc.angle, 0, 62 );
-		screen.drawString( "cd.wangle=" + carDesc.wrapped_angle, 0, 69 );
 		screen.drawString( "screen x="+Director.screenPosFor( body ).x + ",y=" +Director.screenPosFor( body ).y, 0, 80 );
 		screen.drawString( "world x="+body.getPosition().x + ",y=" +body.getPosition().y, 0, 87 );
+		screen.drawString( "orient=" + body.getAngle(), 0, 94 );
 	}
 }
