@@ -11,7 +11,7 @@ public class URacer implements ApplicationListener
 	private Input input = new Input();
 	private boolean running = false;
 
-	private float timeAliasingAlpha = 0;
+	private float temporalAliasing = 0;
 	private float timeAccumSecs = 0;
 	private float oneOnOneBillion = 0;
 
@@ -30,7 +30,7 @@ public class URacer implements ApplicationListener
 
 		running = true;
 		oneOnOneBillion = 1.0f / 1000000000.0f;
-		timeAliasingAlpha = 0;
+		temporalAliasing = 0;
 
 		setScreen( new CarTestScreen() );
 	}
@@ -57,14 +57,17 @@ public class URacer implements ApplicationListener
 		}
 		physicsTime = (System.nanoTime() - startTime) * oneOnOneBillion;
 
-		timeAliasingAlpha = timeAccumSecs * Config.PhysicsTimestepHz;
-//		timeAliasingAlpha = timeAccumSecs / Physics.dt;
+		// compute the temporal aliasing factor, entities will render
+		// themselves accordingly to this to avoid flickering and permit
+		// slow-motion effects without artifacts.
+		// (this imply accepting a one-frame-behind behavior)
+		temporalAliasing = timeAccumSecs * Config.PhysicsTimestepHz;
 
-		screen.beforeRender( timeAliasingAlpha );
+		screen.beforeRender( temporalAliasing );
 
 		startTime = System.nanoTime();
 		{
-			screen.render( timeAliasingAlpha );
+			screen.render( temporalAliasing );
 		}
 		graphicsTime = (System.nanoTime() - startTime) * oneOnOneBillion;
 	}
