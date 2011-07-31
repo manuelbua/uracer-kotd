@@ -133,7 +133,12 @@ public class CarTestScreen extends Screen
 		OrthographicCamera cam = Director.getCamera();
 		Debug.renderFrameStats( temporalAliasingFactor );
 
-		Debug.drawString( "uRacer " + VersionInfo.versionName, Gdx.graphics.getWidth()-150, 5, 6, 12 );
+		int fontW = 6;
+		int fontH = 12;
+		String uRacerInfo = "uRacer " + VersionInfo.versionName;
+		int sw = uRacerInfo.length() * fontW;
+
+		Debug.drawString( uRacerInfo, Gdx.graphics.getWidth()-sw, 0, fontW, fontH);
 		Debug.drawString( "cam x=" + cam.position.x + ", y=" + cam.position.y, 0, 200 );
 		Debug.drawString( "tmpcam x=" + tmpcam.x + ", y=" + tmpcam.y, 0, 207 );
 		Debug.drawString( "mouse x=" + Input.getMouseX() + ", y=" + Input.getMouseY(), 0, 214 );

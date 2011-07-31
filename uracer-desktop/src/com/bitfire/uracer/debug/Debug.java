@@ -134,7 +134,7 @@ public class Debug
 				int xs = chars[ys].indexOf( ch );
 				if( xs >= 0 )
 				{
-					draw( Art.base6[xs][ys + 9], x + i * 6, y, w, h );
+					draw( Art.base6[xs][ys + 9], x + i * w, y, w, h );
 				}
 			}
 		}
