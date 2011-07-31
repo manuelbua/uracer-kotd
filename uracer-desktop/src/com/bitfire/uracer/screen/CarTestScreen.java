@@ -51,7 +51,8 @@ public class CarTestScreen extends Screen
 
 //		Vector2 pos = Convert.tileToPx( 0, 0 ).add( Convert.scaledPixels(64,-64) );
 		Vector2 pos = Convert.scaledPosition(64, 64);
-		car = Car.create( pos, 90, true );
+		car = Car.create( tm.map, pos, 90, true );
+		tm.disposableMeshes.add( car.mesh );
 	}
 
 	@Override

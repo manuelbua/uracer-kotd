@@ -2,13 +2,16 @@ package com.bitfire.uracer.entities;
 
 import com.badlogic.gdx.graphics.g2d.Sprite;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
+import com.badlogic.gdx.graphics.g2d.tiled.TiledMap;
 import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.physics.box2d.BodyDef;
 import com.badlogic.gdx.physics.box2d.BodyDef.BodyType;
 import com.badlogic.gdx.physics.box2d.FixtureDef;
 import com.badlogic.gdx.physics.box2d.MassData;
 import com.badlogic.gdx.physics.box2d.PolygonShape;
+import com.bitfire.testtilemap.OrthographicAlignedMesh;
 import com.bitfire.uracer.Art;
+import com.bitfire.uracer.Config;
 import com.bitfire.uracer.Director;
 import com.bitfire.uracer.Input;
 import com.bitfire.uracer.Physics;
@@ -19,6 +22,7 @@ import com.bitfire.uracer.utils.Convert;
 
 public class Car extends b2dEntity
 {
+	public OrthographicAlignedMesh mesh;
 	private Sprite sprite;
 	private boolean isPlayer;
 
@@ -28,7 +32,7 @@ public class Car extends b2dEntity
 
 	private PolygonShape shape;
 
-	private Car( Vector2 position, float orientation, boolean isPlayer )
+	private Car( TiledMap map, Vector2 position, float orientation, boolean isPlayer )
 	{
 		this.isPlayer = isPlayer;
 		carDesc = CarDescriptor.create();
@@ -71,12 +75,16 @@ public class Car extends b2dEntity
 		sprite.setOrigin( sprite.getWidth() / 2, sprite.getHeight() / 2 );
 
 		setTransform( position, orientation );
+
+		mesh = OrthographicAlignedMesh.create( map, "data/3d/palm.obj", "data/3d/palm.png", new Vector2( 1, 1 ) );
+		mesh.setScale( 3f );
+		mesh.setPositionOffsetPixels( 0, 0 );
 	}
 
 	// factory method
-	public static Car create( Vector2 position, float orientation, boolean isPlayer )
+	public static Car create( TiledMap map, Vector2 position, float orientation, boolean isPlayer )
 	{
-		Car car = new Car( position, orientation, isPlayer );
+		Car car = new Car( map, position, orientation, isPlayer );
 		EntityManager.add( car );
 		return car;
 	}
@@ -121,6 +129,13 @@ public class Car extends b2dEntity
 	@Override
 	public void onRender( SpriteBatch batch )
 	{
+		mesh.setPosition(
+				stateRender.position.x * Config.TileMapZoomFactor,
+				-stateRender.position.y * Config.TileMapZoomFactor
+		);
+
+		mesh.setRotation( stateRender.orientation, 0, 1, 0 );
+
 		sprite.setPosition( stateRender.position.x - sprite.getOriginX(), stateRender.position.y - sprite.getOriginY() );
 		sprite.setRotation( stateRender.orientation );
 		sprite.draw( batch );
