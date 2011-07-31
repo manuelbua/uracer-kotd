@@ -27,13 +27,7 @@ public class EntityManager
 	{
 		entities = new Array<Entity>();
 		sfi_entities = new Array<SubframeInterpolableEntity>();
-
 		spriteBatch = new SpriteBatch();
-
-		// y-flip
-//		Matrix4 proj = new Matrix4();
-//		proj.setToOrtho( 0, Gdx.graphics.getWidth(), Gdx.graphics.getHeight(), 0, 0f, 100f );
-//		spriteBatch.setProjectionMatrix( proj );
 	}
 
 	public static void clear()
@@ -91,10 +85,10 @@ public class EntityManager
 
 	public static void raiseOnRender( float temporalAliasingFactor )
 	{
-		OrthographicCamera screen = Director.getCamera();
+		OrthographicCamera cam = Director.getCamera();
 
-		spriteBatch.setProjectionMatrix( screen.projection );
-		spriteBatch.setTransformMatrix( screen.view );
+		spriteBatch.setProjectionMatrix( cam.projection );
+		spriteBatch.setTransformMatrix( cam.view );
 		spriteBatch.begin();
 
 		int len = sfi_entities.size;
@@ -112,5 +106,22 @@ public class EntityManager
 		}
 
 		spriteBatch.end();
+	}
+
+	public static void raiseOnDebug()
+	{
+		int len = sfi_entities.size;
+		for( int i = 0; i < len; i++ )
+		{
+			SubframeInterpolableEntity e = sfi_entities.get( i );
+			e.onDebug();
+		}
+
+		len = entities.size;
+		for( int i = 0; i < len; i++ )
+		{
+			Entity e = entities.get( i );
+			e.onDebug();
+		}
 	}
 }

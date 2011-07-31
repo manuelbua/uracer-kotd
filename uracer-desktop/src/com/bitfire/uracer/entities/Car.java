@@ -12,7 +12,7 @@ import com.bitfire.uracer.Art;
 import com.bitfire.uracer.Director;
 import com.bitfire.uracer.Input;
 import com.bitfire.uracer.Physics;
-import com.bitfire.uracer.screen.Screen;
+import com.bitfire.uracer.debug.Debug;
 import com.bitfire.uracer.simulation.CarDescriptor;
 import com.bitfire.uracer.simulation.CarSimulator;
 import com.bitfire.uracer.utils.Convert;
@@ -32,7 +32,7 @@ public class Car extends b2dEntity
 	{
 		this.isPlayer = isPlayer;
 		carDesc = CarDescriptor.create();
-//		carDesc.carModel.toModel1();
+		// carDesc.carModel.toModel1();
 
 		carSim = new CarSimulator( carDesc );
 		impactVelocity.set( 0, 0 );
@@ -54,8 +54,9 @@ public class Car extends b2dEntity
 		fd.friction = carDesc.carModel.friction;
 		fd.restitution = carDesc.carModel.restitution;
 
-		/*Fixture f =*/ body.createFixture( fd );
-		// f->SetUserData( (void*)( iIsPlayer ? (unsigned int)ShapeCarPlayer : (unsigned int)ShapeCar ) );
+		/* Fixture f = */body.createFixture( fd );
+		// f->SetUserData( (void*)( iIsPlayer ? (unsigned int)ShapeCarPlayer :
+		// (unsigned int)ShapeCar ) );
 		MassData md = new MassData();
 		md.mass = carDesc.carModel.mass;
 		md.I = carDesc.carModel.inertia;
@@ -65,8 +66,8 @@ public class Car extends b2dEntity
 
 		// build gfx
 		sprite = new Sprite();
-		sprite.setRegion( Art.cars.findRegion("electron") );
-		sprite.setSize( Convert.mt2px(half.x*2), Convert.mt2px(half.y*2) );
+		sprite.setRegion( Art.cars.findRegion( "electron" ) );
+		sprite.setSize( Convert.mt2px( half.x * 2 ), Convert.mt2px( half.y * 2 ) );
 		sprite.setOrigin( sprite.getWidth() / 2, sprite.getHeight() / 2 );
 
 		setTransform( position, orientation );
@@ -89,7 +90,7 @@ public class Car extends b2dEntity
 	public void setTransform( Vector2 position, float orient_degrees )
 	{
 		super.setTransform( position, orient_degrees );
-		carSim.updateHeading(body);
+		carSim.updateHeading( body );
 	}
 
 	@Override
@@ -98,10 +99,11 @@ public class Car extends b2dEntity
 		super.onBeforePhysicsSubstep();
 
 		// retrieve and apply input
-		if( isPlayer ) carSim.acquireInput( body );
+		if( isPlayer )
+			carSim.acquireInput( body );
 
 		carSim.applyInput();
-		carSim.step(body);
+		carSim.step( body );
 
 		// setup forces
 		body.setAwake( true );
@@ -124,15 +126,15 @@ public class Car extends b2dEntity
 		sprite.draw( batch );
 	}
 
-	public void debug( Screen screen, SpriteBatch batch )
+	@Override
+	public void onDebug()
 	{
-		// dbg
-		screen.drawString( "vel_wc [x=" + carDesc.velocity_wc.x + ", y=" + carDesc.velocity_wc.y + "]", 0, 20 );
-		screen.drawString( "steerangle=" + carDesc.steerangle, 0, 27 );
-		screen.drawString( "throttle=" + carDesc.throttle, 0, 34 );
-		screen.drawString( "tx="+Input.getXY().x + ",ty=" +Input.getXY().y, 0, 41 );
-		screen.drawString( "screen x="+Director.screenPosFor( body ).x + ",y=" +Director.screenPosFor( body ).y, 0, 80 );
-		screen.drawString( "world x="+body.getPosition().x + ",y=" +body.getPosition().y, 0, 87 );
-		screen.drawString( "orient=" + body.getAngle(), 0, 94 );
+		Debug.drawString( "vel_wc [x=" + carDesc.velocity_wc.x + ", y=" + carDesc.velocity_wc.y + "]", 0, 20 );
+		Debug.drawString( "steerangle=" + carDesc.steerangle, 0, 27 );
+		Debug.drawString( "throttle=" + carDesc.throttle, 0, 34 );
+		Debug.drawString( "tx=" + Input.getXY().x + ",ty=" + Input.getXY().y, 0, 41 );
+		Debug.drawString( "screen x=" + Director.screenPosFor( body ).x + ",y=" + Director.screenPosFor( body ).y, 0, 80 );
+		Debug.drawString( "world x=" + body.getPosition().x + ",y=" + body.getPosition().y, 0, 87 );
+		Debug.drawString( "orient=" + body.getAngle(), 0, 94 );
 	}
 }

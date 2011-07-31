@@ -6,6 +6,7 @@ import com.badlogic.gdx.math.Rectangle;
 import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.math.Vector3;
 import com.badlogic.gdx.physics.box2d.Body;
+import com.bitfire.uracer.screen.Screen;
 import com.bitfire.uracer.utils.Convert;
 
 public class Director
@@ -16,6 +17,7 @@ public class Director
 	private static Matrix4 mvpMt, mvpPx;
 	private static Vector2 halfViewport;
 	private static Rectangle boundsPx;
+	private static Screen parent;
 
 	private static Vector2 tmp;
 
@@ -31,12 +33,13 @@ public class Director
 		tmp = new Vector2();
 	}
 
-	public static void createFromPixels( int widthPx, int heightPx, Vector2 positionPx, Vector2 worldSizePx )
+	public static void createFromPixels( Screen parent, int widthPx, int heightPx, Vector2 positionPx, Vector2 worldSizePx )
 	{
 		init();
 
 		camera = new OrthographicCamera( widthPx, heightPx );
 		halfViewport.set( camera.viewportWidth/2f, camera.viewportHeight/2f );
+		Director.parent = parent;
 
 		// compute world size
 		Director.worldSizePx = worldSizePx;
@@ -112,5 +115,10 @@ public class Director
 	public static Matrix4 getMatViewProjMt()
 	{
 		return mvpMt;
+	}
+
+	public static Screen screen()
+	{
+		return parent;
 	}
 }

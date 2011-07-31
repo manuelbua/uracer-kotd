@@ -15,6 +15,10 @@ public abstract class Entity
 	{
 	}
 
+	public void onDebug()
+	{
+	}
+
 	public EntityState state()
 	{
 		return stateRender;

@@ -24,7 +24,6 @@ import com.bitfire.uracer.utils.Convert;
 public class CarTestScreen extends Screen
 {
 	private FPSLogger fpslog = new FPSLogger();
-	private Debug dbg;
 	private Car car;
 
 	// test
@@ -43,9 +42,9 @@ public class CarTestScreen extends Screen
 
 		Config.asDefault( tm.strategy.tileMapZoomFactor );
 		Convert.init( tm.strategy, tm.map );
-		Director.createFromPixels( Gdx.graphics.getWidth(), Gdx.graphics.getHeight(), new Vector2( 0, 0 ), scaled_worldsize_px );
+		Director.createFromPixels( this, Gdx.graphics.getWidth(), Gdx.graphics.getHeight(), new Vector2( 0, 0 ), scaled_worldsize_px );
 
-		dbg = new Debug( this );
+		Debug.create();
 		Physics.create( new Vector2( 0, 0 ), false );
 		Physics.world.setContactListener( new CarContactListener() );
 		EntityManager.create();
@@ -59,7 +58,7 @@ public class CarTestScreen extends Screen
 	public void removed()
 	{
 		super.removed();
-		dbg.dispose();
+		Debug.dispose();
 	}
 
 	@Override
@@ -121,25 +120,26 @@ public class CarTestScreen extends Screen
 		// debug
 		//
 
-		OrthographicCamera cam = Director.getCamera();
-
 		if( Gdx.app.getType() == ApplicationType.Desktop )
 		{
-			dbg.renderB2dWorld( Director.getMatViewProjMt() );
+			Debug.renderB2dWorld( Director.getMatViewProjMt() );
 		}
 
-		batch.begin();
-		dbg.renderFrameStats( temporalAliasingFactor );
-		car.debug( this, batch );
+		Debug.begin();
 
-		drawString( "uRacer " + VersionInfo.versionName, 0, 0 );
-		drawString( "cam x=" + cam.position.x + ", y=" + cam.position.y, 0, 200 );
-		drawString( "tmpcam x=" + tmpcam.x + ", y=" + tmpcam.y, 0, 207 );
-		drawString( "mouse x=" + Input.getMouseX() + ", y=" + Input.getMouseY(), 0, 214 );
-		drawString( "temp_alias=" + temporalAliasingFactor, 0, 221 );
-		drawString( "subframe=" + Config.SubframeInterpolation, 0, 228 );
-		batch.end();
+		EntityManager.raiseOnDebug();
 
+		OrthographicCamera cam = Director.getCamera();
+		Debug.renderFrameStats( temporalAliasingFactor );
+
+		Debug.drawString( "uRacer " + VersionInfo.versionName, Gdx.graphics.getWidth()-150, 5, 6, 12 );
+		Debug.drawString( "cam x=" + cam.position.x + ", y=" + cam.position.y, 0, 200 );
+		Debug.drawString( "tmpcam x=" + tmpcam.x + ", y=" + tmpcam.y, 0, 207 );
+		Debug.drawString( "mouse x=" + Input.getMouseX() + ", y=" + Input.getMouseY(), 0, 214 );
+		Debug.drawString( "temp_alias=" + temporalAliasingFactor, 0, 221 );
+		Debug.drawString( "subframe=" + Config.SubframeInterpolation, 0, 228 );
+
+		Debug.end();
 		// fpslog.log();
 	}
 }

@@ -27,10 +27,10 @@ public class TestScreen extends Screen
 
 	public TestScreen()
 	{
-		dbg = new Debug( this );
+		Debug.create();
 		Physics.create( new Vector2( 0, -10 ), false );
 		EntityManager.create();
-		Director.createFromPixels( Gdx.graphics.getWidth(), Gdx.graphics.getHeight(), new Vector2( 0, 0 ), new Vector2(100,100) );
+		Director.createFromPixels( this, Gdx.graphics.getWidth(), Gdx.graphics.getHeight(), new Vector2( 0, 0 ), new Vector2(100,100) );
 		populateWorld();
 	}
 
@@ -109,12 +109,10 @@ public class TestScreen extends Screen
 
 		if( Gdx.app.getType() == ApplicationType.Desktop )
 		{
-			dbg.renderB2dWorld( Director.getMatViewProjMt() );
+			Debug.renderB2dWorld( Director.getMatViewProjMt() );
 		}
 
-		batch.begin();
-		dbg.renderFrameStats( temporalAliasingFactor );
-		batch.end();
+		Debug.renderFrameStats( temporalAliasingFactor );
 
 		fpslog.log();
 	}
