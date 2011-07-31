@@ -84,5 +84,4 @@ public class AMath
 	{
 		return (angle %= TWO_PI) >= 0 ? (angle < PI) ? angle : angle - TWO_PI : (angle >= -PI) ? angle : angle + TWO_PI;
 	}
-
 }

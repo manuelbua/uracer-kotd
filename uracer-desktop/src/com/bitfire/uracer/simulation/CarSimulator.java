@@ -3,29 +3,20 @@ package com.bitfire.uracer.simulation;
 import com.badlogic.gdx.math.MathUtils;
 import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.physics.box2d.Body;
-import com.bitfire.uracer.Director;
-import com.bitfire.uracer.Input;
 import com.bitfire.uracer.Physics;
 import com.bitfire.uracer.utils.AMath;
 import com.bitfire.uracer.utils.VMath;
 
 public class CarSimulator
 {
-	public static final float CS_2PI = 6.28318530717958647692f;
-	public static final float CS_PI = 3.14159265358979323846f;
-	public static final float CS_PI_2 = 1.57079632679489661923f;
-	public static final float CS_PI_4 = 0.785398163397448309616f;
-	public static final float CS_PI_8 = 0.392699081698724154807f;
-
 	public CarDescriptor carDesc;
-	public CarInput carInput = new CarInput();
 	public Vector2 lastCarScreenPos = new Vector2(), lastTouchPos = new Vector2(), velocity = new Vector2(),
 			acceleration_wc = new Vector2(), heading = new Vector2(), side = new Vector2(), flatf = new Vector2(),
-			flatr = new Vector2(), ftraction = new Vector2(), resistance = new Vector2(), force = new Vector2(), acceleration = new Vector2();
+			flatr = new Vector2(), ftraction = new Vector2(), resistance = new Vector2(), force = new Vector2(),
+			acceleration = new Vector2();
 	public float thisSign, lastSign, lastTouchAngle;
 
-
-	public CarSimulator(CarDescriptor carDesc)
+	public CarSimulator( CarDescriptor carDesc )
 	{
 		this.carDesc = carDesc;
 		thisSign = lastSign = 1f;
@@ -37,83 +28,35 @@ public class CarSimulator
 		carDesc.set( carDesc );
 	}
 
-	public void updateHeading(Body body)
+	public void updateHeading( Body body )
 	{
-		VMath.fromAngle( heading, AMath.wrap2PI(body.getAngle()) );
+		VMath.fromAngle( heading, AMath.wrap2PI( body.getAngle() ) );
 		VMath.perp( side, heading );
 	}
 
-	public void acquireInput( Body body )
-	{
-		Vector2 carScreenPos = Director.screenPosFor( body );
-		Vector2 touchPos = Input.getXY();
-
-		carInput.updated = Input.isTouching();
-
-		lastCarScreenPos = carScreenPos;
-		lastTouchPos = touchPos;
-
-		if( carInput.updated )
-		{
-			float angle = 0;
-
-			// avoid singularity
-			if( (int)-carScreenPos.y + (int)touchPos.y == 0 )
-			{
-				angle = lastTouchAngle;
-			} else
-			{
-				angle = MathUtils.atan2( -carScreenPos.x + touchPos.x, -carScreenPos.y + touchPos.y );
-				lastTouchAngle = angle;
-			}
-
-			float wrapped = -body.getAngle();
-
-			angle -= CS_PI;
-			angle += wrapped;	// to local
-			if( angle < 0 )
-				angle += CS_2PI;
-
-			angle = -(angle - CS_2PI);
-			if( angle > CS_PI )
-				angle = angle - CS_2PI;
-
-			carInput.steerAngle = angle;
-
-			// compute throttle
-			carInput.throttle = touchPos.dst( carScreenPos );
-
-			// damp the throttle
-			if( !AMath.isZero( carInput.throttle ) )
-			{
-				carInput.throttle *= 1.5f;
-			}
-		}
-	}
-
-	public void applyInput()
+	public void applyInput( CarInput input )
 	{
 		float maxForce = carDesc.carModel.max_force;
 		boolean hasDir = false, hasSteer = false;
 
-		if( carInput.updated )
+		if( input.updated )
 		{
 			// throttle
-			if( carInput.throttle > 0 )
+			if( AMath.fixup( input.throttle ) > 0 )
 			{
 				// acceleration
-				if( carInput.throttle < maxForce )
-					carDesc.throttle = carInput.throttle;
+				if( input.throttle < maxForce )
+					carDesc.throttle = input.throttle;
 				else
 					carDesc.throttle = maxForce;
 
 				carDesc.brake = 0;
 				hasDir = true;
-			} else if( carInput.throttle < 0 )
+			} else if( AMath.fixup( input.throttle ) < 0 )
 			{
 				// deceleration
-				if( carInput.throttle > -maxForce )
-					carDesc.throttle = carInput.throttle;
+				if( input.throttle > -maxForce )
+					carDesc.throttle = input.throttle;
 				else
 					carDesc.throttle = -maxForce;
 
@@ -122,20 +65,20 @@ public class CarSimulator
 			}
 
 			// steering
-			if( carInput.steerAngle < 0 )
+			if( AMath.fixup( input.steerAngle ) < 0 )
 			{
 				// left
-				carDesc.steerangle = carInput.steerAngle;
-				if( carDesc.steerangle < -CS_PI_4 )
-					carDesc.steerangle = -CS_PI_4;
+				carDesc.steerangle = input.steerAngle;
+				if( carDesc.steerangle < -AMath.PI_4 )
+					carDesc.steerangle = -AMath.PI_4;
 
 				hasSteer = true;
-			} else if( carInput.steerAngle > 0 )
+			} else if( AMath.fixup( input.steerAngle ) > 0 )
 			{
 				// right
-				carDesc.steerangle = carInput.steerAngle;
-				if( carDesc.steerangle > CS_PI_4 )
-					carDesc.steerangle = CS_PI_4;
+				carDesc.steerangle = input.steerAngle;
+				if( carDesc.steerangle > AMath.PI_4 )
+					carDesc.steerangle = AMath.PI_4;
 
 				hasSteer = true;
 			}
@@ -163,7 +106,7 @@ public class CarSimulator
 		if( !hasSteer )
 		{
 			// gently auto steer to 0 degrees
-			if( Math.abs( carDesc.steerangle ) > 0.0001f )
+			if( AMath.fixup( carDesc.steerangle ) > 0 )
 				carDesc.steerangle *= 0.9f;
 			else
 				carDesc.steerangle = 0.f;
@@ -172,28 +115,31 @@ public class CarSimulator
 		carDesc.throttle = AMath.clamp( carDesc.throttle, -maxForce, maxForce );
 	}
 
-	public void step(Body body)
+	public void step( Body body )
 	{
-		float sn = MathUtils.sin( -AMath.wrap2PI(body.getAngle()) );
-		float cs = MathUtils.cos( -AMath.wrap2PI(body.getAngle()) );
+		float sn = MathUtils.sin( -AMath.wrap2PI( body.getAngle() ) );
+		float cs = MathUtils.cos( -AMath.wrap2PI( body.getAngle() ) );
 
 		//
-		// SAE convention: x is to the front of the car, y is to the right, z is down
+		// SAE convention: x is to the front of the car, y is to the right, z is
+		// down
 		//
 
 		// car's velocity: Vlat and Vlong
-		// transform velocity in world reference frame to velocity in car reference frame
-		velocity.x =  cs * carDesc.velocity_wc.y + sn * carDesc.velocity_wc.x;
+		// transform velocity in world reference frame to velocity in car
+		// reference frame
+		velocity.x = cs * carDesc.velocity_wc.y + sn * carDesc.velocity_wc.x;
 		velocity.y = -sn * carDesc.velocity_wc.y + cs * carDesc.velocity_wc.x;
 		VMath.fixup( velocity );
-
 
 		//
 		// Lateral force on wheels
 		//
 
-		// Resulting velocity of the wheels as result of the yaw rate of the car body
-		// v = yawrate * r where r is distance of wheel to CG (approx. half wheel base)
+		// Resulting velocity of the wheels as result of the yaw rate of the car
+		// body
+		// v = yawrate * r where r is distance of wheel to CG (approx. half
+		// wheel base)
 		// yawrate (ang.velocity) must be in rad/s
 		//
 		float yawspeed = carDesc.carModel.wheelbase * 0.5f * carDesc.angularvelocity;
@@ -201,12 +147,11 @@ public class CarSimulator
 
 		// velocity.x = fVLong_, velocity.y = fVLat_
 		// fix singularity
-		if( AMath.isZero( velocity.x) )
+		if( AMath.isZero( velocity.x ) )
 		{
 			rot_angle = 0;
 			sideslip = 0;
-		}
-		else
+		} else
 		{
 			// compute rotational angle
 			rot_angle = MathUtils.atan2( yawspeed, velocity.x );
@@ -217,31 +162,38 @@ public class CarSimulator
 
 		// Calculate slip angles for front and rear wheels (a.k.a. alpha)
 		float slipanglefront = sideslip + rot_angle - carDesc.steerangle;
-		float slipanglerear  = sideslip - rot_angle;
+		float slipanglerear = sideslip - rot_angle;
 
 		// weight per axle = half car mass times 1G (=9.8m/s^2)
 		// (precomputed during initialization)
-		//	weight = car->cartype->mass * 9.8f * 0.5f;
+		// weight = car->cartype->mass * 9.8f * 0.5f;
 
-		// lateral force on front wheels = (Ca * slip angle) capped to friction circle * load
+		// lateral force on front wheels = (Ca * slip angle) capped to friction
+		// circle * load
 		flatf.x = 0;
 		flatf.y = carDesc.carModel.stiffness_front * slipanglefront;
-		flatf.y = Math.min(carDesc.carModel.max_grip, flatf.y);
-		flatf.y = Math.max(-carDesc.carModel.max_grip, flatf.y);
+		flatf.y = Math.min( carDesc.carModel.max_grip, flatf.y );
+		flatf.y = Math.max( -carDesc.carModel.max_grip, flatf.y );
 		flatf.y *= carDesc.carModel.weight;
 
 		// lateral force on rear wheels
 		flatr.x = 0;
 		flatr.y = carDesc.carModel.stiffness_rear * slipanglerear;
-		flatr.y = Math.min(carDesc.carModel.max_grip, flatr.y);
-		flatr.y = Math.max(-carDesc.carModel.max_grip, flatr.y);
+		flatr.y = Math.min( carDesc.carModel.max_grip, flatr.y );
+		flatr.y = Math.max( -carDesc.carModel.max_grip, flatr.y );
 		flatr.y *= carDesc.carModel.weight;
 
-//		float s = SGN(velocity.x);
-		thisSign = AMath.lowpass( lastSign, AMath.sign(velocity.x), 0.2f );
+		// float s = SGN(velocity.x);
+		thisSign = AMath.lowpass( lastSign, AMath.sign( velocity.x ), 0.2f );
 		lastSign = thisSign;
 
-		ftraction.set( 100f * (carDesc.throttle - carDesc.brake * thisSign /*SGN(velocity.x)*/ ), 0 );
+		ftraction.set( 100f * (carDesc.throttle - carDesc.brake * thisSign /*
+																			 * SGN(
+																			 * velocity
+																			 * .
+																			 * x
+																			 * )
+																			 */), 0 );
 
 		// torque on body from lateral forces
 		float torque = carDesc.carModel.b * flatf.y - carDesc.carModel.c * flatr.y;
@@ -268,12 +220,12 @@ public class CarSimulator
 		acceleration.set( force.x * carDesc.carModel.invmass, force.y * carDesc.carModel.invmass );
 		VMath.fixup( acceleration );
 
-
 		//
 		// Velocity and position
 		//
 
-		// transform acceleration from car reference frame to world reference frame
+		// transform acceleration from car reference frame to world reference
+		// frame
 		acceleration_wc.x = cs * acceleration.y + sn * acceleration.x;
 		acceleration_wc.y = -sn * acceleration.y + cs * acceleration.x;
 		VMath.fixup( acceleration_wc );
@@ -287,15 +239,14 @@ public class CarSimulator
 		VMath.truncate( carDesc.velocity_wc, carDesc.carModel.max_speed );
 
 		// position is integrated velocity
-		//carDesc.position_wc.x +=  frametime * carDesc.velocity_wc.x;
-		//carDesc.position_wc.y += -frametime * carDesc.velocity_wc.y;
-
+		// carDesc.position_wc.x += frametime * carDesc.velocity_wc.x;
+		// carDesc.position_wc.y += -frametime * carDesc.velocity_wc.y;
 
 		//
 		// Angular acceleration, angular velocity and heading
 		//
 
-		//angular_acceleration = torque / carDesc.carModel.inertia;
+		// angular_acceleration = torque / carDesc.carModel.inertia;
 		float angular_acceleration = torque * carDesc.carModel.invinertia;
 
 		// integrate angular acceleration to get angular velocity
@@ -305,18 +256,19 @@ public class CarSimulator
 		carDesc.angularOrientation = Physics.dt * carDesc.angularvelocity;
 
 		// this angle is safe for subframe interpolation
-//		carDesc.angle += carDesc.angularOrientation;
+		// carDesc.angle += carDesc.angularOrientation;
 
-		// this angle is *NOT* safe for subframe interpolation (wrapped, one border could get lerped)!
-//		carDesc.wrapped_angle += carDesc.angularOrientation;
+		// this angle is *NOT* safe for subframe interpolation (wrapped, one
+		// border could get lerped)!
+		// carDesc.wrapped_angle += carDesc.angularOrientation;
 
-//		if( carDesc.wrapped_angle > CS_2PI )
-//			carDesc.wrapped_angle -= CS_2PI;
+		// if( carDesc.wrapped_angle > CS_2PI )
+		// carDesc.wrapped_angle -= CS_2PI;
 
-//		if( carDesc.wrapped_angle < 0 )
-//			carDesc.wrapped_angle += CS_2PI;
+		// if( carDesc.wrapped_angle < 0 )
+		// carDesc.wrapped_angle += CS_2PI;
 
-		updateHeading(body);
+		updateHeading( body );
 	}
 
 	public void resetPhysics()

@@ -18,6 +18,8 @@ import com.bitfire.uracer.VersionInfo;
 import com.bitfire.uracer.debug.Debug;
 import com.bitfire.uracer.entities.Car;
 import com.bitfire.uracer.entities.EntityManager;
+import com.bitfire.uracer.entities.GhostCar;
+import com.bitfire.uracer.simulation.CarContactFilter;
 import com.bitfire.uracer.simulation.CarContactListener;
 import com.bitfire.uracer.utils.Convert;
 
@@ -25,6 +27,9 @@ public class CarTestScreen extends Screen
 {
 	private FPSLogger fpslog = new FPSLogger();
 	private Car car;
+	private GhostCar ghost;
+	private CarContactListener carContact;
+	private CarContactFilter carFilter;
 
 	// test
 	private TestTilemap tm;
@@ -45,14 +50,19 @@ public class CarTestScreen extends Screen
 		Director.createFromPixels( this, Gdx.graphics.getWidth(), Gdx.graphics.getHeight(), new Vector2( 0, 0 ), scaled_worldsize_px );
 
 		Debug.create();
+		carContact = new CarContactListener();
+		carFilter = new CarContactFilter();
 		Physics.create( new Vector2( 0, 0 ), false );
-		Physics.world.setContactListener( new CarContactListener() );
+		Physics.world.setContactListener( carContact );
+		Physics.world.setContactFilter( carFilter );
 		EntityManager.create();
 
 //		Vector2 pos = Convert.tileToPx( 0, 0 ).add( Convert.scaledPixels(64,-64) );
 		Vector2 pos = Convert.scaledPosition(64, 64);
-		car = Car.create( tm.map, pos, 90, true );
-		tm.disposableMeshes.add( car.mesh );
+		car = Car.create( tm.map, pos, 90 );
+		car.record( true );
+		ghost = GhostCar.create( tm.map, Convert.scaledPosition(0,0), 90 );
+//		tm.disposableMeshes.add( car.mesh );
 	}
 
 	@Override
@@ -67,8 +77,15 @@ public class CarTestScreen extends Screen
 	{
 		if( Input.isOn( Keys.R ) )
 		{
-			car.reset();
+			car.resetPhysics();
 			car.setTransform( Convert.tileToPx( 3, 1 ), 90);
+		}
+
+		if( car.recordIndex() > 1100 && car.isRecording() )
+		{
+			// start replaying
+			car.record( false );
+			ghost.replay( car.replay() );
 		}
 
 		Vector3 pos = Director.pos();
@@ -89,8 +106,6 @@ public class CarTestScreen extends Screen
 	{
 		EntityManager.raiseOnBeforeRender( timeAliasingFactor );
 	}
-
-	private Vector2 tmpcam = new Vector2();
 
 	@Override
 	public void render( float temporalAliasingFactor )
@@ -140,7 +155,6 @@ public class CarTestScreen extends Screen
 
 		Debug.drawString( uRacerInfo, Gdx.graphics.getWidth()-sw, 0, fontW, fontH);
 		Debug.drawString( "cam x=" + cam.position.x + ", y=" + cam.position.y, 0, 200 );
-		Debug.drawString( "tmpcam x=" + tmpcam.x + ", y=" + tmpcam.y, 0, 207 );
 		Debug.drawString( "mouse x=" + Input.getMouseX() + ", y=" + Input.getMouseY(), 0, 214 );
 		Debug.drawString( "temp_alias=" + temporalAliasingFactor, 0, 221 );
 		Debug.drawString( "subframe=" + Config.SubframeInterpolation, 0, 228 );

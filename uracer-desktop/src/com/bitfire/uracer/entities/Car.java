@@ -1,44 +1,57 @@
 package com.bitfire.uracer.entities;
 
+import java.util.ArrayList;
+
 import com.badlogic.gdx.graphics.g2d.Sprite;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.graphics.g2d.tiled.TiledMap;
+import com.badlogic.gdx.math.MathUtils;
 import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.physics.box2d.BodyDef;
 import com.badlogic.gdx.physics.box2d.BodyDef.BodyType;
 import com.badlogic.gdx.physics.box2d.FixtureDef;
 import com.badlogic.gdx.physics.box2d.MassData;
 import com.badlogic.gdx.physics.box2d.PolygonShape;
-import com.bitfire.testtilemap.OrthographicAlignedMesh;
 import com.bitfire.uracer.Art;
-import com.bitfire.uracer.Config;
 import com.bitfire.uracer.Director;
 import com.bitfire.uracer.Input;
 import com.bitfire.uracer.Physics;
 import com.bitfire.uracer.debug.Debug;
 import com.bitfire.uracer.simulation.CarDescriptor;
+import com.bitfire.uracer.simulation.CarInput;
 import com.bitfire.uracer.simulation.CarSimulator;
+import com.bitfire.uracer.utils.AMath;
 import com.bitfire.uracer.utils.Convert;
 
 public class Car extends b2dEntity
 {
-	public OrthographicAlignedMesh mesh;
-	private Sprite sprite;
+//	public OrthographicAlignedMesh mesh;
+	protected Sprite sprite;
 	private boolean isPlayer;
 
 	private Vector2 impactVelocity = new Vector2();
+	protected Vector2 originalPosition = new Vector2();
+	protected float originalOrientation;
 	private CarDescriptor carDesc;
 	private CarSimulator carSim;
+	public CarInput carInput;
+	private ArrayList<CarInput> cil;
 
 	private PolygonShape shape;
 
-	private Car( TiledMap map, Vector2 position, float orientation, boolean isPlayer )
+	protected Car( TiledMap map, Vector2 position, float orientation, boolean isPlayer )
 	{
 		this.isPlayer = isPlayer;
+		this.originalPosition.set( position );
+		this.originalOrientation = orientation;
+		this.cil = new ArrayList<CarInput>(2500);
+
 		carDesc = CarDescriptor.create();
 		// carDesc.carModel.toModel1();
 
 		carSim = new CarSimulator( carDesc );
+		carInput = new CarInput();
+
 		impactVelocity.set( 0, 0 );
 
 		Vector2 half = new Vector2( (carDesc.carModel.width / 2f), (carDesc.carModel.length / 2f) );
@@ -76,20 +89,20 @@ public class Car extends b2dEntity
 
 		setTransform( position, orientation );
 
-		mesh = OrthographicAlignedMesh.create( map, "data/3d/palm.obj", "data/3d/palm.png", new Vector2( 1, 1 ) );
-		mesh.setScale( 3f );
-		mesh.setPositionOffsetPixels( 0, 0 );
+//		mesh = OrthographicAlignedMesh.create( map, "data/3d/palm.obj", "data/3d/palm.png", new Vector2( 1, 1 ) );
+//		mesh.setScale( 3f );
+//		mesh.setPositionOffsetPixels( 0, 0 );
 	}
 
 	// factory method
-	public static Car create( TiledMap map, Vector2 position, float orientation, boolean isPlayer )
+	public static Car create( TiledMap map, Vector2 position, float orientation )
 	{
-		Car car = new Car( map, position, orientation, isPlayer );
+		Car car = new Car( map, position, orientation, true );
 		EntityManager.add( car );
 		return car;
 	}
 
-	public void reset()
+	public void resetPhysics()
 	{
 		carSim.resetPhysics();
 	}
@@ -101,16 +114,89 @@ public class Car extends b2dEntity
 		carSim.updateHeading( body );
 	}
 
+	private float lastTouchAngle;
+	protected CarInput acquireInput()
+	{
+		Vector2 carScreenPos = Director.screenPosFor( body );
+		Vector2 touchPos = Input.getXY();
+
+		carInput.updated = Input.isTouching();
+
+		if( carInput.updated )
+		{
+			float angle = 0;
+
+			// avoid singularity
+			if( (int)-carScreenPos.y + (int)touchPos.y == 0 )
+			{
+				angle = lastTouchAngle;
+			} else
+			{
+				angle = MathUtils.atan2( -carScreenPos.x + touchPos.x, -carScreenPos.y + touchPos.y );
+				lastTouchAngle = angle;
+			}
+
+			float wrapped = -body.getAngle();
+
+			angle -= AMath.PI;
+			angle += wrapped; // to local
+			if( angle < 0 )
+				angle += AMath.TWO_PI;
+
+			angle = -(angle - AMath.TWO_PI);
+			if( angle > AMath.PI )
+				angle = angle - AMath.TWO_PI;
+
+			carInput.steerAngle = angle;
+
+			// compute throttle
+			carInput.throttle = touchPos.dst( carScreenPos );
+
+			// damp the throttle
+			if( !AMath.isZero( carInput.throttle ) )
+			{
+				carInput.throttle *= 1.5f;
+			}
+		}
+
+		if( isRecording )
+		{
+			CarInput ci = new CarInput( carInput );
+			cil.add( ci );
+		}
+
+		return carInput;
+	}
+
+	private boolean isRecording = false;
+
+	public void record(boolean rec)
+	{
+		isRecording = rec;
+	}
+
+	public boolean isRecording()
+	{
+		return this.isRecording;
+	}
+
+
+	public int recordIndex()
+	{
+		return cil.size();
+	}
+
+	public ArrayList<CarInput> replay()
+	{
+		return cil;
+	}
+
 	@Override
 	public void onBeforePhysicsSubstep()
 	{
 		super.onBeforePhysicsSubstep();
 
-		// retrieve and apply input
-		if( isPlayer )
-			carSim.acquireInput( body );
-
-		carSim.applyInput();
+		carSim.applyInput( acquireInput());
 		carSim.step( body );
 
 		// setup forces
@@ -129,12 +215,8 @@ public class Car extends b2dEntity
 	@Override
 	public void onRender( SpriteBatch batch )
 	{
-		mesh.setPosition(
-				stateRender.position.x * Config.TileMapZoomFactor,
-				-stateRender.position.y * Config.TileMapZoomFactor
-		);
-
-		mesh.setRotation( stateRender.orientation, 0, 1, 0 );
+//		mesh.setPosition( stateRender.position.x * Config.TileMapZoomFactor, -stateRender.position.y * Config.TileMapZoomFactor );
+//		mesh.setRotation( stateRender.orientation, 0, 1, 0 );
 
 		sprite.setPosition( stateRender.position.x - sprite.getOriginX(), stateRender.position.y - sprite.getOriginY() );
 		sprite.setRotation( stateRender.orientation );
@@ -151,5 +233,8 @@ public class Car extends b2dEntity
 		Debug.drawString( "screen x=" + Director.screenPosFor( body ).x + ",y=" + Director.screenPosFor( body ).y, 0, 80 );
 		Debug.drawString( "world x=" + body.getPosition().x + ",y=" + body.getPosition().y, 0, 87 );
 		Debug.drawString( "orient=" + body.getAngle(), 0, 94 );
+
+		Debug.drawString( "input count = " + cil.size(), 0, 106 );
+		Debug.drawString( "REC = " + isRecording, 0, 118 );
 	}
 }
