@@ -33,7 +33,6 @@ public class CarTestScreen extends Screen
 	// test
 	private TestTilemap tm;
 	private Vector2 carStartPos = new Vector2();
-	private Vector2 carStartTilePos = new Vector2();
 //	private Vector2 replayCarStartPos = new Vector2();
 //	private float replayCarStartOrient;
 
@@ -61,12 +60,11 @@ public class CarTestScreen extends Screen
 		EntityManager.create();
 
 		carStartPos.set( Convert.tileToPx( 1, 0 ).add( Convert.scaledPixels( 64, -64 ) ) );
-		carStartTilePos.set( Convert.pxToTile( carStartPos.x, carStartPos.y ) );
 
 		// carStartPos.set( Convert.scaledPosition( 64, 64 ) );
-		car = Car.create( tm.map /* for orthomesh support */, carStartPos, 90 );
+		car = Car.create( carStartPos, 90 );
 //		car.record( true );
-//		ghost = GhostCar.create( tm.map, Convert.scaledPosition( 0, 0 ), 90 );
+//		ghost = GhostCar.create( Convert.scaledPosition( 0, 0 ), 90 );
 
 		// render car's mesh
 		// tm.disposableMeshes.add( car.mesh );
@@ -87,20 +85,16 @@ public class CarTestScreen extends Screen
 	{
 		if( Input.isOn( Keys.R ) )
 		{
-//			ghost.resetPhysics();
+			// ghost.resetPhysics();
 			car.resetPhysics();
 			car.setTransform( carStartPos, 90 );
 		}
 
 		Vector3 pos = Director.pos();
-		if( Input.isOn( Keys.UP ) )
-			pos.y += 10;
-		if( Input.isOn( Keys.DOWN ) )
-			pos.y -= 10;
-		if( Input.isOn( Keys.LEFT ) )
-			pos.x -= 10;
-		if( Input.isOn( Keys.RIGHT ) )
-			pos.x += 10;
+		if( Input.isOn( Keys.UP ) ) pos.y += 10;
+		if( Input.isOn( Keys.DOWN ) ) pos.y -= 10;
+		if( Input.isOn( Keys.LEFT ) ) pos.x -= 10;
+		if( Input.isOn( Keys.RIGHT ) ) pos.x += 10;
 
 		EntityManager.raiseOnTick();
 

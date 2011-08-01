@@ -4,7 +4,6 @@ import java.util.ArrayList;
 
 import com.badlogic.gdx.graphics.g2d.Sprite;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
-import com.badlogic.gdx.graphics.g2d.tiled.TiledMap;
 import com.badlogic.gdx.math.MathUtils;
 import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.physics.box2d.BodyDef;
@@ -25,7 +24,7 @@ import com.bitfire.uracer.utils.Convert;
 
 public class Car extends b2dEntity
 {
-//	public OrthographicAlignedMesh mesh;
+	// public OrthographicAlignedMesh mesh;
 	protected Sprite sprite;
 	private boolean isPlayer;
 
@@ -39,12 +38,12 @@ public class Car extends b2dEntity
 
 	private PolygonShape shape;
 
-	protected Car( TiledMap map, Vector2 position, float orientation, boolean isPlayer )
+	protected Car( Vector2 position, float orientation, boolean isPlayer )
 	{
 		this.isPlayer = isPlayer;
 		this.originalPosition.set( position );
 		this.originalOrientation = orientation;
-		this.cil = new ArrayList<CarInput>(2500);
+		this.cil = new ArrayList<CarInput>( 2500 );
 
 		carDesc = CarDescriptor.create();
 		// carDesc.carModel.toModel1();
@@ -89,15 +88,16 @@ public class Car extends b2dEntity
 
 		setTransform( position, orientation );
 
-//		mesh = OrthographicAlignedMesh.create( map, "data/3d/palm.obj", "data/3d/palm.png", new Vector2( 1, 1 ) );
-//		mesh.setScale( 3f );
-//		mesh.setPositionOffsetPixels( 0, 0 );
+		// mesh = OrthographicAlignedMesh.create( map, "data/3d/palm.obj",
+		// "data/3d/palm.png", new Vector2( 1, 1 ) );
+		// mesh.setScale( 3f );
+		// mesh.setPositionOffsetPixels( 0, 0 );
 	}
 
 	// factory method
-	public static Car create( TiledMap map, Vector2 position, float orientation )
+	public static Car create( Vector2 position, float orientation )
 	{
-		Car car = new Car( map, position, orientation, true );
+		Car car = new Car( position, orientation, true );
 		EntityManager.add( car );
 		return car;
 	}
@@ -115,6 +115,7 @@ public class Car extends b2dEntity
 	}
 
 	private float lastTouchAngle;
+
 	protected CarInput acquireInput()
 	{
 		Vector2 carScreenPos = Director.screenPosFor( body );
@@ -159,45 +160,45 @@ public class Car extends b2dEntity
 			}
 		}
 
-//		if( isRecording )
-//		{
-//			CarInput ci = new CarInput( carInput );
-//			cil.add( ci );
-//		}
+		// if( isRecording )
+		// {
+		// CarInput ci = new CarInput( carInput );
+		// cil.add( ci );
+		// }
 
 		return carInput;
 	}
 
-//	private boolean isRecording = false;
-//
-//	public void record(boolean rec)
-//	{
-//		if(rec) cil.clear();
-//		isRecording = rec;
-//	}
-//
-//	public boolean isRecording()
-//	{
-//		return this.isRecording;
-//	}
-//
-//
-//	public int recordIndex()
-//	{
-//		return cil.size();
-//	}
-//
-//	public ArrayList<CarInput> getReplay()
-//	{
-//		return cil;
-//	}
+	// private boolean isRecording = false;
+	//
+	// public void record(boolean rec)
+	// {
+	// if(rec) cil.clear();
+	// isRecording = rec;
+	// }
+	//
+	// public boolean isRecording()
+	// {
+	// return this.isRecording;
+	// }
+	//
+	//
+	// public int recordIndex()
+	// {
+	// return cil.size();
+	// }
+	//
+	// public ArrayList<CarInput> getReplay()
+	// {
+	// return cil;
+	// }
 
 	@Override
 	public void onBeforePhysicsSubstep()
 	{
 		super.onBeforePhysicsSubstep();
 
-		carSim.applyInput( acquireInput());
+		carSim.applyInput( acquireInput() );
 		carSim.step( body );
 
 		// setup forces
@@ -216,16 +217,17 @@ public class Car extends b2dEntity
 	@Override
 	public void onRender( SpriteBatch batch )
 	{
-//		mesh.setPosition( stateRender.position.x * Config.TileMapZoomFactor, -stateRender.position.y * Config.TileMapZoomFactor );
-//		mesh.setRotation( stateRender.orientation, 0, 1, 0 );
+		// mesh.setPosition( stateRender.position.x * Config.TileMapZoomFactor,
+		// -stateRender.position.y * Config.TileMapZoomFactor );
+		// mesh.setRotation( stateRender.orientation, 0, 1, 0 );
 
 		sprite.setPosition( stateRender.position.x - sprite.getOriginX(), stateRender.position.y - sprite.getOriginY() );
 		sprite.setRotation( stateRender.orientation );
 		sprite.draw( batch );
 	}
 
-
 	private Vector2 tmp = new Vector2();
+
 	@Override
 	public void onDebug()
 	{
@@ -238,7 +240,7 @@ public class Car extends b2dEntity
 		Debug.drawString( "orient=" + body.getAngle(), 0, 94 );
 
 		Debug.drawString( "input count = " + cil.size(), 0, 106 );
-//		Debug.drawString( "REC = " + isRecording, 0, 118 );
+		// Debug.drawString( "REC = " + isRecording, 0, 118 );
 
 		tmp.set( Convert.pxToTile( stateRender.position.x, stateRender.position.y ) );
 		Debug.drawString( "on tile " + tmp, 0, 140 );

@@ -3,7 +3,6 @@ package com.bitfire.uracer.entities;
 import java.util.ArrayList;
 
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
-import com.badlogic.gdx.graphics.g2d.tiled.TiledMap;
 import com.badlogic.gdx.math.Vector2;
 import com.bitfire.uracer.debug.Debug;
 import com.bitfire.uracer.simulation.CarDescriptor;
@@ -20,15 +19,15 @@ public class GhostCar extends Car
 	private float replayStartOrientation;
 	private CarDescriptor replayCarDesc = new CarDescriptor();
 
-	private GhostCar( TiledMap map, Vector2 position, float orientation)
+	private GhostCar( Vector2 position, float orientation)
 	{
-		super(map, position, orientation, false);
+		super(position, orientation, false);
 	}
 
 	// factory method
-	public static GhostCar create( TiledMap map, Vector2 position, float orientation )
+	public static GhostCar create( Vector2 position, float orientation )
 	{
-		GhostCar car = new GhostCar( map, position, orientation);
+		GhostCar car = new GhostCar( position, orientation);
 		EntityManager.add( car );
 		return car;
 	}

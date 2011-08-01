@@ -38,7 +38,7 @@ public class Director
 		init();
 
 		camera = new OrthographicCamera( widthPx, heightPx );
-		halfViewport.set( camera.viewportWidth/2f, camera.viewportHeight/2f );
+		halfViewport.set( camera.viewportWidth / 2f, camera.viewportHeight / 2f );
 		Director.parent = parent;
 
 		// compute world size
@@ -76,10 +76,9 @@ public class Director
 
 	public static void setPositionPx( Vector2 pos, boolean flipY )
 	{
-		tmp.set(pos);
+		tmp.set( pos );
 
-		if(flipY)
-			tmp.y = worldSizePx.y - tmp.y;
+		if( flipY ) tmp.y = worldSizePx.y - tmp.y;
 
 		// ensure in bounds
 		if( tmp.x < boundsPx.x ) tmp.x = boundsPx.x;
@@ -92,7 +91,7 @@ public class Director
 
 	public static void setPositionMt( Vector2 pos, boolean flipY )
 	{
-		setPositionPx( Convert.mt2px(pos), flipY );
+		setPositionPx( Convert.mt2px( pos ), flipY );
 	}
 
 	public static Vector3 pos()
@@ -102,8 +101,8 @@ public class Director
 
 	public static Vector2 screenPosFor( Body body )
 	{
-		screenPosFor.x = Convert.mt2px(body.getPosition().x) - Director.getCamera().position.x + halfViewport.x;
-		screenPosFor.y = Director.getCamera().position.y - Convert.mt2px(body.getPosition().y) + halfViewport.y;
+		screenPosFor.x = Convert.mt2px( body.getPosition().x ) - Director.getCamera().position.x + halfViewport.x;
+		screenPosFor.y = Director.getCamera().position.y - Convert.mt2px( body.getPosition().y ) + halfViewport.y;
 		return screenPosFor;
 	}
 
