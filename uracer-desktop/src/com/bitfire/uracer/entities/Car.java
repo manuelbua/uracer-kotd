@@ -32,8 +32,8 @@ public class Car extends b2dEntity
 	private Vector2 impactVelocity = new Vector2();
 	protected Vector2 originalPosition = new Vector2();
 	protected float originalOrientation;
-	private CarDescriptor carDesc;
-	private CarSimulator carSim;
+	public CarDescriptor carDesc;
+	protected CarSimulator carSim;
 	public CarInput carInput;
 	private ArrayList<CarInput> cil;
 
@@ -159,37 +159,38 @@ public class Car extends b2dEntity
 			}
 		}
 
-		if( isRecording )
-		{
-			CarInput ci = new CarInput( carInput );
-			cil.add( ci );
-		}
+//		if( isRecording )
+//		{
+//			CarInput ci = new CarInput( carInput );
+//			cil.add( ci );
+//		}
 
 		return carInput;
 	}
 
-	private boolean isRecording = false;
-
-	public void record(boolean rec)
-	{
-		isRecording = rec;
-	}
-
-	public boolean isRecording()
-	{
-		return this.isRecording;
-	}
-
-
-	public int recordIndex()
-	{
-		return cil.size();
-	}
-
-	public ArrayList<CarInput> replay()
-	{
-		return cil;
-	}
+//	private boolean isRecording = false;
+//
+//	public void record(boolean rec)
+//	{
+//		if(rec) cil.clear();
+//		isRecording = rec;
+//	}
+//
+//	public boolean isRecording()
+//	{
+//		return this.isRecording;
+//	}
+//
+//
+//	public int recordIndex()
+//	{
+//		return cil.size();
+//	}
+//
+//	public ArrayList<CarInput> getReplay()
+//	{
+//		return cil;
+//	}
 
 	@Override
 	public void onBeforePhysicsSubstep()
@@ -223,6 +224,8 @@ public class Car extends b2dEntity
 		sprite.draw( batch );
 	}
 
+
+	private Vector2 tmp = new Vector2();
 	@Override
 	public void onDebug()
 	{
@@ -235,6 +238,10 @@ public class Car extends b2dEntity
 		Debug.drawString( "orient=" + body.getAngle(), 0, 94 );
 
 		Debug.drawString( "input count = " + cil.size(), 0, 106 );
-		Debug.drawString( "REC = " + isRecording, 0, 118 );
+//		Debug.drawString( "REC = " + isRecording, 0, 118 );
+
+		tmp.set( Convert.pxToTile( stateRender.position.x, stateRender.position.y ) );
+		Debug.drawString( "on tile " + tmp, 0, 140 );
+
 	}
 }

@@ -9,7 +9,7 @@ public class CarContactFilter implements ContactFilter
 	@Override
 	public boolean shouldCollide( Fixture fixtureA, Fixture fixtureB )
 	{
-		System.out.println(fixtureA);
+//		System.out.println(fixtureA);
 		return false;
 	}
 

@@ -81,4 +81,11 @@ public class VMath
 
 		return v;
 	}
+
+	public static final Vector2 truncateToInt(Vector2 v)
+	{
+		v.x = (int)v.x;
+		v.y = (int)v.y;
+		return v;
+	}
 }

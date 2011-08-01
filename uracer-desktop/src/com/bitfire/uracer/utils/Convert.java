@@ -51,6 +51,22 @@ public class Convert
 		return retTile;
 	}
 
+	public static Vector2 pxToTile( float x, float y )
+	{
+		retTile.set(x, y);
+		retTile.mul( 1f / scaled_tilesize );
+		retTile.y = tileMap.height - retTile.y;
+		VMath.truncateToInt( retTile );
+		return retTile;
+	}
+
+	public static Vector2 mtToTile( float x, float y )
+	{
+		retPx.set( mt2px(x), mt2px(y) );
+		retPx = pxToTile(retPx.x, retPx.y);
+		return retPx;
+	}
+
 	public static float scaledPixels( float pixels )
 	{
 		return pixels * invZoomFactor;

@@ -6,13 +6,19 @@ import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.graphics.g2d.tiled.TiledMap;
 import com.badlogic.gdx.math.Vector2;
 import com.bitfire.uracer.debug.Debug;
+import com.bitfire.uracer.simulation.CarDescriptor;
 import com.bitfire.uracer.simulation.CarInput;
 
 public class GhostCar extends Car
 {
 	private int playIndex = 0;
-	private ArrayList<CarInput> input = new ArrayList<CarInput>();
 	private CarInput carInput = new CarInput();
+
+	// replay data
+	private ArrayList<CarInput> input = new ArrayList<CarInput>();
+	private Vector2 replayStartPosition = new Vector2();
+	private float replayStartOrientation;
+	private CarDescriptor replayCarDesc = new CarDescriptor();
 
 	private GhostCar( TiledMap map, Vector2 position, float orientation)
 	{
@@ -33,13 +39,20 @@ public class GhostCar extends Car
 		{
 			playIndex = 0;
 			resetPhysics();
-			setTransform( originalPosition, originalOrientation );
+			this.carDesc.set( replayCarDesc );
+			this.carSim.carDesc.set( replayCarDesc );
+			setTransform( replayStartPosition, replayStartOrientation );
 		}
 	}
 
-	public void replay(ArrayList<CarInput> replay)
+	public void setReplay(ArrayList<CarInput> replay, Vector2 startPosition, float startOrientation, CarDescriptor carDesc )
 	{
-		input = replay;
+		input.clear();
+		input.addAll( replay );
+		System.out.println("Replaying "+input.size() + "(" + replay.size() + ")");
+		replayStartPosition = startPosition;
+		replayStartOrientation = startOrientation;
+		replayCarDesc.set( carDesc );
 		restartPlaying();
 	}
 
