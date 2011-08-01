@@ -5,11 +5,10 @@ import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Input.Keys;
 import com.badlogic.gdx.graphics.FPSLogger;
 import com.badlogic.gdx.graphics.GL20;
-import com.badlogic.gdx.graphics.OrthographicCamera;
-import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.physics.box2d.Body;
-import com.bitfire.uracer.Art;
+import com.bitfire.uracer.Config;
+import com.bitfire.uracer.Director;
 import com.bitfire.uracer.Input;
 import com.bitfire.uracer.Physics;
 import com.bitfire.uracer.debug.Debug;
@@ -17,40 +16,28 @@ import com.bitfire.uracer.entities.Disc;
 import com.bitfire.uracer.entities.EntityManager;
 import com.bitfire.uracer.entities.Rope;
 import com.bitfire.uracer.utils.Box2DFactory;
+import com.bitfire.uracer.utils.Convert;
 
 public class TestScreen extends Screen
 {
 	private FPSLogger fpslog = new FPSLogger();
 	private Debug dbg;
 
-	private OrthographicCamera camScreen, camWorld;
-	private SpriteBatch entitiesBatch;
 	private Vector2 gravity = new Vector2();
 
 	public TestScreen()
 	{
-		dbg = new Debug( this );
+		Debug.create();
 		Physics.create( new Vector2( 0, -10 ), false );
-		EntityManager.clear();
-		entitiesBatch = new SpriteBatch();
-
-		Vector2 campos = new Vector2();
-		campos.x = 0;
-		campos.y = 0;
-
-		camWorld = new OrthographicCamera( Physics.s2w( Gdx.graphics.getWidth() ), Physics.s2w( Gdx.graphics.getHeight() ) );
-		camWorld.position.set( Physics.s2w( campos.x ), Physics.s2w( campos.y ), 0 );
-
-		camScreen = new OrthographicCamera( Gdx.graphics.getWidth(), Gdx.graphics.getHeight() );
-		camScreen.position.set( campos.x, campos.y, 0 );
-
+		EntityManager.create();
+		Director.createFromPixels( this, Gdx.graphics.getWidth(), Gdx.graphics.getHeight(), new Vector2( 0, 0 ), new Vector2(100,100) );
 		populateWorld();
 	}
 
 	private void populateWorld()
 	{
-		float w = Physics.s2w( Gdx.graphics.getWidth() );
-		float h = Physics.s2w( Gdx.graphics.getHeight() );
+		float w = Convert.px2mt( Gdx.graphics.getWidth() );
+		float h = Convert.px2mt( Gdx.graphics.getHeight() );
 
 		Box2DFactory.createThinWall( Physics.world, -w / 2, -h / 2, -w / 2, h / 2, 0.1f );
 		Box2DFactory.createThinWall( Physics.world, w / 2, -h / 2, w / 2, h / 2, 0.1f );
@@ -58,11 +45,14 @@ public class TestScreen extends Screen
 		Box2DFactory.createThinWall( Physics.world, -w / 2, h / 2, w / 2, h / 2, 0.1f );
 
 		Rope.create( 6, ground );
-		Disc.create( new Vector2( 0, 2 ), 0.5f );
-		Disc.create( new Vector2( -1, 3 ), 0.5f );
-		Disc.create( new Vector2( 1, 2.5f ), 0.5f );
-		Disc.create( new Vector2( 0, 0.5f ), 0.2f );
-		Disc.create( new Vector2( -1.25f, 0.5f ), 0.32f );
+
+		for( int i = 0; i < 50; i++ )
+		{
+			float x = (random.nextFloat() - 0.5f) * 2f;
+			float y = (random.nextFloat() - 0.5f) * 2f;
+			float radius = (random.nextFloat() + .1f) / 2f;
+			Disc.create( new Vector2( x, y ), radius );
+		}
 	}
 
 	@Override
@@ -82,6 +72,14 @@ public class TestScreen extends Screen
 			System.out.println( "JUMP" );
 		}
 
+		if( Input.isTouching() )
+		{
+			Config.PhysicsTimeMultiplier = 0.1f;
+		} else
+		{
+			Config.PhysicsTimeMultiplier = 1f;
+		}
+
 		if( Gdx.app.getType() == ApplicationType.Android )
 		{
 			gravity.x = Input.getAccelY();
@@ -99,33 +97,22 @@ public class TestScreen extends Screen
 		gl.glClear( GL20.GL_COLOR_BUFFER_BIT );
 
 		// render background
+		// batch.begin();
+		// draw( Art.titleScreen, 0, 0, Gdx.graphics.getWidth(),
+		// Gdx.graphics.getHeight() );
+		// batch.end();
 
-		spriteBatch.begin();
-		draw( Art.titleScreen, 0, 0 );
-		spriteBatch.end();
-
-		// render box2d world
-
-		camScreen.update();
-		camWorld.update();
-
-		// all-in-EntityManager
-		entitiesBatch.setProjectionMatrix( camScreen.projection );
-		entitiesBatch.setTransformMatrix( camScreen.view );
-		entitiesBatch.begin();
-		EntityManager.raiseOnRender( entitiesBatch, temporalAliasingFactor );
-		entitiesBatch.end();
+		Director.update();
+		EntityManager.raiseOnRender( temporalAliasingFactor );
 
 		// debug
 
-		if( Gdx.app.getType() != ApplicationType.Android )
+		if( Gdx.app.getType() == ApplicationType.Desktop )
 		{
-			dbg.renderB2dWorld( camWorld.combined );
-
-			spriteBatch.begin();
-			dbg.renderFrameStats( temporalAliasingFactor );
-			spriteBatch.end();
+			Debug.renderB2dWorld( Director.getMatViewProjMt() );
 		}
+
+		Debug.renderFrameStats( temporalAliasingFactor );
 
 		fpslog.log();
 	}

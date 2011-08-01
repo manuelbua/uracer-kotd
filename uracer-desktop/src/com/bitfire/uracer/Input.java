@@ -3,6 +3,7 @@ package com.bitfire.uracer;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Input.Peripheral;
 import com.badlogic.gdx.InputAdapter;
+import com.badlogic.gdx.math.Vector2;
 
 public class Input extends InputAdapter
 {
@@ -10,10 +11,15 @@ public class Input extends InputAdapter
 	private static int[] buttons;
 
 	// touches
+	private static Vector2 touchCoords;
 	private static int touchX;
 	private static int touchY;
 	private static boolean is_touching;
 	private static boolean is_dragging;
+
+	// mouse (desktop only)
+	private static int mouseX, mouseY;
+	private static Vector2 mouseCoords;
 
 	// accelerometer
 	private static float accelX, accelY, accelZ;
@@ -46,6 +52,26 @@ public class Input extends InputAdapter
 	public static int getY()
 	{
 		return touchY;
+	}
+
+	public static Vector2 getXY()
+	{
+		return touchCoords;
+	}
+
+	public static int getMouseX()
+	{
+		return mouseX;
+	}
+
+	public static int getMouseY()
+	{
+		return mouseY;
+	}
+
+	public static Vector2 getMouseXY()
+	{
+		return mouseCoords;
 	}
 
 	public static float getAccelX()
@@ -99,6 +125,8 @@ public class Input extends InputAdapter
 		is_touching = is_dragging = false;
 		touchX = touchY = 0;
 		accelX = accelY = accelZ = 0;
+		touchCoords = new Vector2(0,0);
+		mouseCoords = new Vector2(0,0);
 
 		FLAG_REAL_ON = (1 << 0);
 		FLAG_DELAY_ON = (1 << 1);
@@ -119,6 +147,10 @@ public class Input extends InputAdapter
 			accelY = Gdx.input.getAccelerometerY();
 			accelZ = Gdx.input.getAccelerometerZ();
 		}
+
+		mouseX = Gdx.input.getX();
+		mouseY = Gdx.input.getY();
+		mouseCoords.set(mouseX, mouseY);
 
 		int flag;
 		for( int i = 0; i < buttons.length; i++ )
@@ -176,6 +208,8 @@ public class Input extends InputAdapter
 	{
 		touchX = x;
 		touchY = y;
+		touchCoords.set(x, y);
+
 		is_touching = true;
 		is_dragging = false;
 		return false;
@@ -186,6 +220,8 @@ public class Input extends InputAdapter
 	{
 		touchX = x;
 		touchY = y;
+		touchCoords.set(x, y);
+
 		is_dragging = true;
 		return false;
 	}
@@ -195,6 +231,8 @@ public class Input extends InputAdapter
 	{
 		touchX = x;
 		touchY = y;
+		touchCoords.set(x, y);
+
 		is_touching = false;
 		is_dragging = false;
 		return false;

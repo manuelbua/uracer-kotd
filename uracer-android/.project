@@ -3,6 +3,7 @@
 	<name>uracer-android</name>
 	<comment></comment>
 	<projects>
+		<project>test-tilemap</project>
 		<project>uracer-desktop</project>
 	</projects>
 	<buildSpec>

@@ -3,6 +3,7 @@
 	<name>uracer-desktop</name>
 	<comment></comment>
 	<projects>
+		<project>test-tilemap</project>
 	</projects>
 	<buildSpec>
 		<buildCommand>

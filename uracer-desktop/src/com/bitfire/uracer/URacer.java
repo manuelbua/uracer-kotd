@@ -2,8 +2,8 @@ package com.bitfire.uracer;
 
 import com.badlogic.gdx.ApplicationListener;
 import com.badlogic.gdx.Gdx;
+import com.bitfire.uracer.screen.CarTestScreen;
 import com.bitfire.uracer.screen.Screen;
-import com.bitfire.uracer.screen.TestScreen;
 
 public class URacer implements ApplicationListener
 {
@@ -11,7 +11,7 @@ public class URacer implements ApplicationListener
 	private Input input = new Input();
 	private boolean running = false;
 
-	private float timeAliasingAlpha = 0;
+	private float temporalAliasing = 0;
 	private float timeAccumSecs = 0;
 	private float oneOnOneBillion = 0;
 
@@ -22,7 +22,6 @@ public class URacer implements ApplicationListener
 	@Override
 	public void create()
 	{
-		Config.asDefault();
 		Art.load();
 		input.releaseAllKeys();
 
@@ -31,9 +30,9 @@ public class URacer implements ApplicationListener
 
 		running = true;
 		oneOnOneBillion = 1.0f / 1000000000.0f;
-		timeAliasingAlpha = 0;
+		temporalAliasing = 0;
 
-		setScreen( new TestScreen() );
+		setScreen( new CarTestScreen() );
 	}
 
 	@Override
@@ -47,22 +46,28 @@ public class URacer implements ApplicationListener
 
 		long startTime = System.nanoTime();
 		{
-			timeAccumSecs += deltaTime * Physics.timeMultiplier;
+			timeAccumSecs += deltaTime * Config.PhysicsTimeMultiplier;
 			while( timeAccumSecs > Physics.dt )
 			{
 				input.tick();
-				screen.tick( /*input*/ );
+				screen.tick( /* input */);
 
 				timeAccumSecs -= Physics.dt;
 			}
 		}
 		physicsTime = (System.nanoTime() - startTime) * oneOnOneBillion;
 
-		timeAliasingAlpha = timeAccumSecs * Physics.timestepHz; // opt away the divide-by-one-on-timestep
+		// compute the temporal aliasing factor, entities will render
+		// themselves accordingly to this to avoid flickering and permit
+		// slow-motion effects without artifacts.
+		// (this imply accepting a one-frame-behind behavior)
+		temporalAliasing = timeAccumSecs * Config.PhysicsTimestepHz;
+
+		screen.beforeRender( temporalAliasing );
 
 		startTime = System.nanoTime();
 		{
-			screen.render( timeAliasingAlpha );
+			screen.render( temporalAliasing );
 		}
 		graphicsTime = (System.nanoTime() - startTime) * oneOnOneBillion;
 	}
@@ -93,12 +98,16 @@ public class URacer implements ApplicationListener
 	public void setScreen( Screen newScreen )
 	{
 		if( screen != null )
+		{
 			screen.removed();
+		}
 
 		screen = newScreen;
 
 		if( screen != null )
+		{
 			screen.init( this );
+		}
 	}
 
 	public boolean isRunning()

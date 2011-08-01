@@ -2,3 +2,4 @@
 /uracer-android/bin
 /uracer-android/gen
 *.so
+*.log
