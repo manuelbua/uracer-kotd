@@ -2,7 +2,6 @@ package com.bitfire.uracer;
 
 public class Config
 {
-
 	// whether or not subframe interpolable entities should
 	// perform interpolation
 	public static boolean SubframeInterpolation;
@@ -16,14 +15,11 @@ public class Config
 	// defines time modifier
 	public static float PhysicsTimeMultiplier;
 
-	// tilemap zoom factor
-	public static float TileMapZoomFactor;
-
-	public static void asDefault( float tileMapZoomFactor )
+	// set default configuration values
+	public static void asDefault()
 	{
-		TileMapZoomFactor = tileMapZoomFactor;
 		SubframeInterpolation = true;
-		PixelsPerMeter = 9.0f / TileMapZoomFactor;
+		PixelsPerMeter = 9.0f;
 		PhysicsTimestepHz = 60.0f;
 		PhysicsTimeMultiplier = 1f;
 	}

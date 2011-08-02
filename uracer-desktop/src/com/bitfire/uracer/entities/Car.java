@@ -119,8 +119,8 @@ public class Car extends b2dEntity
 	protected CarInput acquireInput()
 	{
 		Vector2 carScreenPos = Director.screenPosFor( body );
-		Vector2 touchPos = Input.getXY();
 
+		Vector2 touchPos = Input.getXY();
 		carInput.updated = Input.isTouching();
 
 		if( carInput.updated )
