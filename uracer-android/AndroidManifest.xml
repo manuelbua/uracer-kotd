@@ -1,8 +1,9 @@
 <?xml version="1.0" encoding="utf-8"?>
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
       package="com.bitfire.uracer"
-      android:versionCode="17"
-      android:versionName="v0.0.5-1-gf04a39b/fix-inverted-y">
+      android:versionCode="18"
+      android:versionName="v0.0.5-2-g433ab6c/fix-inverted-y">
+    <supports-screens android:anyDensity="true" />
     <uses-sdk android:minSdkVersion="7" />
     <application android:icon="@drawable/icon" android:label="@string/app_name">
         <activity android:name="com.bitfire.uracer.URacerAndroid"
