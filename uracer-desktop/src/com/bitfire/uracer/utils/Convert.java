@@ -2,24 +2,21 @@ package com.bitfire.uracer.utils;
 
 import com.badlogic.gdx.graphics.g2d.tiled.TiledMap;
 import com.badlogic.gdx.math.Vector2;
-import com.bitfire.testtilemap.ScalingStrategy;
 import com.bitfire.uracer.Config;
-import com.bitfire.uracer.Director;
+import com.bitfire.uracer.tiled.ScalingStrategy;
 
 public class Convert
 {
 	// for return values
-	private static ScalingStrategy strategy;
 	private static TiledMap tileMap;
 
 	private static float scaled_tilesize;
 	private static float invZoomFactor;
 
-	public static void init(ScalingStrategy s, TiledMap map)
+	public static void init(ScalingStrategy strategy, TiledMap map)
 	{
-		strategy = s;
 		tileMap = map;
-		invZoomFactor = 1f / strategy.tileMapZoomFactor;
+		invZoomFactor = strategy.invTileMapZoomFactor;
 		scaled_tilesize = tileMap.tileWidth * invZoomFactor;
 
 		ret = new Vector2();
@@ -84,17 +81,5 @@ public class Convert
 	{
 		retPx.set( a, b );
 		return scaledPixels(retPx);
-	}
-
-	public static Vector2 scaledPosition( Vector2 position )
-	{
-		return scaledPosition(position.x, position.y);
-	}
-
-	public static Vector2 scaledPosition( float x, float y )
-	{
-		retPx = scaledPixels(retPx.set( x, y ));
-		retPx.y = Director.worldSizePx.y - retPx.y;
-		return retPx;
 	}
 }
