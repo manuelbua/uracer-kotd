@@ -12,6 +12,8 @@ public class EntityManager
 	private static Array<Entity> entities;
 	private static Array<SubframeInterpolableEntity> sfi_entities;
 
+	// private static ArrayList<OrthographicAlignedMesh> meshes;
+
 	public static void add( Entity ent )
 	{
 		entities.add( ent );
@@ -34,6 +36,7 @@ public class EntityManager
 	{
 		entities.clear();
 		sfi_entities.clear();
+		// meshes.clear();
 	}
 
 	private static void raiseOnBeforePhysicsSubstep()
