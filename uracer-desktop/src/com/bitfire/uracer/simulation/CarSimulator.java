@@ -117,8 +117,8 @@ public class CarSimulator
 
 	public void step( Body body )
 	{
-		float sn = MathUtils.sin( -AMath.wrap2PI( body.getAngle() ) );
-		float cs = MathUtils.cos( -AMath.wrap2PI( body.getAngle() ) );
+		float sn = MathUtils.sin( AMath.normalRelativeAngle( -body.getAngle() ) );
+		float cs = MathUtils.cos( AMath.normalRelativeAngle( -body.getAngle() ) );
 
 		//
 		// SAE convention: x is to the front of the car, y is to the right, z is
