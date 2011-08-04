@@ -7,7 +7,6 @@ import com.bitfire.uracer.tiled.ScalingStrategy;
 
 public class Convert
 {
-	// for return values
 	private static TiledMap tileMap;
 
 	private static float scaled_tilesize;

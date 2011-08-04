@@ -13,7 +13,7 @@ import com.bitfire.uracer.utils.Convert;
 
 public class Director
 {
-	public static Vector2 worldSizePx, worldSizeMt;
+	public static Vector2 worldSizeScaledPx, worldSizeScaledMt;
 	public static ScalingStrategy scalingStrategy;
 
 	private static OrthographicCamera camera;
@@ -26,8 +26,8 @@ public class Director
 
 	public static void init()
 	{
-		worldSizePx = new Vector2();
-		worldSizeMt = new Vector2();
+		worldSizeScaledPx = new Vector2();
+		worldSizeScaledMt = new Vector2();
 		screenPosFor = new Vector2();
 		mvpMt = new Matrix4();
 		mvpPx = new Matrix4();
@@ -59,15 +59,15 @@ public class Director
 		Convert.init( scalingStrategy, l.map );
 
 		// compute world size
-		Director.worldSizePx.set( l.map.width * l.map.tileWidth, l.map.height * l.map.tileHeight );
-		Director.worldSizePx.mul( scalingStrategy.invTileMapZoomFactor );
-		Director.worldSizeMt = Convert.px2mt( worldSizePx );
+		Director.worldSizeScaledPx.set( l.map.width * l.map.tileWidth, l.map.height * l.map.tileHeight );
+		Director.worldSizeScaledPx.mul( scalingStrategy.invTileMapZoomFactor );
+		Director.worldSizeScaledMt = Convert.px2mt( worldSizeScaledPx );
 
 		// compute camera bounds
 		boundsPx.x = halfViewport.x;
-		boundsPx.width = Director.worldSizePx.x - halfViewport.x;
+		boundsPx.width = Director.worldSizeScaledPx.x - halfViewport.x;
 		boundsPx.height = halfViewport.y;
-		boundsPx.y = Director.worldSizePx.y - halfViewport.y;
+		boundsPx.y = Director.worldSizeScaledPx.y - halfViewport.y;
 
 		return l;
 	}
@@ -95,7 +95,7 @@ public class Director
 	{
 		tmp.set( pos );
 
-		if( flipY ) tmp.y = worldSizePx.y - tmp.y;
+		if( flipY ) tmp.y = worldSizeScaledPx.y - tmp.y;
 
 		// ensure in bounds
 		if( tmp.x < boundsPx.x ) tmp.x = boundsPx.x;
@@ -146,7 +146,7 @@ public class Director
 	public static Vector2 positionFor( float x, float y )
 	{
 		tmp = Convert.scaledPixels( tmp.set( x, y ) );
-		tmp.y = Director.worldSizePx.y - tmp.y;
+		tmp.y = Director.worldSizeScaledPx.y - tmp.y;
 		return tmp;
 	}
 }
