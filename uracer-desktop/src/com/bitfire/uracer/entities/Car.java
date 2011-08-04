@@ -46,7 +46,7 @@ public class Car extends b2dEntity
 		this.cil = new ArrayList<CarInput>( 2500 );
 
 		carDesc = CarDescriptor.create();
-		// carDesc.carModel.toModel1();
+		carDesc.carModel.toModel1();
 
 		carSim = new CarSimulator( carDesc );
 		carInput = new CarInput();

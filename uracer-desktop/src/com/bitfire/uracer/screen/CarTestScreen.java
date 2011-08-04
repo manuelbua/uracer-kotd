@@ -144,6 +144,7 @@ public class CarTestScreen extends Screen
 		// follow the car
 		Director.setPositionPx( car.state().position, false );
 
+		level.syncWithCam( Director.getCamera() );
 		level.renderTilemap();
 		EntityManager.raiseOnRender( temporalAliasingFactor );
 		level.renderMeshes(gl);

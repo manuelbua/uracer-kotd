@@ -80,38 +80,26 @@ public class CarModel
 
 	public void toModel1()
 	{
-		// physical model
-		h = 1.f; // m
-		mass = 1500.f; // kg
-		invmass = 1.f / mass;
-		inertia = 1500.f; // kg.m
-		invinertia = 1.f / inertia;
+		toDefault();
 
+		// physical model
 		b = 1.f; // m
 		c = 1.f; // m
-		width = 2.1f; // m
-		length = 3.5f; // m must be > wheelbase
-
-		wheellength = 0.7f;
-		wheelwidth = 0.3f;
-
-		// weight per axle = half car mass times 1G (=9.8m/s^2)
-		weight = mass * 9.8f * 0.5f;
-		wheelbase = b + c;
+		width = 2.3f; // m
+		length = 3.5f; // m (must be > wheelbase)
 
 		// physical behavior
-		drag = 10.f; // factor for air resistance (drag)
+		drag = 12.f; // factor for air resistance (drag)
 		resistance = 30.f; // factor for rolling resistance
-		stiffness_rear = -5.2f; // front cornering stiffness
-		stiffness_front = -5.0f; // rear cornering stiffness
-		max_grip = 6.f; // maximum (normalised) friction force, =diameter of
-						// friction circle
+		stiffness_rear = -6.7f; // front cornering stiffness
+		stiffness_front = -6.7f; // rear cornering stiffness
+		max_grip = 100f; // maximum (normalised) friction force, =diameter of friction circle
 
 		max_speed = 35.f;
 		max_force = 300.f;
 
 		density = 1.f;
-		friction = .4f;
-		restitution = 0.f;
+		friction = .5f;
+		restitution = 0.1f;
 	}
 }

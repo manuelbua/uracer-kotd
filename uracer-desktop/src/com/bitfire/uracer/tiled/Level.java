@@ -43,13 +43,27 @@ public class Level
 		createObjects();
 	}
 
-	public void renderTilemap()
+	public void syncWithCam( OrthographicCamera camera_ )
 	{
 		// scale position
-		camOrtho.position.set( Director.getCamera().position );
+		camOrtho.position.set( camera_.position );
 		camOrtho.position.mul( Director.scalingStrategy.tileMapZoomFactor );
-		updateCams( Gdx.graphics.getWidth(), Gdx.graphics.getHeight() );
 
+		camOrtho.viewportWidth = Gdx.graphics.getWidth();
+		camOrtho.viewportHeight = Gdx.graphics.getHeight();
+		camOrtho.zoom = Director.scalingStrategy.tileMapZoomFactor;
+		camOrtho.update();
+
+		camPersp.viewportWidth = camOrtho.viewportWidth;
+		camPersp.viewportHeight = camOrtho.viewportHeight;
+		camPersp.position.set( camOrtho.position.x, camOrtho.position.y, camPerspElevation );
+		camPersp.fieldOfView = Director.scalingStrategy.verticalFov;
+		camPersp.update();
+
+	}
+
+	public void renderTilemap()
+	{
 		renderer.render( camOrtho );
 	}
 
@@ -67,20 +81,6 @@ public class Level
 
 		gl.glDisable( GL20.GL_DEPTH_TEST );
 		gl.glDisable( GL20.GL_CULL_FACE );
-	}
-
-	private void updateCams( int viewportWidth, int viewportHeight )
-	{
-		camOrtho.viewportWidth = viewportWidth;
-		camOrtho.viewportHeight = viewportHeight;
-		camOrtho.zoom = Director.scalingStrategy.tileMapZoomFactor;
-		camOrtho.update();
-
-		camPersp.viewportWidth = camOrtho.viewportWidth;
-		camPersp.viewportHeight = camOrtho.viewportHeight;
-		camPersp.position.set( camOrtho.position.x, camOrtho.position.y, camPerspElevation );
-		camPersp.fieldOfView = Director.scalingStrategy.verticalFov;
-		camPersp.update();
 	}
 
 	private void createCams()
