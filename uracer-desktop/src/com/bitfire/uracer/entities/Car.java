@@ -217,8 +217,8 @@ public class Car extends b2dEntity
 	@Override
 	public void onRender( SpriteBatch batch )
 	{
-		// mesh.setPosition( stateRender.position.x * Config.TileMapZoomFactor,
-		// -stateRender.position.y * Config.TileMapZoomFactor );
+		// reverse y
+		// mesh.setPosition( stateRender.position.x * Config.TileMapZoomFactor, -stateRender.position.y * Config.TileMapZoomFactor );
 		// mesh.setRotation( stateRender.orientation, 0, 1, 0 );
 
 		sprite.setPosition( stateRender.position.x - sprite.getOriginX(), stateRender.position.y - sprite.getOriginY() );
