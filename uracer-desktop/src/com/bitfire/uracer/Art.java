@@ -14,6 +14,7 @@ public class Art
 	public static TextureRegion rope;
 	public static TextureRegion disc;
 	public static TextureAtlas cars;
+	public static TextureRegion blackCar;
 
 	public static void load()
 	{
@@ -23,6 +24,7 @@ public class Art
 		rope = new TextureRegion( new Texture( Gdx.files.internal( "data/base/rope.png" ) ), 0, 0, 64, 18 );
 		disc = new TextureRegion( new Texture( Gdx.files.internal( "data/base/disc.png" ) ), 0, 0, 256, 256 );
 		cars = new TextureAtlas(Gdx.files.internal("data/base/cars.pack"));
+		blackCar = new TextureRegion( new Texture(Gdx.files.internal("data/base/black-car.png")), 0, 0, 210, 424 );
 	}
 
 	private static TextureRegion[][] split( String name, int width, int height )

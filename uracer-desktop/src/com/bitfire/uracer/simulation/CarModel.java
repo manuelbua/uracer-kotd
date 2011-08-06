@@ -102,4 +102,14 @@ public class CarModel
 		friction = .5f;
 		restitution = 0.1f;
 	}
+
+	public void toBlackCar()
+	{
+		toModel1();
+		width = 3.1f; // m
+		length = 4.5f; // m (must be > wheelbase)
+		max_grip = 10f;
+		stiffness_rear = -4.7f; // front cornering stiffness
+		stiffness_front = -4.7f; // rear cornering stiffness
+	}
 }
