@@ -9,9 +9,6 @@ public abstract class Screen
 	protected static Random random = new Random();
 	private URacer uracer;
 
-	private float Near = 0f;
-	private float Far = 100f;
-
 	public final void init( URacer uracer )
 	{
 		this.uracer = uracer;
