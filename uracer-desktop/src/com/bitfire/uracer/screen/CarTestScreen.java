@@ -63,6 +63,7 @@ public class CarTestScreen extends Screen
 		rb = new RadialBlur();
 		rb.setEnabled( true );
 		PostProcessor.init( Gdx.graphics.getWidth(), Gdx.graphics.getHeight() );
+//		PostProcessor.init( 512, 512 );
 		PostProcessor.setEffect( rb );
 	}
 

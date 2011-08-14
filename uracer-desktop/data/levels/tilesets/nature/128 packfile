@@ -5,63 +5,63 @@ filter: Nearest,Nearest
 repeat: none
 128
   rotate: false
-  xy: 0, 0
+  xy: 2, 2
   size: 128, 128
   orig: 128, 128
   offset: 0, 0
   index: 59
 128
   rotate: false
-  xy: 130, 0
+  xy: 132, 2
   size: 128, 128
   orig: 128, 128
   offset: 0, 0
   index: 58
 128
   rotate: false
-  xy: 260, 0
+  xy: 262, 2
   size: 128, 128
   orig: 128, 128
   offset: 0, 0
   index: 57
 128
   rotate: false
-  xy: 0, 130
+  xy: 2, 132
   size: 128, 128
   orig: 128, 128
   offset: 0, 0
   index: 56
 128
   rotate: false
-  xy: 0, 260
+  xy: 2, 262
   size: 128, 128
   orig: 128, 128
   offset: 0, 0
   index: 55
 128
   rotate: false
-  xy: 130, 130
+  xy: 132, 132
   size: 128, 128
   orig: 128, 128
   offset: 0, 0
   index: 54
 128
   rotate: false
-  xy: 260, 130
+  xy: 262, 132
   size: 128, 128
   orig: 128, 128
   offset: 0, 0
   index: 53
 128
   rotate: false
-  xy: 130, 260
+  xy: 132, 262
   size: 128, 128
   orig: 128, 128
   offset: 0, 0
   index: 52
 128
   rotate: false
-  xy: 260, 260
+  xy: 262, 262
   size: 128, 128
   orig: 128, 128
   offset: 0, 0
@@ -73,63 +73,63 @@ filter: Nearest,Nearest
 repeat: none
 128
   rotate: false
-  xy: 0, 0
+  xy: 2, 2
   size: 128, 128
   orig: 128, 128
   offset: 0, 0
   index: 50
 128
   rotate: false
-  xy: 130, 0
+  xy: 132, 2
   size: 128, 128
   orig: 128, 128
   offset: 0, 0
   index: 49
 128
   rotate: false
-  xy: 260, 0
+  xy: 262, 2
   size: 128, 128
   orig: 128, 128
   offset: 0, 0
   index: 48
 128
   rotate: false
-  xy: 0, 130
+  xy: 2, 132
   size: 128, 128
   orig: 128, 128
   offset: 0, 0
   index: 47
 128
   rotate: false
-  xy: 0, 260
+  xy: 2, 262
   size: 128, 128
   orig: 128, 128
   offset: 0, 0
   index: 46
 128
   rotate: false
-  xy: 130, 130
+  xy: 132, 132
   size: 128, 128
   orig: 128, 128
   offset: 0, 0
   index: 45
 128
   rotate: false
-  xy: 260, 130
+  xy: 262, 132
   size: 128, 128
   orig: 128, 128
   offset: 0, 0
   index: 44
 128
   rotate: false
-  xy: 130, 260
+  xy: 132, 262
   size: 128, 128
   orig: 128, 128
   offset: 0, 0
   index: 43
 128
   rotate: false
-  xy: 260, 260
+  xy: 262, 262
   size: 128, 128
   orig: 128, 128
   offset: 0, 0
@@ -141,63 +141,63 @@ filter: Nearest,Nearest
 repeat: none
 128
   rotate: false
-  xy: 0, 0
+  xy: 2, 2
   size: 128, 128
   orig: 128, 128
   offset: 0, 0
   index: 41
 128
   rotate: false
-  xy: 130, 0
+  xy: 132, 2
   size: 128, 128
   orig: 128, 128
   offset: 0, 0
   index: 40
 128
   rotate: false
-  xy: 260, 0
+  xy: 262, 2
   size: 128, 128
   orig: 128, 128
   offset: 0, 0
   index: 39
 128
   rotate: false
-  xy: 0, 130
+  xy: 2, 132
   size: 128, 128
   orig: 128, 128
   offset: 0, 0
   index: 38
 128
   rotate: false
-  xy: 0, 260
+  xy: 2, 262
   size: 128, 128
   orig: 128, 128
   offset: 0, 0
   index: 37
 128
   rotate: false
-  xy: 130, 130
+  xy: 132, 132
   size: 128, 128
   orig: 128, 128
   offset: 0, 0
   index: 36
 128
   rotate: false
-  xy: 260, 130
+  xy: 262, 132
   size: 128, 128
   orig: 128, 128
   offset: 0, 0
   index: 35
 128
   rotate: false
-  xy: 130, 260
+  xy: 132, 262
   size: 128, 128
   orig: 128, 128
   offset: 0, 0
   index: 34
 128
   rotate: false
-  xy: 260, 260
+  xy: 262, 262
   size: 128, 128
   orig: 128, 128
   offset: 0, 0
@@ -209,63 +209,63 @@ filter: Nearest,Nearest
 repeat: none
 128
   rotate: false
-  xy: 0, 0
+  xy: 2, 2
   size: 128, 128
   orig: 128, 128
   offset: 0, 0
   index: 32
 128
   rotate: false
-  xy: 130, 0
+  xy: 132, 2
   size: 128, 128
   orig: 128, 128
   offset: 0, 0
   index: 31
 128
   rotate: false
-  xy: 260, 0
+  xy: 262, 2
   size: 128, 128
   orig: 128, 128
   offset: 0, 0
   index: 30
 128
   rotate: false
-  xy: 0, 130
+  xy: 2, 132
   size: 128, 128
   orig: 128, 128
   offset: 0, 0
   index: 29
 128
   rotate: false
-  xy: 0, 260
+  xy: 2, 262
   size: 128, 128
   orig: 128, 128
   offset: 0, 0
   index: 28
 128
   rotate: false
-  xy: 130, 130
+  xy: 132, 132
   size: 128, 128
   orig: 128, 128
   offset: 0, 0
   index: 27
 128
   rotate: false
-  xy: 260, 130
+  xy: 262, 132
   size: 128, 128
   orig: 128, 128
   offset: 0, 0
   index: 26
 128
   rotate: false
-  xy: 130, 260
+  xy: 132, 262
   size: 128, 128
   orig: 128, 128
   offset: 0, 0
   index: 25
 128
   rotate: false
-  xy: 260, 260
+  xy: 262, 262
   size: 128, 128
   orig: 128, 128
   offset: 0, 0
@@ -277,63 +277,63 @@ filter: Nearest,Nearest
 repeat: none
 128
   rotate: false
-  xy: 0, 0
+  xy: 2, 2
   size: 128, 128
   orig: 128, 128
   offset: 0, 0
   index: 23
 128
   rotate: false
-  xy: 130, 0
+  xy: 132, 2
   size: 128, 128
   orig: 128, 128
   offset: 0, 0
   index: 22
 128
   rotate: false
-  xy: 260, 0
+  xy: 262, 2
   size: 128, 128
   orig: 128, 128
   offset: 0, 0
   index: 21
 128
   rotate: false
-  xy: 0, 130
+  xy: 2, 132
   size: 128, 128
   orig: 128, 128
   offset: 0, 0
   index: 20
 128
   rotate: false
-  xy: 0, 260
+  xy: 2, 262
   size: 128, 128
   orig: 128, 128
   offset: 0, 0
   index: 19
 128
   rotate: false
-  xy: 130, 130
+  xy: 132, 132
   size: 128, 128
   orig: 128, 128
   offset: 0, 0
   index: 18
 128
   rotate: false
-  xy: 260, 130
+  xy: 262, 132
   size: 128, 128
   orig: 128, 128
   offset: 0, 0
   index: 17
 128
   rotate: false
-  xy: 130, 260
+  xy: 132, 262
   size: 128, 128
   orig: 128, 128
   offset: 0, 0
   index: 16
 128
   rotate: false
-  xy: 260, 260
+  xy: 262, 262
   size: 128, 128
   orig: 128, 128
   offset: 0, 0
@@ -345,63 +345,63 @@ filter: Nearest,Nearest
 repeat: none
 128
   rotate: false
-  xy: 0, 0
+  xy: 2, 2
   size: 128, 128
   orig: 128, 128
   offset: 0, 0
   index: 14
 128
   rotate: false
-  xy: 130, 0
+  xy: 132, 2
   size: 128, 128
   orig: 128, 128
   offset: 0, 0
   index: 13
 128
   rotate: false
-  xy: 260, 0
+  xy: 262, 2
   size: 128, 128
   orig: 128, 128
   offset: 0, 0
   index: 12
 128
   rotate: false
-  xy: 0, 130
+  xy: 2, 132
   size: 128, 128
   orig: 128, 128
   offset: 0, 0
   index: 11
 128
   rotate: false
-  xy: 0, 260
+  xy: 2, 262
   size: 128, 128
   orig: 128, 128
   offset: 0, 0
   index: 10
 128
   rotate: false
-  xy: 130, 130
+  xy: 132, 132
   size: 128, 128
   orig: 128, 128
   offset: 0, 0
   index: 9
 128
   rotate: false
-  xy: 260, 130
+  xy: 262, 132
   size: 128, 128
   orig: 128, 128
   offset: 0, 0
   index: 8
 128
   rotate: false
-  xy: 130, 260
+  xy: 132, 262
   size: 128, 128
   orig: 128, 128
   offset: 0, 0
   index: 7
 128
   rotate: false
-  xy: 260, 260
+  xy: 262, 262
   size: 128, 128
   orig: 128, 128
   offset: 0, 0
@@ -413,42 +413,42 @@ filter: Nearest,Nearest
 repeat: none
 128
   rotate: false
-  xy: 0, 0
+  xy: 2, 2
   size: 128, 128
   orig: 128, 128
   offset: 0, 0
   index: 5
 128
   rotate: false
-  xy: 130, 0
+  xy: 132, 2
   size: 128, 128
   orig: 128, 128
   offset: 0, 0
   index: 4
 128
   rotate: false
-  xy: 260, 0
+  xy: 262, 2
   size: 128, 128
   orig: 128, 128
   offset: 0, 0
   index: 3
 128
   rotate: false
-  xy: 0, 130
+  xy: 2, 132
   size: 128, 128
   orig: 128, 128
   offset: 0, 0
   index: 2
 128
   rotate: false
-  xy: 0, 260
+  xy: 2, 262
   size: 128, 128
   orig: 128, 128
   offset: 0, 0
   index: 1
 128
   rotate: false
-  xy: 130, 130
+  xy: 132, 132
   size: 128, 128
   orig: 128, 128
   offset: 0, 0

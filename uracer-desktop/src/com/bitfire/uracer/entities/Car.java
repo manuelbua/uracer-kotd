@@ -46,7 +46,7 @@ public class Car extends b2dEntity
 		this.cil = new ArrayList<CarInput>( 2500 );
 
 		carDesc = CarDescriptor.create();
-		carDesc.carModel.toBlackCar();
+//		carDesc.carModel.toBlackCar();
 
 		carSim = new CarSimulator( carDesc );
 		carInput = new CarInput();
@@ -82,10 +82,10 @@ public class Car extends b2dEntity
 
 		// build gfx
 		sprite = new Sprite();
-//		sprite.setRegion( Art.cars.findRegion( "electron" ) );
-		sprite.setRegion( Art.blackCar );
+		sprite.setRegion( Art.cars.findRegion( "electron" ) );
+//		sprite.setRegion( Art.blackCar );
 		sprite.setSize( Convert.mt2px( half.x * 2 ), Convert.mt2px( half.y * 2 ) );
-		sprite.setScale( 1f );
+//		sprite.setScale( 1f );
 		sprite.setOrigin( sprite.getWidth() / 2, sprite.getHeight() / 2 );
 
 		setTransform( position, orientation );
