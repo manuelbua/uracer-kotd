@@ -15,6 +15,9 @@ public class Config
 	// defines time modifier
 	public static float PhysicsTimeMultiplier;
 
+	// post-processing fx
+	public static boolean EnablePostProcessingFx;
+
 	// set default configuration values
 	public static void asDefault()
 	{
@@ -22,5 +25,6 @@ public class Config
 		PixelsPerMeter = 9.0f;
 		PhysicsTimestepHz = 60.0f;
 		PhysicsTimeMultiplier = 1f;
+		EnablePostProcessingFx = false;
 	}
 }

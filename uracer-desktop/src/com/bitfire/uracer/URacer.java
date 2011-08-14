@@ -58,8 +58,8 @@ public class URacer implements ApplicationListener
 		physicsTime = (System.nanoTime() - startTime) * oneOnOneBillion;
 
 		// compute the temporal aliasing factor, entities will render
-		// themselves accordingly to this to avoid flickering and permit
-		// slow-motion effects without artifacts.
+		// themselves accordingly to this to avoid flickering and
+		// permitting slow-motion effects without artifacts.
 		// (this imply accepting a one-frame-behind behavior)
 		temporalAliasing = timeAccumSecs * Config.PhysicsTimestepHz;
 

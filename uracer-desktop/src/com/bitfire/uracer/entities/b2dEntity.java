@@ -11,6 +11,11 @@ public class b2dEntity extends SubframeInterpolableEntity
 {
 	protected Body body;
 
+	public Body getBody()
+	{
+		return body;
+	}
+
 	@Override
 	public void saveStateTo( EntityState state )
 	{
