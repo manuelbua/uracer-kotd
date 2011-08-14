@@ -23,7 +23,7 @@ public class Art
 		quad = new TextureRegion( base6[0][10], 0, 0, 18, 18 );
 		rope = new TextureRegion( new Texture( Gdx.files.internal( "data/base/rope.png" ) ), 0, 0, 64, 18 );
 		disc = new TextureRegion( new Texture( Gdx.files.internal( "data/base/disc.png" ) ), 0, 0, 256, 256 );
-		cars = new TextureAtlas(Gdx.files.internal("data/base/cars.pack"));
+		cars = new TextureAtlas(Gdx.files.internal("data/base/cars1.pack"));
 		blackCar = new TextureRegion( new Texture(Gdx.files.internal("data/base/black-car.png")), 0, 0, 210, 424 );
 	}
 

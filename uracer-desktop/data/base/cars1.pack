@@ -1,130 +1,130 @@
 
-cars.png
+cars1.png
 format: RGBA8888
 filter: Nearest,Nearest
 repeat: none
 pinkflash
   rotate: false
-  xy: 0, 0
+  xy: 2, 2
   size: 17, 31
   orig: 17, 31
   offset: 0, 0
   index: -1
 thebeast
   rotate: false
-  xy: 19, 0
+  xy: 21, 2
   size: 17, 31
   orig: 17, 31
   offset: 0, 0
   index: -1
 electron
   rotate: false
-  xy: 38, 0
+  xy: 40, 2
   size: 17, 31
   orig: 17, 31
   offset: 0, 0
   index: -1
 redB
   rotate: false
-  xy: 57, 0
+  xy: 2, 35
   size: 17, 31
   orig: 17, 31
   offset: 0, 0
   index: -1
 spider
   rotate: false
-  xy: 76, 0
+  xy: 21, 35
   size: 17, 31
   orig: 17, 31
   offset: 0, 0
   index: -1
 Theghost
   rotate: false
-  xy: 95, 0
+  xy: 40, 35
   size: 17, 30
   orig: 17, 30
   offset: 0, 0
   index: -1
 acid
   rotate: false
-  xy: 114, 0
+  xy: 2, 68
   size: 17, 30
   orig: 17, 30
   offset: 0, 0
   index: -1
 goblin
   rotate: false
-  xy: 133, 0
+  xy: 21, 68
   size: 17, 30
   orig: 17, 30
   offset: 0, 0
   index: -1
 snake
   rotate: false
-  xy: 152, 0
+  xy: 40, 68
   size: 17, 30
   orig: 17, 30
   offset: 0, 0
   index: -1
 tornado
   rotate: false
-  xy: 171, 0
+  xy: 2, 100
   size: 17, 30
   orig: 17, 30
   offset: 0, 0
   index: -1
 joka
   rotate: false
-  xy: 190, 0
+  xy: 21, 100
   size: 17, 30
   orig: 17, 30
   offset: 0, 0
   index: -1
 loki
   rotate: false
-  xy: 209, 0
+  xy: 40, 100
   size: 17, 29
   orig: 17, 29
   offset: 0, 0
   index: -1
 firedwarf
   rotate: false
-  xy: 228, 0
+  xy: 2, 132
   size: 17, 29
   orig: 17, 29
   offset: 0, 0
   index: -1
 striker
   rotate: false
-  xy: 247, 0
+  xy: 21, 132
   size: 17, 29
   orig: 17, 29
   offset: 0, 0
   index: -1
 inferno
   rotate: false
-  xy: 266, 0
+  xy: 40, 132
   size: 17, 29
   orig: 17, 29
   offset: 0, 0
   index: -1
 debuggee
   rotate: false
-  xy: 285, 0
+  xy: 2, 163
   size: 17, 28
   orig: 17, 28
   offset: 0, 0
   index: -1
 invisible
   rotate: false
-  xy: 304, 0
+  xy: 21, 163
   size: 15, 28
   orig: 15, 28
   offset: 0, 0
   index: -1
 Bugzta
   rotate: false
-  xy: 321, 0
+  xy: 38, 163
   size: 17, 26
   orig: 17, 26
   offset: 0, 0
