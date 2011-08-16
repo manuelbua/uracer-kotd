@@ -10,17 +10,27 @@ import com.badlogic.gdx.graphics.PerspectiveCamera;
 import com.badlogic.gdx.graphics.Pixmap.Format;
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.tiled.TiledMap;
-import com.badlogic.gdx.graphics.g3d.loaders.obj.ObjLoader;
+import com.badlogic.gdx.graphics.g3d.loaders.g3d.G3dtLoader;
+import com.badlogic.gdx.graphics.g3d.materials.Material;
+import com.badlogic.gdx.graphics.g3d.materials.TextureAttribute;
+import com.badlogic.gdx.graphics.g3d.model.still.StillModel;
 import com.badlogic.gdx.graphics.glutils.ShaderProgram;
 import com.badlogic.gdx.math.Matrix4;
 import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.math.Vector3;
 
+/**
+ * The model is expected to follow the z-up convention.
+ *
+ * @author manuel
+ *
+ */
 public class OrthographicAlignedMesh
 {
 	private TiledMap tileMap;
 
 	private Mesh mesh;
+	private StillModel model;
 	private Texture texture;
 
 	// matrix state
@@ -82,7 +92,10 @@ public class OrthographicAlignedMesh
 		try
 		{
 			InputStream in = Gdx.files.internal( mesh ).read();
-			m.mesh = ObjLoader.loadObj( in, true );
+//			m.mesh = ObjLoader.loadObj( in, true );
+			m.model = G3dtLoader.loadStillModel( in, true );
+			Material material = new Material("default", new TextureAttribute(new Texture(Gdx.files.internal(texture)), 0, "tex0"));
+			m.model.setMaterial( material );
 			in.close();
 
 			m.tileMap = map;
@@ -184,13 +197,8 @@ public class OrthographicAlignedMesh
 		mtx_model.idt();
 		mtx_model.setToTranslation( tmp_vec.x, tmp_vec.y, -(perspCamera.far - perspCamera.position.z) );
 
-		// TODO: support rotation the good way, not this crap
-		tmp_mtx.setToRotation( 1, 0, 0, 90 );
-		Matrix4.mul( mtx_model.val, tmp_mtx.val );
-		tmp_mtx.setToRotation( iRotationAxis, iRotationAngle );
-		Matrix4.mul( mtx_model.val, tmp_mtx.val );
-		tmp_mtx.setToScaling( scaleAxis );
-		Matrix4.mul( mtx_model.val, tmp_mtx.val );
+		Matrix4.mul( mtx_model.val, tmp_mtx.setToRotation( iRotationAxis, iRotationAngle ).val );
+		Matrix4.mul( mtx_model.val, tmp_mtx.setToScaling( scaleAxis ).val );
 
 		// proj * view
 		mtx_combined.set( perspCamera.combined );
@@ -199,14 +207,16 @@ public class OrthographicAlignedMesh
 		Matrix4.mul( mtx_combined.val, mtx_model.val );
 
 		shader.setUniformMatrix( "u_mvpMatrix", mtx_combined );
-		mesh.render( shader, GL20.GL_TRIANGLES );
+//		mesh.render( shader, GL20.GL_TRIANGLES );
+		model.render( shader );
 
 		shader.end();
 	}
 
 	public void dispose()
 	{
-		mesh.dispose();
+//		mesh.dispose();
+		model.dispose();
 		texture.dispose();
 	}
 }

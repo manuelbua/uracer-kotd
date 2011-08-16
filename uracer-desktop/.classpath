@@ -6,5 +6,6 @@
 	<classpathentry combineaccessrules="false" kind="src" path="/gdx-backend-jogl"/>
 	<classpathentry combineaccessrules="false" kind="src" path="/test-tilemap"/>
 	<classpathentry kind="lib" path="/test-tilemap/src"/>
+	<classpathentry combineaccessrules="false" kind="src" path="/model-loaders"/>
 	<classpathentry kind="output" path="bin"/>
 </classpath>

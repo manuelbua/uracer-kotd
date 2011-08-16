@@ -36,7 +36,7 @@ public class Director
 		tmp = new Vector2();
 
 		// computed for a 256px tile size target (need conversion)
-		scalingStrategy = new ScalingStrategy( new Vector2( 1280, 800 ), 80f, 128, 2f );
+		scalingStrategy = new ScalingStrategy( new Vector2( 1280, 800 ), 60f, 128, 2f );
 
 		// setup configuration
 		Config.asDefault();
