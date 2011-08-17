@@ -36,11 +36,13 @@ public class Director
 		tmp = new Vector2();
 
 		// computed for a 256px tile size target (need conversion)
-		scalingStrategy = new ScalingStrategy( new Vector2( 1280, 800 ), 60f, 128, 2f );
+		scalingStrategy = new ScalingStrategy( new Vector2( 1280, 800 ), 39.6f, 256, 1f );
 
 		// setup configuration
 		Config.asDefault();
-		Config.PixelsPerMeter *= scalingStrategy.invTileMapZoomFactor;
+
+		float to256 = Director.scalingStrategy.tileSizeAtRef / 256f;
+		Config.PixelsPerMeter /= scalingStrategy.targetScreenRatio / to256;
 	}
 
 	public static void create( Screen parent, int widthPx, int heightPx )

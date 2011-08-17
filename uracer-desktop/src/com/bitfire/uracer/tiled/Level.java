@@ -123,6 +123,12 @@ public class Level
 
 		OrthographicAlignedMesh mesh;
 
+		// simple
+		mesh = OrthographicAlignedMesh.create( map, "data/3d/simple.g3dt", "data/3d/tower.png", new Vector2( 4, 3 ) );
+		mesh.setScale( 10.4f );
+//		mesh.setPositionOffsetPixels( -tilesize / 2, -tilesize / 2 );
+		meshes.add( mesh );
+
 		// palm #1
 		mesh = OrthographicAlignedMesh.create( map, "data/3d/palm.g3dt", "data/3d/palm.png", new Vector2( 0, 0 ) );
 		mesh.setScale( scalePalm );
@@ -166,7 +172,7 @@ public class Level
 		meshes.add( mesh );
 
 		// house
-		mesh = OrthographicAlignedMesh.create( map, "data/3d/house.g3dt", "data/3d/house.png", new Vector2( 1, 1 ) );
+		mesh = OrthographicAlignedMesh.create( map, "data/3d/house.g3dt", "data/3d/house.png", new Vector2( 1, 2 ) );
 		mesh.setScale( scaleHouse );
 		mesh.setPositionOffsetPixels( 0, tilesize / 4 );
 		meshes.add( mesh );
