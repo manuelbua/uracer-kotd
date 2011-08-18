@@ -18,6 +18,7 @@ import com.badlogic.gdx.graphics.glutils.ShaderProgram;
 import com.badlogic.gdx.math.Matrix4;
 import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.math.Vector3;
+import com.bitfire.uracer.Director;
 
 /**
  * The model is expected to follow the z-up convention.
@@ -185,7 +186,7 @@ public class OrthographicAlignedMesh
 
 		// account for 3d origin being in the center of the screen
 		// also apply orthocamera's zoom and user-specified offset
-		float zoomFactor = (1f / orthoCamera.zoom);
+		float zoomFactor = Director.scalingStrategy.invTileMapZoomFactor;
 
 		tmp_vec.set(
 				positionPx.x * zoomFactor - (orthoCamera.position.x * zoomFactor - orthoCamera.viewportWidth / 2) + positionOffsetPx.x * zoomFactor,

@@ -96,7 +96,9 @@ public class Level
 
 		// creates and setup perspective camera
 		float perspPlaneNear = 1;
-		float perspPlaneFar = 500;
+
+		// carefully choosen, Blender models' 14.2 meters <=> one 256px tile with far plane @48
+		float perspPlaneFar = 240;
 		camPerspElevation = 100;
 
 		camPersp = new PerspectiveCamera( Director.scalingStrategy.verticalFov, w, h );
@@ -109,77 +111,55 @@ public class Level
 
 	private void createObjects()
 	{
-		// object scales where defined for a tilesize of 256px at the target
-		// screen resolution
-		// let's scale back in case the tilesize is different
-		float to256 = Director.scalingStrategy.tileSizeAtRef / 256f;
-
-		float scalePalm = 6f * to256;
-		float scaleHouse = 16.2f * to256;
-		float scaleTribune = 2.1f * to256;
-		float scaleTower = 5f * to256;
-
 		int tilesize = map.tileWidth;
 
 		OrthographicAlignedMesh mesh;
 
-		// simple
-		mesh = OrthographicAlignedMesh.create( map, "data/3d/simple.g3dt", "data/3d/tower.png", new Vector2( 4, 3 ) );
-		mesh.setScale( 10.4f );
-//		mesh.setPositionOffsetPixels( -tilesize / 2, -tilesize / 2 );
-		meshes.add( mesh );
-
 		// palm #1
 		mesh = OrthographicAlignedMesh.create( map, "data/3d/palm.g3dt", "data/3d/palm.png", new Vector2( 0, 0 ) );
-		mesh.setScale( scalePalm );
 		mesh.setPositionOffsetPixels( -tilesize / 4, -tilesize / 4 );
 		meshes.add( mesh );
 
 		// palm #2
 		mesh = OrthographicAlignedMesh.create( map, "data/3d/palm.g3dt", "data/3d/palm.png", new Vector2( 3, 1 ) );
-		mesh.setScale( scalePalm );
 		mesh.setPositionOffsetPixels( -tilesize / 4, -tilesize / 4 );
 		meshes.add( mesh );
 
 		// palm #3
 		mesh = OrthographicAlignedMesh.create( map, "data/3d/palm.g3dt", "data/3d/palm.png", new Vector2( 2, 4 ) );
-		mesh.setScale( scalePalm * 1.4f );
+		mesh.setScale( 1.2f );
 		mesh.setPositionOffsetPixels( -tilesize / 4, -tilesize / 4 );
 		meshes.add( mesh );
 
 		// palm #4
 		mesh = OrthographicAlignedMesh.create( map, "data/3d/palm.g3dt", "data/3d/palm.png", new Vector2( 0, 4 ) );
-		mesh.setScale( scalePalm );
 		mesh.setPositionOffsetPixels( -tilesize / 4, -tilesize / 4 );
 		meshes.add( mesh );
 
 		// palm #5
 		mesh = OrthographicAlignedMesh.create( map, "data/3d/palm.g3dt", "data/3d/palm.png", new Vector2( 0, 5 ) );
-		mesh.setScale( scalePalm );
 		mesh.setPositionOffsetPixels( -tilesize / 4, -tilesize / 4 );
 		meshes.add( mesh );
 
 		// palm #6
 		mesh = OrthographicAlignedMesh.create( map, "data/3d/palm.g3dt", "data/3d/palm.png", new Vector2( 1, 5 ) );
-		mesh.setScale( scalePalm * 0.45f );
+		mesh.setScale( 0.45f );
 		mesh.setPositionOffsetPixels( -tilesize / 3, -tilesize / 3 );
 		meshes.add( mesh );
 
 		// palm #7
 		mesh = OrthographicAlignedMesh.create( map, "data/3d/palm.g3dt", "data/3d/palm.png", new Vector2( 1, 5 ) );
-		mesh.setScale( scalePalm * 0.55f );
+		mesh.setScale( 0.55f );
 		mesh.setPositionOffsetPixels( -tilesize / 2, -tilesize / 2 );
 		meshes.add( mesh );
 
 		// house
-		mesh = OrthographicAlignedMesh.create( map, "data/3d/house.g3dt", "data/3d/house.png", new Vector2( 1, 2 ) );
-		mesh.setScale( scaleHouse );
-		mesh.setPositionOffsetPixels( 0, tilesize / 4 );
+		mesh = OrthographicAlignedMesh.create( map, "data/3d/house.g3dt", "data/3d/house.png", new Vector2( 1, 1 ) );
+		mesh.setPositionOffsetPixels( 0, tilesize / 2 );
 		meshes.add( mesh );
 
 		// tribune
 		mesh = OrthographicAlignedMesh.create( map, "data/3d/tribune.g3dt", "data/3d/tribune.png", new Vector2( 6, 1 ) );
-		mesh.setScale( scaleTribune );
 		meshes.add( mesh );
 
 		// towers
@@ -211,16 +191,27 @@ public class Level
 				break;
 			}
 
-			t.setScale( scaleTower * 0.8f );
+			t.setScale( 0.8f );
 			meshes.add( t );
 		}
 
-		// apply horizontal fov scaling factor distortion
-		float scale = Director.scalingStrategy.meshScaleFactor;
+		// apply horizontal fov scaling factor distortion and blender factors
+
+		// Blender => cube 14.2x14.2 meters = one tile (256px) w/ far plane @48 (256px are 14.2mt w/ 18px/mt)
+		// I'm lazy and want Blender to work with 10x10mt instead, so a 1.42f factor for this scaling: also, since
+		// the far plane is suboptimal @ just 48, i want 5 times more space on the z-axis, so here's another scaling
+		// factor.
+		float blenderToUracer = 5f * 1.42f;
+
+		// object scales where defined for a tilesize of 256px at the target
+		// screen resolution
+		// let's scale back in case the tilesize is different
+		float to256 = (Director.scalingStrategy.tileSizeAtRef / 256f) * blenderToUracer;
+
 		for( int i = 0; i < meshes.size(); i++ )
 		{
 			OrthographicAlignedMesh t = meshes.get( i );
-			t.rescale( scale );
+			t.rescale( Director.scalingStrategy.meshScaleFactor * to256 );
 		}
 	}
 
