@@ -13,4 +13,7 @@
    H4sIAAAAAAAAA3XMuQqAMBRE0WghthGXlzQGFBRU8P+/zhuYIkUsDm9hGO+c69HiQcSre0VCg4BRM2o3bNiLjK/0LJgxodMclAkVuevAqYzpb0Umd1y4f3o+2UKiIdgAAAA=
   </data>
  </layer>
+ <objectgroup name="Object Layer 1" width="9" height="6">
+  <object name="house" x="128" y="128" width="128" height="256"/>
+ </objectgroup>
 </map>

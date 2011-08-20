@@ -31,7 +31,8 @@ public class OrthographicAlignedMesh
 	private TiledMap tileMap;
 
 	private Mesh mesh;
-	private StillModel model;
+	private UStillModel model;
+	private StillModel model_workaround;
 	private Texture texture;
 
 	// matrix state
@@ -94,7 +95,9 @@ public class OrthographicAlignedMesh
 		{
 			InputStream in = Gdx.files.internal( mesh ).read();
 //			m.mesh = ObjLoader.loadObj( in, true );
-			m.model = G3dtLoader.loadStillModel( in, true );
+			m.model_workaround = G3dtLoader.loadStillModel( in, true );
+			m.model = new UStillModel( m.model_workaround.subMeshes );
+
 			Material material = new Material("default", new TextureAttribute(new Texture(Gdx.files.internal(texture)), 0, "tex0"));
 			m.model.setMaterial( material );
 			in.close();
@@ -218,6 +221,7 @@ public class OrthographicAlignedMesh
 	{
 //		mesh.dispose();
 		model.dispose();
+		model_workaround.dispose();
 		texture.dispose();
 	}
 }
