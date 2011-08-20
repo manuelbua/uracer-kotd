@@ -1,0 +1,57 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?><map height="6" orientation="orthogonal" tileheight="224" tilewidth="224" version="1.0" width="9"><properties><property name="blended tiles" value=""/></properties>
+ <tileset firstgid="1" name="tileset" tileheight="224" tilewidth="224">
+  <image height="3360" source="tilesets/nature/224.png" width="896"/>
+ </tileset>
+ <layer height="6" name="Tile Layer 1" width="9">
+  <data compression="gzip" encoding="base64">
+   H4sIAAAAAAAAA3XMuQqAMBRE0WghthGXlzQGFBRU8P+/zhuYIkUsDm9hGO+c69HiQcSre0VCg4BRM2o3bNiLjK/0LJgxodMclAkVuevAqYzpb0Umd1y4f3o+2UKiIdgAAAA=
+  </data>
+ </layer>
+ <objectgroup color="#00ff00" height="6" name="static-meshes" width="9">
+  <object height="448" type="house" width="224" x="224" y="224"/>
+  <object height="69" type="palm" width="65" x="60" y="1201"/>
+  <object height="152" type="palm" width="137" x="65" y="949">
+   <properties>
+    <property name="scale" value="2"/>
+   </properties>
+  </object>
+  <object height="59" type="palm" width="55" x="27" y="25"/>
+  <object height="56" type="palm" width="55" x="820" y="679"/>
+  <object height="60" type="palm" width="57" x="1886" y="112"/>
+  <object height="256" type="tribune" width="512" x="1172" y="219"/>
+  <object height="65" type="palm" width="80" x="685" y="366"/>
+  <object height="57" type="palm" width="73" x="1012" y="380">
+   <properties>
+    <property name="scale" value="1.5"/>
+   </properties>
+  </object>
+  <object height="76" type="palm" width="75" x="861" y="254"/>
+  <object height="57" type="palm" width="56" x="1085" y="689"/>
+  <object height="76" type="palm" width="61" x="1072" y="1047"/>
+  <object height="67" type="palm" width="71" x="1013" y="1263"/>
+  <object height="61" type="palm" width="72" x="1333" y="1031"/>
+  <object height="76" type="palm" width="72" x="692" y="1261">
+   <properties>
+    <property name="scale" value="1.5"/>
+   </properties>
+  </object>
+  <object height="72" type="palm" width="73" x="855" y="1080"/>
+  <object height="69" type="palm" width="73" x="488" y="996"/>
+  <object height="57" type="palm" width="81" x="1471" y="710"/>
+  <object height="64" type="palm" width="70" x="1825" y="697"/>
+  <object height="219" type="palm" width="256" x="1632" y="1027">
+   <properties>
+    <property name="scale" value="3"/>
+   </properties>
+  </object>
+  <object height="103" type="palm" width="117" x="1337" y="1219">
+   <properties>
+    <property name="scale" value="2"/>
+   </properties>
+  </object>
+  <object height="60" type="palm" width="57" x="531" y="263"/>
+  <object height="69" type="palm" width="59" x="1284" y="857"/>
+  <object height="60" type="palm" width="57" x="1739" y="393"/>
+  <object height="60" type="palm" width="57" x="1568" y="873"/>
+ </objectgroup>
+</map>

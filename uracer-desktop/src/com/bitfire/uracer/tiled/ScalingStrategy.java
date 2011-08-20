@@ -18,6 +18,7 @@ public class ScalingStrategy
 	public float tileSizeAtRef;
 
 	public float hFovScalingFactor;
+	public float to256;
 
 	public ScalingStrategy( Vector2 referenceScreen, float desiredHorizontalFov, int forTileSize, float tileMapZoomAtRef )
 	{
@@ -29,6 +30,9 @@ public class ScalingStrategy
 
 		this.tileSizeAtRef = this.forTileSize * this.tileMapZoomFactorAtRef;
 		this.desiredHorizontalFov = desiredHorizontalFov;
+
+		// reference scaling (256 to current)
+		to256 = this.tileSizeAtRef / 256f;
 
 		// compute scaling factors
 		update();

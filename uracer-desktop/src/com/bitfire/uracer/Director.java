@@ -36,13 +36,14 @@ public class Director
 		tmp = new Vector2();
 
 		// computed for a 256px tile size target (need conversion)
-		scalingStrategy = new ScalingStrategy( new Vector2( 1280, 800 ), 70f, 256, 1f );
+		scalingStrategy = new ScalingStrategy( new Vector2( 1280, 800 ), 70f, 224, 1f);
 
 		// setup configuration
 		Config.asDefault();
 
-		float to256 = Director.scalingStrategy.tileSizeAtRef / 256f;
-		Config.PixelsPerMeter /= scalingStrategy.targetScreenRatio / to256;
+		// everything has been setup on a 256px tile, scale back if that's the case
+		Config.PixelsPerMeter /= scalingStrategy.targetScreenRatio / scalingStrategy.to256;
+//		System.out.println("ppm=" + Config.PixelsPerMeter);
 
 		Physics.create( new Vector2( 0, 0 ), false );
 	}
