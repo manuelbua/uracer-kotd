@@ -107,15 +107,12 @@ public class OrthographicAlignedMesh
 
 			if(tilePosition != null)
 			{
-				m.positionPx.set( Convert.tileToPx( (int)tilePosition.x, (int)tilePosition.y ) );
+				m.setTilePosition( (int)tilePosition.x, (int)tilePosition.y );
 			}
 			else
 			{
 				m.setPosition( 0, 0 );
 			}
-
-//			m.positionTile = tilePosition;
-//			m.computeTilePosition();
 
 			m.setScale( 1 );
 			m.setRotation( 0, 0, 0, 0 );
@@ -132,14 +129,6 @@ public class OrthographicAlignedMesh
 		return OrthographicAlignedMesh.create( map, mesh, texture, null );
 	}
 
-	// compute ortographic-aligned tile position in pixels, w/ centroid at tile
-	// center
-	private void computeTilePosition()
-	{
-		positionPx.x = (positionTile.x * tileMap.tileWidth) + tileMap.tileWidth / 2;
-		positionPx.y = ((positionTile.y - tileMap.height) * tileMap.tileHeight) + tileMap.tileHeight / 2;
-	}
-
 	public void setPositionOffsetPixels( int x, int y )
 	{
 		positionOffsetPx.x = x;
@@ -154,9 +143,7 @@ public class OrthographicAlignedMesh
 	 */
 	public void setTilePosition( int x_index, int y_index )
 	{
-		positionTile.x = x_index;
-		positionTile.y = y_index;
-		computeTilePosition();
+		positionPx.set( Convert.tileToPx( x_index, y_index ) );
 	}
 
 	/**

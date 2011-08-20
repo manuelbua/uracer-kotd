@@ -113,28 +113,28 @@ public class Level
 
 		// palm #1
 		mesh = OrthographicAlignedMesh.create( map, "data/3d/palm.g3dt", "data/3d/palm.png", new Vector2( 0, 0 ) );
-		mesh.setPositionOffsetPixels( -tilesize / 4, -tilesize / 4 );
+		mesh.setPositionOffsetPixels( tilesize / 4, tilesize / 4 );
 		meshes.add( mesh );
 
 		// palm #2
 		mesh = OrthographicAlignedMesh.create( map, "data/3d/palm.g3dt", "data/3d/palm.png", new Vector2( 3, 1 ) );
-		mesh.setPositionOffsetPixels( -tilesize / 4, -tilesize / 4 );
+		mesh.setPositionOffsetPixels( tilesize / 2, tilesize / 2 );
 		meshes.add( mesh );
 
 		// palm #3
 		mesh = OrthographicAlignedMesh.create( map, "data/3d/palm.g3dt", "data/3d/palm.png", new Vector2( 2, 4 ) );
 		mesh.setScale( 1.2f );
-		mesh.setPositionOffsetPixels( -tilesize / 4, -tilesize / 4 );
+		mesh.setPositionOffsetPixels( tilesize / 4, tilesize / 4 );
 		meshes.add( mesh );
 
 		// palm #4
 		mesh = OrthographicAlignedMesh.create( map, "data/3d/palm.g3dt", "data/3d/palm.png", new Vector2( 0, 4 ) );
-		mesh.setPositionOffsetPixels( -tilesize / 4, -tilesize / 4 );
+		mesh.setPositionOffsetPixels( tilesize / 4, tilesize / 4 );
 		meshes.add( mesh );
 
 		// palm #5
 		mesh = OrthographicAlignedMesh.create( map, "data/3d/palm.g3dt", "data/3d/palm.png", new Vector2( 0, 5 ) );
-		mesh.setPositionOffsetPixels( -tilesize / 4, -tilesize / 4 );
+		mesh.setPositionOffsetPixels( tilesize / 4, tilesize / 4 );
 		meshes.add( mesh );
 
 		// palm #6
@@ -152,7 +152,6 @@ public class Level
 		// house
 		mesh = OrthographicAlignedMesh.create( map, "data/3d/house.g3dt", "data/3d/house.png"/*, new Vector2( 1, 1 )*/ );
 		mesh.setPosition( 256, 256 );
-		mesh.setPositionOffsetPixels( tilesize / 2 , tilesize / 2 );
 		meshes.add( mesh );
 
 		// tribune
@@ -188,7 +187,6 @@ public class Level
 				break;
 			}
 
-			t.setScale( 0.8f );
 			meshes.add( t );
 		}
 
