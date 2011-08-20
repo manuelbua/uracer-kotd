@@ -43,6 +43,8 @@ public class Director
 
 		float to256 = Director.scalingStrategy.tileSizeAtRef / 256f;
 		Config.PixelsPerMeter /= scalingStrategy.targetScreenRatio / to256;
+
+		Physics.create( new Vector2( 0, 0 ), false );
 	}
 
 	public static void create( Screen parent, int widthPx, int heightPx )
@@ -55,12 +57,11 @@ public class Director
 
 	public static Level loadLevel(String levelName)
 	{
+		// construct tilemap and cameras
 		Level l = new Level( "level1", scalingStrategy );
 
 		// setup converter
 		Convert.init( scalingStrategy, l.map );
-
-		l.createObjects();
 
 		// compute world size
 		Director.worldSizeScaledPx.set( l.map.width * l.map.tileWidth, l.map.height * l.map.tileHeight );
@@ -72,6 +73,9 @@ public class Director
 		boundsPx.width = Director.worldSizeScaledPx.x - halfViewport.x;
 		boundsPx.height = halfViewport.y;
 		boundsPx.y = Director.worldSizeScaledPx.y - halfViewport.y;
+
+		// construct level objects from tmx definitions
+		l.createObjects();
 
 		return l;
 	}

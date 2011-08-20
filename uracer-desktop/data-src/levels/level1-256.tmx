@@ -8,4 +8,51 @@
    H4sIAAAAAAAAA3XMuQqAMBRE0WghthGXlzQGFBRU8P+/zhuYIkUsDm9hGO+c69HiQcSre0VCg4BRM2o3bNiLjK/0LJgxodMclAkVuevAqYzpb0Umd1y4f3o+2UKiIdgAAAA=
   </data>
  </layer>
+ <objectgroup color="#00ff00" name="static-meshes" width="9" height="6">
+  <object type="house" x="256" y="256" width="256" height="512"/>
+  <object type="palm" x="60" y="1201" width="65" height="69"/>
+  <object type="palm" x="128" y="1013" width="137" height="152">
+   <properties>
+    <property name="scale" value="2"/>
+   </properties>
+  </object>
+  <object type="palm" x="135" y="1309" width="55" height="59"/>
+  <object type="palm" x="256" y="1425" width="55" height="56"/>
+  <object type="palm" x="64" y="1452" width="57" height="60"/>
+  <object type="tribune" x="1428" y="276" width="512" height="256"/>
+  <object type="palm" x="792" y="441" width="80" height="65"/>
+  <object type="palm" x="1120" y="417" width="73" height="57">
+   <properties>
+    <property name="scale" value="1.5"/>
+   </properties>
+  </object>
+  <object type="palm" x="904" y="267" width="75" height="76"/>
+  <object type="palm" x="1128" y="833" width="56" height="57"/>
+  <object type="palm" x="1072" y="1047" width="61" height="76"/>
+  <object type="palm" x="1013" y="1263" width="71" height="67"/>
+  <object type="palm" x="859" y="1427" width="72" height="61"/>
+  <object type="palm" x="537" y="1192" width="72" height="76">
+   <properties>
+    <property name="scale" value="1.5"/>
+   </properties>
+  </object>
+  <object type="palm" x="684" y="1075" width="73" height="72"/>
+  <object type="palm" x="528" y="963" width="73" height="69"/>
+  <object type="palm" x="1551" y="789" width="81" height="57"/>
+  <object type="palm" x="1764" y="797" width="49" height="93"/>
+  <object type="palm" x="1804" y="1147" width="256" height="219">
+   <properties>
+    <property name="scale" value="3"/>
+   </properties>
+  </object>
+  <object type="palm" x="1337" y="1219" width="117" height="103">
+   <properties>
+    <property name="scale" value="2"/>
+   </properties>
+  </object>
+  <object type="palm" x="2067" y="879" width="57" height="60"/>
+  <object type="palm" x="1385" y="980" width="59" height="69"/>
+  <object type="palm" x="2155" y="97" width="57" height="60"/>
+  <object type="palm" x="2212" y="715" width="57" height="60"/>
+ </objectgroup>
 </map>

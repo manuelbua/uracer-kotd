@@ -11,8 +11,10 @@ import com.badlogic.gdx.graphics.g2d.tiled.TileAtlas;
 import com.badlogic.gdx.graphics.g2d.tiled.TileMapRenderer;
 import com.badlogic.gdx.graphics.g2d.tiled.TiledLoader;
 import com.badlogic.gdx.graphics.g2d.tiled.TiledMap;
-import com.badlogic.gdx.math.Vector2;
+import com.badlogic.gdx.graphics.g2d.tiled.TiledObject;
+import com.badlogic.gdx.graphics.g2d.tiled.TiledObjectGroup;
 import com.bitfire.uracer.Director;
+import com.bitfire.uracer.utils.MapUtils;
 
 /**
  * First write. Basic idea in place, will need refactoring for sure.
@@ -36,6 +38,9 @@ public class Level
 		map = TiledLoader.createMap( mapHandle );
 		atlas = new TileAtlas( map, baseDir );
 		renderer = new TileMapRenderer( map, atlas, 1, 1, map.tileWidth, map.tileHeight );
+
+		// initialize TiledMap utils
+		MapUtils.initialize( map );
 
 		createCams();
 	}
@@ -93,7 +98,8 @@ public class Level
 		// creates and setup perspective camera
 		float perspPlaneNear = 1;
 
-		// carefully choosen, Blender models' 14.2 meters <=> one 256px tile with far plane @48
+		// carefully choosen, Blender models' 14.2 meters <=> one 256px tile
+		// with far plane @48
 		float perspPlaneFar = 240;
 		camPerspElevation = 100;
 
@@ -104,97 +110,31 @@ public class Level
 		camPersp.position.set( 0, 0, camPerspElevation );
 	}
 
-
 	public void createObjects()
 	{
-		int tilesize = map.tileWidth;
+		// first object group is the static meshes container
+		if( !MapUtils.hasObjectGroup( StaticMeshes ) ) return;
 
-		OrthographicAlignedMesh mesh;
-
-		// palm #1
-		mesh = OrthographicAlignedMesh.create( map, "data/3d/palm.g3dt", "data/3d/palm.png", new Vector2( 0, 0 ) );
-		mesh.setPositionOffsetPixels( tilesize / 4, tilesize / 4 );
-		meshes.add( mesh );
-
-		// palm #2
-		mesh = OrthographicAlignedMesh.create( map, "data/3d/palm.g3dt", "data/3d/palm.png", new Vector2( 3, 1 ) );
-		mesh.setPositionOffsetPixels( tilesize / 2, tilesize / 2 );
-		meshes.add( mesh );
-
-		// palm #3
-		mesh = OrthographicAlignedMesh.create( map, "data/3d/palm.g3dt", "data/3d/palm.png", new Vector2( 2, 4 ) );
-		mesh.setScale( 1.2f );
-		mesh.setPositionOffsetPixels( tilesize / 4, tilesize / 4 );
-		meshes.add( mesh );
-
-		// palm #4
-		mesh = OrthographicAlignedMesh.create( map, "data/3d/palm.g3dt", "data/3d/palm.png", new Vector2( 0, 4 ) );
-		mesh.setPositionOffsetPixels( tilesize / 4, tilesize / 4 );
-		meshes.add( mesh );
-
-		// palm #5
-		mesh = OrthographicAlignedMesh.create( map, "data/3d/palm.g3dt", "data/3d/palm.png", new Vector2( 0, 5 ) );
-		mesh.setPositionOffsetPixels( tilesize / 4, tilesize / 4 );
-		meshes.add( mesh );
-
-		// palm #6
-		mesh = OrthographicAlignedMesh.create( map, "data/3d/palm.g3dt", "data/3d/palm.png", new Vector2( 1, 5 ) );
-		mesh.setScale( 0.45f );
-		mesh.setPositionOffsetPixels( -tilesize / 3, -tilesize / 3 );
-		meshes.add( mesh );
-
-		// palm #7
-		mesh = OrthographicAlignedMesh.create( map, "data/3d/palm.g3dt", "data/3d/palm.png", new Vector2( 1, 5 ) );
-		mesh.setScale( 0.55f );
-		mesh.setPositionOffsetPixels( -tilesize / 2, -tilesize / 2 );
-		meshes.add( mesh );
-
-		// house
-		mesh = OrthographicAlignedMesh.create( map, "data/3d/house.g3dt", "data/3d/house.png"/*, new Vector2( 1, 1 )*/ );
-		mesh.setPosition( 256, 256 );
-		meshes.add( mesh );
-
-		// tribune
-		mesh = OrthographicAlignedMesh.create( map, "data/3d/tribune.g3dt", "data/3d/tribune.png", new Vector2( 6, 1 ) );
-		meshes.add( mesh );
-
-		// towers
-		for( int i = 0; i < 5; i++ )
+		TiledObjectGroup group = MapUtils.getObjectGroup( StaticMeshes );
+		for( int i = 0; i < group.objects.size(); i++ )
 		{
-			OrthographicAlignedMesh t = OrthographicAlignedMesh.create( map, "data/3d/tower.g3dt", "data/3d/tower.png" );
-			switch( i )
-			{
-			case 0:
-				t.setTilePosition( 4, 1 );
-				t.setRotation( 90, 0, 0, 1 );
-				break;
+			TiledObject o = group.objects.get( i );
 
-			case 1:
-				t.setTilePosition( 4, 3 );
-				t.setRotation( 90, 0, 0, -1 );
-				break;
+			float scale = 1f;
+			if( o.properties.get( MeshScale ) != null ) scale = Float.parseFloat( o.properties.get( MeshScale ) );
 
-			case 2:
-				t.setTilePosition( 4, 4 );
-				break;
-
-			case 3:
-				t.setTilePosition( 4, 5 );
-				break;
-
-			case 4:
-				t.setTilePosition( 6, 3 );
-				break;
-			}
-
-			meshes.add( t );
+			// System.out.println("Creating " + o.type + ", [" + o.x + "," + o.y + "] x" + scale);
+			meshes.add( MeshFactory.create( o.type, o.x, o.y, scale ) );
 		}
 
 		// apply horizontal fov scaling factor distortion and blender factors
 
-		// Blender => cube 14.2x14.2 meters = one tile (256px) w/ far plane @48 (256px are 14.2mt w/ 18px/mt)
-		// I'm lazy and want Blender to work with 10x10mt instead, so a 1.42f factor for this scaling: also, since
-		// the far plane is suboptimal @ just 48, i want 5 times more space on the z-axis, so here's another scaling
+		// Blender => cube 14.2x14.2 meters = one tile (256px) w/ far plane @48
+		// (256px are 14.2mt w/ 18px/mt)
+		// I'm lazy and want Blender to work with 10x10mt instead, so a 1.42f
+		// factor for this scaling: also, since
+		// the far plane is suboptimal @ just 48, i want 5 times more space on
+		// the z-axis, so here's another scaling
 		// factor.
 		float blenderToUracer = 5f * 1.42f;
 
@@ -216,4 +156,8 @@ public class Level
 	private OrthographicCamera camOrtho;
 	private ArrayList<OrthographicAlignedMesh> meshes = new ArrayList<OrthographicAlignedMesh>();
 	private float camPerspElevation;
+
+	// object group name and properties
+	private final String StaticMeshes = "static-meshes";
+	private final String MeshScale = "scale";
 }
