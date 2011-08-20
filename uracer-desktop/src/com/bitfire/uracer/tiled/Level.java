@@ -38,9 +38,6 @@ public class Level
 		renderer = new TileMapRenderer( map, atlas, 1, 1, map.tileWidth, map.tileHeight );
 
 		createCams();
-
-		// should be read from the level file descriptor
-		createObjects();
 	}
 
 	public void syncWithCam( OrthographicCamera camera_ )
@@ -59,7 +56,6 @@ public class Level
 		camPersp.position.set( camOrtho.position.x, camOrtho.position.y, camPerspElevation );
 		camPersp.fieldOfView = Director.scalingStrategy.verticalFov;
 		camPersp.update();
-
 	}
 
 	public void renderTilemap()
@@ -109,7 +105,7 @@ public class Level
 	}
 
 
-	private void createObjects()
+	public void createObjects()
 	{
 		int tilesize = map.tileWidth;
 
@@ -154,8 +150,9 @@ public class Level
 		meshes.add( mesh );
 
 		// house
-		mesh = OrthographicAlignedMesh.create( map, "data/3d/house.g3dt", "data/3d/house.png", new Vector2( 1, 1 ) );
-		mesh.setPositionOffsetPixels( 0, tilesize / 2 );
+		mesh = OrthographicAlignedMesh.create( map, "data/3d/house.g3dt", "data/3d/house.png"/*, new Vector2( 1, 1 )*/ );
+		mesh.setPosition( 256, 256 );
+		mesh.setPositionOffsetPixels( tilesize / 2 , tilesize / 2 );
 		meshes.add( mesh );
 
 		// tribune

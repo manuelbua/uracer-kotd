@@ -60,6 +60,8 @@ public class Director
 		// setup converter
 		Convert.init( scalingStrategy, l.map );
 
+		l.createObjects();
+
 		// compute world size
 		Director.worldSizeScaledPx.set( l.map.width * l.map.tileWidth, l.map.height * l.map.tileHeight );
 		Director.worldSizeScaledPx.mul( scalingStrategy.invTileMapZoomFactor );

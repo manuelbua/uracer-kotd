@@ -37,8 +37,7 @@ public class Convert
 	private static Vector2 retTile;
 	public static Vector2 tileToMt( int tilex, int tiley )
 	{
-		retTile.set( tilex * scaled_tilesize, (tileMap.height - tiley) * scaled_tilesize );
-		return px2mt(retTile);
+		return px2mt( tileToPx(tilex, tiley) );
 	}
 
 	public static Vector2 tileToPx( int tilex, int tiley )

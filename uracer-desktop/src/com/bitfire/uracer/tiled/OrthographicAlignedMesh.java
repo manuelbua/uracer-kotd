@@ -4,7 +4,6 @@ import java.io.InputStream;
 
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.GL20;
-import com.badlogic.gdx.graphics.Mesh;
 import com.badlogic.gdx.graphics.OrthographicCamera;
 import com.badlogic.gdx.graphics.PerspectiveCamera;
 import com.badlogic.gdx.graphics.Pixmap.Format;
@@ -19,6 +18,7 @@ import com.badlogic.gdx.math.Matrix4;
 import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.math.Vector3;
 import com.bitfire.uracer.Director;
+import com.bitfire.uracer.utils.Convert;
 
 /**
  * The model is expected to follow the z-up convention.
@@ -30,9 +30,9 @@ public class OrthographicAlignedMesh
 {
 	private TiledMap tileMap;
 
-	private Mesh mesh;
+//	private Mesh mesh;
 	private UStillModel model;
-	private StillModel model_workaround;
+	private StillModel model_workaround;	// FIXME, this is pure shit...
 	private Texture texture;
 
 	// matrix state
@@ -104,12 +104,21 @@ public class OrthographicAlignedMesh
 
 			m.tileMap = map;
 			m.texture = new Texture( Gdx.files.internal( texture ), Format.RGB565, false );
-			m.positionTile = tilePosition;
+
+			if(tilePosition != null)
+			{
+				m.positionPx.set( Convert.tileToPx( (int)tilePosition.x, (int)tilePosition.y ) );
+			}
+			else
+			{
+				m.setPosition( 0, 0 );
+			}
+
+//			m.positionTile = tilePosition;
+//			m.computeTilePosition();
 
 			m.setScale( 1 );
 			m.setRotation( 0, 0, 0, 0 );
-
-			m.computeTilePosition();
 		} catch( Exception e )
 		{
 			e.printStackTrace();
@@ -120,7 +129,7 @@ public class OrthographicAlignedMesh
 
 	public static OrthographicAlignedMesh create( TiledMap map, String mesh, String texture )
 	{
-		return OrthographicAlignedMesh.create( map, mesh, texture, new Vector2( 0, 0 ) );
+		return OrthographicAlignedMesh.create( map, mesh, texture, null );
 	}
 
 	// compute ortographic-aligned tile position in pixels, w/ centroid at tile
@@ -128,7 +137,6 @@ public class OrthographicAlignedMesh
 	private void computeTilePosition()
 	{
 		positionPx.x = (positionTile.x * tileMap.tileWidth) + tileMap.tileWidth / 2;
-
 		positionPx.y = ((positionTile.y - tileMap.height) * tileMap.tileHeight) + tileMap.tileHeight / 2;
 	}
 
@@ -140,7 +148,6 @@ public class OrthographicAlignedMesh
 
 	/*
 	 * @param x_index the x-axis index of the tile
-	 *
 	 * @param x_index the y-axis index of the tile
 	 *
 	 * @remarks The origin (0,0) is at the top-left corner
@@ -152,9 +159,14 @@ public class OrthographicAlignedMesh
 		computeTilePosition();
 	}
 
+	/**
+	 * Sets the position in world coords, top-left origin.
+	 * @param x
+	 * @param y
+	 */
 	public void setPosition( float x, float y )
 	{
-		positionPx.set( x, y );
+		positionPx.set( x, (tileMap.height * tileMap.tileHeight) -y );
 	}
 
 	public float iRotationAngle;
@@ -191,9 +203,14 @@ public class OrthographicAlignedMesh
 		// also apply orthocamera's zoom and user-specified offset
 		float zoomFactor = Director.scalingStrategy.invTileMapZoomFactor;
 
+//		tmp_vec.set(
+//				positionPx.x * zoomFactor - (orthoCamera.position.x * zoomFactor - orthoCamera.viewportWidth / 2) + positionOffsetPx.x * zoomFactor,
+//				positionPx.y * zoomFactor + (orthoCamera.position.y * zoomFactor + orthoCamera.viewportHeight / 2) + positionOffsetPx.y * zoomFactor,
+//				1 );
+
 		tmp_vec.set(
 				positionPx.x * zoomFactor - (orthoCamera.position.x * zoomFactor - orthoCamera.viewportWidth / 2) + positionOffsetPx.x * zoomFactor,
-				positionPx.y * zoomFactor + (orthoCamera.position.y * zoomFactor + orthoCamera.viewportHeight / 2) + positionOffsetPx.y * zoomFactor,
+				-positionPx.y * zoomFactor + (orthoCamera.position.y * zoomFactor + orthoCamera.viewportHeight / 2) + positionOffsetPx.y * zoomFactor,
 				1 );
 
 		perspCamera.unproject( tmp_vec );
