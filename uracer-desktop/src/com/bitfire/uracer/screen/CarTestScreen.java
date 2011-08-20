@@ -11,7 +11,6 @@ import com.badlogic.gdx.math.Vector2;
 import com.bitfire.uracer.Config;
 import com.bitfire.uracer.Director;
 import com.bitfire.uracer.Input;
-import com.bitfire.uracer.Physics;
 import com.bitfire.uracer.VersionInfo;
 import com.bitfire.uracer.debug.Debug;
 import com.bitfire.uracer.entities.Car;
@@ -43,17 +42,13 @@ public class CarTestScreen extends Screen
 
 		Debug.create();
 		OrthographicAlignedMesh.initialize();
-
-		// tm = new TestTilemap();
-		// tm.create();
-
-		Director.create( this, Gdx.graphics.getWidth(), Gdx.graphics.getHeight() );
-		level = Director.loadLevel( "level1" );
-
-		Physics.create( new Vector2( 0, 0 ), false );
 		EntityManager.create();
 
-		carStartPos.set( Convert.tileToPx( 1, 0 ).add( Convert.scaledPixels( 64, -64 ) ) );
+		Director.create( this, Gdx.graphics.getWidth(), Gdx.graphics.getHeight() );
+
+		level = Director.loadLevel( "level1" );
+
+		carStartPos.set( Convert.tileToPx( 1, 0 ).add( Convert.scaledPixels( 112, -112 ) ) );
 
 		// carStartPos.set( Convert.scaledPosition( 64, 64 ) );
 		car = Car.create( carStartPos, 90 );

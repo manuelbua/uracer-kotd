@@ -36,13 +36,16 @@ public class Director
 		tmp = new Vector2();
 
 		// computed for a 256px tile size target (need conversion)
-		scalingStrategy = new ScalingStrategy( new Vector2( 1280, 800 ), 70f, 256, 1f );
+		scalingStrategy = new ScalingStrategy( new Vector2( 1280, 800 ), 70f, 224, 1f);
 
 		// setup configuration
 		Config.asDefault();
 
-		float to256 = Director.scalingStrategy.tileSizeAtRef / 256f;
-		Config.PixelsPerMeter /= scalingStrategy.targetScreenRatio / to256;
+		// everything has been setup on a 256px tile, scale back if that's the case
+		Config.PixelsPerMeter /= scalingStrategy.targetScreenRatio / scalingStrategy.to256;
+//		System.out.println("ppm=" + Config.PixelsPerMeter);
+
+		Physics.create( new Vector2( 0, 0 ), false );
 	}
 
 	public static void create( Screen parent, int widthPx, int heightPx )
@@ -55,12 +58,11 @@ public class Director
 
 	public static Level loadLevel(String levelName)
 	{
+		// construct tilemap and cameras
 		Level l = new Level( "level1", scalingStrategy );
 
 		// setup converter
 		Convert.init( scalingStrategy, l.map );
-
-		l.createObjects();
 
 		// compute world size
 		Director.worldSizeScaledPx.set( l.map.width * l.map.tileWidth, l.map.height * l.map.tileHeight );
@@ -72,6 +74,9 @@ public class Director
 		boundsPx.width = Director.worldSizeScaledPx.x - halfViewport.x;
 		boundsPx.height = halfViewport.y;
 		boundsPx.y = Director.worldSizeScaledPx.y - halfViewport.y;
+
+		// construct level objects from tmx definitions
+		l.createObjects();
 
 		return l;
 	}

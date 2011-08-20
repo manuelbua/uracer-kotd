@@ -8,7 +8,6 @@ import com.badlogic.gdx.graphics.OrthographicCamera;
 import com.badlogic.gdx.graphics.PerspectiveCamera;
 import com.badlogic.gdx.graphics.Pixmap.Format;
 import com.badlogic.gdx.graphics.Texture;
-import com.badlogic.gdx.graphics.g2d.tiled.TiledMap;
 import com.badlogic.gdx.graphics.g3d.loaders.g3d.G3dtLoader;
 import com.badlogic.gdx.graphics.g3d.materials.Material;
 import com.badlogic.gdx.graphics.g3d.materials.TextureAttribute;
@@ -28,8 +27,6 @@ import com.bitfire.uracer.utils.Convert;
  */
 public class OrthographicAlignedMesh
 {
-	private TiledMap tileMap;
-
 //	private Mesh mesh;
 	private UStillModel model;
 	private StillModel model_workaround;	// FIXME, this is pure shit...
@@ -47,7 +44,6 @@ public class OrthographicAlignedMesh
 
 	// position
 	private Vector2 positionOffsetPx = new Vector2( 0, 0 );
-	private Vector2 positionTile = new Vector2( 0, 0 );
 	private Vector2 positionPx = new Vector2();
 
 	// temporaries
@@ -87,7 +83,7 @@ public class OrthographicAlignedMesh
 			throw new IllegalStateException( OrthographicAlignedMesh.shaderProgram.getLog() );
 	}
 
-	public static OrthographicAlignedMesh create( TiledMap map, String mesh, String texture, Vector2 tilePosition )
+	public static OrthographicAlignedMesh create( String mesh, String texture, Vector2 tilePosition )
 	{
 		OrthographicAlignedMesh m = new OrthographicAlignedMesh();
 
@@ -102,7 +98,6 @@ public class OrthographicAlignedMesh
 			m.model.setMaterial( material );
 			in.close();
 
-			m.tileMap = map;
 			m.texture = new Texture( Gdx.files.internal( texture ), Format.RGB565, false );
 
 			if(tilePosition != null)
@@ -124,9 +119,9 @@ public class OrthographicAlignedMesh
 		return m;
 	}
 
-	public static OrthographicAlignedMesh create( TiledMap map, String mesh, String texture )
+	public static OrthographicAlignedMesh create( String mesh, String texture )
 	{
-		return OrthographicAlignedMesh.create( map, mesh, texture, null );
+		return OrthographicAlignedMesh.create( mesh, texture, null );
 	}
 
 	public void setPositionOffsetPixels( int x, int y )
@@ -147,13 +142,13 @@ public class OrthographicAlignedMesh
 	}
 
 	/**
-	 * Sets the position in world coords, top-left origin.
+	 * Sets the world position in pixels, top-left origin.
 	 * @param x
 	 * @param y
 	 */
 	public void setPosition( float x, float y )
 	{
-		positionPx.set( x, (tileMap.height * tileMap.tileHeight) -y );
+		positionPx.set( Director.positionFor( x, y ) );
 	}
 
 	public float iRotationAngle;
@@ -186,19 +181,9 @@ public class OrthographicAlignedMesh
 		shader.begin();
 		shader.setUniformf( "u_texture", 0 );
 
-		// account for 3d origin being in the center of the screen
-		// also apply orthocamera's zoom and user-specified offset
-		float zoomFactor = Director.scalingStrategy.invTileMapZoomFactor;
-
-//		tmp_vec.set(
-//				positionPx.x * zoomFactor - (orthoCamera.position.x * zoomFactor - orthoCamera.viewportWidth / 2) + positionOffsetPx.x * zoomFactor,
-//				positionPx.y * zoomFactor + (orthoCamera.position.y * zoomFactor + orthoCamera.viewportHeight / 2) + positionOffsetPx.y * zoomFactor,
-//				1 );
-
-		tmp_vec.set(
-				positionPx.x * zoomFactor - (orthoCamera.position.x * zoomFactor - orthoCamera.viewportWidth / 2) + positionOffsetPx.x * zoomFactor,
-				-positionPx.y * zoomFactor + (orthoCamera.position.y * zoomFactor + orthoCamera.viewportHeight / 2) + positionOffsetPx.y * zoomFactor,
-				1 );
+		tmp_vec.x = Convert.scaledPixels( positionOffsetPx.x - orthoCamera.position.x) + orthoCamera.viewportWidth / 2 + positionPx.x;
+		tmp_vec.y = Convert.scaledPixels( positionOffsetPx.y + orthoCamera.position.y) + orthoCamera.viewportHeight / 2 - positionPx.y;
+		tmp_vec.z = 1;
 
 		perspCamera.unproject( tmp_vec );
 
@@ -215,7 +200,6 @@ public class OrthographicAlignedMesh
 		Matrix4.mul( mtx_combined.val, mtx_model.val );
 
 		shader.setUniformMatrix( "u_mvpMatrix", mtx_combined );
-//		mesh.render( shader, GL20.GL_TRIANGLES );
 		model.render( shader );
 
 		shader.end();
