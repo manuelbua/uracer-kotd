@@ -48,7 +48,7 @@ public class CarTestScreen extends Screen
 
 		level = Director.loadLevel( "level1" );
 
-		carStartPos.set( Convert.tileToPx( 1, 0 ).add( Convert.scaledPixels( 128, -128 ) ) );
+		carStartPos.set( Convert.tileToPx( 1, 0 ).add( Convert.scaledPixels( 112, -112 ) ) );
 
 		// carStartPos.set( Convert.scaledPosition( 64, 64 ) );
 		car = Car.create( carStartPos, 90 );
