@@ -4,7 +4,7 @@
  </tileset>
  <layer height="6" name="Tile Layer 1" width="9">
   <data compression="gzip" encoding="base64">
-   H4sIAAAAAAAAA13MSQqAQAxE0ejCARF1odiIs6Cg9z+fvyGLkMWDDEV1IlIgVRmCk7i9NPkVm8vMWFBp34nLZXYcOueYUJvMjUfn+Gsw6r/X7hef6Yz3FgN+n3LGydgAAAA=
+   H4sIAAAAAAAAA13OSQqAQAxE0ejCARFx0aKIs6Cg9z+fX6hFk8WDhBRFWjMrkEqGwUncXkb5BavLTJhRqe/A6TIbds05RtRR5sKt+b816HUP6n7wRp1BP3X4AMlEWPfYAAAA
   </data>
  </layer>
  <objectgroup color="#00ff00" height="6" name="static-meshes" width="9">
