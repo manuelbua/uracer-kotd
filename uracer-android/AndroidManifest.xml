@@ -1,8 +1,8 @@
 <?xml version="1.0" encoding="utf-8"?>
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
       package="com.bitfire.uracer"
-      android:versionCode="40"
-      android:versionName="v0.0.6-2-gb8fac6a/master">
+      android:versionCode="42"
+      android:versionName="v0.0.6-3-g186b8f5/build-track-perimeter">
     <supports-screens android:anyDensity="true" android:xlargeScreens="true" />
     <uses-sdk android:minSdkVersion="7" />
     <application android:icon="@drawable/icon" android:label="@string/app_name">

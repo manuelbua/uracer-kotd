@@ -59,13 +59,13 @@ public class Director
 	public static Level loadLevel(String levelName)
 	{
 		// construct tilemap and cameras
-		Level l = new Level( "level1", scalingStrategy );
+		Level level = new Level( "level1", scalingStrategy );
 
 		// setup converter
-		Convert.init( scalingStrategy, l.map );
+		Convert.init( scalingStrategy, level.map );
 
 		// compute world size
-		Director.worldSizeScaledPx.set( l.map.width * l.map.tileWidth, l.map.height * l.map.tileHeight );
+		Director.worldSizeScaledPx.set( level.map.width * level.map.tileWidth, level.map.height * level.map.tileHeight );
 		Director.worldSizeScaledPx.mul( scalingStrategy.invTileMapZoomFactor );
 		Director.worldSizeScaledMt = Convert.px2mt( worldSizeScaledPx );
 
@@ -76,9 +76,9 @@ public class Director
 		boundsPx.y = Director.worldSizeScaledPx.y - halfViewport.y;
 
 		// construct level objects from tmx definitions
-		l.createObjects();
+		level.init();
 
-		return l;
+		return level;
 	}
 
 	public static OrthographicCamera getCamera()

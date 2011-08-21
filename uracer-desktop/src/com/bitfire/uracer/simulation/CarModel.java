@@ -44,7 +44,7 @@ public class CarModel
 	public void toDefault()
 	{
 		// physical model
-		h = 1.f; // m
+		h = 1f; // m
 		mass = 1500.f; // kg
 		invmass = 1.f / mass;
 		inertia = 1500.f; // kg.m
@@ -108,6 +108,7 @@ public class CarModel
 		toDefault();
 
 		// physical model
+		h = .85f; // m
 		b = 1.f; // m
 		c = 1.f; // m
 		width = 2.3f; // m
