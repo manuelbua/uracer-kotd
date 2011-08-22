@@ -1,5 +1,8 @@
 package com.bitfire.uracer.utils;
 
+import java.util.ArrayList;
+
+import com.badlogic.gdx.math.MathUtils;
 import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.physics.box2d.Body;
 import com.badlogic.gdx.physics.box2d.BodyDef;
@@ -10,6 +13,14 @@ import com.bitfire.uracer.Physics;
 
 public class Box2DFactory
 {
+
+	public static void init()
+	{
+		tmp1 = new Vector2();
+		tmp2 = new Vector2();
+		from = new Vector2();
+		to = new Vector2();
+	}
 
 	/**
 	 * Creates a circle object with the given position and radius. Resitution
@@ -55,7 +66,7 @@ public class Box2DFactory
 	/**
 	 * Creates a wall by constructing a rectangle whose corners are (xmin,ymin)
 	 * and (xmax,ymax), and rotating the box counterclockwise through the given
-	 * angle. Restitution defaults to 0.5.
+	 * angle. Restitution defaults to 0.
 	 */
 	public static Body createWall( float xmin, float ymin, float xmax, float ymax, float angle )
 	{
@@ -119,4 +130,64 @@ public class Box2DFactory
 		return createWall( cx - mag / 2, cy - halfSize, cx + mag / 2, cy + halfSize, angle, restitution );
 	}
 
+
+	private static Vector2 tmp1;
+	private static Vector2 tmp2;
+	private static Vector2 from;
+	private static Vector2 to;
+
+	/**
+	 *
+	 * @param unitCircleRadius
+	 * @param offset
+	 * @param tickness
+	 * @param lumpLen
+	 * @param angle
+	 * @param steps
+	 * @param rotationOffset describes the rotation offset for the two endpoints of the wall being constructed.
+	 * @param restitution
+	 * @param returnResult
+	 * @return
+	 */
+	public static ArrayList<Body> createAngularWall( Vector2 unitCircleRadius, Vector2 offset, float tickness, float lumpLen, float angle, int steps, Vector2 rotationOffset, float restitution, boolean returnResult )
+	{
+		ArrayList<Body> result = null;
+		if(returnResult) result = new ArrayList<Body>();
+
+		float halfTickness = tickness / 2f;
+		float angleStep = angle / (float)(steps);
+		float radStep = angleStep * MathUtils.degreesToRadians;
+		float cosStep = (float)Math.cos(radStep);
+		float sinStep = (float)Math.sin(radStep);
+		float tmpx, tmpy;
+
+		tmp1.set( unitCircleRadius );
+		tmp1.x -= halfTickness * rotationOffset.x;
+
+		tmp2.set(tmp1);
+		tmp2.x += halfTickness * rotationOffset.y;
+		tmp2.y -= lumpLen;
+
+		for( int step = 0; step < steps; step++ )
+		{
+			from.x = offset.x + tmp1.x;
+			from.y = offset.y - tmp1.y;
+			to.x = offset.x + tmp2.x;
+			to.y = offset.y - tmp2.y;
+
+			Body body = Box2DFactory.createWall(from ,to, tickness, 0);
+			if(returnResult) result.add(body);
+
+			// rotate
+			tmpx = tmp1.x * cosStep - tmp1.y * sinStep;
+			tmpy = tmp1.x * sinStep + tmp1.y * cosStep;
+			tmp1.set(tmpx, tmpy);
+
+			tmpx = tmp2.x * cosStep - tmp2.y * sinStep;
+			tmpy = tmp2.x * sinStep + tmp2.y * cosStep;
+			tmp2.set(tmpx, tmpy);
+		}
+
+		return result;
+	}
 }

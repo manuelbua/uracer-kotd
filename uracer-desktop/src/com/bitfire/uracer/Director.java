@@ -9,6 +9,7 @@ import com.badlogic.gdx.physics.box2d.Body;
 import com.bitfire.uracer.screen.Screen;
 import com.bitfire.uracer.tiled.Level;
 import com.bitfire.uracer.tiled.ScalingStrategy;
+import com.bitfire.uracer.utils.Box2DFactory;
 import com.bitfire.uracer.utils.Convert;
 
 public class Director
@@ -46,6 +47,7 @@ public class Director
 //		System.out.println("ppm=" + Config.PixelsPerMeter);
 
 		Physics.create( new Vector2( 0, 0 ), false );
+		Box2DFactory.init();
 	}
 
 	public static void create( Screen parent, int widthPx, int heightPx )
