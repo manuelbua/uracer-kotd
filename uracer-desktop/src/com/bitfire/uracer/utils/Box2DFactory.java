@@ -108,4 +108,15 @@ public class Box2DFactory
 		return createWall( cx - mag / 2, cy - 0.05f, cx + mag / 2, cy + 0.05f, angle, restitution );
 	}
 
+	public static Body createWall( Vector2 from, Vector2 to, float size, float restitution )
+	{
+		// determine center point and rotation angle for createWall
+		float halfSize = size / 2f;
+		float cx = (from.x + to.x) / 2;
+		float cy = (from.y + to.y) / 2;
+		float angle = (float)Math.atan2( to.y - from.y, to.x - from.x);
+		float mag = (float)Math.sqrt( (to.x - from.x) * (to.x - from.x) + (to.y - from.y) * (to.y - from.y) );
+		return createWall( cx - mag / 2, cy - halfSize, cx + mag / 2, cy + halfSize, angle, restitution );
+	}
+
 }

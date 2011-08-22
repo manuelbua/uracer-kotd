@@ -39,8 +39,10 @@ public class Track
 			float flipY = Director.worldSizeScaledMt.y;
 
 			Vector2 coords = new Vector2();
-			Vector2 rExt = new Vector2();
-			Vector2 rInt = new Vector2();
+			Vector2 tmp1 = new Vector2();
+			Vector2 tmp2 = new Vector2();
+			Vector2 from = new Vector2();
+			Vector2 to = new Vector2();
 			TiledLayer layer = MapUtils.getLayer( "track" );
 
 			for( int y = 0; y < map.height; y++ )
@@ -62,63 +64,75 @@ public class Track
 
 					if( orient.equals( "h" ) )
 					{
-						float hY1 = coords.y + halfTileSize - halfTrackSize - halfWallSize - wallDistance;
-						float hY2 = coords.y + halfTileSize - halfTrackSize + halfWallSize - wallDistance;
+						from.x = coords.x;
+						to.x = coords.x + tileSize;
 
 						// top
-//						Box2DFactory.createWall( coords.x, flipY-hY1, coords.x + tileSize, flipY-hY2, 0, 0 );
+						from.y = to.y = flipY - (coords.y + halfTileSize - halfTrackSize - halfWallSize - wallDistance);
+						Box2DFactory.createWall( from, to, wallSize, 0 );
 
 						// bottom
-//						Box2DFactory.createWall( coords.x, flipY-(tileSize-hY1), coords.x + tileSize, flipY-(tileSize-hY2), 0, 0 );
+						from.y = to.y = flipY - (coords.y + tileSize - (halfTileSize - halfTrackSize - halfWallSize - wallDistance));
+						Box2DFactory.createWall( from, to, wallSize, 0 );
 					}
 					else
 					if( orient.equals( "v" ) )
 					{
-						float hX1 = coords.x + halfTileSize - halfTrackSize - halfWallSize - wallDistance;
-						float hX2 = coords.x + halfTileSize - halfTrackSize + halfWallSize - wallDistance;
+						from.y = flipY - coords.y;
+						to.y = flipY - (coords.y + tileSize);
 
 						// left
-//						Box2DFactory.createWall( hX1, flipY-coords.y, hX2, flipY-(coords.y+tileSize), 0, 0 );
+						from.x = to.x = coords.x + halfTileSize - halfTrackSize - halfWallSize - wallDistance;
+						Box2DFactory.createWall( from, to, wallSize, 0 );
 
 						// right
-//						Box2DFactory.createWall( tileSize - hX1, flipY-coords.y, tileSize - hX2, flipY-(coords.y+tileSize), 0, 0 );
+						from.x = to.x = coords.x + tileSize - (halfTileSize - halfTrackSize - halfWallSize - wallDistance);
+						Box2DFactory.createWall( from, to, wallSize, 0 );
 					}
 					else
 					if( orient.equals( "tl" ))
 					{
 						int steps;
-						float angleStep, radStep, cosStep, sinStep, angle;
+						float angleStep, radStep, cosStep, sinStep;
 						float tileAngle;
-						float wallLength;
+						float halfWallLength, wallLength;
+						float rotX, rotY;
 
 						// build external arc
 						steps = 15;
 						tileAngle = 90f;
 						wallLength = 1f;
-						angleStep = tileAngle / (float)(steps-1);
+						halfWallLength = wallLength / 2f;
+						angleStep = tileAngle / (float)(steps);
 						radStep = angleStep * MathUtils.degreesToRadians;
 						cosStep = (float)Math.cos(radStep);
 						sinStep = (float)Math.sin(radStep);
 
-						angle = 0;//(90f / (float)(steps*wallLength));
-						rExt.set(-(halfTileSize + halfTrackSize + wallDistance + wallSize), 0);
+						tmp1.set(-(halfTileSize + halfTrackSize  /* + wallDistance + halfWallSize*/), 0);
+
+						tmp2.set(tmp1);
+						tmp2.y -= wallLength;
 
 						for( int step = 0; step < steps; step++ )
 						{
-							System.out.println("building for " + angle);
-							Box2DFactory.createWall(
-									coords.x + tileSize + rExt.x           , flipY-(coords.y + rExt.y              + tileSize),
-									coords.x + tileSize + rExt.x + wallSize, flipY-(coords.y + rExt.y - wallLength + tileSize),
-									 -angle * MathUtils.degreesToRadians, 0 );
+							from.x = coords.x + tileSize + tmp1.x;
+							from.y = flipY - (coords.y + tmp1.y + tileSize);
+							to.x = coords.x + tileSize + tmp2.x;
+							to.y = flipY-(coords.y + tmp2.y + tileSize);
 
-							angle += angleStep;
+							Box2DFactory.createWall(from ,to, wallSize, 0);
 
 							// rotate
-							float rotX = rExt.x * cosStep - rExt.y * sinStep;
-							float rotY = rExt.x * sinStep + rExt.y * cosStep;
-							rExt.set(rotX, rotY);
+							rotX = tmp1.x * cosStep - tmp1.y * sinStep;
+							rotY = tmp1.x * sinStep + tmp1.y * cosStep;
+							tmp1.set(rotX, rotY);
+
+							rotX = tmp2.x * cosStep - tmp2.y * sinStep;
+							rotY = tmp2.x * sinStep + tmp2.y * cosStep;
+							tmp2.set(rotX, rotY);
 						}
 
+/*
 						// build external arc
 						steps = 5;
 						tileAngle = 90f;
@@ -129,7 +143,7 @@ public class Track
 						sinStep = (float)Math.sin(radStep);
 						angle = 0;
 
-						rInt.set(-(halfTileSize - halfTrackSize - wallDistance - wallSize), 0);
+						rInt.set(-(halfTileSize - halfTrackSize - wallDistance - halfWallSize), 0);
 						for( int step = 0; step < steps; step++ )
 						{
 							Box2DFactory.createWall(
@@ -144,12 +158,13 @@ public class Track
 							float rotY = rInt.x * sinStep + rInt.y * cosStep;
 							rInt.set(rotX, rotY);
 						}
+*/
 					}
 
 //					 System.out.format( "%3s ", orient );
 				}
 
-				System.out.println();
+//				System.out.println();
 			}
 		}
 	}
