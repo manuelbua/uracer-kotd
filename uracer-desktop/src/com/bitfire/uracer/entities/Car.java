@@ -8,6 +8,8 @@ import com.badlogic.gdx.math.MathUtils;
 import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.physics.box2d.BodyDef;
 import com.badlogic.gdx.physics.box2d.BodyDef.BodyType;
+import com.badlogic.gdx.physics.box2d.CircleShape;
+import com.badlogic.gdx.physics.box2d.Fixture;
 import com.badlogic.gdx.physics.box2d.FixtureDef;
 import com.badlogic.gdx.physics.box2d.MassData;
 import com.badlogic.gdx.physics.box2d.PolygonShape;
@@ -35,6 +37,7 @@ public class Car extends b2dEntity
 	protected CarSimulator carSim;
 	public CarInput carInput;
 	private ArrayList<CarInput> cil;
+	public ArrayList<Fixture> impactFeedback;
 
 	private PolygonShape shape;
 
@@ -44,6 +47,7 @@ public class Car extends b2dEntity
 		this.originalPosition.set( position );
 		this.originalOrientation = orientation;
 		this.cil = new ArrayList<CarInput>( 2500 );
+		this.impactFeedback = new ArrayList<Fixture>();
 
 		carDesc = CarDescriptor.create();
 		carDesc.carModel.toModel2();
@@ -56,38 +60,56 @@ public class Car extends b2dEntity
 
 		Vector2 half = new Vector2( (carDesc.carModel.width / 2f), (carDesc.carModel.length / 2f) );
 
-		shape = new PolygonShape();
-		shape.setAsBox( half.x, half.y );
-
+		// body
 		BodyDef bd = new BodyDef();
 		bd.angle = 0;
 		bd.type = BodyType.DynamicBody;
 
 		body = Physics.world.createBody( bd );
 
+		// physical properties
 		FixtureDef fd = new FixtureDef();
+
+		shape = new PolygonShape();
+//		shape.setAsBox( half.x, half.y );
+//		shape.setAsBox( half.x, half.y*0.75f, new Vector2(0,-half.y*0.25f), 0 );
+		shape.setAsBox( half.x, half.y*0.5f);//, new Vector2(0,0), 0 );
+
 		fd.shape = shape;
 		fd.density = carDesc.carModel.density;
 		fd.friction = carDesc.carModel.friction;
 		fd.restitution = carDesc.carModel.restitution;
 
-		/* Fixture f = */body.createFixture( fd );
-		// f->SetUserData( (void*)( iIsPlayer ? (unsigned int)ShapeCarPlayer :
-		// (unsigned int)ShapeCar ) );
+		body.createFixture( fd ).setUserData( EntityType.Car );
+
+		// TODO build a capsule instead!
+		// circle
+		Vector2 p = new Vector2();
+		CircleShape shape = new CircleShape();
+		shape.setPosition( p.set(0,0.75f) );
+		shape.setRadius( carDesc.carModel.width / 2f );
+		fd.shape = shape;
+		body.createFixture( fd ).setUserData( EntityType.Car );
+		shape.setPosition( p.set(0,-0.75f) );
+		body.createFixture( fd ).setUserData( EntityType.Car );
+
+		// mass
 		MassData md = new MassData();
 		md.mass = carDesc.carModel.mass;
 		md.I = carDesc.carModel.inertia;
 		md.center.set( 0, 0 );
 		body.setMassData( md );
+
 		body.setBullet( true );
+		body.setUserData( this );
 
 		// build gfx
 		sprite = new Sprite();
 		sprite.setRegion( Art.cars.findRegion( "electron" ) );
-//		sprite.setRegion( Art.blackCar );
 		sprite.setSize( Convert.mt2px( half.x * 2 ), Convert.mt2px( half.y * 2 ) );
-//		sprite.setScale( 1f );
 		sprite.setOrigin( sprite.getWidth() / 2, sprite.getHeight() / 2 );
+//		sprite.setRegion( Art.blackCar );
+//		sprite.setScale( 1f );
 
 		setTransform( position, orientation );
 
@@ -202,6 +224,24 @@ public class Car extends b2dEntity
 		super.onBeforePhysicsSubstep();
 
 		carSim.applyInput( acquireInput() );
+
+		// process impact feedback
+		while(impactFeedback.size() > 0)
+		{
+			impactFeedback.remove( 0 );
+
+			Vector2 v = body.getLinearVelocity();
+			float vlen = carDesc.velocity_wc.len();
+			float alpha = (vlen / carDesc.carModel.max_speed) * 1f;
+
+			carDesc.velocity_wc.x = AMath.lerp( carDesc.velocity_wc.x, v.x, alpha );
+			carDesc.velocity_wc.y = AMath.lerp( carDesc.velocity_wc.y, v.y, alpha );
+			carDesc.angularvelocity = body.getAngularVelocity();// * 0.85f;
+
+			carDesc.throttle *= ((1 - alpha) + 0.1f);
+//			carDesc.throttle *= (1f / (vlen+0.001f));
+		}
+
 		carSim.step( body );
 
 		// setup forces

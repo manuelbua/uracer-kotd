@@ -124,9 +124,9 @@ public class CarModel
 		max_speed = 35.f;
 		max_force = 300.f;
 
-		density = 1.f;
-		friction = .5f;
-		restitution = 0.1f;
+		density = 1f;
+		friction = .02f;
+		restitution = 0.15f;
 	}
 
 	public void toBlackCar()

@@ -30,7 +30,7 @@ public class Track
 			// common
 			float wallSize = 0.3f;
 			float wallDistance = 0.3f;
-			float restitution = 1f;
+			float restitution = 0.15f;
 
 			// 224px tileset
 			float trackSize = Convert.px2mt( 144f );
