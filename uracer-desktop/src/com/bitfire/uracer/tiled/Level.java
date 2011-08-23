@@ -26,6 +26,7 @@ public class Level
 {
 	public TiledMap map;
 	public TileMapRenderer renderer;
+	public Track track;
 
 	public Level( String levelName, ScalingStrategy strategy )
 	{
@@ -43,6 +44,14 @@ public class Level
 		MapUtils.initialize( map );
 
 		createCams();
+	}
+
+	public void init()
+	{
+		// create track
+		track = new Track( map );
+
+		createObjects();
 	}
 
 	public void syncWithCam( OrthographicCamera camera_ )
@@ -113,17 +122,19 @@ public class Level
 	public void createObjects()
 	{
 		// first object group is the static meshes container
-		if( !MapUtils.hasObjectGroup( StaticMeshes ) ) return;
+		if( !MapUtils.hasObjectGroup( MapUtils.LayerStaticMeshes ) ) return;
 
-		TiledObjectGroup group = MapUtils.getObjectGroup( StaticMeshes );
+		TiledObjectGroup group = MapUtils.getObjectGroup( MapUtils.LayerStaticMeshes );
 		for( int i = 0; i < group.objects.size(); i++ )
 		{
 			TiledObject o = group.objects.get( i );
 
 			float scale = 1f;
-			if( o.properties.get( MeshScale ) != null ) scale = Float.parseFloat( o.properties.get( MeshScale ) );
+			if( o.properties.get( MapUtils.MeshScale ) != null )
+				scale = Float.parseFloat( o.properties.get( MapUtils.MeshScale ) );
 
-			// System.out.println("Creating " + o.type + ", [" + o.x + "," + o.y + "] x" + scale);
+			// System.out.println("Creating " + o.type + ", [" + o.x + "," + o.y
+			// + "] x" + scale);
 			meshes.add( MeshFactory.create( o.type, o.x, o.y, scale ) );
 		}
 
@@ -156,8 +167,4 @@ public class Level
 	private OrthographicCamera camOrtho;
 	private ArrayList<OrthographicAlignedMesh> meshes = new ArrayList<OrthographicAlignedMesh>();
 	private float camPerspElevation;
-
-	// object group name and properties
-	private final String StaticMeshes = "static-meshes";
-	private final String MeshScale = "scale";
 }

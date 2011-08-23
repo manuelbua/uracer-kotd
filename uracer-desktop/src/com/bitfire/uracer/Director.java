@@ -9,6 +9,7 @@ import com.badlogic.gdx.physics.box2d.Body;
 import com.bitfire.uracer.screen.Screen;
 import com.bitfire.uracer.tiled.Level;
 import com.bitfire.uracer.tiled.ScalingStrategy;
+import com.bitfire.uracer.utils.Box2DFactory;
 import com.bitfire.uracer.utils.Convert;
 
 public class Director
@@ -46,6 +47,7 @@ public class Director
 //		System.out.println("ppm=" + Config.PixelsPerMeter);
 
 		Physics.create( new Vector2( 0, 0 ), false );
+		Box2DFactory.init();
 	}
 
 	public static void create( Screen parent, int widthPx, int heightPx )
@@ -59,13 +61,13 @@ public class Director
 	public static Level loadLevel(String levelName)
 	{
 		// construct tilemap and cameras
-		Level l = new Level( "level1", scalingStrategy );
+		Level level = new Level( "level1", scalingStrategy );
 
 		// setup converter
-		Convert.init( scalingStrategy, l.map );
+		Convert.init( scalingStrategy, level.map );
 
 		// compute world size
-		Director.worldSizeScaledPx.set( l.map.width * l.map.tileWidth, l.map.height * l.map.tileHeight );
+		Director.worldSizeScaledPx.set( level.map.width * level.map.tileWidth, level.map.height * level.map.tileHeight );
 		Director.worldSizeScaledPx.mul( scalingStrategy.invTileMapZoomFactor );
 		Director.worldSizeScaledMt = Convert.px2mt( worldSizeScaledPx );
 
@@ -76,9 +78,9 @@ public class Director
 		boundsPx.y = Director.worldSizeScaledPx.y - halfViewport.y;
 
 		// construct level objects from tmx definitions
-		l.createObjects();
+		level.init();
 
-		return l;
+		return level;
 	}
 
 	public static OrthographicCamera getCamera()

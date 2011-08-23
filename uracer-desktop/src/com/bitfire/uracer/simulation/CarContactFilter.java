@@ -10,7 +10,7 @@ public class CarContactFilter implements ContactFilter
 	public boolean shouldCollide( Fixture fixtureA, Fixture fixtureB )
 	{
 //		System.out.println(fixtureA);
-		return false;
+		return true;
 	}
 
 }
