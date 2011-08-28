@@ -11,7 +11,7 @@ import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.physics.box2d.BodyDef;
 import com.badlogic.gdx.physics.box2d.BodyDef.BodyType;
 import com.badlogic.gdx.physics.box2d.CircleShape;
-import com.badlogic.gdx.physics.box2d.Fixture;
+import com.badlogic.gdx.physics.box2d.ContactImpulse;
 import com.badlogic.gdx.physics.box2d.FixtureDef;
 import com.badlogic.gdx.physics.box2d.MassData;
 import com.badlogic.gdx.physics.box2d.PolygonShape;
@@ -40,7 +40,7 @@ public class Car extends b2dEntity
 	protected CarSimulator carSim;
 	public CarInput carInput;
 	private ArrayList<CarInput> cil;
-	public ArrayList<Fixture> impactFeedback;
+	public ArrayList<ContactImpulse> impactFeedback;
 
 	private PolygonShape shape;
 
@@ -50,7 +50,7 @@ public class Car extends b2dEntity
 		this.originalPosition.set( position );
 		this.originalOrientation = orientation;
 		this.cil = new ArrayList<CarInput>( 2500 );
-		this.impactFeedback = new ArrayList<Fixture>();
+		this.impactFeedback = new ArrayList<ContactImpulse>();
 
 		carDesc = CarDescriptor.create();
 		carDesc.carModel.toModel2();
@@ -80,7 +80,7 @@ public class Car extends b2dEntity
 
 		TextureRegion electron = Art.cars.findRegion( "electron" );
 
-		boolean useCapsule = false;
+		boolean useCapsule = true;
 
 		if(!useCapsule)
 		{
@@ -257,22 +257,12 @@ public class Car extends b2dEntity
 		// process impact feedback
 		while(impactFeedback.size() > 0)
 		{
-			impactFeedback.remove( 0 );
+			ContactImpulse impulse = impactFeedback.remove( 0 );
 
-			Vector2 v = body.getLinearVelocity();
-//			float vlen = carDesc.velocity_wc.len();
-//			float alpha = (vlen / carDesc.carModel.max_speed);// * 0.75f;
+//			System.out.println(carDesc.velocity_wc + ", " + v + " -- " + carDesc.angularvelocity + ", " + body.getAngularVelocity());
 
-//			float alpha = 0.3f;
-//			carDesc.velocity_wc.x = AMath.lerp( carDesc.velocity_wc.x, v.x, alpha );
-//			carDesc.velocity_wc.y = AMath.lerp( carDesc.velocity_wc.y, v.y, alpha );
-
-//			carDesc.angularvelocity = AMath.lerp( carDesc.angularvelocity, body.getAngularVelocity(), 0.1f);
-
-//			body.applyLinearImpulse( v, body.getWorldCenter() );
-
-			carDesc.velocity_wc.set( v );
-//			carDesc.angularvelocity = body.getAngularVelocity();
+			carDesc.velocity_wc.set( body.getLinearVelocity() ).mul( 0.95f );
+//			carDesc.angularvelocity += AMath.lerp( carDesc.angularvelocity, body.getAngularVelocity(), 0.9f ) / 2f;
 
 			start_decrease = true;
 		}
@@ -285,7 +275,7 @@ public class Car extends b2dEntity
 				start_timer = System.nanoTime();
 			}
 
-			i.throttle *= 0.05f;
+			i.throttle *= 0.95f;
 		}
 
 		carSim.applyInput( i );

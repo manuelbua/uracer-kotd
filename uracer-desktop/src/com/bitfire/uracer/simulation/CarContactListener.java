@@ -31,12 +31,12 @@ public class CarContactListener implements ContactListener
 //		addImpactFeedback( b );
 	}
 
-	private void addImpactFeedback( Fixture f )
+	private void addImpactFeedback( Fixture f, ContactImpulse impulse )
 	{
 		if( f.getUserData() == EntityType.Car && f.getBody() != null )
 		{
 			Car car = (Car)f.getBody().getUserData();
-			car.impactFeedback.add( f );
+			car.impactFeedback.add( impulse );
 		}
 	}
 
@@ -46,8 +46,8 @@ public class CarContactListener implements ContactListener
 		Fixture a = contact.getFixtureA();
 		Fixture b = contact.getFixtureB();
 
-		addImpactFeedback( a );
-		addImpactFeedback( b );
+		addImpactFeedback( a, impulse );
+		addImpactFeedback( b, impulse );
 	}
 
 }
