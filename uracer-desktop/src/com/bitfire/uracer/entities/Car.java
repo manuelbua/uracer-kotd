@@ -80,7 +80,7 @@ public class Car extends b2dEntity
 
 		TextureRegion electron = Art.cars.findRegion( "electron" );
 
-		boolean useCapsule = true;
+		boolean useCapsule = false;
 
 		if(!useCapsule)
 		{
@@ -285,7 +285,7 @@ public class Car extends b2dEntity
 				start_timer = System.nanoTime();
 			}
 
-//			i.throttle *= 0.05f;
+			i.throttle *= 0.05f;
 		}
 
 		carSim.applyInput( i );
