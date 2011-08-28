@@ -32,7 +32,6 @@ public class Car extends b2dEntity
 	protected Sprite sprite;
 	private boolean isPlayer;
 
-	private Vector2 impactVelocity = new Vector2();
 	protected Vector2 originalPosition = new Vector2();
 	protected float originalOrientation;
 	public CarDescriptor carDesc;
@@ -40,8 +39,6 @@ public class Car extends b2dEntity
 	public CarInput carInput;
 	private ArrayList<CarInput> cil;
 	public ArrayList<ContactImpulse> impactFeedback;
-
-	private PolygonShape shape;
 
 	protected Car( Vector2 position, float orientation, boolean isPlayer )
 	{
@@ -58,16 +55,12 @@ public class Car extends b2dEntity
 		carSim = new CarSimulator( carDesc );
 		carInput = new CarInput();
 
-		impactVelocity.set( 0, 0 );
-
 		Vector2 half = new Vector2( (carDesc.carModel.width / 2f), (carDesc.carModel.length / 2f) );
 
 		// body
 		BodyDef bd = new BodyDef();
 		bd.angle = 0;
 		bd.type = BodyType.DynamicBody;
-
-
 
 		body = Physics.world.createBody( bd );
 
@@ -95,6 +88,7 @@ public class Car extends b2dEntity
 		}
 		else
 		{
+			PolygonShape shape;
 
 			// capsule
 			shape = new PolygonShape();
@@ -120,7 +114,7 @@ public class Car extends b2dEntity
 //		md.center.set( 0, 0 );
 //		body.setMassData( md );
 
-		System.out.println("mass: " + body.getMass() + ", inertia: " + body.getInertia());
+//		System.out.println("mass: " + body.getMass() + ", inertia: " + body.getInertia());
 		body.setBullet( true );
 		body.setUserData( this );
 
@@ -244,22 +238,13 @@ public class Car extends b2dEntity
 	private long start_timer = 0;
 	private boolean start_decrease = false;
 
-	@Override
-	public void onBeforePhysicsSubstep()
+	private void handleImpactFeedback(CarInput input)
 	{
-		super.onBeforePhysicsSubstep();
-
-		CarInput i = carInput;
-		if(isPlayer)
-			acquireInput();
-
 		// process impact feedback
 		while(impactFeedback.size() > 0)
 		{
 			/*ContactImpulse impulse = */ impactFeedback.remove( 0 );
-			carDesc.velocity_wc.set( body.getLinearVelocity() ).mul( 0.95f );
-//			carDesc.angularvelocity = body.getAngularVelocity() * 0.95f;
-
+			carDesc.velocity_wc.set( body.getLinearVelocity() ).mul( Director.gameplaySettings.linearVelocityAfterFeedback );
 			start_decrease = true;
 		}
 
@@ -267,19 +252,27 @@ public class Car extends b2dEntity
 		{
 			if(start_decrease)
 			{
-				start_decrease= false;
+				start_decrease = false;
 				start_timer = System.nanoTime();
 			}
 
-			i.throttle *= 0.95f;
+			input.throttle *= 0.95f;
 		}
+	}
 
+	@Override
+	public void onBeforePhysicsSubstep()
+	{
+		super.onBeforePhysicsSubstep();
+
+		CarInput i = carInput;
+		if(isPlayer) i = acquireInput();
+		handleImpactFeedback(i);
 		carSim.applyInput( i );
 		carSim.step( body );
 
-		// setup forces
+		// set velocities
 		body.setAwake( true );
-
 		body.setLinearVelocity( carDesc.velocity_wc );
 		body.setAngularVelocity( -carDesc.angularvelocity );
 	}

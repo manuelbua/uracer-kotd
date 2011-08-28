@@ -17,6 +17,7 @@ import com.bitfire.uracer.entities.Car;
 import com.bitfire.uracer.entities.EntityManager;
 import com.bitfire.uracer.postprocessing.PostProcessor;
 import com.bitfire.uracer.postprocessing.effects.RadialBlur;
+import com.bitfire.uracer.simulation.GameplaySettings;
 import com.bitfire.uracer.tiled.Level;
 import com.bitfire.uracer.tiled.OrthographicAlignedMesh;
 import com.bitfire.uracer.utils.Convert;
@@ -46,7 +47,8 @@ public class CarTestScreen extends Screen
 
 		Director.create( this, Gdx.graphics.getWidth(), Gdx.graphics.getHeight() );
 
-		level = Director.loadLevel( "level1" );
+		GameplaySettings gs = GameplaySettings.create( GameplaySettings.Medium );
+		level = Director.loadLevel( "level1", gs );
 
 		carStartPos.set( Convert.tileToPx( 1, 0 ).add( Convert.scaledPixels( 112, -112 ) ) );
 
