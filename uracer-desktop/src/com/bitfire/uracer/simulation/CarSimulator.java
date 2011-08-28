@@ -188,12 +188,12 @@ public class CarSimulator
 		lastSign = thisSign;
 
 		ftraction.set( 100f * (carDesc.throttle - carDesc.brake * thisSign /*
-																			 * SGN(
-																			 * velocity
-																			 * .
-																			 * x
-																			 * )
-																			 */), 0 );
+		 * SGN(
+		 * velocity
+		 * .
+		 * x
+		 * )
+		 */), 0 );
 
 		// torque on body from lateral forces
 		float torque = carDesc.carModel.b * flatf.y - carDesc.carModel.c * flatr.y;

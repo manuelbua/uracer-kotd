@@ -111,7 +111,7 @@ public class CarModel
 		h = .85f; // m
 		b = 1.f; // m
 		c = 1.f; // m
-		width = 2.3f; // m
+		width = 2.5f; // m
 		length = 3.5f; // m (must be > wheelbase)
 
 		// physical behavior
@@ -126,7 +126,7 @@ public class CarModel
 
 		density = 1f;
 		friction = .02f;
-		restitution = 0.15f;
+		restitution = 0.1f;
 	}
 
 	public void toBlackCar()

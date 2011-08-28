@@ -51,7 +51,9 @@ public class CarTestScreen extends Screen
 		carStartPos.set( Convert.tileToPx( 1, 0 ).add( Convert.scaledPixels( 112, -112 ) ) );
 
 		// carStartPos.set( Convert.scaledPosition( 64, 64 ) );
-		car = Car.create( carStartPos, 90 );
+		car = Car.create( carStartPos, 90, true );
+		Car other = Car.create( Convert.tileToPx( 2, 0 ).add( Convert.scaledPixels( 112, -112 ) ), 90, false );
+
 		// car.record( true );
 		// ghost = GhostCar.create( Convert.scaledPosition( 0, 0 ), 90 );
 

@@ -2,8 +2,10 @@ package com.bitfire.uracer.entities;
 
 import java.util.ArrayList;
 
+import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.g2d.Sprite;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
+import com.badlogic.gdx.graphics.g2d.TextureRegion;
 import com.badlogic.gdx.math.MathUtils;
 import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.physics.box2d.BodyDef;
@@ -23,6 +25,7 @@ import com.bitfire.uracer.simulation.CarInput;
 import com.bitfire.uracer.simulation.CarSimulator;
 import com.bitfire.uracer.utils.AMath;
 import com.bitfire.uracer.utils.Convert;
+import com.bitfire.uracer.utils.FixtureAtlas;
 
 public class Car extends b2dEntity
 {
@@ -65,33 +68,51 @@ public class Car extends b2dEntity
 		bd.angle = 0;
 		bd.type = BodyType.DynamicBody;
 
+
+
 		body = Physics.world.createBody( bd );
 
 		// physical properties
 		FixtureDef fd = new FixtureDef();
-
-		shape = new PolygonShape();
-//		shape.setAsBox( half.x, half.y );
-//		shape.setAsBox( half.x, half.y*0.75f, new Vector2(0,-half.y*0.25f), 0 );
-		shape.setAsBox( half.x, half.y*0.5f);//, new Vector2(0,0), 0 );
-
-		fd.shape = shape;
 		fd.density = carDesc.carModel.density;
 		fd.friction = carDesc.carModel.friction;
 		fd.restitution = carDesc.carModel.restitution;
 
-		body.createFixture( fd ).setUserData( EntityType.Car );
+		TextureRegion electron = Art.cars.findRegion( "electron" );
 
-		// TODO build a capsule instead!
-		// circle
-		Vector2 p = new Vector2();
-		CircleShape shape = new CircleShape();
-		shape.setPosition( p.set(0,0.75f) );
-		shape.setRadius( carDesc.carModel.width / 2f );
-		fd.shape = shape;
-		body.createFixture( fd ).setUserData( EntityType.Car );
-		shape.setPosition( p.set(0,-0.75f) );
-		body.createFixture( fd ).setUserData( EntityType.Car );
+		boolean useCapsule = true;
+
+		if(!useCapsule)
+		{
+			// editor shape
+			Vector2 gfxToBox2d = new Vector2();
+			gfxToBox2d.x = carDesc.carModel.width / Convert.px2mt(electron.getRegionWidth());
+			gfxToBox2d.y = carDesc.carModel.length / Convert.px2mt(electron.getRegionHeight());
+
+			FixtureAtlas atlas = new FixtureAtlas(Gdx.files.internal("data/base/electron.shape"));
+			atlas.createFixtures( body, "../../data-src/base/cars/electron.png",
+					gfxToBox2d.x,gfxToBox2d.y * 1.1f, fd, new Vector2(-carDesc.carModel.width / 2f + 0.1f, -carDesc.carModel.length / 2f),
+					EntityType.Car);
+		}
+		else
+		{
+
+			// capsule
+			shape = new PolygonShape();
+			shape.setAsBox( half.x -0.05f, half.y*0.5f );//, new Vector2(0,0), 0 );
+			fd.shape = shape;
+			body.createFixture( fd );
+
+			Vector2 p = new Vector2();
+			CircleShape cshape = new CircleShape();
+			cshape.setPosition( p.set(0,0.85f) );
+			cshape.setRadius( carDesc.carModel.width / 2f );
+			fd.shape = cshape;
+			body.createFixture( fd ).setUserData( EntityType.Car );
+			cshape.setPosition( p.set(0,-0.85f) );
+			body.createFixture( fd ).setUserData( EntityType.Car );
+		}
+
 
 		// mass
 		MassData md = new MassData();
@@ -100,13 +121,14 @@ public class Car extends b2dEntity
 		md.center.set( 0, 0 );
 		body.setMassData( md );
 
+		System.out.println("mass: " + body.getMass() + ", inertia: " + body.getInertia());
 		body.setBullet( true );
 		body.setUserData( this );
 
 		// build gfx
 		sprite = new Sprite();
-		sprite.setRegion( Art.cars.findRegion( "electron" ) );
-		sprite.setSize( Convert.mt2px( half.x * 2 ), Convert.mt2px( half.y * 2 ) );
+		sprite.setRegion( electron );
+		sprite.setSize( Convert.mt2px(carDesc.carModel.width), Convert.mt2px(carDesc.carModel.length) );
 		sprite.setOrigin( sprite.getWidth() / 2, sprite.getHeight() / 2 );
 //		sprite.setRegion( Art.blackCar );
 //		sprite.setScale( 1f );
@@ -120,9 +142,10 @@ public class Car extends b2dEntity
 	}
 
 	// factory method
-	public static Car create( Vector2 position, float orientation )
+	public static Car create( Vector2 position, float orientation, boolean isPlayer)
 	{
 		Car car = new Car( position, orientation, true );
+		car.isPlayer = isPlayer;
 		EntityManager.add( car );
 		return car;
 	}
@@ -218,12 +241,18 @@ public class Car extends b2dEntity
 	// return cil;
 	// }
 
+
+	private long start_timer = 0;
+	private boolean start_decrease = false;
+
 	@Override
 	public void onBeforePhysicsSubstep()
 	{
 		super.onBeforePhysicsSubstep();
 
-		carSim.applyInput( acquireInput() );
+		CarInput i = carInput;
+		if(isPlayer)
+			acquireInput();
 
 		// process impact feedback
 		while(impactFeedback.size() > 0)
@@ -231,21 +260,40 @@ public class Car extends b2dEntity
 			impactFeedback.remove( 0 );
 
 			Vector2 v = body.getLinearVelocity();
-			float vlen = carDesc.velocity_wc.len();
-			float alpha = (vlen / carDesc.carModel.max_speed) * 1f;
+//			float vlen = carDesc.velocity_wc.len();
+//			float alpha = (vlen / carDesc.carModel.max_speed);// * 0.75f;
 
-			carDesc.velocity_wc.x = AMath.lerp( carDesc.velocity_wc.x, v.x, alpha );
-			carDesc.velocity_wc.y = AMath.lerp( carDesc.velocity_wc.y, v.y, alpha );
-			carDesc.angularvelocity = body.getAngularVelocity();// * 0.85f;
+//			float alpha = 0.3f;
+//			carDesc.velocity_wc.x = AMath.lerp( carDesc.velocity_wc.x, v.x, alpha );
+//			carDesc.velocity_wc.y = AMath.lerp( carDesc.velocity_wc.y, v.y, alpha );
 
-			carDesc.throttle *= ((1 - alpha) + 0.1f);
-//			carDesc.throttle *= (1f / (vlen+0.001f));
+//			carDesc.angularvelocity = AMath.lerp( carDesc.angularvelocity, body.getAngularVelocity(), 0.1f);
+
+//			body.applyLinearImpulse( v, body.getWorldCenter() );
+
+			carDesc.velocity_wc.set( v );
+//			carDesc.angularvelocity = body.getAngularVelocity();
+
+			start_decrease = true;
 		}
 
+		if(start_decrease || (System.nanoTime() - start_timer < 250000000L) )
+		{
+			if(start_decrease)
+			{
+				start_decrease= false;
+				start_timer = System.nanoTime();
+			}
+
+//			i.throttle *= 0.05f;
+		}
+
+		carSim.applyInput( i );
 		carSim.step( body );
 
 		// setup forces
 		body.setAwake( true );
+
 		body.setLinearVelocity( carDesc.velocity_wc );
 		body.setAngularVelocity( -carDesc.angularvelocity );
 	}
@@ -274,6 +322,9 @@ public class Car extends b2dEntity
 	@Override
 	public void onDebug()
 	{
+		if(!isPlayer)
+			return;
+
 		Debug.drawString( "vel_wc [x=" + carDesc.velocity_wc.x + ", y=" + carDesc.velocity_wc.y + "]", 0, 20 );
 		Debug.drawString( "steerangle=" + carDesc.steerangle, 0, 27 );
 		Debug.drawString( "throttle=" + carDesc.throttle, 0, 34 );
