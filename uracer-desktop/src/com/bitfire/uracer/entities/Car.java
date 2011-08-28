@@ -13,7 +13,6 @@ import com.badlogic.gdx.physics.box2d.BodyDef.BodyType;
 import com.badlogic.gdx.physics.box2d.CircleShape;
 import com.badlogic.gdx.physics.box2d.ContactImpulse;
 import com.badlogic.gdx.physics.box2d.FixtureDef;
-import com.badlogic.gdx.physics.box2d.MassData;
 import com.badlogic.gdx.physics.box2d.PolygonShape;
 import com.bitfire.uracer.Art;
 import com.bitfire.uracer.Director;
@@ -115,11 +114,11 @@ public class Car extends b2dEntity
 
 
 		// mass
-		MassData md = new MassData();
-		md.mass = carDesc.carModel.mass;
-		md.I = carDesc.carModel.inertia;
-		md.center.set( 0, 0 );
-		body.setMassData( md );
+//		MassData md = new MassData();
+//		md.mass = carDesc.carModel.mass;
+//		md.I = carDesc.carModel.inertia;
+//		md.center.set( 0, 0 );
+//		body.setMassData( md );
 
 		System.out.println("mass: " + body.getMass() + ", inertia: " + body.getInertia());
 		body.setBullet( true );
@@ -257,12 +256,9 @@ public class Car extends b2dEntity
 		// process impact feedback
 		while(impactFeedback.size() > 0)
 		{
-			ContactImpulse impulse = impactFeedback.remove( 0 );
-
-//			System.out.println(carDesc.velocity_wc + ", " + v + " -- " + carDesc.angularvelocity + ", " + body.getAngularVelocity());
-
+			/*ContactImpulse impulse = */ impactFeedback.remove( 0 );
 			carDesc.velocity_wc.set( body.getLinearVelocity() ).mul( 0.95f );
-//			carDesc.angularvelocity += AMath.lerp( carDesc.angularvelocity, body.getAngularVelocity(), 0.9f ) / 2f;
+//			carDesc.angularvelocity = body.getAngularVelocity() * 0.95f;
 
 			start_decrease = true;
 		}
