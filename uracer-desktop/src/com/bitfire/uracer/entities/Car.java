@@ -72,7 +72,7 @@ public class Car extends b2dEntity
 
 		TextureRegion electron = Art.cars.findRegion( "electron" );
 
-		boolean useCapsule = true;
+		boolean useCapsule = false;
 
 		if(!useCapsule)
 		{
