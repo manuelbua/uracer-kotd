@@ -7,11 +7,14 @@ public class GameplaySettings
 	public static final int Medium = 2;
 	public static final int Hard = 3;
 
+	public int difficulty = Easy;
 	public float linearVelocityAfterFeedback = 0;
 
 	public static GameplaySettings create( int difficulty )
 	{
 		GameplaySettings s = new GameplaySettings();
+
+		s.difficulty = difficulty;
 
 		switch( difficulty )
 		{

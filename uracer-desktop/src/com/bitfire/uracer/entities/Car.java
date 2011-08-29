@@ -29,7 +29,7 @@ import com.bitfire.uracer.utils.FixtureAtlas;
 public class Car extends b2dEntity
 {
 	// public OrthographicAlignedMesh mesh;
-	protected Sprite sprite;
+	protected Sprite sprite, ambientOcclusion;
 	private boolean isPlayer;
 
 	protected Vector2 originalPosition = new Vector2();
@@ -70,7 +70,7 @@ public class Car extends b2dEntity
 		fd.friction = carDesc.carModel.friction;
 		fd.restitution = carDesc.carModel.restitution;
 
-		TextureRegion electron = Art.cars.findRegion( "electron" );
+		TextureRegion electron = Art.cars.findRegion( "acid" );
 
 		boolean useCapsule = false;
 
@@ -120,11 +120,17 @@ public class Car extends b2dEntity
 
 		// build gfx
 		sprite = new Sprite();
-		sprite.setRegion( electron );
+//		sprite.setRegion( electron );
+		sprite.setRegion( Art.blackCar );
 		sprite.setSize( Convert.mt2px(carDesc.carModel.width), Convert.mt2px(carDesc.carModel.length) );
 		sprite.setOrigin( sprite.getWidth() / 2, sprite.getHeight() / 2 );
-//		sprite.setRegion( Art.blackCar );
-//		sprite.setScale( 1f );
+
+		// car ambient occlusion
+		ambientOcclusion = new Sprite();
+		ambientOcclusion.setRegion( Art.carAmbientOcclusion );
+		ambientOcclusion.setSize( sprite.getWidth(), sprite.getHeight() );
+		ambientOcclusion.setScale( 2.25f, 2.3f );
+		ambientOcclusion.setOrigin( ambientOcclusion.getWidth()/2, ambientOcclusion.getHeight()/2 );
 
 		setTransform( position, orientation );
 
@@ -245,13 +251,7 @@ public class Car extends b2dEntity
 		{
 			/*ContactImpulse impulse =*/ impactFeedback.remove( 0 );
 			carDesc.velocity_wc.set( body.getLinearVelocity() ).mul( Director.gameplaySettings.linearVelocityAfterFeedback );
-//			body.applyTorque( body.getAngularVelocity() * 100f );
-
-
-			carDesc.angularvelocity = -body.getAngularVelocity() * 0.65f;
-
-//			System.out.println(carDesc.angularvelocity + " + " + body.getAngularVelocity() );
-
+			carDesc.angularvelocity = -body.getAngularVelocity() * 0.85f;
 			start_decrease = true;
 		}
 
@@ -298,9 +298,17 @@ public class Car extends b2dEntity
 		// mesh.setPosition( stateRender.position.x * Config.TileMapZoomFactor, -stateRender.position.y * Config.TileMapZoomFactor );
 		// mesh.setRotation( stateRender.orientation, 0, 1, 0 );
 
+		batch.enableBlending();
+
+		ambientOcclusion.setPosition( stateRender.position.x - sprite.getOriginX(), stateRender.position.y - sprite.getOriginY() );
+		ambientOcclusion.setRotation( stateRender.orientation );
+		ambientOcclusion.draw( batch, 0.35f );
+
 		sprite.setPosition( stateRender.position.x - sprite.getOriginX(), stateRender.position.y - sprite.getOriginY() );
 		sprite.setRotation( stateRender.orientation );
 		sprite.draw( batch );
+
+		batch.disableBlending();
 	}
 
 	private Vector2 tmp = new Vector2();

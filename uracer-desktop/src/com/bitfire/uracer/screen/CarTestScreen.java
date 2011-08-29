@@ -48,7 +48,7 @@ public class CarTestScreen extends Screen
 
 		Director.create( this, Gdx.graphics.getWidth(), Gdx.graphics.getHeight() );
 
-		GameplaySettings gs = GameplaySettings.create( GameplaySettings.Easy );
+		GameplaySettings gs = GameplaySettings.create( GameplaySettings.Medium );
 		level = Director.loadLevel( "level1", gs );
 
 		carStartPos.set( Convert.tileToPx( 1, 0 ).add( Convert.scaledPixels( 112, -112 ) ) );
@@ -188,7 +188,7 @@ public class CarTestScreen extends Screen
 
 		if( Gdx.app.getType() == ApplicationType.Desktop )
 		{
-			Debug.renderB2dWorld( Director.getMatViewProjMt() );
+//			Debug.renderB2dWorld( Director.getMatViewProjMt() );
 		}
 
 		Debug.begin();

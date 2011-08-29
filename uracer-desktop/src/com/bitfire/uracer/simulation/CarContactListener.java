@@ -24,11 +24,6 @@ public class CarContactListener implements ContactListener
 	@Override
 	public void preSolve( Contact contact, Manifold oldManifold )
 	{
-//		Fixture a = contact.getFixtureA();
-//		Fixture b = contact.getFixtureB();
-//
-//		addImpactFeedback( a );
-//		addImpactFeedback( b );
 	}
 
 	private void addImpactFeedback( Fixture f, ContactImpulse impulse )

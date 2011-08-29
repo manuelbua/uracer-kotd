@@ -15,6 +15,8 @@ public class Art
 //	public static TextureRegion disc;
 	public static TextureAtlas cars;
 	public static TextureRegion blackCar;
+	public static TextureRegion otherCar;
+	public static TextureRegion carAmbientOcclusion;
 
 	public static void load()
 	{
@@ -25,6 +27,8 @@ public class Art
 //		disc = new TextureRegion( new Texture( Gdx.files.internal( "data/base/disc.png" ) ), 0, 0, 256, 256 );
 		cars = new TextureAtlas(Gdx.files.internal("data/base/cars1.pack"));
 		blackCar = new TextureRegion( new Texture(Gdx.files.internal("data/base/black-car.png")), 0, 0, 210, 424 );
+		otherCar = new TextureRegion( new Texture(Gdx.files.internal("data/base/black-car.png")), 210, 0, 210, 424 );
+		carAmbientOcclusion = new TextureRegion( new Texture(Gdx.files.internal("data/base/car-ao.png")), 0, 0, 34, 62 );
 	}
 
 	private static TextureRegion[][] split( String name, int width, int height )
