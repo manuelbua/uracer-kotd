@@ -47,7 +47,7 @@ public class CarTestScreen extends Screen
 
 		Director.create( this, Gdx.graphics.getWidth(), Gdx.graphics.getHeight() );
 
-		GameplaySettings gs = GameplaySettings.create( GameplaySettings.Medium );
+		GameplaySettings gs = GameplaySettings.create( GameplaySettings.Easy );
 		level = Director.loadLevel( "level1", gs );
 
 		carStartPos.set( Convert.tileToPx( 1, 0 ).add( Convert.scaledPixels( 112, -112 ) ) );
