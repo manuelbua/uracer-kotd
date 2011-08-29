@@ -245,9 +245,10 @@ public class Car extends b2dEntity
 		{
 			/*ContactImpulse impulse =*/ impactFeedback.remove( 0 );
 			carDesc.velocity_wc.set( body.getLinearVelocity() ).mul( Director.gameplaySettings.linearVelocityAfterFeedback );
-			body.applyTorque( body.getAngularVelocity() );
+//			body.applyTorque( body.getAngularVelocity() * 100f );
 
-//			carDesc.angularvelocity += body.getAngularVelocity();
+
+			carDesc.angularvelocity = -body.getAngularVelocity() * 0.65f;
 
 //			System.out.println(carDesc.angularvelocity + " + " + body.getAngularVelocity() );
 
