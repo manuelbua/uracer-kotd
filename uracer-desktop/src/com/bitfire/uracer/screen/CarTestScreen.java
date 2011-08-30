@@ -188,7 +188,7 @@ public class CarTestScreen extends Screen
 
 		if( Gdx.app.getType() == ApplicationType.Desktop )
 		{
-//			Debug.renderB2dWorld( Director.getMatViewProjMt() );
+			Debug.renderB2dWorld( Director.getMatViewProjMt() );
 		}
 
 		Debug.begin();

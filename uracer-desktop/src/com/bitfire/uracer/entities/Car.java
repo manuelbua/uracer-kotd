@@ -10,10 +10,8 @@ import com.badlogic.gdx.math.MathUtils;
 import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.physics.box2d.BodyDef;
 import com.badlogic.gdx.physics.box2d.BodyDef.BodyType;
-import com.badlogic.gdx.physics.box2d.CircleShape;
 import com.badlogic.gdx.physics.box2d.ContactImpulse;
 import com.badlogic.gdx.physics.box2d.FixtureDef;
-import com.badlogic.gdx.physics.box2d.PolygonShape;
 import com.bitfire.uracer.Art;
 import com.bitfire.uracer.Director;
 import com.bitfire.uracer.Input;
@@ -70,40 +68,20 @@ public class Car extends b2dEntity
 		fd.friction = carDesc.carModel.friction;
 		fd.restitution = carDesc.carModel.restitution;
 
-		TextureRegion electron = Art.cars.findRegion( "acid" );
+		TextureRegion carRegion = Art.blackCar;
 
-		boolean useCapsule = false;
-
-		if(!useCapsule)
+		if( false )
 		{
-			// editor shape
-			Vector2 gfxToBox2d = new Vector2();
-			gfxToBox2d.x = carDesc.carModel.width / Convert.px2mt(electron.getRegionWidth());
-			gfxToBox2d.y = carDesc.carModel.length / Convert.px2mt(electron.getRegionHeight());
-
-			FixtureAtlas atlas = new FixtureAtlas(Gdx.files.internal("data/base/electron.shape"));
-			atlas.createFixtures( body, "../../data-src/base/cars/electron.png",
-					gfxToBox2d.x,gfxToBox2d.y * 1.1f, fd, new Vector2(-carDesc.carModel.width / 2f + 0.1f, -carDesc.carModel.length / 2f),
-					EntityType.Car);
-		}
-		else
+			carRegion = Art.blackCar;
+			FixtureAtlas atlas = new FixtureAtlas( Gdx.files.internal( "data/base/blackCar.shape" ) );
+			atlas.createFixtures( body, "../../data-src/base/black-car.png", 6, 4, fd, new Vector2( -1.2f, -2.3f ),
+					EntityType.Car );
+		} else
 		{
-			PolygonShape shape;
-
-			// capsule
-			shape = new PolygonShape();
-			shape.setAsBox( half.x -0.05f, half.y*0.5f );//, new Vector2(0,0), 0 );
-			fd.shape = shape;
-			body.createFixture( fd );
-
-			Vector2 p = new Vector2();
-			CircleShape cshape = new CircleShape();
-			cshape.setPosition( p.set(0,0.85f) );
-			cshape.setRadius( carDesc.carModel.width / 2f );
-			fd.shape = cshape;
-			body.createFixture( fd ).setUserData( EntityType.Car );
-			cshape.setPosition( p.set(0,-0.85f) );
-			body.createFixture( fd ).setUserData( EntityType.Car );
+			carRegion = Art.cars.findRegion( "electron" );
+			FixtureAtlas atlas = new FixtureAtlas( Gdx.files.internal( "data/base/electron.shape" ) );
+			atlas.createFixtures( body, "../../data-src/base/cars/electron.png", 2.31f, 1.79f, fd, new Vector2(
+					-carDesc.carModel.width / 2f + 0.1f, -carDesc.carModel.length / 2f ), EntityType.Car );
 		}
 
 
@@ -120,8 +98,8 @@ public class Car extends b2dEntity
 
 		// build gfx
 		sprite = new Sprite();
-//		sprite.setRegion( electron );
-		sprite.setRegion( Art.blackCar );
+		sprite.setRegion( carRegion );
+//		sprite.setRegion( Art.blackCar );
 		sprite.setSize( Convert.mt2px(carDesc.carModel.width), Convert.mt2px(carDesc.carModel.length) );
 		sprite.setOrigin( sprite.getWidth() / 2, sprite.getHeight() / 2 );
 
