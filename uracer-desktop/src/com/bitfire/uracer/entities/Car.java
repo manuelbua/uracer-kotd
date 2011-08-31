@@ -68,21 +68,42 @@ public class Car extends b2dEntity
 		fd.friction = carDesc.carModel.friction;
 		fd.restitution = carDesc.carModel.restitution;
 
-		TextureRegion carRegion = Art.blackCar;
+		TextureRegion carRegion = new TextureRegion(Art.hqCars,0,0,210,424);
+		TextureRegion b2dEditorRegion = Art.hqCars;
 
-		if( false )
-		{
-			carRegion = Art.blackCar;
-			FixtureAtlas atlas = new FixtureAtlas( Gdx.files.internal( "data/base/blackCar.shape" ) );
-			atlas.createFixtures( body, "../../data-src/base/black-car.png", 6, 4, fd, new Vector2( -1.2f, -2.3f ),
-					EntityType.Car );
-		} else
-		{
-			carRegion = Art.cars.findRegion( "electron" );
-			FixtureAtlas atlas = new FixtureAtlas( Gdx.files.internal( "data/base/electron.shape" ) );
-			atlas.createFixtures( body, "../../data-src/base/cars/electron.png", 2.31f, 1.79f, fd, new Vector2(
-					-carDesc.carModel.width / 2f + 0.1f, -carDesc.carModel.length / 2f ), EntityType.Car );
-		}
+//		TextureRegion carRegion = Art.cars.findRegion( "electron" );
+//		TextureRegion b2dEditorRegion = carRegion;
+
+		Vector2 gfxToBox2d = new Vector2();
+		gfxToBox2d.x = carDesc.carModel.width / Convert.px2mt(carRegion.getRegionWidth());
+		gfxToBox2d.y = carDesc.carModel.length / Convert.px2mt(carRegion.getRegionHeight());
+
+		System.out.println(carRegion.getRegionWidth() + ", " + carRegion.getRegionHeight());
+		System.out.println(gfxToBox2d);
+
+		Vector2 offset = new Vector2(-carDesc.carModel.width/2f, -carDesc.carModel.length/2f);
+		float factor_a = Convert.px2mt(b2dEditorRegion.getRegionWidth() * gfxToBox2d.x);
+		float factor_b = Convert.px2mt(b2dEditorRegion.getRegionWidth() * gfxToBox2d.y);
+
+		FixtureAtlas atlas = new FixtureAtlas( Gdx.files.internal( "data/base/hqcars.shape" ) );
+		atlas.createFixtures( body, "../../data-src/base/black-car.png", factor_a, factor_b, fd, offset, EntityType.Car );
+
+//		FixtureAtlas atlas = new FixtureAtlas( Gdx.files.internal( "data/base/electron.shape" ) );
+//		atlas.createFixtures( body, "../../data-src/base/cars/electron.png", factor_a, factor_b, fd, offset, EntityType.Car );
+
+//		if( false )
+//		{
+//			carRegion = Art.blackCar;
+//			FixtureAtlas atlas = new FixtureAtlas( Gdx.files.internal( "data/base/blackCar.shape" ) );
+//			atlas.createFixtures( body, "../../data-src/base/black-car.png", 6, 4, fd, new Vector2( -1.2f, -2.3f ),
+//					EntityType.Car );
+//		} else
+//		{
+//			carRegion = Art.cars.findRegion( "electron" );
+//			FixtureAtlas atlas = new FixtureAtlas( Gdx.files.internal( "data/base/electron.shape" ) );
+//			atlas.createFixtures( body, "../../data-src/base/cars/electron.png", 2.31f, 1.79f, fd, new Vector2(
+//					-carDesc.carModel.width / 2f + 0.1f, -carDesc.carModel.length / 2f ), EntityType.Car );
+//		}
 
 
 		// mass
