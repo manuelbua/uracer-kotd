@@ -1,4 +1,4 @@
-package com.bitfire.uracer.entities;
+package com.bitfire.uracer.entities.vehicles;
 
 import java.util.ArrayList;
 
@@ -17,9 +17,12 @@ import com.bitfire.uracer.Director;
 import com.bitfire.uracer.Input;
 import com.bitfire.uracer.Physics;
 import com.bitfire.uracer.debug.Debug;
-import com.bitfire.uracer.simulation.CarDescriptor;
-import com.bitfire.uracer.simulation.CarInput;
-import com.bitfire.uracer.simulation.CarSimulator;
+import com.bitfire.uracer.entities.EntityManager;
+import com.bitfire.uracer.entities.EntityType;
+import com.bitfire.uracer.entities.b2dEntity;
+import com.bitfire.uracer.simulations.car.CarDescriptor;
+import com.bitfire.uracer.simulations.car.CarInput;
+import com.bitfire.uracer.simulations.car.CarSimulator;
 import com.bitfire.uracer.utils.AMath;
 import com.bitfire.uracer.utils.Convert;
 import com.bitfire.uracer.utils.FixtureAtlas;
@@ -68,11 +71,11 @@ public class Car extends b2dEntity
 		fd.friction = carDesc.carModel.friction;
 		fd.restitution = carDesc.carModel.restitution;
 
-		TextureRegion carRegion = new TextureRegion(Art.hqCars,0,0,210,424);
-		TextureRegion b2dEditorRegion = Art.hqCars;
+//		TextureRegion carRegion = new TextureRegion(Art.hqCars,0,0,210,424);
+//		TextureRegion b2dEditorRegion = Art.hqCars;
 
-//		TextureRegion carRegion = Art.cars.findRegion( "electron" );
-//		TextureRegion b2dEditorRegion = carRegion;
+		TextureRegion carRegion = Art.cars.findRegion( "electron" );
+		TextureRegion b2dEditorRegion = carRegion;
 
 		Vector2 gfxToBox2d = new Vector2();
 		gfxToBox2d.x = carDesc.carModel.width / Convert.px2mt(carRegion.getRegionWidth());
@@ -85,11 +88,11 @@ public class Car extends b2dEntity
 		float factor_a = Convert.px2mt(b2dEditorRegion.getRegionWidth() * gfxToBox2d.x);
 		float factor_b = Convert.px2mt(b2dEditorRegion.getRegionWidth() * gfxToBox2d.y);
 
-		FixtureAtlas atlas = new FixtureAtlas( Gdx.files.internal( "data/base/hqcars.shape" ) );
-		atlas.createFixtures( body, "../../data-src/base/black-car.png", factor_a, factor_b, fd, offset, EntityType.Car );
+//		FixtureAtlas atlas = new FixtureAtlas( Gdx.files.internal( "data/base/hqcars.shape" ) );
+//		atlas.createFixtures( body, "../../data-src/base/black-car.png", factor_a, factor_b, fd, offset, EntityType.Car );
 
-//		FixtureAtlas atlas = new FixtureAtlas( Gdx.files.internal( "data/base/electron.shape" ) );
-//		atlas.createFixtures( body, "../../data-src/base/cars/electron.png", factor_a, factor_b, fd, offset, EntityType.Car );
+		FixtureAtlas atlas = new FixtureAtlas( Gdx.files.internal( "data/base/electron.shape" ) );
+		atlas.createFixtures( body, "../../data-src/base/cars/electron.png", factor_a, factor_b, fd, offset, EntityType.Car );
 
 
 		// mass

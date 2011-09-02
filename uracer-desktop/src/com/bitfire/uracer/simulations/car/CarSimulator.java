@@ -1,4 +1,4 @@
-package com.bitfire.uracer.simulation;
+package com.bitfire.uracer.simulations.car;
 
 import com.badlogic.gdx.math.MathUtils;
 import com.badlogic.gdx.math.Vector2;

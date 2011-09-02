@@ -1,4 +1,4 @@
-package com.bitfire.uracer.simulation;
+package com.bitfire.uracer.simulations.car;
 
 import com.badlogic.gdx.physics.box2d.ContactFilter;
 import com.badlogic.gdx.physics.box2d.Fixture;

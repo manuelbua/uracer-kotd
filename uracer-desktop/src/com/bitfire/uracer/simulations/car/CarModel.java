@@ -1,4 +1,4 @@
-package com.bitfire.uracer.simulation;
+package com.bitfire.uracer.simulations.car;
 
 /**
  * Represents the physical car model on which we rely to compute

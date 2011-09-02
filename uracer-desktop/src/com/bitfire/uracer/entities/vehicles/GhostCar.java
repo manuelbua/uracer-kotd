@@ -1,12 +1,13 @@
-package com.bitfire.uracer.entities;
+package com.bitfire.uracer.entities.vehicles;
 
 import java.util.ArrayList;
 
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.math.Vector2;
 import com.bitfire.uracer.debug.Debug;
-import com.bitfire.uracer.simulation.CarDescriptor;
-import com.bitfire.uracer.simulation.CarInput;
+import com.bitfire.uracer.entities.EntityManager;
+import com.bitfire.uracer.simulations.car.CarDescriptor;
+import com.bitfire.uracer.simulations.car.CarInput;
 
 public class GhostCar extends Car
 {

@@ -2,8 +2,8 @@ package com.bitfire.uracer;
 
 import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.physics.box2d.World;
-import com.bitfire.uracer.simulation.CarContactFilter;
-import com.bitfire.uracer.simulation.CarContactListener;
+import com.bitfire.uracer.simulations.car.CarContactFilter;
+import com.bitfire.uracer.simulations.car.CarContactListener;
 
 public class Physics
 {
