@@ -111,21 +111,21 @@ public class CarModel
 		h = .85f; // m
 		b = 1.f; // m
 		c = 1.f; // m
-		width = 2.3f; // m
+		width = 2.5f; // m
 		length = 3.5f; // m (must be > wheelbase)
 
 		// physical behavior
-		drag = 20.f; // factor for air resistance (drag)
-		resistance = 25.f; // factor for rolling resistance
-		stiffness_rear = -4.7f; // rear cornering stiffness
-		stiffness_front = -4.7f; // front cornering stiffness
+		drag = 15.f; // factor for air resistance (drag)
+		resistance = 30.f; // factor for rolling resistance
+		stiffness_rear = -4.4f; // rear cornering stiffness
+		stiffness_front = -4.2f; // front cornering stiffness
 		max_grip = 6f; // maximum (normalised) friction force, =diameter of friction circle
 
 		max_speed = 35.f;
 		max_force = 300.f;
 
-		density = 1.f;
-		friction = .5f;
+		density = 1f;
+		friction = .02f;
 		restitution = 0.1f;
 	}
 

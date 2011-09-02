@@ -17,6 +17,7 @@ import com.bitfire.uracer.entities.Car;
 import com.bitfire.uracer.entities.EntityManager;
 import com.bitfire.uracer.postprocessing.PostProcessor;
 import com.bitfire.uracer.postprocessing.effects.RadialBlur;
+import com.bitfire.uracer.simulation.GameplaySettings;
 import com.bitfire.uracer.tiled.Level;
 import com.bitfire.uracer.tiled.OrthographicAlignedMesh;
 import com.bitfire.uracer.utils.Convert;
@@ -24,13 +25,14 @@ import com.bitfire.uracer.utils.Convert;
 public class CarTestScreen extends Screen
 {
 	private FPSLogger fpslog = new FPSLogger();
-	private Car car;
+	private Car car, other;
 	private Level level;
 	// private GhostCar ghost;
 
 	// test
 	// private TestTilemap tm;
 	private Vector2 carStartPos = new Vector2();
+	private Vector2 otherStartPos = new Vector2();
 	// private Vector2 replayCarStartPos = new Vector2();
 	// private float replayCarStartOrient;
 	private RadialBlur rb;
@@ -46,12 +48,16 @@ public class CarTestScreen extends Screen
 
 		Director.create( this, Gdx.graphics.getWidth(), Gdx.graphics.getHeight() );
 
-		level = Director.loadLevel( "level1" );
+		GameplaySettings gs = GameplaySettings.create( GameplaySettings.Easy );
+		level = Director.loadLevel( "level1", gs );
 
 		carStartPos.set( Convert.tileToPx( 1, 0 ).add( Convert.scaledPixels( 112, -112 ) ) );
+		otherStartPos.set( Convert.tileToPx( 3, 0 ).add( Convert.scaledPixels( 112, -112 ) ) );
 
 		// carStartPos.set( Convert.scaledPosition( 64, 64 ) );
-		car = Car.create( carStartPos, 90 );
+		car = Car.create( carStartPos, 90, true );
+		other = Car.create( otherStartPos, 90, false );
+
 		// car.record( true );
 		// ghost = GhostCar.create( Convert.scaledPosition( 0, 0 ), 90 );
 
@@ -79,7 +85,10 @@ public class CarTestScreen extends Screen
 		{
 			// ghost.resetPhysics();
 			car.resetPhysics();
-			car.setTransform( carStartPos, 90 );
+			other.resetPhysics();
+
+			car.setTransform( carStartPos, 90f );
+			other.setTransform( otherStartPos, 90f );
 		}
 
 		// Vector3 pos = Director.pos();

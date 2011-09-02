@@ -94,6 +94,7 @@ public class Box2DFactory
 		FixtureDef fdef = new FixtureDef();
 		fdef.shape = wallshape;
 		fdef.density = 1.0f;
+		fdef.friction = 0.02f;
 		if( restitution > 0 )
 			fdef.restitution = restitution;
 
