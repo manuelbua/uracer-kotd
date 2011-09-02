@@ -20,15 +20,15 @@ public class GhostCar extends Car
 	private float replayStartOrientation;
 	private CarDescriptor replayCarDesc = new CarDescriptor();
 
-	private GhostCar( Vector2 position, float orientation)
+	private GhostCar( CarGraphics graphics, CarDescriptor descriptor, Vector2 position, float orientation, boolean isPlayer )
 	{
-		super(position, orientation, false);
+		super( graphics, descriptor, position, orientation, isPlayer );
 	}
 
 	// factory method
-	public static GhostCar create( Vector2 position, float orientation )
+	public static GhostCar create( CarGraphics graphics, CarDescriptor descriptor, Vector2 position, float orientation, boolean isPlayer )
 	{
-		GhostCar car = new GhostCar( position, orientation);
+		GhostCar car = new GhostCar( graphics, descriptor, position, orientation, isPlayer );
 		EntityManager.add( car );
 		return car;
 	}
@@ -61,9 +61,10 @@ public class GhostCar extends Car
 	{
 		if(input.size() > 0 )
 		{
-			sprite.setPosition( stateRender.position.x - sprite.getOriginX(), stateRender.position.y - sprite.getOriginY() );
-			sprite.setRotation( stateRender.orientation );
-			sprite.draw( batch, 0.5f );
+			graphics.render( batch, stateRender );
+//			sprite.setPosition( stateRender.position.x - sprite.getOriginX(), stateRender.position.y - sprite.getOriginY() );
+//			sprite.setRotation( stateRender.orientation );
+//			sprite.draw( batch, 0.5f );
 		}
 	}
 

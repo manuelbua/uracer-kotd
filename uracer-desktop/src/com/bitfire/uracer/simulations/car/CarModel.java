@@ -41,7 +41,7 @@ public class CarModel
 	}
 
 	// default car model
-	public void toDefault()
+	public CarModel toDefault()
 	{
 		// physical model
 		h = 1f; // m
@@ -76,9 +76,11 @@ public class CarModel
 		density = 1.f;
 		friction = .4f;
 		restitution = 0.f;
+
+		return this;
 	}
 
-	public void toModel1()
+	public CarModel toModel1()
 	{
 		toDefault();
 
@@ -101,9 +103,11 @@ public class CarModel
 		density = 1.f;
 		friction = .5f;
 		restitution = 0.1f;
+
+		return this;
 	}
 
-	public void toModel2()
+	public CarModel toModel2()
 	{
 		toDefault();
 
@@ -127,15 +131,20 @@ public class CarModel
 		density = 1f;
 		friction = .02f;
 		restitution = 0.1f;
+
+		return this;
 	}
 
-	public void toBlackCar()
+	public CarModel toBlackCar()
 	{
 		toModel1();
+
 		width = 3.1f; // m
 		length = 4.5f; // m (must be > wheelbase)
 		max_grip = 10f;
 		stiffness_rear = -4.7f; // front cornering stiffness
 		stiffness_front = -4.7f; // rear cornering stiffness
+
+		return this;
 	}
 }

@@ -8,6 +8,7 @@ import com.badlogic.gdx.graphics.g2d.TextureRegion;
 
 public class Art
 {
+	// Art
 	public static TextureRegion[][] base6;
 	public static TextureRegion titleScreen;
 	public static TextureRegion quad;
@@ -47,7 +48,7 @@ public class Art
 		return res;
 	}
 
-	public static TextureRegion load( String name, int width, int height )
+	private static TextureRegion load( String name, int width, int height )
 	{
 		Texture texture = newTexture( name );
 		TextureRegion region = new TextureRegion( texture, 0, 0, width, height );

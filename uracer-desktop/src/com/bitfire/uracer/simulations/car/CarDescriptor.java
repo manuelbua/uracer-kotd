@@ -20,6 +20,11 @@ public class CarDescriptor
 		velocity_wc.set( 0, 0 );
 	}
 
+	public CarDescriptor(CarDescriptor other)
+	{
+		set(other);
+	}
+
 	public static CarDescriptor create()
 	{
 		return new CarDescriptor();
@@ -27,6 +32,7 @@ public class CarDescriptor
 
 	public void set(CarDescriptor desc)
 	{
+		// a shallow copy should be enough
 		this.carModel = desc.carModel;
 
 		this.angularvelocity = desc.angularvelocity;

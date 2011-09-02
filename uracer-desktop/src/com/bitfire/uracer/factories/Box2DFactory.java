@@ -1,4 +1,4 @@
-package com.bitfire.uracer.utils;
+package com.bitfire.uracer.factories;
 
 import java.util.ArrayList;
 

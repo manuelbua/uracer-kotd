@@ -2,35 +2,28 @@ package com.bitfire.uracer.entities.vehicles;
 
 import java.util.ArrayList;
 
-import com.badlogic.gdx.Gdx;
-import com.badlogic.gdx.graphics.g2d.Sprite;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
-import com.badlogic.gdx.graphics.g2d.TextureRegion;
 import com.badlogic.gdx.math.MathUtils;
 import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.physics.box2d.BodyDef;
 import com.badlogic.gdx.physics.box2d.BodyDef.BodyType;
 import com.badlogic.gdx.physics.box2d.ContactImpulse;
-import com.badlogic.gdx.physics.box2d.FixtureDef;
-import com.bitfire.uracer.Art;
 import com.bitfire.uracer.Director;
 import com.bitfire.uracer.Input;
 import com.bitfire.uracer.Physics;
 import com.bitfire.uracer.debug.Debug;
 import com.bitfire.uracer.entities.EntityManager;
-import com.bitfire.uracer.entities.EntityType;
 import com.bitfire.uracer.entities.b2dEntity;
 import com.bitfire.uracer.simulations.car.CarDescriptor;
 import com.bitfire.uracer.simulations.car.CarInput;
 import com.bitfire.uracer.simulations.car.CarSimulator;
 import com.bitfire.uracer.utils.AMath;
 import com.bitfire.uracer.utils.Convert;
-import com.bitfire.uracer.utils.FixtureAtlas;
 
 public class Car extends b2dEntity
 {
 	// public OrthographicAlignedMesh mesh;
-	protected Sprite sprite, ambientOcclusion;
+	protected CarGraphics graphics;
 	private boolean isPlayer;
 
 	protected Vector2 originalPosition = new Vector2();
@@ -41,22 +34,18 @@ public class Car extends b2dEntity
 	private ArrayList<CarInput> cil;
 	public ArrayList<ContactImpulse> impactFeedback;
 
-	protected Car( Vector2 position, float orientation, boolean isPlayer )
+	protected Car( CarGraphics graphics, CarDescriptor descriptor, Vector2 position, float orientation, boolean isPlayer )
 	{
 		this.isPlayer = isPlayer;
 		this.originalPosition.set( position );
 		this.originalOrientation = orientation;
+		this.graphics = graphics;
 		this.cil = new ArrayList<CarInput>( 2500 );
 		this.impactFeedback = new ArrayList<ContactImpulse>();
 
-		carDesc = CarDescriptor.create();
-		carDesc.carModel.toModel2();
-//		carDesc.carModel.toBlackCar();
-
+		carDesc = new CarDescriptor( descriptor );
 		carSim = new CarSimulator( carDesc );
 		carInput = new CarInput();
-
-		Vector2 half = new Vector2( (carDesc.carModel.width / 2f), (carDesc.carModel.length / 2f) );
 
 		// body
 		BodyDef bd = new BodyDef();
@@ -65,36 +54,6 @@ public class Car extends b2dEntity
 
 		body = Physics.world.createBody( bd );
 
-		// physical properties
-		FixtureDef fd = new FixtureDef();
-		fd.density = carDesc.carModel.density;
-		fd.friction = carDesc.carModel.friction;
-		fd.restitution = carDesc.carModel.restitution;
-
-//		TextureRegion carRegion = new TextureRegion(Art.hqCars,0,0,210,424);
-//		TextureRegion b2dEditorRegion = Art.hqCars;
-
-		TextureRegion carRegion = Art.cars.findRegion( "electron" );
-		TextureRegion b2dEditorRegion = carRegion;
-
-		Vector2 gfxToBox2d = new Vector2();
-		gfxToBox2d.x = carDesc.carModel.width / Convert.px2mt(carRegion.getRegionWidth());
-		gfxToBox2d.y = carDesc.carModel.length / Convert.px2mt(carRegion.getRegionHeight());
-
-		System.out.println(carRegion.getRegionWidth() + ", " + carRegion.getRegionHeight());
-		System.out.println(gfxToBox2d);
-
-		Vector2 offset = new Vector2(-carDesc.carModel.width/2f, -carDesc.carModel.length/2f);
-		float factor_a = Convert.px2mt(b2dEditorRegion.getRegionWidth() * gfxToBox2d.x);
-		float factor_b = Convert.px2mt(b2dEditorRegion.getRegionWidth() * gfxToBox2d.y);
-
-//		FixtureAtlas atlas = new FixtureAtlas( Gdx.files.internal( "data/base/hqcars.shape" ) );
-//		atlas.createFixtures( body, "../../data-src/base/black-car.png", factor_a, factor_b, fd, offset, EntityType.Car );
-
-		FixtureAtlas atlas = new FixtureAtlas( Gdx.files.internal( "data/base/electron.shape" ) );
-		atlas.createFixtures( body, "../../data-src/base/cars/electron.png", factor_a, factor_b, fd, offset, EntityType.Car );
-
-
 		// mass
 //		MassData md = new MassData();
 //		md.mass = carDesc.carModel.mass;
@@ -102,23 +61,8 @@ public class Car extends b2dEntity
 //		md.center.set( 0, 0 );
 //		body.setMassData( md );
 
-//		System.out.println("mass: " + body.getMass() + ", inertia: " + body.getInertia());
 		body.setBullet( true );
 		body.setUserData( this );
-
-		// build gfx
-		sprite = new Sprite();
-		sprite.setRegion( carRegion );
-//		sprite.setRegion( Art.blackCar );
-		sprite.setSize( Convert.mt2px(carDesc.carModel.width), Convert.mt2px(carDesc.carModel.length) );
-		sprite.setOrigin( sprite.getWidth() / 2, sprite.getHeight() / 2 );
-
-		// car ambient occlusion
-		ambientOcclusion = new Sprite();
-		ambientOcclusion.setRegion( Art.carAmbientOcclusion );
-		ambientOcclusion.setSize( sprite.getWidth(), sprite.getHeight() );
-		ambientOcclusion.setScale( 2.25f, 2.3f );
-		ambientOcclusion.setOrigin( ambientOcclusion.getWidth()/2, ambientOcclusion.getHeight()/2 );
 
 		setTransform( position, orientation );
 
@@ -129,10 +73,9 @@ public class Car extends b2dEntity
 	}
 
 	// factory method
-	public static Car create( Vector2 position, float orientation, boolean isPlayer)
+	public static Car createForFactory( CarGraphics graphics, CarDescriptor descriptor, Vector2 position, float orientation, boolean isPlayer)
 	{
-		Car car = new Car( position, orientation, true );
-		car.isPlayer = isPlayer;
+		Car car = new Car( graphics, descriptor, position, orientation, isPlayer );
 		EntityManager.add( car );
 		return car;
 	}
@@ -286,17 +229,7 @@ public class Car extends b2dEntity
 		// mesh.setPosition( stateRender.position.x * Config.TileMapZoomFactor, -stateRender.position.y * Config.TileMapZoomFactor );
 		// mesh.setRotation( stateRender.orientation, 0, 1, 0 );
 
-		batch.enableBlending();
-
-		ambientOcclusion.setPosition( stateRender.position.x - sprite.getOriginX(), stateRender.position.y - sprite.getOriginY() );
-		ambientOcclusion.setRotation( stateRender.orientation );
-		ambientOcclusion.draw( batch, 0.35f );
-
-		sprite.setPosition( stateRender.position.x - sprite.getOriginX(), stateRender.position.y - sprite.getOriginY() );
-		sprite.setRotation( stateRender.orientation );
-		sprite.draw( batch );
-
-		batch.disableBlending();
+		graphics.render( batch, stateRender );
 	}
 
 	private Vector2 tmp = new Vector2();

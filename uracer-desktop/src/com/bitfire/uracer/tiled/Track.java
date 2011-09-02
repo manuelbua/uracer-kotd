@@ -4,7 +4,7 @@ import com.badlogic.gdx.graphics.g2d.tiled.TiledLayer;
 import com.badlogic.gdx.graphics.g2d.tiled.TiledMap;
 import com.badlogic.gdx.math.Vector2;
 import com.bitfire.uracer.Director;
-import com.bitfire.uracer.utils.Box2DFactory;
+import com.bitfire.uracer.factories.Box2DFactory;
 import com.bitfire.uracer.utils.Convert;
 import com.bitfire.uracer.utils.MapUtils;
 
