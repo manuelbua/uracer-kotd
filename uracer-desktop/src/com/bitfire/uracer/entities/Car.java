@@ -91,20 +91,6 @@ public class Car extends b2dEntity
 //		FixtureAtlas atlas = new FixtureAtlas( Gdx.files.internal( "data/base/electron.shape" ) );
 //		atlas.createFixtures( body, "../../data-src/base/cars/electron.png", factor_a, factor_b, fd, offset, EntityType.Car );
 
-//		if( false )
-//		{
-//			carRegion = Art.blackCar;
-//			FixtureAtlas atlas = new FixtureAtlas( Gdx.files.internal( "data/base/blackCar.shape" ) );
-//			atlas.createFixtures( body, "../../data-src/base/black-car.png", 6, 4, fd, new Vector2( -1.2f, -2.3f ),
-//					EntityType.Car );
-//		} else
-//		{
-//			carRegion = Art.cars.findRegion( "electron" );
-//			FixtureAtlas atlas = new FixtureAtlas( Gdx.files.internal( "data/base/electron.shape" ) );
-//			atlas.createFixtures( body, "../../data-src/base/cars/electron.png", 2.31f, 1.79f, fd, new Vector2(
-//					-carDesc.carModel.width / 2f + 0.1f, -carDesc.carModel.length / 2f ), EntityType.Car );
-//		}
-
 
 		// mass
 //		MassData md = new MassData();

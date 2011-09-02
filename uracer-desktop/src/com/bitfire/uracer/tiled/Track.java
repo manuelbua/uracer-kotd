@@ -20,8 +20,7 @@ public class Track
 	}
 
 	/**
-	 * Inspect the TiledMap, create a perimeter out of each tile with Box2D's
-	 * static bodys
+	 * Traverse the map and create a Box2D's bodys manifold perimeter out of each tile.
 	 */
 	private void createPerimeter()
 	{
@@ -61,7 +60,6 @@ public class Track
 					String orient = map.getTileProperty( id, "orient" );
 					if( orient == null )
 					{
-//						 System.out.format( "    " );
 						continue;
 					}
 
@@ -145,11 +143,7 @@ public class Track
 						tmp1.set( (halfTileSize - halfTrackSize - wallDistance - halfWallSize), 0 );	// unit circle radius
 						Box2DFactory.createAngularWall( tmp1, tmp2, wallSize, -innerLumpLen, 90f, 4, rotOffset.set(0f, -1f), restitution, false );
 					}
-
-//					 System.out.format( "%3s ", orient );
 				}
-
-//				System.out.println();
 			}
 		}
 	}
