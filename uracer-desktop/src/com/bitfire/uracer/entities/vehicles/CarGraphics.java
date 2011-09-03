@@ -5,7 +5,7 @@ import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
 import com.bitfire.uracer.Art;
 import com.bitfire.uracer.entities.EntityState;
-import com.bitfire.uracer.simulations.car.CarDescriptor;
+import com.bitfire.uracer.simulations.car.CarModel;
 import com.bitfire.uracer.utils.Convert;
 
 public class CarGraphics
@@ -13,12 +13,12 @@ public class CarGraphics
 	private Sprite facet;
 	private Sprite ambientOcclusion;
 
-	public CarGraphics( CarDescriptor descriptor, TextureRegion region )
+	public CarGraphics( CarModel model, TextureRegion region )
 	{
 		// aspect
 		facet = new Sprite();
 		facet.setRegion( region );
-		facet.setSize( Convert.mt2px( descriptor.carModel.width ), Convert.mt2px( descriptor.carModel.length ) );
+		facet.setSize( Convert.mt2px( model.width ), Convert.mt2px( model.length ) );
 		facet.setOrigin( facet.getWidth() / 2, facet.getHeight() / 2 );
 
 		// ambient occlusion

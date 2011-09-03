@@ -32,8 +32,7 @@ public class CarDescriptor
 
 	public void set(CarDescriptor desc)
 	{
-		// a shallow copy should be enough
-		this.carModel = desc.carModel;
+		this.carModel.set( desc.carModel );
 
 		this.angularvelocity = desc.angularvelocity;
 		this.steerangle = desc.steerangle;

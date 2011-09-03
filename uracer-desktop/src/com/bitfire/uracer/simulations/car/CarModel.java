@@ -40,6 +40,33 @@ public class CarModel
 		toDefault();
 	}
 
+	public void set(CarModel other)
+	{
+		this.wheelbase = other.wheelbase;
+		this.b = other.b;
+		this.c = other.c;
+		this.h = other.h;
+		this.mass = other.mass;
+		this.inertia = other.inertia;
+		this.length = other.length;
+		this.width = other.width;
+		this.wheellength = other.wheellength;
+		this.wheelwidth = other.wheelwidth;
+		this.invmass = other.invmass;
+		this.invinertia = other.invinertia;
+		this.density = other.density;
+		this.friction = other.friction;
+		this.restitution = other.restitution;
+		this.drag = other.drag;
+		this.resistance = other.resistance;
+		this.stiffness_front = other.stiffness_front;
+		this.stiffness_rear = other.stiffness_rear;
+		this.max_grip = other.max_grip;
+		this.max_speed = other.max_speed;
+		this.max_force = other.max_force;
+		this.weight = other.weight;
+	}
+
 	// default car model
 	public CarModel toDefault()
 	{

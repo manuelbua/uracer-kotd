@@ -8,6 +8,7 @@ import com.bitfire.uracer.debug.Debug;
 import com.bitfire.uracer.entities.EntityManager;
 import com.bitfire.uracer.simulations.car.CarDescriptor;
 import com.bitfire.uracer.simulations.car.CarInput;
+import com.bitfire.uracer.simulations.car.CarModel;
 
 public class GhostCar extends Car
 {
@@ -20,15 +21,15 @@ public class GhostCar extends Car
 	private float replayStartOrientation;
 	private CarDescriptor replayCarDesc = new CarDescriptor();
 
-	private GhostCar( CarGraphics graphics, CarDescriptor descriptor, Vector2 position, float orientation, boolean isPlayer )
+	private GhostCar( CarGraphics graphics, CarModel model, Vector2 position, float orientation, boolean isPlayer )
 	{
-		super( graphics, descriptor, position, orientation, isPlayer );
+		super( graphics, model, position, orientation, isPlayer );
 	}
 
 	// factory method
-	public static GhostCar create( CarGraphics graphics, CarDescriptor descriptor, Vector2 position, float orientation, boolean isPlayer )
+	public static GhostCar create( CarGraphics graphics, CarModel model, Vector2 position, float orientation, boolean isPlayer )
 	{
-		GhostCar car = new GhostCar( graphics, descriptor, position, orientation, isPlayer );
+		GhostCar car = new GhostCar( graphics, model, position, orientation, isPlayer );
 		EntityManager.add( car );
 		return car;
 	}

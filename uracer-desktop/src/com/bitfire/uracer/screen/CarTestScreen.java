@@ -20,7 +20,7 @@ import com.bitfire.uracer.entities.vehicles.Car;
 import com.bitfire.uracer.factories.CarFactory;
 import com.bitfire.uracer.postprocessing.PostProcessor;
 import com.bitfire.uracer.postprocessing.effects.RadialBlur;
-import com.bitfire.uracer.simulations.car.CarDescriptor;
+import com.bitfire.uracer.simulations.car.CarModel;
 import com.bitfire.uracer.tiled.Level;
 import com.bitfire.uracer.tiled.OrthographicAlignedMesh;
 import com.bitfire.uracer.utils.Convert;
@@ -57,13 +57,9 @@ public class CarTestScreen extends Screen
 		carStartPos.set( Convert.tileToPx( 1, 0 ).add( Convert.scaledPixels( 112, -112 ) ) );
 		otherStartPos.set( Convert.tileToPx( 3, 0 ).add( Convert.scaledPixels( 112, -112 ) ) );
 
-		CarDescriptor d = new CarDescriptor();
-
-		d.carModel.toModel2();
-		car = CarFactory.create( CarFactory.OldSkool, d, carStartPos, 90, true );
-
-		d.carModel.toModel1();
-		other = CarFactory.create( CarFactory.ModernBlack, d, otherStartPos, 90, false );
+		CarModel m = new CarModel();
+		car = CarFactory.create( CarFactory.OldSkool, m.toModel2(), carStartPos, 90, true );
+		other = CarFactory.create( CarFactory.ModernBlack, m.toModel1(), otherStartPos, 90, false );
 
 		// car.record( true );
 		// ghost = GhostCar.create( Convert.scaledPosition( 0, 0 ), 90 );

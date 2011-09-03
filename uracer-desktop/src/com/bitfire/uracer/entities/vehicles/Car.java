@@ -16,6 +16,7 @@ import com.bitfire.uracer.entities.b2dEntity;
 import com.bitfire.uracer.postprocessing.PostProcessor;
 import com.bitfire.uracer.simulations.car.CarDescriptor;
 import com.bitfire.uracer.simulations.car.CarInput;
+import com.bitfire.uracer.simulations.car.CarModel;
 import com.bitfire.uracer.simulations.car.CarSimulator;
 import com.bitfire.uracer.utils.AMath;
 import com.bitfire.uracer.utils.Convert;
@@ -34,7 +35,7 @@ public class Car extends b2dEntity
 	private ArrayList<CarInput> cil;
 	public ArrayList<Float> impactFeedback;
 
-	protected Car( CarGraphics graphics, CarDescriptor descriptor, Vector2 position, float orientation, boolean isPlayer )
+	protected Car( CarGraphics graphics, CarModel model, Vector2 position, float orientation, boolean isPlayer )
 	{
 		this.isPlayer = isPlayer;
 		this.originalPosition.set( position );
@@ -43,7 +44,9 @@ public class Car extends b2dEntity
 		this.cil = new ArrayList<CarInput>( 2500 );
 		this.impactFeedback = new ArrayList<Float>();
 
-		carDesc = new CarDescriptor( descriptor );
+		carDesc = new CarDescriptor();
+		carDesc.carModel.set( model );
+
 		carSim = new CarSimulator( carDesc );
 		carInput = new CarInput();
 
@@ -73,9 +76,9 @@ public class Car extends b2dEntity
 	}
 
 	// factory method
-	public static Car createForFactory( CarGraphics graphics, CarDescriptor descriptor, Vector2 position, float orientation, boolean isPlayer)
+	public static Car createForFactory( CarGraphics graphics, CarModel model, Vector2 position, float orientation, boolean isPlayer)
 	{
-		Car car = new Car( graphics, descriptor, position, orientation, isPlayer );
+		Car car = new Car( graphics, model, position, orientation, isPlayer );
 		EntityManager.add( car );
 		return car;
 	}
