@@ -49,6 +49,11 @@ public class PostProcessor
 		PostProcessor.effect = effect;
 	}
 
+	public static PostProcessEffect getEffect()
+	{
+		return PostProcessor.effect;
+	}
+
 	private static void render()
 	{
 		quad.setShader( effect.getShader() );

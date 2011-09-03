@@ -7,6 +7,8 @@ import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
 import com.badlogic.gdx.math.Matrix4;
+import com.badlogic.gdx.math.Vector2;
+import com.badlogic.gdx.physics.box2d.ContactImpulse;
 import com.bitfire.uracer.Art;
 import com.bitfire.uracer.Config;
 import com.bitfire.uracer.Physics;
@@ -48,6 +50,11 @@ public class Debug
 		Matrix4 proj = new Matrix4();
 		proj.setToOrtho( 0, Gdx.graphics.getWidth(), Gdx.graphics.getHeight(), 0, 0, 10 );
 		textBatch.setProjectionMatrix( proj );
+
+		// init statics
+		tmp = "";
+		a = new Vector2();
+		b = new Vector2();
 	}
 
 	public static void dispose()
@@ -140,4 +147,52 @@ public class Debug
 		}
 	}
 
+
+	/**
+	 * Print facilities
+	 */
+
+	public static void print( String string )
+	{
+		System.out.println(string);
+	}
+
+	public static void print( String format, Object... args)
+	{
+		Debug.print( String.format( format, args ) );
+	}
+
+	private static String tmp;
+	private static Vector2 a, b;
+	public static void print( ContactImpulse impulse, String label, boolean omitDupes )
+	{
+		String thisString = String.format( "NI=(%.2f,%.2f) | TI=(%.2f,%.2f)",
+				impulse.getNormalImpulses()[0], impulse.getNormalImpulses()[1],
+				impulse.getTangentImpulses()[0], impulse.getTangentImpulses()[1] );
+
+		a.set( impulse.getNormalImpulses()[0], impulse.getNormalImpulses()[1] );
+		b.set( impulse.getTangentImpulses()[0], impulse.getTangentImpulses()[1] );
+
+		thisString += String.format( " | NIl=%.2f | TI=%.2f", a.len(), b.len() );
+
+		if(label!=null)
+			thisString = label + ": " + thisString;
+
+		if(!tmp.equals( thisString ))
+		{
+			System.out.println( thisString );
+			tmp = thisString;
+		}
+	}
+
+	// fuck java all the way up
+	public static void print( ContactImpulse impulse )
+	{
+		Debug.print( impulse, null, true );
+	}
+
+	public static void print( ContactImpulse impulse, String label )
+	{
+		Debug.print( impulse, label, true );
+	}
 }

@@ -12,6 +12,7 @@ import com.bitfire.uracer.Config;
 import com.bitfire.uracer.Director;
 import com.bitfire.uracer.GameplaySettings;
 import com.bitfire.uracer.Input;
+import com.bitfire.uracer.Physics;
 import com.bitfire.uracer.VersionInfo;
 import com.bitfire.uracer.debug.Debug;
 import com.bitfire.uracer.entities.EntityManager;
@@ -27,7 +28,7 @@ import com.bitfire.uracer.utils.Convert;
 public class CarTestScreen extends Screen
 {
 	private FPSLogger fpslog = new FPSLogger();
-	private Car car, other;
+	private Car car = null, other = null;
 	private Level level;
 	// private GhostCar ghost;
 
@@ -58,10 +59,10 @@ public class CarTestScreen extends Screen
 
 		CarDescriptor d = new CarDescriptor();
 
-		d.carModel.toModel1();
+		d.carModel.toModel2();
 		car = CarFactory.create( CarFactory.OldSkool, d, carStartPos, 90, true );
 
-		d.carModel.toModel2();
+		d.carModel.toModel1();
 		other = CarFactory.create( CarFactory.ModernBlack, d, otherStartPos, 90, false );
 
 		// car.record( true );
@@ -91,10 +92,13 @@ public class CarTestScreen extends Screen
 		{
 			// ghost.resetPhysics();
 			car.resetPhysics();
-			other.resetPhysics();
-
 			car.setTransform( carStartPos, 90f );
-			other.setTransform( otherStartPos, 90f );
+
+			if(other!=null)
+			{
+				other.resetPhysics();
+				other.setTransform( otherStartPos, 90f );
+			}
 		}
 
 		// Vector3 pos = Director.pos();
@@ -115,9 +119,9 @@ public class CarTestScreen extends Screen
 			onTileChanged( carTileAt );
 		}
 
-		// rb.setStrength( car.carDesc.velocity_wc.len() );
-		rb.setStrength( (car.carDesc.velocity_wc.len() / car.carDesc.carModel.max_speed) * 0.05f );
-		rb.dampStrength( 0.9f );
+//		// rb.setStrength( car.carDesc.velocity_wc.len() );
+//		rb.setStrength( (car.carDesc.velocity_wc.len() / car.carDesc.carModel.max_speed) * 0.05f );
+		rb.dampStrength( 0.9f, Physics.dt );
 		rb.setOrigin( Director.screenPosFor( car.getBody() ) );
 	}
 

@@ -21,7 +21,7 @@ public class CarFactory
 	{
 		TextureRegion region = null;
 		int b2deditorSourceW = 0;
-		int b2deditorSourceH = 0;
+//		int b2deditorSourceH = 0;
 		String shapeName = null;
 		String shapeRef = null;
 
@@ -30,7 +30,7 @@ public class CarFactory
 		case OldSkool:
 			region = Art.cars.findRegion( "electron" );
 			b2deditorSourceW = region.getRegionWidth();
-			b2deditorSourceH = region.getRegionHeight();
+//			b2deditorSourceH = region.getRegionHeight();
 			shapeName = "data/base/electron.shape";
 			shapeRef = "../../data-src/base/cars/electron.png";
 			break;
@@ -38,7 +38,7 @@ public class CarFactory
 		case ModernBlack:
 			region = new TextureRegion( Art.hqCars, 0, 0, 210, 424 );
 			b2deditorSourceW = Art.hqCars.getRegionWidth();
-			b2deditorSourceH = Art.hqCars.getRegionHeight();
+//			b2deditorSourceH = Art.hqCars.getRegionHeight();
 			shapeName = "data/base/hqcars.shape";
 			shapeRef = "../../data-src/base/black-car.png";
 			break;

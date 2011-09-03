@@ -7,13 +7,13 @@ import com.badlogic.gdx.math.MathUtils;
 import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.physics.box2d.BodyDef;
 import com.badlogic.gdx.physics.box2d.BodyDef.BodyType;
-import com.badlogic.gdx.physics.box2d.ContactImpulse;
 import com.bitfire.uracer.Director;
 import com.bitfire.uracer.Input;
 import com.bitfire.uracer.Physics;
 import com.bitfire.uracer.debug.Debug;
 import com.bitfire.uracer.entities.EntityManager;
 import com.bitfire.uracer.entities.b2dEntity;
+import com.bitfire.uracer.postprocessing.PostProcessor;
 import com.bitfire.uracer.simulations.car.CarDescriptor;
 import com.bitfire.uracer.simulations.car.CarInput;
 import com.bitfire.uracer.simulations.car.CarSimulator;
@@ -32,7 +32,7 @@ public class Car extends b2dEntity
 	protected CarSimulator carSim;
 	public CarInput carInput;
 	private ArrayList<CarInput> cil;
-	public ArrayList<ContactImpulse> impactFeedback;
+	public ArrayList<Float> impactFeedback;
 
 	protected Car( CarGraphics graphics, CarDescriptor descriptor, Vector2 position, float orientation, boolean isPlayer )
 	{
@@ -41,7 +41,7 @@ public class Car extends b2dEntity
 		this.originalOrientation = orientation;
 		this.graphics = graphics;
 		this.cil = new ArrayList<CarInput>( 2500 );
-		this.impactFeedback = new ArrayList<ContactImpulse>();
+		this.impactFeedback = new ArrayList<Float>();
 
 		carDesc = new CarDescriptor( descriptor );
 		carSim = new CarSimulator( carDesc );
@@ -174,18 +174,38 @@ public class Car extends b2dEntity
 
 	private long start_timer = 0;
 	private boolean start_decrease = false;
-
-	private void handleImpactFeedback(CarInput input)
+	private void handleImpactFeedback()
 	{
+//		if( impactFeedback.size() > 0 && PostProcessor.hasEffect() )
+//			PostProcessor.getEffect().setEnabled( true );
+//		else PostProcessor.getEffect().setEnabled( false );
+
 		// process impact feedback
-		while(impactFeedback.size() > 0)
+		float impact = 0f;
+		boolean hasImpact = false;
+		while( impactFeedback.size() > 0 )
 		{
-			/*ContactImpulse impulse =*/ impactFeedback.remove( 0 );
+			float impulse = impactFeedback.remove( 0 );
+			impact += impulse;
+
 			carDesc.velocity_wc.set( body.getLinearVelocity() ).mul( Director.gameplaySettings.linearVelocityAfterFeedback );
 			carDesc.angularvelocity = -body.getAngularVelocity() * 0.85f;
+
+//			carDesc.velocity_wc.set( body.getLinearVelocity() );
+//			carDesc.angularvelocity = -body.getAngularVelocity();
+
 			start_decrease = true;
+			hasImpact = true;
 		}
 
+		if( PostProcessor.hasEffect() && hasImpact )
+		{
+//			PostProcessor.getEffect().setStrength( impact * 0.0005f );
+		}
+	}
+
+	private void handleDecrease(CarInput input)
+	{
 		if(start_decrease || (System.nanoTime() - start_timer < 250000000L) )
 		{
 			if(start_decrease)
@@ -194,7 +214,7 @@ public class Car extends b2dEntity
 				start_timer = System.nanoTime();
 			}
 
-			input.throttle *= 0.95f;
+			input.throttle *= Director.gameplaySettings.throttleDampingAfterFeedback;
 		}
 	}
 
@@ -203,16 +223,27 @@ public class Car extends b2dEntity
 	{
 		super.onBeforePhysicsSubstep();
 
-		CarInput i = carInput;
-		if(isPlayer) i = acquireInput();
-		handleImpactFeedback(i);
-		carSim.applyInput( i );
+		if(isPlayer) carInput = acquireInput();
+
+		// handle decrease queued from previous step
+		handleDecrease( carInput );
+
+		carSim.applyInput( carInput );
 		carSim.step( body );
 
 		// set velocities
 		body.setAwake( true );
 		body.setLinearVelocity( carDesc.velocity_wc );
 		body.setAngularVelocity( -carDesc.angularvelocity );
+	}
+
+	@Override
+	public void onAfterPhysicsSubstep()
+	{
+		super.onAfterPhysicsSubstep();
+
+		// inspect impact feedback, accumulate vel/ang velocities
+		handleImpactFeedback();
 	}
 
 	@Override
