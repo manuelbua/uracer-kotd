@@ -31,9 +31,12 @@ public class Track
 			float wallDistance = 0.3f;
 			float restitution = 0.15f;
 
+			wallSize *= Director.scalingStrategy.invTileMapZoomFactor;
+			wallDistance *= Director.scalingStrategy.invTileMapZoomFactor;
+
 			// 224px tileset
-			float trackSize = Convert.px2mt( 144f );
-			float tileSize = Convert.px2mt( map.tileWidth );
+			float trackSize = Convert.px2mt( 144f ) * Director.scalingStrategy.invTileMapZoomFactor;
+			float tileSize = Convert.px2mt( map.tileWidth ) * Director.scalingStrategy.invTileMapZoomFactor;
 			float halfTrackSize = trackSize / 2f;
 			float halfTileSize = tileSize / 2f;
 			float halfWallSize = wallSize / 2f;
@@ -67,6 +70,7 @@ public class Track
 					// corner
 					coords.set( x * map.tileWidth, y * map.tileHeight );
 					coords = Convert.px2mt( coords );
+					coords.mul( Director.scalingStrategy.invTileMapZoomFactor );
 
 					if( orient.equals( "h" ) )
 					{
