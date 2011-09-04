@@ -102,50 +102,58 @@ public class Track
 					else
 					if( orient.equals( "tl" ))
 					{
-						// external arc
 						tmp1.set( -(halfTileSize + halfTrackSize + wallDistance + halfWallSize), 0 );	// unit circle radius
 						tmp2.set( coords.x + tileSize, flipY - coords.y - tileSize );	// offset
-						Box2DFactory.createAngularWall( tmp1, tmp2, wallSize, outerLumpLen, 90f, 10, rotOffset.set(0f, 1f), restitution, false );
+						rotOffset.set(0f, 1f).mul(Director.scalingStrategy.tileMapZoomFactor);	// rotational offset
+
+						// external arc
+						Box2DFactory.createAngularWall( tmp1, tmp2, wallSize, outerLumpLen, 90f, 10, rotOffset, restitution, false );
 
 						// internal arc
 						tmp1.set( -(halfTileSize - halfTrackSize - wallDistance - halfWallSize), 0 );	// unit circle radius
-						Box2DFactory.createAngularWall( tmp1, tmp2, wallSize, innerLumpLen, 90f, 4, rotOffset.set(0f, 1f), restitution, false );
+						Box2DFactory.createAngularWall( tmp1, tmp2, wallSize, innerLumpLen, 90f, 4, rotOffset, restitution, false );
 					}
 					else
 					if( orient.equals( "tr" ))
 					{
-						// external arc
 						tmp1.set( (halfTileSize + halfTrackSize + wallDistance + halfWallSize), 0 );	// unit circle radius
 						tmp2.set( coords.x, flipY - coords.y - tileSize );	// offset
-						Box2DFactory.createAngularWall( tmp1, tmp2, wallSize, outerLumpLen, -90f, 10, rotOffset.set(0f, -1f), restitution, false );
+						rotOffset.set(0f, -1f).mul(Director.scalingStrategy.tileMapZoomFactor);	// rotational offset
+
+						// external arc
+						Box2DFactory.createAngularWall( tmp1, tmp2, wallSize, outerLumpLen, -90f, 10, rotOffset, restitution, false );
 
 						// internal arc
 						tmp1.set( (halfTileSize - halfTrackSize - wallDistance - halfWallSize), 0 );	// unit circle radius
-						Box2DFactory.createAngularWall( tmp1, tmp2, wallSize, innerLumpLen, -90f, 4, rotOffset.set(0f, -1f), restitution, false );
+						Box2DFactory.createAngularWall( tmp1, tmp2, wallSize, innerLumpLen, -90f, 4, rotOffset, restitution, false );
 					}
 					else
 					if( orient.equals( "bl" ))
 					{
-						// external arc
 						tmp1.set( -(halfTileSize + halfTrackSize + wallDistance + halfWallSize), 0 );	// unit circle radius
 						tmp2.set( coords.x + tileSize, flipY - coords.y );	// offset
-						Box2DFactory.createAngularWall( tmp1, tmp2, wallSize, -outerLumpLen, -90f, 10, rotOffset.set(0f, 1f), restitution, false );
+						rotOffset.set(0f, 1f).mul(Director.scalingStrategy.tileMapZoomFactor);	// rotational offset
+
+						// external arc
+						Box2DFactory.createAngularWall( tmp1, tmp2, wallSize, -outerLumpLen, -90f, 10, rotOffset, restitution, false );
 
 						// internal arc
 						tmp1.set( -(halfTileSize - halfTrackSize - wallDistance - halfWallSize), 0 );	// unit circle radius
-						Box2DFactory.createAngularWall( tmp1, tmp2, wallSize, -innerLumpLen, -90f, 4, rotOffset.set(0f, 1f), restitution, false );
+						Box2DFactory.createAngularWall( tmp1, tmp2, wallSize, -innerLumpLen, -90f, 4, rotOffset, restitution, false );
 					}
 					else
 					if( orient.equals( "br" ))
 					{
-						// external arc
 						tmp1.set( (halfTileSize + halfTrackSize + wallDistance + halfWallSize), 0 );	// unit circle radius
 						tmp2.set( coords.x, flipY - coords.y );	// offset
-						Box2DFactory.createAngularWall( tmp1, tmp2, wallSize, -outerLumpLen, 90f, 10, rotOffset.set(0f, -1f), restitution, false );
+						rotOffset.set(0f, -1f).mul(Director.scalingStrategy.tileMapZoomFactor);	// rotational offset
+
+						// external arc
+						Box2DFactory.createAngularWall( tmp1, tmp2, wallSize, -outerLumpLen, 90f, 10, rotOffset, restitution, false );
 
 						// internal arc
 						tmp1.set( (halfTileSize - halfTrackSize - wallDistance - halfWallSize), 0 );	// unit circle radius
-						Box2DFactory.createAngularWall( tmp1, tmp2, wallSize, -innerLumpLen, 90f, 4, rotOffset.set(0f, -1f), restitution, false );
+						Box2DFactory.createAngularWall( tmp1, tmp2, wallSize, -innerLumpLen, 90f, 4, rotOffset, restitution, false );
 					}
 				}
 			}
