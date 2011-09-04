@@ -18,6 +18,9 @@ public class Config
 	// post-processing fx
 	public static boolean EnablePostProcessingFx;
 
+	// graphics
+	public static boolean EnableMipMapping;
+
 	// set default configuration values
 	public static void asDefault()
 	{
@@ -26,5 +29,6 @@ public class Config
 		PhysicsTimestepHz = 60.0f;
 		PhysicsTimeMultiplier = 1f;
 		EnablePostProcessingFx = false;
+		EnableMipMapping = true;
 	}
 }

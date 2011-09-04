@@ -26,9 +26,9 @@ public class UStillModel extends StillModel
 		for (int i = 0; i < len; i++) {
 			StillSubMesh subMesh = subMeshes[i];
 			if (i == 0) {
-				subMesh.material.bind();
+				subMesh.material.bind(program);
 			} else if (!subMeshes[i - 1].material.equals(subMesh.material)) {
-				subMesh.material.bind();
+				subMesh.material.bind(program);
 			}
 			subMesh.mesh.render(program, subMesh.primitiveType);
 		}

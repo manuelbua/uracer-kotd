@@ -3,6 +3,7 @@ package com.bitfire.uracer;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.Pixmap.Format;
 import com.badlogic.gdx.graphics.Texture;
+import com.badlogic.gdx.graphics.Texture.TextureFilter;
 import com.badlogic.gdx.graphics.g2d.TextureAtlas;
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
 
@@ -22,6 +23,8 @@ public class Art
 		base6 = split( "data/base/base6.png", 6, 6 );
 		quad = new TextureRegion( base6[0][10], 0, 0, 18, 18 );
 		cars = new TextureAtlas(Gdx.files.internal("data/base/cars1.pack"));
+
+		// no mip-mapping
 		hqCars = new TextureRegion( new Texture(Gdx.files.internal("data/base/hqcars.png")), 0, 0, 420, 424 );
 		carAmbientOcclusion = new TextureRegion( new Texture(Gdx.files.internal("data/base/car-ao.png")), 0, 0, 34, 62 );
 	}
@@ -58,6 +61,10 @@ public class Art
 
 	private static Texture newTexture( String name )
 	{
-		return new Texture( Gdx.files.internal( name ), Format.RGB565, false );
+		Texture t = new Texture( Gdx.files.internal( name ), Format.RGB565, Config.EnableMipMapping );
+		if(Config.EnableMipMapping)
+			t.setFilter( TextureFilter.MipMapLinearLinear, TextureFilter.Linear );
+
+		return t;
 	}
 }

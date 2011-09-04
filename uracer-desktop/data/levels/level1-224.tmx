@@ -224,5 +224,11 @@
     <property name="scale" value="0.58"/>
    </properties>
   </object>
+  <object height="27" name="test_arch" type="test_arch" width="35" x="1148" y="445"/>
+  <object height="27" name="test_arch" type="test_arch" width="35" x="1273" y="445"/>
+  <object height="27" name="test_arch" type="test_arch" width="35" x="1209" y="445"/>
+  <object height="27" name="test_arch" type="test_arch" width="35" x="1649" y="1116"/>
+  <object height="27" name="test_arch" type="test_arch" width="35" x="1588" y="1116"/>
+  <object height="27" name="test_arch" type="test_arch" width="35" x="1713" y="1116"/>
  </objectgroup>
 </map>

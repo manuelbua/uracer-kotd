@@ -1,16 +1,20 @@
 package com.bitfire.uracer.tiled;
 
+import java.util.ArrayList;
+
 import com.badlogic.gdx.graphics.g2d.tiled.TiledLayer;
 import com.badlogic.gdx.graphics.g2d.tiled.TiledMap;
 import com.badlogic.gdx.math.Vector2;
 import com.bitfire.uracer.Director;
 import com.bitfire.uracer.factories.Box2DFactory;
+import com.bitfire.uracer.factories.MeshFactory;
 import com.bitfire.uracer.utils.Convert;
 import com.bitfire.uracer.utils.MapUtils;
 
 public class Track
 {
 	private TiledMap map;
+	private ArrayList<OrthographicAlignedMesh> meshes = new ArrayList<OrthographicAlignedMesh>();
 
 	public Track( TiledMap map )
 	{
@@ -24,25 +28,41 @@ public class Track
 	 */
 	private void createPerimeter()
 	{
+		meshes.clear();
+
 		if( MapUtils.hasLayer( "track" ) )
 		{
-			// common
-			float wallSize = 0.3f;
-			float wallDistance = 0.3f;
+			// physics
 			float restitution = 0.15f;
 
-			wallSize *= Director.scalingStrategy.invTileMapZoomFactor;
-			wallDistance *= Director.scalingStrategy.invTileMapZoomFactor;
+			// common
+			float wallSizeMt = 0.3f;
+			float wallDistanceMt = 0.3f;
 
-			// 224px tileset
-			float trackSize = Convert.px2mt( 144f ) * Director.scalingStrategy.invTileMapZoomFactor;
-			float tileSize = Convert.px2mt( map.tileWidth ) * Director.scalingStrategy.invTileMapZoomFactor;
-			float halfTrackSize = trackSize / 2f;
-			float halfTileSize = tileSize / 2f;
-			float halfWallSize = wallSize / 2f;
-			float flipY = Director.worldSizeScaledMt.y;
+			float wallSizePx = Convert.mt2px( 0.3f );
+			float wallDistancePx = Convert.mt2px( 0.3f );
+
+			wallSizeMt *= Director.scalingStrategy.invTileMapZoomFactor;
+			wallDistanceMt *= Director.scalingStrategy.invTileMapZoomFactor;
+
+			// 224px tileset (mt)
+			float trackSizeMt = Convert.px2mt( 144f ) * Director.scalingStrategy.invTileMapZoomFactor;
+			float tileSizeMt = Convert.px2mt( map.tileWidth ) * Director.scalingStrategy.invTileMapZoomFactor;
+			float halfTrackSizeMt = trackSizeMt / 2f;
+			float halfTileSizeMt = tileSizeMt / 2f;
+			float halfWallSizeMt = wallSizeMt / 2f;
+			float flipYMt = Director.worldSizeScaledMt.y;
+
+			// 224px tileset (px, unscaled since OrthoMesh already scale on its own)
+			float trackSizePx = 144f;
+			float tileSizePx = map.tileWidth;
+			float halfTrackSizePx = trackSizePx / 2f;
+			float halfTileSizePx = tileSizePx / 2f;
+			float halfWallSizePx = wallSizePx / 2f;
+			float flipYPx = Director.worldSizeScaledPx.y;
 
 			Vector2 coords = new Vector2();
+			Vector2 meshCoords = new Vector2();
 
 			// angular wall
 			Vector2 tmp1 = new Vector2();
@@ -53,6 +73,7 @@ public class Track
 			float outerLumpLen = 1.9f;
 			float innerLumpLen = 0.8f;
 
+			OrthographicAlignedMesh wallMesh = null;
 			TiledLayer layer = MapUtils.getLayer( "track" );
 
 			for( int y = 0; y < map.height; y++ )
@@ -69,95 +90,159 @@ public class Track
 					// find out world mt coordinates for this tile's top-left
 					// corner
 					coords.set( x * map.tileWidth, y * map.tileHeight );
+					meshCoords.set(coords);
+
 					coords = Convert.px2mt( coords );
 					coords.mul( Director.scalingStrategy.invTileMapZoomFactor );
 
 					if( orient.equals( "h" ) )
 					{
 						from.x = coords.x;
-						to.x = coords.x + tileSize;
+						to.x = coords.x + tileSizeMt;
 
-						// top
-						from.y = to.y = flipY - (coords.y + halfTileSize - halfTrackSize - halfWallSize - wallDistance);
-						Box2DFactory.createWall( from, to, wallSize, restitution );
+						// shape top
+						from.y = to.y = flipYMt - (coords.y + halfTileSizeMt - halfTrackSizeMt - halfWallSizeMt - wallDistanceMt);
+						Box2DFactory.createWall( from, to, wallSizeMt, restitution );
 
-						// bottom
-						from.y = to.y = flipY - (coords.y + tileSize - (halfTileSize - halfTrackSize - halfWallSize - wallDistance));
-						Box2DFactory.createWall( from, to, wallSize, restitution );
+						// shape bottom
+						from.y = to.y = flipYMt - (coords.y + tileSizeMt - (halfTileSizeMt - halfTrackSizeMt - halfWallSizeMt - wallDistanceMt));
+						Box2DFactory.createWall( from, to, wallSizeMt, restitution );
+
+						// mesh top
+						wallMesh = MeshFactory.create( MeshFactory.WallHorizontal,
+							meshCoords.x,
+							meshCoords.y + (halfTileSizePx - halfTrackSizePx - wallSizePx - wallDistancePx - 2), 1f );
+						meshes.add( wallMesh );
+
+						// mesh bottom
+						wallMesh = MeshFactory.create( MeshFactory.WallHorizontal,
+							meshCoords.x,
+							meshCoords.y + (halfTileSizePx + halfTrackSizePx + wallDistancePx - 1), 1f);
+						meshes.add( wallMesh );
 					}
 					else
 					if( orient.equals( "v" ) )
 					{
-						from.y = flipY - coords.y;
-						to.y = flipY - (coords.y + tileSize);
+						from.y = flipYMt - coords.y;
+						to.y = flipYMt - (coords.y + tileSizeMt);
 
-						// left
-						from.x = to.x = coords.x + halfTileSize - halfTrackSize - halfWallSize - wallDistance;
-						Box2DFactory.createWall( from, to, wallSize, restitution );
+						// shape left
+						from.x = to.x = coords.x + halfTileSizeMt - halfTrackSizeMt - halfWallSizeMt - wallDistanceMt;
+						Box2DFactory.createWall( from, to, wallSizeMt, restitution );
 
-						// right
-						from.x = to.x = coords.x + tileSize - (halfTileSize - halfTrackSize - halfWallSize - wallDistance);
-						Box2DFactory.createWall( from, to, wallSize, restitution );
+						// shape right
+						from.x = to.x = coords.x + tileSizeMt - (halfTileSizeMt - halfTrackSizeMt - halfWallSizeMt - wallDistanceMt);
+						Box2DFactory.createWall( from, to, wallSizeMt, restitution );
+
+						// mesh left
+						wallMesh = MeshFactory.create( MeshFactory.WallHorizontal,
+								meshCoords.x + (halfTileSizePx - halfTrackSizePx - wallSizePx - wallDistancePx - 1),
+								meshCoords.y + tileSizePx - 2, 1f );
+						wallMesh.setRotation( 90, 0, 0, 1 );
+						meshes.add( wallMesh );
+
+						// mesh right
+						wallMesh = MeshFactory.create( MeshFactory.WallHorizontal,
+							meshCoords.x + (halfTileSizePx + halfTrackSizePx + wallDistancePx),
+							meshCoords.y + tileSizePx - 2, 1f );
+						wallMesh.setRotation( 90, 0, 0, 1 );
+						meshes.add( wallMesh );
 					}
 					else
 					if( orient.equals( "tl" ))
 					{
-						tmp1.set( -(halfTileSize + halfTrackSize + wallDistance + halfWallSize), 0 );	// unit circle radius
-						tmp2.set( coords.x + tileSize, flipY - coords.y - tileSize );	// offset
+						tmp1.set( -(halfTileSizeMt + halfTrackSizeMt + wallDistanceMt + halfWallSizeMt), 0 );	// unit circle radius
+						tmp2.set( coords.x + tileSizeMt, flipYMt - coords.y - tileSizeMt );	// offset
 						rotOffset.set(0f, 1f).mul(Director.scalingStrategy.tileMapZoomFactor);	// rotational offset
 
 						// external arc
-						Box2DFactory.createAngularWall( tmp1, tmp2, wallSize, outerLumpLen, 90f, 10, rotOffset, restitution, false );
+						Box2DFactory.createAngularWall( tmp1, tmp2, wallSizeMt, outerLumpLen, 90f, 10, rotOffset, restitution, false );
 
 						// internal arc
-						tmp1.set( -(halfTileSize - halfTrackSize - wallDistance - halfWallSize), 0 );	// unit circle radius
-						Box2DFactory.createAngularWall( tmp1, tmp2, wallSize, innerLumpLen, 90f, 4, rotOffset, restitution, false );
+						tmp1.set( -(halfTileSizeMt - halfTrackSizeMt - wallDistanceMt - halfWallSizeMt), 0 );	// unit circle radius
+						Box2DFactory.createAngularWall( tmp1, tmp2, wallSizeMt, innerLumpLen, 90f, 4, rotOffset, restitution, false );
+
+						// external mesh
+						wallMesh = MeshFactory.create( MeshFactory.WallTopRight,
+								meshCoords.x,
+								meshCoords.y + tileSizePx, 1f );
+						wallMesh.setRotation( 90, 0, 0, 1 );
+						meshes.add( wallMesh );
 					}
 					else
 					if( orient.equals( "tr" ))
 					{
-						tmp1.set( (halfTileSize + halfTrackSize + wallDistance + halfWallSize), 0 );	// unit circle radius
-						tmp2.set( coords.x, flipY - coords.y - tileSize );	// offset
+						tmp1.set( (halfTileSizeMt + halfTrackSizeMt + wallDistanceMt + halfWallSizeMt), 0 );	// unit circle radius
+						tmp2.set( coords.x, flipYMt - coords.y - tileSizeMt );	// offset
 						rotOffset.set(0f, -1f).mul(Director.scalingStrategy.tileMapZoomFactor);	// rotational offset
 
 						// external arc
-						Box2DFactory.createAngularWall( tmp1, tmp2, wallSize, outerLumpLen, -90f, 10, rotOffset, restitution, false );
+						Box2DFactory.createAngularWall( tmp1, tmp2, wallSizeMt, outerLumpLen, -90f, 10, rotOffset, restitution, false );
 
 						// internal arc
-						tmp1.set( (halfTileSize - halfTrackSize - wallDistance - halfWallSize), 0 );	// unit circle radius
-						Box2DFactory.createAngularWall( tmp1, tmp2, wallSize, innerLumpLen, -90f, 4, rotOffset, restitution, false );
+						tmp1.set( (halfTileSizeMt - halfTrackSizeMt - wallDistanceMt - halfWallSizeMt), 0 );	// unit circle radius
+						Box2DFactory.createAngularWall( tmp1, tmp2, wallSizeMt, innerLumpLen, -90f, 4, rotOffset, restitution, false );
+
+						// external mesh
+						wallMesh = MeshFactory.create( MeshFactory.WallTopRight,
+								meshCoords.x,
+								meshCoords.y, 1f );
+						meshes.add( wallMesh );
 					}
 					else
 					if( orient.equals( "bl" ))
 					{
-						tmp1.set( -(halfTileSize + halfTrackSize + wallDistance + halfWallSize), 0 );	// unit circle radius
-						tmp2.set( coords.x + tileSize, flipY - coords.y );	// offset
+						tmp1.set( -(halfTileSizeMt + halfTrackSizeMt + wallDistanceMt + halfWallSizeMt), 0 );	// unit circle radius
+						tmp2.set( coords.x + tileSizeMt, flipYMt - coords.y );	// offset
 						rotOffset.set(0f, 1f).mul(Director.scalingStrategy.tileMapZoomFactor);	// rotational offset
 
 						// external arc
-						Box2DFactory.createAngularWall( tmp1, tmp2, wallSize, -outerLumpLen, -90f, 10, rotOffset, restitution, false );
+						Box2DFactory.createAngularWall( tmp1, tmp2, wallSizeMt, -outerLumpLen, -90f, 10, rotOffset, restitution, false );
 
 						// internal arc
-						tmp1.set( -(halfTileSize - halfTrackSize - wallDistance - halfWallSize), 0 );	// unit circle radius
-						Box2DFactory.createAngularWall( tmp1, tmp2, wallSize, -innerLumpLen, -90f, 4, rotOffset, restitution, false );
+						tmp1.set( -(halfTileSizeMt - halfTrackSizeMt - wallDistanceMt - halfWallSizeMt), 0 );	// unit circle radius
+						Box2DFactory.createAngularWall( tmp1, tmp2, wallSizeMt, -innerLumpLen, -90f, 4, rotOffset, restitution, false );
+
+						// external mesh
+						wallMesh = MeshFactory.create( MeshFactory.WallTopRight,
+								meshCoords.x + tileSizePx,
+								meshCoords.y + tileSizePx, 1f );
+						wallMesh.setRotation( 180, 0, 0, 1 );
+						meshes.add( wallMesh );
 					}
 					else
 					if( orient.equals( "br" ))
 					{
-						tmp1.set( (halfTileSize + halfTrackSize + wallDistance + halfWallSize), 0 );	// unit circle radius
-						tmp2.set( coords.x, flipY - coords.y );	// offset
+						tmp1.set( (halfTileSizeMt + halfTrackSizeMt + wallDistanceMt + halfWallSizeMt), 0 );	// unit circle radius
+						tmp2.set( coords.x, flipYMt - coords.y );	// offset
 						rotOffset.set(0f, -1f).mul(Director.scalingStrategy.tileMapZoomFactor);	// rotational offset
 
 						// external arc
-						Box2DFactory.createAngularWall( tmp1, tmp2, wallSize, -outerLumpLen, 90f, 10, rotOffset, restitution, false );
+						Box2DFactory.createAngularWall( tmp1, tmp2, wallSizeMt, -outerLumpLen, 90f, 10, rotOffset, restitution, false );
 
 						// internal arc
-						tmp1.set( (halfTileSize - halfTrackSize - wallDistance - halfWallSize), 0 );	// unit circle radius
-						Box2DFactory.createAngularWall( tmp1, tmp2, wallSize, -innerLumpLen, 90f, 4, rotOffset, restitution, false );
+						tmp1.set( (halfTileSizeMt - halfTrackSizeMt - wallDistanceMt - halfWallSizeMt), 0 );	// unit circle radius
+						Box2DFactory.createAngularWall( tmp1, tmp2, wallSizeMt, -innerLumpLen, 90f, 4, rotOffset, restitution, false );
+
+						// external mesh
+						wallMesh = MeshFactory.create( MeshFactory.WallTopRight,
+								meshCoords.x + tileSizePx,
+								meshCoords.y, 1f );
+						wallMesh.setRotation( -90, 0, 0, 1 );
+						meshes.add( wallMesh );
 					}
 				}
 			}
 		}
 	}
 
+	public boolean hasMeshes()
+	{
+		return meshes.size() > 0;
+	}
+
+	public ArrayList<OrthographicAlignedMesh> getMeshes()
+	{
+		return meshes;
+	}
 }

@@ -14,6 +14,7 @@ import com.badlogic.gdx.graphics.g2d.tiled.TiledMap;
 import com.badlogic.gdx.graphics.g2d.tiled.TiledObject;
 import com.badlogic.gdx.graphics.g2d.tiled.TiledObjectGroup;
 import com.bitfire.uracer.Director;
+import com.bitfire.uracer.factories.MeshFactory;
 import com.bitfire.uracer.utils.MapUtils;
 
 /**
@@ -27,6 +28,13 @@ public class Level
 	public TiledMap map;
 	public TileMapRenderer renderer;
 	public Track track;
+
+	private static final String LevelsStore = "data/levels/";
+	private TileAtlas atlas;
+	private PerspectiveCamera camPersp;
+	private OrthographicCamera camOrtho;
+	private ArrayList<OrthographicAlignedMesh> meshes = new ArrayList<OrthographicAlignedMesh>();
+	private float camPerspElevation;
 
 	public Level( String levelName, ScalingStrategy strategy )
 	{
@@ -51,7 +59,7 @@ public class Level
 		// create track
 		track = new Track( map );
 
-		createObjects();
+		createMeshes();
 	}
 
 	public void syncWithCam( OrthographicCamera camera_ )
@@ -119,8 +127,14 @@ public class Level
 		camPersp.position.set( 0, 0, camPerspElevation );
 	}
 
-	public void createObjects()
+	public void createMeshes()
 	{
+		meshes.clear();
+
+		//
+		// create meshes from level descriptor
+		//
+
 		// first object group is the static meshes container
 		if( !MapUtils.hasObjectGroup( MapUtils.LayerStaticMeshes ) ) return;
 
@@ -135,10 +149,28 @@ public class Level
 
 			// System.out.println("Creating " + o.type + ", [" + o.x + "," + o.y
 			// + "] x" + scale);
-			meshes.add( MeshFactory.create( o.type, o.x, o.y, scale ) );
+			OrthographicAlignedMesh mesh = MeshFactory.create( o.type, o.x, o.y, scale );
+			if(mesh != null)
+				meshes.add( mesh );
 		}
 
-		// apply horizontal fov scaling factor distortion and blender factors
+
+		//
+		// create meshes from track
+		//
+		if( track.hasMeshes() )
+		{
+			ArrayList<OrthographicAlignedMesh> trackMeshes = track.getMeshes();
+			for( int i = 0; i < trackMeshes.size(); i++ )
+			{
+				meshes.add( trackMeshes.get( i ) );
+			}
+		}
+
+
+		//
+		// apply horizontal fov scaling distortion and blender factors
+		//
 
 		// Blender => cube 14.2x14.2 meters = one tile (256px) w/ far plane @48
 		// (256px are 14.2mt w/ 18px/mt)
@@ -160,11 +192,4 @@ public class Level
 			t.rescale( Director.scalingStrategy.meshScaleFactor * blenderToUracer * Director.scalingStrategy.to256 );
 		}
 	}
-
-	private static final String LevelsStore = "data/levels/";
-	private TileAtlas atlas;
-	private PerspectiveCamera camPersp;
-	private OrthographicCamera camOrtho;
-	private ArrayList<OrthographicAlignedMesh> meshes = new ArrayList<OrthographicAlignedMesh>();
-	private float camPerspElevation;
 }

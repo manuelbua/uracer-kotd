@@ -8,6 +8,7 @@ import com.badlogic.gdx.graphics.OrthographicCamera;
 import com.badlogic.gdx.graphics.PerspectiveCamera;
 import com.badlogic.gdx.graphics.Pixmap.Format;
 import com.badlogic.gdx.graphics.Texture;
+import com.badlogic.gdx.graphics.Texture.TextureFilter;
 import com.badlogic.gdx.graphics.g3d.loaders.g3d.G3dtLoader;
 import com.badlogic.gdx.graphics.g3d.materials.Material;
 import com.badlogic.gdx.graphics.g3d.materials.TextureAttribute;
@@ -16,6 +17,7 @@ import com.badlogic.gdx.graphics.glutils.ShaderProgram;
 import com.badlogic.gdx.math.Matrix4;
 import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.math.Vector3;
+import com.bitfire.uracer.Config;
 import com.bitfire.uracer.Director;
 import com.bitfire.uracer.utils.Convert;
 
@@ -30,7 +32,9 @@ public class OrthographicAlignedMesh
 //	private Mesh mesh;
 	private UStillModel model;
 	private StillModel model_workaround;	// FIXME, this is pure shit...
+	private Material material;
 	private Texture texture;
+	private TextureAttribute textureAttribute;
 
 	// matrix state
 	private Matrix4 mtx_model = new Matrix4();
@@ -92,13 +96,20 @@ public class OrthographicAlignedMesh
 			InputStream in = Gdx.files.internal( mesh ).read();
 //			m.mesh = ObjLoader.loadObj( in, true );
 			m.model_workaround = G3dtLoader.loadStillModel( in, true );
-			m.model = new UStillModel( m.model_workaround.subMeshes );
-
-			Material material = new Material("default", new TextureAttribute(new Texture(Gdx.files.internal(texture)), 0, "tex0"));
-			m.model.setMaterial( material );
 			in.close();
 
-			m.texture = new Texture( Gdx.files.internal( texture ), Format.RGB565, false );
+			m.model = new UStillModel( m.model_workaround.subMeshes );
+
+			m.texture = new Texture(Gdx.files.internal(texture), Format.RGB565, Config.EnableMipMapping );
+			if(Config.EnableMipMapping)
+				m.texture.setFilter( TextureFilter.MipMapLinearLinear, TextureFilter.Linear );
+
+			m.textureAttribute = new TextureAttribute(m.texture, 0, "textureAttributes");
+
+			m.material = new Material("default", m.textureAttribute);
+			m.model.setMaterial( m.material );
+
+//			m.texture = new Texture( Gdx.files.internal( texture ), Format.RGB565, false );
 
 			if(tilePosition != null)
 			{
@@ -122,6 +133,11 @@ public class OrthographicAlignedMesh
 	public static OrthographicAlignedMesh create( String mesh, String texture )
 	{
 		return OrthographicAlignedMesh.create( mesh, texture, null );
+	}
+
+	public TextureAttribute getTextureAttribute()
+	{
+		return textureAttribute;
 	}
 
 	public void setPositionOffsetPixels( int x, int y )
@@ -151,6 +167,16 @@ public class OrthographicAlignedMesh
 		positionPx.set( Director.positionFor( x, y ) );
 	}
 
+	/**
+	 * Sets the world position in pixels, top-left origin.
+	 * @param x
+	 * @param y
+	 */
+	public void setPositionUnscaled( float x, float y )
+	{
+		positionPx.set( x, y );
+	}
+
 	public float iRotationAngle;
 	public Vector3 iRotationAxis = new Vector3();
 
@@ -175,14 +201,14 @@ public class OrthographicAlignedMesh
 	public void render( GL20 gl, OrthographicCamera orthoCamera, PerspectiveCamera perspCamera )
 	{
 		ShaderProgram shader = OrthographicAlignedMesh.shaderProgram;
+//		texture.bind(0);
 
-		gl.glActiveTexture( 0 );
-		texture.bind();
+//		material.bind();
 		shader.begin();
 		shader.setUniformf( "u_texture", 0 );
 
-		tmp_vec.x = Convert.scaledPixels( positionOffsetPx.x - orthoCamera.position.x) + orthoCamera.viewportWidth / 2 + positionPx.x;
-		tmp_vec.y = Convert.scaledPixels( positionOffsetPx.y + orthoCamera.position.y) + orthoCamera.viewportHeight / 2 - positionPx.y;
+		tmp_vec.x = Convert.scaledPixels( positionOffsetPx.x - orthoCamera.position.x ) + orthoCamera.viewportWidth / 2 + positionPx.x;
+		tmp_vec.y = Convert.scaledPixels( positionOffsetPx.y + orthoCamera.position.y ) + orthoCamera.viewportHeight / 2 - positionPx.y;
 		tmp_vec.z = 1;
 
 		perspCamera.unproject( tmp_vec );
@@ -210,6 +236,6 @@ public class OrthographicAlignedMesh
 //		mesh.dispose();
 		model.dispose();
 		model_workaround.dispose();
-		texture.dispose();
+//		texture.dispose();
 	}
 }
