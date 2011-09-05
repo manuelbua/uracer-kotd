@@ -12,7 +12,15 @@ public class EntityManager
 	private static Array<Entity> entities;
 	private static Array<SubframeInterpolableEntity> sfi_entities;
 
-	// private static ArrayList<OrthographicAlignedMesh> meshes;
+	public static int maxSpritesInBatch()
+	{
+		return spriteBatch.maxSpritesInBatch;
+	}
+
+	public static int renderCalls()
+	{
+		return spriteBatch.renderCalls;
+	}
 
 	public static void add( Entity ent )
 	{
@@ -29,14 +37,13 @@ public class EntityManager
 	{
 		entities = new Array<Entity>();
 		sfi_entities = new Array<SubframeInterpolableEntity>();
-		spriteBatch = new SpriteBatch();
+		spriteBatch = new SpriteBatch(1000, 100);
 	}
 
 	public static void clear()
 	{
 		entities.clear();
 		sfi_entities.clear();
-		// meshes.clear();
 	}
 
 	private static void raiseOnBeforePhysicsSubstep()

@@ -274,19 +274,18 @@ public class Car extends b2dEntity
 		if(!isPlayer)
 			return;
 
-		Debug.drawString( "vel_wc [x=" + carDesc.velocity_wc.x + ", y=" + carDesc.velocity_wc.y + "]", 0, 20 );
-		Debug.drawString( "steerangle=" + carDesc.steerangle, 0, 27 );
-		Debug.drawString( "throttle=" + carDesc.throttle, 0, 34 );
-		Debug.drawString( "tx=" + Input.getXY().x + ",ty=" + Input.getXY().y, 0, 41 );
-		Debug.drawString( "screen x=" + Director.screenPosFor( body ).x + ",y=" + Director.screenPosFor( body ).y, 0, 80 );
-		Debug.drawString( "world x=" + body.getPosition().x + ",y=" + body.getPosition().y, 0, 87 );
-		Debug.drawString( "orient=" + body.getAngle(), 0, 94 );
-
-		Debug.drawString( "input count = " + cil.size(), 0, 106 );
-		// Debug.drawString( "REC = " + isRecording, 0, 118 );
+//		Debug.drawString( "vel_wc [x=" + carDesc.velocity_wc.x + ", y=" + carDesc.velocity_wc.y + "]", 0, 20 );
+//		Debug.drawString( "steerangle=" + carDesc.steerangle, 0, 27 );
+//		Debug.drawString( "throttle=" + carDesc.throttle, 0, 34 );
+//		Debug.drawString( "tx=" + Input.getXY().x + ",ty=" + Input.getXY().y, 0, 41 );
+//		Debug.drawString( "screen x=" + Director.screenPosFor( body ).x + ",y=" + Director.screenPosFor( body ).y, 0, 80 );
+//		Debug.drawString( "world x=" + body.getPosition().x + ",y=" + body.getPosition().y, 0, 87 );
+//		Debug.drawString( "orient=" + body.getAngle(), 0, 94 );
+//
+//		Debug.drawString( "input count = " + cil.size(), 0, 106 );
+//		// Debug.drawString( "REC = " + isRecording, 0, 118 );
 
 		tmp.set( Convert.pxToTile( stateRender.position.x, stateRender.position.y ) );
-		Debug.drawString( "on tile " + tmp, 0, 140 );
-
+		Debug.drawString( "on tile " + tmp, 0, 0 );
 	}
 }

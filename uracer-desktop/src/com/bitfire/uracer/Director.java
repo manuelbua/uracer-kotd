@@ -42,7 +42,7 @@ public class Director
 		scalingStrategy = new ScalingStrategy( new Vector2( 1280, 800 ), 70f, 224, 1f);
 
 		// setup configuration
-		Config.asDefault();
+//		Config.asDefault();
 
 		// everything has been setup on a 256px tile, scale back if that's the case
 		Config.PixelsPerMeter /= scalingStrategy.targetScreenRatio / scalingStrategy.to256;

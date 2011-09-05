@@ -17,12 +17,29 @@ public class Art
 	public static TextureRegion hqCars;
 	public static TextureRegion carAmbientOcclusion;
 
+	public static Texture meshMissing;
+	public static Texture mesh_test_arch_rusty;
+	public static Texture meshPalm;
+	public static Texture meshTribune;
+	public static Texture meshHouse;
+	public static Texture meshTower;
+
+	public static Texture trackWall;
+
 	public static void load()
 	{
 		titleScreen = load( "data/base/titlescreen.png", 480, 320 );
 		base6 = split( "data/base/base6.png", 6, 6 );
 		quad = new TextureRegion( base6[0][10], 0, 0, 18, 18 );
 		cars = new TextureAtlas(Gdx.files.internal("data/base/cars1.pack"));
+
+		mesh_test_arch_rusty = newTexture( "data/3d/test_arch_rusty.jpg" );
+		meshMissing = newTexture( "data/3d/missing-mesh.png" );
+		meshPalm = newTexture( "data/3d/palm.png" );
+		meshTribune = newTexture( "data/3d/tribune.png" );
+		meshHouse = newTexture( "data/3d/house.png" );
+		meshTower = newTexture( "data/3d/tower.png" );
+		trackWall = newTexture( "data/3d/track/wall.jpg" );
 
 		// no mip-mapping
 		hqCars = new TextureRegion( new Texture(Gdx.files.internal("data/base/hqcars.png")), 0, 0, 420, 424 );
@@ -62,9 +79,32 @@ public class Art
 	private static Texture newTexture( String name )
 	{
 		Texture t = new Texture( Gdx.files.internal( name ), Format.RGB565, Config.EnableMipMapping );
+
 		if(Config.EnableMipMapping)
-			t.setFilter( TextureFilter.MipMapLinearLinear, TextureFilter.Linear );
+			t.setFilter( TextureFilter.MipMapLinearNearest, TextureFilter.Nearest );
+		else
+			t.setFilter( TextureFilter.Nearest, TextureFilter.Nearest );
 
 		return t;
+	}
+
+	public static void dispose()
+	{
+		base6[0][0].getTexture().dispose();
+		titleScreen.getTexture().dispose();
+		quad.getTexture().dispose();
+		hqCars.getTexture().dispose();
+
+		carAmbientOcclusion.getTexture().dispose();
+		cars.dispose();
+
+		meshMissing.dispose();
+		mesh_test_arch_rusty.dispose();
+		meshPalm.dispose();
+		meshTribune.dispose();
+		meshHouse.dispose();
+		meshTower.dispose();
+
+		trackWall.dispose();
 	}
 }

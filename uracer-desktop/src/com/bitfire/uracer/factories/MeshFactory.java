@@ -1,6 +1,7 @@
 package com.bitfire.uracer.factories;
 
 import com.badlogic.gdx.graphics.Texture.TextureWrap;
+import com.bitfire.uracer.Art;
 import com.bitfire.uracer.tiled.OrthographicAlignedMesh;
 
 public class MeshFactory
@@ -12,7 +13,7 @@ public class MeshFactory
 	public static final int MeshArch = 5;
 
 	public static final int WallHorizontal = 10;
-	public static final int WallTopRight = 12;
+	public static final int WallTopRightOuter = 12;
 
 
 	public static OrthographicAlignedMesh create( String meshType, float posPxX, float posPxY, float scale )
@@ -28,41 +29,41 @@ public class MeshFactory
 		switch( meshType )
 		{
 		case MeshPalm:
-			mesh = OrthographicAlignedMesh.create( "data/3d/palm.g3dt", "data/3d/palm.png" );
+			mesh = OrthographicAlignedMesh.create( "data/3d/palm.g3dt", Art.meshPalm );
 			break;
 
 		case MeshTribune:
-			mesh = OrthographicAlignedMesh.create( "data/3d/tribune.g3dt", "data/3d/tribune.png" );
+			mesh = OrthographicAlignedMesh.create( "data/3d/tribune.g3dt", Art.meshTribune );
 			break;
 
 		case MeshHouse:
-			mesh = OrthographicAlignedMesh.create( "data/3d/house.g3dt", "data/3d/house.png" );
+			mesh = OrthographicAlignedMesh.create( "data/3d/house.g3dt", Art.meshHouse );
 			break;
 
 		case MeshTower:
-			mesh = OrthographicAlignedMesh.create( "data/3d/tower.g3dt", "data/3d/tower.png" );
+			mesh = OrthographicAlignedMesh.create( "data/3d/tower.g3dt", Art.meshTower );
 			break;
 
 		case MeshArch:
 //			mesh = null;
-			mesh = OrthographicAlignedMesh.create( "data/3d/test_arch.g3dt", "data/3d/test_arch_rusty.jpg" );
+			mesh = OrthographicAlignedMesh.create( "data/3d/test_arch.g3dt", Art.mesh_test_arch_rusty);
 			break;
 
 		case WallHorizontal:
-			mesh = OrthographicAlignedMesh.create( "data/3d/track/h.g3dt", "data/3d/track/wall.jpg" );
+			mesh = OrthographicAlignedMesh.create( "data/3d/track/h.g3dt", Art.trackWall );
 			mesh.getTextureAttribute().uWrap = TextureWrap.Repeat.getGLEnum();
 			mesh.getTextureAttribute().vWrap = TextureWrap.Repeat.getGLEnum();
 			break;
 
-		case WallTopRight:
-			mesh = OrthographicAlignedMesh.create( "data/3d/track/tr.g3dt", "data/3d/track/wall.jpg" );
+		case WallTopRightOuter:
+			mesh = OrthographicAlignedMesh.create( "data/3d/track/tr.g3dt", Art.trackWall );
 			mesh.getTextureAttribute().uWrap = TextureWrap.Repeat.getGLEnum();
 			mesh.getTextureAttribute().vWrap = TextureWrap.Repeat.getGLEnum();
 			break;
 
 		// missing mesh mesh
 		default:
-			mesh = OrthographicAlignedMesh.create( "data/3d/missing-mesh.g3dt", "data/3d/missing-mesh.png" );
+			mesh = OrthographicAlignedMesh.create( "data/3d/missing-mesh.g3dt", Art.meshMissing );
 		}
 
 		if( mesh != null )

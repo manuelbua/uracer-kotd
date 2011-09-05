@@ -31,8 +31,6 @@ public class CarGraphics
 
 	public void render( SpriteBatch batch, EntityState state )
 	{
-		batch.enableBlending();
-
 		ambientOcclusion.setPosition( state.position.x - ambientOcclusion.getOriginX(), state.position.y - ambientOcclusion.getOriginY() );
 		ambientOcclusion.setRotation( state.orientation );
 		ambientOcclusion.draw( batch, 0.35f );
@@ -40,7 +38,5 @@ public class CarGraphics
 		facet.setPosition( state.position.x - facet.getOriginX(), state.position.y - facet.getOriginY() );
 		facet.setRotation( state.orientation );
 		facet.draw( batch );
-
-		batch.disableBlending();
 	}
 }

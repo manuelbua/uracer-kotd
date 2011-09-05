@@ -163,7 +163,7 @@ public class Track
 						Box2DFactory.createAngularWall( tmp1, tmp2, wallSizeMt, innerLumpLen, 90f, 4, rotOffset, restitution, false );
 
 						// external mesh
-						wallMesh = MeshFactory.create( MeshFactory.WallTopRight,
+						wallMesh = MeshFactory.create( MeshFactory.WallTopRightOuter,
 								meshCoords.x,
 								meshCoords.y + tileSizePx, 1f );
 						wallMesh.setRotation( 90, 0, 0, 1 );
@@ -184,7 +184,7 @@ public class Track
 						Box2DFactory.createAngularWall( tmp1, tmp2, wallSizeMt, innerLumpLen, -90f, 4, rotOffset, restitution, false );
 
 						// external mesh
-						wallMesh = MeshFactory.create( MeshFactory.WallTopRight,
+						wallMesh = MeshFactory.create( MeshFactory.WallTopRightOuter,
 								meshCoords.x,
 								meshCoords.y, 1f );
 						meshes.add( wallMesh );
@@ -204,7 +204,7 @@ public class Track
 						Box2DFactory.createAngularWall( tmp1, tmp2, wallSizeMt, -innerLumpLen, -90f, 4, rotOffset, restitution, false );
 
 						// external mesh
-						wallMesh = MeshFactory.create( MeshFactory.WallTopRight,
+						wallMesh = MeshFactory.create( MeshFactory.WallTopRightOuter,
 								meshCoords.x + tileSizePx,
 								meshCoords.y + tileSizePx, 1f );
 						wallMesh.setRotation( 180, 0, 0, 1 );
@@ -225,7 +225,7 @@ public class Track
 						Box2DFactory.createAngularWall( tmp1, tmp2, wallSizeMt, -innerLumpLen, 90f, 4, rotOffset, restitution, false );
 
 						// external mesh
-						wallMesh = MeshFactory.create( MeshFactory.WallTopRight,
+						wallMesh = MeshFactory.create( MeshFactory.WallTopRightOuter,
 								meshCoords.x + tileSizePx,
 								meshCoords.y, 1f );
 						wallMesh.setRotation( -90, 0, 0, 1 );

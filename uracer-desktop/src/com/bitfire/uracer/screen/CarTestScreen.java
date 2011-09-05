@@ -42,7 +42,6 @@ public class CarTestScreen extends Screen
 
 	public CarTestScreen()
 	{
-		Gdx.graphics.setVSync( true );
 		ShaderProgram.pedantic = false;
 
 		Debug.create();
@@ -53,6 +52,7 @@ public class CarTestScreen extends Screen
 
 		GameplaySettings gs = GameplaySettings.create( GameplaySettings.Easy );
 		level = Director.loadLevel( "level1", gs );
+		Director.setPositionPx( Director.positionFor( new Vector2(0,0)), false );
 
 		carStartPos.set( Convert.tileToPx( 1, 0 ).add( Convert.scaledPixels( 112, -112 ) ) );
 		otherStartPos.set( Convert.tileToPx( 3, 0 ).add( Convert.scaledPixels( 112, -112 ) ) );
@@ -87,8 +87,11 @@ public class CarTestScreen extends Screen
 		if( Input.isOn( Keys.R ) )
 		{
 			// ghost.resetPhysics();
-			car.resetPhysics();
-			car.setTransform( carStartPos, 90f );
+			if(car != null )
+			{
+				car.resetPhysics();
+				car.setTransform( carStartPos, 90f );
+			}
 
 			if(other!=null)
 			{
@@ -108,17 +111,18 @@ public class CarTestScreen extends Screen
 		//
 		// ubersimple events dispatcher
 		//
-		lastCarTileAt.set( carTileAt );
-		carTileAt.set( Convert.pxToTile( car.pos().x, car.pos().y ) );
-		if( (lastCarTileAt.x != carTileAt.x) || (lastCarTileAt.y != carTileAt.y) )
+		if(car!=null)
 		{
-			onTileChanged( carTileAt );
-		}
+			lastCarTileAt.set( carTileAt );
+			carTileAt.set( Convert.pxToTile( car.pos().x, car.pos().y ) );
+			if( (lastCarTileAt.x != carTileAt.x) || (lastCarTileAt.y != carTileAt.y) )
+			{
+				onTileChanged( carTileAt );
+			}
 
-//		// rb.setStrength( car.carDesc.velocity_wc.len() );
-//		rb.setStrength( (car.carDesc.velocity_wc.len() / car.carDesc.carModel.max_speed) * 0.05f );
-		rb.dampStrength( 0.9f, Physics.dt );
-		rb.setOrigin( Director.screenPosFor( car.getBody() ) );
+			rb.dampStrength( 0.9f, Physics.dt );
+			rb.setOrigin( Director.screenPosFor( car.getBody() ) );
+		}
 	}
 
 	// FIXME
@@ -175,7 +179,8 @@ public class CarTestScreen extends Screen
 		GL20 gl = Gdx.graphics.getGL20();
 
 		// follow the car
-		Director.setPositionPx( car.state().position, false );
+		if(car!=null)
+			Director.setPositionPx( car.state().position, false );
 
 		if( Config.EnablePostProcessingFx )
 		{
@@ -208,12 +213,10 @@ public class CarTestScreen extends Screen
 		int fontH = 12;
 		String uRacerInfo = "uRacer " + VersionInfo.versionName;
 		int sw = uRacerInfo.length() * fontW;
-
 		Debug.drawString( uRacerInfo, Gdx.graphics.getWidth() - sw, 0, fontW, fontH );
-		Debug.drawString( "cam x=" + cam.position.x + ", y=" + cam.position.y, 0, 200 );
-		Debug.drawString( "mouse x=" + Input.getMouseX() + ", y=" + Input.getMouseY(), 0, 214 );
-		Debug.drawString( "temp_alias=" + temporalAliasingFactor, 0, 221 );
-		Debug.drawString( "subframe=" + Config.SubframeInterpolation, 0, 228 );
+
+		Debug.drawString( "EMgr::maxSpritesInBatch = " + EntityManager.maxSpritesInBatch(), 0, 6 );
+		Debug.drawString( "EMgr::renderCalls = " + EntityManager.renderCalls(), 0, 12 );
 
 		Debug.end();
 		// fpslog.log();

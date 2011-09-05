@@ -6,9 +6,7 @@ import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.GL20;
 import com.badlogic.gdx.graphics.OrthographicCamera;
 import com.badlogic.gdx.graphics.PerspectiveCamera;
-import com.badlogic.gdx.graphics.Pixmap.Format;
 import com.badlogic.gdx.graphics.Texture;
-import com.badlogic.gdx.graphics.Texture.TextureFilter;
 import com.badlogic.gdx.graphics.g3d.loaders.g3d.G3dtLoader;
 import com.badlogic.gdx.graphics.g3d.materials.Material;
 import com.badlogic.gdx.graphics.g3d.materials.TextureAttribute;
@@ -17,7 +15,6 @@ import com.badlogic.gdx.graphics.glutils.ShaderProgram;
 import com.badlogic.gdx.math.Matrix4;
 import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.math.Vector3;
-import com.bitfire.uracer.Config;
 import com.bitfire.uracer.Director;
 import com.bitfire.uracer.utils.Convert;
 
@@ -87,29 +84,22 @@ public class OrthographicAlignedMesh
 			throw new IllegalStateException( OrthographicAlignedMesh.shaderProgram.getLog() );
 	}
 
-	public static OrthographicAlignedMesh create( String mesh, String texture, Vector2 tilePosition )
+	public static OrthographicAlignedMesh create( String mesh, Texture texture, Vector2 tilePosition )
 	{
 		OrthographicAlignedMesh m = new OrthographicAlignedMesh();
 
 		try
 		{
 			InputStream in = Gdx.files.internal( mesh ).read();
-//			m.mesh = ObjLoader.loadObj( in, true );
 			m.model_workaround = G3dtLoader.loadStillModel( in, true );
 			in.close();
 
 			m.model = new UStillModel( m.model_workaround.subMeshes );
 
-			m.texture = new Texture(Gdx.files.internal(texture), Format.RGB565, Config.EnableMipMapping );
-			if(Config.EnableMipMapping)
-				m.texture.setFilter( TextureFilter.MipMapLinearLinear, TextureFilter.Linear );
-
+			m.texture = texture;
 			m.textureAttribute = new TextureAttribute(m.texture, 0, "textureAttributes");
-
 			m.material = new Material("default", m.textureAttribute);
 			m.model.setMaterial( m.material );
-
-//			m.texture = new Texture( Gdx.files.internal( texture ), Format.RGB565, false );
 
 			if(tilePosition != null)
 			{
@@ -130,7 +120,7 @@ public class OrthographicAlignedMesh
 		return m;
 	}
 
-	public static OrthographicAlignedMesh create( String mesh, String texture )
+	public static OrthographicAlignedMesh create( String mesh, Texture texture )
 	{
 		return OrthographicAlignedMesh.create( mesh, texture, null );
 	}
@@ -205,7 +195,7 @@ public class OrthographicAlignedMesh
 
 //		material.bind();
 		shader.begin();
-		shader.setUniformf( "u_texture", 0 );
+//		shader.setUniformf( "u_texture", 0 );
 
 		tmp_vec.x = Convert.scaledPixels( positionOffsetPx.x - orthoCamera.position.x ) + orthoCamera.viewportWidth / 2 + positionPx.x;
 		tmp_vec.y = Convert.scaledPixels( positionOffsetPx.y + orthoCamera.position.y ) + orthoCamera.viewportHeight / 2 - positionPx.y;

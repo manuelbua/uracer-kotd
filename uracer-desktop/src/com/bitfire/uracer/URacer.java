@@ -22,6 +22,7 @@ public class URacer implements ApplicationListener
 	@Override
 	public void create()
 	{
+		Config.asDefault();
 		Art.load();
 		input.releaseAllKeys();
 
@@ -68,6 +69,9 @@ public class URacer implements ApplicationListener
 		startTime = System.nanoTime();
 		{
 			screen.render( temporalAliasing );
+
+			// simulate slowness
+//			try { Thread.sleep( 32 ); } catch( InterruptedException e ) {}
 		}
 		graphicsTime = (System.nanoTime() - startTime) * oneOnOneBillion;
 	}
