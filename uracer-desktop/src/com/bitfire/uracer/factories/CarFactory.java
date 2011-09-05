@@ -15,7 +15,8 @@ import com.bitfire.uracer.utils.FixtureAtlas;
 public class CarFactory
 {
 	public static final int OldSkool = 1;
-	public static final int ModernBlack = 2;
+	public static final int OldSkool2 = 2;
+//	public static final int ModernBlack = 3;
 
 	public static Car create( int carType, CarModel model, Vector2 position, float orientation, boolean isPlayer )
 	{
@@ -35,13 +36,21 @@ public class CarFactory
 			shapeRef = "../../data-src/base/cars/electron.png";
 			break;
 
-		case ModernBlack:
-			region = new TextureRegion( Art.hqCars, 0, 0, 210, 424 );
-			b2deditorSourceW = Art.hqCars.getRegionWidth();
-//			b2deditorSourceH = Art.hqCars.getRegionHeight();
-			shapeName = "data/base/hqcars.shape";
-			shapeRef = "../../data-src/base/black-car.png";
+		case OldSkool2:
+			region = Art.cars.findRegion( "spider" );
+			b2deditorSourceW = region.getRegionWidth();
+//			b2deditorSourceH = region.getRegionHeight();
+			shapeName = "data/base/electron.shape";
+			shapeRef = "../../data-src/base/cars/electron.png";
 			break;
+
+//		case ModernBlack:
+//			region = new TextureRegion( Art.hqCars, 0, 0, 210, 424 );
+//			b2deditorSourceW = Art.hqCars.getRegionWidth();
+////			b2deditorSourceH = Art.hqCars.getRegionHeight();
+//			shapeName = "data/base/hqcars.shape";
+//			shapeRef = "../../data-src/base/black-car.png";
+//			break;
 		}
 
 		CarGraphics graphics = new CarGraphics( model, region );

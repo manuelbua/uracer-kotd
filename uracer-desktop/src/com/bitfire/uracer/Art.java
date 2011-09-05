@@ -11,10 +11,10 @@ public class Art
 {
 	// Art
 	public static TextureRegion[][] base6;
-	public static TextureRegion titleScreen;
+//	public static TextureRegion titleScreen;
 	public static TextureRegion quad;
 	public static TextureAtlas cars;
-	public static TextureRegion hqCars;
+//	public static TextureRegion hqCars;
 	public static TextureRegion carAmbientOcclusion;
 
 	public static Texture meshMissing;
@@ -28,7 +28,7 @@ public class Art
 
 	public static void load()
 	{
-		titleScreen = load( "data/base/titlescreen.png", 480, 320 );
+//		titleScreen = load( "data/base/titlescreen.png", 480, 320 );
 		base6 = split( "data/base/base6.png", 6, 6 );
 		quad = new TextureRegion( base6[0][10], 0, 0, 18, 18 );
 		cars = new TextureAtlas(Gdx.files.internal("data/base/cars1.pack"));
@@ -42,7 +42,7 @@ public class Art
 		trackWall = newTexture( "data/3d/track/wall.jpg" );
 
 		// no mip-mapping
-		hqCars = new TextureRegion( new Texture(Gdx.files.internal("data/base/hqcars.png")), 0, 0, 420, 424 );
+//		hqCars = new TextureRegion( new Texture(Gdx.files.internal("data/base/hqcars.png")), 0, 0, 420, 424 );
 		carAmbientOcclusion = new TextureRegion( new Texture(Gdx.files.internal("data/base/car-ao.png")), 0, 0, 34, 62 );
 	}
 
@@ -91,9 +91,9 @@ public class Art
 	public static void dispose()
 	{
 		base6[0][0].getTexture().dispose();
-		titleScreen.getTexture().dispose();
+//		titleScreen.getTexture().dispose();
 		quad.getTexture().dispose();
-		hqCars.getTexture().dispose();
+//		hqCars.getTexture().dispose();
 
 		carAmbientOcclusion.getTexture().dispose();
 		cars.dispose();

@@ -8,6 +8,7 @@ import com.badlogic.gdx.graphics.GL20;
 import com.badlogic.gdx.graphics.OrthographicCamera;
 import com.badlogic.gdx.graphics.glutils.ShaderProgram;
 import com.badlogic.gdx.math.Vector2;
+import com.bitfire.uracer.Art;
 import com.bitfire.uracer.Config;
 import com.bitfire.uracer.Director;
 import com.bitfire.uracer.GameplaySettings;
@@ -59,7 +60,7 @@ public class CarTestScreen extends Screen
 
 		CarModel m = new CarModel();
 		car = CarFactory.create( CarFactory.OldSkool, m.toModel2(), carStartPos, 90, true );
-		other = CarFactory.create( CarFactory.ModernBlack, m.toModel1(), otherStartPos, 90, false );
+		other = CarFactory.create( CarFactory.OldSkool2, m.toModel1(), otherStartPos, 90, false );
 
 		// car.record( true );
 		// ghost = GhostCar.create( Convert.scaledPosition( 0, 0 ), 90 );
@@ -76,6 +77,7 @@ public class CarTestScreen extends Screen
 	{
 		super.removed();
 		Debug.dispose();
+		Art.dispose();
 	}
 
 	private Vector2 carTileAt = new Vector2();

@@ -44,7 +44,7 @@ public class Debug
 		sb = new StringBuilder();
 		fmt = new Formatter( sb, Locale.US );
 
-		textBatch = new SpriteBatch();
+		textBatch = new SpriteBatch(1000);
 
 		// y-flip
 		Matrix4 proj = new Matrix4();
