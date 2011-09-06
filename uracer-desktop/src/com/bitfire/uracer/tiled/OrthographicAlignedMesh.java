@@ -40,7 +40,7 @@ public class OrthographicAlignedMesh
 	private static ShaderProgram shaderProgram = null;
 
 	// scale
-	private float scale, originalScale;
+	private float scale, scalingFactor;
 	private Vector3 scaleAxis = new Vector3();
 
 	// position
@@ -110,9 +110,21 @@ public class OrthographicAlignedMesh
 				m.setPosition( 0, 0 );
 			}
 
-			m.setScale( 1 );
+			//
+			// apply horizontal fov scaling distortion and blender factors
+			//
+
+			// Blender => cube 14.2x14.2 meters = one tile (256px) w/ far plane @48
+			// (256px are 14.2mt w/ 18px/mt)
+			// I'm lazy and want Blender to work with 10x10mt instead, so a 1.42f
+			// factor for this scaling: also, since the far plane is suboptimal at
+			// just 48, i want 5 times more space on the z-axis, so here's another
+			// scaling factor creeping up.
+			float blenderToUracer = 5f * 1.42f;
+			m.setScalingFactor( Director.scalingStrategy.meshScaleFactor * blenderToUracer * Director.scalingStrategy.to256 );
 			m.setRotation( 0, 0, 0, 0 );
-		} catch( Exception e )
+		}
+		catch( Exception e )
 		{
 			e.printStackTrace();
 		}
@@ -176,16 +188,16 @@ public class OrthographicAlignedMesh
 		iRotationAxis.set( x_axis, y_axis, z_axis );
 	}
 
-	public void setScale( float scale )
+	public void setScalingFactor( float factor )
 	{
-		this.scale = originalScale = scale;
+		scalingFactor = factor;
 		scaleAxis.set( scale, scale, scale );
 	}
 
-	public void rescale( float factor )
+	public void setScale( float scale )
 	{
-		scale = originalScale * factor;
-		scaleAxis.set( scale, scale, scale );
+		this.scale = scalingFactor * scale;
+		scaleAxis.set( this.scale, this.scale, this.scale );
 	}
 
 	public void render( GL20 gl, OrthographicCamera orthoCamera, PerspectiveCamera perspCamera )

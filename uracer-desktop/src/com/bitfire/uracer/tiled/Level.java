@@ -166,28 +166,28 @@ public class Level
 		}
 
 
-		//
-		// apply horizontal fov scaling distortion and blender factors
-		//
-
-		// Blender => cube 14.2x14.2 meters = one tile (256px) w/ far plane @48
-		// (256px are 14.2mt w/ 18px/mt)
-		// I'm lazy and want Blender to work with 10x10mt instead, so a 1.42f
-		// factor for this scaling: also, since the far plane is suboptimal at
-		// just 48, i want 5 times more space on the z-axis, so here's another
-		// scaling factor creeping up.
-		float blenderToUracer = 5f * 1.42f;
-
-		for( int i = 0; i < meshes.size(); i++ )
-		{
-			OrthographicAlignedMesh t = meshes.get( i );
-
-			// note about the "Convert.to256" factor
-			//
-			// object scales where defined for a tilesize of 256px at the target
-			// screen resolution
-			// let's scale back in case the tilesize is different
-			t.rescale( Director.scalingStrategy.meshScaleFactor * blenderToUracer * Director.scalingStrategy.to256 );
-		}
+//		//
+//		// apply horizontal fov scaling distortion and blender factors
+//		//
+//
+//		// Blender => cube 14.2x14.2 meters = one tile (256px) w/ far plane @48
+//		// (256px are 14.2mt w/ 18px/mt)
+//		// I'm lazy and want Blender to work with 10x10mt instead, so a 1.42f
+//		// factor for this scaling: also, since the far plane is suboptimal at
+//		// just 48, i want 5 times more space on the z-axis, so here's another
+//		// scaling factor creeping up.
+//		float blenderToUracer = 5f * 1.42f;
+//
+//		for( int i = 0; i < meshes.size(); i++ )
+//		{
+//			OrthographicAlignedMesh t = meshes.get( i );
+//
+//			// note about the "Convert.to256" factor
+//			//
+//			// object scales where defined for a tilesize of 256px at the target
+//			// screen resolution
+//			// let's scale back in case the tilesize is different
+//			t.rescale( Director.scalingStrategy.meshScaleFactor * blenderToUracer * Director.scalingStrategy.to256 );
+//		}
 	}
 }
