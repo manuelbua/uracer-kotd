@@ -142,10 +142,10 @@ public class OrthographicAlignedMesh
 		return textureAttribute;
 	}
 
-	public void setPositionOffsetPixels( int x, int y )
+	public void setPositionOffsetPixels( int offsetPxX, int offsetPxY )
 	{
-		positionOffsetPx.x = x;
-		positionOffsetPx.y = y;
+		positionOffsetPx.x = offsetPxX;
+		positionOffsetPx.y = offsetPxY;
 	}
 
 	/*
@@ -154,19 +154,19 @@ public class OrthographicAlignedMesh
 	 *
 	 * @remarks The origin (0,0) is at the top-left corner
 	 */
-	public void setTilePosition( int x_index, int y_index )
+	public void setTilePosition( int tileIndexX, int tileIndexY )
 	{
-		positionPx.set( Convert.tileToPx( x_index, y_index ) );
+		positionPx.set( Convert.tileToPx( tileIndexX, tileIndexY ) );
 	}
 
 	/**
 	 * Sets the world position in pixels, top-left origin.
-	 * @param x
-	 * @param y
+	 * @param posPxX
+	 * @param posPxY
 	 */
-	public void setPosition( float x, float y )
+	public void setPosition( float posPxX, float posPxY )
 	{
-		positionPx.set( Director.positionFor( x, y ) );
+		positionPx.set( Director.positionFor( posPxX, posPxY ) );
 	}
 
 	/**
