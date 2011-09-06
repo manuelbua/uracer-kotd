@@ -9,6 +9,7 @@ import com.bitfire.uracer.Physics;
 public class EntityManager
 {
 	private static SpriteBatch spriteBatch;
+
 	private static Array<Entity> entities;
 	private static Array<SubframeInterpolableEntity> sfi_entities;
 
@@ -40,7 +41,6 @@ public class EntityManager
 
 		// enable use of VBO (GLES2) (wtf, this should be written in the docs!)
 		spriteBatch = new SpriteBatch(1000, 20);
-//		spriteBatch = new SpriteBatch();	// old VertexArrays (GLES1)
 	}
 
 	public static void clear()

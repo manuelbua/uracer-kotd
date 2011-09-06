@@ -15,7 +15,6 @@ public class UStillModel extends StillModel
 	@Override
 	public void render()
 	{
-		// TODO Auto-generated method stub
 		super.render();
 	}
 

@@ -1,13 +1,9 @@
 package com.bitfire.uracer.tiled;
 
-import java.io.InputStream;
-
-import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.GL20;
 import com.badlogic.gdx.graphics.OrthographicCamera;
 import com.badlogic.gdx.graphics.PerspectiveCamera;
 import com.badlogic.gdx.graphics.Texture;
-import com.badlogic.gdx.graphics.g3d.loaders.g3d.G3dtLoader;
 import com.badlogic.gdx.graphics.g3d.materials.Material;
 import com.badlogic.gdx.graphics.g3d.materials.TextureAttribute;
 import com.badlogic.gdx.graphics.g3d.model.still.StillModel;
@@ -24,9 +20,8 @@ import com.bitfire.uracer.utils.Convert;
  * @author manuel
  *
  */
-public class OrthographicAlignedMesh
+public class OrthographicAlignedStillModel
 {
-//	private Mesh mesh;
 	private UStillModel model;
 	private StillModel model_workaround;	// FIXME, this is pure shit...
 	private Material material;
@@ -40,7 +35,7 @@ public class OrthographicAlignedMesh
 	private static ShaderProgram shaderProgram = null;
 
 	// scale
-	private float scale, originalScale;
+	private float scale, scalingFactor;
 	private Vector3 scaleAxis = new Vector3();
 
 	// position
@@ -78,41 +73,46 @@ public class OrthographicAlignedMesh
 				"	gl_FragColor = texture2D( u_texture, v_TexCoord );	\n" +
 				"}														\n";
 
-		OrthographicAlignedMesh.shaderProgram = new ShaderProgram( vertexShader, fragmentShader );
+		OrthographicAlignedStillModel.shaderProgram = new ShaderProgram( vertexShader, fragmentShader );
 
-		if( OrthographicAlignedMesh.shaderProgram.isCompiled() == false )
-			throw new IllegalStateException( OrthographicAlignedMesh.shaderProgram.getLog() );
+		if( OrthographicAlignedStillModel.shaderProgram.isCompiled() == false )
+			throw new IllegalStateException( OrthographicAlignedStillModel.shaderProgram.getLog() );
 	}
 
-	public static OrthographicAlignedMesh create( String mesh, Texture texture, Vector2 tilePosition )
+	// TODO pass a Model instead of a mesh name
+//	public static OrthographicAlignedModel create( String mesh, Texture texture )
+	public static OrthographicAlignedStillModel create( StillModel model, Texture texture )
 	{
-		OrthographicAlignedMesh m = new OrthographicAlignedMesh();
+		OrthographicAlignedStillModel m = new OrthographicAlignedStillModel();
 
 		try
 		{
-			InputStream in = Gdx.files.internal( mesh ).read();
-			m.model_workaround = G3dtLoader.loadStillModel( in, true );
-			in.close();
-
+			m.model_workaround = model;
 			m.model = new UStillModel( m.model_workaround.subMeshes );
 
+			// set material
 			m.texture = texture;
 			m.textureAttribute = new TextureAttribute(m.texture, 0, "textureAttributes");
 			m.material = new Material("default", m.textureAttribute);
 			m.model.setMaterial( m.material );
 
-			if(tilePosition != null)
-			{
-				m.setTilePosition( (int)tilePosition.x, (int)tilePosition.y );
-			}
-			else
-			{
-				m.setPosition( 0, 0 );
-			}
+			//
+			// apply horizontal fov scaling distortion and blender factors
+			//
 
-			m.setScale( 1 );
+			// Blender => cube 14.2x14.2 meters = one tile (256px) w/ far plane @48
+			// (256px are 14.2mt w/ 18px/mt)
+			// I'm lazy and want Blender to work with 10x10mt instead, so a 1.42f
+			// factor for this scaling: also, since the far plane is suboptimal at
+			// just 48, i want 5 times more space on the z-axis, so here's another
+			// scaling factor creeping up.
+			float blenderToUracer = 5f * 1.42f;
+			m.setScalingFactor( Director.scalingStrategy.meshScaleFactor * blenderToUracer * Director.scalingStrategy.to256 );
+
+			m.setPosition( 0, 0 );
 			m.setRotation( 0, 0, 0, 0 );
-		} catch( Exception e )
+		}
+		catch( Exception e )
 		{
 			e.printStackTrace();
 		}
@@ -120,20 +120,15 @@ public class OrthographicAlignedMesh
 		return m;
 	}
 
-	public static OrthographicAlignedMesh create( String mesh, Texture texture )
-	{
-		return OrthographicAlignedMesh.create( mesh, texture, null );
-	}
-
 	public TextureAttribute getTextureAttribute()
 	{
 		return textureAttribute;
 	}
 
-	public void setPositionOffsetPixels( int x, int y )
+	public void setPositionOffsetPixels( int offsetPxX, int offsetPxY )
 	{
-		positionOffsetPx.x = x;
-		positionOffsetPx.y = y;
+		positionOffsetPx.x = offsetPxX;
+		positionOffsetPx.y = offsetPxY;
 	}
 
 	/*
@@ -142,19 +137,19 @@ public class OrthographicAlignedMesh
 	 *
 	 * @remarks The origin (0,0) is at the top-left corner
 	 */
-	public void setTilePosition( int x_index, int y_index )
+	public void setTilePosition( int tileIndexX, int tileIndexY )
 	{
-		positionPx.set( Convert.tileToPx( x_index, y_index ) );
+		positionPx.set( Convert.tileToPx( tileIndexX, tileIndexY ) );
 	}
 
 	/**
 	 * Sets the world position in pixels, top-left origin.
-	 * @param x
-	 * @param y
+	 * @param posPxX
+	 * @param posPxY
 	 */
-	public void setPosition( float x, float y )
+	public void setPosition( float posPxX, float posPxY )
 	{
-		positionPx.set( Director.positionFor( x, y ) );
+		positionPx.set( Director.positionFor( posPxX, posPxY ) );
 	}
 
 	/**
@@ -176,36 +171,36 @@ public class OrthographicAlignedMesh
 		iRotationAxis.set( x_axis, y_axis, z_axis );
 	}
 
-	public void setScale( float scale )
+	public void setScalingFactor( float factor )
 	{
-		this.scale = originalScale = scale;
+		scalingFactor = factor;
 		scaleAxis.set( scale, scale, scale );
 	}
 
-	public void rescale( float factor )
+	public void setScale( float scale )
 	{
-		scale = originalScale * factor;
-		scaleAxis.set( scale, scale, scale );
+		this.scale = scalingFactor * scale;
+		scaleAxis.set( this.scale, this.scale, this.scale );
 	}
 
 	public void render( GL20 gl, OrthographicCamera orthoCamera, PerspectiveCamera perspCamera )
 	{
-		ShaderProgram shader = OrthographicAlignedMesh.shaderProgram;
-//		texture.bind(0);
-
-//		material.bind();
+		ShaderProgram shader = OrthographicAlignedStillModel.shaderProgram;
 		shader.begin();
-//		shader.setUniformf( "u_texture", 0 );
 
+		// compute final position
 		tmp_vec.x = Convert.scaledPixels( positionOffsetPx.x - orthoCamera.position.x ) + orthoCamera.viewportWidth / 2 + positionPx.x;
 		tmp_vec.y = Convert.scaledPixels( positionOffsetPx.y + orthoCamera.position.y ) + orthoCamera.viewportHeight / 2 - positionPx.y;
 		tmp_vec.z = 1;
 
+		// transform to world space
 		perspCamera.unproject( tmp_vec );
 
 		mtx_model.idt();
 		mtx_model.setToTranslation( tmp_vec.x, tmp_vec.y, -(perspCamera.far - perspCamera.position.z) );
 
+		// TODO (when updating the local libgdx repo)
+		// support proper rotation now that Mat3/Mat4 supports opengl-style rotation/translation/scaling
 		Matrix4.mul( mtx_model.val, tmp_mtx.setToRotation( iRotationAxis, iRotationAngle ).val );
 		Matrix4.mul( mtx_model.val, tmp_mtx.setToScaling( scaleAxis ).val );
 
