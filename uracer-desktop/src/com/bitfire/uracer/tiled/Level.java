@@ -135,29 +135,27 @@ public class Level
 		// create meshes from level descriptor
 		//
 
-		// first object group is the static meshes container
-		if( !MapUtils.hasObjectGroup( MapUtils.LayerStaticMeshes ) ) return;
-
-		TiledObjectGroup group = MapUtils.getObjectGroup( MapUtils.LayerStaticMeshes );
-		for( int i = 0; i < group.objects.size(); i++ )
+		// static meshes layer
+		if( MapUtils.hasObjectGroup( MapUtils.LayerStaticMeshes ) )
 		{
-			TiledObject o = group.objects.get( i );
+			TiledObjectGroup group = MapUtils.getObjectGroup( MapUtils.LayerStaticMeshes );
+			for( int i = 0; i < group.objects.size(); i++ )
+			{
+				TiledObject o = group.objects.get( i );
 
-			float scale = 1f;
-			if( o.properties.get( MapUtils.MeshScale ) != null )
-				scale = Float.parseFloat( o.properties.get( MapUtils.MeshScale ) );
+				float scale = 1f;
+				if( o.properties.get( MapUtils.MeshScale ) != null )
+					scale = Float.parseFloat( o.properties.get( MapUtils.MeshScale ) );
 
-			// System.out.println("Creating " + o.type + ", [" + o.x + "," + o.y
-			// + "] x" + scale);
-			OrthographicAlignedMesh mesh = MeshFactory.create( o.type, o.x, o.y, scale );
-			if(mesh != null)
-				meshes.add( mesh );
+				// System.out.println("Creating " + o.type + ", [" + o.x + "," + o.y
+				// + "] x" + scale);
+				OrthographicAlignedMesh mesh = MeshFactory.create( o.type, o.x, o.y, scale );
+				if(mesh != null)
+					meshes.add( mesh );
+			}
 		}
 
-
-		//
-		// create meshes from track
-		//
+		// track meshes
 		if( track.hasMeshes() )
 		{
 			ArrayList<OrthographicAlignedMesh> trackMeshes = track.getMeshes();

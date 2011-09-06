@@ -7,7 +7,7 @@ import com.bitfire.uracer.Config;
 import com.bitfire.uracer.utils.AMath;
 import com.bitfire.uracer.utils.Convert;
 
-public class b2dEntity extends SubframeInterpolableEntity
+public class Box2dEntity extends SubframeInterpolableEntity
 {
 	protected Body body;
 

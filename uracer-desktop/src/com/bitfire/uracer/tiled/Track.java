@@ -58,8 +58,8 @@ public class Track
 			float tileSizePx = map.tileWidth;
 			float halfTrackSizePx = trackSizePx / 2f;
 			float halfTileSizePx = tileSizePx / 2f;
-			float halfWallSizePx = wallSizePx / 2f;
-			float flipYPx = Director.worldSizeScaledPx.y;
+//			float halfWallSizePx = wallSizePx / 2f;
+//			float flipYPx = Director.worldSizeScaledPx.y;
 
 			Vector2 coords = new Vector2();
 			Vector2 meshCoords = new Vector2();

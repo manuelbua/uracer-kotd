@@ -12,7 +12,7 @@ import com.bitfire.uracer.Input;
 import com.bitfire.uracer.Physics;
 import com.bitfire.uracer.debug.Debug;
 import com.bitfire.uracer.entities.EntityManager;
-import com.bitfire.uracer.entities.b2dEntity;
+import com.bitfire.uracer.entities.Box2dEntity;
 import com.bitfire.uracer.postprocessing.PostProcessor;
 import com.bitfire.uracer.simulations.car.CarDescriptor;
 import com.bitfire.uracer.simulations.car.CarInput;
@@ -21,7 +21,7 @@ import com.bitfire.uracer.simulations.car.CarSimulator;
 import com.bitfire.uracer.utils.AMath;
 import com.bitfire.uracer.utils.Convert;
 
-public class Car extends b2dEntity
+public class Car extends Box2dEntity
 {
 	// public OrthographicAlignedMesh mesh;
 	protected CarGraphics graphics;

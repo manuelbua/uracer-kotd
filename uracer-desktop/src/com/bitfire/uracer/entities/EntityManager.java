@@ -39,7 +39,7 @@ public class EntityManager
 		sfi_entities = new Array<SubframeInterpolableEntity>();
 
 		// enable use of VBO (GLES2) (wtf, this should be written in the docs!)
-		spriteBatch = new SpriteBatch(1000, 100);
+		spriteBatch = new SpriteBatch(1000, 20);
 //		spriteBatch = new SpriteBatch();	// old VertexArrays (GLES1)
 	}
 
