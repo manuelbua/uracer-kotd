@@ -14,7 +14,7 @@ import com.badlogic.gdx.graphics.g2d.tiled.TiledMap;
 import com.badlogic.gdx.graphics.g2d.tiled.TiledObject;
 import com.badlogic.gdx.graphics.g2d.tiled.TiledObjectGroup;
 import com.bitfire.uracer.Director;
-import com.bitfire.uracer.factories.MeshFactory;
+import com.bitfire.uracer.factories.ModelFactory;
 import com.bitfire.uracer.utils.MapUtils;
 
 /**
@@ -33,8 +33,8 @@ public class Level
 	private TileAtlas atlas;
 	private PerspectiveCamera camPersp;
 	private OrthographicCamera camOrtho;
-	private ArrayList<OrthographicAlignedMesh> meshes = new ArrayList<OrthographicAlignedMesh>();
 	private float camPerspElevation;
+	private ArrayList<OrthographicAlignedStillModel> staticMeshes = new ArrayList<OrthographicAlignedStillModel>();
 
 	public Level( String levelName, ScalingStrategy strategy )
 	{
@@ -91,9 +91,9 @@ public class Level
 		gl.glEnable( GL20.GL_DEPTH_TEST );
 		gl.glDepthFunc( GL20.GL_LESS );
 
-		for( int i = 0; i < meshes.size(); i++ )
+		for( int i = 0; i < staticMeshes.size(); i++ )
 		{
-			OrthographicAlignedMesh t = meshes.get( i );
+			OrthographicAlignedStillModel t = staticMeshes.get( i );
 			t.render( gl, camOrtho, camPersp );
 		}
 
@@ -129,10 +129,10 @@ public class Level
 
 	public void createMeshes()
 	{
-		meshes.clear();
+		staticMeshes.clear();
 
 		//
-		// create meshes from level descriptor
+		// create static meshes from level descriptor
 		//
 
 		// static meshes layer
@@ -149,45 +149,20 @@ public class Level
 
 				// System.out.println("Creating " + o.type + ", [" + o.x + "," + o.y
 				// + "] x" + scale);
-				OrthographicAlignedMesh mesh = MeshFactory.create( o.type, o.x, o.y, scale );
+				OrthographicAlignedStillModel mesh = ModelFactory.create( o.type, o.x, o.y, scale );
 				if(mesh != null)
-					meshes.add( mesh );
+					staticMeshes.add( mesh );
 			}
 		}
 
 		// track meshes
 		if( track.hasMeshes() )
 		{
-			ArrayList<OrthographicAlignedMesh> trackMeshes = track.getMeshes();
+			ArrayList<OrthographicAlignedStillModel> trackMeshes = track.getMeshes();
 			for( int i = 0; i < trackMeshes.size(); i++ )
 			{
-				meshes.add( trackMeshes.get( i ) );
+				staticMeshes.add( trackMeshes.get( i ) );
 			}
 		}
-
-
-//		//
-//		// apply horizontal fov scaling distortion and blender factors
-//		//
-//
-//		// Blender => cube 14.2x14.2 meters = one tile (256px) w/ far plane @48
-//		// (256px are 14.2mt w/ 18px/mt)
-//		// I'm lazy and want Blender to work with 10x10mt instead, so a 1.42f
-//		// factor for this scaling: also, since the far plane is suboptimal at
-//		// just 48, i want 5 times more space on the z-axis, so here's another
-//		// scaling factor creeping up.
-//		float blenderToUracer = 5f * 1.42f;
-//
-//		for( int i = 0; i < meshes.size(); i++ )
-//		{
-//			OrthographicAlignedMesh t = meshes.get( i );
-//
-//			// note about the "Convert.to256" factor
-//			//
-//			// object scales where defined for a tilesize of 256px at the target
-//			// screen resolution
-//			// let's scale back in case the tilesize is different
-//			t.rescale( Director.scalingStrategy.meshScaleFactor * blenderToUracer * Director.scalingStrategy.to256 );
-//		}
 	}
 }

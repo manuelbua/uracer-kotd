@@ -3,9 +3,7 @@ package com.bitfire.uracer.screen;
 import com.badlogic.gdx.Application.ApplicationType;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Input.Keys;
-import com.badlogic.gdx.graphics.FPSLogger;
 import com.badlogic.gdx.graphics.GL20;
-import com.badlogic.gdx.graphics.OrthographicCamera;
 import com.badlogic.gdx.graphics.glutils.ShaderProgram;
 import com.badlogic.gdx.math.Vector2;
 import com.bitfire.uracer.Art;
@@ -14,21 +12,20 @@ import com.bitfire.uracer.Director;
 import com.bitfire.uracer.GameplaySettings;
 import com.bitfire.uracer.Input;
 import com.bitfire.uracer.Physics;
-import com.bitfire.uracer.VersionInfo;
 import com.bitfire.uracer.debug.Debug;
 import com.bitfire.uracer.entities.EntityManager;
 import com.bitfire.uracer.entities.vehicles.Car;
 import com.bitfire.uracer.factories.CarFactory;
+import com.bitfire.uracer.factories.ModelFactory;
 import com.bitfire.uracer.postprocessing.PostProcessor;
 import com.bitfire.uracer.postprocessing.effects.RadialBlur;
 import com.bitfire.uracer.simulations.car.CarModel;
 import com.bitfire.uracer.tiled.Level;
-import com.bitfire.uracer.tiled.OrthographicAlignedMesh;
+import com.bitfire.uracer.tiled.OrthographicAlignedStillModel;
 import com.bitfire.uracer.utils.Convert;
 
 public class CarTestScreen extends Screen
 {
-	private FPSLogger fpslog = new FPSLogger();
 	private Car car = null, other = null;
 	private Level level;
 	// private GhostCar ghost;
@@ -46,8 +43,9 @@ public class CarTestScreen extends Screen
 		ShaderProgram.pedantic = false;
 
 		Debug.create();
-		OrthographicAlignedMesh.initialize();
+		OrthographicAlignedStillModel.initialize();
 		EntityManager.create();
+		ModelFactory.init();
 
 		Director.create( this, Gdx.graphics.getWidth(), Gdx.graphics.getHeight() );
 
@@ -65,11 +63,14 @@ public class CarTestScreen extends Screen
 		// car.record( true );
 		// ghost = GhostCar.create( Convert.scaledPosition( 0, 0 ), 90 );
 
-		rb = new RadialBlur();
-		rb.setEnabled( true );
-		PostProcessor.init( Gdx.graphics.getWidth(), Gdx.graphics.getHeight() );
-//		PostProcessor.init( 512, 512 );
-		PostProcessor.setEffect( rb );
+		if( Config.EnablePostProcessingFx )
+		{
+			rb = new RadialBlur();
+			rb.setEnabled( true );
+			PostProcessor.init( Gdx.graphics.getWidth(), Gdx.graphics.getHeight() );
+//			PostProcessor.init( 512, 512 );
+			PostProcessor.setEffect( rb );
+		}
 	}
 
 	@Override
@@ -122,8 +123,11 @@ public class CarTestScreen extends Screen
 				onTileChanged( carTileAt );
 			}
 
-			rb.dampStrength( 0.9f, Physics.dt );
-			rb.setOrigin( Director.screenPosFor( car.getBody() ) );
+			if( Config.EnablePostProcessingFx )
+			{
+				rb.dampStrength( 0.9f, Physics.dt );
+				rb.setOrigin( Director.screenPosFor( car.getBody() ) );
+			}
 		}
 	}
 
@@ -205,22 +209,12 @@ public class CarTestScreen extends Screen
 		}
 
 		Debug.begin();
-
 		EntityManager.raiseOnDebug();
-
-		OrthographicCamera cam = Director.getCamera();
+		Debug.renderVersionInfo();
+		Debug.renderMemoryUsage();
 		Debug.renderFrameStats( temporalAliasingFactor );
-
-		int fontW = 6;
-		int fontH = 12;
-		String uRacerInfo = "uRacer " + VersionInfo.versionName;
-		int sw = uRacerInfo.length() * fontW;
-		Debug.drawString( uRacerInfo, Gdx.graphics.getWidth() - sw, 0, fontW, fontH );
-
 		Debug.drawString( "EMgr::maxSpritesInBatch = " + EntityManager.maxSpritesInBatch(), 0, 6 );
 		Debug.drawString( "EMgr::renderCalls = " + EntityManager.renderCalls(), 0, 12 );
-
 		Debug.end();
-		// fpslog.log();
 	}
 }

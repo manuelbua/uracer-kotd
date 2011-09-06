@@ -7,14 +7,14 @@ import com.badlogic.gdx.graphics.g2d.tiled.TiledMap;
 import com.badlogic.gdx.math.Vector2;
 import com.bitfire.uracer.Director;
 import com.bitfire.uracer.factories.Box2DFactory;
-import com.bitfire.uracer.factories.MeshFactory;
+import com.bitfire.uracer.factories.ModelFactory;
 import com.bitfire.uracer.utils.Convert;
 import com.bitfire.uracer.utils.MapUtils;
 
 public class Track
 {
 	private TiledMap map;
-	private ArrayList<OrthographicAlignedMesh> meshes = new ArrayList<OrthographicAlignedMesh>();
+	private ArrayList<OrthographicAlignedStillModel> meshes = new ArrayList<OrthographicAlignedStillModel>();
 
 	public Track( TiledMap map )
 	{
@@ -73,7 +73,7 @@ public class Track
 			float outerLumpLen = 1.9f;
 			float innerLumpLen = 0.8f;
 
-			OrthographicAlignedMesh wallMesh = null;
+			OrthographicAlignedStillModel wallMesh = null;
 			TiledLayer layer = MapUtils.getLayer( "track" );
 
 			for( int y = 0; y < map.height; y++ )
@@ -109,13 +109,13 @@ public class Track
 						Box2DFactory.createWall( from, to, wallSizeMt, restitution );
 
 						// mesh top
-						wallMesh = MeshFactory.create( MeshFactory.WallHorizontal,
+						wallMesh = ModelFactory.create( ModelFactory.WallHorizontal,
 							meshCoords.x,
 							meshCoords.y + (halfTileSizePx - halfTrackSizePx - wallSizePx - wallDistancePx - 2), 1f );
 						meshes.add( wallMesh );
 
 						// mesh bottom
-						wallMesh = MeshFactory.create( MeshFactory.WallHorizontal,
+						wallMesh = ModelFactory.create( ModelFactory.WallHorizontal,
 							meshCoords.x,
 							meshCoords.y + (halfTileSizePx + halfTrackSizePx + wallDistancePx - 1), 1f);
 						meshes.add( wallMesh );
@@ -135,14 +135,14 @@ public class Track
 						Box2DFactory.createWall( from, to, wallSizeMt, restitution );
 
 						// mesh left
-						wallMesh = MeshFactory.create( MeshFactory.WallHorizontal,
+						wallMesh = ModelFactory.create( ModelFactory.WallHorizontal,
 								meshCoords.x + (halfTileSizePx - halfTrackSizePx - wallSizePx - wallDistancePx - 1),
 								meshCoords.y + tileSizePx - 2, 1f );
 						wallMesh.setRotation( 90, 0, 0, 1 );
 						meshes.add( wallMesh );
 
 						// mesh right
-						wallMesh = MeshFactory.create( MeshFactory.WallHorizontal,
+						wallMesh = ModelFactory.create( ModelFactory.WallHorizontal,
 							meshCoords.x + (halfTileSizePx + halfTrackSizePx + wallDistancePx),
 							meshCoords.y + tileSizePx - 2, 1f );
 						wallMesh.setRotation( 90, 0, 0, 1 );
@@ -163,7 +163,7 @@ public class Track
 						Box2DFactory.createAngularWall( tmp1, tmp2, wallSizeMt, innerLumpLen, 90f, 4, rotOffset, restitution, false );
 
 						// external mesh
-						wallMesh = MeshFactory.create( MeshFactory.WallTopRightOuter,
+						wallMesh = ModelFactory.create( ModelFactory.WallTopRightOuter,
 								meshCoords.x,
 								meshCoords.y + tileSizePx, 1f );
 						wallMesh.setRotation( 90, 0, 0, 1 );
@@ -184,7 +184,7 @@ public class Track
 						Box2DFactory.createAngularWall( tmp1, tmp2, wallSizeMt, innerLumpLen, -90f, 4, rotOffset, restitution, false );
 
 						// external mesh
-						wallMesh = MeshFactory.create( MeshFactory.WallTopRightOuter,
+						wallMesh = ModelFactory.create( ModelFactory.WallTopRightOuter,
 								meshCoords.x,
 								meshCoords.y, 1f );
 						meshes.add( wallMesh );
@@ -204,7 +204,7 @@ public class Track
 						Box2DFactory.createAngularWall( tmp1, tmp2, wallSizeMt, -innerLumpLen, -90f, 4, rotOffset, restitution, false );
 
 						// external mesh
-						wallMesh = MeshFactory.create( MeshFactory.WallTopRightOuter,
+						wallMesh = ModelFactory.create( ModelFactory.WallTopRightOuter,
 								meshCoords.x + tileSizePx,
 								meshCoords.y + tileSizePx, 1f );
 						wallMesh.setRotation( 180, 0, 0, 1 );
@@ -225,7 +225,7 @@ public class Track
 						Box2DFactory.createAngularWall( tmp1, tmp2, wallSizeMt, -innerLumpLen, 90f, 4, rotOffset, restitution, false );
 
 						// external mesh
-						wallMesh = MeshFactory.create( MeshFactory.WallTopRightOuter,
+						wallMesh = ModelFactory.create( ModelFactory.WallTopRightOuter,
 								meshCoords.x + tileSizePx,
 								meshCoords.y, 1f );
 						wallMesh.setRotation( -90, 0, 0, 1 );
@@ -241,7 +241,7 @@ public class Track
 		return meshes.size() > 0;
 	}
 
-	public ArrayList<OrthographicAlignedMesh> getMeshes()
+	public ArrayList<OrthographicAlignedStillModel> getMeshes()
 	{
 		return meshes;
 	}

@@ -13,6 +13,7 @@ import com.bitfire.uracer.Art;
 import com.bitfire.uracer.Config;
 import com.bitfire.uracer.Physics;
 import com.bitfire.uracer.URacer;
+import com.bitfire.uracer.VersionInfo;
 
 public class Debug
 {
@@ -30,13 +31,16 @@ public class Debug
 	private static String[] chars = { "ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789", ".,!?:;\"'+-=/\\< " };
 	private static SpriteBatch textBatch;
 
+	private static int fontWidth;
+	private static int fontHeight;
 
-	private Debug( )
+	private Debug()
 	{
 	}
 
 	public static void create()
 	{
+		fontWidth = fontHeight = 6;
 		physicsTime = renderTime = 0;
 		b2drenderer = new Box2DDebugRenderer20();
 		frameStart = System.nanoTime();
@@ -92,6 +96,23 @@ public class Debug
 		drawString(
 				fmt.format( "timemul: x%.02f, step: %.0fHz", Config.PhysicsTimeMultiplier, Config.PhysicsTimestepHz ).toString(),
 				0, Gdx.graphics.getHeight()-12 );
+	}
+
+	public static void renderVersionInfo()
+	{
+		String uRacerInfo = "uRacer " + VersionInfo.versionName;
+
+		drawString( uRacerInfo, Gdx.graphics.getWidth() - uRacerInfo.length() * fontWidth, 0, fontWidth, fontHeight * 2 );
+	}
+
+	public static void renderMemoryUsage()
+	{
+		float javaHeapMb = (float)Gdx.app.getJavaHeap() / 1048576f;
+		float nativeHeapMb = (float)Gdx.app.getNativeHeap() / 1048576f;
+
+		sb.setLength( 0 );
+		String memInfo = fmt.format( "java heap = %.04fMB - native heap = %.04fMB", javaHeapMb, nativeHeapMb ).toString();
+		drawString( memInfo, Gdx.graphics.getWidth() - memInfo.length() * fontWidth, Gdx.graphics.getHeight() - fontHeight );
 	}
 
 	public static void renderB2dWorld( Matrix4 modelViewProj )
