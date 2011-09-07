@@ -8,6 +8,7 @@ import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
 import com.badlogic.gdx.math.Matrix4;
 import com.badlogic.gdx.math.Vector2;
+import com.badlogic.gdx.physics.box2d.Box2DDebugRenderer;
 import com.badlogic.gdx.physics.box2d.ContactImpulse;
 import com.bitfire.uracer.Art;
 import com.bitfire.uracer.Config;
@@ -23,7 +24,7 @@ public class Debug
 	private static float physicsTime, renderTime;
 
 	// box2d
-	private static Box2DDebugRenderer20 b2drenderer;
+	private static Box2DDebugRenderer b2drenderer;
 
 	// text render
 	private static StringBuilder sb;
@@ -42,7 +43,7 @@ public class Debug
 	{
 		fontWidth = fontHeight = 6;
 		physicsTime = renderTime = 0;
-		b2drenderer = new Box2DDebugRenderer20();
+		b2drenderer = new Box2DDebugRenderer();
 		frameStart = System.nanoTime();
 
 		sb = new StringBuilder();
@@ -117,7 +118,8 @@ public class Debug
 
 	public static void renderB2dWorld( Matrix4 modelViewProj )
 	{
-		b2drenderer.render( modelViewProj, Physics.world );
+//		b2drenderer.render( world, projMatrix )( modelViewProj, Physics.world );
+		b2drenderer.render( Physics.world, modelViewProj );
 	}
 
 	public static void draw( TextureRegion region, int x, int y )
