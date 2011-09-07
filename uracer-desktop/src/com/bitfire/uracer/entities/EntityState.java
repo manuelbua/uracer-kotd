@@ -2,6 +2,7 @@ package com.bitfire.uracer.entities;
 
 import com.badlogic.gdx.math.MathUtils;
 import com.badlogic.gdx.math.Vector2;
+import com.bitfire.uracer.utils.AMath;
 import com.bitfire.uracer.utils.Convert;
 
 public class EntityState
@@ -42,7 +43,30 @@ public class EntityState
 	{
 		result.position.set( previous.position );
 		result.position.set( result.position.lerp( current.position, alpha ) );
-		result.orientation = current.orientation * alpha + previous.orientation * (1 - alpha);
+		// result.orientation = current.orientation * alpha + previous.orientation * (1 - alpha);
+
+		float curr = current.orientation;
+		float prev = previous.orientation;
+
+		boolean needWrap = ((curr > 0 && prev < 0) || (prev > 0 && curr < 0)) && (Math.abs( curr ) + Math.abs( prev ) > 1f);
+		if( needWrap )
+		{
+			if( prev < 0 )
+			{
+				prev += AMath.TWO_PI;
+			} else
+			{
+				curr += AMath.TWO_PI;
+			}
+
+			result.orientation = curr * alpha + prev * (1 - alpha);
+			result.orientation = -(AMath.TWO_PI - result.orientation);
+
+//			Debug.print( "curr=%.4f, prev=%.4f, res=%.4f", current.orientation, previous.orientation, result.orientation );
+		} else
+		{
+			result.orientation = current.orientation * alpha + previous.orientation * (1 - alpha);
+		}
 
 		return result;
 	}
