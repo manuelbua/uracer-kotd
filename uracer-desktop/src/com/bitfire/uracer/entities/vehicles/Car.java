@@ -11,8 +11,8 @@ import com.bitfire.uracer.Director;
 import com.bitfire.uracer.Input;
 import com.bitfire.uracer.Physics;
 import com.bitfire.uracer.debug.Debug;
-import com.bitfire.uracer.entities.EntityManager;
 import com.bitfire.uracer.entities.Box2dEntity;
+import com.bitfire.uracer.entities.EntityManager;
 import com.bitfire.uracer.postprocessing.PostProcessor;
 import com.bitfire.uracer.simulations.car.CarDescriptor;
 import com.bitfire.uracer.simulations.car.CarInput;
@@ -280,7 +280,7 @@ public class Car extends Box2dEntity
 //		Debug.drawString( "tx=" + Input.getXY().x + ",ty=" + Input.getXY().y, 0, 41 );
 //		Debug.drawString( "screen x=" + Director.screenPosFor( body ).x + ",y=" + Director.screenPosFor( body ).y, 0, 80 );
 //		Debug.drawString( "world x=" + body.getPosition().x + ",y=" + body.getPosition().y, 0, 87 );
-//		Debug.drawString( "orient=" + body.getAngle(), 0, 94 );
+		Debug.drawString( "orient=" + body.getAngle(), 0, 94 );
 //
 //		Debug.drawString( "input count = " + cil.size(), 0, 106 );
 //		// Debug.drawString( "REC = " + isRecording, 0, 118 );

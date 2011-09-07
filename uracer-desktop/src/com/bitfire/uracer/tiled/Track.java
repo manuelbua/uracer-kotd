@@ -165,7 +165,7 @@ public class Track
 						// external mesh
 						wallMesh = ModelFactory.create( ModelFactory.WallTopRightOuter,
 								meshCoords.x,
-								meshCoords.y + tileSizePx, 1f );
+								meshCoords.y + tileSizePx - 2, 1f );
 						wallMesh.setRotation( 90, 0, 0, 1 );
 						meshes.add( wallMesh );
 					}
@@ -186,7 +186,7 @@ public class Track
 						// external mesh
 						wallMesh = ModelFactory.create( ModelFactory.WallTopRightOuter,
 								meshCoords.x,
-								meshCoords.y, 1f );
+								meshCoords.y - 2, 1f );
 						meshes.add( wallMesh );
 					}
 					else
@@ -206,7 +206,7 @@ public class Track
 						// external mesh
 						wallMesh = ModelFactory.create( ModelFactory.WallTopRightOuter,
 								meshCoords.x + tileSizePx,
-								meshCoords.y + tileSizePx, 1f );
+								meshCoords.y + tileSizePx - 2, 1f );
 						wallMesh.setRotation( 180, 0, 0, 1 );
 						meshes.add( wallMesh );
 					}
@@ -226,8 +226,8 @@ public class Track
 
 						// external mesh
 						wallMesh = ModelFactory.create( ModelFactory.WallTopRightOuter,
-								meshCoords.x + tileSizePx,
-								meshCoords.y, 1f );
+								meshCoords.x + tileSizePx + 2,
+								meshCoords.y - 2, 1f );
 						wallMesh.setRotation( -90, 0, 0, 1 );
 						meshes.add( wallMesh );
 					}
