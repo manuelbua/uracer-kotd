@@ -105,8 +105,9 @@ public class CarSimulator
 
 		if( !hasSteer )
 		{
+			float sa = AMath.fixup( carDesc.steerangle );
 			// gently auto steer to 0 degrees
-			if( AMath.fixup( carDesc.steerangle ) > 0 )
+			if( sa > 0 || sa < 0)
 				carDesc.steerangle *= 0.9f;
 			else
 				carDesc.steerangle = 0.f;
