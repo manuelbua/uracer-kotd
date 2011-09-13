@@ -2,6 +2,7 @@ package com.bitfire.uracer;
 
 import com.badlogic.gdx.ApplicationListener;
 import com.badlogic.gdx.Gdx;
+import com.bitfire.uracer.debug.Debug;
 import com.bitfire.uracer.screen.CarTestScreen;
 import com.bitfire.uracer.screen.Screen;
 
@@ -24,6 +25,7 @@ public class URacer implements ApplicationListener
 	{
 		Config.asDefault();
 		Art.load();
+		Debug.create();
 		input.releaseAllKeys();
 
 		Gdx.input.setInputProcessor( input );

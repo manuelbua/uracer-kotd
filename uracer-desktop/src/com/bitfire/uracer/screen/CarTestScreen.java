@@ -42,7 +42,6 @@ public class CarTestScreen extends Screen
 	{
 		ShaderProgram.pedantic = false;
 
-		Debug.create();
 		OrthographicAlignedStillModel.initialize();
 		EntityManager.create();
 		ModelFactory.init();
