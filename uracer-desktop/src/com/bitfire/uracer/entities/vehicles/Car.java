@@ -135,10 +135,10 @@ public class Car extends Box2dEntity
 			carInput.throttle = touchPos.dst( carScreenPos );
 
 			// damp the throttle
-			if( !AMath.isZero( carInput.throttle ) )
-			{
-				carInput.throttle *= 1.5f;
-			}
+//			if( !AMath.isZero( carInput.throttle ) )
+//			{
+//				carInput.throttle *= 1.5f;
+//			}
 		}
 
 		// if( isRecording )

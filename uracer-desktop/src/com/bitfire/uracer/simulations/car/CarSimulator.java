@@ -105,12 +105,13 @@ public class CarSimulator
 
 		if( !hasSteer )
 		{
-			float sa = AMath.fixup( carDesc.steerangle );
-			// gently auto steer to 0 degrees
-			if( sa > 0 || sa < 0)
-				carDesc.steerangle *= 0.9f;
-			else
-				carDesc.steerangle = 0.f;
+			carDesc.steerangle = 0;
+//			float sa = AMath.fixup( carDesc.steerangle );
+//			// gently auto steer to 0 degrees
+//			if( sa > 0 || sa < 0)
+//				carDesc.steerangle *= 0.9f;
+//			else
+//				carDesc.steerangle = 0.f;
 		}
 
 		carDesc.throttle = AMath.clamp( carDesc.throttle, -maxForce, maxForce );
