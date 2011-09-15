@@ -14,14 +14,9 @@ import com.bitfire.uracer.utils.Hash;
 
 public class ModelFactory
 {
-	public static final int MeshPalm = 1;
-	public static final int MeshHouse = 2;
-	public static final int MeshTribune = 3;
-	public static final int MeshTower = 4;
-	public static final int MeshArch = 5;
-
-	public static final int WallHorizontal = 10;
-	public static final int WallTopRightOuter = 12;
+	public enum ModelMesh {
+		Missing, Palm, House, Tribune, Tower, Arch, WallHorizontal, WallTopRightOuter
+	}
 
 	private static LongMap<StillModel> cachedModels;
 
@@ -32,7 +27,7 @@ public class ModelFactory
 
 	public static OrthographicAlignedStillModel create( String meshType, float posPxX, float posPxY, float scale )
 	{
-		int type = fromString( meshType );
+		ModelMesh type = fromString( meshType );
 		return ModelFactory.create( type, posPxX, posPxY, scale );
 	}
 
@@ -61,29 +56,29 @@ public class ModelFactory
 		return m;
 	}
 
-	public static OrthographicAlignedStillModel create( int meshType, float posPxX, float posPxY, float scale )
+	public static OrthographicAlignedStillModel create( ModelMesh modelMesh, float posPxX, float posPxY, float scale )
 	{
 		OrthographicAlignedStillModel stillModel = null;
 
-		switch( meshType )
+		switch( modelMesh )
 		{
-		case MeshPalm:
+		case Palm:
 			stillModel = OrthographicAlignedStillModel.create( getModel("data/3d/palm.g3dt"), Art.meshPalm );
 			break;
 
-		case MeshTribune:
+		case Tribune:
 			stillModel = OrthographicAlignedStillModel.create( getModel("data/3d/tribune.g3dt"), Art.meshTribune );
 			break;
 
-		case MeshHouse:
+		case House:
 			stillModel = OrthographicAlignedStillModel.create( getModel("data/3d/house.g3dt"), Art.meshHouse );
 			break;
 
-		case MeshTower:
+		case Tower:
 			stillModel = OrthographicAlignedStillModel.create( getModel("data/3d/tower.g3dt"), Art.meshTower );
 			break;
 
-		case MeshArch:
+		case Arch:
 			stillModel = OrthographicAlignedStillModel.create( getModel("data/3d/test_arch.g3dt"), Art.mesh_test_arch_rusty);
 			break;
 
@@ -100,6 +95,7 @@ public class ModelFactory
 			break;
 
 		// missing mesh mesh
+		case Missing:
 		default:
 			stillModel = OrthographicAlignedStillModel.create( getModel("data/3d/missing-mesh.g3dt"), Art.meshMissing );
 		}
@@ -113,15 +109,15 @@ public class ModelFactory
 		return stillModel;
 	}
 
-	private static int fromString(String mesh)
+	private static ModelMesh fromString(String mesh)
 	{
-		if(mesh.equalsIgnoreCase( "palm" )) return MeshPalm;
-		if(mesh.equalsIgnoreCase( "house" )) return MeshHouse;
-		if(mesh.equalsIgnoreCase( "tribune" )) return MeshTribune;
-		if(mesh.equalsIgnoreCase( "tower" )) return MeshTower;
+		if(mesh.equalsIgnoreCase( "palm" )) return ModelMesh.Palm;
+		if(mesh.equalsIgnoreCase( "house" )) return ModelMesh.House;
+		if(mesh.equalsIgnoreCase( "tribune" )) return ModelMesh.Tribune;
+		if(mesh.equalsIgnoreCase( "tower" )) return ModelMesh.Tower;
 
-		if(mesh.equalsIgnoreCase( "test_arch" )) return MeshArch;
+		if(mesh.equalsIgnoreCase( "test_arch" )) return ModelMesh.Arch;
 
-		return 0;
+		return ModelMesh.Missing;
 	}
 }

@@ -8,6 +8,7 @@ import com.badlogic.gdx.math.Vector2;
 import com.bitfire.uracer.Director;
 import com.bitfire.uracer.factories.Box2DFactory;
 import com.bitfire.uracer.factories.ModelFactory;
+import com.bitfire.uracer.factories.ModelFactory.ModelMesh;
 import com.bitfire.uracer.utils.Convert;
 import com.bitfire.uracer.utils.MapUtils;
 
@@ -110,13 +111,13 @@ public class Track
 						float adj = 2f * Director.scalingStrategy.tileMapZoomFactor;
 
 						// mesh top
-						wallMesh = ModelFactory.create( ModelFactory.WallHorizontal,
+						wallMesh = ModelFactory.create( ModelMesh.WallHorizontal,
 							meshCoords.x,
 							meshCoords.y + (halfTileSizePx - halfTrackSizePx - wallSizePx - wallDistancePx) - adj, 1f );
 						meshes.add( wallMesh );
 
 						// mesh bottom
-						wallMesh = ModelFactory.create( ModelFactory.WallHorizontal,
+						wallMesh = ModelFactory.create( ModelMesh.WallHorizontal,
 							meshCoords.x,
 							meshCoords.y + (halfTileSizePx + halfTrackSizePx + wallDistancePx) - adj, 1f);
 						meshes.add( wallMesh );
@@ -138,14 +139,14 @@ public class Track
 						float adj = 1f * Director.scalingStrategy.tileMapZoomFactor;
 
 						// mesh left
-						wallMesh = ModelFactory.create( ModelFactory.WallHorizontal,
+						wallMesh = ModelFactory.create( ModelMesh.WallHorizontal,
 								meshCoords.x + (halfTileSizePx - halfTrackSizePx - wallSizePx - wallDistancePx) - adj,
 								meshCoords.y + tileSizePx - adj, 1f );
 						wallMesh.setRotation( 90, 0, 0, 1 );
 						meshes.add( wallMesh );
 
 						// mesh right
-						wallMesh = ModelFactory.create( ModelFactory.WallHorizontal,
+						wallMesh = ModelFactory.create( ModelMesh.WallHorizontal,
 							meshCoords.x + (halfTileSizePx + halfTrackSizePx + wallDistancePx) - 2 * adj,
 							meshCoords.y + tileSizePx - adj, 1f );
 						wallMesh.setRotation( 90, 0, 0, 1 );
@@ -168,7 +169,7 @@ public class Track
 						float adj = 1f * Director.scalingStrategy.tileMapZoomFactor;
 
 						// external mesh
-						wallMesh = ModelFactory.create( ModelFactory.WallTopRightOuter,
+						wallMesh = ModelFactory.create( ModelMesh.WallTopRightOuter,
 								meshCoords.x + (halfTileSizePx - halfTrackSizePx - wallSizePx - wallDistancePx) - adj,
 								meshCoords.y + tileSizePx + adj, 1f );
 						wallMesh.setRotation( 90, 0, 0, 1 );
@@ -191,7 +192,7 @@ public class Track
 						float adj = 1f * Director.scalingStrategy.tileMapZoomFactor;
 
 						// external mesh
-						wallMesh = ModelFactory.create( ModelFactory.WallTopRightOuter,
+						wallMesh = ModelFactory.create( ModelMesh.WallTopRightOuter,
 								meshCoords.x - adj,
 								meshCoords.y + (halfTileSizePx - halfTrackSizePx - wallSizePx - wallDistancePx) - 2*adj, 1f );
 						meshes.add( wallMesh );
@@ -213,7 +214,7 @@ public class Track
 						float adj = 1f * Director.scalingStrategy.tileMapZoomFactor;
 
 						// external mesh
-						wallMesh = ModelFactory.create( ModelFactory.WallTopRightOuter,
+						wallMesh = ModelFactory.create( ModelMesh.WallTopRightOuter,
 								meshCoords.x + tileSizePx + adj,
 								meshCoords.y + tileSizePx - (halfTileSizePx - halfTrackSizePx - wallSizePx - wallDistancePx), 1f );
 						wallMesh.setRotation( 180, 0, 0, 1 );
@@ -236,7 +237,7 @@ public class Track
 						float adj = 2f * Director.scalingStrategy.tileMapZoomFactor;
 
 						// external mesh
-						wallMesh = ModelFactory.create( ModelFactory.WallTopRightOuter,
+						wallMesh = ModelFactory.create( ModelMesh.WallTopRightOuter,
 								meshCoords.x + tileSizePx - (halfTileSizePx - halfTrackSizePx - wallSizePx - wallDistancePx),
 								meshCoords.y - adj, 1f );
 						wallMesh.setRotation( -90, 0, 0, 1 );

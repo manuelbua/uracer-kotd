@@ -14,11 +14,12 @@ import com.bitfire.uracer.utils.FixtureAtlas;
 
 public class CarFactory
 {
-	public static final int OldSkool = 1;
-	public static final int OldSkool2 = 2;
-//	public static final int ModernBlack = 3;
+	public enum CarType
+	{
+		OldSkool, OldSkool2
+	}
 
-	public static Car create( int carType, CarModel model, Vector2 position, float orientation, boolean isPlayer )
+	public static Car create( CarType carType, CarModel model, Vector2 position, float orientation, boolean isPlayer )
 	{
 		TextureRegion region = null;
 		int b2deditorSourceW = 0;
