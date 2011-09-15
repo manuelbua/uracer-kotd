@@ -202,16 +202,14 @@ public class CarTestScreen extends Screen
 		// debug
 		//
 
-		if( Gdx.app.getType() == ApplicationType.Desktop )
-		{
-			Debug.renderB2dWorld( Director.getMatViewProjMt() );
-		}
+		boolean isDesktop = Gdx.app.getType() == ApplicationType.Desktop;
+		if( isDesktop ) Debug.renderB2dWorld( Director.getMatViewProjMt() );
 
 		Debug.begin();
 		EntityManager.raiseOnDebug();
 		Debug.renderVersionInfo();
-		Debug.renderMemoryUsage();
 		Debug.renderFrameStats( temporalAliasingFactor );
+		if( isDesktop ) Debug.renderMemoryUsage();
 		Debug.drawString( "EMgr::maxSpritesInBatch = " + EntityManager.maxSpritesInBatch(), 0, 6 );
 		Debug.drawString( "EMgr::renderCalls = " + EntityManager.renderCalls(), 0, 12 );
 		Debug.end();
