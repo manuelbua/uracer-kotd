@@ -59,13 +59,16 @@ public class Level
 		// create track
 		track = new Track( map );
 
+		syncWithCam( Director.getCamera() );
+		OrthographicAlignedStillModel.initialize( camOrtho, camPersp );
+
 		createMeshes();
 	}
 
-	public void syncWithCam( OrthographicCamera camera_ )
+	public void syncWithCam( OrthographicCamera orthoCam )
 	{
 		// scale position
-		camOrtho.position.set( camera_.position );
+		camOrtho.position.set( orthoCam.position );
 		camOrtho.position.mul( Director.scalingStrategy.tileMapZoomFactor );
 
 		camOrtho.viewportWidth = Gdx.graphics.getWidth();

@@ -22,7 +22,6 @@ import com.bitfire.uracer.postprocessing.PostProcessor;
 import com.bitfire.uracer.postprocessing.effects.RadialBlur;
 import com.bitfire.uracer.simulations.car.CarModel;
 import com.bitfire.uracer.tiled.Level;
-import com.bitfire.uracer.tiled.OrthographicAlignedStillModel;
 import com.bitfire.uracer.utils.Convert;
 
 public class CarTestScreen extends Screen
@@ -43,7 +42,6 @@ public class CarTestScreen extends Screen
 	{
 		ShaderProgram.pedantic = false;
 
-		OrthographicAlignedStillModel.initialize();
 		EntityManager.create();
 		ModelFactory.init();
 
@@ -125,7 +123,7 @@ public class CarTestScreen extends Screen
 
 			if( Config.EnablePostProcessingFx )
 			{
-				rb.dampStrength( 0.9f, Physics.dt );
+				rb.dampStrength( 0.8f, Physics.dt );
 				rb.setOrigin( Director.screenPosFor( car.getBody() ) );
 			}
 		}

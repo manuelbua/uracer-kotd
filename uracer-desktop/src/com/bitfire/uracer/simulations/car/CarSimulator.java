@@ -27,7 +27,7 @@ public class CarSimulator
 	public float thisSign, lastSign, lastTouchAngle;
 	public boolean isPlayer;
 
-	private float dampingThrottle = 0.9f;
+	private float dampingThrottle = 0.98f;
 	private float dampingThrottleFrame;
 
 	public CarSimulator( CarDescriptor carDesc )

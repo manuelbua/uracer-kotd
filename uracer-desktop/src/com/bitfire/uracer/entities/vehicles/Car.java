@@ -177,6 +177,7 @@ public class Car extends Box2dEntity
 
 	private long start_timer = 0;
 	private boolean start_decrease = false;
+	private float prevStrength = 0;
 	private void handleImpactFeedback()
 	{
 //		if( impactFeedback.size() > 0 && PostProcessor.hasEffect() )
@@ -184,12 +185,12 @@ public class Car extends Box2dEntity
 //		else PostProcessor.getEffect().setEnabled( false );
 
 		// process impact feedback
-//		float impact = 0f;
-//		boolean hasImpact = false;
+		float impact = 0f;
+		boolean hasImpact = false;
 		while( impactFeedback.size() > 0 )
 		{
-			/*float impulse = */ impactFeedback.remove( 0 );
-//			impact += impulse;
+			float impulse = impactFeedback.remove( 0 );
+			impact += impulse;
 
 			carDesc.velocity_wc.set( body.getLinearVelocity() ).mul( Director.gameplaySettings.linearVelocityAfterFeedback );
 			carDesc.angularvelocity = -body.getAngularVelocity() * 0.85f;
@@ -198,13 +199,15 @@ public class Car extends Box2dEntity
 //			carDesc.angularvelocity = -body.getAngularVelocity();
 
 			start_decrease = true;
-//			hasImpact = true;
+			hasImpact = true;
 		}
 
 //		if( PostProcessor.hasEffect() && hasImpact )
-		{
-//			PostProcessor.getEffect().setStrength( impact * 0.0005f );
-		}
+//		{
+//			float strength = AMath.lerp( prevStrength, impact*0.00035f, 0.1f );
+//			prevStrength = strength;
+//			PostProcessor.getEffect().addStrength( strength );
+//		}
 	}
 
 	private void handleDecrease(CarInput input)
@@ -277,11 +280,9 @@ public class Car extends Box2dEntity
 		Debug.drawString( "vel_wc [x=" + carDesc.velocity_wc.x + ", y=" + carDesc.velocity_wc.y + "]", 0, 20 );
 		Debug.drawString( "steerangle=" + carDesc.steerangle, 0, 27 );
 		Debug.drawString( "throttle=" + carDesc.throttle, 0, 34 );
-//		Debug.drawString( "tx=" + Input.getXY().x + ",ty=" + Input.getXY().y, 0, 41 );
 		Debug.drawString( "screen x=" + Director.screenPosFor( body ).x + ",y=" + Director.screenPosFor( body ).y, 0, 80 );
 		Debug.drawString( "world x=" + body.getPosition().x + ",y=" + body.getPosition().y, 0, 87 );
 		Debug.drawString( "orient=" + body.getAngle(), 0, 94 );
-//
 //		Debug.drawString( "input count = " + cil.size(), 0, 106 );
 //		// Debug.drawString( "REC = " + isRecording, 0, 118 );
 
