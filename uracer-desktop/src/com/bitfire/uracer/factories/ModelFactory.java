@@ -15,7 +15,7 @@ import com.bitfire.uracer.utils.Hash;
 public class ModelFactory
 {
 	public enum ModelMesh {
-		Missing, Palm, House, Tribune, Tower, Arch, WallHorizontal, WallTopRightOuter
+		Missing, Palm, House, Tribune, Tower, Arch, WallHorizontal, WallTopRightOuter, WallTopRightInner
 	}
 
 	private static LongMap<StillModel> cachedModels;
@@ -89,7 +89,13 @@ public class ModelFactory
 			break;
 
 		case WallTopRightOuter:
-			stillModel = OrthographicAlignedStillModel.create( getModel("data/3d/track/tr.g3dt"), Art.trackWall );
+			stillModel = OrthographicAlignedStillModel.create( getModel("data/3d/track/tr-outer.g3dt"), Art.trackWall );
+			stillModel.getTextureAttribute().uWrap = TextureWrap.Repeat.getGLEnum();
+			stillModel.getTextureAttribute().vWrap = TextureWrap.Repeat.getGLEnum();
+			break;
+
+		case WallTopRightInner:
+			stillModel = OrthographicAlignedStillModel.create( getModel("data/3d/track/tr-inner.g3dt"), Art.trackWall );
 			stillModel.getTextureAttribute().uWrap = TextureWrap.Repeat.getGLEnum();
 			stillModel.getTextureAttribute().vWrap = TextureWrap.Repeat.getGLEnum();
 			break;

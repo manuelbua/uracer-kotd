@@ -10,17 +10,35 @@ import com.bitfire.uracer.utils.VMath;
 public class CarSimulator
 {
 	public CarDescriptor carDesc;
-	public Vector2 lastCarScreenPos = new Vector2(), lastTouchPos = new Vector2(), velocity = new Vector2(),
-			acceleration_wc = new Vector2(), heading = new Vector2(), side = new Vector2(), flatf = new Vector2(),
-			flatr = new Vector2(), ftraction = new Vector2(), resistance = new Vector2(), force = new Vector2(),
-			acceleration = new Vector2();
+	public Vector2
+		lastCarScreenPos = new Vector2(),
+		lastTouchPos = new Vector2(),
+		velocity = new Vector2(),
+		acceleration_wc = new Vector2(),
+		heading = new Vector2(),
+		side = new Vector2(),
+		flatf = new Vector2(),
+		flatr = new Vector2(),
+		ftraction = new Vector2(),
+		resistance = new Vector2(),
+		force = new Vector2(),
+		acceleration = new Vector2();
+
 	public float thisSign, lastSign, lastTouchAngle;
+	public boolean isPlayer;
+
+	private float dampingThrottle = 0.9f;
+	private float dampingThrottleFrame;
 
 	public CarSimulator( CarDescriptor carDesc )
 	{
 		this.carDesc = carDesc;
 		thisSign = lastSign = 1f;
 		lastTouchAngle = 0;
+		isPlayer = false;
+
+		// precompute constants
+		dampingThrottleFrame = (float)Math.pow( 1f - dampingThrottle, Physics.dt );
 	}
 
 	public void setCarDescriptor( CarDescriptor carDesc )
@@ -90,7 +108,8 @@ public class CarSimulator
 			{
 				if( !AMath.isZero( carDesc.throttle ) )
 				{
-					carDesc.throttle *= 0.9f;
+//					carDesc.throttle *= 0.9f;
+					carDesc.throttle *= dampingThrottleFrame;
 				}
 
 				carDesc.brake = 350f;
@@ -189,13 +208,8 @@ public class CarSimulator
 		thisSign = AMath.lowpass( lastSign, AMath.sign( velocity.x ), 0.2f );
 		lastSign = thisSign;
 
-		ftraction.set( 100f * (carDesc.throttle - carDesc.brake * thisSign /*
-		 * SGN(
-		 * velocity
-		 * .
-		 * x
-		 * )
-		 */), 0 );
+		ftraction.set( 100f * (carDesc.throttle - carDesc.brake * thisSign ), 0 );
+
 
 		// torque on body from lateral forces
 		float torque = carDesc.carModel.b * flatf.y - carDesc.carModel.c * flatr.y;
@@ -240,10 +254,6 @@ public class CarSimulator
 		// make sure vehicle doesn't exceed maximum velocity
 		VMath.truncate( carDesc.velocity_wc, carDesc.carModel.max_speed );
 
-		// position is integrated velocity
-		// carDesc.position_wc.x += frametime * carDesc.velocity_wc.x;
-		// carDesc.position_wc.y += -frametime * carDesc.velocity_wc.y;
-
 		//
 		// Angular acceleration, angular velocity and heading
 		//
@@ -256,19 +266,6 @@ public class CarSimulator
 
 		// integrate angular velocity to get angular orientation
 		carDesc.angularOrientation = Physics.dt * carDesc.angularvelocity;
-
-		// this angle is safe for subframe interpolation
-		// carDesc.angle += carDesc.angularOrientation;
-
-		// this angle is *NOT* safe for subframe interpolation (wrapped, one
-		// border could get lerped)!
-		// carDesc.wrapped_angle += carDesc.angularOrientation;
-
-		// if( carDesc.wrapped_angle > CS_2PI )
-		// carDesc.wrapped_angle -= CS_2PI;
-
-		// if( carDesc.wrapped_angle < 0 )
-		// carDesc.wrapped_angle += CS_2PI;
 
 		updateHeading( body );
 	}

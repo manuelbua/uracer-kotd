@@ -13,7 +13,6 @@ import com.bitfire.uracer.Physics;
 import com.bitfire.uracer.debug.Debug;
 import com.bitfire.uracer.entities.Box2dEntity;
 import com.bitfire.uracer.entities.EntityManager;
-import com.bitfire.uracer.postprocessing.PostProcessor;
 import com.bitfire.uracer.simulations.car.CarDescriptor;
 import com.bitfire.uracer.simulations.car.CarInput;
 import com.bitfire.uracer.simulations.car.CarModel;
@@ -48,6 +47,7 @@ public class Car extends Box2dEntity
 		carDesc.carModel.set( model );
 
 		carSim = new CarSimulator( carDesc );
+		carSim.isPlayer = isPlayer;	// hack
 		carInput = new CarInput();
 
 		// body
@@ -184,12 +184,12 @@ public class Car extends Box2dEntity
 //		else PostProcessor.getEffect().setEnabled( false );
 
 		// process impact feedback
-		float impact = 0f;
-		boolean hasImpact = false;
+//		float impact = 0f;
+//		boolean hasImpact = false;
 		while( impactFeedback.size() > 0 )
 		{
-			float impulse = impactFeedback.remove( 0 );
-			impact += impulse;
+			/*float impulse = */ impactFeedback.remove( 0 );
+//			impact += impulse;
 
 			carDesc.velocity_wc.set( body.getLinearVelocity() ).mul( Director.gameplaySettings.linearVelocityAfterFeedback );
 			carDesc.angularvelocity = -body.getAngularVelocity() * 0.85f;
@@ -198,10 +198,10 @@ public class Car extends Box2dEntity
 //			carDesc.angularvelocity = -body.getAngularVelocity();
 
 			start_decrease = true;
-			hasImpact = true;
+//			hasImpact = true;
 		}
 
-		if( PostProcessor.hasEffect() && hasImpact )
+//		if( PostProcessor.hasEffect() && hasImpact )
 		{
 //			PostProcessor.getEffect().setStrength( impact * 0.0005f );
 		}
@@ -274,12 +274,12 @@ public class Car extends Box2dEntity
 		if(!isPlayer)
 			return;
 
-//		Debug.drawString( "vel_wc [x=" + carDesc.velocity_wc.x + ", y=" + carDesc.velocity_wc.y + "]", 0, 20 );
-//		Debug.drawString( "steerangle=" + carDesc.steerangle, 0, 27 );
-//		Debug.drawString( "throttle=" + carDesc.throttle, 0, 34 );
+		Debug.drawString( "vel_wc [x=" + carDesc.velocity_wc.x + ", y=" + carDesc.velocity_wc.y + "]", 0, 20 );
+		Debug.drawString( "steerangle=" + carDesc.steerangle, 0, 27 );
+		Debug.drawString( "throttle=" + carDesc.throttle, 0, 34 );
 //		Debug.drawString( "tx=" + Input.getXY().x + ",ty=" + Input.getXY().y, 0, 41 );
-//		Debug.drawString( "screen x=" + Director.screenPosFor( body ).x + ",y=" + Director.screenPosFor( body ).y, 0, 80 );
-//		Debug.drawString( "world x=" + body.getPosition().x + ",y=" + body.getPosition().y, 0, 87 );
+		Debug.drawString( "screen x=" + Director.screenPosFor( body ).x + ",y=" + Director.screenPosFor( body ).y, 0, 80 );
+		Debug.drawString( "world x=" + body.getPosition().x + ",y=" + body.getPosition().y, 0, 87 );
 		Debug.drawString( "orient=" + body.getAngle(), 0, 94 );
 //
 //		Debug.drawString( "input count = " + cil.size(), 0, 106 );

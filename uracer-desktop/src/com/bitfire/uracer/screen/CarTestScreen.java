@@ -58,7 +58,7 @@ public class CarTestScreen extends Screen
 
 		CarModel m = new CarModel();
 		car = CarFactory.create( CarType.OldSkool, m.toModel2(), carStartPos, 90, true );
-		other = CarFactory.create( CarType.OldSkool2, m.toModel1(), otherStartPos, 90, false );
+//		other = CarFactory.create( CarType.OldSkool2, m.toModel1(), otherStartPos, 90, false );
 
 		// car.record( true );
 		// ghost = GhostCar.create( Convert.scaledPosition( 0, 0 ), 90 );
@@ -211,8 +211,8 @@ public class CarTestScreen extends Screen
 		Debug.renderVersionInfo();
 		Debug.renderFrameStats( temporalAliasingFactor );
 		if( isDesktop ) Debug.renderMemoryUsage();
-		Debug.drawString( "EMgr::maxSpritesInBatch = " + EntityManager.maxSpritesInBatch(), 0, 6 );
-		Debug.drawString( "EMgr::renderCalls = " + EntityManager.renderCalls(), 0, 12 );
+//		Debug.drawString( "EMgr::maxSpritesInBatch = " + EntityManager.maxSpritesInBatch(), 0, 6 );
+//		Debug.drawString( "EMgr::renderCalls = " + EntityManager.renderCalls(), 0, 12 );
 		Debug.end();
 	}
 }
