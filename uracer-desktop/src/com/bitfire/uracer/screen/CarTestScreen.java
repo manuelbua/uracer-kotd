@@ -139,6 +139,7 @@ public class CarTestScreen extends Screen
 		boolean onStartZone = (carAt.x == 1 && carAt.y == 0);
 		if( onStartZone )
 		{
+			System.out.println("start");
 			// if(doRecord)
 			// {
 			// System.out.println("Recording...");

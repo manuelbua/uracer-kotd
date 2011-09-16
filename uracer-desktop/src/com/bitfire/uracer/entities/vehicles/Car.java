@@ -13,6 +13,7 @@ import com.bitfire.uracer.Physics;
 import com.bitfire.uracer.debug.Debug;
 import com.bitfire.uracer.entities.Box2dEntity;
 import com.bitfire.uracer.entities.EntityManager;
+import com.bitfire.uracer.postprocessing.PostProcessor;
 import com.bitfire.uracer.simulations.car.CarDescriptor;
 import com.bitfire.uracer.simulations.car.CarInput;
 import com.bitfire.uracer.simulations.car.CarModel;
@@ -133,46 +134,10 @@ public class Car extends Box2dEntity
 
 			// compute throttle
 			carInput.throttle = touchPos.dst( carScreenPos );
-
-			// damp the throttle
-//			if( !AMath.isZero( carInput.throttle ) )
-//			{
-//				carInput.throttle *= 1.5f;
-//			}
 		}
-
-		// if( isRecording )
-		// {
-		// CarInput ci = new CarInput( carInput );
-		// cil.add( ci );
-		// }
 
 		return carInput;
 	}
-
-	// private boolean isRecording = false;
-	//
-	// public void record(boolean rec)
-	// {
-	// if(rec) cil.clear();
-	// isRecording = rec;
-	// }
-	//
-	// public boolean isRecording()
-	// {
-	// return this.isRecording;
-	// }
-	//
-	//
-	// public int recordIndex()
-	// {
-	// return cil.size();
-	// }
-	//
-	// public ArrayList<CarInput> getReplay()
-	// {
-	// return cil;
-	// }
 
 
 	private long start_timer = 0;
@@ -202,12 +167,12 @@ public class Car extends Box2dEntity
 			hasImpact = true;
 		}
 
-//		if( PostProcessor.hasEffect() && hasImpact )
-//		{
-//			float strength = AMath.lerp( prevStrength, impact*0.00035f, 0.1f );
-//			prevStrength = strength;
-//			PostProcessor.getEffect().addStrength( strength );
-//		}
+		if( PostProcessor.hasEffect() && hasImpact )
+		{
+			float strength = AMath.lerp( prevStrength, impact*0.00035f, 0.1f );
+			prevStrength = strength;
+			PostProcessor.getEffect().addStrength( strength );
+		}
 	}
 
 	private void handleDecrease(CarInput input)

@@ -60,7 +60,7 @@ public class Level
 		track = new Track( map );
 
 		syncWithCam( Director.getCamera() );
-		OrthographicAlignedStillModel.initialize( camOrtho, camPersp );
+		OrthographicAlignedStillModel.initialize();
 
 		createMeshes();
 	}
