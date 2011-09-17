@@ -3,11 +3,13 @@ package com.bitfire.uracer.entities.vehicles;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.math.Vector2;
 import com.bitfire.uracer.entities.EntityManager;
+import com.bitfire.uracer.simulations.car.CarForces;
 import com.bitfire.uracer.simulations.car.CarInput;
 
 public class GhostCar extends Car
 {
 	private CarInput input = new CarInput();
+	private CarForces forces = new CarForces();
 	private boolean activated = false;
 
 	private GhostCar( Car car )
@@ -42,9 +44,9 @@ public class GhostCar extends Car
 	}
 
 	@Override
-	protected CarInput acquireInput()
+	protected strictfp void transformInput()
 	{
-		input.reset();
+		forces.reset();
 
 		if( recorder.hasReplay() )
 		{
@@ -54,7 +56,7 @@ public class GhostCar extends Car
 				activated = true;
 			}
 
-			if( !recorder.get( input ) )
+			if( !recorder.get( forces ) )
 			{
 				if( recorder.hasFinishedPlaying() )
 				{
@@ -71,6 +73,40 @@ public class GhostCar extends Car
 			activated = false;
 		}
 
-		return input;
+		carDesc.velocity_wc.set( forces.velocity_x, forces.velocity_y );
+		carDesc.angularvelocity = forces.angularVelocity;
 	}
+
+//	@Override
+//	protected CarInput acquireInput()
+//	{
+//		input.reset();
+//
+//		if( recorder.hasReplay() )
+//		{
+//			if(!activated)
+//			{
+//				this.body.setActive( true );
+//				activated = true;
+//			}
+//
+//			if( !recorder.get( input ) )
+//			{
+//				if( recorder.hasFinishedPlaying() )
+//				{
+//					// restart playing
+//					System.out.println( "restarting replay" );
+//					recorder.beginPlay( this );
+//				}
+//			}
+//		}
+//		else
+//		if(activated)
+//		{
+//			this.body.setActive( false );
+//			activated = false;
+//		}
+//
+//		return input;
+//	}
 }

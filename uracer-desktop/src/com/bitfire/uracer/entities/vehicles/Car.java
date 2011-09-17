@@ -16,8 +16,9 @@ import com.bitfire.uracer.entities.EntityManager;
 import com.bitfire.uracer.factories.CarFactory.CarType;
 import com.bitfire.uracer.postprocessing.PostProcessor;
 import com.bitfire.uracer.simulations.car.CarDescriptor;
+import com.bitfire.uracer.simulations.car.CarForces;
+import com.bitfire.uracer.simulations.car.CarForcesRecorder;
 import com.bitfire.uracer.simulations.car.CarInput;
-import com.bitfire.uracer.simulations.car.CarInputRecorder;
 import com.bitfire.uracer.simulations.car.CarModel;
 import com.bitfire.uracer.simulations.car.CarSimulator;
 import com.bitfire.uracer.utils.AMath;
@@ -32,7 +33,8 @@ public strictfp class Car extends Box2dEntity
 
 	// public OrthographicAlignedMesh mesh;
 	protected CarGraphics graphics;
-	protected CarInputRecorder recorder;
+//	protected CarInputRecorder recorder;
+	protected CarForcesRecorder recorder;
 	private boolean isPlayer;
 
 	public CarDescriptor carDesc;
@@ -48,7 +50,8 @@ public strictfp class Car extends Box2dEntity
 		this.isPlayer = isPlayer;
 		this.graphics = graphics;
 		this.impactFeedback = new ArrayList<Float>();
-		this.recorder = CarInputRecorder.instance();
+//		this.recorder = CarInputRecorder.instance();
+		this.recorder = CarForcesRecorder.instance();
 		this.inputMode = CarInputMode.InputFromPlayer;
 		this.carType = type;
 
@@ -207,23 +210,36 @@ public strictfp class Car extends Box2dEntity
 		}
 	}
 
-	@Override
-	public void onBeforePhysicsSubstep()
+	protected void transformInput()
 	{
-		super.onBeforePhysicsSubstep();
-
-		if( isPlayer || inputMode == CarInputMode.InputFromReplay ) carInput = acquireInput();
-
-		if( inputMode == CarInputMode.InputFromPlayer )
-		{
-			recorder.add( carInput );
-		}
+		carInput = acquireInput();
 
 		// handle decrease queued from previous step
 		handleDecrease( carInput );
 
 		carSim.applyInput( carInput );
 		carSim.step( body );
+
+		CarForces f = new CarForces();
+		f.velocity_x = carDesc.velocity_wc.x;
+		f.velocity_y = carDesc.velocity_wc.y;
+		f.angularVelocity = carDesc.angularvelocity;
+		recorder.add( f );
+	}
+
+	@Override
+	public void onBeforePhysicsSubstep()
+	{
+		super.onBeforePhysicsSubstep();
+
+//		if( isPlayer || inputMode == CarInputMode.InputFromReplay )
+
+//		if( inputMode == CarInputMode.InputFromPlayer )
+//		{
+//			recorder.add( carInput );
+//		}
+
+		transformInput();
 
 		// set velocities
 		body.setAwake( true );

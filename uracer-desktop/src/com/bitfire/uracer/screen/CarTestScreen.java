@@ -21,7 +21,7 @@ import com.bitfire.uracer.factories.CarFactory.CarType;
 import com.bitfire.uracer.factories.ModelFactory;
 import com.bitfire.uracer.postprocessing.PostProcessor;
 import com.bitfire.uracer.postprocessing.effects.RadialBlur;
-import com.bitfire.uracer.simulations.car.CarInputRecorder;
+import com.bitfire.uracer.simulations.car.CarForcesRecorder;
 import com.bitfire.uracer.simulations.car.CarModel;
 import com.bitfire.uracer.tiled.Level;
 import com.bitfire.uracer.utils.Convert;
@@ -41,13 +41,15 @@ public class CarTestScreen extends Screen
 	// private float replayCarStartOrient;
 	private RadialBlur rb;
 
-	private CarInputRecorder cir;
+//	private CarInputRecorder recorder;
+	private CarForcesRecorder recorder;
 
 	public CarTestScreen()
 	{
 		ShaderProgram.pedantic = false;
 
-		cir = CarInputRecorder.create();
+//		recorder = CarInputRecorder.create();
+		recorder = CarForcesRecorder.create();
 		EntityManager.create();
 		ModelFactory.init();
 
@@ -100,8 +102,8 @@ public class CarTestScreen extends Screen
 			{
 				car.resetPhysics();
 				car.setTransform( carStartPos, 90f );
-				cir.clear();
-				cir.beginRec( car );
+				recorder.clear();
+				recorder.beginRec( car );
 			}
 
 			if(other!=null)
@@ -114,8 +116,8 @@ public class CarTestScreen extends Screen
 		if( Input.isOn( Keys.Q ))
 		{
 			// start recording
-			cir.clear();
-			cir.beginRec( car );
+			recorder.clear();
+			recorder.beginRec( car );
 			recording = true;
 			System.out.println("------------------- RECORDING");
 		}
@@ -125,11 +127,11 @@ public class CarTestScreen extends Screen
 			if(recording)
 			{
 				recording = false;
-				cir.endRec();
+				recorder.endRec();
 				System.out.println("-----------------------------");
 			}
 
-			cir.beginPlay( ghost );
+			recorder.beginPlay( ghost );
 		}
 
 		EntityManager.raiseOnTick();

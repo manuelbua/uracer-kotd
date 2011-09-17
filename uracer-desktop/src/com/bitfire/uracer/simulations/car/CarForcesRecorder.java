@@ -5,14 +5,14 @@ import java.util.ArrayList;
 import com.badlogic.gdx.math.Vector2;
 import com.bitfire.uracer.entities.vehicles.Car;
 
-public class CarInputRecorder
+public class CarForcesRecorder
 {
 	private final int MaxEvents = 10000;
-	private ArrayList<CarInput> currBuffer;
-	private ArrayList<CarInput> prevBuffer;
+	private ArrayList<CarForces> currBuffer;
+	private ArrayList<CarForces> prevBuffer;
 
-	private ArrayList<CarInput> playBuffer;
-	private ArrayList<CarInput> recBuffer;
+	private ArrayList<CarForces> playBuffer;
+	private ArrayList<CarForces> recBuffer;
 
 	// initial state
 	private Vector2 startPosition;
@@ -26,27 +26,27 @@ public class CarInputRecorder
 	private int playEvents;
 	private boolean canReplay;
 
-	private static CarInputRecorder instance;
+	private static CarForcesRecorder instance;
 
-	public static CarInputRecorder create()
+	public static CarForcesRecorder create()
 	{
-		CarInputRecorder.instance = new CarInputRecorder();
-		return CarInputRecorder.instance;
+		CarForcesRecorder.instance = new CarForcesRecorder();
+		return CarForcesRecorder.instance;
 	}
 
-	public static CarInputRecorder instance()
+	public static CarForcesRecorder instance()
 	{
 		return instance;
 	}
 
-	private CarInputRecorder()
+	private CarForcesRecorder()
 	{
-		currBuffer = new ArrayList<CarInput>( MaxEvents );
-		prevBuffer = new ArrayList<CarInput>( MaxEvents );
+		currBuffer = new ArrayList<CarForces>( MaxEvents );
+		prevBuffer = new ArrayList<CarForces>( MaxEvents );
 		for( int i = 0; i < MaxEvents; i++ )
 		{
-			currBuffer.add( new CarInput() );
-			prevBuffer.add( new CarInput() );
+			currBuffer.add( new CarForces() );
+			prevBuffer.add( new CarForces() );
 		}
 
 		recBuffer = currBuffer;
@@ -76,9 +76,9 @@ public class CarInputRecorder
 		carRec = car;
 	}
 
-	public void add( CarInput i )
+	public void add( CarForces f )
 	{
-		recBuffer.get( indexRec++ ).set( i );
+		recBuffer.get( indexRec++ ).set( f );
 		if( indexRec == MaxEvents )
 		{
 			indexRec = 0;
@@ -88,7 +88,7 @@ public class CarInputRecorder
 
 	public int endRec()
 	{
-		ArrayList<CarInput> tmpBuffer = playBuffer;
+		ArrayList<CarForces> tmpBuffer = playBuffer;
 
 		// exchange buffers
 		playBuffer = recBuffer;
@@ -112,12 +112,12 @@ public class CarInputRecorder
 		indexPlay = 0;
 	}
 
-	public boolean get( CarInput input )
+	public boolean get( CarForces forces )
 	{
 		if( canReplay && indexPlay < playEvents )
 		{
 //			System.out.println("Replaying event #" + indexPlay + "/" + (playEvents-1));
-			input.set( playBuffer.get( indexPlay++ ) );
+			forces.set( playBuffer.get( indexPlay++ ) );
 			return true;
 		}
 
