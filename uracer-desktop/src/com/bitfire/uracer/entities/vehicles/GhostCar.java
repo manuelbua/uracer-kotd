@@ -4,6 +4,7 @@ import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.math.Vector2;
 import com.bitfire.uracer.entities.EntityManager;
 import com.bitfire.uracer.simulations.car.CarForces;
+import com.bitfire.uracer.simulations.car.CarInputMode;
 
 /**
  * Implements an automated Car, playing previously recorded events.
@@ -16,17 +17,13 @@ import com.bitfire.uracer.simulations.car.CarForces;
 
 public class GhostCar extends Car
 {
-	private CarForces forces = new CarForces();
-	private boolean activated = false;
-
 	private GhostCar( Car car )
 	{
-		super( car.graphics, car.carDesc.carModel, car.carType, new Vector2(0,0), 0, false );
-		inputMode = CarInputMode.InputFromReplay;
-		activated = false;
+		super( car.getGraphics(), car.getCarModel(), car.getCarType(), CarInputMode.InputFromReplay, new Vector2(0,0), 0 );
 	}
 
 	// factory methods
+
 	public static GhostCar createForFactory( Car car )
 	{
 		GhostCar ghost = new GhostCar( car );
@@ -49,16 +46,15 @@ public class GhostCar extends Car
 	}
 
 	@Override
-	protected strictfp void transformInput()
+	protected strictfp void onComputeCarForces( CarForces forces )
 	{
 		forces.reset();
 
 		if( recorder.hasReplay() )
 		{
-			if(!activated)
+			if(!isActive())
 			{
-				this.body.setActive( true );
-				activated = true;
+				setActive( true, true );
 			}
 
 			if( !recorder.get( forces ) )
@@ -72,13 +68,9 @@ public class GhostCar extends Car
 			}
 		}
 		else
-		if(activated)
+		if(isActive())
 		{
-			this.body.setActive( false );
-			activated = false;
+			setActive( false, true );
 		}
-
-		carDesc.velocity_wc.set( forces.velocity_x, forces.velocity_y );
-		carDesc.angularvelocity = forces.angularVelocity;
 	}
 }

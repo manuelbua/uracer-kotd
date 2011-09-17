@@ -20,7 +20,7 @@ import com.bitfire.uracer.factories.CarFactory.CarType;
 import com.bitfire.uracer.factories.ModelFactory;
 import com.bitfire.uracer.postprocessing.PostProcessor;
 import com.bitfire.uracer.postprocessing.effects.RadialBlur;
-import com.bitfire.uracer.simulations.car.CarForcesRecorder;
+import com.bitfire.uracer.simulations.car.Recorder;
 import com.bitfire.uracer.simulations.car.CarModel;
 import com.bitfire.uracer.tiled.Level;
 import com.bitfire.uracer.utils.Convert;
@@ -39,13 +39,13 @@ public class CarTestScreen extends Screen
 	// private float replayCarStartOrient;
 	private RadialBlur rb;
 
-	private CarForcesRecorder recorder;
+	private Recorder recorder;
 
 	public CarTestScreen()
 	{
 		ShaderProgram.pedantic = false;
 
-		recorder = CarForcesRecorder.create();
+		recorder = Recorder.create();
 		EntityManager.create();
 		ModelFactory.init();
 
@@ -59,7 +59,7 @@ public class CarTestScreen extends Screen
 		otherStartPos.set( Convert.tileToPx( 3, 0 ).add( Convert.scaledPixels( 112, -112 ) ) );
 
 		CarModel m = new CarModel();
-		car = CarFactory.create( CarType.OldSkool, m.toModel2(), carStartPos, 90, true );
+		car = CarFactory.createPlayer( CarType.OldSkool, m.toModel2(), carStartPos, 90 );
 		ghost = CarFactory.createGhost( car );
 
 		if( Config.EnablePostProcessingFx )
@@ -154,23 +154,21 @@ public class CarTestScreen extends Screen
 		boolean onStartZone = (carAt.x == 1 && carAt.y == 0);
 		if( onStartZone )
 		{
-			if(firstLap)
-			{
-				firstLap = false;
-				recorder.beginRec( car );
-			}
-			else
-			{
-				if(!recorder.hasReplay())
-				{
-					int recevents = recorder.endRec();
-					System.out.println( "arrived, playing " + recevents + " events" );
-//					cir.beginPlay( ghost );
-//					cir.beginRec( car );
-				}
-
-				recorder.beginPlay( ghost );
-			}
+//			if(firstLap)
+//			{
+//				firstLap = false;
+//				recorder.beginRec( car );
+//			}
+//			else
+//			{
+//				if(!recorder.hasReplay())
+//				{
+//					int recevents = recorder.endRec();
+//					System.out.println( "arrived, playing " + recevents + " events" );
+//				}
+//
+//				recorder.beginPlay( ghost );
+//			}
 
 		}
 	}

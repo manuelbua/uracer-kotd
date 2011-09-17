@@ -9,6 +9,7 @@ import com.bitfire.uracer.entities.EntityType;
 import com.bitfire.uracer.entities.vehicles.Car;
 import com.bitfire.uracer.entities.vehicles.CarGraphics;
 import com.bitfire.uracer.entities.vehicles.GhostCar;
+import com.bitfire.uracer.simulations.car.CarInputMode;
 import com.bitfire.uracer.simulations.car.CarModel;
 import com.bitfire.uracer.utils.Convert;
 import com.bitfire.uracer.utils.FixtureAtlas;
@@ -27,7 +28,7 @@ public class CarFactory
 		return ghost;
 	}
 
-	public static Car create( CarType carType, CarModel model, Vector2 position, float orientation, boolean isPlayer )
+	public static Car createPlayer( CarType carType, CarModel model, Vector2 position, float orientation )
 	{
 		TextureRegion region = null;
 
@@ -43,7 +44,7 @@ public class CarFactory
 		}
 
 		CarGraphics graphics = new CarGraphics( model, region );
-		Car car = Car.createForFactory( graphics, model, carType, position, orientation, isPlayer );
+		Car car = Car.createForFactory( graphics, model, carType, CarInputMode.InputFromPlayer, position, orientation );
 
 		applyPhysics( car, EntityType.Car );
 		return car;
@@ -51,7 +52,7 @@ public class CarFactory
 
 	private static void applyPhysics( Car car, EntityType entityType )
 	{
-		CarModel model = car.carDesc.carModel;
+		CarModel model = car.getCarModel();
 		TextureRegion region = car.getGraphics().getTextureRegion();
 
 		String shapeName = null;
