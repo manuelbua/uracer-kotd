@@ -18,7 +18,6 @@ public class Recorder
 	private Vector2 startPosition;
 	private float startOrientation;
 	private CarDescriptor startDescriptor;
-	private Car carRec, carPlay;
 
 	// play/rec indexes
 	private int indexPlay;
@@ -54,7 +53,6 @@ public class Recorder
 		playBuffer = prevBuffer;
 		canReplay = false;
 		playEvents = 0;
-		carPlay = carRec = null;
 		isRecording = false;
 
 		startPosition = new Vector2();
@@ -75,7 +73,6 @@ public class Recorder
 		startOrientation = car.orient();
 		startDescriptor.set( car.getCarDescriptor() );
 		indexRec = 0;
-		carRec = car;
 		isRecording = true;
 	}
 
@@ -113,7 +110,6 @@ public class Recorder
 		car.pos( startPosition );
 		car.orient( startOrientation );
 		car.getCarDescriptor().set( startDescriptor );
-		carPlay = car;
 		indexPlay = 0;
 	}
 

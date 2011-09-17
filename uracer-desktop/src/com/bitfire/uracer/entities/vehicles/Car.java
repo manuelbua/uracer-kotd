@@ -60,7 +60,6 @@ public strictfp class Car extends Box2dEntity
 		bd.type = BodyType.DynamicBody;
 
 		body = Physics.world.createBody( bd );
-
 		body.setBullet( true );
 		body.setUserData( this );
 
@@ -243,12 +242,15 @@ public strictfp class Car extends Box2dEntity
 		carSim.applyInput( carInput );
 		carSim.step( body );
 
-		// record computed forces
-		forces.velocity_x = carDesc.velocity_wc.x;
-		forces.velocity_y = carDesc.velocity_wc.y;
-		forces.angularVelocity = carDesc.angularvelocity;
+		// record computed forces, if recording is enabled
+		if( recorder.isRecording() )
+		{
+			forces.velocity_x = carDesc.velocity_wc.x;
+			forces.velocity_y = carDesc.velocity_wc.y;
+			forces.angularVelocity = carDesc.angularvelocity;
 
-		recorder.add( forces );
+			recorder.add( forces );
+		}
 	}
 
 	@Override
