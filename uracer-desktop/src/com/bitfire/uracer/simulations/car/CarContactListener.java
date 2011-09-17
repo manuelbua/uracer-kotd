@@ -6,10 +6,10 @@ import com.badlogic.gdx.physics.box2d.ContactImpulse;
 import com.badlogic.gdx.physics.box2d.ContactListener;
 import com.badlogic.gdx.physics.box2d.Fixture;
 import com.badlogic.gdx.physics.box2d.Manifold;
-import com.bitfire.uracer.entities.EntityType;
 import com.bitfire.uracer.entities.vehicles.Car;
+import com.bitfire.uracer.utils.Box2DUtils;
 
-public class CarContactListener implements ContactListener
+public strictfp class CarContactListener implements ContactListener
 {
 	@Override
 	public void beginContact( Contact contact )
@@ -27,13 +27,16 @@ public class CarContactListener implements ContactListener
 	}
 
 	Vector2 tmp = new Vector2();
-	private void addImpactFeedback( Fixture f, ContactImpulse impulse )
+	private strictfp void addImpactFeedback( Fixture f, ContactImpulse impulse )
 	{
-		if( f.getUserData() == EntityType.Car && f.getBody() != null )
+		if( (Box2DUtils.isCar(f) || Box2DUtils.isGhostCar(f)) && f.getBody() != null )
 		{
 			Car car = (Car)f.getBody().getUserData();
 			tmp.set( impulse.getNormalImpulses()[0], impulse.getNormalImpulses()[1] );
-			car.impactFeedback.add( tmp.len() );
+			float res = tmp.len();
+
+			car.impactFeedback.add( res );
+//			System.out.println("Impact data =" + res );
 		}
 	}
 

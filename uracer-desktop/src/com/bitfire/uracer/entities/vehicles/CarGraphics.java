@@ -12,6 +12,7 @@ public class CarGraphics
 {
 	private Sprite facet;
 	private Sprite ambientOcclusion;
+	private TextureRegion region;
 
 	public CarGraphics( CarModel model, TextureRegion region )
 	{
@@ -20,6 +21,7 @@ public class CarGraphics
 		facet.setRegion( region );
 		facet.setSize( Convert.mt2px( model.width ), Convert.mt2px( model.length ) );
 		facet.setOrigin( facet.getWidth() / 2, facet.getHeight() / 2 );
+		this.region = region;
 
 		// ambient occlusion
 		ambientOcclusion = new Sprite();
@@ -29,14 +31,29 @@ public class CarGraphics
 		ambientOcclusion.setOrigin( ambientOcclusion.getWidth()/2, ambientOcclusion.getHeight()/2 );
 	}
 
+	public Sprite getFacet()
+	{
+		return facet;
+	}
+
+	public TextureRegion getTextureRegion()
+	{
+		return region;
+	}
+
 	public void render( SpriteBatch batch, EntityState state )
+	{
+		render( batch, state, 1f );
+	}
+
+	public void render( SpriteBatch batch, EntityState state, float opacity )
 	{
 		ambientOcclusion.setPosition( state.position.x - ambientOcclusion.getOriginX(), state.position.y - ambientOcclusion.getOriginY() );
 		ambientOcclusion.setRotation( state.orientation );
-		ambientOcclusion.draw( batch, 0.35f );
+		ambientOcclusion.draw( batch, 0.35f * opacity );
 
 		facet.setPosition( state.position.x - facet.getOriginX(), state.position.y - facet.getOriginY() );
 		facet.setRotation( state.orientation );
-		facet.draw( batch );
+		facet.draw( batch, opacity );
 	}
 }

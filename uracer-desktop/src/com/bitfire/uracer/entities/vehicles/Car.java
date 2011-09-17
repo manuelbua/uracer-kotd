@@ -13,36 +13,44 @@ import com.bitfire.uracer.Physics;
 import com.bitfire.uracer.debug.Debug;
 import com.bitfire.uracer.entities.Box2dEntity;
 import com.bitfire.uracer.entities.EntityManager;
+import com.bitfire.uracer.factories.CarFactory.CarType;
 import com.bitfire.uracer.postprocessing.PostProcessor;
 import com.bitfire.uracer.simulations.car.CarDescriptor;
 import com.bitfire.uracer.simulations.car.CarInput;
+import com.bitfire.uracer.simulations.car.CarInputRecorder;
 import com.bitfire.uracer.simulations.car.CarModel;
 import com.bitfire.uracer.simulations.car.CarSimulator;
 import com.bitfire.uracer.utils.AMath;
 import com.bitfire.uracer.utils.Convert;
 
-public class Car extends Box2dEntity
+public strictfp class Car extends Box2dEntity
 {
+	public enum CarInputMode
+	{
+		InputFromPlayer, InputFromReplay
+	}
+
 	// public OrthographicAlignedMesh mesh;
 	protected CarGraphics graphics;
+	protected CarInputRecorder recorder;
 	private boolean isPlayer;
 
-	protected Vector2 originalPosition = new Vector2();
-	protected float originalOrientation;
 	public CarDescriptor carDesc;
 	protected CarSimulator carSim;
-	public CarInput carInput;
-	private ArrayList<CarInput> cil;
+	private CarInput carInput;
 	public ArrayList<Float> impactFeedback;
 
-	protected Car( CarGraphics graphics, CarModel model, Vector2 position, float orientation, boolean isPlayer )
+	protected CarInputMode inputMode;
+	protected CarType carType;
+
+	protected Car( CarGraphics graphics, CarModel model, CarType type, Vector2 position, float orientation, boolean isPlayer )
 	{
 		this.isPlayer = isPlayer;
-		this.originalPosition.set( position );
-		this.originalOrientation = orientation;
 		this.graphics = graphics;
-		this.cil = new ArrayList<CarInput>( 2500 );
 		this.impactFeedback = new ArrayList<Float>();
+		this.recorder = CarInputRecorder.instance();
+		this.inputMode = CarInputMode.InputFromPlayer;
+		this.carType = type;
 
 		carDesc = new CarDescriptor();
 		carDesc.carModel.set( model );
@@ -77,16 +85,28 @@ public class Car extends Box2dEntity
 	}
 
 	// factory method
-	public static Car createForFactory( CarGraphics graphics, CarModel model, Vector2 position, float orientation, boolean isPlayer)
+	public static Car createForFactory( CarGraphics graphics, CarModel model, CarType type, Vector2 position, float orientation, boolean isPlayer)
 	{
-		Car car = new Car( graphics, model, position, orientation, isPlayer );
+		Car car = new Car( graphics, model, type, position, orientation, isPlayer );
 		EntityManager.add( car );
 		return car;
 	}
 
+	public CarType getCarType()
+	{
+		return carType;
+	}
+
+	public CarGraphics getGraphics()
+	{
+		return graphics;
+	}
+
 	public void resetPhysics()
 	{
+		body.setActive( false );
 		carSim.resetPhysics();
+		body.setActive( true );
 	}
 
 	@Override
@@ -143,12 +163,8 @@ public class Car extends Box2dEntity
 	private long start_timer = 0;
 	private boolean start_decrease = false;
 	private float prevStrength = 0;
-	private void handleImpactFeedback()
+	private strictfp void handleImpactFeedback()
 	{
-//		if( impactFeedback.size() > 0 && PostProcessor.hasEffect() )
-//			PostProcessor.getEffect().setEnabled( true );
-//		else PostProcessor.getEffect().setEnabled( false );
-
 		// process impact feedback
 		float impact = 0f;
 		boolean hasImpact = false;
@@ -160,12 +176,14 @@ public class Car extends Box2dEntity
 			carDesc.velocity_wc.set( body.getLinearVelocity() ).mul( Director.gameplaySettings.linearVelocityAfterFeedback );
 			carDesc.angularvelocity = -body.getAngularVelocity() * 0.85f;
 
-//			carDesc.velocity_wc.set( body.getLinearVelocity() );
-//			carDesc.angularvelocity = -body.getAngularVelocity();
-
 			start_decrease = true;
 			hasImpact = true;
 		}
+
+//		if(hasImpact)
+//		{
+//			System.out.println("Impact=" + impact );
+//		}
 
 		if( PostProcessor.hasEffect() && hasImpact )
 		{
@@ -175,7 +193,7 @@ public class Car extends Box2dEntity
 		}
 	}
 
-	private void handleDecrease(CarInput input)
+	private strictfp void handleDecrease(CarInput input)
 	{
 		if(start_decrease || (System.nanoTime() - start_timer < 250000000L) )
 		{
@@ -194,7 +212,12 @@ public class Car extends Box2dEntity
 	{
 		super.onBeforePhysicsSubstep();
 
-		if(isPlayer) carInput = acquireInput();
+		if( isPlayer || inputMode == CarInputMode.InputFromReplay ) carInput = acquireInput();
+
+		if( inputMode == CarInputMode.InputFromPlayer )
+		{
+			recorder.add( carInput );
+		}
 
 		// handle decrease queued from previous step
 		handleDecrease( carInput );

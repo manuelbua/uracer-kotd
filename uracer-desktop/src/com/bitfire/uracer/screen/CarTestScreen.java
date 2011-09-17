@@ -15,11 +15,13 @@ import com.bitfire.uracer.Physics;
 import com.bitfire.uracer.debug.Debug;
 import com.bitfire.uracer.entities.EntityManager;
 import com.bitfire.uracer.entities.vehicles.Car;
+import com.bitfire.uracer.entities.vehicles.GhostCar;
 import com.bitfire.uracer.factories.CarFactory;
 import com.bitfire.uracer.factories.CarFactory.CarType;
 import com.bitfire.uracer.factories.ModelFactory;
 import com.bitfire.uracer.postprocessing.PostProcessor;
 import com.bitfire.uracer.postprocessing.effects.RadialBlur;
+import com.bitfire.uracer.simulations.car.CarInputRecorder;
 import com.bitfire.uracer.simulations.car.CarModel;
 import com.bitfire.uracer.tiled.Level;
 import com.bitfire.uracer.utils.Convert;
@@ -27,6 +29,7 @@ import com.bitfire.uracer.utils.Convert;
 public class CarTestScreen extends Screen
 {
 	private Car car = null, other = null;
+	private GhostCar ghost = null;
 	private Level level;
 	// private GhostCar ghost;
 
@@ -38,10 +41,13 @@ public class CarTestScreen extends Screen
 	// private float replayCarStartOrient;
 	private RadialBlur rb;
 
+	private CarInputRecorder cir;
+
 	public CarTestScreen()
 	{
 		ShaderProgram.pedantic = false;
 
+		cir = CarInputRecorder.create();
 		EntityManager.create();
 		ModelFactory.init();
 
@@ -56,6 +62,7 @@ public class CarTestScreen extends Screen
 
 		CarModel m = new CarModel();
 		car = CarFactory.create( CarType.OldSkool, m.toModel2(), carStartPos, 90, true );
+		ghost = CarFactory.createGhost( car );
 //		other = CarFactory.create( CarType.OldSkool2, m.toModel1(), otherStartPos, 90, false );
 
 		// car.record( true );
@@ -82,6 +89,7 @@ public class CarTestScreen extends Screen
 	private Vector2 carTileAt = new Vector2();
 	private Vector2 lastCarTileAt = new Vector2();
 
+	private boolean recording = false;
 	@Override
 	public void tick()
 	{
@@ -92,6 +100,8 @@ public class CarTestScreen extends Screen
 			{
 				car.resetPhysics();
 				car.setTransform( carStartPos, 90f );
+				cir.clear();
+				cir.beginRec( car );
 			}
 
 			if(other!=null)
@@ -100,12 +110,27 @@ public class CarTestScreen extends Screen
 				other.setTransform( otherStartPos, 90f );
 			}
 		}
+		else
+		if( Input.isOn( Keys.Q ))
+		{
+			// start recording
+			cir.clear();
+			cir.beginRec( car );
+			recording = true;
+			System.out.println("------------------- RECORDING");
+		}
+		else
+		if( Input.isOn( Keys.W ))
+		{
+			if(recording)
+			{
+				recording = false;
+				cir.endRec();
+				System.out.println("-----------------------------");
+			}
 
-		// Vector3 pos = Director.pos();
-		// if( Input.isOn( Keys.UP ) ) pos.y += 10;
-		// if( Input.isOn( Keys.DOWN ) ) pos.y -= 10;
-		// if( Input.isOn( Keys.LEFT ) ) pos.x -= 10;
-		// if( Input.isOn( Keys.RIGHT ) ) pos.x += 10;
+			cir.beginPlay( ghost );
+		}
 
 		EntityManager.raiseOnTick();
 
@@ -133,13 +158,31 @@ public class CarTestScreen extends Screen
 	// shit, shouldn't this be subscribed instead, and not self-raised like
 	// this?
 	//
-	// private boolean doRecord = true;
+
+	private boolean firstLap = true;
 	protected void onTileChanged( Vector2 carAt )
 	{
 		boolean onStartZone = (carAt.x == 1 && carAt.y == 0);
 		if( onStartZone )
 		{
-			System.out.println("start");
+//			if(firstLap)
+//			{
+//				firstLap = false;
+//				cir.beginRec( car );
+//			}
+//			else
+//			{
+//				if(!cir.hasReplay())
+//				{
+//					int recevents = cir.endRec();
+//					System.out.println( "arrived, playing " + recevents + " events" );
+////					cir.beginPlay( ghost );
+////					cir.beginRec( car );
+//				}
+//
+//				cir.beginPlay( ghost );
+//			}
+
 			// if(doRecord)
 			// {
 			// System.out.println("Recording...");

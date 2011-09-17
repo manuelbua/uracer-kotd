@@ -1,7 +1,7 @@
 package com.bitfire.uracer.entities;
 
 
-public abstract class SubframeInterpolableEntity extends Entity
+public strictfp abstract class SubframeInterpolableEntity extends Entity
 {
 	// world-coords
 	protected EntityState statePrevious = new EntityState();
