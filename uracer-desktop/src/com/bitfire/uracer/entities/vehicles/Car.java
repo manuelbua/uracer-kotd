@@ -243,12 +243,12 @@ public strictfp class Car extends Box2dEntity
 		carSim.step( body );
 
 		// record computed forces, if recording is enabled
+		forces.velocity_x = carDesc.velocity_wc.x;
+		forces.velocity_y = carDesc.velocity_wc.y;
+		forces.angularVelocity = carDesc.angularvelocity;
+
 		if( recorder.isRecording() )
 		{
-			forces.velocity_x = carDesc.velocity_wc.x;
-			forces.velocity_y = carDesc.velocity_wc.y;
-			forces.angularVelocity = carDesc.angularvelocity;
-
 			recorder.add( forces );
 		}
 	}
