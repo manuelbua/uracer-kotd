@@ -81,7 +81,7 @@ public class OrthographicAlignedStillModel
 
 	// TODO pass a Model instead of a mesh name
 //	public static OrthographicAlignedModel create( String mesh, Texture texture )
-	public static OrthographicAlignedStillModel create( StillModel model, Texture texture )
+	public strictfp static OrthographicAlignedStillModel create( StillModel model, Texture texture )
 	{
 		OrthographicAlignedStillModel m = new OrthographicAlignedStillModel();
 
@@ -183,18 +183,27 @@ public class OrthographicAlignedStillModel
 		scaleAxis.set( this.scale, this.scale, this.scale );
 	}
 
-	public void render( GL20 gl, OrthographicCamera orthoCamera, PerspectiveCamera perspCamera )
+	private strictfp static void screenToWorld( Vector3 result, OrthographicCamera orthoCamera, PerspectiveCamera perspCamera, Vector2 positionOffsetPx, Vector2 positionPx )
+	{
+		result.x = Convert.scaledPixels( positionOffsetPx.x - orthoCamera.position.x ) + orthoCamera.viewportWidth / 2 + positionPx.x;
+		result.y = Convert.scaledPixels( positionOffsetPx.y + orthoCamera.position.y ) + orthoCamera.viewportHeight / 2 - positionPx.y;
+		result.z = 1;
+
+		// remove subpixel accuracy (jagged behavior)
+		result.x += 0.5f; result.y += 0.5f;
+		result.x = (int)result.x; result.y = (int)result.y;
+
+		// transform to world space
+		perspCamera.unproject( result );
+	}
+
+	public strictfp void render( GL20 gl, OrthographicCamera orthoCamera, PerspectiveCamera perspCamera )
 	{
 		ShaderProgram shader = OrthographicAlignedStillModel.shaderProgram;
 		shader.begin();
 
 		// compute final position
-		tmp_vec.x = Convert.scaledPixels( positionOffsetPx.x - orthoCamera.position.x ) + orthoCamera.viewportWidth / 2 + positionPx.x;
-		tmp_vec.y = Convert.scaledPixels( positionOffsetPx.y + orthoCamera.position.y ) + orthoCamera.viewportHeight / 2 - positionPx.y;
-		tmp_vec.z = 1;
-
-		// transform to world space
-		perspCamera.unproject( tmp_vec );
+		screenToWorld(tmp_vec, orthoCamera, perspCamera, positionOffsetPx, positionPx );
 
 		mtx_model.idt();
 		mtx_model.setToTranslation( tmp_vec.x, tmp_vec.y, -(perspCamera.far - perspCamera.position.z) );
