@@ -5,7 +5,7 @@ import java.util.ArrayList;
 import com.badlogic.gdx.math.Vector2;
 import com.bitfire.uracer.entities.vehicles.Car;
 
-public class CarForcesRecorder
+public class Recorder
 {
 	private final int MaxEvents = 10000;
 	private ArrayList<CarForces> currBuffer;
@@ -27,20 +27,20 @@ public class CarForcesRecorder
 	private boolean canReplay;
 	private boolean isRecording;
 
-	private static CarForcesRecorder instance;
+	private static Recorder instance;
 
-	public static CarForcesRecorder create()
+	public static Recorder create()
 	{
-		CarForcesRecorder.instance = new CarForcesRecorder();
-		return CarForcesRecorder.instance;
+		Recorder.instance = new Recorder();
+		return Recorder.instance;
 	}
 
-	public static CarForcesRecorder instance()
+	public static Recorder instance()
 	{
 		return instance;
 	}
 
-	private CarForcesRecorder()
+	private Recorder()
 	{
 		currBuffer = new ArrayList<CarForces>( MaxEvents );
 		prevBuffer = new ArrayList<CarForces>( MaxEvents );
@@ -73,7 +73,7 @@ public class CarForcesRecorder
 	{
 		startPosition.set( car.pos() );
 		startOrientation = car.orient();
-		startDescriptor.set( car.carDesc );
+		startDescriptor.set( car.getCarDescriptor() );
 		indexRec = 0;
 		carRec = car;
 		isRecording = true;
@@ -112,7 +112,7 @@ public class CarForcesRecorder
 		car.resetPhysics();
 		car.pos( startPosition );
 		car.orient( startOrientation );
-		car.carDesc.set( startDescriptor );
+		car.getCarDescriptor().set( startDescriptor );
 		carPlay = car;
 		indexPlay = 0;
 	}
