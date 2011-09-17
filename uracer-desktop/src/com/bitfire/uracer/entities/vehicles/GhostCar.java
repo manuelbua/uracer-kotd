@@ -8,11 +8,13 @@ import com.bitfire.uracer.simulations.car.CarInput;
 public class GhostCar extends Car
 {
 	private CarInput input = new CarInput();
+	private boolean activated = false;
 
 	private GhostCar( Car car )
 	{
 		super( car.graphics, car.carDesc.carModel, car.carType, new Vector2(0,0), 0, false );
 		inputMode = CarInputMode.InputFromReplay;
+		activated = false;
 	}
 
 	// factory method
@@ -46,6 +48,12 @@ public class GhostCar extends Car
 
 		if( recorder.hasReplay() )
 		{
+			if(!activated)
+			{
+				this.body.setActive( true );
+				activated = true;
+			}
+
 			if( !recorder.get( input ) )
 			{
 				if( recorder.hasFinishedPlaying() )
@@ -55,6 +63,12 @@ public class GhostCar extends Car
 					recorder.beginPlay( this );
 				}
 			}
+		}
+		else
+		if(activated)
+		{
+			this.body.setActive( false );
+			activated = false;
 		}
 
 		return input;

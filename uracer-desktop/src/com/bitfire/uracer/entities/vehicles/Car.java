@@ -220,7 +220,7 @@ public strictfp class Car extends Box2dEntity
 		}
 
 		// handle decrease queued from previous step
-//		handleDecrease( carInput );
+		handleDecrease( carInput );
 
 		carSim.applyInput( carInput );
 		carSim.step( body );
@@ -237,7 +237,7 @@ public strictfp class Car extends Box2dEntity
 		super.onAfterPhysicsSubstep();
 
 		// inspect impact feedback, accumulate vel/ang velocities
-//		handleImpactFeedback();
+		handleImpactFeedback();
 	}
 
 	@Override
