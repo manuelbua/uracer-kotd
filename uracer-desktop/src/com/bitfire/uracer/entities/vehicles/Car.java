@@ -40,6 +40,7 @@ public strictfp class Car extends Box2dEntity
 	public CarDescriptor carDesc;
 	protected CarSimulator carSim;
 	private CarInput carInput;
+	private CarForces carForces;
 	public ArrayList<Float> impactFeedback;
 
 	protected CarInputMode inputMode;
@@ -61,6 +62,7 @@ public strictfp class Car extends Box2dEntity
 		carSim = new CarSimulator( carDesc );
 		carSim.isPlayer = isPlayer;	// hack
 		carInput = new CarInput();
+		carForces = new CarForces();
 
 		// body
 		BodyDef bd = new BodyDef();
@@ -220,11 +222,10 @@ public strictfp class Car extends Box2dEntity
 		carSim.applyInput( carInput );
 		carSim.step( body );
 
-		CarForces f = new CarForces();
-		f.velocity_x = carDesc.velocity_wc.x;
-		f.velocity_y = carDesc.velocity_wc.y;
-		f.angularVelocity = carDesc.angularvelocity;
-		recorder.add( f );
+		carForces.velocity_x = carDesc.velocity_wc.x;
+		carForces.velocity_y = carDesc.velocity_wc.y;
+		carForces.angularVelocity = carDesc.angularvelocity;
+		recorder.add( carForces );
 	}
 
 	@Override

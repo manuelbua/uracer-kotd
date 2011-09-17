@@ -25,6 +25,7 @@ public class CarForcesRecorder
 	private int indexRec;
 	private int playEvents;
 	private boolean canReplay;
+	private boolean isRecording;
 
 	private static CarForcesRecorder instance;
 
@@ -54,6 +55,7 @@ public class CarForcesRecorder
 		canReplay = false;
 		playEvents = 0;
 		carPlay = carRec = null;
+		isRecording = false;
 
 		startPosition = new Vector2();
 		startDescriptor = new CarDescriptor();
@@ -74,6 +76,7 @@ public class CarForcesRecorder
 		startDescriptor.set( car.carDesc );
 		indexRec = 0;
 		carRec = car;
+		isRecording = true;
 	}
 
 	public void add( CarForces f )
@@ -96,6 +99,8 @@ public class CarForcesRecorder
 
 		canReplay = true;
 		playEvents = indexRec;
+		isRecording = false;
+
 		System.out.println("Recorded " + playEvents + " events");
 		return playEvents;
 	}
@@ -124,6 +129,10 @@ public class CarForcesRecorder
 		return false;
 	}
 
+	/**
+	 * Utilities
+	 */
+
 	public boolean hasFinishedPlaying()
 	{
 		return (indexPlay == playEvents);
@@ -132,5 +141,10 @@ public class CarForcesRecorder
 	public boolean hasReplay()
 	{
 		return playEvents > 0 && canReplay;
+	}
+
+	public boolean isRecording()
+	{
+		return isRecording;
 	}
 }
