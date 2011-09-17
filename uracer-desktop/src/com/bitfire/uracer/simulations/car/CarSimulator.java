@@ -25,7 +25,6 @@ public strictfp class CarSimulator
 		acceleration = new Vector2();
 
 	public float thisSign, lastSign, lastTouchAngle;
-	public boolean isPlayer;
 
 	private float dampingThrottle = 0.98f;
 	private float dampingThrottleFrame;
@@ -35,7 +34,6 @@ public strictfp class CarSimulator
 		this.carDesc = carDesc;
 		thisSign = lastSign = 1f;
 		lastTouchAngle = 0;
-		isPlayer = false;
 
 		// precompute constants
 		dampingThrottleFrame = (float)Math.pow( 1f - dampingThrottle, Physics.dt );

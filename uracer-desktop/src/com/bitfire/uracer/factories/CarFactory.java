@@ -9,6 +9,7 @@ import com.bitfire.uracer.entities.EntityType;
 import com.bitfire.uracer.entities.vehicles.Car;
 import com.bitfire.uracer.entities.vehicles.CarGraphics;
 import com.bitfire.uracer.entities.vehicles.GhostCar;
+import com.bitfire.uracer.simulations.car.CarInputMode;
 import com.bitfire.uracer.simulations.car.CarModel;
 import com.bitfire.uracer.utils.Convert;
 import com.bitfire.uracer.utils.FixtureAtlas;
@@ -27,7 +28,7 @@ public class CarFactory
 		return ghost;
 	}
 
-	public static Car create( CarType carType, CarModel model, Vector2 position, float orientation, boolean isPlayer )
+	public static Car createPlayer( CarType carType, CarModel model, Vector2 position, float orientation )
 	{
 		TextureRegion region = null;
 
@@ -43,19 +44,17 @@ public class CarFactory
 		}
 
 		CarGraphics graphics = new CarGraphics( model, region );
-		Car car = Car.createForFactory( graphics, model, carType, position, orientation, isPlayer );
+		Car car = Car.createForFactory( graphics, model, carType, CarInputMode.InputFromPlayer, position, orientation );
 
 		applyPhysics( car, EntityType.Car );
 		return car;
 	}
 
-	private static void applyPhysics(Car car, EntityType entityType)
+	private static void applyPhysics( Car car, EntityType entityType )
 	{
-		CarModel model = car.carDesc.carModel;
+		CarModel model = car.getCarModel();
 		TextureRegion region = car.getGraphics().getTextureRegion();
 
-		int b2deditorSourceW = 0;
-//		int b2deditorSourceH = 0;
 		String shapeName = null;
 		String shapeRef = null;
 
@@ -63,16 +62,12 @@ public class CarFactory
 		{
 		case OldSkool:
 			region = Art.cars.findRegion( "electron" );
-			b2deditorSourceW = region.getRegionWidth();
-//			b2deditorSourceH = region.getRegionHeight();
 			shapeName = "data/base/electron.shape";
 			shapeRef = "../../data-src/base/cars/electron.png";
 			break;
 
 		case OldSkool2:
 			region = Art.cars.findRegion( "spider" );
-			b2deditorSourceW = region.getRegionWidth();
-//			b2deditorSourceH = region.getRegionHeight();
 			shapeName = "data/base/electron.shape";
 			shapeRef = "../../data-src/base/cars/electron.png";
 			break;
@@ -87,14 +82,13 @@ public class CarFactory
 		// apply scaling factors
 		Vector2 offset = new Vector2( -model.width / 2f, -model.length / 2f );
 
-		Vector2 ratio = new Vector2(
-				model.width / Convert.px2mt( region.getRegionWidth() ),
-				model.length / Convert.px2mt( region.getRegionHeight() ) );
+		Vector2 ratio = new Vector2( model.width / Convert.px2mt( region.getRegionWidth() ), model.length
+				/ Convert.px2mt( region.getRegionHeight() ) );
 
-		// box2d editor "normalization" contemplates just a width-bound ratio.. WTF?
-		Vector2 factor = new Vector2(
-				Convert.px2mt( b2deditorSourceW * ratio.x ),
-				Convert.px2mt( b2deditorSourceW * ratio.y ) );
+		// box2d editor "normalization" contemplates just a width-bound ratio..
+		// WTF?
+		Vector2 factor = new Vector2( Convert.px2mt( region.getRegionWidth() * ratio.x ), Convert.px2mt( region.getRegionWidth()
+				* ratio.y ) );
 
 		FixtureAtlas atlas = new FixtureAtlas( Gdx.files.internal( shapeName ) );
 		atlas.createFixtures( car.getBody(), shapeRef, factor.x, factor.y, fd, offset, entityType );

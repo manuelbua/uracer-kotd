@@ -25,15 +25,15 @@ import com.bitfire.uracer.utils.MapUtils;
  */
 public class Level
 {
-	public TiledMap map;
-	public TileMapRenderer renderer;
-	public Track track;
+	public TiledMap map = null;
+	public TileMapRenderer renderer = null;
+	public Track track = null;
 
 	private static final String LevelsStore = "data/levels/";
-	private TileAtlas atlas;
-	private PerspectiveCamera camPersp;
-	private OrthographicCamera camOrtho;
-	private float camPerspElevation;
+	private TileAtlas atlas = null;
+	private PerspectiveCamera camPersp = null;
+	private OrthographicCamera camOrtho = null;
+	private float camPerspElevation = 0f;
 	private ArrayList<OrthographicAlignedStillModel> staticMeshes = new ArrayList<OrthographicAlignedStillModel>();
 
 	public Level( String levelName, ScalingStrategy strategy )
@@ -63,6 +63,22 @@ public class Level
 		OrthographicAlignedStillModel.initialize();
 
 		createMeshes();
+	}
+
+	public void dispose()
+	{
+		// clear references to track meshes
+		if( track != null && track.hasMeshes() )
+		{
+			track.getMeshes().clear();
+		}
+
+		// dispose any static mesh previously loaded
+		for( int i = 0; i < staticMeshes.size(); i++ )
+		{
+			OrthographicAlignedStillModel model = staticMeshes.get( i );
+			model.dispose();
+		}
 	}
 
 	public void syncWithCam( OrthographicCamera orthoCam )
@@ -150,11 +166,11 @@ public class Level
 				if( o.properties.get( MapUtils.MeshScale ) != null )
 					scale = Float.parseFloat( o.properties.get( MapUtils.MeshScale ) );
 
-				// System.out.println("Creating " + o.type + ", [" + o.x + "," + o.y
+				// System.out.println("Creating " + o.type + ", [" + o.x + "," +
+				// o.y
 				// + "] x" + scale);
 				OrthographicAlignedStillModel mesh = ModelFactory.create( o.type, o.x, o.y, scale );
-				if(mesh != null)
-					staticMeshes.add( mesh );
+				if( mesh != null ) staticMeshes.add( mesh );
 			}
 		}
 

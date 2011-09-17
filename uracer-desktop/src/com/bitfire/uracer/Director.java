@@ -37,6 +37,8 @@ public class Director
 		halfViewport = new Vector2();
 		boundsPx = new Rectangle();
 		tmp = new Vector2();
+		currentLevel = null;
+		gameplaySettings = null;
 
 		// computed for a 256px tile size target (need conversion)
 		scalingStrategy = new ScalingStrategy( new Vector2( 1280, 800 ), 70f, 224, 1f);
@@ -58,6 +60,16 @@ public class Director
 
 		camera = new OrthographicCamera( widthPx, heightPx );
 		halfViewport.set( camera.viewportWidth / 2f, camera.viewportHeight / 2f );
+	}
+
+	public static void dispose()
+	{
+		if( currentLevel != null )
+		{
+			currentLevel.dispose();
+		}
+
+		Physics.dispose();
 	}
 
 	public static Level loadLevel(String levelName, GameplaySettings playSettings)

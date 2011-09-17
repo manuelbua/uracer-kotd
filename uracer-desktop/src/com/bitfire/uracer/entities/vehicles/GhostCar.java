@@ -3,21 +3,27 @@ package com.bitfire.uracer.entities.vehicles;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.math.Vector2;
 import com.bitfire.uracer.entities.EntityManager;
-import com.bitfire.uracer.simulations.car.CarInput;
+import com.bitfire.uracer.simulations.car.CarForces;
+import com.bitfire.uracer.simulations.car.CarInputMode;
+
+/**
+ * Implements an automated Car, playing previously recorded events.
+ * It will ignore car-to-car collisions, but will respect in-track
+ * collisions and responses.
+ *
+ * @author manuel
+ *
+ */
 
 public class GhostCar extends Car
 {
-	private CarInput input = new CarInput();
-	private boolean activated = false;
-
 	private GhostCar( Car car )
 	{
-		super( car.graphics, car.carDesc.carModel, car.carType, new Vector2(0,0), 0, false );
-		inputMode = CarInputMode.InputFromReplay;
-		activated = false;
+		super( car.getGraphics(), car.getCarModel(), car.getCarType(), CarInputMode.InputFromReplay, new Vector2(0,0), 0 );
 	}
 
-	// factory method
+	// factory methods
+
 	public static GhostCar createForFactory( Car car )
 	{
 		GhostCar ghost = new GhostCar( car );
@@ -37,24 +43,21 @@ public class GhostCar extends Car
 	@Override
 	public void onDebug()
 	{
-		// Debug.drawString( "[R] input count = " + input.size(), 0, 124 );
-		// Debug.drawString( "[R] play index = " + playIndex, 0, 132 );
 	}
 
 	@Override
-	protected CarInput acquireInput()
+	protected strictfp void onComputeCarForces( CarForces forces )
 	{
-		input.reset();
+		forces.reset();
 
 		if( recorder.hasReplay() )
 		{
-			if(!activated)
+			if(!isActive())
 			{
-				this.body.setActive( true );
-				activated = true;
+				setActive( true, true );
 			}
 
-			if( !recorder.get( input ) )
+			if( !recorder.get( forces ) )
 			{
 				if( recorder.hasFinishedPlaying() )
 				{
@@ -65,12 +68,9 @@ public class GhostCar extends Car
 			}
 		}
 		else
-		if(activated)
+		if(isActive())
 		{
-			this.body.setActive( false );
-			activated = false;
+			setActive( false, true );
 		}
-
-		return input;
 	}
 }

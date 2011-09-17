@@ -1,12 +1,10 @@
 package com.bitfire.uracer.screen;
 
-import com.badlogic.gdx.Application.ApplicationType;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Input.Keys;
 import com.badlogic.gdx.graphics.GL20;
 import com.badlogic.gdx.graphics.glutils.ShaderProgram;
 import com.badlogic.gdx.math.Vector2;
-import com.bitfire.uracer.Art;
 import com.bitfire.uracer.Config;
 import com.bitfire.uracer.Director;
 import com.bitfire.uracer.GameplaySettings;
@@ -21,8 +19,8 @@ import com.bitfire.uracer.factories.CarFactory.CarType;
 import com.bitfire.uracer.factories.ModelFactory;
 import com.bitfire.uracer.postprocessing.PostProcessor;
 import com.bitfire.uracer.postprocessing.effects.RadialBlur;
-import com.bitfire.uracer.simulations.car.CarInputRecorder;
 import com.bitfire.uracer.simulations.car.CarModel;
+import com.bitfire.uracer.simulations.car.Recorder;
 import com.bitfire.uracer.tiled.Level;
 import com.bitfire.uracer.utils.Convert;
 
@@ -31,7 +29,6 @@ public class CarTestScreen extends Screen
 	private Car car = null, other = null;
 	private GhostCar ghost = null;
 	private Level level;
-	// private GhostCar ghost;
 
 	// test
 	// private TestTilemap tm;
@@ -41,13 +38,13 @@ public class CarTestScreen extends Screen
 	// private float replayCarStartOrient;
 	private RadialBlur rb;
 
-	private CarInputRecorder cir;
+	private Recorder recorder;
 
 	public CarTestScreen()
 	{
 		ShaderProgram.pedantic = false;
 
-		cir = CarInputRecorder.create();
+		recorder = Recorder.create();
 		EntityManager.create();
 		ModelFactory.init();
 
@@ -61,12 +58,8 @@ public class CarTestScreen extends Screen
 		otherStartPos.set( Convert.tileToPx( 3, 0 ).add( Convert.scaledPixels( 112, -112 ) ) );
 
 		CarModel m = new CarModel();
-		car = CarFactory.create( CarType.OldSkool, m.toModel2(), carStartPos, 90, true );
+		car = CarFactory.createPlayer( CarType.OldSkool, m.toModel2(), carStartPos, 90 );
 		ghost = CarFactory.createGhost( car );
-//		other = CarFactory.create( CarType.OldSkool2, m.toModel1(), otherStartPos, 90, false );
-
-		// car.record( true );
-		// ghost = GhostCar.create( Convert.scaledPosition( 0, 0 ), 90 );
 
 		if( Config.EnablePostProcessingFx )
 		{
@@ -82,26 +75,23 @@ public class CarTestScreen extends Screen
 	public void removed()
 	{
 		super.removed();
-		Debug.dispose();
-		Art.dispose();
+		Director.dispose();
 	}
 
 	private Vector2 carTileAt = new Vector2();
 	private Vector2 lastCarTileAt = new Vector2();
 
-	private boolean recording = false;
 	@Override
 	public void tick()
 	{
 		if( Input.isOn( Keys.R ) )
 		{
-			// ghost.resetPhysics();
 			if(car != null )
 			{
 				car.resetPhysics();
 				car.setTransform( carStartPos, 90f );
-				cir.clear();
-				cir.beginRec( car );
+				recorder.clear();
+				recorder.beginRec( car );
 			}
 
 			if(other!=null)
@@ -114,22 +104,20 @@ public class CarTestScreen extends Screen
 		if( Input.isOn( Keys.Q ))
 		{
 			// start recording
-			cir.clear();
-			cir.beginRec( car );
-			recording = true;
+			recorder.clear();
+			recorder.beginRec( car );
 			System.out.println("------------------- RECORDING");
 		}
 		else
 		if( Input.isOn( Keys.W ))
 		{
-			if(recording)
+			if(recorder.isRecording())
 			{
-				recording = false;
-				cir.endRec();
+				recorder.endRec();
 				System.out.println("-----------------------------");
 			}
 
-			cir.beginPlay( ghost );
+			recorder.beginPlay( ghost );
 		}
 
 		EntityManager.raiseOnTick();
@@ -162,44 +150,27 @@ public class CarTestScreen extends Screen
 	private boolean firstLap = true;
 	protected void onTileChanged( Vector2 carAt )
 	{
-		boolean onStartZone = (carAt.x == 1 && carAt.y == 0);
-		if( onStartZone )
+		if( !Config.isDesktop )
 		{
-//			if(firstLap)
-//			{
-//				firstLap = false;
-//				cir.beginRec( car );
-//			}
-//			else
-//			{
-//				if(!cir.hasReplay())
-//				{
-//					int recevents = cir.endRec();
-//					System.out.println( "arrived, playing " + recevents + " events" );
-////					cir.beginPlay( ghost );
-////					cir.beginRec( car );
-//				}
-//
-//				cir.beginPlay( ghost );
-//			}
+			boolean onStartZone = (carAt.x == 1 && carAt.y == 0);
+			if( onStartZone )
+			{
+				if( firstLap )
+				{
+					firstLap = false;
+					recorder.beginRec( car );
+				} else
+				{
+					if( !recorder.hasReplay() )
+					{
+						int recevents = recorder.endRec();
+						System.out.println( "arrived, playing " + recevents + " events" );
+					}
 
-			// if(doRecord)
-			// {
-			// System.out.println("Recording...");
-			// replayCarStartPos.set( car.pos() );
-			// replayCarStartOrient = car.orient();
-			// car.record( true );
-			// }
-			// else
-			// {
-			// System.out.println("Playing...");
-			// car.record( false );
-			// ghost.resetPhysics();
-			// ghost.setReplay( car.getReplay(), replayCarStartPos,
-			// replayCarStartOrient, car.carDesc );
-			// }
-			//
-			// doRecord = !doRecord;
+					recorder.beginPlay( ghost );
+				}
+
+			}
 		}
 	}
 
@@ -245,14 +216,13 @@ public class CarTestScreen extends Screen
 		// debug
 		//
 
-		boolean isDesktop = Gdx.app.getType() == ApplicationType.Desktop;
-		if( isDesktop ) Debug.renderB2dWorld( Director.getMatViewProjMt() );
+		if( Config.isDesktop ) Debug.renderB2dWorld( Director.getMatViewProjMt() );
 
 		Debug.begin();
 		EntityManager.raiseOnDebug();
 		Debug.renderVersionInfo();
 		Debug.renderFrameStats( temporalAliasingFactor );
-		if( isDesktop ) Debug.renderMemoryUsage();
+		if( Config.isDesktop ) Debug.renderMemoryUsage();
 //		Debug.drawString( "EMgr::maxSpritesInBatch = " + EntityManager.maxSpritesInBatch(), 0, 6 );
 //		Debug.drawString( "EMgr::renderCalls = " + EntityManager.renderCalls(), 0, 12 );
 		Debug.end();

@@ -16,48 +16,43 @@ import com.bitfire.uracer.entities.EntityManager;
 import com.bitfire.uracer.factories.CarFactory.CarType;
 import com.bitfire.uracer.postprocessing.PostProcessor;
 import com.bitfire.uracer.simulations.car.CarDescriptor;
+import com.bitfire.uracer.simulations.car.CarForces;
 import com.bitfire.uracer.simulations.car.CarInput;
-import com.bitfire.uracer.simulations.car.CarInputRecorder;
+import com.bitfire.uracer.simulations.car.CarInputMode;
 import com.bitfire.uracer.simulations.car.CarModel;
 import com.bitfire.uracer.simulations.car.CarSimulator;
+import com.bitfire.uracer.simulations.car.Recorder;
 import com.bitfire.uracer.utils.AMath;
 import com.bitfire.uracer.utils.Convert;
 
 public strictfp class Car extends Box2dEntity
 {
-	public enum CarInputMode
-	{
-		InputFromPlayer, InputFromReplay
-	}
-
-	// public OrthographicAlignedMesh mesh;
+	protected Recorder recorder;
 	protected CarGraphics graphics;
-	protected CarInputRecorder recorder;
-	private boolean isPlayer;
 
-	public CarDescriptor carDesc;
-	protected CarSimulator carSim;
+	private CarDescriptor carDesc;
+	private CarSimulator carSim;
 	private CarInput carInput;
-	public ArrayList<Float> impactFeedback;
+	private CarForces carForces;
+	private ArrayList<Float> impactFeedback;
 
-	protected CarInputMode inputMode;
-	protected CarType carType;
+	private CarInputMode carInputMode;
+	private CarType carType;
 
-	protected Car( CarGraphics graphics, CarModel model, CarType type, Vector2 position, float orientation, boolean isPlayer )
+	protected Car( CarGraphics graphics, CarModel model, CarType type, CarInputMode inputMode, Vector2 position, float orientation )
 	{
-		this.isPlayer = isPlayer;
 		this.graphics = graphics;
 		this.impactFeedback = new ArrayList<Float>();
-		this.recorder = CarInputRecorder.instance();
-		this.inputMode = CarInputMode.InputFromPlayer;
+		this.recorder = Recorder.instance();
+		this.carInputMode = inputMode;
 		this.carType = type;
 
 		carDesc = new CarDescriptor();
 		carDesc.carModel.set( model );
 
 		carSim = new CarSimulator( carDesc );
-		carSim.isPlayer = isPlayer;	// hack
 		carInput = new CarInput();
+		carForces = new CarForces();
 
 		// body
 		BodyDef bd = new BodyDef();
@@ -65,29 +60,16 @@ public strictfp class Car extends Box2dEntity
 		bd.type = BodyType.DynamicBody;
 
 		body = Physics.world.createBody( bd );
-
-		// mass
-//		MassData md = new MassData();
-//		md.mass = carDesc.carModel.mass;
-//		md.I = carDesc.carModel.inertia;
-//		md.center.set( 0, 0 );
-//		body.setMassData( md );
-
 		body.setBullet( true );
 		body.setUserData( this );
 
 		setTransform( position, orientation );
-
-		// mesh = OrthographicAlignedMesh.create( map, "data/3d/palm.obj",
-		// "data/3d/palm.png", new Vector2( 1, 1 ) );
-		// mesh.setScale( 3f );
-		// mesh.setPositionOffsetPixels( 0, 0 );
 	}
 
 	// factory method
-	public static Car createForFactory( CarGraphics graphics, CarModel model, CarType type, Vector2 position, float orientation, boolean isPlayer)
+	public static Car createForFactory( CarGraphics graphics, CarModel model, CarType type, CarInputMode inputMode, Vector2 position, float orientation )
 	{
-		Car car = new Car( graphics, model, type, position, orientation, isPlayer );
+		Car car = new Car( graphics, model, type, inputMode, position, orientation );
 		EntityManager.add( car );
 		return car;
 	}
@@ -97,16 +79,52 @@ public strictfp class Car extends Box2dEntity
 		return carType;
 	}
 
+	public CarInputMode getInputMode()
+	{
+		return carInputMode;
+	}
+
 	public CarGraphics getGraphics()
 	{
 		return graphics;
 	}
 
+	public CarDescriptor getCarDescriptor()
+	{
+		return carDesc;
+	}
+
+	public CarModel getCarModel()
+	{
+		return carDesc.carModel;
+	}
+
+	public void setActive(boolean active, boolean resetPhysics)
+	{
+		if(resetPhysics)
+		{
+			resetPhysics();
+		}
+
+		if( active != body.isActive() )
+		{
+			body.setActive( active );
+		}
+	}
+
+	public boolean isActive()
+	{
+		return body.isActive();
+	}
+
 	public void resetPhysics()
 	{
-		body.setActive( false );
+		boolean wasActive = isActive();
+		if(wasActive) body.setActive( false );
 		carSim.resetPhysics();
-		body.setActive( true );
+		body.setAngularVelocity( 0 );
+		body.setLinearVelocity( 0, 0 );
+		if(wasActive) body.setActive( wasActive );
 	}
 
 	@Override
@@ -160,6 +178,11 @@ public strictfp class Car extends Box2dEntity
 	}
 
 
+	public void addImpactFeedback( float feedback )
+	{
+		impactFeedback.add( feedback );
+	}
+
 	private long start_timer = 0;
 	private boolean start_decrease = false;
 	private float prevStrength = 0;
@@ -179,11 +202,6 @@ public strictfp class Car extends Box2dEntity
 			start_decrease = true;
 			hasImpact = true;
 		}
-
-//		if(hasImpact)
-//		{
-//			System.out.println("Impact=" + impact );
-//		}
 
 		if( PostProcessor.hasEffect() && hasImpact )
 		{
@@ -207,17 +225,16 @@ public strictfp class Car extends Box2dEntity
 		}
 	}
 
-	@Override
-	public void onBeforePhysicsSubstep()
+	/**
+	 * Subclasses, such as the GhostCar, will override this method
+	 * to feed forces from external sources, such as Replay data stored
+	 * elsewhere.
+	 *
+	 * @param forces computed forces will be returned by filling this data structure.
+	 */
+	protected strictfp void onComputeCarForces( CarForces forces )
 	{
-		super.onBeforePhysicsSubstep();
-
-		if( isPlayer || inputMode == CarInputMode.InputFromReplay ) carInput = acquireInput();
-
-		if( inputMode == CarInputMode.InputFromPlayer )
-		{
-			recorder.add( carInput );
-		}
+		carInput = acquireInput();
 
 		// handle decrease queued from previous step
 		handleDecrease( carInput );
@@ -225,7 +242,29 @@ public strictfp class Car extends Box2dEntity
 		carSim.applyInput( carInput );
 		carSim.step( body );
 
-		// set velocities
+		// record computed forces, if recording is enabled
+		forces.velocity_x = carDesc.velocity_wc.x;
+		forces.velocity_y = carDesc.velocity_wc.y;
+		forces.angularVelocity = carDesc.angularvelocity;
+
+		if( recorder.isRecording() )
+		{
+			recorder.add( forces );
+		}
+	}
+
+	@Override
+	public void onBeforePhysicsSubstep()
+	{
+		super.onBeforePhysicsSubstep();
+
+		onComputeCarForces( carForces );
+
+		// update the car descriptor with newly computed forces
+		carDesc.velocity_wc.set( carForces.velocity_x, carForces.velocity_y );
+		carDesc.angularvelocity = carForces.angularVelocity;
+
+		// set computed/replayed velocities
 		body.setAwake( true );
 		body.setLinearVelocity( carDesc.velocity_wc );
 		body.setAngularVelocity( -carDesc.angularvelocity );
@@ -250,10 +289,6 @@ public strictfp class Car extends Box2dEntity
 	@Override
 	public void onRender( SpriteBatch batch )
 	{
-		// reverse y
-		// mesh.setPosition( stateRender.position.x * Config.TileMapZoomFactor, -stateRender.position.y * Config.TileMapZoomFactor );
-		// mesh.setRotation( stateRender.orientation, 0, 1, 0 );
-
 		graphics.render( batch, stateRender );
 	}
 
@@ -262,7 +297,7 @@ public strictfp class Car extends Box2dEntity
 	@Override
 	public void onDebug()
 	{
-		if(!isPlayer)
+		if( carInputMode != CarInputMode.InputFromPlayer )
 			return;
 
 		Debug.drawString( "vel_wc [x=" + carDesc.velocity_wc.x + ", y=" + carDesc.velocity_wc.y + "]", 0, 20 );
@@ -271,8 +306,6 @@ public strictfp class Car extends Box2dEntity
 		Debug.drawString( "screen x=" + Director.screenPosFor( body ).x + ",y=" + Director.screenPosFor( body ).y, 0, 80 );
 		Debug.drawString( "world x=" + body.getPosition().x + ",y=" + body.getPosition().y, 0, 87 );
 		Debug.drawString( "orient=" + body.getAngle(), 0, 94 );
-//		Debug.drawString( "input count = " + cil.size(), 0, 106 );
-//		// Debug.drawString( "REC = " + isRecording, 0, 118 );
 
 		tmp.set( Convert.pxToTile( stateRender.position.x, stateRender.position.y ) );
 		Debug.drawString( "on tile " + tmp, 0, 0 );

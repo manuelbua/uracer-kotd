@@ -35,7 +35,7 @@ public strictfp class CarContactListener implements ContactListener
 			tmp.set( impulse.getNormalImpulses()[0], impulse.getNormalImpulses()[1] );
 			float res = tmp.len();
 
-			car.impactFeedback.add( res );
+			car.addImpactFeedback( res );
 //			System.out.println("Impact data =" + res );
 		}
 	}

@@ -98,7 +98,8 @@ public class URacer implements ApplicationListener
 	@Override
 	public void dispose()
 	{
-		Physics.dispose();
+		Debug.dispose();
+		Art.dispose();
 	}
 
 	public void setScreen( Screen newScreen )

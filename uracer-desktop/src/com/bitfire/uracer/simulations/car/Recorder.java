@@ -5,55 +5,55 @@ import java.util.ArrayList;
 import com.badlogic.gdx.math.Vector2;
 import com.bitfire.uracer.entities.vehicles.Car;
 
-public class CarInputRecorder
+public class Recorder
 {
-	private final int MaxInput = 10000;
-	private ArrayList<CarInput> currBuffer;
-	private ArrayList<CarInput> prevBuffer;
+	private final int MaxEvents = 10000;
+	private ArrayList<CarForces> currBuffer;
+	private ArrayList<CarForces> prevBuffer;
 
-	private ArrayList<CarInput> playBuffer;
-	private ArrayList<CarInput> recBuffer;
+	private ArrayList<CarForces> playBuffer;
+	private ArrayList<CarForces> recBuffer;
 
 	// initial state
 	private Vector2 startPosition;
 	private float startOrientation;
 	private CarDescriptor startDescriptor;
-	private Car carRec, carPlay;
 
 	// play/rec indexes
 	private int indexPlay;
 	private int indexRec;
 	private int playEvents;
 	private boolean canReplay;
+	private boolean isRecording;
 
-	private static CarInputRecorder instance;
+	private static Recorder instance;
 
-	public static CarInputRecorder create()
+	public static Recorder create()
 	{
-		CarInputRecorder.instance = new CarInputRecorder();
-		return CarInputRecorder.instance;
+		Recorder.instance = new Recorder();
+		return Recorder.instance;
 	}
 
-	public static CarInputRecorder instance()
+	public static Recorder instance()
 	{
 		return instance;
 	}
 
-	private CarInputRecorder()
+	private Recorder()
 	{
-		currBuffer = new ArrayList<CarInput>( MaxInput );
-		prevBuffer = new ArrayList<CarInput>( MaxInput );
-		for( int i = 0; i < MaxInput; i++ )
+		currBuffer = new ArrayList<CarForces>( MaxEvents );
+		prevBuffer = new ArrayList<CarForces>( MaxEvents );
+		for( int i = 0; i < MaxEvents; i++ )
 		{
-			currBuffer.add( new CarInput() );
-			prevBuffer.add( new CarInput() );
+			currBuffer.add( new CarForces() );
+			prevBuffer.add( new CarForces() );
 		}
 
 		recBuffer = currBuffer;
 		playBuffer = prevBuffer;
 		canReplay = false;
 		playEvents = 0;
-		carPlay = carRec = null;
+		isRecording = false;
 
 		startPosition = new Vector2();
 		startDescriptor = new CarDescriptor();
@@ -71,24 +71,24 @@ public class CarInputRecorder
 	{
 		startPosition.set( car.pos() );
 		startOrientation = car.orient();
-		startDescriptor.set( car.carDesc );
+		startDescriptor.set( car.getCarDescriptor() );
 		indexRec = 0;
-		carRec = car;
+		isRecording = true;
 	}
 
-	public void add( CarInput i )
+	public void add( CarForces f )
 	{
-		recBuffer.get( indexRec++ ).set( i );
-		if( indexRec == MaxInput )
+		recBuffer.get( indexRec++ ).set( f );
+		if( indexRec == MaxEvents )
 		{
 			indexRec = 0;
-			System.out.println( "Input recording limit reached (" + MaxInput + "), recording restarted." );
+			System.out.println( "Recording limit reached (" + MaxEvents + " events), recording restarted." );
 		}
 	}
 
 	public int endRec()
 	{
-		ArrayList<CarInput> tmpBuffer = playBuffer;
+		ArrayList<CarForces> tmpBuffer = playBuffer;
 
 		// exchange buffers
 		playBuffer = recBuffer;
@@ -96,6 +96,8 @@ public class CarInputRecorder
 
 		canReplay = true;
 		playEvents = indexRec;
+		isRecording = false;
+
 		System.out.println("Recorded " + playEvents + " events");
 		return playEvents;
 	}
@@ -107,22 +109,25 @@ public class CarInputRecorder
 		car.resetPhysics();
 		car.pos( startPosition );
 		car.orient( startOrientation );
-		car.carDesc.set( startDescriptor );
-		carPlay = car;
+		car.getCarDescriptor().set( startDescriptor );
 		indexPlay = 0;
 	}
 
-	public boolean get( CarInput input )
+	public boolean get( CarForces forces )
 	{
 		if( canReplay && indexPlay < playEvents )
 		{
 //			System.out.println("Replaying event #" + indexPlay + "/" + (playEvents-1));
-			input.set( playBuffer.get( indexPlay++ ) );
+			forces.set( playBuffer.get( indexPlay++ ) );
 			return true;
 		}
 
 		return false;
 	}
+
+	/**
+	 * Utilities
+	 */
 
 	public boolean hasFinishedPlaying()
 	{
@@ -132,5 +137,10 @@ public class CarInputRecorder
 	public boolean hasReplay()
 	{
 		return playEvents > 0 && canReplay;
+	}
+
+	public boolean isRecording()
+	{
+		return isRecording;
 	}
 }

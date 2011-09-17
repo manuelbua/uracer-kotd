@@ -1,5 +1,8 @@
 package com.bitfire.uracer;
 
+import com.badlogic.gdx.Application.ApplicationType;
+import com.badlogic.gdx.Gdx;
+
 public class Config
 {
 	// whether or not subframe interpolable entities should
@@ -21,6 +24,9 @@ public class Config
 	// graphics
 	public static boolean EnableMipMapping;
 
+	// platform
+	public static boolean isDesktop;
+
 	// set default configuration values
 	public static void asDefault()
 	{
@@ -30,5 +36,6 @@ public class Config
 		PhysicsTimeMultiplier = 1f;
 		EnablePostProcessingFx = false;
 		EnableMipMapping = true;
+		isDesktop = (Gdx.app.getType() == ApplicationType.Desktop);
 	}
 }
