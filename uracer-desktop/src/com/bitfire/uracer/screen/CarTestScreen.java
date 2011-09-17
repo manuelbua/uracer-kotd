@@ -1,6 +1,5 @@
 package com.bitfire.uracer.screen;
 
-import com.badlogic.gdx.Application.ApplicationType;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Input.Keys;
 import com.badlogic.gdx.graphics.GL20;
@@ -20,8 +19,8 @@ import com.bitfire.uracer.factories.CarFactory.CarType;
 import com.bitfire.uracer.factories.ModelFactory;
 import com.bitfire.uracer.postprocessing.PostProcessor;
 import com.bitfire.uracer.postprocessing.effects.RadialBlur;
-import com.bitfire.uracer.simulations.car.Recorder;
 import com.bitfire.uracer.simulations.car.CarModel;
+import com.bitfire.uracer.simulations.car.Recorder;
 import com.bitfire.uracer.tiled.Level;
 import com.bitfire.uracer.utils.Convert;
 
@@ -151,25 +150,27 @@ public class CarTestScreen extends Screen
 	private boolean firstLap = true;
 	protected void onTileChanged( Vector2 carAt )
 	{
-		boolean onStartZone = (carAt.x == 1 && carAt.y == 0);
-		if( onStartZone )
+		if( !Config.isDesktop )
 		{
-//			if(firstLap)
-//			{
-//				firstLap = false;
-//				recorder.beginRec( car );
-//			}
-//			else
-//			{
-//				if(!recorder.hasReplay())
-//				{
-//					int recevents = recorder.endRec();
-//					System.out.println( "arrived, playing " + recevents + " events" );
-//				}
-//
-//				recorder.beginPlay( ghost );
-//			}
+			boolean onStartZone = (carAt.x == 1 && carAt.y == 0);
+			if( onStartZone )
+			{
+				if( firstLap )
+				{
+					firstLap = false;
+					recorder.beginRec( car );
+				} else
+				{
+					if( !recorder.hasReplay() )
+					{
+						int recevents = recorder.endRec();
+						System.out.println( "arrived, playing " + recevents + " events" );
+					}
 
+					recorder.beginPlay( ghost );
+				}
+
+			}
 		}
 	}
 
@@ -215,14 +216,13 @@ public class CarTestScreen extends Screen
 		// debug
 		//
 
-		boolean isDesktop = Gdx.app.getType() == ApplicationType.Desktop;
-		if( isDesktop ) Debug.renderB2dWorld( Director.getMatViewProjMt() );
+		if( Config.isDesktop ) Debug.renderB2dWorld( Director.getMatViewProjMt() );
 
 		Debug.begin();
 		EntityManager.raiseOnDebug();
 		Debug.renderVersionInfo();
 		Debug.renderFrameStats( temporalAliasingFactor );
-		if( isDesktop ) Debug.renderMemoryUsage();
+		if( Config.isDesktop ) Debug.renderMemoryUsage();
 //		Debug.drawString( "EMgr::maxSpritesInBatch = " + EntityManager.maxSpritesInBatch(), 0, 6 );
 //		Debug.drawString( "EMgr::renderCalls = " + EntityManager.renderCalls(), 0, 12 );
 		Debug.end();
