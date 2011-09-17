@@ -1,8 +1,8 @@
 <?xml version="1.0" encoding="utf-8"?>
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
       package="com.bitfire.uracer"
-      android:versionCode="83"
-      android:versionName="v0.0.9-25-gea3cd5f/master">
+      android:versionCode="84"
+      android:versionName="v0.0.9-26-g769d0ff/master">
     <supports-screens android:anyDensity="true" android:xlargeScreens="true" />
     <uses-sdk android:minSdkVersion="7" />
     <application android:icon="@drawable/icon" android:label="@string/app_name">

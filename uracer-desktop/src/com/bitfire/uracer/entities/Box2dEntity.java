@@ -6,7 +6,7 @@ import com.badlogic.gdx.physics.box2d.Body;
 import com.bitfire.uracer.Config;
 import com.bitfire.uracer.utils.Convert;
 
-public class Box2dEntity extends SubframeInterpolableEntity
+public strictfp class Box2dEntity extends SubframeInterpolableEntity
 {
 	protected Body body;
 

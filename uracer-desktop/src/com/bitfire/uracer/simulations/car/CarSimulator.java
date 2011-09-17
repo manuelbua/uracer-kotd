@@ -7,7 +7,7 @@ import com.bitfire.uracer.Physics;
 import com.bitfire.uracer.utils.AMath;
 import com.bitfire.uracer.utils.VMath;
 
-public class CarSimulator
+public strictfp class CarSimulator
 {
 	public CarDescriptor carDesc;
 	public Vector2
@@ -46,13 +46,13 @@ public class CarSimulator
 		carDesc.set( carDesc );
 	}
 
-	public void updateHeading( Body body )
+	public strictfp void updateHeading( Body body )
 	{
 		VMath.fromAngle( heading, AMath.wrap2PI( body.getAngle() ) );
 		VMath.perp( side, heading );
 	}
 
-	public void applyInput( CarInput input )
+	public strictfp void applyInput( CarInput input )
 	{
 		float maxForce = carDesc.carModel.max_force;
 		boolean hasDir = false, hasSteer = false;
@@ -136,7 +136,7 @@ public class CarSimulator
 		carDesc.throttle = AMath.clamp( carDesc.throttle, -maxForce, maxForce );
 	}
 
-	public void step( Body body )
+	public strictfp void step( Body body )
 	{
 		float sn = MathUtils.sin( AMath.normalRelativeAngle( -body.getAngle() ) );
 		float cs = MathUtils.cos( AMath.normalRelativeAngle( -body.getAngle() ) );
@@ -279,5 +279,6 @@ public class CarSimulator
 		carDesc.steerangle = 0;
 		acceleration_wc.set( 0, 0 );
 		velocity.set( 0, 0 );
+		thisSign = lastSign = 1f;
 	}
 }
