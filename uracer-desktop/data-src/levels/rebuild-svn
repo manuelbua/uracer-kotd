@@ -12,7 +12,7 @@ mkdir -p ${DEST}
 #JARS="${TILED_PREP_PATH}:${CLASS_PATH}/gdx.jar:${CLASS_PATH}/gdx-natives.jar:${CLASS_PATH}/gdx-backend-jogl.jar:${CLASS_PATH}/gdx-backend-jogl-natives.jar:${CLASS_PATH}/texture-packer.jar"
 #CMD="java -classpath ${JARS} com.badlogic.gdx.tiledmappacker.TiledMapPacker $1 $2"
 
-CLASS_PATH="/home/manuel/dev/libgdx/target"
+CLASS_PATH="/home/manuel/dev/libgdx/target/dist"
 TILED_PREP_PATH="/home/manuel/dev/libgdx/extensions/tiled-preprocessor/bin"
 JARS="${TILED_PREP_PATH}:${CLASS_PATH}/gdx.jar:${CLASS_PATH}/gdx-natives.jar:${CLASS_PATH}/gdx-backend-jogl.jar:${CLASS_PATH}/gdx-backend-jogl-natives.jar:${CLASS_PATH}/gdx-tools.jar"
 CMD="java -classpath ${JARS} com.badlogic.gdx.tiledmappacker.TiledMapPacker $1 $2"
