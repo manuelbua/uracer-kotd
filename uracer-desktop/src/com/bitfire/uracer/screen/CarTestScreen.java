@@ -30,8 +30,6 @@ public class CarTestScreen extends Screen
 	private GhostCar ghost = null;
 	private Level level;
 
-	// test
-	// private TestTilemap tm;
 	private Vector2 carStartPos = new Vector2();
 	private RadialBlur rb;
 

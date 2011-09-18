@@ -87,7 +87,7 @@ public class OrthographicAlignedStillModel
 		camPersp = perspCamera;
 	}
 
-	public strictfp static OrthographicAlignedStillModel create( StillModel model, Texture texture )
+	public static OrthographicAlignedStillModel create( StillModel model, Texture texture )
 	{
 		OrthographicAlignedStillModel m = new OrthographicAlignedStillModel();
 
@@ -189,7 +189,7 @@ public class OrthographicAlignedStillModel
 		scaleAxis.set( this.scale, this.scale, this.scale );
 	}
 
-	private strictfp static void screenToWorld( Vector3 result, OrthographicCamera orthoCamera, PerspectiveCamera perspCamera, Vector2 positionOffsetPx, Vector2 positionPx )
+	private static void screenToWorld( Vector3 result, OrthographicCamera orthoCamera, PerspectiveCamera perspCamera, Vector2 positionOffsetPx, Vector2 positionPx )
 	{
 		result.x = Convert.scaledPixels( positionOffsetPx.x - orthoCamera.position.x ) + orthoCamera.viewportWidth / 2 + positionPx.x;
 		result.y = Convert.scaledPixels( positionOffsetPx.y + orthoCamera.position.y ) + orthoCamera.viewportHeight / 2 - positionPx.y;
@@ -199,7 +199,7 @@ public class OrthographicAlignedStillModel
 		perspCamera.unproject( result );
 	}
 
-	public strictfp void render( GL20 gl )
+	public void render( GL20 gl )
 	{
 		ShaderProgram shader = OrthographicAlignedStillModel.shaderProgram;
 		shader.begin();

@@ -25,7 +25,7 @@ import com.bitfire.uracer.simulations.car.Recorder;
 import com.bitfire.uracer.utils.AMath;
 import com.bitfire.uracer.utils.Convert;
 
-public strictfp class Car extends Box2dEntity
+public class Car extends Box2dEntity
 {
 	protected Recorder recorder;
 	protected CarGraphics graphics;
@@ -186,7 +186,7 @@ public strictfp class Car extends Box2dEntity
 	private long start_timer = 0;
 	private boolean start_decrease = false;
 	private float prevStrength = 0;
-	private strictfp void handleImpactFeedback()
+	private void handleImpactFeedback()
 	{
 		// process impact feedback
 		float impact = 0f;
@@ -211,7 +211,7 @@ public strictfp class Car extends Box2dEntity
 		}
 	}
 
-	private strictfp void handleDecrease(CarInput input)
+	private void handleDecrease(CarInput input)
 	{
 		if(start_decrease || (System.nanoTime() - start_timer < 250000000L) )
 		{
@@ -232,7 +232,7 @@ public strictfp class Car extends Box2dEntity
 	 *
 	 * @param forces computed forces will be returned by filling this data structure.
 	 */
-	protected strictfp void onComputeCarForces( CarForces forces )
+	protected void onComputeCarForces( CarForces forces )
 	{
 		carInput = acquireInput();
 

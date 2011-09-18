@@ -2,7 +2,7 @@ package com.bitfire.uracer.entities;
 
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 
-public strictfp abstract class Entity
+public abstract class Entity
 {
 	// screen-coords
 	protected EntityState stateRender = new EntityState();

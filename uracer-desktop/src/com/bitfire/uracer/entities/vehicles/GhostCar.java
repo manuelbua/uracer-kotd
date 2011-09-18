@@ -46,7 +46,7 @@ public class GhostCar extends Car
 	}
 
 	@Override
-	protected strictfp void onComputeCarForces( CarForces forces )
+	protected void onComputeCarForces( CarForces forces )
 	{
 		forces.reset();
 

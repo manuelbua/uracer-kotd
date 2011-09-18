@@ -9,7 +9,7 @@ import com.badlogic.gdx.physics.box2d.Manifold;
 import com.bitfire.uracer.entities.vehicles.Car;
 import com.bitfire.uracer.utils.Box2DUtils;
 
-public strictfp class CarContactListener implements ContactListener
+public class CarContactListener implements ContactListener
 {
 	@Override
 	public void beginContact( Contact contact )
@@ -27,7 +27,7 @@ public strictfp class CarContactListener implements ContactListener
 	}
 
 	Vector2 tmp = new Vector2();
-	private strictfp void addImpactFeedback( Fixture f, ContactImpulse impulse )
+	private void addImpactFeedback( Fixture f, ContactImpulse impulse )
 	{
 		if( (Box2DUtils.isCar(f) || Box2DUtils.isGhostCar(f)) && f.getBody() != null )
 		{

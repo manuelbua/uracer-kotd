@@ -7,22 +7,13 @@ import com.bitfire.uracer.Physics;
 import com.bitfire.uracer.utils.AMath;
 import com.bitfire.uracer.utils.VMath;
 
-public strictfp class CarSimulator
+public class CarSimulator
 {
 	public CarDescriptor carDesc;
-	public Vector2
-		lastCarScreenPos = new Vector2(),
-		lastTouchPos = new Vector2(),
-		velocity = new Vector2(),
-		acceleration_wc = new Vector2(),
-		heading = new Vector2(),
-		side = new Vector2(),
-		flatf = new Vector2(),
-		flatr = new Vector2(),
-		ftraction = new Vector2(),
-		resistance = new Vector2(),
-		force = new Vector2(),
-		acceleration = new Vector2();
+	public Vector2 lastCarScreenPos = new Vector2(), lastTouchPos = new Vector2(), velocity = new Vector2(),
+			acceleration_wc = new Vector2(), heading = new Vector2(), side = new Vector2(), flatf = new Vector2(),
+			flatr = new Vector2(), ftraction = new Vector2(), resistance = new Vector2(), force = new Vector2(),
+			acceleration = new Vector2();
 
 	public float thisSign, lastSign, lastTouchAngle;
 
@@ -44,13 +35,13 @@ public strictfp class CarSimulator
 		carDesc.set( carDesc );
 	}
 
-	public strictfp void updateHeading( Body body )
+	public void updateHeading( Body body )
 	{
 		VMath.fromAngle( heading, AMath.wrap2PI( body.getAngle() ) );
 		VMath.perp( side, heading );
 	}
 
-	public strictfp void applyInput( CarInput input )
+	public void applyInput( CarInput input )
 	{
 		float maxForce = carDesc.carModel.max_force;
 		boolean hasDir = false, hasSteer = false;
@@ -85,16 +76,14 @@ public strictfp class CarSimulator
 			{
 				// left
 				carDesc.steerangle = input.steerAngle;
-				if( carDesc.steerangle < -AMath.PI_4 )
-					carDesc.steerangle = -AMath.PI_4;
+				if( carDesc.steerangle < -AMath.PI_4 ) carDesc.steerangle = -AMath.PI_4;
 
 				hasSteer = true;
 			} else if( AMath.fixup( input.steerAngle ) > 0 )
 			{
 				// right
 				carDesc.steerangle = input.steerAngle;
-				if( carDesc.steerangle > AMath.PI_4 )
-					carDesc.steerangle = AMath.PI_4;
+				if( carDesc.steerangle > AMath.PI_4 ) carDesc.steerangle = AMath.PI_4;
 
 				hasSteer = true;
 			}
@@ -106,7 +95,7 @@ public strictfp class CarSimulator
 			{
 				if( !AMath.isZero( carDesc.throttle ) )
 				{
-//					carDesc.throttle *= 0.9f;
+					// carDesc.throttle *= 0.9f;
 					carDesc.throttle *= dampingThrottleFrame;
 				}
 
@@ -123,18 +112,18 @@ public strictfp class CarSimulator
 		if( !hasSteer )
 		{
 			carDesc.steerangle = 0;
-//			float sa = AMath.fixup( carDesc.steerangle );
-//			// gently auto steer to 0 degrees
-//			if( sa > 0 || sa < 0)
-//				carDesc.steerangle *= 0.9f;
-//			else
-//				carDesc.steerangle = 0.f;
+			// float sa = AMath.fixup( carDesc.steerangle );
+			// // gently auto steer to 0 degrees
+			// if( sa > 0 || sa < 0)
+			// carDesc.steerangle *= 0.9f;
+			// else
+			// carDesc.steerangle = 0.f;
 		}
 
 		carDesc.throttle = AMath.clamp( carDesc.throttle, -maxForce, maxForce );
 	}
 
-	public strictfp void step( Body body )
+	public void step( Body body )
 	{
 		float sn = MathUtils.sin( AMath.normalRelativeAngle( -body.getAngle() ) );
 		float cs = MathUtils.cos( AMath.normalRelativeAngle( -body.getAngle() ) );
@@ -206,8 +195,7 @@ public strictfp class CarSimulator
 		thisSign = AMath.lowpass( lastSign, AMath.sign( velocity.x ), 0.2f );
 		lastSign = thisSign;
 
-		ftraction.set( 100f * (carDesc.throttle - carDesc.brake * thisSign ), 0 );
-
+		ftraction.set( 100f * (carDesc.throttle - carDesc.brake * thisSign), 0 );
 
 		// torque on body from lateral forces
 		float torque = carDesc.carModel.b * flatf.y - carDesc.carModel.c * flatr.y;
