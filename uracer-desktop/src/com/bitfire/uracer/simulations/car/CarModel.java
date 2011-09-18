@@ -40,6 +40,18 @@ public class CarModel
 		toDefault();
 	}
 
+	public CarModel( CarModel other )
+	{
+		set( other );
+	}
+
+	@Override
+	public CarModel clone()
+	{
+		CarModel m = new CarModel( this );
+		return m;
+	}
+
 	public void set(CarModel other)
 	{
 		this.wheelbase = other.wheelbase;

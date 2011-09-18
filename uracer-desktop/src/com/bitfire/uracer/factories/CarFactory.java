@@ -21,18 +21,32 @@ public class CarFactory
 		OldSkool, OldSkool2
 	}
 
+	public static GhostCar createGhost( CarType type, CarModel model )
+	{
+		CarGraphics graphics = createCarGraphics( type, model );
+		GhostCar ghost = GhostCar.createForFactory( graphics, type, model );
+		applyCarPhysics( ghost, EntityType.CarReplay );
+		return ghost;
+	}
+
 	public static GhostCar createGhost( Car car )
 	{
-		GhostCar ghost = GhostCar.createForFactory( car );
-		applyPhysics( ghost, EntityType.CarReplay );
-		return ghost;
+		return CarFactory.createGhost( car.getCarType(), car.getCarModel() );
 	}
 
 	public static Car createPlayer( CarType carType, CarModel model, Vector2 position, float orientation )
 	{
+		CarGraphics graphics = createCarGraphics( carType, model );
+		Car car = Car.createForFactory( graphics, model, carType, CarInputMode.InputFromPlayer, position, orientation );
+		applyCarPhysics( car, EntityType.Car );
+		return car;
+	}
+
+	private static CarGraphics createCarGraphics( CarType type, CarModel model )
+	{
 		TextureRegion region = null;
 
-		switch( carType )
+		switch( type )
 		{
 		case OldSkool:
 			region = Art.cars.findRegion( "electron" );
@@ -44,13 +58,10 @@ public class CarFactory
 		}
 
 		CarGraphics graphics = new CarGraphics( model, region );
-		Car car = Car.createForFactory( graphics, model, carType, CarInputMode.InputFromPlayer, position, orientation );
-
-		applyPhysics( car, EntityType.Car );
-		return car;
+		return graphics;
 	}
 
-	private static void applyPhysics( Car car, EntityType entityType )
+	private static void applyCarPhysics( Car car, EntityType entityType )
 	{
 		CarModel model = car.getCarModel();
 		TextureRegion region = car.getGraphics().getTextureRegion();
@@ -78,6 +89,7 @@ public class CarFactory
 		fd.density = model.density;
 		fd.friction = model.friction;
 		fd.restitution = model.restitution;
+		fd.filter.groupIndex = -1;
 
 		// apply scaling factors
 		Vector2 offset = new Vector2( -model.width / 2f, -model.length / 2f );

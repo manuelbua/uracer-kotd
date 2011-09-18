@@ -13,6 +13,27 @@ import com.badlogic.gdx.math.Vector2;
 
 public class CarDescriptor
 {
+	// physical model data
+	public CarModel carModel = new CarModel();
+
+	// results
+
+	// vector-related
+	public Vector2 position_wc = new Vector2(); // position of car center in world coordinates
+	public Vector2 velocity_wc = new Vector2(); // velocity vector of car in world coordinates
+
+	// angle-related
+	public float angularvelocity;
+	public float steerangle; // angle of steering (input)
+
+	// impulses
+	public float throttle; // amount of throttle (input)
+	public float brake; // amount of braking (input)
+
+	// internally computed
+	public float angularOrientation;
+
+
 	public CarDescriptor()
 	{
 		angularvelocity = steerangle = throttle = brake = angularOrientation = 0;
@@ -43,23 +64,10 @@ public class CarDescriptor
 		this.velocity_wc.set( desc.velocity_wc );
 	}
 
-	// physical model data
-	public CarModel carModel = new CarModel();
-
-	// results
-
-	// vector-related
-	public Vector2 position_wc = new Vector2(); // position of car center in world coordinates
-	public Vector2 velocity_wc = new Vector2(); // velocity vector of car in world coordinates
-
-	// angle-related
-	public float angularvelocity;
-	public float steerangle; // angle of steering (input)
-
-	// impulses
-	public float throttle; // amount of throttle (input)
-	public float brake; // amount of braking (input)
-
-	// internally computed
-	public float angularOrientation;
+	@Override
+	public CarDescriptor clone()
+	{
+		CarDescriptor c = new CarDescriptor( this );
+		return c;
+	}
 }

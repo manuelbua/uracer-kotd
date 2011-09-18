@@ -35,4 +35,11 @@ public class CarForces
 		this.angularVelocity = other.angularVelocity;
 		return this;
 	}
+
+	@Override
+	public CarForces clone()
+	{
+		CarForces f = new CarForces( this );
+		return f;
+	}
 }

@@ -30,6 +30,9 @@ public class Config
 	// definitions
 	public static float MaxDeltaTime;
 
+	// debug
+	public static boolean dbgTraverseWalls;
+
 	// set default configuration values
 	public static void asDefault()
 	{
@@ -41,5 +44,8 @@ public class Config
 		EnablePostProcessingFx = false;
 		EnableMipMapping = true;
 		isDesktop = (Gdx.app.getType() == ApplicationType.Desktop);
+
+		// debug
+		dbgTraverseWalls = false;
 	}
 }

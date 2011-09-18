@@ -28,6 +28,7 @@ public class Level
 	public TiledMap map = null;
 	public TileMapRenderer renderer = null;
 	public Track track = null;
+	public String name = "";
 
 	private static final String LevelsStore = "data/levels/";
 	private TileAtlas atlas = null;
@@ -38,6 +39,8 @@ public class Level
 
 	public Level( String levelName, ScalingStrategy strategy )
 	{
+		this.name = levelName;
+
 		// ie. "level1-128.tmx"
 		String mapname = levelName + "-" + (int)strategy.forTileSize + ".tmx";
 		FileHandle mapHandle = Gdx.files.internal( LevelsStore + mapname );

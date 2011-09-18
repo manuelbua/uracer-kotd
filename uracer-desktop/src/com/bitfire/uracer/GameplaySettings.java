@@ -2,17 +2,12 @@ package com.bitfire.uracer;
 
 public class GameplaySettings
 {
-	// difficulty
-	public static final int Easy = 1;
-	public static final int Medium = 2;
-	public static final int Hard = 3;
-
 	// settings
-	public int difficulty = Easy;
+	public GameDifficulty difficulty = GameDifficulty.Easy;
 	public float linearVelocityAfterFeedback = 0;
 	public float throttleDampingAfterFeedback = 1;
 
-	public static GameplaySettings create( int difficulty )
+	public static GameplaySettings create( GameDifficulty difficulty )
 	{
 		GameplaySettings s = new GameplaySettings();
 

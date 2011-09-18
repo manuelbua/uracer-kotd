@@ -7,6 +7,7 @@ import com.badlogic.gdx.graphics.glutils.ShaderProgram;
 import com.badlogic.gdx.math.Vector2;
 import com.bitfire.uracer.Config;
 import com.bitfire.uracer.Director;
+import com.bitfire.uracer.GameDifficulty;
 import com.bitfire.uracer.GameplaySettings;
 import com.bitfire.uracer.Input;
 import com.bitfire.uracer.Physics;
@@ -21,12 +22,13 @@ import com.bitfire.uracer.postprocessing.PostProcessor;
 import com.bitfire.uracer.postprocessing.effects.RadialBlur;
 import com.bitfire.uracer.simulations.car.CarModel;
 import com.bitfire.uracer.simulations.car.Recorder;
+import com.bitfire.uracer.simulations.car.Replay;
 import com.bitfire.uracer.tiled.Level;
 import com.bitfire.uracer.utils.Convert;
 
 public class CarTestScreen extends Screen
 {
-	private Car car = null;
+	private Car player = null;
 	private GhostCar ghost = null;
 	private Level level;
 
@@ -34,6 +36,8 @@ public class CarTestScreen extends Screen
 	private RadialBlur rb;
 
 	private Recorder recorder;
+	private Replay[] replays;
+	private boolean isFirstLap = true;
 
 	public CarTestScreen()
 	{
@@ -45,15 +49,20 @@ public class CarTestScreen extends Screen
 
 		Director.create( this, Gdx.graphics.getWidth(), Gdx.graphics.getHeight() );
 
-		GameplaySettings gs = GameplaySettings.create( GameplaySettings.Easy );
+		GameplaySettings gs = GameplaySettings.create( GameDifficulty.Easy );
 		level = Director.loadLevel( "level1", gs );
 		Director.setPositionPx( Director.positionFor( new Vector2(0,0)), false );
 
 		carStartPos.set( Convert.tileToPx( 1, 0 ).add( Convert.scaledPixels( 112, -112 ) ) );
 
 		CarModel m = new CarModel();
-		car = CarFactory.createPlayer( CarType.OldSkool, m.toModel2(), carStartPos, 90 );
-		ghost = CarFactory.createGhost( car );
+		player = CarFactory.createPlayer( CarType.OldSkool, m.toModel2(), carStartPos, 90 );
+		ghost = CarFactory.createGhost( player );
+
+		// replay buffers
+		replays = new Replay[2];
+		replays[0] = new Replay();
+		replays[1] = new Replay();
 
 		if( Config.EnablePostProcessingFx )
 		{
@@ -80,43 +89,50 @@ public class CarTestScreen extends Screen
 	{
 		if( Input.isOn( Keys.R ) )
 		{
-			if(car != null )
+			if(player != null )
 			{
-				car.resetPhysics();
-				car.setTransform( carStartPos, 90f );
-				recorder.clear();
-				recorder.beginRec( car );
-			}
-		}
-		else
-		if( Input.isOn( Keys.Q ))
-		{
-			// start recording
-			recorder.clear();
-			recorder.beginRec( car );
-			System.out.println("------------------- RECORDING");
-		}
-		else
-		if( Input.isOn( Keys.W ))
-		{
-			if(recorder.isRecording())
-			{
-				recorder.endRec();
-				System.out.println("-----------------------------");
-			}
+				player.resetPhysics();
+				player.setTransform( carStartPos, 90f );
 
-			recorder.beginPlay( ghost );
+				ghost.setReplay( null );
+
+				replays[0].clearForces();
+				replays[1].clearForces();
+				recorder.reset();
+				lastCarTileAt.set( -1, -1 );
+				carTileAt.set( lastCarTileAt );
+				isFirstLap = true;
+			}
 		}
+//		else
+//		if( Input.isOn( Keys.Q ))
+//		{
+//			// start recording
+//			recorder.clear();
+//			recorder.beginRec( car );
+//			System.out.println("------------------- RECORDING");
+//		}
+//		else
+//		if( Input.isOn( Keys.W ))
+//		{
+//			if(recorder.isRecording())
+//			{
+//				recorder.endRec();
+//				System.out.println("-----------------------------");
+//			}
+//
+//			recorder.beginPlay( ghost );
+//		}
 
 		EntityManager.raiseOnTick();
 
 		//
 		// ubersimple events dispatcher
 		//
-		if(car!=null)
+		if(player!=null)
 		{
 			lastCarTileAt.set( carTileAt );
-			carTileAt.set( Convert.pxToTile( car.pos().x, car.pos().y ) );
+			carTileAt.set( Convert.pxToTile( player.pos().x, player.pos().y ) );
 			if( (lastCarTileAt.x != carTileAt.x) || (lastCarTileAt.y != carTileAt.y) )
 			{
 				onTileChanged( carTileAt );
@@ -125,7 +141,7 @@ public class CarTestScreen extends Screen
 			if( Config.EnablePostProcessingFx )
 			{
 				rb.dampStrength( 0.8f, Physics.dt );
-				rb.setOrigin( Director.screenPosFor( car.getBody() ) );
+				rb.setOrigin( Director.screenPosFor( player.getBody() ) );
 			}
 		}
 
@@ -137,29 +153,40 @@ public class CarTestScreen extends Screen
 	// this?
 	//
 
-	private boolean firstLap = true;
 	protected void onTileChanged( Vector2 carAt )
 	{
-		if( !Config.isDesktop )
+		boolean onStartZone = (carAt.x == 1 && carAt.y == 0);
+		if( onStartZone )
 		{
-			boolean onStartZone = (carAt.x == 1 && carAt.y == 0);
-			if( onStartZone )
+			if( isFirstLap )
 			{
-				if( firstLap )
+				isFirstLap = false;
+				System.out.println("Recording began");
+				recorder.beginRecording( player, replays[0] );
+			} else
+			{
+				recorder.endRecording();
+
+				// replay best, overwrite worst logic
+				if(replays[0].isValid && !replays[1].isValid)
 				{
-					firstLap = false;
-					recorder.beginRec( car );
-				} else
+					recorder.beginRecording( player, replays[1] );
+					ghost.setReplay( replays[0] );
+				}
+				else
+				if( replays[0].isValid && replays[1].isValid )
 				{
-					if( !recorder.hasReplay() )
+					// both valid, replay best, overwrite worst
+					Replay best = replays[1], worst = replays[0];
+					if( replays[0].trackTimeSeconds < replays[1].trackTimeSeconds )
 					{
-						int recevents = recorder.endRec();
-						System.out.println( "arrived, playing " + recevents + " events" );
+						best = replays[0];
+						worst = replays[1];
 					}
 
-					recorder.beginPlay( ghost );
+					ghost.setReplay( best );
+					recorder.beginRecording( player, worst );
 				}
-
 			}
 		}
 	}
@@ -188,8 +215,8 @@ public class CarTestScreen extends Screen
 		GL20 gl = Gdx.graphics.getGL20();
 
 		// follow the car
-		if(car!=null)
-			Director.setPositionPx( car.state().position, false );
+		if(player!=null)
+			Director.setPositionPx( player.state().position, false );
 
 		if( Config.EnablePostProcessingFx )
 		{

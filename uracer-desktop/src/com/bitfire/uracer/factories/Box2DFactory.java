@@ -9,6 +9,7 @@ import com.badlogic.gdx.physics.box2d.BodyDef;
 import com.badlogic.gdx.physics.box2d.CircleShape;
 import com.badlogic.gdx.physics.box2d.FixtureDef;
 import com.badlogic.gdx.physics.box2d.PolygonShape;
+import com.bitfire.uracer.Config;
 import com.bitfire.uracer.Physics;
 
 public class Box2DFactory
@@ -52,13 +53,13 @@ public class Box2DFactory
 		fdef.restitution = 0.6f;
 		body.createFixture( fdef );
 
-//		MassData md = new MassData();
-//		md.mass = 1000f;
-//		md.I = 0f;
-//		md.center.x = md.center.y = 0f;
-//		body.setMassData( md );
+		// MassData md = new MassData();
+		// md.mass = 1000f;
+		// md.I = 0f;
+		// md.center.x = md.center.y = 0f;
+		// body.setMassData( md );
 
-		System.out.println("createCircle, mass=" + body.getMass());
+		System.out.println( "createCircle, mass=" + body.getMass() );
 
 		return body;
 	}
@@ -84,10 +85,8 @@ public class Box2DFactory
 		float cy = (ymin + ymax) / 2;
 		float hx = (xmax - xmin) / 2;
 		float hy = (ymax - ymin) / 2;
-		if( hx < 0 )
-			hx = -hx;
-		if( hy < 0 )
-			hy = -hy;
+		if( hx < 0 ) hx = -hx;
+		if( hy < 0 ) hy = -hy;
 		PolygonShape wallshape = new PolygonShape();
 		wallshape.setAsBox( hx, hy, new Vector2( 0f, 0f ), angle );
 
@@ -95,8 +94,13 @@ public class Box2DFactory
 		fdef.shape = wallshape;
 		fdef.density = 1.0f;
 		fdef.friction = 0.02f;
-		if( restitution > 0 )
-			fdef.restitution = restitution;
+
+		if( Config.dbgTraverseWalls )
+		{
+			fdef.filter.groupIndex = -1;
+		}
+
+		if( restitution > 0 ) fdef.restitution = restitution;
 
 		BodyDef bd = new BodyDef();
 		bd.position.set( cx, cy );
@@ -126,11 +130,10 @@ public class Box2DFactory
 		float halfSize = size / 2f;
 		float cx = (from.x + to.x) / 2;
 		float cy = (from.y + to.y) / 2;
-		float angle = (float)Math.atan2( to.y - from.y, to.x - from.x);
+		float angle = (float)Math.atan2( to.y - from.y, to.x - from.x );
 		float mag = (float)Math.sqrt( (to.x - from.x) * (to.x - from.x) + (to.y - from.y) * (to.y - from.y) );
 		return createWall( cx - mag / 2, cy - halfSize, cx + mag / 2, cy + halfSize, angle, restitution );
 	}
-
 
 	private static Vector2 tmp1;
 	private static Vector2 tmp2;
@@ -145,27 +148,30 @@ public class Box2DFactory
 	 * @param lumpLen
 	 * @param angle
 	 * @param steps
-	 * @param rotationOffset describes the rotation offset for the two endpoints of the wall being constructed.
+	 * @param rotationOffset
+	 *            describes the rotation offset for the two endpoints of the
+	 *            wall being constructed.
 	 * @param restitution
 	 * @param returnResult
 	 * @return
 	 */
-	public static ArrayList<Body> createAngularWall( Vector2 unitCircleRadius, Vector2 offset, float tickness, float lumpLen, float angle, int steps, Vector2 rotationOffset, float restitution, boolean returnResult )
+	public static ArrayList<Body> createAngularWall( Vector2 unitCircleRadius, Vector2 offset, float tickness, float lumpLen,
+			float angle, int steps, Vector2 rotationOffset, float restitution, boolean returnResult )
 	{
 		ArrayList<Body> result = null;
-		if(returnResult) result = new ArrayList<Body>();
+		if( returnResult ) result = new ArrayList<Body>();
 
 		float halfTickness = tickness / 2f;
 		float angleStep = angle / (float)(steps);
 		float radStep = angleStep * MathUtils.degreesToRadians;
-		float cosStep = (float)Math.cos(radStep);
-		float sinStep = (float)Math.sin(radStep);
+		float cosStep = (float)Math.cos( radStep );
+		float sinStep = (float)Math.sin( radStep );
 		float tmpx, tmpy;
 
 		tmp1.set( unitCircleRadius );
 		tmp1.x -= halfTickness * rotationOffset.x;
 
-		tmp2.set(tmp1);
+		tmp2.set( tmp1 );
 		tmp2.x += halfTickness * rotationOffset.y;
 		tmp2.y -= lumpLen;
 
@@ -176,17 +182,17 @@ public class Box2DFactory
 			to.x = offset.x + tmp2.x;
 			to.y = offset.y - tmp2.y;
 
-			Body body = Box2DFactory.createWall(from ,to, tickness, 0);
-			if(returnResult) result.add(body);
+			Body body = Box2DFactory.createWall( from, to, tickness, 0 );
+			if( returnResult ) result.add( body );
 
 			// rotate
 			tmpx = tmp1.x * cosStep - tmp1.y * sinStep;
 			tmpy = tmp1.x * sinStep + tmp1.y * cosStep;
-			tmp1.set(tmpx, tmpy);
+			tmp1.set( tmpx, tmpy );
 
 			tmpx = tmp2.x * cosStep - tmp2.y * sinStep;
 			tmpy = tmp2.x * sinStep + tmp2.y * cosStep;
-			tmp2.set(tmpx, tmpy);
+			tmp2.set( tmpx, tmpy );
 		}
 
 		return result;
