@@ -7,7 +7,7 @@ import com.bitfire.uracer.Config;
 import com.bitfire.uracer.utils.AMath;
 import com.bitfire.uracer.utils.Convert;
 
-public strictfp class Box2dEntity extends SubframeInterpolableEntity
+public class Box2dEntity extends SubframeInterpolableEntity
 {
 	protected Body body;
 
@@ -65,6 +65,7 @@ public strictfp class Box2dEntity extends SubframeInterpolableEntity
 		tmp.set( Convert.px2mt(position) );
 		body.setTransform( tmp, -orient * MathUtils.degreesToRadians );
 		toNormalRelativeAngle();
+		resetState();
 	}
 
 	protected void toNormalRelativeAngle()
