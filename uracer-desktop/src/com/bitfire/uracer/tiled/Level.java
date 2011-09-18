@@ -56,11 +56,11 @@ public class Level
 
 	public void init()
 	{
+		syncWithCam( Director.getCamera() );
+		OrthographicAlignedStillModel.initialize( camOrtho, camPersp );
+
 		// create track
 		track = new Track( map );
-
-		syncWithCam( Director.getCamera() );
-		OrthographicAlignedStillModel.initialize();
 
 		createMeshes();
 	}
@@ -113,7 +113,7 @@ public class Level
 		for( int i = 0; i < staticMeshes.size(); i++ )
 		{
 			OrthographicAlignedStillModel t = staticMeshes.get( i );
-			t.render( gl, camOrtho, camPersp );
+			t.render( gl );
 		}
 
 		gl.glDisable( GL20.GL_DEPTH_TEST );
