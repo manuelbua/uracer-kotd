@@ -9,6 +9,7 @@ public class CarContactFilter implements ContactFilter
 	@Override
 	public boolean shouldCollide( Fixture fixtureA, Fixture fixtureB )
 	{
+//		return false;
 		return !Box2DUtils.isPlayerAgainstGhost( fixtureA, fixtureB );
 	}
 }

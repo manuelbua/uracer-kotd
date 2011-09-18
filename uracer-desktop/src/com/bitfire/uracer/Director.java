@@ -1,6 +1,7 @@
 package com.bitfire.uracer;
 
 import com.badlogic.gdx.graphics.OrthographicCamera;
+import com.badlogic.gdx.math.MathUtils;
 import com.badlogic.gdx.math.Matrix4;
 import com.badlogic.gdx.math.Rectangle;
 import com.badlogic.gdx.math.Vector2;
@@ -131,7 +132,11 @@ public class Director
 		if( tmp.y > boundsPx.y ) tmp.y = boundsPx.y;
 		if( tmp.y < boundsPx.height ) tmp.y = boundsPx.height;
 
-		camera.position.set( tmp.x, tmp.y, 0 );
+		// remove subpixel accuracy (jagged behavior)
+		camera.position.x = MathUtils.round( tmp.x );
+		camera.position.y = MathUtils.round( tmp.y );
+		camera.position.z = 0;
+
 		update();
 	}
 

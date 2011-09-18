@@ -4,6 +4,7 @@ import com.badlogic.gdx.math.MathUtils;
 import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.physics.box2d.Body;
 import com.bitfire.uracer.Config;
+import com.bitfire.uracer.utils.AMath;
 import com.bitfire.uracer.utils.Convert;
 
 public strictfp class Box2dEntity extends SubframeInterpolableEntity
@@ -31,8 +32,7 @@ public strictfp class Box2dEntity extends SubframeInterpolableEntity
 	@Override
 	public void onBeforePhysicsSubstep()
 	{
-		// normalize the angle (interpolation safe)
-//		toNormalRelativeAngle();
+		toNormalRelativeAngle();
 		super.onBeforePhysicsSubstep();
 	}
 
@@ -64,13 +64,13 @@ public strictfp class Box2dEntity extends SubframeInterpolableEntity
 	{
 		tmp.set( Convert.px2mt(position) );
 		body.setTransform( tmp, -orient * MathUtils.degreesToRadians );
-//		toNormalRelativeAngle();
+		toNormalRelativeAngle();
 	}
 
-//	protected void toNormalRelativeAngle()
-//	{
-//		// normalize body angle since it can grow unbounded
-//		float angle = AMath.normalRelativeAngle(body.getAngle());
-//		body.setTransform( body.getPosition(), angle );
-//	}
+	protected void toNormalRelativeAngle()
+	{
+		// normalize body angle since it can grow unbounded
+		float angle = AMath.normalRelativeAngle(body.getAngle());
+		body.setTransform( body.getPosition(), angle );
+	}
 }

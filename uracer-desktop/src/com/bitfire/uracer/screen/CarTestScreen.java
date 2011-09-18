@@ -140,6 +140,8 @@ public class CarTestScreen extends Screen
 				rb.setOrigin( Director.screenPosFor( car.getBody() ) );
 			}
 		}
+
+		Debug.update();
 	}
 
 	// FIXME
@@ -221,7 +223,7 @@ public class CarTestScreen extends Screen
 		Debug.begin();
 		EntityManager.raiseOnDebug();
 		Debug.renderVersionInfo();
-		Debug.renderFrameStats( temporalAliasingFactor );
+		Debug.renderGraphicalStats( Gdx.graphics.getWidth() - Debug.getStatsWidth(), Gdx.graphics.getHeight() - Debug.getStatsHeight() - Debug.fontHeight );
 		if( Config.isDesktop ) Debug.renderMemoryUsage();
 //		Debug.drawString( "EMgr::maxSpritesInBatch = " + EntityManager.maxSpritesInBatch(), 0, 6 );
 //		Debug.drawString( "EMgr::renderCalls = " + EntityManager.renderCalls(), 0, 12 );

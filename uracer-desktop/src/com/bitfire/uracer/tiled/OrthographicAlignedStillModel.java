@@ -42,6 +42,10 @@ public class OrthographicAlignedStillModel
 	private Vector2 positionOffsetPx = new Vector2( 0, 0 );
 	private Vector2 positionPx = new Vector2();
 
+	private static float meshZ;
+	private static OrthographicCamera camOrtho;
+	private static PerspectiveCamera camPersp;
+
 	// temporaries
 	private Vector3 tmp_vec = new Vector3();
 	private Matrix4 tmp_mtx = new Matrix4();
@@ -49,7 +53,7 @@ public class OrthographicAlignedStillModel
 
 	// explicitle initialize the static iShader member
 	// (Android: statics need to be re-initialized!)
-	public static void initialize()
+	public static void initialize( OrthographicCamera orthoCamera, PerspectiveCamera perspCamera )
 	{
 		String vertexShader =
 				"uniform mat4 u_mvpMatrix;					\n" +
@@ -77,10 +81,12 @@ public class OrthographicAlignedStillModel
 
 		if( OrthographicAlignedStillModel.shaderProgram.isCompiled() == false )
 			throw new IllegalStateException( OrthographicAlignedStillModel.shaderProgram.getLog() );
+
+		OrthographicAlignedStillModel.meshZ = -(perspCamera.far - perspCamera.position.z);
+		camOrtho = orthoCamera;
+		camPersp = perspCamera;
 	}
 
-	// TODO pass a Model instead of a mesh name
-//	public static OrthographicAlignedModel create( String mesh, Texture texture )
 	public strictfp static OrthographicAlignedStillModel create( StillModel model, Texture texture )
 	{
 		OrthographicAlignedStillModel m = new OrthographicAlignedStillModel();
@@ -189,24 +195,20 @@ public class OrthographicAlignedStillModel
 		result.y = Convert.scaledPixels( positionOffsetPx.y + orthoCamera.position.y ) + orthoCamera.viewportHeight / 2 - positionPx.y;
 		result.z = 1;
 
-		// remove subpixel accuracy (jagged behavior)
-		result.x += 0.5f; result.y += 0.5f;
-		result.x = (int)result.x; result.y = (int)result.y;
-
 		// transform to world space
 		perspCamera.unproject( result );
 	}
 
-	public strictfp void render( GL20 gl, OrthographicCamera orthoCamera, PerspectiveCamera perspCamera )
+	public strictfp void render( GL20 gl )
 	{
 		ShaderProgram shader = OrthographicAlignedStillModel.shaderProgram;
 		shader.begin();
 
 		// compute final position
-		screenToWorld(tmp_vec, orthoCamera, perspCamera, positionOffsetPx, positionPx );
+		screenToWorld(tmp_vec, camOrtho, camPersp, positionOffsetPx, positionPx );
 
 		mtx_model.idt();
-		mtx_model.setToTranslation( tmp_vec.x, tmp_vec.y, -(perspCamera.far - perspCamera.position.z) );
+		mtx_model.setToTranslation( tmp_vec.x, tmp_vec.y, OrthographicAlignedStillModel.meshZ );
 
 		// TODO (when updating the local libgdx repo)
 		// support proper rotation now that Mat3/Mat4 supports opengl-style rotation/translation/scaling
@@ -214,7 +216,7 @@ public class OrthographicAlignedStillModel
 		Matrix4.mul( mtx_model.val, tmp_mtx.setToScaling( scaleAxis ).val );
 
 		// proj * view
-		mtx_combined.set( perspCamera.combined );
+		mtx_combined.set( camPersp.combined );
 
 		// comb = comb * model (fast mul)
 		Matrix4.mul( mtx_combined.val, mtx_model.val );
@@ -227,9 +229,7 @@ public class OrthographicAlignedStillModel
 
 	public void dispose()
 	{
-//		mesh.dispose();
 		model.dispose();
 		model_workaround.dispose();
-//		texture.dispose();
 	}
 }

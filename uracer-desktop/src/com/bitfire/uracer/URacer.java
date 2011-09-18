@@ -5,6 +5,7 @@ import com.badlogic.gdx.Gdx;
 import com.bitfire.uracer.debug.Debug;
 import com.bitfire.uracer.screen.CarTestScreen;
 import com.bitfire.uracer.screen.Screen;
+import com.bitfire.uracer.utils.AMath;
 
 public class URacer implements ApplicationListener
 {
@@ -19,6 +20,7 @@ public class URacer implements ApplicationListener
 	// stats
 	private static float graphicsTime = 0;
 	private static float physicsTime = 0;
+	private static float aliasingTime = 0;
 
 	@Override
 	public void create()
@@ -44,8 +46,7 @@ public class URacer implements ApplicationListener
 		float deltaTime = Gdx.graphics.getDeltaTime();
 
 		// avoid spiral of death
-		if( deltaTime > 0.25f )
-			deltaTime = 0.25f;
+		deltaTime = AMath.clamp( deltaTime, 0, Config.MaxDeltaTime );
 
 		long startTime = System.nanoTime();
 		{
@@ -57,6 +58,10 @@ public class URacer implements ApplicationListener
 
 				timeAccumSecs -= Physics.dt;
 			}
+
+			// simulate slowness
+//			try { Thread.sleep( 32 ); } catch( InterruptedException e ) {}
+
 		}
 		physicsTime = (System.nanoTime() - startTime) * oneOnOneBillion;
 
@@ -65,6 +70,7 @@ public class URacer implements ApplicationListener
 		// permitting slow-motion effects without artifacts.
 		// (this imply accepting a one-frame-behind behavior)
 		temporalAliasing = timeAccumSecs * Config.PhysicsTimestepHz;
+		aliasingTime = temporalAliasing;
 
 		screen.beforeRender( temporalAliasing );
 
@@ -130,5 +136,10 @@ public class URacer implements ApplicationListener
 	public static float getPhysicsTime()
 	{
 		return physicsTime;
+	}
+
+	public static float getTemporalAliasing()
+	{
+		return aliasingTime;
 	}
 }

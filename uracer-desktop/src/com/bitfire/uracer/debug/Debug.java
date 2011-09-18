@@ -22,6 +22,7 @@ public class Debug
 	// frame stats
 	private static long frameStart;
 	private static float physicsTime, renderTime;
+	private static Stats gfxStats;
 
 	// box2d
 	private static Box2DDebugRenderer b2drenderer;
@@ -30,10 +31,10 @@ public class Debug
 	private static StringBuilder sb;
 	private static Formatter fmt;
 	private static String[] chars = { "ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789", ".,!?:;\"'+-=/\\< " };
-	private static SpriteBatch textBatch;
+	private static SpriteBatch spriteBatch;
 
-	private static int fontWidth;
-	private static int fontHeight;
+	public static int fontWidth;
+	public static int fontHeight;
 
 	private Debug()
 	{
@@ -41,20 +42,23 @@ public class Debug
 
 	public static void create()
 	{
+		sb = new StringBuilder();
+		fmt = new Formatter( sb, Locale.US );
+
 		fontWidth = fontHeight = 6;
 		physicsTime = renderTime = 0;
 		b2drenderer = new Box2DDebugRenderer();
 		frameStart = System.nanoTime();
 
-		sb = new StringBuilder();
-		fmt = new Formatter( sb, Locale.US );
+		// compute graphics stats size
+		gfxStats = new Stats();
 
-		textBatch = new SpriteBatch(1000);
+		spriteBatch = new SpriteBatch(1000);
 
 		// y-flip
 		Matrix4 proj = new Matrix4();
 		proj.setToOrtho( 0, Gdx.graphics.getWidth(), Gdx.graphics.getHeight(), 0, 0, 10 );
-		textBatch.setProjectionMatrix( proj );
+		spriteBatch.setProjectionMatrix( proj );
 
 		// init statics
 		tmp = "";
@@ -65,20 +69,23 @@ public class Debug
 	public static void dispose()
 	{
 		b2drenderer.dispose();
+		gfxStats.dispose();
 	}
 
 	public static void begin()
 	{
-		textBatch.begin();
+		spriteBatch.begin();
 	}
 
 	public static void end()
 	{
-		textBatch.end();
+		spriteBatch.end();
 	}
 
-	public static void renderFrameStats( float temporalAliasingFactor )
+	public static void update()
 	{
+		gfxStats.update();
+
 		long time = System.nanoTime();
 
 		if( time - frameStart > 1000000000 )
@@ -87,7 +94,10 @@ public class Debug
 			renderTime = URacer.getRenderTime();
 			frameStart = time;
 		}
+	}
 
+	public static void renderFrameStats( float temporalAliasingFactor )
+	{
 		sb.setLength( 0 );
 		drawString(
 				fmt.format( "fps: %d, physics: %.06f, graphics: %.06f", Gdx.graphics.getFramesPerSecond(), physicsTime,
@@ -99,6 +109,25 @@ public class Debug
 				0, Gdx.graphics.getHeight()-12 );
 	}
 
+	public static void renderGraphicalStats( int x, int y )
+	{
+		spriteBatch.draw( gfxStats.getRegion(), x, y );
+
+		sb.setLength( 0 );
+		String text = fmt.format( "fps: %d, physics: %.06f, graphics: %.06f", Gdx.graphics.getFramesPerSecond(), physicsTime, renderTime ).toString();
+		drawString( text, Gdx.graphics.getWidth() - text.length() * fontWidth, Gdx.graphics.getHeight() - fontHeight );
+	}
+
+	public static int getStatsWidth()
+	{
+		return gfxStats.getWidth();
+	}
+
+	public static int getStatsHeight()
+	{
+		return gfxStats.getHeight();
+	}
+
 	public static void renderVersionInfo()
 	{
 		String uRacerInfo = "uRacer " + VersionInfo.versionName;
@@ -108,12 +137,13 @@ public class Debug
 
 	public static void renderMemoryUsage()
 	{
-		float javaHeapMb = (float)Gdx.app.getJavaHeap() / 1048576f;
-		float nativeHeapMb = (float)Gdx.app.getNativeHeap() / 1048576f;
+		float oneOnMb = 1f / 1048576f;
+		float javaHeapMb = (float)Gdx.app.getJavaHeap() * oneOnMb;
+		float nativeHeapMb = (float)Gdx.app.getNativeHeap() * oneOnMb;
 
 		sb.setLength( 0 );
 		String memInfo = fmt.format( "java heap = %.04fMB - native heap = %.04fMB", javaHeapMb, nativeHeapMb ).toString();
-		drawString( memInfo, Gdx.graphics.getWidth() - memInfo.length() * fontWidth, Gdx.graphics.getHeight() - fontHeight );
+		drawString( memInfo, 0, Gdx.graphics.getHeight() - fontHeight );
 	}
 
 	public static void renderB2dWorld( Matrix4 modelViewProj )
@@ -128,12 +158,12 @@ public class Debug
 		if( width < 0 )
 			width = -width;
 
-		textBatch.draw( region, x, y, width, -region.getRegionHeight() );
+		spriteBatch.draw( region, x, y, width, -region.getRegionHeight() );
 	}
 
 	public static void draw( TextureRegion region, int x, int y, int width, int height )
 	{
-		textBatch.draw( region, x, y, width, height );
+		spriteBatch.draw( region, x, y, width, height );
 	}
 
 	public static void drawString( String string, int x, int y )

@@ -27,6 +27,9 @@ public class Config
 	// platform
 	public static boolean isDesktop;
 
+	// definitions
+	public static float MaxDeltaTime;
+
 	// set default configuration values
 	public static void asDefault()
 	{
@@ -34,6 +37,7 @@ public class Config
 		PixelsPerMeter = 18.0f;
 		PhysicsTimestepHz = 60.0f;
 		PhysicsTimeMultiplier = 1f;
+		MaxDeltaTime = 0.25f;	// 4fps
 		EnablePostProcessingFx = false;
 		EnableMipMapping = true;
 		isDesktop = (Gdx.app.getType() == ApplicationType.Desktop);
