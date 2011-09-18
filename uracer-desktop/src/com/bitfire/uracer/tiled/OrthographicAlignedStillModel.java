@@ -190,7 +190,12 @@ public class OrthographicAlignedStillModel
 		result.z = 1;
 
 		// remove subpixel accuracy (jagged behavior)
-		result.x += 0.5f; result.y += 0.5f;
+		if(result.x>0) result.x += 0.5f;
+		else if(result.x<0) result.x -= 0.5f;
+
+		if(result.y>0) result.y += 0.5f;
+		else if( result.y<0) result.y -= 0.5f;
+
 		result.x = (int)result.x; result.y = (int)result.y;
 
 		// transform to world space
