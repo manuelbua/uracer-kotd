@@ -32,7 +32,6 @@ public strictfp class Box2dEntity extends SubframeInterpolableEntity
 	@Override
 	public void onBeforePhysicsSubstep()
 	{
-		// normalize the angle (interpolation safe)
 		toNormalRelativeAngle();
 		super.onBeforePhysicsSubstep();
 	}
