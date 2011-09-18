@@ -26,16 +26,13 @@ import com.bitfire.uracer.utils.Convert;
 
 public class CarTestScreen extends Screen
 {
-	private Car car = null, other = null;
+	private Car car = null;
 	private GhostCar ghost = null;
 	private Level level;
 
 	// test
 	// private TestTilemap tm;
 	private Vector2 carStartPos = new Vector2();
-	private Vector2 otherStartPos = new Vector2();
-	// private Vector2 replayCarStartPos = new Vector2();
-	// private float replayCarStartOrient;
 	private RadialBlur rb;
 
 	private Recorder recorder;
@@ -55,7 +52,6 @@ public class CarTestScreen extends Screen
 		Director.setPositionPx( Director.positionFor( new Vector2(0,0)), false );
 
 		carStartPos.set( Convert.tileToPx( 1, 0 ).add( Convert.scaledPixels( 112, -112 ) ) );
-		otherStartPos.set( Convert.tileToPx( 3, 0 ).add( Convert.scaledPixels( 112, -112 ) ) );
 
 		CarModel m = new CarModel();
 		car = CarFactory.createPlayer( CarType.OldSkool, m.toModel2(), carStartPos, 90 );
@@ -92,12 +88,6 @@ public class CarTestScreen extends Screen
 				car.setTransform( carStartPos, 90f );
 				recorder.clear();
 				recorder.beginRec( car );
-			}
-
-			if(other!=null)
-			{
-				other.resetPhysics();
-				other.setTransform( otherStartPos, 90f );
 			}
 		}
 		else
