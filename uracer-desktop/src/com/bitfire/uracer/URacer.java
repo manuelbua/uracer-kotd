@@ -54,8 +54,7 @@ public class URacer implements ApplicationListener
 			while( timeAccumSecs > Physics.dt )
 			{
 				input.tick();
-				screen.tick( /* input */);
-
+				screen.tick();
 				timeAccumSecs -= Physics.dt;
 			}
 
@@ -72,11 +71,9 @@ public class URacer implements ApplicationListener
 		temporalAliasing = timeAccumSecs * Config.PhysicsTimestepHz;
 		aliasingTime = temporalAliasing;
 
-		screen.beforeRender( temporalAliasing );
-
 		startTime = System.nanoTime();
 		{
-			screen.render( temporalAliasing );
+			screen.render();
 
 			// simulate slowness
 //			try { Thread.sleep( 32 ); } catch( InterruptedException e ) {}

@@ -35,7 +35,7 @@ public class GameScreen extends Screen
 
 
 	@Override
-	public void render(float timeAliasingFactor)
+	public void render()
 	{
 		GL20 gl = Gdx.graphics.getGL20();
 
@@ -47,7 +47,6 @@ public class GameScreen extends Screen
 		int h = Gdx.graphics.getHeight();
 		Debug.drawString( "FPS: " + Gdx.graphics.getFramesPerSecond(), 5, h-30 );
 		Debug.drawString( "dt: " + Gdx.graphics.getDeltaTime(), 5, h-23 );
-		Debug.drawString( "ta: " + timeAliasingFactor, 5, h-16 );
 
 		Debug.drawString( "[touch] x = " + Input.getX(), 0, 135 );
 		Debug.drawString( "[touch] y = " + Input.getY(), 0, 142 );

@@ -100,7 +100,7 @@ public class Director
 		boundsPx.y = Director.worldSizeScaledPx.y - halfViewport.y;
 
 		// construct level objects from tmx definitions
-		level.init();
+		level.construct();
 
 		currentLevel = level;
 		gameplaySettings = playSettings;

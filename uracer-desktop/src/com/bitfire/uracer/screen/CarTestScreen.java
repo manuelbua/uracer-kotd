@@ -10,18 +10,14 @@ import com.bitfire.uracer.GameDifficulty;
 import com.bitfire.uracer.GameplaySettings;
 import com.bitfire.uracer.Input;
 import com.bitfire.uracer.Physics;
+import com.bitfire.uracer.URacer;
 import com.bitfire.uracer.debug.Debug;
 import com.bitfire.uracer.entities.EntityManager;
 import com.bitfire.uracer.entities.vehicles.Car;
 import com.bitfire.uracer.entities.vehicles.GhostCar;
-import com.bitfire.uracer.factories.CarFactory;
-import com.bitfire.uracer.factories.CarFactory.CarType;
-import com.bitfire.uracer.factories.ModelFactory;
 import com.bitfire.uracer.hud.Messager;
 import com.bitfire.uracer.postprocessing.PostProcessor;
 import com.bitfire.uracer.postprocessing.effects.RadialBlur;
-import com.bitfire.uracer.simulations.car.CarModel;
-import com.bitfire.uracer.simulations.car.Recorder;
 import com.bitfire.uracer.simulations.car.Replay;
 import com.bitfire.uracer.tiled.Level;
 import com.bitfire.uracer.utils.Convert;
@@ -32,18 +28,17 @@ public class CarTestScreen extends Screen
 	private GhostCar ghost = null;
 	private Level level;
 
-	private Vector2 carStartPos = new Vector2();
 	private RadialBlur rb;
 
-	private Recorder recorder;
+//	private Recorder recorder;
 	private Replay[] replays;
 	private boolean isFirstLap = true;
 
 	public CarTestScreen()
 	{
-		recorder = Recorder.create();
-		EntityManager.create();
-		ModelFactory.init();
+//		recorder = Recorder.create();
+//		EntityManager.create();
+//		ModelFactory.init();
 
 		Director.create( this, Gdx.graphics.getWidth(), Gdx.graphics.getHeight() );
 
@@ -51,11 +46,8 @@ public class CarTestScreen extends Screen
 		level = Director.loadLevel( "level1", gs );
 		Director.setPositionPx( Director.positionFor( new Vector2(0,0)), false );
 
-		carStartPos.set( Convert.tileToPx( 1, 0 ).add( Convert.scaledPixels( 112, -112 ) ) );
-
-		CarModel m = new CarModel();
-		player = CarFactory.createPlayer( CarType.OldSkool, m.toModel2(), carStartPos, 90 );
-		ghost = CarFactory.createGhost( player );
+		player = level.getPlayer();
+		ghost = level.getGhost();
 
 		// replay buffers
 		replays = new Replay[2];
@@ -89,40 +81,20 @@ public class CarTestScreen extends Screen
 		{
 			if(player != null )
 			{
-				player.resetPhysics();
-				player.setTransform( carStartPos, 90f );
-
-				ghost.setReplay( null );
+				level.reset();
+				Messager.reset();
 
 				replays[0].clearForces();
 				replays[1].clearForces();
-				recorder.reset();
+				lastLapId = 0;
+
 				lastCarTileAt.set( -1, -1 );
 				carTileAt.set( lastCarTileAt );
 				isFirstLap = true;
 			}
 		}
-//		else
-//		if( Input.isOn( Keys.Q ))
-//		{
-//			// start recording
-//			recorder.clear();
-//			recorder.beginRec( car );
-//			System.out.println("------------------- RECORDING");
-//		}
-//		else
-//		if( Input.isOn( Keys.W ))
-//		{
-//			if(recorder.isRecording())
-//			{
-//				recorder.endRec();
-//				System.out.println("-----------------------------");
-//			}
-//
-//			recorder.beginPlay( ghost );
-//		}
 
-		EntityManager.raiseOnTick();
+		level.tick();
 
 		//
 		// ubersimple events dispatcher
@@ -161,25 +133,24 @@ public class CarTestScreen extends Screen
 			if( isFirstLap )
 			{
 				isFirstLap = false;
-				System.out.println("Recording began");
-				recorder.beginRecording( player, replays[0] );
+				level.beginRecording( replays[0] );
 				lastLapId = replays[0].id;
 
-				Messager.add( "Go!", 2f );
+				Messager.add( "WARM  UP  LAP", 5f );
 			} else
 			{
-				recorder.endRecording();
+				level.endRecording();
 
 				// replay best, overwrite worst logic
 
 				if(replays[0].isValid && !replays[1].isValid)
 				{
 					// only one single replay
-					recorder.beginRecording( player, replays[1] );
+					level.beginRecording( replays[1] );
 					lastLapId = replays[1].id;
 
 					ghost.setReplay( replays[0] );
-					Messager.add( "That was simple...", 1f );
+					Messager.add( "GO!  GO!  GO!", 5f );
 				}
 				else
 				if( replays[0].isValid && replays[1].isValid )
@@ -194,15 +165,15 @@ public class CarTestScreen extends Screen
 
 					if(lastLapId == best.id)
 					{
-						Messager.add( "THAT  WAS  FAST!\n -" + String.format("%.2f", worst.trackTimeSeconds-best.trackTimeSeconds) + " seconds!", 1.5f );
+						Messager.add( "THAT   WAS   FAST!\n -" + String.format("%.2f", worst.trackTimeSeconds-best.trackTimeSeconds) + " seconds!", 5f );
 					}
 					else
 					{
-						Messager.add( "YOU LOST!\nYou were " + String.format("%.2f",worst.trackTimeSeconds-best.trackTimeSeconds) + " seconds slower!", 2f );
+						Messager.add( "YOU   LOST!\nYou were " + String.format("%.2f",worst.trackTimeSeconds-best.trackTimeSeconds) + " seconds slower!", 5f );
 					}
 
 					ghost.setReplay( best );
-					recorder.beginRecording( player, worst );
+					level.beginRecording( worst );
 
 					lastLapId = worst.id;
 				}
@@ -210,42 +181,29 @@ public class CarTestScreen extends Screen
 		}
 	}
 
-	@Override
-	public void beforeRender( float timeAliasingFactor )
-	{
-		EntityManager.raiseOnBeforeRender( timeAliasingFactor );
-	}
-
-	private void renderScene( GL20 gl, float temporalAliasingFactor )
-	{
-		gl.glClearDepthf( 1 );
-		gl.glClearColor( 0, 0, 0, 1 );
-		gl.glClear( GL20.GL_DEPTH_BUFFER_BIT | GL20.GL_COLOR_BUFFER_BIT );
-
-		level.syncWithCam( Director.getCamera() );
-		level.renderTilemap();
-		EntityManager.raiseOnRender( temporalAliasingFactor );
-		level.renderMeshes( gl );
-	}
 
 	@Override
-	public void render( float temporalAliasingFactor )
+	public void render()
 	{
 		GL20 gl = Gdx.graphics.getGL20();
+		EntityManager.raiseOnBeforeRender( URacer.getTemporalAliasing() );
 
 		// follow the car
 		if(player!=null)
+		{
+			// we'll do here since we could have the interpolated position
 			Director.setPositionPx( player.state().position, false );
+		}
 
 		if( Config.EnablePostProcessingFx )
 		{
 			PostProcessor.begin();
-			renderScene( gl, temporalAliasingFactor );
+			level.render();
 			PostProcessor.end();
 		} else
 		{
 			gl.glViewport( 0, 0, Gdx.graphics.getWidth(), Gdx.graphics.getHeight() );
-			renderScene( gl, temporalAliasingFactor );
+			level.render();
 		}
 
 		Messager.render();

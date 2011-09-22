@@ -58,6 +58,11 @@ public class Messager
 		return (current != null);
 	}
 
+	public static void reset()
+	{
+		messages.clear();
+	}
+
 	public static void add( String message, float durationSecs )
 	{
 		Message m = new Message( font, message, durationSecs );
