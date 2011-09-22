@@ -17,6 +17,7 @@ import com.bitfire.uracer.entities.vehicles.GhostCar;
 import com.bitfire.uracer.factories.CarFactory;
 import com.bitfire.uracer.factories.CarFactory.CarType;
 import com.bitfire.uracer.factories.ModelFactory;
+import com.bitfire.uracer.hud.Messager;
 import com.bitfire.uracer.postprocessing.PostProcessor;
 import com.bitfire.uracer.postprocessing.effects.RadialBlur;
 import com.bitfire.uracer.simulations.car.CarModel;
@@ -143,6 +144,7 @@ public class CarTestScreen extends Screen
 		}
 
 		Debug.update();
+		Messager.update();
 	}
 
 	// FIXME
@@ -150,6 +152,7 @@ public class CarTestScreen extends Screen
 	// this?
 	//
 
+	private long lastLapId = 0;
 	protected void onTileChanged( Vector2 carAt )
 	{
 		boolean onStartZone = (carAt.x == 1 && carAt.y == 0);
@@ -160,15 +163,23 @@ public class CarTestScreen extends Screen
 				isFirstLap = false;
 				System.out.println("Recording began");
 				recorder.beginRecording( player, replays[0] );
+				lastLapId = replays[0].id;
+
+				Messager.add( "Go!", 2f );
 			} else
 			{
 				recorder.endRecording();
 
 				// replay best, overwrite worst logic
+
 				if(replays[0].isValid && !replays[1].isValid)
 				{
+					// only one single replay
 					recorder.beginRecording( player, replays[1] );
+					lastLapId = replays[1].id;
+
 					ghost.setReplay( replays[0] );
+					Messager.add( "That was simple...", 1f );
 				}
 				else
 				if( replays[0].isValid && replays[1].isValid )
@@ -181,8 +192,19 @@ public class CarTestScreen extends Screen
 						worst = replays[1];
 					}
 
+					if(lastLapId == best.id)
+					{
+						Messager.add( "THAT  WAS  FAST!\n -" + String.format("%.2f", worst.trackTimeSeconds-best.trackTimeSeconds) + " seconds!", 1.5f );
+					}
+					else
+					{
+						Messager.add( "YOU LOST!\nYou were " + String.format("%.2f",worst.trackTimeSeconds-best.trackTimeSeconds) + " seconds slower!", 2f );
+					}
+
 					ghost.setReplay( best );
 					recorder.beginRecording( player, worst );
+
+					lastLapId = worst.id;
 				}
 			}
 		}
@@ -225,6 +247,8 @@ public class CarTestScreen extends Screen
 			gl.glViewport( 0, 0, Gdx.graphics.getWidth(), Gdx.graphics.getHeight() );
 			renderScene( gl, temporalAliasingFactor );
 		}
+
+		Messager.render();
 
 		//
 		// debug

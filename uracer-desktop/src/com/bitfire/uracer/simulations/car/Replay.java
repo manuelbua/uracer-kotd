@@ -6,6 +6,7 @@ import com.badlogic.gdx.math.Vector2;
 import com.bitfire.uracer.GameDifficulty;
 import com.bitfire.uracer.entities.vehicles.Car;
 import com.bitfire.uracer.factories.CarFactory.CarType;
+import com.bitfire.uracer.utils.Hash;
 
 /**
  * Represents replay data to be feed to a GhostCar, the replay player.
@@ -31,6 +32,7 @@ public class Replay
 	public float trackTimeSeconds = 0;
 	public ArrayList<CarForces> forces = null;
 	public boolean isValid = false;
+	public long id;
 
 	public Replay()
 	{
@@ -40,6 +42,9 @@ public class Replay
 		{
 			forces.add( new CarForces() );
 		}
+
+		Long num = (System.currentTimeMillis() + (int)(Math.random() * 100000));
+		id = Hash.RSHash( num.toString() );
 	}
 
 	public void dispose()
