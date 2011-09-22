@@ -25,6 +25,7 @@ public class Art
 	public static Texture meshTower;
 
 	public static Texture trackWall;
+	public static TextureAtlas fonts;
 
 	public static void load()
 	{
@@ -44,6 +45,9 @@ public class Art
 		// no mip-mapping
 //		hqCars = new TextureRegion( new Texture(Gdx.files.internal("data/base/hqcars.png")), 0, 0, 420, 424 );
 		carAmbientOcclusion = new TextureRegion( new Texture(Gdx.files.internal("data/base/car-ao.png")), 0, 0, 34, 62 );
+
+		// fonts
+		fonts = new TextureAtlas( "data/base/font/pack" );
 	}
 
 	private static TextureRegion[][] split( String name, int width, int height )
@@ -106,5 +110,6 @@ public class Art
 		meshTower.dispose();
 
 		trackWall.dispose();
+		fonts.dispose();
 	}
 }
