@@ -8,7 +8,7 @@ import com.bitfire.uracer.entities.vehicles.Car;
 import com.bitfire.uracer.factories.CarFactory.CarType;
 
 /**
- * Represents replay data to be feed to a Replayer, the replay player.
+ * Represents replay data to be feed to a GhostCar, the replay player.
  *
  * @author manuel
  *

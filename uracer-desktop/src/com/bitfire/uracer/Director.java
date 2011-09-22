@@ -1,6 +1,7 @@
 package com.bitfire.uracer;
 
 import com.badlogic.gdx.graphics.OrthographicCamera;
+import com.badlogic.gdx.graphics.glutils.ShaderProgram;
 import com.badlogic.gdx.math.MathUtils;
 import com.badlogic.gdx.math.Matrix4;
 import com.badlogic.gdx.math.Rectangle;
@@ -30,6 +31,8 @@ public class Director
 
 	public static void init()
 	{
+		ShaderProgram.pedantic = false;
+
 		worldSizeScaledPx = new Vector2();
 		worldSizeScaledMt = new Vector2();
 		screenPosFor = new Vector2();

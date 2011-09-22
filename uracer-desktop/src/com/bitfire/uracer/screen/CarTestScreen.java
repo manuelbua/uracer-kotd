@@ -3,7 +3,6 @@ package com.bitfire.uracer.screen;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Input.Keys;
 import com.badlogic.gdx.graphics.GL20;
-import com.badlogic.gdx.graphics.glutils.ShaderProgram;
 import com.badlogic.gdx.math.Vector2;
 import com.bitfire.uracer.Config;
 import com.bitfire.uracer.Director;
@@ -41,8 +40,6 @@ public class CarTestScreen extends Screen
 
 	public CarTestScreen()
 	{
-		ShaderProgram.pedantic = false;
-
 		recorder = Recorder.create();
 		EntityManager.create();
 		ModelFactory.init();
