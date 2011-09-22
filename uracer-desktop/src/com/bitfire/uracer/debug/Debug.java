@@ -51,7 +51,9 @@ public class Debug
 		frameStart = System.nanoTime();
 
 		// compute graphics stats size
-		gfxStats = new Stats();
+		float updateHz = 0.2f;
+		if( !Config.isDesktop ) updateHz = 1f;
+		gfxStats = new Stats( updateHz );
 
 		spriteBatch = new SpriteBatch(1000);
 

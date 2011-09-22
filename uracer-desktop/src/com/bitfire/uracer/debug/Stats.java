@@ -7,7 +7,6 @@ import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.Texture.TextureFilter;
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
 import com.bitfire.uracer.URacer;
-import com.bitfire.uracer.utils.AMath;
 
 public class Stats
 {
@@ -27,25 +26,30 @@ public class Stats
 	private float[] dataRenderTime;
 	private float[] dataFps;
 	private float[] dataPhysicsTime;
-	private float[] dataTimeAliasing;
+//	private float[] dataTimeAliasing;
 
 	public Stats()
 	{
-		init( 100, 50 );
+		init( 100, 50, 0.2f );
 	}
 
-	public Stats( int width, int height )
+	public Stats( int width, int height, float updateHz )
 	{
-		init( width, height );
+		init( width, height, updateHz );
 	}
 
-	private void init( int width, int height )
+	public Stats( float updateHz )
+	{
+		init( 100, 50, updateHz );
+	}
+
+	private void init( int width, int height, float updateHz )
 	{
 		assert( width < 256 && height < 256 );
 
 		PanelWidth = width;
 		PanelHeight = height;
-		intervalNs = (long)(1000000000L * 0.2f);
+		intervalNs = (long)(1000000000L * updateHz);
 
 		pixels = new Pixmap( PanelWidth, PanelHeight, Format.RGBA8888 );
 		texture = new Texture( 256, 256, Format.RGBA8888 );
@@ -56,7 +60,7 @@ public class Stats
 		dataRenderTime = new float[ PanelWidth ];
 		dataFps = new float[ PanelWidth ];
 		dataPhysicsTime = new float[ PanelWidth ];
-		dataTimeAliasing = new float[ PanelWidth ];
+//		dataTimeAliasing = new float[ PanelWidth ];
 
 		reset();
 	}
@@ -74,7 +78,7 @@ public class Stats
 			dataRenderTime[i] = 0;
 			dataPhysicsTime[i] = 0;
 			dataFps[i] = 0;
-			dataTimeAliasing[i] = 0;
+//			dataTimeAliasing[i] = 0;
 		}
 
 		plot();
@@ -143,12 +147,12 @@ public class Stats
 			}
 
 			// time aliasing
-			value = (int)( AMath.clamp(dataTimeAliasing[x] * PanelHeight, 0, PanelHeight) );
-			if( value > 0 )
-			{
-				pixels.setColor( 1, 0, 1, .8f );
-				pixels.drawPixel( xc, value );
-			}
+//			value = (int)( AMath.clamp(dataTimeAliasing[x] * PanelHeight, 0, PanelHeight) );
+//			if( value > 0 )
+//			{
+//				pixels.setColor( 1, 0, 1, .8f );
+//				pixels.drawPixel( xc, value );
+//			}
 		}
 
 		texture.draw( pixels, 0, 0 );
@@ -166,13 +170,13 @@ public class Stats
 				dataRenderTime[i] = dataRenderTime[i - 1];
 				dataPhysicsTime[i] = dataPhysicsTime[i - 1];
 				dataFps[i] = dataFps[i - 1];
-				dataTimeAliasing[i] = dataTimeAliasing[i-1];
+//				dataTimeAliasing[i] = dataTimeAliasing[i-1];
 			}
 
 			dataPhysicsTime[0] = URacer.getPhysicsTime();
 			dataRenderTime[0] = URacer.getRenderTime();
 			dataFps[0] = Gdx.graphics.getFramesPerSecond();
-			dataTimeAliasing[0] = URacer.getTemporalAliasing();
+//			dataTimeAliasing[0] = URacer.getTemporalAliasing();
 
 			startTime = time;
 
