@@ -4,6 +4,7 @@ import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.Pixmap.Format;
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.Texture.TextureFilter;
+import com.badlogic.gdx.graphics.g2d.BitmapFont;
 import com.badlogic.gdx.graphics.g2d.TextureAtlas;
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
 
@@ -27,6 +28,9 @@ public class Art
 	public static Texture trackWall;
 	public static TextureAtlas fonts;
 
+	// fonts
+	public static BitmapFont fontCurse;
+
 	public static void load()
 	{
 //		titleScreen = load( "data/base/titlescreen.png", 480, 320 );
@@ -48,6 +52,7 @@ public class Art
 
 		// fonts
 		fonts = new TextureAtlas( "data/base/font/pack" );
+		fontCurse = new BitmapFont( Gdx.files.internal( "data/base/font/curse.fnt" ), Art.fonts.findRegion( "curse" ), true );
 	}
 
 	private static TextureRegion[][] split( String name, int width, int height )
