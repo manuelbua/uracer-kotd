@@ -9,13 +9,14 @@ import com.bitfire.uracer.Director;
 import com.bitfire.uracer.GameDifficulty;
 import com.bitfire.uracer.GameplaySettings;
 import com.bitfire.uracer.Input;
+import com.bitfire.uracer.Lap;
 import com.bitfire.uracer.Physics;
 import com.bitfire.uracer.URacer;
 import com.bitfire.uracer.debug.Debug;
 import com.bitfire.uracer.entities.EntityManager;
 import com.bitfire.uracer.entities.vehicles.Car;
 import com.bitfire.uracer.entities.vehicles.GhostCar;
-import com.bitfire.uracer.hud.Messager;
+import com.bitfire.uracer.hud.Hud;
 import com.bitfire.uracer.postprocessing.PostProcessor;
 import com.bitfire.uracer.postprocessing.effects.RadialBlur;
 import com.bitfire.uracer.simulations.car.Replay;
@@ -27,30 +28,36 @@ public class CarTestScreen extends Screen
 	private Car player = null;
 	private GhostCar ghost = null;
 	private Level level;
+	private Hud hud;
+	private Lap lap;
 
 	private RadialBlur rb;
 
-//	private Recorder recorder;
+	// private Recorder recorder;
 	private Replay[] replays;
 	private boolean isFirstLap = true;
 
 	public CarTestScreen()
 	{
-//		recorder = Recorder.create();
-//		EntityManager.create();
-//		ModelFactory.init();
+		// recorder = Recorder.create();
+		// EntityManager.create();
+		// ModelFactory.init();
 
 		Director.create( this, Gdx.graphics.getWidth(), Gdx.graphics.getHeight() );
 
 		GameplaySettings gs = GameplaySettings.create( GameDifficulty.Easy );
 		level = Director.loadLevel( "level1", gs );
-		Director.setPositionPx( Director.positionFor( new Vector2(0,0)), false );
+		Director.setPositionPx( Director.positionFor( new Vector2( 0, 0 ) ), false );
+
+		lap = new Lap();
+		hud = new Hud();
+		hud.setLap( lap );
 
 		player = level.getPlayer();
 		ghost = level.getGhost();
 
 		// replay buffers
-		replays = new Replay[2];
+		replays = new Replay[ 2 ];
 		replays[0] = new Replay();
 		replays[1] = new Replay();
 
@@ -59,7 +66,7 @@ public class CarTestScreen extends Screen
 			rb = new RadialBlur();
 			rb.setEnabled( true );
 			PostProcessor.init( Gdx.graphics.getWidth(), Gdx.graphics.getHeight() );
-//			PostProcessor.init( 512, 512 );
+			// PostProcessor.init( 512, 512 );
 			PostProcessor.setEffect( rb );
 		}
 	}
@@ -79,10 +86,10 @@ public class CarTestScreen extends Screen
 	{
 		if( Input.isOn( Keys.R ) )
 		{
-			if(player != null )
+			if( player != null )
 			{
 				level.reset();
-				Messager.reset();
+				hud.reset();
 
 				replays[0].clearForces();
 				replays[1].clearForces();
@@ -95,11 +102,13 @@ public class CarTestScreen extends Screen
 		}
 
 		level.tick();
+		hud.tick();
+		Debug.update();
 
 		//
 		// ubersimple events dispatcher
 		//
-		if(player!=null)
+		if( player != null )
 		{
 			lastCarTileAt.set( carTileAt );
 			carTileAt.set( Convert.pxToTile( player.pos().x, player.pos().y ) );
@@ -114,9 +123,6 @@ public class CarTestScreen extends Screen
 				rb.setOrigin( Director.screenPosFor( player.getBody() ) );
 			}
 		}
-
-		Debug.update();
-		Messager.update();
 	}
 
 	// FIXME
@@ -125,6 +131,7 @@ public class CarTestScreen extends Screen
 	//
 
 	private long lastLapId = 0;
+
 	protected void onTileChanged( Vector2 carAt )
 	{
 		boolean onStartZone = (carAt.x == 1 && carAt.y == 0);
@@ -133,27 +140,28 @@ public class CarTestScreen extends Screen
 			if( isFirstLap )
 			{
 				isFirstLap = false;
-				level.beginRecording( replays[0] );
+
+				lap.start();
+				level.beginRecording( replays[0], lap );
 				lastLapId = replays[0].id;
 
-				Messager.add( "WARM  UP  LAP", 5f );
+				hud.showMessage( "WARM  UP  LAP", 5f );
 			} else
 			{
 				level.endRecording();
 
 				// replay best, overwrite worst logic
 
-				if(replays[0].isValid && !replays[1].isValid)
+				if( replays[0].isValid && !replays[1].isValid )
 				{
 					// only one single replay
-					level.beginRecording( replays[1] );
+					lap.start();
+					level.beginRecording( replays[1], lap );
 					lastLapId = replays[1].id;
 
 					ghost.setReplay( replays[0] );
-					Messager.add( "GO!  GO!  GO!", 5f );
-				}
-				else
-				if( replays[0].isValid && replays[1].isValid )
+					hud.showMessage( "GO!  GO!  GO!", 5f );
+				} else if( replays[0].isValid && replays[1].isValid )
 				{
 					// both valid, replay best, overwrite worst
 					Replay best = replays[1], worst = replays[0];
@@ -163,24 +171,28 @@ public class CarTestScreen extends Screen
 						worst = replays[1];
 					}
 
-					if(lastLapId == best.id)
+					if( lastLapId == best.id )
 					{
-						Messager.add( "THAT   WAS   FAST!\n -" + String.format("%.2f", worst.trackTimeSeconds-best.trackTimeSeconds) + " seconds!", 5f );
-					}
-					else
+						hud.showMessage(
+								"THAT   WAS   FAST!\n -" + String.format( "%.2f", worst.trackTimeSeconds - best.trackTimeSeconds )
+										+ " seconds!", 5f );
+					} else
 					{
-						Messager.add( "YOU   LOST!\nYou were " + String.format("%.2f",worst.trackTimeSeconds-best.trackTimeSeconds) + " seconds slower!", 5f );
+						hud.showMessage(
+								"YOU   LOST!\nYou were " + String.format( "%.2f", worst.trackTimeSeconds - best.trackTimeSeconds )
+										+ " seconds slower!", 5f );
 					}
 
 					ghost.setReplay( best );
-					level.beginRecording( worst );
+
+					lap.start();
+					level.beginRecording( worst, lap );
 
 					lastLapId = worst.id;
 				}
 			}
 		}
 	}
-
 
 	@Override
 	public void render()
@@ -189,7 +201,7 @@ public class CarTestScreen extends Screen
 		EntityManager.raiseOnBeforeRender( URacer.getTemporalAliasing() );
 
 		// follow the car
-		if(player!=null)
+		if( player != null )
 		{
 			// we'll do here since we could have the interpolated position
 			Director.setPositionPx( player.state().position, false );
@@ -206,7 +218,7 @@ public class CarTestScreen extends Screen
 			level.render();
 		}
 
-		Messager.render();
+		hud.render();
 
 		//
 		// debug
@@ -217,10 +229,13 @@ public class CarTestScreen extends Screen
 		Debug.begin();
 		EntityManager.raiseOnDebug();
 		Debug.renderVersionInfo();
-		Debug.renderGraphicalStats( Gdx.graphics.getWidth() - Debug.getStatsWidth(), Gdx.graphics.getHeight() - Debug.getStatsHeight() - Debug.fontHeight );
+		Debug.renderGraphicalStats( Gdx.graphics.getWidth() - Debug.getStatsWidth(),
+				Gdx.graphics.getHeight() - Debug.getStatsHeight() - Debug.fontHeight );
 		if( Config.isDesktop ) Debug.renderMemoryUsage();
-//		Debug.drawString( "EMgr::maxSpritesInBatch = " + EntityManager.maxSpritesInBatch(), 0, 6 );
-//		Debug.drawString( "EMgr::renderCalls = " + EntityManager.renderCalls(), 0, 12 );
+		// Debug.drawString( "EMgr::maxSpritesInBatch = " +
+		// EntityManager.maxSpritesInBatch(), 0, 6 );
+		// Debug.drawString( "EMgr::renderCalls = " +
+		// EntityManager.renderCalls(), 0, 12 );
 		Debug.end();
 	}
 }

@@ -7,27 +7,21 @@ import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.g2d.BitmapFont;
 import com.badlogic.gdx.graphics.g2d.BitmapFont.HAlignment;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
-import com.badlogic.gdx.math.Matrix4;
 import com.bitfire.uracer.Art;
 
 public class Messager
 {
 	// data
-	private static Queue<Message> messages;
-	private static Message current;
+	private Queue<Message> messages;
+	private Message current;
 
 	// font
-	private static BitmapFont font;
-	private static SpriteBatch batch;
-	private static int halfWidth;
-	private static int quarterWidth;
-	private static int screenHeight;
+	private BitmapFont font;
+	private int halfWidth;
+	private int quarterWidth;
+	private int screenHeight;
 
 	protected Messager()
-	{
-	}
-
-	public static void init()
 	{
 		current = null;
 		messages = new LinkedList<Message>();
@@ -35,48 +29,43 @@ public class Messager
 		quarterWidth = halfWidth / 2;
 		screenHeight = Gdx.graphics.getHeight();
 
-		// setup sprite batch
-		batch = new SpriteBatch( 100, 5 );
-
-		// y-flip
-		Matrix4 proj = new Matrix4();
-		proj.setToOrtho( 0, Gdx.graphics.getWidth(), Gdx.graphics.getHeight(), 0, 0, 10 );
-		batch.setProjectionMatrix( proj );
-
 		// load font
-		font = new BitmapFont( Gdx.files.internal( "data/base/font/curse.fnt" ), Art.fonts.findRegion( "curse" ), true );
+		font = Art.fontCurse;
 	}
 
-	public static void dispose()
+	public void dispose()
 	{
-		font.dispose();
-		batch.dispose();
+		reset();
 	}
 
-	public static boolean isBusy()
+	public boolean isBusy()
 	{
 		return (current != null);
 	}
 
-	public static void reset()
+	public void reset()
 	{
 		messages.clear();
+		current = null;
 	}
 
-	public static void add( String message, float durationSecs )
+	public void add( String message, float durationSecs )
 	{
 		Message m = new Message( font, message, durationSecs );
 		messages.add( m );
 	}
 
-	public static void update()
+	public void update()
 	{
 		// any message?
 		if( !isBusy() && (messages.peek() != null) )
 		{
-			// schedule this message to be processed the next tick
+			// schedule this message to be processed next
 			current = messages.remove();
-		} else if( isBusy() )
+		}
+
+		// busy or became busy?
+		if( isBusy() )
 		{
 			// start message if needed
 			if( !current.started )
@@ -97,24 +86,21 @@ public class Messager
 		}
 	}
 
-	public static void render()
+	public void render(SpriteBatch batch)
 	{
 		if( isBusy() )
 		{
-			batch.begin();
-
-			font.drawMultiLine( batch, current.what, quarterWidth, screenHeight - current.boundsHeight - 30, halfWidth, HAlignment.CENTER );
-
-			batch.end();
+			font.drawMultiLine( batch, current.what, quarterWidth, screenHeight - current.boundsHeight - 30 * font.getScaleX(),
+					halfWidth, HAlignment.CENTER );
 		}
 	}
 
-	private static void show( Message m )
+	private void show( Message m )
 	{
 		System.out.println( "Showing '" + m.what + "', started at " + m.startMs );
 	}
 
-	private static void hide( Message m )
+	private void hide( Message m )
 	{
 		System.out.println( "Hiding '" + m.what + "', at " + System.currentTimeMillis() + ", after "
 				+ (System.currentTimeMillis() - m.startMs) );

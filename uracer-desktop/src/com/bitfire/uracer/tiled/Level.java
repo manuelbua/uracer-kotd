@@ -15,6 +15,7 @@ import com.badlogic.gdx.graphics.g2d.tiled.TiledObject;
 import com.badlogic.gdx.graphics.g2d.tiled.TiledObjectGroup;
 import com.badlogic.gdx.math.Vector2;
 import com.bitfire.uracer.Director;
+import com.bitfire.uracer.Lap;
 import com.bitfire.uracer.URacer;
 import com.bitfire.uracer.entities.EntityManager;
 import com.bitfire.uracer.entities.vehicles.Car;
@@ -108,6 +109,7 @@ public class Level
 			OrthographicAlignedStillModel model = staticMeshes.get( i );
 			model.dispose();
 		}
+
 	}
 
 	public void syncWithCam( OrthographicCamera orthoCam )
@@ -216,7 +218,7 @@ public class Level
 
 	private void createEntities()
 	{
-		// TODO: read positions from from tmx
+		// TODO: read positions from tmx
 		playerStartPos.set( Convert.tileToPx( 1, 0 ).add( Convert.scaledPixels( 112, -112 ) ) );
 		playerStartOrient = 90f;
 
@@ -229,9 +231,9 @@ public class Level
 	 * Game / game logic
 	 */
 
-	public void beginRecording( Replay outputBuffer )
+	public void beginRecording( Replay outputBuffer, Lap lap )
 	{
-		recorder.beginRecording( player, outputBuffer );
+		recorder.beginRecording( player, outputBuffer, lap );
 	}
 
 	public void endRecording()
