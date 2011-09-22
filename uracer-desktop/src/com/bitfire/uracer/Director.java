@@ -9,6 +9,7 @@ import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.math.Vector3;
 import com.badlogic.gdx.physics.box2d.Body;
 import com.bitfire.uracer.factories.Box2DFactory;
+import com.bitfire.uracer.hud.Messager;
 import com.bitfire.uracer.screen.Screen;
 import com.bitfire.uracer.tiled.Level;
 import com.bitfire.uracer.tiled.ScalingStrategy;
@@ -55,7 +56,9 @@ public class Director
 //		System.out.println("ppm=" + Config.PixelsPerMeter);
 
 		Physics.create( new Vector2( 0, 0 ), false );
+
 		Box2DFactory.init();
+		Messager.init();
 	}
 
 	public static void create( Screen parent, int widthPx, int heightPx )
@@ -74,6 +77,7 @@ public class Director
 		}
 
 		Physics.dispose();
+		Messager.dispose();
 	}
 
 	public static Level loadLevel(String levelName, GameplaySettings playSettings)
