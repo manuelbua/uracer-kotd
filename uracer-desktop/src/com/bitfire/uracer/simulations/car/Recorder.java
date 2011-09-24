@@ -36,13 +36,13 @@ public class Recorder
 		replay = null;
 	}
 
-	public void beginRecording( Car car, Replay replay, long startTime )
+	public void beginRecording( Car car, Replay replay, long startTimeNs )
 	{
 		isRecording = true;
 		this.replay = replay;
 		replay.clearForces();
 		replay.setCarData( car );
-		trackNanoseconds = startTime;
+		trackNanoseconds = startTimeNs;
 	}
 
 	public void add( CarForces f )

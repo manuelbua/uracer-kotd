@@ -55,6 +55,7 @@ public class Replay
 	public void clearForces()
 	{
 		eventsCount = 0;
+		isValid = false;
 	}
 
 	public void setCarData( Car car )

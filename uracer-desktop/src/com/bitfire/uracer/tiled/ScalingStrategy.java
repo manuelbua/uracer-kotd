@@ -62,7 +62,7 @@ public class ScalingStrategy
 		hFovScalingFactor = hFovToScalingFactor();
 		meshScaleFactor *= hFovScalingFactor;
 
-		System.out.println( "vfov=" + verticalFov + ", hfov=" + desiredHorizontalFov + ", msf=" + meshScaleFactor + ", tmzf=" + tileMapZoomFactor );
+//		System.out.println( "vfov=" + verticalFov + ", hfov=" + desiredHorizontalFov + ", msf=" + meshScaleFactor + ", tmzf=" + tileMapZoomFactor );
 	}
 
 	// http://rjdown.co.uk/projects/bfbc2/fovcalculator.php

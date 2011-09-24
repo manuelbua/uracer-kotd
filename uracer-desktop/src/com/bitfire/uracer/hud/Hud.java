@@ -4,19 +4,21 @@ import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.math.Matrix4;
 import com.bitfire.uracer.Art;
-import com.bitfire.uracer.Lap;
+import com.bitfire.uracer.GameLogic;
 
 public class Hud
 {
+	private GameLogic logic;
 	private SpriteBatch textBatch;
-	private Messager msg;
-	private Lap lap;
+	private static Messager msg;
 
 	private int lapTimeX = 0;
 	private String lapTimeFormat = "%.04fs";
 
-	public Hud()
+	public Hud(GameLogic logic)
 	{
+		this.logic = logic;
+
 		// setup sprite batch
 		textBatch = new SpriteBatch( 1000, 10 );
 
@@ -47,11 +49,6 @@ public class Hud
 		msg.update();
 	}
 
-	public void setLap(Lap lap)
-	{
-		this.lap = lap;
-	}
-
 	public void render()
 	{
 		textBatch.begin();
@@ -65,10 +62,10 @@ public class Hud
 	private void renderLapTime()
 	{
 		Art.fontCurse.draw( textBatch, "LAP TIME", lapTimeX - 5, 10 );
-		Art.fontCurse.draw( textBatch, String.format( "%.04fs", lap.getElapsedSeconds() ), lapTimeX, 55 );
+		Art.fontCurse.draw( textBatch, String.format( "%.04fs", logic.getLapInfo().getElapsedSeconds() ), lapTimeX, 55 );
 	}
 
-	public void showMessage( String message, float durationSecs )
+	public static void showMessage( String message, float durationSecs )
 	{
 		msg.add( message, durationSecs );
 	}

@@ -4,7 +4,7 @@ import com.badlogic.gdx.ApplicationListener;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.math.Vector2;
 import com.bitfire.uracer.debug.Debug;
-import com.bitfire.uracer.screen.CarTestScreen;
+import com.bitfire.uracer.screen.GameScreen;
 import com.bitfire.uracer.screen.Screen;
 import com.bitfire.uracer.utils.AMath;
 
@@ -40,8 +40,7 @@ public class URacer implements ApplicationListener
 		oneOnOneBillion = 1.0f / 1000000000.0f;
 		temporalAliasing = 0;
 
-		setScreen( new CarTestScreen() );
-//		setScreen( new GameScreen() );
+		setScreen( new GameScreen() );
 	}
 
 	@Override
