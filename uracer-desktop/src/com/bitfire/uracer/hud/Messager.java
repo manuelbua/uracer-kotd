@@ -12,6 +12,16 @@ import com.bitfire.uracer.Director;
 
 public class Messager
 {
+	public enum MessageType
+	{
+		Information, Bad, Good
+	}
+
+	public enum MessagePosition
+	{
+		Top, Middle, Bottom
+	}
+
 	// data
 	private Queue<Message> messages;
 	private Message current;
@@ -19,20 +29,15 @@ public class Messager
 	// font
 	private BitmapFont font;
 	private int halfWidth;
-	private int quarterWidth;
-	private int screenHeight;
 
 	protected Messager()
 	{
 		current = null;
 		messages = new LinkedList<Message>();
 		halfWidth = Gdx.graphics.getWidth() / 2;
-		quarterWidth = halfWidth / 2;
-		screenHeight = Gdx.graphics.getHeight();
 
-		// load font
-		font = Art.fontCurse;
-		font.setScale( Director.scalingStrategy.invTileMapZoomFactor );
+		// default font
+		font = Art.fontCurseYR;
 	}
 
 	public void dispose()
@@ -53,7 +58,24 @@ public class Messager
 
 	public void add( String message, float durationSecs )
 	{
-		Message m = new Message( font, message, durationSecs );
+		add( message, durationSecs, MessageType.Information, MessagePosition.Bottom );
+	}
+
+	public void add( String message, float durationSecs, MessageType type )
+	{
+		Message m = new Message( font, message, durationSecs, type, MessagePosition.Bottom );
+		messages.add( m );
+	}
+
+	public void add( String message, float durationSecs, MessagePosition position )
+	{
+		Message m = new Message( font, message, durationSecs, MessageType.Information, MessagePosition.Bottom );
+		messages.add( m );
+	}
+
+	public void add( String message, float durationSecs, MessageType type, MessagePosition position )
+	{
+		Message m = new Message( font, message, durationSecs, type, position );
 		messages.add( m );
 	}
 
@@ -88,12 +110,28 @@ public class Messager
 		}
 	}
 
-	public void render(SpriteBatch batch)
+	public void render( SpriteBatch batch )
 	{
 		if( isBusy() )
 		{
-			font.drawMultiLine( batch, current.what, quarterWidth, screenHeight - current.boundsHeight - 30 * font.getScaleX(),
-					halfWidth, HAlignment.CENTER );
+			switch( current.type )
+			{
+			default:
+			case Information:
+				font = Art.fontCurseYR;
+				break;
+
+			case Good:
+				font = Art.fontCurseG;
+				break;
+
+			case Bad:
+				font = Art.fontCurseR;
+				break;
+			}
+
+			font.setScale( Director.scalingStrategy.invTileMapZoomFactor );
+			font.drawMultiLine( batch, current.what, current.whereX, current.whereY, halfWidth, HAlignment.CENTER );
 		}
 	}
 

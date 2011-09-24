@@ -26,6 +26,8 @@ public class Game
 		level = Director.loadLevel( "level1", gs );
 		player = level.getPlayer();
 
+		Hud.init();
+
 		logic = new GameLogic( this );
 		hud = new Hud( logic );
 	}

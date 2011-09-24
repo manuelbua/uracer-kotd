@@ -6,6 +6,8 @@ import com.badlogic.gdx.math.Vector2;
 import com.bitfire.uracer.entities.vehicles.Car;
 import com.bitfire.uracer.entities.vehicles.GhostCar;
 import com.bitfire.uracer.hud.Hud;
+import com.bitfire.uracer.hud.Messager.MessagePosition;
+import com.bitfire.uracer.hud.Messager.MessageType;
 import com.bitfire.uracer.postprocessing.PostProcessor;
 import com.bitfire.uracer.postprocessing.effects.RadialBlur;
 import com.bitfire.uracer.simulations.car.Replay;
@@ -43,8 +45,6 @@ public class GameLogic
 		// lap info
 		lapInfo = new LapInfo();
 
-		reset();
-
 		// effects
 		if( Config.EnablePostProcessingFx )
 		{
@@ -54,6 +54,8 @@ public class GameLogic
 			// PostProcessor.init( 512, 512 );
 			PostProcessor.setEffect( rb );
 		}
+
+		reset();
 	}
 
 	public void tick()
@@ -115,7 +117,7 @@ public class GameLogic
 				lapInfo.setAsLast( null );
 				lastLapId = b0.id;
 
-				Hud.showMessage( "WARM  UP  LAP", 5f );
+				Hud.showMessage( "WARM  UP  LAP", 5f, MessageType.Information, MessagePosition.Top );
 			} else
 			{
 				level.endRecording();
@@ -131,7 +133,7 @@ public class GameLogic
 					lastLapId = b1.id;
 
 					ghost.setReplay( b0 );
-					Hud.showMessage( "GO!  GO!  GO!", 5f );
+					Hud.showMessage( "GO!  GO!  GO!", 5f, MessageType.Information, MessagePosition.Top );
 				} else
 				{
 					// both valid, replay best, overwrite worst
@@ -140,13 +142,13 @@ public class GameLogic
 					if( lastLapId == best.id )
 					{
 						Hud.showMessage(
-								"THAT   WAS   FAST!\n -" + String.format( "%.2f", worst.trackTimeSeconds - best.trackTimeSeconds )
-										+ " seconds!", 5f );
+								"-" + String.format( "%.2f", worst.trackTimeSeconds - best.trackTimeSeconds )
+										+ "\nseconds!", 5f, MessageType.Good, MessagePosition.Top );
 					} else
 					{
 						Hud.showMessage(
-								"YOU   LOST!\nYou were " + String.format( "%.2f", worst.trackTimeSeconds - best.trackTimeSeconds )
-										+ " seconds slower!", 5f );
+								"+" + String.format( "%.2f", worst.trackTimeSeconds - best.trackTimeSeconds )
+										+ "\nseconds", 5f, MessageType.Bad, MessagePosition.Top );
 					}
 
 					ghost.setReplay( best );
