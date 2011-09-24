@@ -251,7 +251,12 @@ public class Level
 		recorder.endRecording();
 	}
 
-	public void reset()
+	public void discardRecording()
+	{
+		recorder.reset();
+	}
+
+	public void restart()
 	{
 		player.resetPhysics();
 		player.setTransform( playerStartPos, playerStartOrient );

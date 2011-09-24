@@ -9,6 +9,7 @@ import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.math.Vector3;
 import com.badlogic.gdx.physics.box2d.Body;
 import com.bitfire.uracer.factories.Box2DFactory;
+import com.bitfire.uracer.game.GameplaySettings;
 import com.bitfire.uracer.tiled.Level;
 import com.bitfire.uracer.tiled.ScalingStrategy;
 import com.bitfire.uracer.utils.Convert;

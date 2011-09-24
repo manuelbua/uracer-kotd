@@ -43,6 +43,8 @@ public class LapInfo
 	public long restart()
 	{
 		startTimeNs = System.nanoTime();
+		if(!replays[0].isValid) replays[0].clearForces();
+		if(!replays[1].isValid) replays[1].clearForces();
 		return startTimeNs;
 	}
 
@@ -51,14 +53,19 @@ public class LapInfo
 		return replays[index];
 	}
 
-	public boolean hasReplayData()
+	public boolean hasAllReplayData()
 	{
 		return (replays[0].isValid && replays[1].isValid);
 	}
 
+	public boolean hasAnyReplayData()
+	{
+		return (replays[0].isValid || replays[1].isValid);
+	}
+
 	public void update()
 	{
-		if( !hasReplayData() )
+		if( !hasAllReplayData() )
 		{
 			return;
 		}

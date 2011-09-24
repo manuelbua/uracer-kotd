@@ -1,11 +1,10 @@
 package com.bitfire.uracer.hud;
 
 import com.badlogic.gdx.Gdx;
-import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.math.Matrix4;
 import com.bitfire.uracer.Art;
-import com.bitfire.uracer.GameLogic;
+import com.bitfire.uracer.game.logic.GameLogic;
 import com.bitfire.uracer.hud.Messager.MessagePosition;
 import com.bitfire.uracer.hud.Messager.MessageSize;
 import com.bitfire.uracer.hud.Messager.MessageType;
@@ -17,7 +16,6 @@ public class Hud
 	private SpriteBatch textBatch;
 
 	private static Messager msg;
-	private static Color colorBad, colorGood, defaultColor;
 
 	private int gridX = 0;
 	private int lapTimeX = 0;
@@ -42,9 +40,6 @@ public class Hud
 	public static void init()
 	{
 		msg = new Messager();
-		defaultColor = new Color( 1, 1, 1, 1 );
-		colorBad = new Color( 0.85f, 0.15f, 0.15f, 1 );
-		colorGood = new Color( 0.15f, 0.85f, 0.15f, 1 );
 	}
 
 	public void dispose()

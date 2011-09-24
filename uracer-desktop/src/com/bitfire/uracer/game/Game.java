@@ -1,19 +1,23 @@
-package com.bitfire.uracer;
+package com.bitfire.uracer.game;
 
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.GL20;
+import com.bitfire.uracer.Config;
+import com.bitfire.uracer.Director;
+import com.bitfire.uracer.URacer;
 import com.bitfire.uracer.debug.Debug;
 import com.bitfire.uracer.entities.EntityManager;
 import com.bitfire.uracer.entities.vehicles.Car;
+import com.bitfire.uracer.game.logic.GameLogic;
 import com.bitfire.uracer.hud.Hud;
 import com.bitfire.uracer.postprocessing.PostProcessor;
 import com.bitfire.uracer.tiled.Level;
 
 public class Game
 {
-	private Level level;
+	private Level level = null;
 	private Car player = null;
-	private Hud hud;
+	private Hud hud = null;
 
 	// logic
 	private GameLogic logic = null;
@@ -95,22 +99,17 @@ public class Game
 		return level;
 	}
 
-	public Hud getHud()
-	{
-		return hud;
-	}
-
 	public void restart()
 	{
 		hud.reset();
-		level.reset();
+		level.restart();
 		logic.restart();
 	}
 
 	public void reset()
 	{
 		hud.reset();
-		level.reset();
+		level.restart();
 		logic.reset();
 	}
 }

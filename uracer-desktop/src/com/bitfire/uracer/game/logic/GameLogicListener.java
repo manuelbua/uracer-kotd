@@ -1,111 +1,59 @@
-package com.bitfire.uracer;
+package com.bitfire.uracer.game.logic;
 
-import com.badlogic.gdx.Gdx;
-import com.badlogic.gdx.Input.Keys;
 import com.badlogic.gdx.math.Vector2;
+import com.bitfire.uracer.LapInfo;
 import com.bitfire.uracer.entities.vehicles.Car;
 import com.bitfire.uracer.entities.vehicles.GhostCar;
 import com.bitfire.uracer.hud.Hud;
 import com.bitfire.uracer.hud.Messager.MessagePosition;
 import com.bitfire.uracer.hud.Messager.MessageSize;
 import com.bitfire.uracer.hud.Messager.MessageType;
-import com.bitfire.uracer.postprocessing.PostProcessor;
-import com.bitfire.uracer.postprocessing.effects.RadialBlur;
 import com.bitfire.uracer.simulations.car.Replay;
 import com.bitfire.uracer.tiled.Level;
-import com.bitfire.uracer.utils.Convert;
 
-public class GameLogic
+public class GameLogicListener implements IGameLogicListener
 {
-	private Game game;
+	private GameLogic logic = null;
+	private Level level = null;
 
-	// events - onTileChanged
-	private boolean isFirstLap = true;
-	private long lastLapId = 0;
-	private Vector2 carTileAt = new Vector2();
-	private Vector2 lastCarTileAt = new Vector2();
-
-	// lap and entities
-	private Level level;
-	private LapInfo lapInfo;
 	private Car player = null;
 	private GhostCar ghost = null;
 
-	// effects
-	private RadialBlur rb;
+	// lap
+	private boolean isFirstLap = true;
+	private long lastLapId = 0;
 
-	public GameLogic( Game game )
+	public GameLogicListener( GameLogic logic )
 	{
-		this.game = game;
-		this.level = game.getLevel();
-
-		// get player/ghost references
-		this.player = level.getPlayer();
-		this.ghost = level.getGhost();
-
-		// lap info
-		lapInfo = new LapInfo();
-
-		// effects
-		if( Config.EnablePostProcessingFx )
-		{
-			rb = new RadialBlur();
-			rb.setEnabled( true );
-			PostProcessor.init( Gdx.graphics.getWidth(), Gdx.graphics.getHeight() );
-			// PostProcessor.init( 512, 512 );
-			PostProcessor.setEffect( rb );
-		}
-
-		reset();
+		this.logic = logic;
+		this.level = logic.getGame().getLevel();
+		player = logic.getGame().getLevel().getPlayer();
+		ghost = logic.getGame().getLevel().getGhost();
 	}
 
-	public void tick()
+	@Override
+	public void onReset()
 	{
-		if( Input.isOn( Keys.R ) )
-		{
-			if( player != null )
-			{
-				game.restart();
-			}
-		}
-
-		if( player != null )
-		{
-			lastCarTileAt.set( carTileAt );
-			carTileAt.set( Convert.pxToTile( player.pos().x, player.pos().y ) );
-			if( (lastCarTileAt.x != carTileAt.x) || (lastCarTileAt.y != carTileAt.y) )
-			{
-				onTileChanged( carTileAt );
-			}
-
-			if( Config.EnablePostProcessingFx )
-			{
-				rb.dampStrength( 0.8f, Physics.dt );
-				rb.setOrigin( Director.screenPosFor( player.getBody() ) );
-			}
-		}
-	}
-
-	public void reset()
-	{
-		lapInfo.reset();
-		restart();
 		isFirstLap = true;
 	}
 
-	public void restart()
+	@Override
+	public void onRestart()
 	{
-		// restart the level, do NOT reset lap info
 		lastLapId = 0;
-
-		lastCarTileAt.set( -1, -1 );
-		carTileAt.set( lastCarTileAt );
-		lapInfo.restart();
+		if(!logic.getLapInfo().hasAnyReplayData())
+		{
+			System.out.println("no replay data, re-firstlap");
+			isFirstLap = true;
+		}
 	}
 
-	protected void onTileChanged( Vector2 carAt )
+	@Override
+	public void onTileChanged( Vector2 carAt )
 	{
 		boolean onStartZone = (carAt.x == 1 && carAt.y == 0);
+		LapInfo lapInfo = logic.getLapInfo();
+
 		if( onStartZone )
 		{
 			Replay b0 = lapInfo.getReplay( 0 ), b1 = lapInfo.getReplay( 1 );
@@ -126,7 +74,7 @@ public class GameLogic
 
 				// replay best, overwrite worst logic
 
-				if( !lapInfo.hasReplayData() )
+				if( !lapInfo.hasAllReplayData() )
 				{
 					// only one single replay
 					level.beginRecording( b1, lapInfo.restart() );
@@ -161,8 +109,4 @@ public class GameLogic
 		}
 	}
 
-	public LapInfo getLapInfo()
-	{
-		return lapInfo;
-	}
 }

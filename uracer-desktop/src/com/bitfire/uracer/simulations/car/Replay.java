@@ -3,9 +3,9 @@ package com.bitfire.uracer.simulations.car;
 import java.util.ArrayList;
 
 import com.badlogic.gdx.math.Vector2;
-import com.bitfire.uracer.GameDifficulty;
 import com.bitfire.uracer.entities.vehicles.Car;
 import com.bitfire.uracer.factories.CarFactory.CarType;
+import com.bitfire.uracer.game.GameDifficulty;
 import com.bitfire.uracer.utils.Hash;
 
 /**

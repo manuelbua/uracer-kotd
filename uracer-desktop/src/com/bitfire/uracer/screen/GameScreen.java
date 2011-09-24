@@ -1,7 +1,7 @@
 package com.bitfire.uracer.screen;
 
-import com.bitfire.uracer.Game;
-import com.bitfire.uracer.GameDifficulty;
+import com.bitfire.uracer.game.Game;
+import com.bitfire.uracer.game.GameDifficulty;
 
 public class GameScreen extends Screen
 {
