@@ -29,7 +29,7 @@ public class Art
 	public static TextureAtlas fonts;
 
 	// fonts
-	public static BitmapFont fontCurse;
+	public static BitmapFont fontCurseYR, fontCurseR, fontCurseG;
 
 	public static void load()
 	{
@@ -52,7 +52,9 @@ public class Art
 
 		// fonts
 		fonts = new TextureAtlas( "data/base/font/pack" );
-		fontCurse = new BitmapFont( Gdx.files.internal( "data/base/font/curse.fnt" ), Art.fonts.findRegion( "curse" ), true );
+		fontCurseYR = new BitmapFont( Gdx.files.internal( "data/base/font/curse-y-r.fnt" ), Art.fonts.findRegion( "curse-y-r" ), true );
+		fontCurseG = new BitmapFont( Gdx.files.internal( "data/base/font/curse-g.fnt" ), Art.fonts.findRegion( "curse-g" ), true );
+		fontCurseR = new BitmapFont( Gdx.files.internal( "data/base/font/curse-r.fnt" ), Art.fonts.findRegion( "curse-r" ), true );
 	}
 
 	private static TextureRegion[][] split( String name, int width, int height )

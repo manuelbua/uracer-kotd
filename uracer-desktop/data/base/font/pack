@@ -3,9 +3,23 @@ font1.png
 format: RGBA8888
 filter: Nearest,Nearest
 repeat: none
-curse
+curse-g
   rotate: false
   xy: 2, 2
+  size: 256, 256
+  orig: 256, 256
+  offset: 0, 0
+  index: -1
+curse-r
+  rotate: false
+  xy: 2, 260
+  size: 256, 256
+  orig: 256, 256
+  offset: 0, 0
+  index: -1
+curse-y-r
+  rotate: false
+  xy: 2, 518
   size: 256, 256
   orig: 256, 256
   offset: 0, 0
