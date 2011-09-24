@@ -7,6 +7,7 @@ import com.bitfire.uracer.entities.vehicles.Car;
 import com.bitfire.uracer.entities.vehicles.GhostCar;
 import com.bitfire.uracer.hud.Hud;
 import com.bitfire.uracer.hud.Messager.MessagePosition;
+import com.bitfire.uracer.hud.Messager.MessageSize;
 import com.bitfire.uracer.hud.Messager.MessageType;
 import com.bitfire.uracer.postprocessing.PostProcessor;
 import com.bitfire.uracer.postprocessing.effects.RadialBlur;
@@ -117,7 +118,7 @@ public class GameLogic
 				lapInfo.setAsLast( null );
 				lastLapId = b0.id;
 
-				Hud.showMessage( "WARM  UP  LAP", 5f, MessageType.Information, MessagePosition.Top );
+				Hud.showMessage( "WARM  UP  LAP", 5f, MessageType.Information, MessagePosition.Top, MessageSize.Big );
 			} else
 			{
 				level.endRecording();
@@ -133,7 +134,7 @@ public class GameLogic
 					lastLapId = b1.id;
 
 					ghost.setReplay( b0 );
-					Hud.showMessage( "GO!  GO!  GO!", 5f, MessageType.Information, MessagePosition.Top );
+					Hud.showMessage( "GO!  GO!  GO!", 5f, MessageType.Information, MessagePosition.Top, MessageSize.Big );
 				} else
 				{
 					// both valid, replay best, overwrite worst
@@ -143,12 +144,12 @@ public class GameLogic
 					{
 						Hud.showMessage(
 								"-" + String.format( "%.2f", worst.trackTimeSeconds - best.trackTimeSeconds )
-										+ "\nseconds!", 5f, MessageType.Good, MessagePosition.Top );
+										+ " seconds!", 5f, MessageType.Good, MessagePosition.Top, MessageSize.Big );
 					} else
 					{
 						Hud.showMessage(
 								"+" + String.format( "%.2f", worst.trackTimeSeconds - best.trackTimeSeconds )
-										+ "\nseconds", 5f, MessageType.Bad, MessagePosition.Top );
+										+ " seconds", 5f, MessageType.Bad, MessagePosition.Top, MessageSize.Big );
 					}
 
 					ghost.setReplay( best );

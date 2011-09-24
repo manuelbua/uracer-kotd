@@ -4,10 +4,8 @@ import java.util.LinkedList;
 import java.util.Queue;
 
 import com.badlogic.gdx.Gdx;
-import com.badlogic.gdx.graphics.g2d.BitmapFont;
 import com.badlogic.gdx.graphics.g2d.BitmapFont.HAlignment;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
-import com.bitfire.uracer.Art;
 import com.bitfire.uracer.Director;
 
 public class Messager
@@ -22,12 +20,16 @@ public class Messager
 		Top, Middle, Bottom
 	}
 
+	public enum MessageSize
+	{
+		Normal, Big
+	}
+
 	// data
 	private Queue<Message> messages;
 	private Message current;
 
 	// font
-	private BitmapFont font;
 	private int halfWidth;
 
 	protected Messager()
@@ -35,9 +37,6 @@ public class Messager
 		current = null;
 		messages = new LinkedList<Message>();
 		halfWidth = Gdx.graphics.getWidth() / 2;
-
-		// default font
-		font = Art.fontCurseYR;
 	}
 
 	public void dispose()
@@ -56,26 +55,9 @@ public class Messager
 		current = null;
 	}
 
-	public void add( String message, float durationSecs )
+	public void add( String message, float durationSecs, MessageType type, MessagePosition position, MessageSize size )
 	{
-		add( message, durationSecs, MessageType.Information, MessagePosition.Bottom );
-	}
-
-	public void add( String message, float durationSecs, MessageType type )
-	{
-		Message m = new Message( font, message, durationSecs, type, MessagePosition.Bottom );
-		messages.add( m );
-	}
-
-	public void add( String message, float durationSecs, MessagePosition position )
-	{
-		Message m = new Message( font, message, durationSecs, MessageType.Information, MessagePosition.Bottom );
-		messages.add( m );
-	}
-
-	public void add( String message, float durationSecs, MessageType type, MessagePosition position )
-	{
-		Message m = new Message( font, message, durationSecs, type, position );
+		Message m = new Message( message, durationSecs, type, position, size );
 		messages.add( m );
 	}
 
@@ -114,24 +96,8 @@ public class Messager
 	{
 		if( isBusy() )
 		{
-			switch( current.type )
-			{
-			default:
-			case Information:
-				font = Art.fontCurseYR;
-				break;
-
-			case Good:
-				font = Art.fontCurseG;
-				break;
-
-			case Bad:
-				font = Art.fontCurseR;
-				break;
-			}
-
-			font.setScale( Director.scalingStrategy.invTileMapZoomFactor );
-			font.drawMultiLine( batch, current.what, current.whereX, current.whereY, halfWidth, HAlignment.CENTER );
+			current.font.setScale( Director.scalingStrategy.invTileMapZoomFactor );
+			current.font.drawMultiLine( batch, current.what, current.whereX, current.whereY, halfWidth, HAlignment.CENTER );
 		}
 	}
 

@@ -7,6 +7,7 @@ import com.badlogic.gdx.math.Matrix4;
 import com.bitfire.uracer.Art;
 import com.bitfire.uracer.GameLogic;
 import com.bitfire.uracer.hud.Messager.MessagePosition;
+import com.bitfire.uracer.hud.Messager.MessageSize;
 import com.bitfire.uracer.hud.Messager.MessageType;
 import com.bitfire.uracer.simulations.car.Replay;
 
@@ -102,12 +103,21 @@ public class Hud
 
 	public static void showMessage( String message, float durationSecs )
 	{
-		Hud.showMessage( message, durationSecs, MessageType.Information, MessagePosition.Bottom );
+		Hud.showMessage( message, durationSecs, MessageType.Information, MessagePosition.Bottom, MessageSize.Normal );
+	}
+
+	public static void showMessage( String message, float durationSecs, MessageType type )
+	{
+		Hud.showMessage( message, durationSecs, type, MessagePosition.Bottom, MessageSize.Normal );
 	}
 
 	public static void showMessage( String message, float durationSecs, MessageType type, MessagePosition position )
 	{
-		msg.add( message, durationSecs, type, position );
+		Hud.showMessage( message, durationSecs, type, position, MessageSize.Normal );
 	}
 
+	public static void showMessage( String message, float durationSecs, MessageType type, MessagePosition position, MessageSize size )
+	{
+		msg.add( message, durationSecs, type, position, size );
+	}
 }
