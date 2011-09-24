@@ -112,12 +112,14 @@ public class GameLogic
 				isFirstLap = false;
 
 				level.beginRecording( b0, lapInfo.restart() );
+				lapInfo.setAsLast( null );
 				lastLapId = b0.id;
 
 				Hud.showMessage( "WARM  UP  LAP", 5f );
 			} else
 			{
 				level.endRecording();
+				lapInfo.update();
 
 				// replay best, overwrite worst logic
 
@@ -125,15 +127,14 @@ public class GameLogic
 				{
 					// only one single replay
 					level.beginRecording( b1, lapInfo.restart() );
+					lapInfo.setAsLast( b0 );
 					lastLapId = b1.id;
 
 					ghost.setReplay( b0 );
 					Hud.showMessage( "GO!  GO!  GO!", 5f );
-				}
-				else
+				} else
 				{
 					// both valid, replay best, overwrite worst
-					lapInfo.update();
 					Replay best = lapInfo.getBestReplay(), worst = lapInfo.getWorstReplay();
 
 					if( lastLapId == best.id )

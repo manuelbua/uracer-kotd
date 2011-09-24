@@ -5,6 +5,7 @@ import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.math.Matrix4;
 import com.bitfire.uracer.Art;
 import com.bitfire.uracer.GameLogic;
+import com.bitfire.uracer.simulations.car.Replay;
 
 public class Hud
 {
@@ -12,10 +13,10 @@ public class Hud
 	private SpriteBatch textBatch;
 	private static Messager msg;
 
-	private int lapTimeX = 0;
+	private int gridX = 0;
 	private String lapTimeFormat = "%.04fs";
 
-	public Hud(GameLogic logic)
+	public Hud( GameLogic logic )
 	{
 		this.logic = logic;
 
@@ -30,7 +31,7 @@ public class Hud
 		msg = new Messager();
 
 		// lap time position
-		lapTimeX = (int)( ((float)Gdx.graphics.getWidth() - Art.fontCurse.getBounds( String.format( lapTimeFormat, 9f ) ).width) / 2f );
+		gridX = (int)((float)Gdx.graphics.getWidth() / 4f);
 	}
 
 	public void dispose()
@@ -54,15 +55,33 @@ public class Hud
 		textBatch.begin();
 
 		msg.render( textBatch );
-		renderLapTime();
+
+		// this lap time
+		Art.fontCurse.draw( textBatch, "YOUR TIME", gridX, 10 );
+		Art.fontCurse.draw( textBatch, String.format( "%.04fs", logic.getLapInfo().getElapsedSeconds() ), gridX, 55 );
+
+		// best lap time
+		Replay best = logic.getLapInfo().getBestReplay();
+		Replay last = logic.getLapInfo().getLastReplay();
+		Art.fontCurse.draw( textBatch, "BEST TIME", gridX * 2, 10 );
+
+		if( best != null )
+		{
+			// has best
+			Art.fontCurse.draw( textBatch, String.format( "%.04fs", best.trackTimeSeconds ), gridX * 2, 55 );
+		}
+		else if( last != null && last.isValid )
+		{
+			// has only last
+			Art.fontCurse.draw( textBatch, String.format( "%.04fs", last.trackTimeSeconds ), gridX * 2, 55 );
+		}
+		else
+		{
+			// no data
+			Art.fontCurse.draw( textBatch, "- : ----", gridX * 2, 55 );
+		}
 
 		textBatch.end();
-	}
-
-	private void renderLapTime()
-	{
-		Art.fontCurse.draw( textBatch, "LAP TIME", lapTimeX - 5, 10 );
-		Art.fontCurse.draw( textBatch, String.format( "%.04fs", logic.getLapInfo().getElapsedSeconds() ), lapTimeX, 55 );
 	}
 
 	public static void showMessage( String message, float durationSecs )

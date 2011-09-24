@@ -6,7 +6,7 @@ public class LapInfo
 {
 	// replays
 	private Replay[] replays;
-	private Replay best, worst;
+	private Replay best, worst, last;
 	private long startTimeNs;
 
 	public LapInfo()
@@ -58,8 +58,10 @@ public class LapInfo
 
 	public void update()
 	{
-		if(!hasReplayData())
+		if( !hasReplayData() )
+		{
 			return;
+		}
 
 		best = replays[1];
 		worst = replays[0];
@@ -69,7 +71,10 @@ public class LapInfo
 			best = replays[0];
 			worst = replays[1];
 		}
+
+		last = worst;
 	}
+
 	public Replay getBestReplay()
 	{
 		return best;
@@ -78,5 +83,21 @@ public class LapInfo
 	public Replay getWorstReplay()
 	{
 		return worst;
+	}
+
+	// not necessarily best or worst, just the last recorded
+	public Replay getLastReplay()
+	{
+		return last;
+	}
+
+	public void setAsLast(int index)
+	{
+		last = replays[index];
+	}
+
+	public void setAsLast(Replay replay)
+	{
+		last = replay;
 	}
 }

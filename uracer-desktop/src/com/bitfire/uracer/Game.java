@@ -104,4 +104,11 @@ public class Game
 		level.reset();
 		logic.restart();
 	}
+
+	public void reset()
+	{
+		hud.reset();
+		level.reset();
+		logic.reset();
+	}
 }
