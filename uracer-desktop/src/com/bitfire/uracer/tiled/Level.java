@@ -219,7 +219,7 @@ public class Level
 	private void createEntities()
 	{
 		// TODO: read positions from tmx
-		playerStartPos.set( Convert.tileToPx( 1, 0 ).add( Convert.scaledPixels( 112, -112 ) ) );
+		playerStartPos.set( Convert.tileToPx( 8, 5 ).add( Convert.scaledPixels( 112, -112 ) ) );
 		playerStartOrient = 90f;
 
 		CarModel m = new CarModel();
@@ -227,19 +227,10 @@ public class Level
 		ghost = CarFactory.createGhost( player );
 	}
 
+
 	/**
 	 * Game / game logic
 	 */
-
-	public void beginRecording( Replay outputBuffer, Lap lap )
-	{
-		recorder.beginRecording( player, outputBuffer, lap );
-	}
-
-	public void endRecording()
-	{
-		recorder.endRecording();
-	}
 
 	public Car getPlayer()
 	{
@@ -249,6 +240,16 @@ public class Level
 	public GhostCar getGhost()
 	{
 		return ghost;
+	}
+
+	public void beginRecording( Replay outputBuffer, Lap lap )
+	{
+		recorder.beginRecording( player, outputBuffer, lap.getStartNanotime() );
+	}
+
+	public void endRecording()
+	{
+		recorder.endRecording();
 	}
 
 	public void reset()

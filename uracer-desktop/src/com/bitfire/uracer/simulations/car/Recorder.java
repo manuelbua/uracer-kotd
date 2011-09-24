@@ -1,7 +1,6 @@
 package com.bitfire.uracer.simulations.car;
 
 import com.bitfire.uracer.Director;
-import com.bitfire.uracer.Lap;
 import com.bitfire.uracer.entities.vehicles.Car;
 
 public class Recorder
@@ -37,13 +36,13 @@ public class Recorder
 		replay = null;
 	}
 
-	public void beginRecording( Car car, Replay replay, Lap lap )
+	public void beginRecording( Car car, Replay replay, long startTime )
 	{
 		isRecording = true;
 		this.replay = replay;
 		replay.clearForces();
 		replay.setCarData( car );
-		trackNanoseconds = lap.getStartNanotime();
+		trackNanoseconds = startTime;
 	}
 
 	public void add( CarForces f )

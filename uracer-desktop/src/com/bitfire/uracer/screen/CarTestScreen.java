@@ -39,15 +39,10 @@ public class CarTestScreen extends Screen
 
 	public CarTestScreen()
 	{
-		// recorder = Recorder.create();
-		// EntityManager.create();
-		// ModelFactory.init();
+		GameplaySettings gs = GameplaySettings.create( GameDifficulty.Easy );
 
 		Director.create( this, Gdx.graphics.getWidth(), Gdx.graphics.getHeight() );
-
-		GameplaySettings gs = GameplaySettings.create( GameDifficulty.Easy );
 		level = Director.loadLevel( "level1", gs );
-		Director.setPositionPx( Director.positionFor( new Vector2( 0, 0 ) ), false );
 
 		lap = new Lap();
 		hud = new Hud();
@@ -55,6 +50,7 @@ public class CarTestScreen extends Screen
 
 		player = level.getPlayer();
 		ghost = level.getGhost();
+		lap.start();
 
 		// replay buffers
 		replays = new Replay[ 2 ];
@@ -90,6 +86,7 @@ public class CarTestScreen extends Screen
 			{
 				level.reset();
 				hud.reset();
+				lap.start();
 
 				replays[0].clearForces();
 				replays[1].clearForces();

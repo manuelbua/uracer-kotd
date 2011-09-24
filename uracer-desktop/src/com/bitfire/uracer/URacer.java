@@ -2,6 +2,7 @@ package com.bitfire.uracer;
 
 import com.badlogic.gdx.ApplicationListener;
 import com.badlogic.gdx.Gdx;
+import com.badlogic.gdx.math.Vector2;
 import com.bitfire.uracer.debug.Debug;
 import com.bitfire.uracer.screen.CarTestScreen;
 import com.bitfire.uracer.screen.Screen;
@@ -30,6 +31,8 @@ public class URacer implements ApplicationListener
 		Debug.create();
 		input.releaseAllKeys();
 
+		Physics.create( new Vector2( 0, 0 ), false );
+
 		Gdx.input.setInputProcessor( input );
 		Gdx.graphics.setVSync( true );
 
@@ -38,6 +41,7 @@ public class URacer implements ApplicationListener
 		temporalAliasing = 0;
 
 		setScreen( new CarTestScreen() );
+//		setScreen( new GameScreen() );
 	}
 
 	@Override
