@@ -8,6 +8,7 @@ import com.badlogic.gdx.graphics.g2d.BitmapFont;
 import com.badlogic.gdx.graphics.g2d.BitmapFont.HAlignment;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.bitfire.uracer.Art;
+import com.bitfire.uracer.Director;
 
 public class Messager
 {
@@ -31,6 +32,7 @@ public class Messager
 
 		// load font
 		font = Art.fontCurse;
+		font.setScale( Director.scalingStrategy.invTileMapZoomFactor );
 	}
 
 	public void dispose()

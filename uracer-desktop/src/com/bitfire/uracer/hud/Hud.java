@@ -57,28 +57,26 @@ public class Hud
 		msg.render( textBatch );
 
 		// this lap time
-		Art.fontCurse.draw( textBatch, "YOUR TIME", gridX, 10 );
-		Art.fontCurse.draw( textBatch, String.format( "%.04fs", logic.getLapInfo().getElapsedSeconds() ), gridX, 55 );
+		Art.fontCurse.drawMultiLine( textBatch, String.format( "YOUR TIME\n%.04fs", logic.getLapInfo().getElapsedSeconds() ), gridX, 10 );
 
 		// best lap time
 		Replay best = logic.getLapInfo().getBestReplay();
 		Replay last = logic.getLapInfo().getLastReplay();
-		Art.fontCurse.draw( textBatch, "BEST TIME", gridX * 2, 10 );
 
 		if( best != null )
 		{
 			// has best
-			Art.fontCurse.draw( textBatch, String.format( "%.04fs", best.trackTimeSeconds ), gridX * 2, 55 );
+			Art.fontCurse.drawMultiLine( textBatch, String.format( "BEST TIME\n%.04fs", best.trackTimeSeconds ), gridX * 2, 10 );
 		}
 		else if( last != null && last.isValid )
 		{
 			// has only last
-			Art.fontCurse.draw( textBatch, String.format( "%.04fs", last.trackTimeSeconds ), gridX * 2, 55 );
+			Art.fontCurse.drawMultiLine( textBatch, String.format( "BEST TIME\n%.04fs", last.trackTimeSeconds ), gridX * 2, 10 );
 		}
 		else
 		{
 			// no data
-			Art.fontCurse.draw( textBatch, "- : ----", gridX * 2, 55 );
+			Art.fontCurse.drawMultiLine( textBatch, "BEST TIME\n- : ----", gridX * 2, 10 );
 		}
 
 		textBatch.end();
