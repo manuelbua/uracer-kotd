@@ -46,7 +46,7 @@ public class GameLogicListener implements IGameLogicListener
 	public void onRestart()
 	{
 		isFirstLap = true;
-		Messager.show( "WARM  UP  LAP", 5f, MessageType.Information, MessagePosition.Top, MessageSize.Big );
+		Messager.show( "WARM  UP  LAP", 3f, MessageType.Information, MessagePosition.Top, MessageSize.Big );
 	}
 
 	@Override
@@ -93,7 +93,7 @@ public class GameLogicListener implements IGameLogicListener
 
 					ghost.setReplay( lapInfo.getAnyReplay() );
 
-					Messager.show( "GO!  GO!  GO!", 5f, MessageType.Information, MessagePosition.Top, MessageSize.Big );
+					Messager.show( "GO!  GO!  GO!", 3f, MessageType.Information, MessagePosition.Top, MessageSize.Big );
 				} else
 				{
 					// both valid, replay best, overwrite worst
@@ -103,12 +103,12 @@ public class GameLogicListener implements IGameLogicListener
 					{
 						Messager.show(
 								"-" + String.format( "%.2f", worst.trackTimeSeconds - best.trackTimeSeconds )
-										+ " seconds!", 5f, MessageType.Good, MessagePosition.Top, MessageSize.Big );
+										+ " seconds!", 3f, MessageType.Good, MessagePosition.Top, MessageSize.Big );
 					} else
 					{
 						Messager.show(
 								"+" + String.format( "%.2f", worst.trackTimeSeconds - best.trackTimeSeconds )
-										+ " seconds", 5f, MessageType.Bad, MessagePosition.Top, MessageSize.Big );
+										+ " seconds", 3f, MessageType.Bad, MessagePosition.Top, MessageSize.Big );
 					}
 
 					ghost.setReplay( best );
