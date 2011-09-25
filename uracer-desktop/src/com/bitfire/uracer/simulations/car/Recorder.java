@@ -48,28 +48,28 @@ public class Recorder
 	{
 		if( !isRecording )
 		{
-			System.out.println("Cannot add event, recording not enabled!");
+//			System.out.println("Cannot add event, recording not enabled!");
 			return;
 		}
 
-		if( !replay.add( f ) )
-		{
-			System.out.println( "Replay memory limit reached (" + replay.MaxEvents + " events), restarting." );
-		}
+//		if( !replay.add( f ) )
+//		{
+//			System.out.println( "Replay memory limit reached (" + replay.MaxEvents + " events), restarting." );
+//		}
 	}
 
 	public void endRecording()
 	{
 		if( !isRecording )
 		{
-			System.out.println("Cannot end a recording that wasn't enabled!");
+//			System.out.println("Cannot end a recording that wasn't enabled!");
 			return;
 		}
 
 		float secs = (float)(System.nanoTime() - replay.trackStartTimeNs) / 1000000000f;
 		replay.setReplayData( Director.currentLevel.name, Director.gameplaySettings.difficulty, secs );
 
-		System.out.println( "Recorded " + replay.getEventsCount() + " events" );
+//		System.out.println( "Recorded " + replay.getEventsCount() + " events" );
 
 		isRecording = false;
 		replay = null;

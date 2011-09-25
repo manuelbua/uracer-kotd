@@ -106,13 +106,13 @@ public class GameLogicListener implements IGameLogicListener
 					if( lastRecordedLapId == best.id )
 					{
 						lapInfo.setLastTrackTimeSeconds( best.trackTimeSeconds );
-						Messager.show( "-" + String.format( "%.2f", worst.trackTimeSeconds - best.trackTimeSeconds )
+						Messager.show( "-" + String.format( "%.4f", worst.trackTimeSeconds - best.trackTimeSeconds )
 								+ " seconds!", 3f, MessageType.Good, MessagePosition.Middle, MessageSize.Big );
 					} else
 					{
 						lapInfo.setLastTrackTimeSeconds( worst.trackTimeSeconds );
 						Messager.show(
-								"+" + String.format( "%.2f", worst.trackTimeSeconds - best.trackTimeSeconds ) + " seconds", 3f,
+								"+" + String.format( "%.4f", worst.trackTimeSeconds - best.trackTimeSeconds ) + " seconds", 3f,
 								MessageType.Bad, MessagePosition.Middle, MessageSize.Big );
 					}
 
