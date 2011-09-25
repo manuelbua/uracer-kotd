@@ -2,8 +2,9 @@ package com.bitfire.uracer;
 
 import com.badlogic.gdx.ApplicationListener;
 import com.badlogic.gdx.Gdx;
+import com.badlogic.gdx.math.Vector2;
 import com.bitfire.uracer.debug.Debug;
-import com.bitfire.uracer.screen.CarTestScreen;
+import com.bitfire.uracer.screen.GameScreen;
 import com.bitfire.uracer.screen.Screen;
 import com.bitfire.uracer.utils.AMath;
 
@@ -30,6 +31,8 @@ public class URacer implements ApplicationListener
 		Debug.create();
 		input.releaseAllKeys();
 
+		Physics.create( new Vector2( 0, 0 ), false );
+
 		Gdx.input.setInputProcessor( input );
 		Gdx.graphics.setVSync( true );
 
@@ -37,7 +40,7 @@ public class URacer implements ApplicationListener
 		oneOnOneBillion = 1.0f / 1000000000.0f;
 		temporalAliasing = 0;
 
-		setScreen( new CarTestScreen() );
+		setScreen( new GameScreen() );
 	}
 
 	@Override
@@ -54,8 +57,7 @@ public class URacer implements ApplicationListener
 			while( timeAccumSecs > Physics.dt )
 			{
 				input.tick();
-				screen.tick( /* input */);
-
+				screen.tick();
 				timeAccumSecs -= Physics.dt;
 			}
 
@@ -72,11 +74,9 @@ public class URacer implements ApplicationListener
 		temporalAliasing = timeAccumSecs * Config.PhysicsTimestepHz;
 		aliasingTime = temporalAliasing;
 
-		screen.beforeRender( temporalAliasing );
-
 		startTime = System.nanoTime();
 		{
-			screen.render( temporalAliasing );
+			screen.render();
 
 			// simulate slowness
 //			try { Thread.sleep( 32 ); } catch( InterruptedException e ) {}

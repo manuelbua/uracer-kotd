@@ -55,7 +55,7 @@ public class Debug
 		if( !Config.isDesktop ) updateHz = 1f;
 		gfxStats = new Stats( updateHz );
 
-		spriteBatch = new SpriteBatch(1000);
+		spriteBatch = new SpriteBatch(500);
 
 		// y-flip
 		Matrix4 proj = new Matrix4();

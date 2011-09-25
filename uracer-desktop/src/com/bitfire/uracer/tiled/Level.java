@@ -13,8 +13,19 @@ import com.badlogic.gdx.graphics.g2d.tiled.TiledLoader;
 import com.badlogic.gdx.graphics.g2d.tiled.TiledMap;
 import com.badlogic.gdx.graphics.g2d.tiled.TiledObject;
 import com.badlogic.gdx.graphics.g2d.tiled.TiledObjectGroup;
+import com.badlogic.gdx.math.Vector2;
 import com.bitfire.uracer.Director;
+import com.bitfire.uracer.URacer;
+import com.bitfire.uracer.entities.EntityManager;
+import com.bitfire.uracer.entities.vehicles.Car;
+import com.bitfire.uracer.entities.vehicles.GhostCar;
+import com.bitfire.uracer.factories.CarFactory;
+import com.bitfire.uracer.factories.CarFactory.CarType;
 import com.bitfire.uracer.factories.ModelFactory;
+import com.bitfire.uracer.simulations.car.CarModel;
+import com.bitfire.uracer.simulations.car.Recorder;
+import com.bitfire.uracer.simulations.car.Replay;
+import com.bitfire.uracer.utils.Convert;
 import com.bitfire.uracer.utils.MapUtils;
 
 /**
@@ -37,6 +48,15 @@ public class Level
 	private float camPerspElevation = 0f;
 	private ArrayList<OrthographicAlignedStillModel> staticMeshes = new ArrayList<OrthographicAlignedStillModel>();
 
+	// game data/logic
+	private Car player;
+	private GhostCar ghost;
+	private Recorder recorder;
+
+	private Vector2 playerStartPos = new Vector2();
+	private float playerStartOrient = 0f;
+
+
 	public Level( String levelName, ScalingStrategy strategy )
 	{
 		this.name = levelName;
@@ -57,15 +77,21 @@ public class Level
 		createCams();
 	}
 
-	public void init()
+	public void construct()
 	{
 		syncWithCam( Director.getCamera() );
 		OrthographicAlignedStillModel.initialize( camOrtho, camPersp );
 
+		ModelFactory.init();
+
 		// create track
 		track = new Track( map );
 
+		EntityManager.create();
+		recorder = Recorder.create();
+
 		createMeshes();
+		createEntities();
 	}
 
 	public void dispose()
@@ -82,6 +108,7 @@ public class Level
 			OrthographicAlignedStillModel model = staticMeshes.get( i );
 			model.dispose();
 		}
+
 	}
 
 	public void syncWithCam( OrthographicCamera orthoCam )
@@ -149,7 +176,7 @@ public class Level
 		camPersp.position.set( 0, 0, camPerspElevation );
 	}
 
-	public void createMeshes()
+	private void createMeshes()
 	{
 		staticMeshes.clear();
 
@@ -186,5 +213,77 @@ public class Level
 				staticMeshes.add( trackMeshes.get( i ) );
 			}
 		}
+	}
+
+	private void createEntities()
+	{
+		// TODO: read positions from tmx
+		playerStartPos.set( Convert.tileToPx( 1, 0 ).add( Convert.scaledPixels( 112, -112 ) ) );
+		playerStartOrient = 90f;
+
+		CarModel m = new CarModel();
+		player = CarFactory.createPlayer( CarType.OldSkool, m.toModel2(), playerStartPos, playerStartOrient );
+		ghost = CarFactory.createGhost( player );
+	}
+
+
+	/**
+	 * Game / game logic
+	 */
+
+	public Car getPlayer()
+	{
+		return player;
+	}
+
+	public GhostCar getGhost()
+	{
+		return ghost;
+	}
+
+	public void beginRecording( Replay outputBuffer, long lapStartTimeNs )
+	{
+		recorder.beginRecording( player, outputBuffer, lapStartTimeNs );
+	}
+
+	public void endRecording()
+	{
+		recorder.endRecording();
+	}
+
+	public boolean isRecording()
+	{
+		return recorder.isRecording();
+	}
+
+	public void discardRecording()
+	{
+		recorder.reset();
+	}
+
+	public void restart()
+	{
+		player.reset();
+		ghost.reset();
+		recorder.reset();
+	}
+
+	public void tick()
+	{
+		EntityManager.raiseOnTick();
+	}
+
+	public void render()
+	{
+		GL20 gl = Gdx.graphics.getGL20();
+
+		gl.glClearDepthf( 1 );
+		gl.glClearColor( 0, 0, 0, 1 );
+		gl.glClear( GL20.GL_DEPTH_BUFFER_BIT | GL20.GL_COLOR_BUFFER_BIT );
+
+		syncWithCam( Director.getCamera() );
+		renderTilemap();
+		EntityManager.raiseOnRender( URacer.getTemporalAliasing() );
+		renderMeshes( gl );
 	}
 }

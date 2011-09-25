@@ -39,6 +39,9 @@ public class Car extends Box2dEntity
 	private CarInputMode carInputMode;
 	private CarType carType;
 
+	private Vector2 startPos;
+	private float startOrient;
+
 	protected Car( CarGraphics graphics, CarModel model, CarType type, CarInputMode inputMode, Vector2 position, float orientation )
 	{
 		this.graphics = graphics;
@@ -46,6 +49,8 @@ public class Car extends Box2dEntity
 		this.recorder = Recorder.instance();
 		this.carInputMode = inputMode;
 		this.carType = type;
+		this.startPos = new Vector2(position);
+		this.startOrient = orientation;
 
 		carDesc = new CarDescriptor();
 		carDesc.carModel.set( model );
@@ -97,6 +102,22 @@ public class Car extends Box2dEntity
 	public CarModel getCarModel()
 	{
 		return carDesc.carModel;
+	}
+
+	public Vector2 getStartPos()
+	{
+		return startPos;
+	}
+
+	public float getStartOrient()
+	{
+		return startOrient;
+	}
+
+	public void reset()
+	{
+		resetPhysics();
+		setTransform( startPos, startOrient );
 	}
 
 	public void setActive(boolean active, boolean resetPhysics)

@@ -9,8 +9,7 @@ import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.math.Vector3;
 import com.badlogic.gdx.physics.box2d.Body;
 import com.bitfire.uracer.factories.Box2DFactory;
-import com.bitfire.uracer.hud.Messager;
-import com.bitfire.uracer.screen.Screen;
+import com.bitfire.uracer.game.GameplaySettings;
 import com.bitfire.uracer.tiled.Level;
 import com.bitfire.uracer.tiled.ScalingStrategy;
 import com.bitfire.uracer.utils.Convert;
@@ -48,20 +47,14 @@ public class Director
 		// computed for a 256px tile size target (need conversion)
 		scalingStrategy = new ScalingStrategy( new Vector2( 1280, 800 ), 70f, 224, 1f);
 
-		// setup configuration
-//		Config.asDefault();
-
 		// everything has been setup on a 256px tile, scale back if that's the case
 		Config.PixelsPerMeter /= scalingStrategy.targetScreenRatio / scalingStrategy.to256;
 //		System.out.println("ppm=" + Config.PixelsPerMeter);
 
-		Physics.create( new Vector2( 0, 0 ), false );
-
 		Box2DFactory.init();
-		Messager.init();
 	}
 
-	public static void create( Screen parent, int widthPx, int heightPx )
+	public static void create( int widthPx, int heightPx )
 	{
 		init();
 
@@ -77,7 +70,6 @@ public class Director
 		}
 
 		Physics.dispose();
-		Messager.dispose();
 	}
 
 	public static Level loadLevel(String levelName, GameplaySettings playSettings)
@@ -100,7 +92,7 @@ public class Director
 		boundsPx.y = Director.worldSizeScaledPx.y - halfViewport.y;
 
 		// construct level objects from tmx definitions
-		level.init();
+		level.construct();
 
 		currentLevel = level;
 		gameplaySettings = playSettings;

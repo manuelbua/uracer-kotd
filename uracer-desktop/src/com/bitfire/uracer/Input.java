@@ -125,8 +125,8 @@ public class Input extends InputAdapter
 		is_touching = is_dragging = false;
 		touchX = touchY = 0;
 		accelX = accelY = accelZ = 0;
-		touchCoords = new Vector2(0,0);
-		mouseCoords = new Vector2(0,0);
+		touchCoords = new Vector2( 0, 0 );
+		mouseCoords = new Vector2( 0, 0 );
 
 		FLAG_REAL_ON = (1 << 0);
 		FLAG_DELAY_ON = (1 << 1);
@@ -150,7 +150,7 @@ public class Input extends InputAdapter
 
 		mouseX = Gdx.input.getX();
 		mouseY = Gdx.input.getY();
-		mouseCoords.set(mouseX, mouseY);
+		mouseCoords.set( mouseX, mouseY );
 
 		int flag;
 		for( int i = 0; i < buttons.length; i++ )
@@ -208,7 +208,7 @@ public class Input extends InputAdapter
 	{
 		touchX = x;
 		touchY = y;
-		touchCoords.set(x, y);
+		touchCoords.set( x, y );
 
 		is_touching = true;
 		is_dragging = false;
@@ -220,7 +220,7 @@ public class Input extends InputAdapter
 	{
 		touchX = x;
 		touchY = y;
-		touchCoords.set(x, y);
+		touchCoords.set( x, y );
 
 		is_dragging = true;
 		return false;
@@ -231,7 +231,7 @@ public class Input extends InputAdapter
 	{
 		touchX = x;
 		touchY = y;
-		touchCoords.set(x, y);
+		touchCoords.set( x, y );
 
 		is_touching = false;
 		is_dragging = false;

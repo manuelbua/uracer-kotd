@@ -1,4 +1,4 @@
-package com.bitfire.uracer;
+package com.bitfire.uracer.game;
 
 public class GameplaySettings
 {

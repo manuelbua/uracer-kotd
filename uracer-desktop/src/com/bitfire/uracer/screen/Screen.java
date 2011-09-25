@@ -23,11 +23,7 @@ public abstract class Screen
 		uracer.setScreen( screen );
 	}
 
-	public void beforeRender( float timeAliasingFactor )
-	{
-	}
-
-	public abstract void render( float timeAliasingFactor );
+	public abstract void render();
 
 	public void tick()
 	{
