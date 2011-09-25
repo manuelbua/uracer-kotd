@@ -1,4 +1,4 @@
-package com.bitfire.uracer.hud;
+package com.bitfire.uracer.messager;
 
 import java.util.LinkedList;
 import java.util.Queue;
@@ -26,43 +26,41 @@ public class Messager
 	}
 
 	// data
-	private Queue<Message> messages;
-	private Message current;
+	private static Queue<Message> messages;
+	private static Message current;
 
 	// font
-	private int halfWidth;
+	private static int halfWidth;
 
-	protected Messager()
+	private Messager()
+	{
+	}
+
+	public static void init()
 	{
 		current = null;
 		messages = new LinkedList<Message>();
 		halfWidth = Gdx.graphics.getWidth() / 2;
 	}
 
-	public void dispose()
+	public static void dispose()
 	{
 		reset();
 	}
 
-	public boolean isBusy()
+	public static boolean isBusy()
 	{
 		return (current != null);
 	}
 
-	public void reset()
+	public static void reset()
 	{
 		messages.clear();
 		current = null;
 //		System.out.println("Messages just got cleaned up.");
 	}
 
-	public void add( String message, float durationSecs, MessageType type, MessagePosition position, MessageSize size )
-	{
-		Message m = new Message( message, durationSecs, type, position, size );
-		messages.add( m );
-	}
-
-	public void update()
+	public static void tick()
 	{
 		// any message?
 		if( !isBusy() && (messages.peek() != null) )
@@ -79,7 +77,7 @@ public class Messager
 			{
 				current.started = true;
 				current.startMs = System.currentTimeMillis();
-				show( current );
+				onShow( current );
 			}
 
 			// check if finished
@@ -87,13 +85,13 @@ public class Messager
 			if( elapsed >= current.durationMs )
 			{
 				// message should end
-				hide( current );
+				onHide( current );
 				current = null;
 			}
 		}
 	}
 
-	public void render( SpriteBatch batch )
+	public static void render( SpriteBatch batch )
 	{
 		if( isBusy() )
 		{
@@ -102,12 +100,18 @@ public class Messager
 		}
 	}
 
-	private void show( Message m )
+	public static void show( String message, float durationSecs, MessageType type, MessagePosition position, MessageSize size )
+	{
+		Message m = new Message( message, durationSecs, type, position, size );
+		messages.add( m );
+	}
+
+	private static void onShow( Message m )
 	{
 //		System.out.println( "Showing '" + m.what + "', started at " + m.startMs );
 	}
 
-	private void hide( Message m )
+	private static void onHide( Message m )
 	{
 //		System.out.println( "Hiding '" + m.what + "', at " + System.currentTimeMillis() + ", after "
 //				+ (System.currentTimeMillis() - m.startMs) );

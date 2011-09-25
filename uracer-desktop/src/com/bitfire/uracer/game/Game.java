@@ -10,6 +10,7 @@ import com.bitfire.uracer.entities.EntityManager;
 import com.bitfire.uracer.entities.vehicles.Car;
 import com.bitfire.uracer.game.logic.GameLogic;
 import com.bitfire.uracer.hud.Hud;
+import com.bitfire.uracer.messager.Messager;
 import com.bitfire.uracer.postprocessing.PostProcessor;
 import com.bitfire.uracer.tiled.Level;
 
@@ -27,13 +28,12 @@ public class Game
 
 	public Game( GameDifficulty difficulty )
 	{
+		Messager.init();
 		gameSettings = GameplaySettings.create( difficulty );
 		Director.create( Gdx.graphics.getWidth(), Gdx.graphics.getHeight() );
 
 		level = Director.loadLevel( "level1", gameSettings );
 		player = level.getPlayer();
-
-		Hud.init();
 
 		logic = new GameLogic( this );
 		hud = new Hud( logic );
@@ -42,6 +42,7 @@ public class Game
 	public void dispose()
 	{
 		Director.dispose();
+		Messager.dispose();
 	}
 
 	public void tick()
@@ -49,6 +50,7 @@ public class Game
 		logic.tick();
 		level.tick();
 		hud.tick();
+
 		Debug.update();
 	}
 
@@ -104,14 +106,14 @@ public class Game
 
 	public void restart()
 	{
-		Hud.clearMessages();
+		Messager.reset();
 		level.restart();
 		logic.restart();
 	}
 
 	public void reset()
 	{
-		Hud.clearMessages();
+		Messager.reset();
 		level.restart();
 		logic.reset();
 	}

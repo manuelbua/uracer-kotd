@@ -1,12 +1,12 @@
-package com.bitfire.uracer.hud;
+package com.bitfire.uracer.messager;
 
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.g2d.BitmapFont;
 import com.badlogic.gdx.graphics.g2d.BitmapFont.TextBounds;
 import com.bitfire.uracer.Art;
-import com.bitfire.uracer.hud.Messager.MessagePosition;
-import com.bitfire.uracer.hud.Messager.MessageSize;
-import com.bitfire.uracer.hud.Messager.MessageType;
+import com.bitfire.uracer.messager.Messager.MessagePosition;
+import com.bitfire.uracer.messager.Messager.MessageSize;
+import com.bitfire.uracer.messager.Messager.MessageType;
 
 public class Message
 {

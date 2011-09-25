@@ -5,9 +5,7 @@ import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.math.Matrix4;
 import com.bitfire.uracer.Art;
 import com.bitfire.uracer.game.logic.GameLogic;
-import com.bitfire.uracer.hud.Messager.MessagePosition;
-import com.bitfire.uracer.hud.Messager.MessageSize;
-import com.bitfire.uracer.hud.Messager.MessageType;
+import com.bitfire.uracer.messager.Messager;
 import com.bitfire.uracer.simulations.car.Replay;
 
 public class Hud
@@ -37,26 +35,20 @@ public class Hud
 		lapTimeX = gridX - (int)Art.fontCurseYR.getMultiLineBounds( "YOUR TIME" ).width;
 	}
 
-	public static void init()
-	{
-		msg = new Messager();
-	}
-
 	public void dispose()
 	{
 		textBatch.dispose();
-		msg.dispose();
 	}
 
 	public void tick()
 	{
-		msg.update();
+		Messager.tick();
 	}
 
 	public void render()
 	{
 		textBatch.begin();
-		msg.render( textBatch );
+		Messager.render( textBatch );
 		renderLapTimes();
 		textBatch.end();
 	}
@@ -84,33 +76,5 @@ public class Hud
 			// no data
 			Art.fontCurseYR.drawMultiLine( textBatch, "\n- : ----", gridX * 3, 10 );
 		}
-	}
-
-	// messages utilities
-
-	public static void clearMessages()
-	{
-		msg.reset();
-	}
-
-	public static void showMessage( String message, float durationSecs )
-	{
-		Hud.showMessage( message, durationSecs, MessageType.Information, MessagePosition.Bottom, MessageSize.Normal );
-	}
-
-	public static void showMessage( String message, float durationSecs, MessageType type )
-	{
-		Hud.showMessage( message, durationSecs, type, MessagePosition.Bottom, MessageSize.Normal );
-	}
-
-	public static void showMessage( String message, float durationSecs, MessageType type, MessagePosition position )
-	{
-		Hud.showMessage( message, durationSecs, type, position, MessageSize.Normal );
-	}
-
-	public static void showMessage( String message, float durationSecs, MessageType type, MessagePosition position,
-			MessageSize size )
-	{
-		msg.add( message, durationSecs, type, position, size );
 	}
 }

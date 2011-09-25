@@ -4,10 +4,10 @@ import com.badlogic.gdx.math.Vector2;
 import com.bitfire.uracer.LapInfo;
 import com.bitfire.uracer.entities.vehicles.Car;
 import com.bitfire.uracer.entities.vehicles.GhostCar;
-import com.bitfire.uracer.hud.Hud;
-import com.bitfire.uracer.hud.Messager.MessagePosition;
-import com.bitfire.uracer.hud.Messager.MessageSize;
-import com.bitfire.uracer.hud.Messager.MessageType;
+import com.bitfire.uracer.messager.Messager;
+import com.bitfire.uracer.messager.Messager.MessagePosition;
+import com.bitfire.uracer.messager.Messager.MessageSize;
+import com.bitfire.uracer.messager.Messager.MessageType;
 import com.bitfire.uracer.simulations.car.Replay;
 import com.bitfire.uracer.tiled.Level;
 import com.bitfire.uracer.utils.Convert;
@@ -32,9 +32,6 @@ public class GameLogicListener implements IGameLogicListener
 		player = logic.getGame().getLevel().getPlayer();
 		ghost = logic.getGame().getLevel().getGhost();
 		lapInfo = new LapInfo();
-
-		// onBeforeStart?
-		Hud.showMessage( "WARM  UP  LAP", 5f, MessageType.Information, MessagePosition.Top, MessageSize.Big );
 	}
 
 	@Override
@@ -49,23 +46,8 @@ public class GameLogicListener implements IGameLogicListener
 	public void onRestart()
 	{
 		isFirstLap = true;
-
-//		Replay r = lapInfo.getFirstAvailable();
-//		if(lapInfo.hasAnyReplayData() && r != null )
-//		{
-//			Replay buf = lapInfo.getNextBuffer();
-//			level.beginRecording( buf, lapInfo.getStartNanotime() );
-//
-//			System.out.println("Replaying next buffer");
-//			ghost.setReplay( r );
-//			lastLapId = r.id;
-//		}
-//		else
-//		{
-//			System.out.println("No replay data");
-//			isFirstLap = true;
-//			ghost.setReplay( null );
-//		}
+		Messager.reset();
+		Messager.show( "WARM  UP  LAP", 5f, MessageType.Information, MessagePosition.Top, MessageSize.Big );
 	}
 
 	@Override
@@ -112,20 +94,22 @@ public class GameLogicListener implements IGameLogicListener
 
 					ghost.setReplay( lapInfo.getAnyReplay() );
 
-					Hud.showMessage( "GO!  GO!  GO!", 5f, MessageType.Information, MessagePosition.Top, MessageSize.Big );
+					Messager.reset();
+					Messager.show( "GO!  GO!  GO!", 5f, MessageType.Information, MessagePosition.Top, MessageSize.Big );
 				} else
 				{
 					// both valid, replay best, overwrite worst
 					Replay best = lapInfo.getBestReplay(), worst = lapInfo.getWorstReplay();
 
+					Messager.reset();
 					if( lastRecordedLapId == best.id )
 					{
-						Hud.showMessage(
+						Messager.show(
 								"-" + String.format( "%.2f", worst.trackTimeSeconds - best.trackTimeSeconds )
 										+ " seconds!", 5f, MessageType.Good, MessagePosition.Top, MessageSize.Big );
 					} else
 					{
-						Hud.showMessage(
+						Messager.show(
 								"+" + String.format( "%.2f", worst.trackTimeSeconds - best.trackTimeSeconds )
 										+ " seconds", 5f, MessageType.Bad, MessagePosition.Top, MessageSize.Big );
 					}
