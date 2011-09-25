@@ -107,6 +107,15 @@ public class Art
 		return t;
 	}
 
+	public static void scaleFonts( float scale )
+	{
+		Art.fontCurseYR.setScale( scale );
+		Art.fontCurseG.setScale( scale );
+		Art.fontCurseR.setScale( scale );
+		Art.fontCurseYRbig.setScale( scale );
+		Art.fontCurseGbig.setScale( scale );
+		Art.fontCurseRbig.setScale( scale );
+	}
 	public static void dispose()
 	{
 		base6[0][0].getTexture().dispose();

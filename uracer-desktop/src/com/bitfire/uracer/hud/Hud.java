@@ -13,8 +13,6 @@ public class Hud
 	private GameLogic logic;
 	private SpriteBatch textBatch;
 
-	private static Messager msg;
-
 	private int gridX = 0;
 	private int lapTimeX = 0;
 

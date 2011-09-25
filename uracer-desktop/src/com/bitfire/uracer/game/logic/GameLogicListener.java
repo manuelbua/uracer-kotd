@@ -46,7 +46,6 @@ public class GameLogicListener implements IGameLogicListener
 	public void onRestart()
 	{
 		isFirstLap = true;
-		Messager.reset();
 		Messager.show( "WARM  UP  LAP", 5f, MessageType.Information, MessagePosition.Top, MessageSize.Big );
 	}
 
@@ -94,14 +93,12 @@ public class GameLogicListener implements IGameLogicListener
 
 					ghost.setReplay( lapInfo.getAnyReplay() );
 
-					Messager.reset();
 					Messager.show( "GO!  GO!  GO!", 5f, MessageType.Information, MessagePosition.Top, MessageSize.Big );
 				} else
 				{
 					// both valid, replay best, overwrite worst
 					Replay best = lapInfo.getBestReplay(), worst = lapInfo.getWorstReplay();
 
-					Messager.reset();
 					if( lastRecordedLapId == best.id )
 					{
 						Messager.show(

@@ -2,6 +2,7 @@ package com.bitfire.uracer.game;
 
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.GL20;
+import com.bitfire.uracer.Art;
 import com.bitfire.uracer.Config;
 import com.bitfire.uracer.Director;
 import com.bitfire.uracer.URacer;
@@ -31,6 +32,7 @@ public class Game
 		Messager.init();
 		gameSettings = GameplaySettings.create( difficulty );
 		Director.create( Gdx.graphics.getWidth(), Gdx.graphics.getHeight() );
+		Art.scaleFonts( Director.scalingStrategy.invTileMapZoomFactor );
 
 		level = Director.loadLevel( "level1", gameSettings );
 		player = level.getPlayer();

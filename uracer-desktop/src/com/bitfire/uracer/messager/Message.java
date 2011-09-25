@@ -2,7 +2,9 @@ package com.bitfire.uracer.messager;
 
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.g2d.BitmapFont;
+import com.badlogic.gdx.graphics.g2d.BitmapFont.HAlignment;
 import com.badlogic.gdx.graphics.g2d.BitmapFont.TextBounds;
+import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.bitfire.uracer.Art;
 import com.bitfire.uracer.messager.Messager.MessagePosition;
 import com.bitfire.uracer.messager.Messager.MessageSize;
@@ -10,27 +12,30 @@ import com.bitfire.uracer.messager.Messager.MessageType;
 
 public class Message
 {
-	public String what;
 	public long durationMs;
 	public long startMs;
 	public boolean started;
-	public float boundsWidth, boundsHeight;
-	public MessageType type;
-	public MessagePosition position;
-	public float whereX, whereY;
-	public BitmapFont font;
+
+	private String what;
+	private MessageType type;
+	private MessagePosition position;
+	private float whereX, whereY;
+	private BitmapFont font;
+	private int halfWidth;
+	private boolean finished;
 
 	public Message( String message, float durationSecs, MessageType type, MessagePosition position, MessageSize size )
 	{
 		startMs = 0;
 		started = false;
+		halfWidth = (int)(Gdx.graphics.getWidth() / 2);
 
 		what = message;
 		this.type = type;
 		this.position = position;
 		durationMs = (int)(durationSecs * 1000f);
 
-		switch( type )
+		switch( this.type )
 		{
 		default:
 		case Information:
@@ -61,8 +66,6 @@ public class Message
 	private void computeFinalPosition()
 	{
 		TextBounds bounds = font.getMultiLineBounds( what );
-		boundsWidth = bounds.width;
-		boundsHeight = bounds.height;
 
 		whereX = Gdx.graphics.getWidth() / 4;
 		whereY = 0;
@@ -74,13 +77,33 @@ public class Message
 			break;
 
 		case Middle:
-			whereY = (Gdx.graphics.getHeight() - boundsHeight ) / 2;
+			whereY = (Gdx.graphics.getHeight() - bounds.height) / 2;
 			break;
 
 		case Bottom:
-			whereY = Gdx.graphics.getHeight() - boundsHeight - 30 * font.getScaleX();
+			whereY = Gdx.graphics.getHeight() - bounds.height - 30 * font.getScaleX();
 			break;
 		}
 
+	}
+
+	public boolean tick()
+	{
+		return !finished;
+	}
+
+	public void render( SpriteBatch batch )
+	{
+		font.drawMultiLine( batch, what, whereX, whereY, halfWidth, HAlignment.CENTER );
+	}
+
+	public void onShow()
+	{
+		finished = false;
+	}
+
+	public void onHide()
+	{
+		finished = true;
 	}
 }

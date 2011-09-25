@@ -3,10 +3,7 @@ package com.bitfire.uracer.messager;
 import java.util.LinkedList;
 import java.util.Queue;
 
-import com.badlogic.gdx.Gdx;
-import com.badlogic.gdx.graphics.g2d.BitmapFont.HAlignment;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
-import com.bitfire.uracer.Director;
 
 public class Messager
 {
@@ -29,9 +26,6 @@ public class Messager
 	private static Queue<Message> messages;
 	private static Message current;
 
-	// font
-	private static int halfWidth;
-
 	private Messager()
 	{
 	}
@@ -40,7 +34,6 @@ public class Messager
 	{
 		current = null;
 		messages = new LinkedList<Message>();
-		halfWidth = Gdx.graphics.getWidth() / 2;
 	}
 
 	public static void dispose()
@@ -77,16 +70,20 @@ public class Messager
 			{
 				current.started = true;
 				current.startMs = System.currentTimeMillis();
-				onShow( current );
+				current.onShow();
+			}
+
+			if( !current.tick() )
+			{
+				current = null;
+				return;
 			}
 
 			// check if finished
-			long elapsed = (System.currentTimeMillis() - current.startMs);
-			if( elapsed >= current.durationMs )
+			if( (System.currentTimeMillis() - current.startMs) >= current.durationMs )
 			{
 				// message should end
-				onHide( current );
-				current = null;
+				current.onHide();
 			}
 		}
 	}
@@ -95,25 +92,19 @@ public class Messager
 	{
 		if( isBusy() )
 		{
-			current.font.setScale( Director.scalingStrategy.invTileMapZoomFactor );
-			current.font.drawMultiLine( batch, current.what, current.whereX, current.whereY, halfWidth, HAlignment.CENTER );
+			current.render( batch );
 		}
 	}
 
 	public static void show( String message, float durationSecs, MessageType type, MessagePosition position, MessageSize size )
 	{
+		reset();
+		enqueue( message, durationSecs, type, position, size );
+	}
+
+	public static void enqueue( String message, float durationSecs, MessageType type, MessagePosition position, MessageSize size )
+	{
 		Message m = new Message( message, durationSecs, type, position, size );
 		messages.add( m );
-	}
-
-	private static void onShow( Message m )
-	{
-//		System.out.println( "Showing '" + m.what + "', started at " + m.startMs );
-	}
-
-	private static void onHide( Message m )
-	{
-//		System.out.println( "Hiding '" + m.what + "', at " + System.currentTimeMillis() + ", after "
-//				+ (System.currentTimeMillis() - m.startMs) );
 	}
 }
