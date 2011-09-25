@@ -263,9 +263,8 @@ public class Level
 
 	public void restart()
 	{
-		player.resetPhysics();
-		player.setTransform( playerStartPos, playerStartOrient );
-		ghost.setReplay( null );
+		player.reset();
+		ghost.reset();
 		recorder.reset();
 	}
 

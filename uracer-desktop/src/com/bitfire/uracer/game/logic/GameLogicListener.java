@@ -10,6 +10,7 @@ import com.bitfire.uracer.hud.Messager.MessageSize;
 import com.bitfire.uracer.hud.Messager.MessageType;
 import com.bitfire.uracer.simulations.car.Replay;
 import com.bitfire.uracer.tiled.Level;
+import com.bitfire.uracer.utils.Convert;
 
 public class GameLogicListener implements IGameLogicListener
 {
@@ -76,12 +77,11 @@ public class GameLogicListener implements IGameLogicListener
 	@Override
 	public void onTileChanged( Vector2 carAt )
 	{
-		boolean onStartZone = (carAt.x == 1 && carAt.y == 0);
+		Vector2 cartile = Convert.pxToTile( player.getStartPos().x, player.getStartPos().y );
+		boolean onStartZone = (carAt.x == cartile.x && carAt.y == cartile.y);
 
 		if( onStartZone )
 		{
-//			Replay b0 = lapInfo.getReplay( 0 ), b1 = lapInfo.getReplay( 1 );
-
 			if( isFirstLap )
 			{
 				isFirstLap = false;
@@ -97,6 +97,7 @@ public class GameLogicListener implements IGameLogicListener
 			{
 				if(level.isRecording())
 					level.endRecording();
+
 				lapInfo.update();
 
 				// replay best, overwrite worst logic

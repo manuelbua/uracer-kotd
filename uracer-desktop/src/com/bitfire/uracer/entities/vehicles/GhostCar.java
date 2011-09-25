@@ -70,6 +70,13 @@ public class GhostCar extends Car
 	}
 
 	@Override
+	public void reset()
+	{
+		super.reset();
+		setReplay( null );
+	}
+
+	@Override
 	public void onRender( SpriteBatch batch )
 	{
 		if( isActive() )
