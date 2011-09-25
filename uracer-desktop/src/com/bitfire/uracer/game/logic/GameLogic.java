@@ -43,7 +43,7 @@ public class GameLogic
 		this.game = game;
 		this.level = game.getLevel();
 		this.player = level.getPlayer();
-		this.listener = new GameLogicListener(this );
+		this.listener = new GameLogicListener( this );
 
 		// effects
 		if( Config.EnablePostProcessingFx )
@@ -65,8 +65,7 @@ public class GameLogic
 			if( Input.isOn( Keys.R ) )
 			{
 				game.restart();
-			} else
-			if( Input.isOn( Keys.T ) )
+			} else if( Input.isOn( Keys.T ) )
 			{
 				game.reset();
 			}

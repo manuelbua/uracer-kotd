@@ -50,7 +50,7 @@ public class Messager
 	{
 		messages.clear();
 		current = null;
-//		System.out.println("Messages just got cleaned up.");
+		// System.out.println("Messages just got cleaned up.");
 	}
 
 	public static void tick()
@@ -80,7 +80,7 @@ public class Messager
 			}
 
 			// check if finished
-			if( (System.currentTimeMillis() - current.startMs) >= current.durationMs && !current.isHiding())
+			if( (System.currentTimeMillis() - current.startMs) >= current.durationMs && !current.isHiding() )
 			{
 				// message should end
 				current.onHide();
@@ -98,7 +98,7 @@ public class Messager
 
 	public static void show( String message, float durationSecs, MessageType type, MessagePosition position, MessageSize size )
 	{
-		if(isBusy()) current.onHide();
+		if( isBusy() ) current.onHide();
 		enqueue( message, durationSecs, type, position, size );
 	}
 

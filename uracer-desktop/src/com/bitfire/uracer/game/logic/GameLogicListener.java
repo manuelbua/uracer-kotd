@@ -72,12 +72,10 @@ public class GameLogicListener implements IGameLogicListener
 				level.beginRecording( buf, lapInfo.getStartNanotime() );
 				lastRecordedLapId = buf.id;
 
-				if( lapInfo.hasAnyReplayData() )
-					ghost.setReplay( lapInfo.getAnyReplay() );
+				if( lapInfo.hasAnyReplayData() ) ghost.setReplay( lapInfo.getAnyReplay() );
 			} else
 			{
-				if(level.isRecording())
-					level.endRecording();
+				if( level.isRecording() ) level.endRecording();
 
 				lapInfo.update();
 
@@ -101,14 +99,13 @@ public class GameLogicListener implements IGameLogicListener
 
 					if( lastRecordedLapId == best.id )
 					{
-						Messager.show(
-								"-" + String.format( "%.2f", worst.trackTimeSeconds - best.trackTimeSeconds )
-										+ " seconds!", 3f, MessageType.Good, MessagePosition.Middle, MessageSize.Big );
+						Messager.show( "-" + String.format( "%.2f", worst.trackTimeSeconds - best.trackTimeSeconds )
+								+ " seconds!", 3f, MessageType.Good, MessagePosition.Middle, MessageSize.Big );
 					} else
 					{
 						Messager.show(
-								"+" + String.format( "%.2f", worst.trackTimeSeconds - best.trackTimeSeconds )
-										+ " seconds", 3f, MessageType.Bad, MessagePosition.Middle, MessageSize.Big );
+								"+" + String.format( "%.2f", worst.trackTimeSeconds - best.trackTimeSeconds ) + " seconds", 3f,
+								MessageType.Bad, MessagePosition.Middle, MessageSize.Big );
 					}
 
 					ghost.setReplay( best );
