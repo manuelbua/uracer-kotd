@@ -13,10 +13,7 @@ public class Hud
 	private GameLogic logic;
 	private SpriteBatch textBatch;
 
-	private int gridX = 0;
-	private int lapTimeX = 0;
-
-	private Label best, curr, last;
+	private HudLabel best, curr, last;
 
 	public Hud( GameLogic logic )
 	{
@@ -31,15 +28,15 @@ public class Hud
 		textBatch.setProjectionMatrix( proj );
 
 		// grid-based position
-		gridX = (int)((float)Gdx.graphics.getWidth() / 5f);
+		int gridX = (int)((float)Gdx.graphics.getWidth() / 5f);
 
-		best = new Label( Art.fontCurseYR, "BEST  TIME\n-.----" );
-		curr = new Label( Art.fontCurseYR, "YOUR  TIME\n-.----" );
-		last = new Label( Art.fontCurseYR, "LAST  TIME\n-.----" );
+		best = new HudLabel( Art.fontCurseYR, "BEST  TIME\n-.----" );
+		curr = new HudLabel( Art.fontCurseYR, "YOUR  TIME\n-.----" );
+		last = new HudLabel( Art.fontCurseYR, "LAST  TIME\n-.----" );
 
 		curr.setPosition( gridX - curr.getBounds().width, 10 );
-		last.setPosition( gridX*4 - best.getBounds().width, 10 );
-		best.setPosition( gridX*5 - best.getBounds().width, 10 );
+		last.setPosition( gridX * 4 - best.getBounds().width, 10 );
+		best.setPosition( gridX * 5 - best.getBounds().width, 10 );
 	}
 
 	public void dispose()
@@ -50,11 +47,10 @@ public class Hud
 	public void tick()
 	{
 		Messager.tick();
+	}
 
-		//
-		// update time labels
-		//
-
+	private void updateTimes()
+	{
 		// current time
 		curr.setString( String.format( "YOUR  TIME\n%.04fs", logic.getLapInfo().getElapsedSeconds() ) );
 
@@ -72,8 +68,7 @@ public class Hud
 			if( logic.getLapInfo().hasLastTrackTimeSeconds() )
 			{
 				best.setString( String.format( "BEST  TIME\n%.04fs", logic.getLapInfo().getLastTrackTimeSeconds() ) );
-			}
-			else
+			} else
 				best.setString( "BEST TIME\n-.----" );
 		}
 
@@ -90,6 +85,8 @@ public class Hud
 
 	public void render()
 	{
+		updateTimes();
+
 		textBatch.begin();
 		Messager.render( textBatch );
 		curr.render( textBatch );

@@ -77,6 +77,7 @@ public class Game
 			level.render();
 		}
 
+		logic.render();
 		hud.render();
 
 		//

@@ -1,5 +1,6 @@
 package com.bitfire.uracer.simulations.car;
 
+import com.bitfire.uracer.Config;
 import com.bitfire.uracer.Director;
 import com.bitfire.uracer.entities.vehicles.Car;
 
@@ -52,10 +53,10 @@ public class Recorder
 			return;
 		}
 
-//		if( !replay.add( f ) )
-//		{
+		if( !replay.add( f ) )
+		{
 //			System.out.println( "Replay memory limit reached (" + replay.MaxEvents + " events), restarting." );
-//		}
+		}
 	}
 
 	public void endRecording()
@@ -67,6 +68,7 @@ public class Recorder
 		}
 
 		float secs = (float)(System.nanoTime() - replay.trackStartTimeNs) / 1000000000f;
+		secs *= Config.PhysicsTimeMultiplier;
 		replay.setReplayData( Director.currentLevel.name, Director.gameplaySettings.difficulty, secs );
 
 //		System.out.println( "Recorded " + replay.getEventsCount() + " events" );

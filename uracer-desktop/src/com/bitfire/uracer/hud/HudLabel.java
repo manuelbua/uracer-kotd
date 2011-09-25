@@ -5,14 +5,14 @@ import com.badlogic.gdx.graphics.g2d.BitmapFont.TextBounds;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.bitfire.uracer.Art;
 
-public class Label
+public class HudLabel
 {
 	private String what;
 	private TextBounds bounds;
 	private BitmapFont font;
 	private float x, y;
 
-	public Label( BitmapFont font, String string )
+	public HudLabel( BitmapFont font, String string )
 	{
 		what = string;
 		this.font = font;

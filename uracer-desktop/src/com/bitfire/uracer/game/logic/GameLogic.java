@@ -83,8 +83,6 @@ public class GameLogic
 				rb.setOrigin( Director.screenPosFor( player.getBody() ) );
 			}
 		}
-
-		tweener.update();
 	}
 
 	public void reset()
@@ -100,6 +98,11 @@ public class GameLogic
 		carTileAt.set( lastCarTileAt );
 
 		listener.onRestart();
+	}
+
+	public void render()
+	{
+		tweener.update();
 	}
 
 	public Game getGame()
