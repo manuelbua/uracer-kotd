@@ -19,15 +19,18 @@ public class Game
 	private Car player = null;
 	private Hud hud = null;
 
+	// config
+	public final GameplaySettings gameSettings;
+
 	// logic
 	private GameLogic logic = null;
 
 	public Game( GameDifficulty difficulty )
 	{
-		GameplaySettings gs = GameplaySettings.create( difficulty );
+		gameSettings = GameplaySettings.create( difficulty );
 		Director.create( Gdx.graphics.getWidth(), Gdx.graphics.getHeight() );
 
-		level = Director.loadLevel( "level1", gs );
+		level = Director.loadLevel( "level1", gameSettings );
 		player = level.getPlayer();
 
 		Hud.init();
@@ -101,14 +104,14 @@ public class Game
 
 	public void restart()
 	{
-		hud.reset();
+		Hud.clearMessages();
 		level.restart();
 		logic.restart();
 	}
 
 	public void reset()
 	{
-		hud.reset();
+		Hud.clearMessages();
 		level.restart();
 		logic.reset();
 	}

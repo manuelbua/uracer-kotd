@@ -20,6 +20,7 @@ public class GameLogicListener implements IGameLogicListener
 	private GhostCar ghost = null;
 
 	// lap
+	protected LapInfo lapInfo;
 	private boolean isFirstLap = true;
 	private long lastLapId = 0;
 
@@ -29,47 +30,73 @@ public class GameLogicListener implements IGameLogicListener
 		this.level = logic.getGame().getLevel();
 		player = logic.getGame().getLevel().getPlayer();
 		ghost = logic.getGame().getLevel().getGhost();
+		lapInfo = new LapInfo();
+
+		// onBeforeStart?
+		Hud.showMessage( "WARM  UP  LAP", 5f, MessageType.Information, MessagePosition.Top, MessageSize.Big );
 	}
 
 	@Override
 	public void onReset()
 	{
+		lapInfo.reset();
 		isFirstLap = true;
+		lastLapId = 0;
 	}
 
 	@Override
 	public void onRestart()
 	{
-		lastLapId = 0;
-		if(!logic.getLapInfo().hasAnyReplayData())
-		{
-			System.out.println("no replay data, re-firstlap");
-			isFirstLap = true;
-		}
+		isFirstLap = true;
+
+//		Replay r = lapInfo.getFirstAvailable();
+//		if(lapInfo.hasAnyReplayData() && r != null )
+//		{
+//			Replay buf = lapInfo.getNextBuffer();
+//			level.beginRecording( buf, lapInfo.getStartNanotime() );
+//
+//			System.out.println("Replaying next buffer");
+//			ghost.setReplay( r );
+//			lastLapId = r.id;
+//		}
+//		else
+//		{
+//			System.out.println("No replay data");
+//			isFirstLap = true;
+//			ghost.setReplay( null );
+//		}
+	}
+
+	@Override
+	public LapInfo onGetLapInfo()
+	{
+		return lapInfo;
 	}
 
 	@Override
 	public void onTileChanged( Vector2 carAt )
 	{
 		boolean onStartZone = (carAt.x == 1 && carAt.y == 0);
-		LapInfo lapInfo = logic.getLapInfo();
 
 		if( onStartZone )
 		{
-			Replay b0 = lapInfo.getReplay( 0 ), b1 = lapInfo.getReplay( 1 );
+//			Replay b0 = lapInfo.getReplay( 0 ), b1 = lapInfo.getReplay( 1 );
 
 			if( isFirstLap )
 			{
 				isFirstLap = false;
 
-				level.beginRecording( b0, lapInfo.restart() );
-				lapInfo.setAsLast( null );
-				lastLapId = b0.id;
+				lapInfo.restart();
+				Replay buf = lapInfo.getNextBuffer();
+				level.beginRecording( buf, lapInfo.getStartNanotime() );
+				lastLapId = buf.id;
 
-				Hud.showMessage( "WARM  UP  LAP", 5f, MessageType.Information, MessagePosition.Top, MessageSize.Big );
+				if( lapInfo.hasAnyReplayData() )
+					ghost.setReplay( lapInfo.getFirstAvailable() );
 			} else
 			{
-				level.endRecording();
+				if(level.isRecording())
+					level.endRecording();
 				lapInfo.update();
 
 				// replay best, overwrite worst logic
@@ -77,11 +104,12 @@ public class GameLogicListener implements IGameLogicListener
 				if( !lapInfo.hasAllReplayData() )
 				{
 					// only one single replay
-					level.beginRecording( b1, lapInfo.restart() );
-					lapInfo.setAsLast( b0 );
-					lastLapId = b1.id;
+					lapInfo.restart();
+					Replay buf = lapInfo.getNextBuffer();
+					level.beginRecording( buf, lapInfo.getStartNanotime() );
+					lastLapId = buf.id;
 
-					ghost.setReplay( b0 );
+					ghost.setReplay( lapInfo.getPrevBuffer() );
 					Hud.showMessage( "GO!  GO!  GO!", 5f, MessageType.Information, MessagePosition.Top, MessageSize.Big );
 				} else
 				{
@@ -102,7 +130,8 @@ public class GameLogicListener implements IGameLogicListener
 
 					ghost.setReplay( best );
 
-					level.beginRecording( worst, lapInfo.restart() );
+					lapInfo.restart();
+					level.beginRecording( worst, lapInfo.getStartNanotime() );
 					lastLapId = worst.id;
 				}
 			}

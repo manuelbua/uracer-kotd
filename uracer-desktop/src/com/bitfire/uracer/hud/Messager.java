@@ -53,6 +53,7 @@ public class Messager
 	{
 		messages.clear();
 		current = null;
+//		System.out.println("Messages just got cleaned up.");
 	}
 
 	public void add( String message, float durationSecs, MessageType type, MessagePosition position, MessageSize size )
@@ -103,12 +104,12 @@ public class Messager
 
 	private void show( Message m )
 	{
-		System.out.println( "Showing '" + m.what + "', started at " + m.startMs );
+//		System.out.println( "Showing '" + m.what + "', started at " + m.startMs );
 	}
 
 	private void hide( Message m )
 	{
-		System.out.println( "Hiding '" + m.what + "', at " + System.currentTimeMillis() + ", after "
-				+ (System.currentTimeMillis() - m.startMs) );
+//		System.out.println( "Hiding '" + m.what + "', at " + System.currentTimeMillis() + ", after "
+//				+ (System.currentTimeMillis() - m.startMs) );
 	}
 }

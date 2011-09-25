@@ -251,6 +251,11 @@ public class Level
 		recorder.endRecording();
 	}
 
+	public boolean isRecording()
+	{
+		return recorder.isRecording();
+	}
+
 	public void discardRecording()
 	{
 		recorder.reset();

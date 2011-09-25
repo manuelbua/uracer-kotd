@@ -26,7 +26,6 @@ public class GameLogic
 
 	// lap and entities
 	private Level level;
-	protected LapInfo lapInfo;
 	private Car player = null;
 
 	// effects
@@ -36,12 +35,8 @@ public class GameLogic
 	{
 		this.game = game;
 		this.level = game.getLevel();
-
-		// get player/ghost references
 		this.player = level.getPlayer();
-
-		// lap info
-		lapInfo = new LapInfo();
+		this.listener = new GameLogicListener(this );
 
 		// effects
 		if( Config.EnablePostProcessingFx )
@@ -53,7 +48,6 @@ public class GameLogic
 			PostProcessor.setEffect( rb );
 		}
 
-		this.listener = new GameLogicListener( this );
 		reset();
 	}
 
@@ -64,6 +58,7 @@ public class GameLogic
 			if( player != null )
 			{
 				game.restart();
+//				return;
 			}
 		}
 
@@ -86,34 +81,26 @@ public class GameLogic
 
 	public void reset()
 	{
-		lapInfo.reset();
 		restart();
-		level.restart();
 		listener.onReset();
 	}
 
 	public void restart()
 	{
-		// restart the level, do NOT reset lap info
+		// causes an onTileChanged event to be raised
 		lastCarTileAt.set( -1, -1 );
 		carTileAt.set( lastCarTileAt );
-		lapInfo.restart();
-		level.restart();
+
 		listener.onRestart();
-	}
-
-
-	/**
-	 * Commodity getters
-	 */
-
-	public LapInfo getLapInfo()
-	{
-		return lapInfo;
 	}
 
 	public Game getGame()
 	{
 		return game;
+	}
+
+	public LapInfo getLapInfo()
+	{
+		return listener.onGetLapInfo();
 	}
 }

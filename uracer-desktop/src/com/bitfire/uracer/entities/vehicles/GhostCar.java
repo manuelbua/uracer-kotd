@@ -49,11 +49,15 @@ public class GhostCar extends Car
 		setActive( hasReplay, true );
 		if( hasReplay )
 		{
+			System.out.println( "Replaying " + replay.id );
 			restart(replay);
 		}
 		else
 		{
-			System.out.println("Replay has no recorded events, disabling replaying.");
+			if(replay==null)
+				System.out.println("Replay disabled");
+			else
+				System.out.println("Replay has no recorded events, disabling replaying.");
 		}
 	}
 
@@ -88,7 +92,7 @@ public class GhostCar extends Car
 		{
 			if( indexPlay == replay.getEventsCount() )
 			{
-				System.out.println( "restarting replay" );
+				System.out.println( "Playing finished, restarting." );
 				restart(replay);
 			}
 

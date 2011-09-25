@@ -48,11 +48,6 @@ public class Hud
 		msg.dispose();
 	}
 
-	public void reset()
-	{
-		msg.reset();
-	}
-
 	public void tick()
 	{
 		msg.update();
@@ -61,11 +56,8 @@ public class Hud
 	public void render()
 	{
 		textBatch.begin();
-
 		msg.render( textBatch );
-
 		renderLapTimes();
-
 		textBatch.end();
 	}
 
@@ -96,6 +88,11 @@ public class Hud
 
 	// messages utilities
 
+	public static void clearMessages()
+	{
+		msg.reset();
+	}
+
 	public static void showMessage( String message, float durationSecs )
 	{
 		Hud.showMessage( message, durationSecs, MessageType.Information, MessagePosition.Bottom, MessageSize.Normal );
@@ -111,7 +108,8 @@ public class Hud
 		Hud.showMessage( message, durationSecs, type, position, MessageSize.Normal );
 	}
 
-	public static void showMessage( String message, float durationSecs, MessageType type, MessagePosition position, MessageSize size )
+	public static void showMessage( String message, float durationSecs, MessageType type, MessagePosition position,
+			MessageSize size )
 	{
 		msg.add( message, durationSecs, type, position, size );
 	}
