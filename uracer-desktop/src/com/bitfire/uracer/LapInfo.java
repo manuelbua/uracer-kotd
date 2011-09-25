@@ -6,7 +6,7 @@ public class LapInfo
 {
 	// replays
 	private Replay[] replays;
-	private Replay best, worst, last, prev;
+	private Replay best, worst, last;
 	private long startTimeNs;
 
 	public LapInfo()
@@ -18,7 +18,7 @@ public class LapInfo
 		replays[0] = new Replay();
 		replays[1] = new Replay();
 
-		best = worst = last = prev = null;
+		best = worst = last = null;
 
 		reset();
 		update();
@@ -26,6 +26,7 @@ public class LapInfo
 
 	public void reset()
 	{
+		best = worst = last = null;
 		replays[0].clearForces();
 		replays[1].clearForces();
 		restart();
@@ -79,13 +80,10 @@ public class LapInfo
 			best = replays[0];
 			worst = replays[1];
 		}
-
-		last = worst;
 	}
 
 	public Replay getNextBuffer()
 	{
-		prev = last;
 		update();
 		if( !replays[0].isValid ) { last = replays[0]; return last; }
 		if( !replays[1].isValid ) { last = replays[1]; return last; }
@@ -93,11 +91,6 @@ public class LapInfo
 		// if both are valid
 		last = getWorstReplay();
 		return last;
-	}
-
-	public Replay getPrevBuffer()
-	{
-		return prev;
 	}
 
 	public Replay getBestReplay()
@@ -113,10 +106,22 @@ public class LapInfo
 	// not necessarily best or worst, just the last recorded
 	public Replay getLastReplay()
 	{
-		return last;
+		if(replays[0].isValid && replays[1].isValid)
+		{
+			if( replays[0].trackStartTimeNs > replays[1].trackStartTimeNs )
+				return replays[0];
+			return replays[1];
+		}
+		else
+		{
+			if( replays[0].isValid ) return replays[0];
+			if( replays[1].isValid ) return replays[1];
+		}
+
+		return null;
 	}
 
-	public Replay getFirstAvailable()
+	public Replay getAnyReplay()
 	{
 		if(replays[0].isValid) return replays[0];
 		if(replays[1].isValid) return replays[1];

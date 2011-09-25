@@ -9,7 +9,6 @@ public class Recorder
 
 	// replay data
 	private Replay replay;
-	private long trackNanoseconds;
 
 	private static Recorder instance;
 
@@ -42,7 +41,7 @@ public class Recorder
 		this.replay = replay;
 		replay.clearForces();
 		replay.setCarData( car );
-		trackNanoseconds = startTimeNs;
+		replay.trackStartTimeNs = startTimeNs;
 	}
 
 	public void add( CarForces f )
@@ -67,8 +66,7 @@ public class Recorder
 			return;
 		}
 
-		trackNanoseconds = System.nanoTime() - trackNanoseconds;
-		float secs = (float)trackNanoseconds / 1000000000f;
+		float secs = (float)(System.nanoTime() - replay.trackStartTimeNs) / 1000000000f;
 		replay.setReplayData( Director.currentLevel.name, Director.gameplaySettings.difficulty, secs );
 
 		System.out.println( "Recorded " + replay.getEventsCount() + " events" );

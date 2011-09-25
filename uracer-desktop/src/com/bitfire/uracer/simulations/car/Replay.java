@@ -30,6 +30,7 @@ public class Replay
 	public String trackName = "no-track";
 	public GameDifficulty difficultyLevel = GameDifficulty.Easy;
 	public float trackTimeSeconds = 0;
+	public long trackStartTimeNs = 0;
 	public ArrayList<CarForces> forces = null;
 	public boolean isValid = false;
 	public long id;

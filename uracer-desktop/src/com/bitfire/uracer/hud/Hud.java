@@ -78,11 +78,11 @@ public class Hud
 		} else if( last != null && last.isValid )
 		{
 			// has only last
-			Art.fontCurseYR.drawMultiLine( textBatch, String.format( "BEST TIME\n%.04fs", last.trackTimeSeconds ), gridX * 3, 10 );
+			Art.fontCurseYR.drawMultiLine( textBatch, String.format( "LAST TIME\n%.04fs", last.trackTimeSeconds ), gridX * 3, 10 );
 		} else
 		{
 			// no data
-			Art.fontCurseYR.drawMultiLine( textBatch, "BEST TIME\n- : ----", gridX * 3, 10 );
+			Art.fontCurseYR.drawMultiLine( textBatch, "\n- : ----", gridX * 3, 10 );
 		}
 	}
 

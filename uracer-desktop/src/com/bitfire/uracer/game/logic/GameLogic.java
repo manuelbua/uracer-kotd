@@ -53,17 +53,17 @@ public class GameLogic
 
 	public void tick()
 	{
-		if( Input.isOn( Keys.R ) )
-		{
-			if( player != null )
-			{
-				game.restart();
-//				return;
-			}
-		}
-
 		if( player != null )
 		{
+			if( Input.isOn( Keys.R ) )
+			{
+				game.restart();
+			} else
+			if( Input.isOn( Keys.T ) )
+			{
+				game.reset();
+			}
+
 			lastCarTileAt.set( carTileAt );
 			carTileAt.set( Convert.pxToTile( player.pos().x, player.pos().y ) );
 			if( (lastCarTileAt.x != carTileAt.x) || (lastCarTileAt.y != carTileAt.y) )

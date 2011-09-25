@@ -23,7 +23,7 @@ public class GameLogicListener implements IGameLogicListener
 	// lap
 	protected LapInfo lapInfo;
 	private boolean isFirstLap = true;
-	private long lastLapId = 0;
+	private long lastRecordedLapId = 0;
 
 	public GameLogicListener( GameLogic logic )
 	{
@@ -42,7 +42,7 @@ public class GameLogicListener implements IGameLogicListener
 	{
 		lapInfo.reset();
 		isFirstLap = true;
-		lastLapId = 0;
+		lastRecordedLapId = 0;
 	}
 
 	@Override
@@ -89,10 +89,10 @@ public class GameLogicListener implements IGameLogicListener
 				lapInfo.restart();
 				Replay buf = lapInfo.getNextBuffer();
 				level.beginRecording( buf, lapInfo.getStartNanotime() );
-				lastLapId = buf.id;
+				lastRecordedLapId = buf.id;
 
 				if( lapInfo.hasAnyReplayData() )
-					ghost.setReplay( lapInfo.getFirstAvailable() );
+					ghost.setReplay( lapInfo.getAnyReplay() );
 			} else
 			{
 				if(level.isRecording())
@@ -108,16 +108,17 @@ public class GameLogicListener implements IGameLogicListener
 					lapInfo.restart();
 					Replay buf = lapInfo.getNextBuffer();
 					level.beginRecording( buf, lapInfo.getStartNanotime() );
-					lastLapId = buf.id;
+					lastRecordedLapId = buf.id;
 
-					ghost.setReplay( lapInfo.getPrevBuffer() );
+					ghost.setReplay( lapInfo.getAnyReplay() );
+
 					Hud.showMessage( "GO!  GO!  GO!", 5f, MessageType.Information, MessagePosition.Top, MessageSize.Big );
 				} else
 				{
 					// both valid, replay best, overwrite worst
 					Replay best = lapInfo.getBestReplay(), worst = lapInfo.getWorstReplay();
 
-					if( lastLapId == best.id )
+					if( lastRecordedLapId == best.id )
 					{
 						Hud.showMessage(
 								"-" + String.format( "%.2f", worst.trackTimeSeconds - best.trackTimeSeconds )
@@ -133,7 +134,7 @@ public class GameLogicListener implements IGameLogicListener
 
 					lapInfo.restart();
 					level.beginRecording( worst, lapInfo.getStartNanotime() );
-					lastLapId = worst.id;
+					lastRecordedLapId = worst.id;
 				}
 			}
 		}
