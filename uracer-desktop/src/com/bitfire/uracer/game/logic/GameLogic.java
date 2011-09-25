@@ -1,5 +1,8 @@
 package com.bitfire.uracer.game.logic;
 
+import aurelienribon.tweenengine.Tween;
+import aurelienribon.tweenengine.TweenManager;
+
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Input.Keys;
 import com.badlogic.gdx.math.Vector2;
@@ -19,6 +22,7 @@ public class GameLogic
 {
 	private Game game;
 	private GameLogicListener listener;
+	private static TweenManager tweener;
 
 	// events - onTileChanged
 	private Vector2 carTileAt = new Vector2();
@@ -33,10 +37,13 @@ public class GameLogic
 
 	public GameLogic( Game game )
 	{
+		Tween.setPoolEnabled( true );
+		GameLogic.tweener = new TweenManager();
+
 		this.game = game;
 		this.level = game.getLevel();
 		this.player = level.getPlayer();
-		this.listener = new GameLogicListener(this );
+		this.listener = new GameLogicListener( this );
 
 		// effects
 		if( Config.EnablePostProcessingFx )
@@ -58,8 +65,7 @@ public class GameLogic
 			if( Input.isOn( Keys.R ) )
 			{
 				game.restart();
-			} else
-			if( Input.isOn( Keys.T ) )
+			} else if( Input.isOn( Keys.T ) )
 			{
 				game.reset();
 			}
@@ -77,6 +83,8 @@ public class GameLogic
 				rb.setOrigin( Director.screenPosFor( player.getBody() ) );
 			}
 		}
+
+		tweener.update();
 	}
 
 	public void reset()
@@ -102,5 +110,10 @@ public class GameLogic
 	public LapInfo getLapInfo()
 	{
 		return listener.onGetLapInfo();
+	}
+
+	public static TweenManager getTweener()
+	{
+		return tweener;
 	}
 }

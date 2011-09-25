@@ -46,7 +46,7 @@ public class GameLogicListener implements IGameLogicListener
 	public void onRestart()
 	{
 		isFirstLap = true;
-		Messager.show( "WARM  UP  LAP", 5f, MessageType.Information, MessagePosition.Top, MessageSize.Big );
+		Messager.show( "WARM  UP  LAP", 3f, MessageType.Information, MessagePosition.Middle, MessageSize.Big );
 	}
 
 	@Override
@@ -73,11 +73,13 @@ public class GameLogicListener implements IGameLogicListener
 				lastRecordedLapId = buf.id;
 
 				if( lapInfo.hasAnyReplayData() )
-					ghost.setReplay( lapInfo.getAnyReplay() );
+				{
+					Replay any = lapInfo.getAnyReplay();
+					ghost.setReplay( any );
+				}
 			} else
 			{
-				if(level.isRecording())
-					level.endRecording();
+				if( level.isRecording() ) level.endRecording();
 
 				lapInfo.update();
 
@@ -91,9 +93,11 @@ public class GameLogicListener implements IGameLogicListener
 					level.beginRecording( buf, lapInfo.getStartNanotime() );
 					lastRecordedLapId = buf.id;
 
-					ghost.setReplay( lapInfo.getAnyReplay() );
+					Replay any = lapInfo.getAnyReplay();
+					ghost.setReplay( any );
+					lapInfo.setLastTrackTimeSeconds( any.trackTimeSeconds );
 
-					Messager.show( "GO!  GO!  GO!", 5f, MessageType.Information, MessagePosition.Top, MessageSize.Big );
+					Messager.show( "GO!  GO!  GO!", 3f, MessageType.Information, MessagePosition.Middle, MessageSize.Big );
 				} else
 				{
 					// both valid, replay best, overwrite worst
@@ -101,14 +105,15 @@ public class GameLogicListener implements IGameLogicListener
 
 					if( lastRecordedLapId == best.id )
 					{
-						Messager.show(
-								"-" + String.format( "%.2f", worst.trackTimeSeconds - best.trackTimeSeconds )
-										+ " seconds!", 5f, MessageType.Good, MessagePosition.Top, MessageSize.Big );
+						lapInfo.setLastTrackTimeSeconds( best.trackTimeSeconds );
+						Messager.show( "-" + String.format( "%.2f", worst.trackTimeSeconds - best.trackTimeSeconds )
+								+ " seconds!", 3f, MessageType.Good, MessagePosition.Middle, MessageSize.Big );
 					} else
 					{
+						lapInfo.setLastTrackTimeSeconds( worst.trackTimeSeconds );
 						Messager.show(
-								"+" + String.format( "%.2f", worst.trackTimeSeconds - best.trackTimeSeconds )
-										+ " seconds", 5f, MessageType.Bad, MessagePosition.Top, MessageSize.Big );
+								"+" + String.format( "%.2f", worst.trackTimeSeconds - best.trackTimeSeconds ) + " seconds", 3f,
+								MessageType.Bad, MessagePosition.Middle, MessageSize.Big );
 					}
 
 					ghost.setReplay( best );

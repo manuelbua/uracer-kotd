@@ -6,19 +6,23 @@ public class LapInfo
 {
 	// replays
 	private Replay[] replays;
-	private Replay best, worst, last;
+	private Replay best, worst;
 	private long startTimeNs;
+	private float lastTrackTimeSecs;
+	private boolean hasLastTrackTimeSecs;
 
 	public LapInfo()
 	{
 		startTimeNs = 0;
+		lastTrackTimeSecs = 0;
+		hasLastTrackTimeSecs = false;
 
 		// construct replay buffers
 		replays = new Replay[ 2 ];
 		replays[0] = new Replay();
 		replays[1] = new Replay();
 
-		best = worst = last = null;
+		best = worst = null;
 
 		reset();
 		update();
@@ -26,10 +30,19 @@ public class LapInfo
 
 	public void reset()
 	{
-		best = worst = last = null;
+		hasLastTrackTimeSecs = false;
+		best = worst = null;
 		replays[0].clearForces();
 		replays[1].clearForces();
-		restart();
+		startTimeNs = System.nanoTime();
+	}
+
+	public long restart()
+	{
+		startTimeNs = System.nanoTime();
+		if(!replays[0].isValid) replays[0].clearForces();
+		if(!replays[1].isValid) replays[1].clearForces();
+		return startTimeNs;
 	}
 
 	public float getElapsedSeconds()
@@ -39,14 +52,6 @@ public class LapInfo
 
 	public long getStartNanotime()
 	{
-		return startTimeNs;
-	}
-
-	public long restart()
-	{
-		startTimeNs = System.nanoTime();
-		if(!replays[0].isValid) replays[0].clearForces();
-		if(!replays[1].isValid) replays[1].clearForces();
 		return startTimeNs;
 	}
 
@@ -85,12 +90,11 @@ public class LapInfo
 	public Replay getNextBuffer()
 	{
 		update();
-		if( !replays[0].isValid ) { last = replays[0]; return last; }
-		if( !replays[1].isValid ) { last = replays[1]; return last; }
+		if( !replays[0].isValid ) { return replays[0]; }
+		if( !replays[1].isValid ) { return replays[1]; }
 
 		// if both are valid
-		last = getWorstReplay();
-		return last;
+		return getWorstReplay();
 	}
 
 	public Replay getBestReplay()
@@ -103,22 +107,20 @@ public class LapInfo
 		return worst;
 	}
 
-	// not necessarily best or worst, just the last recorded
-	public Replay getLastReplay()
+	public void setLastTrackTimeSeconds( float value )
 	{
-		if(replays[0].isValid && replays[1].isValid)
-		{
-			if( replays[0].trackStartTimeNs > replays[1].trackStartTimeNs )
-				return replays[0];
-			return replays[1];
-		}
-		else
-		{
-			if( replays[0].isValid ) return replays[0];
-			if( replays[1].isValid ) return replays[1];
-		}
+		lastTrackTimeSecs = value;
+		hasLastTrackTimeSecs = true;
+	}
 
-		return null;
+	public float getLastTrackTimeSeconds()
+	{
+		return lastTrackTimeSecs;
+	}
+
+	public boolean hasLastTrackTimeSeconds()
+	{
+		return hasLastTrackTimeSecs;
 	}
 
 	public Replay getAnyReplay()

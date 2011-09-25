@@ -1,7 +1,6 @@
 package com.bitfire.uracer.game;
 
 import com.badlogic.gdx.Gdx;
-import com.badlogic.gdx.graphics.GL20;
 import com.bitfire.uracer.Art;
 import com.bitfire.uracer.Config;
 import com.bitfire.uracer.Director;
@@ -58,7 +57,6 @@ public class Game
 
 	public void render()
 	{
-		GL20 gl = Gdx.graphics.getGL20();
 		EntityManager.raiseOnBeforeRender( URacer.getTemporalAliasing() );
 
 		// follow the car
@@ -75,7 +73,7 @@ public class Game
 			PostProcessor.end();
 		} else
 		{
-			gl.glViewport( 0, 0, Gdx.graphics.getWidth(), Gdx.graphics.getHeight() );
+			Gdx.graphics.getGL20().glViewport( 0, 0, Gdx.graphics.getWidth(), Gdx.graphics.getHeight() );
 			level.render();
 		}
 
@@ -85,20 +83,28 @@ public class Game
 		// debug
 		//
 
-		if( Config.isDesktop ) Debug.renderB2dWorld( Director.getMatViewProjMt() );
+		if( Config.isDesktop )
+		{
+			Debug.renderB2dWorld( Director.getMatViewProjMt() );
 
-		Debug.begin();
-		EntityManager.raiseOnDebug();
-		Debug.renderVersionInfo();
-		Debug.renderGraphicalStats( Gdx.graphics.getWidth() - Debug.getStatsWidth(),
-				Gdx.graphics.getHeight() - Debug.getStatsHeight() - Debug.fontHeight );
-		if( Config.isDesktop ) Debug.renderMemoryUsage();
-		// Debug.drawString( "EMgr::maxSpritesInBatch = " +
-		// EntityManager.maxSpritesInBatch(), 0, 6 );
-		// Debug.drawString( "EMgr::renderCalls = " +
-		// EntityManager.renderCalls(), 0, 12 );
-		Debug.end();
-
+			Debug.begin();
+			EntityManager.raiseOnDebug();
+			Debug.renderVersionInfo();
+			Debug.renderGraphicalStats( Gdx.graphics.getWidth() - Debug.getStatsWidth(),
+					Gdx.graphics.getHeight() - Debug.getStatsHeight() - Debug.fontHeight );
+			if( Config.isDesktop ) Debug.renderMemoryUsage();
+			// Debug.drawString( "EMgr::maxSpritesInBatch = " +
+			// EntityManager.maxSpritesInBatch(), 0, 6 );
+			// Debug.drawString( "EMgr::renderCalls = " +
+			// EntityManager.renderCalls(), 0, 12 );
+			Debug.end();
+		} else
+		{
+			Debug.begin();
+			Debug.renderGraphicalStats( Gdx.graphics.getWidth() - Debug.getStatsWidth(),
+					Gdx.graphics.getHeight() - Debug.getStatsHeight() - Debug.fontHeight );
+			Debug.end();
+		}
 	}
 
 	public Level getLevel()

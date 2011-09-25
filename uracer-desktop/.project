@@ -25,4 +25,11 @@
 	<natures>
 		<nature>org.eclipse.jdt.core.javanature</nature>
 	</natures>
+	<linkedResources>
+		<link>
+			<name>tweenengine</name>
+			<type>2</type>
+			<location>/home/manuel/dev/java-universal-tween-engine/tween-engine-api/src</location>
+		</link>
+	</linkedResources>
 </projectDescription>

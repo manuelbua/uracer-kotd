@@ -1,14 +1,22 @@
 package com.bitfire.uracer.messager;
 
+import aurelienribon.tweenengine.Tween;
+import aurelienribon.tweenengine.TweenCallback;
+import aurelienribon.tweenengine.TweenGroup;
+import aurelienribon.tweenengine.equations.Back;
+import aurelienribon.tweenengine.equations.Expo;
+
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.g2d.BitmapFont;
 import com.badlogic.gdx.graphics.g2d.BitmapFont.HAlignment;
 import com.badlogic.gdx.graphics.g2d.BitmapFont.TextBounds;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.bitfire.uracer.Art;
+import com.bitfire.uracer.game.logic.GameLogic;
 import com.bitfire.uracer.messager.Messager.MessagePosition;
 import com.bitfire.uracer.messager.Messager.MessageSize;
 import com.bitfire.uracer.messager.Messager.MessageType;
+import com.bitfire.uracer.utils.AMath;
 
 public class Message
 {
@@ -20,9 +28,15 @@ public class Message
 	private MessageType type;
 	private MessagePosition position;
 	private float whereX, whereY;
+	private float finalX, finalY;
+	private float originX, originY;
 	private BitmapFont font;
 	private int halfWidth;
 	private boolean finished;
+	private TextBounds bounds;
+	private float alpha;
+	private TweenMessage tweenable;
+	private boolean hiding;
 
 	public Message( String message, float durationSecs, MessageType type, MessagePosition position, MessageSize size )
 	{
@@ -33,7 +47,10 @@ public class Message
 		what = message;
 		this.type = type;
 		this.position = position;
+		bounds = new TextBounds();
+		alpha = 0f;
 		durationMs = (int)(durationSecs * 1000f);
+		hiding = false;
 
 		switch( this.type )
 		{
@@ -60,31 +77,35 @@ public class Message
 			break;
 		}
 
-		computeFinalPosition();
+		tweenable = new TweenMessage( this );
 	}
 
 	private void computeFinalPosition()
 	{
-		TextBounds bounds = font.getMultiLineBounds( what );
+		bounds.set( font.getMultiLineBounds( what ) );
+		originX = bounds.width / 2;
+		originY = bounds.height / 2;
 
-		whereX = Gdx.graphics.getWidth() / 4;
-		whereY = 0;
+		whereX = finalX = Gdx.graphics.getWidth() / 4;
+		finalY = 0;
 
 		switch( position )
 		{
 		case Top:
-			whereY = 30 * font.getScaleX();
+			finalY = 30 * font.getScaleX();
+			whereY = Gdx.graphics.getHeight() / 2;
 			break;
 
 		case Middle:
-			whereY = (Gdx.graphics.getHeight() - bounds.height) / 2;
+			finalY = (Gdx.graphics.getHeight() - bounds.height) / 2;
+			whereY = Gdx.graphics.getHeight() + 50 * font.getScaleX();
 			break;
 
 		case Bottom:
-			whereY = Gdx.graphics.getHeight() - bounds.height - 30 * font.getScaleX();
+			finalY = Gdx.graphics.getHeight() - bounds.height - 30 * font.getScaleX();
+			whereY = Gdx.graphics.getHeight() + 50 * font.getScaleX();
 			break;
 		}
-
 	}
 
 	public boolean tick()
@@ -94,16 +115,115 @@ public class Message
 
 	public void render( SpriteBatch batch )
 	{
+		font.setColor( 1, 1, 1, alpha );
 		font.drawMultiLine( batch, what, whereX, whereY, halfWidth, HAlignment.CENTER );
+		font.setColor( 1, 1, 1, 1  );
 	}
 
 	public void onShow()
 	{
 		finished = false;
+		hiding = false;
+
+		font.setScale( 1f );
+		computeFinalPosition();
+
+		GameLogic.getTweener().add(
+				TweenGroup.parallel(
+						Tween.to( tweenable, TweenMessage.OPACITY, 400, Expo.INOUT ).target( 1f ),
+						Tween.to( tweenable, TweenMessage.POSITION_Y, 400, Expo.INOUT ).target( finalY ),
+						Tween.to( tweenable, TweenMessage.SCALE_XY, 500, Back.INOUT ).target( 1.5f, 1.5f )
+				)
+		);
 	}
 
 	public void onHide()
 	{
-		finished = true;
+		hiding = true;
+		GameLogic.getTweener().add(
+				TweenGroup.sequence(
+						TweenGroup.parallel(
+								Tween.to( tweenable, TweenMessage.OPACITY, 500, Expo.INOUT ).target( 0f ),
+								Tween.to( tweenable, TweenMessage.POSITION_Y, 500, Expo.INOUT ).target( -50 * font.getScaleX() ),
+								Tween.to( tweenable, TweenMessage.SCALE_XY, 400, Back.INOUT ).target( 1f, 1f )
+						),
+						Tween.call( new TweenCallback()
+						{
+							@Override
+							public void tweenEventOccured( Types eventType, Tween tween )
+							{
+								finished = true;
+							}
+						} )
+				)
+		);
+	}
+
+	public boolean isHiding()
+	{
+		return hiding;
+	}
+
+	public float getX()
+	{
+		return whereX;
+	}
+
+	public float getY()
+	{
+		return whereY;
+	}
+
+	public float getOriginX()
+	{
+		return originX;
+	}
+
+	public float getOriginY()
+	{
+		return originY;
+	}
+
+	public float getScaleX()
+	{
+		return font.getScaleX();
+	}
+
+	public float getScaleY()
+	{
+		return font.getScaleY();
+	}
+
+	public float getAlpha()
+	{
+		return alpha;
+	}
+
+	public void setAlpha(float value)
+	{
+		alpha = value;
+	}
+
+	public void setPosition(float x, float y)
+	{
+		whereX = x;
+		whereY = y;
+	}
+
+	public void setScale(float scaleX, float scaleY)
+	{
+		scaleX = AMath.clamp( scaleX, 0.1f, 10f );
+		scaleY = AMath.clamp( scaleY, 0.1f, 10f );
+		font.setScale( scaleX, scaleY );
+	}
+
+	public void setX(float x)
+	{
+		whereX = x;
+	}
+
+	public void setY(float y)
+	{
+		whereY = y;
 	}
 }
