@@ -53,6 +53,10 @@ public class Art
 
 		// fonts
 		fonts = new TextureAtlas( "data/base/font/pack" );
+		for( TextureRegion r : fonts.getRegions() )
+		{
+			r.getTexture().setFilter( TextureFilter.Linear, TextureFilter.Linear );
+		}
 
 		// default size
 		fontCurseYR = new BitmapFont( Gdx.files.internal( "data/base/font/curse-y-r.fnt" ), Art.fonts.findRegion( "curse-y-r" ), true );
