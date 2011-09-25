@@ -3,6 +3,7 @@ package com.bitfire.uracer.messager;
 import aurelienribon.tweenengine.Tween;
 import aurelienribon.tweenengine.TweenCallback;
 import aurelienribon.tweenengine.TweenGroup;
+import aurelienribon.tweenengine.equations.Back;
 import aurelienribon.tweenengine.equations.Expo;
 
 import com.badlogic.gdx.Gdx;
@@ -15,6 +16,7 @@ import com.bitfire.uracer.game.logic.GameLogic;
 import com.bitfire.uracer.messager.Messager.MessagePosition;
 import com.bitfire.uracer.messager.Messager.MessageSize;
 import com.bitfire.uracer.messager.Messager.MessageType;
+import com.bitfire.uracer.utils.AMath;
 
 public class Message
 {
@@ -26,6 +28,8 @@ public class Message
 	private MessageType type;
 	private MessagePosition position;
 	private float whereX, whereY;
+	private float finalX, finalY;
+	private float originX, originY;
 	private BitmapFont font;
 	private int halfWidth;
 	private boolean finished;
@@ -44,7 +48,7 @@ public class Message
 		this.type = type;
 		this.position = position;
 		bounds = new TextBounds();
-		alpha = 1f;
+		alpha = 0f;
 		durationMs = (int)(durationSecs * 1000f);
 		hiding = false;
 
@@ -73,32 +77,35 @@ public class Message
 			break;
 		}
 
-		computeFinalPosition();
 		tweenable = new TweenMessage( this );
 	}
 
 	private void computeFinalPosition()
 	{
 		bounds.set( font.getMultiLineBounds( what ) );
+		originX = bounds.width / 2;
+		originY = bounds.height / 2;
 
-		whereX = Gdx.graphics.getWidth() / 4;
-		whereY = 0;
+		whereX = finalX = Gdx.graphics.getWidth() / 4;
+		finalY = 0;
 
 		switch( position )
 		{
 		case Top:
-			whereY = 30 * font.getScaleX();
+			finalY = 30 * font.getScaleX();
+			whereY = Gdx.graphics.getHeight() / 2;
 			break;
 
 		case Middle:
-			whereY = (Gdx.graphics.getHeight() - bounds.height) / 2;
+			finalY = (Gdx.graphics.getHeight() - bounds.height) / 2;
+			whereY = Gdx.graphics.getHeight() + 50 * font.getScaleX();
 			break;
 
 		case Bottom:
-			whereY = Gdx.graphics.getHeight() - bounds.height - 30 * font.getScaleX();
+			finalY = Gdx.graphics.getHeight() - bounds.height - 30 * font.getScaleX();
+			whereY = Gdx.graphics.getHeight() + 50 * font.getScaleX();
 			break;
 		}
-
 	}
 
 	public boolean tick()
@@ -110,31 +117,42 @@ public class Message
 	{
 		font.setColor( 1, 1, 1, alpha );
 		font.drawMultiLine( batch, what, whereX, whereY, halfWidth, HAlignment.CENTER );
+		font.setColor( 1, 1, 1, 1  );
 	}
 
 	public void onShow()
 	{
-//		System.out.println("onShow");
 		finished = false;
 		hiding = false;
-		alpha = 0f;
-		GameLogic.getTweener().add( Tween.to( tweenable, TweenMessage.OPACITY, 500, Expo.INOUT ).target( 1f ) );
+
+		font.setScale( 1f );
+		computeFinalPosition();
+
+		GameLogic.getTweener().add(
+				TweenGroup.parallel(
+						Tween.to( tweenable, TweenMessage.OPACITY, 400, Expo.INOUT ).target( 1f ),
+						Tween.to( tweenable, TweenMessage.POSITION_Y, 400, Expo.INOUT ).target( finalY ),
+						Tween.to( tweenable, TweenMessage.SCALE_XY, 500, Back.INOUT ).target( 1.5f, 1.5f )
+				)
+		);
 	}
 
 	public void onHide()
 	{
 		hiding = true;
-//		System.out.println("onHide");
 		GameLogic.getTweener().add(
 				TweenGroup.sequence(
-						Tween.to( tweenable, TweenMessage.OPACITY, 500, Expo.INOUT ).target( 0f ),
+						TweenGroup.parallel(
+								Tween.to( tweenable, TweenMessage.OPACITY, 500, Expo.INOUT ).target( 0f ),
+								Tween.to( tweenable, TweenMessage.POSITION_Y, 500, Expo.INOUT ).target( -50 * font.getScaleX() ),
+								Tween.to( tweenable, TweenMessage.SCALE_XY, 400, Back.INOUT ).target( 1f, 1f )
+						),
 						Tween.call( new TweenCallback()
 						{
 							@Override
 							public void tweenEventOccured( Types eventType, Tween tween )
 							{
 								finished = true;
-//								System.out.println("onHide finished");
 							}
 						} )
 				)
@@ -158,12 +176,12 @@ public class Message
 
 	public float getOriginX()
 	{
-		return bounds.width/2;
+		return originX;
 	}
 
 	public float getOriginY()
 	{
-		return bounds.height/2;
+		return originY;
 	}
 
 	public float getScaleX()
@@ -194,6 +212,18 @@ public class Message
 
 	public void setScale(float scaleX, float scaleY)
 	{
+		scaleX = AMath.clamp( scaleX, 0.1f, 10f );
+		scaleY = AMath.clamp( scaleY, 0.1f, 10f );
 		font.setScale( scaleX, scaleY );
+	}
+
+	public void setX(float x)
+	{
+		whereX = x;
+	}
+
+	public void setY(float y)
+	{
+		whereY = y;
 	}
 }

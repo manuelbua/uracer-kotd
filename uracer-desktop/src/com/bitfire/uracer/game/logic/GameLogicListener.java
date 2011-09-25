@@ -103,12 +103,12 @@ public class GameLogicListener implements IGameLogicListener
 					{
 						Messager.show(
 								"-" + String.format( "%.2f", worst.trackTimeSeconds - best.trackTimeSeconds )
-										+ " seconds!", 3f, MessageType.Good, MessagePosition.Top, MessageSize.Big );
+										+ " seconds!", 3f, MessageType.Good, MessagePosition.Middle, MessageSize.Big );
 					} else
 					{
 						Messager.show(
 								"+" + String.format( "%.2f", worst.trackTimeSeconds - best.trackTimeSeconds )
-										+ " seconds", 3f, MessageType.Bad, MessagePosition.Top, MessageSize.Big );
+										+ " seconds", 3f, MessageType.Bad, MessagePosition.Middle, MessageSize.Big );
 					}
 
 					ghost.setReplay( best );
