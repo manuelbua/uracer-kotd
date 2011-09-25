@@ -85,20 +85,29 @@ public class Game
 		// debug
 		//
 
-		if( Config.isDesktop ) Debug.renderB2dWorld( Director.getMatViewProjMt() );
+		if( Config.isDesktop )
+		{
+			Debug.renderB2dWorld( Director.getMatViewProjMt() );
 
-		Debug.begin();
-		EntityManager.raiseOnDebug();
-		Debug.renderVersionInfo();
-		Debug.renderGraphicalStats( Gdx.graphics.getWidth() - Debug.getStatsWidth(),
-				Gdx.graphics.getHeight() - Debug.getStatsHeight() - Debug.fontHeight );
-		if( Config.isDesktop ) Debug.renderMemoryUsage();
-		// Debug.drawString( "EMgr::maxSpritesInBatch = " +
-		// EntityManager.maxSpritesInBatch(), 0, 6 );
-		// Debug.drawString( "EMgr::renderCalls = " +
-		// EntityManager.renderCalls(), 0, 12 );
-		Debug.end();
-
+			Debug.begin();
+			EntityManager.raiseOnDebug();
+			Debug.renderVersionInfo();
+			Debug.renderGraphicalStats( Gdx.graphics.getWidth() - Debug.getStatsWidth(),
+					Gdx.graphics.getHeight() - Debug.getStatsHeight() - Debug.fontHeight );
+			if( Config.isDesktop ) Debug.renderMemoryUsage();
+			// Debug.drawString( "EMgr::maxSpritesInBatch = " +
+			// EntityManager.maxSpritesInBatch(), 0, 6 );
+			// Debug.drawString( "EMgr::renderCalls = " +
+			// EntityManager.renderCalls(), 0, 12 );
+			Debug.end();
+		}
+		else
+		{
+			Debug.begin();
+			Debug.renderGraphicalStats( Gdx.graphics.getWidth() - Debug.getStatsWidth(),
+					Gdx.graphics.getHeight() - Debug.getStatsHeight() - Debug.fontHeight );
+			Debug.end();
+		}
 	}
 
 	public Level getLevel()
