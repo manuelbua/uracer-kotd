@@ -145,12 +145,11 @@ public class Debug
 
 		sb.setLength( 0 );
 		String memInfo = fmt.format( "java heap = %.04fMB - native heap = %.04fMB", javaHeapMb, nativeHeapMb ).toString();
-		drawString( memInfo, 0, Gdx.graphics.getHeight() - fontHeight );
+		drawString( memInfo, (Gdx.graphics.getWidth() - memInfo.length() * fontWidth)/2, 0);
 	}
 
 	public static void renderB2dWorld( Matrix4 modelViewProj )
 	{
-//		b2drenderer.render( world, projMatrix )( modelViewProj, Physics.world );
 		b2drenderer.render( Physics.world, modelViewProj );
 	}
 

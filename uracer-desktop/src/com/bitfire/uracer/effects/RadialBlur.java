@@ -1,9 +1,9 @@
-package com.bitfire.uracer.postprocessing.effects;
+package com.bitfire.uracer.effects;
 
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.glutils.ShaderProgram;
 import com.badlogic.gdx.math.Vector2;
-import com.bitfire.uracer.postprocessing.PostProcessEffect;
+import com.bitfire.uracer.effects.postprocessing.PostProcessEffect;
 
 public class RadialBlur extends PostProcessEffect
 {

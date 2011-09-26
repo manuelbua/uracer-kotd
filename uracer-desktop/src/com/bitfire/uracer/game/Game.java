@@ -6,12 +6,12 @@ import com.bitfire.uracer.Config;
 import com.bitfire.uracer.Director;
 import com.bitfire.uracer.URacer;
 import com.bitfire.uracer.debug.Debug;
+import com.bitfire.uracer.effects.postprocessing.PostProcessor;
 import com.bitfire.uracer.entities.EntityManager;
 import com.bitfire.uracer.entities.vehicles.Car;
 import com.bitfire.uracer.game.logic.GameLogic;
 import com.bitfire.uracer.hud.Hud;
 import com.bitfire.uracer.messager.Messager;
-import com.bitfire.uracer.postprocessing.PostProcessor;
 import com.bitfire.uracer.tiled.Level;
 
 public class Game
@@ -90,6 +90,7 @@ public class Game
 
 			Debug.begin();
 			EntityManager.raiseOnDebug();
+			hud.debug();
 			Debug.renderVersionInfo();
 			Debug.renderGraphicalStats( Gdx.graphics.getWidth() - Debug.getStatsWidth(),
 					Gdx.graphics.getHeight() - Debug.getStatsHeight() - Debug.fontHeight );

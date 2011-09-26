@@ -165,8 +165,13 @@ public class Director
 	 */
 	public static Vector2 screenPosFor( Body body )
 	{
-		screenPosFor.x = Convert.mt2px( body.getPosition().x ) - camera.position.x + halfViewport.x;
-		screenPosFor.y = camera.position.y - Convert.mt2px( body.getPosition().y ) + halfViewport.y;
+		return Director.screenPosFor( body.getPosition() );
+	}
+
+	public static Vector2 screenPosFor( Vector2 worldPosition )
+	{
+		screenPosFor.x = Convert.mt2px( worldPosition.x ) - camera.position.x + halfViewport.x;
+		screenPosFor.y = camera.position.y - Convert.mt2px( worldPosition.y ) + halfViewport.y;
 		return screenPosFor;
 	}
 

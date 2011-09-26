@@ -1,4 +1,4 @@
-package com.bitfire.uracer.postprocessing;
+package com.bitfire.uracer.effects.postprocessing;
 
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.Pixmap.Format;
