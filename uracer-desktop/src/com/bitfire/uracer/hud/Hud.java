@@ -4,6 +4,7 @@ import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.math.Matrix4;
 import com.bitfire.uracer.Art;
+import com.bitfire.uracer.entities.vehicles.Car;
 import com.bitfire.uracer.game.logic.GameLogic;
 import com.bitfire.uracer.messager.Messager;
 import com.bitfire.uracer.simulations.car.Replay;
@@ -12,12 +13,15 @@ public class Hud
 {
 	private GameLogic logic;
 	private SpriteBatch textBatch;
+	private Car player;
 
 	private HudLabel best, curr, last;
+	private HudDebugMeter meter;
 
 	public Hud( GameLogic logic )
 	{
 		this.logic = logic;
+		player = logic.getGame().getLevel().getPlayer();
 
 		// setup sprite batch
 		textBatch = new SpriteBatch( 1000, 10 );
@@ -35,8 +39,19 @@ public class Hud
 		last = new HudLabel( Art.fontCurseYR, "LAST  TIME\n-.----" );
 
 		curr.setPosition( gridX - curr.getBounds().width, 10 );
-		last.setPosition( gridX * 4 - best.getBounds().width, 10 );
+		last.setPosition( gridX * 4 - last.getBounds().width, 10 );
 		best.setPosition( gridX * 5 - best.getBounds().width, 10 );
+
+		// test meter
+		meter = new HudDebugMeter(this, 100, 5);
+		float maxGrip = player.getCarModel().max_grip;
+		meter.setLimits( 0, maxGrip );
+		meter.setName( "lat-force-FRONT" );
+	}
+
+	public GameLogic getLogic()
+	{
+		return logic;
 	}
 
 	public void dispose()
@@ -85,14 +100,23 @@ public class Hud
 
 	public void render()
 	{
-		updateTimes();
-
 		textBatch.begin();
+
 		Messager.render( textBatch );
+
+		updateTimes();
 		curr.render( textBatch );
 		best.render( textBatch );
 		last.render( textBatch );
+
+		meter.setValue( player.getSimulator().lateralForceFront.y );
+		meter.render( textBatch );
+
 		textBatch.end();
 	}
 
+	public void debug()
+	{
+		meter.debug();
+	}
 }
