@@ -28,6 +28,9 @@ public class Art
 	public static Texture trackWall;
 	public static TextureAtlas fonts;
 
+	// track effects
+	public static TextureRegion skidMarksFront, skidMarksRear;
+
 	// fonts
 	public static BitmapFont fontCurseYR, fontCurseR, fontCurseG;
 	public static BitmapFont fontCurseYRbig, fontCurseRbig, fontCurseGbig;
@@ -67,6 +70,10 @@ public class Art
 		fontCurseYRbig = new BitmapFont( Gdx.files.internal( "data/base/font/curse-y-r-big.fnt" ), Art.fonts.findRegion( "curse-y-r-big" ), true );
 		fontCurseGbig = new BitmapFont( Gdx.files.internal( "data/base/font/curse-g-big.fnt" ), Art.fonts.findRegion( "curse-g-big" ), true );
 		fontCurseRbig = new BitmapFont( Gdx.files.internal( "data/base/font/curse-r-big.fnt" ), Art.fonts.findRegion( "curse-r-big" ), true );
+
+		// track effects
+		skidMarksFront = new TextureRegion(new Texture(Gdx.files.internal( "data/base/skid-marks-front.png")), 0, 0, 34, 62);
+		skidMarksRear = new TextureRegion(new Texture(Gdx.files.internal( "data/base/skid-marks-rear.png")), 0, 0, 34, 62);
 	}
 
 	private static TextureRegion[][] split( String name, int width, int height )
@@ -139,5 +146,8 @@ public class Art
 
 		trackWall.dispose();
 		fonts.dispose();
+
+		skidMarksFront.getTexture().dispose();
+		skidMarksRear.getTexture().dispose();
 	}
 }

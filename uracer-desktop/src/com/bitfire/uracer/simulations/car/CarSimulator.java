@@ -20,6 +20,9 @@ public class CarSimulator
 	private float dampingThrottle = 0.98f;
 	private float dampingThrottleFrame;
 
+	// exports
+	public Vector2 lateralForceFront, lateralForceRear;
+
 	public CarSimulator( CarDescriptor carDesc )
 	{
 		this.carDesc = carDesc;
@@ -28,6 +31,10 @@ public class CarSimulator
 
 		// precompute constants
 		dampingThrottleFrame = (float)Math.pow( 1f - dampingThrottle, Physics.dt );
+
+		// exports
+		lateralForceFront = new Vector2();
+		lateralForceRear = new Vector2();
 	}
 
 	public void setCarDescriptor( CarDescriptor carDesc )
@@ -182,6 +189,7 @@ public class CarSimulator
 		flatf.y = carDesc.carModel.stiffness_front * slipanglefront;
 		flatf.y = Math.min( carDesc.carModel.max_grip, flatf.y );
 		flatf.y = Math.max( -carDesc.carModel.max_grip, flatf.y );
+		lateralForceFront.set(flatf);
 		flatf.y *= carDesc.carModel.weight;
 
 		// lateral force on rear wheels
@@ -189,6 +197,7 @@ public class CarSimulator
 		flatr.y = carDesc.carModel.stiffness_rear * slipanglerear;
 		flatr.y = Math.min( carDesc.carModel.max_grip, flatr.y );
 		flatr.y = Math.max( -carDesc.carModel.max_grip, flatr.y );
+		lateralForceRear.set(flatr);
 		flatr.y *= carDesc.carModel.weight;
 
 		// float s = SGN(velocity.x);
