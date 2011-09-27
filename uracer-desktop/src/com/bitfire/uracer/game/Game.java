@@ -1,11 +1,13 @@
 package com.bitfire.uracer.game;
 
 import com.badlogic.gdx.Gdx;
+import com.badlogic.gdx.graphics.GL20;
 import com.bitfire.uracer.Art;
 import com.bitfire.uracer.Config;
 import com.bitfire.uracer.Director;
 import com.bitfire.uracer.URacer;
 import com.bitfire.uracer.debug.Debug;
+import com.bitfire.uracer.effects.TrackEffects;
 import com.bitfire.uracer.effects.postprocessing.PostProcessor;
 import com.bitfire.uracer.entities.EntityManager;
 import com.bitfire.uracer.entities.vehicles.Car;
@@ -38,12 +40,18 @@ public class Game
 
 		logic = new GameLogic( this );
 		hud = new Hud( logic );
+
+		TrackEffects.init( logic );
 	}
 
 	public void dispose()
 	{
 		Director.dispose();
 		Messager.dispose();
+		logic.dispose();
+		hud.dispose();
+
+		TrackEffects.dispose();
 	}
 
 	public void tick()
@@ -51,12 +59,15 @@ public class Game
 		logic.tick();
 		level.tick();
 		hud.tick();
+		TrackEffects.tick();
 
 		Debug.update();
 	}
 
 	public void render()
 	{
+		GL20 gl = Gdx.graphics.getGL20();
+
 		EntityManager.raiseOnBeforeRender( URacer.getTemporalAliasing() );
 
 		// follow the car
@@ -69,12 +80,24 @@ public class Game
 		if( Config.EnablePostProcessingFx )
 		{
 			PostProcessor.begin();
-			level.render();
-			PostProcessor.end();
 		} else
 		{
-			Gdx.graphics.getGL20().glViewport( 0, 0, Gdx.graphics.getWidth(), Gdx.graphics.getHeight() );
-			level.render();
+			gl.glViewport( 0, 0, Gdx.graphics.getWidth(), Gdx.graphics.getHeight() );
+		}
+
+		gl.glClearDepthf( 1 );
+		gl.glClearColor( 0, 0, 0, 1 );
+		gl.glClear( GL20.GL_DEPTH_BUFFER_BIT | GL20.GL_COLOR_BUFFER_BIT );
+
+		level.syncWithCam( Director.getCamera() );
+		level.renderTilemap();
+		TrackEffects.render();
+		EntityManager.raiseOnRender( URacer.getTemporalAliasing() );
+		level.renderMeshes( gl );
+
+		if( Config.EnablePostProcessingFx )
+		{
+			PostProcessor.end();
 		}
 
 		logic.render();
@@ -119,6 +142,8 @@ public class Game
 		Messager.reset();
 		level.restart();
 		logic.restart();
+
+		TrackEffects.reset();
 	}
 
 	public void reset()
@@ -126,5 +151,7 @@ public class Game
 		Messager.reset();
 		level.restart();
 		logic.reset();
+
+		TrackEffects.reset();
 	}
 }

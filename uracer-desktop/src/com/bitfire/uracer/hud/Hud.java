@@ -24,7 +24,7 @@ public class Hud
 		player = logic.getGame().getLevel().getPlayer();
 
 		// setup sprite batch
-		textBatch = new SpriteBatch( 1000, 10 );
+		textBatch = new SpriteBatch( 100, 1 );
 
 		// y-flip
 		Matrix4 proj = new Matrix4();
@@ -64,7 +64,7 @@ public class Hud
 		Messager.tick();
 	}
 
-	private void updateTimes()
+	private void updateLapTimes()
 	{
 		// current time
 		curr.setString( String.format( "YOUR  TIME\n%.04fs", logic.getLapInfo().getElapsedSeconds() ) );
@@ -104,7 +104,7 @@ public class Hud
 
 		Messager.render( textBatch );
 
-		updateTimes();
+		updateLapTimes();
 		curr.render( textBatch );
 		best.render( textBatch );
 		last.render( textBatch );

@@ -3,65 +3,92 @@ package com.bitfire.uracer.effects;
 import java.util.ArrayList;
 
 import com.badlogic.gdx.graphics.OrthographicCamera;
-import com.badlogic.gdx.graphics.g2d.Sprite;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
-import com.badlogic.gdx.graphics.g2d.TextureRegion;
+import com.badlogic.gdx.math.MathUtils;
 import com.badlogic.gdx.math.Vector2;
-import com.bitfire.uracer.Art;
 import com.bitfire.uracer.Director;
 import com.bitfire.uracer.entities.vehicles.Car;
 import com.bitfire.uracer.game.logic.GameLogic;
 import com.bitfire.uracer.simulations.car.CarModel;
 import com.bitfire.uracer.utils.AMath;
-import com.bitfire.uracer.utils.Convert;
 
 public class TrackEffects
 {
+	private static int MaxSkidMarks = 2000;
 	private static GameLogic logic;
-	private static SpriteBatch batch;
-	private static ArrayList<Sprite> driftMarksFront;
-	private static ArrayList<Sprite> driftMarksRear;
+
+	private static SpriteBatch driftsBatchFront;
+	private static SpriteBatch driftsBatchRear;
+	private static ArrayList<CarDrifts> driftMarks;
+	private static int driftIndex;
+
+	private static Car player;
+	private static CarModel model;
 
 	public static void init( GameLogic logic )
 	{
 		TrackEffects.logic = logic;
-		driftMarksFront = new ArrayList<Sprite>();
-		driftMarksRear = new ArrayList<Sprite>();
-		batch = new SpriteBatch( 1000, 5 );
+
+		driftIndex = 0;
+		driftMarks = new ArrayList<CarDrifts>( MaxSkidMarks );
+
+		player = logic.getGame().getLevel().getPlayer();
+		model = player.getCarModel();
+
+		for( int i = 0; i < MaxSkidMarks; i++ )
+		{
+			driftMarks.add( new CarDrifts( player ) );
+		}
+
+		driftsBatchFront = new SpriteBatch( MaxSkidMarks, 10 );
+		driftsBatchRear = new SpriteBatch( MaxSkidMarks, 10 );
 	}
 
 	public static void tick()
 	{
 		updateDriftMarks();
-//		System.out.println( driftMarksFront.size() );
+		for( int i = 0; i < MaxSkidMarks; i++ )
+		{
+			driftMarks.get(i).tick();
+		}
 	}
 
 	public static void render()
 	{
 		OrthographicCamera cam = Director.getCamera();
 
-		batch.setProjectionMatrix( cam.projection );
-		batch.setTransformMatrix( cam.view );
-		batch.begin();
+		// optimize drawing, group by texture
 
-		// drift marks
-		for( int i = 0; i < driftMarksFront.size(); i++ )
+		driftsBatchFront.setProjectionMatrix( cam.projection );
+		driftsBatchFront.setTransformMatrix( cam.view );
+		driftsBatchRear.setProjectionMatrix( cam.projection );
+		driftsBatchRear.setTransformMatrix( cam.view );
+
+		// front drift marks
+		driftsBatchFront.begin();
+		for( int i = 0; i < MaxSkidMarks; i++ )
 		{
-			driftMarksFront.get( i ).draw( batch );
+			driftMarks.get( i ).renderFront( driftsBatchFront );
 		}
+		driftsBatchFront.end();
 
-		for( int i = 0; i < driftMarksRear.size(); i++ )
+		// rear drift marks
+		driftsBatchRear.begin();
+		for( int i = 0; i < MaxSkidMarks; i++ )
 		{
-			driftMarksRear.get( i ).draw( batch );
+			driftMarks.get( i ).renderRear( driftsBatchRear );
 		}
-
-		batch.end();
+		driftsBatchRear.end();
 	}
 
 	public static void reset()
 	{
-		driftMarksFront.clear();
-		driftMarksRear.clear();
+		driftIndex = 0;
+	}
+
+	public static void dispose()
+	{
+		driftMarks.clear();
 	}
 
 	/**
@@ -69,16 +96,8 @@ public class TrackEffects
 	 *
 	 */
 
-	private enum SkidMarkType
-	{
-		Front, Rear
-	}
-
 	private static void updateDriftMarks()
 	{
-		Car player = logic.getGame().getLevel().getPlayer();
-		CarModel model = player.getCarModel();
-
 		Vector2 pos = player.state().position;
 		float angle = player.state().orientation;
 
@@ -90,36 +109,17 @@ public class TrackEffects
 		flatr = AMath.clamp( flatr / model.max_grip, 0, 1f );
 
 		// add front drift marks?
-		if( flatf > 0.5f ) addSkidMark( SkidMarkType.Front, model, (flatf-0.5f)/0.5f, pos, angle );
-		if( flatr > 0.5f ) addSkidMark( SkidMarkType.Rear, model, (flatr-0.5f)/0.5f, pos, angle );
-	}
+		CarDrifts drift = driftMarks.get( driftIndex++ );
+		if( driftIndex == MaxSkidMarks ) driftIndex = 0;
 
-	private static void addSkidMark( SkidMarkType type, CarModel model, float amount, Vector2 pos, float angle )
-	{
-		ArrayList<Sprite> target = null;
-		TextureRegion region = null;
-
-		switch( type )
-		{
-		default:
-		case Front:
-			target = driftMarksFront;
-			region = Art.skidMarksFront;
-			break;
-		case Rear:
-			target = driftMarksRear;
-			region = Art.skidMarksRear;
-			break;
-		}
-
-		Sprite s = new Sprite();
-		s.setRegion( region );
-		s.setSize( Convert.mt2px( model.width ), Convert.mt2px( model.length ) );
-		s.setOrigin( s.getWidth() / 2, s.getHeight() / 2 );
-		s.setColor( 1, 1, 1, amount );
-		s.setPosition( pos.x - s.getOriginX(), pos.y - s.getOriginY() );
-		s.setRotation( angle );
-
-		target.add( s );
+		float from = 0f;
+		float div = 1f - from;
+		float af = (flatf - from) / div;
+		float ar = (flatr - from) / div;
+		drift.setAlpha( af, ar );
+		drift.setPosition( pos );
+		drift.setOrientation( angle );
+		drift.maxLife = MathUtils.random() * 10f + 21f;
+		drift.life = drift.maxLife;
 	}
 }

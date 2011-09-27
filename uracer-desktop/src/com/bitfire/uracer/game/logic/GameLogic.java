@@ -12,7 +12,6 @@ import com.bitfire.uracer.Input;
 import com.bitfire.uracer.LapInfo;
 import com.bitfire.uracer.Physics;
 import com.bitfire.uracer.effects.RadialBlur;
-import com.bitfire.uracer.effects.TrackEffects;
 import com.bitfire.uracer.effects.postprocessing.PostProcessor;
 import com.bitfire.uracer.entities.vehicles.Car;
 import com.bitfire.uracer.game.Game;
@@ -56,9 +55,11 @@ public class GameLogic
 			PostProcessor.setEffect( rb );
 		}
 
-		TrackEffects.init(this);
-
 		reset();
+	}
+
+	public void dispose()
+	{
 	}
 
 	public void tick()
@@ -86,15 +87,12 @@ public class GameLogic
 				rb.setOrigin( Director.screenPosFor( player.getBody() ) );
 			}
 		}
-
-		TrackEffects.tick();
 	}
 
 	public void reset()
 	{
 		restart();
 		listener.onReset();
-		TrackEffects.reset();
 	}
 
 	public void restart()
@@ -104,13 +102,11 @@ public class GameLogic
 		carTileAt.set( lastCarTileAt );
 
 		listener.onRestart();
-		TrackEffects.reset();
 	}
 
 	public void render()
 	{
 		tweener.update();
-		TrackEffects.render();
 	}
 
 	public Game getGame()

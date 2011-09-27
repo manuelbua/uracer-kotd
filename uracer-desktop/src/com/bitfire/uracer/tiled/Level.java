@@ -15,7 +15,6 @@ import com.badlogic.gdx.graphics.g2d.tiled.TiledObject;
 import com.badlogic.gdx.graphics.g2d.tiled.TiledObjectGroup;
 import com.badlogic.gdx.math.Vector2;
 import com.bitfire.uracer.Director;
-import com.bitfire.uracer.URacer;
 import com.bitfire.uracer.entities.EntityManager;
 import com.bitfire.uracer.entities.vehicles.Car;
 import com.bitfire.uracer.entities.vehicles.GhostCar;
@@ -271,19 +270,5 @@ public class Level
 	public void tick()
 	{
 		EntityManager.raiseOnTick();
-	}
-
-	public void render()
-	{
-		GL20 gl = Gdx.graphics.getGL20();
-
-		gl.glClearDepthf( 1 );
-		gl.glClearColor( 0, 0, 0, 1 );
-		gl.glClear( GL20.GL_DEPTH_BUFFER_BIT | GL20.GL_COLOR_BUFFER_BIT );
-
-		syncWithCam( Director.getCamera() );
-		renderTilemap();
-		EntityManager.raiseOnRender( URacer.getTemporalAliasing() );
-		renderMeshes( gl );
 	}
 }
