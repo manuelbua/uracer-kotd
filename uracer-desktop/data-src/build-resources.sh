@@ -20,7 +20,22 @@ echo "done!"
 
 # fonts
 echo -n "Cooking fonts..."
-cd base
-${TEX_PACKER} font ${DEST}/base/font >/dev/null
-cp -f font/*.fnt ${DEST}/base/font
+rm -rf "${DEST}/base/font/"
+mkdir -p "${DEST}/base/font/"
+${TEX_PACKER} base/font ${DEST}/base/font >/dev/null
+cp -f base/font/*.fnt ${DEST}/base/font
+echo "done!"
+
+# 3d
+#echo -n "Cooking models textures..."
+#rm -rf "${DEST}/3d/textures/"
+#mkdir -p "${DEST}/3d/textures/"
+#${TEX_PACKER} 3d ${DEST}/3d/textures >/dev/null
+#echo "done!"
+
+# track
+echo -n "Cooking track meshes..."
+rm -rf "${DEST}/track/"
+mkdir -p "${DEST}/track/"
+cp track/wall.jpg track/*.g3dt ${DEST}/track >/dev/null
 echo "done!"

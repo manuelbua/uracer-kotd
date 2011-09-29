@@ -63,39 +63,39 @@ public class ModelFactory
 		switch( modelMesh )
 		{
 		case Palm:
-			stillModel = OrthographicAlignedStillModel.create( getModel("data/3d/palm.g3dt"), Art.meshPalm );
+			stillModel = OrthographicAlignedStillModel.create( getModel("data/3d/models/palm.g3dt"), Art.meshPalm );
 			break;
 
 		case Tribune:
-			stillModel = OrthographicAlignedStillModel.create( getModel("data/3d/tribune.g3dt"), Art.meshTribune );
+			stillModel = OrthographicAlignedStillModel.create( getModel("data/3d/models/tribune.g3dt"), Art.meshTribune );
 			break;
 
 		case House:
-			stillModel = OrthographicAlignedStillModel.create( getModel("data/3d/house.g3dt"), Art.meshHouse );
+			stillModel = OrthographicAlignedStillModel.create( getModel("data/3d/models/house.g3dt"), Art.meshHouse );
 			break;
 
 		case Tower:
-			stillModel = OrthographicAlignedStillModel.create( getModel("data/3d/tower.g3dt"), Art.meshTower );
+			stillModel = OrthographicAlignedStillModel.create( getModel("data/3d/models/tower.g3dt"), Art.meshTower );
 			break;
 
 		case Arch:
-			stillModel = OrthographicAlignedStillModel.create( getModel("data/3d/test_arch.g3dt"), Art.mesh_test_arch_rusty);
+			stillModel = OrthographicAlignedStillModel.create( getModel("data/3d/models/test_arch.g3dt"), Art.mesh_test_arch_rusty);
 			break;
 
 		case WallHorizontal:
-			stillModel = OrthographicAlignedStillModel.create( getModel("data/3d/track/h.g3dt"), Art.trackWall );
+			stillModel = OrthographicAlignedStillModel.create( getModel("data/track/h.g3dt"), Art.trackWall );
 			stillModel.getTextureAttribute().uWrap = TextureWrap.Repeat.getGLEnum();
 			stillModel.getTextureAttribute().vWrap = TextureWrap.Repeat.getGLEnum();
 			break;
 
 		case WallTopRightOuter:
-			stillModel = OrthographicAlignedStillModel.create( getModel("data/3d/track/tr-outer.g3dt"), Art.trackWall );
+			stillModel = OrthographicAlignedStillModel.create( getModel("data/track/tr-outer.g3dt"), Art.trackWall );
 			stillModel.getTextureAttribute().uWrap = TextureWrap.Repeat.getGLEnum();
 			stillModel.getTextureAttribute().vWrap = TextureWrap.Repeat.getGLEnum();
 			break;
 
 		case WallTopRightInner:
-			stillModel = OrthographicAlignedStillModel.create( getModel("data/3d/track/tr-inner.g3dt"), Art.trackWall );
+			stillModel = OrthographicAlignedStillModel.create( getModel("data/track/tr-inner.g3dt"), Art.trackWall );
 			stillModel.getTextureAttribute().uWrap = TextureWrap.Repeat.getGLEnum();
 			stillModel.getTextureAttribute().vWrap = TextureWrap.Repeat.getGLEnum();
 			break;
@@ -103,7 +103,7 @@ public class ModelFactory
 		// missing mesh mesh
 		case Missing:
 		default:
-			stillModel = OrthographicAlignedStillModel.create( getModel("data/3d/missing-mesh.g3dt"), Art.meshMissing );
+			stillModel = OrthographicAlignedStillModel.create( getModel("data/3d/models/missing-mesh.g3dt"), Art.meshMissing );
 		}
 
 		if( stillModel != null )

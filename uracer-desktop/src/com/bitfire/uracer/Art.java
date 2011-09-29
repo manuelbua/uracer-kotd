@@ -10,23 +10,22 @@ import com.badlogic.gdx.graphics.g2d.TextureRegion;
 
 public class Art
 {
-	// Art
 	public static TextureRegion[][] base6;
-//	public static TextureRegion titleScreen;
 	public static TextureRegion quad;
 	public static TextureAtlas cars;
-//	public static TextureRegion hqCars;
 	public static TextureRegion carAmbientOcclusion;
 
+	public static Texture trackWall;
+	public static TextureAtlas fonts;
+
+	// 3d
+//	public static TextureAtlas modelsTextures;
 	public static Texture meshMissing;
 	public static Texture mesh_test_arch_rusty;
 	public static Texture meshPalm;
 	public static Texture meshTribune;
 	public static Texture meshHouse;
 	public static Texture meshTower;
-
-	public static Texture trackWall;
-	public static TextureAtlas fonts;
 
 	// track effects
 	public static TextureRegion skidMarksFront, skidMarksRear;
@@ -37,21 +36,22 @@ public class Art
 
 	public static void load()
 	{
-//		titleScreen = load( "data/base/titlescreen.png", 480, 320 );
 		base6 = split( "data/base/base6.png", 6, 6 );
 		quad = new TextureRegion( base6[0][10], 0, 0, 18, 18 );
 		cars = new TextureAtlas(Gdx.files.internal("data/base/cars1.pack"));
 
-		mesh_test_arch_rusty = newTexture( "data/3d/test_arch_rusty.jpg" );
-		meshMissing = newTexture( "data/3d/missing-mesh.png" );
-		meshPalm = newTexture( "data/3d/palm.png" );
-		meshTribune = newTexture( "data/3d/tribune.png" );
-		meshHouse = newTexture( "data/3d/house.png" );
-		meshTower = newTexture( "data/3d/tower.png" );
-		trackWall = newTexture( "data/3d/track/wall.jpg" );
+		// 3d models' textures
+//		modelsTextures = new TextureAtlas(Gdx.files.internal("data/3d/textures/pack"));
+
+		mesh_test_arch_rusty = newTexture( "data/3d/textures/arch-metal.jpg" );
+		meshMissing = newTexture( "data/3d/textures/missing-mesh.png" );
+		meshPalm = newTexture( "data/3d/textures/palm.png" );
+		meshTribune = newTexture( "data/3d/textures/tribune.png" );
+		meshHouse = newTexture( "data/3d/textures/house.png" );
+		meshTower = newTexture( "data/3d/textures/tower.png" );
+		trackWall = newTexture( "data/track/wall.jpg" );
 
 		// no mip-mapping
-//		hqCars = new TextureRegion( new Texture(Gdx.files.internal("data/base/hqcars.png")), 0, 0, 420, 424 );
 		carAmbientOcclusion = new TextureRegion( new Texture(Gdx.files.internal("data/base/car-ao.png")), 0, 0, 34, 62 );
 
 		// fonts
@@ -130,9 +130,7 @@ public class Art
 	public static void dispose()
 	{
 		base6[0][0].getTexture().dispose();
-//		titleScreen.getTexture().dispose();
 		quad.getTexture().dispose();
-//		hqCars.getTexture().dispose();
 
 		carAmbientOcclusion.getTexture().dispose();
 		cars.dispose();
