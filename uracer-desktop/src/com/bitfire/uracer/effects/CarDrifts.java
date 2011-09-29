@@ -14,8 +14,8 @@ public class CarDrifts
 	public Sprite front, rear;
 	public float life;
 	public float maxLife;
-	public float lifeRatio;
-	public float alphaFront, alphaRear;
+	private float lifeRatio;
+	private float alphaFront, alphaRear;
 
 	public CarDrifts( Car player )
 	{
@@ -37,21 +37,17 @@ public class CarDrifts
 		rear.setOrigin( rear.getWidth() / 2, rear.getHeight() / 2 );
 		rear.setColor( 1, 1, 1, 0 );
 
-		maxLife = 100;
-		life = maxLife;
+		life = maxLife = 0;
 	}
 
 	public void tick()
 	{
-		life -= Physics.dt;
 		if( life > 0 )
 		{
-			lifeRatio = life / maxLife;
-//			System.out.println(lifeRatio);
+			life -= Physics.dt;
 		} else
 		{
-			life = 0f;
-			lifeRatio = 0f;
+			life = 0;
 		}
 	}
 
@@ -93,5 +89,17 @@ public class CarDrifts
 	{
 		front.setRotation( degrees );
 		rear.setRotation( degrees );
+	}
+
+	public void updateRatio()
+	{
+		if( life > 0 )
+		{
+			lifeRatio = life / maxLife;
+		} else
+		{
+			life = 0f;
+			lifeRatio = 0f;
+		}
 	}
 }

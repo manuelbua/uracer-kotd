@@ -4,7 +4,6 @@ import java.util.ArrayList;
 
 import com.badlogic.gdx.graphics.OrthographicCamera;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
-import com.badlogic.gdx.math.MathUtils;
 import com.badlogic.gdx.math.Vector2;
 import com.bitfire.uracer.Director;
 import com.bitfire.uracer.entities.vehicles.Car;
@@ -40,21 +39,25 @@ public class TrackEffects
 			driftMarks.add( new CarDrifts( player ) );
 		}
 
-		driftsBatchFront = new SpriteBatch( MaxSkidMarks, 10 );
-		driftsBatchRear = new SpriteBatch( MaxSkidMarks, 10 );
+		driftsBatchFront = new SpriteBatch( MaxSkidMarks / 2 + 5, 5 );
+		driftsBatchRear = new SpriteBatch( MaxSkidMarks / 2 + 5, 5 );
+
+		tmp = new Vector2();
+		last = new Vector2();
 	}
 
 	public static void tick()
 	{
-		updateDriftMarks();
 		for( int i = 0; i < MaxSkidMarks; i++ )
 		{
-			driftMarks.get(i).tick();
+			driftMarks.get( i ).tick();
 		}
 	}
 
 	public static void render()
 	{
+		updateDriftMarks();
+
 		OrthographicCamera cam = Director.getCamera();
 
 		// optimize drawing, group by texture
@@ -64,11 +67,18 @@ public class TrackEffects
 		driftsBatchRear.setProjectionMatrix( cam.projection );
 		driftsBatchRear.setTransformMatrix( cam.view );
 
+		CarDrifts d;
+
 		// front drift marks
 		driftsBatchFront.begin();
 		for( int i = 0; i < MaxSkidMarks; i++ )
 		{
-			driftMarks.get( i ).renderFront( driftsBatchFront );
+			d = driftMarks.get( i );
+			if( d.life > 0 )
+			{
+				d.updateRatio();
+				d.renderFront( driftsBatchFront );
+			}
 		}
 		driftsBatchFront.end();
 
@@ -76,7 +86,8 @@ public class TrackEffects
 		driftsBatchRear.begin();
 		for( int i = 0; i < MaxSkidMarks; i++ )
 		{
-			driftMarks.get( i ).renderRear( driftsBatchRear );
+			d = driftMarks.get( i );
+			if( d.life > 0 ) d.renderRear( driftsBatchRear );
 		}
 		driftsBatchRear.end();
 	}
@@ -96,10 +107,27 @@ public class TrackEffects
 	 *
 	 */
 
+	private static Vector2 tmp;
+	private static Vector2 last;
+
 	private static void updateDriftMarks()
 	{
-		Vector2 pos = player.state().position;
+		if( player.getCarDescriptor().velocity_wc.len2() < 1 )
+		{
+			return;
+		}
+
+		tmp.set( player.state().position );
 		float angle = player.state().orientation;
+
+		if( (int)tmp.x == (int)last.x && (int)tmp.y == (int)last.y )
+		{
+			return;
+		}
+
+		// tmp.set( Convert.mt2px(player.getBody().getPosition()) );
+		// float angle = player.getBody().getAngle() *
+		// MathUtils.radiansToDegrees;
 
 		// lateral forces are in the range [-max_grip, max_grip]
 		float flatf = Math.abs( player.getSimulator().lateralForceFront.y );
@@ -116,10 +144,18 @@ public class TrackEffects
 		float div = 1f - from;
 		float af = (flatf - from) / div;
 		float ar = (flatr - from) / div;
-		drift.setAlpha( af, ar );
-		drift.setPosition( pos );
-		drift.setOrientation( angle );
-		drift.maxLife = MathUtils.random() * 10f + 21f;
-		drift.life = drift.maxLife;
+		if( af > 0 || ar > 0 )
+		{
+			drift.setAlpha( af, ar );
+			drift.setPosition( tmp );
+			drift.setOrientation( angle );
+			drift.maxLife = 5f;
+			drift.life = drift.maxLife;
+
+			last.set( tmp );
+		} else
+		{
+			drift.life = 0;
+		}
 	}
 }

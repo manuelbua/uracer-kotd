@@ -50,14 +50,13 @@ public class Game
 		Messager.dispose();
 		logic.dispose();
 		hud.dispose();
-
 		TrackEffects.dispose();
 	}
 
 	public void tick()
 	{
+		EntityManager.raiseOnTick();
 		logic.tick();
-		level.tick();
 		hud.tick();
 		TrackEffects.tick();
 

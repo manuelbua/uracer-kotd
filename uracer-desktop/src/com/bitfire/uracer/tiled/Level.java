@@ -266,9 +266,4 @@ public class Level
 		ghost.reset();
 		recorder.reset();
 	}
-
-	public void tick()
-	{
-		EntityManager.raiseOnTick();
-	}
 }
