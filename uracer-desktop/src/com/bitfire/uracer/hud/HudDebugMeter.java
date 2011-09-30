@@ -26,8 +26,9 @@ public class HudDebugMeter
 
 	private Hud hud;
 	private Vector2 pos;
+	private int row;
 
-	public HudDebugMeter( Hud hud, int width, int height )
+	public HudDebugMeter( Hud hud, int row, int width, int height )
 	{
 		assert (width < 256 && height < 256);
 
@@ -36,6 +37,7 @@ public class HudDebugMeter
 		this.width = width;
 		this.height = height;
 		this.pos = new Vector2();
+		this.row = row;
 
 		pixels = new Pixmap( this.width, this.height, Format.RGBA8888 );
 		texture = new Texture( 256, 256, Format.RGBA8888 );
@@ -79,9 +81,14 @@ public class HudDebugMeter
 		Car player = hud.getLogic().getGame().getLevel().getPlayer();
 		pos.set(Director.screenPosFor( player.getBody() ));
 
-		// offset for visibility (car will never cover the text)
+		// center horizontally
 		pos.x -= width / 2;
+
+		// offset by half car length
 		pos.y += Convert.mt2px( player.getCarModel().length ) / 2;
+
+		// offset by row
+		pos.y += row * (height + Debug.fontHeight);
 	}
 
 	public void render( SpriteBatch batch )
@@ -89,7 +96,7 @@ public class HudDebugMeter
 		update();
 		draw();
 
-		batch.draw( region, (int)pos.x, (int)pos.y + Debug.fontHeight );
+		batch.draw( region, (int)pos.x, (int)pos.y + Debug.fontHeight);
 	}
 
 	public void debug()
