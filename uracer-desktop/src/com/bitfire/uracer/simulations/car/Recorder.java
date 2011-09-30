@@ -55,7 +55,7 @@ public class Recorder
 
 		if( !replay.add( f ) )
 		{
-//			System.out.println( "Replay memory limit reached (" + replay.MaxEvents + " events), restarting." );
+			System.out.println( "Replay memory limit reached (" + replay.MaxEvents + " events), restarting." );
 		}
 	}
 

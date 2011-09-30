@@ -17,7 +17,7 @@ import com.bitfire.uracer.utils.Hash;
 
 public class Replay
 {
-	public final int MaxEvents = 10000;
+	public final int MaxEvents = 5000;
 	private int eventsCount;
 
 	// car data
