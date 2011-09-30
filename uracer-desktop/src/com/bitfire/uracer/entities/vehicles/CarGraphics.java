@@ -27,7 +27,7 @@ public class CarGraphics
 		ambientOcclusion = new Sprite();
 		ambientOcclusion.setRegion( Art.carAmbientOcclusion );
 		ambientOcclusion.setSize( facet.getWidth(), facet.getHeight() );
-		ambientOcclusion.setScale( 2.25f, 2.3f );
+		ambientOcclusion.setScale( 2f, 2.3f );
 		ambientOcclusion.setOrigin( ambientOcclusion.getWidth()/2, ambientOcclusion.getHeight()/2 );
 	}
 
@@ -48,9 +48,9 @@ public class CarGraphics
 
 	public void render( SpriteBatch batch, EntityState state, float opacity )
 	{
-//		ambientOcclusion.setPosition( state.position.x - ambientOcclusion.getOriginX(), state.position.y - ambientOcclusion.getOriginY() );
-//		ambientOcclusion.setRotation( state.orientation );
-//		ambientOcclusion.draw( batch, 0.35f * opacity );
+		ambientOcclusion.setPosition( state.position.x - ambientOcclusion.getOriginX(), state.position.y - ambientOcclusion.getOriginY() );
+		ambientOcclusion.setRotation( state.orientation );
+		ambientOcclusion.draw( batch, 0.35f * opacity );
 
 		facet.setPosition( state.position.x - facet.getOriginX(), state.position.y - facet.getOriginY() );
 		facet.setRotation( state.orientation );

@@ -116,7 +116,8 @@ public class Game
 			Debug.renderVersionInfo();
 			Debug.renderGraphicalStats( Gdx.graphics.getWidth() - Debug.getStatsWidth(),
 					Gdx.graphics.getHeight() - Debug.getStatsHeight() - Debug.fontHeight );
-			if( Config.isDesktop ) Debug.renderMemoryUsage();
+			Debug.renderMemoryUsage();
+//			Debug.drawString( "visible drifts=" + TrackEffects.visibleDriftsCount, 0, 0 );
 			// Debug.drawString( "EMgr::maxSpritesInBatch = " +
 			// EntityManager.maxSpritesInBatch(), 0, 6 );
 			// Debug.drawString( "EMgr::renderCalls = " +

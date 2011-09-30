@@ -13,13 +13,13 @@ import com.bitfire.uracer.utils.AMath;
 
 public class TrackEffects
 {
-	private static int MaxSkidMarks = 2000;
+	public static final int MaxSkidMarks = 500;
 	private static GameLogic logic;
 
-	private static SpriteBatch driftsBatchFront;
-	private static SpriteBatch driftsBatchRear;
-	private static ArrayList<CarDrifts> driftMarks;
+	private static SpriteBatch driftsBatch;
+	private static ArrayList<CarDrift> driftMarks;
 	private static int driftIndex;
+	public static int visibleDriftsCount;
 
 	private static Car player;
 	private static CarModel model;
@@ -29,18 +29,18 @@ public class TrackEffects
 		TrackEffects.logic = logic;
 
 		driftIndex = 0;
-		driftMarks = new ArrayList<CarDrifts>( MaxSkidMarks );
+		visibleDriftsCount = 0;
+		driftMarks = new ArrayList<CarDrift>( MaxSkidMarks );
 
 		player = logic.getGame().getLevel().getPlayer();
 		model = player.getCarModel();
 
 		for( int i = 0; i < MaxSkidMarks; i++ )
 		{
-			driftMarks.add( new CarDrifts( player ) );
+			driftMarks.add( new CarDrift( player ) );
 		}
 
-		driftsBatchFront = new SpriteBatch( MaxSkidMarks / 2 + 5, 5 );
-		driftsBatchRear = new SpriteBatch( MaxSkidMarks / 2 + 5, 5 );
+		driftsBatch = new SpriteBatch( MaxSkidMarks / 2, 5 );
 
 		tmp = new Vector2();
 		last = new Vector2();
@@ -48,6 +48,8 @@ public class TrackEffects
 
 	public static void tick()
 	{
+		addDriftMark();
+
 		for( int i = 0; i < MaxSkidMarks; i++ )
 		{
 			driftMarks.get( i ).tick();
@@ -56,40 +58,42 @@ public class TrackEffects
 
 	public static void render()
 	{
-		updateDriftMarks();
 
 		OrthographicCamera cam = Director.getCamera();
 
 		// optimize drawing, group by texture
 
-		driftsBatchFront.setProjectionMatrix( cam.projection );
-		driftsBatchFront.setTransformMatrix( cam.view );
-		driftsBatchRear.setProjectionMatrix( cam.projection );
-		driftsBatchRear.setTransformMatrix( cam.view );
+		driftsBatch.setProjectionMatrix( cam.projection );
+		driftsBatch.setTransformMatrix( cam.view );
 
-		CarDrifts d;
+		CarDrift d;
+		visibleDriftsCount = 0;
 
 		// front drift marks
-		driftsBatchFront.begin();
+		driftsBatch.begin();
 		for( int i = 0; i < MaxSkidMarks; i++ )
 		{
 			d = driftMarks.get( i );
-			if( d.life > 0 )
+			if( d.visible && d.life > 0 )
 			{
+				visibleDriftsCount++;
 				d.updateRatio();
-				d.renderFront( driftsBatchFront );
+				d.renderFront( driftsBatch );
 			}
 		}
-		driftsBatchFront.end();
+		driftsBatch.end();
 
 		// rear drift marks
-		driftsBatchRear.begin();
+		driftsBatch.begin();
 		for( int i = 0; i < MaxSkidMarks; i++ )
 		{
 			d = driftMarks.get( i );
-			if( d.life > 0 ) d.renderRear( driftsBatchRear );
+			if( d.visible && d.life > 0 )
+			{
+				d.renderRear( driftsBatch );
+			}
 		}
-		driftsBatchRear.end();
+		driftsBatch.end();
 	}
 
 	public static void reset()
@@ -110,7 +114,7 @@ public class TrackEffects
 	private static Vector2 tmp;
 	private static Vector2 last;
 
-	private static void updateDriftMarks()
+	private static void addDriftMark()
 	{
 		if( player.getCarDescriptor().velocity_wc.len2() < 1 )
 		{
@@ -137,7 +141,7 @@ public class TrackEffects
 		flatr = AMath.clamp( flatr / model.max_grip, 0, 1f );
 
 		// add front drift marks?
-		CarDrifts drift = driftMarks.get( driftIndex++ );
+		CarDrift drift = driftMarks.get( driftIndex++ );
 		if( driftIndex == MaxSkidMarks ) driftIndex = 0;
 
 		float from = 0f;

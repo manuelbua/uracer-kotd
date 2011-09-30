@@ -4,6 +4,8 @@ import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.math.Matrix4;
 import com.bitfire.uracer.Art;
+import com.bitfire.uracer.Config;
+import com.bitfire.uracer.effects.TrackEffects;
 import com.bitfire.uracer.entities.vehicles.Car;
 import com.bitfire.uracer.game.logic.GameLogic;
 import com.bitfire.uracer.messager.Messager;
@@ -16,7 +18,7 @@ public class Hud
 	private Car player;
 
 	private HudLabel best, curr, last;
-	private HudDebugMeter meter;
+	private HudDebugMeter meterLatForce, meterSkidMarks;
 
 	public Hud( GameLogic logic )
 	{
@@ -42,11 +44,16 @@ public class Hud
 		last.setPosition( gridX * 4 - last.getBounds().width, 10 );
 		best.setPosition( gridX * 5 - best.getBounds().width, 10 );
 
-		// test meter
-		meter = new HudDebugMeter(this, 100, 5);
+		// meter lateral forces
+		meterLatForce = new HudDebugMeter( this, 0, 100, 5 );
 		float maxGrip = player.getCarModel().max_grip;
-		meter.setLimits( 0, maxGrip );
-		meter.setName( "lat-force-FRONT" );
+		meterLatForce.setLimits( 0, maxGrip );
+		meterLatForce.setName( "lat-force-FRONT" );
+
+		// meter skid marks count
+		meterSkidMarks= new HudDebugMeter( this, 1, 100, 5 );
+		meterSkidMarks.setLimits( 0, TrackEffects.MaxSkidMarks );
+		meterSkidMarks.setName( "skid marks count" );
 	}
 
 	public GameLogic getLogic()
@@ -109,14 +116,20 @@ public class Hud
 		best.render( textBatch );
 		last.render( textBatch );
 
-		meter.setValue( player.getSimulator().lateralForceFront.y );
-		meter.render( textBatch );
+		if( Config.isDesktop )
+		{
+			meterLatForce.setValue( player.getSimulator().lateralForceFront.y );
+			meterLatForce.render( textBatch );
+			meterSkidMarks.setValue( TrackEffects.visibleDriftsCount );
+			meterSkidMarks.render( textBatch );
+		}
 
 		textBatch.end();
 	}
 
 	public void debug()
 	{
-		meter.debug();
+		meterLatForce.debug();
+		meterSkidMarks.debug();
 	}
 }
