@@ -43,6 +43,7 @@ public class Director
 		tmp = new Vector2();
 		currentLevel = null;
 		gameplaySettings = null;
+		cameraRect = new Rectangle();
 
 		// computed for a 256px tile size target (need conversion)
 		scalingStrategy = new ScalingStrategy( new Vector2( 1280, 800 ), 70f, 224, 1f);
@@ -185,5 +186,23 @@ public class Director
 		tmp = Convert.scaledPixels( tmp.set( x, y ) );
 		tmp.y = Director.worldSizeScaledPx.y - tmp.y;
 		return tmp;
+	}
+
+
+	/**
+	 * visibility queries
+	 */
+
+	private static Rectangle cameraRect;
+	public static boolean isVisible(Rectangle rect)
+	{
+		cameraRect.set(
+				camera.position.x - camera.viewportWidth/2,
+				camera.position.y - camera.viewportHeight/2,
+				camera.viewportWidth,
+				camera.viewportHeight
+		);
+
+		return cameraRect.overlaps( rect );
 	}
 }
