@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?><map height="5" orientation="orthogonal" tileheight="224" tilewidth="224" version="1.0" width="7"><properties><property name="blended tiles" value=""/></properties>
+ <tileset firstgid="1" name="nature" tileheight="224" tilewidth="224">
+  <image height="3360" source="tilesets/nature/224.png" width="896"/>
+ </tileset>
+ <layer height="5" name="Tile Layer 1" width="7">
+  <data compression="gzip" encoding="base64">
+   H4sIAAAAAAAAA2NlYGBgwoLZgJgRiCWhWAKJDRLnAWIpJDFkOUYs4jA5Thz2cQExAIT1xB6MAAAA
+  </data>
+ </layer>
+</map>

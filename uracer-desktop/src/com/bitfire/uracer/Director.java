@@ -76,7 +76,7 @@ public class Director
 	public static Level loadLevel(String levelName, GameplaySettings playSettings)
 	{
 		// construct tilemap and cameras
-		Level level = new Level( "level1", scalingStrategy );
+		Level level = new Level( levelName, scalingStrategy );
 
 		// setup converter
 		Convert.init( scalingStrategy, level.map );
