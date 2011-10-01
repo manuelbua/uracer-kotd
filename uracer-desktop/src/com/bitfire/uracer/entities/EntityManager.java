@@ -1,27 +1,13 @@
 package com.bitfire.uracer.entities;
 
-import com.badlogic.gdx.graphics.OrthographicCamera;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.utils.Array;
-import com.bitfire.uracer.Director;
 import com.bitfire.uracer.Physics;
 
 public class EntityManager
 {
-	private static SpriteBatch spriteBatch;
-
 	private static Array<Entity> entities;
 	private static Array<SubframeInterpolableEntity> sfi_entities;
-
-	public static int maxSpritesInBatch()
-	{
-		return spriteBatch.maxSpritesInBatch;
-	}
-
-	public static int renderCalls()
-	{
-		return spriteBatch.renderCalls;
-	}
 
 	public static void add( Entity ent )
 	{
@@ -38,9 +24,6 @@ public class EntityManager
 	{
 		entities = new Array<Entity>();
 		sfi_entities = new Array<SubframeInterpolableEntity>();
-
-		// enable use of VBO (GLES2) (wtf, this should be written in the docs!)
-		spriteBatch = new SpriteBatch(1000, 20);
 	}
 
 	public static void clear()
@@ -96,29 +79,21 @@ public class EntityManager
 		}
 	}
 
-	public static void raiseOnRender( float temporalAliasingFactor )
+	public static void raiseOnRender( SpriteBatch batch, float temporalAliasingFactor )
 	{
-		OrthographicCamera cam = Director.getCamera();
-
-		spriteBatch.setProjectionMatrix( cam.projection );
-		spriteBatch.setTransformMatrix( cam.view );
-		spriteBatch.begin();
-
 		int len = sfi_entities.size;
 		for( int i = 0; i < len; i++ )
 		{
 			SubframeInterpolableEntity e = sfi_entities.get( i );
-			e.onRender( spriteBatch );
+			e.onRender( batch );
 		}
 
 		len = entities.size;
 		for( int i = 0; i < len; i++ )
 		{
 			Entity e = entities.get( i );
-			e.onRender( spriteBatch );
+			e.onRender( batch );
 		}
-
-		spriteBatch.end();
 	}
 
 	public static void raiseOnDebug()

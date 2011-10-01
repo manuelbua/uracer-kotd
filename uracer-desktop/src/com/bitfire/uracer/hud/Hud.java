@@ -5,6 +5,7 @@ import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.math.Matrix4;
 import com.bitfire.uracer.Art;
 import com.bitfire.uracer.Config;
+import com.bitfire.uracer.effects.CarSkidMarks;
 import com.bitfire.uracer.effects.TrackEffects;
 import com.bitfire.uracer.entities.vehicles.Car;
 import com.bitfire.uracer.game.logic.GameLogic;
@@ -14,24 +15,21 @@ import com.bitfire.uracer.simulations.car.Replay;
 public class Hud
 {
 	private GameLogic logic;
-	private SpriteBatch textBatch;
 	private Car player;
 
 	private HudLabel best, curr, last;
 	private HudDebugMeter meterLatForce, meterSkidMarks;
+	private Matrix4 topLeftOrigin, identity;
 
 	public Hud( GameLogic logic )
 	{
 		this.logic = logic;
 		player = logic.getGame().getLevel().getPlayer();
 
-		// setup sprite batch
-		textBatch = new SpriteBatch( 100, 1 );
-
 		// y-flip
-		Matrix4 proj = new Matrix4();
-		proj.setToOrtho( 0, Gdx.graphics.getWidth(), Gdx.graphics.getHeight(), 0, 0, 10 );
-		textBatch.setProjectionMatrix( proj );
+		topLeftOrigin = new Matrix4();
+		topLeftOrigin.setToOrtho( 0, Gdx.graphics.getWidth(), Gdx.graphics.getHeight(), 0, 0, 10 );
+		identity = new Matrix4();
 
 		// grid-based position
 		int gridX = (int)((float)Gdx.graphics.getWidth() / 5f);
@@ -51,8 +49,8 @@ public class Hud
 		meterLatForce.setName( "lat-force-FRONT" );
 
 		// meter skid marks count
-		meterSkidMarks= new HudDebugMeter( this, 1, 100, 5 );
-		meterSkidMarks.setLimits( 0, TrackEffects.MaxSkidMarks );
+		meterSkidMarks = new HudDebugMeter( this, 1, 100, 5 );
+		meterSkidMarks.setLimits( 0, CarSkidMarks.MaxSkidMarks );
 		meterSkidMarks.setName( "skid marks count" );
 	}
 
@@ -63,7 +61,6 @@ public class Hud
 
 	public void dispose()
 	{
-		textBatch.dispose();
 	}
 
 	public void tick()
@@ -91,7 +88,9 @@ public class Hud
 			{
 				best.setString( String.format( "BEST  TIME\n%.04fs", logic.getLapInfo().getLastTrackTimeSeconds() ) );
 			} else
+			{
 				best.setString( "BEST TIME\n-.----" );
+			}
 		}
 
 		// last time
@@ -105,26 +104,28 @@ public class Hud
 		}
 	}
 
-	public void render()
+	public void render( SpriteBatch batch )
 	{
-		textBatch.begin();
+		batch.setTransformMatrix( identity );
+		batch.setProjectionMatrix( topLeftOrigin );
+		batch.begin();
 
-		Messager.render( textBatch );
+		Messager.render( batch );
 
 		updateLapTimes();
-		curr.render( textBatch );
-		best.render( textBatch );
-		last.render( textBatch );
+		curr.render( batch );
+		best.render( batch );
+		last.render( batch );
 
 		if( Config.isDesktop )
 		{
 			meterLatForce.setValue( player.getSimulator().lateralForceFront.y );
-			meterLatForce.render( textBatch );
-			meterSkidMarks.setValue( TrackEffects.visibleDriftsCount );
-			meterSkidMarks.render( textBatch );
+			meterLatForce.render( batch );
+			meterSkidMarks.setValue( TrackEffects.getVisibleSkidMarksCount() );
+			meterSkidMarks.render( batch );
 		}
 
-		textBatch.end();
+		batch.end();
 	}
 
 	public void debug()

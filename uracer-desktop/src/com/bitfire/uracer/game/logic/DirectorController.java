@@ -2,18 +2,19 @@ package com.bitfire.uracer.game.logic;
 
 import com.badlogic.gdx.math.Vector2;
 import com.bitfire.uracer.Director;
+import com.bitfire.uracer.utils.AMath;
 
 public class DirectorController
 {
-	public enum FollowMode
+	public enum InterpolationMode
 	{
-		Linear, Sigmoid
+		Off, Linear, Sigmoid
 	}
 
 	private float boundsWidth = 0, boundsHeight = 0;
 	private PositionInterpolator interpolator;
 
-	public DirectorController( FollowMode mode )
+	public DirectorController( InterpolationMode mode )
 	{
 		boundsWidth = Director.boundsPx.width - Director.boundsPx.x;
 		boundsHeight = Director.boundsPx.y - Director.boundsPx.height;
@@ -21,6 +22,16 @@ public class DirectorController
 		switch( mode )
 		{
 		default:
+		case Off:
+			interpolator = new PositionInterpolator()
+			{
+				@Override
+				public Vector2 transform( Vector2 targetPosition )
+				{
+					return targetPosition;
+				}
+			};
+			break;
 		case Linear:
 			interpolator = new PositionInterpolator()
 			{
@@ -42,11 +53,6 @@ public class DirectorController
 		case Sigmoid:
 			interpolator = new PositionInterpolator()
 			{
-				private float sigmoid( float strength )
-				{
-					return (float)(1f / (1f + Math.pow( Math.E, -strength )));
-				}
-
 				@Override
 				public Vector2 transform( Vector2 target )
 				{
@@ -58,8 +64,8 @@ public class DirectorController
 					float y_ratio = ((ty / Director.worldSizeScaledPx.y) - 0.5f) * 2;
 
 					float strength = 5f;
-					tmp.x = Director.boundsPx.x + sigmoid( x_ratio * strength ) * boundsWidth;
-					tmp.y = Director.boundsPx.height + sigmoid( y_ratio * strength ) * boundsHeight;
+					tmp.x = Director.boundsPx.x + AMath.sigmoid( x_ratio * strength ) * boundsWidth;
+					tmp.y = Director.boundsPx.height + AMath.sigmoid( y_ratio * strength ) * boundsHeight;
 
 					return tmp;
 				}
@@ -68,13 +74,9 @@ public class DirectorController
 		}
 	}
 
-	public void tick()
-	{
-	}
-
 	public void setPosition( Vector2 pos )
 	{
-		Director.setPositionPx( interpolator.transform(pos), false, true );
+		Director.setPositionPx( interpolator.transform( pos ), false, true );
 	}
 
 	private abstract class PositionInterpolator

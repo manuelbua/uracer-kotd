@@ -28,10 +28,11 @@ public class Debug
 	private static Box2DDebugRenderer b2drenderer;
 
 	// text render
+	private static SpriteBatch batch;
 	private static StringBuilder sb;
 	private static Formatter fmt;
 	private static String[] chars = { "ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789", ".,!?:;\"'+-=/\\< " };
-	private static SpriteBatch spriteBatch;
+	private static Matrix4 topLeftOrigin, identity;
 
 	public static int fontWidth;
 	public static int fontHeight;
@@ -55,12 +56,10 @@ public class Debug
 		if( !Config.isDesktop ) updateHz = 1f;
 		gfxStats = new Stats( updateHz );
 
-		spriteBatch = new SpriteBatch(500);
-
 		// y-flip
-		Matrix4 proj = new Matrix4();
-		proj.setToOrtho( 0, Gdx.graphics.getWidth(), Gdx.graphics.getHeight(), 0, 0, 10 );
-		spriteBatch.setProjectionMatrix( proj );
+		topLeftOrigin = new Matrix4();
+		topLeftOrigin.setToOrtho( 0, Gdx.graphics.getWidth(), Gdx.graphics.getHeight(), 0, 0, 10 );
+		identity = new Matrix4();
 
 		// init statics
 		tmp = "";
@@ -68,20 +67,24 @@ public class Debug
 		b = new Vector2();
 	}
 
-	public static void dispose()
+	public static void begin( SpriteBatch batch )
 	{
-		b2drenderer.dispose();
-		gfxStats.dispose();
-	}
-
-	public static void begin()
-	{
-		spriteBatch.begin();
+		batch.setTransformMatrix( identity );
+		batch.setProjectionMatrix( topLeftOrigin );
+		batch.begin();
+		Debug.batch = batch;
 	}
 
 	public static void end()
 	{
-		spriteBatch.end();
+		batch.end();
+		batch = null;
+	}
+
+	public static void dispose()
+	{
+		b2drenderer.dispose();
+		gfxStats.dispose();
 	}
 
 	public static void update()
@@ -103,37 +106,26 @@ public class Debug
 		sb.setLength( 0 );
 		drawString(
 				fmt.format( "fps: %d, physics: %.06f, graphics: %.06f", Gdx.graphics.getFramesPerSecond(), physicsTime,
-						renderTime ).toString(), 0, Gdx.graphics.getHeight()-6 );
+						renderTime ).toString(), 0, Gdx.graphics.getHeight() - 6 );
 
 		sb.setLength( 0 );
-		drawString(
-				fmt.format( "timemul: x%.02f, step: %.0fHz", Config.PhysicsTimeMultiplier, Config.PhysicsTimestepHz ).toString(),
-				0, Gdx.graphics.getHeight()-12 );
+		drawString( fmt.format( "timemul: x%.02f, step: %.0fHz", Config.PhysicsTimeMultiplier, Config.PhysicsTimestepHz )
+				.toString(), 0, Gdx.graphics.getHeight() - 12 );
 	}
 
 	public static void renderGraphicalStats( int x, int y )
 	{
-		spriteBatch.draw( gfxStats.getRegion(), x, y );
+		batch.draw( gfxStats.getRegion(), x, y );
 
 		sb.setLength( 0 );
-		String text = fmt.format( "fps: %d, physics: %.06f, graphics: %.06f", Gdx.graphics.getFramesPerSecond(), physicsTime, renderTime ).toString();
+		String text = fmt.format( "fps: %d, physics: %.06f, graphics: %.06f", Gdx.graphics.getFramesPerSecond(), physicsTime,
+				renderTime ).toString();
 		drawString( text, Gdx.graphics.getWidth() - text.length() * fontWidth, Gdx.graphics.getHeight() - fontHeight );
-	}
-
-	public static int getStatsWidth()
-	{
-		return gfxStats.getWidth();
-	}
-
-	public static int getStatsHeight()
-	{
-		return gfxStats.getHeight();
 	}
 
 	public static void renderVersionInfo()
 	{
 		String uRacerInfo = "uRacer " + VersionInfo.versionName;
-
 		drawString( uRacerInfo, Gdx.graphics.getWidth() - uRacerInfo.length() * fontWidth, 0, fontWidth, fontHeight * 2 );
 	}
 
@@ -145,7 +137,7 @@ public class Debug
 
 		sb.setLength( 0 );
 		String memInfo = fmt.format( "java heap = %.04fMB - native heap = %.04fMB", javaHeapMb, nativeHeapMb ).toString();
-		drawString( memInfo, (Gdx.graphics.getWidth() - memInfo.length() * fontWidth)/2, 0);
+		drawString( memInfo, (Gdx.graphics.getWidth() - memInfo.length() * fontWidth) / 2, 0 );
 	}
 
 	public static void renderB2dWorld( Matrix4 modelViewProj )
@@ -156,15 +148,14 @@ public class Debug
 	public static void draw( TextureRegion region, int x, int y )
 	{
 		int width = region.getRegionWidth();
-		if( width < 0 )
-			width = -width;
+		if( width < 0 ) width = -width;
 
-		spriteBatch.draw( region, x, y, width, -region.getRegionHeight() );
+		batch.draw( region, x, y, width, -region.getRegionHeight() );
 	}
 
 	public static void draw( TextureRegion region, int x, int y, int width, int height )
 	{
-		spriteBatch.draw( region, x, y, width, height );
+		batch.draw( region, x, y, width, height );
 	}
 
 	public static void drawString( String string, int x, int y )
@@ -201,38 +192,47 @@ public class Debug
 		}
 	}
 
+	public static int getStatsWidth()
+	{
+		return gfxStats.getWidth();
+	}
+
+	public static int getStatsHeight()
+	{
+		return gfxStats.getHeight();
+	}
+
 
 	/**
-	 * Print facilities
+	 * stdout facilities
 	 */
 
 	public static void print( String string )
 	{
-		System.out.println(string);
+		System.out.println( string );
 	}
 
-	public static void print( String format, Object... args)
+	public static void print( String format, Object... args )
 	{
 		Debug.print( String.format( format, args ) );
 	}
 
 	private static String tmp;
 	private static Vector2 a, b;
+
 	public static void print( ContactImpulse impulse, String label, boolean omitDupes )
 	{
-		String thisString = String.format( "NI=(%.2f,%.2f) | TI=(%.2f,%.2f)",
-				impulse.getNormalImpulses()[0], impulse.getNormalImpulses()[1],
-				impulse.getTangentImpulses()[0], impulse.getTangentImpulses()[1] );
+		String thisString = String.format( "NI=(%.2f,%.2f) | TI=(%.2f,%.2f)", impulse.getNormalImpulses()[0],
+				impulse.getNormalImpulses()[1], impulse.getTangentImpulses()[0], impulse.getTangentImpulses()[1] );
 
 		a.set( impulse.getNormalImpulses()[0], impulse.getNormalImpulses()[1] );
 		b.set( impulse.getTangentImpulses()[0], impulse.getTangentImpulses()[1] );
 
 		thisString += String.format( " | NIl=%.2f | TI=%.2f", a.len(), b.len() );
 
-		if(label!=null)
-			thisString = label + ": " + thisString;
+		if( label != null ) thisString = label + ": " + thisString;
 
-		if(!tmp.equals( thisString ))
+		if( !tmp.equals( thisString ) )
 		{
 			System.out.println( thisString );
 			tmp = thisString;

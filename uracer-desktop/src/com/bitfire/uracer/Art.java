@@ -51,14 +51,16 @@ public class Art
 		meshTower = newTexture( "data/3d/textures/tower.png" );
 		trackWall = newTexture( "data/track/wall.jpg" );
 
-		// no mip-mapping
-//		carAmbientOcclusion = new TextureRegion( new Texture(Gdx.files.internal("data/base/car-ao.png")), 0, 0, 34, 62 );
-
 		// cars
 		carTextures = new TextureAtlas("data/cars/pack");
+		for( TextureRegion r : carTextures.getRegions() )
+		{
+			r.getTexture().setFilter( TextureFilter.Nearest, TextureFilter.Nearest );
+		}
+
 		cars = carTextures;
-		skidMarksFront = carTextures.findRegion( "skid-marks-front" );	// new TextureRegion(new Texture(Gdx.files.internal( "data/base/skid-marks-front.png")), 0, 0, 34, 62);
-		skidMarksRear = carTextures.findRegion( "skid-marks-rear" );	// new TextureRegion(new Texture(Gdx.files.internal( "data/base/skid-marks-rear.png")), 0, 0, 34, 62);
+		skidMarksFront = carTextures.findRegion( "skid-marks-front" );
+		skidMarksRear = carTextures.findRegion( "skid-marks-rear" );
 		carAmbientOcclusion = carTextures.findRegion( "car-ao" );
 
 		// fonts

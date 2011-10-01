@@ -2,6 +2,8 @@ package com.bitfire.uracer.game;
 
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.GL20;
+import com.badlogic.gdx.graphics.OrthographicCamera;
+import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.bitfire.uracer.Art;
 import com.bitfire.uracer.Config;
 import com.bitfire.uracer.Director;
@@ -12,7 +14,7 @@ import com.bitfire.uracer.effects.postprocessing.PostProcessor;
 import com.bitfire.uracer.entities.EntityManager;
 import com.bitfire.uracer.entities.vehicles.Car;
 import com.bitfire.uracer.game.logic.DirectorController;
-import com.bitfire.uracer.game.logic.DirectorController.FollowMode;
+import com.bitfire.uracer.game.logic.DirectorController.InterpolationMode;
 import com.bitfire.uracer.game.logic.GameLogic;
 import com.bitfire.uracer.hud.Hud;
 import com.bitfire.uracer.messager.Messager;
@@ -31,6 +33,9 @@ public class Game
 	private GameLogic logic = null;
 	private DirectorController controller;
 
+	// drawing
+	private SpriteBatch batch = null;
+
 	public Game( GameDifficulty difficulty )
 	{
 		Messager.init();
@@ -44,7 +49,10 @@ public class Game
 		hud = new Hud( logic );
 
 		TrackEffects.init( logic );
-		controller = new DirectorController(FollowMode.Sigmoid);
+		controller = new DirectorController( InterpolationMode.Sigmoid );
+
+		// setup sprite batch at origin top-left => 0,0
+		batch = new SpriteBatch( 1000, 10 /* higher values causes issues on Tegra2 (Asus Transformer)*/);
 	}
 
 	public void dispose()
@@ -54,12 +62,12 @@ public class Game
 		logic.dispose();
 		hud.dispose();
 		TrackEffects.dispose();
+		batch.dispose();
 	}
 
 	public void tick()
 	{
 		logic.tick();
-		controller.tick();
 		hud.tick();
 		TrackEffects.tick();
 
@@ -70,6 +78,7 @@ public class Game
 	{
 		// TODO this should belong to GameLogic..
 		GL20 gl = Gdx.graphics.getGL20();
+		OrthographicCamera ortho = Director.getCamera();
 
 		EntityManager.raiseOnBeforeRender( URacer.getTemporalAliasing() );
 
@@ -87,14 +96,26 @@ public class Game
 			gl.glViewport( 0, 0, Gdx.graphics.getWidth(), Gdx.graphics.getHeight() );
 		}
 
+		// resync
+		level.syncWithCam( ortho );
+
+		// prepare sprite batch
+
+		batch.setProjectionMatrix( ortho.projection );
+		batch.setTransformMatrix( ortho.view );
+
 		gl.glClearDepthf( 1 );
 		gl.glClearColor( 0, 0, 0, 1 );
 		gl.glClear( GL20.GL_DEPTH_BUFFER_BIT | GL20.GL_COLOR_BUFFER_BIT );
 
-		level.syncWithCam( Director.getCamera() );
 		level.renderTilemap();
-		TrackEffects.render();
-		EntityManager.raiseOnRender( URacer.getTemporalAliasing() );
+
+		gl.glDepthMask( false );
+		batch.begin();
+		TrackEffects.renderPlayerSkidMarks( batch );
+		EntityManager.raiseOnRender( batch, URacer.getTemporalAliasing() );
+		batch.end();
+
 		level.renderMeshes( gl );
 
 		if( Config.EnablePostProcessingFx )
@@ -103,7 +124,7 @@ public class Game
 		}
 
 		logic.render();
-		hud.render();
+		hud.render(batch);
 
 		//
 		// debug
@@ -113,22 +134,17 @@ public class Game
 		{
 			Debug.renderB2dWorld( Director.getMatViewProjMt() );
 
-			Debug.begin();
+			Debug.begin( batch );
 			EntityManager.raiseOnDebug();
 			hud.debug();
 			Debug.renderVersionInfo();
 			Debug.renderGraphicalStats( Gdx.graphics.getWidth() - Debug.getStatsWidth(),
 					Gdx.graphics.getHeight() - Debug.getStatsHeight() - Debug.fontHeight );
 			Debug.renderMemoryUsage();
-//			Debug.drawString( "visible drifts=" + TrackEffects.visibleDriftsCount, 0, 0 );
-			// Debug.drawString( "EMgr::maxSpritesInBatch = " +
-			// EntityManager.maxSpritesInBatch(), 0, 6 );
-			// Debug.drawString( "EMgr::renderCalls = " +
-			// EntityManager.renderCalls(), 0, 12 );
 			Debug.end();
 		} else
 		{
-			Debug.begin();
+			Debug.begin( batch );
 			Debug.renderGraphicalStats( Gdx.graphics.getWidth() - Debug.getStatsWidth(),
 					Gdx.graphics.getHeight() - Debug.getStatsHeight() - Debug.fontHeight );
 			Debug.end();
