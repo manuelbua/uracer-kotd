@@ -119,8 +119,12 @@ public class Hud
 
 		if( Config.isDesktop )
 		{
-			meterLatForce.setValue( player.getSimulator().lateralForceFront.y );
+			// lateral forces
+			meterLatForce.setValue( logic.getDriftInfo().trackedDrift.y );
+			if(logic.getDriftInfo().isDrifting) meterLatForce.color.set( .3f, 1f, .3f, 1f );
+			else meterLatForce.color.set( 1f, 1f, 1f, 1f );
 			meterLatForce.render( batch );
+
 			meterSkidMarks.setValue( TrackEffects.getVisibleSkidMarksCount() );
 			meterSkidMarks.render( batch );
 		}

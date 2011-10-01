@@ -1,5 +1,6 @@
-package com.bitfire.uracer;
+package com.bitfire.uracer.game.logic;
 
+import com.bitfire.uracer.Config;
 import com.bitfire.uracer.simulations.car.Replay;
 
 public class LapInfo

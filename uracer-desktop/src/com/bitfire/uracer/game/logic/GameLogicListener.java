@@ -1,7 +1,6 @@
 package com.bitfire.uracer.game.logic;
 
 import com.badlogic.gdx.math.Vector2;
-import com.bitfire.uracer.LapInfo;
 import com.bitfire.uracer.entities.vehicles.Car;
 import com.bitfire.uracer.entities.vehicles.GhostCar;
 import com.bitfire.uracer.messager.Messager;
@@ -25,13 +24,18 @@ public class GameLogicListener implements IGameLogicListener
 	private boolean isFirstLap = true;
 	private long lastRecordedLapId = 0;
 
+	// drift
+	protected DriftInfo driftInfo;
+
 	public GameLogicListener( GameLogic logic )
 	{
 		this.logic = logic;
 		this.level = logic.getGame().getLevel();
 		player = logic.getGame().getLevel().getPlayer();
 		ghost = logic.getGame().getLevel().getGhost();
+
 		lapInfo = new LapInfo();
+		driftInfo = new DriftInfo();
 	}
 
 	@Override
@@ -126,14 +130,12 @@ public class GameLogicListener implements IGameLogicListener
 		}
 	}
 
-	private long driftTime = 0;
-	private boolean isDrifting = false;
-
 	@Override
-	public void onBeginDrift()
+	public void onBeginDrift( Vector2 trackedDrift )
 	{
-		driftTime = System.currentTimeMillis();
-		isDrifting = true;
+		driftInfo.driftTime = System.currentTimeMillis();
+		driftInfo.isDrifting = true;
+		driftInfo.trackedDrift = trackedDrift;
 
 		System.out.println("--> begin drift");
 	}
@@ -141,14 +143,21 @@ public class GameLogicListener implements IGameLogicListener
 	@Override
 	public void onEndDrift()
 	{
-		driftTime = System.currentTimeMillis() - driftTime;
-		isDrifting = false;
+		driftInfo.driftTime = System.currentTimeMillis() - driftInfo.driftTime;
+		driftInfo.isDrifting = false;
 
-		System.out.println("end drift (" + String.format( "%.02f", driftTime/1000f ) + " seconds) <--");
+		System.out.println("end drift (" + String.format( "%.02f", driftInfo.driftTime/1000f ) + " seconds) <--");
 	}
 
+	@Override
 	public boolean isDrifting()
 	{
-		return isDrifting;
+		return driftInfo.isDrifting;
+	}
+
+	@Override
+	public DriftInfo onGetDriftInfo()
+	{
+		return driftInfo;
 	}
 }

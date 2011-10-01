@@ -1,5 +1,6 @@
 package com.bitfire.uracer.hud;
 
+import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.Pixmap;
 import com.badlogic.gdx.graphics.Pixmap.Format;
 import com.badlogic.gdx.graphics.Texture;
@@ -27,6 +28,8 @@ public class HudDebugMeter
 	private Hud hud;
 	private Vector2 pos;
 	private int row;
+
+	public Color color = new Color( 1, 1, 1, 1 );
 
 	public HudDebugMeter( Hud hud, int row, int width, int height )
 	{
@@ -79,7 +82,7 @@ public class HudDebugMeter
 	private void update()
 	{
 		Car player = hud.getLogic().getGame().getLevel().getPlayer();
-		pos.set(Director.screenPosFor( player.getBody() ));
+		pos.set( Director.screenPosFor( player.getBody() ) );
 
 		// center horizontally
 		pos.x -= width / 2;
@@ -96,7 +99,7 @@ public class HudDebugMeter
 		update();
 		draw();
 
-		batch.draw( region, (int)pos.x, (int)pos.y + Debug.fontHeight);
+		batch.draw( region, (int)pos.x, (int)pos.y + Debug.fontHeight );
 	}
 
 	public void debug()
@@ -113,7 +116,7 @@ public class HudDebugMeter
 		float ratio = Math.abs( value ) / range;
 		ratio = AMath.clamp( ratio, 0, 1 );
 
-		pixels.setColor( .3f, 1f, .3f, 1 );
+		pixels.setColor( color );
 		pixels.fillRectangle( 1, 1, (int)(width * ratio) - 2, height - 2 );
 
 		texture.draw( pixels, 0, 0 );

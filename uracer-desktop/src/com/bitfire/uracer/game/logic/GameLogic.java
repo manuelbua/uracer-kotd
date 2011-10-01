@@ -9,7 +9,6 @@ import com.badlogic.gdx.math.Vector2;
 import com.bitfire.uracer.Config;
 import com.bitfire.uracer.Director;
 import com.bitfire.uracer.Input;
-import com.bitfire.uracer.LapInfo;
 import com.bitfire.uracer.Physics;
 import com.bitfire.uracer.effects.RadialBlur;
 import com.bitfire.uracer.effects.postprocessing.PostProcessor;
@@ -98,6 +97,10 @@ public class GameLogic
 			}
 
 			// onBeginDrift / onEndDrift
+
+			// TODO driftInfo.setLateralForces(...)
+			// or
+			// TODO driftInfo.setPlayer(car) - driftInfo.combined() (observed lateralForces)
 			if( !inDrift )
 			{
 				// search for onBeginDrift
@@ -116,10 +119,10 @@ public class GameLogic
 				tmpv.set( trackedDrift );
 				tmpv.mul( 1f / player.getCarModel().max_grip );
 
-				if(tmpv.len() > 0.5f )
+				if(tmpv.len() > 0.8f )
 				{
 					inDrift = true;
-					listener.onBeginDrift();
+					listener.onBeginDrift( trackedDrift );
 				}
 			}
 			else
@@ -154,18 +157,28 @@ public class GameLogic
 		tweener.update();
 	}
 
-	public Game getGame()
-	{
-		return game;
-	}
-
 	public LapInfo getLapInfo()
 	{
 		return listener.onGetLapInfo();
 	}
 
+	public boolean isDrifting()
+	{
+		return listener.isDrifting();
+	}
+
+	public DriftInfo getDriftInfo()
+	{
+		return listener.onGetDriftInfo();
+	}
+
 	public static TweenManager getTweener()
 	{
 		return tweener;
+	}
+
+	public Game getGame()
+	{
+		return game;
 	}
 }
