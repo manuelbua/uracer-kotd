@@ -119,6 +119,16 @@
     <property name="orient" value="x"/>
    </properties>
   </tile>
+  <tile id="52">
+   <properties>
+    <property name="orient" value="h"/>
+   </properties>
+  </tile>
+  <tile id="53">
+   <properties>
+    <property name="orient" value="v"/>
+   </properties>
+  </tile>
  </tileset>
  <layer name="track" width="9" height="6">
   <properties>

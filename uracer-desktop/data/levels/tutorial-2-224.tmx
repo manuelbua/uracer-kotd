@@ -1,7 +1,6 @@
-<?xml version="1.0" encoding="UTF-8"?>
-<map version="1.0" orientation="orthogonal" width="7" height="5" tilewidth="224" tileheight="224">
- <tileset firstgid="1" name="tileset" tilewidth="224" tileheight="224">
-  <image source="tilesets/nature/224.png" width="896" height="3360"/>
+<?xml version="1.0" encoding="UTF-8" standalone="no"?><map height="4" orientation="orthogonal" tileheight="224" tilewidth="224" version="1.0" width="6"><properties><property name="blended tiles" value=""/></properties>
+ <tileset firstgid="1" name="tileset" tileheight="224" tilewidth="224">
+  <image height="3360" source="tilesets/nature/224.png" width="896"/>
   <tile id="0">
    <properties>
     <property name="orient" value="v"/>
@@ -130,12 +129,12 @@
    </properties>
   </tile>
  </tileset>
- <layer name="track" width="7" height="5">
+ <layer height="4" name="track" width="6">
   <properties>
-   <property name="start" value="up"/>
+   <property name="start" value="left"/>
   </properties>
-  <data encoding="base64" compression="gzip">
-   H4sIAAAAAAAAA2NlYGBgwoLZgJgRiCWBWASIpaG0JVScB8qHYSsgNgRiMyR9UkjyRlBxTix2mQIxFxADAEfBpzmMAAAA
+  <data compression="gzip" encoding="base64">
+   H4sIAAAAAAAAAxNkYGBgAmI+KA3CbEDMCMSSaJgRj7gokn4OKC0GxAD6qZgEYAAAAA==
   </data>
  </layer>
 </map>

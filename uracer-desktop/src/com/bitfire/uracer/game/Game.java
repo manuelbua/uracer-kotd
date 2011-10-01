@@ -35,7 +35,7 @@ public class Game
 		Director.create( Gdx.graphics.getWidth(), Gdx.graphics.getHeight() );
 		Art.scaleFonts( Director.scalingStrategy.invTileMapZoomFactor );
 
-		level = Director.loadLevel( "level1", gameSettings );
+		level = Director.loadLevel( "tutorial-2", gameSettings );
 		player = level.getPlayer();
 
 		logic = new GameLogic( this );

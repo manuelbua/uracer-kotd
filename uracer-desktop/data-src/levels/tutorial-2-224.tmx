@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<map version="1.0" orientation="orthogonal" width="7" height="5" tilewidth="224" tileheight="224">
+<map version="1.0" orientation="orthogonal" width="6" height="4" tilewidth="224" tileheight="224">
  <tileset firstgid="1" name="tileset" tilewidth="224" tileheight="224">
   <image source="tilesets/nature/224.png" width="896" height="3360"/>
   <tile id="0">
@@ -130,12 +130,12 @@
    </properties>
   </tile>
  </tileset>
- <layer name="track" width="7" height="5">
+ <layer name="track" width="6" height="4">
   <properties>
-   <property name="start" value="up"/>
+   <property name="start" value="left"/>
   </properties>
   <data encoding="base64" compression="gzip">
-   H4sIAAAAAAAAA2NlYGBgwoLZgJgRiCWBWASIpaG0JVScB8qHYSsgNgRiMyR9UkjyRlBxTix2mQIxFxADAEfBpzmMAAAA
+   H4sIAAAAAAAAAxNkYGBgAmI+KA3CbEDMCMSSaJgRj7gokn4OKC0GxAD6qZgEYAAAAA==
   </data>
  </layer>
 </map>
