@@ -12,6 +12,7 @@ import com.bitfire.uracer.effects.postprocessing.PostProcessor;
 import com.bitfire.uracer.entities.EntityManager;
 import com.bitfire.uracer.entities.vehicles.Car;
 import com.bitfire.uracer.game.logic.DirectorController;
+import com.bitfire.uracer.game.logic.DirectorController.FollowMode;
 import com.bitfire.uracer.game.logic.GameLogic;
 import com.bitfire.uracer.hud.Hud;
 import com.bitfire.uracer.messager.Messager;
@@ -43,7 +44,7 @@ public class Game
 		hud = new Hud( logic );
 
 		TrackEffects.init( logic );
-		controller = new DirectorController();
+		controller = new DirectorController(FollowMode.Sigmoid);
 	}
 
 	public void dispose()
