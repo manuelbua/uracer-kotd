@@ -138,4 +138,42 @@
    H4sIAAAAAAAAAxNkYGBgAmI+KA3CbEDMCMSSaJgRj7gokn4OKC0GxAD6qZgEYAAAAA==
   </data>
  </layer>
+ <objectgroup color="#00ff00" name="static-meshes" width="6" height="4">
+  <object name="palm" type="palm" x="316" y="295" width="52" height="60">
+   <properties>
+    <property name="scale" value="0.4"/>
+   </properties>
+  </object>
+  <object name="palm" type="palm" x="479" y="264" width="80" height="68">
+   <properties>
+    <property name="scale" value="0.5"/>
+   </properties>
+  </object>
+  <object name="palm" type="palm" x="575" y="352" width="43" height="49"/>
+  <object name="palm" type="palm" x="931" y="412" width="60" height="53"/>
+  <object name="palm" type="palm" x="1019" y="252" width="27" height="39">
+   <properties>
+    <property name="scale" value="0.6"/>
+   </properties>
+  </object>
+  <object name="palm" type="palm" x="1105" y="637" width="37" height="44">
+   <properties>
+    <property name="scale" value="0.65"/>
+   </properties>
+  </object>
+  <object name="palm" type="palm" x="847" y="569" width="49" height="40"/>
+  <object name="palm" type="palm" x="384" y="633" width="48" height="36">
+   <properties>
+    <property name="scale" value="0.8"/>
+   </properties>
+  </object>
+  <object name="palm" type="palm" x="385" y="523" width="43" height="37"/>
+  <object name="palm" type="palm" x="212" y="619" width="41" height="43">
+   <properties>
+    <property name="scale" value="0.5"/>
+   </properties>
+  </object>
+  <object name="palm" type="palm" x="815" y="292" width="47" height="44"/>
+  <object name="palm" type="palm" x="671" y="560" width="33" height="39"/>
+ </objectgroup>
 </map>
