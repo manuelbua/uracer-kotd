@@ -32,6 +32,7 @@ public class Config
 
 	// debug
 	public static boolean dbgTraverseWalls;
+	public static boolean dbgDirectorHasBounds;
 
 	// set default configuration values
 	public static void asDefault()
@@ -47,5 +48,6 @@ public class Config
 
 		// debug
 		dbgTraverseWalls = false;
+		dbgDirectorHasBounds = true;
 	}
 }

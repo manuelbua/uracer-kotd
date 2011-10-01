@@ -323,12 +323,15 @@ public class Car extends Box2dEntity
 	{
 //		if( carInputMode != CarInputMode.InputFromPlayer )
 //			return;
-//
+
 //		Debug.drawString( "vel_wc [x=" + carDesc.velocity_wc.x + ", y=" + carDesc.velocity_wc.y + "]", 0, 20 );
 //		Debug.drawString( "steerangle=" + carDesc.steerangle, 0, 27 );
 //		Debug.drawString( "throttle=" + carDesc.throttle, 0, 34 );
 //		Debug.drawString( "screen x=" + Director.screenPosFor( body ).x + ",y=" + Director.screenPosFor( body ).y, 0, 80 );
-//		Debug.drawString( "world x=" + body.getPosition().x + ",y=" + body.getPosition().y, 0, 87 );
+//		Debug.drawString( "world-mt x=" + body.getPosition().x + ",y=" + body.getPosition().y, 0, 87 );
+//		Debug.drawString( "world-px x=" + Convert.mt2px(body.getPosition().x) + ",y=" + Convert.mt2px(body.getPosition().y), 0, 87 );
+//		Debug.drawString( "dir worldsize x=" + Director.worldSizeScaledPx.x + ",y=" + Director.worldSizeScaledPx.y, 0, 93 );
+//		Debug.drawString( "dir bounds x=" + Director.boundsPx.x + ",y=" + Director.boundsPx.width, 0, 93 );
 //		Debug.drawString( "orient=" + body.getAngle(), 0, 94 );
 //
 //		tmp.set( Convert.pxToTile( stateRender.position.x, stateRender.position.y ) );

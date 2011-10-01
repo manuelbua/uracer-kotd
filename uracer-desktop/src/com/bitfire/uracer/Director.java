@@ -20,12 +20,12 @@ public class Director
 	public static ScalingStrategy scalingStrategy;
 	public static Level currentLevel;
 	public static GameplaySettings gameplaySettings;
+	public static Rectangle boundsPx;
+	public static Vector2 halfViewport;
 
 	private static OrthographicCamera camera;
 	private static Vector2 screenPosFor;
 	private static Matrix4 mvpMt, mvpPx;
-	private static Vector2 halfViewport;
-	private static Rectangle boundsPx;
 
 	private static Vector2 tmp;
 
@@ -46,11 +46,12 @@ public class Director
 		cameraRect = new Rectangle();
 
 		// computed for a 256px tile size target (need conversion)
-		scalingStrategy = new ScalingStrategy( new Vector2( 1280, 800 ), 70f, 224, 1f);
+		scalingStrategy = new ScalingStrategy( new Vector2( 1280, 800 ), 70f, 224, 1f );
 
-		// everything has been setup on a 256px tile, scale back if that's the case
+		// everything has been setup on a 256px tile, scale back if that's the
+		// case
 		Config.PixelsPerMeter /= scalingStrategy.targetScreenRatio / scalingStrategy.to256;
-//		System.out.println("ppm=" + Config.PixelsPerMeter);
+		// System.out.println("ppm=" + Config.PixelsPerMeter);
 
 		Box2DFactory.init();
 	}
@@ -73,7 +74,7 @@ public class Director
 		Physics.dispose();
 	}
 
-	public static Level loadLevel(String levelName, GameplaySettings playSettings)
+	public static Level loadLevel( String levelName, GameplaySettings playSettings )
 	{
 		// construct tilemap and cameras
 		Level level = new Level( levelName, scalingStrategy );
@@ -120,29 +121,40 @@ public class Director
 		mvpMt.val[Matrix4.M11] *= Config.PixelsPerMeter;
 	}
 
-	public static void setPositionPx( Vector2 pos, boolean flipY )
+	public static void setPositionPx( Vector2 pos, boolean flipY, boolean round )
 	{
 		tmp.set( pos );
 
 		if( flipY ) tmp.y = worldSizeScaledPx.y - tmp.y;
 
 		// ensure in bounds
-		if( tmp.x < boundsPx.x ) tmp.x = boundsPx.x;
-		if( tmp.x > boundsPx.width ) tmp.x = boundsPx.width;
-		if( tmp.y > boundsPx.y ) tmp.y = boundsPx.y;
-		if( tmp.y < boundsPx.height ) tmp.y = boundsPx.height;
+		if( Config.dbgDirectorHasBounds )
+		{
+			if( tmp.x < boundsPx.x ) tmp.x = boundsPx.x;
+			if( tmp.x > boundsPx.width ) tmp.x = boundsPx.width;
+			if( tmp.y > boundsPx.y ) tmp.y = boundsPx.y;
+			if( tmp.y < boundsPx.height ) tmp.y = boundsPx.height;
+		}
 
 		// remove subpixel accuracy (jagged behavior)
-		camera.position.x = MathUtils.round( tmp.x );
-		camera.position.y = MathUtils.round( tmp.y );
+		if( round )
+		{
+			camera.position.x = MathUtils.round( tmp.x );
+			camera.position.y = MathUtils.round( tmp.y );
+		} else
+		{
+			camera.position.x = tmp.x;
+			camera.position.y = tmp.y;
+		}
+
 		camera.position.z = 0;
 
 		update();
 	}
 
-	public static void setPositionMt( Vector2 pos, boolean flipY )
+	public static void setPositionMt( Vector2 pos, boolean flipY, boolean round )
 	{
-		setPositionPx( Convert.mt2px( pos ), flipY );
+		setPositionPx( Convert.mt2px( pos ), flipY, round );
 	}
 
 	public static Vector3 pos()
@@ -188,20 +200,16 @@ public class Director
 		return tmp;
 	}
 
-
 	/**
 	 * visibility queries
 	 */
 
 	private static Rectangle cameraRect;
-	public static boolean isVisible(Rectangle rect)
+
+	public static boolean isVisible( Rectangle rect )
 	{
-		cameraRect.set(
-				camera.position.x - camera.viewportWidth/2,
-				camera.position.y - camera.viewportHeight/2,
-				camera.viewportWidth,
-				camera.viewportHeight
-		);
+		cameraRect.set( camera.position.x - camera.viewportWidth / 2, camera.position.y - camera.viewportHeight / 2,
+				camera.viewportWidth, camera.viewportHeight );
 
 		return cameraRect.overlaps( rect );
 	}

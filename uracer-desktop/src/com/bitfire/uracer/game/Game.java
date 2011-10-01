@@ -11,6 +11,7 @@ import com.bitfire.uracer.effects.TrackEffects;
 import com.bitfire.uracer.effects.postprocessing.PostProcessor;
 import com.bitfire.uracer.entities.EntityManager;
 import com.bitfire.uracer.entities.vehicles.Car;
+import com.bitfire.uracer.game.logic.DirectorController;
 import com.bitfire.uracer.game.logic.GameLogic;
 import com.bitfire.uracer.hud.Hud;
 import com.bitfire.uracer.messager.Messager;
@@ -27,6 +28,7 @@ public class Game
 
 	// logic
 	private GameLogic logic = null;
+	private DirectorController controller;
 
 	public Game( GameDifficulty difficulty )
 	{
@@ -34,7 +36,6 @@ public class Game
 		gameSettings = GameplaySettings.create( difficulty );
 		Director.create( Gdx.graphics.getWidth(), Gdx.graphics.getHeight() );
 		Art.scaleFonts( Director.scalingStrategy.invTileMapZoomFactor );
-
 		level = Director.loadLevel( "tutorial-2", gameSettings );
 		player = level.getPlayer();
 
@@ -42,6 +43,7 @@ public class Game
 		hud = new Hud( logic );
 
 		TrackEffects.init( logic );
+		controller = new DirectorController();
 	}
 
 	public void dispose()
@@ -55,8 +57,8 @@ public class Game
 
 	public void tick()
 	{
-		EntityManager.raiseOnTick();
 		logic.tick();
+		controller.tick();
 		hud.tick();
 		TrackEffects.tick();
 
@@ -65,6 +67,7 @@ public class Game
 
 	public void render()
 	{
+		// TODO this should belong to GameLogic..
 		GL20 gl = Gdx.graphics.getGL20();
 
 		EntityManager.raiseOnBeforeRender( URacer.getTemporalAliasing() );
@@ -72,8 +75,7 @@ public class Game
 		// follow the car
 		if( player != null )
 		{
-			// we'll do here since we could have the interpolated position
-			Director.setPositionPx( player.state().position, false );
+			controller.setPosition( player.state().position );
 		}
 
 		if( Config.EnablePostProcessingFx )

@@ -13,6 +13,7 @@ import com.bitfire.uracer.LapInfo;
 import com.bitfire.uracer.Physics;
 import com.bitfire.uracer.effects.RadialBlur;
 import com.bitfire.uracer.effects.postprocessing.PostProcessor;
+import com.bitfire.uracer.entities.EntityManager;
 import com.bitfire.uracer.entities.vehicles.Car;
 import com.bitfire.uracer.game.Game;
 import com.bitfire.uracer.tiled.Level;
@@ -64,6 +65,8 @@ public class GameLogic
 
 	public void tick()
 	{
+		EntityManager.raiseOnTick();
+
 		if( player != null )
 		{
 			if( Input.isOn( Keys.R ) )
