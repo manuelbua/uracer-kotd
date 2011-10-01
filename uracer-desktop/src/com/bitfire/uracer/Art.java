@@ -53,10 +53,10 @@ public class Art
 
 		// cars
 		carTextures = new TextureAtlas("data/cars/pack");
-		for( TextureRegion r : carTextures.getRegions() )
-		{
-			r.getTexture().setFilter( TextureFilter.Nearest, TextureFilter.Nearest );
-		}
+//		for( TextureRegion r : carTextures.getRegions() )
+//		{
+//			r.getTexture().setFilter( TextureFilter.Nearest, TextureFilter.Nearest );
+//		}
 
 		cars = carTextures;
 		skidMarksFront = carTextures.findRegion( "skid-marks-front" );

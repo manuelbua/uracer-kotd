@@ -96,27 +96,29 @@ public class Game
 			gl.glViewport( 0, 0, Gdx.graphics.getWidth(), Gdx.graphics.getHeight() );
 		}
 
-		// resync
-		level.syncWithCam( ortho );
+		{
+			// resync
+			level.syncWithCam( ortho );
 
-		// prepare sprite batch
+			// prepare sprite batch
 
-		batch.setProjectionMatrix( ortho.projection );
-		batch.setTransformMatrix( ortho.view );
+			batch.setProjectionMatrix( ortho.projection );
+			batch.setTransformMatrix( ortho.view );
 
-		gl.glClearDepthf( 1 );
-		gl.glClearColor( 0, 0, 0, 1 );
-		gl.glClear( GL20.GL_DEPTH_BUFFER_BIT | GL20.GL_COLOR_BUFFER_BIT );
+			gl.glClearDepthf( 1 );
+			gl.glClearColor( 0, 0, 0, 1 );
+			gl.glClear( GL20.GL_DEPTH_BUFFER_BIT | GL20.GL_COLOR_BUFFER_BIT );
 
-		level.renderTilemap();
+			level.renderTilemap();
 
-		gl.glDepthMask( false );
-		batch.begin();
-		TrackEffects.renderPlayerSkidMarks( batch );
-		EntityManager.raiseOnRender( batch, URacer.getTemporalAliasing() );
-		batch.end();
+			gl.glDepthMask( false );
+			batch.begin();
+			TrackEffects.renderPlayerSkidMarks( batch );
+			EntityManager.raiseOnRender( batch, URacer.getTemporalAliasing() );
+			batch.end();
 
-		level.renderMeshes( gl );
+			level.renderMeshes( gl );
+		}
 
 		if( Config.EnablePostProcessingFx )
 		{

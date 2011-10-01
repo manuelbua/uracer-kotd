@@ -217,8 +217,8 @@ public class Level
 	private void createEntities()
 	{
 		// TODO: read positions from tmx
-		playerStartPos.set( Convert.tileToPx( 1, 0 ).add( Convert.scaledPixels( 112, -112 ) ) );
-		playerStartOrient = 90f;
+		playerStartPos.set( Convert.tileToPx( 4, 4 ).add( Convert.scaledPixels( 112, -112 ) ) );
+		playerStartOrient = -90f;
 
 		CarModel m = new CarModel();
 		player = CarFactory.createPlayer( CarType.OldSkool, m.toModel2(), playerStartPos, playerStartOrient );

@@ -13,11 +13,16 @@ public class DirectorController
 
 	private float boundsWidth = 0, boundsHeight = 0;
 	private PositionInterpolator interpolator;
+	private float sigmoidStrengthX = 1f;
+	private float sigmoidStrengthY = 1f;
 
 	public DirectorController( InterpolationMode mode )
 	{
 		boundsWidth = Director.boundsPx.width - Director.boundsPx.x;
 		boundsHeight = Director.boundsPx.y - Director.boundsPx.height;
+
+		sigmoidStrengthX = AMath.clamp( (Director.worldSizeTiles.x / 4f), 1f, 5f );
+		sigmoidStrengthY = AMath.clamp( (Director.worldSizeTiles.y / 4f), 1f, 5f );
 
 		switch( mode )
 		{
@@ -63,9 +68,8 @@ public class DirectorController
 					float x_ratio = ((tx / Director.worldSizeScaledPx.x) - 0.5f) * 2;
 					float y_ratio = ((ty / Director.worldSizeScaledPx.y) - 0.5f) * 2;
 
-					float strength = 5f;
-					tmp.x = Director.boundsPx.x + AMath.sigmoid( x_ratio * strength ) * boundsWidth;
-					tmp.y = Director.boundsPx.height + AMath.sigmoid( y_ratio * strength ) * boundsHeight;
+					tmp.x = Director.boundsPx.x + AMath.sigmoid( x_ratio * sigmoidStrengthX ) * boundsWidth;
+					tmp.y = Director.boundsPx.height + AMath.sigmoid( y_ratio * sigmoidStrengthY ) * boundsHeight;
 
 					return tmp;
 				}

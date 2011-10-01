@@ -126,4 +126,29 @@ public class GameLogicListener implements IGameLogicListener
 		}
 	}
 
+	private long driftTime = 0;
+	private boolean isDrifting = false;
+
+	@Override
+	public void onBeginDrift()
+	{
+		driftTime = System.currentTimeMillis();
+		isDrifting = true;
+
+		System.out.println("--> begin drift");
+	}
+
+	@Override
+	public void onEndDrift()
+	{
+		driftTime = System.currentTimeMillis() - driftTime;
+		isDrifting = false;
+
+		System.out.println("end drift (" + String.format( "%.02f", driftTime/1000f ) + " seconds) <--");
+	}
+
+	public boolean isDrifting()
+	{
+		return isDrifting;
+	}
 }

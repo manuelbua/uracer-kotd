@@ -229,7 +229,7 @@ public class Car extends Box2dEntity
 			hasImpact = true;
 		}
 
-		if( PostProcessor.hasEffect() && hasImpact )
+		if( (carInputMode == CarInputMode.InputFromPlayer) && PostProcessor.hasEffect() && hasImpact )
 		{
 			float strength = AMath.lerp( prevStrength, impact*0.00035f, 0.1f );
 			prevStrength = strength;

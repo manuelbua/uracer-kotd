@@ -16,7 +16,7 @@ import com.bitfire.uracer.utils.Convert;
 
 public class Director
 {
-	public static Vector2 worldSizeScaledPx, worldSizeScaledMt;
+	public static Vector2 worldSizeScaledPx, worldSizeScaledMt, worldSizeTiles;
 	public static ScalingStrategy scalingStrategy;
 	public static Level currentLevel;
 	public static GameplaySettings gameplaySettings;
@@ -35,6 +35,7 @@ public class Director
 
 		worldSizeScaledPx = new Vector2();
 		worldSizeScaledMt = new Vector2();
+		worldSizeTiles = new Vector2();
 		screenPosFor = new Vector2();
 		mvpMt = new Matrix4();
 		mvpPx = new Matrix4();
@@ -83,6 +84,7 @@ public class Director
 		Convert.init( scalingStrategy, level.map );
 
 		// compute world size
+		Director.worldSizeTiles.set( level.map.width, level.map.height );
 		Director.worldSizeScaledPx.set( level.map.width * level.map.tileWidth, level.map.height * level.map.tileHeight );
 		Director.worldSizeScaledPx.mul( scalingStrategy.invTileMapZoomFactor );
 		Director.worldSizeScaledMt = Convert.px2mt( worldSizeScaledPx );

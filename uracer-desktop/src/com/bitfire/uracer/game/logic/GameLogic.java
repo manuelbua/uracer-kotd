@@ -29,6 +29,11 @@ public class GameLogic
 	private Vector2 carTileAt = new Vector2();
 	private Vector2 lastCarTileAt = new Vector2();
 
+	// events - onBeginDrift/onEndDrift
+	private boolean inDrift = false;
+	private Vector2 trackedDrift = new Vector2();
+	private Vector2 tmpv = new Vector2();
+
 	// lap and entities
 	private Level level;
 	private Car player = null;
@@ -56,6 +61,7 @@ public class GameLogic
 			PostProcessor.setEffect( rb );
 		}
 
+		inDrift = false;
 		reset();
 	}
 
@@ -77,6 +83,7 @@ public class GameLogic
 				game.reset();
 			}
 
+			// onTileChanged
 			lastCarTileAt.set( carTileAt );
 			carTileAt.set( Convert.pxToTile( player.pos().x, player.pos().y ) );
 			if( (lastCarTileAt.x != carTileAt.x) || (lastCarTileAt.y != carTileAt.y) )
@@ -88,6 +95,41 @@ public class GameLogic
 			{
 				rb.dampStrength( 0.8f, Physics.dt );
 				rb.setOrigin( Director.screenPosFor( player.getBody() ) );
+			}
+
+			// onBeginDrift / onEndDrift
+			if( !inDrift )
+			{
+				// search for onBeginDrift
+				Vector2 front = player.getSimulator().lateralForceFront;
+				Vector2 rear = player.getSimulator().lateralForceRear;
+
+				if(front.len2() > rear.len2())
+				{
+					trackedDrift = front;
+				}
+				else
+				{
+					trackedDrift = rear;
+				}
+
+				tmpv.set( trackedDrift );
+				tmpv.mul( 1f / player.getCarModel().max_grip );
+
+				if(tmpv.len() > 0.5f )
+				{
+					inDrift = true;
+					listener.onBeginDrift();
+				}
+			}
+			else
+			{
+				// search for onEndDrift
+				if( trackedDrift.len() < 0.5f )
+				{
+					listener.onEndDrift();
+					inDrift = false;
+				}
 			}
 		}
 	}
