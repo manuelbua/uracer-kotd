@@ -44,8 +44,10 @@ public class CarSimulator
 
 	public void updateHeading( Body body )
 	{
-		VMath.fromAngle( heading, AMath.wrap2PI( body.getAngle() ) );
+		VMath.fromRadians( heading, AMath.normalRelativeAngle( body.getAngle() ) );
 		VMath.perp( side, heading );
+//		System.out.println("side=" + side);
+//		System.out.println("heading=" + heading);
 	}
 
 	public void applyInput( CarInput input )

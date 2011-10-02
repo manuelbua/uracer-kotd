@@ -13,58 +13,43 @@ import com.badlogic.gdx.math.Vector2;
 public class VMath
 {
 	/**
-	 *	NOTES
-	 *
-	 *	General formulas for up=(0,1)
-	 *
-	 *		Vector2 AngleToVector( float angle )
-	 *		{
-	 *			return new Vector2( Math.Cos(angle), Math.Sin(angle) );
-	 *		}
-	 *
-	 *		float VectorToAngle( Vector2 vector )
-	 *		{
-	 *			return Math.Atan2( vector.Y, vector.X );
-	 *		}
-	 *
-	 *	Need to reverse for up=(0,-1)
+	 * Returns a vector so that up=[0,-1], left=[-1,0], right=[1,0], down=[0,1]
 	 */
 
-	public static final Vector2 fromAngle(Vector2 result, float degrees)
+	public static final Vector2 fromRadians( Vector2 result, float radians )
 	{
-		float rads = degrees * MathUtils.degreesToRadians;
-		result.x = MathUtils.sin( rads );
-		result.y = -MathUtils.cos( rads );
+		result.x = -MathUtils.sin( radians );
+		result.y = -MathUtils.cos( radians );
 		return result;
 	}
 
-	public static final Vector2 fromAngle(float degrees)
+	public static final Vector2 fromDegrees( Vector2 result, float degrees )
 	{
-		Vector2 result = new Vector2();
-		return VMath.fromAngle( result, degrees );
+		float radians = degrees * MathUtils.degreesToRadians;
+		return VMath.fromRadians( result, radians );
 	}
 
-	public static final float toAngle(Vector2 v)
+	public static final float toAngle( Vector2 v )
 	{
 		return MathUtils.atan2( v.x, -v.y );
 	}
 
-	public static final Vector2 perp(Vector2 result, Vector2 perpAt)
+	public static final Vector2 perp( Vector2 result, Vector2 perpAt )
 	{
 		result.x = -perpAt.y;
 		result.y = perpAt.x;
 		return result;
 	}
 
-	public static final Vector2 perp(Vector2 perpAt)
+	public static final Vector2 perp( Vector2 perpAt )
 	{
 		Vector2 result = new Vector2();
 		return VMath.perp( result, perpAt );
 	}
 
-	public static final Vector2 fixup(Vector2 v)
+	public static final Vector2 fixup( Vector2 v )
 	{
-		if( (v.x*v.x+v.y*v.y)<AMath.CMP_EPSILON)
+		if( (v.x * v.x + v.y * v.y) < AMath.CMP_EPSILON )
 		{
 			v.x = v.y = 0;
 		}
@@ -72,9 +57,9 @@ public class VMath
 		return v;
 	}
 
-	public static final Vector2 truncate(Vector2 v, float maxLength)
+	public static final Vector2 truncate( Vector2 v, float maxLength )
 	{
-		if(v.len() > maxLength)
+		if( v.len() > maxLength )
 		{
 			v.nor().mul( maxLength );
 		}
@@ -82,7 +67,7 @@ public class VMath
 		return v;
 	}
 
-	public static final Vector2 truncateToInt(Vector2 v)
+	public static final Vector2 truncateToInt( Vector2 v )
 	{
 		v.x = (int)v.x;
 		v.y = (int)v.y;
