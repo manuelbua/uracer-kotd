@@ -21,17 +21,12 @@ import com.bitfire.uracer.utils.Convert;
 public class GameLogic
 {
 	private Game game;
-	private GameLogicListener listener;
+	private IGameLogicListener listener;
 	private static TweenManager tweener;
 
 	// events - onTileChanged
 	private Vector2 carTileAt = new Vector2();
 	private Vector2 lastCarTileAt = new Vector2();
-
-	// events - onBeginDrift/onEndDrift
-	private boolean inDrift = false;
-	private Vector2 trackedDrift = new Vector2();
-	private Vector2 tmpv = new Vector2();
 
 	// lap and entities
 	private Level level;
@@ -60,7 +55,7 @@ public class GameLogic
 			PostProcessor.setEffect( rb );
 		}
 
-		inDrift = false;
+		DriftInfo.init(this);
 		reset();
 	}
 
@@ -96,44 +91,9 @@ public class GameLogic
 				rb.setOrigin( Director.screenPosFor( player.getBody() ) );
 			}
 
-			// onBeginDrift / onEndDrift
-
-			// TODO driftInfo.setLateralForces(...)
-			// or
-			// TODO driftInfo.setPlayer(car) - driftInfo.combined() (observed lateralForces)
-			if( !inDrift )
-			{
-				// search for onBeginDrift
-				Vector2 front = player.getSimulator().lateralForceFront;
-				Vector2 rear = player.getSimulator().lateralForceRear;
-
-				if(front.len2() > rear.len2())
-				{
-					trackedDrift = front;
-				}
-				else
-				{
-					trackedDrift = rear;
-				}
-
-				tmpv.set( trackedDrift );
-				tmpv.mul( 1f / player.getCarModel().max_grip );
-
-				if(tmpv.len() > 0.8f )
-				{
-					inDrift = true;
-					listener.onBeginDrift( trackedDrift );
-				}
-			}
-			else
-			{
-				// search for onEndDrift
-				if( trackedDrift.len() < 0.5f )
-				{
-					listener.onEndDrift();
-					inDrift = false;
-				}
-			}
+			// update DriftInfo, raise onBeginDrift / onEndDrift
+			DriftInfo drift = DriftInfo.get();
+			drift.update( player );
 		}
 	}
 
@@ -162,16 +122,6 @@ public class GameLogic
 		return listener.onGetLapInfo();
 	}
 
-	public boolean isDrifting()
-	{
-		return listener.isDrifting();
-	}
-
-	public DriftInfo getDriftInfo()
-	{
-		return listener.onGetDriftInfo();
-	}
-
 	public static TweenManager getTweener()
 	{
 		return tweener;
@@ -180,5 +130,10 @@ public class GameLogic
 	public Game getGame()
 	{
 		return game;
+	}
+
+	public IGameLogicListener getListener()
+	{
+		return listener;
 	}
 }

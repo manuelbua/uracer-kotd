@@ -10,6 +10,7 @@ import com.bitfire.uracer.Director;
 import com.bitfire.uracer.URacer;
 import com.bitfire.uracer.debug.Debug;
 import com.bitfire.uracer.effects.TrackEffects;
+import com.bitfire.uracer.effects.TrackEffects.Effects;
 import com.bitfire.uracer.effects.postprocessing.PostProcessor;
 import com.bitfire.uracer.entities.EntityManager;
 import com.bitfire.uracer.entities.vehicles.Car;
@@ -48,8 +49,10 @@ public class Game
 		logic = new GameLogic( this );
 		hud = new Hud( logic );
 
-		TrackEffects.init( logic );
 		controller = new DirectorController( InterpolationMode.Sigmoid );
+
+		// track effects
+		TrackEffects.init( logic );
 
 		// setup sprite batch at origin top-left => 0,0
 		batch = new SpriteBatch( 1000, 10 /* higher values causes issues on Tegra2 (Asus Transformer)*/);
@@ -113,7 +116,7 @@ public class Game
 
 			gl.glDepthMask( false );
 			batch.begin();
-			TrackEffects.renderPlayerSkidMarks( batch );
+			TrackEffects.renderEffect( Effects.CarSkidMarks, batch );
 			EntityManager.raiseOnRender( batch, URacer.getTemporalAliasing() );
 			batch.end();
 

@@ -24,9 +24,6 @@ public class GameLogicListener implements IGameLogicListener
 	private boolean isFirstLap = true;
 	private long lastRecordedLapId = 0;
 
-	// drift
-	protected DriftInfo driftInfo;
-
 	public GameLogicListener( GameLogic logic )
 	{
 		this.logic = logic;
@@ -35,7 +32,6 @@ public class GameLogicListener implements IGameLogicListener
 		ghost = logic.getGame().getLevel().getGhost();
 
 		lapInfo = new LapInfo();
-		driftInfo = new DriftInfo();
 	}
 
 	@Override
@@ -131,33 +127,14 @@ public class GameLogicListener implements IGameLogicListener
 	}
 
 	@Override
-	public void onBeginDrift( Vector2 trackedDrift )
+	public void onBeginDrift()
 	{
-		driftInfo.driftTime = System.currentTimeMillis();
-		driftInfo.isDrifting = true;
-		driftInfo.trackedDrift = trackedDrift;
-
 		System.out.println("--> begin drift");
 	}
 
 	@Override
 	public void onEndDrift()
 	{
-		driftInfo.driftTime = System.currentTimeMillis() - driftInfo.driftTime;
-		driftInfo.isDrifting = false;
-
-		System.out.println("end drift (" + String.format( "%.02f", driftInfo.driftTime/1000f ) + " seconds) <--");
-	}
-
-	@Override
-	public boolean isDrifting()
-	{
-		return driftInfo.isDrifting;
-	}
-
-	@Override
-	public DriftInfo onGetDriftInfo()
-	{
-		return driftInfo;
+		System.out.println("end drift (" + String.format( "%.02f", DriftInfo.get().driftTime/1000f ) + " seconds) <--");
 	}
 }

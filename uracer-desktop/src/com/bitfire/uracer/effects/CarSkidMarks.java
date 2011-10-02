@@ -9,27 +9,29 @@ import com.badlogic.gdx.math.Vector2;
 import com.bitfire.uracer.Art;
 import com.bitfire.uracer.Director;
 import com.bitfire.uracer.Physics;
+import com.bitfire.uracer.effects.TrackEffects.Effects;
 import com.bitfire.uracer.entities.vehicles.Car;
 import com.bitfire.uracer.simulations.car.CarModel;
 import com.bitfire.uracer.utils.AMath;
 import com.bitfire.uracer.utils.Convert;
 
-public class CarSkidMarks
+public class CarSkidMarks extends TrackEffect
 {
 	public static final int MaxSkidMarks = 100;
 
 	private ArrayList<SkidMark> skidMarks;
 	private int markIndex;
-	public int visibleSkidMarksCount;
+	private int visibleSkidMarksCount;
 
 	private Car player;
 	private CarModel model;
 	private Vector2 tmp;
 	private Vector2 last;
 
-
-	public CarSkidMarks(Car player)
+	public CarSkidMarks( Car player )
 	{
+		super( Effects.CarSkidMarks );
+
 		markIndex = 0;
 		visibleSkidMarksCount = 0;
 		tmp = new Vector2();
@@ -44,16 +46,25 @@ public class CarSkidMarks
 		}
 	}
 
+	@Override
+	public int getParticleCount()
+	{
+		return visibleSkidMarksCount;
+	}
+
+	@Override
 	public void dispose()
 	{
 		skidMarks.clear();
 	}
 
+	@Override
 	public void reset()
 	{
 		markIndex = 0;
 	}
 
+	@Override
 	public void tick()
 	{
 		addDriftMark();
@@ -72,7 +83,8 @@ public class CarSkidMarks
 		}
 	}
 
-	public void render(SpriteBatch batch)
+	@Override
+	public void render( SpriteBatch batch )
 	{
 		float lifeRatio;
 		SkidMark d;
@@ -88,8 +100,8 @@ public class CarSkidMarks
 
 				lifeRatio = d.life / d.maxLife;
 
-				d.front.setColor( 1, 1, 1, d.alphaFront * lifeRatio  );
-				d.rear.setColor( 1, 1, 1, d.alphaRear * lifeRatio  );
+				d.front.setColor( 1, 1, 1, d.alphaFront * lifeRatio );
+				d.rear.setColor( 1, 1, 1, d.alphaRear * lifeRatio );
 
 				d.front.draw( batch );
 				d.rear.draw( batch );
@@ -106,8 +118,8 @@ public class CarSkidMarks
 
 		tmp.set( player.state().position );
 		float angle = player.state().orientation;
-//		tmp.set( player.pos() );
-//		float angle = player.orient();
+		// tmp.set( player.pos() );
+		// float angle = player.orient();
 
 		if( (int)tmp.x == (int)last.x && (int)tmp.y == (int)last.y )
 		{
@@ -123,7 +135,7 @@ public class CarSkidMarks
 
 		// add front drift marks?
 		SkidMark drift = skidMarks.get( markIndex++ );
-		if( markIndex == MaxSkidMarks ) markIndex  = 0;
+		if( markIndex == MaxSkidMarks ) markIndex = 0;
 
 		float af = flatf;
 		float ar = flatr;
@@ -191,6 +203,7 @@ public class CarSkidMarks
 		}
 
 		private Rectangle tmp = new Rectangle();
+
 		public Rectangle getBoundingRectangle()
 		{
 			tmp.set( front.getBoundingRectangle() );

@@ -7,7 +7,9 @@ import com.bitfire.uracer.Art;
 import com.bitfire.uracer.Config;
 import com.bitfire.uracer.effects.CarSkidMarks;
 import com.bitfire.uracer.effects.TrackEffects;
+import com.bitfire.uracer.effects.TrackEffects.Effects;
 import com.bitfire.uracer.entities.vehicles.Car;
+import com.bitfire.uracer.game.logic.DriftInfo;
 import com.bitfire.uracer.game.logic.GameLogic;
 import com.bitfire.uracer.messager.Messager;
 import com.bitfire.uracer.simulations.car.Replay;
@@ -21,6 +23,7 @@ public class Hud
 	private HudDebugMeter meterLatForce, meterSkidMarks;
 	private Matrix4 topLeftOrigin, identity;
 
+	// effects
 	public Hud( GameLogic logic )
 	{
 		this.logic = logic;
@@ -44,8 +47,7 @@ public class Hud
 
 		// meter lateral forces
 		meterLatForce = new HudDebugMeter( this, 0, 100, 5 );
-		float maxGrip = player.getCarModel().max_grip;
-		meterLatForce.setLimits( 0, maxGrip );
+		meterLatForce.setLimits( 0, 1 );
 		meterLatForce.setName( "lat-force-FRONT" );
 
 		// meter skid marks count
@@ -119,13 +121,15 @@ public class Hud
 
 		if( Config.isDesktop )
 		{
+			DriftInfo drift = DriftInfo.get();
+
 			// lateral forces
-			meterLatForce.setValue( logic.getDriftInfo().trackedDrift.y );
-			if(logic.getDriftInfo().isDrifting) meterLatForce.color.set( .3f, 1f, .3f, 1f );
+			meterLatForce.setValue( drift.driftStrength );
+			if(drift.isDrifting) meterLatForce.color.set( .3f, 1f, .3f, 1f );
 			else meterLatForce.color.set( 1f, 1f, 1f, 1f );
 			meterLatForce.render( batch );
 
-			meterSkidMarks.setValue( TrackEffects.getVisibleSkidMarksCount() );
+			meterSkidMarks.setValue( TrackEffects.getParticleCount( Effects.CarSkidMarks ) );
 			meterSkidMarks.render( batch );
 		}
 
