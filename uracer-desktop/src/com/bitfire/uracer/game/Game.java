@@ -55,7 +55,7 @@ public class Game
 		TrackEffects.init( logic );
 
 		// setup sprite batch at origin top-left => 0,0
-		batch = new SpriteBatch( 1000, 10 /* higher values causes issues on Tegra2 (Asus Transformer)*/);
+		batch = new SpriteBatch( 1000, 10 /* higher values causes issues on Tegra2 (Asus Transformer) */ );
 	}
 
 	public void dispose()
@@ -79,7 +79,6 @@ public class Game
 
 	public void render()
 	{
-		// TODO this should belong to GameLogic..
 		GL20 gl = Gdx.graphics.getGL20();
 		OrthographicCamera ortho = Director.getCamera();
 
@@ -159,6 +158,11 @@ public class Game
 	public Level getLevel()
 	{
 		return level;
+	}
+
+	public Hud getHud()
+	{
+		return hud;
 	}
 
 	public void restart()
