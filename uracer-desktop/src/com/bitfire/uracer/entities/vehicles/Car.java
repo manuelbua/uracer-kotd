@@ -326,6 +326,7 @@ public class Car extends Box2dEntity
 		if( carInputMode != CarInputMode.InputFromPlayer )
 			return;
 
+		Debug.drawString( "vel_wc len =" + carDesc.velocity_wc.len(), 0, 13 );
 		Debug.drawString( "vel_wc [x=" + carDesc.velocity_wc.x + ", y=" + carDesc.velocity_wc.y + "]", 0, 20 );
 		Debug.drawString( "steerangle=" + carDesc.steerangle, 0, 27 );
 		Debug.drawString( "throttle=" + carDesc.throttle, 0, 34 );
