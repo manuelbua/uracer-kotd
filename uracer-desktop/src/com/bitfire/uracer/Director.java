@@ -180,13 +180,20 @@ public class Director
 	 */
 	public static Vector2 screenPosFor( Body body )
 	{
-		return Director.screenPosFor( body.getPosition() );
+		return Director.screenPosForMt( body.getPosition() );
 	}
 
-	public static Vector2 screenPosFor( Vector2 worldPosition )
+	public static Vector2 screenPosForMt( Vector2 worldPosition )
 	{
 		screenPosFor.x = Convert.mt2px( worldPosition.x ) - camera.position.x + halfViewport.x;
 		screenPosFor.y = camera.position.y - Convert.mt2px( worldPosition.y ) + halfViewport.y;
+		return screenPosFor;
+	}
+
+	public static Vector2 screenPosForPx( Vector2 worldPosition )
+	{
+		screenPosFor.x = worldPosition.x - camera.position.x + halfViewport.x;
+		screenPosFor.y = camera.position.y - worldPosition.y + halfViewport.y;
 		return screenPosFor;
 	}
 
