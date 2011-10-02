@@ -16,6 +16,7 @@ import com.bitfire.uracer.game.logic.GameLogic;
 import com.bitfire.uracer.messager.Messager.MessagePosition;
 import com.bitfire.uracer.messager.Messager.MessageSize;
 import com.bitfire.uracer.messager.Messager.MessageType;
+import com.bitfire.uracer.tweenables.TweenMessage;
 import com.bitfire.uracer.utils.AMath;
 
 public class Message
@@ -30,6 +31,7 @@ public class Message
 	private float whereX, whereY;
 	private float finalX, finalY;
 	private float originX, originY;
+	private float scaleX, scaleY;
 	private BitmapFont font;
 	private int halfWidth;
 	private boolean finished;
@@ -49,6 +51,7 @@ public class Message
 		this.position = position;
 		bounds = new TextBounds();
 		alpha = 0f;
+		scaleX = scaleY = 1f;
 		durationMs = (int)(durationSecs * 1000f);
 		hiding = false;
 
@@ -102,7 +105,7 @@ public class Message
 			break;
 
 		case Bottom:
-			finalY = Gdx.graphics.getHeight() - bounds.height - 30 * font.getScaleX();
+			finalY = Gdx.graphics.getHeight() - bounds.height - 80 * font.getScaleX();
 			whereY = Gdx.graphics.getHeight() + 50 * font.getScaleX();
 			break;
 		}
@@ -115,6 +118,7 @@ public class Message
 
 	public void render( SpriteBatch batch )
 	{
+		font.setScale(scaleX, scaleY);
 		font.setColor( 1, 1, 1, alpha );
 		font.drawMultiLine( batch, what, whereX, whereY, halfWidth, HAlignment.CENTER );
 		font.setColor( 1, 1, 1, 1  );
@@ -125,7 +129,7 @@ public class Message
 		finished = false;
 		hiding = false;
 
-		font.setScale( 1f );
+//		scaleX = scaleY = 1f;
 		computeFinalPosition();
 
 		GameLogic.getTweener().add(
@@ -186,12 +190,12 @@ public class Message
 
 	public float getScaleX()
 	{
-		return font.getScaleX();
+		return scaleX;
 	}
 
 	public float getScaleY()
 	{
-		return font.getScaleY();
+		return scaleY;
 	}
 
 	public float getAlpha()
@@ -212,9 +216,8 @@ public class Message
 
 	public void setScale(float scaleX, float scaleY)
 	{
-		scaleX = AMath.clamp( scaleX, 0.1f, 10f );
-		scaleY = AMath.clamp( scaleY, 0.1f, 10f );
-		font.setScale( scaleX, scaleY );
+		this.scaleX = AMath.clamp( scaleX, 0.1f, 10f );
+		this.scaleY = AMath.clamp( scaleY, 0.1f, 10f );
 	}
 
 	public void setX(float x)
