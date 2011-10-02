@@ -2,6 +2,6 @@ package com.bitfire.uracer;
 
 public class VersionInfo
 {
-	public static String versionName = "v0.1.1-44-gf4e57b7/master";
+	public static String versionName = "v0.1.1-45-g2d9a568/master";
 }
 
