@@ -23,6 +23,9 @@ public class Hud
 	private HudDebugMeter meterLatForce, meterSkidMarks;
 	private Matrix4 topLeftOrigin, identity;
 
+	// components
+	private HudDrifting hudDrift;
+
 	// effects
 	public Hud( GameLogic logic )
 	{
@@ -37,9 +40,13 @@ public class Hud
 		// grid-based position
 		int gridX = (int)((float)Gdx.graphics.getWidth() / 5f);
 
+		// laptimes component
 		best = new HudLabel( Art.fontCurseYR, "BEST  TIME\n-.----" );
 		curr = new HudLabel( Art.fontCurseYR, "YOUR  TIME\n-.----" );
 		last = new HudLabel( Art.fontCurseYR, "LAST  TIME\n-.----" );
+
+		// drifting component
+		hudDrift = new HudDrifting( logic );
 
 		curr.setPosition( gridX - curr.getBounds().width, 10 );
 		last.setPosition( gridX * 4 - last.getBounds().width, 10 );
@@ -61,6 +68,11 @@ public class Hud
 		return logic;
 	}
 
+	public HudDrifting getDrifting()
+	{
+		return hudDrift;
+	}
+
 	public void dispose()
 	{
 	}
@@ -68,6 +80,7 @@ public class Hud
 	public void tick()
 	{
 		Messager.tick();
+		hudDrift.tick();
 	}
 
 	private void updateLapTimes()
@@ -119,19 +132,27 @@ public class Hud
 		best.render( batch );
 		last.render( batch );
 
+		// dbg only
 		if( Config.isDesktop )
 		{
 			DriftInfo drift = DriftInfo.get();
 
 			// lateral forces
 			meterLatForce.setValue( drift.driftStrength );
-			if(drift.isDrifting) meterLatForce.color.set( .3f, 1f, .3f, 1f );
-			else meterLatForce.color.set( 1f, 1f, 1f, 1f );
+
+			if( drift.isDrifting )
+				meterLatForce.color.set( .3f, 1f, .3f, 1f );
+			else
+				meterLatForce.color.set( 1f, 1f, 1f, 1f );
+
 			meterLatForce.render( batch );
 
 			meterSkidMarks.setValue( TrackEffects.getParticleCount( Effects.CarSkidMarks ) );
 			meterSkidMarks.render( batch );
 		}
+
+		// render drifting component
+		hudDrift.render( batch );
 
 		batch.end();
 	}

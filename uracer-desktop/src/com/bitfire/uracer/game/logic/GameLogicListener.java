@@ -38,6 +38,8 @@ public class GameLogicListener implements IGameLogicListener
 	public void onReset()
 	{
 		lapInfo.reset();
+		DriftInfo.get().reset();
+		if(logic.getGame().getHud()!=null) logic.getGame().getHud().getDrifting().reset();
 		isFirstLap = true;
 		lastRecordedLapId = 0;
 	}
@@ -46,6 +48,8 @@ public class GameLogicListener implements IGameLogicListener
 	public void onRestart()
 	{
 		isFirstLap = true;
+		DriftInfo.get().reset();
+		if(logic.getGame().getHud()!=null) logic.getGame().getHud().getDrifting().reset();
 		Messager.show( "WARM  UP  LAP", 3f, MessageType.Information, MessagePosition.Middle, MessageSize.Big );
 	}
 
@@ -107,13 +111,13 @@ public class GameLogicListener implements IGameLogicListener
 					{
 						lapInfo.setLastTrackTimeSeconds( best.trackTimeSeconds );
 						Messager.show( "-" + String.format( "%.4f", worst.trackTimeSeconds - best.trackTimeSeconds )
-								+ " seconds!", 3f, MessageType.Good, MessagePosition.Middle, MessageSize.Big );
+								+ " seconds!", 3f, MessageType.Good, MessagePosition.Top, MessageSize.Big );
 					} else
 					{
 						lapInfo.setLastTrackTimeSeconds( worst.trackTimeSeconds );
 						Messager.show(
 								"+" + String.format( "%.4f", worst.trackTimeSeconds - best.trackTimeSeconds ) + " seconds", 3f,
-								MessageType.Bad, MessagePosition.Middle, MessageSize.Big );
+								MessageType.Bad, MessagePosition.Top, MessageSize.Big );
 					}
 
 					ghost.setReplay( best );
@@ -129,12 +133,13 @@ public class GameLogicListener implements IGameLogicListener
 	@Override
 	public void onBeginDrift()
 	{
-		System.out.println("--> begin drift");
+		logic.getGame().getHud().getDrifting().onBeginDrift();
+//		System.out.println( "--> begin drift" );
 	}
 
 	@Override
 	public void onEndDrift()
 	{
-		System.out.println("end drift (" + String.format( "%.02f", DriftInfo.get().driftTime/1000f ) + " seconds) <--");
+		logic.getGame().getHud().getDrifting().onEndDrift();
 	}
 }

@@ -55,7 +55,7 @@ public class GameLogic
 			PostProcessor.setEffect( rb );
 		}
 
-		DriftInfo.init(this);
+		DriftInfo.init( this );
 		reset();
 	}
 
@@ -105,6 +105,8 @@ public class GameLogic
 
 	public void restart()
 	{
+		tweener.clear();
+
 		// causes an onTileChanged event to be raised
 		lastCarTileAt.set( -1, -1 );
 		carTileAt.set( lastCarTileAt );

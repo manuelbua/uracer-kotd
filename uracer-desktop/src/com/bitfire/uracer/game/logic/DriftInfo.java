@@ -5,10 +5,14 @@ import com.bitfire.uracer.utils.AMath;
 
 public class DriftInfo
 {
-	public long driftTime = 0;
+	public float driftSeconds = 0;
 	public boolean isDrifting = false;
+	public boolean hasCollided = false;
 	public float lateralForcesFront = 0, lateralForcesRear = 0, lastRear, lastFront;
 	public float driftStrength;
+
+	private long driftStartTime = 0;
+	private long collisionTime;
 
 	private static DriftInfo instance = null;
 	private static GameLogic logic;
@@ -24,6 +28,29 @@ public class DriftInfo
 		return instance;
 	}
 
+	public void reset()
+	{
+		lastFront = lastRear = 0;
+		driftSeconds = 0;
+		hasCollided = false;
+		isDrifting = false;
+		collisionTime = 0;
+		lateralForcesFront = lateralForcesRear = 0;
+		driftStrength = 0;
+	}
+
+	public static void invalidateByCollision()
+	{
+		DriftInfo drift = DriftInfo.get();
+		if( !drift.isDrifting ) return;
+
+		drift.collisionTime = System.currentTimeMillis();
+		drift.isDrifting = false;
+		drift.hasCollided = true;
+		drift.updateDriftTimeSeconds();
+		logic.getListener().onEndDrift();
+	}
+
 	public void update( Car player )
 	{
 		lastFront = lateralForcesFront;
@@ -36,25 +63,47 @@ public class DriftInfo
 		driftStrength = AMath.clamp(
 				((Math.abs( lateralForcesFront ) + Math.abs( lateralForcesRear )) * 0.5f) / player.getCarModel().max_grip, 0, 1 );
 
-		if( !isDrifting )
+		if( isDrifting )
 		{
-			// search for onBeginDrift
-			if( driftStrength > 0.4f )
+			// update in-drift time
+			updateDriftTimeSeconds();
+		}
+
+		if( hasCollided )
+		{
+			// ignore drifts for a couple of seconds
+			if( System.currentTimeMillis() - collisionTime > 1000 )
 			{
-				isDrifting = true;
-				driftTime = System.currentTimeMillis();
-				logic.getListener().onBeginDrift();
+				hasCollided = false;
 			}
 		} else
 		{
-			// search for onEndDrift
-			if( isDrifting && driftStrength < 0.2f )
+			if( !isDrifting )
 			{
-				driftTime = System.currentTimeMillis() - driftTime;
-				isDrifting = false;
-				logic.getListener().onEndDrift();
+				// search for onBeginDrift
+				if( driftStrength > 0.4f && player.getCarDescriptor().velocity_wc.len() > 20 )
+				{
+					isDrifting = true;
+					hasCollided = false;
+					driftStartTime = System.currentTimeMillis();
+					updateDriftTimeSeconds();
+					logic.getListener().onBeginDrift();
+				}
+			} else
+			{
+				// search for onEndDrift
+				if( isDrifting && driftStrength < 0.2f )
+				{
+					isDrifting = false;
+					hasCollided = false;
+					logic.getListener().onEndDrift();
+				}
 			}
 		}
+	}
 
+	private void updateDriftTimeSeconds()
+	{
+		driftSeconds = (System.currentTimeMillis() - driftStartTime) / 1000f;
 	}
 }
