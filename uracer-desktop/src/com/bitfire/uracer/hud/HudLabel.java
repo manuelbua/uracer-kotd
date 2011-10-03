@@ -3,7 +3,7 @@ package com.bitfire.uracer.hud;
 import aurelienribon.tweenengine.Tween;
 import aurelienribon.tweenengine.TweenGroup;
 import aurelienribon.tweenengine.equations.Expo;
-import aurelienribon.tweenengine.equations.Linear;
+import aurelienribon.tweenengine.equations.Quint;
 
 import com.badlogic.gdx.graphics.g2d.BitmapFont;
 import com.badlogic.gdx.graphics.g2d.BitmapFont.TextBounds;
@@ -108,6 +108,11 @@ public class HudLabel
 		recomputeBounds();
 	}
 
+	public float getScale()
+	{
+		return scale;
+	}
+
 	public void setScale( float scale )
 	{
 		setScale( scale, false );
@@ -125,7 +130,9 @@ public class HudLabel
 		{
 			font.setScale( scale );
 			font.setColor( 1, 1, 1, alpha );
+
 			font.drawMultiLine( batch, what, x, y );
+
 			font.setColor( 1, 1, 1, 1 );
 		}
 	}
@@ -158,26 +165,28 @@ public class HudLabel
 
 
 //	private Vector2 tmpv = new Vector2();
-	public void slide( Vector2 heading, float near, float far )
+	public void slide( Vector2 heading, float step )
 	{
-		float targetNearX = getPosition().x + heading.x * near;
-		float targetNearY = getPosition().y + heading.y * near;
-		float targetFarX = getPosition().x - heading.x * far;
-		float targetFarY = getPosition().y - heading.y * far;
+		setScale( 1f, true );
+
+		float targetNearX = getPosition().x;
+		float targetNearY = getPosition().y - 30;
+		float targetFarX = getPosition().x;
+		float targetFarY = getPosition().y - 100;
 
 		GameLogic.getTweener().add
 		(
 			TweenGroup.parallel
 			(
-				Tween.to( tween, TweenHudLabel.OPACITY, 500, Linear.INOUT ).target( 1f ),
+				Tween.to( tween, TweenHudLabel.OPACITY, 500, Quint.INOUT ).target( 1f ),
 				TweenGroup.sequence
 				(
-					Tween.to( tween, TweenHudLabel.POSITION_XY, 500, Linear.INOUT ).target( targetNearX, targetNearY ),
+					Tween.to( tween, TweenHudLabel.POSITION_XY, 500, Quint.INOUT ).target( targetNearX, targetNearY ),
 					TweenGroup.parallel
 					(
 						Tween.to( tween, TweenHudLabel.POSITION_XY, 500, Expo.OUT ).target( targetFarX, targetFarY ),
 						Tween.to( tween, TweenHudLabel.OPACITY, 500, Expo.OUT ).target( 0f )
-					)
+					).delay( 200 )
 				)
 			)
 		);

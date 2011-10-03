@@ -56,7 +56,12 @@ public class GameLogic
 		}
 
 		DriftInfo.init( this );
+	}
+
+	public void create()
+	{
 		reset();
+		listener.onCreate();
 	}
 
 	public void dispose()

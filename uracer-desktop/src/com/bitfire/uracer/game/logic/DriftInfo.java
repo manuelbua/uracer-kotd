@@ -11,7 +11,7 @@ public class DriftInfo
 	public float lateralForcesFront = 0, lateralForcesRear = 0, lastRear, lastFront;
 	public float driftStrength;
 
-	private long driftStartTime = 0;
+	public long driftStartTime = 0;
 	private long collisionTime;
 
 	private static DriftInfo instance = null;

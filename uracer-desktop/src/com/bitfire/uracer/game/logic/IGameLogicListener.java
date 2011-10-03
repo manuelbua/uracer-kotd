@@ -4,6 +4,8 @@ import com.badlogic.gdx.math.Vector2;
 
 public interface IGameLogicListener
 {
+	public abstract void onCreate();
+
 	public abstract void onReset();
 
 	public abstract void onRestart();

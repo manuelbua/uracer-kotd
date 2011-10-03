@@ -48,9 +48,9 @@ public class Hud
 		// drifting component
 		hudDrift = new HudDrifting( logic );
 
-		curr.setPosition( gridX - curr.getBounds().width, 10 );
-		last.setPosition( gridX * 4 - last.getBounds().width, 10 );
-		best.setPosition( gridX * 5 - best.getBounds().width, 10 );
+		curr.setPosition( gridX, 50 );
+		last.setPosition( gridX * 4, 50 );
+		best.setPosition( gridX * 5, 50 );
 
 		// meter lateral forces
 		meterLatForce = new HudDebugMeter( this, 0, 100, 5 );
@@ -61,16 +61,6 @@ public class Hud
 		meterSkidMarks = new HudDebugMeter( this, 1, 100, 5 );
 		meterSkidMarks.setLimits( 0, CarSkidMarks.MaxSkidMarks );
 		meterSkidMarks.setName( "skid marks count" );
-	}
-
-	public GameLogic getLogic()
-	{
-		return logic;
-	}
-
-	public HudDrifting getDrifting()
-	{
-		return hudDrift;
 	}
 
 	public void dispose()
@@ -161,5 +151,22 @@ public class Hud
 	{
 		meterLatForce.debug();
 		meterSkidMarks.debug();
+	}
+
+
+	/**
+	 * Expose components
+	 * TODO find a better way for this
+	 * @return
+	 */
+
+	public GameLogic getLogic()
+	{
+		return logic;
+	}
+
+	public HudDrifting getDrifting()
+	{
+		return hudDrift;
 	}
 }

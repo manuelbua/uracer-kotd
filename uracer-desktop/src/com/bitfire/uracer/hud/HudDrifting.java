@@ -12,6 +12,7 @@ import com.bitfire.uracer.messager.Messager.MessagePosition;
 import com.bitfire.uracer.messager.Messager.MessageSize;
 import com.bitfire.uracer.messager.Messager.MessageType;
 import com.bitfire.uracer.simulations.car.CarModel;
+import com.bitfire.uracer.utils.AMath;
 import com.bitfire.uracer.utils.Convert;
 
 public class HudDrifting
@@ -21,7 +22,7 @@ public class HudDrifting
 	private CarModel model;
 	private int carWidthPx, carLengthPx;
 
-	private HudLabel labelRealtime, labelResult;
+	public HudLabel labelRealtime, labelResult;
 	private DriftInfo drift;
 
 	public HudDrifting( GameLogic logic )
@@ -35,7 +36,7 @@ public class HudDrifting
 		labelRealtime = new HudLabel( Art.fontCurseYRbig, "99.99", 0.5f );
 		labelRealtime.setAlpha( 0 );
 
-		labelResult = new HudLabel( Art.fontCurseR, "99.99", 0.5f );
+		labelResult = new HudLabel( Art.fontCurseR, "99.99", 0.85f );
 		labelResult.setAlpha( 0 );
 	}
 
@@ -51,22 +52,29 @@ public class HudDrifting
 	}
 
 	private Vector2 tmpv = new Vector2();
+	private float lastDistance = 0f;
 	public void render( SpriteBatch batch )
 	{
 		// update from subframe-interpolated player position
 		Vector2 pos = tmpv.set( Director.screenPosForPx( player.state().position ) );
 		Vector2 heading = player.getSimulator().heading;
 
-//		labelResult.setPosition(
-//				pos.x - heading.x * (carWidthPx + labelResult.halfBoundsWidth),
-//				pos.y - heading.y * (carLengthPx + labelResult.halfBoundsHeight)
-//			);
+
+		float secRatio = 1f;
+		float distance = 0f;
+		if( drift.isDrifting )
+		{
+			secRatio = AMath.clamp( (System.currentTimeMillis() - drift.driftStartTime) / 2000f, 0, 1);
+			labelRealtime.setAlpha( secRatio );
+			distance = (1f-secRatio) * 50f;
+			lastDistance = distance;
+		}
 
 		labelRealtime.setPosition(
-				// offset by heading.mul(distance factor)
-				pos.x - heading.x * (carWidthPx + labelRealtime.halfBoundsWidth),
-				pos.y - heading.y * (carLengthPx + labelRealtime.halfBoundsHeight)
-			);
+			// offset by heading.mul(distance factor)
+			pos.x - heading.x * (carWidthPx + labelRealtime.halfBoundsWidth + lastDistance),
+			pos.y - heading.y * (carLengthPx + labelRealtime.halfBoundsHeight + lastDistance)
+		);
 
 		//
 		// draw earned seconds
@@ -82,7 +90,7 @@ public class HudDrifting
 
 	public void onBeginDrift()
 	{
-		labelRealtime.fadeIn( 100 );
+//		labelRealtime.fadeIn( 100 );
 	}
 
 	private Vector2 heading = new Vector2();
@@ -91,7 +99,7 @@ public class HudDrifting
 		Vector2 pos = tmpv.set( Director.screenPosForPx( player.state().position ) );
 		heading.set(player.getSimulator().heading);
 
-		labelRealtime.fadeOut( 100 );
+		labelRealtime.fadeOut( 300 );
 
 		labelResult.setPosition(
 				pos.x - heading.x * (carWidthPx + labelResult.halfBoundsWidth),
@@ -101,14 +109,12 @@ public class HudDrifting
 		// premature end drift event due to collision?
 		if( drift.hasCollided )
 		{
-			labelResult.slide( heading, 10, 50 );
 			labelResult.setString( "-" + String.format( "%.02f", drift.driftSeconds ) );
 			labelResult.setFont( Art.fontCurseRbig );
 //			labelResult.fadeInFor( 200, 400 );
 		}
 		else
 		{
-			labelResult.slide( heading.mul( -1 ), 10, 50 );
 			labelResult.setString( "+" + String.format( "%.02f", drift.driftSeconds ) );
 			labelResult.setFont( Art.fontCurseGbig );
 //			labelResult.fadeInFor( 200, 400 );
@@ -126,5 +132,7 @@ public class HudDrifting
 				Messager.enqueue( "UNREAL!\n+" + String.format( "%.02f", drift.driftSeconds ) + "  seconds!", 1f, MessageType.Good, MessagePosition.Middle, MessageSize.Big );
 			}
 		}
+
+		labelResult.slide( heading, 10 );
 	}
 }

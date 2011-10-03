@@ -35,6 +35,11 @@ public class GameLogicListener implements IGameLogicListener
 	}
 
 	@Override
+	public void onCreate()
+	{
+	}
+
+	@Override
 	public void onReset()
 	{
 		lapInfo.reset();
@@ -50,7 +55,20 @@ public class GameLogicListener implements IGameLogicListener
 		isFirstLap = true;
 		DriftInfo.get().reset();
 		if(logic.getGame().getHud()!=null) logic.getGame().getHud().getDrifting().reset();
-		Messager.show( "WARM  UP  LAP", 3f, MessageType.Information, MessagePosition.Middle, MessageSize.Big );
+//		Messager.show( "WARM  UP  LAP", 3f, MessageType.Information, MessagePosition.Middle, MessageSize.Big );
+
+
+		/**
+		 * debug
+		 */
+
+//		HudDrifting hud = logic.getGame().getHud().getDrifting();
+//		HudLabel label = hud.labelResult;
+//		label.setAlpha( 0 );
+//		label.setString( "+2.30!" );
+//		label.setPosition( Gdx.graphics.getWidth()/2, Gdx.graphics.getHeight()/2);
+//		label.setFont( Art.fontCurseYRbig );
+//		label.slide( new Vector2(0,-1), 10 );
 	}
 
 	@Override

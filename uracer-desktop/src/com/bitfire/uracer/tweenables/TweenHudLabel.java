@@ -9,6 +9,7 @@ public class TweenHudLabel implements Tweenable
 	public static final int POSITION_XY = 1;
 	public static final int POSITION_X = 2;
 	public static final int POSITION_Y = 3;
+	public static final int SCALE = 4;
 	public static final int OPACITY = 5;
 
 	private HudLabel label;
@@ -36,6 +37,10 @@ public class TweenHudLabel implements Tweenable
 			returnValues[0] = label.getY();
 			return 1;
 
+		case SCALE:
+			returnValues[0] = label.getScale();
+			return 1;
+
 		case OPACITY:
 			returnValues[0] = label.getAlpha();
 			return 1;
@@ -61,6 +66,10 @@ public class TweenHudLabel implements Tweenable
 
 		case POSITION_Y:
 			label.setY( newValues[0] );
+			break;
+
+		case SCALE:
+			label.setScale( newValues[0], true );
 			break;
 
 		case OPACITY:
