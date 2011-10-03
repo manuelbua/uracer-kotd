@@ -1,11 +1,5 @@
 package com.bitfire.uracer.hud;
 
-import aurelienribon.tweenengine.Tween;
-import aurelienribon.tweenengine.TweenCallback;
-import aurelienribon.tweenengine.TweenGroup;
-import aurelienribon.tweenengine.equations.Expo;
-
-import com.badlogic.gdx.graphics.g2d.BitmapFont.TextBounds;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.math.Vector2;
 import com.bitfire.uracer.Art;
@@ -18,7 +12,6 @@ import com.bitfire.uracer.messager.Messager.MessagePosition;
 import com.bitfire.uracer.messager.Messager.MessageSize;
 import com.bitfire.uracer.messager.Messager.MessageType;
 import com.bitfire.uracer.simulations.car.CarModel;
-import com.bitfire.uracer.tweenables.TweenHudLabel;
 import com.bitfire.uracer.utils.Convert;
 
 public class HudDrifting
@@ -29,8 +22,6 @@ public class HudDrifting
 	private int carWidthPx, carLengthPx;
 
 	private HudLabel labelRealtime, labelResult;
-	private TweenHudLabel tweenRealtime, tweenResult;
-	private TextBounds boundsRealtime, boundsResult;
 	private DriftInfo drift;
 
 	public HudDrifting( GameLogic logic )
@@ -41,16 +32,11 @@ public class HudDrifting
 		carWidthPx = (int)Convert.mt2px( model.width );
 		carLengthPx = (int)Convert.mt2px( model.length );
 
-		labelRealtime = new HudLabel( Art.fontCurseYRbig, "99.99" );
-		labelRealtime.setScale( 0.5f, true );
+		labelRealtime = new HudLabel( Art.fontCurseYRbig, "99.99", 0.5f );
 		labelRealtime.setAlpha( 0 );
-		boundsRealtime = labelRealtime.getBounds();
-		tweenRealtime = new TweenHudLabel( labelRealtime );
 
-		labelResult = new HudLabel( Art.fontCurseR, "99.99" );
+		labelResult = new HudLabel( Art.fontCurseR, "99.99", 0.5f );
 		labelResult.setAlpha( 0 );
-		boundsResult = labelResult.getBounds();
-		tweenResult = new TweenHudLabel( labelResult );
 	}
 
 	public void reset()
@@ -64,93 +50,80 @@ public class HudDrifting
 		drift = DriftInfo.get();
 	}
 
+	private Vector2 tmpv = new Vector2();
 	public void render( SpriteBatch batch )
 	{
-		Vector2 p = Director.screenPosForPx( player.state().position );
-		Vector2 h = player.getSimulator().heading;
+		// update from subframe-interpolated player position
+		Vector2 pos = tmpv.set( Director.screenPosForPx( player.state().position ) );
+		Vector2 heading = player.getSimulator().heading;
+
+//		labelResult.setPosition(
+//				pos.x - heading.x * (carWidthPx + labelResult.halfBoundsWidth),
+//				pos.y - heading.y * (carLengthPx + labelResult.halfBoundsHeight)
+//			);
+
+		labelRealtime.setPosition(
+				// offset by heading.mul(distance factor)
+				pos.x - heading.x * (carWidthPx + labelRealtime.halfBoundsWidth),
+				pos.y - heading.y * (carLengthPx + labelRealtime.halfBoundsHeight)
+			);
 
 		//
 		// draw earned seconds
 		//
-
 		labelRealtime.setString( "+" + String.format( "%.02f", drift.driftSeconds ) );
-		labelRealtime.setPosition( p.x - labelRealtime.getBounds().width * 0.5f, p.y - labelRealtime.getBounds().height * 0.5f );
-		labelRealtime.x -= h.x * (carWidthPx + labelRealtime.getBounds().width * 0.5f);		// offset by heading
-		labelRealtime.y -= h.y * (carLengthPx + labelRealtime.getBounds().height * 0.5f);		// offset by heading
 		labelRealtime.render( batch );
-
 
 		//
 		// draw lost seconds
 		//
-		labelResult.setPosition( p.x - labelResult.getBounds().width * 0.5f, p.y - labelResult.getBounds().height * 0.5f );
-		labelResult.x -= h.x * (carWidthPx + labelResult.getBounds().width * 0.5f);		// offset by heading
-		labelResult.y -= h.y * (carLengthPx + labelResult.getBounds().height * 0.5f);		// offset by heading
 		labelResult.render( batch );
 	}
 
 	public void onBeginDrift()
 	{
-		GameLogic.getTweener().add( Tween.to( tweenRealtime, TweenHudLabel.OPACITY, 500, Expo.INOUT ).target( 1f ) );
+		labelRealtime.fadeIn( 100 );
 	}
 
+	private Vector2 heading = new Vector2();
 	public void onEndDrift()
 	{
+		Vector2 pos = tmpv.set( Director.screenPosForPx( player.state().position ) );
+		heading.set(player.getSimulator().heading);
+
+		labelRealtime.fadeOut( 100 );
+
+		labelResult.setPosition(
+				pos.x - heading.x * (carWidthPx + labelResult.halfBoundsWidth),
+				pos.y - heading.y * (carLengthPx + labelResult.halfBoundsHeight)
+			);
+
+		// premature end drift event due to collision?
 		if( drift.hasCollided )
 		{
-			// ended due to collision?
+			labelResult.slide( heading, 10, 50 );
 			labelResult.setString( "-" + String.format( "%.02f", drift.driftSeconds ) );
-			labelResult.setFont( Art.fontCurseR );
-
-			GameLogic.getTweener().add(
-				TweenGroup.sequence(
-					TweenGroup.parallel(
-						Tween.to( tweenRealtime, TweenHudLabel.OPACITY, 500, Expo.INOUT ).target( 0f ),
-						Tween.to( tweenResult, TweenHudLabel.OPACITY, 500, Expo.INOUT ).target( 1f )
-					),
-					Tween.call( new TweenCallback() {
-						@Override
-						public void tweenEventOccured( Types eventType, Tween tween )
-						{
-							GameLogic.getTweener().add( Tween.to( tweenResult, TweenHudLabel.OPACITY, 500, Expo.INOUT ).target( 0f ) );
-						}
-					}).delay( 500 )
-				)
-			);
+			labelResult.setFont( Art.fontCurseRbig );
+//			labelResult.fadeInFor( 200, 400 );
 		}
 		else
 		{
+			labelResult.slide( heading.mul( -1 ), 10, 50 );
 			labelResult.setString( "+" + String.format( "%.02f", drift.driftSeconds ) );
-			labelResult.setFont( Art.fontCurseG );
+			labelResult.setFont( Art.fontCurseGbig );
+//			labelResult.fadeInFor( 200, 400 );
 
-			GameLogic.getTweener().add(
-				TweenGroup.sequence(
-					TweenGroup.parallel(
-						Tween.to( tweenRealtime, TweenHudLabel.OPACITY, 500, Expo.INOUT ).target( 0f ),
-						Tween.to( tweenResult, TweenHudLabel.OPACITY, 500, Expo.INOUT ).target( 1f )
-					),
-					Tween.call( new TweenCallback() {
-						@Override
-						public void tweenEventOccured( Types eventType, Tween tween )
-						{
-							GameLogic.getTweener().add( Tween.to( tweenResult, TweenHudLabel.OPACITY, 500, Expo.INOUT ).target( 0f ) );
-						}
-					}).delay( 500 )
-				)
-			);
-
-			if( drift.driftSeconds > 1 && drift.driftSeconds < 1.5f )
+			if( drift.driftSeconds >= 1 && drift.driftSeconds < 1.5f )
 			{
-				Messager.enqueue( "NICE ONE!\n+" + String.format( "%.02f", drift.driftSeconds ) + "  seconds!", 1f,
-						MessageType.Good, MessagePosition.Bottom, MessageSize.Big );
-			} else if( drift.driftSeconds >= 1.5f && drift.driftSeconds < 2f )
+				Messager.enqueue( "NICE ONE!\n+" + String.format( "%.02f", drift.driftSeconds ) + "  seconds!", 1f, MessageType.Good, MessagePosition.Middle, MessageSize.Big );
+			}
+			else if( drift.driftSeconds >= 1.5f && drift.driftSeconds < 2f )
 			{
-				Messager.enqueue( "FANTASTIC!\n+" + String.format( "%.02f", drift.driftSeconds ) + "  seconds!", 1f,
-						MessageType.Good, MessagePosition.Bottom, MessageSize.Big );
-			} else if( drift.driftSeconds >= 2f )
+				Messager.enqueue( "FANTASTIC!\n+" + String.format( "%.02f", drift.driftSeconds ) + "  seconds!", 1f, MessageType.Good, MessagePosition.Middle, MessageSize.Big );
+			}
+			else if( drift.driftSeconds >= 2f )
 			{
-				Messager.enqueue( "U N R E A L!\n+" + String.format( "%.02f", drift.driftSeconds ) + "  seconds!", 1f,
-						MessageType.Good, MessagePosition.Bottom, MessageSize.Big );
+				Messager.enqueue( "UNREAL!\n+" + String.format( "%.02f", drift.driftSeconds ) + "  seconds!", 1f, MessageType.Good, MessagePosition.Middle, MessageSize.Big );
 			}
 		}
 	}

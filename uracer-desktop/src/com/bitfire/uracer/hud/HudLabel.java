@@ -1,26 +1,51 @@
 package com.bitfire.uracer.hud;
 
+import aurelienribon.tweenengine.Tween;
+import aurelienribon.tweenengine.TweenGroup;
+import aurelienribon.tweenengine.equations.Expo;
+import aurelienribon.tweenengine.equations.Linear;
+
 import com.badlogic.gdx.graphics.g2d.BitmapFont;
 import com.badlogic.gdx.graphics.g2d.BitmapFont.TextBounds;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
+import com.badlogic.gdx.math.Vector2;
+import com.bitfire.uracer.game.logic.GameLogic;
+import com.bitfire.uracer.tweenables.TweenHudLabel;
 
 public class HudLabel
 {
 	public float x, y;
 	public float alpha;
+	public TextBounds bounds = new TextBounds();
+	public float halfBoundsWidth, halfBoundsHeight;
 
+	// need controlled access
 	private String what;
-	private TextBounds bounds;
 	private BitmapFont font;
 	private float scale;
+
+	// private
+	private TweenHudLabel tween;
+
+	public HudLabel( BitmapFont font, String string, float scale )
+	{
+		this.font = font;
+		this.tween = new TweenHudLabel( this );
+		what = string;
+		alpha = 1f;
+		this.scale = scale;
+		this.font.setScale( scale );
+		recomputeBounds();
+	}
 
 	public HudLabel( BitmapFont font, String string )
 	{
 		this.font = font;
-		bounds = new TextBounds();
+		this.tween = new TweenHudLabel( this );
 		what = string;
 		alpha = 1f;
-		scale = 1f;
+		this.scale = 1f;
+		this.font.setScale( scale );
 		recomputeBounds();
 	}
 
@@ -37,20 +62,35 @@ public class HudLabel
 
 	public void setPosition( float posX, float posY )
 	{
-		x = posX;
-		y = posY;
+		x = posX - halfBoundsWidth;
+		y = posY - halfBoundsHeight;
+	}
+
+	private Vector2 tmpos = new Vector2();
+
+	public Vector2 getPosition()
+	{
+		tmpos.set( x + halfBoundsWidth, y + halfBoundsHeight );
+		return tmpos;
 	}
 
 	public void recomputeBounds()
 	{
 		font.setScale( scale );
 		bounds.set( font.getMultiLineBounds( what ) );
+		halfBoundsWidth = bounds.width * 0.5f;
+		halfBoundsHeight = bounds.height * 0.5f;
 	}
 
 	public TextBounds getBounds()
 	{
 		return bounds;
 	}
+
+	public float getX() { return x + halfBoundsWidth; }
+	public float getY() { return y + halfBoundsHeight; }
+	public void setX(float v) { x = v - halfBoundsWidth; }
+	public void setY(float v) { y = v - halfBoundsHeight; }
 
 	public float getAlpha()
 	{
@@ -88,5 +128,58 @@ public class HudLabel
 			font.drawMultiLine( batch, what, x, y );
 			font.setColor( 1, 1, 1, 1 );
 		}
+	}
+
+	/**
+	 * effects
+	 */
+
+	public void fadeIn( int milliseconds )
+	{
+		GameLogic.getTweener().add( Tween.to( tween, TweenHudLabel.OPACITY, milliseconds, Expo.INOUT ).target( 1f ) );
+	}
+
+	public void fadeOut( int milliseconds )
+	{
+		GameLogic.getTweener().add( Tween.to( tween, TweenHudLabel.OPACITY, milliseconds, Expo.INOUT ).target( 0f ) );
+	}
+
+	public void fadeInFor( int milliseconds, int showDurationMs )
+	{
+		GameLogic.getTweener().add
+		(
+			TweenGroup.sequence
+			(
+				Tween.to( tween, TweenHudLabel.OPACITY, milliseconds, Expo.INOUT ).target( 1f ),
+				Tween.to( tween, TweenHudLabel.OPACITY, milliseconds, Expo.INOUT ).target( 0f ).delay( showDurationMs )
+			)
+		);
+	}
+
+
+//	private Vector2 tmpv = new Vector2();
+	public void slide( Vector2 heading, float near, float far )
+	{
+		float targetNearX = getPosition().x + heading.x * near;
+		float targetNearY = getPosition().y + heading.y * near;
+		float targetFarX = getPosition().x - heading.x * far;
+		float targetFarY = getPosition().y - heading.y * far;
+
+		GameLogic.getTweener().add
+		(
+			TweenGroup.parallel
+			(
+				Tween.to( tween, TweenHudLabel.OPACITY, 500, Linear.INOUT ).target( 1f ),
+				TweenGroup.sequence
+				(
+					Tween.to( tween, TweenHudLabel.POSITION_XY, 500, Linear.INOUT ).target( targetNearX, targetNearY ),
+					TweenGroup.parallel
+					(
+						Tween.to( tween, TweenHudLabel.POSITION_XY, 500, Expo.OUT ).target( targetFarX, targetFarY ),
+						Tween.to( tween, TweenHudLabel.OPACITY, 500, Expo.OUT ).target( 0f )
+					)
+				)
+			)
+		);
 	}
 }
