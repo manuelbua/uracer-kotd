@@ -92,7 +92,7 @@ public class DriftInfo
 			} else
 			{
 				// search for onEndDrift
-				if( isDrifting && driftStrength < 0.2f )
+				if( isDrifting && driftStrength < 0.1f )
 				{
 					isDrifting = false;
 					hasCollided = false;
