@@ -10,21 +10,21 @@ curse-r-big
   orig: 512, 512
   offset: 0, 0
   index: -1
-curse-g
+curse-r
   rotate: false
   xy: 516, 2
   size: 256, 256
   orig: 256, 256
   offset: 0, 0
   index: -1
-curse-r
+curse-y-r
   rotate: false
   xy: 2, 516
   size: 256, 256
   orig: 256, 256
   offset: 0, 0
   index: -1
-curse-y-r
+curse-g
   rotate: false
   xy: 260, 516
   size: 256, 256
@@ -36,7 +36,7 @@ font2.png
 format: RGBA8888
 filter: Nearest,Nearest
 repeat: none
-curse-g-big
+curse-y-r-big
   rotate: false
   xy: 2, 2
   size: 512, 512
@@ -48,7 +48,7 @@ font3.png
 format: RGBA8888
 filter: Nearest,Nearest
 repeat: none
-curse-y-r-big
+curse-g-big
   rotate: false
   xy: 2, 2
   size: 512, 512

@@ -43,8 +43,6 @@ public class GameLogicListener implements IGameLogicListener
 	public void onReset()
 	{
 		lapInfo.reset();
-		DriftInfo.get().reset();
-		if(logic.getGame().getHud()!=null) logic.getGame().getHud().getDrifting().reset();
 		isFirstLap = true;
 		lastRecordedLapId = 0;
 	}
@@ -53,8 +51,6 @@ public class GameLogicListener implements IGameLogicListener
 	public void onRestart()
 	{
 		isFirstLap = true;
-		DriftInfo.get().reset();
-		if(logic.getGame().getHud()!=null) logic.getGame().getHud().getDrifting().reset();
 //		Messager.show( "WARM  UP  LAP", 3f, MessageType.Information, MessagePosition.Middle, MessageSize.Big );
 
 
@@ -152,7 +148,6 @@ public class GameLogicListener implements IGameLogicListener
 	public void onBeginDrift()
 	{
 		logic.getGame().getHud().getDrifting().onBeginDrift();
-//		System.out.println( "--> begin drift" );
 	}
 
 	@Override

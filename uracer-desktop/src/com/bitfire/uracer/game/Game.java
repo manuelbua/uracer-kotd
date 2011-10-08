@@ -28,7 +28,7 @@ public class Game
 	private Hud hud = null;
 
 	// config
-	public final GameplaySettings gameSettings;
+	public GameplaySettings gameSettings;
 
 	// logic
 	private GameLogic logic = null;
@@ -48,6 +48,7 @@ public class Game
 
 		logic = new GameLogic( this );
 		hud = new Hud( logic );
+		logic.create();
 
 		controller = new DirectorController( InterpolationMode.Sigmoid );
 
@@ -55,7 +56,9 @@ public class Game
 		TrackEffects.init( logic );
 
 		// setup sprite batch at origin top-left => 0,0
-		batch = new SpriteBatch( 1000, 10 /* higher values causes issues on Tegra2 (Asus Transformer) */ );
+		// Issues may arise on Tegra2 (Asus Transformer) devices if the buffers'
+		// count is higher than 10
+		batch = new SpriteBatch( 1000, 10 );
 	}
 
 	public void dispose()

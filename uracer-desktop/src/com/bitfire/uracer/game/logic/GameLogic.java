@@ -116,6 +116,10 @@ public class GameLogic
 		lastCarTileAt.set( -1, -1 );
 		carTileAt.set( lastCarTileAt );
 
+		// reset drift info and hud drifting component
+		DriftInfo.get().reset();
+		if(game.getHud()!=null) game.getHud().getDrifting().reset();
+
 		listener.onRestart();
 	}
 
