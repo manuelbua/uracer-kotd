@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<map version="1.0" orientation="orthogonal" width="9" height="6" tilewidth="224" tileheight="224">
+<map version="1.0" orientation="orthogonal" width="11" height="8" tilewidth="224" tileheight="224">
  <tileset firstgid="1" name="tileset" tilewidth="224" tileheight="224">
   <image source="tilesets/nature/224.png" width="896" height="3360"/>
   <tile id="0">
@@ -130,111 +130,115 @@
    </properties>
   </tile>
  </tileset>
- <layer name="track" width="9" height="6">
+ <layer name="track" width="11" height="8">
   <properties>
    <property name="start" value="right"/>
   </properties>
   <data encoding="base64" compression="gzip">
-   H4sIAAAAAAAAAxNkYGDgAGImKGYDYkkkbAnEjEBshSTGiaQepocRTR8rkpw0VB6mxgoqz4VkvgQQ80LZ1kjyJkj6JaC0KBBzQ+UlofKSUHGQnWJADADtMyxS2AAAAA==
+   H4sIAAAAAAAAA5NkYGCQRMMmWMSkobQgEHMAMRMUs6Hps0TiMwKxFRKfE0kfsl6QPlE0MVYkvjTULEk0OS4oXxSqDqRGAoh50dyA7heQGD9ULbI8zA0wzA3EYkjiYkSEEzoGAH8N1FhgAQAA
   </data>
  </layer>
- <objectgroup color="#00ff00" name="static-meshes" width="9" height="6">
-  <object name="palm" type="palm" x="405" y="607" width="67" height="69">
+ <objectgroup color="#00ff00" name="static-meshes" width="11" height="8">
+  <object name="palm" type="palm" x="777" y="1121" width="67" height="69">
    <properties>
     <property name="scale" value="1.4"/>
    </properties>
   </object>
-  <object name="palm" type="palm" x="346" y="884" width="55" height="54">
+  <object name="palm" type="palm" x="478" y="1160" width="55" height="54">
    <properties>
     <property name="scale" value="0.4"/>
    </properties>
   </object>
-  <object name="palm" type="palm" x="495" y="362" width="55" height="59">
+  <object name="palm" type="palm" x="719" y="586" width="55" height="59">
    <properties>
     <property name="scale" value="1"/>
    </properties>
   </object>
-  <object name="palm" type="palm" x="577" y="533" width="55" height="56">
+  <object name="palm" type="palm" x="1047" y="1169" width="101" height="100">
    <properties>
-    <property name="scale" value="1.15"/>
+    <property name="scale" value="1.6"/>
    </properties>
   </object>
-  <object name="palm" type="palm" x="1810" y="204" width="65" height="56">
+  <object name="palm" type="palm" x="2034" y="428" width="65" height="56">
    <properties>
     <property name="scale" value="2"/>
    </properties>
   </object>
-  <object name="tribune" type="tribune" x="1182" y="-11" width="512" height="256"/>
-  <object name="palm" type="palm" x="353" y="522" width="80" height="65">
+  <object name="tribune" type="tribune" x="1406" y="213" width="512" height="256"/>
+  <object name="palm" type="palm" x="97" y="234" width="80" height="65">
    <properties>
     <property name="scale" value="1.1"/>
    </properties>
   </object>
-  <object name="palm" type="palm" x="572" y="413" width="73" height="57">
+  <object name="palm" type="palm" x="938" y="503" width="73" height="57">
    <properties>
     <property name="scale" value="0.5"/>
    </properties>
   </object>
-  <object name="palm" type="palm" x="673" y="374" width="75" height="76"/>
-  <object name="palm" type="palm" x="1325" y="749" width="56" height="57">
+  <object name="palm" type="palm" x="965" y="716" width="75" height="76"/>
+  <object name="palm" type="palm" x="1513" y="911" width="56" height="57">
    <properties>
     <property name="scale" value="0.65"/>
    </properties>
   </object>
-  <object name="palm" type="palm" x="1119" y="1090" width="60" height="59">
+  <object name="palm" type="palm" x="1263" y="1270" width="60" height="59">
    <properties>
-    <property name="scale" value="1"/>
+    <property name="scale" value="1.25"/>
    </properties>
   </object>
-  <object name="palm" type="palm" x="1001" y="1211" width="71" height="67"/>
-  <object name="palm" type="palm" x="1255" y="1023" width="72" height="61">
+  <object name="palm" type="palm" x="1933" y="1099" width="71" height="67"/>
+  <object name="palm" type="palm" x="163" y="767" width="72" height="61">
    <properties>
     <property name="scale" value="1.3"/>
    </properties>
   </object>
-  <object name="palm" type="palm" x="712" y="1233" width="72" height="76">
+  <object name="palm" type="palm" x="636" y="881" width="42" height="36">
    <properties>
     <property name="scale" value="0.5"/>
    </properties>
   </object>
-  <object name="palm" type="palm" x="929" y="1102" width="73" height="72"/>
-  <object name="palm" type="palm" x="508" y="622" width="73" height="69"/>
-  <object name="palm" type="palm" x="1637" y="982" width="81" height="57">
-   <properties>
-    <property name="scale" value="0.8"/>
-   </properties>
-  </object>
-  <object name="palm" type="palm" x="1669" y="569" width="70" height="64">
+  <object name="palm" type="palm" x="2257" y="648" width="73" height="72"/>
+  <object name="palm" type="palm" x="158" y="1560" width="73" height="69">
    <properties>
     <property name="scale" value="2"/>
    </properties>
   </object>
-  <object name="palm" type="palm" x="1033" y="810" width="66" height="58">
+  <object name="palm" type="palm" x="1861" y="1252" width="81" height="57">
+   <properties>
+    <property name="scale" value="0.8"/>
+   </properties>
+  </object>
+  <object name="palm" type="palm" x="1885" y="737" width="70" height="64">
+   <properties>
+    <property name="scale" value="2"/>
+   </properties>
+  </object>
+  <object name="palm" type="palm" x="1023" y="898" width="66" height="58">
    <properties>
     <property name="scale" value="1.2"/>
    </properties>
   </object>
-  <object name="palm" type="palm" x="1333" y="1241" width="69" height="71">
+  <object name="palm" type="palm" x="113" y="1145" width="69" height="71">
    <properties>
     <property name="scale" value="1.4"/>
    </properties>
   </object>
-  <object name="palm" type="palm" x="342" y="340" width="57" height="60">
+  <object name="palm" type="palm" x="2194" y="1562" width="57" height="60">
    <properties>
     <property name="scale" value="1.2"/>
    </properties>
   </object>
-  <object name="palm" type="palm" x="1540" y="877" width="59" height="69">
+  <object name="palm" type="palm" x="1802" y="1115" width="59" height="69">
    <properties>
     <property name="scale" value="0.7"/>
    </properties>
   </object>
-  <object name="palm" type="palm" x="1485" y="447" width="57" height="60"/>
-  <object name="palm" type="palm" x="1650" y="777" width="57" height="60">
+  <object name="palm" type="palm" x="1709" y="671" width="57" height="60"/>
+  <object name="palm" type="palm" x="1846" y="929" width="57" height="60">
    <properties>
     <property name="scale" value="0.58"/>
    </properties>
   </object>
-  <object name="test_arch" type="test_arch" x="322" y="-4" width="35" height="27"/>
+  <object name="test_arch" type="test_arch" x="546" y="220" width="35" height="27"/>
  </objectgroup>
 </map>

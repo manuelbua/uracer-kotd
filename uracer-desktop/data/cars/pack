@@ -3,149 +3,156 @@ cars1.png
 format: RGBA8888
 filter: Nearest,Nearest
 repeat: none
-skid-marks-rear
+skid-smoke
   rotate: false
   xy: 2, 2
+  size: 256, 256
+  orig: 256, 256
+  offset: 0, 0
+  index: -1
+skid-marks-rear
+  rotate: false
+  xy: 260, 2
   size: 34, 62
   orig: 34, 62
   offset: 0, 0
   index: -1
 car-ao
   rotate: false
-  xy: 2, 66
+  xy: 260, 66
   size: 34, 62
   orig: 34, 62
   offset: 0, 0
   index: -1
 skid-marks-front
   rotate: false
-  xy: 2, 130
+  xy: 260, 130
   size: 34, 62
   orig: 34, 62
   offset: 0, 0
   index: -1
 pinkflash
   rotate: false
-  xy: 38, 2
+  xy: 260, 194
   size: 17, 31
   orig: 17, 31
   offset: 0, 0
   index: -1
 thebeast
   rotate: false
-  xy: 38, 66
+  xy: 260, 227
   size: 17, 31
   orig: 17, 31
   offset: 0, 0
   index: -1
 electron
   rotate: false
-  xy: 38, 130
+  xy: 296, 2
   size: 17, 31
   orig: 17, 31
   offset: 0, 0
   index: -1
 redB
   rotate: false
-  xy: 2, 194
+  xy: 315, 2
   size: 17, 31
   orig: 17, 31
   offset: 0, 0
   index: -1
 spider
   rotate: false
-  xy: 21, 194
+  xy: 334, 2
   size: 17, 31
   orig: 17, 31
   offset: 0, 0
   index: -1
 Theghost
   rotate: false
-  xy: 40, 194
+  xy: 353, 2
   size: 17, 30
   orig: 17, 30
   offset: 0, 0
   index: -1
 acid
   rotate: false
-  xy: 2, 227
+  xy: 372, 2
   size: 17, 30
   orig: 17, 30
   offset: 0, 0
   index: -1
 goblin
   rotate: false
-  xy: 21, 227
+  xy: 391, 2
   size: 17, 30
   orig: 17, 30
   offset: 0, 0
   index: -1
 snake
   rotate: false
-  xy: 40, 227
+  xy: 410, 2
   size: 17, 30
   orig: 17, 30
   offset: 0, 0
   index: -1
 tornado
   rotate: false
-  xy: 2, 259
+  xy: 429, 2
   size: 17, 30
   orig: 17, 30
   offset: 0, 0
   index: -1
 joka
   rotate: false
-  xy: 21, 259
+  xy: 448, 2
   size: 17, 30
   orig: 17, 30
   offset: 0, 0
   index: -1
 loki
   rotate: false
-  xy: 38, 35
+  xy: 467, 2
   size: 17, 29
   orig: 17, 29
   offset: 0, 0
   index: -1
 firedwarf
   rotate: false
-  xy: 38, 99
+  xy: 486, 2
   size: 17, 29
   orig: 17, 29
   offset: 0, 0
   index: -1
 striker
   rotate: false
-  xy: 38, 163
+  xy: 296, 35
   size: 17, 29
   orig: 17, 29
   offset: 0, 0
   index: -1
 inferno
   rotate: false
-  xy: 40, 259
+  xy: 296, 66
   size: 17, 29
   orig: 17, 29
   offset: 0, 0
   index: -1
 debuggee
   rotate: false
-  xy: 2, 291
+  xy: 296, 97
   size: 17, 28
   orig: 17, 28
   offset: 0, 0
   index: -1
 invisible
   rotate: false
-  xy: 21, 291
+  xy: 279, 194
   size: 15, 28
   orig: 15, 28
   offset: 0, 0
   index: -1
 Bugzta
   rotate: false
-  xy: 38, 291
+  xy: 296, 127
   size: 17, 26
   orig: 17, 26
   offset: 0, 0
