@@ -49,8 +49,8 @@ public class Hud
 		hudDrift = new HudDrifting( logic );
 
 		curr.setPosition( gridX, 50 );
-		last.setPosition( gridX * 4, 50 );
-		best.setPosition( gridX * 5, 50 );
+		last.setPosition( gridX * 3, 50 );
+		best.setPosition( gridX * 4, 50 );
 
 		// meter lateral forces
 		meterLatForce = new HudDebugMeter( this, 0, 100, 5 );

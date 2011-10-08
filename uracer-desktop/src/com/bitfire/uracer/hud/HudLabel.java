@@ -169,8 +169,9 @@ public class HudLabel
 	{
 		setScale( 1f, true );
 
+		setPosition( getPosition().x, getPosition().y + 50 );
 		float targetNearX = getPosition().x;
-		float targetNearY = getPosition().y - 30;
+		float targetNearY = getPosition().y;
 		float targetFarX = getPosition().x;
 		float targetFarY = getPosition().y - 100;
 

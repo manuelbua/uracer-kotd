@@ -32,7 +32,8 @@ public class OrthographicAlignedStillModel
 	private Matrix4 mtx_model = new Matrix4();
 	private Matrix4 mtx_combined = new Matrix4();
 
-	private static ShaderProgram shaderProgram = null;
+	protected static ShaderProgram shaderProgram = null;
+	protected ShaderProgram customShader = null;
 
 	// scale
 	private float scale, scalingFactor;
@@ -199,9 +200,14 @@ public class OrthographicAlignedStillModel
 		perspCamera.unproject( result );
 	}
 
+	public void setShader(ShaderProgram program)
+	{
+		customShader = program;
+	}
+
 	public void render( GL20 gl )
 	{
-		ShaderProgram shader = OrthographicAlignedStillModel.shaderProgram;
+		ShaderProgram shader = (customShader!=null) ? customShader : OrthographicAlignedStillModel.shaderProgram;
 		shader.begin();
 
 		// compute final position

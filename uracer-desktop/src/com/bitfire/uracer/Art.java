@@ -35,21 +35,25 @@ public class Art
 	public static BitmapFont fontCurseYR, fontCurseR, fontCurseG;
 	public static BitmapFont fontCurseYRbig, fontCurseRbig, fontCurseGbig;
 
+	private static boolean mipMap;
+
 	public static void load()
 	{
-		base6 = split( "data/base/base6.png", 6, 6 );
+		mipMap = Config.EnableMipMapping;
+
+		base6 = split( "data/base/base6.png", 6, 6, mipMap );
 		quad = new TextureRegion( base6[0][10], 0, 0, 18, 18 );
 
 		// 3d models' textures
 //		modelsTextures = new TextureAtlas(Gdx.files.internal("data/3d/textures/pack"));
 
-		mesh_test_arch_rusty = newTexture( "data/3d/textures/arch-metal-3.jpg" );
-		meshMissing = newTexture( "data/3d/textures/missing-mesh.png" );
-		meshPalm = newTexture( "data/3d/textures/palm.png" );
-		meshTribune = newTexture( "data/3d/textures/tribune.png" );
-		meshHouse = newTexture( "data/3d/textures/house.png" );
-		meshTower = newTexture( "data/3d/textures/tower.png" );
-		trackWall = newTexture( "data/track/wall.jpg" );
+		mesh_test_arch_rusty = newTexture( "data/3d/textures/arch-metal-3.jpg", mipMap );
+		meshMissing = newTexture( "data/3d/textures/missing-mesh.png", mipMap );
+		meshPalm = newTexture( "data/3d/textures/palm.png", mipMap );
+		meshTribune = newTexture( "data/3d/textures/tribune.png", mipMap );
+		meshHouse = newTexture( "data/3d/textures/house.png", mipMap );
+		meshTower = newTexture( "data/3d/textures/tower.png", mipMap );
+		trackWall = newTexture( "data/track/wall.png", mipMap );
 
 		// cars
 		carTextures = new TextureAtlas("data/cars/pack");
@@ -81,14 +85,14 @@ public class Art
 		fontCurseRbig = new BitmapFont( Gdx.files.internal( "data/font/curse-r-big.fnt" ), Art.fonts.findRegion( "curse-r-big" ), true );
 	}
 
-	private static TextureRegion[][] split( String name, int width, int height )
+	private static TextureRegion[][] split( String name, int width, int height, boolean mipMap )
 	{
-		return split( name, width, height, false, true );
+		return split( name, width, height, false, true, mipMap );
 	}
 
-	private static TextureRegion[][] split( String name, int width, int height, boolean flipX, boolean flipY )
+	private static TextureRegion[][] split( String name, int width, int height, boolean flipX, boolean flipY, boolean mipMap )
 	{
-		Texture texture = newTexture( name );
+		Texture texture = newTexture( name, mipMap );
 		int xSlices = texture.getWidth() / width;
 		int ySlices = texture.getHeight() / height;
 		TextureRegion[][] res = new TextureRegion[ xSlices ][ ySlices ];
@@ -103,19 +107,19 @@ public class Art
 		return res;
 	}
 
-	private static TextureRegion load( String name, int width, int height )
+	private static TextureRegion load( String name, int width, int height, boolean mipMap )
 	{
-		Texture texture = newTexture( name );
+		Texture texture = newTexture( name, mipMap );
 		TextureRegion region = new TextureRegion( texture, 0, 0, width, height );
 		region.flip( false, true );
 		return region;
 	}
 
-	private static Texture newTexture( String name )
+	private static Texture newTexture( String name, boolean mipMap )
 	{
-		Texture t = new Texture( Gdx.files.internal( name ), Format.RGBA8888, Config.EnableMipMapping );
+		Texture t = new Texture( Gdx.files.internal( name ), Format.RGBA8888, mipMap );
 
-		if(Config.EnableMipMapping)
+		if(mipMap)
 			t.setFilter( TextureFilter.MipMapLinearNearest, TextureFilter.Nearest );
 		else
 			t.setFilter( TextureFilter.Nearest, TextureFilter.Nearest );

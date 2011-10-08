@@ -78,10 +78,12 @@ public class DriftInfo
 			}
 		} else
 		{
+			float vel = player.getCarDescriptor().velocity_wc.len();
+
 			if( !isDrifting )
 			{
 				// search for onBeginDrift
-				if( driftStrength > 0.4f && player.getCarDescriptor().velocity_wc.len() > 20 )
+				if( driftStrength > 0.4f && vel > 20 )
 				{
 					isDrifting = true;
 					hasCollided = false;
@@ -89,10 +91,11 @@ public class DriftInfo
 					updateDriftTimeSeconds();
 					logic.getListener().onBeginDrift();
 				}
-			} else
+			}
+			else
 			{
 				// search for onEndDrift
-				if( isDrifting && driftStrength < 0.1f )
+				if( isDrifting && (driftStrength < 0.1f || vel < 20) )
 				{
 					isDrifting = false;
 					hasCollided = false;
