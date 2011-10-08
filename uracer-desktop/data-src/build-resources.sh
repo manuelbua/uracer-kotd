@@ -37,7 +37,7 @@ echo "done!"
 echo -n "Cooking track meshes..."
 rm -rf "${DEST}/track/"
 mkdir -p "${DEST}/track/"
-cp track/wall.jpg track/*.g3dt ${DEST}/track >/dev/null
+cp track/wall.png track/*.g3dt ${DEST}/track >/dev/null
 echo "done!"
 
 # cars
