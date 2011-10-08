@@ -12,6 +12,7 @@ import com.badlogic.gdx.graphics.g2d.BitmapFont.HAlignment;
 import com.badlogic.gdx.graphics.g2d.BitmapFont.TextBounds;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.bitfire.uracer.Art;
+import com.bitfire.uracer.Director;
 import com.bitfire.uracer.game.logic.GameLogic;
 import com.bitfire.uracer.messager.Messager.MessagePosition;
 import com.bitfire.uracer.messager.Messager.MessageSize;
@@ -118,7 +119,7 @@ public class Message
 
 	public void render( SpriteBatch batch )
 	{
-		font.setScale(scaleX, scaleY);
+		font.setScale(scaleX * Director.scalingStrategy.invTileMapZoomFactor, scaleY * Director.scalingStrategy.invTileMapZoomFactor);
 		font.setColor( 1, 1, 1, alpha );
 		font.drawMultiLine( batch, what, whereX, whereY, halfWidth, HAlignment.CENTER );
 		font.setColor( 1, 1, 1, 1  );

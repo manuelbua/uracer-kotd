@@ -9,6 +9,7 @@ import com.badlogic.gdx.graphics.g2d.BitmapFont;
 import com.badlogic.gdx.graphics.g2d.BitmapFont.TextBounds;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.math.Vector2;
+import com.bitfire.uracer.Director;
 import com.bitfire.uracer.game.logic.GameLogic;
 import com.bitfire.uracer.tweenables.TweenHudLabel;
 
@@ -33,9 +34,7 @@ public class HudLabel
 		this.tween = new TweenHudLabel( this );
 		what = string;
 		alpha = 1f;
-		this.scale = scale;
-		this.font.setScale( scale );
-		recomputeBounds();
+		setScale( scale, true );
 	}
 
 	public HudLabel( BitmapFont font, String string )
@@ -44,9 +43,7 @@ public class HudLabel
 		this.tween = new TweenHudLabel( this );
 		what = string;
 		alpha = 1f;
-		this.scale = 1f;
-		this.font.setScale( scale );
-		recomputeBounds();
+		setScale( 1.0f, true );
 	}
 
 	public void setString( String string )
@@ -128,7 +125,7 @@ public class HudLabel
 	{
 		if( alpha > 0 )
 		{
-			font.setScale( scale );
+			font.setScale( scale * Director.scalingStrategy.invTileMapZoomFactor );
 			font.setColor( 1, 1, 1, alpha );
 
 			font.drawMultiLine( batch, what, x, y );
