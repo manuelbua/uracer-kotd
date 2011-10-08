@@ -2,8 +2,10 @@ package com.bitfire.uracer.tiled;
 
 import java.util.ArrayList;
 
+import com.badlogic.gdx.graphics.GL20;
 import com.badlogic.gdx.graphics.g2d.tiled.TiledLayer;
 import com.badlogic.gdx.graphics.g2d.tiled.TiledMap;
+import com.badlogic.gdx.graphics.glutils.ShaderProgram;
 import com.badlogic.gdx.math.Vector2;
 import com.bitfire.uracer.Director;
 import com.bitfire.uracer.factories.Box2DFactory;
@@ -12,14 +14,52 @@ import com.bitfire.uracer.factories.ModelFactory.ModelMesh;
 import com.bitfire.uracer.utils.Convert;
 import com.bitfire.uracer.utils.MapUtils;
 
+/**
+ * Creates a perimeter along a given TiledMap (uRacer specific)
+ * TODO splice it up, Track and TrackRenderer should be two separate entities
+ *
+ * @author manuel
+ *
+ */
 public class Track
 {
 	private TiledMap map;
 	private ArrayList<OrthographicAlignedStillModel> meshes = new ArrayList<OrthographicAlignedStillModel>();
 
+	private ShaderProgram program;
+
 	public Track( TiledMap map )
 	{
 		this.map = map;
+
+		String vertexShader =
+				"uniform mat4 u_mvpMatrix;					\n" +
+				"attribute vec4 a_position;					\n" +
+				"attribute vec2 a_texCoord0;				\n" +
+				"varying vec2 v_TexCoord;					\n" +
+				"void main()								\n" +
+				"{											\n" +
+				"	gl_Position = u_mvpMatrix * a_position;	\n" +
+				"	v_TexCoord = a_texCoord0;				\n" +
+				"}											\n";
+
+		String fragmentShader =
+				"#ifdef GL_ES											\n" +
+				"precision mediump float;								\n" +
+				"#endif													\n" +
+				"uniform sampler2D u_texture;							\n" +
+				"varying vec2 v_TexCoord;								\n" +
+				"void main()											\n" +
+				"{														\n" +
+				"	vec4 back = vec4(gl_FragColor.rgb,0);	\n" +
+				"	vec4 track = texture2D( u_texture, v_TexCoord );	\n" +
+				"	gl_FragColor = track;	\n" +
+				"}														\n";
+
+		program = new ShaderProgram( vertexShader, fragmentShader );
+
+		if( program.isCompiled() == false )
+			throw new IllegalStateException( program.getLog() );
 
 		createPerimeter();
 	}
@@ -273,6 +313,26 @@ public class Track
 				}
 			}
 		}
+	}
+
+	public void render( GL20 gl )
+	{
+		OrthographicAlignedStillModel m;
+
+		gl.glEnable( GL20.GL_BLEND );
+//		gl.glBlendFunc( GL20.GL_SRC_ALPHA, GL20.GL_ONE_MINUS_SRC_ALPHA );
+
+		// Use color modulation. glTexEnvx(GL_TEXTURE_ENV, GL_TEXTURE_ENV_MODE, GL_MODULATE); Then set alpha component of the
+		// color to desired. glColor4f(255, 255, 255, alpha);
+
+		int size = meshes.size();
+		for( int i = 0; i < size; i++ )
+		{
+			m = meshes.get( i );
+			m.render( gl );
+		}
+
+		gl.glDisable( GL20.GL_BLEND );
 	}
 
 	public boolean hasMeshes()

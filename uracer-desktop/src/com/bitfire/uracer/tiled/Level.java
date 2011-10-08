@@ -55,7 +55,6 @@ public class Level
 	private Vector2 playerStartPos = new Vector2();
 	private float playerStartOrient = 0f;
 
-
 	public Level( String levelName, ScalingStrategy strategy )
 	{
 		this.name = levelName;
@@ -139,10 +138,18 @@ public class Level
 		gl.glEnable( GL20.GL_DEPTH_TEST );
 		gl.glDepthFunc( GL20.GL_LESS );
 
+		OrthographicAlignedStillModel m;
+
+		// render object group meshes
 		for( int i = 0; i < staticMeshes.size(); i++ )
 		{
-			OrthographicAlignedStillModel t = staticMeshes.get( i );
-			t.render( gl );
+			m = staticMeshes.get( i );
+			m.render( gl );
+		}
+
+		if( track.hasMeshes() )
+		{
+			track.render( gl );
 		}
 
 		gl.glDisable( GL20.GL_DEPTH_TEST );
@@ -204,27 +211,27 @@ public class Level
 		}
 
 		// track meshes
-		if( track.hasMeshes() )
-		{
-			ArrayList<OrthographicAlignedStillModel> trackMeshes = track.getMeshes();
-			for( int i = 0; i < trackMeshes.size(); i++ )
-			{
-				staticMeshes.add( trackMeshes.get( i ) );
-			}
-		}
+		// if( track.hasMeshes() )
+		// {
+		// ArrayList<OrthographicAlignedStillModel> trackMeshes = track.getMeshes();
+		// for( int i = 0; i < trackMeshes.size(); i++ )
+		// {
+		// staticMeshes.add( trackMeshes.get( i ) );
+		// }
+		// }
 	}
 
 	private void createEntities()
 	{
 		// TODO: read positions from tmx
-		playerStartPos.set( Convert.tileToPx( 4, 4 ).add( Convert.scaledPixels( 112, -112 ) ) );
-		playerStartOrient = -90f;
+		// playerStartPos.set( Convert.tileToPx( 4, 4 ).add( Convert.scaledPixels( 112, -112 ) ) );
+		playerStartPos.set( Convert.tileToPx( 2, 1 ).add( Convert.scaledPixels( 112, -112 ) ) );
+		playerStartOrient = 90f;
 
 		CarModel m = new CarModel();
 		player = CarFactory.createPlayer( CarType.OldSkool, m.toModel2(), playerStartPos, playerStartOrient );
 		ghost = CarFactory.createGhost( player );
 	}
-
 
 	/**
 	 * Game / game logic

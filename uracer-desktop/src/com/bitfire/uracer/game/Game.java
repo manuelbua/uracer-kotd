@@ -43,7 +43,7 @@ public class Game
 		gameSettings = GameplaySettings.create( difficulty );
 		Director.create( Gdx.graphics.getWidth(), Gdx.graphics.getHeight() );
 		Art.scaleFonts( Director.scalingStrategy.invTileMapZoomFactor );
-		level = Director.loadLevel( "tutorial-2", gameSettings );
+		level = Director.loadLevel( "level1", gameSettings );
 		player = level.getPlayer();
 
 		logic = new GameLogic( this );
@@ -139,7 +139,7 @@ public class Game
 
 		if( Config.isDesktop )
 		{
-			Debug.renderB2dWorld( Director.getMatViewProjMt() );
+//			Debug.renderB2dWorld( Director.getMatViewProjMt() );
 
 			Debug.begin( batch );
 			EntityManager.raiseOnDebug();
