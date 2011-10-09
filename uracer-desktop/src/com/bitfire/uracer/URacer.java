@@ -1,5 +1,7 @@
 package com.bitfire.uracer;
 
+import java.lang.reflect.Field;
+
 import com.badlogic.gdx.ApplicationListener;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.math.Vector2;
@@ -23,9 +25,33 @@ public class URacer implements ApplicationListener
 	private static float physicsTime = 0;
 	private static float aliasingTime = 0;
 
+	// version
+	private static String versionInfo;
+
+
+	private static void updateVersionInformation()
+	{
+		// extrapolate version information
+		versionInfo = "uRacer";
+		try
+		{
+			Field f = Class.forName( "com.bitfire.uracer.VersionInfo" ).getDeclaredField( "versionName" );
+			f.setAccessible( true );
+			String value = f.get( null ).toString();
+			if( value.length() > 0 )
+			{
+				versionInfo += " " + value;
+			}
+		}
+		catch(Exception e)
+		{}
+	}
+
 	@Override
 	public void create()
 	{
+		URacer.updateVersionInformation();
+
 		Config.asDefault();
 		Art.load();
 		Debug.create();
@@ -141,5 +167,10 @@ public class URacer implements ApplicationListener
 	public static float getTemporalAliasing()
 	{
 		return aliasingTime;
+	}
+
+	public static String getVersionInfo()
+	{
+		return versionInfo;
 	}
 }

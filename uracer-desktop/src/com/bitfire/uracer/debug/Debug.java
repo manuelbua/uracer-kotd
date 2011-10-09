@@ -1,6 +1,5 @@
 package com.bitfire.uracer.debug;
 
-import java.lang.reflect.Field;
 import java.util.Formatter;
 import java.util.Locale;
 
@@ -53,19 +52,7 @@ public class Debug
 		frameStart = System.nanoTime();
 
 		// extrapolate version information
-		uRacerInfo = "uRacer";
-		try
-		{
-			Field f = Class.forName( "com.bitfire.uracer.VersionInfo" ).getDeclaredField( "versionName" );
-			f.setAccessible( true );
-			String value = f.get( null ).toString();
-			if( value.length() > 0 )
-			{
-				uRacerInfo += " " + value;
-			}
-		}
-		catch(Exception e)
-		{}
+		uRacerInfo = URacer.getVersionInfo();
 
 		// compute graphics stats size
 		float updateHz = 0.2f;
