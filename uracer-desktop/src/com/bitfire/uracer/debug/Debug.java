@@ -1,5 +1,6 @@
 package com.bitfire.uracer.debug;
 
+import java.lang.reflect.Field;
 import java.util.Formatter;
 import java.util.Locale;
 
@@ -14,7 +15,6 @@ import com.bitfire.uracer.Art;
 import com.bitfire.uracer.Config;
 import com.bitfire.uracer.Physics;
 import com.bitfire.uracer.URacer;
-import com.bitfire.uracer.VersionInfo;
 
 public class Debug
 {
@@ -23,6 +23,7 @@ public class Debug
 	private static long frameStart;
 	private static float physicsTime, renderTime;
 	private static Stats gfxStats;
+	private static String uRacerInfo;
 
 	// box2d
 	private static Box2DDebugRenderer b2drenderer;
@@ -50,6 +51,21 @@ public class Debug
 		physicsTime = renderTime = 0;
 		b2drenderer = new Box2DDebugRenderer();
 		frameStart = System.nanoTime();
+
+		// extrapolate version information
+		uRacerInfo = "uRacer";
+		try
+		{
+			Field f = Class.forName( "com.bitfire.uracer.VersionInfo" ).getDeclaredField( "versionName" );
+			f.setAccessible( true );
+			String value = f.get( null ).toString();
+			if( value.length() > 0 )
+			{
+				uRacerInfo += " " + value;
+			}
+		}
+		catch(Exception e)
+		{}
 
 		// compute graphics stats size
 		float updateHz = 0.2f;
@@ -125,7 +141,6 @@ public class Debug
 
 	public static void renderVersionInfo()
 	{
-		String uRacerInfo = "uRacer " + VersionInfo.versionName;
 		drawString( uRacerInfo, Gdx.graphics.getWidth() - uRacerInfo.length() * fontWidth, 0, fontWidth, fontHeight * 2 );
 	}
 
