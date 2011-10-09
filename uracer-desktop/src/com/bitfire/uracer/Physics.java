@@ -4,7 +4,7 @@ import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.physics.box2d.ContactFilter;
 import com.badlogic.gdx.physics.box2d.ContactListener;
 import com.badlogic.gdx.physics.box2d.World;
-import com.bitfire.uracer.simulations.car.CarContactListener;
+import com.bitfire.uracer.carsimulation.CarContactListener;
 
 public class Physics
 {

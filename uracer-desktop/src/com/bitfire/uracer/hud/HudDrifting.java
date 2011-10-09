@@ -4,6 +4,7 @@ import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.math.Vector2;
 import com.bitfire.uracer.Art;
 import com.bitfire.uracer.Director;
+import com.bitfire.uracer.carsimulation.CarModel;
 import com.bitfire.uracer.entities.vehicles.Car;
 import com.bitfire.uracer.game.logic.DriftInfo;
 import com.bitfire.uracer.game.logic.GameLogic;
@@ -11,7 +12,6 @@ import com.bitfire.uracer.messager.Messager;
 import com.bitfire.uracer.messager.Messager.MessagePosition;
 import com.bitfire.uracer.messager.Messager.MessageSize;
 import com.bitfire.uracer.messager.Messager.MessageType;
-import com.bitfire.uracer.simulations.car.CarModel;
 import com.bitfire.uracer.utils.Convert;
 
 public class HudDrifting

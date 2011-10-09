@@ -1,4 +1,4 @@
-package com.bitfire.uracer.simulations.car;
+package com.bitfire.uracer.carsimulation;
 
 import com.bitfire.uracer.Config;
 import com.bitfire.uracer.Director;

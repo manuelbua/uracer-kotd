@@ -2,12 +2,12 @@ package com.bitfire.uracer.entities.vehicles;
 
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.math.Vector2;
+import com.bitfire.uracer.carsimulation.CarForces;
+import com.bitfire.uracer.carsimulation.CarInputMode;
+import com.bitfire.uracer.carsimulation.CarModel;
+import com.bitfire.uracer.carsimulation.Replay;
 import com.bitfire.uracer.entities.EntityManager;
 import com.bitfire.uracer.factories.CarFactory.CarType;
-import com.bitfire.uracer.simulations.car.CarForces;
-import com.bitfire.uracer.simulations.car.CarInputMode;
-import com.bitfire.uracer.simulations.car.CarModel;
-import com.bitfire.uracer.simulations.car.Replay;
 
 /**
  * Implements an automated Car, playing previously recorded events. It will

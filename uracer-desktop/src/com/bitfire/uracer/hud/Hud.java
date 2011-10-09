@@ -5,6 +5,7 @@ import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.math.Matrix4;
 import com.bitfire.uracer.Art;
 import com.bitfire.uracer.Config;
+import com.bitfire.uracer.carsimulation.Replay;
 import com.bitfire.uracer.effects.CarSkidMarks;
 import com.bitfire.uracer.effects.TrackEffects;
 import com.bitfire.uracer.effects.TrackEffects.Effects;
@@ -13,7 +14,6 @@ import com.bitfire.uracer.game.logic.DriftInfo;
 import com.bitfire.uracer.game.logic.GameLogic;
 import com.bitfire.uracer.game.logic.LapInfo;
 import com.bitfire.uracer.messager.Messager;
-import com.bitfire.uracer.simulations.car.Replay;
 
 public class Hud
 {

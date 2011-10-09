@@ -1,13 +1,13 @@
 package com.bitfire.uracer.game.logic;
 
 import com.badlogic.gdx.math.Vector2;
+import com.bitfire.uracer.carsimulation.Replay;
 import com.bitfire.uracer.entities.vehicles.Car;
 import com.bitfire.uracer.entities.vehicles.GhostCar;
 import com.bitfire.uracer.messager.Messager;
 import com.bitfire.uracer.messager.Messager.MessagePosition;
 import com.bitfire.uracer.messager.Messager.MessageSize;
 import com.bitfire.uracer.messager.Messager.MessageType;
-import com.bitfire.uracer.simulations.car.Replay;
 import com.bitfire.uracer.tiled.Level;
 import com.bitfire.uracer.utils.Convert;
 

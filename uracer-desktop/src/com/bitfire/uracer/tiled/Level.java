@@ -15,15 +15,15 @@ import com.badlogic.gdx.graphics.g2d.tiled.TiledObject;
 import com.badlogic.gdx.graphics.g2d.tiled.TiledObjectGroup;
 import com.badlogic.gdx.math.Vector2;
 import com.bitfire.uracer.Director;
+import com.bitfire.uracer.carsimulation.CarModel;
+import com.bitfire.uracer.carsimulation.Recorder;
+import com.bitfire.uracer.carsimulation.Replay;
 import com.bitfire.uracer.entities.EntityManager;
 import com.bitfire.uracer.entities.vehicles.Car;
 import com.bitfire.uracer.entities.vehicles.GhostCar;
 import com.bitfire.uracer.factories.CarFactory;
 import com.bitfire.uracer.factories.CarFactory.CarType;
 import com.bitfire.uracer.factories.ModelFactory;
-import com.bitfire.uracer.simulations.car.CarModel;
-import com.bitfire.uracer.simulations.car.Recorder;
-import com.bitfire.uracer.simulations.car.Replay;
 import com.bitfire.uracer.utils.Convert;
 import com.bitfire.uracer.utils.MapUtils;
 

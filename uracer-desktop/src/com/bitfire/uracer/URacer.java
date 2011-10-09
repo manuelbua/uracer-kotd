@@ -130,6 +130,7 @@ public class URacer implements ApplicationListener
 	@Override
 	public void dispose()
 	{
+		setScreen( null );
 		Debug.dispose();
 		Art.dispose();
 	}

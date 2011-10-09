@@ -5,12 +5,12 @@ import com.badlogic.gdx.graphics.g2d.TextureRegion;
 import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.physics.box2d.FixtureDef;
 import com.bitfire.uracer.Art;
+import com.bitfire.uracer.carsimulation.CarInputMode;
+import com.bitfire.uracer.carsimulation.CarModel;
 import com.bitfire.uracer.entities.EntityType;
 import com.bitfire.uracer.entities.vehicles.Car;
 import com.bitfire.uracer.entities.vehicles.CarGraphics;
 import com.bitfire.uracer.entities.vehicles.GhostCar;
-import com.bitfire.uracer.simulations.car.CarInputMode;
-import com.bitfire.uracer.simulations.car.CarModel;
 import com.bitfire.uracer.utils.Convert;
 import com.bitfire.uracer.utils.FixtureAtlas;
 

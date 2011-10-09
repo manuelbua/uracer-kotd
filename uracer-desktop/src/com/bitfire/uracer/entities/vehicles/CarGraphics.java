@@ -4,8 +4,8 @@ import com.badlogic.gdx.graphics.g2d.Sprite;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
 import com.bitfire.uracer.Art;
+import com.bitfire.uracer.carsimulation.CarModel;
 import com.bitfire.uracer.entities.EntityState;
-import com.bitfire.uracer.simulations.car.CarModel;
 import com.bitfire.uracer.utils.Convert;
 
 public class CarGraphics
