@@ -135,58 +135,58 @@
    <property name="start" value="right"/>
   </properties>
   <data encoding="base64" compression="gzip">
-   H4sIAAAAAAAAA5NkYGCQRMMmWMSkobQgEHMAMRMUs6Hps0TiMwKxFRKfE0kfsl6QPlE0MVYkvjTULEk0OS4oXxSqDqRGAoh50dyA7heQGD9ULbI8zA0wzA3EYkjiYkSEEzoGAH8N1FhgAQAA
+   H4sIAAAAAAAAA5NkYGCQRMMmWMSkobQgEHMAMRMOzIakhxHNDFaoPIxmRLIPXS0jFgyTE0WzD10dL5qdMLVcaOr48ZgLwmJQMWSaUDihYwAP/nTgYAEAAA==
   </data>
  </layer>
  <objectgroup color="#00ff00" name="static-meshes" width="11" height="8">
-  <object name="palm" type="palm" x="777" y="1121" width="67" height="69">
+  <object name="palm" type="palm" x="559" y="1667" width="67" height="69">
    <properties>
     <property name="scale" value="1.4"/>
    </properties>
   </object>
-  <object name="palm" type="palm" x="478" y="1160" width="55" height="54">
+  <object name="palm" type="palm" x="1620" y="190" width="55" height="54">
    <properties>
     <property name="scale" value="0.4"/>
    </properties>
   </object>
-  <object name="palm" type="palm" x="719" y="586" width="55" height="59">
+  <object name="palm" type="palm" x="545" y="532" width="55" height="59">
    <properties>
     <property name="scale" value="1"/>
    </properties>
   </object>
-  <object name="palm" type="palm" x="1047" y="1169" width="101" height="100">
+  <object name="palm" type="palm" x="915" y="1635" width="101" height="100">
    <properties>
     <property name="scale" value="1.6"/>
    </properties>
   </object>
-  <object name="palm" type="palm" x="2034" y="428" width="65" height="56">
+  <object name="palm" type="palm" x="2042" y="416" width="65" height="56">
    <properties>
     <property name="scale" value="2"/>
    </properties>
   </object>
-  <object name="tribune" type="tribune" x="1406" y="213" width="512" height="256"/>
-  <object name="palm" type="palm" x="97" y="234" width="80" height="65">
+  <object name="tribune" type="tribune" x="454" y="-5" width="512" height="256"/>
+  <object name="palm" type="palm" x="89" y="322" width="80" height="65">
    <properties>
     <property name="scale" value="1.1"/>
    </properties>
   </object>
-  <object name="palm" type="palm" x="938" y="503" width="73" height="57">
+  <object name="palm" type="palm" x="844" y="437" width="35" height="37">
    <properties>
     <property name="scale" value="0.5"/>
    </properties>
   </object>
-  <object name="palm" type="palm" x="965" y="716" width="75" height="76"/>
-  <object name="palm" type="palm" x="1513" y="911" width="56" height="57">
+  <object name="palm" type="palm" x="863" y="702" width="75" height="76"/>
+  <object name="palm" type="palm" x="1539" y="953" width="56" height="57">
    <properties>
     <property name="scale" value="0.65"/>
    </properties>
   </object>
-  <object name="palm" type="palm" x="1263" y="1270" width="60" height="59">
+  <object name="palm" type="palm" x="1311" y="1536" width="60" height="59">
    <properties>
     <property name="scale" value="1.25"/>
    </properties>
   </object>
-  <object name="palm" type="palm" x="1933" y="1099" width="71" height="67"/>
+  <object name="palm" type="palm" x="1155" y="179" width="71" height="67"/>
   <object name="palm" type="palm" x="163" y="767" width="72" height="61">
    <properties>
     <property name="scale" value="1.3"/>
@@ -203,17 +203,17 @@
     <property name="scale" value="2"/>
    </properties>
   </object>
-  <object name="palm" type="palm" x="1861" y="1252" width="81" height="57">
+  <object name="palm" type="palm" x="1527" y="458" width="81" height="57">
    <properties>
     <property name="scale" value="0.8"/>
    </properties>
   </object>
-  <object name="palm" type="palm" x="1885" y="737" width="70" height="64">
+  <object name="palm" type="palm" x="1745" y="1525" width="70" height="64">
    <properties>
     <property name="scale" value="2"/>
    </properties>
   </object>
-  <object name="palm" type="palm" x="1023" y="898" width="66" height="58">
+  <object name="palm" type="palm" x="1087" y="890" width="66" height="58">
    <properties>
     <property name="scale" value="1.2"/>
    </properties>
@@ -228,13 +228,13 @@
     <property name="scale" value="1.2"/>
    </properties>
   </object>
-  <object name="palm" type="palm" x="1802" y="1115" width="59" height="69">
+  <object name="palm" type="palm" x="1536" y="1229" width="59" height="69">
    <properties>
     <property name="scale" value="0.7"/>
    </properties>
   </object>
-  <object name="palm" type="palm" x="1709" y="671" width="57" height="60"/>
-  <object name="palm" type="palm" x="1846" y="929" width="57" height="60">
+  <object name="palm" type="palm" x="523" y="707" width="57" height="60"/>
+  <object name="palm" type="palm" x="1064" y="1279" width="57" height="60">
    <properties>
     <property name="scale" value="0.58"/>
    </properties>
