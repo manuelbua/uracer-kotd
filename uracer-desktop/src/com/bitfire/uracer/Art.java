@@ -59,7 +59,7 @@ public class Art
 		carTextures = new TextureAtlas("data/cars/pack");
 //		for( TextureRegion r : carTextures.getRegions() )
 //		{
-//			r.getTexture().setFilter( TextureFilter.Nearest, TextureFilter.Nearest );
+//			r.getTexture().setFilter( TextureFilter.Linear, TextureFilter.Linear );
 //		}
 
 		cars = carTextures;
