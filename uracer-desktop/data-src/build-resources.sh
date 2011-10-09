@@ -46,3 +46,10 @@ rm -rf "${DEST}/cars/"
 mkdir -p "${DEST}/cars/"
 ${TEX_PACKER} cars ${DEST}/cars >/dev/null
 echo "done!"
+
+# particle effects
+echo -n "Cooking particle effects..."
+rm -rf "${DEST}/partfx/"
+mkdir -p "${DEST}/partfx/"
+cp partfx/* ${DEST}/partfx > /dev/null
+echo "done!"

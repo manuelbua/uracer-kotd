@@ -15,7 +15,6 @@ import com.bitfire.uracer.effects.postprocessing.PostProcessor;
 import com.bitfire.uracer.entities.EntityManager;
 import com.bitfire.uracer.entities.vehicles.Car;
 import com.bitfire.uracer.game.logic.DirectorController;
-import com.bitfire.uracer.game.logic.DirectorController.InterpolationMode;
 import com.bitfire.uracer.game.logic.GameLogic;
 import com.bitfire.uracer.hud.Hud;
 import com.bitfire.uracer.messager.Messager;
@@ -50,7 +49,7 @@ public class Game
 		hud = new Hud( logic );
 		logic.create();
 
-		controller = new DirectorController( InterpolationMode.Sigmoid );
+		controller = new DirectorController( Config.cameraInterpolationMode );
 
 		// track effects
 		TrackEffects.init( logic );
@@ -119,6 +118,7 @@ public class Game
 			gl.glDepthMask( false );
 			batch.begin();
 			TrackEffects.renderEffect( Effects.CarSkidMarks, batch );
+			TrackEffects.renderEffect( Effects.SmokeTrails, batch );
 			EntityManager.raiseOnRender( batch, URacer.getTemporalAliasing() );
 			batch.end();
 

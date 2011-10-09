@@ -2,6 +2,7 @@ package com.bitfire.uracer;
 
 import com.badlogic.gdx.Application.ApplicationType;
 import com.badlogic.gdx.Gdx;
+import com.bitfire.uracer.game.logic.DirectorController.InterpolationMode;
 
 public class Config
 {
@@ -30,6 +31,9 @@ public class Config
 	// definitions
 	public static float MaxDeltaTime;
 
+	// camera
+	public static InterpolationMode cameraInterpolationMode;
+
 	// debug
 	public static boolean dbgTraverseWalls;
 	public static boolean dbgDirectorHasBounds;
@@ -45,9 +49,10 @@ public class Config
 		EnablePostProcessingFx = false;
 		EnableMipMapping = true;
 		isDesktop = (Gdx.app.getType() == ApplicationType.Desktop);
+		cameraInterpolationMode = InterpolationMode.Off;
 
 		// debug
-		dbgTraverseWalls = false;
-		dbgDirectorHasBounds = true;
+		dbgTraverseWalls = true;
+		dbgDirectorHasBounds = false;
 	}
 }

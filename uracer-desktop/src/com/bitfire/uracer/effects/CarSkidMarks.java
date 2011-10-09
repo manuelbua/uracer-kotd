@@ -111,16 +111,21 @@ public class CarSkidMarks extends TrackEffect
 
 	private void addDriftMark()
 	{
+		tmp.set( player.state().position );
+
+		SmokeTrails smoke = (SmokeTrails)TrackEffects.get( Effects.SmokeTrails );
+		smoke.addEmitter( tmp.x, tmp.y );
+
 		if( player.getCarDescriptor().velocity_wc.len2() < 1 )
 		{
 			return;
 		}
 
-		tmp.set( player.state().position );
 		float angle = player.state().orientation;
 		// tmp.set( player.pos() );
 		// float angle = player.orient();
 
+		// avoid blatant overdrawing
 		if( (int)tmp.x == (int)last.x && (int)tmp.y == (int)last.y )
 		{
 			return;
@@ -133,14 +138,17 @@ public class CarSkidMarks extends TrackEffect
 		float flatr = Math.abs( player.getSimulator().lateralForceRear.y );
 		flatr = AMath.clamp( flatr / model.max_grip, 0, 1f );
 
-		// add front drift marks?
-		SkidMark drift = skidMarks.get( markIndex++ );
-		if( markIndex == MaxSkidMarks ) markIndex = 0;
-
 		float af = flatf;
 		float ar = flatr;
 		if( af > 0.2f || ar > 0.2f )
 		{
+			// add front drift marks?
+			SkidMark drift = skidMarks.get( markIndex++ );
+			if( markIndex == MaxSkidMarks ) markIndex = 0;
+
+//			SmokeTrails smoke = (SmokeTrails)TrackEffects.get( Effects.SmokeTrails );
+//			smoke.addEmitter( tmp.x, tmp.y );
+
 			drift.alphaFront = af;
 			drift.alphaRear = ar;
 			drift.setPosition( tmp );
@@ -151,10 +159,8 @@ public class CarSkidMarks extends TrackEffect
 			drift.life = drift.maxLife;
 
 			last.set( tmp );
-		} else
-		{
-			drift.life = 0;
 		}
+
 	}
 
 	private class SkidMark

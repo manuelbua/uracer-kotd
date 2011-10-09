@@ -9,10 +9,11 @@ public class TrackEffects
 {
 	public enum Effects
 	{
-		CarSkidMarks(1);
+		CarSkidMarks( 1 ), SmokeTrails( 2 );
 
 		public final long id;
-		private Effects(int id)
+
+		private Effects( int id )
 		{
 			this.id = id;
 		}
@@ -33,23 +34,27 @@ public class TrackEffects
 		effects = new LongMap<TrackEffect>();
 
 		TrackEffects.add( Effects.CarSkidMarks );
-}
+		TrackEffects.add( Effects.SmokeTrails );
+	}
 
 	/**
 	 * manage effects
 	 */
 
-	public static void add( Effects what )
+	private static void add( Effects what )
 	{
-		switch(what)
+		switch( what )
 		{
 		case CarSkidMarks:
-			add( new CarSkidMarks( player ));
+			add( new CarSkidMarks( player ) );
+			break;
+		case SmokeTrails:
+			add( new SmokeTrails( player ) );
 			break;
 		}
 	}
 
-	public static long add( TrackEffect effect )
+	private static long add( TrackEffect effect )
 	{
 		long result = 0;
 		if( effect != null )
@@ -61,10 +66,21 @@ public class TrackEffects
 		return result;
 	}
 
-	public static boolean remove(Effects what)
+	private static boolean remove( Effects what )
 	{
-		if( effects.remove( what.id ) != null ) return true;
+		TrackEffect removed = effects.remove( what.id );
+		if( removed != null )
+		{
+			removed.dispose();
+			return true;
+		}
+
 		return false;
+	}
+
+	public static TrackEffect get( Effects what )
+	{
+		return effects.get( what.id );
 	}
 
 	/**
@@ -85,13 +101,12 @@ public class TrackEffects
 
 	public static void dispose()
 	{
-		for( TrackEffect effect : effects.values() )
-			effect.dispose();
+		remove( Effects.CarSkidMarks );
+		remove( Effects.SmokeTrails );
 	}
 
 	/**
-	 * expose effects TODO find a more sensible way without incurring in
-	 * overhead
+	 * expose effects TODO find a more sensible way without incurring in overhead
 	 */
 
 	public static void renderEffect( Effects what, SpriteBatch batch )

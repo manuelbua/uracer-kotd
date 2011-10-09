@@ -149,7 +149,7 @@
     <property name="scale" value="0.4"/>
    </properties>
   </object>
-  <object name="palm" type="palm" x="545" y="532" width="55" height="59">
+  <object name="palm" type="palm" x="323" y="120" width="55" height="59">
    <properties>
     <property name="scale" value="1"/>
    </properties>
@@ -164,18 +164,18 @@
     <property name="scale" value="2"/>
    </properties>
   </object>
-  <object name="tribune" type="tribune" x="454" y="-5" width="512" height="256"/>
+  <object name="tribune" type="tribune" x="468" y="679" width="518" height="224"/>
   <object name="palm" type="palm" x="89" y="322" width="80" height="65">
    <properties>
     <property name="scale" value="1.1"/>
    </properties>
   </object>
-  <object name="palm" type="palm" x="844" y="437" width="35" height="37">
+  <object name="palm" type="palm" x="1016" y="909" width="35" height="37">
    <properties>
     <property name="scale" value="0.5"/>
    </properties>
   </object>
-  <object name="palm" type="palm" x="863" y="702" width="75" height="76"/>
+  <object name="palm" type="palm" x="1021" y="476" width="75" height="76"/>
   <object name="palm" type="palm" x="1539" y="953" width="56" height="57">
    <properties>
     <property name="scale" value="0.65"/>
@@ -187,12 +187,12 @@
    </properties>
   </object>
   <object name="palm" type="palm" x="1155" y="179" width="71" height="67"/>
-  <object name="palm" type="palm" x="163" y="767" width="72" height="61">
+  <object name="palm" type="palm" x="857" y="139" width="72" height="61">
    <properties>
     <property name="scale" value="1.3"/>
    </properties>
   </object>
-  <object name="palm" type="palm" x="636" y="881" width="42" height="36">
+  <object name="palm" type="palm" x="480" y="489" width="42" height="36">
    <properties>
     <property name="scale" value="0.5"/>
    </properties>
@@ -233,7 +233,7 @@
     <property name="scale" value="0.7"/>
    </properties>
   </object>
-  <object name="palm" type="palm" x="523" y="707" width="57" height="60"/>
+  <object name="palm" type="palm" x="581" y="535" width="57" height="60"/>
   <object name="palm" type="palm" x="1064" y="1279" width="57" height="60">
    <properties>
     <property name="scale" value="0.58"/>
