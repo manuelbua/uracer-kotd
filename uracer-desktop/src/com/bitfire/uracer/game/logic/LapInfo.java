@@ -12,7 +12,10 @@ public class LapInfo
 	private float lastTrackTimeSecs;
 	private boolean hasLastTrackTimeSecs;
 
-	public LapInfo()
+	private static LapInfo instance = null;
+	private static GameLogic logic = null;
+
+	private LapInfo()
 	{
 		startTimeNs = 0;
 		lastTrackTimeSecs = 0;
@@ -27,6 +30,17 @@ public class LapInfo
 
 		reset();
 		update();
+	}
+
+	public static void init( GameLogic logic )
+	{
+		instance = new LapInfo();
+		LapInfo.logic = logic;
+	}
+
+	public static LapInfo get()
+	{
+		return instance;
 	}
 
 	public void reset()

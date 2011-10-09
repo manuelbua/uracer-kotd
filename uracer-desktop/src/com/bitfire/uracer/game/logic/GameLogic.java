@@ -43,7 +43,6 @@ public class GameLogic
 		this.game = game;
 		this.level = game.getLevel();
 		this.player = level.getPlayer();
-		this.listener = new GameLogicListener( this );
 
 		// effects
 		if( Config.EnablePostProcessingFx )
@@ -56,7 +55,10 @@ public class GameLogic
 		}
 
 		DriftInfo.init( this );
-	}
+		LapInfo.init( this );
+
+		this.listener = new GameLogicListener( this );
+}
 
 	public void create()
 	{
@@ -97,8 +99,7 @@ public class GameLogic
 			}
 
 			// update DriftInfo, raise onBeginDrift / onEndDrift
-			DriftInfo drift = DriftInfo.get();
-			drift.update( player );
+			DriftInfo.get().update( player );
 		}
 	}
 
@@ -128,10 +129,10 @@ public class GameLogic
 		tweener.update();
 	}
 
-	public LapInfo getLapInfo()
-	{
-		return listener.onGetLapInfo();
-	}
+//	public LapInfo getLapInfo()
+//	{
+//		return listener.onGetLapInfo();
+//	}
 
 	public static TweenManager getTweener()
 	{

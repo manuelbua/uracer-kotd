@@ -28,10 +28,10 @@ public class GameLogicListener implements IGameLogicListener
 	{
 		this.logic = logic;
 		this.level = logic.getGame().getLevel();
+		this.lapInfo = LapInfo.get();
+
 		player = logic.getGame().getLevel().getPlayer();
 		ghost = logic.getGame().getLevel().getGhost();
-
-		lapInfo = new LapInfo();
 	}
 
 	@Override
@@ -67,11 +67,11 @@ public class GameLogicListener implements IGameLogicListener
 //		label.slide( new Vector2(0,-1), 10 );
 	}
 
-	@Override
-	public LapInfo onGetLapInfo()
-	{
-		return lapInfo;
-	}
+//	@Override
+//	public LapInfo onGetLapInfo()
+//	{
+//		return lapInfo;
+//	}
 
 	@Override
 	public void onTileChanged( Vector2 carAt )

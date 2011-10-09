@@ -10,7 +10,7 @@ public interface IGameLogicListener
 
 	public abstract void onRestart();
 
-	public abstract LapInfo onGetLapInfo();
+//	public abstract LapInfo onGetLapInfo();
 
 	public abstract void onTileChanged( Vector2 carAt );
 

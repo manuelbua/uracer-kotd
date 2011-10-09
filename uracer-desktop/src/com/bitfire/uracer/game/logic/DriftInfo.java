@@ -15,7 +15,11 @@ public class DriftInfo
 	private long collisionTime;
 
 	private static DriftInfo instance = null;
-	private static GameLogic logic;
+	private static GameLogic logic = null;
+
+	private DriftInfo()
+	{
+	}
 
 	public static void init( GameLogic logic )
 	{
