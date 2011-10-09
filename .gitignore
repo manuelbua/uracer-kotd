@@ -1,6 +1,6 @@
 /uracer-desktop/bin
 /uracer-android/bin
 /uracer-android/gen
-/uracer-desktop/src/com/bitfire/uracer/debug/VersionInfo.java
+VersionInfo.java
 *.so
 *.log
