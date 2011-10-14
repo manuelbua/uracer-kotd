@@ -16,8 +16,8 @@ public class SmokeTrails extends TrackEffect
 	private ParticleEmitter[] emitters;
 	private int emitterIdx;
 
-	private final int MaxEmitters = 20;
-	private final int MaxParticlesPerEmitterPerSec = 20;
+	private final int MaxEmitters = 100;
+	private final int MaxParticlesPerEmitterPerSec = 5;
 
 	private boolean isDrifting, wasDrifting, isOn;
 	private DriftInfo drift;
@@ -133,7 +133,7 @@ public class SmokeTrails extends TrackEffect
 		next.setPosition( tmp.x, tmp.y );
 
 		next.setContinuous(false);
-		next.duration = 500;
+		next.duration = 850;
 		next.durationTimer = 0;
 
 		emitterIdx++;
