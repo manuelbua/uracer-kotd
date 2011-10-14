@@ -1,13 +1,13 @@
 Untitled
 - Delay -
 active: false
-- Duration - 
+- Duration -
 lowMin: 1000.0
 lowMax: 1000.0
-- Count - 
+- Count -
 min: 0
 max: 1000
-- Emission - 
+- Emission -
 lowMin: 0.0
 lowMax: 0.0
 highMin: 5.0
@@ -17,7 +17,7 @@ scalingCount: 1
 scaling0: 1.0
 timelineCount: 1
 timeline0: 0.0
-- Life - 
+- Life -
 lowMin: 0.0
 lowMax: 0.0
 highMin: 2000.0
@@ -27,15 +27,15 @@ scalingCount: 1
 scaling0: 1.0
 timelineCount: 1
 timeline0: 0.0
-- Life Offset - 
+- Life Offset -
 active: false
-- X Offset - 
+- X Offset -
 active: false
-- Y Offset - 
+- Y Offset -
 active: false
-- Spawn Shape - 
+- Spawn Shape -
 shape: point
-- Spawn Width - 
+- Spawn Width -
 lowMin: 0.0
 lowMax: 0.0
 highMin: 0.0
@@ -45,7 +45,7 @@ scalingCount: 1
 scaling0: 1.0
 timelineCount: 1
 timeline0: 0.0
-- Spawn Height - 
+- Spawn Height -
 lowMin: 0.0
 lowMax: 0.0
 highMin: 0.0
@@ -55,7 +55,7 @@ scalingCount: 1
 scaling0: 1.0
 timelineCount: 1
 timeline0: 0.0
-- Scale - 
+- Scale -
 lowMin: 0.0
 lowMax: 0.0
 highMin: 128.0
@@ -71,7 +71,7 @@ timeline0: 0.0
 timeline1: 0.44166666
 timeline2: 0.79791665
 timeline3: 1.0
-- Velocity - 
+- Velocity -
 active: true
 lowMin: 0.0
 lowMax: 0.0
@@ -88,31 +88,31 @@ timeline0: 0.0
 timeline1: 0.44791666
 timeline2: 0.73333335
 timeline3: 1.0
-- Angle - 
+- Angle -
 active: true
 lowMin: 0.0
 lowMax: 0.0
 highMin: 1.0
 highMax: 360.0
-relative: false
+relative: true
 scalingCount: 1
 scaling0: 1.0
 timelineCount: 1
 timeline0: 0.0
-- Rotation - 
+- Rotation -
 active: true
 lowMin: 0.0
 lowMax: 0.0
 highMin: 1.0
 highMax: 360.0
-relative: false
+relative: true
 scalingCount: 1
 scaling0: 1.0
 timelineCount: 1
 timeline0: 0.0
-- Wind - 
+- Wind -
 active: false
-- Gravity - 
+- Gravity -
 active: true
 lowMin: 0.0
 lowMax: 0.0
@@ -123,14 +123,14 @@ scalingCount: 1
 scaling0: 1.0
 timelineCount: 1
 timeline0: 0.0
-- Tint - 
+- Tint -
 colorsCount: 3
-colors0: 0.38431373
-colors1: 0.38431373
-colors2: 0.38431373
+colors0: 0.23333336
+colors1: 0.23333336
+colors2: 0.23333336
 timelineCount: 1
 timeline0: 0.0
-- Transparency - 
+- Transparency -
 lowMin: 0.0
 lowMax: 0.0
 highMin: 1.0
@@ -152,11 +152,11 @@ timeline3: 0.47204968
 timeline4: 0.73913044
 timeline5: 0.9026915
 timeline6: 1.0
-- Options - 
+- Options -
 attached: false
 continuous: true
 aligned: false
-additive: true
+additive: false
 behind: true
 - Image Path -
-/tmp/SmokeShape.png
+/home/manuel/dev/libgdx/tests/gdx-tests-jogl/bin/data/SmokeShape.png

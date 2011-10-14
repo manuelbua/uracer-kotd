@@ -35,6 +35,9 @@ public class TrackEffects
 
 		TrackEffects.add( Effects.CarSkidMarks );
 		TrackEffects.add( Effects.SmokeTrails );
+
+//		SmokeTrails smoke = (SmokeTrails)TrackEffects.get( Effects.SmokeTrails );
+//		smoke.addEmitter( 100, 100 );
 	}
 
 	/**

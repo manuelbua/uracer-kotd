@@ -82,6 +82,9 @@ public class GameLogic
 			} else if( Input.isOn( Keys.T ) )
 			{
 				game.reset();
+			} else if( Input.isOn( Keys.Q ) )
+			{
+				System.out.println("TODO implement quit");
 			}
 
 			// onTileChanged
