@@ -49,7 +49,7 @@ public class Config
 		EnablePostProcessingFx = false;
 		EnableMipMapping = true;
 		isDesktop = (Gdx.app.getType() == ApplicationType.Desktop);
-		cameraInterpolationMode = InterpolationMode.Off;
+		cameraInterpolationMode = InterpolationMode.Sigmoid;
 
 		// debug
 		dbgTraverseWalls = true;

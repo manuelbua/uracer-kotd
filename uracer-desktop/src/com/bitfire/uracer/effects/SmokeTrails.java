@@ -16,8 +16,10 @@ public class SmokeTrails extends TrackEffect
 	private ParticleEmitter[] emitters;
 	private int emitterIdx;
 
-	private final int MaxEmitters = 100;
-	private final int MaxParticlesPerEmitterPerSec = 5;
+	private final int MaxEmitters = 50;
+	private final float MaxParticlesPerEmitterPerSec;
+	private final float MaxParticleLifeMinMs;
+	private final float MaxParticleLifeMaxMs;
 
 	private boolean isDrifting, wasDrifting, isOn;
 	private DriftInfo drift;
@@ -33,6 +35,10 @@ public class SmokeTrails extends TrackEffect
 		emitters = new ParticleEmitter[ MaxEmitters ];
 		baseEmitter = effect.getEmitters().get( 0 );
 
+		MaxParticleLifeMinMs = baseEmitter.getLife().getHighMin();
+		MaxParticleLifeMaxMs = baseEmitter.getLife().getHighMax();
+		MaxParticlesPerEmitterPerSec = baseEmitter.getEmission().getHighMax();
+
 		emitters[0] = baseEmitter;
 		for( int i = 1; i < MaxEmitters; i++ )
 		{
@@ -43,7 +49,7 @@ public class SmokeTrails extends TrackEffect
 		for( int i = 0; i < MaxEmitters; i++ )
 		{
 			emitters[i].setAdditive( false );
-			emitters[i].getLife().setHigh( 850 );
+			emitters[i].setContinuous(false);
 //			emitters[i].setAttached( true );
 			emitters[i].reset();
 			off(i);
@@ -80,7 +86,7 @@ public class SmokeTrails extends TrackEffect
 
 		// wasDrifting = isDrifting;
 
-//		System.out.println( "smoke particles=" + getParticleCount() );
+		System.out.println( "smoke particles=" + getParticleCount() );
 	}
 
 
@@ -100,14 +106,13 @@ public class SmokeTrails extends TrackEffect
 	{
 		emitters[emitterIndex].getEmission().setHigh( 0 );
 		emitters[emitterIndex].setMaxParticleCount( 0 );
-		emitters[emitterIndex].allowCompletion();
 		isOn = false;
 	}
 
 	private void on(int emitterIndex)
 	{
-		emitters[emitterIndex].getEmission().setHigh( MaxParticlesPerEmitterPerSec );
-		emitters[emitterIndex].setMaxParticleCount( MaxParticlesPerEmitterPerSec );
+		emitters[emitterIndex].getEmission().setHighMax( MaxParticlesPerEmitterPerSec );
+		emitters[emitterIndex].setMaxParticleCount( (int)MaxParticlesPerEmitterPerSec );
 		emitters[emitterIndex].start();
 		isOn = true;
 	}
@@ -132,9 +137,10 @@ public class SmokeTrails extends TrackEffect
 		on( emitterIdx );
 		next.setPosition( tmp.x, tmp.y );
 
-		next.setContinuous(false);
-		next.duration = 850;
-		next.durationTimer = 0;
+//		if( Math.random() * 1000 > 800 )
+//			next.setAdditive( true );
+//		else
+//			next.setAdditive( false );
 
 		emitterIdx++;
 		if( emitterIdx == MaxEmitters ) emitterIdx = 0;
