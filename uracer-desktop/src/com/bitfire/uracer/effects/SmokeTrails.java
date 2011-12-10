@@ -86,7 +86,7 @@ public class SmokeTrails extends TrackEffect
 
 		// wasDrifting = isDrifting;
 
-		System.out.println( "smoke particles=" + getParticleCount() );
+//		System.out.println( "smoke particles=" + getParticleCount() );
 	}
 
 
