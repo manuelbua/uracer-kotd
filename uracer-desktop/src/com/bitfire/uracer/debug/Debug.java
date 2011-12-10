@@ -112,7 +112,7 @@ public class Debug
 						renderTime ).toString(), 0, Gdx.graphics.getHeight() - 6 );
 
 		sb.setLength( 0 );
-		drawString( fmt.format( "timemul: x%.02f, step: %.0fHz", Config.PhysicsTimeMultiplier, Config.PhysicsTimestepHz )
+		drawString( fmt.format( "timemul: x%.02f, step: %.0fHz", Config.Physics.PhysicsTimeMultiplier, Config.Physics.PhysicsTimestepHz )
 				.toString(), 0, Gdx.graphics.getHeight() - 12 );
 	}
 

@@ -45,7 +45,7 @@ public class GameLogic
 		this.player = level.getPlayer();
 
 		// effects
-		if( Config.EnablePostProcessingFx )
+		if( Config.Graphics.EnablePostProcessingFx )
 		{
 			rb = new RadialBlur();
 			rb.setEnabled( true );
@@ -95,7 +95,7 @@ public class GameLogic
 				listener.onTileChanged( carTileAt );
 			}
 
-			if( Config.EnablePostProcessingFx )
+			if( Config.Graphics.EnablePostProcessingFx )
 			{
 				rb.dampStrength( 0.8f, Physics.dt );
 				rb.setOrigin( Director.screenPosFor( player.getBody() ) );

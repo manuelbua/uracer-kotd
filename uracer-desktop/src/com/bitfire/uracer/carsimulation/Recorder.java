@@ -68,7 +68,7 @@ public class Recorder
 		}
 
 		float secs = (float)(System.nanoTime() - replay.trackStartTimeNs) / 1000000000f;
-		secs *= Config.PhysicsTimeMultiplier;
+		secs *= Config.Physics.PhysicsTimeMultiplier;
 		replay.setReplayData( Director.currentLevel.name, Director.gameplaySettings.difficulty, secs );
 
 //		System.out.println( "Recorded " + replay.getEventsCount() + " events" );

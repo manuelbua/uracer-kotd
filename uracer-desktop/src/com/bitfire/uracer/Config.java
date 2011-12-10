@@ -2,57 +2,71 @@ package com.bitfire.uracer;
 
 import com.badlogic.gdx.Application.ApplicationType;
 import com.badlogic.gdx.Gdx;
+import com.bitfire.uracer.effects.TrackEffects;
 import com.bitfire.uracer.game.logic.DirectorController.InterpolationMode;
 
 public class Config
 {
-	// whether or not subframe interpolable entities should
-	// perform interpolation
-	public static boolean SubframeInterpolation;
-
-	// defines how many pixels are 1 Box2d meter
-	public static float PixelsPerMeter;
-
-	// defines physics dt duration
-	public static float PhysicsTimestepHz;
-
-	// defines time modifier
-	public static float PhysicsTimeMultiplier;
-
-	// post-processing fx
-	public static boolean EnablePostProcessingFx;
-
-	// graphics
-	public static boolean EnableMipMapping;
-
-	// platform
+	// generic
 	public static boolean isDesktop;
 
-	// definitions
-	public static float MaxDeltaTime;
+	public static class Graphics
+	{
+		public static boolean EnableMipMapping;
+		public static boolean EnablePostProcessingFx;
+		public static boolean SubframeInterpolation;
+		public static InterpolationMode CameraInterpolationMode;
+		public static long Effects;
 
-	// camera
-	public static InterpolationMode cameraInterpolationMode;
+		public static boolean hasEffect( long effectId )
+		{
+			return ((Effects & effectId) == effectId);
+		}
 
-	// debug
-	public static boolean dbgTraverseWalls;
-	public static boolean dbgDirectorHasBounds;
+		public static void asDefault()
+		{
+			EnablePostProcessingFx = false;
+			EnableMipMapping = true;
+			SubframeInterpolation = true;
+			CameraInterpolationMode = InterpolationMode.Sigmoid;
+			Effects = (TrackEffects.Effects.CarSkidMarks.id /* | TrackEffects.Effects.SmokeTrails.id */);
+		}
+	}
+
+	public static class Physics
+	{
+
+		public static float PixelsPerMeter; // defines how many pixels are 1 Box2d meter
+		public static float PhysicsTimestepHz; // defines physics dt duration
+		public static float PhysicsTimeMultiplier; // defines time modifier
+
+		public static void asDefault()
+		{
+			PixelsPerMeter = 18.0f;
+			PhysicsTimestepHz = 60.0f;
+			PhysicsTimeMultiplier = 1f;
+		}
+	}
+
+	public static class Debug
+	{
+		public static boolean dbgTraverseWalls;
+		public static boolean dbgDirectorHasBounds;
+
+		public static void asDefault()
+		{
+			dbgTraverseWalls = false;
+			dbgDirectorHasBounds = true;
+		}
+	}
 
 	// set default configuration values
 	public static void asDefault()
 	{
-		SubframeInterpolation = true;
-		PixelsPerMeter = 18.0f;
-		PhysicsTimestepHz = 60.0f;
-		PhysicsTimeMultiplier = 1f;
-		MaxDeltaTime = 0.25f;	// 4fps
-		EnablePostProcessingFx = false;
-		EnableMipMapping = true;
 		isDesktop = (Gdx.app.getType() == ApplicationType.Desktop);
-		cameraInterpolationMode = InterpolationMode.Sigmoid;
 
-		// debug
-		dbgTraverseWalls = true;
-		dbgDirectorHasBounds = false;
+		Graphics.asDefault();
+		Physics.asDefault();
+		Debug.asDefault();
 	}
 }

@@ -18,9 +18,14 @@ public class TrackEffects
 			this.id = id;
 		}
 
-		public long getCode()
+		public long asLong()
 		{
 			return id;
+		}
+
+		public int asInt()
+		{
+			return (int)id;
 		}
 	}
 

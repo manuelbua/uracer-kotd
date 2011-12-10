@@ -49,7 +49,7 @@ public class Game
 		hud = new Hud( logic );
 		logic.create();
 
-		controller = new DirectorController( Config.cameraInterpolationMode );
+		controller = new DirectorController( Config.Graphics.CameraInterpolationMode );
 
 		// track effects
 		TrackEffects.init( logic );
@@ -92,7 +92,7 @@ public class Game
 			controller.setPosition( player.state().position );
 		}
 
-		if( Config.EnablePostProcessingFx )
+		if( Config.Graphics.EnablePostProcessingFx )
 		{
 			PostProcessor.begin();
 		} else
@@ -105,27 +105,37 @@ public class Game
 			level.syncWithCam( ortho );
 
 			// prepare sprite batch
-
 			batch.setProjectionMatrix( ortho.projection );
 			batch.setTransformMatrix( ortho.view );
 
+			// clear buffers
 			gl.glClearDepthf( 1 );
 			gl.glClearColor( 0, 0, 0, 1 );
 			gl.glClear( GL20.GL_DEPTH_BUFFER_BIT | GL20.GL_COLOR_BUFFER_BIT );
 
+			// render base tilemap
 			level.renderTilemap();
 
 			gl.glDepthMask( false );
 			batch.begin();
-			TrackEffects.renderEffect( Effects.CarSkidMarks, batch );
-			TrackEffects.renderEffect( Effects.SmokeTrails, batch );
-			EntityManager.raiseOnRender( batch, URacer.getTemporalAliasing() );
+			{
+				// batch render effects
+				if( Config.Graphics.hasEffect(TrackEffects.Effects.CarSkidMarks.id) )
+					TrackEffects.renderEffect( Effects.CarSkidMarks, batch );
+
+				if( Config.Graphics.hasEffect(TrackEffects.Effects.SmokeTrails.id) )
+					TrackEffects.renderEffect( Effects.SmokeTrails, batch );
+
+				// batch render entities
+				EntityManager.raiseOnRender( batch, URacer.getTemporalAliasing() );
+			}
 			batch.end();
 
+			// render meshes
 			level.renderMeshes( gl );
 		}
 
-		if( Config.EnablePostProcessingFx )
+		if( Config.Graphics.EnablePostProcessingFx )
 		{
 			PostProcessor.end();
 		}
