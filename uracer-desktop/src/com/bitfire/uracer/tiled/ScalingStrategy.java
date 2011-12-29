@@ -76,6 +76,8 @@ public class ScalingStrategy
 
 	private float hFovToScalingFactor()
 	{
+		// I DON'T LIKE THIS
+		//
 		// 4th degree polynomial approximation (quartic)
 		//
 		// this has been computed in Wolfram Alpha, with the following
@@ -83,7 +85,7 @@ public class ScalingStrategy
 		// fit {{10,0.1188},{20,0.239},{30,0.363},{40,0.494},{50,0.63},{60,
 		// 0.78}, {73, 1}, {80, 1.13},{90,1.355},{110,1.93},{120,2.35}}
 		//
-		// so this will return correct values for any given hfov in the range
+		// so this will return interpolated values for any given hfov in the range
 		// [10,120]
 		return 1.15197f * 0.00000001f
 				* (desiredHorizontalFov * desiredHorizontalFov * desiredHorizontalFov * desiredHorizontalFov) - 1.6847f
