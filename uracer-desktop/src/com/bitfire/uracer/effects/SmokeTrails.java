@@ -5,6 +5,7 @@ import com.badlogic.gdx.graphics.g2d.ParticleEffect;
 import com.badlogic.gdx.graphics.g2d.ParticleEmitter;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.math.Vector2;
+import com.bitfire.uracer.Art;
 import com.bitfire.uracer.effects.TrackEffects.Effects;
 import com.bitfire.uracer.entities.vehicles.Car;
 import com.bitfire.uracer.game.logic.DriftInfo;
@@ -30,7 +31,7 @@ public class SmokeTrails extends TrackEffect
 		super( Effects.SmokeTrails );
 
 		effect = new ParticleEffect();
-		effect.load( Gdx.files.internal( "data/partfx/smoke.p" ), Gdx.files.internal( "data/partfx" ) );
+		effect.load( Gdx.files.internal( "data/partfx/smoke.p" ), Art.carTextures /*Gdx.files.internal( "data/partfx" )*/ );
 
 		emitters = new ParticleEmitter[ MaxEmitters ];
 		baseEmitter = effect.getEmitters().get( 0 );
