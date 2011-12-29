@@ -308,7 +308,7 @@ public class Track
 								meshCoords.y - adj, 1f );
 						wallMesh.setRotation( -90, 0, 0, 1 );
 						meshes.add( wallMesh );
-}
+					}
 				}
 			}
 		}
