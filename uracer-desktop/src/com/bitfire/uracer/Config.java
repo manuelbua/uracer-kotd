@@ -18,6 +18,7 @@ public class Config
 		public static InterpolationMode CameraInterpolationMode;
 		public static long Effects;
 
+		// wrap it out, ie. BitValue or else
 		public static boolean hasEffect( long effectId )
 		{
 			return ((Effects & effectId) == effectId);
@@ -29,7 +30,7 @@ public class Config
 			EnableMipMapping = true;
 			SubframeInterpolation = true;
 			CameraInterpolationMode = InterpolationMode.Sigmoid;
-			Effects = (TrackEffects.Effects.CarSkidMarks.id /* | TrackEffects.Effects.SmokeTrails.id */);
+			Effects = (TrackEffects.Effects.CarSkidMarks.id | TrackEffects.Effects.SmokeTrails.id);
 		}
 	}
 

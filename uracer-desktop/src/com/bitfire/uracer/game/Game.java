@@ -57,7 +57,7 @@ public class Game
 		// setup sprite batch at origin top-left => 0,0
 		// Issues may arise on Tegra2 (Asus Transformer) devices if the buffers'
 		// count is higher than 10
-		batch = new SpriteBatch( 1000, 10 );
+		batch = new SpriteBatch( 1000, 8 );
 	}
 
 	public void dispose()

@@ -147,9 +147,16 @@ public class Level
 			m.render( gl );
 		}
 
+		// TODO, either disable rendering in release/mobile or
+		// make Track build a single mesh out of the whole track,
+		// there is no point in wasting draw calls/context switching
+		// for every single wall tile (!)
+		//
+		// HUGE performance hit enabling rendering of tile-based walls
+		// on mobile (Tegra2)
 		if( track.hasMeshes() )
 		{
-			track.render( gl );
+//			track.render( gl );
 		}
 
 		gl.glDisable( GL20.GL_DEPTH_TEST );
