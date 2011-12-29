@@ -1,12 +1,14 @@
 #!/bin/bash
 
-CLASS_PATH="/home/manuel/dev/libgdx/target/dist"
-TILED_PACKER_PATH="/home/manuel/dev/libgdx/extensions/tiled-preprocessor/bin"
-JARS="${TILED_PACKER_PATH}:${CLASS_PATH}/gdx.jar:${CLASS_PATH}/gdx-natives.jar:${CLASS_PATH}/gdx-backend-jogl.jar:${CLASS_PATH}/gdx-backend-jogl-natives.jar:${CLASS_PATH}/gdx-tools.jar"
 
-TEX_PACKER="java -classpath ${JARS} com.badlogic.gdx.tools.imagepacker.TexturePacker $1 $2"
-TILED_PACKER="java -classpath ${JARS} com.badlogic.gdx.tiledmappacker.TiledMapPacker $1 $2"
+CLASS_PATH="/home/manuel/dev/libgdx/dist"
+JARS="${CLASS_PATH}/gdx.jar:${CLASS_PATH}/gdx-natives.jar:${CLASS_PATH}/gdx-backend-jogl.jar:${CLASS_PATH}/gdx-backend-jogl-natives.jar"
 
+GDX_TOOLS_PATH="/home/manuel/dev/libgdx/extensions/gdx-tools/target/java"
+TEX_PACKER="java -classpath ${JARS}:${GDX_TOOLS_PATH} com.badlogic.gdx.tools.imagepacker.TexturePacker $1 $2"
+
+GDX_TILED_PREP_PATH="/home/manuel/dev/libgdx/extensions/gdx-tiled-preprocessor/target/java"
+TILED_PACKER="java -classpath ${JARS}:${GDX_TOOLS_PATH}:${GDX_TILED_PREP_PATH} com.badlogic.gdx.tiledmappacker.TiledMapPacker $1 $2"
 
 DEST="/home/manuel/dev/uracer-libgdx/uracer-desktop/data"
 

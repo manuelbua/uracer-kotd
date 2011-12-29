@@ -29,10 +29,10 @@ public class Convert
 	//
 
 	private static Vector2 ret;
-	public static float mt2px( float v )		{ return v * Config.PixelsPerMeter; }
-	public static float px2mt( float v )		{ return v / Config.PixelsPerMeter; }
-	public static Vector2 mt2px( Vector2 v )	{ ret.set(v.x * Config.PixelsPerMeter, v.y * Config.PixelsPerMeter); return ret; }
-	public static Vector2 px2mt( Vector2 v )	{ ret.set(v.x / Config.PixelsPerMeter, v.y / Config.PixelsPerMeter); return ret; }
+	public static float mt2px( float v )		{ return v * Config.Physics.PixelsPerMeter; }
+	public static float px2mt( float v )		{ return v / Config.Physics.PixelsPerMeter; }
+	public static Vector2 mt2px( Vector2 v )	{ ret.set(v.x * Config.Physics.PixelsPerMeter, v.y * Config.Physics.PixelsPerMeter); return ret; }
+	public static Vector2 px2mt( Vector2 v )	{ ret.set(v.x / Config.Physics.PixelsPerMeter, v.y / Config.Physics.PixelsPerMeter); return ret; }
 
 	private static Vector2 retTile;
 	public static Vector2 tileToMt( int tilex, int tiley )

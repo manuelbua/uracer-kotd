@@ -62,7 +62,7 @@ public class LapInfo
 
 	public float getElapsedSeconds()
 	{
-		return ((float)(System.nanoTime() - startTimeNs) / 1000000000f) * Config.PhysicsTimeMultiplier;
+		return ((float)(System.nanoTime() - startTimeNs) / 1000000000f) * Config.Physics.PhysicsTimeMultiplier;
 	}
 
 	public long getStartNanotime()

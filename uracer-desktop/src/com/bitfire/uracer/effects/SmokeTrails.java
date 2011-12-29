@@ -4,52 +4,63 @@ import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.g2d.ParticleEffect;
 import com.badlogic.gdx.graphics.g2d.ParticleEmitter;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
-import com.bitfire.uracer.Physics;
+import com.badlogic.gdx.math.Vector2;
+import com.bitfire.uracer.Art;
 import com.bitfire.uracer.effects.TrackEffects.Effects;
 import com.bitfire.uracer.entities.vehicles.Car;
+import com.bitfire.uracer.game.logic.DriftInfo;
 
 public class SmokeTrails extends TrackEffect
 {
-	ParticleEffect effect;
-	ParticleEmitter baseEmitter;
-	ParticleEmitter[] emitters;
+	private ParticleEffect effect;
+	private ParticleEmitter baseEmitter;
+	private ParticleEmitter[] emitters;
 	private int emitterIdx;
 
-	private final int MaxEmitters = 10;
-	private final int MaxParticlesPerEmitter = 5;
+	private final int MaxEmitters = 50;
+	private final float MaxParticlesPerEmitterPerSec;
+	private final float MaxParticleLifeMinMs;
+	private final float MaxParticleLifeMaxMs;
 
-	// private boolean isDrifting, wasDrifting;
-	// private DriftInfo drift;
+	private boolean isDrifting, wasDrifting, isOn;
+	private DriftInfo drift;
 	private Car player;
 
 	public SmokeTrails( Car player )
 	{
 		super( Effects.SmokeTrails );
-		effect = new ParticleEffect();
-		effect.load( Gdx.files.internal( "data/partfx/smoke.p" ), Gdx.files.internal( "data/partfx" ) );
 
-		baseEmitter = effect.getEmitters().get( 0 );
-		baseEmitter.setMinParticleCount( 0 );
-		baseEmitter.setMaxParticleCount( 0 );
-		baseEmitter.setAdditive( false );
-		baseEmitter.reset();
+		effect = new ParticleEffect();
+		effect.load( Gdx.files.internal( "data/partfx/smoke.p" ), Art.carTextures /*Gdx.files.internal( "data/partfx" )*/ );
 
 		emitters = new ParticleEmitter[ MaxEmitters ];
+		baseEmitter = effect.getEmitters().get( 0 );
+
+		MaxParticleLifeMinMs = baseEmitter.getLife().getHighMin();
+		MaxParticleLifeMaxMs = baseEmitter.getLife().getHighMax();
+		MaxParticlesPerEmitterPerSec = baseEmitter.getEmission().getHighMax();
+
 		emitters[0] = baseEmitter;
 		for( int i = 1; i < MaxEmitters; i++ )
 		{
 			emitters[i] = new ParticleEmitter( baseEmitter );
-			emitters[i].reset();
-
 			effect.getEmitters().add( emitters[i] );
 		}
 
-		effect.start();
+		for( int i = 0; i < MaxEmitters; i++ )
+		{
+			emitters[i].setAdditive( false );
+			emitters[i].setContinuous(false);
+//			emitters[i].setAttached( true );
+			emitters[i].reset();
+			off(i);
+		}
+
 
 		emitterIdx = 0;
 		this.player = player;
-		// isDrifting = wasDrifting = false;
-		// drift = DriftInfo.get();
+		isDrifting = wasDrifting = isOn = false;
+		drift = DriftInfo.get();
 	}
 
 	@Override
@@ -71,57 +82,78 @@ public class SmokeTrails extends TrackEffect
 		// effect.allowCompletion();
 		// }
 
-		if( !effect.isComplete() )
-		{
-			effect.setPosition( player.state().position.x, player.state().position.y );
-			effect.update( Physics.dt );
-		}
+//		effect.setPosition( player.state().position.x, player.state().position.y );
+//		effect.update( Physics.dt );
 
 		// wasDrifting = isDrifting;
-		System.out.println( "active-count=" + getParticleCount() );
+
+//		System.out.println( "smoke particles=" + getParticleCount() );
 	}
+
 
 	@Override
 	public void render( SpriteBatch batch )
 	{
-		if( !effect.isComplete() )
-		{
-			effect.draw( batch );
-		}
+//		effect.setPosition( player.state().position.x, player.state().position.y );
+		effect.draw( batch, Gdx.graphics.getDeltaTime() );
+
+//		if( isOn && effect.isComplete() )
+//		{
+//			effect.start();
+//		}
+	}
+
+	private void off(int emitterIndex)
+	{
+		emitters[emitterIndex].getEmission().setHigh( 0 );
+		emitters[emitterIndex].setMaxParticleCount( 0 );
+		isOn = false;
+	}
+
+	private void on(int emitterIndex)
+	{
+		emitters[emitterIndex].getEmission().setHighMax( MaxParticlesPerEmitterPerSec );
+		emitters[emitterIndex].setMaxParticleCount( (int)MaxParticlesPerEmitterPerSec );
+		emitters[emitterIndex].start();
+		isOn = true;
 	}
 
 	@Override
 	public void reset()
 	{
-		// isDrifting = wasDrifting = false;
-		for( int i = 1; i < MaxEmitters; i++ )
+		isDrifting = wasDrifting = isOn = false;
+		for( int i = 0; i < MaxEmitters; i++ )
 		{
-			emitters[i].setMaxParticleCount( 0 );
-			emitters[i].reset();
+			off( i );
 		}
 	}
 
+	private Vector2 tmp = new Vector2();
 	public void addEmitter( float x, float y )
 	{
-		ParticleEmitter next = emitters[emitterIdx++];
+		ParticleEmitter next = emitters[emitterIdx];
+
+		tmp.set(x,y);
+//		tmp.set( Director.positionFor( tmp ) );	// y-flip pixel-based word position
+		on( emitterIdx );
+		next.setPosition( tmp.x, tmp.y );
+
+//		if( Math.random() * 1000 > 800 )
+//			next.setAdditive( true );
+//		else
+//			next.setAdditive( false );
+
+		emitterIdx++;
 		if( emitterIdx == MaxEmitters ) emitterIdx = 0;
-
-		next.setMaxParticleCount( MaxParticlesPerEmitter );
-		next.setPosition( x, y );
-
-//		next.setAdditive( false );
-//		next.allowCompletion();
-//		next.setContinuous( false );
-//		next.duration = 1000;
-//		next.durationTimer = 0;
-//		next.start();
 	}
 
 	@Override
 	public int getParticleCount()
 	{
+//		return effect.getEmitters().get( 0 ).getActiveCount();
+
 		int count = 0;
-		for( int i = 1; i < MaxEmitters; i++ )
+		for( int i = 0; i < MaxEmitters; i++ )
 		{
 			count += emitters[i].getActiveCount();
 		}

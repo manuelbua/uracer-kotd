@@ -24,6 +24,7 @@ public class URacer implements ApplicationListener
 	private static float graphicsTime = 0;
 	private static float physicsTime = 0;
 	private static float aliasingTime = 0;
+	private float MaxDeltaTime = 0.25f;
 
 	// version
 	private static String versionInfo;
@@ -75,11 +76,11 @@ public class URacer implements ApplicationListener
 		float deltaTime = Gdx.graphics.getDeltaTime();
 
 		// avoid spiral of death
-		deltaTime = AMath.clamp( deltaTime, 0, Config.MaxDeltaTime );
+		deltaTime = AMath.clamp( deltaTime, 0, MaxDeltaTime );
 
 		long startTime = System.nanoTime();
 		{
-			timeAccumSecs += deltaTime * Config.PhysicsTimeMultiplier;
+			timeAccumSecs += deltaTime * Config.Physics.PhysicsTimeMultiplier;
 			while( timeAccumSecs > Physics.dt )
 			{
 				input.tick();
@@ -97,7 +98,7 @@ public class URacer implements ApplicationListener
 		// themselves accordingly to this to avoid flickering and
 		// permitting slow-motion effects without artifacts.
 		// (this imply accepting a one-frame-behind behavior)
-		temporalAliasing = timeAccumSecs * Config.PhysicsTimestepHz;
+		temporalAliasing = timeAccumSecs * Config.Physics.PhysicsTimestepHz;
 		aliasingTime = temporalAliasing;
 
 		startTime = System.nanoTime();

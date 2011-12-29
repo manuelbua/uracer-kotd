@@ -18,9 +18,14 @@ public class TrackEffects
 			this.id = id;
 		}
 
-		public long getCode()
+		public long asLong()
 		{
 			return id;
+		}
+
+		public int asInt()
+		{
+			return (int)id;
 		}
 	}
 
@@ -35,6 +40,9 @@ public class TrackEffects
 
 		TrackEffects.add( Effects.CarSkidMarks );
 		TrackEffects.add( Effects.SmokeTrails );
+
+//		SmokeTrails smoke = (SmokeTrails)TrackEffects.get( Effects.SmokeTrails );
+//		smoke.addEmitter( 100, 100 );
 	}
 
 	/**

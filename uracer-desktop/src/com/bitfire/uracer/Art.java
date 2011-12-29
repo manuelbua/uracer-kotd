@@ -39,7 +39,7 @@ public class Art
 
 	public static void load()
 	{
-		mipMap = Config.EnableMipMapping;
+		mipMap = Config.Graphics.EnableMipMapping;
 
 		base6 = split( "data/base/base6.png", 6, 6, mipMap );
 		quad = new TextureRegion( base6[0][10], 0, 0, 18, 18 );

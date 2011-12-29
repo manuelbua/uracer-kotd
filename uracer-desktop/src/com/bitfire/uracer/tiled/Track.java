@@ -319,10 +319,6 @@ public class Track
 		OrthographicAlignedStillModel m;
 
 		gl.glEnable( GL20.GL_BLEND );
-//		gl.glBlendFunc( GL20.GL_SRC_ALPHA, GL20.GL_ONE_MINUS_SRC_ALPHA );
-
-		// Use color modulation. glTexEnvx(GL_TEXTURE_ENV, GL_TEXTURE_ENV_MODE, GL_MODULATE); Then set alpha component of the
-		// color to desired. glColor4f(255, 255, 255, alpha);
 
 		int size = meshes.size();
 		for( int i = 0; i < size; i++ )

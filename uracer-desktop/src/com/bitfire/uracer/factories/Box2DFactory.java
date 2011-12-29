@@ -95,7 +95,7 @@ public class Box2DFactory
 		fdef.density = 1.0f;
 		fdef.friction = 0.02f;
 
-		if( Config.dbgTraverseWalls )
+		if( Config.Debug.dbgTraverseWalls )
 		{
 			fdef.filter.groupIndex = -1;
 		}

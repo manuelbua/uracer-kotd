@@ -15,7 +15,7 @@ public class Physics
 
 	public static void create( Vector2 gravity, boolean sleepWhenPossible )
 	{
-		dt = 1.0f / Config.PhysicsTimestepHz;
+		dt = 1.0f / Config.Physics.PhysicsTimestepHz;
 		world = new World( gravity, sleepWhenPossible );
 
 		contactListener = new CarContactListener();

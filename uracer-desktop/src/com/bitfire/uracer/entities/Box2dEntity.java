@@ -26,7 +26,7 @@ public class Box2dEntity extends SubframeInterpolableEntity
 	@Override
 	public boolean isSubframeInterpolated()
 	{
-		return Config.SubframeInterpolation;
+		return Config.Graphics.SubframeInterpolation;
 	}
 
 	@Override

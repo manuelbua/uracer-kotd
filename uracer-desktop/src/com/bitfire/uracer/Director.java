@@ -51,7 +51,7 @@ public class Director
 
 		// everything has been setup on a 256px tile, scale back if that's the
 		// case
-		Config.PixelsPerMeter /= scalingStrategy.targetScreenRatio / scalingStrategy.to256;
+		Config.Physics.PixelsPerMeter /= scalingStrategy.targetScreenRatio / scalingStrategy.to256;
 		// System.out.println("ppm=" + Config.PixelsPerMeter);
 
 		Box2DFactory.init();
@@ -117,10 +117,10 @@ public class Director
 		mvpMt.set( mvpPx );
 
 		// rescale
-		mvpMt.val[Matrix4.M00] *= Config.PixelsPerMeter;
-		mvpMt.val[Matrix4.M01] *= Config.PixelsPerMeter;
-		mvpMt.val[Matrix4.M10] *= Config.PixelsPerMeter;
-		mvpMt.val[Matrix4.M11] *= Config.PixelsPerMeter;
+		mvpMt.val[Matrix4.M00] *= Config.Physics.PixelsPerMeter;
+		mvpMt.val[Matrix4.M01] *= Config.Physics.PixelsPerMeter;
+		mvpMt.val[Matrix4.M10] *= Config.Physics.PixelsPerMeter;
+		mvpMt.val[Matrix4.M11] *= Config.Physics.PixelsPerMeter;
 	}
 
 	public static void setPositionPx( Vector2 pos, boolean flipY, boolean round )
@@ -130,7 +130,7 @@ public class Director
 		if( flipY ) tmp.y = worldSizeScaledPx.y - tmp.y;
 
 		// ensure in bounds
-		if( Config.dbgDirectorHasBounds )
+		if( Config.Debug.dbgDirectorHasBounds )
 		{
 			if( tmp.x < boundsPx.x ) tmp.x = boundsPx.x;
 			if( tmp.x > boundsPx.width ) tmp.x = boundsPx.width;

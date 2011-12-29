@@ -45,7 +45,7 @@ public class GameLogic
 		this.player = level.getPlayer();
 
 		// effects
-		if( Config.EnablePostProcessingFx )
+		if( Config.Graphics.EnablePostProcessingFx )
 		{
 			rb = new RadialBlur();
 			rb.setEnabled( true );
@@ -82,6 +82,9 @@ public class GameLogic
 			} else if( Input.isOn( Keys.T ) )
 			{
 				game.reset();
+			} else if( Input.isOn( Keys.Q ) )
+			{
+				System.out.println("TODO implement quit");
 			}
 
 			// onTileChanged
@@ -92,7 +95,7 @@ public class GameLogic
 				listener.onTileChanged( carTileAt );
 			}
 
-			if( Config.EnablePostProcessingFx )
+			if( Config.Graphics.EnablePostProcessingFx )
 			{
 				rb.dampStrength( 0.8f, Physics.dt );
 				rb.setOrigin( Director.screenPosFor( player.getBody() ) );

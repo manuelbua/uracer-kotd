@@ -1,41 +1,41 @@
 Untitled
 - Delay -
 active: false
-- Duration - 
+- Duration -
 lowMin: 1000.0
 lowMax: 1000.0
-- Count - 
+- Count -
 min: 0
 max: 1000
-- Emission - 
+- Emission -
 lowMin: 0.0
 lowMax: 0.0
-highMin: 5.0
-highMax: 5.0
+highMin: 1.0
+highMax: 1.0
 relative: false
 scalingCount: 1
 scaling0: 1.0
 timelineCount: 1
 timeline0: 0.0
-- Life - 
+- Life -
 lowMin: 0.0
 lowMax: 0.0
-highMin: 2000.0
-highMax: 2000.0
+highMin: 400.0
+highMax: 850.0
 relative: false
 scalingCount: 1
 scaling0: 1.0
 timelineCount: 1
 timeline0: 0.0
-- Life Offset - 
+- Life Offset -
 active: false
-- X Offset - 
+- X Offset -
 active: false
-- Y Offset - 
+- Y Offset -
 active: false
-- Spawn Shape - 
+- Spawn Shape -
 shape: point
-- Spawn Width - 
+- Spawn Width -
 lowMin: 0.0
 lowMax: 0.0
 highMin: 0.0
@@ -45,7 +45,7 @@ scalingCount: 1
 scaling0: 1.0
 timelineCount: 1
 timeline0: 0.0
-- Spawn Height - 
+- Spawn Height -
 lowMin: 0.0
 lowMax: 0.0
 highMin: 0.0
@@ -55,82 +55,65 @@ scalingCount: 1
 scaling0: 1.0
 timelineCount: 1
 timeline0: 0.0
-- Scale - 
+- Scale -
 lowMin: 0.0
 lowMax: 0.0
-highMin: 128.0
-highMax: 128.0
+highMin: 32.0
+highMax: 32.0
 relative: false
-scalingCount: 4
-scaling0: 0.056179777
-scaling1: 0.18539326
-scaling2: 0.505618
-scaling3: 1.0
-timelineCount: 4
+scalingCount: 2
+scaling0: 0.2857143
+scaling1: 1.0
+timelineCount: 2
 timeline0: 0.0
-timeline1: 0.44166666
-timeline2: 0.79791665
-timeline3: 1.0
-- Velocity - 
+timeline1: 1.0
+- Velocity -
 active: true
 lowMin: 0.0
 lowMax: 0.0
 highMin: 10.0
 highMax: 10.0
-relative: false
-scalingCount: 4
+relative: true
+scalingCount: 2
 scaling0: 0.0
-scaling1: 0.33707866
-scaling2: 0.46067417
-scaling3: 0.6011236
-timelineCount: 4
+scaling1: 1.0
+timelineCount: 2
 timeline0: 0.0
-timeline1: 0.44791666
-timeline2: 0.73333335
-timeline3: 1.0
-- Angle - 
+timeline1: 1.0
+- Angle -
 active: true
 lowMin: 0.0
 lowMax: 0.0
 highMin: 1.0
 highMax: 360.0
-relative: false
+relative: true
 scalingCount: 1
 scaling0: 1.0
 timelineCount: 1
 timeline0: 0.0
-- Rotation - 
+- Rotation -
 active: true
 lowMin: 0.0
 lowMax: 0.0
 highMin: 1.0
 highMax: 360.0
-relative: false
+relative: true
 scalingCount: 1
 scaling0: 1.0
 timelineCount: 1
 timeline0: 0.0
-- Wind - 
+- Wind -
 active: false
-- Gravity - 
-active: true
-lowMin: 0.0
-lowMax: 0.0
-highMin: -5.0
-highMax: -5.0
-relative: false
-scalingCount: 1
-scaling0: 1.0
-timelineCount: 1
-timeline0: 0.0
-- Tint - 
+- Gravity -
+active: false
+- Tint -
 colorsCount: 3
-colors0: 0.38431373
-colors1: 0.38431373
-colors2: 0.38431373
+colors0: 0.23529412
+colors1: 0.23529412
+colors2: 0.23529412
 timelineCount: 1
 timeline0: 0.0
-- Transparency - 
+- Transparency -
 lowMin: 0.0
 lowMax: 0.0
 highMin: 1.0
@@ -152,11 +135,11 @@ timeline3: 0.47204968
 timeline4: 0.73913044
 timeline5: 0.9026915
 timeline6: 1.0
-- Options - 
+- Options -
 attached: false
 continuous: true
 aligned: false
-additive: true
+additive: false
 behind: true
 - Image Path -
-/tmp/SmokeShape.png
+skid-smoke-small.png

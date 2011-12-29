@@ -113,8 +113,8 @@ public class CarSkidMarks extends TrackEffect
 	{
 		tmp.set( player.state().position );
 
-		SmokeTrails smoke = (SmokeTrails)TrackEffects.get( Effects.SmokeTrails );
-		smoke.addEmitter( tmp.x, tmp.y );
+//		SmokeTrails smoke = (SmokeTrails)TrackEffects.get( Effects.SmokeTrails );
+//		smoke.addEmitter( tmp.x, tmp.y );
 
 		if( player.getCarDescriptor().velocity_wc.len2() < 1 )
 		{
@@ -146,9 +146,6 @@ public class CarSkidMarks extends TrackEffect
 			SkidMark drift = skidMarks.get( markIndex++ );
 			if( markIndex == MaxSkidMarks ) markIndex = 0;
 
-//			SmokeTrails smoke = (SmokeTrails)TrackEffects.get( Effects.SmokeTrails );
-//			smoke.addEmitter( tmp.x, tmp.y );
-
 			drift.alphaFront = af;
 			drift.alphaRear = ar;
 			drift.setPosition( tmp );
@@ -161,6 +158,12 @@ public class CarSkidMarks extends TrackEffect
 			last.set( tmp );
 		}
 
+		// if( timer.isTime() )
+		if( af > 0.8f || ar > 0.8f )
+		{
+			SmokeTrails smoke = (SmokeTrails)TrackEffects.get( Effects.SmokeTrails );
+			smoke.addEmitter( tmp.x, tmp.y );
+		}
 	}
 
 	private class SkidMark
