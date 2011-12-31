@@ -131,6 +131,8 @@ public class CarSkidMarks extends TrackEffect
 			return;
 		}
 
+		// TODO: the following latf results should be part of DriftInfo and made available
+
 		// lateral forces are in the range [-max_grip, max_grip]
 		float flatf = Math.abs( player.getSimulator().lateralForceFront.y );
 		flatf = AMath.clamp( flatf / model.max_grip, 0, 1f );
@@ -156,13 +158,14 @@ public class CarSkidMarks extends TrackEffect
 			drift.life = drift.maxLife;
 
 			last.set( tmp );
-		}
 
-		// if( timer.isTime() )
-		if( af > 0.8f || ar > 0.8f )
-		{
-			SmokeTrails smoke = (SmokeTrails)TrackEffects.get( Effects.SmokeTrails );
-			smoke.addEmitter( tmp.x, tmp.y );
+			// TODO: modulate particles, not just emitters
+//			e.setAdditive( false );
+//			e.getTransparency().setHigh( 1 );
+//			e.addParticles(10);
+//			e.getTransparency().setLow( 0 );
+//			e.getTransparency().setHigh( (af+ar)/2 );
+//			e.getScale().setHigh( 32 * (af+ar)/2 );
 		}
 	}
 

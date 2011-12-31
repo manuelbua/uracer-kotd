@@ -14,7 +14,8 @@ public class URacerDesktop
 		new JoglApplication(new URacer(), "uRacer: The King Of The Drift", 1280, 800, true);	// target
 //		new JoglApplication(new URacer(), "uRacer: The King Of The Drift", 1280, 1024, true);
 
-		// higher resolutions than the target can't be supported without artifacts of some sort cropping out
+		// higher resolutions than the target can't be supported without Track artifacts of
+		// some sort cropping out
 //		new JoglApplication(new URacer(), "uRacer: The King Of The Drift", 1900, 1000, true);
 	}
 
