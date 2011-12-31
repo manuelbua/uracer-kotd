@@ -149,7 +149,7 @@ public class Game
 
 		if( Config.isDesktop )
 		{
-//			Debug.renderB2dWorld( Director.getMatViewProjMt() );
+			Debug.renderB2dWorld( Director.getMatViewProjMt() );
 
 			Debug.begin( batch );
 			EntityManager.raiseOnDebug();

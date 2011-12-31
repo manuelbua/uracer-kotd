@@ -154,10 +154,10 @@ public class Level
 		//
 		// HUGE performance hit enabling rendering of tile-based walls
 		// on mobile (Tegra2)
-		if( track.hasMeshes() )
-		{
+//		if( track.hasMeshes() )
+//		{
 //			track.render( gl );
-		}
+//		}
 
 		gl.glDisable( GL20.GL_DEPTH_TEST );
 		gl.glDisable( GL20.GL_CULL_FACE );
