@@ -162,6 +162,7 @@ public class Game
 		} else
 		{
 			Debug.begin( batch );
+			Debug.renderVersionInfo();
 			Debug.renderGraphicalStats( Gdx.graphics.getWidth() - Debug.getStatsWidth(),
 					Gdx.graphics.getHeight() - Debug.getStatsHeight() - Debug.fontHeight );
 			Debug.end();

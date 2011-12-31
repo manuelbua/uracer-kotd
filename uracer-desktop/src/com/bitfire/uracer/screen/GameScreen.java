@@ -1,7 +1,7 @@
 package com.bitfire.uracer.screen;
 
+import com.bitfire.uracer.Config;
 import com.bitfire.uracer.game.Game;
-import com.bitfire.uracer.game.GameDifficulty;
 
 public class GameScreen extends Screen
 {
@@ -9,7 +9,7 @@ public class GameScreen extends Screen
 
 	public GameScreen()
 	{
-		game = new Game( GameDifficulty.Easy );
+		game = new Game( Config.Game.difficulty );
 	}
 
 	@Override

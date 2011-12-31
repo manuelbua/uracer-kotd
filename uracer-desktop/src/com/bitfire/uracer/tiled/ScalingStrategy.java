@@ -44,7 +44,7 @@ public class ScalingStrategy
 		float thisH = (float)Gdx.graphics.getHeight();
 
 		// compute tilemap zoom factor (ref:1=this:x)
-		if( thisW > thisH )
+		if( thisW > thisH  || thisW == thisH )
 		{
 			tileMapZoomFactor = 1f / ((thisW * tileMapZoomFactorAtRef) / referenceScreen.x);
 		} else
