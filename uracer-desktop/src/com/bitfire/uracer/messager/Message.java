@@ -85,34 +85,32 @@ public class Message
 
 	private void computeFinalPosition()
 	{
-		font.setScale(1.5f * Director.scalingStrategy.invTileMapZoomFactor, 1.5f * Director.scalingStrategy.invTileMapZoomFactor);
-
-		bounds.set( font.getMultiLineBounds( what ) );
-
 		whereX = finalX = Gdx.graphics.getWidth() / 4;
 		finalY = 0;
 
-		float distance = 30 * Director.scalingStrategy.invTileMapZoomFactor;
+		float distance = 180 * Director.scalingStrategy.invTileMapZoomFactor;
 
 		switch( position )
 		{
 		case Top:
-			finalY = distance;
+			finalY = 30 * Director.scalingStrategy.invTileMapZoomFactor;
 			whereY = Gdx.graphics.getHeight() / 2;
 			break;
 
 		case Middle:
-			finalY = (Gdx.graphics.getHeight() - bounds.height) / 2;
+			font.setScale(1.5f * Director.scalingStrategy.invTileMapZoomFactor, 1.5f * Director.scalingStrategy.invTileMapZoomFactor);
+			bounds.set( font.getMultiLineBounds( what ) );
+			finalY = (Gdx.graphics.getHeight() - bounds.height) / 2 - bounds.height/2;
 			whereY = Gdx.graphics.getHeight() + bounds.height;
 			break;
 
 		case Bottom:
-			finalY = Gdx.graphics.getHeight() - bounds.height - distance;
-			whereY = Gdx.graphics.getHeight() + bounds.height + distance;
+			finalY = Gdx.graphics.getHeight() - distance;
+			whereY = Gdx.graphics.getHeight() + distance;
 			break;
 		}
 
-		font.setScale(Director.scalingStrategy.invTileMapZoomFactor, Director.scalingStrategy.invTileMapZoomFactor);
+		font.setScale(Director.scalingStrategy.invTileMapZoomFactor,Director.scalingStrategy.invTileMapZoomFactor);
 	}
 
 	public boolean tick()
