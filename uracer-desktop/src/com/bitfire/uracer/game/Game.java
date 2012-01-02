@@ -149,11 +149,12 @@ public class Game
 
 		if( Config.isDesktop )
 		{
-			Debug.renderB2dWorld( Director.getMatViewProjMt() );
+			if( Config.Graphics.RenderBox2DWorldWireframe )
+				Debug.renderB2dWorld( Director.getMatViewProjMt() );
 
 			Debug.begin( batch );
 			EntityManager.raiseOnDebug();
-			hud.debug();
+			if( Config.Graphics.RenderHudDebugInfo ) hud.debug( batch );
 			Debug.renderVersionInfo();
 			Debug.renderGraphicalStats( Gdx.graphics.getWidth() - Debug.getStatsWidth(),
 					Gdx.graphics.getHeight() - Debug.getStatsHeight() - Debug.fontHeight );

@@ -16,6 +16,9 @@ public class Config
 		public static boolean EnableMipMapping;
 		public static boolean EnablePostProcessingFx;
 		public static boolean SubframeInterpolation;
+		public static boolean RenderBox2DWorldWireframe;
+		public static boolean RenderPlayerDebugInfo;
+		public static boolean RenderHudDebugInfo;
 		public static InterpolationMode CameraInterpolationMode;
 		public static long Effects;
 
@@ -30,6 +33,11 @@ public class Config
 			EnablePostProcessingFx = false;
 			EnableMipMapping = true;
 			SubframeInterpolation = true;
+
+			RenderBox2DWorldWireframe = false;
+			RenderPlayerDebugInfo = false;
+			RenderHudDebugInfo = false;
+
 			CameraInterpolationMode = InterpolationMode.Sigmoid;
 			Effects = (TrackEffects.Effects.CarSkidMarks.id | TrackEffects.Effects.SmokeTrails.id);
 		}
@@ -67,7 +75,7 @@ public class Config
 
 		public static void asDefault()
 		{
-			dbgTraverseWalls = true;
+			dbgTraverseWalls = false;
 			dbgDirectorHasBounds = true;
 		}
 	}

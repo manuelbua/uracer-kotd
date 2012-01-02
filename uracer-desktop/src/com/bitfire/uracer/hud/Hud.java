@@ -4,7 +4,6 @@ import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.math.Matrix4;
 import com.bitfire.uracer.Art;
-import com.bitfire.uracer.Config;
 import com.bitfire.uracer.carsimulation.Replay;
 import com.bitfire.uracer.effects.CarSkidMarks;
 import com.bitfire.uracer.effects.TrackEffects;
@@ -97,7 +96,7 @@ public class Hud
 				best.setString( String.format( "BEST  TIME\n%.04fs", lapInfo.getLastTrackTimeSeconds() ) );
 			} else
 			{
-				best.setString( "BEST TIME\n-.----" );
+				best.setString( "BEST TIME\n-:----" );
 			}
 		}
 
@@ -125,36 +124,32 @@ public class Hud
 		best.render( batch );
 		last.render( batch );
 
-		// dbg only
-		if( Config.isDesktop )
-		{
-			DriftInfo drift = DriftInfo.get();
-
-			// lateral forces
-			meterLatForce.setValue( drift.driftStrength );
-
-			if( drift.isDrifting )
-				meterLatForce.color.set( .3f, 1f, .3f, 1f );
-			else
-				meterLatForce.color.set( 1f, 1f, 1f, 1f );
-
-			meterLatForce.render( batch );
-
-			meterSkidMarks.setValue( TrackEffects.getParticleCount( Effects.CarSkidMarks ) );
-			meterSkidMarks.render( batch );
-		}
-
 		// render drifting component
 		hudDrift.render( batch );
 
 		batch.end();
 	}
 
-	public void debug()
+	public void debug( SpriteBatch batch )
 	{
 		meterLatForce.debug();
 		meterSkidMarks.debug();
-	}
+
+		DriftInfo drift = DriftInfo.get();
+
+		// lateral forces
+		meterLatForce.setValue( drift.driftStrength );
+
+		if( drift.isDrifting )
+			meterLatForce.color.set( .3f, 1f, .3f, 1f );
+		else
+			meterLatForce.color.set( 1f, 1f, 1f, 1f );
+
+		meterLatForce.render( batch );
+
+		meterSkidMarks.setValue( TrackEffects.getParticleCount( Effects.CarSkidMarks ) );
+		meterSkidMarks.render( batch );
+}
 
 
 	/**
