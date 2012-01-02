@@ -31,7 +31,6 @@ public class Message
 	private MessagePosition position;
 	private float whereX, whereY;
 	private float finalX, finalY;
-	private float originX, originY;
 	private float scaleX, scaleY;
 	private BitmapFont font;
 	private int halfWidth;
@@ -86,30 +85,34 @@ public class Message
 
 	private void computeFinalPosition()
 	{
+		font.setScale(1.5f * Director.scalingStrategy.invTileMapZoomFactor, 1.5f * Director.scalingStrategy.invTileMapZoomFactor);
+
 		bounds.set( font.getMultiLineBounds( what ) );
-		originX = bounds.width / 2;
-		originY = bounds.height / 2;
 
 		whereX = finalX = Gdx.graphics.getWidth() / 4;
 		finalY = 0;
 
+		float distance = 30 * Director.scalingStrategy.invTileMapZoomFactor;
+
 		switch( position )
 		{
 		case Top:
-			finalY = 30 * font.getScaleX();
+			finalY = distance;
 			whereY = Gdx.graphics.getHeight() / 2;
 			break;
 
 		case Middle:
 			finalY = (Gdx.graphics.getHeight() - bounds.height) / 2;
-			whereY = Gdx.graphics.getHeight() + 50 * font.getScaleX();
+			whereY = Gdx.graphics.getHeight() + bounds.height;
 			break;
 
 		case Bottom:
-			finalY = Gdx.graphics.getHeight() - bounds.height - 80 * font.getScaleX();
-			whereY = Gdx.graphics.getHeight() + 50 * font.getScaleX();
+			finalY = Gdx.graphics.getHeight() - bounds.height - distance;
+			whereY = Gdx.graphics.getHeight() + bounds.height + distance;
 			break;
 		}
+
+		font.setScale(Director.scalingStrategy.invTileMapZoomFactor, Director.scalingStrategy.invTileMapZoomFactor);
 	}
 
 	public boolean tick()
@@ -177,16 +180,6 @@ public class Message
 	public float getY()
 	{
 		return whereY;
-	}
-
-	public float getOriginX()
-	{
-		return originX;
-	}
-
-	public float getOriginY()
-	{
-		return originY;
 	}
 
 	public float getScaleX()

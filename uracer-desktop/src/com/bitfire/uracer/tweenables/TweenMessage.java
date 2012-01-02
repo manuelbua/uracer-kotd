@@ -1,8 +1,8 @@
 package com.bitfire.uracer.tweenables;
 
-import com.bitfire.uracer.messager.Message;
-
 import aurelienribon.tweenengine.Tweenable;
+
+import com.bitfire.uracer.messager.Message;
 
 public class TweenMessage implements Tweenable
 {
@@ -58,7 +58,7 @@ public class TweenMessage implements Tweenable
 		switch( tweenType )
 		{
 		case POSITION_XY:
-			msg.setPosition( newValues[0] - msg.getOriginX(), newValues[1] - msg.getOriginY() );
+			msg.setPosition( newValues[0] /*- msg.getOriginX()*/, newValues[1] /*- msg.getOriginY()*/ );
 			break;
 
 		case POSITION_X:
