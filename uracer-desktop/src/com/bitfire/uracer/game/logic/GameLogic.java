@@ -55,7 +55,7 @@ public class GameLogic
 		}
 
 		DriftInfo.init( this );
-		LapInfo.init( this );
+		LapInfo.init();
 
 		this.listener = new GameLogicListener( this );
 }
