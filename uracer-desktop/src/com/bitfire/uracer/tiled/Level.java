@@ -14,6 +14,7 @@ import com.badlogic.gdx.graphics.g2d.tiled.TiledMap;
 import com.badlogic.gdx.graphics.g2d.tiled.TiledObject;
 import com.badlogic.gdx.graphics.g2d.tiled.TiledObjectGroup;
 import com.badlogic.gdx.math.Vector2;
+import com.bitfire.uracer.Config;
 import com.bitfire.uracer.Director;
 import com.bitfire.uracer.carsimulation.CarModel;
 import com.bitfire.uracer.carsimulation.Recorder;
@@ -154,10 +155,10 @@ public class Level
 		//
 		// HUGE performance hit enabling rendering of tile-based walls
 		// on mobile (Tegra2)
-//		if( track.hasMeshes() )
-//		{
-//			track.render( gl );
-//		}
+		if( track.hasMeshes() && Config.Graphics.RenderTrackMeshes )
+		{
+			track.render( gl );
+		}
 
 		gl.glDisable( GL20.GL_DEPTH_TEST );
 		gl.glDisable( GL20.GL_CULL_FACE );

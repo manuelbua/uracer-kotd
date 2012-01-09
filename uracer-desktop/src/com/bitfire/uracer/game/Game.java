@@ -1,12 +1,20 @@
 package com.bitfire.uracer.game;
 
+import box2dLight.ConeLight;
+import box2dLight.PointLight;
+import box2dLight.RayHandler;
+
 import com.badlogic.gdx.Gdx;
+import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.GL20;
 import com.badlogic.gdx.graphics.OrthographicCamera;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
+import com.badlogic.gdx.math.MathUtils;
+import com.badlogic.gdx.math.Vector2;
 import com.bitfire.uracer.Art;
 import com.bitfire.uracer.Config;
 import com.bitfire.uracer.Director;
+import com.bitfire.uracer.Physics;
 import com.bitfire.uracer.URacer;
 import com.bitfire.uracer.debug.Debug;
 import com.bitfire.uracer.effects.TrackEffects;
@@ -19,6 +27,7 @@ import com.bitfire.uracer.game.logic.GameLogic;
 import com.bitfire.uracer.hud.Hud;
 import com.bitfire.uracer.messager.Messager;
 import com.bitfire.uracer.tiled.Level;
+import com.bitfire.uracer.utils.Convert;
 
 public class Game
 {
@@ -33,6 +42,11 @@ public class Game
 	private GameLogic logic = null;
 	private DirectorController controller;
 
+	// ray handling
+	private RayHandler rayHandler;
+	private ConeLight playerLight;
+	private PointLight[] levelLights = new PointLight[10];
+
 	// drawing
 	private SpriteBatch batch = null;
 
@@ -42,6 +56,8 @@ public class Game
 		gameSettings = GameplaySettings.create( difficulty );
 		Director.create( Gdx.graphics.getWidth(), Gdx.graphics.getHeight() );
 		Art.scaleFonts( Director.scalingStrategy.invTileMapZoomFactor );
+
+		// bring up level
 		level = Director.loadLevel( "level1", gameSettings );
 		player = level.getPlayer();
 
@@ -59,7 +75,72 @@ public class Game
 		// count is higher than 10
 		batch = new SpriteBatch( 1000, 8 );
 
-//		Messager.show( "debug\ndebug", 13f, MessageType.Information, MessagePosition.Bottom, MessageSize.Big );
+		if( Config.Graphics.NightMode )
+		{
+			// setup ray handling stuff
+			float rttScale = .125f;
+			int maxRays = 128;
+			rayHandler = new RayHandler(Physics.world, maxRays, (int)(Gdx.graphics.getWidth()*rttScale), (int)(Gdx.graphics.getHeight()*rttScale));
+			rayHandler.setShadows(true);
+			rayHandler.setAmbientLight(0.15f);
+			rayHandler.setCulling(true);
+			rayHandler.setBlur(true);
+			rayHandler.setBlurNum(2);
+
+			// attach light to player
+			float lightDistance = 40;
+			final Color c = new Color( 1f, 1f, 1f, .9f );
+
+			playerLight = new ConeLight( rayHandler, maxRays, c, lightDistance, 0, 0, 0, 15 );
+			playerLight.setSoft( false );
+			playerLight.setXray( true );
+//			playerLight.attachToBody( player.getBody(), 0, (player.getCarModel().length/2f) + .25f );
+
+			// level lights test
+			Vector2 tile;
+			float dist = 30f;
+			float halfTileMt = Convert.px2mt( 112 );
+
+			tile = Convert.tileToMt( 1, 1 ).add(halfTileMt, -halfTileMt);
+			c.set( 1f, .85f, .35f, .8f );
+			levelLights[0] = new PointLight( rayHandler, maxRays, c, dist, tile.x, tile.y );
+
+			tile = Convert.tileToMt( 9, 1 ).add(halfTileMt, -halfTileMt);
+			c.set( 1f, .85f, .35f, .8f );
+			levelLights[1] = new PointLight( rayHandler, maxRays, c, dist, tile.x, tile.y );
+
+			tile = Convert.tileToMt( 1, 6 ).add(halfTileMt, -halfTileMt);
+			c.set( 1f, .85f, .35f, .8f );
+			levelLights[2] = new PointLight( rayHandler, maxRays, c, dist, tile.x, tile.y );
+
+			tile = Convert.tileToMt( 5, 6 ).add(halfTileMt, -halfTileMt);
+			c.set( 1f, .85f, .35f, .8f );
+			levelLights[3] = new PointLight( rayHandler, maxRays, c, dist, tile.x, tile.y );
+
+			tile = Convert.tileToMt( 6, 2 ).add(0, -halfTileMt/2f );
+			c.set( 1f, .85f, .35f, .8f );
+			levelLights[4] = new PointLight( rayHandler, maxRays, c, dist, tile.x, tile.y );
+
+			tile = Convert.tileToMt( 8, 2 ).add(0, -halfTileMt/2f );
+			c.set( 1f, .85f, .35f, .8f );
+			levelLights[5] = new PointLight( rayHandler, maxRays, c, dist, tile.x, tile.y );
+
+			tile = Convert.tileToMt( 7, 7 ).add(0, halfTileMt/2f );
+			c.set( 1f, .85f, .35f, .8f );
+			levelLights[6] = new PointLight( rayHandler, maxRays, c, dist, tile.x, tile.y );
+
+			tile = Convert.tileToMt( 9, 7 ).add(0, halfTileMt/2f );
+			c.set( 1f, .85f, .35f, .8f );
+			levelLights[7] = new PointLight( rayHandler, maxRays, c, dist, tile.x, tile.y );
+
+			tile = Convert.tileToMt( 5, 5 ).add(-halfTileMt/2f,0);
+			c.set( 1f, .85f, .35f, .8f );
+			levelLights[8] = new PointLight( rayHandler, maxRays, c, dist, tile.x, tile.y );
+
+			tile = Convert.tileToMt( 1, 4 ).add(halfTileMt,-halfTileMt);
+			c.set( 1f, .85f, .35f, .8f );
+			levelLights[9] = new PointLight( rayHandler, maxRays, c, dist, tile.x, tile.y );
+		}
 	}
 
 	public void dispose()
@@ -81,11 +162,13 @@ public class Game
 		Debug.update();
 	}
 
+	private int frameCount = 0;
 	public void render()
 	{
 		GL20 gl = Gdx.graphics.getGL20();
 		OrthographicCamera ortho = Director.getCamera();
 
+		// Entity's state() is transformed into pixel space
 		EntityManager.raiseOnBeforeRender( URacer.getTemporalAliasing() );
 
 		// follow the car
@@ -133,8 +216,50 @@ public class Game
 			}
 			batch.end();
 
-			// render meshes
+			// render 3d meshes
 			level.renderMeshes( gl );
+
+			//
+			// rays stuff
+			//
+			if( Config.Graphics.NightMode )
+			{
+				// update player light (subframe interpolation ready)
+				float ang = 90 + player.state().orientation;
+				float offx = (player.getCarModel().length/2f) + 1f /* should ignore this emitter's body instead */;
+				float offy = 0f;
+
+				float cos = MathUtils.cosDeg(ang);
+				float sin = MathUtils.sinDeg(ang);
+				float dX = offx * cos - offy * sin;
+				float dY = offx * sin + offy * cos;
+
+				float px = Convert.px2mt(player.state().position.x) + dX;
+				float py = Convert.px2mt(player.state().position.y) + dY;
+
+				playerLight.setDirection( ang );
+				playerLight.setPosition( px, py );
+
+//				playerLight.setDirection( 90 - player.orient() );
+
+//				if( Config.Graphics.SubframeInterpolation || URacer.hasStepped() )
+					rayHandler.update();
+
+				rayHandler.setCombinedMatrix( Director.getMatViewProjMt(),
+						Convert.px2mt( ortho.position.x ),
+						Convert.px2mt( ortho.position.y ),
+						Convert.px2mt( ortho.viewportWidth * ortho.zoom ),
+						Convert.px2mt( ortho.viewportHeight * ortho.zoom )
+				);
+
+				rayHandler.render();
+			}
+
+			frameCount++;
+			if((frameCount&0x3f)==0x3f)
+			{
+				System.out.println("lights rendered="+rayHandler.lightRenderedLastFrame);
+			}
 		}
 
 		if( Config.Graphics.EnablePostProcessingFx )
