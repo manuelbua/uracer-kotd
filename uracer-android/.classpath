@@ -7,5 +7,6 @@
 	<classpathentry combineaccessrules="false" kind="src" path="/gdx-backend-android"/>
 	<classpathentry combineaccessrules="false" kind="src" path="/uracer-desktop"/>
 	<classpathentry kind="lib" path="/model-loaders/bin"/>
+	<classpathentry combineaccessrules="false" kind="src" path="/box2dLight"/>
 	<classpathentry kind="output" path="bin/classes"/>
 </classpath>
