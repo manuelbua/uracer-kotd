@@ -78,68 +78,74 @@ public class Game
 		if( Config.Graphics.NightMode )
 		{
 			// setup ray handling stuff
-			float rttScale = .125f;
+			float rttScale = .25f;
 			int maxRays = 128;
 			rayHandler = new RayHandler(Physics.world, maxRays, (int)(Gdx.graphics.getWidth()*rttScale), (int)(Gdx.graphics.getHeight()*rttScale));
 			rayHandler.setShadows(true);
-			rayHandler.setAmbientLight(0.15f);
+			rayHandler.setAmbientLight(0.2f);
 			rayHandler.setCulling(true);
 			rayHandler.setBlur(true);
-			rayHandler.setBlurNum(2);
+			rayHandler.setBlurNum(1);
 
 			// attach light to player
-			float lightDistance = 40;
 			final Color c = new Color( 1f, 1f, 1f, .9f );
 
-			playerLight = new ConeLight( rayHandler, maxRays, c, lightDistance, 0, 0, 0, 15 );
+			playerLight = new ConeLight( rayHandler, maxRays, c, 30, 0, 0, 0, 15 );
 			playerLight.setSoft( false );
-			playerLight.setXray( true );
+//			playerLight.setXray( true );
 //			playerLight.attachToBody( player.getBody(), 0, (player.getCarModel().length/2f) + .25f );
 
 			// level lights test
 			Vector2 tile;
-			float dist = 30f;
+			float dist = 20f;
+			float intensity = 1f;
 			float halfTileMt = Convert.px2mt( 112 );
 
 			tile = Convert.tileToMt( 1, 1 ).add(halfTileMt, -halfTileMt);
-			c.set( 1f, .85f, .35f, .8f );
+			c.set( 1f, .85f, .35f, intensity );
 			levelLights[0] = new PointLight( rayHandler, maxRays, c, dist, tile.x, tile.y );
 
 			tile = Convert.tileToMt( 9, 1 ).add(halfTileMt, -halfTileMt);
-			c.set( 1f, .85f, .35f, .8f );
+			c.set( 1f, .85f, .35f, intensity );
 			levelLights[1] = new PointLight( rayHandler, maxRays, c, dist, tile.x, tile.y );
 
 			tile = Convert.tileToMt( 1, 6 ).add(halfTileMt, -halfTileMt);
-			c.set( 1f, .85f, .35f, .8f );
+			c.set( 1f, .85f, .35f, intensity );
 			levelLights[2] = new PointLight( rayHandler, maxRays, c, dist, tile.x, tile.y );
 
 			tile = Convert.tileToMt( 5, 6 ).add(halfTileMt, -halfTileMt);
-			c.set( 1f, .85f, .35f, .8f );
+			c.set( 1f, .85f, .35f, intensity );
 			levelLights[3] = new PointLight( rayHandler, maxRays, c, dist, tile.x, tile.y );
 
 			tile = Convert.tileToMt( 6, 2 ).add(0, -halfTileMt/2f );
-			c.set( 1f, .85f, .35f, .8f );
+			c.set( 1f, .85f, .35f, intensity );
 			levelLights[4] = new PointLight( rayHandler, maxRays, c, dist, tile.x, tile.y );
 
 			tile = Convert.tileToMt( 8, 2 ).add(0, -halfTileMt/2f );
-			c.set( 1f, .85f, .35f, .8f );
+			c.set( 1f, .85f, .35f, intensity );
 			levelLights[5] = new PointLight( rayHandler, maxRays, c, dist, tile.x, tile.y );
 
 			tile = Convert.tileToMt( 7, 7 ).add(0, halfTileMt/2f );
-			c.set( 1f, .85f, .35f, .8f );
+			c.set( 1f, .85f, .35f, intensity );
 			levelLights[6] = new PointLight( rayHandler, maxRays, c, dist, tile.x, tile.y );
 
 			tile = Convert.tileToMt( 9, 7 ).add(0, halfTileMt/2f );
-			c.set( 1f, .85f, .35f, .8f );
+			c.set( 1f, .85f, .35f, intensity );
 			levelLights[7] = new PointLight( rayHandler, maxRays, c, dist, tile.x, tile.y );
 
 			tile = Convert.tileToMt( 5, 5 ).add(-halfTileMt/2f,0);
-			c.set( 1f, .85f, .35f, .8f );
+			c.set( 1f, .85f, .35f, intensity );
 			levelLights[8] = new PointLight( rayHandler, maxRays, c, dist, tile.x, tile.y );
 
 			tile = Convert.tileToMt( 1, 4 ).add(halfTileMt,-halfTileMt);
-			c.set( 1f, .85f, .35f, .8f );
+			c.set( 1f, .85f, .35f, intensity );
 			levelLights[9] = new PointLight( rayHandler, maxRays, c, dist, tile.x, tile.y );
+
+			for( int i = 0; i < 10; i++)
+			{
+				levelLights[i].setXray( false );
+				levelLights[i].setSoft( false );
+			}
 		}
 	}
 
@@ -226,7 +232,9 @@ public class Game
 			{
 				// update player light (subframe interpolation ready)
 				float ang = 90 + player.state().orientation;
-				float offx = (player.getCarModel().length/2f) + 1f /* should ignore this emitter's body instead */;
+
+				// the body's compound shape should be created with some clever thinking in it :)
+				float offx = (player.getCarModel().length/2f) + .25f;
 				float offy = 0f;
 
 				float cos = MathUtils.cosDeg(ang);
