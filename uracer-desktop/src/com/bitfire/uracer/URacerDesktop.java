@@ -31,8 +31,10 @@ public class URacerDesktop
 	{
 		LwjglApplicationConfiguration config = new LwjglApplicationConfiguration();
 		config.title = "uRacer: The King Of The Drift";
-		config.width = 1280;
-		config.height = 800;
+
+//		config.width = 1280; config.height = 800;
+		config.width = 1280; config.height = 720;
+
 		config.samples = 0;
 		config.depth = 0;
 		config.vSyncEnabled = true;

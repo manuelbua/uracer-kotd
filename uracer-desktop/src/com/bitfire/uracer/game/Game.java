@@ -79,10 +79,10 @@ public class Game
 		{
 			// setup ray handling stuff
 			float rttScale = .25f;
-			int maxRays = 128;
+			int maxRays = 256;
 			rayHandler = new RayHandler(Physics.world, maxRays, (int)(Gdx.graphics.getWidth()*rttScale), (int)(Gdx.graphics.getHeight()*rttScale));
 			rayHandler.setShadows(true);
-			rayHandler.setAmbientLight(0.2f);
+			rayHandler.setAmbientLight(0.8f);
 			rayHandler.setCulling(true);
 			rayHandler.setBlur(true);
 			rayHandler.setBlurNum(1);
