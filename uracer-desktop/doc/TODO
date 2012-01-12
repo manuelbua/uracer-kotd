@@ -27,3 +27,18 @@ AUDIO
 		
 	- sound track
  		- (i don't give a shit about latency in this case)
+ 
+ LIGHTING SYSTEM
+ 
+ 	- 2d dynamic lighting system w/ realtime soft shadows
+ 	- light attachment to box2d objects
+ 		- filtering system via groupIds then/or/else categoryBits and maskBits (order matters)
+ 		
+ 			+ light.groupId == fixture.groupId
+ 				- if (groupId > 0) light will block at the fixture (generate shadow)
+ 				- if (groupId < 0) light will ignore the fixture (no shadow)
+ 			
+ 			+ if ((light.maskBits & fixture.categoryBits) != 0)
+ 				- light will block at the fixture
+ 			+ else
+ 				- light will ignore the fixture
