@@ -6,6 +6,7 @@ import com.badlogic.gdx.math.Matrix4;
 import com.bitfire.uracer.Art;
 import com.bitfire.uracer.carsimulation.Replay;
 import com.bitfire.uracer.effects.CarSkidMarks;
+import com.bitfire.uracer.effects.SmokeTrails;
 import com.bitfire.uracer.effects.TrackEffects;
 import com.bitfire.uracer.effects.TrackEffects.Effects;
 import com.bitfire.uracer.entities.vehicles.Car;
@@ -20,8 +21,8 @@ public class Hud
 	private Car player;
 
 	private HudLabel best, curr, last;
-	private HudDebugMeter meterLatForce, meterSkidMarks;
 	private Matrix4 topLeftOrigin, identity;
+	private HudDebugMeter meterLatForce, meterSkidMarks, meterSmoke;
 
 	// components
 	private HudDrifting hudDrift;
@@ -61,6 +62,10 @@ public class Hud
 		meterSkidMarks = new HudDebugMeter( this, 1, 100, 5 );
 		meterSkidMarks.setLimits( 0, CarSkidMarks.MaxSkidMarks );
 		meterSkidMarks.setName( "skid marks count" );
+
+		meterSmoke = new HudDebugMeter( this, 2, 100, 5 );
+		meterSmoke.setLimits( 0, SmokeTrails.MaxParticles );
+		meterSmoke.setName( "smokepar count" );
 	}
 
 	public void dispose()
@@ -134,6 +139,7 @@ public class Hud
 	{
 		meterLatForce.debug();
 		meterSkidMarks.debug();
+		meterSmoke.debug();
 
 		DriftInfo drift = DriftInfo.get();
 
@@ -149,7 +155,10 @@ public class Hud
 
 		meterSkidMarks.setValue( TrackEffects.getParticleCount( Effects.CarSkidMarks ) );
 		meterSkidMarks.render( batch );
-}
+
+		meterSmoke.setValue( TrackEffects.getParticleCount( Effects.SmokeTrails ) );
+		meterSmoke.render( batch );
+	}
 
 
 	/**

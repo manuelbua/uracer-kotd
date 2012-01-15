@@ -15,6 +15,7 @@ public class SmokeTrails extends TrackEffect
 {
 	private SmokeEffect fx[];
 	private final int SmokeEffectsCount = 1;
+	public static final int MaxParticles = 50;
 
 	private boolean isDrifting, wasDrifting;
 	private DriftInfo drift;
@@ -37,7 +38,7 @@ public class SmokeTrails extends TrackEffect
 
 			baseEmitter = effect.getEmitters().get( 0 );
 
-			baseEmitter.setMaxParticleCount( 1000 );
+			baseEmitter.setMaxParticleCount( MaxParticles );
 			MaxParticleLifeMinMs = baseEmitter.getLife().getHighMin();
 			MaxParticleLifeMaxMs = baseEmitter.getLife().getHighMax();
 			OriginalParticleScaling = baseEmitter.getScale().getHighMax();
@@ -107,7 +108,7 @@ public class SmokeTrails extends TrackEffect
 		for(int i = 0; i < SmokeEffectsCount; i++)
 		{
 			fx[i] = new SmokeEffect();
-			fx[i].setLifeMul( 2.4f );
+			fx[i].setLifeMul( 2.25f );
 //			fx[i].setScaleMul( .9f );
 			fx[i].setEmissionMul( .8f );
 			fx[i].stop();

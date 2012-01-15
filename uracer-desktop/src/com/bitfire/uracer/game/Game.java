@@ -75,23 +75,25 @@ public class Game
 		// Issues may arise on Tegra2 (Asus Transformer) devices if the buffers'
 		// count is higher than 10
 		batch = new SpriteBatch( 1000, 8 );
-//		batch = new SpriteBatch();
 
 		if( Config.Graphics.NightMode )
 		{
 			// setup ray handling stuff
-			float rttScale = .2f;
+			float rttScale = .25f;
 			int maxRays = 100;
+			RayHandler.setColorPrecisionMediump();
 			rayHandler = new RayHandler(Physics.world, maxRays, (int)(Gdx.graphics.getWidth()*rttScale), (int)(Gdx.graphics.getHeight()*rttScale));
 			rayHandler.setShadows(true);
 			rayHandler.setAmbientLight(0.2f);
+			rayHandler.setAmbientColor( new Color( 0, 0.05f, 0.25f, 1 ) );
 			rayHandler.setCulling(true);
 			rayHandler.setBlur(true);
 			rayHandler.setBlurNum(1);
 
 			// attach light to player
-			final Color c = new Color( 1f, 1f, 1f, .9f );
+			final Color c = new Color();
 
+			c.set( .7f, .7f, 1f, 1f );
 			playerLight = new ConeLight( rayHandler, maxRays, c, 30, 0, 0, 0, 15 );
 			playerLight.setSoft( false );
 			playerLight.setMaskBits( 0 );
@@ -101,7 +103,7 @@ public class Game
 			Vector2 tile;
 			float dist = 20f;
 			float intensity = 1f;
-			float halfTileMt = Convert.px2mt( 112 );
+			float halfTileMt = Convert.px2mt( Convert.scaledPixels( 112 ) );
 
 			tile = Convert.tileToMt( 1, 1 ).add(halfTileMt, -halfTileMt);
 			c.set( 1f, .85f, .35f, intensity );
