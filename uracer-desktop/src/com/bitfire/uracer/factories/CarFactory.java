@@ -5,8 +5,10 @@ import com.badlogic.gdx.graphics.g2d.TextureRegion;
 import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.physics.box2d.FixtureDef;
 import com.bitfire.uracer.Art;
+import com.bitfire.uracer.Config;
 import com.bitfire.uracer.carsimulation.CarInputMode;
 import com.bitfire.uracer.carsimulation.CarModel;
+import com.bitfire.uracer.entities.CollisionFilters;
 import com.bitfire.uracer.entities.EntityType;
 import com.bitfire.uracer.entities.vehicles.Car;
 import com.bitfire.uracer.entities.vehicles.CarGraphics;
@@ -89,7 +91,15 @@ public class CarFactory
 		fd.density = model.density;
 		fd.friction = model.friction;
 		fd.restitution = model.restitution;
-		fd.filter.groupIndex = -1;
+
+		fd.filter.groupIndex = (short)((entityType==EntityType.Car)? CollisionFilters.GroupPlayer : CollisionFilters.GroupReplay );
+		fd.filter.categoryBits = (short)((entityType==EntityType.Car)? CollisionFilters.CategoryPlayer : CollisionFilters.CategoryReplay );
+		fd.filter.maskBits = (short)((entityType==EntityType.Car)? CollisionFilters.MaskPlayer : CollisionFilters.MaskReplay );
+
+		if(Config.Debug.dbgTraverseWalls)
+		{
+			fd.filter.groupIndex = CollisionFilters.GroupNoCollisions;
+		}
 
 		// apply scaling factors
 		Vector2 offset = new Vector2( -model.width / 2f, -model.length / 2f );

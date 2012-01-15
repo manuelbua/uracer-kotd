@@ -11,6 +11,7 @@ import com.badlogic.gdx.physics.box2d.FixtureDef;
 import com.badlogic.gdx.physics.box2d.PolygonShape;
 import com.bitfire.uracer.Config;
 import com.bitfire.uracer.Physics;
+import com.bitfire.uracer.entities.CollisionFilters;
 
 public class Box2DFactory
 {
@@ -95,9 +96,13 @@ public class Box2DFactory
 		fdef.density = 1.0f;
 		fdef.friction = 0.02f;
 
+		fdef.filter.groupIndex = CollisionFilters.GroupTrackWalls;
+		fdef.filter.categoryBits = CollisionFilters.CategoryTrackWalls;
+		fdef.filter.maskBits = CollisionFilters.MaskWalls;
+
 		if( Config.Debug.dbgTraverseWalls )
 		{
-			fdef.filter.groupIndex = -1;
+			fdef.filter.groupIndex = CollisionFilters.GroupNoCollisions;
 		}
 
 		if( restitution > 0 ) fdef.restitution = restitution;

@@ -30,7 +30,7 @@ AUDIO
  
  LIGHTING SYSTEM
  
- 	- 2d dynamic lighting system w/ realtime soft shadows
+ 	- 2d dynamic lighting system w/ realtime soft-shadows
  	- light attachment to box2d objects
  		- filtering system via groupIds then/or/else categoryBits and maskBits (order matters)
  		
