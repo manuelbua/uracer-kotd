@@ -20,6 +20,7 @@ import com.bitfire.uracer.debug.Debug;
 import com.bitfire.uracer.effects.TrackEffects;
 import com.bitfire.uracer.effects.TrackEffects.Effects;
 import com.bitfire.uracer.effects.postprocessing.PostProcessor;
+import com.bitfire.uracer.entities.CollisionFilters;
 import com.bitfire.uracer.entities.EntityManager;
 import com.bitfire.uracer.entities.vehicles.Car;
 import com.bitfire.uracer.game.logic.DirectorController;
@@ -74,12 +75,13 @@ public class Game
 		// Issues may arise on Tegra2 (Asus Transformer) devices if the buffers'
 		// count is higher than 10
 		batch = new SpriteBatch( 1000, 8 );
+//		batch = new SpriteBatch();
 
 		if( Config.Graphics.NightMode )
 		{
 			// setup ray handling stuff
-			float rttScale = .25f;
-			int maxRays = 256;
+			float rttScale = .2f;
+			int maxRays = 100;
 			rayHandler = new RayHandler(Physics.world, maxRays, (int)(Gdx.graphics.getWidth()*rttScale), (int)(Gdx.graphics.getHeight()*rttScale));
 			rayHandler.setShadows(true);
 			rayHandler.setAmbientLight(0.2f);
@@ -92,8 +94,8 @@ public class Game
 
 			playerLight = new ConeLight( rayHandler, maxRays, c, 30, 0, 0, 0, 15 );
 			playerLight.setSoft( false );
+			playerLight.setMaskBits( 0 );
 //			playerLight.setXray( true );
-//			playerLight.attachToBody( player.getBody(), 0, (player.getCarModel().length/2f) + .25f );
 
 			// level lights test
 			Vector2 tile;
@@ -143,8 +145,11 @@ public class Game
 
 			for( int i = 0; i < 10; i++)
 			{
-				levelLights[i].setXray( false );
 				levelLights[i].setSoft( false );
+				levelLights[i].setMaskBits( CollisionFilters.CategoryPlayer | CollisionFilters.CategoryTrackWalls );
+//				levelLights[i].setMaskBits( -1 );
+//				levelLights[i].setMaskBits( 0 );
+//				levelLights[i].setXray( true );
 			}
 		}
 	}
@@ -264,7 +269,7 @@ public class Game
 			}
 
 			frameCount++;
-			if((frameCount&0x3f)==0x3f)
+			if( rayHandler != null && (frameCount&0x3f)==0x3f)
 			{
 				System.out.println("lights rendered="+rayHandler.lightRenderedLastFrame);
 			}

@@ -40,7 +40,7 @@ public class Config
 			RenderPlayerDebugInfo = true;
 			RenderHudDebugInfo = true;
 			RenderTrackMeshes = false;
-			NightMode = true;
+			NightMode = false;
 
 			CameraInterpolationMode = InterpolationMode.Sigmoid;
 			Effects = (TrackEffects.Effects.CarSkidMarks.id | TrackEffects.Effects.SmokeTrails.id);
@@ -79,7 +79,7 @@ public class Config
 
 		public static void asDefault()
 		{
-			dbgTraverseWalls = true;
+			dbgTraverseWalls = false;
 			dbgDirectorHasBounds = true;
 		}
 	}

@@ -107,8 +107,8 @@ public class SmokeTrails extends TrackEffect
 		for(int i = 0; i < SmokeEffectsCount; i++)
 		{
 			fx[i] = new SmokeEffect();
-			fx[i].setLifeMul( 3.2f );
-			fx[i].setScaleMul( 1.25f );
+			fx[i].setLifeMul( 2.4f );
+//			fx[i].setScaleMul( .9f );
 			fx[i].setEmissionMul( .8f );
 			fx[i].stop();
 		}
