@@ -105,7 +105,7 @@ public class Game
 
 			tile = Convert.tileToMt( 1, 1 ).add(halfTileMt, -halfTileMt);
 			c.set( 1f, .85f, .35f, intensity );
-			levelLights[0] = new PointLight( rayHandler, maxRays, c, dist, tile.x, tile.y );
+			levelLights[0] = new PointLight( rayHandler, maxRays, c, dist/2, tile.x, tile.y );
 
 			tile = Convert.tileToMt( 9, 1 ).add(halfTileMt, -halfTileMt);
 			c.set( 1f, .85f, .35f, intensity );
@@ -113,7 +113,7 @@ public class Game
 
 			tile = Convert.tileToMt( 1, 6 ).add(halfTileMt, -halfTileMt);
 			c.set( 1f, .85f, .35f, intensity );
-			levelLights[2] = new PointLight( rayHandler, maxRays, c, dist, tile.x, tile.y );
+			levelLights[2] = new PointLight( rayHandler, maxRays, c, dist/2, tile.x, tile.y );
 
 			tile = Convert.tileToMt( 5, 6 ).add(halfTileMt, -halfTileMt);
 			c.set( 1f, .85f, .35f, intensity );
@@ -121,7 +121,7 @@ public class Game
 
 			tile = Convert.tileToMt( 6, 2 ).add(0, -halfTileMt/2f );
 			c.set( 1f, .85f, .35f, intensity );
-			levelLights[4] = new PointLight( rayHandler, maxRays, c, dist, tile.x, tile.y );
+			levelLights[4] = new PointLight( rayHandler, maxRays, c, dist/2, tile.x, tile.y );
 
 			tile = Convert.tileToMt( 8, 2 ).add(0, -halfTileMt/2f );
 			c.set( 1f, .85f, .35f, intensity );
@@ -129,7 +129,7 @@ public class Game
 
 			tile = Convert.tileToMt( 7, 7 ).add(0, halfTileMt/2f );
 			c.set( 1f, .85f, .35f, intensity );
-			levelLights[6] = new PointLight( rayHandler, maxRays, c, dist, tile.x, tile.y );
+			levelLights[6] = new PointLight( rayHandler, maxRays, c, dist/2, tile.x, tile.y );
 
 			tile = Convert.tileToMt( 9, 7 ).add(0, halfTileMt/2f );
 			c.set( 1f, .85f, .35f, intensity );
@@ -137,7 +137,7 @@ public class Game
 
 			tile = Convert.tileToMt( 5, 5 ).add(-halfTileMt/2f,0);
 			c.set( 1f, .85f, .35f, intensity );
-			levelLights[8] = new PointLight( rayHandler, maxRays, c, dist, tile.x, tile.y );
+			levelLights[8] = new PointLight( rayHandler, maxRays, c, dist/2, tile.x, tile.y );
 
 			tile = Convert.tileToMt( 1, 4 ).add(halfTileMt,-halfTileMt);
 			c.set( 1f, .85f, .35f, intensity );

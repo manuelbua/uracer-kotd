@@ -40,7 +40,7 @@ public class Config
 			RenderPlayerDebugInfo = true;
 			RenderHudDebugInfo = true;
 			RenderTrackMeshes = false;
-			NightMode = false;
+			NightMode = true;
 
 			CameraInterpolationMode = InterpolationMode.Sigmoid;
 			Effects = (TrackEffects.Effects.CarSkidMarks.id | TrackEffects.Effects.SmokeTrails.id);
