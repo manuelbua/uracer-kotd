@@ -1,18 +1,19 @@
 GAMEPLAY, RENDERING and CONSIDERATIONS
 
-	- version information should be stored differently, git-log output shouldn't expose so much androidmanifest/etc..
+	x version information should be stored differently, git-log output shouldn't expose so much androidmanifest/etc..
 
 	x LapInfo should be accessed as DriftInfo, single-lived components are better accessible than instance-owned one in this
 	  design approach
 	  
 		- extrapolate the pattern and identify abstractable areas, create a SharedComponent interface with a more meaningful name
 
-	- smoke due to skid marks, a simple and efficient implemention will do it
-	- better total drift score's and real-time score's placement, dynamics, logic separation and appearance
-	- improve drift detection, provide a simple way to manage different detection policies
-	- improve the way missed drifts and associated drift points are exposed to the player *WHILE* playing and producing this event
-	- determine optimal texture size for cars, fake ambient occlusion, skid marks and such
-	  
+	x smoke due to skid marks, a simple and efficient implemention will do it
+	x better total drift score's and real-time score's placement, dynamics, logic separation and appearance
+	x improve drift detection, provide a simple way to manage different detection policies
+	x improve the way missed drifts and associated drift points are exposed to the player *WHILE* playing and producing this event
+	x determine optimal texture size for cars, fake ambient occlusion, skid marks and such
+
+
 AUDIO
 
 	- car engine
@@ -27,18 +28,24 @@ AUDIO
 		
 	- sound track
  		- (i don't give a shit about latency in this case)
- 
- LIGHTING SYSTEM
- 
- 	- 2d dynamic lighting system w/ realtime soft-shadows
- 	- light attachment to box2d objects
- 		- filtering system via groupIds then/or/else categoryBits and maskBits (order matters)
- 		
- 			+ light.groupId == fixture.groupId
- 				- if (groupId > 0) light will block at the fixture (generate shadow)
- 				- if (groupId < 0) light will ignore the fixture (no shadow)
- 			
- 			+ if ((light.maskBits & fixture.categoryBits) != 0)
- 				- light will block at the fixture
- 			+ else
- 				- light will ignore the fixture
+
+
+COLLISIONS
+
+	x use collision groups, categories and bitmasking for better definitions
+
+	 
+LIGHTING SYSTEM
+
+	- 2d dynamic lighting system w/ realtime soft-shadows
+	- light attachment to box2d objects
+		- filtering system via groupIds then/or/else categoryBits and maskBits (order matters)
+		
+			+ light.groupId == fixture.groupId
+				- if (groupId > 0) light will block at the fixture (generate shadow)
+				- if (groupId < 0) light will ignore the fixture (no shadow)
+			
+			+ if ((light.maskBits & fixture.categoryBits) != 0)
+				- light will block at the fixture
+			+ else
+				- light will ignore the fixture
