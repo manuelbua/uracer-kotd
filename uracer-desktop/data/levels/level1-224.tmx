@@ -133,8 +133,8 @@
   <properties>
    <property name="start" value="right"/>
   </properties>
-  <data compression="gzip" encoding="base64">
-   H4sIAAAAAAAAA5NkYGCQRMMmWMSkobQgEHMAMRMOzIakhxHNDFaoPIxmRLIPXS0jFgyTE0WzD10dL5qdMLVcaOr48ZgLwmJQMWSaUDihYwAP/nTgYAEAAA==
+  <data compression="zlib" encoding="base64">
+   eJyTZGBgkETDJljEpKG0IBBzADETDsyGpIcRzQxWqDyMZkSyD10tIxYMkxNFsw9dHS+anTC1XGjq+PGYC8JiUDFkmlA4oWMAtGUFYg==
   </data>
  </layer>
  <objectgroup color="#00ff00" height="8" name="static-meshes" width="11">
@@ -158,9 +158,9 @@
     <property name="scale" value="1.6"/>
    </properties>
   </object>
-  <object height="56" name="palm" type="palm" width="65" x="2042" y="416">
+  <object height="56" name="palm" type="palm" width="65" x="1938" y="463">
    <properties>
-    <property name="scale" value="2"/>
+    <property name="scale" value="1"/>
    </properties>
   </object>
   <object height="224" name="tribune" type="tribune" width="518" x="468" y="679"/>
@@ -175,7 +175,7 @@
    </properties>
   </object>
   <object height="76" name="palm" type="palm" width="75" x="1021" y="476"/>
-  <object height="57" name="palm" type="palm" width="56" x="1539" y="953">
+  <object height="34" name="palm" type="palm" width="36" x="1558" y="965">
    <properties>
     <property name="scale" value="0.65"/>
    </properties>
@@ -202,7 +202,7 @@
     <property name="scale" value="2"/>
    </properties>
   </object>
-  <object height="57" name="palm" type="palm" width="81" x="1527" y="458">
+  <object height="57" name="palm" type="palm" width="81" x="1556" y="491">
    <properties>
     <property name="scale" value="0.8"/>
    </properties>
@@ -227,7 +227,7 @@
     <property name="scale" value="1.2"/>
    </properties>
   </object>
-  <object height="69" name="palm" type="palm" width="59" x="1536" y="1229">
+  <object height="38" name="palm" type="palm" width="35" x="1552" y="1242">
    <properties>
     <property name="scale" value="0.7"/>
    </properties>

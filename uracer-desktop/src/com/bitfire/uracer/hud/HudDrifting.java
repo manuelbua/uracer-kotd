@@ -33,6 +33,8 @@ public class HudDrifting
 		carWidthPx = (int)Convert.mt2px( model.width );
 		carLengthPx = (int)Convert.mt2px( model.length );
 
+		drift = DriftInfo.get();
+
 		labelRealtime = new HudLabel( Art.fontCurseYRbig, "99.99", 0.5f );
 		labelRealtime.setAlpha( 0 );
 
@@ -48,7 +50,6 @@ public class HudDrifting
 
 	public void tick()
 	{
-		drift = DriftInfo.get();
 		heading.set(player.getSimulator().heading);
 	}
 

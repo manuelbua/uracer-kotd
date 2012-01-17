@@ -19,6 +19,7 @@ public class URacer implements ApplicationListener
 	private float temporalAliasing = 0;
 	private float timeAccumSecs = 0;
 	private float oneOnOneBillion = 0;
+	private static boolean hasStepped = false;
 
 	// stats
 	private static float graphicsTime = 0;
@@ -80,12 +81,14 @@ public class URacer implements ApplicationListener
 
 		long startTime = System.nanoTime();
 		{
+			hasStepped = false;
 			timeAccumSecs += deltaTime * Config.Physics.PhysicsTimeMultiplier;
 			while( timeAccumSecs > Physics.dt )
 			{
 				input.tick();
 				screen.tick();
 				timeAccumSecs -= Physics.dt;
+				hasStepped = true;
 			}
 
 			// simulate slowness
@@ -154,6 +157,11 @@ public class URacer implements ApplicationListener
 	public boolean isRunning()
 	{
 		return running;
+	}
+
+	public static boolean hasStepped()
+	{
+		return hasStepped;
 	}
 
 	public static float getRenderTime()
