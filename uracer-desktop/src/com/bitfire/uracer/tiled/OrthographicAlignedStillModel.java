@@ -23,7 +23,7 @@ import com.bitfire.uracer.utils.Convert;
 public class OrthographicAlignedStillModel
 {
 	private UStillModel model;
-	private StillModel model_workaround;	// FIXME, this is pure shit...
+//	private StillModel model_workaround;	// FIXME, this is pure shit...
 	private Material material;
 	private Texture texture;
 	private TextureAttribute textureAttribute;
@@ -94,8 +94,8 @@ public class OrthographicAlignedStillModel
 
 		try
 		{
-			m.model_workaround = model;
-			m.model = new UStillModel( m.model_workaround.subMeshes );
+//			m.model_workaround = model;
+			m.model = new UStillModel( model.subMeshes.clone() );
 
 			// set material
 			m.texture = texture;
@@ -235,7 +235,12 @@ public class OrthographicAlignedStillModel
 
 	public void dispose()
 	{
-		model.dispose();
-		model_workaround.dispose();
+		try {
+			model.dispose();
+//			model_workaround.dispose();
+		} catch( IllegalArgumentException e )
+		{
+			// buffer already disposed
+		}
 	}
 }
