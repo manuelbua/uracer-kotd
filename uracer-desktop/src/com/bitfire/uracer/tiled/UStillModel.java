@@ -13,12 +13,6 @@ public class UStillModel extends StillModel
 	}
 
 	@Override
-	public void render()
-	{
-		super.render();
-	}
-
-	@Override
 	public void render( ShaderProgram program )
 	{
 		int len = subMeshes.length;
