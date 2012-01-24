@@ -13,7 +13,10 @@ import com.badlogic.gdx.graphics.g2d.tiled.TiledLoader;
 import com.badlogic.gdx.graphics.g2d.tiled.TiledMap;
 import com.badlogic.gdx.graphics.g2d.tiled.TiledObject;
 import com.badlogic.gdx.graphics.g2d.tiled.TiledObjectGroup;
+import com.badlogic.gdx.graphics.glutils.ShaderProgram;
+import com.badlogic.gdx.math.Matrix4;
 import com.badlogic.gdx.math.Vector2;
+import com.badlogic.gdx.math.Vector3;
 import com.bitfire.uracer.Config;
 import com.bitfire.uracer.Director;
 import com.bitfire.uracer.carsimulation.CarModel;
@@ -79,7 +82,7 @@ public class Level
 	public void construct()
 	{
 		syncWithCam( Director.getCamera() );
-		OrthographicAlignedStillModel.initialize( camOrtho, camPersp );
+		OrthographicAlignedStillModel.initialize();
 
 		ModelFactory.init();
 
@@ -139,14 +142,7 @@ public class Level
 		gl.glEnable( GL20.GL_DEPTH_TEST );
 		gl.glDepthFunc( GL20.GL_LESS );
 
-		OrthographicAlignedStillModel m;
-
-		// render object group meshes
-		for( int i = 0; i < staticMeshes.size(); i++ )
-		{
-			m = staticMeshes.get( i );
-			m.render( gl );
-		}
+		renderOrthographicAlignedModels( staticMeshes );
 
 		// TODO, either disable rendering in release/mobile or
 		// make Track build a single mesh out of the whole track,
@@ -155,13 +151,71 @@ public class Level
 		//
 		// HUGE performance hit enabling rendering of tile-based walls
 		// on mobile (Tegra2)
-		if( track.hasMeshes() && Config.Graphics.RenderTrackMeshes )
+
+		if( Config.Graphics.RenderTrackMeshes && track.hasMeshes() )
 		{
-			track.render( gl );
+			gl.glEnable( GL20.GL_BLEND );
+			renderOrthographicAlignedModels( track.getMeshes() );
+			gl.glDisable( GL20.GL_BLEND );
 		}
 
 		gl.glDisable( GL20.GL_DEPTH_TEST );
 		gl.glDisable( GL20.GL_CULL_FACE );
+	}
+
+	private Vector3 tmpvec = new Vector3();
+	private Matrix4 mtx = new Matrix4();
+	private Matrix4 mtx2 = new Matrix4();
+	private void renderOrthographicAlignedModels(ArrayList<OrthographicAlignedStillModel> models)
+	{
+		OrthographicAlignedStillModel m;
+
+		// TODO: precompute
+		float halfVpW = camOrtho.viewportWidth / 2;
+		float halfVpH = camOrtho.viewportHeight / 2;
+		float meshZ = -(camPersp.far - camPersp.position.z);
+
+		ShaderProgram shader = OrthographicAlignedStillModel.shaderProgram;
+		shader.begin();
+
+		for( int i = 0; i < models.size(); i++ )
+		{
+			m = models.get( i );
+
+			// compute position
+			tmpvec.x = Convert.scaledPixels( m.positionOffsetPx.x - camOrtho.position.x ) + halfVpW + m.positionPx.x;
+			tmpvec.y = Convert.scaledPixels( m.positionOffsetPx.y + camOrtho.position.y ) + halfVpH - m.positionPx.y;
+			tmpvec.z = 1;
+
+			// transform to world space
+			camPersp.unproject( tmpvec );
+
+			// build model matrix
+			// TODO: support proper rotation now that Mat3/Mat4 supports opengl-style rotation/translation/scaling
+			mtx.setToTranslation( tmpvec.x, tmpvec.y, meshZ );
+			Matrix4.mul( mtx.val, mtx2.setToRotation( m.iRotationAxis, m.iRotationAngle ).val );
+			Matrix4.mul( mtx.val, mtx2.setToScaling( m.scaleAxis ).val );
+
+			// comb = (proj * view) * model (fast mul)
+			Matrix4.mul( mtx2.set( camPersp.combined ).val, mtx.val );
+
+			shader.setUniformMatrix( "u_mvpMatrix", mtx2 );
+
+			// do not bind/rebind textures without reason
+			if( i == 0 )
+			{
+				m.material.bind(shader);
+			} else
+			if( !models.get(i - 1).material.equals(m.material) )
+			{
+				m.material.bind(shader);
+			}
+
+			m.model.subMeshes[0].mesh.render(shader, m.model.subMeshes[0].primitiveType);
+
+		}
+
+		shader.end();
 	}
 
 	private void createCams()

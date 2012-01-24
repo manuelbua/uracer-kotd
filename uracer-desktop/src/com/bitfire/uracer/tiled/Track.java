@@ -2,10 +2,10 @@ package com.bitfire.uracer.tiled;
 
 import java.util.ArrayList;
 
-import com.badlogic.gdx.graphics.GL20;
 import com.badlogic.gdx.graphics.g2d.tiled.TiledLayer;
 import com.badlogic.gdx.graphics.g2d.tiled.TiledMap;
 import com.badlogic.gdx.math.Vector2;
+import com.bitfire.uracer.Config;
 import com.bitfire.uracer.Director;
 import com.bitfire.uracer.factories.Box2DFactory;
 import com.bitfire.uracer.factories.ModelFactory;
@@ -147,19 +147,20 @@ public class Track
 						from.y = to.y = flipYMt - (coords.y + tileSizeMt - (halfTileSizeMt - halfTrackSizeMt - halfWallSizeMt - wallDistanceMt));
 						Box2DFactory.createWall( from, to, wallSizeMt, restitution );
 
-						float adj = 2f * Director.scalingStrategy.tileMapZoomFactor;
+						if( Config.Graphics.RenderTrackMeshes )
+						{
+							float adj = 2f * Director.scalingStrategy.tileMapZoomFactor;
 
-						// mesh top
-						wallMesh = ModelFactory.create( ModelMesh.WallHorizontal,
-							meshCoords.x,
-							meshCoords.y + (halfTileSizePx - halfTrackSizePx - wallSizePx - wallDistancePx) - adj, 1f );
-						meshes.add( wallMesh );
+							// mesh top
+							wallMesh = ModelFactory.create( ModelMesh.WallHorizontal, meshCoords.x, meshCoords.y
+									+ (halfTileSizePx - halfTrackSizePx - wallSizePx - wallDistancePx) - adj, 1f );
+							meshes.add( wallMesh );
 
-						// mesh bottom
-						wallMesh = ModelFactory.create( ModelMesh.WallHorizontal,
-							meshCoords.x,
-							meshCoords.y + (halfTileSizePx + halfTrackSizePx + wallDistancePx) - adj, 1f);
-						meshes.add( wallMesh );
+							// mesh bottom
+							wallMesh = ModelFactory.create( ModelMesh.WallHorizontal, meshCoords.x, meshCoords.y
+									+ (halfTileSizePx + halfTrackSizePx + wallDistancePx) - adj, 1f );
+							meshes.add( wallMesh );
+						}
 					}
 					else
 					if( orient.equals( "v" ) )
@@ -175,21 +176,24 @@ public class Track
 						from.x = to.x = coords.x + tileSizeMt - (halfTileSizeMt - halfTrackSizeMt - halfWallSizeMt - wallDistanceMt);
 						Box2DFactory.createWall( from, to, wallSizeMt, restitution );
 
-						float adj = 1f * Director.scalingStrategy.tileMapZoomFactor;
+						if( Config.Graphics.RenderTrackMeshes )
+						{
+							float adj = 1f * Director.scalingStrategy.tileMapZoomFactor;
 
-						// mesh left
-						wallMesh = ModelFactory.create( ModelMesh.WallHorizontal,
-								meshCoords.x + (halfTileSizePx - halfTrackSizePx - wallSizePx - wallDistancePx) - adj,
+							// mesh left
+							wallMesh = ModelFactory.create( ModelMesh.WallHorizontal,
+									meshCoords.x + (halfTileSizePx - halfTrackSizePx - wallSizePx - wallDistancePx) - adj,
+									meshCoords.y + tileSizePx - adj, 1f );
+							wallMesh.setRotation( 90, 0, 0, 1 );
+							meshes.add( wallMesh );
+
+							// mesh right
+							wallMesh = ModelFactory.create( ModelMesh.WallHorizontal,
+								meshCoords.x + (halfTileSizePx + halfTrackSizePx + wallDistancePx) - 2 * adj,
 								meshCoords.y + tileSizePx - adj, 1f );
-						wallMesh.setRotation( 90, 0, 0, 1 );
-						meshes.add( wallMesh );
-
-						// mesh right
-						wallMesh = ModelFactory.create( ModelMesh.WallHorizontal,
-							meshCoords.x + (halfTileSizePx + halfTrackSizePx + wallDistancePx) - 2 * adj,
-							meshCoords.y + tileSizePx - adj, 1f );
-						wallMesh.setRotation( 90, 0, 0, 1 );
-						meshes.add( wallMesh );
+							wallMesh.setRotation( 90, 0, 0, 1 );
+							meshes.add( wallMesh );
+						}
 					}
 					else
 					if( orient.equals( "tl" ))
@@ -205,21 +209,24 @@ public class Track
 						tmp1.set( -(halfTileSizeMt - halfTrackSizeMt - wallDistanceMt - halfWallSizeMt), 0 );	// unit circle radius
 						Box2DFactory.createAngularWall( tmp1, tmp2, wallSizeMt, innerLumpLen, 90f, 4, rotOffset, restitution, false );
 
-						float adj = 1f * Director.scalingStrategy.tileMapZoomFactor;
+						if( Config.Graphics.RenderTrackMeshes )
+						{
+							float adj = 1f * Director.scalingStrategy.tileMapZoomFactor;
 
-						// external mesh
-						wallMesh = ModelFactory.create( ModelMesh.WallTopRightOuter,
-								meshCoords.x + (halfTileSizePx - halfTrackSizePx - wallSizePx - wallDistancePx) - adj,
-								meshCoords.y + tileSizePx + adj, 1f );
-						wallMesh.setRotation( 90, 0, 0, 1 );
-						meshes.add( wallMesh );
+							// external mesh
+							wallMesh = ModelFactory.create( ModelMesh.WallTopRightOuter,
+									meshCoords.x + (halfTileSizePx - halfTrackSizePx - wallSizePx - wallDistancePx) - adj,
+									meshCoords.y + tileSizePx + adj, 1f );
+							wallMesh.setRotation( 90, 0, 0, 1 );
+							meshes.add( wallMesh );
 
-						// internal mesh
-						wallMesh = ModelFactory.create( ModelMesh.WallTopRightInner,
-								meshCoords.x + (halfTileSizePx + halfTrackSizePx + wallDistancePx) - 2*adj,
-								meshCoords.y + tileSizePx - 2*adj, 1f );
-						wallMesh.setRotation( 90, 0, 0, 1 );
-						meshes.add( wallMesh );
+							// internal mesh
+							wallMesh = ModelFactory.create( ModelMesh.WallTopRightInner,
+									meshCoords.x + (halfTileSizePx + halfTrackSizePx + wallDistancePx) - 2*adj,
+									meshCoords.y + tileSizePx - 2*adj, 1f );
+							wallMesh.setRotation( 90, 0, 0, 1 );
+							meshes.add( wallMesh );
+						}
 					}
 					else
 					if( orient.equals( "tr" ))
@@ -235,19 +242,22 @@ public class Track
 						tmp1.set( (halfTileSizeMt - halfTrackSizeMt - wallDistanceMt - halfWallSizeMt), 0 );	// unit circle radius
 						Box2DFactory.createAngularWall( tmp1, tmp2, wallSizeMt, innerLumpLen, -90f, 4, rotOffset, restitution, false );
 
-						float adj = 1f * Director.scalingStrategy.tileMapZoomFactor;
+						if( Config.Graphics.RenderTrackMeshes )
+						{
+							float adj = 1f * Director.scalingStrategy.tileMapZoomFactor;
 
-						// external mesh
-						wallMesh = ModelFactory.create( ModelMesh.WallTopRightOuter,
-								meshCoords.x - adj,
-								meshCoords.y + (halfTileSizePx - halfTrackSizePx - wallSizePx - wallDistancePx) - 2*adj, 1f );
-						meshes.add( wallMesh );
+							// external mesh
+							wallMesh = ModelFactory.create( ModelMesh.WallTopRightOuter,
+									meshCoords.x - adj,
+									meshCoords.y + (halfTileSizePx - halfTrackSizePx - wallSizePx - wallDistancePx) - 2*adj, 1f );
+							meshes.add( wallMesh );
 
-						// internal mesh
-						wallMesh = ModelFactory.create( ModelMesh.WallTopRightInner,
-								meshCoords.x,
-								meshCoords.y + (halfTileSizePx + halfTrackSizePx + wallDistancePx) - adj, 1f );
-						meshes.add( wallMesh );
+							// internal mesh
+							wallMesh = ModelFactory.create( ModelMesh.WallTopRightInner,
+									meshCoords.x,
+									meshCoords.y + (halfTileSizePx + halfTrackSizePx + wallDistancePx) - adj, 1f );
+							meshes.add( wallMesh );
+						}
 					}
 					else
 					if( orient.equals( "bl" ))
@@ -263,21 +273,24 @@ public class Track
 						tmp1.set( -(halfTileSizeMt - halfTrackSizeMt - wallDistanceMt - halfWallSizeMt), 0 );	// unit circle radius
 						Box2DFactory.createAngularWall( tmp1, tmp2, wallSizeMt, -innerLumpLen, -90f, 4, rotOffset, restitution, false );
 
-						float adj = 1f * Director.scalingStrategy.tileMapZoomFactor;
+						if( Config.Graphics.RenderTrackMeshes )
+						{
+							float adj = 1f * Director.scalingStrategy.tileMapZoomFactor;
 
-						// external mesh
-						wallMesh = ModelFactory.create( ModelMesh.WallTopRightOuter,
-								meshCoords.x + tileSizePx + adj,
-								meshCoords.y + tileSizePx - (halfTileSizePx - halfTrackSizePx - wallSizePx - wallDistancePx), 1f );
-						wallMesh.setRotation( 180, 0, 0, 1 );
-						meshes.add( wallMesh );
+							// external mesh
+							wallMesh = ModelFactory.create( ModelMesh.WallTopRightOuter,
+									meshCoords.x + tileSizePx + adj,
+									meshCoords.y + tileSizePx - (halfTileSizePx - halfTrackSizePx - wallSizePx - wallDistancePx), 1f );
+							wallMesh.setRotation( 180, 0, 0, 1 );
+							meshes.add( wallMesh );
 
-						// internal mesh
-						wallMesh = ModelFactory.create( ModelMesh.WallTopRightInner,
-								meshCoords.x + tileSizePx - adj,
-								meshCoords.y + tileSizePx - (halfTileSizePx + halfTrackSizePx + wallDistancePx), 1f );
-						wallMesh.setRotation( 180, 0, 0, 1 );
-						meshes.add( wallMesh );
+							// internal mesh
+							wallMesh = ModelFactory.create( ModelMesh.WallTopRightInner,
+									meshCoords.x + tileSizePx - adj,
+									meshCoords.y + tileSizePx - (halfTileSizePx + halfTrackSizePx + wallDistancePx), 1f );
+							wallMesh.setRotation( 180, 0, 0, 1 );
+							meshes.add( wallMesh );
+						}
 					}
 					else
 					if( orient.equals( "br" ))
@@ -293,41 +306,28 @@ public class Track
 						tmp1.set( (halfTileSizeMt - halfTrackSizeMt - wallDistanceMt - halfWallSizeMt), 0 );	// unit circle radius
 						Box2DFactory.createAngularWall( tmp1, tmp2, wallSizeMt, -innerLumpLen, 90f, 4, rotOffset, restitution, false );
 
-						float adj = 1f * Director.scalingStrategy.tileMapZoomFactor;
+						if( Config.Graphics.RenderTrackMeshes )
+						{
+							float adj = 1f * Director.scalingStrategy.tileMapZoomFactor;
 
-						// external mesh
-						wallMesh = ModelFactory.create( ModelMesh.WallTopRightOuter,
-								meshCoords.x + tileSizePx - (halfTileSizePx - halfTrackSizePx - wallSizePx - wallDistancePx),
-								meshCoords.y - 2f * adj, 1f );
-						wallMesh.setRotation( -90, 0, 0, 1 );
-						meshes.add( wallMesh );
+							// external mesh
+							wallMesh = ModelFactory.create( ModelMesh.WallTopRightOuter,
+									meshCoords.x + tileSizePx - (halfTileSizePx - halfTrackSizePx - wallSizePx - wallDistancePx),
+									meshCoords.y - 2f * adj, 1f );
+							wallMesh.setRotation( -90, 0, 0, 1 );
+							meshes.add( wallMesh );
 
-						// internal mesh
-						wallMesh = ModelFactory.create( ModelMesh.WallTopRightInner,
-								meshCoords.x + tileSizePx - (halfTileSizePx + halfTrackSizePx + wallDistancePx) + adj,
-								meshCoords.y - adj, 1f );
-						wallMesh.setRotation( -90, 0, 0, 1 );
-						meshes.add( wallMesh );
+							// internal mesh
+							wallMesh = ModelFactory.create( ModelMesh.WallTopRightInner,
+									meshCoords.x + tileSizePx - (halfTileSizePx + halfTrackSizePx + wallDistancePx) + adj,
+									meshCoords.y - adj, 1f );
+							wallMesh.setRotation( -90, 0, 0, 1 );
+							meshes.add( wallMesh );
+						}
 					}
 				}
 			}
 		}
-	}
-
-	public void render( GL20 gl )
-	{
-		OrthographicAlignedStillModel m;
-
-		gl.glEnable( GL20.GL_BLEND );
-
-		int size = meshes.size();
-		for( int i = 0; i < size; i++ )
-		{
-			m = meshes.get( i );
-			m.render( gl );
-		}
-
-		gl.glDisable( GL20.GL_BLEND );
 	}
 
 	public boolean hasMeshes()

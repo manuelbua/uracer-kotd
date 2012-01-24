@@ -1,14 +1,10 @@
 package com.bitfire.uracer.tiled;
 
-import com.badlogic.gdx.graphics.GL20;
-import com.badlogic.gdx.graphics.OrthographicCamera;
-import com.badlogic.gdx.graphics.PerspectiveCamera;
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g3d.materials.Material;
 import com.badlogic.gdx.graphics.g3d.materials.TextureAttribute;
 import com.badlogic.gdx.graphics.g3d.model.still.StillModel;
 import com.badlogic.gdx.graphics.glutils.ShaderProgram;
-import com.badlogic.gdx.math.Matrix4;
 import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.math.Vector3;
 import com.bitfire.uracer.Director;
@@ -22,38 +18,25 @@ import com.bitfire.uracer.utils.Convert;
  */
 public class OrthographicAlignedStillModel
 {
-	private UStillModel model;
-	private Material material;
+	public UStillModel model;
+	public Material material;
 	private Texture texture;
 	private TextureAttribute textureAttribute;
 
-	// matrix state
-	private Matrix4 mtx_model = new Matrix4();
-	private Matrix4 mtx_combined = new Matrix4();
-
-	protected static ShaderProgram shaderProgram = null;
-	protected ShaderProgram customShader = null;
+	public static ShaderProgram shaderProgram = null;
 
 	// scale
 	private float scale, scalingFactor;
-	private Vector3 scaleAxis = new Vector3();
+	public Vector3 scaleAxis = new Vector3();
 
 	// position
-	private Vector2 positionOffsetPx = new Vector2( 0, 0 );
-	private Vector2 positionPx = new Vector2();
-
-	private static float meshZ;
-	private static OrthographicCamera camOrtho;
-	private static PerspectiveCamera camPersp;
-
-	// temporaries
-	private Vector3 tmp_vec = new Vector3();
-	private Matrix4 tmp_mtx = new Matrix4();
+	public Vector2 positionOffsetPx = new Vector2( 0, 0 );
+	public Vector2 positionPx = new Vector2();
 
 
 	// explicitle initialize the static iShader member
 	// (Android: statics need to be re-initialized!)
-	public static void initialize( OrthographicCamera orthoCamera, PerspectiveCamera perspCamera )
+	public static void initialize()
 	{
 		String vertexShader =
 				"uniform mat4 u_mvpMatrix;					\n" +
@@ -66,25 +49,22 @@ public class OrthographicAlignedStillModel
 				"	v_TexCoord = a_texCoord0;				\n" +
 				"}											\n";
 
-			String fragmentShader =
-				"#ifdef GL_ES											\n" +
-				"precision mediump float;								\n" +
-				"#endif													\n" +
-				"uniform sampler2D u_texture;							\n" +
-				"varying vec2 v_TexCoord;								\n" +
-				"void main()											\n" +
-				"{														\n" +
-				"	gl_FragColor = texture2D( u_texture, v_TexCoord );	\n" +
-				"}														\n";
+		String fragmentShader =
+			"#ifdef GL_ES											\n" +
+			"precision mediump float;								\n" +
+			"#endif													\n" +
+			"uniform sampler2D u_texture;							\n" +
+			"varying vec2 v_TexCoord;								\n" +
+			"void main()											\n" +
+			"{														\n" +
+			"	gl_FragColor = texture2D( u_texture, v_TexCoord );	\n" +
+			"}														\n";
 
+		ShaderProgram.pedantic = false;
 		OrthographicAlignedStillModel.shaderProgram = new ShaderProgram( vertexShader, fragmentShader );
 
 		if( OrthographicAlignedStillModel.shaderProgram.isCompiled() == false )
 			throw new IllegalStateException( OrthographicAlignedStillModel.shaderProgram.getLog() );
-
-		OrthographicAlignedStillModel.meshZ = -(perspCamera.far - perspCamera.position.z);
-		camOrtho = orthoCamera;
-		camPersp = perspCamera;
 	}
 
 	public static OrthographicAlignedStillModel create( StillModel model, Texture texture )
@@ -186,49 +166,6 @@ public class OrthographicAlignedStillModel
 	{
 		this.scale = scalingFactor * scale;
 		scaleAxis.set( this.scale, this.scale, this.scale );
-	}
-
-	private static void screenToWorld( Vector3 result, OrthographicCamera orthoCamera, PerspectiveCamera perspCamera, Vector2 positionOffsetPx, Vector2 positionPx )
-	{
-		result.x = Convert.scaledPixels( positionOffsetPx.x - orthoCamera.position.x ) + orthoCamera.viewportWidth / 2 + positionPx.x;
-		result.y = Convert.scaledPixels( positionOffsetPx.y + orthoCamera.position.y ) + orthoCamera.viewportHeight / 2 - positionPx.y;
-		result.z = 1;
-
-		// transform to world space
-		perspCamera.unproject( result );
-	}
-
-	public void setShader(ShaderProgram program)
-	{
-		customShader = program;
-	}
-
-	public void render( GL20 gl )
-	{
-		ShaderProgram shader = (customShader!=null) ? customShader : OrthographicAlignedStillModel.shaderProgram;
-		shader.begin();
-
-		// compute final position
-		screenToWorld(tmp_vec, camOrtho, camPersp, positionOffsetPx, positionPx );
-
-		mtx_model.idt();
-		mtx_model.setToTranslation( tmp_vec.x, tmp_vec.y, OrthographicAlignedStillModel.meshZ );
-
-		// TODO (when updating the local libgdx repo)
-		// support proper rotation now that Mat3/Mat4 supports opengl-style rotation/translation/scaling
-		Matrix4.mul( mtx_model.val, tmp_mtx.setToRotation( iRotationAxis, iRotationAngle ).val );
-		Matrix4.mul( mtx_model.val, tmp_mtx.setToScaling( scaleAxis ).val );
-
-		// proj * view
-		mtx_combined.set( camPersp.combined );
-
-		// comb = comb * model (fast mul)
-		Matrix4.mul( mtx_combined.val, mtx_model.val );
-
-		shader.setUniformMatrix( "u_mvpMatrix", mtx_combined );
-		model.render( shader );
-
-		shader.end();
 	}
 
 	public void dispose()
