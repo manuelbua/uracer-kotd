@@ -271,16 +271,6 @@ public class Level
 				if( mesh != null ) staticMeshes.add( mesh );
 			}
 		}
-
-		// track meshes
-		// if( track.hasMeshes() )
-		// {
-		// ArrayList<OrthographicAlignedStillModel> trackMeshes = track.getMeshes();
-		// for( int i = 0; i < trackMeshes.size(); i++ )
-		// {
-		// staticMeshes.add( trackMeshes.get( i ) );
-		// }
-		// }
 	}
 
 	private void createEntities()
