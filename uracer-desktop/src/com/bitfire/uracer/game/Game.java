@@ -80,6 +80,10 @@ public class Game
 		{
 			// setup ray handling stuff
 			float rttScale = .25f;
+
+			if(!Config.isDesktop)
+				rttScale = 0.2f;
+
 			int maxRays = 128;
 			RayHandler.setColorPrecisionMediump();
 			rayHandler = new RayHandler(Physics.world, maxRays, (int)(Gdx.graphics.getWidth()*rttScale), (int)(Gdx.graphics.getHeight()*rttScale));
