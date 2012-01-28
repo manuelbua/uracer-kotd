@@ -144,7 +144,7 @@ public class Level
 
 		renderOrthographicAlignedModels( staticMeshes );
 
-		// TODO, either disable rendering in release/mobile or
+		// TODO, either disable Track rendering in release/mobile or
 		// make Track build a single mesh out of the whole track,
 		// there is no point in wasting draw calls/context switching
 		// for every single wall tile (!)
