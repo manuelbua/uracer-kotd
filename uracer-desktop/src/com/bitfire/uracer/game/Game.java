@@ -12,6 +12,7 @@ import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.math.MathUtils;
 import com.badlogic.gdx.math.Vector2;
 import com.bitfire.uracer.Art;
+import com.bitfire.uracer.CarSounds;
 import com.bitfire.uracer.Config;
 import com.bitfire.uracer.Director;
 import com.bitfire.uracer.Physics;
@@ -70,6 +71,11 @@ public class Game
 
 		// track effects
 		TrackEffects.init( logic );
+
+		// audio effects
+		CarSounds.setPlayer( player );
+//		CarSounds.carStart();
+//		CarSounds.drift();
 
 		// setup sprite batch at origin top-left => 0,0
 		// Issues may arise on Tegra2 (Asus Transformer) devices if the buffers'
@@ -161,6 +167,8 @@ public class Game
 
 	public void dispose()
 	{
+		CarSounds.carStop();
+
 		Director.dispose();
 		Messager.dispose();
 		logic.dispose();
@@ -174,6 +182,7 @@ public class Game
 		logic.tick();
 		hud.tick();
 		TrackEffects.tick();
+		CarSounds.tick();
 
 		Debug.update();
 	}
