@@ -142,7 +142,8 @@ public class CarSkidMarks extends TrackEffect
 
 		float af = flatf;
 		float ar = flatr;
-		if( af > 0.2f || ar > 0.2f )
+//		if( af > 0.2f || ar > 0.2f )
+		if( (af+ar) > 0.4f )
 		{
 			// add front drift marks?
 			SkidMark drift = skidMarks.get( markIndex++ );

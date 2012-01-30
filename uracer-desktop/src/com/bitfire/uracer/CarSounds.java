@@ -22,7 +22,7 @@ public class CarSounds
 	public static void load()
 	{
 		carEngine = Gdx.audio.newSound(Gdx.files.getFileHandle("data/audio/lotus-elise.ogg", FileType.Internal));
-		drift = Gdx.audio.newSound(Gdx.files.getFileHandle("data/audio/drift-9.ogg", FileType.Internal));
+		drift = Gdx.audio.newSound(Gdx.files.getFileHandle("data/audio/drift-loop-1.ogg", FileType.Internal));
 	}
 
 	public static void dispose()
@@ -95,36 +95,76 @@ public class CarSounds
 	private static Sound drift = null;
 	private static long driftId = -1;
 	private static float driftLastPitch = 0;
-	private static final float pitchFactor = .95f;
-	private static final float pitchMin = 0.5f;
-	private static final float pitchMax = 1.25f;
+	private static final float pitchFactor = 1f;
+	private static final float pitchMin = 0.6f;
+	private static final float pitchMax = 1f;
 
-	public static void drift()
+	private static boolean doFadeIn = false;
+	private static boolean doFadeOut = false;
+	private static float lastVolume = 0f;
+
+	public static void driftPlay()
 	{
-		if(driftId>-1) drift.stop( driftId );
-
-		driftId = drift.play(0f);
+		driftId = drift.loop(0f);
 		drift.setPitch( driftId, pitchMin );
-		drift.setVolume( driftId, 0 );
+		drift.setVolume( driftId, 0f );
+	}
+
+	public static void driftStart()
+	{
+//		if(driftId>-1) drift.stop( driftId );
+
+		doFadeIn = true;
+		doFadeOut = false;
+//		lastVolume = 0f;
+	}
+
+	public static void driftEnd()
+	{
+		doFadeIn = false;
+		doFadeOut = true;
 	}
 
 	private static void driftUpdate()
 	{
 		if( driftId > -1 )
 		{
-			float pitch = (1f - currSpeedFactor) * pitchFactor + pitchMin;
+			float pitch = ( currSpeedFactor) * pitchFactor + pitchMin;
+//			float t = (( currSpeedFactor));
+//			float pitch = AMath.sigmoid(t) * pitchFactor + pitchMin;
 
 			pitch = AMath.clamp( pitch, pitchMin, pitchMax );
 
 			if( !AMath.equals(pitch, driftLastPitch) )
 			{
-				pitch = AMath.lerp( driftLastPitch, pitch, 0.55f );
-
-				drift.setVolume( driftId, (1f-currSpeedFactor)*0.75f );
+				pitch = AMath.lerp( driftLastPitch, pitch, 0.85f );
+//				System.out.println("pitch=" + pitch);
 				drift.setPitch( driftId, pitch );
-
 				driftLastPitch = pitch;
 			}
+
+			// modulate volume
+			if( doFadeIn )
+			{
+				if(lastVolume < 1f)
+					lastVolume += 0.01f;
+				else {
+					lastVolume = 1f;
+					doFadeIn = false;
+				}
+			}
+			else if( doFadeOut )
+			{
+				if(lastVolume > 0f)
+					lastVolume -= 0.01f;
+				else {
+					lastVolume = 0f;
+					doFadeOut = false;
+				}
+			}
+
+			lastVolume = AMath.clamp( lastVolume, 0, 1f );
+			drift.setVolume( driftId, lastVolume );
 		}
 
 	}
