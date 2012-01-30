@@ -74,7 +74,7 @@ public class Game
 
 		// audio effects
 		CarSounds.setPlayer( player );
-//		CarSounds.carStart();
+		CarSounds.carStart();
 		CarSounds.driftPlay();
 
 		// setup sprite batch at origin top-left => 0,0
@@ -106,7 +106,6 @@ public class Game
 			playerLight = new ConeLight( rayHandler, maxRays, c, 30, 0, 0, 0, 15 );
 			playerLight.setSoft( false );
 			playerLight.setMaskBits( 0 );
-//			playerLight.setXray( true );
 
 			// level lights test
 			Vector2 tile;

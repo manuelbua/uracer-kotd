@@ -64,7 +64,7 @@ public class CarSounds
 
 	public static void carStart()
 	{
-		carEngineId = carEngine.loop(1f);
+		carEngineId = carEngine.loop(.2f);
 		carEnginePitchStart = carEnginePitchLast = 1f;
 		carEngine.setPitch( carEngineId, carEnginePitchStart );
 	}
