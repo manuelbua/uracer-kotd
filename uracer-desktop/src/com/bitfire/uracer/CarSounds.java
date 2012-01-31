@@ -21,8 +21,8 @@ public class CarSounds
 
 	public static void load()
 	{
-		carEngine = Gdx.audio.newSound(Gdx.files.getFileHandle("data/audio/lotus-elise.ogg", FileType.Internal));
-		drift = Gdx.audio.newSound(Gdx.files.getFileHandle("data/audio/drift-loop-1.ogg", FileType.Internal));
+		carEngine = Gdx.audio.newSound(Gdx.files.getFileHandle("data/audio/mustang.ogg", FileType.Internal));
+		drift = Gdx.audio.newSound(Gdx.files.getFileHandle("data/audio/drift-loop-2.ogg", FileType.Internal));
 	}
 
 	public static void dispose()
@@ -62,7 +62,7 @@ public class CarSounds
 	private static float carEnginePitchStart = 0;
 	private static float carEnginePitchLast = 0;
 
-	public static void carStart()
+	public static void engineStart()
 	{
 		carEngineId = carEngine.loop(.2f);
 		carEnginePitchStart = carEnginePitchLast = 1f;
@@ -103,14 +103,14 @@ public class CarSounds
 	private static boolean doFadeOut = false;
 	private static float lastVolume = 0f;
 
-	public static void driftPlay()
+	public static void driftStart()
 	{
 		driftId = drift.loop(0f);
 		drift.setPitch( driftId, pitchMin );
 		drift.setVolume( driftId, 0f );
 	}
 
-	public static void driftStart()
+	public static void driftBegin()
 	{
 //		if(driftId>-1) drift.stop( driftId );
 

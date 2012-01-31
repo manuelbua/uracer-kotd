@@ -74,8 +74,8 @@ public class Game
 
 		// audio effects
 		CarSounds.setPlayer( player );
-		CarSounds.carStart();
-		CarSounds.driftPlay();
+//		CarSounds.engineStart();
+		CarSounds.driftStart();
 
 		// setup sprite batch at origin top-left => 0,0
 		// Issues may arise on Tegra2 (Asus Transformer) devices if the buffers'
