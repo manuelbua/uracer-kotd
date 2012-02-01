@@ -150,7 +150,7 @@ public class GameLogicListener implements IGameLogicListener
 	{
 		logic.getGame().getHud().getDrifting().onBeginDrift();
 		CarSounds.driftBegin();
-		System.out.println("-> drift starts");
+//		System.out.println("-> drift starts");
 	}
 
 	@Override
@@ -158,6 +158,6 @@ public class GameLogicListener implements IGameLogicListener
 	{
 		logic.getGame().getHud().getDrifting().onEndDrift();
 		CarSounds.driftEnd();
-		System.out.println("<- drift ends");
+//		System.out.println("<- drift ends");
 	}
 }

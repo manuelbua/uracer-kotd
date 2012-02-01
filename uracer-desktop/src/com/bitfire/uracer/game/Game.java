@@ -74,7 +74,7 @@ public class Game
 
 		// audio effects
 		CarSounds.setPlayer( player );
-//		CarSounds.engineStart();
+		CarSounds.engineStart();
 		CarSounds.driftStart();
 
 		// setup sprite batch at origin top-left => 0,0

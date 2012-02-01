@@ -21,7 +21,7 @@ public class CarSounds
 
 	public static void load()
 	{
-		carEngine = Gdx.audio.newSound(Gdx.files.getFileHandle("data/audio/mustang.ogg", FileType.Internal));
+		carEngine = Gdx.audio.newSound(Gdx.files.getFileHandle("data/audio/engine-2.ogg", FileType.Internal));
 		drift = Gdx.audio.newSound(Gdx.files.getFileHandle("data/audio/drift-loop-2.ogg", FileType.Internal));
 	}
 
@@ -64,8 +64,8 @@ public class CarSounds
 
 	public static void engineStart()
 	{
-		carEngineId = carEngine.loop(.2f);
-		carEnginePitchStart = carEnginePitchLast = 1f;
+		carEngineId = carEngine.loop(1f);
+		carEnginePitchStart = carEnginePitchLast = .8f;
 		carEngine.setPitch( carEngineId, carEnginePitchStart );
 	}
 
@@ -78,11 +78,13 @@ public class CarSounds
 	{
 		if( carEngineId > -1 )
 		{
-			float pitch = carEnginePitchStart + currSpeedFactor;
+			float s = (currSpeedFactor-0.5f)*.5f;
+			float pitch = .85f + AMath.sigmoid(s*10)*0.65f;
 			if( !AMath.equals(pitch, carEnginePitchLast) )
 			{
 				carEngine.setPitch( carEngineId, pitch );
 				carEnginePitchLast = pitch;
+				System.out.println("engine-pitch="+pitch);
 			}
 		}
 	}
@@ -96,7 +98,7 @@ public class CarSounds
 	private static long driftId = -1;
 	private static float driftLastPitch = 0;
 	private static final float pitchFactor = 1f;
-	private static final float pitchMin = 0.6f;
+	private static final float pitchMin = 0.75f;
 	private static final float pitchMax = 1f;
 
 	private static boolean doFadeIn = false;
@@ -112,7 +114,12 @@ public class CarSounds
 
 	public static void driftBegin()
 	{
-//		if(driftId>-1) drift.stop( driftId );
+		if(driftId>-1)
+		{
+			drift.stop( driftId );
+			driftId = drift.loop(0f);
+			drift.setVolume( driftId, 0f );
+		}
 
 		doFadeIn = true;
 		doFadeOut = false;
