@@ -61,11 +61,12 @@ public class CarSounds
 	private static long carEngineId = -1;
 	private static float carEnginePitchStart = 0;
 	private static float carEnginePitchLast = 0;
+	private static final float carEnginePitchMin = 0.85f;
 
 	public static void engineStart()
 	{
 		carEngineId = carEngine.loop(1f);
-		carEnginePitchStart = carEnginePitchLast = .8f;
+		carEnginePitchStart = carEnginePitchLast = carEnginePitchMin;
 		carEngine.setPitch( carEngineId, carEnginePitchStart );
 	}
 
@@ -78,13 +79,14 @@ public class CarSounds
 	{
 		if( carEngineId > -1 )
 		{
-			float s = (currSpeedFactor-0.5f)*.5f;
-			float pitch = .85f + AMath.sigmoid(s*10)*0.65f;
+//			float s = (currSpeedFactor-0.5f)*.5f;
+//			float pitch = carEnginePitchMin + AMath.sigmoid(s*10)*0.65f;
+			float pitch = carEnginePitchMin + currSpeedFactor*0.65f;
 			if( !AMath.equals(pitch, carEnginePitchLast) )
 			{
 				carEngine.setPitch( carEngineId, pitch );
 				carEnginePitchLast = pitch;
-				System.out.println("engine-pitch="+pitch);
+//				System.out.println("engine-pitch="+pitch);
 			}
 		}
 	}
