@@ -21,8 +21,8 @@ public class CarSounds
 
 	public static void load()
 	{
-		carEngine = Gdx.audio.newSound(Gdx.files.getFileHandle("data/audio/engine-2.wav", FileType.Internal));
-		drift = Gdx.audio.newSound(Gdx.files.getFileHandle("data/audio/drift-loop-2.wav", FileType.Internal));
+		carEngine = Gdx.audio.newSound(Gdx.files.getFileHandle("data/audio/engine-2.ogg", FileType.Internal));
+		drift = Gdx.audio.newSound(Gdx.files.getFileHandle("data/audio/drift-loop-2.ogg", FileType.Internal));
 	}
 
 	public static void dispose()
