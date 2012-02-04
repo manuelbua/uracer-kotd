@@ -21,13 +21,13 @@ public class CarSounds
 
 	public static void load()
 	{
-		carEngine = Gdx.audio.newSound(Gdx.files.getFileHandle("data/audio/engine-2.ogg", FileType.Internal));
+//		carEngine = Gdx.audio.newSound(Gdx.files.getFileHandle("data/audio/engine-2.ogg", FileType.Internal));
 		drift = Gdx.audio.newSound(Gdx.files.getFileHandle("data/audio/drift-loop-2.ogg", FileType.Internal));
 	}
 
 	public static void dispose()
 	{
-		carEngine.dispose();
+//		carEngine.dispose();
 		drift.dispose();
 	}
 
@@ -48,7 +48,7 @@ public class CarSounds
 			currSpeedFactor = AMath.clamp(currCarSpeedSq / carMaxSpeedSq, 0f, 1f);
 			currForceFactor = AMath.clamp(carDescriptor.throttle / carMaxForce, 0f, 1f);
 
-			carUpdate();
+//			engineUpdate();
 			driftUpdate();
 		}
 	}
@@ -57,39 +57,36 @@ public class CarSounds
 	// car engine
 	//
 
-	private static Sound carEngine = null;
-	private static long carEngineId = -1;
-	private static float carEnginePitchStart = 0;
-	private static float carEnginePitchLast = 0;
-	private static final float carEnginePitchMin = 1f;
-
-	public static void engineStart()
-	{
-		carEngineId = carEngine.loop(1f);
-		carEnginePitchStart = carEnginePitchLast = carEnginePitchMin;
-		carEngine.setPitch( carEngineId, carEnginePitchStart );
-	}
-
-	public static void carStop()
-	{
-		carEngine.stop();
-	}
-
-	private static void carUpdate()
-	{
-		if( carEngineId > -1 )
-		{
-//			float s = (currSpeedFactor-0.5f)*.5f;
-//			float pitch = carEnginePitchMin + AMath.sigmoid(s*10)*0.65f;
-			float pitch = carEnginePitchMin + currSpeedFactor*0.65f;
-			if( !AMath.equals(pitch, carEnginePitchLast) )
-			{
-				carEngine.setPitch( carEngineId, pitch );
-				carEnginePitchLast = pitch;
-//				System.out.println("engine-pitch="+pitch);
-			}
-		}
-	}
+//	private static Sound carEngine = null;
+//	private static long carEngineId = -1;
+//	private static float carEnginePitchStart = 0;
+//	private static float carEnginePitchLast = 0;
+//	private static final float carEnginePitchMin = 1f;
+//
+//	public static void engineStart()
+//	{
+//		carEngineId = carEngine.loop(1f);
+//		carEnginePitchStart = carEnginePitchLast = carEnginePitchMin;
+//		carEngine.setPitch( carEngineId, carEnginePitchStart );
+//	}
+//
+//	public static void engineStop()
+//	{
+//		carEngine.stop();
+//	}
+//
+//	private static void engineUpdate()
+//	{
+//		if( carEngineId > -1 )
+//		{
+//			float pitch = carEnginePitchMin + currSpeedFactor*0.65f;
+//			if( !AMath.equals(pitch, carEnginePitchLast) )
+//			{
+//				carEngine.setPitch( carEngineId, pitch );
+//				carEnginePitchLast = pitch;
+//			}
+//		}
+//	}
 
 
 	//

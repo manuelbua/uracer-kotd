@@ -74,7 +74,7 @@ public class Game
 
 		// audio effects
 		CarSounds.setPlayer( player );
-		CarSounds.engineStart();
+//		CarSounds.engineStart();
 		CarSounds.driftStart();
 
 		// setup sprite batch at origin top-left => 0,0
@@ -166,7 +166,7 @@ public class Game
 
 	public void dispose()
 	{
-		CarSounds.carStop();
+//		CarSounds.engineStop();
 
 		Director.dispose();
 		Messager.dispose();
