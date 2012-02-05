@@ -1,0 +1,25 @@
+<?xml version="1.0" standalone="no" ?>
+<!DOCTYPE project PUBLIC "-//audacityproject-1.3.0//DTD//EN" "http://audacity.sourceforge.net/xml/audacityproject-1.3.0.dtd" >
+<project xmlns="http://audacity.sourceforge.net/xml/" projname="drift-loop-2_data" version="1.3.0" audacityversion="1.3.14-beta" sel0="0.3483440308" sel1="2.6618741977" vpos="0" h="0.0000000000" zoom="304.2968750000" rate="22050.0">
+	<tags/>
+	<wavetrack name="JRF006363" channel="0" linked="1" mute="0" solo="0" height="150" minimized="0" rate="22050" gain="1.0" pan="0.0">
+		<waveclip offset="0.00000000">
+			<sequence maxsamples="262144" sampleformat="262159" numsamples="112896">
+				<waveblock start="0">
+					<simpleblockfile filename="e0000916.au" len="112896" min="-0.266402" max="0.250029" rms="0.046546"/>
+				</waveblock>
+			</sequence>
+			<envelope numpoints="0"/>
+		</waveclip>
+	</wavetrack>
+	<wavetrack name="JRF006363" channel="1" linked="0" mute="0" solo="0" height="150" minimized="0" rate="22050" gain="1.0" pan="0.0">
+		<waveclip offset="0.00000000">
+			<sequence maxsamples="262144" sampleformat="262159" numsamples="112896">
+				<waveblock start="0">
+					<simpleblockfile filename="e000021c.au" len="112896" min="-0.265355" max="0.252585" rms="0.05042"/>
+				</waveblock>
+			</sequence>
+			<envelope numpoints="0"/>
+		</waveclip>
+	</wavetrack>
+</project>

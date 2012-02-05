@@ -1,6 +1,7 @@
 package com.bitfire.uracer.game.logic;
 
 import com.badlogic.gdx.math.Vector2;
+import com.bitfire.uracer.CarSounds;
 import com.bitfire.uracer.carsimulation.Replay;
 import com.bitfire.uracer.entities.vehicles.Car;
 import com.bitfire.uracer.entities.vehicles.GhostCar;
@@ -30,8 +31,8 @@ public class GameLogicListener implements IGameLogicListener
 		this.level = logic.getGame().getLevel();
 		this.lapInfo = LapInfo.get();
 
-		player = logic.getGame().getLevel().getPlayer();
-		ghost = logic.getGame().getLevel().getGhost();
+		this.player = logic.getGame().getLevel().getPlayer();
+		this.ghost = logic.getGame().getLevel().getGhost();
 	}
 
 	@Override
@@ -148,11 +149,15 @@ public class GameLogicListener implements IGameLogicListener
 	public void onBeginDrift()
 	{
 		logic.getGame().getHud().getDrifting().onBeginDrift();
+		CarSounds.driftBegin();
+//		System.out.println("-> drift starts");
 	}
 
 	@Override
 	public void onEndDrift()
 	{
 		logic.getGame().getHud().getDrifting().onEndDrift();
+		CarSounds.driftEnd();
+//		System.out.println("<- drift ends");
 	}
 }

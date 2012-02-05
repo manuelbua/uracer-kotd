@@ -12,6 +12,7 @@ import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.math.MathUtils;
 import com.badlogic.gdx.math.Vector2;
 import com.bitfire.uracer.Art;
+import com.bitfire.uracer.CarSounds;
 import com.bitfire.uracer.Config;
 import com.bitfire.uracer.Director;
 import com.bitfire.uracer.Physics;
@@ -71,6 +72,11 @@ public class Game
 		// track effects
 		TrackEffects.init( logic );
 
+		// audio effects
+		CarSounds.setPlayer( player );
+//		CarSounds.engineStart();
+		CarSounds.driftStart();
+
 		// setup sprite batch at origin top-left => 0,0
 		// Issues may arise on Tegra2 (Asus Transformer) devices if the buffers'
 		// count is higher than 10
@@ -100,7 +106,6 @@ public class Game
 			playerLight = new ConeLight( rayHandler, maxRays, c, 30, 0, 0, 0, 15 );
 			playerLight.setSoft( false );
 			playerLight.setMaskBits( 0 );
-//			playerLight.setXray( true );
 
 			// level lights test
 			Vector2 tile;
@@ -161,6 +166,8 @@ public class Game
 
 	public void dispose()
 	{
+//		CarSounds.engineStop();
+
 		Director.dispose();
 		Messager.dispose();
 		logic.dispose();
@@ -174,6 +181,7 @@ public class Game
 		logic.tick();
 		hud.tick();
 		TrackEffects.tick();
+		CarSounds.tick();
 
 		Debug.update();
 	}
@@ -271,13 +279,14 @@ public class Game
 				);
 
 				rayHandler.render();
+
+				if( (frameCount&0x3f)==0x3f)
+				{
+					System.out.println("lights rendered="+rayHandler.lightRenderedLastFrame);
+				}
 			}
 
 			frameCount++;
-			if( rayHandler != null && (frameCount&0x3f)==0x3f)
-			{
-				System.out.println("lights rendered="+rayHandler.lightRenderedLastFrame);
-			}
 		}
 
 		if( Config.Graphics.EnablePostProcessingFx )

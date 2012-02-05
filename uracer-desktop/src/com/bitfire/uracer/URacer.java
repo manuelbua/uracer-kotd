@@ -56,6 +56,7 @@ public class URacer implements ApplicationListener
 
 		Config.asDefault();
 		Art.load();
+		CarSounds.load();
 		Debug.create();
 		input.releaseAllKeys();
 
@@ -137,6 +138,8 @@ public class URacer implements ApplicationListener
 		setScreen( null );
 		Debug.dispose();
 		Art.dispose();
+		CarSounds.dispose();
+		System.exit( 0 );
 	}
 
 	public void setScreen( Screen newScreen )
