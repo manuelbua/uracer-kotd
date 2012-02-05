@@ -3,7 +3,9 @@
 	<name>uracer-desktop</name>
 	<comment></comment>
 	<projects>
-		<project>test-tilemap</project>
+		<project>gdx</project>
+		<project>gdx-audio</project>
+		<project>model-loaders</project>
 	</projects>
 	<buildSpec>
 		<buildCommand>
