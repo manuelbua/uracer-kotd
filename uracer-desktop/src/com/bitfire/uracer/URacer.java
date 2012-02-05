@@ -139,6 +139,7 @@ public class URacer implements ApplicationListener
 		Debug.dispose();
 		Art.dispose();
 		CarSounds.dispose();
+		System.exit( 0 );
 	}
 
 	public void setScreen( Screen newScreen )
