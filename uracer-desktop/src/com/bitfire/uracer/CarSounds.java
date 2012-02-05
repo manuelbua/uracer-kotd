@@ -136,15 +136,12 @@ public class CarSounds
 		if( driftId > -1 )
 		{
 			float pitch = ( currSpeedFactor) * pitchFactor + pitchMin;
-//			float t = (( currSpeedFactor));
-//			float pitch = AMath.sigmoid(t) * pitchFactor + pitchMin;
 
 			pitch = AMath.clamp( pitch, pitchMin, pitchMax );
+//			pitch = AMath.lerp( driftLastPitch, pitch, 0.85f );
 
 			if( !AMath.equals(pitch, driftLastPitch) )
 			{
-				pitch = AMath.lerp( driftLastPitch, pitch, 0.85f );
-//				System.out.println("pitch=" + pitch);
 				drift.setPitch( driftId, pitch );
 				driftLastPitch = pitch;
 			}

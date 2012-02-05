@@ -279,13 +279,14 @@ public class Game
 				);
 
 				rayHandler.render();
+
+				if( (frameCount&0x3f)==0x3f)
+				{
+					System.out.println("lights rendered="+rayHandler.lightRenderedLastFrame);
+				}
 			}
 
 			frameCount++;
-			if( rayHandler != null && (frameCount&0x3f)==0x3f)
-			{
-				System.out.println("lights rendered="+rayHandler.lightRenderedLastFrame);
-			}
 		}
 
 		if( Config.Graphics.EnablePostProcessingFx )
