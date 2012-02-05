@@ -20,20 +20,24 @@ public class CarSoundManager
 	// sound effects
 	private static CarDriftSoundEffect carDrift;
 	private static CarEngineSoundEffect carEngine;
+	private static CarImpactSoundEffect carImpact;
 
 	public static void load()
 	{
 		carEngine = new CarEngineSoundEffect();
-		carEngine.start();
+//		carEngine.start();
 
 		carDrift = new CarDriftSoundEffect();
 		carDrift.start();
+
+		carImpact = new CarImpactSoundEffect();
 	}
 
 	public static void dispose()
 	{
 		carEngine.dispose();
 		carDrift.dispose();
+		carImpact.dispose();
 	}
 
 	public static void setPlayer(Car player)
@@ -59,10 +63,7 @@ public class CarSoundManager
 	}
 
 
-	//
-	// drift
-	//
-
+	// drift events
 	public static void driftBegin()
 	{
 		carDrift.driftBegin();
@@ -73,4 +74,9 @@ public class CarSoundManager
 		carDrift.driftEnd();
 	}
 
+	// crashes
+	public static void carImpacted(float impactForce)
+	{
+		carImpact.impact( impactForce, currSpeedFactor );
+	}
 }
