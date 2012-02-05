@@ -3,6 +3,7 @@
 	<name>uracer-desktop</name>
 	<comment></comment>
 	<projects>
+		<project>box2dLight</project>
 		<project>gdx</project>
 		<project>gdx-audio</project>
 		<project>model-loaders</project>
