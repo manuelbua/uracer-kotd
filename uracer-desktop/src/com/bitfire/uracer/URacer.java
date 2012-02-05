@@ -5,6 +5,7 @@ import java.lang.reflect.Field;
 import com.badlogic.gdx.ApplicationListener;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.math.Vector2;
+import com.bitfire.uracer.audio.CarSoundManager;
 import com.bitfire.uracer.debug.Debug;
 import com.bitfire.uracer.screen.GameScreen;
 import com.bitfire.uracer.screen.Screen;
@@ -56,7 +57,7 @@ public class URacer implements ApplicationListener
 
 		Config.asDefault();
 		Art.load();
-		CarSounds.load();
+		CarSoundManager.load();
 		Debug.create();
 		input.releaseAllKeys();
 
@@ -138,7 +139,7 @@ public class URacer implements ApplicationListener
 		setScreen( null );
 		Debug.dispose();
 		Art.dispose();
-		CarSounds.dispose();
+		CarSoundManager.dispose();
 		System.exit( 0 );
 	}
 

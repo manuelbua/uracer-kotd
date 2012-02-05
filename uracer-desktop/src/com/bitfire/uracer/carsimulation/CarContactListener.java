@@ -45,7 +45,7 @@ public class CarContactListener implements ContactListener
 				DriftInfo.invalidateByCollision();
 			}
 
-			// System.out.println("Impact data =" + res );
+			System.out.println("Impact data =" + res );
 		}
 	}
 
