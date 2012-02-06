@@ -68,12 +68,6 @@ public class GameLogicListener implements IGameLogicListener
 //		label.slide( new Vector2(0,-1), 10 );
 	}
 
-//	@Override
-//	public LapInfo onGetLapInfo()
-//	{
-//		return lapInfo;
-//	}
-
 	@Override
 	public void onTileChanged( Vector2 carAt )
 	{

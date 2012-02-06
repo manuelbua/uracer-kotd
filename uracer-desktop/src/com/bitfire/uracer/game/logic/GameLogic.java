@@ -58,7 +58,7 @@ public class GameLogic
 		LapInfo.init();
 
 		this.listener = new GameLogicListener( this );
-}
+	}
 
 	public void create()
 	{

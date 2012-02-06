@@ -1,7 +1,6 @@
 package com.bitfire.uracer;
 
 import com.badlogic.gdx.Gdx;
-import com.badlogic.gdx.Input.Peripheral;
 import com.badlogic.gdx.InputAdapter;
 import com.badlogic.gdx.math.Vector2;
 
@@ -22,7 +21,7 @@ public class Input extends InputAdapter
 	private static Vector2 mouseCoords;
 
 	// accelerometer
-	private static float accelX, accelY, accelZ;
+//	private static float accelX, accelY, accelZ;
 
 	// flags
 	private static int FLAG_REAL_ON;
@@ -74,20 +73,20 @@ public class Input extends InputAdapter
 		return mouseCoords;
 	}
 
-	public static float getAccelX()
-	{
-		return accelX;
-	}
-
-	public static float getAccelY()
-	{
-		return accelY;
-	}
-
-	public static float getAccelZ()
-	{
-		return accelZ;
-	}
+//	public static float getAccelX()
+//	{
+//		return accelX;
+//	}
+//
+//	public static float getAccelY()
+//	{
+//		return accelY;
+//	}
+//
+//	public static float getAccelZ()
+//	{
+//		return accelZ;
+//	}
 
 	public static boolean isOn( int keycode )
 	{
@@ -124,7 +123,7 @@ public class Input extends InputAdapter
 		buttons = new int[ 256 ];
 		is_touching = is_dragging = false;
 		touchX = touchY = 0;
-		accelX = accelY = accelZ = 0;
+//		accelX = accelY = accelZ = 0;
 		touchCoords = new Vector2( 0, 0 );
 		mouseCoords = new Vector2( 0, 0 );
 
@@ -141,12 +140,12 @@ public class Input extends InputAdapter
 
 	public void tick()
 	{
-		if( Gdx.input.isPeripheralAvailable( Peripheral.Accelerometer ) )
-		{
-			accelX = Gdx.input.getAccelerometerX();
-			accelY = Gdx.input.getAccelerometerY();
-			accelZ = Gdx.input.getAccelerometerZ();
-		}
+//		if( Gdx.input.isPeripheralAvailable( Peripheral.Accelerometer ) )
+//		{
+//			accelX = Gdx.input.getAccelerometerX();
+//			accelY = Gdx.input.getAccelerometerY();
+//			accelZ = Gdx.input.getAccelerometerZ();
+//		}
 
 		mouseX = Gdx.input.getX();
 		mouseY = Gdx.input.getY();
