@@ -14,7 +14,7 @@ public class CarImpactSoundEffect implements CarSoundEffect
 	private final float MinImpactForce = 20;
 	private final float MaxImpactForce = 200;
 	private final float OneOnMaxImpactForce = 1f / MaxImpactForce;
-	private final float MaxVolume = 1f;
+	private final float MaxVolume = .8f;
 
 	public CarImpactSoundEffect()
 	{
