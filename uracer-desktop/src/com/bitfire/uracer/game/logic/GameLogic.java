@@ -84,7 +84,7 @@ public class GameLogic
 				game.reset();
 			} else if( Input.isOn( Keys.Q ) )
 			{
-				System.out.println("TODO implement quit");
+				Gdx.app.exit();
 			}
 
 			// onTileChanged
