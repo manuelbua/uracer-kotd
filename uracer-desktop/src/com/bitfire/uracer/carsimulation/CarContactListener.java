@@ -4,7 +4,6 @@ import com.badlogic.gdx.physics.box2d.Contact;
 import com.badlogic.gdx.physics.box2d.ContactImpulse;
 import com.badlogic.gdx.physics.box2d.ContactListener;
 import com.badlogic.gdx.physics.box2d.Manifold;
-import com.bitfire.uracer.utils.Box2DUtils;
 
 public class CarContactListener implements ContactListener
 {
@@ -13,15 +12,15 @@ public class CarContactListener implements ContactListener
 	@Override
 	public void beginContact( Contact contact )
 	{
-		if(Box2DUtils.isCar(contact.getFixtureA()) || Box2DUtils.isCar(contact.getFixtureB()))
-			System.out.println("beginContact");
+//		if(Box2DUtils.isCar(contact.getFixtureA()) || Box2DUtils.isCar(contact.getFixtureB()))
+//			System.out.println("beginContact");
 	}
 
 	@Override
 	public void endContact( Contact contact )
 	{
-		if(Box2DUtils.isCar(contact.getFixtureA()) || Box2DUtils.isCar(contact.getFixtureB()))
-			System.out.println("endContact");
+//		if(Box2DUtils.isCar(contact.getFixtureA()) || Box2DUtils.isCar(contact.getFixtureB()))
+//			System.out.println("endContact");
 	}
 
 	@Override
