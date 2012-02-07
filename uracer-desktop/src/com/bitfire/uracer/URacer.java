@@ -95,8 +95,8 @@ public class URacer implements ApplicationListener
 
 			// simulate slowness
 //			try { Thread.sleep( 32 ); } catch( InterruptedException e ) {}
-
 		}
+
 		physicsTime = (System.nanoTime() - startTime) * oneOnOneBillion;
 
 		// compute the temporal aliasing factor, entities will render
@@ -113,6 +113,7 @@ public class URacer implements ApplicationListener
 			// simulate slowness
 //			try { Thread.sleep( 32 ); } catch( InterruptedException e ) {}
 		}
+
 		graphicsTime = (System.nanoTime() - startTime) * oneOnOneBillion;
 	}
 
