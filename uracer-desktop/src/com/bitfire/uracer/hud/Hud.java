@@ -14,6 +14,7 @@ import com.bitfire.uracer.game.Game;
 import com.bitfire.uracer.game.logic.DriftInfo;
 import com.bitfire.uracer.game.logic.LapInfo;
 import com.bitfire.uracer.messager.Messager;
+import com.bitfire.uracer.utils.FloatString;
 
 public class Hud
 {
@@ -83,7 +84,7 @@ public class Hud
 		LapInfo lapInfo = LapInfo.get();
 
 		// current time
-		curr.setString( String.format( "YOUR  TIME\n%.04fs", lapInfo.getElapsedSeconds() ) );
+		curr.setString( "YOUR  TIME\n" + FloatString.format(lapInfo.getElapsedSeconds()) + "s" );
 
 		// render best lap time
 		Replay rbest = lapInfo.getBestReplay();
@@ -92,13 +93,13 @@ public class Hud
 		if( rbest != null && rbest.isValid )
 		{
 			// has best
-			best.setString( String.format( "BEST  TIME\n%.04fs", rbest.trackTimeSeconds ) );
+			best.setString( "BEST  TIME\n" + FloatString.format(rbest.trackTimeSeconds) + "s" );
 		} else
 		{
 			// temporarily use last track time
 			if( lapInfo.hasLastTrackTimeSeconds() )
 			{
-				best.setString( String.format( "BEST  TIME\n%.04fs", lapInfo.getLastTrackTimeSeconds() ) );
+				best.setString( "BEST  TIME\n" + FloatString.format(lapInfo.getLastTrackTimeSeconds()) + "s" );
 			} else
 			{
 				best.setString( "BEST TIME\n-:----" );
@@ -109,7 +110,7 @@ public class Hud
 		if( lapInfo.hasLastTrackTimeSeconds() )
 		{
 			// has only last
-			last.setString( String.format( "LAST  TIME\n%.04fs", lapInfo.getLastTrackTimeSeconds() ) );
+			last.setString( "LAST  TIME\n" + FloatString.format(lapInfo.getLastTrackTimeSeconds()) + "s" );
 		} else
 		{
 			last.setString( "LAST  TIME\n-:----" );

@@ -13,6 +13,7 @@ import com.bitfire.uracer.messager.Messager.MessagePosition;
 import com.bitfire.uracer.messager.Messager.MessageSize;
 import com.bitfire.uracer.messager.Messager.MessageType;
 import com.bitfire.uracer.utils.Convert;
+import com.bitfire.uracer.utils.FloatString;
 
 public class HudDrifting
 {
@@ -81,7 +82,7 @@ public class HudDrifting
 		//
 		// draw earned seconds
 		//
-		labelRealtime.setString( "+" + String.format( "%.02f", drift.driftSeconds ) );
+		labelRealtime.setString( "+" + FloatString.format(drift.driftSeconds) );
 		labelRealtime.render( batch );
 
 		//
@@ -109,25 +110,25 @@ public class HudDrifting
 		// premature end drift event due to collision?
 		if( drift.hasCollided )
 		{
-			labelResult.setString( "-" + String.format( "%.02f", drift.driftSeconds ) );
+			labelResult.setString( "-" + FloatString.format(drift.driftSeconds) );
 			labelResult.setFont( Art.fontCurseRbig );
 		}
 		else
 		{
-			labelResult.setString( "+" + String.format( "%.02f", drift.driftSeconds ) );
+			labelResult.setString( "+" + FloatString.format(drift.driftSeconds) );
 			labelResult.setFont( Art.fontCurseGbig );
 
 			if( drift.driftSeconds >= 1 && drift.driftSeconds < 1.5f )
 			{
-				Messager.enqueue( "NICE ONE!\n+" + String.format( "%.02f", drift.driftSeconds ) + "  seconds!", 1f, MessageType.Good, MessagePosition.Bottom, MessageSize.Big );
+				Messager.enqueue( "NICE ONE!\n+" + FloatString.format(drift.driftSeconds) + "  seconds!", 1f, MessageType.Good, MessagePosition.Bottom, MessageSize.Big );
 			}
 			else if( drift.driftSeconds >= 1.5f && drift.driftSeconds < 2f )
 			{
-				Messager.enqueue( "FANTASTIC!\n+" + String.format( "%.02f", drift.driftSeconds ) + "  seconds!", 1f, MessageType.Good, MessagePosition.Bottom, MessageSize.Big );
+				Messager.enqueue( "FANTASTIC!\n+" + FloatString.format(drift.driftSeconds) + "  seconds!", 1f, MessageType.Good, MessagePosition.Bottom, MessageSize.Big );
 			}
 			else if( drift.driftSeconds >= 2f )
 			{
-				Messager.enqueue( "UNREAL!\n+" + String.format( "%.02f", drift.driftSeconds ) + "  seconds!", 1f, MessageType.Good, MessagePosition.Bottom, MessageSize.Big );
+				Messager.enqueue( "UNREAL!\n+" + FloatString.format(drift.driftSeconds) + "  seconds!", 1f, MessageType.Good, MessagePosition.Bottom, MessageSize.Big );
 			}
 		}
 
