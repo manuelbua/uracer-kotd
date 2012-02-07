@@ -25,6 +25,9 @@ public class Messager
 	// data
 	private static Array<LinkedList<Message>> messages;
 	private static Array<Message> currents;
+	private static Message[] messageStore;
+	private static final int MaxMessagesInStore = 10;
+	private static int idxMessageStore;
 
 	private Messager()
 	{
@@ -41,6 +44,12 @@ public class Messager
 		messages.insert( MessagePosition.Top.ordinal(), new LinkedList<Message>() );
 		messages.insert( MessagePosition.Middle.ordinal(), new LinkedList<Message>() );
 		messages.insert( MessagePosition.Bottom.ordinal(), new LinkedList<Message>() );
+
+		// initialize message store
+		idxMessageStore = 0;
+		messageStore = new Message[ MaxMessagesInStore ];
+		for( int i = 0; i < MaxMessagesInStore; i++ )
+			messageStore[i] = new Message();
 	}
 
 	public static void dispose()
@@ -128,7 +137,19 @@ public class Messager
 
 	public static void enqueue( String message, float durationSecs, MessageType type, MessagePosition position, MessageSize size )
 	{
-		Message m = new Message( message, durationSecs, type, position, size );
+		Message m = nextFreeMessage();
+		m.set( message, durationSecs, type, position, size );
 		messages.get( position.ordinal() ).add( m );
+	}
+
+	private static Message nextFreeMessage()
+	{
+		Message ret = messageStore[ idxMessageStore++ ];
+		if( idxMessageStore == MaxMessagesInStore )
+		{
+			idxMessageStore = 0;
+		}
+
+		return ret;
 	}
 }

@@ -40,7 +40,18 @@ public class Message
 	private float alpha;
 	private boolean hiding;
 
+	public Message()
+	{
+		bounds = new TextBounds();
+	}
+
 	public Message( String message, float durationSecs, MessageType type, MessagePosition position, MessageSize size )
+	{
+		this();
+		set( message, durationSecs, type, position, size );
+	}
+
+	public void set( String message, float durationSecs, MessageType type, MessagePosition position, MessageSize size )
 	{
 		startMs = 0;
 		started = false;
@@ -49,7 +60,6 @@ public class Message
 		what = message;
 		this.type = type;
 		this.position = position;
-		bounds = new TextBounds();
 		alpha = 0f;
 		scaleX = scaleY = 1f;
 		durationMs = (int)(durationSecs * 1000f);
