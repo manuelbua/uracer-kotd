@@ -96,7 +96,6 @@ public class SmokeTrails extends TrackEffect
 			}
 
 			return count;
-
 		}
 	}
 
