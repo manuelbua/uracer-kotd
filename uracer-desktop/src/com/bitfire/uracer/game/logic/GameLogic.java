@@ -1,8 +1,5 @@
 package com.bitfire.uracer.game.logic;
 
-import aurelienribon.tweenengine.Tween;
-import aurelienribon.tweenengine.TweenManager;
-
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Input.Keys;
 import com.badlogic.gdx.math.Vector2;
@@ -22,7 +19,6 @@ public class GameLogic
 {
 	private Game game;
 	private IGameLogicListener listener;
-	private static TweenManager tweener;
 
 	// events - onTileChanged
 	private Vector2 carTileAt = new Vector2();
@@ -37,9 +33,6 @@ public class GameLogic
 
 	public GameLogic( Game game )
 	{
-		Tween.setPoolEnabled( true );
-		GameLogic.tweener = new TweenManager();
-
 		this.game = game;
 		this.level = game.getLevel();
 		this.player = level.getPlayer();
@@ -114,7 +107,7 @@ public class GameLogic
 
 	public void restart()
 	{
-		tweener.clear();
+		Game.getTweener().clear();
 
 		// causes an onTileChanged event to be raised
 		lastCarTileAt.set( -1, -1 );
@@ -125,21 +118,6 @@ public class GameLogic
 		if(game.getHud()!=null) game.getHud().getDrifting().reset();
 
 		listener.onRestart();
-	}
-
-	public void render()
-	{
-		tweener.update();
-	}
-
-//	public LapInfo getLapInfo()
-//	{
-//		return listener.onGetLapInfo();
-//	}
-
-	public static TweenManager getTweener()
-	{
-		return tweener;
 	}
 
 	public Game getGame()

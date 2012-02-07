@@ -6,8 +6,8 @@ import com.bitfire.uracer.Art;
 import com.bitfire.uracer.Director;
 import com.bitfire.uracer.carsimulation.CarModel;
 import com.bitfire.uracer.entities.vehicles.Car;
+import com.bitfire.uracer.game.Game;
 import com.bitfire.uracer.game.logic.DriftInfo;
-import com.bitfire.uracer.game.logic.GameLogic;
 import com.bitfire.uracer.messager.Messager;
 import com.bitfire.uracer.messager.Messager.MessagePosition;
 import com.bitfire.uracer.messager.Messager.MessageSize;
@@ -16,7 +16,7 @@ import com.bitfire.uracer.utils.Convert;
 
 public class HudDrifting
 {
-	private GameLogic logic;
+	private Game game;
 	private Car player;
 	private CarModel model;
 	private int carWidthPx, carLengthPx;
@@ -25,10 +25,10 @@ public class HudDrifting
 	private DriftInfo drift;
 	private Vector2 heading = new Vector2();
 
-	public HudDrifting( GameLogic logic )
+	public HudDrifting( Game game )
 	{
-		this.logic = logic;
-		this.player = logic.getGame().getLevel().getPlayer();
+		this.game = game;
+		this.player = game.getPlayer();
 		this.model = player.getCarModel();
 		carWidthPx = (int)Convert.mt2px( model.width );
 		carLengthPx = (int)Convert.mt2px( model.length );
@@ -131,6 +131,6 @@ public class HudDrifting
 			}
 		}
 
-		labelResult.slide( heading, 10 );
+		labelResult.slide();
 	}
 }
