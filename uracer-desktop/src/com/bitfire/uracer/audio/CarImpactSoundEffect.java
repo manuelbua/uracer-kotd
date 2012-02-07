@@ -28,10 +28,15 @@ public class CarImpactSoundEffect implements CarSoundEffect
 	@Override
 	public void dispose()
 	{
+		soundLow1.stop();
 		soundLow1.dispose();
+		soundLow2.stop();
 		soundLow2.dispose();
+		soundMid1.stop();
 		soundMid1.dispose();
+		soundMid2.stop();
 		soundMid2.dispose();
+		soundHigh.stop();
 		soundHigh.dispose();
 	}
 

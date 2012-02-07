@@ -1,7 +1,5 @@
 package com.bitfire.uracer.audio;
 
-import com.badlogic.gdx.Files.FileType;
-import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.audio.Sound;
 import com.bitfire.uracer.utils.AMath;
 
@@ -15,13 +13,13 @@ public class CarEngineSoundEffect implements CarSoundEffect
 
 	public CarEngineSoundEffect()
 	{
-		carEngine = Gdx.audio.newSound(Gdx.files.getFileHandle("data/audio/engine.ogg", FileType.Internal));
+//		carEngine = Gdx.audio.newSound(Gdx.files.getFileHandle("data/audio/engine.ogg", FileType.Internal));
 	}
 
 	@Override
 	public void dispose()
 	{
-		carEngine.dispose();
+//		carEngine.dispose();
 	}
 
 	public void update(float speedFactor)

@@ -26,6 +26,7 @@ public class CarDriftSoundEffect implements CarSoundEffect
 	@Override
 	public void dispose()
 	{
+		drift.stop();
 		drift.dispose();
 	}
 
