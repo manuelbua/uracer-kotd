@@ -26,7 +26,7 @@ public class URacer implements ApplicationListener
 	private static float graphicsTime = 0;
 	private static float physicsTime = 0;
 	private static float aliasingTime = 0;
-	private float MaxDeltaTime = 0.25f;
+	private static final float MaxDeltaTime = 0.25f;
 
 	// version
 	private static String versionInfo;
@@ -73,18 +73,26 @@ public class URacer implements ApplicationListener
 		setScreen( new GameScreen() );
 	}
 
+//	private long lastTimeNs = 0;
+	private static float lastDeltaTimeSec = MaxDeltaTime;
+
 	@Override
 	public void render()
 	{
-		float deltaTime = Gdx.graphics.getDeltaTime();
+		// this is not good for Android since the value often hop around
+//		long currNanos = System.nanoTime();
+//		lastDeltaTimeSec = (currNanos - lastTimeNs) * oneOnOneBillion;
+//		lastTimeNs = currNanos;
+
+		lastDeltaTimeSec = Gdx.graphics.getDeltaTime();
 
 		// avoid spiral of death
-		deltaTime = AMath.clamp( deltaTime, 0, MaxDeltaTime );
+		lastDeltaTimeSec = AMath.clamp( lastDeltaTimeSec, 0, MaxDeltaTime );
 
 		long startTime = System.nanoTime();
 		{
 			hasStepped = false;
-			timeAccumSecs += deltaTime * Config.Physics.PhysicsTimeMultiplier;
+			timeAccumSecs += lastDeltaTimeSec * Config.Physics.PhysicsTimeMultiplier;
 			while( timeAccumSecs > Physics.dt )
 			{
 				input.tick();
@@ -177,6 +185,11 @@ public class URacer implements ApplicationListener
 	public static float getPhysicsTime()
 	{
 		return physicsTime;
+	}
+
+	public static float getLastDeltaSecs()
+	{
+		return lastDeltaTimeSec;
 	}
 
 	public static float getTemporalAliasing()
