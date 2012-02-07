@@ -289,10 +289,10 @@ public class Game
 
 				rayHandler.render();
 
-				if( (frameCount&0x3f)==0x3f)
-				{
-					System.out.println("lights rendered="+rayHandler.lightRenderedLastFrame);
-				}
+//				if( (frameCount&0x3f)==0x3f)
+//				{
+//					System.out.println("lights rendered="+rayHandler.lightRenderedLastFrame);
+//				}
 			}
 
 			frameCount++;

@@ -15,8 +15,11 @@ public class RadialBlur extends PostProcessEffect
 
 	public RadialBlur()
 	{
-		shader = new ShaderProgram( Gdx.files.internal( "data/shaders/radialblur.vert" ).readString(), Gdx.files.internal(
-				"data/shaders/radialblur.frag" ).readString() );
+		ShaderProgram.pedantic = false;
+		shader = new ShaderProgram(
+					Gdx.files.internal( "data/shaders/radialblur.vert" ).readString(),
+					Gdx.files.internal( "data/shaders/radialblur.frag" ).readString()
+		);
 
 		if( shader.isCompiled() == false )
 			throw new IllegalStateException( "\"" + shader.getLog() + "\"" );
