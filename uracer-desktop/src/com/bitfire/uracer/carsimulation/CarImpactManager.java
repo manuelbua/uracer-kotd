@@ -57,7 +57,6 @@ public class CarImpactManager
 		CarSoundManager.carImpacted( impulseLength );
 		DriftInfo.invalidateByCollision();
 
-
 		prevImpactTime = lastImpactTime;
 		lastImpactTime = System.currentTimeMillis();
 	}

@@ -7,6 +7,7 @@ import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.math.Vector2;
 import com.bitfire.uracer.Art;
 import com.bitfire.uracer.Director;
+import com.bitfire.uracer.URacer;
 import com.bitfire.uracer.effects.TrackEffects.Effects;
 import com.bitfire.uracer.entities.vehicles.Car;
 import com.bitfire.uracer.game.logic.DriftInfo;
@@ -83,7 +84,7 @@ public class SmokeTrails extends TrackEffect
 		public void render(SpriteBatch batch, float x, float y)
 		{
 			effect.setPosition( x, y );
-			effect.draw( batch, Gdx.graphics.getDeltaTime() );
+			effect.draw( batch, URacer.getLastDeltaSecs() );
 		}
 
 		public int getParticleCount()
@@ -95,7 +96,6 @@ public class SmokeTrails extends TrackEffect
 			}
 
 			return count;
-
 		}
 	}
 

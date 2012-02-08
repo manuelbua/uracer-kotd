@@ -14,6 +14,7 @@ import com.bitfire.uracer.Art;
 import com.bitfire.uracer.Config;
 import com.bitfire.uracer.Physics;
 import com.bitfire.uracer.URacer;
+import com.bitfire.uracer.utils.NumberString;
 
 public class Debug
 {
@@ -104,25 +105,15 @@ public class Debug
 		}
 	}
 
-	public static void renderFrameStats( float temporalAliasingFactor )
-	{
-		sb.setLength( 0 );
-		drawString(
-				fmt.format( "fps: %d, physics: %.06f, graphics: %.06f", Gdx.graphics.getFramesPerSecond(), physicsTime,
-						renderTime ).toString(), 0, Gdx.graphics.getHeight() - 6 );
-
-		sb.setLength( 0 );
-		drawString( fmt.format( "timemul: x%.02f, step: %.0fHz", Config.Physics.PhysicsTimeMultiplier, Config.Physics.PhysicsTimestepHz )
-				.toString(), 0, Gdx.graphics.getHeight() - 12 );
-	}
-
 	public static void renderGraphicalStats( int x, int y )
 	{
 		batch.draw( gfxStats.getRegion(), x, y );
 
-		sb.setLength( 0 );
-		String text = fmt.format( "fps: %d, physics: %.06f, graphics: %.06f", Gdx.graphics.getFramesPerSecond(), physicsTime,
-				renderTime ).toString();
+		String text =
+				"fps: " + NumberString.formatLong(Gdx.graphics.getFramesPerSecond()) +
+				", physics: " + NumberString.formatLong(physicsTime) +
+				", graphics: " + NumberString.formatLong(renderTime);
+
 		drawString( text, Gdx.graphics.getWidth() - text.length() * fontWidth, Gdx.graphics.getHeight() - fontHeight );
 	}
 
@@ -137,9 +128,11 @@ public class Debug
 		float javaHeapMb = (float)Gdx.app.getJavaHeap() * oneOnMb;
 		float nativeHeapMb = (float)Gdx.app.getNativeHeap() * oneOnMb;
 
-		sb.setLength( 0 );
-		String memInfo = fmt.format( "java heap = %.04fMB - native heap = %.04fMB", javaHeapMb, nativeHeapMb ).toString();
-		drawString( memInfo, (Gdx.graphics.getWidth() - memInfo.length() * fontWidth) / 2, 0 );
+		String text =
+				"java heap = " + NumberString.format(javaHeapMb) + "MB" +
+				" - native heap = " + NumberString.format(nativeHeapMb) + "MB";
+
+		drawString( text, (Gdx.graphics.getWidth() - text.length() * fontWidth) / 2, 0 );
 	}
 
 	public static void renderB2dWorld( Matrix4 modelViewProj )

@@ -10,14 +10,15 @@ import com.bitfire.uracer.effects.SmokeTrails;
 import com.bitfire.uracer.effects.TrackEffects;
 import com.bitfire.uracer.effects.TrackEffects.Effects;
 import com.bitfire.uracer.entities.vehicles.Car;
+import com.bitfire.uracer.game.Game;
 import com.bitfire.uracer.game.logic.DriftInfo;
-import com.bitfire.uracer.game.logic.GameLogic;
 import com.bitfire.uracer.game.logic.LapInfo;
 import com.bitfire.uracer.messager.Messager;
+import com.bitfire.uracer.utils.NumberString;
 
 public class Hud
 {
-	private GameLogic logic;
+	private Game game;
 	private Car player;
 
 	private HudLabel best, curr, last;
@@ -28,10 +29,10 @@ public class Hud
 	private HudDrifting hudDrift;
 
 	// effects
-	public Hud( GameLogic logic )
+	public Hud( Game game )
 	{
-		this.logic = logic;
-		player = logic.getGame().getLevel().getPlayer();
+		this.game = game;
+		player = game.getPlayer();
 
 		// y-flip
 		topLeftOrigin = new Matrix4();
@@ -47,23 +48,23 @@ public class Hud
 		last = new HudLabel( Art.fontCurseYR, "LAST  TIME\n-.----" );
 
 		// drifting component
-		hudDrift = new HudDrifting( logic );
+		hudDrift = new HudDrifting( game );
 
 		curr.setPosition( gridX, 50 );
 		last.setPosition( gridX * 3, 50 );
 		best.setPosition( gridX * 4, 50 );
 
 		// meter lateral forces
-		meterLatForce = new HudDebugMeter( this, 0, 100, 5 );
+		meterLatForce = new HudDebugMeter( game, 0, 100, 5 );
 		meterLatForce.setLimits( 0, 1 );
 		meterLatForce.setName( "lat-force-FRONT" );
 
 		// meter skid marks count
-		meterSkidMarks = new HudDebugMeter( this, 1, 100, 5 );
+		meterSkidMarks = new HudDebugMeter( game, 1, 100, 5 );
 		meterSkidMarks.setLimits( 0, CarSkidMarks.MaxSkidMarks );
 		meterSkidMarks.setName( "skid marks count" );
 
-		meterSmoke = new HudDebugMeter( this, 2, 100, 5 );
+		meterSmoke = new HudDebugMeter( game, 2, 100, 5 );
 		meterSmoke.setLimits( 0, SmokeTrails.MaxParticles );
 		meterSmoke.setName( "smokepar count" );
 	}
@@ -83,7 +84,7 @@ public class Hud
 		LapInfo lapInfo = LapInfo.get();
 
 		// current time
-		curr.setString( String.format( "YOUR  TIME\n%.04fs", lapInfo.getElapsedSeconds() ) );
+		curr.setString( "YOUR  TIME\n" + NumberString.format(lapInfo.getElapsedSeconds()) + "s" );
 
 		// render best lap time
 		Replay rbest = lapInfo.getBestReplay();
@@ -92,13 +93,13 @@ public class Hud
 		if( rbest != null && rbest.isValid )
 		{
 			// has best
-			best.setString( String.format( "BEST  TIME\n%.04fs", rbest.trackTimeSeconds ) );
+			best.setString( "BEST  TIME\n" + NumberString.format(rbest.trackTimeSeconds) + "s" );
 		} else
 		{
 			// temporarily use last track time
 			if( lapInfo.hasLastTrackTimeSeconds() )
 			{
-				best.setString( String.format( "BEST  TIME\n%.04fs", lapInfo.getLastTrackTimeSeconds() ) );
+				best.setString( "BEST  TIME\n" + NumberString.format(lapInfo.getLastTrackTimeSeconds()) + "s" );
 			} else
 			{
 				best.setString( "BEST TIME\n-:----" );
@@ -109,7 +110,7 @@ public class Hud
 		if( lapInfo.hasLastTrackTimeSeconds() )
 		{
 			// has only last
-			last.setString( String.format( "LAST  TIME\n%.04fs", lapInfo.getLastTrackTimeSeconds() ) );
+			last.setString( "LAST  TIME\n" + NumberString.format(lapInfo.getLastTrackTimeSeconds()) + "s" );
 		} else
 		{
 			last.setString( "LAST  TIME\n-:----" );
@@ -166,11 +167,6 @@ public class Hud
 	 * TODO find a better way for this
 	 * @return
 	 */
-
-	public GameLogic getLogic()
-	{
-		return logic;
-	}
 
 	public HudDrifting getDrifting()
 	{

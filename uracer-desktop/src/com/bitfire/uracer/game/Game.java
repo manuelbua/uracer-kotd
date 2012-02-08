@@ -27,8 +27,13 @@ import com.bitfire.uracer.entities.vehicles.Car;
 import com.bitfire.uracer.game.logic.DirectorController;
 import com.bitfire.uracer.game.logic.GameLogic;
 import com.bitfire.uracer.hud.Hud;
+import com.bitfire.uracer.hud.HudLabel;
+import com.bitfire.uracer.messager.Message;
 import com.bitfire.uracer.messager.Messager;
 import com.bitfire.uracer.tiled.Level;
+import com.bitfire.uracer.tweener.Tweener;
+import com.bitfire.uracer.tweener.accessors.HudLabelAccessor;
+import com.bitfire.uracer.tweener.accessors.MessageAccessor;
 import com.bitfire.uracer.utils.Convert;
 
 public class Game
@@ -36,6 +41,8 @@ public class Game
 	private Level level = null;
 	private Car player = null;
 	private Hud hud = null;
+
+	private static Tweener tweener = null;
 
 	// config
 	public GameplaySettings gameSettings;
@@ -52,19 +59,21 @@ public class Game
 	// drawing
 	private SpriteBatch batch = null;
 
-	public Game( GameDifficulty difficulty )
+	public Game( String levelName, GameDifficulty difficulty )
 	{
+		createTweener();
+
 		Messager.init();
 		gameSettings = GameplaySettings.create( difficulty );
 		Director.create( Gdx.graphics.getWidth(), Gdx.graphics.getHeight() );
 		Art.scaleFonts( Director.scalingStrategy.invTileMapZoomFactor );
 
 		// bring up level
-		level = Director.loadLevel( "level1", gameSettings );
+		level = Director.loadLevel( levelName, gameSettings );
 		player = level.getPlayer();
 
 		logic = new GameLogic( this );
-		hud = new Hud( logic );
+		hud = new Hud( this );
 		logic.create();
 
 		controller = new DirectorController( Config.Graphics.CameraInterpolationMode );
@@ -74,7 +83,6 @@ public class Game
 
 		// audio effects
 		CarSoundManager.setPlayer( player );
-//		CarSounds.engineStart();
 
 		// setup sprite batch at origin top-left => 0,0
 		// Issues may arise on Tegra2 (Asus Transformer) devices if the buffers'
@@ -94,6 +102,9 @@ public class Game
 			rayHandler = new RayHandler(Physics.world, maxRays, (int)(Gdx.graphics.getWidth()*rttScale), (int)(Gdx.graphics.getHeight()*rttScale));
 			rayHandler.setShadows(true);
 			rayHandler.setAmbientLight( 0, 0.05f, 0.25f, 0.2f );
+//			RayHandler.setGammaCorrection( true );
+//			RayHandler.useDiffuseLight( true );
+//			rayHandler.setAmbientLight( 0, 0.01f, 0.025f, 0f );
 			rayHandler.setCulling(true);
 			rayHandler.setBlur(true);
 			rayHandler.setBlurNum(1);
@@ -156,23 +167,25 @@ public class Game
 			{
 				levelLights[i].setSoft( false );
 				levelLights[i].setMaskBits( CollisionFilters.CategoryPlayer | CollisionFilters.CategoryTrackWalls );
-//				levelLights[i].setMaskBits( -1 );
-//				levelLights[i].setMaskBits( 0 );
-//				levelLights[i].setXray( true );
 			}
 		}
 	}
 
 	public void dispose()
 	{
-//		CarSounds.engineStop();
-
 		Director.dispose();
 		Messager.dispose();
 		logic.dispose();
 		hud.dispose();
 		TrackEffects.dispose();
 		batch.dispose();
+	}
+
+	private void createTweener()
+	{
+		tweener = new Tweener();
+		Tweener.registerAccessor( Message.class, new MessageAccessor() );
+		Tweener.registerAccessor( HudLabel.class, new HudLabelAccessor() );
 	}
 
 	public void tick()
@@ -279,10 +292,10 @@ public class Game
 
 				rayHandler.render();
 
-				if( (frameCount&0x3f)==0x3f)
-				{
-					System.out.println("lights rendered="+rayHandler.lightRenderedLastFrame);
-				}
+//				if( (frameCount&0x3f)==0x3f)
+//				{
+//					System.out.println("lights rendered="+rayHandler.lightRenderedLastFrame);
+//				}
 			}
 
 			frameCount++;
@@ -293,7 +306,7 @@ public class Game
 			PostProcessor.end();
 		}
 
-		logic.render();
+		tweener.update((int)(URacer.getLastDeltaSecs()*1000));
 		hud.render(batch);
 
 		//
@@ -328,9 +341,19 @@ public class Game
 		return level;
 	}
 
+	public Car getPlayer()
+	{
+		return player;
+	}
+
 	public Hud getHud()
 	{
 		return hud;
+	}
+
+	public static Tweener getTweener()
+	{
+		return tweener;
 	}
 
 	public void restart()

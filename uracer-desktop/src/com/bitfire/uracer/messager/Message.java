@@ -1,8 +1,9 @@
 package com.bitfire.uracer.messager;
 
+import aurelienribon.tweenengine.BaseTween;
+import aurelienribon.tweenengine.Timeline;
 import aurelienribon.tweenengine.Tween;
 import aurelienribon.tweenengine.TweenCallback;
-import aurelienribon.tweenengine.TweenGroup;
 import aurelienribon.tweenengine.equations.Back;
 import aurelienribon.tweenengine.equations.Expo;
 
@@ -13,11 +14,11 @@ import com.badlogic.gdx.graphics.g2d.BitmapFont.TextBounds;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.bitfire.uracer.Art;
 import com.bitfire.uracer.Director;
-import com.bitfire.uracer.game.logic.GameLogic;
+import com.bitfire.uracer.game.Game;
 import com.bitfire.uracer.messager.Messager.MessagePosition;
 import com.bitfire.uracer.messager.Messager.MessageSize;
 import com.bitfire.uracer.messager.Messager.MessageType;
-import com.bitfire.uracer.tweenables.TweenMessage;
+import com.bitfire.uracer.tweener.accessors.MessageAccessor;
 import com.bitfire.uracer.utils.AMath;
 
 public class Message
@@ -37,10 +38,20 @@ public class Message
 	private boolean finished;
 	private TextBounds bounds;
 	private float alpha;
-	private TweenMessage tweenable;
 	private boolean hiding;
 
+	public Message()
+	{
+		bounds = new TextBounds();
+	}
+
 	public Message( String message, float durationSecs, MessageType type, MessagePosition position, MessageSize size )
+	{
+		this();
+		set( message, durationSecs, type, position, size );
+	}
+
+	public void set( String message, float durationSecs, MessageType type, MessagePosition position, MessageSize size )
 	{
 		startMs = 0;
 		started = false;
@@ -49,7 +60,6 @@ public class Message
 		what = message;
 		this.type = type;
 		this.position = position;
-		bounds = new TextBounds();
 		alpha = 0f;
 		scaleX = scaleY = 1f;
 		durationMs = (int)(durationSecs * 1000f);
@@ -79,8 +89,6 @@ public class Message
 				font = Art.fontCurseRbig;
 			break;
 		}
-
-		tweenable = new TweenMessage( this );
 	}
 
 	private void computeFinalPosition()
@@ -134,34 +142,31 @@ public class Message
 //		scaleX = scaleY = 1f;
 		computeFinalPosition();
 
-		GameLogic.getTweener().add(
-				TweenGroup.parallel(
-						Tween.to( tweenable, TweenMessage.OPACITY, 400, Expo.INOUT ).target( 1f ),
-						Tween.to( tweenable, TweenMessage.POSITION_Y, 400, Expo.INOUT ).target( finalY ),
-						Tween.to( tweenable, TweenMessage.SCALE_XY, 500, Back.INOUT ).target( 1.5f, 1.5f )
-				)
+		Game.getTweener().start(
+			Timeline.createParallel()
+				.push( Tween.to( this, MessageAccessor.OPACITY, 400 ).target( 1f ).ease( Expo.INOUT ) )
+				.push( Tween.to( this, MessageAccessor.POSITION_Y, 400 ).target( finalY ).ease( Expo.INOUT ) )
+				.push( Tween.to( this, MessageAccessor.SCALE_XY, 500 ).target( 1.5f, 1.5f ).ease( Back.INOUT ) )
 		);
 	}
 
 	public void onHide()
 	{
 		hiding = true;
-		GameLogic.getTweener().add(
-				TweenGroup.sequence(
-						TweenGroup.parallel(
-								Tween.to( tweenable, TweenMessage.OPACITY, 500, Expo.INOUT ).target( 0f ),
-								Tween.to( tweenable, TweenMessage.POSITION_Y, 500, Expo.INOUT ).target( -50 * font.getScaleX() ),
-								Tween.to( tweenable, TweenMessage.SCALE_XY, 400, Back.INOUT ).target( 1f, 1f )
-						),
-						Tween.call( new TweenCallback()
-						{
-							@Override
-							public void tweenEventOccured( Types eventType, Tween tween )
+
+		Game.getTweener().start(
+			Timeline.createParallel()
+				.push( Tween.to( this, MessageAccessor.OPACITY, 500 ).target( 0f ).ease( Expo.INOUT ) )
+				.push( Tween.to( this, MessageAccessor.POSITION_Y, 500 ).target( -50 * font.getScaleX() ).ease( Expo.INOUT ) )
+				.push( Tween.to( this, MessageAccessor.SCALE_XY, 400 ).target( 1f, 1f ).ease( Back.INOUT ) )
+				.addCallback( TweenCallback.EventType.COMPLETE, new TweenCallback()
 							{
-								finished = true;
-							}
-						} )
-				)
+								@Override
+								public void onEvent( EventType eventType, BaseTween source )
+								{
+									finished = true;
+								}
+							} )
 		);
 	}
 

@@ -11,6 +11,7 @@ import com.badlogic.gdx.math.Vector2;
 import com.bitfire.uracer.Director;
 import com.bitfire.uracer.debug.Debug;
 import com.bitfire.uracer.entities.vehicles.Car;
+import com.bitfire.uracer.game.Game;
 import com.bitfire.uracer.utils.AMath;
 import com.bitfire.uracer.utils.Convert;
 
@@ -25,22 +26,22 @@ public class HudDebugMeter
 	private float value, minValue, maxValue;
 	private String name;
 
-	private Hud hud;
 	private Vector2 pos;
 	private int row;
+	private Car player;
 
 	public Color color = new Color( 1, 1, 1, 1 );
 
-	public HudDebugMeter( Hud hud, int row, int width, int height )
+	public HudDebugMeter( Game game, int row, int width, int height )
 	{
 		assert (width < 256 && height < 256);
 
 		this.name = "";
-		this.hud = hud;
 		this.width = width;
 		this.height = height;
 		this.pos = new Vector2();
 		this.row = row;
+		this.player = game.getPlayer();
 
 		pixels = new Pixmap( this.width, this.height, Format.RGBA8888 );
 		texture = new Texture( 256, 256, Format.RGBA8888 );
@@ -81,7 +82,6 @@ public class HudDebugMeter
 
 	private void update()
 	{
-		Car player = hud.getLogic().getGame().getLevel().getPlayer();
 		pos.set( Director.screenPosFor( player.getBody() ) );
 
 		// center horizontally

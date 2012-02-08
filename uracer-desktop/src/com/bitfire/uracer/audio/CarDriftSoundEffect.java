@@ -3,6 +3,7 @@ package com.bitfire.uracer.audio;
 import com.badlogic.gdx.Files.FileType;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.audio.Sound;
+import com.bitfire.uracer.game.logic.DriftInfo;
 import com.bitfire.uracer.utils.AMath;
 
 public class CarDriftSoundEffect implements CarSoundEffect
@@ -26,6 +27,7 @@ public class CarDriftSoundEffect implements CarSoundEffect
 	@Override
 	public void dispose()
 	{
+		drift.stop();
 		drift.dispose();
 	}
 
@@ -72,7 +74,6 @@ public class CarDriftSoundEffect implements CarSoundEffect
 			float pitch = speedFactor * pitchFactor + pitchMin;
 
 			pitch = AMath.clamp( pitch, pitchMin, pitchMax );
-//			pitch = AMath.lerp( driftLastPitch, pitch, 0.85f );
 
 			if( !AMath.equals(pitch, driftLastPitch) )
 			{
@@ -101,7 +102,7 @@ public class CarDriftSoundEffect implements CarSoundEffect
 			}
 
 			lastVolume = AMath.clamp( lastVolume, 0, 1f );
-			drift.setVolume( driftId, lastVolume );
+			drift.setVolume( driftId, DriftInfo.get().driftStrength * lastVolume );
 		}
 
 	}

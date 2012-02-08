@@ -49,8 +49,8 @@ public class PostProcessEffect
 		setStrength( effectStrength + aStrength );
 	}
 
-	public void dampStrength( float factor, float dt )
+	public void dampStrength( float factor )
 	{
-		setStrength( effectStrength * (float)Math.pow( (1.0f-factor), dt ) );
+		setStrength( effectStrength * 0.9f );
 	}
 }

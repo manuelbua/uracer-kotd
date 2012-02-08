@@ -8,11 +8,13 @@ public class DriftInfo
 	public float driftSeconds = 0;
 	public boolean isDrifting = false;
 	public boolean hasCollided = false;
-	public float lateralForcesFront = 0, lateralForcesRear = 0, lastRear, lastFront;
+	public float lateralForcesFront = 0, lateralForcesRear = 0;
 	public float driftStrength;
 
 	public long driftStartTime = 0;
+
 	private long collisionTime;
+	private float lastRear = 0, lastFront = 0;
 
 	private static DriftInfo instance = null;
 	private static GameLogic logic = null;
@@ -57,15 +59,17 @@ public class DriftInfo
 
 	public void update( Car player )
 	{
-		lastFront = lateralForcesFront;
-		lastRear = lateralForcesRear;
+		float oneOnMaxGrip = 1f / player.getCarModel().max_grip;
 
-		// filter out spurious values (at car start the latf has a one-frame-long offscale value)
-		lateralForcesFront = AMath.lowpass( lastFront, player.getSimulator().lateralForceFront.y, 0.2f );
-		lateralForcesRear = AMath.lowpass( lastRear, player.getSimulator().lateralForceRear.y, 0.2f );
+		// lateral forces are in the range [-max_grip, max_grip]
+		lateralForcesFront = lastFront = AMath.lowpass( lastFront, player.getSimulator().lateralForceFront.y, 0.2f );	// get and smooth out
+		lateralForcesFront = AMath.clamp(Math.abs(lateralForcesFront) * oneOnMaxGrip, 0f, 1f);	// normalize
 
-		driftStrength = AMath.clamp(
-				((Math.abs( lateralForcesFront ) + Math.abs( lateralForcesRear )) * 0.5f) / player.getCarModel().max_grip, 0, 1 );
+		lateralForcesRear = lastRear = AMath.lowpass( lastRear, player.getSimulator().lateralForceRear.y, 0.2f );	// get and smooth out
+		lateralForcesRear = AMath.clamp(Math.abs(lateralForcesRear) * oneOnMaxGrip, 0f, 1f);	// normalize
+
+		// compute strength
+		driftStrength = AMath.fixup((lateralForcesFront+lateralForcesRear) * 0.5f);
 
 		if( isDrifting )
 		{
@@ -87,7 +91,10 @@ public class DriftInfo
 			if( !isDrifting )
 			{
 				// search for onBeginDrift
-				if( driftStrength > 0.4f && vel > 20 )
+				if(
+					driftStrength > 0.4f &&
+					vel > 20
+				)
 				{
 					isDrifting = true;
 					hasCollided = false;
@@ -99,7 +106,10 @@ public class DriftInfo
 			else
 			{
 				// search for onEndDrift
-				if( isDrifting && (driftStrength < 0.3f || vel < 18) )
+				if(
+					isDrifting &&
+					(driftStrength < 0.2f || vel < 15f)
+				)
 				{
 					isDrifting = false;
 					hasCollided = false;
@@ -111,6 +121,6 @@ public class DriftInfo
 
 	private void updateDriftTimeSeconds()
 	{
-		driftSeconds = (System.currentTimeMillis() - driftStartTime) / 1000f;
+		driftSeconds = (System.currentTimeMillis() - driftStartTime) * 0.001f;
 	}
 }

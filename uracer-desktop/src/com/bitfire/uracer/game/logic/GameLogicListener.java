@@ -11,6 +11,7 @@ import com.bitfire.uracer.messager.Messager.MessageSize;
 import com.bitfire.uracer.messager.Messager.MessageType;
 import com.bitfire.uracer.tiled.Level;
 import com.bitfire.uracer.utils.Convert;
+import com.bitfire.uracer.utils.NumberString;
 
 public class GameLogicListener implements IGameLogicListener
 {
@@ -68,12 +69,6 @@ public class GameLogicListener implements IGameLogicListener
 //		label.slide( new Vector2(0,-1), 10 );
 	}
 
-//	@Override
-//	public LapInfo onGetLapInfo()
-//	{
-//		return lapInfo;
-//	}
-
 	@Override
 	public void onTileChanged( Vector2 carAt )
 	{
@@ -125,13 +120,13 @@ public class GameLogicListener implements IGameLogicListener
 					if( lastRecordedLapId == best.id )
 					{
 						lapInfo.setLastTrackTimeSeconds( best.trackTimeSeconds );
-						Messager.show( "-" + String.format( "%.4f", worst.trackTimeSeconds - best.trackTimeSeconds )
+						Messager.show( "-" + NumberString.format(worst.trackTimeSeconds - best.trackTimeSeconds)
 								+ " seconds!", 3f, MessageType.Good, MessagePosition.Top, MessageSize.Big );
 					} else
 					{
 						lapInfo.setLastTrackTimeSeconds( worst.trackTimeSeconds );
 						Messager.show(
-								"+" + String.format( "%.4f", worst.trackTimeSeconds - best.trackTimeSeconds ) + " seconds", 3f,
+								"+" + NumberString.format(worst.trackTimeSeconds - best.trackTimeSeconds) + " seconds", 3f,
 								MessageType.Bad, MessagePosition.Top, MessageSize.Big );
 					}
 

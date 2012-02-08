@@ -6,17 +6,18 @@ import com.bitfire.uracer.Art;
 import com.bitfire.uracer.Director;
 import com.bitfire.uracer.carsimulation.CarModel;
 import com.bitfire.uracer.entities.vehicles.Car;
+import com.bitfire.uracer.game.Game;
 import com.bitfire.uracer.game.logic.DriftInfo;
-import com.bitfire.uracer.game.logic.GameLogic;
 import com.bitfire.uracer.messager.Messager;
 import com.bitfire.uracer.messager.Messager.MessagePosition;
 import com.bitfire.uracer.messager.Messager.MessageSize;
 import com.bitfire.uracer.messager.Messager.MessageType;
 import com.bitfire.uracer.utils.Convert;
+import com.bitfire.uracer.utils.NumberString;
 
 public class HudDrifting
 {
-	private GameLogic logic;
+	private Game game;
 	private Car player;
 	private CarModel model;
 	private int carWidthPx, carLengthPx;
@@ -25,10 +26,10 @@ public class HudDrifting
 	private DriftInfo drift;
 	private Vector2 heading = new Vector2();
 
-	public HudDrifting( GameLogic logic )
+	public HudDrifting( Game game )
 	{
-		this.logic = logic;
-		this.player = logic.getGame().getLevel().getPlayer();
+		this.game = game;
+		this.player = game.getPlayer();
 		this.model = player.getCarModel();
 		carWidthPx = (int)Convert.mt2px( model.width );
 		carLengthPx = (int)Convert.mt2px( model.length );
@@ -81,7 +82,7 @@ public class HudDrifting
 		//
 		// draw earned seconds
 		//
-		labelRealtime.setString( "+" + String.format( "%.02f", drift.driftSeconds ) );
+		labelRealtime.setString( "+" + NumberString.format(drift.driftSeconds) );
 		labelRealtime.render( batch );
 
 		//
@@ -109,28 +110,28 @@ public class HudDrifting
 		// premature end drift event due to collision?
 		if( drift.hasCollided )
 		{
-			labelResult.setString( "-" + String.format( "%.02f", drift.driftSeconds ) );
+			labelResult.setString( "-" + NumberString.format(drift.driftSeconds) );
 			labelResult.setFont( Art.fontCurseRbig );
 		}
 		else
 		{
-			labelResult.setString( "+" + String.format( "%.02f", drift.driftSeconds ) );
+			labelResult.setString( "+" + NumberString.format(drift.driftSeconds) );
 			labelResult.setFont( Art.fontCurseGbig );
 
 			if( drift.driftSeconds >= 1 && drift.driftSeconds < 1.5f )
 			{
-				Messager.enqueue( "NICE ONE!\n+" + String.format( "%.02f", drift.driftSeconds ) + "  seconds!", 1f, MessageType.Good, MessagePosition.Bottom, MessageSize.Big );
+				Messager.enqueue( "NICE ONE!\n+" + NumberString.format(drift.driftSeconds) + "  seconds!", 1f, MessageType.Good, MessagePosition.Bottom, MessageSize.Big );
 			}
 			else if( drift.driftSeconds >= 1.5f && drift.driftSeconds < 2f )
 			{
-				Messager.enqueue( "FANTASTIC!\n+" + String.format( "%.02f", drift.driftSeconds ) + "  seconds!", 1f, MessageType.Good, MessagePosition.Bottom, MessageSize.Big );
+				Messager.enqueue( "FANTASTIC!\n+" + NumberString.format(drift.driftSeconds) + "  seconds!", 1f, MessageType.Good, MessagePosition.Bottom, MessageSize.Big );
 			}
 			else if( drift.driftSeconds >= 2f )
 			{
-				Messager.enqueue( "UNREAL!\n+" + String.format( "%.02f", drift.driftSeconds ) + "  seconds!", 1f, MessageType.Good, MessagePosition.Bottom, MessageSize.Big );
+				Messager.enqueue( "UNREAL!\n+" + NumberString.format(drift.driftSeconds) + "  seconds!", 1f, MessageType.Good, MessagePosition.Bottom, MessageSize.Big );
 			}
 		}
 
-		labelResult.slide( heading, 10 );
+		labelResult.slide();
 	}
 }

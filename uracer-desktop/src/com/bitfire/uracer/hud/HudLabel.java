@@ -1,7 +1,7 @@
 package com.bitfire.uracer.hud;
 
+import aurelienribon.tweenengine.Timeline;
 import aurelienribon.tweenengine.Tween;
-import aurelienribon.tweenengine.TweenGroup;
 import aurelienribon.tweenengine.equations.Expo;
 import aurelienribon.tweenengine.equations.Quint;
 
@@ -10,8 +10,8 @@ import com.badlogic.gdx.graphics.g2d.BitmapFont.TextBounds;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.math.Vector2;
 import com.bitfire.uracer.Director;
-import com.bitfire.uracer.game.logic.GameLogic;
-import com.bitfire.uracer.tweenables.TweenHudLabel;
+import com.bitfire.uracer.game.Game;
+import com.bitfire.uracer.tweener.accessors.HudLabelAccessor;
 
 public class HudLabel
 {
@@ -25,13 +25,10 @@ public class HudLabel
 	private BitmapFont font;
 	private float scale;
 
-	// private
-	private TweenHudLabel tween;
 
 	public HudLabel( BitmapFont font, String string, float scale )
 	{
 		this.font = font;
-		this.tween = new TweenHudLabel( this );
 		what = string;
 		alpha = 1f;
 		setScale( scale, true );
@@ -40,7 +37,6 @@ public class HudLabel
 	public HudLabel( BitmapFont font, String string )
 	{
 		this.font = font;
-		this.tween = new TweenHudLabel( this );
 		what = string;
 		alpha = 1f;
 		setScale( 1.0f, true );
@@ -140,29 +136,21 @@ public class HudLabel
 
 	public void fadeIn( int milliseconds )
 	{
-		GameLogic.getTweener().add( Tween.to( tween, TweenHudLabel.OPACITY, milliseconds, Expo.INOUT ).target( 1f ) );
+		Game.getTweener().start(
+			Timeline.createSequence()
+				.push( Tween.to( this, HudLabelAccessor.OPACITY, milliseconds ).target( 1f ).ease( Expo.INOUT ) )
+		);
 	}
 
 	public void fadeOut( int milliseconds )
 	{
-		GameLogic.getTweener().add( Tween.to( tween, TweenHudLabel.OPACITY, milliseconds, Expo.INOUT ).target( 0f ) );
+		Game.getTweener().start(
+				Timeline.createSequence()
+					.push( Tween.to( this, HudLabelAccessor.OPACITY, milliseconds ).target( 0f ).ease( Expo.INOUT ) )
+			);
 	}
 
-	public void fadeInFor( int milliseconds, int showDurationMs )
-	{
-		GameLogic.getTweener().add
-		(
-			TweenGroup.sequence
-			(
-				Tween.to( tween, TweenHudLabel.OPACITY, milliseconds, Expo.INOUT ).target( 1f ),
-				Tween.to( tween, TweenHudLabel.OPACITY, milliseconds, Expo.INOUT ).target( 0f ).delay( showDurationMs )
-			)
-		);
-	}
-
-
-//	private Vector2 tmpv = new Vector2();
-	public void slide( Vector2 heading, float step )
+	public void slide()
 	{
 		setScale( 1f, true );
 
@@ -172,21 +160,16 @@ public class HudLabel
 		float targetFarX = getPosition().x;
 		float targetFarY = getPosition().y - 100;
 
-		GameLogic.getTweener().add
-		(
-			TweenGroup.parallel
-			(
-				Tween.to( tween, TweenHudLabel.OPACITY, 500, Quint.INOUT ).target( 1f ),
-				TweenGroup.sequence
-				(
-					Tween.to( tween, TweenHudLabel.POSITION_XY, 500, Quint.INOUT ).target( targetNearX, targetNearY ),
-					TweenGroup.parallel
-					(
-						Tween.to( tween, TweenHudLabel.POSITION_XY, 500, Expo.OUT ).target( targetFarX, targetFarY ),
-						Tween.to( tween, TweenHudLabel.OPACITY, 500, Expo.OUT ).target( 0f )
-					).delay( 200 )
+		Game.getTweener().start(
+			Timeline.createParallel()
+				.push( Tween.to( this, HudLabelAccessor.OPACITY, 500 ).target( 1f ).ease( Quint.INOUT ) )
+				.push( Timeline.createSequence()
+					.push( Tween.to( this, HudLabelAccessor.POSITION_XY, 500 ).target( targetNearX, targetNearY ).ease( Quint.INOUT ).delay( 300 ) )
+					.push( Timeline.createParallel()
+						.push( Tween.to( this, HudLabelAccessor.POSITION_XY, 500 ).target( targetFarX, targetFarY ).ease( Expo.OUT ) )
+						.push( Tween.to( this, HudLabelAccessor.OPACITY, 500 ).target( 0f ).ease( Expo.OUT ) )
+					)
 				)
-			)
 		);
 	}
 }
