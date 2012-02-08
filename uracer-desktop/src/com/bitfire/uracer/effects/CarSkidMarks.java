@@ -12,6 +12,7 @@ import com.bitfire.uracer.Physics;
 import com.bitfire.uracer.carsimulation.CarModel;
 import com.bitfire.uracer.effects.TrackEffects.Effects;
 import com.bitfire.uracer.entities.vehicles.Car;
+import com.bitfire.uracer.game.logic.DriftInfo;
 import com.bitfire.uracer.utils.AMath;
 import com.bitfire.uracer.utils.Convert;
 
@@ -24,7 +25,6 @@ public class CarSkidMarks extends TrackEffect
 	private int visibleSkidMarksCount;
 
 	private Car player;
-	private CarModel model;
 	private Vector2 tmp;
 	private Vector2 last;
 
@@ -37,12 +37,11 @@ public class CarSkidMarks extends TrackEffect
 		tmp = new Vector2();
 		last = new Vector2();
 		this.player = player;
-		this.model = player.getCarModel();
 
 		skidMarks = new ArrayList<SkidMark>( MaxSkidMarks );
 		for( int i = 0; i < MaxSkidMarks; i++ )
 		{
-			skidMarks.add( new SkidMark( player ) );
+			skidMarks.add( new SkidMark( player.getCarModel() ) );
 		}
 	}
 
@@ -113,17 +112,10 @@ public class CarSkidMarks extends TrackEffect
 	{
 		tmp.set( player.state().position );
 
-//		SmokeTrails smoke = (SmokeTrails)TrackEffects.get( Effects.SmokeTrails );
-//		smoke.addEmitter( tmp.x, tmp.y );
-
 		if( player.getCarDescriptor().velocity_wc.len2() < 1 )
 		{
 			return;
 		}
-
-		float angle = player.state().orientation;
-		// tmp.set( player.pos() );
-		// float angle = player.orient();
 
 		// avoid blatant overdrawing
 		if( (int)tmp.x == (int)last.x && (int)tmp.y == (int)last.y )
@@ -131,42 +123,24 @@ public class CarSkidMarks extends TrackEffect
 			return;
 		}
 
-		// TODO: the following latf results should be part of DriftInfo and made available
-
-		// lateral forces are in the range [-max_grip, max_grip]
-		float flatf = Math.abs( player.getSimulator().lateralForceFront.y );
-		flatf = AMath.clamp( flatf / model.max_grip, 0, 1f );
-
-		float flatr = Math.abs( player.getSimulator().lateralForceRear.y );
-		flatr = AMath.clamp( flatr / model.max_grip, 0, 1f );
-
-		float af = flatf;
-		float ar = flatr;
-//		if( af > 0.2f || ar > 0.2f )
-		if( (af+ar) > 0.4f )
+		DriftInfo di = DriftInfo.get();
+		if( di.driftStrength > 0.2f )
+//		if( di.isDrifting )
 		{
 			// add front drift marks?
 			SkidMark drift = skidMarks.get( markIndex++ );
 			if( markIndex == MaxSkidMarks ) markIndex = 0;
 
-			drift.alphaFront = af;
-			drift.alphaRear = ar;
+			drift.alphaFront = di.driftStrength;
+			drift.alphaRear = di.driftStrength;
 			drift.setPosition( tmp );
-			drift.setOrientation( angle );
-			drift.front.setScale( AMath.clamp( af + 0.8f, 0.85f, 1.1f ) );
-			drift.rear.setScale( AMath.clamp( ar + 0.8f, 0.85f, 1.1f ) );
+			drift.setOrientation( player.state().orientation );
+			drift.front.setScale( AMath.clamp( di.lateralForcesFront + 0.8f, 0.85f, 1.1f ) );
+			drift.rear.setScale( AMath.clamp( di.lateralForcesRear + 0.8f, 0.85f, 1.1f ) );
 			drift.maxLife = 1.5f;
 			drift.life = drift.maxLife;
 
 			last.set( tmp );
-
-			// TODO: modulate particles, not just emitters
-//			e.setAdditive( false );
-//			e.getTransparency().setHigh( 1 );
-//			e.addParticles(10);
-//			e.getTransparency().setLow( 0 );
-//			e.getTransparency().setHigh( (af+ar)/2 );
-//			e.getScale().setHigh( 32 * (af+ar)/2 );
 		}
 	}
 
@@ -178,14 +152,13 @@ public class CarSkidMarks extends TrackEffect
 		public float alphaFront, alphaRear;
 		public Vector2 position;
 
-		public SkidMark( Car player )
+		public SkidMark( CarModel model )
 		{
 			front = new Sprite();
 			rear = new Sprite();
 			position = new Vector2();
 
 			// setup sprites
-			CarModel model = player.getCarModel();
 			float carWidth = Convert.mt2px( model.width );
 			float carLength = Convert.mt2px( model.length );
 
