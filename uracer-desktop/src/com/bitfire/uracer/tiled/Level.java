@@ -285,7 +285,7 @@ public class Level
 
 		// search the map for the start marker and create
 		// the player with the found tile coordinates
-		TiledLayer layerTrack = MapUtils.getLayer( "track" );
+		TiledLayer layerTrack = MapUtils.getLayer( MapUtils.LayerTrack );
 		String startOrient = layerTrack.properties.get("start");
 		for( int y = 0; y < map.height; y++ )
 		{
