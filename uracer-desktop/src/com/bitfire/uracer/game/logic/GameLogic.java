@@ -93,7 +93,7 @@ public class GameLogic
 				rb.setOrigin( Director.screenPosFor( player.getBody() ) );
 			}
 
-			// update DriftInfo, raise onBeginDrift / onEndDrift
+			// update DriftInfo, handle raising onBeginDrift / onEndDrift
 			DriftInfo.get().update( player );
 		}
 	}

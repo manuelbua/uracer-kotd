@@ -9,14 +9,15 @@ public class Convert
 {
 	private static TiledMap tileMap;
 
-	private static float scaled_tilesize;
+	public static float scaledTilesize, invScaledTilesize;
 	private static float invZoomFactor;
 
 	public static void init(ScalingStrategy strategy, TiledMap map)
 	{
 		tileMap = map;
 		invZoomFactor = strategy.invTileMapZoomFactor;
-		scaled_tilesize = tileMap.tileWidth * invZoomFactor;
+		scaledTilesize = tileMap.tileWidth * invZoomFactor;
+		invScaledTilesize = 1f / scaledTilesize;
 
 		ret = new Vector2();
 		retTile = new Vector2();
@@ -42,14 +43,14 @@ public class Convert
 
 	public static Vector2 tileToPx( int tilex, int tiley )
 	{
-		retTile.set( tilex * scaled_tilesize, (tileMap.height - tiley) * scaled_tilesize );
+		retTile.set( tilex * scaledTilesize, (tileMap.height - tiley) * scaledTilesize );
 		return retTile;
 	}
 
 	public static Vector2 pxToTile( float x, float y )
 	{
 		retTile.set(x, y);
-		retTile.mul( 1f / scaled_tilesize );
+		retTile.mul( 1f / scaledTilesize );
 		retTile.y = tileMap.height - retTile.y;
 		VMath.truncateToInt( retTile );
 		return retTile;

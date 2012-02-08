@@ -79,7 +79,7 @@ public class Config
 
 		public static void asDefault()
 		{
-			dbgTraverseWalls = false;
+			dbgTraverseWalls = true;
 			dbgDirectorHasBounds = true;
 		}
 	}
