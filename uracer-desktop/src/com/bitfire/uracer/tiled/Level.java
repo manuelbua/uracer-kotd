@@ -9,6 +9,7 @@ import com.badlogic.gdx.graphics.OrthographicCamera;
 import com.badlogic.gdx.graphics.PerspectiveCamera;
 import com.badlogic.gdx.graphics.g2d.tiled.TileAtlas;
 import com.badlogic.gdx.graphics.g2d.tiled.TileMapRenderer;
+import com.badlogic.gdx.graphics.g2d.tiled.TiledLayer;
 import com.badlogic.gdx.graphics.g2d.tiled.TiledLoader;
 import com.badlogic.gdx.graphics.g2d.tiled.TiledMap;
 import com.badlogic.gdx.graphics.g2d.tiled.TiledObject;
@@ -275,14 +276,45 @@ public class Level
 
 	private void createEntities()
 	{
-		// TODO: read positions from tmx
-		// playerStartPos.set( Convert.tileToPx( 4, 4 ).add( Convert.scaledPixels( 112, -112 ) ) );
-		playerStartPos.set( Convert.tileToPx( 2, 1 ).add( Convert.scaledPixels( 112, -112 ) ) );
-		playerStartOrient = 90f;
-
-		CarModel m = new CarModel();
-		player = CarFactory.createPlayer( CarType.OldSkool, m.toModel2(), playerStartPos, playerStartOrient );
+		player = createPlayer(map);
 		ghost = CarFactory.createGhost( player );
+	}
+
+	private Car createPlayer(TiledMap map)
+	{
+
+		// search the map for the start marker and create
+		// the player with the found tile coordinates
+		TiledLayer layerTrack = MapUtils.getLayer( "track" );
+		String startOrient = layerTrack.properties.get("start");
+		for( int y = 0; y < map.height; y++ )
+		{
+			for( int x = 0; x < map.width; x++ )
+			{
+				int id = layerTrack.tiles[y][x];
+				String type = map.getTileProperty(id, "type");
+				if(type == null) continue;
+
+				if(type.equals("start"))
+				{
+					playerStartPos.set( Convert.tileToPx( x, y ).add( Convert.scaledPixels( 112, -112 ) ) );
+
+					if(startOrient.equals("up"))
+						playerStartOrient = 0f;
+					else if(startOrient.equals("right"))
+						playerStartOrient = 90f;
+					else if(startOrient.equals("down"))
+						playerStartOrient = 180f;
+					else if(startOrient.equals("left"))
+						playerStartOrient = 270f;
+
+					break;
+				}
+
+			}
+		}
+
+		return CarFactory.createPlayer( CarType.OldSkool, new CarModel().toModel2(), playerStartPos, playerStartOrient );
 	}
 
 	/**

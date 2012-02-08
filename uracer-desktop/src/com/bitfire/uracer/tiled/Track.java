@@ -30,36 +30,6 @@ public class Track
 	public Track( TiledMap map )
 	{
 		this.map = map;
-
-//		String vertexShader =
-//				"uniform mat4 u_mvpMatrix;					\n" +
-//				"attribute vec4 a_position;					\n" +
-//				"attribute vec2 a_texCoord0;				\n" +
-//				"varying vec2 v_TexCoord;					\n" +
-//				"void main()								\n" +
-//				"{											\n" +
-//				"	gl_Position = u_mvpMatrix * a_position;	\n" +
-//				"	v_TexCoord = a_texCoord0;				\n" +
-//				"}											\n";
-//
-//		String fragmentShader =
-//				"#ifdef GL_ES											\n" +
-//				"precision mediump float;								\n" +
-//				"#endif													\n" +
-//				"uniform sampler2D u_texture;							\n" +
-//				"varying vec2 v_TexCoord;								\n" +
-//				"void main()											\n" +
-//				"{														\n" +
-//				"	vec4 back = vec4(gl_FragColor.rgb,0);	\n" +
-//				"	vec4 track = texture2D( u_texture, v_TexCoord );	\n" +
-//				"	gl_FragColor = track;	\n" +
-//				"}														\n";
-//
-//		program = new ShaderProgram( vertexShader, fragmentShader );
-//
-//		if( program.isCompiled() == false )
-//			throw new IllegalStateException( program.getLog() );
-
 		createPerimeter();
 	}
 
