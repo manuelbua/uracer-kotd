@@ -1,9 +1,8 @@
-package com.bitfire.uracer.effects;
+package com.bitfire.uracer.effects.postprocessing;
 
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.glutils.ShaderProgram;
 import com.badlogic.gdx.math.Vector2;
-import com.bitfire.uracer.effects.postprocessing.PostProcessEffect;
 
 public class RadialBlur extends PostProcessEffect
 {
@@ -24,7 +23,7 @@ public class RadialBlur extends PostProcessEffect
 		if( shader.isCompiled() == false )
 			throw new IllegalStateException( "\"" + shader.getLog() + "\"" );
 
-		effectStrength = 0.0f;
+		effectStrength = 0f;
 	}
 
 	@Override

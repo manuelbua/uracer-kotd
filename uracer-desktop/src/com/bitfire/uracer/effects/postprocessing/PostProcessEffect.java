@@ -49,11 +49,8 @@ public class PostProcessEffect
 		setStrength( effectStrength + aStrength );
 	}
 
-	public void dampStrength( float factor, float dt )
+	public void dampStrength( float factor )
 	{
-		// TODO: could pow be NOT used instead? this is a *fixed* timestep after all..
-		// if this is going to be called from within the fixed timestep event then it could
-		// be safe to remove it!
-		setStrength( effectStrength * (float)Math.pow( (1.0f-factor), dt ) );
+		setStrength( effectStrength * 0.9f );
 	}
 }
