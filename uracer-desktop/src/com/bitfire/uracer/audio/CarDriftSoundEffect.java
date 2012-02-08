@@ -74,7 +74,6 @@ public class CarDriftSoundEffect implements CarSoundEffect
 			float pitch = speedFactor * pitchFactor + pitchMin;
 
 			pitch = AMath.clamp( pitch, pitchMin, pitchMax );
-//			pitch = AMath.lerp( driftLastPitch, pitch, 0.85f );
 
 			if( !AMath.equals(pitch, driftLastPitch) )
 			{

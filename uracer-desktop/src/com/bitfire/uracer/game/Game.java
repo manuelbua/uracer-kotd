@@ -59,7 +59,7 @@ public class Game
 	// drawing
 	private SpriteBatch batch = null;
 
-	public Game( GameDifficulty difficulty )
+	public Game( String levelName, GameDifficulty difficulty )
 	{
 		createTweener();
 
@@ -69,7 +69,7 @@ public class Game
 		Art.scaleFonts( Director.scalingStrategy.invTileMapZoomFactor );
 
 		// bring up level
-		level = Director.loadLevel( "level1", gameSettings );
+		level = Director.loadLevel( levelName, gameSettings );
 		player = level.getPlayer();
 
 		logic = new GameLogic( this );

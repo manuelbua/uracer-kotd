@@ -69,12 +69,7 @@ public class DriftInfo
 		lateralForcesRear = AMath.clamp(Math.abs(lateralForcesRear) * oneOnMaxGrip, 0f, 1f);	// normalize
 
 		// compute strength
-//		float currVel = player.getCarDescriptor().velocity_wc.len2();
-//		float maxVel = player.getCarModel().max_speed * player.getCarModel().max_speed;
-//		float velocityFactor = AMath.clamp(currVel / maxVel, 0f, 1f);
-
-		driftStrength = AMath.fixup( (lateralForcesFront+lateralForcesRear) * 0.5f /** velocityFactor*/ );
-//		Gdx.app.log( "DriftInfo", "driftStrength="+driftStrength  );
+		driftStrength = AMath.fixup((lateralForcesFront+lateralForcesRear) * 0.5f);
 
 		if( isDrifting )
 		{
@@ -96,8 +91,10 @@ public class DriftInfo
 			if( !isDrifting )
 			{
 				// search for onBeginDrift
-				if( driftStrength > 0.4f && vel > 20 )
-//				if( driftStrength > 0.2f )
+				if(
+					driftStrength > 0.4f &&
+					vel > 20
+				)
 				{
 					isDrifting = true;
 					hasCollided = false;
@@ -109,7 +106,10 @@ public class DriftInfo
 			else
 			{
 				// search for onEndDrift
-				if( isDrifting && (driftStrength < 0.2f || vel < 15f) )
+				if(
+					isDrifting &&
+					(driftStrength < 0.2f || vel < 15f)
+				)
 				{
 					isDrifting = false;
 					hasCollided = false;
