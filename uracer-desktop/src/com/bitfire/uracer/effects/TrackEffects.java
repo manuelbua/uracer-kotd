@@ -29,13 +29,13 @@ public class TrackEffects
 		}
 	}
 
-	private static Car player;
+	private static Car playerCar;
 
 	private static LongMap<TrackEffect> effects;
 
 	public static void init( GameLogic logic )
 	{
-		player = logic.getGame().getLevel().getPlayer();
+		playerCar = logic.getGame().getLevel().getPlayer().car;
 		effects = new LongMap<TrackEffect>();
 
 		TrackEffects.add( Effects.CarSkidMarks );
@@ -54,10 +54,10 @@ public class TrackEffects
 		switch( what )
 		{
 		case CarSkidMarks:
-			add( new CarSkidMarks( player ) );
+			add( new CarSkidMarks( playerCar ) );
 			break;
 		case SmokeTrails:
-			add( new SmokeTrails( player ) );
+			add( new SmokeTrails( playerCar ) );
 			break;
 		}
 	}

@@ -29,6 +29,7 @@ import com.bitfire.uracer.entities.vehicles.GhostCar;
 import com.bitfire.uracer.factories.CarFactory;
 import com.bitfire.uracer.factories.CarFactory.CarType;
 import com.bitfire.uracer.factories.ModelFactory;
+import com.bitfire.uracer.game.logic.Player;
 import com.bitfire.uracer.utils.Convert;
 import com.bitfire.uracer.utils.MapUtils;
 
@@ -52,13 +53,9 @@ public class Level
 	private float camPerspElevation = 0f;
 	private ArrayList<OrthographicAlignedStillModel> staticMeshes = new ArrayList<OrthographicAlignedStillModel>();
 
-	// game data/logic
-	private Car player;
-	private GhostCar ghost;
+	// game data
+	private Player player;
 	private Recorder recorder;
-
-	private Vector2 playerStartPos = new Vector2();
-	private float playerStartOrient = 0f;
 
 	public Level( String levelName, ScalingStrategy strategy )
 	{
@@ -94,7 +91,7 @@ public class Level
 		recorder = Recorder.create();
 
 		createMeshes();
-		createEntities();
+		player = createPlayer( map );
 	}
 
 	public void dispose()
@@ -274,18 +271,14 @@ public class Level
 		}
 	}
 
-	private void createEntities()
-	{
-		player = createPlayer(map);
-		ghost = CarFactory.createGhost( player );
-	}
-
-	private Car createPlayer(TiledMap map)
+	private Player createPlayer(TiledMap map)
 	{
 		// search the map for the start marker and create
 		// the player with the found tile coordinates
 		TiledLayer layerTrack = MapUtils.getLayer( MapUtils.LayerTrack );
-		String startOrient = layerTrack.properties.get("start");
+		Vector2 start = new Vector2();
+		int startTileX = 0, startTileY = 0;
+
 		for( int y = 0; y < map.height; y++ )
 		{
 			for( int x = 0; x < map.width; x++ )
@@ -296,43 +289,45 @@ public class Level
 
 				if(type.equals("start"))
 				{
-					playerStartPos.set( Convert.tileToPx( x, y ).add( Convert.scaledPixels( 112, -112 ) ) );
-
-					if(startOrient.equals("up"))
-						playerStartOrient = 0f;
-					else if(startOrient.equals("right"))
-						playerStartOrient = 90f;
-					else if(startOrient.equals("down"))
-						playerStartOrient = 180f;
-					else if(startOrient.equals("left"))
-						playerStartOrient = 270f;
-
+					start.set( Convert.tileToPx(x, y).add(Convert.scaledPixels(112, -112)) );
+					startTileX = x;
+					startTileY = y;
 					break;
 				}
-
 			}
 		}
 
-		return CarFactory.createPlayer( CarType.OldSkool, new CarModel().toModel2(), playerStartPos, playerStartOrient );
+		float startOrient = 0f;
+		String orient = layerTrack.properties.get("start");
+		if(orient.equals("up")) startOrient = 0f;
+		else if(orient.equals("right")) startOrient = 90f;
+		else if(orient.equals("down")) startOrient = 180f;
+		else if(orient.equals("left")) startOrient = 270f;
+
+		Car car = CarFactory.createPlayer( CarType.OldSkool, new CarModel().toModel2(), start, startOrient );
+		GhostCar ghost = CarFactory.createGhost( car );
+
+		Player p = new Player(car, ghost);
+		p.startPos.set( start );
+		p.startTileX = startTileX;
+		p.startTileY = startTileY;
+		p.startOrient = startOrient;
+
+		return p;
 	}
 
 	/**
 	 * operations
 	 */
 
-	public Car getPlayer()
+	public Player getPlayer()
 	{
 		return player;
 	}
 
-	public GhostCar getGhost()
-	{
-		return ghost;
-	}
-
 	public void beginRecording( Replay outputBuffer, long lapStartTimeNs )
 	{
-		recorder.beginRecording( player, outputBuffer, lapStartTimeNs );
+		recorder.beginRecording( player.car, outputBuffer, lapStartTimeNs );
 	}
 
 	public void endRecording()
@@ -350,10 +345,9 @@ public class Level
 		recorder.reset();
 	}
 
-	public void restart()
+	public void reset()
 	{
 		player.reset();
-		ghost.reset();
 		recorder.reset();
 	}
 }

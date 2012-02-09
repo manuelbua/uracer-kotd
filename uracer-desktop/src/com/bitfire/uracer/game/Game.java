@@ -26,6 +26,7 @@ import com.bitfire.uracer.entities.EntityManager;
 import com.bitfire.uracer.entities.vehicles.Car;
 import com.bitfire.uracer.game.logic.DirectorController;
 import com.bitfire.uracer.game.logic.GameLogic;
+import com.bitfire.uracer.game.logic.Player;
 import com.bitfire.uracer.hud.Hud;
 import com.bitfire.uracer.hud.HudLabel;
 import com.bitfire.uracer.messager.Message;
@@ -39,7 +40,7 @@ import com.bitfire.uracer.utils.Convert;
 public class Game
 {
 	private Level level = null;
-	private Car player = null;
+	private Player player = null;
 	private Hud hud = null;
 
 	private static Tweener tweener = null;
@@ -201,6 +202,7 @@ public class Game
 	private int frameCount = 0;
 	public void render()
 	{
+		Car playerCar = null;
 		GL20 gl = Gdx.graphics.getGL20();
 		OrthographicCamera ortho = Director.getCamera();
 
@@ -210,7 +212,8 @@ public class Game
 		// follow the car
 		if( player != null )
 		{
-			controller.setPosition( player.state().position );
+			playerCar = player.car;
+			controller.setPosition( playerCar.state().position );
 		}
 
 		if( Config.Graphics.EnablePostProcessingFx )
@@ -261,10 +264,10 @@ public class Game
 			if( Config.Graphics.NightMode )
 			{
 				// update player light (subframe interpolation ready)
-				float ang = 90 + player.state().orientation;
+				float ang = 90 + playerCar.state().orientation;
 
 				// the body's compound shape should be created with some clever thinking in it :)
-				float offx = (player.getCarModel().length/2f) + .25f;
+				float offx = (playerCar.getCarModel().length/2f) + .25f;
 				float offy = 0f;
 
 				float cos = MathUtils.cosDeg(ang);
@@ -272,8 +275,8 @@ public class Game
 				float dX = offx * cos - offy * sin;
 				float dY = offx * sin + offy * cos;
 
-				float px = Convert.px2mt(player.state().position.x) + dX;
-				float py = Convert.px2mt(player.state().position.y) + dY;
+				float px = Convert.px2mt(playerCar.state().position.x) + dX;
+				float py = Convert.px2mt(playerCar.state().position.y) + dY;
 
 				playerLight.setDirection( ang );
 				playerLight.setPosition( px, py );
@@ -341,11 +344,6 @@ public class Game
 		return level;
 	}
 
-	public Car getPlayer()
-	{
-		return player;
-	}
-
 	public Hud getHud()
 	{
 		return hud;
@@ -359,7 +357,7 @@ public class Game
 	public void restart()
 	{
 		Messager.reset();
-		level.restart();
+		level.reset();
 		logic.restart();
 
 		TrackEffects.reset();
@@ -368,7 +366,7 @@ public class Game
 	public void reset()
 	{
 		Messager.reset();
-		level.restart();
+		level.reset();
 		logic.reset();
 
 		TrackEffects.reset();

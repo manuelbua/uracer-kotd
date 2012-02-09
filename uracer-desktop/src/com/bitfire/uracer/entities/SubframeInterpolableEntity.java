@@ -15,6 +15,7 @@ public abstract class SubframeInterpolableEntity extends Entity
 		saveStateTo( stateCurrent );
 		statePrevious.set( stateCurrent );
 		stateRender.set( stateCurrent );
+		stateRender.toPixels();
 	}
 
 	public void onBeforePhysicsSubstep()

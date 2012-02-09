@@ -18,7 +18,7 @@ import com.bitfire.uracer.utils.NumberString;
 public class HudDrifting
 {
 	private Game game;
-	private Car player;
+	private Car playerCar;
 	private CarModel model;
 	private int carWidthPx, carLengthPx;
 
@@ -29,8 +29,8 @@ public class HudDrifting
 	public HudDrifting( Game game )
 	{
 		this.game = game;
-		this.player = game.getPlayer();
-		this.model = player.getCarModel();
+		this.playerCar = game.getLevel().getPlayer().car;
+		this.model = playerCar.getCarModel();
 		carWidthPx = (int)Convert.mt2px( model.width );
 		carLengthPx = (int)Convert.mt2px( model.length );
 
@@ -51,7 +51,7 @@ public class HudDrifting
 
 	public void tick()
 	{
-		heading.set(player.getSimulator().heading);
+		heading.set(playerCar.getSimulator().heading);
 	}
 
 	private Vector2 tmpv = new Vector2();
@@ -59,7 +59,7 @@ public class HudDrifting
 	public void render( SpriteBatch batch )
 	{
 		// update from subframe-interpolated player position
-		Vector2 pos = tmpv.set( Director.screenPosForPx( player.state().position ) );
+		Vector2 pos = tmpv.set( Director.screenPosForPx( playerCar.state().position ) );
 
 
 		float secRatio = 1f;
@@ -98,7 +98,7 @@ public class HudDrifting
 
 	public void onEndDrift()
 	{
-		Vector2 pos = tmpv.set( Director.screenPosForPx( player.state().position ) );
+		Vector2 pos = tmpv.set( Director.screenPosForPx( playerCar.state().position ) );
 
 		labelRealtime.fadeOut( 300 );
 
