@@ -282,7 +282,6 @@ public class Level
 
 	private Car createPlayer(TiledMap map)
 	{
-
 		// search the map for the start marker and create
 		// the player with the found tile coordinates
 		TiledLayer layerTrack = MapUtils.getLayer( MapUtils.LayerTrack );
@@ -318,7 +317,7 @@ public class Level
 	}
 
 	/**
-	 * Game / game logic
+	 * operations
 	 */
 
 	public Car getPlayer()

@@ -232,18 +232,20 @@ public class Car extends Box2dEntity
 
 				TiledLayer layerTrack = MapUtils.getLayer( MapUtils.LayerTrack );
 				int id = layerTrack.tiles[(int)carTileAt.y][(int)carTileAt.x] - 1;
-				int xOnMap = (id %4) * 224 + (int)offset.x;
-				int yOnMap = (int)( id/4f ) * 224 + (int)offset.y;
+
+//				int xOnMap = (id %4) * 224 + (int)offset.x;
+//				int yOnMap = (int)( id/4f ) * 224 + (int)offset.y;
+
+				// bit twiddling, faster versions
+				int xOnMap = (id&3) * 224 + (int)offset.x;
+				int yOnMap = (id>>2) * 224 + (int)offset.y;
+
 
 				int pixel = Art.frictionNature.getPixel( xOnMap, yOnMap );
-				int val = ( pixel == -256 ? 0 : -1 );
-				frictionMean.addValue( val );
-//				System.out.println(frictionMean.getMean());
-//				System.out.println(id+"-"+xOnMap + ", " + yOnMap + "=" + pixel);
+				frictionMean.addValue( ( pixel == -256 ? 0 : -1 ) );
 
 				if( frictionMean.getMean() < -0.4 && carDesc.velocity_wc.len2() > 10 )
 				{
-//					input.throttle = 5f;
 					carDesc.velocity_wc.mul( 0.975f );
 				}
 			}
