@@ -203,9 +203,9 @@ public class Car extends Box2dEntity
 
 			// compute throttle
 			carInput.throttle = touchPos.dst( carScreenPos );
-			applyFriction(carInput);
 		}
 
+		applyFriction(carInput);
 		return carInput;
 	}
 
@@ -214,6 +214,8 @@ public class Car extends Box2dEntity
 	private void applyFriction(CarInput input)
 	{
 		currPos.set(pos());
+//		currPos.set(this.state().position);
+
 		carTileAt.set( Convert.pxToTile( currPos.x, currPos.y ) );
 
 		if( carTileAt.x > 0 && carTileAt.x < Director.currentLevel.map.width &&
@@ -239,9 +241,10 @@ public class Car extends Box2dEntity
 //				System.out.println(frictionMean.getMean());
 //				System.out.println(id+"-"+xOnMap + ", " + yOnMap + "=" + pixel);
 
-				if( frictionMean.getMean() < -0.4 )
+				if( frictionMean.getMean() < -0.4 && carDesc.velocity_wc.len2() > 10 )
 				{
-					input.throttle = 0.1f;
+//					input.throttle = 5f;
+					carDesc.velocity_wc.mul( 0.975f );
 				}
 			}
 	}
