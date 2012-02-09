@@ -6,7 +6,6 @@ import com.bitfire.uracer.messager.Messager;
 import com.bitfire.uracer.messager.Messager.MessagePosition;
 import com.bitfire.uracer.messager.Messager.MessageSize;
 import com.bitfire.uracer.messager.Messager.MessageType;
-import com.bitfire.uracer.tiled.Level;
 import com.bitfire.uracer.utils.NumberString;
 
 public class GameLogicListener implements IGameLogicListener

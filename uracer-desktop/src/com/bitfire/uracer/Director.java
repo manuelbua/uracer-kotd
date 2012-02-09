@@ -10,7 +10,7 @@ import com.badlogic.gdx.math.Vector3;
 import com.badlogic.gdx.physics.box2d.Body;
 import com.bitfire.uracer.factories.Box2DFactory;
 import com.bitfire.uracer.game.GameplaySettings;
-import com.bitfire.uracer.tiled.Level;
+import com.bitfire.uracer.game.logic.Level;
 import com.bitfire.uracer.tiled.ScalingStrategy;
 import com.bitfire.uracer.utils.Convert;
 
@@ -75,10 +75,10 @@ public class Director
 		Physics.dispose();
 	}
 
-	public static Level loadLevel( String levelName, GameplaySettings playSettings )
+	public static Level loadLevel( String levelName, GameplaySettings playSettings, boolean nightMode )
 	{
 		// construct tilemap and cameras
-		Level level = new Level( levelName, scalingStrategy );
+		Level level = new Level( levelName, scalingStrategy, nightMode );
 
 		// setup converter
 		Convert.init( scalingStrategy, level.map );

@@ -138,7 +138,7 @@
    eJxdzjkOgDAMRFGLiooaCnYIa0lDuP+9+JGmsFI8xdEkI0czazKfzhc1WnSoUKDHoDcpHzHp/mDG4jpWBNe7YXf/D5zqLnHhdnnqjJrzXX9YfgYW
   </data>
  </layer>
- <objectgroup color="#00ff00" name="static-meshes" width="8" height="6">
+ <objectgroup color="#00ff00" name="static-meshes" width="8" height="6" visible="0">
   <object name="palm" type="palm" x="540" y="519" width="52" height="60">
    <properties>
     <property name="scale" value="0.4"/>
@@ -175,5 +175,13 @@
   </object>
   <object name="palm" type="palm" x="1039" y="516" width="47" height="44"/>
   <object name="palm" type="palm" x="895" y="784" width="33" height="39"/>
+ </objectgroup>
+ <objectgroup color="#ffaa00" name="lights" width="8" height="6">
+  <object x="676" y="1085" width="27" height="21"/>
+  <object x="268" y="672" width="27" height="21"/>
+  <object x="671" y="267" width="27" height="21"/>
+  <object x="1527" y="674" width="27" height="21"/>
+  <object x="1122" y="264" width="27" height="21"/>
+  <object x="1121" y="1076" width="27" height="21"/>
  </objectgroup>
 </map>

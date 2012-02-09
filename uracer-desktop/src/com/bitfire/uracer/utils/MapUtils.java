@@ -7,8 +7,9 @@ import com.badlogic.gdx.graphics.g2d.tiled.TiledObjectGroup;
 public class MapUtils
 {
 	// object group name and properties
-	public static final String LayerStaticMeshes = "static-meshes";
 	public static final String LayerTrack = "track";
+	public static final String LayerLights = "lights";
+	public static final String LayerStaticMeshes = "static-meshes";
 	public static final String MeshScale = "scale";
 
 	private static TiledMap map;

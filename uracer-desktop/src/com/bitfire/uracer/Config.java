@@ -20,7 +20,6 @@ public class Config
 		public static boolean RenderPlayerDebugInfo;
 		public static boolean RenderHudDebugInfo;
 		public static boolean RenderTrackMeshes;
-		public static boolean NightMode;
 		public static InterpolationMode CameraInterpolationMode;
 		public static long Effects;
 
@@ -36,11 +35,10 @@ public class Config
 			EnableMipMapping = true;
 			SubframeInterpolation = true;
 
-			RenderBox2DWorldWireframe = true;
+			RenderBox2DWorldWireframe = false;
 			RenderPlayerDebugInfo = true;
 			RenderHudDebugInfo = true;
 			RenderTrackMeshes = false;
-			NightMode = false;
 
 			CameraInterpolationMode = InterpolationMode.Sigmoid;
 			Effects = (TrackEffects.Effects.CarSkidMarks.id | TrackEffects.Effects.SmokeTrails.id);

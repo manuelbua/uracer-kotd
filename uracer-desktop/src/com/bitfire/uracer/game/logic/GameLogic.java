@@ -9,7 +9,6 @@ import com.bitfire.uracer.effects.postprocessing.PostProcessor;
 import com.bitfire.uracer.effects.postprocessing.RadialBlur;
 import com.bitfire.uracer.entities.EntityManager;
 import com.bitfire.uracer.game.Game;
-import com.bitfire.uracer.tiled.Level;
 
 public class GameLogic
 {

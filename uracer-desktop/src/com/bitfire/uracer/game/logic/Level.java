@@ -1,9 +1,14 @@
-package com.bitfire.uracer.tiled;
+package com.bitfire.uracer.game.logic;
 
 import java.util.ArrayList;
 
+import box2dLight.ConeLight;
+import box2dLight.PointLight;
+import box2dLight.RayHandler;
+
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.files.FileHandle;
+import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.GL20;
 import com.badlogic.gdx.graphics.OrthographicCamera;
 import com.badlogic.gdx.graphics.PerspectiveCamera;
@@ -15,21 +20,26 @@ import com.badlogic.gdx.graphics.g2d.tiled.TiledMap;
 import com.badlogic.gdx.graphics.g2d.tiled.TiledObject;
 import com.badlogic.gdx.graphics.g2d.tiled.TiledObjectGroup;
 import com.badlogic.gdx.graphics.glutils.ShaderProgram;
+import com.badlogic.gdx.math.MathUtils;
 import com.badlogic.gdx.math.Matrix4;
 import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.math.Vector3;
 import com.bitfire.uracer.Config;
 import com.bitfire.uracer.Director;
+import com.bitfire.uracer.Physics;
 import com.bitfire.uracer.carsimulation.CarModel;
 import com.bitfire.uracer.carsimulation.Recorder;
 import com.bitfire.uracer.carsimulation.Replay;
+import com.bitfire.uracer.entities.CollisionFilters;
 import com.bitfire.uracer.entities.EntityManager;
 import com.bitfire.uracer.entities.vehicles.Car;
 import com.bitfire.uracer.entities.vehicles.GhostCar;
 import com.bitfire.uracer.factories.CarFactory;
 import com.bitfire.uracer.factories.CarFactory.CarType;
 import com.bitfire.uracer.factories.ModelFactory;
-import com.bitfire.uracer.game.logic.Player;
+import com.bitfire.uracer.tiled.OrthographicAlignedStillModel;
+import com.bitfire.uracer.tiled.ScalingStrategy;
+import com.bitfire.uracer.tiled.Track;
 import com.bitfire.uracer.utils.Convert;
 import com.bitfire.uracer.utils.MapUtils;
 
@@ -56,10 +66,17 @@ public class Level
 	// game data
 	private Player player;
 	private Recorder recorder;
+	private boolean nightMode;
 
-	public Level( String levelName, ScalingStrategy strategy )
+	// lighting system
+	private final int MaxRays = 128;
+	private RayHandler rayHandler = null;
+	private ConeLight playerHeadlights = null;
+
+	public Level( String levelName, ScalingStrategy strategy, boolean nightMode )
 	{
 		this.name = levelName;
+		this.nightMode = nightMode;
 
 		// ie. "level1-128.tmx"
 		String mapname = levelName + "-" + (int)strategy.forTileSize + ".tmx";
@@ -77,6 +94,7 @@ public class Level
 		createCams();
 	}
 
+	/* 2-stage construction, avoid <static> problems in Android */
 	public void construct()
 	{
 		syncWithCam( Director.getCamera() );
@@ -85,13 +103,18 @@ public class Level
 		ModelFactory.init();
 
 		// create track
-		track = new Track( map );
+//		track = new Track( map );
 
 		EntityManager.create();
 		recorder = Recorder.create();
 
 		createMeshes();
 		player = createPlayer( map );
+
+		if( nightMode )
+		{
+			createLights();
+		}
 	}
 
 	public void dispose()
@@ -150,7 +173,7 @@ public class Level
 		// HUGE performance hit enabling rendering of tile-based walls
 		// on mobile (Tegra2)
 
-		if( Config.Graphics.RenderTrackMeshes && track.hasMeshes() )
+		if( Config.Graphics.RenderTrackMeshes && track != null && track.hasMeshes() )
 		{
 			gl.glEnable( GL20.GL_BLEND );
 			renderOrthographicAlignedModels( track.getMeshes() );
@@ -271,7 +294,7 @@ public class Level
 		}
 	}
 
-	private Player createPlayer(TiledMap map)
+	private Player createPlayer(TiledMap map )
 	{
 		// search the map for the start marker and create
 		// the player with the found tile coordinates
@@ -316,6 +339,100 @@ public class Level
 		return p;
 	}
 
+	private void createLights()
+	{
+		if( !MapUtils.hasObjectGroup( MapUtils.LayerLights ) )
+		{
+			this.nightMode = false;
+			return;
+		}
+
+		// setup ray handling stuff
+		float rttScale = .25f;
+
+		if(!Config.isDesktop)
+			rttScale = 0.2f;
+
+		RayHandler.setColorPrecisionMediump();
+		rayHandler = new RayHandler(Physics.world, MaxRays, (int)(Gdx.graphics.getWidth()*rttScale), (int)(Gdx.graphics.getHeight()*rttScale));
+		rayHandler.setShadows(true);
+		rayHandler.setCulling(true);
+		rayHandler.setBlur(true);
+		rayHandler.setBlurNum(1);
+		rayHandler.setAmbientLight( 0, 0.05f, 0.25f, 0.2f );
+
+//		RayHandler.setGammaCorrection( true );
+//		RayHandler.useDiffuseLight( true );
+//		rayHandler.setAmbientLight( 0, 0.01f, 0.025f, 0f );
+
+		// attach light to player
+		final Color c = new Color();
+
+		// setup player headlights
+		c.set( .7f, .7f, 1f, 1f );
+		playerHeadlights = new ConeLight( rayHandler, MaxRays, c, 30, 0, 0, 0, 15 );
+		playerHeadlights.setSoft( false );
+		playerHeadlights.setMaskBits( 0 );
+
+
+		c.set( 1f, 0.85f, 0.35f, 1f );
+
+		Vector2 pos = new Vector2();
+		TiledObjectGroup group = MapUtils.getObjectGroup( MapUtils.LayerLights );
+		for( int i = 0; i < group.objects.size(); i++ )
+		{
+			TiledObject o = group.objects.get( i );
+			pos.set( o.x, Director.worldSizeScaledPx.y - o.y );
+			pos.set( Convert.px2mt( pos ));
+			System.out.println("Light @ " + pos);
+
+			PointLight l = new PointLight( rayHandler, MaxRays, c, 10f, pos.x, pos.y );
+			l.setSoft( false );
+			l.setMaskBits( CollisionFilters.CategoryPlayer | CollisionFilters.CategoryTrackWalls );
+		}
+	}
+
+	private int frameCount = 0;
+	public void renderLights()
+	{
+		// update player light (subframe interpolation ready)
+		float ang = 90 + player.car.state().orientation;
+
+		// the body's compound shape should be created with some clever thinking in it :)
+		float offx = (player.car.getCarModel().length/2f) + .25f;
+		float offy = 0f;
+
+		float cos = MathUtils.cosDeg(ang);
+		float sin = MathUtils.sinDeg(ang);
+		float dX = offx * cos - offy * sin;
+		float dY = offx * sin + offy * cos;
+
+		float px = Convert.px2mt(player.car.state().position.x) + dX;
+		float py = Convert.px2mt(player.car.state().position.y) + dY;
+
+		playerHeadlights.setDirection( ang );
+		playerHeadlights.setPosition( px, py );
+
+		rayHandler.update();
+
+		// TODO: check for correct light clipping!
+		rayHandler.setCombinedMatrix( Director.getMatViewProjMt(),
+				Convert.px2mt( camOrtho.position.x ),
+				Convert.px2mt( camOrtho.position.y ),
+				Convert.px2mt( camOrtho.viewportWidth * camOrtho.zoom ),
+				Convert.px2mt( camOrtho.viewportHeight * camOrtho.zoom )
+		);
+
+		rayHandler.render();
+
+		if( (frameCount&0x3f)==0x3f)
+		{
+			System.out.println("lights rendered="+rayHandler.lightRenderedLastFrame);
+		}
+
+		frameCount++;
+	}
+
 	/**
 	 * operations
 	 */
@@ -323,6 +440,11 @@ public class Level
 	public Player getPlayer()
 	{
 		return player;
+	}
+
+	public boolean isNightMode()
+	{
+		return nightMode;
 	}
 
 	public void beginRecording( Replay outputBuffer, long lapStartTimeNs )
