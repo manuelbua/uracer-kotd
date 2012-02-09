@@ -140,7 +140,7 @@ public class Debug
 		b2drenderer.render( Physics.world, modelViewProj );
 	}
 
-	public static void draw( TextureRegion region, int x, int y )
+	public static void draw( TextureRegion region, float x, float y )
 	{
 		int width = region.getRegionWidth();
 		if( width < 0 ) width = -width;
@@ -148,12 +148,12 @@ public class Debug
 		batch.draw( region, x, y, width, -region.getRegionHeight() );
 	}
 
-	public static void draw( TextureRegion region, int x, int y, int width, int height )
+	public static void draw( TextureRegion region, float x, float y, float width, float height )
 	{
 		batch.draw( region, x, y, width, height );
 	}
 
-	public static void drawString( String string, int x, int y )
+	public static void drawString( String string, float x, float y )
 	{
 		string = string.toUpperCase();
 		for( int i = 0; i < string.length(); i++ )
@@ -170,7 +170,7 @@ public class Debug
 		}
 	}
 
-	public static void drawString( String string, int x, int y, int w, int h )
+	public static void drawString( String string, float x, float y, float w, float h )
 	{
 		string = string.toUpperCase();
 		for( int i = 0; i < string.length(); i++ )
