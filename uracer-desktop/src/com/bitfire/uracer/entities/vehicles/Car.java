@@ -3,10 +3,13 @@ package com.bitfire.uracer.entities.vehicles;
 import java.util.ArrayList;
 
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
+import com.badlogic.gdx.graphics.g2d.tiled.TiledLayer;
 import com.badlogic.gdx.math.MathUtils;
 import com.badlogic.gdx.math.Vector2;
+import com.badlogic.gdx.math.WindowedMean;
 import com.badlogic.gdx.physics.box2d.BodyDef;
 import com.badlogic.gdx.physics.box2d.BodyDef.BodyType;
+import com.bitfire.uracer.Art;
 import com.bitfire.uracer.Config;
 import com.bitfire.uracer.Director;
 import com.bitfire.uracer.Input;
@@ -25,6 +28,7 @@ import com.bitfire.uracer.entities.EntityManager;
 import com.bitfire.uracer.factories.CarFactory.CarType;
 import com.bitfire.uracer.utils.AMath;
 import com.bitfire.uracer.utils.Convert;
+import com.bitfire.uracer.utils.MapUtils;
 
 public class Car extends Box2dEntity
 {
@@ -201,9 +205,51 @@ public class Car extends Box2dEntity
 			carInput.throttle = touchPos.dst( carScreenPos );
 		}
 
+		applyFriction(carInput);
 		return carInput;
 	}
 
+	private Vector2 carTileAt = new Vector2(), currPos = new Vector2();
+	private WindowedMean frictionMean = new WindowedMean( 16 );
+	private void applyFriction(CarInput input)
+	{
+		currPos.set(pos());
+//		currPos.set(this.state().position);
+
+		carTileAt.set( Convert.pxToTile( currPos.x, currPos.y ) );
+
+		if( carTileAt.x > 0 && carTileAt.x < Director.currentLevel.map.width &&
+			carTileAt.y > 0 && carTileAt.y < Director.currentLevel.map.height )
+			{
+				// compute realsize-based pixel offset car-tile (top-left origin)
+				float tsx = carTileAt.x * Convert.scaledTilesize;
+				float tsy = carTileAt.y * Convert.scaledTilesize;
+				Vector2 offset = currPos;
+				offset.y = Director.worldSizeScaledPx.y - offset.y;
+				offset.x = offset.x - tsx;
+				offset.y = offset.y - tsy;
+				offset.mul(Convert.invScaledTilesize).mul(Director.currentLevel.map.tileWidth);
+
+				TiledLayer layerTrack = MapUtils.getLayer( MapUtils.LayerTrack );
+				int id = layerTrack.tiles[(int)carTileAt.y][(int)carTileAt.x] - 1;
+
+//				int xOnMap = (id %4) * 224 + (int)offset.x;
+//				int yOnMap = (int)( id/4f ) * 224 + (int)offset.y;
+
+				// bit twiddling, faster versions
+				int xOnMap = (id&3) * 224 + (int)offset.x;
+				int yOnMap = (id>>2) * 224 + (int)offset.y;
+
+
+				int pixel = Art.frictionNature.getPixel( xOnMap, yOnMap );
+				frictionMean.addValue( ( pixel == -256 ? 0 : -1 ) );
+
+				if( frictionMean.getMean() < -0.4 && carDesc.velocity_wc.len2() > 10 )
+				{
+					carDesc.velocity_wc.mul( 0.975f );
+				}
+			}
+	}
 
 	public void addImpactFeedback( float feedback )
 	{

@@ -20,6 +20,10 @@ mkdir -p ${DEST}
 ${TILED_PACKER} levels/ ${DEST}/levels >/dev/null
 echo "done!"
 
+# tileset friction maps
+echo -n "Cooking friction maps..."
+cp levels/tilesets/nature/224-friction.png ${DEST}/levels/tilesets/nature/
+
 # fonts
 echo -n "Cooking fonts..."
 rm -rf "${DEST}/font/"

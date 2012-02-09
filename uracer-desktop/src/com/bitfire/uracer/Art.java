@@ -1,6 +1,7 @@
 package com.bitfire.uracer;
 
 import com.badlogic.gdx.Gdx;
+import com.badlogic.gdx.graphics.Pixmap;
 import com.badlogic.gdx.graphics.Pixmap.Format;
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.Texture.TextureFilter;
@@ -16,8 +17,10 @@ public class Art
 	public static Texture trackWall;
 	public static TextureAtlas fonts;
 
+	// tileset friction maps
+	public static Pixmap frictionNature;
+
 	// 3d
-//	public static TextureAtlas modelsTextures;
 	public static Texture meshMissing;
 	public static Texture mesh_test_arch_rusty;
 	public static Texture meshPalm;
@@ -44,9 +47,6 @@ public class Art
 		base6 = split( "data/base/base6.png", 6, 6, mipMap );
 		quad = new TextureRegion( base6[0][10], 0, 0, 18, 18 );
 
-		// 3d models' textures
-//		modelsTextures = new TextureAtlas(Gdx.files.internal("data/3d/textures/pack"));
-
 		mesh_test_arch_rusty = newTexture( "data/3d/textures/arch-metal-3.jpg", mipMap );
 		meshMissing = newTexture( "data/3d/textures/missing-mesh.png", mipMap );
 		meshPalm = newTexture( "data/3d/textures/palm.png", mipMap );
@@ -57,10 +57,6 @@ public class Art
 
 		// cars
 		carTextures = new TextureAtlas("data/cars/pack");
-//		for( TextureRegion r : carTextures.getRegions() )
-//		{
-//			r.getTexture().setFilter( TextureFilter.Linear, TextureFilter.Linear );
-//		}
 
 		cars = carTextures;
 		skidMarksFront = carTextures.findRegion( "skid-marks-front" );
@@ -83,6 +79,9 @@ public class Art
 		fontCurseYRbig = new BitmapFont( Gdx.files.internal( "data/font/curse-y-r-big.fnt" ), Art.fonts.findRegion( "curse-y-r-big" ), true );
 		fontCurseGbig = new BitmapFont( Gdx.files.internal( "data/font/curse-g-big.fnt" ), Art.fonts.findRegion( "curse-g-big" ), true );
 		fontCurseRbig = new BitmapFont( Gdx.files.internal( "data/font/curse-r-big.fnt" ), Art.fonts.findRegion( "curse-r-big" ), true );
+
+		// friction maps
+		frictionNature = new Pixmap( Gdx.files.internal( "data/levels/tilesets/nature/224-friction.png" ) );
 	}
 
 	private static TextureRegion[][] split( String name, int width, int height, boolean mipMap )
