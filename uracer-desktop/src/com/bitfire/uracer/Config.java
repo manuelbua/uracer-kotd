@@ -74,11 +74,13 @@ public class Config
 	{
 		public static boolean dbgTraverseWalls;
 		public static boolean dbgDirectorHasBounds;
+		public static boolean dbgApplyCarFriction;
 
 		public static void asDefault()
 		{
-			dbgTraverseWalls = true;
+			dbgTraverseWalls = false;
 			dbgDirectorHasBounds = true;
+			dbgApplyCarFriction = true;
 		}
 	}
 

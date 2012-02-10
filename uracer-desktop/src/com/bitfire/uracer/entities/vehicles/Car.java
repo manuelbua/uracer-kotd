@@ -205,7 +205,8 @@ public class Car extends Box2dEntity
 			carInput.throttle = touchPos.dst( carScreenPos );
 		}
 
-		applyFriction(carInput);
+		if(Config.Debug.dbgApplyCarFriction)
+			applyFriction(carInput);
 		return carInput;
 	}
 

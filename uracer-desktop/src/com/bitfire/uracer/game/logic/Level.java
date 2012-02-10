@@ -69,7 +69,6 @@ public class Level
 	private boolean nightMode;
 
 	// lighting system
-	private final int MaxRays = 128;
 	private RayHandler rayHandler = null;
 	private ConeLight playerHeadlights = null;
 
@@ -285,9 +284,6 @@ public class Level
 				if( o.properties.get( MapUtils.MeshScale ) != null )
 					scale = Float.parseFloat( o.properties.get( MapUtils.MeshScale ) );
 
-				// System.out.println("Creating " + o.type + ", [" + o.x + "," +
-				// o.y
-				// + "] x" + scale);
 				OrthographicAlignedStillModel mesh = ModelFactory.create( o.type, o.x, o.y, scale );
 				if( mesh != null ) staticMeshes.add( mesh );
 			}
@@ -353,6 +349,8 @@ public class Level
 		if(!Config.isDesktop)
 			rttScale = 0.2f;
 
+		final int MaxRays = 360;
+
 		RayHandler.setColorPrecisionMediump();
 		rayHandler = new RayHandler(Physics.world, MaxRays, (int)(Gdx.graphics.getWidth()*rttScale), (int)(Gdx.graphics.getHeight()*rttScale));
 		rayHandler.setShadows(true);
@@ -369,24 +367,25 @@ public class Level
 		final Color c = new Color();
 
 		// setup player headlights
-		c.set( .7f, .7f, 1f, 1f );
+		c.set( .7f, .7f, 1f, .65f );
 		playerHeadlights = new ConeLight( rayHandler, MaxRays, c, 30, 0, 0, 0, 15 );
 		playerHeadlights.setSoft( false );
 		playerHeadlights.setMaskBits( 0 );
 
 
-		c.set( 1f, 0.85f, 0.35f, 1f );
+		c.set( 1f, 0.85f, 0.35f, .75f );
 
 		Vector2 pos = new Vector2();
 		TiledObjectGroup group = MapUtils.getObjectGroup( MapUtils.LayerLights );
 		for( int i = 0; i < group.objects.size(); i++ )
 		{
 			TiledObject o = group.objects.get( i );
-			pos.set( o.x, Director.worldSizeScaledPx.y - o.y );
+			pos.set( o.x, o.y ).mul( Director.scalingStrategy.invTileMapZoomFactor );
+			pos.y = Director.worldSizeScaledPx.y - pos.y;
 			pos.set( Convert.px2mt( pos ));
-			System.out.println("Light @ " + pos);
+//			System.out.println("Light @ " + pos);
 
-			PointLight l = new PointLight( rayHandler, MaxRays, c, 10f, pos.x, pos.y );
+			PointLight l = new PointLight( rayHandler, MaxRays, c, 30f, pos.x, pos.y );
 			l.setSoft( false );
 			l.setMaskBits( CollisionFilters.CategoryPlayer | CollisionFilters.CategoryTrackWalls );
 		}
@@ -413,16 +412,16 @@ public class Level
 		playerHeadlights.setDirection( ang );
 		playerHeadlights.setPosition( px, py );
 
-		rayHandler.update();
-
-		// TODO: check for correct light clipping!
-		rayHandler.setCombinedMatrix( Director.getMatViewProjMt(),
-				Convert.px2mt( camOrtho.position.x ),
-				Convert.px2mt( camOrtho.position.y ),
-				Convert.px2mt( camOrtho.viewportWidth * camOrtho.zoom ),
-				Convert.px2mt( camOrtho.viewportHeight * camOrtho.zoom )
+		rayHandler.setCombinedMatrix
+		(
+			Director.getMatViewProjMt(),
+			Convert.px2mt(camOrtho.position.x * Director.scalingStrategy.invTileMapZoomFactor),
+			Convert.px2mt(camOrtho.position.y * Director.scalingStrategy.invTileMapZoomFactor),
+			Convert.px2mt(camOrtho.viewportWidth),
+			Convert.px2mt(camOrtho.viewportHeight)
 		);
 
+		rayHandler.update();
 		rayHandler.render();
 
 		if( (frameCount&0x3f)==0x3f)
