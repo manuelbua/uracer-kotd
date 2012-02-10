@@ -27,6 +27,7 @@ public class URacer implements ApplicationListener
 	private static float physicsTime = 0;
 	private static float aliasingTime = 0;
 	private static final float MaxDeltaTime = 0.25f;
+	private static long frameCount = 0;
 
 	// version
 	private static String versionInfo;
@@ -123,6 +124,7 @@ public class URacer implements ApplicationListener
 		}
 
 		graphicsTime = (System.nanoTime() - startTime) * oneOnOneBillion;
+		frameCount++;
 	}
 
 	@Override
@@ -195,6 +197,11 @@ public class URacer implements ApplicationListener
 	public static float getTemporalAliasing()
 	{
 		return aliasingTime;
+	}
+
+	public static long getFrameCount()
+	{
+		return frameCount;
 	}
 
 	public static String getVersionInfo()

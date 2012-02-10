@@ -126,11 +126,11 @@ public class SmokeTrails extends TrackEffect
 	{
 	}
 
-	private long idx = 0;
 	@Override
 	public void tick()
 	{
 		isDrifting = drift.isDrifting;
+
 		if( isDrifting && !wasDrifting )
 		{
 			// started drifting

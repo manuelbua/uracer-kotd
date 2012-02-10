@@ -27,6 +27,7 @@ import com.badlogic.gdx.math.Vector3;
 import com.bitfire.uracer.Config;
 import com.bitfire.uracer.Director;
 import com.bitfire.uracer.Physics;
+import com.bitfire.uracer.URacer;
 import com.bitfire.uracer.carsimulation.CarModel;
 import com.bitfire.uracer.carsimulation.Recorder;
 import com.bitfire.uracer.carsimulation.Replay;
@@ -343,16 +344,17 @@ public class Level
 			return;
 		}
 
-		// setup ray handling stuff
-		float rttScale = .25f;
+		float rttScale = .5f;
+		int maxRays = 720;
 
 		if(!Config.isDesktop)
+		{
 			rttScale = 0.2f;
-
-		final int MaxRays = 360;
+			maxRays = 360;
+		}
 
 		RayHandler.setColorPrecisionMediump();
-		rayHandler = new RayHandler(Physics.world, MaxRays, (int)(Gdx.graphics.getWidth()*rttScale), (int)(Gdx.graphics.getHeight()*rttScale));
+		rayHandler = new RayHandler(Physics.world, maxRays, (int)(Gdx.graphics.getWidth()*rttScale), (int)(Gdx.graphics.getHeight()*rttScale));
 		rayHandler.setShadows(true);
 		rayHandler.setCulling(true);
 		rayHandler.setBlur(true);
@@ -367,31 +369,33 @@ public class Level
 		final Color c = new Color();
 
 		// setup player headlights
-		c.set( .7f, .7f, 1f, .65f );
-		playerHeadlights = new ConeLight( rayHandler, MaxRays, c, 30, 0, 0, 0, 15 );
+		c.set( .7f, .7f, 1f, .85f );
+		playerHeadlights = new ConeLight( rayHandler, maxRays, c, 30, 0, 0, 0, 15 );
 		playerHeadlights.setSoft( false );
 		playerHeadlights.setMaskBits( 0 );
 
-
-		c.set( 1f, 0.85f, 0.35f, .75f );
 
 		Vector2 pos = new Vector2();
 		TiledObjectGroup group = MapUtils.getObjectGroup( MapUtils.LayerLights );
 		for( int i = 0; i < group.objects.size(); i++ )
 		{
+			c.set(
+					MathUtils.random(0,1),
+					MathUtils.random(0,1),
+					MathUtils.random(0,1),
+					.75f );
 			TiledObject o = group.objects.get( i );
 			pos.set( o.x, o.y ).mul( Director.scalingStrategy.invTileMapZoomFactor );
 			pos.y = Director.worldSizeScaledPx.y - pos.y;
 			pos.set( Convert.px2mt( pos ));
 //			System.out.println("Light @ " + pos);
 
-			PointLight l = new PointLight( rayHandler, MaxRays, c, 30f, pos.x, pos.y );
+			PointLight l = new PointLight( rayHandler, maxRays, c, 30f, pos.x, pos.y );
 			l.setSoft( false );
 			l.setMaskBits( CollisionFilters.CategoryPlayer | CollisionFilters.CategoryTrackWalls );
 		}
 	}
 
-	private int frameCount = 0;
 	public void renderLights()
 	{
 		// update player light (subframe interpolation ready)
@@ -424,12 +428,10 @@ public class Level
 		rayHandler.update();
 		rayHandler.render();
 
-		if( (frameCount&0x3f)==0x3f)
+		if( Config.isDesktop && (URacer.getFrameCount()&0x1f)==0x1f)
 		{
 			System.out.println("lights rendered="+rayHandler.lightRenderedLastFrame);
 		}
-
-		frameCount++;
 	}
 
 	/**
