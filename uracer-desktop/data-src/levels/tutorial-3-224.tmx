@@ -138,7 +138,7 @@
    eJxdzjkOgDAMRFGLiooaCnYIa0lDuP+9+JGmsFI8xdEkI0czazKfzhc1WnSoUKDHoDcpHzHp/mDG4jpWBNe7YXf/D5zqLnHhdnnqjJrzXX9YfgYW
   </data>
  </layer>
- <objectgroup color="#00ff00" name="static-meshes" width="8" height="6" visible="0">
+ <objectgroup color="#00ff00" name="static-meshes" width="8" height="6">
   <object name="palm" type="palm" x="540" y="519" width="52" height="60">
    <properties>
     <property name="scale" value="0.4"/>
@@ -162,12 +162,12 @@
    </properties>
   </object>
   <object name="palm" type="palm" x="1071" y="793" width="49" height="40"/>
-  <object name="palm" type="palm" x="608" y="857" width="48" height="36">
+  <object name="palm" type="palm" x="600" y="861" width="48" height="36">
    <properties>
     <property name="scale" value="0.8"/>
    </properties>
   </object>
-  <object name="palm" type="palm" x="609" y="747" width="43" height="37"/>
+  <object name="palm" type="palm" x="593" y="730" width="43" height="37"/>
   <object name="palm" type="palm" x="456" y="697" width="41" height="43">
    <properties>
     <property name="scale" value="0.5"/>
@@ -175,8 +175,38 @@
   </object>
   <object name="palm" type="palm" x="1039" y="516" width="47" height="44"/>
   <object name="palm" type="palm" x="895" y="784" width="33" height="39"/>
+  <object name="lptree1" type="lptree1" x="330" y="1041" width="41" height="43">
+   <properties>
+    <property name="scale" value="1"/>
+   </properties>
+  </object>
+  <object name="lptree1" type="lptree1" x="314" y="277" width="41" height="43">
+   <properties>
+    <property name="scale" value="2"/>
+   </properties>
+  </object>
+  <object name="lptree1" type="lptree1" x="1462" y="296" width="41" height="43">
+   <properties>
+    <property name="scale" value="2"/>
+   </properties>
+  </object>
+  <object name="lptree1" type="lptree1" x="1446" y="985" width="41" height="43">
+   <properties>
+    <property name="scale" value="2"/>
+   </properties>
+  </object>
+  <object name="lptree1" type="lptree1" x="678" y="637" width="41" height="43">
+   <properties>
+    <property name="scale" value="1.5"/>
+   </properties>
+  </object>
+  <object name="lptree1" type="lptree1" x="970" y="674" width="41" height="43">
+   <properties>
+    <property name="scale" value="2"/>
+   </properties>
+  </object>
  </objectgroup>
- <objectgroup color="#ffaa00" name="lights" width="8" height="6">
+ <objectgroup color="#ffaa00" name="lights" width="8" height="6" visible="0">
   <object x="676" y="1085" width="27" height="21"/>
   <object x="268" y="672" width="27" height="21"/>
   <object x="671" y="267" width="27" height="21"/>

@@ -1,5 +1,6 @@
 package com.bitfire.uracer.tiled;
 
+import com.badlogic.gdx.graphics.GL20;
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g3d.materials.Material;
 import com.badlogic.gdx.graphics.g3d.materials.TextureAttribute;
@@ -20,10 +21,19 @@ public class OrthographicAlignedStillModel
 {
 	public UStillModel model;
 	public Material material;
-	private Texture texture;
-	private TextureAttribute textureAttribute;
+	public boolean isTransparent = false;
+	protected Texture texture;
+	protected TextureAttribute textureAttribute;
 
 	public static ShaderProgram shaderProgram = null;
+
+	// Blender => cube 14.2x14.2 meters = one tile (256px) w/ far plane @48
+	// (256px are 14.2mt w/ 18px/mt)
+	// I'm lazy and want Blender to work with 10x10mt instead, so a 1.42f
+	// factor for this scaling: also, since the far plane is suboptimal at
+	// just 48, i want 5 times more space on the z-axis, so here's another
+	// scaling factor creeping up.
+	protected static float BlenderToURacer = 5f * 1.42f;
 
 	// scale
 	private float scale, scalingFactor;
@@ -81,18 +91,7 @@ public class OrthographicAlignedStillModel
 			m.material = new Material("default", m.textureAttribute);
 			m.model.setMaterial( m.material );
 
-			//
-			// apply horizontal fov scaling distortion and blender factors
-			//
-
-			// Blender => cube 14.2x14.2 meters = one tile (256px) w/ far plane @48
-			// (256px are 14.2mt w/ 18px/mt)
-			// I'm lazy and want Blender to work with 10x10mt instead, so a 1.42f
-			// factor for this scaling: also, since the far plane is suboptimal at
-			// just 48, i want 5 times more space on the z-axis, so here's another
-			// scaling factor creeping up.
-			float blenderToUracer = 5f * 1.42f;
-			m.setScalingFactor( Director.scalingStrategy.meshScaleFactor * blenderToUracer * Director.scalingStrategy.to256 );
+			m.setScalingFactor( Director.scalingStrategy.meshScaleFactor * BlenderToURacer * Director.scalingStrategy.to256 );
 
 			m.setPosition( 0, 0 );
 			m.setRotation( 0, 0, 0, 0 );
@@ -103,6 +102,23 @@ public class OrthographicAlignedStillModel
 		}
 
 		return m;
+	}
+
+	public static OrthographicAlignedStillModel create( StillModel model, Texture texture, boolean transparency )
+	{
+		OrthographicAlignedStillModel m = OrthographicAlignedStillModel.create( model, texture );
+		m.isTransparent = transparency;
+		return m;
+	}
+
+	public void dispose()
+	{
+		try {
+			model.dispose();
+		} catch( IllegalArgumentException e )
+		{
+			// buffer already disposed
+		}
 	}
 
 	public TextureAttribute getTextureAttribute()
@@ -168,13 +184,14 @@ public class OrthographicAlignedStillModel
 		scaleAxis.set( this.scale, this.scale, this.scale );
 	}
 
-	public void dispose()
+	/**
+	 * This is for model with submeshes and/or handling transparency correctly.
+	 *
+	 * NOTE: shaders and texture units are already setup and bound for you, here
+	 * goes just plain rendering.
+	 */
+	public void render(GL20 gl)
 	{
-		try {
-			model.dispose();
-		} catch( IllegalArgumentException e )
-		{
-			// buffer already disposed
-		}
+		model.subMeshes[0].mesh.render(OrthographicAlignedStillModel.shaderProgram, model.subMeshes[0].primitiveType);
 	}
 }

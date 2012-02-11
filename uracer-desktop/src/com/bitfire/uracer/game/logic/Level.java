@@ -159,11 +159,12 @@ public class Level
 
 	public void renderMeshes( GL20 gl )
 	{
+		gl.glDepthMask(true);
 		gl.glEnable( GL20.GL_CULL_FACE );
 		gl.glEnable( GL20.GL_DEPTH_TEST );
 		gl.glDepthFunc( GL20.GL_LESS );
 
-		renderOrthographicAlignedModels( staticMeshes );
+		renderOrthographicAlignedModels( gl, staticMeshes );
 
 		// TODO, either disable Track rendering in release/mobile or
 		// make Track build a single mesh out of the whole track,
@@ -176,7 +177,7 @@ public class Level
 		if( Config.Graphics.RenderTrackMeshes && track != null && track.hasMeshes() )
 		{
 			gl.glEnable( GL20.GL_BLEND );
-			renderOrthographicAlignedModels( track.getMeshes() );
+			renderOrthographicAlignedModels( gl, track.getMeshes() );
 			gl.glDisable( GL20.GL_BLEND );
 		}
 
@@ -187,7 +188,7 @@ public class Level
 	private Vector3 tmpvec = new Vector3();
 	private Matrix4 mtx = new Matrix4();
 	private Matrix4 mtx2 = new Matrix4();
-	private void renderOrthographicAlignedModels(ArrayList<OrthographicAlignedStillModel> models)
+	private void renderOrthographicAlignedModels(GL20 gl, ArrayList<OrthographicAlignedStillModel> models)
 	{
 		OrthographicAlignedStillModel m;
 
@@ -232,8 +233,7 @@ public class Level
 				m.material.bind(shader);
 			}
 
-			m.model.subMeshes[0].mesh.render(shader, m.model.subMeshes[0].primitiveType);
-
+			m.render(gl);
 		}
 
 		shader.end();

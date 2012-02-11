@@ -9,13 +9,14 @@ import com.badlogic.gdx.graphics.g3d.loaders.g3d.G3dtLoader;
 import com.badlogic.gdx.graphics.g3d.model.still.StillModel;
 import com.badlogic.gdx.utils.LongMap;
 import com.bitfire.uracer.Art;
+import com.bitfire.uracer.tiled.LPTreeStillModel;
 import com.bitfire.uracer.tiled.OrthographicAlignedStillModel;
 import com.bitfire.uracer.utils.Hash;
 
 public class ModelFactory
 {
 	public enum ModelMesh {
-		Missing, Palm, House, Tribune, Tower, Arch, WallHorizontal, WallTopRightOuter, WallTopRightInner
+		Missing, Palm, House, Tribune, Tower, Arch, WallHorizontal, WallTopRightOuter, WallTopRightInner, LPTree
 	}
 
 	private static LongMap<StillModel> cachedModels;
@@ -63,7 +64,7 @@ public class ModelFactory
 		switch( modelMesh )
 		{
 		case Palm:
-			stillModel = OrthographicAlignedStillModel.create( getModel("data/3d/models/palm.g3dt"), Art.meshPalm );
+//			stillModel = OrthographicAlignedStillModel.create( getModel("data/3d/models/palm.g3dt"), Art.meshPalm );
 			break;
 
 		case Tribune:
@@ -80,6 +81,10 @@ public class ModelFactory
 
 		case Arch:
 			stillModel = OrthographicAlignedStillModel.create( getModel("data/3d/models/test_arch.g3dt"), Art.mesh_test_arch_rusty);
+			break;
+
+		case LPTree:
+			stillModel = new LPTreeStillModel( getModel("data/3d/models/LPTree1.g3dt"), Art.meshLPTree1 );
 			break;
 
 		case WallHorizontal:
@@ -121,6 +126,7 @@ public class ModelFactory
 		if(mesh.equalsIgnoreCase( "house" )) return ModelMesh.House;
 		if(mesh.equalsIgnoreCase( "tribune" )) return ModelMesh.Tribune;
 		if(mesh.equalsIgnoreCase( "tower" )) return ModelMesh.Tower;
+		if(mesh.equalsIgnoreCase( "lptree1" )) return ModelMesh.LPTree;
 
 		if(mesh.equalsIgnoreCase( "test_arch" )) return ModelMesh.Arch;
 
