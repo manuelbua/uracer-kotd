@@ -146,7 +146,6 @@ public class SmokeTrails extends TrackEffect
 
 		wasDrifting = isDrifting;
 
-		//
 //		idx++;
 //		if((idx&0x3f)==0)
 //		{
