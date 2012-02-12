@@ -219,8 +219,8 @@ public class Car extends Box2dEntity
 	private WindowedMean frictionMean = new WindowedMean( 16 );
 	private void applyFriction(CarInput input)
 	{
-		if( tilePosition.x > 0 && tilePosition.x < Director.currentLevel.map.width &&
-			tilePosition.y > 0 && tilePosition.y < Director.currentLevel.map.height )
+		if( tilePosition.x >= 0 && tilePosition.x < Director.currentLevel.map.width &&
+			tilePosition.y >= 0 && tilePosition.y < Director.currentLevel.map.height )
 			{
 				// compute realsize-based pixel offset car-tile (top-left origin)
 				float tsx = tilePosition.x * Convert.scaledTilesize;
@@ -244,12 +244,17 @@ public class Car extends Box2dEntity
 
 				int pixel = Art.frictionNature.getPixel( xOnMap, yOnMap );
 				frictionMean.addValue( ( pixel == -256 ? 0 : -1 ) );
+//				System.out.println(pixel);
 
 				if( frictionMean.getMean() < -0.4 && carDesc.velocity_wc.len2() > 10 )
 				{
 					carDesc.velocity_wc.mul( 0.975f );
 				}
 			}
+		else
+		{
+			System.out.println("Car out of map");
+		}
 	}
 
 	public void addImpactFeedback( float feedback )
