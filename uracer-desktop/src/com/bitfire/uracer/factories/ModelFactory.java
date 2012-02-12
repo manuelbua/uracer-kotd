@@ -64,7 +64,7 @@ public class ModelFactory
 		switch( modelMesh )
 		{
 		case Palm:
-//			stillModel = OrthographicAlignedStillModel.create( getModel("data/3d/models/palm.g3dt"), Art.meshPalm );
+			stillModel = OrthographicAlignedStillModel.create( getModel("data/3d/models/palm.g3dt"), Art.meshPalm );
 			break;
 
 		case Tribune:
