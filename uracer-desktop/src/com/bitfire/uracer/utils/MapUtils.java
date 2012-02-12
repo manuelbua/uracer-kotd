@@ -1,16 +1,23 @@
 package com.bitfire.uracer.utils;
 
+import java.util.HashMap;
+
 import com.badlogic.gdx.graphics.g2d.tiled.TiledLayer;
 import com.badlogic.gdx.graphics.g2d.tiled.TiledMap;
 import com.badlogic.gdx.graphics.g2d.tiled.TiledObjectGroup;
 
 public class MapUtils
 {
-	// object group name and properties
+	public static final String MeshScale = "scale";
+
+	// known layer names
 	public static final String LayerTrack = "track";
 	public static final String LayerLights = "lights";
 	public static final String LayerStaticMeshes = "static-meshes";
-	public static final String MeshScale = "scale";
+
+	// cache
+	public static final HashMap<String, TiledLayer> cachedLayers = new HashMap<String, TiledLayer>(10);
+	public static final HashMap<String, TiledObjectGroup> cachedGroups = new HashMap<String, TiledObjectGroup>(10);
 
 	private static TiledMap map;
 
@@ -21,13 +28,23 @@ public class MapUtils
 
 	public static TiledObjectGroup getObjectGroup( String groupName )
 	{
-		for( int i = 0; i < map.objectGroups.size(); i++ )
+		TiledObjectGroup cached = cachedGroups.get( groupName );
+		if(cached==null)
 		{
-			TiledObjectGroup group = map.objectGroups.get( i );
-			if( group.name.equals( groupName ) ) return group;
+			for( int i = 0; i < map.objectGroups.size(); i++ )
+			{
+				TiledObjectGroup group = map.objectGroups.get( i );
+				if( group.name.equals( groupName ) )
+				{
+					cached = group;
+					break;
+				}
+			}
+
+			cachedGroups.put( groupName, cached );
 		}
 
-		return null;
+		return cached;
 	}
 
 	public static boolean hasObjectGroup( String groupName )
@@ -37,13 +54,23 @@ public class MapUtils
 
 	public static TiledLayer getLayer( String layerName )
 	{
-		for( int i = 0; i < map.layers.size(); i++ )
+		TiledLayer cached = cachedLayers.get( layerName );
+		if(cached==null)
 		{
-			TiledLayer layer = map.layers.get( i );
-			if( layer.name.equals( layerName ) ) return layer;
+			for( int i = 0; i < map.layers.size(); i++ )
+			{
+				TiledLayer layer = map.layers.get( i );
+				if( layer.name.equals( layerName ) )
+				{
+					cached = layer;
+					break;
+				}
+			}
+
+			cachedLayers.put( layerName, cached );
 		}
 
-		return null;
+		return cached;
 	}
 
 	public static boolean hasLayer(String layerName)
