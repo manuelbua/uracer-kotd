@@ -14,7 +14,6 @@ public class Art
 	public static TextureRegion[][] base6;
 	public static TextureRegion quad;
 
-	public static Texture trackWall;
 	public static TextureAtlas fonts;
 
 	// tileset friction maps
@@ -22,11 +21,8 @@ public class Art
 
 	// 3d
 	public static Texture meshMissing;
-	public static Texture mesh_test_arch_rusty;
 	public static Texture meshPalm;
 	public static Texture meshTribune;
-	public static Texture meshHouse;
-	public static Texture meshTower;
 	public static Texture meshLPTree1;
 
 	// cars
@@ -48,14 +44,9 @@ public class Art
 		base6 = split( "data/base/base6.png", 6, 6, mipMap );
 		quad = new TextureRegion( base6[0][10], 0, 0, 18, 18 );
 
-		trackWall = newTexture( "data/track/wall.png", mipMap );
-
-		mesh_test_arch_rusty = newTexture( "data/3d/textures/arch-metal-3.jpg", mipMap );
 		meshMissing = newTexture( "data/3d/textures/missing-mesh.png", mipMap );
 		meshPalm = newTexture( "data/3d/textures/palm.png", mipMap );
 		meshTribune = newTexture( "data/3d/textures/tribune.png", mipMap );
-		meshHouse = newTexture( "data/3d/textures/house.png", mipMap );
-		meshTower = newTexture( "data/3d/textures/tower.png", mipMap );
 		meshLPTree1 = newTexture( "data/3d/textures/LPTree1.png", mipMap );
 
 		// cars
@@ -96,14 +87,10 @@ public class Art
 		cars.dispose();
 
 		meshMissing.dispose();
-		mesh_test_arch_rusty.dispose();
 		meshPalm.dispose();
 		meshTribune.dispose();
-		meshHouse.dispose();
-		meshTower.dispose();
 		meshLPTree1.dispose();
 
-		trackWall.dispose();
 		fonts.dispose();
 
 		frictionNature.dispose();
