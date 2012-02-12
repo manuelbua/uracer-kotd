@@ -190,4 +190,9 @@
   <object height="21" width="27" x="1681" y="310"/>
   <object height="21" width="27" x="389" y="368"/>
  </objectgroup>
+ <objectgroup color="#ffffff" height="12" name="walls" width="9">
+  <object x="456" y="1324">
+   <polyline points="0,0 96,12 156,54 206,132 236,204 232,250"/>
+  </object>
+ </objectgroup>
 </map>

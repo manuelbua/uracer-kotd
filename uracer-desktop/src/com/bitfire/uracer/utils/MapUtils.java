@@ -1,10 +1,12 @@
 package com.bitfire.uracer.utils;
 
+import java.util.ArrayList;
 import java.util.HashMap;
 
 import com.badlogic.gdx.graphics.g2d.tiled.TiledLayer;
 import com.badlogic.gdx.graphics.g2d.tiled.TiledMap;
 import com.badlogic.gdx.graphics.g2d.tiled.TiledObjectGroup;
+import com.badlogic.gdx.math.Vector2;
 
 public class MapUtils
 {
@@ -14,6 +16,8 @@ public class MapUtils
 	public static final String LayerTrack = "track";
 	public static final String LayerLights = "lights";
 	public static final String LayerStaticMeshes = "static-meshes";
+	public static final String LayerWalls = "walls";
+
 
 	// cache
 	public static final HashMap<String, TiledLayer> cachedLayers = new HashMap<String, TiledLayer>(10);
@@ -76,5 +80,22 @@ public class MapUtils
 	public static boolean hasLayer(String layerName)
 	{
 		return getLayer( layerName ) != null;
+	}
+
+	public static ArrayList<Vector2> extractPolyData(String encoded)
+	{
+		ArrayList<Vector2> ret = new ArrayList<Vector2>();
+
+		if( encoded != null && encoded.length() > 0 )
+		{
+			String[] pairs = encoded.split( " " );
+			for( int j = 0; j < pairs.length; j++ )
+			{
+				String[] pair = pairs[j].split( "," );
+				ret.add( new Vector2(Integer.parseInt(pair[0]), Integer.parseInt(pair[1])) );
+			}
+		}
+
+		return ret;
 	}
 }
