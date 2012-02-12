@@ -87,7 +87,7 @@ public class Director
 		Director.worldSizeTiles.set( level.map.width, level.map.height );
 		Director.worldSizeScaledPx.set( level.map.width * level.map.tileWidth, level.map.height * level.map.tileHeight );
 		Director.worldSizeScaledPx.mul( scalingStrategy.invTileMapZoomFactor );
-		Director.worldSizeScaledMt = Convert.px2mt( worldSizeScaledPx );
+		Director.worldSizeScaledMt.set(Convert.px2mt( worldSizeScaledPx ));
 
 		// compute camera bounds
 		boundsPx.x = halfViewport.x;
