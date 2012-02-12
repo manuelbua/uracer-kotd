@@ -13,7 +13,6 @@ import com.badlogic.gdx.graphics.GL20;
 import com.badlogic.gdx.graphics.OrthographicCamera;
 import com.badlogic.gdx.graphics.PerspectiveCamera;
 import com.badlogic.gdx.graphics.g2d.tiled.TileAtlas;
-import com.badlogic.gdx.graphics.g2d.tiled.TileMapRenderer;
 import com.badlogic.gdx.graphics.g2d.tiled.TiledLayer;
 import com.badlogic.gdx.graphics.g2d.tiled.TiledLoader;
 import com.badlogic.gdx.graphics.g2d.tiled.TiledMap;
@@ -40,7 +39,7 @@ import com.bitfire.uracer.factories.CarFactory.CarType;
 import com.bitfire.uracer.factories.ModelFactory;
 import com.bitfire.uracer.tiled.OrthographicAlignedStillModel;
 import com.bitfire.uracer.tiled.ScalingStrategy;
-import com.bitfire.uracer.tiled.Track;
+import com.bitfire.uracer.tiled.UTileMapRenderer;
 import com.bitfire.uracer.utils.Convert;
 import com.bitfire.uracer.utils.MapUtils;
 
@@ -53,8 +52,7 @@ import com.bitfire.uracer.utils.MapUtils;
 public class Level
 {
 	public TiledMap map = null;
-	public TileMapRenderer renderer = null;
-	public Track track = null;
+	public UTileMapRenderer renderer = null;
 	public String name = "";
 
 	private static final String LevelsStore = "data/levels/";
@@ -86,7 +84,7 @@ public class Level
 		// load tilemap
 		map = TiledLoader.createMap( mapHandle );
 		atlas = new TileAtlas( map, baseDir );
-		renderer = new TileMapRenderer( map, atlas, 1, 1, map.tileWidth, map.tileHeight );
+		renderer = new UTileMapRenderer( map, atlas, 1, 1, map.tileWidth, map.tileHeight );
 
 		// initialize TiledMap utils
 		MapUtils.initialize( map );
@@ -99,8 +97,6 @@ public class Level
 	{
 		syncWithCam( Director.getCamera() );
 		OrthographicAlignedStillModel.initialize();
-
-		ModelFactory.init();
 
 		// create track
 //		track = new Track( map );
@@ -119,12 +115,6 @@ public class Level
 
 	public void dispose()
 	{
-		// clear references to track meshes
-		if( track != null && track.hasMeshes() )
-		{
-			track.getMeshes().clear();
-		}
-
 		// dispose any static mesh previously loaded
 		for( int i = 0; i < staticMeshes.size(); i++ )
 		{
@@ -152,8 +142,9 @@ public class Level
 		camPersp.update();
 	}
 
-	public void renderTilemap()
+	public void renderTilemap(GL20 gl)
 	{
+		gl.glDisable( GL20.GL_BLEND );
 		renderer.render( camOrtho );
 	}
 
@@ -166,23 +157,9 @@ public class Level
 
 		renderOrthographicAlignedModels( gl, staticMeshes );
 
-		// TODO, either disable Track rendering in release/mobile or
-		// make Track build a single mesh out of the whole track,
-		// there is no point in wasting draw calls/context switching
-		// for every single wall tile (!)
-		//
-		// HUGE performance hit enabling rendering of tile-based walls
-		// on mobile (Tegra2)
-
-		if( Config.Graphics.RenderTrackMeshes && track != null && track.hasMeshes() )
-		{
-			gl.glEnable( GL20.GL_BLEND );
-			renderOrthographicAlignedModels( gl, track.getMeshes() );
-			gl.glDisable( GL20.GL_BLEND );
-		}
-
 		gl.glDisable( GL20.GL_DEPTH_TEST );
 		gl.glDisable( GL20.GL_CULL_FACE );
+		gl.glDepthMask(false);
 	}
 
 	private Vector3 tmpvec = new Vector3();
@@ -192,9 +169,6 @@ public class Level
 	{
 		OrthographicAlignedStillModel m;
 
-		// TODO: precompute
-		float halfVpW = camOrtho.viewportWidth / 2;
-		float halfVpH = camOrtho.viewportHeight / 2;
 		float meshZ = -(camPersp.far - camPersp.position.z);
 
 		ShaderProgram shader = OrthographicAlignedStillModel.shaderProgram;
@@ -205,8 +179,8 @@ public class Level
 			m = models.get( i );
 
 			// compute position
-			tmpvec.x = Convert.scaledPixels( m.positionOffsetPx.x - camOrtho.position.x ) + halfVpW + m.positionPx.x;
-			tmpvec.y = Convert.scaledPixels( m.positionOffsetPx.y + camOrtho.position.y ) + halfVpH - m.positionPx.y;
+			tmpvec.x = Convert.scaledPixels( m.positionOffsetPx.x - camOrtho.position.x ) + Director.halfViewport.x + m.positionPx.x;
+			tmpvec.y = Convert.scaledPixels( m.positionOffsetPx.y + camOrtho.position.y ) + Director.halfViewport.y - m.positionPx.y;
 			tmpvec.z = 1;
 
 			// transform to world space
@@ -319,6 +293,7 @@ public class Level
 
 		float startOrient = 0f;
 		String orient = layerTrack.properties.get("start");
+
 		if(orient.equals("up")) startOrient = 0f;
 		else if(orient.equals("right")) startOrient = 90f;
 		else if(orient.equals("down")) startOrient = 180f;
@@ -380,9 +355,10 @@ public class Level
 		for( int i = 0; i < group.objects.size(); i++ )
 		{
 			c.set(
-					MathUtils.random(0,1),
-					MathUtils.random(0,1),
-					MathUtils.random(0,1),
+//					MathUtils.random(0,1),
+//					MathUtils.random(0,1),
+//					MathUtils.random(0,1),
+					1f, .85f, .75f,
 					.75f );
 			TiledObject o = group.objects.get( i );
 			pos.set( o.x, o.y ).mul( Director.scalingStrategy.invTileMapZoomFactor );
