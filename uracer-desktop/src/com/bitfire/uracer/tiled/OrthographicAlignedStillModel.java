@@ -77,38 +77,31 @@ public class OrthographicAlignedStillModel
 			throw new IllegalStateException( OrthographicAlignedStillModel.shaderProgram.getLog() );
 	}
 
-	public static OrthographicAlignedStillModel create( StillModel model, Texture texture )
+	public OrthographicAlignedStillModel(StillModel aModel, Texture aTexture, boolean transparency)
 	{
-		OrthographicAlignedStillModel m = new OrthographicAlignedStillModel();
-
 		try
 		{
-			m.model = new UStillModel( model.subMeshes.clone() );
+			model = new UStillModel( aModel.subMeshes.clone() );
 
 			// set material
-			m.texture = texture;
-			m.textureAttribute = new TextureAttribute(m.texture, 0, "textureAttributes");
-			m.material = new Material("default", m.textureAttribute);
-			m.model.setMaterial( m.material );
+			texture = aTexture;
+			textureAttribute = new TextureAttribute(texture, 0, "textureAttributes");
+			material = new Material("default", textureAttribute);
+			model.setMaterial( material );
 
-			m.setScalingFactor( Director.scalingStrategy.meshScaleFactor * BlenderToURacer * Director.scalingStrategy.to256 );
-
-			m.setPosition( 0, 0 );
-			m.setRotation( 0, 0, 0, 0 );
+			setScalingFactor( Director.scalingStrategy.meshScaleFactor * BlenderToURacer * Director.scalingStrategy.to256 );
+			setPosition( 0, 0 );
+			setRotation( 0, 0, 0, 0 );
 		}
 		catch( Exception e )
 		{
 			e.printStackTrace();
 		}
-
-		return m;
 	}
 
-	public static OrthographicAlignedStillModel create( StillModel model, Texture texture, boolean transparency )
+	public OrthographicAlignedStillModel(StillModel model, Texture texture)
 	{
-		OrthographicAlignedStillModel m = OrthographicAlignedStillModel.create( model, texture );
-		m.isTransparent = transparency;
-		return m;
+		this(model, texture, false);
 	}
 
 	public void dispose()

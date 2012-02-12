@@ -2,25 +2,13 @@ package com.bitfire.uracer.tiled;
 
 import com.badlogic.gdx.graphics.GL20;
 import com.badlogic.gdx.graphics.Texture;
-import com.badlogic.gdx.graphics.g3d.materials.Material;
-import com.badlogic.gdx.graphics.g3d.materials.TextureAttribute;
 import com.badlogic.gdx.graphics.g3d.model.still.StillModel;
-import com.bitfire.uracer.Director;
 
 public class LPTreeStillModel extends OrthographicAlignedStillModel
 {
-	public LPTreeStillModel( StillModel model, Texture texture )
+	public LPTreeStillModel( StillModel aModel, Texture aTexture )
 	{
-		this.model = new UStillModel( model.subMeshes.clone() );
-		this.texture = texture;
-		textureAttribute = new TextureAttribute(texture, 0, "textureAttributes");
-		material = new Material("default", textureAttribute);
-		model.setMaterial( material );
-
-		setScalingFactor( Director.scalingStrategy.meshScaleFactor * BlenderToURacer * Director.scalingStrategy.to256 );
-
-		setPosition( 0, 0 );
-		setRotation( 0, 0, 0, 0 );
+		super(aModel, aTexture);
 	}
 
 	@Override
