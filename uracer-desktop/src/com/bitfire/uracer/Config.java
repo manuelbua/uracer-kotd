@@ -19,7 +19,6 @@ public class Config
 		public static boolean RenderBox2DWorldWireframe;
 		public static boolean RenderPlayerDebugInfo;
 		public static boolean RenderHudDebugInfo;
-		public static boolean RenderTrackMeshes;
 		public static InterpolationMode CameraInterpolationMode;
 		public static long Effects;
 
@@ -38,7 +37,6 @@ public class Config
 			RenderBox2DWorldWireframe = false;
 			RenderPlayerDebugInfo = true;
 			RenderHudDebugInfo = true;
-			RenderTrackMeshes = false;
 
 			CameraInterpolationMode = InterpolationMode.Sigmoid;
 			Effects = (TrackEffects.Effects.CarSkidMarks.id | TrackEffects.Effects.SmokeTrails.id);
@@ -72,15 +70,15 @@ public class Config
 
 	public static class Debug
 	{
-		public static boolean dbgTraverseWalls;
-		public static boolean dbgDirectorHasBounds;
-		public static boolean dbgApplyCarFriction;
+		public static boolean TraverseWalls;
+		public static boolean DirectorHasBounds;
+		public static boolean ApplyCarFriction;
 
 		public static void asDefault()
 		{
-			dbgTraverseWalls = false;
-			dbgDirectorHasBounds = true;
-			dbgApplyCarFriction = true;
+			TraverseWalls = false;
+			DirectorHasBounds = true;
+			ApplyCarFriction = true;
 		}
 	}
 

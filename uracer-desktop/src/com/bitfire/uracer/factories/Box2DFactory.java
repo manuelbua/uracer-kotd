@@ -100,7 +100,7 @@ public class Box2DFactory
 		fdef.filter.categoryBits = CollisionFilters.CategoryTrackWalls;
 		fdef.filter.maskBits = CollisionFilters.MaskWalls;
 
-		if( Config.Debug.dbgTraverseWalls )
+		if( Config.Debug.TraverseWalls )
 		{
 			fdef.filter.groupIndex = CollisionFilters.GroupNoCollisions;
 		}

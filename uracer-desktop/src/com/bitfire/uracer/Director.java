@@ -130,7 +130,7 @@ public class Director
 		if( flipY ) tmp.y = worldSizeScaledPx.y - tmp.y;
 
 		// ensure in bounds
-		if( Config.Debug.dbgDirectorHasBounds )
+		if( Config.Debug.DirectorHasBounds )
 		{
 			if( tmp.x < boundsPx.x ) tmp.x = boundsPx.x;
 			if( tmp.x > boundsPx.width ) tmp.x = boundsPx.width;

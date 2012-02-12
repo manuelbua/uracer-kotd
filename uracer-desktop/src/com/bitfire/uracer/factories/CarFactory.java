@@ -96,7 +96,7 @@ public class CarFactory
 		fd.filter.categoryBits = (short)((entityType==EntityType.Car)? CollisionFilters.CategoryPlayer : CollisionFilters.CategoryReplay );
 		fd.filter.maskBits = (short)((entityType==EntityType.Car)? CollisionFilters.MaskPlayer : CollisionFilters.MaskReplay );
 
-		if(Config.Debug.dbgTraverseWalls)
+		if(Config.Debug.TraverseWalls)
 		{
 			fd.filter.groupIndex = CollisionFilters.GroupNoCollisions;
 		}

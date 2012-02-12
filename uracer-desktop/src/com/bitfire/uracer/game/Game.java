@@ -147,9 +147,9 @@ public class Game
 			gl.glClear( GL20.GL_DEPTH_BUFFER_BIT | GL20.GL_COLOR_BUFFER_BIT );
 
 			// render base tilemap
-			level.renderTilemap();
+			level.renderTilemap(gl);
 
-//			gl.glDepthMask( false );
+			gl.glDepthMask( false );
 			batch.begin();
 			{
 				// batch render effects
@@ -197,16 +197,15 @@ public class Game
 			EntityManager.raiseOnDebug();
 			if( Config.Graphics.RenderHudDebugInfo ) hud.debug( batch );
 			Debug.renderVersionInfo();
-			Debug.renderGraphicalStats( Gdx.graphics.getWidth() - Debug.getStatsWidth(),
-					Gdx.graphics.getHeight() - Debug.getStatsHeight() - Debug.fontHeight );
+			Debug.renderGraphicalStats( Gdx.graphics.getWidth() - Debug.getStatsWidth(),Gdx.graphics.getHeight() - Debug.getStatsHeight() - Debug.fontHeight );
+			Debug.renderTextualStats();
 			Debug.renderMemoryUsage();
 			Debug.end();
 		} else
 		{
 			Debug.begin( batch );
 			Debug.renderVersionInfo();
-			Debug.renderGraphicalStats( Gdx.graphics.getWidth() - Debug.getStatsWidth(),
-					Gdx.graphics.getHeight() - Debug.getStatsHeight() - Debug.fontHeight );
+			Debug.renderTextualStats();
 			Debug.end();
 		}
 	}
