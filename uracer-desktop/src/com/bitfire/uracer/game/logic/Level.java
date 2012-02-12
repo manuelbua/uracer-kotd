@@ -34,6 +34,7 @@ import com.bitfire.uracer.entities.CollisionFilters;
 import com.bitfire.uracer.entities.EntityManager;
 import com.bitfire.uracer.entities.vehicles.Car;
 import com.bitfire.uracer.entities.vehicles.GhostCar;
+import com.bitfire.uracer.factories.Box2DFactory;
 import com.bitfire.uracer.factories.CarFactory;
 import com.bitfire.uracer.factories.CarFactory.CarType;
 import com.bitfire.uracer.factories.ModelFactory;
@@ -243,10 +244,6 @@ public class Level
 	{
 		staticMeshes.clear();
 
-		//
-		// create static meshes from level descriptor
-		//
-
 		// static meshes layer
 		if( MapUtils.hasObjectGroup( MapUtils.LayerStaticMeshes ) )
 		{
@@ -261,6 +258,47 @@ public class Level
 
 				OrthographicAlignedStillModel mesh = ModelFactory.create( o.type, o.x, o.y, scale );
 				if( mesh != null ) staticMeshes.add( mesh );
+			}
+		}
+
+		// walls by polylines
+		if( MapUtils.hasObjectGroup( MapUtils.LayerWalls ))
+		{
+			Vector2 from = new Vector2();
+			Vector2 to = new Vector2();
+			Vector2 offset = new Vector2();
+			TiledObjectGroup group = MapUtils.getObjectGroup( MapUtils.LayerWalls );
+			for( int i = 0; i < group.objects.size(); i++ )
+			{
+				TiledObject o = group.objects.get( i );
+
+				ArrayList<Vector2> points = MapUtils.extractPolyData( o.polyline );
+				if( points.size() > 0 )
+				{
+					float factor = Director.scalingStrategy.invTileMapZoomFactor;
+					float wallSizeMt = 0.3f * factor;
+
+					offset.set(o.x, o.y);
+					offset.set(Convert.px2mt(offset));
+
+					from.set(Convert.px2mt(points.get(0)));
+					from.add( offset );
+					from.mul( factor );
+					from.y = Director.worldSizeScaledMt.y - from.y;
+
+					for( int j = 1; j <= points.size() - 1; j++ )
+					{
+						to.set(Convert.px2mt(points.get(j)));
+						to.add( offset );
+						to.mul( factor );
+						to.y = Director.worldSizeScaledMt.y - to.y;
+
+						Box2DFactory.createWall( from, to, wallSizeMt, 0.15f );
+//						System.out.println("from " + from + " to " + to);
+
+						from.set(to);
+					}
+				}
 			}
 		}
 	}

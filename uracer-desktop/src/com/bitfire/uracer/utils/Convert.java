@@ -12,16 +12,16 @@ public class Convert
 	public static float scaledTilesize, invScaledTilesize;
 	private static float invZoomFactor;
 
+	private static Vector2 ret = new Vector2();
+	private static Vector2 retTile = new Vector2();
+	private static Vector2 retPx = new Vector2();
+
 	public static void init(ScalingStrategy strategy, TiledMap map)
 	{
 		tileMap = map;
 		invZoomFactor = strategy.invTileMapZoomFactor;
 		scaledTilesize = tileMap.tileWidth * invZoomFactor;
 		invScaledTilesize = 1f / scaledTilesize;
-
-		ret = new Vector2();
-		retTile = new Vector2();
-		retPx = new Vector2();
 	}
 
 	//
@@ -29,13 +29,12 @@ public class Convert
 	// (pixels domain is scaled)
 	//
 
-	private static Vector2 ret;
 	public static float mt2px( float v )		{ return v * Config.Physics.PixelsPerMeter; }
 	public static float px2mt( float v )		{ return v / Config.Physics.PixelsPerMeter; }
-	public static Vector2 mt2px( Vector2 v )	{ ret.set(v.x * Config.Physics.PixelsPerMeter, v.y * Config.Physics.PixelsPerMeter); return ret; }
-	public static Vector2 px2mt( Vector2 v )	{ ret.set(v.x / Config.Physics.PixelsPerMeter, v.y / Config.Physics.PixelsPerMeter); return ret; }
 
-	private static Vector2 retTile;
+	public static Vector2 mt2px( final Vector2 v )	{ ret.set(v.x * Config.Physics.PixelsPerMeter, v.y * Config.Physics.PixelsPerMeter); return ret; }
+	public static Vector2 px2mt( final Vector2 v )	{ ret.set(v.x / Config.Physics.PixelsPerMeter, v.y / Config.Physics.PixelsPerMeter); return ret; }
+
 	public static Vector2 tileToMt( int tilex, int tiley )
 	{
 		return px2mt( tileToPx(tilex, tiley) );
@@ -68,8 +67,7 @@ public class Convert
 		return pixels * invZoomFactor;
 	}
 
-	private static Vector2 retPx;
-	public static Vector2 scaledPixels(Vector2 pixels)
+	public static Vector2 scaledPixels(final Vector2 pixels)
 	{
 		retPx.set(pixels);
 		retPx.mul( invZoomFactor );
