@@ -3,7 +3,6 @@ package com.bitfire.uracer.game.logic;
 import com.badlogic.gdx.math.Vector2;
 import com.bitfire.uracer.entities.vehicles.Car;
 import com.bitfire.uracer.entities.vehicles.GhostCar;
-import com.bitfire.uracer.utils.Convert;
 
 public class Player
 {
@@ -31,13 +30,12 @@ public class Player
 	{
 		// onTileChanged
 		lastTileX = currTileX; lastTileY = currTileY;
-		Vector2 tmp = Convert.pxToTile( car.state().position.x, car.state().position.y );
-		currTileX = (int)tmp.x; currTileY = (int)tmp.y;
+		Vector2 tp = car.getTilePosition();
+		currTileX = (int)tp.x; currTileY = (int)tp.y;
 		if( (lastTileX != currTileX) || (lastTileY != currTileY) )
 		{
 			listener.onTileChanged(this);
 		}
-
 	}
 
 	public void reset()

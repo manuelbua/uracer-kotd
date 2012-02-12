@@ -29,6 +29,7 @@ import com.bitfire.uracer.factories.CarFactory.CarType;
 import com.bitfire.uracer.utils.AMath;
 import com.bitfire.uracer.utils.Convert;
 import com.bitfire.uracer.utils.MapUtils;
+import com.bitfire.uracer.utils.VMath;
 
 public class Car extends Box2dEntity
 {
@@ -46,6 +47,8 @@ public class Car extends Box2dEntity
 
 	private Vector2 startPos;
 	private float startOrient;
+
+	private Vector2 tilePosition = new Vector2();
 
 	protected Car( CarGraphics graphics, CarModel model, CarType type, CarInputMode inputMode, Vector2 position, float orientation )
 	{
@@ -74,6 +77,7 @@ public class Car extends Box2dEntity
 		body.setUserData( this );
 
 		setTransform( position, orientation );
+		computeTilePosition();
 	}
 
 	// factory method
@@ -207,32 +211,28 @@ public class Car extends Box2dEntity
 
 		if(Config.Debug.dbgApplyCarFriction)
 			applyFriction(carInput);
+
 		return carInput;
 	}
 
-	private Vector2 carTileAt = new Vector2(), currPos = new Vector2();
+	private Vector2 offset = new Vector2();
 	private WindowedMean frictionMean = new WindowedMean( 16 );
 	private void applyFriction(CarInput input)
 	{
-		currPos.set(pos());
-//		currPos.set(this.state().position);
-
-		carTileAt.set( Convert.pxToTile( currPos.x, currPos.y ) );
-
-		if( carTileAt.x > 0 && carTileAt.x < Director.currentLevel.map.width &&
-			carTileAt.y > 0 && carTileAt.y < Director.currentLevel.map.height )
+		if( tilePosition.x > 0 && tilePosition.x < Director.currentLevel.map.width &&
+			tilePosition.y > 0 && tilePosition.y < Director.currentLevel.map.height )
 			{
 				// compute realsize-based pixel offset car-tile (top-left origin)
-				float tsx = carTileAt.x * Convert.scaledTilesize;
-				float tsy = carTileAt.y * Convert.scaledTilesize;
-				Vector2 offset = currPos;
+				float tsx = tilePosition.x * Convert.scaledTilesize;
+				float tsy = tilePosition.y * Convert.scaledTilesize;
+				offset.set( stateRender.position );
 				offset.y = Director.worldSizeScaledPx.y - offset.y;
 				offset.x = offset.x - tsx;
 				offset.y = offset.y - tsy;
 				offset.mul(Convert.invScaledTilesize).mul(Director.currentLevel.map.tileWidth);
 
 				TiledLayer layerTrack = MapUtils.getLayer( MapUtils.LayerTrack );
-				int id = layerTrack.tiles[(int)carTileAt.y][(int)carTileAt.x] - 1;
+				int id = layerTrack.tiles[(int)tilePosition.y][(int)tilePosition.x] - 1;
 
 //				int xOnMap = (id %4) * 224 + (int)offset.x;
 //				int yOnMap = (int)( id/4f ) * 224 + (int)offset.y;
@@ -255,6 +255,17 @@ public class Car extends Box2dEntity
 	public void addImpactFeedback( float feedback )
 	{
 		impactFeedback.add( feedback );
+	}
+
+	private void computeTilePosition()
+	{
+		tilePosition.set(Convert.pxToTile( stateRender.position.x, stateRender.position.y ));
+		VMath.truncateToInt( tilePosition );
+	}
+
+	public Vector2 getTilePosition()
+	{
+		return tilePosition;
 	}
 
 	private long start_timer = 0;
@@ -352,6 +363,8 @@ public class Car extends Box2dEntity
 
 		// inspect impact feedback, accumulate vel/ang velocities
 		handleImpactFeedback();
+
+		computeTilePosition();
 	}
 
 	@Override
@@ -366,8 +379,6 @@ public class Car extends Box2dEntity
 	{
 		graphics.render( batch, stateRender );
 	}
-
-	private Vector2 tmp = new Vector2();
 
 	@Override
 	public void onDebug()
@@ -389,8 +400,7 @@ public class Car extends Box2dEntity
 			Debug.drawString( "orient=" + body.getAngle(), 0, 114 );
 			Debug.drawString( "render.interp=" + (state().position.x + "," + state().position.y), 0, 121 );
 
-			tmp.set( Convert.pxToTile( stateRender.position.x, stateRender.position.y ) );
-			Debug.drawString( "on tile " + tmp, 0, 0 );
+			Debug.drawString( "on tile " + tilePosition, 0, 0 );
 		}
 	}
 }
