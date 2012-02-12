@@ -50,7 +50,7 @@ public class Convert
 	public static Vector2 pxToTile( float x, float y )
 	{
 		retTile.set(x, y);
-		retTile.mul( 1f / scaledTilesize );
+		retTile.mul( invScaledTilesize );
 		retTile.y = tileMap.height - retTile.y;
 		VMath.truncateToInt( retTile );
 		return retTile;
