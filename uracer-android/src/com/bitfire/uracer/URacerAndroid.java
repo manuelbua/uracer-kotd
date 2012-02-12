@@ -4,6 +4,8 @@ import android.os.Bundle;
 
 import com.badlogic.gdx.backends.android.AndroidApplication;
 import com.badlogic.gdx.backends.android.AndroidApplicationConfiguration;
+import com.badlogic.gdx.backends.android.AndroidAudio;
+import com.bitfire.uracer.URacer.URacerFinalizer;
 
 public class URacerAndroid extends AndroidApplication
 {
@@ -16,6 +18,31 @@ public class URacerAndroid extends AndroidApplication
 		config.useAccelerometer = false;
 		config.useCompass = false;
 		config.useGL20 = true;
-		initialize( new URacer(), config );
+
+		URacer uracer = new URacer();
+		initialize( uracer, config );
+
+		AndroidFinalizer finalizer = new AndroidFinalizer( this.audio );
+		uracer.setFinalizer( finalizer );
+	}
+
+	private class AndroidFinalizer implements URacerFinalizer
+	{
+		private AndroidAudio audio = null;
+
+		public AndroidFinalizer(AndroidAudio audio)
+		{
+			this.audio = audio;
+		}
+
+		@Override
+		public void dispose()
+		{
+			if(this.audio != null)
+			{
+				this.audio.dispose();
+				this.audio = null;
+			}
+		}
 	}
 }

@@ -31,7 +31,17 @@ public class URacer implements ApplicationListener
 
 	// version
 	private static String versionInfo;
+	private URacerFinalizer uRacerFinalizer;
 
+	public interface URacerFinalizer
+	{
+		public void dispose();
+	}
+
+	public void setFinalizer(URacerFinalizer finalizer)
+	{
+		this.uRacerFinalizer = finalizer;
+	}
 
 	private static void updateVersionInformation()
 	{
@@ -151,6 +161,7 @@ public class URacer implements ApplicationListener
 		Debug.dispose();
 		Art.dispose();
 		CarSoundManager.dispose();
+		if(uRacerFinalizer != null) uRacerFinalizer.dispose();
 		System.exit( 0 );
 	}
 
