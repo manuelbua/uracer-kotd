@@ -34,12 +34,12 @@ import com.bitfire.uracer.entities.CollisionFilters;
 import com.bitfire.uracer.entities.EntityManager;
 import com.bitfire.uracer.entities.vehicles.Car;
 import com.bitfire.uracer.entities.vehicles.GhostCar;
-import com.bitfire.uracer.factories.Box2DFactory;
 import com.bitfire.uracer.factories.CarFactory;
 import com.bitfire.uracer.factories.CarFactory.CarType;
 import com.bitfire.uracer.factories.ModelFactory;
 import com.bitfire.uracer.tiled.OrthographicAlignedStillModel;
 import com.bitfire.uracer.tiled.ScalingStrategy;
+import com.bitfire.uracer.tiled.TrackWalls;
 import com.bitfire.uracer.tiled.UTileMapRenderer;
 import com.bitfire.uracer.utils.Convert;
 import com.bitfire.uracer.utils.MapUtils;
@@ -52,7 +52,11 @@ import com.bitfire.uracer.utils.MapUtils;
  */
 public class Level
 {
+	// level data
 	public TiledMap map = null;
+	private TrackWalls trackWalls = null;
+
+	// level rendering
 	public UTileMapRenderer renderer = null;
 	public String name = "";
 
@@ -152,10 +156,17 @@ public class Level
 	public void renderMeshes( GL20 gl )
 	{
 		gl.glDepthMask(true);
-		gl.glEnable( GL20.GL_CULL_FACE );
 		gl.glEnable( GL20.GL_DEPTH_TEST );
 		gl.glDepthFunc( GL20.GL_LESS );
 
+		// render track walls, if any
+		gl.glDisable( GL20.GL_CULL_FACE );
+		gl.glEnable( GL20.GL_BLEND );
+		gl.glBlendFunc( GL20.GL_SRC_ALPHA, GL20.GL_ONE_MINUS_SRC_ALPHA );
+		renderOrthographicAlignedModels( gl, trackWalls.walls );
+
+		// render "static-meshes" layer
+		gl.glEnable( GL20.GL_CULL_FACE );
 		renderOrthographicAlignedModels( gl, staticMeshes );
 
 		gl.glDisable( GL20.GL_DEPTH_TEST );
@@ -186,6 +197,8 @@ public class Level
 
 			// transform to world space
 			camPersp.unproject( tmpvec );
+//			tmpvec.x = 1000;
+//			tmpvec.y = 405;
 
 			// build model matrix
 			// TODO: support proper rotation now that Mat3/Mat4 supports opengl-style rotation/translation/scaling
@@ -262,45 +275,8 @@ public class Level
 		}
 
 		// walls by polylines
-		if( MapUtils.hasObjectGroup( MapUtils.LayerWalls ))
-		{
-			Vector2 from = new Vector2();
-			Vector2 to = new Vector2();
-			Vector2 offset = new Vector2();
-			TiledObjectGroup group = MapUtils.getObjectGroup( MapUtils.LayerWalls );
-			for( int i = 0; i < group.objects.size(); i++ )
-			{
-				TiledObject o = group.objects.get( i );
-
-				ArrayList<Vector2> points = MapUtils.extractPolyData( o.polyline );
-				if( points.size() > 0 )
-				{
-					float factor = Director.scalingStrategy.invTileMapZoomFactor;
-					float wallSizeMt = 0.3f * factor;
-
-					offset.set(o.x, o.y);
-					offset.set(Convert.px2mt(offset));
-
-					from.set(Convert.px2mt(points.get(0)));
-					from.add( offset );
-					from.mul( factor );
-					from.y = Director.worldSizeScaledMt.y - from.y;
-
-					for( int j = 1; j <= points.size() - 1; j++ )
-					{
-						to.set(Convert.px2mt(points.get(j)));
-						to.add( offset );
-						to.mul( factor );
-						to.y = Director.worldSizeScaledMt.y - to.y;
-
-						Box2DFactory.createWall( from, to, wallSizeMt, 0.15f );
-//						System.out.println("from " + from + " to " + to);
-
-						from.set(to);
-					}
-				}
-			}
-		}
+		trackWalls = new TrackWalls();
+		trackWalls.createWalls();
 	}
 
 	private Player createPlayer(TiledMap map )
@@ -372,7 +348,8 @@ public class Level
 		rayHandler.setCulling(true);
 		rayHandler.setBlur(true);
 		rayHandler.setBlurNum(1);
-		rayHandler.setAmbientLight( 0, 0.05f, 0.25f, 0.2f );
+//		rayHandler.setAmbientLight( 0, 0.01f, 0.25f, 0.2f );
+		rayHandler.setAmbientLight( 0f, 0, 0.25f, 0.2f );
 
 //		RayHandler.setGammaCorrection( true );
 //		RayHandler.useDiffuseLight( true );
@@ -385,7 +362,7 @@ public class Level
 		c.set( .7f, .7f, 1f, .85f );
 		playerHeadlights = new ConeLight( rayHandler, maxRays, c, 30, 0, 0, 0, 15 );
 		playerHeadlights.setSoft( false );
-		playerHeadlights.setMaskBits( 0 );
+		playerHeadlights.setMaskBits( CollisionFilters.CategoryTrackWalls );
 
 
 		Vector2 pos = new Vector2();
