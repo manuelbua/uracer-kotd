@@ -33,7 +33,8 @@ public class OrthographicAlignedStillModel
 	// factor for this scaling: also, since the far plane is suboptimal at
 	// just 48, i want 5 times more space on the z-axis, so here's another
 	// scaling factor creeping up.
-	protected static float BlenderToURacer = 5f * 1.42f;
+	public static float World3DScalingFactor = 1.42222f;
+	protected static float BlenderToURacer = 5f * World3DScalingFactor;
 
 	// scale
 	private float scale, scalingFactor;
@@ -165,7 +166,7 @@ public class OrthographicAlignedStillModel
 		iRotationAxis.set( x_axis, y_axis, z_axis );
 	}
 
-	public void setScalingFactor( float factor )
+	private void setScalingFactor( float factor )
 	{
 		scalingFactor = factor;
 		scaleAxis.set( scale, scale, scale );
