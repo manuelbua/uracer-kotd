@@ -60,7 +60,7 @@ public class Game
 		Art.scaleFonts( Director.scalingStrategy.invTileMapZoomFactor );
 
 		// bring up level
-		level = Director.loadLevel( levelName, gameSettings, false /* night mode */ );
+		level = Director.loadLevel( levelName, gameSettings, true /* night mode */ );
 		player = level.getPlayer();
 
 		logic = new GameLogic( this );
@@ -149,7 +149,7 @@ public class Game
 			// render base tilemap
 			level.renderTilemap(gl);
 
-			gl.glDepthMask( false );
+//			gl.glDepthMask( false );
 			batch.begin();
 			{
 				// batch render effects

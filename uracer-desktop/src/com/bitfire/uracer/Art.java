@@ -24,6 +24,7 @@ public class Art
 	public static Texture meshPalm;
 	public static Texture meshTribune;
 	public static Texture meshLPTree1;
+	public static Texture meshTrackWall;
 
 	// cars
 	public static TextureAtlas carTextures;
@@ -48,6 +49,7 @@ public class Art
 		meshPalm = newTexture( "data/3d/textures/palm.png", mipMap );
 		meshTribune = newTexture( "data/3d/textures/tribune.png", mipMap );
 		meshLPTree1 = newTexture( "data/3d/textures/LPTree1.png", mipMap );
+		meshTrackWall = newTexture( "data/track/wall.png", false );
 
 		// cars
 		carTextures = new TextureAtlas("data/cars/pack");
@@ -90,6 +92,7 @@ public class Art
 		meshPalm.dispose();
 		meshTribune.dispose();
 		meshLPTree1.dispose();
+		meshTrackWall.dispose();
 
 		fonts.dispose();
 
