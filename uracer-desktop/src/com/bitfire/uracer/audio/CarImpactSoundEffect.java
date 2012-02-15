@@ -6,7 +6,7 @@ import com.badlogic.gdx.audio.Sound;
 import com.badlogic.gdx.math.MathUtils;
 import com.bitfire.uracer.utils.AMath;
 
-public class CarImpactSoundEffect implements CarSoundEffect
+public class CarImpactSoundEffect extends CarSoundEffect
 {
 	private Sound soundLow1, soundLow2, soundMid1, soundMid2, soundHigh;
 	private long lastSoundTimeMs = 0;

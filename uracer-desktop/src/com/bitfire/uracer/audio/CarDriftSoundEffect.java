@@ -3,10 +3,11 @@ package com.bitfire.uracer.audio;
 import com.badlogic.gdx.Files.FileType;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.audio.Sound;
+import com.bitfire.uracer.Config;
 import com.bitfire.uracer.game.logic.DriftInfo;
 import com.bitfire.uracer.utils.AMath;
 
-public class CarDriftSoundEffect implements CarSoundEffect
+public class CarDriftSoundEffect extends CarSoundEffect
 {
 	private Sound drift = null;
 	private long driftId = -1;
@@ -34,7 +35,12 @@ public class CarDriftSoundEffect implements CarSoundEffect
 	@Override
 	public void start()
 	{
-		driftId = drift.loop(0f);
+		// UGLY HACK FOR ANDROID
+		if(Config.isDesktop)
+			driftId = drift.loop(0f);
+		else
+			driftId = checkedLoop(drift,0f);
+
 		drift.setPitch( driftId, pitchMin );
 		drift.setVolume( driftId, 0f );
 	}
