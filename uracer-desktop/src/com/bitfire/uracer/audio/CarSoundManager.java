@@ -25,7 +25,7 @@ public class CarSoundManager
 	public static void load()
 	{
 		carEngine = new CarEngineSoundEffect();
-		carEngine.start();
+//		carEngine.start();
 
 		carDrift = new CarDriftSoundEffect();
 		carDrift.start();
