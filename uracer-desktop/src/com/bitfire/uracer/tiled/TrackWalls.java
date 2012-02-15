@@ -92,7 +92,7 @@ public class TrackWalls
 						toMt.set(Convert.px2mt(points.get(j))).add( offsetMt ).mul( factor );
 						toMt.y = Director.worldSizeScaledMt.y - toMt.y;
 
-						Box2DFactory.createWall( fromMt, toMt, wallSizeMt, 0.15f );
+						Box2DFactory.createWall( fromMt, toMt, wallSizeMt, 0f );
 
 						fromMt.set(toMt);
 					}
@@ -120,11 +120,11 @@ public class TrackWalls
 		// scaling factors
 		float factor = Director.scalingStrategy.invTileMapZoomFactor;
 		float oneOnWorld3DFactor = 1f / OrthographicAlignedStillModel.World3DScalingFactor;
-		float textureScaling = 3.5f;
-		float wallHeightMt = 2.5f * factor * oneOnWorld3DFactor;
+		float textureScaling = 4f;
+		float wallHeightMt = 1.5f * factor * oneOnWorld3DFactor;
 
 		// jitter
-		float jitterPositional = 1.5f * factor * oneOnWorld3DFactor;
+		float jitterPositional = .75f * factor * oneOnWorld3DFactor;
 		float jitterAltitudinal = .5f * factor * oneOnWorld3DFactor;
 		boolean addJitter = true;
 
