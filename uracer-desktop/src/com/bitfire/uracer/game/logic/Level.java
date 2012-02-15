@@ -359,7 +359,7 @@ public class Level
 		final Color c = new Color();
 
 		// setup player headlights
-		c.set( .7f, .7f, 1f, .85f );
+		c.set( .7f, .7f, .65f, .85f );
 		playerHeadlights = new ConeLight( rayHandler, maxRays, c, 30, 0, 0, 0, 15 );
 		playerHeadlights.setSoft( false );
 		playerHeadlights.setMaskBits( CollisionFilters.CategoryTrackWalls );
@@ -373,7 +373,7 @@ public class Level
 //					MathUtils.random(0,1),
 //					MathUtils.random(0,1),
 //					MathUtils.random(0,1),
-					1f, .85f, .75f,
+					1f, .85f, .35f,
 					.75f );
 			TiledObject o = group.objects.get( i );
 			pos.set( o.x, o.y ).mul( Director.scalingStrategy.invTileMapZoomFactor );
