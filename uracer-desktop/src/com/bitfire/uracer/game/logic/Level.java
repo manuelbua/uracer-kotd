@@ -26,7 +26,6 @@ import com.badlogic.gdx.math.Vector3;
 import com.bitfire.uracer.Config;
 import com.bitfire.uracer.Director;
 import com.bitfire.uracer.Physics;
-import com.bitfire.uracer.URacer;
 import com.bitfire.uracer.carsimulation.CarModel;
 import com.bitfire.uracer.carsimulation.Recorder;
 import com.bitfire.uracer.carsimulation.Replay;
@@ -359,7 +358,7 @@ public class Level
 		final Color c = new Color();
 
 		// setup player headlights
-		c.set( .7f, .7f, .65f, .85f );
+		c.set( .4f, .4f, .75f, .85f );
 		playerHeadlights = new ConeLight( rayHandler, maxRays, c, 30, 0, 0, 0, 15 );
 		playerHeadlights.setSoft( false );
 		playerHeadlights.setMaskBits( CollisionFilters.CategoryTrackWalls );
@@ -373,7 +372,7 @@ public class Level
 //					MathUtils.random(0,1),
 //					MathUtils.random(0,1),
 //					MathUtils.random(0,1),
-					1f, .85f, .35f,
+					1f, .85f, .15f,
 					.75f );
 			TiledObject o = group.objects.get( i );
 			pos.set( o.x, o.y ).mul( Director.scalingStrategy.invTileMapZoomFactor );
@@ -419,10 +418,10 @@ public class Level
 		rayHandler.update();
 		rayHandler.render();
 
-		if( Config.isDesktop && (URacer.getFrameCount()&0x1f)==0x1f)
-		{
-			System.out.println("lights rendered="+rayHandler.lightRenderedLastFrame);
-		}
+//		if( Config.isDesktop && (URacer.getFrameCount()&0x1f)==0x1f)
+//		{
+//			System.out.println("lights rendered="+rayHandler.lightRenderedLastFrame);
+//		}
 	}
 
 	/**
