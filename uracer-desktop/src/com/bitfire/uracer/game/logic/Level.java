@@ -18,11 +18,8 @@ import com.badlogic.gdx.graphics.g2d.tiled.TiledLoader;
 import com.badlogic.gdx.graphics.g2d.tiled.TiledMap;
 import com.badlogic.gdx.graphics.g2d.tiled.TiledObject;
 import com.badlogic.gdx.graphics.g2d.tiled.TiledObjectGroup;
-import com.badlogic.gdx.graphics.glutils.ShaderProgram;
 import com.badlogic.gdx.math.MathUtils;
-import com.badlogic.gdx.math.Matrix4;
 import com.badlogic.gdx.math.Vector2;
-import com.badlogic.gdx.math.Vector3;
 import com.bitfire.uracer.Config;
 import com.bitfire.uracer.Director;
 import com.bitfire.uracer.Physics;
@@ -36,8 +33,10 @@ import com.bitfire.uracer.entities.vehicles.GhostCar;
 import com.bitfire.uracer.factories.CarFactory;
 import com.bitfire.uracer.factories.CarFactory.CarType;
 import com.bitfire.uracer.factories.ModelFactory;
+import com.bitfire.uracer.tiled.LevelRenderer;
 import com.bitfire.uracer.tiled.OrthographicAlignedStillModel;
 import com.bitfire.uracer.tiled.ScalingStrategy;
+import com.bitfire.uracer.tiled.TrackTrees;
 import com.bitfire.uracer.tiled.TrackWalls;
 import com.bitfire.uracer.tiled.UTileMapRenderer;
 import com.bitfire.uracer.utils.Convert;
@@ -54,9 +53,11 @@ public class Level
 	// level data
 	public TiledMap map = null;
 	private TrackWalls trackWalls = null;
+	private TrackTrees trackTrees = null;
 
 	// level rendering
-	public UTileMapRenderer renderer = null;
+	public LevelRenderer levelRenderer = null;
+	public UTileMapRenderer tileMapRenderer = null;
 	public String name = "";
 
 	private static final String LevelsStore = "data/levels/";
@@ -88,12 +89,14 @@ public class Level
 		// load tilemap
 		map = TiledLoader.createMap( mapHandle );
 		atlas = new TileAtlas( map, baseDir );
-		renderer = new UTileMapRenderer( map, atlas, 1, 1, map.tileWidth, map.tileHeight );
+		tileMapRenderer = new UTileMapRenderer( map, atlas, 1, 1, map.tileWidth, map.tileHeight );
 
 		// initialize TiledMap utils
 		MapUtils.initialize( map );
 
 		createCams();
+
+		levelRenderer = new LevelRenderer(camPersp, camOrtho);
 	}
 
 	/* 2-stage construction, avoid <static> problems in Android */
@@ -126,6 +129,8 @@ public class Level
 			model.dispose();
 		}
 
+		trackWalls.dispose();
+		trackTrees.dispose();
 	}
 
 	public void syncWithCam( OrthographicCamera orthoCam )
@@ -149,81 +154,27 @@ public class Level
 	public void renderTilemap(GL20 gl)
 	{
 		gl.glDisable( GL20.GL_BLEND );
-		renderer.render( camOrtho );
+		tileMapRenderer.render( camOrtho );
 	}
 
 	public void renderMeshes( GL20 gl )
 	{
 		gl.glDepthMask(true);
 		gl.glEnable( GL20.GL_DEPTH_TEST );
+		gl.glCullFace( GL20.GL_BACK );
+		gl.glFrontFace( GL20.GL_CCW );
 		gl.glDepthFunc( GL20.GL_LESS );
 
-		// render track walls, if any
-		gl.glDisable( GL20.GL_CULL_FACE );
-		gl.glEnable( GL20.GL_BLEND );
-		gl.glBlendFunc( GL20.GL_SRC_ALPHA, GL20.GL_ONE_MINUS_SRC_ALPHA );
-		renderOrthographicAlignedModels( gl, trackWalls.walls );
+		levelRenderer.renderWalls( gl, trackWalls );
+		levelRenderer.renderTrees( gl, trackTrees );
 
 		// render "static-meshes" layer
 		gl.glEnable( GL20.GL_CULL_FACE );
-		renderOrthographicAlignedModels( gl, staticMeshes );
+		levelRenderer.renderOrthographicAlignedModels( gl, staticMeshes );
 
 		gl.glDisable( GL20.GL_DEPTH_TEST );
 		gl.glDisable( GL20.GL_CULL_FACE );
 		gl.glDepthMask(false);
-	}
-
-	private Vector3 tmpvec = new Vector3();
-	private Matrix4 mtx = new Matrix4();
-	private Matrix4 mtx2 = new Matrix4();
-	private void renderOrthographicAlignedModels(GL20 gl, ArrayList<OrthographicAlignedStillModel> models)
-	{
-		OrthographicAlignedStillModel m;
-
-		float meshZ = -(camPersp.far - camPersp.position.z);
-
-		ShaderProgram shader = OrthographicAlignedStillModel.shaderProgram;
-		shader.begin();
-
-		for( int i = 0; i < models.size(); i++ )
-		{
-			m = models.get( i );
-
-			// compute position
-			tmpvec.x = Convert.scaledPixels( m.positionOffsetPx.x - camOrtho.position.x ) + Director.halfViewport.x + m.positionPx.x;
-			tmpvec.y = Convert.scaledPixels( m.positionOffsetPx.y + camOrtho.position.y ) + Director.halfViewport.y - m.positionPx.y;
-			tmpvec.z = 1;
-
-			// transform to world space
-			camPersp.unproject( tmpvec );
-//			tmpvec.x = 1000;
-//			tmpvec.y = 405;
-
-			// build model matrix
-			// TODO: support proper rotation now that Mat3/Mat4 supports opengl-style rotation/translation/scaling
-			mtx.setToTranslation( tmpvec.x, tmpvec.y, meshZ );
-			Matrix4.mul( mtx.val, mtx2.setToRotation( m.iRotationAxis, m.iRotationAngle ).val );
-			Matrix4.mul( mtx.val, mtx2.setToScaling( m.scaleAxis ).val );
-
-			// comb = (proj * view) * model (fast mul)
-			Matrix4.mul( mtx2.set( camPersp.combined ).val, mtx.val );
-
-			shader.setUniformMatrix( "u_mvpMatrix", mtx2 );
-
-			// do not bind/rebind textures without reason
-			if( i == 0 )
-			{
-				m.material.bind(shader);
-			} else
-			if( !models.get(i - 1).material.equals(m.material) )
-			{
-				m.material.bind(shader);
-			}
-
-			m.render(gl);
-		}
-
-		shader.end();
 	}
 
 	private void createCams()
@@ -276,6 +227,10 @@ public class Level
 		// walls by polylines
 		trackWalls = new TrackWalls();
 		trackWalls.createWalls();
+
+		// trees
+		trackTrees = new TrackTrees();
+		trackTrees.createTrees();
 	}
 
 	private Player createPlayer(TiledMap map )
