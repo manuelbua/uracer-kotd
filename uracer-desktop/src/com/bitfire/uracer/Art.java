@@ -23,7 +23,10 @@ public class Art
 	public static Texture meshMissing;
 	public static Texture meshPalm;
 	public static Texture meshTribune;
-	public static Texture meshLPTree1;
+	public static Texture meshTreeTrunk;
+	public static Texture meshTreeLeaves3;
+	public static Texture meshTreeLeaves5;
+	public static Texture meshTreeLeaves7;
 	public static Texture meshTrackWall;
 
 	// cars
@@ -45,11 +48,16 @@ public class Art
 		base6 = split( "data/base/base6.png", 6, 6, mipMap );
 		quad = new TextureRegion( base6[0][10], 0, 0, 18, 18 );
 
+		meshTrackWall = newTexture( "data/track/wall.png", false );
 		meshMissing = newTexture( "data/3d/textures/missing-mesh.png", mipMap );
 		meshPalm = newTexture( "data/3d/textures/palm.png", mipMap );
 		meshTribune = newTexture( "data/3d/textures/tribune.png", mipMap );
-		meshLPTree1 = newTexture( "data/3d/textures/LPTree1.png", mipMap );
-		meshTrackWall = newTexture( "data/track/wall.png", false );
+
+		// trees
+		meshTreeTrunk = newTexture( "data/3d/textures/trunk_6_col.png", mipMap );
+		meshTreeLeaves3 = newTexture( "data/3d/textures/leaves_3_spring_1.png", mipMap );
+		meshTreeLeaves5 = newTexture( "data/3d/textures/leaves_5_spring_1.png", mipMap );
+		meshTreeLeaves7 = newTexture( "data/3d/textures/leaves_7_spring_1.png", mipMap );
 
 		// cars
 		carTextures = new TextureAtlas("data/cars/pack");
@@ -89,10 +97,16 @@ public class Art
 		cars.dispose();
 
 		meshMissing.dispose();
+		meshTrackWall.dispose();
 		meshPalm.dispose();
 		meshTribune.dispose();
-		meshLPTree1.dispose();
-		meshTrackWall.dispose();
+
+		// trees
+		meshTreeLeaves3.dispose();
+		meshTreeLeaves5.dispose();
+		meshTreeLeaves7.dispose();
+		meshTreeTrunk.dispose();
+
 
 		fonts.dispose();
 

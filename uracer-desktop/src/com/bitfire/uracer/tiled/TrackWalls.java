@@ -9,6 +9,8 @@ import com.badlogic.gdx.graphics.VertexAttribute;
 import com.badlogic.gdx.graphics.VertexAttributes.Usage;
 import com.badlogic.gdx.graphics.g2d.tiled.TiledObject;
 import com.badlogic.gdx.graphics.g2d.tiled.TiledObjectGroup;
+import com.badlogic.gdx.graphics.g3d.materials.Material;
+import com.badlogic.gdx.graphics.g3d.materials.TextureAttribute;
 import com.badlogic.gdx.graphics.g3d.model.still.StillModel;
 import com.badlogic.gdx.graphics.g3d.model.still.StillSubMesh;
 import com.badlogic.gdx.graphics.glutils.ShaderProgram;
@@ -23,42 +25,18 @@ import com.bitfire.uracer.utils.MapUtils;
 public class TrackWalls
 {
 	public final ArrayList<OrthographicAlignedStillModel> walls = new ArrayList<OrthographicAlignedStillModel>();
-//	public final ArrayList<Mesh> walls = new ArrayList<Mesh>();
-//	public ShaderProgram shader = null;
 
 	public TrackWalls()
 	{
-//		String vertexShader =
-//				"uniform mat4 u_mvpMatrix;					\n" +
-//				"attribute vec4 a_position;					\n" +
-//				"attribute vec2 a_texCoord0;				\n" +
-//				"varying vec2 v_TexCoord;					\n" +
-//				"void main()								\n" +
-//				"{											\n" +
-//				"	gl_Position = a_position;	\n" +
-//				"	v_TexCoord = a_texCoord0;				\n" +
-//				"}											\n";
-//
-//		String fragmentShader =
-//			"#ifdef GL_ES											\n" +
-//			"precision mediump float;								\n" +
-//			"#endif													\n" +
-//			"uniform sampler2D u_texture;							\n" +
-//			"varying vec2 v_TexCoord;								\n" +
-//			"void main()											\n" +
-//			"{														\n" +
-//			"	gl_FragColor = texture2D( u_texture, v_TexCoord );	\n" +
-//			"}														\n";
-//
-//		ShaderProgram.pedantic = false;
-//		shader = new ShaderProgram( vertexShader, fragmentShader );
-//
-//		if( shader.isCompiled() == false )
-//			throw new IllegalStateException( shader.getLog() );
 	}
 
 	public void dispose()
 	{
+		for(int i = 0; i < walls.size(); i++)
+		{
+			walls.get( i ).dispose();
+		}
+
 		walls.clear();
 	}
 
@@ -69,6 +47,12 @@ public class TrackWalls
 			Vector2 fromMt = new Vector2();
 			Vector2 toMt = new Vector2();
 			Vector2 offsetMt = new Vector2();
+
+			// create material
+			TextureAttribute ta = new TextureAttribute(Art.meshTrackWall, 0, "textureAttributes");
+			ta.uWrap = TextureWrap.Repeat.getGLEnum();
+			ta.vWrap = TextureWrap.Repeat.getGLEnum();
+			Material mat = new Material("trackWall", ta);
 
 			TiledObjectGroup group = MapUtils.getObjectGroup( MapUtils.LayerWalls );
 			for( int i = 0; i < group.objects.size(); i++ )
@@ -101,13 +85,11 @@ public class TrackWalls
 
 					StillSubMesh[] subMeshes = new StillSubMesh[1];
 					subMeshes[0] = new StillSubMesh("wall", mesh, GL10.GL_TRIANGLES);
-					OrthographicAlignedStillModel model = new OrthographicAlignedStillModel(new StillModel(subMeshes), Art.meshTrackWall);
+
+					OrthographicAlignedStillModel model = new OrthographicAlignedStillModel(new StillModel(subMeshes), mat);
 
 					model.setPosition(o.x, o.y);
 					model.setScale(1);
-
-					model.getTextureAttribute().uWrap = TextureWrap.Repeat.getGLEnum();
-					model.getTextureAttribute().vWrap = TextureWrap.Repeat.getGLEnum();
 
 					walls.add(model);
 				}

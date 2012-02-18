@@ -1,15 +1,12 @@
 package com.bitfire.uracer.tiled;
 
 import com.badlogic.gdx.graphics.GL20;
-import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g3d.materials.Material;
-import com.badlogic.gdx.graphics.g3d.materials.TextureAttribute;
 import com.badlogic.gdx.graphics.g3d.model.still.StillModel;
 import com.badlogic.gdx.graphics.glutils.ShaderProgram;
 import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.math.Vector3;
 import com.bitfire.uracer.Director;
-import com.bitfire.uracer.utils.Convert;
 
 /**
  * The model is expected to follow the z-up convention.
@@ -22,8 +19,8 @@ public class OrthographicAlignedStillModel
 	public UStillModel model;
 	public Material material;
 	public boolean isTransparent = false;
-	protected Texture texture;
-	protected TextureAttribute textureAttribute;
+//	protected Texture texture;
+//	protected TextureAttribute textureAttribute;
 
 	public static ShaderProgram shaderProgram = null;
 
@@ -78,17 +75,14 @@ public class OrthographicAlignedStillModel
 			throw new IllegalStateException( OrthographicAlignedStillModel.shaderProgram.getLog() );
 	}
 
-	public OrthographicAlignedStillModel(StillModel aModel, Texture aTexture, boolean transparency)
+	public OrthographicAlignedStillModel(StillModel aModel, Material material)
 	{
 		try
 		{
 			model = new UStillModel( aModel.subMeshes.clone() );
 
-			// set material
-			texture = aTexture;
-			textureAttribute = new TextureAttribute(texture, 0, "textureAttributes");
-			material = new Material("default", textureAttribute);
-			model.setMaterial( material );
+			this.material = material;
+			model.setMaterial( this.material );
 
 			setScalingFactor( Director.scalingStrategy.meshScaleFactor * BlenderToURacer * Director.scalingStrategy.to256 );
 			setPosition( 0, 0 );
@@ -98,11 +92,6 @@ public class OrthographicAlignedStillModel
 		{
 			e.printStackTrace();
 		}
-	}
-
-	public OrthographicAlignedStillModel(StillModel model, Texture texture)
-	{
-		this(model, texture, false);
 	}
 
 	public void dispose()
@@ -115,26 +104,10 @@ public class OrthographicAlignedStillModel
 		}
 	}
 
-	public TextureAttribute getTextureAttribute()
-	{
-		return textureAttribute;
-	}
-
 	public void setPositionOffsetPixels( int offsetPxX, int offsetPxY )
 	{
 		positionOffsetPx.x = offsetPxX;
 		positionOffsetPx.y = offsetPxY;
-	}
-
-	/*
-	 * @param x_index the x-axis index of the tile
-	 * @param x_index the y-axis index of the tile
-	 *
-	 * @remarks The origin (0,0) is at the top-left corner
-	 */
-	public void setTilePosition( int tileIndexX, int tileIndexY )
-	{
-		positionPx.set( Convert.tileToPx( tileIndexX, tileIndexY ) );
 	}
 
 	/**
@@ -145,16 +118,6 @@ public class OrthographicAlignedStillModel
 	public void setPosition( float posPxX, float posPxY )
 	{
 		positionPx.set( Director.positionFor( posPxX, posPxY ) );
-	}
-
-	/**
-	 * Sets the world position in pixels, top-left origin.
-	 * @param x
-	 * @param y
-	 */
-	public void setPositionUnscaled( float x, float y )
-	{
-		positionPx.set( x, y );
 	}
 
 	public float iRotationAngle;

@@ -16,6 +16,7 @@ public class MapUtils
 	public static final String LayerTrack = "track";
 	public static final String LayerLights = "lights";
 	public static final String LayerStaticMeshes = "static-meshes";
+	public static final String LayerTrees = "trees";
 	public static final String LayerWalls = "walls";
 
 
