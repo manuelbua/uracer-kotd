@@ -19,8 +19,6 @@ public class OrthographicAlignedStillModel
 	public UStillModel model;
 	public Material material;
 	public boolean isTransparent = false;
-//	protected Texture texture;
-//	protected TextureAttribute textureAttribute;
 
 	public static ShaderProgram shaderProgram = null;
 

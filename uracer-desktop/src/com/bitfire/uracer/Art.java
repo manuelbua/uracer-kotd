@@ -24,9 +24,7 @@ public class Art
 	public static Texture meshPalm;
 	public static Texture meshTribune;
 	public static Texture meshTreeTrunk;
-	public static Texture meshTreeLeaves3;
-	public static Texture meshTreeLeaves5;
-	public static Texture meshTreeLeaves7;
+	public static Texture[] meshTreeLeavesSpring;
 	public static Texture meshTrackWall;
 
 	// cars
@@ -55,9 +53,8 @@ public class Art
 
 		// trees
 		meshTreeTrunk = newTexture( "data/3d/textures/trunk_6_col.png", mipMap );
-		meshTreeLeaves3 = newTexture( "data/3d/textures/leaves_3_spring_1.png", mipMap );
-		meshTreeLeaves5 = newTexture( "data/3d/textures/leaves_5_spring_1.png", mipMap );
-		meshTreeLeaves7 = newTexture( "data/3d/textures/leaves_7_spring_1.png", mipMap );
+		meshTreeLeavesSpring = new Texture[7];
+		for(int i = 0; i < 7; i++) meshTreeLeavesSpring[i] = newTexture( "data/3d/textures/leaves_" + (i+1) + "_spring_1.png", mipMap );
 
 		// cars
 		carTextures = new TextureAtlas("data/cars/pack");
@@ -102,9 +99,7 @@ public class Art
 		meshTribune.dispose();
 
 		// trees
-		meshTreeLeaves3.dispose();
-		meshTreeLeaves5.dispose();
-		meshTreeLeaves7.dispose();
+		for(int i = 0; i < 7; i++) meshTreeLeavesSpring[i].dispose();
 		meshTreeTrunk.dispose();
 
 

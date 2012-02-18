@@ -56,7 +56,7 @@ public class TrackTrees
 				TreeStillModel model = ModelFactory.createTree( o.type, o.x, o.y, scale );
 				if( model != null )
 				{
-					model.setRotation( MathUtils.random( 0f, 90f ), 0, 0, 1f );
+					model.setRotation( MathUtils.random( -180f, 180f ), 0, 0, 1f );
 					trees.add( nextIndexFor( model ), model );
 				}
 			}

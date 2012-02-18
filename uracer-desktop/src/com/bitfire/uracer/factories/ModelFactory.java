@@ -19,7 +19,8 @@ import com.bitfire.uracer.utils.Hash;
 public class ModelFactory
 {
 	public enum ModelMesh {
-		Missing, Palm, Tribune, Tree_1, Tree_7, Tree_9
+		Missing, Palm, Tribune,
+		Tree_1, Tree_2, Tree_3, Tree_4, Tree_5, Tree_6, Tree_7, Tree_8, Tree_9
 	}
 
 	private static ModelMesh fromString(String mesh)
@@ -27,7 +28,13 @@ public class ModelFactory
 		if(mesh.equalsIgnoreCase( "palm" )) return ModelMesh.Palm;
 		if(mesh.equalsIgnoreCase( "tribune" )) return ModelMesh.Tribune;
 		if(mesh.equalsIgnoreCase( "tree-1" )) return ModelMesh.Tree_1;
+		if(mesh.equalsIgnoreCase( "tree-2" )) return ModelMesh.Tree_2;
+		if(mesh.equalsIgnoreCase( "tree-3" )) return ModelMesh.Tree_3;
+		if(mesh.equalsIgnoreCase( "tree-4" )) return ModelMesh.Tree_4;
+		if(mesh.equalsIgnoreCase( "tree-5" )) return ModelMesh.Tree_5;
+		if(mesh.equalsIgnoreCase( "tree-6" )) return ModelMesh.Tree_6;
 		if(mesh.equalsIgnoreCase( "tree-7" )) return ModelMesh.Tree_7;
+		if(mesh.equalsIgnoreCase( "tree-8" )) return ModelMesh.Tree_8;
 		if(mesh.equalsIgnoreCase( "tree-9" )) return ModelMesh.Tree_9;
 
 		return ModelMesh.Missing;
@@ -81,20 +88,67 @@ public class ModelFactory
 	{
 		TreeStillModel stillModel = null;
 
+		String treeModelName = "", treeMeshName = "";
+		Texture leavesTexture = null;
+
 		switch( modelMesh )
 		{
 		case Tree_1:
-			stillModel = new TreeStillModel( getModel("data/3d/models/tree-1.g3dt"), getMaterial(modelMesh, Art.meshTreeLeaves3), "tree_1_" );
+			treeModelName = "tree-1.g3dt";
+			treeMeshName = "tree_1_";
+			leavesTexture = Art.meshTreeLeavesSpring[2];
+			break;
+
+		case Tree_2:
+			treeModelName = "tree-2.g3dt";
+			treeMeshName = "tree_2_";
+			leavesTexture = Art.meshTreeLeavesSpring[0];
+			break;
+
+		case Tree_3:
+			treeModelName = "tree-3.g3dt";
+			treeMeshName = "tree_3_";
+			leavesTexture = Art.meshTreeLeavesSpring[0];
+			break;
+
+		case Tree_4:
+			treeModelName = "tree-4.g3dt";
+			treeMeshName = "tree_4_";
+			leavesTexture = Art.meshTreeLeavesSpring[1];
+			break;
+
+		case Tree_5:
+			treeModelName = "tree-5.g3dt";
+			treeMeshName = "tree_5_";
+			leavesTexture = Art.meshTreeLeavesSpring[4];
+			break;
+
+		case Tree_6:
+			treeModelName = "tree-6.g3dt";
+			treeMeshName = "tree_6_";
+			leavesTexture = Art.meshTreeLeavesSpring[5];
 			break;
 
 		case Tree_7:
-			stillModel = new TreeStillModel( getModel("data/3d/models/tree-7.g3dt"), getMaterial(modelMesh, Art.meshTreeLeaves5), "tree_7_" );
+			treeModelName = "tree-7.g3dt";
+			treeMeshName = "tree_7_";
+			leavesTexture = Art.meshTreeLeavesSpring[4];
+			break;
+
+		case Tree_8:
+			treeModelName = "tree-8.g3dt";
+			treeMeshName = "tree_8_";
+			leavesTexture = Art.meshTreeLeavesSpring[3];
 			break;
 
 		case Tree_9:
-			stillModel = new TreeStillModel( getModel("data/3d/models/tree-9.g3dt"), getMaterial(modelMesh,Art.meshTreeLeaves7), "tree_9_" );
+			treeModelName = "tree-9.g3dt";
+			treeMeshName = "tree_9_";
+			leavesTexture = Art.meshTreeLeavesSpring[6];
 			break;
 		}
+
+		stillModel = new TreeStillModel( getModel("data/3d/models/" + treeModelName), getMaterial(modelMesh, leavesTexture), treeMeshName );
 
 		if( stillModel != null )
 		{

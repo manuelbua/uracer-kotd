@@ -16,11 +16,42 @@ public class LevelRenderer
 {
 	private PerspectiveCamera camPersp;
 	private OrthographicCamera camOrtho;
+	private ShaderProgram treeShader;
 
 	public LevelRenderer(PerspectiveCamera persp, OrthographicCamera ortho)
 	{
 		camPersp = persp;
 		camOrtho = ortho;
+
+		String vertexShader =
+				"uniform mat4 u_mvpMatrix;					\n" +
+				"attribute vec4 a_position;					\n" +
+				"attribute vec2 a_texCoord0;				\n" +
+				"varying vec2 v_TexCoord;					\n" +
+				"void main()								\n" +
+				"{											\n" +
+				"	gl_Position = u_mvpMatrix * a_position;	\n" +
+				"	v_TexCoord = a_texCoord0;				\n" +
+				"}											\n";
+
+		String fragmentShader =
+			"#ifdef GL_ES											\n" +
+			"precision mediump float;								\n" +
+			"#endif													\n" +
+			"uniform sampler2D u_texture;							\n" +
+			"varying vec2 v_TexCoord;								\n" +
+			"void main()											\n" +
+			"{														\n" +
+			"	vec4 texel = texture2D( u_texture, v_TexCoord );	\n" +
+			"	if(texel.a < 0.5) discard;	\n" +
+			"	gl_FragColor = texel;	\n" +
+			"}														\n";
+
+		ShaderProgram.pedantic = false;
+		treeShader = new ShaderProgram( vertexShader, fragmentShader );
+
+		if( treeShader.isCompiled() == false )
+			throw new IllegalStateException( treeShader.getLog() );
 	}
 
 	public void renderWalls(GL20 gl, TrackWalls walls)
@@ -45,19 +76,20 @@ public class LevelRenderer
 
 			Art.meshTreeTrunk.bind();
 
-			ShaderProgram shader = OrthographicAlignedStillModel.shaderProgram;
-			shader.begin();
+			treeShader.begin();
 
 			// trunk
 			for( int i = 0; i < trees.trees.size(); i++ )
 			{
 				TreeStillModel m = trees.trees.get( i );
-				shader.setUniformMatrix( "u_mvpMatrix", m.transformed );
-				m.trunk.render(shader, GL20.GL_TRIANGLES );
+				treeShader.setUniformMatrix( "u_mvpMatrix", m.transformed );
+				m.trunk.render(treeShader, GL20.GL_TRIANGLES );
 			}
+
 
 			// transparent foliage
 			gl.glEnable( GL20.GL_BLEND );
+			gl.glDisable( GL20.GL_CULL_FACE );
 			gl.glBlendFunc( GL20.GL_SRC_ALPHA, GL20.GL_ONE_MINUS_SRC_ALPHA );
 
 			for( int i = 0; i < trees.trees.size(); i++ )
@@ -65,20 +97,20 @@ public class LevelRenderer
 				TreeStillModel m = trees.trees.get( i );
 				if( i == 0 )
 				{
-					m.material.bind(shader);
+					m.material.bind(treeShader);
 				} else
 				if( !trees.trees.get(i - 1).material.equals(m.material) )
 				{
-					m.material.bind(shader);
+					m.material.bind(treeShader);
 //					System.out.println("switched");
 				}
 
-				shader.setUniformMatrix( "u_mvpMatrix", m.transformed );
-				m.leaves.render(shader, GL20.GL_TRIANGLES );
+				treeShader.setUniformMatrix( "u_mvpMatrix", m.transformed );
+				m.leaves.render(treeShader, GL20.GL_TRIANGLES );
 			}
 			gl.glDisable( GL20.GL_BLEND );
 
-			shader.end();
+			treeShader.end();
 		}
 	}
 
