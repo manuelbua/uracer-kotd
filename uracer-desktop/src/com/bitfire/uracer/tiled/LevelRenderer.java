@@ -89,7 +89,6 @@ public class LevelRenderer
 
 			// transparent foliage
 			gl.glEnable( GL20.GL_BLEND );
-			gl.glDisable( GL20.GL_CULL_FACE );
 			gl.glBlendFunc( GL20.GL_SRC_ALPHA, GL20.GL_ONE_MINUS_SRC_ALPHA );
 
 			for( int i = 0; i < trees.trees.size(); i++ )
