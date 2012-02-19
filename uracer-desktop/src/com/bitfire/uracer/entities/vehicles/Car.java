@@ -22,7 +22,6 @@ import com.bitfire.uracer.carsimulation.CarModel;
 import com.bitfire.uracer.carsimulation.CarSimulator;
 import com.bitfire.uracer.carsimulation.Recorder;
 import com.bitfire.uracer.debug.Debug;
-import com.bitfire.uracer.effects.postprocessing.PostProcessor;
 import com.bitfire.uracer.entities.Box2dEntity;
 import com.bitfire.uracer.entities.EntityManager;
 import com.bitfire.uracer.factories.CarFactory.CarType;
@@ -294,12 +293,12 @@ public class Car extends Box2dEntity
 		}
 
 
-		if( (carInputMode == CarInputMode.InputFromPlayer) && PostProcessor.hasEffect() && hasImpact )
-		{
-			float strength = AMath.lerp( prevStrength, impact*0.005f, 0.05f );
-			prevStrength = strength;
-			PostProcessor.getEffect().addStrength( strength );
-		}
+//		if( (carInputMode == CarInputMode.InputFromPlayer) && PostProcessor.hasEffect() && hasImpact )
+//		{
+//			float strength = AMath.lerp( prevStrength, impact*0.005f, 0.05f );
+//			prevStrength = strength;
+//			PostProcessor.getEffect().addStrength( strength );
+//		}
 	}
 
 	private void handleDecrease(CarInput input)

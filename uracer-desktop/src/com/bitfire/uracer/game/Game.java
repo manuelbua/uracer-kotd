@@ -1,7 +1,5 @@
 package com.bitfire.uracer.game;
 
-import box2dLight.PointLight;
-
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.GL20;
 import com.badlogic.gdx.graphics.OrthographicCamera;
@@ -14,7 +12,8 @@ import com.bitfire.uracer.audio.CarSoundManager;
 import com.bitfire.uracer.debug.Debug;
 import com.bitfire.uracer.effects.TrackEffects;
 import com.bitfire.uracer.effects.TrackEffects.Effects;
-import com.bitfire.uracer.effects.postprocessing.PostProcessor;
+import com.bitfire.uracer.effects.postprocessing.RadialBlur;
+import com.bitfire.uracer.effects.postprocessing.bloom.Bloom;
 import com.bitfire.uracer.entities.EntityManager;
 import com.bitfire.uracer.entities.vehicles.Car;
 import com.bitfire.uracer.game.logic.DirectorController;
@@ -44,14 +43,18 @@ public class Game
 	private GameLogic logic = null;
 	private DirectorController controller;
 
-	// ray handling
-	private PointLight[] levelLights = new PointLight[10];
+	// effects
+	private RadialBlur radialBlur;
+	private Bloom bloom;
 
 	// drawing
 	private SpriteBatch batch = null;
 
 	public Game( String levelName, GameDifficulty difficulty )
 	{
+//		if(!Config.isDesktop)
+//			Config.Graphics.EnablePostProcessingFx = false;
+
 		Game.tweener = createTweener();
 
 		Messager.init();
@@ -75,6 +78,36 @@ public class Game
 		// audio effects
 		CarSoundManager.setPlayer( player );
 
+		if( Config.Graphics.EnablePostProcessingFx )
+		{
+//			radialBlur = new RadialBlur();
+//			radialBlur.setEnabled( true );
+//			PostProcessor.init( Gdx.graphics.getWidth(), Gdx.graphics.getHeight() );
+//			 PostProcessor.init( 512, 512 );
+//			PostProcessor.setEffect( radialBlur );
+
+			float rttRatio = 0.5f;
+			boolean use32bits = true;
+			boolean useBlending = false;
+			boolean needDepth = false;
+			int blurPasses = 4;
+			if(!Config.isDesktop)
+			{
+				rttRatio = 0.2f;
+				blurPasses = 1;
+				use32bits = false;
+			}
+
+			Bloom.useAlphaChannelAsMask = false;
+			bloom = new Bloom( (int)(Gdx.graphics.getWidth() * rttRatio), (int)(Gdx.graphics.getHeight() * rttRatio), needDepth, useBlending, use32bits );
+
+			float bloomQ = 1.5f;
+			bloom.blurPasses = blurPasses;
+			bloom.setBloomIntesity( bloomQ );
+			bloom.setOriginalIntesity( 1 );
+			bloom.setTreshold( 0.5f );
+		}
+
 		// setup sprite batch at origin top-left => 0,0
 		// Issues may arise on Tegra2 (Asus Transformer) devices if the buffers'
 		// count is higher than 10
@@ -89,6 +122,11 @@ public class Game
 		hud.dispose();
 		TrackEffects.dispose();
 		batch.dispose();
+
+		if(Config.Graphics.EnablePostProcessingFx)
+		{
+			bloom.dispose();
+		}
 	}
 
 	private Tweener createTweener()
@@ -105,6 +143,12 @@ public class Game
 		hud.tick();
 		TrackEffects.tick();
 		CarSoundManager.tick();
+
+//		if( Config.Graphics.EnablePostProcessingFx )
+//		{
+//			radialBlur.dampStrength( 0.8f );
+//			radialBlur.setOrigin( Director.screenPosFor( level.getPlayer().car.getBody() ) );
+//		}
 
 		Debug.update();
 	}
@@ -127,58 +171,54 @@ public class Game
 
 		if( Config.Graphics.EnablePostProcessingFx )
 		{
-			PostProcessor.begin();
-		} else
-		{
-			gl.glViewport( 0, 0, Gdx.graphics.getWidth(), Gdx.graphics.getHeight() );
+//			PostProcessor.begin();
+			bloom.capture();
 		}
 
+		gl.glViewport( 0, 0, Gdx.graphics.getWidth(), Gdx.graphics.getHeight() );
+
+		// resync
+		level.syncWithCam( ortho );
+
+		// prepare sprite batch
+		batch.setProjectionMatrix( ortho.projection );
+		batch.setTransformMatrix( ortho.view );
+
+		// clear buffers
+		gl.glClearDepthf( 1 );
+		gl.glClearColor( 0, 0, 0, 0 );
+		gl.glClear( GL20.GL_DEPTH_BUFFER_BIT | GL20.GL_COLOR_BUFFER_BIT );
+
+		// render base tilemap
+		level.renderTilemap(gl);
+
+		batch.begin();
 		{
-			// resync
-			level.syncWithCam( ortho );
+			// batch render effects
+			if( Config.Graphics.hasEffect(TrackEffects.Effects.CarSkidMarks.id) )
+				TrackEffects.renderEffect( Effects.CarSkidMarks, batch );
 
-			// prepare sprite batch
-			batch.setProjectionMatrix( ortho.projection );
-			batch.setTransformMatrix( ortho.view );
+			if( Config.Graphics.hasEffect(TrackEffects.Effects.SmokeTrails.id) )
+				TrackEffects.renderEffect( Effects.SmokeTrails, batch );
 
-			// clear buffers
-			gl.glClearDepthf( 1 );
-			gl.glClearColor( 0, 0, 0, 1 );
-			gl.glClear( GL20.GL_DEPTH_BUFFER_BIT | GL20.GL_COLOR_BUFFER_BIT );
-
-			// render base tilemap
-			level.renderTilemap(gl);
-
-//			gl.glDepthMask( false );
-			batch.begin();
-			{
-				// batch render effects
-				if( Config.Graphics.hasEffect(TrackEffects.Effects.CarSkidMarks.id) )
-					TrackEffects.renderEffect( Effects.CarSkidMarks, batch );
-
-				if( Config.Graphics.hasEffect(TrackEffects.Effects.SmokeTrails.id) )
-					TrackEffects.renderEffect( Effects.SmokeTrails, batch );
-
-				// batch render entities
-				EntityManager.raiseOnRender( batch, URacer.getTemporalAliasing() );
-			}
-			batch.end();
-
-			// render 3d meshes
-			level.renderMeshes( gl );
-
-			//
-			// rays stuff
-			//
-			if( level.isNightMode() )
-			{
-				level.renderLights();
-			}
+			// batch render entities
+			EntityManager.raiseOnRender( batch, URacer.getTemporalAliasing() );
 		}
+		batch.end();
+
+		// render 3d meshes
+		level.renderMeshes( gl );
 
 		if( Config.Graphics.EnablePostProcessingFx )
 		{
-			PostProcessor.end();
+//			PostProcessor.end();
+			bloom.render();
+		}
+
+		// lights
+		if( level.isNightMode() )
+		{
+			level.renderLights();
 		}
 
 		tweener.update((int)(URacer.getLastDeltaSecs()*1000));
