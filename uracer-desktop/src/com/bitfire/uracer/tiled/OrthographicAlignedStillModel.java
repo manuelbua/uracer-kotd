@@ -1,6 +1,5 @@
 package com.bitfire.uracer.tiled;
 
-import com.badlogic.gdx.graphics.GL20;
 import com.badlogic.gdx.graphics.g3d.materials.Material;
 import com.badlogic.gdx.graphics.g3d.model.still.StillModel;
 import com.badlogic.gdx.graphics.glutils.ShaderProgram;
@@ -137,16 +136,5 @@ public class OrthographicAlignedStillModel
 	{
 		this.scale = scalingFactor * scale;
 		scaleAxis.set( this.scale, this.scale, this.scale );
-	}
-
-	/**
-	 * This is for model with submeshes and/or handling transparency correctly.
-	 *
-	 * NOTE: shaders and texture units are already setup and bound for you, here
-	 * goes just plain rendering.
-	 */
-	public void render(GL20 gl)
-	{
-		model.subMeshes[0].mesh.render(OrthographicAlignedStillModel.shaderProgram, model.subMeshes[0].primitiveType);
 	}
 }

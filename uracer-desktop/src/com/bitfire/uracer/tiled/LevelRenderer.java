@@ -158,7 +158,7 @@ public class LevelRenderer
 				m.material.bind(shader);
 			}
 
-			m.render(gl);
+			m.model.subMeshes[0].mesh.render(OrthographicAlignedStillModel.shaderProgram, GL20.GL_TRIANGLES);
 		}
 
 		shader.end();

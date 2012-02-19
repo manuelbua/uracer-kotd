@@ -302,12 +302,7 @@ public class Level
 		rayHandler.setCulling(true);
 		rayHandler.setBlur(true);
 		rayHandler.setBlurNum(1);
-//		rayHandler.setAmbientLight( 0, 0.01f, 0.25f, 0.2f );
 		rayHandler.setAmbientLight( 0f, 0, 0.25f, 0.2f );
-
-//		RayHandler.setGammaCorrection( true );
-//		RayHandler.useDiffuseLight( true );
-//		rayHandler.setAmbientLight( 0, 0.01f, 0.025f, 0f );
 
 		// attach light to player
 		final Color c = new Color();
@@ -333,7 +328,6 @@ public class Level
 			pos.set( o.x, o.y ).mul( Director.scalingStrategy.invTileMapZoomFactor );
 			pos.y = Director.worldSizeScaledPx.y - pos.y;
 			pos.set( Convert.px2mt( pos ));
-//			System.out.println("Light @ " + pos);
 
 			PointLight l = new PointLight( rayHandler, maxRays, c, 30f, pos.x, pos.y );
 			l.setSoft( false );

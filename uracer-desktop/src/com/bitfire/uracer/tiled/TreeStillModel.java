@@ -1,6 +1,5 @@
 package com.bitfire.uracer.tiled;
 
-import com.badlogic.gdx.graphics.GL20;
 import com.badlogic.gdx.graphics.Mesh;
 import com.badlogic.gdx.graphics.g3d.materials.Material;
 import com.badlogic.gdx.graphics.g3d.model.still.StillModel;
@@ -17,10 +16,5 @@ public class TreeStillModel extends OrthographicAlignedStillModel
 
 		trunk = model.getSubMesh( meshName + "trunk" ).mesh;
 		leaves = model.getSubMesh( meshName + "leaves" ).mesh;
-	}
-
-	@Override
-	public void render(GL20 gl)
-	{
 	}
 }
