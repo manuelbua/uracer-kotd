@@ -93,7 +93,7 @@ public class Game
 			int blurPasses = 4;
 			if(!Config.isDesktop)
 			{
-				rttRatio = 0.2f;
+				rttRatio = 0.25f;
 				blurPasses = 1;
 				use32bits = false;
 			}
