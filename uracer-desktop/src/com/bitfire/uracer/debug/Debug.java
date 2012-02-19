@@ -4,6 +4,7 @@ import java.util.Formatter;
 import java.util.Locale;
 
 import com.badlogic.gdx.Gdx;
+import com.badlogic.gdx.graphics.GL20;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
 import com.badlogic.gdx.math.Matrix4;
@@ -75,7 +76,10 @@ public class Debug
 	{
 		batch.setTransformMatrix( identity );
 		batch.setProjectionMatrix( topLeftOrigin );
+
+		Gdx.gl.glActiveTexture( GL20.GL_TEXTURE0 );
 		batch.begin();
+
 		Debug.batch = batch;
 	}
 

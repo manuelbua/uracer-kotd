@@ -9,7 +9,7 @@ public class GameScreen extends Screen
 
 	public GameScreen()
 	{
-		game = new Game( "tutorial-3", Config.Game.difficulty );
+		game = new Game( "tutorial-4", Config.Game.difficulty );
 	}
 
 	@Override

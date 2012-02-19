@@ -192,6 +192,7 @@ public class Game
 		// render base tilemap
 		level.renderTilemap(gl);
 
+		gl.glActiveTexture( GL20.GL_TEXTURE0 );
 		batch.begin();
 		{
 			// batch render effects

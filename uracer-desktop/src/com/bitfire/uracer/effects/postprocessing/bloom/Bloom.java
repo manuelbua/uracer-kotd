@@ -253,8 +253,8 @@ public class Bloom
 			Gdx.gl.glBlendFunc( GL10.GL_SRC_ALPHA, GL10.GL_ONE_MINUS_SRC_ALPHA );
 		}
 
-		pingPongTex1.bind( 1 );
 		original.bind( 0 );
+		pingPongTex1.bind( 1 );
 		bloomShader.begin();
 		{
 			bloomShader.setUniformi( "u_texture0", 0 );
