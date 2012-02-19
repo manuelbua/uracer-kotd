@@ -1,14 +1,11 @@
 package com.bitfire.uracer.tiled;
 
-import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g3d.materials.Material;
-import com.badlogic.gdx.graphics.g3d.materials.TextureAttribute;
 import com.badlogic.gdx.graphics.g3d.model.still.StillModel;
 import com.badlogic.gdx.graphics.glutils.ShaderProgram;
 import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.math.Vector3;
 import com.bitfire.uracer.Director;
-import com.bitfire.uracer.utils.Convert;
 
 /**
  * The model is expected to follow the z-up convention.
@@ -20,10 +17,18 @@ public class OrthographicAlignedStillModel
 {
 	public UStillModel model;
 	public Material material;
-	private Texture texture;
-	private TextureAttribute textureAttribute;
+	public boolean isTransparent = false;
 
 	public static ShaderProgram shaderProgram = null;
+
+	// Blender => cube 14.2x14.2 meters = one tile (256px) w/ far plane @48
+	// (256px are 14.2mt w/ 18px/mt)
+	// I'm lazy and want Blender to work with 10x10mt instead, so a 1.42f
+	// factor for this scaling: also, since the far plane is suboptimal at
+	// just 48, i want 5 times more space on the z-axis, so here's another
+	// scaling factor creeping up.
+	public static float World3DScalingFactor = 1.42222f;
+	protected static float BlenderToURacer = 5f * World3DScalingFactor;
 
 	// scale
 	private float scale, scalingFactor;
@@ -67,64 +72,39 @@ public class OrthographicAlignedStillModel
 			throw new IllegalStateException( OrthographicAlignedStillModel.shaderProgram.getLog() );
 	}
 
-	public static OrthographicAlignedStillModel create( StillModel model, Texture texture )
+	public OrthographicAlignedStillModel(StillModel aModel, Material material)
 	{
-		OrthographicAlignedStillModel m = new OrthographicAlignedStillModel();
-
 		try
 		{
-			m.model = new UStillModel( model.subMeshes.clone() );
+			model = new UStillModel( aModel.subMeshes.clone() );
 
-			// set material
-			m.texture = texture;
-			m.textureAttribute = new TextureAttribute(m.texture, 0, "textureAttributes");
-			m.material = new Material("default", m.textureAttribute);
-			m.model.setMaterial( m.material );
+			this.material = material;
+			model.setMaterial( this.material );
 
-			//
-			// apply horizontal fov scaling distortion and blender factors
-			//
-
-			// Blender => cube 14.2x14.2 meters = one tile (256px) w/ far plane @48
-			// (256px are 14.2mt w/ 18px/mt)
-			// I'm lazy and want Blender to work with 10x10mt instead, so a 1.42f
-			// factor for this scaling: also, since the far plane is suboptimal at
-			// just 48, i want 5 times more space on the z-axis, so here's another
-			// scaling factor creeping up.
-			float blenderToUracer = 5f * 1.42f;
-			m.setScalingFactor( Director.scalingStrategy.meshScaleFactor * blenderToUracer * Director.scalingStrategy.to256 );
-
-			m.setPosition( 0, 0 );
-			m.setRotation( 0, 0, 0, 0 );
+			setScalingFactor( Director.scalingStrategy.meshScaleFactor * BlenderToURacer * Director.scalingStrategy.to256 );
+			setPosition( 0, 0 );
+			setRotation( 0, 0, 0, 0 );
 		}
 		catch( Exception e )
 		{
 			e.printStackTrace();
 		}
-
-		return m;
 	}
 
-	public TextureAttribute getTextureAttribute()
+	public void dispose()
 	{
-		return textureAttribute;
+		try {
+			model.dispose();
+		} catch( IllegalArgumentException e )
+		{
+			// buffer already disposed
+		}
 	}
 
 	public void setPositionOffsetPixels( int offsetPxX, int offsetPxY )
 	{
 		positionOffsetPx.x = offsetPxX;
 		positionOffsetPx.y = offsetPxY;
-	}
-
-	/*
-	 * @param x_index the x-axis index of the tile
-	 * @param x_index the y-axis index of the tile
-	 *
-	 * @remarks The origin (0,0) is at the top-left corner
-	 */
-	public void setTilePosition( int tileIndexX, int tileIndexY )
-	{
-		positionPx.set( Convert.tileToPx( tileIndexX, tileIndexY ) );
 	}
 
 	/**
@@ -137,16 +117,6 @@ public class OrthographicAlignedStillModel
 		positionPx.set( Director.positionFor( posPxX, posPxY ) );
 	}
 
-	/**
-	 * Sets the world position in pixels, top-left origin.
-	 * @param x
-	 * @param y
-	 */
-	public void setPositionUnscaled( float x, float y )
-	{
-		positionPx.set( x, y );
-	}
-
 	public float iRotationAngle;
 	public Vector3 iRotationAxis = new Vector3();
 
@@ -156,7 +126,7 @@ public class OrthographicAlignedStillModel
 		iRotationAxis.set( x_axis, y_axis, z_axis );
 	}
 
-	public void setScalingFactor( float factor )
+	private void setScalingFactor( float factor )
 	{
 		scalingFactor = factor;
 		scaleAxis.set( scale, scale, scale );
@@ -166,15 +136,5 @@ public class OrthographicAlignedStillModel
 	{
 		this.scale = scalingFactor * scale;
 		scaleAxis.set( this.scale, this.scale, this.scale );
-	}
-
-	public void dispose()
-	{
-		try {
-			model.dispose();
-		} catch( IllegalArgumentException e )
-		{
-			// buffer already disposed
-		}
 	}
 }

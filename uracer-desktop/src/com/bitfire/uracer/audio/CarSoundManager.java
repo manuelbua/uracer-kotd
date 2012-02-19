@@ -2,12 +2,12 @@ package com.bitfire.uracer.audio;
 
 import com.bitfire.uracer.carsimulation.CarDescriptor;
 import com.bitfire.uracer.carsimulation.CarInputMode;
-import com.bitfire.uracer.entities.vehicles.Car;
+import com.bitfire.uracer.game.logic.Player;
 import com.bitfire.uracer.utils.AMath;
 
 public class CarSoundManager
 {
-	private static Car player = null;
+	private static Player player = null;
 	private static CarDescriptor carDescriptor = null;
 
 	// common sound factors
@@ -40,17 +40,17 @@ public class CarSoundManager
 		carImpact.dispose();
 	}
 
-	public static void setPlayer(Car player)
+	public static void setPlayer(Player player)
 	{
 		CarSoundManager.player = player;
-		CarSoundManager.carDescriptor = player.getCarDescriptor();
+		CarSoundManager.carDescriptor = player.car.getCarDescriptor();
 		carMaxSpeedSquared = carDescriptor.carModel.max_speed * carDescriptor.carModel.max_speed;
 		carMaxForce = carDescriptor.carModel.max_force;
 	}
 
 	public static void tick()
 	{
-		if( player != null && player.getInputMode()==CarInputMode.InputFromPlayer)
+		if( player.car.getInputMode() == CarInputMode.InputFromPlayer)
 		{
 			// compute common factors
 			currCarSpeedSquared = carDescriptor.velocity_wc.len2();

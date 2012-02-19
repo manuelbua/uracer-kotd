@@ -4,6 +4,8 @@ import org.lwjgl.opengl.Display;
 
 import com.badlogic.gdx.backends.lwjgl.LwjglApplication;
 import com.badlogic.gdx.backends.lwjgl.LwjglApplicationConfiguration;
+import com.badlogic.gdx.backends.openal.OpenALAudio;
+
 
 //public class URacerDesktop
 //{
@@ -43,7 +45,14 @@ public class URacerDesktop
 		config.useGL20 = true;
 		config.fullscreen = false;
 
-		LwjglApplication app = new LwjglApplication(new URacer(), config);
+		URacer uracer = new URacer();
+		LwjglApplication app = new LwjglApplication(uracer, config);
+
+		URacerDesktopFinalizer finalizr = new URacerDesktopFinalizer( (OpenALAudio)app.getAudio() );
+		uracer.setFinalizer( finalizr );
+
 		Display.setLocation( (1920-config.width)/2, (1080-config.height)/2 );
 	}
+
+
 }

@@ -1,9 +1,10 @@
 package com.bitfire.uracer.audio;
 
 import com.badlogic.gdx.audio.Sound;
+import com.bitfire.uracer.Config;
 import com.bitfire.uracer.utils.AMath;
 
-public class CarEngineSoundEffect implements CarSoundEffect
+public class CarEngineSoundEffect extends CarSoundEffect
 {
 	private Sound carEngine = null;
 	private long carEngineId = -1;
@@ -38,7 +39,12 @@ public class CarEngineSoundEffect implements CarSoundEffect
 	@Override
 	public void start()
 	{
-		carEngineId = carEngine.loop(1f);
+		// UGLY HACK FOR ANDROID
+		if(Config.isDesktop)
+			carEngineId = carEngine.loop(1f);
+		else
+			carEngineId = checkedLoop(carEngine,1f);
+
 		carEnginePitchStart = carEnginePitchLast = carEnginePitchMin;
 		carEngine.setPitch( carEngineId, carEnginePitchStart );
 	}

@@ -28,7 +28,7 @@ public class HudDebugMeter
 
 	private Vector2 pos;
 	private int row;
-	private Car player;
+	private Car playerCar;
 
 	public Color color = new Color( 1, 1, 1, 1 );
 
@@ -41,7 +41,7 @@ public class HudDebugMeter
 		this.height = height;
 		this.pos = new Vector2();
 		this.row = row;
-		this.player = game.getPlayer();
+		this.playerCar = game.getLevel().getPlayer().car;
 
 		pixels = new Pixmap( this.width, this.height, Format.RGBA8888 );
 		texture = new Texture( 256, 256, Format.RGBA8888 );
@@ -82,13 +82,14 @@ public class HudDebugMeter
 
 	private void update()
 	{
-		pos.set( Director.screenPosFor( player.getBody() ) );
+		pos.set( Director.screenPosForPx( playerCar.state().position ) );
+//		pos.set( Director.screenPosFor( playerCar.getBody() ) );
 
 		// center horizontally
-		pos.x -= width / 2;
+		pos.x -= width * 0.5f;
 
 		// offset by half car length
-		pos.y += Convert.mt2px( player.getCarModel().length ) / 2;
+		pos.y += Convert.mt2px( playerCar.getCarModel().length ) * 0.5f;
 
 		// offset by row
 		pos.y += row * (height + Debug.fontHeight);
@@ -98,13 +99,9 @@ public class HudDebugMeter
 	{
 		update();
 		draw();
+		Debug.drawString( getMessage(), pos.x, pos.y );
 
-		batch.draw( region, (int)pos.x, (int)pos.y + Debug.fontHeight );
-	}
-
-	public void debug()
-	{
-		Debug.drawString( getMessage(), (int)pos.x, (int)pos.y );
+		batch.draw( region, pos.x, pos.y + Debug.fontHeight );
 	}
 
 	private void draw()

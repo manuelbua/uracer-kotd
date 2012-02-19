@@ -1,6 +1,5 @@
 package com.bitfire.uracer.game.logic;
 
-import com.badlogic.gdx.math.Vector2;
 
 public interface IGameLogicListener
 {
@@ -10,7 +9,7 @@ public interface IGameLogicListener
 
 	public abstract void onRestart();
 
-	public abstract void onTileChanged( Vector2 carAt );
+	public abstract void onTileChanged( Player player );
 
 	public abstract void onBeginDrift();
 

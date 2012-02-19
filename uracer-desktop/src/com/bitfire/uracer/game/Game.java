@@ -1,45 +1,38 @@
 package com.bitfire.uracer.game;
 
-import box2dLight.ConeLight;
 import box2dLight.PointLight;
-import box2dLight.RayHandler;
 
 import com.badlogic.gdx.Gdx;
-import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.GL20;
 import com.badlogic.gdx.graphics.OrthographicCamera;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
-import com.badlogic.gdx.math.MathUtils;
-import com.badlogic.gdx.math.Vector2;
 import com.bitfire.uracer.Art;
 import com.bitfire.uracer.Config;
 import com.bitfire.uracer.Director;
-import com.bitfire.uracer.Physics;
 import com.bitfire.uracer.URacer;
 import com.bitfire.uracer.audio.CarSoundManager;
 import com.bitfire.uracer.debug.Debug;
 import com.bitfire.uracer.effects.TrackEffects;
 import com.bitfire.uracer.effects.TrackEffects.Effects;
 import com.bitfire.uracer.effects.postprocessing.PostProcessor;
-import com.bitfire.uracer.entities.CollisionFilters;
 import com.bitfire.uracer.entities.EntityManager;
 import com.bitfire.uracer.entities.vehicles.Car;
 import com.bitfire.uracer.game.logic.DirectorController;
 import com.bitfire.uracer.game.logic.GameLogic;
+import com.bitfire.uracer.game.logic.Level;
+import com.bitfire.uracer.game.logic.Player;
 import com.bitfire.uracer.hud.Hud;
 import com.bitfire.uracer.hud.HudLabel;
 import com.bitfire.uracer.messager.Message;
 import com.bitfire.uracer.messager.Messager;
-import com.bitfire.uracer.tiled.Level;
 import com.bitfire.uracer.tweener.Tweener;
 import com.bitfire.uracer.tweener.accessors.HudLabelAccessor;
 import com.bitfire.uracer.tweener.accessors.MessageAccessor;
-import com.bitfire.uracer.utils.Convert;
 
 public class Game
 {
 	private Level level = null;
-	private Car player = null;
+	private Player player = null;
 	private Hud hud = null;
 
 	private static Tweener tweener = null;
@@ -52,8 +45,6 @@ public class Game
 	private DirectorController controller;
 
 	// ray handling
-	private RayHandler rayHandler;
-	private ConeLight playerLight;
 	private PointLight[] levelLights = new PointLight[10];
 
 	// drawing
@@ -61,7 +52,7 @@ public class Game
 
 	public Game( String levelName, GameDifficulty difficulty )
 	{
-		createTweener();
+		Game.tweener = createTweener();
 
 		Messager.init();
 		gameSettings = GameplaySettings.create( difficulty );
@@ -69,7 +60,7 @@ public class Game
 		Art.scaleFonts( Director.scalingStrategy.invTileMapZoomFactor );
 
 		// bring up level
-		level = Director.loadLevel( levelName, gameSettings );
+		level = Director.loadLevel( levelName, gameSettings, false /* night mode */ );
 		player = level.getPlayer();
 
 		logic = new GameLogic( this );
@@ -88,87 +79,6 @@ public class Game
 		// Issues may arise on Tegra2 (Asus Transformer) devices if the buffers'
 		// count is higher than 10
 		batch = new SpriteBatch( 1000, 8 );
-
-		if( Config.Graphics.NightMode )
-		{
-			// setup ray handling stuff
-			float rttScale = .25f;
-
-			if(!Config.isDesktop)
-				rttScale = 0.2f;
-
-			int maxRays = 128;
-			RayHandler.setColorPrecisionMediump();
-			rayHandler = new RayHandler(Physics.world, maxRays, (int)(Gdx.graphics.getWidth()*rttScale), (int)(Gdx.graphics.getHeight()*rttScale));
-			rayHandler.setShadows(true);
-			rayHandler.setAmbientLight( 0, 0.05f, 0.25f, 0.2f );
-//			RayHandler.setGammaCorrection( true );
-//			RayHandler.useDiffuseLight( true );
-//			rayHandler.setAmbientLight( 0, 0.01f, 0.025f, 0f );
-			rayHandler.setCulling(true);
-			rayHandler.setBlur(true);
-			rayHandler.setBlurNum(1);
-
-			// attach light to player
-			final Color c = new Color();
-
-			c.set( .7f, .7f, 1f, 1f );
-			playerLight = new ConeLight( rayHandler, maxRays, c, 30, 0, 0, 0, 15 );
-			playerLight.setSoft( false );
-			playerLight.setMaskBits( 0 );
-
-			// level lights test
-			Vector2 tile;
-			float dist = 20f;
-			float intensity = 1f;
-			float halfTileMt = Convert.px2mt( Convert.scaledPixels( 112 ) );
-
-			tile = Convert.tileToMt( 1, 1 ).add(halfTileMt, -halfTileMt);
-			c.set( 1f, .85f, .35f, intensity );
-			levelLights[0] = new PointLight( rayHandler, maxRays, c, dist/2, tile.x, tile.y );
-
-			tile = Convert.tileToMt( 9, 1 ).add(halfTileMt, -halfTileMt);
-			c.set( 1f, .85f, .35f, intensity );
-			levelLights[1] = new PointLight( rayHandler, maxRays, c, dist, tile.x, tile.y );
-
-			tile = Convert.tileToMt( 1, 6 ).add(halfTileMt, -halfTileMt);
-			c.set( 1f, .85f, .35f, intensity );
-			levelLights[2] = new PointLight( rayHandler, maxRays, c, dist/2, tile.x, tile.y );
-
-			tile = Convert.tileToMt( 5, 6 ).add(halfTileMt, -halfTileMt);
-			c.set( 1f, .85f, .35f, intensity );
-			levelLights[3] = new PointLight( rayHandler, maxRays, c, dist, tile.x, tile.y );
-
-			tile = Convert.tileToMt( 6, 2 ).add(0, -halfTileMt/2f );
-			c.set( 1f, .85f, .35f, intensity );
-			levelLights[4] = new PointLight( rayHandler, maxRays, c, dist/2, tile.x, tile.y );
-
-			tile = Convert.tileToMt( 8, 2 ).add(0, -halfTileMt/2f );
-			c.set( 1f, .85f, .35f, intensity );
-			levelLights[5] = new PointLight( rayHandler, maxRays, c, dist, tile.x, tile.y );
-
-			tile = Convert.tileToMt( 7, 7 ).add(0, halfTileMt/2f );
-			c.set( 1f, .85f, .35f, intensity );
-			levelLights[6] = new PointLight( rayHandler, maxRays, c, dist/2, tile.x, tile.y );
-
-			tile = Convert.tileToMt( 9, 7 ).add(0, halfTileMt/2f );
-			c.set( 1f, .85f, .35f, intensity );
-			levelLights[7] = new PointLight( rayHandler, maxRays, c, dist, tile.x, tile.y );
-
-			tile = Convert.tileToMt( 5, 5 ).add(-halfTileMt/2f,0);
-			c.set( 1f, .85f, .35f, intensity );
-			levelLights[8] = new PointLight( rayHandler, maxRays, c, dist/2, tile.x, tile.y );
-
-			tile = Convert.tileToMt( 1, 4 ).add(halfTileMt,-halfTileMt);
-			c.set( 1f, .85f, .35f, intensity );
-			levelLights[9] = new PointLight( rayHandler, maxRays, c, dist, tile.x, tile.y );
-
-			for( int i = 0; i < 10; i++)
-			{
-				levelLights[i].setSoft( false );
-				levelLights[i].setMaskBits( CollisionFilters.CategoryPlayer | CollisionFilters.CategoryTrackWalls );
-			}
-		}
 	}
 
 	public void dispose()
@@ -181,11 +91,12 @@ public class Game
 		batch.dispose();
 	}
 
-	private void createTweener()
+	private Tweener createTweener()
 	{
-		tweener = new Tweener();
+		Tweener t = new Tweener();
 		Tweener.registerAccessor( Message.class, new MessageAccessor() );
 		Tweener.registerAccessor( HudLabel.class, new HudLabelAccessor() );
+		return t;
 	}
 
 	public void tick()
@@ -198,9 +109,9 @@ public class Game
 		Debug.update();
 	}
 
-	private int frameCount = 0;
 	public void render()
 	{
+		Car playerCar = null;
 		GL20 gl = Gdx.graphics.getGL20();
 		OrthographicCamera ortho = Director.getCamera();
 
@@ -210,7 +121,8 @@ public class Game
 		// follow the car
 		if( player != null )
 		{
-			controller.setPosition( player.state().position );
+			playerCar = player.car;
+			controller.setPosition( playerCar.state().position );
 		}
 
 		if( Config.Graphics.EnablePostProcessingFx )
@@ -235,9 +147,9 @@ public class Game
 			gl.glClear( GL20.GL_DEPTH_BUFFER_BIT | GL20.GL_COLOR_BUFFER_BIT );
 
 			// render base tilemap
-			level.renderTilemap();
+			level.renderTilemap(gl);
 
-			gl.glDepthMask( false );
+//			gl.glDepthMask( false );
 			batch.begin();
 			{
 				// batch render effects
@@ -258,47 +170,10 @@ public class Game
 			//
 			// rays stuff
 			//
-			if( Config.Graphics.NightMode )
+			if( level.isNightMode() )
 			{
-				// update player light (subframe interpolation ready)
-				float ang = 90 + player.state().orientation;
-
-				// the body's compound shape should be created with some clever thinking in it :)
-				float offx = (player.getCarModel().length/2f) + .25f;
-				float offy = 0f;
-
-				float cos = MathUtils.cosDeg(ang);
-				float sin = MathUtils.sinDeg(ang);
-				float dX = offx * cos - offy * sin;
-				float dY = offx * sin + offy * cos;
-
-				float px = Convert.px2mt(player.state().position.x) + dX;
-				float py = Convert.px2mt(player.state().position.y) + dY;
-
-				playerLight.setDirection( ang );
-				playerLight.setPosition( px, py );
-
-//				playerLight.setDirection( 90 - player.orient() );
-
-//				if( Config.Graphics.SubframeInterpolation || URacer.hasStepped() )
-					rayHandler.update();
-
-				rayHandler.setCombinedMatrix( Director.getMatViewProjMt(),
-						Convert.px2mt( ortho.position.x ),
-						Convert.px2mt( ortho.position.y ),
-						Convert.px2mt( ortho.viewportWidth * ortho.zoom ),
-						Convert.px2mt( ortho.viewportHeight * ortho.zoom )
-				);
-
-				rayHandler.render();
-
-//				if( (frameCount&0x3f)==0x3f)
-//				{
-//					System.out.println("lights rendered="+rayHandler.lightRenderedLastFrame);
-//				}
+				level.renderLights();
 			}
-
-			frameCount++;
 		}
 
 		if( Config.Graphics.EnablePostProcessingFx )
@@ -322,16 +197,15 @@ public class Game
 			EntityManager.raiseOnDebug();
 			if( Config.Graphics.RenderHudDebugInfo ) hud.debug( batch );
 			Debug.renderVersionInfo();
-			Debug.renderGraphicalStats( Gdx.graphics.getWidth() - Debug.getStatsWidth(),
-					Gdx.graphics.getHeight() - Debug.getStatsHeight() - Debug.fontHeight );
+			Debug.renderGraphicalStats( Gdx.graphics.getWidth() - Debug.getStatsWidth(),Gdx.graphics.getHeight() - Debug.getStatsHeight() - Debug.fontHeight );
+			Debug.renderTextualStats();
 			Debug.renderMemoryUsage();
 			Debug.end();
 		} else
 		{
 			Debug.begin( batch );
 			Debug.renderVersionInfo();
-			Debug.renderGraphicalStats( Gdx.graphics.getWidth() - Debug.getStatsWidth(),
-					Gdx.graphics.getHeight() - Debug.getStatsHeight() - Debug.fontHeight );
+			Debug.renderTextualStats();
 			Debug.end();
 		}
 	}
@@ -339,11 +213,6 @@ public class Game
 	public Level getLevel()
 	{
 		return level;
-	}
-
-	public Car getPlayer()
-	{
-		return player;
 	}
 
 	public Hud getHud()
@@ -359,7 +228,7 @@ public class Game
 	public void restart()
 	{
 		Messager.reset();
-		level.restart();
+		level.reset();
 		logic.restart();
 
 		TrackEffects.reset();
@@ -368,7 +237,7 @@ public class Game
 	public void reset()
 	{
 		Messager.reset();
-		level.restart();
+		level.reset();
 		logic.reset();
 
 		TrackEffects.reset();

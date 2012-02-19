@@ -14,7 +14,6 @@ public class Art
 	public static TextureRegion[][] base6;
 	public static TextureRegion quad;
 
-	public static Texture trackWall;
 	public static TextureAtlas fonts;
 
 	// tileset friction maps
@@ -22,11 +21,11 @@ public class Art
 
 	// 3d
 	public static Texture meshMissing;
-	public static Texture mesh_test_arch_rusty;
 	public static Texture meshPalm;
 	public static Texture meshTribune;
-	public static Texture meshHouse;
-	public static Texture meshTower;
+	public static Texture meshTreeTrunk;
+	public static Texture[] meshTreeLeavesSpring;
+	public static Texture meshTrackWall;
 
 	// cars
 	public static TextureAtlas carTextures;
@@ -47,13 +46,15 @@ public class Art
 		base6 = split( "data/base/base6.png", 6, 6, mipMap );
 		quad = new TextureRegion( base6[0][10], 0, 0, 18, 18 );
 
-		mesh_test_arch_rusty = newTexture( "data/3d/textures/arch-metal-3.jpg", mipMap );
+		meshTrackWall = newTexture( "data/track/wall.png", false );
 		meshMissing = newTexture( "data/3d/textures/missing-mesh.png", mipMap );
 		meshPalm = newTexture( "data/3d/textures/palm.png", mipMap );
 		meshTribune = newTexture( "data/3d/textures/tribune.png", mipMap );
-		meshHouse = newTexture( "data/3d/textures/house.png", mipMap );
-		meshTower = newTexture( "data/3d/textures/tower.png", mipMap );
-		trackWall = newTexture( "data/track/wall.png", mipMap );
+
+		// trees
+		meshTreeTrunk = newTexture( "data/3d/textures/trunk_6_col.png", mipMap );
+		meshTreeLeavesSpring = new Texture[7];
+		for(int i = 0; i < 7; i++) meshTreeLeavesSpring[i] = newTexture( "data/3d/textures/leaves_" + (i+1) + "_spring_1.png", mipMap );
 
 		// cars
 		carTextures = new TextureAtlas("data/cars/pack");
@@ -82,6 +83,32 @@ public class Art
 
 		// friction maps
 		frictionNature = new Pixmap( Gdx.files.internal( "data/levels/tilesets/nature/224-friction.png" ) );
+	}
+
+	public static void dispose()
+	{
+		base6[0][0].getTexture().dispose();
+		quad.getTexture().dispose();
+
+		carAmbientOcclusion.getTexture().dispose();
+		cars.dispose();
+
+		meshMissing.dispose();
+		meshTrackWall.dispose();
+		meshPalm.dispose();
+		meshTribune.dispose();
+
+		// trees
+		for(int i = 0; i < 7; i++) meshTreeLeavesSpring[i].dispose();
+		meshTreeTrunk.dispose();
+
+
+		fonts.dispose();
+
+		frictionNature.dispose();
+
+		skidMarksFront.getTexture().dispose();
+		skidMarksRear.getTexture().dispose();
 	}
 
 	private static TextureRegion[][] split( String name, int width, int height, boolean mipMap )
@@ -135,25 +162,5 @@ public class Art
 		Art.fontCurseGbig.setScale( scale );
 		Art.fontCurseRbig.setScale( scale );
 	}
-	public static void dispose()
-	{
-		base6[0][0].getTexture().dispose();
-		quad.getTexture().dispose();
 
-		carAmbientOcclusion.getTexture().dispose();
-		cars.dispose();
-
-		meshMissing.dispose();
-		mesh_test_arch_rusty.dispose();
-		meshPalm.dispose();
-		meshTribune.dispose();
-		meshHouse.dispose();
-		meshTower.dispose();
-
-		trackWall.dispose();
-		fonts.dispose();
-
-		skidMarksFront.getTexture().dispose();
-		skidMarksRear.getTexture().dispose();
-	}
 }

@@ -1,25 +1,17 @@
 package com.bitfire.uracer.game.logic;
 
-import com.badlogic.gdx.math.Vector2;
 import com.bitfire.uracer.audio.CarSoundManager;
 import com.bitfire.uracer.carsimulation.Replay;
-import com.bitfire.uracer.entities.vehicles.Car;
-import com.bitfire.uracer.entities.vehicles.GhostCar;
 import com.bitfire.uracer.messager.Messager;
 import com.bitfire.uracer.messager.Messager.MessagePosition;
 import com.bitfire.uracer.messager.Messager.MessageSize;
 import com.bitfire.uracer.messager.Messager.MessageType;
-import com.bitfire.uracer.tiled.Level;
-import com.bitfire.uracer.utils.Convert;
 import com.bitfire.uracer.utils.NumberString;
 
 public class GameLogicListener implements IGameLogicListener
 {
 	private GameLogic logic = null;
 	private Level level = null;
-
-	private Car player = null;
-	private GhostCar ghost = null;
 
 	// lap
 	protected LapInfo lapInfo;
@@ -31,9 +23,6 @@ public class GameLogicListener implements IGameLogicListener
 		this.logic = logic;
 		this.level = logic.getGame().getLevel();
 		this.lapInfo = LapInfo.get();
-
-		this.player = logic.getGame().getLevel().getPlayer();
-		this.ghost = logic.getGame().getLevel().getGhost();
 	}
 
 	@Override
@@ -70,10 +59,9 @@ public class GameLogicListener implements IGameLogicListener
 	}
 
 	@Override
-	public void onTileChanged( Vector2 carAt )
+	public void onTileChanged( Player player )
 	{
-		Vector2 cartile = Convert.pxToTile( player.getStartPos().x, player.getStartPos().y );
-		boolean onStartZone = (carAt.x == cartile.x && carAt.y == cartile.y);
+		boolean onStartZone = (player.currTileX == player.startTileX && player.currTileY == player.startTileY);
 
 		if( onStartZone )
 		{
@@ -89,7 +77,7 @@ public class GameLogicListener implements IGameLogicListener
 				if( lapInfo.hasAnyReplayData() )
 				{
 					Replay any = lapInfo.getAnyReplay();
-					ghost.setReplay( any );
+					player.ghost.setReplay( any );
 				}
 			} else
 			{
@@ -108,7 +96,7 @@ public class GameLogicListener implements IGameLogicListener
 					lastRecordedLapId = buf.id;
 
 					Replay any = lapInfo.getAnyReplay();
-					ghost.setReplay( any );
+					player.ghost.setReplay( any );
 					lapInfo.setLastTrackTimeSeconds( any.trackTimeSeconds );
 
 					Messager.show( "GO!  GO!  GO!", 3f, MessageType.Information, MessagePosition.Middle, MessageSize.Big );
@@ -130,7 +118,7 @@ public class GameLogicListener implements IGameLogicListener
 								MessageType.Bad, MessagePosition.Top, MessageSize.Big );
 					}
 
-					ghost.setReplay( best );
+					player.ghost.setReplay( best );
 
 					lapInfo.restart();
 					level.beginRecording( worst, lapInfo.getStartNanotime() );

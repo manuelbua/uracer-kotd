@@ -9,7 +9,6 @@ import com.bitfire.uracer.effects.CarSkidMarks;
 import com.bitfire.uracer.effects.SmokeTrails;
 import com.bitfire.uracer.effects.TrackEffects;
 import com.bitfire.uracer.effects.TrackEffects.Effects;
-import com.bitfire.uracer.entities.vehicles.Car;
 import com.bitfire.uracer.game.Game;
 import com.bitfire.uracer.game.logic.DriftInfo;
 import com.bitfire.uracer.game.logic.LapInfo;
@@ -19,7 +18,6 @@ import com.bitfire.uracer.utils.NumberString;
 public class Hud
 {
 	private Game game;
-	private Car player;
 
 	private HudLabel best, curr, last;
 	private Matrix4 topLeftOrigin, identity;
@@ -32,7 +30,6 @@ public class Hud
 	public Hud( Game game )
 	{
 		this.game = game;
-		player = game.getPlayer();
 
 		// y-flip
 		topLeftOrigin = new Matrix4();
@@ -138,10 +135,6 @@ public class Hud
 
 	public void debug( SpriteBatch batch )
 	{
-		meterLatForce.debug();
-		meterSkidMarks.debug();
-		meterSmoke.debug();
-
 		DriftInfo drift = DriftInfo.get();
 
 		// lateral forces

@@ -37,10 +37,11 @@ public class CarImpactManager
 			float[] impulses = impulse.getNormalImpulses();
 			tmpVec2.set( impulses[0], impulses[1] );
 
-			float len2 = tmpVec2.len2();
-			if( len2 > 0 )
+//			float len2 = tmpVec2.len2();
+//			if( len2 > 0 )
 			{
-				float len = (float)Math.sqrt( len2 );
+//				float len = (float)Math.sqrt( len2 );
+				float len = tmpVec2.len();
 				car.addImpactFeedback( len );
 
 				// update DriftInfo in case of collision

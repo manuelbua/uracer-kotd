@@ -108,7 +108,10 @@ public class Debug
 	public static void renderGraphicalStats( int x, int y )
 	{
 		batch.draw( gfxStats.getRegion(), x, y );
+	}
 
+	public static void renderTextualStats()
+	{
 		String text =
 				"fps: " + NumberString.formatLong(Gdx.graphics.getFramesPerSecond()) +
 				", physics: " + NumberString.formatLong(physicsTime) +
