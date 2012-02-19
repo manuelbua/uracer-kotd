@@ -86,26 +86,27 @@ public class Game
 //			 PostProcessor.init( 512, 512 );
 //			PostProcessor.setEffect( radialBlur );
 
-			float rttRatio = 0.5f;
+			float rttRatio = 0.25f;
 			boolean use32bits = true;
 			boolean useBlending = false;
 			boolean needDepth = false;
-			int blurPasses = 4;
-			if(!Config.isDesktop)
-			{
-				rttRatio = 0.25f;
-				blurPasses = 1;
-				use32bits = false;
-			}
+			int blurPasses = 1;
+//			if(!Config.isDesktop)
+//			{
+//				rttRatio = 0.25f;
+//				blurPasses = 1;
+//				use32bits = false;
+//			}
 
 			Bloom.useAlphaChannelAsMask = false;
 			bloom = new Bloom( (int)(Gdx.graphics.getWidth() * rttRatio), (int)(Gdx.graphics.getHeight() * rttRatio), needDepth, useBlending, use32bits );
 
-			float bloomQ = 1.5f;
+			float bloomQ = .25f;
 			bloom.blurPasses = blurPasses;
 			bloom.setBloomIntesity( bloomQ );
-			bloom.setOriginalIntesity( 1 );
-			bloom.setTreshold( 0.5f );
+			bloom.setOriginalIntesity( 1f-bloomQ );
+//			bloom.setClearColor( 1f, 1f, 1f, 0f );
+//			bloom.setTreshold( 0.5f );
 		}
 
 		// setup sprite batch at origin top-left => 0,0
@@ -172,6 +173,9 @@ public class Game
 		if( Config.Graphics.EnablePostProcessingFx )
 		{
 //			PostProcessor.begin();
+//			bloom.blurPasses = 4;
+//			bloom.setBloomIntesity( 1f );
+//			bloom.setOriginalIntesity( 1f );
 			bloom.capture();
 		}
 

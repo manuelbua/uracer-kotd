@@ -130,7 +130,7 @@ public class URacer implements ApplicationListener
 			screen.render();
 
 			// simulate slowness
-//			try { Thread.sleep( 32 ); } catch( InterruptedException e ) {}
+//			try { Thread.sleep( 64 ); } catch( InterruptedException e ) {}
 		}
 
 		graphicsTime = (System.nanoTime() - startTime) * oneOnOneBillion;
