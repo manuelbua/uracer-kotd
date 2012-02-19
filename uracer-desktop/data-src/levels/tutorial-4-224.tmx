@@ -138,50 +138,60 @@
    eJyFz00LgkAQxvFNKkopAhHWQ75kL1oevajf/3v1X5jDQxgefszuzswykzvn8hUTriiQIMLW4l7qatx+el9o5Z5iZ73BGR/0UnPCEReUqBZmyiTX4P5nds098JSct1nCDDEGdHjLXqFmIz2DSO1tlL9nqdPdvfwd9j5Y1N299U121j1Gi18knwum
   </data>
  </layer>
- <objectgroup color="#00ff00" name="static-meshes" width="9" height="12">
-  <object name="lptree1" type="lptree1" x="330" y="2385" width="41" height="43">
+ <objectgroup color="#00ff00" name="trees" width="9" height="12">
+  <object name="tree-8" type="tree-8" x="388" y="2345" width="41" height="43">
    <properties>
-    <property name="scale" value="3"/>
+    <property name="scale" value="6"/>
    </properties>
   </object>
-  <object name="lptree1" type="lptree1" x="506" y="1459" width="41" height="43">
+  <object name="tree-5" type="tree-5" x="506" y="1459" width="41" height="43">
    <properties>
-    <property name="scale" value="2"/>
+    <property name="scale" value="4"/>
    </properties>
   </object>
-  <object name="lptree1" type="lptree1" x="1538" y="1114" width="41" height="43">
+  <object name="tree-9" type="tree-9" x="1592" y="1122" width="41" height="43">
    <properties>
-    <property name="scale" value="3"/>
+    <property name="scale" value="5"/>
    </properties>
   </object>
-  <object name="lptree1" type="lptree1" x="1428" y="2104" width="41" height="43">
+  <object name="tree-7" type="tree-7" x="1428" y="2104" width="41" height="43">
    <properties>
-    <property name="scale" value="1"/>
+    <property name="scale" value="5"/>
    </properties>
   </object>
-  <object name="lptree1" type="lptree1" x="221" y="2020" width="50" height="47">
+  <object name="tree-8" type="tree-8" x="221" y="2020" width="50" height="47">
    <properties>
-    <property name="scale" value="1.5"/>
+    <property name="scale" value="4"/>
    </properties>
   </object>
-  <object name="lptree1" type="lptree1" x="928" y="1236" width="41" height="43">
+  <object name="tree-6" type="tree-6" x="928" y="1236" width="41" height="43">
    <properties>
-    <property name="scale" value="2"/>
+    <property name="scale" value="5"/>
    </properties>
   </object>
-  <object name="lptree1" type="lptree1" x="887" y="1994" width="140" height="124">
+  <object name="tree-6" type="tree-6" x="907" y="2134" width="38" height="42">
    <properties>
-    <property name="scale" value="2.5"/>
+    <property name="scale" value="5"/>
    </properties>
   </object>
-  <object name="lptree1" type="lptree1" x="129" y="599" width="41" height="43">
+  <object name="tree-7" type="tree-7" x="259" y="497" width="41" height="43">
    <properties>
-    <property name="scale" value="2"/>
+    <property name="scale" value="4"/>
    </properties>
   </object>
-  <object name="palm" type="palm" x="1066" y="1773" width="41" height="43">
+  <object name="tree-6" type="tree-6" x="1050" y="1683" width="41" height="43">
    <properties>
-    <property name="scale" value="2"/>
+    <property name="scale" value="6"/>
+   </properties>
+  </object>
+  <object name="tree-7" type="tree-7" x="958" y="555" width="41" height="43">
+   <properties>
+    <property name="scale" value="4"/>
+   </properties>
+  </object>
+  <object name="tree-7" type="tree-7" x="1480" y="505" width="41" height="43">
+   <properties>
+    <property name="scale" value="4"/>
    </properties>
   </object>
  </objectgroup>

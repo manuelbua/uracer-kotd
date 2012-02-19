@@ -25,6 +25,8 @@ public class ModelFactory
 
 	private static ModelMesh fromString(String mesh)
 	{
+		if(mesh==null)
+			return ModelMesh.Missing;
 		if(mesh.equalsIgnoreCase( "palm" )) return ModelMesh.Palm;
 		if(mesh.equalsIgnoreCase( "tribune" )) return ModelMesh.Tribune;
 		if(mesh.equalsIgnoreCase( "tree-1" )) return ModelMesh.Tree_1;
