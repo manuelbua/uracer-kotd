@@ -105,7 +105,7 @@ public class Game
 			bloom.blurPasses = blurPasses;
 			bloom.setBloomIntesity( bloomQ );
 			bloom.setOriginalIntesity( 1f-bloomQ );
-//			bloom.setClearColor( 1f, 1f, 1f, 0f );
+//			bloom.setClearColor( 1f, .1f, .1f, 0f );
 //			bloom.setTreshold( 0.5f );
 		}
 
