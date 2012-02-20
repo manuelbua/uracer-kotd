@@ -86,27 +86,34 @@ public class Game
 //			 PostProcessor.init( 512, 512 );
 //			PostProcessor.setEffect( radialBlur );
 
-			float rttRatio = 0.25f;
 			boolean use32bits = true;
 			boolean useBlending = false;
 			boolean needDepth = false;
-			int blurPasses = 1;
-//			if(!Config.isDesktop)
-//			{
-//				rttRatio = 0.25f;
-//				blurPasses = 1;
-//				use32bits = false;
-//			}
+			boolean hq = true;
 
 			Bloom.useAlphaChannelAsMask = false;
-			bloom = new Bloom( (int)(Gdx.graphics.getWidth() * rttRatio), (int)(Gdx.graphics.getHeight() * rttRatio), needDepth, useBlending, use32bits );
 
-			float bloomQ = .25f;
-			bloom.blurPasses = blurPasses;
-			bloom.setBloomIntesity( bloomQ );
-			bloom.setOriginalIntesity( 1f-bloomQ );
-//			bloom.setClearColor( 1f, .1f, .1f, 0f );
-//			bloom.setTreshold( 0.5f );
+			if( !hq )
+			{
+				float rttRatio = 0.25f;
+				bloom = new Bloom( (int)(Gdx.graphics.getWidth() * rttRatio), (int)(Gdx.graphics.getHeight() * rttRatio), needDepth, useBlending, use32bits );
+
+				float bloomQ = .3f;
+				bloom.blurPasses = 1;
+				bloom.setBloomIntesity( bloomQ );
+				bloom.setOriginalIntesity( 1f-bloomQ );
+			}
+			else
+			{
+				float rttRatio = 0.5f;
+				bloom = new Bloom( (int)(Gdx.graphics.getWidth() * rttRatio), (int)(Gdx.graphics.getHeight() * rttRatio), needDepth, useBlending, use32bits );
+
+				float bloomQ = 1.6f;
+				bloom.blurPasses = 4;
+				bloom.setBloomIntesity( bloomQ );
+				bloom.setOriginalIntesity( 1f );
+				bloom.setTreshold( 0.5f );
+			}
 		}
 
 		// setup sprite batch at origin top-left => 0,0
