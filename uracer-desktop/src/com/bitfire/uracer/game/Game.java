@@ -108,7 +108,7 @@ public class Game
 				float rttRatio = 0.5f;
 				bloom = new Bloom( (int)(Gdx.graphics.getWidth() * rttRatio), (int)(Gdx.graphics.getHeight() * rttRatio), needDepth, useBlending, use32bits );
 
-				float bloomQ = 1.6f;
+				float bloomQ = 1f;
 				bloom.blurPasses = 4;
 				bloom.setBloomIntesity( bloomQ );
 				bloom.setOriginalIntesity( 1f );
