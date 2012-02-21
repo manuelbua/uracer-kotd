@@ -18,9 +18,9 @@ void main()
 
 	vec4 original = texture2D(u_texture0, v_texCoords) * OriginalIntensity;
 	vec4 bloom = texture2D(u_texture1, v_texCoords) * BloomIntensity;
-    original = original *  (1.0 - bloom);
- 	gl_FragColor =  original + bloom;
- 	//gl_FragColor = texture2D(u_texture1, v_texCoords);
+	original = original *  (1.0 - bloom);
+	gl_FragColor =  original + bloom;
+	//gl_FragColor = texture2D(u_texture1, v_texCoords);
 }
 //const float BloomSaturation = 0.65;
 //const float OriginalSaturation = 1.0;

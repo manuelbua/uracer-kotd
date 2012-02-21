@@ -106,13 +106,20 @@ public class Game
 			else
 			{
 				float rttRatio = 0.5f;
+				int blurPasses = 4;
+				if(!Config.isDesktop)
+				{
+					blurPasses = 2;
+					rttRatio = 0.25f;
+				}
+
 				bloom = new Bloom( (int)(Gdx.graphics.getWidth() * rttRatio), (int)(Gdx.graphics.getHeight() * rttRatio), needDepth, useBlending, use32bits );
 
-				float bloomQ = 1f;
-				bloom.blurPasses = 4;
+				float bloomQ = 1.4f;
+				bloom.blurPasses = blurPasses;
 				bloom.setBloomIntesity( bloomQ );
 				bloom.setOriginalIntesity( 1f );
-				bloom.setTreshold( 0.5f );
+				bloom.setTreshold( 0.48f );
 			}
 		}
 

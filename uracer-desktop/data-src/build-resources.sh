@@ -60,3 +60,10 @@ rm -rf "${DEST}/partfx/"
 mkdir -p "${DEST}/partfx/"
 cp partfx/* ${DEST}/partfx > /dev/null
 echo "done!"
+
+# shaders
+echo -n "Cooking GLSL shaders..."
+rm -rf "${DEST}/shaders/"
+mkdir -p "${DEST}/shaders/"
+cp -r shaders/* ${DEST}/shaders > /dev/null
+echo "done!"
