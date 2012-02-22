@@ -2,12 +2,16 @@ package com.bitfire.uracer.tiled;
 
 import java.util.ArrayList;
 
+import com.badlogic.gdx.Gdx;
+import com.badlogic.gdx.graphics.GL10;
 import com.badlogic.gdx.graphics.GL20;
 import com.badlogic.gdx.graphics.OrthographicCamera;
 import com.badlogic.gdx.graphics.PerspectiveCamera;
+import com.badlogic.gdx.graphics.glutils.ImmediateModeRenderer20;
 import com.badlogic.gdx.graphics.glutils.ShaderProgram;
 import com.badlogic.gdx.math.Matrix4;
 import com.badlogic.gdx.math.Vector3;
+import com.badlogic.gdx.math.collision.BoundingBox;
 import com.bitfire.uracer.Art;
 import com.bitfire.uracer.Director;
 import com.bitfire.uracer.utils.Convert;
@@ -17,6 +21,11 @@ public class LevelRenderer
 	private PerspectiveCamera camPersp;
 	private OrthographicCamera camOrtho;
 	private ShaderProgram treeShader;
+
+	// render stats
+	private ImmediateModeRenderer20 dbg = new ImmediateModeRenderer20( false, true, 0 );
+	public static int renderedTrees = 0;
+	public static int renderedStaticMeshes = 0;
 
 	public LevelRenderer(PerspectiveCamera persp, OrthographicCamera ortho)
 	{
@@ -54,6 +63,11 @@ public class LevelRenderer
 			throw new IllegalStateException( treeShader.getLog() );
 	}
 
+	public void resetCounters()
+	{
+		renderedStaticMeshes = renderedTrees = 0;
+	}
+
 	public void renderWalls(GL20 gl, TrackWalls walls)
 	{
 		if(walls.walls.size() > 0)
@@ -72,7 +86,7 @@ public class LevelRenderer
 			trees.transform( camPersp, camOrtho );
 
 			gl.glDisable( GL20.GL_BLEND );
-			gl.glEnable( GL20.GL_CULL_FACE );
+			gl.glDisable( GL20.GL_CULL_FACE );
 
 			Art.meshTreeTrunk.bind();
 
@@ -86,30 +100,48 @@ public class LevelRenderer
 				m.trunk.render(treeShader, GL20.GL_TRIANGLES );
 			}
 
-
 			// transparent foliage
 			gl.glEnable( GL20.GL_BLEND );
 			gl.glBlendFunc( GL20.GL_SRC_ALPHA, GL20.GL_ONE_MINUS_SRC_ALPHA );
 
+			boolean needRebind = false;
 			for( int i = 0; i < trees.trees.size(); i++ )
 			{
 				TreeStillModel m = trees.trees.get( i );
-				if( i == 0 )
+
+				if( !camPersp.frustum.boundsInFrustum( m.boundingBox ) )
+				{
+					needRebind = true;
+					continue;
+				}
+
+				if( i == 0 || needRebind)
 				{
 					m.material.bind(treeShader);
 				} else
 				if( !trees.trees.get(i - 1).material.equals(m.material) )
 				{
 					m.material.bind(treeShader);
-//					System.out.println("switched");
 				}
 
 				treeShader.setUniformMatrix( "u_mvpMatrix", m.transformed );
 				m.leaves.render(treeShader, GL20.GL_TRIANGLES );
+
+				renderedTrees++;
 			}
-			gl.glDisable( GL20.GL_BLEND );
 
 			treeShader.end();
+
+			gl.glDisable( GL20.GL_BLEND );
+			gl.glEnable( GL20.GL_CULL_FACE );
+
+
+			// debug
+			for( int i = 0; i < trees.trees.size(); i++ )
+			{
+				TreeStillModel m = trees.trees.get( i );
+				renderBoundingBox( m.boundingBox );
+			}
 		}
 	}
 
@@ -125,6 +157,7 @@ public class LevelRenderer
 		ShaderProgram shader = OrthographicAlignedStillModel.shaderProgram;
 		shader.begin();
 
+		boolean needRebind = false;
 		for( int i = 0; i < models.size(); i++ )
 		{
 			m = models.get( i );
@@ -146,10 +179,20 @@ public class LevelRenderer
 			// comb = (proj * view) * model (fast mul)
 			Matrix4.mul( mtx2.set( camPersp.combined ).val, mtx.val );
 
+			// transform the bounding box
+			m.boundingBox.inf().set( m.localBoundingBox );
+			m.boundingBox.mul( mtx );
+
+			if( !camPersp.frustum.boundsInFrustum( m.boundingBox ) )
+			{
+				needRebind = true;
+				continue;
+			}
+
 			shader.setUniformMatrix( "u_mvpMatrix", mtx2 );
 
 			// avoid rebinding same textures
-			if( i == 0 )
+			if( i == 0 || needRebind)
 			{
 				m.material.bind(shader);
 			} else
@@ -159,9 +202,91 @@ public class LevelRenderer
 			}
 
 			m.model.subMeshes[0].mesh.render(OrthographicAlignedStillModel.shaderProgram, GL20.GL_TRIANGLES);
+			renderedStaticMeshes++;
 		}
 
 		shader.end();
+
+		// debug (tested on a single mesh only!)
+		for( int i = 0; i < models.size(); i++ )
+		{
+			m = models.get( i );
+			renderBoundingBox( m.boundingBox );
+		}
 	}
 
+	/**
+	 * This is intentionally SLOW. Read it again!
+	 * @param boundingBox
+	 */
+	private void renderBoundingBox(BoundingBox boundingBox)
+	{
+		float alpha = .85f;
+		float r = 0f;
+		float g = 0f;
+		float b = 1f;
+		float offset = 0.5f;	// offset for the base, due to pixel-perfect model placement
+
+		Vector3[] corners = boundingBox.getCorners();
+
+		Gdx.gl.glDisable( GL20.GL_CULL_FACE );
+		Gdx.gl.glEnable( GL20.GL_BLEND );
+		Gdx.gl.glBlendFunc( GL20.GL_SRC_ALPHA, GL20.GL_DST_ALPHA );
+
+		dbg.begin(camPersp.combined, GL10.GL_TRIANGLES);
+		{
+			dbg.color( r, g, b, alpha ); dbg.vertex( corners[0].x, corners[0].y, corners[0].z + offset );
+			dbg.color( r, g, b, alpha ); dbg.vertex( corners[1].x, corners[1].y, corners[1].z + offset );
+			dbg.color( r, g, b, alpha ); dbg.vertex( corners[4].x, corners[4].y, corners[4].z );
+
+			dbg.color( r, g, b, alpha ); dbg.vertex( corners[1].x, corners[1].y, corners[1].z + offset );
+			dbg.color( r, g, b, alpha ); dbg.vertex( corners[4].x, corners[4].y, corners[4].z );
+			dbg.color( r, g, b, alpha ); dbg.vertex( corners[5].x, corners[5].y, corners[5].z );
+
+			dbg.color( r, g, b, alpha ); dbg.vertex( corners[1].x, corners[1].y, corners[1].z + offset );
+			dbg.color( r, g, b, alpha ); dbg.vertex( corners[2].x, corners[2].y, corners[2].z + offset );
+			dbg.color( r, g, b, alpha ); dbg.vertex( corners[5].x, corners[5].y, corners[5].z );
+
+			dbg.color( r, g, b, alpha ); dbg.vertex( corners[2].x, corners[2].y, corners[2].z + offset );
+			dbg.color( r, g, b, alpha ); dbg.vertex( corners[5].x, corners[5].y, corners[5].z );
+			dbg.color( r, g, b, alpha ); dbg.vertex( corners[6].x, corners[6].y, corners[6].z );
+
+
+			dbg.color( r, g, b, alpha ); dbg.vertex( corners[2].x, corners[2].y, corners[2].z + offset );
+			dbg.color( r, g, b, alpha ); dbg.vertex( corners[6].x, corners[6].y, corners[6].z );
+			dbg.color( r, g, b, alpha ); dbg.vertex( corners[3].x, corners[3].y, corners[3].z + offset );
+
+			dbg.color( r, g, b, alpha ); dbg.vertex( corners[3].x, corners[3].y, corners[3].z );
+			dbg.color( r, g, b, alpha ); dbg.vertex( corners[6].x, corners[6].y, corners[6].z );
+			dbg.color( r, g, b, alpha ); dbg.vertex( corners[7].x, corners[7].y, corners[7].z );
+
+			dbg.color( r, g, b, alpha ); dbg.vertex( corners[3].x, corners[3].y, corners[3].z + offset );
+			dbg.color( r, g, b, alpha ); dbg.vertex( corners[0].x, corners[0].y, corners[0].z + offset );
+			dbg.color( r, g, b, alpha ); dbg.vertex( corners[7].x, corners[7].y, corners[7].z );
+
+			dbg.color( r, g, b, alpha ); dbg.vertex( corners[7].x, corners[7].y, corners[7].z );
+			dbg.color( r, g, b, alpha ); dbg.vertex( corners[0].x, corners[0].y, corners[0].z + offset);
+			dbg.color( r, g, b, alpha ); dbg.vertex( corners[4].x, corners[4].y, corners[4].z );
+
+			// top cap
+			dbg.color( r, g, b, alpha ); dbg.vertex( corners[4].x, corners[4].y, corners[4].z );
+			dbg.color( r, g, b, alpha ); dbg.vertex( corners[5].x, corners[5].y, corners[5].z );
+			dbg.color( r, g, b, alpha ); dbg.vertex( corners[7].x, corners[7].y, corners[7].z );
+
+			dbg.color( r, g, b, alpha ); dbg.vertex( corners[5].x, corners[5].y, corners[5].z );
+			dbg.color( r, g, b, alpha ); dbg.vertex( corners[7].x, corners[7].y, corners[7].z );
+			dbg.color( r, g, b, alpha ); dbg.vertex( corners[6].x, corners[6].y, corners[6].z );
+
+			dbg.color( r, g, b, alpha ); dbg.vertex( corners[0].x, corners[0].y, corners[0].z + offset );
+			dbg.color( r, g, b, alpha ); dbg.vertex( corners[3].x, corners[3].y, corners[3].z + offset );
+			dbg.color( r, g, b, alpha ); dbg.vertex( corners[1].x, corners[1].y, corners[1].z + offset );
+
+			dbg.color( r, g, b, alpha ); dbg.vertex( corners[3].x, corners[3].y, corners[3].z + offset );
+			dbg.color( r, g, b, alpha ); dbg.vertex( corners[1].x, corners[1].y, corners[1].z + offset );
+			dbg.color( r, g, b, alpha ); dbg.vertex( corners[2].x, corners[2].y, corners[2].z + offset );
+		}
+		dbg.end();
+
+		Gdx.gl.glDisable( GL20.GL_BLEND );
+	}
 }

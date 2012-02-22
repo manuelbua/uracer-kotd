@@ -5,6 +5,7 @@ import com.badlogic.gdx.graphics.g3d.model.still.StillModel;
 import com.badlogic.gdx.graphics.glutils.ShaderProgram;
 import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.math.Vector3;
+import com.badlogic.gdx.math.collision.BoundingBox;
 import com.bitfire.uracer.Director;
 
 /**
@@ -17,7 +18,8 @@ public class OrthographicAlignedStillModel
 {
 	public UStillModel model;
 	public Material material;
-	public boolean isTransparent = false;
+	public BoundingBox localBoundingBox = new BoundingBox();
+	public BoundingBox boundingBox = new BoundingBox();
 
 	public static ShaderProgram shaderProgram = null;
 
@@ -80,6 +82,9 @@ public class OrthographicAlignedStillModel
 
 			this.material = material;
 			model.setMaterial( this.material );
+
+			model.getBoundingBox( localBoundingBox );
+			boundingBox.set( localBoundingBox );
 
 			setScalingFactor( Director.scalingStrategy.meshScaleFactor * BlenderToURacer * Director.scalingStrategy.to256 );
 			setPosition( 0, 0 );

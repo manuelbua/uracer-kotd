@@ -30,7 +30,7 @@ public class Config
 
 		public static void asDefault()
 		{
-			EnablePostProcessingFx = true;
+			EnablePostProcessingFx = false;
 			EnableMipMapping = true;
 			SubframeInterpolation = true;
 
@@ -38,7 +38,7 @@ public class Config
 			RenderPlayerDebugInfo = true;
 			RenderHudDebugInfo = true;
 
-			CameraInterpolationMode = InterpolationMode.Sigmoid;
+			CameraInterpolationMode = InterpolationMode.Off;
 			Effects = (TrackEffects.Effects.CarSkidMarks.id | TrackEffects.Effects.SmokeTrails.id);
 		}
 	}
@@ -76,9 +76,9 @@ public class Config
 
 		public static void asDefault()
 		{
-			TraverseWalls = false;
-			DirectorHasBounds = true;
-			ApplyCarFriction = true;
+			TraverseWalls = true;
+			DirectorHasBounds = false;
+			ApplyCarFriction = false;
 		}
 	}
 

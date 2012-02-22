@@ -159,11 +159,14 @@ public class Level
 
 	public void renderMeshes( GL20 gl )
 	{
+		levelRenderer.resetCounters();
+
 		gl.glDepthMask(true);
 		gl.glEnable( GL20.GL_DEPTH_TEST );
 		gl.glCullFace( GL20.GL_BACK );
 		gl.glFrontFace( GL20.GL_CCW );
 		gl.glDepthFunc( GL20.GL_LESS );
+		gl.glBlendEquation( GL20.GL_FUNC_ADD );
 
 		levelRenderer.renderWalls( gl, trackWalls );
 		levelRenderer.renderTrees( gl, trackTrees );

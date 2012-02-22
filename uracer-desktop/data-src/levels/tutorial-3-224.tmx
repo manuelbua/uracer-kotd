@@ -138,26 +138,26 @@
    eJxdzjkOgDAMRFGLiooaCnYIa0lDuP+9+JGmsFI8xdEkI0czazKfzhc1WnSoUKDHoDcpHzHp/mDG4jpWBNe7YXf/D5zqLnHhdnnqjJrzXX9YfgYW
   </data>
  </layer>
- <objectgroup color="#00ff00" name="static-meshes" width="8" height="6" visible="0"/>
+ <objectgroup color="#00ff00" name="static-meshes" width="8" height="6"/>
  <objectgroup color="#55ffff" name="trees" width="8" height="6">
-  <object name="tree-9" type="tree-9" x="517" y="868" width="61" height="68">
+  <object name="tree-1" type="tree-1" x="916" y="726" width="61" height="68">
+   <properties>
+    <property name="scale" value="1"/>
+   </properties>
+  </object>
+  <object name="tree-9" type="tree-9" x="467" y="506" width="61" height="68">
    <properties>
     <property name="scale" value="4"/>
    </properties>
   </object>
-  <object name="tree-9" type="tree-9" x="458" y="513" width="61" height="68">
+  <object name="tree-9" type="tree-9" x="1248" y="455" width="61" height="68">
    <properties>
-    <property name="scale" value="4"/>
+    <property name="scale" value="5"/>
    </properties>
   </object>
-  <object name="tree-9" type="tree-9" x="1224" y="434" width="61" height="68">
+  <object name="tree-9" type="tree-9" x="503" y="862" width="61" height="68">
    <properties>
-    <property name="scale" value="4"/>
-   </properties>
-  </object>
-  <object name="tree-9" type="tree-9" x="1286" y="858" width="61" height="68">
-   <properties>
-    <property name="scale" value="4"/>
+    <property name="scale" value="5"/>
    </properties>
   </object>
  </objectgroup>

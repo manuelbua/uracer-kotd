@@ -24,6 +24,7 @@ import com.bitfire.uracer.hud.Hud;
 import com.bitfire.uracer.hud.HudLabel;
 import com.bitfire.uracer.messager.Message;
 import com.bitfire.uracer.messager.Messager;
+import com.bitfire.uracer.tiled.LevelRenderer;
 import com.bitfire.uracer.tweener.Tweener;
 import com.bitfire.uracer.tweener.accessors.HudLabelAccessor;
 import com.bitfire.uracer.tweener.accessors.MessageAccessor;
@@ -259,6 +260,8 @@ public class Game
 			Debug.renderGraphicalStats( Gdx.graphics.getWidth() - Debug.getStatsWidth(),Gdx.graphics.getHeight() - Debug.getStatsHeight() - Debug.fontHeight );
 			Debug.renderTextualStats();
 			Debug.renderMemoryUsage();
+			Debug.drawString( "rendered static meshes=" + LevelRenderer.renderedStaticMeshes, 0, Gdx.graphics.getHeight()-14 );
+			Debug.drawString( "rendered trees=" + LevelRenderer.renderedTrees, 0, Gdx.graphics.getHeight()-7 );
 			Debug.end();
 		} else
 		{
