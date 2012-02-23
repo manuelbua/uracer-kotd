@@ -76,7 +76,7 @@ public class TrackTrees
 				if( model != null )
 				{
 //					model.setRotation( MathUtils.random( -180f, 180f ), 0, 0, 1f );
-					model.setRotation( MathUtils.random( 0, 3 ), 0, 0, 1f );
+					model.setRotation( rotations[MathUtils.random( 0, 3 )], 0, 0, 1f );
 					trees.add( nextIndexFor( model ), model );
 				}
 			}
