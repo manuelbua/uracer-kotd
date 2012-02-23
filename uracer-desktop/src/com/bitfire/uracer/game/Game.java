@@ -64,7 +64,7 @@ public class Game
 		Art.scaleFonts( Director.scalingStrategy.invTileMapZoomFactor );
 
 		// bring up level
-		level = Director.loadLevel( levelName, gameSettings, false /* night mode */ );
+		level = Director.loadLevel( levelName, gameSettings, true /* night mode */ );
 		player = level.getPlayer();
 
 		logic = new GameLogic( this );
@@ -116,7 +116,7 @@ public class Game
 
 				bloom = new Bloom( (int)(Gdx.graphics.getWidth() * rttRatio), (int)(Gdx.graphics.getHeight() * rttRatio), needDepth, useBlending, use32bits );
 
-				float bloomQ = 1.4f;
+				float bloomQ = 1.6f;
 				bloom.blurPasses = blurPasses;
 				bloom.setBloomIntesity( bloomQ );
 				bloom.setOriginalIntesity( 1f );
@@ -260,8 +260,9 @@ public class Game
 			Debug.renderGraphicalStats( Gdx.graphics.getWidth() - Debug.getStatsWidth(),Gdx.graphics.getHeight() - Debug.getStatsHeight() - Debug.fontHeight );
 			Debug.renderTextualStats();
 			Debug.renderMemoryUsage();
-			Debug.drawString( "rendered static meshes=" + LevelRenderer.renderedStaticMeshes, 0, Gdx.graphics.getHeight()-14 );
-			Debug.drawString( "rendered trees=" + LevelRenderer.renderedTrees, 0, Gdx.graphics.getHeight()-7 );
+			Debug.drawString( "rendered static meshes=" + LevelRenderer.renderedStaticMeshes, 0, Gdx.graphics.getHeight()-21 );
+			Debug.drawString( "rendered trees=" + LevelRenderer.renderedTrees, 0, Gdx.graphics.getHeight()-14 );
+			Debug.drawString( "rendered meshes=" + (LevelRenderer.renderedTrees + LevelRenderer.renderedStaticMeshes), 0, Gdx.graphics.getHeight()-7 );
 			Debug.end();
 		} else
 		{

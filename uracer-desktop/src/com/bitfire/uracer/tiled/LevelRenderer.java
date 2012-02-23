@@ -13,6 +13,7 @@ import com.badlogic.gdx.math.Matrix4;
 import com.badlogic.gdx.math.Vector3;
 import com.badlogic.gdx.math.collision.BoundingBox;
 import com.bitfire.uracer.Art;
+import com.bitfire.uracer.Config;
 import com.bitfire.uracer.Director;
 import com.bitfire.uracer.utils.Convert;
 
@@ -136,11 +137,14 @@ public class LevelRenderer
 			gl.glEnable( GL20.GL_CULL_FACE );
 
 
-			// debug
-			for( int i = 0; i < trees.trees.size(); i++ )
+			if(Config.Graphics.Render3DBoundingBoxes)
 			{
-				TreeStillModel m = trees.trees.get( i );
-				renderBoundingBox( m.boundingBox );
+				// debug
+				for( int i = 0; i < trees.trees.size(); i++ )
+				{
+					TreeStillModel m = trees.trees.get( i );
+					renderBoundingBox( m.boundingBox );
+				}
 			}
 		}
 	}
@@ -207,11 +211,14 @@ public class LevelRenderer
 
 		shader.end();
 
-		// debug (tested on a single mesh only!)
-		for( int i = 0; i < models.size(); i++ )
+		if(Config.Graphics.Render3DBoundingBoxes)
 		{
-			m = models.get( i );
-			renderBoundingBox( m.boundingBox );
+			// debug (tested on a single mesh only!)
+			for( int i = 0; i < models.size(); i++ )
+			{
+				m = models.get( i );
+				renderBoundingBox( m.boundingBox );
+			}
 		}
 	}
 
