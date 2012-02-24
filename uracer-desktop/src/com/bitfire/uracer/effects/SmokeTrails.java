@@ -16,7 +16,7 @@ public class SmokeTrails extends TrackEffect
 {
 	private SmokeEffect fx[];
 	private final int SmokeEffectsCount = 1;
-	public static final int MaxParticles = 50;
+	public static final int MaxParticles = 250;
 
 	private boolean isDrifting, wasDrifting;
 	private DriftInfo drift;
