@@ -114,7 +114,7 @@ public class CarModel
 
 		density = 1.f;
 		friction = .4f;
-		restitution = 0.f;
+		restitution = 0f;
 
 		return this;
 	}
@@ -141,7 +141,7 @@ public class CarModel
 
 		density = 1.f;
 		friction = .5f;
-		restitution = 0.1f;
+		restitution = 0f;
 
 		return this;
 	}
@@ -168,8 +168,8 @@ public class CarModel
 		max_force = 300.f;
 
 		density = 1f;
-		friction = .02f;
-		restitution = 0.1f;
+		friction = 5.02f;
+		restitution = 0f;
 
 		return this;
 	}

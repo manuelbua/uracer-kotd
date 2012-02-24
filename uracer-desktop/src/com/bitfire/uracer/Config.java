@@ -66,7 +66,7 @@ public class Config
 
 		public static void asDefault()
 		{
-			difficulty = GameDifficulty.Medium;
+			difficulty = GameDifficulty.Hard;
 		}
 	}
 
