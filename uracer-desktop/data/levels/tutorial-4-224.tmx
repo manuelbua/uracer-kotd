@@ -180,7 +180,7 @@
   </object>
   <object height="43" name="tree-6" type="tree-6" width="41" x="1050" y="1683">
    <properties>
-    <property name="scale" value="6"/>
+    <property name="scale" value="4"/>
    </properties>
   </object>
   <object height="43" name="tree-7" type="tree-7" width="41" x="958" y="555">

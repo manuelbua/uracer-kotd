@@ -181,7 +181,7 @@
   </object>
   <object name="tree-6" type="tree-6" x="1050" y="1683" width="41" height="43">
    <properties>
-    <property name="scale" value="6"/>
+    <property name="scale" value="4"/>
    </properties>
   </object>
   <object name="tree-7" type="tree-7" x="958" y="555" width="41" height="43">

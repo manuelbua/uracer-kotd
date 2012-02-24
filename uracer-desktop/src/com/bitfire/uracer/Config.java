@@ -31,7 +31,7 @@ public class Config
 
 		public static void asDefault()
 		{
-			EnablePostProcessingFx = true;
+			EnablePostProcessingFx = false;
 			EnableMipMapping = true;
 			SubframeInterpolation = true;
 
@@ -75,12 +75,14 @@ public class Config
 		public static boolean TraverseWalls;
 		public static boolean DirectorHasBounds;
 		public static boolean ApplyCarFriction;
+		public static boolean FrustumCulling;
 
 		public static void asDefault()
 		{
 			TraverseWalls = false;
 			DirectorHasBounds = false;
 			ApplyCarFriction = true;
+			FrustumCulling = true;
 		}
 	}
 

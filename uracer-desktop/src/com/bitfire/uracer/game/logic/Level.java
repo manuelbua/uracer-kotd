@@ -59,6 +59,7 @@ public class Level
 	public LevelRenderer levelRenderer = null;
 	public UTileMapRenderer tileMapRenderer = null;
 	public String name = "";
+	public static int totalMeshes = 0;
 
 	private static final String LevelsStore = "data/levels/";
 	private TileAtlas atlas = null;
@@ -67,7 +68,7 @@ public class Level
 	private float camPerspElevation = 0f;
 	private ArrayList<OrthographicAlignedStillModel> staticMeshes = new ArrayList<OrthographicAlignedStillModel>();
 
-	// game data
+	// player recording data
 	private Player player;
 	private Recorder recorder;
 	private boolean nightMode;
@@ -209,6 +210,7 @@ public class Level
 	private void createMeshes()
 	{
 		staticMeshes.clear();
+		totalMeshes = 0;
 
 		// static meshes layer
 		if( MapUtils.hasObjectGroup( MapUtils.LayerStaticMeshes ) )
@@ -234,6 +236,8 @@ public class Level
 		// trees
 		trackTrees = new TrackTrees();
 		trackTrees.createTrees();
+
+		totalMeshes = staticMeshes.size() + trackWalls.walls.size() + trackTrees.trees.size();
 	}
 
 	private Player createPlayer(TiledMap map )

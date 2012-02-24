@@ -137,7 +137,7 @@ public class CarSkidMarks extends TrackEffect
 			drift.setOrientation( player.state().orientation );
 			drift.front.setScale( AMath.clamp( di.lateralForcesFront + 0.8f, 0.85f, 1.1f ) );
 			drift.rear.setScale( AMath.clamp( di.lateralForcesRear + 0.8f, 0.85f, 1.1f ) );
-			drift.maxLife = 1.5f;
+			drift.maxLife = 3.5f;
 			drift.life = drift.maxLife;
 
 			last.set( tmp );

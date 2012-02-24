@@ -26,7 +26,8 @@ public class LevelRenderer
 	// render stats
 	private ImmediateModeRenderer20 dbg = new ImmediateModeRenderer20( false, true, 0 );
 	public static int renderedTrees = 0;
-	public static int renderedStaticMeshes = 0;
+	public static int renderedWalls = 0;
+	public static int culledMeshes = 0;
 
 	public LevelRenderer(PerspectiveCamera persp, OrthographicCamera ortho)
 	{
@@ -66,7 +67,7 @@ public class LevelRenderer
 
 	public void resetCounters()
 	{
-		renderedStaticMeshes = renderedTrees = 0;
+		culledMeshes = renderedTrees = renderedWalls = 0;
 	}
 
 	public void renderWalls(GL20 gl, TrackWalls walls)
@@ -76,7 +77,7 @@ public class LevelRenderer
 			gl.glDisable( GL20.GL_CULL_FACE );
 			gl.glEnable( GL20.GL_BLEND );
 			gl.glBlendFunc( GL20.GL_SRC_ALPHA, GL20.GL_ONE_MINUS_SRC_ALPHA );
-			renderOrthographicAlignedModels( gl, walls.walls );
+			renderedWalls = renderOrthographicAlignedModels( gl, walls.walls );
 		}
 	}
 
@@ -87,7 +88,7 @@ public class LevelRenderer
 			trees.transform( camPersp, camOrtho );
 
 			gl.glDisable( GL20.GL_BLEND );
-			gl.glDisable( GL20.GL_CULL_FACE );
+			gl.glEnable( GL20.GL_CULL_FACE );
 
 			Art.meshTreeTrunk.bind();
 
@@ -102,6 +103,7 @@ public class LevelRenderer
 			}
 
 			// transparent foliage
+			gl.glDisable( GL20.GL_CULL_FACE );
 			gl.glEnable( GL20.GL_BLEND );
 			gl.glBlendFunc( GL20.GL_SRC_ALPHA, GL20.GL_ONE_MINUS_SRC_ALPHA );
 
@@ -110,9 +112,10 @@ public class LevelRenderer
 			{
 				TreeStillModel m = trees.trees.get( i );
 
-				if( !camPersp.frustum.boundsInFrustum( m.boundingBox ) )
+				if( Config.Debug.FrustumCulling &&  !camPersp.frustum.boundsInFrustum( m.boundingBox ) )
 				{
 					needRebind = true;
+					culledMeshes++;
 					continue;
 				}
 
@@ -133,9 +136,8 @@ public class LevelRenderer
 
 			treeShader.end();
 
-			gl.glDisable( GL20.GL_BLEND );
-			gl.glEnable( GL20.GL_CULL_FACE );
-
+//			gl.glDisable( GL20.GL_BLEND );
+//			gl.glEnable( GL20.GL_CULL_FACE );
 
 			if(Config.Graphics.Render3DBoundingBoxes)
 			{
@@ -152,8 +154,9 @@ public class LevelRenderer
 	private Vector3 tmpvec = new Vector3();
 	private Matrix4 mtx = new Matrix4();
 	private Matrix4 mtx2 = new Matrix4();
-	public void renderOrthographicAlignedModels(GL20 gl, ArrayList<OrthographicAlignedStillModel> models)
+	public int renderOrthographicAlignedModels(GL20 gl, ArrayList<OrthographicAlignedStillModel> models)
 	{
+		int renderedCount = 0;
 		OrthographicAlignedStillModel m;
 
 		float meshZ = -(camPersp.far - camPersp.position.z);
@@ -187,9 +190,10 @@ public class LevelRenderer
 			m.boundingBox.inf().set( m.localBoundingBox );
 			m.boundingBox.mul( mtx );
 
-			if( !camPersp.frustum.boundsInFrustum( m.boundingBox ) )
+			if( Config.Debug.FrustumCulling && !camPersp.frustum.boundsInFrustum( m.boundingBox ) )
 			{
 				needRebind = true;
+				culledMeshes++;
 				continue;
 			}
 
@@ -206,7 +210,7 @@ public class LevelRenderer
 			}
 
 			m.model.subMeshes[0].mesh.render(OrthographicAlignedStillModel.shaderProgram, GL20.GL_TRIANGLES);
-			renderedStaticMeshes++;
+			renderedCount++;
 		}
 
 		shader.end();
@@ -220,6 +224,8 @@ public class LevelRenderer
 				renderBoundingBox( m.boundingBox );
 			}
 		}
+
+		return renderedCount;
 	}
 
 	/**
@@ -228,7 +234,7 @@ public class LevelRenderer
 	 */
 	private void renderBoundingBox(BoundingBox boundingBox)
 	{
-		float alpha = .85f;
+		float alpha = .15f;
 		float r = 0f;
 		float g = 0f;
 		float b = 1f;
@@ -238,7 +244,7 @@ public class LevelRenderer
 
 		Gdx.gl.glDisable( GL20.GL_CULL_FACE );
 		Gdx.gl.glEnable( GL20.GL_BLEND );
-		Gdx.gl.glBlendFunc( GL20.GL_SRC_ALPHA, GL20.GL_DST_ALPHA );
+		Gdx.gl.glBlendFunc( GL20.GL_SRC_ALPHA, GL20.GL_ONE_MINUS_SRC_ALPHA );
 
 		dbg.begin(camPersp.combined, GL10.GL_TRIANGLES);
 		{

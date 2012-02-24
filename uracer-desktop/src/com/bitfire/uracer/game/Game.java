@@ -12,7 +12,6 @@ import com.bitfire.uracer.audio.CarSoundManager;
 import com.bitfire.uracer.debug.Debug;
 import com.bitfire.uracer.effects.TrackEffects;
 import com.bitfire.uracer.effects.TrackEffects.Effects;
-import com.bitfire.uracer.effects.postprocessing.RadialBlur;
 import com.bitfire.uracer.effects.postprocessing.bloom.Bloom;
 import com.bitfire.uracer.entities.EntityManager;
 import com.bitfire.uracer.entities.vehicles.Car;
@@ -45,7 +44,7 @@ public class Game
 	private DirectorController controller;
 
 	// effects
-	private RadialBlur radialBlur;
+//	private RadialBlur radialBlur;
 	private Bloom bloom;
 
 	// drawing
@@ -64,7 +63,7 @@ public class Game
 		Art.scaleFonts( Director.scalingStrategy.invTileMapZoomFactor );
 
 		// bring up level
-		level = Director.loadLevel( levelName, gameSettings, true /* night mode */ );
+		level = Director.loadLevel( levelName, gameSettings, false /* night mode */ );
 		player = level.getPlayer();
 
 		logic = new GameLogic( this );
@@ -260,9 +259,11 @@ public class Game
 			Debug.renderGraphicalStats( Gdx.graphics.getWidth() - Debug.getStatsWidth(),Gdx.graphics.getHeight() - Debug.getStatsHeight() - Debug.fontHeight );
 			Debug.renderTextualStats();
 			Debug.renderMemoryUsage();
-			Debug.drawString( "rendered static meshes=" + LevelRenderer.renderedStaticMeshes, 0, Gdx.graphics.getHeight()-21 );
-			Debug.drawString( "rendered trees=" + LevelRenderer.renderedTrees, 0, Gdx.graphics.getHeight()-14 );
-			Debug.drawString( "rendered meshes=" + (LevelRenderer.renderedTrees + LevelRenderer.renderedStaticMeshes), 0, Gdx.graphics.getHeight()-7 );
+			Debug.drawString( "total meshes=" + Level.totalMeshes, 0, Gdx.graphics.getHeight()-14 );
+			Debug.drawString( "rendered meshes=" + (LevelRenderer.renderedTrees + LevelRenderer.renderedWalls)
+					+ ", trees=" + LevelRenderer.renderedTrees
+					+ ", walls=" + LevelRenderer.renderedWalls
+					+ ", culled=" + LevelRenderer.culledMeshes, 0, Gdx.graphics.getHeight()-7 );
 			Debug.end();
 		} else
 		{
