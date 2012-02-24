@@ -168,7 +168,7 @@ public class CarModel
 		max_force = 300.f;
 
 		density = 1f;
-		friction = 5.02f;
+		friction = 8.02f;
 		restitution = 0f;
 
 		return this;
