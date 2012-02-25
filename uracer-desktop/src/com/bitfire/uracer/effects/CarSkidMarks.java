@@ -36,10 +36,11 @@ public class CarSkidMarks extends TrackEffect
 		last = new Vector2();
 		this.player = player;
 
+		CarModel model = player.getCarModel();
 		skidMarks = new SkidMark[ MaxSkidMarks ];
 		for( int i = 0; i < MaxSkidMarks; i++ )
 		{
-			skidMarks[i] = new SkidMark( player.getCarModel() );
+			skidMarks[i] = new SkidMark( model );
 		}
 	}
 
