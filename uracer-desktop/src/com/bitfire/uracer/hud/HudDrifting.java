@@ -22,7 +22,11 @@ public class HudDrifting
 	private CarModel model;
 	private int carWidthPx, carLengthPx;
 
-	public HudLabel labelRealtime, labelResult;
+	private HudLabel labelRealtime;
+	private HudLabel[] labelResult;
+	private static final int MaxLabelResult = 3;
+	private int nextLabelResult = 0;
+
 	private DriftInfo drift;
 	private Vector2 heading = new Vector2();
 
@@ -39,14 +43,29 @@ public class HudDrifting
 		labelRealtime = new HudLabel( Art.fontCurseYRbig, "99.99", 0.5f );
 		labelRealtime.setAlpha( 0 );
 
-		labelResult = new HudLabel( Art.fontCurseR, "99.99", 0.85f );
-		labelResult.setAlpha( 0 );
+		// we need an HudLabel circular buffer since
+		// the player could be doing combos and the time
+		// needed for one single labelResult to ".slide"
+		// and disappear could be higher than the time
+		// needed for the user to initiate, perform and
+		// finish the next drift.. in this case the label
+		// will move from the last result position to the
+		// current one
+		labelResult = new HudLabel[MaxLabelResult];
+		nextLabelResult = 0;
+		for(int i = 0; i < MaxLabelResult; i++ )
+		{
+			labelResult[i] = new HudLabel( Art.fontCurseR, "99.99", 0.85f );
+			labelResult[i].setAlpha( 0 );
+		}
 	}
 
 	public void reset()
 	{
 		labelRealtime.setAlpha( 0 );
-		labelResult.setAlpha( 0 );
+		for(int i = 0; i < MaxLabelResult; i++)
+			labelResult[i].setAlpha( 0 );
+		nextLabelResult = 0;
 	}
 
 	public void tick()
@@ -80,15 +99,16 @@ public class HudDrifting
 		);
 
 		//
-		// draw earned seconds
+		// draw earned/lost seconds
 		//
 		labelRealtime.setString( "+" + NumberString.format(drift.driftSeconds) );
 		labelRealtime.render( batch );
 
 		//
-		// draw lost seconds
+		// draw result
 		//
-		labelResult.render( batch );
+		for(int i = 0; i < MaxLabelResult; i++)
+			labelResult[i].render( batch );
 	}
 
 	public void onBeginDrift()
@@ -102,21 +122,24 @@ public class HudDrifting
 
 		labelRealtime.fadeOut( 300 );
 
-		labelResult.setPosition(
-				pos.x - heading.x * (carWidthPx + labelResult.halfBoundsWidth),
-				pos.y - heading.y * (carLengthPx + labelResult.halfBoundsHeight)
-			);
+		HudLabel result = labelResult[nextLabelResult++];
+		if(nextLabelResult==MaxLabelResult) nextLabelResult = 0;
+
+		result.setPosition(
+			pos.x - heading.x * (carWidthPx + result.halfBoundsWidth),
+			pos.y - heading.y * (carLengthPx + result.halfBoundsHeight)
+		);
 
 		// premature end drift event due to collision?
 		if( drift.hasCollided )
 		{
-			labelResult.setString( "-" + NumberString.format(drift.driftSeconds) );
-			labelResult.setFont( Art.fontCurseRbig );
+			result.setString( "-" + NumberString.format(drift.driftSeconds) );
+			result.setFont( Art.fontCurseRbig );
 		}
 		else
 		{
-			labelResult.setString( "+" + NumberString.format(drift.driftSeconds) );
-			labelResult.setFont( Art.fontCurseGbig );
+			result.setString( "+" + NumberString.format(drift.driftSeconds) );
+			result.setFont( Art.fontCurseGbig );
 
 			if( drift.driftSeconds >= 1 && drift.driftSeconds < 1.5f )
 			{
@@ -132,6 +155,6 @@ public class HudDrifting
 			}
 		}
 
-		labelResult.slide();
+		result.slide();
 	}
 }

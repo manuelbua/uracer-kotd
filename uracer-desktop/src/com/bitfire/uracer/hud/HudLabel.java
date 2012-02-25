@@ -126,7 +126,7 @@ public class HudLabel
 
 			font.drawMultiLine( batch, what, x, y );
 
-			font.setColor( 1, 1, 1, 1 );
+//			font.setColor( 1, 1, 1, 1 );
 		}
 	}
 
