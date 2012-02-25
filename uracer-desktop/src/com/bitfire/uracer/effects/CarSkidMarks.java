@@ -16,7 +16,7 @@ import com.bitfire.uracer.utils.Convert;
 
 public class CarSkidMarks extends TrackEffect
 {
-	public static final int MaxSkidMarks = 100;
+	public static final int MaxSkidMarks = 300;
 
 	private SkidMark[] skidMarks;
 	private int markIndex;
@@ -191,8 +191,9 @@ public class CarSkidMarks extends TrackEffect
 
 		public Rectangle getBoundingRectangle()
 		{
+			// front and rear rectangles always converge, just use one
 			tmp.set( front.getBoundingRectangle() );
-			tmp.merge( rear.getBoundingRectangle() );
+//			tmp.merge( rear.getBoundingRectangle() );
 			return tmp;
 		}
 	}
