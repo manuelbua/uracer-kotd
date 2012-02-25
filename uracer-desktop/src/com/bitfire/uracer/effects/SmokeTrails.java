@@ -16,7 +16,7 @@ public class SmokeTrails extends TrackEffect
 {
 	private SmokeEffect fx[];
 	private static final int SmokeEffectsCount = 1;
-	public static final int MaxParticles = 250;
+	public static final int MaxParticles = 100;
 
 	private boolean isDrifting, wasDrifting;
 	private DriftInfo drift;
@@ -113,8 +113,6 @@ public class SmokeTrails extends TrackEffect
 			fx[i].setEmissionMul( .8f );
 			fx[i].stop();
 		}
-
-//		effect.setEmissionMul( 2f );
 
 		this.player = player;
 		isDrifting = wasDrifting = false;

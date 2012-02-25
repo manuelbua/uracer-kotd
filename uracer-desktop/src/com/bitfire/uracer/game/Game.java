@@ -11,7 +11,6 @@ import com.bitfire.uracer.URacer;
 import com.bitfire.uracer.audio.CarSoundManager;
 import com.bitfire.uracer.debug.Debug;
 import com.bitfire.uracer.effects.TrackEffects;
-import com.bitfire.uracer.effects.TrackEffects.Effects;
 import com.bitfire.uracer.effects.postprocessing.bloom.Bloom;
 import com.bitfire.uracer.entities.EntityManager;
 import com.bitfire.uracer.entities.vehicles.Car;
@@ -214,11 +213,7 @@ public class Game
 		batch.begin();
 		{
 			// batch render effects
-			if( Config.Graphics.hasEffect(TrackEffects.Effects.CarSkidMarks.id) )
-				TrackEffects.renderEffect( Effects.CarSkidMarks, batch );
-
-			if( Config.Graphics.hasEffect(TrackEffects.Effects.SmokeTrails.id) )
-				TrackEffects.renderEffect( Effects.SmokeTrails, batch );
+			TrackEffects.render( batch );
 
 			// batch render entities
 			EntityManager.raiseOnRender( batch, URacer.getTemporalAliasing() );

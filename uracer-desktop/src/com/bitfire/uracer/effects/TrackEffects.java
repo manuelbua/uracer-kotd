@@ -2,6 +2,7 @@ package com.bitfire.uracer.effects;
 
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.utils.LongMap;
+import com.bitfire.uracer.Config;
 import com.bitfire.uracer.entities.vehicles.Car;
 import com.bitfire.uracer.game.logic.GameLogic;
 
@@ -39,10 +40,7 @@ public class TrackEffects
 		effects = new LongMap<TrackEffect>();
 
 		TrackEffects.add( Effects.CarSkidMarks );
-		TrackEffects.add( Effects.SmokeTrails );
-
-//		SmokeTrails smoke = (SmokeTrails)TrackEffects.get( Effects.SmokeTrails );
-//		smoke.addEmitter( 100, 100 );
+//		TrackEffects.add( Effects.SmokeTrails );
 	}
 
 	/**
@@ -113,6 +111,17 @@ public class TrackEffects
 		remove( Effects.SmokeTrails );
 	}
 
+	public static void render( SpriteBatch batch )
+	{
+		TrackEffect effect;
+
+		effect = effects.get( TrackEffects.Effects.CarSkidMarks.id );
+		if( Config.Graphics.hasEffect(TrackEffects.Effects.CarSkidMarks.id) && effect != null ) effect.render( batch );
+
+		effect = effects.get( TrackEffects.Effects.SmokeTrails.id );
+		if( Config.Graphics.hasEffect(TrackEffects.Effects.SmokeTrails.id) && effect != null ) effect.render( batch );
+	}
+
 	/**
 	 * expose effects TODO find a more sensible way without incurring in overhead
 	 */
@@ -124,6 +133,8 @@ public class TrackEffects
 
 	public static int getParticleCount( Effects what )
 	{
-		return effects.get( what.id ).getParticleCount();
+		TrackEffect effect = effects.get( what.id );
+		if(effect==null) return 0;
+		return effect.getParticleCount();
 	}
 }
