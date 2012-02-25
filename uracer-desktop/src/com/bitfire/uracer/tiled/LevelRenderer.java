@@ -7,6 +7,7 @@ import com.badlogic.gdx.graphics.GL10;
 import com.badlogic.gdx.graphics.GL20;
 import com.badlogic.gdx.graphics.OrthographicCamera;
 import com.badlogic.gdx.graphics.PerspectiveCamera;
+import com.badlogic.gdx.graphics.g3d.model.still.StillSubMesh;
 import com.badlogic.gdx.graphics.glutils.ImmediateModeRenderer20;
 import com.badlogic.gdx.graphics.glutils.ShaderProgram;
 import com.badlogic.gdx.math.Matrix4;
@@ -99,7 +100,7 @@ public class LevelRenderer
 			{
 				TreeStillModel m = trees.trees.get( i );
 				treeShader.setUniformMatrix( "u_mvpMatrix", m.transformed );
-				m.trunk.render(treeShader, GL20.GL_TRIANGLES );
+				m.trunk.render(treeShader, m.smTrunk.primitiveType );
 			}
 
 			// transparent foliage
@@ -129,15 +130,12 @@ public class LevelRenderer
 				}
 
 				treeShader.setUniformMatrix( "u_mvpMatrix", m.transformed );
-				m.leaves.render(treeShader, GL20.GL_TRIANGLES );
+				m.leaves.render(treeShader, m.smLeaves.primitiveType );
 
 				renderedTrees++;
 			}
 
 			treeShader.end();
-
-//			gl.glDisable( GL20.GL_BLEND );
-//			gl.glEnable( GL20.GL_CULL_FACE );
 
 			if(Config.Graphics.Render3DBoundingBoxes)
 			{
@@ -158,6 +156,7 @@ public class LevelRenderer
 	{
 		int renderedCount = 0;
 		OrthographicAlignedStillModel m;
+		StillSubMesh submesh;
 
 		float meshZ = -(camPersp.far - camPersp.position.z);
 
@@ -168,6 +167,7 @@ public class LevelRenderer
 		for( int i = 0; i < models.size(); i++ )
 		{
 			m = models.get( i );
+			submesh = m.model.subMeshes[0];
 
 			// compute position
 			tmpvec.x = Convert.scaledPixels( m.positionOffsetPx.x - camOrtho.position.x ) + Director.halfViewport.x + m.positionPx.x;
@@ -209,7 +209,7 @@ public class LevelRenderer
 				m.material.bind(shader);
 			}
 
-			m.model.subMeshes[0].mesh.render(OrthographicAlignedStillModel.shaderProgram, GL20.GL_TRIANGLES);
+			submesh.mesh.render(OrthographicAlignedStillModel.shaderProgram, submesh.primitiveType);
 			renderedCount++;
 		}
 

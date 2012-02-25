@@ -15,7 +15,7 @@ import com.bitfire.uracer.game.logic.DriftInfo;
 public class SmokeTrails extends TrackEffect
 {
 	private SmokeEffect fx[];
-	private final int SmokeEffectsCount = 1;
+	private static final int SmokeEffectsCount = 1;
 	public static final int MaxParticles = 250;
 
 	private boolean isDrifting, wasDrifting;

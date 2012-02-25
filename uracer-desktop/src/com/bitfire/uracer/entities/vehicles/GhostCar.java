@@ -103,7 +103,7 @@ public class GhostCar extends Car
 				restart(replay);
 			}
 
-			forces.set( replay.forces.get( indexPlay++ ) );
+			forces.set( replay.forces[indexPlay++] );
 		}
 	}
 }

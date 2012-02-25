@@ -1,7 +1,5 @@
 package com.bitfire.uracer.effects;
 
-import java.util.ArrayList;
-
 import com.badlogic.gdx.graphics.g2d.Sprite;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.math.Rectangle;
@@ -20,7 +18,7 @@ public class CarSkidMarks extends TrackEffect
 {
 	public static final int MaxSkidMarks = 100;
 
-	private ArrayList<SkidMark> skidMarks;
+	private SkidMark[] skidMarks;
 	private int markIndex;
 	private int visibleSkidMarksCount;
 
@@ -38,10 +36,10 @@ public class CarSkidMarks extends TrackEffect
 		last = new Vector2();
 		this.player = player;
 
-		skidMarks = new ArrayList<SkidMark>( MaxSkidMarks );
+		skidMarks = new SkidMark[ MaxSkidMarks ];
 		for( int i = 0; i < MaxSkidMarks; i++ )
 		{
-			skidMarks.add( new SkidMark( player.getCarModel() ) );
+			skidMarks[i] = new SkidMark( player.getCarModel() );
 		}
 	}
 
@@ -54,7 +52,8 @@ public class CarSkidMarks extends TrackEffect
 	@Override
 	public void dispose()
 	{
-		skidMarks.clear();
+		for( int i = 0; i < MaxSkidMarks; i++ )
+			skidMarks[i] = null;
 	}
 
 	@Override
@@ -71,7 +70,7 @@ public class CarSkidMarks extends TrackEffect
 		SkidMark d;
 		for( int i = 0; i < MaxSkidMarks; i++ )
 		{
-			d = skidMarks.get( i );
+			d = skidMarks[i];
 			if( d.life > 0 )
 			{
 				d.life -= Physics.dt;
@@ -92,7 +91,7 @@ public class CarSkidMarks extends TrackEffect
 		// front drift marks
 		for( int i = 0; i < MaxSkidMarks; i++ )
 		{
-			d = skidMarks.get( i );
+			d = skidMarks[i];
 			if( d.life > 0 && Director.isVisible( d.getBoundingRectangle() ) )
 			{
 				visibleSkidMarksCount++;
@@ -128,7 +127,7 @@ public class CarSkidMarks extends TrackEffect
 //		if( di.isDrifting )
 		{
 			// add front drift marks?
-			SkidMark drift = skidMarks.get( markIndex++ );
+			SkidMark drift = skidMarks[markIndex++];
 			if( markIndex == MaxSkidMarks ) markIndex = 0;
 
 			drift.alphaFront = di.driftStrength;

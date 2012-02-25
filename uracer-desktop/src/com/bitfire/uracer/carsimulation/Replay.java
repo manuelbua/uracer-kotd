@@ -1,7 +1,5 @@
 package com.bitfire.uracer.carsimulation;
 
-import java.util.ArrayList;
-
 import com.badlogic.gdx.math.Vector2;
 import com.bitfire.uracer.entities.vehicles.Car;
 import com.bitfire.uracer.factories.CarFactory.CarType;
@@ -31,17 +29,17 @@ public class Replay
 	public GameDifficulty difficultyLevel = GameDifficulty.Easy;
 	public float trackTimeSeconds = 0;
 	public long trackStartTimeNs = 0;
-	public ArrayList<CarForces> forces = null;
+	public CarForces[] forces = null;
 	public boolean isValid = false;
-	public long id;
+	public final long id;
 
 	public Replay()
 	{
 		eventsCount = 0;
-		forces = new ArrayList<CarForces>( MaxEvents );
+		forces = new CarForces[MaxEvents];
 		for( int i = 0; i < MaxEvents; i++ )
 		{
-			forces.add( new CarForces() );
+			forces[i] = new CarForces();
 		}
 
 		id = UUid.get();
@@ -82,7 +80,7 @@ public class Replay
 
 	public boolean add( CarForces f )
 	{
-		forces.get( eventsCount++ ).set( f );
+		forces[eventsCount++].set( f );
 		if( eventsCount == MaxEvents )
 		{
 			eventsCount = 0;
@@ -90,10 +88,5 @@ public class Replay
 		}
 
 		return true;
-	}
-
-	public ArrayList<CarForces> getEvents()
-	{
-		return forces;
 	}
 }
