@@ -102,12 +102,13 @@ public class TrackWalls
 		// scaling factors
 		float factor = Director.scalingStrategy.invTileMapZoomFactor;
 		float oneOnWorld3DFactor = 1f / OrthographicAlignedStillModel.World3DScalingFactor;
-		float textureScaling = 4f;
-		float wallHeightMt = 3f * factor * oneOnWorld3DFactor;
+		float textureScalingU = 8f;
+		float textureScalingV = 8f;
+		float wallHeightMt = 6f * factor * oneOnWorld3DFactor;
 
 		// jitter
-		float jitterPositional = 1f * factor * oneOnWorld3DFactor;
-//		float jitterAltitudinal = 0f * factor * oneOnWorld3DFactor;
+		float jitterPositional = .6f * factor * oneOnWorld3DFactor;
+//		float jitterAltitudinal = 1f * factor * oneOnWorld3DFactor;
 		boolean addJitter = true;
 
 		int vertexCount = points.size() * 2;
@@ -138,10 +139,10 @@ public class TrackWalls
 			verts[j + Z2] = wallHeightMt;// + (addJitter? MathUtils.random( -jitterAltitudinal, jitterAltitudinal ) : 0);
 
 			// tex coords
-			verts[j + U1] = ((i&1)==0 ? textureScaling : 0f);
-			verts[j + V1] = textureScaling;
+			verts[j + U1] = ((i&1)==0 ? textureScalingU : 0f);
+			verts[j + V1] = textureScalingV;
 
-			verts[j + U2] = ((i&1)==0 ? textureScaling : 0f);
+			verts[j + U2] = ((i&1)==0 ? textureScalingU : 0f);
 			verts[j + V2] = 0f;
 
 			vc+=2;
