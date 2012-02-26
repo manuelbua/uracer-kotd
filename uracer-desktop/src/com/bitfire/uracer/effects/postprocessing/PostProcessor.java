@@ -1,74 +1,144 @@
 package com.bitfire.uracer.effects.postprocessing;
 
-import com.badlogic.gdx.graphics.GL20;
+import com.badlogic.gdx.Gdx;
+import com.badlogic.gdx.graphics.Color;
+import com.badlogic.gdx.graphics.GL10;
 import com.badlogic.gdx.graphics.Mesh;
 import com.badlogic.gdx.graphics.Pixmap.Format;
-import com.badlogic.gdx.graphics.Texture.TextureFilter;
-import com.badlogic.gdx.graphics.Texture.TextureWrap;
+import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.VertexAttribute;
 import com.badlogic.gdx.graphics.VertexAttributes.Usage;
 import com.badlogic.gdx.graphics.glutils.FrameBuffer;
-import com.badlogic.gdx.graphics.glutils.ShaderProgram;
 
 public class PostProcessor
 {
-	private static FrameBuffer frameBuffer;
-	private static Mesh quad;
-	private static PostProcessEffect effect;
+	private FrameBuffer fbScene;
+	private Format fbFormat;
+	private Mesh fullScreenQuad;
+	private boolean capturing = false;
+	private IPostProcessorEffect effect = null;
 
-	public static void init( int rttWidth, int rttHeight )
+	private Texture texScene;
+
+	public PostProcessor( int fboWidth, int fboHeight, boolean useDepth, boolean useAlphaChannel, boolean use32Bits)
 	{
-		frameBuffer = new FrameBuffer( Format.RGBA8888, rttWidth, rttHeight, true );
-		frameBuffer.getColorBufferTexture().setFilter( TextureFilter.Nearest, TextureFilter.Nearest );
-		frameBuffer.getColorBufferTexture().setWrap( TextureWrap.ClampToEdge, TextureWrap.ClampToEdge );
-		quad = createQuadMesh();
-		effect = null;
+		if( use32Bits )
+		{
+			if( useAlphaChannel )
+			{
+				fbFormat = Format.RGBA8888;
+			} else
+			{
+				fbFormat = Format.RGB888;
+			}
+
+		} else
+		{
+			if( useAlphaChannel )
+			{
+				fbFormat = Format.RGBA4444;
+			} else
+			{
+				fbFormat = Format.RGB565;
+			}
+		}
+
+		fbScene = new FrameBuffer( fbFormat, fboWidth, fboHeight, useDepth );
+		texScene = fbScene.getColorBufferTexture();
+		fullScreenQuad = createFullscreenQuad();
+		capturing = false;
 	}
 
-	public static void begin()
+	public void dispose()
 	{
-		if( hasEffect() )
+		if(effect != null)
+			effect.dispose();
+
+		fbScene.dispose();
+		fullScreenQuad.dispose();
+	}
+
+	public void setEffect(IPostProcessorEffect effect)
+	{
+		this.effect = effect;
+	}
+
+	public Format getFramebufferFormat()
+	{
+		return fbFormat;
+	}
+
+	/**
+	 * Start capturing the scene
+	 */
+	public void capture()
+	{
+		if(!capturing && ( effect != null ))
 		{
-			frameBuffer.begin();
+			capturing = true;
+			fbScene.begin();
+
+			Color c = Color.CLEAR;
+			if(effect != null)
+				c = effect.getClearColor();
+
+			Gdx.gl.glClearColor( c.r, c.g, c.b, c.a );
+			Gdx.gl.glClear( GL10.GL_COLOR_BUFFER_BIT | GL10.GL_DEPTH_BUFFER_BIT );
 		}
 	}
 
-	public static void end()
+	/**
+	 * Pause capturing
+	 */
+	public void capturePause()
 	{
-		if( hasEffect() )
+		if(capturing)
 		{
-			frameBuffer.end();
-			render();
+			capturing = false;
+			fbScene.end();
 		}
 	}
 
-	public static boolean hasEffect()
+	/**
+	 * Start capturing again, after pause
+	 */
+	public void captureContinue()
 	{
-		return (effect != null) && effect.isEnabled();
+		if(!capturing)
+		{
+			capturing = true;
+			fbScene.begin();
+		}
 	}
 
-	public static void setEffect( PostProcessEffect effect )
+	/**
+	 * call this when resuming
+	 */
+	public void resume()
 	{
-		PostProcessor.effect = effect;
+		texScene = fbScene.getColorBufferTexture();
+		if( effect != null )
+			effect.resume();
 	}
 
-	public static PostProcessEffect getEffect()
+	/**
+	 * Finish capturing the scene, post-process and render the effect, if any
+	 */
+	public void render()
 	{
-		return PostProcessor.effect;
+		if(capturing && ( effect != null ))
+		{
+			capturing = false;
+			fbScene.end();
+
+			if(effect != null)
+			{
+				effect.render( fullScreenQuad, texScene );
+			}
+		}
 	}
 
-	private static void render()
-	{
-		frameBuffer.getColorBufferTexture().bind(0);
-
-		ShaderProgram shader = effect.getShader();
-		shader.begin();
-		effect.onBeforeShaderPass();
-		quad.render( shader, GL20.GL_TRIANGLE_FAN );
-		shader.end();
-	}
-
-	private static Mesh createQuadMesh() {
+	private Mesh createFullscreenQuad() {
 		// vertex coord
 		verts[X1] = -1;
 		verts[Y1] = -1;
@@ -97,29 +167,29 @@ public class PostProcessor
 
 		Mesh tmpMesh = new Mesh(true, 4, 0, new VertexAttribute(
 				Usage.Position, 2, "a_position"), new VertexAttribute(
-				Usage.TextureCoordinates, 2, "a_texCoord"));
+				Usage.TextureCoordinates, 2, "a_texCoord0"));
 
 		tmpMesh.setVertices(verts);
 		return tmpMesh;
 
 	}
 
-	static public final int VERT_SIZE = 16;
+	private static final int VERT_SIZE = 16;
 	private static float[] verts = new float[VERT_SIZE];
-	static public final int X1 = 0;
-	static public final int Y1 = 1;
-	static public final int U1 = 2;
-	static public final int V1 = 3;
-	static public final int X2 = 4;
-	static public final int Y2 = 5;
-	static public final int U2 = 6;
-	static public final int V2 = 7;
-	static public final int X3 = 8;
-	static public final int Y3 = 9;
-	static public final int U3 = 10;
-	static public final int V3 = 11;
-	static public final int X4 = 12;
-	static public final int Y4 = 13;
-	static public final int U4 = 14;
-	static public final int V4 = 15;
+	private static final int X1 = 0;
+	private static final int Y1 = 1;
+	private static final int U1 = 2;
+	private static final int V1 = 3;
+	private static final int X2 = 4;
+	private static final int Y2 = 5;
+	private static final int U2 = 6;
+	private static final int V2 = 7;
+	private static final int X3 = 8;
+	private static final int Y3 = 9;
+	private static final int U3 = 10;
+	private static final int V3 = 11;
+	private static final int X4 = 12;
+	private static final int Y4 = 13;
+	private static final int U4 = 14;
+	private static final int V4 = 15;
 }

@@ -1,9 +1,10 @@
-package com.bitfire.uracer.effects.postprocessing.bloom;
+package com.bitfire.uracer.utils;
 
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.glutils.ShaderProgram;
 
-public final class ShaderLoader {
+public final class ShaderLoader
+{
 
 	static final public ShaderProgram createShader( String vertexName, String fragmentName )
 	{
@@ -15,8 +16,7 @@ public final class ShaderLoader {
 		{
 			System.out.println( shader.getLog() );
 			Gdx.app.exit();
-		} //else
-//			Gdx.app.log( "shader compiled", shader.getLog() );
+		}
 
 		return shader;
 	}

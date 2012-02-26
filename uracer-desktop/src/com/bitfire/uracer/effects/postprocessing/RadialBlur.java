@@ -1,7 +1,8 @@
+/*
 package com.bitfire.uracer.effects.postprocessing;
 
 import com.badlogic.gdx.Gdx;
-import com.badlogic.gdx.graphics.glutils.ShaderProgram;
+import com.badlogic.gdx.graphics.g3d.experimental.ShaderLoader;
 import com.badlogic.gdx.math.Vector2;
 
 public class RadialBlur extends PostProcessEffect
@@ -14,15 +15,7 @@ public class RadialBlur extends PostProcessEffect
 
 	public RadialBlur()
 	{
-		ShaderProgram.pedantic = false;
-		shader = new ShaderProgram(
-					Gdx.files.internal( "data/shaders/radialblur.vert" ).readString(),
-					Gdx.files.internal( "data/shaders/radialblur.frag" ).readString()
-		);
-
-		if( shader.isCompiled() == false )
-			throw new IllegalStateException( "\"" + shader.getLog() + "\"" );
-
+		setShader( ShaderLoader.createShader( "data/shaders/radialblur/radialblur.vert", "data/shaders/radialblur/radialblur.vert" ) );
 		effectStrength = 0f;
 	}
 
@@ -52,3 +45,4 @@ public class RadialBlur extends PostProcessEffect
 		origin.set(x, y);
 	}
 }
+*/

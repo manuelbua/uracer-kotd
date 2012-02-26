@@ -12,7 +12,10 @@ import com.bitfire.uracer.audio.CarSoundManager;
 import com.bitfire.uracer.debug.Debug;
 import com.bitfire.uracer.effects.CarSkidMarks;
 import com.bitfire.uracer.effects.TrackEffects;
-import com.bitfire.uracer.effects.postprocessing.bloom.Bloom;
+import com.bitfire.uracer.effects.postprocessing.Bloom;
+import com.bitfire.uracer.effects.postprocessing.Bloom.BloomMixing;
+import com.bitfire.uracer.effects.postprocessing.Bloom.ThresholdType;
+import com.bitfire.uracer.effects.postprocessing.PostProcessor;
 import com.bitfire.uracer.entities.EntityManager;
 import com.bitfire.uracer.entities.vehicles.Car;
 import com.bitfire.uracer.game.logic.DirectorController;
@@ -44,7 +47,7 @@ public class Game
 	private DirectorController controller;
 
 	// effects
-//	private RadialBlur radialBlur;
+	private PostProcessor postProcessor;
 	private Bloom bloom;
 
 	// drawing
@@ -80,47 +83,38 @@ public class Game
 
 		if( Config.Graphics.EnablePostProcessingFx )
 		{
-//			radialBlur = new RadialBlur();
-//			radialBlur.setEnabled( true );
-//			PostProcessor.init( Gdx.graphics.getWidth(), Gdx.graphics.getHeight() );
-//			 PostProcessor.init( 512, 512 );
-//			PostProcessor.setEffect( radialBlur );
+			postProcessor = new PostProcessor( Gdx.graphics.getWidth(), Gdx.graphics.getHeight(), false /* depth */, true /* alpha */, true /* 32Bits */ );
 
-			boolean use32bits = true;
-			boolean useBlending = false;
-			boolean needDepth = false;
-			boolean hq = true;
+			float rttRatio = 0.5f;
+			int blurPasses = 4;
+			boolean saturated = false;
 
-			Bloom.useAlphaChannelAsMask = false;
-
-			if( !hq )
+			if(!Config.isDesktop)
 			{
-				float rttRatio = 0.25f;
-				bloom = new Bloom( (int)(Gdx.graphics.getWidth() * rttRatio), (int)(Gdx.graphics.getHeight() * rttRatio), needDepth, useBlending, use32bits );
-
-				float bloomQ = .3f;
-				bloom.blurPasses = 1;
-				bloom.setBloomIntesity( bloomQ );
-				bloom.setOriginalIntesity( 1f-bloomQ );
+				rttRatio = 0.25f;
+				blurPasses = 2;
 			}
-			else
+
+			int fboWidth = (int)(Gdx.graphics.getWidth() * rttRatio);
+			int fboHeight = (int)(Gdx.graphics.getHeight() * rttRatio);
+			bloom = new Bloom( fboWidth, fboHeight, postProcessor.getFramebufferFormat() );
+			bloom.blurPasses = blurPasses;
+
+			if(saturated)
 			{
-				float rttRatio = 0.5f;
-				int blurPasses = 4;
-				if(!Config.isDesktop)
-				{
-					blurPasses = 2;
-					rttRatio = 0.25f;
-				}
-
-				bloom = new Bloom( (int)(Gdx.graphics.getWidth() * rttRatio), (int)(Gdx.graphics.getHeight() * rttRatio), needDepth, useBlending, use32bits );
-
-				float bloomQ = 1.6f;
-				bloom.blurPasses = blurPasses;
-				bloom.setBloomIntesity( bloomQ );
+				bloom.setThresholdType( ThresholdType.Saturate );
+				bloom.setBloomMixing( BloomMixing.Scaled );
+				bloom.setBloomIntesity( 1.6f );
 				bloom.setOriginalIntesity( 1f );
 				bloom.setTreshold( 0.48f );
 			}
+			else
+			{
+				bloom.setBloomIntesity( 1.2f );
+				bloom.setOriginalIntesity( 1f );
+			}
+
+			postProcessor.setEffect( bloom );
 		}
 
 		// setup sprite batch at origin top-left => 0,0
@@ -140,7 +134,7 @@ public class Game
 
 		if(Config.Graphics.EnablePostProcessingFx)
 		{
-			bloom.dispose();
+			postProcessor.dispose();
 		}
 	}
 
@@ -186,11 +180,15 @@ public class Game
 
 		if( Config.Graphics.EnablePostProcessingFx )
 		{
-//			PostProcessor.begin();
-//			bloom.blurPasses = 4;
-//			bloom.setBloomIntesity( 1f );
+//			bloom.setThresholdType( ThresholdType.Saturate );
+//			bloom.setBloomMixing( BloomMixing.WeightedAverage );
+//			bloom.setBloomIntesity( 2f );
 //			bloom.setOriginalIntesity( 1f );
-			bloom.capture();
+//			bloom.setTreshold( 0.4f );
+//			bloom.setBlending( true );
+//			bloom.setClearColor( 1f, .3f, .3f, 0 );
+//			bloom.blurPasses = 4;
+			postProcessor.capture();
 		}
 
 		gl.glViewport( 0, 0, Gdx.graphics.getWidth(), Gdx.graphics.getHeight() );
@@ -226,8 +224,7 @@ public class Game
 
 		if( Config.Graphics.EnablePostProcessingFx )
 		{
-//			PostProcessor.end();
-			bloom.render();
+			postProcessor.render();
 		}
 
 		// lights
