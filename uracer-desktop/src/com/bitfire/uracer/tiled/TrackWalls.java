@@ -19,6 +19,7 @@ import com.badlogic.gdx.math.Vector2;
 import com.bitfire.uracer.Art;
 import com.bitfire.uracer.Director;
 import com.bitfire.uracer.factories.Box2DFactory;
+import com.bitfire.uracer.utils.AMath;
 import com.bitfire.uracer.utils.Convert;
 import com.bitfire.uracer.utils.MapUtils;
 
@@ -64,6 +65,7 @@ public class TrackWalls
 				{
 					float factor = Director.scalingStrategy.invTileMapZoomFactor;
 					float wallSizeMt = 0.3f * factor;
+					float[] mags = new float[points.size()-1];
 
 					offsetMt.set(o.x, o.y);
 					offsetMt.set(Convert.px2mt(offsetMt));
@@ -76,12 +78,16 @@ public class TrackWalls
 						toMt.set(Convert.px2mt(points.get(j))).add( offsetMt ).mul( factor );
 						toMt.y = Director.worldSizeScaledMt.y - toMt.y;
 
+						// create box2d wall
 						Box2DFactory.createWall( fromMt, toMt, wallSizeMt, 0f );
+
+						// compute magnitude
+						mags[j-1] = (float)Math.sqrt( (toMt.x - fromMt.x) * (toMt.x - fromMt.x) + (toMt.y - fromMt.y) * (toMt.y - fromMt.y) );
 
 						fromMt.set(toMt);
 					}
 
-					Mesh mesh = buildMesh( points );
+					Mesh mesh = buildMesh( points, mags );
 
 					StillSubMesh[] subMeshes = new StillSubMesh[1];
 					subMeshes[0] = new StillSubMesh("wall", mesh, GL10.GL_TRIANGLES);
@@ -97,18 +103,22 @@ public class TrackWalls
 		}
 	}
 
-	private Mesh buildMesh(ArrayList<Vector2> points)
+	private Mesh buildMesh(ArrayList<Vector2> points, float[] magnitudes)
 	{
+		Vector2 in = new Vector2();
+		MathUtils.random.setSeed( Long.MIN_VALUE );
+
 		// scaling factors
 		float factor = Director.scalingStrategy.invTileMapZoomFactor;
 		float oneOnWorld3DFactor = 1f / OrthographicAlignedStillModel.World3DScalingFactor;
-		float textureScalingU = 8f;
-		float textureScalingV = 8f;
-		float wallHeightMt = 6f * factor * oneOnWorld3DFactor;
+		float wallHeightMt = 5f * factor * oneOnWorld3DFactor;
+		float textureScalingU = 1f;
+		float coordU = 1f;
+		float coordV = 3f;
 
 		// jitter
-		float jitterPositional = .6f * factor * oneOnWorld3DFactor;
-//		float jitterAltitudinal = 1f * factor * oneOnWorld3DFactor;
+		float jitterPositional = .5f * factor * oneOnWorld3DFactor;
+//		float jitterAltitudinal = 3f * factor * oneOnWorld3DFactor;
 		boolean addJitter = true;
 
 		int vertexCount = points.size() * 2;
@@ -117,16 +127,20 @@ public class TrackWalls
 		int vertSize = 5;	// x, y, z, u, v
 		float[] verts = new float[vertSize*vertexCount];
 		short[] indices = new short[indexCount];
-
-
-		Vector2 in = new Vector2();
-
-		MathUtils.random.setSeed( Long.MIN_VALUE );
+		float mag, prevmag;
+		mag = prevmag = magnitudes[0];
 
 		// add input (interleaved w/ later filled dupes w/ just a meaningful z-coordinate)
 		for(int i = 0, j = 0, vc = 0, vci = 0; i < points.size(); i++, j+=2*vertSize)
 		{
-			in.set( Convert.px2mt(points.get(i))).mul(factor * oneOnWorld3DFactor );
+			int magidx = i-1;
+			if(magidx<0) magidx = 0;
+			mag = AMath.lerp( prevmag, magnitudes[magidx], .25f);
+			prevmag = mag;
+
+			coordU = mag * textureScalingU;
+
+			in.set( Convert.px2mt(points.get(i))).mul(factor * oneOnWorld3DFactor);
 
 			// base
 			verts[j + X1] = in.x;
@@ -139,10 +153,10 @@ public class TrackWalls
 			verts[j + Z2] = wallHeightMt;// + (addJitter? MathUtils.random( -jitterAltitudinal, jitterAltitudinal ) : 0);
 
 			// tex coords
-			verts[j + U1] = ((i&1)==0 ? textureScalingU : 0f);
-			verts[j + V1] = textureScalingV;
+			verts[j + U1] = ((i&1)==0 ? coordU : 0f);
+			verts[j + V1] = coordV;
 
-			verts[j + U2] = ((i&1)==0 ? textureScalingU : 0f);
+			verts[j + U2] = ((i&1)==0 ? coordU : 0f);
 			verts[j + V2] = 0f;
 
 			vc+=2;
