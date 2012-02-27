@@ -103,15 +103,19 @@ public class Game
 			if(saturated)
 			{
 				bloom.setThresholdType( ThresholdType.Saturate );
-				bloom.setBloomMixing( BloomMixing.Scaled );
+				bloom.setBloomMixing( BloomMixing.Scaled );	// slow on device, BloomMixing.WeightedAverage is faster
 				bloom.setBloomIntesity( 1.6f );
 				bloom.setOriginalIntesity( 1f );
 				bloom.setTreshold( 0.48f );
 			}
 			else
 			{
-				bloom.setBloomIntesity( 1.2f );
+				bloom.setThresholdType( ThresholdType.Test );
+				bloom.setBloomMixing( BloomMixing.Test );
+				bloom.setBloomIntesity( 1f );
 				bloom.setOriginalIntesity( 1f );
+				bloom.setTreshold( 0.35f );
+//				bloom.blurPasses = 0;
 			}
 
 			postProcessor.setEffect( bloom );

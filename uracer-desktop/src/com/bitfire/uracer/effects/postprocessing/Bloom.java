@@ -15,8 +15,8 @@ public class Bloom implements IPostProcessorEffect
 {
 	public static boolean useAlphaChannelAsMask = false;
 
-	public enum ThresholdType { Luminance, Saturate };
-	public enum BloomMixing { WeightedAverage, Scaled };
+	public enum ThresholdType { Luminance, Saturate, Test };
+	public enum BloomMixing { WeightedAverage, Scaled, Test };
 
 	private ThresholdType thresholdType = ThresholdType.Luminance;
 	private BloomMixing bloomMixing = BloomMixing.WeightedAverage;
@@ -28,6 +28,7 @@ public class Bloom implements IPostProcessorEffect
 	protected static ShaderProgram shThresholdLum;
 	protected static ShaderProgram shThresholdMaskedSat, shThresholdMaskedLum;
 	protected static ShaderProgram shBloomScaled, shBloomWa;
+	protected static ShaderProgram shBloomTest, shThresholdTest;
 	protected static ShaderProgram shBlur;
 	private static boolean shadersInitialized = false;
 
@@ -73,6 +74,9 @@ public class Bloom implements IPostProcessorEffect
 			shThresholdSat = ShaderLoader.createShader( "bloom/screenspace", "bloom/treshold-sat" );
 			shThresholdLum = ShaderLoader.createShader( "bloom/screenspace", "bloom/treshold-lum" );
 			shThresholdMaskedSat = shThresholdMaskedLum = ShaderLoader.createShader( "bloom/screenspace", "bloom/maskedtreshold-sat" ); // TODO
+
+			shBloomTest = ShaderLoader.createShader( "bloom/screenspace", "bloom/bloom-test" );
+			shThresholdTest = ShaderLoader.createShader( "bloom/screenspace", "bloom/threshold-test" );
 		}
 
 		setThresholdType( thresholdType );
@@ -90,6 +94,10 @@ public class Bloom implements IPostProcessorEffect
 				shThreshold = shThresholdMaskedSat;
 			else
 				shThreshold = shThresholdSat;
+			break;
+
+		case Test:
+			shThreshold = shThresholdTest;
 			break;
 
 		default:
@@ -111,6 +119,10 @@ public class Bloom implements IPostProcessorEffect
 		{
 		case Scaled:
 			shBloom = shBloomScaled;
+			break;
+
+		case Test:
+			shBloom = shBloomTest;
 			break;
 
 		default:
