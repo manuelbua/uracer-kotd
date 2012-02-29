@@ -192,6 +192,12 @@ public class Game
 //			bloom.setBlending( true );
 //			bloom.setClearColor( 1f, .3f, .3f, 0 );
 //			bloom.blurPasses = 4;
+
+			// this is some nice graphic expression for "arrogance mode"
+			bloom.setOriginalIntesity( 1f );	bloom.setOriginalSaturation( .1f );
+			bloom.setBloomIntesity( 1f );		bloom.setBloomSaturation( 1.5f );
+			bloom.setTreshold( 0.35f );
+
 			postProcessor.capture();
 		}
 

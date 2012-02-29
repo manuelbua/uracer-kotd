@@ -44,6 +44,9 @@ public class Bloom implements IPostProcessorEffect
 
 	protected float bloomIntensity = 1.3f;
 	protected float originalIntensity = 0.8f;
+	protected float bloomSaturation = 1f;
+	protected float originalSaturation = 1f;
+
 	protected float treshold = 0.277f;
 	protected boolean blending = false;
 	private int w;
@@ -133,6 +136,9 @@ public class Bloom implements IPostProcessorEffect
 
 		setBloomIntesity( bloomIntensity );
 		setOriginalIntesity( originalIntensity );
+
+		setBloomSaturation( bloomSaturation );
+		setOriginalSaturation( originalSaturation );
 	}
 
 	public void setClearColor( float r, float g, float b, float a )
@@ -160,15 +166,42 @@ public class Bloom implements IPostProcessorEffect
 		shBloom.end();
 	}
 
+	public void setBloomSaturation( float saturation )
+	{
+		bloomSaturation = saturation;
+		shBloom.begin();
+		{
+			shBloom.setUniformf( "BloomSaturation", saturation );
+		}
+		shBloom.end();
+	}
+
+	public void setOriginalSaturation( float saturation )
+	{
+		originalSaturation = saturation;
+		shBloom.begin();
+		{
+			shBloom.setUniformf( "OriginalSaturation", saturation );
+		}
+		shBloom.end();
+	}
+
 	public void setTreshold( float treshold )
 	{
 		this.treshold = treshold;
 		shThreshold.begin();
 		{
 			shThreshold.setUniformf( "treshold", treshold );
+
 			if(thresholdType == ThresholdType.Saturate)
 			{
 				shThreshold.setUniformf( "tresholdD", (1f / treshold) );
+			}
+
+			if(thresholdType == ThresholdType.Test)
+			{
+				shThreshold.setUniformf( "tresholdInvTx", (1f / (1f-treshold)) );	// correct
+//				shThreshold.setUniformf( "tresholdInvTx", (1f / (treshold)) );		// but does it looks better?
 			}
 		}
 		shThreshold.end();

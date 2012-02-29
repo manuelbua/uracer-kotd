@@ -8,7 +8,7 @@ precision mediump float;
 #endif
 uniform MED sampler2D u_texture0;
 uniform float treshold;
-uniform float tresholdD;
+uniform float tresholdInvTx;
 varying vec2 v_texCoords;
 
 void main()
@@ -18,5 +18,5 @@ void main()
 
 	// adjust it to keep only values brighter than the specified
 	// threshold, scaling back up to preserve full color range
-	gl_FragColor = saturate((c-treshold) / (1-treshold));
+	gl_FragColor = clamp((c-treshold) * tresholdInvTx, 0.0, 1.0);
 }
