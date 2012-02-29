@@ -195,7 +195,7 @@ public class Game
 
 			// this is some nice graphic expression for "arrogance mode"
 			bloom.setOriginalIntesity( 1f );	bloom.setOriginalSaturation( .1f );
-			bloom.setBloomIntesity( 1f );		bloom.setBloomSaturation( 1.5f );
+			bloom.setBloomIntesity( 1.4f );		bloom.setBloomSaturation( 1.15f );
 			bloom.setTreshold( 0.35f );
 
 			postProcessor.capture();
