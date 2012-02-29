@@ -18,5 +18,6 @@ void main()
 
 	// adjust it to keep only values brighter than the specified
 	// threshold, scaling back up to preserve full color range
-	gl_FragColor = clamp((c-treshold) * tresholdInvTx, 0.0, 1.0);
+	//gl_FragColor = clamp((c-treshold) * tresholdInvTx, 0.0, 1.0);
+	gl_FragColor = (c-treshold) * tresholdInvTx;
 }

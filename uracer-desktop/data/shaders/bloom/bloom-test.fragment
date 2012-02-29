@@ -43,7 +43,8 @@ void main()
 
 	// darken the base image in areas there there is a lot of bloom
 	// to prevent things looking excessively burned-out
-	original *= (1.0 - clamp(bloom, 0.0, 1.0));
+	//original *= (1.0 - clamp(bloom, 0.0, 1.0));
+	original *= (1.0 - bloom);
 
 	// combine
 	gl_FragColor = original + bloom;
