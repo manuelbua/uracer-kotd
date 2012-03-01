@@ -1,4 +1,4 @@
-package com.bitfire.uracer.effects.postprocessing;
+package com.bitfire.uracer.effects.postprocessing.bloom;
 
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.Color;
@@ -9,31 +9,19 @@ import com.badlogic.gdx.graphics.Pixmap.Format;
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.glutils.FrameBuffer;
 import com.badlogic.gdx.graphics.glutils.ShaderProgram;
+import com.bitfire.uracer.effects.postprocessing.IPostProcessorEffect;
 import com.bitfire.uracer.utils.ShaderLoader;
 
 public class Bloom implements IPostProcessorEffect
 {
 	public static boolean useAlphaChannelAsMask = false;
 
-	public enum ThresholdType { Luminance, Saturate, Test };
-	public enum BloomMixing { WeightedAverage, Scaled, Test };
-
-	private ThresholdType thresholdType = ThresholdType.Luminance;
-	private BloomMixing bloomMixing = BloomMixing.WeightedAverage;
-
 	/** how many blur pass */
-	public int blurPasses = 1;
 
-	protected static ShaderProgram shThresholdSat;
-	protected static ShaderProgram shThresholdLum;
-	protected static ShaderProgram shThresholdMaskedSat, shThresholdMaskedLum;
-	protected static ShaderProgram shBloomScaled, shBloomWa;
-	protected static ShaderProgram shBloomTest, shThresholdTest;
+	protected static ShaderProgram shThreshold;
+	protected static ShaderProgram shBloom;
 	protected static ShaderProgram shBlur;
 	private static boolean shadersInitialized = false;
-
-	// refs
-	private ShaderProgram shThreshold, shBloom;
 
 	private Color clearColor = Color.CLEAR;
 
@@ -42,12 +30,12 @@ public class Bloom implements IPostProcessorEffect
 	private Texture pingPongTex1;
 	private Texture pingPongTex2;
 
-	protected float bloomIntensity = 1.3f;
-	protected float originalIntensity = 0.8f;
-	protected float bloomSaturation = 1f;
-	protected float originalSaturation = 1f;
+	protected int blurPasses = 1;
+	protected float bloomIntensity, bloomSaturation;
+	protected float baseIntensity, baseSaturation;
+	protected BloomSettings defaultSettings = new BloomSettings( "default", 2, 0.277f, 1f, .85f, 1.1f, .85f );
 
-	protected float treshold = 0.277f;
+	protected float threshold;
 	protected boolean blending = false;
 	private int w;
 	private int h;
@@ -63,6 +51,7 @@ public class Bloom implements IPostProcessorEffect
 		createShaders();
 
 		setSize( fboWidth, fboHeight );
+		setSettings( defaultSettings );
 	}
 
 	protected void createShaders()
@@ -71,74 +60,14 @@ public class Bloom implements IPostProcessorEffect
 		{
 			Bloom.shadersInitialized = true;
 
+			if(Bloom.useAlphaChannelAsMask)
+				shThreshold = ShaderLoader.createShader( "bloom/screenspace", "bloom/masked-threshold" );
+			else
+				shThreshold = ShaderLoader.createShader( "bloom/screenspace", "bloom/threshold" );
+
+			shBloom = ShaderLoader.createShader( "bloom/screenspace", "bloom/bloom" );
 			shBlur = ShaderLoader.createShader( "bloom/blurspace", "bloom/gaussian" );
-			shBloomScaled = ShaderLoader.createShader( "bloom/screenspace", "bloom/bloom-scaled" );
-			shBloomWa = ShaderLoader.createShader( "bloom/screenspace", "bloom/bloom-wa" );
-			shThresholdSat = ShaderLoader.createShader( "bloom/screenspace", "bloom/treshold-sat" );
-			shThresholdLum = ShaderLoader.createShader( "bloom/screenspace", "bloom/treshold-lum" );
-			shThresholdMaskedSat = shThresholdMaskedLum = ShaderLoader.createShader( "bloom/screenspace", "bloom/maskedtreshold-sat" ); // TODO
-
-			shBloomTest = ShaderLoader.createShader( "bloom/screenspace", "bloom/bloom-test" );
-			shThresholdTest = ShaderLoader.createShader( "bloom/screenspace", "bloom/threshold-test" );
 		}
-
-		setThresholdType( thresholdType );
-		setBloomMixing( bloomMixing );
-	}
-
-	public void setThresholdType(ThresholdType threshold)
-	{
-		thresholdType = threshold;
-
-		switch( threshold )
-		{
-		case Saturate:
-			if(Bloom.useAlphaChannelAsMask)
-				shThreshold = shThresholdMaskedSat;
-			else
-				shThreshold = shThresholdSat;
-			break;
-
-		case Test:
-			shThreshold = shThresholdTest;
-			break;
-
-		default:
-		case Luminance:
-			if(Bloom.useAlphaChannelAsMask)
-				shThreshold = shThresholdMaskedLum;	// TODO
-			else
-				shThreshold = shThresholdLum;
-		}
-
-		setTreshold( treshold );
-	}
-
-	public void setBloomMixing(BloomMixing mixing)
-	{
-		bloomMixing = mixing;
-
-		switch( mixing )
-		{
-		case Scaled:
-			shBloom = shBloomScaled;
-			break;
-
-		case Test:
-			shBloom = shBloomTest;
-			break;
-
-		default:
-		case WeightedAverage:
-			shBloom = shBloomWa;
-			break;
-		}
-
-		setBloomIntesity( bloomIntensity );
-		setOriginalIntesity( originalIntensity );
-
-		setBloomSaturation( bloomSaturation );
-		setOriginalSaturation( originalSaturation );
 	}
 
 	public void setClearColor( float r, float g, float b, float a )
@@ -156,12 +85,12 @@ public class Bloom implements IPostProcessorEffect
 		shBloom.end();
 	}
 
-	public void setOriginalIntesity( float intensity )
+	public void setBaseIntesity( float intensity )
 	{
-		originalIntensity = intensity;
+		baseIntensity = intensity;
 		shBloom.begin();
 		{
-			shBloom.setUniformf( "OriginalIntensity", intensity );
+			shBloom.setUniformf( "BaseIntensity", intensity );
 		}
 		shBloom.end();
 	}
@@ -176,33 +105,24 @@ public class Bloom implements IPostProcessorEffect
 		shBloom.end();
 	}
 
-	public void setOriginalSaturation( float saturation )
+	public void setBaseSaturation( float saturation )
 	{
-		originalSaturation = saturation;
+		baseSaturation = saturation;
 		shBloom.begin();
 		{
-			shBloom.setUniformf( "OriginalSaturation", saturation );
+			shBloom.setUniformf( "BaseSaturation", saturation );
 		}
 		shBloom.end();
 	}
 
-	public void setTreshold( float treshold )
+	public void setThreshold( float treshold )
 	{
-		this.treshold = treshold;
+		this.threshold = treshold;
 		shThreshold.begin();
 		{
 			shThreshold.setUniformf( "treshold", treshold );
-
-			if(thresholdType == ThresholdType.Saturate)
-			{
-				shThreshold.setUniformf( "tresholdD", (1f / treshold) );
-			}
-
-			if(thresholdType == ThresholdType.Test)
-			{
-				shThreshold.setUniformf( "tresholdInvTx", (1f / (1f-treshold)) );	// correct
-//				shThreshold.setUniformf( "tresholdInvTx", (1f / (treshold)) );		// but does it looks better?
-			}
+			shThreshold.setUniformf( "tresholdInvTx", (1f / (1f-treshold)) );	// correct
+//			shThreshold.setUniformf( "tresholdInvTx", (1f / (treshold)) );		// does this look better?
 		}
 		shThreshold.end();
 	}
@@ -210,6 +130,21 @@ public class Bloom implements IPostProcessorEffect
 	public void setBlending(boolean blending)
 	{
 		this.blending = blending;
+	}
+
+	public void setSettings(BloomSettings settings)
+	{
+		setThreshold( settings.bloomThreshold );
+		setBaseIntesity( settings.baseIntensity );
+		setBaseSaturation( settings.baseSaturation );
+		setBloomIntesity( settings.bloomIntensity );
+		setBloomSaturation( settings.bloomSaturation );
+		setBlurPasses( settings.blurPasses );
+	}
+
+	public void setBlurPasses(int passes)
+	{
+		this.blurPasses = passes;
 	}
 
 	private void setSize( int FBO_W, int FBO_H )
@@ -220,6 +155,7 @@ public class Bloom implements IPostProcessorEffect
 		shBlur.setUniformf( "size", FBO_W, FBO_H );
 		shBlur.end();
 	}
+
 
 	/**
 	 * Call this when application is exiting.
@@ -232,11 +168,8 @@ public class Bloom implements IPostProcessorEffect
 		pingPongBuffer2.dispose();
 
 		shBlur.dispose();
-		shBloomScaled.dispose();
-		shBloomWa.dispose();
-		shThresholdSat.dispose();
-		shThresholdLum.dispose();
-		shThresholdMaskedSat.dispose();
+		shBloom.dispose();
+		shThreshold.dispose();
 	}
 
 	@Override
@@ -325,9 +258,12 @@ public class Bloom implements IPostProcessorEffect
 	public void resume()
 	{
 		setSize( w, h );
-		setTreshold( treshold );
+
+		setThreshold( threshold );
+		setBaseIntesity( baseIntensity );
+		setBaseSaturation( baseSaturation );
 		setBloomIntesity( bloomIntensity );
-		setOriginalIntesity( originalIntensity );
+		setBloomSaturation( bloomSaturation );
 
 		pingPongTex1 = pingPongBuffer1.getColorBufferTexture();
 		pingPongTex2 = pingPongBuffer2.getColorBufferTexture();

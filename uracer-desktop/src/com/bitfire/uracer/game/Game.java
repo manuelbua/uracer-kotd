@@ -12,10 +12,9 @@ import com.bitfire.uracer.audio.CarSoundManager;
 import com.bitfire.uracer.debug.Debug;
 import com.bitfire.uracer.effects.CarSkidMarks;
 import com.bitfire.uracer.effects.TrackEffects;
-import com.bitfire.uracer.effects.postprocessing.Bloom;
-import com.bitfire.uracer.effects.postprocessing.Bloom.BloomMixing;
-import com.bitfire.uracer.effects.postprocessing.Bloom.ThresholdType;
 import com.bitfire.uracer.effects.postprocessing.PostProcessor;
+import com.bitfire.uracer.effects.postprocessing.bloom.Bloom;
+import com.bitfire.uracer.effects.postprocessing.bloom.BloomSettings;
 import com.bitfire.uracer.entities.EntityManager;
 import com.bitfire.uracer.entities.vehicles.Car;
 import com.bitfire.uracer.game.logic.DirectorController;
@@ -83,11 +82,10 @@ public class Game
 
 		if( Config.Graphics.EnablePostProcessingFx )
 		{
-			postProcessor = new PostProcessor( Gdx.graphics.getWidth(), Gdx.graphics.getHeight(), false /* depth */, true /* alpha */, true /* 32Bits */ );
+			postProcessor = new PostProcessor( Gdx.graphics.getWidth(), Gdx.graphics.getHeight(), false /* depth */, false /* alpha */, true /* 32Bits */ );
 
 			float rttRatio = 0.5f;
 			int blurPasses = 4;
-			boolean saturated = false;
 
 			if(!Config.isDesktop)
 			{
@@ -98,26 +96,17 @@ public class Game
 			int fboWidth = (int)(Gdx.graphics.getWidth() * rttRatio);
 			int fboHeight = (int)(Gdx.graphics.getHeight() * rttRatio);
 			bloom = new Bloom( fboWidth, fboHeight, postProcessor.getFramebufferFormat() );
-			bloom.blurPasses = blurPasses;
 
-			if(saturated)
-			{
-				bloom.setThresholdType( ThresholdType.Saturate );
-				bloom.setBloomMixing( BloomMixing.Scaled );	// slow on device, BloomMixing.WeightedAverage is faster
-				bloom.setBloomIntesity( 1.6f );
-				bloom.setOriginalIntesity( 1f );
-				bloom.setTreshold( 0.48f );
-			}
-			else
-			{
-				bloom.setThresholdType( ThresholdType.Test );
-				bloom.setBloomMixing( BloomMixing.Test );
-				bloom.setBloomIntesity( 1f );
-				bloom.setOriginalIntesity( 1f );
-				bloom.setTreshold( 0.35f );
-//				bloom.blurPasses = 0;
-			}
+			// this is some nice graphic expression for "arrogance mode"
+			BloomSettings bs = new BloomSettings( "arrogance", blurPasses, 0.35f, 1f, 0.1f, 1.3f, 0.75f );
+//			BloomSettings bs = new BloomSettings( "default", blurPasses, 0.25f, 1f, 1f, 1.25f, 1f );
+//			BloomSettings bs = new BloomSettings( "soft", blurPasses, 0f, 1f, 1f, 1f, 1f );
+//			BloomSettings bs = new BloomSettings( "desaturated", 2, 0.5f, 1f, 1f, 2f, 0f );
+//			BloomSettings bs = new BloomSettings( "saturated", 3, 0.25f, 1f, 0f, 2f, 2f );
+//			BloomSettings bs = new BloomSettings( "blurry", 2, 0f, 0.1f, 1f, 1f, 1f );
+//			BloomSettings bs = new BloomSettings( "subtle", 2, 0.5f, 1f, 1f, 1f, 1f );
 
+			bloom.setSettings( bs );
 			postProcessor.setEffect( bloom );
 		}
 
@@ -193,10 +182,10 @@ public class Game
 //			bloom.setClearColor( 1f, .3f, .3f, 0 );
 //			bloom.blurPasses = 4;
 
-			// this is some nice graphic expression for "arrogance mode"
-			bloom.setOriginalIntesity( 1f );	bloom.setOriginalSaturation( .1f );
-			bloom.setBloomIntesity( 1.4f );		bloom.setBloomSaturation( 1.15f );
-			bloom.setTreshold( 0.35f );
+
+//			bloom.setOriginalIntesity( 1f );	bloom.setOriginalSaturation( .1f );
+//			bloom.setBloomIntesity( 1.4f );		bloom.setBloomSaturation( .75f );
+//			bloom.setTreshold( 0.35f );
 
 			postProcessor.capture();
 		}
