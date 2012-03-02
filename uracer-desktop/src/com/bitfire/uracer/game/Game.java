@@ -84,8 +84,7 @@ public class Game
 		{
 			postProcessor = new PostProcessor( Gdx.graphics.getWidth(), Gdx.graphics.getHeight(), false /* depth */, false /* alpha */, true /* 32Bits */ );
 
-			float rttRatio = 0.5f;
-			int blurPasses = 4;
+			float rttRatio = 0.25f;
 
 //			if(!Config.isDesktop)
 //			{
@@ -98,10 +97,12 @@ public class Game
 			bloom = new Bloom( fboWidth, fboHeight, postProcessor.getFramebufferFormat() );
 
 			// this is some nice graphic expression for "arrogance mode"
-//			BloomSettings bs = new BloomSettings( "arrogance", blurPasses, 0.35f, 1f, 0.1f, 1.4f, 0.75f );
-//			BloomSettings bs = new BloomSettings( "default", blurPasses, 0.35f, 1f, 0.3f, 1.3f, 1.5f );
-			BloomSettings bs = new BloomSettings( "soft", 2, 0.25f, 1f, 0.3f, 1f, 1.4f );
-//			BloomSettings bs = new BloomSettings( "soft", blurPasses, 0f, 1f, 1f, 1f, 1f );
+//			BloomSettings bs = new BloomSettings( "arrogance", 4, 0.35f, 1f, 0.1f, 1.4f, 0.75f );
+//			BloomSettings bs = new BloomSettings( "default", 4, 0.35f, 1f, 0.3f, 1.3f, 1.5f );
+//			BloomSettings bs = new BloomSettings( "soft", 2, 0.25f, 1f, 0.3f, 1f, 1.4f );
+			BloomSettings bs = new BloomSettings( "soft-2", 1, 0.25f, 0.8f, 0.5f, 0.9f, 1.3f );
+
+//			BloomSettings bs = new BloomSettings( "soft-3", 4, 0f, 1f, 1f, 1f, 1f );
 //			BloomSettings bs = new BloomSettings( "desaturated", 2, 0.5f, 1f, 1f, 2f, 0f );
 //			BloomSettings bs = new BloomSettings( "saturated", 3, 0.25f, 1f, 0f, 2f, 2f );
 //			BloomSettings bs = new BloomSettings( "blurry", 2, 0f, 0.1f, 1f, 1f, 1f );
@@ -185,10 +186,10 @@ public class Game
 
 
 			// dbg (hotcode)
-//			bloom.setBaseIntesity( 1f );	bloom.setBaseSaturation( .3f );
-//			bloom.setBloomIntesity( 1f );		bloom.setBloomSaturation( 1.4f );
+//			bloom.setBaseIntesity( .8f );	bloom.setBaseSaturation( .5f );
+//			bloom.setBloomIntesity( .8f );		bloom.setBloomSaturation( 1.1f );
 //			bloom.setThreshold( 0.25f );
-//			bloom.setBlurPasses( 2 );
+//			bloom.setBlurPasses( 1 );
 
 			postProcessor.capture();
 		}
