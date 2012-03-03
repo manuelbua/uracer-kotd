@@ -82,7 +82,7 @@ public class Game
 
 		if( Config.Graphics.EnablePostProcessingFx )
 		{
-			postProcessor = new PostProcessor( Gdx.graphics.getWidth(), Gdx.graphics.getHeight(), false /* depth */, false /* alpha */, true /* 32Bits */ );
+			postProcessor = new PostProcessor( Gdx.graphics.getWidth(), Gdx.graphics.getHeight(), false /* depth */, false /* alpha */, Config.isDesktop /* 32Bits */ );
 
 			float rttRatio = 0.25f;
 
