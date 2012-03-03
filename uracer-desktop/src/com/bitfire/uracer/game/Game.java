@@ -99,7 +99,7 @@ public class Game
 //			BloomSettings bs = new BloomSettings( "soft", 2, 0.25f, 1f, 0.3f, 1f, 1.4f );
 //			BloomSettings bs = new BloomSettings( "soft-2", 1, 0.25f, 0.8f, 0.5f, 0.9f, 1.3f );
 //			BloomSettings bs = new BloomSettings( "soft-lowq", 1, 0.25f, 1f, 1f, 0.8f, 1.25f );
-			BloomSettings bs = new BloomSettings( "arrogance-lowq", 1, 0.25f, 1f, 0.1f, 1f, 1.4f );
+			BloomSettings bs = new BloomSettings( "arrogance-lowq", 1, 0.25f, 1f, 0.1f, 0.8f, 1.4f );
 
 //			BloomSettings bs = new BloomSettings( "soft-3", 4, 0f, 1f, 1f, 1f, 1f );
 //			BloomSettings bs = new BloomSettings( "desaturated", 2, 0.5f, 1f, 1f, 2f, 0f );
