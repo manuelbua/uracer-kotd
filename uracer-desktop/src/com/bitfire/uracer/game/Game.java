@@ -4,8 +4,10 @@ import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.GL20;
 import com.badlogic.gdx.graphics.OrthographicCamera;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
+import com.badlogic.gdx.math.WindowedMean;
 import com.bitfire.uracer.Art;
 import com.bitfire.uracer.Config;
+import com.bitfire.uracer.Config.Physics;
 import com.bitfire.uracer.Director;
 import com.bitfire.uracer.URacer;
 import com.bitfire.uracer.audio.CarSoundManager;
@@ -57,6 +59,7 @@ public class Game
 //		if(!Config.isDesktop)
 //			Config.Graphics.EnablePostProcessingFx = false;
 
+		System.out.println("resolution=" + Gdx.graphics.getWidth() + "x" + Gdx.graphics.getHeight() + "px, physics=" + Physics.PhysicsTimestepHz + "Hz");
 		Game.tweener = createTweener();
 
 		Messager.init();
@@ -96,7 +99,7 @@ public class Game
 //			BloomSettings bs = new BloomSettings( "soft", 2, 0.25f, 1f, 0.3f, 1f, 1.4f );
 //			BloomSettings bs = new BloomSettings( "soft-2", 1, 0.25f, 0.8f, 0.5f, 0.9f, 1.3f );
 //			BloomSettings bs = new BloomSettings( "soft-lowq", 1, 0.25f, 1f, 1f, 0.8f, 1.25f );
-			BloomSettings bs = new BloomSettings( "arrogance-lowq", 1, 0.25f, 1f, 0.1f, 1f, 1.8f );
+			BloomSettings bs = new BloomSettings( "arrogance-lowq", 1, 0.25f, 1f, 0.1f, 1f, 1.4f );
 
 //			BloomSettings bs = new BloomSettings( "soft-3", 4, 0f, 1f, 1f, 1f, 1f );
 //			BloomSettings bs = new BloomSettings( "desaturated", 2, 0.5f, 1f, 1f, 2f, 0f );
@@ -153,8 +156,12 @@ public class Game
 		Debug.update();
 	}
 
+	private WindowedMean mean = new WindowedMean( 16 );
+	private float lastFactor = 0f;
 	public void render()
 	{
+		tweener.update((int)(URacer.getLastDeltaSecs()*1000));
+
 		Car playerCar = null;
 		GL20 gl = Gdx.graphics.getGL20();
 		OrthographicCamera ortho = Director.getCamera();
@@ -191,6 +198,17 @@ public class Game
 //			bloom.setBloomIntesity( 1f );		bloom.setBloomSaturation( 1.8f );
 //			bloom.setBlurPasses( 1 );
 
+
+//			mean.addValue( player.car.getCarDescriptor().velocity_wc.len() / player.car.getCarModel().max_speed );
+//			mean.addValue( DriftInfo.get().driftStrength );
+//
+//			float factor = DriftInfo.get().driftStrength;
+//			factor = AMath.fixup( AMath.lerp( lastFactor, factor, 0.85f ) );
+//			lastFactor = factor;
+//
+//			bloom.setBloomIntesity( factor * 0.8f + 0.2f );
+//			bloom.setBloomSaturation( 1.8f /*+ factor * -0.05f*/ );
+
 			postProcessor.capture();
 		}
 
@@ -226,6 +244,8 @@ public class Game
 		// render 3d meshes
 		level.renderMeshes( gl );
 
+		hud.render(batch);
+
 		if( Config.Graphics.EnablePostProcessingFx )
 		{
 			postProcessor.render();
@@ -236,10 +256,6 @@ public class Game
 		{
 			level.renderLights();
 		}
-
-		tweener.update((int)(URacer.getLastDeltaSecs()*1000));
-
-		hud.render(batch);
 
 		//
 		// debug
