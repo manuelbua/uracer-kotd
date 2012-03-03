@@ -51,7 +51,8 @@ public class URacerDesktop
 		URacerDesktopFinalizer finalizr = new URacerDesktopFinalizer( (OpenALAudio)app.getAudio() );
 		uracer.setFinalizer( finalizr );
 
-		Display.setLocation( (1920-config.width)/2, (1080-config.height)/2 );
+		int screenW = 1680; int screenH = 1050;
+		Display.setLocation( 1920 + (screenW-config.width)/2, (screenH-config.height)/2 );
 	}
 
 
