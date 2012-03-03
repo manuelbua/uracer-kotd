@@ -112,6 +112,18 @@ public class PostProcessor
 	}
 
 	/**
+	 * Stops capturing the scene
+	 */
+	public void captureEnd()
+	{
+		if(capturing)
+		{
+			capturing = false;
+			fbScene.end();
+		}
+	}
+
+	/**
 	 * call this when resuming
 	 */
 	public void resume()
@@ -126,15 +138,11 @@ public class PostProcessor
 	 */
 	public void render()
 	{
-		if(capturing && ( effect != null ))
-		{
-			capturing = false;
-			fbScene.end();
+		captureEnd();
 
-			if(effect != null)
-			{
-				effect.render( fullScreenQuad, texScene );
-			}
+		if(effect != null)
+		{
+			effect.render( fullScreenQuad, texScene );
 		}
 	}
 

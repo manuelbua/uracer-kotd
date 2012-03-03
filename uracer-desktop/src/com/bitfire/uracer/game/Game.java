@@ -84,13 +84,7 @@ public class Game
 		{
 			postProcessor = new PostProcessor( Gdx.graphics.getWidth(), Gdx.graphics.getHeight(), false /* depth */, false /* alpha */, Config.isDesktop /* 32Bits */ );
 
-			float rttRatio = 0.25f;
-
-//			if(!Config.isDesktop)
-//			{
-//				rttRatio = 0.25f;
-//				blurPasses = 2;
-//			}
+			float rttRatio = 0.2f;
 
 			int fboWidth = (int)(Gdx.graphics.getWidth() * rttRatio);
 			int fboHeight = (int)(Gdx.graphics.getHeight() * rttRatio);
@@ -100,7 +94,9 @@ public class Game
 //			BloomSettings bs = new BloomSettings( "arrogance", 4, 0.35f, 1f, 0.1f, 1.4f, 0.75f );
 //			BloomSettings bs = new BloomSettings( "default", 4, 0.35f, 1f, 0.3f, 1.3f, 1.5f );
 //			BloomSettings bs = new BloomSettings( "soft", 2, 0.25f, 1f, 0.3f, 1f, 1.4f );
-			BloomSettings bs = new BloomSettings( "soft-2", 1, 0.25f, 0.8f, 0.5f, 0.9f, 1.3f );
+//			BloomSettings bs = new BloomSettings( "soft-2", 1, 0.25f, 0.8f, 0.5f, 0.9f, 1.3f );
+//			BloomSettings bs = new BloomSettings( "soft-lowq", 1, 0.25f, 1f, 1f, 0.8f, 1.25f );
+			BloomSettings bs = new BloomSettings( "arrogance-lowq", 1, 0.25f, 1f, 0.1f, 1f, 1.8f );
 
 //			BloomSettings bs = new BloomSettings( "soft-3", 4, 0f, 1f, 1f, 1f, 1f );
 //			BloomSettings bs = new BloomSettings( "desaturated", 2, 0.5f, 1f, 1f, 2f, 0f );
@@ -191,8 +187,13 @@ public class Game
 //			bloom.setThreshold( 0.25f );
 //			bloom.setBlurPasses( 1 );
 
+//			bloom.setBaseIntesity( 1f );	bloom.setBaseSaturation( 0.1f );
+//			bloom.setBloomIntesity( 1f );		bloom.setBloomSaturation( 1.8f );
+//			bloom.setBlurPasses( 1 );
+
 			postProcessor.capture();
 		}
+
 
 		gl.glViewport( 0, 0, Gdx.graphics.getWidth(), Gdx.graphics.getHeight() );
 
@@ -237,6 +238,7 @@ public class Game
 		}
 
 		tweener.update((int)(URacer.getLastDeltaSecs()*1000));
+
 		hud.render(batch);
 
 		//
