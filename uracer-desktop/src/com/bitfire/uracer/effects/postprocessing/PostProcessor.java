@@ -45,6 +45,8 @@ public class PostProcessor
 
 		fbScene = new FrameBuffer( fbFormat, fboWidth, fboHeight, useDepth );
 		texScene = fbScene.getColorBufferTexture();
+//		texScene.setFilter( TextureFilter.Nearest, TextureFilter.Nearest );
+
 		fullScreenQuad = createFullscreenQuad();
 		capturing = false;
 	}

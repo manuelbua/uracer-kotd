@@ -9,7 +9,9 @@ import com.badlogic.gdx.graphics.Pixmap.Format;
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.glutils.FrameBuffer;
 import com.badlogic.gdx.graphics.glutils.ShaderProgram;
+import com.badlogic.gdx.math.Vector2;
 import com.bitfire.uracer.effects.postprocessing.IPostProcessorEffect;
+import com.bitfire.uracer.effects.postprocessing.bloom.BloomSettings.BlurType;
 import com.bitfire.uracer.utils.ShaderLoader;
 
 public class Bloom implements IPostProcessorEffect
@@ -20,8 +22,17 @@ public class Bloom implements IPostProcessorEffect
 
 	protected static ShaderProgram shThreshold;
 	protected static ShaderProgram shBloom;
-	protected static ShaderProgram shBlur;
+	protected static ShaderProgram shBlur, shBlurSimple;
+	protected ShaderProgram usedBlur;
 	private static boolean shadersInitialized = false;
+
+	// blur
+	private float[] blurSampleWeights = null;
+	private float[] blurSampleOffsetsH = null;
+	private float[] blurSampleOffsetsV = null;
+	private final int BlurSampleCount = 5;
+	private final int BlurRadius = 2;
+	private final int BlurKernelSize = (BlurRadius * 2) + 1;
 
 	private Color clearColor = Color.CLEAR;
 
@@ -30,43 +41,51 @@ public class Bloom implements IPostProcessorEffect
 	private Texture pingPongTex1;
 	private Texture pingPongTex2;
 
-	protected int blurPasses = 1;
+	protected int blurPasses;
+	protected float blurAmount;
 	protected float bloomIntensity, bloomSaturation;
 	protected float baseIntensity, baseSaturation;
-	protected BloomSettings defaultSettings = new BloomSettings( "default", 2, 0.277f, 1f, .85f, 1.1f, .85f );
+	protected BloomSettings bloomSettings;
 
 	protected float threshold;
 	protected boolean blending = false;
-	private int w;
-	private int h;
+	private int fboWidth;
+	private int fboHeight;
 
 	public Bloom( int fboWidth, int fboHeight, Format frameBufferFormat )
 	{
+		this.fboWidth = fboWidth;
+		this.fboHeight = fboHeight;
+
 		pingPongBuffer1 = new FrameBuffer( frameBufferFormat, fboWidth, fboHeight, false );
 		pingPongBuffer2 = new FrameBuffer( frameBufferFormat, fboWidth, fboHeight, false );
 
 		pingPongTex1 = pingPongBuffer1.getColorBufferTexture();
 		pingPongTex2 = pingPongBuffer2.getColorBufferTexture();
 
-		createShaders();
+//		pingPongTex1.setFilter( TextureFilter.Nearest, TextureFilter.Nearest );
+//		pingPongTex2.setFilter( TextureFilter.Nearest, TextureFilter.Nearest );
 
-		setSize( fboWidth, fboHeight );
-		setSettings( defaultSettings );
+		BloomSettings s = new BloomSettings( "default", 2, 0.277f, 1f, .85f, 1.1f, .85f );
+		createShaders(s);
+		setSettings(s);
 	}
 
-	protected void createShaders()
+	protected void createShaders(BloomSettings settings)
 	{
 		if(!Bloom.shadersInitialized)
 		{
 			Bloom.shadersInitialized = true;
+
+			shBloom = ShaderLoader.createShader( "bloom/screenspace", "bloom/bloom" );
 
 			if(Bloom.useAlphaChannelAsMask)
 				shThreshold = ShaderLoader.createShader( "bloom/screenspace", "bloom/masked-threshold" );
 			else
 				shThreshold = ShaderLoader.createShader( "bloom/screenspace", "bloom/threshold" );
 
-			shBloom = ShaderLoader.createShader( "bloom/screenspace", "bloom/bloom" );
-			shBlur = ShaderLoader.createShader( "bloom/blurspace", "bloom/gaussian" );
+			shBlurSimple = ShaderLoader.createShader( "bloom/blur-simple", "bloom/blur-simple" );
+			shBlur = ShaderLoader.createShader( "bloom/blur", "bloom/blur" );
 		}
 	}
 
@@ -134,12 +153,17 @@ public class Bloom implements IPostProcessorEffect
 
 	public void setSettings(BloomSettings settings)
 	{
+		this.bloomSettings = settings;
+
 		setThreshold( settings.bloomThreshold );
 		setBaseIntesity( settings.baseIntensity );
 		setBaseSaturation( settings.baseSaturation );
 		setBloomIntesity( settings.bloomIntensity );
 		setBloomSaturation( settings.bloomSaturation );
+
 		setBlurPasses( settings.blurPasses );
+		setBlurAmount( settings.blurAmount );
+		setBlurSize();
 	}
 
 	public void setBlurPasses(int passes)
@@ -147,13 +171,132 @@ public class Bloom implements IPostProcessorEffect
 		this.blurPasses = passes;
 	}
 
-	private void setSize( int FBO_W, int FBO_H )
+	public void setBlurAmount(float amount)
 	{
-		w = FBO_W;
-		h = FBO_H;
-		shBlur.begin();
-		shBlur.setUniformf( "size", FBO_W, FBO_H );
-		shBlur.end();
+		this.blurAmount = amount;
+
+		if(bloomSettings.blurType == BlurType.Fast)
+			return;
+
+		if(blurSampleWeights == null) blurSampleWeights = new float[BlurSampleCount];
+		if(blurSampleOffsetsH == null) blurSampleOffsetsH = new float[BlurSampleCount * 2];	// x-y pairs
+		if(blurSampleOffsetsV == null) blurSampleOffsetsV = new float[BlurSampleCount * 2];	// x-y pairs
+
+		// opt gaussian (exploit bilinear filtering on texture units, good on big-sized FBOs, ie. rtt=0.5)
+		computeBlurParams( 1f / this.fboWidth, 0, BlurSampleCount, blurSampleWeights, blurSampleOffsetsH );
+		computeBlurParams( 0, 1f / this.fboHeight, BlurSampleCount, blurSampleWeights, blurSampleOffsetsV );
+
+		// gaussian (good on small-sizes FBOs, ie. rtt=0.2)
+//		computeKernel( BlurRadius, this.blurAmount, blurSampleWeights );
+//		computeOffsets( BlurRadius, 1f / this.fboWidth, 1f / this.fboHeight, blurSampleOffsetsH, blurSampleOffsetsV );
+	}
+
+	private void computeBlurParams( float dx, float dy, int sampleCount, float[] outWeights, float[] outOffsets )
+	{
+		final int X = 0, Y = 1;
+		int halfSampleCount = sampleCount / 2;
+
+		outWeights[0] = computeGaussian( 0 );
+		outOffsets[0+X] = 0;
+		outOffsets[0+Y] = 0;
+
+		float totalWeights = outWeights[0];
+		Vector2 delta = new Vector2();
+		for(int i = 0, j = 0; i < halfSampleCount; i++, j+=2)
+		{
+			float weight = computeGaussian( i+1 );
+
+			outWeights[i * 2 + 1] = weight;
+			outWeights[i * 2 + 2] = weight;
+
+			totalWeights += weight * 2;
+
+			// To get the maximum amount of blurring from a limited number of
+			// pixel shader samples, we take advantage of the bilinear filtering
+			// hardware inside the texture fetch unit. If we position our texture
+			// coordinates exactly halfway between two texels, the filtering unit
+			// will average them for us, giving two samples for the price of one.
+			// This allows us to step in units of two texels per sample, rather
+			// than just one at a time. The 1.5 offset kicks things off by
+			// positioning us nicely in between two texels.
+			float sampleOffset = i * 2 + 1.5f;
+
+			delta.set( dx, dy ).mul(sampleOffset);
+
+			// Store texture coordinate offsets for the positive and negative taps.
+			outOffsets[i * 2 + j + 2 + X] = delta.x;
+			outOffsets[i * 2 + j + 2 + Y] = delta.y;
+			outOffsets[i * 2 + j + 4 + X] = -delta.x;
+			outOffsets[i * 2 + j + 4 + Y] = -delta.y;
+		}
+
+		// Normalize the list of sample weightings, so they will always sum to one.
+		for( int i = 0; i < sampleCount; i++ )
+		{
+			outWeights[i] /= totalWeights;
+		}
+	}
+
+	private void computeKernel( int blurRadius, float blurAmount, float[] outKernel )
+	{
+		int radius = blurRadius;
+		float amount = blurAmount;
+
+//		float sigma = (float)radius / amount;
+		float sigma = amount;
+
+		float twoSigmaSquare = 2.0f * sigma * sigma;
+		float sigmaRoot = (float)Math.sqrt( twoSigmaSquare * Math.PI );
+		float total = 0.0f;
+		float distance = 0.0f;
+		int index = 0;
+
+		for( int i = -radius; i <= radius; ++i )
+		{
+			distance = i * i;
+			index = i + radius;
+			outKernel[index] = (float)Math.exp( -distance / twoSigmaSquare ) / sigmaRoot;
+			total += outKernel[index];
+		}
+
+		int size = (radius*2)+1;
+		for( int i = 0; i < size; ++i )
+			outKernel[i] /= total;
+	}
+
+	public void computeOffsets( int blurRadius, float dx, float dy, float[] outOffsetH, float[] outOffsetV )
+	{
+		int radius = blurRadius;
+
+		final int X = 0, Y = 1;
+		for( int i = -radius, j = 0; i <= radius; ++i, j+=2 )
+		{
+			outOffsetH[j + X] = i * dx;
+			outOffsetH[j + Y] = 0;
+
+			outOffsetV[j + X] = 0;
+			outOffsetV[j + Y] = i * dy;
+		}
+	}
+
+	/**
+	 * Evaluates a single point on the gaussian falloff curve. Used for setting up the blur filter weightings.
+	 */
+	private float computeGaussian( float n )
+	{
+		float theta = this.blurAmount;
+
+		return (float)((1.0 / Math.sqrt( 2 * Math.PI * theta )) * Math.exp( -(n * n) / (2 * theta * theta) ));
+	}
+
+	private void setBlurSize()
+	{
+		if(bloomSettings.blurType == BlurType.Normal)
+			return;
+
+		shBlurSimple.begin();
+		shBlurSimple.setUniformf( "size", this.fboWidth, this.fboHeight );
+		shBlurSimple.end();
 	}
 
 
@@ -167,6 +310,7 @@ public class Bloom implements IPostProcessorEffect
 		pingPongBuffer1.dispose();
 		pingPongBuffer2.dispose();
 
+		shBlurSimple.dispose();
 		shBlur.dispose();
 		shBloom.dispose();
 		shThreshold.dispose();
@@ -185,7 +329,7 @@ public class Bloom implements IPostProcessorEffect
 		Gdx.gl.glDisable( GL10.GL_DEPTH_TEST );
 		Gdx.gl.glDepthMask( false );
 
-		gaussianBlur( fullScreenQuad, originalScene );
+		renderGaussianBlur( fullScreenQuad, originalScene );
 
 		if( blending )
 		{
@@ -204,9 +348,12 @@ public class Bloom implements IPostProcessorEffect
 		shBloom.end();
 	}
 
-	private void gaussianBlur( Mesh fullScreenQuad, Texture originalScene )
+	private void renderGaussianBlur( Mesh fullScreenQuad, Texture originalScene )
 	{
 		// cut bright areas of the picture and blit to smaller fbo
+
+		boolean isSimpleBlur = (bloomSettings.blurType == BlurType.Fast);
+		ShaderProgram blur = (isSimpleBlur ? shBlurSimple : shBlur);
 
 		originalScene.bind( 0 );
 		pingPongBuffer1.begin();
@@ -222,33 +369,47 @@ public class Bloom implements IPostProcessorEffect
 
 		for( int i = 0; i < blurPasses; i++ )
 		{
-			pingPongTex1.bind( 0 );
-
 			// horizontal
+			pingPongTex1.bind( 0 );
 			pingPongBuffer2.begin();
 			{
-				shBlur.begin();
+				blur.begin();
 				{
-					shBlur.setUniformi( "u_texture", 0 );
-					shBlur.setUniformf( "dir", 1f, 0f );
-					fullScreenQuad.render( shBlur, GL20.GL_TRIANGLE_FAN, 0, 4 );
+					blur.setUniformi( "u_texture", 0 );
+
+					if(isSimpleBlur)
+						blur.setUniformf( "dir", 1f, 0f );
+					else
+					{
+						blur.setUniform1fv( "SampleWeights", blurSampleWeights, 0, BlurSampleCount );
+						blur.setUniform2fv( "SampleOffsets", blurSampleOffsetsH, 0, BlurSampleCount*2  /* libgdx ask for number of floats! */ );
+					}
+
+					fullScreenQuad.render( blur, GL20.GL_TRIANGLE_FAN, 0, 4 );
 				}
-				shBlur.end();
+				blur.end();
 			}
 			pingPongBuffer2.end();
 
-			pingPongTex2.bind( 0 );
 			// vertical
+			pingPongTex2.bind( 0 );
 			pingPongBuffer1.begin();
 			{
-				shBlur.begin();
+				blur.begin();
 				{
-					shBlur.setUniformi( "u_texture", 0 );
-					shBlur.setUniformf( "dir", 0f, 1f );
+					blur.setUniformi( "u_texture", 0 );
 
-					fullScreenQuad.render( shBlur, GL20.GL_TRIANGLE_FAN, 0, 4 );
+					if(isSimpleBlur)
+						blur.setUniformf( "dir", 0f, 1f );
+					else
+					{
+						blur.setUniform1fv( "SampleWeights", blurSampleWeights, 0, BlurSampleCount );
+						blur.setUniform2fv( "SampleOffsets", blurSampleOffsetsV, 0, BlurSampleCount*2 /* libgdx ask for number of floats! */ );
+					}
+
+					fullScreenQuad.render( blur, GL20.GL_TRIANGLE_FAN, 0, 4 );
 				}
-				shBlur.end();
+				blur.end();
 			}
 			pingPongBuffer1.end();
 		}
@@ -257,14 +418,7 @@ public class Bloom implements IPostProcessorEffect
 	@Override
 	public void resume()
 	{
-		setSize( w, h );
-
-		setThreshold( threshold );
-		setBaseIntesity( baseIntensity );
-		setBaseSaturation( baseSaturation );
-		setBloomIntesity( bloomIntensity );
-		setBloomSaturation( bloomSaturation );
-
+		setSettings( bloomSettings );
 		pingPongTex1 = pingPongBuffer1.getColorBufferTexture();
 		pingPongTex2 = pingPongBuffer2.getColorBufferTexture();
 	}

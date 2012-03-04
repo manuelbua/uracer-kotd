@@ -8,7 +8,7 @@ public final class ShaderLoader
 
 	static final public ShaderProgram createShader( String vertexName, String fragmentName )
 	{
-		System.out.println( "Compiling " + vertexName  + "/" + fragmentName + "...");
+		System.out.println( "Compiling " + vertexName  + " | " + fragmentName + "...");
 		String vertexShader = Gdx.files.internal( "data/shaders/" + vertexName + ".vertex" ).readString();
 		String fragmentShader = Gdx.files.internal( "data/shaders/" + fragmentName + ".fragment" ).readString();
 		ShaderProgram.pedantic = false;

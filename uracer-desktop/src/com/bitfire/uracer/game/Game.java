@@ -17,6 +17,7 @@ import com.bitfire.uracer.effects.TrackEffects;
 import com.bitfire.uracer.effects.postprocessing.PostProcessor;
 import com.bitfire.uracer.effects.postprocessing.bloom.Bloom;
 import com.bitfire.uracer.effects.postprocessing.bloom.BloomSettings;
+import com.bitfire.uracer.effects.postprocessing.bloom.BloomSettings.BlurType;
 import com.bitfire.uracer.entities.EntityManager;
 import com.bitfire.uracer.entities.vehicles.Car;
 import com.bitfire.uracer.game.logic.DirectorController;
@@ -87,7 +88,7 @@ public class Game
 		{
 			postProcessor = new PostProcessor( Gdx.graphics.getWidth(), Gdx.graphics.getHeight(), false /* depth */, false /* alpha */, Config.isDesktop /* 32Bits */ );
 
-			float rttRatio = 0.2f;
+			float rttRatio = 0.25f;
 
 			int fboWidth = (int)(Gdx.graphics.getWidth() * rttRatio);
 			int fboHeight = (int)(Gdx.graphics.getHeight() * rttRatio);
@@ -99,7 +100,18 @@ public class Game
 //			BloomSettings bs = new BloomSettings( "soft", 2, 0.25f, 1f, 0.3f, 1f, 1.4f );
 //			BloomSettings bs = new BloomSettings( "soft-2", 1, 0.25f, 0.8f, 0.5f, 0.9f, 1.3f );
 //			BloomSettings bs = new BloomSettings( "soft-lowq", 1, 0.25f, 1f, 1f, 0.8f, 1.25f );
-			BloomSettings bs = new BloomSettings( "arrogance-lowq", 1, 0.25f, 1f, 0.1f, 0.8f, 1.4f );
+//			BloomSettings bs = new BloomSettings( "arrogance-lowq", 1, 0.25f, 1f, 0.1f, 0.8f, 1.4f );
+//			BloomSettings bs = new BloomSettings( "blurry", 2, 0f, 0f, 1f, 1f, 1f );
+
+//			BloomSettings bs = new BloomSettings( "arrogance-1", BlurType.Normal, 1, 1, 0.25f, 1f, 0.1f, 0.8f, 1.4f );
+//			BloomSettings bs = new BloomSettings( "arrogance-2", BlurType.Normal, 1, 1, 0.35f, 1f, 0.1f, 1.4f, 0.75f );
+
+			BloomSettings bs = new BloomSettings( "subtle", BlurType.Normal, 1, 2, 0.5f, 1f, 1f, 1f, 1f );
+//			BloomSettings bs = new BloomSettings( "default", BlurType.Normal, 1, 4, 0.25f, 1f, 1f, 1.25f, 1f );
+//			BloomSettings bs = new BloomSettings( "soft", BlurType.Normal, 1, 3, 0f, 1f, 1f, 1f, 1f );
+//			BloomSettings bs = new BloomSettings( "blurry", BlurType.Normal, 1, 2, 0f, 0.1f, 1f, 1f, 1f );
+//			BloomSettings bs = new BloomSettings( "desaturated", BlurType.Normal, 1, 8, 0.5f, 1f, 1f, 2f, 0f );
+//			BloomSettings bs = new BloomSettings( "saturated", BlurType.Normal, 1, 4, 0.25f, 1f, 0f, 2f, 2f );
 
 //			BloomSettings bs = new BloomSettings( "soft-3", 4, 0f, 1f, 1f, 1f, 1f );
 //			BloomSettings bs = new BloomSettings( "desaturated", 2, 0.5f, 1f, 1f, 2f, 0f );
@@ -189,8 +201,8 @@ public class Game
 
 
 			// dbg (hotcode)
-//			bloom.setBaseIntesity( .8f );	bloom.setBaseSaturation( .5f );
-//			bloom.setBloomIntesity( .8f );		bloom.setBloomSaturation( 1.1f );
+//			bloom.setBaseIntesity( 0f );	bloom.setBaseSaturation( 1f );
+//			bloom.setBloomIntesity( 1f );		bloom.setBloomSaturation( 1f );
 //			bloom.setThreshold( 0.25f );
 //			bloom.setBlurPasses( 1 );
 
@@ -209,6 +221,7 @@ public class Game
 //			bloom.setBloomIntesity( factor * 0.8f + 0.2f );
 //			bloom.setBloomSaturation( 1.8f /*+ factor * -0.05f*/ );
 
+//			bloom.setBlurAmount( 1f );
 			postProcessor.capture();
 		}
 
