@@ -183,12 +183,12 @@ public class Bloom implements IPostProcessorEffect
 		if(blurSampleOffsetsV == null) blurSampleOffsetsV = new float[BlurSampleCount * 2];	// x-y pairs
 
 		// opt gaussian (exploit bilinear filtering on texture units, good on big-sized FBOs, ie. rtt=0.5)
-		computeBlurParams( 1f / this.fboWidth, 0, BlurSampleCount, blurSampleWeights, blurSampleOffsetsH );
-		computeBlurParams( 0, 1f / this.fboHeight, BlurSampleCount, blurSampleWeights, blurSampleOffsetsV );
+//		computeBlurParams( 1f / this.fboWidth, 0, BlurSampleCount, blurSampleWeights, blurSampleOffsetsH );
+//		computeBlurParams( 0, 1f / this.fboHeight, BlurSampleCount, blurSampleWeights, blurSampleOffsetsV );
 
 		// gaussian (good on small-sizes FBOs, ie. rtt=0.2)
-//		computeKernel( BlurRadius, this.blurAmount, blurSampleWeights );
-//		computeOffsets( BlurRadius, 1f / this.fboWidth, 1f / this.fboHeight, blurSampleOffsetsH, blurSampleOffsetsV );
+		computeKernel( BlurRadius, this.blurAmount, blurSampleWeights );
+		computeOffsets( BlurRadius, 1f / this.fboWidth, 1f / this.fboHeight, blurSampleOffsetsH, blurSampleOffsetsV );
 	}
 
 	private void computeBlurParams( float dx, float dy, int sampleCount, float[] outWeights, float[] outOffsets )

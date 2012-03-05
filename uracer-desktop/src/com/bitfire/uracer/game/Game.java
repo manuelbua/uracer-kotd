@@ -221,7 +221,7 @@ public class Game
 //			bloom.setBloomIntesity( factor * 0.8f + 0.2f );
 //			bloom.setBloomSaturation( 1.8f /*+ factor * -0.05f*/ );
 
-//			bloom.setBlurAmount( 1f );
+			bloom.setBlurAmount( 2f );
 			postProcessor.capture();
 		}
 
