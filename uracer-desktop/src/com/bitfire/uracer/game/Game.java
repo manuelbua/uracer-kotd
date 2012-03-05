@@ -88,7 +88,7 @@ public class Game
 		{
 			postProcessor = new PostProcessor( Gdx.graphics.getWidth(), Gdx.graphics.getHeight(), false /* depth */, false /* alpha */, Config.isDesktop /* 32Bits */ );
 
-			float rttRatio = 0.25f;
+			float rttRatio = 0.2f;
 
 			int fboWidth = (int)(Gdx.graphics.getWidth() * rttRatio);
 			int fboHeight = (int)(Gdx.graphics.getHeight() * rttRatio);
@@ -106,7 +106,9 @@ public class Game
 //			BloomSettings bs = new BloomSettings( "arrogance-1", BlurType.Normal, 1, 1, 0.25f, 1f, 0.1f, 0.8f, 1.4f );
 //			BloomSettings bs = new BloomSettings( "arrogance-2", BlurType.Normal, 1, 1, 0.35f, 1f, 0.1f, 1.4f, 0.75f );
 
-			BloomSettings bs = new BloomSettings( "subtle", BlurType.Normal, 1, 2, 0.5f, 1f, 1f, 1f, 1f );
+//			BloomSettings bs = new BloomSettings( "subtle", BlurType.GaussianBilinear, 1, 2, 0.5f, 1f, 1f, 1f, 1f );
+			BloomSettings bs = new BloomSettings( "subtle-rtt=0.2", BlurType.GaussianBilinear, 1, 1f, 0.5f, 1f, 1f, 1f, 1f );
+
 //			BloomSettings bs = new BloomSettings( "default", BlurType.Normal, 1, 4, 0.25f, 1f, 1f, 1.25f, 1f );
 //			BloomSettings bs = new BloomSettings( "soft", BlurType.Normal, 1, 3, 0f, 1f, 1f, 1f, 1f );
 //			BloomSettings bs = new BloomSettings( "blurry", BlurType.Normal, 1, 2, 0f, 0.1f, 1f, 1f, 1f );
@@ -221,7 +223,8 @@ public class Game
 //			bloom.setBloomIntesity( factor * 0.8f + 0.2f );
 //			bloom.setBloomSaturation( 1.8f /*+ factor * -0.05f*/ );
 
-			bloom.setBlurAmount( 2f );
+//			bloom.setBlurType( BlurType.Gaussian );
+//			bloom.setBlurAmount( 1f );
 			postProcessor.capture();
 		}
 

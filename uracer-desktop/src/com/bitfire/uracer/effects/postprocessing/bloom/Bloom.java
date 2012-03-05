@@ -23,7 +23,6 @@ public class Bloom implements IPostProcessorEffect
 	protected static ShaderProgram shThreshold;
 	protected static ShaderProgram shBloom;
 	protected static ShaderProgram shBlur, shBlurSimple;
-	protected ShaderProgram usedBlur;
 	private static boolean shadersInitialized = false;
 
 	// blur
@@ -45,17 +44,20 @@ public class Bloom implements IPostProcessorEffect
 	protected float blurAmount;
 	protected float bloomIntensity, bloomSaturation;
 	protected float baseIntensity, baseSaturation;
+	protected BlurType blurType;
 	protected BloomSettings bloomSettings;
 
 	protected float threshold;
 	protected boolean blending = false;
-	private int fboWidth;
-	private int fboHeight;
+	private int fboWidth, fboHeight;
+	private float invFboWidth, invFboHeight;
 
 	public Bloom( int fboWidth, int fboHeight, Format frameBufferFormat )
 	{
 		this.fboWidth = fboWidth;
 		this.fboHeight = fboHeight;
+		this.invFboWidth = 1f / (float)this.fboWidth;
+		this.invFboHeight = 1f / (float)this.fboHeight;
 
 		pingPongBuffer1 = new FrameBuffer( frameBufferFormat, fboWidth, fboHeight, false );
 		pingPongBuffer2 = new FrameBuffer( frameBufferFormat, fboWidth, fboHeight, false );
@@ -151,6 +153,14 @@ public class Bloom implements IPostProcessorEffect
 		this.blending = blending;
 	}
 
+	public void setBlurType(BlurType blurType)
+	{
+		this.blurType = blurType;
+
+		if( this.blurType == BlurType.Gaussian || this.blurType == BlurType.GaussianBilinear )
+			computeBlurWeightings( this.blurAmount );
+	}
+
 	public void setSettings(BloomSettings settings)
 	{
 		this.bloomSettings = settings;
@@ -162,7 +172,11 @@ public class Bloom implements IPostProcessorEffect
 		setBloomSaturation( settings.bloomSaturation );
 
 		setBlurPasses( settings.blurPasses );
+
+		// avoid computing blur weights 2x
+		setBlurType( BlurType.GaussianApproximation );
 		setBlurAmount( settings.blurAmount );
+		setBlurType( settings.blurType );
 		setBlurSize();
 	}
 
@@ -175,28 +189,39 @@ public class Bloom implements IPostProcessorEffect
 	{
 		this.blurAmount = amount;
 
-		if(bloomSettings.blurType == BlurType.Fast)
-			return;
+		if( this.blurType == BlurType.Gaussian || this.blurType == BlurType.GaussianBilinear )
+			computeBlurWeightings( this.blurAmount );
+	}
 
+	private void computeBlurWeightings( float blurAmount )
+	{
+		// need memory?
 		if(blurSampleWeights == null) blurSampleWeights = new float[BlurSampleCount];
 		if(blurSampleOffsetsH == null) blurSampleOffsetsH = new float[BlurSampleCount * 2];	// x-y pairs
 		if(blurSampleOffsetsV == null) blurSampleOffsetsV = new float[BlurSampleCount * 2];	// x-y pairs
 
-		// opt gaussian (exploit bilinear filtering on texture units, good on big-sized FBOs, ie. rtt=0.5)
-//		computeBlurParams( 1f / this.fboWidth, 0, BlurSampleCount, blurSampleWeights, blurSampleOffsetsH );
-//		computeBlurParams( 0, 1f / this.fboHeight, BlurSampleCount, blurSampleWeights, blurSampleOffsetsV );
+		switch(this.blurType)
+		{
+		case GaussianBilinear:
+			// opt gaussian (exploit bilinear filtering on texture units, good on big-sized FBOs, ie. rtt>~0.3)
+			computeGaussianViaBilinear( this.invFboWidth, 0, blurAmount, BlurSampleCount, blurSampleWeights, blurSampleOffsetsH );
+			computeGaussianViaBilinear( 0, this.invFboHeight, blurAmount, BlurSampleCount, blurSampleWeights, blurSampleOffsetsV );
+			break;
 
-		// gaussian (good on small-sizes FBOs, ie. rtt=0.2)
-		computeKernel( BlurRadius, this.blurAmount, blurSampleWeights );
-		computeOffsets( BlurRadius, 1f / this.fboWidth, 1f / this.fboHeight, blurSampleOffsetsH, blurSampleOffsetsV );
+		case Gaussian:
+			// gaussian (good on small-sizes FBOs, ie. rtt<=0.2)
+			computeKernel( BlurRadius, blurAmount, blurSampleWeights );
+			computeOffsets( BlurRadius, this.invFboWidth, this.invFboHeight, blurSampleOffsetsH, blurSampleOffsetsV );
+			break;
+		}
 	}
 
-	private void computeBlurParams( float dx, float dy, int sampleCount, float[] outWeights, float[] outOffsets )
+	private void computeGaussianViaBilinear( float dx, float dy, float blurAmount, int sampleCount, float[] outWeights, float[] outOffsets )
 	{
 		final int X = 0, Y = 1;
 		int halfSampleCount = sampleCount / 2;
 
-		outWeights[0] = computeGaussian( 0 );
+		outWeights[0] = computeGaussian( blurAmount, 0 );
 		outOffsets[0+X] = 0;
 		outOffsets[0+Y] = 0;
 
@@ -204,7 +229,7 @@ public class Bloom implements IPostProcessorEffect
 		Vector2 delta = new Vector2();
 		for(int i = 0, j = 0; i < halfSampleCount; i++, j+=2)
 		{
-			float weight = computeGaussian( i+1 );
+			float weight = computeGaussian( blurAmount, i+1 );
 
 			outWeights[i * 2 + 1] = weight;
 			outWeights[i * 2 + 2] = weight;
@@ -282,21 +307,20 @@ public class Bloom implements IPostProcessorEffect
 	/**
 	 * Evaluates a single point on the gaussian falloff curve. Used for setting up the blur filter weightings.
 	 */
-	private float computeGaussian( float n )
+	private float computeGaussian( float blurAmount, float n )
 	{
-		float theta = this.blurAmount;
-
+		float theta = blurAmount;
 		return (float)((1.0 / Math.sqrt( 2 * Math.PI * theta )) * Math.exp( -(n * n) / (2 * theta * theta) ));
 	}
 
 	private void setBlurSize()
 	{
-		if(bloomSettings.blurType == BlurType.Normal)
-			return;
-
-		shBlurSimple.begin();
-		shBlurSimple.setUniformf( "size", this.fboWidth, this.fboHeight );
-		shBlurSimple.end();
+		if(this.blurType == BlurType.GaussianApproximation)
+		{
+			shBlurSimple.begin();
+			shBlurSimple.setUniformf( "size", this.fboWidth, this.fboHeight );
+			shBlurSimple.end();
+		}
 	}
 
 
@@ -304,6 +328,7 @@ public class Bloom implements IPostProcessorEffect
 	 * Call this when application is exiting.
 	 *
 	 */
+
 	@Override
 	public void dispose()
 	{
@@ -314,6 +339,10 @@ public class Bloom implements IPostProcessorEffect
 		shBlur.dispose();
 		shBloom.dispose();
 		shThreshold.dispose();
+
+		blurSampleWeights = null;
+		blurSampleOffsetsH = null;
+		blurSampleOffsetsV = null;
 	}
 
 	@Override
@@ -352,7 +381,7 @@ public class Bloom implements IPostProcessorEffect
 	{
 		// cut bright areas of the picture and blit to smaller fbo
 
-		boolean isSimpleBlur = (bloomSettings.blurType == BlurType.Fast);
+		boolean isSimpleBlur = (this.blurType == BlurType.GaussianApproximation);
 		ShaderProgram blur = (isSimpleBlur ? shBlurSimple : shBlur);
 
 		originalScene.bind( 0 );
