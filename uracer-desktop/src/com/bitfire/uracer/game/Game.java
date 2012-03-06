@@ -108,6 +108,7 @@ public class Game
 
 //			BloomSettings bs = new BloomSettings( "subtle", BlurType.GaussianBilinear, 1, 2, 0.5f, 1f, 1f, 1f, 1f );
 			BloomSettings bs = new BloomSettings( "subtle-rtt=0.2", BlurType.GaussianBilinear, 1, 1f, 0.5f, 1f, 1f, 1f, 1f );
+//			BloomSettings bs = new BloomSettings( "subtle-rtt=1", BlurType.GaussianBilinear, 1, 8f, 0.5f, 1f, 1f, 1f, 1f );
 
 //			BloomSettings bs = new BloomSettings( "default", BlurType.Normal, 1, 4, 0.25f, 1f, 1f, 1.25f, 1f );
 //			BloomSettings bs = new BloomSettings( "soft", BlurType.Normal, 1, 3, 0f, 1f, 1f, 1f, 1f );
