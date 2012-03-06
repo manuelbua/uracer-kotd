@@ -171,7 +171,9 @@ public class URacer implements ApplicationListener
 		CarSoundManager.dispose();
 		if(uRacerFinalizer != null)
 			uRacerFinalizer.dispose();
-//		System.exit( 0 );
+
+		if(!Config.isDesktop)
+			System.exit( 0 );
 	}
 
 	public void setScreen( Screen newScreen )
