@@ -29,7 +29,6 @@ public class Bloom implements IPostProcessorEffect
 	private float[] blurSampleWeights = null;
 	private float[] blurSampleOffsetsH = null;
 	private float[] blurSampleOffsetsV = null;
-	private final int BlurSampleCount = 5;
 	private final int BlurRadius = 2;
 	private final int BlurKernelSize = (BlurRadius * 2) + 1;
 
@@ -196,16 +195,16 @@ public class Bloom implements IPostProcessorEffect
 	private void computeBlurWeightings( float blurAmount )
 	{
 		// need memory?
-		if(blurSampleWeights == null) blurSampleWeights = new float[BlurSampleCount];
-		if(blurSampleOffsetsH == null) blurSampleOffsetsH = new float[BlurSampleCount * 2];	// x-y pairs
-		if(blurSampleOffsetsV == null) blurSampleOffsetsV = new float[BlurSampleCount * 2];	// x-y pairs
+		if(blurSampleWeights == null) blurSampleWeights = new float[BlurKernelSize];
+		if(blurSampleOffsetsH == null) blurSampleOffsetsH = new float[BlurKernelSize * 2];	// x-y pairs
+		if(blurSampleOffsetsV == null) blurSampleOffsetsV = new float[BlurKernelSize * 2];	// x-y pairs
 
 		switch(this.blurType)
 		{
 		case GaussianBilinear:
-			// opt gaussian (exploit bilinear filtering on texture units, good on big-sized FBOs, ie. rtt>~0.3)
-			computeGaussianViaBilinear( this.invFboWidth, 0, blurAmount, BlurSampleCount, blurSampleWeights, blurSampleOffsetsH );
-			computeGaussianViaBilinear( 0, this.invFboHeight, blurAmount, BlurSampleCount, blurSampleWeights, blurSampleOffsetsV );
+			// opt gaussian (exploit bilinear filtering on texture units, good on mid-to-big-sized FBOs, ie. rtt>~0.3)
+			computeGaussianViaBilinear( this.invFboWidth, 0, blurAmount, BlurKernelSize, blurSampleWeights, blurSampleOffsetsH );
+			computeGaussianViaBilinear( 0, this.invFboHeight, blurAmount, BlurKernelSize, blurSampleWeights, blurSampleOffsetsV );
 			break;
 
 		case Gaussian:
@@ -410,8 +409,8 @@ public class Bloom implements IPostProcessorEffect
 						blur.setUniformf( "dir", 1f, 0f );
 					else
 					{
-						blur.setUniform1fv( "SampleWeights", blurSampleWeights, 0, BlurSampleCount );
-						blur.setUniform2fv( "SampleOffsets", blurSampleOffsetsH, 0, BlurSampleCount*2  /* libgdx ask for number of floats! */ );
+						blur.setUniform1fv( "SampleWeights", blurSampleWeights, 0, BlurKernelSize );
+						blur.setUniform2fv( "SampleOffsets", blurSampleOffsetsH, 0, BlurKernelSize*2  /* libgdx ask for number of floats! */ );
 					}
 
 					fullScreenQuad.render( blur, GL20.GL_TRIANGLE_FAN, 0, 4 );
@@ -432,8 +431,8 @@ public class Bloom implements IPostProcessorEffect
 						blur.setUniformf( "dir", 0f, 1f );
 					else
 					{
-						blur.setUniform1fv( "SampleWeights", blurSampleWeights, 0, BlurSampleCount );
-						blur.setUniform2fv( "SampleOffsets", blurSampleOffsetsV, 0, BlurSampleCount*2 /* libgdx ask for number of floats! */ );
+						blur.setUniform1fv( "SampleWeights", blurSampleWeights, 0, BlurKernelSize );
+						blur.setUniform2fv( "SampleOffsets", blurSampleOffsetsV, 0, BlurKernelSize*2 /* libgdx ask for number of floats! */ );
 					}
 
 					fullScreenQuad.render( blur, GL20.GL_TRIANGLE_FAN, 0, 4 );
