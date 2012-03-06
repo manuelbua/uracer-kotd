@@ -8,11 +8,16 @@ public final class ShaderLoader
 
 	static final public ShaderProgram createShader( String vertexName, String fragmentName )
 	{
+		return ShaderLoader.createShader( vertexName, fragmentName, "" );
+	}
+
+	static final public ShaderProgram createShader( String vertexName, String fragmentName, String defines )
+	{
 		System.out.println( "Compiling " + vertexName  + " | " + fragmentName + "...");
 		String vertexShader = Gdx.files.internal( "data/shaders/" + vertexName + ".vertex" ).readString();
 		String fragmentShader = Gdx.files.internal( "data/shaders/" + fragmentName + ".fragment" ).readString();
 		ShaderProgram.pedantic = false;
-		ShaderProgram shader = new ShaderProgram( vertexShader, fragmentShader );
+		ShaderProgram shader = new ShaderProgram( defines + "\n" + vertexShader, defines + "\n" + fragmentShader );
 		if( !shader.isCompiled() )
 		{
 			System.out.println( shader.getLog() );
@@ -20,7 +25,10 @@ public final class ShaderLoader
 		}
 		else
 		{
-			System.out.println( vertexName + "/" + fragmentName + " compiled!");
+			if(defines!= null && defines.length()>0)
+				System.out.println( vertexName + "/" + fragmentName + " compiled w/ (" + defines + ")" );
+			else
+				System.out.println( vertexName + "/" + fragmentName + " compiled!" );
 		}
 
 		return shader;

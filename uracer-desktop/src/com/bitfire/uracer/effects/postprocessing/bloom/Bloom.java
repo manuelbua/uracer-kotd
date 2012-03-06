@@ -29,6 +29,8 @@ public class Bloom implements IPostProcessorEffect
 	private float[] blurSampleWeights = null;
 	private float[] blurSampleOffsetsH = null;
 	private float[] blurSampleOffsetsV = null;
+
+	// in settings!
 	private final int BlurRadius = 2;
 	private final int BlurKernelSize = (BlurRadius * 2) + 1;
 
@@ -86,7 +88,9 @@ public class Bloom implements IPostProcessorEffect
 				shThreshold = ShaderLoader.createShader( "bloom/screenspace", "bloom/threshold" );
 
 			shBlurSimple = ShaderLoader.createShader( "bloom/blur-simple", "bloom/blur-simple" );
-			shBlur = ShaderLoader.createShader( "bloom/blur", "bloom/blur" );
+
+			// setup blur radius and kernel size
+			shBlur = ShaderLoader.createShader( "bloom/blur", "bloom/blur", "#define RADIUS " + BlurRadius );
 		}
 	}
 
