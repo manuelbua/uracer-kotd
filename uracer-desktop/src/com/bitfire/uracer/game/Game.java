@@ -154,9 +154,11 @@ public class Game
 		return t;
 	}
 
-	public void tick()
+	public boolean tick()
 	{
-		logic.tick();
+		if(!logic.tick())
+			return false;
+
 		hud.tick();
 		TrackEffects.tick();
 		CarSoundManager.tick();
@@ -168,6 +170,7 @@ public class Game
 //		}
 
 		Debug.update();
+		return true;
 	}
 
 	private WindowedMean mean = new WindowedMean( 16 );

@@ -24,8 +24,6 @@ public abstract class Screen
 	}
 
 	public abstract void render();
-
-	public void tick()
-	{
-	}
+	public abstract void tick();
+	public abstract boolean quit();
 }

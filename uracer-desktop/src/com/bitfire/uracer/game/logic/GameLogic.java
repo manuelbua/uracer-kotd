@@ -35,7 +35,7 @@ public class GameLogic
 	{
 	}
 
-	public void tick()
+	public boolean tick()
 	{
 		EntityManager.raiseOnTick();
 
@@ -48,12 +48,15 @@ public class GameLogic
 		} else if( Input.isOn( Keys.Q ) )
 		{
 			Gdx.app.exit();
+			return false;
 		}
 
 		level.getPlayer().update(listener);
 
 		// update DriftInfo, handle raising onBeginDrift / onEndDrift
 		DriftInfo.get().update( level.getPlayer().car );
+
+		return true;
 	}
 
 	public void reset()

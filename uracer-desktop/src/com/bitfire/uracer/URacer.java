@@ -87,9 +87,15 @@ public class URacer implements ApplicationListener
 //	private long lastTimeNs = 0;
 	private static float lastDeltaTimeSec = MaxDeltaTime;
 
+	private boolean quit = false;
+
+	// NOTE: this render() method will get called by JoglGraphics when screen.tick will ask to finish!!
 	@Override
 	public void render()
 	{
+		if(screen == null) return;
+		if(screen.quit()) return;
+
 		// this is not good for Android since the value often hop around
 //		long currNanos = System.nanoTime();
 //		lastDeltaTimeSec = (currNanos - lastTimeNs) * oneOnOneBillion;
@@ -110,6 +116,7 @@ public class URacer implements ApplicationListener
 				screen.tick();
 				timeAccumSecs -= Physics.dt;
 				hasStepped = true;
+				if(screen.quit()) return;
 			}
 
 			// simulate slowness
@@ -162,8 +169,9 @@ public class URacer implements ApplicationListener
 		Debug.dispose();
 		Art.dispose();
 		CarSoundManager.dispose();
-		if(uRacerFinalizer != null) uRacerFinalizer.dispose();
-		System.exit( 0 );
+		if(uRacerFinalizer != null)
+			uRacerFinalizer.dispose();
+//		System.exit( 0 );
 	}
 
 	public void setScreen( Screen newScreen )
