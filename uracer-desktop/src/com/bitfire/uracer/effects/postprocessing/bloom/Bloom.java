@@ -159,9 +159,7 @@ public class Bloom implements IPostProcessorEffect
 	public void setBlurType(BlurType blurType)
 	{
 		this.blurType = blurType;
-
-		if( this.blurType == BlurType.Gaussian || this.blurType == BlurType.GaussianBilinear )
-			computeBlurWeightings( this.blurAmount );
+		computeBlurWeightings( this.blurAmount );
 	}
 
 	public void setSettings(BloomSettings settings)
@@ -177,7 +175,7 @@ public class Bloom implements IPostProcessorEffect
 		setBlurPasses( settings.blurPasses );
 
 		// avoid computing blur weights 2x
-		setBlurType( BlurType.GaussianApproximation );
+		setBlurType( BlurType.GaussianHardCoded );
 		setBlurAmount( settings.blurAmount );
 		setBlurType( settings.blurType );
 		setBlurSize();
@@ -191,9 +189,7 @@ public class Bloom implements IPostProcessorEffect
 	public void setBlurAmount(float amount)
 	{
 		this.blurAmount = amount;
-
-		if( this.blurType == BlurType.Gaussian || this.blurType == BlurType.GaussianBilinear )
-			computeBlurWeightings( this.blurAmount );
+		computeBlurWeightings( this.blurAmount );
 	}
 
 	private void computeBlurWeightings( float blurAmount )
@@ -216,6 +212,40 @@ public class Bloom implements IPostProcessorEffect
 			computeKernel( BlurRadius, blurAmount, blurSampleWeights );
 			computeOffsets( BlurRadius, this.invFboWidth, this.invFboHeight, blurSampleOffsetsH, blurSampleOffsetsV );
 			break;
+
+		case Gaussian_5x5:
+			float[] outWeights = blurSampleWeights;
+			float[] outOffsetsH = blurSampleOffsetsH;
+			float[] outOffsetsV = blurSampleOffsetsV;
+
+			// weights and offsets are computed from a binomial distribution
+			// and reduced to be used *only* with bilinearly-filtered texture lookups
+			//
+			// with radius = 2f
+			// with rtt ratio = 0.25f
+
+			// weights
+			outWeights[0] = 0.0702703f;
+			outWeights[1] = 0.316216f;
+			outWeights[2] = 0.227027f;
+			outWeights[3] = 0.316216f;
+			outWeights[4] = 0.0702703f;
+
+			// horizontal offsets
+			outOffsetsH[0] = -0.0100962f;	outOffsetsH[1] = 0f;
+			outOffsetsH[2] = -0.00432692f;	outOffsetsH[3] = 0f;
+			outOffsetsH[4] = 0f;		outOffsetsH[5] = 0f;
+			outOffsetsH[6] = 0.00432692f;	outOffsetsH[7] = 0f;
+			outOffsetsH[8] = 0.0100962f;	outOffsetsH[9] = 0f;
+
+			// vertical offsets
+			outOffsetsV[0] = 0f;	outOffsetsV[1] = -0.0171849f;
+			outOffsetsV[2] = 0f;	outOffsetsV[3] = -0.00736497f;
+			outOffsetsV[4] = 0f;	outOffsetsV[5] = 0f;
+			outOffsetsV[6] = 0f;	outOffsetsV[7] = 0.00736497f;
+			outOffsetsV[8] = 0f;	outOffsetsV[9] = 0.0171849f;
+
+			break;
 		}
 	}
 
@@ -225,17 +255,22 @@ public class Bloom implements IPostProcessorEffect
 		int halfSampleCount = sampleCount / 2;
 
 		outWeights[0] = computeGaussian( blurAmount, 0 );
+//		outWeights[halfSampleCount] = computeGaussian( blurAmount, 0 );
 		outOffsets[0+X] = 0;
 		outOffsets[0+Y] = 0;
 
 		float totalWeights = outWeights[0];
+//		float totalWeights = outWeights[halfSampleCount];
 		Vector2 delta = new Vector2();
-		for(int i = 0, j = 0; i < halfSampleCount; i++, j+=2)
+		for(int i = 0, j = 0, wi = 1; i < halfSampleCount; i++, j+=2, wi++)
 		{
 			float weight = computeGaussian( blurAmount, i+1 );
 
 			outWeights[i * 2 + 1] = weight;
 			outWeights[i * 2 + 2] = weight;
+
+//			outWeights[halfSampleCount - wi] = weight;
+//			outWeights[halfSampleCount + wi] = weight;
 
 			totalWeights += weight * 2;
 
@@ -247,7 +282,7 @@ public class Bloom implements IPostProcessorEffect
 			// This allows us to step in units of two texels per sample, rather
 			// than just one at a time. The 1.5 offset kicks things off by
 			// positioning us nicely in between two texels.
-			float sampleOffset = i * 2 + 1.5f;
+			float sampleOffset = i * 2 + 1.5f;	// blur_kernel_size * rtt ratio
 
 			delta.set( dx, dy ).mul(sampleOffset);
 
@@ -263,6 +298,15 @@ public class Bloom implements IPostProcessorEffect
 		{
 			outWeights[i] /= totalWeights;
 		}
+	}
+
+	/**
+	 * Evaluates a single point on the gaussian falloff curve. Used for setting up the blur filter weightings.
+	 */
+	private float computeGaussian( float blurAmount, float n )
+	{
+		float theta = blurAmount;
+		return (float)((1.0 / Math.sqrt( 2 * Math.PI * theta )) * Math.exp( -(n * n) / (2 * theta * theta) ));
 	}
 
 	private void computeKernel( int blurRadius, float blurAmount, float[] outKernel )
@@ -307,18 +351,9 @@ public class Bloom implements IPostProcessorEffect
 		}
 	}
 
-	/**
-	 * Evaluates a single point on the gaussian falloff curve. Used for setting up the blur filter weightings.
-	 */
-	private float computeGaussian( float blurAmount, float n )
-	{
-		float theta = blurAmount;
-		return (float)((1.0 / Math.sqrt( 2 * Math.PI * theta )) * Math.exp( -(n * n) / (2 * theta * theta) ));
-	}
-
 	private void setBlurSize()
 	{
-		if(this.blurType == BlurType.GaussianApproximation)
+		if(this.blurType == BlurType.GaussianHardCoded)
 		{
 			shBlurSimple.begin();
 			shBlurSimple.setUniformf( "size", this.fboWidth, this.fboHeight );
@@ -384,7 +419,7 @@ public class Bloom implements IPostProcessorEffect
 	{
 		// cut bright areas of the picture and blit to smaller fbo
 
-		boolean isSimpleBlur = (this.blurType == BlurType.GaussianApproximation);
+		boolean isSimpleBlur = (this.blurType == BlurType.GaussianHardCoded);
 		ShaderProgram blur = (isSimpleBlur ? shBlurSimple : shBlur);
 
 		originalScene.bind( 0 );

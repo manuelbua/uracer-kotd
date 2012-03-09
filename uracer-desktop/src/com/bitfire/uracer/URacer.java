@@ -172,7 +172,7 @@ public class URacer implements ApplicationListener
 		if(uRacerFinalizer != null)
 			uRacerFinalizer.dispose();
 
-		if(!Config.isDesktop)
+//		if(!Config.isDesktop || )
 			System.exit( 0 );
 	}
 
