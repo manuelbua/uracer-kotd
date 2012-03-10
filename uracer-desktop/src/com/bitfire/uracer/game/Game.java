@@ -115,8 +115,8 @@ public class Game
 //			BloomSettings bs = new BloomSettings( "subtle-rtt=1", BlurType.Gaussian_5x5, 1, 8f, 0.35f, 1f, 1f, 1f, 1f );
 
 			// 1280+@5x5/1024+@4x4/800+@3x3
-			BloomSettings bs = new BloomSettings( "subtle Gaussian", BlurType.Gaussian, 2, 1.5f, 0.45f, 1f, 0.4f, 1f, 1.5f );
-//			BloomSettings bs = new BloomSettings( "subtle Gaussian_5x5", BlurType.Gaussian_5x5, 1, 1f, 0.45f, 1f, 0.4f, 1f, 1.5f );
+//			BloomSettings bs = new BloomSettings( "subtle Gaussian", BlurType.Gaussian, 2, 1.5f, 0.45f, 1f, 0.5f, 1f, 1.5f );
+			BloomSettings bs = new BloomSettings( "subtle Gaussian_5x5", BlurType.Gaussian_5x5, 1, 1f, 0.45f, 1f, 0.5f, 1f, 1.5f );
 //			BloomSettings bs = new BloomSettings( "subtle BlurType.GaussianHardCoded", BlurType.GaussianHardCoded, 1, 1f, 0.45f, 1f, 0.4f, 1f, 1.5f );
 
 //			BloomSettings bs = new BloomSettings( "default", BlurType.GaussianBilinear, 1, 4, 0.25f, 1f, 1f, 1.25f, 1f );
@@ -230,8 +230,7 @@ public class Game
 			// need "subtle Gaussian"
 //			bloom.setBlurType( BlurType.Gaussian ); bloom.setBlurPasses( 1 ); bloom.setBlurAmount( 1f );	// @800
 //			bloom.setBlurType( BlurType.Gaussian ); bloom.setBlurPasses( 2 ); bloom.setBlurAmount( 1f );	// @1280
-//			bloom.setBlurType( BlurType.Gaussian ); bloom.setBlurPasses( 2 ); bloom.setBlurAmount( 1f );
-			bloom.setBlurType( BlurType.Gaussian_5x5 ); bloom.setBlurPasses( 1 );
+//			bloom.setBlurType( BlurType.Gaussian_5x5 ); bloom.setBlurPasses( 1 );
 
 //			bloom.setThreshold( 0.45f );
 			postProcessor.capture();
