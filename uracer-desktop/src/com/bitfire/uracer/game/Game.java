@@ -4,7 +4,6 @@ import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.GL20;
 import com.badlogic.gdx.graphics.OrthographicCamera;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
-import com.badlogic.gdx.math.WindowedMean;
 import com.bitfire.uracer.Art;
 import com.bitfire.uracer.Config;
 import com.bitfire.uracer.Config.Physics;
@@ -92,6 +91,7 @@ public class Game
 			postProcessor = new PostProcessor( Gdx.graphics.getWidth(), Gdx.graphics.getHeight(), false /* depth */, false /* alpha */, Config.isDesktop /* 32Bits */ );
 
 			float rttRatio = 0.25f;
+			System.out.println("rttRatio=" + rttRatio);
 
 			int fboWidth = (int)(Gdx.graphics.getWidth() * rttRatio);
 			int fboHeight = (int)(Gdx.graphics.getHeight() * rttRatio);
@@ -114,8 +114,10 @@ public class Game
 //			BloomSettings bs = new BloomSettings( "subtle-rtt=0.5", BlurType.Gaussian_5x5, 1, 1.5f, 0.5f, 1f, 1f, 1f, 1f );
 //			BloomSettings bs = new BloomSettings( "subtle-rtt=1", BlurType.Gaussian_5x5, 1, 8f, 0.35f, 1f, 1f, 1f, 1f );
 
-//			BloomSettings bs = new BloomSettings( "subtle #2", BlurType.Gaussian_5x5, 1, 1f, 0.45f, 1f, 0.4f, 1f, 1.5f );
-			BloomSettings bs = new BloomSettings( "subtle #2", BlurType.GaussianHardCoded, 1, 1f, 0.45f, 1f, 0.4f, 1f, 1.5f );
+			// 1280+@5x5/1024+@4x4/800+@3x3
+			BloomSettings bs = new BloomSettings( "subtle Gaussian", BlurType.Gaussian, 2, 1.5f, 0.45f, 1f, 0.4f, 1f, 1.5f );
+//			BloomSettings bs = new BloomSettings( "subtle Gaussian_5x5", BlurType.Gaussian_5x5, 1, 1f, 0.45f, 1f, 0.4f, 1f, 1.5f );
+//			BloomSettings bs = new BloomSettings( "subtle BlurType.GaussianHardCoded", BlurType.GaussianHardCoded, 1, 1f, 0.45f, 1f, 0.4f, 1f, 1.5f );
 
 //			BloomSettings bs = new BloomSettings( "default", BlurType.GaussianBilinear, 1, 4, 0.25f, 1f, 1f, 1.25f, 1f );
 //			BloomSettings bs = new BloomSettings( "soft", BlurType.GaussianBilinear, 1, 3, 0f, 1f, 1f, 1f, 1f );
@@ -178,8 +180,7 @@ public class Game
 		return true;
 	}
 
-	private WindowedMean mean = new WindowedMean( 16 );
-	private float lastFactor = 0f;
+//	private float lastFactor = 0f;
 	public void render()
 	{
 		tweener.update((int)(URacer.getLastDeltaSecs()*1000));
@@ -200,30 +201,7 @@ public class Game
 
 		if( Config.Graphics.EnablePostProcessingFx )
 		{
-//			bloom.setThresholdType( ThresholdType.Saturate );
-//			bloom.setBloomMixing( BloomMixing.WeightedAverage );
-//			bloom.setBloomIntesity( 2f );
-//			bloom.setOriginalIntesity( 1f );
-//			bloom.setTreshold( 0.4f );
-//			bloom.setBlending( true );
-//			bloom.setClearColor( 1f, .3f, .3f, 0 );
-//			bloom.blurPasses = 4;
-
-
 			// dbg (hotcode)
-//			bloom.setBaseIntesity( 0f );	bloom.setBaseSaturation( 1f );
-//			bloom.setBloomIntesity( 1f );		bloom.setBloomSaturation( 1f );
-//			bloom.setThreshold( 0.25f );
-//			bloom.setBlurPasses( 1 );
-
-//			bloom.setBaseIntesity( 1f );	bloom.setBaseSaturation( 0.1f );
-//			bloom.setBloomIntesity( 1f );		bloom.setBloomSaturation( 1.8f );
-//			bloom.setBlurPasses( 1 );
-
-
-//			mean.addValue( player.car.getCarDescriptor().velocity_wc.len() / player.car.getCarModel().max_speed );
-//			mean.addValue( DriftInfo.get().driftStrength );
-//
 //			float factor = DriftInfo.get().driftStrength;
 //			factor = AMath.fixup( AMath.lerp( lastFactor, factor, 0.85f ) );
 //			lastFactor = factor;
@@ -249,11 +227,18 @@ public class Game
 //			bloom.setBlurType( BlurType.Gaussian_5x5 );
 //			bloom.setBlurPasses( 1 );
 
+			// need "subtle Gaussian"
+//			bloom.setBlurType( BlurType.Gaussian ); bloom.setBlurPasses( 1 ); bloom.setBlurAmount( 1f );	// @800
+//			bloom.setBlurType( BlurType.Gaussian ); bloom.setBlurPasses( 2 ); bloom.setBlurAmount( 1f );	// @1280
+//			bloom.setBlurType( BlurType.Gaussian ); bloom.setBlurPasses( 2 ); bloom.setBlurAmount( 1f );
+			bloom.setBlurType( BlurType.Gaussian_5x5 ); bloom.setBlurPasses( 1 );
+
 			postProcessor.capture();
 		}
 
 
 		gl.glViewport( 0, 0, Gdx.graphics.getWidth(), Gdx.graphics.getHeight() );
+
 
 		// resync
 		level.syncWithCam( ortho );

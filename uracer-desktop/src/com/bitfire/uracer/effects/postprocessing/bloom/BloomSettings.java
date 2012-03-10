@@ -2,7 +2,13 @@ package com.bitfire.uracer.effects.postprocessing.bloom;
 
 public class BloomSettings
 {
-	public enum BlurType { GaussianBilinear, Gaussian, GaussianHardCoded, Gaussian_5x5 };
+	public enum BlurType {
+		GaussianBilinear,
+		Gaussian,
+		GaussianHardCoded,
+		Gaussian_5x5	// a 9x9 tap kernel result with lot less texture lookups :)
+	};
+
 	public final String name;
 
 	public final BlurType blurType;

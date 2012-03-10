@@ -23,6 +23,7 @@ public class Bloom implements IPostProcessorEffect
 	protected static ShaderProgram shThreshold;
 	protected static ShaderProgram shBloom;
 	protected static ShaderProgram shBlur, shBlurSimple;
+	protected static ShaderProgram shConvolve;
 	private static boolean shadersInitialized = false;
 
 	// blur
@@ -32,7 +33,7 @@ public class Bloom implements IPostProcessorEffect
 
 	// in settings!
 	private final int BlurRadius = 2;
-	private final int BlurKernelSize = (BlurRadius * 2) + 1;
+	private final int ConvolveKernelSize = (BlurRadius * 2) + 1;
 
 	private Color clearColor = Color.CLEAR;
 
@@ -91,6 +92,9 @@ public class Bloom implements IPostProcessorEffect
 
 			// setup blur radius and kernel size
 			shBlur = ShaderLoader.createShader( "bloom/blur", "bloom/blur", "#define RADIUS " + BlurRadius );
+
+			// BlurEffect will use the generic convolve
+			shConvolve = ShaderLoader.createShader( "bloom/convolve-1d", "bloom/convolve-1d", "#define LENGTH " + ConvolveKernelSize );
 		}
 	}
 
@@ -195,16 +199,16 @@ public class Bloom implements IPostProcessorEffect
 	private void computeBlurWeightings( float blurAmount )
 	{
 		// need memory?
-		if(blurSampleWeights == null) blurSampleWeights = new float[BlurKernelSize];
-		if(blurSampleOffsetsH == null) blurSampleOffsetsH = new float[BlurKernelSize * 2];	// x-y pairs
-		if(blurSampleOffsetsV == null) blurSampleOffsetsV = new float[BlurKernelSize * 2];	// x-y pairs
+		if(blurSampleWeights == null) blurSampleWeights = new float[ConvolveKernelSize];
+		if(blurSampleOffsetsH == null) blurSampleOffsetsH = new float[ConvolveKernelSize * 2];	// x-y pairs
+		if(blurSampleOffsetsV == null) blurSampleOffsetsV = new float[ConvolveKernelSize * 2];	// x-y pairs
 
 		switch(this.blurType)
 		{
 		case GaussianBilinear:
 			// opt gaussian (exploit bilinear filtering on texture units, good on mid-to-big-sized FBOs, ie. rtt>~0.3)
-			computeGaussianViaBilinear( this.invFboWidth, 0, blurAmount, BlurKernelSize, blurSampleWeights, blurSampleOffsetsH );
-			computeGaussianViaBilinear( 0, this.invFboHeight, blurAmount, BlurKernelSize, blurSampleWeights, blurSampleOffsetsV );
+			computeGaussianViaBilinear( this.invFboWidth, 0, blurAmount, ConvolveKernelSize, blurSampleWeights, blurSampleOffsetsH );
+			computeGaussianViaBilinear( 0, this.invFboHeight, blurAmount, ConvolveKernelSize, blurSampleWeights, blurSampleOffsetsV );
 			break;
 
 		case Gaussian:
@@ -224,6 +228,16 @@ public class Bloom implements IPostProcessorEffect
 			// with radius = 2f
 			// with rtt ratio = 0.25f
 
+			float dx = 1f / fboWidth;
+			float dy = 1f / fboHeight;
+
+			// ---------------8<---------------8<---------------8<---------------8<---------------8<---------------8<
+			// weights and offsets are computed from a binomial distribution
+			// and reduced to be used *only* with bilinearly-filtered texture lookups
+			//
+			// with radius = 2f
+			// with rtt ratio = 0.25f
+
 			// weights
 			outWeights[0] = 0.0702703f;
 			outWeights[1] = 0.316216f;
@@ -232,18 +246,29 @@ public class Bloom implements IPostProcessorEffect
 			outWeights[4] = 0.0702703f;
 
 			// horizontal offsets
-			outOffsetsH[0] = -0.0100962f;	outOffsetsH[1] = 0f;
-			outOffsetsH[2] = -0.00432692f;	outOffsetsH[3] = 0f;
+			outOffsetsH[0] = -3.23077f;	outOffsetsH[1] = 0f;
+			outOffsetsH[2] = -1.38462f;	outOffsetsH[3] = 0f;
 			outOffsetsH[4] = 0f;		outOffsetsH[5] = 0f;
-			outOffsetsH[6] = 0.00432692f;	outOffsetsH[7] = 0f;
-			outOffsetsH[8] = 0.0100962f;	outOffsetsH[9] = 0f;
+			outOffsetsH[6] = 1.38462f;	outOffsetsH[7] = 0f;
+			outOffsetsH[8] = 3.23077f;	outOffsetsH[9] = 0f;
 
 			// vertical offsets
-			outOffsetsV[0] = 0f;	outOffsetsV[1] = -0.0171849f;
-			outOffsetsV[2] = 0f;	outOffsetsV[3] = -0.00736497f;
+			outOffsetsV[0] = 0f;	outOffsetsV[1] = -3.23077f;
+			outOffsetsV[2] = 0f;	outOffsetsV[3] = -1.38462f;
 			outOffsetsV[4] = 0f;	outOffsetsV[5] = 0f;
-			outOffsetsV[6] = 0f;	outOffsetsV[7] = 0.00736497f;
-			outOffsetsV[8] = 0f;	outOffsetsV[9] = 0.0171849f;
+			outOffsetsV[6] = 0f;	outOffsetsV[7] = 1.38462f;
+			outOffsetsV[8] = 0f;	outOffsetsV[9] = 3.23077f;
+
+			// scale offsets from binomial space to screen space
+			for(int i = 0; i < ConvolveKernelSize * 2; i++) {
+				outOffsetsH[i] *= dx;
+				outOffsetsV[i] *= dy;
+			}
+			// ---------------8<---------------8<---------------8<---------------8<---------------8<---------------8<
+
+			shConvolve.begin();
+			shConvolve.setUniform1fv( "SampleWeights", blurSampleWeights, 0, ConvolveKernelSize );
+			shConvolve.end();
 
 			break;
 		}
@@ -377,6 +402,7 @@ public class Bloom implements IPostProcessorEffect
 		shBlur.dispose();
 		shBloom.dispose();
 		shThreshold.dispose();
+		shConvolve.dispose();
 
 		blurSampleWeights = null;
 		blurSampleOffsetsH = null;
@@ -417,11 +443,11 @@ public class Bloom implements IPostProcessorEffect
 
 	private void renderGaussianBlur( Mesh fullScreenQuad, Texture originalScene )
 	{
-		// cut bright areas of the picture and blit to smaller fbo
-
+		// choose blur shader
 		boolean isSimpleBlur = (this.blurType == BlurType.GaussianHardCoded);
-		ShaderProgram blur = (isSimpleBlur ? shBlurSimple : shBlur);
+		ShaderProgram blur = (isSimpleBlur ? shBlurSimple : (this.blurType==BlurType.Gaussian_5x5? shConvolve : shBlur));
 
+		// cut bright areas of the picture and blit to smaller fbo
 		originalScene.bind( 0 );
 		pingPongBuffer1.begin();
 		{
@@ -436,7 +462,7 @@ public class Bloom implements IPostProcessorEffect
 
 		for( int i = 0; i < blurPasses; i++ )
 		{
-			// horizontal
+			// horizontal pass
 			pingPongTex1.bind( 0 );
 			pingPongBuffer2.begin();
 			{
@@ -444,12 +470,14 @@ public class Bloom implements IPostProcessorEffect
 				{
 					blur.setUniformi( "u_texture", 0 );
 
-					if(isSimpleBlur)
+					if(isSimpleBlur) {
 						blur.setUniformf( "dir", 1f, 0f );
-					else
-					{
-						blur.setUniform1fv( "SampleWeights", blurSampleWeights, 0, BlurKernelSize );
-						blur.setUniform2fv( "SampleOffsets", blurSampleOffsetsH, 0, BlurKernelSize*2  /* libgdx ask for number of floats! */ );
+					}
+					else if(this.blurType==BlurType.Gaussian_5x5) {
+						shConvolve.setUniform2fv( "SampleOffsets", blurSampleOffsetsH, 0, ConvolveKernelSize*2  /* libgdx ask for number of floats! */ );
+					} else {
+						blur.setUniform1fv( "SampleWeights", blurSampleWeights, 0, ConvolveKernelSize );
+						blur.setUniform2fv( "SampleOffsets", blurSampleOffsetsH, 0, ConvolveKernelSize*2  /* libgdx ask for number of floats! */ );
 					}
 
 					fullScreenQuad.render( blur, GL20.GL_TRIANGLE_FAN, 0, 4 );
@@ -458,7 +486,7 @@ public class Bloom implements IPostProcessorEffect
 			}
 			pingPongBuffer2.end();
 
-			// vertical
+			// vertical pass
 			pingPongTex2.bind( 0 );
 			pingPongBuffer1.begin();
 			{
@@ -466,12 +494,14 @@ public class Bloom implements IPostProcessorEffect
 				{
 					blur.setUniformi( "u_texture", 0 );
 
-					if(isSimpleBlur)
+					if(isSimpleBlur) {
 						blur.setUniformf( "dir", 0f, 1f );
-					else
-					{
-						blur.setUniform1fv( "SampleWeights", blurSampleWeights, 0, BlurKernelSize );
-						blur.setUniform2fv( "SampleOffsets", blurSampleOffsetsV, 0, BlurKernelSize*2 /* libgdx ask for number of floats! */ );
+					}
+					else if(this.blurType==BlurType.Gaussian_5x5) {
+						shConvolve.setUniform2fv( "SampleOffsets", blurSampleOffsetsV, 0, ConvolveKernelSize*2  /* libgdx ask for number of floats! */ );
+					} else {
+						blur.setUniform1fv( "SampleWeights", blurSampleWeights, 0, ConvolveKernelSize );
+						blur.setUniform2fv( "SampleOffsets", blurSampleOffsetsV, 0, ConvolveKernelSize*2 /* libgdx ask for number of floats! */ );
 					}
 
 					fullScreenQuad.render( blur, GL20.GL_TRIANGLE_FAN, 0, 4 );
