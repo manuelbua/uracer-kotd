@@ -233,6 +233,7 @@ public class Game
 //			bloom.setBlurType( BlurType.Gaussian ); bloom.setBlurPasses( 2 ); bloom.setBlurAmount( 1f );
 			bloom.setBlurType( BlurType.Gaussian_5x5 ); bloom.setBlurPasses( 1 );
 
+//			bloom.setThreshold( 0.45f );
 			postProcessor.capture();
 		}
 
