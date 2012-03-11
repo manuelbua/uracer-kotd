@@ -16,7 +16,7 @@ import com.bitfire.uracer.effects.TrackEffects;
 import com.bitfire.uracer.effects.postprocessing.PostProcessor;
 import com.bitfire.uracer.effects.postprocessing.bloom.Bloom;
 import com.bitfire.uracer.effects.postprocessing.bloom.BloomSettings;
-import com.bitfire.uracer.effects.postprocessing.bloom.BloomSettings.BlurType;
+import com.bitfire.uracer.effects.postprocessing.filters.Blur.BlurType;
 import com.bitfire.uracer.entities.EntityManager;
 import com.bitfire.uracer.entities.vehicles.Car;
 import com.bitfire.uracer.game.logic.DirectorController;
@@ -27,9 +27,6 @@ import com.bitfire.uracer.hud.Hud;
 import com.bitfire.uracer.hud.HudLabel;
 import com.bitfire.uracer.messager.Message;
 import com.bitfire.uracer.messager.Messager;
-import com.bitfire.uracer.messager.Messager.MessagePosition;
-import com.bitfire.uracer.messager.Messager.MessageSize;
-import com.bitfire.uracer.messager.Messager.MessageType;
 import com.bitfire.uracer.tiled.LevelRenderer;
 import com.bitfire.uracer.tweener.Tweener;
 import com.bitfire.uracer.tweener.accessors.HudLabelAccessor;
@@ -115,8 +112,8 @@ public class Game
 //			BloomSettings bs = new BloomSettings( "subtle-rtt=1", BlurType.Gaussian_5x5, 1, 8f, 0.35f, 1f, 1f, 1f, 1f );
 
 			// 1280+@5x5/1024+@4x4/800+@3x3
-//			BloomSettings bs = new BloomSettings( "subtle Gaussian", BlurType.Gaussian, 2, 1.5f, 0.45f, 1f, 0.5f, 1f, 1.5f );
-			BloomSettings bs = new BloomSettings( "subtle Gaussian_5x5", BlurType.Gaussian_5x5, 1, 1f, 0.45f, 1f, 0.5f, 1f, 1.5f );
+//			BloomSettings bs = new BloomSettings( "subtle (800x480/1280x800)", BlurType.Gaussian, 1, 1.5f, 0.45f, 1f, 0.5f, 1f, 1.5f );
+			BloomSettings bs = new BloomSettings( "subtle rtt=0.25 @1920x1050", BlurType.Gaussian5x5b, 1, 1f, 0.45f, 1f, 0.5f, 1f, 1.5f );
 //			BloomSettings bs = new BloomSettings( "subtle BlurType.GaussianHardCoded", BlurType.GaussianHardCoded, 1, 1f, 0.45f, 1f, 0.4f, 1f, 1.5f );
 
 //			BloomSettings bs = new BloomSettings( "default", BlurType.GaussianBilinear, 1, 4, 0.25f, 1f, 1f, 1.25f, 1f );
@@ -125,12 +122,11 @@ public class Game
 //			BloomSettings bs = new BloomSettings( "desaturated", BlurType.GaussianBilinear, 1, 8, 0.5f, 1f, 1f, 2f, 0f );
 //			BloomSettings bs = new BloomSettings( "saturated", BlurType.GaussianBilinear, 1, 4, 0.25f, 1f, 0f, 2f, 2f );
 
-
 			bloom.setSettings( bs );
 			postProcessor.setEffect( bloom );
 		}
 
-		Messager.show( "FANTASTIC", 600, MessageType.Good, MessagePosition.Bottom, MessageSize.Big );
+//		Messager.show( "FANTASTIC", 600, MessageType.Good, MessagePosition.Bottom, MessageSize.Big );
 
 		// setup sprite batch at origin top-left => 0,0
 		// Issues may arise on Tegra2 (Asus Transformer) devices if the buffers'
