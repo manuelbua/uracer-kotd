@@ -33,6 +33,7 @@ public class URacerDesktop
 		config.title = "uRacer: The King Of The Drift";
 
 		config.width = 1920; config.height = 1050;
+//		config.width = 1730; config.height = 1016;
 //		config.width = 1280; config.height = 752;
 
 //		config.width = 1280; config.height = 720;
