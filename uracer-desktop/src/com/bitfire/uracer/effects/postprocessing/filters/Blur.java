@@ -1,12 +1,10 @@
 package com.bitfire.uracer.effects.postprocessing.filters;
 
-import com.badlogic.gdx.graphics.GL20;
 import com.badlogic.gdx.graphics.Mesh;
 import com.badlogic.gdx.graphics.Pixmap.Format;
-import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.glutils.FrameBuffer;
-import com.badlogic.gdx.graphics.glutils.ShaderProgram;
-import com.bitfire.uracer.utils.ShaderLoader;
+import com.badlogic.gdx.utils.IntMap;
+import com.bitfire.uracer.effects.postprocessing.PingPongBuffer;
 
 public class Blur
 {
@@ -16,47 +14,12 @@ public class Blur
 		Tap5x5(2),
 		Tap7x7(3);
 
-		public final int length;
 		public final int radius;
-		public float[] weights;
-		public float[] offsetsH;
-		public float[] offsetsV;
 
 		private Tap( int radius )
 		{
 			this.radius = radius;
-			this.length = (radius*2)+1;
-
-			convolveH = ShaderLoader.createShader("bloom/convolve-1d", "bloom/convolve-1d", "#define LENGTH " + length);
-			convolveV = ShaderLoader.createShader("bloom/convolve-1d", "bloom/convolve-1d", "#define LENGTH " + length);
-
-			weights = new float[length];
-			offsetsH = new float[length*2];
-			offsetsV = new float[length*2];
 		}
-
-		public void dispose()
-		{
-			convolveH.dispose();
-			convolveV.dispose();
-			weights = offsetsH = offsetsV = null;
-		}
-
-		public void bind()
-		{
-			convolveH.begin();
-			convolveH.begin();
-			convolveH.setUniform1fv( "SampleWeights", weights, 0, length );
-			convolveH.setUniform2fv( "SampleOffsets", offsetsH, 0, length*2  /* libgdx ask for number of floats! */ );
-			convolveH.end();
-
-			convolveV.begin();
-			convolveV.setUniform1fv( "SampleWeights", weights, 0, length );
-			convolveV.setUniform2fv( "SampleOffsets", offsetsV, 0, length*2  /* libgdx ask for number of floats! */ );
-			convolveV.end();
-		}
-
-		protected ShaderProgram convolveH = null, convolveV = null;
 	}
 
 	public enum BlurType
@@ -67,9 +30,9 @@ public class Blur
 		;
 
 		public final Tap tap;
-		private BlurType(Tap tapsize)
+		private BlurType(Tap tap)
 		{
-			this.tap = tapsize;
+			this.tap = tap;
 		}
 	}
 
@@ -79,12 +42,9 @@ public class Blur
 	private int passes;
 
 	// fbo, textures
-	private int fboWidth, fboHeight;
+	private PingPongBuffer ppBuffer;
 	private float invFboWidth, invFboHeight;
-	private FrameBuffer pingPongBuffer1;
-	private FrameBuffer pingPongBuffer2;
-	private Texture pingPongTex1;
-	private Texture pingPongTex2;
+	private IntMap<Convolve2D> convolve = new IntMap<Convolve2D>(Tap.values().length);
 
 	public Blur( int fboWidth, int fboHeight, Format frameBufferFormat )
 	{
@@ -94,20 +54,14 @@ public class Blur
 
 	private void create( int fboWidth, int fboHeight, Format frameBufferFormat )
 	{
-		// setup fbo
-		this.fboWidth = fboWidth;
-		this.fboHeight = fboHeight;
-		this.invFboWidth = 1f / (float)this.fboWidth;
-		this.invFboHeight = 1f / (float)this.fboHeight;
+		// precompute constants
+		this.invFboWidth = 1f / (float)fboWidth;
+		this.invFboHeight = 1f / (float)fboHeight;
 
-		pingPongBuffer1 = new FrameBuffer( frameBufferFormat, fboWidth, fboHeight, false );
-		pingPongBuffer2 = new FrameBuffer( frameBufferFormat, fboWidth, fboHeight, false );
+		ppBuffer = new PingPongBuffer( fboWidth, fboHeight, frameBufferFormat, false );
 
-		pingPongTex1 = pingPongBuffer1.getColorBufferTexture();
-		pingPongTex2 = pingPongBuffer2.getColorBufferTexture();
-
-//		pingPongTex1.setFilter( TextureFilter.Nearest, TextureFilter.Nearest );
-//		pingPongTex2.setFilter( TextureFilter.Nearest, TextureFilter.Nearest );
+		for(Tap tap : Tap.values())
+			convolve.put( tap.radius, new Convolve2D(tap.radius) );
 	}
 
 	private void setup()
@@ -119,15 +73,15 @@ public class Blur
 
 	public void dispose()
 	{
+		for(Convolve2D c : convolve.values())
+			c.dispose();
 
-		pingPongBuffer1.dispose();
-		pingPongBuffer2.dispose();
+		ppBuffer.dispose();
 	}
 
 	public void rebind()
 	{
-		pingPongTex1 = pingPongBuffer1.getColorBufferTexture();
-		pingPongTex2 = pingPongBuffer2.getColorBufferTexture();
+		ppBuffer.rebind();
 		computeBlurWeightings();
 	}
 
@@ -151,52 +105,43 @@ public class Blur
 
 	public FrameBuffer getInputBuffer()
 	{
-		return pingPongBuffer1;
+		return ppBuffer.buffer1;
 	}
 
 	public FrameBuffer getOutputBuffer()
 	{
-		return pingPongBuffer1;
+		return ppBuffer.buffer1;
 	}
 
 	public void render( Mesh fullScreenQuad )
 	{
-		ShaderProgram h = this.type.tap.convolveH;
-		ShaderProgram v = this.type.tap.convolveV;
+		Convolve2D c = convolve.get( this.type.tap.radius );
 
 		for( int i = 0; i < this.passes; i++ )
 		{
 			// horizontal pass
-			pingPongTex1.bind( 0 );
-			pingPongBuffer2.begin();
+			ppBuffer.begin();
 			{
-				h.begin();
-				{
-					h.setUniformi( "u_texture", 0 );
-					fullScreenQuad.render( h, GL20.GL_TRIANGLE_FAN, 0, 4 );
-				}
-				h.end();
+				c.renderHorizontal( fullScreenQuad );
 			}
-			pingPongBuffer2.end();
 
 			// vertical pass
-			pingPongTex2.bind( 0 );
-			pingPongBuffer1.begin();
+			ppBuffer.swap();
 			{
-				v.begin();
-				{
-					v.setUniformi( "u_texture", 0 );
-					fullScreenQuad.render( v, GL20.GL_TRIANGLE_FAN, 0, 4 );
-				}
-				v.end();
+				c.renderVertical( fullScreenQuad );
 			}
-			pingPongBuffer1.end();
+			ppBuffer.end();
 		}
 	}
 
 	private void computeBlurWeightings()
 	{
 		boolean hasdata = true;
+		Convolve2D c = convolve.get( this.type.tap.radius );
+
+		float[] outWeights = c.weights;
+		float[] outOffsetsH = c.offsetsHor;
+		float[] outOffsetsV = c.offsetsVert;
 
 		switch(this.type)
 		{
@@ -206,14 +151,11 @@ public class Blur
 
 		case Gaussian3x3:
 		case Gaussian5x5:
-			computeKernel( this.type.tap.radius, this.amount, this.type.tap.weights );
-			computeOffsets( this.type.tap.radius, this.invFboWidth, this.invFboHeight, this.type.tap.offsetsH, this.type.tap.offsetsV );
+			computeKernel( this.type.tap.radius, this.amount, outWeights );
+			computeOffsets( this.type.tap.radius, this.invFboWidth, this.invFboHeight, outOffsetsH, outOffsetsV );
 			break;
 
 		case Gaussian5x5b:
-			float[] outWeights = this.type.tap.weights;
-			float[] outOffsetsH = this.type.tap.offsetsH;
-			float[] outOffsetsV = this.type.tap.offsetsV;
 
 			// weights and offsets are computed from a binomial distribution
 			// and reduced to be used *only* with bilinearly-filtered texture lookups
@@ -253,7 +195,7 @@ public class Blur
 			outOffsetsV[8] = 0f;	outOffsetsV[9] = 3.23077f;
 
 			// scale offsets from binomial space to screen space
-			for(int i = 0; i < this.type.tap.length * 2; i++) {
+			for(int i = 0; i < c.length * 2; i++) {
 				outOffsetsH[i] *= dx;
 				outOffsetsV[i] *= dy;
 			}
@@ -264,7 +206,7 @@ public class Blur
 
 		if(hasdata)
 		{
-			this.type.tap.bind();
+			c.upload();
 		}
 	}
 
