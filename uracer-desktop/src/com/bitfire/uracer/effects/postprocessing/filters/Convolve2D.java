@@ -1,21 +1,21 @@
 package com.bitfire.uracer.effects.postprocessing.filters;
 
-import com.badlogic.gdx.graphics.glutils.ShaderProgram;
 import com.bitfire.uracer.effects.postprocessing.FullscreenQuad;
+import com.bitfire.uracer.effects.postprocessing.PingPongBuffer;
 
 public class Convolve2D
 {
 	public final int radius;
-	public final int length;	// NxN taps filter, w/ N=length
+	public final int length; // NxN taps filter, w/ N=length
 
 	public final float[] weights, offsetsHor, offsetsVert;
 
 	private Convolve1D hor, vert;
-	private ShaderProgram convh, convv;
-	public Convolve2D(int radius)
+
+	public Convolve2D( int radius )
 	{
 		this.radius = radius;
-		length = (radius*2)+1;
+		length = (radius * 2) + 1;
 
 		hor = new Convolve1D( length );
 		vert = new Convolve1D( length, hor.weights );
@@ -23,9 +23,6 @@ public class Convolve2D
 		weights = hor.weights;
 		offsetsHor = hor.offsets;
 		offsetsVert = vert.offsets;
-
-		convh = hor.convolve1d;
-		convv = vert.convolve1d;
 	}
 
 	public void dispose()
@@ -40,23 +37,19 @@ public class Convolve2D
 		vert.upload();
 	}
 
-	public void renderHorizontal(FullscreenQuad quad)
-	{
-		convh.begin();
-		{
-			convh.setUniformi( "u_texture", 0 );
-			quad.render( convh );
-		}
-		convh.end();
-	}
+	/**
+	 * Expects input to be in PingPongBuffer.buffer1
+	 */
 
-	public void renderVertical(FullscreenQuad quad)
+	// public void render(FullscreenQuad quad, Texture source, FrameBuffer dest)
+	public void render( FullscreenQuad quad, PingPongBuffer buffer )
 	{
-		convv.begin();
-		{
-			convv.setUniformi( "u_texture", 0 );
-			quad.render( convv );
-		}
-		convv.end();
+		hor.render( quad, buffer.pingPong() );
+		vert.render( quad, buffer.pingPong() );
+
+//		Texture src = buffer.getNextSourceTexture(); buffer.pingPong();
+//		hor.render( quad, src );
+//		src = buffer.getNextSourceTexture(); buffer.pingPong();
+//		vert.render( quad, src );
 	}
 }

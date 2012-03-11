@@ -5,66 +5,56 @@ import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.GL10;
 import com.badlogic.gdx.graphics.Pixmap.Format;
 import com.badlogic.gdx.graphics.Texture;
-import com.badlogic.gdx.graphics.glutils.FrameBuffer;
-import com.badlogic.gdx.graphics.glutils.ShaderProgram;
 import com.bitfire.uracer.effects.postprocessing.FullscreenQuad;
 import com.bitfire.uracer.effects.postprocessing.IPostProcessorEffect;
+import com.bitfire.uracer.effects.postprocessing.PingPongBuffer;
 import com.bitfire.uracer.effects.postprocessing.filters.Blur;
 import com.bitfire.uracer.effects.postprocessing.filters.Blur.BlurType;
-import com.bitfire.uracer.utils.ShaderLoader;
+import com.bitfire.uracer.effects.postprocessing.filters.Combine;
+import com.bitfire.uracer.effects.postprocessing.filters.Combine.Param;
+import com.bitfire.uracer.effects.postprocessing.filters.Threshold;
 
 public class Bloom implements IPostProcessorEffect
 {
 	public static boolean useAlphaChannelAsMask = false;
 
-	protected static ShaderProgram shThreshold, shBloom;
-	private static boolean shadersInitialized = false;
-
-
 	private Color clearColor = Color.CLEAR;
 
-	private FrameBuffer blurInput, blurOutput;
-	private Texture blurInputTex, blurOutputTex;
+	private PingPongBuffer pingPongBuffer;
 
 	protected int blurPasses;
 	protected float blurAmount;
 	protected float bloomIntensity, bloomSaturation;
 	protected float baseIntensity, baseSaturation;
+
 	protected Blur blur;
+	protected Threshold threshold;
+	protected Combine combine;
+
 	protected BlurType blurType;
 	protected BloomSettings bloomSettings;
 
-	protected float threshold;
 	protected boolean blending = false;
 
 	public Bloom( int fboWidth, int fboHeight, Format frameBufferFormat )
 	{
-		blur = new Blur(fboWidth, fboHeight, frameBufferFormat);
+		pingPongBuffer = new PingPongBuffer( fboWidth, fboHeight, frameBufferFormat, false );
 
-		blurInput = blur.getInputBuffer();
-		blurOutput = blur.getOutputBuffer();
-
-		blurInputTex = blur.getInputBuffer().getColorBufferTexture();
-		blurOutputTex = blur.getOutputBuffer().getColorBufferTexture();
+		blur = new Blur(fboWidth, fboHeight);
+		threshold = new Threshold(Bloom.useAlphaChannelAsMask);
+		combine = new Combine();
 
 		BloomSettings s = new BloomSettings( "default", 2, 0.277f, 1f, .85f, 1.1f, .85f );
-		createShaders(s);
 		setSettings(s);
 	}
 
-	protected void createShaders(BloomSettings settings)
+	@Override
+	public void dispose()
 	{
-		if(!Bloom.shadersInitialized)
-		{
-			Bloom.shadersInitialized = true;
-
-			shBloom = ShaderLoader.createShader( "bloom/screenspace", "bloom/bloom" );
-
-			if(Bloom.useAlphaChannelAsMask)
-				shThreshold = ShaderLoader.createShader( "bloom/screenspace", "bloom/masked-threshold" );
-			else
-				shThreshold = ShaderLoader.createShader( "bloom/screenspace", "bloom/threshold" );
-		}
+		pingPongBuffer.dispose();
+		blur.dispose();
+		threshold.dispose();
+		combine.dispose();
 	}
 
 	public void setClearColor( float r, float g, float b, float a )
@@ -72,56 +62,30 @@ public class Bloom implements IPostProcessorEffect
 		clearColor.set( r, g, b, a );
 	}
 
-	public void setBloomIntesity( float intensity )
-	{
-		bloomIntensity = intensity;
-		shBloom.begin();
-		{
-			shBloom.setUniformf( "BloomIntensity", intensity );
-		}
-		shBloom.end();
-	}
-
 	public void setBaseIntesity( float intensity )
 	{
-		baseIntensity = intensity;
-		shBloom.begin();
-		{
-			shBloom.setUniformf( "BaseIntensity", intensity );
-		}
-		shBloom.end();
-	}
-
-	public void setBloomSaturation( float saturation )
-	{
-		bloomSaturation = saturation;
-		shBloom.begin();
-		{
-			shBloom.setUniformf( "BloomSaturation", saturation );
-		}
-		shBloom.end();
+		combine.setParam( Param.Source1Intensity, intensity );
 	}
 
 	public void setBaseSaturation( float saturation )
 	{
-		baseSaturation = saturation;
-		shBloom.begin();
-		{
-			shBloom.setUniformf( "BaseSaturation", saturation );
-		}
-		shBloom.end();
+		combine.setParam( Param.Source1Saturation, saturation );
 	}
 
-	public void setThreshold( float treshold )
+	public void setBloomIntesity( float intensity )
 	{
-		this.threshold = treshold;
-		shThreshold.begin();
-		{
-			shThreshold.setUniformf( "treshold", treshold );
-			shThreshold.setUniformf( "tresholdInvTx", (1f / (1f-treshold)) );	// correct
-//			shThreshold.setUniformf( "tresholdInvTx", (1f / (treshold)) );		// does this look better?
-		}
-		shThreshold.end();
+		combine.setParam( Param.Source2Intensity, intensity );
+	}
+
+	public void setBloomSaturation( float saturation )
+	{
+		combine.setParam( Param.Source2Saturation, saturation );
+
+	}
+
+	public void setThreshold( float gamma )
+	{
+		threshold.setTreshold( gamma );
 	}
 
 	public void setBlending(boolean blending)
@@ -161,20 +125,6 @@ public class Bloom implements IPostProcessorEffect
 		blur.setAmount( amount );
 	}
 
-
-	/**
-	 * Call this when application is exiting.
-	 *
-	 */
-
-	@Override
-	public void dispose()
-	{
-		blur.dispose();
-		shBloom.dispose();
-		shThreshold.dispose();
-	}
-
 	@Override
 	public Color getClearColor()
 	{
@@ -188,7 +138,13 @@ public class Bloom implements IPostProcessorEffect
 		Gdx.gl.glDisable( GL10.GL_DEPTH_TEST );
 		Gdx.gl.glDepthMask( false );
 
-		thresholdAndBlur( quad, originalScene );
+		// cut bright areas of the picture and blit to smaller fbo
+		threshold.render( quad, originalScene, pingPongBuffer.getNextSourceBuffer() );
+
+		// src in buffer1
+		// result in buffer1
+		blur.render( quad, pingPongBuffer );
+		pingPongBuffer.end();
 
 		if( blending )
 		{
@@ -196,41 +152,15 @@ public class Bloom implements IPostProcessorEffect
 			Gdx.gl.glBlendFunc( GL10.GL_SRC_ALPHA, GL10.GL_ONE_MINUS_SRC_ALPHA );
 		}
 
-		originalScene.bind( 0 );
-		blurOutputTex.bind( 1 );
-		shBloom.begin();
-		{
-			shBloom.setUniformi( "u_texture0", 0 );
-			shBloom.setUniformi( "u_texture1", 1 );
-			quad.render( shBloom );
-		}
-		shBloom.end();
-	}
-
-	private void thresholdAndBlur( FullscreenQuad quad, Texture originalScene )
-	{
-		// cut bright areas of the picture and blit to smaller fbo
-		originalScene.bind( 0 );
-		blur.getInputBuffer().begin();
-		{
-			shThreshold.begin();
-			{
-				shThreshold.setUniformi( "u_texture0", 0 );
-				quad.render( shThreshold );
-			}
-			shThreshold.end();
-		}
-		blur.getInputBuffer().end();
-
-		blur.render( quad );
+		combine.render( quad, originalScene, pingPongBuffer.getLastDestinationTexture() );
 	}
 
 	@Override
 	public void resume()
 	{
-		blur.rebind();
+		blur.upload();
+		threshold.upload();
+		pingPongBuffer.rebind();
 		setSettings( bloomSettings );
-		blurInputTex = blurInput.getColorBufferTexture();
-		blurOutputTex = blurOutput.getColorBufferTexture();
 	}
 }

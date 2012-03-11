@@ -4,33 +4,42 @@ import com.badlogic.gdx.graphics.Pixmap.Format;
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.glutils.FrameBuffer;
 
+/**
+ * Encapsulates a ping-pong buffer.
+ *
+ * @author manuel
+ *
+ */
 public class PingPongBuffer
 {
-	public final FrameBuffer buffer1, buffer2;
+	public FrameBuffer buffer1, buffer2;
 	public Texture texture1, texture2;
 
-	public final int width, height;
+	private Texture nextPingpongTexSrc, lastPingpongTexDst;
+	private FrameBuffer nextPingpongBufSrc, lastPingpongBufDst;
+
+	public int width, height;
+
 	public PingPongBuffer( int width, int height, Format frameBufferFormat, boolean hasDepth )
 	{
-		this.width = width;
-		this.height = height;
-
-		buffer1 = new FrameBuffer( frameBufferFormat, width, height, hasDepth );
-		buffer2 = new FrameBuffer( frameBufferFormat, width, height, hasDepth );
-
-//		buffer1.setFilter( TextureFilter.Nearest, TextureFilter.Nearest );
-//		buffer2.setFilter( TextureFilter.Nearest, TextureFilter.Nearest );
-
-		rebind();
+		set( new FrameBuffer( frameBufferFormat, width, height, hasDepth ), new FrameBuffer( frameBufferFormat, width, height, hasDepth ) );
 	}
 
 	public PingPongBuffer( FrameBuffer buffer1, FrameBuffer buffer2 )
 	{
-		this.width = this.buffer1.getWidth();
-		this.height = this.buffer1.getHeight();
+		set( buffer1, buffer2 );
+	}
 
+	public void set( FrameBuffer buffer1, FrameBuffer buffer2 )
+	{
 		this.buffer1 = buffer1;
 		this.buffer2 = buffer2;
+
+		// buffer1.setFilter( TextureFilter.Nearest, TextureFilter.Nearest );
+		// buffer2.setFilter( TextureFilter.Nearest, TextureFilter.Nearest );
+
+		this.width = this.buffer1.getWidth();
+		this.height = this.buffer1.getHeight();
 
 		rebind();
 	}
@@ -45,32 +54,95 @@ public class PingPongBuffer
 	{
 		texture1 = buffer1.getColorBufferTexture();
 		texture2 = buffer2.getColorBufferTexture();
+		restore();
 	}
 
-	/**
-	 * begin ping-ponging, tex1#0, begin write to buf2
-	 */
-	public void begin()
+	private void restore()
 	{
-		texture1.bind(0);
-		buffer2.begin();
+		pending1 = pending2 = false;
+		writeState = true;
+
+		nextPingpongTexSrc = texture1; nextPingpongBufSrc = buffer1;
+		lastPingpongTexDst = texture2; lastPingpongBufDst = buffer2;
 	}
 
+	private boolean writeState, pending1, pending2;
+
 	/**
-	 * swap, end write buf2, tex2#0, begin write to buf1
+	 * Start/continue ping-ponging between two buffers.
+	 *
+	 * Returns the result of the previous pass, or the source texture for the next pass if the ping-ponging was ended.
 	 */
-	public void swap()
+	public Texture pingPong()
 	{
-		buffer2.end();
-		texture2.bind(0);
-		buffer1.begin();
+		endPending();
+
+		Texture currSource = null;
+		if( writeState )
+		{
+			// the caller is performing a pingPong step, this is the current source texture
+			currSource = texture1;
+
+			// this will be the next pingPong step's source texture
+			nextPingpongTexSrc = lastPingpongTexDst = texture2;
+			nextPingpongBufSrc = lastPingpongBufDst = buffer2;
+
+			// write to buf2
+			pending2 = true;
+			buffer2.begin();
+		} else
+		{
+			currSource = texture2;
+
+			nextPingpongTexSrc = lastPingpongTexDst = texture1;
+			nextPingpongBufSrc = lastPingpongBufDst = buffer1;
+
+			// write to buf1
+			pending1 = true;
+			buffer1.begin();
+		}
+
+		writeState = !writeState;
+		return currSource;
 	}
 
-	/**
-	 * end, end write to buf1
-	 */
+	public Texture getNextSourceTexture()
+	{
+		return nextPingpongTexSrc;
+	}
+
+	public FrameBuffer getNextSourceBuffer()
+	{
+		return nextPingpongBufSrc;
+	}
+
+	public Texture getLastDestinationTexture()
+	{
+		return lastPingpongTexDst;
+	}
+
+	public FrameBuffer getLastDestinationBuffer()
+	{
+		return lastPingpongBufDst;
+	}
+
 	public void end()
 	{
-		buffer1.end();
+		endPending();
+	}
+
+	private void endPending()
+	{
+		if( pending1 )
+		{
+			buffer1.end();
+			pending1 = false;
+		}
+
+		if( pending2 )
+		{
+			buffer2.end();
+			pending2 = false;
+		}
 	}
 }
