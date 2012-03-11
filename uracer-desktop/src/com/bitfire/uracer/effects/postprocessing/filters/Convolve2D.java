@@ -1,8 +1,7 @@
 package com.bitfire.uracer.effects.postprocessing.filters;
 
-import com.badlogic.gdx.graphics.GL20;
-import com.badlogic.gdx.graphics.Mesh;
 import com.badlogic.gdx.graphics.glutils.ShaderProgram;
+import com.bitfire.uracer.effects.postprocessing.FullscreenQuad;
 
 public class Convolve2D
 {
@@ -41,22 +40,22 @@ public class Convolve2D
 		vert.upload();
 	}
 
-	public void renderHorizontal(Mesh fullScreenQuad)
+	public void renderHorizontal(FullscreenQuad quad)
 	{
 		convh.begin();
 		{
 			convh.setUniformi( "u_texture", 0 );
-			fullScreenQuad.render( convh, GL20.GL_TRIANGLE_FAN, 0, 4 );
+			quad.render( convh );
 		}
 		convh.end();
 	}
 
-	public void renderVertical(Mesh fullScreenQuad)
+	public void renderVertical(FullscreenQuad quad)
 	{
 		convv.begin();
 		{
 			convv.setUniformi( "u_texture", 0 );
-			fullScreenQuad.render( convv, GL20.GL_TRIANGLE_FAN, 0, 4 );
+			quad.render( convv );
 		}
 		convv.end();
 	}

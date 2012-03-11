@@ -1,9 +1,9 @@
 package com.bitfire.uracer.effects.postprocessing.filters;
 
-import com.badlogic.gdx.graphics.Mesh;
 import com.badlogic.gdx.graphics.Pixmap.Format;
 import com.badlogic.gdx.graphics.glutils.FrameBuffer;
 import com.badlogic.gdx.utils.IntMap;
+import com.bitfire.uracer.effects.postprocessing.FullscreenQuad;
 import com.bitfire.uracer.effects.postprocessing.PingPongBuffer;
 
 public class Blur
@@ -113,7 +113,7 @@ public class Blur
 		return ppBuffer.buffer1;
 	}
 
-	public void render( Mesh fullScreenQuad )
+	public void render( FullscreenQuad quad )
 	{
 		Convolve2D c = convolve.get( this.type.tap.radius );
 
@@ -122,13 +122,13 @@ public class Blur
 			// horizontal pass
 			ppBuffer.begin();
 			{
-				c.renderHorizontal( fullScreenQuad );
+				c.renderHorizontal(quad);
 			}
 
 			// vertical pass
 			ppBuffer.swap();
 			{
-				c.renderVertical( fullScreenQuad );
+				c.renderVertical(quad);
 			}
 			ppBuffer.end();
 		}

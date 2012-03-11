@@ -3,12 +3,11 @@ package com.bitfire.uracer.effects.postprocessing.bloom;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.GL10;
-import com.badlogic.gdx.graphics.GL20;
-import com.badlogic.gdx.graphics.Mesh;
 import com.badlogic.gdx.graphics.Pixmap.Format;
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.glutils.FrameBuffer;
 import com.badlogic.gdx.graphics.glutils.ShaderProgram;
+import com.bitfire.uracer.effects.postprocessing.FullscreenQuad;
 import com.bitfire.uracer.effects.postprocessing.IPostProcessorEffect;
 import com.bitfire.uracer.effects.postprocessing.filters.Blur;
 import com.bitfire.uracer.effects.postprocessing.filters.Blur.BlurType;
@@ -183,13 +182,13 @@ public class Bloom implements IPostProcessorEffect
 	}
 
 	@Override
-	public void render( Mesh fullScreenQuad, Texture originalScene )
+	public void render( FullscreenQuad quad, Texture originalScene )
 	{
 		Gdx.gl.glDisable( GL10.GL_BLEND );
 		Gdx.gl.glDisable( GL10.GL_DEPTH_TEST );
 		Gdx.gl.glDepthMask( false );
 
-		thresholdAndBlur( fullScreenQuad, originalScene );
+		thresholdAndBlur( quad, originalScene );
 
 		if( blending )
 		{
@@ -203,12 +202,12 @@ public class Bloom implements IPostProcessorEffect
 		{
 			shBloom.setUniformi( "u_texture0", 0 );
 			shBloom.setUniformi( "u_texture1", 1 );
-			fullScreenQuad.render( shBloom, GL20.GL_TRIANGLE_FAN );
+			quad.render( shBloom );
 		}
 		shBloom.end();
 	}
 
-	private void thresholdAndBlur( Mesh fullScreenQuad, Texture originalScene )
+	private void thresholdAndBlur( FullscreenQuad quad, Texture originalScene )
 	{
 		// cut bright areas of the picture and blit to smaller fbo
 		originalScene.bind( 0 );
@@ -217,13 +216,13 @@ public class Bloom implements IPostProcessorEffect
 			shThreshold.begin();
 			{
 				shThreshold.setUniformi( "u_texture0", 0 );
-				fullScreenQuad.render( shThreshold, GL20.GL_TRIANGLE_FAN, 0, 4 );
+				quad.render( shThreshold );
 			}
 			shThreshold.end();
 		}
 		blur.getInputBuffer().end();
 
-		blur.render( fullScreenQuad );
+		blur.render( quad );
 	}
 
 	@Override
