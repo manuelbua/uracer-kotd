@@ -1,12 +1,11 @@
 package com.bitfire.uracer.effects.postprocessing.filters;
 
 import com.badlogic.gdx.graphics.Texture;
-import com.badlogic.gdx.graphics.glutils.FrameBuffer;
 import com.badlogic.gdx.graphics.glutils.ShaderProgram;
 import com.bitfire.uracer.effects.postprocessing.FullscreenQuad;
 import com.bitfire.uracer.utils.ShaderLoader;
 
-public class Threshold
+public class Threshold extends Filter
 {
 	private ShaderProgram threshold;
 
@@ -46,10 +45,10 @@ public class Threshold
 		threshold.end();
 	}
 
-	public void render(FullscreenQuad quad, Texture source, FrameBuffer dest)
+	@Override
+	public void render(FullscreenQuad quad, Texture source)
 	{
 		source.bind(0);
-		dest.begin();
 
 		threshold.begin();
 		{
@@ -57,7 +56,5 @@ public class Threshold
 			quad.render( threshold );
 		}
 		threshold.end();
-
-		dest.end();
 	}
 }

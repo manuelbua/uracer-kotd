@@ -8,6 +8,6 @@ public interface IPostProcessorEffect
 {
 	public void dispose();
 	public void resume();
-	public void render(FullscreenQuad fsquad, Texture originalScene);
+	public void render(FullscreenQuad fsquad, final Texture originalScene);
 	public Color getClearColor();
 }

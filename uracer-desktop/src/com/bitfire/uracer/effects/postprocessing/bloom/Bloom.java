@@ -132,7 +132,7 @@ public class Bloom implements IPostProcessorEffect
 	}
 
 	@Override
-	public void render( FullscreenQuad quad, Texture originalScene )
+	public void render( FullscreenQuad quad, final Texture originalScene )
 	{
 		Gdx.gl.glDisable( GL10.GL_BLEND );
 		Gdx.gl.glDisable( GL10.GL_DEPTH_TEST );

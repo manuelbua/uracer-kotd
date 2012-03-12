@@ -52,11 +52,13 @@ public class Blur
 		this.invWidth = 1f / (float)width;
 		this.invHeight = 1f / (float)height;
 
+		this.passes = 1;
+		this.amount = 1f;
+
+		// create filters
 		for( Tap tap : Tap.values() )
 			convolve.put( tap.radius, new Convolve2D( tap.radius ) );
 
-		this.passes = 1;
-		this.amount = 1f;
 		setType( BlurType.Gaussian5x5 );
 	}
 

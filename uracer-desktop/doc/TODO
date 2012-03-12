@@ -68,4 +68,9 @@
 	- stabilize APIs
 		? public void render(FullscreenQuad quad, PingPongBuffer buffer)
 		? public void render(FullscreenQuad quad, Texture source, FrameBuffer dest)
-	- ..
+	- chain filters to create effects, eg:
+		- bloom
+			- threshold
+			- blur h
+			- blur v
+			- combine
