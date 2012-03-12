@@ -1,4 +1,4 @@
-GAMEPLAY, RENDERING and CONSIDERATIONS
+[ x ] GAMEPLAY, RENDERING and CONSIDERATIONS
 
 	x version information should be stored differently, git-log output shouldn't expose so much androidmanifest/etc..
 
@@ -14,38 +14,58 @@ GAMEPLAY, RENDERING and CONSIDERATIONS
 	x determine optimal texture size for cars, fake ambient occlusion, skid marks and such
 
 
-AUDIO
 
-	- car engine
-		- pitch twiddling on the audio stream
-		- latency?
+[   ] AUDIO
+
+	x car engine
+		x pitch twiddling on the audio stream
+		x latency?
 		
-	- while producing skid marks
-		- latency?
+	x while producing skid marks
+		x latency?
 		
-	- on collision
-		- LATENCY?
+	x on collision
+		x LATENCY?
 		
 	- sound track
  		- (i don't give a shit about latency in this case)
 
 
-COLLISIONS
+
+[ x ] COLLISIONS
 
 	x use collision groups, categories and bitmasking for better definitions
 
-	 
-LIGHTING SYSTEM
 
-	- 2d dynamic lighting system w/ realtime soft-shadows
-	- light attachment to box2d objects
-		- filtering system via groupIds then/or/else categoryBits and maskBits (order matters)
+	 
+[ x ] LIGHTING SYSTEM
+
+	x 2d dynamic lighting system w/ realtime soft-shadows
+	x light attachment to box2d objects
+		x filtering system via groupIds then/or/else categoryBits and maskBits (order matters)
 		
-			+ light.groupId == fixture.groupId
-				- if (groupId > 0) light will block at the fixture (generate shadow)
-				- if (groupId < 0) light will ignore the fixture (no shadow)
+		x	+ light.groupId == fixture.groupId
+		x		- if (groupId > 0) light will block at the fixture (generate shadow)
+		x		- if (groupId < 0) light will ignore the fixture (no shadow)
 			
-			+ if ((light.maskBits & fixture.categoryBits) != 0)
-				- light will block at the fixture
-			+ else
-				- light will ignore the fixture
+		x	+ if ((light.maskBits & fixture.categoryBits) != 0)
+		x		- light will block at the fixture
+		x	+ else
+		x		- light will ignore the fixture
+
+
+
+[  ] POST-PROCESSOR API
+
+	x initial release
+	x initial APIs
+	x test shaders
+	x port shaders
+	x performance check against raw impl
+		- hard-coded weights/offsets, per-vertex computations (24fps)
+		- generic convolution filter, pre-computed values (passthrough vertex program), (22/23fps) sysmem-to-gpumem copy overhead?
+		
+	- stabilize APIs
+		? public void render(FullscreenQuad quad, PingPongBuffer buffer)
+		? public void render(FullscreenQuad quad, Texture source, FrameBuffer dest)
+	- ..
