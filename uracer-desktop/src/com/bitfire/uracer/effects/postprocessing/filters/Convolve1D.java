@@ -2,10 +2,9 @@ package com.bitfire.uracer.effects.postprocessing.filters;
 
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.glutils.ShaderProgram;
-import com.bitfire.uracer.effects.postprocessing.FullscreenQuad;
 import com.bitfire.uracer.utils.ShaderLoader;
 
-public class Convolve1D
+public class Convolve1D extends Filter
 {
 	public final int length;
 	public float[] weights;
@@ -46,13 +45,14 @@ public class Convolve1D
 	}
 
 	// public void render(FullscreenQuad quad, Texture source, FrameBuffer dest)
-	public void render( FullscreenQuad quad, Texture source )
+	@Override
+	public void render( Texture source )
 	{
 		source.bind( 0 );
 		convolve1d.begin();
 		{
 			convolve1d.setUniformi( "u_texture", 0 );
-			quad.render( convolve1d );
+			IFilter.quad.render( convolve1d );
 		}
 		convolve1d.end();
 	}

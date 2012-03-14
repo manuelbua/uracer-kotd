@@ -7,11 +7,11 @@ import com.badlogic.gdx.graphics.Pixmap.Format;
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.glutils.FrameBuffer;
 
-public class PostProcessor
+public final class PostProcessor
 {
-	private FrameBuffer bufferScene;
-	private Format fbFormat;
-	private FullscreenQuad fullScreenQuad;
+	private final FrameBuffer bufferScene;
+	private final Format fbFormat;
+	private final FullscreenQuad fullScreenQuad;
 	private boolean capturing = false;
 	private IPostProcessorEffect effect = null;
 
@@ -42,7 +42,6 @@ public class PostProcessor
 
 		bufferScene = new FrameBuffer( fbFormat, fboWidth, fboHeight, useDepth );
 		textureScene = bufferScene.getColorBufferTexture();
-//		textureScene.setFilter( TextureFilter.Nearest, TextureFilter.Nearest );
 
 		fullScreenQuad = new FullscreenQuad();
 		capturing = false;
@@ -141,7 +140,7 @@ public class PostProcessor
 
 		if(effect != null)
 		{
-			effect.render( fullScreenQuad, textureScene );
+			effect.render( textureScene );
 		}
 	}
 }

@@ -1,7 +1,6 @@
 package com.bitfire.uracer.effects.postprocessing.filters;
 
 import com.badlogic.gdx.utils.IntMap;
-import com.bitfire.uracer.effects.postprocessing.FullscreenQuad;
 import com.bitfire.uracer.effects.postprocessing.PingPongBuffer;
 
 public class Blur
@@ -91,18 +90,14 @@ public class Blur
 		computeBlurWeightings();
 	}
 
-	/**
-	 * Expects input to be in PingPongBuffer.buffer1
-	 */
-
-	// public void render(FullscreenQuad quad, Texture source, FrameBuffer dest)
-	public void render( FullscreenQuad quad, PingPongBuffer buffer )
+	// public void render(FullscreenQuad quad, Texture source)
+	public void render( PingPongBuffer buffer )
 	{
 		Convolve2D c = convolve.get( this.type.tap.radius );
 
 		for( int i = 0; i < this.passes; i++ )
 		{
-			c.render( quad, buffer );
+			c.render( buffer );
 		}
 	}
 

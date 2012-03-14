@@ -1,6 +1,5 @@
 package com.bitfire.uracer.effects.postprocessing.filters;
 
-import com.bitfire.uracer.effects.postprocessing.FullscreenQuad;
 import com.bitfire.uracer.effects.postprocessing.PingPongBuffer;
 
 public class Convolve2D
@@ -42,10 +41,10 @@ public class Convolve2D
 	 */
 
 	// public void render(FullscreenQuad quad, Texture source, FrameBuffer dest)
-	public void render( FullscreenQuad quad, PingPongBuffer buffer )
+	public void render( PingPongBuffer buffer )
 	{
-		hor.render( quad, buffer.pingPong() );
-		vert.render( quad, buffer.pingPong() );
+		hor.render( buffer.pingPong() );
+		vert.render( buffer.pingPong() );
 
 //		Texture src = buffer.getNextSourceTexture(); buffer.pingPong();
 //		hor.render( quad, src );

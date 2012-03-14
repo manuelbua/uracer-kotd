@@ -85,14 +85,16 @@ public class Game
 
 		if( Config.Graphics.EnablePostProcessingFx )
 		{
-			postProcessor = new PostProcessor( Gdx.graphics.getWidth(), Gdx.graphics.getHeight(), false /* depth */, false /* alpha */, Config.isDesktop /* 32Bits */ );
+			int fboWidth = Gdx.graphics.getWidth();
+			int fboHeight = Gdx.graphics.getHeight();
+
+			postProcessor = new PostProcessor( fboWidth, fboHeight, false /* depth */, false /* alpha */, Config.isDesktop /* 32 bits */ );
 
 			float rttRatio = 0.25f;
+
 			System.out.println("rttRatio=" + rttRatio);
 
-			int fboWidth = (int)(Gdx.graphics.getWidth() * rttRatio);
-			int fboHeight = (int)(Gdx.graphics.getHeight() * rttRatio);
-			bloom = new Bloom( fboWidth, fboHeight, postProcessor.getFramebufferFormat() );
+			bloom = new Bloom( (int)(fboWidth * rttRatio), (int)(fboHeight * rttRatio), postProcessor.getFramebufferFormat() );
 
 //			BloomSettings bs = new BloomSettings( "arrogance-1", BlurType.Gaussian_5x5, 1, 1, 0.25f, 1f, 0.1f, 0.8f, 1.4f );
 //			BloomSettings bs = new BloomSettings( "arrogance-2", BlurType.Gaussian_5x5, 1, 1, 0.35f, 1f, 0.1f, 1.4f, 0.75f );
@@ -106,7 +108,7 @@ public class Game
 			postProcessor.setEffect( bloom );
 		}
 
-//		Messager.show( "DEBUG! FANTASTIC! DEBUG!", 600, MessageType.Good, MessagePosition.Bottom, MessageSize.Big );
+//		Messager.show( "FUCK! BERLU! SCONI!", 600, MessageType.Good, MessagePosition.Bottom, MessageSize.Big );
 
 		// setup sprite batch at origin top-left => 0,0
 		// Issues may arise on Tegra2 (Asus Transformer) devices if the buffers'

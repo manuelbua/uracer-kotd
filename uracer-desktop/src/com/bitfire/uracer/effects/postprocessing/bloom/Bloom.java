@@ -5,7 +5,6 @@ import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.GL10;
 import com.badlogic.gdx.graphics.Pixmap.Format;
 import com.badlogic.gdx.graphics.Texture;
-import com.bitfire.uracer.effects.postprocessing.FullscreenQuad;
 import com.bitfire.uracer.effects.postprocessing.IPostProcessorEffect;
 import com.bitfire.uracer.effects.postprocessing.PingPongBuffer;
 import com.bitfire.uracer.effects.postprocessing.filters.Blur;
@@ -51,10 +50,10 @@ public class Bloom implements IPostProcessorEffect
 	@Override
 	public void dispose()
 	{
-		pingPongBuffer.dispose();
-		blur.dispose();
-		threshold.dispose();
 		combine.dispose();
+		threshold.dispose();
+		blur.dispose();
+		pingPongBuffer.dispose();
 	}
 
 	public void setClearColor( float r, float g, float b, float a )
@@ -102,8 +101,10 @@ public class Bloom implements IPostProcessorEffect
 	{
 		this.bloomSettings = settings;
 
-		// setup bloom
+		// setup threshold
 		setThreshold( settings.bloomThreshold );
+
+		// set combine
 		setBaseIntesity( settings.baseIntensity );
 		setBaseSaturation( settings.baseSaturation );
 		setBloomIntesity( settings.bloomIntensity );
@@ -132,18 +133,18 @@ public class Bloom implements IPostProcessorEffect
 	}
 
 	@Override
-	public void render( FullscreenQuad quad, final Texture originalScene )
+	public void render( final Texture originalScene )
 	{
 		Gdx.gl.glDisable( GL10.GL_BLEND );
 		Gdx.gl.glDisable( GL10.GL_DEPTH_TEST );
 		Gdx.gl.glDepthMask( false );
 
 		// cut bright areas of the picture and blit to smaller fbo
-		threshold.render( quad, originalScene, pingPongBuffer.getNextSourceBuffer() );
+		threshold.render( originalScene, pingPongBuffer.getNextSourceBuffer() );
 
 		// src in buffer1
 		// result in buffer1
-		blur.render( quad, pingPongBuffer );
+		blur.render( pingPongBuffer );
 		pingPongBuffer.end();
 
 		if( blending )
@@ -152,7 +153,7 @@ public class Bloom implements IPostProcessorEffect
 			Gdx.gl.glBlendFunc( GL10.GL_SRC_ALPHA, GL10.GL_ONE_MINUS_SRC_ALPHA );
 		}
 
-		combine.render( quad, originalScene, pingPongBuffer.getLastDestinationTexture() );
+		combine.render( originalScene, pingPongBuffer.getLastDestinationTexture() );
 	}
 
 	@Override

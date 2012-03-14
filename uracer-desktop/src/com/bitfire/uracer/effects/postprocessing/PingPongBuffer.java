@@ -34,13 +34,8 @@ public class PingPongBuffer
 	{
 		this.buffer1 = buffer1;
 		this.buffer2 = buffer2;
-
-		// buffer1.setFilter( TextureFilter.Nearest, TextureFilter.Nearest );
-		// buffer2.setFilter( TextureFilter.Nearest, TextureFilter.Nearest );
-
 		this.width = this.buffer1.getWidth();
 		this.height = this.buffer1.getHeight();
-
 		rebind();
 	}
 
@@ -69,7 +64,7 @@ public class PingPongBuffer
 	private boolean writeState, pending1, pending2;
 
 	/**
-	 * Start/continue ping-ponging between two buffers.
+	 * Swap buffers, returns the current input texture
 	 *
 	 * Returns the result of the previous pass, or the source texture for the next pass if the ping-ponging was ended.
 	 */
