@@ -30,6 +30,7 @@ public class PingPongBuffer
 		set( buffer1, buffer2 );
 	}
 
+	// TODO +unset, check for "ownage" of the buffers for correct impl of unset/set/multiple set/etc..
 	public void set( FrameBuffer buffer1, FrameBuffer buffer2 )
 	{
 		this.buffer1 = buffer1;
@@ -64,11 +65,10 @@ public class PingPongBuffer
 	private boolean writeState, pending1, pending2;
 
 	/**
-	 * Swap buffers, returns the current input texture
-	 *
-	 * Returns the result of the previous pass, or the source texture for the next pass if the ping-ponging was ended.
+	 * Both starts and continue ping-ponging between two buffers, returning the previous
+	 * buffer containing the last result, initiating recording
 	 */
-	public Texture pingPong()
+	public Texture capture()
 	{
 		endPending();
 
@@ -101,24 +101,43 @@ public class PingPongBuffer
 		return currSource;
 	}
 
+	/**
+	 * @return Returns the next buffer's texture that will be used as a source when
+	 * the next "next()" step will be performed.
+	 */
 	public Texture getNextSourceTexture()
 	{
 		return nextPingpongTexSrc;
 	}
 
+	/**
+	 * @return Returns the next buffer that will be used as a source when
+	 * the next "next()" step will be performed.
+	 */
 	public FrameBuffer getNextSourceBuffer()
 	{
 		return nextPingpongBufSrc;
 	}
 
+	/**
+	 * @return Returns the result of the latest "next()" iteration. Texture version.
+	 */
 	public Texture getLastDestinationTexture()
 	{
 		return lastPingpongTexDst;
 	}
 
+	/**
+	 * @return Returns the result of the latest "next()" iteration. Buffer version.
+	 */
 	public FrameBuffer getLastDestinationBuffer()
 	{
 		return lastPingpongBufDst;
+	}
+
+	public void begin()
+	{
+		rebind();
 	}
 
 	public void end()

@@ -2,15 +2,53 @@ package com.bitfire.uracer.effects.postprocessing.filters;
 
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.glutils.FrameBuffer;
+import com.bitfire.uracer.effects.postprocessing.IFilter;
+import com.bitfire.uracer.effects.postprocessing.PingPongBuffer;
 
-public abstract class Filter
+public abstract class Filter extends IFilter
 {
-	public abstract void render(Texture source);
+	protected static final int u_texture_1 = 0;
+	protected static final int u_texture_2 = 1;
 
-	public void render(Texture source, FrameBuffer dest)
+	protected Texture inputTexture = null;
+	protected FrameBuffer outputBuffer = null;
+
+	public Filter setInput(Texture input)
 	{
-		dest.begin();
-		render(source);
-		dest.end();
+		this.inputTexture = input;
+		return this;
+	}
+
+	public Filter setInput(FrameBuffer input)
+	{
+		this.inputTexture = input.getColorBufferTexture();
+		return this;
+	}
+
+	public Filter setInput(PingPongBuffer input)
+	{
+		this.inputTexture = input.capture();
+		return this;
+	}
+
+	public Filter setOutput(FrameBuffer output)
+	{
+		this.outputBuffer = output;
+		return this;
+	}
+
+	public abstract void upload();
+	protected abstract void compute();
+
+	public void render()
+	{
+		if(outputBuffer!=null)
+		{
+			outputBuffer.begin();
+			compute();
+			outputBuffer.end();
+		}
+		else
+			compute();
 	}
 }

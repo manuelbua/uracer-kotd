@@ -1,16 +1,20 @@
 package com.bitfire.uracer.effects.postprocessing.filters;
 
 import com.badlogic.gdx.graphics.Texture;
+import com.badlogic.gdx.graphics.glutils.FrameBuffer;
 import com.badlogic.gdx.graphics.glutils.ShaderProgram;
+import com.bitfire.uracer.effects.postprocessing.IFilter;
 import com.bitfire.uracer.utils.ShaderLoader;
 
-public class Combine
+public class Combine extends Filter
 {
 	private ShaderProgram combine;
+	private Texture input2 = null;
 
 	public Combine()
 	{
 		combine = ShaderLoader.createShader( "bloom/screenspace", "bloom/combine" );
+		upload();
 	}
 
 	public void dispose()
@@ -39,16 +43,29 @@ public class Combine
 		combine.end();
 	}
 
-	public void render(Texture source1, Texture source2)
+	public Filter setInput(FrameBuffer buffer1, FrameBuffer buffer2)
 	{
-		source1.bind(0);
-		source2.bind(1);
+		this.inputTexture = buffer1.getColorBufferTexture();
+		this.input2 = buffer2.getColorBufferTexture();
+		return this;
+	}
+
+	@Override
+	public void upload()
+	{
 		combine.begin();
-		{
-			combine.setUniformi( "u_texture0", 0 );
-			combine.setUniformi( "u_texture1", 1 );
-			IFilter.quad.render( combine );
-		}
+		combine.setUniformi( "u_texture0", u_texture_1 );
+		combine.setUniformi( "u_texture1", u_texture_2 );
+		combine.end();
+	}
+
+	@Override
+	protected void compute()
+	{
+		inputTexture.bind(u_texture_1);
+		input2.bind(u_texture_2);
+		combine.begin();
+		IFilter.quad.render( combine );
 		combine.end();
 	}
 }

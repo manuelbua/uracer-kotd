@@ -2,7 +2,12 @@ package com.bitfire.uracer.effects.postprocessing.filters;
 
 import com.bitfire.uracer.effects.postprocessing.PingPongBuffer;
 
-public class Convolve2D
+/**
+ * Encapsulates a separable (1D+1D=2D) 2D convolution kernel filter
+ * @author manuel
+ *
+ */
+public class Convolve2D extends MultipassFilter
 {
 	public final int radius;
 	public final int length; // NxN taps filter, w/ N=length
@@ -36,19 +41,10 @@ public class Convolve2D
 		vert.upload();
 	}
 
-	/**
-	 * Expects input to be in PingPongBuffer.buffer1
-	 */
-
-	// public void render(FullscreenQuad quad, Texture source, FrameBuffer dest)
+	@Override
 	public void render( PingPongBuffer buffer )
 	{
-		hor.render( buffer.pingPong() );
-		vert.render( buffer.pingPong() );
-
-//		Texture src = buffer.getNextSourceTexture(); buffer.pingPong();
-//		hor.render( quad, src );
-//		src = buffer.getNextSourceTexture(); buffer.pingPong();
-//		vert.render( quad, src );
+		hor.setInput( buffer ).render();
+		vert.setInput( buffer ).render();
 	}
 }

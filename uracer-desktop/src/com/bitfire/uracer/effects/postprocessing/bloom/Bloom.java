@@ -4,7 +4,7 @@ import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.GL10;
 import com.badlogic.gdx.graphics.Pixmap.Format;
-import com.badlogic.gdx.graphics.Texture;
+import com.badlogic.gdx.graphics.glutils.FrameBuffer;
 import com.bitfire.uracer.effects.postprocessing.IPostProcessorEffect;
 import com.bitfire.uracer.effects.postprocessing.PingPongBuffer;
 import com.bitfire.uracer.effects.postprocessing.filters.Blur;
@@ -133,18 +133,21 @@ public class Bloom implements IPostProcessorEffect
 	}
 
 	@Override
-	public void render( final Texture originalScene )
+	public void render( final FrameBuffer scene )
 	{
 		Gdx.gl.glDisable( GL10.GL_BLEND );
 		Gdx.gl.glDisable( GL10.GL_DEPTH_TEST );
 		Gdx.gl.glDepthMask( false );
 
-		// cut bright areas of the picture and blit to smaller fbo
-		threshold.render( originalScene, pingPongBuffer.getNextSourceBuffer() );
+		pingPongBuffer.begin();
+		{
+			// threshold pass
+			// cut bright areas of the picture and blit to smaller fbo
+			threshold.setInput( scene ).setOutput( pingPongBuffer.getNextSourceBuffer() ).render();
 
-		// src in buffer1
-		// result in buffer1
-		blur.render( pingPongBuffer );
+			// blur pass
+			blur.render(pingPongBuffer);
+		}
 		pingPongBuffer.end();
 
 		if( blending )
@@ -153,7 +156,7 @@ public class Bloom implements IPostProcessorEffect
 			Gdx.gl.glBlendFunc( GL10.GL_SRC_ALPHA, GL10.GL_ONE_MINUS_SRC_ALPHA );
 		}
 
-		combine.render( originalScene, pingPongBuffer.getLastDestinationTexture() );
+		combine.setInput( scene, pingPongBuffer.getLastDestinationBuffer() ).render();
 	}
 
 	@Override
@@ -161,6 +164,7 @@ public class Bloom implements IPostProcessorEffect
 	{
 		blur.upload();
 		threshold.upload();
+		combine.upload();
 		pingPongBuffer.rebind();
 		setSettings( bloomSettings );
 	}

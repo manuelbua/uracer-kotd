@@ -140,7 +140,7 @@ public final class PostProcessor
 
 		if(effect != null)
 		{
-			effect.render( textureScene );
+			effect.render( bufferScene );
 		}
 	}
 }

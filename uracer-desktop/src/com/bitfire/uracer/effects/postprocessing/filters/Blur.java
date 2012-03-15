@@ -3,7 +3,7 @@ package com.bitfire.uracer.effects.postprocessing.filters;
 import com.badlogic.gdx.utils.IntMap;
 import com.bitfire.uracer.effects.postprocessing.PingPongBuffer;
 
-public class Blur
+public class Blur extends MultipassFilter
 {
 	private enum Tap
 	{
@@ -90,7 +90,7 @@ public class Blur
 		computeBlurWeightings();
 	}
 
-	// public void render(FullscreenQuad quad, Texture source)
+	@Override
 	public void render( PingPongBuffer buffer )
 	{
 		Convolve2D c = convolve.get( this.type.tap.radius );

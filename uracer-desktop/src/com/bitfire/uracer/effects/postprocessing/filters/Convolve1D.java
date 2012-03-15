@@ -1,11 +1,13 @@
 package com.bitfire.uracer.effects.postprocessing.filters;
 
-import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.glutils.ShaderProgram;
+import com.bitfire.uracer.effects.postprocessing.IFilter;
 import com.bitfire.uracer.utils.ShaderLoader;
 
 public class Convolve1D extends Filter
 {
+	// TODO setParam for weights/offsets
+
 	public final int length;
 	public float[] weights;
 	public float[] offsets;
@@ -36,24 +38,22 @@ public class Convolve1D extends Filter
 		weights = offsets = null;
 	}
 
+	@Override
 	public void upload()
 	{
 		convolve1d.begin();
 		convolve1d.setUniform1fv( "SampleWeights", weights, 0, length );
-		convolve1d.setUniform2fv( "SampleOffsets", offsets, 0, length * 2 /* libgdx ask for number of floats! */);
+		convolve1d.setUniform2fv( "SampleOffsets", offsets, 0, length * 2 /* libgdx asks for number of floats, not elements! */);
+		convolve1d.setUniformi( "u_texture", u_texture_1 );
 		convolve1d.end();
 	}
 
-	// public void render(FullscreenQuad quad, Texture source, FrameBuffer dest)
 	@Override
-	public void render( Texture source )
+	protected void compute()
 	{
-		source.bind( 0 );
+		inputTexture.bind( u_texture_1 );
 		convolve1d.begin();
-		{
-			convolve1d.setUniformi( "u_texture", 0 );
-			IFilter.quad.render( convolve1d );
-		}
+		IFilter.quad.render( convolve1d );
 		convolve1d.end();
 	}
 }

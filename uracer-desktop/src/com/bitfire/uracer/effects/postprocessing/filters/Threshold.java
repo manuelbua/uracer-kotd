@@ -1,7 +1,7 @@
 package com.bitfire.uracer.effects.postprocessing.filters;
 
-import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.glutils.ShaderProgram;
+import com.bitfire.uracer.effects.postprocessing.IFilter;
 import com.bitfire.uracer.utils.ShaderLoader;
 
 public class Threshold extends Filter
@@ -32,10 +32,12 @@ public class Threshold extends Filter
 		upload();
 	}
 
+	@Override
 	public void upload()
 	{
 		threshold.begin();
 		{
+			threshold.setUniformi( "u_texture0", u_texture_1 );
 			threshold.setUniformf( "treshold", gamma );
 			threshold.setUniformf( "tresholdInvTx", (1f / (1f-gamma)) );	// correct
 //			shThreshold.setUniformf( "tresholdInvTx", (1f / (gamma)) );		// does this look better?
@@ -44,16 +46,13 @@ public class Threshold extends Filter
 		threshold.end();
 	}
 
-	@Override
-	public void render(Texture source)
-	{
-		source.bind(0);
 
+	@Override
+	protected void compute()
+	{
+		inputTexture.bind(u_texture_1);
 		threshold.begin();
-		{
-			threshold.setUniformi( "u_texture0", 0 );
-			IFilter.quad.render( threshold );
-		}
+		IFilter.quad.render( threshold );
 		threshold.end();
 	}
 }
