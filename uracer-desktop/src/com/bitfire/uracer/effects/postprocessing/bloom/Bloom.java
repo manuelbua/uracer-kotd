@@ -101,16 +101,16 @@ public class Bloom implements IPostProcessorEffect
 	{
 		this.bloomSettings = settings;
 
-		// setup threshold
+		// setup threshold filter
 		setThreshold( settings.bloomThreshold );
 
-		// set combine
+		// setup combine filter
 		setBaseIntesity( settings.baseIntensity );
 		setBaseSaturation( settings.baseSaturation );
 		setBloomIntesity( settings.bloomIntensity );
 		setBloomSaturation( settings.bloomSaturation );
 
-		// setup blur
+		// setup blur filter
 		setBlurPasses( settings.blurPasses );
 		setBlurAmount( settings.blurAmount );
 		setBlurType( settings.blurType );
