@@ -35,7 +35,7 @@ public class Config
 			EnableMipMapping = true;
 			SubframeInterpolation = true;
 
-			RenderBox2DWorldWireframe = false;
+			RenderBox2DWorldWireframe = true;
 			RenderPlayerDebugInfo = true;
 			RenderHudDebugInfo = true;
 			Render3DBoundingBoxes = false;
@@ -80,7 +80,7 @@ public class Config
 		public static void asDefault()
 		{
 			TraverseWalls = false;
-			DirectorHasBounds = false;
+			DirectorHasBounds = ((Graphics.CameraInterpolationMode == InterpolationMode.Linear) || (Graphics.CameraInterpolationMode==InterpolationMode.Off));
 			ApplyCarFriction = true;
 			FrustumCulling = true;
 		}
@@ -94,6 +94,8 @@ public class Config
 		Game.asDefault();
 		Graphics.asDefault();
 		Physics.asDefault();
+
+		// always call as last
 		Debug.asDefault();
 	}
 }

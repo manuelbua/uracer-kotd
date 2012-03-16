@@ -96,13 +96,13 @@ public class Game
 
 			bloom = new Bloom( (int)(fboWidth * rttRatio), (int)(fboHeight * rttRatio), postProcessor.getFramebufferFormat() );
 
-//			BloomSettings bs = new BloomSettings( "arrogance-1", BlurType.Gaussian_5x5, 1, 1, 0.25f, 1f, 0.1f, 0.8f, 1.4f );
-//			BloomSettings bs = new BloomSettings( "arrogance-2", BlurType.Gaussian_5x5, 1, 1, 0.35f, 1f, 0.1f, 1.4f, 0.75f );
+//			BloomSettings bs = new BloomSettings( "arrogance-1 / rtt=0.25 / @1920x1050", BlurType.Gaussian5x5b, 1, 1, 0.25f, 1f, 0.1f, 0.8f, 1.4f );
+//			BloomSettings bs = new BloomSettings( "arrogance-2 / rtt=0.25 / @1920x1050", BlurType.Gaussian5x5b, 1, 1, 0.35f, 1f, 0.1f, 1.4f, 0.75f );
 
-//			BloomSettings bs = new BloomSettings( "subtle rtt=0.25 @800x480/1280x800", BlurType.Gaussian5x5, 1, 1.5f, 0.45f, 1f, 0.5f, 1f, 1.5f );
-//			BloomSettings bs = new BloomSettings( "subtle rtt=0.2  @800x480/1280x800", BlurType.Gaussian3x3b, 1, 1.5f, 0.45f, 1f, 0.5f, 1f, 1.5f );
+//			BloomSettings bs = new BloomSettings( "subtle / rtt=0.25 / @800x480/1280x800", BlurType.Gaussian5x5, 1, 1.5f, 0.45f, 1f, 0.5f, 1f, 1.5f );
+//			BloomSettings bs = new BloomSettings( "subtle / rtt=0.2  / @800x480/1280x800", BlurType.Gaussian3x3b, 1, 1.5f, 0.45f, 1f, 0.5f, 1f, 1.5f );
 
-			BloomSettings bs = new BloomSettings( "subtle rtt=0.25 @1920x1050", BlurType.Gaussian5x5b, 1, 1f, 0.45f, 1f, 0.5f, 1f, 1.5f );
+			BloomSettings bs = new BloomSettings( "subtle / rtt=0.25 / @1920x1050", BlurType.Gaussian5x5b, 1, 1f, 0.45f, 1f, 0.5f, 1f, 1.5f );
 
 			bloom.setSettings( bs );
 			postProcessor.setEffect( bloom );

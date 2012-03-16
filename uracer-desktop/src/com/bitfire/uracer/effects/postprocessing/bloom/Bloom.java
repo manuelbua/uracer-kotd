@@ -30,7 +30,6 @@ public class Bloom implements IPostProcessorEffect
 	protected Threshold threshold;
 	protected Combine combine;
 
-	protected BlurType blurType;
 	protected BloomSettings bloomSettings;
 
 	protected boolean blending = false;
@@ -156,6 +155,7 @@ public class Bloom implements IPostProcessorEffect
 			Gdx.gl.glBlendFunc( GL10.GL_SRC_ALPHA, GL10.GL_ONE_MINUS_SRC_ALPHA );
 		}
 
+		// mix original scene and blurred threshold, modula
 		combine.setInput( scene, pingPongBuffer.getLastDestinationBuffer() ).render();
 	}
 
