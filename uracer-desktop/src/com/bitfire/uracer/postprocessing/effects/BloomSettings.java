@@ -1,6 +1,6 @@
-package com.bitfire.uracer.effects.postprocessing.bloom;
+package com.bitfire.uracer.postprocessing.effects;
 
-import com.bitfire.uracer.effects.postprocessing.filters.Blur.BlurType;
+import com.bitfire.uracer.postprocessing.filters.Blur.BlurType;
 
 public class BloomSettings
 {

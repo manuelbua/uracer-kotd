@@ -1,9 +1,9 @@
-package com.bitfire.uracer.effects.postprocessing.filters;
+package com.bitfire.uracer.postprocessing.filters;
 
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.glutils.FrameBuffer;
 import com.badlogic.gdx.graphics.glutils.ShaderProgram;
-import com.bitfire.uracer.effects.postprocessing.IFilter;
+import com.bitfire.uracer.postprocessing.IFilter;
 import com.bitfire.uracer.utils.ShaderLoader;
 
 public class Combine extends Filter

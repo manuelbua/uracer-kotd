@@ -1,7 +1,7 @@
-package com.bitfire.uracer.effects.postprocessing.filters;
+package com.bitfire.uracer.postprocessing.filters;
 
 import com.badlogic.gdx.utils.IntMap;
-import com.bitfire.uracer.effects.postprocessing.PingPongBuffer;
+import com.bitfire.uracer.postprocessing.PingPongBuffer;
 
 public class Blur extends MultipassFilter
 {

@@ -1,17 +1,17 @@
-package com.bitfire.uracer.effects.postprocessing.bloom;
+package com.bitfire.uracer.postprocessing.effects;
 
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.GL10;
 import com.badlogic.gdx.graphics.Pixmap.Format;
 import com.badlogic.gdx.graphics.glutils.FrameBuffer;
-import com.bitfire.uracer.effects.postprocessing.IPostProcessorEffect;
-import com.bitfire.uracer.effects.postprocessing.PingPongBuffer;
-import com.bitfire.uracer.effects.postprocessing.filters.Blur;
-import com.bitfire.uracer.effects.postprocessing.filters.Blur.BlurType;
-import com.bitfire.uracer.effects.postprocessing.filters.Combine;
-import com.bitfire.uracer.effects.postprocessing.filters.Combine.Param;
-import com.bitfire.uracer.effects.postprocessing.filters.Threshold;
+import com.bitfire.uracer.postprocessing.IPostProcessorEffect;
+import com.bitfire.uracer.postprocessing.PingPongBuffer;
+import com.bitfire.uracer.postprocessing.filters.Blur;
+import com.bitfire.uracer.postprocessing.filters.Combine;
+import com.bitfire.uracer.postprocessing.filters.Threshold;
+import com.bitfire.uracer.postprocessing.filters.Blur.BlurType;
+import com.bitfire.uracer.postprocessing.filters.Combine.Param;
 
 public class Bloom implements IPostProcessorEffect
 {

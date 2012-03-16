@@ -1,4 +1,4 @@
-package com.bitfire.uracer.effects.postprocessing;
+package com.bitfire.uracer.postprocessing;
 
 import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.glutils.FrameBuffer;

@@ -1,3 +1,4 @@
+package com.bitfire.uracer.postprocessing;
 /*
 package com.bitfire.uracer.effects.postprocessing;
 

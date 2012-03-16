@@ -1,6 +1,6 @@
-package com.bitfire.uracer.effects.postprocessing.filters;
+package com.bitfire.uracer.postprocessing.filters;
 
-import com.bitfire.uracer.effects.postprocessing.PingPongBuffer;
+import com.bitfire.uracer.postprocessing.PingPongBuffer;
 
 /**
  * Encapsulates a separable (1D+1D=2D) 2D convolution kernel filter

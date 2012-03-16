@@ -1,4 +1,4 @@
-package com.bitfire.uracer.effects.postprocessing;
+package com.bitfire.uracer.postprocessing;
 
 
 public abstract class IFilter
