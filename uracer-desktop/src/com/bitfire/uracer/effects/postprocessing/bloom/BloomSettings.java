@@ -1,8 +1,9 @@
 package com.bitfire.uracer.effects.postprocessing.bloom;
 
+import com.bitfire.uracer.effects.postprocessing.filters.Blur.BlurType;
+
 public class BloomSettings
 {
-	public enum BlurType { GaussianBilinear, Gaussian, GaussianHardCoded, Gaussian_5x5 };
 	public final String name;
 
 	public final BlurType blurType;
@@ -32,7 +33,7 @@ public class BloomSettings
 	// simple blur
 	public BloomSettings( String name, int blurPasses, float bloomThreshold, float baseIntensity, float baseSaturation, float bloomIntensity, float bloomSaturation )
 	{
-		this( name, BlurType.GaussianHardCoded, blurPasses, 0, bloomThreshold, baseIntensity, baseSaturation, bloomIntensity, bloomSaturation );
+		this( name, BlurType.Gaussian5x5b, blurPasses, 0, bloomThreshold, baseIntensity, baseSaturation, bloomIntensity, bloomSaturation );
 	}
 
 	public BloomSettings(BloomSettings other)

@@ -4,7 +4,6 @@ import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.GL20;
 import com.badlogic.gdx.graphics.OrthographicCamera;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
-import com.badlogic.gdx.math.WindowedMean;
 import com.bitfire.uracer.Art;
 import com.bitfire.uracer.Config;
 import com.bitfire.uracer.Config.Physics;
@@ -17,7 +16,7 @@ import com.bitfire.uracer.effects.TrackEffects;
 import com.bitfire.uracer.effects.postprocessing.PostProcessor;
 import com.bitfire.uracer.effects.postprocessing.bloom.Bloom;
 import com.bitfire.uracer.effects.postprocessing.bloom.BloomSettings;
-import com.bitfire.uracer.effects.postprocessing.bloom.BloomSettings.BlurType;
+import com.bitfire.uracer.effects.postprocessing.filters.Blur.BlurType;
 import com.bitfire.uracer.entities.EntityManager;
 import com.bitfire.uracer.entities.vehicles.Car;
 import com.bitfire.uracer.game.logic.DirectorController;
@@ -28,9 +27,6 @@ import com.bitfire.uracer.hud.Hud;
 import com.bitfire.uracer.hud.HudLabel;
 import com.bitfire.uracer.messager.Message;
 import com.bitfire.uracer.messager.Messager;
-import com.bitfire.uracer.messager.Messager.MessagePosition;
-import com.bitfire.uracer.messager.Messager.MessageSize;
-import com.bitfire.uracer.messager.Messager.MessageType;
 import com.bitfire.uracer.tiled.LevelRenderer;
 import com.bitfire.uracer.tweener.Tweener;
 import com.bitfire.uracer.tweener.accessors.HudLabelAccessor;
@@ -89,46 +85,30 @@ public class Game
 
 		if( Config.Graphics.EnablePostProcessingFx )
 		{
-			postProcessor = new PostProcessor( Gdx.graphics.getWidth(), Gdx.graphics.getHeight(), false /* depth */, false /* alpha */, Config.isDesktop /* 32Bits */ );
+			int fboWidth = Gdx.graphics.getWidth();
+			int fboHeight = Gdx.graphics.getHeight();
+
+			postProcessor = new PostProcessor( fboWidth, fboHeight, false /* depth */, false /* alpha */, Config.isDesktop /* 32 bits */ );
 
 			float rttRatio = 0.25f;
 
-			int fboWidth = (int)(Gdx.graphics.getWidth() * rttRatio);
-			int fboHeight = (int)(Gdx.graphics.getHeight() * rttRatio);
-			bloom = new Bloom( fboWidth, fboHeight, postProcessor.getFramebufferFormat() );
+			System.out.println("rttRatio=" + rttRatio);
 
-			// this is some nice graphic expression for "arrogance mode"
-//			BloomSettings bs = new BloomSettings( "arrogance", 4, 0.35f, 1f, 0.1f, 1.4f, 0.75f );
-//			BloomSettings bs = new BloomSettings( "default", 4, 0.35f, 1f, 0.3f, 1.3f, 1.5f );
-//			BloomSettings bs = new BloomSettings( "soft", 2, 0.25f, 1f, 0.3f, 1f, 1.4f );
-//			BloomSettings bs = new BloomSettings( "soft-2", 1, 0.25f, 0.8f, 0.5f, 0.9f, 1.3f );
-//			BloomSettings bs = new BloomSettings( "soft-lowq", 1, 0.25f, 1f, 1f, 0.8f, 1.25f );
-//			BloomSettings bs = new BloomSettings( "arrogance-lowq", 1, 0.25f, 1f, 0.1f, 0.8f, 1.4f );
-//			BloomSettings bs = new BloomSettings( "blurry", 2, 0f, 0f, 1f, 1f, 1f );
+			bloom = new Bloom( (int)(fboWidth * rttRatio), (int)(fboHeight * rttRatio), postProcessor.getFramebufferFormat() );
 
-//			BloomSettings bs = new BloomSettings( "arrogance-1", BlurType.Gaussian_5x5, 1, 1, 0.25f, 1f, 0.1f, 0.8f, 1.4f );
-//			BloomSettings bs = new BloomSettings( "arrogance-2", BlurType.Gaussian_5x5, 1, 1, 0.35f, 1f, 0.1f, 1.4f, 0.75f );
+//			BloomSettings bs = new BloomSettings( "arrogance-1 / rtt=0.25 / @1920x1050", BlurType.Gaussian5x5b, 1, 1, 0.25f, 1f, 0.1f, 0.8f, 1.4f );
+//			BloomSettings bs = new BloomSettings( "arrogance-2 / rtt=0.25 / @1920x1050", BlurType.Gaussian5x5b, 1, 1, 0.35f, 1f, 0.1f, 1.4f, 0.75f );
 
-//			BloomSettings bs = new BloomSettings( "subtle", BlurType.GaussianBilinear, 1, 2, 0.5f, 1f, 1f, 1f, 1f );
-//			BloomSettings bs = new BloomSettings( "subtle-rtt=0.2", BlurType.Gaussian_5x5, 1, 1f, 0.5f, 1f, 1f, 1f, 1f );
-//			BloomSettings bs = new BloomSettings( "subtle-rtt=0.5", BlurType.Gaussian_5x5, 1, 1.5f, 0.5f, 1f, 1f, 1f, 1f );
-//			BloomSettings bs = new BloomSettings( "subtle-rtt=1", BlurType.Gaussian_5x5, 1, 8f, 0.35f, 1f, 1f, 1f, 1f );
+//			BloomSettings bs = new BloomSettings( "subtle / rtt=0.25 / @800x480/1280x800", BlurType.Gaussian5x5, 1, 1.5f, 0.45f, 1f, 0.5f, 1f, 1.5f );
+//			BloomSettings bs = new BloomSettings( "subtle / rtt=0.2  / @800x480/1280x800", BlurType.Gaussian3x3b, 1, 1.5f, 0.45f, 1f, 0.5f, 1f, 1.5f );
 
-//			BloomSettings bs = new BloomSettings( "subtle #2", BlurType.Gaussian_5x5, 1, 1f, 0.45f, 1f, 0.4f, 1f, 1.5f );
-			BloomSettings bs = new BloomSettings( "subtle #2", BlurType.GaussianHardCoded, 1, 1f, 0.45f, 1f, 0.4f, 1f, 1.5f );
-
-//			BloomSettings bs = new BloomSettings( "default", BlurType.GaussianBilinear, 1, 4, 0.25f, 1f, 1f, 1.25f, 1f );
-//			BloomSettings bs = new BloomSettings( "soft", BlurType.GaussianBilinear, 1, 3, 0f, 1f, 1f, 1f, 1f );
-//			BloomSettings bs = new BloomSettings( "blurry", BlurType.GaussianBilinear, 1, 2, 0f, 0.1f, 1f, 1f, 1f );
-//			BloomSettings bs = new BloomSettings( "desaturated", BlurType.GaussianBilinear, 1, 8, 0.5f, 1f, 1f, 2f, 0f );
-//			BloomSettings bs = new BloomSettings( "saturated", BlurType.GaussianBilinear, 1, 4, 0.25f, 1f, 0f, 2f, 2f );
-
+			BloomSettings bs = new BloomSettings( "subtle / rtt=0.25 / @1920x1050", BlurType.Gaussian5x5b, 1, 1f, 0.45f, 1f, 0.5f, 1f, 1.5f );
 
 			bloom.setSettings( bs );
 			postProcessor.setEffect( bloom );
 		}
 
-		Messager.show( "FANTASTIC", 600, MessageType.Good, MessagePosition.Bottom, MessageSize.Big );
+//		Messager.show( "FUCK! BERLU! SCONI!", 600, MessageType.Good, MessagePosition.Bottom, MessageSize.Big );
 
 		// setup sprite batch at origin top-left => 0,0
 		// Issues may arise on Tegra2 (Asus Transformer) devices if the buffers'
@@ -178,8 +158,7 @@ public class Game
 		return true;
 	}
 
-	private WindowedMean mean = new WindowedMean( 16 );
-	private float lastFactor = 0f;
+//	private float lastFactor = 0f;
 	public void render()
 	{
 		tweener.update((int)(URacer.getLastDeltaSecs()*1000));
@@ -200,30 +179,7 @@ public class Game
 
 		if( Config.Graphics.EnablePostProcessingFx )
 		{
-//			bloom.setThresholdType( ThresholdType.Saturate );
-//			bloom.setBloomMixing( BloomMixing.WeightedAverage );
-//			bloom.setBloomIntesity( 2f );
-//			bloom.setOriginalIntesity( 1f );
-//			bloom.setTreshold( 0.4f );
-//			bloom.setBlending( true );
-//			bloom.setClearColor( 1f, .3f, .3f, 0 );
-//			bloom.blurPasses = 4;
-
-
 			// dbg (hotcode)
-//			bloom.setBaseIntesity( 0f );	bloom.setBaseSaturation( 1f );
-//			bloom.setBloomIntesity( 1f );		bloom.setBloomSaturation( 1f );
-//			bloom.setThreshold( 0.25f );
-//			bloom.setBlurPasses( 1 );
-
-//			bloom.setBaseIntesity( 1f );	bloom.setBaseSaturation( 0.1f );
-//			bloom.setBloomIntesity( 1f );		bloom.setBloomSaturation( 1.8f );
-//			bloom.setBlurPasses( 1 );
-
-
-//			mean.addValue( player.car.getCarDescriptor().velocity_wc.len() / player.car.getCarModel().max_speed );
-//			mean.addValue( DriftInfo.get().driftStrength );
-//
 //			float factor = DriftInfo.get().driftStrength;
 //			factor = AMath.fixup( AMath.lerp( lastFactor, factor, 0.85f ) );
 //			lastFactor = factor;
@@ -249,11 +205,18 @@ public class Game
 //			bloom.setBlurType( BlurType.Gaussian_5x5 );
 //			bloom.setBlurPasses( 1 );
 
+			// need "subtle Gaussian"
+//			bloom.setBlurType( BlurType.Gaussian ); bloom.setBlurPasses( 1 ); bloom.setBlurAmount( 1f );	// @800
+//			bloom.setBlurType( BlurType.Gaussian ); bloom.setBlurPasses( 2 ); bloom.setBlurAmount( 1f );	// @1280
+//			bloom.setBlurType( BlurType.Gaussian_5x5 ); bloom.setBlurPasses( 1 );
+
+//			bloom.setThreshold( 0.45f );
 			postProcessor.capture();
 		}
 
 
 		gl.glViewport( 0, 0, Gdx.graphics.getWidth(), Gdx.graphics.getHeight() );
+
 
 		// resync
 		level.syncWithCam( ortho );

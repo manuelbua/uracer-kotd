@@ -50,7 +50,7 @@ public class CarGraphics
 	{
 		ambientOcclusion.setPosition( state.position.x - ambientOcclusion.getOriginX(), state.position.y - ambientOcclusion.getOriginY() );
 		ambientOcclusion.setRotation( state.orientation );
-		ambientOcclusion.draw( batch, 0.35f * opacity );
+		ambientOcclusion.draw( batch, 0.5f * opacity );
 
 		facet.setPosition( state.position.x - facet.getOriginX(), state.position.y - facet.getOriginY() );
 		facet.setRotation( state.orientation );

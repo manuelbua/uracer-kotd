@@ -1,14 +1,13 @@
 package com.bitfire.uracer.effects.postprocessing;
 
 import com.badlogic.gdx.graphics.Color;
-import com.badlogic.gdx.graphics.Mesh;
-import com.badlogic.gdx.graphics.Texture;
+import com.badlogic.gdx.graphics.glutils.FrameBuffer;
 
 
 public interface IPostProcessorEffect
 {
 	public void dispose();
 	public void resume();
-	public void render(Mesh fullScreenQuad, Texture originalScene);
+	public void render(final FrameBuffer scene);
 	public Color getClearColor();
 }

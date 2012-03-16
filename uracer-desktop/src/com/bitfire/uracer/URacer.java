@@ -89,6 +89,7 @@ public class URacer implements ApplicationListener
 
 	private boolean quit = false;
 
+//	private WindowedMean mean = new WindowedMean( 120 );
 	// NOTE: this render() method will get called by JoglGraphics when screen.tick will ask to finish!!
 	@Override
 	public void render()
@@ -143,6 +144,8 @@ public class URacer implements ApplicationListener
 
 		graphicsTime = (System.nanoTime() - startTime) * oneOnOneBillion;
 		frameCount++;
+//		mean.addValue( graphicsTime );
+//		if((frameCount&0x3f)==0) System.out.println("gfx-mean="+mean.getMean());
 	}
 
 	@Override
