@@ -142,44 +142,28 @@ public final class PostProcessor
 	}
 
 	/**
-	 * Finish capturing the scene, post-process and render the effect, if any
+	 * Finish capturing the scene, post-process and render the effects, if any
 	 */
 	public void render()
 	{
 		captureEnd();
 
-//		PostProcessorEffect a = effects.get(0);
-//		PostProcessorEffect b = effects.get(1);
-//
-//		a.render( processorBuffer.buffer2, processorBuffer.buffer1 );
-//		b.render( processorBuffer.buffer1, null );
-
-//		b.render( processorBuffer.buffer2, processorBuffer.buffer1 );
-//		a.render( processorBuffer.buffer1, null );
-
-
-
-		System.out.println("--> start ");
-
-		for(int i = 0, last = effects.size-2; i < effects.size-1 && last >= 0; i++)
+		if(effects.size>0)
 		{
-			PostProcessorEffect e = effects.get( i );
-
-			processorBuffer.capture();
+			for(int i = 0, last = effects.size-2; i < effects.size-1 && last >= 0; i++)
 			{
-				e.render( processorBuffer.getSourceBuffer(), processorBuffer.getResultBuffer() );
+				PostProcessorEffect e = effects.get( i );
+
+				processorBuffer.capture();
+				{
+					e.render( processorBuffer.getSourceBuffer(), processorBuffer.getResultBuffer() );
+				}
 			}
 
-			System.out.println(e.name);
+			processorBuffer.end();
+
+			PostProcessorEffect last = effects.get( effects.size-1 );
+			last.render( processorBuffer.getResultBuffer(), null );
 		}
-
-		processorBuffer.end();
-
-		PostProcessorEffect last = effects.get( effects.size-1 );
-		last.render( processorBuffer.getResultBuffer(), null );
-		System.out.println(last.name);
-
-
-		System.out.println("<-- end ");
 	}
 }
