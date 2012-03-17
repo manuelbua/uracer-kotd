@@ -1,7 +1,6 @@
 package com.bitfire.uracer.postprocessing.effects;
 
 import com.badlogic.gdx.Gdx;
-import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.GL10;
 import com.badlogic.gdx.graphics.Pixmap.Format;
 import com.badlogic.gdx.graphics.Texture;
@@ -67,8 +66,6 @@ public class Bloom implements IPostProcessorEffect
 
 	public static boolean useAlphaChannelAsMask = false;
 
-	private Color clearColor = Color.CLEAR;
-
 	private PingPongBuffer pingPongBuffer;
 
 	protected int blurPasses;
@@ -92,8 +89,7 @@ public class Bloom implements IPostProcessorEffect
 		threshold = new Threshold(Bloom.useAlphaChannelAsMask);
 		combine = new Combine();
 
-		Settings s = new Settings( "default", 2, 0.277f, 1f, .85f, 1.1f, .85f );
-		setSettings(s);
+		setSettings(new Settings( "default", 2, 0.277f, 1f, .85f, 1.1f, .85f ));
 	}
 
 	@Override
@@ -103,11 +99,6 @@ public class Bloom implements IPostProcessorEffect
 		threshold.dispose();
 		blur.dispose();
 		pingPongBuffer.dispose();
-	}
-
-	public void setClearColor( float r, float g, float b, float a )
-	{
-		clearColor.set( r, g, b, a );
 	}
 
 	public void setBaseIntesity( float intensity )
@@ -175,12 +166,6 @@ public class Bloom implements IPostProcessorEffect
 	}
 
 	@Override
-	public Color getClearColor()
-	{
-		return clearColor;
-	}
-
-	@Override
 	public void render( final FrameBuffer scene )
 	{
 		Texture texScene = scene.getColorBufferTexture();
@@ -206,7 +191,7 @@ public class Bloom implements IPostProcessorEffect
 			Gdx.gl.glBlendFunc( GL10.GL_SRC_ALPHA, GL10.GL_ONE_MINUS_SRC_ALPHA );
 		}
 
-		// mix original scene and blurred threshold, modula
+		// mix original scene and blurred threshold, modulate via set(Base|Bloom)(Saturation|Intensity)
 		combine.setInput(texScene, pingPongBuffer.getLastDestinationTexture() ).render();
 	}
 

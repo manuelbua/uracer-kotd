@@ -13,6 +13,7 @@ public final class PostProcessor
 	private final FullscreenQuad fullScreenQuad;
 	private boolean capturing = false;
 	private IPostProcessorEffect effect = null;
+	private Color clearColor = Color.CLEAR;
 
 	public PostProcessor( int fboWidth, int fboHeight, boolean useDepth, boolean useAlphaChannel, boolean use32Bits)
 	{
@@ -62,21 +63,27 @@ public final class PostProcessor
 		return fbFormat;
 	}
 
+	public void setClearColor(Color color)
+	{
+		clearColor.set( color );
+	}
+
+	public void setClearColor( float r, float g, float b, float a )
+	{
+		clearColor.set( r, g, b, a );
+	}
+
 	/**
 	 * Start capturing the scene
 	 */
 	public void capture()
 	{
-		if(!capturing && ( effect != null ))
+		if(!capturing)
 		{
 			capturing = true;
 			bufferScene.begin();
 
-			Color c = Color.CLEAR;
-			if(effect != null)
-				c = effect.getClearColor();
-
-			Gdx.gl.glClearColor( c.r, c.g, c.b, c.a );
+			Gdx.gl.glClearColor( clearColor.r, clearColor.g, clearColor.b, clearColor.a );
 			Gdx.gl.glClear( GL10.GL_COLOR_BUFFER_BIT | GL10.GL_DEPTH_BUFFER_BIT );
 		}
 	}
