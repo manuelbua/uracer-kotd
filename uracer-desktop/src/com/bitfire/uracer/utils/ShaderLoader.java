@@ -26,7 +26,7 @@ public final class ShaderLoader
 		else
 		{
 			if(defines!= null && defines.length()>0)
-				System.out.println( vertexName + "/" + fragmentName + " compiled w/ (" + defines + ")" );
+				System.out.println( vertexName + "/" + fragmentName + " compiled w/ (" + defines.replace( "\n", ", " ) + ")" );
 			else
 				System.out.println( vertexName + "/" + fragmentName + " compiled!" );
 		}
