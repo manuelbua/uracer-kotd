@@ -48,8 +48,8 @@ public class Game
 
 	// effects
 	private PostProcessor postProcessor;
-	private Bloom bloom;
-	private ZoomBlur zblur;
+	private Bloom bloom = null;
+	private ZoomBlur zblur = null;
 
 	// drawing
 	private SpriteBatch batch = null;
@@ -151,11 +151,11 @@ public class Game
 		TrackEffects.tick();
 		CarSoundManager.tick();
 
-//		if( Config.Graphics.EnablePostProcessingFx )
-//		{
-//			radialBlur.dampStrength( 0.8f );
-//			radialBlur.setOrigin( Director.screenPosFor( level.getPlayer().car.getBody() ) );
-//		}
+		if( Config.Graphics.EnablePostProcessingFx && zblur != null )
+		{
+			zblur.setOrigin( Director.screenPosFor( player.car.getBody() ) );
+			zblur.setStrength( player.currSpeedFactor * 0.5f );
+		}
 
 		Debug.update();
 		return true;
@@ -182,7 +182,6 @@ public class Game
 
 		if( Config.Graphics.EnablePostProcessingFx )
 		{
-			zblur.setOrigin( Director.screenPosFor( playerCar.getBody() ) );
 			postProcessor.capture();
 		}
 
