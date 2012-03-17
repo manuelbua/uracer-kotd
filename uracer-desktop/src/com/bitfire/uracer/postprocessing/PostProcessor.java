@@ -10,7 +10,6 @@ public final class PostProcessor
 {
 	private final FrameBuffer bufferScene;
 	private final Format fbFormat;
-	private final FullscreenQuad fullScreenQuad;
 	private boolean capturing = false;
 	private IPostProcessorEffect effect = null;
 	private Color clearColor = Color.CLEAR;
@@ -40,7 +39,6 @@ public final class PostProcessor
 
 		bufferScene = new FrameBuffer( fbFormat, fboWidth, fboHeight, useDepth );
 
-		fullScreenQuad = new FullscreenQuad();
 		capturing = false;
 	}
 
@@ -50,7 +48,6 @@ public final class PostProcessor
 			effect.dispose();
 
 		bufferScene.dispose();
-		fullScreenQuad.dispose();
 	}
 
 	public void setEffect(IPostProcessorEffect effect)
