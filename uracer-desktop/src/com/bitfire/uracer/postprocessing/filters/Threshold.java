@@ -4,7 +4,7 @@ import com.badlogic.gdx.graphics.glutils.ShaderProgram;
 import com.bitfire.uracer.postprocessing.IFilter;
 import com.bitfire.uracer.utils.ShaderLoader;
 
-public class Threshold extends Filter
+public class Threshold extends Filter<Threshold>
 {
 	private ShaderProgram threshold;
 

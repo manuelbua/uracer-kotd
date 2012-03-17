@@ -9,6 +9,7 @@ import com.badlogic.gdx.graphics.glutils.FrameBuffer;
 public final class PostProcessor
 {
 	private final FrameBuffer bufferScene;
+	private final PingPongBuffer processorBuffer;
 	private final Format fbFormat;
 	private boolean capturing = false;
 	private IPostProcessorEffect effect = null;
@@ -38,6 +39,7 @@ public final class PostProcessor
 		}
 
 		bufferScene = new FrameBuffer( fbFormat, fboWidth, fboHeight, useDepth );
+		processorBuffer = new PingPongBuffer( fboWidth, fboHeight, fbFormat, useDepth );
 
 		capturing = false;
 	}
@@ -48,6 +50,7 @@ public final class PostProcessor
 			effect.dispose();
 
 		bufferScene.dispose();
+		processorBuffer.dispose();
 	}
 
 	public void setEffect(IPostProcessorEffect effect)
@@ -78,7 +81,9 @@ public final class PostProcessor
 		if(!capturing)
 		{
 			capturing = true;
-			bufferScene.begin();
+//			bufferScene.begin();
+			processorBuffer.begin();
+			processorBuffer.capture();
 
 			Gdx.gl.glClearColor( clearColor.r, clearColor.g, clearColor.b, clearColor.a );
 			Gdx.gl.glClear( GL10.GL_COLOR_BUFFER_BIT | GL10.GL_DEPTH_BUFFER_BIT );
@@ -93,7 +98,8 @@ public final class PostProcessor
 		if(capturing)
 		{
 			capturing = false;
-			bufferScene.end();
+//			bufferScene.end();
+			processorBuffer.end();
 		}
 	}
 
@@ -105,7 +111,8 @@ public final class PostProcessor
 		if(!capturing)
 		{
 			capturing = true;
-			bufferScene.begin();
+//			bufferScene.begin();
+			processorBuffer.begin();
 		}
 	}
 
@@ -117,7 +124,8 @@ public final class PostProcessor
 		if(capturing)
 		{
 			capturing = false;
-			bufferScene.end();
+//			bufferScene.end();
+			processorBuffer.end();
 		}
 	}
 
@@ -139,7 +147,7 @@ public final class PostProcessor
 
 		if(effect != null)
 		{
-			effect.render( bufferScene );
+			effect.render( processorBuffer.getLastDestinationBuffer(), null );
 		}
 	}
 }

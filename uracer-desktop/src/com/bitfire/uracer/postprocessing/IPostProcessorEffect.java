@@ -7,5 +7,5 @@ public interface IPostProcessorEffect
 {
 	public void dispose();
 	public void resume();
-	public void render(final FrameBuffer scene);
+	public void render(final FrameBuffer src, final FrameBuffer dest);
 }

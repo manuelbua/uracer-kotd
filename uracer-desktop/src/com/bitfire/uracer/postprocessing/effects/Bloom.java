@@ -166,9 +166,9 @@ public class Bloom implements IPostProcessorEffect
 	}
 
 	@Override
-	public void render( final FrameBuffer scene )
+	public void render( final FrameBuffer src, final FrameBuffer dest  )
 	{
-		Texture texScene = scene.getColorBufferTexture();
+		Texture texsrc = src.getColorBufferTexture();
 
 		Gdx.gl.glDisable( GL10.GL_BLEND );
 		Gdx.gl.glDisable( GL10.GL_DEPTH_TEST );
@@ -178,7 +178,7 @@ public class Bloom implements IPostProcessorEffect
 		{
 			// threshold pass
 			// cut bright areas of the picture and blit to smaller fbo
-			threshold.setInput(texScene).setOutput( pingPongBuffer ).render();
+			threshold.setInput(texsrc).setOutput( pingPongBuffer ).render();
 
 			// blur pass
 			blur.render(pingPongBuffer);
@@ -192,7 +192,7 @@ public class Bloom implements IPostProcessorEffect
 		}
 
 		// mix original scene and blurred threshold, modulate via set(Base|Bloom)(Saturation|Intensity)
-		combine.setInput(texScene, pingPongBuffer.getLastDestinationTexture() ).render();
+		combine.setOutput(dest).setInput(texsrc, pingPongBuffer.getLastDestinationTexture() ).render();
 	}
 
 	@Override

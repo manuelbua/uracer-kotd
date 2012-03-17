@@ -4,7 +4,7 @@ import com.badlogic.gdx.graphics.glutils.ShaderProgram;
 import com.bitfire.uracer.postprocessing.IFilter;
 import com.bitfire.uracer.utils.ShaderLoader;
 
-public class Convolve1D extends Filter
+public class Convolve1D extends Filter<Convolve1D>
 {
 	// TODO setParam for weights/offsets
 

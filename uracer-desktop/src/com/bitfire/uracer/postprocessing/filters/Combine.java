@@ -6,7 +6,7 @@ import com.badlogic.gdx.graphics.glutils.ShaderProgram;
 import com.bitfire.uracer.postprocessing.IFilter;
 import com.bitfire.uracer.utils.ShaderLoader;
 
-public class Combine extends Filter
+public class Combine extends Filter<Combine>
 {
 	private ShaderProgram combine;
 	private Texture inputTexture2 = null;
@@ -43,14 +43,14 @@ public class Combine extends Filter
 		combine.end();
 	}
 
-	public Filter setInput(FrameBuffer buffer1, FrameBuffer buffer2)
+	public Combine setInput(FrameBuffer buffer1, FrameBuffer buffer2)
 	{
 		this.inputTexture = buffer1.getColorBufferTexture();
 		this.inputTexture2 = buffer2.getColorBufferTexture();
 		return this;
 	}
 
-	public Filter setInput(Texture texture1, Texture texture2)
+	public Combine setInput(Texture texture1, Texture texture2)
 	{
 		this.inputTexture = texture1;
 		this.inputTexture2 = texture2;
