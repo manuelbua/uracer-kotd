@@ -35,7 +35,7 @@ public class Config
 			EnableMipMapping = true;
 			SubframeInterpolation = true;
 
-			RenderBox2DWorldWireframe = true;
+			RenderBox2DWorldWireframe = false;
 			RenderPlayerDebugInfo = true;
 			RenderHudDebugInfo = true;
 			Render3DBoundingBoxes = false;

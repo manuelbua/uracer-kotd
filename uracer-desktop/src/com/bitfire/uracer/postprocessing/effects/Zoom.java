@@ -11,8 +11,8 @@ import com.bitfire.uracer.utils.ShaderLoader;
 
 public class Zoom extends PostProcessorEffect
 {
-	private int blur_len = 4; // ctrl quality
-	private final float MaxBlurWidth = -0.08f; // ctrl quantity
+	private int blur_len = 2; // ctrl quality
+	private final float MaxBlurWidth = -0.04f; // ctrl quantity
 
 	private Vector2 origin = new Vector2(0,0);
 	private ShaderProgram shader;

@@ -159,8 +159,8 @@ public class Game
 		if( Config.Graphics.EnablePostProcessingFx && zblur != null )
 		{
 			zblur.setOrigin( Director.screenPosFor( player.car.getBody() ) );
-			zblur.setStrength( player.currSpeedFactor*0.2f );
-//			zblur.setStrength(1);
+//			zblur.setStrength( DriftInfo.get().driftStrength );
+			zblur.setStrength( player.currSpeedFactor );
 		}
 
 		Debug.update();
@@ -188,7 +188,6 @@ public class Game
 
 		if( Config.Graphics.EnablePostProcessingFx )
 		{
-//			zblur.setStrength( 1 );
 //			if(postProcessor.effects.get( 0 ).name.equals( "Bloom" ))
 //			{
 //				PostProcessorEffect a = postProcessor.effects.get( 0 );
