@@ -15,8 +15,8 @@ public class PingPongBuffer
 	public FrameBuffer buffer1, buffer2;
 	public Texture texture1, texture2;
 
-	private Texture nextPingpongTexSrc, lastPingpongTexDst;
-	private FrameBuffer nextPingpongBufSrc, lastPingpongBufDst;
+	private Texture nextPingpongTexSrc, lastPingpongTexDst, currTexSrc;
+	private FrameBuffer nextPingpongBufSrc, lastPingpongBufDst, currBufSrc;
 
 	public int width, height;
 
@@ -58,7 +58,7 @@ public class PingPongBuffer
 		pending1 = pending2 = false;
 		writeState = true;
 
-		nextPingpongTexSrc = texture1; nextPingpongBufSrc = buffer1;
+		nextPingpongTexSrc = currTexSrc = texture1; nextPingpongBufSrc = currBufSrc = buffer1;
 		lastPingpongTexDst = texture2; lastPingpongBufDst = buffer2;
 	}
 
@@ -66,17 +66,17 @@ public class PingPongBuffer
 
 	/**
 	 * Both starts and continue ping-ponging between two buffers, returning the previous
-	 * buffer containing the last result, initiating recording
+	 * buffer containing the last result, initiating recording on the next buffer.
 	 */
 	public Texture capture()
 	{
 		endPending();
 
-		Texture currSource = null;
 		if( writeState )
 		{
 			// the caller is performing a pingPong step, this is the current source texture
-			currSource = texture1;
+			currTexSrc = texture1;
+			currBufSrc = buffer1;
 
 			// this will be the next pingPong step's source texture
 			nextPingpongTexSrc = lastPingpongTexDst = texture2;
@@ -87,7 +87,8 @@ public class PingPongBuffer
 			buffer2.begin();
 		} else
 		{
-			currSource = texture2;
+			currTexSrc = texture2;
+			currBufSrc = buffer2;
 
 			nextPingpongTexSrc = lastPingpongTexDst = texture1;
 			nextPingpongBufSrc = lastPingpongBufDst = buffer1;
@@ -98,7 +99,17 @@ public class PingPongBuffer
 		}
 
 		writeState = !writeState;
-		return currSource;
+		return currTexSrc;
+	}
+
+	public Texture getCurrentSouceTexture()
+	{
+		return currTexSrc;
+	}
+
+	public FrameBuffer getCurrentSourceBuffer()
+	{
+		return currBufSrc;
 	}
 
 	/**
@@ -144,7 +155,7 @@ public class PingPongBuffer
 	}
 
 	/**
-	 * Finishes ping-ponging, must always be called after a call to {@link #begin()}
+	 * Finishes ping-ponging, must always be called after a call to {@link #capture()}
 	 */
 	public void end()
 	{

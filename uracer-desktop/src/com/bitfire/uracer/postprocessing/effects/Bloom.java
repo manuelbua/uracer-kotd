@@ -5,15 +5,15 @@ import com.badlogic.gdx.graphics.GL10;
 import com.badlogic.gdx.graphics.Pixmap.Format;
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.glutils.FrameBuffer;
-import com.bitfire.uracer.postprocessing.IPostProcessorEffect;
 import com.bitfire.uracer.postprocessing.PingPongBuffer;
+import com.bitfire.uracer.postprocessing.PostProcessorEffect;
 import com.bitfire.uracer.postprocessing.filters.Blur;
 import com.bitfire.uracer.postprocessing.filters.Blur.BlurType;
 import com.bitfire.uracer.postprocessing.filters.Combine;
 import com.bitfire.uracer.postprocessing.filters.Combine.Param;
 import com.bitfire.uracer.postprocessing.filters.Threshold;
 
-public class Bloom implements IPostProcessorEffect
+public class Bloom extends PostProcessorEffect
 {
 	public static class Settings
 	{

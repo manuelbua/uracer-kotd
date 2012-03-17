@@ -4,15 +4,14 @@ import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.GL10;
 import com.badlogic.gdx.graphics.Pixmap.Format;
-import com.badlogic.gdx.graphics.glutils.FrameBuffer;
+import com.badlogic.gdx.utils.Array;
 
 public final class PostProcessor
 {
-	private final FrameBuffer bufferScene;
 	private final PingPongBuffer processorBuffer;
 	private final Format fbFormat;
 	private boolean capturing = false;
-	private IPostProcessorEffect effect = null;
+	public Array<PostProcessorEffect> effects = new Array<PostProcessorEffect>();
 	private Color clearColor = Color.CLEAR;
 
 	public PostProcessor( int fboWidth, int fboHeight, boolean useDepth, boolean useAlphaChannel, boolean use32Bits)
@@ -38,7 +37,7 @@ public final class PostProcessor
 			}
 		}
 
-		bufferScene = new FrameBuffer( fbFormat, fboWidth, fboHeight, useDepth );
+//		bufferScene = new FrameBuffer( fbFormat, fboWidth, fboHeight, useDepth );
 		processorBuffer = new PingPongBuffer( fboWidth, fboHeight, fbFormat, useDepth );
 
 		capturing = false;
@@ -46,16 +45,23 @@ public final class PostProcessor
 
 	public void dispose()
 	{
-		if(effect != null)
-			effect.dispose();
+		for(int i = 0; i < effects.size; i++)
+			effects.get(i).dispose();
 
-		bufferScene.dispose();
+		effects.clear();
+
+//		bufferScene.dispose();
 		processorBuffer.dispose();
 	}
 
-	public void setEffect(IPostProcessorEffect effect)
+	public void addEffect(PostProcessorEffect effect)
 	{
-		this.effect = effect;
+		effects.add( effect );
+	}
+
+	public void removeEffect(PostProcessorEffect effect)
+	{
+		effects.removeValue( effect, false );
 	}
 
 	public Format getFramebufferFormat()
@@ -81,7 +87,6 @@ public final class PostProcessor
 		if(!capturing)
 		{
 			capturing = true;
-//			bufferScene.begin();
 			processorBuffer.begin();
 			processorBuffer.capture();
 
@@ -98,7 +103,6 @@ public final class PostProcessor
 		if(capturing)
 		{
 			capturing = false;
-//			bufferScene.end();
 			processorBuffer.end();
 		}
 	}
@@ -111,8 +115,8 @@ public final class PostProcessor
 		if(!capturing)
 		{
 			capturing = true;
-//			bufferScene.begin();
 			processorBuffer.begin();
+			processorBuffer.capture();
 		}
 	}
 
@@ -124,7 +128,6 @@ public final class PostProcessor
 		if(capturing)
 		{
 			capturing = false;
-//			bufferScene.end();
 			processorBuffer.end();
 		}
 	}
@@ -134,8 +137,8 @@ public final class PostProcessor
 	 */
 	public void resume()
 	{
-		if( effect != null )
-			effect.resume();
+		for(int i = 0; i < effects.size; i++)
+			effects.get(i).resume();
 	}
 
 	/**
@@ -145,9 +148,37 @@ public final class PostProcessor
 	{
 		captureEnd();
 
-		if(effect != null)
+//		PostProcessorEffect a = effects.get(0);
+//		PostProcessorEffect b = effects.get(1);
+//
+//		a.render( processorBuffer.buffer2, processorBuffer.buffer1 );
+//		b.render( processorBuffer.buffer1, null );
+
+//		b.render( processorBuffer.buffer2, processorBuffer.buffer1 );
+//		a.render( processorBuffer.buffer1, null );
+
+
+
+		System.out.println("--> start ");
+
+		for(int i = 0, last = effects.size-2; i < effects.size-1 && last >= 0; i++)
 		{
-			effect.render( processorBuffer.getLastDestinationBuffer(), null );
+			PostProcessorEffect e = effects.get( i );
+
+			processorBuffer.capture();
+			{
+				e.render( processorBuffer.getCurrentSourceBuffer(), processorBuffer.getNextSourceBuffer() );
+				if(i==last) processorBuffer.end();
+			}
+
+			System.out.println(e.name);
 		}
+
+		PostProcessorEffect last = effects.get( effects.size-1 );
+		last.render( processorBuffer.getLastDestinationBuffer(), null );
+		System.out.println(last.name);
+
+
+		System.out.println("<-- end ");
 	}
 }
