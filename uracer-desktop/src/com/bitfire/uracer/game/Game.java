@@ -75,6 +75,7 @@ public class Game
 		logic = new GameLogic( this );
 		hud = new Hud( this );
 		logic.create();
+		CarSoundManager.load();
 
 		controller = new DirectorController( Config.Graphics.CameraInterpolationMode );
 
@@ -129,6 +130,8 @@ public class Game
 		hud.dispose();
 		TrackEffects.dispose();
 		batch.dispose();
+		CarSoundManager.dispose();
+
 
 		if(Config.Graphics.EnablePostProcessingFx)
 		{
