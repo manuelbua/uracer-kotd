@@ -25,7 +25,6 @@ import com.bitfire.uracer.messager.Message;
 import com.bitfire.uracer.messager.Messager;
 import com.bitfire.uracer.postprocessing.PostProcessor;
 import com.bitfire.uracer.postprocessing.effects.Bloom;
-import com.bitfire.uracer.postprocessing.effects.BloomSettings;
 import com.bitfire.uracer.postprocessing.filters.Blur.BlurType;
 import com.bitfire.uracer.tiled.LevelRenderer;
 import com.bitfire.uracer.tweener.Tweener;
@@ -102,7 +101,7 @@ public class Game
 //			BloomSettings bs = new BloomSettings( "subtle / rtt=0.25 / @800x480/1280x800", BlurType.Gaussian5x5, 1, 1.5f, 0.45f, 1f, 0.5f, 1f, 1.5f );
 //			BloomSettings bs = new BloomSettings( "subtle / rtt=0.2  / @800x480/1280x800", BlurType.Gaussian3x3b, 1, 1.5f, 0.45f, 1f, 0.5f, 1f, 1.5f );
 
-			BloomSettings bs = new BloomSettings( "subtle / rtt=0.25 / @1920x1050", BlurType.Gaussian5x5b, 1, 1f, 0.45f, 1f, 0.5f, 1f, 1.5f );
+			Bloom.Settings bs = new Bloom.Settings( "subtle / rtt=0.25 / @1920x1050", BlurType.Gaussian5x5b, 1, 1f, 0.45f, 1f, 0.5f, 1f, 1.5f );
 
 			bloom.setSettings( bs );
 			postProcessor.setEffect( bloom );

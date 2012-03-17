@@ -8,13 +8,62 @@ import com.badlogic.gdx.graphics.glutils.FrameBuffer;
 import com.bitfire.uracer.postprocessing.IPostProcessorEffect;
 import com.bitfire.uracer.postprocessing.PingPongBuffer;
 import com.bitfire.uracer.postprocessing.filters.Blur;
-import com.bitfire.uracer.postprocessing.filters.Combine;
-import com.bitfire.uracer.postprocessing.filters.Threshold;
 import com.bitfire.uracer.postprocessing.filters.Blur.BlurType;
+import com.bitfire.uracer.postprocessing.filters.Combine;
 import com.bitfire.uracer.postprocessing.filters.Combine.Param;
+import com.bitfire.uracer.postprocessing.filters.Threshold;
 
 public class Bloom implements IPostProcessorEffect
 {
+	public static class Settings
+	{
+		public final String name;
+
+		public final BlurType blurType;
+		public final int blurPasses;	// simple blur
+		public final float blurAmount;	// normal blur (1 pass)
+		public final float bloomThreshold;
+
+		public final float bloomIntensity;
+		public final float bloomSaturation;
+		public final float baseIntensity;
+		public final float baseSaturation;
+
+		public Settings( String name, BlurType blurType, int blurPasses, float blurAmount, float bloomThreshold, float baseIntensity, float baseSaturation, float bloomIntensity, float bloomSaturation )
+		{
+			this.name = name;
+			this.blurType = blurType;
+			this.blurPasses = blurPasses;
+			this.blurAmount = blurAmount;
+
+			this.bloomThreshold = bloomThreshold;
+			this.baseIntensity = baseIntensity;
+			this.baseSaturation = baseSaturation;
+			this.bloomIntensity = bloomIntensity;
+			this.bloomSaturation = bloomSaturation;
+		}
+
+		// simple blur
+		public Settings( String name, int blurPasses, float bloomThreshold, float baseIntensity, float baseSaturation, float bloomIntensity, float bloomSaturation )
+		{
+			this( name, BlurType.Gaussian5x5b, blurPasses, 0, bloomThreshold, baseIntensity, baseSaturation, bloomIntensity, bloomSaturation );
+		}
+
+		public Settings(Settings other)
+		{
+			this.name = other.name;
+			this.blurType = other.blurType;
+			this.blurPasses = other.blurPasses;
+			this.blurAmount = other.blurAmount;
+
+			this.bloomThreshold = other.bloomThreshold;
+			this.baseIntensity = other.baseIntensity;
+			this.baseSaturation = other.baseSaturation;
+			this.bloomIntensity = other.bloomIntensity;
+			this.bloomSaturation = other.bloomSaturation;
+		}
+	}
+
 	public static boolean useAlphaChannelAsMask = false;
 
 	private Color clearColor = Color.CLEAR;
@@ -30,7 +79,7 @@ public class Bloom implements IPostProcessorEffect
 	protected Threshold threshold;
 	protected Combine combine;
 
-	protected BloomSettings bloomSettings;
+	protected Settings settings;
 
 	protected boolean blending = false;
 
@@ -42,7 +91,7 @@ public class Bloom implements IPostProcessorEffect
 		threshold = new Threshold(Bloom.useAlphaChannelAsMask);
 		combine = new Combine();
 
-		BloomSettings s = new BloomSettings( "default", 2, 0.277f, 1f, .85f, 1.1f, .85f );
+		Settings s = new Settings( "default", 2, 0.277f, 1f, .85f, 1.1f, .85f );
 		setSettings(s);
 	}
 
@@ -96,9 +145,9 @@ public class Bloom implements IPostProcessorEffect
 		blur.setType( type );
 	}
 
-	public void setSettings(BloomSettings settings)
+	public void setSettings(Settings settings)
 	{
-		this.bloomSettings = settings;
+		this.settings = settings;
 
 		// setup threshold filter
 		setThreshold( settings.bloomThreshold );
@@ -166,6 +215,6 @@ public class Bloom implements IPostProcessorEffect
 		threshold.upload();
 		combine.upload();
 		pingPongBuffer.rebind();
-		setSettings( bloomSettings );
+		setSettings( settings );
 	}
 }
