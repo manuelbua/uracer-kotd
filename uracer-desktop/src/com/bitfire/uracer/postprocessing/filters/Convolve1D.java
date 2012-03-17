@@ -27,7 +27,7 @@ public class Convolve1D extends Filter<Convolve1D>
 	public Convolve1D( int length, float[] weights, float[] offsets )
 	{
 		this.length = length;
-		convolve1d = ShaderLoader.createShader( "bloom/convolve-1d", "bloom/convolve-1d", "#define LENGTH " + length );
+		convolve1d = ShaderLoader.createShader( "convolve-1d", "convolve-1d", "#define LENGTH " + length );
 		this.weights = weights;
 		this.offsets = offsets;
 	}

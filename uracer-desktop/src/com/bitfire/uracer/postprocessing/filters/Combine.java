@@ -13,7 +13,7 @@ public class Combine extends Filter<Combine>
 
 	public Combine()
 	{
-		combine = ShaderLoader.createShader( "bloom/screenspace", "bloom/combine" );
+		combine = ShaderLoader.createShader( "screenspace", "combine" );
 		upload();
 	}
 
