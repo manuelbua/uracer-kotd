@@ -15,8 +15,8 @@ public class PingPongBuffer
 	public FrameBuffer buffer1, buffer2;
 	public Texture texture1, texture2;
 
-	private Texture nextPingpongTexSrc, lastPingpongTexDst, currTexSrc;
-	private FrameBuffer nextPingpongBufSrc, lastPingpongBufDst, currBufSrc;
+	private Texture texResult, texSrc;
+	private FrameBuffer bufResult, bufSrc;
 
 	public int width, height;
 
@@ -58,8 +58,8 @@ public class PingPongBuffer
 		pending1 = pending2 = false;
 		writeState = true;
 
-		nextPingpongTexSrc = currTexSrc = texture1; nextPingpongBufSrc = currBufSrc = buffer1;
-		lastPingpongTexDst = texture2; lastPingpongBufDst = buffer2;
+		texSrc = texture1; bufSrc = buffer1;
+		texResult = texture2; bufResult = buffer2;
 	}
 
 	private boolean writeState, pending1, pending2;
@@ -75,23 +75,23 @@ public class PingPongBuffer
 		if( writeState )
 		{
 			// the caller is performing a pingPong step, this is the current source texture
-			currTexSrc = texture1;
-			currBufSrc = buffer1;
+			texSrc = texture1;
+			bufSrc = buffer1;
 
 			// this will be the next pingPong step's source texture
-			nextPingpongTexSrc = lastPingpongTexDst = texture2;
-			nextPingpongBufSrc = lastPingpongBufDst = buffer2;
+			texResult = texture2;
+			bufResult = buffer2;
 
 			// write to buf2
 			pending2 = true;
 			buffer2.begin();
 		} else
 		{
-			currTexSrc = texture2;
-			currBufSrc = buffer2;
+			texSrc = texture2;
+			bufSrc = buffer2;
 
-			nextPingpongTexSrc = lastPingpongTexDst = texture1;
-			nextPingpongBufSrc = lastPingpongBufDst = buffer1;
+			texResult = texture1;
+			bufResult = buffer1;
 
 			// write to buf1
 			pending1 = true;
@@ -99,51 +99,33 @@ public class PingPongBuffer
 		}
 
 		writeState = !writeState;
-		return currTexSrc;
+		return texSrc;
 	}
 
-	public Texture getCurrentSouceTexture()
+	public Texture getSouceTexture()
 	{
-		return currTexSrc;
+		return texSrc;
 	}
 
-	public FrameBuffer getCurrentSourceBuffer()
+	public FrameBuffer getSourceBuffer()
 	{
-		return currBufSrc;
-	}
-
-	/**
-	 * @return Returns the next buffer's texture that will be used as a source when
-	 * the next "next()" step will be performed.
-	 */
-	public Texture getNextSourceTexture()
-	{
-		return nextPingpongTexSrc;
-	}
-
-	/**
-	 * @return Returns the next buffer that will be used as a source when
-	 * the next "next()" step will be performed.
-	 */
-	public FrameBuffer getNextSourceBuffer()
-	{
-		return nextPingpongBufSrc;
+		return bufSrc;
 	}
 
 	/**
 	 * @return Returns the result of the latest {@link #capture()}. Texture version.
 	 */
-	public Texture getLastDestinationTexture()
+	public Texture getResultTexture()
 	{
-		return lastPingpongTexDst;
+		return texResult;
 	}
 
 	/**
 	 * @return Returns the result of the latest {@link #capture()}. Buffer version.
 	 */
-	public FrameBuffer getLastDestinationBuffer()
+	public FrameBuffer getResultBuffer()
 	{
-		return lastPingpongBufDst;
+		return bufResult;
 	}
 
 	/**

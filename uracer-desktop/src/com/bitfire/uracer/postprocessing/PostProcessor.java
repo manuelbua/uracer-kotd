@@ -167,15 +167,16 @@ public final class PostProcessor
 
 			processorBuffer.capture();
 			{
-				e.render( processorBuffer.getCurrentSourceBuffer(), processorBuffer.getNextSourceBuffer() );
-				if(i==last) processorBuffer.end();
+				e.render( processorBuffer.getSourceBuffer(), processorBuffer.getResultBuffer() );
 			}
 
 			System.out.println(e.name);
 		}
 
+		processorBuffer.end();
+
 		PostProcessorEffect last = effects.get( effects.size-1 );
-		last.render( processorBuffer.getLastDestinationBuffer(), null );
+		last.render( processorBuffer.getResultBuffer(), null );
 		System.out.println(last.name);
 
 

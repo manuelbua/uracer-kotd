@@ -159,7 +159,8 @@ public class Game
 		if( Config.Graphics.EnablePostProcessingFx && zblur != null )
 		{
 			zblur.setOrigin( Director.screenPosFor( player.car.getBody() ) );
-			zblur.setStrength( player.currSpeedFactor*0.5f );
+			zblur.setStrength( player.currSpeedFactor*0.2f );
+//			zblur.setStrength(1);
 		}
 
 		Debug.update();

@@ -178,7 +178,7 @@ public class Bloom extends PostProcessorEffect
 		{
 			// threshold pass
 			// cut bright areas of the picture and blit to smaller fbo
-			threshold.setInput(texsrc).setOutput( pingPongBuffer ).render();
+			threshold.setInput(texsrc).setOutput( pingPongBuffer.getSourceBuffer() ).render();
 
 			// blur pass
 			blur.render(pingPongBuffer);
@@ -192,7 +192,7 @@ public class Bloom extends PostProcessorEffect
 		}
 
 		// mix original scene and blurred threshold, modulate via set(Base|Bloom)(Saturation|Intensity)
-		combine.setOutput(dest).setInput(texsrc, pingPongBuffer.getLastDestinationTexture() ).render();
+		combine.setOutput(dest).setInput(texsrc, pingPongBuffer.getResultTexture() ).render();
 	}
 
 	@Override

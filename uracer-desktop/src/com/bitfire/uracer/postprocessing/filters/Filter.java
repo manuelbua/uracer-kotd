@@ -37,11 +37,11 @@ public abstract class Filter<T> extends IFilter
 		return (T)this;
 	}
 
-	public T setOutput(PingPongBuffer output)
-	{
-		this.outputBuffer = output.getNextSourceBuffer();
-		return (T)this;
-	}
+//	public T setOutput(PingPongBuffer output)
+//	{
+//		this.outputBuffer = output.getSourceBuffer();
+//		return (T)this;
+//	}
 
 	public abstract void upload();
 	protected abstract void compute();
