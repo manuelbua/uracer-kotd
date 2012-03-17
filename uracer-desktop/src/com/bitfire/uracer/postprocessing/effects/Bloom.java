@@ -178,7 +178,7 @@ public class Bloom implements IPostProcessorEffect
 		{
 			// threshold pass
 			// cut bright areas of the picture and blit to smaller fbo
-			threshold.setInput(texScene).setOutput( pingPongBuffer.getNextSourceBuffer() ).render();
+			threshold.setInput(texScene).setOutput( pingPongBuffer ).render();
 
 			// blur pass
 			blur.render(pingPongBuffer);
