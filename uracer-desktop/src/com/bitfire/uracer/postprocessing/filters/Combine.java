@@ -9,7 +9,7 @@ import com.bitfire.uracer.utils.ShaderLoader;
 public class Combine extends Filter
 {
 	private ShaderProgram combine;
-	private Texture input2 = null;
+	private Texture inputTexture2 = null;
 
 	public Combine()
 	{
@@ -46,7 +46,14 @@ public class Combine extends Filter
 	public Filter setInput(FrameBuffer buffer1, FrameBuffer buffer2)
 	{
 		this.inputTexture = buffer1.getColorBufferTexture();
-		this.input2 = buffer2.getColorBufferTexture();
+		this.inputTexture2 = buffer2.getColorBufferTexture();
+		return this;
+	}
+
+	public Filter setInput(Texture texture1, Texture texture2)
+	{
+		this.inputTexture = texture1;
+		this.inputTexture2 = texture2;
 		return this;
 	}
 
@@ -63,7 +70,7 @@ public class Combine extends Filter
 	protected void compute()
 	{
 		inputTexture.bind(u_texture_1);
-		input2.bind(u_texture_2);
+		inputTexture2.bind(u_texture_2);
 		combine.begin();
 		IFilter.quad.render( combine );
 		combine.end();

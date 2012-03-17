@@ -18,7 +18,6 @@ public class Threshold extends Filter
 			threshold = ShaderLoader.createShader( "bloom/screenspace", "bloom/masked-threshold" );
 		else
 			threshold = ShaderLoader.createShader( "bloom/screenspace", "bloom/threshold" );
-
 	}
 
 	public void dispose()
