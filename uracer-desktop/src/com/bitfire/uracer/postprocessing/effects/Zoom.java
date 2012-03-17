@@ -9,7 +9,7 @@ import com.bitfire.uracer.postprocessing.IPostProcessorEffect;
 import com.bitfire.uracer.utils.AMath;
 import com.bitfire.uracer.utils.ShaderLoader;
 
-public class ZoomBlur implements IPostProcessorEffect
+public class Zoom implements IPostProcessorEffect
 {
 	private int blur_len = 4; // ctrl quality
 	private final float MaxBlurWidth = -0.08f; // ctrl quantity
@@ -17,7 +17,7 @@ public class ZoomBlur implements IPostProcessorEffect
 	private Vector2 origin = new Vector2(0,0);
 	private ShaderProgram shader;
 
-	public ZoomBlur()
+	public Zoom()
 	{
 		shader = ShaderLoader.createShader( "zoom-blur", "zoom-blur", "#define BLUR_LENGTH " + blur_len + "\n#define ONE_ON_BLUR_LENGTH " + 1f / (float)blur_len );
 		upload();

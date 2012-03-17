@@ -25,7 +25,7 @@ import com.bitfire.uracer.messager.Message;
 import com.bitfire.uracer.messager.Messager;
 import com.bitfire.uracer.postprocessing.PostProcessor;
 import com.bitfire.uracer.postprocessing.effects.Bloom;
-import com.bitfire.uracer.postprocessing.effects.ZoomBlur;
+import com.bitfire.uracer.postprocessing.effects.Zoom;
 import com.bitfire.uracer.tiled.LevelRenderer;
 import com.bitfire.uracer.tweener.Tweener;
 import com.bitfire.uracer.tweener.accessors.HudLabelAccessor;
@@ -49,7 +49,7 @@ public class Game
 	// effects
 	private PostProcessor postProcessor;
 	private Bloom bloom = null;
-	private ZoomBlur zblur = null;
+	private Zoom zblur = null;
 
 	// drawing
 	private SpriteBatch batch = null;
@@ -106,7 +106,7 @@ public class Game
 //			postProcessor.setEffect( bloom );
 
 			// ------
-			zblur = new ZoomBlur();
+			zblur = new Zoom();
 			postProcessor.setEffect( zblur );
 			// ------
 		}
