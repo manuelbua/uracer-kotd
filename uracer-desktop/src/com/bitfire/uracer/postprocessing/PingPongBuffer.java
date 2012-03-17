@@ -120,7 +120,7 @@ public class PingPongBuffer
 	}
 
 	/**
-	 * @return Returns the result of the latest "next()" iteration. Texture version.
+	 * @return Returns the result of the latest {@link #capture()}. Texture version.
 	 */
 	public Texture getLastDestinationTexture()
 	{
@@ -128,18 +128,24 @@ public class PingPongBuffer
 	}
 
 	/**
-	 * @return Returns the result of the latest "next()" iteration. Buffer version.
+	 * @return Returns the result of the latest {@link #capture()}. Buffer version.
 	 */
 	public FrameBuffer getLastDestinationBuffer()
 	{
 		return lastPingpongBufDst;
 	}
 
+	/**
+	 * Ensures the initial buffer state is always the same before starting ping-ponging.
+	 */
 	public void begin()
 	{
 		rebind();
 	}
 
+	/**
+	 * Finishes ping-ponging, must always be called after a call to {@link #begin()}
+	 */
 	public void end()
 	{
 		endPending();
