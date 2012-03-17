@@ -25,7 +25,7 @@ import com.bitfire.uracer.messager.Message;
 import com.bitfire.uracer.messager.Messager;
 import com.bitfire.uracer.postprocessing.PostProcessor;
 import com.bitfire.uracer.postprocessing.effects.Bloom;
-import com.bitfire.uracer.postprocessing.filters.Blur.BlurType;
+import com.bitfire.uracer.postprocessing.effects.ZoomBlur;
 import com.bitfire.uracer.tiled.LevelRenderer;
 import com.bitfire.uracer.tweener.Tweener;
 import com.bitfire.uracer.tweener.accessors.HudLabelAccessor;
@@ -49,6 +49,7 @@ public class Game
 	// effects
 	private PostProcessor postProcessor;
 	private Bloom bloom;
+	private ZoomBlur zblur;
 
 	// drawing
 	private SpriteBatch batch = null;
@@ -97,14 +98,17 @@ public class Game
 
 //			BloomSettings bs = new BloomSettings( "arrogance-1 / rtt=0.25 / @1920x1050", BlurType.Gaussian5x5b, 1, 1, 0.25f, 1f, 0.1f, 0.8f, 1.4f );
 //			BloomSettings bs = new BloomSettings( "arrogance-2 / rtt=0.25 / @1920x1050", BlurType.Gaussian5x5b, 1, 1, 0.35f, 1f, 0.1f, 1.4f, 0.75f );
-
 //			BloomSettings bs = new BloomSettings( "subtle / rtt=0.25 / @800x480/1280x800", BlurType.Gaussian5x5, 1, 1.5f, 0.45f, 1f, 0.5f, 1f, 1.5f );
 //			BloomSettings bs = new BloomSettings( "subtle / rtt=0.2  / @800x480/1280x800", BlurType.Gaussian3x3b, 1, 1.5f, 0.45f, 1f, 0.5f, 1f, 1.5f );
 
-			Bloom.Settings bs = new Bloom.Settings( "subtle / rtt=0.25 / @1920x1050", BlurType.Gaussian5x5b, 1, 1f, 0.45f, 1f, 0.5f, 1f, 1.5f );
+//			Bloom.Settings bs = new Bloom.Settings( "subtle / rtt=0.25 / @1920x1050", BlurType.Gaussian5x5b, 1, 1f, 0.45f, 1f, 0.5f, 1f, 1.5f );
+//			bloom.setSettings( bs );
+//			postProcessor.setEffect( bloom );
 
-			bloom.setSettings( bs );
-			postProcessor.setEffect( bloom );
+			// ------
+			zblur = new ZoomBlur();
+			postProcessor.setEffect( zblur );
+			// ------
 		}
 
 //		Messager.show( "FUCK! BERLU! SCONI!", 600, MessageType.Good, MessagePosition.Bottom, MessageSize.Big );
@@ -178,38 +182,7 @@ public class Game
 
 		if( Config.Graphics.EnablePostProcessingFx )
 		{
-			// dbg (hotcode)
-//			float factor = DriftInfo.get().driftStrength;
-//			factor = AMath.fixup( AMath.lerp( lastFactor, factor, 0.85f ) );
-//			lastFactor = factor;
-//
-//			bloom.setBloomIntesity( factor * 0.8f + 0.2f );
-//			bloom.setBloomSaturation( 1.8f /*+ factor * -0.05f*/ );
-
-			// rtt >= 0.5
-			// GaussianApprox w/pass=1 == Gaussian+passes=2+amount=1.5
-//			bloom.setBlurType( BlurType.GaussianBilinear);
-//			bloom.setBlurAmount( 1f );
-//			bloom.setBlurPasses( 1 );
-
-//			bloom.setBlurType( BlurType.Gaussian);
-//			bloom.setBlurAmount( 1.5f );
-//			bloom.setBlurPasses( 2 );
-
-			// derived ()
-//			bloom.setBlurType( BlurType.GaussianHardCoded);
-//			bloom.setBlurPasses( 1 );
-
-			// optimized (precomputed)
-//			bloom.setBlurType( BlurType.Gaussian_5x5 );
-//			bloom.setBlurPasses( 1 );
-
-			// need "subtle Gaussian"
-//			bloom.setBlurType( BlurType.Gaussian ); bloom.setBlurPasses( 1 ); bloom.setBlurAmount( 1f );	// @800
-//			bloom.setBlurType( BlurType.Gaussian ); bloom.setBlurPasses( 2 ); bloom.setBlurAmount( 1f );	// @1280
-//			bloom.setBlurType( BlurType.Gaussian_5x5 ); bloom.setBlurPasses( 1 );
-
-//			bloom.setThreshold( 0.45f );
+			zblur.setOrigin( Director.screenPosFor( playerCar.getBody() ) );
 			postProcessor.capture();
 		}
 
