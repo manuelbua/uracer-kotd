@@ -5,11 +5,11 @@ import com.badlogic.gdx.graphics.glutils.FrameBuffer;
 import com.badlogic.gdx.graphics.glutils.ShaderProgram;
 import com.badlogic.gdx.math.Vector2;
 import com.bitfire.uracer.postprocessing.IFilter;
-import com.bitfire.uracer.postprocessing.IPostProcessorEffect;
+import com.bitfire.uracer.postprocessing.PostProcessorEffect;
 import com.bitfire.uracer.utils.AMath;
 import com.bitfire.uracer.utils.ShaderLoader;
 
-public class Zoom implements IPostProcessorEffect
+public class Zoom extends PostProcessorEffect
 {
 	private int blur_len = 4; // ctrl quality
 	private final float MaxBlurWidth = -0.08f; // ctrl quantity
