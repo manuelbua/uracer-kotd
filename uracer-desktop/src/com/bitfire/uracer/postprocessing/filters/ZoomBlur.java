@@ -8,13 +8,20 @@ import com.bitfire.uracer.utils.ShaderLoader;
 
 public class ZoomBlur extends Filter<ZoomBlur>
 {
-	private int blur_len = 5; // ctrl quality
+	private static final int MaxBlurLen = 32;
+	private int blur_len; // ctrl quality
 	private final float MaxBlurWidth = -0.04f; // ctrl quantity
 
 	private ShaderProgram shader;
 
 	public ZoomBlur()
 	{
+		this(2);
+	}
+
+	public ZoomBlur(int quality)
+	{
+		this.blur_len = AMath.clamp(quality, 1, MaxBlurLen);
 		shader = ShaderLoader.createShader( "zoom-blur", "zoom-blur", "#define BLUR_LENGTH " + blur_len + "\n#define ONE_ON_BLUR_LENGTH " + 1f / (float)blur_len );
 		upload();
 		setOrigin(0.5f, 0.5f);

@@ -94,12 +94,13 @@ public class Game
 
 			bloom = new Bloom( (int)(fboWidth * Config.Graphics.RttRatio), (int)(fboHeight * Config.Graphics.RttRatio), postProcessor.getFramebufferFormat() );
 
-//			BloomSettings bs = new BloomSettings( "arrogance-1 / rtt=0.25 / @1920x1050", BlurType.Gaussian5x5b, 1, 1, 0.25f, 1f, 0.1f, 0.8f, 1.4f );
-//			BloomSettings bs = new BloomSettings( "arrogance-2 / rtt=0.25 / @1920x1050", BlurType.Gaussian5x5b, 1, 1, 0.35f, 1f, 0.1f, 1.4f, 0.75f );
-//			BloomSettings bs = new BloomSettings( "subtle / rtt=0.25 / @800x480/1280x800", BlurType.Gaussian5x5, 1, 1.5f, 0.45f, 1f, 0.5f, 1f, 1.5f );
-//			BloomSettings bs = new BloomSettings( "subtle / rtt=0.2  / @800x480/1280x800", BlurType.Gaussian3x3b, 1, 1.5f, 0.45f, 1f, 0.5f, 1f, 1.5f );
+//			Bloom.Settings bs = new Bloom.Settings( "arrogance-1 / rtt=0.25 / @1920x1050", BlurType.Gaussian5x5b, 1, 1, 0.25f, 1f, 0.1f, 0.8f, 1.4f );
+//			Bloom.Settings bs = new Bloom.Settings( "arrogance-2 / rtt=0.25 / @1920x1050", BlurType.Gaussian5x5b, 1, 1, 0.35f, 1f, 0.1f, 1.4f, 0.75f );
+			Bloom.Settings bs = new Bloom.Settings( "subtle / rtt=0.25 / @800x480/1280x800", BlurType.Gaussian5x5, 1, 1.5f, 0.45f, 1f, 0.5f, 1f, 1.5f );
+//			Bloom.Settings bs = new Bloom.Settings( "subtle / rtt=0.2  / @800x480/1280x800", BlurType.Gaussian3x3b, 1, 1.5f, 0.45f, 1f, 0.5f, 1f, 1.5f );
 
-			Bloom.Settings bs = new Bloom.Settings( "subtle / rtt=0.25 / @1920x1050", BlurType.Gaussian5x5b, 1, 1f, 0.45f, 1f, 0.5f, 1f, 1.5f );
+//			Bloom.Settings bs = new Bloom.Settings( "subtle / rtt=0.25 / @1920x1050", BlurType.Gaussian5x5b, 1, 1f, 0.45f, 1f, 0.5f, 1f, 1.5f );
+
 			bloom.setSettings( bs );
 
 			// ------
@@ -112,7 +113,6 @@ public class Game
 
 //		Messager.show( "FUCK! BERLU! SCONI!", 600, MessageType.Good, MessagePosition.Bottom, MessageSize.Big );
 
-		// setup sprite batch at origin top-left => 0,0
 		// Issues may arise on Tegra2 (Asus Transformer) devices if the buffers'
 		// count is higher than 10
 		batch = new SpriteBatch( 1000, 8 );

@@ -66,6 +66,11 @@ public class AMath
 		return Math.min( max, Math.max( min, value ) );
 	}
 
+	public static final int clamp( int value, int min, int max )
+	{
+		return Math.min( max, Math.max( min, value ) );
+	}
+
 	public static final float fixup( float v )
 	{
 		if( Math.abs( v ) < CMP_EPSILON )
