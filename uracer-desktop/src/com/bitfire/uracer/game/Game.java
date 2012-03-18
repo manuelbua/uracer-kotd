@@ -50,7 +50,7 @@ public class Game
 	// effects
 	private PostProcessor postProcessor;
 	private Bloom bloom = null;
-	private Zoom zblur = null;
+	private Zoom zoom = null;
 
 	// drawing
 	private SpriteBatch batch = null;
@@ -107,10 +107,10 @@ public class Game
 			bloom.setSettings( bs );
 
 			// ------
-			zblur = new Zoom();
+			zoom = new Zoom();
 
-			postProcessor.addEffect( zblur );
 			postProcessor.addEffect( bloom );
+			postProcessor.addEffect( zoom );
 			// ------
 		}
 
@@ -156,11 +156,11 @@ public class Game
 		TrackEffects.tick();
 		CarSoundManager.tick();
 
-		if( Config.Graphics.EnablePostProcessingFx && zblur != null )
+		if( Config.Graphics.EnablePostProcessingFx && zoom != null )
 		{
-			zblur.setOrigin( Director.screenPosFor( player.car.getBody() ) );
+			zoom.setOrigin( Director.screenPosFor( player.car.getBody() ) );
 //			zblur.setStrength( DriftInfo.get().driftStrength );
-			zblur.setStrength( player.currSpeedFactor );
+			zoom.setStrength( player.currSpeedFactor );
 		}
 
 		Debug.update();

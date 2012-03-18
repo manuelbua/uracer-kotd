@@ -1,89 +1,58 @@
 package com.bitfire.uracer.postprocessing.effects;
 
-import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.glutils.FrameBuffer;
-import com.badlogic.gdx.graphics.glutils.ShaderProgram;
 import com.badlogic.gdx.math.Vector2;
-import com.bitfire.uracer.postprocessing.IFilter;
 import com.bitfire.uracer.postprocessing.PostProcessorEffect;
-import com.bitfire.uracer.utils.AMath;
-import com.bitfire.uracer.utils.ShaderLoader;
+import com.bitfire.uracer.postprocessing.filters.ZoomBlur;
 
 public class Zoom extends PostProcessorEffect
 {
-	private int blur_len = 2; // ctrl quality
-	private final float MaxBlurWidth = -0.04f; // ctrl quantity
-
-	private Vector2 origin = new Vector2(0,0);
-	private ShaderProgram shader;
+	private ZoomBlur zoomBlur;
+	private float x, y, strength;
 
 	public Zoom()
 	{
-		shader = ShaderLoader.createShader( "zoom-blur", "zoom-blur", "#define BLUR_LENGTH " + blur_len + "\n#define ONE_ON_BLUR_LENGTH " + 1f / (float)blur_len );
-		upload();
-		setOrigin(0.5f, 0.5f);
-		setStrength( 0 );
-	}
-
-	private void upload()
-	{
-		shader.begin();
-
-//		blur_width = -effectStrength;
-
-		shader.setUniformf( "one_on_blurlen", 1f / (float)blur_len );
-		shader.setUniformf( "offset_x", origin.x / (float)Gdx.graphics.getWidth() );
-		shader.setUniformf( "offset_y", 1f - (origin .y / (float)Gdx.graphics.getHeight()) );
-		shader.setUniformi( "u_texture", 0 );
-
-		shader.end();
+		zoomBlur = new ZoomBlur();
 	}
 
 	public void setOrigin(Vector2 o)
 	{
-		setOrigin(o.x, o.y);
-	}
-
-	public void setStrength(float strength)
-	{
-		float s = AMath.clamp( strength, 0f, 1f ) * MaxBlurWidth;
-		shader.begin();
-		shader.setUniformf( "blur_div", s / (float)blur_len );
-		shader.end();
+		this.x = o.x;
+		this.y = o.y;
+		zoomBlur.setOrigin(o.x, o.y);
 	}
 
 	public void setOrigin(float x, float y)
 	{
-		origin.set(x, y);
-		shader.begin();
-		shader.setUniformf( "offset_x", origin.x / (float)Gdx.graphics.getWidth() );
-		shader.setUniformf( "offset_y", 1f - (origin .y / (float)Gdx.graphics.getHeight()) );
-		shader.end();
+		this.x = x;
+		this.y = y;
+		zoomBlur.setOrigin( x, y );
+	}
+
+	public void setStrength(float strength)
+	{
+		this.strength = strength;
+		zoomBlur.setStrength( strength );
 	}
 
 	@Override
 	public void dispose()
 	{
-		shader.dispose();
+		zoomBlur.dispose();
 	}
 
 	@Override
 	public void resume()
 	{
-		upload();
+		zoomBlur.upload();
+		zoomBlur.setOrigin( x, y );
+		zoomBlur.setStrength( strength );
 	}
 
 	@Override
 	public void render( FrameBuffer src, FrameBuffer dest )
 	{
-		if(dest!=null) dest.begin();
-
-		src.getColorBufferTexture().bind( 0 );
-		shader.begin();
-		IFilter.quad.render( shader );
-		shader.end();
-
-		if(dest!=null) dest.end();
+		zoomBlur.setInput( src ).setOutput( dest ).render();
 	}
 
 }

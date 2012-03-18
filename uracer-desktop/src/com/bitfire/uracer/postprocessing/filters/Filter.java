@@ -43,6 +43,7 @@ public abstract class Filter<T> extends IFilter
 //		return (T)this;
 //	}
 
+	public abstract void dispose();
 	public abstract void upload();
 	protected abstract void compute();
 

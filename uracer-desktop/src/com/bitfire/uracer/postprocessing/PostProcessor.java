@@ -37,7 +37,6 @@ public final class PostProcessor
 			}
 		}
 
-//		bufferScene = new FrameBuffer( fbFormat, fboWidth, fboHeight, useDepth );
 		processorBuffer = new PingPongBuffer( fboWidth, fboHeight, fbFormat, useDepth );
 
 		capturing = false;
@@ -50,7 +49,6 @@ public final class PostProcessor
 
 		effects.clear();
 
-//		bufferScene.dispose();
 		processorBuffer.dispose();
 	}
 
