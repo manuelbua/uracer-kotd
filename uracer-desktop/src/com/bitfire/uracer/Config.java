@@ -20,6 +20,7 @@ public class Config
 		public static boolean RenderPlayerDebugInfo;
 		public static boolean RenderHudDebugInfo;
 		public static boolean Render3DBoundingBoxes;
+		public static float RttRatio;
 		public static InterpolationMode CameraInterpolationMode;
 		public static long Effects;
 
@@ -32,10 +33,11 @@ public class Config
 		public static void asDefault()
 		{
 			EnablePostProcessingFx = true;
+			RttRatio = 0.25f;
 			EnableMipMapping = true;
 			SubframeInterpolation = true;
 
-			RenderBox2DWorldWireframe = true;
+			RenderBox2DWorldWireframe = false;
 			RenderPlayerDebugInfo = true;
 			RenderHudDebugInfo = true;
 			Render3DBoundingBoxes = false;

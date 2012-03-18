@@ -2,27 +2,29 @@
 precision mediump float;
 #endif
 
-//varying vec4 v_color;
-//varying vec2 v_texCoords;
-varying vec2 v_texCoordsFx;
-
+varying vec2 v_texCoord0;
 uniform sampler2D u_texture;
 
-//uniform int blur_len;
-//uniform int blur_start;
 uniform float blur_div;
 uniform float offset_x;
 uniform float offset_y;
 uniform float one_on_blurlen;
 
+#ifndef BLUR_LENGTH
+#error Please define a BLUR_LENGTH
+#endif
+
+#ifndef ONE_ON_BLUR_LENGTH
+#error Please define a ONE_ON_BLUR_LENGTH
+#endif
+
+// avoid compile errors
+#define BLUR_LEN			BLUR_LENGTH
+#define ONE_ON_BLUR_LEN		ONE_ON_BLUR_LENGTH
+
 
 // precompute blur factors (faster, loops will be unrolled)
-const int blur_len = 4;			// ctrl quality
 const float blur_start = 1.0;
-//const float blur_width = -0.08;		// ctrl quantity
-//const float blur_div = blur_width / float(blur_len);
-
-
 
 // performant version
 void main()
@@ -31,17 +33,21 @@ void main()
 	vec2 o = vec2(offset_x, offset_y);
 
 	vec4 c = vec4(0);
-	for( int i = 0; i < blur_len; ++i )
+	for( int i = 0; i < BLUR_LEN; ++i )
 	{
-		c += texture2D(u_texture, (v_texCoordsFx * scale) + o);
+		c += texture2D(u_texture, (v_texCoord0 * scale) + o);
 		scale += blur_div;
 	}
 
-	gl_FragColor = c * one_on_blurlen;
+	gl_FragColor = c * ONE_ON_BLUR_LEN;
 }
 
 
 /*
+
+//const float blur_width = -0.08;		// ctrl quantity
+//const float blur_div = blur_width / float(blur_len);
+
 void main()
 {
 	float scale = float(blur_start);

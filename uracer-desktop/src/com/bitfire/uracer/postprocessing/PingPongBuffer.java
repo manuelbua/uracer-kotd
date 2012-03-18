@@ -15,8 +15,8 @@ public class PingPongBuffer
 	public FrameBuffer buffer1, buffer2;
 	public Texture texture1, texture2;
 
-	private Texture nextPingpongTexSrc, lastPingpongTexDst;
-	private FrameBuffer nextPingpongBufSrc, lastPingpongBufDst;
+	private Texture texResult, texSrc;
+	private FrameBuffer bufResult, bufSrc;
 
 	public int width, height;
 
@@ -58,39 +58,40 @@ public class PingPongBuffer
 		pending1 = pending2 = false;
 		writeState = true;
 
-		nextPingpongTexSrc = texture1; nextPingpongBufSrc = buffer1;
-		lastPingpongTexDst = texture2; lastPingpongBufDst = buffer2;
+		texSrc = texture1; bufSrc = buffer1;
+		texResult = texture2; bufResult = buffer2;
 	}
 
 	private boolean writeState, pending1, pending2;
 
 	/**
 	 * Both starts and continue ping-ponging between two buffers, returning the previous
-	 * buffer containing the last result, initiating recording
+	 * buffer containing the last result, initiating recording on the next buffer.
 	 */
 	public Texture capture()
 	{
 		endPending();
 
-		Texture currSource = null;
 		if( writeState )
 		{
 			// the caller is performing a pingPong step, this is the current source texture
-			currSource = texture1;
+			texSrc = texture1;
+			bufSrc = buffer1;
 
 			// this will be the next pingPong step's source texture
-			nextPingpongTexSrc = lastPingpongTexDst = texture2;
-			nextPingpongBufSrc = lastPingpongBufDst = buffer2;
+			texResult = texture2;
+			bufResult = buffer2;
 
 			// write to buf2
 			pending2 = true;
 			buffer2.begin();
 		} else
 		{
-			currSource = texture2;
+			texSrc = texture2;
+			bufSrc = buffer2;
 
-			nextPingpongTexSrc = lastPingpongTexDst = texture1;
-			nextPingpongBufSrc = lastPingpongBufDst = buffer1;
+			texResult = texture1;
+			bufResult = buffer1;
 
 			// write to buf1
 			pending1 = true;
@@ -98,41 +99,33 @@ public class PingPongBuffer
 		}
 
 		writeState = !writeState;
-		return currSource;
+		return texSrc;
 	}
 
-	/**
-	 * @return Returns the next buffer's texture that will be used as a source when
-	 * the next "next()" step will be performed.
-	 */
-	public Texture getNextSourceTexture()
+	public Texture getSouceTexture()
 	{
-		return nextPingpongTexSrc;
+		return texSrc;
 	}
 
-	/**
-	 * @return Returns the next buffer that will be used as a source when
-	 * the next "next()" step will be performed.
-	 */
-	public FrameBuffer getNextSourceBuffer()
+	public FrameBuffer getSourceBuffer()
 	{
-		return nextPingpongBufSrc;
+		return bufSrc;
 	}
 
 	/**
 	 * @return Returns the result of the latest {@link #capture()}. Texture version.
 	 */
-	public Texture getLastDestinationTexture()
+	public Texture getResultTexture()
 	{
-		return lastPingpongTexDst;
+		return texResult;
 	}
 
 	/**
 	 * @return Returns the result of the latest {@link #capture()}. Buffer version.
 	 */
-	public FrameBuffer getLastDestinationBuffer()
+	public FrameBuffer getResultBuffer()
 	{
-		return lastPingpongBufDst;
+		return bufResult;
 	}
 
 	/**
@@ -144,7 +137,7 @@ public class PingPongBuffer
 	}
 
 	/**
-	 * Finishes ping-ponging, must always be called after a call to {@link #begin()}
+	 * Finishes ping-ponging, must always be called after a call to {@link #capture()}
 	 */
 	public void end()
 	{

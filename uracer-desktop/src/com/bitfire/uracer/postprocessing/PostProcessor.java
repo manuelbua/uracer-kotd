@@ -4,15 +4,14 @@ import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.GL10;
 import com.badlogic.gdx.graphics.Pixmap.Format;
-import com.badlogic.gdx.graphics.glutils.FrameBuffer;
+import com.badlogic.gdx.utils.Array;
 
 public final class PostProcessor
 {
-	private final FrameBuffer bufferScene;
+	private final PingPongBuffer composite;
 	private final Format fbFormat;
-	private final FullscreenQuad fullScreenQuad;
 	private boolean capturing = false;
-	private IPostProcessorEffect effect = null;
+	public Array<PostProcessorEffect> effects = new Array<PostProcessorEffect>();
 	private Color clearColor = Color.CLEAR;
 
 	public PostProcessor( int fboWidth, int fboHeight, boolean useDepth, boolean useAlphaChannel, boolean use32Bits)
@@ -38,24 +37,29 @@ public final class PostProcessor
 			}
 		}
 
-		bufferScene = new FrameBuffer( fbFormat, fboWidth, fboHeight, useDepth );
+		composite = new PingPongBuffer( fboWidth, fboHeight, fbFormat, useDepth );
 
-		fullScreenQuad = new FullscreenQuad();
 		capturing = false;
 	}
 
 	public void dispose()
 	{
-		if(effect != null)
-			effect.dispose();
+		for(int i = 0; i < effects.size; i++)
+			effects.get(i).dispose();
 
-		bufferScene.dispose();
-		fullScreenQuad.dispose();
+		effects.clear();
+
+		composite.dispose();
 	}
 
-	public void setEffect(IPostProcessorEffect effect)
+	public void addEffect(PostProcessorEffect effect)
 	{
-		this.effect = effect;
+		effects.add( effect );
+	}
+
+	public void removeEffect(PostProcessorEffect effect)
+	{
+		effects.removeValue( effect, false );
 	}
 
 	public Format getFramebufferFormat()
@@ -81,7 +85,8 @@ public final class PostProcessor
 		if(!capturing)
 		{
 			capturing = true;
-			bufferScene.begin();
+			composite.begin();
+			composite.capture();
 
 			Gdx.gl.glClearColor( clearColor.r, clearColor.g, clearColor.b, clearColor.a );
 			Gdx.gl.glClear( GL10.GL_COLOR_BUFFER_BIT | GL10.GL_DEPTH_BUFFER_BIT );
@@ -96,7 +101,7 @@ public final class PostProcessor
 		if(capturing)
 		{
 			capturing = false;
-			bufferScene.end();
+			composite.end();
 		}
 	}
 
@@ -108,7 +113,8 @@ public final class PostProcessor
 		if(!capturing)
 		{
 			capturing = true;
-			bufferScene.begin();
+			composite.begin();
+			composite.capture();
 		}
 	}
 
@@ -120,7 +126,7 @@ public final class PostProcessor
 		if(capturing)
 		{
 			capturing = false;
-			bufferScene.end();
+			composite.end();
 		}
 	}
 
@@ -129,20 +135,35 @@ public final class PostProcessor
 	 */
 	public void resume()
 	{
-		if( effect != null )
-			effect.resume();
+		for(int i = 0; i < effects.size; i++)
+			effects.get(i).resume();
 	}
 
 	/**
-	 * Finish capturing the scene, post-process and render the effect, if any
+	 * Finish capturing the scene, post-process w/ the effect chain, if any
 	 */
 	public void render()
 	{
 		captureEnd();
 
-		if(effect != null)
+		if(effects.size>0)
 		{
-			effect.render( bufferScene );
+			// render effects chain, [0,n-1]
+			for(int i = 0; i < effects.size-1; i++)
+			{
+				PostProcessorEffect e = effects.get( i );
+
+				composite.capture();
+				{
+					e.render( composite.getSourceBuffer(), composite.getResultBuffer() );
+				}
+			}
+
+			// complete
+			composite.end();
+
+			// render with null dest, to the screen!
+			effects.get( effects.size-1 ).render( composite.getResultBuffer(), null );
 		}
 	}
 }

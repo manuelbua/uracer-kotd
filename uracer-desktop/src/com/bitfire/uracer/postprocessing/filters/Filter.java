@@ -5,7 +5,7 @@ import com.badlogic.gdx.graphics.glutils.FrameBuffer;
 import com.bitfire.uracer.postprocessing.IFilter;
 import com.bitfire.uracer.postprocessing.PingPongBuffer;
 
-public abstract class Filter extends IFilter
+public abstract class Filter<T> extends IFilter
 {
 	protected static final int u_texture_1 = 0;
 	protected static final int u_texture_2 = 1;
@@ -13,36 +13,37 @@ public abstract class Filter extends IFilter
 	protected Texture inputTexture = null;
 	protected FrameBuffer outputBuffer = null;
 
-	public Filter setInput(Texture input)
+	public T setInput(Texture input)
 	{
 		this.inputTexture = input;
-		return this;
+		return (T)this;
 	}
 
-	public Filter setInput(FrameBuffer input)
+	public T setInput(FrameBuffer input)
 	{
 		this.inputTexture = input.getColorBufferTexture();
-		return this;
+		return (T)this;
 	}
 
-	public Filter setInput(PingPongBuffer input)
+	public T setInput(PingPongBuffer input)
 	{
 		this.inputTexture = input.capture();
-		return this;
+		return (T)this;
 	}
 
-	public Filter setOutput(FrameBuffer output)
+	public T setOutput(FrameBuffer output)
 	{
 		this.outputBuffer = output;
-		return this;
+		return (T)this;
 	}
 
-	public Filter setOutput(PingPongBuffer output)
-	{
-		this.outputBuffer = output.getNextSourceBuffer();
-		return this;
-	}
+//	public T setOutput(PingPongBuffer output)
+//	{
+//		this.outputBuffer = output.getSourceBuffer();
+//		return (T)this;
+//	}
 
+	public abstract void dispose();
 	public abstract void upload();
 	protected abstract void compute();
 

@@ -5,15 +5,15 @@ import com.badlogic.gdx.graphics.GL10;
 import com.badlogic.gdx.graphics.Pixmap.Format;
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.glutils.FrameBuffer;
-import com.bitfire.uracer.postprocessing.IPostProcessorEffect;
 import com.bitfire.uracer.postprocessing.PingPongBuffer;
+import com.bitfire.uracer.postprocessing.PostProcessorEffect;
 import com.bitfire.uracer.postprocessing.filters.Blur;
 import com.bitfire.uracer.postprocessing.filters.Blur.BlurType;
 import com.bitfire.uracer.postprocessing.filters.Combine;
 import com.bitfire.uracer.postprocessing.filters.Combine.Param;
 import com.bitfire.uracer.postprocessing.filters.Threshold;
 
-public class Bloom implements IPostProcessorEffect
+public class Bloom extends PostProcessorEffect
 {
 	public static class Settings
 	{
@@ -166,9 +166,9 @@ public class Bloom implements IPostProcessorEffect
 	}
 
 	@Override
-	public void render( final FrameBuffer scene )
+	public void render( final FrameBuffer src, final FrameBuffer dest  )
 	{
-		Texture texScene = scene.getColorBufferTexture();
+		Texture texsrc = src.getColorBufferTexture();
 
 		Gdx.gl.glDisable( GL10.GL_BLEND );
 		Gdx.gl.glDisable( GL10.GL_DEPTH_TEST );
@@ -178,7 +178,7 @@ public class Bloom implements IPostProcessorEffect
 		{
 			// threshold pass
 			// cut bright areas of the picture and blit to smaller fbo
-			threshold.setInput(texScene).setOutput( pingPongBuffer ).render();
+			threshold.setInput(texsrc).setOutput( pingPongBuffer.getSourceBuffer() ).render();
 
 			// blur pass
 			blur.render(pingPongBuffer);
@@ -192,7 +192,7 @@ public class Bloom implements IPostProcessorEffect
 		}
 
 		// mix original scene and blurred threshold, modulate via set(Base|Bloom)(Saturation|Intensity)
-		combine.setInput(texScene, pingPongBuffer.getLastDestinationTexture() ).render();
+		combine.setOutput(dest).setInput(texsrc, pingPongBuffer.getResultTexture() ).render();
 	}
 
 	@Override

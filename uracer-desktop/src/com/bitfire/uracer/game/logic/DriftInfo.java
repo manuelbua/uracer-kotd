@@ -86,6 +86,7 @@ public class DriftInfo
 			}
 		} else
 		{
+			// TODO should be expressed as a percent value ref. maxvel, to scale to different max velocities
 			float vel = player.getCarDescriptor().velocity_wc.len();
 
 			if( !isDrifting )

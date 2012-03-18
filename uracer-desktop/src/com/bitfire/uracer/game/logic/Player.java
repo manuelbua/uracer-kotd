@@ -3,11 +3,18 @@ package com.bitfire.uracer.game.logic;
 import com.badlogic.gdx.math.Vector2;
 import com.bitfire.uracer.entities.vehicles.Car;
 import com.bitfire.uracer.entities.vehicles.GhostCar;
+import com.bitfire.uracer.utils.AMath;
 
 public class Player
 {
 	public final Car car;
 	public final GhostCar ghost;
+
+	public float carMaxSpeedSquared = 0;
+	public float carMaxForce = 0;
+	public float currCarSpeedSquared = 0;
+	public float currSpeedFactor = 0;
+	public float currForceFactor = 0;
 
 	/* position/orientation */
 
@@ -19,10 +26,15 @@ public class Player
 	// current
 	public int currTileX = 1, currTileY = 1;
 
+
 	public Player(Car car, GhostCar ghost)
 	{
 		this.car = car;
 		this.ghost = ghost;
+
+		// precompute factors
+		carMaxSpeedSquared = car.getCarDescriptor().carModel.max_speed * car.getCarDescriptor().carModel.max_speed;
+		carMaxForce = car.getCarDescriptor().carModel.max_force;
 	}
 
 	private int lastTileX = 0, lastTileY = 0;
@@ -36,6 +48,11 @@ public class Player
 		{
 			listener.onTileChanged(this);
 		}
+
+		// speed/force normalized factors
+		currCarSpeedSquared = car.getCarDescriptor().velocity_wc.len2();
+		currSpeedFactor = AMath.clamp(currCarSpeedSquared / carMaxSpeedSquared, 0f, 1f);
+		currForceFactor = AMath.clamp(car.getCarDescriptor().throttle / carMaxForce, 0f, 1f);
 	}
 
 	public void reset()

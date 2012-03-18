@@ -4,7 +4,7 @@ import com.badlogic.gdx.graphics.glutils.ShaderProgram;
 import com.bitfire.uracer.postprocessing.IFilter;
 import com.bitfire.uracer.utils.ShaderLoader;
 
-public class Threshold extends Filter
+public class Threshold extends Filter<Threshold>
 {
 	private ShaderProgram threshold;
 
@@ -15,9 +15,9 @@ public class Threshold extends Filter
 		threshold = null;
 
 		if(useAlphaChannelAsMask)
-			threshold = ShaderLoader.createShader( "bloom/screenspace", "bloom/masked-threshold" );
+			threshold = ShaderLoader.createShader( "screenspace", "masked-threshold" );
 		else
-			threshold = ShaderLoader.createShader( "bloom/screenspace", "bloom/threshold" );
+			threshold = ShaderLoader.createShader( "screenspace", "threshold" );
 	}
 
 	public void dispose()
