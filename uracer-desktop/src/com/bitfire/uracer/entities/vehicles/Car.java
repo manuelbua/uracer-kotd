@@ -210,8 +210,12 @@ public class Car extends Box2dEntity
 			carInput.steerAngle = angle;
 
 			// normalize and clamp
-			touchPos.x *= invWidth;		touchPos.y *= invHeight;	VMath.clamp( touchPos, 0, 1 );
-			carPos.x *= invWidth;		carPos.y *= invHeight;		VMath.clamp( carPos, 0, 1 );
+			touchPos.x *= invWidth;
+			touchPos.y *= invHeight;
+			carPos.x *= invWidth;
+			carPos.y *= invHeight;
+			VMath.clamp( touchPos, 0, 1 );
+			VMath.clamp( carPos, 0, 1 );
 
 			// compute throttle
 			carInput.throttle = touchPos.dst( carPos ) * 4 * carDesc.carModel.max_force;
