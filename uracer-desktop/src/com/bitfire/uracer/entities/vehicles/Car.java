@@ -2,6 +2,7 @@ package com.bitfire.uracer.entities.vehicles;
 
 import java.util.ArrayList;
 
+import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.graphics.g2d.tiled.TiledLayer;
 import com.badlogic.gdx.math.MathUtils;
@@ -170,11 +171,15 @@ public class Car extends Box2dEntity
 
 	private float lastTouchAngle;
 
+
+	private Vector2 touchPos = new Vector2();
+	private Vector2 carPos = new Vector2();
+	private float invWidth = 1f / Gdx.graphics.getWidth(), invHeight = 1f / Gdx.graphics.getHeight();
 	protected CarInput acquireInput()
 	{
-		Vector2 carScreenPos = Director.screenPosFor( body );
+		carPos.set(Director.screenPosFor( body ));
 
-		Vector2 touchPos = Input.getXY();
+		touchPos.set(Input.getXY());
 		carInput.updated = Input.isTouching();
 
 		if( carInput.updated )
@@ -182,12 +187,12 @@ public class Car extends Box2dEntity
 			float angle = 0;
 
 			// avoid singularity
-			if( (int)-carScreenPos.y + (int)touchPos.y == 0 )
+			if( (int)-carPos.y + (int)touchPos.y == 0 )
 			{
 				angle = lastTouchAngle;
 			} else
 			{
-				angle = MathUtils.atan2( -carScreenPos.x + touchPos.x, -carScreenPos.y + touchPos.y );
+				angle = MathUtils.atan2( -carPos.x + touchPos.x, -carPos.y + touchPos.y );
 				lastTouchAngle = angle;
 			}
 
@@ -204,19 +209,23 @@ public class Car extends Box2dEntity
 
 			carInput.steerAngle = angle;
 
+			// normalize and clamp
+			touchPos.x *= invWidth;		touchPos.y *= invHeight;	VMath.clamp( touchPos, 0, 1 );
+			carPos.x *= invWidth;		carPos.y *= invHeight;		VMath.clamp( carPos, 0, 1 );
+
 			// compute throttle
-			carInput.throttle = touchPos.dst( carScreenPos );
+			carInput.throttle = touchPos.dst( carPos ) * 4 * carDesc.carModel.max_force;
 		}
 
-		if(Config.Debug.ApplyCarFriction)
-			applyFriction(carInput);
+		if(Config.Debug.ApplyFrictionMap)
+			applyFrictionMap(carInput);
 
 		return carInput;
 	}
 
 	private Vector2 offset = new Vector2();
 	private WindowedMean frictionMean = new WindowedMean( 16 );
-	private void applyFriction(CarInput input)
+	private void applyFrictionMap(CarInput input)
 	{
 		if( tilePosition.x >= 0 && tilePosition.x < Director.currentLevel.map.width &&
 			tilePosition.y >= 0 && tilePosition.y < Director.currentLevel.map.height )
@@ -237,8 +246,8 @@ public class Car extends Box2dEntity
 //				int yOnMap = (int)( id/4f ) * 224 + (int)offset.y;
 
 				// bit twiddling, faster versions
-				int xOnMap = (id&3) * 224 + (int)offset.x;
-				int yOnMap = (id>>2) * 224 + (int)offset.y;
+				int xOnMap = (id&3) * (int)Director.currentLevel.map.tileWidth + (int)offset.x;
+				int yOnMap = (id>>2) * (int)Director.currentLevel.map.tileWidth + (int)offset.y;
 
 
 				int pixel = Art.frictionNature.getPixel( xOnMap, yOnMap );
@@ -274,31 +283,18 @@ public class Car extends Box2dEntity
 
 	private long start_timer = 0;
 	private boolean start_decrease = false;
-	private float prevStrength = 0;
 	private void handleImpactFeedback()
 	{
 		// process impact feedback
-		float impact = 0f;
-		boolean hasImpact = false;
 		while( impactFeedback.size() > 0 )
 		{
-			float impulse = impactFeedback.remove( 0 );
-			impact += impulse;
+			impactFeedback.remove( 0 );
 
 			carDesc.velocity_wc.set( body.getLinearVelocity() ).mul( Director.gameplaySettings.linearVelocityAfterFeedback );
 			carDesc.angularvelocity = -body.getAngularVelocity() * 0.85f;
 
 			start_decrease = true;
-			hasImpact = true;
 		}
-
-
-//		if( (carInputMode == CarInputMode.InputFromPlayer) && PostProcessor.hasEffect() && hasImpact )
-//		{
-//			float strength = AMath.lerp( prevStrength, impact*0.005f, 0.05f );
-//			prevStrength = strength;
-//			PostProcessor.getEffect().addStrength( strength );
-//		}
 	}
 
 	private void handleDecrease(CarInput input)

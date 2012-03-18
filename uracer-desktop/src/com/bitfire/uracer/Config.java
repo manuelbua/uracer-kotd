@@ -76,14 +76,14 @@ public class Config
 	{
 		public static boolean TraverseWalls;
 		public static boolean DirectorHasBounds;
-		public static boolean ApplyCarFriction;
+		public static boolean ApplyFrictionMap;
 		public static boolean FrustumCulling;
 
 		public static void asDefault()
 		{
 			TraverseWalls = false;
 			DirectorHasBounds = ((Graphics.CameraInterpolationMode == InterpolationMode.Linear) || (Graphics.CameraInterpolationMode==InterpolationMode.Off));
-			ApplyCarFriction = true;
+			ApplyFrictionMap = true;
 			FrustumCulling = true;
 		}
 	}

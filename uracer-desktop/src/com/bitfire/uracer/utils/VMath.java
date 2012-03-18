@@ -49,6 +49,20 @@ public class VMath
 		return VMath.perp( result, perpAt );
 	}
 
+	public static final Vector2 clamp( Vector2 v, float min, float max )
+	{
+		v.x = AMath.clamp( v.x, min, max );
+		v.y = AMath.clamp( v.y, min, max );
+		return v;
+	}
+
+	public static final Vector2 clamp( Vector2 v, float xmin, float xmax, float ymin, float ymax )
+	{
+		v.x = AMath.clamp( v.x, xmin, xmax );
+		v.y = AMath.clamp( v.y, ymin, ymax );
+		return v;
+	}
+
 	public static final Vector2 fixup( Vector2 v )
 	{
 		if( (v.x * v.x + v.y * v.y) < AMath.CMP_EPSILON )

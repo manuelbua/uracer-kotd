@@ -4,6 +4,8 @@ import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.GL20;
 import com.badlogic.gdx.graphics.OrthographicCamera;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
+import com.badlogic.gdx.graphics.glutils.ShapeRenderer;
+import com.badlogic.gdx.graphics.glutils.ShapeRenderer.ShapeType;
 import com.bitfire.uracer.Art;
 import com.bitfire.uracer.Config;
 import com.bitfire.uracer.Config.Physics;
@@ -162,6 +164,7 @@ public class Game
 		return true;
 	}
 
+	private ShapeRenderer shapes = new ShapeRenderer();
 //	private float lastFactor = 0f;
 	public void render()
 	{
@@ -262,6 +265,16 @@ public class Game
 					+ ", walls=" + LevelRenderer.renderedWalls
 					+ ", culled=" + LevelRenderer.culledMeshes, 0, Gdx.graphics.getHeight()-7 );
 			Debug.end();
+
+			// car throttle
+			gl.glEnable( GL20.GL_BLEND );
+			float radius = Math.max( 1, playerCar.getCarDescriptor().throttle);
+			shapes.setTransformMatrix( ortho.view );
+			shapes.setProjectionMatrix( ortho.projection );
+			shapes.setColor( 1, 1, 1, 0.2f );
+			shapes.begin( ShapeType.FilledCircle );
+			shapes.filledCircle( playerCar.state().position.x, playerCar.state().position.y, radius * Director.scalingStrategy.invTileMapZoomFactor );
+			shapes.end();
 		} else
 		{
 			Debug.begin( batch );
