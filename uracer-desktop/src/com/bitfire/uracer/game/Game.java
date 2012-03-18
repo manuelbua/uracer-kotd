@@ -128,7 +128,6 @@ public class Game
 		batch.dispose();
 		CarSoundManager.dispose();
 
-
 		if(Config.Graphics.EnablePostProcessingFx)
 		{
 			postProcessor.dispose();
@@ -203,10 +202,6 @@ public class Game
 		// resync
 		level.syncWithCam( ortho );
 
-		// prepare sprite batch
-		batch.setProjectionMatrix( ortho.projection );
-		batch.setTransformMatrix( ortho.view );
-
 		// clear buffers
 		gl.glClearDepthf( 1 );
 		gl.glClearColor( 0, 0, 0, 0 );
@@ -216,6 +211,8 @@ public class Game
 		level.renderTilemap(gl);
 
 		gl.glActiveTexture( GL20.GL_TEXTURE0 );
+		batch.setProjectionMatrix( ortho.projection );
+		batch.setTransformMatrix( ortho.view );
 		batch.begin();
 		{
 			// batch render effects
