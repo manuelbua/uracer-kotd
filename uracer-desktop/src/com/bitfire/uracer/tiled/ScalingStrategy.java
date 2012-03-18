@@ -86,7 +86,7 @@ public class ScalingStrategy
 		// 0.78}, {73, 1}, {80, 1.13},{90,1.355},{110,1.93},{120,2.35}}
 		//
 		// so this will return interpolated values for any given hfov in the range
-		// [10,120]
+		// [10,120] with quartic approximation
 		return 1.15197f * 0.00000001f
 				* (desiredHorizontalFov * desiredHorizontalFov * desiredHorizontalFov * desiredHorizontalFov) - 1.6847f
 				* 0.000001f * (desiredHorizontalFov * desiredHorizontalFov * desiredHorizontalFov) + 0.000124545f
