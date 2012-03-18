@@ -43,11 +43,11 @@ public class VMath
 		return result;
 	}
 
-	public static final Vector2 perp( Vector2 perpAt )
-	{
-		Vector2 result = new Vector2();
-		return VMath.perp( result, perpAt );
-	}
+//	public static final Vector2 perp( Vector2 perpAt )
+//	{
+//		Vector2 result = new Vector2();
+//		return VMath.perp( result, perpAt );
+//	}
 
 	public static final Vector2 clamp( Vector2 v, float min, float max )
 	{
