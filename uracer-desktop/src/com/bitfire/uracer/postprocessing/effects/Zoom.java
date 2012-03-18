@@ -10,9 +10,9 @@ public class Zoom extends PostProcessorEffect
 	private ZoomBlur zoomBlur;
 	private float x, y, strength;
 
-	public Zoom()
+	public Zoom(int quality)
 	{
-		zoomBlur = new ZoomBlur();
+		zoomBlur = new ZoomBlur(quality);
 	}
 
 	public void setOrigin(Vector2 o)
@@ -27,6 +27,11 @@ public class Zoom extends PostProcessorEffect
 		this.x = x;
 		this.y = y;
 		zoomBlur.setOrigin( x, y );
+	}
+
+	public void setMaxStrength(float maxStrength)
+	{
+		zoomBlur.setMaxStrength( maxStrength );
 	}
 
 	public void setStrength(float strength)

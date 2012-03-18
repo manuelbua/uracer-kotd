@@ -10,22 +10,29 @@ public class ZoomBlur extends Filter<ZoomBlur>
 {
 	private static final int MaxBlurLen = 32;
 	private int blur_len; // ctrl quality
-	private final float MaxBlurWidth = -0.04f; // ctrl quantity
+	private float max_strength; // ctrl quantity
 
 	private ShaderProgram shader;
 
 	public ZoomBlur()
 	{
-		this(2);
+		this(2, -0.02f);
 	}
 
 	public ZoomBlur(int quality)
 	{
+		this(quality, -0.02f);
+	}
+
+	public ZoomBlur(int quality, float maxStrength)
+	{
 		this.blur_len = AMath.clamp(quality, 1, MaxBlurLen);
+		this.max_strength = maxStrength;
 		shader = ShaderLoader.createShader( "zoom-blur", "zoom-blur", "#define BLUR_LENGTH " + blur_len + "\n#define ONE_ON_BLUR_LENGTH " + 1f / (float)blur_len );
 		upload();
 		setOrigin(0.5f, 0.5f);
-		setStrength( 0 );
+		setStrength(0.5f);
+		setMaxStrength(maxStrength);
 	}
 
 	public void setOrigin(float x, float y)
@@ -36,9 +43,14 @@ public class ZoomBlur extends Filter<ZoomBlur>
 		shader.end();
 	}
 
+	public void setMaxStrength(float maxStrength)
+	{
+		this.max_strength = maxStrength;
+	}
+
 	public void setStrength(float strength)
 	{
-		float s = AMath.clamp( strength, 0f, 1f ) * MaxBlurWidth;
+		float s = AMath.clamp( strength, 0f, 1f ) * max_strength;
 		shader.begin();
 		shader.setUniformf( "blur_div", s / (float)blur_len );
 		shader.end();

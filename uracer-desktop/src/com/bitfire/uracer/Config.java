@@ -5,11 +5,47 @@ import com.badlogic.gdx.Gdx;
 import com.bitfire.uracer.effects.TrackEffects;
 import com.bitfire.uracer.game.GameDifficulty;
 import com.bitfire.uracer.game.logic.DirectorController.InterpolationMode;
+import com.bitfire.uracer.postprocessing.filters.Blur;
+import com.bitfire.uracer.postprocessing.filters.Blur.BlurType;
 
 public class Config
 {
 	// generic
 	public static boolean isDesktop;
+
+	public static class PostProcessing
+	{
+		public static BlurType BlurType;
+		public static float RttRatio = 0.25f;
+
+		public static int ZoomQuality;
+		public static float ZoomMaxStrength;
+
+		public static void asDefault()
+		{
+			int w = Gdx.graphics.getWidth();
+
+			if(w >= 1680 ) {
+				BlurType = Blur.BlurType.Gaussian5x5b;
+				ZoomQuality = 8;
+				ZoomMaxStrength = -0.08f;
+			}
+			else if( w >= 1280 ) {
+				BlurType = Blur.BlurType.Gaussian3x3b;
+				ZoomQuality = 4;
+				ZoomMaxStrength = -0.08f;
+			}
+			else if( w >= 800 ) {
+				BlurType = Blur.BlurType.Gaussian3x3;
+				ZoomQuality = 2;
+				ZoomMaxStrength = -0.08f;
+			}
+
+			System.out.println("blurType = " + BlurType);
+			System.out.println("zoomQuality= " + ZoomQuality);
+			System.out.println("zoomMaxStrength= " + ZoomMaxStrength);
+		}
+	}
 
 	public static class Graphics
 	{
@@ -20,7 +56,6 @@ public class Config
 		public static boolean RenderPlayerDebugInfo;
 		public static boolean RenderHudDebugInfo;
 		public static boolean Render3DBoundingBoxes;
-		public static float RttRatio;
 		public static InterpolationMode CameraInterpolationMode;
 		public static long Effects;
 
@@ -33,7 +68,6 @@ public class Config
 		public static void asDefault()
 		{
 			EnablePostProcessingFx = true;
-			RttRatio = 0.25f;
 			EnableMipMapping = true;
 			SubframeInterpolation = true;
 
@@ -96,6 +130,7 @@ public class Config
 		Game.asDefault();
 		Graphics.asDefault();
 		Physics.asDefault();
+		PostProcessing.asDefault();
 
 		// always call as last
 		Debug.asDefault();

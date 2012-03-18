@@ -5,7 +5,6 @@ import com.badlogic.gdx.graphics.GL20;
 import com.badlogic.gdx.graphics.OrthographicCamera;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.graphics.glutils.ShapeRenderer;
-import com.badlogic.gdx.graphics.glutils.ShapeRenderer.ShapeType;
 import com.bitfire.uracer.Art;
 import com.bitfire.uracer.Config;
 import com.bitfire.uracer.Config.Physics;
@@ -28,7 +27,6 @@ import com.bitfire.uracer.messager.Messager;
 import com.bitfire.uracer.postprocessing.PostProcessor;
 import com.bitfire.uracer.postprocessing.effects.Bloom;
 import com.bitfire.uracer.postprocessing.effects.Zoom;
-import com.bitfire.uracer.postprocessing.filters.Blur.BlurType;
 import com.bitfire.uracer.tiled.LevelRenderer;
 import com.bitfire.uracer.tweener.Tweener;
 import com.bitfire.uracer.tweener.accessors.HudLabelAccessor;
@@ -94,22 +92,21 @@ public class Game
 
 			postProcessor = new PostProcessor( fboWidth, fboHeight, false /* depth */, false /* alpha */, Config.isDesktop /* 32 bits */ );
 
-			bloom = new Bloom( (int)(fboWidth * Config.Graphics.RttRatio), (int)(fboHeight * Config.Graphics.RttRatio), postProcessor.getFramebufferFormat() );
+			bloom = new Bloom( (int)(fboWidth * Config.PostProcessing.RttRatio), (int)(fboHeight * Config.PostProcessing.RttRatio), postProcessor.getFramebufferFormat() );
 
 //			Bloom.Settings bs = new Bloom.Settings( "arrogance-1 / rtt=0.25 / @1920x1050", BlurType.Gaussian5x5b, 1, 1, 0.25f, 1f, 0.1f, 0.8f, 1.4f );
 //			Bloom.Settings bs = new Bloom.Settings( "arrogance-2 / rtt=0.25 / @1920x1050", BlurType.Gaussian5x5b, 1, 1, 0.35f, 1f, 0.1f, 1.4f, 0.75f );
-			Bloom.Settings bs = new Bloom.Settings( "subtle / rtt=0.25 / @800x480/1280x800", BlurType.Gaussian5x5, 1, 1.5f, 0.45f, 1f, 0.5f, 1f, 1.5f );
-//			Bloom.Settings bs = new Bloom.Settings( "subtle / rtt=0.2  / @800x480/1280x800", BlurType.Gaussian3x3b, 1, 1.5f, 0.45f, 1f, 0.5f, 1f, 1.5f );
 
-//			Bloom.Settings bs = new Bloom.Settings( "subtle / rtt=0.25 / @1920x1050", BlurType.Gaussian5x5b, 1, 1f, 0.45f, 1f, 0.5f, 1f, 1.5f );
+			Bloom.Settings bs = new Bloom.Settings( "subtle", Config.PostProcessing.BlurType, 1, 1.5f, 0.45f, 1f, 0.5f, 1f, 1.5f );
 
 			bloom.setSettings( bs );
 
 			// ------
-			zoom = new Zoom();
+			zoom = new Zoom(Config.PostProcessing.ZoomQuality);
+			zoom.setMaxStrength( Config.PostProcessing.ZoomMaxStrength );
 
-			postProcessor.addEffect( zoom );
 			postProcessor.addEffect( bloom );
+			postProcessor.addEffect( zoom );
 			// ------
 		}
 
@@ -186,21 +183,10 @@ public class Game
 
 		if( Config.Graphics.EnablePostProcessingFx )
 		{
-//			if(postProcessor.effects.get( 0 ).name.equals( "Bloom" ))
-//			{
-//				PostProcessorEffect a = postProcessor.effects.get( 0 );
-//				PostProcessorEffect b = postProcessor.effects.get( 1 );
-//				postProcessor.effects.clear();
-//				postProcessor.effects.add( b );
-//				postProcessor.effects.add( a );
-//			}
-
 			postProcessor.capture();
 		}
 
-
 		gl.glViewport( 0, 0, Gdx.graphics.getWidth(), Gdx.graphics.getHeight() );
-
 
 		// resync
 		level.syncWithCam( ortho );
@@ -212,6 +198,25 @@ public class Game
 
 		// render base tilemap
 		level.renderTilemap(gl);
+
+		// ------------------------- exp
+		// car throttle
+//		gl.glEnable( GL20.GL_BLEND );
+//		float radius = Math.max( 1, playerCar.getCarDescriptor().throttle);
+//		shapes.setTransformMatrix( ortho.view );
+//		shapes.setProjectionMatrix( ortho.projection );
+//		shapes.setColor
+//		(
+//			player.currForceFactor,
+//			1-player.currForceFactor,
+//			0f,
+//			0.15f
+//		);
+//		shapes.begin( ShapeType.FilledCircle );
+//		shapes.filledCircle( playerCar.state().position.x, playerCar.state().position.y, radius * Director.scalingStrategy.invTileMapZoomFactor );
+//		shapes.end();
+//		gl.glDisable( GL20.GL_BLEND );
+		// ------------------------- exp
 
 		gl.glActiveTexture( GL20.GL_TEXTURE0 );
 		batch.setProjectionMatrix( ortho.projection );
@@ -230,6 +235,7 @@ public class Game
 		level.renderMeshes( gl );
 
 		hud.render(batch);
+
 
 		if( Config.Graphics.EnablePostProcessingFx )
 		{
@@ -265,16 +271,6 @@ public class Game
 					+ ", walls=" + LevelRenderer.renderedWalls
 					+ ", culled=" + LevelRenderer.culledMeshes, 0, Gdx.graphics.getHeight()-7 );
 			Debug.end();
-
-			// car throttle
-			gl.glEnable( GL20.GL_BLEND );
-			float radius = Math.max( 1, playerCar.getCarDescriptor().throttle);
-			shapes.setTransformMatrix( ortho.view );
-			shapes.setProjectionMatrix( ortho.projection );
-			shapes.setColor( 1, 1, 1, 0.2f );
-			shapes.begin( ShapeType.FilledCircle );
-			shapes.filledCircle( playerCar.state().position.x, playerCar.state().position.y, radius * Director.scalingStrategy.invTileMapZoomFactor );
-			shapes.end();
 		} else
 		{
 			Debug.begin( batch );
