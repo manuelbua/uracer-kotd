@@ -92,11 +92,7 @@ public class Game
 
 			postProcessor = new PostProcessor( fboWidth, fboHeight, false /* depth */, false /* alpha */, Config.isDesktop /* 32 bits */ );
 
-			float rttRatio = 0.25f;
-
-			System.out.println("rttRatio=" + rttRatio);
-
-			bloom = new Bloom( (int)(fboWidth * rttRatio), (int)(fboHeight * rttRatio), postProcessor.getFramebufferFormat() );
+			bloom = new Bloom( (int)(fboWidth * Config.Graphics.RttRatio), (int)(fboHeight * Config.Graphics.RttRatio), postProcessor.getFramebufferFormat() );
 
 //			BloomSettings bs = new BloomSettings( "arrogance-1 / rtt=0.25 / @1920x1050", BlurType.Gaussian5x5b, 1, 1, 0.25f, 1f, 0.1f, 0.8f, 1.4f );
 //			BloomSettings bs = new BloomSettings( "arrogance-2 / rtt=0.25 / @1920x1050", BlurType.Gaussian5x5b, 1, 1, 0.35f, 1f, 0.1f, 1.4f, 0.75f );
@@ -109,8 +105,8 @@ public class Game
 			// ------
 			zoom = new Zoom();
 
-			postProcessor.addEffect( bloom );
 			postProcessor.addEffect( zoom );
+			postProcessor.addEffect( bloom );
 			// ------
 		}
 
