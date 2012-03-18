@@ -44,7 +44,7 @@ public class Convolve2D extends MultipassFilter
 	@Override
 	public void render( PingPongBuffer buffer )
 	{
-		hor.setInput( buffer ).render();
-		vert.setInput( buffer ).render();
+		hor.setInput( buffer.capture() ).render();
+		vert.setInput( buffer.capture() ).render();
 	}
 }

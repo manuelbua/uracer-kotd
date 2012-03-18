@@ -3,7 +3,6 @@ package com.bitfire.uracer.postprocessing.filters;
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.glutils.FrameBuffer;
 import com.bitfire.uracer.postprocessing.IFilter;
-import com.bitfire.uracer.postprocessing.PingPongBuffer;
 
 public abstract class Filter<T> extends IFilter
 {
@@ -25,23 +24,11 @@ public abstract class Filter<T> extends IFilter
 		return (T)this;
 	}
 
-	public T setInput(PingPongBuffer input)
-	{
-		this.inputTexture = input.capture();
-		return (T)this;
-	}
-
 	public T setOutput(FrameBuffer output)
 	{
 		this.outputBuffer = output;
 		return (T)this;
 	}
-
-//	public T setOutput(PingPongBuffer output)
-//	{
-//		this.outputBuffer = output.getSourceBuffer();
-//		return (T)this;
-//	}
 
 	public abstract void dispose();
 	public abstract void upload();
