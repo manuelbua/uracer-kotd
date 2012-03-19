@@ -13,6 +13,7 @@ public final class PostProcessor
 	private boolean capturing = false;
 	public Array<PostProcessorEffect> effects = new Array<PostProcessorEffect>();
 	private Color clearColor = Color.CLEAR;
+	private static Array<PingPongBuffer> buffers = new Array<PingPongBuffer>(5);
 
 	public PostProcessor( int fboWidth, int fboHeight, boolean useDepth, boolean useAlphaChannel, boolean use32Bits)
 	{
@@ -37,9 +38,20 @@ public final class PostProcessor
 			}
 		}
 
-		composite = new PingPongBuffer( fboWidth, fboHeight, fbFormat, useDepth );
+		composite = newPingPongBuffer( fboWidth, fboHeight, fbFormat, useDepth );
 
 		capturing = false;
+	}
+
+	/**
+	 * Create and returns a managed PingPongBuffer buffer, just create and forget.
+	 * This is a drop-in replacement for the same-signature constructor.
+	 */
+	public static PingPongBuffer newPingPongBuffer( int width, int height, Format frameBufferFormat, boolean hasDepth )
+	{
+		PingPongBuffer buffer = new PingPongBuffer( width, height, frameBufferFormat, hasDepth );
+		buffers.add( buffer );
+		return buffer;
 	}
 
 	public void dispose()
@@ -49,7 +61,9 @@ public final class PostProcessor
 
 		effects.clear();
 
-		composite.dispose();
+		// cleanup managed buffers, if any
+		for(int i = 0; i < buffers.size; i++)
+			buffers.get(i).dispose();
 	}
 
 	public void addEffect(PostProcessorEffect effect)
@@ -137,6 +151,9 @@ public final class PostProcessor
 	{
 		for(int i = 0; i < effects.size; i++)
 			effects.get(i).resume();
+
+		for(int i = 0; i < buffers.size; i++)
+			buffers.items[i].rebind();
 	}
 
 	/**

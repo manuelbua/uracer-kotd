@@ -6,6 +6,7 @@ import com.badlogic.gdx.graphics.Pixmap.Format;
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.glutils.FrameBuffer;
 import com.bitfire.uracer.postprocessing.PingPongBuffer;
+import com.bitfire.uracer.postprocessing.PostProcessor;
 import com.bitfire.uracer.postprocessing.PostProcessorEffect;
 import com.bitfire.uracer.postprocessing.filters.Blur;
 import com.bitfire.uracer.postprocessing.filters.Blur.BlurType;
@@ -83,7 +84,7 @@ public class Bloom extends PostProcessorEffect
 
 	public Bloom( int fboWidth, int fboHeight, Format frameBufferFormat )
 	{
-		pingPongBuffer = new PingPongBuffer( fboWidth, fboHeight, frameBufferFormat, false );
+		pingPongBuffer = PostProcessor.newPingPongBuffer( fboWidth, fboHeight, frameBufferFormat, false );
 
 		blur = new Blur(fboWidth, fboHeight);
 		threshold = new Threshold(Bloom.useAlphaChannelAsMask);
@@ -98,7 +99,6 @@ public class Bloom extends PostProcessorEffect
 		combine.dispose();
 		threshold.dispose();
 		blur.dispose();
-		pingPongBuffer.dispose();
 	}
 
 	public void setBaseIntesity( float intensity )

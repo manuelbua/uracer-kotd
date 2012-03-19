@@ -14,19 +14,21 @@ public class PingPongBuffer
 {
 	public FrameBuffer buffer1, buffer2;
 	public Texture texture1, texture2;
-
-	private Texture texResult, texSrc;
-	private FrameBuffer bufResult, bufSrc;
-
 	public int width, height;
 	public final boolean ownResources;
+
+	// internal state
+	private Texture texResult, texSrc;
+	private FrameBuffer bufResult, bufSrc;
+	private boolean writeState, pending1, pending2;
 
 	// save/restore state
 	private final FrameBuffer owned1, owned2;
 	private FrameBuffer ownedResult, ownedSource;
 	private int ownedW, ownedH;
 
-	/* Creates a new ping-pong buffer and owns the resources.
+	/**
+	 * Creates a new ping-pong buffer and owns the resources.
 	 */
 	public PingPongBuffer( int width, int height, Format frameBufferFormat, boolean hasDepth )
 	{
@@ -100,6 +102,9 @@ public class PingPongBuffer
 		}
 	}
 
+	/**
+	 * When needed graphics memory could be invalidated so buffers should be rebuilt.
+	 */
 	public void rebind()
 	{
 		texture1 = buffer1.getColorBufferTexture();
@@ -107,6 +112,8 @@ public class PingPongBuffer
 		restore();
 	}
 
+	// internal use
+	// set the object to a known initial state
 	private void restore()
 	{
 		pending1 = pending2 = false;
@@ -116,11 +123,19 @@ public class PingPongBuffer
 		texResult = texture2; bufResult = buffer2;
 	}
 
-	private boolean writeState, pending1, pending2;
+	/**
+	 * Ensures the initial buffer state is always the same before starting ping-ponging.
+	 */
+	public void begin()
+	{
+		rebind();
+	}
 
 	/**
-	 * Both starts and continue ping-ponging between two buffers, returning the previous
-	 * buffer containing the last result, initiating recording on the next buffer.
+	 * Starts and/or continue ping-ponging, begin capturing on the next available buffer,
+	 * returns the result of the previous {@link #capture()} call.
+	 *
+	 * @return the Texture containing the result.
 	 */
 	public Texture capture()
 	{
@@ -128,15 +143,15 @@ public class PingPongBuffer
 
 		if( writeState )
 		{
-			// the caller is performing a pingPong step, this is the current source texture
+			// set src
 			texSrc = texture1;
 			bufSrc = buffer1;
 
-			// this will be the next pingPong step's source texture
+			// set result
 			texResult = texture2;
 			bufResult = buffer2;
 
-			// write to buf2
+			// write to other
 			pending2 = true;
 			buffer2.begin();
 		} else
@@ -147,13 +162,20 @@ public class PingPongBuffer
 			texResult = texture1;
 			bufResult = buffer1;
 
-			// write to buf1
 			pending1 = true;
 			buffer1.begin();
 		}
 
 		writeState = !writeState;
 		return texSrc;
+	}
+
+	/**
+	 * Finishes ping-ponging, must always be called after a call to {@link #capture()}
+	 */
+	public void end()
+	{
+		endPending();
 	}
 
 	/**
@@ -188,22 +210,8 @@ public class PingPongBuffer
 		return bufResult;
 	}
 
-	/**
-	 * Ensures the initial buffer state is always the same before starting ping-ponging.
-	 */
-	public void begin()
-	{
-		rebind();
-	}
-
-	/**
-	 * Finishes ping-ponging, must always be called after a call to {@link #capture()}
-	 */
-	public void end()
-	{
-		endPending();
-	}
-
+	// internal use
+	// finish writing to the buffers, mark as not pending anymore.
 	private void endPending()
 	{
 		if( pending1 )
