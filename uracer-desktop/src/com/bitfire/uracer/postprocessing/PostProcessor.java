@@ -26,7 +26,6 @@ public final class PostProcessor
 			{
 				fbFormat = Format.RGB888;
 			}
-
 		} else
 		{
 			if( useAlphaChannel )
@@ -47,7 +46,7 @@ public final class PostProcessor
 	 * Create and returns a managed PingPongBuffer buffer, just create and forget.
 	 * This is a drop-in replacement for the same-signature constructor.
 	 */
-	public static PingPongBuffer newPingPongBuffer( int width, int height, Format frameBufferFormat, boolean hasDepth )
+	public static final PingPongBuffer newPingPongBuffer( int width, int height, Format frameBufferFormat, boolean hasDepth )
 	{
 		PingPongBuffer buffer = new PingPongBuffer( width, height, frameBufferFormat, hasDepth );
 		buffers.add( buffer );
@@ -64,6 +63,8 @@ public final class PostProcessor
 		// cleanup managed buffers, if any
 		for(int i = 0; i < buffers.size; i++)
 			buffers.get(i).dispose();
+
+		buffers.clear();
 	}
 
 	public void addEffect(PostProcessorEffect effect)
@@ -76,7 +77,7 @@ public final class PostProcessor
 		effects.removeValue( effect, false );
 	}
 
-	public Format getFramebufferFormat()
+	public final Format getFramebufferFormat()
 	{
 		return fbFormat;
 	}
