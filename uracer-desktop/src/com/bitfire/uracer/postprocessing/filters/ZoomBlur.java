@@ -9,8 +9,8 @@ import com.bitfire.uracer.utils.ShaderLoader;
 public class ZoomBlur extends Filter<ZoomBlur>
 {
 	private static final int MaxBlurLen = 32;
-	private int blur_len; // ctrl quality
-	private float max_strength; // ctrl quantity
+	private int blur_len;		// ctrl quality
+	private float max_strength;	// ctrl quantity
 
 	private ShaderProgram shader;
 

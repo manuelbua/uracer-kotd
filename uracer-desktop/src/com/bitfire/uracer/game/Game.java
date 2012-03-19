@@ -87,27 +87,7 @@ public class Game
 
 		if( Config.Graphics.EnablePostProcessingFx )
 		{
-			int fboWidth = Gdx.graphics.getWidth();
-			int fboHeight = Gdx.graphics.getHeight();
-
-			postProcessor = new PostProcessor( fboWidth, fboHeight, false /* depth */, false /* alpha */, Config.isDesktop /* 32 bits */ );
-
-			bloom = new Bloom( (int)(fboWidth * Config.PostProcessing.RttRatio), (int)(fboHeight * Config.PostProcessing.RttRatio), postProcessor.getFramebufferFormat() );
-
-//			Bloom.Settings bs = new Bloom.Settings( "arrogance-1 / rtt=0.25 / @1920x1050", BlurType.Gaussian5x5b, 1, 1, 0.25f, 1f, 0.1f, 0.8f, 1.4f );
-//			Bloom.Settings bs = new Bloom.Settings( "arrogance-2 / rtt=0.25 / @1920x1050", BlurType.Gaussian5x5b, 1, 1, 0.35f, 1f, 0.1f, 1.4f, 0.75f );
-
-			Bloom.Settings bs = new Bloom.Settings( "subtle", Config.PostProcessing.BlurType, 1, 1.5f, 0.45f, 1f, 0.5f, 1f, 1.5f );
-
-			bloom.setSettings( bs );
-
-			// ------
-			zoom = new Zoom(Config.PostProcessing.ZoomQuality);
-			zoom.setMaxStrength( Config.PostProcessing.ZoomMaxStrength );
-
-			postProcessor.addEffect( bloom );
-			postProcessor.addEffect( zoom );
-			// ------
+			setupPostProcessing();
 		}
 
 //		Messager.show( "FUCK! BERLU! SCONI!", 600, MessageType.Good, MessagePosition.Bottom, MessageSize.Big );
@@ -139,6 +119,30 @@ public class Game
 		Tweener.registerAccessor( Message.class, new MessageAccessor() );
 		Tweener.registerAccessor( HudLabel.class, new HudLabelAccessor() );
 		return t;
+	}
+
+	private void setupPostProcessing()
+	{
+		int fboWidth = Gdx.graphics.getWidth();
+		int fboHeight = Gdx.graphics.getHeight();
+
+		postProcessor = new PostProcessor( fboWidth, fboHeight, false /* depth */, false /* alpha */, Config.isDesktop /* 32 bits */ );
+
+		bloom = new Bloom( (int)(fboWidth * Config.PostProcessing.RttRatio), (int)(fboHeight * Config.PostProcessing.RttRatio), postProcessor.getFramebufferFormat() );
+
+//		Bloom.Settings bs = new Bloom.Settings( "arrogance-1 / rtt=0.25 / @1920x1050", BlurType.Gaussian5x5b, 1, 1, 0.25f, 1f, 0.1f, 0.8f, 1.4f );
+//		Bloom.Settings bs = new Bloom.Settings( "arrogance-2 / rtt=0.25 / @1920x1050", BlurType.Gaussian5x5b, 1, 1, 0.35f, 1f, 0.1f, 1.4f, 0.75f );
+
+		Bloom.Settings bs = new Bloom.Settings( "subtle", Config.PostProcessing.BlurType, 1, 1.5f, 0.45f, 1f, 0.5f, 1f, 1.5f );
+
+		bloom.setSettings( bs );
+
+		// ------
+		zoom = new Zoom(Config.PostProcessing.ZoomQuality);
+		zoom.setMaxStrength( Config.PostProcessing.ZoomMaxStrength );
+
+		postProcessor.addEffect( bloom );
+		postProcessor.addEffect( zoom );
 	}
 
 	public boolean tick()
@@ -198,25 +202,6 @@ public class Game
 
 		// render base tilemap
 		level.renderTilemap(gl);
-
-		// ------------------------- exp
-		// car throttle
-//		gl.glEnable( GL20.GL_BLEND );
-//		float radius = Math.max( 1, playerCar.getCarDescriptor().throttle);
-//		shapes.setTransformMatrix( ortho.view );
-//		shapes.setProjectionMatrix( ortho.projection );
-//		shapes.setColor
-//		(
-//			player.currForceFactor,
-//			1-player.currForceFactor,
-//			0f,
-//			0.15f
-//		);
-//		shapes.begin( ShapeType.FilledCircle );
-//		shapes.filledCircle( playerCar.state().position.x, playerCar.state().position.y, radius * Director.scalingStrategy.invTileMapZoomFactor );
-//		shapes.end();
-//		gl.glDisable( GL20.GL_BLEND );
-		// ------------------------- exp
 
 		gl.glActiveTexture( GL20.GL_TEXTURE0 );
 		batch.setProjectionMatrix( ortho.projection );
