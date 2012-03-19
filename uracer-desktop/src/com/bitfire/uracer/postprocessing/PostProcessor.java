@@ -153,7 +153,7 @@ public final class PostProcessor
 			effects.get(i).resume();
 
 		for(int i = 0; i < buffers.size; i++)
-			buffers.items[i].rebind();
+			buffers.get(i).rebind();
 	}
 
 	/**
