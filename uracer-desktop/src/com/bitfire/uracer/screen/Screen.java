@@ -23,6 +23,8 @@ public abstract class Screen
 		uracer.setScreen( screen );
 	}
 
+	public abstract void pause();
+	public abstract void resume();
 	public abstract void render();
 	public abstract void tick();
 	public abstract boolean quit();

@@ -4,6 +4,7 @@ import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.glutils.FrameBuffer;
 import com.bitfire.uracer.postprocessing.IFilter;
 
+//@SuppressWarnings( "unchecked" )
 public abstract class Filter<T> extends IFilter
 {
 	protected static final int u_texture_1 = 0;
@@ -15,7 +16,7 @@ public abstract class Filter<T> extends IFilter
 	public T setInput(Texture input)
 	{
 		this.inputTexture = input;
-		return (T)this;
+		return (T)this;	// assumes T extends Filter
 	}
 
 	public T setInput(FrameBuffer input)

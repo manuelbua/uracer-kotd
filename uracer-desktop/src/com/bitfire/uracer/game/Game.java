@@ -265,6 +265,15 @@ public class Game
 		}
 	}
 
+	public void pause()
+	{
+	}
+
+	public void resume()
+	{
+		postProcessor.resume();
+	}
+
 	public Level getLevel()
 	{
 		return level;

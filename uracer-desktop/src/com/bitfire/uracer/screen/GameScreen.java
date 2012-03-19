@@ -40,4 +40,18 @@ public class GameScreen extends Screen
 		if(quit) return;
 		game.render();
 	}
+
+	@Override
+	public void pause()
+	{
+		game.pause();
+	}
+
+	@Override
+	public void resume()
+	{
+		game.resume();
+	}
+
+
 }

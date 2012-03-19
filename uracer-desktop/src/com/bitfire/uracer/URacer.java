@@ -155,12 +155,14 @@ public class URacer implements ApplicationListener
 	public void pause()
 	{
 		running = false;
+		screen.pause();
 	}
 
 	@Override
 	public void resume()
 	{
 		running = true;
+		screen.resume();
 	}
 
 	@Override
