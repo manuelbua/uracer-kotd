@@ -40,24 +40,20 @@ public class Zoom extends PostProcessorEffect
 		zoomBlur.setStrength( strength );
 	}
 
-	@Override
 	public void dispose()
 	{
 		zoomBlur.dispose();
 	}
 
-	@Override
-	public void resume()
+	public void rebind()
 	{
 		zoomBlur.upload();
 		zoomBlur.setOrigin( x, y );
 		zoomBlur.setStrength( strength );
 	}
 
-	@Override
 	public void render( FrameBuffer src, FrameBuffer dest )
 	{
 		zoomBlur.setInput( src ).setOutput( dest ).render();
 	}
-
 }

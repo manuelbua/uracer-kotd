@@ -93,7 +93,6 @@ public class Bloom extends PostProcessorEffect
 		setSettings(new Settings( "default", 2, 0.277f, 1f, .85f, 1.1f, .85f ));
 	}
 
-	@Override
 	public void dispose()
 	{
 		combine.dispose();
@@ -165,7 +164,6 @@ public class Bloom extends PostProcessorEffect
 		blur.setAmount( amount );
 	}
 
-	@Override
 	public void render( final FrameBuffer src, final FrameBuffer dest  )
 	{
 		Texture texsrc = src.getColorBufferTexture();
@@ -195,8 +193,7 @@ public class Bloom extends PostProcessorEffect
 		combine.setOutput(dest).setInput(texsrc, pingPongBuffer.getResultTexture() ).render();
 	}
 
-	@Override
-	public void resume()
+	public void rebind()
 	{
 		setSettings( settings );
 	}

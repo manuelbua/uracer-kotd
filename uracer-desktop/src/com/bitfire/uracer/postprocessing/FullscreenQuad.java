@@ -6,6 +6,10 @@ import com.badlogic.gdx.graphics.VertexAttribute;
 import com.badlogic.gdx.graphics.VertexAttributes.Usage;
 import com.badlogic.gdx.graphics.glutils.ShaderProgram;
 
+/**
+ * Encapsulates a fullscreen quad, geometry is aligned to the screen
+ * corners.
+ */
 public class FullscreenQuad
 {
 	private Mesh quad;
@@ -20,6 +24,9 @@ public class FullscreenQuad
 		quad.dispose();
 	}
 
+	/**
+	 * Renders the quad with the specified shader program.
+	 */
 	public void render(ShaderProgram program)
 	{
 		quad.render( program, GL20.GL_TRIANGLE_FAN, 0, 4 );
@@ -60,7 +67,6 @@ public class FullscreenQuad
 
 		tmpMesh.setVertices(verts);
 		return tmpMesh;
-
 	}
 
 	private static final int VERT_SIZE = 16;

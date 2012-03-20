@@ -5,7 +5,20 @@ import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.glutils.FrameBuffer;
 
 /**
- * Encapsulates a ping-pong buffer.
+ * Encapsulates a framebuffer with the ability to ping-pong between two
+ * buffers.
+ *
+ * Upon {@link #begin()} the buffer is reset to a known initial state,
+ * this is usually done just before the first usage of the buffer.
+ *
+ * Subsequent {@link #capture()} calls will initiate writing to the next
+ * available buffer, returning the previously used one, effectively
+ * ping-ponging between the two.
+ * Until {@link #end()} is called, chained rendering will be possible by
+ * retrieving the necessary buffers via {@link #getSourceTexture()},
+ * {@link #getSourceBuffer()}, {@link #getResultTexture()} or {@link #getResultBuffer}.
+ *
+ * When finished, {@link #end()} should be called to stop capturing.
  *
  * @author manuel
  *
@@ -36,7 +49,8 @@ public class PingPongBuffer
 		set( owned1 = new FrameBuffer( frameBufferFormat, width, height, hasDepth ), owned2 = new FrameBuffer( frameBufferFormat, width, height, hasDepth ) );
 	}
 
-	/* Creates a new ping-pong buffer with the given buffers.
+	/**
+	 * Creates a new ping-pong buffer with the given buffers.
 	 */
 	public PingPongBuffer( FrameBuffer buffer1, FrameBuffer buffer2 )
 	{

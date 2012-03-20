@@ -4,7 +4,6 @@ import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.GL20;
 import com.badlogic.gdx.graphics.OrthographicCamera;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
-import com.badlogic.gdx.graphics.glutils.ShapeRenderer;
 import com.bitfire.uracer.Art;
 import com.bitfire.uracer.Config;
 import com.bitfire.uracer.Config.Physics;
@@ -165,8 +164,6 @@ public class Game
 		return true;
 	}
 
-	private ShapeRenderer shapes = new ShapeRenderer();
-//	private float lastFactor = 0f;
 	public void render()
 	{
 		tweener.update((int)(URacer.getLastDeltaSecs()*1000));
@@ -271,7 +268,7 @@ public class Game
 
 	public void resume()
 	{
-		postProcessor.resume();
+		postProcessor.rebind();
 	}
 
 	public Level getLevel()
