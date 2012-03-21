@@ -1,14 +1,10 @@
 package com.bitfire.uracer.carsimulation;
 
-/**
- * Represents the physical car model on which we rely to compute
+/** Represents the physical car model on which we rely to compute
  * the forces exerted by the simulation.
- *
- * @author manuel
- *
- */
-public class CarModel
-{
+ * 
+ * @author manuel */
+public class CarModel {
 	public float wheelbase; // wheelbase in m
 	public float b; // in m, distance from CG to front axle
 	public float c; // in m, idem to rear axle
@@ -35,25 +31,21 @@ public class CarModel
 	// physically computed
 	public float weight;
 
-	public CarModel()
-	{
+	public CarModel() {
 		toDefault();
 	}
 
-	public CarModel( CarModel other )
-	{
+	public CarModel( CarModel other ) {
 		set( other );
 	}
 
 	@Override
-	public CarModel clone()
-	{
+	public CarModel clone() {
 		CarModel m = new CarModel( this );
 		return m;
 	}
 
-	public void set(CarModel other)
-	{
+	public void set( CarModel other ) {
 		this.wheelbase = other.wheelbase;
 		this.b = other.b;
 		this.c = other.c;
@@ -80,8 +72,7 @@ public class CarModel
 	}
 
 	// default car model
-	public CarModel toDefault()
-	{
+	public CarModel toDefault() {
 		// physical model
 		h = 1f; // m
 		mass = 1500.f; // kg
@@ -119,8 +110,7 @@ public class CarModel
 		return this;
 	}
 
-	public CarModel toModel1()
-	{
+	public CarModel toModel1() {
 		toDefault();
 
 		// physical model
@@ -146,8 +136,7 @@ public class CarModel
 		return this;
 	}
 
-	public CarModel toModel2()
-	{
+	public CarModel toModel2() {
 		toDefault();
 
 		// physical model
@@ -174,8 +163,7 @@ public class CarModel
 		return this;
 	}
 
-	public CarModel toBlackCar()
-	{
+	public CarModel toBlackCar() {
 		toModel1();
 
 		width = 3.1f; // m

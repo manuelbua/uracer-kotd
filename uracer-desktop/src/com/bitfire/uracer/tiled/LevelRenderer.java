@@ -18,8 +18,7 @@ import com.bitfire.uracer.Config;
 import com.bitfire.uracer.Director;
 import com.bitfire.uracer.utils.Convert;
 
-public class LevelRenderer
-{
+public class LevelRenderer {
 	private PerspectiveCamera camPersp;
 	private OrthographicCamera camOrtho;
 	private ShaderProgram treeShader;
@@ -30,51 +29,32 @@ public class LevelRenderer
 	public static int renderedWalls = 0;
 	public static int culledMeshes = 0;
 
-	public LevelRenderer(PerspectiveCamera persp, OrthographicCamera ortho)
-	{
+	public LevelRenderer( PerspectiveCamera persp, OrthographicCamera ortho ) {
 		camPersp = persp;
 		camOrtho = ortho;
 
-		String vertexShader =
-				"uniform mat4 u_mvpMatrix;					\n" +
-				"attribute vec4 a_position;					\n" +
-				"attribute vec2 a_texCoord0;				\n" +
-				"varying vec2 v_TexCoord;					\n" +
-				"void main()								\n" +
-				"{											\n" +
-				"	gl_Position = u_mvpMatrix * a_position;	\n" +
-				"	v_TexCoord = a_texCoord0;				\n" +
-				"}											\n";
+		String vertexShader = "uniform mat4 u_mvpMatrix;					\n" + "attribute vec4 a_position;					\n"
+				+ "attribute vec2 a_texCoord0;				\n" + "varying vec2 v_TexCoord;					\n" + "void main()								\n"
+				+ "{											\n" + "	gl_Position = u_mvpMatrix * a_position;	\n" + "	v_TexCoord = a_texCoord0;				\n"
+				+ "}											\n";
 
-		String fragmentShader =
-			"#ifdef GL_ES											\n" +
-			"precision mediump float;								\n" +
-			"#endif													\n" +
-			"uniform sampler2D u_texture;							\n" +
-			"varying vec2 v_TexCoord;								\n" +
-			"void main()											\n" +
-			"{														\n" +
-			"	vec4 texel = texture2D( u_texture, v_TexCoord );	\n" +
-			"	if(texel.a < 0.5) discard;	\n" +
-			"	gl_FragColor = texel;	\n" +
-			"}														\n";
+		String fragmentShader = "#ifdef GL_ES											\n" + "precision mediump float;								\n" + "#endif													\n"
+				+ "uniform sampler2D u_texture;							\n" + "varying vec2 v_TexCoord;								\n" + "void main()											\n"
+				+ "{														\n" + "	vec4 texel = texture2D( u_texture, v_TexCoord );	\n" + "	if(texel.a < 0.5) discard;	\n"
+				+ "	gl_FragColor = texel;	\n" + "}														\n";
 
 		ShaderProgram.pedantic = false;
 		treeShader = new ShaderProgram( vertexShader, fragmentShader );
 
-		if( treeShader.isCompiled() == false )
-			throw new IllegalStateException( treeShader.getLog() );
+		if( treeShader.isCompiled() == false ) throw new IllegalStateException( treeShader.getLog() );
 	}
 
-	public void resetCounters()
-	{
+	public void resetCounters() {
 		culledMeshes = renderedTrees = renderedWalls = 0;
 	}
 
-	public void renderWalls(GL20 gl, TrackWalls walls)
-	{
-		if(walls.walls.size() > 0)
-		{
+	public void renderWalls( GL20 gl, TrackWalls walls ) {
+		if( walls.walls.size() > 0 ) {
 			gl.glDisable( GL20.GL_CULL_FACE );
 			gl.glEnable( GL20.GL_BLEND );
 			gl.glBlendFunc( GL20.GL_SRC_ALPHA, GL20.GL_ONE_MINUS_SRC_ALPHA );
@@ -82,10 +62,8 @@ public class LevelRenderer
 		}
 	}
 
-	public void renderTrees(GL20 gl, TrackTrees trees)
-	{
-		if(trees.trees.size() > 0)
-		{
+	public void renderTrees( GL20 gl, TrackTrees trees ) {
+		if( trees.trees.size() > 0 ) {
 			trees.transform( camPersp, camOrtho );
 
 			gl.glDisable( GL20.GL_BLEND );
@@ -96,11 +74,10 @@ public class LevelRenderer
 			treeShader.begin();
 
 			// trunk
-			for( int i = 0; i < trees.trees.size(); i++ )
-			{
+			for( int i = 0; i < trees.trees.size(); i++ ) {
 				TreeStillModel m = trees.trees.get( i );
 				treeShader.setUniformMatrix( "u_mvpMatrix", m.transformed );
-				m.trunk.render(treeShader, m.smTrunk.primitiveType );
+				m.trunk.render( treeShader, m.smTrunk.primitiveType );
 			}
 
 			// transparent foliage
@@ -109,39 +86,33 @@ public class LevelRenderer
 			gl.glBlendFunc( GL20.GL_SRC_ALPHA, GL20.GL_ONE_MINUS_SRC_ALPHA );
 
 			boolean needRebind = false;
-			for( int i = 0; i < trees.trees.size(); i++ )
-			{
+			for( int i = 0; i < trees.trees.size(); i++ ) {
 				TreeStillModel m = trees.trees.get( i );
 
-				if( Config.Debug.FrustumCulling &&  !camPersp.frustum.boundsInFrustum( m.boundingBox ) )
-				{
+				if( Config.Debug.FrustumCulling && !camPersp.frustum.boundsInFrustum( m.boundingBox ) ) {
 					needRebind = true;
 					culledMeshes++;
 					continue;
 				}
 
-				if( i == 0 || needRebind)
-				{
-					m.material.bind(treeShader);
-				} else
-				if( !trees.trees.get(i - 1).material.equals(m.material) )
-				{
-					m.material.bind(treeShader);
+				if( i == 0 || needRebind ) {
+					m.material.bind( treeShader );
+				}
+				else if( !trees.trees.get( i - 1 ).material.equals( m.material ) ) {
+					m.material.bind( treeShader );
 				}
 
 				treeShader.setUniformMatrix( "u_mvpMatrix", m.transformed );
-				m.leaves.render(treeShader, m.smLeaves.primitiveType );
+				m.leaves.render( treeShader, m.smLeaves.primitiveType );
 
 				renderedTrees++;
 			}
 
 			treeShader.end();
 
-			if(Config.Graphics.Render3DBoundingBoxes)
-			{
+			if( Config.Graphics.Render3DBoundingBoxes ) {
 				// debug
-				for( int i = 0; i < trees.trees.size(); i++ )
-				{
+				for( int i = 0; i < trees.trees.size(); i++ ) {
 					TreeStillModel m = trees.trees.get( i );
 					renderBoundingBox( m.boundingBox );
 				}
@@ -152,8 +123,8 @@ public class LevelRenderer
 	private Vector3 tmpvec = new Vector3();
 	private Matrix4 mtx = new Matrix4();
 	private Matrix4 mtx2 = new Matrix4();
-	public int renderOrthographicAlignedModels(GL20 gl, ArrayList<OrthographicAlignedStillModel> models)
-	{
+
+	public int renderOrthographicAlignedModels( GL20 gl, ArrayList<OrthographicAlignedStillModel> models ) {
 		int renderedCount = 0;
 		OrthographicAlignedStillModel m;
 		StillSubMesh submesh;
@@ -164,14 +135,15 @@ public class LevelRenderer
 		shader.begin();
 
 		boolean needRebind = false;
-		for( int i = 0; i < models.size(); i++ )
-		{
+		for( int i = 0; i < models.size(); i++ ) {
 			m = models.get( i );
 			submesh = m.model.subMeshes[0];
 
 			// compute position
-			tmpvec.x = Convert.scaledPixels( m.positionOffsetPx.x - camOrtho.position.x ) + Director.halfViewport.x + m.positionPx.x;
-			tmpvec.y = Convert.scaledPixels( m.positionOffsetPx.y + camOrtho.position.y ) + Director.halfViewport.y - m.positionPx.y;
+			tmpvec.x = Convert.scaledPixels( m.positionOffsetPx.x - camOrtho.position.x ) + Director.halfViewport.x
+					+ m.positionPx.x;
+			tmpvec.y = Convert.scaledPixels( m.positionOffsetPx.y + camOrtho.position.y ) + Director.halfViewport.y
+					- m.positionPx.y;
 			tmpvec.z = 1;
 
 			// transform to world space
@@ -190,8 +162,7 @@ public class LevelRenderer
 			m.boundingBox.inf().set( m.localBoundingBox );
 			m.boundingBox.mul( mtx );
 
-			if( Config.Debug.FrustumCulling && !camPersp.frustum.boundsInFrustum( m.boundingBox ) )
-			{
+			if( Config.Debug.FrustumCulling && !camPersp.frustum.boundsInFrustum( m.boundingBox ) ) {
 				needRebind = true;
 				culledMeshes++;
 				continue;
@@ -200,26 +171,22 @@ public class LevelRenderer
 			shader.setUniformMatrix( "u_mvpMatrix", mtx2 );
 
 			// avoid rebinding same textures
-			if( i == 0 || needRebind)
-			{
-				m.material.bind(shader);
-			} else
-			if( !models.get(i - 1).material.equals(m.material) )
-			{
-				m.material.bind(shader);
+			if( i == 0 || needRebind ) {
+				m.material.bind( shader );
+			}
+			else if( !models.get( i - 1 ).material.equals( m.material ) ) {
+				m.material.bind( shader );
 			}
 
-			submesh.mesh.render(OrthographicAlignedStillModel.shaderProgram, submesh.primitiveType);
+			submesh.mesh.render( OrthographicAlignedStillModel.shaderProgram, submesh.primitiveType );
 			renderedCount++;
 		}
 
 		shader.end();
 
-		if(Config.Graphics.Render3DBoundingBoxes)
-		{
+		if( Config.Graphics.Render3DBoundingBoxes ) {
 			// debug (tested on a single mesh only!)
-			for( int i = 0; i < models.size(); i++ )
-			{
+			for( int i = 0; i < models.size(); i++ ) {
 				m = models.get( i );
 				renderBoundingBox( m.boundingBox );
 			}
@@ -228,12 +195,10 @@ public class LevelRenderer
 		return renderedCount;
 	}
 
-	/**
-	 * This is intentionally SLOW. Read it again!
-	 * @param boundingBox
-	 */
-	private void renderBoundingBox(BoundingBox boundingBox)
-	{
+	/** This is intentionally SLOW. Read it again!
+	 * 
+	 * @param boundingBox */
+	private void renderBoundingBox( BoundingBox boundingBox ) {
 		float alpha = .15f;
 		float r = 0f;
 		float g = 0f;
@@ -246,57 +211,92 @@ public class LevelRenderer
 		Gdx.gl.glEnable( GL20.GL_BLEND );
 		Gdx.gl.glBlendFunc( GL20.GL_SRC_ALPHA, GL20.GL_ONE_MINUS_SRC_ALPHA );
 
-		dbg.begin(camPersp.combined, GL10.GL_TRIANGLES);
+		dbg.begin( camPersp.combined, GL10.GL_TRIANGLES );
 		{
-			dbg.color( r, g, b, alpha ); dbg.vertex( corners[0].x, corners[0].y, corners[0].z + offset );
-			dbg.color( r, g, b, alpha ); dbg.vertex( corners[1].x, corners[1].y, corners[1].z + offset );
-			dbg.color( r, g, b, alpha ); dbg.vertex( corners[4].x, corners[4].y, corners[4].z );
+			dbg.color( r, g, b, alpha );
+			dbg.vertex( corners[0].x, corners[0].y, corners[0].z + offset );
+			dbg.color( r, g, b, alpha );
+			dbg.vertex( corners[1].x, corners[1].y, corners[1].z + offset );
+			dbg.color( r, g, b, alpha );
+			dbg.vertex( corners[4].x, corners[4].y, corners[4].z );
 
-			dbg.color( r, g, b, alpha ); dbg.vertex( corners[1].x, corners[1].y, corners[1].z + offset );
-			dbg.color( r, g, b, alpha ); dbg.vertex( corners[4].x, corners[4].y, corners[4].z );
-			dbg.color( r, g, b, alpha ); dbg.vertex( corners[5].x, corners[5].y, corners[5].z );
+			dbg.color( r, g, b, alpha );
+			dbg.vertex( corners[1].x, corners[1].y, corners[1].z + offset );
+			dbg.color( r, g, b, alpha );
+			dbg.vertex( corners[4].x, corners[4].y, corners[4].z );
+			dbg.color( r, g, b, alpha );
+			dbg.vertex( corners[5].x, corners[5].y, corners[5].z );
 
-			dbg.color( r, g, b, alpha ); dbg.vertex( corners[1].x, corners[1].y, corners[1].z + offset );
-			dbg.color( r, g, b, alpha ); dbg.vertex( corners[2].x, corners[2].y, corners[2].z + offset );
-			dbg.color( r, g, b, alpha ); dbg.vertex( corners[5].x, corners[5].y, corners[5].z );
+			dbg.color( r, g, b, alpha );
+			dbg.vertex( corners[1].x, corners[1].y, corners[1].z + offset );
+			dbg.color( r, g, b, alpha );
+			dbg.vertex( corners[2].x, corners[2].y, corners[2].z + offset );
+			dbg.color( r, g, b, alpha );
+			dbg.vertex( corners[5].x, corners[5].y, corners[5].z );
 
-			dbg.color( r, g, b, alpha ); dbg.vertex( corners[2].x, corners[2].y, corners[2].z + offset );
-			dbg.color( r, g, b, alpha ); dbg.vertex( corners[5].x, corners[5].y, corners[5].z );
-			dbg.color( r, g, b, alpha ); dbg.vertex( corners[6].x, corners[6].y, corners[6].z );
+			dbg.color( r, g, b, alpha );
+			dbg.vertex( corners[2].x, corners[2].y, corners[2].z + offset );
+			dbg.color( r, g, b, alpha );
+			dbg.vertex( corners[5].x, corners[5].y, corners[5].z );
+			dbg.color( r, g, b, alpha );
+			dbg.vertex( corners[6].x, corners[6].y, corners[6].z );
 
+			dbg.color( r, g, b, alpha );
+			dbg.vertex( corners[2].x, corners[2].y, corners[2].z + offset );
+			dbg.color( r, g, b, alpha );
+			dbg.vertex( corners[6].x, corners[6].y, corners[6].z );
+			dbg.color( r, g, b, alpha );
+			dbg.vertex( corners[3].x, corners[3].y, corners[3].z + offset );
 
-			dbg.color( r, g, b, alpha ); dbg.vertex( corners[2].x, corners[2].y, corners[2].z + offset );
-			dbg.color( r, g, b, alpha ); dbg.vertex( corners[6].x, corners[6].y, corners[6].z );
-			dbg.color( r, g, b, alpha ); dbg.vertex( corners[3].x, corners[3].y, corners[3].z + offset );
+			dbg.color( r, g, b, alpha );
+			dbg.vertex( corners[3].x, corners[3].y, corners[3].z );
+			dbg.color( r, g, b, alpha );
+			dbg.vertex( corners[6].x, corners[6].y, corners[6].z );
+			dbg.color( r, g, b, alpha );
+			dbg.vertex( corners[7].x, corners[7].y, corners[7].z );
 
-			dbg.color( r, g, b, alpha ); dbg.vertex( corners[3].x, corners[3].y, corners[3].z );
-			dbg.color( r, g, b, alpha ); dbg.vertex( corners[6].x, corners[6].y, corners[6].z );
-			dbg.color( r, g, b, alpha ); dbg.vertex( corners[7].x, corners[7].y, corners[7].z );
+			dbg.color( r, g, b, alpha );
+			dbg.vertex( corners[3].x, corners[3].y, corners[3].z + offset );
+			dbg.color( r, g, b, alpha );
+			dbg.vertex( corners[0].x, corners[0].y, corners[0].z + offset );
+			dbg.color( r, g, b, alpha );
+			dbg.vertex( corners[7].x, corners[7].y, corners[7].z );
 
-			dbg.color( r, g, b, alpha ); dbg.vertex( corners[3].x, corners[3].y, corners[3].z + offset );
-			dbg.color( r, g, b, alpha ); dbg.vertex( corners[0].x, corners[0].y, corners[0].z + offset );
-			dbg.color( r, g, b, alpha ); dbg.vertex( corners[7].x, corners[7].y, corners[7].z );
-
-			dbg.color( r, g, b, alpha ); dbg.vertex( corners[7].x, corners[7].y, corners[7].z );
-			dbg.color( r, g, b, alpha ); dbg.vertex( corners[0].x, corners[0].y, corners[0].z + offset);
-			dbg.color( r, g, b, alpha ); dbg.vertex( corners[4].x, corners[4].y, corners[4].z );
+			dbg.color( r, g, b, alpha );
+			dbg.vertex( corners[7].x, corners[7].y, corners[7].z );
+			dbg.color( r, g, b, alpha );
+			dbg.vertex( corners[0].x, corners[0].y, corners[0].z + offset );
+			dbg.color( r, g, b, alpha );
+			dbg.vertex( corners[4].x, corners[4].y, corners[4].z );
 
 			// top cap
-			dbg.color( r, g, b, alpha ); dbg.vertex( corners[4].x, corners[4].y, corners[4].z );
-			dbg.color( r, g, b, alpha ); dbg.vertex( corners[5].x, corners[5].y, corners[5].z );
-			dbg.color( r, g, b, alpha ); dbg.vertex( corners[7].x, corners[7].y, corners[7].z );
+			dbg.color( r, g, b, alpha );
+			dbg.vertex( corners[4].x, corners[4].y, corners[4].z );
+			dbg.color( r, g, b, alpha );
+			dbg.vertex( corners[5].x, corners[5].y, corners[5].z );
+			dbg.color( r, g, b, alpha );
+			dbg.vertex( corners[7].x, corners[7].y, corners[7].z );
 
-			dbg.color( r, g, b, alpha ); dbg.vertex( corners[5].x, corners[5].y, corners[5].z );
-			dbg.color( r, g, b, alpha ); dbg.vertex( corners[7].x, corners[7].y, corners[7].z );
-			dbg.color( r, g, b, alpha ); dbg.vertex( corners[6].x, corners[6].y, corners[6].z );
+			dbg.color( r, g, b, alpha );
+			dbg.vertex( corners[5].x, corners[5].y, corners[5].z );
+			dbg.color( r, g, b, alpha );
+			dbg.vertex( corners[7].x, corners[7].y, corners[7].z );
+			dbg.color( r, g, b, alpha );
+			dbg.vertex( corners[6].x, corners[6].y, corners[6].z );
 
-			dbg.color( r, g, b, alpha ); dbg.vertex( corners[0].x, corners[0].y, corners[0].z + offset );
-			dbg.color( r, g, b, alpha ); dbg.vertex( corners[3].x, corners[3].y, corners[3].z + offset );
-			dbg.color( r, g, b, alpha ); dbg.vertex( corners[1].x, corners[1].y, corners[1].z + offset );
+			dbg.color( r, g, b, alpha );
+			dbg.vertex( corners[0].x, corners[0].y, corners[0].z + offset );
+			dbg.color( r, g, b, alpha );
+			dbg.vertex( corners[3].x, corners[3].y, corners[3].z + offset );
+			dbg.color( r, g, b, alpha );
+			dbg.vertex( corners[1].x, corners[1].y, corners[1].z + offset );
 
-			dbg.color( r, g, b, alpha ); dbg.vertex( corners[3].x, corners[3].y, corners[3].z + offset );
-			dbg.color( r, g, b, alpha ); dbg.vertex( corners[1].x, corners[1].y, corners[1].z + offset );
-			dbg.color( r, g, b, alpha ); dbg.vertex( corners[2].x, corners[2].y, corners[2].z + offset );
+			dbg.color( r, g, b, alpha );
+			dbg.vertex( corners[3].x, corners[3].y, corners[3].z + offset );
+			dbg.color( r, g, b, alpha );
+			dbg.vertex( corners[1].x, corners[1].y, corners[1].z + offset );
+			dbg.color( r, g, b, alpha );
+			dbg.vertex( corners[2].x, corners[2].y, corners[2].z + offset );
 		}
 		dbg.end();
 

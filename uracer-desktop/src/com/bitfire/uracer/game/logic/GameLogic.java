@@ -6,16 +6,14 @@ import com.bitfire.uracer.Input;
 import com.bitfire.uracer.entities.EntityManager;
 import com.bitfire.uracer.game.Game;
 
-public class GameLogic
-{
+public class GameLogic {
 	private Game game;
 	private IGameLogicListener listener;
 
 	// lap and entities
 	private Level level;
 
-	public GameLogic( Game game )
-	{
+	public GameLogic( Game game ) {
 		this.game = game;
 		this.level = game.getLevel();
 
@@ -25,33 +23,29 @@ public class GameLogic
 		this.listener = new GameLogicListener( this );
 	}
 
-	public void create()
-	{
+	public void create() {
 		reset();
 		listener.onCreate();
 	}
 
-	public void dispose()
-	{
+	public void dispose() {
 	}
 
-	public boolean tick()
-	{
+	public boolean tick() {
 		EntityManager.raiseOnTick();
 
-		if( Input.isOn( Keys.R ) )
-		{
+		if( Input.isOn( Keys.R ) ) {
 			game.restart();
-		} else if( Input.isOn( Keys.T ) )
-		{
+		}
+		else if( Input.isOn( Keys.T ) ) {
 			game.reset();
-		} else if( Input.isOn( Keys.Q ) )
-		{
+		}
+		else if( Input.isOn( Keys.Q ) ) {
 			Gdx.app.exit();
 			return false;
 		}
 
-		level.getPlayer().update(listener);
+		level.getPlayer().update( listener );
 
 		// update DriftInfo, handle raising onBeginDrift / onEndDrift
 		DriftInfo.get().update( level.getPlayer().car );
@@ -59,30 +53,26 @@ public class GameLogic
 		return true;
 	}
 
-	public void reset()
-	{
+	public void reset() {
 		restart();
 		listener.onReset();
 	}
 
-	public void restart()
-	{
+	public void restart() {
 		Game.getTweener().clear();
 
 		// reset drift info and hud drifting component
 		DriftInfo.get().reset();
-		if(game.getHud()!=null) game.getHud().getDrifting().reset();
+		if( game.getHud() != null ) game.getHud().getDrifting().reset();
 
 		listener.onRestart();
 	}
 
-	public Game getGame()
-	{
+	public Game getGame() {
 		return game;
 	}
 
-	public IGameLogicListener getListener()
-	{
+	public IGameLogicListener getListener() {
 		return listener;
 	}
 }

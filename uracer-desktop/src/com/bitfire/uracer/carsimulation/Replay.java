@@ -6,15 +6,11 @@ import com.bitfire.uracer.factories.CarFactory.CarType;
 import com.bitfire.uracer.game.GameDifficulty;
 import com.bitfire.uracer.utils.UUid;
 
-/**
- * Represents replay data to be feed to a GhostCar, the replay player.
- *
- * @author manuel
- *
- */
+/** Represents replay data to be feed to a GhostCar, the replay player.
+ * 
+ * @author manuel */
 
-public class Replay
-{
+public class Replay {
 	public final int MaxEvents = 5000;
 	private int eventsCount;
 
@@ -33,39 +29,33 @@ public class Replay
 	public boolean isValid = false;
 	public final long id;
 
-	public Replay()
-	{
+	public Replay() {
 		eventsCount = 0;
-		forces = new CarForces[MaxEvents];
-		for( int i = 0; i < MaxEvents; i++ )
-		{
+		forces = new CarForces[ MaxEvents ];
+		for( int i = 0; i < MaxEvents; i++ ) {
 			forces[i] = new CarForces();
 		}
 
 		id = UUid.get();
 	}
 
-	public void dispose()
-	{
+	public void dispose() {
 		clearForces();
 	}
 
-	public void clearForces()
-	{
+	public void clearForces() {
 		eventsCount = 0;
 		isValid = false;
 	}
 
-	public void setCarData( Car car )
-	{
+	public void setCarData( Car car ) {
 		carType = car.getCarType();
 		carPosition = new Vector2( car.pos() );
 		carOrientation = car.orient();
 		carDescriptor = car.getCarDescriptor().clone();
 	}
 
-	public void setReplayData( String trackName, GameDifficulty difficulty, float timeSeconds )
-	{
+	public void setReplayData( String trackName, GameDifficulty difficulty, float timeSeconds ) {
 		this.trackName = trackName;
 		this.difficultyLevel = difficulty;
 		this.trackTimeSeconds = timeSeconds;
@@ -73,16 +63,13 @@ public class Replay
 	}
 
 	// recording
-	public int getEventsCount()
-	{
+	public int getEventsCount() {
 		return eventsCount;
 	}
 
-	public boolean add( CarForces f )
-	{
+	public boolean add( CarForces f ) {
 		forces[eventsCount++].set( f );
-		if( eventsCount == MaxEvents )
-		{
+		if( eventsCount == MaxEvents ) {
 			eventsCount = 0;
 			return false;
 		}

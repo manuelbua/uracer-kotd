@@ -7,8 +7,7 @@ import com.bitfire.uracer.Config;
 import com.bitfire.uracer.game.logic.DriftInfo;
 import com.bitfire.uracer.utils.AMath;
 
-public class CarDriftSoundEffect extends CarSoundEffect
-{
+public class CarDriftSoundEffect extends CarSoundEffect {
 	private Sound drift = null;
 	private long driftId = -1;
 	private float driftLastPitch = 0;
@@ -20,46 +19,39 @@ public class CarDriftSoundEffect extends CarSoundEffect
 	private boolean doFadeOut = false;
 	private float lastVolume = 0f;
 
-	public CarDriftSoundEffect()
-	{
-		drift = Gdx.audio.newSound(Gdx.files.getFileHandle("data/audio/drift-loop.ogg", FileType.Internal));
+	public CarDriftSoundEffect() {
+		drift = Gdx.audio.newSound( Gdx.files.getFileHandle( "data/audio/drift-loop.ogg", FileType.Internal ) );
 	}
 
 	@Override
-	public void dispose()
-	{
+	public void dispose() {
 		drift.stop();
 		drift.dispose();
 	}
 
 	@Override
-	public void start()
-	{
+	public void start() {
 		// UGLY HACK FOR ANDROID
-		if(Config.isDesktop)
-			driftId = drift.loop(0f);
+		if( Config.isDesktop )
+			driftId = drift.loop( 0f );
 		else
-			driftId = checkedLoop(drift,0f);
+			driftId = checkedLoop( drift, 0f );
 
 		drift.setPitch( driftId, pitchMin );
 		drift.setVolume( driftId, 0f );
 	}
 
 	@Override
-	public void stop()
-	{
-		if(driftId>-1)
-		{
-			drift.stop(driftId);
+	public void stop() {
+		if( driftId > -1 ) {
+			drift.stop( driftId );
 		}
 	}
 
-	public void driftBegin()
-	{
-		if(driftId>-1)
-		{
+	public void driftBegin() {
+		if( driftId > -1 ) {
 			drift.stop( driftId );
-			driftId = drift.loop(0f);
+			driftId = drift.loop( 0f );
 			drift.setVolume( driftId, 0f );
 		}
 
@@ -67,39 +59,33 @@ public class CarDriftSoundEffect extends CarSoundEffect
 		doFadeOut = false;
 	}
 
-	public void driftEnd()
-	{
+	public void driftEnd() {
 		doFadeIn = false;
 		doFadeOut = true;
 	}
 
-	public void update(float speedFactor)
-	{
-		if( driftId > -1 )
-		{
+	public void update( float speedFactor ) {
+		if( driftId > -1 ) {
 			float pitch = speedFactor * pitchFactor + pitchMin;
 
 			pitch = AMath.clamp( pitch, pitchMin, pitchMax );
 
-			if( !AMath.equals(pitch, driftLastPitch) )
-			{
+			if( !AMath.equals( pitch, driftLastPitch ) ) {
 				drift.setPitch( driftId, pitch );
 				driftLastPitch = pitch;
 			}
 
 			// modulate volume
-			if( doFadeIn )
-			{
-				if(lastVolume < 1f)
+			if( doFadeIn ) {
+				if( lastVolume < 1f )
 					lastVolume += 0.01f;
 				else {
 					lastVolume = 1f;
 					doFadeIn = false;
 				}
 			}
-			else if( doFadeOut )
-			{
-				if(lastVolume > 0f)
+			else if( doFadeOut ) {
+				if( lastVolume > 0f )
 					lastVolume -= 0.01f;
 				else {
 					lastVolume = 0f;

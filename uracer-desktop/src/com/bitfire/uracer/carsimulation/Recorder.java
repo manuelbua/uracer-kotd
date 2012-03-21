@@ -4,8 +4,7 @@ import com.bitfire.uracer.Config;
 import com.bitfire.uracer.Director;
 import com.bitfire.uracer.entities.vehicles.Car;
 
-public class Recorder
-{
+public class Recorder {
 	private boolean isRecording;
 
 	// replay data
@@ -13,31 +12,26 @@ public class Recorder
 
 	private static Recorder instance;
 
-	public static Recorder create()
-	{
+	public static Recorder create() {
 		Recorder.instance = new Recorder();
 		return Recorder.instance;
 	}
 
-	public static Recorder instance()
-	{
+	public static Recorder instance() {
 		return instance;
 	}
 
-	private Recorder()
-	{
+	private Recorder() {
 		isRecording = false;
 		replay = null;
 	}
 
-	public void reset()
-	{
+	public void reset() {
 		isRecording = false;
 		replay = null;
 	}
 
-	public void beginRecording( Car car, Replay replay, long startTimeNs )
-	{
+	public void beginRecording( Car car, Replay replay, long startTimeNs ) {
 		isRecording = true;
 		this.replay = replay;
 		replay.clearForces();
@@ -45,25 +39,20 @@ public class Recorder
 		replay.trackStartTimeNs = startTimeNs;
 	}
 
-	public void add( CarForces f )
-	{
-		if( !isRecording )
-		{
-//			System.out.println("Cannot add event, recording not enabled!");
+	public void add( CarForces f ) {
+		if( !isRecording ) {
+			// System.out.println("Cannot add event, recording not enabled!");
 			return;
 		}
 
-		if( !replay.add( f ) )
-		{
+		if( !replay.add( f ) ) {
 			System.out.println( "Replay memory limit reached (" + replay.MaxEvents + " events), restarting." );
 		}
 	}
 
-	public void endRecording()
-	{
-		if( !isRecording )
-		{
-//			System.out.println("Cannot end a recording that wasn't enabled!");
+	public void endRecording() {
+		if( !isRecording ) {
+			// System.out.println("Cannot end a recording that wasn't enabled!");
 			return;
 		}
 
@@ -71,14 +60,13 @@ public class Recorder
 		secs *= Config.Physics.PhysicsTimeMultiplier;
 		replay.setReplayData( Director.currentLevel.name, Director.gameplaySettings.difficulty, secs );
 
-//		System.out.println( "Recorded " + replay.getEventsCount() + " events" );
+		// System.out.println( "Recorded " + replay.getEventsCount() + " events" );
 
 		isRecording = false;
 		replay = null;
 	}
 
-	public boolean isRecording()
-	{
+	public boolean isRecording() {
 		return isRecording;
 	}
 }

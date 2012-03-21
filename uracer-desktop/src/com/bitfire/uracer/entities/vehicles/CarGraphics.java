@@ -8,14 +8,12 @@ import com.bitfire.uracer.carsimulation.CarModel;
 import com.bitfire.uracer.entities.EntityState;
 import com.bitfire.uracer.utils.Convert;
 
-public class CarGraphics
-{
+public class CarGraphics {
 	private Sprite facet;
 	private Sprite ambientOcclusion;
 	private TextureRegion region;
 
-	public CarGraphics( CarModel model, TextureRegion region )
-	{
+	public CarGraphics( CarModel model, TextureRegion region ) {
 		// aspect
 		facet = new Sprite();
 		facet.setRegion( region );
@@ -28,27 +26,24 @@ public class CarGraphics
 		ambientOcclusion.setRegion( Art.carAmbientOcclusion );
 		ambientOcclusion.setSize( facet.getWidth(), facet.getHeight() );
 		ambientOcclusion.setScale( 2f, 2.3f );
-		ambientOcclusion.setOrigin( ambientOcclusion.getWidth()/2, ambientOcclusion.getHeight()/2 );
+		ambientOcclusion.setOrigin( ambientOcclusion.getWidth() / 2, ambientOcclusion.getHeight() / 2 );
 	}
 
-	public Sprite getFacet()
-	{
+	public Sprite getFacet() {
 		return facet;
 	}
 
-	public TextureRegion getTextureRegion()
-	{
+	public TextureRegion getTextureRegion() {
 		return region;
 	}
 
-	public void render( SpriteBatch batch, EntityState state )
-	{
+	public void render( SpriteBatch batch, EntityState state ) {
 		render( batch, state, 1f );
 	}
 
-	public void render( SpriteBatch batch, EntityState state, float opacity )
-	{
-		ambientOcclusion.setPosition( state.position.x - ambientOcclusion.getOriginX(), state.position.y - ambientOcclusion.getOriginY() );
+	public void render( SpriteBatch batch, EntityState state, float opacity ) {
+		ambientOcclusion.setPosition( state.position.x - ambientOcclusion.getOriginX(),
+				state.position.y - ambientOcclusion.getOriginY() );
 		ambientOcclusion.setRotation( state.orientation );
 		ambientOcclusion.draw( batch, 0.5f * opacity );
 

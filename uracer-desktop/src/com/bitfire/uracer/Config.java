@@ -8,24 +8,21 @@ import com.bitfire.uracer.game.logic.DirectorController.InterpolationMode;
 import com.bitfire.uracer.postprocessing.filters.Blur;
 import com.bitfire.uracer.postprocessing.filters.Blur.BlurType;
 
-public class Config
-{
+public class Config {
 	// generic
 	public static boolean isDesktop;
 
-	public static class PostProcessing
-	{
+	public static class PostProcessing {
 		public static BlurType BlurType;
 		public static float RttRatio = 0.25f;
 
 		public static int ZoomQuality;
 		public static float ZoomMaxStrength;
 
-		public static void asDefault()
-		{
+		public static void asDefault() {
 			int w = Gdx.graphics.getWidth();
 
-			if(w >= 1680 ) {
+			if( w >= 1680 ) {
 				BlurType = Blur.BlurType.Gaussian5x5b;
 				ZoomQuality = 8;
 				ZoomMaxStrength = -0.08f;
@@ -41,14 +38,13 @@ public class Config
 				ZoomMaxStrength = -0.08f;
 			}
 
-			System.out.println("blurType = " + BlurType);
-			System.out.println("zoomQuality= " + ZoomQuality);
-			System.out.println("zoomMaxStrength= " + ZoomMaxStrength);
+			System.out.println( "blurType = " + BlurType );
+			System.out.println( "zoomQuality= " + ZoomQuality );
+			System.out.println( "zoomMaxStrength= " + ZoomMaxStrength );
 		}
 	}
 
-	public static class Graphics
-	{
+	public static class Graphics {
 		public static boolean EnableMipMapping;
 		public static boolean EnablePostProcessingFx;
 		public static boolean SubframeInterpolation;
@@ -60,13 +56,11 @@ public class Config
 		public static long Effects;
 
 		// wrap it out, ie. BitValue or else
-		public static boolean hasEffect( long effectId )
-		{
+		public static boolean hasEffect( long effectId ) {
 			return ((Effects & effectId) == effectId);
 		}
 
-		public static void asDefault()
-		{
+		public static void asDefault() {
 			EnablePostProcessingFx = true;
 			EnableMipMapping = true;
 			SubframeInterpolation = true;
@@ -81,50 +75,43 @@ public class Config
 		}
 	}
 
-	public static class Physics
-	{
+	public static class Physics {
 
 		public static float PixelsPerMeter; // defines how many pixels are 1 Box2d meter
 		public static float PhysicsTimestepHz; // defines physics dt duration
 		public static float PhysicsTimeMultiplier; // defines time modifier
 
-		public static void asDefault()
-		{
+		public static void asDefault() {
 			PixelsPerMeter = 18.0f;
 			PhysicsTimestepHz = 60.0f;
 			PhysicsTimeMultiplier = 1f;
 		}
 	}
 
-	public static class Game
-	{
+	public static class Game {
 		public static GameDifficulty difficulty;
 
-		public static void asDefault()
-		{
+		public static void asDefault() {
 			difficulty = GameDifficulty.Hard;
 		}
 	}
 
-	public static class Debug
-	{
+	public static class Debug {
 		public static boolean TraverseWalls;
 		public static boolean DirectorHasBounds;
 		public static boolean ApplyFrictionMap;
 		public static boolean FrustumCulling;
 
-		public static void asDefault()
-		{
+		public static void asDefault() {
 			TraverseWalls = false;
-			DirectorHasBounds = ((Graphics.CameraInterpolationMode == InterpolationMode.Linear) || (Graphics.CameraInterpolationMode==InterpolationMode.Off));
+			DirectorHasBounds = ((Graphics.CameraInterpolationMode == InterpolationMode.Linear) || (Graphics.CameraInterpolationMode == InterpolationMode.Off));
 			ApplyFrictionMap = true;
 			FrustumCulling = true;
 		}
 	}
 
 	// set default configuration values
-	public static void asDefault()
-	{
+	public static void asDefault() {
 		isDesktop = (Gdx.app.getType() == ApplicationType.Desktop);
 
 		Game.asDefault();

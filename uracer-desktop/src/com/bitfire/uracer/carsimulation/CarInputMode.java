@@ -1,6 +1,5 @@
 package com.bitfire.uracer.carsimulation;
 
-public enum CarInputMode
-{
+public enum CarInputMode {
 	InputFromPlayer, InputFromReplay
 }

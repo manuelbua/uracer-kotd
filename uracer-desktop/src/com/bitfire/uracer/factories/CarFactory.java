@@ -16,40 +16,33 @@ import com.bitfire.uracer.entities.vehicles.GhostCar;
 import com.bitfire.uracer.utils.Convert;
 import com.bitfire.uracer.utils.FixtureAtlas;
 
-public class CarFactory
-{
-	public enum CarType
-	{
+public class CarFactory {
+	public enum CarType {
 		OldSkool, OldSkool2
 	}
 
-	public static GhostCar createGhost( CarType type, CarModel model )
-	{
+	public static GhostCar createGhost( CarType type, CarModel model ) {
 		CarGraphics graphics = createCarGraphics( type, model );
 		GhostCar ghost = GhostCar.createForFactory( graphics, type, model );
 		applyCarPhysics( ghost, EntityType.CarReplay );
 		return ghost;
 	}
 
-	public static GhostCar createGhost( Car car )
-	{
+	public static GhostCar createGhost( Car car ) {
 		return CarFactory.createGhost( car.getCarType(), car.getCarModel() );
 	}
 
-	public static Car createPlayer( CarType carType, CarModel model, Vector2 position, float orientation )
-	{
+	public static Car createPlayer( CarType carType, CarModel model, Vector2 position, float orientation ) {
 		CarGraphics graphics = createCarGraphics( carType, model );
 		Car car = Car.createForFactory( graphics, model, carType, CarInputMode.InputFromPlayer, position, orientation );
 		applyCarPhysics( car, EntityType.Car );
 		return car;
 	}
 
-	private static CarGraphics createCarGraphics( CarType type, CarModel model )
-	{
+	private static CarGraphics createCarGraphics( CarType type, CarModel model ) {
 		TextureRegion region = null;
 
-		switch( type )
-		{
+		switch( type ) {
 		case OldSkool:
 			region = Art.cars.findRegion( "electron" );
 			break;
@@ -63,16 +56,14 @@ public class CarFactory
 		return graphics;
 	}
 
-	private static void applyCarPhysics( Car car, EntityType entityType )
-	{
+	private static void applyCarPhysics( Car car, EntityType entityType ) {
 		CarModel model = car.getCarModel();
 		TextureRegion region = car.getGraphics().getTextureRegion();
 
 		String shapeName = null;
 		String shapeRef = null;
 
-		switch( car.getCarType() )
-		{
+		switch( car.getCarType() ) {
 		case OldSkool:
 			region = Art.cars.findRegion( "electron" );
 			shapeName = "data/base/electron.shape";
@@ -92,12 +83,13 @@ public class CarFactory
 		fd.friction = model.friction;
 		fd.restitution = model.restitution;
 
-		fd.filter.groupIndex = (short)((entityType==EntityType.Car)? CollisionFilters.GroupPlayer : CollisionFilters.GroupReplay );
-		fd.filter.categoryBits = (short)((entityType==EntityType.Car)? CollisionFilters.CategoryPlayer : CollisionFilters.CategoryReplay );
-		fd.filter.maskBits = (short)((entityType==EntityType.Car)? CollisionFilters.MaskPlayer : CollisionFilters.MaskReplay );
+		fd.filter.groupIndex = (short)((entityType == EntityType.Car) ? CollisionFilters.GroupPlayer
+				: CollisionFilters.GroupReplay);
+		fd.filter.categoryBits = (short)((entityType == EntityType.Car) ? CollisionFilters.CategoryPlayer
+				: CollisionFilters.CategoryReplay);
+		fd.filter.maskBits = (short)((entityType == EntityType.Car) ? CollisionFilters.MaskPlayer : CollisionFilters.MaskReplay);
 
-		if(Config.Debug.TraverseWalls)
-		{
+		if( Config.Debug.TraverseWalls ) {
 			fd.filter.groupIndex = CollisionFilters.GroupNoCollisions;
 		}
 

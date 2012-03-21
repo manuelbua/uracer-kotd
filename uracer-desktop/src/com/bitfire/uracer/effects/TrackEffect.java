@@ -3,18 +3,15 @@ package com.bitfire.uracer.effects;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.bitfire.uracer.effects.TrackEffects.Effects;
 
-public abstract class TrackEffect
-{
+public abstract class TrackEffect {
 	public Effects effectType;
 
-	public TrackEffect( Effects what )
-	{
+	public TrackEffect( Effects what ) {
 		this.effectType = what;
 	}
 
 	@Override
-	public boolean equals( Object that )
-	{
+	public boolean equals( Object that ) {
 		// self
 		if( this == that ) return true;
 

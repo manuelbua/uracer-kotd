@@ -4,8 +4,7 @@ import aurelienribon.tweenengine.TweenAccessor;
 
 import com.bitfire.uracer.hud.HudLabel;
 
-public class HudLabelAccessor implements TweenAccessor<HudLabel>
-{
+public class HudLabelAccessor implements TweenAccessor<HudLabel> {
 	public static final int POSITION_XY = 1;
 	public static final int POSITION_X = 2;
 	public static final int POSITION_Y = 3;
@@ -13,10 +12,8 @@ public class HudLabelAccessor implements TweenAccessor<HudLabel>
 	public static final int OPACITY = 5;
 
 	@Override
-	public int getValues( HudLabel target, int tweenType, float[] returnValues )
-	{
-		switch( tweenType )
-		{
+	public int getValues( HudLabel target, int tweenType, float[] returnValues ) {
+		switch( tweenType ) {
 		case POSITION_XY:
 			returnValues[0] = target.getX();
 			returnValues[1] = target.getY();
@@ -45,10 +42,8 @@ public class HudLabelAccessor implements TweenAccessor<HudLabel>
 	}
 
 	@Override
-	public void setValues( HudLabel target, int tweenType, float[] newValues )
-	{
-		switch( tweenType )
-		{
+	public void setValues( HudLabel target, int tweenType, float[] newValues ) {
+		switch( tweenType ) {
 		case POSITION_XY:
 			target.setPosition( newValues[0], newValues[1] );
 			break;

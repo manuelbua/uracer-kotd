@@ -15,8 +15,7 @@ import com.bitfire.uracer.messager.Messager.MessageType;
 import com.bitfire.uracer.utils.Convert;
 import com.bitfire.uracer.utils.NumberString;
 
-public class HudDrifting
-{
+public class HudDrifting {
 	private Game game;
 	private Car playerCar;
 	private CarModel model;
@@ -30,8 +29,7 @@ public class HudDrifting
 	private DriftInfo drift;
 	private Vector2 heading = new Vector2();
 
-	public HudDrifting( Game game )
-	{
+	public HudDrifting( Game game ) {
 		this.game = game;
 		this.playerCar = game.getLevel().getPlayer().car;
 		this.model = playerCar.getCarModel();
@@ -51,107 +49,95 @@ public class HudDrifting
 		// finish the next drift.. in this case the label
 		// will move from the last result position to the
 		// current one
-		labelResult = new HudLabel[MaxLabelResult];
+		labelResult = new HudLabel[ MaxLabelResult ];
 		nextLabelResult = 0;
-		for(int i = 0; i < MaxLabelResult; i++ )
-		{
+		for( int i = 0; i < MaxLabelResult; i++ ) {
 			labelResult[i] = new HudLabel( Art.fontCurseR, "99.99", 0.85f );
 			labelResult[i].setAlpha( 0 );
 		}
 	}
 
-	public void reset()
-	{
+	public void reset() {
 		labelRealtime.setAlpha( 0 );
-		for(int i = 0; i < MaxLabelResult; i++)
+		for( int i = 0; i < MaxLabelResult; i++ )
 			labelResult[i].setAlpha( 0 );
 		nextLabelResult = 0;
 	}
 
-	public void tick()
-	{
-		heading.set(playerCar.getSimulator().heading);
+	public void tick() {
+		heading.set( playerCar.getSimulator().heading );
 	}
 
 	private Vector2 tmpv = new Vector2();
 	private float lastDistance = 0f;
-	public void render( SpriteBatch batch )
-	{
+
+	public void render( SpriteBatch batch ) {
 		// update from subframe-interpolated player position
 		Vector2 pos = tmpv.set( Director.screenPosForPx( playerCar.state().position ) );
 
-
 		float secRatio = 1f;
 		float distance = 0f;
-		if( drift.isDrifting )
-		{
-//			secRatio = AMath.clamp( (System.currentTimeMillis() - drift.driftStartTime) / 2000f, 0, 1);
-//			labelRealtime.setAlpha( secRatio );
-//			distance = (1f-secRatio) * 50f;
-//			lastDistance = distance;
+		if( drift.isDrifting ) {
+			// secRatio = AMath.clamp( (System.currentTimeMillis() - drift.driftStartTime) / 2000f, 0, 1);
+			// labelRealtime.setAlpha( secRatio );
+			// distance = (1f-secRatio) * 50f;
+			// lastDistance = distance;
 			lastDistance = 0;
 		}
 
 		labelRealtime.setPosition(
-			// offset by heading.mul(distance factor)
-			pos.x - heading.x * (carWidthPx + labelRealtime.halfBoundsWidth + lastDistance),
-			pos.y - heading.y * (carLengthPx + labelRealtime.halfBoundsHeight + lastDistance)
-		);
+		// offset by heading.mul(distance factor)
+				pos.x - heading.x * (carWidthPx + labelRealtime.halfBoundsWidth + lastDistance), pos.y - heading.y
+						* (carLengthPx + labelRealtime.halfBoundsHeight + lastDistance) );
 
 		//
 		// draw earned/lost seconds
 		//
-		labelRealtime.setString( "+" + NumberString.format(drift.driftSeconds) );
+		labelRealtime.setString( "+" + NumberString.format( drift.driftSeconds ) );
 		labelRealtime.render( batch );
 
 		//
 		// draw result
 		//
-		for(int i = 0; i < MaxLabelResult; i++)
+		for( int i = 0; i < MaxLabelResult; i++ )
 			labelResult[i].render( batch );
 	}
 
-	public void onBeginDrift()
-	{
+	public void onBeginDrift() {
 		labelRealtime.fadeIn( 300 );
 	}
 
-	public void onEndDrift()
-	{
+	public void onEndDrift() {
 		Vector2 pos = tmpv.set( Director.screenPosForPx( playerCar.state().position ) );
 
 		labelRealtime.fadeOut( 300 );
 
 		HudLabel result = labelResult[nextLabelResult++];
-		if(nextLabelResult==MaxLabelResult) nextLabelResult = 0;
+		if( nextLabelResult == MaxLabelResult ) nextLabelResult = 0;
 
-		result.setPosition(
-			pos.x - heading.x * (carWidthPx + result.halfBoundsWidth),
-			pos.y - heading.y * (carLengthPx + result.halfBoundsHeight)
-		);
+		result.setPosition( pos.x - heading.x * (carWidthPx + result.halfBoundsWidth), pos.y - heading.y
+				* (carLengthPx + result.halfBoundsHeight) );
 
 		// premature end drift event due to collision?
-		if( drift.hasCollided )
-		{
-			result.setString( "-" + NumberString.format(drift.driftSeconds) );
+		if( drift.hasCollided ) {
+			result.setString( "-" + NumberString.format( drift.driftSeconds ) );
 			result.setFont( Art.fontCurseRbig );
 		}
-		else
-		{
-			result.setString( "+" + NumberString.format(drift.driftSeconds) );
+		else {
+			result.setString( "+" + NumberString.format( drift.driftSeconds ) );
 			result.setFont( Art.fontCurseGbig );
 
-			if( drift.driftSeconds >= 1 && drift.driftSeconds < 1.5f )
-			{
-				Messager.enqueue( "NICE ONE!\n+" + NumberString.format(drift.driftSeconds) + "  seconds!", 1f, MessageType.Good, MessagePosition.Bottom, MessageSize.Big );
+			if( drift.driftSeconds >= 1 && drift.driftSeconds < 1.5f ) {
+				Messager.enqueue( "NICE ONE!\n+" + NumberString.format( drift.driftSeconds ) + "  seconds!", 1f,
+						MessageType.Good, MessagePosition.Bottom, MessageSize.Big );
 			}
-			else if( drift.driftSeconds >= 1.5f && drift.driftSeconds < 2f )
-			{
-				Messager.enqueue( "FANTASTIC!\n+" + NumberString.format(drift.driftSeconds) + "  seconds!", 1f, MessageType.Good, MessagePosition.Bottom, MessageSize.Big );
+			else if( drift.driftSeconds >= 1.5f && drift.driftSeconds < 2f ) {
+				Messager.enqueue( "FANTASTIC!\n+" + NumberString.format( drift.driftSeconds ) + "  seconds!", 1f,
+						MessageType.Good, MessagePosition.Bottom, MessageSize.Big );
 			}
-			else if( drift.driftSeconds >= 2f )
-			{
-				Messager.enqueue( "UNREAL!\n+" + NumberString.format(drift.driftSeconds) + "  seconds!", 1f, MessageType.Good, MessagePosition.Bottom, MessageSize.Big );
+			else if( drift.driftSeconds >= 2f ) {
+				Messager.enqueue( "UNREAL!\n+" + NumberString.format( drift.driftSeconds ) + "  seconds!", 1f, MessageType.Good,
+						MessagePosition.Bottom, MessageSize.Big );
 			}
 		}
 

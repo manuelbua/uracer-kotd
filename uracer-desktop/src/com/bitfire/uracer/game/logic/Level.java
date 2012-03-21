@@ -42,14 +42,10 @@ import com.bitfire.uracer.tiled.UTileMapRenderer;
 import com.bitfire.uracer.utils.Convert;
 import com.bitfire.uracer.utils.MapUtils;
 
-/**
- * First write. Basic idea in place, will need refactoring for sure.
- *
- * @author manuel
- *
- */
-public class Level
-{
+/** First write. Basic idea in place, will need refactoring for sure.
+ * 
+ * @author manuel */
+public class Level {
 	// level data
 	public TiledMap map = null;
 	private TrackWalls trackWalls = null;
@@ -77,8 +73,7 @@ public class Level
 	private RayHandler rayHandler = null;
 	private ConeLight playerHeadlights = null;
 
-	public Level( String levelName, ScalingStrategy strategy, boolean nightMode )
-	{
+	public Level( String levelName, ScalingStrategy strategy, boolean nightMode ) {
 		this.name = levelName;
 		this.nightMode = nightMode;
 
@@ -97,17 +92,16 @@ public class Level
 
 		createCams();
 
-		levelRenderer = new LevelRenderer(camPersp, camOrtho);
+		levelRenderer = new LevelRenderer( camPersp, camOrtho );
 	}
 
 	/* 2-stage construction, avoid <static> problems in Android */
-	public void construct()
-	{
+	public void construct() {
 		syncWithCam( Director.getCamera() );
 		OrthographicAlignedStillModel.initialize();
 
 		// create track
-//		track = new Track( map );
+		// track = new Track( map );
 
 		EntityManager.create();
 		recorder = Recorder.create();
@@ -115,17 +109,14 @@ public class Level
 		createMeshes();
 		player = createPlayer( map );
 
-		if( nightMode )
-		{
+		if( nightMode ) {
 			createLights();
 		}
 	}
 
-	public void dispose()
-	{
+	public void dispose() {
 		// dispose any static mesh previously loaded
-		for( int i = 0; i < staticMeshes.size(); i++ )
-		{
+		for( int i = 0; i < staticMeshes.size(); i++ ) {
 			OrthographicAlignedStillModel model = staticMeshes.get( i );
 			model.dispose();
 		}
@@ -134,8 +125,7 @@ public class Level
 		trackTrees.dispose();
 	}
 
-	public void syncWithCam( OrthographicCamera orthoCam )
-	{
+	public void syncWithCam( OrthographicCamera orthoCam ) {
 		// scale position
 		camOrtho.position.set( orthoCam.position );
 		camOrtho.position.mul( Director.scalingStrategy.tileMapZoomFactor );
@@ -152,17 +142,15 @@ public class Level
 		camPersp.update();
 	}
 
-	public void renderTilemap(GL20 gl)
-	{
+	public void renderTilemap( GL20 gl ) {
 		gl.glDisable( GL20.GL_BLEND );
 		tileMapRenderer.render( camOrtho );
 	}
 
-	public void renderMeshes( GL20 gl )
-	{
+	public void renderMeshes( GL20 gl ) {
 		levelRenderer.resetCounters();
 
-		gl.glDepthMask(true);
+		gl.glDepthMask( true );
 		gl.glEnable( GL20.GL_DEPTH_TEST );
 		gl.glCullFace( GL20.GL_BACK );
 		gl.glFrontFace( GL20.GL_CCW );
@@ -178,11 +166,10 @@ public class Level
 
 		gl.glDisable( GL20.GL_DEPTH_TEST );
 		gl.glDisable( GL20.GL_CULL_FACE );
-		gl.glDepthMask(false);
+		gl.glDepthMask( false );
 	}
 
-	private void createCams()
-	{
+	private void createCams() {
 		int w = Gdx.graphics.getWidth();
 		int h = Gdx.graphics.getHeight();
 
@@ -207,17 +194,14 @@ public class Level
 		camPersp.position.set( 0, 0, camPerspElevation );
 	}
 
-	private void createMeshes()
-	{
+	private void createMeshes() {
 		staticMeshes.clear();
 		totalMeshes = 0;
 
 		// static meshes layer
-		if( MapUtils.hasObjectGroup( MapUtils.LayerStaticMeshes ) )
-		{
+		if( MapUtils.hasObjectGroup( MapUtils.LayerStaticMeshes ) ) {
 			TiledObjectGroup group = MapUtils.getObjectGroup( MapUtils.LayerStaticMeshes );
-			for( int i = 0; i < group.objects.size(); i++ )
-			{
+			for( int i = 0; i < group.objects.size(); i++ ) {
 				TiledObject o = group.objects.get( i );
 
 				float scale = 1f;
@@ -240,25 +224,21 @@ public class Level
 		totalMeshes = staticMeshes.size() + trackWalls.walls.size() + trackTrees.trees.size();
 	}
 
-	private Player createPlayer(TiledMap map )
-	{
+	private Player createPlayer( TiledMap map ) {
 		// search the map for the start marker and create
 		// the player with the found tile coordinates
 		TiledLayer layerTrack = MapUtils.getLayer( MapUtils.LayerTrack );
 		Vector2 start = new Vector2();
 		int startTileX = 0, startTileY = 0;
 
-		for( int y = 0; y < map.height; y++ )
-		{
-			for( int x = 0; x < map.width; x++ )
-			{
+		for( int y = 0; y < map.height; y++ ) {
+			for( int x = 0; x < map.width; x++ ) {
 				int id = layerTrack.tiles[y][x];
-				String type = map.getTileProperty(id, "type");
-				if(type == null) continue;
+				String type = map.getTileProperty( id, "type" );
+				if( type == null ) continue;
 
-				if(type.equals("start"))
-				{
-					start.set( Convert.tileToPx(x, y).add(Convert.scaledPixels(112, -112)) );
+				if( type.equals( "start" ) ) {
+					start.set( Convert.tileToPx( x, y ).add( Convert.scaledPixels( 112, -112 ) ) );
 					startTileX = x;
 					startTileY = y;
 					break;
@@ -267,17 +247,20 @@ public class Level
 		}
 
 		float startOrient = 0f;
-		String orient = layerTrack.properties.get("start");
+		String orient = layerTrack.properties.get( "start" );
 
-		if(orient.equals("up")) startOrient = 0f;
-		else if(orient.equals("right")) startOrient = 90f;
-		else if(orient.equals("down")) startOrient = 180f;
-		else if(orient.equals("left")) startOrient = 270f;
+		if( orient.equals( "up" ) )
+			startOrient = 0f;
+		else if( orient.equals( "right" ) )
+			startOrient = 90f;
+		else if( orient.equals( "down" ) )
+			startOrient = 180f;
+		else if( orient.equals( "left" ) ) startOrient = 270f;
 
 		Car car = CarFactory.createPlayer( CarType.OldSkool, new CarModel().toModel2(), start, startOrient );
 		GhostCar ghost = CarFactory.createGhost( car );
 
-		Player p = new Player(car, ghost);
+		Player p = new Player( car, ghost );
 		p.startPos.set( start );
 		p.startTileX = startTileX;
 		p.startTileY = startTileY;
@@ -286,10 +269,8 @@ public class Level
 		return p;
 	}
 
-	private void createLights()
-	{
-		if( !MapUtils.hasObjectGroup( MapUtils.LayerLights ) )
-		{
+	private void createLights() {
+		if( !MapUtils.hasObjectGroup( MapUtils.LayerLights ) ) {
 			this.nightMode = false;
 			return;
 		}
@@ -297,18 +278,18 @@ public class Level
 		float rttScale = .5f;
 		int maxRays = 720;
 
-		if(!Config.isDesktop)
-		{
+		if( !Config.isDesktop ) {
 			rttScale = 0.2f;
 			maxRays = 360;
 		}
 
 		RayHandler.setColorPrecisionMediump();
-		rayHandler = new RayHandler(Physics.world, maxRays, (int)(Gdx.graphics.getWidth()*rttScale), (int)(Gdx.graphics.getHeight()*rttScale));
-		rayHandler.setShadows(true);
-		rayHandler.setCulling(true);
-		rayHandler.setBlur(true);
-		rayHandler.setBlurNum(1);
+		rayHandler = new RayHandler( Physics.world, maxRays, (int)(Gdx.graphics.getWidth() * rttScale),
+				(int)(Gdx.graphics.getHeight() * rttScale) );
+		rayHandler.setShadows( true );
+		rayHandler.setCulling( true );
+		rayHandler.setBlur( true );
+		rayHandler.setBlurNum( 1 );
 		rayHandler.setAmbientLight( 0f, 0, 0.25f, 0.2f );
 
 		// attach light to player
@@ -320,21 +301,18 @@ public class Level
 		playerHeadlights.setSoft( false );
 		playerHeadlights.setMaskBits( CollisionFilters.CategoryTrackWalls );
 
-
 		Vector2 pos = new Vector2();
 		TiledObjectGroup group = MapUtils.getObjectGroup( MapUtils.LayerLights );
-		for( int i = 0; i < group.objects.size(); i++ )
-		{
+		for( int i = 0; i < group.objects.size(); i++ ) {
 			c.set(
-//					MathUtils.random(0,1),
-//					MathUtils.random(0,1),
-//					MathUtils.random(0,1),
-					1f, .85f, .15f,
-					.75f );
+			// MathUtils.random(0,1),
+			// MathUtils.random(0,1),
+			// MathUtils.random(0,1),
+			1f, .85f, .15f, .75f );
 			TiledObject o = group.objects.get( i );
 			pos.set( o.x, o.y ).mul( Director.scalingStrategy.invTileMapZoomFactor );
 			pos.y = Director.worldSizeScaledPx.y - pos.y;
-			pos.set( Convert.px2mt( pos ));
+			pos.set( Convert.px2mt( pos ) );
 
 			PointLight l = new PointLight( rayHandler, maxRays, c, 30f, pos.x, pos.y );
 			l.setSoft( false );
@@ -342,80 +320,66 @@ public class Level
 		}
 	}
 
-	public void renderLights()
-	{
+	public void renderLights() {
 		// update player light (subframe interpolation ready)
 		float ang = 90 + player.car.state().orientation;
 
 		// the body's compound shape should be created with some clever thinking in it :)
-		float offx = (player.car.getCarModel().length/2f) + .25f;
+		float offx = (player.car.getCarModel().length / 2f) + .25f;
 		float offy = 0f;
 
-		float cos = MathUtils.cosDeg(ang);
-		float sin = MathUtils.sinDeg(ang);
+		float cos = MathUtils.cosDeg( ang );
+		float sin = MathUtils.sinDeg( ang );
 		float dX = offx * cos - offy * sin;
 		float dY = offx * sin + offy * cos;
 
-		float px = Convert.px2mt(player.car.state().position.x) + dX;
-		float py = Convert.px2mt(player.car.state().position.y) + dY;
+		float px = Convert.px2mt( player.car.state().position.x ) + dX;
+		float py = Convert.px2mt( player.car.state().position.y ) + dY;
 
 		playerHeadlights.setDirection( ang );
 		playerHeadlights.setPosition( px, py );
 
-		rayHandler.setCombinedMatrix
-		(
-			Director.getMatViewProjMt(),
-			Convert.px2mt(camOrtho.position.x * Director.scalingStrategy.invTileMapZoomFactor),
-			Convert.px2mt(camOrtho.position.y * Director.scalingStrategy.invTileMapZoomFactor),
-			Convert.px2mt(camOrtho.viewportWidth),
-			Convert.px2mt(camOrtho.viewportHeight)
-		);
+		rayHandler.setCombinedMatrix( Director.getMatViewProjMt(),
+				Convert.px2mt( camOrtho.position.x * Director.scalingStrategy.invTileMapZoomFactor ),
+				Convert.px2mt( camOrtho.position.y * Director.scalingStrategy.invTileMapZoomFactor ),
+				Convert.px2mt( camOrtho.viewportWidth ), Convert.px2mt( camOrtho.viewportHeight ) );
 
 		rayHandler.update();
 		rayHandler.render();
 
-//		if( Config.isDesktop && (URacer.getFrameCount()&0x1f)==0x1f)
-//		{
-//			System.out.println("lights rendered="+rayHandler.lightRenderedLastFrame);
-//		}
+		// if( Config.isDesktop && (URacer.getFrameCount()&0x1f)==0x1f)
+		// {
+		// System.out.println("lights rendered="+rayHandler.lightRenderedLastFrame);
+		// }
 	}
 
-	/**
-	 * operations
-	 */
+	/** operations */
 
-	public Player getPlayer()
-	{
+	public Player getPlayer() {
 		return player;
 	}
 
-	public boolean isNightMode()
-	{
+	public boolean isNightMode() {
 		return nightMode;
 	}
 
-	public void beginRecording( Replay outputBuffer, long lapStartTimeNs )
-	{
+	public void beginRecording( Replay outputBuffer, long lapStartTimeNs ) {
 		recorder.beginRecording( player.car, outputBuffer, lapStartTimeNs );
 	}
 
-	public void endRecording()
-	{
+	public void endRecording() {
 		recorder.endRecording();
 	}
 
-	public boolean isRecording()
-	{
+	public boolean isRecording() {
 		return recorder.isRecording();
 	}
 
-	public void discardRecording()
-	{
+	public void discardRecording() {
 		recorder.reset();
 	}
 
-	public void reset()
-	{
+	public void reset() {
 		player.reset();
 		recorder.reset();
 	}

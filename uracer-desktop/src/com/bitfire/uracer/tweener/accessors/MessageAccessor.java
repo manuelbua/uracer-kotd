@@ -4,8 +4,7 @@ import aurelienribon.tweenengine.TweenAccessor;
 
 import com.bitfire.uracer.messager.Message;
 
-public class MessageAccessor implements TweenAccessor<Message>
-{
+public class MessageAccessor implements TweenAccessor<Message> {
 	public static final int POSITION_XY = 1;
 	public static final int POSITION_X = 2;
 	public static final int POSITION_Y = 3;
@@ -13,10 +12,8 @@ public class MessageAccessor implements TweenAccessor<Message>
 	public static final int OPACITY = 5;
 
 	@Override
-	public int getValues( Message target, int tweenType, float[] returnValues )
-	{
-		switch( tweenType )
-		{
+	public int getValues( Message target, int tweenType, float[] returnValues ) {
+		switch( tweenType ) {
 		case POSITION_XY:
 			returnValues[0] = target.getX();// + msg.getOriginX();
 			returnValues[1] = target.getY();// + msg.getOriginY();
@@ -46,20 +43,18 @@ public class MessageAccessor implements TweenAccessor<Message>
 	}
 
 	@Override
-	public void setValues( Message target, int tweenType, float[] newValues )
-	{
-		switch( tweenType )
-		{
+	public void setValues( Message target, int tweenType, float[] newValues ) {
+		switch( tweenType ) {
 		case POSITION_XY:
-			target.setPosition( newValues[0] /*- msg.getOriginX()*/, newValues[1] /*- msg.getOriginY()*/ );
+			target.setPosition( newValues[0] /*- msg.getOriginX()*/, newValues[1] /*- msg.getOriginY()*/);
 			break;
 
 		case POSITION_X:
-			target.setX( newValues[0] /*- msg.getOriginX()*/ );
+			target.setX( newValues[0] /*- msg.getOriginX()*/);
 			break;
 
 		case POSITION_Y:
-			target.setY( newValues[0] /*- msg.getOriginY()*/ );
+			target.setY( newValues[0] /*- msg.getOriginY()*/);
 			break;
 
 		case SCALE_XY:

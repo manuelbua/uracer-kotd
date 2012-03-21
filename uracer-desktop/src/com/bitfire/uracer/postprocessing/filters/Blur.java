@@ -3,35 +3,34 @@ package com.bitfire.uracer.postprocessing.filters;
 import com.badlogic.gdx.utils.IntMap;
 import com.bitfire.uracer.postprocessing.PingPongBuffer;
 
-public class Blur extends MultipassFilter
-{
-	private enum Tap
-	{
+public class Blur extends MultipassFilter {
+	private enum Tap {
+		// @formatter:off
 		Tap3x3( 1 ),
 		Tap5x5( 2 ),
 //		Tap7x7( 3 )
 		;
+		// @formatter:on
 
 		public final int radius;
 
-		private Tap( int radius )
-		{
+		private Tap( int radius ) {
 			this.radius = radius;
 		}
 	}
 
-	public enum BlurType
-	{
+	public enum BlurType {
+		// @formatter:off
 		Gaussian3x3( Tap.Tap3x3 ),
 		Gaussian3x3b(Tap.Tap3x3 ),	// R=5 (11x11, policy "higher-then-discard")
 		Gaussian5x5( Tap.Tap5x5 ),
 		Gaussian5x5b( Tap.Tap5x5 ), // R=9 (19x19, policy "higher-then-discard")
 		;
+		// @formatter:on
 
 		public final Tap tap;
 
-		private BlurType( Tap tap )
-		{
+		private BlurType( Tap tap ) {
 			this.tap = tap;
 		}
 	}
@@ -45,8 +44,7 @@ public class Blur extends MultipassFilter
 	private float invWidth, invHeight;
 	private final IntMap<Convolve2D> convolve = new IntMap<Convolve2D>( Tap.values().length );
 
-	public Blur( int width, int height )
-	{
+	public Blur( int width, int height ) {
 		// precompute constants
 		this.invWidth = 1f / (float)width;
 		this.invHeight = 1f / (float)height;
@@ -61,48 +59,40 @@ public class Blur extends MultipassFilter
 		setType( BlurType.Gaussian5x5 );
 	}
 
-	public void dispose()
-	{
+	public void dispose() {
 		for( Convolve2D c : convolve.values() )
 			c.dispose();
 	}
 
-	public void upload()
-	{
+	public void upload() {
 		computeBlurWeightings();
 	}
 
-	public void setPasses( int passes )
-	{
+	public void setPasses( int passes ) {
 		this.passes = passes;
 	}
 
-	public void setType( BlurType type )
-	{
+	public void setType( BlurType type ) {
 		this.type = type;
 		computeBlurWeightings();
 	}
 
 	// not all blur types support custom amounts at this time
-	public void setAmount( float amount )
-	{
+	public void setAmount( float amount ) {
 		this.amount = amount;
 		computeBlurWeightings();
 	}
 
 	@Override
-	public void render( PingPongBuffer buffer )
-	{
+	public void render( PingPongBuffer buffer ) {
 		Convolve2D c = convolve.get( this.type.tap.radius );
 
-		for( int i = 0; i < this.passes; i++ )
-		{
+		for( int i = 0; i < this.passes; i++ ) {
 			c.render( buffer );
 		}
 	}
 
-	private void computeBlurWeightings()
-	{
+	private void computeBlurWeightings() {
 		boolean hasdata = true;
 		Convolve2D c = convolve.get( this.type.tap.radius );
 
@@ -113,8 +103,7 @@ public class Blur extends MultipassFilter
 		float dx = this.invWidth;
 		float dy = this.invHeight;
 
-		switch( this.type )
-		{
+		switch( this.type ) {
 		default:
 			hasdata = false;
 			break;
@@ -137,17 +126,23 @@ public class Blur extends MultipassFilter
 			outWeights[2] = 0.352941f;
 
 			// horizontal offsets
-			outOffsetsH[0] = -1.33333f;	outOffsetsH[1] = 0f;
-			outOffsetsH[2] = 0f;		outOffsetsH[3] = 0f;
-			outOffsetsH[4] = 1.33333f;	outOffsetsH[5] = 0f;
+			outOffsetsH[0] = -1.33333f;
+			outOffsetsH[1] = 0f;
+			outOffsetsH[2] = 0f;
+			outOffsetsH[3] = 0f;
+			outOffsetsH[4] = 1.33333f;
+			outOffsetsH[5] = 0f;
 
 			// vertical offsets
-			outOffsetsV[0] = 0f;	outOffsetsV[1] = -1.33333f;
-			outOffsetsV[2] = 0f;	outOffsetsV[3] = 0f;
-			outOffsetsV[4] = 0f;	outOffsetsV[5] = 1.33333f;
+			outOffsetsV[0] = 0f;
+			outOffsetsV[1] = -1.33333f;
+			outOffsetsV[2] = 0f;
+			outOffsetsV[3] = 0f;
+			outOffsetsV[4] = 0f;
+			outOffsetsV[5] = 1.33333f;
 
 			// scale offsets from binomial space to screen space
-			for(int i = 0; i < c.length * 2; i++) {
+			for( int i = 0; i < c.length * 2; i++ ) {
 				outOffsetsH[i] *= dx;
 				outOffsetsV[i] *= dy;
 			}
@@ -169,22 +164,31 @@ public class Blur extends MultipassFilter
 			outWeights[4] = 0.0702703f;
 
 			// horizontal offsets
-			outOffsetsH[0] = -3.23077f;	outOffsetsH[1] = 0f;
-			outOffsetsH[2] = -1.38462f;	outOffsetsH[3] = 0f;
-			outOffsetsH[4] = 0f;		outOffsetsH[5] = 0f;
-			outOffsetsH[6] = 1.38462f;	outOffsetsH[7] = 0f;
-			outOffsetsH[8] = 3.23077f;	outOffsetsH[9] = 0f;
+			outOffsetsH[0] = -3.23077f;
+			outOffsetsH[1] = 0f;
+			outOffsetsH[2] = -1.38462f;
+			outOffsetsH[3] = 0f;
+			outOffsetsH[4] = 0f;
+			outOffsetsH[5] = 0f;
+			outOffsetsH[6] = 1.38462f;
+			outOffsetsH[7] = 0f;
+			outOffsetsH[8] = 3.23077f;
+			outOffsetsH[9] = 0f;
 
 			// vertical offsets
-			outOffsetsV[0] = 0f;	outOffsetsV[1] = -3.23077f;
-			outOffsetsV[2] = 0f;	outOffsetsV[3] = -1.38462f;
-			outOffsetsV[4] = 0f;	outOffsetsV[5] = 0f;
-			outOffsetsV[6] = 0f;	outOffsetsV[7] = 1.38462f;
-			outOffsetsV[8] = 0f;	outOffsetsV[9] = 3.23077f;
+			outOffsetsV[0] = 0f;
+			outOffsetsV[1] = -3.23077f;
+			outOffsetsV[2] = 0f;
+			outOffsetsV[3] = -1.38462f;
+			outOffsetsV[4] = 0f;
+			outOffsetsV[5] = 0f;
+			outOffsetsV[6] = 0f;
+			outOffsetsV[7] = 1.38462f;
+			outOffsetsV[8] = 0f;
+			outOffsetsV[9] = 3.23077f;
 
 			// scale offsets from binomial space to screen space
-			for( int i = 0; i < c.length * 2; i++ )
-			{
+			for( int i = 0; i < c.length * 2; i++ ) {
 				outOffsetsH[i] *= dx;
 				outOffsetsV[i] *= dy;
 			}
@@ -192,14 +196,12 @@ public class Blur extends MultipassFilter
 			break;
 		}
 
-		if( hasdata )
-		{
+		if( hasdata ) {
 			c.upload();
 		}
 	}
 
-	private void computeKernel( int blurRadius, float blurAmount, float[] outKernel )
-	{
+	private void computeKernel( int blurRadius, float blurAmount, float[] outKernel ) {
 		int radius = blurRadius;
 		float amount = blurAmount;
 
@@ -212,8 +214,7 @@ public class Blur extends MultipassFilter
 		float distance = 0.0f;
 		int index = 0;
 
-		for( int i = -radius; i <= radius; ++i )
-		{
+		for( int i = -radius; i <= radius; ++i ) {
 			distance = i * i;
 			index = i + radius;
 			outKernel[index] = (float)Math.exp( -distance / twoSigmaSquare ) / sigmaRoot;
@@ -225,13 +226,11 @@ public class Blur extends MultipassFilter
 			outKernel[i] /= total;
 	}
 
-	private void computeOffsets( int blurRadius, float dx, float dy, float[] outOffsetH, float[] outOffsetV )
-	{
+	private void computeOffsets( int blurRadius, float dx, float dy, float[] outOffsetH, float[] outOffsetV ) {
 		int radius = blurRadius;
 
 		final int X = 0, Y = 1;
-		for( int i = -radius, j = 0; i <= radius; ++i, j += 2 )
-		{
+		for( int i = -radius, j = 0; i <= radius; ++i, j += 2 ) {
 			outOffsetH[j + X] = i * dx;
 			outOffsetH[j + Y] = 0;
 

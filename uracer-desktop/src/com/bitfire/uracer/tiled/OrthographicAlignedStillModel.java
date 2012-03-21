@@ -8,14 +8,10 @@ import com.badlogic.gdx.math.Vector3;
 import com.badlogic.gdx.math.collision.BoundingBox;
 import com.bitfire.uracer.Director;
 
-/**
- * The model is expected to follow the z-up convention.
- *
- * @author manuel
- *
- */
-public class OrthographicAlignedStillModel
-{
+/** The model is expected to follow the z-up convention.
+ * 
+ * @author manuel */
+public class OrthographicAlignedStillModel {
 	public UStillModel model;
 	public Material material;
 	public BoundingBox localBoundingBox = new BoundingBox();
@@ -40,32 +36,17 @@ public class OrthographicAlignedStillModel
 	public Vector2 positionOffsetPx = new Vector2( 0, 0 );
 	public Vector2 positionPx = new Vector2();
 
-
 	// explicitle initialize the static iShader member
 	// (Android: statics need to be re-initialized!)
-	public static void initialize()
-	{
-		String vertexShader =
-				"uniform mat4 u_mvpMatrix;					\n" +
-				"attribute vec4 a_position;					\n" +
-				"attribute vec2 a_texCoord0;				\n" +
-				"varying vec2 v_TexCoord;					\n" +
-				"void main()								\n" +
-				"{											\n" +
-				"	gl_Position = u_mvpMatrix * a_position;	\n" +
-				"	v_TexCoord = a_texCoord0;				\n" +
-				"}											\n";
+	public static void initialize() {
+		String vertexShader = "uniform mat4 u_mvpMatrix;					\n" + "attribute vec4 a_position;					\n"
+				+ "attribute vec2 a_texCoord0;				\n" + "varying vec2 v_TexCoord;					\n" + "void main()								\n"
+				+ "{											\n" + "	gl_Position = u_mvpMatrix * a_position;	\n" + "	v_TexCoord = a_texCoord0;				\n"
+				+ "}											\n";
 
-		String fragmentShader =
-			"#ifdef GL_ES											\n" +
-			"precision mediump float;								\n" +
-			"#endif													\n" +
-			"uniform sampler2D u_texture;							\n" +
-			"varying vec2 v_TexCoord;								\n" +
-			"void main()											\n" +
-			"{														\n" +
-			"	gl_FragColor = texture2D( u_texture, v_TexCoord );	\n" +
-			"}														\n";
+		String fragmentShader = "#ifdef GL_ES											\n" + "precision mediump float;								\n" + "#endif													\n"
+				+ "uniform sampler2D u_texture;							\n" + "varying vec2 v_TexCoord;								\n" + "void main()											\n"
+				+ "{														\n" + "	gl_FragColor = texture2D( u_texture, v_TexCoord );	\n" + "}														\n";
 
 		ShaderProgram.pedantic = false;
 		OrthographicAlignedStillModel.shaderProgram = new ShaderProgram( vertexShader, fragmentShader );
@@ -74,10 +55,8 @@ public class OrthographicAlignedStillModel
 			throw new IllegalStateException( OrthographicAlignedStillModel.shaderProgram.getLog() );
 	}
 
-	public OrthographicAlignedStillModel(StillModel aModel, Material material)
-	{
-		try
-		{
+	public OrthographicAlignedStillModel( StillModel aModel, Material material ) {
+		try {
 			model = new UStillModel( aModel.subMeshes.clone() );
 
 			this.material = material;
@@ -90,55 +69,47 @@ public class OrthographicAlignedStillModel
 			setPosition( 0, 0 );
 			setRotation( 0, 0, 0, 0 );
 		}
-		catch( Exception e )
-		{
+		catch( Exception e ) {
 			e.printStackTrace();
 		}
 	}
 
-	public void dispose()
-	{
+	public void dispose() {
 		try {
 			model.dispose();
-		} catch( IllegalArgumentException e )
-		{
+		}
+		catch( IllegalArgumentException e ) {
 			// buffer already disposed
 		}
 	}
 
-	public void setPositionOffsetPixels( int offsetPxX, int offsetPxY )
-	{
+	public void setPositionOffsetPixels( int offsetPxX, int offsetPxY ) {
 		positionOffsetPx.x = offsetPxX;
 		positionOffsetPx.y = offsetPxY;
 	}
 
-	/**
-	 * Sets the world position in pixels, top-left origin.
+	/** Sets the world position in pixels, top-left origin.
+	 * 
 	 * @param posPxX
-	 * @param posPxY
-	 */
-	public void setPosition( float posPxX, float posPxY )
-	{
+	 * @param posPxY */
+	public void setPosition( float posPxX, float posPxY ) {
 		positionPx.set( Director.positionFor( posPxX, posPxY ) );
 	}
 
 	public float iRotationAngle;
 	public Vector3 iRotationAxis = new Vector3();
 
-	public void setRotation( float angle, float x_axis, float y_axis, float z_axis )
-	{
+	public void setRotation( float angle, float x_axis, float y_axis, float z_axis ) {
 		iRotationAngle = angle;
 		iRotationAxis.set( x_axis, y_axis, z_axis );
 	}
 
-	private void setScalingFactor( float factor )
-	{
+	private void setScalingFactor( float factor ) {
 		scalingFactor = factor;
 		scaleAxis.set( scale, scale, scale );
 	}
 
-	public void setScale( float scale )
-	{
+	public void setScale( float scale ) {
 		this.scale = scalingFactor * scale;
 		scaleAxis.set( this.scale, this.scale, this.scale );
 	}

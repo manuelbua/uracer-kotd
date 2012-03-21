@@ -10,8 +10,7 @@ import com.bitfire.uracer.screen.GameScreen;
 import com.bitfire.uracer.screen.Screen;
 import com.bitfire.uracer.utils.AMath;
 
-public class URacer implements ApplicationListener
-{
+public class URacer implements ApplicationListener {
 	private Screen screen;
 	private Input input = new Input();
 	private boolean running = false;
@@ -32,37 +31,31 @@ public class URacer implements ApplicationListener
 	private static String versionInfo;
 	private URacerFinalizer uRacerFinalizer;
 
-	public interface URacerFinalizer
-	{
+	public interface URacerFinalizer {
 		public void dispose();
 	}
 
-	public void setFinalizer(URacerFinalizer finalizer)
-	{
+	public void setFinalizer( URacerFinalizer finalizer ) {
 		this.uRacerFinalizer = finalizer;
 	}
 
-	private static void updateVersionInformation()
-	{
+	private static void updateVersionInformation() {
 		// extrapolate version information
 		versionInfo = "uRacer";
-		try
-		{
+		try {
 			Field f = Class.forName( "com.bitfire.uracer.VersionInfo" ).getDeclaredField( "versionName" );
 			f.setAccessible( true );
 			String value = f.get( null ).toString();
-			if( value.length() > 0 )
-			{
+			if( value.length() > 0 ) {
 				versionInfo += " " + value;
 			}
 		}
-		catch(Exception e)
-		{}
+		catch( Exception e ) {
+		}
 	}
 
 	@Override
-	public void create()
-	{
+	public void create() {
 		URacer.updateVersionInformation();
 
 		Config.asDefault();
@@ -82,23 +75,22 @@ public class URacer implements ApplicationListener
 		setScreen( new GameScreen() );
 	}
 
-//	private long lastTimeNs = 0;
+	// private long lastTimeNs = 0;
 	private static float lastDeltaTimeSec = MaxDeltaTime;
 
 	private boolean quit = false;
 
-//	private WindowedMean mean = new WindowedMean( 120 );
+	// private WindowedMean mean = new WindowedMean( 120 );
 	// NOTE: this render() method will get called by JoglGraphics when screen.tick will ask to finish!!
 	@Override
-	public void render()
-	{
-		if(screen == null) return;
-		if(screen.quit()) return;
+	public void render() {
+		if( screen == null ) return;
+		if( screen.quit() ) return;
 
 		// this is not good for Android since the value often hop around
-//		long currNanos = System.nanoTime();
-//		lastDeltaTimeSec = (currNanos - lastTimeNs) * oneOnOneBillion;
-//		lastTimeNs = currNanos;
+		// long currNanos = System.nanoTime();
+		// lastDeltaTimeSec = (currNanos - lastTimeNs) * oneOnOneBillion;
+		// lastTimeNs = currNanos;
 
 		lastDeltaTimeSec = Gdx.graphics.getDeltaTime();
 
@@ -109,17 +101,16 @@ public class URacer implements ApplicationListener
 		{
 			hasStepped = false;
 			timeAccumSecs += lastDeltaTimeSec * Config.Physics.PhysicsTimeMultiplier;
-			while( timeAccumSecs > Physics.dt )
-			{
+			while( timeAccumSecs > Physics.dt ) {
 				input.tick();
 				screen.tick();
 				timeAccumSecs -= Physics.dt;
 				hasStepped = true;
-				if(screen.quit()) return;
+				if( screen.quit() ) return;
 			}
 
 			// simulate slowness
-//			try { Thread.sleep( 32 ); } catch( InterruptedException e ) {}
+			// try { Thread.sleep( 32 ); } catch( InterruptedException e ) {}
 		}
 
 		physicsTime = (System.nanoTime() - startTime) * oneOnOneBillion;
@@ -136,100 +127,84 @@ public class URacer implements ApplicationListener
 			screen.render();
 
 			// simulate slowness
-//			if(Config.isDesktop)
-//				try { Thread.sleep( 5 ); } catch( InterruptedException e ) {}
+			// if(Config.isDesktop)
+			// try { Thread.sleep( 5 ); } catch( InterruptedException e ) {}
 		}
 
 		graphicsTime = (System.nanoTime() - startTime) * oneOnOneBillion;
 		frameCount++;
-//		mean.addValue( graphicsTime );
-//		if((frameCount&0x3f)==0) System.out.println("gfx-mean="+mean.getMean());
+		// mean.addValue( graphicsTime );
+		// if((frameCount&0x3f)==0) System.out.println("gfx-mean="+mean.getMean());
 	}
 
 	@Override
-	public void resize( int width, int height )
-	{
+	public void resize( int width, int height ) {
 	}
 
 	@Override
-	public void pause()
-	{
+	public void pause() {
 		running = false;
 		screen.pause();
 	}
 
 	@Override
-	public void resume()
-	{
+	public void resume() {
 		running = true;
 		screen.resume();
 	}
 
 	@Override
-	public void dispose()
-	{
+	public void dispose() {
 		setScreen( null );
 		Debug.dispose();
 		Art.dispose();
-		if(uRacerFinalizer != null)
-			uRacerFinalizer.dispose();
+		if( uRacerFinalizer != null ) uRacerFinalizer.dispose();
 
-//		if(!Config.isDesktop || )
-			System.exit( 0 );
+		// if(!Config.isDesktop || )
+		System.exit( 0 );
 	}
 
-	public void setScreen( Screen newScreen )
-	{
-		if( screen != null )
-		{
+	public void setScreen( Screen newScreen ) {
+		if( screen != null ) {
 			screen.removed();
 		}
 
 		screen = newScreen;
 
-		if( screen != null )
-		{
+		if( screen != null ) {
 			screen.init( this );
 		}
 	}
 
-	public boolean isRunning()
-	{
+	public boolean isRunning() {
 		return running;
 	}
 
-	public static boolean hasStepped()
-	{
+	public static boolean hasStepped() {
 		return hasStepped;
 	}
 
-	public static float getRenderTime()
-	{
+	public static float getRenderTime() {
 		return graphicsTime;
 	}
 
-	public static float getPhysicsTime()
-	{
+	public static float getPhysicsTime() {
 		return physicsTime;
 	}
 
-	public static float getLastDeltaSecs()
-	{
+	public static float getLastDeltaSecs() {
 		return lastDeltaTimeSec;
 	}
 
-	public static float getTemporalAliasing()
-	{
+	public static float getTemporalAliasing() {
 		return aliasingTime;
 	}
 
-	public static long getFrameCount()
-	{
+	public static long getFrameCount() {
 		return frameCount;
 	}
 
-	public static String getVersionInfo()
-	{
+	public static String getVersionInfo() {
 		return versionInfo;
 	}
 }

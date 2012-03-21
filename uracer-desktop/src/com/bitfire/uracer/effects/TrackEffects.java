@@ -6,26 +6,21 @@ import com.bitfire.uracer.Config;
 import com.bitfire.uracer.entities.vehicles.Car;
 import com.bitfire.uracer.game.logic.GameLogic;
 
-public class TrackEffects
-{
-	public enum Effects
-	{
+public class TrackEffects {
+	public enum Effects {
 		CarSkidMarks( 1 ), SmokeTrails( 2 );
 
 		public final long id;
 
-		private Effects( int id )
-		{
+		private Effects( int id ) {
 			this.id = id;
 		}
 
-		public long asLong()
-		{
+		public long asLong() {
 			return id;
 		}
 
-		public int asInt()
-		{
+		public int asInt() {
 			return (int)id;
 		}
 	}
@@ -34,23 +29,18 @@ public class TrackEffects
 
 	private static LongMap<TrackEffect> effects;
 
-	public static void init( GameLogic logic )
-	{
+	public static void init( GameLogic logic ) {
 		playerCar = logic.getGame().getLevel().getPlayer().car;
 		effects = new LongMap<TrackEffect>();
 
 		TrackEffects.add( Effects.CarSkidMarks );
-//		TrackEffects.add( Effects.SmokeTrails );
+		// TrackEffects.add( Effects.SmokeTrails );
 	}
 
-	/**
-	 * manage effects
-	 */
+	/** manage effects */
 
-	private static void add( Effects what )
-	{
-		switch( what )
-		{
+	private static void add( Effects what ) {
+		switch( what ) {
 		case CarSkidMarks:
 			add( new CarSkidMarks( playerCar ) );
 			break;
@@ -60,11 +50,9 @@ public class TrackEffects
 		}
 	}
 
-	private static long add( TrackEffect effect )
-	{
+	private static long add( TrackEffect effect ) {
 		long result = 0;
-		if( effect != null )
-		{
+		if( effect != null ) {
 			result = effect.effectType.id;
 			effects.put( effect.effectType.id, effect );
 		}
@@ -72,11 +60,9 @@ public class TrackEffects
 		return result;
 	}
 
-	private static boolean remove( Effects what )
-	{
+	private static boolean remove( Effects what ) {
 		TrackEffect removed = effects.remove( what.id );
-		if( removed != null )
-		{
+		if( removed != null ) {
 			removed.dispose();
 			return true;
 		}
@@ -84,57 +70,46 @@ public class TrackEffects
 		return false;
 	}
 
-	public static TrackEffect get( Effects what )
-	{
+	public static TrackEffect get( Effects what ) {
 		return effects.get( what.id );
 	}
 
-	/**
-	 * life
-	 */
+	/** life */
 
-	public static void tick()
-	{
+	public static void tick() {
 		for( TrackEffect effect : effects.values() )
 			effect.tick();
 	}
 
-	public static void reset()
-	{
+	public static void reset() {
 		for( TrackEffect effect : effects.values() )
 			effect.reset();
 	}
 
-	public static void dispose()
-	{
+	public static void dispose() {
 		remove( Effects.CarSkidMarks );
 		remove( Effects.SmokeTrails );
 	}
 
-	public static void render( SpriteBatch batch )
-	{
+	public static void render( SpriteBatch batch ) {
 		TrackEffect effect;
 
 		effect = effects.get( TrackEffects.Effects.CarSkidMarks.id );
-		if( Config.Graphics.hasEffect(TrackEffects.Effects.CarSkidMarks.id) && effect != null ) effect.render( batch );
+		if( Config.Graphics.hasEffect( TrackEffects.Effects.CarSkidMarks.id ) && effect != null ) effect.render( batch );
 
 		effect = effects.get( TrackEffects.Effects.SmokeTrails.id );
-		if( Config.Graphics.hasEffect(TrackEffects.Effects.SmokeTrails.id) && effect != null ) effect.render( batch );
+		if( Config.Graphics.hasEffect( TrackEffects.Effects.SmokeTrails.id ) && effect != null ) effect.render( batch );
 	}
 
-	/**
-	 * expose effects TODO find a more sensible way without incurring in overhead
-	 */
+	/** expose effects TODO find a more sensible way without incurring in overhead */
 
-	public static void renderEffect( Effects what, SpriteBatch batch )
-	{
+	public static void renderEffect( Effects what, SpriteBatch batch ) {
 		effects.get( what.id ).render( batch );
 	}
 
-	public static int getParticleCount( Effects what )
-	{
+	public static int getParticleCount( Effects what ) {
 		TrackEffect effect = effects.get( what.id );
-		if(effect==null) return 0;
+		if( effect == null ) return 0;
 		return effect.getParticleCount();
 	}
 }

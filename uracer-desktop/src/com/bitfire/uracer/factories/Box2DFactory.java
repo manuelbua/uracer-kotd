@@ -13,23 +13,18 @@ import com.bitfire.uracer.Config;
 import com.bitfire.uracer.Physics;
 import com.bitfire.uracer.entities.CollisionFilters;
 
-public class Box2DFactory
-{
+public class Box2DFactory {
 
-	public static void init()
-	{
+	public static void init() {
 		tmp1 = new Vector2();
 		tmp2 = new Vector2();
 		from = new Vector2();
 		to = new Vector2();
 	}
 
-	/**
-	 * Creates a circle object with the given position and radius. Resitution
-	 * defaults to 0.6.
-	 */
-	public static Body createCircle( float x, float y, float radius, boolean isStatic )
-	{
+	/** Creates a circle object with the given position and radius. Resitution
+	 * defaults to 0.6. */
+	public static Body createCircle( float x, float y, float radius, boolean isStatic ) {
 		CircleShape sd = new CircleShape();
 		sd.setRadius( radius );
 
@@ -39,11 +34,10 @@ public class Box2DFactory
 		bd.position.set( x, y );
 		Body body = Physics.world.createBody( bd );
 
-		if( isStatic )
-		{
+		if( isStatic ) {
 			body.setType( BodyDef.BodyType.StaticBody );
-		} else
-		{
+		}
+		else {
 			body.setType( BodyDef.BodyType.DynamicBody );
 		}
 
@@ -65,23 +59,17 @@ public class Box2DFactory
 		return body;
 	}
 
-	/**
-	 * Creates a wall by constructing a rectangle whose corners are (xmin,ymin)
+	/** Creates a wall by constructing a rectangle whose corners are (xmin,ymin)
 	 * and (xmax,ymax), and rotating the box counterclockwise through the given
-	 * angle. Restitution defaults to 0.
-	 */
-	public static Body createWall( float xmin, float ymin, float xmax, float ymax, float angle )
-	{
+	 * angle. Restitution defaults to 0. */
+	public static Body createWall( float xmin, float ymin, float xmax, float ymax, float angle ) {
 		return createWall( xmin, ymin, xmax, ymax, angle, 0f );
 	}
 
-	/**
-	 * Creates a wall by constructing a rectangle whose corners are (xmin,ymin)
+	/** Creates a wall by constructing a rectangle whose corners are (xmin,ymin)
 	 * and (xmax,ymax), and rotating the box counterclockwise through the given
-	 * angle, with specified restitution.
-	 */
-	public static Body createWall( float xmin, float ymin, float xmax, float ymax, float angle, float restitution )
-	{
+	 * angle, with specified restitution. */
+	public static Body createWall( float xmin, float ymin, float xmax, float ymax, float angle, float restitution ) {
 		float cx = (xmin + xmax) / 2;
 		float cy = (ymin + ymax) / 2;
 		float hx = (xmax - xmin) / 2;
@@ -100,8 +88,7 @@ public class Box2DFactory
 		fdef.filter.categoryBits = CollisionFilters.CategoryTrackWalls;
 		fdef.filter.maskBits = CollisionFilters.MaskWalls;
 
-		if( Config.Debug.TraverseWalls )
-		{
+		if( Config.Debug.TraverseWalls ) {
 			fdef.filter.groupIndex = CollisionFilters.GroupNoCollisions;
 		}
 
@@ -115,12 +102,9 @@ public class Box2DFactory
 		return wall;
 	}
 
-	/**
-	 * Creates a segment-like thin wall with 0.05 thickness going from (x1,y1)
-	 * to (x2,y2)
-	 */
-	public static Body createThinWall( float x1, float y1, float x2, float y2, float restitution )
-	{
+	/** Creates a segment-like thin wall with 0.05 thickness going from (x1,y1)
+	 * to (x2,y2) */
+	public static Body createThinWall( float x1, float y1, float x2, float y2, float restitution ) {
 		// determine center point and rotation angle for createWall
 		float cx = (x1 + x2) / 2;
 		float cy = (y1 + y2) / 2;
@@ -129,8 +113,7 @@ public class Box2DFactory
 		return createWall( cx - mag / 2, cy - 0.05f, cx + mag / 2, cy + 0.05f, angle, restitution );
 	}
 
-	public static Body createWall( Vector2 from, Vector2 to, float size, float restitution )
-	{
+	public static Body createWall( Vector2 from, Vector2 to, float size, float restitution ) {
 		// determine center point and rotation angle for createWall
 		float halfSize = size / 2f;
 		float cx = (from.x + to.x) / 2;
@@ -145,9 +128,7 @@ public class Box2DFactory
 	private static Vector2 from;
 	private static Vector2 to;
 
-	/**
-	 *
-	 * @param unitCircleRadius
+	/** @param unitCircleRadius
 	 * @param offset
 	 * @param tickness
 	 * @param lumpLen
@@ -158,11 +139,9 @@ public class Box2DFactory
 	 *            wall being constructed.
 	 * @param restitution
 	 * @param returnResult
-	 * @return
-	 */
+	 * @return */
 	public static ArrayList<Body> createAngularWall( Vector2 unitCircleRadius, Vector2 offset, float tickness, float lumpLen,
-			float angle, int steps, Vector2 rotationOffset, float restitution, boolean returnResult )
-	{
+			float angle, int steps, Vector2 rotationOffset, float restitution, boolean returnResult ) {
 		ArrayList<Body> result = null;
 		if( returnResult ) result = new ArrayList<Body>();
 
@@ -180,8 +159,7 @@ public class Box2DFactory
 		tmp2.x += halfTickness * rotationOffset.y;
 		tmp2.y -= lumpLen;
 
-		for( int step = 0; step < steps; step++ )
-		{
+		for( int step = 0; step < steps; step++ ) {
 			from.x = offset.x + tmp1.x;
 			from.y = offset.y - tmp1.y;
 			to.x = offset.x + tmp2.x;

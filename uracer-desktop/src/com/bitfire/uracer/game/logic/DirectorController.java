@@ -4,10 +4,8 @@ import com.badlogic.gdx.math.Vector2;
 import com.bitfire.uracer.Director;
 import com.bitfire.uracer.utils.AMath;
 
-public class DirectorController
-{
-	public enum InterpolationMode
-	{
+public class DirectorController {
+	public enum InterpolationMode {
 		Off, Linear, Sigmoid
 	}
 
@@ -16,33 +14,27 @@ public class DirectorController
 	private float sigmoidStrengthX = 1f;
 	private float sigmoidStrengthY = 1f;
 
-	public DirectorController( InterpolationMode mode )
-	{
+	public DirectorController( InterpolationMode mode ) {
 		boundsWidth = Director.boundsPx.width - Director.boundsPx.x;
 		boundsHeight = Director.boundsPx.y - Director.boundsPx.height;
 
 		sigmoidStrengthX = AMath.clamp( (Director.worldSizeTiles.x / 4f), 1f, 5f );
 		sigmoidStrengthY = AMath.clamp( (Director.worldSizeTiles.y / 4f), 1f, 5f );
 
-		switch( mode )
-		{
+		switch( mode ) {
 		default:
 		case Off:
-			interpolator = new PositionInterpolator()
-			{
+			interpolator = new PositionInterpolator() {
 				@Override
-				public Vector2 transform( Vector2 targetPosition )
-				{
+				public Vector2 transform( Vector2 targetPosition ) {
 					return targetPosition;
 				}
 			};
 			break;
 		case Linear:
-			interpolator = new PositionInterpolator()
-			{
+			interpolator = new PositionInterpolator() {
 				@Override
-				public Vector2 transform( Vector2 targetPosition )
-				{
+				public Vector2 transform( Vector2 targetPosition ) {
 					// [0,1]
 					float x_ratio = targetPosition.x / Director.worldSizeScaledPx.x;
 					float y_ratio = targetPosition.y / Director.worldSizeScaledPx.y;
@@ -56,11 +48,9 @@ public class DirectorController
 			break;
 
 		case Sigmoid:
-			interpolator = new PositionInterpolator()
-			{
+			interpolator = new PositionInterpolator() {
 				@Override
-				public Vector2 transform( Vector2 target )
-				{
+				public Vector2 transform( Vector2 target ) {
 					float tx = target.x;
 					float ty = target.y;
 
@@ -78,17 +68,14 @@ public class DirectorController
 		}
 	}
 
-	public void setPosition( Vector2 pos )
-	{
+	public void setPosition( Vector2 pos ) {
 		Director.setPositionPx( interpolator.transform( pos ), false, true );
 	}
 
-	private abstract class PositionInterpolator
-	{
+	private abstract class PositionInterpolator {
 		protected Vector2 tmp = new Vector2();
 
-		public PositionInterpolator()
-		{
+		public PositionInterpolator() {
 		}
 
 		public abstract Vector2 transform( Vector2 targetPosition );

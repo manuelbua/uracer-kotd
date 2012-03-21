@@ -5,8 +5,7 @@ import com.bitfire.uracer.entities.vehicles.Car;
 import com.bitfire.uracer.entities.vehicles.GhostCar;
 import com.bitfire.uracer.utils.AMath;
 
-public class Player
-{
+public class Player {
 	public final Car car;
 	public final GhostCar ghost;
 
@@ -26,9 +25,7 @@ public class Player
 	// current
 	public int currTileX = 1, currTileY = 1;
 
-
-	public Player(Car car, GhostCar ghost)
-	{
+	public Player( Car car, GhostCar ghost ) {
 		this.car = car;
 		this.ghost = ghost;
 
@@ -38,25 +35,25 @@ public class Player
 	}
 
 	private int lastTileX = 0, lastTileY = 0;
-	public void update(IGameLogicListener listener)
-	{
+
+	public void update( IGameLogicListener listener ) {
 		// onTileChanged
-		lastTileX = currTileX; lastTileY = currTileY;
+		lastTileX = currTileX;
+		lastTileY = currTileY;
 		Vector2 tp = car.getTilePosition();
-		currTileX = (int)tp.x; currTileY = (int)tp.y;
-		if( (lastTileX != currTileX) || (lastTileY != currTileY) )
-		{
-			listener.onTileChanged(this);
+		currTileX = (int)tp.x;
+		currTileY = (int)tp.y;
+		if( (lastTileX != currTileX) || (lastTileY != currTileY) ) {
+			listener.onTileChanged( this );
 		}
 
 		// speed/force normalized factors
 		currCarSpeedSquared = car.getCarDescriptor().velocity_wc.len2();
-		currSpeedFactor = AMath.clamp(currCarSpeedSquared / carMaxSpeedSquared, 0f, 1f);
-		currForceFactor = AMath.clamp(car.getCarDescriptor().throttle / carMaxForce, 0f, 1f);
+		currSpeedFactor = AMath.clamp( currCarSpeedSquared / carMaxSpeedSquared, 0f, 1f );
+		currForceFactor = AMath.clamp( car.getCarDescriptor().throttle / carMaxForce, 0f, 1f );
 	}
 
-	public void reset()
-	{
+	public void reset() {
 		car.reset();
 		ghost.reset();
 

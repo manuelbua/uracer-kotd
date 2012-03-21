@@ -1,8 +1,6 @@
 package com.bitfire.uracer.game.logic;
 
-
-public interface IGameLogicListener
-{
+public interface IGameLogicListener {
 	public abstract void onCreate();
 
 	public abstract void onReset();

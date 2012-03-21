@@ -16,62 +16,57 @@ import com.bitfire.uracer.tiled.OrthographicAlignedStillModel;
 import com.bitfire.uracer.tiled.TreeStillModel;
 import com.bitfire.uracer.utils.Hash;
 
-public class ModelFactory
-{
+public class ModelFactory {
 	public enum ModelMesh {
-		Missing, Palm, Tribune,
-		Tree_1, Tree_2, Tree_3, Tree_4, Tree_5, Tree_6, Tree_7, Tree_8, Tree_9
+		Missing, Palm, Tribune, Tree_1, Tree_2, Tree_3, Tree_4, Tree_5, Tree_6, Tree_7, Tree_8, Tree_9
 	}
 
-	private static ModelMesh fromString(String mesh)
-	{
-		if(mesh==null)
-			return ModelMesh.Missing;
-		if(mesh.equalsIgnoreCase( "palm" )) return ModelMesh.Palm;
-		if(mesh.equalsIgnoreCase( "tribune" )) return ModelMesh.Tribune;
-		if(mesh.equalsIgnoreCase( "tree-1" )) return ModelMesh.Tree_1;
-		if(mesh.equalsIgnoreCase( "tree-2" )) return ModelMesh.Tree_2;
-		if(mesh.equalsIgnoreCase( "tree-3" )) return ModelMesh.Tree_3;
-		if(mesh.equalsIgnoreCase( "tree-4" )) return ModelMesh.Tree_4;
-		if(mesh.equalsIgnoreCase( "tree-5" )) return ModelMesh.Tree_5;
-		if(mesh.equalsIgnoreCase( "tree-6" )) return ModelMesh.Tree_6;
-		if(mesh.equalsIgnoreCase( "tree-7" )) return ModelMesh.Tree_7;
-		if(mesh.equalsIgnoreCase( "tree-8" )) return ModelMesh.Tree_8;
-		if(mesh.equalsIgnoreCase( "tree-9" )) return ModelMesh.Tree_9;
+	private static ModelMesh fromString( String mesh ) {
+		if( mesh == null ) return ModelMesh.Missing;
+		if( mesh.equalsIgnoreCase( "palm" ) ) return ModelMesh.Palm;
+		if( mesh.equalsIgnoreCase( "tribune" ) ) return ModelMesh.Tribune;
+		if( mesh.equalsIgnoreCase( "tree-1" ) ) return ModelMesh.Tree_1;
+		if( mesh.equalsIgnoreCase( "tree-2" ) ) return ModelMesh.Tree_2;
+		if( mesh.equalsIgnoreCase( "tree-3" ) ) return ModelMesh.Tree_3;
+		if( mesh.equalsIgnoreCase( "tree-4" ) ) return ModelMesh.Tree_4;
+		if( mesh.equalsIgnoreCase( "tree-5" ) ) return ModelMesh.Tree_5;
+		if( mesh.equalsIgnoreCase( "tree-6" ) ) return ModelMesh.Tree_6;
+		if( mesh.equalsIgnoreCase( "tree-7" ) ) return ModelMesh.Tree_7;
+		if( mesh.equalsIgnoreCase( "tree-8" ) ) return ModelMesh.Tree_8;
+		if( mesh.equalsIgnoreCase( "tree-9" ) ) return ModelMesh.Tree_9;
 
 		return ModelMesh.Missing;
 	}
 
-	public static OrthographicAlignedStillModel create( String meshType, float posPxX, float posPxY, float scale )
-	{
+	public static OrthographicAlignedStillModel create( String meshType, float posPxX, float posPxY, float scale ) {
 		ModelMesh type = fromString( meshType );
 		return ModelFactory.create( type, posPxX, posPxY, scale );
 	}
 
-	public static OrthographicAlignedStillModel create( ModelMesh modelMesh, float posPxX, float posPxY, float scale )
-	{
+	public static OrthographicAlignedStillModel create( ModelMesh modelMesh, float posPxX, float posPxY, float scale ) {
 		OrthographicAlignedStillModel stillModel = null;
 
-		switch( modelMesh )
-		{
+		switch( modelMesh ) {
 		case Palm:
-			stillModel = new OrthographicAlignedStillModel( getModel("data/3d/models/palm.g3dt"), getMaterial(modelMesh,Art.meshPalm) );
+			stillModel = new OrthographicAlignedStillModel( getModel( "data/3d/models/palm.g3dt" ), getMaterial( modelMesh,
+					Art.meshPalm ) );
 			break;
 
 		case Tribune:
-			stillModel = new OrthographicAlignedStillModel( getModel("data/3d/models/tribune.g3dt"), getMaterial(modelMesh,Art.meshTribune) );
+			stillModel = new OrthographicAlignedStillModel( getModel( "data/3d/models/tribune.g3dt" ), getMaterial( modelMesh,
+					Art.meshTribune ) );
 			break;
 
 		// missing mesh mesh
 		case Missing:
 		default:
-			stillModel = new OrthographicAlignedStillModel( getModel("data/3d/models/missing-mesh.g3dt"), getMaterial(modelMesh,Art.meshMissing) );
+			stillModel = new OrthographicAlignedStillModel( getModel( "data/3d/models/missing-mesh.g3dt" ), getMaterial(
+					modelMesh, Art.meshMissing ) );
 		}
 
-		if( stillModel != null )
-		{
+		if( stillModel != null ) {
 			stillModel.setPosition( posPxX, posPxY );
-			if(modelMesh!=ModelMesh.Missing)
+			if( modelMesh != ModelMesh.Missing )
 				stillModel.setScale( scale );
 			else
 				stillModel.setScale( 1 );
@@ -80,21 +75,18 @@ public class ModelFactory
 		return stillModel;
 	}
 
-	public static TreeStillModel createTree( String meshType, float posPxX, float posPxY, float scale )
-	{
+	public static TreeStillModel createTree( String meshType, float posPxX, float posPxY, float scale ) {
 		ModelMesh type = fromString( meshType );
 		return ModelFactory.createTree( type, posPxX, posPxY, scale );
 	}
 
-	public static TreeStillModel createTree( ModelMesh modelMesh, float posPxX, float posPxY, float scale )
-	{
+	public static TreeStillModel createTree( ModelMesh modelMesh, float posPxX, float posPxY, float scale ) {
 		TreeStillModel stillModel = null;
 
 		String treeModelName = "", treeMeshName = "";
 		Texture leavesTexture = null;
 
-		switch( modelMesh )
-		{
+		switch( modelMesh ) {
 		case Tree_1:
 			treeModelName = "tree-1.g3dt";
 			treeMeshName = "tree_1_";
@@ -150,12 +142,12 @@ public class ModelFactory
 			break;
 		}
 
-		stillModel = new TreeStillModel( getModel("data/3d/models/" + treeModelName), getMaterial(modelMesh, leavesTexture), treeMeshName );
+		stillModel = new TreeStillModel( getModel( "data/3d/models/" + treeModelName ), getMaterial( modelMesh, leavesTexture ),
+				treeMeshName );
 
-		if( stillModel != null )
-		{
+		if( stillModel != null ) {
 			stillModel.setPosition( posPxX, posPxY );
-			if(modelMesh!=ModelMesh.Missing)
+			if( modelMesh != ModelMesh.Missing )
 				stillModel.setScale( scale );
 			else
 				stillModel.setScale( 1 );
@@ -165,24 +157,21 @@ public class ModelFactory
 	}
 
 	private static LongMap<Material> cachedMaterials = null;
-	private static Material getMaterial(ModelMesh modelMesh, Texture texture)
-	{
+
+	private static Material getMaterial( ModelMesh modelMesh, Texture texture ) {
 		Material m = null;
 
 		long materialHash = Hash.RSHash( modelMesh.toString() );
-		if(cachedMaterials==null)
-		{
+		if( cachedMaterials == null ) {
 			cachedMaterials = new LongMap<Material>();
 		}
 
-		if(cachedMaterials.containsKey( materialHash ))
-		{
+		if( cachedMaterials.containsKey( materialHash ) ) {
 			return cachedMaterials.get( materialHash );
 		}
-		else
-		{
-			TextureAttribute ta = new TextureAttribute(texture, 0, "textureAttributes");
-			m = new Material("default", ta);
+		else {
+			TextureAttribute ta = new TextureAttribute( texture, 0, "textureAttributes" );
+			m = new Material( "default", ta );
 
 			cachedMaterials.put( materialHash, m );
 		}
@@ -191,43 +180,37 @@ public class ModelFactory
 	}
 
 	private static LongMap<StillModel> cachedModels = null;
-	private static StillModel getModel( String model )
-	{
-		StillModel m = null;
-		long modelHash = Hash.RSHash(model);
 
-		if(cachedModels==null)
-		{
+	private static StillModel getModel( String model ) {
+		StillModel m = null;
+		long modelHash = Hash.RSHash( model );
+
+		if( cachedModels == null ) {
 			cachedModels = new LongMap<StillModel>();
 		}
 
-		if( cachedModels.containsKey( modelHash ))
-		{
+		if( cachedModels.containsKey( modelHash ) ) {
 			return cachedModels.get( modelHash );
 		}
-		else
-		{
-			try
-			{
+		else {
+			try {
 				String[] ext = model.split( "\\." );
 
-				if(ext[1].equals( "g3dt" ))
-				{
+				if( ext[1].equals( "g3dt" ) ) {
 					// NO opengl coords, NO invert v
 					InputStream in = Gdx.files.internal( model ).read();
 					m = G3dtLoader.loadStillModel( in, true );
 					in.close();
 				}
-				else if(ext[1].equals( "obj" ))
-				{
+				else if( ext[1].equals( "obj" ) ) {
 					// y-forward, z-up
 					ObjLoader l = new ObjLoader();
 					m = l.loadObj( Gdx.files.internal( model ), true );
 				}
 
 				cachedModels.put( modelHash, m );
-			} catch( IOException ioex )
-			{
+			}
+			catch( IOException ioex ) {
 				ioex.printStackTrace();
 			}
 		}

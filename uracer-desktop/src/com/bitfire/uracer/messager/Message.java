@@ -21,8 +21,7 @@ import com.bitfire.uracer.messager.Messager.MessageType;
 import com.bitfire.uracer.tweener.accessors.MessageAccessor;
 import com.bitfire.uracer.utils.AMath;
 
-public class Message
-{
+public class Message {
 	public long durationMs;
 	public long startMs;
 	public boolean started;
@@ -40,19 +39,16 @@ public class Message
 	private float alpha;
 	private boolean hiding;
 
-	public Message()
-	{
+	public Message() {
 		bounds = new TextBounds();
 	}
 
-	public Message( String message, float durationSecs, MessageType type, MessagePosition position, MessageSize size )
-	{
+	public Message( String message, float durationSecs, MessageType type, MessagePosition position, MessageSize size ) {
 		this();
 		set( message, durationSecs, type, position, size );
 	}
 
-	public void set( String message, float durationSecs, MessageType type, MessagePosition position, MessageSize size )
-	{
+	public void set( String message, float durationSecs, MessageType type, MessagePosition position, MessageSize size ) {
 		startMs = 0;
 		started = false;
 		halfWidth = (int)(Gdx.graphics.getWidth() / 2);
@@ -65,8 +61,7 @@ public class Message
 		durationMs = (int)(durationSecs * 1000f);
 		hiding = false;
 
-		switch( this.type )
-		{
+		switch( this.type ) {
 		default:
 		case Information:
 			if( size == MessageSize.Normal )
@@ -91,24 +86,23 @@ public class Message
 		}
 	}
 
-	private void computeFinalPosition()
-	{
+	private void computeFinalPosition() {
 		whereX = finalX = Gdx.graphics.getWidth() / 4;
 		finalY = 0;
 
 		float distance = 180 * Director.scalingStrategy.invTileMapZoomFactor;
 
-		switch( position )
-		{
+		switch( position ) {
 		case Top:
 			finalY = 30 * Director.scalingStrategy.invTileMapZoomFactor;
 			whereY = Gdx.graphics.getHeight() / 2;
 			break;
 
 		case Middle:
-			font.setScale(1.5f * Director.scalingStrategy.invTileMapZoomFactor, 1.5f * Director.scalingStrategy.invTileMapZoomFactor);
+			font.setScale( 1.5f * Director.scalingStrategy.invTileMapZoomFactor,
+					1.5f * Director.scalingStrategy.invTileMapZoomFactor );
 			bounds.set( font.getMultiLineBounds( what ) );
-			finalY = (Gdx.graphics.getHeight() - bounds.height) / 2 - bounds.height/2;
+			finalY = (Gdx.graphics.getHeight() - bounds.height) / 2 - bounds.height / 2;
 			whereY = Gdx.graphics.getHeight() + bounds.height;
 			break;
 
@@ -118,112 +112,94 @@ public class Message
 			break;
 		}
 
-		font.setScale(Director.scalingStrategy.invTileMapZoomFactor,Director.scalingStrategy.invTileMapZoomFactor);
+		font.setScale( Director.scalingStrategy.invTileMapZoomFactor, Director.scalingStrategy.invTileMapZoomFactor );
 	}
 
-	public boolean tick()
-	{
+	public boolean tick() {
 		return !finished;
 	}
 
-	public void render( SpriteBatch batch )
-	{
-		font.setScale(scaleX * Director.scalingStrategy.invTileMapZoomFactor, scaleY * Director.scalingStrategy.invTileMapZoomFactor);
+	public void render( SpriteBatch batch ) {
+		font.setScale( scaleX * Director.scalingStrategy.invTileMapZoomFactor, scaleY
+				* Director.scalingStrategy.invTileMapZoomFactor );
 		font.setColor( 1, 1, 1, alpha );
 		font.drawMultiLine( batch, what, whereX, whereY, halfWidth, HAlignment.CENTER );
-		font.setColor( 1, 1, 1, 1  );
+		font.setColor( 1, 1, 1, 1 );
 	}
 
-	public void onShow()
-	{
+	public void onShow() {
 		finished = false;
 		hiding = false;
 
-//		scaleX = scaleY = 1f;
+		// scaleX = scaleY = 1f;
 		computeFinalPosition();
 
 		Game.getTweener().start(
-			Timeline.createParallel()
-				.push( Tween.to( this, MessageAccessor.OPACITY, 400 ).target( 1f ).ease( Expo.INOUT ) )
-				.push( Tween.to( this, MessageAccessor.POSITION_Y, 400 ).target( finalY ).ease( Expo.INOUT ) )
-				.push( Tween.to( this, MessageAccessor.SCALE_XY, 500 ).target( 1.5f, 1.5f ).ease( Back.INOUT ) )
-		);
+				Timeline.createParallel().push( Tween.to( this, MessageAccessor.OPACITY, 400 ).target( 1f ).ease( Expo.INOUT ) )
+						.push( Tween.to( this, MessageAccessor.POSITION_Y, 400 ).target( finalY ).ease( Expo.INOUT ) )
+						.push( Tween.to( this, MessageAccessor.SCALE_XY, 500 ).target( 1.5f, 1.5f ).ease( Back.INOUT ) ) );
 	}
 
-	public void onHide()
-	{
+	public void onHide() {
 		hiding = true;
 
 		Game.getTweener().start(
-			Timeline.createParallel()
-				.push( Tween.to( this, MessageAccessor.OPACITY, 500 ).target( 0f ).ease( Expo.INOUT ) )
-				.push( Tween.to( this, MessageAccessor.POSITION_Y, 500 ).target( -50 * font.getScaleX() ).ease( Expo.INOUT ) )
-				.push( Tween.to( this, MessageAccessor.SCALE_XY, 400 ).target( 1f, 1f ).ease( Back.INOUT ) )
-				.addCallback( TweenCallback.EventType.COMPLETE, new TweenCallback()
-							{
-								@Override
-								public void onEvent( EventType eventType, BaseTween source )
-								{
-									finished = true;
-								}
-							} )
-		);
+				Timeline.createParallel()
+						.push( Tween.to( this, MessageAccessor.OPACITY, 500 ).target( 0f ).ease( Expo.INOUT ) )
+						.push( Tween.to( this, MessageAccessor.POSITION_Y, 500 ).target( -50 * font.getScaleX() )
+								.ease( Expo.INOUT ) )
+						.push( Tween.to( this, MessageAccessor.SCALE_XY, 400 ).target( 1f, 1f ).ease( Back.INOUT ) )
+						.addCallback( TweenCallback.EventType.COMPLETE, new TweenCallback() {
+							@Override
+							public void onEvent( EventType eventType, BaseTween source ) {
+								finished = true;
+							}
+						} ) );
 	}
 
-	public boolean isHiding()
-	{
+	public boolean isHiding() {
 		return hiding;
 	}
 
-	public float getX()
-	{
+	public float getX() {
 		return whereX;
 	}
 
-	public float getY()
-	{
+	public float getY() {
 		return whereY;
 	}
 
-	public float getScaleX()
-	{
+	public float getScaleX() {
 		return scaleX;
 	}
 
-	public float getScaleY()
-	{
+	public float getScaleY() {
 		return scaleY;
 	}
 
-	public float getAlpha()
-	{
+	public float getAlpha() {
 		return alpha;
 	}
 
-	public void setAlpha(float value)
-	{
+	public void setAlpha( float value ) {
 		alpha = value;
 	}
 
-	public void setPosition(float x, float y)
-	{
+	public void setPosition( float x, float y ) {
 		whereX = x;
 		whereY = y;
 	}
 
-	public void setScale(float scaleX, float scaleY)
-	{
+	public void setScale( float scaleX, float scaleY ) {
 		this.scaleX = AMath.clamp( scaleX, 0.1f, 10f );
 		this.scaleY = AMath.clamp( scaleY, 0.1f, 10f );
 	}
 
-	public void setX(float x)
-	{
+	public void setX( float x ) {
 		whereX = x;
 	}
 
-	public void setY(float y)
-	{
+	public void setY( float y ) {
 		whereY = y;
 	}
 }

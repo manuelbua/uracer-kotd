@@ -8,8 +8,7 @@ import com.bitfire.uracer.messager.Messager.MessageSize;
 import com.bitfire.uracer.messager.Messager.MessageType;
 import com.bitfire.uracer.utils.NumberString;
 
-public class GameLogicListener implements IGameLogicListener
-{
+public class GameLogicListener implements IGameLogicListener {
 	private GameLogic logic = null;
 	private Level level = null;
 
@@ -18,55 +17,45 @@ public class GameLogicListener implements IGameLogicListener
 	private boolean isFirstLap = true;
 	private long lastRecordedLapId = 0;
 
-	public GameLogicListener( GameLogic logic )
-	{
+	public GameLogicListener( GameLogic logic ) {
 		this.logic = logic;
 		this.level = logic.getGame().getLevel();
 		this.lapInfo = LapInfo.get();
 	}
 
 	@Override
-	public void onCreate()
-	{
+	public void onCreate() {
 	}
 
 	@Override
-	public void onReset()
-	{
+	public void onReset() {
 		lapInfo.reset();
 		isFirstLap = true;
 		lastRecordedLapId = 0;
 	}
 
 	@Override
-	public void onRestart()
-	{
+	public void onRestart() {
 		isFirstLap = true;
-//		Messager.show( "WARM  UP  LAP", 3f, MessageType.Information, MessagePosition.Middle, MessageSize.Big );
+		// Messager.show( "WARM  UP  LAP", 3f, MessageType.Information, MessagePosition.Middle, MessageSize.Big );
 
+		/** debug */
 
-		/**
-		 * debug
-		 */
-
-//		HudDrifting hud = logic.getGame().getHud().getDrifting();
-//		HudLabel label = hud.labelResult;
-//		label.setAlpha( 0 );
-//		label.setString( "+2.30!" );
-//		label.setPosition( Gdx.graphics.getWidth()/2, Gdx.graphics.getHeight()/2);
-//		label.setFont( Art.fontCurseYRbig );
-//		label.slide( new Vector2(0,-1), 10 );
+		// HudDrifting hud = logic.getGame().getHud().getDrifting();
+		// HudLabel label = hud.labelResult;
+		// label.setAlpha( 0 );
+		// label.setString( "+2.30!" );
+		// label.setPosition( Gdx.graphics.getWidth()/2, Gdx.graphics.getHeight()/2);
+		// label.setFont( Art.fontCurseYRbig );
+		// label.slide( new Vector2(0,-1), 10 );
 	}
 
 	@Override
-	public void onTileChanged( Player player )
-	{
+	public void onTileChanged( Player player ) {
 		boolean onStartZone = (player.currTileX == player.startTileX && player.currTileY == player.startTileY);
 
-		if( onStartZone )
-		{
-			if( isFirstLap )
-			{
+		if( onStartZone ) {
+			if( isFirstLap ) {
 				isFirstLap = false;
 
 				lapInfo.restart();
@@ -74,21 +63,19 @@ public class GameLogicListener implements IGameLogicListener
 				level.beginRecording( buf, lapInfo.getStartNanotime() );
 				lastRecordedLapId = buf.id;
 
-				if( lapInfo.hasAnyReplayData() )
-				{
+				if( lapInfo.hasAnyReplayData() ) {
 					Replay any = lapInfo.getAnyReplay();
 					player.ghost.setReplay( any );
 				}
-			} else
-			{
+			}
+			else {
 				if( level.isRecording() ) level.endRecording();
 
 				lapInfo.update();
 
 				// replay best, overwrite worst logic
 
-				if( !lapInfo.hasAllReplayData() )
-				{
+				if( !lapInfo.hasAllReplayData() ) {
 					// only one single replay
 					lapInfo.restart();
 					Replay buf = lapInfo.getNextBuffer();
@@ -100,22 +87,20 @@ public class GameLogicListener implements IGameLogicListener
 					lapInfo.setLastTrackTimeSeconds( any.trackTimeSeconds );
 
 					Messager.show( "GO!  GO!  GO!", 3f, MessageType.Information, MessagePosition.Middle, MessageSize.Big );
-				} else
-				{
+				}
+				else {
 					// both valid, replay best, overwrite worst
 					Replay best = lapInfo.getBestReplay(), worst = lapInfo.getWorstReplay();
 
-					if( lastRecordedLapId == best.id )
-					{
+					if( lastRecordedLapId == best.id ) {
 						lapInfo.setLastTrackTimeSeconds( best.trackTimeSeconds );
-						Messager.show( "-" + NumberString.format(worst.trackTimeSeconds - best.trackTimeSeconds)
-								+ " seconds!", 3f, MessageType.Good, MessagePosition.Top, MessageSize.Big );
-					} else
-					{
+						Messager.show( "-" + NumberString.format( worst.trackTimeSeconds - best.trackTimeSeconds ) + " seconds!",
+								3f, MessageType.Good, MessagePosition.Top, MessageSize.Big );
+					}
+					else {
 						lapInfo.setLastTrackTimeSeconds( worst.trackTimeSeconds );
-						Messager.show(
-								"+" + NumberString.format(worst.trackTimeSeconds - best.trackTimeSeconds) + " seconds", 3f,
-								MessageType.Bad, MessagePosition.Top, MessageSize.Big );
+						Messager.show( "+" + NumberString.format( worst.trackTimeSeconds - best.trackTimeSeconds ) + " seconds",
+								3f, MessageType.Bad, MessagePosition.Top, MessageSize.Big );
 					}
 
 					player.ghost.setReplay( best );
@@ -129,18 +114,16 @@ public class GameLogicListener implements IGameLogicListener
 	}
 
 	@Override
-	public void onBeginDrift()
-	{
+	public void onBeginDrift() {
 		logic.getGame().getHud().getDrifting().onBeginDrift();
 		CarSoundManager.driftBegin();
-//		System.out.println("-> drift starts");
+		// System.out.println("-> drift starts");
 	}
 
 	@Override
-	public void onEndDrift()
-	{
+	public void onEndDrift() {
 		logic.getGame().getHud().getDrifting().onEndDrift();
 		CarSoundManager.driftEnd();
-//		System.out.println("<- drift ends");
+		// System.out.println("<- drift ends");
 	}
 }

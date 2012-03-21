@@ -9,8 +9,7 @@ import com.badlogic.gdx.graphics.g2d.BitmapFont;
 import com.badlogic.gdx.graphics.g2d.TextureAtlas;
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
 
-public class Art
-{
+public class Art {
 	public static TextureRegion[][] base6;
 	public static TextureRegion quad;
 
@@ -39,8 +38,7 @@ public class Art
 
 	private static boolean mipMap;
 
-	public static void load()
-	{
+	public static void load() {
 		mipMap = Config.Graphics.EnableMipMapping;
 
 		base6 = split( "data/base/base6.png", 6, 6, mipMap );
@@ -53,11 +51,12 @@ public class Art
 
 		// trees
 		meshTreeTrunk = newTexture( "data/3d/textures/trunk_6_col.png", mipMap );
-		meshTreeLeavesSpring = new Texture[7];
-		for(int i = 0; i < 7; i++) meshTreeLeavesSpring[i] = newTexture( "data/3d/textures/leaves_" + (i+1) + "_spring_1.png", mipMap );
+		meshTreeLeavesSpring = new Texture[ 7 ];
+		for( int i = 0; i < 7; i++ )
+			meshTreeLeavesSpring[i] = newTexture( "data/3d/textures/leaves_" + (i + 1) + "_spring_1.png", mipMap );
 
 		// cars
-		carTextures = new TextureAtlas("data/cars/pack");
+		carTextures = new TextureAtlas( "data/cars/pack" );
 
 		cars = carTextures;
 		skidMarksFront = carTextures.findRegion( "skid-marks-front" );
@@ -66,8 +65,7 @@ public class Art
 
 		// fonts
 		fonts = new TextureAtlas( "data/font/pack" );
-		for( TextureRegion r : fonts.getRegions() )
-		{
+		for( TextureRegion r : fonts.getRegions() ) {
 			r.getTexture().setFilter( TextureFilter.Linear, TextureFilter.Linear );
 		}
 
@@ -77,16 +75,18 @@ public class Art
 		fontCurseR = new BitmapFont( Gdx.files.internal( "data/font/curse-r.fnt" ), Art.fonts.findRegion( "curse-r" ), true );
 
 		// big size
-		fontCurseYRbig = new BitmapFont( Gdx.files.internal( "data/font/curse-y-r-big.fnt" ), Art.fonts.findRegion( "curse-y-r-big" ), true );
-		fontCurseGbig = new BitmapFont( Gdx.files.internal( "data/font/curse-g-big.fnt" ), Art.fonts.findRegion( "curse-g-big" ), true );
-		fontCurseRbig = new BitmapFont( Gdx.files.internal( "data/font/curse-r-big.fnt" ), Art.fonts.findRegion( "curse-r-big" ), true );
+		fontCurseYRbig = new BitmapFont( Gdx.files.internal( "data/font/curse-y-r-big.fnt" ),
+				Art.fonts.findRegion( "curse-y-r-big" ), true );
+		fontCurseGbig = new BitmapFont( Gdx.files.internal( "data/font/curse-g-big.fnt" ), Art.fonts.findRegion( "curse-g-big" ),
+				true );
+		fontCurseRbig = new BitmapFont( Gdx.files.internal( "data/font/curse-r-big.fnt" ), Art.fonts.findRegion( "curse-r-big" ),
+				true );
 
 		// friction maps
 		frictionNature = new Pixmap( Gdx.files.internal( "data/levels/tilesets/nature/224-friction.png" ) );
 	}
 
-	public static void dispose()
-	{
+	public static void dispose() {
 		base6[0][0].getTexture().dispose();
 		quad.getTexture().dispose();
 
@@ -99,9 +99,9 @@ public class Art
 		meshTribune.dispose();
 
 		// trees
-		for(int i = 0; i < 7; i++) meshTreeLeavesSpring[i].dispose();
+		for( int i = 0; i < 7; i++ )
+			meshTreeLeavesSpring[i].dispose();
 		meshTreeTrunk.dispose();
-
 
 		fonts.dispose();
 
@@ -111,21 +111,17 @@ public class Art
 		skidMarksRear.getTexture().dispose();
 	}
 
-	private static TextureRegion[][] split( String name, int width, int height, boolean mipMap )
-	{
+	private static TextureRegion[][] split( String name, int width, int height, boolean mipMap ) {
 		return split( name, width, height, false, true, mipMap );
 	}
 
-	private static TextureRegion[][] split( String name, int width, int height, boolean flipX, boolean flipY, boolean mipMap )
-	{
+	private static TextureRegion[][] split( String name, int width, int height, boolean flipX, boolean flipY, boolean mipMap ) {
 		Texture texture = newTexture( name, mipMap );
 		int xSlices = texture.getWidth() / width;
 		int ySlices = texture.getHeight() / height;
 		TextureRegion[][] res = new TextureRegion[ xSlices ][ ySlices ];
-		for( int x = 0; x < xSlices; x++ )
-		{
-			for( int y = 0; y < ySlices; y++ )
-			{
+		for( int x = 0; x < xSlices; x++ ) {
+			for( int y = 0; y < ySlices; y++ ) {
 				res[x][y] = new TextureRegion( texture, x * width, y * height, width, height );
 				res[x][y].flip( flipX, flipY );
 			}
@@ -133,19 +129,17 @@ public class Art
 		return res;
 	}
 
-	private static TextureRegion load( String name, int width, int height, boolean mipMap )
-	{
+	private static TextureRegion load( String name, int width, int height, boolean mipMap ) {
 		Texture texture = newTexture( name, mipMap );
 		TextureRegion region = new TextureRegion( texture, 0, 0, width, height );
 		region.flip( false, true );
 		return region;
 	}
 
-	private static Texture newTexture( String name, boolean mipMap )
-	{
+	private static Texture newTexture( String name, boolean mipMap ) {
 		Texture t = new Texture( Gdx.files.internal( name ), Format.RGBA8888, mipMap );
 
-		if(mipMap)
+		if( mipMap )
 			t.setFilter( TextureFilter.MipMapLinearNearest, TextureFilter.Nearest );
 		else
 			t.setFilter( TextureFilter.Nearest, TextureFilter.Nearest );
@@ -153,8 +147,7 @@ public class Art
 		return t;
 	}
 
-	public static void scaleFonts( float scale )
-	{
+	public static void scaleFonts( float scale ) {
 		Art.fontCurseYR.setScale( scale );
 		Art.fontCurseG.setScale( scale );
 		Art.fontCurseR.setScale( scale );

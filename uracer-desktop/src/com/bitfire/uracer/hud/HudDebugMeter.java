@@ -15,8 +15,7 @@ import com.bitfire.uracer.game.Game;
 import com.bitfire.uracer.utils.AMath;
 import com.bitfire.uracer.utils.Convert;
 
-public class HudDebugMeter
-{
+public class HudDebugMeter {
 	// graphics data
 	private Pixmap pixels;
 	private Texture texture;
@@ -32,8 +31,7 @@ public class HudDebugMeter
 
 	public Color color = new Color( 1, 1, 1, 1 );
 
-	public HudDebugMeter( Game game, int row, int width, int height )
-	{
+	public HudDebugMeter( Game game, int row, int width, int height ) {
 		assert (width < 256 && height < 256);
 
 		this.name = "";
@@ -49,41 +47,34 @@ public class HudDebugMeter
 		region = new TextureRegion( texture, 0, 0, pixels.getWidth(), pixels.getHeight() );
 	}
 
-	public void setValue( float value )
-	{
+	public void setValue( float value ) {
 		this.value = value;
 	}
 
-	public void setName( String name )
-	{
+	public void setName( String name ) {
 		this.name = name + " = ";
 	}
 
-	public void setLimits( float min, float max )
-	{
+	public void setLimits( float min, float max ) {
 		minValue = min;
 		maxValue = max;
 	}
 
-	public int getWidth()
-	{
+	public int getWidth() {
 		return width;
 	}
 
-	public int getHeight()
-	{
+	public int getHeight() {
 		return height;
 	}
 
-	public String getMessage()
-	{
+	public String getMessage() {
 		return name + String.format( "%.04f", Math.abs( value ) );
 	}
 
-	private void update()
-	{
+	private void update() {
 		pos.set( Director.screenPosForPx( playerCar.state().position ) );
-//		pos.set( Director.screenPosFor( playerCar.getBody() ) );
+		// pos.set( Director.screenPosFor( playerCar.getBody() ) );
 
 		// center horizontally
 		pos.x -= width * 0.5f;
@@ -95,8 +86,7 @@ public class HudDebugMeter
 		pos.y += row * (height + Debug.fontHeight);
 	}
 
-	public void render( SpriteBatch batch )
-	{
+	public void render( SpriteBatch batch ) {
 		update();
 		draw();
 		Debug.drawString( getMessage(), pos.x, pos.y );
@@ -104,8 +94,7 @@ public class HudDebugMeter
 		batch.draw( region, pos.x, pos.y + Debug.fontHeight );
 	}
 
-	private void draw()
-	{
+	private void draw() {
 		pixels.setColor( 0, 0, 0, 1 );
 		pixels.fill();
 

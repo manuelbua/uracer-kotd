@@ -14,8 +14,7 @@ import com.bitfire.uracer.game.logic.Level;
 import com.bitfire.uracer.tiled.ScalingStrategy;
 import com.bitfire.uracer.utils.Convert;
 
-public class Director
-{
+public class Director {
 	public static Vector2 worldSizeScaledPx, worldSizeScaledMt, worldSizeTiles;
 	public static ScalingStrategy scalingStrategy;
 	public static Level currentLevel;
@@ -29,8 +28,7 @@ public class Director
 
 	private static Vector2 tmp;
 
-	public static void init()
-	{
+	public static void init() {
 		ShaderProgram.pedantic = false;
 
 		worldSizeScaledPx = new Vector2();
@@ -57,26 +55,22 @@ public class Director
 		Box2DFactory.init();
 	}
 
-	public static void create( int widthPx, int heightPx )
-	{
+	public static void create( int widthPx, int heightPx ) {
 		init();
 
 		camera = new OrthographicCamera( widthPx, heightPx );
 		halfViewport.set( camera.viewportWidth / 2f, camera.viewportHeight / 2f );
 	}
 
-	public static void dispose()
-	{
-		if( currentLevel != null )
-		{
+	public static void dispose() {
+		if( currentLevel != null ) {
 			currentLevel.dispose();
 		}
 
 		Physics.dispose();
 	}
 
-	public static Level loadLevel( String levelName, GameplaySettings playSettings, boolean nightMode )
-	{
+	public static Level loadLevel( String levelName, GameplaySettings playSettings, boolean nightMode ) {
 		// construct tilemap and cameras
 		Level level = new Level( levelName, scalingStrategy, nightMode );
 
@@ -87,7 +81,7 @@ public class Director
 		Director.worldSizeTiles.set( level.map.width, level.map.height );
 		Director.worldSizeScaledPx.set( level.map.width * level.map.tileWidth, level.map.height * level.map.tileHeight );
 		Director.worldSizeScaledPx.mul( scalingStrategy.invTileMapZoomFactor );
-		Director.worldSizeScaledMt.set(Convert.px2mt( worldSizeScaledPx ));
+		Director.worldSizeScaledMt.set( Convert.px2mt( worldSizeScaledPx ) );
 
 		// compute camera bounds
 		boundsPx.x = halfViewport.x;
@@ -104,13 +98,11 @@ public class Director
 		return level;
 	}
 
-	public static OrthographicCamera getCamera()
-	{
+	public static OrthographicCamera getCamera() {
 		return camera;
 	}
 
-	private static void update()
-	{
+	private static void update() {
 		camera.update();
 
 		mvpPx.set( camera.combined );
@@ -123,15 +115,13 @@ public class Director
 		mvpMt.val[Matrix4.M11] *= Config.Physics.PixelsPerMeter;
 	}
 
-	public static void setPositionPx( Vector2 pos, boolean flipY, boolean round )
-	{
+	public static void setPositionPx( Vector2 pos, boolean flipY, boolean round ) {
 		tmp.set( pos );
 
 		if( flipY ) tmp.y = worldSizeScaledPx.y - tmp.y;
 
 		// ensure in bounds
-		if( Config.Debug.DirectorHasBounds )
-		{
+		if( Config.Debug.DirectorHasBounds ) {
 			if( tmp.x < boundsPx.x ) tmp.x = boundsPx.x;
 			if( tmp.x > boundsPx.width ) tmp.x = boundsPx.width;
 			if( tmp.y > boundsPx.y ) tmp.y = boundsPx.y;
@@ -139,12 +129,11 @@ public class Director
 		}
 
 		// remove subpixel accuracy (jagged behavior)
-		if( round )
-		{
+		if( round ) {
 			camera.position.x = MathUtils.round( tmp.x );
 			camera.position.y = MathUtils.round( tmp.y );
-		} else
-		{
+		}
+		else {
 			camera.position.x = tmp.x;
 			camera.position.y = tmp.y;
 		}
@@ -154,69 +143,54 @@ public class Director
 		update();
 	}
 
-	public static void setPositionMt( Vector2 pos, boolean flipY, boolean round )
-	{
+	public static void setPositionMt( Vector2 pos, boolean flipY, boolean round ) {
 		setPositionPx( Convert.mt2px( pos ), flipY, round );
 	}
 
-	public static Vector3 pos()
-	{
+	public static Vector3 pos() {
 		return camera.position;
 	}
 
-	public static Matrix4 getMatViewProjPx()
-	{
+	public static Matrix4 getMatViewProjPx() {
 		return mvpPx;
 	}
 
-	public static Matrix4 getMatViewProjMt()
-	{
+	public static Matrix4 getMatViewProjMt() {
 		return mvpMt;
 	}
 
-	/**
-	 * PUBLIC HELPERS
-	 *
-	 */
-	public static Vector2 screenPosFor( Body body )
-	{
+	/** PUBLIC HELPERS */
+	public static Vector2 screenPosFor( Body body ) {
 		return Director.screenPosForMt( body.getPosition() );
 	}
 
-	public static Vector2 screenPosForMt( Vector2 worldPosition )
-	{
+	public static Vector2 screenPosForMt( Vector2 worldPosition ) {
 		screenPosFor.x = Convert.mt2px( worldPosition.x ) - camera.position.x + halfViewport.x;
 		screenPosFor.y = camera.position.y - Convert.mt2px( worldPosition.y ) + halfViewport.y;
 		return screenPosFor;
 	}
 
-	public static Vector2 screenPosForPx( Vector2 worldPosition )
-	{
+	public static Vector2 screenPosForPx( Vector2 worldPosition ) {
 		screenPosFor.x = worldPosition.x - camera.position.x + halfViewport.x;
 		screenPosFor.y = camera.position.y - worldPosition.y + halfViewport.y;
 		return screenPosFor;
 	}
 
-	public static Vector2 positionFor( Vector2 position )
-	{
+	public static Vector2 positionFor( Vector2 position ) {
 		return positionFor( position.x, position.y );
 	}
 
-	public static Vector2 positionFor( float x, float y )
-	{
+	public static Vector2 positionFor( float x, float y ) {
 		tmp = Convert.scaledPixels( tmp.set( x, y ) );
 		tmp.y = Director.worldSizeScaledPx.y - tmp.y;
 		return tmp;
 	}
 
-	/**
-	 * visibility queries
-	 */
+	/** visibility queries */
 
 	private static Rectangle cameraRect;
 
-	public static boolean isVisible( Rectangle rect )
-	{
+	public static boolean isVisible( Rectangle rect ) {
 		cameraRect.set( camera.position.x - camera.viewportWidth / 2, camera.position.y - camera.viewportHeight / 2,
 				camera.viewportWidth, camera.viewportHeight );
 

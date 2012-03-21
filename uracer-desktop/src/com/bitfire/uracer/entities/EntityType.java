@@ -1,7 +1,5 @@
 package com.bitfire.uracer.entities;
 
-
-public enum EntityType
-{
+public enum EntityType {
 	Car, CarReplay
 }

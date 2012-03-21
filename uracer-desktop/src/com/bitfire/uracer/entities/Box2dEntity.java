@@ -7,71 +7,61 @@ import com.bitfire.uracer.Config;
 import com.bitfire.uracer.utils.AMath;
 import com.bitfire.uracer.utils.Convert;
 
-public class Box2dEntity extends SubframeInterpolableEntity
-{
+public class Box2dEntity extends SubframeInterpolableEntity {
 	protected Body body;
 
-	public Body getBody()
-	{
+	public Body getBody() {
 		return body;
 	}
 
 	@Override
-	public void saveStateTo( EntityState state )
-	{
+	public void saveStateTo( EntityState state ) {
 		state.position.set( body.getPosition() );
 		state.orientation = body.getAngle();
 	}
 
 	@Override
-	public boolean isSubframeInterpolated()
-	{
+	public boolean isSubframeInterpolated() {
 		return Config.Graphics.SubframeInterpolation;
 	}
 
 	@Override
-	public void onBeforePhysicsSubstep()
-	{
+	public void onBeforePhysicsSubstep() {
 		toNormalRelativeAngle();
 		super.onBeforePhysicsSubstep();
 	}
 
 	private Vector2 _pos = new Vector2();
 
-	public Vector2 pos()
-	{
+	public Vector2 pos() {
 		_pos.set( Convert.mt2px( body.getPosition() ) );
 		return _pos;
 	}
 
-	public void pos( Vector2 pos )
-	{
+	public void pos( Vector2 pos ) {
 		setTransform( pos, orient() );
 	}
 
-	public float orient()
-	{
+	public float orient() {
 		return -body.getAngle() * MathUtils.radiansToDegrees;
 	}
 
-	public void orient( float orient )
-	{
+	public void orient( float orient ) {
 		setTransform( pos(), orient );
 	}
 
 	private Vector2 tmp = new Vector2();
-	public void setTransform( Vector2 position, float orient )
-	{
-		tmp.set( Convert.px2mt(position) );
+
+	public void setTransform( Vector2 position, float orient ) {
+		tmp.set( Convert.px2mt( position ) );
 		body.setTransform( tmp, -orient * MathUtils.degreesToRadians );
 		toNormalRelativeAngle();
 		resetState();
 	}
 
-	protected void toNormalRelativeAngle()
-	{
+	protected void toNormalRelativeAngle() {
 		// normalize body angle since it can grow unbounded
-		float angle = AMath.normalRelativeAngle(body.getAngle());
+		float angle = AMath.normalRelativeAngle( body.getAngle() );
 		body.setTransform( body.getPosition(), angle );
 	}
 }

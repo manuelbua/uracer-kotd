@@ -16,8 +16,7 @@ import com.bitfire.uracer.game.logic.LapInfo;
 import com.bitfire.uracer.messager.Messager;
 import com.bitfire.uracer.utils.NumberString;
 
-public class Hud
-{
+public class Hud {
 	private Game game;
 
 	private HudLabel best, curr, last;
@@ -28,8 +27,7 @@ public class Hud
 	private HudDrifting hudDrift;
 
 	// effects
-	public Hud( Game game )
-	{
+	public Hud( Game game ) {
 		this.game = game;
 
 		// y-flip
@@ -67,56 +65,49 @@ public class Hud
 		meterSmoke.setName( "smokepar count" );
 	}
 
-	public void dispose()
-	{
+	public void dispose() {
 	}
 
-	public void tick()
-	{
+	public void tick() {
 		Messager.tick();
 		hudDrift.tick();
 	}
 
-	private void updateLapTimes()
-	{
+	private void updateLapTimes() {
 		LapInfo lapInfo = LapInfo.get();
 
 		// current time
-		curr.setString( "YOUR  TIME\n" + NumberString.format(lapInfo.getElapsedSeconds()) + "s" );
+		curr.setString( "YOUR  TIME\n" + NumberString.format( lapInfo.getElapsedSeconds() ) + "s" );
 
 		// render best lap time
 		Replay rbest = lapInfo.getBestReplay();
 
 		// best time
-		if( rbest != null && rbest.isValid )
-		{
+		if( rbest != null && rbest.isValid ) {
 			// has best
-			best.setString( "BEST  TIME\n" + NumberString.format(rbest.trackTimeSeconds) + "s" );
-		} else
-		{
+			best.setString( "BEST  TIME\n" + NumberString.format( rbest.trackTimeSeconds ) + "s" );
+		}
+		else {
 			// temporarily use last track time
-			if( lapInfo.hasLastTrackTimeSeconds() )
-			{
-				best.setString( "BEST  TIME\n" + NumberString.format(lapInfo.getLastTrackTimeSeconds()) + "s" );
-			} else
-			{
+			if( lapInfo.hasLastTrackTimeSeconds() ) {
+				best.setString( "BEST  TIME\n" + NumberString.format( lapInfo.getLastTrackTimeSeconds() ) + "s" );
+			}
+			else {
 				best.setString( "BEST TIME\n-:----" );
 			}
 		}
 
 		// last time
-		if( lapInfo.hasLastTrackTimeSeconds() )
-		{
+		if( lapInfo.hasLastTrackTimeSeconds() ) {
 			// has only last
-			last.setString( "LAST  TIME\n" + NumberString.format(lapInfo.getLastTrackTimeSeconds()) + "s" );
-		} else
-		{
+			last.setString( "LAST  TIME\n" + NumberString.format( lapInfo.getLastTrackTimeSeconds() ) + "s" );
+		}
+		else {
 			last.setString( "LAST  TIME\n-:----" );
 		}
 	}
 
-	public void render( SpriteBatch batch )
-	{
+	public void render( SpriteBatch batch ) {
 		batch.setTransformMatrix( identity );
 		batch.setProjectionMatrix( topLeftOrigin );
 
@@ -136,8 +127,7 @@ public class Hud
 		batch.end();
 	}
 
-	public void debug( SpriteBatch batch )
-	{
+	public void debug( SpriteBatch batch ) {
 		DriftInfo drift = DriftInfo.get();
 
 		// lateral forces
@@ -157,15 +147,12 @@ public class Hud
 		meterSmoke.render( batch );
 	}
 
-
-	/**
-	 * Expose components
+	/** Expose components
 	 * TODO find a better way for this
-	 * @return
-	 */
+	 * 
+	 * @return */
 
-	public HudDrifting getDrifting()
-	{
+	public HudDrifting getDrifting() {
 		return hudDrift;
 	}
 }

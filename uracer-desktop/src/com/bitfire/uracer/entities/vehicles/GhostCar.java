@@ -9,23 +9,18 @@ import com.bitfire.uracer.carsimulation.Replay;
 import com.bitfire.uracer.entities.EntityManager;
 import com.bitfire.uracer.factories.CarFactory.CarType;
 
-/**
- * Implements an automated Car, playing previously recorded events. It will
+/** Implements an automated Car, playing previously recorded events. It will
  * ignore car-to-car collisions, but will respect in-track collisions and
  * responses.
- *
- * @author manuel
- *
- */
+ * 
+ * @author manuel */
 
-public class GhostCar extends Car
-{
+public class GhostCar extends Car {
 	private Replay replay;
 	private int indexPlay;
 	private boolean hasReplay;
 
-	private GhostCar( CarGraphics graphics, CarType type, CarModel model )
-	{
+	private GhostCar( CarGraphics graphics, CarType type, CarModel model ) {
 		super( graphics, model, type, CarInputMode.InputFromReplay, new Vector2( 0, 0 ), 0 );
 		indexPlay = 0;
 		hasReplay = false;
@@ -35,34 +30,30 @@ public class GhostCar extends Car
 
 	// factory methods
 
-	public static GhostCar createForFactory( CarGraphics graphics, CarType type, CarModel model )
-	{
+	public static GhostCar createForFactory( CarGraphics graphics, CarType type, CarModel model ) {
 		GhostCar ghost = new GhostCar( graphics, type, model );
 		EntityManager.add( ghost );
 		return ghost;
 	}
 
-	public void setReplay( Replay replay )
-	{
+	public void setReplay( Replay replay ) {
 		this.replay = replay;
-		hasReplay = (replay != null && replay.getEventsCount() > 0 );
+		hasReplay = (replay != null && replay.getEventsCount() > 0);
 		setActive( hasReplay, true );
-		if( hasReplay )
-		{
-//			System.out.println( "Replaying " + replay.id );
-			restart(replay);
+		if( hasReplay ) {
+			// System.out.println( "Replaying " + replay.id );
+			restart( replay );
 		}
-//		else
-//		{
-//			if(replay==null)
-//				System.out.println("Replay disabled");
-//			else
-//				System.out.println("Replay has no recorded events, disabling replaying.");
-//		}
+		// else
+		// {
+		// if(replay==null)
+		// System.out.println("Replay disabled");
+		// else
+		// System.out.println("Replay has no recorded events, disabling replaying.");
+		// }
 	}
 
-	private void restart( Replay replay )
-	{
+	private void restart( Replay replay ) {
 		pos( replay.carPosition );
 		orient( replay.carOrientation );
 		getCarDescriptor().set( replay.carDescriptor );
@@ -70,37 +61,30 @@ public class GhostCar extends Car
 	}
 
 	@Override
-	public void reset()
-	{
+	public void reset() {
 		super.reset();
 		setReplay( null );
 	}
 
 	@Override
-	public void onRender( SpriteBatch batch )
-	{
-		if( isActive() )
-		{
+	public void onRender( SpriteBatch batch ) {
+		if( isActive() ) {
 			graphics.render( batch, stateRender, 0.5f );
 		}
 	}
 
 	@Override
-	public void onDebug()
-	{
+	public void onDebug() {
 	}
 
 	@Override
-	protected void onComputeCarForces( CarForces forces )
-	{
+	protected void onComputeCarForces( CarForces forces ) {
 		forces.reset();
 
-		if( hasReplay )
-		{
-			if( indexPlay == replay.getEventsCount() )
-			{
-//				System.out.println( "Playing finished, restarting." );
-				restart(replay);
+		if( hasReplay ) {
+			if( indexPlay == replay.getEventsCount() ) {
+				// System.out.println( "Playing finished, restarting." );
+				restart( replay );
 			}
 
 			forces.set( replay.forces[indexPlay++] );

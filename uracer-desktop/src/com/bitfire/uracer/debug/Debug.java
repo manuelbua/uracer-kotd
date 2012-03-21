@@ -17,8 +17,7 @@ import com.bitfire.uracer.Physics;
 import com.bitfire.uracer.URacer;
 import com.bitfire.uracer.utils.NumberString;
 
-public class Debug
-{
+public class Debug {
 
 	// frame stats
 	private static long frameStart;
@@ -39,12 +38,10 @@ public class Debug
 	public static int fontWidth;
 	public static int fontHeight;
 
-	private Debug()
-	{
+	private Debug() {
 	}
 
-	public static void create()
-	{
+	public static void create() {
 		sb = new StringBuilder();
 		fmt = new Formatter( sb, Locale.US );
 
@@ -72,8 +69,7 @@ public class Debug
 		b = new Vector2();
 	}
 
-	public static void begin( SpriteBatch batch )
-	{
+	public static void begin( SpriteBatch batch ) {
 		batch.setTransformMatrix( identity );
 		batch.setProjectionMatrix( topLeftOrigin );
 
@@ -83,147 +79,117 @@ public class Debug
 		Debug.batch = batch;
 	}
 
-	public static void end()
-	{
+	public static void end() {
 		batch.end();
 		batch = null;
 	}
 
-	public static void dispose()
-	{
+	public static void dispose() {
 		b2drenderer.dispose();
 		gfxStats.dispose();
 	}
 
-	public static void update()
-	{
+	public static void update() {
 		gfxStats.update();
 
 		long time = System.nanoTime();
 
-		if( time - frameStart > 1000000000 )
-		{
+		if( time - frameStart > 1000000000 ) {
 			physicsTime = URacer.getPhysicsTime();
 			renderTime = URacer.getRenderTime();
 			frameStart = time;
 		}
 	}
 
-	public static void renderGraphicalStats( int x, int y )
-	{
+	public static void renderGraphicalStats( int x, int y ) {
 		batch.draw( gfxStats.getRegion(), x, y );
 	}
 
-	public static void renderTextualStats()
-	{
-		String text =
-				"fps: " + NumberString.formatLong(Gdx.graphics.getFramesPerSecond()) +
-				", physics: " + NumberString.formatLong(physicsTime) +
-				", graphics: " + NumberString.formatLong(renderTime);
+	public static void renderTextualStats() {
+		String text = "fps: " + NumberString.formatLong( Gdx.graphics.getFramesPerSecond() ) + ", physics: "
+				+ NumberString.formatLong( physicsTime ) + ", graphics: " + NumberString.formatLong( renderTime );
 
 		drawString( text, Gdx.graphics.getWidth() - text.length() * fontWidth, Gdx.graphics.getHeight() - fontHeight );
 	}
 
-	public static void renderVersionInfo()
-	{
+	public static void renderVersionInfo() {
 		drawString( uRacerInfo, Gdx.graphics.getWidth() - uRacerInfo.length() * fontWidth, 0, fontWidth, fontHeight * 2 );
 	}
 
-	public static void renderMemoryUsage()
-	{
+	public static void renderMemoryUsage() {
 		float oneOnMb = 1f / 1048576f;
 		float javaHeapMb = (float)Gdx.app.getJavaHeap() * oneOnMb;
 		float nativeHeapMb = (float)Gdx.app.getNativeHeap() * oneOnMb;
 
-		String text =
-				"java heap = " + NumberString.format(javaHeapMb) + "MB" +
-				" - native heap = " + NumberString.format(nativeHeapMb) + "MB";
+		String text = "java heap = " + NumberString.format( javaHeapMb ) + "MB" + " - native heap = "
+				+ NumberString.format( nativeHeapMb ) + "MB";
 
 		drawString( text, (Gdx.graphics.getWidth() - text.length() * fontWidth) / 2, 0 );
 	}
 
-	public static void renderB2dWorld( Matrix4 modelViewProj )
-	{
+	public static void renderB2dWorld( Matrix4 modelViewProj ) {
 		b2drenderer.render( Physics.world, modelViewProj );
 	}
 
-	public static void draw( TextureRegion region, float x, float y )
-	{
+	public static void draw( TextureRegion region, float x, float y ) {
 		int width = region.getRegionWidth();
 		if( width < 0 ) width = -width;
 
 		batch.draw( region, x, y, width, -region.getRegionHeight() );
 	}
 
-	public static void draw( TextureRegion region, float x, float y, float width, float height )
-	{
+	public static void draw( TextureRegion region, float x, float y, float width, float height ) {
 		batch.draw( region, x, y, width, height );
 	}
 
-	public static void drawString( String string, float x, float y )
-	{
+	public static void drawString( String string, float x, float y ) {
 		string = string.toUpperCase();
-		for( int i = 0; i < string.length(); i++ )
-		{
+		for( int i = 0; i < string.length(); i++ ) {
 			char ch = string.charAt( i );
-			for( int ys = 0; ys < chars.length; ys++ )
-			{
+			for( int ys = 0; ys < chars.length; ys++ ) {
 				int xs = chars[ys].indexOf( ch );
-				if( xs >= 0 )
-				{
+				if( xs >= 0 ) {
 					draw( Art.base6[xs][ys + 9], x + i * 6, y );
 				}
 			}
 		}
 	}
 
-	public static void drawString( String string, float x, float y, float w, float h )
-	{
+	public static void drawString( String string, float x, float y, float w, float h ) {
 		string = string.toUpperCase();
-		for( int i = 0; i < string.length(); i++ )
-		{
+		for( int i = 0; i < string.length(); i++ ) {
 			char ch = string.charAt( i );
-			for( int ys = 0; ys < chars.length; ys++ )
-			{
+			for( int ys = 0; ys < chars.length; ys++ ) {
 				int xs = chars[ys].indexOf( ch );
-				if( xs >= 0 )
-				{
+				if( xs >= 0 ) {
 					draw( Art.base6[xs][ys + 9], x + i * w, y, w, h );
 				}
 			}
 		}
 	}
 
-	public static int getStatsWidth()
-	{
+	public static int getStatsWidth() {
 		return gfxStats.getWidth();
 	}
 
-	public static int getStatsHeight()
-	{
+	public static int getStatsHeight() {
 		return gfxStats.getHeight();
 	}
 
+	/** stdout facilities */
 
-	/**
-	 * stdout facilities
-	 */
-
-	public static void print( String string )
-	{
+	public static void print( String string ) {
 		System.out.println( string );
 	}
 
-	public static void print( String format, Object... args )
-	{
+	public static void print( String format, Object... args ) {
 		Debug.print( String.format( format, args ) );
 	}
 
 	private static String tmp;
 	private static Vector2 a, b;
 
-	public static void print( ContactImpulse impulse, String label, boolean omitDupes )
-	{
+	public static void print( ContactImpulse impulse, String label, boolean omitDupes ) {
 		String thisString = String.format( "NI=(%.2f,%.2f) | TI=(%.2f,%.2f)", impulse.getNormalImpulses()[0],
 				impulse.getNormalImpulses()[1], impulse.getTangentImpulses()[0], impulse.getTangentImpulses()[1] );
 
@@ -234,21 +200,18 @@ public class Debug
 
 		if( label != null ) thisString = label + ": " + thisString;
 
-		if( !tmp.equals( thisString ) )
-		{
+		if( !tmp.equals( thisString ) ) {
 			System.out.println( thisString );
 			tmp = thisString;
 		}
 	}
 
 	// fuck java all the way up
-	public static void print( ContactImpulse impulse )
-	{
+	public static void print( ContactImpulse impulse ) {
 		Debug.print( impulse, null, true );
 	}
 
-	public static void print( ContactImpulse impulse, String label )
-	{
+	public static void print( ContactImpulse impulse, String label ) {
 		Debug.print( impulse, label, true );
 	}
 }

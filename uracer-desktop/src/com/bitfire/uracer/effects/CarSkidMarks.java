@@ -14,8 +14,7 @@ import com.bitfire.uracer.game.logic.DriftInfo;
 import com.bitfire.uracer.utils.AMath;
 import com.bitfire.uracer.utils.Convert;
 
-public class CarSkidMarks extends TrackEffect
-{
+public class CarSkidMarks extends TrackEffect {
 	public static final int MaxSkidMarks = 300;
 
 	private SkidMark[] skidMarks;
@@ -26,8 +25,7 @@ public class CarSkidMarks extends TrackEffect
 	private Vector2 tmp;
 	private Vector2 last;
 
-	public CarSkidMarks( Car player )
-	{
+	public CarSkidMarks( Car player ) {
 		super( Effects.CarSkidMarks );
 
 		markIndex = 0;
@@ -38,63 +36,53 @@ public class CarSkidMarks extends TrackEffect
 
 		CarModel model = player.getCarModel();
 		skidMarks = new SkidMark[ MaxSkidMarks ];
-		for( int i = 0; i < MaxSkidMarks; i++ )
-		{
+		for( int i = 0; i < MaxSkidMarks; i++ ) {
 			skidMarks[i] = new SkidMark( model );
 		}
 	}
 
 	@Override
-	public int getParticleCount()
-	{
+	public int getParticleCount() {
 		return visibleSkidMarksCount;
 	}
 
 	@Override
-	public void dispose()
-	{
+	public void dispose() {
 		for( int i = 0; i < MaxSkidMarks; i++ )
 			skidMarks[i] = null;
 	}
 
 	@Override
-	public void reset()
-	{
+	public void reset() {
 		markIndex = 0;
 	}
 
 	@Override
-	public void tick()
-	{
+	public void tick() {
 		addDriftMark();
 
 		SkidMark d;
-		for( int i = 0; i < MaxSkidMarks; i++ )
-		{
+		for( int i = 0; i < MaxSkidMarks; i++ ) {
 			d = skidMarks[i];
-			if( d.life > 0 )
-			{
+			if( d.life > 0 ) {
 				d.life -= Physics.dt;
-			} else
-			{
+			}
+			else {
 				d.life = 0;
 			}
 		}
 	}
 
 	@Override
-	public void render( SpriteBatch batch )
-	{
+	public void render( SpriteBatch batch ) {
 		float lifeRatio;
 		SkidMark d;
 		visibleSkidMarksCount = 0;
 
 		// front drift marks
-		for( int i = 0; i < MaxSkidMarks; i++ )
-		{
+		for( int i = 0; i < MaxSkidMarks; i++ ) {
 			d = skidMarks[i];
-			if( d.life > 0 && Director.isVisible( d.getBoundingRectangle() ) )
-			{
+			if( d.life > 0 && Director.isVisible( d.getBoundingRectangle() ) ) {
 				visibleSkidMarksCount++;
 
 				lifeRatio = d.life / d.maxLife;
@@ -108,24 +96,21 @@ public class CarSkidMarks extends TrackEffect
 		}
 	}
 
-	private void addDriftMark()
-	{
+	private void addDriftMark() {
 		tmp.set( player.state().position );
 
-		if( player.getCarDescriptor().velocity_wc.len2() < 1 )
-		{
+		if( player.getCarDescriptor().velocity_wc.len2() < 1 ) {
 			return;
 		}
 
 		// avoid blatant overdrawing
-		if( (int)tmp.x == (int)last.x && (int)tmp.y == (int)last.y )
-		{
+		if( (int)tmp.x == (int)last.x && (int)tmp.y == (int)last.y ) {
 			return;
 		}
 
 		DriftInfo di = DriftInfo.get();
 		if( di.driftStrength > 0.2f )
-//		if( di.isDrifting )
+		// if( di.isDrifting )
 		{
 			// add front drift marks?
 			SkidMark drift = skidMarks[markIndex++];
@@ -144,16 +129,14 @@ public class CarSkidMarks extends TrackEffect
 		}
 	}
 
-	private class SkidMark
-	{
+	private class SkidMark {
 		public Sprite front, rear;
 		public float life;
 		public float maxLife;
 		public float alphaFront, alphaRear;
 		public Vector2 position;
 
-		public SkidMark( CarModel model )
-		{
+		public SkidMark( CarModel model ) {
 			front = new Sprite();
 			rear = new Sprite();
 			position = new Vector2();
@@ -175,26 +158,23 @@ public class CarSkidMarks extends TrackEffect
 			life = maxLife = 0;
 		}
 
-		public void setPosition( Vector2 pos )
-		{
+		public void setPosition( Vector2 pos ) {
 			position.set( pos );
 			front.setPosition( pos.x - front.getOriginX(), pos.y - front.getOriginY() );
 			rear.setPosition( pos.x - rear.getOriginX(), pos.y - rear.getOriginY() );
 		}
 
-		public void setOrientation( float degrees )
-		{
+		public void setOrientation( float degrees ) {
 			front.setRotation( degrees );
 			rear.setRotation( degrees );
 		}
 
 		private Rectangle tmp = new Rectangle();
 
-		public Rectangle getBoundingRectangle()
-		{
+		public Rectangle getBoundingRectangle() {
 			// front and rear rectangles always converge, just use one
 			tmp.set( front.getBoundingRectangle() );
-//			tmp.merge( rear.getBoundingRectangle() );
+			// tmp.merge( rear.getBoundingRectangle() );
 			return tmp;
 		}
 	}

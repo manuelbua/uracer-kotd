@@ -31,8 +31,7 @@ import com.bitfire.uracer.tweener.Tweener;
 import com.bitfire.uracer.tweener.accessors.HudLabelAccessor;
 import com.bitfire.uracer.tweener.accessors.MessageAccessor;
 
-public class Game
-{
+public class Game {
 	private Level level = null;
 	private Player player = null;
 	private Hud hud = null;
@@ -54,12 +53,12 @@ public class Game
 	// drawing
 	private SpriteBatch batch = null;
 
-	public Game( String levelName, GameDifficulty difficulty )
-	{
-//		if(!Config.isDesktop)
-//			Config.Graphics.EnablePostProcessingFx = false;
+	public Game( String levelName, GameDifficulty difficulty ) {
+		// if(!Config.isDesktop)
+		// Config.Graphics.EnablePostProcessingFx = false;
 
-		System.out.println("resolution=" + Gdx.graphics.getWidth() + "x" + Gdx.graphics.getHeight() + "px, physics=" + Physics.PhysicsTimestepHz + "Hz");
+		System.out.println( "resolution=" + Gdx.graphics.getWidth() + "x" + Gdx.graphics.getHeight() + "px, physics="
+				+ Physics.PhysicsTimestepHz + "Hz" );
 		Game.tweener = createTweener();
 
 		Messager.init();
@@ -68,7 +67,7 @@ public class Game
 		Art.scaleFonts( Director.scalingStrategy.invTileMapZoomFactor );
 
 		// bring up level
-		level = Director.loadLevel( levelName, gameSettings, false /* night mode */ );
+		level = Director.loadLevel( levelName, gameSettings, false /* night mode */);
 		player = level.getPlayer();
 
 		logic = new GameLogic( this );
@@ -84,20 +83,18 @@ public class Game
 		// audio effects
 		CarSoundManager.setPlayer( player );
 
-		if( Config.Graphics.EnablePostProcessingFx )
-		{
+		if( Config.Graphics.EnablePostProcessingFx ) {
 			setupPostProcessing();
 		}
 
-//		Messager.show( "FUCK! BERLU! SCONI!", 600, MessageType.Good, MessagePosition.Bottom, MessageSize.Big );
+		// Messager.show( "FUCK! BERLU! SCONI!", 600, MessageType.Good, MessagePosition.Bottom, MessageSize.Big );
 
 		// Issues may arise on Tegra2 (Asus Transformer) devices if the buffers'
 		// count is higher than 10
 		batch = new SpriteBatch( 1000, 8 );
 	}
 
-	public void dispose()
-	{
+	public void dispose() {
 		Director.dispose();
 		Messager.dispose();
 		logic.dispose();
@@ -106,59 +103,55 @@ public class Game
 		batch.dispose();
 		CarSoundManager.dispose();
 
-		if(Config.Graphics.EnablePostProcessingFx)
-		{
+		if( Config.Graphics.EnablePostProcessingFx ) {
 			postProcessor.dispose();
 		}
 	}
 
-	private Tweener createTweener()
-	{
+	private Tweener createTweener() {
 		Tweener t = new Tweener();
 		Tweener.registerAccessor( Message.class, new MessageAccessor() );
 		Tweener.registerAccessor( HudLabel.class, new HudLabelAccessor() );
 		return t;
 	}
 
-	private void setupPostProcessing()
-	{
+	private void setupPostProcessing() {
 		int fboWidth = Gdx.graphics.getWidth();
 		int fboHeight = Gdx.graphics.getHeight();
 
-		postProcessor = new PostProcessor( fboWidth, fboHeight, false /* depth */, false /* alpha */, Config.isDesktop /* 32 bits */ );
+		postProcessor = new PostProcessor( fboWidth, fboHeight, false /* depth */, false /* alpha */, Config.isDesktop /* 32 bits */);
 
 		fboWidth = (int)(fboWidth * Config.PostProcessing.RttRatio);
 		fboHeight = (int)(fboHeight * Config.PostProcessing.RttRatio);
 
 		bloom = new Bloom( fboWidth, fboHeight, postProcessor.getFramebufferFormat() );
 
-//		Bloom.Settings bs = new Bloom.Settings( "arrogance-1 / rtt=0.25 / @1920x1050", BlurType.Gaussian5x5b, 1, 1, 0.25f, 1f, 0.1f, 0.8f, 1.4f );
-//		Bloom.Settings bs = new Bloom.Settings( "arrogance-2 / rtt=0.25 / @1920x1050", BlurType.Gaussian5x5b, 1, 1, 0.35f, 1f, 0.1f, 1.4f, 0.75f );
+		// Bloom.Settings bs = new Bloom.Settings( "arrogance-1 / rtt=0.25 / @1920x1050", BlurType.Gaussian5x5b, 1, 1, 0.25f, 1f,
+		// 0.1f, 0.8f, 1.4f );
+		// Bloom.Settings bs = new Bloom.Settings( "arrogance-2 / rtt=0.25 / @1920x1050", BlurType.Gaussian5x5b, 1, 1, 0.35f, 1f,
+		// 0.1f, 1.4f, 0.75f );
 
 		Bloom.Settings bs = new Bloom.Settings( "subtle", Config.PostProcessing.BlurType, 1, 1.5f, 0.45f, 1f, 0.5f, 1f, 1.5f );
 
 		bloom.setSettings( bs );
 
-//		zoom = new Zoom(Config.PostProcessing.ZoomQuality);
-//		zoom.setMaxStrength( Config.PostProcessing.ZoomMaxStrength );
-//		postProcessor.addEffect( zoom );
+		// zoom = new Zoom(Config.PostProcessing.ZoomQuality);
+		// zoom.setMaxStrength( Config.PostProcessing.ZoomMaxStrength );
+		// postProcessor.addEffect( zoom );
 
 		postProcessor.addEffect( bloom );
 	}
 
-	public boolean tick()
-	{
-		if(!logic.tick())
-			return false;
+	public boolean tick() {
+		if( !logic.tick() ) return false;
 
 		hud.tick();
 		TrackEffects.tick();
 		CarSoundManager.tick();
 
-		if( Config.Graphics.EnablePostProcessingFx && zoom != null )
-		{
+		if( Config.Graphics.EnablePostProcessingFx && zoom != null ) {
 			zoom.setOrigin( Director.screenPosFor( player.car.getBody() ) );
-//			zblur.setStrength( DriftInfo.get().driftStrength );
+			// zblur.setStrength( DriftInfo.get().driftStrength );
 			zoom.setStrength( player.currSpeedFactor );
 		}
 
@@ -166,9 +159,8 @@ public class Game
 		return true;
 	}
 
-	public void render()
-	{
-		tweener.update((int)(URacer.getLastDeltaSecs()*1000));
+	public void render() {
+		tweener.update( (int)(URacer.getLastDeltaSecs() * 1000) );
 
 		Car playerCar = null;
 		GL20 gl = Gdx.graphics.getGL20();
@@ -178,14 +170,12 @@ public class Game
 		EntityManager.raiseOnBeforeRender( URacer.getTemporalAliasing() );
 
 		// follow the car
-		if( player != null )
-		{
+		if( player != null ) {
 			playerCar = player.car;
 			controller.setPosition( playerCar.state().position );
 		}
 
-		if( Config.Graphics.EnablePostProcessingFx )
-		{
+		if( Config.Graphics.EnablePostProcessingFx ) {
 			postProcessor.capture();
 		}
 
@@ -202,7 +192,7 @@ public class Game
 		gl.glClear( GL20.GL_DEPTH_BUFFER_BIT | GL20.GL_COLOR_BUFFER_BIT );
 
 		// render base tilemap
-		level.renderTilemap(gl);
+		level.renderTilemap( gl );
 
 		gl.glActiveTexture( GL20.GL_TEXTURE0 );
 		batch.setProjectionMatrix( ortho.projection );
@@ -220,17 +210,14 @@ public class Game
 		// render 3d meshes
 		level.renderMeshes( gl );
 
-		hud.render(batch);
+		hud.render( batch );
 
-
-		if( Config.Graphics.EnablePostProcessingFx )
-		{
+		if( Config.Graphics.EnablePostProcessingFx ) {
 			postProcessor.render();
 		}
 
 		// lights
-		if( level.isNightMode() )
-		{
+		if( level.isNightMode() ) {
 			level.renderLights();
 		}
 
@@ -238,27 +225,28 @@ public class Game
 		// debug
 		//
 
-		if( Config.isDesktop )
-		{
-			if( Config.Graphics.RenderBox2DWorldWireframe )
-				Debug.renderB2dWorld( Director.getMatViewProjMt() );
+		if( Config.isDesktop ) {
+			if( Config.Graphics.RenderBox2DWorldWireframe ) Debug.renderB2dWorld( Director.getMatViewProjMt() );
 
 			Debug.begin( batch );
 			EntityManager.raiseOnDebug();
 			if( Config.Graphics.RenderHudDebugInfo ) hud.debug( batch );
 			Debug.renderVersionInfo();
-			Debug.renderGraphicalStats( Gdx.graphics.getWidth() - Debug.getStatsWidth(),Gdx.graphics.getHeight() - Debug.getStatsHeight() - Debug.fontHeight );
+			Debug.renderGraphicalStats( Gdx.graphics.getWidth() - Debug.getStatsWidth(),
+					Gdx.graphics.getHeight() - Debug.getStatsHeight() - Debug.fontHeight );
 			Debug.renderTextualStats();
 			Debug.renderMemoryUsage();
-			Debug.drawString( "Visible car skid marks=" + ((CarSkidMarks)TrackEffects.get(TrackEffects.Effects.CarSkidMarks)).getParticleCount(), 0, Gdx.graphics.getHeight()-21 );
-			Debug.drawString( "total meshes=" + Level.totalMeshes, 0, Gdx.graphics.getHeight()-14 );
-			Debug.drawString( "rendered meshes=" + (LevelRenderer.renderedTrees + LevelRenderer.renderedWalls)
-					+ ", trees=" + LevelRenderer.renderedTrees
-					+ ", walls=" + LevelRenderer.renderedWalls
-					+ ", culled=" + LevelRenderer.culledMeshes, 0, Gdx.graphics.getHeight()-7 );
+			Debug.drawString(
+					"Visible car skid marks="
+							+ ((CarSkidMarks)TrackEffects.get( TrackEffects.Effects.CarSkidMarks )).getParticleCount(), 0,
+					Gdx.graphics.getHeight() - 21 );
+			Debug.drawString( "total meshes=" + Level.totalMeshes, 0, Gdx.graphics.getHeight() - 14 );
+			Debug.drawString( "rendered meshes=" + (LevelRenderer.renderedTrees + LevelRenderer.renderedWalls) + ", trees="
+					+ LevelRenderer.renderedTrees + ", walls=" + LevelRenderer.renderedWalls + ", culled="
+					+ LevelRenderer.culledMeshes, 0, Gdx.graphics.getHeight() - 7 );
 			Debug.end();
-		} else
-		{
+		}
+		else {
 			Debug.begin( batch );
 			Debug.renderVersionInfo();
 			Debug.renderTextualStats();
@@ -266,32 +254,26 @@ public class Game
 		}
 	}
 
-	public void pause()
-	{
+	public void pause() {
 	}
 
-	public void resume()
-	{
+	public void resume() {
 		postProcessor.rebind();
 	}
 
-	public Level getLevel()
-	{
+	public Level getLevel() {
 		return level;
 	}
 
-	public Hud getHud()
-	{
+	public Hud getHud() {
 		return hud;
 	}
 
-	public static Tweener getTweener()
-	{
+	public static Tweener getTweener() {
 		return tweener;
 	}
 
-	public void restart()
-	{
+	public void restart() {
 		Messager.reset();
 		level.reset();
 		logic.restart();
@@ -299,8 +281,7 @@ public class Game
 		TrackEffects.reset();
 	}
 
-	public void reset()
-	{
+	public void reset() {
 		Messager.reset();
 		level.reset();
 		logic.reset();

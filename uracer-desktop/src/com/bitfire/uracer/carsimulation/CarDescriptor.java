@@ -2,17 +2,13 @@ package com.bitfire.uracer.carsimulation;
 
 import com.badlogic.gdx.math.Vector2;
 
-/**
- * Describes the global state of the car entity providing access to both the base
+/** Describes the global state of the car entity providing access to both the base
  * physical model information and the processed per-timestep data resulting
  * after each integration.
- *
- * @author manuel
- *
- */
+ * 
+ * @author manuel */
 
-public class CarDescriptor
-{
+public class CarDescriptor {
 	// physical model data
 	public CarModel carModel = new CarModel();
 
@@ -33,26 +29,21 @@ public class CarDescriptor
 	// internally computed
 	public float angularOrientation;
 
-
-	public CarDescriptor()
-	{
+	public CarDescriptor() {
 		angularvelocity = steerangle = throttle = brake = angularOrientation = 0;
 		position_wc.set( 0, 0 );
 		velocity_wc.set( 0, 0 );
 	}
 
-	public CarDescriptor(CarDescriptor other)
-	{
-		set(other);
+	public CarDescriptor( CarDescriptor other ) {
+		set( other );
 	}
 
-	public static CarDescriptor create()
-	{
+	public static CarDescriptor create() {
 		return new CarDescriptor();
 	}
 
-	public void set(CarDescriptor desc)
-	{
+	public void set( CarDescriptor desc ) {
 		this.carModel.set( desc.carModel );
 
 		this.angularvelocity = desc.angularvelocity;
@@ -65,8 +56,7 @@ public class CarDescriptor
 	}
 
 	@Override
-	public CarDescriptor clone()
-	{
+	public CarDescriptor clone() {
 		CarDescriptor c = new CarDescriptor( this );
 		return c;
 	}
