@@ -25,25 +25,24 @@ public class Zoom extends PostProcessorEffect {
 		zoomBlur.setOrigin( x, y );
 	}
 
-	public void setMaxStrength( float maxStrength ) {
-		zoomBlur.setMaxStrength( maxStrength );
-	}
-
 	public void setStrength( float strength ) {
 		this.strength = strength;
 		zoomBlur.setStrength( strength );
 	}
 
+	@Override
 	public void dispose() {
 		zoomBlur.dispose();
 	}
 
+	@Override
 	public void rebind() {
 		zoomBlur.upload();
 		zoomBlur.setOrigin( x, y );
 		zoomBlur.setStrength( strength );
 	}
 
+	@Override
 	public void render( FrameBuffer src, FrameBuffer dest ) {
 		zoomBlur.setInput( src ).setOutput( dest ).render();
 	}

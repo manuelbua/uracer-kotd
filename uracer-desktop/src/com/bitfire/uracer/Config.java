@@ -24,7 +24,7 @@ public class Config {
 
 			if( w >= 1680 ) {
 				BlurType = Blur.BlurType.Gaussian5x5b;
-				ZoomQuality = 8;
+				ZoomQuality = 16;
 				ZoomMaxStrength = -0.08f;
 			}
 			else if( w >= 1280 ) {
