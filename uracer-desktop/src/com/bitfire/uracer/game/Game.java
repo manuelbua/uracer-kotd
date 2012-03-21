@@ -46,7 +46,7 @@ public class Game
 	private GameLogic logic = null;
 	private DirectorController controller;
 
-	// effects
+	// post-processing
 	private PostProcessor postProcessor;
 	private Bloom bloom = null;
 	private Zoom zoom = null;
@@ -127,7 +127,10 @@ public class Game
 
 		postProcessor = new PostProcessor( fboWidth, fboHeight, false /* depth */, false /* alpha */, Config.isDesktop /* 32 bits */ );
 
-		bloom = new Bloom( (int)(fboWidth * Config.PostProcessing.RttRatio), (int)(fboHeight * Config.PostProcessing.RttRatio), postProcessor.getFramebufferFormat() );
+		fboWidth = (int)(fboWidth * Config.PostProcessing.RttRatio);
+		fboHeight = (int)(fboHeight * Config.PostProcessing.RttRatio);
+
+		bloom = new Bloom( fboWidth, fboHeight, postProcessor.getFramebufferFormat() );
 
 //		Bloom.Settings bs = new Bloom.Settings( "arrogance-1 / rtt=0.25 / @1920x1050", BlurType.Gaussian5x5b, 1, 1, 0.25f, 1f, 0.1f, 0.8f, 1.4f );
 //		Bloom.Settings bs = new Bloom.Settings( "arrogance-2 / rtt=0.25 / @1920x1050", BlurType.Gaussian5x5b, 1, 1, 0.35f, 1f, 0.1f, 1.4f, 0.75f );
@@ -136,12 +139,11 @@ public class Game
 
 		bloom.setSettings( bs );
 
-		// ------
-		zoom = new Zoom(Config.PostProcessing.ZoomQuality);
-		zoom.setMaxStrength( Config.PostProcessing.ZoomMaxStrength );
+//		zoom = new Zoom(Config.PostProcessing.ZoomQuality);
+//		zoom.setMaxStrength( Config.PostProcessing.ZoomMaxStrength );
+//		postProcessor.addEffect( zoom );
 
 		postProcessor.addEffect( bloom );
-		postProcessor.addEffect( zoom );
 	}
 
 	public boolean tick()
@@ -193,6 +195,8 @@ public class Game
 		level.syncWithCam( ortho );
 
 		// clear buffers
+		// TODO could be more sensible since while post-processing there is already a glClear
+		// going on..
 		gl.glClearDepthf( 1 );
 		gl.glClearColor( 0, 0, 0, 0 );
 		gl.glClear( GL20.GL_DEPTH_BUFFER_BIT | GL20.GL_COLOR_BUFFER_BIT );
