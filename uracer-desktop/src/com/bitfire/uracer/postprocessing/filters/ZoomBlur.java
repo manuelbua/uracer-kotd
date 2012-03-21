@@ -59,13 +59,13 @@ public class ZoomBlur extends Filter<ZoomBlur> {
 	public void upload() {
 		shader.begin();
 		shader.setUniformf( "one_on_blurlen", 1f / (float)blur_len );
-		shader.setUniformi( "u_texture", 0 );
+		shader.setUniformi( "u_texture", u_texture_1 );
 		shader.end();
 	}
 
 	@Override
 	protected void compute() {
-		inputTexture.bind( 0 );
+		inputTexture.bind( u_texture_1 );
 		shader.begin();
 		IFilter.quad.render( shader );
 		shader.end();

@@ -18,6 +18,7 @@ public class Threshold extends Filter<Threshold> {
 			threshold = ShaderLoader.createShader( "screenspace", "threshold" );
 	}
 
+	@Override
 	public void dispose() {
 		threshold.dispose();
 	}
@@ -33,8 +34,8 @@ public class Threshold extends Filter<Threshold> {
 		{
 			threshold.setUniformi( "u_texture0", u_texture_1 );
 			threshold.setUniformf( "treshold", gamma );
-			threshold.setUniformf( "tresholdInvTx", (1f / (1f - gamma)) );	// correct
-			// shThreshold.setUniformf( "tresholdInvTx", (1f / (gamma)) ); // does this look better?
+			threshold.setUniformf( "tresholdInvTx", (1f / (1f - gamma)) );
+			// shThreshold.setUniformf( "tresholdInvTx", (1f / (gamma)) ); // does the opposite, saturate more the less bright and less the brighter
 		}
 
 		threshold.end();

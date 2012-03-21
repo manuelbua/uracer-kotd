@@ -9,7 +9,7 @@ import com.badlogic.gdx.math.collision.BoundingBox;
 import com.bitfire.uracer.Director;
 
 /** The model is expected to follow the z-up convention.
- * 
+ *
  * @author manuel */
 public class OrthographicAlignedStillModel {
 	public UStillModel model;
@@ -39,14 +39,29 @@ public class OrthographicAlignedStillModel {
 	// explicitle initialize the static iShader member
 	// (Android: statics need to be re-initialized!)
 	public static void initialize() {
-		String vertexShader = "uniform mat4 u_mvpMatrix;					\n" + "attribute vec4 a_position;					\n"
-				+ "attribute vec2 a_texCoord0;				\n" + "varying vec2 v_TexCoord;					\n" + "void main()								\n"
-				+ "{											\n" + "	gl_Position = u_mvpMatrix * a_position;	\n" + "	v_TexCoord = a_texCoord0;				\n"
-				+ "}											\n";
+		// @formatter:off
+		String vertexShader =
+			"uniform mat4 u_mvpMatrix;					\n" +
+			"attribute vec4 a_position;					\n" +
+			"attribute vec2 a_texCoord0;				\n" +
+			"varying vec2 v_TexCoord;					\n" +
+			"void main()								\n" +
+			"{											\n" +
+			"	gl_Position = u_mvpMatrix * a_position;	\n" +
+			"	v_TexCoord = a_texCoord0;				\n" +
+			"}											\n";
 
-		String fragmentShader = "#ifdef GL_ES											\n" + "precision mediump float;								\n" + "#endif													\n"
-				+ "uniform sampler2D u_texture;							\n" + "varying vec2 v_TexCoord;								\n" + "void main()											\n"
-				+ "{														\n" + "	gl_FragColor = texture2D( u_texture, v_TexCoord );	\n" + "}														\n";
+		String fragmentShader =
+			"#ifdef GL_ES											\n" +
+			"precision mediump float;								\n" +
+			"#endif													\n" +
+			"uniform sampler2D u_texture;							\n" +
+			"varying vec2 v_TexCoord;								\n" +
+			"void main()											\n" +
+			"{														\n" +
+			"	gl_FragColor = texture2D( u_texture, v_TexCoord );	\n" +
+			"}														\n";
+		// @formatter:on
 
 		ShaderProgram.pedantic = false;
 		OrthographicAlignedStillModel.shaderProgram = new ShaderProgram( vertexShader, fragmentShader );
@@ -89,7 +104,7 @@ public class OrthographicAlignedStillModel {
 	}
 
 	/** Sets the world position in pixels, top-left origin.
-	 * 
+	 *
 	 * @param posPxX
 	 * @param posPxY */
 	public void setPosition( float posPxX, float posPxY ) {

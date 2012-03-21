@@ -57,8 +57,7 @@ public class Game {
 		// if(!Config.isDesktop)
 		// Config.Graphics.EnablePostProcessingFx = false;
 
-		System.out.println( "resolution=" + Gdx.graphics.getWidth() + "x" + Gdx.graphics.getHeight() + "px, physics="
-				+ Physics.PhysicsTimestepHz + "Hz" );
+		System.out.println( "resolution=" + Gdx.graphics.getWidth() + "x" + Gdx.graphics.getHeight() + "px, physics=" + Physics.PhysicsTimestepHz + "Hz" );
 		Game.tweener = createTweener();
 
 		Messager.init();
@@ -126,18 +125,16 @@ public class Game {
 
 		bloom = new Bloom( fboWidth, fboHeight, postProcessor.getFramebufferFormat() );
 
-		// Bloom.Settings bs = new Bloom.Settings( "arrogance-1 / rtt=0.25 / @1920x1050", BlurType.Gaussian5x5b, 1, 1, 0.25f, 1f,
-		// 0.1f, 0.8f, 1.4f );
-		// Bloom.Settings bs = new Bloom.Settings( "arrogance-2 / rtt=0.25 / @1920x1050", BlurType.Gaussian5x5b, 1, 1, 0.35f, 1f,
-		// 0.1f, 1.4f, 0.75f );
+		// Bloom.Settings bs = new Bloom.Settings( "arrogance-1 / rtt=0.25 / @1920x1050", BlurType.Gaussian5x5b, 1, 1, 0.25f, 1f, 0.1f, 0.8f, 1.4f );
+		// Bloom.Settings bs = new Bloom.Settings( "arrogance-2 / rtt=0.25 / @1920x1050", BlurType.Gaussian5x5b, 1, 1, 0.35f, 1f, 0.1f, 1.4f, 0.75f );
 
 		Bloom.Settings bs = new Bloom.Settings( "subtle", Config.PostProcessing.BlurType, 1, 1.5f, 0.45f, 1f, 0.5f, 1f, 1.5f );
 
 		bloom.setSettings( bs );
 
-		// zoom = new Zoom(Config.PostProcessing.ZoomQuality);
-		// zoom.setMaxStrength( Config.PostProcessing.ZoomMaxStrength );
-		// postProcessor.addEffect( zoom );
+		 zoom = new Zoom(Config.PostProcessing.ZoomQuality);
+		 zoom.setMaxStrength( Config.PostProcessing.ZoomMaxStrength );
+		 postProcessor.addEffect( zoom );
 
 		postProcessor.addEffect( bloom );
 	}
@@ -232,18 +229,14 @@ public class Game {
 			EntityManager.raiseOnDebug();
 			if( Config.Graphics.RenderHudDebugInfo ) hud.debug( batch );
 			Debug.renderVersionInfo();
-			Debug.renderGraphicalStats( Gdx.graphics.getWidth() - Debug.getStatsWidth(),
-					Gdx.graphics.getHeight() - Debug.getStatsHeight() - Debug.fontHeight );
+			Debug.renderGraphicalStats( Gdx.graphics.getWidth() - Debug.getStatsWidth(), Gdx.graphics.getHeight() - Debug.getStatsHeight() - Debug.fontHeight );
 			Debug.renderTextualStats();
 			Debug.renderMemoryUsage();
-			Debug.drawString(
-					"Visible car skid marks="
-							+ ((CarSkidMarks)TrackEffects.get( TrackEffects.Effects.CarSkidMarks )).getParticleCount(), 0,
+			Debug.drawString( "Visible car skid marks=" + ((CarSkidMarks)TrackEffects.get( TrackEffects.Effects.CarSkidMarks )).getParticleCount(), 0,
 					Gdx.graphics.getHeight() - 21 );
 			Debug.drawString( "total meshes=" + Level.totalMeshes, 0, Gdx.graphics.getHeight() - 14 );
-			Debug.drawString( "rendered meshes=" + (LevelRenderer.renderedTrees + LevelRenderer.renderedWalls) + ", trees="
-					+ LevelRenderer.renderedTrees + ", walls=" + LevelRenderer.renderedWalls + ", culled="
-					+ LevelRenderer.culledMeshes, 0, Gdx.graphics.getHeight() - 7 );
+			Debug.drawString( "rendered meshes=" + (LevelRenderer.renderedTrees + LevelRenderer.renderedWalls) + ", trees=" + LevelRenderer.renderedTrees + ", walls="
+					+ LevelRenderer.renderedWalls + ", culled=" + LevelRenderer.culledMeshes, 0, Gdx.graphics.getHeight() - 7 );
 			Debug.end();
 		}
 		else {

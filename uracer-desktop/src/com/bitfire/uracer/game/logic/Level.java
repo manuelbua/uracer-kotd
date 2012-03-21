@@ -43,7 +43,7 @@ import com.bitfire.uracer.utils.Convert;
 import com.bitfire.uracer.utils.MapUtils;
 
 /** First write. Basic idea in place, will need refactoring for sure.
- * 
+ *
  * @author manuel */
 public class Level {
 	// level data
@@ -95,13 +95,11 @@ public class Level {
 		levelRenderer = new LevelRenderer( camPersp, camOrtho );
 	}
 
+	// TODO remove this 2-stage construction, the "static" problem on Android is no more.
 	/* 2-stage construction, avoid <static> problems in Android */
 	public void construct() {
 		syncWithCam( Director.getCamera() );
 		OrthographicAlignedStillModel.initialize();
-
-		// create track
-		// track = new Track( map );
 
 		EntityManager.create();
 		recorder = Recorder.create();
@@ -182,7 +180,7 @@ public class Level {
 		// creates and setup perspective camera
 		float perspPlaneNear = 1;
 
-		// carefully choosen, Blender models' 14.2 meters <=> one 256px tile
+		// strategically choosen, Blender models' 14.2 meters <=> one 256px tile
 		// with far plane @48
 		float perspPlaneFar = 240;
 		camPerspElevation = 100;

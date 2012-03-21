@@ -15,13 +15,18 @@ public class Combine extends Filter<Combine> {
 		upload();
 	}
 
+	@Override
 	public void dispose() {
 		combine.dispose();
 	}
 
 	public enum Param {
-		Source1Intensity( "Src1Intensity" ), Source1Saturation( "Src1Saturation" ), Source2Intensity( "Src2Intensity" ), Source2Saturation(
-				"Src2Saturation" );
+		// @formatter:off
+		Source1Intensity( "Src1Intensity" ),
+		Source1Saturation( "Src1Saturation" ),
+		Source2Intensity( "Src2Intensity" ),
+		Source2Saturation("Src2Saturation" );
+		// @formatter:on
 
 		final String mnemonic;
 

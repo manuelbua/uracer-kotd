@@ -4,13 +4,12 @@ import com.badlogic.gdx.utils.IntMap;
 import com.bitfire.uracer.postprocessing.PingPongBuffer;
 
 public class Blur extends MultipassFilter {
+	// @formatter:off
 	private enum Tap {
-		// @formatter:off
 		Tap3x3( 1 ),
 		Tap5x5( 2 ),
 //		Tap7x7( 3 )
 		;
-		// @formatter:on
 
 		public final int radius;
 
@@ -20,13 +19,11 @@ public class Blur extends MultipassFilter {
 	}
 
 	public enum BlurType {
-		// @formatter:off
 		Gaussian3x3( Tap.Tap3x3 ),
 		Gaussian3x3b(Tap.Tap3x3 ),	// R=5 (11x11, policy "higher-then-discard")
 		Gaussian5x5( Tap.Tap5x5 ),
 		Gaussian5x5b( Tap.Tap5x5 ), // R=9 (19x19, policy "higher-then-discard")
 		;
-		// @formatter:on
 
 		public final Tap tap;
 
@@ -34,6 +31,7 @@ public class Blur extends MultipassFilter {
 			this.tap = tap;
 		}
 	}
+	// @formatter:off
 
 	// blur
 	private BlurType type;
