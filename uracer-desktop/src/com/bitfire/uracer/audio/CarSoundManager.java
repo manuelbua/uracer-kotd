@@ -5,14 +5,6 @@ import com.bitfire.uracer.game.logic.Player;
 
 public class CarSoundManager {
 	private static Player player = null;
-	// private static CarDescriptor carDescriptor = null;
-
-	// common sound factors
-	// private static float carMaxSpeedSquared = 0;
-	// private static float carMaxForce = 0;
-	// private static float currCarSpeedSquared = 0;
-	// private static float currSpeedFactor = 0;
-	// private static float currForceFactor = 0;
 
 	// sound effects
 	private static CarDriftSoundEffect carDrift;
@@ -37,19 +29,10 @@ public class CarSoundManager {
 
 	public static void setPlayer( Player player ) {
 		CarSoundManager.player = player;
-		// CarSoundManager.carDescriptor = player.car.getCarDescriptor();
-		// carMaxSpeedSquared = carDescriptor.carModel.max_speed * carDescriptor.carModel.max_speed;
-		// carMaxForce = carDescriptor.carModel.max_force;
 	}
 
 	public static void tick() {
 		if( player.car.getInputMode() == CarInputMode.InputFromPlayer ) {
-			// TODO should be done by the Player concrete class
-			// compute common factors
-			// currCarSpeedSquared = carDescriptor.velocity_wc.len2();
-			// currSpeedFactor = AMath.clamp(currCarSpeedSquared / carMaxSpeedSquared, 0f, 1f);
-			// currForceFactor = AMath.clamp(carDescriptor.throttle / carMaxForce, 0f, 1f);
-
 			carEngine.update( player.currSpeedFactor );
 			carDrift.update( player.currSpeedFactor );
 		}

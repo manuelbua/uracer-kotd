@@ -16,7 +16,6 @@ import com.bitfire.uracer.effects.TrackEffects;
 import com.bitfire.uracer.entities.EntityManager;
 import com.bitfire.uracer.entities.vehicles.Car;
 import com.bitfire.uracer.game.logic.DirectorController;
-import com.bitfire.uracer.game.logic.DriftInfo;
 import com.bitfire.uracer.game.logic.GameLogic;
 import com.bitfire.uracer.game.logic.Level;
 import com.bitfire.uracer.game.logic.Player;
@@ -32,6 +31,11 @@ import com.bitfire.uracer.tweener.Tweener;
 import com.bitfire.uracer.tweener.accessors.HudLabelAccessor;
 import com.bitfire.uracer.tweener.accessors.MessageAccessor;
 
+/** TODO most of the shared stuff between Game and GameLogic should go in a
+ * GameData structure of some sort, GameLogic is really the logical portion of
+ * Game, so data should be accessible for both.
+ *
+ * @author bmanuel */
 public class Game {
 	private Level level = null;
 	private Player player = null;
@@ -147,17 +151,18 @@ public class Game {
 		CarSoundManager.tick();
 
 		// post-processor debug ------------------------------
+		// float factor = DriftInfo.get().driftStrength;
+		float factor = player.currSpeedFactor;
 		if( Config.Graphics.EnablePostProcessingFx && zoom != null ) {
 			zoom.setOrigin( Director.screenPosFor( player.car.getBody() ) );
-//			zoom.setStrength( Config.PostProcessing.ZoomMaxStrength * DriftInfo.get().driftStrength );
-			zoom.setStrength( -0.125f * DriftInfo.get().driftStrength );
-//			 zoom.setStrength( player.currSpeedFactor );
+			// zoom.setStrength( Config.PostProcessing.ZoomMaxStrength * DriftInfo.get().driftStrength );
+			zoom.setStrength( -0.125f * factor );
 		}
 
-		if(Config.Graphics.EnablePostProcessingFx && bloom != null) {
-			bloom.setBaseSaturation( 0.5f * (1-DriftInfo.get().driftStrength) );
-//			bloom.setBloomSaturation( 1.5f + 0.5f * DriftInfo.get().driftStrength );
-//			bloom.setBloomIntesity( 1f - 0.5f * DriftInfo.get().driftStrength );
+		if( Config.Graphics.EnablePostProcessingFx && bloom != null ) {
+			bloom.setBaseSaturation( 0.5f * (1 - factor) );
+			bloom.setBloomSaturation( 1.5f + 0.5f * factor );
+			bloom.setBloomIntesity( 1f + 0.25f * factor );
 		}
 		// ---------------------------------------------------
 
