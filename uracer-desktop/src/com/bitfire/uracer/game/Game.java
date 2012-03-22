@@ -162,11 +162,11 @@ public class Game {
 		}
 
 		if( Config.Graphics.EnablePostProcessingFx && bloom != null ) {
-			bloom.setBaseIntesity( 1f - 0.1f*factor );
+			bloom.setBaseIntesity( 1f + 0.1f*factor );
 			bloom.setBaseSaturation( 0.5f - 0.5f*factor );
 
 			bloom.setBloomIntesity( 1.0f + 0.25f*factor );
-			bloom.setBloomSaturation( 1.5f + 0.25f*factor);
+			bloom.setBloomSaturation( 1.5f + 0.5f*factor);
 
 //			bloom.setBloomSaturation( 1.5f + 0.25f * factor );
 		}
