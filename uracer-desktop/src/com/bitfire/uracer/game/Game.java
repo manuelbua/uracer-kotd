@@ -151,8 +151,10 @@ public class Game {
 		CarSoundManager.tick();
 
 		// post-processor debug ------------------------------
-		// float factor = DriftInfo.get().driftStrength;
-		float factor = player.currSpeedFactor;
+//		 float factor = DriftInfo.get().driftStrength;
+		 float factor = player.currSpeedFactor;
+//		float factor = 1f;
+
 		if( Config.Graphics.EnablePostProcessingFx && zoom != null ) {
 			zoom.setOrigin( Director.screenPosFor( player.car.getBody() ) );
 			// zoom.setStrength( Config.PostProcessing.ZoomMaxStrength * DriftInfo.get().driftStrength );
@@ -160,9 +162,13 @@ public class Game {
 		}
 
 		if( Config.Graphics.EnablePostProcessingFx && bloom != null ) {
-			bloom.setBaseSaturation( 0.5f * (1 - factor) );
-			bloom.setBloomSaturation( 1.5f + 0.5f * factor );
-			bloom.setBloomIntesity( 1f + 0.25f * factor );
+			bloom.setBaseIntesity( 1f - 0.1f*factor );
+			bloom.setBaseSaturation( 0.5f - 0.5f*factor );
+
+			bloom.setBloomIntesity( 1.0f + 0.25f*factor );
+			bloom.setBloomSaturation( 1.5f + 0.25f*factor);
+
+//			bloom.setBloomSaturation( 1.5f + 0.25f * factor );
 		}
 		// ---------------------------------------------------
 
