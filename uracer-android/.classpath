@@ -8,5 +8,6 @@
 	<classpathentry combineaccessrules="false" kind="src" path="/uracer-desktop"/>
 	<classpathentry kind="lib" path="/model-loaders/bin"/>
 	<classpathentry combineaccessrules="false" kind="src" path="/box2dLight"/>
+	<classpathentry exported="true" kind="con" path="com.android.ide.eclipse.adt.LIBRARIES"/>
 	<classpathentry kind="output" path="bin/classes"/>
 </classpath>
