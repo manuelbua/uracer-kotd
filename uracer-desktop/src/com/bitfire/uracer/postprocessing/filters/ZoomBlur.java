@@ -9,7 +9,7 @@ import com.bitfire.uracer.utils.ShaderLoader;
 public class ZoomBlur extends Filter<ZoomBlur> {
 	private static final int MaxBlurLen = 32;
 	private int blur_len;		// ctrl quality
-	private float strength;		// ctrl quantity
+	private float strength, x, y;		// ctrl quantity
 
 	private ShaderProgram shader;
 
@@ -26,6 +26,8 @@ public class ZoomBlur extends Filter<ZoomBlur> {
 	}
 
 	public void setOrigin( float x, float y ) {
+		this.x = x;
+		this.y = y;
 		shader.begin();
 		shader.setUniformf( "offset_x", x / (float)Gdx.graphics.getWidth() );
 		shader.setUniformf( "offset_y", 1f - (y / (float)Gdx.graphics.getHeight()) );
@@ -33,6 +35,7 @@ public class ZoomBlur extends Filter<ZoomBlur> {
 	}
 
 	public void setStrength( float strength ) {
+		this.strength = strength;
 		shader.begin();
 		shader.setUniformf( "blur_div", strength / (float)blur_len );
 		shader.end();
@@ -48,6 +51,9 @@ public class ZoomBlur extends Filter<ZoomBlur> {
 		shader.begin();
 		shader.setUniformf( "one_on_blurlen", 1f / (float)blur_len );
 		shader.setUniformi( "u_texture", u_texture_1 );
+		shader.setUniformf( "blur_div", this.strength / (float)blur_len );
+		shader.setUniformf( "offset_x", this.x / (float)Gdx.graphics.getWidth() );
+		shader.setUniformf( "offset_y", 1f - (this.y / (float)Gdx.graphics.getHeight()) );
 		shader.end();
 	}
 

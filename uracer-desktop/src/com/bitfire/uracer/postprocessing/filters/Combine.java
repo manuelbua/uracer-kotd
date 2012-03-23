@@ -22,10 +22,10 @@ public class Combine extends Filter<Combine> {
 
 	public enum Param {
 		// @formatter:off
-		Source1Intensity( "Src1Intensity" ),
-		Source1Saturation( "Src1Saturation" ),
-		Source2Intensity( "Src2Intensity" ),
-		Source2Saturation("Src2Saturation" );
+		Source1Intensity("Src1Intensity"),
+		Source1Saturation("Src1Saturation"),
+		Source2Intensity("Src2Intensity"),
+		Source2Saturation("Src2Saturation");
 		// @formatter:on
 
 		final String mnemonic;

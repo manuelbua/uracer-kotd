@@ -77,3 +77,14 @@
 			x combine
 		x zoom
 			x zoom blur
+	- filters should implement the setParam paradigm as the Combine filter is doing, will minimize the amount of shader's begin/end context switches
+	  when updating ONE single value, not so good for updating multiple values per-frame, this need a bit of work..
+	  
+[ ] GAME DATA
+	- shared between Game and GameLogic
+	- can only be modified by GameLogic
+	- can be read by whoever need
+		? contains DriftInfo
+		? contains LapInfo
+		? contains Player
+		? no more getHud/getLevel in Game
