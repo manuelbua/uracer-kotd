@@ -71,7 +71,7 @@ public class Game {
 		Art.scaleFonts( Director.scalingStrategy.invTileMapZoomFactor );
 
 		// bring up level
-		level = Director.loadLevel( levelName, gameSettings, false /* night mode */);
+		level = Director.loadLevel( levelName, gameSettings, true /* night mode */);
 		player = level.getPlayer();
 
 		logic = new GameLogic( this );
@@ -120,15 +120,9 @@ public class Game {
 	}
 
 	private void setupPostProcessing() {
-		int fboWidth = Gdx.graphics.getWidth();
-		int fboHeight = Gdx.graphics.getHeight();
-
-		postProcessor = new PostProcessor( fboWidth, fboHeight, false /* depth */, false /* alpha */, Config.isDesktop /* 32 bits */);
-
-		fboWidth = (int)(fboWidth * Config.PostProcessing.RttRatio);
-		fboHeight = (int)(fboHeight * Config.PostProcessing.RttRatio);
-
-		bloom = new Bloom( fboWidth, fboHeight, postProcessor.getFramebufferFormat() );
+		postProcessor = new PostProcessor( Gdx.graphics.getWidth(), Gdx.graphics.getHeight(), false /* depth */, false /* alpha */, Config.isDesktop /* 32 bits */);
+		bloom = new Bloom( Config.PostProcessing.RttFboWidth, Config.PostProcessing.RttFboHeight, postProcessor.getFramebufferFormat() );
+		// bloom = new Bloom( Config.PostProcessing.SmallFboWidth, Config.PostProcessing.SmallFboHeight, postProcessor.getFramebufferFormat() );
 
 		// Bloom.Settings bs = new Bloom.Settings( "arrogance-1 / rtt=0.25 / @1920x1050", BlurType.Gaussian5x5b, 1, 1, 0.25f, 1f, 0.1f, 0.8f, 1.4f );
 		// Bloom.Settings bs = new Bloom.Settings( "arrogance-2 / rtt=0.25 / @1920x1050", BlurType.Gaussian5x5b, 1, 1, 0.35f, 1f, 0.1f, 1.4f, 0.75f );
@@ -137,8 +131,8 @@ public class Game {
 
 		bloom.setSettings( bs );
 
-		zoom = new Zoom( Config.PostProcessing.ZoomQuality );
-		postProcessor.addEffect( zoom );
+		// zoom = new Zoom( Config.PostProcessing.ZoomQuality );
+		// postProcessor.addEffect( zoom );
 
 		postProcessor.addEffect( bloom );
 	}
@@ -151,24 +145,24 @@ public class Game {
 		CarSoundManager.tick();
 
 		// post-processor debug ------------------------------
-//		 float factor = DriftInfo.get().driftStrength;
-		 float factor = player.currSpeedFactor;
-//		float factor = 1f;
+		// float factor = DriftInfo.get().driftStrength;
+		float factor = player.currSpeedFactor;
+		// float factor = 1f;
 
 		if( Config.Graphics.EnablePostProcessingFx && zoom != null ) {
 			zoom.setOrigin( Director.screenPosFor( player.car.getBody() ) );
 			// zoom.setStrength( Config.PostProcessing.ZoomMaxStrength * DriftInfo.get().driftStrength );
-			zoom.setStrength( -0.125f * factor );
+			zoom.setStrength( -0.085f * factor );
 		}
 
 		if( Config.Graphics.EnablePostProcessingFx && bloom != null ) {
-			bloom.setBaseIntesity( 1f + 0.1f*factor );
-			bloom.setBaseSaturation( 0.5f - 0.5f*factor );
+			bloom.setBaseIntesity( 1f + 0.1f * factor );
+			bloom.setBaseSaturation( 0.5f - 0.5f * factor );
 
-			bloom.setBloomIntesity( 1.0f + 0.25f*factor );
-			bloom.setBloomSaturation( 1.5f + 0.5f*factor);
+			bloom.setBloomIntesity( 1.0f + 0.25f * factor );
+			bloom.setBloomSaturation( 1.5f + 0.5f * factor );
 
-//			bloom.setBloomSaturation( 1.5f + 0.25f * factor );
+			// bloom.setBloomSaturation( 1.5f + 0.25f * factor );
 		}
 		// ---------------------------------------------------
 

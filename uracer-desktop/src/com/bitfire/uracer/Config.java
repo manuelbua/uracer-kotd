@@ -7,6 +7,7 @@ import com.bitfire.uracer.game.GameDifficulty;
 import com.bitfire.uracer.game.logic.DirectorController.InterpolationMode;
 import com.bitfire.uracer.postprocessing.filters.Blur;
 import com.bitfire.uracer.postprocessing.filters.Blur.BlurType;
+import com.bitfire.uracer.postprocessing.filters.ZoomBlur;
 
 public class Config {
 	// generic
@@ -15,40 +16,44 @@ public class Config {
 	public static class PostProcessing {
 		public static BlurType BlurType;
 		public static float RttRatio = 0.25f;
-		public static int SmallFboWidth, SmallFboHeight;
+		public static int PotRttFboWidth, PotRttFboHeight;
+		public static int RttFboWidth, RttFboHeight;
 
-		public static int ZoomQuality;
+		public static ZoomBlur.Quality ZoomQuality;
 		public static float ZoomMaxStrength;
 
 		// compute per-resolution constants
 		public static void asDefault() {
 			int w = Gdx.graphics.getWidth();
 
+			RttFboWidth = (int)(Gdx.graphics.getWidth() * RttRatio);
+			RttFboHeight = (int)(Gdx.graphics.getHeight() * RttRatio);
+
 			if( w >= 1680 ) {
 				BlurType = Blur.BlurType.Gaussian5x5b;
-				ZoomQuality = 16;
+				ZoomQuality = ZoomBlur.Quality.High;
 				ZoomMaxStrength = -0.08f;
-				SmallFboWidth = SmallFboHeight = 512;
+				PotRttFboWidth = PotRttFboHeight = 256;
 			}
 			else if( w >= 1280 ) {
 				BlurType = Blur.BlurType.Gaussian3x3b;
-				ZoomQuality = 4;
+				ZoomQuality = ZoomBlur.Quality.Medium;
 				ZoomMaxStrength = -0.08f;
-				SmallFboWidth = SmallFboHeight = 256;
+				PotRttFboWidth = PotRttFboHeight = 256;
 			}
 			else if( w >= 800 ) {
 				BlurType = Blur.BlurType.Gaussian3x3;
-				ZoomQuality = 2;
+				ZoomQuality = ZoomBlur.Quality.Low;
 				ZoomMaxStrength = -0.08f;
-				SmallFboWidth = SmallFboHeight = 256;
+				PotRttFboWidth = PotRttFboHeight = 128;
 			}
 
 			System.out.println( "blurType=" + BlurType );
 			System.out.println( "zoomQuality=" + ZoomQuality );
 			System.out.println( "zoomMaxStrength=" + ZoomMaxStrength );
-			System.out.println( "SmallFboWidth=" + SmallFboWidth );
-			System.out.println( "SmallFboHeight=" + SmallFboHeight );
-			System.out.println( "FBO x Ratio=" + (int)(Gdx.graphics.getWidth()*RttRatio) + "x" + (int)(Gdx.graphics.getHeight()*RttRatio) );
+			System.out.println( "SmallFboWidth=" + PotRttFboWidth );
+			System.out.println( "SmallFboHeight=" + PotRttFboHeight );
+			System.out.println( "FBO x Ratio=" + (int)(Gdx.graphics.getWidth() * RttRatio) + "x" + (int)(Gdx.graphics.getHeight() * RttRatio) );
 		}
 	}
 
@@ -69,7 +74,7 @@ public class Config {
 		}
 
 		public static void asDefault() {
-			EnablePostProcessingFx = true;
+			EnablePostProcessingFx = false;
 			EnableMipMapping = true;
 			SubframeInterpolation = true;
 

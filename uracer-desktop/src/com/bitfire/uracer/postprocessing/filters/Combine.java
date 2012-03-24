@@ -2,43 +2,45 @@ package com.bitfire.uracer.postprocessing.filters;
 
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.glutils.FrameBuffer;
-import com.badlogic.gdx.graphics.glutils.ShaderProgram;
 import com.bitfire.uracer.postprocessing.IFilter;
 import com.bitfire.uracer.utils.ShaderLoader;
 
 public class Combine extends Filter<Combine> {
-	private ShaderProgram combine;
-	private Texture inputTexture2 = null;
 
-	public Combine() {
-		combine = ShaderLoader.createShader( "screenspace", "combine" );
-		upload();
-	}
-
-	@Override
-	public void dispose() {
-		combine.dispose();
-	}
-
-	public enum Param {
+	public enum Param implements Parameter {
 		// @formatter:off
-		Source1Intensity("Src1Intensity"),
-		Source1Saturation("Src1Saturation"),
-		Source2Intensity("Src2Intensity"),
-		Source2Saturation("Src2Saturation");
+		Texture1("u_texture0",0),
+		Texture2("u_texture1",0),
+		Source1Intensity("Src1Intensity",0),
+		Source1Saturation("Src1Saturation",0),
+		Source2Intensity("Src2Intensity",0),
+		Source2Saturation("Src2Saturation",0);
 		// @formatter:on
 
-		final String mnemonic;
+		private final String mnemonic;
+		private int elementSize;
 
-		private Param( String m ) {
+		private Param( String m, int elementSize ) {
 			this.mnemonic = m;
+			this.elementSize = elementSize;
+		}
+
+		@Override
+		public String mnemonic() {
+			return this.mnemonic;
+		}
+
+		@Override
+		public int arrayElementSize() {
+			return this.elementSize;
 		}
 	}
 
-	public void setParam( Param param, float value ) {
-		combine.begin();
-		combine.setUniformf( param.mnemonic, value );
-		combine.end();
+	private Texture inputTexture2 = null;
+
+	public Combine() {
+		super( ShaderLoader.createShader( "screenspace", "combine" ) );
+		rebind();
 	}
 
 	public Combine setInput( FrameBuffer buffer1, FrameBuffer buffer2 ) {
@@ -54,19 +56,18 @@ public class Combine extends Filter<Combine> {
 	}
 
 	@Override
-	public void upload() {
-		combine.begin();
-		combine.setUniformi( "u_texture0", u_texture_1 );
-		combine.setUniformi( "u_texture1", u_texture_2 );
-		combine.end();
+	public void rebind() {
+		setParams( Param.Texture1, u_texture_1 );
+		setParams( Param.Texture2, u_texture_2 );
+		endParams();
 	}
 
 	@Override
 	protected void compute() {
 		inputTexture.bind( u_texture_1 );
 		inputTexture2.bind( u_texture_2 );
-		combine.begin();
-		IFilter.quad.render( combine );
-		combine.end();
+		program.begin();
+		IFilter.quad.render( program );
+		program.end();
 	}
 }

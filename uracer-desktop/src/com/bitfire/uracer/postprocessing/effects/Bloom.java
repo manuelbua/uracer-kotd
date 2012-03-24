@@ -84,7 +84,7 @@ public class Bloom extends PostProcessorEffect {
 		pingPongBuffer = PostProcessor.newPingPongBuffer( fboWidth, fboHeight, frameBufferFormat, false );
 
 		blur = new Blur( fboWidth, fboHeight );
-		threshold = new Threshold( Bloom.useAlphaChannelAsMask );
+		threshold = new Threshold();
 		combine = new Combine();
 
 		setSettings( new Settings( "default", 2, 0.277f, 1f, .85f, 1.1f, .85f ) );

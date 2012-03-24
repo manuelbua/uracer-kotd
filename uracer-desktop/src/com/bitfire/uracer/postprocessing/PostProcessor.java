@@ -9,9 +9,9 @@ import com.badlogic.gdx.utils.Disposable;
 
 /** Provides a way to capture the rendered scene to an off-screen buffer
  * and to apply a chain of effects on it before rendering to screen.
- * 
+ *
  * Effects can be added or removed via {@link #addEffect(PostProcessorEffect)} and {@link #removeEffect(PostProcessorEffect)}.
- * 
+ *
  * @author bmanuel */
 public final class PostProcessor implements Disposable {
 	private final PingPongBuffer composite;
@@ -21,7 +21,7 @@ public final class PostProcessor implements Disposable {
 	private Color clearColor = Color.CLEAR;
 	private static Array<PingPongBuffer> buffers = new Array<PingPongBuffer>( 5 );
 
-	/** Construct a new PostProcessor object with the given parameters. */
+	/** Construct a new PostProcessor with the given parameters. */
 	public PostProcessor( int fboWidth, int fboHeight, boolean useDepth, boolean useAlphaChannel, boolean use32Bits ) {
 		if( use32Bits ) {
 			if( useAlphaChannel ) {
@@ -42,6 +42,11 @@ public final class PostProcessor implements Disposable {
 
 		composite = newPingPongBuffer( fboWidth, fboHeight, fbFormat, useDepth );
 		capturing = false;
+	}
+
+	/** Construct a new PostProcessor with FBO dimensions set to the size of the screen */
+	public PostProcessor( boolean useDepth, boolean useAlphaChannel, boolean use32Bits ) {
+		this( Gdx.graphics.getWidth(), Gdx.graphics.getHeight(), useDepth, useAlphaChannel, use32Bits );
 	}
 
 	/** Creates and returns a managed PingPongBuffer buffer, just create and forget.

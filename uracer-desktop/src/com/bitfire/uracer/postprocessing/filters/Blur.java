@@ -8,7 +8,7 @@ public class Blur extends MultipassFilter {
 	private enum Tap {
 		Tap3x3( 1 ),
 		Tap5x5( 2 ),
-//		Tap7x7( 3 )
+		//Tap7x7( 3 )
 		;
 
 		public final int radius;

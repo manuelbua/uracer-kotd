@@ -15,7 +15,7 @@
 
 
 
-[   ] AUDIO
+[ O ] AUDIO
 
 	x car engine
 		x pitch twiddling on the audio stream
@@ -27,8 +27,8 @@
 	x on collision
 		x LATENCY?
 		
-	- sound track
- 		- (i don't give a shit about latency in this case)
+	o sound track
+ 		o (i don't give a shit about latency in this case)
 
 
 
@@ -55,7 +55,7 @@
 
 
 
-[ O ] POST-PROCESSOR API
+[ X ] POST-PROCESSOR API
 
 	x initial release
 	x initial APIs
@@ -65,10 +65,10 @@
 		- hard-coded weights/offsets, per-vertex computations (24fps)
 		- generic convolution filter, pre-computed values (passthrough vertex program), (22/23fps) sysmem-to-gpumem copy overhead?
 		
-	o stabilize APIs
+	x stabilize APIs
 		x public void render(FullscreenQuad quad, PingPongBuffer buffer)
 		x public void render(FullscreenQuad quad, Texture source, FrameBuffer dest)
-		o make sure the current API is flexible enough
+		x make sure the current API is flexible enough
 	x chain filters to create effects, eg:
 		x bloom
 			x threshold
@@ -77,9 +77,13 @@
 			x combine
 		x zoom
 			x zoom blur
-	- filters should implement the setParam paradigm as the Combine filter is doing, will minimize the amount of shader's begin/end context switches
+	x filters should implement the setParam paradigm as the Combine filter is doing, will minimize the amount of shader's begin/end context switches
 	  when updating ONE single value, not so good for updating multiple values per-frame, this need a bit of work..
-	  
+
+[ ] box2dlights update
+	- same/better features than i need? what's different? faster?
+	- svn project in git?
+
 [ ] GAME DATA
 	- shared between Game and GameLogic
 	- can only be modified by GameLogic
@@ -88,3 +92,5 @@
 		? contains LapInfo
 		? contains Player
 		? no more getHud/getLevel in Game
+[ ] car
+	- draw wheels

@@ -1,26 +1,67 @@
 package com.bitfire.uracer.postprocessing.filters;
 
 import com.badlogic.gdx.Gdx;
-import com.badlogic.gdx.graphics.glutils.ShaderProgram;
 import com.bitfire.uracer.postprocessing.IFilter;
-import com.bitfire.uracer.utils.AMath;
 import com.bitfire.uracer.utils.ShaderLoader;
 
 public class ZoomBlur extends Filter<ZoomBlur> {
-	private static final int MaxBlurLen = 32;
-	private int blur_len;		// ctrl quality
-	private float strength, x, y;		// ctrl quantity
+	// ctrl quality
+	private int blur_len;
 
-	private ShaderProgram shader;
+	// ctrl quantity
+	private float strength, x, y;
 
 	public ZoomBlur() {
-		this( 2 );
+		this( Quality.Low );
 	}
 
-	public ZoomBlur( int quality ) {
-		this.blur_len = AMath.clamp( quality, 1, MaxBlurLen );
-		shader = ShaderLoader.createShader( "zoom-blur", "zoom-blur", "#define BLUR_LENGTH " + blur_len + "\n#define ONE_ON_BLUR_LENGTH " + 1f / (float)blur_len );
-		upload();
+	public enum Quality {
+		// @formatter:off
+		High( 16 ),
+		Medium( 4 ),
+		Low( 2 );
+		// @formatter:off
+
+		final int length;
+
+		private Quality( int value ) {
+			this.length = value;
+		}
+	}
+
+	public enum Param implements Parameter {
+		// @formatter:off
+		Texture( "u_texture", 0 ),
+		BlurDiv( "blur_div", 0 ),
+		OffsetX( "offset_x", 0 ),
+		OffsetY( "offset_y", 0 ),
+		OneOnBlurLen( "one_on_blurlen", 0 );
+		// @formatter:on
+
+		private String mnemonic;
+		private int elementSize;
+
+		private Param( String mnemonic, int arrayElementSize ) {
+			this.mnemonic = mnemonic;
+			this.elementSize = arrayElementSize;
+		}
+
+		@Override
+		public String mnemonic() {
+			return this.mnemonic;
+		}
+
+		@Override
+		public int arrayElementSize() {
+			return this.elementSize;
+		}
+	}
+
+	public ZoomBlur( Quality quality ) {
+		super( ShaderLoader.createShader( "zoom-blur", "zoom-blur", "#define BLUR_LENGTH " + quality.length + "\n#define ONE_ON_BLUR_LENGTH " + 1f
+				/ (float)quality.length ) );
+		this.blur_len = quality.length;
+		rebind();
 		setOrigin( 0.5f, 0.5f );
 		setStrength( 0.5f );
 	}
@@ -28,40 +69,28 @@ public class ZoomBlur extends Filter<ZoomBlur> {
 	public void setOrigin( float x, float y ) {
 		this.x = x;
 		this.y = y;
-		shader.begin();
-		shader.setUniformf( "offset_x", x / (float)Gdx.graphics.getWidth() );
-		shader.setUniformf( "offset_y", 1f - (y / (float)Gdx.graphics.getHeight()) );
-		shader.end();
+		setParams( Param.OffsetX, x / (float)Gdx.graphics.getWidth() );
+		setParams( Param.OffsetY, 1f - (y / (float)Gdx.graphics.getHeight()) ).endParams();
 	}
 
 	public void setStrength( float strength ) {
 		this.strength = strength;
-		shader.begin();
-		shader.setUniformf( "blur_div", strength / (float)blur_len );
-		shader.end();
+		setParams( Param.BlurDiv, strength / (float)blur_len ).endParams();
 	}
 
 	@Override
-	public void dispose() {
-		shader.dispose();
-	}
-
-	@Override
-	public void upload() {
-		shader.begin();
-		shader.setUniformf( "one_on_blurlen", 1f / (float)blur_len );
-		shader.setUniformi( "u_texture", u_texture_1 );
-		shader.setUniformf( "blur_div", this.strength / (float)blur_len );
-		shader.setUniformf( "offset_x", this.x / (float)Gdx.graphics.getWidth() );
-		shader.setUniformf( "offset_y", 1f - (this.y / (float)Gdx.graphics.getHeight()) );
-		shader.end();
+	public void rebind() {
+		setParams( Param.Texture, u_texture_1 );
+		setParams( Param.OneOnBlurLen, 1f / (float)blur_len );
+		setParams( Param.BlurDiv, this.strength / (float)blur_len );
+		setOrigin( this.x, this.y );
 	}
 
 	@Override
 	protected void compute() {
 		inputTexture.bind( u_texture_1 );
-		shader.begin();
-		IFilter.quad.render( shader );
-		shader.end();
+		program.begin();
+		IFilter.quad.render( program );
+		program.end();
 	}
 }
