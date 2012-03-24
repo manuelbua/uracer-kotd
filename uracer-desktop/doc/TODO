@@ -80,9 +80,10 @@
 	x filters should implement the setParam paradigm as the Combine filter is doing, will minimize the amount of shader's begin/end context switches
 	  when updating ONE single value, not so good for updating multiple values per-frame, this need a bit of work..
 
-[ ] box2dlights update
-	- same/better features than i need? what's different? faster?
-	- svn project in git?
+[ X ] box2dlights update
+	x same/better features than i need?[point in shader/point in light] faster? [not quite]
+	x svn project in git?
+	x NOT GOING TO UPDATE, SLOW IMPLEMENTATION JUST BY READING IT
 
 [ ] GAME DATA
 	- shared between Game and GameLogic
@@ -94,3 +95,4 @@
 		? no more getHud/getLevel in Game
 [ ] car
 	- draw wheels
+	- get graphics real size in pixels to permit artist to work on it, get pixel size at target resolution (1280x800)
