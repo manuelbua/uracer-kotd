@@ -123,12 +123,15 @@ public final class PostProcessor implements Disposable {
 		}
 	}
 
-	/** Stops capturing the scene. */
-	public void captureEnd() {
+	/** Stops capturing the scene and returns the result, or null if nothing was captured. */
+	public FrameBuffer captureEnd() {
 		if( capturing ) {
 			capturing = false;
 			composite.end();
+			return composite.getResultBuffer();
 		}
+
+		return null;
 	}
 
 	/** After a capture/captureEnd action, returns the just captured buffer */

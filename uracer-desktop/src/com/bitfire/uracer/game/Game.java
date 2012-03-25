@@ -147,7 +147,7 @@ public class Game {
 		// post-processor debug ------------------------------
 		// float factor = DriftInfo.get().driftStrength;
 		float factor = player.currSpeedFactor;
-//		factor = 1f;
+		// factor = 1f;
 
 		if( Config.Graphics.EnablePostProcessingFx && zoom != null ) {
 			zoom.setOrigin( Director.screenPosFor( player.car.getBody() ) );
@@ -158,7 +158,7 @@ public class Game {
 		if( Config.Graphics.EnablePostProcessingFx && bloom != null ) {
 			bloom.setBaseSaturation( 0.5f - 0.5f * factor );
 			bloom.setBloomIntesity( 1.0f + 0.25f * factor );
-			bloom.setBloomSaturation( 1.5f + (level.isNightMode()?2f:0.5f) * factor );
+			bloom.setBloomSaturation( 1.5f + (level.isNightMode() ? 2f : 0.5f) * factor );
 		}
 		// ---------------------------------------------------
 
@@ -222,12 +222,10 @@ public class Game {
 		// lights
 		if( level.isNightMode() ) {
 			level.generateLightMap();
-			if(Config.Graphics.EnablePostProcessingFx) {
-				postProcessor.captureEnd();
-
-				// blend the lightmap on the just captured scene
-				level.renderLigthMap(postProcessor.captured());
-			}
+			// hook into the next PostProcessor source buffer (the last result)
+			// and blend the lightmap on it
+			if( Config.Graphics.EnablePostProcessingFx )
+				level.renderLigthMap( postProcessor.captureEnd() );
 			else
 				level.renderLigthMap( null );
 		}
@@ -235,7 +233,6 @@ public class Game {
 		if( Config.Graphics.EnablePostProcessingFx ) {
 			postProcessor.render();
 		}
-
 
 		//
 		// debug
