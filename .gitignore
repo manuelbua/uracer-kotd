@@ -6,3 +6,4 @@ AndroidManifest.xml
 VersionInfo.java
 *.so
 *.log
+*.class
