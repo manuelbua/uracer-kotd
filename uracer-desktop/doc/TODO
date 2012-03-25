@@ -93,6 +93,10 @@
 		? contains LapInfo
 		? contains Player
 		? no more getHud/getLevel in Game
+		
 [ ] car
 	- draw wheels
-	- get graphics real size in pixels to permit artist to work on it, get pixel size at target resolution (1280x800)
+	- get graphics' real size in pixels to permit artist to work on it, get pixel size at target resolution (1280x800)
+	
+[ ] investigate night-more + bloom + zoom performance drop?
+[ ] document map definition, objects, tile types, lights, tileset settings, tile settings
