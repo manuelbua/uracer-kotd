@@ -16,6 +16,7 @@ import com.bitfire.uracer.effects.TrackEffects;
 import com.bitfire.uracer.entities.EntityManager;
 import com.bitfire.uracer.entities.vehicles.Car;
 import com.bitfire.uracer.game.logic.DirectorController;
+import com.bitfire.uracer.game.logic.DriftInfo;
 import com.bitfire.uracer.game.logic.GameLogic;
 import com.bitfire.uracer.game.logic.Level;
 import com.bitfire.uracer.game.logic.Player;
@@ -30,6 +31,7 @@ import com.bitfire.uracer.tiled.LevelRenderer;
 import com.bitfire.uracer.tweener.Tweener;
 import com.bitfire.uracer.tweener.accessors.HudLabelAccessor;
 import com.bitfire.uracer.tweener.accessors.MessageAccessor;
+import com.bitfire.uracer.utils.AMath;
 
 /** TODO most of the shared stuff between Game and GameLogic should go in a
  * GameData structure of some sort, GameLogic is really the logical portion of
@@ -71,7 +73,7 @@ public class Game {
 		Art.scaleFonts( Director.scalingStrategy.invTileMapZoomFactor );
 
 		// bring up level
-		level = Director.loadLevel( levelName, gameSettings, true /* night mode */);
+		level = Director.loadLevel( levelName, gameSettings, false /* night mode */);
 		player = level.getPlayer();
 
 		logic = new GameLogic( this );
@@ -137,6 +139,7 @@ public class Game {
 		postProcessor.addEffect( bloom );
 	}
 
+	private float prevFactor = 0;
 	public boolean tick() {
 		if( !logic.tick() ) return false;
 
@@ -145,20 +148,22 @@ public class Game {
 		CarSoundManager.tick();
 
 		// post-processor debug ------------------------------
-		// float factor = DriftInfo.get().driftStrength;
-		float factor = player.currSpeedFactor;
-		// factor = 1f;
+		 float factor = DriftInfo.get().driftStrength;
+//		float factor = player.currSpeedFactor;
+//		 factor = 1f;
 
+		 factor = AMath.lerp( prevFactor, factor, 0.125f );
+		 prevFactor = factor;
 		if( Config.Graphics.EnablePostProcessingFx && zoom != null ) {
 			zoom.setOrigin( Director.screenPosFor( player.car.getBody() ) );
 			// zoom.setStrength( Config.PostProcessing.ZoomMaxStrength * DriftInfo.get().driftStrength );
-			zoom.setStrength( -0.03f * factor );
+			zoom.setStrength( -0.1f * factor );
 		}
 
 		if( Config.Graphics.EnablePostProcessingFx && bloom != null ) {
-			bloom.setBaseSaturation( 0.5f - 0.5f * factor );
+			bloom.setBaseSaturation( 0.5f - 0.8f * factor );
 			bloom.setBloomIntesity( 1.0f + 0.25f * factor );
-			bloom.setBloomSaturation( 1.5f + ((level.isNightMode() && !Config.Graphics.DumbNightMode) ? 2f : 0.5f) * factor );
+			bloom.setBloomSaturation( 1.5f + ((level.isNightMode() && !Config.Graphics.DumbNightMode) ? 2f : 1.5f) * factor );
 		}
 		// ---------------------------------------------------
 
