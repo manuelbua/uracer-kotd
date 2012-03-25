@@ -219,24 +219,29 @@ public class Game {
 
 		hud.render( batch );
 
-		if( Config.Graphics.DumbNightMode ) {
-			if( Config.Graphics.EnablePostProcessingFx ) postProcessor.render();
-			level.generateLightMap();
-			level.renderLigthMap( null );
+		if(level.isNightMode()) {
+			if( Config.Graphics.DumbNightMode ) {
+				if( Config.Graphics.EnablePostProcessingFx ) postProcessor.render();
+				level.generateLightMap();
+				level.renderLigthMap( null );
+			}
+			else {
+				// render nightmode
+				if( level.isNightMode() ) {
+					level.generateLightMap();
+					// hook into the next PostProcessor source buffer (the last result)
+					// and blend the lightmap on it
+					if( Config.Graphics.EnablePostProcessingFx )
+						level.renderLigthMap( postProcessor.captureEnd() );
+					else
+						level.renderLigthMap( null );
+				}
+
+				if( Config.Graphics.EnablePostProcessingFx ) postProcessor.render();
+			}
 		}
 		else {
-			// render nightmode
-			if( level.isNightMode() ) {
-				level.generateLightMap();
-				// hook into the next PostProcessor source buffer (the last result)
-				// and blend the lightmap on it
-				if( Config.Graphics.EnablePostProcessingFx )
-					level.renderLigthMap( postProcessor.captureEnd() );
-				else
-					level.renderLigthMap( null );
-			}
-
-			if( Config.Graphics.EnablePostProcessingFx ) postProcessor.render();
+			if(Config.Graphics.EnablePostProcessingFx) postProcessor.render();
 		}
 
 		//

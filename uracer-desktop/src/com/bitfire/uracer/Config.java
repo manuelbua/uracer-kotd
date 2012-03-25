@@ -79,7 +79,7 @@ public class Config {
 			EnableMipMapping = true;
 			SubframeInterpolation = true;
 
-			DumbNightMode = false;
+			DumbNightMode = true;
 			RenderBox2DWorldWireframe = false;
 			RenderPlayerDebugInfo = true;
 			RenderHudDebugInfo = true;
