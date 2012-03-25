@@ -267,6 +267,7 @@ public class RayHandler implements Disposable {
 		}
 	}
 
+
 	void renderWithShaders() {
 
 		if( shadows || blur ) {
