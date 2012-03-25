@@ -265,7 +265,6 @@ public class RayHandler implements Disposable {
 
 			Gdx.gl.glDisable( GL10.GL_BLEND );
 		}
-
 	}
 
 	void renderWithShaders() {
@@ -292,8 +291,8 @@ public class RayHandler implements Disposable {
 		}
 	}
 
-	public void renderLightMap(FrameBuffer dest) {
-		lightMap.render(dest);
+	public void renderLightMap( FrameBuffer dest ) {
+		lightMap.render( dest );
 	}
 
 	public FrameBuffer getLightMap() {
