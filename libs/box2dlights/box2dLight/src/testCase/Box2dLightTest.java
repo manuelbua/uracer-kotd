@@ -193,7 +193,7 @@ public class Box2dLightTest implements ApplicationListener, InputProcessor {
 		//rayHandler.setCombinedMatrix(camera.combined);
 		if (stepped)
 			rayHandler.update();
-		rayHandler.render();
+		rayHandler.generateLightMap();
 
 		/** BOX2D LIGHT STUFF END */
 

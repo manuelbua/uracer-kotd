@@ -27,7 +27,7 @@ class LightMap {
 	private ShaderProgram blurShader;
 	private ShaderProgram diffuseShader;
 
-	public void render() {
+	public void render(FrameBuffer dest) {
 		Gdx.gl.glEnable(GL20.GL_TEXTURE_2D);
 
 		boolean needed = rayHandler.lightRenderedLastFrame > 0;
@@ -36,6 +36,7 @@ class LightMap {
 			gaussianBlur();
 
 		frameBuffer.getColorBufferTexture().bind(0);
+		if(dest!=null) dest.begin();
 
 		// at last lights are rendered over scene
 		if (rayHandler.shadows) {
@@ -65,6 +66,7 @@ class LightMap {
 			withoutShadowShader.end();
 		}
 
+		if(dest!=null) dest.end();
 		Gdx.gl20.glDisable(GL20.GL_BLEND);
 	}
 
