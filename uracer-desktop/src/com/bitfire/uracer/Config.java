@@ -31,7 +31,7 @@ public class Config {
 
 			if( w >= 1680 ) {
 				BlurType = Blur.BlurType.Gaussian5x5b;
-				ZoomQuality = ZoomBlur.Quality.High;
+				ZoomQuality = ZoomBlur.Quality.Normal;
 				ZoomMaxStrength = -0.08f;
 				PotRttFboWidth = PotRttFboHeight = 256;
 			}
@@ -65,6 +65,7 @@ public class Config {
 		public static boolean RenderPlayerDebugInfo;
 		public static boolean RenderHudDebugInfo;
 		public static boolean Render3DBoundingBoxes;
+		public static boolean DumbNightMode;	// night-mode rendered as an overlay *after* PostProcessor
 		public static InterpolationMode CameraInterpolationMode;
 		public static long Effects;
 
@@ -78,6 +79,7 @@ public class Config {
 			EnableMipMapping = true;
 			SubframeInterpolation = true;
 
+			DumbNightMode = false;
 			RenderBox2DWorldWireframe = false;
 			RenderPlayerDebugInfo = true;
 			RenderHudDebugInfo = true;

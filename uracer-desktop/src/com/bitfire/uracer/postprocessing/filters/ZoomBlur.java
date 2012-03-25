@@ -19,6 +19,7 @@ public class ZoomBlur extends Filter<ZoomBlur> {
 		// @formatter:off
 		VeryHigh(16),
 		High( 8 ),
+		Normal( 6 ),
 		Medium( 4 ),
 		Low( 2 );
 		// @formatter:off

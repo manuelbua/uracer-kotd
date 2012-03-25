@@ -127,7 +127,7 @@ public class Game {
 		// Bloom.Settings bs = new Bloom.Settings( "arrogance-1 / rtt=0.25 / @1920x1050", BlurType.Gaussian5x5b, 1, 1, 0.25f, 1f, 0.1f, 0.8f, 1.4f );
 		// Bloom.Settings bs = new Bloom.Settings( "arrogance-2 / rtt=0.25 / @1920x1050", BlurType.Gaussian5x5b, 1, 1, 0.35f, 1f, 0.1f, 1.4f, 0.75f );
 
-		float threshold = (level.isNightMode() ? 0.1f : 0.45f);
+		float threshold = ((level.isNightMode() && !Config.Graphics.DumbNightMode)? 0.1f : 0.45f);
 		Bloom.Settings bs = new Bloom.Settings( "subtle", Config.PostProcessing.BlurType, 1, 1.5f, threshold, 1f, 0.5f, 1f, 1.5f );
 		bloom.setSettings( bs );
 
@@ -158,7 +158,7 @@ public class Game {
 		if( Config.Graphics.EnablePostProcessingFx && bloom != null ) {
 			bloom.setBaseSaturation( 0.5f - 0.5f * factor );
 			bloom.setBloomIntesity( 1.0f + 0.25f * factor );
-			bloom.setBloomSaturation( 1.5f + (level.isNightMode() ? 2f : 0.5f) * factor );
+			bloom.setBloomSaturation( 1.5f + ((level.isNightMode() && !Config.Graphics.DumbNightMode) ? 2f : 0.5f) * factor );
 		}
 		// ---------------------------------------------------
 
@@ -219,19 +219,24 @@ public class Game {
 
 		hud.render( batch );
 
-		// lights
-		if( level.isNightMode() ) {
+		if( Config.Graphics.DumbNightMode ) {
+			if( Config.Graphics.EnablePostProcessingFx ) postProcessor.render();
 			level.generateLightMap();
-			// hook into the next PostProcessor source buffer (the last result)
-			// and blend the lightmap on it
-			if( Config.Graphics.EnablePostProcessingFx )
-				level.renderLigthMap( postProcessor.captureEnd() );
-			else
-				level.renderLigthMap( null );
+			level.renderLigthMap( null );
 		}
+		else {
+			// render nightmode
+			if( level.isNightMode() ) {
+				level.generateLightMap();
+				// hook into the next PostProcessor source buffer (the last result)
+				// and blend the lightmap on it
+				if( Config.Graphics.EnablePostProcessingFx )
+					level.renderLigthMap( postProcessor.captureEnd() );
+				else
+					level.renderLigthMap( null );
+			}
 
-		if( Config.Graphics.EnablePostProcessingFx ) {
-			postProcessor.render();
+			if( Config.Graphics.EnablePostProcessingFx ) postProcessor.render();
 		}
 
 		//
