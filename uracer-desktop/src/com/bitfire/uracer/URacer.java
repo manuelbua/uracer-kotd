@@ -71,6 +71,7 @@ public class URacer implements ApplicationListener {
 		running = true;
 		oneOnOneBillion = 1.0f / 1000000000.0f;
 		temporalAliasing = 0;
+		timeAccumSecs = Physics.dt;
 
 		setScreen( new GameScreen() );
 	}
