@@ -71,7 +71,7 @@ public class Game {
 		Art.scaleFonts( Director.scalingStrategy.invTileMapZoomFactor );
 
 		// bring up level
-		level = Director.loadLevel( levelName, gameSettings, true /* night mode */);
+		level = Director.loadLevel( levelName, gameSettings, false /* night mode */);
 		player = level.getPlayer();
 
 		logic = new GameLogic( this );
@@ -127,13 +127,13 @@ public class Game {
 		// Bloom.Settings bs = new Bloom.Settings( "arrogance-1 / rtt=0.25 / @1920x1050", BlurType.Gaussian5x5b, 1, 1, 0.25f, 1f, 0.1f, 0.8f, 1.4f );
 		// Bloom.Settings bs = new Bloom.Settings( "arrogance-2 / rtt=0.25 / @1920x1050", BlurType.Gaussian5x5b, 1, 1, 0.35f, 1f, 0.1f, 1.4f, 0.75f );
 
-		Bloom.Settings bs = new Bloom.Settings( "subtle", Config.PostProcessing.BlurType, 1, 1.5f, 0.45f, 1f, 0.5f, 1f, 1.5f );
-
+		float threshold = (level.isNightMode() ? 0.1f : 0.45f);
+		Bloom.Settings bs = new Bloom.Settings( "subtle", Config.PostProcessing.BlurType, 1, 1.5f, threshold, 1f, 0.5f, 1f, 1.5f );
 		bloom.setSettings( bs );
 
-		// zoom = new Zoom( Config.PostProcessing.ZoomQuality );
-		// postProcessor.addEffect( zoom );
+		zoom = new Zoom( Config.PostProcessing.ZoomQuality );
 
+		postProcessor.addEffect( zoom );
 		postProcessor.addEffect( bloom );
 	}
 
@@ -147,22 +147,18 @@ public class Game {
 		// post-processor debug ------------------------------
 		// float factor = DriftInfo.get().driftStrength;
 		float factor = player.currSpeedFactor;
-		// float factor = 1f;
+//		factor = 1f;
 
 		if( Config.Graphics.EnablePostProcessingFx && zoom != null ) {
 			zoom.setOrigin( Director.screenPosFor( player.car.getBody() ) );
 			// zoom.setStrength( Config.PostProcessing.ZoomMaxStrength * DriftInfo.get().driftStrength );
-			zoom.setStrength( -0.085f * factor );
+			zoom.setStrength( -0.03f * factor );
 		}
 
 		if( Config.Graphics.EnablePostProcessingFx && bloom != null ) {
-			bloom.setBaseIntesity( 1f + 0.1f * factor );
 			bloom.setBaseSaturation( 0.5f - 0.5f * factor );
-
 			bloom.setBloomIntesity( 1.0f + 0.25f * factor );
-			bloom.setBloomSaturation( 1.5f + 0.5f * factor );
-
-			// bloom.setBloomSaturation( 1.5f + 0.25f * factor );
+			bloom.setBloomSaturation( 1.5f + (level.isNightMode()?2f:0.5f) * factor );
 		}
 		// ---------------------------------------------------
 
@@ -223,14 +219,23 @@ public class Game {
 
 		hud.render( batch );
 
+		// lights
+		if( level.isNightMode() ) {
+			level.generateLightMap();
+			if(Config.Graphics.EnablePostProcessingFx) {
+				postProcessor.captureEnd();
+
+				// blend the lightmap on the just captured scene
+				level.renderLigthMap(postProcessor.captured());
+			}
+			else
+				level.renderLigthMap( null );
+		}
+
 		if( Config.Graphics.EnablePostProcessingFx ) {
 			postProcessor.render();
 		}
 
-		// lights
-		if( level.isNightMode() ) {
-			level.renderLights();
-		}
 
 		//
 		// debug

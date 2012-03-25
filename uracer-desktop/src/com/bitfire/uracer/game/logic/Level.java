@@ -18,6 +18,7 @@ import com.badlogic.gdx.graphics.g2d.tiled.TiledLoader;
 import com.badlogic.gdx.graphics.g2d.tiled.TiledMap;
 import com.badlogic.gdx.graphics.g2d.tiled.TiledObject;
 import com.badlogic.gdx.graphics.g2d.tiled.TiledObjectGroup;
+import com.badlogic.gdx.graphics.glutils.FrameBuffer;
 import com.badlogic.gdx.math.MathUtils;
 import com.badlogic.gdx.math.Vector2;
 import com.bitfire.uracer.Config;
@@ -318,7 +319,7 @@ public class Level {
 		}
 	}
 
-	public void renderLights() {
+	public void generateLightMap() {
 		// update player light (subframe interpolation ready)
 		float ang = 90 + player.car.state().orientation;
 
@@ -343,12 +344,16 @@ public class Level {
 				Convert.px2mt( camOrtho.viewportWidth ), Convert.px2mt( camOrtho.viewportHeight ) );
 
 		rayHandler.update();
-		rayHandler.render();
+		rayHandler.generateLightMap();
 
 		// if( Config.isDesktop && (URacer.getFrameCount()&0x1f)==0x1f)
 		// {
 		// System.out.println("lights rendered="+rayHandler.lightRenderedLastFrame);
 		// }
+	}
+
+	public void renderLigthMap(FrameBuffer dest) {
+		rayHandler.renderLightMap(dest);
 	}
 
 	/** operations */

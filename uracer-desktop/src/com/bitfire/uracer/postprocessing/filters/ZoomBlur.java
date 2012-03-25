@@ -17,7 +17,8 @@ public class ZoomBlur extends Filter<ZoomBlur> {
 
 	public enum Quality {
 		// @formatter:off
-		High( 16 ),
+		VeryHigh(16),
+		High( 8 ),
 		Medium( 4 ),
 		Low( 2 );
 		// @formatter:off

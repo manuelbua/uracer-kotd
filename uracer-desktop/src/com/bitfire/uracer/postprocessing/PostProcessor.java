@@ -4,6 +4,7 @@ import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.GL10;
 import com.badlogic.gdx.graphics.Pixmap.Format;
+import com.badlogic.gdx.graphics.glutils.FrameBuffer;
 import com.badlogic.gdx.utils.Array;
 import com.badlogic.gdx.utils.Disposable;
 
@@ -113,14 +114,6 @@ public final class PostProcessor implements Disposable {
 		}
 	}
 
-	/** Pauses capturing */
-	public void capturePause() {
-		if( capturing ) {
-			capturing = false;
-			composite.end();
-		}
-	}
-
 	/** Starts capturing again, after a pause, without clearing the screen. */
 	public void captureContinue() {
 		if( !capturing ) {
@@ -136,6 +129,11 @@ public final class PostProcessor implements Disposable {
 			capturing = false;
 			composite.end();
 		}
+	}
+
+	/** After a capture/captureEnd action, returns the just captured buffer */
+	public FrameBuffer captured() {
+		return composite.getResultBuffer();
 	}
 
 	/** Regenerates and/or rebinds owned resources when is needed, eg. when
@@ -166,7 +164,7 @@ public final class PostProcessor implements Disposable {
 			// complete
 			composite.end();
 
-			// render with null dest, to the screen!
+			// render with null dest (to screen)
 			effects.get( effects.size - 1 ).render( composite.getResultBuffer(), null );
 		}
 	}
