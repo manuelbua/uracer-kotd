@@ -196,7 +196,9 @@ public class Car extends Box2dEntity {
 			VMath.clamp( carPos, 0, 1 );
 
 			// compute throttle
+			// TODO think, in car::compute_throttle, could be modulated by user's game settings? (multiplier? strength?)
 			carInput.throttle = touchPos.dst( carPos ) * 4 * carDesc.carModel.max_force;
+//			carInput.throttle = touchPos.dst( carPos ) * 2 * carDesc.carModel.max_force;	// x2 = 0<->halfscreen is considered 0<->1
 		}
 
 		if( Config.Debug.ApplyFrictionMap ) applyFrictionMap( carInput );
@@ -284,7 +286,7 @@ public class Car extends Box2dEntity {
 	/** Subclasses, such as the GhostCar, will override this method
 	 * to feed forces from external sources, such as Replay data stored
 	 * elsewhere.
-	 * 
+	 *
 	 * @param forces computed forces will be returned by filling this data structure. */
 	protected void onComputeCarForces( CarForces forces ) {
 		carInput = acquireInput();

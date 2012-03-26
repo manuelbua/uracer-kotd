@@ -48,20 +48,17 @@ public class ModelFactory {
 
 		switch( modelMesh ) {
 		case Palm:
-			stillModel = new OrthographicAlignedStillModel( getModel( "data/3d/models/palm.g3dt" ), getMaterial( modelMesh,
-					Art.meshPalm ) );
+			stillModel = new OrthographicAlignedStillModel( getModel( "data/3d/models/palm.g3dt" ), getMaterial( modelMesh, Art.meshPalm ) );
 			break;
 
 		case Tribune:
-			stillModel = new OrthographicAlignedStillModel( getModel( "data/3d/models/tribune.g3dt" ), getMaterial( modelMesh,
-					Art.meshTribune ) );
+			stillModel = new OrthographicAlignedStillModel( getModel( "data/3d/models/tribune.g3dt" ), getMaterial( modelMesh, Art.meshTribune ) );
 			break;
 
 		// missing mesh mesh
 		case Missing:
 		default:
-			stillModel = new OrthographicAlignedStillModel( getModel( "data/3d/models/missing-mesh.g3dt" ), getMaterial(
-					modelMesh, Art.meshMissing ) );
+			stillModel = new OrthographicAlignedStillModel( getModel( "data/3d/models/missing-mesh.g3dt" ), getMaterial( modelMesh, Art.meshMissing ) );
 		}
 
 		if( stillModel != null ) {
@@ -140,10 +137,14 @@ public class ModelFactory {
 			treeMeshName = "tree_9_";
 			leavesTexture = Art.meshTreeLeavesSpring[6];
 			break;
+		// missing mesh mesh
+//		case Missing:
+//		default:
+//			stillModel = new OrthographicAlignedStillModel( getModel( "data/3d/models/missing-mesh.g3dt" ), getMaterial( modelMesh, Art.meshMissing ) );
+
 		}
 
-		stillModel = new TreeStillModel( getModel( "data/3d/models/" + treeModelName ), getMaterial( modelMesh, leavesTexture ),
-				treeMeshName );
+		stillModel = new TreeStillModel( getModel( "data/3d/models/" + treeModelName ), getMaterial( modelMesh, leavesTexture ), treeMeshName );
 
 		if( stillModel != null ) {
 			stillModel.setPosition( posPxX, posPxY );

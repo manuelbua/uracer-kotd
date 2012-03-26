@@ -60,10 +60,16 @@ public class TrackTrees {
 				TiledObject o = group.objects.get( i );
 
 				float scale = 1f;
-				if( o.properties.get( MapUtils.MeshScale ) != null )
-					scale = Float.parseFloat( o.properties.get( MapUtils.MeshScale ) );
+				if( o.properties.get( MapUtils.MeshScale ) != null ) scale = Float.parseFloat( o.properties.get( MapUtils.MeshScale ) );
 
-				TreeStillModel model = ModelFactory.createTree( o.type, o.x, o.y, scale );
+				TreeStillModel model = null;
+				if( o.type != null ) {
+					model = ModelFactory.createTree( o.type, o.x, o.y, scale );
+				}
+				else {
+					System.out.println( "# load error, no type was given for the tree #" + (i+1) );
+				}
+
 				if( model != null ) {
 					// model.setRotation( MathUtils.random( -180f, 180f ), 0, 0, 1f );
 					model.setRotation( rotations[MathUtils.random( 0, 3 )], 0, 0, 1f );
@@ -87,10 +93,8 @@ public class TrackTrees {
 			Matrix4 transf = m.transformed;
 
 			// compute position
-			tmpvec.x = Convert.scaledPixels( m.positionOffsetPx.x - camOrtho.position.x ) + Director.halfViewport.x
-					+ m.positionPx.x;
-			tmpvec.y = Convert.scaledPixels( m.positionOffsetPx.y + camOrtho.position.y ) + Director.halfViewport.y
-					- m.positionPx.y;
+			tmpvec.x = Convert.scaledPixels( m.positionOffsetPx.x - camOrtho.position.x ) + Director.halfViewport.x + m.positionPx.x;
+			tmpvec.y = Convert.scaledPixels( m.positionOffsetPx.y + camOrtho.position.y ) + Director.halfViewport.y - m.positionPx.y;
 			tmpvec.z = 1;
 
 			// transform to world space

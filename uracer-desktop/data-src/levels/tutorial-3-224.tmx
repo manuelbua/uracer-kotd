@@ -140,22 +140,17 @@
  </layer>
  <objectgroup color="#00ff00" name="static-meshes" width="8" height="6"/>
  <objectgroup color="#55ffff" name="trees" width="8" height="6">
-  <object name="tree-1" type="tree-1" x="1203" y="807" width="61" height="68">
-   <properties>
-    <property name="scale" value="1"/>
-   </properties>
-  </object>
-  <object name="tree-9" type="tree-9" x="494" y="503" width="61" height="68">
+  <object name="tree-9" type="tree-9" x="658" y="584" width="61" height="68">
    <properties>
     <property name="scale" value="4"/>
    </properties>
   </object>
-  <object name="tree-9" type="tree-9" x="1227" y="492" width="61" height="68">
+  <object name="tree-9" type="tree-9" x="1092" y="599" width="61" height="68">
    <properties>
     <property name="scale" value="5"/>
    </properties>
   </object>
-  <object name="tree-9" type="tree-9" x="556" y="846" width="61" height="68">
+  <object name="tree-9" type="tree-9" x="888" y="681" width="61" height="68">
    <properties>
     <property name="scale" value="5"/>
    </properties>
@@ -239,6 +234,12 @@
  <objectgroup color="#a40002" name="walls" width="8" height="6">
   <object x="676" y="439">
    <polyline points="0,0 60,0 385,0 429,7"/>
+  </object>
+  <object x="860" y="894">
+   <polyline points="0,0 158,-1 294,-13 364,3 469,-69"/>
+  </object>
+  <object x="595" y="453">
+   <polyline points="57,-9 -5,6 -63,49 -101,92 -125,181 -96,284 -14,353 100,363"/>
   </object>
  </objectgroup>
 </map>

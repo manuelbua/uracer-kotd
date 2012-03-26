@@ -256,7 +256,7 @@ public class Level {
 			startOrient = 180f;
 		else if( orient.equals( "left" ) ) startOrient = 270f;
 
-		Car car = CarFactory.createPlayer( CarType.OldSkool, new CarModel().toModel2(), start, startOrient );
+		Car car = CarFactory.createPlayer( CarType.OldSkool, new CarModel().toModel3(), start, startOrient );
 		GhostCar ghost = CarFactory.createGhost( car );
 
 		Player p = new Player( car, ghost );

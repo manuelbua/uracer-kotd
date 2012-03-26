@@ -73,7 +73,7 @@ public class Game {
 		Art.scaleFonts( Director.scalingStrategy.invTileMapZoomFactor );
 
 		// bring up level
-		level = Director.loadLevel( levelName, gameSettings, false /* night mode */);
+		level = Director.loadLevel( levelName, gameSettings, true /* night mode */);
 		player = level.getPlayer();
 
 		logic = new GameLogic( this );
@@ -133,9 +133,9 @@ public class Game {
 		Bloom.Settings bs = new Bloom.Settings( "subtle", Config.PostProcessing.BlurType, 1, 1.5f, threshold, 1f, 0.5f, 1f, 1.5f );
 		bloom.setSettings( bs );
 
-		zoom = new Zoom( Config.PostProcessing.ZoomQuality );
+//		zoom = new Zoom( Config.PostProcessing.ZoomQuality );
 
-		postProcessor.addEffect( zoom );
+//		postProcessor.addEffect( zoom );
 		postProcessor.addEffect( bloom );
 	}
 
@@ -160,7 +160,7 @@ public class Game {
 			zoom.setStrength( -0.1f * factor );
 		}
 
-		if( Config.Graphics.EnablePostProcessingFx && bloom != null ) {
+		if( Config.Graphics.EnablePostProcessingFx && bloom != null && zoom != null ) {
 			bloom.setBaseSaturation( 0.5f - 0.8f * factor );
 			bloom.setBloomIntesity( 1.0f + 0.25f * factor );
 			bloom.setBloomSaturation( 1.5f + ((level.isNightMode() && !Config.Graphics.DumbNightMode) ? -0.5f : 1.5f) * factor );
