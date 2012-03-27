@@ -126,15 +126,15 @@ public class HudDrifting {
 			result.setString( "+" + NumberString.format( drift.driftSeconds ) );
 			result.setFont( Art.fontCurseGbig );
 
-			if( drift.driftSeconds >= 1 && drift.driftSeconds < 1.5f ) {
-				Messager.enqueue( "NICE ONE!\n+" + NumberString.format( drift.driftSeconds ) + "  seconds!", 1f, MessageType.Good, MessagePosition.Bottom,
+			if( drift.driftSeconds >= 1 && drift.driftSeconds < 3f ) {
+				Messager.enqueue( "NICE ONE!\n+" + NumberString.format( drift.driftSeconds ) + "  seconds!", 1f, MessageType.Good, MessagePosition.Middle,
 						MessageSize.Big );
 			}
-			else if( drift.driftSeconds >= 1.5f && drift.driftSeconds < 2f ) {
-				Messager.enqueue( "FANTASTIC!\n+" + NumberString.format( drift.driftSeconds ) + "  seconds!", 1f, MessageType.Good, MessagePosition.Bottom,
+			else if( drift.driftSeconds >= 3f && drift.driftSeconds < 5f ) {
+				Messager.enqueue( "FANTASTIC!\n+" + NumberString.format( drift.driftSeconds ) + "  seconds!", 1f, MessageType.Good, MessagePosition.Middle,
 						MessageSize.Big );
 			}
-			else if( drift.driftSeconds >= 2f ) {
+			else if( drift.driftSeconds >= 5f ) {
 				Messager.enqueue( "UNREAL!\n+" + NumberString.format( drift.driftSeconds ) + "  seconds!", 1f, MessageType.Good, MessagePosition.Bottom, MessageSize.Big );
 			}
 		}

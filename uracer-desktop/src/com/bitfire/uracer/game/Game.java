@@ -36,7 +36,7 @@ import com.bitfire.uracer.utils.AMath;
 /** TODO most of the shared stuff between Game and GameLogic should go in a
  * GameData structure of some sort, GameLogic is really the logical portion of
  * Game, so data should be accessible for both.
- * 
+ *
  * @author bmanuel */
 public class Game {
 	private Level level = null;
@@ -55,6 +55,7 @@ public class Game {
 	// post-processing
 	private PostProcessor postProcessor;
 	private Bloom bloom = null;
+	private Bloom.Settings bloomSettings = null;
 	private Zoom zoom = null;
 
 	// drawing
@@ -73,7 +74,7 @@ public class Game {
 		Art.scaleFonts( Director.scalingStrategy.invTileMapZoomFactor );
 
 		// bring up level
-		level = Director.loadLevel( levelName, gameSettings, true /* night mode */);
+		level = Director.loadLevel( levelName, gameSettings, false /* night mode */);
 		player = level.getPlayer();
 
 		logic = new GameLogic( this );
@@ -133,9 +134,9 @@ public class Game {
 		// Bloom.Settings bs = new Bloom.Settings( "arrogance-2 / rtt=0.25 / @1920x1050", BlurType.Gaussian5x5b, 1, 1,
 		// 0.35f, 1f, 0.1f, 1.4f, 0.75f );
 
-		float threshold = ((level.isNightMode() && !Config.Graphics.DumbNightMode) ? 0.1f : 0.45f);
-		Bloom.Settings bs = new Bloom.Settings( "subtle", Config.PostProcessing.BlurType, 1, 1.5f, threshold, 1f, 0.5f, 1f, 1.5f );
-		bloom.setSettings( bs );
+		float threshold = ((level.isNightMode() && !Config.Graphics.DumbNightMode) ? 0.2f : 0.45f);
+		bloomSettings = new Bloom.Settings( "subtle", Config.PostProcessing.BlurType, 1, 1.5f, threshold, 1f, 0.5f, 1f, 1.5f );
+		bloom.setSettings( bloomSettings );
 
 		// zoom = new Zoom( Config.PostProcessing.ZoomQuality );
 
@@ -153,24 +154,29 @@ public class Game {
 		CarSoundManager.tick();
 
 		// post-processor debug ------------------------------
-		float factor = DriftInfo.get().driftStrength;
-		// float factor = player.currSpeedFactor;
-		// factor = 1f;q
+		float factor = DriftInfo.get().driftStrength * 2f;
+//		 float factor = player.currSpeedFactor * 1.75f;
+		 factor = 1f;
 
 		factor = AMath.lerp( prevFactor, factor, 0.125f );
 		prevFactor = factor;
 
-		if( Config.Graphics.EnablePostProcessingFx && zoom != null ) {
-			zoom.setOrigin( Director.screenPosFor( player.car.getBody() ) );
-			// zoom.setStrength( Config.PostProcessing.ZoomMaxStrength * DriftInfo.get().driftStrength );
-			zoom.setStrength( -0.1f * factor );
+		// fade bloom
+		if( Config.Graphics.EnablePostProcessingFx && bloom != null ) {
+			bloom.setBaseSaturation( bloomSettings.baseSaturation + 0.5f * (1-factor) );
+			bloom.setBloomIntesity( bloomSettings.bloomIntensity * factor );
 		}
 
-		if( Config.Graphics.EnablePostProcessingFx && bloom != null && zoom != null ) {
-			bloom.setBaseSaturation( 0.5f - 0.8f * factor );
-			bloom.setBloomIntesity( 1.0f + 0.25f * factor );
-			bloom.setBloomSaturation( 1.5f + ((level.isNightMode() && !Config.Graphics.DumbNightMode) ? -0.5f : 1.5f) * factor );
-		}
+//		if( Config.Graphics.EnablePostProcessingFx && zoom != null ) {
+//			zoom.setOrigin( Director.screenPosFor( player.car.getBody() ) );
+//			zoom.setStrength( -0.1f * factor );
+//		}
+//
+//		if( Config.Graphics.EnablePostProcessingFx && bloom != null && zoom != null ) {
+//			bloom.setBaseSaturation( 0.5f - 0.8f * factor );
+//			bloom.setBloomIntesity( 1.0f + 0.25f * factor );
+//			bloom.setBloomSaturation( 1.5f + ((level.isNightMode() && !Config.Graphics.DumbNightMode) ? -0.5f : 1.5f) * factor );
+//		}
 		// ---------------------------------------------------
 
 		Debug.update();

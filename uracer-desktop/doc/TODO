@@ -106,3 +106,4 @@
 [ ] task-based component system, when update() will use GameData shared data internally, thus no params, thus a task-based component system can be created, components'
 data in GameData? GameData::<Component>?
 [ ] look at, in night-mode, shadows don't take into account time aliasing, producing stuttering in a subframe-interpolated context.
+[ ] event listeners as3-style

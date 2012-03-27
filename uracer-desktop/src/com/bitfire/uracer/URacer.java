@@ -79,8 +79,6 @@ public class URacer implements ApplicationListener {
 	// private long lastTimeNs = 0;
 	private static float lastDeltaTimeSec = MaxDeltaTime;
 
-	private boolean quit = false;
-
 	// private WindowedMean mean = new WindowedMean( 120 );
 	// NOTE: this render() method will get called by JoglGraphics when screen.tick will ask to finish!!
 	@Override
