@@ -140,8 +140,8 @@ public class Box2DFactory {
 	 * @param restitution
 	 * @param returnResult
 	 * @return */
-	public static ArrayList<Body> createAngularWall( Vector2 unitCircleRadius, Vector2 offset, float tickness, float lumpLen,
-			float angle, int steps, Vector2 rotationOffset, float restitution, boolean returnResult ) {
+	public static ArrayList<Body> createAngularWall( Vector2 unitCircleRadius, Vector2 offset, float tickness, float lumpLen, float angle, int steps,
+			Vector2 rotationOffset, float restitution, boolean returnResult ) {
 		ArrayList<Body> result = null;
 		if( returnResult ) result = new ArrayList<Body>();
 

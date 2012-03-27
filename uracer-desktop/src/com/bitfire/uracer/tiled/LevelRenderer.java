@@ -156,10 +156,8 @@ public class LevelRenderer {
 			submesh = m.model.subMeshes[0];
 
 			// compute position
-			tmpvec.x = Convert.scaledPixels( m.positionOffsetPx.x - camOrtho.position.x ) + Director.halfViewport.x
-					+ m.positionPx.x;
-			tmpvec.y = Convert.scaledPixels( m.positionOffsetPx.y + camOrtho.position.y ) + Director.halfViewport.y
-					- m.positionPx.y;
+			tmpvec.x = Convert.scaledPixels( m.positionOffsetPx.x - camOrtho.position.x ) + Director.halfViewport.x + m.positionPx.x;
+			tmpvec.y = Convert.scaledPixels( m.positionOffsetPx.y + camOrtho.position.y ) + Director.halfViewport.y - m.positionPx.y;
 			tmpvec.z = 1;
 
 			// transform to world space
@@ -212,7 +210,7 @@ public class LevelRenderer {
 	}
 
 	/** This is intentionally SLOW. Read it again!
-	 *
+	 * 
 	 * @param boundingBox */
 	private void renderBoundingBox( BoundingBox boundingBox ) {
 		float alpha = .15f;

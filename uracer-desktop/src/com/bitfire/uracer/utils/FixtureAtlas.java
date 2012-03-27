@@ -89,15 +89,12 @@ public class FixtureAtlas {
 	 * @param width The desired width of the body.
 	 * @param height The desired height of the body.
 	 * @param params Custom fixture parameters to apply. */
-	public void createFixtures( Body body, String name, float width, float height, FixtureDef params, Vector2 offset,
-			Object userData ) {
+	public void createFixtures( Body body, String name, float width, float height, FixtureDef params, Vector2 offset, Object userData ) {
 		BodyModel bm = bodyMap.get( name );
 		if( bm == null ) throw new RuntimeException( name + " does not exist in the fixture list." );
 
 		Vector2[][] polygons = bm.getPolygons( width, height, offset );
-		if( polygons == null )
-			throw new RuntimeException( name + " does not declare any polygon. "
-					+ "Should not happen. Is your shape file corrupted ?" );
+		if( polygons == null ) throw new RuntimeException( name + " does not declare any polygon. " + "Should not happen. Is your shape file corrupted ?" );
 
 		for( Vector2[] polygon : polygons ) {
 			shape.set( polygon );

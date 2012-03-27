@@ -191,8 +191,7 @@ public class Director {
 	private static Rectangle cameraRect;
 
 	public static boolean isVisible( Rectangle rect ) {
-		cameraRect.set( camera.position.x - camera.viewportWidth / 2, camera.position.y - camera.viewportHeight / 2,
-				camera.viewportWidth, camera.viewportHeight );
+		cameraRect.set( camera.position.x - camera.viewportWidth / 2, camera.position.y - camera.viewportHeight / 2, camera.viewportWidth, camera.viewportHeight );
 
 		return cameraRect.overlaps( rect );
 	}

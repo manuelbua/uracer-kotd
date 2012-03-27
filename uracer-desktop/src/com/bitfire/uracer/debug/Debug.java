@@ -106,8 +106,8 @@ public class Debug {
 	}
 
 	public static void renderTextualStats() {
-		String text = "fps: " + NumberString.formatLong( Gdx.graphics.getFramesPerSecond() ) + ", physics: "
-				+ NumberString.formatLong( physicsTime ) + ", graphics: " + NumberString.formatLong( renderTime );
+		String text = "fps: " + NumberString.formatLong( Gdx.graphics.getFramesPerSecond() ) + ", physics: " + NumberString.formatLong( physicsTime ) + ", graphics: "
+				+ NumberString.formatLong( renderTime );
 
 		drawString( text, Gdx.graphics.getWidth() - text.length() * fontWidth, Gdx.graphics.getHeight() - fontHeight );
 	}
@@ -121,8 +121,7 @@ public class Debug {
 		float javaHeapMb = (float)Gdx.app.getJavaHeap() * oneOnMb;
 		float nativeHeapMb = (float)Gdx.app.getNativeHeap() * oneOnMb;
 
-		String text = "java heap = " + NumberString.format( javaHeapMb ) + "MB" + " - native heap = "
-				+ NumberString.format( nativeHeapMb ) + "MB";
+		String text = "java heap = " + NumberString.format( javaHeapMb ) + "MB" + " - native heap = " + NumberString.format( nativeHeapMb ) + "MB";
 
 		drawString( text, (Gdx.graphics.getWidth() - text.length() * fontWidth) / 2, 0 );
 	}
@@ -190,8 +189,8 @@ public class Debug {
 	private static Vector2 a, b;
 
 	public static void print( ContactImpulse impulse, String label, boolean omitDupes ) {
-		String thisString = String.format( "NI=(%.2f,%.2f) | TI=(%.2f,%.2f)", impulse.getNormalImpulses()[0],
-				impulse.getNormalImpulses()[1], impulse.getTangentImpulses()[0], impulse.getTangentImpulses()[1] );
+		String thisString = String.format( "NI=(%.2f,%.2f) | TI=(%.2f,%.2f)", impulse.getNormalImpulses()[0], impulse.getNormalImpulses()[1],
+				impulse.getTangentImpulses()[0], impulse.getTangentImpulses()[1] );
 
 		a.set( impulse.getNormalImpulses()[0], impulse.getNormalImpulses()[1] );
 		b.set( impulse.getTangentImpulses()[0], impulse.getTangentImpulses()[1] );

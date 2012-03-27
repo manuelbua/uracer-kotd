@@ -115,8 +115,7 @@ public class HudDrifting {
 		HudLabel result = labelResult[nextLabelResult++];
 		if( nextLabelResult == MaxLabelResult ) nextLabelResult = 0;
 
-		result.setPosition( pos.x - heading.x * (carWidthPx + result.halfBoundsWidth), pos.y - heading.y
-				* (carLengthPx + result.halfBoundsHeight) );
+		result.setPosition( pos.x - heading.x * (carWidthPx + result.halfBoundsWidth), pos.y - heading.y * (carLengthPx + result.halfBoundsHeight) );
 
 		// premature end drift event due to collision?
 		if( drift.hasCollided ) {
@@ -128,16 +127,15 @@ public class HudDrifting {
 			result.setFont( Art.fontCurseGbig );
 
 			if( drift.driftSeconds >= 1 && drift.driftSeconds < 1.5f ) {
-				Messager.enqueue( "NICE ONE!\n+" + NumberString.format( drift.driftSeconds ) + "  seconds!", 1f,
-						MessageType.Good, MessagePosition.Bottom, MessageSize.Big );
+				Messager.enqueue( "NICE ONE!\n+" + NumberString.format( drift.driftSeconds ) + "  seconds!", 1f, MessageType.Good, MessagePosition.Bottom,
+						MessageSize.Big );
 			}
 			else if( drift.driftSeconds >= 1.5f && drift.driftSeconds < 2f ) {
-				Messager.enqueue( "FANTASTIC!\n+" + NumberString.format( drift.driftSeconds ) + "  seconds!", 1f,
-						MessageType.Good, MessagePosition.Bottom, MessageSize.Big );
+				Messager.enqueue( "FANTASTIC!\n+" + NumberString.format( drift.driftSeconds ) + "  seconds!", 1f, MessageType.Good, MessagePosition.Bottom,
+						MessageSize.Big );
 			}
 			else if( drift.driftSeconds >= 2f ) {
-				Messager.enqueue( "UNREAL!\n+" + NumberString.format( drift.driftSeconds ) + "  seconds!", 1f, MessageType.Good,
-						MessagePosition.Bottom, MessageSize.Big );
+				Messager.enqueue( "UNREAL!\n+" + NumberString.format( drift.driftSeconds ) + "  seconds!", 1f, MessageType.Good, MessagePosition.Bottom, MessageSize.Big );
 			}
 		}
 

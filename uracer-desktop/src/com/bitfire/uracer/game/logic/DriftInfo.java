@@ -55,13 +55,16 @@ public class DriftInfo {
 		float oneOnMaxGrip = 1f / player.getCarModel().max_grip;
 
 		// lateral forces are in the range [-max_grip, max_grip]
-		lateralForcesFront = lastFront = AMath.lowpass( lastFront, player.getSimulator().lateralForceFront.y, 0.2f );	// get and
+		lateralForcesFront = lastFront = AMath.lowpass( lastFront, player.getSimulator().lateralForceFront.y, 0.2f );	// get
+																														// and
 																														// smooth
 																														// out
 		lateralForcesFront = AMath.clamp( Math.abs( lateralForcesFront ) * oneOnMaxGrip, 0f, 1f );	// normalize
 
-		lateralForcesRear = lastRear = AMath.lowpass( lastRear, player.getSimulator().lateralForceRear.y, 0.2f );	// get and
-																													// smooth out
+		lateralForcesRear = lastRear = AMath.lowpass( lastRear, player.getSimulator().lateralForceRear.y, 0.2f );	// get
+																													// and
+																													// smooth
+																													// out
 		lateralForcesRear = AMath.clamp( Math.abs( lateralForcesRear ) * oneOnMaxGrip, 0f, 1f );	// normalize
 
 		// compute strength

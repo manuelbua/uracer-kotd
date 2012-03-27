@@ -28,8 +28,8 @@ public class Bloom extends PostProcessorEffect {
 		public final float baseIntensity;
 		public final float baseSaturation;
 
-		public Settings( String name, BlurType blurType, int blurPasses, float blurAmount, float bloomThreshold,
-				float baseIntensity, float baseSaturation, float bloomIntensity, float bloomSaturation ) {
+		public Settings( String name, BlurType blurType, int blurPasses, float blurAmount, float bloomThreshold, float baseIntensity, float baseSaturation,
+				float bloomIntensity, float bloomSaturation ) {
 			this.name = name;
 			this.blurType = blurType;
 			this.blurPasses = blurPasses;
@@ -43,10 +43,8 @@ public class Bloom extends PostProcessorEffect {
 		}
 
 		// simple blur
-		public Settings( String name, int blurPasses, float bloomThreshold, float baseIntensity, float baseSaturation,
-				float bloomIntensity, float bloomSaturation ) {
-			this( name, BlurType.Gaussian5x5b, blurPasses, 0, bloomThreshold, baseIntensity, baseSaturation, bloomIntensity,
-					bloomSaturation );
+		public Settings( String name, int blurPasses, float bloomThreshold, float baseIntensity, float baseSaturation, float bloomIntensity, float bloomSaturation ) {
+			this( name, BlurType.Gaussian5x5b, blurPasses, 0, bloomThreshold, baseIntensity, baseSaturation, bloomIntensity, bloomSaturation );
 		}
 
 		public Settings( Settings other ) {

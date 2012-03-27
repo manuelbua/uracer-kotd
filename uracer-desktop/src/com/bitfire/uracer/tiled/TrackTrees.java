@@ -67,7 +67,7 @@ public class TrackTrees {
 					model = ModelFactory.createTree( o.type, o.x, o.y, scale );
 				}
 				else {
-					System.out.println( "# load error, no type was given for the tree #" + (i+1) );
+					System.out.println( "# load error, no type was given for the tree #" + (i + 1) );
 				}
 
 				if( model != null ) {

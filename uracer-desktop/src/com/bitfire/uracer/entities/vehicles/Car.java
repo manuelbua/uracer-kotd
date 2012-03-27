@@ -79,8 +79,7 @@ public class Car extends Box2dEntity {
 	}
 
 	// factory method
-	public static Car createForFactory( CarGraphics graphics, CarModel model, CarType type, CarInputMode inputMode,
-			Vector2 position, float orientation ) {
+	public static Car createForFactory( CarGraphics graphics, CarModel model, CarType type, CarInputMode inputMode, Vector2 position, float orientation ) {
 		Car car = new Car( graphics, model, type, inputMode, position, orientation );
 		EntityManager.add( car );
 		return car;
@@ -198,7 +197,8 @@ public class Car extends Box2dEntity {
 			// compute throttle
 			// TODO think, in car::compute_throttle, could be modulated by user's game settings? (multiplier? strength?)
 			carInput.throttle = touchPos.dst( carPos ) * 4 * carDesc.carModel.max_force;
-//			carInput.throttle = touchPos.dst( carPos ) * 2 * carDesc.carModel.max_force;	// x2 = 0<->halfscreen is considered 0<->1
+			// carInput.throttle = touchPos.dst( carPos ) * 2 * carDesc.carModel.max_force; // x2 = 0<->halfscreen is
+			// considered 0<->1
 		}
 
 		if( Config.Debug.ApplyFrictionMap ) applyFrictionMap( carInput );
@@ -210,8 +210,7 @@ public class Car extends Box2dEntity {
 	private WindowedMean frictionMean = new WindowedMean( 16 );
 
 	private void applyFrictionMap( CarInput input ) {
-		if( tilePosition.x >= 0 && tilePosition.x < Director.currentLevel.map.width && tilePosition.y >= 0
-				&& tilePosition.y < Director.currentLevel.map.height ) {
+		if( tilePosition.x >= 0 && tilePosition.x < Director.currentLevel.map.width && tilePosition.y >= 0 && tilePosition.y < Director.currentLevel.map.height ) {
 			// compute realsize-based pixel offset car-tile (top-left origin)
 			float tsx = tilePosition.x * Convert.scaledTilesize;
 			float tsy = tilePosition.y * Convert.scaledTilesize;
@@ -286,7 +285,7 @@ public class Car extends Box2dEntity {
 	/** Subclasses, such as the GhostCar, will override this method
 	 * to feed forces from external sources, such as Replay data stored
 	 * elsewhere.
-	 *
+	 * 
 	 * @param forces computed forces will be returned by filling this data structure. */
 	protected void onComputeCarForces( CarForces forces ) {
 		carInput = acquireInput();
@@ -355,8 +354,7 @@ public class Car extends Box2dEntity {
 			Debug.drawString( "throttle=" + carDesc.throttle, 0, 34 );
 			Debug.drawString( "screen x=" + Director.screenPosFor( body ).x + ",y=" + Director.screenPosFor( body ).y, 0, 80 );
 			Debug.drawString( "world-mt x=" + body.getPosition().x + ",y=" + body.getPosition().y, 0, 87 );
-			Debug.drawString(
-					"world-px x=" + Convert.mt2px( body.getPosition().x ) + ",y=" + Convert.mt2px( body.getPosition().y ), 0, 93 );
+			Debug.drawString( "world-px x=" + Convert.mt2px( body.getPosition().x ) + ",y=" + Convert.mt2px( body.getPosition().y ), 0, 93 );
 			Debug.drawString( "dir worldsize x=" + Director.worldSizeScaledPx.x + ",y=" + Director.worldSizeScaledPx.y, 0, 100 );
 			Debug.drawString( "dir bounds x=" + Director.boundsPx.x + ",y=" + Director.boundsPx.width, 0, 107 );
 			Debug.drawString( "orient=" + body.getAngle(), 0, 114 );

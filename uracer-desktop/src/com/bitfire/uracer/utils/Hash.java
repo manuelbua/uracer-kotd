@@ -1,7 +1,6 @@
 package com.bitfire.uracer.utils;
 
-/**************************************************************************
- * *
+/************************************************************************** *
  * General Purpose Hash Function Algorithms Library *
  * *
  * Author: Arash Partow - 2002 *

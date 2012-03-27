@@ -58,8 +58,7 @@ public class ScalingStrategy {
 		hFovScalingFactor = hFovToScalingFactor();
 		meshScaleFactor *= hFovScalingFactor;
 
-		System.out.println( "vfov=" + verticalFov + ", hfov=" + desiredHorizontalFov + ", msf=" + meshScaleFactor + ", tmzf="
-				+ tileMapZoomFactor );
+		System.out.println( "vfov=" + verticalFov + ", hfov=" + desiredHorizontalFov + ", msf=" + meshScaleFactor + ", tmzf=" + tileMapZoomFactor );
 	}
 
 	// http://rjdown.co.uk/projects/bfbc2/fovcalculator.php
@@ -82,10 +81,9 @@ public class ScalingStrategy {
 		//
 		// so this will return interpolated values for any given hfov in the range
 		// [10,120] with quartic approximation
-		return 1.15197f * 0.00000001f
-				* (desiredHorizontalFov * desiredHorizontalFov * desiredHorizontalFov * desiredHorizontalFov) - 1.6847f
-				* 0.000001f * (desiredHorizontalFov * desiredHorizontalFov * desiredHorizontalFov) + 0.000124545f
-				* (desiredHorizontalFov * desiredHorizontalFov) + 0.00877285f * desiredHorizontalFov + 0.022265f;
+		return 1.15197f * 0.00000001f * (desiredHorizontalFov * desiredHorizontalFov * desiredHorizontalFov * desiredHorizontalFov) - 1.6847f * 0.000001f
+				* (desiredHorizontalFov * desiredHorizontalFov * desiredHorizontalFov) + 0.000124545f * (desiredHorizontalFov * desiredHorizontalFov) + 0.00877285f
+				* desiredHorizontalFov + 0.022265f;
 	}
 
 	public void setHorizontalFov( float desiredHfov ) {

@@ -94,13 +94,13 @@ public class GameLogicListener implements IGameLogicListener {
 
 					if( lastRecordedLapId == best.id ) {
 						lapInfo.setLastTrackTimeSeconds( best.trackTimeSeconds );
-						Messager.show( "-" + NumberString.format( worst.trackTimeSeconds - best.trackTimeSeconds ) + " seconds!",
-								3f, MessageType.Good, MessagePosition.Top, MessageSize.Big );
+						Messager.show( "-" + NumberString.format( worst.trackTimeSeconds - best.trackTimeSeconds ) + " seconds!", 3f, MessageType.Good,
+								MessagePosition.Top, MessageSize.Big );
 					}
 					else {
 						lapInfo.setLastTrackTimeSeconds( worst.trackTimeSeconds );
-						Messager.show( "+" + NumberString.format( worst.trackTimeSeconds - best.trackTimeSeconds ) + " seconds",
-								3f, MessageType.Bad, MessagePosition.Top, MessageSize.Big );
+						Messager.show( "+" + NumberString.format( worst.trackTimeSeconds - best.trackTimeSeconds ) + " seconds", 3f, MessageType.Bad,
+								MessagePosition.Top, MessageSize.Big );
 					}
 
 					player.ghost.setReplay( best );

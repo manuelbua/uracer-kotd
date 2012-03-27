@@ -2,13 +2,13 @@ package com.bitfire.uracer.carsimulation;
 
 /** Represents the physical car model on which we rely to compute
  * the forces exerted by the simulation.
- *
+ * 
  * @author manuel */
 public class CarModel {
 	public float wheelbase; // wheelbase in m
 	public float b; // in m, distance from CG to front axle
 	public float c; // in m, idem to rear axle
-//	public float h; // in m, height of CM from ground
+	// public float h; // in m, height of CM from ground
 	public float mass; // in kg
 	public float inertia; // in kg.m
 	public float length, width;
@@ -49,7 +49,7 @@ public class CarModel {
 		this.wheelbase = other.wheelbase;
 		this.b = other.b;
 		this.c = other.c;
-//		this.h = other.h;
+		// this.h = other.h;
 		this.mass = other.mass;
 		this.inertia = other.inertia;
 		this.length = other.length;
@@ -74,7 +74,7 @@ public class CarModel {
 	// default car model
 	public CarModel toDefault() {
 		// physical model
-//		h = 1f; // m
+		// h = 1f; // m
 		mass = 1500.f; // kg
 		invmass = 1.f / mass;
 		inertia = 1500.f; // kg.m
@@ -140,7 +140,7 @@ public class CarModel {
 		toDefault();
 
 		// physical model
-//		h = .85f; // m
+		// h = .85f; // m
 		b = 1.f; // m
 		c = 1.f; // m
 		width = 2.5f; // m
@@ -168,7 +168,7 @@ public class CarModel {
 		toModel2();
 
 		// physical model
-//		h = .85f; // m
+		// h = .85f; // m
 		b = 1.f; // m
 		c = 1.f; // m
 

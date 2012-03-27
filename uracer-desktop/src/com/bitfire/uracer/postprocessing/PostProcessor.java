@@ -10,9 +10,10 @@ import com.badlogic.gdx.utils.Disposable;
 
 /** Provides a way to capture the rendered scene to an off-screen buffer
  * and to apply a chain of effects on it before rendering to screen.
- *
- * Effects can be added or removed via {@link #addEffect(PostProcessorEffect)} and {@link #removeEffect(PostProcessorEffect)}.
- *
+ * 
+ * Effects can be added or removed via {@link #addEffect(PostProcessorEffect)} and
+ * {@link #removeEffect(PostProcessorEffect)}.
+ * 
  * @author bmanuel */
 public final class PostProcessor implements Disposable {
 	private final PingPongBuffer composite;
@@ -45,13 +46,16 @@ public final class PostProcessor implements Disposable {
 		capturing = false;
 	}
 
-	/** Construct a new PostProcessor with FBO dimensions set to the size of the screen */
+	/** Construct a new PostProcessor with FBO dimensions set to the size of the
+	 * screen */
 	public PostProcessor( boolean useDepth, boolean useAlphaChannel, boolean use32Bits ) {
 		this( Gdx.graphics.getWidth(), Gdx.graphics.getHeight(), useDepth, useAlphaChannel, use32Bits );
 	}
 
-	/** Creates and returns a managed PingPongBuffer buffer, just create and forget.
-	 * This is a drop-in replacement for the same-signature constructor. */
+	/** Creates and returns a managed PingPongBuffer buffer, just create and
+	 * forget.
+	 * This is a drop-in replacement for the same-signature PingPongBuffer's
+	 * constructor. */
 	public static final PingPongBuffer newPingPongBuffer( int width, int height, Format frameBufferFormat, boolean hasDepth ) {
 		PingPongBuffer buffer = new PingPongBuffer( width, height, frameBufferFormat, hasDepth );
 		buffers.add( buffer );
@@ -123,7 +127,8 @@ public final class PostProcessor implements Disposable {
 		}
 	}
 
-	/** Stops capturing the scene and returns the result, or null if nothing was captured. */
+	/** Stops capturing the scene and returns the result, or null if nothing was
+	 * captured. */
 	public FrameBuffer captureEnd() {
 		if( capturing ) {
 			capturing = false;

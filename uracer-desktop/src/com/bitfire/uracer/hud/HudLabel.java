@@ -126,15 +126,11 @@ public class HudLabel {
 	/** effects */
 
 	public void fadeIn( int milliseconds ) {
-		Game.getTweener().start(
-				Timeline.createSequence().push(
-						Tween.to( this, HudLabelAccessor.OPACITY, milliseconds ).target( 1f ).ease( Expo.INOUT ) ) );
+		Game.getTweener().start( Timeline.createSequence().push( Tween.to( this, HudLabelAccessor.OPACITY, milliseconds ).target( 1f ).ease( Expo.INOUT ) ) );
 	}
 
 	public void fadeOut( int milliseconds ) {
-		Game.getTweener().start(
-				Timeline.createSequence().push(
-						Tween.to( this, HudLabelAccessor.OPACITY, milliseconds ).target( 0f ).ease( Expo.INOUT ) ) );
+		Game.getTweener().start( Timeline.createSequence().push( Tween.to( this, HudLabelAccessor.OPACITY, milliseconds ).target( 0f ).ease( Expo.INOUT ) ) );
 	}
 
 	public void slide() {
@@ -146,18 +142,14 @@ public class HudLabel {
 		float targetFarX = getPosition().x;
 		float targetFarY = getPosition().y - 100;
 
-		Game.getTweener()
-				.start( Timeline
-						.createParallel()
+		Game.getTweener().start(
+				Timeline.createParallel()
 						.push( Tween.to( this, HudLabelAccessor.OPACITY, 500 ).target( 1f ).ease( Quint.INOUT ) )
 						.push( Timeline
 								.createSequence()
-								.push( Tween.to( this, HudLabelAccessor.POSITION_XY, 500 ).target( targetNearX, targetNearY )
-										.ease( Quint.INOUT ).delay( 300 ) )
-								.push( Timeline
-										.createParallel()
-										.push( Tween.to( this, HudLabelAccessor.POSITION_XY, 500 )
-												.target( targetFarX, targetFarY ).ease( Expo.OUT ) )
+								.push( Tween.to( this, HudLabelAccessor.POSITION_XY, 500 ).target( targetNearX, targetNearY ).ease( Quint.INOUT ).delay( 300 ) )
+								.push( Timeline.createParallel()
+										.push( Tween.to( this, HudLabelAccessor.POSITION_XY, 500 ).target( targetFarX, targetFarY ).ease( Expo.OUT ) )
 										.push( Tween.to( this, HudLabelAccessor.OPACITY, 500 ).target( 0f ).ease( Expo.OUT ) ) ) ) );
 	}
 }

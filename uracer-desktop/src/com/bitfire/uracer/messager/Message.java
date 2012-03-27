@@ -99,8 +99,7 @@ public class Message {
 			break;
 
 		case Middle:
-			font.setScale( 1.5f * Director.scalingStrategy.invTileMapZoomFactor,
-					1.5f * Director.scalingStrategy.invTileMapZoomFactor );
+			font.setScale( 1.5f * Director.scalingStrategy.invTileMapZoomFactor, 1.5f * Director.scalingStrategy.invTileMapZoomFactor );
 			bounds.set( font.getMultiLineBounds( what ) );
 			finalY = (Gdx.graphics.getHeight() - bounds.height) / 2 - bounds.height / 2;
 			whereY = Gdx.graphics.getHeight() + bounds.height;
@@ -120,8 +119,7 @@ public class Message {
 	}
 
 	public void render( SpriteBatch batch ) {
-		font.setScale( scaleX * Director.scalingStrategy.invTileMapZoomFactor, scaleY
-				* Director.scalingStrategy.invTileMapZoomFactor );
+		font.setScale( scaleX * Director.scalingStrategy.invTileMapZoomFactor, scaleY * Director.scalingStrategy.invTileMapZoomFactor );
 		font.setColor( 1, 1, 1, alpha );
 		font.drawMultiLine( batch, what, whereX, whereY, halfWidth, HAlignment.CENTER );
 		font.setColor( 1, 1, 1, 1 );
@@ -144,10 +142,8 @@ public class Message {
 		hiding = true;
 
 		Game.getTweener().start(
-				Timeline.createParallel()
-						.push( Tween.to( this, MessageAccessor.OPACITY, 500 ).target( 0f ).ease( Expo.INOUT ) )
-						.push( Tween.to( this, MessageAccessor.POSITION_Y, 500 ).target( -50 * font.getScaleX() )
-								.ease( Expo.INOUT ) )
+				Timeline.createParallel().push( Tween.to( this, MessageAccessor.OPACITY, 500 ).target( 0f ).ease( Expo.INOUT ) )
+						.push( Tween.to( this, MessageAccessor.POSITION_Y, 500 ).target( -50 * font.getScaleX() ).ease( Expo.INOUT ) )
 						.push( Tween.to( this, MessageAccessor.SCALE_XY, 400 ).target( 1f, 1f ).ease( Back.INOUT ) )
 						.addCallback( TweenCallback.EventType.COMPLETE, new TweenCallback() {
 							@Override

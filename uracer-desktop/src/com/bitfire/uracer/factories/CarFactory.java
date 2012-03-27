@@ -83,10 +83,8 @@ public class CarFactory {
 		fd.friction = model.friction;
 		fd.restitution = model.restitution;
 
-		fd.filter.groupIndex = (short)((entityType == EntityType.Car) ? CollisionFilters.GroupPlayer
-				: CollisionFilters.GroupReplay);
-		fd.filter.categoryBits = (short)((entityType == EntityType.Car) ? CollisionFilters.CategoryPlayer
-				: CollisionFilters.CategoryReplay);
+		fd.filter.groupIndex = (short)((entityType == EntityType.Car) ? CollisionFilters.GroupPlayer : CollisionFilters.GroupReplay);
+		fd.filter.categoryBits = (short)((entityType == EntityType.Car) ? CollisionFilters.CategoryPlayer : CollisionFilters.CategoryReplay);
 		fd.filter.maskBits = (short)((entityType == EntityType.Car) ? CollisionFilters.MaskPlayer : CollisionFilters.MaskReplay);
 
 		if( Config.Debug.TraverseWalls ) {
@@ -96,13 +94,11 @@ public class CarFactory {
 		// apply scaling factors
 		Vector2 offset = new Vector2( -model.width / 2f, -model.length / 2f );
 
-		Vector2 ratio = new Vector2( model.width / Convert.px2mt( region.getRegionWidth() ), model.length
-				/ Convert.px2mt( region.getRegionHeight() ) );
+		Vector2 ratio = new Vector2( model.width / Convert.px2mt( region.getRegionWidth() ), model.length / Convert.px2mt( region.getRegionHeight() ) );
 
 		// box2d editor "normalization" contemplates just a width-bound ratio..
 		// WTF?
-		Vector2 factor = new Vector2( Convert.px2mt( region.getRegionWidth() * ratio.x ), Convert.px2mt( region.getRegionWidth()
-				* ratio.y ) );
+		Vector2 factor = new Vector2( Convert.px2mt( region.getRegionWidth() * ratio.x ), Convert.px2mt( region.getRegionWidth() * ratio.y ) );
 
 		FixtureAtlas atlas = new FixtureAtlas( Gdx.files.internal( shapeName ) );
 		atlas.createFixtures( car.getBody(), shapeRef, factor.x, factor.y, fd, offset, entityType );

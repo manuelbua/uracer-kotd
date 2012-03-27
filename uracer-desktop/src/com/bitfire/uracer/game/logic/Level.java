@@ -44,7 +44,7 @@ import com.bitfire.uracer.utils.Convert;
 import com.bitfire.uracer.utils.MapUtils;
 
 /** First write. Basic idea in place, will need refactoring for sure.
- *
+ * 
  * @author manuel */
 public class Level {
 	// level data
@@ -204,8 +204,7 @@ public class Level {
 				TiledObject o = group.objects.get( i );
 
 				float scale = 1f;
-				if( o.properties.get( MapUtils.MeshScale ) != null )
-					scale = Float.parseFloat( o.properties.get( MapUtils.MeshScale ) );
+				if( o.properties.get( MapUtils.MeshScale ) != null ) scale = Float.parseFloat( o.properties.get( MapUtils.MeshScale ) );
 
 				OrthographicAlignedStillModel mesh = ModelFactory.create( o.type, o.x, o.y, scale );
 				if( mesh != null ) staticMeshes.add( mesh );
@@ -256,7 +255,7 @@ public class Level {
 			startOrient = 180f;
 		else if( orient.equals( "left" ) ) startOrient = 270f;
 
-		Car car = CarFactory.createPlayer( CarType.OldSkool, new CarModel().toModel3(), start, startOrient );
+		Car car = CarFactory.createPlayer( CarType.OldSkool, new CarModel().toModel2(), start, startOrient );
 		GhostCar ghost = CarFactory.createGhost( car );
 
 		Player p = new Player( car, ghost );
@@ -283,8 +282,7 @@ public class Level {
 		}
 
 		RayHandler.setColorPrecisionMediump();
-		rayHandler = new RayHandler( Physics.world, maxRays, (int)(Gdx.graphics.getWidth() * rttScale),
-				(int)(Gdx.graphics.getHeight() * rttScale) );
+		rayHandler = new RayHandler( Physics.world, maxRays, (int)(Gdx.graphics.getWidth() * rttScale), (int)(Gdx.graphics.getHeight() * rttScale) );
 		rayHandler.setShadows( true );
 		rayHandler.setCulling( true );
 		rayHandler.setBlur( true );
@@ -338,10 +336,9 @@ public class Level {
 		playerHeadlights.setDirection( ang );
 		playerHeadlights.setPosition( px, py );
 
-		rayHandler.setCombinedMatrix( Director.getMatViewProjMt(),
-				Convert.px2mt( camOrtho.position.x * Director.scalingStrategy.invTileMapZoomFactor ),
-				Convert.px2mt( camOrtho.position.y * Director.scalingStrategy.invTileMapZoomFactor ),
-				Convert.px2mt( camOrtho.viewportWidth ), Convert.px2mt( camOrtho.viewportHeight ) );
+		rayHandler.setCombinedMatrix( Director.getMatViewProjMt(), Convert.px2mt( camOrtho.position.x * Director.scalingStrategy.invTileMapZoomFactor ),
+				Convert.px2mt( camOrtho.position.y * Director.scalingStrategy.invTileMapZoomFactor ), Convert.px2mt( camOrtho.viewportWidth ),
+				Convert.px2mt( camOrtho.viewportHeight ) );
 
 		rayHandler.update();
 		rayHandler.generateLightMap();
@@ -352,8 +349,8 @@ public class Level {
 		// }
 	}
 
-	public void renderLigthMap(FrameBuffer dest) {
-		rayHandler.renderLightMap(dest);
+	public void renderLigthMap( FrameBuffer dest ) {
+		rayHandler.renderLightMap( dest );
 	}
 
 	/** operations */

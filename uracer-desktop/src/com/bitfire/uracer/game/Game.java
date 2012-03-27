@@ -36,7 +36,7 @@ import com.bitfire.uracer.utils.AMath;
 /** TODO most of the shared stuff between Game and GameLogic should go in a
  * GameData structure of some sort, GameLogic is really the logical portion of
  * Game, so data should be accessible for both.
- *
+ * 
  * @author bmanuel */
 public class Game {
 	private Level level = null;
@@ -122,24 +122,29 @@ public class Game {
 	}
 
 	private void setupPostProcessing() {
-		postProcessor = new PostProcessor( Gdx.graphics.getWidth(), Gdx.graphics.getHeight(), false /* depth */, false /* alpha */, Config.isDesktop /* 32 bits */);
+		postProcessor = new PostProcessor( Gdx.graphics.getWidth(), Gdx.graphics.getHeight(), false /* depth */, false /* alpha */, Config.isDesktop /* 32
+																																					 * bits */);
 		bloom = new Bloom( Config.PostProcessing.RttFboWidth, Config.PostProcessing.RttFboHeight, postProcessor.getFramebufferFormat() );
-		// bloom = new Bloom( Config.PostProcessing.SmallFboWidth, Config.PostProcessing.SmallFboHeight, postProcessor.getFramebufferFormat() );
+		// bloom = new Bloom( Config.PostProcessing.SmallFboWidth, Config.PostProcessing.SmallFboHeight,
+		// postProcessor.getFramebufferFormat() );
 
-		// Bloom.Settings bs = new Bloom.Settings( "arrogance-1 / rtt=0.25 / @1920x1050", BlurType.Gaussian5x5b, 1, 1, 0.25f, 1f, 0.1f, 0.8f, 1.4f );
-		// Bloom.Settings bs = new Bloom.Settings( "arrogance-2 / rtt=0.25 / @1920x1050", BlurType.Gaussian5x5b, 1, 1, 0.35f, 1f, 0.1f, 1.4f, 0.75f );
+		// Bloom.Settings bs = new Bloom.Settings( "arrogance-1 / rtt=0.25 / @1920x1050", BlurType.Gaussian5x5b, 1, 1,
+		// 0.25f, 1f, 0.1f, 0.8f, 1.4f );
+		// Bloom.Settings bs = new Bloom.Settings( "arrogance-2 / rtt=0.25 / @1920x1050", BlurType.Gaussian5x5b, 1, 1,
+		// 0.35f, 1f, 0.1f, 1.4f, 0.75f );
 
-		float threshold = ((level.isNightMode() && !Config.Graphics.DumbNightMode)? 0.1f : 0.45f);
+		float threshold = ((level.isNightMode() && !Config.Graphics.DumbNightMode) ? 0.1f : 0.45f);
 		Bloom.Settings bs = new Bloom.Settings( "subtle", Config.PostProcessing.BlurType, 1, 1.5f, threshold, 1f, 0.5f, 1f, 1.5f );
 		bloom.setSettings( bs );
 
-//		zoom = new Zoom( Config.PostProcessing.ZoomQuality );
+		// zoom = new Zoom( Config.PostProcessing.ZoomQuality );
 
-//		postProcessor.addEffect( zoom );
+		// postProcessor.addEffect( zoom );
 		postProcessor.addEffect( bloom );
 	}
 
 	private float prevFactor = 0;
+
 	public boolean tick() {
 		if( !logic.tick() ) return false;
 
@@ -149,10 +154,11 @@ public class Game {
 
 		// post-processor debug ------------------------------
 		float factor = DriftInfo.get().driftStrength;
-//		float factor = player.currSpeedFactor;
-//		factor = 1f;q
+		// float factor = player.currSpeedFactor;
+		// factor = 1f;q
 
-		factor = AMath.lerp( prevFactor, factor, 0.125f ); prevFactor = factor;
+		factor = AMath.lerp( prevFactor, factor, 0.125f );
+		prevFactor = factor;
 
 		if( Config.Graphics.EnablePostProcessingFx && zoom != null ) {
 			zoom.setOrigin( Director.screenPosFor( player.car.getBody() ) );
@@ -224,7 +230,7 @@ public class Game {
 
 		hud.render( batch );
 
-		if(level.isNightMode()) {
+		if( level.isNightMode() ) {
 			if( Config.Graphics.DumbNightMode ) {
 				if( Config.Graphics.EnablePostProcessingFx ) postProcessor.render();
 				level.generateLightMap();
@@ -246,7 +252,7 @@ public class Game {
 			}
 		}
 		else {
-			if(Config.Graphics.EnablePostProcessingFx) postProcessor.render();
+			if( Config.Graphics.EnablePostProcessingFx ) postProcessor.render();
 		}
 
 		//

@@ -73,8 +73,7 @@ public class TrackWalls {
 						Box2DFactory.createWall( fromMt, toMt, wallSizeMt, 0f );
 
 						// compute magnitude
-						mags[j - 1] = (float)Math.sqrt( (toMt.x - fromMt.x) * (toMt.x - fromMt.x) + (toMt.y - fromMt.y)
-								* (toMt.y - fromMt.y) );
+						mags[j - 1] = (float)Math.sqrt( (toMt.x - fromMt.x) * (toMt.x - fromMt.x) + (toMt.y - fromMt.y) * (toMt.y - fromMt.y) );
 
 						fromMt.set( toMt );
 					}
@@ -140,7 +139,8 @@ public class TrackWalls {
 			// elevation
 			verts[j + X2] = in.x + (addJitter ? MathUtils.random( -jitterPositional, jitterPositional ) : 0);
 			verts[j + Y2] = -in.y + (addJitter ? MathUtils.random( -jitterPositional, jitterPositional ) : 0);
-			verts[j + Z2] = wallHeightMt;// + (addJitter? MathUtils.random( -jitterAltitudinal, jitterAltitudinal ) : 0);
+			verts[j + Z2] = wallHeightMt;// + (addJitter? MathUtils.random( -jitterAltitudinal, jitterAltitudinal ) :
+											// 0);
 
 			// tex coords
 			verts[j + U1] = ((i & 1) == 0 ? coordU : 0f);
@@ -161,9 +161,8 @@ public class TrackWalls {
 			}
 		}
 
-		Mesh mesh = new Mesh( true, vertexCount, indexCount, new VertexAttribute( Usage.Position, 3,
-				ShaderProgram.POSITION_ATTRIBUTE ), new VertexAttribute( Usage.TextureCoordinates, 2,
-				ShaderProgram.TEXCOORD_ATTRIBUTE + "0" ) );
+		Mesh mesh = new Mesh( true, vertexCount, indexCount, new VertexAttribute( Usage.Position, 3, ShaderProgram.POSITION_ATTRIBUTE ), new VertexAttribute(
+				Usage.TextureCoordinates, 2, ShaderProgram.TEXCOORD_ATTRIBUTE + "0" ) );
 
 		mesh.setVertices( verts );
 		mesh.setIndices( indices );

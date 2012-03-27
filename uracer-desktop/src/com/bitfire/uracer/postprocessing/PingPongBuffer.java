@@ -6,20 +6,20 @@ import com.badlogic.gdx.graphics.glutils.FrameBuffer;
 
 /** Encapsulates a framebuffer with the ability to ping-pong between two
  * buffers.
- *
+ * 
  * Upon {@link #begin()} the buffer is reset to a known initial state,
  * this is usually done just before the first usage of the buffer.
- *
+ * 
  * Subsequent {@link #capture()} calls will initiate writing to the next
  * available buffer, returning the previously used one, effectively
  * ping-ponging between the two.
  * Until {@link #end()} is called, chained rendering will be possible by
- * retrieving the necessary buffers via {@link #getSourceTexture()}, {@link #getSourceBuffer()}, {@link #getResultTexture()} or
- * {@link #getResultBuffer}.
- *
+ * retrieving the necessary buffers via {@link #getSourceTexture()}, {@link #getSourceBuffer()},
+ * {@link #getResultTexture()} or {@link #getResultBuffer}.
+ * 
  * When finished, {@link #end()} should be called to stop capturing.
  * When the OpenGL context is lost, {@link #rebind()} should be called.
- *
+ * 
  * @author bmanuel */
 public class PingPongBuffer {
 	public FrameBuffer buffer1, buffer2;
@@ -40,8 +40,7 @@ public class PingPongBuffer {
 	/** Creates a new ping-pong buffer and owns the resources. */
 	public PingPongBuffer( int width, int height, Format frameBufferFormat, boolean hasDepth ) {
 		ownResources = true;
-		set( owned1 = new FrameBuffer( frameBufferFormat, width, height, hasDepth ), owned2 = new FrameBuffer( frameBufferFormat,
-				width, height, hasDepth ) );
+		set( owned1 = new FrameBuffer( frameBufferFormat, width, height, hasDepth ), owned2 = new FrameBuffer( frameBufferFormat, width, height, hasDepth ) );
 	}
 
 	/** Creates a new ping-pong buffer with the given buffers. */
@@ -53,10 +52,10 @@ public class PingPongBuffer {
 
 	/** An instance of this object can also be used to manipulate some other
 	 * externally-allocated buffers, applying just the same ping-ponging behavior.
-	 *
+	 * 
 	 * If this instance of the object was owning the resources, they will be preserved
 	 * and will be restored by a {@link #reset()} call.
-	 *
+	 * 
 	 * @param buffer1 the first buffer
 	 * @param buffer2 the second buffer */
 	public void set( FrameBuffer buffer1, FrameBuffer buffer2 ) {
@@ -122,7 +121,7 @@ public class PingPongBuffer {
 
 	/** Starts and/or continue ping-ponging, begin capturing on the next available buffer,
 	 * returns the result of the previous {@link #capture()} call.
-	 *
+	 * 
 	 * @return the Texture containing the result. */
 	public Texture capture() {
 		endPending();

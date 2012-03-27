@@ -42,8 +42,7 @@ public class CarGraphics {
 	}
 
 	public void render( SpriteBatch batch, EntityState state, float opacity ) {
-		ambientOcclusion.setPosition( state.position.x - ambientOcclusion.getOriginX(),
-				state.position.y - ambientOcclusion.getOriginY() );
+		ambientOcclusion.setPosition( state.position.x - ambientOcclusion.getOriginX(), state.position.y - ambientOcclusion.getOriginY() );
 		ambientOcclusion.setRotation( state.orientation );
 		ambientOcclusion.draw( batch, 0.5f * opacity );
 

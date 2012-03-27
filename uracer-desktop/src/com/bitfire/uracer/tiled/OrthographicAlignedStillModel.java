@@ -9,7 +9,7 @@ import com.badlogic.gdx.math.collision.BoundingBox;
 import com.bitfire.uracer.Director;
 
 /** The model is expected to follow the z-up convention.
- *
+ * 
  * @author manuel */
 public class OrthographicAlignedStillModel {
 	public UStillModel model;
@@ -66,8 +66,7 @@ public class OrthographicAlignedStillModel {
 		ShaderProgram.pedantic = false;
 		OrthographicAlignedStillModel.shaderProgram = new ShaderProgram( vertexShader, fragmentShader );
 
-		if( OrthographicAlignedStillModel.shaderProgram.isCompiled() == false )
-			throw new IllegalStateException( OrthographicAlignedStillModel.shaderProgram.getLog() );
+		if( OrthographicAlignedStillModel.shaderProgram.isCompiled() == false ) throw new IllegalStateException( OrthographicAlignedStillModel.shaderProgram.getLog() );
 	}
 
 	public OrthographicAlignedStillModel( StillModel aModel, Material material ) {
@@ -104,7 +103,7 @@ public class OrthographicAlignedStillModel {
 	}
 
 	/** Sets the world position in pixels, top-left origin.
-	 *
+	 * 
 	 * @param posPxX
 	 * @param posPxY */
 	public void setPosition( float posPxX, float posPxY ) {

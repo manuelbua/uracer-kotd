@@ -36,12 +36,15 @@ public class UTileMapRenderer implements Disposable {
 
 	/** A renderer for static tile maps backed with a Sprite Cache.
 	 * 
-	 * This constructor is for convenience when loading TiledMaps. The normal Tiled coordinate system is used when placing tiles.
+	 * This constructor is for convenience when loading TiledMaps. The normal Tiled coordinate system is used when
+	 * placing tiles.
 	 * 
 	 * A default shader is used if OpenGL ES 2.0 is enabled.
 	 * 
-	 * The tilesPerBlockX and tilesPerBlockY parameters will need to be adjusted for best performance. Smaller values will cull
-	 * more precisely, but result in longer loading times. Larger values result in shorter loading times, but will cull less
+	 * The tilesPerBlockX and tilesPerBlockY parameters will need to be adjusted for best performance. Smaller values
+	 * will cull
+	 * more precisely, but result in longer loading times. Larger values result in shorter loading times, but will cull
+	 * less
 	 * precisely.
 	 * 
 	 * @param map A tile map's tile numbers, in the order [layer][row][column]
@@ -58,8 +61,10 @@ public class UTileMapRenderer implements Disposable {
 	 * 
 	 * A default shader is used if OpenGL ES 2.0 is enabled.
 	 * 
-	 * The tilesPerBlockX and tilesPerBlockY parameters will need to be adjusted for best performance. Smaller values will cull
-	 * more precisely, but result in longer loading times. Larger values result in shorter loading times, but will cull less
+	 * The tilesPerBlockX and tilesPerBlockY parameters will need to be adjusted for best performance. Smaller values
+	 * will cull
+	 * more precisely, but result in longer loading times. Larger values result in shorter loading times, but will cull
+	 * less
 	 * precisely.
 	 * 
 	 * @param map A tile map's tile numbers, in the order [layer][row][column]
@@ -68,17 +73,19 @@ public class UTileMapRenderer implements Disposable {
 	 * @param tilesPerBlockY The height of each block to be drawn, in number of tiles
 	 * @param unitsPerTileX The number of units per tile in the x direction
 	 * @param unitsPerTileY The number of units per tile in the y direction */
-	public UTileMapRenderer( TiledMap map, TileAtlas atlas, int tilesPerBlockX, int tilesPerBlockY, float unitsPerTileX,
-			float unitsPerTileY ) {
+	public UTileMapRenderer( TiledMap map, TileAtlas atlas, int tilesPerBlockX, int tilesPerBlockY, float unitsPerTileX, float unitsPerTileY ) {
 		this( map, atlas, tilesPerBlockX, tilesPerBlockY, unitsPerTileX, unitsPerTileY, null );
 	}
 
 	/** A renderer for static tile maps backed with a Sprite Cache.
 	 * 
-	 * This constructor is for convenience when loading TiledMaps. The normal Tiled coordinate system is used when placing tiles.
+	 * This constructor is for convenience when loading TiledMaps. The normal Tiled coordinate system is used when
+	 * placing tiles.
 	 * 
-	 * The tilesPerBlockX and tilesPerBlockY parameters will need to be adjusted for best performance. Smaller values will cull
-	 * more precisely, but result in longer loading times. Larger values result in shorter loading times, but will cull less
+	 * The tilesPerBlockX and tilesPerBlockY parameters will need to be adjusted for best performance. Smaller values
+	 * will cull
+	 * more precisely, but result in longer loading times. Larger values result in shorter loading times, but will cull
+	 * less
 	 * precisely.
 	 * 
 	 * @param map A tile map's tile numbers, in the order [layer][row][column]
@@ -90,8 +97,7 @@ public class UTileMapRenderer implements Disposable {
 		this( map, atlas, tilesPerBlockX, tilesPerBlockY, map.tileWidth, map.tileHeight, shader );
 	}
 
-	public UTileMapRenderer( TiledMap map, TileAtlas atlas, int tilesPerBlockX, int tilesPerBlockY, float unitsPerTileX,
-			float unitsPerTileY, ShaderProgram shader ) {
+	public UTileMapRenderer( TiledMap map, TileAtlas atlas, int tilesPerBlockX, int tilesPerBlockY, float unitsPerTileX, float unitsPerTileY, ShaderProgram shader ) {
 		int[][][] tileMap = new int[ map.layers.size() ][][];
 		for( int i = 0; i < map.layers.size(); i++ ) {
 			tileMap[i] = map.layers.get( i ).tiles;
@@ -114,15 +120,16 @@ public class UTileMapRenderer implements Disposable {
 			blendedTilesArray = new IntArray( 0 );
 		}
 
-		init( tileMap, atlas, map.tileWidth, map.tileHeight, unitsPerTileX, unitsPerTileY, blendedTilesArray, tilesPerBlockX,
-				tilesPerBlockY, shader );
+		init( tileMap, atlas, map.tileWidth, map.tileHeight, unitsPerTileX, unitsPerTileY, blendedTilesArray, tilesPerBlockX, tilesPerBlockY, shader );
 		this.map = map;
 	}
 
 	/** A renderer for static tile maps backed with a Sprite Cache.
 	 * 
-	 * The tilesPerBlockX and tilesPerBlockY parameters will need to be adjusted for best performance. Smaller values will cull
-	 * more precisely, but result in longer loading times. Larger values result in shorter loading times, but will cull less
+	 * The tilesPerBlockX and tilesPerBlockY parameters will need to be adjusted for best performance. Smaller values
+	 * will cull
+	 * more precisely, but result in longer loading times. Larger values result in shorter loading times, but will cull
+	 * less
 	 * precisely.
 	 * 
 	 * A default shader is used if OpenGL ES 2.0 is enabled.
@@ -136,15 +143,17 @@ public class UTileMapRenderer implements Disposable {
 	 * @param blendedTiles Array containing tile numbers that require blending
 	 * @param tilesPerBlockX The width of each block to be drawn, in number of tiles
 	 * @param tilesPerBlockY The height of each block to be drawn, in number of tiles */
-	public UTileMapRenderer( int[][][] map, TileAtlas atlas, int tileWidth, int tileHeight, float unitsPerTileX,
-			float unitsPerTileY, IntArray blendedTiles, int tilesPerBlockX, int tilesPerBlockY ) {
+	public UTileMapRenderer( int[][][] map, TileAtlas atlas, int tileWidth, int tileHeight, float unitsPerTileX, float unitsPerTileY, IntArray blendedTiles,
+			int tilesPerBlockX, int tilesPerBlockY ) {
 		init( map, atlas, tileWidth, tileHeight, unitsPerTileX, unitsPerTileY, blendedTiles, tilesPerBlockX, tilesPerBlockY, null );
 	}
 
 	/** A renderer for static tile maps backed with a Sprite Cache.
 	 * 
-	 * The tilesPerBlockX and tilesPerBlockY parameters will need to be adjusted for best performance. Smaller values will cull
-	 * more precisely, but result in longer loading times. Larger values result in shorter loading times, but will cull less
+	 * The tilesPerBlockX and tilesPerBlockY parameters will need to be adjusted for best performance. Smaller values
+	 * will cull
+	 * more precisely, but result in longer loading times. Larger values result in shorter loading times, but will cull
+	 * less
 	 * precisely.
 	 * 
 	 * @param map A tile map's tile numbers, in the order [layer][row][column]
@@ -157,16 +166,16 @@ public class UTileMapRenderer implements Disposable {
 	 * @param tilesPerBlockX The width of each block to be drawn, in number of tiles
 	 * @param tilesPerBlockY The height of each block to be drawn, in number of tiles
 	 * @param shader Shader to use for OpenGL ES 2.0, null uses a default shader. Ignored if using OpenGL ES 1.0. */
-	public UTileMapRenderer( int[][][] map, TileAtlas atlas, int tileWidth, int tileHeight, float unitsPerTileX,
-			float unitsPerTileY, IntArray blendedTiles, int tilesPerBlockX, int tilesPerBlockY, ShaderProgram shader ) {
-		init( map, atlas, tileWidth, tileHeight, unitsPerTileX, unitsPerTileY, blendedTiles, tilesPerBlockX, tilesPerBlockY,
-				shader );
+	public UTileMapRenderer( int[][][] map, TileAtlas atlas, int tileWidth, int tileHeight, float unitsPerTileX, float unitsPerTileY, IntArray blendedTiles,
+			int tilesPerBlockX, int tilesPerBlockY, ShaderProgram shader ) {
+		init( map, atlas, tileWidth, tileHeight, unitsPerTileX, unitsPerTileY, blendedTiles, tilesPerBlockX, tilesPerBlockY, shader );
 	}
 
-	/** Initializer, used to avoid a "Constructor call must be the first statement in a constructor" syntax error when creating a
+	/** Initializer, used to avoid a "Constructor call must be the first statement in a constructor" syntax error when
+	 * creating a
 	 * map from a TiledMap */
-	private void init( int[][][] map, TileAtlas atlas, int tileWidth, int tileHeight, float unitsPerTileX, float unitsPerTileY,
-			IntArray blendedTiles, int tilesPerBlockX, int tilesPerBlockY, ShaderProgram shader ) {
+	private void init( int[][][] map, TileAtlas atlas, int tileWidth, int tileHeight, float unitsPerTileX, float unitsPerTileY, IntArray blendedTiles,
+			int tilesPerBlockX, int tilesPerBlockY, ShaderProgram shader ) {
 		this.atlas = atlas;
 		this.tileWidth = tileWidth;
 		this.tileHeight = tileHeight;
@@ -246,16 +255,13 @@ public class UTileMapRenderer implements Disposable {
 						if( reg != null ) {
 							if( !isSimpleTileAtlas ) {
 								AtlasRegion region = (AtlasRegion)reg;
-								cache.add( region, col * unitsPerTileX, (layer.length - row - 1) * unitsPerTileY,
-										(float)region.offsetX * unitsPerTileX / tileWidth, (float)(region.offsetY)
-												* unitsPerTileY / (float)tileHeight, region.packedWidth, region.packedHeight,
-										unitsPerTileX / (float)tileWidth, unitsPerTileY / (float)tileHeight, (region.rotate) ? 90
-												: 0 );
+								cache.add( region, col * unitsPerTileX, (layer.length - row - 1) * unitsPerTileY, (float)region.offsetX * unitsPerTileX / tileWidth,
+										(float)(region.offsetY) * unitsPerTileY / (float)tileHeight, region.packedWidth, region.packedHeight, unitsPerTileX
+												/ (float)tileWidth, unitsPerTileY / (float)tileHeight, (region.rotate) ? 90 : 0 );
 							}
 							else {
-								cache.add( reg, col * unitsPerTileX, (layer.length - row - 1) * unitsPerTileY, 0, 0,
-										reg.getRegionWidth(), reg.getRegionHeight(), unitsPerTileX / tileWidth, unitsPerTileY
-												/ tileHeight, 0 );
+								cache.add( reg, col * unitsPerTileX, (layer.length - row - 1) * unitsPerTileY, 0, 0, reg.getRegionWidth(), reg.getRegionHeight(),
+										unitsPerTileX / tileWidth, unitsPerTileY / tileHeight, 0 );
 							}
 						}
 					}
@@ -266,7 +272,8 @@ public class UTileMapRenderer implements Disposable {
 		return cache.endCache();
 	}
 
-	/** Renders the entire map. Use this function only on very small maps or for debugging purposes. The size of the map is based
+	/** Renders the entire map. Use this function only on very small maps or for debugging purposes. The size of the map
+	 * is based
 	 * on
 	 * the first layer and the first row's size. */
 	public void render() {
@@ -291,7 +298,8 @@ public class UTileMapRenderer implements Disposable {
 	/** Renders specific layers in the given a camera.
 	 * 
 	 * @param cam The camera to use
-	 * @param layers The list of layers to draw, 0 being the lowest layer. You will get an IndexOutOfBoundsException if a layer
+	 * @param layers The list of layers to draw, 0 being the lowest layer. You will get an IndexOutOfBoundsException if
+	 *            a layer
 	 *            number is too high. */
 	public void render( OrthographicCamera cam, int[] layers ) {
 		getProjectionMatrix().set( cam.combined );
@@ -300,11 +308,13 @@ public class UTileMapRenderer implements Disposable {
 		render( tmp.x, tmp.y, cam.viewportWidth * cam.zoom, cam.viewportHeight * cam.zoom, layers );
 	}
 
-	/** Sets the amount of overdraw in the X direction (in units). Use this if an actual tile width is greater than the tileWidth
+	/** Sets the amount of overdraw in the X direction (in units). Use this if an actual tile width is greater than the
+	 * tileWidth
 	 * specified in the constructor. Use the value actual_tile_width - tileWidth (from the constructor). */
 	public float overdrawX;
 
-	/** Sets the amount of overdraw in the Y direction (in units). Use this if an actual tile height is greater than the tileHeight
+	/** Sets the amount of overdraw in the Y direction (in units). Use this if an actual tile height is greater than the
+	 * tileHeight
 	 * specified in the constructor. Use the value actual_tile_height - tileHeight (from the constructor). */
 	public float overdrawY;
 
@@ -316,7 +326,8 @@ public class UTileMapRenderer implements Disposable {
 	 * @param y the y coordinate to start drawing
 	 * @param width the width of the tiles to draw
 	 * @param height the width of the tiles to draw
-	 * @param layers The list of layers to draw, 0 being the lowest layer. You will get an IndexOutOfBoundsException if a layer
+	 * @param layers The list of layers to draw, 0 being the lowest layer. You will get an IndexOutOfBoundsException if
+	 *            a layer
 	 *            number is too high. */
 	public void render( float x, float y, float width, float height, int[] layers ) {
 		lastRow = (int)((mapHeightUnits - (y - height + overdrawY)) / (unitsPerBlockY));
@@ -333,7 +344,8 @@ public class UTileMapRenderer implements Disposable {
 		// if (isSimpleTileAtlas) {
 		// Gdx.gl.glEnable(GL10.GL_BLEND);
 		// for (currentLayer = 0; currentLayer < layers.length; currentLayer++) {
-		// for (currentRow = initialRow; currentRow <= lastRow && currentRow < getLayerHeightInBlocks(currentLayer); currentRow++)
+		// for (currentRow = initialRow; currentRow <= lastRow && currentRow < getLayerHeightInBlocks(currentLayer);
+		// currentRow++)
 		// {
 		// for (currentCol = initialCol; currentCol <= lastCol
 		// && currentCol < getLayerWidthInBlocks(currentLayer, currentRow); currentCol++) {
@@ -345,8 +357,7 @@ public class UTileMapRenderer implements Disposable {
 		{
 			for( currentLayer = 0; currentLayer < layers.length; currentLayer++ ) {
 				for( currentRow = initialRow; currentRow <= lastRow && currentRow < getLayerHeightInBlocks( currentLayer ); currentRow++ ) {
-					for( currentCol = initialCol; currentCol <= lastCol
-							&& currentCol < getLayerWidthInBlocks( currentLayer, currentRow ); currentCol++ ) {
+					for( currentCol = initialCol; currentCol <= lastCol && currentCol < getLayerWidthInBlocks( currentLayer, currentRow ); currentCol++ ) {
 						// Gdx.gl.glDisable(GL10.GL_BLEND);
 						cache.draw( normalCacheId[layers[currentLayer]][currentRow][currentCol] );
 						// Gdx.gl.glEnable(GL10.GL_BLEND);
@@ -409,27 +420,34 @@ public class UTileMapRenderer implements Disposable {
 		return (int)(worldX / unitsPerTileX);
 	}
 
-	/** Returns the initial drawn block row, for debugging purposes. Use this along with {@link TileMapRenderer#getLastRow()} to
-	 * compute the number of rows drawn in the last call to {@link TileMapRenderer#render(float, float, float, float, int[])}. */
+	/** Returns the initial drawn block row, for debugging purposes. Use this along with
+	 * {@link TileMapRenderer#getLastRow()} to
+	 * compute the number of rows drawn in the last call to
+	 * {@link TileMapRenderer#render(float, float, float, float, int[])}. */
 	public int getInitialRow() {
 		return initialRow;
 	}
 
-	/** Returns the initial drawn block column, for debugging purposes. Use this along with {@link TileMapRenderer#getLastCol()} to
-	 * compute the number of columns drawn in the last call to {@link TileMapRenderer#render(float, float, float, float, int[])}. */
+	/** Returns the initial drawn block column, for debugging purposes. Use this along with
+	 * {@link TileMapRenderer#getLastCol()} to
+	 * compute the number of columns drawn in the last call to
+	 * {@link TileMapRenderer#render(float, float, float, float, int[])}. */
 	public int getInitialCol() {
 		return initialCol;
 	}
 
-	/** Returns the final drawn block row, for debugging purposes. Use this along with {@link TileMapRenderer#getInitialRow()} to
-	 * compute the number of rows drawn in the last call to {@link TileMapRenderer#render(float, float, float, float, int[])}. */
+	/** Returns the final drawn block row, for debugging purposes. Use this along with
+	 * {@link TileMapRenderer#getInitialRow()} to
+	 * compute the number of rows drawn in the last call to
+	 * {@link TileMapRenderer#render(float, float, float, float, int[])}. */
 	public int getLastRow() {
 		return lastRow;
 	}
 
-	/** Returns the final drawn block column, for debugging purposes. Use this along with {@link TileMapRenderer#getInitialCol()}
-	 * to
-	 * compute the number of columns drawn in the last call to {@link TileMapRenderer#render(float, float, float, float, int[])}. */
+	/** Returns the final drawn block column, for debugging purposes. Use this along with
+	 * {@link TileMapRenderer#getInitialCol()} to
+	 * compute the number of columns drawn in the last call to
+	 * {@link TileMapRenderer#render(float, float, float, float, int[])}. */
 	public int getLastCol() {
 		return lastCol;
 	}

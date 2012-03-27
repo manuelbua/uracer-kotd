@@ -138,9 +138,10 @@ public class ModelFactory {
 			leavesTexture = Art.meshTreeLeavesSpring[6];
 			break;
 		// missing mesh mesh
-//		case Missing:
-//		default:
-//			stillModel = new OrthographicAlignedStillModel( getModel( "data/3d/models/missing-mesh.g3dt" ), getMaterial( modelMesh, Art.meshMissing ) );
+		// case Missing:
+		// default:
+		// stillModel = new OrthographicAlignedStillModel( getModel( "data/3d/models/missing-mesh.g3dt" ), getMaterial(
+		// modelMesh, Art.meshMissing ) );
 
 		}
 

@@ -11,9 +11,9 @@ public class CarDriftSoundEffect extends CarSoundEffect {
 	private Sound drift = null;
 	private long driftId = -1;
 	private float driftLastPitch = 0;
-	private final float pitchFactor = 1f;
+	private final float pitchFactor = 1.2f;
 	private final float pitchMin = 0.75f;
-	private final float pitchMax = 1f;
+	private final float pitchMax = 1.2f;
 
 	private boolean doFadeIn = false;
 	private boolean doFadeOut = false;

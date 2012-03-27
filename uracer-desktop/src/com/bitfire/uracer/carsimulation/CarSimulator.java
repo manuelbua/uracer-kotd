@@ -9,9 +9,8 @@ import com.bitfire.uracer.utils.VMath;
 
 public class CarSimulator {
 	public CarDescriptor carDesc;
-	public Vector2 lastCarScreenPos = new Vector2(), lastTouchPos = new Vector2(), velocity = new Vector2(),
-			acceleration_wc = new Vector2(), heading = new Vector2(), side = new Vector2(), flatf = new Vector2(),
-			flatr = new Vector2(), ftraction = new Vector2(), resistance = new Vector2(), force = new Vector2(),
+	public Vector2 lastCarScreenPos = new Vector2(), lastTouchPos = new Vector2(), velocity = new Vector2(), acceleration_wc = new Vector2(), heading = new Vector2(),
+			side = new Vector2(), flatf = new Vector2(), flatr = new Vector2(), ftraction = new Vector2(), resistance = new Vector2(), force = new Vector2(),
 			acceleration = new Vector2();
 
 	public float thisSign, lastSign, lastTouchAngle;
