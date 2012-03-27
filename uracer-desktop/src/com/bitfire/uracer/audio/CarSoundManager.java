@@ -33,6 +33,8 @@ public class CarSoundManager {
 
 	public static void tick() {
 		if( player.car.getInputMode() == CarInputMode.InputFromPlayer ) {
+			// TODO when update() will use GameData shared data internally, no params, thus a task-based component
+			// system can be created
 			carEngine.update( player.currSpeedFactor );
 			carDrift.update( player.currSpeedFactor );
 		}

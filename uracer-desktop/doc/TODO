@@ -103,3 +103,6 @@
 [ ] think, menu as a game level?
 [ ] think, cars for drift (max_grip = 3/4/5f), other cars (max_grip = 6/7/8f)
 [ ] think, in car::compute_throttle, could be modulated by user's game settings?
+[ ] task-based component system, when update() will use GameData shared data internally, thus no params, thus a task-based component system can be created, components'
+data in GameData? GameData::<Component>?
+[ ] look at, in night-mode, shadows don't take into account time aliasing, producing stuttering in a subframe-interpolated context.
