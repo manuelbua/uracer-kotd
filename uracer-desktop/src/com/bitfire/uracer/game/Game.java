@@ -138,13 +138,13 @@ public class Game {
 		bloomSettings = new Bloom.Settings( "subtle", Config.PostProcessing.BlurType, 1, 1.5f, threshold, 1f, 0.5f, 1f, 1.5f );
 		bloom.setSettings( bloomSettings );
 
-		// zoom = new Zoom( Config.PostProcessing.ZoomQuality );
+		 zoom = new Zoom( Config.PostProcessing.ZoomQuality );
 
-		// postProcessor.addEffect( zoom );
+		 postProcessor.addEffect( zoom );
 		postProcessor.addEffect( bloom );
 	}
 
-	private float prevFactor = 0;
+	private float prevFactor = 0, prevDriftTimeFactor = 0;
 
 	public boolean tick() {
 		if( !logic.tick() ) return false;
@@ -154,23 +154,24 @@ public class Game {
 		CarSoundManager.tick();
 
 		// post-processor debug ------------------------------
-		float factor = DriftInfo.get().driftStrength * 2f;
-//		 float factor = player.currSpeedFactor * 1.75f;
-		 factor = 1f;
+//		float factor = player.currSpeedFactor * 1.75f;
 
-		factor = AMath.lerp( prevFactor, factor, 0.125f );
+		float factor = AMath.lerp( prevFactor, DriftInfo.get().driftStrength * 2f, 0.05f );
 		prevFactor = factor;
 
-		// fade bloom
+		float driftTimeFactor = !DriftInfo.get().isDrifting ? 0 : AMath.clamp( DriftInfo.get().driftSeconds / 2f /* seconds */, 0, 1.5f);
+		driftTimeFactor = AMath.lerp( prevDriftTimeFactor, driftTimeFactor, 0.0025f );
+		prevDriftTimeFactor = driftTimeFactor;
+
 		if( Config.Graphics.EnablePostProcessingFx && bloom != null ) {
-			bloom.setBaseSaturation( bloomSettings.baseSaturation + 0.5f * (1-factor) );
-			bloom.setBloomIntesity( bloomSettings.bloomIntensity * factor );
+			bloom.setBaseSaturation( bloomSettings.baseSaturation + 0.5f * (1-driftTimeFactor) );
+			bloom.setBloomIntesity( bloomSettings.bloomIntensity * driftTimeFactor );
 		}
 
-//		if( Config.Graphics.EnablePostProcessingFx && zoom != null ) {
-//			zoom.setOrigin( Director.screenPosFor( player.car.getBody() ) );
-//			zoom.setStrength( -0.1f * factor );
-//		}
+		if( Config.Graphics.EnablePostProcessingFx && zoom != null ) {
+			zoom.setOrigin( Director.screenPosFor( player.car.getBody() ) );
+			zoom.setStrength( -0.1f * factor * 0.1f );
+		}
 //
 //		if( Config.Graphics.EnablePostProcessingFx && bloom != null && zoom != null ) {
 //			bloom.setBaseSaturation( 0.5f - 0.8f * factor );

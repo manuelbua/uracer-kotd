@@ -85,13 +85,13 @@ public class DriftInfo {
 					isDrifting = true;
 					hasCollided = false;
 					driftStartTime = System.currentTimeMillis();
-					updateDriftTimeSeconds();
 					logic.getListener().onBeginDrift();
 				}
 			}
 			else {
 				// search for onEndDrift
 				if( isDrifting && (driftStrength < 0.2f || vel < 15f) ) {
+					updateDriftTimeSeconds();
 					isDrifting = false;
 					hasCollided = false;
 					logic.getListener().onEndDrift();
