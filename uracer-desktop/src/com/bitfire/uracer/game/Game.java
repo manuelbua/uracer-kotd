@@ -144,7 +144,7 @@ public class Game {
 		postProcessor.addEffect( bloom );
 	}
 
-	private float prevFactor = 0, prevDriftTimeFactor = 0;
+	private float prevFactor = 0;
 
 	public boolean tick() {
 		if( !logic.tick() ) return false;
@@ -155,29 +155,28 @@ public class Game {
 
 		// post-processor debug ------------------------------
 //		float factor = player.currSpeedFactor * 1.75f;
+		float factor = DriftInfo.get().driftStrength * 2;
+//		factor = 1.8f;
+//		System.out.println(DriftInfo.get().driftStrength);
 
-		float factor = AMath.lerp( prevFactor, DriftInfo.get().driftStrength * 2f, 0.05f );
+		factor = AMath.clamp(AMath.lerp( prevFactor, factor, 0.15f ),0,2);
 		prevFactor = factor;
 
-		float driftTimeFactor = !DriftInfo.get().isDrifting ? 0 : AMath.clamp( DriftInfo.get().driftSeconds / 2f /* seconds */, 0, 1.5f);
-		driftTimeFactor = AMath.lerp( prevDriftTimeFactor, driftTimeFactor, 0.0025f );
-		prevDriftTimeFactor = driftTimeFactor;
-
 		if( Config.Graphics.EnablePostProcessingFx && bloom != null ) {
-			bloom.setBaseSaturation( bloomSettings.baseSaturation + 0.5f * (1-driftTimeFactor) );
-			bloom.setBloomIntesity( bloomSettings.bloomIntensity * driftTimeFactor );
+			bloom.setBaseSaturation( bloomSettings.baseSaturation + 0.5f * (1-factor) );
+			bloom.setBloomIntesity( bloomSettings.bloomIntensity * factor );
 		}
 
 		if( Config.Graphics.EnablePostProcessingFx && zoom != null ) {
 			zoom.setOrigin( Director.screenPosFor( player.car.getBody() ) );
-			zoom.setStrength( -0.1f * factor * 0.1f );
+			zoom.setStrength( -0.01f * factor );
 		}
-//
+
 //		if( Config.Graphics.EnablePostProcessingFx && bloom != null && zoom != null ) {
 //			bloom.setBaseSaturation( 0.5f - 0.8f * factor );
 //			bloom.setBloomIntesity( 1.0f + 0.25f * factor );
 //			bloom.setBloomSaturation( 1.5f + ((level.isNightMode() && !Config.Graphics.DumbNightMode) ? -0.5f : 1.5f) * factor );
-//		}
+		// }
 		// ---------------------------------------------------
 
 		Debug.update();

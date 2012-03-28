@@ -10,18 +10,21 @@ import com.badlogic.gdx.utils.Disposable;
 
 /** Provides a way to capture the rendered scene to an off-screen buffer
  * and to apply a chain of effects on it before rendering to screen.
- * 
+ *
  * Effects can be added or removed via {@link #addEffect(PostProcessorEffect)} and
  * {@link #removeEffect(PostProcessorEffect)}.
- * 
+ *
  * @author bmanuel */
 public final class PostProcessor implements Disposable {
 	private final PingPongBuffer composite;
 	private final Format fbFormat;
 	private boolean capturing = false;
-	private Array<PostProcessorEffect> effects = new Array<PostProcessorEffect>();
+	private Array<PostProcessorEffect> effects = new Array<PostProcessorEffect>();	// should use the
+																					// PostProcessorEffect.class
+																					// constructor
 	private Color clearColor = Color.CLEAR;
-	private static Array<PingPongBuffer> buffers = new Array<PingPongBuffer>( 5 );
+	private static Array<PingPongBuffer> buffers = new Array<PingPongBuffer>( 5 );	// should use the
+																					// PingPongBuffer.class constructor
 
 	/** Construct a new PostProcessor with the given parameters. */
 	public PostProcessor( int fboWidth, int fboHeight, boolean useDepth, boolean useAlphaChannel, boolean use32Bits ) {
@@ -118,8 +121,8 @@ public final class PostProcessor implements Disposable {
 		}
 	}
 
-	/** Starts capturing again, after a pause, without clearing the screen. */
-	public void captureContinue() {
+	/** Starts capturing the scene as {@link #capture()}, but <strong>without</strong> clearing the screen. */
+	public void captureNoClear() {
 		if( !capturing ) {
 			capturing = true;
 			composite.begin();
@@ -144,7 +147,7 @@ public final class PostProcessor implements Disposable {
 		return composite.getResultBuffer();
 	}
 
-	/** Regenerates and/or rebinds owned resources when is needed, eg. when
+	/** Regenerates and/or rebinds owned resources when needed, eg. when
 	 * the OpenGL context is lost. */
 	public void rebind() {
 		for( int i = 0; i < effects.size; i++ )
