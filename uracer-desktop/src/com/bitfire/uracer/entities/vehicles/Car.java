@@ -1,7 +1,5 @@
 package com.bitfire.uracer.entities.vehicles;
 
-import java.util.ArrayList;
-
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.graphics.g2d.tiled.TiledLayer;
@@ -10,11 +8,13 @@ import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.math.WindowedMean;
 import com.badlogic.gdx.physics.box2d.BodyDef;
 import com.badlogic.gdx.physics.box2d.BodyDef.BodyType;
+import com.badlogic.gdx.physics.box2d.Fixture;
 import com.bitfire.uracer.Art;
 import com.bitfire.uracer.Config;
 import com.bitfire.uracer.Director;
 import com.bitfire.uracer.Input;
 import com.bitfire.uracer.Physics;
+import com.bitfire.uracer.audio.CarSoundManager;
 import com.bitfire.uracer.carsimulation.CarDescriptor;
 import com.bitfire.uracer.carsimulation.CarForces;
 import com.bitfire.uracer.carsimulation.CarInput;
@@ -26,6 +26,7 @@ import com.bitfire.uracer.debug.Debug;
 import com.bitfire.uracer.entities.Box2dEntity;
 import com.bitfire.uracer.entities.EntityManager;
 import com.bitfire.uracer.factories.CarFactory.CarType;
+import com.bitfire.uracer.game.logic.DriftInfo;
 import com.bitfire.uracer.utils.AMath;
 import com.bitfire.uracer.utils.Convert;
 import com.bitfire.uracer.utils.MapUtils;
@@ -39,7 +40,7 @@ public class Car extends Box2dEntity {
 	private CarSimulator carSim;
 	private CarInput carInput;
 	private CarForces carForces;
-	private ArrayList<Float> impactFeedback;
+	private int impacts;
 
 	private CarInputMode carInputMode;
 	private CarType carType;
@@ -51,12 +52,12 @@ public class Car extends Box2dEntity {
 
 	protected Car( CarGraphics graphics, CarModel model, CarType type, CarInputMode inputMode, Vector2 position, float orientation ) {
 		this.graphics = graphics;
-		this.impactFeedback = new ArrayList<Float>();
 		this.recorder = Recorder.instance();
 		this.carInputMode = inputMode;
 		this.carType = type;
 		this.startPos = new Vector2( position );
 		this.startOrient = orientation;
+		this.impacts = 0;
 
 		carDesc = new CarDescriptor();
 		carDesc.carModel.set( model );
@@ -243,10 +244,6 @@ public class Car extends Box2dEntity {
 		}
 	}
 
-	public void addImpactFeedback( float feedback ) {
-		impactFeedback.add( feedback );
-	}
-
 	private void computeTilePosition() {
 		tilePosition.set( Convert.pxToTile( stateRender.position.x, stateRender.position.y ) );
 		VMath.truncateToInt( tilePosition );
@@ -261,12 +258,9 @@ public class Car extends Box2dEntity {
 
 	private void handleImpactFeedback() {
 		// process impact feedback
-		while( impactFeedback.size() > 0 ) {
-			impactFeedback.remove( 0 );
-
+		while( impacts-- > 0 ) {
 			carDesc.velocity_wc.set( body.getLinearVelocity() ).mul( Director.gameplaySettings.linearVelocityAfterFeedback );
 			carDesc.angularvelocity = -body.getAngularVelocity() * 0.85f;
-
 			start_decrease = true;
 		}
 	}
@@ -285,7 +279,7 @@ public class Car extends Box2dEntity {
 	/** Subclasses, such as the GhostCar, will override this method
 	 * to feed forces from external sources, such as Replay data stored
 	 * elsewhere.
-	 * 
+	 *
 	 * @param forces computed forces will be returned by filling this data structure. */
 	protected void onComputeCarForces( CarForces forces ) {
 		carInput = acquireInput();
@@ -304,6 +298,19 @@ public class Car extends Box2dEntity {
 		if( recorder.isRecording() ) {
 			recorder.add( forces );
 		}
+	}
+
+
+	public void onCollide(Fixture other, Vector2 normalImpulses) {
+		float len = normalImpulses.len();
+		impacts++;
+
+		// update DriftInfo in case of collision
+		if( carInputMode == CarInputMode.InputFromPlayer ) {
+			CarSoundManager.carImpacted( len );
+			DriftInfo.invalidateByCollision();
+		}
+
 	}
 
 	@Override
