@@ -258,7 +258,8 @@ public class Car extends Box2dEntity {
 
 	private void handleImpactFeedback() {
 		// process impact feedback
-		while( impacts-- > 0 ) {
+		while( impacts > 0 ) {
+			impacts--;
 			carDesc.velocity_wc.set( body.getLinearVelocity() ).mul( Director.gameplaySettings.linearVelocityAfterFeedback );
 			carDesc.angularvelocity = -body.getAngularVelocity() * 0.85f;
 			start_decrease = true;
@@ -302,12 +303,11 @@ public class Car extends Box2dEntity {
 
 
 	public void onCollide(Fixture other, Vector2 normalImpulses) {
-		float len = normalImpulses.len();
 		impacts++;
 
 		// update DriftInfo in case of collision
 		if( carInputMode == CarInputMode.InputFromPlayer ) {
-			CarSoundManager.carImpacted( len );
+			CarSoundManager.carImpacted( normalImpulses.len() );
 			DriftInfo.invalidateByCollision();
 		}
 
