@@ -1,7 +1,7 @@
 package com.bitfire.uracer.carsimulation;
 
-/** Represents the forces computed by the car simulator, given the CarInput input forces.
- * 
+/** Represents the forces computed by the car simulator.
+ *
  * @author manuel */
 
 public class CarForces {

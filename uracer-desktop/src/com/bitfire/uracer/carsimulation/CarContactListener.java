@@ -5,6 +5,7 @@ import com.badlogic.gdx.physics.box2d.ContactImpulse;
 import com.badlogic.gdx.physics.box2d.ContactListener;
 import com.badlogic.gdx.physics.box2d.Manifold;
 
+// TODO Car imlements ContactListener?
 public class CarContactListener implements ContactListener {
 	private CarImpactManager impactManager = new CarImpactManager();
 
