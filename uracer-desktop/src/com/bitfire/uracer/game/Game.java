@@ -16,7 +16,6 @@ import com.bitfire.uracer.effects.TrackEffects;
 import com.bitfire.uracer.entities.EntityManager;
 import com.bitfire.uracer.entities.vehicles.Car;
 import com.bitfire.uracer.game.logic.DirectorController;
-import com.bitfire.uracer.game.logic.DriftInfo;
 import com.bitfire.uracer.game.logic.GameLogic;
 import com.bitfire.uracer.game.logic.Level;
 import com.bitfire.uracer.game.logic.Player;
@@ -31,7 +30,6 @@ import com.bitfire.uracer.tiled.LevelRenderer;
 import com.bitfire.uracer.tweener.Tweener;
 import com.bitfire.uracer.tweener.accessors.HudLabelAccessor;
 import com.bitfire.uracer.tweener.accessors.MessageAccessor;
-import com.bitfire.uracer.utils.AMath;
 
 /** TODO most of the shared stuff between Game and GameLogic should go in a
  * GameData structure of some sort, GameLogic is really the logical portion of
@@ -138,14 +136,13 @@ public class Game {
 		bloomSettings = new Bloom.Settings( "subtle", Config.PostProcessing.BlurType, 1, 1.5f, threshold, 1f, 0.5f, 1f, 1.5f );
 		bloom.setSettings( bloomSettings );
 
-		 zoom = new Zoom( Config.PostProcessing.ZoomQuality );
+//		 zoom = new Zoom( Config.PostProcessing.ZoomQuality );
 
-		 postProcessor.addEffect( zoom );
+//		 postProcessor.addEffect( zoom );
 		postProcessor.addEffect( bloom );
 	}
 
-	private float prevFactor = 0;
-
+//	private float prevFactor = 0;
 	public boolean tick() {
 		if( !logic.tick() ) return false;
 
@@ -155,22 +152,21 @@ public class Game {
 
 		// post-processor debug ------------------------------
 //		float factor = player.currSpeedFactor * 1.75f;
-		float factor = DriftInfo.get().driftStrength * 2;
+//		float factor = DriftInfo.get().driftStrength * 2;
 //		factor = 1.8f;
-//		System.out.println(DriftInfo.get().driftStrength);
 
-		factor = AMath.clamp(AMath.lerp( prevFactor, factor, 0.15f ),0,2);
-		prevFactor = factor;
-
-		if( Config.Graphics.EnablePostProcessingFx && bloom != null ) {
-			bloom.setBaseSaturation( bloomSettings.baseSaturation + 0.5f * (1-factor) );
-			bloom.setBloomIntesity( bloomSettings.bloomIntensity * factor );
-		}
-
-		if( Config.Graphics.EnablePostProcessingFx && zoom != null ) {
-			zoom.setOrigin( Director.screenPosFor( player.car.getBody() ) );
-			zoom.setStrength( -0.01f * factor );
-		}
+//		factor = AMath.clamp(AMath.lerp( prevFactor, factor, 0.15f ),0,2);
+//		prevFactor = factor;
+//
+//		if( Config.Graphics.EnablePostProcessingFx && bloom != null ) {
+//			bloom.setBaseSaturation( bloomSettings.baseSaturation + 0.5f * (1-factor) );
+//			bloom.setBloomIntesity( bloomSettings.bloomIntensity * factor );
+//		}
+//
+//		if( Config.Graphics.EnablePostProcessingFx && zoom != null ) {
+//			zoom.setOrigin( Director.screenPosFor( player.car.getBody() ) );
+//			zoom.setStrength( -0.01f * factor );
+//		}
 
 //		if( Config.Graphics.EnablePostProcessingFx && bloom != null && zoom != null ) {
 //			bloom.setBaseSaturation( 0.5f - 0.8f * factor );
