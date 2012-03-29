@@ -16,6 +16,7 @@ import com.badlogic.gdx.graphics.g3d.model.still.StillSubMesh;
 import com.badlogic.gdx.graphics.glutils.ShaderProgram;
 import com.badlogic.gdx.math.MathUtils;
 import com.badlogic.gdx.math.Vector2;
+import com.badlogic.gdx.physics.box2d.World;
 import com.bitfire.uracer.Art;
 import com.bitfire.uracer.Director;
 import com.bitfire.uracer.factories.Box2DFactory;
@@ -37,7 +38,7 @@ public class TrackWalls {
 		walls.clear();
 	}
 
-	public void createWalls() {
+	public void createWalls(World world) {
 		if( MapUtils.hasObjectGroup( MapUtils.LayerWalls ) ) {
 			Vector2 fromMt = new Vector2();
 			Vector2 toMt = new Vector2();
@@ -70,7 +71,7 @@ public class TrackWalls {
 						toMt.y = Director.worldSizeScaledMt.y - toMt.y;
 
 						// create box2d wall
-						Box2DFactory.createWall( fromMt, toMt, wallSizeMt, 0f );
+						Box2DFactory.createWall( world, fromMt, toMt, wallSizeMt, 0f );
 
 						// compute magnitude
 						mags[j - 1] = (float)Math.sqrt( (toMt.x - fromMt.x) * (toMt.x - fromMt.x) + (toMt.y - fromMt.y) * (toMt.y - fromMt.y) );

@@ -7,7 +7,7 @@ import com.bitfire.uracer.Director;
 import com.bitfire.uracer.carsimulation.CarModel;
 import com.bitfire.uracer.entities.vehicles.Car;
 import com.bitfire.uracer.game.Game;
-import com.bitfire.uracer.game.logic.DriftInfo;
+import com.bitfire.uracer.game.logic.DriftState;
 import com.bitfire.uracer.messager.Messager;
 import com.bitfire.uracer.messager.Messager.MessagePosition;
 import com.bitfire.uracer.messager.Messager.MessageSize;
@@ -26,7 +26,7 @@ public class HudDrifting {
 	private static final int MaxLabelResult = 3;
 	private int nextLabelResult = 0;
 
-	private DriftInfo drift;
+	private DriftState drift;
 	private Vector2 heading = new Vector2();
 
 	public HudDrifting( Game game ) {
@@ -36,7 +36,7 @@ public class HudDrifting {
 		carWidthPx = (int)Convert.mt2px( model.width );
 		carLengthPx = (int)Convert.mt2px( model.length );
 
-		drift = DriftInfo.get();
+		drift = DriftState.get();
 
 		labelRealtime = new HudLabel( Art.fontCurseYRbig, "99.99", 0.5f );
 		labelRealtime.setAlpha( 0 );

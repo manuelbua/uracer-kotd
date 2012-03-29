@@ -9,22 +9,22 @@ import com.badlogic.gdx.physics.box2d.BodyDef;
 import com.badlogic.gdx.physics.box2d.CircleShape;
 import com.badlogic.gdx.physics.box2d.FixtureDef;
 import com.badlogic.gdx.physics.box2d.PolygonShape;
+import com.badlogic.gdx.physics.box2d.World;
 import com.bitfire.uracer.Config;
-import com.bitfire.uracer.Physics;
 import com.bitfire.uracer.entities.CollisionFilters;
 
 public class Box2DFactory {
 
 	public static void init() {
-		tmp1 = new Vector2();
-		tmp2 = new Vector2();
-		from = new Vector2();
-		to = new Vector2();
+		Box2DFactory.tmp1 = new Vector2();
+		Box2DFactory.tmp2 = new Vector2();
+		Box2DFactory.from = new Vector2();
+		Box2DFactory.to = new Vector2();
 	}
 
 	/** Creates a circle object with the given position and radius. Resitution
 	 * defaults to 0.6. */
-	public static Body createCircle( float x, float y, float radius, boolean isStatic ) {
+	public static Body createCircle( World world, float x, float y, float radius, boolean isStatic ) {
 		CircleShape sd = new CircleShape();
 		sd.setRadius( radius );
 
@@ -32,7 +32,7 @@ public class Box2DFactory {
 		bd.bullet = false;
 		bd.allowSleep = true;
 		bd.position.set( x, y );
-		Body body = Physics.world.createBody( bd );
+		Body body = world.createBody( bd );
 
 		if( isStatic ) {
 			body.setType( BodyDef.BodyType.StaticBody );
@@ -62,14 +62,14 @@ public class Box2DFactory {
 	/** Creates a wall by constructing a rectangle whose corners are (xmin,ymin)
 	 * and (xmax,ymax), and rotating the box counterclockwise through the given
 	 * angle. Restitution defaults to 0. */
-	public static Body createWall( float xmin, float ymin, float xmax, float ymax, float angle ) {
-		return createWall( xmin, ymin, xmax, ymax, angle, 0f );
+	public static Body createWall( World world, float xmin, float ymin, float xmax, float ymax, float angle ) {
+		return createWall( world, xmin, ymin, xmax, ymax, angle, 0f );
 	}
 
 	/** Creates a wall by constructing a rectangle whose corners are (xmin,ymin)
 	 * and (xmax,ymax), and rotating the box counterclockwise through the given
 	 * angle, with specified restitution. */
-	public static Body createWall( float xmin, float ymin, float xmax, float ymax, float angle, float restitution ) {
+	public static Body createWall( World world, float xmin, float ymin, float xmax, float ymax, float angle, float restitution ) {
 		float cx = (xmin + xmax) / 2;
 		float cy = (ymin + ymax) / 2;
 		float hx = (xmax - xmin) / 2;
@@ -96,7 +96,7 @@ public class Box2DFactory {
 
 		BodyDef bd = new BodyDef();
 		bd.position.set( cx, cy );
-		Body wall = Physics.world.createBody( bd );
+		Body wall = world.createBody( bd );
 		wall.createFixture( fdef );
 		wall.setType( BodyDef.BodyType.StaticBody );
 		return wall;
@@ -104,23 +104,23 @@ public class Box2DFactory {
 
 	/** Creates a segment-like thin wall with 0.05 thickness going from (x1,y1)
 	 * to (x2,y2) */
-	public static Body createThinWall( float x1, float y1, float x2, float y2, float restitution ) {
+	public static Body createThinWall( World world, float x1, float y1, float x2, float y2, float restitution ) {
 		// determine center point and rotation angle for createWall
 		float cx = (x1 + x2) / 2;
 		float cy = (y1 + y2) / 2;
 		float angle = (float)Math.atan2( y2 - y1, x2 - x1 );
 		float mag = (float)Math.sqrt( (x2 - x1) * (x2 - x1) + (y2 - y1) * (y2 - y1) );
-		return createWall( cx - mag / 2, cy - 0.05f, cx + mag / 2, cy + 0.05f, angle, restitution );
+		return createWall( world, cx - mag / 2, cy - 0.05f, cx + mag / 2, cy + 0.05f, angle, restitution );
 	}
 
-	public static Body createWall( Vector2 from, Vector2 to, float size, float restitution ) {
+	public static Body createWall( World world, Vector2 from, Vector2 to, float size, float restitution ) {
 		// determine center point and rotation angle for createWall
 		float halfSize = size / 2f;
 		float cx = (from.x + to.x) / 2;
 		float cy = (from.y + to.y) / 2;
 		float angle = (float)Math.atan2( to.y - from.y, to.x - from.x );
 		float mag = (float)Math.sqrt( (to.x - from.x) * (to.x - from.x) + (to.y - from.y) * (to.y - from.y) );
-		return createWall( cx - mag / 2, cy - halfSize, cx + mag / 2, cy + halfSize, angle, restitution );
+		return createWall( world, cx - mag / 2, cy - halfSize, cx + mag / 2, cy + halfSize, angle, restitution );
 	}
 
 	private static Vector2 tmp1;
@@ -140,7 +140,7 @@ public class Box2DFactory {
 	 * @param restitution
 	 * @param returnResult
 	 * @return */
-	public static ArrayList<Body> createAngularWall( Vector2 unitCircleRadius, Vector2 offset, float tickness, float lumpLen, float angle, int steps,
+	public static ArrayList<Body> createAngularWall( World world, Vector2 unitCircleRadius, Vector2 offset, float tickness, float lumpLen, float angle, int steps,
 			Vector2 rotationOffset, float restitution, boolean returnResult ) {
 		ArrayList<Body> result = null;
 		if( returnResult ) result = new ArrayList<Body>();
@@ -165,7 +165,7 @@ public class Box2DFactory {
 			to.x = offset.x + tmp2.x;
 			to.y = offset.y - tmp2.y;
 
-			Body body = Box2DFactory.createWall( from, to, tickness, 0 );
+			Body body = Box2DFactory.createWall( world, from, to, tickness, 0 );
 			if( returnResult ) result.add( body );
 
 			// rotate

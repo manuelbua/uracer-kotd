@@ -11,9 +11,9 @@ import com.badlogic.gdx.math.Matrix4;
 import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.physics.box2d.Box2DDebugRenderer;
 import com.badlogic.gdx.physics.box2d.ContactImpulse;
+import com.badlogic.gdx.physics.box2d.World;
 import com.bitfire.uracer.Art;
 import com.bitfire.uracer.Config;
-import com.bitfire.uracer.Physics;
 import com.bitfire.uracer.URacer;
 import com.bitfire.uracer.utils.NumberString;
 
@@ -126,8 +126,8 @@ public class Debug {
 		drawString( text, (Gdx.graphics.getWidth() - text.length() * fontWidth) / 2, 0 );
 	}
 
-	public static void renderB2dWorld( Matrix4 modelViewProj ) {
-		b2drenderer.render( Physics.world, modelViewProj );
+	public static void renderB2dWorld( World world, Matrix4 modelViewProj ) {
+		b2drenderer.render( world, modelViewProj );
 	}
 
 	public static void draw( TextureRegion region, float x, float y ) {

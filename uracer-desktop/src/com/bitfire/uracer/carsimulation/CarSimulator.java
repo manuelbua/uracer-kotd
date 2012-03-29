@@ -3,7 +3,7 @@ package com.bitfire.uracer.carsimulation;
 import com.badlogic.gdx.math.MathUtils;
 import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.physics.box2d.Body;
-import com.bitfire.uracer.Physics;
+import com.bitfire.uracer.Config;
 import com.bitfire.uracer.utils.AMath;
 import com.bitfire.uracer.utils.VMath;
 
@@ -16,7 +16,7 @@ public class CarSimulator {
 	public float thisSign, lastSign, lastTouchAngle;
 
 	private float dampingThrottle = 0.98f;
-	private float dampingThrottleFrame;
+	// private float dampingThrottleFrame;
 
 	// exports
 	public Vector2 lateralForceFront, lateralForceRear;
@@ -27,7 +27,7 @@ public class CarSimulator {
 		lastTouchAngle = 0;
 
 		// precompute constants
-		dampingThrottleFrame = (float)Math.pow( 1f - dampingThrottle, Physics.dt );
+		// dampingThrottleFrame = (float)Math.pow( 1f - dampingThrottle, Config.Physics.PhysicsDt );
 
 		// exports
 		lateralForceFront = new Vector2();
@@ -92,8 +92,8 @@ public class CarSimulator {
 		if( !hasDir ) {
 			if( Math.abs( carDesc.velocity_wc.x ) > 0.5f || Math.abs( carDesc.velocity_wc.y ) > 0.5f ) {
 				if( !AMath.isZero( carDesc.throttle ) ) {
-					// carDesc.throttle *= 0.9f;
-					carDesc.throttle *= dampingThrottleFrame;
+					carDesc.throttle *= dampingThrottle;
+					// carDesc.throttle *= dampingThrottleFrame;
 				}
 
 				carDesc.brake = 350f;
@@ -229,8 +229,8 @@ public class CarSimulator {
 		VMath.fixup( acceleration_wc );
 
 		// velocity is integrated acceleration
-		carDesc.velocity_wc.x += Physics.dt * acceleration_wc.x;
-		carDesc.velocity_wc.y += Physics.dt * acceleration_wc.y;
+		carDesc.velocity_wc.x += Config.Physics.PhysicsDt * acceleration_wc.x;
+		carDesc.velocity_wc.y += Config.Physics.PhysicsDt * acceleration_wc.y;
 		VMath.fixup( carDesc.velocity_wc );
 
 		// make sure vehicle doesn't exceed maximum velocity
@@ -244,10 +244,10 @@ public class CarSimulator {
 		float angular_acceleration = torque * carDesc.carModel.invinertia;
 
 		// integrate angular acceleration to get angular velocity
-		carDesc.angularvelocity += Physics.dt * angular_acceleration;
+		carDesc.angularvelocity += Config.Physics.PhysicsDt * angular_acceleration;
 
 		// integrate angular velocity to get angular orientation
-		carDesc.angularOrientation = Physics.dt * carDesc.angularvelocity;
+		carDesc.angularOrientation = Config.Physics.PhysicsDt * carDesc.angularvelocity;
 
 		updateHeading( body );
 	}

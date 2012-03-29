@@ -11,7 +11,7 @@ import com.bitfire.uracer.effects.SmokeTrails;
 import com.bitfire.uracer.effects.TrackEffects;
 import com.bitfire.uracer.effects.TrackEffects.Effects;
 import com.bitfire.uracer.game.Game;
-import com.bitfire.uracer.game.logic.DriftInfo;
+import com.bitfire.uracer.game.logic.DriftState;
 import com.bitfire.uracer.game.logic.LapInfo;
 import com.bitfire.uracer.messager.Messager;
 import com.bitfire.uracer.utils.NumberString;
@@ -128,7 +128,7 @@ public class Hud {
 	}
 
 	public void debug( SpriteBatch batch ) {
-		DriftInfo drift = DriftInfo.get();
+		DriftState drift = DriftState.get();
 
 		// lateral forces
 		meterLatForce.setValue( drift.driftStrength );

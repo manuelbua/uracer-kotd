@@ -4,6 +4,9 @@ import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.GL20;
 import com.badlogic.gdx.graphics.OrthographicCamera;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
+import com.badlogic.gdx.math.Vector2;
+import com.badlogic.gdx.physics.box2d.World;
+import com.badlogic.gdx.utils.Disposable;
 import com.bitfire.uracer.Art;
 import com.bitfire.uracer.Config;
 import com.bitfire.uracer.Config.Physics;
@@ -16,7 +19,7 @@ import com.bitfire.uracer.effects.TrackEffects;
 import com.bitfire.uracer.entities.EntityManager;
 import com.bitfire.uracer.entities.vehicles.Car;
 import com.bitfire.uracer.game.logic.DirectorController;
-import com.bitfire.uracer.game.logic.GameLogic;
+import com.bitfire.uracer.game.logic.GameContactListener;
 import com.bitfire.uracer.game.logic.Level;
 import com.bitfire.uracer.game.logic.Player;
 import com.bitfire.uracer.hud.Hud;
@@ -36,7 +39,8 @@ import com.bitfire.uracer.tweener.accessors.MessageAccessor;
  * Game, so data should be accessible for both.
  *
  * @author bmanuel */
-public class Game {
+public class Game implements Disposable {
+	protected World world = null;
 	private Level level = null;
 	private Player player = null;
 	private Hud hud = null;
@@ -60,19 +64,19 @@ public class Game {
 	private SpriteBatch batch = null;
 
 	public Game( String levelName, GameDifficulty difficulty ) {
-		// if(!Config.isDesktop)
-		// Config.Graphics.EnablePostProcessingFx = false;
-
-		System.out.println( "resolution=" + Gdx.graphics.getWidth() + "x" + Gdx.graphics.getHeight() + "px, physics=" + Physics.PhysicsTimestepHz + "Hz" );
 		Game.tweener = createTweener();
+
+		world = new World( new Vector2( 0, 0 ), false );
+		world.setContactListener( new GameContactListener() );
 
 		Messager.init();
 		gameSettings = GameplaySettings.create( difficulty );
+
 		Director.create( Gdx.graphics.getWidth(), Gdx.graphics.getHeight() );
 		Art.scaleFonts( Director.scalingStrategy.invTileMapZoomFactor );
 
 		// bring up level
-		level = Director.loadLevel( levelName, gameSettings, false /* night mode */);
+		level = Director.loadLevel( world, levelName, gameSettings, false /* night mode */);
 		player = level.getPlayer();
 
 		logic = new GameLogic( this );
@@ -83,7 +87,7 @@ public class Game {
 		controller = new DirectorController( Config.Graphics.CameraInterpolationMode );
 
 		// track effects
-		TrackEffects.init( logic );
+		TrackEffects.init( player.car );
 
 		// audio effects
 		CarSoundManager.setPlayer( player );
@@ -97,8 +101,11 @@ public class Game {
 		// Issues may arise on Tegra2 (Asus Transformer) devices if the buffers'
 		// count is higher than 10
 		batch = new SpriteBatch( 1000, 8 );
+
+		System.out.println( "resolution=" + Gdx.graphics.getWidth() + "x" + Gdx.graphics.getHeight() + "px, physics=" + Physics.PhysicsTimestepHz + "Hz" );
 	}
 
+	@Override
 	public void dispose() {
 		Director.dispose();
 		Messager.dispose();
@@ -107,6 +114,7 @@ public class Game {
 		TrackEffects.dispose();
 		batch.dispose();
 		CarSoundManager.dispose();
+		world.dispose();
 
 		if( Config.Graphics.EnablePostProcessingFx ) {
 			postProcessor.dispose();
@@ -262,7 +270,7 @@ public class Game {
 		//
 
 		if( Config.isDesktop ) {
-			if( Config.Graphics.RenderBox2DWorldWireframe ) Debug.renderB2dWorld( Director.getMatViewProjMt() );
+			if( Config.Graphics.RenderBox2DWorldWireframe ) Debug.renderB2dWorld( world, Director.getMatViewProjMt() );
 
 			Debug.begin( batch );
 			EntityManager.raiseOnDebug();

@@ -1,4 +1,4 @@
-package com.bitfire.uracer.carsimulation;
+package com.bitfire.uracer.game.collisions;
 
 import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.physics.box2d.Body;
@@ -8,23 +8,23 @@ import com.badlogic.gdx.physics.box2d.Fixture;
 import com.bitfire.uracer.entities.EntityType;
 import com.bitfire.uracer.entities.vehicles.Car;
 
-public class CarImpactManager {
-
-	public CarImpactManager() {
-	}
-
-	public void impact( Contact contact, ContactImpulse impulse ) {
+/** Manages to distinguish and filter out Car-to-<entity> collisions only, raising the
+ * associated events on the correct entities.
+ *
+ * @author bmanuel */
+public class CarImpactManager extends ImpactManager {
+	@Override
+	public void process( Contact contact, ContactImpulse impulse ) {
 		Fixture a = contact.getFixtureA();
 		Fixture b = contact.getFixtureB();
 
-		addImpactFeedback( a, b, impulse );
-		addImpactFeedback( b, a, impulse );
-
+		ifCarThenCollide( a, b, impulse );
+		ifCarThenCollide( b, a, impulse );
 	}
 
 	private Vector2 tmpVec2 = new Vector2();
 
-	private void addImpactFeedback( Fixture f, Fixture other, ContactImpulse impulse ) {
+	private void ifCarThenCollide( Fixture f, Fixture other, ContactImpulse impulse ) {
 		Body body = f.getBody();
 		Object userData = f.getUserData();
 		if( (body != null) && (userData == EntityType.Car || userData == EntityType.CarReplay) ) {

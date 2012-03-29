@@ -1,9 +1,10 @@
 package com.bitfire.uracer.game.logic;
 
 import com.bitfire.uracer.entities.vehicles.Car;
+import com.bitfire.uracer.game.GameLogic;
 import com.bitfire.uracer.utils.AMath;
 
-public class DriftInfo {
+public class DriftState {
 	public float driftSeconds = 0;
 	public boolean isDrifting = false;
 	public boolean hasCollided = false;
@@ -15,18 +16,18 @@ public class DriftInfo {
 	private long collisionTime;
 	private float lastRear = 0, lastFront = 0;
 
-	private static DriftInfo instance = null;
+	private static DriftState instance = null;
 	private static GameLogic logic = null;
 
-	private DriftInfo() {
+	private DriftState() {
 	}
 
 	public static void init( GameLogic logic ) {
-		instance = new DriftInfo();
-		DriftInfo.logic = logic;
+		instance = new DriftState();
+		DriftState.logic = logic;
 	}
 
-	public static DriftInfo get() {
+	public static DriftState get() {
 		return instance;
 	}
 
@@ -41,7 +42,7 @@ public class DriftInfo {
 	}
 
 	public static void invalidateByCollision() {
-		DriftInfo drift = DriftInfo.get();
+		DriftState drift = DriftState.get();
 		if( !drift.isDrifting ) return;
 
 		drift.collisionTime = System.currentTimeMillis();

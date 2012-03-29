@@ -10,7 +10,7 @@ import com.bitfire.uracer.Director;
 import com.bitfire.uracer.URacer;
 import com.bitfire.uracer.effects.TrackEffects.Effects;
 import com.bitfire.uracer.entities.vehicles.Car;
-import com.bitfire.uracer.game.logic.DriftInfo;
+import com.bitfire.uracer.game.logic.DriftState;
 
 public class SmokeTrails extends TrackEffect {
 	private SmokeEffect fx[];
@@ -18,7 +18,7 @@ public class SmokeTrails extends TrackEffect {
 	public static final int MaxParticles = 100;
 
 	private boolean isDrifting, wasDrifting;
-	private DriftInfo drift;
+	private DriftState drift;
 	private Car player;
 
 	private class SmokeEffect {
@@ -102,7 +102,7 @@ public class SmokeTrails extends TrackEffect {
 
 		this.player = player;
 		isDrifting = wasDrifting = false;
-		drift = DriftInfo.get();
+		drift = DriftState.get();
 	}
 
 	@Override

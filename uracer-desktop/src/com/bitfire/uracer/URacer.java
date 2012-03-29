@@ -4,7 +4,6 @@ import java.lang.reflect.Field;
 
 import com.badlogic.gdx.ApplicationListener;
 import com.badlogic.gdx.Gdx;
-import com.badlogic.gdx.math.Vector2;
 import com.bitfire.uracer.debug.Debug;
 import com.bitfire.uracer.screen.GameScreen;
 import com.bitfire.uracer.screen.Screen;
@@ -63,15 +62,13 @@ public class URacer implements ApplicationListener {
 		Debug.create();
 		input.releaseAllKeys();
 
-		Physics.create( new Vector2( 0, 0 ), false );
-
 		Gdx.input.setInputProcessor( input );
 		Gdx.graphics.setVSync( true );
 
 		running = true;
 		oneOnOneBillion = 1.0f / 1000000000.0f;
 		temporalAliasing = 0;
-		timeAccumSecs = Physics.dt;
+		timeAccumSecs = Config.Physics.PhysicsDt;
 
 		setScreen( new GameScreen() );
 	}
@@ -100,10 +97,10 @@ public class URacer implements ApplicationListener {
 		{
 			hasStepped = false;
 			timeAccumSecs += lastDeltaTimeSec * Config.Physics.PhysicsTimeMultiplier;
-			while( timeAccumSecs > Physics.dt ) {
+			while( timeAccumSecs > Config.Physics.PhysicsDt ) {
 				input.tick();
 				screen.tick();
-				timeAccumSecs -= Physics.dt;
+				timeAccumSecs -= Config.Physics.PhysicsDt;
 				hasStepped = true;
 				if( screen.quit() ) return;
 			}

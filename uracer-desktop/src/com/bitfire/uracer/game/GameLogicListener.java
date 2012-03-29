@@ -1,7 +1,11 @@
-package com.bitfire.uracer.game.logic;
+package com.bitfire.uracer.game;
 
 import com.bitfire.uracer.audio.CarSoundManager;
 import com.bitfire.uracer.carsimulation.Replay;
+import com.bitfire.uracer.game.logic.IGameLogicListener;
+import com.bitfire.uracer.game.logic.LapInfo;
+import com.bitfire.uracer.game.logic.Level;
+import com.bitfire.uracer.game.logic.Player;
 import com.bitfire.uracer.messager.Messager;
 import com.bitfire.uracer.messager.Messager.MessagePosition;
 import com.bitfire.uracer.messager.Messager.MessageSize;
@@ -19,7 +23,7 @@ public class GameLogicListener implements IGameLogicListener {
 
 	public GameLogicListener( GameLogic logic ) {
 		this.logic = logic;
-		this.level = logic.getGame().getLevel();
+		this.level = logic.game.getLevel();
 		this.lapInfo = LapInfo.get();
 	}
 
@@ -115,14 +119,14 @@ public class GameLogicListener implements IGameLogicListener {
 
 	@Override
 	public void onBeginDrift() {
-		logic.getGame().getHud().getDrifting().onBeginDrift();
+		logic.game.getHud().getDrifting().onBeginDrift();
 		CarSoundManager.driftBegin();
 		// System.out.println("-> drift starts");
 	}
 
 	@Override
 	public void onEndDrift() {
-		logic.getGame().getHud().getDrifting().onEndDrift();
+		logic.game.getHud().getDrifting().onEndDrift();
 		CarSoundManager.driftEnd();
 		// System.out.println("<- drift ends");
 	}

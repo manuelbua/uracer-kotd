@@ -5,12 +5,12 @@ import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.math.Rectangle;
 import com.badlogic.gdx.math.Vector2;
 import com.bitfire.uracer.Art;
+import com.bitfire.uracer.Config;
 import com.bitfire.uracer.Director;
-import com.bitfire.uracer.Physics;
 import com.bitfire.uracer.carsimulation.CarModel;
 import com.bitfire.uracer.effects.TrackEffects.Effects;
 import com.bitfire.uracer.entities.vehicles.Car;
-import com.bitfire.uracer.game.logic.DriftInfo;
+import com.bitfire.uracer.game.logic.DriftState;
 import com.bitfire.uracer.utils.AMath;
 import com.bitfire.uracer.utils.Convert;
 
@@ -65,7 +65,7 @@ public class CarSkidMarks extends TrackEffect {
 		for( int i = 0; i < MaxSkidMarks; i++ ) {
 			d = skidMarks[i];
 			if( d.life > 0 ) {
-				d.life -= Physics.dt;
+				d.life -= Config.Physics.PhysicsDt;
 			}
 			else {
 				d.life = 0;
@@ -108,7 +108,7 @@ public class CarSkidMarks extends TrackEffect {
 			return;
 		}
 
-		DriftInfo di = DriftInfo.get();
+		DriftState di = DriftState.get();
 		if( di.driftStrength > 0.2f )
 		// if( di.isDrifting )
 		{

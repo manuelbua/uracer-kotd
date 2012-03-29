@@ -21,9 +21,9 @@ import com.badlogic.gdx.graphics.g2d.tiled.TiledObjectGroup;
 import com.badlogic.gdx.graphics.glutils.FrameBuffer;
 import com.badlogic.gdx.math.MathUtils;
 import com.badlogic.gdx.math.Vector2;
+import com.badlogic.gdx.physics.box2d.World;
 import com.bitfire.uracer.Config;
 import com.bitfire.uracer.Director;
-import com.bitfire.uracer.Physics;
 import com.bitfire.uracer.carsimulation.CarModel;
 import com.bitfire.uracer.carsimulation.Recorder;
 import com.bitfire.uracer.carsimulation.Replay;
@@ -43,10 +43,12 @@ import com.bitfire.uracer.tiled.UTileMapRenderer;
 import com.bitfire.uracer.utils.Convert;
 import com.bitfire.uracer.utils.MapUtils;
 
-/** First write. Basic idea in place, will need refactoring for sure.
- * 
+/** First write. Basic idea in place (in iterative refactoring)
+ *
  * @author manuel */
 public class Level {
+	private final World world;
+
 	// level data
 	public TiledMap map = null;
 	private TrackWalls trackWalls = null;
@@ -74,9 +76,10 @@ public class Level {
 	private RayHandler rayHandler = null;
 	private ConeLight playerHeadlights = null;
 
-	public Level( String levelName, ScalingStrategy strategy, boolean nightMode ) {
+	public Level( World world, String levelName, ScalingStrategy strategy, boolean nightMode ) {
 		this.name = levelName;
 		this.nightMode = nightMode;
+		this.world = world;
 
 		// ie. "level1-128.tmx"
 		String mapname = levelName + "-" + (int)strategy.forTileSize + ".tmx";
@@ -98,7 +101,7 @@ public class Level {
 
 	// TODO remove this 2-stage construction, the "static" problem on Android is no more.
 	/* 2-stage construction, avoid <static> problems in Android */
-	public void construct() {
+	public void construct(World world) {
 		syncWithCam( Director.getCamera() );
 		OrthographicAlignedStillModel.initialize();
 
@@ -213,7 +216,7 @@ public class Level {
 
 		// walls by polylines
 		trackWalls = new TrackWalls();
-		trackWalls.createWalls();
+		trackWalls.createWalls(world);
 
 		// trees
 		trackTrees = new TrackTrees();
@@ -255,8 +258,8 @@ public class Level {
 			startOrient = 180f;
 		else if( orient.equals( "left" ) ) startOrient = 270f;
 
-		Car car = CarFactory.createPlayer( CarType.OldSkool, new CarModel().toModel2(), start, startOrient );
-		GhostCar ghost = CarFactory.createGhost( car );
+		Car car = CarFactory.createPlayer( world, CarType.OldSkool, new CarModel().toModel2(), start, startOrient );
+		GhostCar ghost = CarFactory.createGhost( world, car );
 
 		Player p = new Player( car, ghost );
 		p.startPos.set( start );
@@ -282,7 +285,7 @@ public class Level {
 		}
 
 		RayHandler.setColorPrecisionMediump();
-		rayHandler = new RayHandler( Physics.world, maxRays, (int)(Gdx.graphics.getWidth() * rttScale), (int)(Gdx.graphics.getHeight() * rttScale) );
+		rayHandler = new RayHandler( world, maxRays, (int)(Gdx.graphics.getWidth() * rttScale), (int)(Gdx.graphics.getHeight() * rttScale) );
 		rayHandler.setShadows( true );
 		rayHandler.setCulling( true );
 		rayHandler.setBlur( true );

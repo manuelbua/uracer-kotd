@@ -8,7 +8,7 @@ import com.badlogic.gdx.math.Rectangle;
 import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.math.Vector3;
 import com.badlogic.gdx.physics.box2d.Body;
-import com.bitfire.uracer.factories.Box2DFactory;
+import com.badlogic.gdx.physics.box2d.World;
 import com.bitfire.uracer.game.GameplaySettings;
 import com.bitfire.uracer.game.logic.Level;
 import com.bitfire.uracer.tiled.ScalingStrategy;
@@ -52,7 +52,6 @@ public class Director {
 		Config.Physics.PixelsPerMeter /= scalingStrategy.targetScreenRatio / scalingStrategy.to256;
 		// System.out.println("ppm=" + Config.PixelsPerMeter);
 
-		Box2DFactory.init();
 	}
 
 	public static void create( int widthPx, int heightPx ) {
@@ -66,13 +65,11 @@ public class Director {
 		if( currentLevel != null ) {
 			currentLevel.dispose();
 		}
-
-		Physics.dispose();
 	}
 
-	public static Level loadLevel( String levelName, GameplaySettings playSettings, boolean nightMode ) {
+	public static Level loadLevel( World world, String levelName, GameplaySettings playSettings, boolean nightMode ) {
 		// construct tilemap and cameras
-		Level level = new Level( levelName, scalingStrategy, nightMode );
+		Level level = new Level( world, levelName, scalingStrategy, nightMode );
 
 		// setup converter
 		Convert.init( scalingStrategy, level.map );
@@ -90,7 +87,7 @@ public class Director {
 		boundsPx.y = Director.worldSizeScaledPx.y - halfViewport.y;
 
 		// construct level objects from tmx definitions
-		level.construct();
+		level.construct(world);
 
 		currentLevel = level;
 		gameplaySettings = playSettings;

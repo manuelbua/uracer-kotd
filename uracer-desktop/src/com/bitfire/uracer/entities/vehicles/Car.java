@@ -9,11 +9,11 @@ import com.badlogic.gdx.math.WindowedMean;
 import com.badlogic.gdx.physics.box2d.BodyDef;
 import com.badlogic.gdx.physics.box2d.BodyDef.BodyType;
 import com.badlogic.gdx.physics.box2d.Fixture;
+import com.badlogic.gdx.physics.box2d.World;
 import com.bitfire.uracer.Art;
 import com.bitfire.uracer.Config;
 import com.bitfire.uracer.Director;
 import com.bitfire.uracer.Input;
-import com.bitfire.uracer.Physics;
 import com.bitfire.uracer.audio.CarSoundManager;
 import com.bitfire.uracer.carsimulation.CarDescriptor;
 import com.bitfire.uracer.carsimulation.CarForces;
@@ -26,7 +26,7 @@ import com.bitfire.uracer.debug.Debug;
 import com.bitfire.uracer.entities.Box2dEntity;
 import com.bitfire.uracer.entities.EntityManager;
 import com.bitfire.uracer.factories.CarFactory.CarType;
-import com.bitfire.uracer.game.logic.DriftInfo;
+import com.bitfire.uracer.game.logic.DriftState;
 import com.bitfire.uracer.utils.AMath;
 import com.bitfire.uracer.utils.Convert;
 import com.bitfire.uracer.utils.MapUtils;
@@ -50,7 +50,7 @@ public class Car extends Box2dEntity {
 
 	private Vector2 tilePosition = new Vector2();
 
-	protected Car( CarGraphics graphics, CarModel model, CarType type, CarInputMode inputMode, Vector2 position, float orientation ) {
+	protected Car( World world, CarGraphics graphics, CarModel model, CarType type, CarInputMode inputMode, Vector2 position, float orientation ) {
 		this.graphics = graphics;
 		this.recorder = Recorder.instance();
 		this.carInputMode = inputMode;
@@ -71,7 +71,7 @@ public class Car extends Box2dEntity {
 		bd.angle = 0;
 		bd.type = BodyType.DynamicBody;
 
-		body = Physics.world.createBody( bd );
+		body = world.createBody( bd );
 		body.setBullet( true );
 		body.setUserData( this );
 
@@ -80,8 +80,8 @@ public class Car extends Box2dEntity {
 	}
 
 	// factory method
-	public static Car createForFactory( CarGraphics graphics, CarModel model, CarType type, CarInputMode inputMode, Vector2 position, float orientation ) {
-		Car car = new Car( graphics, model, type, inputMode, position, orientation );
+	public static Car createForFactory( World world, CarGraphics graphics, CarModel model, CarType type, CarInputMode inputMode, Vector2 position, float orientation ) {
+		Car car = new Car( world, graphics, model, type, inputMode, position, orientation );
 		EntityManager.add( car );
 		return car;
 	}
@@ -308,7 +308,7 @@ public class Car extends Box2dEntity {
 		// update DriftInfo in case of collision
 		if( carInputMode == CarInputMode.InputFromPlayer ) {
 			CarSoundManager.carImpacted( normalImpulses.len() );
-			DriftInfo.invalidateByCollision();
+			DriftState.invalidateByCollision();
 		}
 
 	}
