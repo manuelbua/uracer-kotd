@@ -12,7 +12,7 @@ import com.bitfire.uracer.effects.TrackEffects;
 import com.bitfire.uracer.effects.TrackEffects.Effects;
 import com.bitfire.uracer.game.Game;
 import com.bitfire.uracer.game.logic.DriftState;
-import com.bitfire.uracer.game.logic.LapInfo;
+import com.bitfire.uracer.game.logic.LapState;
 import com.bitfire.uracer.messager.Messager;
 import com.bitfire.uracer.utils.NumberString;
 
@@ -68,19 +68,19 @@ public class Hud {
 	public void dispose() {
 	}
 
-	public void tick() {
+	public void tick(LapState lapState) {
 		Messager.tick();
 		hudDrift.tick();
+		updateLapTimes( lapState );
 	}
 
-	private void updateLapTimes() {
-		LapInfo lapInfo = LapInfo.get();
+	private void updateLapTimes(LapState lapState) {
 
 		// current time
-		curr.setString( "YOUR  TIME\n" + NumberString.format( lapInfo.getElapsedSeconds() ) + "s" );
+		curr.setString( "YOUR  TIME\n" + NumberString.format( lapState.getElapsedSeconds() ) + "s" );
 
 		// render best lap time
-		Replay rbest = lapInfo.getBestReplay();
+		Replay rbest = lapState.getBestReplay();
 
 		// best time
 		if( rbest != null && rbest.isValid ) {
@@ -89,8 +89,8 @@ public class Hud {
 		}
 		else {
 			// temporarily use last track time
-			if( lapInfo.hasLastTrackTimeSeconds() ) {
-				best.setString( "BEST  TIME\n" + NumberString.format( lapInfo.getLastTrackTimeSeconds() ) + "s" );
+			if( lapState.hasLastTrackTimeSeconds() ) {
+				best.setString( "BEST  TIME\n" + NumberString.format( lapState.getLastTrackTimeSeconds() ) + "s" );
 			}
 			else {
 				best.setString( "BEST TIME\n-:----" );
@@ -98,9 +98,9 @@ public class Hud {
 		}
 
 		// last time
-		if( lapInfo.hasLastTrackTimeSeconds() ) {
+		if( lapState.hasLastTrackTimeSeconds() ) {
 			// has only last
-			last.setString( "LAST  TIME\n" + NumberString.format( lapInfo.getLastTrackTimeSeconds() ) + "s" );
+			last.setString( "LAST  TIME\n" + NumberString.format( lapState.getLastTrackTimeSeconds() ) + "s" );
 		}
 		else {
 			last.setString( "LAST  TIME\n-:----" );
@@ -116,7 +116,6 @@ public class Hud {
 
 		Messager.render( batch );
 
-		updateLapTimes();
 		curr.render( batch );
 		best.render( batch );
 		last.render( batch );
@@ -149,7 +148,7 @@ public class Hud {
 
 	/** Expose components
 	 * TODO find a better way for this
-	 * 
+	 *
 	 * @return */
 
 	public HudDrifting getDrifting() {

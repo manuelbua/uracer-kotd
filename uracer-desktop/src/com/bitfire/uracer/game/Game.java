@@ -20,6 +20,7 @@ import com.bitfire.uracer.entities.EntityManager;
 import com.bitfire.uracer.entities.vehicles.Car;
 import com.bitfire.uracer.game.logic.DirectorController;
 import com.bitfire.uracer.game.logic.GameContactListener;
+import com.bitfire.uracer.game.logic.LapState;
 import com.bitfire.uracer.game.logic.Level;
 import com.bitfire.uracer.game.logic.Player;
 import com.bitfire.uracer.hud.Hud;
@@ -44,6 +45,7 @@ public class Game implements Disposable {
 	private Level level = null;
 	private Player player = null;
 	private Hud hud = null;
+	private LapState lapState = null;
 
 	private static Tweener tweener = null;
 
@@ -69,17 +71,18 @@ public class Game implements Disposable {
 		world = new World( new Vector2( 0, 0 ), false );
 		world.setContactListener( new GameContactListener() );
 
+		lapState = new LapState();
+
 		Messager.init();
 		gameSettings = GameplaySettings.create( difficulty );
 
 		Director.create( Gdx.graphics.getWidth(), Gdx.graphics.getHeight() );
 		Art.scaleFonts( Director.scalingStrategy.invTileMapZoomFactor );
 
-		// bring up level
 		level = Director.loadLevel( world, levelName, gameSettings, false /* night mode */);
 		player = level.getPlayer();
 
-		logic = new GameLogic( this );
+		logic = new GameLogic( this, lapState );
 		hud = new Hud( this );
 		logic.create();
 		CarSoundManager.load();
@@ -154,7 +157,7 @@ public class Game implements Disposable {
 	public boolean tick() {
 		if( !logic.tick() ) return false;
 
-		hud.tick();
+		hud.tick(lapState);
 		TrackEffects.tick();
 		CarSoundManager.tick();
 

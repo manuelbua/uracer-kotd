@@ -6,7 +6,7 @@ import com.bitfire.uracer.Input;
 import com.bitfire.uracer.entities.EntityManager;
 import com.bitfire.uracer.game.logic.DriftState;
 import com.bitfire.uracer.game.logic.IGameLogicListener;
-import com.bitfire.uracer.game.logic.LapInfo;
+import com.bitfire.uracer.game.logic.LapState;
 import com.bitfire.uracer.game.logic.Level;
 
 public class GameLogic {
@@ -16,14 +16,13 @@ public class GameLogic {
 	// lap and entities
 	private Level level;
 
-	public GameLogic( Game game ) {
+	public GameLogic( Game game, LapState lapState ) {
 		this.game = game;
 		this.level = game.getLevel();
 
 		DriftState.init( this );
-		LapInfo.init();
 
-		this.listener = new GameLogicListener( this );
+		this.listener = new GameLogicListener( this, lapState );
 	}
 
 	public void create() {

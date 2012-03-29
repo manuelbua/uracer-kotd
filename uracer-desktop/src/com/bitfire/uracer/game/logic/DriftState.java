@@ -23,7 +23,7 @@ public class DriftState {
 	}
 
 	public static void init( GameLogic logic ) {
-		instance = new DriftState();
+		DriftState.instance = new DriftState();
 		DriftState.logic = logic;
 	}
 

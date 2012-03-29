@@ -3,7 +3,7 @@ package com.bitfire.uracer.game.logic;
 import com.bitfire.uracer.Config;
 import com.bitfire.uracer.carsimulation.Replay;
 
-public class LapInfo {
+public class LapState {
 	// replays
 	private Replay[] replays;
 	private Replay best, worst;
@@ -11,9 +11,7 @@ public class LapInfo {
 	private float lastTrackTimeSecs;
 	private boolean hasLastTrackTimeSecs;
 
-	private static LapInfo instance = null;
-
-	private LapInfo() {
+	public LapState() {
 		startTimeNs = 0;
 		lastTrackTimeSecs = 0;
 		hasLastTrackTimeSecs = false;
@@ -27,14 +25,6 @@ public class LapInfo {
 
 		reset();
 		update();
-	}
-
-	public static void init() {
-		instance = new LapInfo();
-	}
-
-	public static LapInfo get() {
-		return instance;
 	}
 
 	public void reset() {
