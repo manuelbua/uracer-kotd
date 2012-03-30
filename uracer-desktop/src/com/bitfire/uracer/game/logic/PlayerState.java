@@ -5,7 +5,7 @@ import com.bitfire.uracer.entities.vehicles.Car;
 import com.bitfire.uracer.entities.vehicles.GhostCar;
 import com.bitfire.uracer.utils.AMath;
 
-public class Player {
+public class PlayerState {
 	public final Car car;
 	public final GhostCar ghost;
 
@@ -25,7 +25,7 @@ public class Player {
 	// current
 	public int currTileX = 1, currTileY = 1;
 
-	public Player( Car car, GhostCar ghost ) {
+	public PlayerState( Car car, GhostCar ghost ) {
 		this.car = car;
 		this.ghost = ghost;
 

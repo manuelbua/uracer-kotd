@@ -107,3 +107,4 @@
 data in GameData? GameData::<Component>?
 [ ] look at, in night-mode, shadows don't take into account time aliasing, producing stuttering in a subframe-interpolated context.
 [ ] event listeners as3-style
+

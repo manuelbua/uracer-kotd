@@ -7,7 +7,7 @@ public interface IGameLogicListener {
 
 	public abstract void onRestart();
 
-	public abstract void onTileChanged( Player player );
+	public abstract void onTileChanged( PlayerState player );
 
 	public abstract void onBeginDrift();
 

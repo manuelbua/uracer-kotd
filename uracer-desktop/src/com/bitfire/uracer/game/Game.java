@@ -4,8 +4,6 @@ import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.GL20;
 import com.badlogic.gdx.graphics.OrthographicCamera;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
-import com.badlogic.gdx.math.Vector2;
-import com.badlogic.gdx.physics.box2d.World;
 import com.badlogic.gdx.utils.Disposable;
 import com.bitfire.uracer.Art;
 import com.bitfire.uracer.Config;
@@ -19,21 +17,15 @@ import com.bitfire.uracer.effects.TrackEffects;
 import com.bitfire.uracer.entities.EntityManager;
 import com.bitfire.uracer.entities.vehicles.Car;
 import com.bitfire.uracer.game.logic.DirectorController;
-import com.bitfire.uracer.game.logic.GameContactListener;
+import com.bitfire.uracer.game.logic.DriftState;
 import com.bitfire.uracer.game.logic.LapState;
 import com.bitfire.uracer.game.logic.Level;
-import com.bitfire.uracer.game.logic.Player;
 import com.bitfire.uracer.hud.Hud;
-import com.bitfire.uracer.hud.HudLabel;
-import com.bitfire.uracer.messager.Message;
 import com.bitfire.uracer.messager.Messager;
 import com.bitfire.uracer.postprocessing.PostProcessor;
 import com.bitfire.uracer.postprocessing.effects.Bloom;
 import com.bitfire.uracer.postprocessing.effects.Zoom;
 import com.bitfire.uracer.tiled.LevelRenderer;
-import com.bitfire.uracer.tweener.Tweener;
-import com.bitfire.uracer.tweener.accessors.HudLabelAccessor;
-import com.bitfire.uracer.tweener.accessors.MessageAccessor;
 
 /** TODO most of the shared stuff between Game and GameLogic should go in a
  * GameData structure of some sort, GameLogic is really the logical portion of
@@ -41,13 +33,7 @@ import com.bitfire.uracer.tweener.accessors.MessageAccessor;
  *
  * @author bmanuel */
 public class Game implements Disposable {
-	protected World world = null;
 	private Level level = null;
-	private Player player = null;
-	private Hud hud = null;
-	private LapState lapState = null;
-
-	private static Tweener tweener = null;
 
 	// config
 	public GameplaySettings gameSettings;
@@ -66,45 +52,53 @@ public class Game implements Disposable {
 	private SpriteBatch batch = null;
 
 	public Game( String levelName, GameDifficulty difficulty ) {
-		Game.tweener = createTweener();
-
-		world = new World( new Vector2( 0, 0 ), false );
-		world.setContactListener( new GameContactListener() );
-
-		lapState = new LapState();
-
-		Messager.init();
 		gameSettings = GameplaySettings.create( difficulty );
+		CarSoundManager.load();	// early load
+		Messager.init();
 
-		Director.create( Gdx.graphics.getWidth(), Gdx.graphics.getHeight() );
-		Art.scaleFonts( Director.scalingStrategy.invTileMapZoomFactor );
+		{
+			Director.create( Gdx.graphics.getWidth(), Gdx.graphics.getHeight() );
+			{
+				Art.scaleFonts( Director.scalingStrategy.invTileMapZoomFactor );
 
-		level = Director.loadLevel( world, levelName, gameSettings, false /* night mode */);
-		player = level.getPlayer();
+				GameData.create( this );
+				{
+					GameData.lapState = new LapState();
+					GameData.lapState.reset();
+					level = Director.loadLevel( GameData.world, levelName, gameSettings, false /* night mode */);
+					{
+						controller = new DirectorController( Config.Graphics.CameraInterpolationMode, Director.boundsPx );
 
-		logic = new GameLogic( this, lapState );
-		hud = new Hud( this );
-		logic.create();
-		CarSoundManager.load();
+						if( Config.Graphics.EnablePostProcessingFx ) {
+							setupPostProcessing( level );
+						}
 
-		controller = new DirectorController( Config.Graphics.CameraInterpolationMode );
+						GameData.listener = new GameLogicListener( level );
+						{
+							logic = new GameLogic( this, GameData.listener );
+							GameData.driftState = new DriftState( GameData.listener );
+							GameData.driftState.reset();
+						} // listener
 
-		// track effects
-		TrackEffects.init( player.car );
-
-		// audio effects
-		CarSoundManager.setPlayer( player );
-
-		if( Config.Graphics.EnablePostProcessingFx ) {
-			setupPostProcessing();
-		}
+						GameData.playerState = level.getPlayerState();
+						{
+							CarSoundManager.setPlayer( GameData.playerState );
+							Car car = GameData.playerState.car;
+							{
+								TrackEffects.init( car );
+								GameData.hud = new Hud( car );
+							} // car
+						} // playerState
+					} // level/boundsPx
+				} // GameData
+			} // Director/Config/scalingStrategy
+		} // this
 
 		// Messager.show( "FUCK! BERLU! SCONI!", 600, MessageType.Good, MessagePosition.Bottom, MessageSize.Big );
 
 		// Issues may arise on Tegra2 (Asus Transformer) devices if the buffers'
 		// count is higher than 10
 		batch = new SpriteBatch( 1000, 8 );
-
 		System.out.println( "resolution=" + Gdx.graphics.getWidth() + "x" + Gdx.graphics.getHeight() + "px, physics=" + Physics.PhysicsTimestepHz + "Hz" );
 	}
 
@@ -112,26 +106,16 @@ public class Game implements Disposable {
 	public void dispose() {
 		Director.dispose();
 		Messager.dispose();
-		logic.dispose();
-		hud.dispose();
 		TrackEffects.dispose();
 		batch.dispose();
 		CarSoundManager.dispose();
-		world.dispose();
 
 		if( Config.Graphics.EnablePostProcessingFx ) {
 			postProcessor.dispose();
 		}
 	}
 
-	private Tweener createTweener() {
-		Tweener t = new Tweener();
-		Tweener.registerAccessor( Message.class, new MessageAccessor() );
-		Tweener.registerAccessor( HudLabel.class, new HudLabelAccessor() );
-		return t;
-	}
-
-	private void setupPostProcessing() {
+	private void setupPostProcessing( Level level ) {
 		postProcessor = new PostProcessor( Gdx.graphics.getWidth(), Gdx.graphics.getHeight(), false /* depth */, false /* alpha */, Config.isDesktop /* 32
 																																					 * bits */);
 		bloom = new Bloom( Config.PostProcessing.RttFboWidth, Config.PostProcessing.RttFboHeight, postProcessor.getFramebufferFormat() );
@@ -147,42 +131,43 @@ public class Game implements Disposable {
 		bloomSettings = new Bloom.Settings( "subtle", Config.PostProcessing.BlurType, 1, 1.5f, threshold, 1f, 0.5f, 1f, 1.5f );
 		bloom.setSettings( bloomSettings );
 
-//		 zoom = new Zoom( Config.PostProcessing.ZoomQuality );
+		// zoom = new Zoom( Config.PostProcessing.ZoomQuality );
 
-//		 postProcessor.addEffect( zoom );
+		// postProcessor.addEffect( zoom );
 		postProcessor.addEffect( bloom );
 	}
 
-//	private float prevFactor = 0;
+	// private float prevFactor = 0;
 	public boolean tick() {
 		if( !logic.tick() ) return false;
 
-		hud.tick(lapState);
+		GameData.hud.tick();
 		TrackEffects.tick();
 		CarSoundManager.tick();
 
 		// post-processor debug ------------------------------
-//		float factor = player.currSpeedFactor * 1.75f;
-//		float factor = DriftInfo.get().driftStrength * 2;
-//		factor = 1.8f;
+		// float factor = player.currSpeedFactor * 1.75f;
+		// float factor = DriftInfo.get().driftStrength * 2;
+		// factor = 1.8f;
 
-//		factor = AMath.clamp(AMath.lerp( prevFactor, factor, 0.15f ),0,2);
-//		prevFactor = factor;
-//
-//		if( Config.Graphics.EnablePostProcessingFx && bloom != null ) {
-//			bloom.setBaseSaturation( bloomSettings.baseSaturation + 0.5f * (1-factor) );
-//			bloom.setBloomIntesity( bloomSettings.bloomIntensity * factor );
-//		}
-//
-//		if( Config.Graphics.EnablePostProcessingFx && zoom != null ) {
-//			zoom.setOrigin( Director.screenPosFor( player.car.getBody() ) );
-//			zoom.setStrength( -0.01f * factor );
-//		}
+		// factor = AMath.clamp(AMath.lerp( prevFactor, factor, 0.15f ),0,2);
+		// prevFactor = factor;
+		//
+		// if( Config.Graphics.EnablePostProcessingFx && bloom != null ) {
+		// bloom.setBaseSaturation( bloomSettings.baseSaturation + 0.5f * (1-factor) );
+		// bloom.setBloomIntesity( bloomSettings.bloomIntensity * factor );
+		// }
+		//
+		// if( Config.Graphics.EnablePostProcessingFx && zoom != null ) {
+		// zoom.setOrigin( Director.screenPosFor( player.car.getBody() ) );
+		// zoom.setStrength( -0.01f * factor );
+		// }
 
-//		if( Config.Graphics.EnablePostProcessingFx && bloom != null && zoom != null ) {
-//			bloom.setBaseSaturation( 0.5f - 0.8f * factor );
-//			bloom.setBloomIntesity( 1.0f + 0.25f * factor );
-//			bloom.setBloomSaturation( 1.5f + ((level.isNightMode() && !Config.Graphics.DumbNightMode) ? -0.5f : 1.5f) * factor );
+		// if( Config.Graphics.EnablePostProcessingFx && bloom != null && zoom != null ) {
+		// bloom.setBaseSaturation( 0.5f - 0.8f * factor );
+		// bloom.setBloomIntesity( 1.0f + 0.25f * factor );
+		// bloom.setBloomSaturation( 1.5f + ((level.isNightMode() && !Config.Graphics.DumbNightMode) ? -0.5f : 1.5f) *
+		// factor );
 		// }
 		// ---------------------------------------------------
 
@@ -191,7 +176,7 @@ public class Game implements Disposable {
 	}
 
 	public void render() {
-		tweener.update( (int)(URacer.getLastDeltaSecs() * 1000) );
+		GameData.tweener.update( (int)(URacer.getLastDeltaSecs() * 1000) );
 
 		Car playerCar = null;
 		GL20 gl = Gdx.graphics.getGL20();
@@ -201,8 +186,8 @@ public class Game implements Disposable {
 		EntityManager.raiseOnBeforeRender( URacer.getTemporalAliasing() );
 
 		// follow the car
-		if( player != null ) {
-			playerCar = player.car;
+		if( GameData.playerState != null ) {
+			playerCar = GameData.playerState.car;
 			controller.setPosition( playerCar.state().position );
 		}
 
@@ -241,7 +226,7 @@ public class Game implements Disposable {
 		// render 3d meshes
 		level.renderMeshes( gl );
 
-		hud.render( batch );
+		GameData.hud.render( batch );
 
 		if( level.isNightMode() ) {
 			if( Config.Graphics.DumbNightMode ) {
@@ -273,11 +258,11 @@ public class Game implements Disposable {
 		//
 
 		if( Config.isDesktop ) {
-			if( Config.Graphics.RenderBox2DWorldWireframe ) Debug.renderB2dWorld( world, Director.getMatViewProjMt() );
+			if( Config.Graphics.RenderBox2DWorldWireframe ) Debug.renderB2dWorld( GameData.world, Director.getMatViewProjMt() );
 
 			Debug.begin( batch );
 			EntityManager.raiseOnDebug();
-			if( Config.Graphics.RenderHudDebugInfo ) hud.debug( batch );
+			if( Config.Graphics.RenderHudDebugInfo ) GameData.hud.debug( batch );
 			Debug.renderVersionInfo();
 			Debug.renderGraphicalStats( Gdx.graphics.getWidth() - Debug.getStatsWidth(), Gdx.graphics.getHeight() - Debug.getStatsHeight() - Debug.fontHeight );
 			Debug.renderTextualStats();
@@ -306,14 +291,6 @@ public class Game implements Disposable {
 
 	public Level getLevel() {
 		return level;
-	}
-
-	public Hud getHud() {
-		return hud;
-	}
-
-	public static Tweener getTweener() {
-		return tweener;
 	}
 
 	public void restart() {

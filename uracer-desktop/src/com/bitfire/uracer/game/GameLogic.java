@@ -4,37 +4,25 @@ import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Input.Keys;
 import com.bitfire.uracer.Input;
 import com.bitfire.uracer.entities.EntityManager;
-import com.bitfire.uracer.game.logic.DriftState;
 import com.bitfire.uracer.game.logic.IGameLogicListener;
-import com.bitfire.uracer.game.logic.LapState;
-import com.bitfire.uracer.game.logic.Level;
 
 public class GameLogic {
 	protected Game game;
-	protected IGameLogicListener listener;
 
 	// lap and entities
-	private Level level;
+	private IGameLogicListener listener;
 
-	public GameLogic( Game game, LapState lapState ) {
+	// the convention here is that it is safe to pass the "this" pointer
+	// as a constructor parameter from the "this" constructor method itself,
+	// since the constructor NEVER EVER *dereference* the "this" parameter
+	// in ITS constructor method.		// ttp
+	public GameLogic( Game game, IGameLogicListener listener ) {
 		this.game = game;
-		this.level = game.getLevel();
-
-		DriftState.init( this );
-
-		this.listener = new GameLogicListener( this, lapState );
-	}
-
-	public void create() {
-		reset();
-		listener.onCreate();
-	}
-
-	public void dispose() {
+		this.listener = listener;
 	}
 
 	public boolean tick() {
-		EntityManager.raiseOnTick(game.world);
+		EntityManager.raiseOnTick(GameData.world);
 
 		if( Input.isOn( Keys.R ) ) {
 			game.restart();
@@ -47,10 +35,8 @@ public class GameLogic {
 			return false;
 		}
 
-		level.getPlayer().update( listener );
-
-		// update DriftInfo, handle raising onBeginDrift / onEndDrift
-		DriftState.get().update( level.getPlayer().car );
+		GameData.playerState.update( listener );
+		GameData.driftState.update();
 
 		return true;
 	}
@@ -61,11 +47,11 @@ public class GameLogic {
 	}
 
 	public void restart() {
-		Game.getTweener().clear();
+		GameData.tweener.clear();
 
 		// reset drift info and hud drifting component
-		DriftState.get().reset();
-		if( game.getHud() != null ) game.getHud().getDrifting().reset();
+		GameData.driftState.reset();
+		GameData.hud.getDrifting().reset();
 
 		listener.onRestart();
 	}

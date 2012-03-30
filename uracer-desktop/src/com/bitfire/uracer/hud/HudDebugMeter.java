@@ -11,7 +11,6 @@ import com.badlogic.gdx.math.Vector2;
 import com.bitfire.uracer.Director;
 import com.bitfire.uracer.debug.Debug;
 import com.bitfire.uracer.entities.vehicles.Car;
-import com.bitfire.uracer.game.Game;
 import com.bitfire.uracer.utils.AMath;
 import com.bitfire.uracer.utils.Convert;
 
@@ -31,7 +30,7 @@ public class HudDebugMeter {
 
 	public Color color = new Color( 1, 1, 1, 1 );
 
-	public HudDebugMeter( Game game, int row, int width, int height ) {
+	public HudDebugMeter( Car car, int row, int width, int height ) {
 		assert (width < 256 && height < 256);
 
 		this.name = "";
@@ -39,7 +38,7 @@ public class HudDebugMeter {
 		this.height = height;
 		this.pos = new Vector2();
 		this.row = row;
-		this.playerCar = game.getLevel().getPlayer().car;
+		playerCar = car;
 
 		pixels = new Pixmap( this.width, this.height, Format.RGBA8888 );
 		texture = new Texture( 256, 256, Format.RGBA8888 );

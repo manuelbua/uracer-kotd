@@ -1,10 +1,10 @@
 package com.bitfire.uracer.audio;
 
 import com.bitfire.uracer.carsimulation.CarInputMode;
-import com.bitfire.uracer.game.logic.Player;
+import com.bitfire.uracer.game.logic.PlayerState;
 
 public class CarSoundManager {
-	private static Player player = null;
+	private static PlayerState player = null;
 
 	// sound effects
 	private static CarDriftSoundEffect carDrift;
@@ -16,7 +16,7 @@ public class CarSoundManager {
 		// carEngine.start();
 
 		carDrift = new CarDriftSoundEffect();
-		carDrift.start();
+		carDrift.start();	// wtf? why the manager should start it in load()?
 
 		carImpact = new CarImpactSoundEffect();
 	}
@@ -27,7 +27,7 @@ public class CarSoundManager {
 		carImpact.dispose();
 	}
 
-	public static void setPlayer( Player player ) {
+	public static void setPlayer( PlayerState player ) {
 		CarSoundManager.player = player;
 	}
 

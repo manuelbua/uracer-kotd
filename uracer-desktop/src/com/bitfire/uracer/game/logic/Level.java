@@ -68,7 +68,7 @@ public class Level {
 	private ArrayList<OrthographicAlignedStillModel> staticMeshes = new ArrayList<OrthographicAlignedStillModel>();
 
 	// player recording data
-	private Player player;
+	private PlayerState player;
 	private Recorder recorder;
 	private boolean nightMode;
 
@@ -225,7 +225,7 @@ public class Level {
 		totalMeshes = staticMeshes.size() + trackWalls.walls.size() + trackTrees.trees.size();
 	}
 
-	private Player createPlayer( TiledMap map ) {
+	private PlayerState createPlayer( TiledMap map ) {
 		// search the map for the start marker and create
 		// the player with the found tile coordinates
 		TiledLayer layerTrack = MapUtils.getLayer( MapUtils.LayerTrack );
@@ -261,7 +261,7 @@ public class Level {
 		Car car = CarFactory.createPlayer( world, CarType.OldSkool, new CarModel().toModel2(), start, startOrient );
 		GhostCar ghost = CarFactory.createGhost( world, car );
 
-		Player p = new Player( car, ghost );
+		PlayerState p = new PlayerState( car, ghost );
 		p.startPos.set( start );
 		p.startTileX = startTileX;
 		p.startTileY = startTileY;
@@ -358,7 +358,7 @@ public class Level {
 
 	/** operations */
 
-	public Player getPlayer() {
+	public PlayerState getPlayerState() {
 		return player;
 	}
 

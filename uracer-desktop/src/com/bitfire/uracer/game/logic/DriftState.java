@@ -1,7 +1,6 @@
 package com.bitfire.uracer.game.logic;
 
-import com.bitfire.uracer.entities.vehicles.Car;
-import com.bitfire.uracer.game.GameLogic;
+import com.bitfire.uracer.game.GameData;
 import com.bitfire.uracer.utils.AMath;
 
 public class DriftState {
@@ -16,19 +15,11 @@ public class DriftState {
 	private long collisionTime;
 	private float lastRear = 0, lastFront = 0;
 
-	private static DriftState instance = null;
-	private static GameLogic logic = null;
+	private IGameLogicListener listener = null;
 
-	private DriftState() {
-	}
-
-	public static void init( GameLogic logic ) {
-		DriftState.instance = new DriftState();
-		DriftState.logic = logic;
-	}
-
-	public static DriftState get() {
-		return instance;
+	public DriftState( IGameLogicListener listener ) {
+		this.listener = listener;
+		reset();
 	}
 
 	public void reset() {
@@ -41,25 +32,25 @@ public class DriftState {
 		driftStrength = 0;
 	}
 
-	public static void invalidateByCollision() {
-		DriftState drift = DriftState.get();
-		if( !drift.isDrifting ) return;
+	// onCollision?
+	public void invalidateByCollision() {
+		if( !isDrifting ) return;
 
-		drift.collisionTime = System.currentTimeMillis();
-		drift.isDrifting = false;
-		drift.hasCollided = true;
-		drift.updateDriftTimeSeconds();
-		logic.getListener().onEndDrift();
+		collisionTime = System.currentTimeMillis();
+		isDrifting = false;
+		hasCollided = true;
+		updateDriftTimeSeconds();
+		listener.onEndDrift();
 	}
 
-	public void update( Car player ) {
-		float oneOnMaxGrip = 1f / player.getCarModel().max_grip;
+	public void update() {
+		float oneOnMaxGrip = 1f / GameData.playerState.car.getCarModel().max_grip;
 
 		// lateral forces are in the range [-max_grip, max_grip]
-		lateralForcesFront = lastFront = AMath.lowpass( lastFront, player.getSimulator().lateralForceFront.y, 0.2f );
+		lateralForcesFront = lastFront = AMath.lowpass( lastFront, GameData.playerState.car.getSimulator().lateralForceFront.y, 0.2f );
 		lateralForcesFront = AMath.clamp( Math.abs( lateralForcesFront ) * oneOnMaxGrip, 0f, 1f );	// normalize
 
-		lateralForcesRear = lastRear = AMath.lowpass( lastRear, player.getSimulator().lateralForceRear.y, 0.2f );
+		lateralForcesRear = lastRear = AMath.lowpass( lastRear, GameData.playerState.car.getSimulator().lateralForceRear.y, 0.2f );
 		lateralForcesRear = AMath.clamp( Math.abs( lateralForcesRear ) * oneOnMaxGrip, 0f, 1f );	// normalize
 
 		// compute strength
@@ -78,7 +69,7 @@ public class DriftState {
 		}
 		else {
 			// TODO should be expressed as a percent value ref. maxvel, to scale to different max velocities
-			float vel = player.getCarDescriptor().velocity_wc.len();
+			float vel = GameData.playerState.car.getCarDescriptor().velocity_wc.len();
 
 			if( !isDrifting ) {
 				// search for onBeginDrift
@@ -86,7 +77,7 @@ public class DriftState {
 					isDrifting = true;
 					hasCollided = false;
 					driftStartTime = System.currentTimeMillis();
-					logic.getListener().onBeginDrift();
+					listener.onBeginDrift();
 				}
 			}
 			else {
@@ -95,7 +86,7 @@ public class DriftState {
 					updateDriftTimeSeconds();
 					isDrifting = false;
 					hasCollided = false;
-					logic.getListener().onEndDrift();
+					listener.onEndDrift();
 				}
 			}
 		}

@@ -14,7 +14,7 @@ import com.badlogic.gdx.graphics.g2d.BitmapFont.TextBounds;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.bitfire.uracer.Art;
 import com.bitfire.uracer.Director;
-import com.bitfire.uracer.game.Game;
+import com.bitfire.uracer.game.GameData;
 import com.bitfire.uracer.messager.Messager.MessagePosition;
 import com.bitfire.uracer.messager.Messager.MessageSize;
 import com.bitfire.uracer.messager.Messager.MessageType;
@@ -132,7 +132,7 @@ public class Message {
 		// scaleX = scaleY = 1f;
 		computeFinalPosition();
 
-		Game.getTweener().start(
+		GameData.tweener.start(
 				Timeline.createParallel().push( Tween.to( this, MessageAccessor.OPACITY, 400 ).target( 1f ).ease( Expo.INOUT ) )
 						.push( Tween.to( this, MessageAccessor.POSITION_Y, 400 ).target( finalY ).ease( Expo.INOUT ) )
 						.push( Tween.to( this, MessageAccessor.SCALE_XY, 500 ).target( 1.5f, 1.5f ).ease( Back.INOUT ) ) );
@@ -141,7 +141,7 @@ public class Message {
 	public void onHide() {
 		hiding = true;
 
-		Game.getTweener().start(
+		GameData.tweener.start(
 				Timeline.createParallel().push( Tween.to( this, MessageAccessor.OPACITY, 500 ).target( 0f ).ease( Expo.INOUT ) )
 						.push( Tween.to( this, MessageAccessor.POSITION_Y, 500 ).target( -50 * font.getScaleX() ).ease( Expo.INOUT ) )
 						.push( Tween.to( this, MessageAccessor.SCALE_XY, 400 ).target( 1f, 1f ).ease( Back.INOUT ) )

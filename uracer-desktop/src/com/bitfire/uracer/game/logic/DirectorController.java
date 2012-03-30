@@ -1,5 +1,6 @@
 package com.bitfire.uracer.game.logic;
 
+import com.badlogic.gdx.math.Rectangle;
 import com.badlogic.gdx.math.Vector2;
 import com.bitfire.uracer.Director;
 import com.bitfire.uracer.utils.AMath;
@@ -14,9 +15,9 @@ public class DirectorController {
 	private float sigmoidStrengthX = 1f;
 	private float sigmoidStrengthY = 1f;
 
-	public DirectorController( InterpolationMode mode ) {
-		boundsWidth = Director.boundsPx.width - Director.boundsPx.x;
-		boundsHeight = Director.boundsPx.y - Director.boundsPx.height;
+	public DirectorController( InterpolationMode mode, final Rectangle bounds ) {
+		boundsWidth = bounds.width - bounds.x;
+		boundsHeight = bounds.y - bounds.height;
 
 		sigmoidStrengthX = AMath.clamp( (Director.worldSizeTiles.x / 4f), 1f, 5f );
 		sigmoidStrengthY = AMath.clamp( (Director.worldSizeTiles.y / 4f), 1f, 5f );
@@ -39,8 +40,8 @@ public class DirectorController {
 					float x_ratio = targetPosition.x / Director.worldSizeScaledPx.x;
 					float y_ratio = targetPosition.y / Director.worldSizeScaledPx.y;
 
-					tmp.x = Director.boundsPx.x + x_ratio * boundsWidth;
-					tmp.y = Director.boundsPx.height + y_ratio * boundsHeight;
+					tmp.x = bounds.x + x_ratio * boundsWidth;
+					tmp.y = bounds.height + y_ratio * boundsHeight;
 
 					return tmp;
 				}

@@ -5,7 +5,7 @@ import com.bitfire.uracer.carsimulation.Replay;
 import com.bitfire.uracer.game.logic.IGameLogicListener;
 import com.bitfire.uracer.game.logic.LapState;
 import com.bitfire.uracer.game.logic.Level;
-import com.bitfire.uracer.game.logic.Player;
+import com.bitfire.uracer.game.logic.PlayerState;
 import com.bitfire.uracer.messager.Messager;
 import com.bitfire.uracer.messager.Messager.MessagePosition;
 import com.bitfire.uracer.messager.Messager.MessageSize;
@@ -13,18 +13,14 @@ import com.bitfire.uracer.messager.Messager.MessageType;
 import com.bitfire.uracer.utils.NumberString;
 
 public class GameLogicListener implements IGameLogicListener {
-	private GameLogic logic = null;
 	private Level level = null;
 
 	// lap
-	protected LapState lapState;
 	private boolean isFirstLap = true;
 	private long lastRecordedLapId = 0;
 
-	public GameLogicListener( GameLogic logic, LapState lapState ) {
-		this.logic = logic;
-		this.level = logic.game.getLevel();
-		this.lapState = lapState;
+	public GameLogicListener( Level level ) {
+		this.level = level;
 	}
 
 	@Override
@@ -33,7 +29,7 @@ public class GameLogicListener implements IGameLogicListener {
 
 	@Override
 	public void onReset() {
-		lapState.reset();
+		GameData.lapState.reset();
 		isFirstLap = true;
 		lastRecordedLapId = 0;
 	}
@@ -55,8 +51,10 @@ public class GameLogicListener implements IGameLogicListener {
 	}
 
 	@Override
-	public void onTileChanged( Player player ) {
+	public void onTileChanged( PlayerState player ) {
 		boolean onStartZone = (player.currTileX == player.startTileX && player.currTileY == player.startTileY);
+
+		LapState lapState = GameData.lapState;
 
 		if( onStartZone ) {
 			if( isFirstLap ) {
@@ -119,14 +117,14 @@ public class GameLogicListener implements IGameLogicListener {
 
 	@Override
 	public void onBeginDrift() {
-		logic.game.getHud().getDrifting().onBeginDrift();
+		GameData.hud.getDrifting().onBeginDrift();
 		CarSoundManager.driftBegin();
 		// System.out.println("-> drift starts");
 	}
 
 	@Override
 	public void onEndDrift() {
-		logic.game.getHud().getDrifting().onEndDrift();
+		GameData.hud.getDrifting().onEndDrift();
 		CarSoundManager.driftEnd();
 		// System.out.println("<- drift ends");
 	}

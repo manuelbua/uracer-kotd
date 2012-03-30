@@ -56,19 +56,15 @@ public class Director {
 
 	public static void create( int widthPx, int heightPx ) {
 		init();
-
 		camera = new OrthographicCamera( widthPx, heightPx );
 		halfViewport.set( camera.viewportWidth / 2f, camera.viewportHeight / 2f );
 	}
 
 	public static void dispose() {
-		if( currentLevel != null ) {
-			currentLevel.dispose();
-		}
 	}
 
 	public static Level loadLevel( World world, String levelName, GameplaySettings playSettings, boolean nightMode ) {
-		// construct tilemap and cameras
+		// construct tilemap, cameras and renderer
 		Level level = new Level( world, levelName, scalingStrategy, nightMode );
 
 		// setup converter
@@ -87,7 +83,7 @@ public class Director {
 		boundsPx.y = Director.worldSizeScaledPx.y - halfViewport.y;
 
 		// construct level objects from tmx definitions
-		level.construct(world);
+		level.construct( world );
 
 		currentLevel = level;
 		gameplaySettings = playSettings;
@@ -183,13 +179,12 @@ public class Director {
 		return tmp;
 	}
 
-	/** visibility queries */
+	/** orthographic camera visibility queries */
 
 	private static Rectangle cameraRect;
 
 	public static boolean isVisible( Rectangle rect ) {
-		cameraRect.set( camera.position.x - camera.viewportWidth / 2, camera.position.y - camera.viewportHeight / 2, camera.viewportWidth, camera.viewportHeight );
-
+		cameraRect.set( camera.position.x - halfViewport.x, camera.position.y - halfViewport.y, camera.viewportWidth, camera.viewportHeight );
 		return cameraRect.overlaps( rect );
 	}
 }

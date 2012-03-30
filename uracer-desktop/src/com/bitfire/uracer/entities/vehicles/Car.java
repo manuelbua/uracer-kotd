@@ -26,7 +26,7 @@ import com.bitfire.uracer.debug.Debug;
 import com.bitfire.uracer.entities.Box2dEntity;
 import com.bitfire.uracer.entities.EntityManager;
 import com.bitfire.uracer.factories.CarFactory.CarType;
-import com.bitfire.uracer.game.logic.DriftState;
+import com.bitfire.uracer.game.GameData;
 import com.bitfire.uracer.utils.AMath;
 import com.bitfire.uracer.utils.Convert;
 import com.bitfire.uracer.utils.MapUtils;
@@ -308,7 +308,7 @@ public class Car extends Box2dEntity {
 		// update DriftInfo in case of collision
 		if( carInputMode == CarInputMode.InputFromPlayer ) {
 			CarSoundManager.carImpacted( normalImpulses.len() );
-			DriftState.invalidateByCollision();
+			GameData.driftState.invalidateByCollision();
 		}
 
 	}

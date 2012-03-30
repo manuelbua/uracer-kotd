@@ -10,7 +10,7 @@ import com.badlogic.gdx.graphics.g2d.BitmapFont.TextBounds;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.math.Vector2;
 import com.bitfire.uracer.Director;
-import com.bitfire.uracer.game.Game;
+import com.bitfire.uracer.game.GameData;
 import com.bitfire.uracer.tweener.accessors.HudLabelAccessor;
 
 public class HudLabel {
@@ -126,11 +126,11 @@ public class HudLabel {
 	/** effects */
 
 	public void fadeIn( int milliseconds ) {
-		Game.getTweener().start( Timeline.createSequence().push( Tween.to( this, HudLabelAccessor.OPACITY, milliseconds ).target( 1f ).ease( Expo.INOUT ) ) );
+		GameData.tweener.start( Timeline.createSequence().push( Tween.to( this, HudLabelAccessor.OPACITY, milliseconds ).target( 1f ).ease( Expo.INOUT ) ) );
 	}
 
 	public void fadeOut( int milliseconds ) {
-		Game.getTweener().start( Timeline.createSequence().push( Tween.to( this, HudLabelAccessor.OPACITY, milliseconds ).target( 0f ).ease( Expo.INOUT ) ) );
+		GameData.tweener.start( Timeline.createSequence().push( Tween.to( this, HudLabelAccessor.OPACITY, milliseconds ).target( 0f ).ease( Expo.INOUT ) ) );
 	}
 
 	public void slide() {
@@ -142,7 +142,7 @@ public class HudLabel {
 		float targetFarX = getPosition().x;
 		float targetFarY = getPosition().y - 100;
 
-		Game.getTweener().start(
+		GameData.tweener.start(
 				Timeline.createParallel()
 						.push( Tween.to( this, HudLabelAccessor.OPACITY, 500 ).target( 1f ).ease( Quint.INOUT ) )
 						.push( Timeline
