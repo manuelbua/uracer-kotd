@@ -12,11 +12,12 @@ import com.bitfire.uracer.utils.AMath;
 public class URacer implements ApplicationListener {
 	private Screen screen;
 	private Input input = new Input();
-	private boolean running = false;
+	private static boolean running = false;
 
 	private float temporalAliasing = 0;
 	private float timeAccumSecs = 0;
 	private float oneOnOneBillion = 0;
+	public static float timeMultiplier = 0f;
 	private static boolean hasStepped = false;
 
 	// stats
@@ -69,6 +70,7 @@ public class URacer implements ApplicationListener {
 		oneOnOneBillion = 1.0f / 1000000000.0f;
 		temporalAliasing = 0;
 		timeAccumSecs = Config.Physics.PhysicsDt;
+		timeMultiplier = Config.Physics.PhysicsTimeMultiplier;
 
 		setScreen( new GameScreen() );
 	}
@@ -96,7 +98,7 @@ public class URacer implements ApplicationListener {
 		long startTime = System.nanoTime();
 		{
 			hasStepped = false;
-			timeAccumSecs += lastDeltaTimeSec * Config.Physics.PhysicsTimeMultiplier;
+			timeAccumSecs += lastDeltaTimeSec * timeMultiplier;
 			while( timeAccumSecs > Config.Physics.PhysicsDt ) {
 				input.tick();
 				screen.tick();
@@ -172,7 +174,7 @@ public class URacer implements ApplicationListener {
 		}
 	}
 
-	public boolean isRunning() {
+	public static boolean isRunning() {
 		return running;
 	}
 

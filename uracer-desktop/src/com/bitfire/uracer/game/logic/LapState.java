@@ -1,6 +1,6 @@
 package com.bitfire.uracer.game.logic;
 
-import com.bitfire.uracer.Config;
+import com.bitfire.uracer.URacer;
 import com.bitfire.uracer.carsimulation.Replay;
 
 public class LapState {
@@ -43,7 +43,7 @@ public class LapState {
 	}
 
 	public float getElapsedSeconds() {
-		return ((float)(System.nanoTime() - startTimeNs) / 1000000000f) * Config.Physics.PhysicsTimeMultiplier;
+		return ((float)(System.nanoTime() - startTimeNs) / 1000000000f) * URacer.timeMultiplier;
 	}
 
 	public long getStartNanotime() {

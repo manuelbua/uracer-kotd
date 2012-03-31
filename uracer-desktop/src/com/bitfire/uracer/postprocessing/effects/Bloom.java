@@ -2,7 +2,6 @@ package com.bitfire.uracer.postprocessing.effects;
 
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.GL10;
-import com.badlogic.gdx.graphics.Pixmap.Format;
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.glutils.FrameBuffer;
 import com.bitfire.uracer.postprocessing.PingPongBuffer;
@@ -78,8 +77,9 @@ public class Bloom extends PostProcessorEffect {
 
 	protected boolean blending = false;
 
-	public Bloom( int fboWidth, int fboHeight, Format frameBufferFormat ) {
-		pingPongBuffer = PostProcessor.newPingPongBuffer( fboWidth, fboHeight, frameBufferFormat, false );
+	public Bloom( PostProcessor postProcessor, int fboWidth, int fboHeight ) {
+		super(postProcessor);
+		pingPongBuffer = postProcessor.newPingPongBuffer( fboWidth, fboHeight, postProcessor.getFramebufferFormat(), false );
 
 		blur = new Blur( fboWidth, fboHeight );
 		threshold = new Threshold();

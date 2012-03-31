@@ -18,7 +18,6 @@ import com.badlogic.gdx.math.MathUtils;
 import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.physics.box2d.World;
 import com.bitfire.uracer.Art;
-import com.bitfire.uracer.Director;
 import com.bitfire.uracer.factories.Box2DFactory;
 import com.bitfire.uracer.game.GameData;
 import com.bitfire.uracer.utils.AMath;
@@ -39,7 +38,7 @@ public class TrackWalls {
 		walls.clear();
 	}
 
-	public void createWalls(World world) {
+	public void createWalls(World world, Vector2 worldSizeScaledMt ) {
 		if( MapUtils.hasObjectGroup( MapUtils.LayerWalls ) ) {
 			Vector2 fromMt = new Vector2();
 			Vector2 toMt = new Vector2();
@@ -65,11 +64,11 @@ public class TrackWalls {
 					offsetMt.set( Convert.px2mt( offsetMt ) );
 
 					fromMt.set( Convert.px2mt( points.get( 0 ) ) ).add( offsetMt ).mul( factor );
-					fromMt.y = Director.worldSizeScaledMt.y - fromMt.y;
+					fromMt.y = worldSizeScaledMt.y - fromMt.y;
 
 					for( int j = 1; j <= points.size() - 1; j++ ) {
 						toMt.set( Convert.px2mt( points.get( j ) ) ).add( offsetMt ).mul( factor );
-						toMt.y = Director.worldSizeScaledMt.y - toMt.y;
+						toMt.y = worldSizeScaledMt.y - toMt.y;
 
 						// create box2d wall
 						Box2DFactory.createWall( world, fromMt, toMt, wallSizeMt, 0f );

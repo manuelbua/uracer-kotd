@@ -34,7 +34,6 @@ import com.bitfire.uracer.factories.ModelFactory;
 import com.bitfire.uracer.game.GameData;
 import com.bitfire.uracer.tiled.LevelRenderer;
 import com.bitfire.uracer.tiled.OrthographicAlignedStillModel;
-import com.bitfire.uracer.tiled.ScalingStrategy;
 import com.bitfire.uracer.tiled.TrackTrees;
 import com.bitfire.uracer.tiled.TrackWalls;
 import com.bitfire.uracer.tiled.UTileMapRenderer;
@@ -51,6 +50,7 @@ public class Level {
 	public TiledMap map = null;
 	private TrackWalls trackWalls = null;
 	private TrackTrees trackTrees = null;
+	public Vector2 worldSizeScaledPx = null, worldSizeScaledMt = null, worldSizeTiles = null;
 
 	// level rendering
 	public LevelRenderer levelRenderer = null;
@@ -73,13 +73,15 @@ public class Level {
 	private RayHandler rayHandler = null;
 	private ConeLight playerHeadlights = null;
 
-	public Level( World world, String levelName, ScalingStrategy strategy, boolean nightMode ) {
+	public Level( World world, String levelName, boolean nightMode, int width, int height ) {
 		this.name = levelName;
 		this.nightMode = nightMode;
 		this.world = world;
 
+		createCams( width, height );
+
 		// ie. "level1-128.tmx"
-		String mapname = levelName + "-" + (int)strategy.forTileSize + ".tmx";
+		String mapname = levelName + "-" + (int)GameData.scalingStrategy.forTileSize + ".tmx";
 		FileHandle mapHandle = Gdx.files.internal( LevelsStore + mapname );
 		FileHandle baseDir = Gdx.files.internal( LevelsStore );
 
@@ -88,18 +90,17 @@ public class Level {
 		atlas = new TileAtlas( map, baseDir );
 		tileMapRenderer = new UTileMapRenderer( map, atlas, 1, 1, map.tileWidth, map.tileHeight );
 
+		// compute world size
+		worldSizeTiles = new Vector2( map.width, map.height );
+		worldSizeScaledPx = new Vector2( map.width * map.tileWidth, map.height * map.tileHeight );
+		worldSizeScaledPx.mul( GameData.scalingStrategy.invTileMapZoomFactor );
+		worldSizeScaledMt = new Vector2( Convert.px2mt( worldSizeScaledPx ) );
+
 		// initialize TiledMap utils
-		MapUtils.initialize( map );
+		MapUtils.init( map, worldSizeScaledPx );
 
-		createCams();
-
-		levelRenderer = new LevelRenderer( camPersp, camOrtho );
-	}
-
-	// TODO remove this 2-stage construction, the "static" problem on Android is no more.
-	/* 2-stage construction, avoid <static> problems in Android */
-	public void construct() {
-		syncWithCam( Director.getCamera() );
+		// TODO, look on why i needed to sync at construction
+		// syncWithCam( Director.getCamera() );
 
 		createMeshes();
 		player = createPlayer( map );
@@ -107,6 +108,8 @@ public class Level {
 		if( nightMode ) {
 			createLights();
 		}
+
+		levelRenderer = new LevelRenderer( camPersp, camOrtho );
 	}
 
 	public void dispose() {
@@ -164,12 +167,9 @@ public class Level {
 		gl.glDepthMask( false );
 	}
 
-	private void createCams() {
-		int w = Gdx.graphics.getWidth();
-		int h = Gdx.graphics.getHeight();
-
+	private void createCams( int width, int height ) {
 		// creates and setup orthographic camera
-		camOrtho = new OrthographicCamera( w, h );
+		camOrtho = new OrthographicCamera( width, height );
 		camOrtho.near = 0;
 		camOrtho.far = 100;
 		camOrtho.zoom = 1;
@@ -182,7 +182,7 @@ public class Level {
 		float perspPlaneFar = 240;
 		camPerspElevation = 100;
 
-		camPersp = new PerspectiveCamera( GameData.scalingStrategy.verticalFov, w, h );
+		camPersp = new PerspectiveCamera( GameData.scalingStrategy.verticalFov, width, height );
 		camPersp.near = perspPlaneNear;
 		camPersp.far = perspPlaneFar;
 		camPersp.lookAt( 0, 0, -1 );
@@ -209,7 +209,7 @@ public class Level {
 
 		// walls by polylines
 		trackWalls = new TrackWalls();
-		trackWalls.createWalls(world);
+		trackWalls.createWalls( world, worldSizeScaledMt );
 
 		// trees
 		trackTrees = new TrackTrees();
@@ -232,7 +232,7 @@ public class Level {
 				if( type == null ) continue;
 
 				if( type.equals( "start" ) ) {
-					start.set( Convert.tileToPx( x, y ).add( Convert.scaledPixels( 112, -112 ) ) );
+					start.set( MapUtils.tileToPx( x, y ).add( Convert.scaledPixels( 112, -112 ) ) );
 					startTileX = x;
 					startTileY = y;
 					break;
@@ -304,7 +304,7 @@ public class Level {
 			1f, .85f, .15f, .75f );
 			TiledObject o = group.objects.get( i );
 			pos.set( o.x, o.y ).mul( GameData.scalingStrategy.invTileMapZoomFactor );
-			pos.y = Director.worldSizeScaledPx.y - pos.y;
+			pos.y = worldSizeScaledPx.y - pos.y;
 			pos.set( Convert.px2mt( pos ) );
 
 			PointLight l = new PointLight( rayHandler, maxRays, c, 30f, pos.x, pos.y );
@@ -358,4 +358,13 @@ public class Level {
 	public boolean isNightMode() {
 		return nightMode;
 	}
+
+	public OrthographicCamera getOrthoCamera() {
+		return camOrtho;
+	}
+
+	public PerspectiveCamera getPerspectiveCamera() {
+		return camPersp;
+	}
+
 }

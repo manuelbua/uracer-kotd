@@ -101,6 +101,10 @@ public class DriftState {
 	}
 
 	private void updateDriftTimeSeconds() {
+//		driftSeconds = (System.currentTimeMillis() - driftStartTime) * 0.001f;
 		driftSeconds = (System.currentTimeMillis() - driftStartTime) * 0.001f;
+
+		// apply scaling
+//		driftSeconds *= URacer.timeMultiplier;
 	}
 }

@@ -6,8 +6,8 @@ import com.badlogic.gdx.graphics.glutils.ShaderProgram;
 import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.math.Vector3;
 import com.badlogic.gdx.math.collision.BoundingBox;
-import com.bitfire.uracer.Director;
 import com.bitfire.uracer.game.GameData;
+import com.bitfire.uracer.utils.MapUtils;
 import com.bitfire.uracer.utils.ShaderLoader;
 
 /** The model is expected to follow the z-up convention.
@@ -111,7 +111,7 @@ public class OrthographicAlignedStillModel {
 	 * @param posPxX
 	 * @param posPxY */
 	public void setPosition( float posPxX, float posPxY ) {
-		positionPx.set( Director.positionFor( posPxX, posPxY ) );
+		positionPx.set( MapUtils.positionFor( posPxX, posPxY ) );
 	}
 
 	public float iRotationAngle;

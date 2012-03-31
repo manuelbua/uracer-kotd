@@ -4,8 +4,9 @@ import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Input.Keys;
 import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.physics.box2d.Fixture;
+import com.bitfire.uracer.Config;
 import com.bitfire.uracer.Input;
-import com.bitfire.uracer.audio.CarSoundManager;
+import com.bitfire.uracer.URacer;
 import com.bitfire.uracer.carsimulation.CarForces;
 import com.bitfire.uracer.carsimulation.CarInputMode;
 import com.bitfire.uracer.carsimulation.Recorder;
@@ -14,7 +15,8 @@ import com.bitfire.uracer.effects.TrackEffects;
 import com.bitfire.uracer.entities.EntityManager;
 import com.bitfire.uracer.entities.vehicles.Car;
 import com.bitfire.uracer.events.CarListener;
-import com.bitfire.uracer.events.DriftStateListener;
+import com.bitfire.uracer.events.GameLogicListener;
+import com.bitfire.uracer.events.GameLogicNotifier;
 import com.bitfire.uracer.events.PlayerStateListener;
 import com.bitfire.uracer.game.logic.LapState;
 import com.bitfire.uracer.game.logic.PlayerState;
@@ -22,9 +24,10 @@ import com.bitfire.uracer.messager.Messager;
 import com.bitfire.uracer.messager.Messager.MessagePosition;
 import com.bitfire.uracer.messager.Messager.MessageSize;
 import com.bitfire.uracer.messager.Messager.MessageType;
+import com.bitfire.uracer.utils.AMath;
 import com.bitfire.uracer.utils.NumberString;
 
-public class GameLogic implements CarListener, DriftStateListener, PlayerStateListener {
+public class GameLogic implements CarListener, PlayerStateListener {
 	// lap
 	private boolean isFirstLap = true;
 	private long lastRecordedLapId = 0;
@@ -32,10 +35,19 @@ public class GameLogic implements CarListener, DriftStateListener, PlayerStateLi
 	// replay
 	private Recorder recorder = null;
 
+	private GameLogicNotifier notifier = null;
+
 	public GameLogic() {
 		this.recorder = new Recorder();
+		this.notifier = new GameLogicNotifier();
 	}
 
+	public void addListener( GameLogicListener listener ) {
+		notifier.addListener( listener );
+	}
+
+	boolean timeModulation = false;
+	float tmMin = 0.3f;
 	public boolean onTick() {
 		EntityManager.raiseOnTick( GameData.world );
 
@@ -50,19 +62,26 @@ public class GameLogic implements CarListener, DriftStateListener, PlayerStateLi
 			Gdx.app.exit();
 			return false;
 		}
+		else if( Input.isOn( Keys.SPACE ) ) {
+			timeModulation = !timeModulation;
+		}
+
+		if(timeModulation) {
+			URacer.timeMultiplier = AMath.clamp( URacer.timeMultiplier - 0.02f, tmMin, Config.Physics.PhysicsTimeMultiplier );
+		} else {
+			URacer.timeMultiplier = AMath.clamp( URacer.timeMultiplier + 0.02f, tmMin, Config.Physics.PhysicsTimeMultiplier );
+		}
 
 		GameData.playerState.tick();
 		GameData.driftState.tick();
 
 		GameData.hud.tick();
 		TrackEffects.tick();
-		CarSoundManager.tick();
 
 		return true;
 	}
 
 	private void restart() {
-		CarSoundManager.reset();
 		GameData.tweener.clear();
 		GameData.driftState.reset();
 		GameData.hud.reset();
@@ -71,12 +90,14 @@ public class GameLogic implements CarListener, DriftStateListener, PlayerStateLi
 		recorder.reset();
 		GameData.playerState.reset();
 		isFirstLap = true;
+		notifier.onRestart();
 	}
 
 	private void reset() {
 		restart();
 		GameData.lapState.reset();
 		lastRecordedLapId = 0;
+		notifier.onReset();
 	}
 
 	// ----------------------------------------------------------------------
@@ -88,18 +109,19 @@ public class GameLogic implements CarListener, DriftStateListener, PlayerStateLi
 	@Override
 	public void onCollision( Car car, Fixture other, Vector2 impulses ) {
 		if( car.getInputMode() == CarInputMode.InputFromPlayer ) {
-			CarSoundManager.carImpacted( impulses.len() );
-			GameData.driftState.invalidateByCollision();
+			if( GameData.driftState.isDrifting ) {
+				GameData.driftState.invalidateByCollision();
+				System.out.println( "invalidated" );
+			}
 		}
 	}
 
 	@Override
 	public void onComputeForces( CarForces forces ) {
-		if(recorder.isRecording()) {
+		if( recorder.isRecording() ) {
 			recorder.add( forces );
 		}
 	}
-
 
 	// ----------------------------------------------------------------------
 	//
@@ -113,6 +135,7 @@ public class GameLogic implements CarListener, DriftStateListener, PlayerStateLi
 		boolean onStartZone = (player.currTileX == player.startTileX && player.currTileY == player.startTileY);
 
 		LapState lapState = GameData.lapState;
+		String name = GameData.level.name;
 
 		if( onStartZone ) {
 			if( isFirstLap ) {
@@ -120,7 +143,7 @@ public class GameLogic implements CarListener, DriftStateListener, PlayerStateLi
 
 				lapState.restart();
 				Replay buf = lapState.getNextBuffer();
-				recorder.beginRecording( player.car, buf, lapState.getStartNanotime() );
+				recorder.beginRecording( player.car, buf, lapState.getStartNanotime(), name );
 				lastRecordedLapId = buf.id;
 
 				if( lapState.hasAnyReplayData() ) {
@@ -139,7 +162,7 @@ public class GameLogic implements CarListener, DriftStateListener, PlayerStateLi
 					// only one single replay
 					lapState.restart();
 					Replay buf = lapState.getNextBuffer();
-					recorder.beginRecording( player.car, buf, lapState.getStartNanotime() );
+					recorder.beginRecording( player.car, buf, lapState.getStartNanotime(), name );
 					lastRecordedLapId = buf.id;
 
 					Replay any = lapState.getAnyReplay();
@@ -166,29 +189,10 @@ public class GameLogic implements CarListener, DriftStateListener, PlayerStateLi
 					player.ghost.setReplay( best );
 
 					lapState.restart();
-					recorder.beginRecording( player.car, worst, lapState.getStartNanotime() );
+					recorder.beginRecording( player.car, worst, lapState.getStartNanotime(), name );
 					lastRecordedLapId = worst.id;
 				}
 			}
 		}
-	}
-
-
-	// ----------------------------------------------------------------------
-	//
-	// DriftStateListener
-	//
-	// ----------------------------------------------------------------------
-
-	@Override
-	public void onBeginDrift() {
-		CarSoundManager.driftBegin();
-		// System.out.println("-> drift starts");
-	}
-
-	@Override
-	public void onEndDrift() {
-		CarSoundManager.driftEnd();
-		// System.out.println("<- drift ends");
 	}
 }

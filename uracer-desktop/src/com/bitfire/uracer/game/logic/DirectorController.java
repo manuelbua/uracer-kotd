@@ -15,12 +15,18 @@ public class DirectorController {
 	private float sigmoidStrengthX = 1f;
 	private float sigmoidStrengthY = 1f;
 
-	public DirectorController( InterpolationMode mode, final Rectangle bounds ) {
-		boundsWidth = bounds.width - bounds.x;
-		boundsHeight = bounds.y - bounds.height;
+	public DirectorController( InterpolationMode mode, Vector2 halfViewport, final Level level ) {
+		final Rectangle cameraBounds = new Rectangle();
+		cameraBounds.x = halfViewport.x;
+		cameraBounds.width = level.worldSizeScaledPx.x - halfViewport.x;
+		cameraBounds.height = halfViewport.y;
+		cameraBounds.y = level.worldSizeScaledPx.y - halfViewport.y;
 
-		sigmoidStrengthX = AMath.clamp( (Director.worldSizeTiles.x / 4f), 1f, 5f );
-		sigmoidStrengthY = AMath.clamp( (Director.worldSizeTiles.y / 4f), 1f, 5f );
+		boundsWidth = cameraBounds.width - cameraBounds.x;
+		boundsHeight = cameraBounds.y - cameraBounds.height;
+
+		sigmoidStrengthX = AMath.clamp( (level.worldSizeTiles.x / 4f), 1f, 5f );
+		sigmoidStrengthY = AMath.clamp( (level.worldSizeTiles.y / 4f), 1f, 5f );
 
 		switch( mode ) {
 		default:
@@ -28,6 +34,11 @@ public class DirectorController {
 			interpolator = new PositionInterpolator() {
 				@Override
 				public Vector2 transform( Vector2 targetPosition ) {
+					if( targetPosition.x < cameraBounds.x ) targetPosition.x = cameraBounds.x;
+					if( targetPosition.x > cameraBounds.width ) targetPosition.x = cameraBounds.width;
+					if( targetPosition.y > cameraBounds.y ) targetPosition.y= cameraBounds.y;
+					if( targetPosition.y < cameraBounds.height ) targetPosition.y = cameraBounds.height;
+
 					return targetPosition;
 				}
 			};
@@ -37,11 +48,11 @@ public class DirectorController {
 				@Override
 				public Vector2 transform( Vector2 targetPosition ) {
 					// [0,1]
-					float x_ratio = targetPosition.x / Director.worldSizeScaledPx.x;
-					float y_ratio = targetPosition.y / Director.worldSizeScaledPx.y;
+					float x_ratio = targetPosition.x / level.worldSizeScaledPx.x;
+					float y_ratio = targetPosition.y / level.worldSizeScaledPx.y;
 
-					tmp.x = bounds.x + x_ratio * boundsWidth;
-					tmp.y = bounds.height + y_ratio * boundsHeight;
+					tmp.x = cameraBounds.x + x_ratio * boundsWidth;
+					tmp.y = cameraBounds.height + y_ratio * boundsHeight;
 
 					return tmp;
 				}
@@ -56,11 +67,11 @@ public class DirectorController {
 					float ty = target.y;
 
 					// [-1, 1]
-					float x_ratio = ((tx / Director.worldSizeScaledPx.x) - 0.5f) * 2;
-					float y_ratio = ((ty / Director.worldSizeScaledPx.y) - 0.5f) * 2;
+					float x_ratio = ((tx / level.worldSizeScaledPx.x) - 0.5f) * 2;
+					float y_ratio = ((ty / level.worldSizeScaledPx.y) - 0.5f) * 2;
 
-					tmp.x = Director.boundsPx.x + AMath.sigmoid( x_ratio * sigmoidStrengthX ) * boundsWidth;
-					tmp.y = Director.boundsPx.height + AMath.sigmoid( y_ratio * sigmoidStrengthY ) * boundsHeight;
+					tmp.x = cameraBounds.x + AMath.sigmoid( x_ratio * sigmoidStrengthX ) * boundsWidth;
+					tmp.y = cameraBounds.height + AMath.sigmoid( y_ratio * sigmoidStrengthY ) * boundsHeight;
 
 					return tmp;
 				}
@@ -70,7 +81,7 @@ public class DirectorController {
 	}
 
 	public void setPosition( Vector2 pos ) {
-		Director.setPositionPx( interpolator.transform( pos ), false, true );
+		Director.setPositionPx( interpolator.transform( pos ), true );
 	}
 
 	private abstract class PositionInterpolator {

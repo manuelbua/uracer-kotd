@@ -115,13 +115,11 @@ public class Config {
 
 	public static class Debug {
 		public static boolean TraverseWalls;
-		public static boolean DirectorHasBounds;
 		public static boolean ApplyFrictionMap;
 		public static boolean FrustumCulling;
 
 		public static void asDefault() {
 			TraverseWalls = false;
-			DirectorHasBounds = ((Graphics.CameraInterpolationMode == InterpolationMode.Linear) || (Graphics.CameraInterpolationMode == InterpolationMode.Off));
 			ApplyFrictionMap = true;
 			FrustumCulling = true;
 		}

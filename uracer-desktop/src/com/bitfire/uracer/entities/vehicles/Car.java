@@ -27,6 +27,8 @@ import com.bitfire.uracer.entities.EntityManager;
 import com.bitfire.uracer.events.CarListener;
 import com.bitfire.uracer.events.CarNotifier;
 import com.bitfire.uracer.factories.CarFactory.CarType;
+import com.bitfire.uracer.game.GameData;
+import com.bitfire.uracer.game.logic.Level;
 import com.bitfire.uracer.utils.AMath;
 import com.bitfire.uracer.utils.Convert;
 import com.bitfire.uracer.utils.MapUtils;
@@ -219,15 +221,16 @@ public class Car extends Box2dEntity {
 	private WindowedMean frictionMean = new WindowedMean( 16 );
 
 	private void applyFrictionMap( CarInput input ) {
-		if( tilePosition.x >= 0 && tilePosition.x < Director.currentLevel.map.width && tilePosition.y >= 0 && tilePosition.y < Director.currentLevel.map.height ) {
+		Level level = GameData.level;
+		if( tilePosition.x >= 0 && tilePosition.x < level.map.width && tilePosition.y >= 0 && tilePosition.y < level.map.height ) {
 			// compute realsize-based pixel offset car-tile (top-left origin)
-			float tsx = tilePosition.x * Convert.scaledTilesize;
-			float tsy = tilePosition.y * Convert.scaledTilesize;
+			float tsx = tilePosition.x * MapUtils.scaledTilesize;
+			float tsy = tilePosition.y * MapUtils.scaledTilesize;
 			offset.set( stateRender.position );
-			offset.y = Director.worldSizeScaledPx.y - offset.y;
+			offset.y = GameData.level.worldSizeScaledPx.y - offset.y;
 			offset.x = offset.x - tsx;
 			offset.y = offset.y - tsy;
-			offset.mul( Convert.invScaledTilesize ).mul( Director.currentLevel.map.tileWidth );
+			offset.mul( MapUtils.invScaledTilesize ).mul( level.map.tileWidth );
 
 			TiledLayer layerTrack = MapUtils.getLayer( MapUtils.LayerTrack );
 			int id = layerTrack.tiles[(int)tilePosition.y][(int)tilePosition.x] - 1;
@@ -236,8 +239,8 @@ public class Car extends Box2dEntity {
 			// int yOnMap = (int)( id/4f ) * 224 + (int)offset.y;
 
 			// bit twiddling, faster versions
-			int xOnMap = (id & 3) * (int)Director.currentLevel.map.tileWidth + (int)offset.x;
-			int yOnMap = (id >> 2) * (int)Director.currentLevel.map.tileWidth + (int)offset.y;
+			int xOnMap = (id & 3) * (int)level.map.tileWidth + (int)offset.x;
+			int yOnMap = (id >> 2) * (int)level.map.tileWidth + (int)offset.y;
 
 			int pixel = Art.frictionNature.getPixel( xOnMap, yOnMap );
 			frictionMean.addValue( (pixel == -256 ? 0 : -1) );
@@ -253,7 +256,7 @@ public class Car extends Box2dEntity {
 	}
 
 	private void computeTilePosition() {
-		tilePosition.set( Convert.pxToTile( stateRender.position.x, stateRender.position.y ) );
+		tilePosition.set( MapUtils.pxToTile( stateRender.position.x, stateRender.position.y ) );
 		VMath.truncateToInt( tilePosition );
 	}
 
@@ -268,7 +271,7 @@ public class Car extends Box2dEntity {
 		// process impact feedback
 		while( impacts > 0 ) {
 			impacts--;
-			carDesc.velocity_wc.set( body.getLinearVelocity() ).mul( Director.gameplaySettings.linearVelocityAfterFeedback );
+			carDesc.velocity_wc.set( body.getLinearVelocity() ).mul( GameData.gameSettings.linearVelocityAfterFeedback );
 			carDesc.angularvelocity = -body.getAngularVelocity() * 0.85f;
 			start_decrease = true;
 		}
@@ -281,7 +284,7 @@ public class Car extends Box2dEntity {
 				start_timer = System.nanoTime();
 			}
 
-			input.throttle *= Director.gameplaySettings.throttleDampingAfterFeedback;
+			input.throttle *= GameData.gameSettings.throttleDampingAfterFeedback;
 		}
 	}
 
@@ -363,8 +366,8 @@ public class Car extends Box2dEntity {
 			Debug.drawString( "screen x=" + Director.screenPosFor( body ).x + ",y=" + Director.screenPosFor( body ).y, 0, 80 );
 			Debug.drawString( "world-mt x=" + body.getPosition().x + ",y=" + body.getPosition().y, 0, 87 );
 			Debug.drawString( "world-px x=" + Convert.mt2px( body.getPosition().x ) + ",y=" + Convert.mt2px( body.getPosition().y ), 0, 93 );
-			Debug.drawString( "dir worldsize x=" + Director.worldSizeScaledPx.x + ",y=" + Director.worldSizeScaledPx.y, 0, 100 );
-			Debug.drawString( "dir bounds x=" + Director.boundsPx.x + ",y=" + Director.boundsPx.width, 0, 107 );
+//			Debug.drawString( "dir worldsize x=" + Director.worldSizeScaledPx.x + ",y=" + Director.worldSizeScaledPx.y, 0, 100 );
+//			Debug.drawString( "dir bounds x=" + Director.boundsPx.x + ",y=" + Director.boundsPx.width, 0, 107 );
 			Debug.drawString( "orient=" + body.getAngle(), 0, 114 );
 			Debug.drawString( "render.interp=" + (state().position.x + "," + state().position.y), 0, 121 );
 

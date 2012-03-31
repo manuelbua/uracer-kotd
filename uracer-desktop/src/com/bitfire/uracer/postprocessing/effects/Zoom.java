@@ -2,6 +2,7 @@ package com.bitfire.uracer.postprocessing.effects;
 
 import com.badlogic.gdx.graphics.glutils.FrameBuffer;
 import com.badlogic.gdx.math.Vector2;
+import com.bitfire.uracer.postprocessing.PostProcessor;
 import com.bitfire.uracer.postprocessing.PostProcessorEffect;
 import com.bitfire.uracer.postprocessing.filters.ZoomBlur;
 import com.bitfire.uracer.postprocessing.filters.ZoomBlur.Quality;
@@ -10,7 +11,8 @@ public class Zoom extends PostProcessorEffect {
 	private ZoomBlur zoomBlur;
 	private float x, y, strength;
 
-	public Zoom( Quality quality ) {
+	public Zoom( PostProcessor postProcessor, Quality quality ) {
+		super(postProcessor);
 		zoomBlur = new ZoomBlur( quality );
 	}
 

@@ -5,6 +5,7 @@ import com.badlogic.gdx.physics.box2d.World;
 import com.bitfire.uracer.game.logic.DriftState;
 import com.bitfire.uracer.game.logic.GameContactListener;
 import com.bitfire.uracer.game.logic.LapState;
+import com.bitfire.uracer.game.logic.Level;
 import com.bitfire.uracer.game.logic.PlayerState;
 import com.bitfire.uracer.hud.Hud;
 import com.bitfire.uracer.hud.HudLabel;
@@ -20,6 +21,8 @@ import com.bitfire.uracer.tweener.accessors.MessageAccessor;
 public class GameData {
 
 	public static ScalingStrategy scalingStrategy;
+	public static GameplaySettings gameSettings;
+	public static Level level;
 
 	public static Tweener tweener;
 	public static World world;
@@ -30,7 +33,7 @@ public class GameData {
 	public static PlayerState playerState;
 	public static DriftState driftState;
 
-	public static void create() {
+	public static void create( GameDifficulty difficulty ) {
 		// computed for a 256px tile size target (need conversion)
 		scalingStrategy = new ScalingStrategy( new Vector2( 1280, 800 ), 70f, 224, 1f );
 		GameData.tweener = createTweener();
@@ -40,6 +43,8 @@ public class GameData {
 		GameData.lapState.reset();
 		GameData.driftState = new DriftState();
 		GameData.driftState.reset();
+
+		GameData.gameSettings = new GameplaySettings( difficulty );
 	}
 
 	public void dispose() {
