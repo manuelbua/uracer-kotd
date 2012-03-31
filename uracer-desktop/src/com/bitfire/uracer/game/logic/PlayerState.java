@@ -3,6 +3,8 @@ package com.bitfire.uracer.game.logic;
 import com.badlogic.gdx.math.Vector2;
 import com.bitfire.uracer.entities.vehicles.Car;
 import com.bitfire.uracer.entities.vehicles.GhostCar;
+import com.bitfire.uracer.events.PlayerStateListener;
+import com.bitfire.uracer.events.PlayerStateNotifier;
 import com.bitfire.uracer.utils.AMath;
 
 public class PlayerState {
@@ -25,9 +27,12 @@ public class PlayerState {
 	// current
 	public int currTileX = 1, currTileY = 1;
 
+	private PlayerStateNotifier notifier;
+
 	public PlayerState( Car car, GhostCar ghost ) {
 		this.car = car;
 		this.ghost = ghost;
+		this.notifier = new PlayerStateNotifier();
 
 		// precompute factors
 		carMaxSpeedSquared = car.getCarDescriptor().carModel.max_speed * car.getCarDescriptor().carModel.max_speed;
@@ -36,7 +41,11 @@ public class PlayerState {
 
 	private int lastTileX = 0, lastTileY = 0;
 
-	public void update( IGameLogicListener listener ) {
+	public void addListener(PlayerStateListener listener) {
+		notifier.addListener( listener );
+	}
+
+	public void tick() {
 		// onTileChanged
 		lastTileX = currTileX;
 		lastTileY = currTileY;
@@ -44,7 +53,7 @@ public class PlayerState {
 		currTileX = (int)tp.x;
 		currTileY = (int)tp.y;
 		if( (lastTileX != currTileX) || (lastTileY != currTileY) ) {
-			listener.onTileChanged( this );
+			notifier.onTileChanged();
 		}
 
 		// speed/force normalized factors

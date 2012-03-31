@@ -46,6 +46,14 @@ public class CarDriftSoundEffect extends CarSoundEffect {
 		if( driftId > -1 ) {
 			drift.stop( driftId );
 		}
+
+		doFadeIn = doFadeOut = false;
+	}
+
+	@Override
+	public void reset() {
+		stop();
+		lastVolume = 0;
 	}
 
 	public void driftBegin() {

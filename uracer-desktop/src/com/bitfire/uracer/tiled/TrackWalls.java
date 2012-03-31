@@ -20,6 +20,7 @@ import com.badlogic.gdx.physics.box2d.World;
 import com.bitfire.uracer.Art;
 import com.bitfire.uracer.Director;
 import com.bitfire.uracer.factories.Box2DFactory;
+import com.bitfire.uracer.game.GameData;
 import com.bitfire.uracer.utils.AMath;
 import com.bitfire.uracer.utils.Convert;
 import com.bitfire.uracer.utils.MapUtils;
@@ -56,7 +57,7 @@ public class TrackWalls {
 
 				ArrayList<Vector2> points = MapUtils.extractPolyData( o.polyline );
 				if( points.size() >= 2 ) {
-					float factor = Director.scalingStrategy.invTileMapZoomFactor;
+					float factor = GameData.scalingStrategy.invTileMapZoomFactor;
 					float wallSizeMt = 0.3f * factor;
 					float[] mags = new float[ points.size() - 1 ];
 
@@ -100,7 +101,7 @@ public class TrackWalls {
 		MathUtils.random.setSeed( Long.MIN_VALUE );
 
 		// scaling factors
-		float factor = Director.scalingStrategy.invTileMapZoomFactor;
+		float factor = GameData.scalingStrategy.invTileMapZoomFactor;
 		float oneOnWorld3DFactor = 1f / OrthographicAlignedStillModel.World3DScalingFactor;
 		float wallHeightMt = 5f * factor * oneOnWorld3DFactor;
 		float textureScalingU = 1f;

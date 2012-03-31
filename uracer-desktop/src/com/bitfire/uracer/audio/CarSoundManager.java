@@ -22,7 +22,7 @@ public class CarSoundManager {
 	}
 
 	public static void dispose() {
-		carEngine.dispose();
+//		carEngine.dispose();
 		carDrift.dispose();
 		carImpact.dispose();
 	}
@@ -35,7 +35,7 @@ public class CarSoundManager {
 		if( player.car.getInputMode() == CarInputMode.InputFromPlayer ) {
 			// TODO when update() will use GameData shared data internally, no params, thus a task-based component
 			// system can be created
-			carEngine.update( player.currSpeedFactor );
+//			carEngine.update( player.currSpeedFactor );
 			carDrift.update( player.currSpeedFactor );
 		}
 	}
@@ -52,5 +52,10 @@ public class CarSoundManager {
 	// crashes
 	public static void carImpacted( float impactForce ) {
 		carImpact.impact( impactForce, player.currSpeedFactor );
+	}
+
+	public static void reset() {
+//		carEngine.reset();
+		carDrift.reset();
 	}
 }

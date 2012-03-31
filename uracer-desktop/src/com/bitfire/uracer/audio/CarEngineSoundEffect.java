@@ -38,12 +38,18 @@ public class CarEngineSoundEffect extends CarSoundEffect {
 		else
 			carEngineId = checkedLoop( carEngine, 1f );
 
-		carEnginePitchStart = carEnginePitchLast = carEnginePitchMin;
-		carEngine.setPitch( carEngineId, carEnginePitchStart );
+		reset();
 	}
 
 	@Override
 	public void stop() {
 		carEngine.stop();
+	}
+
+	@Override
+	public void reset() {
+		stop();
+		carEnginePitchStart = carEnginePitchLast = carEnginePitchMin;
+		carEngine.setPitch( carEngineId, carEnginePitchStart );
 	}
 }

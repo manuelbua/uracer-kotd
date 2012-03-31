@@ -7,9 +7,11 @@ import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.math.Vector3;
 import com.badlogic.gdx.math.collision.BoundingBox;
 import com.bitfire.uracer.Director;
+import com.bitfire.uracer.game.GameData;
+import com.bitfire.uracer.utils.ShaderLoader;
 
 /** The model is expected to follow the z-up convention.
- * 
+ *
  * @author manuel */
 public class OrthographicAlignedStillModel {
 	public UStillModel model;
@@ -17,7 +19,7 @@ public class OrthographicAlignedStillModel {
 	public BoundingBox localBoundingBox = new BoundingBox();
 	public BoundingBox boundingBox = new BoundingBox();
 
-	public static ShaderProgram shaderProgram = null;
+	public static ShaderProgram shader = null;
 
 	// Blender => cube 14.2x14.2 meters = one tile (256px) w/ far plane @48
 	// (256px are 14.2mt w/ 18px/mt)
@@ -38,7 +40,7 @@ public class OrthographicAlignedStillModel {
 
 	// explicitle initialize the static iShader member
 	// (Android: statics need to be re-initialized!)
-	public static void initialize() {
+	private void loadShaders() {
 		// @formatter:off
 		String vertexShader =
 			"uniform mat4 u_mvpMatrix;					\n" +
@@ -63,13 +65,15 @@ public class OrthographicAlignedStillModel {
 			"}														\n";
 		// @formatter:on
 
-		ShaderProgram.pedantic = false;
-		OrthographicAlignedStillModel.shaderProgram = new ShaderProgram( vertexShader, fragmentShader );
-
-		if( OrthographicAlignedStillModel.shaderProgram.isCompiled() == false ) throw new IllegalStateException( OrthographicAlignedStillModel.shaderProgram.getLog() );
+		if( !(shader instanceof ShaderProgram) ) {
+			ShaderProgram.pedantic = false;
+			shader = ShaderLoader.fromString( vertexShader, fragmentShader, "OASM::vert", "OASM::frag" );
+		}
 	}
 
 	public OrthographicAlignedStillModel( StillModel aModel, Material material ) {
+		loadShaders();
+
 		try {
 			model = new UStillModel( aModel.subMeshes.clone() );
 
@@ -79,7 +83,7 @@ public class OrthographicAlignedStillModel {
 			model.getBoundingBox( localBoundingBox );
 			boundingBox.set( localBoundingBox );
 
-			setScalingFactor( Director.scalingStrategy.meshScaleFactor * BlenderToURacer * Director.scalingStrategy.to256 );
+			setScalingFactor( GameData.scalingStrategy.meshScaleFactor * BlenderToURacer * GameData.scalingStrategy.to256 );
 			setPosition( 0, 0 );
 			setRotation( 0, 0, 0, 0 );
 		}
@@ -103,7 +107,7 @@ public class OrthographicAlignedStillModel {
 	}
 
 	/** Sets the world position in pixels, top-left origin.
-	 * 
+	 *
 	 * @param posPxX
 	 * @param posPxY */
 	public void setPosition( float posPxX, float posPxY ) {

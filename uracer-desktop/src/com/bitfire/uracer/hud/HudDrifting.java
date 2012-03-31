@@ -25,7 +25,6 @@ public class HudDrifting {
 	private static final int MaxLabelResult = 3;
 	private int nextLabelResult = 0;
 
-	private DriftState drift;
 	private Vector2 heading = new Vector2();
 
 	public HudDrifting( Car car ) {
@@ -33,8 +32,6 @@ public class HudDrifting {
 		model = playerCar.getCarModel();
 		carWidthPx = (int)Convert.mt2px( model.width );
 		carLengthPx = (int)Convert.mt2px( model.length );
-
-		drift = GameData.driftState;
 
 		labelRealtime = new HudLabel( Art.fontCurseYRbig, "99.99", 0.5f );
 		labelRealtime.setAlpha( 0 );
@@ -70,11 +67,13 @@ public class HudDrifting {
 	private float lastDistance = 0f;
 
 	public void render( SpriteBatch batch ) {
+		DriftState drift = GameData.driftState;
+
 		// update from subframe-interpolated player position
 		Vector2 pos = tmpv.set( Director.screenPosForPx( playerCar.state().position ) );
 
-		float secRatio = 1f;
-		float distance = 0f;
+		// float secRatio = 1f;
+		// float distance = 0f;
 		if( drift.isDrifting ) {
 			// secRatio = AMath.clamp( (System.currentTimeMillis() - drift.driftStartTime) / 2000f, 0, 1);
 			// labelRealtime.setAlpha( secRatio );
@@ -106,6 +105,7 @@ public class HudDrifting {
 	}
 
 	public void onEndDrift() {
+		DriftState drift = GameData.driftState;
 		Vector2 pos = tmpv.set( Director.screenPosForPx( playerCar.state().position ) );
 
 		labelRealtime.fadeOut( 300 );

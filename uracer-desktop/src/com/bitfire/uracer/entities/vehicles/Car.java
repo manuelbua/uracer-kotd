@@ -14,7 +14,6 @@ import com.bitfire.uracer.Art;
 import com.bitfire.uracer.Config;
 import com.bitfire.uracer.Director;
 import com.bitfire.uracer.Input;
-import com.bitfire.uracer.audio.CarSoundManager;
 import com.bitfire.uracer.carsimulation.CarDescriptor;
 import com.bitfire.uracer.carsimulation.CarForces;
 import com.bitfire.uracer.carsimulation.CarInput;
@@ -25,8 +24,9 @@ import com.bitfire.uracer.carsimulation.Recorder;
 import com.bitfire.uracer.debug.Debug;
 import com.bitfire.uracer.entities.Box2dEntity;
 import com.bitfire.uracer.entities.EntityManager;
+import com.bitfire.uracer.events.CarListener;
+import com.bitfire.uracer.events.CarNotifier;
 import com.bitfire.uracer.factories.CarFactory.CarType;
-import com.bitfire.uracer.game.GameData;
 import com.bitfire.uracer.utils.AMath;
 import com.bitfire.uracer.utils.Convert;
 import com.bitfire.uracer.utils.MapUtils;
@@ -49,10 +49,10 @@ public class Car extends Box2dEntity {
 	private float startOrient;
 
 	private Vector2 tilePosition = new Vector2();
+	private CarNotifier notifier = new CarNotifier();
 
 	protected Car( World world, CarGraphics graphics, CarModel model, CarType type, CarInputMode inputMode, Vector2 position, float orientation ) {
 		this.graphics = graphics;
-		this.recorder = Recorder.instance();
 		this.carInputMode = inputMode;
 		this.carType = type;
 		this.startPos = new Vector2( position );
@@ -86,6 +86,10 @@ public class Car extends Box2dEntity {
 		return car;
 	}
 
+	public void addListener(CarListener listener) {
+		notifier.addListener( listener );
+	}
+
 	public CarType getCarType() {
 		return carType;
 	}
@@ -116,6 +120,10 @@ public class Car extends Box2dEntity {
 
 	public CarSimulator getSimulator() {
 		return carSim;
+	}
+
+	public CarForces getForces() {
+		return carForces;
 	}
 
 	public void reset() {
@@ -296,21 +304,14 @@ public class Car extends Box2dEntity {
 		forces.velocity_y = carDesc.velocity_wc.y;
 		forces.angularVelocity = carDesc.angularvelocity;
 
-		if( recorder.isRecording() ) {
-			recorder.add( forces );
-		}
+		notifier.onComputeForces( forces );
 	}
 
 
 	public void onCollide(Fixture other, Vector2 normalImpulses) {
 		impacts++;
 
-		// update DriftInfo in case of collision
-		if( carInputMode == CarInputMode.InputFromPlayer ) {
-			CarSoundManager.carImpacted( normalImpulses.len() );
-			GameData.driftState.invalidateByCollision();
-		}
-
+		notifier.onCollision(this, other, normalImpulses);
 	}
 
 	@Override

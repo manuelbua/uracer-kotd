@@ -9,14 +9,13 @@ import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.math.Vector3;
 import com.badlogic.gdx.physics.box2d.Body;
 import com.badlogic.gdx.physics.box2d.World;
+import com.bitfire.uracer.game.GameData;
 import com.bitfire.uracer.game.GameplaySettings;
 import com.bitfire.uracer.game.logic.Level;
-import com.bitfire.uracer.tiled.ScalingStrategy;
 import com.bitfire.uracer.utils.Convert;
 
 public class Director {
 	public static Vector2 worldSizeScaledPx, worldSizeScaledMt, worldSizeTiles;
-	public static ScalingStrategy scalingStrategy;
 	public static Level currentLevel;
 	public static GameplaySettings gameplaySettings;
 	public static Rectangle boundsPx;
@@ -44,12 +43,9 @@ public class Director {
 		gameplaySettings = null;
 		cameraRect = new Rectangle();
 
-		// computed for a 256px tile size target (need conversion)
-		scalingStrategy = new ScalingStrategy( new Vector2( 1280, 800 ), 70f, 224, 1f );
-
 		// everything has been setup on a 256px tile, scale back if that's the
 		// case
-		Config.Physics.PixelsPerMeter /= scalingStrategy.targetScreenRatio / scalingStrategy.to256;
+		Config.Physics.PixelsPerMeter /= GameData.scalingStrategy.targetScreenRatio / GameData.scalingStrategy.to256;
 		// System.out.println("ppm=" + Config.PixelsPerMeter);
 
 	}
@@ -65,15 +61,15 @@ public class Director {
 
 	public static Level loadLevel( World world, String levelName, GameplaySettings playSettings, boolean nightMode ) {
 		// construct tilemap, cameras and renderer
-		Level level = new Level( world, levelName, scalingStrategy, nightMode );
+		Level level = new Level( world, levelName, GameData.scalingStrategy, nightMode );
 
 		// setup converter
-		Convert.init( scalingStrategy, level.map );
+		Convert.init( GameData.scalingStrategy, level.map );
 
 		// compute world size
 		Director.worldSizeTiles.set( level.map.width, level.map.height );
 		Director.worldSizeScaledPx.set( level.map.width * level.map.tileWidth, level.map.height * level.map.tileHeight );
-		Director.worldSizeScaledPx.mul( scalingStrategy.invTileMapZoomFactor );
+		Director.worldSizeScaledPx.mul( GameData.scalingStrategy.invTileMapZoomFactor );
 		Director.worldSizeScaledMt.set( Convert.px2mt( worldSizeScaledPx ) );
 
 		// compute camera bounds
@@ -83,7 +79,7 @@ public class Director {
 		boundsPx.y = Director.worldSizeScaledPx.y - halfViewport.y;
 
 		// construct level objects from tmx definitions
-		level.construct( world );
+		level.construct();
 
 		currentLevel = level;
 		gameplaySettings = playSettings;

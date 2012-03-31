@@ -60,7 +60,7 @@ public class ZoomBlur extends Filter<ZoomBlur> {
 	}
 
 	public ZoomBlur( Quality quality ) {
-		super( ShaderLoader.createShader( "zoom-blur", "zoom-blur", "#define BLUR_LENGTH " + quality.length + "\n#define ONE_ON_BLUR_LENGTH " + 1f
+		super( ShaderLoader.fromFile( "zoom-blur", "zoom-blur", "#define BLUR_LENGTH " + quality.length + "\n#define ONE_ON_BLUR_LENGTH " + 1f
 				/ (float)quality.length ) );
 		this.blur_len = quality.length;
 		rebind();

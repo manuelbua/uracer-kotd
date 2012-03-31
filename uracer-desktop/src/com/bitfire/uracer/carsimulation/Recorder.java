@@ -10,18 +10,7 @@ public class Recorder {
 	// replay data
 	private Replay replay;
 
-	private static Recorder instance;
-
-	public static Recorder create() {
-		Recorder.instance = new Recorder();
-		return Recorder.instance;
-	}
-
-	public static Recorder instance() {
-		return instance;
-	}
-
-	private Recorder() {
+	public Recorder() {
 		isRecording = false;
 		replay = null;
 	}

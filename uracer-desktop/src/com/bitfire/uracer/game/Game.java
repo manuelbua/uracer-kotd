@@ -17,8 +17,6 @@ import com.bitfire.uracer.effects.TrackEffects;
 import com.bitfire.uracer.entities.EntityManager;
 import com.bitfire.uracer.entities.vehicles.Car;
 import com.bitfire.uracer.game.logic.DirectorController;
-import com.bitfire.uracer.game.logic.DriftState;
-import com.bitfire.uracer.game.logic.LapState;
 import com.bitfire.uracer.game.logic.Level;
 import com.bitfire.uracer.hud.Hud;
 import com.bitfire.uracer.messager.Messager;
@@ -35,16 +33,17 @@ import com.bitfire.uracer.tiled.LevelRenderer;
 public class Game implements Disposable {
 	private Level level = null;
 
+
 	// config
-	public GameplaySettings gameSettings;
+	public GameplaySettings gameSettings = null;
 
 	// logic
-	private GameLogic logic = null;
-	private DirectorController controller;
+	private GameLogic gameLogic = null;
+	private DirectorController controller = null;
 
 	// post-processing
-	private PostProcessor postProcessor;
-	private Bloom bloom = null;
+	private PostProcessor postProcessor = null;
+	private Bloom bloom= null;
 	private Bloom.Settings bloomSettings = null;
 	private Zoom zoom = null;
 
@@ -55,16 +54,15 @@ public class Game implements Disposable {
 		gameSettings = GameplaySettings.create( difficulty );
 		CarSoundManager.load();	// early load
 		Messager.init();
+		EntityManager.create();
+
+		GameData.create();
 
 		{
 			Director.create( Gdx.graphics.getWidth(), Gdx.graphics.getHeight() );
 			{
-				Art.scaleFonts( Director.scalingStrategy.invTileMapZoomFactor );
-
-				GameData.create( this );
+				Art.scaleFonts( GameData.scalingStrategy.invTileMapZoomFactor );
 				{
-					GameData.lapState = new LapState();
-					GameData.lapState.reset();
 					level = Director.loadLevel( GameData.world, levelName, gameSettings, false /* night mode */);
 					{
 						controller = new DirectorController( Config.Graphics.CameraInterpolationMode, Director.boundsPx );
@@ -72,13 +70,6 @@ public class Game implements Disposable {
 						if( Config.Graphics.EnablePostProcessingFx ) {
 							setupPostProcessing( level );
 						}
-
-						GameData.listener = new GameLogicListener( level );
-						{
-							logic = new GameLogic( this, GameData.listener );
-							GameData.driftState = new DriftState( GameData.listener );
-							GameData.driftState.reset();
-						} // listener
 
 						GameData.playerState = level.getPlayerState();
 						{
@@ -94,7 +85,12 @@ public class Game implements Disposable {
 			} // Director/Config/scalingStrategy
 		} // this
 
-		// Messager.show( "FUCK! BERLU! SCONI!", 600, MessageType.Good, MessagePosition.Bottom, MessageSize.Big );
+		// setup listeners
+		gameLogic = new GameLogic();
+		GameData.driftState.addListener( gameLogic );
+		GameData.driftState.addListener( GameData.hud );
+		GameData.playerState.addListener( gameLogic );
+		GameData.playerState.car.addListener( gameLogic );
 
 		// Issues may arise on Tegra2 (Asus Transformer) devices if the buffers'
 		// count is higher than 10
@@ -139,11 +135,7 @@ public class Game implements Disposable {
 
 	// private float prevFactor = 0;
 	public boolean tick() {
-		if( !logic.tick() ) return false;
-
-		GameData.hud.tick();
-		TrackEffects.tick();
-		CarSoundManager.tick();
+		if(!gameLogic.onTick()) return false;
 
 		// post-processor debug ------------------------------
 		// float factor = player.currSpeedFactor * 1.75f;
@@ -171,7 +163,7 @@ public class Game implements Disposable {
 		// }
 		// ---------------------------------------------------
 
-		Debug.update();
+		Debug.tick();
 		return true;
 	}
 
@@ -253,6 +245,7 @@ public class Game implements Disposable {
 			if( Config.Graphics.EnablePostProcessingFx ) postProcessor.render();
 		}
 
+
 		//
 		// debug
 		//
@@ -287,25 +280,5 @@ public class Game implements Disposable {
 
 	public void resume() {
 		postProcessor.rebind();
-	}
-
-	public Level getLevel() {
-		return level;
-	}
-
-	public void restart() {
-		Messager.reset();
-		level.reset();
-		logic.restart();
-
-		TrackEffects.reset();
-	}
-
-	public void reset() {
-		Messager.reset();
-		level.reset();
-		logic.reset();
-
-		TrackEffects.reset();
 	}
 }

@@ -11,13 +11,14 @@ import com.bitfire.uracer.effects.SmokeTrails;
 import com.bitfire.uracer.effects.TrackEffects;
 import com.bitfire.uracer.effects.TrackEffects.Effects;
 import com.bitfire.uracer.entities.vehicles.Car;
+import com.bitfire.uracer.events.DriftStateListener;
 import com.bitfire.uracer.game.GameData;
 import com.bitfire.uracer.game.logic.DriftState;
 import com.bitfire.uracer.game.logic.LapState;
 import com.bitfire.uracer.messager.Messager;
 import com.bitfire.uracer.utils.NumberString;
 
-public class Hud {
+public class Hud implements DriftStateListener {
 	private HudLabel best, curr, last;
 	private Matrix4 topLeftOrigin, identity;
 	private HudDebugMeter meterLatForce, meterSkidMarks, meterSmoke;
@@ -26,7 +27,7 @@ public class Hud {
 	private HudDrifting hudDrift;
 
 	// effects
-	public Hud( Car car) {
+	public Hud( Car car ) {
 
 		// y-flip
 		topLeftOrigin = new Matrix4();
@@ -42,7 +43,7 @@ public class Hud {
 		last = new HudLabel( Art.fontCurseYR, "LAST  TIME\n-.----" );
 
 		// drifting component
-		hudDrift = new HudDrifting( car);
+		hudDrift = new HudDrifting( car );
 
 		curr.setPosition( gridX, 50 );
 		last.setPosition( gridX * 3, 50 );
@@ -66,10 +67,24 @@ public class Hud {
 	public void dispose() {
 	}
 
+	@Override
+	public void onBeginDrift() {
+		hudDrift.onBeginDrift();
+	}
+
+	@Override
+	public void onEndDrift() {
+		hudDrift.onEndDrift();
+	}
+
 	public void tick() {
 		Messager.tick();
 		hudDrift.tick();
 		updateLapTimes();
+	}
+
+	public void reset() {
+		hudDrift.reset();
 	}
 
 	private void updateLapTimes() {
@@ -144,14 +159,5 @@ public class Hud {
 
 		meterSmoke.setValue( TrackEffects.getParticleCount( Effects.SmokeTrails ) );
 		meterSmoke.render( batch );
-	}
-
-	/** Expose components
-	 * TODO find a better way for this
-	 *
-	 * @return */
-
-	public HudDrifting getDrifting() {
-		return hudDrift;
 	}
 }

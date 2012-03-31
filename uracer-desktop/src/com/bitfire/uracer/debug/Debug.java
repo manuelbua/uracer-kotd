@@ -89,7 +89,7 @@ public class Debug {
 		gfxStats.dispose();
 	}
 
-	public static void update() {
+	public static void tick() {
 		gfxStats.update();
 
 		long time = System.nanoTime();

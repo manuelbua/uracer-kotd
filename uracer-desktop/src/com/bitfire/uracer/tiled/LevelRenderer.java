@@ -147,7 +147,7 @@ public class LevelRenderer {
 
 		float meshZ = -(camPersp.far - camPersp.position.z);
 
-		ShaderProgram shader = OrthographicAlignedStillModel.shaderProgram;
+		ShaderProgram shader = OrthographicAlignedStillModel.shader;
 		shader.begin();
 
 		boolean needRebind = false;
@@ -192,7 +192,7 @@ public class LevelRenderer {
 				m.material.bind( shader );
 			}
 
-			submesh.mesh.render( OrthographicAlignedStillModel.shaderProgram, submesh.primitiveType );
+			submesh.mesh.render( OrthographicAlignedStillModel.shader, submesh.primitiveType );
 			renderedCount++;
 		}
 

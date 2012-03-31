@@ -87,4 +87,9 @@ public class CarImpactSoundEffect extends CarSoundEffect {
 	public void stop() {
 		// unused
 	}
+
+	@Override
+	public void reset() {
+		// unused
+	}
 }

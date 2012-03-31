@@ -39,7 +39,7 @@ public class Combine extends Filter<Combine> {
 	private Texture inputTexture2 = null;
 
 	public Combine() {
-		super( ShaderLoader.createShader( "screenspace", "combine" ) );
+		super( ShaderLoader.fromFile( "screenspace", "combine" ) );
 		rebind();
 	}
 

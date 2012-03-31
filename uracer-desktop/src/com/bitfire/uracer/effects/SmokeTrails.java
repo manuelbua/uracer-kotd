@@ -6,7 +6,6 @@ import com.badlogic.gdx.graphics.g2d.ParticleEmitter;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.math.Vector2;
 import com.bitfire.uracer.Art;
-import com.bitfire.uracer.Director;
 import com.bitfire.uracer.URacer;
 import com.bitfire.uracer.effects.TrackEffects.Effects;
 import com.bitfire.uracer.entities.vehicles.Car;
@@ -54,7 +53,7 @@ public class SmokeTrails extends TrackEffect {
 		}
 
 		public void setScaleMul( float value ) {
-			baseEmitter.getScale().setHigh( OriginalParticleScaling * value * Director.scalingStrategy.invTileMapZoomFactor );
+			baseEmitter.getScale().setHigh( OriginalParticleScaling * value * GameData.scalingStrategy.invTileMapZoomFactor );
 		}
 
 		public void setEmissionMul( float value ) {

@@ -43,7 +43,7 @@ public class Convolve1D extends Filter<Convolve1D> {
 	}
 
 	public Convolve1D( int length, float[] weights, float[] offsets ) {
-		super( ShaderLoader.createShader( "convolve-1d", "convolve-1d", "#define LENGTH " + length ) );
+		super( ShaderLoader.fromFile( "convolve-1d", "convolve-1d", "#define LENGTH " + length ) );
 		this.length = length;
 		this.weights = weights;
 		this.offsets = offsets;

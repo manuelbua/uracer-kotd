@@ -25,15 +25,13 @@ import com.badlogic.gdx.physics.box2d.World;
 import com.bitfire.uracer.Config;
 import com.bitfire.uracer.Director;
 import com.bitfire.uracer.carsimulation.CarModel;
-import com.bitfire.uracer.carsimulation.Recorder;
-import com.bitfire.uracer.carsimulation.Replay;
 import com.bitfire.uracer.entities.CollisionFilters;
-import com.bitfire.uracer.entities.EntityManager;
 import com.bitfire.uracer.entities.vehicles.Car;
 import com.bitfire.uracer.entities.vehicles.GhostCar;
 import com.bitfire.uracer.factories.CarFactory;
 import com.bitfire.uracer.factories.CarFactory.CarType;
 import com.bitfire.uracer.factories.ModelFactory;
+import com.bitfire.uracer.game.GameData;
 import com.bitfire.uracer.tiled.LevelRenderer;
 import com.bitfire.uracer.tiled.OrthographicAlignedStillModel;
 import com.bitfire.uracer.tiled.ScalingStrategy;
@@ -69,7 +67,6 @@ public class Level {
 
 	// player recording data
 	private PlayerState player;
-	private Recorder recorder;
 	private boolean nightMode;
 
 	// lighting system
@@ -101,12 +98,8 @@ public class Level {
 
 	// TODO remove this 2-stage construction, the "static" problem on Android is no more.
 	/* 2-stage construction, avoid <static> problems in Android */
-	public void construct(World world) {
+	public void construct() {
 		syncWithCam( Director.getCamera() );
-		OrthographicAlignedStillModel.initialize();
-
-		EntityManager.create();
-		recorder = Recorder.create();
 
 		createMeshes();
 		player = createPlayer( map );
@@ -130,17 +123,17 @@ public class Level {
 	public void syncWithCam( OrthographicCamera orthoCam ) {
 		// scale position
 		camOrtho.position.set( orthoCam.position );
-		camOrtho.position.mul( Director.scalingStrategy.tileMapZoomFactor );
+		camOrtho.position.mul( GameData.scalingStrategy.tileMapZoomFactor );
 
 		camOrtho.viewportWidth = Gdx.graphics.getWidth();
 		camOrtho.viewportHeight = Gdx.graphics.getHeight();
-		camOrtho.zoom = Director.scalingStrategy.tileMapZoomFactor;
+		camOrtho.zoom = GameData.scalingStrategy.tileMapZoomFactor;
 		camOrtho.update();
 
 		camPersp.viewportWidth = camOrtho.viewportWidth;
 		camPersp.viewportHeight = camOrtho.viewportHeight;
 		camPersp.position.set( camOrtho.position.x, camOrtho.position.y, camPerspElevation );
-		camPersp.fieldOfView = Director.scalingStrategy.verticalFov;
+		camPersp.fieldOfView = GameData.scalingStrategy.verticalFov;
 		camPersp.update();
 	}
 
@@ -189,7 +182,7 @@ public class Level {
 		float perspPlaneFar = 240;
 		camPerspElevation = 100;
 
-		camPersp = new PerspectiveCamera( Director.scalingStrategy.verticalFov, w, h );
+		camPersp = new PerspectiveCamera( GameData.scalingStrategy.verticalFov, w, h );
 		camPersp.near = perspPlaneNear;
 		camPersp.far = perspPlaneFar;
 		camPersp.lookAt( 0, 0, -1 );
@@ -310,7 +303,7 @@ public class Level {
 			// MathUtils.random(0,1),
 			1f, .85f, .15f, .75f );
 			TiledObject o = group.objects.get( i );
-			pos.set( o.x, o.y ).mul( Director.scalingStrategy.invTileMapZoomFactor );
+			pos.set( o.x, o.y ).mul( GameData.scalingStrategy.invTileMapZoomFactor );
 			pos.y = Director.worldSizeScaledPx.y - pos.y;
 			pos.set( Convert.px2mt( pos ) );
 
@@ -339,8 +332,8 @@ public class Level {
 		playerHeadlights.setDirection( ang );
 		playerHeadlights.setPosition( px, py );
 
-		rayHandler.setCombinedMatrix( Director.getMatViewProjMt(), Convert.px2mt( camOrtho.position.x * Director.scalingStrategy.invTileMapZoomFactor ),
-				Convert.px2mt( camOrtho.position.y * Director.scalingStrategy.invTileMapZoomFactor ), Convert.px2mt( camOrtho.viewportWidth ),
+		rayHandler.setCombinedMatrix( Director.getMatViewProjMt(), Convert.px2mt( camOrtho.position.x * GameData.scalingStrategy.invTileMapZoomFactor ),
+				Convert.px2mt( camOrtho.position.y * GameData.scalingStrategy.invTileMapZoomFactor ), Convert.px2mt( camOrtho.viewportWidth ),
 				Convert.px2mt( camOrtho.viewportHeight ) );
 
 		rayHandler.update();
@@ -364,26 +357,5 @@ public class Level {
 
 	public boolean isNightMode() {
 		return nightMode;
-	}
-
-	public void beginRecording( Replay outputBuffer, long lapStartTimeNs ) {
-		recorder.beginRecording( player.car, outputBuffer, lapStartTimeNs );
-	}
-
-	public void endRecording() {
-		recorder.endRecording();
-	}
-
-	public boolean isRecording() {
-		return recorder.isRecording();
-	}
-
-	public void discardRecording() {
-		recorder.reset();
-	}
-
-	public void reset() {
-		player.reset();
-		recorder.reset();
 	}
 }

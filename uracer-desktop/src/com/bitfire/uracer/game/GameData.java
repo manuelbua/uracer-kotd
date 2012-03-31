@@ -9,16 +9,18 @@ import com.bitfire.uracer.game.logic.PlayerState;
 import com.bitfire.uracer.hud.Hud;
 import com.bitfire.uracer.hud.HudLabel;
 import com.bitfire.uracer.messager.Message;
+import com.bitfire.uracer.tiled.ScalingStrategy;
 import com.bitfire.uracer.tweener.Tweener;
 import com.bitfire.uracer.tweener.accessors.HudLabelAccessor;
 import com.bitfire.uracer.tweener.accessors.MessageAccessor;
 
-/** Encapsulates some objects, abstracting the dynamic state of the game.
+/** Encapsulates and abstracts the dynamic state of the game.
  *
  * @author bmanuel */
 public class GameData {
 
-	public static Game game;
+	public static ScalingStrategy scalingStrategy;
+
 	public static Tweener tweener;
 	public static World world;
 	public static Hud hud;
@@ -28,14 +30,16 @@ public class GameData {
 	public static PlayerState playerState;
 	public static DriftState driftState;
 
-	// listeners
-	public static GameLogicListener listener;
-
-
-	public static void create( Game game ) {
-		GameData.game = game;
+	public static void create() {
+		// computed for a 256px tile size target (need conversion)
+		scalingStrategy = new ScalingStrategy( new Vector2( 1280, 800 ), 70f, 224, 1f );
 		GameData.tweener = createTweener();
 		GameData.world = createWorld();
+
+		GameData.lapState = new LapState();
+		GameData.lapState.reset();
+		GameData.driftState = new DriftState();
+		GameData.driftState.reset();
 	}
 
 	public void dispose() {

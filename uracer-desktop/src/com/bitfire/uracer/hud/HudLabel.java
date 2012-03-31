@@ -9,7 +9,6 @@ import com.badlogic.gdx.graphics.g2d.BitmapFont;
 import com.badlogic.gdx.graphics.g2d.BitmapFont.TextBounds;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.math.Vector2;
-import com.bitfire.uracer.Director;
 import com.bitfire.uracer.game.GameData;
 import com.bitfire.uracer.tweener.accessors.HudLabelAccessor;
 
@@ -114,7 +113,7 @@ public class HudLabel {
 
 	public void render( SpriteBatch batch ) {
 		if( alpha > 0 ) {
-			font.setScale( scale * Director.scalingStrategy.invTileMapZoomFactor );
+			font.setScale( scale * GameData.scalingStrategy.invTileMapZoomFactor );
 			font.setColor( 1, 1, 1, alpha );
 
 			font.drawMultiLine( batch, what, x, y );
