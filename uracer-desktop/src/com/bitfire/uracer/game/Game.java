@@ -119,7 +119,7 @@ public class Game implements Disposable, GameLogicListener {
 
 	private void setupPostProcessing( int width, int height, Level level ) {
 		postProcessor = new PostProcessor( width, height, false /* depth */, false /* alpha */, Config.isDesktop /* 32
-																																					 * bits */);
+																												 * bits */);
 		bloom = new Bloom( postProcessor, Config.PostProcessing.RttFboWidth, Config.PostProcessing.RttFboHeight );
 
 		// Bloom.Settings bs = new Bloom.Settings( "arrogance-1 / rtt=0.25 / @1920x1050", BlurType.Gaussian5x5b, 1, 1,
@@ -131,9 +131,9 @@ public class Game implements Disposable, GameLogicListener {
 		bloomSettings = new Bloom.Settings( "subtle", Config.PostProcessing.BlurType, 1, 1.5f, threshold, 1f, 0.5f, 1f, 1.5f );
 		bloom.setSettings( bloomSettings );
 
-		// zoom = new Zoom( postProcessor, Config.PostProcessing.ZoomQuality );
+		zoom = new Zoom( postProcessor, Config.PostProcessing.ZoomQuality );
 
-		// postProcessor.addEffect( zoom );
+		postProcessor.addEffect( zoom );
 		postProcessor.addEffect( bloom );
 	}
 
@@ -145,8 +145,8 @@ public class Game implements Disposable, GameLogicListener {
 
 		// post-processor debug ------------------------------
 		// float factor = player.currSpeedFactor * 1.75f;
-		// float factor = DriftInfo.get().driftStrength * 2;
-		// factor = 1.8f;
+//		float factor = GameData.driftState.driftStrength * 2;
+		float factor = 1 - (URacer.timeMultiplier - 0.3f) / (Config.Physics.PhysicsTimeMultiplier - 0.3f);
 
 		// factor = AMath.clamp(AMath.lerp( prevFactor, factor, 0.15f ),0,2);
 		// prevFactor = factor;
@@ -155,18 +155,23 @@ public class Game implements Disposable, GameLogicListener {
 		// bloom.setBaseSaturation( bloomSettings.baseSaturation + 0.5f * (1-factor) );
 		// bloom.setBloomIntesity( bloomSettings.bloomIntensity * factor );
 		// }
-		//
-		// if( Config.Graphics.EnablePostProcessingFx && zoom != null ) {
-		// zoom.setOrigin( Director.screenPosFor( player.car.getBody() ) );
-		// zoom.setStrength( -0.01f * factor );
-		// }
 
-		// if( Config.Graphics.EnablePostProcessingFx && bloom != null && zoom != null ) {
-		// bloom.setBaseSaturation( 0.5f - 0.8f * factor );
-		// bloom.setBloomIntesity( 1.0f + 0.25f * factor );
-		// bloom.setBloomSaturation( 1.5f + ((level.isNightMode() && !Config.Graphics.DumbNightMode) ? -0.5f : 1.5f) *
-		// factor );
-		// }
+		if( Config.Graphics.EnablePostProcessingFx && zoom != null ) {
+			zoom.setOrigin( Director.screenPosFor( GameData.playerState.car.getBody() ) );
+			zoom.setStrength( -0.1f * factor );
+		}
+
+		if( Config.Graphics.EnablePostProcessingFx && bloom != null && zoom != null ) {
+			bloom.setBaseSaturation( 0.5f - 0.8f * factor );
+			bloom.setBloomSaturation( 1.5f - factor * 0.25f );
+			bloom.setBloomIntesity( 1f + factor * 1.5f );
+		}
+
+//		if( Config.Graphics.EnablePostProcessingFx && bloom != null && zoom != null ) {
+//			bloom.setBaseSaturation( 0.5f - 0.8f * factor );
+//			bloom.setBloomIntesity( 1.0f + 0.25f * factor );
+//			bloom.setBloomSaturation( 1.5f + ((level.isNightMode() && !Config.Graphics.DumbNightMode) ? -0.5f : 1.5f) * factor );
+//		}
 		// ---------------------------------------------------
 
 		Debug.tick();
