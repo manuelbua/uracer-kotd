@@ -92,7 +92,7 @@ public class HudDrifting {
 		//
 		// draw earned/lost seconds
 		//
-		labelRealtime.setString( "+" + NumberString.format( drift.driftSeconds ) );
+		labelRealtime.setString( "+" + NumberString.format( drift.driftSeconds() ) );
 		labelRealtime.render( batch );
 
 		//
@@ -118,22 +118,26 @@ public class HudDrifting {
 
 		result.setPosition( pos.x - heading.x * (carWidthPx + result.halfBoundsWidth), pos.y - heading.y * (carLengthPx + result.halfBoundsHeight) );
 
+		float driftSeconds = drift.driftSeconds();
+
 		// premature end drift event due to collision?
 		if( drift.hasCollided ) {
-			result.setString( "-" + NumberString.format( drift.driftSeconds ) );
+			result.setString( "-" + NumberString.format( driftSeconds ) );
 			result.setFont( Art.fontCurseRbig );
 		} else {
-			result.setString( "+" + NumberString.format( drift.driftSeconds ) );
+			result.setString( "+" + NumberString.format( driftSeconds ) );
 			result.setFont( Art.fontCurseGbig );
 
-			if( drift.driftSeconds >= 1 && drift.driftSeconds < 3f ) {
-				Messager.enqueue( "NICE ONE!\n+" + NumberString.format( drift.driftSeconds ) + "  seconds!", 1f, MessageType.Good, MessagePosition.Middle,
+			String seconds = NumberString.format(driftSeconds) + "  seconds!";
+
+			if( driftSeconds >= 1 && driftSeconds < 3f ) {
+				Messager.enqueue( "NICE ONE!\n+" + seconds, 1f, MessageType.Good, MessagePosition.Middle,
 						MessageSize.Big );
-			} else if( drift.driftSeconds >= 3f && drift.driftSeconds < 5f ) {
-				Messager.enqueue( "FANTASTIC!\n+" + NumberString.format( drift.driftSeconds ) + "  seconds!", 1f, MessageType.Good, MessagePosition.Middle,
+			} else if( driftSeconds >= 3f && driftSeconds < 5f ) {
+				Messager.enqueue( "FANTASTIC!\n+" + seconds, 1f, MessageType.Good, MessagePosition.Middle,
 						MessageSize.Big );
-			} else if( drift.driftSeconds >= 5f ) {
-				Messager.enqueue( "UNREAL!\n+" + NumberString.format( drift.driftSeconds ) + "  seconds!", 1f, MessageType.Good, MessagePosition.Bottom, MessageSize.Big );
+			} else if( driftSeconds >= 5f ) {
+				Messager.enqueue( "UNREAL!\n+" + seconds, 1f, MessageType.Good, MessagePosition.Bottom, MessageSize.Big );
 			}
 		}
 

@@ -1,23 +1,25 @@
 package com.bitfire.uracer.game.logic;
 
+import com.badlogic.gdx.utils.Disposable;
+import com.bitfire.uracer.Time;
 import com.bitfire.uracer.entities.vehicles.Car;
 import com.bitfire.uracer.events.DriftStateListener;
 import com.bitfire.uracer.events.DriftStateNotifier;
 import com.bitfire.uracer.game.GameData;
 import com.bitfire.uracer.utils.AMath;
 
-public class DriftState {
-	public float driftSeconds = 0;
+public class DriftState implements Disposable {
 	public boolean isDrifting = false;
 	public boolean hasCollided = false;
 	public float lateralForcesFront = 0, lateralForcesRear = 0;
 	public float driftStrength;
 
-	public long driftStartTime = 0;
+//	public long driftStartTime = 0;
 
 	private long collisionTime;
 	private float lastRear = 0, lastFront = 0;
 
+	private Time time;
 	private DriftStateNotifier notifier;
 
 	public DriftState() {
@@ -25,9 +27,14 @@ public class DriftState {
 		reset();
 	}
 
+	@Override
+	public void dispose() {
+		time = null;
+	}
+
 	public void reset() {
+		time = new Time();
 		lastFront = lastRear = 0;
-		driftSeconds = 0;
 		hasCollided = false;
 		isDrifting = false;
 		collisionTime = 0;
@@ -47,11 +54,13 @@ public class DriftState {
 		collisionTime = System.currentTimeMillis();
 		isDrifting = false;
 		hasCollided = true;
-		updateDriftTimeSeconds();
+		time.reset();
 		notifier.onEndDrift();
 	}
 
 	public void tick() {
+		time.tick();
+
 		Car car = GameData.playerState.car;
 		float oneOnMaxGrip = 1f / car.getCarModel().max_grip;
 
@@ -64,11 +73,6 @@ public class DriftState {
 
 		// compute strength
 		driftStrength = AMath.fixup( (lateralForcesFront + lateralForcesRear) * 0.5f );
-
-		if( isDrifting ) {
-			// update in-drift time
-			updateDriftTimeSeconds();
-		}
 
 		if( hasCollided ) {
 			// ignore drifts for a couple of seconds
@@ -84,13 +88,14 @@ public class DriftState {
 				if( driftStrength > 0.4f && vel > 20 ) {
 					isDrifting = true;
 					hasCollided = false;
-					driftStartTime = System.currentTimeMillis();
+//					driftStartTime = System.currentTimeMillis();
+					time.start();
 					notifier.onBeginDrift();
 				}
 			} else {
 				// search for onEndDrift
 				if( isDrifting && (driftStrength < 0.2f || vel < 15f) ) {
-					updateDriftTimeSeconds();
+					time.stop();
 					isDrifting = false;
 					hasCollided = false;
 					notifier.onEndDrift();
@@ -99,11 +104,7 @@ public class DriftState {
 		}
 	}
 
-	private void updateDriftTimeSeconds() {
-		// driftSeconds = (System.currentTimeMillis() - driftStartTime) * 0.001f;
-		driftSeconds = (System.currentTimeMillis() - driftStartTime) * 0.001f;
-
-		// apply scaling
-		// driftSeconds *= URacer.timeMultiplier;
+	public float driftSeconds() {
+		return time.elapsed( Time.Reference.Ticks );
 	}
 }
