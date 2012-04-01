@@ -30,7 +30,7 @@ import com.bitfire.uracer.utils.Convert;
 /** TODO most of the shared stuff between Game and GameLogic should go in a
  * GameData structure of some sort, GameLogic is really the logical portion of
  * Game, so data should be accessible for both.
- * 
+ *
  * @author bmanuel */
 public class Game implements Disposable, GameLogicListener {
 	// config
@@ -70,13 +70,13 @@ public class Game implements Disposable, GameLogicListener {
 		Director.init( width, height );
 
 		GameData.level = new Level( GameData.world, levelName, false, width, height /* night mode */);
+		GameData.playerState = GameData.level.getPlayerState();
 
 		controller = new DirectorController( Config.Graphics.CameraInterpolationMode, Director.halfViewport, GameData.level );
 		if( Config.Graphics.EnablePostProcessingFx ) {
 			setupPostProcessing( width, height, GameData.level );
 		}
 
-		GameData.playerState = GameData.level.getPlayerState();
 		Car car = GameData.playerState.car;
 		TrackEffects.init( car );
 		GameData.hud = new Hud( car );

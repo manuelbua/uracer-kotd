@@ -14,12 +14,9 @@ public class DriftState implements Disposable {
 	public float lateralForcesFront = 0, lateralForcesRear = 0;
 	public float driftStrength;
 
-//	public long driftStartTime = 0;
-
-	private long collisionTime;
 	private float lastRear = 0, lastFront = 0;
 
-	private Time time;
+	private Time time, collisionTime;
 	private DriftStateNotifier notifier;
 
 	public DriftState() {
@@ -34,10 +31,11 @@ public class DriftState implements Disposable {
 
 	public void reset() {
 		time = new Time();
+		collisionTime = new Time();
+
 		lastFront = lastRear = 0;
 		hasCollided = false;
 		isDrifting = false;
-		collisionTime = 0;
 		lateralForcesFront = lateralForcesRear = 0;
 		driftStrength = 0;
 	}
@@ -51,14 +49,15 @@ public class DriftState implements Disposable {
 		if( !isDrifting )
 			return;
 
-		collisionTime = System.currentTimeMillis();
 		isDrifting = false;
 		hasCollided = true;
+		collisionTime.start();
 		time.reset();
 		notifier.onEndDrift();
 	}
 
 	public void tick() {
+		collisionTime.tick();
 		time.tick();
 
 		Car car = GameData.playerState.car;
@@ -76,7 +75,8 @@ public class DriftState implements Disposable {
 
 		if( hasCollided ) {
 			// ignore drifts for a couple of seconds
-			if( System.currentTimeMillis() - collisionTime > 1000 ) {
+			if( collisionTime.elapsed( Time.Reference.Ticks ) > 10 ) {
+				collisionTime.stop();
 				hasCollided = false;
 			}
 		} else {
