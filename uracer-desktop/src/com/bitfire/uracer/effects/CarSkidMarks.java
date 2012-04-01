@@ -67,8 +67,7 @@ public class CarSkidMarks extends TrackEffect {
 			d = skidMarks[i];
 			if( d.life > 0 ) {
 				d.life -= Config.Physics.PhysicsDt;
-			}
-			else {
+			} else {
 				d.life = 0;
 			}
 		}

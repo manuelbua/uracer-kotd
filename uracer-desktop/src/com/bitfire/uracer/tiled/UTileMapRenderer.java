@@ -115,8 +115,7 @@ public class UTileMapRenderer implements Disposable {
 
 		if( blendedTiles != null ) {
 			blendedTilesArray = createFromCSV( blendedTiles );
-		}
-		else {
+		} else {
 			blendedTilesArray = new IntArray( 0 );
 		}
 
@@ -228,8 +227,7 @@ public class UTileMapRenderer implements Disposable {
 					if( isSimpleTileAtlas ) {
 						// Everything considered blended
 						blendedCacheId[layer][row][col] = addBlock( map[layer], row, col, false );
-					}
-					else {
+					} else {
 						normalCacheId[layer][row][col] = addBlock( map[layer], row, col, false );
 						blendedCacheId[layer][row][col] = addBlock( map[layer], row, col, true );
 					}
@@ -258,8 +256,7 @@ public class UTileMapRenderer implements Disposable {
 								cache.add( region, col * unitsPerTileX, (layer.length - row - 1) * unitsPerTileY, (float)region.offsetX * unitsPerTileX / tileWidth,
 										(float)(region.offsetY) * unitsPerTileY / (float)tileHeight, region.packedWidth, region.packedHeight, unitsPerTileX
 												/ (float)tileWidth, unitsPerTileY / (float)tileHeight, (region.rotate) ? 90 : 0 );
-							}
-							else {
+							} else {
 								cache.add( reg, col * unitsPerTileX, (layer.length - row - 1) * unitsPerTileY, 0, 0, reg.getRegionWidth(), reg.getRegionHeight(),
 										unitsPerTileX / tileWidth, unitsPerTileY / tileHeight, 0 );
 							}
@@ -472,8 +469,7 @@ public class UTileMapRenderer implements Disposable {
 		if( string == null ) return defaultValue;
 		try {
 			return Integer.parseInt( string );
-		}
-		catch( NumberFormatException e ) {
+		} catch( NumberFormatException e ) {
 			return defaultValue;
 		}
 	}

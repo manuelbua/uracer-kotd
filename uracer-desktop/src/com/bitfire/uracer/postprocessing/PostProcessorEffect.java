@@ -5,7 +5,7 @@ import com.badlogic.gdx.utils.Disposable;
 
 /** This interface defines the base class for the concrete implementation
  * of post-processor effects.
- *
+ * 
  * @author bmanuel */
 public abstract class PostProcessorEffect implements Disposable {
 	public final int id;
@@ -14,7 +14,7 @@ public abstract class PostProcessorEffect implements Disposable {
 
 	/** Construct a new post-processor effect, computing
 	 * the hash code by its class name. */
-	public PostProcessorEffect(PostProcessor postProcessor) {
+	public PostProcessorEffect( PostProcessor postProcessor ) {
 		this.name = this.getClass().getSimpleName();
 		this.postProcessor = postProcessor;
 		this.id = this.name.hashCode();

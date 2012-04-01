@@ -49,8 +49,7 @@ public class URacer implements ApplicationListener {
 			if( value.length() > 0 ) {
 				versionInfo += " " + value;
 			}
-		}
-		catch( Exception e ) {
+		} catch( Exception e ) {
 		}
 	}
 

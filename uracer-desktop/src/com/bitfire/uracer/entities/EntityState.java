@@ -45,8 +45,7 @@ public class EntityState {
 		if( needWrap ) {
 			if( prev < 0 ) {
 				prev += AMath.TWO_PI;
-			}
-			else {
+			} else {
 				curr += AMath.TWO_PI;
 			}
 
@@ -55,8 +54,7 @@ public class EntityState {
 
 			// Debug.print( "curr=%.4f, prev=%.4f, res=%.4f", current.orientation, previous.orientation,
 			// result.orientation );
-		}
-		else {
+		} else {
 			result.orientation = current.orientation * alpha + previous.orientation * (1 - alpha);
 		}
 

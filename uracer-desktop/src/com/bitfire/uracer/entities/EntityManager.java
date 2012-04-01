@@ -44,7 +44,7 @@ public class EntityManager {
 		}
 	}
 
-	public static void raiseOnTick(World world) {
+	public static void raiseOnTick( World world ) {
 		// intentionally avoid rising onTick on subframe interpolables since
 		// there are plenty of chances to tick already
 

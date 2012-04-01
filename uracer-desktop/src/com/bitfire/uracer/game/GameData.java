@@ -18,7 +18,7 @@ import com.bitfire.uracer.tweener.accessors.HudLabelAccessor;
 import com.bitfire.uracer.tweener.accessors.MessageAccessor;
 
 /** Encapsulates and abstracts the dynamic state of the game.
- *
+ * 
  * @author bmanuel */
 public class GameData {
 

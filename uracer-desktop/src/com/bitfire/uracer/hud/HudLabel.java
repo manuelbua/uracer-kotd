@@ -141,14 +141,13 @@ public class HudLabel {
 		float targetFarX = getPosition().x;
 		float targetFarY = getPosition().y - 100;
 
-		GameData.tweener.start(
-				Timeline.createParallel()
-						.push( Tween.to( this, HudLabelAccessor.OPACITY, 500 ).target( 1f ).ease( Quint.INOUT ) )
-						.push( Timeline
-								.createSequence()
-								.push( Tween.to( this, HudLabelAccessor.POSITION_XY, 500 ).target( targetNearX, targetNearY ).ease( Quint.INOUT ).delay( 300 ) )
-								.push( Timeline.createParallel()
-										.push( Tween.to( this, HudLabelAccessor.POSITION_XY, 500 ).target( targetFarX, targetFarY ).ease( Expo.OUT ) )
-										.push( Tween.to( this, HudLabelAccessor.OPACITY, 500 ).target( 0f ).ease( Expo.OUT ) ) ) ) );
+		GameData.tweener.start( Timeline
+				.createParallel()
+				.push( Tween.to( this, HudLabelAccessor.OPACITY, 500 ).target( 1f ).ease( Quint.INOUT ) )
+				.push( Timeline
+						.createSequence()
+						.push( Tween.to( this, HudLabelAccessor.POSITION_XY, 500 ).target( targetNearX, targetNearY ).ease( Quint.INOUT ).delay( 300 ) )
+						.push( Timeline.createParallel().push( Tween.to( this, HudLabelAccessor.POSITION_XY, 500 ).target( targetFarX, targetFarY ).ease( Expo.OUT ) )
+								.push( Tween.to( this, HudLabelAccessor.OPACITY, 500 ).target( 0f ).ease( Expo.OUT ) ) ) ) );
 	}
 }

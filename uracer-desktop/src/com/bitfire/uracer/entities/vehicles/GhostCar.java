@@ -13,7 +13,7 @@ import com.bitfire.uracer.factories.CarFactory.CarType;
 /** Implements an automated Car, playing previously recorded events. It will
  * ignore car-to-car collisions, but will respect in-track collisions and
  * responses.
- *
+ * 
  * @author manuel */
 
 public class GhostCar extends Car {

@@ -60,8 +60,7 @@ public class CarSimulator {
 
 				carDesc.brake = 0;
 				hasDir = true;
-			}
-			else if( AMath.fixup( input.throttle ) < 0 ) {
+			} else if( AMath.fixup( input.throttle ) < 0 ) {
 				// deceleration
 				if( input.throttle > -maxForce )
 					carDesc.throttle = input.throttle;
@@ -79,8 +78,7 @@ public class CarSimulator {
 				if( carDesc.steerangle < -AMath.PI_4 ) carDesc.steerangle = -AMath.PI_4;
 
 				hasSteer = true;
-			}
-			else if( AMath.fixup( input.steerAngle ) > 0 ) {
+			} else if( AMath.fixup( input.steerAngle ) > 0 ) {
 				// right
 				carDesc.steerangle = input.steerAngle;
 				if( carDesc.steerangle > AMath.PI_4 ) carDesc.steerangle = AMath.PI_4;
@@ -97,8 +95,7 @@ public class CarSimulator {
 				}
 
 				carDesc.brake = 350f;
-			}
-			else {
+			} else {
 				carDesc.velocity_wc.set( 0, 0 );
 				carDesc.angularvelocity = 0;
 				carDesc.brake = 0;
@@ -153,8 +150,7 @@ public class CarSimulator {
 		if( AMath.isZero( velocity.x ) ) {
 			rot_angle = 0;
 			sideslip = 0;
-		}
-		else {
+		} else {
 			// compute rotational angle
 			rot_angle = MathUtils.atan2( yawspeed, velocity.x );
 

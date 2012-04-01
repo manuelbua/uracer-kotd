@@ -78,7 +78,7 @@ public class Bloom extends PostProcessorEffect {
 	protected boolean blending = false;
 
 	public Bloom( PostProcessor postProcessor, int fboWidth, int fboHeight ) {
-		super(postProcessor);
+		super( postProcessor );
 		pingPongBuffer = postProcessor.newPingPongBuffer( fboWidth, fboHeight, postProcessor.getFramebufferFormat(), false );
 
 		blur = new Blur( fboWidth, fboHeight );

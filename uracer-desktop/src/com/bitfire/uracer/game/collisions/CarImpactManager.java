@@ -10,7 +10,7 @@ import com.bitfire.uracer.entities.vehicles.Car;
 
 /** Manages to distinguish and filter out Car-to-<entity> collisions only, raising the
  * associated events on the correct entities.
- *
+ * 
  * @author bmanuel */
 public class CarImpactManager extends ImpactManager {
 	@Override

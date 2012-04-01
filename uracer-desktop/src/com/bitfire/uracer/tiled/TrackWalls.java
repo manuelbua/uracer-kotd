@@ -38,7 +38,7 @@ public class TrackWalls {
 		walls.clear();
 	}
 
-	public void createWalls(World world, Vector2 worldSizeScaledMt ) {
+	public void createWalls( World world, Vector2 worldSizeScaledMt ) {
 		if( MapUtils.hasObjectGroup( MapUtils.LayerWalls ) ) {
 			Vector2 fromMt = new Vector2();
 			Vector2 toMt = new Vector2();

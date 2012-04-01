@@ -138,8 +138,7 @@ public class PingPongBuffer {
 			// write to other
 			pending2 = true;
 			buffer2.begin();
-		}
-		else {
+		} else {
 			texSrc = texture2;
 			bufSrc = buffer2;
 

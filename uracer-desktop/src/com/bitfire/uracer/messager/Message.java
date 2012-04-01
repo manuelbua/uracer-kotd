@@ -132,25 +132,23 @@ public class Message {
 		// scaleX = scaleY = 1f;
 		computeFinalPosition();
 
-		GameData.tweener.start(
-				Timeline.createParallel().push( Tween.to( this, MessageAccessor.OPACITY, 400 ).target( 1f ).ease( Expo.INOUT ) )
-						.push( Tween.to( this, MessageAccessor.POSITION_Y, 400 ).target( finalY ).ease( Expo.INOUT ) )
-						.push( Tween.to( this, MessageAccessor.SCALE_XY, 500 ).target( 1.5f, 1.5f ).ease( Back.INOUT ) ) );
+		GameData.tweener.start( Timeline.createParallel().push( Tween.to( this, MessageAccessor.OPACITY, 400 ).target( 1f ).ease( Expo.INOUT ) )
+				.push( Tween.to( this, MessageAccessor.POSITION_Y, 400 ).target( finalY ).ease( Expo.INOUT ) )
+				.push( Tween.to( this, MessageAccessor.SCALE_XY, 500 ).target( 1.5f, 1.5f ).ease( Back.INOUT ) ) );
 	}
 
 	public void onHide() {
 		hiding = true;
 
-		GameData.tweener.start(
-				Timeline.createParallel().push( Tween.to( this, MessageAccessor.OPACITY, 500 ).target( 0f ).ease( Expo.INOUT ) )
-						.push( Tween.to( this, MessageAccessor.POSITION_Y, 500 ).target( -50 * font.getScaleX() ).ease( Expo.INOUT ) )
-						.push( Tween.to( this, MessageAccessor.SCALE_XY, 400 ).target( 1f, 1f ).ease( Back.INOUT ) )
-						.addCallback( TweenCallback.EventType.COMPLETE, new TweenCallback() {
-							@Override
-							public void onEvent( EventType eventType, BaseTween source ) {
-								finished = true;
-							}
-						} ) );
+		GameData.tweener.start( Timeline.createParallel().push( Tween.to( this, MessageAccessor.OPACITY, 500 ).target( 0f ).ease( Expo.INOUT ) )
+				.push( Tween.to( this, MessageAccessor.POSITION_Y, 500 ).target( -50 * font.getScaleX() ).ease( Expo.INOUT ) )
+				.push( Tween.to( this, MessageAccessor.SCALE_XY, 400 ).target( 1f, 1f ).ease( Back.INOUT ) )
+				.addCallback( TweenCallback.EventType.COMPLETE, new TweenCallback() {
+					@Override
+					public void onEvent( EventType eventType, BaseTween source ) {
+						finished = true;
+					}
+				} ) );
 	}
 
 	public boolean isHiding() {

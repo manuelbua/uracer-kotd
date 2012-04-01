@@ -34,14 +34,12 @@ public class Config {
 				ZoomQuality = ZoomBlur.Quality.Normal;
 				ZoomMaxStrength = -0.08f;
 				PotRttFboWidth = PotRttFboHeight = 256;
-			}
-			else if( w >= 1280 ) {
+			} else if( w >= 1280 ) {
 				BlurType = Blur.BlurType.Gaussian3x3b;
 				ZoomQuality = ZoomBlur.Quality.Medium;
 				ZoomMaxStrength = -0.08f;
 				PotRttFboWidth = PotRttFboHeight = 256;
-			}
-			else if( w >= 800 ) {
+			} else if( w >= 800 ) {
 				BlurType = Blur.BlurType.Gaussian3x3;
 				ZoomQuality = ZoomBlur.Quality.Low;
 				ZoomMaxStrength = -0.08f;

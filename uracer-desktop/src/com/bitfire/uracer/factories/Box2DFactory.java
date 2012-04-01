@@ -36,8 +36,7 @@ public class Box2DFactory {
 
 		if( isStatic ) {
 			body.setType( BodyDef.BodyType.StaticBody );
-		}
-		else {
+		} else {
 			body.setType( BodyDef.BodyType.DynamicBody );
 		}
 

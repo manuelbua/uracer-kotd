@@ -19,7 +19,7 @@ public class Recorder {
 		replay = null;
 	}
 
-	public void beginRecording( Car car, Replay replay, /*long startTimeNs,*/ String trackName ) {
+	public void beginRecording( Car car, Replay replay, /* long startTimeNs, */String trackName ) {
 		isRecording = true;
 		this.replay = replay;
 		replay.begin( trackName, GameData.gameSettings.difficulty, car );
@@ -37,10 +37,11 @@ public class Recorder {
 	}
 
 	public void tick() {
-		if(isRecording) {
+		if( isRecording ) {
 			replay.tick();
 		}
 	}
+
 	public void endRecording() {
 		if( !isRecording ) {
 			// System.out.println("Cannot end a recording that wasn't enabled!");
@@ -48,16 +49,16 @@ public class Recorder {
 		}
 
 		replay.end();
-//		float secs = (float)(System.nanoTime() - replay.trackStartTimeNs) / 1000000000f;
-//		secs *= URacer.timeMultiplier;
-//		replay.setReplayData( name, GameData.gameSettings.difficulty, replay.time.elapsed( Time.Reference.Ticks ));
+		// float secs = (float)(System.nanoTime() - replay.trackStartTimeNs) / 1000000000f;
+		// secs *= URacer.timeMultiplier;
+		// replay.setReplayData( name, GameData.gameSettings.difficulty, replay.time.elapsed( Time.Reference.Ticks ));
 
 		// System.out.println( "Recorded " + replay.getEventsCount() + " events" );
-//		System.out.println("Recorded " + secs + " seconds" );
-//		System.out.println("Time: " +
-//				replay.time.elapsed( Time.Reference.Absolute ) + " abs, " +
-//				replay.time.elapsed( Time.Reference.NumberOfTicks ) + " ticks, " +
-//				replay.time.elapsed( Time.Reference.Ticks ) + " secs" );
+		// System.out.println("Recorded " + secs + " seconds" );
+		// System.out.println("Time: " +
+		// replay.time.elapsed( Time.Reference.Absolute ) + " abs, " +
+		// replay.time.elapsed( Time.Reference.NumberOfTicks ) + " ticks, " +
+		// replay.time.elapsed( Time.Reference.Ticks ) + " secs" );
 
 		isRecording = false;
 		replay = null;

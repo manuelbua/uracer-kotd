@@ -91,8 +91,7 @@ public class CarDriftSoundEffect extends CarSoundEffect {
 					lastVolume = 1f;
 					doFadeIn = false;
 				}
-			}
-			else if( doFadeOut ) {
+			} else if( doFadeOut ) {
 				if( lastVolume > 0f )
 					lastVolume -= 0.03f;
 				else {

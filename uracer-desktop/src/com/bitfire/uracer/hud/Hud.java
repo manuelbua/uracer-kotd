@@ -101,13 +101,11 @@ public class Hud implements DriftStateListener {
 		if( rbest != null && rbest.isValid ) {
 			// has best
 			best.setString( "BEST  TIME\n" + NumberString.format( rbest.trackTimeSeconds ) + "s" );
-		}
-		else {
+		} else {
 			// temporarily use last track time
 			if( lapState.hasLastTrackTimeSeconds() ) {
 				best.setString( "BEST  TIME\n" + NumberString.format( lapState.getLastTrackTimeSeconds() ) + "s" );
-			}
-			else {
+			} else {
 				best.setString( "BEST TIME\n-:----" );
 			}
 		}
@@ -116,8 +114,7 @@ public class Hud implements DriftStateListener {
 		if( lapState.hasLastTrackTimeSeconds() ) {
 			// has only last
 			last.setString( "LAST  TIME\n" + NumberString.format( lapState.getLastTrackTimeSeconds() ) + "s" );
-		}
-		else {
+		} else {
 			last.setString( "LAST  TIME\n-:----" );
 		}
 	}

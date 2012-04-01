@@ -41,7 +41,7 @@ public class PlayerState {
 
 	private int lastTileX = 0, lastTileY = 0;
 
-	public void addListener(PlayerStateListener listener) {
+	public void addListener( PlayerStateListener listener ) {
 		notifier.addListener( listener );
 	}
 

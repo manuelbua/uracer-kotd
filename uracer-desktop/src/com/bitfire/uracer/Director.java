@@ -18,7 +18,7 @@ public class Director {
 
 	private static Vector2 tmp;
 
-	public static void init(int width, int height) {
+	public static void init( int width, int height ) {
 		screenPosFor = new Vector2();
 		mvpMt = new Matrix4();
 		mvpPx = new Matrix4();
@@ -56,8 +56,7 @@ public class Director {
 		if( round ) {
 			camera.position.x = MathUtils.round( tmp.x );
 			camera.position.y = MathUtils.round( tmp.y );
-		}
-		else {
+		} else {
 			camera.position.x = tmp.x;
 			camera.position.y = tmp.y;
 		}
@@ -100,8 +99,8 @@ public class Director {
 		return screenPosFor;
 	}
 
-
 	private static Rectangle cameraRect;
+
 	public static boolean isVisible( Rectangle rect ) {
 		cameraRect.set( camera.position.x - halfViewport.x, camera.position.y - halfViewport.y, camera.viewportWidth, camera.viewportHeight );
 		return cameraRect.overlaps( rect );

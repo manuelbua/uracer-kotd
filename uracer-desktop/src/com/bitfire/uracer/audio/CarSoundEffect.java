@@ -25,8 +25,7 @@ public abstract class CarSoundEffect implements ISoundEffect {
 			waitCounter++;
 			try {
 				Thread.sleep( ThrottleMs );
-			}
-			catch( InterruptedException e ) {
+			} catch( InterruptedException e ) {
 			}
 		}
 
@@ -41,8 +40,7 @@ public abstract class CarSoundEffect implements ISoundEffect {
 			waitCounter++;
 			try {
 				Thread.sleep( ThrottleMs );
-			}
-			catch( InterruptedException e ) {
+			} catch( InterruptedException e ) {
 			}
 		}
 

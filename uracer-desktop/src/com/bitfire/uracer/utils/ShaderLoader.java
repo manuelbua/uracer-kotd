@@ -22,12 +22,11 @@ public final class ShaderLoader {
 
 	static final public ShaderProgram fromString( String vertex, String fragment, String vertexName, String fragmentName, String defines ) {
 		ShaderProgram.pedantic = false;
-		ShaderProgram shader = new ShaderProgram( defines + "\n" + vertex, defines + "\n" + fragment);
+		ShaderProgram shader = new ShaderProgram( defines + "\n" + vertex, defines + "\n" + fragment );
 		if( !shader.isCompiled() ) {
 			System.out.println( shader.getLog() );
 			Gdx.app.exit();
-		}
-		else {
+		} else {
 			if( defines != null && defines.length() > 0 )
 				System.out.println( vertexName + "/" + fragmentName + " compiled w/ (" + defines.replace( "\n", ", " ) + ")" );
 			else

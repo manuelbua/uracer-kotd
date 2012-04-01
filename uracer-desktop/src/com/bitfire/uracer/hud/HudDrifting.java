@@ -119,20 +119,17 @@ public class HudDrifting {
 		if( drift.hasCollided ) {
 			result.setString( "-" + NumberString.format( drift.driftSeconds ) );
 			result.setFont( Art.fontCurseRbig );
-		}
-		else {
+		} else {
 			result.setString( "+" + NumberString.format( drift.driftSeconds ) );
 			result.setFont( Art.fontCurseGbig );
 
 			if( drift.driftSeconds >= 1 && drift.driftSeconds < 3f ) {
 				Messager.enqueue( "NICE ONE!\n+" + NumberString.format( drift.driftSeconds ) + "  seconds!", 1f, MessageType.Good, MessagePosition.Middle,
 						MessageSize.Big );
-			}
-			else if( drift.driftSeconds >= 3f && drift.driftSeconds < 5f ) {
+			} else if( drift.driftSeconds >= 3f && drift.driftSeconds < 5f ) {
 				Messager.enqueue( "FANTASTIC!\n+" + NumberString.format( drift.driftSeconds ) + "  seconds!", 1f, MessageType.Good, MessagePosition.Middle,
 						MessageSize.Big );
-			}
-			else if( drift.driftSeconds >= 5f ) {
+			} else if( drift.driftSeconds >= 5f ) {
 				Messager.enqueue( "UNREAL!\n+" + NumberString.format( drift.driftSeconds ) + "  seconds!", 1f, MessageType.Good, MessagePosition.Bottom, MessageSize.Big );
 			}
 		}

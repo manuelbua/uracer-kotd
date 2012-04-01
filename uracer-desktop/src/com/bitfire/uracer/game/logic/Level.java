@@ -41,7 +41,7 @@ import com.bitfire.uracer.utils.Convert;
 import com.bitfire.uracer.utils.MapUtils;
 
 /** First write. Basic idea in place (in iterative refactoring)
- *
+ * 
  * @author manuel */
 public class Level {
 	private final World world;

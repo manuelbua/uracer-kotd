@@ -12,7 +12,7 @@ public class Zoom extends PostProcessorEffect {
 	private float x, y, strength;
 
 	public Zoom( PostProcessor postProcessor, Quality quality ) {
-		super(postProcessor);
+		super( postProcessor );
 		zoomBlur = new ZoomBlur( quality );
 	}
 

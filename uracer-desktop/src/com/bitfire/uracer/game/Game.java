@@ -30,7 +30,7 @@ import com.bitfire.uracer.utils.Convert;
 /** TODO most of the shared stuff between Game and GameLogic should go in a
  * GameData structure of some sort, GameLogic is really the logical portion of
  * Game, so data should be accessible for both.
- *
+ * 
  * @author bmanuel */
 public class Game implements Disposable, GameLogicListener {
 	// config
@@ -240,8 +240,7 @@ public class Game implements Disposable, GameLogicListener {
 				if( Config.Graphics.EnablePostProcessingFx ) postProcessor.render();
 				level.generateLightMap();
 				level.renderLigthMap( null );
-			}
-			else {
+			} else {
 				// render nightmode
 				if( level.isNightMode() ) {
 					level.generateLightMap();
@@ -255,8 +254,7 @@ public class Game implements Disposable, GameLogicListener {
 
 				if( Config.Graphics.EnablePostProcessingFx ) postProcessor.render();
 			}
-		}
-		else {
+		} else {
 			if( Config.Graphics.EnablePostProcessingFx ) postProcessor.render();
 		}
 
@@ -280,8 +278,7 @@ public class Game implements Disposable, GameLogicListener {
 			Debug.drawString( "rendered meshes=" + (LevelRenderer.renderedTrees + LevelRenderer.renderedWalls) + ", trees=" + LevelRenderer.renderedTrees + ", walls="
 					+ LevelRenderer.renderedWalls + ", culled=" + LevelRenderer.culledMeshes, 0, Gdx.graphics.getHeight() - 7 );
 			Debug.end();
-		}
-		else {
+		} else {
 			Debug.begin( batch );
 			Debug.renderVersionInfo();
 			Debug.renderTextualStats();

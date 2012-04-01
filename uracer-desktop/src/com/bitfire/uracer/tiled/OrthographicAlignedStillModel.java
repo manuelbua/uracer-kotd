@@ -11,7 +11,7 @@ import com.bitfire.uracer.utils.MapUtils;
 import com.bitfire.uracer.utils.ShaderLoader;
 
 /** The model is expected to follow the z-up convention.
- *
+ * 
  * @author manuel */
 public class OrthographicAlignedStillModel {
 	public UStillModel model;
@@ -86,8 +86,7 @@ public class OrthographicAlignedStillModel {
 			setScalingFactor( GameData.scalingStrategy.meshScaleFactor * BlenderToURacer * GameData.scalingStrategy.to256 );
 			setPosition( 0, 0 );
 			setRotation( 0, 0, 0, 0 );
-		}
-		catch( Exception e ) {
+		} catch( Exception e ) {
 			e.printStackTrace();
 		}
 	}
@@ -95,8 +94,7 @@ public class OrthographicAlignedStillModel {
 	public void dispose() {
 		try {
 			model.dispose();
-		}
-		catch( IllegalArgumentException e ) {
+		} catch( IllegalArgumentException e ) {
 			// buffer already disposed
 		}
 	}
@@ -107,7 +105,7 @@ public class OrthographicAlignedStillModel {
 	}
 
 	/** Sets the world position in pixels, top-left origin.
-	 *
+	 * 
 	 * @param posPxX
 	 * @param posPxY */
 	public void setPosition( float posPxX, float posPxY ) {

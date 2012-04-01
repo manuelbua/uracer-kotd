@@ -103,7 +103,7 @@ public class SmokeTrails extends TrackEffect {
 		this.player = player;
 		isDrifting = wasDrifting = false;
 		drift = GameData.driftState;
-		}
+	}
 
 	@Override
 	public void dispose() {
@@ -117,8 +117,7 @@ public class SmokeTrails extends TrackEffect {
 			// started drifting
 			for( int i = 0; i < SmokeEffectsCount; i++ )
 				fx[i].start();
-		}
-		else if( !isDrifting && wasDrifting ) {
+		} else if( !isDrifting && wasDrifting ) {
 			// ended drifting
 			for( int i = 0; i < SmokeEffectsCount; i++ )
 				fx[i].stop();

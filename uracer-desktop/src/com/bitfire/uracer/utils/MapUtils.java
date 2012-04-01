@@ -29,7 +29,7 @@ public class MapUtils {
 
 	public static void init( TiledMap map, Vector2 worldSizeScaledPx ) {
 		MapUtils.map = map;
-		MapUtils.worldSizeScaledPx.set(worldSizeScaledPx);
+		MapUtils.worldSizeScaledPx.set( worldSizeScaledPx );
 		scaledTilesize = map.tileWidth * GameData.scalingStrategy.invTileMapZoomFactor;
 		invScaledTilesize = 1f / scaledTilesize;
 	}
@@ -95,6 +95,7 @@ public class MapUtils {
 	}
 
 	private static Vector2 retTile = new Vector2();
+
 	public static Vector2 tileToPx( int tilex, int tiley ) {
 		retTile.set( tilex * scaledTilesize, (map.height - tiley) * scaledTilesize );
 		return retTile;
@@ -109,6 +110,7 @@ public class MapUtils {
 	}
 
 	private static Vector2 retPx = new Vector2();
+
 	public static Vector2 mtToTile( float x, float y ) {
 		retPx.set( Convert.mt2px( x ), Convert.mt2px( y ) );
 		retPx = pxToTile( retPx.x, retPx.y );
@@ -120,6 +122,7 @@ public class MapUtils {
 	}
 
 	private static Vector2 tmp = new Vector2();
+
 	public static Vector2 positionFor( float x, float y ) {
 		tmp = Convert.scaledPixels( tmp.set( x, y ) );
 		tmp.y = worldSizeScaledPx.y - tmp.y;

@@ -35,7 +35,7 @@ public class DriftState {
 		driftStrength = 0;
 	}
 
-	public void addListener(DriftStateListener listener) {
+	public void addListener( DriftStateListener listener ) {
 		notifier.addListener( listener );
 	}
 
@@ -74,8 +74,7 @@ public class DriftState {
 			if( System.currentTimeMillis() - collisionTime > 1000 ) {
 				hasCollided = false;
 			}
-		}
-		else {
+		} else {
 			// TODO should be expressed as a percent value ref. maxvel, to scale to different max velocities
 			float vel = car.getCarDescriptor().velocity_wc.len();
 
@@ -87,8 +86,7 @@ public class DriftState {
 					driftStartTime = System.currentTimeMillis();
 					notifier.onBeginDrift();
 				}
-			}
-			else {
+			} else {
 				// search for onEndDrift
 				if( isDrifting && (driftStrength < 0.2f || vel < 15f) ) {
 					updateDriftTimeSeconds();
@@ -101,10 +99,10 @@ public class DriftState {
 	}
 
 	private void updateDriftTimeSeconds() {
-//		driftSeconds = (System.currentTimeMillis() - driftStartTime) * 0.001f;
+		// driftSeconds = (System.currentTimeMillis() - driftStartTime) * 0.001f;
 		driftSeconds = (System.currentTimeMillis() - driftStartTime) * 0.001f;
 
 		// apply scaling
-//		driftSeconds *= URacer.timeMultiplier;
+		// driftSeconds *= URacer.timeMultiplier;
 	}
 }

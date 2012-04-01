@@ -163,8 +163,7 @@ public class Hash {
 		for( int i = 0; i < str.length(); i++ ) {
 			if( (i & 1) == 0 ) {
 				hash ^= ((hash << 7) ^ str.charAt( i ) * (hash >> 3));
-			}
-			else {
+			} else {
 				hash ^= (~((hash << 11) + str.charAt( i ) ^ (hash >> 5)));
 			}
 		}

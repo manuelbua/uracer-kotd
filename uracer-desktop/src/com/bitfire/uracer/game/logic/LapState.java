@@ -47,13 +47,13 @@ public class LapState {
 	}
 
 	public float getElapsedSeconds() {
-//		return ((float)(System.nanoTime() - startTimeNs) / 1000000000f) * URacer.timeMultiplier;
+		// return ((float)(System.nanoTime() - startTimeNs) / 1000000000f) * URacer.timeMultiplier;
 		return time.elapsed( Time.Reference.Ticks );
 	}
 
-//	public long getStartNanotime() {
-//		return startTimeNs;
-//	}
+	// public long getStartNanotime() {
+	// return startTimeNs;
+	// }
 
 	public Replay getReplay( int index ) {
 		return replays[index];

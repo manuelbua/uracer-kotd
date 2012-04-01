@@ -139,15 +139,13 @@ public class Input extends InputAdapter {
 
 			if( (flag & FLAG_CUR_ON) == FLAG_CUR_ON ) {
 				buttons[i] |= FLAG_LAST_ON;
-			}
-			else {
+			} else {
 				buttons[i] &= ~FLAG_LAST_ON;
 			}
 
 			if( (flag & (FLAG_DELAY_ON | FLAG_REAL_ON)) == (FLAG_DELAY_ON | FLAG_REAL_ON) ) {
 				buttons[i] |= FLAG_CUR_ON;
-			}
-			else {
+			} else {
 				buttons[i] &= ~FLAG_CUR_ON;
 			}
 
