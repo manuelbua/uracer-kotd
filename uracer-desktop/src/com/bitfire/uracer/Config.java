@@ -92,10 +92,17 @@ public class Config {
 
 	public static class Physics {
 
-		public static float PixelsPerMeter; // defines how many pixels are 1 Box2d meter
-		public static float PhysicsTimestepHz; // defines physics dt duration, in hz
-		public static float PhysicsTimeMultiplier; // defines time modifier
-		public static float PhysicsDt;	// defines physics dt duration, in seconds
+		/** defines how many pixels are 1 Box2d meter */
+		public static float PixelsPerMeter;
+
+		/** defines physics dt duration, in hz */
+		public static float PhysicsTimestepHz;
+
+		/** defines time modifier */
+		public static float PhysicsTimeMultiplier;
+
+		/** defines physics dt duration, in seconds */
+		public static float PhysicsDt;
 
 		public static void asDefault() {
 			PixelsPerMeter = 18.0f;

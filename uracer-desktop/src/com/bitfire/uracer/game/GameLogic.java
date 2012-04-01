@@ -74,9 +74,12 @@ public class GameLogic implements CarListener, PlayerStateListener {
 
 		GameData.playerState.tick();
 		GameData.driftState.tick();
+		GameData.lapState.tick();
 
 		GameData.hud.tick();
 		TrackEffects.tick();
+
+		recorder.tick();
 
 		return true;
 	}
@@ -143,7 +146,7 @@ public class GameLogic implements CarListener, PlayerStateListener {
 
 				lapState.restart();
 				Replay buf = lapState.getNextBuffer();
-				recorder.beginRecording( player.car, buf, lapState.getStartNanotime(), name );
+				recorder.beginRecording( player.car, buf, /*lapState.getStartNanotime(), */name );
 				lastRecordedLapId = buf.id;
 
 				if( lapState.hasAnyReplayData() ) {
@@ -154,7 +157,7 @@ public class GameLogic implements CarListener, PlayerStateListener {
 			else {
 				if( recorder.isRecording() ) recorder.endRecording();
 
-				lapState.update();
+				lapState.updateReplays();
 
 				// replay best, overwrite worst logic
 
@@ -162,7 +165,7 @@ public class GameLogic implements CarListener, PlayerStateListener {
 					// only one single replay
 					lapState.restart();
 					Replay buf = lapState.getNextBuffer();
-					recorder.beginRecording( player.car, buf, lapState.getStartNanotime(), name );
+					recorder.beginRecording( player.car, buf, /*lapState.getStartNanotime(), */name );
 					lastRecordedLapId = buf.id;
 
 					Replay any = lapState.getAnyReplay();
@@ -189,7 +192,7 @@ public class GameLogic implements CarListener, PlayerStateListener {
 					player.ghost.setReplay( best );
 
 					lapState.restart();
-					recorder.beginRecording( player.car, worst, lapState.getStartNanotime(), name );
+					recorder.beginRecording( player.car, worst, /*lapState.getStartNanotime(), */name );
 					lastRecordedLapId = worst.id;
 				}
 			}

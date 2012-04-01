@@ -1,12 +1,13 @@
 package com.bitfire.uracer.game.logic;
 
-import com.bitfire.uracer.URacer;
+import com.bitfire.uracer.Time;
 import com.bitfire.uracer.carsimulation.Replay;
 
 public class LapState {
 	// replays
 	private Replay[] replays;
 	private Replay best, worst;
+	private Time time;
 	private long startTimeNs;
 	private float lastTrackTimeSecs;
 	private boolean hasLastTrackTimeSecs;
@@ -15,6 +16,7 @@ public class LapState {
 		startTimeNs = 0;
 		lastTrackTimeSecs = 0;
 		hasLastTrackTimeSecs = false;
+		time = new Time();
 
 		// construct replay buffers
 		replays = new Replay[ 2 ];
@@ -24,31 +26,34 @@ public class LapState {
 		best = worst = null;
 
 		reset();
-		update();
+		updateReplays();
 	}
 
 	public void reset() {
 		hasLastTrackTimeSecs = false;
 		best = worst = null;
-		replays[0].clearForces();
-		replays[1].clearForces();
+		time.start();
+		replays[0].reset();
+		replays[1].reset();
 		startTimeNs = System.nanoTime();
 	}
 
 	public long restart() {
 		startTimeNs = System.nanoTime();
-		if( !replays[0].isValid ) replays[0].clearForces();
-		if( !replays[1].isValid ) replays[1].clearForces();
+		time.start();
+		if( !replays[0].isValid ) replays[0].reset();
+		if( !replays[1].isValid ) replays[1].reset();
 		return startTimeNs;
 	}
 
 	public float getElapsedSeconds() {
-		return ((float)(System.nanoTime() - startTimeNs) / 1000000000f) * URacer.timeMultiplier;
+//		return ((float)(System.nanoTime() - startTimeNs) / 1000000000f) * URacer.timeMultiplier;
+		return time.elapsed( Time.Reference.Ticks );
 	}
 
-	public long getStartNanotime() {
-		return startTimeNs;
-	}
+//	public long getStartNanotime() {
+//		return startTimeNs;
+//	}
 
 	public Replay getReplay( int index ) {
 		return replays[index];
@@ -62,7 +67,11 @@ public class LapState {
 		return (replays[0].isValid || replays[1].isValid);
 	}
 
-	public void update() {
+	public void tick() {
+		time.tick();
+	}
+
+	public void updateReplays() {
 		if( !hasAllReplayData() ) {
 			return;
 		}
@@ -77,7 +86,7 @@ public class LapState {
 	}
 
 	public Replay getNextBuffer() {
-		update();
+		updateReplays();
 		if( !replays[0].isValid ) {
 			return replays[0];
 		}

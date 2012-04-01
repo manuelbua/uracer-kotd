@@ -1,13 +1,14 @@
 package com.bitfire.uracer.carsimulation;
 
 import com.badlogic.gdx.math.Vector2;
+import com.bitfire.uracer.Time;
 import com.bitfire.uracer.entities.vehicles.Car;
 import com.bitfire.uracer.factories.CarFactory.CarType;
 import com.bitfire.uracer.game.GameDifficulty;
 import com.bitfire.uracer.utils.UUid;
 
 /** Represents replay data to be feed to a GhostCar, the replay player.
- * 
+ *
  * @author manuel */
 
 public class Replay {
@@ -24,10 +25,13 @@ public class Replay {
 	public String trackName = "no-track";
 	public GameDifficulty difficultyLevel = GameDifficulty.Easy;
 	public float trackTimeSeconds = 0;
-	public long trackStartTimeNs = 0;
+//	public long trackStartTimeNs = 0;
 	public CarForces[] forces = null;
 	public boolean isValid = false;
 	public final long id;
+
+	// time track
+	private Time time = new Time();
 
 	public Replay() {
 		eventsCount = 0;
@@ -40,26 +44,43 @@ public class Replay {
 	}
 
 	public void dispose() {
-		clearForces();
+		reset();
 	}
 
-	public void clearForces() {
+	public void begin(String trackName, GameDifficulty difficulty, Car car) {
+		reset();
+		setCarData( car );
+		setReplayData( trackName, difficulty );
+		time.start();
+	}
+
+	public void end() {
+		time.stop();
+		trackTimeSeconds = time.elapsed( Time.Reference.Ticks );
+		isValid = true;
+	}
+
+	public void tick() {
+		time.tick();
+	}
+
+	// TODO, rename to begin?
+	public void reset() {
 		eventsCount = 0;
 		isValid = false;
 	}
 
-	public void setCarData( Car car ) {
+	private void setCarData( Car car ) {
 		carType = car.getCarType();
 		carPosition = new Vector2( car.pos() );
 		carOrientation = car.orient();
 		carDescriptor = car.getCarDescriptor().clone();
 	}
 
-	public void setReplayData( String trackName, GameDifficulty difficulty, float timeSeconds ) {
+	// TODO, rename to end?
+	private void setReplayData( String trackName, GameDifficulty difficulty/*, float timeSeconds*/ ) {
 		this.trackName = trackName;
-		this.difficultyLevel = difficulty;
-		this.trackTimeSeconds = timeSeconds;
-		this.isValid = true;
+		difficultyLevel = difficulty;
 	}
 
 	// recording
