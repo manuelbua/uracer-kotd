@@ -1,5 +1,11 @@
 package com.bitfire.uracer.game;
 
+import aurelienribon.tweenengine.BaseTween;
+import aurelienribon.tweenengine.Timeline;
+import aurelienribon.tweenengine.Tween;
+import aurelienribon.tweenengine.TweenCallback;
+import aurelienribon.tweenengine.equations.Cubic;
+
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Input.Keys;
 import com.badlogic.gdx.math.Vector2;
@@ -24,6 +30,8 @@ import com.bitfire.uracer.messager.Messager;
 import com.bitfire.uracer.messager.Messager.MessagePosition;
 import com.bitfire.uracer.messager.Messager.MessageSize;
 import com.bitfire.uracer.messager.Messager.MessageType;
+import com.bitfire.uracer.tweener.BoxedFloat;
+import com.bitfire.uracer.tweener.accessors.BoxedFloatAccessor;
 import com.bitfire.uracer.utils.AMath;
 import com.bitfire.uracer.utils.NumberString;
 
@@ -40,14 +48,17 @@ public class GameLogic implements CarListener, PlayerStateListener {
 	public GameLogic() {
 		this.recorder = new Recorder();
 		this.notifier = new GameLogicNotifier();
+		timeMultiplier.value = 1f;
 	}
 
 	public void addListener( GameLogicListener listener ) {
 		notifier.addListener( listener );
 	}
 
-	boolean timeModulation = false;
+	boolean timeModulation = false, timeModulationBusy = false;
+	BoxedFloat timeMultiplier = new BoxedFloat();
 	float tmMin = 0.3f;
+
 	public boolean onTick() {
 		EntityManager.raiseOnTick( GameData.world );
 
@@ -63,14 +74,42 @@ public class GameLogic implements CarListener, PlayerStateListener {
 			return false;
 		}
 		else if( Input.isOn( Keys.SPACE ) ) {
-			timeModulation = !timeModulation;
+			if( !timeModulationBusy ) {
+				timeModulation = !timeModulation;
+				if( timeModulation ) {
+					timeModulationBusy = true;
+					GameData.tweener.start( Timeline.createSequence().push( Tween.to( timeMultiplier, BoxedFloatAccessor.VALUE, 1000 ).target( tmMin ).ease( Cubic.INOUT) )
+							.addCallback( TweenCallback.EventType.COMPLETE, new TweenCallback() {
+								@Override
+								public void onEvent( EventType eventType, BaseTween source ) {
+									timeModulationBusy = false;
+								}
+							} ) );
+				}
+				else {
+					timeModulationBusy = true;
+					GameData.tweener.start( Timeline.createSequence()
+							.push( Tween.to( timeMultiplier, BoxedFloatAccessor.VALUE, 1000 ).target( Config.Physics.PhysicsTimeMultiplier ).ease( Cubic.INOUT ) )
+							.addCallback( TweenCallback.EventType.COMPLETE, new TweenCallback() {
+								@Override
+								public void onEvent( EventType eventType, BaseTween source ) {
+									timeModulationBusy = false;
+								}
+							} ) );
+				}
+			}
 		}
 
-		if(timeModulation) {
-			URacer.timeMultiplier = AMath.clamp( URacer.timeMultiplier - 0.02f, tmMin, Config.Physics.PhysicsTimeMultiplier );
-		} else {
-			URacer.timeMultiplier = AMath.clamp( URacer.timeMultiplier + 0.02f, tmMin, Config.Physics.PhysicsTimeMultiplier );
-		}
+		URacer.timeMultiplier = AMath.clamp( timeMultiplier.value, tmMin, Config.Physics.PhysicsTimeMultiplier );
+
+//		System.out.println( timeModulationBusy + " - " + timeMultiplier.value );
+
+//		if( timeModulation ) {
+//			URacer.timeMultiplier = AMath.clamp( URacer.timeMultiplier - 0.02f, tmMin, Config.Physics.PhysicsTimeMultiplier );
+//		}
+//		else {
+//			URacer.timeMultiplier = AMath.clamp( URacer.timeMultiplier + 0.02f, tmMin, Config.Physics.PhysicsTimeMultiplier );
+//		}
 
 		GameData.playerState.tick();
 		GameData.driftState.tick();
@@ -146,7 +185,7 @@ public class GameLogic implements CarListener, PlayerStateListener {
 
 				lapState.restart();
 				Replay buf = lapState.getNextBuffer();
-				recorder.beginRecording( player.car, buf, /*lapState.getStartNanotime(), */name );
+				recorder.beginRecording( player.car, buf, /* lapState.getStartNanotime(), */name );
 				lastRecordedLapId = buf.id;
 
 				if( lapState.hasAnyReplayData() ) {
@@ -165,7 +204,7 @@ public class GameLogic implements CarListener, PlayerStateListener {
 					// only one single replay
 					lapState.restart();
 					Replay buf = lapState.getNextBuffer();
-					recorder.beginRecording( player.car, buf, /*lapState.getStartNanotime(), */name );
+					recorder.beginRecording( player.car, buf, /* lapState.getStartNanotime(), */name );
 					lastRecordedLapId = buf.id;
 
 					Replay any = lapState.getAnyReplay();
@@ -192,7 +231,7 @@ public class GameLogic implements CarListener, PlayerStateListener {
 					player.ghost.setReplay( best );
 
 					lapState.restart();
-					recorder.beginRecording( player.car, worst, /*lapState.getStartNanotime(), */name );
+					recorder.beginRecording( player.car, worst, /* lapState.getStartNanotime(), */name );
 					lastRecordedLapId = worst.id;
 				}
 			}

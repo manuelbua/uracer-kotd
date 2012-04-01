@@ -3,6 +3,7 @@ package com.bitfire.uracer;
 
 /** Tracks elapsed time both in absolute terms (wall clock time) or
  * relative to the tick-based system.
+ * This should guarantee some level of fair handicap for any user.
  *
  * @author bmanuel */
 public final class Time {

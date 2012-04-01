@@ -11,7 +11,9 @@ import com.bitfire.uracer.hud.Hud;
 import com.bitfire.uracer.hud.HudLabel;
 import com.bitfire.uracer.messager.Message;
 import com.bitfire.uracer.tiled.ScalingStrategy;
+import com.bitfire.uracer.tweener.BoxedFloat;
 import com.bitfire.uracer.tweener.Tweener;
+import com.bitfire.uracer.tweener.accessors.BoxedFloatAccessor;
 import com.bitfire.uracer.tweener.accessors.HudLabelAccessor;
 import com.bitfire.uracer.tweener.accessors.MessageAccessor;
 
@@ -58,6 +60,7 @@ public class GameData {
 		Tweener t = new Tweener();
 		Tweener.registerAccessor( Message.class, new MessageAccessor() );
 		Tweener.registerAccessor( HudLabel.class, new HudLabelAccessor() );
+		Tweener.registerAccessor( BoxedFloat.class, new BoxedFloatAccessor() );
 		return t;
 	}
 

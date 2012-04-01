@@ -14,7 +14,7 @@ public class Tweener {
 	}
 
 	public void dispose() {
-
+		manager.killAll();
 	}
 
 	public static void registerAccessor( Class someClass, TweenAccessor accessor ) {
