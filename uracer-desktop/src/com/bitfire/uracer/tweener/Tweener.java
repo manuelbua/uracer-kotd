@@ -9,7 +9,6 @@ public class Tweener {
 	private TweenManager manager;
 
 	public Tweener() {
-		Tween.enablePooling( true );
 		manager = new TweenManager();
 	}
 

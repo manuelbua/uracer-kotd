@@ -59,6 +59,16 @@ public class GameLogic implements CarListener, PlayerStateListener {
 	boolean timeModulation = false, timeModulationBusy = false;
 	BoxedFloat timeMultiplier = new BoxedFloat();
 	float tmMin = 0.3f;
+	TweenCallback timeModulationFinished = new TweenCallback() {
+
+		@Override
+		public void onEvent( int type, BaseTween<?> source ) {
+			switch( type ) {
+			case COMPLETE:
+				timeModulationBusy = false;
+			}
+		}
+	};
 
 	public boolean onTick() {
 		EntityManager.raiseOnTick( GameData.world );
@@ -83,22 +93,12 @@ public class GameLogic implements CarListener, PlayerStateListener {
 				if( timeModulation ) {
 					timeModulationBusy = true;
 					GameData.tweener.start( Timeline.createSequence().push( Tween.to( timeMultiplier, BoxedFloatAccessor.VALUE, 1000 ).target( tmMin ).ease( eqIn ) )
-							.addCallback( TweenCallback.EventType.COMPLETE, new TweenCallback() {
-								@Override
-								public void onEvent( EventType eventType, BaseTween source ) {
-									timeModulationBusy = false;
-								}
-							} ) );
+							.setCallback( timeModulationFinished ) );
 				} else {
 					timeModulationBusy = true;
 					GameData.tweener.start( Timeline.createSequence()
 							.push( Tween.to( timeMultiplier, BoxedFloatAccessor.VALUE, 1000 ).target( Config.Physics.PhysicsTimeMultiplier ).ease( eqOut ) )
-							.addCallback( TweenCallback.EventType.COMPLETE, new TweenCallback() {
-								@Override
-								public void onEvent( EventType eventType, BaseTween source ) {
-									timeModulationBusy = false;
-								}
-							} ) );
+							.setCallback( timeModulationFinished ) );
 				}
 			}
 		}
