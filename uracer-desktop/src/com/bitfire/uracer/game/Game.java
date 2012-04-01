@@ -83,6 +83,7 @@ public class Game implements Disposable, GameLogicListener {
 
 		// setup listeners
 		gameLogic = new GameLogic();
+		gameLogic.addListener( this );
 		GameData.driftState.addListener( GameData.hud );
 		GameData.playerState.addListener( gameLogic );
 		GameData.playerState.car.addListener( gameLogic );
@@ -110,6 +111,7 @@ public class Game implements Disposable, GameLogicListener {
 
 	@Override
 	public void onReset() {
+		carSoundManager.reset();
 	}
 
 	@Override
@@ -162,9 +164,9 @@ public class Game implements Disposable, GameLogicListener {
 		}
 
 		if( Config.Graphics.EnablePostProcessingFx && bloom != null && zoom != null ) {
-			bloom.setBaseSaturation( 0.5f - 0.8f * factor );
-			bloom.setBloomSaturation( 1.5f - factor * 0.25f );
-			bloom.setBloomIntesity( 1f + factor * 1.5f );
+			bloom.setBaseSaturation( 0.5f - 0.5f * factor );
+			bloom.setBloomSaturation( 1.5f - factor * 1.15f );
+			bloom.setBloomIntesity( 1f + factor * 1.75f );
 		}
 
 		// if( Config.Graphics.EnablePostProcessingFx && bloom != null && zoom != null ) {

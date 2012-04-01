@@ -64,29 +64,28 @@ public class GameLogic implements CarListener, PlayerStateListener {
 
 		if( Input.isOn( Keys.R ) ) {
 			restart();
-		}
-		else if( Input.isOn( Keys.T ) ) {
+			notifier.onRestart();
+		} else if( Input.isOn( Keys.T ) ) {
 			restart();
 			reset();
-		}
-		else if( Input.isOn( Keys.Q ) ) {
+			notifier.onReset();
+		} else if( Input.isOn( Keys.Q ) ) {
 			Gdx.app.exit();
 			return false;
-		}
-		else if( Input.isOn( Keys.SPACE ) ) {
+		} else if( Input.isOn( Keys.SPACE ) ) {
 			if( !timeModulationBusy ) {
 				timeModulation = !timeModulation;
 				if( timeModulation ) {
 					timeModulationBusy = true;
-					GameData.tweener.start( Timeline.createSequence().push( Tween.to( timeMultiplier, BoxedFloatAccessor.VALUE, 1000 ).target( tmMin ).ease( Cubic.INOUT) )
+					GameData.tweener.start( Timeline.createSequence()
+							.push( Tween.to( timeMultiplier, BoxedFloatAccessor.VALUE, 800 ).target( tmMin ).ease( Cubic.INOUT ) )
 							.addCallback( TweenCallback.EventType.COMPLETE, new TweenCallback() {
 								@Override
 								public void onEvent( EventType eventType, BaseTween source ) {
 									timeModulationBusy = false;
 								}
 							} ) );
-				}
-				else {
+				} else {
 					timeModulationBusy = true;
 					GameData.tweener.start( Timeline.createSequence()
 							.push( Tween.to( timeMultiplier, BoxedFloatAccessor.VALUE, 1000 ).target( Config.Physics.PhysicsTimeMultiplier ).ease( Cubic.INOUT ) )
@@ -102,14 +101,16 @@ public class GameLogic implements CarListener, PlayerStateListener {
 
 		URacer.timeMultiplier = AMath.clamp( timeMultiplier.value, tmMin, Config.Physics.PhysicsTimeMultiplier );
 
-//		System.out.println( timeModulationBusy + " - " + timeMultiplier.value );
+		// System.out.println( timeModulationBusy + " - " + timeMultiplier.value );
 
-//		if( timeModulation ) {
-//			URacer.timeMultiplier = AMath.clamp( URacer.timeMultiplier - 0.02f, tmMin, Config.Physics.PhysicsTimeMultiplier );
-//		}
-//		else {
-//			URacer.timeMultiplier = AMath.clamp( URacer.timeMultiplier + 0.02f, tmMin, Config.Physics.PhysicsTimeMultiplier );
-//		}
+		// if( timeModulation ) {
+		// URacer.timeMultiplier = AMath.clamp( URacer.timeMultiplier - 0.02f, tmMin,
+		// Config.Physics.PhysicsTimeMultiplier );
+		// }
+		// else {
+		// URacer.timeMultiplier = AMath.clamp( URacer.timeMultiplier + 0.02f, tmMin,
+		// Config.Physics.PhysicsTimeMultiplier );
+		// }
 
 		GameData.playerState.tick();
 		GameData.driftState.tick();
@@ -132,14 +133,15 @@ public class GameLogic implements CarListener, PlayerStateListener {
 		recorder.reset();
 		GameData.playerState.reset();
 		isFirstLap = true;
-		notifier.onRestart();
+		timeModulationBusy = false;
+		timeModulation = false;
+		timeMultiplier.value = Config.Physics.PhysicsTimeMultiplier;
 	}
 
 	private void reset() {
 		restart();
 		GameData.lapState.reset();
 		lastRecordedLapId = 0;
-		notifier.onReset();
 	}
 
 	// ----------------------------------------------------------------------
@@ -192,8 +194,7 @@ public class GameLogic implements CarListener, PlayerStateListener {
 					Replay any = lapState.getAnyReplay();
 					player.ghost.setReplay( any );
 				}
-			}
-			else {
+			} else {
 				if( recorder.isRecording() ) recorder.endRecording();
 
 				lapState.updateReplays();
@@ -212,8 +213,7 @@ public class GameLogic implements CarListener, PlayerStateListener {
 					lapState.setLastTrackTimeSeconds( any.trackTimeSeconds );
 
 					Messager.show( "GO!  GO!  GO!", 3f, MessageType.Information, MessagePosition.Middle, MessageSize.Big );
-				}
-				else {
+				} else {
 					// both valid, replay best, overwrite worst
 					Replay best = lapState.getBestReplay(), worst = lapState.getWorstReplay();
 
@@ -221,8 +221,7 @@ public class GameLogic implements CarListener, PlayerStateListener {
 						lapState.setLastTrackTimeSeconds( best.trackTimeSeconds );
 						Messager.show( "-" + NumberString.format( worst.trackTimeSeconds - best.trackTimeSeconds ) + " seconds!", 3f, MessageType.Good,
 								MessagePosition.Top, MessageSize.Big );
-					}
-					else {
+					} else {
 						lapState.setLastTrackTimeSeconds( worst.trackTimeSeconds );
 						Messager.show( "+" + NumberString.format( worst.trackTimeSeconds - best.trackTimeSeconds ) + " seconds", 3f, MessageType.Bad,
 								MessagePosition.Top, MessageSize.Big );
