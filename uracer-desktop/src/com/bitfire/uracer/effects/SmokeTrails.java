@@ -6,11 +6,11 @@ import com.badlogic.gdx.graphics.g2d.ParticleEmitter;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.math.Vector2;
 import com.bitfire.uracer.Art;
-import com.bitfire.uracer.Director;
 import com.bitfire.uracer.URacer;
 import com.bitfire.uracer.effects.TrackEffects.Effects;
 import com.bitfire.uracer.entities.vehicles.Car;
-import com.bitfire.uracer.game.logic.DriftInfo;
+import com.bitfire.uracer.game.GameData;
+import com.bitfire.uracer.game.logic.DriftState;
 
 public class SmokeTrails extends TrackEffect {
 	private SmokeEffect fx[];
@@ -18,7 +18,7 @@ public class SmokeTrails extends TrackEffect {
 	public static final int MaxParticles = 100;
 
 	private boolean isDrifting, wasDrifting;
-	private DriftInfo drift;
+	private DriftState drift;
 	private Car player;
 
 	private class SmokeEffect {
@@ -53,7 +53,7 @@ public class SmokeTrails extends TrackEffect {
 		}
 
 		public void setScaleMul( float value ) {
-			baseEmitter.getScale().setHigh( OriginalParticleScaling * value * Director.scalingStrategy.invTileMapZoomFactor );
+			baseEmitter.getScale().setHigh( OriginalParticleScaling * value * GameData.scalingStrategy.invTileMapZoomFactor );
 		}
 
 		public void setEmissionMul( float value ) {
@@ -102,7 +102,7 @@ public class SmokeTrails extends TrackEffect {
 
 		this.player = player;
 		isDrifting = wasDrifting = false;
-		drift = DriftInfo.get();
+		drift = GameData.driftState;
 	}
 
 	@Override
@@ -117,8 +117,7 @@ public class SmokeTrails extends TrackEffect {
 			// started drifting
 			for( int i = 0; i < SmokeEffectsCount; i++ )
 				fx[i].start();
-		}
-		else if( !isDrifting && wasDrifting ) {
+		} else if( !isDrifting && wasDrifting ) {
 			// ended drifting
 			for( int i = 0; i < SmokeEffectsCount; i++ )
 				fx[i].stop();

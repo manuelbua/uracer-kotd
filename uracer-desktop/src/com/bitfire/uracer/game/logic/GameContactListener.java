@@ -1,12 +1,12 @@
-package com.bitfire.uracer.carsimulation;
+package com.bitfire.uracer.game.logic;
 
 import com.badlogic.gdx.physics.box2d.Contact;
 import com.badlogic.gdx.physics.box2d.ContactImpulse;
 import com.badlogic.gdx.physics.box2d.ContactListener;
 import com.badlogic.gdx.physics.box2d.Manifold;
+import com.bitfire.uracer.game.collisions.CarImpactManager;
 
-// TODO Car imlements ContactListener?
-public class CarContactListener implements ContactListener {
+public class GameContactListener implements ContactListener {
 	private CarImpactManager impactManager = new CarImpactManager();
 
 	@Override
@@ -27,6 +27,6 @@ public class CarContactListener implements ContactListener {
 
 	@Override
 	public void postSolve( Contact contact, ContactImpulse impulse ) {
-		impactManager.impact( contact, impulse );
+		impactManager.process( contact, impulse );
 	}
 }

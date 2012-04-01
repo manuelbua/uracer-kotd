@@ -1,8 +1,7 @@
 package com.bitfire.uracer.carsimulation;
 
-import com.bitfire.uracer.Config;
-import com.bitfire.uracer.Director;
 import com.bitfire.uracer.entities.vehicles.Car;
+import com.bitfire.uracer.game.GameData;
 
 public class Recorder {
 	private boolean isRecording;
@@ -10,18 +9,7 @@ public class Recorder {
 	// replay data
 	private Replay replay;
 
-	private static Recorder instance;
-
-	public static Recorder create() {
-		Recorder.instance = new Recorder();
-		return Recorder.instance;
-	}
-
-	public static Recorder instance() {
-		return instance;
-	}
-
-	private Recorder() {
+	public Recorder() {
 		isRecording = false;
 		replay = null;
 	}
@@ -31,12 +19,10 @@ public class Recorder {
 		replay = null;
 	}
 
-	public void beginRecording( Car car, Replay replay, long startTimeNs ) {
+	public void beginRecording( Car car, Replay replay, /* long startTimeNs, */String trackName ) {
 		isRecording = true;
 		this.replay = replay;
-		replay.clearForces();
-		replay.setCarData( car );
-		replay.trackStartTimeNs = startTimeNs;
+		replay.begin( trackName, GameData.gameSettings.difficulty, car );
 	}
 
 	public void add( CarForces f ) {
@@ -50,17 +36,29 @@ public class Recorder {
 		}
 	}
 
+	public void tick() {
+		if( isRecording ) {
+			replay.tick();
+		}
+	}
+
 	public void endRecording() {
 		if( !isRecording ) {
 			// System.out.println("Cannot end a recording that wasn't enabled!");
 			return;
 		}
 
-		float secs = (float)(System.nanoTime() - replay.trackStartTimeNs) / 1000000000f;
-		secs *= Config.Physics.PhysicsTimeMultiplier;
-		replay.setReplayData( Director.currentLevel.name, Director.gameplaySettings.difficulty, secs );
+		replay.end();
+		// float secs = (float)(System.nanoTime() - replay.trackStartTimeNs) / 1000000000f;
+		// secs *= URacer.timeMultiplier;
+		// replay.setReplayData( name, GameData.gameSettings.difficulty, replay.time.elapsed( Time.Reference.Ticks ));
 
 		// System.out.println( "Recorded " + replay.getEventsCount() + " events" );
+		// System.out.println("Recorded " + secs + " seconds" );
+		// System.out.println("Time: " +
+		// replay.time.elapsed( Time.Reference.Absolute ) + " abs, " +
+		// replay.time.elapsed( Time.Reference.NumberOfTicks ) + " ticks, " +
+		// replay.time.elapsed( Time.Reference.Ticks ) + " secs" );
 
 		isRecording = false;
 		replay = null;

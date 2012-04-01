@@ -112,8 +112,7 @@ public abstract class Filter<T> extends IFilter {
 			outputBuffer.begin();
 			compute();
 			outputBuffer.end();
-		}
-		else
+		} else
 			compute();
 	}
 }

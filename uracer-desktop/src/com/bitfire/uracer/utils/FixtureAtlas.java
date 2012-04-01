@@ -123,15 +123,13 @@ public class FixtureAtlas {
 				bodyMap.put( name, bm );
 			}
 
-		}
-		catch( IOException ex ) {
+		} catch( IOException ex ) {
 			throw new RuntimeException( ex.getMessage() );
 
 		} finally {
 			if( is != null ) try {
 				is.close();
-			}
-			catch( IOException ex ) {
+			} catch( IOException ex ) {
 			}
 		}
 	}

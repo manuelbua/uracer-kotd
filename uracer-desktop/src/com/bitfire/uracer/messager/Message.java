@@ -13,8 +13,7 @@ import com.badlogic.gdx.graphics.g2d.BitmapFont.HAlignment;
 import com.badlogic.gdx.graphics.g2d.BitmapFont.TextBounds;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.bitfire.uracer.Art;
-import com.bitfire.uracer.Director;
-import com.bitfire.uracer.game.Game;
+import com.bitfire.uracer.game.GameData;
 import com.bitfire.uracer.messager.Messager.MessagePosition;
 import com.bitfire.uracer.messager.Messager.MessageSize;
 import com.bitfire.uracer.messager.Messager.MessageType;
@@ -90,16 +89,17 @@ public class Message {
 		whereX = finalX = Gdx.graphics.getWidth() / 4;
 		finalY = 0;
 
-		float distance = 180 * Director.scalingStrategy.invTileMapZoomFactor;
+		float scale = GameData.scalingStrategy.invTileMapZoomFactor;
+		float distance = 180 * scale;
 
 		switch( position ) {
 		case Top:
-			finalY = 30 * Director.scalingStrategy.invTileMapZoomFactor;
+			finalY = 30 * scale;
 			whereY = Gdx.graphics.getHeight() / 2;
 			break;
 
 		case Middle:
-			font.setScale( 1.5f * Director.scalingStrategy.invTileMapZoomFactor, 1.5f * Director.scalingStrategy.invTileMapZoomFactor );
+			font.setScale( 1.5f * scale, 1.5f * scale );
 			bounds.set( font.getMultiLineBounds( what ) );
 			finalY = (Gdx.graphics.getHeight() - bounds.height) / 2 - bounds.height / 2;
 			whereY = Gdx.graphics.getHeight() + bounds.height;
@@ -111,7 +111,7 @@ public class Message {
 			break;
 		}
 
-		font.setScale( Director.scalingStrategy.invTileMapZoomFactor, Director.scalingStrategy.invTileMapZoomFactor );
+		font.setScale( scale, scale );
 	}
 
 	public boolean tick() {
@@ -119,7 +119,7 @@ public class Message {
 	}
 
 	public void render( SpriteBatch batch ) {
-		font.setScale( scaleX * Director.scalingStrategy.invTileMapZoomFactor, scaleY * Director.scalingStrategy.invTileMapZoomFactor );
+		font.setScale( scaleX * GameData.scalingStrategy.invTileMapZoomFactor, scaleY * GameData.scalingStrategy.invTileMapZoomFactor );
 		font.setColor( 1, 1, 1, alpha );
 		font.drawMultiLine( batch, what, whereX, whereY, halfWidth, HAlignment.CENTER );
 		font.setColor( 1, 1, 1, 1 );
@@ -132,25 +132,23 @@ public class Message {
 		// scaleX = scaleY = 1f;
 		computeFinalPosition();
 
-		Game.getTweener().start(
-				Timeline.createParallel().push( Tween.to( this, MessageAccessor.OPACITY, 400 ).target( 1f ).ease( Expo.INOUT ) )
-						.push( Tween.to( this, MessageAccessor.POSITION_Y, 400 ).target( finalY ).ease( Expo.INOUT ) )
-						.push( Tween.to( this, MessageAccessor.SCALE_XY, 500 ).target( 1.5f, 1.5f ).ease( Back.INOUT ) ) );
+		GameData.tweener.start( Timeline.createParallel().push( Tween.to( this, MessageAccessor.OPACITY, 400 ).target( 1f ).ease( Expo.INOUT ) )
+				.push( Tween.to( this, MessageAccessor.POSITION_Y, 400 ).target( finalY ).ease( Expo.INOUT ) )
+				.push( Tween.to( this, MessageAccessor.SCALE_XY, 500 ).target( 1.5f, 1.5f ).ease( Back.INOUT ) ) );
 	}
 
 	public void onHide() {
 		hiding = true;
 
-		Game.getTweener().start(
-				Timeline.createParallel().push( Tween.to( this, MessageAccessor.OPACITY, 500 ).target( 0f ).ease( Expo.INOUT ) )
-						.push( Tween.to( this, MessageAccessor.POSITION_Y, 500 ).target( -50 * font.getScaleX() ).ease( Expo.INOUT ) )
-						.push( Tween.to( this, MessageAccessor.SCALE_XY, 400 ).target( 1f, 1f ).ease( Back.INOUT ) )
-						.addCallback( TweenCallback.EventType.COMPLETE, new TweenCallback() {
-							@Override
-							public void onEvent( EventType eventType, BaseTween source ) {
-								finished = true;
-							}
-						} ) );
+		GameData.tweener.start( Timeline.createParallel().push( Tween.to( this, MessageAccessor.OPACITY, 500 ).target( 0f ).ease( Expo.INOUT ) )
+				.push( Tween.to( this, MessageAccessor.POSITION_Y, 500 ).target( -50 * font.getScaleX() ).ease( Expo.INOUT ) )
+				.push( Tween.to( this, MessageAccessor.SCALE_XY, 400 ).target( 1f, 1f ).ease( Back.INOUT ) )
+				.addCallback( TweenCallback.EventType.COMPLETE, new TweenCallback() {
+					@Override
+					public void onEvent( EventType eventType, BaseTween source ) {
+						finished = true;
+					}
+				} ) );
 	}
 
 	public boolean isHiding() {

@@ -1,56 +1,66 @@
 package com.bitfire.uracer.audio;
 
+import com.badlogic.gdx.math.Vector2;
+import com.badlogic.gdx.physics.box2d.Fixture;
+import com.bitfire.uracer.carsimulation.CarForces;
 import com.bitfire.uracer.carsimulation.CarInputMode;
-import com.bitfire.uracer.game.logic.Player;
+import com.bitfire.uracer.entities.vehicles.Car;
+import com.bitfire.uracer.events.CarListener;
+import com.bitfire.uracer.events.DriftStateListener;
+import com.bitfire.uracer.game.GameData;
 
-public class CarSoundManager {
-	private static Player player = null;
-
+public class CarSoundManager implements DriftStateListener, CarListener {
 	// sound effects
-	private static CarDriftSoundEffect carDrift;
-	private static CarEngineSoundEffect carEngine;
-	private static CarImpactSoundEffect carImpact;
+	private CarDriftSoundEffect carDrift;
+	private CarEngineSoundEffect carEngine;
+	private CarImpactSoundEffect carImpact;
 
-	public static void load() {
+	public CarSoundManager() {
 		carEngine = new CarEngineSoundEffect();
 		// carEngine.start();
 
 		carDrift = new CarDriftSoundEffect();
-		carDrift.start();
+		carDrift.start();	// wtf? why the manager should start it in load()?
 
 		carImpact = new CarImpactSoundEffect();
 	}
 
-	public static void dispose() {
-		carEngine.dispose();
+	public void dispose() {
+		// carEngine.dispose();
 		carDrift.dispose();
 		carImpact.dispose();
 	}
 
-	public static void setPlayer( Player player ) {
-		CarSoundManager.player = player;
-	}
-
-	public static void tick() {
-		if( player.car.getInputMode() == CarInputMode.InputFromPlayer ) {
+	public void tick() {
+		if( GameData.playerState.car.getInputMode() == CarInputMode.InputFromPlayer ) {
 			// TODO when update() will use GameData shared data internally, no params, thus a task-based component
 			// system can be created
-			carEngine.update( player.currSpeedFactor );
-			carDrift.update( player.currSpeedFactor );
+			// carEngine.update( player.currSpeedFactor );
+			carDrift.update( GameData.playerState.currSpeedFactor );
 		}
 	}
 
-	// drift events
-	public static void driftBegin() {
+	@Override
+	public void onBeginDrift() {
 		carDrift.driftBegin();
 	}
 
-	public static void driftEnd() {
+	@Override
+	public void onEndDrift() {
 		carDrift.driftEnd();
 	}
 
-	// crashes
-	public static void carImpacted( float impactForce ) {
-		carImpact.impact( impactForce, player.currSpeedFactor );
+	@Override
+	public void onComputeForces( CarForces forces ) {
+	}
+
+	@Override
+	public void onCollision( Car car, Fixture other, Vector2 impulses ) {
+		carImpact.impact( impulses.len(), GameData.playerState.currSpeedFactor );
+	}
+
+	public void reset() {
+		// carEngine.reset();
+		carDrift.reset();
 	}
 }

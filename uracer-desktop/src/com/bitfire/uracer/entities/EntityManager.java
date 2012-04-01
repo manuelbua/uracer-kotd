@@ -1,8 +1,9 @@
 package com.bitfire.uracer.entities;
 
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
+import com.badlogic.gdx.physics.box2d.World;
 import com.badlogic.gdx.utils.Array;
-import com.bitfire.uracer.Physics;
+import com.bitfire.uracer.Config;
 
 public class EntityManager {
 	private static Array<Entity> entities;
@@ -43,12 +44,12 @@ public class EntityManager {
 		}
 	}
 
-	public static void raiseOnTick() {
+	public static void raiseOnTick( World world ) {
 		// intentionally avoid rising onTick on subframe interpolables since
 		// there are plenty of chances to tick already
 
 		raiseOnBeforePhysicsSubstep();
-		Physics.world.step( Physics.dt, 10, 10 );
+		world.step( Config.Physics.PhysicsDt, 10, 10 );
 		raiseOnAfterPhysicsSubstep();
 
 		int len = entities.size;

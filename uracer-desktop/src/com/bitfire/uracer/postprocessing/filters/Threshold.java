@@ -32,7 +32,7 @@ public class Threshold extends Filter<Threshold> {
 	}
 
 	public Threshold() {
-		super( ShaderLoader.createShader( "screenspace", "threshold" ) );
+		super( ShaderLoader.fromFile( "screenspace", "threshold" ) );
 		rebind();
 	}
 

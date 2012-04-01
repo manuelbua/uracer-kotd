@@ -21,36 +21,36 @@ import com.badlogic.gdx.graphics.g2d.tiled.TiledObjectGroup;
 import com.badlogic.gdx.graphics.glutils.FrameBuffer;
 import com.badlogic.gdx.math.MathUtils;
 import com.badlogic.gdx.math.Vector2;
+import com.badlogic.gdx.physics.box2d.World;
 import com.bitfire.uracer.Config;
 import com.bitfire.uracer.Director;
-import com.bitfire.uracer.Physics;
 import com.bitfire.uracer.carsimulation.CarModel;
-import com.bitfire.uracer.carsimulation.Recorder;
-import com.bitfire.uracer.carsimulation.Replay;
 import com.bitfire.uracer.entities.CollisionFilters;
-import com.bitfire.uracer.entities.EntityManager;
 import com.bitfire.uracer.entities.vehicles.Car;
 import com.bitfire.uracer.entities.vehicles.GhostCar;
 import com.bitfire.uracer.factories.CarFactory;
 import com.bitfire.uracer.factories.CarFactory.CarType;
 import com.bitfire.uracer.factories.ModelFactory;
+import com.bitfire.uracer.game.GameData;
 import com.bitfire.uracer.tiled.LevelRenderer;
 import com.bitfire.uracer.tiled.OrthographicAlignedStillModel;
-import com.bitfire.uracer.tiled.ScalingStrategy;
 import com.bitfire.uracer.tiled.TrackTrees;
 import com.bitfire.uracer.tiled.TrackWalls;
 import com.bitfire.uracer.tiled.UTileMapRenderer;
 import com.bitfire.uracer.utils.Convert;
 import com.bitfire.uracer.utils.MapUtils;
 
-/** First write. Basic idea in place, will need refactoring for sure.
+/** First write. Basic idea in place (in iterative refactoring)
  * 
  * @author manuel */
 public class Level {
+	private final World world;
+
 	// level data
 	public TiledMap map = null;
 	private TrackWalls trackWalls = null;
 	private TrackTrees trackTrees = null;
+	public Vector2 worldSizeScaledPx = null, worldSizeScaledMt = null, worldSizeTiles = null;
 
 	// level rendering
 	public LevelRenderer levelRenderer = null;
@@ -66,20 +66,22 @@ public class Level {
 	private ArrayList<OrthographicAlignedStillModel> staticMeshes = new ArrayList<OrthographicAlignedStillModel>();
 
 	// player recording data
-	private Player player;
-	private Recorder recorder;
+	private PlayerState player;
 	private boolean nightMode;
 
 	// lighting system
 	private RayHandler rayHandler = null;
 	private ConeLight playerHeadlights = null;
 
-	public Level( String levelName, ScalingStrategy strategy, boolean nightMode ) {
+	public Level( World world, String levelName, boolean nightMode, int width, int height ) {
 		this.name = levelName;
 		this.nightMode = nightMode;
+		this.world = world;
+
+		createCams( width, height );
 
 		// ie. "level1-128.tmx"
-		String mapname = levelName + "-" + (int)strategy.forTileSize + ".tmx";
+		String mapname = levelName + "-" + (int)GameData.scalingStrategy.forTileSize + ".tmx";
 		FileHandle mapHandle = Gdx.files.internal( LevelsStore + mapname );
 		FileHandle baseDir = Gdx.files.internal( LevelsStore );
 
@@ -88,22 +90,17 @@ public class Level {
 		atlas = new TileAtlas( map, baseDir );
 		tileMapRenderer = new UTileMapRenderer( map, atlas, 1, 1, map.tileWidth, map.tileHeight );
 
+		// compute world size
+		worldSizeTiles = new Vector2( map.width, map.height );
+		worldSizeScaledPx = new Vector2( map.width * map.tileWidth, map.height * map.tileHeight );
+		worldSizeScaledPx.mul( GameData.scalingStrategy.invTileMapZoomFactor );
+		worldSizeScaledMt = new Vector2( Convert.px2mt( worldSizeScaledPx ) );
+
 		// initialize TiledMap utils
-		MapUtils.initialize( map );
+		MapUtils.init( map, worldSizeScaledPx );
 
-		createCams();
-
-		levelRenderer = new LevelRenderer( camPersp, camOrtho );
-	}
-
-	// TODO remove this 2-stage construction, the "static" problem on Android is no more.
-	/* 2-stage construction, avoid <static> problems in Android */
-	public void construct() {
-		syncWithCam( Director.getCamera() );
-		OrthographicAlignedStillModel.initialize();
-
-		EntityManager.create();
-		recorder = Recorder.create();
+		// TODO, look on why i needed to sync at construction
+		// syncWithCam( Director.getCamera() );
 
 		createMeshes();
 		player = createPlayer( map );
@@ -111,6 +108,8 @@ public class Level {
 		if( nightMode ) {
 			createLights();
 		}
+
+		levelRenderer = new LevelRenderer( camPersp, camOrtho );
 	}
 
 	public void dispose() {
@@ -127,17 +126,17 @@ public class Level {
 	public void syncWithCam( OrthographicCamera orthoCam ) {
 		// scale position
 		camOrtho.position.set( orthoCam.position );
-		camOrtho.position.mul( Director.scalingStrategy.tileMapZoomFactor );
+		camOrtho.position.mul( GameData.scalingStrategy.tileMapZoomFactor );
 
 		camOrtho.viewportWidth = Gdx.graphics.getWidth();
 		camOrtho.viewportHeight = Gdx.graphics.getHeight();
-		camOrtho.zoom = Director.scalingStrategy.tileMapZoomFactor;
+		camOrtho.zoom = GameData.scalingStrategy.tileMapZoomFactor;
 		camOrtho.update();
 
 		camPersp.viewportWidth = camOrtho.viewportWidth;
 		camPersp.viewportHeight = camOrtho.viewportHeight;
 		camPersp.position.set( camOrtho.position.x, camOrtho.position.y, camPerspElevation );
-		camPersp.fieldOfView = Director.scalingStrategy.verticalFov;
+		camPersp.fieldOfView = GameData.scalingStrategy.verticalFov;
 		camPersp.update();
 	}
 
@@ -168,12 +167,9 @@ public class Level {
 		gl.glDepthMask( false );
 	}
 
-	private void createCams() {
-		int w = Gdx.graphics.getWidth();
-		int h = Gdx.graphics.getHeight();
-
+	private void createCams( int width, int height ) {
 		// creates and setup orthographic camera
-		camOrtho = new OrthographicCamera( w, h );
+		camOrtho = new OrthographicCamera( width, height );
 		camOrtho.near = 0;
 		camOrtho.far = 100;
 		camOrtho.zoom = 1;
@@ -186,7 +182,7 @@ public class Level {
 		float perspPlaneFar = 240;
 		camPerspElevation = 100;
 
-		camPersp = new PerspectiveCamera( Director.scalingStrategy.verticalFov, w, h );
+		camPersp = new PerspectiveCamera( GameData.scalingStrategy.verticalFov, width, height );
 		camPersp.near = perspPlaneNear;
 		camPersp.far = perspPlaneFar;
 		camPersp.lookAt( 0, 0, -1 );
@@ -213,7 +209,7 @@ public class Level {
 
 		// walls by polylines
 		trackWalls = new TrackWalls();
-		trackWalls.createWalls();
+		trackWalls.createWalls( world, worldSizeScaledMt );
 
 		// trees
 		trackTrees = new TrackTrees();
@@ -222,7 +218,7 @@ public class Level {
 		totalMeshes = staticMeshes.size() + trackWalls.walls.size() + trackTrees.trees.size();
 	}
 
-	private Player createPlayer( TiledMap map ) {
+	private PlayerState createPlayer( TiledMap map ) {
 		// search the map for the start marker and create
 		// the player with the found tile coordinates
 		TiledLayer layerTrack = MapUtils.getLayer( MapUtils.LayerTrack );
@@ -236,7 +232,7 @@ public class Level {
 				if( type == null ) continue;
 
 				if( type.equals( "start" ) ) {
-					start.set( Convert.tileToPx( x, y ).add( Convert.scaledPixels( 112, -112 ) ) );
+					start.set( MapUtils.tileToPx( x, y ).add( Convert.scaledPixels( 112, -112 ) ) );
 					startTileX = x;
 					startTileY = y;
 					break;
@@ -255,10 +251,10 @@ public class Level {
 			startOrient = 180f;
 		else if( orient.equals( "left" ) ) startOrient = 270f;
 
-		Car car = CarFactory.createPlayer( CarType.OldSkool, new CarModel().toModel2(), start, startOrient );
-		GhostCar ghost = CarFactory.createGhost( car );
+		Car car = CarFactory.createPlayer( world, CarType.OldSkool, new CarModel().toModel2(), start, startOrient );
+		GhostCar ghost = CarFactory.createGhost( world, car );
 
-		Player p = new Player( car, ghost );
+		PlayerState p = new PlayerState( car, ghost );
 		p.startPos.set( start );
 		p.startTileX = startTileX;
 		p.startTileY = startTileY;
@@ -282,7 +278,7 @@ public class Level {
 		}
 
 		RayHandler.setColorPrecisionMediump();
-		rayHandler = new RayHandler( Physics.world, maxRays, (int)(Gdx.graphics.getWidth() * rttScale), (int)(Gdx.graphics.getHeight() * rttScale) );
+		rayHandler = new RayHandler( world, maxRays, (int)(Gdx.graphics.getWidth() * rttScale), (int)(Gdx.graphics.getHeight() * rttScale) );
 		rayHandler.setShadows( true );
 		rayHandler.setCulling( true );
 		rayHandler.setBlur( true );
@@ -307,8 +303,8 @@ public class Level {
 			// MathUtils.random(0,1),
 			1f, .85f, .15f, .75f );
 			TiledObject o = group.objects.get( i );
-			pos.set( o.x, o.y ).mul( Director.scalingStrategy.invTileMapZoomFactor );
-			pos.y = Director.worldSizeScaledPx.y - pos.y;
+			pos.set( o.x, o.y ).mul( GameData.scalingStrategy.invTileMapZoomFactor );
+			pos.y = worldSizeScaledPx.y - pos.y;
 			pos.set( Convert.px2mt( pos ) );
 
 			PointLight l = new PointLight( rayHandler, maxRays, c, 30f, pos.x, pos.y );
@@ -336,8 +332,8 @@ public class Level {
 		playerHeadlights.setDirection( ang );
 		playerHeadlights.setPosition( px, py );
 
-		rayHandler.setCombinedMatrix( Director.getMatViewProjMt(), Convert.px2mt( camOrtho.position.x * Director.scalingStrategy.invTileMapZoomFactor ),
-				Convert.px2mt( camOrtho.position.y * Director.scalingStrategy.invTileMapZoomFactor ), Convert.px2mt( camOrtho.viewportWidth ),
+		rayHandler.setCombinedMatrix( Director.getMatViewProjMt(), Convert.px2mt( camOrtho.position.x * GameData.scalingStrategy.invTileMapZoomFactor ),
+				Convert.px2mt( camOrtho.position.y * GameData.scalingStrategy.invTileMapZoomFactor ), Convert.px2mt( camOrtho.viewportWidth ),
 				Convert.px2mt( camOrtho.viewportHeight ) );
 
 		rayHandler.update();
@@ -355,7 +351,7 @@ public class Level {
 
 	/** operations */
 
-	public Player getPlayer() {
+	public PlayerState getPlayerState() {
 		return player;
 	}
 
@@ -363,24 +359,12 @@ public class Level {
 		return nightMode;
 	}
 
-	public void beginRecording( Replay outputBuffer, long lapStartTimeNs ) {
-		recorder.beginRecording( player.car, outputBuffer, lapStartTimeNs );
+	public OrthographicCamera getOrthoCamera() {
+		return camOrtho;
 	}
 
-	public void endRecording() {
-		recorder.endRecording();
+	public PerspectiveCamera getPerspectiveCamera() {
+		return camPersp;
 	}
 
-	public boolean isRecording() {
-		return recorder.isRecording();
-	}
-
-	public void discardRecording() {
-		recorder.reset();
-	}
-
-	public void reset() {
-		player.reset();
-		recorder.reset();
-	}
 }

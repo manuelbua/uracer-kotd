@@ -170,8 +170,7 @@ public class ModelFactory {
 
 		if( cachedMaterials.containsKey( materialHash ) ) {
 			return cachedMaterials.get( materialHash );
-		}
-		else {
+		} else {
 			TextureAttribute ta = new TextureAttribute( texture, 0, "textureAttributes" );
 			m = new Material( "default", ta );
 
@@ -193,8 +192,7 @@ public class ModelFactory {
 
 		if( cachedModels.containsKey( modelHash ) ) {
 			return cachedModels.get( modelHash );
-		}
-		else {
+		} else {
 			try {
 				String[] ext = model.split( "\\." );
 
@@ -203,16 +201,14 @@ public class ModelFactory {
 					InputStream in = Gdx.files.internal( model ).read();
 					m = G3dtLoader.loadStillModel( in, true );
 					in.close();
-				}
-				else if( ext[1].equals( "obj" ) ) {
+				} else if( ext[1].equals( "obj" ) ) {
 					// y-forward, z-up
 					ObjLoader l = new ObjLoader();
 					m = l.loadObj( Gdx.files.internal( model ), true );
 				}
 
 				cachedModels.put( modelHash, m );
-			}
-			catch( IOException ioex ) {
+			} catch( IOException ioex ) {
 				ioex.printStackTrace();
 			}
 		}

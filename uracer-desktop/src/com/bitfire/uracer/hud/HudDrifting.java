@@ -6,8 +6,8 @@ import com.bitfire.uracer.Art;
 import com.bitfire.uracer.Director;
 import com.bitfire.uracer.carsimulation.CarModel;
 import com.bitfire.uracer.entities.vehicles.Car;
-import com.bitfire.uracer.game.Game;
-import com.bitfire.uracer.game.logic.DriftInfo;
+import com.bitfire.uracer.game.GameData;
+import com.bitfire.uracer.game.logic.DriftState;
 import com.bitfire.uracer.messager.Messager;
 import com.bitfire.uracer.messager.Messager.MessagePosition;
 import com.bitfire.uracer.messager.Messager.MessageSize;
@@ -16,7 +16,6 @@ import com.bitfire.uracer.utils.Convert;
 import com.bitfire.uracer.utils.NumberString;
 
 public class HudDrifting {
-	private Game game;
 	private Car playerCar;
 	private CarModel model;
 	private int carWidthPx, carLengthPx;
@@ -26,17 +25,13 @@ public class HudDrifting {
 	private static final int MaxLabelResult = 3;
 	private int nextLabelResult = 0;
 
-	private DriftInfo drift;
 	private Vector2 heading = new Vector2();
 
-	public HudDrifting( Game game ) {
-		this.game = game;
-		this.playerCar = game.getLevel().getPlayer().car;
-		this.model = playerCar.getCarModel();
+	public HudDrifting( Car car ) {
+		this.playerCar = car;
+		model = playerCar.getCarModel();
 		carWidthPx = (int)Convert.mt2px( model.width );
 		carLengthPx = (int)Convert.mt2px( model.length );
-
-		drift = DriftInfo.get();
 
 		labelRealtime = new HudLabel( Art.fontCurseYRbig, "99.99", 0.5f );
 		labelRealtime.setAlpha( 0 );
@@ -72,11 +67,13 @@ public class HudDrifting {
 	private float lastDistance = 0f;
 
 	public void render( SpriteBatch batch ) {
+		DriftState drift = GameData.driftState;
+
 		// update from subframe-interpolated player position
 		Vector2 pos = tmpv.set( Director.screenPosForPx( playerCar.state().position ) );
 
-		float secRatio = 1f;
-		float distance = 0f;
+		// float secRatio = 1f;
+		// float distance = 0f;
 		if( drift.isDrifting ) {
 			// secRatio = AMath.clamp( (System.currentTimeMillis() - drift.driftStartTime) / 2000f, 0, 1);
 			// labelRealtime.setAlpha( secRatio );
@@ -108,6 +105,7 @@ public class HudDrifting {
 	}
 
 	public void onEndDrift() {
+		DriftState drift = GameData.driftState;
 		Vector2 pos = tmpv.set( Director.screenPosForPx( playerCar.state().position ) );
 
 		labelRealtime.fadeOut( 300 );
@@ -121,20 +119,17 @@ public class HudDrifting {
 		if( drift.hasCollided ) {
 			result.setString( "-" + NumberString.format( drift.driftSeconds ) );
 			result.setFont( Art.fontCurseRbig );
-		}
-		else {
+		} else {
 			result.setString( "+" + NumberString.format( drift.driftSeconds ) );
 			result.setFont( Art.fontCurseGbig );
 
 			if( drift.driftSeconds >= 1 && drift.driftSeconds < 3f ) {
 				Messager.enqueue( "NICE ONE!\n+" + NumberString.format( drift.driftSeconds ) + "  seconds!", 1f, MessageType.Good, MessagePosition.Middle,
 						MessageSize.Big );
-			}
-			else if( drift.driftSeconds >= 3f && drift.driftSeconds < 5f ) {
+			} else if( drift.driftSeconds >= 3f && drift.driftSeconds < 5f ) {
 				Messager.enqueue( "FANTASTIC!\n+" + NumberString.format( drift.driftSeconds ) + "  seconds!", 1f, MessageType.Good, MessagePosition.Middle,
 						MessageSize.Big );
-			}
-			else if( drift.driftSeconds >= 5f ) {
+			} else if( drift.driftSeconds >= 5f ) {
 				Messager.enqueue( "UNREAL!\n+" + NumberString.format( drift.driftSeconds ) + "  seconds!", 1f, MessageType.Good, MessagePosition.Bottom, MessageSize.Big );
 			}
 		}

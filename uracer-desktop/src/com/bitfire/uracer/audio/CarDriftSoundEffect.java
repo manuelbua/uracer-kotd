@@ -4,7 +4,7 @@ import com.badlogic.gdx.Files.FileType;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.audio.Sound;
 import com.bitfire.uracer.Config;
-import com.bitfire.uracer.game.logic.DriftInfo;
+import com.bitfire.uracer.game.GameData;
 import com.bitfire.uracer.utils.AMath;
 
 public class CarDriftSoundEffect extends CarSoundEffect {
@@ -46,6 +46,14 @@ public class CarDriftSoundEffect extends CarSoundEffect {
 		if( driftId > -1 ) {
 			drift.stop( driftId );
 		}
+
+		doFadeIn = doFadeOut = false;
+	}
+
+	@Override
+	public void reset() {
+		stop();
+		lastVolume = 0;
 	}
 
 	public void driftBegin() {
@@ -83,8 +91,7 @@ public class CarDriftSoundEffect extends CarSoundEffect {
 					lastVolume = 1f;
 					doFadeIn = false;
 				}
-			}
-			else if( doFadeOut ) {
+			} else if( doFadeOut ) {
 				if( lastVolume > 0f )
 					lastVolume -= 0.03f;
 				else {
@@ -94,7 +101,7 @@ public class CarDriftSoundEffect extends CarSoundEffect {
 			}
 
 			lastVolume = AMath.clamp( lastVolume, 0, 1f );
-			drift.setVolume( driftId, DriftInfo.get().driftStrength * lastVolume );
+			drift.setVolume( driftId, GameData.driftState.driftStrength * lastVolume );
 		}
 
 	}

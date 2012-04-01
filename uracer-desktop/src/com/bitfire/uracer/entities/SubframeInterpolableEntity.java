@@ -27,8 +27,7 @@ public abstract class SubframeInterpolableEntity extends Entity {
 	public void onBeforeRender( float temporalAliasingFactor ) {
 		if( isSubframeInterpolated() ) {
 			stateRender.set( EntityState.interpolate( statePrevious, stateCurrent, temporalAliasingFactor ) );
-		}
-		else {
+		} else {
 			stateRender.set( stateCurrent );
 		}
 	}

@@ -113,8 +113,7 @@ public class LevelRenderer {
 
 				if( i == 0 || needRebind ) {
 					m.material.bind( treeShader );
-				}
-				else if( !trees.trees.get( i - 1 ).material.equals( m.material ) ) {
+				} else if( !trees.trees.get( i - 1 ).material.equals( m.material ) ) {
 					m.material.bind( treeShader );
 				}
 
@@ -147,7 +146,7 @@ public class LevelRenderer {
 
 		float meshZ = -(camPersp.far - camPersp.position.z);
 
-		ShaderProgram shader = OrthographicAlignedStillModel.shaderProgram;
+		ShaderProgram shader = OrthographicAlignedStillModel.shader;
 		shader.begin();
 
 		boolean needRebind = false;
@@ -187,12 +186,11 @@ public class LevelRenderer {
 			// avoid rebinding same textures
 			if( i == 0 || needRebind ) {
 				m.material.bind( shader );
-			}
-			else if( !models.get( i - 1 ).material.equals( m.material ) ) {
+			} else if( !models.get( i - 1 ).material.equals( m.material ) ) {
 				m.material.bind( shader );
 			}
 
-			submesh.mesh.render( OrthographicAlignedStillModel.shaderProgram, submesh.primitiveType );
+			submesh.mesh.render( OrthographicAlignedStillModel.shader, submesh.primitiveType );
 			renderedCount++;
 		}
 

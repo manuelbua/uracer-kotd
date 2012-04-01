@@ -4,7 +4,6 @@ import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.utils.LongMap;
 import com.bitfire.uracer.Config;
 import com.bitfire.uracer.entities.vehicles.Car;
-import com.bitfire.uracer.game.logic.GameLogic;
 
 public class TrackEffects {
 	public enum Effects {
@@ -29,8 +28,8 @@ public class TrackEffects {
 
 	private static LongMap<TrackEffect> effects;
 
-	public static void init( GameLogic logic ) {
-		playerCar = logic.getGame().getLevel().getPlayer().car;
+	public static void init( Car car ) {
+		playerCar = car;
 		effects = new LongMap<TrackEffect>();
 
 		TrackEffects.add( Effects.CarSkidMarks );

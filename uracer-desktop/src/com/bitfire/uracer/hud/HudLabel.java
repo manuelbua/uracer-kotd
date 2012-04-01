@@ -9,8 +9,7 @@ import com.badlogic.gdx.graphics.g2d.BitmapFont;
 import com.badlogic.gdx.graphics.g2d.BitmapFont.TextBounds;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.math.Vector2;
-import com.bitfire.uracer.Director;
-import com.bitfire.uracer.game.Game;
+import com.bitfire.uracer.game.GameData;
 import com.bitfire.uracer.tweener.accessors.HudLabelAccessor;
 
 public class HudLabel {
@@ -114,7 +113,7 @@ public class HudLabel {
 
 	public void render( SpriteBatch batch ) {
 		if( alpha > 0 ) {
-			font.setScale( scale * Director.scalingStrategy.invTileMapZoomFactor );
+			font.setScale( scale * GameData.scalingStrategy.invTileMapZoomFactor );
 			font.setColor( 1, 1, 1, alpha );
 
 			font.drawMultiLine( batch, what, x, y );
@@ -126,11 +125,11 @@ public class HudLabel {
 	/** effects */
 
 	public void fadeIn( int milliseconds ) {
-		Game.getTweener().start( Timeline.createSequence().push( Tween.to( this, HudLabelAccessor.OPACITY, milliseconds ).target( 1f ).ease( Expo.INOUT ) ) );
+		GameData.tweener.start( Timeline.createSequence().push( Tween.to( this, HudLabelAccessor.OPACITY, milliseconds ).target( 1f ).ease( Expo.INOUT ) ) );
 	}
 
 	public void fadeOut( int milliseconds ) {
-		Game.getTweener().start( Timeline.createSequence().push( Tween.to( this, HudLabelAccessor.OPACITY, milliseconds ).target( 0f ).ease( Expo.INOUT ) ) );
+		GameData.tweener.start( Timeline.createSequence().push( Tween.to( this, HudLabelAccessor.OPACITY, milliseconds ).target( 0f ).ease( Expo.INOUT ) ) );
 	}
 
 	public void slide() {
@@ -142,14 +141,13 @@ public class HudLabel {
 		float targetFarX = getPosition().x;
 		float targetFarY = getPosition().y - 100;
 
-		Game.getTweener().start(
-				Timeline.createParallel()
-						.push( Tween.to( this, HudLabelAccessor.OPACITY, 500 ).target( 1f ).ease( Quint.INOUT ) )
-						.push( Timeline
-								.createSequence()
-								.push( Tween.to( this, HudLabelAccessor.POSITION_XY, 500 ).target( targetNearX, targetNearY ).ease( Quint.INOUT ).delay( 300 ) )
-								.push( Timeline.createParallel()
-										.push( Tween.to( this, HudLabelAccessor.POSITION_XY, 500 ).target( targetFarX, targetFarY ).ease( Expo.OUT ) )
-										.push( Tween.to( this, HudLabelAccessor.OPACITY, 500 ).target( 0f ).ease( Expo.OUT ) ) ) ) );
+		GameData.tweener.start( Timeline
+				.createParallel()
+				.push( Tween.to( this, HudLabelAccessor.OPACITY, 500 ).target( 1f ).ease( Quint.INOUT ) )
+				.push( Timeline
+						.createSequence()
+						.push( Tween.to( this, HudLabelAccessor.POSITION_XY, 500 ).target( targetNearX, targetNearY ).ease( Quint.INOUT ).delay( 300 ) )
+						.push( Timeline.createParallel().push( Tween.to( this, HudLabelAccessor.POSITION_XY, 500 ).target( targetFarX, targetFarY ).ease( Expo.OUT ) )
+								.push( Tween.to( this, HudLabelAccessor.OPACITY, 500 ).target( 0f ).ease( Expo.OUT ) ) ) ) );
 	}
 }

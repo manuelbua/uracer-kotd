@@ -61,13 +61,11 @@ public class CarImpactSoundEffect extends CarSoundEffect {
 				// low, vol=[0.25,0.5]
 				s = (MathUtils.random( 0, 100 ) < 50 ? soundLow1 : soundLow2);
 				volumeFactor = 0.25f + impactFactor;
-			}
-			else if( impactFactor > 0.25f && impactFactor < 0.75f ) {
+			} else if( impactFactor > 0.25f && impactFactor < 0.75f ) {
 				// mid, vol=[0.5,0.75]
 				s = (MathUtils.random( 0, 100 ) < 50 ? soundMid1 : soundMid2);
 				volumeFactor = 0.5f + (impactFactor - 0.25f) * 0.5f;
-			}
-			else // impactFactor >= 0.75f
+			} else // impactFactor >= 0.75f
 			{
 				// high, vol=[0.75,1]
 				s = soundHigh;
@@ -85,6 +83,11 @@ public class CarImpactSoundEffect extends CarSoundEffect {
 
 	@Override
 	public void stop() {
+		// unused
+	}
+
+	@Override
+	public void reset() {
 		// unused
 	}
 }

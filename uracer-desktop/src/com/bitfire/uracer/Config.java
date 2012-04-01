@@ -34,14 +34,12 @@ public class Config {
 				ZoomQuality = ZoomBlur.Quality.Normal;
 				ZoomMaxStrength = -0.08f;
 				PotRttFboWidth = PotRttFboHeight = 256;
-			}
-			else if( w >= 1280 ) {
+			} else if( w >= 1280 ) {
 				BlurType = Blur.BlurType.Gaussian3x3b;
 				ZoomQuality = ZoomBlur.Quality.Medium;
 				ZoomMaxStrength = -0.08f;
 				PotRttFboWidth = PotRttFboHeight = 256;
-			}
-			else if( w >= 800 ) {
+			} else if( w >= 800 ) {
 				BlurType = Blur.BlurType.Gaussian3x3;
 				ZoomQuality = ZoomBlur.Quality.Low;
 				ZoomMaxStrength = -0.08f;
@@ -92,13 +90,22 @@ public class Config {
 
 	public static class Physics {
 
-		public static float PixelsPerMeter; // defines how many pixels are 1 Box2d meter
-		public static float PhysicsTimestepHz; // defines physics dt duration
-		public static float PhysicsTimeMultiplier; // defines time modifier
+		/** defines how many pixels are 1 Box2d meter */
+		public static float PixelsPerMeter;
+
+		/** defines physics dt duration, in hz */
+		public static float PhysicsTimestepHz;
+
+		/** defines time modifier */
+		public static float PhysicsTimeMultiplier;
+
+		/** defines physics dt duration, in seconds */
+		public static float PhysicsDt;
 
 		public static void asDefault() {
 			PixelsPerMeter = 18.0f;
 			PhysicsTimestepHz = 60.0f;
+			PhysicsDt = 1.0f / PhysicsTimestepHz;
 			PhysicsTimeMultiplier = 1f;
 		}
 	}
@@ -113,13 +120,11 @@ public class Config {
 
 	public static class Debug {
 		public static boolean TraverseWalls;
-		public static boolean DirectorHasBounds;
 		public static boolean ApplyFrictionMap;
 		public static boolean FrustumCulling;
 
 		public static void asDefault() {
 			TraverseWalls = false;
-			DirectorHasBounds = ((Graphics.CameraInterpolationMode == InterpolationMode.Linear) || (Graphics.CameraInterpolationMode == InterpolationMode.Off));
 			ApplyFrictionMap = true;
 			FrustumCulling = true;
 		}

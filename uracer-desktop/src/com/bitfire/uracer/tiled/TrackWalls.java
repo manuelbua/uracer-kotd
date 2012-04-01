@@ -16,9 +16,10 @@ import com.badlogic.gdx.graphics.g3d.model.still.StillSubMesh;
 import com.badlogic.gdx.graphics.glutils.ShaderProgram;
 import com.badlogic.gdx.math.MathUtils;
 import com.badlogic.gdx.math.Vector2;
+import com.badlogic.gdx.physics.box2d.World;
 import com.bitfire.uracer.Art;
-import com.bitfire.uracer.Director;
 import com.bitfire.uracer.factories.Box2DFactory;
+import com.bitfire.uracer.game.GameData;
 import com.bitfire.uracer.utils.AMath;
 import com.bitfire.uracer.utils.Convert;
 import com.bitfire.uracer.utils.MapUtils;
@@ -37,7 +38,7 @@ public class TrackWalls {
 		walls.clear();
 	}
 
-	public void createWalls() {
+	public void createWalls( World world, Vector2 worldSizeScaledMt ) {
 		if( MapUtils.hasObjectGroup( MapUtils.LayerWalls ) ) {
 			Vector2 fromMt = new Vector2();
 			Vector2 toMt = new Vector2();
@@ -55,7 +56,7 @@ public class TrackWalls {
 
 				ArrayList<Vector2> points = MapUtils.extractPolyData( o.polyline );
 				if( points.size() >= 2 ) {
-					float factor = Director.scalingStrategy.invTileMapZoomFactor;
+					float factor = GameData.scalingStrategy.invTileMapZoomFactor;
 					float wallSizeMt = 0.3f * factor;
 					float[] mags = new float[ points.size() - 1 ];
 
@@ -63,14 +64,14 @@ public class TrackWalls {
 					offsetMt.set( Convert.px2mt( offsetMt ) );
 
 					fromMt.set( Convert.px2mt( points.get( 0 ) ) ).add( offsetMt ).mul( factor );
-					fromMt.y = Director.worldSizeScaledMt.y - fromMt.y;
+					fromMt.y = worldSizeScaledMt.y - fromMt.y;
 
 					for( int j = 1; j <= points.size() - 1; j++ ) {
 						toMt.set( Convert.px2mt( points.get( j ) ) ).add( offsetMt ).mul( factor );
-						toMt.y = Director.worldSizeScaledMt.y - toMt.y;
+						toMt.y = worldSizeScaledMt.y - toMt.y;
 
 						// create box2d wall
-						Box2DFactory.createWall( fromMt, toMt, wallSizeMt, 0f );
+						Box2DFactory.createWall( world, fromMt, toMt, wallSizeMt, 0f );
 
 						// compute magnitude
 						mags[j - 1] = (float)Math.sqrt( (toMt.x - fromMt.x) * (toMt.x - fromMt.x) + (toMt.y - fromMt.y) * (toMt.y - fromMt.y) );
@@ -99,7 +100,7 @@ public class TrackWalls {
 		MathUtils.random.setSeed( Long.MIN_VALUE );
 
 		// scaling factors
-		float factor = Director.scalingStrategy.invTileMapZoomFactor;
+		float factor = GameData.scalingStrategy.invTileMapZoomFactor;
 		float oneOnWorld3DFactor = 1f / OrthographicAlignedStillModel.World3DScalingFactor;
 		float wallHeightMt = 5f * factor * oneOnWorld3DFactor;
 		float textureScalingU = 1f;

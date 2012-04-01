@@ -10,11 +10,13 @@ import com.badlogic.gdx.utils.Disposable;
 public abstract class PostProcessorEffect implements Disposable {
 	public final int id;
 	public final String name;
+	public final PostProcessor postProcessor;
 
 	/** Construct a new post-processor effect, computing
 	 * the hash code by its class name. */
-	public PostProcessorEffect() {
+	public PostProcessorEffect( PostProcessor postProcessor ) {
 		this.name = this.getClass().getSimpleName();
+		this.postProcessor = postProcessor;
 		this.id = this.name.hashCode();
 	}
 
