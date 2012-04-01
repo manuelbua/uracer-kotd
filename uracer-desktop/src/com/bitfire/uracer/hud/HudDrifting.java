@@ -22,7 +22,17 @@ public class HudDrifting {
 
 	private HudLabel labelRealtime;
 	private HudLabel[] labelResult;
+
+	// we need an HudLabel circular buffer since
+	// the player could be doing combos and the time
+	// needed for one single labelResult to ".slide"
+	// and disappear could be higher than the time
+	// needed for the user to initiate, perform and
+	// finish the next drift.. in this case the label
+	// will move from the last result position to the
+	// current one
 	private static final int MaxLabelResult = 3;
+
 	private int nextLabelResult = 0;
 
 	private Vector2 heading = new Vector2();
@@ -36,14 +46,6 @@ public class HudDrifting {
 		labelRealtime = new HudLabel( Art.fontCurseYRbig, "99.99", 0.5f );
 		labelRealtime.setAlpha( 0 );
 
-		// we need an HudLabel circular buffer since
-		// the player could be doing combos and the time
-		// needed for one single labelResult to ".slide"
-		// and disappear could be higher than the time
-		// needed for the user to initiate, perform and
-		// finish the next drift.. in this case the label
-		// will move from the last result position to the
-		// current one
 		labelResult = new HudLabel[ MaxLabelResult ];
 		nextLabelResult = 0;
 		for( int i = 0; i < MaxLabelResult; i++ ) {
