@@ -75,7 +75,7 @@ public class Config {
 		}
 
 		public static void asDefault() {
-			EnablePostProcessingFx = false;
+			EnablePostProcessingFx = true;
 			EnableMipMapping = true;
 			SubframeInterpolation = true;
 

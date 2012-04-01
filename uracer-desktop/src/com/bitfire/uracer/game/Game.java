@@ -131,8 +131,8 @@ public class Game implements Disposable, GameLogicListener {
 		bloomSettings = new Bloom.Settings( "subtle", Config.PostProcessing.BlurType, 1, 1.5f, threshold, 1f, 0.5f, 1f, 1.5f );
 		bloom.setSettings( bloomSettings );
 
-//		zoom = new Zoom( postProcessor, Config.PostProcessing.ZoomQuality );
-//		postProcessor.addEffect( zoom );
+		zoom = new Zoom( postProcessor, Config.PostProcessing.ZoomQuality );
+		postProcessor.addEffect( zoom );
 
 		postProcessor.addEffect( bloom );
 	}
@@ -156,16 +156,16 @@ public class Game implements Disposable, GameLogicListener {
 		// bloom.setBloomIntesity( bloomSettings.bloomIntensity * factor );
 		// }
 
-//		if( Config.Graphics.EnablePostProcessingFx && zoom != null ) {
-//			zoom.setOrigin( Director.screenPosFor( GameData.playerState.car.getBody() ) );
-//			zoom.setStrength( -0.1f * factor );
-//		}
-//
-//		if( Config.Graphics.EnablePostProcessingFx && bloom != null && zoom != null ) {
-//			bloom.setBaseSaturation( 0.5f - 0.8f * factor );
-//			bloom.setBloomSaturation( 1.5f - factor * 0.25f );
-//			bloom.setBloomIntesity( 1f + factor * 1.5f );
-//		}
+		if( Config.Graphics.EnablePostProcessingFx && zoom != null ) {
+			zoom.setOrigin( Director.screenPosFor( GameData.playerState.car.getBody() ) );
+			zoom.setStrength( -0.1f * factor );
+		}
+
+		if( Config.Graphics.EnablePostProcessingFx && bloom != null && zoom != null ) {
+			bloom.setBaseSaturation( 0.5f - 0.8f * factor );
+			bloom.setBloomSaturation( 1.5f - factor * 0.25f );
+			bloom.setBloomIntesity( 1f + factor * 1.5f );
+		}
 
 		// if( Config.Graphics.EnablePostProcessingFx && bloom != null && zoom != null ) {
 		// bloom.setBaseSaturation( 0.5f - 0.8f * factor );
