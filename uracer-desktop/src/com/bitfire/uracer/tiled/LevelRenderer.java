@@ -62,7 +62,8 @@ public class LevelRenderer {
 		ShaderProgram.pedantic = false;
 		treeShader = new ShaderProgram( vertexShader, fragmentShader );
 
-		if( treeShader.isCompiled() == false ) throw new IllegalStateException( treeShader.getLog() );
+		if( treeShader.isCompiled() == false )
+			throw new IllegalStateException( treeShader.getLog() );
 	}
 
 	public void resetCounters() {

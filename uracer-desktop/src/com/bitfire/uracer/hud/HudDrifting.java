@@ -111,7 +111,8 @@ public class HudDrifting {
 		labelRealtime.fadeOut( 300 );
 
 		HudLabel result = labelResult[nextLabelResult++];
-		if( nextLabelResult == MaxLabelResult ) nextLabelResult = 0;
+		if( nextLabelResult == MaxLabelResult )
+			nextLabelResult = 0;
 
 		result.setPosition( pos.x - heading.x * (carWidthPx + result.halfBoundsWidth), pos.y - heading.y * (carLengthPx + result.halfBoundsHeight) );
 

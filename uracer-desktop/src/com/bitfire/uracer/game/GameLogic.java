@@ -4,6 +4,7 @@ import aurelienribon.tweenengine.BaseTween;
 import aurelienribon.tweenengine.Timeline;
 import aurelienribon.tweenengine.Tween;
 import aurelienribon.tweenengine.TweenCallback;
+import aurelienribon.tweenengine.TweenEquation;
 import aurelienribon.tweenengine.equations.Cubic;
 
 import com.badlogic.gdx.Gdx;
@@ -74,11 +75,14 @@ public class GameLogic implements CarListener, PlayerStateListener {
 			return false;
 		} else if( Input.isOn( Keys.SPACE ) ) {
 			if( !timeModulationBusy ) {
+
+				TweenEquation eqIn = Cubic.INOUT;
+				TweenEquation eqOut = Cubic.INOUT;
+
 				timeModulation = !timeModulation;
 				if( timeModulation ) {
 					timeModulationBusy = true;
-					GameData.tweener.start( Timeline.createSequence()
-							.push( Tween.to( timeMultiplier, BoxedFloatAccessor.VALUE, 800 ).target( tmMin ).ease( Cubic.INOUT ) )
+					GameData.tweener.start( Timeline.createSequence().push( Tween.to( timeMultiplier, BoxedFloatAccessor.VALUE, 1000 ).target( tmMin ).ease( eqIn ) )
 							.addCallback( TweenCallback.EventType.COMPLETE, new TweenCallback() {
 								@Override
 								public void onEvent( EventType eventType, BaseTween source ) {
@@ -88,7 +92,7 @@ public class GameLogic implements CarListener, PlayerStateListener {
 				} else {
 					timeModulationBusy = true;
 					GameData.tweener.start( Timeline.createSequence()
-							.push( Tween.to( timeMultiplier, BoxedFloatAccessor.VALUE, 1000 ).target( Config.Physics.PhysicsTimeMultiplier ).ease( Cubic.INOUT ) )
+							.push( Tween.to( timeMultiplier, BoxedFloatAccessor.VALUE, 1000 ).target( Config.Physics.PhysicsTimeMultiplier ).ease( eqOut ) )
 							.addCallback( TweenCallback.EventType.COMPLETE, new TweenCallback() {
 								@Override
 								public void onEvent( EventType eventType, BaseTween source ) {
@@ -195,7 +199,8 @@ public class GameLogic implements CarListener, PlayerStateListener {
 					player.ghost.setReplay( any );
 				}
 			} else {
-				if( recorder.isRecording() ) recorder.endRecording();
+				if( recorder.isRecording() )
+					recorder.endRecording();
 
 				lapState.updateReplays();
 

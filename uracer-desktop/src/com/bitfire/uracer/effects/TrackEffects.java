@@ -94,10 +94,12 @@ public class TrackEffects {
 		TrackEffect effect;
 
 		effect = effects.get( TrackEffects.Effects.CarSkidMarks.id );
-		if( Config.Graphics.hasEffect( TrackEffects.Effects.CarSkidMarks.id ) && effect != null ) effect.render( batch );
+		if( Config.Graphics.hasEffect( TrackEffects.Effects.CarSkidMarks.id ) && effect != null )
+			effect.render( batch );
 
 		effect = effects.get( TrackEffects.Effects.SmokeTrails.id );
-		if( Config.Graphics.hasEffect( TrackEffects.Effects.SmokeTrails.id ) && effect != null ) effect.render( batch );
+		if( Config.Graphics.hasEffect( TrackEffects.Effects.SmokeTrails.id ) && effect != null )
+			effect.render( batch );
 	}
 
 	/** expose effects TODO find a more sensible way without incurring in overhead */
@@ -108,7 +110,8 @@ public class TrackEffects {
 
 	public static int getParticleCount( Effects what ) {
 		TrackEffect effect = effects.get( what.id );
-		if( effect == null ) return 0;
+		if( effect == null )
+			return 0;
 		return effect.getParticleCount();
 	}
 }

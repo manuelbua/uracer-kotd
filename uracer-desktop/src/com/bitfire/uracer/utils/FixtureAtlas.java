@@ -28,7 +28,8 @@ public class FixtureAtlas {
 	 * 
 	 * @param shapeFile A file created with the editor. */
 	public FixtureAtlas( FileHandle shapeFile ) {
-		if( shapeFile == null ) throw new NullPointerException( "shapeFile is null" );
+		if( shapeFile == null )
+			throw new NullPointerException( "shapeFile is null" );
 
 		importFromFile( shapeFile.read() );
 	}
@@ -91,10 +92,12 @@ public class FixtureAtlas {
 	 * @param params Custom fixture parameters to apply. */
 	public void createFixtures( Body body, String name, float width, float height, FixtureDef params, Vector2 offset, Object userData ) {
 		BodyModel bm = bodyMap.get( name );
-		if( bm == null ) throw new RuntimeException( name + " does not exist in the fixture list." );
+		if( bm == null )
+			throw new RuntimeException( name + " does not exist in the fixture list." );
 
 		Vector2[][] polygons = bm.getPolygons( width, height, offset );
-		if( polygons == null ) throw new RuntimeException( name + " does not declare any polygon. " + "Should not happen. Is your shape file corrupted ?" );
+		if( polygons == null )
+			throw new RuntimeException( name + " does not declare any polygon. " + "Should not happen. Is your shape file corrupted ?" );
 
 		for( Vector2[] polygon : polygons ) {
 			shape.set( polygon );
@@ -127,10 +130,11 @@ public class FixtureAtlas {
 			throw new RuntimeException( ex.getMessage() );
 
 		} finally {
-			if( is != null ) try {
-				is.close();
-			} catch( IOException ex ) {
-			}
+			if( is != null )
+				try {
+					is.close();
+				} catch( IOException ex ) {
+				}
 		}
 	}
 

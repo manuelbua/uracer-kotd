@@ -107,13 +107,17 @@ public class Messager {
 	}
 
 	public static void render( SpriteBatch batch ) {
-		if( isBusy( MessagePosition.Top ) ) currents.get( MessagePosition.Top.ordinal() ).render( batch );
-		if( isBusy( MessagePosition.Middle ) ) currents.get( MessagePosition.Middle.ordinal() ).render( batch );
-		if( isBusy( MessagePosition.Bottom ) ) currents.get( MessagePosition.Bottom.ordinal() ).render( batch );
+		if( isBusy( MessagePosition.Top ) )
+			currents.get( MessagePosition.Top.ordinal() ).render( batch );
+		if( isBusy( MessagePosition.Middle ) )
+			currents.get( MessagePosition.Middle.ordinal() ).render( batch );
+		if( isBusy( MessagePosition.Bottom ) )
+			currents.get( MessagePosition.Bottom.ordinal() ).render( batch );
 	}
 
 	public static void show( String message, float durationSecs, MessageType type, MessagePosition position, MessageSize size ) {
-		if( isBusy( position ) ) currents.get( position.ordinal() ).onHide();
+		if( isBusy( position ) )
+			currents.get( position.ordinal() ).onHide();
 		enqueue( message, durationSecs, type, position, size );
 	}
 

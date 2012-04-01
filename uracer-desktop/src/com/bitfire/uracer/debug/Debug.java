@@ -55,7 +55,8 @@ public class Debug {
 
 		// compute graphics stats size
 		float updateHz = 0.2f;
-		if( !Config.isDesktop ) updateHz = 1f;
+		if( !Config.isDesktop )
+			updateHz = 1f;
 		gfxStats = new Stats( updateHz );
 
 		// y-flip
@@ -132,7 +133,8 @@ public class Debug {
 
 	public static void draw( TextureRegion region, float x, float y ) {
 		int width = region.getRegionWidth();
-		if( width < 0 ) width = -width;
+		if( width < 0 )
+			width = -width;
 
 		batch.draw( region, x, y, width, -region.getRegionHeight() );
 	}
@@ -197,7 +199,8 @@ public class Debug {
 
 		thisString += String.format( " | NIl=%.2f | TI=%.2f", a.len(), b.len() );
 
-		if( label != null ) thisString = label + ": " + thisString;
+		if( label != null )
+			thisString = label + ": " + thisString;
 
 		if( !tmp.equals( thisString ) ) {
 			System.out.println( thisString );

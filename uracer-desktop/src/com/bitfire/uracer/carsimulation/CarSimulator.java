@@ -75,13 +75,15 @@ public class CarSimulator {
 			if( AMath.fixup( input.steerAngle ) < 0 ) {
 				// left
 				carDesc.steerangle = input.steerAngle;
-				if( carDesc.steerangle < -AMath.PI_4 ) carDesc.steerangle = -AMath.PI_4;
+				if( carDesc.steerangle < -AMath.PI_4 )
+					carDesc.steerangle = -AMath.PI_4;
 
 				hasSteer = true;
 			} else if( AMath.fixup( input.steerAngle ) > 0 ) {
 				// right
 				carDesc.steerangle = input.steerAngle;
-				if( carDesc.steerangle > AMath.PI_4 ) carDesc.steerangle = AMath.PI_4;
+				if( carDesc.steerangle > AMath.PI_4 )
+					carDesc.steerangle = AMath.PI_4;
 
 				hasSteer = true;
 			}

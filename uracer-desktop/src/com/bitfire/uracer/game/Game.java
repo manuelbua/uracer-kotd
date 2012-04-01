@@ -141,7 +141,8 @@ public class Game implements Disposable, GameLogicListener {
 
 	// private float prevFactor = 0;
 	public boolean tick() {
-		if( !gameLogic.onTick() ) return false;
+		if( !gameLogic.onTick() )
+			return false;
 
 		carSoundManager.tick();
 
@@ -237,7 +238,8 @@ public class Game implements Disposable, GameLogicListener {
 
 		if( level.isNightMode() ) {
 			if( Config.Graphics.DumbNightMode ) {
-				if( Config.Graphics.EnablePostProcessingFx ) postProcessor.render();
+				if( Config.Graphics.EnablePostProcessingFx )
+					postProcessor.render();
 				level.generateLightMap();
 				level.renderLigthMap( null );
 			} else {
@@ -252,10 +254,12 @@ public class Game implements Disposable, GameLogicListener {
 						level.renderLigthMap( null );
 				}
 
-				if( Config.Graphics.EnablePostProcessingFx ) postProcessor.render();
+				if( Config.Graphics.EnablePostProcessingFx )
+					postProcessor.render();
 			}
 		} else {
-			if( Config.Graphics.EnablePostProcessingFx ) postProcessor.render();
+			if( Config.Graphics.EnablePostProcessingFx )
+				postProcessor.render();
 		}
 
 		//
@@ -263,11 +267,13 @@ public class Game implements Disposable, GameLogicListener {
 		//
 
 		if( Config.isDesktop ) {
-			if( Config.Graphics.RenderBox2DWorldWireframe ) Debug.renderB2dWorld( GameData.world, Director.getMatViewProjMt() );
+			if( Config.Graphics.RenderBox2DWorldWireframe )
+				Debug.renderB2dWorld( GameData.world, Director.getMatViewProjMt() );
 
 			Debug.begin( batch );
 			EntityManager.raiseOnDebug();
-			if( Config.Graphics.RenderHudDebugInfo ) GameData.hud.debug( batch );
+			if( Config.Graphics.RenderHudDebugInfo )
+				GameData.hud.debug( batch );
 			Debug.renderVersionInfo();
 			Debug.renderGraphicalStats( Gdx.graphics.getWidth() - Debug.getStatsWidth(), Gdx.graphics.getHeight() - Debug.getStatsHeight() - Debug.fontHeight );
 			Debug.renderTextualStats();

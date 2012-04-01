@@ -41,7 +41,8 @@ public class DriftState {
 
 	// onCollision?
 	public void invalidateByCollision() {
-		if( !isDrifting ) return;
+		if( !isDrifting )
+			return;
 
 		collisionTime = System.currentTimeMillis();
 		isDrifting = false;

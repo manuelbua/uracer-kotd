@@ -73,8 +73,10 @@ public class Box2DFactory {
 		float cy = (ymin + ymax) / 2;
 		float hx = (xmax - xmin) / 2;
 		float hy = (ymax - ymin) / 2;
-		if( hx < 0 ) hx = -hx;
-		if( hy < 0 ) hy = -hy;
+		if( hx < 0 )
+			hx = -hx;
+		if( hy < 0 )
+			hy = -hy;
 		PolygonShape wallshape = new PolygonShape();
 		wallshape.setAsBox( hx, hy, new Vector2( 0f, 0f ), angle );
 
@@ -91,7 +93,8 @@ public class Box2DFactory {
 			fdef.filter.groupIndex = CollisionFilters.GroupNoCollisions;
 		}
 
-		if( restitution > 0 ) fdef.restitution = restitution;
+		if( restitution > 0 )
+			fdef.restitution = restitution;
 
 		BodyDef bd = new BodyDef();
 		bd.position.set( cx, cy );
@@ -142,7 +145,8 @@ public class Box2DFactory {
 	public static ArrayList<Body> createAngularWall( World world, Vector2 unitCircleRadius, Vector2 offset, float tickness, float lumpLen, float angle, int steps,
 			Vector2 rotationOffset, float restitution, boolean returnResult ) {
 		ArrayList<Body> result = null;
-		if( returnResult ) result = new ArrayList<Body>();
+		if( returnResult )
+			result = new ArrayList<Body>();
 
 		float halfTickness = tickness / 2f;
 		float angleStep = angle / (float)(steps);
@@ -165,7 +169,8 @@ public class Box2DFactory {
 			to.y = offset.y - tmp2.y;
 
 			Body body = Box2DFactory.createWall( world, from, to, tickness, 0 );
-			if( returnResult ) result.add( body );
+			if( returnResult )
+				result.add( body );
 
 			// rotate
 			tmpx = tmp1.x * cosStep - tmp1.y * sinStep;

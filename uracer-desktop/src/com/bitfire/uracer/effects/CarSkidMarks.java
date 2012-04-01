@@ -114,7 +114,8 @@ public class CarSkidMarks extends TrackEffect {
 		{
 			// add front drift marks?
 			SkidMark drift = skidMarks[markIndex++];
-			if( markIndex == MaxSkidMarks ) markIndex = 0;
+			if( markIndex == MaxSkidMarks )
+				markIndex = 0;
 
 			drift.alphaFront = di.driftStrength;
 			drift.alphaRear = di.driftStrength;

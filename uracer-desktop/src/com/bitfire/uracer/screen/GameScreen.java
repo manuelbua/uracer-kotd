@@ -20,7 +20,8 @@ public class GameScreen extends Screen {
 
 	@Override
 	public void tick() {
-		if( quit ) return;
+		if( quit )
+			return;
 		quit = !game.tick();
 	}
 
@@ -31,7 +32,8 @@ public class GameScreen extends Screen {
 
 	@Override
 	public void render() {
-		if( quit ) return;
+		if( quit )
+			return;
 		game.render();
 	}
 

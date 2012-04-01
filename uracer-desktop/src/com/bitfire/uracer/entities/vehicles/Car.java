@@ -149,11 +149,13 @@ public class Car extends Box2dEntity {
 
 	public void resetPhysics() {
 		boolean wasActive = isActive();
-		if( wasActive ) body.setActive( false );
+		if( wasActive )
+			body.setActive( false );
 		carSim.resetPhysics();
 		body.setAngularVelocity( 0 );
 		body.setLinearVelocity( 0, 0 );
-		if( wasActive ) body.setActive( wasActive );
+		if( wasActive )
+			body.setActive( wasActive );
 	}
 
 	@Override
@@ -189,10 +191,12 @@ public class Car extends Box2dEntity {
 
 			angle -= AMath.PI;
 			angle += wrapped; // to local
-			if( angle < 0 ) angle += AMath.TWO_PI;
+			if( angle < 0 )
+				angle += AMath.TWO_PI;
 
 			angle = -(angle - AMath.TWO_PI);
-			if( angle > AMath.PI ) angle = angle - AMath.TWO_PI;
+			if( angle > AMath.PI )
+				angle = angle - AMath.TWO_PI;
 
 			carInput.steerAngle = angle;
 
@@ -211,7 +215,8 @@ public class Car extends Box2dEntity {
 			// considered 0<->1
 		}
 
-		if( Config.Debug.ApplyFrictionMap ) applyFrictionMap( carInput );
+		if( Config.Debug.ApplyFrictionMap )
+			applyFrictionMap( carInput );
 
 		return carInput;
 	}
@@ -353,7 +358,8 @@ public class Car extends Box2dEntity {
 
 	@Override
 	public void onDebug() {
-		if( carInputMode != CarInputMode.InputFromPlayer ) return;
+		if( carInputMode != CarInputMode.InputFromPlayer )
+			return;
 
 		if( Config.Graphics.RenderPlayerDebugInfo ) {
 			Debug.drawString( "vel_wc len =" + carDesc.velocity_wc.len(), 0, 13 );

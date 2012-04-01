@@ -43,7 +43,8 @@ public class HudLabel {
 
 	public void setString( String string, boolean computeBounds ) {
 		what = string;
-		if( computeBounds ) recomputeBounds();
+		if( computeBounds )
+			recomputeBounds();
 	}
 
 	public void setPosition( float posX, float posY ) {
@@ -108,7 +109,8 @@ public class HudLabel {
 
 	public void setScale( float scale, boolean recomputeBounds ) {
 		this.scale = scale;
-		if( recomputeBounds ) recomputeBounds();
+		if( recomputeBounds )
+			recomputeBounds();
 	}
 
 	public void render( SpriteBatch batch ) {

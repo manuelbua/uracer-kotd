@@ -81,8 +81,10 @@ public class URacer implements ApplicationListener {
 	// NOTE: this render() method will get called by JoglGraphics when screen.tick will ask to finish!!
 	@Override
 	public void render() {
-		if( screen == null ) return;
-		if( screen.quit() ) return;
+		if( screen == null )
+			return;
+		if( screen.quit() )
+			return;
 
 		// this is not good for Android since the value often hop around
 		// long currNanos = System.nanoTime();
@@ -103,7 +105,8 @@ public class URacer implements ApplicationListener {
 				screen.tick();
 				timeAccumSecs -= Config.Physics.PhysicsDt;
 				hasStepped = true;
-				if( screen.quit() ) return;
+				if( screen.quit() )
+					return;
 			}
 
 			// simulate slowness
@@ -155,7 +158,8 @@ public class URacer implements ApplicationListener {
 		setScreen( null );
 		Debug.dispose();
 		Art.dispose();
-		if( uRacerFinalizer != null ) uRacerFinalizer.dispose();
+		if( uRacerFinalizer != null )
+			uRacerFinalizer.dispose();
 
 		// if(!Config.isDesktop || )
 		System.exit( 0 );

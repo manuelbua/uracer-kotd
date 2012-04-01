@@ -41,8 +41,10 @@ public class LapState {
 	public long restart() {
 		startTimeNs = System.nanoTime();
 		time.start();
-		if( !replays[0].isValid ) replays[0].reset();
-		if( !replays[1].isValid ) replays[1].reset();
+		if( !replays[0].isValid )
+			replays[0].reset();
+		if( !replays[1].isValid )
+			replays[1].reset();
 		return startTimeNs;
 	}
 
@@ -120,8 +122,10 @@ public class LapState {
 	}
 
 	public Replay getAnyReplay() {
-		if( replays[0].isValid ) return replays[0];
-		if( replays[1].isValid ) return replays[1];
+		if( replays[0].isValid )
+			return replays[0];
+		if( replays[1].isValid )
+			return replays[1];
 		return null;
 	}
 }

@@ -44,7 +44,8 @@ public class TrackTrees {
 
 	private int nextIndexFor( TreeStillModel model ) {
 		for( int i = 0; i < trees.size(); i++ ) {
-			if( model.material.equals( trees.get( i ).material ) ) return i;
+			if( model.material.equals( trees.get( i ).material ) )
+				return i;
 		}
 
 		return 0;
@@ -60,7 +61,8 @@ public class TrackTrees {
 				TiledObject o = group.objects.get( i );
 
 				float scale = 1f;
-				if( o.properties.get( MapUtils.MeshScale ) != null ) scale = Float.parseFloat( o.properties.get( MapUtils.MeshScale ) );
+				if( o.properties.get( MapUtils.MeshScale ) != null )
+					scale = Float.parseFloat( o.properties.get( MapUtils.MeshScale ) );
 
 				TreeStillModel model = null;
 				if( o.type != null ) {

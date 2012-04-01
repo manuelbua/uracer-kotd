@@ -13,10 +13,12 @@ public abstract class TrackEffect {
 	@Override
 	public boolean equals( Object that ) {
 		// self
-		if( this == that ) return true;
+		if( this == that )
+			return true;
 
 		// not the same type
-		if( !(that instanceof TrackEffect) ) return false;
+		if( !(that instanceof TrackEffect) )
+			return false;
 
 		// safe cast
 		TrackEffect other = (TrackEffect)that;

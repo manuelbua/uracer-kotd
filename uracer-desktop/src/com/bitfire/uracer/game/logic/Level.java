@@ -200,10 +200,12 @@ public class Level {
 				TiledObject o = group.objects.get( i );
 
 				float scale = 1f;
-				if( o.properties.get( MapUtils.MeshScale ) != null ) scale = Float.parseFloat( o.properties.get( MapUtils.MeshScale ) );
+				if( o.properties.get( MapUtils.MeshScale ) != null )
+					scale = Float.parseFloat( o.properties.get( MapUtils.MeshScale ) );
 
 				OrthographicAlignedStillModel mesh = ModelFactory.create( o.type, o.x, o.y, scale );
-				if( mesh != null ) staticMeshes.add( mesh );
+				if( mesh != null )
+					staticMeshes.add( mesh );
 			}
 		}
 
@@ -229,7 +231,8 @@ public class Level {
 			for( int x = 0; x < map.width; x++ ) {
 				int id = layerTrack.tiles[y][x];
 				String type = map.getTileProperty( id, "type" );
-				if( type == null ) continue;
+				if( type == null )
+					continue;
 
 				if( type.equals( "start" ) ) {
 					start.set( MapUtils.tileToPx( x, y ).add( Convert.scaledPixels( 112, -112 ) ) );
@@ -249,7 +252,8 @@ public class Level {
 			startOrient = 90f;
 		else if( orient.equals( "down" ) )
 			startOrient = 180f;
-		else if( orient.equals( "left" ) ) startOrient = 270f;
+		else if( orient.equals( "left" ) )
+			startOrient = 270f;
 
 		Car car = CarFactory.createPlayer( world, CarType.OldSkool, new CarModel().toModel2(), start, startOrient );
 		GhostCar ghost = CarFactory.createGhost( world, car );

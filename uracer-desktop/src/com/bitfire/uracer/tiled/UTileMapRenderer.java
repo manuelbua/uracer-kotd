@@ -200,11 +200,14 @@ public class UTileMapRenderer implements Disposable {
 		int maxWidth = 0;
 		for( layer = 0; layer < map.length; layer++ ) {
 			allLayers[layer] = layer;
-			if( map[layer].length > maxHeight ) maxHeight = map[layer].length;
+			if( map[layer].length > maxHeight )
+				maxHeight = map[layer].length;
 			for( row = 0; row < map[layer].length; row++ ) {
-				if( map[layer][row].length > maxWidth ) maxWidth = map[layer][row].length;
+				if( map[layer][row].length > maxWidth )
+					maxWidth = map[layer][row].length;
 				for( col = 0; col < map[layer][row].length; col++ )
-					if( map[layer][row][col] != 0 ) maxCacheSize++;
+					if( map[layer][row][col] != 0 )
+						maxCacheSize++;
 			}
 		}
 		mapHeightUnits = (int)(maxHeight * unitsPerTileY);
@@ -466,7 +469,8 @@ public class UTileMapRenderer implements Disposable {
 	}
 
 	private static int parseIntWithDefault( String string, int defaultValue ) {
-		if( string == null ) return defaultValue;
+		if( string == null )
+			return defaultValue;
 		try {
 			return Integer.parseInt( string );
 		} catch( NumberFormatException e ) {

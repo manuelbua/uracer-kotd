@@ -124,7 +124,8 @@ public class TrackWalls {
 		// add input (interleaved w/ later filled dupes w/ just a meaningful z-coordinate)
 		for( int i = 0, j = 0, vc = 0, vci = 0; i < points.size(); i++, j += 2 * vertSize ) {
 			int magidx = i - 1;
-			if( magidx < 0 ) magidx = 0;
+			if( magidx < 0 )
+				magidx = 0;
 			mag = AMath.lerp( prevmag, magnitudes[magidx], .25f );
 			prevmag = mag;
 
