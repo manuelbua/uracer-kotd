@@ -22,8 +22,7 @@ import com.bitfire.uracer.effects.TrackEffects;
 import com.bitfire.uracer.entities.EntityManager;
 import com.bitfire.uracer.entities.vehicles.Car;
 import com.bitfire.uracer.events.CarListener;
-import com.bitfire.uracer.events.GameLogicListener;
-import com.bitfire.uracer.events.GameLogicNotifier;
+import com.bitfire.uracer.events.GameLogicEvent;
 import com.bitfire.uracer.events.PlayerStateListener;
 import com.bitfire.uracer.game.logic.LapState;
 import com.bitfire.uracer.game.logic.PlayerState;
@@ -37,6 +36,7 @@ import com.bitfire.uracer.utils.AMath;
 import com.bitfire.uracer.utils.NumberString;
 
 public class GameLogic implements CarListener, PlayerStateListener {
+	// public class GameLogic implements CarListener, PlayerStateListener {
 	// lap
 	private boolean isFirstLap = true;
 	private long lastRecordedLapId = 0;
@@ -44,16 +44,14 @@ public class GameLogic implements CarListener, PlayerStateListener {
 	// replay
 	private Recorder recorder = null;
 
-	private GameLogicNotifier notifier = null;
+	// private GameLogicNotifier notifier = null;
+
+	public static final GameLogicEvent event = new GameLogicEvent();
 
 	public GameLogic() {
 		this.recorder = new Recorder();
-		this.notifier = new GameLogicNotifier();
+		// this.notifier = new GameLogicNotifier();
 		timeMultiplier.value = 1f;
-	}
-
-	public void addListener( GameLogicListener listener ) {
-		notifier.addListener( listener );
 	}
 
 	boolean timeModulation = false, timeModulationBusy = false;
@@ -75,11 +73,11 @@ public class GameLogic implements CarListener, PlayerStateListener {
 
 		if( Input.isOn( Keys.R ) ) {
 			restart();
-			notifier.onRestart();
+			event.trigger.onRestart();
 		} else if( Input.isOn( Keys.T ) ) {
 			restart();
 			reset();
-			notifier.onReset();
+			event.trigger.onReset();
 		} else if( Input.isOn( Keys.Q ) ) {
 			Gdx.app.exit();
 			return false;

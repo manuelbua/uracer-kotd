@@ -83,7 +83,7 @@ public class Game implements Disposable, GameLogicListener {
 
 		// setup listeners
 		gameLogic = new GameLogic();
-		gameLogic.addListener( this );
+		GameLogic.event.addListener( this );
 		GameData.driftState.addListener( GameData.hud );
 		GameData.playerState.addListener( gameLogic );
 		GameData.playerState.car.addListener( gameLogic );
