@@ -75,7 +75,8 @@ public class DriftState implements Disposable {
 
 		if( hasCollided ) {
 			// ignore drifts for a couple of seconds
-			if( collisionTime.elapsed( Time.Reference.Ticks ) > 10 ) {
+			// TODO highlight this penalty!
+			if( collisionTime.elapsed( Time.Reference.Ticks ) >= 2 ) {
 				collisionTime.stop();
 				hasCollided = false;
 			}
