@@ -50,22 +50,23 @@ public class Game implements Disposable, GameLogicListener {
 	private CarSoundManager carSoundManager = null;
 
 	public Game( String levelName, GameDifficulty difficulty ) {
-		int width = Gdx.graphics.getWidth();
-		int height = Gdx.graphics.getHeight();
-
-		carSoundManager = new CarSoundManager();	// early load
 		GameData.create( difficulty );
 
 		// everything has been setup on a 256px tile, scale back if that's the case
 		Config.Physics.PixelsPerMeter /= (GameData.scalingStrategy.targetScreenRatio / GameData.scalingStrategy.to256);
 
+		carSoundManager = new CarSoundManager();	// early load
 		Art.scaleFonts( GameData.scalingStrategy.invTileMapZoomFactor );
 		Messager.init();
 		EntityManager.create();
-
 		Convert.init();
+
+		int width = Gdx.graphics.getWidth();
+		int height = Gdx.graphics.getHeight();
 		Director.init( width, height );
 
+
+		// TODO, GameData should be consistent *BEFORE* constructing a Level
 		GameData.level = new Level( GameData.world, levelName, false, width, height /* night mode */);
 		GameData.playerState = GameData.level.getPlayerState();
 

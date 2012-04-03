@@ -41,7 +41,7 @@ import com.bitfire.uracer.utils.Convert;
 import com.bitfire.uracer.utils.MapUtils;
 
 /** First write. Basic idea in place (in iterative refactoring)
- * 
+ *
  * @author manuel */
 public class Level {
 	private final World world;
@@ -267,6 +267,7 @@ public class Level {
 		return p;
 	}
 
+	// TODO, renderer stuff?
 	private void createLights() {
 		if( !MapUtils.hasObjectGroup( MapUtils.LayerLights ) ) {
 			this.nightMode = false;
