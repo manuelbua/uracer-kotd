@@ -28,11 +28,6 @@ import com.bitfire.uracer.postprocessing.effects.Zoom;
 import com.bitfire.uracer.tiled.LevelRenderer;
 import com.bitfire.uracer.utils.Convert;
 
-/** TODO most of the shared stuff between Game and GameLogic should go in a
- * GameData structure of some sort, GameLogic is really the logical portion of
- * Game, so data should be accessible for both.
- *
- * @author bmanuel */
 public class Game implements Disposable, GameLogicListener {
 
 	// config
@@ -113,11 +108,11 @@ public class Game implements Disposable, GameLogicListener {
 
 	@Override
 	public void gameLogicEvent( EventType type ) {
-		switch(type) {
+		switch( type ) {
 		case OnRestart:
 		case OnReset:
 			carSoundManager.reset();
-		break;
+			break;
 		}
 	}
 

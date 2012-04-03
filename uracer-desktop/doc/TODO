@@ -108,3 +108,4 @@ data in GameData? GameData::<Component>?
 [ ] look at, in night-mode, shadows don't take into account time aliasing, producing stuttering in a subframe-interpolated context.
 [ ] event listeners as3-style
 [ ] think, player drifts will raise a SuPeRpOwA-bAr, in seconds: these seconds can be consumed by using the time dilation super-power for the accumulated drift seconds! 
+[ ] remember, i'm writing an engine AND a game thus split meanings wisely

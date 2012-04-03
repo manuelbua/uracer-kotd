@@ -44,13 +44,11 @@ public class GameLogic implements CarListener, PlayerStateListener {
 	// replay
 	private Recorder recorder = null;
 
-	// private GameLogicNotifier notifier = null;
-
 	public static final GameLogicEvent event = new GameLogicEvent();
 
 	public GameLogic() {
-		this.recorder = new Recorder();
-		// this.notifier = new GameLogicNotifier();
+		event.source = this;
+		recorder = new Recorder();
 		timeMultiplier.value = 1f;
 	}
 

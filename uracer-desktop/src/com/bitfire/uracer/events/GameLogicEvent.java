@@ -1,12 +1,9 @@
 package com.bitfire.uracer.events;
 
-
-public final class GameLogicEvent {
+public final class GameLogicEvent extends Event {
 	public enum EventType {
 		OnRestart, OnReset
 	}
-
-	public final Notifier notify = new Notifier();
 
 	public void addListener( GameLogicListener listener ) {
 		notify.addListener( listener );
@@ -15,6 +12,8 @@ public final class GameLogicEvent {
 	public void trigger( EventType type ) {
 		notify.gameLogicEvent( type );
 	}
+
+	private final Notifier notify = new Notifier();
 
 	private class Notifier extends EventNotifier<GameLogicListener> implements GameLogicListener {
 		@Override
