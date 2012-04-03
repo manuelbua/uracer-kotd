@@ -1,7 +1,7 @@
 package com.bitfire.uracer.events;
 
-public interface GameLogicListener {
-	void onReset();
+import com.bitfire.uracer.events.GameLogicEvent.EventType;
 
-	void onRestart();
+public interface GameLogicListener extends EventListener {
+	void gameLogicEvent(EventType type);
 }

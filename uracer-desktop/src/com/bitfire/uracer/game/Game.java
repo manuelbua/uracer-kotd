@@ -16,6 +16,7 @@ import com.bitfire.uracer.effects.CarSkidMarks;
 import com.bitfire.uracer.effects.TrackEffects;
 import com.bitfire.uracer.entities.EntityManager;
 import com.bitfire.uracer.entities.vehicles.Car;
+import com.bitfire.uracer.events.GameLogicEvent.EventType;
 import com.bitfire.uracer.events.GameLogicListener;
 import com.bitfire.uracer.game.logic.DirectorController;
 import com.bitfire.uracer.game.logic.Level;
@@ -33,6 +34,7 @@ import com.bitfire.uracer.utils.Convert;
  *
  * @author bmanuel */
 public class Game implements Disposable, GameLogicListener {
+
 	// config
 	public GameplaySettings gameSettings = null;
 
@@ -110,13 +112,13 @@ public class Game implements Disposable, GameLogicListener {
 	}
 
 	@Override
-	public void onReset() {
-		carSoundManager.reset();
-	}
-
-	@Override
-	public void onRestart() {
-		carSoundManager.reset();
+	public void gameLogicEvent( EventType type ) {
+		switch(type) {
+		case OnRestart:
+		case OnReset:
+			carSoundManager.reset();
+		break;
+		}
 	}
 
 	private void setupPostProcessing( int width, int height, Level level ) {

@@ -23,6 +23,7 @@ import com.bitfire.uracer.entities.EntityManager;
 import com.bitfire.uracer.entities.vehicles.Car;
 import com.bitfire.uracer.events.CarListener;
 import com.bitfire.uracer.events.GameLogicEvent;
+import com.bitfire.uracer.events.GameLogicEvent.EventType;
 import com.bitfire.uracer.events.PlayerStateListener;
 import com.bitfire.uracer.game.logic.LapState;
 import com.bitfire.uracer.game.logic.PlayerState;
@@ -36,7 +37,6 @@ import com.bitfire.uracer.utils.AMath;
 import com.bitfire.uracer.utils.NumberString;
 
 public class GameLogic implements CarListener, PlayerStateListener {
-	// public class GameLogic implements CarListener, PlayerStateListener {
 	// lap
 	private boolean isFirstLap = true;
 	private long lastRecordedLapId = 0;
@@ -73,11 +73,11 @@ public class GameLogic implements CarListener, PlayerStateListener {
 
 		if( Input.isOn( Keys.R ) ) {
 			restart();
-			event.trigger.onRestart();
+			event.trigger( EventType.OnRestart );
 		} else if( Input.isOn( Keys.T ) ) {
 			restart();
 			reset();
-			event.trigger.onReset();
+			event.trigger( EventType.OnReset );
 		} else if( Input.isOn( Keys.Q ) ) {
 			Gdx.app.exit();
 			return false;
@@ -157,7 +157,7 @@ public class GameLogic implements CarListener, PlayerStateListener {
 		if( car.getInputMode() == CarInputMode.InputFromPlayer ) {
 			if( GameData.driftState.isDrifting ) {
 				GameData.driftState.invalidateByCollision();
-				System.out.println( "invalidated" );
+				// System.out.println( "invalidated" );
 			}
 		}
 	}
