@@ -6,10 +6,9 @@ import com.bitfire.uracer.carsimulation.CarForces;
 import com.bitfire.uracer.carsimulation.CarInputMode;
 import com.bitfire.uracer.entities.vehicles.Car;
 import com.bitfire.uracer.events.CarListener;
-import com.bitfire.uracer.events.DriftStateListener;
 import com.bitfire.uracer.game.GameData;
 
-public class CarSoundManager implements DriftStateListener, CarListener {
+public class CarSoundManager implements CarListener {
 	// sound effects
 	private CarDriftSoundEffect carDrift;
 	private CarEngineSoundEffect carEngine;
@@ -20,7 +19,7 @@ public class CarSoundManager implements DriftStateListener, CarListener {
 		// carEngine.start();
 
 		carDrift = new CarDriftSoundEffect();
-		carDrift.start();	// wtf? why the manager should start it in load()?
+		carDrift.start();
 
 		carImpact = new CarImpactSoundEffect();
 	}
@@ -38,16 +37,6 @@ public class CarSoundManager implements DriftStateListener, CarListener {
 			// carEngine.update( player.currSpeedFactor );
 			carDrift.update( GameData.playerState.currSpeedFactor );
 		}
-	}
-
-	@Override
-	public void onBeginDrift() {
-		carDrift.driftBegin();
-	}
-
-	@Override
-	public void onEndDrift() {
-		carDrift.driftEnd();
 	}
 
 	@Override

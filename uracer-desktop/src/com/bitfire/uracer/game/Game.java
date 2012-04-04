@@ -86,7 +86,6 @@ public class Game implements Disposable, GameLogicListener {
 		GameData.playerState.addListener( gameLogic );
 		GameData.playerState.car.addListener( gameLogic );
 		GameData.playerState.car.addListener( carSoundManager );
-		GameData.driftState.addListener( carSoundManager );
 
 		// Issues may arise on Tegra2 (Asus Transformer) devices if the buffers'
 		// count is higher than 10
@@ -159,7 +158,7 @@ public class Game implements Disposable, GameLogicListener {
 
 		if( Config.Graphics.EnablePostProcessingFx && zoom != null ) {
 			zoom.setOrigin( Director.screenPosFor( GameData.playerState.car.getBody() ) );
-			zoom.setStrength( -0.1f * factor );
+			zoom.setStrength( -0.05f * factor );
 		}
 
 		if( Config.Graphics.EnablePostProcessingFx && bloom != null && zoom != null ) {

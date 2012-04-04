@@ -4,10 +4,11 @@ import com.badlogic.gdx.Files.FileType;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.audio.Sound;
 import com.bitfire.uracer.Config;
+import com.bitfire.uracer.events.DriftStateListener;
 import com.bitfire.uracer.game.GameData;
 import com.bitfire.uracer.utils.AMath;
 
-public class CarDriftSoundEffect extends CarSoundEffect {
+public class CarDriftSoundEffect extends CarSoundEffect implements DriftStateListener {
 	private Sound drift = null;
 	private long driftId = -1;
 	private float driftLastPitch = 0;
@@ -20,6 +21,7 @@ public class CarDriftSoundEffect extends CarSoundEffect {
 	private float lastVolume = 0f;
 
 	public CarDriftSoundEffect() {
+		GameData.driftState.addListener( this );
 		drift = Gdx.audio.newSound( Gdx.files.getFileHandle( "data/audio/drift-loop.ogg", FileType.Internal ) );
 	}
 
@@ -56,7 +58,8 @@ public class CarDriftSoundEffect extends CarSoundEffect {
 		lastVolume = 0;
 	}
 
-	public void driftBegin() {
+	@Override
+	public void onBeginDrift() {
 		if( driftId > -1 ) {
 			drift.stop( driftId );
 			driftId = drift.loop( 0f );
@@ -67,7 +70,8 @@ public class CarDriftSoundEffect extends CarSoundEffect {
 		doFadeOut = false;
 	}
 
-	public void driftEnd() {
+	@Override
+	public void onEndDrift() {
 		doFadeIn = false;
 		doFadeOut = true;
 	}
@@ -75,6 +79,11 @@ public class CarDriftSoundEffect extends CarSoundEffect {
 	public void update( float speedFactor ) {
 		if( driftId > -1 ) {
 			float pitch = speedFactor * pitchFactor + pitchMin;
+
+			// apply time factor
+			// pitch *= URacer.timeMultiplier;
+
+			// System.out.println(URacer.timeMultiplier);
 
 			pitch = AMath.clamp( pitch, pitchMin, pitchMax );
 
