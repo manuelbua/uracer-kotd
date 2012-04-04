@@ -15,7 +15,7 @@ public class DirectorController {
 	private float sigmoidStrengthX = 1f;
 	private float sigmoidStrengthY = 1f;
 
-	public DirectorController( InterpolationMode mode, Vector2 halfViewport, final Level level ) {
+	public DirectorController( InterpolationMode mode, Vector2 halfViewport, final LevelLoader level ) {
 		final Rectangle cameraBounds = new Rectangle();
 		cameraBounds.x = halfViewport.x;
 		cameraBounds.width = level.worldSizeScaledPx.x - halfViewport.x;

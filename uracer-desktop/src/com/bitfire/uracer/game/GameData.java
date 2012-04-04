@@ -5,7 +5,7 @@ import com.badlogic.gdx.physics.box2d.World;
 import com.bitfire.uracer.game.logic.DriftState;
 import com.bitfire.uracer.game.logic.GameContactListener;
 import com.bitfire.uracer.game.logic.LapState;
-import com.bitfire.uracer.game.logic.Level;
+import com.bitfire.uracer.game.logic.LevelLoader;
 import com.bitfire.uracer.game.logic.PlayerState;
 import com.bitfire.uracer.hud.Hud;
 import com.bitfire.uracer.hud.HudLabel;
@@ -24,7 +24,7 @@ public class GameData {
 
 	public static ScalingStrategy scalingStrategy;
 	public static GameplaySettings gameSettings;
-	public static Level level;
+	public static LevelLoader level;
 
 	public static Tweener tweener;
 	public static World world;

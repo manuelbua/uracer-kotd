@@ -28,7 +28,7 @@ import com.bitfire.uracer.events.CarListener;
 import com.bitfire.uracer.events.CarNotifier;
 import com.bitfire.uracer.factories.CarFactory.CarType;
 import com.bitfire.uracer.game.GameData;
-import com.bitfire.uracer.game.logic.Level;
+import com.bitfire.uracer.game.logic.LevelLoader;
 import com.bitfire.uracer.utils.AMath;
 import com.bitfire.uracer.utils.Convert;
 import com.bitfire.uracer.utils.MapUtils;
@@ -225,7 +225,7 @@ public class Car extends Box2dEntity {
 	private WindowedMean frictionMean = new WindowedMean( 16 );
 
 	private void applyFrictionMap( CarInput input ) {
-		Level level = GameData.level;
+		LevelLoader level = GameData.level;
 		if( tilePosition.x >= 0 && tilePosition.x < level.map.width && tilePosition.y >= 0 && tilePosition.y < level.map.height ) {
 			// compute realsize-based pixel offset car-tile (top-left origin)
 			float tsx = tilePosition.x * MapUtils.scaledTilesize;

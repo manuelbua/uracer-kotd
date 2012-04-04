@@ -43,7 +43,7 @@ import com.bitfire.uracer.utils.MapUtils;
 /** First write. Basic idea in place (in iterative refactoring)
  * FIXME should go with something else instead, eg. MVC/no Level..
  * @author manuel */
-public class Level {
+public class LevelLoader {
 	private final World world;
 
 	// level data
@@ -73,7 +73,7 @@ public class Level {
 	private RayHandler rayHandler = null;
 	private ConeLight playerHeadlights = null;
 
-	public Level( World world, String levelName, boolean nightMode, int width, int height ) {
+	public LevelLoader( World world, String levelName, boolean nightMode, int width, int height ) {
 		this.name = levelName;
 		this.nightMode = nightMode;
 		this.world = world;
@@ -227,7 +227,7 @@ public class Level {
 		for( int y = 0; y < map.height; y++ ) {
 			for( int x = 0; x < map.width; x++ ) {
 				int id = layerTrack.tiles[y][x];
-				String type = map.getTileProperty( id, "type" );
+//				String type = map.getTileProperty( id, "type" );
 				if( type == null )
 					continue;
 

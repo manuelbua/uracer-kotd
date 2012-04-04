@@ -19,7 +19,7 @@ import com.bitfire.uracer.entities.vehicles.Car;
 import com.bitfire.uracer.events.GameLogicEvent.EventType;
 import com.bitfire.uracer.events.GameLogicListener;
 import com.bitfire.uracer.game.logic.DirectorController;
-import com.bitfire.uracer.game.logic.Level;
+import com.bitfire.uracer.game.logic.LevelLoader;
 import com.bitfire.uracer.hud.Hud;
 import com.bitfire.uracer.messager.Messager;
 import com.bitfire.uracer.postprocessing.PostProcessor;
@@ -67,7 +67,7 @@ public class Game implements Disposable, GameLogicListener {
 
 
 		// TODO, GameData should be consistent *BEFORE* constructing a Level
-		GameData.level = new Level( GameData.world, levelName, false, width, height /* night mode */);
+		GameData.level = new LevelLoader( GameData.world, levelName, false, width, height /* night mode */);
 		GameData.playerState = GameData.level.getPlayerState();
 
 		controller = new DirectorController( Config.Graphics.CameraInterpolationMode, Director.halfViewport, GameData.level );
@@ -116,7 +116,7 @@ public class Game implements Disposable, GameLogicListener {
 		}
 	}
 
-	private void setupPostProcessing( int width, int height, Level level ) {
+	private void setupPostProcessing( int width, int height, LevelLoader level ) {
 		postProcessor = new PostProcessor( width, height, false /* depth */, false /* alpha */, Config.isDesktop /* 32
 																												 * bits */);
 		bloom = new Bloom( postProcessor, Config.PostProcessing.RttFboWidth, Config.PostProcessing.RttFboHeight );
@@ -180,7 +180,7 @@ public class Game implements Disposable, GameLogicListener {
 	}
 
 	public void render() {
-		Level level = GameData.level;
+		LevelLoader level = GameData.level;
 		GameData.tweener.update( (int)(URacer.getLastDeltaSecs() * 1000) );
 
 		Car playerCar = null;
@@ -277,7 +277,7 @@ public class Game implements Disposable, GameLogicListener {
 			Debug.renderMemoryUsage();
 			Debug.drawString( "Visible car skid marks=" + ((CarSkidMarks)TrackEffects.get( TrackEffects.Effects.CarSkidMarks )).getParticleCount(), 0,
 					Gdx.graphics.getHeight() - 21 );
-			Debug.drawString( "total meshes=" + Level.totalMeshes, 0, Gdx.graphics.getHeight() - 14 );
+			Debug.drawString( "total meshes=" + LevelLoader.totalMeshes, 0, Gdx.graphics.getHeight() - 14 );
 			Debug.drawString( "rendered meshes=" + (LevelRenderer.renderedTrees + LevelRenderer.renderedWalls) + ", trees=" + LevelRenderer.renderedTrees + ", walls="
 					+ LevelRenderer.renderedWalls + ", culled=" + LevelRenderer.culledMeshes, 0, Gdx.graphics.getHeight() - 7 );
 			Debug.end();
