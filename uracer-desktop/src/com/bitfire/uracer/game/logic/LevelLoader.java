@@ -227,7 +227,7 @@ public class LevelLoader {
 		for( int y = 0; y < map.height; y++ ) {
 			for( int x = 0; x < map.width; x++ ) {
 				int id = layerTrack.tiles[y][x];
-//				String type = map.getTileProperty( id, "type" );
+				String type = map.getTileProperty( id, "type" );
 				if( type == null )
 					continue;
 
