@@ -41,7 +41,7 @@ import com.bitfire.uracer.utils.Convert;
 import com.bitfire.uracer.utils.MapUtils;
 
 /** First write. Basic idea in place (in iterative refactoring)
- *
+ * FIXME should go with something else instead, eg. MVC/no Level..
  * @author manuel */
 public class Level {
 	private final World world;
@@ -98,9 +98,6 @@ public class Level {
 
 		// initialize TiledMap utils
 		MapUtils.init( map, worldSizeScaledPx );
-
-		// TODO, look on why i needed to sync at construction
-		// syncWithCam( Director.getCamera() );
 
 		createMeshes();
 		player = createPlayer( map );

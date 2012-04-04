@@ -1,21 +1,16 @@
 package com.bitfire.uracer.audio;
 
-import com.badlogic.gdx.math.Vector2;
-import com.badlogic.gdx.physics.box2d.Fixture;
-import com.bitfire.uracer.carsimulation.CarForces;
 import com.bitfire.uracer.carsimulation.CarInputMode;
-import com.bitfire.uracer.entities.vehicles.Car;
-import com.bitfire.uracer.events.CarListener;
 import com.bitfire.uracer.game.GameData;
 
-public class CarSoundManager implements CarListener {
+public class CarSoundManager {
 	// sound effects
 	private CarDriftSoundEffect carDrift;
-	private CarEngineSoundEffect carEngine;
-	private CarImpactSoundEffect carImpact;
+//	private CarEngineSoundEffect carEngine;
+	public CarImpactSoundEffect carImpact;	// FIXME not public but proper GameData.playerState construction..
 
 	public CarSoundManager() {
-		carEngine = new CarEngineSoundEffect();
+//		carEngine = new CarEngineSoundEffect();
 		// carEngine.start();
 
 		carDrift = new CarDriftSoundEffect();
@@ -32,20 +27,12 @@ public class CarSoundManager implements CarListener {
 
 	public void tick() {
 		if( GameData.playerState.car.getInputMode() == CarInputMode.InputFromPlayer ) {
-			// TODO when update() will use GameData shared data internally, no params, thus a task-based component
+			// FIXME when update() will use GameData shared data internally, no params, thus a task-based component
 			// system can be created
+			// FIXME task-based system will cause the CarSoundManager to be only an instance store! Yay! Components for the better!
 			// carEngine.update( player.currSpeedFactor );
 			carDrift.update( GameData.playerState.currSpeedFactor );
 		}
-	}
-
-	@Override
-	public void onComputeForces( CarForces forces ) {
-	}
-
-	@Override
-	public void onCollision( Car car, Fixture other, Vector2 impulses ) {
-		carImpact.impact( impulses.len(), GameData.playerState.currSpeedFactor );
 	}
 
 	public void reset() {

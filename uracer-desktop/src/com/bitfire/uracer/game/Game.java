@@ -85,7 +85,7 @@ public class Game implements Disposable, GameLogicListener {
 		GameData.driftState.addListener( GameData.hud );
 		GameData.playerState.addListener( gameLogic );
 		GameData.playerState.car.addListener( gameLogic );
-		GameData.playerState.car.addListener( carSoundManager );
+		GameData.playerState.car.addListener( carSoundManager.carImpact );
 
 		// Issues may arise on Tegra2 (Asus Transformer) devices if the buffers'
 		// count is higher than 10

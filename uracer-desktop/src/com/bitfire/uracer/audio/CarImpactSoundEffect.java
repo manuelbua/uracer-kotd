@@ -4,9 +4,15 @@ import com.badlogic.gdx.Files.FileType;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.audio.Sound;
 import com.badlogic.gdx.math.MathUtils;
+import com.badlogic.gdx.math.Vector2;
+import com.badlogic.gdx.physics.box2d.Fixture;
+import com.bitfire.uracer.carsimulation.CarForces;
+import com.bitfire.uracer.entities.vehicles.Car;
+import com.bitfire.uracer.events.CarListener;
+import com.bitfire.uracer.game.GameData;
 import com.bitfire.uracer.utils.AMath;
 
-public class CarImpactSoundEffect extends CarSoundEffect {
+public class CarImpactSoundEffect extends CarSoundEffect implements CarListener {
 	private Sound soundLow1, soundLow2, soundMid1, soundMid2, soundHigh;
 	private long lastSoundTimeMs = 0;
 	private final long MinElapsedBetweenSoundsMs = 500;
@@ -37,7 +43,7 @@ public class CarImpactSoundEffect extends CarSoundEffect {
 		soundHigh.dispose();
 	}
 
-	public void impact( float impactForce, float speedFactor ) {
+	private void impact( float impactForce, float speedFactor ) {
 		// early exit
 		if( impactForce < MinImpactForce ) {
 			return;
@@ -74,6 +80,16 @@ public class CarImpactSoundEffect extends CarSoundEffect {
 
 			s.play( MaxVolume * volumeFactor );
 		}
+	}
+
+	@Override
+	public void onCollision( Car car, Fixture other, Vector2 impulses ) {
+		impact( impulses.len(), GameData.playerState.currSpeedFactor );
+	}
+
+	@Override
+	public void onComputeForces( CarForces forces ) {
+		// unused
 	}
 
 	@Override
