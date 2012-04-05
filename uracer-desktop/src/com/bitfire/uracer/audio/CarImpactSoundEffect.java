@@ -50,6 +50,7 @@ public class CarImpactSoundEffect extends CarSoundEffect implements CarEvent.Lis
 		soundHigh.dispose();
 	}
 
+	// FIXME, modulate pitch while playing as CarDriftSoundEffect to handle impact also on start/end time modulation
 	private void impact( float impactForce, float speedFactor ) {
 		// early exit
 		if( impactForce < MinImpactForce ) {
