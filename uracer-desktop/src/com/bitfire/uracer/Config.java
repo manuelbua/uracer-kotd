@@ -12,6 +12,7 @@ import com.bitfire.uracer.postprocessing.filters.ZoomBlur;
 public class Config {
 	// generic
 	public static boolean isDesktop;
+	public static final String LevelsStore = "data/levels/";
 
 	public static class PostProcessing {
 		public static BlurType BlurType;
@@ -89,7 +90,9 @@ public class Config {
 
 	public static class Physics {
 
-		/** defines how many pixels are 1 Box2d meter */
+		/** defines how many pixels are 1 Box2d meter, this will be
+		 * automatically scaled accordingly to the device resolution
+		 * during the construction of GameData */
 		public static float PixelsPerMeter;
 
 		/** defines physics dt duration, in hz */

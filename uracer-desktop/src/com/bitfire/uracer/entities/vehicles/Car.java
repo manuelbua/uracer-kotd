@@ -9,7 +9,6 @@ import com.badlogic.gdx.math.WindowedMean;
 import com.badlogic.gdx.physics.box2d.BodyDef;
 import com.badlogic.gdx.physics.box2d.BodyDef.BodyType;
 import com.badlogic.gdx.physics.box2d.Fixture;
-import com.badlogic.gdx.physics.box2d.World;
 import com.bitfire.uracer.Art;
 import com.bitfire.uracer.Config;
 import com.bitfire.uracer.Director;
@@ -28,7 +27,7 @@ import com.bitfire.uracer.events.CarListener;
 import com.bitfire.uracer.events.CarNotifier;
 import com.bitfire.uracer.factories.CarFactory.CarType;
 import com.bitfire.uracer.game.GameData;
-import com.bitfire.uracer.game.logic.LevelLoader;
+import com.bitfire.uracer.game.GameWorld;
 import com.bitfire.uracer.utils.AMath;
 import com.bitfire.uracer.utils.Convert;
 import com.bitfire.uracer.utils.MapUtils;
@@ -47,18 +46,13 @@ public class Car extends Box2dEntity {
 	private CarInputMode carInputMode;
 	private CarType carType;
 
-	private Vector2 startPos;
-	private float startOrient;
-
 	private Vector2 tilePosition = new Vector2();
 	private CarNotifier notifier = new CarNotifier();
 
-	protected Car( World world, CarGraphics graphics, CarModel model, CarType type, CarInputMode inputMode, Vector2 position, float orientation ) {
+	protected Car( CarGraphics graphics, CarModel model, CarType type, CarInputMode inputMode ) {
 		this.graphics = graphics;
 		this.carInputMode = inputMode;
 		this.carType = type;
-		this.startPos = new Vector2( position );
-		this.startOrient = orientation;
 		this.impacts = 0;
 
 		carDesc = new CarDescriptor();
@@ -73,17 +67,14 @@ public class Car extends Box2dEntity {
 		bd.angle = 0;
 		bd.type = BodyType.DynamicBody;
 
-		body = world.createBody( bd );
+		body = GameData.b2dWorld.createBody( bd );
 		body.setBullet( true );
 		body.setUserData( this );
-
-		setTransform( position, orientation );
-		computeTilePosition();
 	}
 
 	// factory method
-	public static Car createForFactory( World world, CarGraphics graphics, CarModel model, CarType type, CarInputMode inputMode, Vector2 position, float orientation ) {
-		Car car = new Car( world, graphics, model, type, inputMode, position, orientation );
+	public static Car createForFactory( CarGraphics graphics, CarModel model, CarType type, CarInputMode inputMode ) {
+		Car car = new Car( graphics, model, type, inputMode );
 		EntityManager.add( car );
 		return car;
 	}
@@ -112,25 +103,13 @@ public class Car extends Box2dEntity {
 		return carDesc.carModel;
 	}
 
-	public Vector2 getStartPos() {
-		return startPos;
-	}
-
-	public float getStartOrient() {
-		return startOrient;
-	}
-
 	public CarSimulator getSimulator() {
 		return carSim;
 	}
 
-	public CarForces getForces() {
-		return carForces;
-	}
-
 	public void reset() {
 		resetPhysics();
-		setTransform( startPos, startOrient );
+		// setTransform( startPos, startOrient );
 	}
 
 	public void setActive( boolean active, boolean resetPhysics ) {
@@ -149,11 +128,14 @@ public class Car extends Box2dEntity {
 
 	public void resetPhysics() {
 		boolean wasActive = isActive();
+
 		if( wasActive )
 			body.setActive( false );
+
 		carSim.resetPhysics();
 		body.setAngularVelocity( 0 );
 		body.setLinearVelocity( 0, 0 );
+
 		if( wasActive )
 			body.setActive( wasActive );
 	}
@@ -162,6 +144,7 @@ public class Car extends Box2dEntity {
 	public void setTransform( Vector2 position, float orient_degrees ) {
 		super.setTransform( position, orient_degrees );
 		carSim.updateHeading( body );
+		computeTilePosition();
 	}
 
 	private float lastTouchAngle;
@@ -225,13 +208,13 @@ public class Car extends Box2dEntity {
 	private WindowedMean frictionMean = new WindowedMean( 16 );
 
 	private void applyFrictionMap( CarInput input ) {
-		LevelLoader level = GameData.level;
+		GameWorld level = GameData.gameWorld;
 		if( tilePosition.x >= 0 && tilePosition.x < level.map.width && tilePosition.y >= 0 && tilePosition.y < level.map.height ) {
 			// compute realsize-based pixel offset car-tile (top-left origin)
 			float tsx = tilePosition.x * MapUtils.scaledTilesize;
 			float tsy = tilePosition.y * MapUtils.scaledTilesize;
 			offset.set( stateRender.position );
-			offset.y = GameData.level.worldSizeScaledPx.y - offset.y;
+			offset.y = GameData.gameWorld.worldSizeScaledPx.y - offset.y;
 			offset.x = offset.x - tsx;
 			offset.y = offset.y - tsy;
 			offset.mul( MapUtils.invScaledTilesize ).mul( level.map.tileWidth );
@@ -294,7 +277,7 @@ public class Car extends Box2dEntity {
 	/** Subclasses, such as the GhostCar, will override this method
 	 * to feed forces from external sources, such as Replay data stored
 	 * elsewhere.
-	 * 
+	 *
 	 * @param forces computed forces will be returned by filling this data structure. */
 	protected void onComputeCarForces( CarForces forces ) {
 		carInput = acquireInput();

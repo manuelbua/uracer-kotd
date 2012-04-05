@@ -67,7 +67,7 @@ public class GameLogic implements CarListener, PlayerStateListener {
 	};
 
 	public boolean onTick() {
-		EntityManager.raiseOnTick( GameData.world );
+		EntityManager.raiseOnTick( GameData.b2dWorld );
 
 		if( Input.isOn( Keys.R ) ) {
 			restart();
@@ -176,10 +176,10 @@ public class GameLogic implements CarListener, PlayerStateListener {
 	@Override
 	public void onTileChanged() {
 		PlayerState player = GameData.playerState;
-		boolean onStartZone = (player.currTileX == player.startTileX && player.currTileY == player.startTileY);
+		boolean onStartZone = (player.currTileX == GameData.gameWorld.playerStartTileX && player.currTileY == GameData.gameWorld.playerStartTileY);
 
 		LapState lapState = GameData.lapState;
-		String name = GameData.level.name;
+		String name = GameData.gameWorld.name;
 
 		if( onStartZone ) {
 			if( isFirstLap ) {

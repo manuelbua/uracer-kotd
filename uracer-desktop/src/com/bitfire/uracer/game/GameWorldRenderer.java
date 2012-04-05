@@ -1,27 +1,67 @@
-package com.bitfire.uracer.tiled;
+package com.bitfire.uracer.game;
 
 import java.util.ArrayList;
 
 import com.badlogic.gdx.Gdx;
+import com.badlogic.gdx.files.FileHandle;
 import com.badlogic.gdx.graphics.GL10;
 import com.badlogic.gdx.graphics.GL20;
 import com.badlogic.gdx.graphics.OrthographicCamera;
 import com.badlogic.gdx.graphics.PerspectiveCamera;
+import com.badlogic.gdx.graphics.g2d.tiled.TileAtlas;
 import com.badlogic.gdx.graphics.g3d.model.still.StillSubMesh;
+import com.badlogic.gdx.graphics.glutils.FrameBuffer;
 import com.badlogic.gdx.graphics.glutils.ImmediateModeRenderer20;
 import com.badlogic.gdx.graphics.glutils.ShaderProgram;
+import com.badlogic.gdx.math.MathUtils;
 import com.badlogic.gdx.math.Matrix4;
 import com.badlogic.gdx.math.Vector3;
 import com.badlogic.gdx.math.collision.BoundingBox;
 import com.bitfire.uracer.Art;
 import com.bitfire.uracer.Config;
 import com.bitfire.uracer.Director;
+import com.bitfire.uracer.entities.vehicles.Car;
+import com.bitfire.uracer.tiled.OrthographicAlignedStillModel;
+import com.bitfire.uracer.tiled.TrackTrees;
+import com.bitfire.uracer.tiled.TrackWalls;
+import com.bitfire.uracer.tiled.TreeStillModel;
+import com.bitfire.uracer.tiled.UTileMapRenderer;
 import com.bitfire.uracer.utils.Convert;
 
-public class LevelRenderer {
+public class GameWorldRenderer {
+	// @formatter:off
+	private static final String vertexShader =
+		"uniform mat4 u_mvpMatrix;					\n" +
+		"attribute vec4 a_position;					\n" +
+		"attribute vec2 a_texCoord0;				\n" +
+		"varying vec2 v_TexCoord;					\n" +
+		"void main()								\n" +
+		"{											\n" +
+		"	gl_Position = u_mvpMatrix * a_position;	\n" +
+		"	v_TexCoord = a_texCoord0;				\n" +
+		"}											\n";
+
+	private static final String fragmentShader =
+		"#ifdef GL_ES											\n" +
+		"precision mediump float;								\n" +
+		"#endif													\n" +
+		"uniform sampler2D u_texture;							\n" +
+		"varying vec2 v_TexCoord;								\n" +
+		"void main()											\n" +
+		"{														\n" +
+		"	vec4 texel = texture2D( u_texture, v_TexCoord );	\n" +
+		"	if(texel.a < 0.5) discard;							\n" +
+		"	gl_FragColor = texel;								\n" +
+		"}														\n";
+	// @formatter:on
+
+	private final GameWorld world;
 	private PerspectiveCamera camPersp;
 	private OrthographicCamera camOrtho;
 	private ShaderProgram treeShader;
+	private float camPerspElevation = 0f;
+
+	public UTileMapRenderer tileMapRenderer = null;
 
 	// render stats
 	private ImmediateModeRenderer20 dbg = new ImmediateModeRenderer20( false, true, 0 );
@@ -29,35 +69,13 @@ public class LevelRenderer {
 	public static int renderedWalls = 0;
 	public static int culledMeshes = 0;
 
-	public LevelRenderer( PerspectiveCamera persp, OrthographicCamera ortho ) {
-		camPersp = persp;
-		camOrtho = ortho;
+	public GameWorldRenderer( GameWorld world, int width, int height ) {
+		this.world = world;
+		createCams( width, height );
 
-		// @formatter:off
-		String vertexShader =
-			"uniform mat4 u_mvpMatrix;					\n" +
-			"attribute vec4 a_position;					\n" +
-			"attribute vec2 a_texCoord0;				\n" +
-			"varying vec2 v_TexCoord;					\n" +
-			"void main()								\n" +
-			"{											\n" +
-			"	gl_Position = u_mvpMatrix * a_position;	\n" +
-			"	v_TexCoord = a_texCoord0;				\n" +
-			"}											\n";
-
-		String fragmentShader =
-			"#ifdef GL_ES											\n" +
-			"precision mediump float;								\n" +
-			"#endif													\n" +
-			"uniform sampler2D u_texture;							\n" +
-			"varying vec2 v_TexCoord;								\n" +
-			"void main()											\n" +
-			"{														\n" +
-			"	vec4 texel = texture2D( u_texture, v_TexCoord );	\n" +
-			"	if(texel.a < 0.5) discard;							\n" +
-			"	gl_FragColor = texel;								\n" +
-			"}														\n";
-		// @formatter:on
+		FileHandle baseDir = Gdx.files.internal( Config.LevelsStore );
+		TileAtlas atlas = new TileAtlas( world.map, baseDir );
+		tileMapRenderer = new UTileMapRenderer( world.map, atlas, 1, 1, world.map.tileWidth, world.map.tileHeight );
 
 		ShaderProgram.pedantic = false;
 		treeShader = new ShaderProgram( vertexShader, fragmentShader );
@@ -68,6 +86,83 @@ public class LevelRenderer {
 
 	public void resetCounters() {
 		culledMeshes = renderedTrees = renderedWalls = 0;
+	}
+
+	public void generateLightMap() {
+		Car car = GameData.playerState.car;
+
+		// update player light (subframe interpolation ready)
+		float ang = 90 + car.state().orientation;
+
+		// the body's compound shape should be created with some clever thinking in it :)
+		float offx = (car.getCarModel().length / 2f) + .25f;
+		float offy = 0f;
+
+		float cos = MathUtils.cosDeg( ang );
+		float sin = MathUtils.sinDeg( ang );
+		float dX = offx * cos - offy * sin;
+		float dY = offx * sin + offy * cos;
+
+		float px = Convert.px2mt( car.state().position.x ) + dX;
+		float py = Convert.px2mt( car.state().position.y ) + dY;
+
+		world.playerHeadlights.setDirection( ang );
+		world.playerHeadlights.setPosition( px, py );
+
+		world.rayHandler.setCombinedMatrix( Director.getMatViewProjMt(), Convert.px2mt( camOrtho.position.x * GameData.scalingStrategy.invTileMapZoomFactor ),
+				Convert.px2mt( camOrtho.position.y * GameData.scalingStrategy.invTileMapZoomFactor ), Convert.px2mt( camOrtho.viewportWidth ),
+				Convert.px2mt( camOrtho.viewportHeight ) );
+
+		world.rayHandler.update();
+		world.rayHandler.generateLightMap();
+
+		// if( Config.isDesktop && (URacer.getFrameCount()&0x1f)==0x1f)
+		// {
+		// System.out.println("lights rendered="+rayHandler.lightRenderedLastFrame);
+		// }
+	}
+
+	public void renderLigthMap( FrameBuffer dest ) {
+		world.rayHandler.renderLightMap( dest );
+	}
+
+	public void syncWithCam( OrthographicCamera orthoCam ) {
+		// scale position
+		camOrtho.position.set( orthoCam.position );
+		camOrtho.position.mul( GameData.scalingStrategy.tileMapZoomFactor );
+
+		camOrtho.viewportWidth = Gdx.graphics.getWidth();
+		camOrtho.viewportHeight = Gdx.graphics.getHeight();
+		camOrtho.zoom = GameData.scalingStrategy.tileMapZoomFactor;
+		camOrtho.update();
+
+		camPersp.viewportWidth = camOrtho.viewportWidth;
+		camPersp.viewportHeight = camOrtho.viewportHeight;
+		camPersp.position.set( camOrtho.position.x, camOrtho.position.y, camPerspElevation );
+		camPersp.fieldOfView = GameData.scalingStrategy.verticalFov;
+		camPersp.update();
+	}
+
+	private void createCams( int width, int height ) {
+		// creates and setup orthographic camera
+		camOrtho = new OrthographicCamera( width, height );
+		camOrtho.near = 0;
+		camOrtho.far = 100;
+		camOrtho.zoom = 1;
+
+		// creates and setup perspective camera
+		float perspPlaneNear = 1;
+
+		// strategically choosen, Blender models' 14.2 meters <=> one 256px tile
+		// with far plane @48
+		float perspPlaneFar = 240;
+		camPerspElevation = 100;
+
+		camPersp = new PerspectiveCamera( GameData.scalingStrategy.verticalFov, width, height );
+		camPersp.near = perspPlaneNear;
+		camPersp.far = perspPlaneFar;
+		camPersp.lookAt( 0, 0, -1 );
+		camPersp.position.set( 0, 0, camPerspElevation );
 	}
 
 	public void renderWalls( GL20 gl, TrackWalls walls ) {
@@ -208,8 +303,35 @@ public class LevelRenderer {
 		return renderedCount;
 	}
 
+	public void renderTilemap( GL20 gl ) {
+		gl.glDisable( GL20.GL_BLEND );
+		tileMapRenderer.render( camOrtho );
+	}
+
+	public void renderAllMeshes( GL20 gl ) {
+		resetCounters();
+
+		gl.glDepthMask( true );
+		gl.glEnable( GL20.GL_DEPTH_TEST );
+		gl.glCullFace( GL20.GL_BACK );
+		gl.glFrontFace( GL20.GL_CCW );
+		gl.glDepthFunc( GL20.GL_LESS );
+		gl.glBlendEquation( GL20.GL_FUNC_ADD );
+
+		renderWalls( gl, world.trackWalls );
+		renderTrees( gl, world.trackTrees );
+
+		// render "static-meshes" layer
+		gl.glEnable( GL20.GL_CULL_FACE );
+		renderOrthographicAlignedModels( gl, world.staticMeshes );
+
+		gl.glDisable( GL20.GL_DEPTH_TEST );
+		gl.glDisable( GL20.GL_CULL_FACE );
+		gl.glDepthMask( false );
+	}
+
 	/** This is intentionally SLOW. Read it again!
-	 * 
+	 *
 	 * @param boundingBox */
 	private void renderBoundingBox( BoundingBox boundingBox ) {
 		float alpha = .15f;
