@@ -5,7 +5,9 @@ import aurelienribon.tweenengine.Timeline;
 import aurelienribon.tweenengine.Tween;
 import aurelienribon.tweenengine.TweenCallback;
 import aurelienribon.tweenengine.TweenEquation;
-import aurelienribon.tweenengine.equations.Cubic;
+import aurelienribon.tweenengine.equations.Circ;
+import aurelienribon.tweenengine.equations.Quad;
+import aurelienribon.tweenengine.equations.Sine;
 
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Input.Keys;
@@ -82,8 +84,8 @@ public class GameLogic implements CarEvent.Listener, PlayerStateEvent.Listener {
 		} else if( Input.isOn( Keys.SPACE ) ) {
 			if( !timeModulationBusy ) {
 
-				TweenEquation eqIn = Cubic.INOUT;
-				TweenEquation eqOut = Cubic.INOUT;
+				TweenEquation eqIn = Sine.INOUT;
+				TweenEquation eqOut = Sine.INOUT;
 
 				timeModulation = !timeModulation;
 				if( timeModulation ) {

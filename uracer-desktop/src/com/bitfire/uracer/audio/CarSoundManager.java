@@ -19,6 +19,10 @@ public class CarSoundManager {
 		carImpact = new CarImpactSoundEffect();
 	}
 
+	public static final float timeDilationToAudioPitch( float pitchIn, float timeMultiplier ) {
+		return pitchIn - (1-timeMultiplier) * 0.3f;
+	}
+
 	public void dispose() {
 		// carEngine.dispose();
 		carDrift.dispose();
@@ -29,6 +33,7 @@ public class CarSoundManager {
 		if( GameData.playerState.car.getInputMode() == CarInputMode.InputFromPlayer ) {
 			// FIXME when update() will use GameData shared data internally, no params, thus a task-based component
 			// system can be created
+
 			// FIXME task-based system will cause the CarSoundManager to be only an instance store! Yay! Components for the better!
 			// carEngine.update( player.currSpeedFactor );
 			carDrift.update( GameData.playerState.currSpeedFactor );

@@ -4,6 +4,8 @@ import com.badlogic.gdx.Files.FileType;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.audio.Sound;
 import com.badlogic.gdx.math.MathUtils;
+import com.bitfire.uracer.URacer;
+import com.bitfire.uracer.carsimulation.CarInputMode;
 import com.bitfire.uracer.entities.vehicles.Car;
 import com.bitfire.uracer.events.CarEvent;
 import com.bitfire.uracer.game.GameData;
@@ -17,6 +19,12 @@ public class CarImpactSoundEffect extends CarSoundEffect implements CarEvent.Lis
 	private final float MaxImpactForce = 200;
 	private final float OneOnMaxImpactForce = 1f / MaxImpactForce;
 	private final float MaxVolume = .8f;
+
+	// pitch modulation
+	private float driftLastPitch = 0;
+	private final float pitchFactor = 1f;
+	private final float pitchMin = 0.75f;
+	private final float pitchMax = 1f;
 
 	public CarImpactSoundEffect() {
 		Car.event.addListener( this );
@@ -61,7 +69,7 @@ public class CarImpactSoundEffect extends CarSoundEffect implements CarEvent.Lis
 
 			Sound s = soundLow1;
 
-			// decide sound
+			// decides sound
 			if( impactFactor <= 0.25f ) {
 				// low, vol=[0.25,0.5]
 				s = (MathUtils.random( 0, 100 ) < 50 ? soundLow1 : soundLow2);
@@ -77,7 +85,12 @@ public class CarImpactSoundEffect extends CarSoundEffect implements CarEvent.Lis
 				volumeFactor = 0.75f + (impactFactor - 0.75f);
 			}
 
-			s.play( MaxVolume * volumeFactor );
+
+			long id = s.play( MaxVolume * volumeFactor );
+			float pitch = speedFactor * pitchFactor + pitchMin;
+			pitch = AMath.clamp( pitch, pitchMin, pitchMax );
+			pitch = CarSoundManager.timeDilationToAudioPitch( pitch, URacer.timeMultiplier );
+			s.setPitch( id, pitch );
 		}
 	}
 
@@ -85,7 +98,8 @@ public class CarImpactSoundEffect extends CarSoundEffect implements CarEvent.Lis
 	public void carEvent( CarEvent.Type type, CarEvent.Data data ) {
 		switch( type ) {
 		case onCollision:
-			impact( data.impulses.len(), GameData.playerState.currSpeedFactor );
+			if( data.car.getInputMode() == CarInputMode.InputFromPlayer )
+				impact( data.impulses.len(), GameData.playerState.currSpeedFactor );
 			break;
 		case onComputeForces:
 			break;

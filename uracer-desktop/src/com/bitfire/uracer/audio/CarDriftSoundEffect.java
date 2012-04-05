@@ -4,14 +4,23 @@ import com.badlogic.gdx.Files.FileType;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.audio.Sound;
 import com.bitfire.uracer.Config;
+import com.bitfire.uracer.URacer;
 import com.bitfire.uracer.events.DriftStateEvent;
 import com.bitfire.uracer.game.GameData;
 import com.bitfire.uracer.game.logic.DriftState;
 import com.bitfire.uracer.utils.AMath;
 
+/**
+ * Implements car drifting sound effects, modulating amplitude's volume and pitch
+ * accordingly to the car's physical behavior and properties.
+ * The behavior is extrapolated from the resultant computed forces upon user
+ * input interaction with the car simulator.
+ *
+ * @author bmanuel
+ */
 public class CarDriftSoundEffect extends CarSoundEffect implements DriftStateEvent.Listener {
 	private Sound drift = null;
-	private long driftId = -1;
+	private long driftId = -1, lastDriftId = -1;
 	private float driftLastPitch = 0;
 	private final float pitchFactor = 1f;
 	private final float pitchMin = 0.75f;
@@ -81,16 +90,15 @@ public class CarDriftSoundEffect extends CarSoundEffect implements DriftStateEve
 
 	public void update( float speedFactor ) {
 		if( driftId > -1 ) {
+			boolean anotherDriftId = (driftId != lastDriftId);
+
+			// compute behavior
 			float pitch = speedFactor * pitchFactor + pitchMin;
-
-			// apply time factor
-			// pitch *= URacer.timeMultiplier;
-
-			// System.out.println(URacer.timeMultiplier);
-
 			pitch = AMath.clamp( pitch, pitchMin, pitchMax );
+			pitch = CarSoundManager.timeDilationToAudioPitch( pitch, URacer.timeMultiplier );
+//			System.out.println( pitch );
 
-			if( !AMath.equals( pitch, driftLastPitch ) ) {
+			if( !AMath.equals( pitch, driftLastPitch ) || anotherDriftId ) {
 				drift.setPitch( driftId, pitch );
 				driftLastPitch = pitch;
 			}
@@ -112,6 +120,7 @@ public class CarDriftSoundEffect extends CarSoundEffect implements DriftStateEve
 				}
 			}
 
+			lastDriftId = driftId;
 			lastVolume = AMath.clamp( lastVolume, 0, 1f );
 			drift.setVolume( driftId, GameData.driftState.driftStrength * lastVolume );
 		}
