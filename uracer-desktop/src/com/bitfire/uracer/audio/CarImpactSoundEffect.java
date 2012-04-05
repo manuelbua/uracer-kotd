@@ -4,15 +4,12 @@ import com.badlogic.gdx.Files.FileType;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.audio.Sound;
 import com.badlogic.gdx.math.MathUtils;
-import com.badlogic.gdx.math.Vector2;
-import com.badlogic.gdx.physics.box2d.Fixture;
-import com.bitfire.uracer.carsimulation.CarForces;
 import com.bitfire.uracer.entities.vehicles.Car;
-import com.bitfire.uracer.events.CarListener;
+import com.bitfire.uracer.events.CarEvent;
 import com.bitfire.uracer.game.GameData;
 import com.bitfire.uracer.utils.AMath;
 
-public class CarImpactSoundEffect extends CarSoundEffect implements CarListener {
+public class CarImpactSoundEffect extends CarSoundEffect implements CarEvent.Listener {
 	private Sound soundLow1, soundLow2, soundMid1, soundMid2, soundHigh;
 	private long lastSoundTimeMs = 0;
 	private final long MinElapsedBetweenSoundsMs = 500;
@@ -22,6 +19,8 @@ public class CarImpactSoundEffect extends CarSoundEffect implements CarListener 
 	private final float MaxVolume = .8f;
 
 	public CarImpactSoundEffect() {
+		Car.event.addListener( this );
+
 		soundLow1 = Gdx.audio.newSound( Gdx.files.getFileHandle( "data/audio/impact-2.ogg", FileType.Internal ) );
 		soundLow2 = Gdx.audio.newSound( Gdx.files.getFileHandle( "data/audio/impact-3.ogg", FileType.Internal ) );
 		soundMid1 = Gdx.audio.newSound( Gdx.files.getFileHandle( "data/audio/impact-1.ogg", FileType.Internal ) );
@@ -83,13 +82,14 @@ public class CarImpactSoundEffect extends CarSoundEffect implements CarListener 
 	}
 
 	@Override
-	public void onCollision( Car car, Fixture other, Vector2 impulses ) {
-		impact( impulses.len(), GameData.playerState.currSpeedFactor );
-	}
-
-	@Override
-	public void onComputeForces( CarForces forces ) {
-		// unused
+	public void carEvent( CarEvent.Type type, CarEvent.Data data ) {
+		switch( type ) {
+		case onCollision:
+			impact( data.impulses.len(), GameData.playerState.currSpeedFactor );
+			break;
+		case onComputeForces:
+			break;
+		}
 	}
 
 	@Override

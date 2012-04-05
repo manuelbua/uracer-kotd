@@ -11,14 +11,14 @@ import com.bitfire.uracer.effects.SmokeTrails;
 import com.bitfire.uracer.effects.TrackEffects;
 import com.bitfire.uracer.effects.TrackEffects.Effects;
 import com.bitfire.uracer.entities.vehicles.Car;
-import com.bitfire.uracer.events.DriftStateListener;
+import com.bitfire.uracer.events.DriftStateEvent;
 import com.bitfire.uracer.game.GameData;
 import com.bitfire.uracer.game.logic.DriftState;
 import com.bitfire.uracer.game.logic.LapState;
 import com.bitfire.uracer.messager.Messager;
 import com.bitfire.uracer.utils.NumberString;
 
-public class Hud implements DriftStateListener {
+public class Hud implements DriftStateEvent.Listener {
 	private HudLabel best, curr, last;
 	private Matrix4 topLeftOrigin, identity;
 	private HudDebugMeter meterLatForce, meterSkidMarks, meterSmoke;
@@ -28,6 +28,8 @@ public class Hud implements DriftStateListener {
 
 	// effects
 	public Hud( Car car ) {
+
+		DriftState.event.addListener( this );
 
 		// y-flip
 		topLeftOrigin = new Matrix4();
@@ -68,13 +70,15 @@ public class Hud implements DriftStateListener {
 	}
 
 	@Override
-	public void onBeginDrift() {
-		hudDrift.onBeginDrift();
-	}
-
-	@Override
-	public void onEndDrift() {
-		hudDrift.onEndDrift();
+	public void driftStateEvent( DriftStateEvent.Type type ) {
+		switch(type) {
+		case onBeginDrift:
+			hudDrift.onBeginDrift();
+			break;
+		case onEndDrift:
+			hudDrift.onEndDrift();
+			break;
+		}
 	}
 
 	public void tick() {

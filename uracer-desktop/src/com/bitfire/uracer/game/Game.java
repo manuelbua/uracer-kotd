@@ -17,8 +17,7 @@ import com.bitfire.uracer.effects.CarSkidMarks;
 import com.bitfire.uracer.effects.TrackEffects;
 import com.bitfire.uracer.entities.EntityManager;
 import com.bitfire.uracer.entities.vehicles.Car;
-import com.bitfire.uracer.events.GameLogicEvent.EventType;
-import com.bitfire.uracer.events.GameLogicListener;
+import com.bitfire.uracer.events.GameLogicEvent;
 import com.bitfire.uracer.factories.CarFactory;
 import com.bitfire.uracer.factories.CarFactory.CarType;
 import com.bitfire.uracer.game.logic.DirectorController;
@@ -29,7 +28,7 @@ import com.bitfire.uracer.postprocessing.effects.Bloom;
 import com.bitfire.uracer.postprocessing.effects.Zoom;
 import com.bitfire.uracer.utils.Convert;
 
-public class Game implements Disposable, GameLogicListener {
+public class Game implements Disposable, GameLogicEvent.Listener {
 
 	// config
 	public GameplaySettings gameSettings = null;
@@ -57,6 +56,9 @@ public class Game implements Disposable, GameLogicListener {
 		Car car = CarFactory.createPlayer( CarType.OldSkool, new CarModel().toModel2() );
 		GameData.createStates( car );
 
+
+		// GameData states are now fully initialized
+
 		carSoundManager = new CarSoundManager();	// early load
 		Art.scaleFonts( GameData.scalingStrategy.invTileMapZoomFactor );
 		Messager.init();
@@ -77,11 +79,8 @@ public class Game implements Disposable, GameLogicListener {
 		TrackEffects.init( car );
 		GameData.hud = new Hud( car );
 
-		// setup listeners
 		gameLogic = new GameLogic();
 		GameLogic.event.addListener( this );
-		GameData.driftState.addListener( GameData.hud );
-		GameData.playerState.car.addListener( carSoundManager.carImpact );
 
 		// Issues may arise on Tegra2 (Asus Transformer) devices if the buffers'
 		// count is higher than 10
@@ -103,10 +102,10 @@ public class Game implements Disposable, GameLogicListener {
 	}
 
 	@Override
-	public void gameLogicEvent( EventType type ) {
+	public void gameLogicEvent( GameLogicEvent.Type type ) {
 		switch( type ) {
-		case OnRestart:
-		case OnReset:
+		case onRestart:
+		case onReset:
 			carSoundManager.reset();
 			break;
 		}

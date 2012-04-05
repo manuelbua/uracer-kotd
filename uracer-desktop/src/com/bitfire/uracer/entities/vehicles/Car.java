@@ -23,8 +23,7 @@ import com.bitfire.uracer.carsimulation.Recorder;
 import com.bitfire.uracer.debug.Debug;
 import com.bitfire.uracer.entities.Box2dEntity;
 import com.bitfire.uracer.entities.EntityManager;
-import com.bitfire.uracer.events.CarListener;
-import com.bitfire.uracer.events.CarNotifier;
+import com.bitfire.uracer.events.CarEvent;
 import com.bitfire.uracer.factories.CarFactory.CarType;
 import com.bitfire.uracer.game.GameData;
 import com.bitfire.uracer.game.GameWorld;
@@ -34,6 +33,8 @@ import com.bitfire.uracer.utils.MapUtils;
 import com.bitfire.uracer.utils.VMath;
 
 public class Car extends Box2dEntity {
+	public static final CarEvent event = new CarEvent();
+
 	protected Recorder recorder;
 	protected CarGraphics graphics;
 
@@ -47,7 +48,6 @@ public class Car extends Box2dEntity {
 	private CarType carType;
 
 	private Vector2 tilePosition = new Vector2();
-	private CarNotifier notifier = new CarNotifier();
 
 	protected Car( CarGraphics graphics, CarModel model, CarType type, CarInputMode inputMode ) {
 		this.graphics = graphics;
@@ -77,10 +77,6 @@ public class Car extends Box2dEntity {
 		Car car = new Car( graphics, model, type, inputMode );
 		EntityManager.add( car );
 		return car;
-	}
-
-	public void addListener( CarListener listener ) {
-		notifier.addListener( listener );
 	}
 
 	public CarType getCarType() {
@@ -293,13 +289,15 @@ public class Car extends Box2dEntity {
 		forces.velocity_y = carDesc.velocity_wc.y;
 		forces.angularVelocity = carDesc.angularvelocity;
 
-		notifier.onComputeForces( forces );
+		event.data.setForces( forces );
+		event.trigger( CarEvent.Type.onComputeForces );
 	}
 
 	public void onCollide( Fixture other, Vector2 normalImpulses ) {
 		impacts++;
 
-		notifier.onCollision( this, other, normalImpulses );
+		event.data.setCollisionData( this, other, normalImpulses );
+		event.trigger( CarEvent.Type.onCollision );
 	}
 
 	@Override

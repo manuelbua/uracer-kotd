@@ -4,7 +4,6 @@ import com.badlogic.gdx.math.Vector2;
 import com.bitfire.uracer.entities.vehicles.Car;
 import com.bitfire.uracer.entities.vehicles.GhostCar;
 import com.bitfire.uracer.events.PlayerStateEvent;
-import com.bitfire.uracer.events.PlayerStateEvent.EventType;
 import com.bitfire.uracer.game.GameData;
 import com.bitfire.uracer.utils.AMath;
 
@@ -54,7 +53,7 @@ public class PlayerState {
 		currTileY = (int)tp.y;
 
 		if( (lastTileX != currTileX) || (lastTileY != currTileY) ) {
-			event.trigger( EventType.OnTileChanged );
+			event.trigger( PlayerStateEvent.Type.onTileChanged );
 		}
 
 		if( car != null ) {

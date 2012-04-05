@@ -9,22 +9,18 @@ import aurelienribon.tweenengine.equations.Cubic;
 
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Input.Keys;
-import com.badlogic.gdx.math.Vector2;
-import com.badlogic.gdx.physics.box2d.Fixture;
 import com.bitfire.uracer.Config;
 import com.bitfire.uracer.Input;
 import com.bitfire.uracer.URacer;
-import com.bitfire.uracer.carsimulation.CarForces;
 import com.bitfire.uracer.carsimulation.CarInputMode;
 import com.bitfire.uracer.carsimulation.Recorder;
 import com.bitfire.uracer.carsimulation.Replay;
 import com.bitfire.uracer.effects.TrackEffects;
 import com.bitfire.uracer.entities.EntityManager;
 import com.bitfire.uracer.entities.vehicles.Car;
-import com.bitfire.uracer.events.CarListener;
+import com.bitfire.uracer.events.CarEvent;
 import com.bitfire.uracer.events.GameLogicEvent;
-import com.bitfire.uracer.events.GameLogicEvent.EventType;
-import com.bitfire.uracer.events.PlayerStateListener;
+import com.bitfire.uracer.events.PlayerStateEvent;
 import com.bitfire.uracer.game.logic.LapState;
 import com.bitfire.uracer.game.logic.PlayerState;
 import com.bitfire.uracer.messager.Messager;
@@ -36,7 +32,7 @@ import com.bitfire.uracer.tweener.accessors.BoxedFloatAccessor;
 import com.bitfire.uracer.utils.AMath;
 import com.bitfire.uracer.utils.NumberString;
 
-public class GameLogic implements CarListener, PlayerStateListener {
+public class GameLogic implements CarEvent.Listener, PlayerStateEvent.Listener {
 	// lap
 	private boolean isFirstLap = true;
 	private long lastRecordedLapId = 0;
@@ -52,7 +48,7 @@ public class GameLogic implements CarListener, PlayerStateListener {
 		timeMultiplier.value = 1f;
 
 		PlayerState.event.addListener( this );
-		GameData.playerState.car.addListener( this );
+		Car.event.addListener( this );
 		GameData.playerState.car.setTransform( GameData.gameWorld.playerStartPos, GameData.gameWorld.playerStartOrient );
 	}
 
@@ -75,11 +71,11 @@ public class GameLogic implements CarListener, PlayerStateListener {
 
 		if( Input.isOn( Keys.R ) ) {
 			restart();
-			event.trigger( EventType.OnRestart );
+			event.trigger( GameLogicEvent.Type.onRestart );
 		} else if( Input.isOn( Keys.T ) ) {
 			restart();
 			reset();
-			event.trigger( EventType.OnReset );
+			event.trigger( GameLogicEvent.Type.onReset );
 		} else if( Input.isOn( Keys.Q ) ) {
 			Gdx.app.exit();
 			return false;
@@ -155,26 +151,28 @@ public class GameLogic implements CarListener, PlayerStateListener {
 	// ----------------------------------------------------------------------
 
 	@Override
-	public void onCollision( Car car, Fixture other, Vector2 impulses ) {
-		if( car.getInputMode() == CarInputMode.InputFromPlayer ) {
-			if( GameData.driftState.isDrifting ) {
-				GameData.driftState.invalidateByCollision();
-				// System.out.println( "invalidated" );
-			}
-		}
-	}
-
-	@Override
-	public void onComputeForces( CarForces forces ) {
-		if( recorder.isRecording() ) {
-			recorder.add( forces );
-		}
-	}
-
-	@Override
-	public void playerStateEvent( com.bitfire.uracer.events.PlayerStateEvent.EventType type ) {
+	public void carEvent( CarEvent.Type type, CarEvent.Data data ) {
 		switch( type ) {
-		case OnTileChanged:
+		case onCollision:
+			if( data.car.getInputMode() == CarInputMode.InputFromPlayer ) {
+				if( GameData.driftState.isDrifting ) {
+					GameData.driftState.invalidateByCollision();
+					// System.out.println( "invalidated" );
+				}
+			}
+			break;
+		case onComputeForces:
+			if( recorder.isRecording() ) {
+				recorder.add( data.forces );
+			}
+			break;
+		}
+	};
+
+	@Override
+	public void playerStateEvent( PlayerStateEvent.Type type ) {
+		switch( type ) {
+		case onTileChanged:
 			PlayerState player = GameData.playerState;
 			boolean onStartZone = (player.currTileX == GameData.gameWorld.playerStartTileX && player.currTileY == GameData.gameWorld.playerStartTileY);
 

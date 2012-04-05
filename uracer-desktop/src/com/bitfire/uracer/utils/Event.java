@@ -1,4 +1,4 @@
-package com.bitfire.uracer.events;
+package com.bitfire.uracer.utils;
 
 public abstract class Event {
 	public Object source;

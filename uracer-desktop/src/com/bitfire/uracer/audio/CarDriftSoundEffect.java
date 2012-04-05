@@ -4,11 +4,12 @@ import com.badlogic.gdx.Files.FileType;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.audio.Sound;
 import com.bitfire.uracer.Config;
-import com.bitfire.uracer.events.DriftStateListener;
+import com.bitfire.uracer.events.DriftStateEvent;
 import com.bitfire.uracer.game.GameData;
+import com.bitfire.uracer.game.logic.DriftState;
 import com.bitfire.uracer.utils.AMath;
 
-public class CarDriftSoundEffect extends CarSoundEffect implements DriftStateListener {
+public class CarDriftSoundEffect extends CarSoundEffect implements DriftStateEvent.Listener {
 	private Sound drift = null;
 	private long driftId = -1;
 	private float driftLastPitch = 0;
@@ -21,7 +22,7 @@ public class CarDriftSoundEffect extends CarSoundEffect implements DriftStateLis
 	private float lastVolume = 0f;
 
 	public CarDriftSoundEffect() {
-		GameData.driftState.addListener( this );
+		DriftState.event.addListener( this );
 		drift = Gdx.audio.newSound( Gdx.files.getFileHandle( "data/audio/drift-loop.ogg", FileType.Internal ) );
 	}
 
@@ -59,21 +60,23 @@ public class CarDriftSoundEffect extends CarSoundEffect implements DriftStateLis
 	}
 
 	@Override
-	public void onBeginDrift() {
-		if( driftId > -1 ) {
-			drift.stop( driftId );
-			driftId = drift.loop( 0f );
-			drift.setVolume( driftId, 0f );
+	public void driftStateEvent( DriftStateEvent.Type type ) {
+		switch( type ) {
+		case onBeginDrift:
+			if( driftId > -1 ) {
+				drift.stop( driftId );
+				driftId = drift.loop( 0f );
+				drift.setVolume( driftId, 0f );
+			}
+
+			doFadeIn = true;
+			doFadeOut = false;
+			break;
+		case onEndDrift:
+			doFadeIn = false;
+			doFadeOut = true;
+			break;
 		}
-
-		doFadeIn = true;
-		doFadeOut = false;
-	}
-
-	@Override
-	public void onEndDrift() {
-		doFadeIn = false;
-		doFadeOut = true;
 	}
 
 	public void update( float speedFactor ) {
