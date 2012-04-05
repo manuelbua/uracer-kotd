@@ -51,7 +51,7 @@ public class GameWorld {
 	protected TrackTrees trackTrees = null;
 	protected ArrayList<OrthographicAlignedStillModel> staticMeshes = new ArrayList<OrthographicAlignedStillModel>();
 
-	public GameWorld( String levelName, boolean nightMode, int width, int height ) {
+	public GameWorld( String levelName, boolean nightMode ) {
 		this.name = levelName;
 		this.nightMode = nightMode;
 
@@ -68,7 +68,7 @@ public class GameWorld {
 		worldSizeScaledPx.mul( GameData.scalingStrategy.invTileMapZoomFactor );
 		worldSizeScaledMt = new Vector2( Convert.px2mt( worldSizeScaledPx ) );
 
-		// initialize TiledMap utils
+		// initialize tilemap utils
 		MapUtils.init( map, worldSizeScaledPx );
 
 		createMeshes();
@@ -216,9 +216,6 @@ public class GameWorld {
 			l.setMaskBits( CollisionFilters.CategoryPlayer | CollisionFilters.CategoryTrackWalls );
 		}
 	}
-
-
-	/** operations */
 
 	public boolean isNightMode() {
 		return nightMode;
