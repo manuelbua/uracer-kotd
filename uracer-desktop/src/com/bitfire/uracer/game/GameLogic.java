@@ -50,6 +50,10 @@ public class GameLogic implements CarListener, PlayerStateListener {
 		event.source = this;
 		recorder = new Recorder();
 		timeMultiplier.value = 1f;
+
+		PlayerState.event.addListener( this );
+		GameData.playerState.car.addListener( this );
+		GameData.playerState.car.setTransform( GameData.gameWorld.playerStartPos, GameData.gameWorld.playerStartOrient );
 	}
 
 	boolean timeModulation = false, timeModulationBusy = false;
@@ -167,74 +171,72 @@ public class GameLogic implements CarListener, PlayerStateListener {
 		}
 	}
 
-	// ----------------------------------------------------------------------
-	//
-	// from PlayerStateListener
-	//
-	// ----------------------------------------------------------------------
-
 	@Override
-	public void onTileChanged() {
-		PlayerState player = GameData.playerState;
-		boolean onStartZone = (player.currTileX == GameData.gameWorld.playerStartTileX && player.currTileY == GameData.gameWorld.playerStartTileY);
+	public void playerStateEvent( com.bitfire.uracer.events.PlayerStateEvent.EventType type ) {
+		switch( type ) {
+		case OnTileChanged:
+			PlayerState player = GameData.playerState;
+			boolean onStartZone = (player.currTileX == GameData.gameWorld.playerStartTileX && player.currTileY == GameData.gameWorld.playerStartTileY);
 
-		LapState lapState = GameData.lapState;
-		String name = GameData.gameWorld.name;
+			LapState lapState = GameData.lapState;
+			String name = GameData.gameWorld.name;
 
-		if( onStartZone ) {
-			if( isFirstLap ) {
-				isFirstLap = false;
+			if( onStartZone ) {
+				if( isFirstLap ) {
+					isFirstLap = false;
 
-				lapState.restart();
-				Replay buf = lapState.getNextBuffer();
-				recorder.beginRecording( player.car, buf, /* lapState.getStartNanotime(), */name );
-				lastRecordedLapId = buf.id;
-
-				if( lapState.hasAnyReplayData() ) {
-					Replay any = lapState.getAnyReplay();
-					player.ghost.setReplay( any );
-				}
-			} else {
-				if( recorder.isRecording() )
-					recorder.endRecording();
-
-				lapState.updateReplays();
-
-				// replay best, overwrite worst logic
-
-				if( !lapState.hasAllReplayData() ) {
-					// only one single replay
 					lapState.restart();
 					Replay buf = lapState.getNextBuffer();
 					recorder.beginRecording( player.car, buf, /* lapState.getStartNanotime(), */name );
 					lastRecordedLapId = buf.id;
 
-					Replay any = lapState.getAnyReplay();
-					player.ghost.setReplay( any );
-					lapState.setLastTrackTimeSeconds( any.trackTimeSeconds );
-
-					Messager.show( "GO!  GO!  GO!", 3f, MessageType.Information, MessagePosition.Middle, MessageSize.Big );
-				} else {
-					// both valid, replay best, overwrite worst
-					Replay best = lapState.getBestReplay(), worst = lapState.getWorstReplay();
-
-					if( lastRecordedLapId == best.id ) {
-						lapState.setLastTrackTimeSeconds( best.trackTimeSeconds );
-						Messager.show( "-" + NumberString.format( worst.trackTimeSeconds - best.trackTimeSeconds ) + " seconds!", 3f, MessageType.Good,
-								MessagePosition.Top, MessageSize.Big );
-					} else {
-						lapState.setLastTrackTimeSeconds( worst.trackTimeSeconds );
-						Messager.show( "+" + NumberString.format( worst.trackTimeSeconds - best.trackTimeSeconds ) + " seconds", 3f, MessageType.Bad,
-								MessagePosition.Top, MessageSize.Big );
+					if( lapState.hasAnyReplayData() ) {
+						Replay any = lapState.getAnyReplay();
+						player.ghost.setReplay( any );
 					}
+				} else {
+					if( recorder.isRecording() )
+						recorder.endRecording();
 
-					player.ghost.setReplay( best );
+					lapState.updateReplays();
 
-					lapState.restart();
-					recorder.beginRecording( player.car, worst, /* lapState.getStartNanotime(), */name );
-					lastRecordedLapId = worst.id;
+					// replay best, overwrite worst logic
+
+					if( !lapState.hasAllReplayData() ) {
+						// only one single replay
+						lapState.restart();
+						Replay buf = lapState.getNextBuffer();
+						recorder.beginRecording( player.car, buf, /* lapState.getStartNanotime(), */name );
+						lastRecordedLapId = buf.id;
+
+						Replay any = lapState.getAnyReplay();
+						player.ghost.setReplay( any );
+						lapState.setLastTrackTimeSeconds( any.trackTimeSeconds );
+
+						Messager.show( "GO!  GO!  GO!", 3f, MessageType.Information, MessagePosition.Middle, MessageSize.Big );
+					} else {
+						// both valid, replay best, overwrite worst
+						Replay best = lapState.getBestReplay(), worst = lapState.getWorstReplay();
+
+						if( lastRecordedLapId == best.id ) {
+							lapState.setLastTrackTimeSeconds( best.trackTimeSeconds );
+							Messager.show( "-" + NumberString.format( worst.trackTimeSeconds - best.trackTimeSeconds ) + " seconds!", 3f, MessageType.Good,
+									MessagePosition.Top, MessageSize.Big );
+						} else {
+							lapState.setLastTrackTimeSeconds( worst.trackTimeSeconds );
+							Messager.show( "+" + NumberString.format( worst.trackTimeSeconds - best.trackTimeSeconds ) + " seconds", 3f, MessageType.Bad,
+									MessagePosition.Top, MessageSize.Big );
+						}
+
+						player.ghost.setReplay( best );
+
+						lapState.restart();
+						recorder.beginRecording( player.car, worst, /* lapState.getStartNanotime(), */name );
+						lastRecordedLapId = worst.id;
+					}
 				}
 			}
+			break;
 		}
 	}
 }

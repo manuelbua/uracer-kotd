@@ -66,7 +66,7 @@ public class Game implements Disposable, GameLogicListener {
 		int height = Gdx.graphics.getHeight();
 		Director.init( width, height );
 
-		GameData.gameWorld = new GameWorld( levelName, false, width, height /* night mode */);
+		GameData.gameWorld = new GameWorld( levelName, false /* night mode */);
 		worldRenderer = new GameWorldRenderer( GameData.gameWorld, width, height );
 
 		controller = new DirectorController( Config.Graphics.CameraInterpolationMode, Director.halfViewport, GameData.gameWorld );
@@ -77,16 +77,11 @@ public class Game implements Disposable, GameLogicListener {
 		TrackEffects.init( car );
 		GameData.hud = new Hud( car );
 
-		car.setTransform( GameData.gameWorld.playerStartPos, GameData.gameWorld.playerStartOrient );
-
 		// setup listeners
 		gameLogic = new GameLogic();
 		GameLogic.event.addListener( this );
 		GameData.driftState.addListener( GameData.hud );
-		GameData.playerState.addListener( gameLogic );
-		GameData.playerState.car.addListener( gameLogic );
 		GameData.playerState.car.addListener( carSoundManager.carImpact );
-
 
 		// Issues may arise on Tegra2 (Asus Transformer) devices if the buffers'
 		// count is higher than 10
@@ -281,8 +276,8 @@ public class Game implements Disposable, GameLogicListener {
 			Debug.drawString( "Visible car skid marks=" + ((CarSkidMarks)TrackEffects.get( TrackEffects.Effects.CarSkidMarks )).getParticleCount(), 0,
 					Gdx.graphics.getHeight() - 21 );
 			Debug.drawString( "total meshes=" + GameWorld.TotalMeshes, 0, Gdx.graphics.getHeight() - 14 );
-			Debug.drawString( "rendered meshes=" + (GameWorldRenderer.renderedTrees + GameWorldRenderer.renderedWalls) + ", trees=" + GameWorldRenderer.renderedTrees + ", walls="
-					+ GameWorldRenderer.renderedWalls + ", culled=" + GameWorldRenderer.culledMeshes, 0, Gdx.graphics.getHeight() - 7 );
+			Debug.drawString( "rendered meshes=" + (GameWorldRenderer.renderedTrees + GameWorldRenderer.renderedWalls) + ", trees=" + GameWorldRenderer.renderedTrees
+					+ ", walls=" + GameWorldRenderer.renderedWalls + ", culled=" + GameWorldRenderer.culledMeshes, 0, Gdx.graphics.getHeight() - 7 );
 			Debug.end();
 		} else {
 			Debug.begin( batch );

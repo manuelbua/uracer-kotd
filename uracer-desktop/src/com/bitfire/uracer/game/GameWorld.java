@@ -24,10 +24,10 @@ import com.bitfire.uracer.tiled.TrackWalls;
 import com.bitfire.uracer.utils.Convert;
 import com.bitfire.uracer.utils.MapUtils;
 
-/** First write. Basic idea in place (in iterative refactoring)
- * FIXME should go with something else instead, eg. MVC/no Level..
- * @author manuel */
 public class GameWorld {
+	// statistics
+	public static int TotalMeshes = 0;
+
 	// level data
 	public String name = "no-level-loaded";
 	public TiledMap map = null;
@@ -42,9 +42,6 @@ public class GameWorld {
 	private boolean nightMode;
 	protected RayHandler rayHandler = null;
 	protected ConeLight playerHeadlights = null;
-
-	// statistics
-	public static int TotalMeshes = 0;
 
 	// level meshes, package-level access for GameWorldRenderer (ugly but faster than accessors)
 	protected TrackWalls trackWalls = null;
@@ -90,7 +87,6 @@ public class GameWorld {
 		trackWalls.dispose();
 		trackTrees.dispose();
 	}
-
 
 	private void createMeshes() {
 		staticMeshes.clear();
@@ -162,7 +158,7 @@ public class GameWorld {
 
 		// set player data
 		playerStartOrient = startOrient;
-		playerStartPos.set(start);
+		playerStartPos.set( start );
 		playerStartTileX = startTileX;
 		playerStartTileY = startTileY;
 	}

@@ -3,12 +3,14 @@ package com.bitfire.uracer.game.logic;
 import com.badlogic.gdx.math.Vector2;
 import com.bitfire.uracer.entities.vehicles.Car;
 import com.bitfire.uracer.entities.vehicles.GhostCar;
-import com.bitfire.uracer.events.PlayerStateListener;
-import com.bitfire.uracer.events.PlayerStateNotifier;
+import com.bitfire.uracer.events.PlayerStateEvent;
+import com.bitfire.uracer.events.PlayerStateEvent.EventType;
 import com.bitfire.uracer.game.GameData;
 import com.bitfire.uracer.utils.AMath;
 
 public class PlayerState {
+	public static final PlayerStateEvent event = new PlayerStateEvent();
+
 	public Car car;
 	public GhostCar ghost;
 
@@ -20,10 +22,7 @@ public class PlayerState {
 
 	/* position/orientation */
 
-	// current
 	public int currTileX = 1, currTileY = 1;
-
-	private PlayerStateNotifier notifier;
 	private int lastTileX = 0, lastTileY = 0;
 
 	public PlayerState() {
@@ -31,7 +30,7 @@ public class PlayerState {
 	}
 
 	public PlayerState( Car car, GhostCar ghost ) {
-		this.notifier = new PlayerStateNotifier();
+		event.source = this;
 		setData( car, ghost );
 	}
 
@@ -46,10 +45,6 @@ public class PlayerState {
 		}
 	}
 
-	public void addListener( PlayerStateListener listener ) {
-		notifier.addListener( listener );
-	}
-
 	public void tick() {
 		// onTileChanged
 		lastTileX = currTileX;
@@ -57,8 +52,9 @@ public class PlayerState {
 		Vector2 tp = car.getTilePosition();
 		currTileX = (int)tp.x;
 		currTileY = (int)tp.y;
+
 		if( (lastTileX != currTileX) || (lastTileY != currTileY) ) {
-			notifier.onTileChanged();
+			event.trigger( EventType.OnTileChanged );
 		}
 
 		if( car != null ) {
