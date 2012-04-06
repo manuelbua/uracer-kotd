@@ -1,6 +1,5 @@
 package com.bitfire.uracer.entities;
 
-import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.utils.Array;
 
 public class EntityManager {
@@ -65,31 +64,31 @@ public class EntityManager {
 //		}
 //	}
 
-	public static void raiseOnRender( SpriteBatch batch, float temporalAliasingFactor ) {
-		int len = sfi_entities.size;
-		for( int i = 0; i < len; i++ ) {
-			SubframeInterpolableEntity e = sfi_entities.get( i );
-			e.onRender( batch );
-		}
+//	public static void raiseOnRender( SpriteBatch batch, float temporalAliasingFactor ) {
+//		int len = sfi_entities.size;
+//		for( int i = 0; i < len; i++ ) {
+//			SubframeInterpolableEntity e = sfi_entities.get( i );
+//			e.onRender( batch );
+//		}
+//
+//		len = entities.size;
+//		for( int i = 0; i < len; i++ ) {
+//			Entity e = entities.get( i );
+//			e.onRender( batch );
+//		}
+//	}
 
-		len = entities.size;
-		for( int i = 0; i < len; i++ ) {
-			Entity e = entities.get( i );
-			e.onRender( batch );
-		}
-	}
-
-	public static void raiseOnDebug() {
-		int len = sfi_entities.size;
-		for( int i = 0; i < len; i++ ) {
-			SubframeInterpolableEntity e = sfi_entities.get( i );
-			e.onDebug();
-		}
-
-		len = entities.size;
-		for( int i = 0; i < len; i++ ) {
-			Entity e = entities.get( i );
-			e.onDebug();
-		}
-	}
+//	public static void raiseOnDebug() {
+//		int len = sfi_entities.size;
+//		for( int i = 0; i < len; i++ ) {
+//			SubframeInterpolableEntity e = sfi_entities.get( i );
+//			e.onDebug();
+//		}
+//
+//		len = entities.size;
+//		for( int i = 0; i < len; i++ ) {
+//			Entity e = entities.get( i );
+//			e.onDebug();
+//		}
+//	}
 }

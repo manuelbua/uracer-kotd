@@ -1,6 +1,5 @@
 package com.bitfire.uracer.entities;
 
-import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 
 public abstract class Entity {
 	// screen-coords
@@ -9,8 +8,8 @@ public abstract class Entity {
 //	public void onTick() {
 //	}
 
-	public void onRender( SpriteBatch batch ) {
-	}
+//	public void onRender( SpriteBatch batch ) {
+//	}
 
 	public void onDebug() {
 	}
