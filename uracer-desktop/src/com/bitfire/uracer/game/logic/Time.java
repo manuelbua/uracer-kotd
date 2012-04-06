@@ -1,7 +1,9 @@
-package com.bitfire.uracer;
+package com.bitfire.uracer.game.logic;
 
+import com.bitfire.uracer.Config;
 import com.bitfire.uracer.events.TaskManagerEvent.Order;
 import com.bitfire.uracer.task.Task;
+
 
 /** Tracks elapsed time both in absolute terms (wall clock time) or
  * relative to the tick-based system.
