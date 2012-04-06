@@ -165,7 +165,7 @@ public class GameWorldRenderer {
 		camPersp.position.set( 0, 0, camPerspElevation );
 	}
 
-	public void renderWalls( GL20 gl, TrackWalls walls ) {
+	private void renderWalls( GL20 gl, TrackWalls walls ) {
 		if( walls.walls.size() > 0 ) {
 			gl.glDisable( GL20.GL_CULL_FACE );
 			gl.glEnable( GL20.GL_BLEND );
@@ -174,7 +174,7 @@ public class GameWorldRenderer {
 		}
 	}
 
-	public void renderTrees( GL20 gl, TrackTrees trees ) {
+	private void renderTrees( GL20 gl, TrackTrees trees ) {
 		if( trees.trees.size() > 0 ) {
 			trees.transform( camPersp, camOrtho );
 
@@ -235,7 +235,7 @@ public class GameWorldRenderer {
 	private Matrix4 mtx = new Matrix4();
 	private Matrix4 mtx2 = new Matrix4();
 
-	public int renderOrthographicAlignedModels( GL20 gl, ArrayList<OrthographicAlignedStillModel> models ) {
+	private int renderOrthographicAlignedModels( GL20 gl, ArrayList<OrthographicAlignedStillModel> models ) {
 		int renderedCount = 0;
 		OrthographicAlignedStillModel m;
 		StillSubMesh submesh;
