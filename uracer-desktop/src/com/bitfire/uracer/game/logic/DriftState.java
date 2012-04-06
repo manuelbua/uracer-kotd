@@ -3,12 +3,14 @@ package com.bitfire.uracer.game.logic;
 import com.badlogic.gdx.utils.Disposable;
 import com.bitfire.uracer.Time;
 import com.bitfire.uracer.entities.vehicles.Car;
-import com.bitfire.uracer.events.DriftStateListener;
-import com.bitfire.uracer.events.DriftStateNotifier;
+import com.bitfire.uracer.events.DriftStateEvent;
+import com.bitfire.uracer.events.DriftStateEvent.Type;
 import com.bitfire.uracer.game.GameData;
 import com.bitfire.uracer.utils.AMath;
 
 public class DriftState implements Disposable {
+	public static final DriftStateEvent event = new DriftStateEvent();
+
 	public boolean isDrifting = false;
 	public boolean hasCollided = false;
 	public float lateralForcesFront = 0, lateralForcesRear = 0;
@@ -17,10 +19,8 @@ public class DriftState implements Disposable {
 	private float lastRear = 0, lastFront = 0;
 
 	private Time time, collisionTime;
-	private DriftStateNotifier notifier;
 
 	public DriftState() {
-		this.notifier = new DriftStateNotifier();
 		reset();
 	}
 
@@ -40,10 +40,6 @@ public class DriftState implements Disposable {
 		driftStrength = 0;
 	}
 
-	public void addListener( DriftStateListener listener ) {
-		notifier.addListener( listener );
-	}
-
 	// onCollision?
 	public void invalidateByCollision() {
 		if( !isDrifting )
@@ -53,7 +49,7 @@ public class DriftState implements Disposable {
 		hasCollided = true;
 		collisionTime.start();
 		time.reset();
-		notifier.onEndDrift();
+		event.trigger( Type.onEndDrift );
 	}
 
 	public void tick() {
@@ -75,7 +71,8 @@ public class DriftState implements Disposable {
 
 		if( hasCollided ) {
 			// ignore drifts for a couple of seconds
-			if( collisionTime.elapsed( Time.Reference.Ticks ) > 10 ) {
+			// TODO highlight this penalty!
+			if( collisionTime.elapsed( Time.Reference.Ticks ) >= 2 ) {
 				collisionTime.stop();
 				hasCollided = false;
 			}
@@ -90,7 +87,7 @@ public class DriftState implements Disposable {
 					hasCollided = false;
 //					driftStartTime = System.currentTimeMillis();
 					time.start();
-					notifier.onBeginDrift();
+					event.trigger( Type.onBeginDrift );
 				}
 			} else {
 				// search for onEndDrift
@@ -98,7 +95,7 @@ public class DriftState implements Disposable {
 					time.stop();
 					isDrifting = false;
 					hasCollided = false;
-					notifier.onEndDrift();
+					event.trigger( Type.onEndDrift );
 				}
 			}
 		}

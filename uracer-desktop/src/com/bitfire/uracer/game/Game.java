@@ -11,28 +11,25 @@ import com.bitfire.uracer.Config.Physics;
 import com.bitfire.uracer.Director;
 import com.bitfire.uracer.URacer;
 import com.bitfire.uracer.audio.CarSoundManager;
+import com.bitfire.uracer.carsimulation.CarModel;
 import com.bitfire.uracer.debug.Debug;
 import com.bitfire.uracer.effects.CarSkidMarks;
 import com.bitfire.uracer.effects.TrackEffects;
 import com.bitfire.uracer.entities.EntityManager;
 import com.bitfire.uracer.entities.vehicles.Car;
-import com.bitfire.uracer.events.GameLogicListener;
+import com.bitfire.uracer.events.GameLogicEvent;
+import com.bitfire.uracer.factories.CarFactory;
+import com.bitfire.uracer.factories.CarFactory.CarType;
 import com.bitfire.uracer.game.logic.DirectorController;
-import com.bitfire.uracer.game.logic.Level;
 import com.bitfire.uracer.hud.Hud;
 import com.bitfire.uracer.messager.Messager;
 import com.bitfire.uracer.postprocessing.PostProcessor;
 import com.bitfire.uracer.postprocessing.effects.Bloom;
 import com.bitfire.uracer.postprocessing.effects.Zoom;
-import com.bitfire.uracer.tiled.LevelRenderer;
 import com.bitfire.uracer.utils.Convert;
 
-/** TODO most of the shared stuff between Game and GameLogic should go in a
- * GameData structure of some sort, GameLogic is really the logical portion of
- * Game, so data should be accessible for both.
- *
- * @author bmanuel */
-public class Game implements Disposable, GameLogicListener {
+public class Game implements Disposable, GameLogicEvent.Listener {
+
 	// config
 	public GameplaySettings gameSettings = null;
 
@@ -48,47 +45,42 @@ public class Game implements Disposable, GameLogicListener {
 
 	// drawing
 	private SpriteBatch batch = null;
+	private GameWorldRenderer worldRenderer = null;
 
 	// sounds
 	private CarSoundManager carSoundManager = null;
 
 	public Game( String levelName, GameDifficulty difficulty ) {
-		int width = Gdx.graphics.getWidth();
-		int height = Gdx.graphics.getHeight();
+		EntityManager.create();
+		GameData.create( difficulty );
+		Car car = CarFactory.createPlayer( CarType.OldSkool, new CarModel().toModel2() );
+		GameData.createStates( car );
+
+
+		// GameData states are now fully initialized
 
 		carSoundManager = new CarSoundManager();	// early load
-		GameData.create( difficulty );
-
-		// everything has been setup on a 256px tile, scale back if that's the case
-		Config.Physics.PixelsPerMeter /= (GameData.scalingStrategy.targetScreenRatio / GameData.scalingStrategy.to256);
-
 		Art.scaleFonts( GameData.scalingStrategy.invTileMapZoomFactor );
 		Messager.init();
-		EntityManager.create();
-
 		Convert.init();
+
+		int width = Gdx.graphics.getWidth();
+		int height = Gdx.graphics.getHeight();
 		Director.init( width, height );
 
-		GameData.level = new Level( GameData.world, levelName, false, width, height /* night mode */);
-		GameData.playerState = GameData.level.getPlayerState();
+		GameData.gameWorld = new GameWorld( levelName, false /* night mode */);
+		worldRenderer = new GameWorldRenderer( GameData.gameWorld, width, height );
 
-		controller = new DirectorController( Config.Graphics.CameraInterpolationMode, Director.halfViewport, GameData.level );
+		controller = new DirectorController( Config.Graphics.CameraInterpolationMode, Director.halfViewport, GameData.gameWorld );
 		if( Config.Graphics.EnablePostProcessingFx ) {
-			setupPostProcessing( width, height, GameData.level );
+			setupPostProcessing( width, height, GameData.gameWorld );
 		}
 
-		Car car = GameData.playerState.car;
 		TrackEffects.init( car );
 		GameData.hud = new Hud( car );
 
-		// setup listeners
 		gameLogic = new GameLogic();
-		gameLogic.addListener( this );
-		GameData.driftState.addListener( GameData.hud );
-		GameData.playerState.addListener( gameLogic );
-		GameData.playerState.car.addListener( gameLogic );
-		GameData.playerState.car.addListener( carSoundManager );
-		GameData.driftState.addListener( carSoundManager );
+		GameLogic.event.addListener( this );
 
 		// Issues may arise on Tegra2 (Asus Transformer) devices if the buffers'
 		// count is higher than 10
@@ -110,16 +102,16 @@ public class Game implements Disposable, GameLogicListener {
 	}
 
 	@Override
-	public void onReset() {
-		carSoundManager.reset();
+	public void gameLogicEvent( GameLogicEvent.Type type ) {
+		switch( type ) {
+		case onRestart:
+		case onReset:
+			carSoundManager.reset();
+			break;
+		}
 	}
 
-	@Override
-	public void onRestart() {
-		carSoundManager.reset();
-	}
-
-	private void setupPostProcessing( int width, int height, Level level ) {
+	private void setupPostProcessing( int width, int height, GameWorld level ) {
 		postProcessor = new PostProcessor( width, height, false /* depth */, false /* alpha */, Config.isDesktop /* 32
 																												 * bits */);
 		bloom = new Bloom( postProcessor, Config.PostProcessing.RttFboWidth, Config.PostProcessing.RttFboHeight );
@@ -161,7 +153,7 @@ public class Game implements Disposable, GameLogicListener {
 
 		if( Config.Graphics.EnablePostProcessingFx && zoom != null ) {
 			zoom.setOrigin( Director.screenPosFor( GameData.playerState.car.getBody() ) );
-			zoom.setStrength( -0.1f * factor );
+			zoom.setStrength( -0.05f * factor );
 		}
 
 		if( Config.Graphics.EnablePostProcessingFx && bloom != null && zoom != null ) {
@@ -183,7 +175,7 @@ public class Game implements Disposable, GameLogicListener {
 	}
 
 	public void render() {
-		Level level = GameData.level;
+		GameWorld world = GameData.gameWorld;
 		GameData.tweener.update( (int)(URacer.getLastDeltaSecs() * 1000) );
 
 		Car playerCar = null;
@@ -206,7 +198,7 @@ public class Game implements Disposable, GameLogicListener {
 		gl.glViewport( 0, 0, Gdx.graphics.getWidth(), Gdx.graphics.getHeight() );
 
 		// resync
-		level.syncWithCam( ortho );
+		worldRenderer.syncWithCam( ortho );
 
 		// clear buffers
 		// TODO could be more sensible since while post-processing there is already a glClear
@@ -216,7 +208,7 @@ public class Game implements Disposable, GameLogicListener {
 		gl.glClear( GL20.GL_DEPTH_BUFFER_BIT | GL20.GL_COLOR_BUFFER_BIT );
 
 		// render base tilemap
-		level.renderTilemap( gl );
+		worldRenderer.renderTilemap( gl );
 
 		gl.glActiveTexture( GL20.GL_TEXTURE0 );
 		batch.setProjectionMatrix( ortho.projection );
@@ -232,26 +224,28 @@ public class Game implements Disposable, GameLogicListener {
 		batch.end();
 
 		// render 3d meshes
-		level.renderMeshes( gl );
+		worldRenderer.renderAllMeshes( gl );
 
 		GameData.hud.render( batch );
 
-		if( level.isNightMode() ) {
+		if( world.isNightMode() ) {
 			if( Config.Graphics.DumbNightMode ) {
 				if( Config.Graphics.EnablePostProcessingFx )
 					postProcessor.render();
-				level.generateLightMap();
-				level.renderLigthMap( null );
+
+				worldRenderer.generateLightMap();
+				worldRenderer.renderLigthMap( null );
 			} else {
 				// render nightmode
-				if( level.isNightMode() ) {
-					level.generateLightMap();
+				if( world.isNightMode() ) {
+					worldRenderer.generateLightMap();
+
 					// hook into the next PostProcessor source buffer (the last result)
 					// and blend the lightmap on it
 					if( Config.Graphics.EnablePostProcessingFx )
-						level.renderLigthMap( postProcessor.captureEnd() );
+						worldRenderer.renderLigthMap( postProcessor.captureEnd() );
 					else
-						level.renderLigthMap( null );
+						worldRenderer.renderLigthMap( null );
 				}
 
 				if( Config.Graphics.EnablePostProcessingFx )
@@ -268,7 +262,7 @@ public class Game implements Disposable, GameLogicListener {
 
 		if( Config.isDesktop ) {
 			if( Config.Graphics.RenderBox2DWorldWireframe )
-				Debug.renderB2dWorld( GameData.world, Director.getMatViewProjMt() );
+				Debug.renderB2dWorld( GameData.b2dWorld, Director.getMatViewProjMt() );
 
 			Debug.begin( batch );
 			EntityManager.raiseOnDebug();
@@ -280,9 +274,9 @@ public class Game implements Disposable, GameLogicListener {
 			Debug.renderMemoryUsage();
 			Debug.drawString( "Visible car skid marks=" + ((CarSkidMarks)TrackEffects.get( TrackEffects.Effects.CarSkidMarks )).getParticleCount(), 0,
 					Gdx.graphics.getHeight() - 21 );
-			Debug.drawString( "total meshes=" + Level.totalMeshes, 0, Gdx.graphics.getHeight() - 14 );
-			Debug.drawString( "rendered meshes=" + (LevelRenderer.renderedTrees + LevelRenderer.renderedWalls) + ", trees=" + LevelRenderer.renderedTrees + ", walls="
-					+ LevelRenderer.renderedWalls + ", culled=" + LevelRenderer.culledMeshes, 0, Gdx.graphics.getHeight() - 7 );
+			Debug.drawString( "total meshes=" + GameWorld.TotalMeshes, 0, Gdx.graphics.getHeight() - 14 );
+			Debug.drawString( "rendered meshes=" + (GameWorldRenderer.renderedTrees + GameWorldRenderer.renderedWalls) + ", trees=" + GameWorldRenderer.renderedTrees
+					+ ", walls=" + GameWorldRenderer.renderedWalls + ", culled=" + GameWorldRenderer.culledMeshes, 0, Gdx.graphics.getHeight() - 7 );
 			Debug.end();
 		} else {
 			Debug.begin( batch );

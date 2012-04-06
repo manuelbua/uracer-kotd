@@ -3,6 +3,7 @@ package com.bitfire.uracer.game.logic;
 import com.badlogic.gdx.math.Rectangle;
 import com.badlogic.gdx.math.Vector2;
 import com.bitfire.uracer.Director;
+import com.bitfire.uracer.game.GameWorld;
 import com.bitfire.uracer.utils.AMath;
 
 public class DirectorController {
@@ -15,7 +16,7 @@ public class DirectorController {
 	private float sigmoidStrengthX = 1f;
 	private float sigmoidStrengthY = 1f;
 
-	public DirectorController( InterpolationMode mode, Vector2 halfViewport, final Level level ) {
+	public DirectorController( InterpolationMode mode, Vector2 halfViewport, final GameWorld level ) {
 		final Rectangle cameraBounds = new Rectangle();
 		cameraBounds.x = halfViewport.x;
 		cameraBounds.width = level.worldSizeScaledPx.x - halfViewport.x;
