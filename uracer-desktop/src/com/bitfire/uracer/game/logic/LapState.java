@@ -1,6 +1,5 @@
 package com.bitfire.uracer.game.logic;
 
-import com.bitfire.uracer.Time;
 import com.bitfire.uracer.carsimulation.Replay;
 
 public class LapState {
