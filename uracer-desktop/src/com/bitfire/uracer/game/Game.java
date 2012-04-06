@@ -50,7 +50,7 @@ public class Game implements Disposable, GameLogicEvent.Listener {
 	private Zoom zoom = null;
 
 	// drawing
-	private SpriteBatch batch = null;
+	private GameBatchRenderer batchRenderer = null;
 	private GameWorldRenderer worldRenderer = null;
 
 	// sounds
@@ -75,6 +75,7 @@ public class Game implements Disposable, GameLogicEvent.Listener {
 
 		GameData.gameWorld = new GameWorld( levelName, false /* night mode */);
 		worldRenderer = new GameWorldRenderer( GameData.gameWorld, width, height );
+		batchRenderer = new GameBatchRenderer(Gdx.graphics.getGL20());
 
 		controller = new DirectorController( Config.Graphics.CameraInterpolationMode, Director.halfViewport, GameData.gameWorld );
 		if( Config.Graphics.EnablePostProcessingFx ) {
@@ -89,7 +90,6 @@ public class Game implements Disposable, GameLogicEvent.Listener {
 
 		// Issues may arise on Tegra2 (Asus Transformer) devices if the buffers'
 		// count is higher than 10
-		batch = new SpriteBatch( 1000, 8 );
 		physicsStep = new PhysicsStep( GameData.b2dWorld );
 
 		System.out.println( "resolution=" + width + "x" + height + "px, physics=" + Physics.PhysicsTimestepHz + "Hz" );
@@ -100,7 +100,7 @@ public class Game implements Disposable, GameLogicEvent.Listener {
 		Director.dispose();
 		Messager.dispose();
 		TrackEffects.dispose();
-		batch.dispose();
+		batchRenderer.dispose();
 		carSoundManager.dispose();
 
 		if( Config.Graphics.EnablePostProcessingFx ) {
@@ -157,7 +157,7 @@ public class Game implements Disposable, GameLogicEvent.Listener {
 		carSoundManager.tick();
 
 		// ---------------------------------------------------
-		// post-processor debug
+		// post-processor animator's tick impl
 		// ---------------------------------------------------
 
 		// float factor = player.currSpeedFactor * 1.75f;
@@ -247,23 +247,23 @@ public class Game implements Disposable, GameLogicEvent.Listener {
 		// 3
 		// ------------------------------------------
 
-		gl.glActiveTexture( GL20.GL_TEXTURE0 );
-		batch.setProjectionMatrix( ortho.projection );
-		batch.setTransformMatrix( ortho.view );
-		batch.begin();
+		batchRenderer.begin( ortho );
 		{
+			// BatchRendererEvent same insertion w/ order as TaskManagerEvent
+			//
+
 			// batch render effects
-			TrackEffects.render( batch );
+//			TrackEffects.render( batch );
 
 			// batch render entities
-			EntityManager.raiseOnRender( batch, URacer.getTemporalAliasing() );
+//			EntityManager.raiseOnRender( batch, URacer.getTemporalAliasing() );
 		}
-		batch.end();
+		batchRenderer.end();
 
 		// render 3d meshes
 		worldRenderer.renderAllMeshes( gl );
 
-		GameData.hud.render( batch );
+		GameData.hud.render( batchRenderer );
 
 		GameWorld world = GameData.gameWorld;
 		if( world.isNightMode() ) {
@@ -302,10 +302,12 @@ public class Game implements Disposable, GameLogicEvent.Listener {
 			if( Config.Graphics.RenderBox2DWorldWireframe )
 				Debug.renderB2dWorld( GameData.b2dWorld, Director.getMatViewProjMt() );
 
-			Debug.begin( batch );
-			EntityManager.raiseOnDebug();
+			SpriteBatch dbg = Debug.begin( batchRenderer );
+
+//			EntityManager.raiseOnDebug();
 			if( Config.Graphics.RenderHudDebugInfo )
-				GameData.hud.debug( batch );
+				GameData.hud.debug(dbg);
+
 			Debug.renderVersionInfo();
 			Debug.renderGraphicalStats( Gdx.graphics.getWidth() - Debug.getStatsWidth(), Gdx.graphics.getHeight() - Debug.getStatsHeight() - Debug.fontHeight );
 			Debug.renderTextualStats();
@@ -315,13 +317,19 @@ public class Game implements Disposable, GameLogicEvent.Listener {
 			Debug.drawString( "total meshes=" + GameWorld.TotalMeshes, 0, Gdx.graphics.getHeight() - 14 );
 			Debug.drawString( "rendered meshes=" + (GameWorldRenderer.renderedTrees + GameWorldRenderer.renderedWalls) + ", trees=" + GameWorldRenderer.renderedTrees
 					+ ", walls=" + GameWorldRenderer.renderedWalls + ", culled=" + GameWorldRenderer.culledMeshes, 0, Gdx.graphics.getHeight() - 7 );
-			Debug.end();
+
+			Debug.end( batchRenderer );
+
 		} else {
-			Debug.begin( batch );
+
+			Debug.begin( batchRenderer );
+
 			Debug.renderVersionInfo();
 			Debug.renderTextualStats();
-			Debug.end();
+
+			Debug.end( batchRenderer );
 		}
+
 	}
 
 	public void pause() {

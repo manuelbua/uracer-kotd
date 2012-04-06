@@ -1,7 +1,6 @@
 package com.bitfire.uracer.hud;
 
 import com.badlogic.gdx.Gdx;
-import com.badlogic.gdx.graphics.GL20;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.math.Matrix4;
 import com.bitfire.uracer.Art;
@@ -11,6 +10,7 @@ import com.bitfire.uracer.effects.SmokeTrails;
 import com.bitfire.uracer.effects.TrackEffects;
 import com.bitfire.uracer.effects.TrackEffects.Effects;
 import com.bitfire.uracer.entities.vehicles.Car;
+import com.bitfire.uracer.game.GameBatchRenderer;
 import com.bitfire.uracer.game.GameData;
 import com.bitfire.uracer.game.logic.DriftState;
 import com.bitfire.uracer.game.logic.LapState;
@@ -108,12 +108,8 @@ public class Hud {
 		}
 	}
 
-	public void render( SpriteBatch batch ) {
-		batch.setTransformMatrix( identity );
-		batch.setProjectionMatrix( topLeftOrigin );
-
-		Gdx.gl.glActiveTexture( GL20.GL_TEXTURE0 );
-		batch.begin();
+	public void render( GameBatchRenderer batchRenderer ) {
+		SpriteBatch batch = batchRenderer.begin( topLeftOrigin, identity );
 
 		Messager.render( batch );
 
@@ -124,7 +120,7 @@ public class Hud {
 		// render drifting component
 		hudDrift.render( batch );
 
-		batch.end();
+		batchRenderer.end();
 	}
 
 	public void debug( SpriteBatch batch ) {

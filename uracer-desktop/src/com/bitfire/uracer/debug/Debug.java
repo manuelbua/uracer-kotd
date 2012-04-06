@@ -4,7 +4,6 @@ import java.util.Formatter;
 import java.util.Locale;
 
 import com.badlogic.gdx.Gdx;
-import com.badlogic.gdx.graphics.GL20;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
 import com.badlogic.gdx.math.Matrix4;
@@ -15,6 +14,7 @@ import com.badlogic.gdx.physics.box2d.World;
 import com.bitfire.uracer.Art;
 import com.bitfire.uracer.Config;
 import com.bitfire.uracer.URacer;
+import com.bitfire.uracer.game.GameBatchRenderer;
 import com.bitfire.uracer.utils.NumberString;
 
 public class Debug {
@@ -70,19 +70,13 @@ public class Debug {
 		b = new Vector2();
 	}
 
-	public static void begin( SpriteBatch batch ) {
-		batch.setTransformMatrix( identity );
-		batch.setProjectionMatrix( topLeftOrigin );
-
-		Gdx.gl.glActiveTexture( GL20.GL_TEXTURE0 );
-		batch.begin();
-
-		Debug.batch = batch;
+	public static SpriteBatch begin( GameBatchRenderer batchRenderer ) {
+		batch = batchRenderer.begin( topLeftOrigin, identity );
+		return batch;
 	}
 
-	public static void end() {
-		batch.end();
-		batch = null;
+	public static void end( GameBatchRenderer batchRenderer ) {
+		batchRenderer.end();
 	}
 
 	public static void dispose() {
