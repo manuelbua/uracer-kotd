@@ -30,6 +30,7 @@ import com.bitfire.uracer.postprocessing.effects.Zoom;
 import com.bitfire.uracer.task.TaskManager;
 import com.bitfire.uracer.utils.Convert;
 
+// TODO, extrapolate its GameRenderer out of it
 public class Game implements Disposable, GameLogicEvent.Listener {
 
 	// config
@@ -141,20 +142,19 @@ public class Game implements Disposable, GameLogicEvent.Listener {
 	public boolean tick() {
 		TaskManager.dispatchTick();
 
-//		EntityManager.raiseOnTick( GameData.b2dWorld );
+		// EntityManager.raiseOnTick( GameData.b2dWorld );
 
 		if( !gameLogic.onTick() )
 			return false;
 
-//		GameData.playerState.tick();
-//		GameData.driftState.tick();
-//		GameData.lapState.tick();
+		// GameData.playerState.tick();
+		// GameData.driftState.tick();
+		// GameData.lapState.tick();
 
 		GameData.hud.tick();
 		TrackEffects.tick();
 
 		carSoundManager.tick();
-
 
 		// ---------------------------------------------------
 		// post-processor debug
@@ -196,30 +196,41 @@ public class Game implements Disposable, GameLogicEvent.Listener {
 	}
 
 	public void render() {
-		GameWorld world = GameData.gameWorld;
 		GameData.tweener.update( (int)(URacer.getLastDeltaSecs() * 1000) );
 
-		Car playerCar = null;
 		GL20 gl = Gdx.graphics.getGL20();
 		OrthographicCamera ortho = Director.getCamera();
 
-		// Entity's state() is transformed into pixel space
-		EntityManager.raiseOnBeforeRender( URacer.getTemporalAliasing() );
+		// ------------------------------------------
+		// 1
+		// ------------------------------------------
+
+		physicsStep.triggerOnTemporalAliasing( URacer.getTemporalAliasing() );
+
+		// Entity's state() is transformed into time-aliased pixel space
+		// EntityManager.raiseOnBeforeRender( URacer.getTemporalAliasing() );
+
+		// ------------------------------------------
+		// 2
+		// ------------------------------------------
+
+		// resync
+		worldRenderer.syncWithCam( ortho );
 
 		// follow the car
-		if( GameData.playerState != null ) {
-			playerCar = GameData.playerState.car;
-			controller.setPosition( playerCar.state().position );
+		if( GameData.playerState != null && GameData.playerState.car != null ) {
+			controller.setPosition( GameData.playerState.car.state().position );
 		}
+
+		// ------------------------------------------
+		// 3
+		// ------------------------------------------
 
 		if( Config.Graphics.EnablePostProcessingFx ) {
 			postProcessor.capture();
 		}
 
 		gl.glViewport( 0, 0, Gdx.graphics.getWidth(), Gdx.graphics.getHeight() );
-
-		// resync
-		worldRenderer.syncWithCam( ortho );
 
 		// clear buffers
 		// TODO could be more sensible since while post-processing there is already a glClear
@@ -228,8 +239,13 @@ public class Game implements Disposable, GameLogicEvent.Listener {
 		gl.glClearColor( 0, 0, 0, 0 );
 		gl.glClear( GL20.GL_DEPTH_BUFFER_BIT | GL20.GL_COLOR_BUFFER_BIT );
 
+
 		// render base tilemap
 		worldRenderer.renderTilemap( gl );
+
+		// ------------------------------------------
+		// 3
+		// ------------------------------------------
 
 		gl.glActiveTexture( GL20.GL_TEXTURE0 );
 		batch.setProjectionMatrix( ortho.projection );
@@ -249,6 +265,7 @@ public class Game implements Disposable, GameLogicEvent.Listener {
 
 		GameData.hud.render( batch );
 
+		GameWorld world = GameData.gameWorld;
 		if( world.isNightMode() ) {
 			if( Config.Graphics.DumbNightMode ) {
 				if( Config.Graphics.EnablePostProcessingFx )

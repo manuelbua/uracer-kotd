@@ -57,13 +57,13 @@ public class EntityManager {
 //		}
 //	}
 
-	public static void raiseOnBeforeRender( float temporalAliasingFactor ) {
-		int len = sfi_entities.size;
-		for( int i = 0; i < len; i++ ) {
-			SubframeInterpolableEntity e = sfi_entities.get( i );
-			e.onBeforeRender( temporalAliasingFactor );
-		}
-	}
+//	public static void raiseOnBeforeRender( float temporalAliasingFactor ) {
+//		int len = sfi_entities.size;
+//		for( int i = 0; i < len; i++ ) {
+//			SubframeInterpolableEntity e = sfi_entities.get( i );
+//			e.onTemporalAliasing( temporalAliasingFactor );
+//		}
+//	}
 
 	public static void raiseOnRender( SpriteBatch batch, float temporalAliasingFactor ) {
 		int len = sfi_entities.size;
