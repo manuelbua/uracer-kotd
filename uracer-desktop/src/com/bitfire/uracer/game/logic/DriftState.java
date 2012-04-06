@@ -6,9 +6,10 @@ import com.bitfire.uracer.entities.vehicles.Car;
 import com.bitfire.uracer.events.DriftStateEvent;
 import com.bitfire.uracer.events.DriftStateEvent.Type;
 import com.bitfire.uracer.game.GameData;
+import com.bitfire.uracer.task.Task;
 import com.bitfire.uracer.utils.AMath;
 
-public class DriftState implements Disposable {
+public class DriftState extends Task implements Disposable {
 	public static final DriftStateEvent event = new DriftStateEvent();
 
 	public boolean isDrifting = false;
@@ -52,10 +53,8 @@ public class DriftState implements Disposable {
 		event.trigger( Type.onEndDrift );
 	}
 
-	public void tick() {
-		collisionTime.tick();
-		time.tick();
-
+	@Override
+	public void onTick() {
 		Car car = GameData.playerState.car;
 		float oneOnMaxGrip = 1f / car.getCarModel().max_grip;
 
@@ -85,7 +84,7 @@ public class DriftState implements Disposable {
 				if( driftStrength > 0.4f && vel > 20 ) {
 					isDrifting = true;
 					hasCollided = false;
-//					driftStartTime = System.currentTimeMillis();
+					// driftStartTime = System.currentTimeMillis();
 					time.start();
 					event.trigger( Type.onBeginDrift );
 				}

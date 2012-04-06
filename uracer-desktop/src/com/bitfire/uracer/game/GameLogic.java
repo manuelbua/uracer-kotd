@@ -5,8 +5,6 @@ import aurelienribon.tweenengine.Timeline;
 import aurelienribon.tweenengine.Tween;
 import aurelienribon.tweenengine.TweenCallback;
 import aurelienribon.tweenengine.TweenEquation;
-import aurelienribon.tweenengine.equations.Circ;
-import aurelienribon.tweenengine.equations.Quad;
 import aurelienribon.tweenengine.equations.Sine;
 
 import com.badlogic.gdx.Gdx;
@@ -18,7 +16,6 @@ import com.bitfire.uracer.carsimulation.CarInputMode;
 import com.bitfire.uracer.carsimulation.Recorder;
 import com.bitfire.uracer.carsimulation.Replay;
 import com.bitfire.uracer.effects.TrackEffects;
-import com.bitfire.uracer.entities.EntityManager;
 import com.bitfire.uracer.entities.vehicles.Car;
 import com.bitfire.uracer.events.CarEvent;
 import com.bitfire.uracer.events.GameLogicEvent;
@@ -58,7 +55,6 @@ public class GameLogic implements CarEvent.Listener, PlayerStateEvent.Listener {
 	BoxedFloat timeMultiplier = new BoxedFloat();
 	float tmMin = 0.3f;
 	TweenCallback timeModulationFinished = new TweenCallback() {
-
 		@Override
 		public void onEvent( int type, BaseTween<?> source ) {
 			switch( type ) {
@@ -69,8 +65,6 @@ public class GameLogic implements CarEvent.Listener, PlayerStateEvent.Listener {
 	};
 
 	public boolean onTick() {
-		EntityManager.raiseOnTick( GameData.b2dWorld );
-
 		if( Input.isOn( Keys.R ) ) {
 			restart();
 			event.trigger( GameLogicEvent.Type.onRestart );
@@ -103,26 +97,6 @@ public class GameLogic implements CarEvent.Listener, PlayerStateEvent.Listener {
 
 		URacer.timeMultiplier = AMath.clamp( timeMultiplier.value, tmMin, Config.Physics.PhysicsTimeMultiplier );
 
-		// System.out.println( timeModulationBusy + " - " + timeMultiplier.value );
-
-		// if( timeModulation ) {
-		// URacer.timeMultiplier = AMath.clamp( URacer.timeMultiplier - 0.02f, tmMin,
-		// Config.Physics.PhysicsTimeMultiplier );
-		// }
-		// else {
-		// URacer.timeMultiplier = AMath.clamp( URacer.timeMultiplier + 0.02f, tmMin,
-		// Config.Physics.PhysicsTimeMultiplier );
-		// }
-
-		GameData.playerState.tick();
-		GameData.driftState.tick();
-		GameData.lapState.tick();
-
-		GameData.hud.tick();
-		TrackEffects.tick();
-
-		recorder.tick();
-
 		return true;
 	}
 
@@ -145,12 +119,6 @@ public class GameLogic implements CarEvent.Listener, PlayerStateEvent.Listener {
 		GameData.lapState.reset();
 		lastRecordedLapId = 0;
 	}
-
-	// ----------------------------------------------------------------------
-	//
-	// from CarListener
-	//
-	// ----------------------------------------------------------------------
 
 	@Override
 	public void carEvent( CarEvent.Type type, CarEvent.Data data ) {

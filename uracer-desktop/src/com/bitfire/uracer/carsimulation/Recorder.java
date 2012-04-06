@@ -36,12 +36,6 @@ public class Recorder {
 		}
 	}
 
-	public void tick() {
-		if( isRecording ) {
-			replay.tick();
-		}
-	}
-
 	public void endRecording() {
 		if( !isRecording ) {
 			// System.out.println("Cannot end a recording that wasn't enabled!");

@@ -1,9 +1,7 @@
 package com.bitfire.uracer.entities;
 
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
-import com.badlogic.gdx.physics.box2d.World;
 import com.badlogic.gdx.utils.Array;
-import com.bitfire.uracer.Config;
 
 public class EntityManager {
 	private static Array<Entity> entities;
@@ -28,36 +26,36 @@ public class EntityManager {
 		sfi_entities.clear();
 	}
 
-	private static void raiseOnBeforePhysicsSubstep() {
-		int len = sfi_entities.size;
-		for( int i = 0; i < len; i++ ) {
-			SubframeInterpolableEntity e = sfi_entities.get( i );
-			e.onBeforePhysicsSubstep();
-		}
-	}
+//	private static void raiseOnBeforePhysicsSubstep() {
+//		int len = sfi_entities.size;
+//		for( int i = 0; i < len; i++ ) {
+//			SubframeInterpolableEntity e = sfi_entities.get( i );
+//			e.onBeforePhysicsSubstep();
+//		}
+//	}
+//
+//	private static void raiseOnAfterPhysicsSubstep() {
+//		int len = sfi_entities.size;
+//		for( int i = 0; i < len; i++ ) {
+//			SubframeInterpolableEntity e = sfi_entities.get( i );
+//			e.onAfterPhysicsSubstep();
+//		}
+//	}
 
-	private static void raiseOnAfterPhysicsSubstep() {
-		int len = sfi_entities.size;
-		for( int i = 0; i < len; i++ ) {
-			SubframeInterpolableEntity e = sfi_entities.get( i );
-			e.onAfterPhysicsSubstep();
-		}
-	}
-
-	public static void raiseOnTick( World world ) {
-		// intentionally avoid rising onTick on subframe interpolables since
-		// there are plenty of chances to tick already
-
-		raiseOnBeforePhysicsSubstep();
-		world.step( Config.Physics.PhysicsDt, 10, 10 );
-		raiseOnAfterPhysicsSubstep();
-
-		int len = entities.size;
-		for( int i = 0; i < len; i++ ) {
-			Entity e = entities.get( i );
-			e.onTick();
-		}
-	}
+//	public static void raiseOnTick( World world ) {
+//		// intentionally avoid rising onTick on subframe interpolables since
+//		// there are plenty of chances to tick already
+//
+//		raiseOnBeforePhysicsSubstep();
+//		world.step( Config.Physics.PhysicsDt, 10, 10 );
+//		raiseOnAfterPhysicsSubstep();
+//
+//		int len = entities.size;
+//		for( int i = 0; i < len; i++ ) {
+//			Entity e = entities.get( i );
+//			e.onTick();
+//		}
+//	}
 
 	public static void raiseOnBeforeRender( float temporalAliasingFactor ) {
 		int len = sfi_entities.size;

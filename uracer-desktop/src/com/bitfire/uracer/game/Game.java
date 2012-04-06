@@ -21,17 +21,22 @@ import com.bitfire.uracer.events.GameLogicEvent;
 import com.bitfire.uracer.factories.CarFactory;
 import com.bitfire.uracer.factories.CarFactory.CarType;
 import com.bitfire.uracer.game.logic.DirectorController;
+import com.bitfire.uracer.game.logic.PhysicsStep;
 import com.bitfire.uracer.hud.Hud;
 import com.bitfire.uracer.messager.Messager;
 import com.bitfire.uracer.postprocessing.PostProcessor;
 import com.bitfire.uracer.postprocessing.effects.Bloom;
 import com.bitfire.uracer.postprocessing.effects.Zoom;
+import com.bitfire.uracer.task.TaskManager;
 import com.bitfire.uracer.utils.Convert;
 
 public class Game implements Disposable, GameLogicEvent.Listener {
 
 	// config
 	public GameplaySettings gameSettings = null;
+
+	// physics
+	private PhysicsStep physicsStep = null;
 
 	// logic
 	private GameLogic gameLogic = null;
@@ -55,7 +60,6 @@ public class Game implements Disposable, GameLogicEvent.Listener {
 		GameData.create( difficulty );
 		Car car = CarFactory.createPlayer( CarType.OldSkool, new CarModel().toModel2() );
 		GameData.createStates( car );
-
 
 		// GameData states are now fully initialized
 
@@ -85,6 +89,8 @@ public class Game implements Disposable, GameLogicEvent.Listener {
 		// Issues may arise on Tegra2 (Asus Transformer) devices if the buffers'
 		// count is higher than 10
 		batch = new SpriteBatch( 1000, 8 );
+		physicsStep = new PhysicsStep( GameData.b2dWorld );
+
 		System.out.println( "resolution=" + width + "x" + height + "px, physics=" + Physics.PhysicsTimestepHz + "Hz" );
 	}
 
@@ -133,12 +139,27 @@ public class Game implements Disposable, GameLogicEvent.Listener {
 
 	// private float prevFactor = 0;
 	public boolean tick() {
+		TaskManager.dispatchTick();
+
+//		EntityManager.raiseOnTick( GameData.b2dWorld );
+
 		if( !gameLogic.onTick() )
 			return false;
 
+//		GameData.playerState.tick();
+//		GameData.driftState.tick();
+//		GameData.lapState.tick();
+
+		GameData.hud.tick();
+		TrackEffects.tick();
+
 		carSoundManager.tick();
 
-		// post-processor debug ------------------------------
+
+		// ---------------------------------------------------
+		// post-processor debug
+		// ---------------------------------------------------
+
 		// float factor = player.currSpeedFactor * 1.75f;
 		// float factor = GameData.driftState.driftStrength * 2;
 		float factor = 1 - (URacer.timeMultiplier - 0.3f) / (Config.Physics.PhysicsTimeMultiplier - 0.3f);

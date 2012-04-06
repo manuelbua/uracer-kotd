@@ -6,8 +6,8 @@ public abstract class Entity {
 	// screen-coords
 	protected EntityState stateRender = new EntityState();
 
-	public void onTick() {
-	}
+//	public void onTick() {
+//	}
 
 	public void onRender( SpriteBatch batch ) {
 	}

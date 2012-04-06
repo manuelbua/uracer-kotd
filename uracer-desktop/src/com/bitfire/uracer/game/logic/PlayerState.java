@@ -5,9 +5,10 @@ import com.bitfire.uracer.entities.vehicles.Car;
 import com.bitfire.uracer.entities.vehicles.GhostCar;
 import com.bitfire.uracer.events.PlayerStateEvent;
 import com.bitfire.uracer.game.GameData;
+import com.bitfire.uracer.task.Task;
 import com.bitfire.uracer.utils.AMath;
 
-public class PlayerState {
+public class PlayerState extends Task {
 	public static final PlayerStateEvent event = new PlayerStateEvent();
 
 	public Car car;
@@ -44,7 +45,8 @@ public class PlayerState {
 		}
 	}
 
-	public void tick() {
+	@Override
+	public void onTick() {
 		// onTileChanged
 		lastTileX = currTileX;
 		lastTileY = currTileY;

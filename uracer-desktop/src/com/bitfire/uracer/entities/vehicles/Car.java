@@ -105,7 +105,6 @@ public class Car extends Box2dEntity {
 
 	public void reset() {
 		resetPhysics();
-		// setTransform( startPos, startOrient );
 	}
 
 	public void setActive( boolean active, boolean resetPhysics ) {
@@ -122,7 +121,7 @@ public class Car extends Box2dEntity {
 		return body.isActive();
 	}
 
-	public void resetPhysics() {
+	private void resetPhysics() {
 		boolean wasActive = isActive();
 
 		if( wasActive )

@@ -8,7 +8,7 @@ import com.bitfire.uracer.game.GameDifficulty;
 import com.bitfire.uracer.utils.UUid;
 
 /** Represents replay data to be feed to a GhostCar, the replay player.
- * 
+ *
  * @author manuel */
 
 public class Replay {
@@ -60,11 +60,6 @@ public class Replay {
 		isValid = true;
 	}
 
-	public void tick() {
-		time.tick();
-	}
-
-	// TODO, rename to begin?
 	public void reset() {
 		eventsCount = 0;
 		isValid = false;
@@ -77,7 +72,6 @@ public class Replay {
 		carDescriptor = car.getCarDescriptor().clone();
 	}
 
-	// TODO, rename to end?
 	private void setReplayData( String trackName, GameDifficulty difficulty/* , float timeSeconds */) {
 		this.trackName = trackName;
 		difficultyLevel = difficulty;

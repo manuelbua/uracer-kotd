@@ -53,10 +53,6 @@ public class LapState {
 		return time.elapsed( Time.Reference.Ticks );
 	}
 
-	// public long getStartNanotime() {
-	// return startTimeNs;
-	// }
-
 	public Replay getReplay( int index ) {
 		return replays[index];
 	}
@@ -67,10 +63,6 @@ public class LapState {
 
 	public boolean hasAnyReplayData() {
 		return (replays[0].isValid || replays[1].isValid);
-	}
-
-	public void tick() {
-		time.tick();
 	}
 
 	public void updateReplays() {

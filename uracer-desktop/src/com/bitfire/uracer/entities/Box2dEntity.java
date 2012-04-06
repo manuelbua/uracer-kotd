@@ -60,7 +60,7 @@ public class Box2dEntity extends SubframeInterpolableEntity {
 	}
 
 	protected void toNormalRelativeAngle() {
-		// normalize body angle since it can grow unbounded
+		// normalize body angle since it can grows unbounded
 		float angle = AMath.normalRelativeAngle( body.getAngle() );
 		body.setTransform( body.getPosition(), angle );
 	}

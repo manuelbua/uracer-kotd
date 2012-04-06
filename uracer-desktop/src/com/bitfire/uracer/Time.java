@@ -1,11 +1,14 @@
 package com.bitfire.uracer;
 
+import com.bitfire.uracer.events.TaskManagerEvent.Order;
+import com.bitfire.uracer.task.Task;
+
 /** Tracks elapsed time both in absolute terms (wall clock time) or
  * relative to the tick-based system.
  * This should guarantee some level of fair handicap for any user.
- * 
+ *
  * @author bmanuel */
-public final class Time {
+public final class Time extends Task {
 	public enum Reference {
 		Absolute, Ticks, NumberOfTicks
 	}
@@ -19,6 +22,7 @@ public final class Time {
 
 	/** Constructs a new Time object */
 	public Time() {
+		super( Order.Order_Plus_4 );
 		reset();
 	}
 
@@ -53,12 +57,13 @@ public final class Time {
 	}
 
 	/** Counts this tick */
-	public void tick() {
+	@Override
+	public void onTick() {
 		if( !stopped ) {
 			ticks++;
 			ticksInSeconds += Config.Physics.PhysicsDt;
 		}
-	}
+	};
 
 	/** Returns the elapsed time expressed as the specified measuring unit */
 	public float elapsed( Reference timeReference ) {
