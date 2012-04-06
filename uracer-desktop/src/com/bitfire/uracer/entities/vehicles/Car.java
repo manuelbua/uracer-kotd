@@ -203,8 +203,8 @@ public class Car extends Box2dEntity {
 	private WindowedMean frictionMean = new WindowedMean( 16 );
 
 	private void applyFrictionMap( CarInput input ) {
-		GameWorld level = GameData.gameWorld;
-		if( tilePosition.x >= 0 && tilePosition.x < level.map.width && tilePosition.y >= 0 && tilePosition.y < level.map.height ) {
+		GameWorld world = GameData.gameWorld;
+		if( tilePosition.x >= 0 && tilePosition.x < world.map.width && tilePosition.y >= 0 && tilePosition.y < world.map.height ) {
 			// compute realsize-based pixel offset car-tile (top-left origin)
 			float tsx = tilePosition.x * MapUtils.scaledTilesize;
 			float tsy = tilePosition.y * MapUtils.scaledTilesize;
@@ -212,7 +212,7 @@ public class Car extends Box2dEntity {
 			offset.y = GameData.gameWorld.worldSizeScaledPx.y - offset.y;
 			offset.x = offset.x - tsx;
 			offset.y = offset.y - tsy;
-			offset.mul( MapUtils.invScaledTilesize ).mul( level.map.tileWidth );
+			offset.mul( MapUtils.invScaledTilesize ).mul( world.map.tileWidth );
 
 			TiledLayer layerTrack = MapUtils.getLayer( MapUtils.LayerTrack );
 			int id = layerTrack.tiles[(int)tilePosition.y][(int)tilePosition.x] - 1;
@@ -221,8 +221,8 @@ public class Car extends Box2dEntity {
 			// int yOnMap = (int)( id/4f ) * 224 + (int)offset.y;
 
 			// bit twiddling, faster versions
-			int xOnMap = (id & 3) * (int)level.map.tileWidth + (int)offset.x;
-			int yOnMap = (id >> 2) * (int)level.map.tileWidth + (int)offset.y;
+			int xOnMap = (id & 3) * (int)world.map.tileWidth + (int)offset.x;
+			int yOnMap = (id >> 2) * (int)world.map.tileWidth + (int)offset.y;
 
 			int pixel = Art.frictionNature.getPixel( xOnMap, yOnMap );
 			frictionMean.addValue( (pixel == -256 ? 0 : -1) );
