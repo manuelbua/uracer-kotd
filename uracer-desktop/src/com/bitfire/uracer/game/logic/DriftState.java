@@ -69,7 +69,7 @@ public class DriftState extends Task implements Disposable {
 
 		if( hasCollided ) {
 			// ignore drifts for a couple of seconds
-			// TODO highlight this penalty!
+			// TODO use this in a penalty system
 			if( collisionTime.elapsed( Time.Reference.Ticks ) >= 2 ) {
 				collisionTime.stop();
 				hasCollided = false;
