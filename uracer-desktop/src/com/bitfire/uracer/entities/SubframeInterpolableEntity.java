@@ -33,6 +33,9 @@ public abstract class SubframeInterpolableEntity extends Entity implements Physi
 		case onAfterTimestep:
 			onAfterPhysicsSubstep();
 			break;
+		case onTemporalAliasing:
+			onTemporalAliasing( PhysicsStep.event.temporalAliasingFactor );
+			break;
 		}
 	}
 
@@ -44,9 +47,9 @@ public abstract class SubframeInterpolableEntity extends Entity implements Physi
 		saveStateTo( stateCurrent );
 	}
 
-	public void onBeforeRender( float temporalAliasingFactor ) {
+	public void onTemporalAliasing(float aliasingFactor) {
 		if( isSubframeInterpolated() ) {
-			stateRender.set( EntityState.interpolate( statePrevious, stateCurrent, temporalAliasingFactor ) );
+			stateRender.set( EntityState.interpolate( statePrevious, stateCurrent, aliasingFactor ) );
 		} else {
 			stateRender.set( stateCurrent );
 		}

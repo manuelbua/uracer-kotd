@@ -6,7 +6,7 @@ import com.bitfire.uracer.utils.EventNotifier;
 
 public class PhysicsStepEvent extends Event {
 	public enum Type {
-		onBeforeTimestep, onAfterTimestep
+		onBeforeTimestep, onAfterTimestep, onTemporalAliasing
 	}
 
 	public interface Listener extends EventListener {
@@ -20,6 +20,8 @@ public class PhysicsStepEvent extends Event {
 	public void trigger( Type type ) {
 		notify.physicsEvent( type );
 	}
+
+	public float temporalAliasingFactor = 0;
 
 	private final Notifier notify = new Notifier();
 
