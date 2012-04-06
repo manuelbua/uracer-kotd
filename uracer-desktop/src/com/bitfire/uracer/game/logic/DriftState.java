@@ -1,7 +1,6 @@
 package com.bitfire.uracer.game.logic;
 
 import com.badlogic.gdx.utils.Disposable;
-import com.bitfire.uracer.Time;
 import com.bitfire.uracer.entities.vehicles.Car;
 import com.bitfire.uracer.events.DriftStateEvent;
 import com.bitfire.uracer.events.DriftStateEvent.Type;
@@ -49,7 +48,7 @@ public class DriftState extends Task implements Disposable {
 		isDrifting = false;
 		hasCollided = true;
 		collisionTime.start();
-		time.reset();
+		time.stop();
 		event.trigger( Type.onEndDrift );
 	}
 
