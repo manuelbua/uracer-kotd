@@ -46,7 +46,7 @@ public class PlayerState extends Task {
 	}
 
 	@Override
-	public void onTick() {
+	protected void onTick() {
 		// onTileChanged
 		lastTileX = currTileX;
 		lastTileY = currTileY;

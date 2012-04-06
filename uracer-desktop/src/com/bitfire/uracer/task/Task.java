@@ -14,7 +14,7 @@ public abstract class Task implements TaskManagerEvent.Listener {
 		TaskManager.event.addListener( this, order );
 	}
 
-	public abstract void onTick();
+	protected abstract void onTick();
 
 	@Override
 	public void taskManagerEvent( Type type ) {

@@ -60,7 +60,7 @@ public final class Time extends Task {
 
 	/** Counts this tick */
 	@Override
-	public void onTick() {
+	protected void onTick() {
 		if( !stopped ) {
 			ticks++;
 			ticksInSeconds += Config.Physics.PhysicsDt;

@@ -53,7 +53,7 @@ public class DriftState extends Task implements Disposable {
 	}
 
 	@Override
-	public void onTick() {
+	protected void onTick() {
 		Car car = GameData.playerState.car;
 		float oneOnMaxGrip = 1f / car.getCarModel().max_grip;
 
