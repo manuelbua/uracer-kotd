@@ -31,7 +31,7 @@ import com.bitfire.uracer.task.TaskManager;
 import com.bitfire.uracer.utils.Convert;
 
 // TODO, extrapolate its GameRenderer out of it
-public class Game implements Disposable, GameLogicEvent.Listener {
+public class Game implements Disposable {
 
 	// config
 	public GameplaySettings gameSettings = null;
@@ -55,6 +55,18 @@ public class Game implements Disposable, GameLogicEvent.Listener {
 
 	// sounds
 	private CarSoundManager carSoundManager = null;
+
+	private GameLogicEvent.Listener gameLogicListener = new GameLogicEvent.Listener() {
+		@Override
+		public void gameLogicEvent( Type type ) {
+			switch( type ) {
+			case onRestart:
+			case onReset:
+				carSoundManager.reset();
+				break;
+			}
+		}
+	};
 
 	public Game( String levelName, GameDifficulty difficulty ) {
 		EntityManager.create();
@@ -86,7 +98,7 @@ public class Game implements Disposable, GameLogicEvent.Listener {
 		GameData.hud = new Hud( car );
 
 		gameLogic = new GameLogic();
-		GameLogic.event.addListener( this );
+		GameLogic.event.addListener( gameLogicListener );
 
 		// Issues may arise on Tegra2 (Asus Transformer) devices if the buffers'
 		// count is higher than 10
@@ -105,16 +117,6 @@ public class Game implements Disposable, GameLogicEvent.Listener {
 
 		if( Config.Graphics.EnablePostProcessingFx ) {
 			postProcessor.dispose();
-		}
-	}
-
-	@Override
-	public void gameLogicEvent( GameLogicEvent.Type type ) {
-		switch( type ) {
-		case onRestart:
-		case onReset:
-			carSoundManager.reset();
-			break;
 		}
 	}
 
