@@ -1,6 +1,9 @@
-package com.bitfire.uracer.game;
+package com.bitfire.uracer.game.rendering;
 
 import java.util.ArrayList;
+
+import box2dLight.ConeLight;
+import box2dLight.RayHandler;
 
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.files.FileHandle;
@@ -21,6 +24,9 @@ import com.bitfire.uracer.Art;
 import com.bitfire.uracer.Config;
 import com.bitfire.uracer.Director;
 import com.bitfire.uracer.entities.vehicles.Car;
+import com.bitfire.uracer.game.GameData;
+import com.bitfire.uracer.game.GameData.State;
+import com.bitfire.uracer.game.GameWorld;
 import com.bitfire.uracer.tiled.OrthographicAlignedStillModel;
 import com.bitfire.uracer.tiled.TrackTrees;
 import com.bitfire.uracer.tiled.TrackWalls;
@@ -55,11 +61,11 @@ public class GameWorldRenderer {
 		"}														\n";
 	// @formatter:on
 
-	private final GameWorld world;
-	private PerspectiveCamera camPersp;
-	private OrthographicCamera camOrtho;
-	private ShaderProgram treeShader;
+	private PerspectiveCamera camPersp = null;
+	private OrthographicCamera camOrtho = null;
+	private ShaderProgram treeShader = null;
 	private float camPerspElevation = 0f;
+	private TileAtlas tileAtlas = null;
 
 	public UTileMapRenderer tileMapRenderer = null;
 
@@ -69,13 +75,25 @@ public class GameWorldRenderer {
 	public static int renderedWalls = 0;
 	public static int culledMeshes = 0;
 
+	// world refs
+	private RayHandler rayHandler = null;
+	private ArrayList<OrthographicAlignedStillModel> staticMeshes = null;
+	private TrackTrees trackTrees = null;
+	private TrackWalls trackWalls = null;
+	private ConeLight playerLights = null;
+
 	public GameWorldRenderer( GameWorld world, int width, int height ) {
-		this.world = world;
+		rayHandler = world.getRayHandler();
+		trackTrees = world.getTrackTrees();
+		trackWalls = world.getTrackWalls();
+		playerLights = world.getPlayerHeadLights();
+		staticMeshes = world.getStaticMeshes();
+
 		createCams( width, height );
 
 		FileHandle baseDir = Gdx.files.internal( Config.LevelsStore );
-		TileAtlas atlas = new TileAtlas( world.map, baseDir );
-		tileMapRenderer = new UTileMapRenderer( world.map, atlas, 1, 1, world.map.tileWidth, world.map.tileHeight );
+		tileAtlas = new TileAtlas( world.map, baseDir );
+		tileMapRenderer = new UTileMapRenderer( world.map, tileAtlas, 1, 1, world.map.tileWidth, world.map.tileHeight );
 
 		ShaderProgram.pedantic = false;
 		treeShader = new ShaderProgram( vertexShader, fragmentShader );
@@ -84,12 +102,17 @@ public class GameWorldRenderer {
 			throw new IllegalStateException( treeShader.getLog() );
 	}
 
+	public void dispose() {
+		tileMapRenderer.dispose();
+		tileAtlas.dispose();
+	}
+
 	public void resetCounters() {
 		culledMeshes = renderedTrees = renderedWalls = 0;
 	}
 
 	public void generateLightMap() {
-		Car car = GameData.playerState.car;
+		Car car = State.playerState.car;
 
 		// update player light (subframe interpolation ready)
 		float ang = 90 + car.state().orientation;
@@ -106,15 +129,15 @@ public class GameWorldRenderer {
 		float px = Convert.px2mt( car.state().position.x ) + dX;
 		float py = Convert.px2mt( car.state().position.y ) + dY;
 
-		world.playerHeadlights.setDirection( ang );
-		world.playerHeadlights.setPosition( px, py );
+		playerLights.setDirection( ang );
+		playerLights.setPosition( px, py );
 
-		world.rayHandler.setCombinedMatrix( Director.getMatViewProjMt(), Convert.px2mt( camOrtho.position.x * GameData.scalingStrategy.invTileMapZoomFactor ),
+		rayHandler.setCombinedMatrix( Director.getMatViewProjMt(), Convert.px2mt( camOrtho.position.x * GameData.scalingStrategy.invTileMapZoomFactor ),
 				Convert.px2mt( camOrtho.position.y * GameData.scalingStrategy.invTileMapZoomFactor ), Convert.px2mt( camOrtho.viewportWidth ),
 				Convert.px2mt( camOrtho.viewportHeight ) );
 
-		world.rayHandler.update();
-		world.rayHandler.generateLightMap();
+		rayHandler.update();
+		rayHandler.generateLightMap();
 
 		// if( Config.isDesktop && (URacer.getFrameCount()&0x1f)==0x1f)
 		// {
@@ -123,7 +146,7 @@ public class GameWorldRenderer {
 	}
 
 	public void renderLigthMap( FrameBuffer dest ) {
-		world.rayHandler.renderLightMap( dest );
+		rayHandler.renderLightMap( dest );
 	}
 
 	public void syncWithCam( OrthographicCamera orthoCam ) {
@@ -318,12 +341,12 @@ public class GameWorldRenderer {
 		gl.glDepthFunc( GL20.GL_LESS );
 		gl.glBlendEquation( GL20.GL_FUNC_ADD );
 
-		renderWalls( gl, world.trackWalls );
-		renderTrees( gl, world.trackTrees );
+		renderWalls( gl, trackWalls );
+		renderTrees( gl, trackTrees );
 
 		// render "static-meshes" layer
 		gl.glEnable( GL20.GL_CULL_FACE );
-		renderOrthographicAlignedModels( gl, world.staticMeshes );
+		renderOrthographicAlignedModels( gl, staticMeshes );
 
 		gl.glDisable( GL20.GL_DEPTH_TEST );
 		gl.glDisable( GL20.GL_CULL_FACE );

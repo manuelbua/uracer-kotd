@@ -216,4 +216,24 @@ public class GameWorld {
 	public boolean isNightMode() {
 		return nightMode;
 	}
+
+	public final TrackWalls getTrackWalls() {
+		return trackWalls;
+	}
+
+	public final TrackTrees getTrackTrees() {
+		return trackTrees;
+	}
+
+	public final ArrayList<OrthographicAlignedStillModel> getStaticMeshes() {
+		return staticMeshes;
+	}
+
+	public final RayHandler getRayHandler() {
+		return rayHandler;
+	}
+
+	public final ConeLight getPlayerHeadLights() {
+		return playerHeadlights;
+	}
 }
