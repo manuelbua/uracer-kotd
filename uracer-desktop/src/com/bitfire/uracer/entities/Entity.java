@@ -1,18 +1,11 @@
 package com.bitfire.uracer.entities;
 
+import com.badlogic.gdx.utils.Disposable;
 
-public abstract class Entity {
+
+public abstract class Entity implements Disposable {
 	// screen-coords
 	protected EntityState stateRender = new EntityState();
-
-//	public void onTick() {
-//	}
-
-//	public void onRender( SpriteBatch batch ) {
-//	}
-
-	public void onDebug() {
-	}
 
 	public EntityState state() {
 		return stateRender;
