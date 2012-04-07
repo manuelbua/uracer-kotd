@@ -1,5 +1,6 @@
 package com.bitfire.uracer;
 
+import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.OrthographicCamera;
 import com.badlogic.gdx.math.MathUtils;
 import com.badlogic.gdx.math.Matrix4;
@@ -18,14 +19,14 @@ public class Director {
 
 	private static Vector2 tmp;
 
-	public static void init( int width, int height ) {
+	public static void init() {
 		screenPosFor = new Vector2();
 		mvpMt = new Matrix4();
 		mvpPx = new Matrix4();
 		halfViewport = new Vector2();
 		tmp = new Vector2();
 		cameraRect = new Rectangle();
-		camera = new OrthographicCamera( width, height );
+		camera = new OrthographicCamera( Gdx.graphics.getWidth(), Gdx.graphics.getHeight() );
 		halfViewport.set( camera.viewportWidth / 2f, camera.viewportHeight / 2f );
 	}
 
