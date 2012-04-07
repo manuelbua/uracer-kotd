@@ -46,4 +46,20 @@ public abstract class CarSoundEffect implements ISoundEffect {
 
 		return soundId;
 	}
+
+	@Override
+	public void onStart() {
+	}
+
+	@Override
+	public void onStop() {
+	}
+
+	@Override
+	public void onReset() {
+	}
+
+	@Override
+	public void onTick() {
+	}
 }
