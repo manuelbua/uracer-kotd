@@ -1,33 +1,16 @@
 package com.bitfire.uracer.effects;
 
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
-import com.bitfire.uracer.effects.TrackEffects.Effects;
+import com.bitfire.uracer.effects.TrackEffects.Type;
 
 public abstract class TrackEffect {
-	public Effects effectType;
+	public Type type;
 
-	public TrackEffect( Effects what ) {
-		this.effectType = what;
+	public TrackEffect( Type what ) {
+		this.type = what;
 	}
 
-	@Override
-	public boolean equals( Object that ) {
-		// self
-		if( this == that )
-			return true;
-
-		// not the same type
-		if( !(that instanceof TrackEffect) )
-			return false;
-
-		// safe cast
-		TrackEffect other = (TrackEffect)that;
-
-		// evaluate
-		return this.effectType == other.effectType;
-	}
-
-	public abstract void tick();
+	public abstract void onTick();
 
 	public abstract void reset();
 

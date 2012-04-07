@@ -7,9 +7,10 @@ import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.math.Vector2;
 import com.bitfire.uracer.Art;
 import com.bitfire.uracer.URacer;
-import com.bitfire.uracer.effects.TrackEffects.Effects;
+import com.bitfire.uracer.effects.TrackEffects.Type;
 import com.bitfire.uracer.entities.vehicles.Car;
 import com.bitfire.uracer.game.GameData;
+import com.bitfire.uracer.game.GameData.State;
 import com.bitfire.uracer.game.logic.DriftState;
 
 public class SmokeTrails extends TrackEffect {
@@ -88,7 +89,7 @@ public class SmokeTrails extends TrackEffect {
 	}
 
 	public SmokeTrails( Car player ) {
-		super( Effects.SmokeTrails );
+		super( Type.SmokeTrails );
 
 		fx = new SmokeEffect[ SmokeEffectsCount ];
 
@@ -102,7 +103,7 @@ public class SmokeTrails extends TrackEffect {
 
 		this.player = player;
 		isDrifting = wasDrifting = false;
-		drift = GameData.driftState;
+		drift = State.driftState;
 	}
 
 	@Override
@@ -110,7 +111,7 @@ public class SmokeTrails extends TrackEffect {
 	}
 
 	@Override
-	public void tick() {
+	public void onTick() {
 		isDrifting = drift.isDrifting;
 
 		if( isDrifting && !wasDrifting ) {
