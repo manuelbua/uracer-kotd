@@ -5,10 +5,26 @@ import aurelienribon.tweenengine.Tween;
 import aurelienribon.tweenengine.TweenAccessor;
 import aurelienribon.tweenengine.TweenManager;
 
+import com.bitfire.uracer.events.GameLogicEvent;
+import com.bitfire.uracer.game.GameLogic;
+
 public class Tweener {
 	private TweenManager manager;
 
+	private final GameLogicEvent.Listener gameLogicEvent = new GameLogicEvent.Listener() {
+		@Override
+		public void gameLogicEvent( GameLogicEvent.Type type ) {
+			switch( type ) {
+			case onReset:
+			case onRestart:
+				clear();
+				break;
+			}
+		}
+	};
+
 	public Tweener() {
+		GameLogic.event.addListener( gameLogicEvent );
 		manager = new TweenManager();
 	}
 
