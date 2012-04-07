@@ -89,7 +89,7 @@ public class HudDebugMeter {
 	public void render( SpriteBatch batch ) {
 		update();
 		draw();
-		Debug.drawString( getMessage(), pos.x, pos.y );
+		Debug.drawString( batch, getMessage(), pos.x, pos.y );
 
 		batch.draw( region, pos.x, pos.y + Debug.fontHeight );
 	}
