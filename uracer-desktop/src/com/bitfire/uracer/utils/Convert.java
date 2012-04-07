@@ -2,7 +2,6 @@ package com.bitfire.uracer.utils;
 
 import com.badlogic.gdx.math.Vector2;
 import com.bitfire.uracer.Config;
-import com.bitfire.uracer.game.GameData;
 
 public class Convert {
 	private static float invZoomFactor;
@@ -10,14 +9,9 @@ public class Convert {
 	private static Vector2 ret = new Vector2();
 	private static Vector2 retPx = new Vector2();
 
-	public static void init() {
-		invZoomFactor = GameData.scalingStrategy.invTileMapZoomFactor;
+	public static void init(float invZoomFactor) {
+		Convert.invZoomFactor = invZoomFactor;
 	}
-
-	//
-	// meters <-> pixels
-	// (pixels domain is scaled)
-	//
 
 	public static float mt2px( float v ) {
 		return v * Config.Physics.PixelsPerMeter;
