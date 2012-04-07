@@ -14,7 +14,6 @@ import com.badlogic.gdx.physics.box2d.World;
 import com.bitfire.uracer.Art;
 import com.bitfire.uracer.Config;
 import com.bitfire.uracer.URacer;
-import com.bitfire.uracer.game.GameBatchRenderer;
 import com.bitfire.uracer.utils.NumberString;
 
 public class Debug {
@@ -29,11 +28,9 @@ public class Debug {
 	private static Box2DDebugRenderer b2drenderer;
 
 	// text render
-	private static SpriteBatch batch;
 	private static StringBuilder sb;
 	private static Formatter fmt;
 	private static String[] chars = { "ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789", ".,!?:;\"'+-=/\\< " };
-	private static Matrix4 topLeftOrigin, identity;
 
 	public static int fontWidth;
 	public static int fontHeight;
@@ -59,24 +56,10 @@ public class Debug {
 			updateHz = 1f;
 		gfxStats = new Stats( updateHz );
 
-		// y-flip
-		topLeftOrigin = new Matrix4();
-		topLeftOrigin.setToOrtho( 0, Gdx.graphics.getWidth(), Gdx.graphics.getHeight(), 0, 0, 10 );
-		identity = new Matrix4();
-
 		// init statics
 		tmp = "";
 		a = new Vector2();
 		b = new Vector2();
-	}
-
-	public static SpriteBatch begin( GameBatchRenderer batchRenderer ) {
-		batch = batchRenderer.begin( topLeftOrigin, identity );
-		return batch;
-	}
-
-	public static void end( GameBatchRenderer batchRenderer ) {
-		batchRenderer.end();
 	}
 
 	public static void dispose() {
@@ -96,36 +79,36 @@ public class Debug {
 		}
 	}
 
-	public static void renderGraphicalStats( int x, int y ) {
+	public static void renderGraphicalStats( SpriteBatch batch, int x, int y ) {
 		batch.draw( gfxStats.getRegion(), x, y );
 	}
 
-	public static void renderTextualStats() {
+	public static void renderTextualStats(SpriteBatch batch) {
 		String text = "fps: " + NumberString.formatLong( Gdx.graphics.getFramesPerSecond() ) + ", physics: " + NumberString.formatLong( physicsTime ) + ", graphics: "
 				+ NumberString.formatLong( renderTime );
 
-		drawString( text, Gdx.graphics.getWidth() - text.length() * fontWidth, Gdx.graphics.getHeight() - fontHeight );
+		drawString( batch, text, Gdx.graphics.getWidth() - text.length() * fontWidth, Gdx.graphics.getHeight() - fontHeight );
 	}
 
-	public static void renderVersionInfo() {
-		drawString( uRacerInfo, Gdx.graphics.getWidth() - uRacerInfo.length() * fontWidth, 0, fontWidth, fontHeight * 2 );
+	public static void renderVersionInfo(SpriteBatch batch) {
+		drawString( batch, uRacerInfo, Gdx.graphics.getWidth() - uRacerInfo.length() * fontWidth, 0, fontWidth, fontHeight * 2 );
 	}
 
-	public static void renderMemoryUsage() {
+	public static void renderMemoryUsage(SpriteBatch batch) {
 		float oneOnMb = 1f / 1048576f;
 		float javaHeapMb = (float)Gdx.app.getJavaHeap() * oneOnMb;
 		float nativeHeapMb = (float)Gdx.app.getNativeHeap() * oneOnMb;
 
 		String text = "java heap = " + NumberString.format( javaHeapMb ) + "MB" + " - native heap = " + NumberString.format( nativeHeapMb ) + "MB";
 
-		drawString( text, (Gdx.graphics.getWidth() - text.length() * fontWidth) / 2, 0 );
+		drawString( batch, text, (Gdx.graphics.getWidth() - text.length() * fontWidth) / 2, 0 );
 	}
 
 	public static void renderB2dWorld( World world, Matrix4 modelViewProj ) {
 		b2drenderer.render( world, modelViewProj );
 	}
 
-	public static void draw( TextureRegion region, float x, float y ) {
+	public static void draw( SpriteBatch batch, TextureRegion region, float x, float y ) {
 		int width = region.getRegionWidth();
 		if( width < 0 )
 			width = -width;
@@ -133,31 +116,31 @@ public class Debug {
 		batch.draw( region, x, y, width, -region.getRegionHeight() );
 	}
 
-	public static void draw( TextureRegion region, float x, float y, float width, float height ) {
+	public static void draw( SpriteBatch batch, TextureRegion region, float x, float y, float width, float height ) {
 		batch.draw( region, x, y, width, height );
 	}
 
-	public static void drawString( String string, float x, float y ) {
+	public static void drawString( SpriteBatch batch, String string, float x, float y ) {
 		string = string.toUpperCase();
 		for( int i = 0; i < string.length(); i++ ) {
 			char ch = string.charAt( i );
 			for( int ys = 0; ys < chars.length; ys++ ) {
 				int xs = chars[ys].indexOf( ch );
 				if( xs >= 0 ) {
-					draw( Art.base6[xs][ys + 9], x + i * 6, y );
+					draw( batch, Art.base6[xs][ys + 9], x + i * 6, y );
 				}
 			}
 		}
 	}
 
-	public static void drawString( String string, float x, float y, float w, float h ) {
+	public static void drawString( SpriteBatch batch, String string, float x, float y, float w, float h ) {
 		string = string.toUpperCase();
 		for( int i = 0; i < string.length(); i++ ) {
 			char ch = string.charAt( i );
 			for( int ys = 0; ys < chars.length; ys++ ) {
 				int xs = chars[ys].indexOf( ch );
 				if( xs >= 0 ) {
-					draw( Art.base6[xs][ys + 9], x + i * w, y, w, h );
+					draw( batch, Art.base6[xs][ys + 9], x + i * w, y, w, h );
 				}
 			}
 		}
