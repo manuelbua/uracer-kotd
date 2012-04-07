@@ -12,4 +12,11 @@ public class EventNotifier<L> {
 	public void addListener( L listener ) {
 		listeners.add( listener );
 	}
+
+	public void removeListener( L listener ) {
+		int pos = listeners.indexOf( listener, true );
+		if( pos > -1 ) {
+			listeners.removeIndex( pos );
+		}
+	}
 }
