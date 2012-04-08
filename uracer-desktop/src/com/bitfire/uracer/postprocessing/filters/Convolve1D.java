@@ -38,21 +38,22 @@ public class Convolve1D extends Filter<Convolve1D> {
 		this( length, new float[ length ], new float[ length * 2 ] );
 	}
 
-	public Convolve1D( int length, float[] weights ) {
-		this( length, weights, new float[ length * 2 ] );
+	public Convolve1D( int length, float[] weights_data ) {
+		this( length, weights_data, new float[ length * 2 ] );
 	}
 
-	public Convolve1D( int length, float[] weights, float[] offsets ) {
+	public Convolve1D( int length, float[] weights_data, float[] offsets ) {
 		super( ShaderLoader.fromFile( "convolve-1d", "convolve-1d", "#define LENGTH " + length ) );
 		this.length = length;
-		this.weights = weights;
+		this.weights = weights_data;
 		this.offsets = offsets;
 	}
 
 	@Override
 	public void dispose() {
 		super.dispose();
-		weights = offsets = null;
+		weights = null;
+		offsets = null;
 	}
 
 	@Override

@@ -87,7 +87,6 @@ public class GameRenderer {
 		}
 		batchRenderer.end();
 
-		GameWorld world = GameData.gameWorld;
 		if( world.isNightMode() ) {
 			if( Config.Graphics.DumbNightMode ) {
 				if( postProcessorEnabled )
@@ -102,10 +101,12 @@ public class GameRenderer {
 
 					// hook into the next PostProcessor source buffer (the last result)
 					// and blend the lightmap on it
-					if( postProcessorEnabled )
+					if( postProcessorEnabled ) {
 						worldRenderer.renderLigthMap( postProcessor.captureEnd() );
-					else
+					}
+					else {
 						worldRenderer.renderLigthMap( null );
+					}
 				}
 
 				if( postProcessorEnabled )
@@ -124,8 +125,9 @@ public class GameRenderer {
 		batch = batchRenderer.beginTopLeft();
 
 		if( Config.isDesktop ) {
-			if( Config.Graphics.RenderBox2DWorldWireframe )
+			if( Config.Graphics.RenderBox2DWorldWireframe ) {
 				Debug.renderB2dWorld( GameData.b2dWorld, Director.getMatViewProjMt() );
+			}
 
 			// EntityManager.raiseOnDebug();
 			event.trigger( GameRendererEvent.Type.BatchDebug );

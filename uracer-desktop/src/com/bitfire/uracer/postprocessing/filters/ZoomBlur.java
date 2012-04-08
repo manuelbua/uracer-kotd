@@ -4,7 +4,7 @@ import com.badlogic.gdx.Gdx;
 import com.bitfire.uracer.postprocessing.IFilter;
 import com.bitfire.uracer.utils.ShaderLoader;
 
-public class ZoomBlur extends Filter<ZoomBlur> {
+public final class ZoomBlur extends Filter<ZoomBlur> {
 	// ctrl quality
 	private int blur_len;
 

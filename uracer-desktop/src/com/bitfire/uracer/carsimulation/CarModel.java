@@ -2,9 +2,9 @@ package com.bitfire.uracer.carsimulation;
 
 /** Represents the physical car model on which we rely to compute
  * the forces exerted by the simulation.
- * 
+ *
  * @author manuel */
-public class CarModel {
+public final class CarModel {
 	public float wheelbase; // wheelbase in m
 	public float b; // in m, distance from CG to front axle
 	public float c; // in m, idem to rear axle
@@ -39,8 +39,7 @@ public class CarModel {
 		set( other );
 	}
 
-	@Override
-	public CarModel clone() {
+	public CarModel newCopy() {
 		CarModel m = new CarModel( this );
 		return m;
 	}

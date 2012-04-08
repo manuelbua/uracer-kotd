@@ -69,7 +69,7 @@ public class Replay {
 		carType = car.getCarType();
 		carPosition = new Vector2( car.pos() );
 		carOrientation = car.orient();
-		carDescriptor = car.getCarDescriptor().clone();
+		carDescriptor = car.getCarDescriptor().newCopy();
 	}
 
 	private void setReplayData( String trackName, GameDifficulty difficulty/* , float timeSeconds */) {

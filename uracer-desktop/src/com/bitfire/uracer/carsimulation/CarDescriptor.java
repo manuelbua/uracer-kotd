@@ -5,10 +5,10 @@ import com.badlogic.gdx.math.Vector2;
 /** Describes the global state of the car entity providing access to both the base
  * physical model information and the processed per-timestep data resulting
  * after each integration.
- * 
+ *
  * @author manuel */
 
-public class CarDescriptor {
+public final class CarDescriptor {
 	// physical model data
 	public CarModel carModel = new CarModel();
 
@@ -30,7 +30,11 @@ public class CarDescriptor {
 	public float angularOrientation;
 
 	public CarDescriptor() {
-		angularvelocity = steerangle = throttle = brake = angularOrientation = 0;
+		angularvelocity = 0;
+		steerangle = 0;
+		throttle = 0;
+		brake = 0;
+		angularOrientation = 0;
 		position_wc.set( 0, 0 );
 		velocity_wc.set( 0, 0 );
 	}
@@ -55,9 +59,7 @@ public class CarDescriptor {
 		this.velocity_wc.set( desc.velocity_wc );
 	}
 
-	@Override
-	public CarDescriptor clone() {
-		CarDescriptor c = new CarDescriptor( this );
-		return c;
+	public CarDescriptor newCopy() {
+		return new CarDescriptor( this );
 	}
 }

@@ -45,7 +45,7 @@ public class Threshold extends Filter<Threshold> {
 	}
 
 	@Override
-	public void rebind() {
+	public final void rebind() {
 		setParams( Param.Texture, u_texture_1 );
 		setTreshold( this.gamma );
 	}

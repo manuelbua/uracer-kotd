@@ -22,30 +22,31 @@ public class ModelFactory {
 	}
 
 	private static ModelMesh fromString( String mesh ) {
-		if( mesh == null )
+		if( mesh == null ) {
 			return ModelMesh.Missing;
-		if( mesh.equalsIgnoreCase( "palm" ) )
+		} else if( mesh.equalsIgnoreCase( "palm" ) ) {
 			return ModelMesh.Palm;
-		if( mesh.equalsIgnoreCase( "tribune" ) )
+		} else if( mesh.equalsIgnoreCase( "tribune" ) ) {
 			return ModelMesh.Tribune;
-		if( mesh.equalsIgnoreCase( "tree-1" ) )
+		} else if( mesh.equalsIgnoreCase( "tree-1" ) ) {
 			return ModelMesh.Tree_1;
-		if( mesh.equalsIgnoreCase( "tree-2" ) )
+		} else if( mesh.equalsIgnoreCase( "tree-2" ) ) {
 			return ModelMesh.Tree_2;
-		if( mesh.equalsIgnoreCase( "tree-3" ) )
+		} else if( mesh.equalsIgnoreCase( "tree-3" ) ) {
 			return ModelMesh.Tree_3;
-		if( mesh.equalsIgnoreCase( "tree-4" ) )
+		} else if( mesh.equalsIgnoreCase( "tree-4" ) ) {
 			return ModelMesh.Tree_4;
-		if( mesh.equalsIgnoreCase( "tree-5" ) )
+		} else if( mesh.equalsIgnoreCase( "tree-5" ) ) {
 			return ModelMesh.Tree_5;
-		if( mesh.equalsIgnoreCase( "tree-6" ) )
+		} else if( mesh.equalsIgnoreCase( "tree-6" ) ) {
 			return ModelMesh.Tree_6;
-		if( mesh.equalsIgnoreCase( "tree-7" ) )
+		} else if( mesh.equalsIgnoreCase( "tree-7" ) ) {
 			return ModelMesh.Tree_7;
-		if( mesh.equalsIgnoreCase( "tree-8" ) )
+		} else if( mesh.equalsIgnoreCase( "tree-8" ) ) {
 			return ModelMesh.Tree_8;
-		if( mesh.equalsIgnoreCase( "tree-9" ) )
+		} else if( mesh.equalsIgnoreCase( "tree-9" ) ) {
 			return ModelMesh.Tree_9;
+		}
 
 		return ModelMesh.Missing;
 	}
