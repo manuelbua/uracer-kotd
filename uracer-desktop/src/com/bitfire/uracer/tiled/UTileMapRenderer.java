@@ -35,18 +35,18 @@ public class UTileMapRenderer implements Disposable {
 	private IntArray blendedTiles;
 
 	/** A renderer for static tile maps backed with a Sprite Cache.
-	 * 
+	 *
 	 * This constructor is for convenience when loading TiledMaps. The normal Tiled coordinate system is used when
 	 * placing tiles.
-	 * 
+	 *
 	 * A default shader is used if OpenGL ES 2.0 is enabled.
-	 * 
+	 *
 	 * The tilesPerBlockX and tilesPerBlockY parameters will need to be adjusted for best performance. Smaller values
 	 * will cull
 	 * more precisely, but result in longer loading times. Larger values result in shorter loading times, but will cull
 	 * less
 	 * precisely.
-	 * 
+	 *
 	 * @param map A tile map's tile numbers, in the order [layer][row][column]
 	 * @param atlas The tile atlas to be used when drawing the map
 	 * @param tilesPerBlockX The width of each block to be drawn, in number of tiles
@@ -56,17 +56,17 @@ public class UTileMapRenderer implements Disposable {
 	}
 
 	/** A renderer for static tile maps backed with a Sprite Cache.
-	 * 
+	 *
 	 * This constructor is for convenience when loading TiledMaps.
-	 * 
+	 *
 	 * A default shader is used if OpenGL ES 2.0 is enabled.
-	 * 
+	 *
 	 * The tilesPerBlockX and tilesPerBlockY parameters will need to be adjusted for best performance. Smaller values
 	 * will cull
 	 * more precisely, but result in longer loading times. Larger values result in shorter loading times, but will cull
 	 * less
 	 * precisely.
-	 * 
+	 *
 	 * @param map A tile map's tile numbers, in the order [layer][row][column]
 	 * @param atlas The tile atlas to be used when drawing the map
 	 * @param tilesPerBlockX The width of each block to be drawn, in number of tiles
@@ -78,16 +78,16 @@ public class UTileMapRenderer implements Disposable {
 	}
 
 	/** A renderer for static tile maps backed with a Sprite Cache.
-	 * 
+	 *
 	 * This constructor is for convenience when loading TiledMaps. The normal Tiled coordinate system is used when
 	 * placing tiles.
-	 * 
+	 *
 	 * The tilesPerBlockX and tilesPerBlockY parameters will need to be adjusted for best performance. Smaller values
 	 * will cull
 	 * more precisely, but result in longer loading times. Larger values result in shorter loading times, but will cull
 	 * less
 	 * precisely.
-	 * 
+	 *
 	 * @param map A tile map's tile numbers, in the order [layer][row][column]
 	 * @param atlas The tile atlas to be used when drawing the map
 	 * @param tilesPerBlockX The width of each block to be drawn, in number of tiles
@@ -104,10 +104,12 @@ public class UTileMapRenderer implements Disposable {
 		}
 
 		for( int i = 0; i < map.tileSets.size(); i++ ) {
-			if( map.tileSets.get( i ).tileHeight - map.tileHeight > overdrawY * unitsPerTileY )
+			if( map.tileSets.get( i ).tileHeight - map.tileHeight > overdrawY * unitsPerTileY ) {
 				overdrawY = (map.tileSets.get( i ).tileHeight - map.tileHeight) / unitsPerTileY;
-			if( map.tileSets.get( i ).tileWidth - map.tileWidth > overdrawX * unitsPerTileX )
+			}
+			if( map.tileSets.get( i ).tileWidth - map.tileWidth > overdrawX * unitsPerTileX ) {
 				overdrawX = (map.tileSets.get( i ).tileWidth - map.tileWidth) / unitsPerTileX;
+			}
 		}
 
 		String blendedTiles = map.properties.get( "blended tiles" );
@@ -124,15 +126,15 @@ public class UTileMapRenderer implements Disposable {
 	}
 
 	/** A renderer for static tile maps backed with a Sprite Cache.
-	 * 
+	 *
 	 * The tilesPerBlockX and tilesPerBlockY parameters will need to be adjusted for best performance. Smaller values
 	 * will cull
 	 * more precisely, but result in longer loading times. Larger values result in shorter loading times, but will cull
 	 * less
 	 * precisely.
-	 * 
+	 *
 	 * A default shader is used if OpenGL ES 2.0 is enabled.
-	 * 
+	 *
 	 * @param map A tile map's tile numbers, in the order [layer][row][column]
 	 * @param atlas The tile atlas to be used when drawing the map
 	 * @param tileWidth The width of the tiles, in pixels
@@ -148,13 +150,13 @@ public class UTileMapRenderer implements Disposable {
 	}
 
 	/** A renderer for static tile maps backed with a Sprite Cache.
-	 * 
+	 *
 	 * The tilesPerBlockX and tilesPerBlockY parameters will need to be adjusted for best performance. Smaller values
 	 * will cull
 	 * more precisely, but result in longer loading times. Larger values result in shorter loading times, but will cull
 	 * less
 	 * precisely.
-	 * 
+	 *
 	 * @param map A tile map's tile numbers, in the order [layer][row][column]
 	 * @param atlas The tile atlas to be used when drawing the map
 	 * @param tileWidth The width of the tiles, in pixels
@@ -287,7 +289,7 @@ public class UTileMapRenderer implements Disposable {
 	}
 
 	/** Renders specific layers in the given a camera
-	 * 
+	 *
 	 * @param cam The camera to use */
 	public void render( OrthographicCamera cam ) {
 		render( cam, allLayers );
@@ -296,7 +298,7 @@ public class UTileMapRenderer implements Disposable {
 	Vector3 tmp = new Vector3();
 
 	/** Renders specific layers in the given a camera.
-	 * 
+	 *
 	 * @param cam The camera to use
 	 * @param layers The list of layers to draw, 0 being the lowest layer. You will get an IndexOutOfBoundsException if
 	 *            a layer
@@ -321,7 +323,7 @@ public class UTileMapRenderer implements Disposable {
 	private int initialRow, initialCol, currentRow, currentCol, lastRow, lastCol, currentLayer;
 
 	/** Renders specific layers between the given bounding box in map units.
-	 * 
+	 *
 	 * @param x The x coordinate to start drawing
 	 * @param y the y coordinate to start drawing
 	 * @param width the width of the tiles to draw
@@ -407,14 +409,14 @@ public class UTileMapRenderer implements Disposable {
 	}
 
 	/** Computes the Tiled Map row given a Y coordinate in units
-	 * 
+	 *
 	 * @param worldY the Y coordinate in units */
 	public int getRow( int worldY ) {
 		return (int)(worldY / unitsPerTileY);
 	}
 
 	/** Computes the Tiled Map column given an X coordinate in units
-	 * 
+	 *
 	 * @param worldX the X coordinate in units */
 	public int getCol( int worldX ) {
 		return (int)(worldX / unitsPerTileX);
