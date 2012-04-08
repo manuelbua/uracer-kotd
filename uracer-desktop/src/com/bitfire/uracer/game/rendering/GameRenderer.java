@@ -47,7 +47,6 @@ public class GameRenderer {
 	}
 
 	public void render() {
-		GL20 gl = Gdx.graphics.getGL20();
 		OrthographicCamera ortho = Director.getCamera();
 
 		// tweener step
