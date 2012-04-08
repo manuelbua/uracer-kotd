@@ -7,7 +7,7 @@ import com.bitfire.uracer.Config;
 import com.bitfire.uracer.carsimulation.Replay;
 import com.bitfire.uracer.effects.CarSkidMarks;
 import com.bitfire.uracer.effects.SmokeTrails;
-import com.bitfire.uracer.effects.TrackEffects.Type;
+import com.bitfire.uracer.effects.TrackEffect.Type;
 import com.bitfire.uracer.entities.vehicles.Car;
 import com.bitfire.uracer.events.GameLogicEvent;
 import com.bitfire.uracer.events.GameRendererEvent;

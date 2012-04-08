@@ -2,7 +2,7 @@ package com.bitfire.uracer;
 
 import com.badlogic.gdx.Application.ApplicationType;
 import com.badlogic.gdx.Gdx;
-import com.bitfire.uracer.effects.TrackEffects;
+import com.bitfire.uracer.effects.TrackEffect;
 import com.bitfire.uracer.game.GameDifficulty;
 import com.bitfire.uracer.game.logic.DirectorController.InterpolationMode;
 import com.bitfire.uracer.postprocessing.filters.Blur;
@@ -84,7 +84,7 @@ public class Config {
 			Render3DBoundingBoxes = false;
 
 			CameraInterpolationMode = InterpolationMode.Sigmoid;
-			Effects = (TrackEffects.Type.CarSkidMarks.id | TrackEffects.Type.SmokeTrails.id);
+			Effects = (TrackEffect.Type.CarSkidMarks.id | TrackEffect.Type.SmokeTrails.id);
 		}
 	}
 

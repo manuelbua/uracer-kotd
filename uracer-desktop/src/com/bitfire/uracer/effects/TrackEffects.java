@@ -2,6 +2,7 @@ package com.bitfire.uracer.effects;
 
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.bitfire.uracer.Config;
+import com.bitfire.uracer.effects.TrackEffect.Type;
 import com.bitfire.uracer.entities.vehicles.Car;
 import com.bitfire.uracer.events.GameLogicEvent;
 import com.bitfire.uracer.events.GameRendererEvent;
@@ -10,15 +11,6 @@ import com.bitfire.uracer.game.rendering.GameRenderer;
 import com.bitfire.uracer.task.Task;
 
 public class TrackEffects extends Task {
-	public enum Type {
-		CarSkidMarks( 1 ), SmokeTrails( 2 );	// FIXME, effects are destined to be drawn in this precise order in the same queue
-		public final int id;
-
-		private Type( int id ) {
-			this.id = id;
-		}
-	}
-
 	private TrackEffect[] effects = new TrackEffect[ Type.values().length ];
 
 	private final GameLogicEvent.Listener gameLogicEvent = new GameLogicEvent.Listener() {

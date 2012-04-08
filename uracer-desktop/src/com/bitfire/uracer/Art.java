@@ -53,8 +53,9 @@ public class Art {
 		// trees
 		meshTreeTrunk = newTexture( "data/3d/textures/trunk_6_col.png", mipMap );
 		meshTreeLeavesSpring = new Texture[ 7 ];
-		for( int i = 0; i < 7; i++ )
+		for( int i = 0; i < 7; i++ ) {
 			meshTreeLeavesSpring[i] = newTexture( "data/3d/textures/leaves_" + (i + 1) + "_spring_1.png", mipMap );
+		}
 
 		// cars
 		carTextures = new TextureAtlas( "data/cars/pack" );
@@ -99,8 +100,10 @@ public class Art {
 		meshTribune.dispose();
 
 		// trees
-		for( int i = 0; i < 7; i++ )
+		for( int i = 0; i < 7; i++ ) {
 			meshTreeLeavesSpring[i].dispose();
+		}
+
 		meshTreeTrunk.dispose();
 
 		fonts.dispose();
@@ -139,10 +142,11 @@ public class Art {
 	private static Texture newTexture( String name, boolean mipMap ) {
 		Texture t = new Texture( Gdx.files.internal( name ), Format.RGBA8888, mipMap );
 
-		if( mipMap )
+		if( mipMap ) {
 			t.setFilter( TextureFilter.MipMapLinearNearest, TextureFilter.Nearest );
-		else
+		} else {
 			t.setFilter( TextureFilter.Nearest, TextureFilter.Nearest );
+		}
 
 		return t;
 	}

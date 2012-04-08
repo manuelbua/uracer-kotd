@@ -9,7 +9,7 @@ import com.bitfire.uracer.Director;
 import com.bitfire.uracer.URacer;
 import com.bitfire.uracer.debug.Debug;
 import com.bitfire.uracer.effects.CarSkidMarks;
-import com.bitfire.uracer.effects.TrackEffects;
+import com.bitfire.uracer.effects.TrackEffect;
 import com.bitfire.uracer.events.GameRendererEvent;
 import com.bitfire.uracer.game.GameData;
 import com.bitfire.uracer.game.GameWorld;
@@ -136,7 +136,7 @@ public class GameRenderer {
 			Debug.renderGraphicalStats( batch, Gdx.graphics.getWidth() - Debug.getStatsWidth(), Gdx.graphics.getHeight() - Debug.getStatsHeight() - Debug.fontHeight );
 			Debug.renderTextualStats( batch );
 			Debug.renderMemoryUsage( batch );
-			Debug.drawString( batch, "Visible car skid marks=" + ((CarSkidMarks)GameData.System.trackEffects.get( TrackEffects.Type.CarSkidMarks )).getParticleCount(), 0,
+			Debug.drawString( batch, "Visible car skid marks=" + ((CarSkidMarks)GameData.System.trackEffects.get( TrackEffect.Type.CarSkidMarks )).getParticleCount(), 0,
 					Gdx.graphics.getHeight() - 21 );
 			Debug.drawString( batch, "total meshes=" + GameWorld.TotalMeshes, 0, Gdx.graphics.getHeight() - 14 );
 			Debug.drawString( batch, "rendered meshes=" + (GameWorldRenderer.renderedTrees + GameWorldRenderer.renderedWalls) + ", trees="

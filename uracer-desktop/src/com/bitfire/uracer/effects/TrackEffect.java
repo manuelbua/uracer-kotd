@@ -1,9 +1,17 @@
 package com.bitfire.uracer.effects;
 
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
-import com.bitfire.uracer.effects.TrackEffects.Type;
 
 public abstract class TrackEffect {
+	public enum Type {
+		CarSkidMarks( 1 ), SmokeTrails( 2 );	// FIXME, effects are destined to be drawn in this precise order in the same queue
+		public final int id;
+
+		private Type( int id ) {
+			this.id = id;
+		}
+	}
+
 	public Type type;
 
 	public TrackEffect( Type what ) {
@@ -20,3 +28,4 @@ public abstract class TrackEffect {
 
 	public abstract int getParticleCount();
 }
+

@@ -8,7 +8,6 @@ import com.bitfire.uracer.Art;
 import com.bitfire.uracer.Config;
 import com.bitfire.uracer.Director;
 import com.bitfire.uracer.carsimulation.CarModel;
-import com.bitfire.uracer.effects.TrackEffects.Type;
 import com.bitfire.uracer.entities.vehicles.Car;
 import com.bitfire.uracer.game.GameData.State;
 import com.bitfire.uracer.game.logic.DriftState;
