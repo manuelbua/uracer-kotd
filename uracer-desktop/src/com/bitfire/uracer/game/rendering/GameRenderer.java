@@ -12,12 +12,11 @@ import com.bitfire.uracer.effects.CarSkidMarks;
 import com.bitfire.uracer.effects.TrackEffect;
 import com.bitfire.uracer.events.GameRendererEvent;
 import com.bitfire.uracer.game.GameData;
+import com.bitfire.uracer.game.GameData.Events;
 import com.bitfire.uracer.game.GameWorld;
 import com.bitfire.uracer.postprocessing.PostProcessor;
 
 public class GameRenderer {
-	public static final GameRendererEvent event = new GameRendererEvent();
-
 	private final GL20 gl;
 	private final GameWorld world;
 	private final GameBatchRenderer batchRenderer;
@@ -71,8 +70,8 @@ public class GameRenderer {
 		SpriteBatch batch = null;
 		batch = batchRenderer.begin( ortho );
 		{
-			event.batch = batch;
-			event.trigger( GameRendererEvent.Type.BatchBeforeMeshes );
+			Events.gameRenderer.batch = batch;
+			Events.gameRenderer.trigger( GameRendererEvent.Type.BatchBeforeMeshes );
 		}
 		batchRenderer.end();
 
@@ -82,15 +81,16 @@ public class GameRenderer {
 		// BatchAfterMeshes
 		batch = batchRenderer.beginTopLeft();
 		{
-			event.batch = batch;
-			event.trigger( GameRendererEvent.Type.BatchAfterMeshes );
+			Events.gameRenderer.batch = batch;
+			Events.gameRenderer.trigger( GameRendererEvent.Type.BatchAfterMeshes );
 		}
 		batchRenderer.end();
 
 		if( world.isNightMode() ) {
 			if( Config.Graphics.DumbNightMode ) {
-				if( postProcessorEnabled )
+				if( postProcessorEnabled ) {
 					postProcessor.render();
+				}
 
 				worldRenderer.generateLightMap();
 				worldRenderer.renderLigthMap( null );
@@ -109,12 +109,14 @@ public class GameRenderer {
 					}
 				}
 
-				if( postProcessorEnabled )
+				if( postProcessorEnabled ) {
 					postProcessor.render();
+				}
 			}
 		} else {
-			if( postProcessorEnabled )
+			if( postProcessorEnabled ) {
 				postProcessor.render();
+			}
 		}
 
 
@@ -130,7 +132,7 @@ public class GameRenderer {
 			}
 
 			// EntityManager.raiseOnDebug();
-			event.trigger( GameRendererEvent.Type.BatchDebug );
+			Events.gameRenderer.trigger( GameRendererEvent.Type.BatchDebug );
 
 			Debug.renderVersionInfo( batch );
 			Debug.renderGraphicalStats( batch, Gdx.graphics.getWidth() - Debug.getStatsWidth(), Gdx.graphics.getHeight() - Debug.getStatsHeight() - Debug.fontHeight );

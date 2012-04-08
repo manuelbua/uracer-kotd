@@ -8,7 +8,7 @@ import com.bitfire.uracer.Config;
 import com.bitfire.uracer.events.GameRendererEvent;
 import com.bitfire.uracer.events.GameRendererEvent.Type;
 import com.bitfire.uracer.game.GameData;
-import com.bitfire.uracer.game.rendering.GameRenderer;
+import com.bitfire.uracer.game.GameData.Events;
 import com.bitfire.uracer.utils.AMath;
 import com.bitfire.uracer.utils.Convert;
 
@@ -18,7 +18,7 @@ public abstract class Box2dEntity extends SubframeInterpolableEntity {
 	private final GameRendererEvent.Listener gameRendererEvent = new GameRendererEvent.Listener() {
 		@Override
 		public void gameRendererEvent( Type type ) {
-			SpriteBatch batch = GameRenderer.event.batch;
+			SpriteBatch batch = Events.gameRenderer.batch;
 
 			switch( type ) {
 			case BatchBeforeMeshes:
@@ -35,8 +35,8 @@ public abstract class Box2dEntity extends SubframeInterpolableEntity {
 	public abstract void onDebug( SpriteBatch batch );
 
 	public Box2dEntity() {
-		GameRenderer.event.addListener( gameRendererEvent, GameRendererEvent.Type.BatchBeforeMeshes, GameRendererEvent.Order.Order_0 );
-		GameRenderer.event.addListener( gameRendererEvent, GameRendererEvent.Type.BatchDebug, GameRendererEvent.Order.Order_0 );
+		Events.gameRenderer.addListener( gameRendererEvent, GameRendererEvent.Type.BatchBeforeMeshes, GameRendererEvent.Order.Order_0 );
+		Events.gameRenderer.addListener( gameRendererEvent, GameRendererEvent.Type.BatchDebug, GameRendererEvent.Order.Order_0 );
 	}
 
 //	public Box2dEntity(GameRendererEvent.Order orderForBatchBeforeMeshes, GameRendererEvent.Order orderForDebug) {

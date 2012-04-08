@@ -3,6 +3,7 @@ package com.bitfire.uracer.task;
 import com.bitfire.uracer.events.TaskManagerEvent;
 import com.bitfire.uracer.events.TaskManagerEvent.Order;
 import com.bitfire.uracer.events.TaskManagerEvent.Type;
+import com.bitfire.uracer.game.GameData.Events;
 
 public abstract class Task implements TaskManagerEvent.Listener {
 
@@ -13,11 +14,11 @@ public abstract class Task implements TaskManagerEvent.Listener {
 
 	public Task( Order order ) {
 		this.order = order;
-		TaskManager.event.addListener( this, order );
+		Events.taskManager.addListener( this, order );
 	}
 
 	public void dispose() {
-		TaskManager.event.removeListener( this, order );
+		Events.taskManager.removeListener( this, order );
 	}
 
 	protected abstract void onTick();

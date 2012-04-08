@@ -2,7 +2,7 @@ package com.bitfire.uracer.audio;
 
 import com.bitfire.uracer.events.GameLogicEvent;
 import com.bitfire.uracer.events.GameLogicEvent.Type;
-import com.bitfire.uracer.game.GameLogic;
+import com.bitfire.uracer.game.GameData.Events;
 import com.bitfire.uracer.task.Task;
 
 public class CarSoundManager extends Task {
@@ -23,7 +23,7 @@ public class CarSoundManager extends Task {
 	};
 
 	public CarSoundManager() {
-		GameLogic.event.addListener( gameLogicEvent );
+		Events.gameLogic.addListener( gameLogicEvent );
 
 		// carEngine = new CarEngineSoundEffect();
 		// carEngine.start();

@@ -2,17 +2,14 @@ package com.bitfire.uracer.game.logic;
 
 import com.badlogic.gdx.utils.Disposable;
 import com.bitfire.uracer.entities.vehicles.Car;
-import com.bitfire.uracer.events.DriftStateEvent;
 import com.bitfire.uracer.events.DriftStateEvent.Type;
 import com.bitfire.uracer.events.GameLogicEvent;
+import com.bitfire.uracer.game.GameData.Events;
 import com.bitfire.uracer.game.GameData.State;
-import com.bitfire.uracer.game.GameLogic;
 import com.bitfire.uracer.task.Task;
 import com.bitfire.uracer.utils.AMath;
 
 public class DriftState extends Task implements Disposable {
-	public static final DriftStateEvent event = new DriftStateEvent();
-
 	public boolean isDrifting = false;
 	public boolean hasCollided = false;
 	public float lateralForcesFront = 0, lateralForcesRear = 0;
@@ -35,7 +32,7 @@ public class DriftState extends Task implements Disposable {
 	};
 
 	public DriftState() {
-		GameLogic.event.addListener( gameLogicEvent );
+		Events.gameLogic.addListener( gameLogicEvent );
 		reset();
 	}
 
@@ -64,7 +61,7 @@ public class DriftState extends Task implements Disposable {
 		hasCollided = true;
 		collisionTime.start();
 		time.stop();
-		event.trigger( Type.onEndDrift );
+		Events.driftState.trigger( Type.onEndDrift );
 	}
 
 	@Override
@@ -100,7 +97,7 @@ public class DriftState extends Task implements Disposable {
 					hasCollided = false;
 					// driftStartTime = System.currentTimeMillis();
 					time.start();
-					event.trigger( Type.onBeginDrift );
+					Events.driftState.trigger( Type.onBeginDrift );
 				}
 			} else {
 				// search for onEndDrift
@@ -108,7 +105,7 @@ public class DriftState extends Task implements Disposable {
 					time.stop();
 					isDrifting = false;
 					hasCollided = false;
-					event.trigger( Type.onEndDrift );
+					Events.driftState.trigger( Type.onEndDrift );
 				}
 			}
 		}

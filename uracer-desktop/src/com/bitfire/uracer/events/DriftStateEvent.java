@@ -26,8 +26,9 @@ public final class DriftStateEvent extends Event {
 	private class Notifier extends EventNotifier<Listener> implements Listener {
 		@Override
 		public void driftStateEvent( Type type ) {
-			for( Listener listener : listeners )
+			for( Listener listener : listeners ) {
 				listener.driftStateEvent( type );
+			}
 		}
 	};
 }

@@ -9,6 +9,7 @@ import com.bitfire.uracer.entities.vehicles.Car;
 import com.bitfire.uracer.events.DriftStateEvent;
 import com.bitfire.uracer.events.DriftStateEvent.Type;
 import com.bitfire.uracer.game.GameData;
+import com.bitfire.uracer.game.GameData.Events;
 import com.bitfire.uracer.game.GameData.State;
 import com.bitfire.uracer.game.logic.DriftState;
 import com.bitfire.uracer.messager.Messager.MessagePosition;
@@ -86,7 +87,7 @@ public class HudDrifting {
 	};
 
 	public HudDrifting( Car car ) {
-		DriftState.event.addListener( driftListener );
+		Events.driftState.addListener( driftListener );
 
 		this.playerCar = car;
 		model = playerCar.getCarModel();

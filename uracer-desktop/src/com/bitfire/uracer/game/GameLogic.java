@@ -16,10 +16,10 @@ import com.bitfire.uracer.URacer;
 import com.bitfire.uracer.carsimulation.CarInputMode;
 import com.bitfire.uracer.carsimulation.Recorder;
 import com.bitfire.uracer.carsimulation.Replay;
-import com.bitfire.uracer.entities.vehicles.Car;
 import com.bitfire.uracer.events.CarEvent;
 import com.bitfire.uracer.events.GameLogicEvent;
 import com.bitfire.uracer.events.PlayerStateEvent;
+import com.bitfire.uracer.game.GameData.Events;
 import com.bitfire.uracer.game.GameData.State;
 import com.bitfire.uracer.game.logic.DirectorController;
 import com.bitfire.uracer.game.logic.LapState;
@@ -33,8 +33,6 @@ import com.bitfire.uracer.utils.AMath;
 import com.bitfire.uracer.utils.NumberString;
 
 public class GameLogic implements CarEvent.Listener, PlayerStateEvent.Listener {
-	public static final GameLogicEvent event = new GameLogicEvent();
-
 	// lap
 	private boolean isFirstLap = true;
 	private long lastRecordedLapId = 0;
@@ -46,12 +44,12 @@ public class GameLogic implements CarEvent.Listener, PlayerStateEvent.Listener {
 	private Recorder recorder = null;
 
 	public GameLogic() {
-		event.source = this;
+		Events.gameLogic.source = this;
 		recorder = new Recorder();
 		timeMultiplier.value = 1f;
 
-		PlayerState.event.addListener( this );
-		Car.event.addListener( this );
+		Events.playerState.addListener( this );
+		Events.carEvent.addListener( this );
 		State.playerState.car.setTransform( GameData.gameWorld.playerStartPos, GameData.gameWorld.playerStartOrient );
 
 		controller = new DirectorController( Config.Graphics.CameraInterpolationMode, Director.halfViewport, GameData.gameWorld );
@@ -73,11 +71,11 @@ public class GameLogic implements CarEvent.Listener, PlayerStateEvent.Listener {
 	public boolean onTick() {
 		if( Input.isOn( Keys.R ) ) {
 			restart();
-			event.trigger( GameLogicEvent.Type.onRestart );
+			Events.gameLogic.trigger( GameLogicEvent.Type.onRestart );
 		} else if( Input.isOn( Keys.T ) ) {
 			restart();
 			reset();
-			event.trigger( GameLogicEvent.Type.onReset );
+			Events.gameLogic.trigger( GameLogicEvent.Type.onReset );
 		} else if( Input.isOn( Keys.Q ) ) {
 			Gdx.app.exit();
 			return false;

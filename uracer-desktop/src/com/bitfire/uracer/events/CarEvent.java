@@ -26,13 +26,13 @@ public final class CarEvent extends Event {
 		/** compute forces data */
 		public CarForces forces;
 
-		public void setCollisionData(Car car, Fixture other, Vector2 impulses ) {
+		public void setCollisionData( Car car, Fixture other, Vector2 impulses ) {
 			this.car = car;
 			this.other = other;
 			this.impulses = impulses;
 		}
 
-		public void setForces(CarForces forces) {
+		public void setForces( CarForces forces ) {
 			this.forces = forces;
 		}
 	}
@@ -52,8 +52,9 @@ public final class CarEvent extends Event {
 	private class Notifier extends EventNotifier<Listener> implements Listener {
 		@Override
 		public void carEvent( Type type, Data data ) {
-			for( Listener listener : listeners )
+			for( Listener listener : listeners ) {
 				listener.carEvent( type, data );
+			}
 		}
 	};
 }

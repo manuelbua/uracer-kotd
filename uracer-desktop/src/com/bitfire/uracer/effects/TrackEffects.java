@@ -6,8 +6,7 @@ import com.bitfire.uracer.effects.TrackEffect.Type;
 import com.bitfire.uracer.entities.vehicles.Car;
 import com.bitfire.uracer.events.GameLogicEvent;
 import com.bitfire.uracer.events.GameRendererEvent;
-import com.bitfire.uracer.game.GameLogic;
-import com.bitfire.uracer.game.rendering.GameRenderer;
+import com.bitfire.uracer.game.GameData.Events;
 import com.bitfire.uracer.task.Task;
 
 public class TrackEffects extends Task {
@@ -28,7 +27,7 @@ public class TrackEffects extends Task {
 	private final GameRendererEvent.Listener gameRendererEvent = new GameRendererEvent.Listener() {
 		@Override
 		public void gameRendererEvent( GameRendererEvent.Type type ) {
-			SpriteBatch batch = GameRenderer.event.batch;
+			SpriteBatch batch = Events.gameRenderer.batch;
 			for( TrackEffect effect : effects ) {
 				if( (effect != null) && Config.Graphics.hasEffect( effect.type.id ) )
 					effect.render( batch );
@@ -37,8 +36,8 @@ public class TrackEffects extends Task {
 	};
 
 	public TrackEffects( Car car ) {
-		GameLogic.event.addListener( gameLogicEvent );
-		GameRenderer.event.addListener( gameRendererEvent, GameRendererEvent.Type.BatchBeforeMeshes, GameRendererEvent.Order.Order_Minus_4 );
+		Events.gameLogic.addListener( gameLogicEvent );
+		Events.gameRenderer.addListener( gameRendererEvent, GameRendererEvent.Type.BatchBeforeMeshes, GameRendererEvent.Order.Order_Minus_4 );
 
 		// TODO, custom render event
 		// for CarSkidMarks GameRenderer.event.addListener( gameRendererEvent, GameRendererEvent.Type.BatchBeforeMeshes, GameRendererEvent.Order.Order_Minus_4 );

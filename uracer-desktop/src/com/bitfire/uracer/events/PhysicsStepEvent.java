@@ -28,8 +28,9 @@ public class PhysicsStepEvent extends Event {
 	private class Notifier extends EventNotifier<Listener> implements Listener {
 		@Override
 		public void physicsEvent( Type type ) {
-			for( Listener listener : listeners )
+			for( Listener listener : listeners ) {
 				listener.physicsEvent( type );
+			}
 		}
 	};
 }

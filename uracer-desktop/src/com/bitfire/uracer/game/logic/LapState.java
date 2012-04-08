@@ -2,7 +2,7 @@ package com.bitfire.uracer.game.logic;
 
 import com.bitfire.uracer.carsimulation.Replay;
 import com.bitfire.uracer.events.GameLogicEvent;
-import com.bitfire.uracer.game.GameLogic;
+import com.bitfire.uracer.game.GameData.Events;
 
 public class LapState {
 	// replays
@@ -25,7 +25,7 @@ public class LapState {
 	};
 
 	public LapState() {
-		GameLogic.event.addListener( gameLogicEvent );
+		Events.gameLogic.addListener( gameLogicEvent );
 
 		startTimeNs = 0;
 		lastTrackTimeSecs = 0;

@@ -24,15 +24,17 @@ public class GameRendererEvent {
 	private class Notifier extends EventNotifier<Listener> implements Listener {
 		@Override
 		public void gameRendererEvent( Type type ) {
-			for( Listener listener : listeners )
+			for( Listener listener : listeners ) {
 				listener.gameRendererEvent( type );
+			}
 		}
 	};
 
 	public GameRendererEvent() {
 		for( Type t : Type.values() )
-			for( Order o : Order.values() )
+			for( Order o : Order.values() ) {
 				notifiers[t.ordinal()][o.ordinal()] = new Notifier();
+			}
 	}
 
 	private Notifier[][] notifiers = new Notifier[ Type.values().length ][ Order.values().length ];
@@ -43,8 +45,7 @@ public class GameRendererEvent {
 	 *
 	 * @param listener the listener to be notified of the event
 	 * @param type the event type
-	 * @param order the order in the rendering queue for the specified event type
-	 */
+	 * @param order the order in the rendering queue for the specified event type */
 	public void addListener( Listener listener, Type type, Order order ) {
 		notifiers[type.ordinal()][order.ordinal()].addListener( listener );
 	}
@@ -54,8 +55,9 @@ public class GameRendererEvent {
 	}
 
 	public void trigger( Type type ) {
-		for( Order order : Order.values() )
+		for( Order order : Order.values() ) {
 			notifiers[type.ordinal()][order.ordinal()].gameRendererEvent( type );
+		}
 	}
 
 }

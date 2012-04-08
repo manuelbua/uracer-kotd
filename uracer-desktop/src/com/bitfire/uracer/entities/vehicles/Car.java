@@ -25,6 +25,7 @@ import com.bitfire.uracer.entities.Box2dEntity;
 import com.bitfire.uracer.events.CarEvent;
 import com.bitfire.uracer.factories.CarFactory.CarType;
 import com.bitfire.uracer.game.GameData;
+import com.bitfire.uracer.game.GameData.Events;
 import com.bitfire.uracer.game.GameWorld;
 import com.bitfire.uracer.utils.AMath;
 import com.bitfire.uracer.utils.Convert;
@@ -32,8 +33,6 @@ import com.bitfire.uracer.utils.MapUtils;
 import com.bitfire.uracer.utils.VMath;
 
 public class Car extends Box2dEntity {
-	public static final CarEvent event = new CarEvent();
-
 	protected Recorder recorder;
 	protected CarGraphics graphics;
 
@@ -288,15 +287,15 @@ public class Car extends Box2dEntity {
 		forces.velocity_y = carDesc.velocity_wc.y;
 		forces.angularVelocity = carDesc.angularvelocity;
 
-		event.data.setForces( forces );
-		event.trigger( CarEvent.Type.onComputeForces );
+		Events.carEvent.data.setForces( forces );
+		Events.carEvent.trigger( CarEvent.Type.onComputeForces );
 	}
 
 	public void onCollide( Fixture other, Vector2 normalImpulses ) {
 		impacts++;
 
-		event.data.setCollisionData( this, other, normalImpulses );
-		event.trigger( CarEvent.Type.onCollision );
+		Events.carEvent.data.setCollisionData( this, other, normalImpulses );
+		Events.carEvent.trigger( CarEvent.Type.onCollision );
 	}
 
 	@Override

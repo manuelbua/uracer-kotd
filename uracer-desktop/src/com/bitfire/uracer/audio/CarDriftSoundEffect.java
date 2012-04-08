@@ -8,8 +8,8 @@ import com.bitfire.uracer.URacer;
 import com.bitfire.uracer.events.DriftStateEvent;
 import com.bitfire.uracer.events.DriftStateEvent.Type;
 import com.bitfire.uracer.game.GameData;
+import com.bitfire.uracer.game.GameData.Events;
 import com.bitfire.uracer.game.GameData.State;
-import com.bitfire.uracer.game.logic.DriftState;
 import com.bitfire.uracer.utils.AMath;
 
 /** Implements car drifting sound effects, modulating amplitude's volume and pitch
@@ -53,7 +53,7 @@ public class CarDriftSoundEffect extends CarSoundEffect {
 	};
 
 	public CarDriftSoundEffect() {
-		DriftState.event.addListener( driftListener );
+		Events.driftState.addListener( driftListener );
 
 		// TODO. Sounds as the Art class
 		drift = Gdx.audio.newSound( Gdx.files.getFileHandle( "data/audio/drift-loop.ogg", FileType.Internal ) );

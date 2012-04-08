@@ -34,7 +34,6 @@ public class Game implements Disposable {
 
 	// post-processing
 	private Bloom bloom = null;
-	private Bloom.Settings bloomSettings = null;
 	private Zoom zoom = null;
 
 	// graphics
@@ -95,7 +94,7 @@ public class Game implements Disposable {
 		// 0.35f, 1f, 0.1f, 1.4f, 0.75f );
 
 		float threshold = ((GameData.gameWorld.isNightMode() && !Config.Graphics.DumbNightMode) ? 0.2f : 0.45f);
-		bloomSettings = new Bloom.Settings( "subtle", Config.PostProcessing.BlurType, 1, 1.5f, threshold, 1f, 0.5f, 1f, 1.5f );
+		Bloom.Settings bloomSettings = new Bloom.Settings( "subtle", Config.PostProcessing.BlurType, 1, 1.5f, threshold, 1f, 0.5f, 1f, 1.5f );
 		bloom.setSettings( bloomSettings );
 
 		zoom = new Zoom( postProcessor, Config.PostProcessing.ZoomQuality );
@@ -107,8 +106,9 @@ public class Game implements Disposable {
 	public boolean tick() {
 		TaskManager.dispatchTick();
 
-		if( !gameLogic.onTick() )
+		if( !gameLogic.onTick() ) {
 			return false;
+		}
 
 		// ---------------------------------------------------
 		// post-processor animator's tick impl

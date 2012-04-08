@@ -3,7 +3,7 @@ package com.bitfire.uracer.carsimulation;
 import com.bitfire.uracer.entities.vehicles.Car;
 import com.bitfire.uracer.events.GameLogicEvent;
 import com.bitfire.uracer.game.GameData;
-import com.bitfire.uracer.game.GameLogic;
+import com.bitfire.uracer.game.GameData.Events;
 
 public class Recorder {
 	private boolean isRecording;
@@ -24,7 +24,7 @@ public class Recorder {
 	};
 
 	public Recorder() {
-		GameLogic.event.addListener( gameLogicEvent );
+		Events.gameLogic.addListener( gameLogicEvent );
 		isRecording = false;
 		replay = null;
 	}

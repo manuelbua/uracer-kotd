@@ -6,10 +6,10 @@ import com.badlogic.gdx.audio.Sound;
 import com.badlogic.gdx.math.MathUtils;
 import com.bitfire.uracer.URacer;
 import com.bitfire.uracer.carsimulation.CarInputMode;
-import com.bitfire.uracer.entities.vehicles.Car;
 import com.bitfire.uracer.events.CarEvent;
 import com.bitfire.uracer.events.CarEvent.Data;
 import com.bitfire.uracer.events.CarEvent.Type;
+import com.bitfire.uracer.game.GameData.Events;
 import com.bitfire.uracer.game.GameData.State;
 import com.bitfire.uracer.utils.AMath;
 
@@ -42,7 +42,7 @@ public class CarImpactSoundEffect extends CarSoundEffect {
 	};
 
 	public CarImpactSoundEffect() {
-		Car.event.addListener( carEvent );
+		Events.carEvent.addListener( carEvent );
 
 		soundLow1 = Gdx.audio.newSound( Gdx.files.getFileHandle( "data/audio/impact-2.ogg", FileType.Internal ) );
 		soundLow2 = Gdx.audio.newSound( Gdx.files.getFileHandle( "data/audio/impact-3.ogg", FileType.Internal ) );

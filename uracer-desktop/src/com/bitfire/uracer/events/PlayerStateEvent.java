@@ -26,8 +26,9 @@ public final class PlayerStateEvent extends Event {
 	private class Notifier extends EventNotifier<Listener> implements Listener {
 		@Override
 		public void playerStateEvent( Type type ) {
-			for( Listener listener : listeners )
+			for( Listener listener : listeners ) {
 				listener.playerStateEvent( type );
+			}
 		}
 	};
 }

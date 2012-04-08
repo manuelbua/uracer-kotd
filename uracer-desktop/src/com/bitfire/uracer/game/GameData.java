@@ -5,6 +5,13 @@ import com.badlogic.gdx.physics.box2d.World;
 import com.bitfire.uracer.Config;
 import com.bitfire.uracer.effects.TrackEffects;
 import com.bitfire.uracer.entities.vehicles.Car;
+import com.bitfire.uracer.events.CarEvent;
+import com.bitfire.uracer.events.DriftStateEvent;
+import com.bitfire.uracer.events.GameLogicEvent;
+import com.bitfire.uracer.events.GameRendererEvent;
+import com.bitfire.uracer.events.PhysicsStepEvent;
+import com.bitfire.uracer.events.PlayerStateEvent;
+import com.bitfire.uracer.events.TaskManagerEvent;
 import com.bitfire.uracer.factories.CarFactory;
 import com.bitfire.uracer.game.collisions.GameContactListener;
 import com.bitfire.uracer.game.logic.DriftState;
@@ -25,6 +32,9 @@ import com.bitfire.uracer.tweener.accessors.MessageAccessor;
  *
  * @author bmanuel */
 public class GameData {
+
+	private GameData() {
+	}
 
 	public static ScalingStrategy scalingStrategy;
 	public static GameplaySettings gameSettings;
@@ -52,6 +62,18 @@ public class GameData {
 		public static void dispose() {
 			trackEffects.dispose();
 		}
+	}
+
+	public static final class Events {
+
+		public static final GameRendererEvent gameRenderer = new GameRendererEvent();
+		public static final PlayerStateEvent playerState = new PlayerStateEvent();
+		public static final DriftStateEvent driftState = new DriftStateEvent();
+		public static final PhysicsStepEvent physicsStep = new PhysicsStepEvent();
+		public static final GameLogicEvent gameLogic = new GameLogicEvent();
+		public static final CarEvent carEvent = new CarEvent();
+		public static final TaskManagerEvent taskManager = new TaskManagerEvent();
+
 	}
 
 	public static void create( GameDifficulty difficulty ) {

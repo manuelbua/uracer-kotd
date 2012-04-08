@@ -15,8 +15,9 @@ public class TaskManagerEvent {
 		private class Notifier extends EventNotifier<Listener> implements Listener {
 			@Override
 			public void taskManagerEvent( Type type ) {
-				for( Listener listener : listeners )
+				for( Listener listener : listeners ) {
 					listener.taskManagerEvent( type );
+				}
 			}
 		};
 
@@ -36,7 +37,8 @@ public class TaskManagerEvent {
 	}
 
 	public void trigger( Type type ) {
-		for( Order order : Order.values() )
+		for( Order order : Order.values() ) {
 			order.notify.taskManagerEvent( type );
+		}
 	}
 }

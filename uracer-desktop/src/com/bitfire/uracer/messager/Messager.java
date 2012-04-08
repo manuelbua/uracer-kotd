@@ -7,8 +7,7 @@ import com.badlogic.gdx.utils.Array;
 import com.bitfire.uracer.events.GameLogicEvent;
 import com.bitfire.uracer.events.GameRendererEvent;
 import com.bitfire.uracer.events.GameRendererEvent.Type;
-import com.bitfire.uracer.game.GameLogic;
-import com.bitfire.uracer.game.rendering.GameRenderer;
+import com.bitfire.uracer.game.GameData.Events;
 import com.bitfire.uracer.task.Task;
 
 public class Messager extends Task {
@@ -27,7 +26,7 @@ public class Messager extends Task {
 	private final GameRendererEvent.Listener gameRendererEvent = new GameRendererEvent.Listener() {
 		@Override
 		public void gameRendererEvent( Type type ) {
-			SpriteBatch batch = GameRenderer.event.batch;
+			SpriteBatch batch = Events.gameRenderer.batch;
 
 			if( isBusy( MessagePosition.Top ) )
 				currents.get( MessagePosition.Top.ordinal() ).render( batch );
@@ -58,8 +57,8 @@ public class Messager extends Task {
 	private int idxMessageStore;
 
 	public Messager() {
-		GameRenderer.event.addListener( gameRendererEvent, GameRendererEvent.Type.BatchAfterMeshes, GameRendererEvent.Order.Order_Minus_4 );
-		GameLogic.event.addListener( gameLogicEvent );
+		Events.gameRenderer.addListener( gameRendererEvent, GameRendererEvent.Type.BatchAfterMeshes, GameRendererEvent.Order.Order_Minus_4 );
+		Events.gameLogic.addListener( gameLogicEvent );
 
 		currents = new Array<Message>( 3 );
 		currents.insert( MessagePosition.Top.ordinal(), null );

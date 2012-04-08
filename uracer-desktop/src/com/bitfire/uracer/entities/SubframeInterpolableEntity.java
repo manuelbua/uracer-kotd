@@ -2,7 +2,7 @@ package com.bitfire.uracer.entities;
 
 import com.bitfire.uracer.events.PhysicsStepEvent;
 import com.bitfire.uracer.events.PhysicsStepEvent.Type;
-import com.bitfire.uracer.game.logic.PhysicsStep;
+import com.bitfire.uracer.game.GameData.Events;
 
 public abstract class SubframeInterpolableEntity extends Entity implements PhysicsStepEvent.Listener {
 	// world-coords
@@ -10,7 +10,7 @@ public abstract class SubframeInterpolableEntity extends Entity implements Physi
 	protected EntityState stateCurrent = new EntityState();
 
 	public SubframeInterpolableEntity() {
-		PhysicsStep.event.addListener( this );
+		Events.physicsStep.addListener( this );
 	}
 
 	public abstract void saveStateTo( EntityState state );
@@ -34,7 +34,7 @@ public abstract class SubframeInterpolableEntity extends Entity implements Physi
 			onAfterPhysicsSubstep();
 			break;
 		case onTemporalAliasing:
-			onTemporalAliasing( PhysicsStep.event.temporalAliasingFactor );
+			onTemporalAliasing( Events.physicsStep.temporalAliasingFactor );
 			break;
 		}
 	}

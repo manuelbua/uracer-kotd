@@ -6,13 +6,11 @@ import com.bitfire.uracer.entities.vehicles.GhostCar;
 import com.bitfire.uracer.events.GameLogicEvent;
 import com.bitfire.uracer.events.PlayerStateEvent;
 import com.bitfire.uracer.game.GameData;
-import com.bitfire.uracer.game.GameLogic;
+import com.bitfire.uracer.game.GameData.Events;
 import com.bitfire.uracer.task.Task;
 import com.bitfire.uracer.utils.AMath;
 
-public class PlayerState extends Task {
-	public static final PlayerStateEvent event = new PlayerStateEvent();
-
+public final class PlayerState extends Task {
 	public Car car;
 	public GhostCar ghost;
 
@@ -44,9 +42,9 @@ public class PlayerState extends Task {
 	}
 
 	public PlayerState( Car car, GhostCar ghost ) {
-		GameLogic.event.addListener( gameLogicEvent );
+		Events.gameLogic.addListener( gameLogicEvent );
 
-		event.source = this;
+		Events.playerState.source = this;
 		setData( car, ghost );
 	}
 
@@ -71,7 +69,7 @@ public class PlayerState extends Task {
 		currTileY = (int)tp.y;
 
 		if( (lastTileX != currTileX) || (lastTileY != currTileY) ) {
-			event.trigger( PlayerStateEvent.Type.onTileChanged );
+			Events.playerState.trigger( PlayerStateEvent.Type.onTileChanged );
 		}
 
 		if( car != null ) {
@@ -93,6 +91,9 @@ public class PlayerState extends Task {
 		}
 
 		// causes an onTileChanged event to be raised
-		lastTileX = lastTileY = currTileX = currTileY = -1;
+		lastTileX = -1;
+		lastTileY = -1;
+		currTileX = -1;
+		currTileY = -1;
 	}
 }
