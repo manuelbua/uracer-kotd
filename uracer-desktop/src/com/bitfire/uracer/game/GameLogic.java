@@ -52,7 +52,8 @@ public class GameLogic implements CarEvent.Listener, PlayerStateEvent.Listener {
 		Events.carEvent.addListener( this );
 		State.playerState.car.setTransform( GameData.gameWorld.playerStartPos, GameData.gameWorld.playerStartOrient );
 
-		controller = new DirectorController( Config.Graphics.CameraInterpolationMode, Director.halfViewport, GameData.gameWorld );
+		controller = new DirectorController( Config.Graphics.CameraInterpolationMode, Director.halfViewport, GameData.gameWorld.worldSizeScaledPx,
+				GameData.gameWorld.worldSizeTiles );
 	}
 
 	boolean timeModulation = false, timeModulationBusy = false;

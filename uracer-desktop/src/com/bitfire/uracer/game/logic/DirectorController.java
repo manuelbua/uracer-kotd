@@ -3,7 +3,6 @@ package com.bitfire.uracer.game.logic;
 import com.badlogic.gdx.math.Rectangle;
 import com.badlogic.gdx.math.Vector2;
 import com.bitfire.uracer.Director;
-import com.bitfire.uracer.game.GameWorld;
 import com.bitfire.uracer.utils.AMath;
 
 public class DirectorController {
@@ -16,46 +15,27 @@ public class DirectorController {
 	private float sigmoidStrengthX = 1f;
 	private float sigmoidStrengthY = 1f;
 
-	public DirectorController( InterpolationMode mode, Vector2 halfViewport, final GameWorld world ) {
+	public DirectorController( InterpolationMode mode, Vector2 halfViewport, final Vector2 worldSizeScaledPx, Vector2 worldSizeTiles ) {
 		final Rectangle cameraBounds = new Rectangle();
 		cameraBounds.x = halfViewport.x;
-		cameraBounds.width = world.worldSizeScaledPx.x - halfViewport.x;
+		cameraBounds.width = worldSizeScaledPx.x - halfViewport.x;
 		cameraBounds.height = halfViewport.y;
-		cameraBounds.y = world.worldSizeScaledPx.y - halfViewport.y;
+		cameraBounds.y = worldSizeScaledPx.y - halfViewport.y;
 
 		boundsWidth = cameraBounds.width - cameraBounds.x;
 		boundsHeight = cameraBounds.y - cameraBounds.height;
 
-		sigmoidStrengthX = AMath.clamp( (world.worldSizeTiles.x / 4f), 1f, 5f );
-		sigmoidStrengthY = AMath.clamp( (world.worldSizeTiles.y / 4f), 1f, 5f );
+		sigmoidStrengthX = AMath.clamp( (worldSizeTiles.x / 4f), 1f, 5f );
+		sigmoidStrengthY = AMath.clamp( (worldSizeTiles.y / 4f), 1f, 5f );
 
 		switch( mode ) {
-		default:
-		case Off:
-			interpolator = new PositionInterpolator() {
-				@Override
-				public Vector2 transform( Vector2 targetPosition ) {
-
-					if( targetPosition.x < cameraBounds.x )
-						targetPosition.x = cameraBounds.x;
-					if( targetPosition.x > cameraBounds.width )
-						targetPosition.x = cameraBounds.width;
-					if( targetPosition.y > cameraBounds.y )
-						targetPosition.y = cameraBounds.y;
-					if( targetPosition.y < cameraBounds.height )
-						targetPosition.y = cameraBounds.height;
-
-					return targetPosition;
-				}
-			};
-			break;
 		case Linear:
 			interpolator = new PositionInterpolator() {
 				@Override
 				public Vector2 transform( Vector2 targetPosition ) {
 					// [0,1]
-					float x_ratio = targetPosition.x / world.worldSizeScaledPx.x;
-					float y_ratio = targetPosition.y / world.worldSizeScaledPx.y;
+					float x_ratio = targetPosition.x / worldSizeScaledPx.x;
+					float y_ratio = targetPosition.y / worldSizeScaledPx.y;
 
 					tmp.x = cameraBounds.x + x_ratio * boundsWidth;
 					tmp.y = cameraBounds.height + y_ratio * boundsHeight;
@@ -73,13 +53,32 @@ public class DirectorController {
 					float ty = target.y;
 
 					// [-1, 1]
-					float x_ratio = ((tx / world.worldSizeScaledPx.x) - 0.5f) * 2;
-					float y_ratio = ((ty / world.worldSizeScaledPx.y) - 0.5f) * 2;
+					float x_ratio = ((tx / worldSizeScaledPx.x) - 0.5f) * 2;
+					float y_ratio = ((ty / worldSizeScaledPx.y) - 0.5f) * 2;
 
 					tmp.x = cameraBounds.x + AMath.sigmoid( x_ratio * sigmoidStrengthX ) * boundsWidth;
 					tmp.y = cameraBounds.height + AMath.sigmoid( y_ratio * sigmoidStrengthY ) * boundsHeight;
 
 					return tmp;
+				}
+			};
+			break;
+		default:
+		case Off:
+			interpolator = new PositionInterpolator() {
+				@Override
+				public Vector2 transform( Vector2 targetPosition ) {
+
+					if( targetPosition.x < cameraBounds.x )
+						targetPosition.x = cameraBounds.x;
+					if( targetPosition.x > cameraBounds.width )
+						targetPosition.x = cameraBounds.width;
+					if( targetPosition.y > cameraBounds.y )
+						targetPosition.y = cameraBounds.y;
+					if( targetPosition.y < cameraBounds.height )
+						targetPosition.y = cameraBounds.height;
+
+					return targetPosition;
 				}
 			};
 			break;
