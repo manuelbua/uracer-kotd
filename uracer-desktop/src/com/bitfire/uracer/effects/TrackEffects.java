@@ -1,115 +1,91 @@
 package com.bitfire.uracer.effects;
 
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
-import com.badlogic.gdx.utils.LongMap;
 import com.bitfire.uracer.Config;
 import com.bitfire.uracer.entities.vehicles.Car;
+import com.bitfire.uracer.events.GameLogicEvent;
+import com.bitfire.uracer.events.GameRendererEvent;
+import com.bitfire.uracer.game.GameLogic;
+import com.bitfire.uracer.game.rendering.GameRenderer;
+import com.bitfire.uracer.task.Task;
 
-public class TrackEffects {
-	public enum Effects {
-		CarSkidMarks( 1 ), SmokeTrails( 2 );
+public class TrackEffects extends Task {
+	public enum Type {
+		CarSkidMarks( 1 ), SmokeTrails( 2 );	// FIXME, effects are destined to be drawn in this precise order in the same queue
+		public final int id;
 
-		public final long id;
-
-		private Effects( int id ) {
+		private Type( int id ) {
 			this.id = id;
 		}
-
-		public long asLong() {
-			return id;
-		}
-
-		public int asInt() {
-			return (int)id;
-		}
 	}
 
-	private static Car playerCar;
+	private TrackEffect[] effects = new TrackEffect[ Type.values().length ];
 
-	private static LongMap<TrackEffect> effects;
-
-	public static void init( Car car ) {
-		playerCar = car;
-		effects = new LongMap<TrackEffect>();
-
-		TrackEffects.add( Effects.CarSkidMarks );
-		// TrackEffects.add( Effects.SmokeTrails );
-	}
-
-	/** manage effects */
-
-	private static void add( Effects what ) {
-		switch( what ) {
-		case CarSkidMarks:
-			add( new CarSkidMarks( playerCar ) );
-			break;
-		case SmokeTrails:
-			add( new SmokeTrails( playerCar ) );
-			break;
+	private final GameLogicEvent.Listener gameLogicEvent = new GameLogicEvent.Listener() {
+		@Override
+		public void gameLogicEvent( com.bitfire.uracer.events.GameLogicEvent.Type type ) {
+			switch( type ) {
+			case onReset:
+			case onRestart:
+				reset();
+				break;
+			}
 		}
-	}
+	};
 
-	private static long add( TrackEffect effect ) {
-		long result = 0;
-		if( effect != null ) {
-			result = effect.effectType.id;
-			effects.put( effect.effectType.id, effect );
+	private final GameRendererEvent.Listener gameRendererEvent = new GameRendererEvent.Listener() {
+		@Override
+		public void gameRendererEvent( GameRendererEvent.Type type ) {
+			SpriteBatch batch = GameRenderer.event.batch;
+			for( TrackEffect effect : effects ) {
+				if( (effect != null) && Config.Graphics.hasEffect( effect.type.id ) )
+					effect.render( batch );
+			}
 		}
+	};
 
-		return result;
+	public TrackEffects( Car car ) {
+		GameLogic.event.addListener( gameLogicEvent );
+		GameRenderer.event.addListener( gameRendererEvent, GameRendererEvent.Type.BatchBeforeMeshes, GameRendererEvent.Order.Order_Minus_4 );
+
+		// TODO, custom render event
+		// for CarSkidMarks GameRenderer.event.addListener( gameRendererEvent, GameRendererEvent.Type.BatchBeforeMeshes, GameRendererEvent.Order.Order_Minus_4 );
+		// for SmokeTrails GameRenderer.event.addListener( gameRendererEvent, GameRendererEvent.Type.BatchBeforeMeshes, GameRendererEvent.Order.Order_Minus_3 );
+
+		effects[Type.CarSkidMarks.ordinal()] = new CarSkidMarks( car );
+//		effects[Type.SmokeTrails.ordinal()] = new SmokeTrails( car );
 	}
 
-	private static boolean remove( Effects what ) {
-		TrackEffect removed = effects.remove( what.id );
-		if( removed != null ) {
-			removed.dispose();
-			return true;
-		}
-
-		return false;
-	}
-
-	public static TrackEffect get( Effects what ) {
-		return effects.get( what.id );
+	public TrackEffect get( Type what ) {
+		return effects[what.ordinal()];
 	}
 
 	/** life */
 
-	public static void tick() {
-		for( TrackEffect effect : effects.values() )
-			effect.tick();
+	@Override
+	public void onTick() {
+		for( TrackEffect effect : effects )
+			if( effect != null )
+				effect.onTick();
 	}
 
-	public static void reset() {
-		for( TrackEffect effect : effects.values() )
-			effect.reset();
+	public void reset() {
+		for( TrackEffect effect : effects )
+			if( effect != null )
+				effect.reset();
 	}
 
-	public static void dispose() {
-		remove( Effects.CarSkidMarks );
-		remove( Effects.SmokeTrails );
+	@Override
+	public void dispose() {
+		for( TrackEffect effect : effects )
+			if( effect != null )
+				effect.dispose();
+
+		effects = null;
 	}
 
-	public static void render( SpriteBatch batch ) {
-		TrackEffect effect;
-
-		effect = effects.get( TrackEffects.Effects.CarSkidMarks.id );
-		if( Config.Graphics.hasEffect( TrackEffects.Effects.CarSkidMarks.id ) && effect != null )
-			effect.render( batch );
-
-		effect = effects.get( TrackEffects.Effects.SmokeTrails.id );
-		if( Config.Graphics.hasEffect( TrackEffects.Effects.SmokeTrails.id ) && effect != null )
-			effect.render( batch );
-	}
-
-	/** expose effects TODO find a more sensible way without incurring in overhead */
-
-	public static void renderEffect( Effects what, SpriteBatch batch ) {
-		effects.get( what.id ).render( batch );
-	}
-
-	public static int getParticleCount( Effects what ) {
-		TrackEffect effect = effects.get( what.id );
+	public int getParticleCount( Type what ) {
+		TrackEffect effect = effects[what.ordinal()];
 		if( effect == null )
 			return 0;
 		return effect.getParticleCount();

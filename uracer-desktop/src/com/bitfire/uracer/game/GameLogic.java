@@ -10,19 +10,20 @@ import aurelienribon.tweenengine.equations.Sine;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Input.Keys;
 import com.bitfire.uracer.Config;
+import com.bitfire.uracer.Director;
 import com.bitfire.uracer.Input;
 import com.bitfire.uracer.URacer;
 import com.bitfire.uracer.carsimulation.CarInputMode;
 import com.bitfire.uracer.carsimulation.Recorder;
 import com.bitfire.uracer.carsimulation.Replay;
-import com.bitfire.uracer.effects.TrackEffects;
 import com.bitfire.uracer.entities.vehicles.Car;
 import com.bitfire.uracer.events.CarEvent;
 import com.bitfire.uracer.events.GameLogicEvent;
 import com.bitfire.uracer.events.PlayerStateEvent;
+import com.bitfire.uracer.game.GameData.State;
+import com.bitfire.uracer.game.logic.DirectorController;
 import com.bitfire.uracer.game.logic.LapState;
 import com.bitfire.uracer.game.logic.PlayerState;
-import com.bitfire.uracer.messager.Messager;
 import com.bitfire.uracer.messager.Messager.MessagePosition;
 import com.bitfire.uracer.messager.Messager.MessageSize;
 import com.bitfire.uracer.messager.Messager.MessageType;
@@ -32,14 +33,17 @@ import com.bitfire.uracer.utils.AMath;
 import com.bitfire.uracer.utils.NumberString;
 
 public class GameLogic implements CarEvent.Listener, PlayerStateEvent.Listener {
+	public static final GameLogicEvent event = new GameLogicEvent();
+
 	// lap
 	private boolean isFirstLap = true;
 	private long lastRecordedLapId = 0;
 
+	//
+	private DirectorController controller = null;
+
 	// replay
 	private Recorder recorder = null;
-
-	public static final GameLogicEvent event = new GameLogicEvent();
 
 	public GameLogic() {
 		event.source = this;
@@ -48,7 +52,9 @@ public class GameLogic implements CarEvent.Listener, PlayerStateEvent.Listener {
 
 		PlayerState.event.addListener( this );
 		Car.event.addListener( this );
-		GameData.playerState.car.setTransform( GameData.gameWorld.playerStartPos, GameData.gameWorld.playerStartOrient );
+		State.playerState.car.setTransform( GameData.gameWorld.playerStartPos, GameData.gameWorld.playerStartOrient );
+
+		controller = new DirectorController( Config.Graphics.CameraInterpolationMode, Director.halfViewport, GameData.gameWorld );
 	}
 
 	boolean timeModulation = false, timeModulationBusy = false;
@@ -100,14 +106,16 @@ public class GameLogic implements CarEvent.Listener, PlayerStateEvent.Listener {
 		return true;
 	}
 
+	public void onBeforeRender() {
+		GameData.System.physicsStep.triggerOnTemporalAliasing( URacer.getTemporalAliasing() );
+
+		// follow the player's car
+		if( GameData.State.playerState != null && GameData.State.playerState.car != null ) {
+			controller.setPosition( GameData.State.playerState.car.state().position );
+		}
+	}
+
 	private void restart() {
-		GameData.tweener.clear();
-		GameData.driftState.reset();
-		GameData.hud.reset();
-		Messager.reset();
-		TrackEffects.reset();
-		recorder.reset();
-		GameData.playerState.reset();
 		isFirstLap = true;
 		timeModulationBusy = false;
 		timeModulation = false;
@@ -116,7 +124,6 @@ public class GameLogic implements CarEvent.Listener, PlayerStateEvent.Listener {
 
 	private void reset() {
 		restart();
-		GameData.lapState.reset();
 		lastRecordedLapId = 0;
 	}
 
@@ -125,8 +132,8 @@ public class GameLogic implements CarEvent.Listener, PlayerStateEvent.Listener {
 		switch( type ) {
 		case onCollision:
 			if( data.car.getInputMode() == CarInputMode.InputFromPlayer ) {
-				if( GameData.driftState.isDrifting ) {
-					GameData.driftState.invalidateByCollision();
+				if( GameData.State.driftState.isDrifting ) {
+					GameData.State.driftState.invalidateByCollision();
 					// System.out.println( "invalidated" );
 				}
 			}
@@ -143,10 +150,10 @@ public class GameLogic implements CarEvent.Listener, PlayerStateEvent.Listener {
 	public void playerStateEvent( PlayerStateEvent.Type type ) {
 		switch( type ) {
 		case onTileChanged:
-			PlayerState player = GameData.playerState;
+			PlayerState player = GameData.State.playerState;
 			boolean onStartZone = (player.currTileX == GameData.gameWorld.playerStartTileX && player.currTileY == GameData.gameWorld.playerStartTileY);
 
-			LapState lapState = GameData.lapState;
+			LapState lapState = GameData.State.lapState;
 			String name = GameData.gameWorld.name;
 
 			if( onStartZone ) {
@@ -181,18 +188,18 @@ public class GameLogic implements CarEvent.Listener, PlayerStateEvent.Listener {
 						player.ghost.setReplay( any );
 						lapState.setLastTrackTimeSeconds( any.trackTimeSeconds );
 
-						Messager.show( "GO!  GO!  GO!", 3f, MessageType.Information, MessagePosition.Middle, MessageSize.Big );
+						GameData.messager.show( "GO!  GO!  GO!", 3f, MessageType.Information, MessagePosition.Middle, MessageSize.Big );
 					} else {
 						// both valid, replay best, overwrite worst
 						Replay best = lapState.getBestReplay(), worst = lapState.getWorstReplay();
 
 						if( lastRecordedLapId == best.id ) {
 							lapState.setLastTrackTimeSeconds( best.trackTimeSeconds );
-							Messager.show( "-" + NumberString.format( worst.trackTimeSeconds - best.trackTimeSeconds ) + " seconds!", 3f, MessageType.Good,
+							GameData.messager.show( "-" + NumberString.format( worst.trackTimeSeconds - best.trackTimeSeconds ) + " seconds!", 3f, MessageType.Good,
 									MessagePosition.Top, MessageSize.Big );
 						} else {
 							lapState.setLastTrackTimeSeconds( worst.trackTimeSeconds );
-							Messager.show( "+" + NumberString.format( worst.trackTimeSeconds - best.trackTimeSeconds ) + " seconds", 3f, MessageType.Bad,
+							GameData.messager.show( "+" + NumberString.format( worst.trackTimeSeconds - best.trackTimeSeconds ) + " seconds", 3f, MessageType.Bad,
 									MessagePosition.Top, MessageSize.Big );
 						}
 

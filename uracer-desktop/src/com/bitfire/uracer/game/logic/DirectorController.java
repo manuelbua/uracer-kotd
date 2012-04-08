@@ -16,18 +16,18 @@ public class DirectorController {
 	private float sigmoidStrengthX = 1f;
 	private float sigmoidStrengthY = 1f;
 
-	public DirectorController( InterpolationMode mode, Vector2 halfViewport, final GameWorld level ) {
+	public DirectorController( InterpolationMode mode, Vector2 halfViewport, final GameWorld world ) {
 		final Rectangle cameraBounds = new Rectangle();
 		cameraBounds.x = halfViewport.x;
-		cameraBounds.width = level.worldSizeScaledPx.x - halfViewport.x;
+		cameraBounds.width = world.worldSizeScaledPx.x - halfViewport.x;
 		cameraBounds.height = halfViewport.y;
-		cameraBounds.y = level.worldSizeScaledPx.y - halfViewport.y;
+		cameraBounds.y = world.worldSizeScaledPx.y - halfViewport.y;
 
 		boundsWidth = cameraBounds.width - cameraBounds.x;
 		boundsHeight = cameraBounds.y - cameraBounds.height;
 
-		sigmoidStrengthX = AMath.clamp( (level.worldSizeTiles.x / 4f), 1f, 5f );
-		sigmoidStrengthY = AMath.clamp( (level.worldSizeTiles.y / 4f), 1f, 5f );
+		sigmoidStrengthX = AMath.clamp( (world.worldSizeTiles.x / 4f), 1f, 5f );
+		sigmoidStrengthY = AMath.clamp( (world.worldSizeTiles.y / 4f), 1f, 5f );
 
 		switch( mode ) {
 		default:
@@ -35,6 +35,7 @@ public class DirectorController {
 			interpolator = new PositionInterpolator() {
 				@Override
 				public Vector2 transform( Vector2 targetPosition ) {
+
 					if( targetPosition.x < cameraBounds.x )
 						targetPosition.x = cameraBounds.x;
 					if( targetPosition.x > cameraBounds.width )
@@ -53,8 +54,8 @@ public class DirectorController {
 				@Override
 				public Vector2 transform( Vector2 targetPosition ) {
 					// [0,1]
-					float x_ratio = targetPosition.x / level.worldSizeScaledPx.x;
-					float y_ratio = targetPosition.y / level.worldSizeScaledPx.y;
+					float x_ratio = targetPosition.x / world.worldSizeScaledPx.x;
+					float y_ratio = targetPosition.y / world.worldSizeScaledPx.y;
 
 					tmp.x = cameraBounds.x + x_ratio * boundsWidth;
 					tmp.y = cameraBounds.height + y_ratio * boundsHeight;
@@ -72,8 +73,8 @@ public class DirectorController {
 					float ty = target.y;
 
 					// [-1, 1]
-					float x_ratio = ((tx / level.worldSizeScaledPx.x) - 0.5f) * 2;
-					float y_ratio = ((ty / level.worldSizeScaledPx.y) - 0.5f) * 2;
+					float x_ratio = ((tx / world.worldSizeScaledPx.x) - 0.5f) * 2;
+					float y_ratio = ((ty / world.worldSizeScaledPx.y) - 0.5f) * 2;
 
 					tmp.x = cameraBounds.x + AMath.sigmoid( x_ratio * sigmoidStrengthX ) * boundsWidth;
 					tmp.y = cameraBounds.height + AMath.sigmoid( y_ratio * sigmoidStrengthY ) * boundsHeight;

@@ -8,6 +8,7 @@ import com.badlogic.gdx.graphics.Texture.TextureFilter;
 import com.badlogic.gdx.graphics.g2d.BitmapFont;
 import com.badlogic.gdx.graphics.g2d.TextureAtlas;
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
+import com.bitfire.uracer.game.GameData;
 
 public class Art {
 	public static TextureRegion[][] base6;
@@ -38,7 +39,7 @@ public class Art {
 
 	private static boolean mipMap;
 
-	public static void load() {
+	public static void init() {
 		mipMap = Config.Graphics.EnableMipMapping;
 
 		base6 = split( "data/base/base6.png", 6, 6, mipMap );
@@ -81,6 +82,8 @@ public class Art {
 
 		// friction maps
 		frictionNature = new Pixmap( Gdx.files.internal( "data/levels/tilesets/nature/224-friction.png" ) );
+
+		Art.scaleFonts( GameData.scalingStrategy.invTileMapZoomFactor );
 	}
 
 	public static void dispose() {
@@ -144,7 +147,7 @@ public class Art {
 		return t;
 	}
 
-	public static void scaleFonts( float scale ) {
+	private static void scaleFonts( float scale ) {
 		Art.fontCurseYR.setScale( scale );
 		Art.fontCurseG.setScale( scale );
 		Art.fontCurseR.setScale( scale );
@@ -152,5 +155,4 @@ public class Art {
 		Art.fontCurseGbig.setScale( scale );
 		Art.fontCurseRbig.setScale( scale );
 	}
-
 }

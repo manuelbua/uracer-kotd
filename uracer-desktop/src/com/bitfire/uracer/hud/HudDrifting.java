@@ -9,15 +9,15 @@ import com.bitfire.uracer.entities.vehicles.Car;
 import com.bitfire.uracer.events.DriftStateEvent;
 import com.bitfire.uracer.events.DriftStateEvent.Type;
 import com.bitfire.uracer.game.GameData;
+import com.bitfire.uracer.game.GameData.State;
 import com.bitfire.uracer.game.logic.DriftState;
-import com.bitfire.uracer.messager.Messager;
 import com.bitfire.uracer.messager.Messager.MessagePosition;
 import com.bitfire.uracer.messager.Messager.MessageSize;
 import com.bitfire.uracer.messager.Messager.MessageType;
 import com.bitfire.uracer.utils.Convert;
 import com.bitfire.uracer.utils.NumberString;
 
-public class HudDrifting implements DriftStateEvent.Listener {
+public class HudDrifting {
 	private Car playerCar;
 	private CarModel model;
 	private int carWidthPx, carLengthPx;
@@ -39,8 +39,55 @@ public class HudDrifting implements DriftStateEvent.Listener {
 
 	private Vector2 heading = new Vector2();
 
+	private DriftStateEvent.Listener driftListener = new DriftStateEvent.Listener() {
+		@Override
+		public void driftStateEvent( Type type ) {
+			switch( type ) {
+			case onBeginDrift:
+				labelRealtime.fadeIn( 300 );
+				break;
+			case onEndDrift:
+				DriftState drift = State.driftState;
+				Vector2 pos = tmpv.set( Director.screenPosForPx( playerCar.state().position ) );
+
+				labelRealtime.fadeOut( 300 );
+
+				HudLabel result = labelResult[nextLabelResult++];
+				if( nextLabelResult == MaxLabelResult )
+					nextLabelResult = 0;
+
+				result.setPosition( pos.x - heading.x * (carWidthPx + result.halfBoundsWidth), pos.y - heading.y * (carLengthPx + result.halfBoundsHeight) );
+
+				float driftSeconds = drift.driftSeconds();
+
+				// premature end drift event due to collision?
+				if( drift.hasCollided ) {
+					result.setString( "-" + NumberString.format( driftSeconds ) );
+					result.setFont( Art.fontCurseRbig );
+				} else {
+					result.setString( "+" + NumberString.format( driftSeconds ) );
+					result.setFont( Art.fontCurseGbig );
+
+					String seconds = NumberString.format( driftSeconds ) + "  seconds!";
+
+					if( driftSeconds >= 1 && driftSeconds < 3f ) {
+						GameData.messager.enqueue( "NICE ONE!\n+" + seconds, 1f, MessageType.Good, MessagePosition.Middle, MessageSize.Big );
+					} else if( driftSeconds >= 3f && driftSeconds < 5f ) {
+						GameData.messager.enqueue( "FANTASTIC!\n+" + seconds, 1f, MessageType.Good, MessagePosition.Middle, MessageSize.Big );
+					} else if( driftSeconds >= 5f ) {
+						GameData.messager.enqueue( "UNREAL!\n+" + seconds, 1f, MessageType.Good, MessagePosition.Bottom, MessageSize.Big );
+					}
+				}
+
+				result.slide();
+				break;
+			}
+		}
+	};
+
 	public HudDrifting( Car car ) {
-		DriftState.event.addListener( this );
+		DriftState.event.addListener( driftListener );
+
 		this.playerCar = car;
 		model = playerCar.getCarModel();
 		carWidthPx = (int)Convert.mt2px( model.width );
@@ -64,15 +111,15 @@ public class HudDrifting implements DriftStateEvent.Listener {
 		nextLabelResult = 0;
 	}
 
+	private Vector2 tmpv = new Vector2();
+	private float lastDistance = 0f;
+
 	public void tick() {
 		heading.set( playerCar.getSimulator().heading );
 	}
 
-	private Vector2 tmpv = new Vector2();
-	private float lastDistance = 0f;
-
 	public void render( SpriteBatch batch ) {
-		DriftState drift = GameData.driftState;
+		DriftState drift = State.driftState;
 
 		// update from subframe-interpolated player position
 		Vector2 pos = tmpv.set( Director.screenPosForPx( playerCar.state().position ) );
@@ -103,50 +150,6 @@ public class HudDrifting implements DriftStateEvent.Listener {
 		//
 		for( int i = 0; i < MaxLabelResult; i++ )
 			labelResult[i].render( batch );
-	}
-
-	@Override
-	public void driftStateEvent( Type type ) {
-		switch( type ) {
-		case onBeginDrift:
-			labelRealtime.fadeIn( 300 );
-			break;
-		case onEndDrift:
-			DriftState drift = GameData.driftState;
-			Vector2 pos = tmpv.set( Director.screenPosForPx( playerCar.state().position ) );
-
-			labelRealtime.fadeOut( 300 );
-
-			HudLabel result = labelResult[nextLabelResult++];
-			if( nextLabelResult == MaxLabelResult )
-				nextLabelResult = 0;
-
-			result.setPosition( pos.x - heading.x * (carWidthPx + result.halfBoundsWidth), pos.y - heading.y * (carLengthPx + result.halfBoundsHeight) );
-
-			float driftSeconds = drift.driftSeconds();
-
-			// premature end drift event due to collision?
-			if( drift.hasCollided ) {
-				result.setString( "-" + NumberString.format( driftSeconds ) );
-				result.setFont( Art.fontCurseRbig );
-			} else {
-				result.setString( "+" + NumberString.format( driftSeconds ) );
-				result.setFont( Art.fontCurseGbig );
-
-				String seconds = NumberString.format( driftSeconds ) + "  seconds!";
-
-				if( driftSeconds >= 1 && driftSeconds < 3f ) {
-					Messager.enqueue( "NICE ONE!\n+" + seconds, 1f, MessageType.Good, MessagePosition.Middle, MessageSize.Big );
-				} else if( driftSeconds >= 3f && driftSeconds < 5f ) {
-					Messager.enqueue( "FANTASTIC!\n+" + seconds, 1f, MessageType.Good, MessagePosition.Middle, MessageSize.Big );
-				} else if( driftSeconds >= 5f ) {
-					Messager.enqueue( "UNREAL!\n+" + seconds, 1f, MessageType.Good, MessagePosition.Bottom, MessageSize.Big );
-				}
-			}
-
-			result.slide();
-			break;
-		}
 	}
 
 }

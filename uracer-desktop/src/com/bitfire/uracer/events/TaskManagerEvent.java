@@ -31,6 +31,10 @@ public class TaskManagerEvent {
 		order.notify.addListener( listener );
 	}
 
+	public void removeListener( Listener listener, Order order ) {
+		order.notify.removeListener( listener );
+	}
+
 	public void trigger( Type type ) {
 		for( Order order : Order.values() )
 			order.notify.taskManagerEvent( type );

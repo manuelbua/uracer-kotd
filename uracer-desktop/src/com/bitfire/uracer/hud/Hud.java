@@ -1,37 +1,71 @@
 package com.bitfire.uracer.hud;
 
 import com.badlogic.gdx.Gdx;
-import com.badlogic.gdx.graphics.GL20;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
-import com.badlogic.gdx.math.Matrix4;
 import com.bitfire.uracer.Art;
+import com.bitfire.uracer.Config;
 import com.bitfire.uracer.carsimulation.Replay;
 import com.bitfire.uracer.effects.CarSkidMarks;
 import com.bitfire.uracer.effects.SmokeTrails;
-import com.bitfire.uracer.effects.TrackEffects;
-import com.bitfire.uracer.effects.TrackEffects.Effects;
+import com.bitfire.uracer.effects.TrackEffects.Type;
 import com.bitfire.uracer.entities.vehicles.Car;
+import com.bitfire.uracer.events.GameLogicEvent;
+import com.bitfire.uracer.events.GameRendererEvent;
 import com.bitfire.uracer.game.GameData;
+import com.bitfire.uracer.game.GameData.State;
+import com.bitfire.uracer.game.GameLogic;
 import com.bitfire.uracer.game.logic.DriftState;
 import com.bitfire.uracer.game.logic.LapState;
-import com.bitfire.uracer.messager.Messager;
+import com.bitfire.uracer.game.rendering.GameRenderer;
+import com.bitfire.uracer.task.Task;
 import com.bitfire.uracer.utils.NumberString;
 
-public class Hud {
+public class Hud extends Task {
 	private HudLabel best, curr, last;
-	private Matrix4 topLeftOrigin, identity;
 	private HudDebugMeter meterLatForce, meterSkidMarks, meterSmoke;
 
 	// components
 	private HudDrifting hudDrift;
 
+	private final GameRendererEvent.Listener gameRendererEvent = new GameRendererEvent.Listener() {
+		@Override
+		public void gameRendererEvent( GameRendererEvent.Type type ) {
+			SpriteBatch batch = GameRenderer.event.batch;
+
+			switch(type) {
+			case BatchAfterMeshes:
+				curr.render( batch );
+				best.render( batch );
+				last.render( batch );
+
+				// render drifting component
+				hudDrift.render( batch );
+				break;
+			case BatchDebug:
+				if( Config.Graphics.RenderHudDebugInfo )
+					onDebug( batch );
+				break;
+			}
+		}
+	};
+
+	private final GameLogicEvent.Listener gameLogicEvent = new GameLogicEvent.Listener() {
+		@Override
+		public void gameLogicEvent( com.bitfire.uracer.events.GameLogicEvent.Type type ) {
+			switch( type ) {
+			case onReset:
+			case onRestart:
+				reset();
+				break;
+			}
+		}
+	};
+
 	// effects
 	public Hud( Car car ) {
-
-		// y-flip
-		topLeftOrigin = new Matrix4();
-		topLeftOrigin.setToOrtho( 0, Gdx.graphics.getWidth(), Gdx.graphics.getHeight(), 0, 0, 10 );
-		identity = new Matrix4();
+		GameRenderer.event.addListener( gameRendererEvent, GameRendererEvent.Type.BatchAfterMeshes, GameRendererEvent.Order.Order_0 );
+		GameRenderer.event.addListener( gameRendererEvent, GameRendererEvent.Type.BatchDebug, GameRendererEvent.Order.Order_0 );
+		GameLogic.event.addListener( gameLogicEvent );
 
 		// grid-based position
 		int gridX = (int)((float)Gdx.graphics.getWidth() / 5f);
@@ -63,22 +97,19 @@ public class Hud {
 		meterSmoke.setName( "smokepar count" );
 	}
 
-	public void dispose() {
-	}
-
-	public void tick() {
-		Messager.tick();
-		hudDrift.tick();
-		updateLapTimes();
-	}
-
 	public void reset() {
 		hudDrift.reset();
 	}
 
+	@Override
+	protected void onTick() {
+		hudDrift.tick();
+		updateLapTimes();
+	}
+
 	private void updateLapTimes() {
 
-		LapState lapState = GameData.lapState;
+		LapState lapState = State.lapState;
 
 		// current time
 		curr.setString( "YOUR  TIME\n" + NumberString.format( lapState.getElapsedSeconds() ) + "s" );
@@ -108,27 +139,8 @@ public class Hud {
 		}
 	}
 
-	public void render( SpriteBatch batch ) {
-		batch.setTransformMatrix( identity );
-		batch.setProjectionMatrix( topLeftOrigin );
-
-		Gdx.gl.glActiveTexture( GL20.GL_TEXTURE0 );
-		batch.begin();
-
-		Messager.render( batch );
-
-		curr.render( batch );
-		best.render( batch );
-		last.render( batch );
-
-		// render drifting component
-		hudDrift.render( batch );
-
-		batch.end();
-	}
-
-	public void debug( SpriteBatch batch ) {
-		DriftState drift = GameData.driftState;
+	public void onDebug( SpriteBatch batch ) {
+		DriftState drift = State.driftState;
 
 		// lateral forces
 		meterLatForce.setValue( drift.driftStrength );
@@ -140,10 +152,10 @@ public class Hud {
 
 		meterLatForce.render( batch );
 
-		meterSkidMarks.setValue( TrackEffects.getParticleCount( Effects.CarSkidMarks ) );
+		meterSkidMarks.setValue( GameData.System.trackEffects.getParticleCount( Type.CarSkidMarks ) );
 		meterSkidMarks.render( batch );
 
-		meterSmoke.setValue( TrackEffects.getParticleCount( Effects.SmokeTrails ) );
+		meterSmoke.setValue( GameData.System.trackEffects.getParticleCount( Type.SmokeTrails ) );
 		meterSmoke.render( batch );
 	}
 }

@@ -3,8 +3,10 @@ package com.bitfire.uracer.game.logic;
 import com.badlogic.gdx.math.Vector2;
 import com.bitfire.uracer.entities.vehicles.Car;
 import com.bitfire.uracer.entities.vehicles.GhostCar;
+import com.bitfire.uracer.events.GameLogicEvent;
 import com.bitfire.uracer.events.PlayerStateEvent;
 import com.bitfire.uracer.game.GameData;
+import com.bitfire.uracer.game.GameLogic;
 import com.bitfire.uracer.task.Task;
 import com.bitfire.uracer.utils.AMath;
 
@@ -25,11 +27,25 @@ public class PlayerState extends Task {
 	public int currTileX = 1, currTileY = 1;
 	private int lastTileX = 0, lastTileY = 0;
 
+	private final GameLogicEvent.Listener gameLogicEvent = new GameLogicEvent.Listener() {
+		@Override
+		public void gameLogicEvent( com.bitfire.uracer.events.GameLogicEvent.Type type ) {
+			switch( type ) {
+			case onReset:
+			case onRestart:
+				reset();
+				break;
+			}
+		}
+	};
+
 	public PlayerState() {
 		this( null, null );
 	}
 
 	public PlayerState( Car car, GhostCar ghost ) {
+		GameLogic.event.addListener( gameLogicEvent );
+
 		event.source = this;
 		setData( car, ghost );
 	}

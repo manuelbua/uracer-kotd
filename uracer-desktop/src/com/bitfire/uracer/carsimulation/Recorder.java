@@ -1,7 +1,9 @@
 package com.bitfire.uracer.carsimulation;
 
 import com.bitfire.uracer.entities.vehicles.Car;
+import com.bitfire.uracer.events.GameLogicEvent;
 import com.bitfire.uracer.game.GameData;
+import com.bitfire.uracer.game.GameLogic;
 
 public class Recorder {
 	private boolean isRecording;
@@ -9,7 +11,20 @@ public class Recorder {
 	// replay data
 	private Replay replay;
 
+	private final GameLogicEvent.Listener gameLogicEvent = new GameLogicEvent.Listener() {
+		@Override
+		public void gameLogicEvent( GameLogicEvent.Type type ) {
+			switch( type ) {
+			case onReset:
+			case onRestart:
+				reset();
+				break;
+			}
+		}
+	};
+
 	public Recorder() {
+		GameLogic.event.addListener( gameLogicEvent );
 		isRecording = false;
 		replay = null;
 	}

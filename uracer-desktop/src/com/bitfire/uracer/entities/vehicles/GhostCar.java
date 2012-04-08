@@ -5,7 +5,6 @@ import com.bitfire.uracer.carsimulation.CarForces;
 import com.bitfire.uracer.carsimulation.CarInputMode;
 import com.bitfire.uracer.carsimulation.CarModel;
 import com.bitfire.uracer.carsimulation.Replay;
-import com.bitfire.uracer.entities.EntityManager;
 import com.bitfire.uracer.factories.CarFactory.CarType;
 
 /** Implements an automated Car, playing previously recorded events. It will
@@ -31,7 +30,7 @@ public class GhostCar extends Car {
 
 	public static GhostCar createForFactory( CarGraphics graphics, CarType type, CarModel model ) {
 		GhostCar ghost = new GhostCar( graphics, type, model );
-		EntityManager.add( ghost );
+//		EntityManager.add( ghost );
 		return ghost;
 	}
 
@@ -73,7 +72,8 @@ public class GhostCar extends Car {
 	}
 
 	@Override
-	public void onDebug() {
+	public void onDebug( SpriteBatch batch ) {
+		// no output
 	}
 
 	@Override

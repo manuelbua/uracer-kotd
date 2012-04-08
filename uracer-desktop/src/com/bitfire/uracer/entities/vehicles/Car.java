@@ -22,7 +22,6 @@ import com.bitfire.uracer.carsimulation.CarSimulator;
 import com.bitfire.uracer.carsimulation.Recorder;
 import com.bitfire.uracer.debug.Debug;
 import com.bitfire.uracer.entities.Box2dEntity;
-import com.bitfire.uracer.entities.EntityManager;
 import com.bitfire.uracer.events.CarEvent;
 import com.bitfire.uracer.factories.CarFactory.CarType;
 import com.bitfire.uracer.game.GameData;
@@ -48,6 +47,7 @@ public class Car extends Box2dEntity {
 	private CarType carType;
 
 	private Vector2 tilePosition = new Vector2();
+
 
 	protected Car( CarGraphics graphics, CarModel model, CarType type, CarInputMode inputMode ) {
 		this.graphics = graphics;
@@ -75,7 +75,7 @@ public class Car extends Box2dEntity {
 	// factory method
 	public static Car createForFactory( CarGraphics graphics, CarModel model, CarType type, CarInputMode inputMode ) {
 		Car car = new Car( graphics, model, type, inputMode );
-		EntityManager.add( car );
+//		EntityManager.add( car );
 		return car;
 	}
 
@@ -203,8 +203,8 @@ public class Car extends Box2dEntity {
 	private WindowedMean frictionMean = new WindowedMean( 16 );
 
 	private void applyFrictionMap( CarInput input ) {
-		GameWorld level = GameData.gameWorld;
-		if( tilePosition.x >= 0 && tilePosition.x < level.map.width && tilePosition.y >= 0 && tilePosition.y < level.map.height ) {
+		GameWorld world = GameData.gameWorld;
+		if( tilePosition.x >= 0 && tilePosition.x < world.map.width && tilePosition.y >= 0 && tilePosition.y < world.map.height ) {
 			// compute realsize-based pixel offset car-tile (top-left origin)
 			float tsx = tilePosition.x * MapUtils.scaledTilesize;
 			float tsy = tilePosition.y * MapUtils.scaledTilesize;
@@ -212,7 +212,7 @@ public class Car extends Box2dEntity {
 			offset.y = GameData.gameWorld.worldSizeScaledPx.y - offset.y;
 			offset.x = offset.x - tsx;
 			offset.y = offset.y - tsy;
-			offset.mul( MapUtils.invScaledTilesize ).mul( level.map.tileWidth );
+			offset.mul( MapUtils.invScaledTilesize ).mul( world.map.tileWidth );
 
 			TiledLayer layerTrack = MapUtils.getLayer( MapUtils.LayerTrack );
 			int id = layerTrack.tiles[(int)tilePosition.y][(int)tilePosition.x] - 1;
@@ -221,8 +221,8 @@ public class Car extends Box2dEntity {
 			// int yOnMap = (int)( id/4f ) * 224 + (int)offset.y;
 
 			// bit twiddling, faster versions
-			int xOnMap = (id & 3) * (int)level.map.tileWidth + (int)offset.x;
-			int yOnMap = (id >> 2) * (int)level.map.tileWidth + (int)offset.y;
+			int xOnMap = (id & 3) * (int)world.map.tileWidth + (int)offset.x;
+			int yOnMap = (id >> 2) * (int)world.map.tileWidth + (int)offset.y;
 
 			int pixel = Art.frictionNature.getPixel( xOnMap, yOnMap );
 			frictionMean.addValue( (pixel == -256 ? 0 : -1) );
@@ -337,25 +337,25 @@ public class Car extends Box2dEntity {
 	}
 
 	@Override
-	public void onDebug() {
+	public void onDebug( SpriteBatch batch ) {
 		if( carInputMode != CarInputMode.InputFromPlayer )
 			return;
 
 		if( Config.Graphics.RenderPlayerDebugInfo ) {
-			Debug.drawString( "vel_wc len =" + carDesc.velocity_wc.len(), 0, 13 );
-			Debug.drawString( "vel_wc [x=" + carDesc.velocity_wc.x + ", y=" + carDesc.velocity_wc.y + "]", 0, 20 );
-			Debug.drawString( "steerangle=" + carDesc.steerangle, 0, 27 );
-			Debug.drawString( "throttle=" + carDesc.throttle, 0, 34 );
-			Debug.drawString( "screen x=" + Director.screenPosFor( body ).x + ",y=" + Director.screenPosFor( body ).y, 0, 80 );
-			Debug.drawString( "world-mt x=" + body.getPosition().x + ",y=" + body.getPosition().y, 0, 87 );
-			Debug.drawString( "world-px x=" + Convert.mt2px( body.getPosition().x ) + ",y=" + Convert.mt2px( body.getPosition().y ), 0, 93 );
+			Debug.drawString( batch, "vel_wc len =" + carDesc.velocity_wc.len(), 0, 13 );
+			Debug.drawString( batch, "vel_wc [x=" + carDesc.velocity_wc.x + ", y=" + carDesc.velocity_wc.y + "]", 0, 20 );
+			Debug.drawString( batch, "steerangle=" + carDesc.steerangle, 0, 27 );
+			Debug.drawString( batch, "throttle=" + carDesc.throttle, 0, 34 );
+			Debug.drawString( batch, "screen x=" + Director.screenPosFor( body ).x + ",y=" + Director.screenPosFor( body ).y, 0, 80 );
+			Debug.drawString( batch, "world-mt x=" + body.getPosition().x + ",y=" + body.getPosition().y, 0, 87 );
+			Debug.drawString( batch, "world-px x=" + Convert.mt2px( body.getPosition().x ) + ",y=" + Convert.mt2px( body.getPosition().y ), 0, 93 );
 			// Debug.drawString( "dir worldsize x=" + Director.worldSizeScaledPx.x + ",y=" +
 			// Director.worldSizeScaledPx.y, 0, 100 );
 			// Debug.drawString( "dir bounds x=" + Director.boundsPx.x + ",y=" + Director.boundsPx.width, 0, 107 );
-			Debug.drawString( "orient=" + body.getAngle(), 0, 114 );
-			Debug.drawString( "render.interp=" + (state().position.x + "," + state().position.y), 0, 121 );
+			Debug.drawString( batch, "orient=" + body.getAngle(), 0, 114 );
+			Debug.drawString( batch, "render.interp=" + (state().position.x + "," + state().position.y), 0, 121 );
 
-			Debug.drawString( "on tile " + tilePosition, 0, 0 );
+			Debug.drawString( batch, "on tile " + tilePosition, 0, 0 );
 		}
 	}
 }

@@ -8,9 +8,9 @@ import com.bitfire.uracer.Art;
 import com.bitfire.uracer.Config;
 import com.bitfire.uracer.Director;
 import com.bitfire.uracer.carsimulation.CarModel;
-import com.bitfire.uracer.effects.TrackEffects.Effects;
+import com.bitfire.uracer.effects.TrackEffects.Type;
 import com.bitfire.uracer.entities.vehicles.Car;
-import com.bitfire.uracer.game.GameData;
+import com.bitfire.uracer.game.GameData.State;
 import com.bitfire.uracer.game.logic.DriftState;
 import com.bitfire.uracer.utils.AMath;
 import com.bitfire.uracer.utils.Convert;
@@ -27,7 +27,7 @@ public class CarSkidMarks extends TrackEffect {
 	private Vector2 last;
 
 	public CarSkidMarks( Car player ) {
-		super( Effects.CarSkidMarks );
+		super( Type.CarSkidMarks );
 
 		markIndex = 0;
 		visibleSkidMarksCount = 0;
@@ -59,7 +59,7 @@ public class CarSkidMarks extends TrackEffect {
 	}
 
 	@Override
-	public void tick() {
+	public void onTick() {
 		addDriftMark();
 
 		SkidMark d;
@@ -108,7 +108,7 @@ public class CarSkidMarks extends TrackEffect {
 			return;
 		}
 
-		DriftState di = GameData.driftState;
+		DriftState di = State.driftState;
 		if( di.driftStrength > 0.2f )
 		// if( di.isDrifting )
 		{

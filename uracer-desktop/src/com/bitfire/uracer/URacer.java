@@ -58,7 +58,6 @@ public class URacer implements ApplicationListener {
 		URacer.updateVersionInformation();
 
 		Config.asDefault();
-		Art.load();
 		Debug.create();
 		input.releaseAllKeys();
 
@@ -157,7 +156,6 @@ public class URacer implements ApplicationListener {
 	public void dispose() {
 		setScreen( null );
 		Debug.dispose();
-		Art.dispose();
 		if( uRacerFinalizer != null )
 			uRacerFinalizer.dispose();
 

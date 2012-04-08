@@ -56,7 +56,7 @@ public class Combine extends Filter<Combine> {
 	}
 
 	@Override
-	public void rebind() {
+	public final void rebind() {
 		setParams( Param.Texture1, u_texture_1 );
 		setParams( Param.Texture2, u_texture_2 );
 		endParams();

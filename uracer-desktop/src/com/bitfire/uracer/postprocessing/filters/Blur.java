@@ -51,8 +51,9 @@ public class Blur extends MultipassFilter {
 		this.amount = 1f;
 
 		// create filters
-		for( Tap tap : Tap.values() )
+		for( Tap tap : Tap.values() ) {
 			convolve.put( tap.radius, new Convolve2D( tap.radius ) );
+		}
 
 		setType( BlurType.Gaussian5x5 );
 	}
@@ -70,7 +71,7 @@ public class Blur extends MultipassFilter {
 		this.passes = passes;
 	}
 
-	public void setType( BlurType type ) {
+	public final void setType( BlurType type ) {
 		this.type = type;
 		computeBlurWeightings();
 	}
@@ -220,8 +221,9 @@ public class Blur extends MultipassFilter {
 		}
 
 		int size = (radius * 2) + 1;
-		for( int i = 0; i < size; ++i )
+		for( int i = 0; i < size; ++i ) {
 			outKernel[i] /= total;
+		}
 	}
 
 	private void computeOffsets( int blurRadius, float dx, float dy, float[] outOffsetH, float[] outOffsetV ) {

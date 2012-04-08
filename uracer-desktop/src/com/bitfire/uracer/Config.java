@@ -68,7 +68,7 @@ public class Config {
 		public static InterpolationMode CameraInterpolationMode;
 		public static long Effects;
 
-		public static boolean hasEffect( long effectId ) {
+		public static boolean hasEffect( int effectId ) {
 			return ((Effects & effectId) == effectId);
 		}
 
@@ -84,7 +84,7 @@ public class Config {
 			Render3DBoundingBoxes = false;
 
 			CameraInterpolationMode = InterpolationMode.Sigmoid;
-			Effects = (TrackEffects.Effects.CarSkidMarks.id | TrackEffects.Effects.SmokeTrails.id);
+			Effects = (TrackEffects.Type.CarSkidMarks.id | TrackEffects.Type.SmokeTrails.id);
 		}
 	}
 

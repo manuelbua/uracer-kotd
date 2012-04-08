@@ -11,7 +11,7 @@ import com.bitfire.uracer.utils.MapUtils;
 import com.bitfire.uracer.utils.ShaderLoader;
 
 /** The model is expected to follow the z-up convention.
- * 
+ *
  * @author manuel */
 public class OrthographicAlignedStillModel {
 	public UStillModel model;
@@ -99,33 +99,33 @@ public class OrthographicAlignedStillModel {
 		}
 	}
 
-	public void setPositionOffsetPixels( int offsetPxX, int offsetPxY ) {
+	public final void setPositionOffsetPixels( int offsetPxX, int offsetPxY ) {
 		positionOffsetPx.x = offsetPxX;
 		positionOffsetPx.y = offsetPxY;
 	}
 
 	/** Sets the world position in pixels, top-left origin.
-	 * 
+	 *
 	 * @param posPxX
 	 * @param posPxY */
-	public void setPosition( float posPxX, float posPxY ) {
+	public final void setPosition( float posPxX, float posPxY ) {
 		positionPx.set( MapUtils.positionFor( posPxX, posPxY ) );
 	}
 
 	public float iRotationAngle;
 	public Vector3 iRotationAxis = new Vector3();
 
-	public void setRotation( float angle, float x_axis, float y_axis, float z_axis ) {
+	public final void setRotation( float angle, float x_axis, float y_axis, float z_axis ) {
 		iRotationAngle = angle;
 		iRotationAxis.set( x_axis, y_axis, z_axis );
 	}
 
-	private void setScalingFactor( float factor ) {
+	private final void setScalingFactor( float factor ) {
 		scalingFactor = factor;
 		scaleAxis.set( scale, scale, scale );
 	}
 
-	public void setScale( float scale ) {
+	public final void setScale( float scale ) {
 		this.scale = scalingFactor * scale;
 		scaleAxis.set( this.scale, this.scale, this.scale );
 	}

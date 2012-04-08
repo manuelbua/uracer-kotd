@@ -4,7 +4,9 @@ import com.badlogic.gdx.utils.Disposable;
 import com.bitfire.uracer.entities.vehicles.Car;
 import com.bitfire.uracer.events.DriftStateEvent;
 import com.bitfire.uracer.events.DriftStateEvent.Type;
-import com.bitfire.uracer.game.GameData;
+import com.bitfire.uracer.events.GameLogicEvent;
+import com.bitfire.uracer.game.GameData.State;
+import com.bitfire.uracer.game.GameLogic;
 import com.bitfire.uracer.task.Task;
 import com.bitfire.uracer.utils.AMath;
 
@@ -20,7 +22,20 @@ public class DriftState extends Task implements Disposable {
 
 	private Time time, collisionTime;
 
+	private final GameLogicEvent.Listener gameLogicEvent = new GameLogicEvent.Listener() {
+		@Override
+		public void gameLogicEvent( com.bitfire.uracer.events.GameLogicEvent.Type type ) {
+			switch( type ) {
+			case onReset:
+			case onRestart:
+				reset();
+				break;
+			}
+		}
+	};
+
 	public DriftState() {
+		GameLogic.event.addListener( gameLogicEvent );
 		reset();
 	}
 
@@ -54,7 +69,7 @@ public class DriftState extends Task implements Disposable {
 
 	@Override
 	protected void onTick() {
-		Car car = GameData.playerState.car;
+		Car car = State.playerState.car;
 		float oneOnMaxGrip = 1f / car.getCarModel().max_grip;
 
 		// lateral forces are in the range [-max_grip, max_grip]

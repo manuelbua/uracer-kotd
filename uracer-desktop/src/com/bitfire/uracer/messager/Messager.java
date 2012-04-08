@@ -4,8 +4,14 @@ import java.util.LinkedList;
 
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.utils.Array;
+import com.bitfire.uracer.events.GameLogicEvent;
+import com.bitfire.uracer.events.GameRendererEvent;
+import com.bitfire.uracer.events.GameRendererEvent.Type;
+import com.bitfire.uracer.game.GameLogic;
+import com.bitfire.uracer.game.rendering.GameRenderer;
+import com.bitfire.uracer.task.Task;
 
-public class Messager {
+public class Messager extends Task {
 	public enum MessageType {
 		Information, Bad, Good
 	}
@@ -18,17 +24,43 @@ public class Messager {
 		Normal, Big
 	}
 
+	private final GameRendererEvent.Listener gameRendererEvent = new GameRendererEvent.Listener() {
+		@Override
+		public void gameRendererEvent( Type type ) {
+			SpriteBatch batch = GameRenderer.event.batch;
+
+			if( isBusy( MessagePosition.Top ) )
+				currents.get( MessagePosition.Top.ordinal() ).render( batch );
+			if( isBusy( MessagePosition.Middle ) )
+				currents.get( MessagePosition.Middle.ordinal() ).render( batch );
+			if( isBusy( MessagePosition.Bottom ) )
+				currents.get( MessagePosition.Bottom.ordinal() ).render( batch );
+		}
+	};
+
+	private final GameLogicEvent.Listener gameLogicEvent = new GameLogicEvent.Listener() {
+		@Override
+		public void gameLogicEvent( GameLogicEvent.Type type ) {
+			switch( type ) {
+			case onReset:
+			case onRestart:
+				reset();
+				break;
+			}
+		}
+	};
+
 	// data
-	private static Array<LinkedList<Message>> messages;
-	private static Array<Message> currents;
-	private static Message[] messageStore;
-	private static final int MaxMessagesInStore = 10;
-	private static int idxMessageStore;
+	private Array<LinkedList<Message>> messages;
+	private Array<Message> currents;
+	private Message[] messageStore;
+	private final int MaxMessagesInStore = 10;
+	private int idxMessageStore;
 
-	private Messager() {
-	}
+	public Messager() {
+		GameRenderer.event.addListener( gameRendererEvent, GameRendererEvent.Type.BatchAfterMeshes, GameRendererEvent.Order.Order_Minus_4 );
+		GameLogic.event.addListener( gameLogicEvent );
 
-	public static void init() {
 		currents = new Array<Message>( 3 );
 		currents.insert( MessagePosition.Top.ordinal(), null );
 		currents.insert( MessagePosition.Middle.ordinal(), null );
@@ -46,34 +78,35 @@ public class Messager {
 			messageStore[i] = new Message();
 	}
 
-	public static void dispose() {
+	@Override
+	public void dispose() {
 		reset();
 	}
 
-	public static boolean isBusy( MessagePosition group ) {
-		return (currents.get( group.ordinal() ) != null);
-	}
-
-	public static void reset() {
-		messages.get( MessagePosition.Top.ordinal() ).clear();
-		messages.get( MessagePosition.Middle.ordinal() ).clear();
-		messages.get( MessagePosition.Bottom.ordinal() ).clear();
-
-		currents.clear();
-		messages.clear();
-
-		init();
-
-		// System.out.println("Messages just got cleaned up.");
-	}
-
-	public static void tick() {
+	@Override
+	protected void onTick() {
 		update( MessagePosition.Top );
 		update( MessagePosition.Middle );
 		update( MessagePosition.Bottom );
 	}
 
-	private static void update( MessagePosition group ) {
+	public boolean isBusy( MessagePosition group ) {
+		return (currents.get( group.ordinal() ) != null);
+	}
+
+	public void reset() {
+		messages.get( MessagePosition.Top.ordinal() ).clear();
+		messages.get( MessagePosition.Middle.ordinal() ).clear();
+		messages.get( MessagePosition.Bottom.ordinal() ).clear();
+
+		currents.set( MessagePosition.Top.ordinal(), null );
+		currents.set( MessagePosition.Middle.ordinal(), null );
+		currents.set( MessagePosition.Bottom.ordinal(), null );
+
+		idxMessageStore = 0;
+	}
+
+	private void update( MessagePosition group ) {
 		LinkedList<Message> msgs = messages.get( group.ordinal() );
 		Message msg = currents.get( group.ordinal() );
 
@@ -106,28 +139,20 @@ public class Messager {
 		}
 	}
 
-	public static void render( SpriteBatch batch ) {
-		if( isBusy( MessagePosition.Top ) )
-			currents.get( MessagePosition.Top.ordinal() ).render( batch );
-		if( isBusy( MessagePosition.Middle ) )
-			currents.get( MessagePosition.Middle.ordinal() ).render( batch );
-		if( isBusy( MessagePosition.Bottom ) )
-			currents.get( MessagePosition.Bottom.ordinal() ).render( batch );
-	}
-
-	public static void show( String message, float durationSecs, MessageType type, MessagePosition position, MessageSize size ) {
+	public void show( String message, float durationSecs, MessageType type, MessagePosition position, MessageSize size ) {
 		if( isBusy( position ) )
 			currents.get( position.ordinal() ).onHide();
+
 		enqueue( message, durationSecs, type, position, size );
 	}
 
-	public static void enqueue( String message, float durationSecs, MessageType type, MessagePosition position, MessageSize size ) {
+	public void enqueue( String message, float durationSecs, MessageType type, MessagePosition position, MessageSize size ) {
 		Message m = nextFreeMessage();
 		m.set( message, durationSecs, type, position, size );
 		messages.get( position.ordinal() ).add( m );
 	}
 
-	private static Message nextFreeMessage() {
+	private Message nextFreeMessage() {
 		Message ret = messageStore[idxMessageStore++];
 		if( idxMessageStore == MaxMessagesInStore ) {
 			idxMessageStore = 0;

@@ -8,10 +8,12 @@ import com.bitfire.uracer.URacer;
 import com.bitfire.uracer.carsimulation.CarInputMode;
 import com.bitfire.uracer.entities.vehicles.Car;
 import com.bitfire.uracer.events.CarEvent;
-import com.bitfire.uracer.game.GameData;
+import com.bitfire.uracer.events.CarEvent.Data;
+import com.bitfire.uracer.events.CarEvent.Type;
+import com.bitfire.uracer.game.GameData.State;
 import com.bitfire.uracer.utils.AMath;
 
-public class CarImpactSoundEffect extends CarSoundEffect implements CarEvent.Listener {
+public class CarImpactSoundEffect extends CarSoundEffect {
 	private Sound soundLow1, soundLow2, soundMid1, soundMid2, soundHigh;
 	private long lastSoundTimeMs = 0;
 	private final long MinElapsedBetweenSoundsMs = 500;
@@ -21,13 +23,26 @@ public class CarImpactSoundEffect extends CarSoundEffect implements CarEvent.Lis
 	private final float MaxVolume = .8f;
 
 	// pitch modulation
-	private float driftLastPitch = 0;
 	private final float pitchFactor = 1f;
 	private final float pitchMin = 0.75f;
 	private final float pitchMax = 1f;
 
+	private final CarEvent.Listener carEvent = new CarEvent.Listener() {
+		@Override
+		public void carEvent( Type type, Data data ) {
+			switch( type ) {
+			case onCollision:
+				if( data.car.getInputMode() == CarInputMode.InputFromPlayer )
+					impact( data.impulses.len(), State.playerState.currSpeedFactor );
+				break;
+			case onComputeForces:
+				break;
+			}
+		}
+	};
+
 	public CarImpactSoundEffect() {
-		Car.event.addListener( this );
+		Car.event.addListener( carEvent );
 
 		soundLow1 = Gdx.audio.newSound( Gdx.files.getFileHandle( "data/audio/impact-2.ogg", FileType.Internal ) );
 		soundLow2 = Gdx.audio.newSound( Gdx.files.getFileHandle( "data/audio/impact-3.ogg", FileType.Internal ) );
@@ -37,7 +52,7 @@ public class CarImpactSoundEffect extends CarSoundEffect implements CarEvent.Lis
 	}
 
 	@Override
-	public void dispose() {
+	public void onDispose() {
 		soundLow1.stop();
 		soundLow1.dispose();
 		soundLow2.stop();
@@ -86,7 +101,6 @@ public class CarImpactSoundEffect extends CarSoundEffect implements CarEvent.Lis
 				volumeFactor = 0.75f + (impactFactor - 0.75f);
 			}
 
-
 			long id = s.play( MaxVolume * volumeFactor );
 			float pitch = speedFactor * pitchFactor + pitchMin;
 			pitch = AMath.clamp( pitch, pitchMin, pitchMax );
@@ -96,29 +110,17 @@ public class CarImpactSoundEffect extends CarSoundEffect implements CarEvent.Lis
 	}
 
 	@Override
-	public void carEvent( CarEvent.Type type, CarEvent.Data data ) {
-		switch( type ) {
-		case onCollision:
-			if( data.car.getInputMode() == CarInputMode.InputFromPlayer )
-				impact( data.impulses.len(), GameData.playerState.currSpeedFactor );
-			break;
-		case onComputeForces:
-			break;
-		}
-	}
-
-	@Override
-	public void start() {
+	public void onStart() {
 		// unused
 	}
 
 	@Override
-	public void stop() {
+	public void onStop() {
 		// unused
 	}
 
 	@Override
-	public void reset() {
+	public void onReset() {
 		// unused
 	}
 }

@@ -1,6 +1,8 @@
 package com.bitfire.uracer.game.logic;
 
 import com.bitfire.uracer.carsimulation.Replay;
+import com.bitfire.uracer.events.GameLogicEvent;
+import com.bitfire.uracer.game.GameLogic;
 
 public class LapState {
 	// replays
@@ -11,7 +13,20 @@ public class LapState {
 	private float lastTrackTimeSecs;
 	private boolean hasLastTrackTimeSecs;
 
+	private final GameLogicEvent.Listener gameLogicEvent = new GameLogicEvent.Listener() {
+		@Override
+		public void gameLogicEvent( com.bitfire.uracer.events.GameLogicEvent.Type type ) {
+			switch( type ) {
+			case onReset:
+				reset();
+				break;
+			}
+		}
+	};
+
 	public LapState() {
+		GameLogic.event.addListener( gameLogicEvent );
+
 		startTimeNs = 0;
 		lastTrackTimeSecs = 0;
 		hasLastTrackTimeSecs = false;
