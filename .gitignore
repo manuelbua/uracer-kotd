@@ -2,7 +2,7 @@
 /uracer-desktop/data
 /uracer-android/bin
 /uracer-android/gen
-/target
+/uracer-desktop/target
 AndroidManifest.xml
 VersionInfo.java
 *.so
