@@ -15,6 +15,9 @@ import com.bitfire.uracer.entities.CollisionFilters;
 
 public class Box2DFactory {
 
+	private Box2DFactory() {
+	}
+
 	public static void init() {
 		Box2DFactory.tmp1 = new Vector2();
 		Box2DFactory.tmp2 = new Vector2();

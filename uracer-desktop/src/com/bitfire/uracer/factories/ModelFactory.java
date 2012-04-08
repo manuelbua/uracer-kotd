@@ -21,6 +21,9 @@ public class ModelFactory {
 		Missing, Palm, Tribune, Tree_1, Tree_2, Tree_3, Tree_4, Tree_5, Tree_6, Tree_7, Tree_8, Tree_9
 	}
 
+	private ModelFactory() {
+	}
+
 	private static ModelMesh fromString( String mesh ) {
 		if( mesh == null ) {
 			return ModelMesh.Missing;

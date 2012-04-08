@@ -21,6 +21,9 @@ public class CarFactory {
 		OldSkool, OldSkool2
 	}
 
+	private CarFactory() {
+	}
+
 	public static GhostCar createGhost( CarType type, CarModel model ) {
 		CarGraphics graphics = createCarGraphics( type, model );
 		GhostCar ghost = GhostCar.createForFactory( graphics, type, model );
