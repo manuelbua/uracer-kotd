@@ -1,9 +1,9 @@
-package com.bitfire.uracer.effects;
+package com.bitfire.uracer.game.effects;
 
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.bitfire.uracer.Config;
-import com.bitfire.uracer.effects.TrackEffect.Type;
 import com.bitfire.uracer.game.GameData.Events;
+import com.bitfire.uracer.game.effects.TrackEffect.Type;
 import com.bitfire.uracer.game.entities.Car;
 import com.bitfire.uracer.game.events.GameLogicEvent;
 import com.bitfire.uracer.game.events.GameRendererEvent;
@@ -29,8 +29,9 @@ public class TrackEffects extends Task {
 		public void gameRendererEvent( GameRendererEvent.Type type ) {
 			SpriteBatch batch = Events.gameRenderer.batch;
 			for( TrackEffect effect : effects ) {
-				if( (effect != null) && Config.Graphics.hasEffect( effect.type.id ) )
+				if( (effect != null) && Config.Graphics.hasEffect( effect.type.id ) ) {
 					effect.render( batch );
+				}
 			}
 		}
 	};
@@ -40,11 +41,13 @@ public class TrackEffects extends Task {
 		Events.gameRenderer.addListener( gameRendererEvent, GameRendererEvent.Type.BatchBeforeMeshes, GameRendererEvent.Order.MINUS_4 );
 
 		// TODO, custom render event
-		// for CarSkidMarks GameRenderer.event.addListener( gameRendererEvent, GameRendererEvent.Type.BatchBeforeMeshes, GameRendererEvent.Order.Order_Minus_4 );
-		// for SmokeTrails GameRenderer.event.addListener( gameRendererEvent, GameRendererEvent.Type.BatchBeforeMeshes, GameRendererEvent.Order.Order_Minus_3 );
+		// for CarSkidMarks GameRenderer.event.addListener( gameRendererEvent, GameRendererEvent.Type.BatchBeforeMeshes,
+		// GameRendererEvent.Order.Order_Minus_4 );
+		// for SmokeTrails GameRenderer.event.addListener( gameRendererEvent, GameRendererEvent.Type.BatchBeforeMeshes,
+		// GameRendererEvent.Order.Order_Minus_3 );
 
 		effects[Type.CarSkidMarks.ordinal()] = new CarSkidMarks( car );
-//		effects[Type.SmokeTrails.ordinal()] = new SmokeTrails( car );
+		// effects[Type.SmokeTrails.ordinal()] = new SmokeTrails( car );
 	}
 
 	public TrackEffect get( Type what ) {

@@ -2,8 +2,8 @@ package com.bitfire.uracer;
 
 import com.badlogic.gdx.Application.ApplicationType;
 import com.badlogic.gdx.Gdx;
-import com.bitfire.uracer.effects.TrackEffect;
 import com.bitfire.uracer.game.GameDifficulty;
+import com.bitfire.uracer.game.effects.TrackEffect;
 import com.bitfire.uracer.game.logic.DirectorController.InterpolationMode;
 import com.bitfire.uracer.postprocessing.filters.Blur;
 import com.bitfire.uracer.postprocessing.filters.Blur.BlurType;
@@ -14,7 +14,7 @@ public final class Config {
 	public static boolean isDesktop;
 	public static final String LevelsStore = "data/levels/";
 
-	public final static class PostProcessing {
+	public static final class PostProcessing {
 		public static BlurType BlurType;
 		public static float RttRatio = 0.25f;
 		public static int PotRttFboWidth, PotRttFboHeight;
@@ -62,7 +62,7 @@ public final class Config {
 		}
 	}
 
-	public final static class Graphics {
+	public static final class Graphics {
 		public static boolean EnableMipMapping;
 		public static boolean EnablePostProcessingFx;
 		public static boolean SubframeInterpolation;
@@ -97,7 +97,7 @@ public final class Config {
 		}
 	}
 
-	public final static class Physics {
+	public static final class Physics {
 
 		/** defines how many pixels are 1 Box2d meter, this will be
 		 * automatically scaled accordingly to the device resolution
@@ -124,7 +124,7 @@ public final class Config {
 		}
 	}
 
-	public final static class Game {
+	public static final class Game {
 		public static GameDifficulty difficulty;
 
 		public static void asDefault() {
@@ -135,7 +135,7 @@ public final class Config {
 		}
 	}
 
-	public final static class Debug {
+	public static final class Debug {
 		public static boolean TraverseWalls;
 		public static boolean ApplyFrictionMap;
 		public static boolean FrustumCulling;

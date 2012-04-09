@@ -1,4 +1,4 @@
-package com.bitfire.uracer.effects;
+package com.bitfire.uracer.game.effects;
 
 import com.badlogic.gdx.graphics.g2d.Sprite;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
