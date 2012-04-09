@@ -48,7 +48,7 @@ public class Game implements Disposable {
 		GameData.create( difficulty );
 		Art.init();
 		BatchUtils.init( Art.base6 );
-		Convert.init( GameData.scalingStrategy.invTileMapZoomFactor );
+		Convert.init( GameData.scalingStrategy.invTileMapZoomFactor, Config.Physics.PixelsPerMeter );
 		Director.init();
 
 		Car car = CarFactory.createPlayer( CarType.OldSkool, new CarModel().toModel2() );
