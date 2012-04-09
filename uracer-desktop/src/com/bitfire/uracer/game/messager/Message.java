@@ -14,12 +14,21 @@ import com.badlogic.gdx.graphics.g2d.BitmapFont.TextBounds;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.bitfire.uracer.Art;
 import com.bitfire.uracer.game.Tweener;
-import com.bitfire.uracer.game.messager.Messager.MessagePosition;
-import com.bitfire.uracer.game.messager.Messager.MessageSize;
-import com.bitfire.uracer.game.messager.Messager.MessageType;
 import com.bitfire.uracer.utils.AMath;
 
 public class Message {
+	public enum MessageType {
+		Information, Bad, Good
+	}
+
+	public enum MessagePosition {
+		Top, Middle, Bottom
+	}
+
+	public enum MessageSize {
+		Normal, Big
+	}
+
 	public long durationMs;
 	public long startMs;
 	public boolean started;

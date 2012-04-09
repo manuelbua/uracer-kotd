@@ -8,21 +8,12 @@ import com.bitfire.uracer.game.GameEvents;
 import com.bitfire.uracer.game.events.GameLogicEvent;
 import com.bitfire.uracer.game.events.GameRendererEvent;
 import com.bitfire.uracer.game.events.GameRendererEvent.Type;
+import com.bitfire.uracer.game.messager.Message.MessagePosition;
+import com.bitfire.uracer.game.messager.Message.MessageSize;
+import com.bitfire.uracer.game.messager.Message.MessageType;
 import com.bitfire.uracer.task.Task;
 
 public class Messager extends Task {
-	public enum MessageType {
-		Information, Bad, Good
-	}
-
-	public enum MessagePosition {
-		Top, Middle, Bottom
-	}
-
-	public enum MessageSize {
-		Normal, Big
-	}
-
 	private final GameRendererEvent.Listener gameRendererEvent = new GameRendererEvent.Listener() {
 		@Override
 		public void gameRendererEvent( Type type ) {
