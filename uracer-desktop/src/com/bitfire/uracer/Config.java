@@ -2,7 +2,6 @@ package com.bitfire.uracer;
 
 import com.badlogic.gdx.Application.ApplicationType;
 import com.badlogic.gdx.Gdx;
-import com.bitfire.uracer.game.GameDifficulty;
 import com.bitfire.uracer.game.effects.TrackEffect;
 import com.bitfire.uracer.game.logic.DirectorController.InterpolationMode;
 import com.bitfire.uracer.postprocessing.filters.Blur;
@@ -124,17 +123,6 @@ public final class Config {
 		}
 	}
 
-	public static final class Game {
-		public static GameDifficulty difficulty;
-
-		public static void asDefault() {
-			difficulty = GameDifficulty.Hard;
-		}
-
-		private Game() {
-		}
-	}
-
 	public static final class Debug {
 		public static boolean TraverseWalls;
 		public static boolean ApplyFrictionMap;
@@ -154,7 +142,6 @@ public final class Config {
 	public static void asDefault() {
 		isDesktop = (Gdx.app.getType() == ApplicationType.Desktop);
 
-		Game.asDefault();
 		Graphics.asDefault();
 		Physics.asDefault();
 		PostProcessing.asDefault();

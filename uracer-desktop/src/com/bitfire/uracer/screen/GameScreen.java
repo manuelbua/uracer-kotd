@@ -1,14 +1,14 @@
 package com.bitfire.uracer.screen;
 
-import com.bitfire.uracer.Config;
 import com.bitfire.uracer.game.Game;
+import com.bitfire.uracer.game.GameDifficulty;
 
 public class GameScreen extends Screen {
 	private Game game = null;
 	private boolean quit = false;
 
 	public GameScreen() {
-		game = new Game( "tutorial-3", Config.Game.difficulty );
+		game = new Game( "tutorial-3", GameDifficulty.Hard );
 	}
 
 	@Override
@@ -20,8 +20,10 @@ public class GameScreen extends Screen {
 
 	@Override
 	public void tick() {
-		if( quit )
+		if( quit ) {
 			return;
+		}
+
 		quit = !game.tick();
 	}
 
@@ -32,8 +34,10 @@ public class GameScreen extends Screen {
 
 	@Override
 	public void render() {
-		if( quit )
+		if( quit ) {
 			return;
+		}
+
 		game.render();
 	}
 
