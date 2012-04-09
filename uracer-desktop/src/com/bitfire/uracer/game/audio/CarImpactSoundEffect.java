@@ -12,28 +12,30 @@ import com.bitfire.uracer.game.actors.CarEvent;
 import com.bitfire.uracer.game.actors.CarEvent.Data;
 import com.bitfire.uracer.game.actors.CarEvent.Type;
 import com.bitfire.uracer.utils.AMath;
+import com.bitfire.uracer.utils.AudioUtils;
 
 public class CarImpactSoundEffect extends CarSoundEffect {
 	private Sound soundLow1, soundLow2, soundMid1, soundMid2, soundHigh;
 	private long lastSoundTimeMs = 0;
-	private final long MinElapsedBetweenSoundsMs = 500;
-	private final float MinImpactForce = 20;
-	private final float MaxImpactForce = 200;
-	private final float OneOnMaxImpactForce = 1f / MaxImpactForce;
-	private final float MaxVolume = .8f;
+	private static final long MinElapsedBetweenSoundsMs = 500;
+	private static final float MinImpactForce = 20;
+	private static final float MaxImpactForce = 200;
+	private static final float OneOnMaxImpactForce = 1f / MaxImpactForce;
+	private static final float MaxVolume = .8f;
 
 	// pitch modulation
-	private final float pitchFactor = 1f;
-	private final float pitchMin = 0.75f;
-	private final float pitchMax = 1f;
+	private static final float pitchFactor = 1f;
+	private static final float pitchMin = 0.75f;
+	private static final float pitchMax = 1f;
 
 	private final CarEvent.Listener carEvent = new CarEvent.Listener() {
 		@Override
 		public void carEvent( Type type, Data data ) {
 			switch( type ) {
 			case onCollision:
-				if( data.car.getInputMode() == CarInputMode.InputFromPlayer )
+				if( data.car.getInputMode() == CarInputMode.InputFromPlayer ) {
 					impact( data.impulses.len(), States.playerState.currSpeedFactor );
+				}
 				break;
 			case onComputeForces:
 				break;
@@ -104,7 +106,7 @@ public class CarImpactSoundEffect extends CarSoundEffect {
 			long id = s.play( MaxVolume * volumeFactor );
 			float pitch = speedFactor * pitchFactor + pitchMin;
 			pitch = AMath.clamp( pitch, pitchMin, pitchMax );
-			pitch = CarSoundManager.timeDilationToAudioPitch( pitch, URacer.timeMultiplier );
+			pitch = AudioUtils.timeDilationToAudioPitch( pitch, URacer.timeMultiplier );
 			s.setPitch( id, pitch );
 		}
 	}

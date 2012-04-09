@@ -11,6 +11,7 @@ import com.bitfire.uracer.game.GameEvents;
 import com.bitfire.uracer.game.events.DriftStateEvent;
 import com.bitfire.uracer.game.events.DriftStateEvent.Type;
 import com.bitfire.uracer.utils.AMath;
+import com.bitfire.uracer.utils.AudioUtils;
 
 /** Implements car drifting sound effects, modulating amplitude's volume and pitch
  * accordingly to the car's physical behavior and properties.
@@ -103,7 +104,7 @@ public class CarDriftSoundEffect extends CarSoundEffect {
 			// compute behavior
 			float pitch = speedFactor * pitchFactor + pitchMin;
 			pitch = AMath.clamp( pitch, pitchMin, pitchMax );
-			pitch = CarSoundManager.timeDilationToAudioPitch( pitch, URacer.timeMultiplier );
+			pitch = AudioUtils.timeDilationToAudioPitch( pitch, URacer.timeMultiplier );
 			// System.out.println( pitch );
 
 			if( !AMath.equals( pitch, driftLastPitch ) || anotherDriftId ) {

@@ -34,10 +34,6 @@ public class CarSoundManager extends Task {
 		carImpact = new CarImpactSoundEffect();
 	}
 
-	public static final float timeDilationToAudioPitch( float pitchIn, float timeMultiplier ) {
-		return pitchIn - (1 - timeMultiplier) * 0.3f;
-	}
-
 	@Override
 	public void dispose() {
 		// carEngine.dispose();
