@@ -1,8 +1,7 @@
-package com.bitfire.uracer.screen;
+package com.bitfire.uracer;
 
 import java.util.Random;
 
-import com.bitfire.uracer.URacer;
 
 public abstract class Screen {
 	protected static Random random = new Random();
