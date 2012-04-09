@@ -34,7 +34,6 @@ public class Game implements Disposable {
 
 	// logic
 	private GameLogic gameLogic = null;
-	private Car playerCar;
 
 	// post-processing
 	private Bloom bloom = null;
@@ -54,9 +53,9 @@ public class Game implements Disposable {
 		Convert.init( GameData.scalingStrategy.invTileMapZoomFactor, Config.Physics.PixelsPerMeter );
 		Director.init();
 
-		playerCar = CarFactory.createPlayer( CarType.OldSkool, new CarModel().toModel2() );
-		GameData.createStates( playerCar );
-		GameData.createSystems( GameData.b2dWorld, playerCar );
+		Car car = CarFactory.createPlayer( CarType.OldSkool, new CarModel().toModel2() );
+		GameData.createStates( car );
+		GameData.createSystems( GameData.b2dWorld, car );
 		GameData.createWorld( levelName, false );
 
 		gameLogic = new GameLogic();
@@ -75,7 +74,7 @@ public class Game implements Disposable {
 		// game tasks
 		// ----------------------------
 		gameTasks = new ArrayList<Task>( 10 );
-		gameTasks.add( new Hud( playerCar ) );
+		gameTasks.add( new Hud( car ) );
 		gameTasks.add( new CarSoundManager() );
 	}
 
