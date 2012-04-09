@@ -1,7 +1,6 @@
 package com.bitfire.uracer.game.effects;
 
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
-import com.bitfire.uracer.Config;
 import com.bitfire.uracer.game.GameData.Events;
 import com.bitfire.uracer.game.actors.Car;
 import com.bitfire.uracer.game.effects.TrackEffect.Type;
@@ -29,7 +28,7 @@ public class TrackEffects extends Task {
 		public void gameRendererEvent( GameRendererEvent.Type type ) {
 			SpriteBatch batch = Events.gameRenderer.batch;
 			for( TrackEffect effect : effects ) {
-				if( (effect != null) && Config.Graphics.hasEffect( effect.type.id ) ) {
+				if( effect != null ) {
 					effect.render( batch );
 				}
 			}

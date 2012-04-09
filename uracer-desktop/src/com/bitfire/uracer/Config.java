@@ -2,7 +2,6 @@ package com.bitfire.uracer;
 
 import com.badlogic.gdx.Application.ApplicationType;
 import com.badlogic.gdx.Gdx;
-import com.bitfire.uracer.game.effects.TrackEffect;
 import com.bitfire.uracer.game.logic.DirectorController.InterpolationMode;
 import com.bitfire.uracer.postprocessing.filters.Blur;
 import com.bitfire.uracer.postprocessing.filters.Blur.BlurType;
@@ -71,11 +70,7 @@ public final class Config {
 		public static boolean Render3DBoundingBoxes;
 		public static boolean DumbNightMode;	// night-mode rendered as an overlay *after* PostProcessor
 		public static InterpolationMode CameraInterpolationMode;
-		public static long Effects;
 
-		public static boolean hasEffect( int effectId ) {
-			return ((Effects & effectId) == effectId);
-		}
 
 		public static void asDefault() {
 			EnablePostProcessingFx = true;
@@ -89,7 +84,6 @@ public final class Config {
 			Render3DBoundingBoxes = false;
 
 			CameraInterpolationMode = InterpolationMode.Sigmoid;
-			Effects = (TrackEffect.Type.CarSkidMarks.id | TrackEffect.Type.SmokeTrails.id);
 		}
 
 		private Graphics() {
