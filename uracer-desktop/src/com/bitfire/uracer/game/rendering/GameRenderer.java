@@ -11,9 +11,10 @@ import com.bitfire.uracer.URacer;
 import com.bitfire.uracer.game.GameData;
 import com.bitfire.uracer.game.GameData.Events;
 import com.bitfire.uracer.game.GameWorld;
+import com.bitfire.uracer.game.Tweener;
 import com.bitfire.uracer.game.actors.Car;
-import com.bitfire.uracer.game.debug.Debug;
 import com.bitfire.uracer.game.events.GameRendererEvent;
+import com.bitfire.uracer.game.rendering.debug.Debug;
 import com.bitfire.uracer.postprocessing.PostProcessor;
 import com.bitfire.uracer.utils.BatchUtils;
 
@@ -31,9 +32,11 @@ public class GameRenderer {
 
 		int width = Gdx.graphics.getWidth();
 		int height = Gdx.graphics.getHeight();
-		worldRenderer = new GameWorldRenderer( strategy, world, width, height );
+
+		worldRenderer = new GameWorldRenderer( strategy, gameWorld, width, height );
 		batchRenderer = new GameBatchRenderer( gl );
 		postProcessor = new PostProcessor( width, height, false /* depth */, false /* alpha */, Config.isDesktop /* 32bpp */);
+
 		Debug.create();
 	}
 
@@ -47,11 +50,11 @@ public class GameRenderer {
 		postProcessorEnabled = enable;
 	}
 
-	public void render(Car car) {
+	public void render( Car car ) {
 		OrthographicCamera ortho = Director.getCamera();
 
 		// tweener step
-		GameData.tweener.update( (int)(URacer.getLastDeltaSecs() * 1000) );
+		Tweener.update( (int)(URacer.getLastDeltaSecs() * 1000) );
 
 		// resync
 		worldRenderer.syncWithCam( ortho );
@@ -94,12 +97,12 @@ public class GameRenderer {
 					postProcessor.render();
 				}
 
-				worldRenderer.generateLightMap(car);
+				worldRenderer.generateLightMap( car );
 				worldRenderer.renderLigthMap( null );
 			} else {
 				// render nightmode
 				if( world.isNightMode() ) {
-					worldRenderer.generateLightMap(car);
+					worldRenderer.generateLightMap( car );
 
 					// hook into the next PostProcessor source buffer (the last result)
 					// and blend the lightmap on it

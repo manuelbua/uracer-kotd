@@ -14,11 +14,12 @@ import com.bitfire.uracer.Director;
 import com.bitfire.uracer.URacer;
 import com.bitfire.uracer.carsimulation.CarInputMode;
 import com.bitfire.uracer.game.GameData;
-import com.bitfire.uracer.game.GameData.Systems;
-import com.bitfire.uracer.game.Input;
 import com.bitfire.uracer.game.GameData.Events;
 import com.bitfire.uracer.game.GameData.States;
+import com.bitfire.uracer.game.GameData.Systems;
+import com.bitfire.uracer.game.Input;
 import com.bitfire.uracer.game.Replay;
+import com.bitfire.uracer.game.Tweener;
 import com.bitfire.uracer.game.actors.CarEvent;
 import com.bitfire.uracer.game.events.GameLogicEvent;
 import com.bitfire.uracer.game.events.PlayerStateEvent;
@@ -90,11 +91,11 @@ public class GameLogic implements CarEvent.Listener, PlayerStateEvent.Listener {
 			timeModulation = !timeModulation;
 			if( timeModulation ) {
 				timeModulationBusy = true;
-				GameData.tweener.start( Timeline.createSequence().push( Tween.to( timeMultiplier, BoxedFloatAccessor.VALUE, 1000 ).target( tmMin ).ease( eqIn ) )
+				Tweener.start( Timeline.createSequence().push( Tween.to( timeMultiplier, BoxedFloatAccessor.VALUE, 1000 ).target( tmMin ).ease( eqIn ) )
 						.setCallback( timeModulationFinished ) );
 			} else {
 				timeModulationBusy = true;
-				GameData.tweener.start( Timeline.createSequence()
+				Tweener.start( Timeline.createSequence()
 						.push( Tween.to( timeMultiplier, BoxedFloatAccessor.VALUE, 1000 ).target( Config.Physics.PhysicsTimeMultiplier ).ease( eqOut ) )
 						.setCallback( timeModulationFinished ) );
 			}

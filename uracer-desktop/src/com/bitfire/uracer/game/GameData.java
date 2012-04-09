@@ -14,18 +14,12 @@ import com.bitfire.uracer.game.events.GameLogicEvent;
 import com.bitfire.uracer.game.events.GameRendererEvent;
 import com.bitfire.uracer.game.events.PhysicsStepEvent;
 import com.bitfire.uracer.game.events.PlayerStateEvent;
-import com.bitfire.uracer.game.hud.HudLabel;
-import com.bitfire.uracer.game.hud.HudLabelAccessor;
 import com.bitfire.uracer.game.logic.PhysicsStep;
-import com.bitfire.uracer.game.messager.Message;
-import com.bitfire.uracer.game.messager.MessageAccessor;
 import com.bitfire.uracer.game.messager.Messager;
 import com.bitfire.uracer.game.states.DriftState;
 import com.bitfire.uracer.game.states.LapState;
 import com.bitfire.uracer.game.states.PlayerState;
 import com.bitfire.uracer.task.TaskManagerEvent;
-import com.bitfire.uracer.utils.BoxedFloat;
-import com.bitfire.uracer.utils.BoxedFloatAccessor;
 
 /** Encapsulates and abstracts the dynamic state of the game.
  *
@@ -39,7 +33,6 @@ public final class GameData {
 	public static GameplaySettings gameSettings;
 	public static GameWorld gameWorld;
 	public static Messager messager;
-	public static Tweener tweener;
 	public static World b2dWorld;
 
 	/** States */
@@ -109,7 +102,6 @@ public final class GameData {
 		Config.Physics.PixelsPerMeter /= (GameData.scalingStrategy.targetScreenRatio / GameData.scalingStrategy.to256);
 
 		GameData.gameSettings = new GameplaySettings( difficulty );
-		GameData.tweener = createTweener();
 		GameData.b2dWorld = createBox2DWorld();
 		GameData.messager = new Messager(GameData.scalingStrategy.invTileMapZoomFactor);
 	}
@@ -128,19 +120,9 @@ public final class GameData {
 
 	public static void dispose() {
 		GameData.b2dWorld.dispose();
-		GameData.tweener.clear();
-		GameData.tweener.dispose();
 		GameData.messager.dispose();
 		GameData.States.dispose();
 		GameData.Systems.dispose();
-	}
-
-	private static Tweener createTweener() {
-		Tweener t = new Tweener();
-		Tweener.registerAccessor( Message.class, new MessageAccessor() );
-		Tweener.registerAccessor( HudLabel.class, new HudLabelAccessor() );
-		Tweener.registerAccessor( BoxedFloat.class, new BoxedFloatAccessor() );
-		return t;
 	}
 
 	private static World createBox2DWorld() {

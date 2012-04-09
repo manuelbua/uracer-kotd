@@ -14,10 +14,10 @@ import com.bitfire.uracer.game.actors.Car;
 import com.bitfire.uracer.game.actors.CarFactory;
 import com.bitfire.uracer.game.actors.CarFactory.CarType;
 import com.bitfire.uracer.game.audio.CarSoundManager;
-import com.bitfire.uracer.game.debug.Debug;
 import com.bitfire.uracer.game.hud.Hud;
 import com.bitfire.uracer.game.logic.GameLogic;
 import com.bitfire.uracer.game.rendering.GameRenderer;
+import com.bitfire.uracer.game.rendering.debug.Debug;
 import com.bitfire.uracer.postprocessing.PostProcessor;
 import com.bitfire.uracer.postprocessing.effects.Bloom;
 import com.bitfire.uracer.postprocessing.effects.Zoom;
@@ -48,7 +48,8 @@ public class Game implements Disposable {
 
 	public Game( String levelName, GameDifficulty difficulty ) {
 		GameData.create( difficulty );
-		Art.init();
+		Tweener.init();
+		Art.init( GameData.scalingStrategy.invTileMapZoomFactor );
 		BatchUtils.init( Art.base6 );
 		Convert.init( GameData.scalingStrategy.invTileMapZoomFactor, Config.Physics.PixelsPerMeter );
 		Director.init();
@@ -139,7 +140,7 @@ public class Game implements Disposable {
 
 	public void render() {
 		gameLogic.onBeforeRender();
-		gameRenderer.render(playerCar);
+		gameRenderer.render( playerCar );
 	}
 
 	public void pause() {
