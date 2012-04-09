@@ -18,6 +18,7 @@ import com.badlogic.gdx.graphics.glutils.ImmediateModeRenderer20;
 import com.badlogic.gdx.graphics.glutils.ShaderProgram;
 import com.badlogic.gdx.math.MathUtils;
 import com.badlogic.gdx.math.Matrix4;
+import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.math.Vector3;
 import com.badlogic.gdx.math.collision.BoundingBox;
 import com.bitfire.uracer.Art;
@@ -25,7 +26,6 @@ import com.bitfire.uracer.Config;
 import com.bitfire.uracer.Director;
 import com.bitfire.uracer.ScalingStrategy;
 import com.bitfire.uracer.game.GameWorld;
-import com.bitfire.uracer.game.actors.Car;
 import com.bitfire.uracer.game.models.OrthographicAlignedStillModel;
 import com.bitfire.uracer.game.models.TreeStillModel;
 import com.bitfire.uracer.utils.Convert;
@@ -112,13 +112,13 @@ public class GameWorldRenderer {
 		renderedWalls = 0;
 	}
 
-	public void generateLightMap(Car car) {
+	public void generatePlayerHeadlightsLightMap(Vector2 carPosition, float carOrientation, float carLength) {
 
 		// update player light (subframe interpolation ready)
-		float ang = 90 + car.state().orientation;
+		float ang = 90 + carOrientation;
 
 		// the body's compound shape should be created with some clever thinking in it :)
-		float offx = (car.getCarModel().length / 2f) + .25f;
+		float offx = (carLength / 2f) + .25f;
 		float offy = 0f;
 
 		float cos = MathUtils.cosDeg( ang );
@@ -126,8 +126,8 @@ public class GameWorldRenderer {
 		float dX = offx * cos - offy * sin;
 		float dY = offx * sin + offy * cos;
 
-		float px = Convert.px2mt( car.state().position.x ) + dX;
-		float py = Convert.px2mt( car.state().position.y ) + dY;
+		float px = Convert.px2mt( carPosition.x ) + dX;
+		float py = Convert.px2mt( carPosition.y ) + dY;
 
 		playerLights.setDirection( ang );
 		playerLights.setPosition( px, py );

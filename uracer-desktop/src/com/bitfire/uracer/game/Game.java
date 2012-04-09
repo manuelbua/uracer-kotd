@@ -140,7 +140,7 @@ public class Game implements Disposable {
 
 	public void render() {
 		gameLogic.onBeforeRender();
-		gameRenderer.render( playerCar );
+		gameRenderer.render();
 	}
 
 	public void pause() {

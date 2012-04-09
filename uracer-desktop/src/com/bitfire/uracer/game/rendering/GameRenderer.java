@@ -50,7 +50,7 @@ public class GameRenderer {
 		postProcessorEnabled = enable;
 	}
 
-	public void render( Car car ) {
+	public void render() {
 		OrthographicCamera ortho = Director.getCamera();
 
 		// tweener step
@@ -91,18 +91,19 @@ public class GameRenderer {
 		}
 		batchRenderer.end();
 
+		Car car = GameData.States.playerState.car;
 		if( world.isNightMode() ) {
 			if( Config.Graphics.DumbNightMode ) {
 				if( postProcessorEnabled ) {
 					postProcessor.render();
 				}
 
-				worldRenderer.generateLightMap( car );
+				worldRenderer.generatePlayerHeadlightsLightMap( car.state().position, car.orient(), car.getCarModel().length );
 				worldRenderer.renderLigthMap( null );
 			} else {
 				// render nightmode
 				if( world.isNightMode() ) {
-					worldRenderer.generateLightMap( car );
+					worldRenderer.generatePlayerHeadlightsLightMap( car.state().position, car.orient(), car.getCarModel().length );
 
 					// hook into the next PostProcessor source buffer (the last result)
 					// and blend the lightmap on it
