@@ -22,7 +22,6 @@ import com.bitfire.uracer.game.GameData.Systems;
 import com.bitfire.uracer.game.GameEvents;
 import com.bitfire.uracer.game.Input;
 import com.bitfire.uracer.game.actors.CarFactory.CarType;
-import com.bitfire.uracer.game.rendering.CarRenderer;
 import com.bitfire.uracer.utils.AMath;
 import com.bitfire.uracer.utils.BatchUtils;
 import com.bitfire.uracer.utils.Convert;

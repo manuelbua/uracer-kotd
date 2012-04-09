@@ -10,7 +10,6 @@ import com.bitfire.uracer.carsimulation.CarInputMode;
 import com.bitfire.uracer.carsimulation.CarModel;
 import com.bitfire.uracer.entities.EntityType;
 import com.bitfire.uracer.game.collisions.CollisionFilters;
-import com.bitfire.uracer.game.rendering.CarRenderer;
 import com.bitfire.uracer.utils.Convert;
 import com.bitfire.uracer.utils.FixtureAtlas;
 

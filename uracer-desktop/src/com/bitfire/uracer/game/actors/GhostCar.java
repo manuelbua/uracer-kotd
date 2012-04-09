@@ -6,7 +6,6 @@ import com.bitfire.uracer.carsimulation.CarInputMode;
 import com.bitfire.uracer.carsimulation.CarModel;
 import com.bitfire.uracer.game.Replay;
 import com.bitfire.uracer.game.actors.CarFactory.CarType;
-import com.bitfire.uracer.game.rendering.CarRenderer;
 
 /** Implements an automated Car, playing previously recorded events. It will
  * ignore car-to-car collisions, but will respect in-track collisions and
