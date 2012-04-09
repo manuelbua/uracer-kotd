@@ -56,7 +56,7 @@ public class Messager extends Task {
 	private Array<LinkedList<Message>> messages;
 	private Array<Message> currents;
 	private Message[] messageStore;
-	private final int MaxMessagesInStore = 10;
+	private static final int MaxMessagesInStore = 10;
 	private int idxMessageStore;
 
 	public Messager( float invZoomFactor ) {
