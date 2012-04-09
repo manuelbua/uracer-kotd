@@ -1,4 +1,4 @@
-package com.bitfire.uracer.factories;
+package com.bitfire.uracer.tiled;
 
 import java.io.IOException;
 import java.io.InputStream;
@@ -12,8 +12,6 @@ import com.badlogic.gdx.graphics.g3d.materials.TextureAttribute;
 import com.badlogic.gdx.graphics.g3d.model.still.StillModel;
 import com.badlogic.gdx.utils.LongMap;
 import com.bitfire.uracer.Art;
-import com.bitfire.uracer.tiled.OrthographicAlignedStillModel;
-import com.bitfire.uracer.tiled.TreeStillModel;
 import com.bitfire.uracer.utils.Hash;
 
 public final class ModelFactory {
@@ -79,10 +77,11 @@ public final class ModelFactory {
 
 		if( stillModel != null ) {
 			stillModel.setPosition( posPxX, posPxY );
-			if( modelMesh != ModelMesh.Missing )
+			if( modelMesh != ModelMesh.Missing ) {
 				stillModel.setScale( scale );
-			else
+			} else {
 				stillModel.setScale( 1 );
+			}
 		}
 
 		return stillModel;
@@ -165,10 +164,11 @@ public final class ModelFactory {
 
 		if( stillModel != null ) {
 			stillModel.setPosition( posPxX, posPxY );
-			if( modelMesh != ModelMesh.Missing )
+			if( modelMesh != ModelMesh.Missing ) {
 				stillModel.setScale( scale );
-			else
+			} else {
 				stillModel.setScale( 1 );
+			}
 		}
 
 		return stillModel;
@@ -225,7 +225,7 @@ public final class ModelFactory {
 
 				cachedModels.put( modelHash, m );
 			} catch( IOException ioex ) {
-				ioex.printStackTrace();
+				Gdx.app.log( "ModelFactory", ioex.toString() );
 			}
 		}
 

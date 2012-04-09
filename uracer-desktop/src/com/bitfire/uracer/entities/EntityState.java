@@ -5,14 +5,15 @@ import com.badlogic.gdx.math.Vector2;
 import com.bitfire.uracer.utils.AMath;
 import com.bitfire.uracer.utils.Convert;
 
-public class EntityState {
+public final class EntityState {
 	public float orientation = 0;
 	public Vector2 position = new Vector2();
 	private static EntityState result = new EntityState();
 
 	public EntityState() {
 		orientation = 0;
-		position.x = position.y = 0;
+		position.x = 0;
+		position.y = 0;
 	}
 
 	public EntityState( EntityState state ) {

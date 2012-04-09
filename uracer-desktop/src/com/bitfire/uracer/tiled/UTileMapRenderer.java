@@ -112,11 +112,11 @@ public class UTileMapRenderer implements Disposable {
 			}
 		}
 
-		String blendedTiles = map.properties.get( "blended tiles" );
+		String blended = map.properties.get( "blended tiles" );
 		IntArray blendedTilesArray;
 
-		if( blendedTiles != null ) {
-			blendedTilesArray = createFromCSV( blendedTiles );
+		if( blended != null ) {
+			blendedTilesArray = createFromCSV( blended );
 		} else {
 			blendedTilesArray = new IntArray( 0 );
 		}
