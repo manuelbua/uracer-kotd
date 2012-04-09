@@ -9,11 +9,11 @@ import com.bitfire.uracer.Director;
 import com.bitfire.uracer.URacer;
 import com.bitfire.uracer.effects.CarSkidMarks;
 import com.bitfire.uracer.effects.TrackEffect;
-import com.bitfire.uracer.events.GameRendererEvent;
 import com.bitfire.uracer.game.GameData;
 import com.bitfire.uracer.game.GameData.Events;
 import com.bitfire.uracer.game.GameWorld;
 import com.bitfire.uracer.game.debug.Debug;
+import com.bitfire.uracer.game.events.GameRendererEvent;
 import com.bitfire.uracer.postprocessing.PostProcessor;
 import com.bitfire.uracer.utils.BatchUtils;
 

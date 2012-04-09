@@ -2,9 +2,9 @@ package com.bitfire.uracer.game.logic;
 
 import com.badlogic.gdx.physics.box2d.World;
 import com.bitfire.uracer.Config;
-import com.bitfire.uracer.events.PhysicsStepEvent.Type;
-import com.bitfire.uracer.events.TaskManagerEvent.Order;
 import com.bitfire.uracer.game.GameData.Events;
+import com.bitfire.uracer.game.events.PhysicsStepEvent.Type;
+import com.bitfire.uracer.game.events.TaskManagerEvent.Order;
 import com.bitfire.uracer.task.Task;
 
 public class PhysicsStep extends Task {

@@ -1,8 +1,8 @@
 package com.bitfire.uracer.entities;
 
-import com.bitfire.uracer.events.PhysicsStepEvent;
-import com.bitfire.uracer.events.PhysicsStepEvent.Type;
 import com.bitfire.uracer.game.GameData.Events;
+import com.bitfire.uracer.game.events.PhysicsStepEvent;
+import com.bitfire.uracer.game.events.PhysicsStepEvent.Type;
 
 public abstract class SubframeInterpolableEntity extends Entity implements PhysicsStepEvent.Listener {
 	// world-coords

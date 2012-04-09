@@ -3,10 +3,10 @@ package com.bitfire.uracer.effects;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.bitfire.uracer.Config;
 import com.bitfire.uracer.effects.TrackEffect.Type;
-import com.bitfire.uracer.events.GameLogicEvent;
-import com.bitfire.uracer.events.GameRendererEvent;
 import com.bitfire.uracer.game.GameData.Events;
 import com.bitfire.uracer.game.entities.Car;
+import com.bitfire.uracer.game.events.GameLogicEvent;
+import com.bitfire.uracer.game.events.GameRendererEvent;
 import com.bitfire.uracer.task.Task;
 
 public class TrackEffects extends Task {
@@ -14,7 +14,7 @@ public class TrackEffects extends Task {
 
 	private final GameLogicEvent.Listener gameLogicEvent = new GameLogicEvent.Listener() {
 		@Override
-		public void gameLogicEvent( com.bitfire.uracer.events.GameLogicEvent.Type type ) {
+		public void gameLogicEvent( com.bitfire.uracer.game.events.GameLogicEvent.Type type ) {
 			switch( type ) {
 			case onReset:
 			case onRestart:

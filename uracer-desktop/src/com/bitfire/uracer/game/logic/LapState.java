@@ -1,7 +1,7 @@
 package com.bitfire.uracer.game.logic;
 
-import com.bitfire.uracer.events.GameLogicEvent;
 import com.bitfire.uracer.game.GameData.Events;
+import com.bitfire.uracer.game.events.GameLogicEvent;
 
 public class LapState {
 	// replays
@@ -14,7 +14,7 @@ public class LapState {
 
 	private final GameLogicEvent.Listener gameLogicEvent = new GameLogicEvent.Listener() {
 		@Override
-		public void gameLogicEvent( com.bitfire.uracer.events.GameLogicEvent.Type type ) {
+		public void gameLogicEvent( com.bitfire.uracer.game.events.GameLogicEvent.Type type ) {
 			switch( type ) {
 			case onReset:
 				reset();

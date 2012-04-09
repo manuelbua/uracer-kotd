@@ -5,8 +5,8 @@ import aurelienribon.tweenengine.Tween;
 import aurelienribon.tweenengine.TweenAccessor;
 import aurelienribon.tweenengine.TweenManager;
 
-import com.bitfire.uracer.events.GameLogicEvent;
 import com.bitfire.uracer.game.GameData.Events;
+import com.bitfire.uracer.game.events.GameLogicEvent;
 
 public class Tweener {
 	private TweenManager manager;

@@ -7,12 +7,12 @@ import com.bitfire.uracer.Config;
 import com.bitfire.uracer.effects.CarSkidMarks;
 import com.bitfire.uracer.effects.SmokeTrails;
 import com.bitfire.uracer.effects.TrackEffect.Type;
-import com.bitfire.uracer.events.GameLogicEvent;
-import com.bitfire.uracer.events.GameRendererEvent;
 import com.bitfire.uracer.game.GameData;
 import com.bitfire.uracer.game.GameData.Events;
 import com.bitfire.uracer.game.GameData.States;
 import com.bitfire.uracer.game.entities.Car;
+import com.bitfire.uracer.game.events.GameLogicEvent;
+import com.bitfire.uracer.game.events.GameRendererEvent;
 import com.bitfire.uracer.game.logic.DriftState;
 import com.bitfire.uracer.game.logic.LapState;
 import com.bitfire.uracer.game.logic.Replay;
@@ -50,7 +50,7 @@ public class Hud extends Task {
 
 	private final GameLogicEvent.Listener gameLogicEvent = new GameLogicEvent.Listener() {
 		@Override
-		public void gameLogicEvent( com.bitfire.uracer.events.GameLogicEvent.Type type ) {
+		public void gameLogicEvent( com.bitfire.uracer.game.events.GameLogicEvent.Type type ) {
 			switch( type ) {
 			case onReset:
 			case onRestart:

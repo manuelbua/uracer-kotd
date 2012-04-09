@@ -1,16 +1,16 @@
-package com.bitfire.uracer.events;
+package com.bitfire.uracer.game.events;
 
 import com.bitfire.uracer.utils.Event;
 import com.bitfire.uracer.utils.EventListener;
 import com.bitfire.uracer.utils.EventNotifier;
 
-public final class GameLogicEvent extends Event {
+public class PhysicsStepEvent extends Event {
 	public enum Type {
-		onRestart, onReset
+		onBeforeTimestep, onAfterTimestep, onTemporalAliasing
 	}
 
 	public interface Listener extends EventListener {
-		void gameLogicEvent( Type type );
+		void physicsEvent( Type type );
 	}
 
 	public void addListener( Listener listener ) {
@@ -18,16 +18,18 @@ public final class GameLogicEvent extends Event {
 	}
 
 	public void trigger( Type type ) {
-		notify.gameLogicEvent( type );
+		notify.physicsEvent( type );
 	}
+
+	public float temporalAliasingFactor = 0;
 
 	private final Notifier notify = new Notifier();
 
 	private class Notifier extends EventNotifier<Listener> implements Listener {
 		@Override
-		public void gameLogicEvent( Type type ) {
+		public void physicsEvent( Type type ) {
 			for( Listener listener : listeners ) {
-				listener.gameLogicEvent( type );
+				listener.physicsEvent( type );
 			}
 		}
 	};

@@ -1,11 +1,11 @@
 package com.bitfire.uracer.game.logic;
 
 import com.badlogic.gdx.utils.Disposable;
-import com.bitfire.uracer.events.DriftStateEvent.Type;
-import com.bitfire.uracer.events.GameLogicEvent;
 import com.bitfire.uracer.game.GameData.Events;
 import com.bitfire.uracer.game.GameData.States;
 import com.bitfire.uracer.game.entities.Car;
+import com.bitfire.uracer.game.events.GameLogicEvent;
+import com.bitfire.uracer.game.events.DriftStateEvent.Type;
 import com.bitfire.uracer.task.Task;
 import com.bitfire.uracer.utils.AMath;
 
@@ -21,7 +21,7 @@ public class DriftState extends Task implements Disposable {
 
 	private final GameLogicEvent.Listener gameLogicEvent = new GameLogicEvent.Listener() {
 		@Override
-		public void gameLogicEvent( com.bitfire.uracer.events.GameLogicEvent.Type type ) {
+		public void gameLogicEvent( com.bitfire.uracer.game.events.GameLogicEvent.Type type ) {
 			switch( type ) {
 			case onReset:
 			case onRestart:

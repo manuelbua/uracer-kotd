@@ -1,16 +1,16 @@
-package com.bitfire.uracer.events;
+package com.bitfire.uracer.game.events;
 
 import com.bitfire.uracer.utils.Event;
 import com.bitfire.uracer.utils.EventListener;
 import com.bitfire.uracer.utils.EventNotifier;
 
-public final class DriftStateEvent extends Event {
+public final class GameLogicEvent extends Event {
 	public enum Type {
-		onBeginDrift, onEndDrift
+		onRestart, onReset
 	}
 
 	public interface Listener extends EventListener {
-		void driftStateEvent( Type type );
+		void gameLogicEvent( Type type );
 	}
 
 	public void addListener( Listener listener ) {
@@ -18,16 +18,16 @@ public final class DriftStateEvent extends Event {
 	}
 
 	public void trigger( Type type ) {
-		notify.driftStateEvent( type );
+		notify.gameLogicEvent( type );
 	}
 
 	private final Notifier notify = new Notifier();
 
 	private class Notifier extends EventNotifier<Listener> implements Listener {
 		@Override
-		public void driftStateEvent( Type type ) {
+		public void gameLogicEvent( Type type ) {
 			for( Listener listener : listeners ) {
-				listener.driftStateEvent( type );
+				listener.gameLogicEvent( type );
 			}
 		}
 	};

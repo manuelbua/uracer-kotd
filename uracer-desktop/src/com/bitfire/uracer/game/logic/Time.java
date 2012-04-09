@@ -1,7 +1,7 @@
 package com.bitfire.uracer.game.logic;
 
 import com.bitfire.uracer.Config;
-import com.bitfire.uracer.events.TaskManagerEvent.Order;
+import com.bitfire.uracer.game.events.TaskManagerEvent.Order;
 import com.bitfire.uracer.task.Task;
 
 

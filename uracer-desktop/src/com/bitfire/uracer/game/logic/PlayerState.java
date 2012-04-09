@@ -1,12 +1,12 @@
 package com.bitfire.uracer.game.logic;
 
 import com.badlogic.gdx.math.Vector2;
-import com.bitfire.uracer.events.GameLogicEvent;
-import com.bitfire.uracer.events.PlayerStateEvent;
 import com.bitfire.uracer.game.GameData;
 import com.bitfire.uracer.game.GameData.Events;
 import com.bitfire.uracer.game.entities.Car;
 import com.bitfire.uracer.game.entities.GhostCar;
+import com.bitfire.uracer.game.events.GameLogicEvent;
+import com.bitfire.uracer.game.events.PlayerStateEvent;
 import com.bitfire.uracer.task.Task;
 import com.bitfire.uracer.utils.AMath;
 
@@ -27,7 +27,7 @@ public final class PlayerState extends Task {
 
 	private final GameLogicEvent.Listener gameLogicEvent = new GameLogicEvent.Listener() {
 		@Override
-		public void gameLogicEvent( com.bitfire.uracer.events.GameLogicEvent.Type type ) {
+		public void gameLogicEvent( com.bitfire.uracer.game.events.GameLogicEvent.Type type ) {
 			switch( type ) {
 			case onReset:
 			case onRestart:
