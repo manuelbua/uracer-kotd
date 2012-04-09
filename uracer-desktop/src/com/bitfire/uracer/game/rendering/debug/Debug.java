@@ -6,7 +6,13 @@ import com.badlogic.gdx.math.Matrix4;
 import com.badlogic.gdx.physics.box2d.Box2DDebugRenderer;
 import com.badlogic.gdx.physics.box2d.World;
 import com.bitfire.uracer.Config;
+import com.bitfire.uracer.Director;
 import com.bitfire.uracer.URacer;
+import com.bitfire.uracer.game.GameData;
+import com.bitfire.uracer.game.GameEvents;
+import com.bitfire.uracer.game.GameWorld;
+import com.bitfire.uracer.game.events.GameRendererEvent;
+import com.bitfire.uracer.game.rendering.GameWorldRenderer;
 import com.bitfire.uracer.utils.BatchUtils;
 import com.bitfire.uracer.utils.NumberString;
 
@@ -99,5 +105,30 @@ public final class Debug {
 
 	public static int getStatsHeight() {
 		return gfxStats.getHeight();
+	}
+
+	public static void render( SpriteBatch batch ) {
+		if( Config.isDesktop ) {
+			if( Config.Graphics.RenderBox2DWorldWireframe ) {
+				Debug.renderB2dWorld( GameData.b2dWorld, Director.getMatViewProjMt() );
+			}
+
+			// EntityManager.raiseOnDebug();
+			GameEvents.gameRenderer.trigger( GameRendererEvent.Type.BatchDebug );
+
+			Debug.renderVersionInfo( batch );
+			Debug.renderGraphicalStats( batch, Gdx.graphics.getWidth() - Debug.getStatsWidth(), Gdx.graphics.getHeight() - Debug.getStatsHeight() - Debug.fontHeight );
+			Debug.renderTextualStats( batch );
+			Debug.renderMemoryUsage( batch );
+			BatchUtils.drawString( batch, "total meshes=" + GameWorld.TotalMeshes, 0, Gdx.graphics.getHeight() - 14 );
+			BatchUtils.drawString( batch, "rendered meshes=" + (GameWorldRenderer.renderedTrees + GameWorldRenderer.renderedWalls) + ", trees="
+					+ GameWorldRenderer.renderedTrees + ", walls=" + GameWorldRenderer.renderedWalls + ", culled=" + GameWorldRenderer.culledMeshes, 0,
+					Gdx.graphics.getHeight() - 7 );
+
+		} else {
+
+			Debug.renderVersionInfo( batch );
+			Debug.renderTextualStats( batch );
+		}
 	}
 }

@@ -8,14 +8,12 @@ import com.bitfire.uracer.Config;
 import com.bitfire.uracer.Director;
 import com.bitfire.uracer.ScalingStrategy;
 import com.bitfire.uracer.URacer;
-import com.bitfire.uracer.game.GameData;
 import com.bitfire.uracer.game.GameEvents;
 import com.bitfire.uracer.game.GameWorld;
 import com.bitfire.uracer.game.Tweener;
 import com.bitfire.uracer.game.events.GameRendererEvent;
 import com.bitfire.uracer.game.rendering.debug.Debug;
 import com.bitfire.uracer.postprocessing.PostProcessor;
-import com.bitfire.uracer.utils.BatchUtils;
 
 public class GameRenderer {
 	private final GL20 gl;
@@ -126,31 +124,7 @@ public class GameRenderer {
 		// debug
 		//
 
-		batch = batchRenderer.beginTopLeft();
-
-		if( Config.isDesktop ) {
-			if( Config.Graphics.RenderBox2DWorldWireframe ) {
-				Debug.renderB2dWorld( GameData.b2dWorld, Director.getMatViewProjMt() );
-			}
-
-			// EntityManager.raiseOnDebug();
-			GameEvents.gameRenderer.trigger( GameRendererEvent.Type.BatchDebug );
-
-			Debug.renderVersionInfo( batch );
-			Debug.renderGraphicalStats( batch, Gdx.graphics.getWidth() - Debug.getStatsWidth(), Gdx.graphics.getHeight() - Debug.getStatsHeight() - Debug.fontHeight );
-			Debug.renderTextualStats( batch );
-			Debug.renderMemoryUsage( batch );
-			BatchUtils.drawString( batch, "total meshes=" + GameWorld.TotalMeshes, 0, Gdx.graphics.getHeight() - 14 );
-			BatchUtils.drawString( batch, "rendered meshes=" + (GameWorldRenderer.renderedTrees + GameWorldRenderer.renderedWalls) + ", trees="
-					+ GameWorldRenderer.renderedTrees + ", walls=" + GameWorldRenderer.renderedWalls + ", culled=" + GameWorldRenderer.culledMeshes, 0,
-					Gdx.graphics.getHeight() - 7 );
-
-		} else {
-
-			Debug.renderVersionInfo( batch );
-			Debug.renderTextualStats( batch );
-		}
-
+		Debug.render( batchRenderer.beginTopLeft() );
 		batchRenderer.end();
 	}
 
