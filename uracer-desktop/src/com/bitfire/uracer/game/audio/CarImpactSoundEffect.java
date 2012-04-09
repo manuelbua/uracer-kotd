@@ -8,9 +8,9 @@ import com.bitfire.uracer.URacer;
 import com.bitfire.uracer.carsimulation.CarInputMode;
 import com.bitfire.uracer.game.GameData.Events;
 import com.bitfire.uracer.game.GameData.States;
-import com.bitfire.uracer.game.entities.CarEvent;
-import com.bitfire.uracer.game.entities.CarEvent.Data;
-import com.bitfire.uracer.game.entities.CarEvent.Type;
+import com.bitfire.uracer.game.actors.CarEvent;
+import com.bitfire.uracer.game.actors.CarEvent.Data;
+import com.bitfire.uracer.game.actors.CarEvent.Type;
 import com.bitfire.uracer.utils.AMath;
 
 public class CarImpactSoundEffect extends CarSoundEffect {

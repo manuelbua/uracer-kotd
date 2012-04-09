@@ -1,6 +1,9 @@
-package com.bitfire.uracer.game.logic;
+package com.bitfire.uracer.game.states;
 
+import com.bitfire.uracer.game.Replay;
+import com.bitfire.uracer.game.Time;
 import com.bitfire.uracer.game.GameData.Events;
+import com.bitfire.uracer.game.Time.Reference;
 import com.bitfire.uracer.game.events.GameLogicEvent;
 
 public class LapState {

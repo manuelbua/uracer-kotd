@@ -1,13 +1,13 @@
 package com.bitfire.uracer.game.audio;
 
 public interface ISoundEffect {
-	public void onDispose();
+	void onDispose();
 
-	public void onStart();
+	void onStart();
 
-	public void onTick();
+	void onTick();
 
-	public void onStop();
+	void onStop();
 
-	public void onReset();
+	void onReset();
 }

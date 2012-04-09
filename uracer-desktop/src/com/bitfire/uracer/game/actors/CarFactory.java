@@ -1,4 +1,4 @@
-package com.bitfire.uracer.game.entities;
+package com.bitfire.uracer.game.actors;
 
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.g2d.TextureRegion;

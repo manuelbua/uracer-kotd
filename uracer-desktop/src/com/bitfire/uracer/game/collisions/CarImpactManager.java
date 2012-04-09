@@ -6,7 +6,7 @@ import com.badlogic.gdx.physics.box2d.Contact;
 import com.badlogic.gdx.physics.box2d.ContactImpulse;
 import com.badlogic.gdx.physics.box2d.Fixture;
 import com.bitfire.uracer.entities.EntityType;
-import com.bitfire.uracer.game.entities.Car;
+import com.bitfire.uracer.game.actors.Car;
 
 /** Manages to distinguish and filter out Car-to-<entity> collisions only, raising the
  * associated events on the correct entities.

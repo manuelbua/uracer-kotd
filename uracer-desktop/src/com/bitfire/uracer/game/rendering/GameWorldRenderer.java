@@ -26,7 +26,7 @@ import com.bitfire.uracer.Director;
 import com.bitfire.uracer.game.GameData;
 import com.bitfire.uracer.game.GameData.States;
 import com.bitfire.uracer.game.GameWorld;
-import com.bitfire.uracer.game.entities.Car;
+import com.bitfire.uracer.game.actors.Car;
 import com.bitfire.uracer.tiled.OrthographicAlignedStillModel;
 import com.bitfire.uracer.tiled.TrackTrees;
 import com.bitfire.uracer.tiled.TrackWalls;

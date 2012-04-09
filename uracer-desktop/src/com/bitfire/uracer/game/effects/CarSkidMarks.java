@@ -9,8 +9,8 @@ import com.bitfire.uracer.Config;
 import com.bitfire.uracer.Director;
 import com.bitfire.uracer.carsimulation.CarModel;
 import com.bitfire.uracer.game.GameData.States;
-import com.bitfire.uracer.game.entities.Car;
-import com.bitfire.uracer.game.logic.DriftState;
+import com.bitfire.uracer.game.actors.Car;
+import com.bitfire.uracer.game.states.DriftState;
 import com.bitfire.uracer.utils.AMath;
 import com.bitfire.uracer.utils.Convert;
 

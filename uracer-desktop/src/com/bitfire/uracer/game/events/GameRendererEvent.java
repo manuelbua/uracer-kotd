@@ -31,10 +31,11 @@ public class GameRendererEvent {
 	};
 
 	public GameRendererEvent() {
-		for( Type t : Type.values() )
+		for( Type t : Type.values() ) {
 			for( Order o : Order.values() ) {
 				notifiers[t.ordinal()][o.ordinal()] = new Notifier();
 			}
+		}
 	}
 
 	private Notifier[][] notifiers = new Notifier[ Type.values().length ][ Order.values().length ];

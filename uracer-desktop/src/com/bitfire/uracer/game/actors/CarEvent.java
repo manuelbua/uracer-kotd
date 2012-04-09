@@ -1,4 +1,4 @@
-package com.bitfire.uracer.game.entities;
+package com.bitfire.uracer.game.actors;
 
 import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.physics.box2d.Fixture;

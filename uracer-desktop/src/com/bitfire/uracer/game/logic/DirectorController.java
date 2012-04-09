@@ -69,14 +69,18 @@ public class DirectorController {
 				@Override
 				public Vector2 transform( Vector2 targetPosition ) {
 
-					if( targetPosition.x < cameraBounds.x )
+					if( targetPosition.x < cameraBounds.x ) {
 						targetPosition.x = cameraBounds.x;
-					if( targetPosition.x > cameraBounds.width )
+					}
+					if( targetPosition.x > cameraBounds.width ) {
 						targetPosition.x = cameraBounds.width;
-					if( targetPosition.y > cameraBounds.y )
+					}
+					if( targetPosition.y > cameraBounds.y ) {
 						targetPosition.y = cameraBounds.y;
-					if( targetPosition.y < cameraBounds.height )
+					}
+					if( targetPosition.y < cameraBounds.height ) {
 						targetPosition.y = cameraBounds.height;
+					}
 
 					return targetPosition;
 				}

@@ -3,8 +3,9 @@ package com.bitfire.uracer.game.logic;
 import com.badlogic.gdx.Gdx;
 import com.bitfire.uracer.carsimulation.CarForces;
 import com.bitfire.uracer.game.GameData;
+import com.bitfire.uracer.game.Replay;
 import com.bitfire.uracer.game.GameData.Events;
-import com.bitfire.uracer.game.entities.Car;
+import com.bitfire.uracer.game.actors.Car;
 import com.bitfire.uracer.game.events.GameLogicEvent;
 
 public class Recorder {
@@ -49,7 +50,7 @@ public class Recorder {
 		}
 
 		if( !replay.add( f ) ) {
-			Gdx.app.log( "Recorder", "Replay memory limit reached (" + replay.MaxEvents + " events), restarting." );
+			Gdx.app.log( "Recorder", "Replay memory limit reached (" + Replay.MaxEvents + " events), restarting." );
 		}
 	}
 

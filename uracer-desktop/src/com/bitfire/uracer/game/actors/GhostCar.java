@@ -1,11 +1,11 @@
-package com.bitfire.uracer.game.entities;
+package com.bitfire.uracer.game.actors;
 
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.bitfire.uracer.carsimulation.CarForces;
 import com.bitfire.uracer.carsimulation.CarInputMode;
 import com.bitfire.uracer.carsimulation.CarModel;
-import com.bitfire.uracer.game.entities.CarFactory.CarType;
-import com.bitfire.uracer.game.logic.Replay;
+import com.bitfire.uracer.game.Replay;
+import com.bitfire.uracer.game.actors.CarFactory.CarType;
 import com.bitfire.uracer.game.rendering.CarRenderer;
 
 /** Implements an automated Car, playing previously recorded events. It will
@@ -31,7 +31,6 @@ public class GhostCar extends Car {
 
 	public static GhostCar createForFactory( CarRenderer graphics, CarType type, CarModel model ) {
 		GhostCar ghost = new GhostCar( graphics, type, model );
-//		EntityManager.add( ghost );
 		return ghost;
 	}
 

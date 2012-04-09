@@ -1,4 +1,4 @@
-package com.bitfire.uracer.game;
+package com.bitfire.uracer.game.logic;
 
 import aurelienribon.tweenengine.BaseTween;
 import aurelienribon.tweenengine.Timeline;
@@ -14,16 +14,16 @@ import com.bitfire.uracer.Director;
 import com.bitfire.uracer.Input;
 import com.bitfire.uracer.URacer;
 import com.bitfire.uracer.carsimulation.CarInputMode;
+import com.bitfire.uracer.game.GameData;
+import com.bitfire.uracer.game.Replay;
 import com.bitfire.uracer.game.GameData.Events;
 import com.bitfire.uracer.game.GameData.States;
-import com.bitfire.uracer.game.entities.CarEvent;
+import com.bitfire.uracer.game.GameData.Systems;
+import com.bitfire.uracer.game.actors.CarEvent;
 import com.bitfire.uracer.game.events.GameLogicEvent;
 import com.bitfire.uracer.game.events.PlayerStateEvent;
-import com.bitfire.uracer.game.logic.DirectorController;
-import com.bitfire.uracer.game.logic.LapState;
-import com.bitfire.uracer.game.logic.PlayerState;
-import com.bitfire.uracer.game.logic.Recorder;
-import com.bitfire.uracer.game.logic.Replay;
+import com.bitfire.uracer.game.states.LapState;
+import com.bitfire.uracer.game.states.PlayerState;
 import com.bitfire.uracer.game.tweening.accessors.BoxedFloatAccessor;
 import com.bitfire.uracer.messager.Messager.MessagePosition;
 import com.bitfire.uracer.messager.Messager.MessageSize;
@@ -80,23 +80,21 @@ public class GameLogic implements CarEvent.Listener, PlayerStateEvent.Listener {
 		} else if( Input.isOn( Keys.Q ) ) {
 			Gdx.app.exit();
 			return false;
-		} else if( Input.isOn( Keys.SPACE ) ) {
-			if( !timeModulationBusy ) {
+		} else if( Input.isOn( Keys.SPACE ) && !timeModulationBusy ) {
 
-				TweenEquation eqIn = Sine.INOUT;
-				TweenEquation eqOut = Sine.INOUT;
+			TweenEquation eqIn = Sine.INOUT;
+			TweenEquation eqOut = Sine.INOUT;
 
-				timeModulation = !timeModulation;
-				if( timeModulation ) {
-					timeModulationBusy = true;
-					GameData.tweener.start( Timeline.createSequence().push( Tween.to( timeMultiplier, BoxedFloatAccessor.VALUE, 1000 ).target( tmMin ).ease( eqIn ) )
-							.setCallback( timeModulationFinished ) );
-				} else {
-					timeModulationBusy = true;
-					GameData.tweener.start( Timeline.createSequence()
-							.push( Tween.to( timeMultiplier, BoxedFloatAccessor.VALUE, 1000 ).target( Config.Physics.PhysicsTimeMultiplier ).ease( eqOut ) )
-							.setCallback( timeModulationFinished ) );
-				}
+			timeModulation = !timeModulation;
+			if( timeModulation ) {
+				timeModulationBusy = true;
+				GameData.tweener.start( Timeline.createSequence().push( Tween.to( timeMultiplier, BoxedFloatAccessor.VALUE, 1000 ).target( tmMin ).ease( eqIn ) )
+						.setCallback( timeModulationFinished ) );
+			} else {
+				timeModulationBusy = true;
+				GameData.tweener.start( Timeline.createSequence()
+						.push( Tween.to( timeMultiplier, BoxedFloatAccessor.VALUE, 1000 ).target( Config.Physics.PhysicsTimeMultiplier ).ease( eqOut ) )
+						.setCallback( timeModulationFinished ) );
 			}
 		}
 
@@ -130,11 +128,8 @@ public class GameLogic implements CarEvent.Listener, PlayerStateEvent.Listener {
 	public void carEvent( CarEvent.Type type, CarEvent.Data data ) {
 		switch( type ) {
 		case onCollision:
-			if( data.car.getInputMode() == CarInputMode.InputFromPlayer ) {
-				if( GameData.States.driftState.isDrifting ) {
-					GameData.States.driftState.invalidateByCollision();
-					// System.out.println( "invalidated" );
-				}
+			if( GameData.States.driftState.isDrifting && data.car.getInputMode() == CarInputMode.InputFromPlayer ) {
+				GameData.States.driftState.invalidateByCollision();
 			}
 			break;
 		case onComputeForces:
@@ -169,8 +164,9 @@ public class GameLogic implements CarEvent.Listener, PlayerStateEvent.Listener {
 						player.ghost.setReplay( any );
 					}
 				} else {
-					if( recorder.isRecording() )
+					if( recorder.isRecording() ) {
 						recorder.endRecording();
+					}
 
 					lapState.updateReplays();
 

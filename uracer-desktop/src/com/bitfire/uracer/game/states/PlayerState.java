@@ -1,10 +1,10 @@
-package com.bitfire.uracer.game.logic;
+package com.bitfire.uracer.game.states;
 
 import com.badlogic.gdx.math.Vector2;
 import com.bitfire.uracer.game.GameData;
 import com.bitfire.uracer.game.GameData.Events;
-import com.bitfire.uracer.game.entities.Car;
-import com.bitfire.uracer.game.entities.GhostCar;
+import com.bitfire.uracer.game.actors.Car;
+import com.bitfire.uracer.game.actors.GhostCar;
 import com.bitfire.uracer.game.events.GameLogicEvent;
 import com.bitfire.uracer.game.events.PlayerStateEvent;
 import com.bitfire.uracer.task.Task;

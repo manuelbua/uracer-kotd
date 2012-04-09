@@ -9,8 +9,8 @@ import com.bitfire.uracer.Art;
 import com.bitfire.uracer.URacer;
 import com.bitfire.uracer.game.GameData;
 import com.bitfire.uracer.game.GameData.States;
-import com.bitfire.uracer.game.entities.Car;
-import com.bitfire.uracer.game.logic.DriftState;
+import com.bitfire.uracer.game.actors.Car;
+import com.bitfire.uracer.game.states.DriftState;
 
 public class SmokeTrails extends TrackEffect {
 	private SmokeEffect fx[];

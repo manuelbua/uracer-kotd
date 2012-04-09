@@ -1,4 +1,4 @@
-package com.bitfire.uracer.game.logic;
+package com.bitfire.uracer.game;
 
 import com.bitfire.uracer.Config;
 import com.bitfire.uracer.game.events.TaskManagerEvent.Order;
@@ -72,13 +72,13 @@ public final class Time extends Task {
 		long now = (stopped ? nsStopTime : System.nanoTime());
 
 		switch( timeReference ) {
-		default:
-		case Absolute:			// returns seconds
-			return (now - nsStartTime) * oneOnOneBillion;
 		case Ticks:				// returns seconds
 			return ticksInSeconds;
 		case NumberOfTicks:		// returns the tick count so far
 			return ticks;
+		case Absolute:			// returns seconds
+		default:
+			return (now - nsStartTime) * oneOnOneBillion;
 		}
 	}
 }

@@ -1,4 +1,4 @@
-package com.bitfire.uracer.game.entities;
+package com.bitfire.uracer.game.actors;
 
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
@@ -22,10 +22,9 @@ import com.bitfire.uracer.carsimulation.CarSimulator;
 import com.bitfire.uracer.entities.Box2dEntity;
 import com.bitfire.uracer.game.GameData;
 import com.bitfire.uracer.game.GameData.Events;
-import com.bitfire.uracer.game.entities.CarFactory.CarType;
-import com.bitfire.uracer.game.logic.Recorder;
-import com.bitfire.uracer.game.rendering.CarRenderer;
 import com.bitfire.uracer.game.GameWorld;
+import com.bitfire.uracer.game.actors.CarFactory.CarType;
+import com.bitfire.uracer.game.rendering.CarRenderer;
 import com.bitfire.uracer.utils.AMath;
 import com.bitfire.uracer.utils.BatchUtils;
 import com.bitfire.uracer.utils.Convert;
@@ -33,7 +32,6 @@ import com.bitfire.uracer.utils.MapUtils;
 import com.bitfire.uracer.utils.VMath;
 
 public class Car extends Box2dEntity {
-	protected Recorder recorder;
 	protected CarRenderer graphics;
 
 	private CarDescriptor carDesc;
@@ -46,7 +44,6 @@ public class Car extends Box2dEntity {
 	private CarType carType;
 
 	private Vector2 tilePosition = new Vector2();
-
 
 	protected Car( CarRenderer graphics, CarModel model, CarType type, CarInputMode inputMode ) {
 		this.graphics = graphics;
@@ -74,7 +71,7 @@ public class Car extends Box2dEntity {
 	// factory method
 	public static Car createForFactory( CarRenderer graphics, CarModel model, CarType type, CarInputMode inputMode ) {
 		Car car = new Car( graphics, model, type, inputMode );
-//		EntityManager.add( car );
+		// EntityManager.add( car );
 		return car;
 	}
 
@@ -123,15 +120,17 @@ public class Car extends Box2dEntity {
 	private void resetPhysics() {
 		boolean wasActive = isActive();
 
-		if( wasActive )
+		if( wasActive ) {
 			body.setActive( false );
+		}
 
 		carSim.resetPhysics();
 		body.setAngularVelocity( 0 );
 		body.setLinearVelocity( 0, 0 );
 
-		if( wasActive )
+		if( wasActive ) {
 			body.setActive( wasActive );
+		}
 	}
 
 	@Override
@@ -168,12 +167,14 @@ public class Car extends Box2dEntity {
 
 			angle -= AMath.PI;
 			angle += wrapped; // to local
-			if( angle < 0 )
+			if( angle < 0 ) {
 				angle += AMath.TWO_PI;
+			}
 
 			angle = -(angle - AMath.TWO_PI);
-			if( angle > AMath.PI )
+			if( angle > AMath.PI ) {
 				angle = angle - AMath.TWO_PI;
+			}
 
 			carInput.steerAngle = angle;
 
@@ -192,8 +193,9 @@ public class Car extends Box2dEntity {
 			// considered 0<->1
 		}
 
-		if( Config.Debug.ApplyFrictionMap )
-			applyFrictionMap( carInput );
+		if( Config.Debug.ApplyFrictionMap ) {
+			applyFrictionMap();
+		}
 
 		return carInput;
 	}
@@ -201,7 +203,7 @@ public class Car extends Box2dEntity {
 	private Vector2 offset = new Vector2();
 	private WindowedMean frictionMean = new WindowedMean( 16 );
 
-	private void applyFrictionMap( CarInput input ) {
+	private void applyFrictionMap() {
 		GameWorld world = GameData.gameWorld;
 		if( tilePosition.x >= 0 && tilePosition.x < world.map.width && tilePosition.y >= 0 && tilePosition.y < world.map.height ) {
 			// compute realsize-based pixel offset car-tile (top-left origin)
@@ -231,7 +233,7 @@ public class Car extends Box2dEntity {
 				carDesc.velocity_wc.mul( 0.975f );
 			}
 		} else {
-			System.out.println( "Car out of map" );
+			Gdx.app.log( "Car", "Out of map!" );
 		}
 	}
 
@@ -337,8 +339,9 @@ public class Car extends Box2dEntity {
 
 	@Override
 	public void onDebug( SpriteBatch batch ) {
-		if( carInputMode != CarInputMode.InputFromPlayer )
+		if( carInputMode != CarInputMode.InputFromPlayer ) {
 			return;
+		}
 
 		if( Config.Graphics.RenderPlayerDebugInfo ) {
 			BatchUtils.drawString( batch, "vel_wc len =" + carDesc.velocity_wc.len(), 0, 13 );
