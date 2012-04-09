@@ -112,7 +112,7 @@ public final class GameData {
 		GameData.gameSettings = new GameplaySettings( difficulty );
 		GameData.tweener = createTweener();
 		GameData.b2dWorld = createBox2DWorld();
-		GameData.messager = new Messager();
+		GameData.messager = new Messager(GameData.scalingStrategy.invTileMapZoomFactor);
 	}
 
 	public static void createStates( Car car ) {

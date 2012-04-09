@@ -37,17 +37,19 @@ public class Message {
 	private TextBounds bounds;
 	private float alpha;
 	private boolean hiding;
+	private float invZoomFactor;
 
-	public Message() {
+	public Message(float invZoomFactor) {
 		bounds = new TextBounds();
+		this.invZoomFactor = invZoomFactor;
 	}
 
-	public Message( String message, float durationSecs, MessageType type, MessagePosition position, MessageSize size ) {
-		this();
+	public Message( String message, float durationSecs, MessageType type, MessagePosition position, MessageSize size, float invZoomFactor ) {
+		this(invZoomFactor);
 		set( message, durationSecs, type, position, size );
 	}
 
-	public void set( String message, float durationSecs, MessageType type, MessagePosition position, MessageSize size ) {
+	public final void set( String message, float durationSecs, MessageType type, MessagePosition position, MessageSize size ) {
 		startMs = 0;
 		started = false;
 		halfWidth = (int)(Gdx.graphics.getWidth() / 2);
@@ -56,37 +58,43 @@ public class Message {
 		this.type = type;
 		this.position = position;
 		alpha = 0f;
-		scaleX = scaleY = 1f;
+		scaleX = 1f;
+		scaleY = 1f;
 		durationMs = (int)(durationSecs * 1000f);
 		hiding = false;
 
 		switch( this.type ) {
 		default:
 		case Information:
-			if( size == MessageSize.Normal )
+			if( size == MessageSize.Normal ) {
 				font = Art.fontCurseYR;
-			else
+			} else {
 				font = Art.fontCurseYRbig;
+			}
 			break;
 
 		case Good:
-			if( size == MessageSize.Normal )
+			if( size == MessageSize.Normal ) {
 				font = Art.fontCurseG;
-			else
+			} else {
 				font = Art.fontCurseGbig;
+			}
 			break;
 
 		case Bad:
-			if( size == MessageSize.Normal )
+			if( size == MessageSize.Normal ) {
 				font = Art.fontCurseR;
-			else
+			} else {
 				font = Art.fontCurseRbig;
+			}
 			break;
 		}
 	}
 
 	private void computeFinalPosition() {
-		whereX = finalX = Gdx.graphics.getWidth() / 4;
+		int widthOnFour = Gdx.graphics.getWidth() / 4;
+		whereX = widthOnFour;
+		finalX = widthOnFour;
 		finalY = 0;
 
 		float scale = GameData.scalingStrategy.invTileMapZoomFactor;
@@ -119,7 +127,7 @@ public class Message {
 	}
 
 	public void render( SpriteBatch batch ) {
-		font.setScale( scaleX * GameData.scalingStrategy.invTileMapZoomFactor, scaleY * GameData.scalingStrategy.invTileMapZoomFactor );
+		font.setScale( scaleX * invZoomFactor, scaleY * invZoomFactor );
 		font.setColor( 1, 1, 1, alpha );
 		font.drawMultiLine( batch, what, whereX, whereY, halfWidth, HAlignment.CENTER );
 		font.setColor( 1, 1, 1, 1 );
@@ -152,8 +160,7 @@ public class Message {
 
 		GameData.tweener.start( Timeline.createParallel().push( Tween.to( this, MessageAccessor.OPACITY, 500 ).target( 0f ).ease( Expo.INOUT ) )
 				.push( Tween.to( this, MessageAccessor.POSITION_Y, 500 ).target( -50 * font.getScaleX() ).ease( Expo.INOUT ) )
-				.push( Tween.to( this, MessageAccessor.SCALE_XY, 400 ).target( 1f, 1f ).ease( Back.INOUT ) )
-				.setCallback( hideFinished ) );
+				.push( Tween.to( this, MessageAccessor.SCALE_XY, 400 ).target( 1f, 1f ).ease( Back.INOUT ) ).setCallback( hideFinished ) );
 	}
 
 	public boolean isHiding() {
