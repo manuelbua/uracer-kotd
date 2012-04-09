@@ -9,15 +9,12 @@ import com.bitfire.uracer.Config;
 import com.bitfire.uracer.carsimulation.CarInputMode;
 import com.bitfire.uracer.carsimulation.CarModel;
 import com.bitfire.uracer.entities.EntityType;
+import com.bitfire.uracer.game.actors.Car.CarType;
 import com.bitfire.uracer.game.collisions.CollisionFilters;
 import com.bitfire.uracer.utils.Convert;
 import com.bitfire.uracer.utils.FixtureAtlas;
 
 public final class CarFactory {
-	public enum CarType {
-		OldSkool, OldSkool2
-	}
-
 	private CarFactory() {
 	}
 

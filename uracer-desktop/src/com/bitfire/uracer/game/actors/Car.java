@@ -21,13 +21,16 @@ import com.bitfire.uracer.game.GameData;
 import com.bitfire.uracer.game.GameData.Systems;
 import com.bitfire.uracer.game.GameEvents;
 import com.bitfire.uracer.game.Input;
-import com.bitfire.uracer.game.actors.CarFactory.CarType;
 import com.bitfire.uracer.utils.AMath;
 import com.bitfire.uracer.utils.BatchUtils;
 import com.bitfire.uracer.utils.Convert;
 import com.bitfire.uracer.utils.VMath;
 
 public class Car extends Box2dEntity {
+	public enum CarType {
+		OldSkool, OldSkool2
+	}
+
 	protected CarRenderer graphics;
 
 	private CarDescriptor carDesc;
