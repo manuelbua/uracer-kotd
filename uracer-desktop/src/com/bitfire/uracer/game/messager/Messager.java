@@ -1,4 +1,4 @@
-package com.bitfire.uracer.messager;
+package com.bitfire.uracer.game.messager;
 
 import java.util.LinkedList;
 

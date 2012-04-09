@@ -2,7 +2,7 @@ package com.bitfire.uracer.game.tweening.accessors;
 
 import aurelienribon.tweenengine.TweenAccessor;
 
-import com.bitfire.uracer.messager.Message;
+import com.bitfire.uracer.game.messager.Message;
 
 public class MessageAccessor implements TweenAccessor<Message> {
 	public static final int POSITION_XY = 1;

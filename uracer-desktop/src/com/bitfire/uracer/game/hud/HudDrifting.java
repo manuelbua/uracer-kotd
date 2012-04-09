@@ -11,10 +11,10 @@ import com.bitfire.uracer.game.GameData.States;
 import com.bitfire.uracer.game.actors.Car;
 import com.bitfire.uracer.game.events.DriftStateEvent;
 import com.bitfire.uracer.game.events.DriftStateEvent.Type;
+import com.bitfire.uracer.game.messager.Messager.MessagePosition;
+import com.bitfire.uracer.game.messager.Messager.MessageSize;
+import com.bitfire.uracer.game.messager.Messager.MessageType;
 import com.bitfire.uracer.game.states.DriftState;
-import com.bitfire.uracer.messager.Messager.MessagePosition;
-import com.bitfire.uracer.messager.Messager.MessageSize;
-import com.bitfire.uracer.messager.Messager.MessageType;
 import com.bitfire.uracer.utils.Convert;
 import com.bitfire.uracer.utils.NumberString;
 
