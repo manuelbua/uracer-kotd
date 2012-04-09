@@ -1,7 +1,7 @@
 package com.bitfire.uracer.game.states;
 
-import com.bitfire.uracer.game.GameData.Events;
 import com.bitfire.uracer.game.GameData.States;
+import com.bitfire.uracer.game.GameEvents;
 import com.bitfire.uracer.game.Time;
 import com.bitfire.uracer.game.actors.Car;
 import com.bitfire.uracer.game.events.DriftStateEvent.Type;
@@ -31,7 +31,7 @@ public final class DriftState {
 	};
 
 	public DriftState() {
-		Events.gameLogic.addListener( gameLogicEvent );
+		GameEvents.gameLogic.addListener( gameLogicEvent );
 		reset();
 	}
 
@@ -58,7 +58,7 @@ public final class DriftState {
 		hasCollided = true;
 		collisionTime.start();
 		time.stop();
-		Events.driftState.trigger( Type.onEndDrift );
+		GameEvents.driftState.trigger( Type.onEndDrift );
 	}
 
 	public void update() {
@@ -95,7 +95,7 @@ public final class DriftState {
 					hasCollided = false;
 					// driftStartTime = System.currentTimeMillis();
 					time.start();
-					Events.driftState.trigger( Type.onBeginDrift );
+					GameEvents.driftState.trigger( Type.onBeginDrift );
 				}
 			} else {
 				// search for onEndDrift
@@ -103,7 +103,7 @@ public final class DriftState {
 					time.stop();
 					isDrifting = false;
 					hasCollided = false;
-					Events.driftState.trigger( Type.onEndDrift );
+					GameEvents.driftState.trigger( Type.onEndDrift );
 				}
 			}
 		}

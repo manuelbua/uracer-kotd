@@ -3,7 +3,6 @@ package com.bitfire.uracer.game;
 import aurelienribon.tweenengine.Timeline;
 import aurelienribon.tweenengine.TweenManager;
 
-import com.bitfire.uracer.game.GameData.Events;
 import com.bitfire.uracer.game.events.GameLogicEvent;
 
 public final class Tweener {
@@ -22,7 +21,7 @@ public final class Tweener {
 	};
 
 	public static void init() {
-		Events.gameLogic.addListener( gameLogicEvent );
+		GameEvents.gameLogic.addListener( gameLogicEvent );
 	}
 
 	private Tweener() {

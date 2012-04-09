@@ -2,7 +2,7 @@ package com.bitfire.uracer.game.states;
 
 import com.badlogic.gdx.math.Vector2;
 import com.bitfire.uracer.game.GameData;
-import com.bitfire.uracer.game.GameData.Events;
+import com.bitfire.uracer.game.GameEvents;
 import com.bitfire.uracer.game.MapUtils;
 import com.bitfire.uracer.game.actors.Car;
 import com.bitfire.uracer.game.actors.GhostCar;
@@ -42,8 +42,8 @@ public final class PlayerState {
 	}
 
 	public PlayerState( Car car, GhostCar ghost ) {
-		Events.playerState.source = this;
-		Events.gameLogic.addListener( gameLogicEvent );
+		GameEvents.playerState.source = this;
+		GameEvents.gameLogic.addListener( gameLogicEvent );
 		setData( car, ghost );
 	}
 
@@ -71,7 +71,7 @@ public final class PlayerState {
 			currTileY = (int)tilePosition.y;
 
 			if( (lastTileX != currTileX) || (lastTileY != currTileY) ) {
-				Events.playerState.trigger( PlayerStateEvent.Type.onTileChanged );
+				GameEvents.playerState.trigger( PlayerStateEvent.Type.onTileChanged );
 			}
 
 			// speed/force normalized factors

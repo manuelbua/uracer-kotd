@@ -7,7 +7,7 @@ import com.badlogic.gdx.physics.box2d.Body;
 import com.badlogic.gdx.physics.box2d.World;
 import com.bitfire.uracer.Config;
 import com.bitfire.uracer.game.GameData;
-import com.bitfire.uracer.game.GameData.Events;
+import com.bitfire.uracer.game.GameEvents;
 import com.bitfire.uracer.game.events.GameRendererEvent;
 import com.bitfire.uracer.game.events.GameRendererEvent.Type;
 import com.bitfire.uracer.utils.AMath;
@@ -20,7 +20,7 @@ public abstract class Box2dEntity extends SubframeInterpolableEntity {
 	private final GameRendererEvent.Listener gameRendererEvent = new GameRendererEvent.Listener() {
 		@Override
 		public void gameRendererEvent( Type type ) {
-			SpriteBatch batch = Events.gameRenderer.batch;
+			SpriteBatch batch = GameEvents.gameRenderer.batch;
 
 			switch( type ) {
 			case BatchBeforeMeshes:
@@ -37,8 +37,8 @@ public abstract class Box2dEntity extends SubframeInterpolableEntity {
 	public abstract void onDebug( SpriteBatch batch );
 
 	public Box2dEntity(World world) {
-		Events.gameRenderer.addListener( gameRendererEvent, GameRendererEvent.Type.BatchBeforeMeshes, GameRendererEvent.Order.DEFAULT );
-		Events.gameRenderer.addListener( gameRendererEvent, GameRendererEvent.Type.BatchDebug, GameRendererEvent.Order.DEFAULT );
+		GameEvents.gameRenderer.addListener( gameRendererEvent, GameRendererEvent.Type.BatchBeforeMeshes, GameRendererEvent.Order.DEFAULT );
+		GameEvents.gameRenderer.addListener( gameRendererEvent, GameRendererEvent.Type.BatchDebug, GameRendererEvent.Order.DEFAULT );
 		this.world = world;
 	}
 

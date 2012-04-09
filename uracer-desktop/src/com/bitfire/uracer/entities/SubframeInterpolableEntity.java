@@ -1,6 +1,6 @@
 package com.bitfire.uracer.entities;
 
-import com.bitfire.uracer.game.GameData.Events;
+import com.bitfire.uracer.game.GameEvents;
 import com.bitfire.uracer.game.events.PhysicsStepEvent;
 import com.bitfire.uracer.game.events.PhysicsStepEvent.Type;
 
@@ -10,7 +10,7 @@ public abstract class SubframeInterpolableEntity extends Entity implements Physi
 	protected EntityRenderState stateCurrent = new EntityRenderState();
 
 	public SubframeInterpolableEntity() {
-		Events.physicsStep.addListener( this );
+		GameEvents.physicsStep.addListener( this );
 	}
 
 	public abstract void saveStateTo( EntityRenderState state );
@@ -34,7 +34,7 @@ public abstract class SubframeInterpolableEntity extends Entity implements Physi
 			onAfterPhysicsSubstep();
 			break;
 		case onTemporalAliasing:
-			onTemporalAliasing( Events.physicsStep.temporalAliasingFactor );
+			onTemporalAliasing( GameEvents.physicsStep.temporalAliasingFactor );
 			break;
 		}
 	}

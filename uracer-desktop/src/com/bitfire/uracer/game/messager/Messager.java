@@ -4,7 +4,7 @@ import java.util.LinkedList;
 
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.utils.Array;
-import com.bitfire.uracer.game.GameData.Events;
+import com.bitfire.uracer.game.GameEvents;
 import com.bitfire.uracer.game.events.GameLogicEvent;
 import com.bitfire.uracer.game.events.GameRendererEvent;
 import com.bitfire.uracer.game.events.GameRendererEvent.Type;
@@ -26,7 +26,7 @@ public class Messager extends Task {
 	private final GameRendererEvent.Listener gameRendererEvent = new GameRendererEvent.Listener() {
 		@Override
 		public void gameRendererEvent( Type type ) {
-			SpriteBatch batch = Events.gameRenderer.batch;
+			SpriteBatch batch = GameEvents.gameRenderer.batch;
 
 			if( isBusy( MessagePosition.Top ) ) {
 				currents.get( MessagePosition.Top.ordinal() ).render( batch );
@@ -60,8 +60,8 @@ public class Messager extends Task {
 	private int idxMessageStore;
 
 	public Messager( float invZoomFactor ) {
-		Events.gameRenderer.addListener( gameRendererEvent, GameRendererEvent.Type.BatchAfterMeshes, GameRendererEvent.Order.MINUS_4 );
-		Events.gameLogic.addListener( gameLogicEvent );
+		GameEvents.gameRenderer.addListener( gameRendererEvent, GameRendererEvent.Type.BatchAfterMeshes, GameRendererEvent.Order.MINUS_4 );
+		GameEvents.gameLogic.addListener( gameLogicEvent );
 
 		currents = new Array<Message>( 3 );
 		currents.insert( MessagePosition.Top.ordinal(), null );

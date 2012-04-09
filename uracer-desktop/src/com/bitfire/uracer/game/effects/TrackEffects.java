@@ -1,7 +1,7 @@
 package com.bitfire.uracer.game.effects;
 
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
-import com.bitfire.uracer.game.GameData.Events;
+import com.bitfire.uracer.game.GameEvents;
 import com.bitfire.uracer.game.actors.Car;
 import com.bitfire.uracer.game.effects.TrackEffect.Type;
 import com.bitfire.uracer.game.events.GameLogicEvent;
@@ -26,7 +26,7 @@ public class TrackEffects extends Task {
 	private final GameRendererEvent.Listener gameRendererEvent = new GameRendererEvent.Listener() {
 		@Override
 		public void gameRendererEvent( GameRendererEvent.Type type ) {
-			SpriteBatch batch = Events.gameRenderer.batch;
+			SpriteBatch batch = GameEvents.gameRenderer.batch;
 			for( TrackEffect effect : effects ) {
 				if( effect != null ) {
 					effect.render( batch );
@@ -36,8 +36,8 @@ public class TrackEffects extends Task {
 	};
 
 	public TrackEffects( Car car ) {
-		Events.gameLogic.addListener( gameLogicEvent );
-		Events.gameRenderer.addListener( gameRendererEvent, GameRendererEvent.Type.BatchBeforeMeshes, GameRendererEvent.Order.MINUS_4 );
+		GameEvents.gameLogic.addListener( gameLogicEvent );
+		GameEvents.gameRenderer.addListener( gameRendererEvent, GameRendererEvent.Type.BatchBeforeMeshes, GameRendererEvent.Order.MINUS_4 );
 
 		// TODO, custom render event
 		// for CarSkidMarks GameRenderer.event.addListener( gameRendererEvent, GameRendererEvent.Type.BatchBeforeMeshes,
@@ -57,30 +57,38 @@ public class TrackEffects extends Task {
 
 	@Override
 	public void onTick() {
-		for( TrackEffect effect : effects )
-			if( effect != null )
+		for( TrackEffect effect : effects ) {
+			if( effect != null ) {
 				effect.onTick();
+			}
+		}
 	}
 
 	public void reset() {
-		for( TrackEffect effect : effects )
-			if( effect != null )
+		for( TrackEffect effect : effects ) {
+			if( effect != null ) {
 				effect.reset();
+			}
+		}
 	}
 
 	@Override
 	public void dispose() {
-		for( TrackEffect effect : effects )
-			if( effect != null )
+		for( TrackEffect effect : effects ) {
+			if( effect != null ) {
 				effect.dispose();
+			}
+		}
 
 		effects = null;
 	}
 
 	public int getParticleCount( Type what ) {
 		TrackEffect effect = effects[what.ordinal()];
-		if( effect == null )
+		if( effect == null ) {
 			return 0;
+		}
+
 		return effect.getParticleCount();
 	}
 }

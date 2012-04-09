@@ -17,9 +17,9 @@ import com.bitfire.uracer.Director;
 import com.bitfire.uracer.URacer;
 import com.bitfire.uracer.carsimulation.CarInputMode;
 import com.bitfire.uracer.game.GameData;
-import com.bitfire.uracer.game.GameData.Events;
 import com.bitfire.uracer.game.GameData.States;
 import com.bitfire.uracer.game.GameData.Systems;
+import com.bitfire.uracer.game.GameEvents;
 import com.bitfire.uracer.game.GameWorld;
 import com.bitfire.uracer.game.Input;
 import com.bitfire.uracer.game.MapUtils;
@@ -52,15 +52,15 @@ public class GameLogic implements CarEvent.Listener, PlayerStateEvent.Listener {
 	private Recorder recorder = null;
 
 	public GameLogic( GameWorld world ) {
-		Events.gameLogic.source = this;
+		GameEvents.gameLogic.source = this;
 		this.world = world;
 		mapUtils = world.mapUtils;
 
 		recorder = new Recorder();
 		timeMultiplier.value = 1f;
 
-		Events.playerState.addListener( this );
-		Events.carEvent.addListener( this );
+		GameEvents.playerState.addListener( this );
+		GameEvents.carEvent.addListener( this );
 		States.playerState.car.setTransform( GameData.gameWorld.playerStartPos, GameData.gameWorld.playerStartOrient );
 
 		controller = new DirectorController( Config.Graphics.CameraInterpolationMode, Director.halfViewport, GameData.gameWorld.worldSizeScaledPx,
@@ -85,11 +85,11 @@ public class GameLogic implements CarEvent.Listener, PlayerStateEvent.Listener {
 
 		if( input.isOn( Keys.R ) ) {
 			restart();
-			Events.gameLogic.trigger( GameLogicEvent.Type.onRestart );
+			GameEvents.gameLogic.trigger( GameLogicEvent.Type.onRestart );
 		} else if( input.isOn( Keys.T ) ) {
 			restart();
 			reset();
-			Events.gameLogic.trigger( GameLogicEvent.Type.onReset );
+			GameEvents.gameLogic.trigger( GameLogicEvent.Type.onReset );
 		} else if( input.isOn( Keys.Q ) ) {
 			Gdx.app.exit();
 			return false;

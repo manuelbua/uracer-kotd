@@ -9,7 +9,7 @@ import com.bitfire.uracer.Director;
 import com.bitfire.uracer.ScalingStrategy;
 import com.bitfire.uracer.URacer;
 import com.bitfire.uracer.game.GameData;
-import com.bitfire.uracer.game.GameData.Events;
+import com.bitfire.uracer.game.GameEvents;
 import com.bitfire.uracer.game.GameWorld;
 import com.bitfire.uracer.game.Tweener;
 import com.bitfire.uracer.game.events.GameRendererEvent;
@@ -74,8 +74,8 @@ public class GameRenderer {
 		SpriteBatch batch = null;
 		batch = batchRenderer.begin( ortho );
 		{
-			Events.gameRenderer.batch = batch;
-			Events.gameRenderer.trigger( GameRendererEvent.Type.BatchBeforeMeshes );
+			GameEvents.gameRenderer.batch = batch;
+			GameEvents.gameRenderer.trigger( GameRendererEvent.Type.BatchBeforeMeshes );
 		}
 		batchRenderer.end();
 
@@ -85,8 +85,8 @@ public class GameRenderer {
 		// BatchAfterMeshes
 		batch = batchRenderer.beginTopLeft();
 		{
-			Events.gameRenderer.batch = batch;
-			Events.gameRenderer.trigger( GameRendererEvent.Type.BatchAfterMeshes );
+			GameEvents.gameRenderer.batch = batch;
+			GameEvents.gameRenderer.trigger( GameRendererEvent.Type.BatchAfterMeshes );
 		}
 		batchRenderer.end();
 
@@ -134,7 +134,7 @@ public class GameRenderer {
 			}
 
 			// EntityManager.raiseOnDebug();
-			Events.gameRenderer.trigger( GameRendererEvent.Type.BatchDebug );
+			GameEvents.gameRenderer.trigger( GameRendererEvent.Type.BatchDebug );
 
 			Debug.renderVersionInfo( batch );
 			Debug.renderGraphicalStats( batch, Gdx.graphics.getWidth() - Debug.getStatsWidth(), Gdx.graphics.getHeight() - Debug.getStatsHeight() - Debug.fontHeight );

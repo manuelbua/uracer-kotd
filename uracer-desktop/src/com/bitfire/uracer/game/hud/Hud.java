@@ -5,8 +5,8 @@ import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.bitfire.uracer.Art;
 import com.bitfire.uracer.Config;
 import com.bitfire.uracer.game.GameData;
-import com.bitfire.uracer.game.GameData.Events;
 import com.bitfire.uracer.game.GameData.States;
+import com.bitfire.uracer.game.GameEvents;
 import com.bitfire.uracer.game.Replay;
 import com.bitfire.uracer.game.actors.Car;
 import com.bitfire.uracer.game.effects.CarSkidMarks;
@@ -29,7 +29,7 @@ public class Hud extends Task {
 	private final GameRendererEvent.Listener gameRendererEvent = new GameRendererEvent.Listener() {
 		@Override
 		public void gameRendererEvent( GameRendererEvent.Type type ) {
-			SpriteBatch batch = Events.gameRenderer.batch;
+			SpriteBatch batch = GameEvents.gameRenderer.batch;
 
 			switch( type ) {
 			case BatchAfterMeshes:
@@ -62,9 +62,9 @@ public class Hud extends Task {
 
 	// effects
 	public Hud( Car car ) {
-		Events.gameRenderer.addListener( gameRendererEvent, GameRendererEvent.Type.BatchAfterMeshes, GameRendererEvent.Order.DEFAULT );
-		Events.gameRenderer.addListener( gameRendererEvent, GameRendererEvent.Type.BatchDebug, GameRendererEvent.Order.DEFAULT );
-		Events.gameLogic.addListener( gameLogicEvent );
+		GameEvents.gameRenderer.addListener( gameRendererEvent, GameRendererEvent.Type.BatchAfterMeshes, GameRendererEvent.Order.DEFAULT );
+		GameEvents.gameRenderer.addListener( gameRendererEvent, GameRendererEvent.Type.BatchDebug, GameRendererEvent.Order.DEFAULT );
+		GameEvents.gameLogic.addListener( gameLogicEvent );
 
 		// grid-based position
 		int gridX = (int)((float)Gdx.graphics.getWidth() / 5f);

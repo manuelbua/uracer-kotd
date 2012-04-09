@@ -7,15 +7,9 @@ import com.badlogic.gdx.physics.box2d.World;
 import com.bitfire.uracer.Config;
 import com.bitfire.uracer.ScalingStrategy;
 import com.bitfire.uracer.game.actors.Car;
-import com.bitfire.uracer.game.actors.CarEvent;
 import com.bitfire.uracer.game.actors.CarFactory;
 import com.bitfire.uracer.game.collisions.GameContactListener;
 import com.bitfire.uracer.game.effects.TrackEffects;
-import com.bitfire.uracer.game.events.DriftStateEvent;
-import com.bitfire.uracer.game.events.GameLogicEvent;
-import com.bitfire.uracer.game.events.GameRendererEvent;
-import com.bitfire.uracer.game.events.PhysicsStepEvent;
-import com.bitfire.uracer.game.events.PlayerStateEvent;
 import com.bitfire.uracer.game.hud.HudLabel;
 import com.bitfire.uracer.game.hud.HudLabelAccessor;
 import com.bitfire.uracer.game.logic.PhysicsStep;
@@ -83,20 +77,6 @@ public final class GameData {
 		public static Input input;
 
 		private Systems() {
-		}
-	}
-
-	/** Events */
-	public static final class Events {
-
-		public static final GameRendererEvent gameRenderer = new GameRendererEvent();
-		public static final PlayerStateEvent playerState = new PlayerStateEvent();
-		public static final DriftStateEvent driftState = new DriftStateEvent();
-		public static final PhysicsStepEvent physicsStep = new PhysicsStepEvent();
-		public static final GameLogicEvent gameLogic = new GameLogicEvent();
-		public static final CarEvent carEvent = new CarEvent();
-
-		private Events() {
 		}
 	}
 
