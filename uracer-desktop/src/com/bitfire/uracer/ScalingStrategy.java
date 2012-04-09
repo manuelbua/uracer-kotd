@@ -1,4 +1,4 @@
-package com.bitfire.uracer.tiled;
+package com.bitfire.uracer;
 
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.math.MathUtils;
@@ -57,7 +57,7 @@ public class ScalingStrategy {
 		hFovScalingFactor = hFovToScalingFactor();
 		meshScaleFactor *= hFovScalingFactor;
 
-		System.out.println( "vfov=" + verticalFov + ", hfov=" + desiredHorizontalFov + ", msf=" + meshScaleFactor + ", tmzf=" + tileMapZoomFactor );
+		Gdx.app.log( "ScalingStrategy", "vfov=" + verticalFov + ", hfov=" + desiredHorizontalFov + ", msf=" + meshScaleFactor + ", tmzf=" + tileMapZoomFactor );
 	}
 
 	// http://rjdown.co.uk/projects/bfbc2/fovcalculator.php

@@ -3,6 +3,7 @@ package com.bitfire.uracer.game;
 import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.physics.box2d.World;
 import com.bitfire.uracer.Config;
+import com.bitfire.uracer.ScalingStrategy;
 import com.bitfire.uracer.game.collisions.GameContactListener;
 import com.bitfire.uracer.game.effects.TrackEffects;
 import com.bitfire.uracer.game.entities.Car;
@@ -25,7 +26,6 @@ import com.bitfire.uracer.game.tweening.accessors.HudLabelAccessor;
 import com.bitfire.uracer.game.tweening.accessors.MessageAccessor;
 import com.bitfire.uracer.messager.Message;
 import com.bitfire.uracer.messager.Messager;
-import com.bitfire.uracer.tiled.ScalingStrategy;
 import com.bitfire.uracer.utils.BoxedFloat;
 
 /** Encapsulates and abstracts the dynamic state of the game.
