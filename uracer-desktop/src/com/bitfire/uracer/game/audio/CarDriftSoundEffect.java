@@ -68,10 +68,11 @@ public class CarDriftSoundEffect extends CarSoundEffect {
 	@Override
 	public void onStart() {
 		// UGLY HACK FOR ANDROID
-		if( Config.isDesktop )
+		if( Config.isDesktop ) {
 			driftId = drift.loop( 0f );
-		else
+		} else {
 			driftId = checkedLoop( drift, 0f );
+		}
 
 		drift.setPitch( driftId, pitchMin );
 		drift.setVolume( driftId, 0f );
@@ -111,16 +112,16 @@ public class CarDriftSoundEffect extends CarSoundEffect {
 
 			// modulate volume
 			if( doFadeIn ) {
-				if( lastVolume < 1f )
+				if( lastVolume < 1f ) {
 					lastVolume += 0.01f;
-				else {
+				} else {
 					lastVolume = 1f;
 					doFadeIn = false;
 				}
 			} else if( doFadeOut ) {
-				if( lastVolume > 0f )
+				if( lastVolume > 0f ) {
 					lastVolume -= 0.03f;
-				else {
+				} else {
 					lastVolume = 0f;
 					doFadeOut = false;
 				}
