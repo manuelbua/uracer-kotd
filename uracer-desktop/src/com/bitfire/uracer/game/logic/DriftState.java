@@ -5,7 +5,7 @@ import com.bitfire.uracer.entities.vehicles.Car;
 import com.bitfire.uracer.events.DriftStateEvent.Type;
 import com.bitfire.uracer.events.GameLogicEvent;
 import com.bitfire.uracer.game.GameData.Events;
-import com.bitfire.uracer.game.GameData.State;
+import com.bitfire.uracer.game.GameData.States;
 import com.bitfire.uracer.task.Task;
 import com.bitfire.uracer.utils.AMath;
 
@@ -66,7 +66,7 @@ public class DriftState extends Task implements Disposable {
 
 	@Override
 	protected void onTick() {
-		Car car = State.playerState.car;
+		Car car = States.playerState.car;
 		float oneOnMaxGrip = 1f / car.getCarModel().max_grip;
 
 		// lateral forces are in the range [-max_grip, max_grip]

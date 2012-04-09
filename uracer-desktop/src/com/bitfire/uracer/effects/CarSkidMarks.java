@@ -9,7 +9,7 @@ import com.bitfire.uracer.Config;
 import com.bitfire.uracer.Director;
 import com.bitfire.uracer.carsimulation.CarModel;
 import com.bitfire.uracer.entities.vehicles.Car;
-import com.bitfire.uracer.game.GameData.State;
+import com.bitfire.uracer.game.GameData.States;
 import com.bitfire.uracer.game.logic.DriftState;
 import com.bitfire.uracer.utils.AMath;
 import com.bitfire.uracer.utils.Convert;
@@ -107,7 +107,7 @@ public class CarSkidMarks extends TrackEffect {
 			return;
 		}
 
-		DriftState di = State.driftState;
+		DriftState di = States.driftState;
 		if( di.driftStrength > 0.2f )
 		// if( di.isDrifting )
 		{

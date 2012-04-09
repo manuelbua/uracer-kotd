@@ -20,7 +20,7 @@ import com.bitfire.uracer.events.CarEvent;
 import com.bitfire.uracer.events.GameLogicEvent;
 import com.bitfire.uracer.events.PlayerStateEvent;
 import com.bitfire.uracer.game.GameData.Events;
-import com.bitfire.uracer.game.GameData.State;
+import com.bitfire.uracer.game.GameData.States;
 import com.bitfire.uracer.game.logic.DirectorController;
 import com.bitfire.uracer.game.logic.LapState;
 import com.bitfire.uracer.game.logic.PlayerState;
@@ -50,7 +50,7 @@ public class GameLogic implements CarEvent.Listener, PlayerStateEvent.Listener {
 
 		Events.playerState.addListener( this );
 		Events.carEvent.addListener( this );
-		State.playerState.car.setTransform( GameData.gameWorld.playerStartPos, GameData.gameWorld.playerStartOrient );
+		States.playerState.car.setTransform( GameData.gameWorld.playerStartPos, GameData.gameWorld.playerStartOrient );
 
 		controller = new DirectorController( Config.Graphics.CameraInterpolationMode, Director.halfViewport, GameData.gameWorld.worldSizeScaledPx,
 				GameData.gameWorld.worldSizeTiles );
@@ -106,11 +106,11 @@ public class GameLogic implements CarEvent.Listener, PlayerStateEvent.Listener {
 	}
 
 	public void onBeforeRender() {
-		GameData.System.physicsStep.triggerOnTemporalAliasing( URacer.getTemporalAliasing() );
+		GameData.Systems.physicsStep.triggerOnTemporalAliasing( URacer.getTemporalAliasing() );
 
 		// follow the player's car
-		if( GameData.State.playerState != null && GameData.State.playerState.car != null ) {
-			controller.setPosition( GameData.State.playerState.car.state().position );
+		if( GameData.States.playerState != null && GameData.States.playerState.car != null ) {
+			controller.setPosition( GameData.States.playerState.car.state().position );
 		}
 	}
 
@@ -131,8 +131,8 @@ public class GameLogic implements CarEvent.Listener, PlayerStateEvent.Listener {
 		switch( type ) {
 		case onCollision:
 			if( data.car.getInputMode() == CarInputMode.InputFromPlayer ) {
-				if( GameData.State.driftState.isDrifting ) {
-					GameData.State.driftState.invalidateByCollision();
+				if( GameData.States.driftState.isDrifting ) {
+					GameData.States.driftState.invalidateByCollision();
 					// System.out.println( "invalidated" );
 				}
 			}
@@ -149,10 +149,10 @@ public class GameLogic implements CarEvent.Listener, PlayerStateEvent.Listener {
 	public void playerStateEvent( PlayerStateEvent.Type type ) {
 		switch( type ) {
 		case onTileChanged:
-			PlayerState player = GameData.State.playerState;
+			PlayerState player = GameData.States.playerState;
 			boolean onStartZone = (player.currTileX == GameData.gameWorld.playerStartTileX && player.currTileY == GameData.gameWorld.playerStartTileY);
 
-			LapState lapState = GameData.State.lapState;
+			LapState lapState = GameData.States.lapState;
 			String name = GameData.gameWorld.name;
 
 			if( onStartZone ) {

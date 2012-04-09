@@ -9,7 +9,7 @@ import com.bitfire.uracer.Art;
 import com.bitfire.uracer.URacer;
 import com.bitfire.uracer.entities.vehicles.Car;
 import com.bitfire.uracer.game.GameData;
-import com.bitfire.uracer.game.GameData.State;
+import com.bitfire.uracer.game.GameData.States;
 import com.bitfire.uracer.game.logic.DriftState;
 
 public class SmokeTrails extends TrackEffect {
@@ -102,7 +102,7 @@ public class SmokeTrails extends TrackEffect {
 
 		this.player = player;
 		isDrifting = wasDrifting = false;
-		drift = State.driftState;
+		drift = States.driftState;
 	}
 
 	@Override

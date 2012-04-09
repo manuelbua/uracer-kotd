@@ -13,7 +13,7 @@ import com.bitfire.uracer.events.GameLogicEvent;
 import com.bitfire.uracer.events.GameRendererEvent;
 import com.bitfire.uracer.game.GameData;
 import com.bitfire.uracer.game.GameData.Events;
-import com.bitfire.uracer.game.GameData.State;
+import com.bitfire.uracer.game.GameData.States;
 import com.bitfire.uracer.game.logic.DriftState;
 import com.bitfire.uracer.game.logic.LapState;
 import com.bitfire.uracer.task.Task;
@@ -108,7 +108,7 @@ public class Hud extends Task {
 
 	private void updateLapTimes() {
 
-		LapState lapState = State.lapState;
+		LapState lapState = States.lapState;
 
 		// current time
 		curr.setString( "YOUR  TIME\n" + NumberString.format( lapState.getElapsedSeconds() ) + "s" );
@@ -139,7 +139,7 @@ public class Hud extends Task {
 	}
 
 	public void onDebug( SpriteBatch batch ) {
-		DriftState drift = State.driftState;
+		DriftState drift = States.driftState;
 
 		// lateral forces
 		meterLatForce.setValue( drift.driftStrength );
@@ -151,10 +151,10 @@ public class Hud extends Task {
 
 		meterLatForce.render( batch );
 
-		meterSkidMarks.setValue( GameData.System.trackEffects.getParticleCount( Type.CarSkidMarks ) );
+		meterSkidMarks.setValue( GameData.Systems.trackEffects.getParticleCount( Type.CarSkidMarks ) );
 		meterSkidMarks.render( batch );
 
-		meterSmoke.setValue( GameData.System.trackEffects.getParticleCount( Type.SmokeTrails ) );
+		meterSmoke.setValue( GameData.Systems.trackEffects.getParticleCount( Type.SmokeTrails ) );
 		meterSmoke.render( batch );
 	}
 }

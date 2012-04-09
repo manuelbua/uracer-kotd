@@ -44,23 +44,41 @@ public final class GameData {
 	public static Tweener tweener;
 	public static World b2dWorld;
 
-	public static final class State {
+	public static final class States {
 		public static PlayerState playerState;
 		public static DriftState driftState;
 		public static LapState lapState;
 
+		public static void create( Car car ) {
+			States.playerState = new PlayerState( car, CarFactory.createGhost( car ) );
+			States.driftState = new DriftState();
+			States.lapState = new LapState();
+		}
+
 		public static void dispose() {
 			playerState.dispose();
 			driftState.dispose();
+			States.lapState = null;
+		}
+
+		private States() {
 		}
 	}
 
-	public static final class System {
+	public static final class Systems {
 		public static PhysicsStep physicsStep;
 		public static TrackEffects trackEffects;
 
+		public static void create( World b2dWorld, Car car ) {
+			Systems.physicsStep = new PhysicsStep( b2dWorld );
+			Systems.trackEffects = new TrackEffects( car );
+		}
+
 		public static void dispose() {
 			trackEffects.dispose();
+		}
+
+		private Systems() {
 		}
 	}
 
@@ -74,6 +92,8 @@ public final class GameData {
 		public static final CarEvent carEvent = new CarEvent();
 		public static final TaskManagerEvent taskManager = new TaskManagerEvent();
 
+		private Events() {
+		}
 	}
 
 	public static void create( GameDifficulty difficulty ) {
@@ -90,14 +110,11 @@ public final class GameData {
 	}
 
 	public static void createStates( Car car ) {
-		State.playerState = new PlayerState( car, CarFactory.createGhost( car ) );
-		State.driftState = new DriftState();
-		State.lapState = new LapState();
+		States.create( car );
 	}
 
-	public static void createSystems() {
-		System.physicsStep = new PhysicsStep( GameData.b2dWorld );
-		System.trackEffects = new TrackEffects( State.playerState.car );
+	public static void createSystems( World b2dWorld, Car car ) {
+		Systems.create( b2dWorld, car );
 	}
 
 	public static void createWorld( String levelName, boolean nightMode ) {
@@ -109,8 +126,8 @@ public final class GameData {
 		GameData.tweener.clear();
 		GameData.tweener.dispose();
 		GameData.messager.dispose();
-		GameData.State.dispose();
-		GameData.System.dispose();
+		GameData.States.dispose();
+		GameData.Systems.dispose();
 	}
 
 	private static Tweener createTweener() {

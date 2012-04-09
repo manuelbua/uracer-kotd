@@ -25,7 +25,7 @@ import com.bitfire.uracer.Config;
 import com.bitfire.uracer.Director;
 import com.bitfire.uracer.entities.vehicles.Car;
 import com.bitfire.uracer.game.GameData;
-import com.bitfire.uracer.game.GameData.State;
+import com.bitfire.uracer.game.GameData.States;
 import com.bitfire.uracer.game.GameWorld;
 import com.bitfire.uracer.tiled.OrthographicAlignedStillModel;
 import com.bitfire.uracer.tiled.TrackTrees;
@@ -112,7 +112,7 @@ public class GameWorldRenderer {
 	}
 
 	public void generateLightMap() {
-		Car car = State.playerState.car;
+		Car car = States.playerState.car;
 
 		// update player light (subframe interpolation ready)
 		float ang = 90 + car.state().orientation;

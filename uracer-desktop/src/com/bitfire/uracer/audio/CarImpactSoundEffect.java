@@ -10,7 +10,7 @@ import com.bitfire.uracer.events.CarEvent;
 import com.bitfire.uracer.events.CarEvent.Data;
 import com.bitfire.uracer.events.CarEvent.Type;
 import com.bitfire.uracer.game.GameData.Events;
-import com.bitfire.uracer.game.GameData.State;
+import com.bitfire.uracer.game.GameData.States;
 import com.bitfire.uracer.utils.AMath;
 
 public class CarImpactSoundEffect extends CarSoundEffect {
@@ -33,7 +33,7 @@ public class CarImpactSoundEffect extends CarSoundEffect {
 			switch( type ) {
 			case onCollision:
 				if( data.car.getInputMode() == CarInputMode.InputFromPlayer )
-					impact( data.impulses.len(), State.playerState.currSpeedFactor );
+					impact( data.impulses.len(), States.playerState.currSpeedFactor );
 				break;
 			case onComputeForces:
 				break;

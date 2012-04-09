@@ -1,6 +1,7 @@
 package com.bitfire.uracer.game;
 
 import java.util.ArrayList;
+import java.util.List;
 
 import com.badlogic.gdx.utils.Disposable;
 import com.bitfire.uracer.Art;
@@ -13,12 +14,9 @@ import com.bitfire.uracer.debug.Debug;
 import com.bitfire.uracer.entities.vehicles.Car;
 import com.bitfire.uracer.factories.CarFactory;
 import com.bitfire.uracer.factories.CarFactory.CarType;
-import com.bitfire.uracer.game.GameData.State;
+import com.bitfire.uracer.game.GameData.States;
 import com.bitfire.uracer.game.rendering.GameRenderer;
 import com.bitfire.uracer.hud.Hud;
-import com.bitfire.uracer.messager.Messager.MessagePosition;
-import com.bitfire.uracer.messager.Messager.MessageSize;
-import com.bitfire.uracer.messager.Messager.MessageType;
 import com.bitfire.uracer.postprocessing.PostProcessor;
 import com.bitfire.uracer.postprocessing.effects.Bloom;
 import com.bitfire.uracer.postprocessing.effects.Zoom;
@@ -42,11 +40,8 @@ public class Game implements Disposable {
 	// graphics
 	private GameRenderer gameRenderer = null;
 
-	// sounds
-	private CarSoundManager carSoundManager = null;
-
 	// tasks
-	private ArrayList<Task> gameTasks = null;
+	private List<Task> gameTasks = null;
 
 	public Game( String levelName, GameDifficulty difficulty ) {
 		GameData.create( difficulty );
@@ -56,10 +51,7 @@ public class Game implements Disposable {
 
 		Car car = CarFactory.createPlayer( CarType.OldSkool, new CarModel().toModel2() );
 		GameData.createStates( car );
-		GameData.createSystems();
-
-		carSoundManager = new CarSoundManager();	// early load
-
+		GameData.createSystems( GameData.b2dWorld, car );
 		GameData.createWorld( levelName, false );
 
 		gameLogic = new GameLogic();
@@ -79,21 +71,18 @@ public class Game implements Disposable {
 		// ----------------------------
 		gameTasks = new ArrayList<Task>( 10 );
 		gameTasks.add( new Hud( car ) );
-
-		// dbg
-		GameData.messager.show( "This is just a test", 300, MessageType.Good, MessagePosition.Bottom, MessageSize.Big );
+		gameTasks.add( new CarSoundManager() );
 	}
 
 	@Override
 	public void dispose() {
-		for(Task task : gameTasks) {
+		for( Task task : gameTasks ) {
 			task.dispose();
 		}
 
 		gameTasks.clear();
 		Director.dispose();
 		gameRenderer.dispose();
-		carSoundManager.dispose();
 		Art.dispose();
 		GameData.dispose();
 	}
@@ -129,7 +118,7 @@ public class Game implements Disposable {
 		float factor = 1 - (URacer.timeMultiplier - 0.3f) / (Config.Physics.PhysicsTimeMultiplier - 0.3f);
 
 		if( Config.Graphics.EnablePostProcessingFx && zoom != null ) {
-			zoom.setOrigin( Director.screenPosFor( State.playerState.car.getBody() ) );
+			zoom.setOrigin( Director.screenPosFor( States.playerState.car.getBody() ) );
 			zoom.setStrength( -0.05f * factor );
 		}
 

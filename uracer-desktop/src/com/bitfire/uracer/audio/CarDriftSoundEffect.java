@@ -9,7 +9,7 @@ import com.bitfire.uracer.events.DriftStateEvent;
 import com.bitfire.uracer.events.DriftStateEvent.Type;
 import com.bitfire.uracer.game.GameData;
 import com.bitfire.uracer.game.GameData.Events;
-import com.bitfire.uracer.game.GameData.State;
+import com.bitfire.uracer.game.GameData.States;
 import com.bitfire.uracer.utils.AMath;
 
 /** Implements car drifting sound effects, modulating amplitude's volume and pitch
@@ -96,7 +96,7 @@ public class CarDriftSoundEffect extends CarSoundEffect {
 	public void onTick() {
 		if( driftId > -1 ) {
 			boolean anotherDriftId = (driftId != lastDriftId);
-			float speedFactor = GameData.State.playerState.currSpeedFactor;
+			float speedFactor = GameData.States.playerState.currSpeedFactor;
 
 			// compute behavior
 			float pitch = speedFactor * pitchFactor + pitchMin;
@@ -128,7 +128,7 @@ public class CarDriftSoundEffect extends CarSoundEffect {
 
 			lastDriftId = driftId;
 			lastVolume = AMath.clamp( lastVolume, 0, 1f );
-			drift.setVolume( driftId, State.driftState.driftStrength * lastVolume );
+			drift.setVolume( driftId, States.driftState.driftStrength * lastVolume );
 		}
 	}
 }

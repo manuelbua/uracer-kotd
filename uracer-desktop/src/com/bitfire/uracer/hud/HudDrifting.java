@@ -10,7 +10,7 @@ import com.bitfire.uracer.events.DriftStateEvent;
 import com.bitfire.uracer.events.DriftStateEvent.Type;
 import com.bitfire.uracer.game.GameData;
 import com.bitfire.uracer.game.GameData.Events;
-import com.bitfire.uracer.game.GameData.State;
+import com.bitfire.uracer.game.GameData.States;
 import com.bitfire.uracer.game.logic.DriftState;
 import com.bitfire.uracer.messager.Messager.MessagePosition;
 import com.bitfire.uracer.messager.Messager.MessageSize;
@@ -48,7 +48,7 @@ public class HudDrifting {
 				labelRealtime.fadeIn( 300 );
 				break;
 			case onEndDrift:
-				DriftState drift = State.driftState;
+				DriftState drift = States.driftState;
 				Vector2 pos = tmpv.set( Director.screenPosForPx( playerCar.state().position ) );
 
 				labelRealtime.fadeOut( 300 );
@@ -120,7 +120,7 @@ public class HudDrifting {
 	}
 
 	public void render( SpriteBatch batch ) {
-		DriftState drift = State.driftState;
+		DriftState drift = States.driftState;
 
 		// update from subframe-interpolated player position
 		Vector2 pos = tmpv.set( Director.screenPosForPx( playerCar.state().position ) );
