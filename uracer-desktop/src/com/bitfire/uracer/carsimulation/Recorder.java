@@ -1,9 +1,9 @@
 package com.bitfire.uracer.carsimulation;
 
-import com.bitfire.uracer.entities.vehicles.Car;
 import com.bitfire.uracer.events.GameLogicEvent;
 import com.bitfire.uracer.game.GameData;
 import com.bitfire.uracer.game.GameData.Events;
+import com.bitfire.uracer.game.entities.Car;
 
 public class Recorder {
 	private boolean isRecording;

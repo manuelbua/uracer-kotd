@@ -1,4 +1,4 @@
-package com.bitfire.uracer.tweener;
+package com.bitfire.uracer.utils;
 
 public class BoxedFloat {
 	public float value;

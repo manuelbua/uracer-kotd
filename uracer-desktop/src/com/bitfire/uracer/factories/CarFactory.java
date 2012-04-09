@@ -8,11 +8,11 @@ import com.bitfire.uracer.Art;
 import com.bitfire.uracer.Config;
 import com.bitfire.uracer.carsimulation.CarInputMode;
 import com.bitfire.uracer.carsimulation.CarModel;
-import com.bitfire.uracer.entities.CollisionFilters;
 import com.bitfire.uracer.entities.EntityType;
-import com.bitfire.uracer.entities.vehicles.Car;
-import com.bitfire.uracer.entities.vehicles.CarGraphics;
-import com.bitfire.uracer.entities.vehicles.GhostCar;
+import com.bitfire.uracer.game.collisions.CollisionFilters;
+import com.bitfire.uracer.game.entities.Car;
+import com.bitfire.uracer.game.entities.GhostCar;
+import com.bitfire.uracer.game.rendering.CarRenderer;
 import com.bitfire.uracer.utils.Convert;
 import com.bitfire.uracer.utils.FixtureAtlas;
 
@@ -25,7 +25,7 @@ public final class CarFactory {
 	}
 
 	public static GhostCar createGhost( CarType type, CarModel model ) {
-		CarGraphics graphics = createCarGraphics( type, model );
+		CarRenderer graphics = createCarGraphics( type, model );
 		GhostCar ghost = GhostCar.createForFactory( graphics, type, model );
 		applyCarPhysics( ghost, EntityType.CarReplay );
 		return ghost;
@@ -36,13 +36,13 @@ public final class CarFactory {
 	}
 
 	public static Car createPlayer( CarType carType, CarModel model ) {
-		CarGraphics graphics = createCarGraphics( carType, model );
+		CarRenderer graphics = createCarGraphics( carType, model );
 		Car car = Car.createForFactory( graphics, model, carType, CarInputMode.InputFromPlayer );
 		applyCarPhysics( car, EntityType.Car );
 		return car;
 	}
 
-	private static CarGraphics createCarGraphics( CarType type, CarModel model ) {
+	private static CarRenderer createCarGraphics( CarType type, CarModel model ) {
 		TextureRegion region = null;
 
 		switch( type ) {
@@ -55,7 +55,7 @@ public final class CarFactory {
 			break;
 		}
 
-		CarGraphics graphics = new CarGraphics( model, region );
+		CarRenderer graphics = new CarRenderer( model, region );
 		return graphics;
 	}
 

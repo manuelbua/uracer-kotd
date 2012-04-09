@@ -7,9 +7,9 @@ import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.math.Vector2;
 import com.bitfire.uracer.Art;
 import com.bitfire.uracer.URacer;
-import com.bitfire.uracer.entities.vehicles.Car;
 import com.bitfire.uracer.game.GameData;
 import com.bitfire.uracer.game.GameData.States;
+import com.bitfire.uracer.game.entities.Car;
 import com.bitfire.uracer.game.logic.DriftState;
 
 public class SmokeTrails extends TrackEffect {

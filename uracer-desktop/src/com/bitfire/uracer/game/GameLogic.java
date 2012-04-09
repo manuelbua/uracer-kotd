@@ -24,12 +24,12 @@ import com.bitfire.uracer.game.GameData.States;
 import com.bitfire.uracer.game.logic.DirectorController;
 import com.bitfire.uracer.game.logic.LapState;
 import com.bitfire.uracer.game.logic.PlayerState;
+import com.bitfire.uracer.game.tweening.accessors.BoxedFloatAccessor;
 import com.bitfire.uracer.messager.Messager.MessagePosition;
 import com.bitfire.uracer.messager.Messager.MessageSize;
 import com.bitfire.uracer.messager.Messager.MessageType;
-import com.bitfire.uracer.tweener.BoxedFloat;
-import com.bitfire.uracer.tweener.accessors.BoxedFloatAccessor;
 import com.bitfire.uracer.utils.AMath;
+import com.bitfire.uracer.utils.BoxedFloat;
 import com.bitfire.uracer.utils.NumberString;
 
 public class GameLogic implements CarEvent.Listener, PlayerStateEvent.Listener {

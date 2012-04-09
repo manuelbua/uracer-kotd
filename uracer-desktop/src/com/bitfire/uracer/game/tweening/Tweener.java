@@ -1,4 +1,4 @@
-package com.bitfire.uracer.tweener;
+package com.bitfire.uracer.game.tweening;
 
 import aurelienribon.tweenengine.Timeline;
 import aurelienribon.tweenengine.Tween;

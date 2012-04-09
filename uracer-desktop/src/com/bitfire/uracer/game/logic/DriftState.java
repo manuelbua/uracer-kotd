@@ -1,11 +1,11 @@
 package com.bitfire.uracer.game.logic;
 
 import com.badlogic.gdx.utils.Disposable;
-import com.bitfire.uracer.entities.vehicles.Car;
 import com.bitfire.uracer.events.DriftStateEvent.Type;
 import com.bitfire.uracer.events.GameLogicEvent;
 import com.bitfire.uracer.game.GameData.Events;
 import com.bitfire.uracer.game.GameData.States;
+import com.bitfire.uracer.game.entities.Car;
 import com.bitfire.uracer.task.Task;
 import com.bitfire.uracer.utils.AMath;
 

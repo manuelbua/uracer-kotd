@@ -1,4 +1,4 @@
-package com.bitfire.uracer.entities.vehicles;
+package com.bitfire.uracer.game.entities;
 
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.bitfire.uracer.carsimulation.CarForces;
@@ -6,6 +6,7 @@ import com.bitfire.uracer.carsimulation.CarInputMode;
 import com.bitfire.uracer.carsimulation.CarModel;
 import com.bitfire.uracer.carsimulation.Replay;
 import com.bitfire.uracer.factories.CarFactory.CarType;
+import com.bitfire.uracer.game.rendering.CarRenderer;
 
 /** Implements an automated Car, playing previously recorded events. It will
  * ignore car-to-car collisions, but will respect in-track collisions and
@@ -18,7 +19,7 @@ public class GhostCar extends Car {
 	private int indexPlay;
 	private boolean hasReplay;
 
-	private GhostCar( CarGraphics graphics, CarType type, CarModel model ) {
+	private GhostCar( CarRenderer graphics, CarType type, CarModel model ) {
 		super( graphics, model, type, CarInputMode.InputFromReplay );
 		indexPlay = 0;
 		hasReplay = false;
@@ -28,7 +29,7 @@ public class GhostCar extends Car {
 
 	// factory methods
 
-	public static GhostCar createForFactory( CarGraphics graphics, CarType type, CarModel model ) {
+	public static GhostCar createForFactory( CarRenderer graphics, CarType type, CarModel model ) {
 		GhostCar ghost = new GhostCar( graphics, type, model );
 //		EntityManager.add( ghost );
 		return ghost;

@@ -3,10 +3,10 @@ package com.bitfire.uracer.effects;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.bitfire.uracer.Config;
 import com.bitfire.uracer.effects.TrackEffect.Type;
-import com.bitfire.uracer.entities.vehicles.Car;
 import com.bitfire.uracer.events.GameLogicEvent;
 import com.bitfire.uracer.events.GameRendererEvent;
 import com.bitfire.uracer.game.GameData.Events;
+import com.bitfire.uracer.game.entities.Car;
 import com.bitfire.uracer.task.Task;
 
 public class TrackEffects extends Task {

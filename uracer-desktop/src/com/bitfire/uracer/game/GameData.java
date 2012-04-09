@@ -4,7 +4,6 @@ import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.physics.box2d.World;
 import com.bitfire.uracer.Config;
 import com.bitfire.uracer.effects.TrackEffects;
-import com.bitfire.uracer.entities.vehicles.Car;
 import com.bitfire.uracer.events.CarEvent;
 import com.bitfire.uracer.events.DriftStateEvent;
 import com.bitfire.uracer.events.GameLogicEvent;
@@ -14,19 +13,20 @@ import com.bitfire.uracer.events.PlayerStateEvent;
 import com.bitfire.uracer.events.TaskManagerEvent;
 import com.bitfire.uracer.factories.CarFactory;
 import com.bitfire.uracer.game.collisions.GameContactListener;
+import com.bitfire.uracer.game.entities.Car;
 import com.bitfire.uracer.game.hud.HudLabel;
 import com.bitfire.uracer.game.logic.DriftState;
 import com.bitfire.uracer.game.logic.LapState;
 import com.bitfire.uracer.game.logic.PhysicsStep;
 import com.bitfire.uracer.game.logic.PlayerState;
+import com.bitfire.uracer.game.tweening.Tweener;
+import com.bitfire.uracer.game.tweening.accessors.BoxedFloatAccessor;
+import com.bitfire.uracer.game.tweening.accessors.HudLabelAccessor;
+import com.bitfire.uracer.game.tweening.accessors.MessageAccessor;
 import com.bitfire.uracer.messager.Message;
 import com.bitfire.uracer.messager.Messager;
 import com.bitfire.uracer.tiled.ScalingStrategy;
-import com.bitfire.uracer.tweener.BoxedFloat;
-import com.bitfire.uracer.tweener.Tweener;
-import com.bitfire.uracer.tweener.accessors.BoxedFloatAccessor;
-import com.bitfire.uracer.tweener.accessors.HudLabelAccessor;
-import com.bitfire.uracer.tweener.accessors.MessageAccessor;
+import com.bitfire.uracer.utils.BoxedFloat;
 
 /** Encapsulates and abstracts the dynamic state of the game.
  *

@@ -1,4 +1,4 @@
-package com.bitfire.uracer.entities.vehicles;
+package com.bitfire.uracer.game.entities;
 
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
@@ -25,6 +25,7 @@ import com.bitfire.uracer.events.CarEvent;
 import com.bitfire.uracer.factories.CarFactory.CarType;
 import com.bitfire.uracer.game.GameData;
 import com.bitfire.uracer.game.GameData.Events;
+import com.bitfire.uracer.game.rendering.CarRenderer;
 import com.bitfire.uracer.game.GameWorld;
 import com.bitfire.uracer.utils.AMath;
 import com.bitfire.uracer.utils.BatchUtils;
@@ -34,7 +35,7 @@ import com.bitfire.uracer.utils.VMath;
 
 public class Car extends Box2dEntity {
 	protected Recorder recorder;
-	protected CarGraphics graphics;
+	protected CarRenderer graphics;
 
 	private CarDescriptor carDesc;
 	private CarSimulator carSim;
@@ -48,7 +49,7 @@ public class Car extends Box2dEntity {
 	private Vector2 tilePosition = new Vector2();
 
 
-	protected Car( CarGraphics graphics, CarModel model, CarType type, CarInputMode inputMode ) {
+	protected Car( CarRenderer graphics, CarModel model, CarType type, CarInputMode inputMode ) {
 		this.graphics = graphics;
 		this.carInputMode = inputMode;
 		this.carType = type;
@@ -72,7 +73,7 @@ public class Car extends Box2dEntity {
 	}
 
 	// factory method
-	public static Car createForFactory( CarGraphics graphics, CarModel model, CarType type, CarInputMode inputMode ) {
+	public static Car createForFactory( CarRenderer graphics, CarModel model, CarType type, CarInputMode inputMode ) {
 		Car car = new Car( graphics, model, type, inputMode );
 //		EntityManager.add( car );
 		return car;
@@ -86,7 +87,7 @@ public class Car extends Box2dEntity {
 		return carInputMode;
 	}
 
-	public CarGraphics getGraphics() {
+	public CarRenderer getGraphics() {
 		return graphics;
 	}
 

@@ -1,4 +1,4 @@
-package com.bitfire.uracer.tweener.accessors;
+package com.bitfire.uracer.game.tweening.accessors;
 
 import aurelienribon.tweenengine.TweenAccessor;
 

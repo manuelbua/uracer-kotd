@@ -11,7 +11,7 @@ import com.badlogic.gdx.physics.box2d.FixtureDef;
 import com.badlogic.gdx.physics.box2d.PolygonShape;
 import com.badlogic.gdx.physics.box2d.World;
 import com.bitfire.uracer.Config;
-import com.bitfire.uracer.entities.CollisionFilters;
+import com.bitfire.uracer.game.collisions.CollisionFilters;
 
 public final class Box2DFactory {
 

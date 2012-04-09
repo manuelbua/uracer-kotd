@@ -10,7 +10,7 @@ import com.badlogic.gdx.graphics.g2d.BitmapFont.TextBounds;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.math.Vector2;
 import com.bitfire.uracer.game.GameData;
-import com.bitfire.uracer.tweener.accessors.HudLabelAccessor;
+import com.bitfire.uracer.game.tweening.accessors.HudLabelAccessor;
 
 public class HudLabel {
 	public float x, y;

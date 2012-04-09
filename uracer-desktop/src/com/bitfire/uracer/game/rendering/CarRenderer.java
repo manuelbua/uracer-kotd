@@ -1,4 +1,4 @@
-package com.bitfire.uracer.entities.vehicles;
+package com.bitfire.uracer.game.rendering;
 
 import com.badlogic.gdx.graphics.g2d.Sprite;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
@@ -8,12 +8,12 @@ import com.bitfire.uracer.carsimulation.CarModel;
 import com.bitfire.uracer.entities.EntityState;
 import com.bitfire.uracer.utils.Convert;
 
-public class CarGraphics {
+public class CarRenderer {
 	private Sprite facet;
 	private Sprite ambientOcclusion;
 	private TextureRegion region;
 
-	public CarGraphics( CarModel model, TextureRegion region ) {
+	public CarRenderer( CarModel model, TextureRegion region ) {
 		// aspect
 		facet = new Sprite();
 		facet.setRegion( region );
