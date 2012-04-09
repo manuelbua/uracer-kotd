@@ -16,7 +16,7 @@ import com.bitfire.uracer.URacer;
 import com.bitfire.uracer.carsimulation.CarInputMode;
 import com.bitfire.uracer.game.GameData.Events;
 import com.bitfire.uracer.game.GameData.States;
-import com.bitfire.uracer.game.events.CarEvent;
+import com.bitfire.uracer.game.entities.CarEvent;
 import com.bitfire.uracer.game.events.GameLogicEvent;
 import com.bitfire.uracer.game.events.PlayerStateEvent;
 import com.bitfire.uracer.game.logic.DirectorController;

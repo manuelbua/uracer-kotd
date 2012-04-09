@@ -1,6 +1,7 @@
 package com.bitfire.uracer.game;
 
 import java.util.ArrayList;
+import java.util.List;
 
 import box2dLight.ConeLight;
 import box2dLight.PointLight;
@@ -46,7 +47,7 @@ public class GameWorld {
 	// level meshes, package-level access for GameWorldRenderer (ugly but faster than accessors)
 	protected TrackWalls trackWalls = null;
 	protected TrackTrees trackTrees = null;
-	protected ArrayList<OrthographicAlignedStillModel> staticMeshes = new ArrayList<OrthographicAlignedStillModel>();
+	protected List<OrthographicAlignedStillModel> staticMeshes = new ArrayList<OrthographicAlignedStillModel>();
 
 	public GameWorld( String levelName, boolean nightMode ) {
 		this.name = levelName;
@@ -66,7 +67,7 @@ public class GameWorld {
 		worldSizeScaledMt = new Vector2( Convert.px2mt( worldSizeScaledPx ) );
 
 		// initialize tilemap utils
-		MapUtils.init( map, worldSizeScaledPx );
+		MapUtils.init( map, worldSizeScaledPx, GameData.scalingStrategy.invTileMapZoomFactor );
 
 		createMeshes();
 		loadPlayer( map );
@@ -99,12 +100,14 @@ public class GameWorld {
 				TiledObject o = group.objects.get( i );
 
 				float scale = 1f;
-				if( o.properties.get( MapUtils.MeshScale ) != null )
+				if( o.properties.get( MapUtils.MeshScale ) != null ) {
 					scale = Float.parseFloat( o.properties.get( MapUtils.MeshScale ) );
+				}
 
 				OrthographicAlignedStillModel mesh = ModelFactory.create( o.type, o.x, o.y, scale );
-				if( mesh != null )
+				if( mesh != null ) {
 					staticMeshes.add( mesh );
+				}
 			}
 		}
 
@@ -132,8 +135,9 @@ public class GameWorld {
 			for( int x = 0; x < map.width; x++ ) {
 				int id = layerTrack.tiles[y][x];
 				String type = map.getTileProperty( id, "type" );
-				if( type == null )
+				if( type == null ) {
 					continue;
+				}
 
 				if( type.equals( "start" ) ) {
 					start.set( MapUtils.tileToPx( x, y ).add( Convert.scaledPixels( halfTile, -halfTile ) ) );
@@ -144,17 +148,8 @@ public class GameWorld {
 			}
 		}
 
-		float startOrient = 0f;
-		String orient = layerTrack.properties.get( "start" );
-
-		if( orient.equals( "up" ) )
-			startOrient = 0f;
-		else if( orient.equals( "right" ) )
-			startOrient = 90f;
-		else if( orient.equals( "down" ) )
-			startOrient = 180f;
-		else if( orient.equals( "left" ) )
-			startOrient = 270f;
+		String direction = layerTrack.properties.get( "start" );
+		float startOrient = MapUtils.orientationFromDirection( direction );
 
 		// set player data
 		playerStartOrient = startOrient;
@@ -225,7 +220,7 @@ public class GameWorld {
 		return trackTrees;
 	}
 
-	public final ArrayList<OrthographicAlignedStillModel> getStaticMeshes() {
+	public final List<OrthographicAlignedStillModel> getStaticMeshes() {
 		return staticMeshes;
 	}
 

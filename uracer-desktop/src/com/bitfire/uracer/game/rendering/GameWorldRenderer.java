@@ -1,6 +1,6 @@
 package com.bitfire.uracer.game.rendering;
 
-import java.util.ArrayList;
+import java.util.List;
 
 import box2dLight.ConeLight;
 import box2dLight.RayHandler;
@@ -25,8 +25,8 @@ import com.bitfire.uracer.Config;
 import com.bitfire.uracer.Director;
 import com.bitfire.uracer.game.GameData;
 import com.bitfire.uracer.game.GameData.States;
-import com.bitfire.uracer.game.entities.Car;
 import com.bitfire.uracer.game.GameWorld;
+import com.bitfire.uracer.game.entities.Car;
 import com.bitfire.uracer.tiled.OrthographicAlignedStillModel;
 import com.bitfire.uracer.tiled.TrackTrees;
 import com.bitfire.uracer.tiled.TrackWalls;
@@ -77,7 +77,7 @@ public class GameWorldRenderer {
 
 	// world refs
 	private RayHandler rayHandler = null;
-	private ArrayList<OrthographicAlignedStillModel> staticMeshes = null;
+	private List<OrthographicAlignedStillModel> staticMeshes = null;
 	private TrackTrees trackTrees = null;
 	private TrackWalls trackWalls = null;
 	private ConeLight playerLights = null;
@@ -98,8 +98,9 @@ public class GameWorldRenderer {
 		ShaderProgram.pedantic = false;
 		treeShader = new ShaderProgram( vertexShader, fragmentShader );
 
-		if( treeShader.isCompiled() == false )
+		if( treeShader.isCompiled() == false ) {
 			throw new IllegalStateException( treeShader.getLog() );
+		}
 	}
 
 	public void dispose() {
@@ -108,7 +109,9 @@ public class GameWorldRenderer {
 	}
 
 	public void resetCounters() {
-		culledMeshes = renderedTrees = renderedWalls = 0;
+		culledMeshes = 0;
+		renderedTrees = 0;
+		renderedWalls = 0;
 	}
 
 	public void generateLightMap() {
@@ -258,7 +261,7 @@ public class GameWorldRenderer {
 	private Matrix4 mtx = new Matrix4();
 	private Matrix4 mtx2 = new Matrix4();
 
-	private int renderOrthographicAlignedModels( GL20 gl, ArrayList<OrthographicAlignedStillModel> models ) {
+	private int renderOrthographicAlignedModels( GL20 gl, List<OrthographicAlignedStillModel> models ) {
 		int renderedCount = 0;
 		OrthographicAlignedStillModel m;
 		StillSubMesh submesh;

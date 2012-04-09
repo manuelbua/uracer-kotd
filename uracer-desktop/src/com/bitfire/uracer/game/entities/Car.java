@@ -23,7 +23,6 @@ import com.bitfire.uracer.entities.Box2dEntity;
 import com.bitfire.uracer.game.GameData;
 import com.bitfire.uracer.game.GameData.Events;
 import com.bitfire.uracer.game.entities.CarFactory.CarType;
-import com.bitfire.uracer.game.events.CarEvent;
 import com.bitfire.uracer.game.logic.Recorder;
 import com.bitfire.uracer.game.rendering.CarRenderer;
 import com.bitfire.uracer.game.GameWorld;

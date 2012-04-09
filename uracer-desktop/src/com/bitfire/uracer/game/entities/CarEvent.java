@@ -1,9 +1,8 @@
-package com.bitfire.uracer.game.events;
+package com.bitfire.uracer.game.entities;
 
 import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.physics.box2d.Fixture;
 import com.bitfire.uracer.carsimulation.CarForces;
-import com.bitfire.uracer.game.entities.Car;
 import com.bitfire.uracer.utils.Event;
 import com.bitfire.uracer.utils.EventListener;
 import com.bitfire.uracer.utils.EventNotifier;

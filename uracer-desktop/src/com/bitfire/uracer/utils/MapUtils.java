@@ -2,14 +2,15 @@ package com.bitfire.uracer.utils;
 
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 
 import com.badlogic.gdx.graphics.g2d.tiled.TiledLayer;
 import com.badlogic.gdx.graphics.g2d.tiled.TiledMap;
 import com.badlogic.gdx.graphics.g2d.tiled.TiledObjectGroup;
 import com.badlogic.gdx.math.Vector2;
-import com.bitfire.uracer.game.GameData;
 
-public class MapUtils {
+public final class MapUtils {
 	public static final String MeshScale = "scale";
 
 	// known layer names
@@ -20,17 +21,20 @@ public class MapUtils {
 	public static final String LayerWalls = "walls";
 
 	// cache
-	public static final HashMap<String, TiledLayer> cachedLayers = new HashMap<String, TiledLayer>( 10 );
-	public static final HashMap<String, TiledObjectGroup> cachedGroups = new HashMap<String, TiledObjectGroup>( 10 );
+	public static final Map<String, TiledLayer> cachedLayers = new HashMap<String, TiledLayer>( 10 );
+	public static final Map<String, TiledObjectGroup> cachedGroups = new HashMap<String, TiledObjectGroup>( 10 );
 
 	private static TiledMap map;
 	private static Vector2 worldSizeScaledPx = new Vector2();
 	public static float scaledTilesize, invScaledTilesize;
 
-	public static void init( TiledMap map, Vector2 worldSizeScaledPx ) {
+	private MapUtils() {
+	}
+
+	public static void init( TiledMap map, Vector2 worldSizeScaledPx, float invZoomFactor ) {
 		MapUtils.map = map;
 		MapUtils.worldSizeScaledPx.set( worldSizeScaledPx );
-		scaledTilesize = map.tileWidth * GameData.scalingStrategy.invTileMapZoomFactor;
+		scaledTilesize = map.tileWidth * invZoomFactor;
 		invScaledTilesize = 1f / scaledTilesize;
 	}
 
@@ -76,8 +80,8 @@ public class MapUtils {
 		return getLayer( layerName ) != null;
 	}
 
-	public static ArrayList<Vector2> extractPolyData( String encoded ) {
-		ArrayList<Vector2> ret = new ArrayList<Vector2>();
+	public static List<Vector2> extractPolyData( String encoded ) {
+		List<Vector2> ret = new ArrayList<Vector2>();
 
 		if( encoded != null && encoded.length() > 0 ) {
 			String[] pairs = encoded.split( " " );
@@ -127,6 +131,22 @@ public class MapUtils {
 		tmp = Convert.scaledPixels( tmp.set( x, y ) );
 		tmp.y = worldSizeScaledPx.y - tmp.y;
 		return tmp;
+	}
+
+	public static float orientationFromDirection( String direction ) {
+		float ret = 0f;
+
+		if( direction.equals( "up" ) ) {
+			ret = 0f;
+		} else if( direction.equals( "right" ) ) {
+			ret = 90f;
+		} else if( direction.equals( "down" ) ) {
+			ret = 180f;
+		} else if( direction.equals( "left" ) ) {
+			ret = 270f;
+		}
+
+		return ret;
 	}
 
 }

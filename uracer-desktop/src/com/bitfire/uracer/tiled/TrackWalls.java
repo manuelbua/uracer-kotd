@@ -1,6 +1,7 @@
 package com.bitfire.uracer.tiled;
 
 import java.util.ArrayList;
+import java.util.List;
 
 import com.badlogic.gdx.graphics.GL10;
 import com.badlogic.gdx.graphics.Mesh;
@@ -25,7 +26,7 @@ import com.bitfire.uracer.utils.Convert;
 import com.bitfire.uracer.utils.MapUtils;
 
 public class TrackWalls {
-	public final ArrayList<OrthographicAlignedStillModel> walls = new ArrayList<OrthographicAlignedStillModel>();
+	public final List<OrthographicAlignedStillModel> walls = new ArrayList<OrthographicAlignedStillModel>();
 
 	public TrackWalls() {
 	}
@@ -54,7 +55,7 @@ public class TrackWalls {
 			for( int i = 0; i < group.objects.size(); i++ ) {
 				TiledObject o = group.objects.get( i );
 
-				ArrayList<Vector2> points = MapUtils.extractPolyData( o.polyline );
+				List<Vector2> points = MapUtils.extractPolyData( o.polyline );
 				if( points.size() >= 2 ) {
 					float factor = GameData.scalingStrategy.invTileMapZoomFactor;
 					float wallSizeMt = 0.3f * factor;
@@ -95,7 +96,7 @@ public class TrackWalls {
 		}
 	}
 
-	private Mesh buildMesh( ArrayList<Vector2> points, float[] magnitudes ) {
+	private Mesh buildMesh( List<Vector2> points, float[] magnitudes ) {
 		Vector2 in = new Vector2();
 		MathUtils.random.setSeed( Long.MIN_VALUE );
 
@@ -119,13 +120,16 @@ public class TrackWalls {
 		float[] verts = new float[ vertSize * vertexCount ];
 		short[] indices = new short[ indexCount ];
 		float mag, prevmag;
-		mag = prevmag = magnitudes[0];
+		mag = magnitudes[0];
+		prevmag = magnitudes[0];
 
 		// add input (interleaved w/ later filled dupes w/ just a meaningful z-coordinate)
 		for( int i = 0, j = 0, vc = 0, vci = 0; i < points.size(); i++, j += 2 * vertSize ) {
 			int magidx = i - 1;
-			if( magidx < 0 )
+			if( magidx < 0 ) {
 				magidx = 0;
+			}
+
 			mag = AMath.lerp( prevmag, magnitudes[magidx], .25f );
 			prevmag = mag;
 
@@ -172,14 +176,14 @@ public class TrackWalls {
 		return mesh;
 	}
 
-	static public final int X1 = 0;
-	static public final int Y1 = 1;
-	static public final int Z1 = 2;
-	static public final int U1 = 3;
-	static public final int V1 = 4;
-	static public final int X2 = 5;
-	static public final int Y2 = 6;
-	static public final int Z2 = 7;
-	static public final int U2 = 8;
-	static public final int V2 = 9;
+	private static final int X1 = 0;
+	private static final int Y1 = 1;
+	private static final int Z1 = 2;
+	private static final int U1 = 3;
+	private static final int V1 = 4;
+	private static final int X2 = 5;
+	private static final int Y2 = 6;
+	private static final int Z2 = 7;
+	private static final int U2 = 8;
+	private static final int V2 = 9;
 }
