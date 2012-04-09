@@ -68,8 +68,7 @@ public class Car extends Box2dEntity {
 
 	// factory method
 	public static Car createForFactory( CarRenderer graphics, CarModel model, CarType type, CarInputMode inputMode ) {
-		Car car = new Car( graphics, model, type, inputMode );
-		return car;
+		return new Car( graphics, model, type, inputMode );
 	}
 
 	public CarType getCarType() {
