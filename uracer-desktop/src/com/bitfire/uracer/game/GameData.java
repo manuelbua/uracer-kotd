@@ -1,5 +1,7 @@
 package com.bitfire.uracer.game;
 
+import aurelienribon.tweenengine.Tween;
+
 import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.physics.box2d.World;
 import com.bitfire.uracer.Config;
@@ -14,12 +16,18 @@ import com.bitfire.uracer.game.events.GameLogicEvent;
 import com.bitfire.uracer.game.events.GameRendererEvent;
 import com.bitfire.uracer.game.events.PhysicsStepEvent;
 import com.bitfire.uracer.game.events.PlayerStateEvent;
+import com.bitfire.uracer.game.hud.HudLabel;
+import com.bitfire.uracer.game.hud.HudLabelAccessor;
 import com.bitfire.uracer.game.logic.PhysicsStep;
+import com.bitfire.uracer.game.messager.Message;
+import com.bitfire.uracer.game.messager.MessageAccessor;
 import com.bitfire.uracer.game.messager.Messager;
 import com.bitfire.uracer.game.states.DriftState;
 import com.bitfire.uracer.game.states.LapState;
 import com.bitfire.uracer.game.states.PlayerState;
 import com.bitfire.uracer.task.TaskManagerEvent;
+import com.bitfire.uracer.utils.BoxedFloat;
+import com.bitfire.uracer.utils.BoxedFloatAccessor;
 
 /** Encapsulates and abstracts the dynamic state of the game.
  *
@@ -103,6 +111,11 @@ public final class GameData {
 
 		GameData.gameSettings = new GameplaySettings( difficulty );
 		GameData.b2dWorld = createBox2DWorld();
+
+		Tween.registerAccessor( Message.class, new MessageAccessor() );
+		Tween.registerAccessor( HudLabel.class, new HudLabelAccessor() );
+		Tween.registerAccessor( BoxedFloat.class, new BoxedFloatAccessor() );
+
 		GameData.messager = new Messager(GameData.scalingStrategy.invTileMapZoomFactor);
 	}
 
