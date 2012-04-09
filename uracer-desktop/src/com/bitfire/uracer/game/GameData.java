@@ -14,7 +14,6 @@ import com.bitfire.uracer.game.events.GameLogicEvent;
 import com.bitfire.uracer.game.events.GameRendererEvent;
 import com.bitfire.uracer.game.events.PhysicsStepEvent;
 import com.bitfire.uracer.game.events.PlayerStateEvent;
-import com.bitfire.uracer.game.events.TaskManagerEvent;
 import com.bitfire.uracer.game.hud.HudLabel;
 import com.bitfire.uracer.game.logic.PhysicsStep;
 import com.bitfire.uracer.game.states.DriftState;
@@ -26,6 +25,7 @@ import com.bitfire.uracer.game.tweening.accessors.HudLabelAccessor;
 import com.bitfire.uracer.game.tweening.accessors.MessageAccessor;
 import com.bitfire.uracer.messager.Message;
 import com.bitfire.uracer.messager.Messager;
+import com.bitfire.uracer.task.TaskManagerEvent;
 import com.bitfire.uracer.utils.BoxedFloat;
 
 /** Encapsulates and abstracts the dynamic state of the game.
@@ -40,10 +40,10 @@ public final class GameData {
 	public static GameplaySettings gameSettings;
 	public static GameWorld gameWorld;
 	public static Messager messager;
-
 	public static Tweener tweener;
 	public static World b2dWorld;
 
+	/** States */
 	public static final class States {
 		public static PlayerState playerState;
 		public static DriftState driftState;
@@ -65,12 +65,16 @@ public final class GameData {
 		}
 	}
 
+	/** Systems */
 	public static final class Systems {
 		public static PhysicsStep physicsStep;
 		public static TrackEffects trackEffects;
 
 		public static void create( World b2dWorld, Car car ) {
-			Systems.physicsStep = new PhysicsStep( b2dWorld );
+			Systems.input = new Input( TaskManagerEvent.Order.MINUS_4 );
+			Systems.physicsStep = new PhysicsStep( b2dWorld, TaskManagerEvent.Order.MINUS_3 );
+
+			// FIXME this is just for GameRenderer, Hud and GameData
 			Systems.trackEffects = new TrackEffects( car );
 		}
 
@@ -78,10 +82,13 @@ public final class GameData {
 			trackEffects.dispose();
 		}
 
+		public static Input input;
+
 		private Systems() {
 		}
 	}
 
+	/** Events */
 	public static final class Events {
 
 		public static final GameRendererEvent gameRenderer = new GameRendererEvent();
@@ -90,7 +97,6 @@ public final class GameData {
 		public static final PhysicsStepEvent physicsStep = new PhysicsStepEvent();
 		public static final GameLogicEvent gameLogic = new GameLogicEvent();
 		public static final CarEvent carEvent = new CarEvent();
-		public static final TaskManagerEvent taskManager = new TaskManagerEvent();
 
 		private Events() {
 		}

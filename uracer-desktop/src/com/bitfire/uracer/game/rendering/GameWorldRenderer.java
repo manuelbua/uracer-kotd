@@ -98,7 +98,7 @@ public class GameWorldRenderer {
 		ShaderProgram.pedantic = false;
 		treeShader = new ShaderProgram( vertexShader, fragmentShader );
 
-		if( treeShader.isCompiled() == false ) {
+		if( !treeShader.isCompiled() ) {
 			throw new IllegalStateException( treeShader.getLog() );
 		}
 	}

@@ -10,7 +10,6 @@ import com.bitfire.uracer.utils.AMath;
 
 public class URacer implements ApplicationListener {
 	private Screen screen;
-	private Input input = new Input();
 	private static boolean running = false;
 
 	private float temporalAliasing = 0;
@@ -55,11 +54,7 @@ public class URacer implements ApplicationListener {
 	@Override
 	public void create() {
 		URacer.updateVersionInformation();
-
 		Config.asDefault();
-		input.releaseAllKeys();
-
-		Gdx.input.setInputProcessor( input );
 		Gdx.graphics.setVSync( true );
 
 		running = true;
@@ -101,7 +96,6 @@ public class URacer implements ApplicationListener {
 			hasStepped = false;
 			timeAccumSecs += lastDeltaTimeSec * timeMultiplier;
 			while( timeAccumSecs > Config.Physics.PhysicsDt ) {
-				input.tick();
 				screen.tick();
 				timeAccumSecs -= Config.Physics.PhysicsDt;
 				hasStepped = true;

@@ -121,7 +121,7 @@ public class OrthographicAlignedStillModel {
 		iRotationAxis.set( x_axis, y_axis, z_axis );
 	}
 
-	private final void setScalingFactor( float factor ) {
+	private void setScalingFactor( float factor ) {
 		scalingFactor = factor;
 		scaleAxis.set( scale, scale, scale );
 	}

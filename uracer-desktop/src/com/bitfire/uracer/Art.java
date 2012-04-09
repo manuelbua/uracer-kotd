@@ -10,7 +10,7 @@ import com.badlogic.gdx.graphics.g2d.TextureAtlas;
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
 import com.bitfire.uracer.game.GameData;
 
-public class Art {
+public final class Art {
 	public static TextureRegion[][] base6;
 	public static TextureRegion quad;
 
@@ -38,6 +38,9 @@ public class Art {
 	public static BitmapFont fontCurseYRbig, fontCurseRbig, fontCurseGbig;
 
 	private static boolean mipMap;
+
+	private Art() {
+	}
 
 	public static void init() {
 		mipMap = Config.Graphics.EnableMipMapping;
@@ -132,12 +135,12 @@ public class Art {
 		return res;
 	}
 
-	private static TextureRegion load( String name, int width, int height, boolean mipMap ) {
-		Texture texture = newTexture( name, mipMap );
-		TextureRegion region = new TextureRegion( texture, 0, 0, width, height );
-		region.flip( false, true );
-		return region;
-	}
+	// private static TextureRegion load( String name, int width, int height, boolean mipMap ) {
+	// Texture texture = newTexture( name, mipMap );
+	// TextureRegion region = new TextureRegion( texture, 0, 0, width, height );
+	// region.flip( false, true );
+	// return region;
+	// }
 
 	private static Texture newTexture( String name, boolean mipMap ) {
 		Texture t = new Texture( Gdx.files.internal( name ), Format.RGBA8888, mipMap );

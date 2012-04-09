@@ -11,14 +11,14 @@ import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Input.Keys;
 import com.bitfire.uracer.Config;
 import com.bitfire.uracer.Director;
-import com.bitfire.uracer.Input;
 import com.bitfire.uracer.URacer;
 import com.bitfire.uracer.carsimulation.CarInputMode;
 import com.bitfire.uracer.game.GameData;
-import com.bitfire.uracer.game.Replay;
+import com.bitfire.uracer.game.GameData.Systems;
+import com.bitfire.uracer.game.Input;
 import com.bitfire.uracer.game.GameData.Events;
 import com.bitfire.uracer.game.GameData.States;
-import com.bitfire.uracer.game.GameData.Systems;
+import com.bitfire.uracer.game.Replay;
 import com.bitfire.uracer.game.actors.CarEvent;
 import com.bitfire.uracer.game.events.GameLogicEvent;
 import com.bitfire.uracer.game.events.PlayerStateEvent;
@@ -70,17 +70,19 @@ public class GameLogic implements CarEvent.Listener, PlayerStateEvent.Listener {
 	};
 
 	public boolean onTick() {
-		if( Input.isOn( Keys.R ) ) {
+		Input input = Systems.input;
+
+		if( input.isOn( Keys.R ) ) {
 			restart();
 			Events.gameLogic.trigger( GameLogicEvent.Type.onRestart );
-		} else if( Input.isOn( Keys.T ) ) {
+		} else if( input.isOn( Keys.T ) ) {
 			restart();
 			reset();
 			Events.gameLogic.trigger( GameLogicEvent.Type.onReset );
-		} else if( Input.isOn( Keys.Q ) ) {
+		} else if( input.isOn( Keys.Q ) ) {
 			Gdx.app.exit();
 			return false;
-		} else if( Input.isOn( Keys.SPACE ) && !timeModulationBusy ) {
+		} else if( input.isOn( Keys.SPACE ) && !timeModulationBusy ) {
 
 			TweenEquation eqIn = Sine.INOUT;
 			TweenEquation eqOut = Sine.INOUT;

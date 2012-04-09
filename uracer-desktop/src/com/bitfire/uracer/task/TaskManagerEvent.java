@@ -1,4 +1,4 @@
-package com.bitfire.uracer.game.events;
+package com.bitfire.uracer.task;
 
 import com.bitfire.uracer.utils.EventListener;
 import com.bitfire.uracer.utils.EventNotifier;
@@ -24,7 +24,7 @@ public class TaskManagerEvent {
 		private final Notifier notify = new Notifier();
 	}
 
-	public interface Listener extends EventListener {
+	protected interface Listener extends EventListener {
 		void taskManagerEvent( Type type );
 	}
 

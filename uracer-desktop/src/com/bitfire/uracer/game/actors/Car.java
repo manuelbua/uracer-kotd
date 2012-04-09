@@ -12,7 +12,6 @@ import com.badlogic.gdx.physics.box2d.Fixture;
 import com.bitfire.uracer.Art;
 import com.bitfire.uracer.Config;
 import com.bitfire.uracer.Director;
-import com.bitfire.uracer.Input;
 import com.bitfire.uracer.carsimulation.CarDescriptor;
 import com.bitfire.uracer.carsimulation.CarForces;
 import com.bitfire.uracer.carsimulation.CarInput;
@@ -21,6 +20,8 @@ import com.bitfire.uracer.carsimulation.CarModel;
 import com.bitfire.uracer.carsimulation.CarSimulator;
 import com.bitfire.uracer.entities.Box2dEntity;
 import com.bitfire.uracer.game.GameData;
+import com.bitfire.uracer.game.GameData.Systems;
+import com.bitfire.uracer.game.Input;
 import com.bitfire.uracer.game.GameData.Events;
 import com.bitfire.uracer.game.GameWorld;
 import com.bitfire.uracer.game.actors.CarFactory.CarType;
@@ -150,8 +151,9 @@ public class Car extends Box2dEntity {
 	protected CarInput acquireInput() {
 		carPos.set( Director.screenPosFor( body ) );
 
-		touchPos.set( Input.getXY() );
-		carInput.updated = Input.isTouching();
+		Input input = Systems.input;
+		touchPos.set( input.getXY() );
+		carInput.updated = input.isTouching();
 
 		if( carInput.updated ) {
 			float angle = 0;

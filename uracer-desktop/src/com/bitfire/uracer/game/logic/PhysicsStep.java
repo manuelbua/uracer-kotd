@@ -4,14 +4,14 @@ import com.badlogic.gdx.physics.box2d.World;
 import com.bitfire.uracer.Config;
 import com.bitfire.uracer.game.GameData.Events;
 import com.bitfire.uracer.game.events.PhysicsStepEvent.Type;
-import com.bitfire.uracer.game.events.TaskManagerEvent.Order;
 import com.bitfire.uracer.task.Task;
+import com.bitfire.uracer.task.TaskManagerEvent;
 
 public class PhysicsStep extends Task {
 	private World world;
 
-	public PhysicsStep( World world ) {
-		super( Order.MINUS_4 );
+	public PhysicsStep( World world, TaskManagerEvent.Order order ) {
+		super( order );
 		this.world = world;
 	}
 
