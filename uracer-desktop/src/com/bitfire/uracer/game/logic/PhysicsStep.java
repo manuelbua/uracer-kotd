@@ -11,7 +11,7 @@ public class PhysicsStep extends Task {
 	private World world;
 
 	public PhysicsStep( World world ) {
-		super( Order.Order_Minus_4 );	// TODO, rename to Minus_4 instead
+		super( Order.MINUS_4 );
 		this.world = world;
 	}
 

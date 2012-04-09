@@ -12,7 +12,7 @@ public class GameRendererEvent {
 
 	/** defines the position in the render queue specified by the Type parameter */
 	public enum Order {
-		Order_Minus_4, Order_Minus_3, Order_Minus_2, Order_Minus_1, Order_0, Order_Plus_1, Order_Plus_2, Order_Plus_3, Order_Plus_4;
+		MINUS_4, MINUS_3, MINUS_2, MINUS_1, DEFAULT, PLUS_1, PLUS_2, PLUS_3, PLUS_4;
 	}
 
 	public SpriteBatch batch;

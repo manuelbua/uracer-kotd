@@ -9,7 +9,7 @@ public abstract class Task implements TaskManagerEvent.Listener {
 
 	private Order order;
 	public Task() {
-		this( Order.Order_0 );
+		this( Order.DEFAULT );
 	}
 
 	public Task( Order order ) {

@@ -12,7 +12,7 @@ import com.bitfire.uracer.utils.UUid;
  * @author manuel */
 
 public class Replay {
-	public final int MaxEvents = 5000;
+	public static final int MaxEvents = 5000;
 	private int eventsCount;
 
 	// car data

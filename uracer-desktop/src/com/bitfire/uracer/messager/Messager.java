@@ -57,7 +57,7 @@ public class Messager extends Task {
 	private int idxMessageStore;
 
 	public Messager() {
-		Events.gameRenderer.addListener( gameRendererEvent, GameRendererEvent.Type.BatchAfterMeshes, GameRendererEvent.Order.Order_Minus_4 );
+		Events.gameRenderer.addListener( gameRendererEvent, GameRendererEvent.Type.BatchAfterMeshes, GameRendererEvent.Order.MINUS_4 );
 		Events.gameLogic.addListener( gameLogicEvent );
 
 		currents = new Array<Message>( 3 );

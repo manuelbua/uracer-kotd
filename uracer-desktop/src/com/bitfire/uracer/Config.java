@@ -9,12 +9,12 @@ import com.bitfire.uracer.postprocessing.filters.Blur;
 import com.bitfire.uracer.postprocessing.filters.Blur.BlurType;
 import com.bitfire.uracer.postprocessing.filters.ZoomBlur;
 
-public class Config {
+public final class Config {
 	// generic
 	public static boolean isDesktop;
 	public static final String LevelsStore = "data/levels/";
 
-	public static class PostProcessing {
+	public final static class PostProcessing {
 		public static BlurType BlurType;
 		public static float RttRatio = 0.25f;
 		public static int PotRttFboWidth, PotRttFboHeight;
@@ -34,29 +34,35 @@ public class Config {
 				BlurType = Blur.BlurType.Gaussian5x5b;
 				ZoomQuality = ZoomBlur.Quality.Normal;
 				ZoomMaxStrength = -0.08f;
-				PotRttFboWidth = PotRttFboHeight = 256;
+				PotRttFboWidth = 256;
+				PotRttFboHeight = 256;
 			} else if( w >= 1280 ) {
 				BlurType = Blur.BlurType.Gaussian3x3b;
 				ZoomQuality = ZoomBlur.Quality.Medium;
 				ZoomMaxStrength = -0.08f;
-				PotRttFboWidth = PotRttFboHeight = 256;
+				PotRttFboWidth = 256;
+				PotRttFboHeight = 256;
 			} else if( w >= 800 ) {
 				BlurType = Blur.BlurType.Gaussian3x3;
 				ZoomQuality = ZoomBlur.Quality.Low;
 				ZoomMaxStrength = -0.08f;
-				PotRttFboWidth = PotRttFboHeight = 128;
+				PotRttFboWidth = 128;
+				PotRttFboHeight = 128;
 			}
 
-			System.out.println( "blurType=" + BlurType );
-			System.out.println( "zoomQuality=" + ZoomQuality );
-			System.out.println( "zoomMaxStrength=" + ZoomMaxStrength );
-			System.out.println( "SmallFboWidth=" + PotRttFboWidth );
-			System.out.println( "SmallFboHeight=" + PotRttFboHeight );
-			System.out.println( "FBO x Ratio=" + (int)(Gdx.graphics.getWidth() * RttRatio) + "x" + (int)(Gdx.graphics.getHeight() * RttRatio) );
+			Gdx.app.log( "Config", "blurType=" + BlurType );
+			Gdx.app.log( "Config", "zoomQuality=" + ZoomQuality );
+			Gdx.app.log( "Config", "zoomMaxStrength=" + ZoomMaxStrength );
+			Gdx.app.log( "Config", "SmallFboWidth=" + PotRttFboWidth );
+			Gdx.app.log( "Config", "SmallFboHeight=" + PotRttFboHeight );
+			Gdx.app.log( "Config", "FBO x Ratio=" + (int)(Gdx.graphics.getWidth() * RttRatio) + "x" + (int)(Gdx.graphics.getHeight() * RttRatio) );
+		}
+
+		private PostProcessing() {
 		}
 	}
 
-	public static class Graphics {
+	public final static class Graphics {
 		public static boolean EnableMipMapping;
 		public static boolean EnablePostProcessingFx;
 		public static boolean SubframeInterpolation;
@@ -86,9 +92,12 @@ public class Config {
 			CameraInterpolationMode = InterpolationMode.Sigmoid;
 			Effects = (TrackEffect.Type.CarSkidMarks.id | TrackEffect.Type.SmokeTrails.id);
 		}
+
+		private Graphics() {
+		}
 	}
 
-	public static class Physics {
+	public final static class Physics {
 
 		/** defines how many pixels are 1 Box2d meter, this will be
 		 * automatically scaled accordingly to the device resolution
@@ -110,17 +119,23 @@ public class Config {
 			PhysicsDt = 1.0f / PhysicsTimestepHz;
 			PhysicsTimeMultiplier = 1f;
 		}
+
+		private Physics() {
+		}
 	}
 
-	public static class Game {
+	public final static class Game {
 		public static GameDifficulty difficulty;
 
 		public static void asDefault() {
 			difficulty = GameDifficulty.Hard;
 		}
+
+		private Game() {
+		}
 	}
 
-	public static class Debug {
+	public final static class Debug {
 		public static boolean TraverseWalls;
 		public static boolean ApplyFrictionMap;
 		public static boolean FrustumCulling;
@@ -129,6 +144,9 @@ public class Config {
 			TraverseWalls = false;
 			ApplyFrictionMap = true;
 			FrustumCulling = true;
+		}
+
+		private Debug() {
 		}
 	}
 
@@ -143,5 +161,8 @@ public class Config {
 
 		// always call as last
 		Debug.asDefault();
+	}
+
+	private Config() {
 	}
 }

@@ -24,7 +24,7 @@ public final class Time extends Task {
 
 	/** Constructs a new Time object */
 	public Time() {
-		super( Order.Order_Plus_4 );
+		super( Order.PLUS_4 );
 		reset();
 	}
 

@@ -37,7 +37,7 @@ public class TrackEffects extends Task {
 
 	public TrackEffects( Car car ) {
 		Events.gameLogic.addListener( gameLogicEvent );
-		Events.gameRenderer.addListener( gameRendererEvent, GameRendererEvent.Type.BatchBeforeMeshes, GameRendererEvent.Order.Order_Minus_4 );
+		Events.gameRenderer.addListener( gameRendererEvent, GameRendererEvent.Type.BatchBeforeMeshes, GameRendererEvent.Order.MINUS_4 );
 
 		// TODO, custom render event
 		// for CarSkidMarks GameRenderer.event.addListener( gameRendererEvent, GameRendererEvent.Type.BatchBeforeMeshes, GameRendererEvent.Order.Order_Minus_4 );
