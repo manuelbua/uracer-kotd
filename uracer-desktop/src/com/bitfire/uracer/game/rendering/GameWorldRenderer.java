@@ -12,6 +12,7 @@ import com.badlogic.gdx.graphics.GL20;
 import com.badlogic.gdx.graphics.OrthographicCamera;
 import com.badlogic.gdx.graphics.PerspectiveCamera;
 import com.badlogic.gdx.graphics.g2d.tiled.TileAtlas;
+import com.badlogic.gdx.graphics.g2d.tiled.TileMapRenderer;
 import com.badlogic.gdx.graphics.g3d.model.still.StillSubMesh;
 import com.badlogic.gdx.graphics.glutils.FrameBuffer;
 import com.badlogic.gdx.graphics.glutils.ImmediateModeRenderer20;
@@ -67,7 +68,7 @@ public class GameWorldRenderer {
 	private float camPerspElevation = 0f;
 	private TileAtlas tileAtlas = null;
 
-	public UTileMapRenderer tileMapRenderer = null;
+	public TileMapRenderer tileMapRenderer = null;
 	private ScalingStrategy scalingStrategy = null;
 
 	// render stats
@@ -95,7 +96,7 @@ public class GameWorldRenderer {
 
 		FileHandle baseDir = Gdx.files.internal( Config.LevelsStore );
 		tileAtlas = new TileAtlas( world.map, baseDir );
-		tileMapRenderer = new UTileMapRenderer( world.map, tileAtlas, 1, 1, world.map.tileWidth, world.map.tileHeight );
+		tileMapRenderer = new TileMapRenderer( world.map, tileAtlas, 1, 1, world.map.tileWidth, world.map.tileHeight );
 
 		ShaderProgram.pedantic = false;
 		treeShader = new ShaderProgram( vertexShader, fragmentShader );
