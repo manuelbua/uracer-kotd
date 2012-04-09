@@ -12,6 +12,7 @@ import com.badlogic.gdx.graphics.g3d.materials.TextureAttribute;
 import com.badlogic.gdx.graphics.g3d.model.still.StillModel;
 import com.badlogic.gdx.utils.LongMap;
 import com.bitfire.uracer.Art;
+import com.bitfire.uracer.game.GameData;
 import com.bitfire.uracer.utils.Hash;
 
 public final class ModelFactory {
@@ -62,17 +63,17 @@ public final class ModelFactory {
 
 		switch( modelMesh ) {
 		case Palm:
-			stillModel = new OrthographicAlignedStillModel( getModel( "data/3d/models/palm.g3dt" ), getMaterial( modelMesh, Art.meshPalm ) );
+			stillModel = new OrthographicAlignedStillModel( getModel( "data/3d/models/palm.g3dt" ), getMaterial( modelMesh, Art.meshPalm ), GameData.scalingStrategy );
 			break;
 
 		case Tribune:
-			stillModel = new OrthographicAlignedStillModel( getModel( "data/3d/models/tribune.g3dt" ), getMaterial( modelMesh, Art.meshTribune ) );
+			stillModel = new OrthographicAlignedStillModel( getModel( "data/3d/models/tribune.g3dt" ), getMaterial( modelMesh, Art.meshTribune ), GameData.scalingStrategy );
 			break;
 
 		// missing mesh mesh
 		case Missing:
 		default:
-			stillModel = new OrthographicAlignedStillModel( getModel( "data/3d/models/missing-mesh.g3dt" ), getMaterial( modelMesh, Art.meshMissing ) );
+			stillModel = new OrthographicAlignedStillModel( getModel( "data/3d/models/missing-mesh.g3dt" ), getMaterial( modelMesh, Art.meshMissing ), GameData.scalingStrategy );
 		}
 
 		if( stillModel != null ) {
@@ -160,7 +161,7 @@ public final class ModelFactory {
 
 		}
 
-		stillModel = new TreeStillModel( getModel( "data/3d/models/" + treeModelName ), getMaterial( modelMesh, leavesTexture ), treeMeshName );
+		stillModel = new TreeStillModel( getModel( "data/3d/models/" + treeModelName ), getMaterial( modelMesh, leavesTexture ), treeMeshName, GameData.scalingStrategy );
 
 		if( stillModel != null ) {
 			stillModel.setPosition( posPxX, posPxY );
@@ -225,7 +226,7 @@ public final class ModelFactory {
 
 				cachedModels.put( modelHash, m );
 			} catch( IOException ioex ) {
-				Gdx.app.log( "ModelFactory", ioex.toString() );
+				Gdx.app.log( "ModelFactory", ioex.getMessage() );
 			}
 		}
 

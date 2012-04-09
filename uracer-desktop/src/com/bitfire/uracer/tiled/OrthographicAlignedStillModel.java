@@ -1,12 +1,13 @@
 package com.bitfire.uracer.tiled;
 
+import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.g3d.materials.Material;
 import com.badlogic.gdx.graphics.g3d.model.still.StillModel;
 import com.badlogic.gdx.graphics.glutils.ShaderProgram;
 import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.math.Vector3;
 import com.badlogic.gdx.math.collision.BoundingBox;
-import com.bitfire.uracer.game.GameData;
+import com.bitfire.uracer.ScalingStrategy;
 import com.bitfire.uracer.utils.MapUtils;
 import com.bitfire.uracer.utils.ShaderLoader;
 
@@ -71,7 +72,7 @@ public class OrthographicAlignedStillModel {
 		}
 	}
 
-	public OrthographicAlignedStillModel( StillModel aModel, Material material ) {
+	public OrthographicAlignedStillModel( StillModel aModel, Material material, ScalingStrategy strategy ) {
 		loadShaders();
 
 		try {
@@ -83,11 +84,11 @@ public class OrthographicAlignedStillModel {
 			model.getBoundingBox( localBoundingBox );
 			boundingBox.set( localBoundingBox );
 
-			setScalingFactor( GameData.scalingStrategy.meshScaleFactor * BlenderToURacer * GameData.scalingStrategy.to256 );
+			setScalingFactor( strategy.meshScaleFactor * BlenderToURacer * strategy.to256 );
 			setPosition( 0, 0 );
 			setRotation( 0, 0, 0, 0 );
 		} catch( Exception e ) {
-			e.printStackTrace();
+			Gdx.app.log( "OrthographicAlignedStillModel", e.getMessage() );
 		}
 	}
 

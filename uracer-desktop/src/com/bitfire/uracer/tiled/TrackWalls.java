@@ -85,7 +85,7 @@ public class TrackWalls {
 					StillSubMesh[] subMeshes = new StillSubMesh[ 1 ];
 					subMeshes[0] = new StillSubMesh( "wall", mesh, GL10.GL_TRIANGLES );
 
-					OrthographicAlignedStillModel model = new OrthographicAlignedStillModel( new StillModel( subMeshes ), mat );
+					OrthographicAlignedStillModel model = new OrthographicAlignedStillModel( new StillModel( subMeshes ), mat, GameData.scalingStrategy );
 
 					model.setPosition( o.x, o.y );
 					model.setScale( 1 );

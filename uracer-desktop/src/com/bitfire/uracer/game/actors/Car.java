@@ -46,6 +46,7 @@ public class Car extends Box2dEntity {
 	private Vector2 tilePosition = new Vector2();
 
 	protected Car( CarRenderer graphics, CarModel model, CarType type, CarInputMode inputMode ) {
+		super(GameData.b2dWorld);
 		this.graphics = graphics;
 		this.carInputMode = inputMode;
 		this.carType = type;

@@ -1,7 +1,9 @@
 package com.bitfire.uracer.tiled;
 
 import java.util.ArrayList;
+import java.util.List;
 
+import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.OrthographicCamera;
 import com.badlogic.gdx.graphics.PerspectiveCamera;
 import com.badlogic.gdx.graphics.g2d.tiled.TiledObject;
@@ -14,7 +16,7 @@ import com.bitfire.uracer.utils.Convert;
 import com.bitfire.uracer.utils.MapUtils;
 
 public class TrackTrees {
-	public final ArrayList<TreeStillModel> trees = new ArrayList<TreeStillModel>();
+	public final List<TreeStillModel> trees = new ArrayList<TreeStillModel>();
 
 	public TrackTrees() {
 		// for( int i = 0; i < vtrans.length; i++)
@@ -43,8 +45,9 @@ public class TrackTrees {
 
 	private int nextIndexFor( TreeStillModel model ) {
 		for( int i = 0; i < trees.size(); i++ ) {
-			if( model.material.equals( trees.get( i ).material ) )
+			if( model.material.equals( trees.get( i ).material ) ) {
 				return i;
+			}
 		}
 
 		return 0;
@@ -60,14 +63,15 @@ public class TrackTrees {
 				TiledObject o = group.objects.get( i );
 
 				float scale = 1f;
-				if( o.properties.get( MapUtils.MeshScale ) != null )
+				if( o.properties.get( MapUtils.MeshScale ) != null ) {
 					scale = Float.parseFloat( o.properties.get( MapUtils.MeshScale ) );
+				}
 
 				TreeStillModel model = null;
 				if( o.type != null ) {
 					model = ModelFactory.createTree( o.type, o.x, o.y, scale );
 				} else {
-					System.out.println( "# load error, no type was given for the tree #" + (i + 1) );
+					Gdx.app.log( "TrackTrees", "Load error, no type was given for the tree #" + (i + 1) );
 				}
 
 				if( model != null ) {

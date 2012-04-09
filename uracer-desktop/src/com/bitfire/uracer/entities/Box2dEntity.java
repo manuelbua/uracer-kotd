@@ -4,6 +4,7 @@ import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.math.MathUtils;
 import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.physics.box2d.Body;
+import com.badlogic.gdx.physics.box2d.World;
 import com.bitfire.uracer.Config;
 import com.bitfire.uracer.game.GameData;
 import com.bitfire.uracer.game.GameData.Events;
@@ -14,6 +15,7 @@ import com.bitfire.uracer.utils.Convert;
 
 public abstract class Box2dEntity extends SubframeInterpolableEntity {
 	protected Body body;
+	protected World world;
 
 	private final GameRendererEvent.Listener gameRendererEvent = new GameRendererEvent.Listener() {
 		@Override
@@ -34,9 +36,10 @@ public abstract class Box2dEntity extends SubframeInterpolableEntity {
 	public abstract void onRender( SpriteBatch batch );
 	public abstract void onDebug( SpriteBatch batch );
 
-	public Box2dEntity() {
+	public Box2dEntity(World world) {
 		Events.gameRenderer.addListener( gameRendererEvent, GameRendererEvent.Type.BatchBeforeMeshes, GameRendererEvent.Order.DEFAULT );
 		Events.gameRenderer.addListener( gameRendererEvent, GameRendererEvent.Type.BatchDebug, GameRendererEvent.Order.DEFAULT );
+		this.world = world;
 	}
 
 //	public Box2dEntity(GameRendererEvent.Order orderForBatchBeforeMeshes, GameRendererEvent.Order orderForDebug) {
