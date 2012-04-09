@@ -27,9 +27,9 @@ import com.bitfire.uracer.game.messager.Messager.MessageSize;
 import com.bitfire.uracer.game.messager.Messager.MessageType;
 import com.bitfire.uracer.game.states.LapState;
 import com.bitfire.uracer.game.states.PlayerState;
-import com.bitfire.uracer.game.tweening.accessors.BoxedFloatAccessor;
 import com.bitfire.uracer.utils.AMath;
 import com.bitfire.uracer.utils.BoxedFloat;
+import com.bitfire.uracer.utils.BoxedFloatAccessor;
 import com.bitfire.uracer.utils.NumberString;
 
 public class GameLogic implements CarEvent.Listener, PlayerStateEvent.Listener {

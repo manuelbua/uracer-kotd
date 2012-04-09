@@ -10,7 +10,6 @@ import com.badlogic.gdx.graphics.g2d.BitmapFont.TextBounds;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.math.Vector2;
 import com.bitfire.uracer.game.GameData;
-import com.bitfire.uracer.game.tweening.accessors.HudLabelAccessor;
 
 public class HudLabel {
 	public float x, y;
@@ -43,8 +42,9 @@ public class HudLabel {
 
 	public void setString( String string, boolean computeBounds ) {
 		what = string;
-		if( computeBounds )
+		if( computeBounds ) {
 			recomputeBounds();
+		}
 	}
 
 	public void setPosition( float posX, float posY ) {
@@ -104,13 +104,14 @@ public class HudLabel {
 	}
 
 	public void setScale( float scale ) {
-		setScale( scale, false );
+		setScale( scale, true );
 	}
 
-	public void setScale( float scale, boolean recomputeBounds ) {
+	private void setScale( float scale, boolean recomputeBounds ) {
 		this.scale = scale;
-		if( recomputeBounds )
+		if( recomputeBounds ) {
 			recomputeBounds();
+		}
 	}
 
 	public void render( SpriteBatch batch ) {

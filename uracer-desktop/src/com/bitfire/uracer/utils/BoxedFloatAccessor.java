@@ -1,8 +1,7 @@
-package com.bitfire.uracer.game.tweening.accessors;
+package com.bitfire.uracer.utils;
 
 import aurelienribon.tweenengine.TweenAccessor;
 
-import com.bitfire.uracer.utils.BoxedFloat;
 
 public class BoxedFloatAccessor implements TweenAccessor<BoxedFloat> {
 	public static final int VALUE = 1;

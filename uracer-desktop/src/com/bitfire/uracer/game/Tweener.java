@@ -1,4 +1,4 @@
-package com.bitfire.uracer.game.tweening;
+package com.bitfire.uracer.game;
 
 import aurelienribon.tweenengine.Timeline;
 import aurelienribon.tweenengine.Tween;
@@ -22,6 +22,7 @@ public class Tweener {
 			}
 		}
 	};
+
 
 	public Tweener() {
 		Events.gameLogic.addListener( gameLogicEvent );

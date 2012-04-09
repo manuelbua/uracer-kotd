@@ -1,8 +1,7 @@
-package com.bitfire.uracer.game.tweening.accessors;
+package com.bitfire.uracer.game.hud;
 
 import aurelienribon.tweenengine.TweenAccessor;
 
-import com.bitfire.uracer.game.hud.HudLabel;
 
 public class HudLabelAccessor implements TweenAccessor<HudLabel> {
 	public static final int POSITION_XY = 1;
@@ -57,7 +56,7 @@ public class HudLabelAccessor implements TweenAccessor<HudLabel> {
 			break;
 
 		case SCALE:
-			target.setScale( newValues[0], true );
+			target.setScale( newValues[0] );
 			break;
 
 		case OPACITY:

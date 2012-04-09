@@ -17,7 +17,6 @@ import com.bitfire.uracer.game.GameData;
 import com.bitfire.uracer.game.messager.Messager.MessagePosition;
 import com.bitfire.uracer.game.messager.Messager.MessageSize;
 import com.bitfire.uracer.game.messager.Messager.MessageType;
-import com.bitfire.uracer.game.tweening.accessors.MessageAccessor;
 import com.bitfire.uracer.utils.AMath;
 
 public class Message {
@@ -97,7 +96,7 @@ public class Message {
 		finalX = widthOnFour;
 		finalY = 0;
 
-		float scale = GameData.scalingStrategy.invTileMapZoomFactor;
+		float scale = invZoomFactor;
 		float distance = 180 * scale;
 
 		switch( position ) {

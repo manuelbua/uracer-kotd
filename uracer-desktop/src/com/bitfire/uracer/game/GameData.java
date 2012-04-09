@@ -15,18 +15,17 @@ import com.bitfire.uracer.game.events.GameRendererEvent;
 import com.bitfire.uracer.game.events.PhysicsStepEvent;
 import com.bitfire.uracer.game.events.PlayerStateEvent;
 import com.bitfire.uracer.game.hud.HudLabel;
+import com.bitfire.uracer.game.hud.HudLabelAccessor;
 import com.bitfire.uracer.game.logic.PhysicsStep;
 import com.bitfire.uracer.game.messager.Message;
+import com.bitfire.uracer.game.messager.MessageAccessor;
 import com.bitfire.uracer.game.messager.Messager;
 import com.bitfire.uracer.game.states.DriftState;
 import com.bitfire.uracer.game.states.LapState;
 import com.bitfire.uracer.game.states.PlayerState;
-import com.bitfire.uracer.game.tweening.Tweener;
-import com.bitfire.uracer.game.tweening.accessors.BoxedFloatAccessor;
-import com.bitfire.uracer.game.tweening.accessors.HudLabelAccessor;
-import com.bitfire.uracer.game.tweening.accessors.MessageAccessor;
 import com.bitfire.uracer.task.TaskManagerEvent;
 import com.bitfire.uracer.utils.BoxedFloat;
+import com.bitfire.uracer.utils.BoxedFloatAccessor;
 
 /** Encapsulates and abstracts the dynamic state of the game.
  *
