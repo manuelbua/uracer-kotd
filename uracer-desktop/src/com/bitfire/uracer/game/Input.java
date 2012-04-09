@@ -6,7 +6,7 @@ import com.badlogic.gdx.math.Vector2;
 import com.bitfire.uracer.task.Task;
 import com.bitfire.uracer.task.TaskManagerEvent;
 
-public class Input extends InputAdapter {
+public final class Input extends InputAdapter {
 	// keys
 	private int[] buttons = new int[ 256 ];;
 

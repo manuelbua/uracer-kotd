@@ -5,9 +5,9 @@ import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.bitfire.uracer.Art;
 import com.bitfire.uracer.Config;
 import com.bitfire.uracer.game.GameData;
-import com.bitfire.uracer.game.Replay;
 import com.bitfire.uracer.game.GameData.Events;
 import com.bitfire.uracer.game.GameData.States;
+import com.bitfire.uracer.game.Replay;
 import com.bitfire.uracer.game.actors.Car;
 import com.bitfire.uracer.game.effects.CarSkidMarks;
 import com.bitfire.uracer.game.effects.SmokeTrails;
@@ -31,7 +31,7 @@ public class Hud extends Task {
 		public void gameRendererEvent( GameRendererEvent.Type type ) {
 			SpriteBatch batch = Events.gameRenderer.batch;
 
-			switch(type) {
+			switch( type ) {
 			case BatchAfterMeshes:
 				curr.render( batch );
 				best.render( batch );
@@ -144,10 +144,11 @@ public class Hud extends Task {
 		// lateral forces
 		meterLatForce.setValue( drift.driftStrength );
 
-		if( drift.isDrifting )
+		if( drift.isDrifting ) {
 			meterLatForce.color.set( .3f, 1f, .3f, 1f );
-		else
+		} else {
 			meterLatForce.color.set( 1f, 1f, 1f, 1f );
+		}
 
 		meterLatForce.render( batch );
 
