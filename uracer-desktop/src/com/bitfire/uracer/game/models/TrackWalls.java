@@ -1,4 +1,4 @@
-package com.bitfire.uracer.game.rendering;
+package com.bitfire.uracer.game.models;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -21,15 +21,16 @@ import com.badlogic.gdx.physics.box2d.World;
 import com.bitfire.uracer.Art;
 import com.bitfire.uracer.factories.Box2DFactory;
 import com.bitfire.uracer.game.GameData;
-import com.bitfire.uracer.game.models.OrthographicAlignedStillModel;
+import com.bitfire.uracer.game.MapUtils;
 import com.bitfire.uracer.utils.AMath;
 import com.bitfire.uracer.utils.Convert;
-import com.bitfire.uracer.utils.MapUtils;
 
 public class TrackWalls {
 	public final List<OrthographicAlignedStillModel> walls = new ArrayList<OrthographicAlignedStillModel>();
+	private MapUtils mapUtils;
 
-	public TrackWalls() {
+	public TrackWalls(MapUtils mapUtils) {
+		this.mapUtils = mapUtils;
 	}
 
 	public void dispose() {
@@ -41,7 +42,7 @@ public class TrackWalls {
 	}
 
 	public void createWalls( World world, Vector2 worldSizeScaledMt ) {
-		if( MapUtils.hasObjectGroup( MapUtils.LayerWalls ) ) {
+		if( mapUtils.hasObjectGroup( MapUtils.LayerWalls ) ) {
 			Vector2 fromMt = new Vector2();
 			Vector2 toMt = new Vector2();
 			Vector2 offsetMt = new Vector2();
@@ -52,7 +53,7 @@ public class TrackWalls {
 			ta.vWrap = TextureWrap.Repeat.getGLEnum();
 			Material mat = new Material( "trackWall", ta );
 
-			TiledObjectGroup group = MapUtils.getObjectGroup( MapUtils.LayerWalls );
+			TiledObjectGroup group = mapUtils.getObjectGroup( MapUtils.LayerWalls );
 			for( int i = 0; i < group.objects.size(); i++ ) {
 				TiledObject o = group.objects.get( i );
 
@@ -86,7 +87,7 @@ public class TrackWalls {
 					StillSubMesh[] subMeshes = new StillSubMesh[ 1 ];
 					subMeshes[0] = new StillSubMesh( "wall", mesh, GL10.GL_TRIANGLES );
 
-					OrthographicAlignedStillModel model = new OrthographicAlignedStillModel( new StillModel( subMeshes ), mat, GameData.scalingStrategy );
+					OrthographicAlignedStillModel model = new OrthographicAlignedStillModel( mapUtils, new StillModel( subMeshes ), mat, GameData.scalingStrategy );
 
 					model.setPosition( o.x, o.y );
 					model.setScale( 1 );

@@ -1,17 +1,14 @@
 package com.bitfire.uracer.game.states;
 
-import com.badlogic.gdx.utils.Disposable;
-import com.bitfire.uracer.game.Time;
 import com.bitfire.uracer.game.GameData.Events;
 import com.bitfire.uracer.game.GameData.States;
-import com.bitfire.uracer.game.Time.Reference;
+import com.bitfire.uracer.game.Time;
 import com.bitfire.uracer.game.actors.Car;
-import com.bitfire.uracer.game.events.GameLogicEvent;
 import com.bitfire.uracer.game.events.DriftStateEvent.Type;
-import com.bitfire.uracer.task.Task;
+import com.bitfire.uracer.game.events.GameLogicEvent;
 import com.bitfire.uracer.utils.AMath;
 
-public class DriftState extends Task implements Disposable {
+public final class DriftState {
 	public boolean isDrifting = false;
 	public boolean hasCollided = false;
 	public float lateralForcesFront = 0, lateralForcesRear = 0;
@@ -38,26 +35,24 @@ public class DriftState extends Task implements Disposable {
 		reset();
 	}
 
-	@Override
-	public void dispose() {
-		time = null;
-	}
-
 	public void reset() {
 		time = new Time();
 		collisionTime = new Time();
 
-		lastFront = lastRear = 0;
+		lastFront = 0;
+		lastRear = 0;
 		hasCollided = false;
 		isDrifting = false;
-		lateralForcesFront = lateralForcesRear = 0;
+		lateralForcesFront = 0;
+		lateralForcesRear = 0;
 		driftStrength = 0;
 	}
 
 	// onCollision?
 	public void invalidateByCollision() {
-		if( !isDrifting )
+		if( !isDrifting ) {
 			return;
+		}
 
 		isDrifting = false;
 		hasCollided = true;
@@ -66,16 +61,17 @@ public class DriftState extends Task implements Disposable {
 		Events.driftState.trigger( Type.onEndDrift );
 	}
 
-	@Override
-	protected void onTick() {
+	public void update() {
 		Car car = States.playerState.car;
 		float oneOnMaxGrip = 1f / car.getCarModel().max_grip;
 
 		// lateral forces are in the range [-max_grip, max_grip]
-		lateralForcesFront = lastFront = AMath.lowpass( lastFront, car.getSimulator().lateralForceFront.y, 0.2f );
+		lateralForcesFront = AMath.lowpass( lastFront, car.getSimulator().lateralForceFront.y, 0.2f );
+		lastFront = lateralForcesFront;
 		lateralForcesFront = AMath.clamp( Math.abs( lateralForcesFront ) * oneOnMaxGrip, 0f, 1f );	// normalize
 
-		lateralForcesRear = lastRear = AMath.lowpass( lastRear, car.getSimulator().lateralForceRear.y, 0.2f );
+		lateralForcesRear = AMath.lowpass( lastRear, car.getSimulator().lateralForceRear.y, 0.2f );
+		lastRear = lateralForcesRear;
 		lateralForcesRear = AMath.clamp( Math.abs( lateralForcesRear ) * oneOnMaxGrip, 0f, 1f );	// normalize
 
 		// compute strength

@@ -2,14 +2,12 @@ package com.bitfire.uracer.game.actors;
 
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
-import com.badlogic.gdx.graphics.g2d.tiled.TiledLayer;
 import com.badlogic.gdx.math.MathUtils;
 import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.math.WindowedMean;
 import com.badlogic.gdx.physics.box2d.BodyDef;
 import com.badlogic.gdx.physics.box2d.BodyDef.BodyType;
 import com.badlogic.gdx.physics.box2d.Fixture;
-import com.bitfire.uracer.Art;
 import com.bitfire.uracer.Config;
 import com.bitfire.uracer.Director;
 import com.bitfire.uracer.carsimulation.CarDescriptor;
@@ -20,16 +18,14 @@ import com.bitfire.uracer.carsimulation.CarModel;
 import com.bitfire.uracer.carsimulation.CarSimulator;
 import com.bitfire.uracer.entities.Box2dEntity;
 import com.bitfire.uracer.game.GameData;
+import com.bitfire.uracer.game.GameData.Events;
 import com.bitfire.uracer.game.GameData.Systems;
 import com.bitfire.uracer.game.Input;
-import com.bitfire.uracer.game.GameData.Events;
-import com.bitfire.uracer.game.GameWorld;
 import com.bitfire.uracer.game.actors.CarFactory.CarType;
 import com.bitfire.uracer.game.rendering.CarRenderer;
 import com.bitfire.uracer.utils.AMath;
 import com.bitfire.uracer.utils.BatchUtils;
 import com.bitfire.uracer.utils.Convert;
-import com.bitfire.uracer.utils.MapUtils;
 import com.bitfire.uracer.utils.VMath;
 
 public class Car extends Box2dEntity {
@@ -44,10 +40,8 @@ public class Car extends Box2dEntity {
 	private CarInputMode carInputMode;
 	private CarType carType;
 
-	private Vector2 tilePosition = new Vector2();
-
 	protected Car( CarRenderer graphics, CarModel model, CarType type, CarInputMode inputMode ) {
-		super(GameData.b2dWorld);
+		super( GameData.b2dWorld );
 		this.graphics = graphics;
 		this.carInputMode = inputMode;
 		this.carType = type;
@@ -73,7 +67,6 @@ public class Car extends Box2dEntity {
 	// factory method
 	public static Car createForFactory( CarRenderer graphics, CarModel model, CarType type, CarInputMode inputMode ) {
 		Car car = new Car( graphics, model, type, inputMode );
-		// EntityManager.add( car );
 		return car;
 	}
 
@@ -101,8 +94,15 @@ public class Car extends Box2dEntity {
 		return carSim;
 	}
 
+	private WindowedMean frictionMean = new WindowedMean( 16 );
+
+	public void setFriction( float value ) {
+		frictionMean.addValue( value );
+	}
+
 	public void reset() {
 		resetPhysics();
+		frictionMean.clear();
 	}
 
 	public void setActive( boolean active, boolean resetPhysics ) {
@@ -139,7 +139,7 @@ public class Car extends Box2dEntity {
 	public void setTransform( Vector2 position, float orient_degrees ) {
 		super.setTransform( position, orient_degrees );
 		carSim.updateHeading( body );
-		computeTilePosition();
+//		computeTilePosition();
 	}
 
 	private float lastTouchAngle;
@@ -203,50 +203,10 @@ public class Car extends Box2dEntity {
 		return carInput;
 	}
 
-	private Vector2 offset = new Vector2();
-	private WindowedMean frictionMean = new WindowedMean( 16 );
-
 	private void applyFrictionMap() {
-		GameWorld world = GameData.gameWorld;
-		if( tilePosition.x >= 0 && tilePosition.x < world.map.width && tilePosition.y >= 0 && tilePosition.y < world.map.height ) {
-			// compute realsize-based pixel offset car-tile (top-left origin)
-			float tsx = tilePosition.x * MapUtils.scaledTilesize;
-			float tsy = tilePosition.y * MapUtils.scaledTilesize;
-			offset.set( stateRender.position );
-			offset.y = GameData.gameWorld.worldSizeScaledPx.y - offset.y;
-			offset.x = offset.x - tsx;
-			offset.y = offset.y - tsy;
-			offset.mul( MapUtils.invScaledTilesize ).mul( world.map.tileWidth );
-
-			TiledLayer layerTrack = MapUtils.getLayer( MapUtils.LayerTrack );
-			int id = layerTrack.tiles[(int)tilePosition.y][(int)tilePosition.x] - 1;
-
-			// int xOnMap = (id %4) * 224 + (int)offset.x;
-			// int yOnMap = (int)( id/4f ) * 224 + (int)offset.y;
-
-			// bit twiddling, faster versions
-			int xOnMap = (id & 3) * (int)world.map.tileWidth + (int)offset.x;
-			int yOnMap = (id >> 2) * (int)world.map.tileWidth + (int)offset.y;
-
-			int pixel = Art.frictionNature.getPixel( xOnMap, yOnMap );
-			frictionMean.addValue( (pixel == -256 ? 0 : -1) );
-			// System.out.println(pixel);
-
-			if( frictionMean.getMean() < -0.4 && carDesc.velocity_wc.len2() > 10 ) {
-				carDesc.velocity_wc.mul( 0.975f );
-			}
-		} else {
-			Gdx.app.log( "Car", "Out of map!" );
+		if( frictionMean.getMean() < -0.4 && carDesc.velocity_wc.len2() > 10 ) {
+			carDesc.velocity_wc.mul( 0.975f );
 		}
-	}
-
-	private void computeTilePosition() {
-		tilePosition.set( MapUtils.pxToTile( stateRender.position.x, stateRender.position.y ) );
-		VMath.truncateToInt( tilePosition );
-	}
-
-	public Vector2 getTilePosition() {
-		return tilePosition;
 	}
 
 	private long start_timer = 0;
@@ -326,7 +286,7 @@ public class Car extends Box2dEntity {
 		// inspect impact feedback, accumulate vel/ang velocities
 		handleImpactFeedback();
 
-		computeTilePosition();
+//		computeTilePosition();
 	}
 
 	@Override
@@ -360,7 +320,7 @@ public class Car extends Box2dEntity {
 			BatchUtils.drawString( batch, "orient=" + body.getAngle(), 0, 114 );
 			BatchUtils.drawString( batch, "render.interp=" + (state().position.x + "," + state().position.y), 0, 121 );
 
-			BatchUtils.drawString( batch, "on tile " + tilePosition, 0, 0 );
+//			BatchUtils.drawString( batch, "on tile " + tilePosition, 0, 0 );
 		}
 	}
 }

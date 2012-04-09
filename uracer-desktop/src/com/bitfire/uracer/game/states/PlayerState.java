@@ -3,14 +3,14 @@ package com.bitfire.uracer.game.states;
 import com.badlogic.gdx.math.Vector2;
 import com.bitfire.uracer.game.GameData;
 import com.bitfire.uracer.game.GameData.Events;
+import com.bitfire.uracer.game.MapUtils;
 import com.bitfire.uracer.game.actors.Car;
 import com.bitfire.uracer.game.actors.GhostCar;
 import com.bitfire.uracer.game.events.GameLogicEvent;
 import com.bitfire.uracer.game.events.PlayerStateEvent;
-import com.bitfire.uracer.task.Task;
 import com.bitfire.uracer.utils.AMath;
 
-public final class PlayerState extends Task {
+public final class PlayerState {
 	public Car car;
 	public GhostCar ghost;
 
@@ -20,14 +20,14 @@ public final class PlayerState extends Task {
 	public float currSpeedFactor = 0;
 	public float currForceFactor = 0;
 
-	/* position/orientation */
-
+	/* position */
 	public int currTileX = 1, currTileY = 1;
+	public Vector2 tilePosition = new Vector2();
 	private int lastTileX = 0, lastTileY = 0;
 
 	private final GameLogicEvent.Listener gameLogicEvent = new GameLogicEvent.Listener() {
 		@Override
-		public void gameLogicEvent( com.bitfire.uracer.game.events.GameLogicEvent.Type type ) {
+		public void gameLogicEvent( GameLogicEvent.Type type ) {
 			switch( type ) {
 			case onReset:
 			case onRestart:
@@ -42,9 +42,8 @@ public final class PlayerState extends Task {
 	}
 
 	public PlayerState( Car car, GhostCar ghost ) {
-		Events.gameLogic.addListener( gameLogicEvent );
-
 		Events.playerState.source = this;
+		Events.gameLogic.addListener( gameLogicEvent );
 		setData( car, ghost );
 	}
 
@@ -59,20 +58,22 @@ public final class PlayerState extends Task {
 		}
 	}
 
-	@Override
-	protected void onTick() {
-		// onTileChanged
-		lastTileX = currTileX;
-		lastTileY = currTileY;
-		Vector2 tp = car.getTilePosition();
-		currTileX = (int)tp.x;
-		currTileY = (int)tp.y;
-
-		if( (lastTileX != currTileX) || (lastTileY != currTileY) ) {
-			Events.playerState.trigger( PlayerStateEvent.Type.onTileChanged );
-		}
-
+	public void update( MapUtils mapUtils ) {
 		if( car != null ) {
+			// onTileChanged
+			lastTileX = currTileX;
+			lastTileY = currTileY;
+
+			// compute car's tile position
+			tilePosition.set( mapUtils.pxToTile( car.state().position.x, car.state().position.y ) );
+
+			currTileX = (int)tilePosition.x;
+			currTileY = (int)tilePosition.y;
+
+			if( (lastTileX != currTileX) || (lastTileY != currTileY) ) {
+				Events.playerState.trigger( PlayerStateEvent.Type.onTileChanged );
+			}
+
 			// speed/force normalized factors
 			currCarSpeedSquared = car.getCarDescriptor().velocity_wc.len2();
 			currSpeedFactor = AMath.clamp( currCarSpeedSquared / carMaxSpeedSquared, 0f, 1f );

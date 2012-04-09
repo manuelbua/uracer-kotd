@@ -1,12 +1,11 @@
 package com.bitfire.uracer.game.states;
 
+import com.bitfire.uracer.game.GameData.Events;
 import com.bitfire.uracer.game.Replay;
 import com.bitfire.uracer.game.Time;
-import com.bitfire.uracer.game.GameData.Events;
-import com.bitfire.uracer.game.Time.Reference;
 import com.bitfire.uracer.game.events.GameLogicEvent;
 
-public class LapState {
+public final class LapState {
 	// replays
 	private Replay[] replays;
 	private Replay best, worst;
@@ -17,7 +16,7 @@ public class LapState {
 
 	private final GameLogicEvent.Listener gameLogicEvent = new GameLogicEvent.Listener() {
 		@Override
-		public void gameLogicEvent( com.bitfire.uracer.game.events.GameLogicEvent.Type type ) {
+		public void gameLogicEvent( GameLogicEvent.Type type ) {
 			switch( type ) {
 			case onReset:
 				reset();
@@ -39,7 +38,8 @@ public class LapState {
 		replays[0] = new Replay();
 		replays[1] = new Replay();
 
-		best = worst = null;
+		best = null;
+		worst = null;
 
 		reset();
 		updateReplays();
@@ -57,10 +57,14 @@ public class LapState {
 	public long restart() {
 		startTimeNs = System.nanoTime();
 		time.start();
-		if( !replays[0].isValid )
+		if( !replays[0].isValid ) {
 			replays[0].reset();
-		if( !replays[1].isValid )
+		}
+
+		if( !replays[1].isValid ) {
 			replays[1].reset();
+		}
+
 		return startTimeNs;
 	}
 
@@ -130,10 +134,14 @@ public class LapState {
 	}
 
 	public Replay getAnyReplay() {
-		if( replays[0].isValid )
+		if( replays[0].isValid ) {
 			return replays[0];
-		if( replays[1].isValid )
+		}
+
+		if( replays[1].isValid ) {
 			return replays[1];
+		}
+
 		return null;
 	}
 }

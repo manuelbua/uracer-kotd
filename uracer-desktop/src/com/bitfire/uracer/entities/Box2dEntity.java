@@ -57,7 +57,7 @@ public abstract class Box2dEntity extends SubframeInterpolableEntity {
 	}
 
 	@Override
-	public void saveStateTo( EntityState state ) {
+	public void saveStateTo( EntityRenderState state ) {
 		state.position.set( body.getPosition() );
 		state.orientation = body.getAngle();
 	}

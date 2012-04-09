@@ -6,14 +6,14 @@ import com.bitfire.uracer.game.events.PhysicsStepEvent.Type;
 
 public abstract class SubframeInterpolableEntity extends Entity implements PhysicsStepEvent.Listener {
 	// world-coords
-	protected EntityState statePrevious = new EntityState();
-	protected EntityState stateCurrent = new EntityState();
+	protected EntityRenderState statePrevious = new EntityRenderState();
+	protected EntityRenderState stateCurrent = new EntityRenderState();
 
 	public SubframeInterpolableEntity() {
 		Events.physicsStep.addListener( this );
 	}
 
-	public abstract void saveStateTo( EntityState state );
+	public abstract void saveStateTo( EntityRenderState state );
 
 	public abstract boolean isSubframeInterpolated();
 
@@ -50,7 +50,7 @@ public abstract class SubframeInterpolableEntity extends Entity implements Physi
 	/** Issued after a tick/physicsStep but before render onBeforeRender :P */
 	public void onTemporalAliasing(float aliasingFactor) {
 		if( isSubframeInterpolated() ) {
-			stateRender.set( EntityState.interpolate( statePrevious, stateCurrent, aliasingFactor ) );
+			stateRender.set( EntityRenderState.interpolate( statePrevious, stateCurrent, aliasingFactor ) );
 		} else {
 			stateRender.set( stateCurrent );
 		}

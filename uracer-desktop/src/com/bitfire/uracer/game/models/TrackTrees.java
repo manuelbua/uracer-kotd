@@ -1,4 +1,4 @@
-package com.bitfire.uracer.game.rendering;
+package com.bitfire.uracer.game.models;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -12,17 +12,15 @@ import com.badlogic.gdx.math.MathUtils;
 import com.badlogic.gdx.math.Matrix4;
 import com.badlogic.gdx.math.Vector3;
 import com.bitfire.uracer.Director;
-import com.bitfire.uracer.game.models.ModelFactory;
-import com.bitfire.uracer.game.models.TreeStillModel;
+import com.bitfire.uracer.game.MapUtils;
 import com.bitfire.uracer.utils.Convert;
-import com.bitfire.uracer.utils.MapUtils;
 
 public class TrackTrees {
 	public final List<TreeStillModel> trees = new ArrayList<TreeStillModel>();
+	private MapUtils mapUtils;
 
-	public TrackTrees() {
-		// for( int i = 0; i < vtrans.length; i++)
-		// vtrans[i] = new Vector3();
+	public TrackTrees( MapUtils mapUtils ) {
+		this.mapUtils = mapUtils;
 
 		// We want to differentiate tree meshes as much as we can
 		// rotation will helps immensely, but non-orthogonal rotations
@@ -58,9 +56,9 @@ public class TrackTrees {
 	private float[] rotations = new float[ 4 ];
 
 	public void createTrees() {
-		if( MapUtils.hasObjectGroup( MapUtils.LayerTrees ) ) {
+		if( mapUtils.hasObjectGroup( MapUtils.LayerTrees ) ) {
 			MathUtils.random.setSeed( Long.MAX_VALUE );
-			TiledObjectGroup group = MapUtils.getObjectGroup( MapUtils.LayerTrees );
+			TiledObjectGroup group = mapUtils.getObjectGroup( MapUtils.LayerTrees );
 			for( int i = 0; i < group.objects.size(); i++ ) {
 				TiledObject o = group.objects.get( i );
 

@@ -5,26 +5,26 @@ import com.badlogic.gdx.math.Vector2;
 import com.bitfire.uracer.utils.AMath;
 import com.bitfire.uracer.utils.Convert;
 
-public final class EntityState {
+public final class EntityRenderState {
 	public float orientation = 0;
 	public Vector2 position = new Vector2();
-	private static EntityState result = new EntityState();
+	private static EntityRenderState result = new EntityRenderState();
 
-	public EntityState() {
+	public EntityRenderState() {
 		orientation = 0;
 		position.x = 0;
 		position.y = 0;
 	}
 
-	public EntityState( EntityState state ) {
+	public EntityRenderState( EntityRenderState state ) {
 		set( state );
 	}
 
-	public EntityState( Vector2 position, float orientation ) {
+	public EntityRenderState( Vector2 position, float orientation ) {
 		set( position, orientation );
 	}
 
-	public void set( EntityState state ) {
+	public void set( EntityRenderState state ) {
 		this.orientation = state.orientation;
 		this.position.set( state.position );
 	}
@@ -34,7 +34,7 @@ public final class EntityState {
 		this.orientation = orientation;
 	}
 
-	public static EntityState interpolate( EntityState previous, EntityState current, float alpha ) {
+	public static EntityRenderState interpolate( EntityRenderState previous, EntityRenderState current, float alpha ) {
 		result.position.set( previous.position );
 		result.position.set( result.position.lerp( current.position, alpha ) );
 		// result.orientation = current.orientation * alpha + previous.orientation * (1 - alpha);

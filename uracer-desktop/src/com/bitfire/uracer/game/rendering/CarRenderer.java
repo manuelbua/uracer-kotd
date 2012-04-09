@@ -5,7 +5,7 @@ import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
 import com.bitfire.uracer.Art;
 import com.bitfire.uracer.carsimulation.CarModel;
-import com.bitfire.uracer.entities.EntityState;
+import com.bitfire.uracer.entities.EntityRenderState;
 import com.bitfire.uracer.utils.Convert;
 
 public class CarRenderer {
@@ -37,11 +37,11 @@ public class CarRenderer {
 		return region;
 	}
 
-	public void render( SpriteBatch batch, EntityState state ) {
+	public void render( SpriteBatch batch, EntityRenderState state ) {
 		render( batch, state, 1f );
 	}
 
-	public void render( SpriteBatch batch, EntityState state, float opacity ) {
+	public void render( SpriteBatch batch, EntityRenderState state, float opacity ) {
 		ambientOcclusion.setPosition( state.position.x - ambientOcclusion.getOriginX(), state.position.y - ambientOcclusion.getOriginY() );
 		ambientOcclusion.setRotation( state.orientation );
 		ambientOcclusion.draw( batch, 0.65f * opacity );

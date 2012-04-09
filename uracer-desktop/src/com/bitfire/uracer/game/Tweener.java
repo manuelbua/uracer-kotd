@@ -6,7 +6,7 @@ import aurelienribon.tweenengine.TweenManager;
 import com.bitfire.uracer.game.GameData.Events;
 import com.bitfire.uracer.game.events.GameLogicEvent;
 
-public class Tweener {
+public final class Tweener {
 	private static final TweenManager manager = new TweenManager();
 
 	private static final GameLogicEvent.Listener gameLogicEvent = new GameLogicEvent.Listener() {

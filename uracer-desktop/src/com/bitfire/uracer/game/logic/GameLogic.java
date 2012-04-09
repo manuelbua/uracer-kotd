@@ -9,6 +9,9 @@ import aurelienribon.tweenengine.equations.Sine;
 
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Input.Keys;
+import com.badlogic.gdx.graphics.g2d.tiled.TiledLayer;
+import com.badlogic.gdx.math.Vector2;
+import com.bitfire.uracer.Art;
 import com.bitfire.uracer.Config;
 import com.bitfire.uracer.Director;
 import com.bitfire.uracer.URacer;
@@ -17,9 +20,12 @@ import com.bitfire.uracer.game.GameData;
 import com.bitfire.uracer.game.GameData.Events;
 import com.bitfire.uracer.game.GameData.States;
 import com.bitfire.uracer.game.GameData.Systems;
+import com.bitfire.uracer.game.GameWorld;
 import com.bitfire.uracer.game.Input;
+import com.bitfire.uracer.game.MapUtils;
 import com.bitfire.uracer.game.Replay;
 import com.bitfire.uracer.game.Tweener;
+import com.bitfire.uracer.game.actors.Car;
 import com.bitfire.uracer.game.actors.CarEvent;
 import com.bitfire.uracer.game.events.GameLogicEvent;
 import com.bitfire.uracer.game.events.PlayerStateEvent;
@@ -38,14 +44,18 @@ public class GameLogic implements CarEvent.Listener, PlayerStateEvent.Listener {
 	private boolean isFirstLap = true;
 	private long lastRecordedLapId = 0;
 
-	//
 	private DirectorController controller = null;
+	private GameWorld world = null;
+	private MapUtils mapUtils = null;
 
 	// replay
 	private Recorder recorder = null;
 
-	public GameLogic() {
+	public GameLogic( GameWorld world ) {
 		Events.gameLogic.source = this;
+		this.world = world;
+		mapUtils = world.mapUtils;
+
 		recorder = new Recorder();
 		timeMultiplier.value = 1f;
 
@@ -101,6 +111,10 @@ public class GameLogic implements CarEvent.Listener, PlayerStateEvent.Listener {
 			}
 		}
 
+		GameData.States.playerState.update( mapUtils );
+		GameData.States.driftState.update();
+		updateCarFriction();
+
 		URacer.timeMultiplier = AMath.clamp( timeMultiplier.value, tmMin, Config.Physics.PhysicsTimeMultiplier );
 
 		return true;
@@ -109,9 +123,12 @@ public class GameLogic implements CarEvent.Listener, PlayerStateEvent.Listener {
 	public void onBeforeRender() {
 		GameData.Systems.physicsStep.triggerOnTemporalAliasing( URacer.getTemporalAliasing() );
 
-		// follow the player's car
-		if( GameData.States.playerState != null && GameData.States.playerState.car != null ) {
-			controller.setPosition( GameData.States.playerState.car.state().position );
+		Car car = GameData.States.playerState.car;
+		if( car != null ) {
+			// follow the player's car
+			if( GameData.States.playerState != null ) {
+				controller.setPosition( GameData.States.playerState.car.state().position );
+			}
 		}
 	}
 
@@ -147,7 +164,49 @@ public class GameLogic implements CarEvent.Listener, PlayerStateEvent.Listener {
 	public void playerStateEvent( PlayerStateEvent.Type type ) {
 		switch( type ) {
 		case onTileChanged:
-			PlayerState player = GameData.States.playerState;
+			updateLap();
+			break;
+		}
+	}
+
+	private Vector2 offset = new Vector2();
+
+	private void updateCarFriction() {
+		PlayerState player = GameData.States.playerState;
+
+		GameWorld world = GameData.gameWorld;
+		Vector2 tilePosition = player.tilePosition;
+
+		if( tilePosition.x >= 0 && tilePosition.x < world.map.width && tilePosition.y >= 0 && tilePosition.y < world.map.height ) {
+			// compute realsize-based pixel offset car-tile (top-left origin)
+			float tsx = tilePosition.x * mapUtils.scaledTilesize;
+			float tsy = tilePosition.y * mapUtils.scaledTilesize;
+			offset.set( player.car.state().position );
+			offset.y = GameData.gameWorld.worldSizeScaledPx.y - offset.y;
+			offset.x = offset.x - tsx;
+			offset.y = offset.y - tsy;
+			offset.mul( mapUtils.invScaledTilesize ).mul( world.map.tileWidth );
+
+			TiledLayer layerTrack = mapUtils.getLayer( MapUtils.LayerTrack );
+			int id = layerTrack.tiles[(int)tilePosition.y][(int)tilePosition.x] - 1;
+
+			// int xOnMap = (id %4) * 224 + (int)offset.x;
+			// int yOnMap = (int)( id/4f ) * 224 + (int)offset.y;
+
+			// bit twiddling, faster versions
+			int xOnMap = (id & 3) * (int)world.map.tileWidth + (int)offset.x;
+			int yOnMap = (id >> 2) * (int)world.map.tileWidth + (int)offset.y;
+
+			int pixel = Art.frictionNature.getPixel( xOnMap, yOnMap );
+			player.car.setFriction( (pixel == -256 ? 0 : -1) );
+		} else {
+			Gdx.app.log( "GameLogic", "Out of map!" );
+		}
+	}
+
+	private void updateLap() {
+		PlayerState player = GameData.States.playerState;
+		if( player.car != null ) {
 			boolean onStartZone = (player.currTileX == GameData.gameWorld.playerStartTileX && player.currTileY == GameData.gameWorld.playerStartTileY);
 
 			LapState lapState = GameData.States.lapState;
@@ -159,7 +218,7 @@ public class GameLogic implements CarEvent.Listener, PlayerStateEvent.Listener {
 
 					lapState.restart();
 					Replay buf = lapState.getNextBuffer();
-					recorder.beginRecording( player.car, buf, /* lapState.getStartNanotime(), */name );
+					recorder.beginRecording( player.car, buf, name );
 					lastRecordedLapId = buf.id;
 
 					if( lapState.hasAnyReplayData() ) {
@@ -179,7 +238,7 @@ public class GameLogic implements CarEvent.Listener, PlayerStateEvent.Listener {
 						// only one single replay
 						lapState.restart();
 						Replay buf = lapState.getNextBuffer();
-						recorder.beginRecording( player.car, buf, /* lapState.getStartNanotime(), */name );
+						recorder.beginRecording( player.car, buf, name );
 						lastRecordedLapId = buf.id;
 
 						Replay any = lapState.getAnyReplay();
@@ -204,12 +263,11 @@ public class GameLogic implements CarEvent.Listener, PlayerStateEvent.Listener {
 						player.ghost.setReplay( best );
 
 						lapState.restart();
-						recorder.beginRecording( player.car, worst, /* lapState.getStartNanotime(), */name );
+						recorder.beginRecording( player.car, worst, name );
 						lastRecordedLapId = worst.id;
 					}
 				}
 			}
-			break;
 		}
 	}
 }

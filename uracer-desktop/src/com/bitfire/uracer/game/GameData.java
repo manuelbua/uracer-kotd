@@ -56,8 +56,6 @@ public final class GameData {
 		}
 
 		public static void dispose() {
-			playerState.dispose();
-			driftState.dispose();
 			States.lapState = null;
 		}
 
@@ -116,7 +114,7 @@ public final class GameData {
 		Tween.registerAccessor( HudLabel.class, new HudLabelAccessor() );
 		Tween.registerAccessor( BoxedFloat.class, new BoxedFloatAccessor() );
 
-		GameData.messager = new Messager(GameData.scalingStrategy.invTileMapZoomFactor);
+		GameData.messager = new Messager( GameData.scalingStrategy.invTileMapZoomFactor );
 	}
 
 	public static void createStates( Car car ) {
@@ -127,8 +125,8 @@ public final class GameData {
 		Systems.create( b2dWorld, car );
 	}
 
-	public static void createWorld( String levelName, boolean nightMode ) {
-		gameWorld = new GameWorld( levelName, nightMode );
+	public static void createWorld( World b2dWorld, ScalingStrategy strategy, String levelName, boolean nightMode ) {
+		gameWorld = new GameWorld( b2dWorld, strategy, levelName, nightMode );
 	}
 
 	public static void dispose() {

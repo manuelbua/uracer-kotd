@@ -1,4 +1,4 @@
-package com.bitfire.uracer.utils;
+package com.bitfire.uracer.game;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -9,6 +9,8 @@ import com.badlogic.gdx.graphics.g2d.tiled.TiledLayer;
 import com.badlogic.gdx.graphics.g2d.tiled.TiledMap;
 import com.badlogic.gdx.graphics.g2d.tiled.TiledObjectGroup;
 import com.badlogic.gdx.math.Vector2;
+import com.bitfire.uracer.utils.Convert;
+import com.bitfire.uracer.utils.VMath;
 
 public final class MapUtils {
 	public static final String MeshScale = "scale";
@@ -24,21 +26,18 @@ public final class MapUtils {
 	public static final Map<String, TiledLayer> cachedLayers = new HashMap<String, TiledLayer>( 10 );
 	public static final Map<String, TiledObjectGroup> cachedGroups = new HashMap<String, TiledObjectGroup>( 10 );
 
-	private static TiledMap map;
-	private static Vector2 worldSizeScaledPx = new Vector2();
-	public static float scaledTilesize, invScaledTilesize;
+	private TiledMap map;
+	private Vector2 worldSizeScaledPx = new Vector2();
+	public float scaledTilesize, invScaledTilesize;
 
-	private MapUtils() {
-	}
-
-	public static void init( TiledMap map, Vector2 worldSizeScaledPx, float invZoomFactor ) {
-		MapUtils.map = map;
-		MapUtils.worldSizeScaledPx.set( worldSizeScaledPx );
+	public MapUtils( TiledMap map, Vector2 worldSizeScaledPx, float invZoomFactor ) {
+		this.map = map;
+		this.worldSizeScaledPx.set( worldSizeScaledPx );
 		scaledTilesize = map.tileWidth * invZoomFactor;
 		invScaledTilesize = 1f / scaledTilesize;
 	}
 
-	public static TiledObjectGroup getObjectGroup( String groupName ) {
+	public TiledObjectGroup getObjectGroup( String groupName ) {
 		TiledObjectGroup cached = cachedGroups.get( groupName );
 		if( cached == null ) {
 			for( int i = 0; i < map.objectGroups.size(); i++ ) {
@@ -55,11 +54,11 @@ public final class MapUtils {
 		return cached;
 	}
 
-	public static boolean hasObjectGroup( String groupName ) {
+	public boolean hasObjectGroup( String groupName ) {
 		return getObjectGroup( groupName ) != null;
 	}
 
-	public static TiledLayer getLayer( String layerName ) {
+	public TiledLayer getLayer( String layerName ) {
 		TiledLayer cached = cachedLayers.get( layerName );
 		if( cached == null ) {
 			for( int i = 0; i < map.layers.size(); i++ ) {
@@ -76,7 +75,7 @@ public final class MapUtils {
 		return cached;
 	}
 
-	public static boolean hasLayer( String layerName ) {
+	public boolean hasLayer( String layerName ) {
 		return getLayer( layerName ) != null;
 	}
 
@@ -94,18 +93,18 @@ public final class MapUtils {
 		return ret;
 	}
 
-	public static Vector2 tileToMt( int tilex, int tiley ) {
+	public Vector2 tileToMt( int tilex, int tiley ) {
 		return Convert.px2mt( tileToPx( tilex, tiley ) );
 	}
 
-	private static Vector2 retTile = new Vector2();
+	private Vector2 retTile = new Vector2();
 
-	public static Vector2 tileToPx( int tilex, int tiley ) {
+	public Vector2 tileToPx( int tilex, int tiley ) {
 		retTile.set( tilex * scaledTilesize, (map.height - tiley) * scaledTilesize );
 		return retTile;
 	}
 
-	public static Vector2 pxToTile( float x, float y ) {
+	public Vector2 pxToTile( float x, float y ) {
 		retTile.set( x, y );
 		retTile.mul( invScaledTilesize );
 		retTile.y = map.height - retTile.y;
@@ -113,27 +112,27 @@ public final class MapUtils {
 		return retTile;
 	}
 
-	private static Vector2 retPx = new Vector2();
+	private Vector2 retPx = new Vector2();
 
-	public static Vector2 mtToTile( float x, float y ) {
+	public Vector2 mtToTile( float x, float y ) {
 		retPx.set( Convert.mt2px( x ), Convert.mt2px( y ) );
 		retPx = pxToTile( retPx.x, retPx.y );
 		return retPx;
 	}
 
-	public static Vector2 positionFor( Vector2 position ) {
+	public Vector2 positionFor( Vector2 position ) {
 		return positionFor( position.x, position.y );
 	}
 
-	private static Vector2 tmp = new Vector2();
+	private Vector2 tmp = new Vector2();
 
-	public static Vector2 positionFor( float x, float y ) {
+	public Vector2 positionFor( float x, float y ) {
 		tmp = Convert.scaledPixels( tmp.set( x, y ) );
 		tmp.y = worldSizeScaledPx.y - tmp.y;
 		return tmp;
 	}
 
-	public static float orientationFromDirection( String direction ) {
+	public float orientationFromDirection( String direction ) {
 		float ret = 0f;
 
 		if( direction.equals( "up" ) ) {

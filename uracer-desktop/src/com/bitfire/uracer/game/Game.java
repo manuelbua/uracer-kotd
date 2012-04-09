@@ -56,9 +56,9 @@ public class Game implements Disposable {
 		Car car = CarFactory.createPlayer( CarType.OldSkool, new CarModel().toModel2() );
 		GameData.createStates( car );
 		GameData.createSystems( GameData.b2dWorld, car );
-		GameData.createWorld( levelName, false );
+		GameData.createWorld( GameData.b2dWorld, GameData.scalingStrategy, levelName, false );
 
-		gameLogic = new GameLogic();
+		gameLogic = new GameLogic( GameData.gameWorld );
 
 		// ----------------------------
 		// rendering engine initialization

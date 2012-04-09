@@ -28,6 +28,8 @@ import com.bitfire.uracer.ScalingStrategy;
 import com.bitfire.uracer.game.GameWorld;
 import com.bitfire.uracer.game.actors.Car;
 import com.bitfire.uracer.game.models.OrthographicAlignedStillModel;
+import com.bitfire.uracer.game.models.TrackTrees;
+import com.bitfire.uracer.game.models.TrackWalls;
 import com.bitfire.uracer.game.models.TreeStillModel;
 import com.bitfire.uracer.utils.Convert;
 

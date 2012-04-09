@@ -16,14 +16,15 @@ import com.badlogic.gdx.graphics.g2d.tiled.TiledMap;
 import com.badlogic.gdx.graphics.g2d.tiled.TiledObject;
 import com.badlogic.gdx.graphics.g2d.tiled.TiledObjectGroup;
 import com.badlogic.gdx.math.Vector2;
+import com.badlogic.gdx.physics.box2d.World;
 import com.bitfire.uracer.Config;
+import com.bitfire.uracer.ScalingStrategy;
 import com.bitfire.uracer.game.collisions.CollisionFilters;
 import com.bitfire.uracer.game.models.ModelFactory;
 import com.bitfire.uracer.game.models.OrthographicAlignedStillModel;
-import com.bitfire.uracer.game.rendering.TrackTrees;
-import com.bitfire.uracer.game.rendering.TrackWalls;
+import com.bitfire.uracer.game.models.TrackTrees;
+import com.bitfire.uracer.game.models.TrackWalls;
 import com.bitfire.uracer.utils.Convert;
-import com.bitfire.uracer.utils.MapUtils;
 
 public class GameWorld {
 	// statistics
@@ -32,7 +33,10 @@ public class GameWorld {
 	// level data
 	public String name = "no-level-loaded";
 	public TiledMap map = null;
+	public MapUtils mapUtils = null;
 	public Vector2 worldSizeScaledPx = null, worldSizeScaledMt = null, worldSizeTiles = null;
+	private ScalingStrategy scalingStrategy;
+	private World b2dWorld;
 
 	// player data
 	public Vector2 playerStartPos = new Vector2();
@@ -49,12 +53,14 @@ public class GameWorld {
 	protected TrackTrees trackTrees = null;
 	protected List<OrthographicAlignedStillModel> staticMeshes = new ArrayList<OrthographicAlignedStillModel>();
 
-	public GameWorld( String levelName, boolean nightMode ) {
+	public GameWorld( World b2dWorld, ScalingStrategy strategy, String levelName, boolean nightMode ) {
+		scalingStrategy = strategy;
+		this.b2dWorld = b2dWorld;
 		this.name = levelName;
 		this.nightMode = nightMode;
 
 		// ie. "level1-128.tmx"
-		String mapname = levelName + "-" + (int)GameData.scalingStrategy.forTileSize + ".tmx";
+		String mapname = levelName + "-" + (int)scalingStrategy.forTileSize + ".tmx";
 		FileHandle mapHandle = Gdx.files.internal( Config.LevelsStore + mapname );
 
 		// load tilemap
@@ -63,11 +69,12 @@ public class GameWorld {
 		// compute world size
 		worldSizeTiles = new Vector2( map.width, map.height );
 		worldSizeScaledPx = new Vector2( map.width * map.tileWidth, map.height * map.tileHeight );
-		worldSizeScaledPx.mul( GameData.scalingStrategy.invTileMapZoomFactor );
+		worldSizeScaledPx.mul( scalingStrategy.invTileMapZoomFactor );
 		worldSizeScaledMt = new Vector2( Convert.px2mt( worldSizeScaledPx ) );
 
 		// initialize tilemap utils
-		MapUtils.init( map, worldSizeScaledPx, GameData.scalingStrategy.invTileMapZoomFactor );
+		mapUtils = new MapUtils( map, worldSizeScaledPx, scalingStrategy.invTileMapZoomFactor );
+		ModelFactory.init( strategy, mapUtils );
 
 		createMeshes();
 		loadPlayer( map );
@@ -94,8 +101,8 @@ public class GameWorld {
 		TotalMeshes = 0;
 
 		// static meshes layer
-		if( MapUtils.hasObjectGroup( MapUtils.LayerStaticMeshes ) ) {
-			TiledObjectGroup group = MapUtils.getObjectGroup( MapUtils.LayerStaticMeshes );
+		if( mapUtils.hasObjectGroup( MapUtils.LayerStaticMeshes ) ) {
+			TiledObjectGroup group = mapUtils.getObjectGroup( MapUtils.LayerStaticMeshes );
 			for( int i = 0; i < group.objects.size(); i++ ) {
 				TiledObject o = group.objects.get( i );
 
@@ -112,11 +119,11 @@ public class GameWorld {
 		}
 
 		// walls by polylines
-		trackWalls = new TrackWalls();
-		trackWalls.createWalls( GameData.b2dWorld, worldSizeScaledMt );
+		trackWalls = new TrackWalls(mapUtils);
+		trackWalls.createWalls( b2dWorld, worldSizeScaledMt );
 
 		// trees
-		trackTrees = new TrackTrees();
+		trackTrees = new TrackTrees(mapUtils);
 		trackTrees.createTrees();
 
 		TotalMeshes = staticMeshes.size() + trackWalls.walls.size() + trackTrees.trees.size();
@@ -127,7 +134,7 @@ public class GameWorld {
 		// the player with the found tile coordinates
 		float halfTile = map.tileWidth / 2;
 
-		TiledLayer layerTrack = MapUtils.getLayer( MapUtils.LayerTrack );
+		TiledLayer layerTrack = mapUtils.getLayer( MapUtils.LayerTrack );
 		Vector2 start = new Vector2();
 		int startTileX = 0, startTileY = 0;
 
@@ -140,7 +147,7 @@ public class GameWorld {
 				}
 
 				if( type.equals( "start" ) ) {
-					start.set( MapUtils.tileToPx( x, y ).add( Convert.scaledPixels( halfTile, -halfTile ) ) );
+					start.set( mapUtils.tileToPx( x, y ).add( Convert.scaledPixels( halfTile, -halfTile ) ) );
 					startTileX = x;
 					startTileY = y;
 					break;
@@ -149,7 +156,7 @@ public class GameWorld {
 		}
 
 		String direction = layerTrack.properties.get( "start" );
-		float startOrient = MapUtils.orientationFromDirection( direction );
+		float startOrient = mapUtils.orientationFromDirection( direction );
 
 		// set player data
 		playerStartOrient = startOrient;
@@ -159,7 +166,7 @@ public class GameWorld {
 	}
 
 	private void createLights() {
-		if( !MapUtils.hasObjectGroup( MapUtils.LayerLights ) ) {
+		if( !mapUtils.hasObjectGroup( MapUtils.LayerLights ) ) {
 			this.nightMode = false;
 			return;
 		}
@@ -173,7 +180,7 @@ public class GameWorld {
 		}
 
 		RayHandler.setColorPrecisionMediump();
-		rayHandler = new RayHandler( GameData.b2dWorld, maxRays, (int)(Gdx.graphics.getWidth() * rttScale), (int)(Gdx.graphics.getHeight() * rttScale) );
+		rayHandler = new RayHandler( b2dWorld, maxRays, (int)(Gdx.graphics.getWidth() * rttScale), (int)(Gdx.graphics.getHeight() * rttScale) );
 		rayHandler.setShadows( true );
 		rayHandler.setCulling( true );
 		rayHandler.setBlur( true );
@@ -190,7 +197,7 @@ public class GameWorld {
 		playerHeadlights.setMaskBits( CollisionFilters.CategoryTrackWalls );
 
 		Vector2 pos = new Vector2();
-		TiledObjectGroup group = MapUtils.getObjectGroup( MapUtils.LayerLights );
+		TiledObjectGroup group = mapUtils.getObjectGroup( MapUtils.LayerLights );
 		for( int i = 0; i < group.objects.size(); i++ ) {
 			c.set(
 			// MathUtils.random(0,1),
@@ -198,7 +205,7 @@ public class GameWorld {
 			// MathUtils.random(0,1),
 			1f, .85f, .15f, .75f );
 			TiledObject o = group.objects.get( i );
-			pos.set( o.x, o.y ).mul( GameData.scalingStrategy.invTileMapZoomFactor );
+			pos.set( o.x, o.y ).mul( scalingStrategy.invTileMapZoomFactor );
 			pos.y = worldSizeScaledPx.y - pos.y;
 			pos.set( Convert.px2mt( pos ) );
 

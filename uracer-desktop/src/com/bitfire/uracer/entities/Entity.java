@@ -5,9 +5,9 @@ import com.badlogic.gdx.utils.Disposable;
 
 public abstract class Entity implements Disposable {
 	// screen-coords
-	protected EntityState stateRender = new EntityState();
+	protected EntityRenderState stateRender = new EntityRenderState();
 
-	public EntityState state() {
+	public EntityRenderState state() {
 		return stateRender;
 	}
 }
