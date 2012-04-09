@@ -1,4 +1,4 @@
-package com.bitfire.uracer.tiled;
+package com.bitfire.uracer.game.models;
 
 import java.io.IOException;
 import java.io.InputStream;

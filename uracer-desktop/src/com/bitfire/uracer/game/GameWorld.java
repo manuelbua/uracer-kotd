@@ -18,10 +18,10 @@ import com.badlogic.gdx.graphics.g2d.tiled.TiledObjectGroup;
 import com.badlogic.gdx.math.Vector2;
 import com.bitfire.uracer.Config;
 import com.bitfire.uracer.game.collisions.CollisionFilters;
-import com.bitfire.uracer.tiled.ModelFactory;
-import com.bitfire.uracer.tiled.OrthographicAlignedStillModel;
-import com.bitfire.uracer.tiled.TrackTrees;
-import com.bitfire.uracer.tiled.TrackWalls;
+import com.bitfire.uracer.game.models.ModelFactory;
+import com.bitfire.uracer.game.models.OrthographicAlignedStillModel;
+import com.bitfire.uracer.game.rendering.TrackTrees;
+import com.bitfire.uracer.game.rendering.TrackWalls;
 import com.bitfire.uracer.utils.Convert;
 import com.bitfire.uracer.utils.MapUtils;
 

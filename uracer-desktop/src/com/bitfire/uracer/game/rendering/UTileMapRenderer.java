@@ -1,4 +1,4 @@
-package com.bitfire.uracer.tiled;
+package com.bitfire.uracer.game.rendering;
 
 import java.util.StringTokenizer;
 

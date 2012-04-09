@@ -1,4 +1,4 @@
-package com.bitfire.uracer.tiled;
+package com.bitfire.uracer.game.rendering;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -12,6 +12,8 @@ import com.badlogic.gdx.math.MathUtils;
 import com.badlogic.gdx.math.Matrix4;
 import com.badlogic.gdx.math.Vector3;
 import com.bitfire.uracer.Director;
+import com.bitfire.uracer.game.models.ModelFactory;
+import com.bitfire.uracer.game.models.TreeStillModel;
 import com.bitfire.uracer.utils.Convert;
 import com.bitfire.uracer.utils.MapUtils;
 

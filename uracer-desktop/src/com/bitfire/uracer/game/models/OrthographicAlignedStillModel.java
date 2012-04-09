@@ -1,4 +1,4 @@
-package com.bitfire.uracer.tiled;
+package com.bitfire.uracer.game.models;
 
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.g3d.materials.Material;

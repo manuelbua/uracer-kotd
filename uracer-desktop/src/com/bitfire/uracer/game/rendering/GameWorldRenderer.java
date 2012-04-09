@@ -27,11 +27,8 @@ import com.bitfire.uracer.game.GameData;
 import com.bitfire.uracer.game.GameData.States;
 import com.bitfire.uracer.game.GameWorld;
 import com.bitfire.uracer.game.actors.Car;
-import com.bitfire.uracer.tiled.OrthographicAlignedStillModel;
-import com.bitfire.uracer.tiled.TrackTrees;
-import com.bitfire.uracer.tiled.TrackWalls;
-import com.bitfire.uracer.tiled.TreeStillModel;
-import com.bitfire.uracer.tiled.UTileMapRenderer;
+import com.bitfire.uracer.game.models.OrthographicAlignedStillModel;
+import com.bitfire.uracer.game.models.TreeStillModel;
 import com.bitfire.uracer.utils.Convert;
 
 public class GameWorldRenderer {
