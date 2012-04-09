@@ -1,7 +1,7 @@
 package com.bitfire.uracer.utils;
 
 /** Algebra math utils.
- * 
+ *
  * @author manuel */
 
 public class AMath {
@@ -14,9 +14,8 @@ public class AMath {
 	public static final float CMP_EPSILON = 0.001f;
 
 	public static final boolean equals( float a, float b ) {
-		if( a == b )
-			return true;
-		return Math.abs( a - b ) < CMP_EPSILON;
+
+		return Math.abs( Math.abs( a ) - Math.abs( b ) ) < CMP_EPSILON;
 	}
 
 	public static final boolean isZero( float a ) {
@@ -58,14 +57,18 @@ public class AMath {
 	}
 
 	public static final float fixup( float v ) {
-		if( Math.abs( v ) < CMP_EPSILON )
+		if( Math.abs( v ) < CMP_EPSILON ) {
 			return 0;
+		}
+
 		return v;
 	}
 
 	public static final float sign( float v ) {
-		if( v < 0 )
+		if( v < 0 ) {
 			return -1f;
+		}
+
 		return 1f;
 	}
 
