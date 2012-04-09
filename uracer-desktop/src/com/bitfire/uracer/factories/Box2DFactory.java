@@ -13,7 +13,7 @@ import com.badlogic.gdx.physics.box2d.World;
 import com.bitfire.uracer.Config;
 import com.bitfire.uracer.entities.CollisionFilters;
 
-public class Box2DFactory {
+public final class Box2DFactory {
 
 	private Box2DFactory() {
 	}

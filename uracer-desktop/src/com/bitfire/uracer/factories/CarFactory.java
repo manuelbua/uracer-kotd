@@ -16,7 +16,7 @@ import com.bitfire.uracer.entities.vehicles.GhostCar;
 import com.bitfire.uracer.utils.Convert;
 import com.bitfire.uracer.utils.FixtureAtlas;
 
-public class CarFactory {
+public final class CarFactory {
 	public enum CarType {
 		OldSkool, OldSkool2
 	}

@@ -1,5 +1,7 @@
 package com.bitfire.uracer.game;
 
+import java.util.ArrayList;
+
 import com.badlogic.gdx.utils.Disposable;
 import com.bitfire.uracer.Art;
 import com.bitfire.uracer.Config;
@@ -20,6 +22,7 @@ import com.bitfire.uracer.messager.Messager.MessageType;
 import com.bitfire.uracer.postprocessing.PostProcessor;
 import com.bitfire.uracer.postprocessing.effects.Bloom;
 import com.bitfire.uracer.postprocessing.effects.Zoom;
+import com.bitfire.uracer.task.Task;
 import com.bitfire.uracer.task.TaskManager;
 import com.bitfire.uracer.utils.Convert;
 
@@ -38,10 +41,12 @@ public class Game implements Disposable {
 
 	// graphics
 	private GameRenderer gameRenderer = null;
-	private Hud hud = null;
 
 	// sounds
 	private CarSoundManager carSoundManager = null;
+
+	// tasks
+	private ArrayList<Task> gameTasks = null;
 
 	public Game( String levelName, GameDifficulty difficulty ) {
 		GameData.create( difficulty );
@@ -69,7 +74,11 @@ public class Game implements Disposable {
 			setupPostProcessing( gameRenderer.postProcessor );
 		}
 
-		hud = new Hud( car );
+		// ----------------------------
+		// game tasks
+		// ----------------------------
+		gameTasks = new ArrayList<Task>( 10 );
+		gameTasks.add( new Hud( car ) );
 
 		// dbg
 		GameData.messager.show( "This is just a test", 300, MessageType.Good, MessagePosition.Bottom, MessageSize.Big );
@@ -77,7 +86,11 @@ public class Game implements Disposable {
 
 	@Override
 	public void dispose() {
-		hud.dispose();
+		for(Task task : gameTasks) {
+			task.dispose();
+		}
+
+		gameTasks.clear();
 		Director.dispose();
 		gameRenderer.dispose();
 		carSoundManager.dispose();

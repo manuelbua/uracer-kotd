@@ -16,7 +16,7 @@ import com.bitfire.uracer.tiled.OrthographicAlignedStillModel;
 import com.bitfire.uracer.tiled.TreeStillModel;
 import com.bitfire.uracer.utils.Hash;
 
-public class ModelFactory {
+public final class ModelFactory {
 	public enum ModelMesh {
 		Missing, Palm, Tribune, Tree_1, Tree_2, Tree_3, Tree_4, Tree_5, Tree_6, Tree_7, Tree_8, Tree_9
 	}
