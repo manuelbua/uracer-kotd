@@ -23,8 +23,7 @@ import com.badlogic.gdx.math.collision.BoundingBox;
 import com.bitfire.uracer.Art;
 import com.bitfire.uracer.Config;
 import com.bitfire.uracer.Director;
-import com.bitfire.uracer.game.GameData;
-import com.bitfire.uracer.game.GameData.States;
+import com.bitfire.uracer.ScalingStrategy;
 import com.bitfire.uracer.game.GameWorld;
 import com.bitfire.uracer.game.actors.Car;
 import com.bitfire.uracer.game.models.OrthographicAlignedStillModel;
@@ -65,6 +64,7 @@ public class GameWorldRenderer {
 	private TileAtlas tileAtlas = null;
 
 	public UTileMapRenderer tileMapRenderer = null;
+	private ScalingStrategy scalingStrategy = null;
 
 	// render stats
 	private ImmediateModeRenderer20 dbg = new ImmediateModeRenderer20( false, true, 0 );
@@ -79,7 +79,8 @@ public class GameWorldRenderer {
 	private TrackWalls trackWalls = null;
 	private ConeLight playerLights = null;
 
-	public GameWorldRenderer( GameWorld world, int width, int height ) {
+	public GameWorldRenderer( ScalingStrategy strategy, GameWorld world, int width, int height ) {
+		scalingStrategy = strategy;
 		rayHandler = world.getRayHandler();
 		trackTrees = world.getTrackTrees();
 		trackWalls = world.getTrackWalls();
@@ -111,8 +112,7 @@ public class GameWorldRenderer {
 		renderedWalls = 0;
 	}
 
-	public void generateLightMap() {
-		Car car = States.playerState.car;
+	public void generateLightMap(Car car) {
 
 		// update player light (subframe interpolation ready)
 		float ang = 90 + car.state().orientation;
@@ -132,8 +132,8 @@ public class GameWorldRenderer {
 		playerLights.setDirection( ang );
 		playerLights.setPosition( px, py );
 
-		rayHandler.setCombinedMatrix( Director.getMatViewProjMt(), Convert.px2mt( camOrtho.position.x * GameData.scalingStrategy.invTileMapZoomFactor ),
-				Convert.px2mt( camOrtho.position.y * GameData.scalingStrategy.invTileMapZoomFactor ), Convert.px2mt( camOrtho.viewportWidth ),
+		rayHandler.setCombinedMatrix( Director.getMatViewProjMt(), Convert.px2mt( camOrtho.position.x * scalingStrategy.invTileMapZoomFactor ),
+				Convert.px2mt( camOrtho.position.y * scalingStrategy.invTileMapZoomFactor ), Convert.px2mt( camOrtho.viewportWidth ),
 				Convert.px2mt( camOrtho.viewportHeight ) );
 
 		rayHandler.update();
@@ -152,17 +152,17 @@ public class GameWorldRenderer {
 	public void syncWithCam( OrthographicCamera orthoCam ) {
 		// scale position
 		camOrtho.position.set( orthoCam.position );
-		camOrtho.position.mul( GameData.scalingStrategy.tileMapZoomFactor );
+		camOrtho.position.mul( scalingStrategy.tileMapZoomFactor );
 
 		camOrtho.viewportWidth = Gdx.graphics.getWidth();
 		camOrtho.viewportHeight = Gdx.graphics.getHeight();
-		camOrtho.zoom = GameData.scalingStrategy.tileMapZoomFactor;
+		camOrtho.zoom = scalingStrategy.tileMapZoomFactor;
 		camOrtho.update();
 
 		camPersp.viewportWidth = camOrtho.viewportWidth;
 		camPersp.viewportHeight = camOrtho.viewportHeight;
 		camPersp.position.set( camOrtho.position.x, camOrtho.position.y, camPerspElevation );
-		camPersp.fieldOfView = GameData.scalingStrategy.verticalFov;
+		camPersp.fieldOfView = scalingStrategy.verticalFov;
 		camPersp.update();
 	}
 
@@ -181,7 +181,7 @@ public class GameWorldRenderer {
 		float perspPlaneFar = 240;
 		camPerspElevation = 100;
 
-		camPersp = new PerspectiveCamera( GameData.scalingStrategy.verticalFov, width, height );
+		camPersp = new PerspectiveCamera( scalingStrategy.verticalFov, width, height );
 		camPersp.near = perspPlaneNear;
 		camPersp.far = perspPlaneFar;
 		camPersp.lookAt( 0, 0, -1 );

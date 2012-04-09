@@ -6,10 +6,12 @@ import com.badlogic.gdx.graphics.OrthographicCamera;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.bitfire.uracer.Config;
 import com.bitfire.uracer.Director;
+import com.bitfire.uracer.ScalingStrategy;
 import com.bitfire.uracer.URacer;
 import com.bitfire.uracer.game.GameData;
 import com.bitfire.uracer.game.GameData.Events;
 import com.bitfire.uracer.game.GameWorld;
+import com.bitfire.uracer.game.actors.Car;
 import com.bitfire.uracer.game.debug.Debug;
 import com.bitfire.uracer.game.events.GameRendererEvent;
 import com.bitfire.uracer.postprocessing.PostProcessor;
@@ -23,13 +25,13 @@ public class GameRenderer {
 	public final PostProcessor postProcessor;
 	private boolean postProcessorEnabled = Config.Graphics.EnablePostProcessingFx;
 
-	public GameRenderer( GameWorld gameWorld ) {
+	public GameRenderer( ScalingStrategy strategy, GameWorld gameWorld ) {
 		gl = Gdx.graphics.getGL20();
 		world = gameWorld;
 
 		int width = Gdx.graphics.getWidth();
 		int height = Gdx.graphics.getHeight();
-		worldRenderer = new GameWorldRenderer( world, width, height );
+		worldRenderer = new GameWorldRenderer( strategy, world, width, height );
 		batchRenderer = new GameBatchRenderer( gl );
 		postProcessor = new PostProcessor( width, height, false /* depth */, false /* alpha */, Config.isDesktop /* 32bpp */);
 		Debug.create();
@@ -45,7 +47,7 @@ public class GameRenderer {
 		postProcessorEnabled = enable;
 	}
 
-	public void render() {
+	public void render(Car car) {
 		OrthographicCamera ortho = Director.getCamera();
 
 		// tweener step
@@ -92,12 +94,12 @@ public class GameRenderer {
 					postProcessor.render();
 				}
 
-				worldRenderer.generateLightMap();
+				worldRenderer.generateLightMap(car);
 				worldRenderer.renderLigthMap( null );
 			} else {
 				// render nightmode
 				if( world.isNightMode() ) {
-					worldRenderer.generateLightMap();
+					worldRenderer.generateLightMap(car);
 
 					// hook into the next PostProcessor source buffer (the last result)
 					// and blend the lightmap on it

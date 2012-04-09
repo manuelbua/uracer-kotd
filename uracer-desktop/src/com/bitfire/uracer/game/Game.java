@@ -34,6 +34,7 @@ public class Game implements Disposable {
 
 	// logic
 	private GameLogic gameLogic = null;
+	private Car playerCar;
 
 	// post-processing
 	private Bloom bloom = null;
@@ -52,9 +53,9 @@ public class Game implements Disposable {
 		Convert.init( GameData.scalingStrategy.invTileMapZoomFactor, Config.Physics.PixelsPerMeter );
 		Director.init();
 
-		Car car = CarFactory.createPlayer( CarType.OldSkool, new CarModel().toModel2() );
-		GameData.createStates( car );
-		GameData.createSystems( GameData.b2dWorld, car );
+		playerCar = CarFactory.createPlayer( CarType.OldSkool, new CarModel().toModel2() );
+		GameData.createStates( playerCar );
+		GameData.createSystems( GameData.b2dWorld, playerCar );
 		GameData.createWorld( levelName, false );
 
 		gameLogic = new GameLogic();
@@ -62,7 +63,7 @@ public class Game implements Disposable {
 		// ----------------------------
 		// rendering engine initialization
 		// ----------------------------
-		gameRenderer = new GameRenderer( GameData.gameWorld );
+		gameRenderer = new GameRenderer( GameData.scalingStrategy, GameData.gameWorld );
 
 		// in-place customization
 		if( Config.Graphics.EnablePostProcessingFx ) {
@@ -73,7 +74,7 @@ public class Game implements Disposable {
 		// game tasks
 		// ----------------------------
 		gameTasks = new ArrayList<Task>( 10 );
-		gameTasks.add( new Hud( car ) );
+		gameTasks.add( new Hud( playerCar ) );
 		gameTasks.add( new CarSoundManager() );
 	}
 
@@ -138,7 +139,7 @@ public class Game implements Disposable {
 
 	public void render() {
 		gameLogic.onBeforeRender();
-		gameRenderer.render();
+		gameRenderer.render(playerCar);
 	}
 
 	public void pause() {
