@@ -26,6 +26,7 @@ import com.bitfire.uracer.Config;
 import com.bitfire.uracer.Director;
 import com.bitfire.uracer.ScalingStrategy;
 import com.bitfire.uracer.game.GameWorld;
+import com.bitfire.uracer.game.actors.Car;
 import com.bitfire.uracer.game.models.OrthographicAlignedStillModel;
 import com.bitfire.uracer.game.models.TreeStillModel;
 import com.bitfire.uracer.utils.Convert;
@@ -57,6 +58,7 @@ public class GameWorldRenderer {
 		"}														\n";
 	// @formatter:on
 
+	private Car carPlayer = null;
 	private PerspectiveCamera camPersp = null;
 	private OrthographicCamera camOrtho = null;
 	private ShaderProgram treeShader = null;
@@ -106,31 +108,43 @@ public class GameWorldRenderer {
 		tileAtlas.dispose();
 	}
 
+	public void setPlayerCar( Car car ) {
+		carPlayer = car;
+	}
+
 	public void resetCounters() {
 		culledMeshes = 0;
 		renderedTrees = 0;
 		renderedWalls = 0;
 	}
 
-	public void generatePlayerHeadlightsLightMap(Vector2 carPosition, float carOrientation, float carLength) {
+	public void generatePlayerHeadlightsLightMap() {
+		if( carPlayer != null ) {
+			Vector2 carPosition = carPlayer.state().position;
+			float carOrientation = carPlayer.state().orientation;
+			float carLength = carPlayer.getCarModel().length;
 
-		// update player light (subframe interpolation ready)
-		float ang = 90 + carOrientation;
+			// update player light (subframe interpolation ready)
+			float ang = 90 + carOrientation;
 
-		// the body's compound shape should be created with some clever thinking in it :)
-		float offx = (carLength / 2f) + .25f;
-		float offy = 0f;
+			// the body's compound shape should be created with some clever thinking in it :)
+			float offx = (carLength / 2f) + .25f;
+			float offy = 0f;
 
-		float cos = MathUtils.cosDeg( ang );
-		float sin = MathUtils.sinDeg( ang );
-		float dX = offx * cos - offy * sin;
-		float dY = offx * sin + offy * cos;
+			float cos = MathUtils.cosDeg( ang );
+			float sin = MathUtils.sinDeg( ang );
+			float dX = offx * cos - offy * sin;
+			float dY = offx * sin + offy * cos;
 
-		float px = Convert.px2mt( carPosition.x ) + dX;
-		float py = Convert.px2mt( carPosition.y ) + dY;
+			float px = Convert.px2mt( carPosition.x ) + dX;
+			float py = Convert.px2mt( carPosition.y ) + dY;
 
-		playerLights.setDirection( ang );
-		playerLights.setPosition( px, py );
+			playerLights.setDirection( ang );
+			playerLights.setPosition( px, py );
+			playerLights.setActive( false );
+		} else {
+			playerLights.setActive( true );
+		}
 
 		rayHandler.setCombinedMatrix( Director.getMatViewProjMt(), Convert.px2mt( camOrtho.position.x * scalingStrategy.invTileMapZoomFactor ),
 				Convert.px2mt( camOrtho.position.y * scalingStrategy.invTileMapZoomFactor ), Convert.px2mt( camOrtho.viewportWidth ),

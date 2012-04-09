@@ -12,7 +12,6 @@ import com.bitfire.uracer.game.GameData;
 import com.bitfire.uracer.game.GameData.Events;
 import com.bitfire.uracer.game.GameWorld;
 import com.bitfire.uracer.game.Tweener;
-import com.bitfire.uracer.game.actors.Car;
 import com.bitfire.uracer.game.events.GameRendererEvent;
 import com.bitfire.uracer.game.rendering.debug.Debug;
 import com.bitfire.uracer.postprocessing.PostProcessor;
@@ -91,19 +90,18 @@ public class GameRenderer {
 		}
 		batchRenderer.end();
 
-		Car car = GameData.States.playerState.car;
 		if( world.isNightMode() ) {
 			if( Config.Graphics.DumbNightMode ) {
 				if( postProcessorEnabled ) {
 					postProcessor.render();
 				}
 
-				worldRenderer.generatePlayerHeadlightsLightMap( car.state().position, car.orient(), car.getCarModel().length );
+				worldRenderer.generatePlayerHeadlightsLightMap();
 				worldRenderer.renderLigthMap( null );
 			} else {
 				// render nightmode
 				if( world.isNightMode() ) {
-					worldRenderer.generatePlayerHeadlightsLightMap( car.state().position, car.orient(), car.getCarModel().length );
+					worldRenderer.generatePlayerHeadlightsLightMap();
 
 					// hook into the next PostProcessor source buffer (the last result)
 					// and blend the lightmap on it
