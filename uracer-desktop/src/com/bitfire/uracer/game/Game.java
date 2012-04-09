@@ -22,6 +22,7 @@ import com.bitfire.uracer.postprocessing.effects.Bloom;
 import com.bitfire.uracer.postprocessing.effects.Zoom;
 import com.bitfire.uracer.task.Task;
 import com.bitfire.uracer.task.TaskManager;
+import com.bitfire.uracer.utils.BatchUtils;
 import com.bitfire.uracer.utils.Convert;
 
 // TODO, extrapolate its GameRenderer out of it
@@ -46,6 +47,7 @@ public class Game implements Disposable {
 	public Game( String levelName, GameDifficulty difficulty ) {
 		GameData.create( difficulty );
 		Art.init();
+		BatchUtils.init( Art.base6 );
 		Convert.init( GameData.scalingStrategy.invTileMapZoomFactor );
 		Director.init();
 
