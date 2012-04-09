@@ -1,4 +1,4 @@
-package com.bitfire.uracer.audio;
+package com.bitfire.uracer.game.audio;
 
 public interface ISoundEffect {
 	public void onDispose();

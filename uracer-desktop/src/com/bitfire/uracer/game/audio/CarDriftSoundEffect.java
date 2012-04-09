@@ -1,4 +1,4 @@
-package com.bitfire.uracer.audio;
+package com.bitfire.uracer.game.audio;
 
 import com.badlogic.gdx.Files.FileType;
 import com.badlogic.gdx.Gdx;

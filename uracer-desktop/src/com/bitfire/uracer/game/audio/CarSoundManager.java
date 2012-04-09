@@ -1,4 +1,4 @@
-package com.bitfire.uracer.audio;
+package com.bitfire.uracer.game.audio;
 
 import com.bitfire.uracer.events.GameLogicEvent;
 import com.bitfire.uracer.events.GameLogicEvent.Type;
