@@ -20,7 +20,6 @@ import com.bitfire.uracer.carsimulation.CarInputMode;
 import com.bitfire.uracer.carsimulation.CarModel;
 import com.bitfire.uracer.carsimulation.CarSimulator;
 import com.bitfire.uracer.carsimulation.Recorder;
-import com.bitfire.uracer.debug.Debug;
 import com.bitfire.uracer.entities.Box2dEntity;
 import com.bitfire.uracer.events.CarEvent;
 import com.bitfire.uracer.factories.CarFactory.CarType;
@@ -28,6 +27,7 @@ import com.bitfire.uracer.game.GameData;
 import com.bitfire.uracer.game.GameData.Events;
 import com.bitfire.uracer.game.GameWorld;
 import com.bitfire.uracer.utils.AMath;
+import com.bitfire.uracer.utils.BatchUtils;
 import com.bitfire.uracer.utils.Convert;
 import com.bitfire.uracer.utils.MapUtils;
 import com.bitfire.uracer.utils.VMath;
@@ -341,20 +341,20 @@ public class Car extends Box2dEntity {
 			return;
 
 		if( Config.Graphics.RenderPlayerDebugInfo ) {
-			Debug.drawString( batch, "vel_wc len =" + carDesc.velocity_wc.len(), 0, 13 );
-			Debug.drawString( batch, "vel_wc [x=" + carDesc.velocity_wc.x + ", y=" + carDesc.velocity_wc.y + "]", 0, 20 );
-			Debug.drawString( batch, "steerangle=" + carDesc.steerangle, 0, 27 );
-			Debug.drawString( batch, "throttle=" + carDesc.throttle, 0, 34 );
-			Debug.drawString( batch, "screen x=" + Director.screenPosFor( body ).x + ",y=" + Director.screenPosFor( body ).y, 0, 80 );
-			Debug.drawString( batch, "world-mt x=" + body.getPosition().x + ",y=" + body.getPosition().y, 0, 87 );
-			Debug.drawString( batch, "world-px x=" + Convert.mt2px( body.getPosition().x ) + ",y=" + Convert.mt2px( body.getPosition().y ), 0, 93 );
+			BatchUtils.drawString( batch, "vel_wc len =" + carDesc.velocity_wc.len(), 0, 13 );
+			BatchUtils.drawString( batch, "vel_wc [x=" + carDesc.velocity_wc.x + ", y=" + carDesc.velocity_wc.y + "]", 0, 20 );
+			BatchUtils.drawString( batch, "steerangle=" + carDesc.steerangle, 0, 27 );
+			BatchUtils.drawString( batch, "throttle=" + carDesc.throttle, 0, 34 );
+			BatchUtils.drawString( batch, "screen x=" + Director.screenPosFor( body ).x + ",y=" + Director.screenPosFor( body ).y, 0, 80 );
+			BatchUtils.drawString( batch, "world-mt x=" + body.getPosition().x + ",y=" + body.getPosition().y, 0, 87 );
+			BatchUtils.drawString( batch, "world-px x=" + Convert.mt2px( body.getPosition().x ) + ",y=" + Convert.mt2px( body.getPosition().y ), 0, 93 );
 			// Debug.drawString( "dir worldsize x=" + Director.worldSizeScaledPx.x + ",y=" +
 			// Director.worldSizeScaledPx.y, 0, 100 );
 			// Debug.drawString( "dir bounds x=" + Director.boundsPx.x + ",y=" + Director.boundsPx.width, 0, 107 );
-			Debug.drawString( batch, "orient=" + body.getAngle(), 0, 114 );
-			Debug.drawString( batch, "render.interp=" + (state().position.x + "," + state().position.y), 0, 121 );
+			BatchUtils.drawString( batch, "orient=" + body.getAngle(), 0, 114 );
+			BatchUtils.drawString( batch, "render.interp=" + (state().position.x + "," + state().position.y), 0, 121 );
 
-			Debug.drawString( batch, "on tile " + tilePosition, 0, 0 );
+			BatchUtils.drawString( batch, "on tile " + tilePosition, 0, 0 );
 		}
 	}
 }

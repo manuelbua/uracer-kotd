@@ -1,4 +1,4 @@
-package com.bitfire.uracer.hud;
+package com.bitfire.uracer.game.hud;
 
 import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.Pixmap;
@@ -9,9 +9,10 @@ import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
 import com.badlogic.gdx.math.Vector2;
 import com.bitfire.uracer.Director;
-import com.bitfire.uracer.debug.Debug;
 import com.bitfire.uracer.entities.vehicles.Car;
+import com.bitfire.uracer.game.debug.Debug;
 import com.bitfire.uracer.utils.AMath;
+import com.bitfire.uracer.utils.BatchUtils;
 import com.bitfire.uracer.utils.Convert;
 
 public class HudDebugMeter {
@@ -89,7 +90,7 @@ public class HudDebugMeter {
 	public void render( SpriteBatch batch ) {
 		update();
 		draw();
-		Debug.drawString( batch, getMessage(), pos.x, pos.y );
+		BatchUtils.drawString( batch, getMessage(), pos.x, pos.y );
 
 		batch.draw( region, pos.x, pos.y + Debug.fontHeight );
 	}

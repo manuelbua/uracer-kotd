@@ -1,4 +1,4 @@
-package com.bitfire.uracer.hud;
+package com.bitfire.uracer.game.hud;
 
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.math.Vector2;

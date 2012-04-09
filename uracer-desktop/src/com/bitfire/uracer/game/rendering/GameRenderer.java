@@ -7,14 +7,15 @@ import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.bitfire.uracer.Config;
 import com.bitfire.uracer.Director;
 import com.bitfire.uracer.URacer;
-import com.bitfire.uracer.debug.Debug;
 import com.bitfire.uracer.effects.CarSkidMarks;
 import com.bitfire.uracer.effects.TrackEffect;
 import com.bitfire.uracer.events.GameRendererEvent;
 import com.bitfire.uracer.game.GameData;
 import com.bitfire.uracer.game.GameData.Events;
 import com.bitfire.uracer.game.GameWorld;
+import com.bitfire.uracer.game.debug.Debug;
 import com.bitfire.uracer.postprocessing.PostProcessor;
+import com.bitfire.uracer.utils.BatchUtils;
 
 public class GameRenderer {
 	private final GL20 gl;
@@ -32,11 +33,12 @@ public class GameRenderer {
 		int height = Gdx.graphics.getHeight();
 		worldRenderer = new GameWorldRenderer( world, width, height );
 		batchRenderer = new GameBatchRenderer( gl );
-		postProcessor = new PostProcessor( width, height, false /* depth */, false /* alpha */, Config.isDesktop /* 32
-																												 * bits */);
+		postProcessor = new PostProcessor( width, height, false /* depth */, false /* alpha */, Config.isDesktop /* 32bpp */);
+		Debug.create();
 	}
 
 	public void dispose() {
+		Debug.dispose();
 		batchRenderer.dispose();
 		postProcessor.dispose();
 	}
@@ -103,8 +105,7 @@ public class GameRenderer {
 					// and blend the lightmap on it
 					if( postProcessorEnabled ) {
 						worldRenderer.renderLigthMap( postProcessor.captureEnd() );
-					}
-					else {
+					} else {
 						worldRenderer.renderLigthMap( null );
 					}
 				}
@@ -118,7 +119,6 @@ public class GameRenderer {
 				postProcessor.render();
 			}
 		}
-
 
 		//
 		// debug
@@ -138,10 +138,10 @@ public class GameRenderer {
 			Debug.renderGraphicalStats( batch, Gdx.graphics.getWidth() - Debug.getStatsWidth(), Gdx.graphics.getHeight() - Debug.getStatsHeight() - Debug.fontHeight );
 			Debug.renderTextualStats( batch );
 			Debug.renderMemoryUsage( batch );
-			Debug.drawString( batch, "Visible car skid marks=" + ((CarSkidMarks)GameData.Systems.trackEffects.get( TrackEffect.Type.CarSkidMarks )).getParticleCount(), 0,
-					Gdx.graphics.getHeight() - 21 );
-			Debug.drawString( batch, "total meshes=" + GameWorld.TotalMeshes, 0, Gdx.graphics.getHeight() - 14 );
-			Debug.drawString( batch, "rendered meshes=" + (GameWorldRenderer.renderedTrees + GameWorldRenderer.renderedWalls) + ", trees="
+			BatchUtils.drawString( batch, "Visible car skid marks=" + ((CarSkidMarks)GameData.Systems.trackEffects.get( TrackEffect.Type.CarSkidMarks )).getParticleCount(),
+					0, Gdx.graphics.getHeight() - 21 );
+			BatchUtils.drawString( batch, "total meshes=" + GameWorld.TotalMeshes, 0, Gdx.graphics.getHeight() - 14 );
+			BatchUtils.drawString( batch, "rendered meshes=" + (GameWorldRenderer.renderedTrees + GameWorldRenderer.renderedWalls) + ", trees="
 					+ GameWorldRenderer.renderedTrees + ", walls=" + GameWorldRenderer.renderedWalls + ", culled=" + GameWorldRenderer.culledMeshes, 0,
 					Gdx.graphics.getHeight() - 7 );
 

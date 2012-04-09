@@ -4,7 +4,6 @@ import java.lang.reflect.Field;
 
 import com.badlogic.gdx.ApplicationListener;
 import com.badlogic.gdx.Gdx;
-import com.bitfire.uracer.debug.Debug;
 import com.bitfire.uracer.screen.GameScreen;
 import com.bitfire.uracer.screen.Screen;
 import com.bitfire.uracer.utils.AMath;
@@ -32,7 +31,7 @@ public class URacer implements ApplicationListener {
 	private URacerFinalizer uRacerFinalizer;
 
 	public interface URacerFinalizer {
-		public void dispose();
+		void dispose();
 	}
 
 	public void setFinalizer( URacerFinalizer finalizer ) {
@@ -58,7 +57,6 @@ public class URacer implements ApplicationListener {
 		URacer.updateVersionInformation();
 
 		Config.asDefault();
-		Debug.create();
 		input.releaseAllKeys();
 
 		Gdx.input.setInputProcessor( input );
@@ -80,10 +78,13 @@ public class URacer implements ApplicationListener {
 	// NOTE: this render() method will get called by JoglGraphics when screen.tick will ask to finish!!
 	@Override
 	public void render() {
-		if( screen == null )
+		if( screen == null ) {
 			return;
-		if( screen.quit() )
+		}
+
+		if( screen.quit() ) {
 			return;
+		}
 
 		// this is not good for Android since the value often hop around
 		// long currNanos = System.nanoTime();
@@ -104,8 +105,9 @@ public class URacer implements ApplicationListener {
 				screen.tick();
 				timeAccumSecs -= Config.Physics.PhysicsDt;
 				hasStepped = true;
-				if( screen.quit() )
+				if( screen.quit() ) {
 					return;
+				}
 			}
 
 			// simulate slowness
@@ -155,9 +157,9 @@ public class URacer implements ApplicationListener {
 	@Override
 	public void dispose() {
 		setScreen( null );
-		Debug.dispose();
-		if( uRacerFinalizer != null )
+		if( uRacerFinalizer != null ) {
 			uRacerFinalizer.dispose();
+		}
 
 		// if(!Config.isDesktop || )
 		System.exit( 0 );

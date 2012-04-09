@@ -2,7 +2,7 @@ package com.bitfire.uracer.tweener.accessors;
 
 import aurelienribon.tweenengine.TweenAccessor;
 
-import com.bitfire.uracer.hud.HudLabel;
+import com.bitfire.uracer.game.hud.HudLabel;
 
 public class HudLabelAccessor implements TweenAccessor<HudLabel> {
 	public static final int POSITION_XY = 1;
