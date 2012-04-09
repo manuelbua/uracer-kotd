@@ -4,7 +4,6 @@ import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.bitfire.uracer.Art;
 import com.bitfire.uracer.Config;
-import com.bitfire.uracer.carsimulation.Replay;
 import com.bitfire.uracer.effects.CarSkidMarks;
 import com.bitfire.uracer.effects.SmokeTrails;
 import com.bitfire.uracer.effects.TrackEffect.Type;
@@ -16,6 +15,7 @@ import com.bitfire.uracer.game.GameData.States;
 import com.bitfire.uracer.game.entities.Car;
 import com.bitfire.uracer.game.logic.DriftState;
 import com.bitfire.uracer.game.logic.LapState;
+import com.bitfire.uracer.game.logic.Replay;
 import com.bitfire.uracer.task.Task;
 import com.bitfire.uracer.utils.NumberString;
 

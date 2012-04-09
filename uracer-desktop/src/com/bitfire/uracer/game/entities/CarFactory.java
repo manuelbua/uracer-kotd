@@ -1,4 +1,4 @@
-package com.bitfire.uracer.factories;
+package com.bitfire.uracer.game.entities;
 
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
@@ -10,8 +10,6 @@ import com.bitfire.uracer.carsimulation.CarInputMode;
 import com.bitfire.uracer.carsimulation.CarModel;
 import com.bitfire.uracer.entities.EntityType;
 import com.bitfire.uracer.game.collisions.CollisionFilters;
-import com.bitfire.uracer.game.entities.Car;
-import com.bitfire.uracer.game.entities.GhostCar;
 import com.bitfire.uracer.game.rendering.CarRenderer;
 import com.bitfire.uracer.utils.Convert;
 import com.bitfire.uracer.utils.FixtureAtlas;

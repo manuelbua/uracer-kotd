@@ -1,5 +1,7 @@
-package com.bitfire.uracer.carsimulation;
+package com.bitfire.uracer.game.logic;
 
+import com.badlogic.gdx.Gdx;
+import com.bitfire.uracer.carsimulation.CarForces;
 import com.bitfire.uracer.events.GameLogicEvent;
 import com.bitfire.uracer.game.GameData;
 import com.bitfire.uracer.game.GameData.Events;
@@ -47,7 +49,7 @@ public class Recorder {
 		}
 
 		if( !replay.add( f ) ) {
-			System.out.println( "Replay memory limit reached (" + replay.MaxEvents + " events), restarting." );
+			Gdx.app.log( "Recorder", "Replay memory limit reached (" + replay.MaxEvents + " events), restarting." );
 		}
 	}
 
