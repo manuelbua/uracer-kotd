@@ -3,21 +3,16 @@ package com.bitfire.uracer.game;
 import java.util.ArrayList;
 import java.util.List;
 
-import com.badlogic.gdx.physics.box2d.World;
 import com.badlogic.gdx.utils.Disposable;
 import com.bitfire.uracer.Art;
 import com.bitfire.uracer.Config;
 import com.bitfire.uracer.Director;
-import com.bitfire.uracer.ScalingStrategy;
 import com.bitfire.uracer.URacer;
 import com.bitfire.uracer.carsimulation.CarModel;
 import com.bitfire.uracer.game.actors.Car;
 import com.bitfire.uracer.game.actors.Car.CarType;
 import com.bitfire.uracer.game.actors.CarFactory;
 import com.bitfire.uracer.game.audio.CarSoundManager;
-import com.bitfire.uracer.game.data.Environment;
-import com.bitfire.uracer.game.data.States;
-import com.bitfire.uracer.game.data.Systems;
 import com.bitfire.uracer.game.hud.Hud;
 import com.bitfire.uracer.game.logic.GameLogic;
 import com.bitfire.uracer.game.rendering.Debug;
@@ -49,7 +44,7 @@ public class Game implements Disposable {
 	private List<Task> gameTasks = null;
 
 	public Game( String levelName, GameDifficulty difficulty ) {
-		create( difficulty );
+		GameData.create( difficulty );
 
 		Tweener.init();
 		Art.init( GameData.Environment.scalingStrategy.invTileMapZoomFactor );
@@ -58,9 +53,9 @@ public class Game implements Disposable {
 		Director.init();
 		Car car = CarFactory.createPlayer( CarType.OldSkool, new CarModel().toModel2() );
 
-		createStates( car );
-		createSystems( GameData.Environment.b2dWorld, car );
-		createWorld( GameData.Environment.b2dWorld, GameData.Environment.scalingStrategy, levelName, false );
+		GameData.createStates( car );
+		GameData.createSystems( GameData.Environment.b2dWorld, car );
+		GameData.createWorld( GameData.Environment.b2dWorld, GameData.Environment.scalingStrategy, levelName, false );
 
 		gameLogic = new GameLogic( GameData.Environment.gameWorld );
 
@@ -82,33 +77,6 @@ public class Game implements Disposable {
 		gameTasks.add( new CarSoundManager() );
 	}
 
-	//----------------------------------------------------------------------------------------------
-	// creation
-	private static void create( GameDifficulty difficulty ) {
-		GameData.Environment = new Environment( difficulty );
-	}
-
-	private static void createStates( Car car ) {
-		GameData.States = new States( car );
-	}
-
-	private static void createSystems( World b2dWorld, Car car ) {
-		GameData.Systems = new Systems( b2dWorld, car );
-	}
-
-	private static void disposeGameData() {
-		GameData.Environment.dispose();
-		GameData.Systems.dispose();
-	}
-
-	private static void createWorld( World b2dWorld, ScalingStrategy strategy, String levelName, boolean nightMode ) {
-		GameData.Environment.createWorld( b2dWorld, strategy, levelName, nightMode );
-	}
-
-	// creation
-	//----------------------------------------------------------------------------------------------
-
-
 	@Override
 	public void dispose() {
 		for( Task task : gameTasks ) {
@@ -120,8 +88,7 @@ public class Game implements Disposable {
 		gameRenderer.dispose();
 		Art.dispose();
 
-		disposeGameData();
-//		GameData.dispose();
+		GameData.dispose();
 	}
 
 	private void setupPostProcessing( PostProcessor postProcessor ) {
