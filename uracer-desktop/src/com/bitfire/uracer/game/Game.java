@@ -93,7 +93,7 @@ public class Game implements Disposable {
 	}
 
 	private void setupPostProcessing( PostProcessor postProcessor ) {
-		bloom = new Bloom( postProcessor, Config.PostProcessing.RttFboWidth, Config.PostProcessing.RttFboHeight );
+		bloom = new Bloom( Config.PostProcessing.RttFboWidth, Config.PostProcessing.RttFboHeight );
 
 		// Bloom.Settings bs = new Bloom.Settings( "arrogance-1 / rtt=0.25 / @1920x1050", BlurType.Gaussian5x5b, 1, 1,
 		// 0.25f, 1f, 0.1f, 0.8f, 1.4f );
@@ -104,7 +104,7 @@ public class Game implements Disposable {
 		Bloom.Settings bloomSettings = new Bloom.Settings( "subtle", Config.PostProcessing.BlurType, 1, 1.5f, threshold, 1f, 0.5f, 1f, 1.5f );
 		bloom.setSettings( bloomSettings );
 
-		zoom = new Zoom( postProcessor, Config.PostProcessing.ZoomQuality );
+		zoom = new Zoom( Config.PostProcessing.ZoomQuality );
 		postProcessor.addEffect( zoom );
 
 		postProcessor.addEffect( bloom );

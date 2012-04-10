@@ -77,9 +77,8 @@ public class Bloom extends PostProcessorEffect {
 
 	protected boolean blending = false;
 
-	public Bloom( PostProcessor postProcessor, int fboWidth, int fboHeight ) {
-		super( postProcessor );
-		pingPongBuffer = postProcessor.newPingPongBuffer( fboWidth, fboHeight, postProcessor.getFramebufferFormat(), false );
+	public Bloom( int fboWidth, int fboHeight ) {
+		pingPongBuffer = new PingPongBuffer( fboWidth, fboHeight, PostProcessor.getFramebufferFormat(), false );
 
 		blur = new Blur( fboWidth, fboHeight );
 		threshold = new Threshold();
@@ -93,6 +92,7 @@ public class Bloom extends PostProcessorEffect {
 		combine.dispose();
 		threshold.dispose();
 		blur.dispose();
+		pingPongBuffer.dispose();
 	}
 
 	public void setBaseIntesity( float intensity ) {
@@ -123,7 +123,7 @@ public class Bloom extends PostProcessorEffect {
 		blur.setType( type );
 	}
 
-	public void setSettings( Settings settings ) {
+	public final void setSettings( Settings settings ) {
 		this.settings = settings;
 
 		// setup threshold filter

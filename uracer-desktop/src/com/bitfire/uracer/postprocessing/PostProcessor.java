@@ -17,7 +17,7 @@ import com.badlogic.gdx.utils.Disposable;
  * @author bmanuel */
 public final class PostProcessor implements Disposable {
 	private final PingPongBuffer composite;
-	private final Format fbFormat;
+	private static Format fbFormat;
 	private final Array<PostProcessorEffect> effects = new Array<PostProcessorEffect>();
 	private static final Array<PingPongBuffer> buffers = new Array<PingPongBuffer>( 5 );
 	private final Color clearColor = Color.CLEAR;
@@ -89,8 +89,9 @@ public final class PostProcessor implements Disposable {
 	}
 
 	/** Returns the internal framebuffer format, computed from the
-	 * parameters specified during construction. */
-	public final Format getFramebufferFormat() {
+	 * parameters specified during construction.
+	 * NOTE: this static will be valid from upon construction and NOT early! */
+	public static Format getFramebufferFormat() {
 		return fbFormat;
 	}
 
