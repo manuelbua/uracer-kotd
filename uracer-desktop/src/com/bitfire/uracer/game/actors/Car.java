@@ -18,7 +18,6 @@ import com.bitfire.uracer.carsimulation.CarModel;
 import com.bitfire.uracer.carsimulation.CarSimulator;
 import com.bitfire.uracer.entities.Box2dEntity;
 import com.bitfire.uracer.game.GameData;
-import com.bitfire.uracer.game.GameData.Systems;
 import com.bitfire.uracer.game.GameEvents;
 import com.bitfire.uracer.game.Input;
 import com.bitfire.uracer.utils.AMath;
@@ -152,7 +151,7 @@ public class Car extends Box2dEntity {
 	protected CarInput acquireInput() {
 		carPos.set( Director.screenPosFor( body ) );
 
-		Input input = Systems.input;
+		Input input = GameData.Systems.input;
 		touchPos.set( input.getXY() );
 		carInput.updated = input.isTouching();
 

@@ -17,7 +17,6 @@ import com.bitfire.uracer.Director;
 import com.bitfire.uracer.URacer;
 import com.bitfire.uracer.carsimulation.CarInputMode;
 import com.bitfire.uracer.game.GameData;
-import com.bitfire.uracer.game.GameData.Systems;
 import com.bitfire.uracer.game.GameEvents;
 import com.bitfire.uracer.game.GameWorld;
 import com.bitfire.uracer.game.Input;
@@ -80,7 +79,7 @@ public class GameLogic implements CarEvent.Listener, PlayerStateEvent.Listener {
 	};
 
 	public boolean onTick() {
-		Input input = Systems.input;
+		Input input = GameData.Systems.input;
 
 		if( input.isOn( Keys.R ) ) {
 			restart();
