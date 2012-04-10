@@ -124,7 +124,8 @@ public class GameRenderer {
 		// debug
 		//
 
-		Debug.render( batchRenderer.beginTopLeft() );
+		batch = batchRenderer.beginTopLeft();
+		GameEvents.gameRenderer.trigger( GameRendererEvent.Type.BatchDebug );
 		batchRenderer.end();
 	}
 

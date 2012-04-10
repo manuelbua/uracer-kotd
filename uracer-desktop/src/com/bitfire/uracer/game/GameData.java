@@ -57,7 +57,19 @@ public final class GameData {
 		}
 	}
 
-	/** Systems */
+	// @formatter:off
+	/** Systems
+	 *
+	 * This is the order in which tickable and Tasks are being dispatched and consumed by the game super components:
+	 *
+	 * 1	Input task
+	 * 2	PhysicsStep task
+	 * 3	any other task
+	 * 4	Time timers
+	 * 5	GameLogic updates playState and driftState
+	 *
+	 **/
+	// @formatter:on
 	public static final class Systems {
 		public static PhysicsStep physicsStep;
 		public static TrackEffects trackEffects;

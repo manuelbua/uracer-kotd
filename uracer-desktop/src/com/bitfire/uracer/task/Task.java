@@ -6,6 +6,7 @@ import com.bitfire.uracer.task.TaskManagerEvent.Type;
 public abstract class Task implements TaskManagerEvent.Listener {
 
 	private Order order;
+
 	public Task() {
 		this( Order.DEFAULT );
 	}
@@ -23,7 +24,7 @@ public abstract class Task implements TaskManagerEvent.Listener {
 
 	@Override
 	public void taskManagerEvent( Type type ) {
-		switch(type) {
+		switch( type ) {
 		case onTick:
 			onTick();
 			break;

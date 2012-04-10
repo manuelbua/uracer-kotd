@@ -31,7 +31,7 @@ public class Blur extends MultipassFilter {
 			this.tap = tap;
 		}
 	}
-	// @formatter:off
+	// @formatter:on
 
 	// blur
 	private BlurType type;

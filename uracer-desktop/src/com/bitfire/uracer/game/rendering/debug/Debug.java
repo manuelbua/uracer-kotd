@@ -28,10 +28,22 @@ public final class Debug {
 	// box2d
 	private static Box2DDebugRenderer b2drenderer;
 
+	private static final GameRendererEvent.Listener onRender = new GameRendererEvent.Listener() {
+		@Override
+		public void gameRendererEvent( GameRendererEvent.Type type ) {
+			switch( type ) {
+			case BatchDebug:
+				Debug.render( GameEvents.gameRenderer.batch );
+				break;
+			}
+		}
+	};
+
 	private Debug() {
 	}
 
 	public static void create() {
+		GameEvents.gameRenderer.addListener( onRender, GameRendererEvent.Type.BatchDebug, GameRendererEvent.Order.PLUS_4 );
 		physicsTime = 0;
 		renderTime = 0;
 		b2drenderer = new Box2DDebugRenderer();
@@ -103,14 +115,11 @@ public final class Debug {
 		return gfxStats.getHeight();
 	}
 
-	public static void render( SpriteBatch batch ) {
+	private static void render( SpriteBatch batch ) {
 		if( Config.isDesktop ) {
 			if( Config.Graphics.RenderBox2DWorldWireframe ) {
 				Debug.renderB2dWorld( GameData.b2dWorld, Director.getMatViewProjMt() );
 			}
-
-			// EntityManager.raiseOnDebug();
-			GameEvents.gameRenderer.trigger( GameRendererEvent.Type.BatchDebug );
 
 			Debug.renderVersionInfo( batch );
 			Debug.renderGraphicalStats( batch, Gdx.graphics.getWidth() - Debug.getStatsWidth(), Gdx.graphics.getHeight() - Debug.getStatsHeight() - Art.fontHeight );

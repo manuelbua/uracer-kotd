@@ -53,7 +53,7 @@ public final class PostProcessor implements Disposable {
 	 * forget.
 	 * This is a drop-in replacement for the same-signature PingPongBuffer's
 	 * constructor. */
-	public final PingPongBuffer newPingPongBuffer( int width, int height, Format frameBufferFormat, boolean hasDepth ) {
+	public PingPongBuffer newPingPongBuffer( int width, int height, Format frameBufferFormat, boolean hasDepth ) {
 		PingPongBuffer buffer = new PingPongBuffer( width, height, frameBufferFormat, hasDepth );
 		buffers.add( buffer );
 		return buffer;
@@ -62,14 +62,16 @@ public final class PostProcessor implements Disposable {
 	/** Frees owned resources. */
 	@Override
 	public void dispose() {
-		for( int i = 0; i < effects.size; i++ )
+		for( int i = 0; i < effects.size; i++ ) {
 			effects.get( i ).dispose();
+		}
 
 		effects.clear();
 
 		// cleanup managed buffers, if any
-		for( int i = 0; i < buffers.size; i++ )
+		for( int i = 0; i < buffers.size; i++ ) {
 			buffers.get( i ).dispose();
+		}
 
 		buffers.clear();
 	}
@@ -144,11 +146,13 @@ public final class PostProcessor implements Disposable {
 	/** Regenerates and/or rebinds owned resources when needed, eg. when
 	 * the OpenGL context is lost. */
 	public void rebind() {
-		for( int i = 0; i < effects.size; i++ )
+		for( int i = 0; i < effects.size; i++ ) {
 			effects.get( i ).rebind();
+		}
 
-		for( int i = 0; i < buffers.size; i++ )
+		for( int i = 0; i < buffers.size; i++ ) {
 			buffers.get( i ).rebind();
+		}
 	}
 
 	/** Stops capturing the scene and apply the effect chain, if there is one. */

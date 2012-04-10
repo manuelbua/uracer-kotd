@@ -61,10 +61,10 @@ public class GameLogic implements CarEvent.Listener, PlayerStateEvent.Listener {
 
 		GameEvents.playerState.addListener( this );
 		GameEvents.carEvent.addListener( this );
-		States.playerState.car.setTransform( GameData.gameWorld.playerStartPos, GameData.gameWorld.playerStartOrient );
+		States.playerState.car.setTransform( world.playerStartPos, world.playerStartOrient );
 
-		controller = new DirectorController( Config.Graphics.CameraInterpolationMode, Director.halfViewport, GameData.gameWorld.worldSizeScaledPx,
-				GameData.gameWorld.worldSizeTiles );
+		controller = new DirectorController( Config.Graphics.CameraInterpolationMode, Director.halfViewport, world.worldSizeScaledPx,
+				world.worldSizeTiles );
 	}
 
 	boolean timeModulation = false, timeModulationBusy = false;
@@ -126,9 +126,7 @@ public class GameLogic implements CarEvent.Listener, PlayerStateEvent.Listener {
 		Car car = GameData.States.playerState.car;
 		if( car != null ) {
 			// follow the player's car
-			if( GameData.States.playerState != null ) {
-				controller.setPosition( GameData.States.playerState.car.state().position );
-			}
+			controller.setPosition( GameData.States.playerState.car.state().position );
 		}
 	}
 
@@ -174,7 +172,6 @@ public class GameLogic implements CarEvent.Listener, PlayerStateEvent.Listener {
 	private void updateCarFriction() {
 		PlayerState player = GameData.States.playerState;
 
-		GameWorld world = GameData.gameWorld;
 		Vector2 tilePosition = player.tilePosition;
 
 		if( tilePosition.x >= 0 && tilePosition.x < world.map.width && tilePosition.y >= 0 && tilePosition.y < world.map.height ) {
@@ -182,7 +179,7 @@ public class GameLogic implements CarEvent.Listener, PlayerStateEvent.Listener {
 			float tsx = tilePosition.x * mapUtils.scaledTilesize;
 			float tsy = tilePosition.y * mapUtils.scaledTilesize;
 			offset.set( player.car.state().position );
-			offset.y = GameData.gameWorld.worldSizeScaledPx.y - offset.y;
+			offset.y = world.worldSizeScaledPx.y - offset.y;
 			offset.x = offset.x - tsx;
 			offset.y = offset.y - tsy;
 			offset.mul( mapUtils.invScaledTilesize ).mul( world.map.tileWidth );
@@ -207,10 +204,10 @@ public class GameLogic implements CarEvent.Listener, PlayerStateEvent.Listener {
 	private void updateLap() {
 		PlayerState player = GameData.States.playerState;
 		if( player.car != null ) {
-			boolean onStartZone = (player.currTileX == GameData.gameWorld.playerStartTileX && player.currTileY == GameData.gameWorld.playerStartTileY);
+			boolean onStartZone = (player.currTileX == world.playerStartTileX && player.currTileY == world.playerStartTileY);
 
 			LapState lapState = GameData.States.lapState;
-			String name = GameData.gameWorld.name;
+			String name = world.name;
 
 			if( onStartZone ) {
 				if( isFirstLap ) {
