@@ -118,7 +118,7 @@ public final class Debug {
 	private static void render( SpriteBatch batch ) {
 		if( Config.isDesktop ) {
 			if( Config.Graphics.RenderBox2DWorldWireframe ) {
-				Debug.renderB2dWorld( GameData.b2dWorld, Director.getMatViewProjMt() );
+				Debug.renderB2dWorld( GameData.Environment.b2dWorld, Director.getMatViewProjMt() );
 			}
 
 			Debug.renderVersionInfo( batch );

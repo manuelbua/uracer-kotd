@@ -72,11 +72,11 @@ public class HudDrifting {
 					String seconds = NumberString.format( driftSeconds ) + "  seconds!";
 
 					if( driftSeconds >= 1 && driftSeconds < 3f ) {
-						GameData.messager.enqueue( "NICE ONE!\n+" + seconds, 1f, MessageType.Good, MessagePosition.Middle, MessageSize.Big );
+						GameData.Environment.messager.enqueue( "NICE ONE!\n+" + seconds, 1f, MessageType.Good, MessagePosition.Middle, MessageSize.Big );
 					} else if( driftSeconds >= 3f && driftSeconds < 5f ) {
-						GameData.messager.enqueue( "FANTASTIC!\n+" + seconds, 1f, MessageType.Good, MessagePosition.Middle, MessageSize.Big );
+						GameData.Environment.messager.enqueue( "FANTASTIC!\n+" + seconds, 1f, MessageType.Good, MessagePosition.Middle, MessageSize.Big );
 					} else if( driftSeconds >= 5f ) {
-						GameData.messager.enqueue( "UNREAL!\n+" + seconds, 1f, MessageType.Good, MessagePosition.Bottom, MessageSize.Big );
+						GameData.Environment.messager.enqueue( "UNREAL!\n+" + seconds, 1f, MessageType.Good, MessagePosition.Bottom, MessageSize.Big );
 					}
 				}
 
@@ -107,8 +107,9 @@ public class HudDrifting {
 
 	public void reset() {
 		labelRealtime.setAlpha( 0 );
-		for( int i = 0; i < MaxLabelResult; i++ ){
-			labelResult[i].setAlpha( 0 );}
+		for( int i = 0; i < MaxLabelResult; i++ ) {
+			labelResult[i].setAlpha( 0 );
+		}
 		nextLabelResult = 0;
 	}
 
@@ -149,8 +150,9 @@ public class HudDrifting {
 		//
 		// draw result
 		//
-		for( int i = 0; i < MaxLabelResult; i++ )
+		for( int i = 0; i < MaxLabelResult; i++ ) {
 			labelResult[i].render( batch );
+		}
 	}
 
 }

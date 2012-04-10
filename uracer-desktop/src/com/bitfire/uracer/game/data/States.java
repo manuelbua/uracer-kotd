@@ -17,4 +17,7 @@ public final class States {
 		driftState = new DriftState();
 		lapState = new LapState();
 	}
+	
+	public void dispose() {
+	}
 }

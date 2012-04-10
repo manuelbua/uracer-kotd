@@ -240,18 +240,18 @@ public class GameLogic implements CarEvent.Listener, PlayerStateEvent.Listener {
 						player.ghost.setReplay( any );
 						lapState.setLastTrackTimeSeconds( any.trackTimeSeconds );
 
-						GameData.messager.show( "GO!  GO!  GO!", 3f, MessageType.Information, MessagePosition.Middle, MessageSize.Big );
+						GameData.Environment.messager.show( "GO!  GO!  GO!", 3f, MessageType.Information, MessagePosition.Middle, MessageSize.Big );
 					} else {
 						// both valid, replay best, overwrite worst
 						Replay best = lapState.getBestReplay(), worst = lapState.getWorstReplay();
 
 						if( lastRecordedLapId == best.id ) {
 							lapState.setLastTrackTimeSeconds( best.trackTimeSeconds );
-							GameData.messager.show( "-" + NumberString.format( worst.trackTimeSeconds - best.trackTimeSeconds ) + " seconds!", 3f, MessageType.Good,
+							GameData.Environment.messager.show( "-" + NumberString.format( worst.trackTimeSeconds - best.trackTimeSeconds ) + " seconds!", 3f, MessageType.Good,
 									MessagePosition.Top, MessageSize.Big );
 						} else {
 							lapState.setLastTrackTimeSeconds( worst.trackTimeSeconds );
-							GameData.messager.show( "+" + NumberString.format( worst.trackTimeSeconds - best.trackTimeSeconds ) + " seconds", 3f, MessageType.Bad,
+							GameData.Environment.messager.show( "+" + NumberString.format( worst.trackTimeSeconds - best.trackTimeSeconds ) + " seconds", 3f, MessageType.Bad,
 									MessagePosition.Top, MessageSize.Big );
 						}
 

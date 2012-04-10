@@ -42,7 +42,7 @@ public class Car extends Box2dEntity {
 	private CarType carType;
 
 	protected Car( CarRenderer graphics, CarModel model, CarType type, CarInputMode inputMode ) {
-		super( GameData.b2dWorld );
+		super( GameData.Environment.b2dWorld );
 		this.graphics = graphics;
 		this.carInputMode = inputMode;
 		this.carType = type;
@@ -60,7 +60,7 @@ public class Car extends Box2dEntity {
 		bd.angle = 0;
 		bd.type = BodyType.DynamicBody;
 
-		body = GameData.b2dWorld.createBody( bd );
+		body = GameData.Environment.b2dWorld.createBody( bd );
 		body.setBullet( true );
 		body.setUserData( this );
 	}
@@ -216,7 +216,7 @@ public class Car extends Box2dEntity {
 		// process impact feedback
 		while( impacts > 0 ) {
 			impacts--;
-			carDesc.velocity_wc.set( body.getLinearVelocity() ).mul( GameData.gameSettings.linearVelocityAfterFeedback );
+			carDesc.velocity_wc.set( body.getLinearVelocity() ).mul( GameData.Environment.gameSettings.linearVelocityAfterFeedback );
 			carDesc.angularvelocity = -body.getAngularVelocity() * 0.85f;
 			start_decrease = true;
 		}
@@ -229,7 +229,7 @@ public class Car extends Box2dEntity {
 				start_timer = System.nanoTime();
 			}
 
-			input.throttle *= GameData.gameSettings.throttleDampingAfterFeedback;
+			input.throttle *= GameData.Environment.gameSettings.throttleDampingAfterFeedback;
 		}
 	}
 

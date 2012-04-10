@@ -108,7 +108,7 @@ public class HudLabel {
 		setScale( scale, true );
 	}
 
-	private void setScale( float scale, boolean recomputeBounds ) {
+	private final void setScale( float scale, boolean recomputeBounds ) {
 		this.scale = scale;
 		if( recomputeBounds ) {
 			recomputeBounds();
@@ -117,7 +117,7 @@ public class HudLabel {
 
 	public void render( SpriteBatch batch ) {
 		if( alpha > 0 ) {
-			font.setScale( scale * GameData.scalingStrategy.invTileMapZoomFactor );
+			font.setScale( scale * GameData.Environment.scalingStrategy.invTileMapZoomFactor );
 			font.setColor( 1, 1, 1, alpha );
 
 			font.drawMultiLine( batch, what, x, y );

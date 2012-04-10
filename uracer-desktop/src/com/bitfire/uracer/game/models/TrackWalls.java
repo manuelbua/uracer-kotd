@@ -59,7 +59,7 @@ public class TrackWalls {
 
 				List<Vector2> points = MapUtils.extractPolyData( o.polyline );
 				if( points.size() >= 2 ) {
-					float factor = GameData.scalingStrategy.invTileMapZoomFactor;
+					float factor = GameData.Environment.scalingStrategy.invTileMapZoomFactor;
 					float wallSizeMt = 0.3f * factor;
 					float[] mags = new float[ points.size() - 1 ];
 
@@ -87,7 +87,7 @@ public class TrackWalls {
 					StillSubMesh[] subMeshes = new StillSubMesh[ 1 ];
 					subMeshes[0] = new StillSubMesh( "wall", mesh, GL10.GL_TRIANGLES );
 
-					OrthographicAlignedStillModel model = new OrthographicAlignedStillModel( mapUtils, new StillModel( subMeshes ), mat, GameData.scalingStrategy );
+					OrthographicAlignedStillModel model = new OrthographicAlignedStillModel( mapUtils, new StillModel( subMeshes ), mat, GameData.Environment.scalingStrategy );
 
 					model.setPosition( o.x, o.y );
 					model.setScale( 1 );
@@ -103,7 +103,7 @@ public class TrackWalls {
 		MathUtils.random.setSeed( Long.MIN_VALUE );
 
 		// scaling factors
-		float factor = GameData.scalingStrategy.invTileMapZoomFactor;
+		float factor = GameData.Environment.scalingStrategy.invTileMapZoomFactor;
 		float oneOnWorld3DFactor = 1f / OrthographicAlignedStillModel.World3DScalingFactor;
 		float wallHeightMt = 5f * factor * oneOnWorld3DFactor;
 		float textureScalingU = 1f;

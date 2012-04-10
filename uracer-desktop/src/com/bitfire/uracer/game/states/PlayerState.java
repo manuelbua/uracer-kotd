@@ -84,7 +84,7 @@ public final class PlayerState {
 	public void reset() {
 		if( car != null ) {
 			car.reset();
-			car.setTransform( GameData.gameWorld.playerStartPos, GameData.gameWorld.playerStartOrient );
+			car.setTransform( GameData.Environment.gameWorld.playerStartPos, GameData.Environment.gameWorld.playerStartOrient );
 		}
 
 		if( ghost != null ) {

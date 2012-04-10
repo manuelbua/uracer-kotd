@@ -3,16 +3,21 @@ package com.bitfire.uracer.game;
 import java.util.ArrayList;
 import java.util.List;
 
+import com.badlogic.gdx.physics.box2d.World;
 import com.badlogic.gdx.utils.Disposable;
 import com.bitfire.uracer.Art;
 import com.bitfire.uracer.Config;
 import com.bitfire.uracer.Director;
+import com.bitfire.uracer.ScalingStrategy;
 import com.bitfire.uracer.URacer;
 import com.bitfire.uracer.carsimulation.CarModel;
 import com.bitfire.uracer.game.actors.Car;
 import com.bitfire.uracer.game.actors.Car.CarType;
 import com.bitfire.uracer.game.actors.CarFactory;
 import com.bitfire.uracer.game.audio.CarSoundManager;
+import com.bitfire.uracer.game.data.Environment;
+import com.bitfire.uracer.game.data.States;
+import com.bitfire.uracer.game.data.Systems;
 import com.bitfire.uracer.game.hud.Hud;
 import com.bitfire.uracer.game.logic.GameLogic;
 import com.bitfire.uracer.game.rendering.GameRenderer;
@@ -45,24 +50,25 @@ public class Game implements Disposable {
 	private List<Task> gameTasks = null;
 
 	public Game( String levelName, GameDifficulty difficulty ) {
-		GameData.create( difficulty );
+		create( difficulty );
+
 		Tweener.init();
-		Art.init( GameData.scalingStrategy.invTileMapZoomFactor );
+		Art.init( GameData.Environment.scalingStrategy.invTileMapZoomFactor );
 		BatchUtils.init( Art.base6 );
-		Convert.init( GameData.scalingStrategy.invTileMapZoomFactor, Config.Physics.PixelsPerMeter );
+		Convert.init( GameData.Environment.scalingStrategy.invTileMapZoomFactor, Config.Physics.PixelsPerMeter );
 		Director.init();
-
 		Car car = CarFactory.createPlayer( CarType.OldSkool, new CarModel().toModel2() );
-		GameData.createStates( car );
-		GameData.createSystems( GameData.b2dWorld, car );
-		GameData.createWorld( GameData.b2dWorld, GameData.scalingStrategy, levelName, false );
 
-		gameLogic = new GameLogic( GameData.gameWorld );
+		createStates( car );
+		createSystems( GameData.Environment.b2dWorld, car );
+		createWorld( GameData.Environment.b2dWorld, GameData.Environment.scalingStrategy, levelName, false );
+
+		gameLogic = new GameLogic( GameData.Environment.gameWorld );
 
 		// ----------------------------
 		// rendering engine initialization
 		// ----------------------------
-		gameRenderer = new GameRenderer( GameData.scalingStrategy, GameData.gameWorld );
+		gameRenderer = new GameRenderer( GameData.Environment.scalingStrategy, GameData.Environment.gameWorld );
 
 		// in-place customization
 		if( Config.Graphics.EnablePostProcessingFx ) {
@@ -77,6 +83,33 @@ public class Game implements Disposable {
 		gameTasks.add( new CarSoundManager() );
 	}
 
+	//----------------------------------------------------------------------------------------------
+	// creation
+	private static void create( GameDifficulty difficulty ) {
+		GameData.Environment = new Environment( difficulty );
+	}
+
+	private static void createStates( Car car ) {
+		GameData.States = new States( car );
+	}
+
+	private static void createSystems( World b2dWorld, Car car ) {
+		GameData.Systems = new Systems( b2dWorld, car );
+	}
+
+	private static void disposeGameData() {
+		GameData.Environment.dispose();
+		GameData.Systems.dispose();
+	}
+
+	private static void createWorld( World b2dWorld, ScalingStrategy strategy, String levelName, boolean nightMode ) {
+		GameData.Environment.createWorld( b2dWorld, strategy, levelName, nightMode );
+	}
+
+	// creation
+	//----------------------------------------------------------------------------------------------
+
+
 	@Override
 	public void dispose() {
 		for( Task task : gameTasks ) {
@@ -87,7 +120,9 @@ public class Game implements Disposable {
 		Director.dispose();
 		gameRenderer.dispose();
 		Art.dispose();
-		GameData.dispose();
+
+		disposeGameData();
+//		GameData.dispose();
 	}
 
 	private void setupPostProcessing( PostProcessor postProcessor ) {
@@ -98,7 +133,7 @@ public class Game implements Disposable {
 		// Bloom.Settings bs = new Bloom.Settings( "arrogance-2 / rtt=0.25 / @1920x1050", BlurType.Gaussian5x5b, 1, 1,
 		// 0.35f, 1f, 0.1f, 1.4f, 0.75f );
 
-		float threshold = ((GameData.gameWorld.isNightMode() && !Config.Graphics.DumbNightMode) ? 0.2f : 0.45f);
+		float threshold = ((GameData.Environment.gameWorld.isNightMode() && !Config.Graphics.DumbNightMode) ? 0.2f : 0.45f);
 		Bloom.Settings bloomSettings = new Bloom.Settings( "subtle", Config.PostProcessing.BlurType, 1, 1.5f, threshold, 1f, 0.5f, 1f, 1.5f );
 		bloom.setSettings( bloomSettings );
 

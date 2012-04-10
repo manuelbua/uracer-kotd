@@ -49,8 +49,8 @@ public class SmokeTrails extends TrackEffect {
 			baseEmitter.getLife().setHighMax( MaxParticleLifeMaxMs * value );
 		}
 
-		public void setScaleMul( float value ) {
-			baseEmitter.getScale().setHigh( OriginalParticleScaling * value * GameData.scalingStrategy.invTileMapZoomFactor );
+		public final void setScaleMul( float value ) {
+			baseEmitter.getScale().setHigh( OriginalParticleScaling * value * GameData.Environment.scalingStrategy.invTileMapZoomFactor );
 		}
 
 		public void setEmissionMul( float value ) {

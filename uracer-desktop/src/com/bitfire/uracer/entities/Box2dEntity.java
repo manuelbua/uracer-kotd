@@ -49,7 +49,7 @@ public abstract class Box2dEntity extends SubframeInterpolableEntity {
 
 	@Override
 	public void dispose() {
-		GameData.b2dWorld.destroyBody( body );
+		GameData.Environment.b2dWorld.destroyBody( body );
 	}
 
 	public Body getBody() {

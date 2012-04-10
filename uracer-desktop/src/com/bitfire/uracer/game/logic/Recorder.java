@@ -40,7 +40,7 @@ public class Recorder {
 	public void beginRecording( Car car, Replay replay, /* long startTimeNs, */String trackName ) {
 		isRecording = true;
 		this.replay = replay;
-		replay.begin( trackName, GameData.gameSettings.difficulty, car );
+		replay.begin( trackName, GameData.Environment.gameSettings.difficulty, car );
 	}
 
 	public void add( CarForces f ) {
