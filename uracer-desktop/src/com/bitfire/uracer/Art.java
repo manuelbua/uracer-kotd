@@ -37,11 +37,16 @@ public final class Art {
 	public static BitmapFont fontCurseYRbig, fontCurseRbig, fontCurseGbig;
 
 	private static boolean mipMap;
+	public static int fontWidth;
+	public static int fontHeight;
 
 	private Art() {
 	}
 
 	public static void init( float invZoomFactor ) {
+		fontWidth = 6;
+		fontHeight = 6;
+
 		mipMap = Config.Graphics.EnableMipMapping;
 
 		base6 = split( "data/base/base6.png", 6, 6, mipMap );

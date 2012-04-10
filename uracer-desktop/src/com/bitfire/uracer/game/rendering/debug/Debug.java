@@ -5,6 +5,7 @@ import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.math.Matrix4;
 import com.badlogic.gdx.physics.box2d.Box2DDebugRenderer;
 import com.badlogic.gdx.physics.box2d.World;
+import com.bitfire.uracer.Art;
 import com.bitfire.uracer.Config;
 import com.bitfire.uracer.Director;
 import com.bitfire.uracer.URacer;
@@ -27,15 +28,10 @@ public final class Debug {
 	// box2d
 	private static Box2DDebugRenderer b2drenderer;
 
-	public static int fontWidth;
-	public static int fontHeight;
-
 	private Debug() {
 	}
 
 	public static void create() {
-		fontWidth = 6;
-		fontHeight = 6;
 		physicsTime = 0;
 		renderTime = 0;
 		b2drenderer = new Box2DDebugRenderer();
@@ -78,11 +74,11 @@ public final class Debug {
 		String text = "fps: " + NumberString.formatLong( Gdx.graphics.getFramesPerSecond() ) + ", physics: " + NumberString.formatLong( physicsTime ) + ", graphics: "
 				+ NumberString.formatLong( renderTime );
 
-		BatchUtils.drawString( batch, text, Gdx.graphics.getWidth() - text.length() * fontWidth, Gdx.graphics.getHeight() - fontHeight );
+		BatchUtils.drawString( batch, text, Gdx.graphics.getWidth() - text.length() * Art.fontWidth, Gdx.graphics.getHeight() - Art.fontHeight );
 	}
 
 	public static void renderVersionInfo( SpriteBatch batch ) {
-		BatchUtils.drawString( batch, uRacerInfo, Gdx.graphics.getWidth() - uRacerInfo.length() * fontWidth, 0, fontWidth, fontHeight * 2 );
+		BatchUtils.drawString( batch, uRacerInfo, Gdx.graphics.getWidth() - uRacerInfo.length() * Art.fontWidth, 0, Art.fontWidth, Art.fontHeight * 2 );
 	}
 
 	public static void renderMemoryUsage( SpriteBatch batch ) {
@@ -92,7 +88,7 @@ public final class Debug {
 
 		String text = "java heap = " + NumberString.format( javaHeapMb ) + "MB" + " - native heap = " + NumberString.format( nativeHeapMb ) + "MB";
 
-		BatchUtils.drawString( batch, text, (Gdx.graphics.getWidth() - text.length() * fontWidth) / 2, 0 );
+		BatchUtils.drawString( batch, text, (Gdx.graphics.getWidth() - text.length() * Art.fontWidth) / 2, 0 );
 	}
 
 	public static void renderB2dWorld( World world, Matrix4 modelViewProj ) {
@@ -117,7 +113,7 @@ public final class Debug {
 			GameEvents.gameRenderer.trigger( GameRendererEvent.Type.BatchDebug );
 
 			Debug.renderVersionInfo( batch );
-			Debug.renderGraphicalStats( batch, Gdx.graphics.getWidth() - Debug.getStatsWidth(), Gdx.graphics.getHeight() - Debug.getStatsHeight() - Debug.fontHeight );
+			Debug.renderGraphicalStats( batch, Gdx.graphics.getWidth() - Debug.getStatsWidth(), Gdx.graphics.getHeight() - Debug.getStatsHeight() - Art.fontHeight );
 			Debug.renderTextualStats( batch );
 			Debug.renderMemoryUsage( batch );
 			BatchUtils.drawString( batch, "total meshes=" + GameWorld.TotalMeshes, 0, Gdx.graphics.getHeight() - 14 );

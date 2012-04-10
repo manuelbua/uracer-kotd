@@ -8,9 +8,9 @@ import com.badlogic.gdx.graphics.Texture.TextureFilter;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
 import com.badlogic.gdx.math.Vector2;
+import com.bitfire.uracer.Art;
 import com.bitfire.uracer.Director;
 import com.bitfire.uracer.game.actors.Car;
-import com.bitfire.uracer.game.rendering.debug.Debug;
 import com.bitfire.uracer.utils.AMath;
 import com.bitfire.uracer.utils.BatchUtils;
 import com.bitfire.uracer.utils.Convert;
@@ -84,7 +84,7 @@ public class HudDebugMeter {
 		pos.y += Convert.mt2px( playerCar.getCarModel().length ) * 0.5f;
 
 		// offset by row
-		pos.y += row * (height + Debug.fontHeight);
+		pos.y += row * (height + Art.fontHeight);
 	}
 
 	public void render( SpriteBatch batch ) {
@@ -92,7 +92,7 @@ public class HudDebugMeter {
 		draw();
 		BatchUtils.drawString( batch, getMessage(), pos.x, pos.y );
 
-		batch.draw( region, pos.x, pos.y + Debug.fontHeight );
+		batch.draw( region, pos.x, pos.y + Art.fontHeight );
 	}
 
 	private void draw() {
