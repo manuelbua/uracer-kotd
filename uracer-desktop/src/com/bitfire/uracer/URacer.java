@@ -53,7 +53,7 @@ public class URacer implements ApplicationListener {
 	@Override
 	public void create() {
 		URacer.updateVersionInformation();
-		Gdx.app.log( "URacer", "This is " + versionInfo );
+		Gdx.app.log( "URacer", "booting version " + versionInfo );
 
 		Config.asDefault();
 		Gdx.graphics.setVSync( true );
