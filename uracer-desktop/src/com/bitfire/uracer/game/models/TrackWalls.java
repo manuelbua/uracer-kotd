@@ -19,9 +19,9 @@ import com.badlogic.gdx.math.MathUtils;
 import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.physics.box2d.World;
 import com.bitfire.uracer.Art;
-import com.bitfire.uracer.factories.Box2DFactory;
 import com.bitfire.uracer.game.MapUtils;
 import com.bitfire.uracer.game.data.GameData;
+import com.bitfire.uracer.game.physics.Box2DFactory;
 import com.bitfire.uracer.utils.AMath;
 import com.bitfire.uracer.utils.Convert;
 

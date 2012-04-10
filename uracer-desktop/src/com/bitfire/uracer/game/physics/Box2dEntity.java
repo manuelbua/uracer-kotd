@@ -1,4 +1,4 @@
-package com.bitfire.uracer.entities;
+package com.bitfire.uracer.game.physics;
 
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.math.MathUtils;
@@ -6,6 +6,8 @@ import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.physics.box2d.Body;
 import com.badlogic.gdx.physics.box2d.World;
 import com.bitfire.uracer.Config;
+import com.bitfire.uracer.entities.EntityRenderState;
+import com.bitfire.uracer.entities.SubframeInterpolableEntity;
 import com.bitfire.uracer.game.GameEvents;
 import com.bitfire.uracer.game.data.GameData;
 import com.bitfire.uracer.game.events.GameRendererEvent;
