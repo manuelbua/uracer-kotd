@@ -20,8 +20,8 @@ import com.bitfire.uracer.game.data.States;
 import com.bitfire.uracer.game.data.Systems;
 import com.bitfire.uracer.game.hud.Hud;
 import com.bitfire.uracer.game.logic.GameLogic;
+import com.bitfire.uracer.game.rendering.Debug;
 import com.bitfire.uracer.game.rendering.GameRenderer;
-import com.bitfire.uracer.game.rendering.debug.Debug;
 import com.bitfire.uracer.postprocessing.PostProcessor;
 import com.bitfire.uracer.postprocessing.effects.Bloom;
 import com.bitfire.uracer.postprocessing.effects.Zoom;
@@ -30,7 +30,6 @@ import com.bitfire.uracer.task.TaskManager;
 import com.bitfire.uracer.utils.BatchUtils;
 import com.bitfire.uracer.utils.Convert;
 
-// TODO, extrapolate its GameRenderer out of it
 public class Game implements Disposable {
 
 	// config

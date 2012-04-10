@@ -12,7 +12,6 @@ import com.bitfire.uracer.game.GameEvents;
 import com.bitfire.uracer.game.GameWorld;
 import com.bitfire.uracer.game.Tweener;
 import com.bitfire.uracer.game.events.GameRendererEvent;
-import com.bitfire.uracer.game.rendering.debug.Debug;
 import com.bitfire.uracer.postprocessing.PostProcessor;
 
 public class GameRenderer {

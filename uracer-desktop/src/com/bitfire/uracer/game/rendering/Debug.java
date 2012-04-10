@@ -1,4 +1,4 @@
-package com.bitfire.uracer.game.rendering.debug;
+package com.bitfire.uracer.game.rendering;
 
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
@@ -13,7 +13,7 @@ import com.bitfire.uracer.game.GameData;
 import com.bitfire.uracer.game.GameEvents;
 import com.bitfire.uracer.game.GameWorld;
 import com.bitfire.uracer.game.events.GameRendererEvent;
-import com.bitfire.uracer.game.rendering.GameWorldRenderer;
+import com.bitfire.uracer.game.rendering.debug.Stats;
 import com.bitfire.uracer.utils.BatchUtils;
 import com.bitfire.uracer.utils.NumberString;
 
