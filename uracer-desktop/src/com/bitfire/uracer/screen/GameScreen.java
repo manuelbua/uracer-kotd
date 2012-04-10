@@ -1,15 +1,17 @@
 package com.bitfire.uracer.screen;
 
 import com.bitfire.uracer.Screen;
+import com.bitfire.uracer.carsimulation.CarModel;
 import com.bitfire.uracer.game.Game;
 import com.bitfire.uracer.game.GameDifficulty;
+import com.bitfire.uracer.game.actors.Car.CarType;
 
 public class GameScreen extends Screen {
 	private Game game = null;
 	private boolean quit = false;
 
 	public GameScreen() {
-		game = new Game( "tutorial-3", GameDifficulty.Hard );
+		game = new Game( "tutorial-3", GameDifficulty.Hard, CarType.OldSkool, new CarModel().toModel2() );
 	}
 
 	@Override

@@ -44,7 +44,7 @@ public class Game implements Disposable {
 	// tasks
 	private List<Task> gameTasks = null;
 
-	public Game( String levelName, GameDifficulty difficulty ) {
+	public Game( String levelName, GameDifficulty difficulty, CarType carType, CarModel carModel ) {
 		GameData.create( difficulty );
 
 		Tweener.init();
@@ -52,7 +52,7 @@ public class Game implements Disposable {
 		BatchUtils.init( Art.base6 );
 		Convert.init( GameData.Environment.scalingStrategy.invTileMapZoomFactor, Config.Physics.PixelsPerMeter );
 		Director.init();
-		Car car = CarFactory.createPlayer( CarType.OldSkool, new CarModel().toModel2() );
+		Car car = CarFactory.createPlayer( carType, carModel );
 
 		GameData.createStates( car );
 		GameData.createSystems( GameData.Environment.b2dWorld, car );
