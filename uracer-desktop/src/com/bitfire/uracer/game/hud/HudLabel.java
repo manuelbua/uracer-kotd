@@ -9,8 +9,8 @@ import com.badlogic.gdx.graphics.g2d.BitmapFont;
 import com.badlogic.gdx.graphics.g2d.BitmapFont.TextBounds;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.math.Vector2;
-import com.bitfire.uracer.game.GameData;
 import com.bitfire.uracer.game.Tweener;
+import com.bitfire.uracer.game.data.GameData;
 
 public class HudLabel {
 	public float x, y;

@@ -2,7 +2,7 @@ package com.bitfire.uracer.game.audio;
 
 import com.badlogic.gdx.audio.Sound;
 import com.bitfire.uracer.Config;
-import com.bitfire.uracer.game.GameData;
+import com.bitfire.uracer.game.data.GameData;
 import com.bitfire.uracer.utils.AMath;
 
 public class CarEngineSoundEffect extends CarSoundEffect {

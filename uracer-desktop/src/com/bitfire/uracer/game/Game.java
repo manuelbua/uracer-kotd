@@ -13,6 +13,7 @@ import com.bitfire.uracer.game.actors.Car;
 import com.bitfire.uracer.game.actors.Car.CarType;
 import com.bitfire.uracer.game.actors.CarFactory;
 import com.bitfire.uracer.game.audio.CarSoundManager;
+import com.bitfire.uracer.game.data.GameData;
 import com.bitfire.uracer.game.hud.Hud;
 import com.bitfire.uracer.game.logic.GameLogic;
 import com.bitfire.uracer.game.rendering.Debug;

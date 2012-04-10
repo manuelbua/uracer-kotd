@@ -1,11 +1,9 @@
-package com.bitfire.uracer.game;
+package com.bitfire.uracer.game.data;
 
 import com.badlogic.gdx.physics.box2d.World;
 import com.bitfire.uracer.ScalingStrategy;
+import com.bitfire.uracer.game.GameDifficulty;
 import com.bitfire.uracer.game.actors.Car;
-import com.bitfire.uracer.game.data.Environment;
-import com.bitfire.uracer.game.data.States;
-import com.bitfire.uracer.game.data.Systems;
 
 /** Encapsulates and abstracts the dynamic state of the game.
  *
