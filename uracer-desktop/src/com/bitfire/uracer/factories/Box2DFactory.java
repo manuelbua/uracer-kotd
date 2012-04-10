@@ -1,6 +1,7 @@
 package com.bitfire.uracer.factories;
 
 import java.util.ArrayList;
+import java.util.List;
 
 import com.badlogic.gdx.math.MathUtils;
 import com.badlogic.gdx.math.Vector2;
@@ -145,11 +146,12 @@ public final class Box2DFactory {
 	 * @param restitution
 	 * @param returnResult
 	 * @return */
-	public static ArrayList<Body> createAngularWall( World world, Vector2 unitCircleRadius, Vector2 offset, float tickness, float lumpLen, float angle, int steps,
+	public static List<Body> createAngularWall( World world, Vector2 unitCircleRadius, Vector2 offset, float tickness, float lumpLen, float angle, int steps,
 			Vector2 rotationOffset, float restitution, boolean returnResult ) {
-		ArrayList<Body> result = null;
-		if( returnResult )
+		List<Body> result = null;
+		if( returnResult ) {
 			result = new ArrayList<Body>();
+		}
 
 		float halfTickness = tickness / 2f;
 		float angleStep = angle / (float)(steps);
@@ -172,8 +174,9 @@ public final class Box2DFactory {
 			to.y = offset.y - tmp2.y;
 
 			Body body = Box2DFactory.createWall( world, from, to, tickness, 0 );
-			if( returnResult )
+			if( returnResult ) {
 				result.add( body );
+			}
 
 			// rotate
 			tmpx = tmp1.x * cosStep - tmp1.y * sinStep;
