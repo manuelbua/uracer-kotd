@@ -17,7 +17,6 @@ import com.bitfire.uracer.Director;
 import com.bitfire.uracer.URacer;
 import com.bitfire.uracer.carsimulation.CarInputMode;
 import com.bitfire.uracer.game.GameData;
-import com.bitfire.uracer.game.GameData.States;
 import com.bitfire.uracer.game.GameData.Systems;
 import com.bitfire.uracer.game.GameEvents;
 import com.bitfire.uracer.game.GameWorld;
@@ -61,7 +60,7 @@ public class GameLogic implements CarEvent.Listener, PlayerStateEvent.Listener {
 
 		GameEvents.playerState.addListener( this );
 		GameEvents.carEvent.addListener( this );
-		States.playerState.car.setTransform( world.playerStartPos, world.playerStartOrient );
+		GameData.States.playerState.car.setTransform( world.playerStartPos, world.playerStartOrient );
 
 		controller = new DirectorController( Config.Graphics.CameraInterpolationMode, Director.halfViewport, world.worldSizeScaledPx,
 				world.worldSizeTiles );

@@ -8,7 +8,7 @@ import com.bitfire.uracer.Art;
 import com.bitfire.uracer.Config;
 import com.bitfire.uracer.Director;
 import com.bitfire.uracer.carsimulation.CarModel;
-import com.bitfire.uracer.game.GameData.States;
+import com.bitfire.uracer.game.GameData;
 import com.bitfire.uracer.game.actors.Car;
 import com.bitfire.uracer.game.states.DriftState;
 import com.bitfire.uracer.utils.AMath;
@@ -48,8 +48,9 @@ public class CarSkidMarks extends TrackEffect {
 
 	@Override
 	public void dispose() {
-		for( int i = 0; i < MaxSkidMarks; i++ )
+		for( int i = 0; i < MaxSkidMarks; i++ ) {
 			skidMarks[i] = null;
+		}
 	}
 
 	@Override
@@ -107,14 +108,15 @@ public class CarSkidMarks extends TrackEffect {
 			return;
 		}
 
-		DriftState di = States.driftState;
+		DriftState di = GameData.States.driftState;
 		if( di.driftStrength > 0.2f )
 		// if( di.isDrifting )
 		{
 			// add front drift marks?
 			SkidMark drift = skidMarks[markIndex++];
-			if( markIndex == MaxSkidMarks )
+			if( markIndex == MaxSkidMarks ) {
 				markIndex = 0;
+			}
 
 			drift.alphaFront = di.driftStrength;
 			drift.alphaRear = di.driftStrength;

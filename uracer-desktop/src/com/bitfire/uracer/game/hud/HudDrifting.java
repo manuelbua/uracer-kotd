@@ -6,7 +6,6 @@ import com.bitfire.uracer.Art;
 import com.bitfire.uracer.Director;
 import com.bitfire.uracer.carsimulation.CarModel;
 import com.bitfire.uracer.game.GameData;
-import com.bitfire.uracer.game.GameData.States;
 import com.bitfire.uracer.game.GameEvents;
 import com.bitfire.uracer.game.actors.Car;
 import com.bitfire.uracer.game.events.DriftStateEvent;
@@ -48,14 +47,15 @@ public class HudDrifting {
 				labelRealtime.fadeIn( 300 );
 				break;
 			case onEndDrift:
-				DriftState drift = States.driftState;
+				DriftState drift = GameData.States.driftState;
 				Vector2 pos = tmpv.set( Director.screenPosForPx( playerCar.state().position ) );
 
 				labelRealtime.fadeOut( 300 );
 
 				HudLabel result = labelResult[nextLabelResult++];
-				if( nextLabelResult == MaxLabelResult )
+				if( nextLabelResult == MaxLabelResult ) {
 					nextLabelResult = 0;
+				}
 
 				result.setPosition( pos.x - heading.x * (carWidthPx + result.halfBoundsWidth), pos.y - heading.y * (carLengthPx + result.halfBoundsHeight) );
 
@@ -107,8 +107,8 @@ public class HudDrifting {
 
 	public void reset() {
 		labelRealtime.setAlpha( 0 );
-		for( int i = 0; i < MaxLabelResult; i++ )
-			labelResult[i].setAlpha( 0 );
+		for( int i = 0; i < MaxLabelResult; i++ ){
+			labelResult[i].setAlpha( 0 );}
 		nextLabelResult = 0;
 	}
 
@@ -120,7 +120,7 @@ public class HudDrifting {
 	}
 
 	public void render( SpriteBatch batch ) {
-		DriftState drift = States.driftState;
+		DriftState drift = GameData.States.driftState;
 
 		// update from subframe-interpolated player position
 		Vector2 pos = tmpv.set( Director.screenPosForPx( playerCar.state().position ) );

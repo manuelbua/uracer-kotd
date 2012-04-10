@@ -6,7 +6,7 @@ import com.badlogic.gdx.audio.Sound;
 import com.badlogic.gdx.math.MathUtils;
 import com.bitfire.uracer.URacer;
 import com.bitfire.uracer.carsimulation.CarInputMode;
-import com.bitfire.uracer.game.GameData.States;
+import com.bitfire.uracer.game.GameData;
 import com.bitfire.uracer.game.GameEvents;
 import com.bitfire.uracer.game.actors.CarEvent;
 import com.bitfire.uracer.game.actors.CarEvent.Data;
@@ -34,7 +34,7 @@ public class CarImpactSoundEffect extends CarSoundEffect {
 			switch( type ) {
 			case onCollision:
 				if( data.car.getInputMode() == CarInputMode.InputFromPlayer ) {
-					impact( data.impulses.len(), States.playerState.currSpeedFactor );
+					impact( data.impulses.len(), GameData.States.playerState.currSpeedFactor );
 				}
 				break;
 			case onComputeForces:

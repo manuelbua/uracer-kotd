@@ -7,8 +7,8 @@ import com.badlogic.gdx.physics.box2d.World;
 import com.bitfire.uracer.Config;
 import com.bitfire.uracer.ScalingStrategy;
 import com.bitfire.uracer.game.actors.Car;
-import com.bitfire.uracer.game.actors.CarFactory;
 import com.bitfire.uracer.game.collisions.GameContactListener;
+import com.bitfire.uracer.game.data.States;
 import com.bitfire.uracer.game.effects.TrackEffects;
 import com.bitfire.uracer.game.hud.HudLabel;
 import com.bitfire.uracer.game.hud.HudLabelAccessor;
@@ -16,9 +16,6 @@ import com.bitfire.uracer.game.logic.PhysicsStep;
 import com.bitfire.uracer.game.messager.Message;
 import com.bitfire.uracer.game.messager.MessageAccessor;
 import com.bitfire.uracer.game.messager.Messager;
-import com.bitfire.uracer.game.states.DriftState;
-import com.bitfire.uracer.game.states.LapState;
-import com.bitfire.uracer.game.states.PlayerState;
 import com.bitfire.uracer.task.TaskManagerEvent;
 import com.bitfire.uracer.utils.BoxedFloat;
 import com.bitfire.uracer.utils.BoxedFloatAccessor;
@@ -31,31 +28,13 @@ public final class GameData {
 	private GameData() {
 	}
 
+	public static States States;
+
 	public static ScalingStrategy scalingStrategy;
 	public static GameplaySettings gameSettings;
 	public static GameWorld gameWorld;
 	public static Messager messager;
 	public static World b2dWorld;
-
-	/** States */
-	public static final class States {
-		public static PlayerState playerState;
-		public static DriftState driftState;
-		public static LapState lapState;
-
-		public static void create( Car car ) {
-			States.playerState = new PlayerState( car, CarFactory.createGhost( car ) );
-			States.driftState = new DriftState();
-			States.lapState = new LapState();
-		}
-
-		public static void dispose() {
-			States.lapState = null;
-		}
-
-		private States() {
-		}
-	}
 
 	// @formatter:off
 	/** Systems
@@ -110,7 +89,7 @@ public final class GameData {
 	}
 
 	public static void createStates( Car car ) {
-		States.create( car );
+		States = new States( car );
 	}
 
 	public static void createSystems( World b2dWorld, Car car ) {
@@ -124,7 +103,6 @@ public final class GameData {
 	public static void dispose() {
 		GameData.b2dWorld.dispose();
 		GameData.messager.dispose();
-		GameData.States.dispose();
 		GameData.Systems.dispose();
 	}
 

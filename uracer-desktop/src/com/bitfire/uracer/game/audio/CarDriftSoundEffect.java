@@ -6,7 +6,6 @@ import com.badlogic.gdx.audio.Sound;
 import com.bitfire.uracer.Config;
 import com.bitfire.uracer.URacer;
 import com.bitfire.uracer.game.GameData;
-import com.bitfire.uracer.game.GameData.States;
 import com.bitfire.uracer.game.GameEvents;
 import com.bitfire.uracer.game.events.DriftStateEvent;
 import com.bitfire.uracer.game.events.DriftStateEvent.Type;
@@ -23,9 +22,9 @@ public class CarDriftSoundEffect extends CarSoundEffect {
 	private Sound drift = null;
 	private long driftId = -1, lastDriftId = -1;
 	private float driftLastPitch = 0;
-	private final float pitchFactor = 1f;
-	private final float pitchMin = 0.75f;
-	private final float pitchMax = 1f;
+	private static final float pitchFactor = 1f;
+	private static final float pitchMin = 0.75f;
+	private static final float pitchMax = 1f;
 
 	private boolean doFadeIn = false;
 	private boolean doFadeOut = false;
@@ -131,7 +130,7 @@ public class CarDriftSoundEffect extends CarSoundEffect {
 
 			lastDriftId = driftId;
 			lastVolume = AMath.clamp( lastVolume, 0, 1f );
-			drift.setVolume( driftId, States.driftState.driftStrength * lastVolume );
+			drift.setVolume( driftId, GameData.States.driftState.driftStrength * lastVolume );
 		}
 	}
 }

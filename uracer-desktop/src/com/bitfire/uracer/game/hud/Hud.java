@@ -5,7 +5,6 @@ import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.bitfire.uracer.Art;
 import com.bitfire.uracer.Config;
 import com.bitfire.uracer.game.GameData;
-import com.bitfire.uracer.game.GameData.States;
 import com.bitfire.uracer.game.GameEvents;
 import com.bitfire.uracer.game.Replay;
 import com.bitfire.uracer.game.actors.Car;
@@ -41,8 +40,9 @@ public class Hud extends Task {
 				hudDrift.render( batch );
 				break;
 			case BatchDebug:
-				if( Config.Graphics.RenderHudDebugInfo )
+				if( Config.Graphics.RenderHudDebugInfo ) {
 					onDebug( batch );
+				}
 				break;
 			}
 		}
@@ -108,7 +108,7 @@ public class Hud extends Task {
 
 	private void updateLapTimes() {
 
-		LapState lapState = States.lapState;
+		LapState lapState = GameData.States.lapState;
 
 		// current time
 		curr.setString( "YOUR  TIME\n" + NumberString.format( lapState.getElapsedSeconds() ) + "s" );
@@ -139,7 +139,7 @@ public class Hud extends Task {
 	}
 
 	public void onDebug( SpriteBatch batch ) {
-		DriftState drift = States.driftState;
+		DriftState drift = GameData.States.driftState;
 
 		// lateral forces
 		meterLatForce.setValue( drift.driftStrength );

@@ -9,7 +9,6 @@ import com.bitfire.uracer.Config;
 import com.bitfire.uracer.Director;
 import com.bitfire.uracer.URacer;
 import com.bitfire.uracer.carsimulation.CarModel;
-import com.bitfire.uracer.game.GameData.States;
 import com.bitfire.uracer.game.actors.Car;
 import com.bitfire.uracer.game.actors.Car.CarType;
 import com.bitfire.uracer.game.actors.CarFactory;
@@ -122,7 +121,7 @@ public class Game implements Disposable {
 		float factor = 1 - (URacer.timeMultiplier - 0.3f) / (Config.Physics.PhysicsTimeMultiplier - 0.3f);
 
 		if( Config.Graphics.EnablePostProcessingFx && zoom != null ) {
-			zoom.setOrigin( Director.screenPosFor( States.playerState.car.getBody() ) );
+			zoom.setOrigin( Director.screenPosFor( GameData.States.playerState.car.getBody() ) );
 			zoom.setStrength( -0.05f * factor );
 		}
 
