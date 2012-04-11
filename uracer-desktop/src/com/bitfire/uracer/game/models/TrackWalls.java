@@ -26,7 +26,7 @@ import com.bitfire.uracer.utils.AMath;
 import com.bitfire.uracer.utils.Convert;
 
 public class TrackWalls {
-	public final List<OrthographicAlignedStillModel> walls = new ArrayList<OrthographicAlignedStillModel>();
+	public final List<OrthographicAlignedStillModel> models = new ArrayList<OrthographicAlignedStillModel>();
 	private MapUtils mapUtils;
 
 	public TrackWalls(MapUtils mapUtils) {
@@ -34,11 +34,11 @@ public class TrackWalls {
 	}
 
 	public void dispose() {
-		for( int i = 0; i < walls.size(); i++ ) {
-			walls.get( i ).dispose();
+		for( int i = 0; i < models.size(); i++ ) {
+			models.get( i ).dispose();
 		}
 
-		walls.clear();
+		models.clear();
 	}
 
 	public void createWalls( World world, Vector2 worldSizeScaledMt ) {
@@ -92,7 +92,7 @@ public class TrackWalls {
 					model.setPosition( o.x, o.y );
 					model.setScale( 1 );
 
-					walls.add( model );
+					models.add( model );
 				}
 			}
 		}

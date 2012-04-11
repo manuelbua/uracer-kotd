@@ -16,36 +16,24 @@ import com.bitfire.uracer.game.MapUtils;
 import com.bitfire.uracer.utils.Convert;
 
 public class TrackTrees {
-	public final List<TreeStillModel> trees = new ArrayList<TreeStillModel>();
+	public final List<TreeStillModel> models = new ArrayList<TreeStillModel>();
 	private MapUtils mapUtils;
 
 	public TrackTrees( MapUtils mapUtils ) {
 		this.mapUtils = mapUtils;
-
-		// We want to differentiate tree meshes as much as we can
-		// rotation will helps immensely, but non-orthogonal rotations
-		// will cause the bounding box to get recomputed only approximately
-		// thus loosing precision: orthogonal rotations instead provides high
-		// quality AABB recomputation.
-		//
-		// We still have 4 variations for any given tree!
-		rotations[0] = 0;
-		rotations[1] = 90;
-		rotations[2] = 180;
-		rotations[3] = 270;
 	}
 
 	public void dispose() {
-		for( int i = 0; i < trees.size(); i++ ) {
-			trees.get( i ).dispose();
+		for( int i = 0; i < models.size(); i++ ) {
+			models.get( i ).dispose();
 		}
 
-		trees.clear();
+		models.clear();
 	}
 
 	private int nextIndexFor( TreeStillModel model ) {
-		for( int i = 0; i < trees.size(); i++ ) {
-			if( model.material.equals( trees.get( i ).material ) ) {
+		for( int i = 0; i < models.size(); i++ ) {
+			if( model.material.equals( models.get( i ).material ) ) {
 				return i;
 			}
 		}
@@ -57,6 +45,19 @@ public class TrackTrees {
 
 	public void createTrees() {
 		if( mapUtils.hasObjectGroup( MapUtils.LayerTrees ) ) {
+
+			// We want to differentiate tree meshes as much as we can
+			// rotation will helps immensely, but non-orthogonal rotations
+			// will cause the bounding box to get recomputed only approximately
+			// thus loosing precision: orthogonal rotations instead provides high
+			// quality AABB recomputation.
+			//
+			// We still have 4 variations for any given tree!
+			rotations[0] = 0;
+			rotations[1] = 90;
+			rotations[2] = 180;
+			rotations[3] = 270;
+
 			MathUtils.random.setSeed( Long.MAX_VALUE );
 			TiledObjectGroup group = mapUtils.getObjectGroup( MapUtils.LayerTrees );
 			for( int i = 0; i < group.objects.size(); i++ ) {
@@ -77,7 +78,7 @@ public class TrackTrees {
 				if( model != null ) {
 					// model.setRotation( MathUtils.random( -180f, 180f ), 0, 0, 1f );
 					model.setRotation( rotations[MathUtils.random( 0, 3 )], 0, 0, 1f );
-					trees.add( nextIndexFor( model ), model );
+					models.add( nextIndexFor( model ), model );
 				}
 			}
 		}
@@ -91,8 +92,8 @@ public class TrackTrees {
 	public void transform( PerspectiveCamera camPersp, OrthographicCamera camOrtho ) {
 		float meshZ = -(camPersp.far - camPersp.position.z);
 
-		for( int i = 0; i < trees.size(); i++ ) {
-			TreeStillModel m = trees.get( i );
+		for( int i = 0; i < models.size(); i++ ) {
+			TreeStillModel m = models.get( i );
 
 			Matrix4 transf = m.transformed;
 

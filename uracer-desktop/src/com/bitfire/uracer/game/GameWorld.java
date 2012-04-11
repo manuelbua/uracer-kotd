@@ -126,7 +126,7 @@ public class GameWorld {
 		trackTrees = new TrackTrees(mapUtils);
 		trackTrees.createTrees();
 
-		TotalMeshes = staticMeshes.size() + trackWalls.walls.size() + trackTrees.trees.size();
+		TotalMeshes = staticMeshes.size() + trackWalls.models.size() + trackTrees.models.size();
 	}
 
 	private void loadPlayer( TiledMap map ) {

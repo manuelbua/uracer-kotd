@@ -205,16 +205,16 @@ public class GameWorldRenderer {
 	}
 
 	private void renderWalls( GL20 gl, TrackWalls walls ) {
-		if( walls.walls.size() > 0 ) {
+		if( walls.models.size() > 0 ) {
 			gl.glDisable( GL20.GL_CULL_FACE );
 			gl.glEnable( GL20.GL_BLEND );
 			gl.glBlendFunc( GL20.GL_SRC_ALPHA, GL20.GL_ONE_MINUS_SRC_ALPHA );
-			renderedWalls = renderOrthographicAlignedModels( gl, walls.walls );
+			renderedWalls = renderOrthographicAlignedModels( gl, walls.models );
 		}
 	}
 
 	private void renderTrees( GL20 gl, TrackTrees trees ) {
-		if( trees.trees.size() > 0 ) {
+		if( trees.models.size() > 0 ) {
 			trees.transform( camPersp, camOrtho );
 
 			gl.glDisable( GL20.GL_BLEND );
@@ -225,8 +225,8 @@ public class GameWorldRenderer {
 			treeShader.begin();
 
 			// trunk
-			for( int i = 0; i < trees.trees.size(); i++ ) {
-				TreeStillModel m = trees.trees.get( i );
+			for( int i = 0; i < trees.models.size(); i++ ) {
+				TreeStillModel m = trees.models.get( i );
 				treeShader.setUniformMatrix( "u_mvpMatrix", m.transformed );
 				m.trunk.render( treeShader, m.smTrunk.primitiveType );
 			}
@@ -237,8 +237,8 @@ public class GameWorldRenderer {
 			gl.glBlendFunc( GL20.GL_SRC_ALPHA, GL20.GL_ONE_MINUS_SRC_ALPHA );
 
 			boolean needRebind = false;
-			for( int i = 0; i < trees.trees.size(); i++ ) {
-				TreeStillModel m = trees.trees.get( i );
+			for( int i = 0; i < trees.models.size(); i++ ) {
+				TreeStillModel m = trees.models.get( i );
 
 				if( Config.Debug.FrustumCulling && !camPersp.frustum.boundsInFrustum( m.boundingBox ) ) {
 					needRebind = true;
@@ -248,7 +248,7 @@ public class GameWorldRenderer {
 
 				if( i == 0 || needRebind ) {
 					m.material.bind( treeShader );
-				} else if( !trees.trees.get( i - 1 ).material.equals( m.material ) ) {
+				} else if( !trees.models.get( i - 1 ).material.equals( m.material ) ) {
 					m.material.bind( treeShader );
 				}
 
@@ -262,8 +262,8 @@ public class GameWorldRenderer {
 
 			if( Config.Graphics.Render3DBoundingBoxes ) {
 				// debug
-				for( int i = 0; i < trees.trees.size(); i++ ) {
-					TreeStillModel m = trees.trees.get( i );
+				for( int i = 0; i < trees.models.size(); i++ ) {
+					TreeStillModel m = trees.models.get( i );
 					renderBoundingBox( m.boundingBox );
 				}
 			}
