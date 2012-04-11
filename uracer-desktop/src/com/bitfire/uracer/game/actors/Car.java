@@ -253,14 +253,14 @@ public class Car extends Box2dEntity {
 		forces.angularVelocity = carDesc.angularvelocity;
 
 		GameEvents.carEvent.data.setForces( forces );
-		GameEvents.carEvent.trigger( CarEvent.Type.onComputeForces );
+		GameEvents.carEvent.trigger( this, CarEvent.Type.onComputeForces );
 	}
 
 	public void onCollide( Fixture other, Vector2 normalImpulses ) {
 		impacts++;
 
 		GameEvents.carEvent.data.setCollisionData( this, other, normalImpulses );
-		GameEvents.carEvent.trigger( CarEvent.Type.onCollision );
+		GameEvents.carEvent.trigger( this, CarEvent.Type.onCollision );
 	}
 
 	@Override

@@ -18,7 +18,6 @@ public final class CarEvent extends Event {
 
 	public final class Data {
 		/** collision data */
-		public Car car;
 		public Fixture other;
 		public Vector2 impulses;
 
@@ -26,7 +25,6 @@ public final class CarEvent extends Event {
 		public CarForces forces;
 
 		public void setCollisionData( Car car, Fixture other, Vector2 impulses ) {
-			this.car = car;
 			this.other = other;
 			this.impulses = impulses;
 		}
@@ -42,7 +40,8 @@ public final class CarEvent extends Event {
 		notify.addListener( listener );
 	}
 
-	public void trigger( Type type ) {
+	public void trigger( Object source, Type type ) {
+		this.source = source;
 		notify.carEvent( type, data );
 	}
 

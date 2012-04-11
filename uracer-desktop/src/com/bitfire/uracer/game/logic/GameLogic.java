@@ -142,9 +142,11 @@ public class GameLogic implements CarEvent.Listener, PlayerStateEvent.Listener {
 
 	@Override
 	public void carEvent( CarEvent.Type type, CarEvent.Data data ) {
+		Car car = (Car)GameEvents.carEvent.source;
+
 		switch( type ) {
 		case onCollision:
-			if( GameData.States.driftState.isDrifting && data.car.getInputMode() == CarInputMode.InputFromPlayer ) {
+			if( GameData.States.driftState.isDrifting && car.getInputMode() == CarInputMode.InputFromPlayer ) {
 				GameData.States.driftState.invalidateByCollision();
 			}
 			break;
