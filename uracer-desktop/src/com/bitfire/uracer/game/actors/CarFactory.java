@@ -9,7 +9,6 @@ import com.bitfire.uracer.Config;
 import com.bitfire.uracer.carsimulation.CarInputMode;
 import com.bitfire.uracer.carsimulation.CarModel;
 import com.bitfire.uracer.entities.EntityType;
-import com.bitfire.uracer.game.actors.Car.CarType;
 import com.bitfire.uracer.game.collisions.CollisionFilters;
 import com.bitfire.uracer.utils.Convert;
 import com.bitfire.uracer.utils.FixtureAtlas;
@@ -18,7 +17,7 @@ public final class CarFactory {
 	private CarFactory() {
 	}
 
-	public static GhostCar createGhost( CarType type, CarModel model ) {
+	public static GhostCar createGhost( CarAspect type, CarModel model ) {
 		CarRenderer graphics = createCarGraphics( type, model );
 		GhostCar ghost = GhostCar.createForFactory( graphics, type, model );
 		applyCarPhysics( ghost, EntityType.CarReplay );
@@ -26,17 +25,17 @@ public final class CarFactory {
 	}
 
 	public static GhostCar createGhost( Car car ) {
-		return CarFactory.createGhost( car.getCarType(), car.getCarModel() );
+		return CarFactory.createGhost( car.getCarAspect(), car.getCarModel() );
 	}
 
-	public static Car createPlayer( CarType carType, CarModel model ) {
+	public static Car createPlayer( CarAspect carType, CarModel model ) {
 		CarRenderer graphics = createCarGraphics( carType, model );
 		Car car = Car.createForFactory( graphics, model, carType, CarInputMode.InputFromPlayer );
 		applyCarPhysics( car, EntityType.Car );
 		return car;
 	}
 
-	private static CarRenderer createCarGraphics( CarType type, CarModel model ) {
+	private static CarRenderer createCarGraphics( CarAspect type, CarModel model ) {
 		TextureRegion region = null;
 
 		switch( type ) {
@@ -49,8 +48,7 @@ public final class CarFactory {
 			break;
 		}
 
-		CarRenderer graphics = new CarRenderer( model, region );
-		return graphics;
+		return new CarRenderer( model, region );
 	}
 
 	private static void applyCarPhysics( Car car, EntityType entityType ) {
@@ -60,7 +58,7 @@ public final class CarFactory {
 		String shapeName = null;
 		String shapeRef = null;
 
-		switch( car.getCarType() ) {
+		switch( car.getCarAspect() ) {
 		case OldSkool:
 			region = Art.cars.findRegion( "electron" );
 			shapeName = "data/base/electron.shape";

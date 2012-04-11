@@ -10,8 +10,8 @@ import com.bitfire.uracer.Director;
 import com.bitfire.uracer.URacer;
 import com.bitfire.uracer.carsimulation.CarModel;
 import com.bitfire.uracer.game.actors.Car;
-import com.bitfire.uracer.game.actors.Car.CarType;
 import com.bitfire.uracer.game.actors.CarFactory;
+import com.bitfire.uracer.game.actors.CarAspect;
 import com.bitfire.uracer.game.audio.CarSoundManager;
 import com.bitfire.uracer.game.data.GameData;
 import com.bitfire.uracer.game.hud.Hud;
@@ -43,7 +43,7 @@ public class Game implements Disposable {
 	// tasks
 	private List<Task> gameTasks = null;
 
-	public Game( String levelName, GameDifficulty difficulty, CarType carType, CarModel carModel ) {
+	public Game( String levelName, GameDifficulty difficulty, CarAspect carType, CarModel carModel ) {
 		GameData.create( difficulty );
 
 		Tweener.init();

@@ -26,10 +26,6 @@ import com.bitfire.uracer.utils.Convert;
 import com.bitfire.uracer.utils.VMath;
 
 public class Car extends Box2dEntity {
-	public enum CarType {
-		OldSkool, OldSkool2
-	}
-
 	protected CarRenderer graphics;
 
 	private CarDescriptor carDesc;
@@ -39,13 +35,13 @@ public class Car extends Box2dEntity {
 	private int impacts;
 
 	private CarInputMode carInputMode;
-	private CarType carType;
+	private CarAspect carAspect;
 
-	protected Car( CarRenderer graphics, CarModel model, CarType type, CarInputMode inputMode ) {
+	protected Car( CarRenderer graphics, CarModel model, CarAspect type, CarInputMode inputMode ) {
 		super( GameData.Environment.b2dWorld );
 		this.graphics = graphics;
 		this.carInputMode = inputMode;
-		this.carType = type;
+		this.carAspect = type;
 		this.impacts = 0;
 
 		carDesc = new CarDescriptor();
@@ -66,12 +62,12 @@ public class Car extends Box2dEntity {
 	}
 
 	// factory method
-	public static Car createForFactory( CarRenderer graphics, CarModel model, CarType type, CarInputMode inputMode ) {
+	public static Car createForFactory( CarRenderer graphics, CarModel model, CarAspect type, CarInputMode inputMode ) {
 		return new Car( graphics, model, type, inputMode );
 	}
 
-	public CarType getCarType() {
-		return carType;
+	public CarAspect getCarAspect() {
+		return carAspect;
 	}
 
 	public CarInputMode getInputMode() {

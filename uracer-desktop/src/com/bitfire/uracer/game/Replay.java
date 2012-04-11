@@ -1,10 +1,9 @@
 package com.bitfire.uracer.game;
 
 import com.badlogic.gdx.math.Vector2;
-import com.bitfire.uracer.carsimulation.CarDescriptor;
 import com.bitfire.uracer.carsimulation.CarForces;
 import com.bitfire.uracer.game.actors.Car;
-import com.bitfire.uracer.game.actors.Car.CarType;
+import com.bitfire.uracer.game.actors.CarAspect;
 import com.bitfire.uracer.utils.UUid;
 
 /** Represents replay data to be feed to a GhostCar, the replay player.
@@ -16,10 +15,9 @@ public class Replay {
 	private int eventsCount;
 
 	// car data
-	public CarType carType;
+	public CarAspect carAspect;
 	public Vector2 carPosition;
 	public float carOrientation;
-	public CarDescriptor carDescriptor;
 
 	// replay data
 	public String trackName = "no-track";
@@ -49,10 +47,9 @@ public class Replay {
 
 	public void begin( String trackName, GameDifficulty difficulty, Car car ) {
 		reset();
-		carType = car.getCarType();
+		carAspect = car.getCarAspect();
 		carPosition = new Vector2( car.pos() );
 		carOrientation = car.orient();
-		carDescriptor = car.getCarDescriptor().newCopy();
 		this.trackName = trackName;
 		difficultyLevel = difficulty;
 		time.start();

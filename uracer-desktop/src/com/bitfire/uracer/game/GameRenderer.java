@@ -50,6 +50,7 @@ public class GameRenderer {
 		OrthographicCamera ortho = Director.getCamera();
 
 		// tweener step
+//		Tweener.update( (int)(URacer.getLastDeltaSecs() * URacer.timeMultiplier * 1000) );	// interesting
 		Tweener.update( (int)(URacer.getLastDeltaSecs() * 1000) );
 
 		// resync

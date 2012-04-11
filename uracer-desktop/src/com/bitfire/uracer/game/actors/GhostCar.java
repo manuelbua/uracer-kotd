@@ -12,12 +12,12 @@ import com.bitfire.uracer.game.Replay;
  *
  * @author manuel */
 
-public class GhostCar extends Car {
+public final class GhostCar extends Car {
 	private Replay replay;
 	private int indexPlay;
 	private boolean hasReplay;
 
-	private GhostCar( CarRenderer graphics, CarType type, CarModel model ) {
+	private GhostCar( CarRenderer graphics, CarAspect type, CarModel model ) {
 		super( graphics, model, type, CarInputMode.InputFromReplay );
 		indexPlay = 0;
 		hasReplay = false;
@@ -27,9 +27,8 @@ public class GhostCar extends Car {
 
 	// factory methods
 
-	public static GhostCar createForFactory( CarRenderer graphics, CarType type, CarModel model ) {
-		GhostCar ghost = new GhostCar( graphics, type, model );
-		return ghost;
+	public static GhostCar createForFactory( CarRenderer graphics, CarAspect type, CarModel model ) {
+		return new GhostCar( graphics, type, model );
 	}
 
 	public void setReplay( Replay replay ) {
@@ -52,7 +51,6 @@ public class GhostCar extends Car {
 	private void restart( Replay replay ) {
 		pos( replay.carPosition );
 		orient( replay.carOrientation );
-		getCarDescriptor().set( replay.carDescriptor );
 		indexPlay = 0;
 	}
 
