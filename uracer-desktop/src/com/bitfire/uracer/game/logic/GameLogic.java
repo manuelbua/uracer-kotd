@@ -49,9 +49,9 @@ public class GameLogic implements CarEvent.Listener, PlayerStateEvent.Listener {
 	// replay
 	private Recorder recorder = null;
 
-	public GameLogic( GameWorld world ) {
+	public GameLogic() {
 		GameEvents.gameLogic.source = this;
-		this.world = world;
+		this.world = GameData.Environment.gameWorld;
 		mapUtils = world.mapUtils;
 
 		recorder = new Recorder();

@@ -1,7 +1,5 @@
 package com.bitfire.uracer.game.data;
 
-import com.badlogic.gdx.physics.box2d.World;
-import com.bitfire.uracer.ScalingStrategy;
 import com.bitfire.uracer.game.GameDifficulty;
 import com.bitfire.uracer.game.actors.Car;
 
@@ -14,25 +12,31 @@ public final class GameData {
 	public static Systems Systems;
 	public static Environment Environment;
 
+	// 1st
 	public static void create( GameDifficulty difficulty ) {
 		Environment = new Environment( difficulty );
 	}
 
+	// ... (some init, Car created)
+
+	// 2nd
 	public static void createStates( Car car ) {
 		States = new States( car );
 	}
 
-	public static void createSystems( World b2dWorld, Car car ) {
-		Systems = new Systems( b2dWorld, car );
+	// 3rd
+	public static void createSystems( Car car ) {
+		Systems = new Systems( Environment.b2dWorld, car );
+	}
+
+	// 4th
+	public static void createWorld( String levelName, boolean nightMode ) {
+		Environment.createWorld( Environment.b2dWorld, Environment.scalingStrategy, levelName, nightMode );
 	}
 
 	public static void dispose() {
 		Environment.dispose();
 		Systems.dispose();
-	}
-
-	public static void createWorld( World b2dWorld, ScalingStrategy strategy, String levelName, boolean nightMode ) {
-		Environment.createWorld( b2dWorld, strategy, levelName, nightMode );
 	}
 
 	private GameData() {

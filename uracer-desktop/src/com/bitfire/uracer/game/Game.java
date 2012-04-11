@@ -10,8 +10,8 @@ import com.bitfire.uracer.Director;
 import com.bitfire.uracer.URacer;
 import com.bitfire.uracer.carsimulation.CarModel;
 import com.bitfire.uracer.game.actors.Car;
-import com.bitfire.uracer.game.actors.CarFactory;
 import com.bitfire.uracer.game.actors.CarAspect;
+import com.bitfire.uracer.game.actors.CarFactory;
 import com.bitfire.uracer.game.audio.CarSoundManager;
 import com.bitfire.uracer.game.data.GameData;
 import com.bitfire.uracer.game.hud.Hud;
@@ -54,15 +54,16 @@ public class Game implements Disposable {
 		Car car = CarFactory.createPlayer( carType, carModel );
 
 		GameData.createStates( car );
-		GameData.createSystems( GameData.Environment.b2dWorld, car );
-		GameData.createWorld( GameData.Environment.b2dWorld, GameData.Environment.scalingStrategy, levelName, false );
+		GameData.createSystems( car );
+		GameData.createWorld( levelName, false );
 
-		gameLogic = new GameLogic( GameData.Environment.gameWorld );
+		// can use GameData
+		gameLogic = new GameLogic();
 
 		// ----------------------------
 		// rendering engine initialization
 		// ----------------------------
-		gameRenderer = new GameRenderer( GameData.Environment.scalingStrategy, GameData.Environment.gameWorld );
+		gameRenderer = new GameRenderer();
 
 		// in-place customization
 		if( Config.Graphics.EnablePostProcessingFx ) {
