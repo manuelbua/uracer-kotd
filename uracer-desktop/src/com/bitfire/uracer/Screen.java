@@ -2,21 +2,12 @@ package com.bitfire.uracer;
 
 import java.util.Random;
 
-
 public abstract class Screen {
 	protected static Random random = new Random();
-	private URacer uracer;
 
-	public final void init( URacer uracer ) {
-		this.uracer = uracer;
-	}
+	public abstract void init();
 
-	public void removed() {
-	}
-
-	protected void setScreen( Screen screen ) {
-		uracer.setScreen( screen );
-	}
+	public abstract void removed();
 
 	public abstract void pause();
 

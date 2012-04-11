@@ -168,7 +168,7 @@ public class URacer implements ApplicationListener {
 		screen = newScreen;
 
 		if( screen != null ) {
-			screen.init( this );
+			screen.init();
 		}
 	}
 

@@ -15,8 +15,11 @@ public class GameScreen extends Screen {
 	}
 
 	@Override
+	public void init() {
+	}
+
+	@Override
 	public void removed() {
-		super.removed();
 		game.dispose();
 		game = null;
 	}
