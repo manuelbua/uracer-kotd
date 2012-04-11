@@ -4,14 +4,11 @@ import java.util.ArrayList;
 import java.util.List;
 
 import com.badlogic.gdx.utils.Disposable;
-import com.bitfire.uracer.Art;
 import com.bitfire.uracer.Config;
 import com.bitfire.uracer.Director;
 import com.bitfire.uracer.URacer;
 import com.bitfire.uracer.carsimulation.CarModel;
-import com.bitfire.uracer.game.actors.Car;
 import com.bitfire.uracer.game.actors.CarAspect;
-import com.bitfire.uracer.game.actors.CarFactory;
 import com.bitfire.uracer.game.audio.CarSoundManager;
 import com.bitfire.uracer.game.data.GameData;
 import com.bitfire.uracer.game.hud.Hud;
@@ -22,8 +19,6 @@ import com.bitfire.uracer.postprocessing.effects.Bloom;
 import com.bitfire.uracer.postprocessing.effects.Zoom;
 import com.bitfire.uracer.task.Task;
 import com.bitfire.uracer.task.TaskManager;
-import com.bitfire.uracer.utils.BatchUtils;
-import com.bitfire.uracer.utils.Convert;
 
 public class Game implements Disposable {
 
@@ -45,16 +40,8 @@ public class Game implements Disposable {
 
 	public Game( String levelName, GameDifficulty difficulty, CarAspect carType, CarModel carModel ) {
 		GameData.create( difficulty );
-
-		Tweener.init();
-		Art.init( GameData.Environment.scalingStrategy.invTileMapZoomFactor );
-		BatchUtils.init( Art.base6 );
-		Convert.init( GameData.Environment.scalingStrategy.invTileMapZoomFactor, Config.Physics.PixelsPerMeter );
-		Director.init();
-		Car car = CarFactory.createPlayer( carType, carModel );
-
-		GameData.createStates( car );
-		GameData.createSystems( car );
+		GameData.createStates( carType, carModel );
+		GameData.createSystems();
 		GameData.createWorld( levelName, false );
 
 		// can use GameData
@@ -74,7 +61,7 @@ public class Game implements Disposable {
 		// game tasks
 		// ----------------------------
 		gameTasks = new ArrayList<Task>( 10 );
-		gameTasks.add( new Hud( car ) );
+		gameTasks.add( new Hud() );
 		gameTasks.add( new CarSoundManager() );
 	}
 
@@ -85,9 +72,7 @@ public class Game implements Disposable {
 		}
 
 		gameTasks.clear();
-		Director.dispose();
 		gameRenderer.dispose();
-		Art.dispose();
 
 		GameData.dispose();
 	}

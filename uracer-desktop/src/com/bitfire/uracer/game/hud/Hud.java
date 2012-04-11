@@ -61,7 +61,7 @@ public class Hud extends Task {
 	};
 
 	// effects
-	public Hud( Car car ) {
+	public Hud() {
 		GameEvents.gameRenderer.addListener( gameRendererEvent, GameRendererEvent.Type.BatchAfterMeshes, GameRendererEvent.Order.DEFAULT );
 		GameEvents.gameRenderer.addListener( gameRendererEvent, GameRendererEvent.Type.BatchDebug, GameRendererEvent.Order.DEFAULT );
 		GameEvents.gameLogic.addListener( gameLogicEvent );
@@ -73,6 +73,8 @@ public class Hud extends Task {
 		best = new HudLabel( Art.fontCurseYR, "BEST  TIME\n-.----" );
 		curr = new HudLabel( Art.fontCurseYR, "YOUR  TIME\n-.----" );
 		last = new HudLabel( Art.fontCurseYR, "LAST  TIME\n-.----" );
+
+		Car car = GameData.States.playerState.car;
 
 		// drifting component
 		hudDrift = new HudDrifting( car );
