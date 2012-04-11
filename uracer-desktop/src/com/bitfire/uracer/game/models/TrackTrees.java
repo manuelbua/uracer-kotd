@@ -1,87 +1,35 @@
 package com.bitfire.uracer.game.models;
 
-import java.util.ArrayList;
 import java.util.List;
 
-import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.OrthographicCamera;
 import com.badlogic.gdx.graphics.PerspectiveCamera;
-import com.badlogic.gdx.graphics.g2d.tiled.TiledObject;
-import com.badlogic.gdx.graphics.g2d.tiled.TiledObjectGroup;
-import com.badlogic.gdx.math.MathUtils;
 import com.badlogic.gdx.math.Matrix4;
 import com.badlogic.gdx.math.Vector3;
 import com.bitfire.uracer.Director;
-import com.bitfire.uracer.game.MapUtils;
 import com.bitfire.uracer.utils.Convert;
 
 public class TrackTrees {
-	public final List<TreeStillModel> models = new ArrayList<TreeStillModel>();
-	private MapUtils mapUtils;
+	public final List<TreeStillModel> models;
+	private final boolean owned;
 
-	public TrackTrees( MapUtils mapUtils ) {
-		this.mapUtils = mapUtils;
+	public TrackTrees( List<TreeStillModel> models, boolean owned ) {
+		this.models = models;
+		this.owned = owned;
 	}
 
 	public void dispose() {
-		for( int i = 0; i < models.size(); i++ ) {
-			models.get( i ).dispose();
-		}
+		if( owned && models != null && models.size() > 0 ) {
+			for( int i = 0; i < models.size(); i++ ) {
+				models.get( i ).dispose();
+			}
 
-		models.clear();
+			models.clear();
+		}
 	}
 
-	private int nextIndexFor( TreeStillModel model ) {
-		for( int i = 0; i < models.size(); i++ ) {
-			if( model.material.equals( models.get( i ).material ) ) {
-				return i;
-			}
-		}
-
-		return 0;
-	}
-
-	private float[] rotations = new float[ 4 ];
-
-	public void createTrees() {
-		if( mapUtils.hasObjectGroup( MapUtils.LayerTrees ) ) {
-
-			// We want to differentiate tree meshes as much as we can
-			// rotation will helps immensely, but non-orthogonal rotations
-			// will cause the bounding box to get recomputed only approximately
-			// thus loosing precision: orthogonal rotations instead provides high
-			// quality AABB recomputation.
-			//
-			// We still have 4 variations for any given tree!
-			rotations[0] = 0;
-			rotations[1] = 90;
-			rotations[2] = 180;
-			rotations[3] = 270;
-
-			MathUtils.random.setSeed( Long.MAX_VALUE );
-			TiledObjectGroup group = mapUtils.getObjectGroup( MapUtils.LayerTrees );
-			for( int i = 0; i < group.objects.size(); i++ ) {
-				TiledObject o = group.objects.get( i );
-
-				float scale = 1f;
-				if( o.properties.get( MapUtils.MeshScale ) != null ) {
-					scale = Float.parseFloat( o.properties.get( MapUtils.MeshScale ) );
-				}
-
-				TreeStillModel model = null;
-				if( o.type != null ) {
-					model = ModelFactory.createTree( o.type, o.x, o.y, scale );
-				} else {
-					Gdx.app.log( "TrackTrees", "Load error, no type was given for the tree #" + (i + 1) );
-				}
-
-				if( model != null ) {
-					// model.setRotation( MathUtils.random( -180f, 180f ), 0, 0, 1f );
-					model.setRotation( rotations[MathUtils.random( 0, 3 )], 0, 0, 1f );
-					models.add( nextIndexFor( model ), model );
-				}
-			}
-		}
+	public int count() {
+		return (models != null ? models.size() : 0);
 	}
 
 	private Vector3 tmpvec = new Vector3();

@@ -205,67 +205,63 @@ public class GameWorldRenderer {
 	}
 
 	private void renderWalls( GL20 gl, TrackWalls walls ) {
-		if( walls.models.size() > 0 ) {
-			gl.glDisable( GL20.GL_CULL_FACE );
-			gl.glEnable( GL20.GL_BLEND );
-			gl.glBlendFunc( GL20.GL_SRC_ALPHA, GL20.GL_ONE_MINUS_SRC_ALPHA );
-			renderedWalls = renderOrthographicAlignedModels( gl, walls.models );
-		}
+		gl.glDisable( GL20.GL_CULL_FACE );
+		gl.glEnable( GL20.GL_BLEND );
+		gl.glBlendFunc( GL20.GL_SRC_ALPHA, GL20.GL_ONE_MINUS_SRC_ALPHA );
+		renderedWalls = renderOrthographicAlignedModels( gl, walls.models );
 	}
 
 	private void renderTrees( GL20 gl, TrackTrees trees ) {
-		if( trees.models.size() > 0 ) {
-			trees.transform( camPersp, camOrtho );
+		trees.transform( camPersp, camOrtho );
 
-			gl.glDisable( GL20.GL_BLEND );
-			gl.glEnable( GL20.GL_CULL_FACE );
+		gl.glDisable( GL20.GL_BLEND );
+		gl.glEnable( GL20.GL_CULL_FACE );
 
-			Art.meshTreeTrunk.bind();
+		Art.meshTreeTrunk.bind();
 
-			treeShader.begin();
+		treeShader.begin();
 
-			// trunk
-			for( int i = 0; i < trees.models.size(); i++ ) {
-				TreeStillModel m = trees.models.get( i );
-				treeShader.setUniformMatrix( "u_mvpMatrix", m.transformed );
-				m.trunk.render( treeShader, m.smTrunk.primitiveType );
+		// trunk
+		for( int i = 0; i < trees.models.size(); i++ ) {
+			TreeStillModel m = trees.models.get( i );
+			treeShader.setUniformMatrix( "u_mvpMatrix", m.transformed );
+			m.trunk.render( treeShader, m.smTrunk.primitiveType );
+		}
+
+		// transparent foliage
+		gl.glDisable( GL20.GL_CULL_FACE );
+		gl.glEnable( GL20.GL_BLEND );
+		gl.glBlendFunc( GL20.GL_SRC_ALPHA, GL20.GL_ONE_MINUS_SRC_ALPHA );
+
+		boolean needRebind = false;
+		for( int i = 0; i < trees.models.size(); i++ ) {
+			TreeStillModel m = trees.models.get( i );
+
+			if( Config.Debug.FrustumCulling && !camPersp.frustum.boundsInFrustum( m.boundingBox ) ) {
+				needRebind = true;
+				culledMeshes++;
+				continue;
 			}
 
-			// transparent foliage
-			gl.glDisable( GL20.GL_CULL_FACE );
-			gl.glEnable( GL20.GL_BLEND );
-			gl.glBlendFunc( GL20.GL_SRC_ALPHA, GL20.GL_ONE_MINUS_SRC_ALPHA );
-
-			boolean needRebind = false;
-			for( int i = 0; i < trees.models.size(); i++ ) {
-				TreeStillModel m = trees.models.get( i );
-
-				if( Config.Debug.FrustumCulling && !camPersp.frustum.boundsInFrustum( m.boundingBox ) ) {
-					needRebind = true;
-					culledMeshes++;
-					continue;
-				}
-
-				if( i == 0 || needRebind ) {
-					m.material.bind( treeShader );
-				} else if( !trees.models.get( i - 1 ).material.equals( m.material ) ) {
-					m.material.bind( treeShader );
-				}
-
-				treeShader.setUniformMatrix( "u_mvpMatrix", m.transformed );
-				m.leaves.render( treeShader, m.smLeaves.primitiveType );
-
-				renderedTrees++;
+			if( i == 0 || needRebind ) {
+				m.material.bind( treeShader );
+			} else if( !trees.models.get( i - 1 ).material.equals( m.material ) ) {
+				m.material.bind( treeShader );
 			}
 
-			treeShader.end();
+			treeShader.setUniformMatrix( "u_mvpMatrix", m.transformed );
+			m.leaves.render( treeShader, m.smLeaves.primitiveType );
 
-			if( Config.Graphics.Render3DBoundingBoxes ) {
-				// debug
-				for( int i = 0; i < trees.models.size(); i++ ) {
-					TreeStillModel m = trees.models.get( i );
-					renderBoundingBox( m.boundingBox );
-				}
+			renderedTrees++;
+		}
+
+		treeShader.end();
+
+		if( Config.Graphics.Render3DBoundingBoxes ) {
+			// debug
+			for( int i = 0; i < trees.models.size(); i++ ) {
+				TreeStillModel m = trees.models.get( i );
+				renderBoundingBox( m.boundingBox );
 			}
 		}
 	}
@@ -358,7 +354,10 @@ public class GameWorldRenderer {
 		gl.glBlendEquation( GL20.GL_FUNC_ADD );
 
 		renderWalls( gl, trackWalls );
-		renderTrees( gl, trackTrees );
+
+		if( trackTrees.count() > 0 ) {
+			renderTrees( gl, trackTrees );
+		}
 
 		// render "static-meshes" layer
 		gl.glEnable( GL20.GL_CULL_FACE );

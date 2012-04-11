@@ -15,6 +15,7 @@ import com.badlogic.gdx.graphics.g2d.tiled.TiledLoader;
 import com.badlogic.gdx.graphics.g2d.tiled.TiledMap;
 import com.badlogic.gdx.graphics.g2d.tiled.TiledObject;
 import com.badlogic.gdx.graphics.g2d.tiled.TiledObjectGroup;
+import com.badlogic.gdx.math.MathUtils;
 import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.physics.box2d.World;
 import com.bitfire.uracer.Config;
@@ -24,6 +25,7 @@ import com.bitfire.uracer.game.models.ModelFactory;
 import com.bitfire.uracer.game.models.OrthographicAlignedStillModel;
 import com.bitfire.uracer.game.models.TrackTrees;
 import com.bitfire.uracer.game.models.TrackWalls;
+import com.bitfire.uracer.game.models.TreeStillModel;
 import com.bitfire.uracer.utils.Convert;
 
 public class GameWorld {
@@ -119,14 +121,14 @@ public class GameWorld {
 		}
 
 		// walls by polylines
-		trackWalls = new TrackWalls(mapUtils);
+		trackWalls = new TrackWalls( mapUtils );
 		trackWalls.createWalls( b2dWorld, worldSizeScaledMt );
 
 		// trees
-		trackTrees = new TrackTrees(mapUtils);
-		trackTrees.createTrees();
+		List<TreeStillModel> trees = createTrees();
+		trackTrees = new TrackTrees( trees, true );
 
-		TotalMeshes = staticMeshes.size() + trackWalls.models.size() + trackTrees.models.size();
+		TotalMeshes = staticMeshes.size() + (trackWalls!=null?trackWalls.models.size():0) + trackTrees.count();
 	}
 
 	private void loadPlayer( TiledMap map ) {
@@ -213,6 +215,72 @@ public class GameWorld {
 			l.setSoft( false );
 			l.setMaskBits( CollisionFilters.CategoryPlayer | CollisionFilters.CategoryTrackWalls );
 		}
+	}
+
+	//
+	// construct trees
+	//
+	private float[] treeRotations = new float[ 4 ];
+
+	private List<TreeStillModel> createTrees() {
+		List<TreeStillModel> models = null;
+
+		if( mapUtils.hasObjectGroup( MapUtils.LayerTrees ) ) {
+
+			// We want to differentiate tree meshes as much as we can
+			// rotation will helps immensely, but non-orthogonal rotations
+			// will cause the bounding box to get recomputed only approximately
+			// thus loosing precision: orthogonal rotations instead provides high
+			// quality AABB recomputation.
+			//
+			// We still have 4 variations for any given tree!
+			treeRotations[0] = 0;
+			treeRotations[1] = 90;
+			treeRotations[2] = 180;
+			treeRotations[3] = 270;
+
+			MathUtils.random.setSeed( Long.MAX_VALUE );
+			TiledObjectGroup group = mapUtils.getObjectGroup( MapUtils.LayerTrees );
+
+			if( group.objects.size() > 0 ) {
+
+				models = new ArrayList<TreeStillModel>();
+
+				for( int i = 0; i < group.objects.size(); i++ ) {
+					TiledObject o = group.objects.get( i );
+
+					float scale = 1f;
+					if( o.properties.get( MapUtils.MeshScale ) != null ) {
+						scale = Float.parseFloat( o.properties.get( MapUtils.MeshScale ) );
+					}
+
+					TreeStillModel model = null;
+					if( o.type != null ) {
+						model = ModelFactory.createTree( o.type, o.x, o.y, scale );
+					} else {
+						Gdx.app.log( "TrackTrees", "Load error, no type was given for the tree #" + (i + 1) );
+					}
+
+					if( model != null ) {
+						// model.setRotation( MathUtils.random( -180f, 180f ), 0, 0, 1f );
+						model.setRotation( treeRotations[MathUtils.random( 0, 3 )], 0, 0, 1f );
+						models.add( nextIndexForTrees( models, model ), model );
+					}
+				}
+			}
+		}
+
+		return null;
+	}
+
+	private int nextIndexForTrees( List<TreeStillModel> models, TreeStillModel model ) {
+		for( int i = 0; i < models.size(); i++ ) {
+			if( model.material.equals( models.get( i ).material ) ) {
+				return i;
+			}
+		}
+
+		return 0;
 	}
 
 	public boolean isNightMode() {
