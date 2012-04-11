@@ -259,7 +259,7 @@ public class Car extends Box2dEntity {
 	public void onCollide( Fixture other, Vector2 normalImpulses ) {
 		impacts++;
 
-		GameEvents.carEvent.data.setCollisionData( this, other, normalImpulses );
+		GameEvents.carEvent.data.setCollisionData( other, normalImpulses );
 		GameEvents.carEvent.trigger( this, CarEvent.Type.onCollision );
 	}
 

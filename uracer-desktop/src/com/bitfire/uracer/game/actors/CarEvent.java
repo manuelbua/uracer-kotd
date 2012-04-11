@@ -24,7 +24,7 @@ public final class CarEvent extends Event {
 		/** compute forces data */
 		public CarForces forces;
 
-		public void setCollisionData( Car car, Fixture other, Vector2 impulses ) {
+		public void setCollisionData( Fixture other, Vector2 impulses ) {
 			this.other = other;
 			this.impulses = impulses;
 		}
