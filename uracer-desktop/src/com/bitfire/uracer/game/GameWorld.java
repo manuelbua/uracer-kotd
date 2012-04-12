@@ -460,23 +460,23 @@ public final class GameWorld {
 		return nightMode;
 	}
 
-	public final TrackWalls getTrackWalls() {
+	public TrackWalls getTrackWalls() {
 		return trackWalls;
 	}
 
-	public final TrackTrees getTrackTrees() {
+	public TrackTrees getTrackTrees() {
 		return trackTrees;
 	}
 
-	public final List<OrthographicAlignedStillModel> getStaticMeshes() {
+	public List<OrthographicAlignedStillModel> getStaticMeshes() {
 		return staticMeshes;
 	}
 
-	public final RayHandler getRayHandler() {
+	public RayHandler getRayHandler() {
 		return rayHandler;
 	}
 
-	public final ConeLight getPlayerHeadLights() {
+	public ConeLight getPlayerHeadLights() {
 		return playerHeadlights;
 	}
 }

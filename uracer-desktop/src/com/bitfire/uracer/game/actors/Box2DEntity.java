@@ -11,7 +11,6 @@ import com.bitfire.uracer.game.GameEvents;
 import com.bitfire.uracer.game.data.GameData;
 import com.bitfire.uracer.game.events.GameRendererEvent;
 import com.bitfire.uracer.game.events.GameRendererEvent.Type;
-import com.bitfire.uracer.game.physics.SubframeInterpolableEntity;
 import com.bitfire.uracer.utils.AMath;
 import com.bitfire.uracer.utils.Convert;
 
