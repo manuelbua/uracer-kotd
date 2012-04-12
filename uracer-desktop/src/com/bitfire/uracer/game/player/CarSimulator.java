@@ -1,4 +1,4 @@
-package com.bitfire.uracer.game.actors;
+package com.bitfire.uracer.game.player;
 
 import com.badlogic.gdx.math.MathUtils;
 import com.badlogic.gdx.math.Vector2;
@@ -30,7 +30,7 @@ public final class CarSimulator {
 		lastTouchAngle = 0;
 
 		// precompute constants
-		// dampingThrottleFrame = (float)Math.pow( 1f - dampingThrottle, Config.Physics.PhysicsDt );
+//		 dampingThrottleFrame = (float)Math.pow( 1f - dampingThrottle, Config.Physics.PhysicsDt );
 
 		// exports
 		lateralForceFront = new Vector2();

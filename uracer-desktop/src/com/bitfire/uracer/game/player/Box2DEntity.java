@@ -1,4 +1,4 @@
-package com.bitfire.uracer.game.actors;
+package com.bitfire.uracer.game.player;
 
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.math.MathUtils;

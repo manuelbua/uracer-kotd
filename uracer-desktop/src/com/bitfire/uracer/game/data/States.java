@@ -1,7 +1,7 @@
 package com.bitfire.uracer.game.data;
 
-import com.bitfire.uracer.game.actors.Car;
-import com.bitfire.uracer.game.actors.CarFactory;
+import com.bitfire.uracer.game.player.Car;
+import com.bitfire.uracer.game.player.CarFactory;
 import com.bitfire.uracer.game.states.DriftState;
 import com.bitfire.uracer.game.states.LapState;
 import com.bitfire.uracer.game.states.PlayerState;

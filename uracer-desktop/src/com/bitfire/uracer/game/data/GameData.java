@@ -6,8 +6,8 @@ import com.bitfire.uracer.Director;
 import com.bitfire.uracer.carsimulation.CarModel;
 import com.bitfire.uracer.game.GameDifficulty;
 import com.bitfire.uracer.game.Tweener;
-import com.bitfire.uracer.game.actors.CarAspect;
-import com.bitfire.uracer.game.actors.CarFactory;
+import com.bitfire.uracer.game.player.CarAspect;
+import com.bitfire.uracer.game.player.CarFactory;
 import com.bitfire.uracer.utils.BatchUtils;
 import com.bitfire.uracer.utils.Convert;
 

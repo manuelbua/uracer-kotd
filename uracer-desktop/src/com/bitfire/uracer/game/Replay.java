@@ -2,8 +2,8 @@ package com.bitfire.uracer.game;
 
 import com.badlogic.gdx.math.Vector2;
 import com.bitfire.uracer.carsimulation.CarForces;
-import com.bitfire.uracer.game.actors.Car;
-import com.bitfire.uracer.game.actors.CarAspect;
+import com.bitfire.uracer.game.player.Car;
+import com.bitfire.uracer.game.player.CarAspect;
 import com.bitfire.uracer.utils.UUid;
 
 /** Represents replay data to be feed to a GhostCar, the replay player.

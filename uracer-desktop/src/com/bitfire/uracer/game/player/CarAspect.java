@@ -1,4 +1,4 @@
-package com.bitfire.uracer.game.actors;
+package com.bitfire.uracer.game.player;
 
 public enum CarAspect {
 	OldSkool, OldSkool2

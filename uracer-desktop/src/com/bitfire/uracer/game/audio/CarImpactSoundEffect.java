@@ -7,11 +7,11 @@ import com.badlogic.gdx.math.MathUtils;
 import com.bitfire.uracer.URacer;
 import com.bitfire.uracer.carsimulation.CarInputMode;
 import com.bitfire.uracer.game.GameEvents;
-import com.bitfire.uracer.game.actors.Car;
-import com.bitfire.uracer.game.actors.CarEvent;
-import com.bitfire.uracer.game.actors.CarEvent.Data;
-import com.bitfire.uracer.game.actors.CarEvent.Type;
 import com.bitfire.uracer.game.data.GameData;
+import com.bitfire.uracer.game.player.Car;
+import com.bitfire.uracer.game.player.CarEvent;
+import com.bitfire.uracer.game.player.CarEvent.Data;
+import com.bitfire.uracer.game.player.CarEvent.Type;
 import com.bitfire.uracer.utils.AMath;
 import com.bitfire.uracer.utils.AudioUtils;
 
