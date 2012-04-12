@@ -59,8 +59,9 @@ public class Blur extends MultipassFilter {
 	}
 
 	public void dispose() {
-		for( Convolve2D c : convolve.values() )
+		for( Convolve2D c : convolve.values() ) {
 			c.dispose();
+		}
 	}
 
 	public void upload() {
@@ -103,10 +104,6 @@ public class Blur extends MultipassFilter {
 		float dy = this.invHeight;
 
 		switch( this.type ) {
-		default:
-			hasdata = false;
-			break;
-
 		case Gaussian3x3:
 		case Gaussian5x5:
 			computeKernel( this.type.tap.radius, this.amount, outWeights );
@@ -193,6 +190,9 @@ public class Blur extends MultipassFilter {
 			}
 
 			break;
+		default:
+			hasdata = false;
+			break;
 		}
 
 		if( hasdata ) {
@@ -202,10 +202,9 @@ public class Blur extends MultipassFilter {
 
 	private void computeKernel( int blurRadius, float blurAmount, float[] outKernel ) {
 		int radius = blurRadius;
-		float amount = blurAmount;
 
 		// float sigma = (float)radius / amount;
-		float sigma = amount;
+		float sigma = blurAmount;
 
 		float twoSigmaSquare = 2.0f * sigma * sigma;
 		float sigmaRoot = (float)Math.sqrt( twoSigmaSquare * Math.PI );

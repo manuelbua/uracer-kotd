@@ -23,7 +23,8 @@ public final class CarSimulator {
 
 	public CarSimulator( CarDescriptor carDesc ) {
 		this.carDesc = carDesc;
-		thisSign = lastSign = 1f;
+		thisSign = 1f;
+		lastSign = 1f;
 		lastTouchAngle = 0;
 
 		// precompute constants
@@ -53,19 +54,21 @@ public final class CarSimulator {
 			// throttle
 			if( AMath.fixup( input.throttle ) > 0 ) {
 				// acceleration
-				if( input.throttle < maxForce )
+				if( input.throttle < maxForce ) {
 					carDesc.throttle = input.throttle;
-				else
+				} else {
 					carDesc.throttle = maxForce;
+				}
 
 				carDesc.brake = 0;
 				hasDir = true;
 			} else if( AMath.fixup( input.throttle ) < 0 ) {
 				// deceleration
-				if( input.throttle > -maxForce )
+				if( input.throttle > -maxForce ) {
 					carDesc.throttle = input.throttle;
-				else
+				} else {
 					carDesc.throttle = -maxForce;
+				}
 
 				carDesc.brake = 0;
 				hasDir = true;
@@ -75,15 +78,17 @@ public final class CarSimulator {
 			if( AMath.fixup( input.steerAngle ) < 0 ) {
 				// left
 				carDesc.steerangle = input.steerAngle;
-				if( carDesc.steerangle < -AMath.PI_4 )
+				if( carDesc.steerangle < -AMath.PI_4 ) {
 					carDesc.steerangle = -AMath.PI_4;
+				}
 
 				hasSteer = true;
 			} else if( AMath.fixup( input.steerAngle ) > 0 ) {
 				// right
 				carDesc.steerangle = input.steerAngle;
-				if( carDesc.steerangle > AMath.PI_4 )
+				if( carDesc.steerangle > AMath.PI_4 ) {
 					carDesc.steerangle = AMath.PI_4;
+				}
 
 				hasSteer = true;
 			}
@@ -258,6 +263,7 @@ public final class CarSimulator {
 		carDesc.steerangle = 0;
 		acceleration_wc.set( 0, 0 );
 		velocity.set( 0, 0 );
-		thisSign = lastSign = 1f;
+		thisSign = 1f;
+		lastSign = 1f;
 	}
 }

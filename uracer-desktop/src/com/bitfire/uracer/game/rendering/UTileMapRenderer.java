@@ -202,23 +202,28 @@ public class UTileMapRenderer implements Disposable {
 		int maxWidth = 0;
 		for( layer = 0; layer < map.length; layer++ ) {
 			allLayers[layer] = layer;
-			if( map[layer].length > maxHeight )
+			if( map[layer].length > maxHeight ) {
 				maxHeight = map[layer].length;
+			}
 			for( row = 0; row < map[layer].length; row++ ) {
-				if( map[layer][row].length > maxWidth )
+				if( map[layer][row].length > maxWidth ) {
 					maxWidth = map[layer][row].length;
-				for( col = 0; col < map[layer][row].length; col++ )
-					if( map[layer][row][col] != 0 )
+				}
+				for( col = 0; col < map[layer][row].length; col++ ) {
+					if( map[layer][row][col] != 0 ) {
 						maxCacheSize++;
+					}
+				}
 			}
 		}
 		mapHeightUnits = (int)(maxHeight * unitsPerTileY);
 		mapWidthUnits = (int)(maxWidth * unitsPerTileX);
 
-		if( shader == null )
+		if( shader == null ) {
 			cache = new SpriteCache( maxCacheSize, true );
-		else
+		} else {
 			cache = new SpriteCache( maxCacheSize, shader, true );
+		}
 
 		normalCacheId = new int[ map.length ][][];
 		blendedCacheId = new int[ map.length ][][];
@@ -252,19 +257,17 @@ public class UTileMapRenderer implements Disposable {
 		for( int row = firstRow; row < lastRow && row < layer.length; row++ ) {
 			for( int col = firstCol; col < lastCol && col < layer[row].length; col++ ) {
 				int tile = layer[row][col];
-				if( tile != 0 ) {
-					if( blended == blendedTiles.contains( tile ) ) {
-						TextureRegion reg = atlas.getRegion( tile );
-						if( reg != null ) {
-							if( !isSimpleTileAtlas ) {
-								AtlasRegion region = (AtlasRegion)reg;
-								cache.add( region, col * unitsPerTileX, (layer.length - row - 1) * unitsPerTileY, (float)region.offsetX * unitsPerTileX / tileWidth,
-										(float)(region.offsetY) * unitsPerTileY / (float)tileHeight, region.packedWidth, region.packedHeight, unitsPerTileX
-												/ (float)tileWidth, unitsPerTileY / (float)tileHeight, (region.rotate) ? 90 : 0 );
-							} else {
-								cache.add( reg, col * unitsPerTileX, (layer.length - row - 1) * unitsPerTileY, 0, 0, reg.getRegionWidth(), reg.getRegionHeight(),
-										unitsPerTileX / tileWidth, unitsPerTileY / tileHeight, 0 );
-							}
+				if( tile != 0 && blended == blendedTiles.contains( tile ) ) {
+					TextureRegion reg = atlas.getRegion( tile );
+					if( reg != null ) {
+						if( !isSimpleTileAtlas ) {
+							AtlasRegion region = (AtlasRegion)reg;
+							cache.add( region, col * unitsPerTileX, (layer.length - row - 1) * unitsPerTileY, (float)region.offsetX * unitsPerTileX / tileWidth,
+									(float)(region.offsetY) * unitsPerTileY / (float)tileHeight, region.packedWidth, region.packedHeight, unitsPerTileX
+											/ (float)tileWidth, unitsPerTileY / (float)tileHeight, (region.rotate) ? 90 : 0 );
+						} else {
+							cache.add( reg, col * unitsPerTileX, (layer.length - row - 1) * unitsPerTileY, 0, 0, reg.getRegionWidth(), reg.getRegionHeight(),
+									unitsPerTileX / tileWidth, unitsPerTileY / tileHeight, 0 );
 						}
 					}
 				}
@@ -468,16 +471,6 @@ public class UTileMapRenderer implements Disposable {
 
 	public int getMapWidthUnits() {
 		return mapWidthUnits;
-	}
-
-	private static int parseIntWithDefault( String string, int defaultValue ) {
-		if( string == null )
-			return defaultValue;
-		try {
-			return Integer.parseInt( string );
-		} catch( NumberFormatException e ) {
-			return defaultValue;
-		}
 	}
 
 	/** Releases all resources held by this TiledMapRenderer. */
