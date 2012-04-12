@@ -42,7 +42,7 @@ import com.bitfire.uracer.game.physics.Box2DFactory;
 import com.bitfire.uracer.utils.AMath;
 import com.bitfire.uracer.utils.Convert;
 
-public class GameWorld {
+public final class GameWorld {
 	// statistics
 	public static int TotalMeshes = 0;
 
