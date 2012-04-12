@@ -1,6 +1,5 @@
-package com.bitfire.uracer.screen;
+package com.bitfire.uracer;
 
-import com.bitfire.uracer.Screen;
 import com.bitfire.uracer.carsimulation.CarModel;
 import com.bitfire.uracer.game.Game;
 import com.bitfire.uracer.game.GameDifficulty;
