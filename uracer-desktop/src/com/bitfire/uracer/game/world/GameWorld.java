@@ -99,7 +99,7 @@ public final class GameWorld {
 
 		// initialize tilemap utils
 		mapUtils = new MapUtils( map, worldSizeScaledPx, scalingStrategy.invTileMapZoomFactor );
-		ModelFactory.init( strategy, mapUtils );
+		ModelFactory.init( strategy );
 
 		createMeshes();
 		loadPlayer( map );

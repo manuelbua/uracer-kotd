@@ -13,7 +13,6 @@ import com.badlogic.gdx.graphics.g3d.model.still.StillModel;
 import com.badlogic.gdx.utils.LongMap;
 import com.bitfire.uracer.Art;
 import com.bitfire.uracer.ScalingStrategy;
-import com.bitfire.uracer.game.world.MapUtils;
 import com.bitfire.uracer.utils.Hash;
 
 public final class ModelFactory {
@@ -26,7 +25,7 @@ public final class ModelFactory {
 	private ModelFactory() {
 	}
 
-	public static void init( ScalingStrategy strategy, MapUtils mapUtils ) {
+	public static void init( ScalingStrategy strategy ) {
 		ModelFactory.scalingStrategy = strategy;
 	}
 
