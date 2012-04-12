@@ -38,7 +38,6 @@ import com.bitfire.uracer.game.models.OrthographicAlignedStillModel;
 import com.bitfire.uracer.game.models.TrackTrees;
 import com.bitfire.uracer.game.models.TrackWalls;
 import com.bitfire.uracer.game.models.TreeStillModel;
-import com.bitfire.uracer.game.physics.Box2DFactory;
 import com.bitfire.uracer.utils.AMath;
 import com.bitfire.uracer.utils.Convert;
 

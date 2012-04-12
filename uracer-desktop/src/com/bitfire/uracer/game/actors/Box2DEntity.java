@@ -1,4 +1,4 @@
-package com.bitfire.uracer.game.physics;
+package com.bitfire.uracer.game.actors;
 
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.math.MathUtils;
@@ -11,10 +11,11 @@ import com.bitfire.uracer.game.GameEvents;
 import com.bitfire.uracer.game.data.GameData;
 import com.bitfire.uracer.game.events.GameRendererEvent;
 import com.bitfire.uracer.game.events.GameRendererEvent.Type;
+import com.bitfire.uracer.game.physics.SubframeInterpolableEntity;
 import com.bitfire.uracer.utils.AMath;
 import com.bitfire.uracer.utils.Convert;
 
-public abstract class Box2dEntity extends SubframeInterpolableEntity {
+public abstract class Box2DEntity extends SubframeInterpolableEntity {
 	protected Body body;
 	protected World world;
 
@@ -37,13 +38,13 @@ public abstract class Box2dEntity extends SubframeInterpolableEntity {
 	public abstract void onRender( SpriteBatch batch );
 	public abstract void onDebug( SpriteBatch batch );
 
-	public Box2dEntity(World world) {
+	public Box2DEntity(World world) {
 		GameEvents.gameRenderer.addListener( gameRendererEvent, GameRendererEvent.Type.BatchBeforeMeshes, GameRendererEvent.Order.DEFAULT );
 		GameEvents.gameRenderer.addListener( gameRendererEvent, GameRendererEvent.Type.BatchDebug, GameRendererEvent.Order.DEFAULT );
 		this.world = world;
 	}
 
-//	public Box2dEntity(GameRendererEvent.Order orderForBatchBeforeMeshes, GameRendererEvent.Order orderForDebug) {
+//	public Box2DEntity(GameRendererEvent.Order orderForBatchBeforeMeshes, GameRendererEvent.Order orderForDebug) {
 //		GameRenderer.event.addListener( gameRendererEvent, GameRendererEvent.Type.BatchBeforeMeshes, orderForBatchBeforeMeshes );
 //		GameRenderer.event.addListener( gameRendererEvent, GameRendererEvent.Type.BatchDebug, orderForDebug );
 //	}

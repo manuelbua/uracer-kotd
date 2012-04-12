@@ -19,13 +19,12 @@ import com.bitfire.uracer.carsimulation.CarSimulator;
 import com.bitfire.uracer.game.GameEvents;
 import com.bitfire.uracer.game.Input;
 import com.bitfire.uracer.game.data.GameData;
-import com.bitfire.uracer.game.physics.Box2dEntity;
 import com.bitfire.uracer.utils.AMath;
 import com.bitfire.uracer.utils.BatchUtils;
 import com.bitfire.uracer.utils.Convert;
 import com.bitfire.uracer.utils.VMath;
 
-public class Car extends Box2dEntity {
+public class Car extends Box2DEntity {
 	protected CarRenderer graphics;
 
 	private CarDescriptor carDesc;
