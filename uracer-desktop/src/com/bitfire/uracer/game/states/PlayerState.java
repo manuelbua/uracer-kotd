@@ -7,7 +7,6 @@ import com.bitfire.uracer.game.actors.GhostCar;
 import com.bitfire.uracer.game.data.GameData;
 import com.bitfire.uracer.game.events.GameLogicEvent;
 import com.bitfire.uracer.game.events.PlayerStateEvent;
-import com.bitfire.uracer.game.world.MapUtils;
 import com.bitfire.uracer.utils.AMath;
 
 public final class PlayerState {
@@ -58,14 +57,14 @@ public final class PlayerState {
 		}
 	}
 
-	public void update( MapUtils mapUtils ) {
+	public void update() {
 		if( car != null ) {
 			// onTileChanged
 			lastTileX = currTileX;
 			lastTileY = currTileY;
 
 			// compute car's tile position
-			tilePosition.set( mapUtils.pxToTile( car.state().position.x, car.state().position.y ) );
+			tilePosition.set( GameData.Environment.gameWorld.pxToTile( car.state().position.x, car.state().position.y ) );
 
 			currTileX = (int)tilePosition.x;
 			currTileY = (int)tilePosition.y;

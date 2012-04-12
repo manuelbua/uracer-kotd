@@ -34,6 +34,11 @@ import com.bitfire.uracer.ScalingStrategy;
 import com.bitfire.uracer.game.Box2DFactory;
 import com.bitfire.uracer.game.collisions.CollisionFilters;
 import com.bitfire.uracer.game.data.GameData;
+import com.bitfire.uracer.game.world.WorldDefs.LayerProperties;
+import com.bitfire.uracer.game.world.WorldDefs.ObjectGroup;
+import com.bitfire.uracer.game.world.WorldDefs.ObjectProperties;
+import com.bitfire.uracer.game.world.WorldDefs.TileLayer;
+import com.bitfire.uracer.game.world.WorldDefs.TileProperties;
 import com.bitfire.uracer.game.world.models.ModelFactory;
 import com.bitfire.uracer.game.world.models.OrthographicAlignedStillModel;
 import com.bitfire.uracer.game.world.models.TrackTrees;
@@ -42,14 +47,18 @@ import com.bitfire.uracer.game.world.models.TreeStillModel;
 import com.bitfire.uracer.utils.AMath;
 import com.bitfire.uracer.utils.Convert;
 
+/** Encapsulates the game's world. Yay!
+ *
+ * @author bmanuel */
 public final class GameWorld {
+
 	// statistics
 	public static int TotalMeshes = 0;
 
 	// level data
 	public String name = "no-level-loaded";
 	public TiledMap map = null;
-	public MapUtils mapUtils = null;
+	private MapUtils mapUtils = null;
 	public Vector2 worldSizeScaledPx = null, worldSizeScaledMt = null, worldSizeTiles = null;
 	private ScalingStrategy scalingStrategy;
 	private World b2dWorld;
@@ -117,14 +126,14 @@ public final class GameWorld {
 		TotalMeshes = 0;
 
 		// static meshes layer
-		if( mapUtils.hasObjectGroup( MapUtils.LayerStaticMeshes ) ) {
-			TiledObjectGroup group = mapUtils.getObjectGroup( MapUtils.LayerStaticMeshes );
+		if( mapUtils.hasObjectGroup( ObjectGroup.StaticMeshes ) ) {
+			TiledObjectGroup group = mapUtils.getObjectGroup( ObjectGroup.StaticMeshes );
 			for( int i = 0; i < group.objects.size(); i++ ) {
 				TiledObject o = group.objects.get( i );
 
 				float scale = 1f;
-				if( o.properties.get( MapUtils.MeshScale ) != null ) {
-					scale = Float.parseFloat( o.properties.get( MapUtils.MeshScale ) );
+				if( o.properties.get( ObjectProperties.MeshScale.mnemonic ) != null ) {
+					scale = Float.parseFloat( o.properties.get( ObjectProperties.MeshScale.mnemonic ) );
 				}
 
 				OrthographicAlignedStillModel mesh = ModelFactory.create( o.type, o.x, o.y, scale );
@@ -150,14 +159,14 @@ public final class GameWorld {
 		// the player with the found tile coordinates
 		float halfTile = map.tileWidth / 2;
 
-		TiledLayer layerTrack = mapUtils.getLayer( MapUtils.LayerTrack );
+		TiledLayer layerTrack = mapUtils.getLayer( TileLayer.Track );
 		Vector2 start = new Vector2();
 		int startTileX = 0, startTileY = 0;
 
 		for( int y = 0; y < map.height; y++ ) {
 			for( int x = 0; x < map.width; x++ ) {
 				int id = layerTrack.tiles[y][x];
-				String type = map.getTileProperty( id, "type" );
+				String type = map.getTileProperty( id, TileProperties.Type.mnemonic );
 				if( type == null ) {
 					continue;
 				}
@@ -171,7 +180,7 @@ public final class GameWorld {
 			}
 		}
 
-		String direction = layerTrack.properties.get( "start" );
+		String direction = layerTrack.properties.get( LayerProperties.Start.mnemonic );
 		float startOrient = mapUtils.orientationFromDirection( direction );
 
 		// set player data
@@ -182,7 +191,7 @@ public final class GameWorld {
 	}
 
 	private void createLights() {
-		if( !mapUtils.hasObjectGroup( MapUtils.LayerLights ) ) {
+		if( !mapUtils.hasObjectGroup( ObjectGroup.Lights ) ) {
 			this.nightMode = false;
 			return;
 		}
@@ -213,7 +222,7 @@ public final class GameWorld {
 		playerHeadlights.setMaskBits( CollisionFilters.CategoryTrackWalls );
 
 		Vector2 pos = new Vector2();
-		TiledObjectGroup group = mapUtils.getObjectGroup( MapUtils.LayerLights );
+		TiledObjectGroup group = mapUtils.getObjectGroup( ObjectGroup.Lights );
 		for( int i = 0; i < group.objects.size(); i++ ) {
 			c.set(
 			// MathUtils.random(0,1),
@@ -237,7 +246,7 @@ public final class GameWorld {
 	public List<OrthographicAlignedStillModel> createWalls() {
 		List<OrthographicAlignedStillModel> models = null;
 
-		if( mapUtils.hasObjectGroup( MapUtils.LayerWalls ) ) {
+		if( mapUtils.hasObjectGroup( ObjectGroup.Walls ) ) {
 			Vector2 fromMt = new Vector2();
 			Vector2 toMt = new Vector2();
 			Vector2 offsetMt = new Vector2();
@@ -248,7 +257,7 @@ public final class GameWorld {
 			ta.vWrap = TextureWrap.Repeat.getGLEnum();
 			Material mat = new Material( "trackWall", ta );
 
-			TiledObjectGroup group = mapUtils.getObjectGroup( MapUtils.LayerWalls );
+			TiledObjectGroup group = mapUtils.getObjectGroup( ObjectGroup.Walls );
 			if( group.objects.size() > 0 ) {
 				models = new ArrayList<OrthographicAlignedStillModel>( group.objects.size() );
 
@@ -399,7 +408,7 @@ public final class GameWorld {
 	private List<TreeStillModel> createTrees() {
 		List<TreeStillModel> models = null;
 
-		if( mapUtils.hasObjectGroup( MapUtils.LayerTrees ) ) {
+		if( mapUtils.hasObjectGroup( ObjectGroup.Trees ) ) {
 
 			// We want to differentiate tree meshes as much as we can
 			// rotation will helps immensely, but non-orthogonal rotations
@@ -414,7 +423,7 @@ public final class GameWorld {
 			treeRotations[3] = 270;
 
 			MathUtils.random.setSeed( Long.MAX_VALUE );
-			TiledObjectGroup group = mapUtils.getObjectGroup( MapUtils.LayerTrees );
+			TiledObjectGroup group = mapUtils.getObjectGroup( ObjectGroup.Trees );
 
 			if( group.objects.size() > 0 ) {
 
@@ -424,8 +433,8 @@ public final class GameWorld {
 					TiledObject o = group.objects.get( i );
 
 					float scale = 1f;
-					if( o.properties.get( MapUtils.MeshScale ) != null ) {
-						scale = Float.parseFloat( o.properties.get( MapUtils.MeshScale ) );
+					if( o.properties.get( ObjectProperties.MeshScale.mnemonic ) != null ) {
+						scale = Float.parseFloat( o.properties.get( ObjectProperties.MeshScale.mnemonic ) );
 					}
 
 					TreeStillModel model = null;
@@ -479,5 +488,27 @@ public final class GameWorld {
 
 	public ConeLight getPlayerHeadLights() {
 		return playerHeadlights;
+	}
+
+	// helpers from maputils
+
+	public Vector2 positionFor( Vector2 position ) {
+		return mapUtils.positionFor( position );
+	}
+
+	public Vector2 pxToTile( float x, float y ) {
+		return mapUtils.pxToTile( x, y );
+	}
+
+	public float getTileSizeScaled() {
+		return mapUtils.scaledTilesize;
+	}
+
+	public float getTileSizeInvScaled() {
+		return mapUtils.invScaledTilesize;
+	}
+
+	public TiledLayer getLayer( TileLayer layer ) {
+		return mapUtils.getLayer( layer );
 	}
 }

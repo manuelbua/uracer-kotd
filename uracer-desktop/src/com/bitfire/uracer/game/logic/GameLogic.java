@@ -31,7 +31,7 @@ import com.bitfire.uracer.game.messager.Message.MessageType;
 import com.bitfire.uracer.game.states.LapState;
 import com.bitfire.uracer.game.states.PlayerState;
 import com.bitfire.uracer.game.world.GameWorld;
-import com.bitfire.uracer.game.world.MapUtils;
+import com.bitfire.uracer.game.world.WorldDefs.TileLayer;
 import com.bitfire.uracer.utils.AMath;
 import com.bitfire.uracer.utils.BoxedFloat;
 import com.bitfire.uracer.utils.BoxedFloatAccessor;
@@ -44,7 +44,6 @@ public class GameLogic implements CarEvent.Listener, PlayerStateEvent.Listener {
 
 	private DirectorController controller = null;
 	private GameWorld world = null;
-	private MapUtils mapUtils = null;
 
 	// replay
 	private Recorder recorder = null;
@@ -52,7 +51,6 @@ public class GameLogic implements CarEvent.Listener, PlayerStateEvent.Listener {
 	public GameLogic() {
 		GameEvents.gameLogic.source = this;
 		this.world = GameData.Environment.gameWorld;
-		mapUtils = world.mapUtils;
 
 		recorder = new Recorder();
 		timeMultiplier.value = 1f;
@@ -61,8 +59,7 @@ public class GameLogic implements CarEvent.Listener, PlayerStateEvent.Listener {
 		GameEvents.carEvent.addListener( this );
 		GameData.States.playerState.car.setTransform( world.playerStartPos, world.playerStartOrient );
 
-		controller = new DirectorController( Config.Graphics.CameraInterpolationMode, Director.halfViewport, world.worldSizeScaledPx,
-				world.worldSizeTiles );
+		controller = new DirectorController( Config.Graphics.CameraInterpolationMode, Director.halfViewport, world.worldSizeScaledPx, world.worldSizeTiles );
 	}
 
 	boolean timeModulation = false, timeModulationBusy = false;
@@ -109,7 +106,7 @@ public class GameLogic implements CarEvent.Listener, PlayerStateEvent.Listener {
 			}
 		}
 
-		GameData.States.playerState.update( mapUtils );
+		GameData.States.playerState.update();
 		GameData.States.driftState.update();
 		updateCarFriction();
 
@@ -176,15 +173,16 @@ public class GameLogic implements CarEvent.Listener, PlayerStateEvent.Listener {
 
 		if( tilePosition.x >= 0 && tilePosition.x < world.map.width && tilePosition.y >= 0 && tilePosition.y < world.map.height ) {
 			// compute realsize-based pixel offset car-tile (top-left origin)
-			float tsx = tilePosition.x * mapUtils.scaledTilesize;
-			float tsy = tilePosition.y * mapUtils.scaledTilesize;
+			float scaledTileSize = GameData.Environment.gameWorld.getTileSizeScaled();
+			float tsx = tilePosition.x * scaledTileSize;
+			float tsy = tilePosition.y * scaledTileSize;
 			offset.set( player.car.state().position );
 			offset.y = world.worldSizeScaledPx.y - offset.y;
 			offset.x = offset.x - tsx;
 			offset.y = offset.y - tsy;
-			offset.mul( mapUtils.invScaledTilesize ).mul( world.map.tileWidth );
+			offset.mul( GameData.Environment.gameWorld.getTileSizeInvScaled() ).mul( world.map.tileWidth );
 
-			TiledLayer layerTrack = mapUtils.getLayer( MapUtils.LayerTrack );
+			TiledLayer layerTrack = GameData.Environment.gameWorld.getLayer( TileLayer.Track );
 			int id = layerTrack.tiles[(int)tilePosition.y][(int)tilePosition.x] - 1;
 
 			// int xOnMap = (id %4) * 224 + (int)offset.x;
@@ -249,12 +247,12 @@ public class GameLogic implements CarEvent.Listener, PlayerStateEvent.Listener {
 
 						if( lastRecordedLapId == best.id ) {
 							lapState.setLastTrackTimeSeconds( best.trackTimeSeconds );
-							GameData.Environment.messager.show( "-" + NumberString.format( worst.trackTimeSeconds - best.trackTimeSeconds ) + " seconds!", 3f, MessageType.Good,
-									MessagePosition.Top, MessageSize.Big );
+							GameData.Environment.messager.show( "-" + NumberString.format( worst.trackTimeSeconds - best.trackTimeSeconds ) + " seconds!", 3f,
+									MessageType.Good, MessagePosition.Top, MessageSize.Big );
 						} else {
 							lapState.setLastTrackTimeSeconds( worst.trackTimeSeconds );
-							GameData.Environment.messager.show( "+" + NumberString.format( worst.trackTimeSeconds - best.trackTimeSeconds ) + " seconds", 3f, MessageType.Bad,
-									MessagePosition.Top, MessageSize.Big );
+							GameData.Environment.messager.show( "+" + NumberString.format( worst.trackTimeSeconds - best.trackTimeSeconds ) + " seconds", 3f,
+									MessageType.Bad, MessagePosition.Top, MessageSize.Big );
 						}
 
 						player.ghost.setReplay( best );

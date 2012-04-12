@@ -9,18 +9,12 @@ import com.badlogic.gdx.graphics.g2d.tiled.TiledLayer;
 import com.badlogic.gdx.graphics.g2d.tiled.TiledMap;
 import com.badlogic.gdx.graphics.g2d.tiled.TiledObjectGroup;
 import com.badlogic.gdx.math.Vector2;
+import com.bitfire.uracer.game.world.WorldDefs.ObjectGroup;
+import com.bitfire.uracer.game.world.WorldDefs.TileLayer;
 import com.bitfire.uracer.utils.Convert;
 import com.bitfire.uracer.utils.VMath;
 
 public final class MapUtils {
-	public static final String MeshScale = "scale";
-
-	// known layer names
-	public static final String LayerTrack = "track";
-	public static final String LayerLights = "lights";
-	public static final String LayerStaticMeshes = "static-meshes";
-	public static final String LayerTrees = "trees";
-	public static final String LayerWalls = "walls";
 
 	// cache
 	public static final Map<String, TiledLayer> cachedLayers = new HashMap<String, TiledLayer>( 10 );
@@ -37,46 +31,46 @@ public final class MapUtils {
 		invScaledTilesize = 1f / scaledTilesize;
 	}
 
-	public TiledObjectGroup getObjectGroup( String groupName ) {
-		TiledObjectGroup cached = cachedGroups.get( groupName );
+	public TiledObjectGroup getObjectGroup( ObjectGroup group ) {
+		TiledObjectGroup cached = cachedGroups.get( group.mnemonic );
 		if( cached == null ) {
 			for( int i = 0; i < map.objectGroups.size(); i++ ) {
-				TiledObjectGroup group = map.objectGroups.get( i );
-				if( group.name.equals( groupName ) ) {
-					cached = group;
+				TiledObjectGroup objgroup = map.objectGroups.get( i );
+				if( objgroup.name.equals( group.mnemonic ) ) {
+					cached = objgroup;
 					break;
 				}
 			}
 
-			cachedGroups.put( groupName, cached );
+			cachedGroups.put( group.mnemonic, cached );
 		}
 
 		return cached;
 	}
 
-	public boolean hasObjectGroup( String groupName ) {
-		return getObjectGroup( groupName ) != null;
+	public boolean hasObjectGroup( ObjectGroup group ) {
+		return getObjectGroup( group ) != null;
 	}
 
-	public TiledLayer getLayer( String layerName ) {
-		TiledLayer cached = cachedLayers.get( layerName );
+	public TiledLayer getLayer( TileLayer layer ) {
+		TiledLayer cached = cachedLayers.get( layer.mnemonic );
 		if( cached == null ) {
 			for( int i = 0; i < map.layers.size(); i++ ) {
-				TiledLayer layer = map.layers.get( i );
-				if( layer.name.equals( layerName ) ) {
-					cached = layer;
+				TiledLayer tilelayer = map.layers.get( i );
+				if( tilelayer.name.equals( layer.mnemonic ) ) {
+					cached = tilelayer;
 					break;
 				}
 			}
 
-			cachedLayers.put( layerName, cached );
+			cachedLayers.put( layer.mnemonic, cached );
 		}
 
 		return cached;
 	}
 
-	public boolean hasLayer( String layerName ) {
-		return getLayer( layerName ) != null;
+	public boolean hasLayer( TileLayer layer ) {
+		return getLayer( layer ) != null;
 	}
 
 	public static List<Vector2> extractPolyData( String encoded ) {

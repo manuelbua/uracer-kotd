@@ -10,7 +10,7 @@ public class GameScreen extends Screen {
 	private boolean quit = false;
 
 	public GameScreen() {
-		game = new Game( "tutorial-4", GameDifficulty.Hard, CarAspect.OldSkool, new CarModel().toModel2() );
+		game = new Game( "tutorial-3", GameDifficulty.Hard, CarAspect.OldSkool, new CarModel().toModel2() );
 	}
 
 	@Override
