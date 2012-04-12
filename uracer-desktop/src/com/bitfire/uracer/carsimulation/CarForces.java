@@ -30,8 +30,7 @@ public final class CarForces {
 		return this;
 	}
 
-	public CarForces newCopy() {
-		CarForces f = new CarForces( this );
-		return f;
-	}
+//	public CarForces newCopy() {
+//		return new CarForces( this );
+//	}
 }

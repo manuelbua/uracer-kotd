@@ -7,7 +7,6 @@ import com.badlogic.gdx.physics.box2d.World;
 import com.bitfire.uracer.Config;
 import com.bitfire.uracer.ScalingStrategy;
 import com.bitfire.uracer.game.GameDifficulty;
-import com.bitfire.uracer.game.GameWorld;
 import com.bitfire.uracer.game.GameplaySettings;
 import com.bitfire.uracer.game.collisions.GameContactListener;
 import com.bitfire.uracer.game.hud.HudLabel;
@@ -15,6 +14,7 @@ import com.bitfire.uracer.game.hud.HudLabelAccessor;
 import com.bitfire.uracer.game.messager.Message;
 import com.bitfire.uracer.game.messager.MessageAccessor;
 import com.bitfire.uracer.game.messager.Messager;
+import com.bitfire.uracer.game.world.GameWorld;
 import com.bitfire.uracer.utils.BoxedFloat;
 import com.bitfire.uracer.utils.BoxedFloatAccessor;
 

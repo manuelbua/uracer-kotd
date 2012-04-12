@@ -1,4 +1,4 @@
-package com.bitfire.uracer.game;
+package com.bitfire.uracer.game.world;
 
 import java.util.ArrayList;
 import java.util.HashMap;

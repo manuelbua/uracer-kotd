@@ -15,11 +15,11 @@ public class CarRenderer {
 
 	public CarRenderer( CarModel model, TextureRegion region ) {
 		// aspect
+		this.region = region;
 		facet = new Sprite();
 		facet.setRegion( region );
 		facet.setSize( Convert.mt2px( model.width ), Convert.mt2px( model.length ) );
 		facet.setOrigin( facet.getWidth() / 2, facet.getHeight() / 2 );
-		this.region = region;
 
 		// ambient occlusion
 		ambientOcclusion = new Sprite();

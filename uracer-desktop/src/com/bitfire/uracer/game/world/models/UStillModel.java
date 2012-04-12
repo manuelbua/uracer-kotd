@@ -1,4 +1,4 @@
-package com.bitfire.uracer.game.models;
+package com.bitfire.uracer.game.world.models;
 
 import com.badlogic.gdx.graphics.g3d.model.still.StillModel;
 import com.badlogic.gdx.graphics.g3d.model.still.StillSubMesh;

@@ -1,4 +1,4 @@
-package com.bitfire.uracer.game;
+package com.bitfire.uracer.game.world;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -31,13 +31,14 @@ import com.badlogic.gdx.physics.box2d.World;
 import com.bitfire.uracer.Art;
 import com.bitfire.uracer.Config;
 import com.bitfire.uracer.ScalingStrategy;
+import com.bitfire.uracer.game.Box2DFactory;
 import com.bitfire.uracer.game.collisions.CollisionFilters;
 import com.bitfire.uracer.game.data.GameData;
-import com.bitfire.uracer.game.models.ModelFactory;
-import com.bitfire.uracer.game.models.OrthographicAlignedStillModel;
-import com.bitfire.uracer.game.models.TrackTrees;
-import com.bitfire.uracer.game.models.TrackWalls;
-import com.bitfire.uracer.game.models.TreeStillModel;
+import com.bitfire.uracer.game.world.models.ModelFactory;
+import com.bitfire.uracer.game.world.models.OrthographicAlignedStillModel;
+import com.bitfire.uracer.game.world.models.TrackTrees;
+import com.bitfire.uracer.game.world.models.TrackWalls;
+import com.bitfire.uracer.game.world.models.TreeStillModel;
 import com.bitfire.uracer.utils.AMath;
 import com.bitfire.uracer.utils.Convert;
 

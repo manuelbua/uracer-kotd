@@ -1,4 +1,4 @@
-package com.bitfire.uracer.game.models;
+package com.bitfire.uracer.game.world.models;
 
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.g3d.materials.Material;
@@ -8,7 +8,7 @@ import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.math.Vector3;
 import com.badlogic.gdx.math.collision.BoundingBox;
 import com.bitfire.uracer.ScalingStrategy;
-import com.bitfire.uracer.game.MapUtils;
+import com.bitfire.uracer.game.world.MapUtils;
 import com.bitfire.uracer.utils.ShaderLoader;
 
 /** The model is expected to follow the z-up convention.

@@ -1,4 +1,4 @@
-package com.bitfire.uracer.game.models;
+package com.bitfire.uracer.game.world.models;
 
 import java.util.List;
 

@@ -1,4 +1,4 @@
-package com.bitfire.uracer.game.models;
+package com.bitfire.uracer.game.world.models;
 
 import java.io.IOException;
 import java.io.InputStream;
@@ -13,7 +13,7 @@ import com.badlogic.gdx.graphics.g3d.model.still.StillModel;
 import com.badlogic.gdx.utils.LongMap;
 import com.bitfire.uracer.Art;
 import com.bitfire.uracer.ScalingStrategy;
-import com.bitfire.uracer.game.MapUtils;
+import com.bitfire.uracer.game.world.MapUtils;
 import com.bitfire.uracer.utils.Hash;
 
 public final class ModelFactory {

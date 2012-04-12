@@ -1,4 +1,4 @@
-package com.bitfire.uracer.game.models;
+package com.bitfire.uracer.game.world.models;
 
 import com.badlogic.gdx.graphics.Mesh;
 import com.badlogic.gdx.graphics.g3d.materials.Material;
@@ -7,7 +7,7 @@ import com.badlogic.gdx.graphics.g3d.model.still.StillSubMesh;
 import com.badlogic.gdx.math.Matrix4;
 import com.badlogic.gdx.math.collision.BoundingBox;
 import com.bitfire.uracer.ScalingStrategy;
-import com.bitfire.uracer.game.MapUtils;
+import com.bitfire.uracer.game.world.MapUtils;
 
 public class TreeStillModel extends OrthographicAlignedStillModel {
 	public Mesh leaves, trunk;
