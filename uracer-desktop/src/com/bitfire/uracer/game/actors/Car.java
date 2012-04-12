@@ -15,7 +15,6 @@ import com.bitfire.uracer.carsimulation.CarForces;
 import com.bitfire.uracer.carsimulation.CarInput;
 import com.bitfire.uracer.carsimulation.CarInputMode;
 import com.bitfire.uracer.carsimulation.CarModel;
-import com.bitfire.uracer.carsimulation.CarSimulator;
 import com.bitfire.uracer.game.GameEvents;
 import com.bitfire.uracer.game.Input;
 import com.bitfire.uracer.game.data.GameData;
