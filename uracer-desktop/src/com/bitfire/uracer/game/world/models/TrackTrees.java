@@ -5,15 +5,19 @@ import java.util.List;
 import com.badlogic.gdx.graphics.OrthographicCamera;
 import com.badlogic.gdx.graphics.PerspectiveCamera;
 import com.badlogic.gdx.math.Matrix4;
+import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.math.Vector3;
 import com.bitfire.uracer.Director;
+import com.bitfire.uracer.game.world.MapUtils;
 import com.bitfire.uracer.utils.Convert;
 
 public class TrackTrees {
 	public final List<TreeStillModel> models;
 	private final boolean owned;
+	private final MapUtils mapUtils;
 
-	public TrackTrees( List<TreeStillModel> models, boolean owned ) {
+	public TrackTrees( MapUtils mapUtils, List<TreeStillModel> models, boolean owned ) {
+		this.mapUtils = mapUtils;
 		this.models = models;
 		this.owned = owned;
 	}
@@ -35,8 +39,8 @@ public class TrackTrees {
 	private Vector3 tmpvec = new Vector3();
 	private Matrix4 tmpmtx = new Matrix4();
 	private Matrix4 tmpmtx2 = new Matrix4();
+	private Vector2 pospx = new Vector2();
 
-	// private Vector3[] vtrans = new Vector3[8];
 	public void transform( PerspectiveCamera camPersp, OrthographicCamera camOrtho ) {
 		float meshZ = -(camPersp.far - camPersp.position.z);
 
@@ -46,8 +50,10 @@ public class TrackTrees {
 			Matrix4 transf = m.transformed;
 
 			// compute position
-			tmpvec.x = Convert.scaledPixels( m.positionOffsetPx.x - camOrtho.position.x ) + Director.halfViewport.x + m.positionPx.x;
-			tmpvec.y = Convert.scaledPixels( m.positionOffsetPx.y + camOrtho.position.y ) + Director.halfViewport.y - m.positionPx.y;
+			pospx.set(m.positionPx);
+			pospx.set(mapUtils.positionFor( pospx ));
+			tmpvec.x = Convert.scaledPixels( m.positionOffsetPx.x - camOrtho.position.x ) + Director.halfViewport.x + pospx.x;
+			tmpvec.y = Convert.scaledPixels( m.positionOffsetPx.y + camOrtho.position.y ) + Director.halfViewport.y - pospx.y;
 			tmpvec.z = 1;
 
 			// transform to world space

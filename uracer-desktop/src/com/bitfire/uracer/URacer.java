@@ -60,14 +60,18 @@ public class URacer implements ApplicationListener {
 		running = true;
 		oneOnOneBillion = 1.0f / 1000000000.0f;
 		temporalAliasing = 0;
-		timeAccumSecs = Config.Physics.PhysicsDt;
 		timeMultiplier = Config.Physics.PhysicsTimeMultiplier;
+
+		// ensures the first iteration ever is going to at least perform one single tick
+		lastDeltaTimeSec = MaxDeltaTime;
+		timeAccumSecs = Config.Physics.PhysicsDt;
+
 
 		setScreen( new GameScreen() );
 	}
 
 	// private long lastTimeNs = 0;
-	private static float lastDeltaTimeSec = MaxDeltaTime;
+	private static float lastDeltaTimeSec;
 
 	// private WindowedMean mean = new WindowedMean( 120 );
 	// NOTE: this render() method will get called by JoglGraphics when screen.tick will ask to finish!!

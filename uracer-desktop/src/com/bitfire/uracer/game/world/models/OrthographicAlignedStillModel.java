@@ -8,7 +8,6 @@ import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.math.Vector3;
 import com.badlogic.gdx.math.collision.BoundingBox;
 import com.bitfire.uracer.ScalingStrategy;
-import com.bitfire.uracer.game.world.MapUtils;
 import com.bitfire.uracer.utils.ShaderLoader;
 
 /** The model is expected to follow the z-up convention.
@@ -38,7 +37,6 @@ public class OrthographicAlignedStillModel {
 	// position
 	public Vector2 positionOffsetPx = new Vector2( 0, 0 );
 	public Vector2 positionPx = new Vector2();
-	private MapUtils mapUtils;
 
 	// explicitle initialize the static iShader member
 	// (Android: statics need to be re-initialized!)
@@ -73,8 +71,7 @@ public class OrthographicAlignedStillModel {
 		}
 	}
 
-	public OrthographicAlignedStillModel( MapUtils mapUtils, StillModel aModel, Material material, ScalingStrategy strategy ) {
-		this.mapUtils = mapUtils;
+	public OrthographicAlignedStillModel( StillModel aModel, Material material, ScalingStrategy strategy ) {
 		loadShaders();
 
 		try {
@@ -112,7 +109,8 @@ public class OrthographicAlignedStillModel {
 	 * @param posPxX
 	 * @param posPxY */
 	public final void setPosition( float posPxX, float posPxY ) {
-		positionPx.set( mapUtils.positionFor( posPxX, posPxY ) );
+		// positionPx.set( GameData.Environment.gameWorld.positionFor( posPxX, posPxY ) );
+		positionPx.set( posPxX, posPxY );
 	}
 
 	public float iRotationAngle;

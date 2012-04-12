@@ -149,7 +149,7 @@ public final class GameWorld {
 
 		// trees
 		List<TreeStillModel> trees = createTrees();
-		trackTrees = new TrackTrees( trees, true );
+		trackTrees = new TrackTrees( mapUtils, trees, true );
 
 		TotalMeshes = staticMeshes.size() + trackWalls.count() + trackTrees.count();
 	}
@@ -294,8 +294,7 @@ public final class GameWorld {
 						StillSubMesh[] subMeshes = new StillSubMesh[ 1 ];
 						subMeshes[0] = new StillSubMesh( "wall", mesh, GL10.GL_TRIANGLES );
 
-						OrthographicAlignedStillModel model = new OrthographicAlignedStillModel( mapUtils, new StillModel( subMeshes ), mat,
-								GameData.Environment.scalingStrategy );
+						OrthographicAlignedStillModel model = new OrthographicAlignedStillModel( new StillModel( subMeshes ), mat, GameData.Environment.scalingStrategy );
 
 						model.setPosition( o.x, o.y );
 						model.setScale( 1 );
@@ -494,6 +493,10 @@ public final class GameWorld {
 
 	public Vector2 positionFor( Vector2 position ) {
 		return mapUtils.positionFor( position );
+	}
+
+	public Vector2 positionFor( float x, float y ) {
+		return mapUtils.positionFor( x, y );
 	}
 
 	public Vector2 pxToTile( float x, float y ) {

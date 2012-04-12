@@ -60,6 +60,7 @@ public class GameWorldRenderer {
 		"}														\n";
 	// @formatter:on
 
+	private GameWorld world = null;
 	private Car carPlayer = null;
 	private PerspectiveCamera camPersp = null;
 	private OrthographicCamera camOrtho = null;
@@ -85,6 +86,7 @@ public class GameWorldRenderer {
 
 	public GameWorldRenderer( ScalingStrategy strategy, GameWorld world, int width, int height ) {
 		scalingStrategy = strategy;
+		this.world = world;
 		rayHandler = world.getRayHandler();
 		trackTrees = world.getTrackTrees();
 		trackWalls = world.getTrackWalls();
@@ -221,14 +223,14 @@ public class GameWorldRenderer {
 
 		treeShader.begin();
 
-		// trunk
+		// all trunks
 		for( int i = 0; i < trees.models.size(); i++ ) {
 			TreeStillModel m = trees.models.get( i );
 			treeShader.setUniformMatrix( "u_mvpMatrix", m.transformed );
 			m.trunk.render( treeShader, m.smTrunk.primitiveType );
 		}
 
-		// transparent foliage
+		// all transparent foliage
 		gl.glDisable( GL20.GL_CULL_FACE );
 		gl.glEnable( GL20.GL_BLEND );
 		gl.glBlendFunc( GL20.GL_SRC_ALPHA, GL20.GL_ONE_MINUS_SRC_ALPHA );
@@ -269,6 +271,7 @@ public class GameWorldRenderer {
 	private Vector3 tmpvec = new Vector3();
 	private Matrix4 mtx = new Matrix4();
 	private Matrix4 mtx2 = new Matrix4();
+	private Vector2 pospx = new Vector2();
 
 	private int renderOrthographicAlignedModels( GL20 gl, List<OrthographicAlignedStillModel> models ) {
 		int renderedCount = 0;
@@ -286,8 +289,10 @@ public class GameWorldRenderer {
 			submesh = m.model.subMeshes[0];
 
 			// compute position
-			tmpvec.x = Convert.scaledPixels( m.positionOffsetPx.x - camOrtho.position.x ) + Director.halfViewport.x + m.positionPx.x;
-			tmpvec.y = Convert.scaledPixels( m.positionOffsetPx.y + camOrtho.position.y ) + Director.halfViewport.y - m.positionPx.y;
+			pospx.set(m.positionPx);
+			pospx.set( world.positionFor( pospx ) );
+			tmpvec.x = Convert.scaledPixels( m.positionOffsetPx.x - camOrtho.position.x ) + Director.halfViewport.x + pospx.x;
+			tmpvec.y = Convert.scaledPixels( m.positionOffsetPx.y + camOrtho.position.y ) + Director.halfViewport.y - pospx.y;
 			tmpvec.z = 1;
 
 			// transform to world space
