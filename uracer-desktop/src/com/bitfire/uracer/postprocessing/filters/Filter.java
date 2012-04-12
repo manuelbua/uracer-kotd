@@ -43,9 +43,9 @@ public abstract class Filter<T> extends IFilter {
 	protected abstract void compute();
 
 	public interface Parameter {
-		public String mnemonic();
+		String mnemonic();
 
-		public int arrayElementSize();
+		int arrayElementSize();
 	}
 
 	public void setParam( Parameter param, float value ) {
