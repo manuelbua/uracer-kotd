@@ -7,7 +7,6 @@ import com.badlogic.gdx.physics.box2d.Body;
 import com.badlogic.gdx.physics.box2d.World;
 import com.bitfire.uracer.Config;
 import com.bitfire.uracer.entities.EntityRenderState;
-import com.bitfire.uracer.entities.SubframeInterpolableEntity;
 import com.bitfire.uracer.game.GameEvents;
 import com.bitfire.uracer.game.data.GameData;
 import com.bitfire.uracer.game.events.GameRendererEvent;
