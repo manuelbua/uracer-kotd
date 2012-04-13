@@ -21,7 +21,7 @@ public final class GameData {
 	public static Environment Environment;
 
 	// 1st
-	public static void create( GameDifficulty difficulty ) {
+	public static void create( String levelName, boolean nightMode, GameDifficulty difficulty, CarAspect carType, CarModel carModel ) {
 		Environment = new Environment( difficulty );
 
 		Tweener.init();
@@ -29,20 +29,9 @@ public final class GameData {
 		BatchUtils.init( Art.base6 );
 		Convert.init( GameData.Environment.scalingStrategy.invTileMapZoomFactor, Config.Physics.PixelsPerMeter );
 		Director.init();
-	}
 
-	// 2nd
-	public static void createStates( CarAspect carType, CarModel carModel ) {
 		States = new States( CarFactory.createPlayer( carType, carModel ) );
-	}
-
-	// 3rd
-	public static void createSystems() {
 		Systems = new Systems( Environment.b2dWorld, States.playerState.car );
-	}
-
-	// 4th
-	public static void createWorld( String levelName, boolean nightMode ) {
 		Environment.createWorld( Environment.b2dWorld, Environment.scalingStrategy, levelName, nightMode );
 	}
 

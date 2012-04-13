@@ -39,10 +39,7 @@ public class Game implements Disposable {
 	private List<Task> gameTasks = null;
 
 	public Game( String levelName, GameDifficulty difficulty, CarAspect carType, CarModel carModel ) {
-		GameData.create( difficulty );
-		GameData.createStates( carType, carModel );
-		GameData.createSystems();
-		GameData.createWorld( levelName, false );
+		GameData.create( levelName, false, difficulty, carType, carModel );
 
 		// can use GameData
 		gameLogic = new GameLogic();
