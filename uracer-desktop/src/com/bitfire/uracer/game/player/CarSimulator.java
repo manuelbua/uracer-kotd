@@ -4,8 +4,6 @@ import com.badlogic.gdx.math.MathUtils;
 import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.physics.box2d.Body;
 import com.bitfire.uracer.Config;
-import com.bitfire.uracer.carsimulation.CarDescriptor;
-import com.bitfire.uracer.carsimulation.CarInput;
 import com.bitfire.uracer.utils.AMath;
 import com.bitfire.uracer.utils.VMath;
 
