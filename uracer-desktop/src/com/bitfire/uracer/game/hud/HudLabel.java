@@ -12,7 +12,7 @@ import com.badlogic.gdx.math.Vector2;
 import com.bitfire.uracer.game.Tweener;
 import com.bitfire.uracer.game.data.GameData;
 
-public class HudLabel {
+public final class HudLabel {
 	public float x, y;
 	public float alpha;
 	public TextBounds bounds = new TextBounds();
@@ -108,7 +108,7 @@ public class HudLabel {
 		setScale( scale, true );
 	}
 
-	private final void setScale( float scale, boolean recomputeBounds ) {
+	private void setScale( float scale, boolean recomputeBounds ) {
 		this.scale = scale;
 		if( recomputeBounds ) {
 			recomputeBounds();

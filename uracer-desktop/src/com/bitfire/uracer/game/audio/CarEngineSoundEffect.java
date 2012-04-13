@@ -54,7 +54,8 @@ public final class CarEngineSoundEffect extends CarSoundEffect {
 	@Override
 	public void onReset() {
 		onStop();
-		carEnginePitchStart = carEnginePitchLast = carEnginePitchMin;
+		carEnginePitchStart = carEnginePitchMin;
+		carEnginePitchLast = carEnginePitchMin;
 		carEngine.setPitch( carEngineId, carEnginePitchStart );
 	}
 }

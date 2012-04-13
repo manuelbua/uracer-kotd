@@ -35,22 +35,30 @@ public final class CarDriftSoundEffect extends CarSoundEffect {
 		public void driftStateEvent( Type type ) {
 			switch( type ) {
 			case onBeginDrift:
-				if( driftId > -1 ) {
-					drift.stop( driftId );
-					driftId = drift.loop( 0f );
-					drift.setVolume( driftId, 0f );
-				}
-
-				doFadeIn = true;
-				doFadeOut = false;
+				onBeginDrift();
 				break;
 			case onEndDrift:
-				doFadeIn = false;
-				doFadeOut = true;
+				onEndDrift();
 				break;
 			}
 		}
 	};
+
+	private void onBeginDrift() {
+		if( driftId > -1 ) {
+			drift.stop( driftId );
+			driftId = drift.loop( 0f );
+			drift.setVolume( driftId, 0f );
+		}
+
+		doFadeIn = true;
+		doFadeOut = false;
+	}
+
+	public void onEndDrift() {
+		doFadeIn = false;
+		doFadeOut = true;
+	}
 
 	public CarDriftSoundEffect() {
 		GameEvents.driftState.addListener( driftListener );

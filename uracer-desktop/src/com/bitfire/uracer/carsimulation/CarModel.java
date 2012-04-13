@@ -40,8 +40,7 @@ public final class CarModel {
 	}
 
 	public CarModel newCopy() {
-		CarModel m = new CarModel( this );
-		return m;
+		return new CarModel( this );
 	}
 
 	public void set( CarModel other ) {

@@ -18,14 +18,14 @@ import com.bitfire.uracer.game.states.LapState;
 import com.bitfire.uracer.task.Task;
 import com.bitfire.uracer.utils.NumberString;
 
-public class Hud extends Task {
+public final class Hud extends Task {
 	private HudLabel best, curr, last;
 	private HudDebugMeter meterLatForce, meterSkidMarks, meterSmoke;
 
 	// components
 	private HudDrifting hudDrift;
 
-	private final GameRendererEvent.Listener gameRendererEvent = new GameRendererEvent.Listener() {
+	private GameRendererEvent.Listener gameRendererEvent = new GameRendererEvent.Listener() {
 		@Override
 		public void gameRendererEvent( GameRendererEvent.Type type ) {
 			SpriteBatch batch = GameEvents.gameRenderer.batch;
@@ -48,7 +48,7 @@ public class Hud extends Task {
 		}
 	};
 
-	private final GameLogicEvent.Listener gameLogicEvent = new GameLogicEvent.Listener() {
+	private GameLogicEvent.Listener gameLogicEvent = new GameLogicEvent.Listener() {
 		@Override
 		public void gameLogicEvent( com.bitfire.uracer.game.events.GameLogicEvent.Type type ) {
 			switch( type ) {
