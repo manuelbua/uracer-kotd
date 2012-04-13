@@ -19,14 +19,10 @@ public class Messager extends Task {
 		public void gameRendererEvent( Type type ) {
 			SpriteBatch batch = GameEvents.gameRenderer.batch;
 
-			if( isBusy( MessagePosition.Top ) ) {
-				currents.get( MessagePosition.Top.ordinal() ).render( batch );
-			}
-			if( isBusy( MessagePosition.Middle ) ) {
-				currents.get( MessagePosition.Middle.ordinal() ).render( batch );
-			}
-			if( isBusy( MessagePosition.Bottom ) ) {
-				currents.get( MessagePosition.Bottom.ordinal() ).render( batch );
+			for( MessagePosition group : MessagePosition.values() ) {
+				if( isBusy( group ) ) {
+					currents.get( group.ordinal() ).render( batch );
+				}
 			}
 		}
 	};
@@ -55,14 +51,14 @@ public class Messager extends Task {
 		GameEvents.gameLogic.addListener( gameLogicEvent );
 
 		currents = new Array<Message>( 3 );
-		currents.insert( MessagePosition.Top.ordinal(), null );
-		currents.insert( MessagePosition.Middle.ordinal(), null );
-		currents.insert( MessagePosition.Bottom.ordinal(), null );
+		for( MessagePosition group : MessagePosition.values() ) {
+			currents.insert( group.ordinal(), null );
+		}
 
 		messages = new Array<LinkedList<Message>>( 3 );
-		messages.insert( MessagePosition.Top.ordinal(), new LinkedList<Message>() );
-		messages.insert( MessagePosition.Middle.ordinal(), new LinkedList<Message>() );
-		messages.insert( MessagePosition.Bottom.ordinal(), new LinkedList<Message>() );
+		for( MessagePosition group : MessagePosition.values() ) {
+			messages.insert( group.ordinal(), new LinkedList<Message>() );
+		}
 
 		// initialize message store
 		idxMessageStore = 0;
@@ -89,13 +85,13 @@ public class Messager extends Task {
 	}
 
 	public void reset() {
-		messages.get( MessagePosition.Top.ordinal() ).clear();
-		messages.get( MessagePosition.Middle.ordinal() ).clear();
-		messages.get( MessagePosition.Bottom.ordinal() ).clear();
+		for( MessagePosition group : MessagePosition.values() ) {
+			messages.get( group.ordinal() ).clear();
+		}
 
-		currents.set( MessagePosition.Top.ordinal(), null );
-		currents.set( MessagePosition.Middle.ordinal(), null );
-		currents.set( MessagePosition.Bottom.ordinal(), null );
+		for( MessagePosition group : MessagePosition.values() ) {
+			currents.set( group.ordinal(), null );
+		}
 
 		idxMessageStore = 0;
 	}
@@ -106,7 +102,7 @@ public class Messager extends Task {
 
 		// any message?
 		if( msg == null && (msgs.peek() != null) ) {
-			// schedule this message to be processed next
+			// schedule next message to process
 			msg = msgs.remove();
 			currents.set( group.ordinal(), msg );
 		}

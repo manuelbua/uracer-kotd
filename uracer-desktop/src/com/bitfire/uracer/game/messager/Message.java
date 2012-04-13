@@ -21,6 +21,7 @@ public class Message {
 		Information, Bad, Good
 	}
 
+	/** the position of the displayed message, this also reflects the order in which they are rendered */
 	public enum MessagePosition {
 		Top, Middle, Bottom
 	}
