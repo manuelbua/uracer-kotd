@@ -8,7 +8,6 @@ import com.badlogic.gdx.graphics.g2d.TextureAtlas.AtlasRegion;
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
 import com.badlogic.gdx.graphics.g2d.tiled.SimpleTileAtlas;
 import com.badlogic.gdx.graphics.g2d.tiled.TileAtlas;
-import com.badlogic.gdx.graphics.g2d.tiled.TileMapRenderer;
 import com.badlogic.gdx.graphics.g2d.tiled.TiledMap;
 import com.badlogic.gdx.graphics.glutils.ShaderProgram;
 import com.badlogic.gdx.math.MathUtils;
@@ -285,8 +284,6 @@ public class UTileMapRenderer implements Disposable {
 		render( 0, 0, (int)getMapWidthUnits(), (int)(getMapHeightUnits()) );
 	}
 
-	/** Renders all layers between the given bounding box in map units. This is the same as calling
-	 * {@link TileMapRenderer#render(float, float, float, float, int[])} with all layers in the layers list. */
 	public void render( float x, float y, float width, float height ) {
 		render( x, y, width, height, allLayers );
 	}
@@ -425,34 +422,18 @@ public class UTileMapRenderer implements Disposable {
 		return (int)(worldX / unitsPerTileX);
 	}
 
-	/** Returns the initial drawn block row, for debugging purposes. Use this along with
-	 * {@link TileMapRenderer#getLastRow()} to
-	 * compute the number of rows drawn in the last call to
-	 * {@link TileMapRenderer#render(float, float, float, float, int[])}. */
 	public int getInitialRow() {
 		return initialRow;
 	}
 
-	/** Returns the initial drawn block column, for debugging purposes. Use this along with
-	 * {@link TileMapRenderer#getLastCol()} to
-	 * compute the number of columns drawn in the last call to
-	 * {@link TileMapRenderer#render(float, float, float, float, int[])}. */
 	public int getInitialCol() {
 		return initialCol;
 	}
 
-	/** Returns the final drawn block row, for debugging purposes. Use this along with
-	 * {@link TileMapRenderer#getInitialRow()} to
-	 * compute the number of rows drawn in the last call to
-	 * {@link TileMapRenderer#render(float, float, float, float, int[])}. */
 	public int getLastRow() {
 		return lastRow;
 	}
 
-	/** Returns the final drawn block column, for debugging purposes. Use this along with
-	 * {@link TileMapRenderer#getInitialCol()} to
-	 * compute the number of columns drawn in the last call to
-	 * {@link TileMapRenderer#render(float, float, float, float, int[])}. */
 	public int getLastCol() {
 		return lastCol;
 	}

@@ -34,6 +34,7 @@ public final class EntityRenderState {
 		this.orientation = orientation;
 	}
 
+	/** Interpolate between the specified render states, by the specified quantity. */
 	public static EntityRenderState interpolate( EntityRenderState previous, EntityRenderState current, float alpha ) {
 		result.position.set( previous.position );
 		result.position.set( result.position.lerp( current.position, alpha ) );
@@ -42,7 +43,9 @@ public final class EntityRenderState {
 		float curr = current.orientation;
 		float prev = previous.orientation;
 
-		boolean needWrap = ((curr > 0 && prev < 0) || (prev > 0 && curr < 0)) && (Math.abs( curr ) + Math.abs( prev ) > 1f);
+		boolean hasWrapped = ((curr > 0 && prev < 0) || (prev > 0 && curr < 0));
+		boolean needWrap = hasWrapped && (Math.abs( curr ) + Math.abs( prev ) > 1f);
+
 		if( needWrap ) {
 			if( prev < 0 ) {
 				prev += AMath.TWO_PI;

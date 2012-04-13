@@ -17,11 +17,11 @@ import com.bitfire.uracer.game.Tweener;
 import com.bitfire.uracer.utils.AMath;
 
 public class Message {
-	public enum MessageType {
+	public enum Type {
 		Information, Bad, Good
 	}
 
-	/** the position of the displayed message, this also reflects the order in which they are rendered */
+	/** the position of the displayed message, this also reflects the order in which messages are rendered */
 	public enum MessagePosition {
 		Top, Middle, Bottom
 	}
@@ -35,10 +35,9 @@ public class Message {
 	public boolean started;
 
 	private String what;
-	private MessageType type;
 	private MessagePosition position;
 	private float whereX, whereY;
-	private float finalX, finalY;
+	private float finalY;
 	private float scaleX, scaleY;
 	private BitmapFont font;
 	private int halfWidth;
@@ -53,18 +52,17 @@ public class Message {
 		this.invZoomFactor = invZoomFactor;
 	}
 
-	public Message( String message, float durationSecs, MessageType type, MessagePosition position, MessageSize size, float invZoomFactor ) {
+	public Message( String message, float durationSecs, Type type, MessagePosition position, MessageSize size, float invZoomFactor ) {
 		this( invZoomFactor );
 		set( message, durationSecs, type, position, size );
 	}
 
-	public final void set( String message, float durationSecs, MessageType type, MessagePosition position, MessageSize size ) {
+	public final void set( String message, float durationSecs, Type type, MessagePosition position, MessageSize size ) {
 		startMs = 0;
 		started = false;
 		halfWidth = (int)(Gdx.graphics.getWidth() / 2);
 
 		what = message;
-		this.type = type;
 		this.position = position;
 		alpha = 0f;
 		scaleX = 1f;
@@ -72,7 +70,7 @@ public class Message {
 		durationMs = (int)(durationSecs * 1000f);
 		hiding = false;
 
-		switch( this.type ) {
+		switch( type ) {
 		case Good:
 			if( size == MessageSize.Normal ) {
 				font = Art.fontCurseG;
@@ -101,7 +99,6 @@ public class Message {
 	private void computeFinalPosition() {
 		int widthOnFour = Gdx.graphics.getWidth() / 4;
 		whereX = widthOnFour;
-		finalX = widthOnFour;
 		finalY = 0;
 
 		float scale = invZoomFactor;

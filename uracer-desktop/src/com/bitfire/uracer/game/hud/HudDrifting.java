@@ -8,10 +8,9 @@ import com.bitfire.uracer.carsimulation.CarModel;
 import com.bitfire.uracer.game.GameEvents;
 import com.bitfire.uracer.game.data.GameData;
 import com.bitfire.uracer.game.events.DriftStateEvent;
-import com.bitfire.uracer.game.events.DriftStateEvent.Type;
 import com.bitfire.uracer.game.messager.Message.MessagePosition;
 import com.bitfire.uracer.game.messager.Message.MessageSize;
-import com.bitfire.uracer.game.messager.Message.MessageType;
+import com.bitfire.uracer.game.messager.Message.Type;
 import com.bitfire.uracer.game.player.Car;
 import com.bitfire.uracer.game.states.DriftState;
 import com.bitfire.uracer.utils.Convert;
@@ -40,7 +39,7 @@ public final class HudDrifting {
 
 	private DriftStateEvent.Listener driftListener = new DriftStateEvent.Listener() {
 		@Override
-		public void driftStateEvent( Type type ) {
+		public void driftStateEvent( DriftStateEvent.Type type ) {
 			switch( type ) {
 			case onBeginDrift:
 				onBeginDrift();
@@ -82,11 +81,11 @@ public final class HudDrifting {
 			String seconds = NumberString.format( driftSeconds ) + "  seconds!";
 
 			if( driftSeconds >= 1 && driftSeconds < 3f ) {
-				GameData.Environment.messager.enqueue( "NICE ONE!\n+" + seconds, 1f, MessageType.Good, MessagePosition.Middle, MessageSize.Big );
+				GameData.Environment.messager.enqueue( "NICE ONE!\n+" + seconds, 1f, Type.Good, MessagePosition.Middle, MessageSize.Big );
 			} else if( driftSeconds >= 3f && driftSeconds < 5f ) {
-				GameData.Environment.messager.enqueue( "FANTASTIC!\n+" + seconds, 1f, MessageType.Good, MessagePosition.Middle, MessageSize.Big );
+				GameData.Environment.messager.enqueue( "FANTASTIC!\n+" + seconds, 1f, Type.Good, MessagePosition.Middle, MessageSize.Big );
 			} else if( driftSeconds >= 5f ) {
-				GameData.Environment.messager.enqueue( "UNREAL!\n+" + seconds, 1f, MessageType.Good, MessagePosition.Bottom, MessageSize.Big );
+				GameData.Environment.messager.enqueue( "UNREAL!\n+" + seconds, 1f, Type.Good, MessagePosition.Bottom, MessageSize.Big );
 			}
 		}
 

@@ -10,7 +10,6 @@ import com.bitfire.uracer.game.events.GameRendererEvent;
 import com.bitfire.uracer.game.events.GameRendererEvent.Type;
 import com.bitfire.uracer.game.messager.Message.MessagePosition;
 import com.bitfire.uracer.game.messager.Message.MessageSize;
-import com.bitfire.uracer.game.messager.Message.MessageType;
 import com.bitfire.uracer.task.Task;
 
 public class Messager extends Task {
@@ -129,7 +128,7 @@ public class Messager extends Task {
 		}
 	}
 
-	public void show( String message, float durationSecs, MessageType type, MessagePosition position, MessageSize size ) {
+	public void show( String message, float durationSecs, Message.Type type, MessagePosition position, MessageSize size ) {
 		if( isBusy( position ) ) {
 			currents.get( position.ordinal() ).onHide();
 		}
@@ -137,7 +136,7 @@ public class Messager extends Task {
 		enqueue( message, durationSecs, type, position, size );
 	}
 
-	public void enqueue( String message, float durationSecs, MessageType type, MessagePosition position, MessageSize size ) {
+	public void enqueue( String message, float durationSecs, Message.Type type, MessagePosition position, MessageSize size ) {
 		Message m = nextFreeMessage();
 		m.set( message, durationSecs, type, position, size );
 		messages.get( position.ordinal() ).add( m );

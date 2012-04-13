@@ -24,7 +24,7 @@ import com.bitfire.uracer.game.events.GameLogicEvent;
 import com.bitfire.uracer.game.events.PlayerStateEvent;
 import com.bitfire.uracer.game.messager.Message.MessagePosition;
 import com.bitfire.uracer.game.messager.Message.MessageSize;
-import com.bitfire.uracer.game.messager.Message.MessageType;
+import com.bitfire.uracer.game.messager.Message.Type;
 import com.bitfire.uracer.game.player.Car;
 import com.bitfire.uracer.game.player.Car.InputMode;
 import com.bitfire.uracer.game.player.CarEvent;
@@ -240,7 +240,7 @@ public class GameLogic implements CarEvent.Listener, PlayerStateEvent.Listener {
 						player.ghost.setReplay( any );
 						lapState.setLastTrackTimeSeconds( any.trackTimeSeconds );
 
-						GameData.Environment.messager.show( "GO!  GO!  GO!", 3f, MessageType.Information, MessagePosition.Middle, MessageSize.Big );
+						GameData.Environment.messager.show( "GO!  GO!  GO!", 3f, Type.Information, MessagePosition.Middle, MessageSize.Big );
 					} else {
 						// both valid, replay best, overwrite worst
 						Replay best = lapState.getBestReplay(), worst = lapState.getWorstReplay();
@@ -248,11 +248,11 @@ public class GameLogic implements CarEvent.Listener, PlayerStateEvent.Listener {
 						if( lastRecordedLapId == best.id ) {
 							lapState.setLastTrackTimeSeconds( best.trackTimeSeconds );
 							GameData.Environment.messager.show( "-" + NumberString.format( worst.trackTimeSeconds - best.trackTimeSeconds ) + " seconds!", 3f,
-									MessageType.Good, MessagePosition.Top, MessageSize.Big );
+									Type.Good, MessagePosition.Top, MessageSize.Big );
 						} else {
 							lapState.setLastTrackTimeSeconds( worst.trackTimeSeconds );
 							GameData.Environment.messager.show( "+" + NumberString.format( worst.trackTimeSeconds - best.trackTimeSeconds ) + " seconds", 3f,
-									MessageType.Bad, MessagePosition.Top, MessageSize.Big );
+									Type.Bad, MessagePosition.Top, MessageSize.Big );
 						}
 
 						player.ghost.setReplay( best );
