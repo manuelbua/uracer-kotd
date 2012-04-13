@@ -5,7 +5,8 @@ import com.badlogic.gdx.graphics.glutils.FrameBuffer;
 import com.badlogic.gdx.graphics.glutils.ShaderProgram;
 import com.bitfire.uracer.postprocessing.IFilter;
 
-// @SuppressWarnings( "unchecked" )
+@SuppressWarnings( "unchecked" )
+
 public abstract class Filter<T> extends IFilter {
 	protected static final int u_texture_1 = 0;
 	protected static final int u_texture_2 = 1;

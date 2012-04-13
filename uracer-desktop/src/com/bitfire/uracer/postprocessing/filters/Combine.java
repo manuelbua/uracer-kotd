@@ -5,7 +5,7 @@ import com.badlogic.gdx.graphics.glutils.FrameBuffer;
 import com.bitfire.uracer.postprocessing.IFilter;
 import com.bitfire.uracer.utils.ShaderLoader;
 
-public class Combine extends Filter<Combine> {
+public final class Combine extends Filter<Combine> {
 
 	public enum Param implements Parameter {
 		// @formatter:off
@@ -56,7 +56,7 @@ public class Combine extends Filter<Combine> {
 	}
 
 	@Override
-	public final void rebind() {
+	public void rebind() {
 		setParams( Param.Texture1, u_texture_1 );
 		setParams( Param.Texture2, u_texture_2 );
 		endParams();

@@ -3,7 +3,7 @@ package com.bitfire.uracer.postprocessing.filters;
 import com.badlogic.gdx.utils.IntMap;
 import com.bitfire.uracer.postprocessing.PingPongBuffer;
 
-public class Blur extends MultipassFilter {
+public final class Blur extends MultipassFilter {
 	// @formatter:off
 	private enum Tap {
 		Tap3x3( 1 ),
@@ -72,7 +72,7 @@ public class Blur extends MultipassFilter {
 		this.passes = passes;
 	}
 
-	public final void setType( BlurType type ) {
+	public void setType( BlurType type ) {
 		this.type = type;
 		computeBlurWeightings();
 	}
