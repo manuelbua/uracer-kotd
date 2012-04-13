@@ -5,22 +5,22 @@ import com.badlogic.gdx.graphics.glutils.ShaderProgram;
 
 public final class ShaderLoader {
 
-	public static final ShaderProgram fromFile( String vertexFileName, String fragmentFileName ) {
+	public static ShaderProgram fromFile( String vertexFileName, String fragmentFileName ) {
 		return ShaderLoader.fromFile( vertexFileName, fragmentFileName, "" );
 	}
 
-	public static final ShaderProgram fromFile( String vertexFileName, String fragmentFileName, String defines ) {
-		System.out.println( "Compiling " + vertexFileName + " | " + fragmentFileName + "..." );
+	public static ShaderProgram fromFile( String vertexFileName, String fragmentFileName, String defines ) {
+		Gdx.app.log( "ShaderLoader", "Compiling " + vertexFileName + " | " + fragmentFileName + "..." );
 		String vertexShaderSrc = Gdx.files.internal( "data/shaders/" + vertexFileName + ".vertex" ).readString();
 		String fragmentShaderSrc = Gdx.files.internal( "data/shaders/" + fragmentFileName + ".fragment" ).readString();
 		return ShaderLoader.fromString( vertexShaderSrc, fragmentShaderSrc, vertexFileName, fragmentFileName, defines );
 	}
 
-	public static final ShaderProgram fromString( String vertex, String fragment, String vertexName, String fragmentName ) {
+	public static ShaderProgram fromString( String vertex, String fragment, String vertexName, String fragmentName ) {
 		return ShaderLoader.fromString( vertex, fragment, vertexName, fragmentName, "" );
 	}
 
-	public static final ShaderProgram fromString( String vertex, String fragment, String vertexName, String fragmentName, String defines ) {
+	public static ShaderProgram fromString( String vertex, String fragment, String vertexName, String fragmentName, String defines ) {
 		ShaderProgram.pedantic = false;
 		ShaderProgram shader = new ShaderProgram( defines + "\n" + vertex, defines + "\n" + fragment );
 		if( !shader.isCompiled() ) {
@@ -28,9 +28,9 @@ public final class ShaderLoader {
 			Gdx.app.exit();
 		} else {
 			if( defines != null && defines.length() > 0 ) {
-				System.out.println( vertexName + "/" + fragmentName + " compiled w/ (" + defines.replace( "\n", ", " ) + ")" );
+				Gdx.app.log( "ShaderLoader", vertexName + "/" + fragmentName + " compiled w/ (" + defines.replace( "\n", ", " ) + ")" );
 			} else {
-				System.out.println( vertexName + "/" + fragmentName + " compiled!" );
+				Gdx.app.log( "ShaderLoader", vertexName + "/" + fragmentName + " compiled!" );
 			}
 		}
 
