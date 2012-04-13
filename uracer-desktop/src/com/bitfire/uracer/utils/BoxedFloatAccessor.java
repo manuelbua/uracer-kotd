@@ -3,7 +3,7 @@ package com.bitfire.uracer.utils;
 import aurelienribon.tweenengine.TweenAccessor;
 
 
-public class BoxedFloatAccessor implements TweenAccessor<BoxedFloat> {
+public final class BoxedFloatAccessor implements TweenAccessor<BoxedFloat> {
 	public static final int VALUE = 1;
 
 	@Override

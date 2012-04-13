@@ -112,12 +112,14 @@ public class SmokeTrails extends TrackEffect {
 
 		if( isDrifting && !wasDrifting ) {
 			// started drifting
-			for( int i = 0; i < SmokeEffectsCount; i++ ){
-				fx[i].start();}
+			for( int i = 0; i < SmokeEffectsCount; i++ ) {
+				fx[i].start();
+			}
 		} else if( !isDrifting && wasDrifting ) {
 			// ended drifting
-			for( int i = 0; i < SmokeEffectsCount; i++ ){
-				fx[i].stop();}
+			for( int i = 0; i < SmokeEffectsCount; i++ ) {
+				fx[i].stop();
+			}
 		}
 
 		wasDrifting = isDrifting;
@@ -151,16 +153,19 @@ public class SmokeTrails extends TrackEffect {
 
 	@Override
 	public void reset() {
-		isDrifting = wasDrifting = false;
-		for( int i = 0; i < SmokeEffectsCount; i++ )
+		isDrifting = false;
+		wasDrifting = false;
+		for( int i = 0; i < SmokeEffectsCount; i++ ) {
 			fx[i].reset();
+		}
 	}
 
 	@Override
 	public int getParticleCount() {
 		int count = 0;
-		for( int i = 0; i < SmokeEffectsCount; i++ )
+		for( int i = 0; i < SmokeEffectsCount; i++ ) {
 			count += fx[i].getParticleCount();
+		}
 
 		return count;
 	}

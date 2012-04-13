@@ -1,11 +1,14 @@
 package com.bitfire.uracer.utils;
 
-public class UUid {
+public final class UUid {
 	public static long incr = 0;
 
-	public static long get() {
+	public static final long get() {
 		incr++;
 		Long time = System.nanoTime() + incr;
 		return Hash.RSHash( time.toString() );
+	}
+
+	private UUid() {
 	}
 }

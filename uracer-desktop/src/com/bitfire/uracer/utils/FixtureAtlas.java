@@ -18,7 +18,7 @@ import com.badlogic.gdx.physics.box2d.PolygonShape;
  * to bodies. Has to be disposed to free some resources.
  *
  * @author Aurelien Ribon (aurelien.ribon@gmail.com) */
-public class FixtureAtlas {
+public final class FixtureAtlas {
 	private static final FixtureDef DEFAULT_FIXTURE = new FixtureDef();
 
 	private final Map<String, BodyModel> bodyMap = new HashMap<String, BodyModel>();
@@ -95,12 +95,12 @@ public class FixtureAtlas {
 	public void createFixtures( Body body, String name, float width, float height, FixtureDef params, Vector2 offset, Object userData ) {
 		BodyModel bm = bodyMap.get( name );
 		if( bm == null ) {
-			throw new RuntimeException( name + " does not exist in the fixture list." );
+			Gdx.app.log( "FixtureAtlas", name + " does not exist in the fixture list." );
 		}
 
 		Vector2[][] polygons = bm.getPolygons( width, height, offset );
 		if( polygons == null ) {
-			throw new RuntimeException( name + " does not declare any polygon. " + "Should not happen. Is your shape file corrupted ?" );
+			Gdx.app.log( "FixtureAtlas", name + " does not declare any polygon. " + "Should not happen. Is your shape file corrupted ?" );
 		}
 
 		for( Vector2[] polygon : polygons ) {
@@ -131,7 +131,7 @@ public class FixtureAtlas {
 			}
 
 		} catch( IOException ex ) {
-			throw new RuntimeException( ex.getMessage() );
+			Gdx.app.log( "FixtureAtlas", ex.getMessage() );
 
 		} finally {
 			if( is != null ) {

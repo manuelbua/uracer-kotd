@@ -19,6 +19,9 @@ public class Director {
 
 	private static Vector2 tmp;
 
+	private Director() {
+	}
+
 	public static void init() {
 		screenPosFor = new Vector2();
 		mvpMt = new Matrix4();

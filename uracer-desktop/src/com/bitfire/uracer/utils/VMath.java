@@ -4,12 +4,15 @@ import com.badlogic.gdx.math.MathUtils;
 import com.badlogic.gdx.math.Vector2;
 
 /** Vector math utils.
- * 
+ *
  * @author manuel */
 
-public class VMath {
+public final class VMath {
+	private VMath() {
+	}
+
 	/** Returns a vector in a top-left coordinate system so that:
-	 * 
+	 *
 	 * up=[0,-1], left=[-1,0], right=[1,0], down=[0,1] */
 
 	public static final Vector2 fromRadians( Vector2 result, float radians ) {

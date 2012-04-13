@@ -4,7 +4,7 @@ package com.bitfire.uracer.utils;
  *
  * @author manuel */
 
-public class AMath {
+public final class AMath {
 	public static final float TWO_PI = 6.28318530717958647692f;
 	public static final float PI = 3.14159265358979323846f;
 	public static final float PI_2 = 1.57079632679489661923f;
@@ -12,6 +12,9 @@ public class AMath {
 	public static final float PI_8 = 0.392699081698724154807f;
 
 	public static final float CMP_EPSILON = 0.001f;
+
+	private AMath() {
+	}
 
 	public static final boolean equals( float a, float b ) {
 
@@ -73,7 +76,8 @@ public class AMath {
 	}
 
 	public static float normalRelativeAngle( float angle ) {
-		return (angle %= TWO_PI) >= 0 ? (angle < PI) ? angle : angle - TWO_PI : (angle >= -PI) ? angle : angle + TWO_PI;
+		float wrapped = (angle % TWO_PI);
+		return wrapped >= 0 ? (wrapped < PI) ? wrapped : wrapped - TWO_PI : (wrapped >= -PI) ? wrapped : wrapped + TWO_PI;
 	}
 
 	public static float sigmoid( float strength ) {

@@ -23,7 +23,7 @@ import com.badlogic.gdx.backends.openal.OpenALAudio;
 // }
 // }
 
-public class URacerDesktop {
+public final class URacerDesktop {
 	public static void main( String[] argv ) {
 		LwjglApplicationConfiguration config = new LwjglApplicationConfiguration();
 		config.title = "uRacer: The King Of The Drift";
@@ -56,4 +56,6 @@ public class URacerDesktop {
 		Display.setLocation( 1920 + (screenW - config.width) / 2, (screenH - config.height) / 2 );
 	}
 
+	private URacerDesktop() {
+	}
 }
