@@ -28,12 +28,17 @@ public abstract class PostProcessorEffect implements Disposable {
 	 * comparing the ids (hashcodes). */
 	@Override
 	public boolean equals( Object obj ) {
-		if( this == obj )
+		if( this == obj ) {
 			return true;
-		if( obj == null )
+		}
+
+		if( obj == null ) {
 			return false;
-		if( getClass() != obj.getClass() )
+		}
+
+		if( getClass() != obj.getClass() ) {
 			return false;
+		}
 
 		PostProcessorEffect e = (PostProcessorEffect)obj;
 		return e.id == this.id;

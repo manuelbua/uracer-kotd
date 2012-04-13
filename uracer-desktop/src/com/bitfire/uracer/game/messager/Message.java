@@ -47,13 +47,13 @@ public class Message {
 	private boolean hiding;
 	private float invZoomFactor;
 
-	public Message(float invZoomFactor) {
+	public Message( float invZoomFactor ) {
 		bounds = new TextBounds();
 		this.invZoomFactor = invZoomFactor;
 	}
 
 	public Message( String message, float durationSecs, MessageType type, MessagePosition position, MessageSize size, float invZoomFactor ) {
-		this(invZoomFactor);
+		this( invZoomFactor );
 		set( message, durationSecs, type, position, size );
 	}
 
@@ -72,15 +72,6 @@ public class Message {
 		hiding = false;
 
 		switch( this.type ) {
-		default:
-		case Information:
-			if( size == MessageSize.Normal ) {
-				font = Art.fontCurseYR;
-			} else {
-				font = Art.fontCurseYRbig;
-			}
-			break;
-
 		case Good:
 			if( size == MessageSize.Normal ) {
 				font = Art.fontCurseG;
@@ -88,12 +79,19 @@ public class Message {
 				font = Art.fontCurseGbig;
 			}
 			break;
-
 		case Bad:
 			if( size == MessageSize.Normal ) {
 				font = Art.fontCurseR;
 			} else {
 				font = Art.fontCurseRbig;
+			}
+			break;
+		default:
+		case Information:
+			if( size == MessageSize.Normal ) {
+				font = Art.fontCurseYR;
+			} else {
+				font = Art.fontCurseYRbig;
 			}
 			break;
 		}

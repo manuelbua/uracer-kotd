@@ -210,7 +210,7 @@ public class GameWorldRenderer {
 		gl.glDisable( GL20.GL_CULL_FACE );
 		gl.glEnable( GL20.GL_BLEND );
 		gl.glBlendFunc( GL20.GL_SRC_ALPHA, GL20.GL_ONE_MINUS_SRC_ALPHA );
-		renderedWalls = renderOrthographicAlignedModels( gl, walls.models );
+		renderedWalls = renderOrthographicAlignedModels( walls.models );
 	}
 
 	private void renderTrees( GL20 gl, TrackTrees trees ) {
@@ -273,7 +273,7 @@ public class GameWorldRenderer {
 	private Matrix4 mtx2 = new Matrix4();
 	private Vector2 pospx = new Vector2();
 
-	private int renderOrthographicAlignedModels( GL20 gl, List<OrthographicAlignedStillModel> models ) {
+	private int renderOrthographicAlignedModels( List<OrthographicAlignedStillModel> models ) {
 		int renderedCount = 0;
 		OrthographicAlignedStillModel m;
 		StillSubMesh submesh;
@@ -366,7 +366,7 @@ public class GameWorldRenderer {
 
 		// render "static-meshes" layer
 		gl.glEnable( GL20.GL_CULL_FACE );
-		renderOrthographicAlignedModels( gl, staticMeshes );
+		renderOrthographicAlignedModels( staticMeshes );
 
 		gl.glDisable( GL20.GL_DEPTH_TEST );
 		gl.glDisable( GL20.GL_CULL_FACE );
