@@ -59,7 +59,7 @@ public final class CarDescriptor {
 		this.velocity_wc.set( desc.velocity_wc );
 	}
 
-	public CarDescriptor newCopy() {
-		return new CarDescriptor( this );
-	}
+//	public CarDescriptor newCopy() {
+//		return new CarDescriptor( this );
+//	}
 }
