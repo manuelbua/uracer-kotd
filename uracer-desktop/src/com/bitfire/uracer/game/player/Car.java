@@ -10,8 +10,6 @@ import com.badlogic.gdx.physics.box2d.BodyDef.BodyType;
 import com.badlogic.gdx.physics.box2d.Fixture;
 import com.bitfire.uracer.Config;
 import com.bitfire.uracer.Director;
-import com.bitfire.uracer.carsimulation.CarForces;
-import com.bitfire.uracer.carsimulation.CarModel;
 import com.bitfire.uracer.game.GameEvents;
 import com.bitfire.uracer.game.Input;
 import com.bitfire.uracer.game.data.GameData;

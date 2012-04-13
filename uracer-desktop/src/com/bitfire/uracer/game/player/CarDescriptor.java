@@ -1,7 +1,6 @@
 package com.bitfire.uracer.game.player;
 
 import com.badlogic.gdx.math.Vector2;
-import com.bitfire.uracer.carsimulation.CarModel;
 
 /** Describes the global state of the car entity providing access to both the base
  * physical model information and the processed per-timestep data resulting

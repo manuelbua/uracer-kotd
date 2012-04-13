@@ -1,8 +1,6 @@
 package com.bitfire.uracer.game.player;
 
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
-import com.bitfire.uracer.carsimulation.CarForces;
-import com.bitfire.uracer.carsimulation.CarModel;
 import com.bitfire.uracer.game.Replay;
 
 /** Implements an automated Car, playing previously recorded events. It will

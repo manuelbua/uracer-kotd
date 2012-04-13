@@ -1,8 +1,8 @@
 package com.bitfire.uracer;
 
-import com.bitfire.uracer.carsimulation.CarModel;
 import com.bitfire.uracer.game.Game;
 import com.bitfire.uracer.game.GameDifficulty;
+import com.bitfire.uracer.game.player.CarModel;
 import com.bitfire.uracer.game.player.Car.Aspect;
 
 public class GameScreen extends Screen {

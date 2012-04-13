@@ -1,12 +1,12 @@
 package com.bitfire.uracer.game.logic;
 
 import com.badlogic.gdx.Gdx;
-import com.bitfire.uracer.carsimulation.CarForces;
 import com.bitfire.uracer.game.GameEvents;
 import com.bitfire.uracer.game.Replay;
 import com.bitfire.uracer.game.data.GameData;
 import com.bitfire.uracer.game.events.GameLogicEvent;
 import com.bitfire.uracer.game.player.Car;
+import com.bitfire.uracer.game.player.CarForces;
 
 public class Recorder {
 	private boolean isRecording;

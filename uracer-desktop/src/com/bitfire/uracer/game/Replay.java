@@ -1,8 +1,8 @@
 package com.bitfire.uracer.game;
 
 import com.badlogic.gdx.math.Vector2;
-import com.bitfire.uracer.carsimulation.CarForces;
 import com.bitfire.uracer.game.player.Car;
+import com.bitfire.uracer.game.player.CarForces;
 import com.bitfire.uracer.game.player.Car.Aspect;
 import com.bitfire.uracer.utils.UUid;
 

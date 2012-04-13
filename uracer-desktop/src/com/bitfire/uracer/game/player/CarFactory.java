@@ -6,7 +6,6 @@ import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.physics.box2d.FixtureDef;
 import com.bitfire.uracer.Art;
 import com.bitfire.uracer.Config;
-import com.bitfire.uracer.carsimulation.CarModel;
 import com.bitfire.uracer.entities.EntityType;
 import com.bitfire.uracer.game.collisions.CollisionFilters;
 import com.bitfire.uracer.game.player.Car.Aspect;
