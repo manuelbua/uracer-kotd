@@ -56,7 +56,8 @@ public final class VMath {
 
 	public static Vector2 fixup( Vector2 v ) {
 		if( (v.x * v.x + v.y * v.y) < AMath.CMP_EPSILON ) {
-			v.x = v.y = 0;
+			v.x = 0;
+			v.y = 0;
 		}
 
 		return v;

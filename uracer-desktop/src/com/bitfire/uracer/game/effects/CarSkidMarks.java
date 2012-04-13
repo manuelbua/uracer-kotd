@@ -157,7 +157,8 @@ public class CarSkidMarks extends TrackEffect {
 			rear.setOrigin( rear.getWidth() / 2, rear.getHeight() / 2 );
 			rear.setColor( 1, 1, 1, 1 );
 
-			life = maxLife = 0;
+			life = 0;
+			maxLife = 0;
 		}
 
 		public void setPosition( Vector2 pos ) {

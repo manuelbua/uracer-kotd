@@ -18,8 +18,8 @@ public final class GameplaySettings {
 			linearVelocityAfterFeedback = 0.975f;
 			throttleDampingAfterFeedback = 0.975f;
 			break;
-		default:
 		case Easy:
+		default:
 			linearVelocityAfterFeedback = 0.99f;
 			throttleDampingAfterFeedback = 0.99f;
 			break;

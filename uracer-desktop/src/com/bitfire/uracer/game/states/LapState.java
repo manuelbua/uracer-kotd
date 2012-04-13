@@ -47,7 +47,8 @@ public final class LapState {
 
 	public void reset() {
 		hasLastTrackTimeSecs = false;
-		best = worst = null;
+		best = null;
+		worst = null;
 		time.start();
 		replays[0].reset();
 		replays[1].reset();
