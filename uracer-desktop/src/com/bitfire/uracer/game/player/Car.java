@@ -11,7 +11,6 @@ import com.badlogic.gdx.physics.box2d.Fixture;
 import com.bitfire.uracer.Config;
 import com.bitfire.uracer.Director;
 import com.bitfire.uracer.carsimulation.CarForces;
-import com.bitfire.uracer.carsimulation.CarInputMode;
 import com.bitfire.uracer.carsimulation.CarModel;
 import com.bitfire.uracer.game.GameEvents;
 import com.bitfire.uracer.game.Input;
@@ -22,6 +21,14 @@ import com.bitfire.uracer.utils.Convert;
 import com.bitfire.uracer.utils.VMath;
 
 public class Car extends Box2DEntity {
+	public enum InputMode {
+		InputFromPlayer, InputFromReplay
+	}
+
+	public enum Aspect {
+		OldSkool, OldSkool2
+	}
+
 	protected CarRenderer graphics;
 
 	private CarDescriptor carDesc;
@@ -30,10 +37,10 @@ public class Car extends Box2DEntity {
 	private CarForces carForces;
 	private int impacts;
 
-	private CarInputMode carInputMode;
-	private CarAspect carAspect;
+	private InputMode carInputMode;
+	private Aspect carAspect;
 
-	protected Car( CarRenderer graphics, CarModel model, CarAspect type, CarInputMode inputMode ) {
+	protected Car( CarRenderer graphics, CarModel model, Aspect type, InputMode inputMode ) {
 		super( GameData.Environment.b2dWorld );
 		this.graphics = graphics;
 		this.carInputMode = inputMode;
@@ -58,15 +65,15 @@ public class Car extends Box2DEntity {
 	}
 
 	// factory method
-	public static Car createForFactory( CarRenderer graphics, CarModel model, CarAspect type, CarInputMode inputMode ) {
+	public static Car createForFactory( CarRenderer graphics, CarModel model, Aspect type, InputMode inputMode ) {
 		return new Car( graphics, model, type, inputMode );
 	}
 
-	public CarAspect getCarAspect() {
+	public Aspect getCarAspect() {
 		return carAspect;
 	}
 
-	public CarInputMode getInputMode() {
+	public InputMode getInputMode() {
 		return carInputMode;
 	}
 
@@ -130,8 +137,8 @@ public class Car extends Box2DEntity {
 	@Override
 	public void setTransform( Vector2 position, float orient_degrees ) {
 		super.setTransform( position, orient_degrees );
-		carSim.updateHeading( body );
-//		computeTilePosition();
+		carSim.updateHeading( body.getAngle() );
+		// computeTilePosition();
 	}
 
 	private float lastTouchAngle;
@@ -237,7 +244,7 @@ public class Car extends Box2DEntity {
 		handleDecrease( carInput );
 
 		carSim.applyInput( carInput );
-		carSim.step( body );
+		carSim.step( body.getAngle() );
 
 		// record computed forces, if recording is enabled
 		forces.velocity_x = carDesc.velocity_wc.x;
@@ -278,7 +285,7 @@ public class Car extends Box2DEntity {
 		// inspect impact feedback, accumulate vel/ang velocities
 		handleImpactFeedback();
 
-//		computeTilePosition();
+		// computeTilePosition();
 	}
 
 	@Override
@@ -294,7 +301,7 @@ public class Car extends Box2DEntity {
 
 	@Override
 	public void onDebug( SpriteBatch batch ) {
-		if( carInputMode != CarInputMode.InputFromPlayer ) {
+		if( carInputMode != InputMode.InputFromPlayer ) {
 			return;
 		}
 
@@ -312,7 +319,7 @@ public class Car extends Box2DEntity {
 			BatchUtils.drawString( batch, "orient=" + body.getAngle(), 0, 114 );
 			BatchUtils.drawString( batch, "render.interp=" + (state().position.x + "," + state().position.y), 0, 121 );
 
-//			BatchUtils.drawString( batch, "on tile " + tilePosition, 0, 0 );
+			// BatchUtils.drawString( batch, "on tile " + tilePosition, 0, 0 );
 		}
 	}
 }

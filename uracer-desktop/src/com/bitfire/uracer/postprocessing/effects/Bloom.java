@@ -13,7 +13,7 @@ import com.bitfire.uracer.postprocessing.filters.Combine;
 import com.bitfire.uracer.postprocessing.filters.Combine.Param;
 import com.bitfire.uracer.postprocessing.filters.Threshold;
 
-public class Bloom extends PostProcessorEffect {
+public final class Bloom extends PostProcessorEffect {
 	public static class Settings {
 		public final String name;
 
@@ -123,7 +123,7 @@ public class Bloom extends PostProcessorEffect {
 		blur.setType( type );
 	}
 
-	public final void setSettings( Settings settings ) {
+	public void setSettings( Settings settings ) {
 		this.settings = settings;
 
 		// setup threshold filter

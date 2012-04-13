@@ -15,7 +15,6 @@ import com.bitfire.uracer.Art;
 import com.bitfire.uracer.Config;
 import com.bitfire.uracer.Director;
 import com.bitfire.uracer.URacer;
-import com.bitfire.uracer.carsimulation.CarInputMode;
 import com.bitfire.uracer.game.GameEvents;
 import com.bitfire.uracer.game.Input;
 import com.bitfire.uracer.game.Replay;
@@ -27,6 +26,7 @@ import com.bitfire.uracer.game.messager.Message.MessagePosition;
 import com.bitfire.uracer.game.messager.Message.MessageSize;
 import com.bitfire.uracer.game.messager.Message.MessageType;
 import com.bitfire.uracer.game.player.Car;
+import com.bitfire.uracer.game.player.Car.InputMode;
 import com.bitfire.uracer.game.player.CarEvent;
 import com.bitfire.uracer.game.states.LapState;
 import com.bitfire.uracer.game.states.PlayerState;
@@ -143,7 +143,7 @@ public class GameLogic implements CarEvent.Listener, PlayerStateEvent.Listener {
 
 		switch( type ) {
 		case onCollision:
-			if( GameData.States.driftState.isDrifting && car.getInputMode() == CarInputMode.InputFromPlayer ) {
+			if( GameData.States.driftState.isDrifting && car.getInputMode() == InputMode.InputFromPlayer ) {
 				GameData.States.driftState.invalidateByCollision();
 			}
 			break;

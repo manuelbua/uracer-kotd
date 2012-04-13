@@ -3,14 +3,14 @@ package com.bitfire.uracer;
 import com.bitfire.uracer.carsimulation.CarModel;
 import com.bitfire.uracer.game.Game;
 import com.bitfire.uracer.game.GameDifficulty;
-import com.bitfire.uracer.game.player.CarAspect;
+import com.bitfire.uracer.game.player.Car.Aspect;
 
 public class GameScreen extends Screen {
 	private Game game = null;
 	private boolean quit = false;
 
 	public GameScreen() {
-		game = new Game( "tutorial-3", GameDifficulty.Hard, CarAspect.OldSkool, new CarModel().toModel2() );
+		game = new Game( "tutorial-3", GameDifficulty.Hard, Aspect.OldSkool, new CarModel().toModel2() );
 	}
 
 	@Override

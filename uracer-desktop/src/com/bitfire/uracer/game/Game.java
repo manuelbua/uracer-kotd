@@ -12,7 +12,7 @@ import com.bitfire.uracer.game.audio.CarSoundManager;
 import com.bitfire.uracer.game.data.GameData;
 import com.bitfire.uracer.game.hud.Hud;
 import com.bitfire.uracer.game.logic.GameLogic;
-import com.bitfire.uracer.game.player.CarAspect;
+import com.bitfire.uracer.game.player.Car.Aspect;
 import com.bitfire.uracer.game.rendering.Debug;
 import com.bitfire.uracer.postprocessing.PostProcessor;
 import com.bitfire.uracer.postprocessing.effects.Bloom;
@@ -38,8 +38,8 @@ public class Game implements Disposable {
 	// tasks
 	private List<Task> gameTasks = null;
 
-	public Game( String levelName, GameDifficulty difficulty, CarAspect carType, CarModel carModel ) {
-		GameData.create( levelName, false, difficulty, carType, carModel );
+	public Game( String levelName, GameDifficulty difficulty, Aspect carAspect, CarModel carModel ) {
+		GameData.create( levelName, false, difficulty, carAspect, carModel );
 
 		// can use GameData
 		gameLogic = new GameLogic();

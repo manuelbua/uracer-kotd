@@ -2,7 +2,6 @@ package com.bitfire.uracer.game.player;
 
 import com.badlogic.gdx.math.MathUtils;
 import com.badlogic.gdx.math.Vector2;
-import com.badlogic.gdx.physics.box2d.Body;
 import com.bitfire.uracer.Config;
 import com.bitfire.uracer.utils.AMath;
 import com.bitfire.uracer.utils.VMath;
@@ -39,8 +38,8 @@ public final class CarSimulator {
 		carDesc.set( carDesc );
 	}
 
-	public void updateHeading( Body body ) {
-		VMath.fromRadians( heading, AMath.normalRelativeAngle( body.getAngle() ) );
+	public void updateHeading( float bodyAngle ) {
+		VMath.fromRadians( heading, AMath.normalRelativeAngle( bodyAngle ) );
 		VMath.perp( side, heading );
 		// System.out.println("side=" + side);
 		// System.out.println("heading=" + heading);
@@ -123,9 +122,9 @@ public final class CarSimulator {
 		carDesc.throttle = AMath.clamp( carDesc.throttle, -maxForce, maxForce );
 	}
 
-	public void step( Body body ) {
-		float sn = MathUtils.sin( AMath.normalRelativeAngle( -body.getAngle() ) );
-		float cs = MathUtils.cos( AMath.normalRelativeAngle( -body.getAngle() ) );
+	public void step( float bodyAngle ) {
+		float sn = MathUtils.sin( AMath.normalRelativeAngle( -bodyAngle ) );
+		float cs = MathUtils.cos( AMath.normalRelativeAngle( -bodyAngle ) );
 
 		//
 		// SAE convention: x is to the front of the car, y is to the right, z is
@@ -252,7 +251,7 @@ public final class CarSimulator {
 		// integrate angular velocity to get angular orientation
 		carDesc.angularOrientation = Config.Physics.PhysicsDt * carDesc.angularvelocity;
 
-		updateHeading( body );
+		updateHeading( bodyAngle );
 	}
 
 	public void resetPhysics() {

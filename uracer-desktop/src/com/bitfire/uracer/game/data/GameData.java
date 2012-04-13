@@ -6,7 +6,7 @@ import com.bitfire.uracer.Director;
 import com.bitfire.uracer.carsimulation.CarModel;
 import com.bitfire.uracer.game.GameDifficulty;
 import com.bitfire.uracer.game.Tweener;
-import com.bitfire.uracer.game.player.CarAspect;
+import com.bitfire.uracer.game.player.Car.Aspect;
 import com.bitfire.uracer.game.player.CarFactory;
 import com.bitfire.uracer.utils.BatchUtils;
 import com.bitfire.uracer.utils.Convert;
@@ -21,7 +21,7 @@ public final class GameData {
 	public static Environment Environment;
 
 	// 1st
-	public static void create( String levelName, boolean nightMode, GameDifficulty difficulty, CarAspect carType, CarModel carModel ) {
+	public static void create( String levelName, boolean nightMode, GameDifficulty difficulty, Aspect carAspect, CarModel carModel ) {
 		Environment = new Environment( difficulty );
 
 		Tweener.init();
@@ -30,7 +30,7 @@ public final class GameData {
 		Convert.init( GameData.Environment.scalingStrategy.invTileMapZoomFactor, Config.Physics.PixelsPerMeter );
 		Director.init();
 
-		States = new States( CarFactory.createPlayer( carType, carModel ) );
+		States = new States( CarFactory.createPlayer( carAspect, carModel ) );
 		Systems = new Systems( Environment.b2dWorld, States.playerState.car );
 
 		// requires Art, Convert and Director

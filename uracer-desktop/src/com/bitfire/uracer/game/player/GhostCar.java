@@ -2,7 +2,6 @@ package com.bitfire.uracer.game.player;
 
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.bitfire.uracer.carsimulation.CarForces;
-import com.bitfire.uracer.carsimulation.CarInputMode;
 import com.bitfire.uracer.carsimulation.CarModel;
 import com.bitfire.uracer.game.Replay;
 
@@ -17,8 +16,8 @@ public final class GhostCar extends Car {
 	private int indexPlay;
 	private boolean hasReplay;
 
-	private GhostCar( CarRenderer graphics, CarAspect type, CarModel model ) {
-		super( graphics, model, type, CarInputMode.InputFromReplay );
+	private GhostCar( CarRenderer graphics, Aspect type, CarModel model ) {
+		super( graphics, model, type, InputMode.InputFromReplay );
 		indexPlay = 0;
 		hasReplay = false;
 		replay = null;
@@ -27,7 +26,7 @@ public final class GhostCar extends Car {
 
 	// factory methods
 
-	public static GhostCar createForFactory( CarRenderer graphics, CarAspect type, CarModel model ) {
+	public static GhostCar createForFactory( CarRenderer graphics, Aspect type, CarModel model ) {
 		return new GhostCar( graphics, type, model );
 	}
 
