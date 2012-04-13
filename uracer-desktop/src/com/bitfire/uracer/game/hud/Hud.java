@@ -32,12 +32,7 @@ public final class Hud extends Task {
 
 			switch( type ) {
 			case BatchAfterMeshes:
-				curr.render( batch );
-				best.render( batch );
-				last.render( batch );
-
-				// render drifting component
-				hudDrift.render( batch );
+				renderAfterMeshes( batch );
 				break;
 			case BatchDebug:
 				if( Config.Graphics.RenderHudDebugInfo ) {
@@ -47,6 +42,15 @@ public final class Hud extends Task {
 			}
 		}
 	};
+
+	private void renderAfterMeshes( SpriteBatch batch ) {
+		curr.render( batch );
+		best.render( batch );
+		last.render( batch );
+
+		// render drifting component
+		hudDrift.render( batch );
+	}
 
 	private GameLogicEvent.Listener gameLogicEvent = new GameLogicEvent.Listener() {
 		@Override

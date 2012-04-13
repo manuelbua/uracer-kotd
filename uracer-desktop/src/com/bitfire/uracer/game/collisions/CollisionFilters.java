@@ -17,7 +17,7 @@ package com.bitfire.uracer.game.collisions;
  * }
  *
  * @author manuel */
-public class CollisionFilters {
+public final class CollisionFilters {
 	public static final short GroupNoCollisions = -1;
 
 	public static final short GroupPlayer = 0x0001;

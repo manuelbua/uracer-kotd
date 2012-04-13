@@ -251,11 +251,11 @@ public class UTileMapRenderer implements Disposable {
 
 		int firstCol = blockCol * tilesPerBlockX;
 		int firstRow = blockRow * tilesPerBlockY;
-		int lastCol = firstCol + tilesPerBlockX;
-		int lastRow = firstRow + tilesPerBlockY;
+		int thisLastCol = firstCol + tilesPerBlockX;
+		int thisLastRow = firstRow + tilesPerBlockY;
 
-		for( int row = firstRow; row < lastRow && row < layer.length; row++ ) {
-			for( int col = firstCol; col < lastCol && col < layer[row].length; col++ ) {
+		for( int row = firstRow; row < thisLastRow && row < layer.length; row++ ) {
+			for( int col = firstCol; col < thisLastCol && col < layer[row].length; col++ ) {
 				int tile = layer[row][col];
 				if( tile != 0 && blended == blendedTiles.contains( tile ) ) {
 					TextureRegion reg = atlas.getRegion( tile );
