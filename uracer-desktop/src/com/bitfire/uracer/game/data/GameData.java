@@ -32,6 +32,8 @@ public final class GameData {
 
 		States = new States( CarFactory.createPlayer( carType, carModel ) );
 		Systems = new Systems( Environment.b2dWorld, States.playerState.car );
+
+		// requires Art, Convert and Director
 		Environment.createWorld( Environment.b2dWorld, Environment.scalingStrategy, levelName, nightMode );
 	}
 
