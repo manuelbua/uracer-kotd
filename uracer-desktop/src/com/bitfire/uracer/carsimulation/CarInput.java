@@ -4,7 +4,7 @@ package com.bitfire.uracer.carsimulation;
  *
  * @author manuel */
 
-public class CarInput {
+public final class CarInput {
 	public float throttle, steerAngle;
 	public boolean updated;
 
@@ -18,10 +18,11 @@ public class CarInput {
 
 	public void reset() {
 		updated = false;
-		throttle = steerAngle = 0;
+		throttle = 0;
+		steerAngle = 0;
 	};
 
-	public final void set( CarInput other ) {
+	public void set( CarInput other ) {
 		this.throttle = other.throttle;
 		this.steerAngle = other.steerAngle;
 		this.updated = other.updated;

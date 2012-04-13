@@ -5,12 +5,12 @@ import com.bitfire.uracer.Config;
 import com.bitfire.uracer.game.data.GameData;
 import com.bitfire.uracer.utils.AMath;
 
-public class CarEngineSoundEffect extends CarSoundEffect {
+public final class CarEngineSoundEffect extends CarSoundEffect {
 	private Sound carEngine = null;
 	private long carEngineId = -1;
-	private float carEnginePitchStart = 0;
+	private static float carEnginePitchStart = 0;
 	private float carEnginePitchLast = 0;
-	private final float carEnginePitchMin = 1f;
+	private static final float carEnginePitchMin = 1f;
 
 	public CarEngineSoundEffect() {
 		// carEngine = Gdx.audio.newSound(Gdx.files.getFileHandle("data/audio/engine.ogg", FileType.Internal));

@@ -15,7 +15,7 @@ import com.bitfire.uracer.game.player.CarEvent.Type;
 import com.bitfire.uracer.utils.AMath;
 import com.bitfire.uracer.utils.AudioUtils;
 
-public class CarImpactSoundEffect extends CarSoundEffect {
+public final class CarImpactSoundEffect extends CarSoundEffect {
 	private Sound soundLow1, soundLow2, soundMid1, soundMid2, soundHigh;
 	private long lastSoundTimeMs = 0;
 	private static final long MinElapsedBetweenSoundsMs = 500;
@@ -29,7 +29,7 @@ public class CarImpactSoundEffect extends CarSoundEffect {
 	private static final float pitchMin = 0.75f;
 	private static final float pitchMax = 1f;
 
-	private final CarEvent.Listener carEvent = new CarEvent.Listener() {
+	private CarEvent.Listener carEvent = new CarEvent.Listener() {
 		@Override
 		public void carEvent( Type type, Data data ) {
 			Car car = (Car)GameEvents.carEvent.source;

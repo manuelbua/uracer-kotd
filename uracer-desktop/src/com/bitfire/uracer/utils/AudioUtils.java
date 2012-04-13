@@ -5,7 +5,7 @@ public final class AudioUtils {
 	private AudioUtils() {
 	}
 
-	public static final float timeDilationToAudioPitch( float pitchIn, float timeMultiplier ) {
+	public static float timeDilationToAudioPitch( float pitchIn, float timeMultiplier ) {
 		return pitchIn - (1 - timeMultiplier) * 0.3f;
 	}
 

@@ -18,7 +18,7 @@ import com.bitfire.uracer.utils.AudioUtils;
  * input interaction with the car simulator.
  *
  * @author bmanuel */
-public class CarDriftSoundEffect extends CarSoundEffect {
+public final class CarDriftSoundEffect extends CarSoundEffect {
 	private Sound drift = null;
 	private long driftId = -1, lastDriftId = -1;
 	private float driftLastPitch = 0;

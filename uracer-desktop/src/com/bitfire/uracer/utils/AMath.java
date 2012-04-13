@@ -16,50 +16,50 @@ public final class AMath {
 	private AMath() {
 	}
 
-	public static final boolean equals( float a, float b ) {
+	public static boolean equals( float a, float b ) {
 
 		return Math.abs( Math.abs( a ) - Math.abs( b ) ) < CMP_EPSILON;
 	}
 
-	public static final boolean isZero( float a ) {
+	public static boolean isZero( float a ) {
 		return Math.abs( a ) < CMP_EPSILON;
 	}
 
-	public static final float lerp( float prev, float curr, float alpha ) {
+	public static float lerp( float prev, float curr, float alpha ) {
 		return curr * alpha + prev * (1f - alpha);
 	}
 
-	public static final float lowpass( float prev, float curr, float alpha ) {
+	public static float lowpass( float prev, float curr, float alpha ) {
 		return lerp( prev, curr, alpha );
 	}
 
-	public static final float hipass( float prev, float curr, float alpha ) {
+	public static float hipass( float prev, float curr, float alpha ) {
 		return curr - lowpass( prev, curr, alpha );
 	}
 
-	public static final float modulo( float value, float div ) {
+	public static float modulo( float value, float div ) {
 		int result = (int)(value / div);
 		return (value - (float)result * div);
 	}
 
-	public static final float wrap( float value, float lower, float upper ) {
+	public static float wrap( float value, float lower, float upper ) {
 		float wrapped = modulo( value, (upper - lower) );
 		return wrapped + lower;
 	}
 
-	public static final float wrap2PI( float value ) {
+	public static float wrap2PI( float value ) {
 		return wrap( value, 0.f, TWO_PI );
 	}
 
-	public static final float clamp( float value, float min, float max ) {
+	public static float clamp( float value, float min, float max ) {
 		return Math.min( max, Math.max( min, value ) );
 	}
 
-	public static final int clamp( int value, int min, int max ) {
+	public static int clamp( int value, int min, int max ) {
 		return Math.min( max, Math.max( min, value ) );
 	}
 
-	public static final float fixup( float v ) {
+	public static float fixup( float v ) {
 		if( Math.abs( v ) < CMP_EPSILON ) {
 			return 0;
 		}
@@ -67,7 +67,7 @@ public final class AMath {
 		return v;
 	}
 
-	public static final float sign( float v ) {
+	public static float sign( float v ) {
 		if( v < 0 ) {
 			return -1f;
 		}
