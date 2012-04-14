@@ -1,4 +1,4 @@
-package com.bitfire.uracer.game.hud;
+package com.bitfire.uracer.game.logic.hud;
 
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.math.Vector2;
@@ -16,8 +16,8 @@ import com.bitfire.uracer.game.states.DriftState;
 import com.bitfire.uracer.utils.Convert;
 import com.bitfire.uracer.utils.NumberString;
 
-public final class HudDrifting {
-	private Car playerCar;
+public final class HudDrifting extends HudElement {
+	private Car car;
 	private int carWidthPx, carLengthPx;
 
 	private HudLabel labelRealtime;
@@ -56,8 +56,8 @@ public final class HudDrifting {
 	}
 
 	private void onEndDrift() {
-		DriftState drift = GameData.States.driftState;
-		Vector2 pos = tmpv.set( Director.screenPosForPx( playerCar.state().position ) );
+		DriftState drift = GameData.States.drift;
+		Vector2 pos = tmpv.set( Director.screenPosForPx( car.state().position ) );
 
 		labelRealtime.fadeOut( 300 );
 
@@ -95,8 +95,8 @@ public final class HudDrifting {
 	public HudDrifting( Car car ) {
 		GameEvents.driftState.addListener( driftListener );
 
-		this.playerCar = car;
-		CarModel model = playerCar.getCarModel();
+		this.car = car;
+		CarModel model = car.getCarModel();
 		carWidthPx = (int)Convert.mt2px( model.width );
 		carLengthPx = (int)Convert.mt2px( model.length );
 
@@ -111,7 +111,8 @@ public final class HudDrifting {
 		}
 	}
 
-	public void reset() {
+	@Override
+	void onReset() {
 		labelRealtime.setAlpha( 0 );
 		for( int i = 0; i < MaxLabelResult; i++ ) {
 			labelResult[i].setAlpha( 0 );
@@ -119,18 +120,21 @@ public final class HudDrifting {
 		nextLabelResult = 0;
 	}
 
+	@Override
+	void onTick() {
+		heading.set( car.getSimulator().heading );
+	}
+
+
 	private Vector2 tmpv = new Vector2();
 	private float lastDistance = 0f;
 
-	public void tick() {
-		heading.set( playerCar.getSimulator().heading );
-	}
-
-	public void render( SpriteBatch batch ) {
-		DriftState drift = GameData.States.driftState;
+	@Override
+	void onRender( SpriteBatch batch ) {
+		DriftState drift = GameData.States.drift;
 
 		// update from subframe-interpolated player position
-		Vector2 pos = tmpv.set( Director.screenPosForPx( playerCar.state().position ) );
+		Vector2 pos = tmpv.set( Director.screenPosForPx( car.state().position ) );
 
 		// float secRatio = 1f;
 		// float distance = 0f;

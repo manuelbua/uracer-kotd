@@ -102,7 +102,7 @@ public final class CarDriftSoundEffect extends CarSoundEffect {
 	public void onTick() {
 		if( driftId > -1 ) {
 			boolean anotherDriftId = (driftId != lastDriftId);
-			float speedFactor = GameData.States.playerState.currSpeedFactor;
+			float speedFactor = GameData.States.player.currSpeedFactor;
 
 			// compute behavior
 			float pitch = speedFactor * pitchFactor + pitchMin;
@@ -134,7 +134,7 @@ public final class CarDriftSoundEffect extends CarSoundEffect {
 
 			lastDriftId = driftId;
 			lastVolume = AMath.clamp( lastVolume, 0, 1f );
-			drift.setVolume( driftId, GameData.States.driftState.driftStrength * lastVolume );
+			drift.setVolume( driftId, GameData.States.drift.driftStrength * lastVolume );
 		}
 	}
 }

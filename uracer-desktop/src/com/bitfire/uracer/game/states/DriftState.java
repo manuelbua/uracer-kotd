@@ -62,7 +62,7 @@ public final class DriftState {
 	}
 
 	public void update() {
-		Car car = GameData.States.playerState.car;
+		Car car = GameData.States.player.car;
 		float oneOnMaxGrip = 1f / car.getCarModel().max_grip;
 
 		// lateral forces are in the range [-max_grip, max_grip]

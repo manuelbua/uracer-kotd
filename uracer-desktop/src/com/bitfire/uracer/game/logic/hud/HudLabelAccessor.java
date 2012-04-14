@@ -1,4 +1,4 @@
-package com.bitfire.uracer.game.hud;
+package com.bitfire.uracer.game.logic.hud;
 
 import aurelienribon.tweenengine.TweenAccessor;
 

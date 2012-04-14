@@ -24,7 +24,7 @@ public final class CarEngineSoundEffect extends CarSoundEffect {
 	@Override
 	public void onTick() {
 		if( carEngineId > -1 ) {
-			float speedFactor = GameData.States.playerState.currSpeedFactor;
+			float speedFactor = GameData.States.player.currSpeedFactor;
 
 			float pitch = carEnginePitchMin + speedFactor * 0.65f;
 			if( !AMath.equals( pitch, carEnginePitchLast ) ) {

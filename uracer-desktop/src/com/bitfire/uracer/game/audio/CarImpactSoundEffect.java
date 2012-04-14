@@ -36,7 +36,7 @@ public final class CarImpactSoundEffect extends CarSoundEffect {
 			case onCollision:
 				Car car = GameEvents.carEvent.data.car;
 				if( car.getInputMode() == InputMode.InputFromPlayer ) {
-					impact( data.impulses.len(), GameData.States.playerState.currSpeedFactor );
+					impact( data.impulses.len(), GameData.States.player.currSpeedFactor );
 				}
 				break;
 			case onComputeForces:

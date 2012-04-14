@@ -48,17 +48,21 @@ public final class TrackEffects extends Task {
 	}
 
 	/** Add a new effect to the manager, if own is true the manager will manage its lifecycle */
-	public void add(TrackEffect effect, boolean own) {
+	public void add( TrackEffect effect, boolean own ) {
+		if( effect == null ) {
+			return;
+		}
+
 		effects.add( effect );
-		owned.add(own);
+		owned.add( own );
 	}
 
 	/** Add a new effect to the manager, and transfer resource's ownership to it */
-	public void add(TrackEffect effect) {
-		add(effect, true);
+	public void add( TrackEffect effect ) {
+		add( effect, true );
 	}
 
-	public void remove(TrackEffect effect) {
+	public void remove( TrackEffect effect ) {
 		int index = effects.indexOf( effect, true );
 		effects.removeIndex( index );
 		owned.removeIndex( index );
@@ -68,18 +72,14 @@ public final class TrackEffects extends Task {
 	public void onTick() {
 		for( int i = 0; i < effects.size; i++ ) {
 			TrackEffect effect = effects.get( i );
-			if( effect != null ) {
-				effect.onTick();
-			}
+			effect.onTick();
 		}
 	}
 
 	public void reset() {
 		for( int i = 0; i < effects.size; i++ ) {
 			TrackEffect effect = effects.get( i );
-			if( effect != null ) {
-				effect.reset();
-			}
+			effect.reset();
 		}
 	}
 
@@ -87,9 +87,7 @@ public final class TrackEffects extends Task {
 	public void dispose() {
 		for( int i = 0; i < effects.size; i++ ) {
 			TrackEffect effect = effects.get( i );
-			if( effect != null ) {
-				effect.dispose();
-			}
+			effect.dispose();
 		}
 
 		effects = null;
@@ -99,9 +97,7 @@ public final class TrackEffects extends Task {
 		int total = 0;
 		for( int i = 0; i < effects.size; i++ ) {
 			TrackEffect effect = effects.get( i );
-			if( effect != null ) {
-				total += effect.getParticleCount();
-			}
+			total += effect.getParticleCount();
 		}
 
 		return total;

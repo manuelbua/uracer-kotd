@@ -8,14 +8,14 @@ import com.bitfire.uracer.game.states.PlayerState;
 
 /** States */
 public final class States {
-	public PlayerState playerState;
-	public DriftState driftState;
-	public LapState lapState;
+	public PlayerState player;
+	public DriftState drift;
+	public LapState lap;
 
 	public States(Car car) {
-		playerState = new PlayerState( car, CarFactory.createGhost( car ) );
-		driftState = new DriftState();
-		lapState = new LapState();
+		player = new PlayerState( car, CarFactory.createGhost( car ) );
+		drift = new DriftState();
+		lap = new LapState();
 	}
 	
 	public void dispose() {

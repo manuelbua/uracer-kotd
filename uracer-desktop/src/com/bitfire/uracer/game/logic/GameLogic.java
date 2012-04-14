@@ -28,9 +28,10 @@ import com.bitfire.uracer.game.effects.CarSkidMarks;
 import com.bitfire.uracer.game.effects.TrackEffects;
 import com.bitfire.uracer.game.events.GameLogicEvent;
 import com.bitfire.uracer.game.events.PlayerStateEvent;
-import com.bitfire.uracer.game.hud.Hud;
 import com.bitfire.uracer.game.logic.helpers.DirectorController;
 import com.bitfire.uracer.game.logic.helpers.Recorder;
+import com.bitfire.uracer.game.logic.hud.Hud;
+import com.bitfire.uracer.game.logic.hud.HudDrifting;
 import com.bitfire.uracer.game.messager.Message.MessagePosition;
 import com.bitfire.uracer.game.messager.Message.MessageSize;
 import com.bitfire.uracer.game.messager.Message.Type;
@@ -68,6 +69,10 @@ public class GameLogic implements CarEvent.Listener, PlayerStateEvent.Listener {
 	private TrackEffects effects = null;
 	private CarSkidMarks playerSkidMarks = null;
 
+	// hud
+	private Hud hud = null;
+	private HudDrifting hudDrifting = null;
+
 	// handles timeModulationBusy onComplete event
 	boolean timeModulation = false, timeModulationBusy = false;
 	BoxedFloat timeMultiplier = new BoxedFloat();
@@ -92,7 +97,7 @@ public class GameLogic implements CarEvent.Listener, PlayerStateEvent.Listener {
 		GameEvents.carEvent.addListener( this );
 
 		// initialize player position in the world
-		GameData.States.playerState.car.setTransform( world.playerStartPos, world.playerStartOrient );
+		GameData.States.player.car.setTransform( world.playerStartPos, world.playerStartOrient );
 
 		controller = new DirectorController( Config.Graphics.CameraInterpolationMode, Director.halfViewport, world.worldSizeScaledPx, world.worldSizeTiles );
 
@@ -109,20 +114,31 @@ public class GameLogic implements CarEvent.Listener, PlayerStateEvent.Listener {
 
 	private void createTasks() {
 		gameTasks = new ArrayList<Task>( 10 );
-		gameTasks.add( new Hud() );
 		gameTasks.add( new CarSoundManager() );
+
+		hud = new Hud();
+		gameTasks.add( hud );
 
 		effects = new TrackEffects();
 		gameTasks.add( effects );
 
 		// configure effects
-		configureTrackEffects( effects );
+		configureTasks();
 	}
 
-	private void configureTrackEffects( TrackEffects e ) {
-		CarModel model = GameData.States.playerState.car.getCarModel();
-		playerSkidMarks = new CarSkidMarks( Convert.mt2px( model.width ), Convert.mt2px( model.length ) );
+	private void configureTasks() {
+		Car car = GameData.States.player.car;
+		CarModel model = car.getCarModel();
+		float carModelWithPx = Convert.mt2px( model.width );
+		float carModelLengthPx = Convert.mt2px( model.length );
+
+		// track effects
+		playerSkidMarks = new CarSkidMarks( carModelWithPx, carModelLengthPx );
 		effects.add( playerSkidMarks );
+
+		// hud
+		hudDrifting = new HudDrifting( GameData.States.player.car );
+		hud.addElement( hudDrifting );
 	}
 
 	public boolean onTick() {
@@ -158,6 +174,7 @@ public class GameLogic implements CarEvent.Listener, PlayerStateEvent.Listener {
 
 		updateStates();
 		updateCarFriction();
+		updateHud();
 		updateTrackEffects();
 		updateTimeMultiplier();
 
@@ -166,28 +183,32 @@ public class GameLogic implements CarEvent.Listener, PlayerStateEvent.Listener {
 
 	private void updateTrackEffects() {
 		// update track effects
-		Car player = GameData.States.playerState.car;
+		Car player = GameData.States.player.car;
 		if( player.getCarDescriptor().velocity_wc.len2() >= 1 ) {
-			playerSkidMarks.tryAddDriftMark( player.state().position, player.state().orientation, GameData.States.driftState );
+			playerSkidMarks.tryAddDriftMark( player.state().position, player.state().orientation, GameData.States.drift );
 		}
 	}
 
 	private void updateStates() {
-		GameData.States.playerState.update();
-		GameData.States.driftState.update();
+		GameData.States.player.update();
+		GameData.States.drift.update();
 	}
 
 	private void updateTimeMultiplier() {
 		URacer.timeMultiplier = AMath.clamp( timeMultiplier.value, tmMin, Config.Physics.PhysicsTimeMultiplier );
 	}
 
+	private void updateHud() {
+		hud.update( GameData.States.lap );
+	}
+
 	public void onBeforeRender() {
 		GameData.Systems.physicsStep.triggerOnTemporalAliasing( URacer.getTemporalAliasing() );
 
-		Car car = GameData.States.playerState.car;
+		Car car = GameData.States.player.car;
 		if( car != null ) {
 			// follow the player's car
-			controller.setPosition( GameData.States.playerState.car.state().position );
+			controller.setPosition( GameData.States.player.car.state().position );
 		}
 	}
 
@@ -207,7 +228,7 @@ public class GameLogic implements CarEvent.Listener, PlayerStateEvent.Listener {
 	public void carEvent( CarEvent.Type type, CarEvent.Data data ) {
 		switch( type ) {
 		case onCollision:
-			DriftState driftState = GameData.States.driftState;
+			DriftState driftState = GameData.States.drift;
 			Car car = GameEvents.carEvent.data.car;
 			if( car.getInputMode() == InputMode.InputFromPlayer && driftState.isDrifting ) {
 				driftState.invalidateByCollision();
@@ -233,7 +254,7 @@ public class GameLogic implements CarEvent.Listener, PlayerStateEvent.Listener {
 	private Vector2 offset = new Vector2();
 
 	private void updateCarFriction() {
-		PlayerState player = GameData.States.playerState;
+		PlayerState player = GameData.States.player;
 
 		Vector2 tilePosition = player.tilePosition;
 
@@ -266,11 +287,11 @@ public class GameLogic implements CarEvent.Listener, PlayerStateEvent.Listener {
 	}
 
 	private void updateLap() {
-		PlayerState player = GameData.States.playerState;
+		PlayerState player = GameData.States.player;
 		if( player.car != null ) {
 			boolean onStartZone = (player.currTileX == world.playerStartTileX && player.currTileY == world.playerStartTileY);
 
-			LapState lapState = GameData.States.lapState;
+			LapState lapState = GameData.States.lap;
 			String name = world.name;
 
 			if( onStartZone ) {

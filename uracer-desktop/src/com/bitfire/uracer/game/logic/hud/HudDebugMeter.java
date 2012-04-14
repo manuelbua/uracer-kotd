@@ -1,4 +1,4 @@
-package com.bitfire.uracer.game.hud;
+package com.bitfire.uracer.game.logic.hud;
 
 import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.Pixmap;
