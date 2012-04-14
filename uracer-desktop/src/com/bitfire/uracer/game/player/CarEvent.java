@@ -16,6 +16,8 @@ public final class CarEvent extends Event {
 	}
 
 	public final class Data {
+		public Car car;
+
 		/** collision data */
 		public Fixture other;
 		public Vector2 impulses;
@@ -39,8 +41,8 @@ public final class CarEvent extends Event {
 		notify.addListener( listener );
 	}
 
-	public void trigger( Object source, Type type ) {
-		this.source = source;
+	public void trigger( Car car, Type type ) {
+		data.car = car;
 		notify.carEvent( type, data );
 	}
 

@@ -2,7 +2,7 @@ package com.bitfire.uracer;
 
 import com.badlogic.gdx.Application.ApplicationType;
 import com.badlogic.gdx.Gdx;
-import com.bitfire.uracer.game.logic.DirectorController.InterpolationMode;
+import com.bitfire.uracer.game.logic.helpers.DirectorController.InterpolationMode;
 import com.bitfire.uracer.postprocessing.filters.Blur;
 import com.bitfire.uracer.postprocessing.filters.Blur.BlurType;
 import com.bitfire.uracer.postprocessing.filters.ZoomBlur;

@@ -29,6 +29,8 @@ import com.bitfire.uracer.game.effects.TrackEffects;
 import com.bitfire.uracer.game.events.GameLogicEvent;
 import com.bitfire.uracer.game.events.PlayerStateEvent;
 import com.bitfire.uracer.game.hud.Hud;
+import com.bitfire.uracer.game.logic.helpers.DirectorController;
+import com.bitfire.uracer.game.logic.helpers.Recorder;
 import com.bitfire.uracer.game.messager.Message.MessagePosition;
 import com.bitfire.uracer.game.messager.Message.MessageSize;
 import com.bitfire.uracer.game.messager.Message.Type;
@@ -36,6 +38,7 @@ import com.bitfire.uracer.game.player.Car;
 import com.bitfire.uracer.game.player.Car.InputMode;
 import com.bitfire.uracer.game.player.CarEvent;
 import com.bitfire.uracer.game.player.CarModel;
+import com.bitfire.uracer.game.states.DriftState;
 import com.bitfire.uracer.game.states.LapState;
 import com.bitfire.uracer.game.states.PlayerState;
 import com.bitfire.uracer.game.world.GameWorld;
@@ -80,7 +83,6 @@ public class GameLogic implements CarEvent.Listener, PlayerStateEvent.Listener {
 	};
 
 	public GameLogic() {
-		GameEvents.gameLogic.source = this;
 		this.world = GameData.Environment.gameWorld;
 
 		recorder = new Recorder();
@@ -154,13 +156,10 @@ public class GameLogic implements CarEvent.Listener, PlayerStateEvent.Listener {
 			}
 		}
 
-		GameData.States.playerState.update();
-		GameData.States.driftState.update();
+		updateStates();
 		updateCarFriction();
-
 		updateTrackEffects();
-
-		URacer.timeMultiplier = AMath.clamp( timeMultiplier.value, tmMin, Config.Physics.PhysicsTimeMultiplier );
+		updateTimeMultiplier();
 
 		return true;
 	}
@@ -171,6 +170,15 @@ public class GameLogic implements CarEvent.Listener, PlayerStateEvent.Listener {
 		if( player.getCarDescriptor().velocity_wc.len2() >= 1 ) {
 			playerSkidMarks.tryAddDriftMark( player.state().position, player.state().orientation, GameData.States.driftState );
 		}
+	}
+
+	private void updateStates() {
+		GameData.States.playerState.update();
+		GameData.States.driftState.update();
+	}
+
+	private void updateTimeMultiplier() {
+		URacer.timeMultiplier = AMath.clamp( timeMultiplier.value, tmMin, Config.Physics.PhysicsTimeMultiplier );
 	}
 
 	public void onBeforeRender() {
@@ -197,12 +205,12 @@ public class GameLogic implements CarEvent.Listener, PlayerStateEvent.Listener {
 
 	@Override
 	public void carEvent( CarEvent.Type type, CarEvent.Data data ) {
-		Car car = (Car)GameEvents.carEvent.source;
-
 		switch( type ) {
 		case onCollision:
-			if( GameData.States.driftState.isDrifting && car.getInputMode() == InputMode.InputFromPlayer ) {
-				GameData.States.driftState.invalidateByCollision();
+			DriftState driftState = GameData.States.driftState;
+			Car car = GameEvents.carEvent.data.car;
+			if( car.getInputMode() == InputMode.InputFromPlayer && driftState.isDrifting ) {
+				driftState.invalidateByCollision();
 			}
 			break;
 		case onComputeForces:

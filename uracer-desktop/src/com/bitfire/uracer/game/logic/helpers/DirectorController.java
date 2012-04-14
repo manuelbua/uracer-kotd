@@ -1,4 +1,4 @@
-package com.bitfire.uracer.game.logic;
+package com.bitfire.uracer.game.logic.helpers;
 
 import com.badlogic.gdx.math.Rectangle;
 import com.badlogic.gdx.math.Vector2;

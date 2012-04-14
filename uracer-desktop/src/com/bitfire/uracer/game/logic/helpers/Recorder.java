@@ -1,4 +1,4 @@
-package com.bitfire.uracer.game.logic;
+package com.bitfire.uracer.game.logic.helpers;
 
 import com.badlogic.gdx.Gdx;
 import com.bitfire.uracer.game.GameEvents;

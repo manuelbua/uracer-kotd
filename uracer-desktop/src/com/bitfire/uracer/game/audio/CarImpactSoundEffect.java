@@ -31,10 +31,10 @@ public final class CarImpactSoundEffect extends CarSoundEffect {
 	private CarEvent.Listener carEvent = new CarEvent.Listener() {
 		@Override
 		public void carEvent( Type type, Data data ) {
-			Car car = (Car)GameEvents.carEvent.source;
 
 			switch( type ) {
 			case onCollision:
+				Car car = GameEvents.carEvent.data.car;
 				if( car.getInputMode() == InputMode.InputFromPlayer ) {
 					impact( data.impulses.len(), GameData.States.playerState.currSpeedFactor );
 				}

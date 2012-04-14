@@ -41,7 +41,6 @@ public final class PlayerState {
 	}
 
 	public PlayerState( Car car, GhostCar ghost ) {
-		GameEvents.playerState.source = this;
 		GameEvents.gameLogic.addListener( gameLogicEvent );
 		setData( car, ghost );
 	}
