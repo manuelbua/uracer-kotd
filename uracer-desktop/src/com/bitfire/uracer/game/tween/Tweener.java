@@ -1,9 +1,10 @@
-package com.bitfire.uracer.game;
+package com.bitfire.uracer.game.tween;
 
 import aurelienribon.tweenengine.Timeline;
 import aurelienribon.tweenengine.Tween;
 import aurelienribon.tweenengine.TweenManager;
 
+import com.bitfire.uracer.game.GameEvents;
 import com.bitfire.uracer.game.events.GameLogicEvent;
 import com.bitfire.uracer.game.logic.hud.HudLabel;
 import com.bitfire.uracer.game.logic.hud.HudLabelAccessor;

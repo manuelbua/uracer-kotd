@@ -514,4 +514,8 @@ public final class GameWorld {
 	public TiledLayer getLayer( TileLayer layer ) {
 		return mapUtils.getLayer( layer );
 	}
+
+	public boolean isValidTilePosition( Vector2 tilePosition ) {
+		return tilePosition.x >= 0 && tilePosition.x < map.width && tilePosition.y >= 0 && tilePosition.y < map.height;
+	}
 }

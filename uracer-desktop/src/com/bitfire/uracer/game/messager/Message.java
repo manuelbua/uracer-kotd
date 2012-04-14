@@ -13,7 +13,7 @@ import com.badlogic.gdx.graphics.g2d.BitmapFont.HAlignment;
 import com.badlogic.gdx.graphics.g2d.BitmapFont.TextBounds;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.bitfire.uracer.Art;
-import com.bitfire.uracer.game.Tweener;
+import com.bitfire.uracer.game.tween.Tweener;
 import com.bitfire.uracer.utils.AMath;
 
 public class Message {

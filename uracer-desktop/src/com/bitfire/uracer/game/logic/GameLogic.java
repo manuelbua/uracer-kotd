@@ -21,7 +21,6 @@ import com.bitfire.uracer.URacer;
 import com.bitfire.uracer.game.GameEvents;
 import com.bitfire.uracer.game.Input;
 import com.bitfire.uracer.game.Replay;
-import com.bitfire.uracer.game.Tweener;
 import com.bitfire.uracer.game.audio.CarSoundManager;
 import com.bitfire.uracer.game.data.GameData;
 import com.bitfire.uracer.game.effects.CarSkidMarks;
@@ -45,6 +44,7 @@ import com.bitfire.uracer.game.player.CarModel;
 import com.bitfire.uracer.game.states.DriftState;
 import com.bitfire.uracer.game.states.LapState;
 import com.bitfire.uracer.game.states.PlayerState;
+import com.bitfire.uracer.game.tween.Tweener;
 import com.bitfire.uracer.game.world.GameWorld;
 import com.bitfire.uracer.game.world.WorldDefs.TileLayer;
 import com.bitfire.uracer.task.Task;
@@ -60,7 +60,6 @@ public class GameLogic implements CarEvent.Listener, PlayerStateEvent.Listener, 
 	private long lastRecordedLapId = 0;
 
 	private DirectorController controller = null;
-	private GameWorld world = null;
 
 	// replay
 	private Recorder recorder = null;
@@ -94,8 +93,6 @@ public class GameLogic implements CarEvent.Listener, PlayerStateEvent.Listener, 
 	};
 
 	public GameLogic() {
-		this.world = GameData.Environment.gameWorld;
-
 		recorder = new Recorder();
 		timeMultiplier.value = 1f;
 
@@ -103,12 +100,15 @@ public class GameLogic implements CarEvent.Listener, PlayerStateEvent.Listener, 
 		GameEvents.carEvent.addListener( this );
 		GameEvents.driftState.addListener( this );
 
+		GameWorld world = GameData.Environment.gameWorld;
+
 		// initialize player position in the world
 		GameData.States.player.car.setTransform( world.playerStartPos, world.playerStartOrient );
 
+		// creates global camera controller
 		controller = new DirectorController( Config.Graphics.CameraInterpolationMode, Director.halfViewport, world.worldSizeScaledPx, world.worldSizeTiles );
 
-		createTasks();
+		createGameTasks();
 	}
 
 	public void dispose() {
@@ -119,7 +119,7 @@ public class GameLogic implements CarEvent.Listener, PlayerStateEvent.Listener, 
 		gameTasks.clear();
 	}
 
-	private void createTasks() {
+	private void createGameTasks() {
 		gameTasks = new ArrayList<Task>( 10 );
 		gameTasks.add( new CarSoundManager() );
 
@@ -184,11 +184,15 @@ public class GameLogic implements CarEvent.Listener, PlayerStateEvent.Listener, 
 
 		updateStates();
 		updateCarFriction();
-		updateHud();
-		updateTrackEffects();
+		updateGameTasks();
 		updateTimeMultiplier();
 
 		return true;
+	}
+
+	private void updateGameTasks() {
+		updateHud();
+		updateTrackEffects();
 	}
 
 	private void updateTrackEffects() {
@@ -215,6 +219,10 @@ public class GameLogic implements CarEvent.Listener, PlayerStateEvent.Listener, 
 		hudDrifting.update( GameData.States.playerDrift );
 	}
 
+	//
+	// RENDERING-BOUND LOGIC
+	//
+
 	public void onBeforeRender() {
 		// trigger the event and let's subscribers interpolate and update their state()
 		GameData.Systems.physicsStep.triggerOnTemporalAliasing( URacer.getTemporalAliasing() );
@@ -229,7 +237,14 @@ public class GameLogic implements CarEvent.Listener, PlayerStateEvent.Listener, 
 			// hud keeps track of the player's position and orientation
 			hud.trackPlayerPosition( playerCar );
 		}
+
+		// tweener step
+		Tweener.update( (int)(URacer.getLastDeltaSecs() * 1000 * URacer.timeMultiplier ) );
 	}
+
+	//
+	// TODO, COULD THIS BE A TASK HANDLING IN-GAME USER CHOICES ??
+	//
 
 	private void restart() {
 		isFirstLap = true;
@@ -242,6 +257,10 @@ public class GameLogic implements CarEvent.Listener, PlayerStateEvent.Listener, 
 		restart();
 		lastRecordedLapId = 0;
 	}
+
+	//
+	// EVENT HANDLERS
+	//
 
 	@Override
 	public void carEvent( CarEvent.Type type, CarEvent.Data data ) {
@@ -303,6 +322,10 @@ public class GameLogic implements CarEvent.Listener, PlayerStateEvent.Listener, 
 		}
 	}
 
+	//
+	// MORE TASKS ??
+	//
+
 	private Vector2 offset = new Vector2();
 
 	private void updateCarFriction() {
@@ -310,7 +333,8 @@ public class GameLogic implements CarEvent.Listener, PlayerStateEvent.Listener, 
 
 		Vector2 tilePosition = player.tilePosition;
 
-		if( tilePosition.x >= 0 && tilePosition.x < world.map.width && tilePosition.y >= 0 && tilePosition.y < world.map.height ) {
+		GameWorld world = GameData.Environment.gameWorld;
+		if( world.isValidTilePosition( tilePosition ) ) {
 			// compute realsize-based pixel offset car-tile (top-left origin)
 			float scaledTileSize = GameData.Environment.gameWorld.getTileSizeScaled();
 			float tsx = tilePosition.x * scaledTileSize;
@@ -338,9 +362,12 @@ public class GameLogic implements CarEvent.Listener, PlayerStateEvent.Listener, 
 		}
 	}
 
+	// FIXME looks like this function is doing MUCH more than what's stated in its name..
 	private void updateLap() {
 		PlayerState player = GameData.States.player;
 		if( player.car != null ) {
+			GameWorld world = GameData.Environment.gameWorld;
+
 			boolean onStartZone = (player.currTileX == world.playerStartTileX && player.currTileY == world.playerStartTileY);
 
 			LapState lapState = GameData.States.lap;

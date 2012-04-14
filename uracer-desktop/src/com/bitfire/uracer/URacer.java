@@ -38,7 +38,7 @@ public class URacer implements ApplicationListener {
 	}
 
 	private static void updateVersionInformation() {
-		// extrapolate version information
+		// extract version information
 		versionInfo = "uRacer";
 		try {
 			Field f = Class.forName( "com.bitfire.uracer.VersionInfo" ).getDeclaredField( "versionName" );

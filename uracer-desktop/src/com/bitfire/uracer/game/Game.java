@@ -32,7 +32,10 @@ public class Game implements Disposable {
 	public Game( String levelName, GameDifficulty difficulty, Aspect carAspect, CarModel carModel ) {
 		GameData.create( URacer.getScalingStrategy(), levelName, false, difficulty, carAspect, carModel );
 
+		// handle game rules and mechanics, it's all about game data
 		gameLogic = new GameLogic();
+
+		// the world renderer
 		gameRenderer = new GameRenderer();
 
 		if( Config.Graphics.EnablePostProcessingFx ) {

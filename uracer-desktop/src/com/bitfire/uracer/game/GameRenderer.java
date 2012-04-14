@@ -6,7 +6,6 @@ import com.badlogic.gdx.graphics.OrthographicCamera;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.bitfire.uracer.Config;
 import com.bitfire.uracer.Director;
-import com.bitfire.uracer.URacer;
 import com.bitfire.uracer.game.data.GameData;
 import com.bitfire.uracer.game.events.GameRendererEvent;
 import com.bitfire.uracer.game.rendering.Debug;
@@ -49,10 +48,6 @@ public class GameRenderer {
 
 	public void render() {
 		OrthographicCamera ortho = Director.getCamera();
-
-		// tweener step
-//		Tweener.update( (int)(URacer.getLastDeltaSecs() * URacer.timeMultiplier * 1000) );	// interesting
-		Tweener.update( (int)(URacer.getLastDeltaSecs() * 1000) );
 
 		// resync
 		worldRenderer.syncWithCam( ortho );
