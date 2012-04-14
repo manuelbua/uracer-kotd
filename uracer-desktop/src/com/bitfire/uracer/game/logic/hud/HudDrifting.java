@@ -116,6 +116,7 @@ public final class HudDrifting extends HudElement {
 		for( int i = 0; i < MaxLabelResult; i++ ) {
 			labelResult[i].setAlpha( 0 );
 		}
+
 		nextLabelResult = 0;
 	}
 

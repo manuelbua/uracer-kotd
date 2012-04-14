@@ -119,12 +119,12 @@ public final class Config {
 
 	public static final class Debug {
 		public static boolean TraverseWalls;
-		public static boolean ApplyFrictionMap;
+		public static boolean ApplyCarFrictionFromMap;
 		public static boolean FrustumCulling;
 
 		public static void asDefault() {
 			TraverseWalls = false;
-			ApplyFrictionMap = true;
+			ApplyCarFrictionFromMap = true;
 			FrustumCulling = true;
 		}
 

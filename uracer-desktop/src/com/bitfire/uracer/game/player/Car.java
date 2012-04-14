@@ -193,14 +193,14 @@ public class Car extends Box2DEntity {
 			// considered 0<->1
 		}
 
-		if( Config.Debug.ApplyFrictionMap ) {
-			applyFrictionMap();
+		if( Config.Debug.ApplyCarFrictionFromMap ) {
+			applyFriction();
 		}
 
 		return carInput;
 	}
 
-	private void applyFrictionMap() {
+	private void applyFriction() {
 		if( frictionMean.getMean() < -0.4 && carDesc.velocity_wc.len2() > 10 ) {
 			carDesc.velocity_wc.mul( 0.975f );
 		}
