@@ -71,7 +71,6 @@ public class GameLogic implements CarEvent.Listener, PlayerStateEvent.Listener {
 
 	// hud
 	private Hud hud = null;
-	private HudDrifting hudDrifting = null;
 
 	// handles timeModulationBusy onComplete event
 	boolean timeModulation = false, timeModulationBusy = false;
