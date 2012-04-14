@@ -38,12 +38,12 @@ public final class CarSimulator {
 		carDesc.set( carDesc );
 	}
 
-	public void updateHeading( float bodyAngle ) {
-		VMath.fromRadians( heading, AMath.normalRelativeAngle( bodyAngle ) );
-		VMath.perp( side, heading );
-		// System.out.println("side=" + side);
-		// System.out.println("heading=" + heading);
-	}
+//	public void updateHeading( float bodyAngle ) {
+//		VMath.fromRadians( heading, AMath.normalRelativeAngle( bodyAngle ) );
+//		VMath.perp( side, heading );
+//		// System.out.println("side=" + side);
+//		// System.out.println("heading=" + heading);
+//	}
 
 	public void applyInput( CarInput input ) {
 		float maxForce = carDesc.carModel.max_force;
@@ -251,7 +251,7 @@ public final class CarSimulator {
 		// integrate angular velocity to get angular orientation
 		carDesc.angularOrientation = Config.Physics.PhysicsDt * carDesc.angularvelocity;
 
-		updateHeading( bodyAngle );
+//		updateHeading( bodyAngle );
 	}
 
 	public void resetPhysics() {

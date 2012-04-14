@@ -136,7 +136,7 @@ public class GameLogic implements CarEvent.Listener, PlayerStateEvent.Listener {
 		effects.add( playerSkidMarks );
 
 		// hud
-		hud.add( new HudDrifting( GameData.States.player.car ) );
+		hud.add( new HudDrifting( carModelWithPx, carModelLengthPx ) );
 	}
 
 	public boolean onTick() {

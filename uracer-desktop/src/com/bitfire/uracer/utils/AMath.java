@@ -75,8 +75,8 @@ public final class AMath {
 		return 1f;
 	}
 
-	public static float normalRelativeAngle( float angle ) {
-		float wrapped = (angle % TWO_PI);
+	public static float normalRelativeAngle( float angleRad ) {
+		float wrapped = (angleRad % TWO_PI);
 		return wrapped >= 0 ? (wrapped < PI) ? wrapped : wrapped - TWO_PI : (wrapped >= -PI) ? wrapped : wrapped + TWO_PI;
 	}
 

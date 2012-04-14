@@ -53,6 +53,11 @@ public final class HudLabel {
 		y = posY - halfBoundsHeight;
 	}
 
+	public void setPosition( Vector2 position ) {
+		x = position.x - halfBoundsWidth;
+		y = position.y - halfBoundsHeight;
+	}
+
 	private Vector2 tmpos = new Vector2();
 
 	public Vector2 getPosition() {

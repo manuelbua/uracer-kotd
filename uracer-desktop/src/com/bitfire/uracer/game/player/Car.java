@@ -135,7 +135,7 @@ public class Car extends Box2DEntity {
 	@Override
 	public void setTransform( Vector2 position, float orient_degrees ) {
 		super.setTransform( position, orient_degrees );
-		carSim.updateHeading( body.getAngle() );
+//		carSim.updateHeading( body.getAngle() );
 		// computeTilePosition();
 	}
 

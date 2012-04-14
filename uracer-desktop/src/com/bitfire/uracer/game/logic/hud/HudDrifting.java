@@ -10,19 +10,11 @@ import com.bitfire.uracer.game.events.DriftStateEvent;
 import com.bitfire.uracer.game.messager.Message.MessagePosition;
 import com.bitfire.uracer.game.messager.Message.MessageSize;
 import com.bitfire.uracer.game.messager.Message.Type;
-import com.bitfire.uracer.game.player.Car;
-import com.bitfire.uracer.game.player.CarModel;
 import com.bitfire.uracer.game.states.DriftState;
-import com.bitfire.uracer.utils.Convert;
 import com.bitfire.uracer.utils.NumberString;
+import com.bitfire.uracer.utils.VMath;
 
 public final class HudDrifting extends HudElement {
-	private Car car;
-	private int carWidthPx, carLengthPx;
-
-	private HudLabel labelRealtime;
-	private HudLabel[] labelResult;
-
 	// we need an HudLabel circular buffer since
 	// the player could be doing combos and the time
 	// needed for one single labelResult to ".slide"
@@ -33,9 +25,15 @@ public final class HudDrifting extends HudElement {
 	// current one
 	private static final int MaxLabelResult = 3;
 
-	private int nextLabelResult = 0;
+	private HudLabel labelRealtime;
+	private HudLabel[] labelResult;
 
-	private Vector2 heading = new Vector2();
+	private int nextLabelResult = 0;
+	private float carModelWidthPx, carModelLengthPx;
+
+	private Vector2 displacement = new Vector2();
+	private Vector2 tmpv = new Vector2();
+	private Vector2 lastRealtimePos = new Vector2();
 
 	private DriftStateEvent.Listener driftListener = new DriftStateEvent.Listener() {
 		@Override
@@ -57,16 +55,13 @@ public final class HudDrifting extends HudElement {
 
 	private void onEndDrift() {
 		DriftState drift = GameData.States.drift;
-		Vector2 pos = tmpv.set( Director.screenPosForPx( car.state().position ) );
-
-		labelRealtime.fadeOut( 300 );
 
 		HudLabel result = labelResult[nextLabelResult++];
 		if( nextLabelResult == MaxLabelResult ) {
 			nextLabelResult = 0;
 		}
 
-		result.setPosition( pos.x - heading.x * (carWidthPx + result.halfBoundsWidth), pos.y - heading.y * (carLengthPx + result.halfBoundsHeight) );
+		result.setPosition( lastRealtimePos );
 
 		float driftSeconds = drift.driftSeconds();
 
@@ -90,18 +85,18 @@ public final class HudDrifting extends HudElement {
 		}
 
 		result.slide();
+		labelRealtime.fadeOut( 300 );
 	}
 
-	public HudDrifting( Car car ) {
+	public HudDrifting( float carModelWidthPx, float carModelLengthPx ) {
 		GameEvents.driftState.addListener( driftListener );
 
-		this.car = car;
-		CarModel model = car.getCarModel();
-		carWidthPx = (int)Convert.mt2px( model.width );
-		carLengthPx = (int)Convert.mt2px( model.length );
+		this.carModelWidthPx = carModelWidthPx;
+		this.carModelLengthPx = carModelLengthPx;
 
 		labelRealtime = new HudLabel( Art.fontCurseYRbig, "99.99", 0.5f );
 		labelRealtime.setAlpha( 0 );
+		lastRealtimePos.set( 0, 0 );
 
 		labelResult = new HudLabel[ MaxLabelResult ];
 		nextLabelResult = 0;
@@ -125,43 +120,31 @@ public final class HudDrifting extends HudElement {
 	}
 
 	@Override
-	void onTick() {
-		heading.set( car.getSimulator().heading );
-	}
-
-	private Vector2 tmpv = new Vector2();
-	private float lastDistance = 0f;
-
-	@Override
 	void onRender( SpriteBatch batch, Vector2 playerPosition, float playerOrientation ) {
 		DriftState drift = GameData.States.drift;
 
-		playerPosition = Director.screenPosForPx( playerPosition );
+		tmpv.set( Director.screenPosForPx( playerPosition ) );
 
-		// float secRatio = 1f;
-		// float distance = 0f;
-		if( drift.isDrifting ) {
-			// secRatio = AMath.clamp( (System.currentTimeMillis() - drift.driftStartTime) / 2000f, 0, 1);
-			// labelRealtime.setAlpha( secRatio );
-			// distance = (1f-secRatio) * 50f;
-			// lastDistance = distance;
-			lastDistance = 0;
+		// compute heading
+		displacement.set( VMath.fromDegrees( playerOrientation ) );
+
+		// compute displacement
+		displacement.x *= (carModelWidthPx + labelRealtime.halfBoundsWidth);
+		displacement.y *= (carModelLengthPx + labelRealtime.halfBoundsHeight);
+
+		// displace the position
+		tmpv.sub( displacement );
+
+		labelRealtime.setPosition( tmpv );
+		lastRealtimePos.set( tmpv );
+
+		// draw earned/lost seconds
+		if( labelRealtime.getAlpha() > 0 ) {
+			labelRealtime.setString( "+" + NumberString.format( drift.driftSeconds() ) );
+			labelRealtime.render( batch );
 		}
 
-		labelRealtime.setPosition(
-		// offset by heading.mul(distance factor)
-				playerPosition.x - heading.x * (carWidthPx + labelRealtime.halfBoundsWidth + lastDistance), playerPosition.y - heading.y
-						* (carLengthPx + labelRealtime.halfBoundsHeight + lastDistance) );
-
-		//
-		// draw earned/lost seconds
-		//
-		labelRealtime.setString( "+" + NumberString.format( drift.driftSeconds() ) );
-		labelRealtime.render( batch );
-
-		//
 		// draw result
-		//
 		for( int i = 0; i < MaxLabelResult; i++ ) {
 			labelResult[i].render( batch );
 		}

@@ -11,19 +11,22 @@ public final class VMath {
 	private VMath() {
 	}
 
+
 	/** Returns a vector in a top-left coordinate system so that:
 	 *
 	 * up=[0,-1], left=[-1,0], right=[1,0], down=[0,1] */
 
-	public static Vector2 fromRadians( Vector2 result, float radians ) {
-		result.x = -MathUtils.sin( radians );
-		result.y = -MathUtils.cos( radians );
-		return result;
+	private static Vector2 retRad = new Vector2();
+	public static Vector2 fromRadians( float radians ) {
+		retRad.set(-MathUtils.sin( radians ),-MathUtils.cos( radians ));
+		return retRad;
 	}
 
-	public static Vector2 fromDegrees( Vector2 result, float degrees ) {
+	private static Vector2 retDeg = new Vector2();
+	public static Vector2 fromDegrees( float degrees ) {
 		float radians = degrees * MathUtils.degreesToRadians;
-		return VMath.fromRadians( result, radians );
+		retDeg.set(VMath.fromRadians( radians ));
+		return retDeg;
 	}
 
 	public static float toAngle( Vector2 v ) {
