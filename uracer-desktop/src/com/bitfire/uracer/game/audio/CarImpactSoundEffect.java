@@ -1,9 +1,8 @@
 package com.bitfire.uracer.game.audio;
 
-import com.badlogic.gdx.Files.FileType;
-import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.audio.Sound;
 import com.badlogic.gdx.math.MathUtils;
+import com.bitfire.uracer.Sounds;
 import com.bitfire.uracer.URacer;
 import com.bitfire.uracer.game.GameEvents;
 import com.bitfire.uracer.game.data.GameData;
@@ -49,11 +48,11 @@ public final class CarImpactSoundEffect extends CarSoundEffect {
 	public CarImpactSoundEffect() {
 		GameEvents.carEvent.addListener( carEvent );
 
-		soundLow1 = Gdx.audio.newSound( Gdx.files.getFileHandle( "data/audio/impact-2.ogg", FileType.Internal ) );
-		soundLow2 = Gdx.audio.newSound( Gdx.files.getFileHandle( "data/audio/impact-3.ogg", FileType.Internal ) );
-		soundMid1 = Gdx.audio.newSound( Gdx.files.getFileHandle( "data/audio/impact-1.ogg", FileType.Internal ) );
-		soundMid2 = Gdx.audio.newSound( Gdx.files.getFileHandle( "data/audio/impact-4.ogg", FileType.Internal ) );
-		soundHigh = Gdx.audio.newSound( Gdx.files.getFileHandle( "data/audio/impact-5.ogg", FileType.Internal ) );
+		soundLow1 = Sounds.carImpacts[0];
+		soundLow2 = Sounds.carImpacts[1];
+		soundMid1 = Sounds.carImpacts[2];
+		soundMid2 = Sounds.carImpacts[3];
+		soundHigh = Sounds.carImpacts[4];
 	}
 
 	@Override

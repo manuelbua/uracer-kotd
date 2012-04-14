@@ -1,9 +1,8 @@
 package com.bitfire.uracer.game.audio;
 
-import com.badlogic.gdx.Files.FileType;
-import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.audio.Sound;
 import com.bitfire.uracer.Config;
+import com.bitfire.uracer.Sounds;
 import com.bitfire.uracer.URacer;
 import com.bitfire.uracer.game.GameEvents;
 import com.bitfire.uracer.game.data.GameData;
@@ -62,9 +61,7 @@ public final class CarDriftSoundEffect extends CarSoundEffect {
 
 	public CarDriftSoundEffect() {
 		GameEvents.driftState.addListener( driftListener );
-
-		// TODO. Sounds as the Art class
-		drift = Gdx.audio.newSound( Gdx.files.getFileHandle( "data/audio/drift-loop.ogg", FileType.Internal ) );
+		drift = Sounds.carDrift;
 	}
 
 	@Override

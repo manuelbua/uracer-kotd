@@ -26,9 +26,8 @@ public final class Environment {
 	public Messager messager;
 	public World b2dWorld;
 
-	public Environment( GameDifficulty difficulty ) {
-		// computed for a 256px tile size target (compute needed conversion factors)
-		scalingStrategy = new ScalingStrategy( new Vector2( 1280, 800 ), 70f, 224, 1f );
+	public Environment( ScalingStrategy scalingStrategy, GameDifficulty difficulty ) {
+		this.scalingStrategy = scalingStrategy;
 
 		// everything has been setup on a 256px tile, scale back if that's the case
 		Config.Physics.PixelsPerMeter /= (scalingStrategy.targetScreenRatio / scalingStrategy.to256);

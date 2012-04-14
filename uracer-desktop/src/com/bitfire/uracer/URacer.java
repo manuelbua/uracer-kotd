@@ -4,12 +4,14 @@ import java.lang.reflect.Field;
 
 import com.badlogic.gdx.ApplicationListener;
 import com.badlogic.gdx.Gdx;
+import com.badlogic.gdx.math.Vector2;
 import com.bitfire.uracer.utils.AMath;
 
 public class URacer implements ApplicationListener {
 	private Screen screen;
 	private static boolean running = false;
 
+	private static ScalingStrategy scalingStrategy;
 	private float temporalAliasing = 0;
 	private float timeAccumSecs = 0;
 	private float oneOnOneBillion = 0;
@@ -54,6 +56,12 @@ public class URacer implements ApplicationListener {
 		URacer.updateVersionInformation();
 		Gdx.app.log( "URacer", "booting version " + versionInfo );
 
+		// computed for a 256px tile size target (compute needed conversion factors)
+		scalingStrategy = new ScalingStrategy( new Vector2( 1280, 800 ), 70f, 224, 1f );
+
+		Art.init( scalingStrategy.invTileMapZoomFactor );
+		Sounds.init();
+
 		Config.asDefault();
 		Gdx.graphics.setVSync( true );
 
@@ -65,7 +73,6 @@ public class URacer implements ApplicationListener {
 		// ensures the first iteration ever is going to at least perform one single tick
 		lastDeltaTimeSec = MaxDeltaTime;
 		timeAccumSecs = Config.Physics.PhysicsDt;
-
 
 		setScreen( new GameScreen() );
 	}
@@ -155,6 +162,10 @@ public class URacer implements ApplicationListener {
 	@Override
 	public void dispose() {
 		setScreen( null );
+
+		Art.dispose();
+		Sounds.dispose();
+
 		if( uRacerFinalizer != null ) {
 			uRacerFinalizer.dispose();
 		}
@@ -205,5 +216,9 @@ public class URacer implements ApplicationListener {
 
 	public static String getVersionInfo() {
 		return versionInfo;
+	}
+
+	public static ScalingStrategy getScalingStrategy() {
+		return scalingStrategy;
 	}
 }

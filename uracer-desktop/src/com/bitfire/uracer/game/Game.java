@@ -39,7 +39,7 @@ public class Game implements Disposable {
 	private List<Task> gameTasks = null;
 
 	public Game( String levelName, GameDifficulty difficulty, Aspect carAspect, CarModel carModel ) {
-		GameData.create( levelName, false, difficulty, carAspect, carModel );
+		GameData.create( URacer.getScalingStrategy(), levelName, false, difficulty, carAspect, carModel );
 
 		gameLogic = new GameLogic();
 		gameRenderer = new GameRenderer();

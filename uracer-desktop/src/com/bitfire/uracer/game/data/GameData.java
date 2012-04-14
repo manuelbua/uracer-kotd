@@ -3,6 +3,7 @@ package com.bitfire.uracer.game.data;
 import com.bitfire.uracer.Art;
 import com.bitfire.uracer.Config;
 import com.bitfire.uracer.Director;
+import com.bitfire.uracer.ScalingStrategy;
 import com.bitfire.uracer.game.GameDifficulty;
 import com.bitfire.uracer.game.Tweener;
 import com.bitfire.uracer.game.player.Car.Aspect;
@@ -21,11 +22,10 @@ public final class GameData {
 	public static Environment Environment;
 
 	// 1st
-	public static void create( String levelName, boolean nightMode, GameDifficulty difficulty, Aspect carAspect, CarModel carModel ) {
-		Environment = new Environment( difficulty );
+	public static void create( ScalingStrategy scalingStrategy, String levelName, boolean nightMode, GameDifficulty difficulty, Aspect carAspect, CarModel carModel ) {
+		Environment = new Environment( scalingStrategy, difficulty );
 
 		Tweener.init();
-		Art.init( GameData.Environment.scalingStrategy.invTileMapZoomFactor );
 		BatchUtils.init( Art.base6 );
 		Convert.init( GameData.Environment.scalingStrategy.invTileMapZoomFactor, Config.Physics.PixelsPerMeter );
 		Director.init();
@@ -39,7 +39,6 @@ public final class GameData {
 
 	public static void dispose() {
 		Director.dispose();
-		Art.dispose();
 
 		Environment.dispose();
 		Systems.dispose();
