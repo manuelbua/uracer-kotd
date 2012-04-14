@@ -84,7 +84,10 @@ public final class ZoomBlur extends Filter<ZoomBlur> {
 		setParams( Param.Texture, u_texture_1 );
 		setParams( Param.OneOnBlurLen, 1f / (float)blur_len );
 		setParams( Param.BlurDiv, this.strength / (float)blur_len );
-		setOrigin( this.x, this.y );
+
+		// being explicit (could call setOrigin that will call endParams)
+		setParams( Param.OffsetX, x / (float)Gdx.graphics.getWidth() );
+		setParams( Param.OffsetY, 1f - (y / (float)Gdx.graphics.getHeight()) ).endParams();
 	}
 
 	@Override
