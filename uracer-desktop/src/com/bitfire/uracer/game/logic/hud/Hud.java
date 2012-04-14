@@ -8,6 +8,7 @@ import com.bitfire.uracer.Config;
 import com.bitfire.uracer.game.GameEvents;
 import com.bitfire.uracer.game.Manager;
 import com.bitfire.uracer.game.Replay;
+import com.bitfire.uracer.game.data.GameData;
 import com.bitfire.uracer.game.events.GameLogicEvent;
 import com.bitfire.uracer.game.events.GameRendererEvent;
 import com.bitfire.uracer.game.player.Car;
@@ -76,9 +77,9 @@ public final class Hud extends Manager<HudElement> {
 		curr = new HudLabel( Art.fontCurseYR, "YOUR  TIME\n-.----" );
 		last = new HudLabel( Art.fontCurseYR, "LAST  TIME\n-.----" );
 
-		curr.setPosition( gridX, 50 );
-		last.setPosition( gridX * 3, 50 );
-		best.setPosition( gridX * 4, 50 );
+		curr.setPosition( gridX, 50 * GameData.Environment.scalingStrategy.invTileMapZoomFactor );
+		last.setPosition( gridX * 3, 50 * GameData.Environment.scalingStrategy.invTileMapZoomFactor );
+		best.setPosition( gridX * 4, 50 * GameData.Environment.scalingStrategy.invTileMapZoomFactor );
 
 		// // meter lateral forces
 		// meterLatForce = new HudDebugMeter( car, 0, 100, 5 );

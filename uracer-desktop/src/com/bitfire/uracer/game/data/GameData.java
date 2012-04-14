@@ -8,8 +8,7 @@ import com.bitfire.uracer.game.GameDifficulty;
 import com.bitfire.uracer.game.player.Car.Aspect;
 import com.bitfire.uracer.game.player.CarFactory;
 import com.bitfire.uracer.game.player.CarModel;
-import com.bitfire.uracer.game.tween.Tweener;
-import com.bitfire.uracer.utils.BatchUtils;
+import com.bitfire.uracer.utils.SpriteBatchUtils;
 import com.bitfire.uracer.utils.Convert;
 
 /** Encapsulates and abstracts the dynamic state of the game.
@@ -25,8 +24,7 @@ public final class GameData {
 	public static void create( ScalingStrategy scalingStrategy, String levelName, boolean nightMode, GameDifficulty difficulty, Aspect carAspect, CarModel carModel ) {
 		Environment = new Environment( scalingStrategy, difficulty );
 
-		Tweener.init();
-		BatchUtils.init( Art.base6 );
+		SpriteBatchUtils.init( Art.base6 );
 		Convert.init( GameData.Environment.scalingStrategy.invTileMapZoomFactor, Config.Physics.PixelsPerMeter );
 		Director.init();
 

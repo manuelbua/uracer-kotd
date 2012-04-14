@@ -12,7 +12,7 @@ import com.bitfire.uracer.Art;
 import com.bitfire.uracer.Director;
 import com.bitfire.uracer.game.player.Car;
 import com.bitfire.uracer.utils.AMath;
-import com.bitfire.uracer.utils.BatchUtils;
+import com.bitfire.uracer.utils.SpriteBatchUtils;
 import com.bitfire.uracer.utils.Convert;
 
 public class HudDebugMeter {
@@ -90,7 +90,7 @@ public class HudDebugMeter {
 	public void render( SpriteBatch batch ) {
 		update();
 		draw();
-		BatchUtils.drawString( batch, getMessage(), pos.x, pos.y );
+		SpriteBatchUtils.drawString( batch, getMessage(), pos.x, pos.y );
 
 		batch.draw( region, pos.x, pos.y + Art.fontHeight );
 	}

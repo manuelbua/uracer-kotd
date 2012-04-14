@@ -88,10 +88,10 @@ public final class Art {
 		fontCurseGbig = new BitmapFont( Gdx.files.internal( "data/font/curse-g-big.fnt" ), Art.fonts.findRegion( "curse-g-big" ), true );
 		fontCurseRbig = new BitmapFont( Gdx.files.internal( "data/font/curse-r-big.fnt" ), Art.fonts.findRegion( "curse-r-big" ), true );
 
+		Art.scaleFonts( invZoomFactor );
+
 		// friction maps
 		frictionNature = new Pixmap( Gdx.files.internal( "data/levels/tilesets/nature/224-friction.png" ) );
-
-		Art.scaleFonts( invZoomFactor );
 	}
 
 	public static void dispose() {

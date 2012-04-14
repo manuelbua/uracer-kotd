@@ -1,19 +1,14 @@
 package com.bitfire.uracer.game.tween;
 
 import aurelienribon.tweenengine.Timeline;
-import aurelienribon.tweenengine.Tween;
 import aurelienribon.tweenengine.TweenManager;
 
+import com.bitfire.uracer.URacer;
 import com.bitfire.uracer.game.GameEvents;
 import com.bitfire.uracer.game.events.GameLogicEvent;
-import com.bitfire.uracer.game.logic.hud.HudLabel;
-import com.bitfire.uracer.game.logic.hud.HudLabelAccessor;
-import com.bitfire.uracer.game.messager.Message;
-import com.bitfire.uracer.game.messager.MessageAccessor;
-import com.bitfire.uracer.utils.BoxedFloat;
-import com.bitfire.uracer.utils.BoxedFloatAccessor;
 
-public final class Tweener {
+/** This tweener will update taking the timeMultiplier modulation into account */
+public final class GameTweener {
 	private static final TweenManager manager = new TweenManager();
 
 	private static final GameLogicEvent.Listener gameLogicEvent = new GameLogicEvent.Listener() {
@@ -30,13 +25,9 @@ public final class Tweener {
 
 	public static void init() {
 		GameEvents.gameLogic.addListener( gameLogicEvent );
-
-		Tween.registerAccessor( Message.class, new MessageAccessor() );
-		Tween.registerAccessor( HudLabel.class, new HudLabelAccessor() );
-		Tween.registerAccessor( BoxedFloat.class, new BoxedFloatAccessor() );
 	}
 
-	private Tweener() {
+	private GameTweener() {
 	}
 
 	public static void dispose() {
@@ -51,7 +42,8 @@ public final class Tweener {
 		timeline.start( manager );
 	}
 
-	public static void update( int deltaMillis ) {
-		manager.update( deltaMillis );
+	public static void update() {
+		// TODO, check this, the documentation doesn't state it, looks like milliseconds
+		manager.update( 1000 * URacer.getLastDeltaSecs() * URacer.timeMultiplier);
 	}
 }

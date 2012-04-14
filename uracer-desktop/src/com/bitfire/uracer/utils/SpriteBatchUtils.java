@@ -3,15 +3,15 @@ package com.bitfire.uracer.utils;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
 
-public final class BatchUtils {
+public final class SpriteBatchUtils {
 	private static String[] chars = { "ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789", ".,!?:;\"'+-=/\\< " };
 	private static TextureRegion[][] base6;
 
-	private BatchUtils() {
+	private SpriteBatchUtils() {
 	}
 
 	public static void init( TextureRegion[][] base6 ) {
-		BatchUtils.base6 = base6;
+		SpriteBatchUtils.base6 = base6;
 	}
 
 	public static void draw( SpriteBatch batch, TextureRegion region, float x, float y ) {
@@ -34,7 +34,7 @@ public final class BatchUtils {
 			for( int ys = 0; ys < chars.length; ys++ ) {
 				int xs = chars[ys].indexOf( ch );
 				if( xs >= 0 ) {
-					draw( batch, BatchUtils.base6[xs][ys + 9], x + i * 6, y );
+					draw( batch, SpriteBatchUtils.base6[xs][ys + 9], x + i * 6, y );
 				}
 			}
 		}
@@ -47,7 +47,7 @@ public final class BatchUtils {
 			for( int ys = 0; ys < chars.length; ys++ ) {
 				int xs = chars[ys].indexOf( ch );
 				if( xs >= 0 ) {
-					draw( batch, BatchUtils.base6[xs][ys + 9], x + i * w, y, w, h );
+					draw( batch, SpriteBatchUtils.base6[xs][ys + 9], x + i * w, y, w, h );
 				}
 			}
 		}

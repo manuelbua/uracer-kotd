@@ -14,7 +14,7 @@ import com.bitfire.uracer.game.data.GameData;
 import com.bitfire.uracer.game.events.GameRendererEvent;
 import com.bitfire.uracer.game.rendering.debug.Stats;
 import com.bitfire.uracer.game.world.GameWorld;
-import com.bitfire.uracer.utils.BatchUtils;
+import com.bitfire.uracer.utils.SpriteBatchUtils;
 import com.bitfire.uracer.utils.NumberString;
 
 public final class Debug {
@@ -86,11 +86,11 @@ public final class Debug {
 		String text = "fps: " + NumberString.formatLong( Gdx.graphics.getFramesPerSecond() ) + ", physics: " + NumberString.formatLong( physicsTime ) + ", graphics: "
 				+ NumberString.formatLong( renderTime );
 
-		BatchUtils.drawString( batch, text, Gdx.graphics.getWidth() - text.length() * Art.fontWidth, Gdx.graphics.getHeight() - Art.fontHeight );
+		SpriteBatchUtils.drawString( batch, text, Gdx.graphics.getWidth() - text.length() * Art.fontWidth, Gdx.graphics.getHeight() - Art.fontHeight );
 	}
 
 	public static void renderVersionInfo( SpriteBatch batch ) {
-		BatchUtils.drawString( batch, uRacerInfo, Gdx.graphics.getWidth() - uRacerInfo.length() * Art.fontWidth, 0, Art.fontWidth, Art.fontHeight * 2 );
+		SpriteBatchUtils.drawString( batch, uRacerInfo, Gdx.graphics.getWidth() - uRacerInfo.length() * Art.fontWidth, 0, Art.fontWidth, Art.fontHeight * 2 );
 	}
 
 	public static void renderMemoryUsage( SpriteBatch batch ) {
@@ -100,7 +100,7 @@ public final class Debug {
 
 		String text = "java heap = " + NumberString.format( javaHeapMb ) + "MB" + " - native heap = " + NumberString.format( nativeHeapMb ) + "MB";
 
-		BatchUtils.drawString( batch, text, (Gdx.graphics.getWidth() - text.length() * Art.fontWidth) / 2, 0 );
+		SpriteBatchUtils.drawString( batch, text, (Gdx.graphics.getWidth() - text.length() * Art.fontWidth) / 2, 0 );
 	}
 
 	public static void renderB2dWorld( World world, Matrix4 modelViewProj ) {
@@ -125,8 +125,8 @@ public final class Debug {
 			Debug.renderGraphicalStats( batch, Gdx.graphics.getWidth() - Debug.getStatsWidth(), Gdx.graphics.getHeight() - Debug.getStatsHeight() - Art.fontHeight );
 			Debug.renderTextualStats( batch );
 			Debug.renderMemoryUsage( batch );
-			BatchUtils.drawString( batch, "total meshes=" + GameWorld.TotalMeshes, 0, Gdx.graphics.getHeight() - 14 );
-			BatchUtils.drawString( batch, "rendered meshes=" + (GameWorldRenderer.renderedTrees + GameWorldRenderer.renderedWalls) + ", trees="
+			SpriteBatchUtils.drawString( batch, "total meshes=" + GameWorld.TotalMeshes, 0, Gdx.graphics.getHeight() - 14 );
+			SpriteBatchUtils.drawString( batch, "rendered meshes=" + (GameWorldRenderer.renderedTrees + GameWorldRenderer.renderedWalls) + ", trees="
 					+ GameWorldRenderer.renderedTrees + ", walls=" + GameWorldRenderer.renderedWalls + ", culled=" + GameWorldRenderer.culledMeshes, 0,
 					Gdx.graphics.getHeight() - 7 );
 

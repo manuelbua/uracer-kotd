@@ -33,9 +33,13 @@ import com.bitfire.uracer.game.logic.helpers.Recorder;
 import com.bitfire.uracer.game.logic.hud.Hud;
 import com.bitfire.uracer.game.logic.hud.HudDrifting;
 import com.bitfire.uracer.game.logic.hud.HudDrifting.EndDriftType;
+import com.bitfire.uracer.game.logic.hud.HudLabel;
+import com.bitfire.uracer.game.logic.hud.HudLabelAccessor;
+import com.bitfire.uracer.game.messager.Message;
 import com.bitfire.uracer.game.messager.Message.MessagePosition;
 import com.bitfire.uracer.game.messager.Message.MessageSize;
 import com.bitfire.uracer.game.messager.Message.Type;
+import com.bitfire.uracer.game.messager.MessageAccessor;
 import com.bitfire.uracer.game.messager.Messager;
 import com.bitfire.uracer.game.player.Car;
 import com.bitfire.uracer.game.player.Car.InputMode;
@@ -44,7 +48,8 @@ import com.bitfire.uracer.game.player.CarModel;
 import com.bitfire.uracer.game.states.DriftState;
 import com.bitfire.uracer.game.states.LapState;
 import com.bitfire.uracer.game.states.PlayerState;
-import com.bitfire.uracer.game.tween.Tweener;
+import com.bitfire.uracer.game.tween.GameTweener;
+import com.bitfire.uracer.game.tween.WcTweener;
 import com.bitfire.uracer.game.world.GameWorld;
 import com.bitfire.uracer.game.world.WorldDefs.TileLayer;
 import com.bitfire.uracer.task.Task;
@@ -93,6 +98,17 @@ public class GameLogic implements CarEvent.Listener, PlayerStateEvent.Listener, 
 	};
 
 	public GameLogic() {
+		// create tweening support
+		Tween.registerAccessor( Message.class, new MessageAccessor() );
+		Tween.registerAccessor( HudLabel.class, new HudLabelAccessor() );
+		Tween.registerAccessor( BoxedFloat.class, new BoxedFloatAccessor() );
+
+		// wall-clocked tweener, use this to tween the timeMultiplier
+		WcTweener.init();
+
+		// game tweener, for all the rest
+		GameTweener.init();
+
 		recorder = new Recorder();
 		timeMultiplier.value = 1f;
 
@@ -109,6 +125,8 @@ public class GameLogic implements CarEvent.Listener, PlayerStateEvent.Listener, 
 		controller = new DirectorController( Config.Graphics.CameraInterpolationMode, Director.halfViewport, world.worldSizeScaledPx, world.worldSizeTiles );
 
 		createGameTasks();
+
+		messager.show( "COOL STUFF!", 60, Message.Type.Information, MessagePosition.Bottom, MessageSize.Big );
 	}
 
 	public void dispose() {
@@ -172,11 +190,11 @@ public class GameLogic implements CarEvent.Listener, PlayerStateEvent.Listener, 
 			timeModulation = !timeModulation;
 			if( timeModulation ) {
 				timeModulationBusy = true;
-				Tweener.start( Timeline.createSequence().push( Tween.to( timeMultiplier, BoxedFloatAccessor.VALUE, 1000 ).target( tmMin ).ease( eqIn ) )
+				WcTweener.start( Timeline.createSequence().push( Tween.to( timeMultiplier, BoxedFloatAccessor.VALUE, 1000 ).target( tmMin ).ease( eqIn ) )
 						.setCallback( timeModulationFinished ) );
 			} else {
 				timeModulationBusy = true;
-				Tweener.start( Timeline.createSequence()
+				WcTweener.start( Timeline.createSequence()
 						.push( Tween.to( timeMultiplier, BoxedFloatAccessor.VALUE, 1000 ).target( Config.Physics.PhysicsTimeMultiplier ).ease( eqOut ) )
 						.setCallback( timeModulationFinished ) );
 			}
@@ -239,7 +257,8 @@ public class GameLogic implements CarEvent.Listener, PlayerStateEvent.Listener, 
 		}
 
 		// tweener step
-		Tweener.update( (int)(URacer.getLastDeltaSecs() * 1000 * URacer.timeMultiplier ) );
+		WcTweener.update();
+		GameTweener.update();
 	}
 
 	//
