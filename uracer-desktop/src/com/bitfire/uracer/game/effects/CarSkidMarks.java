@@ -97,13 +97,12 @@ public class CarSkidMarks extends TrackEffect {
 	}
 
 	private void addDriftMark() {
-		tmp.set( player.state().position );
-
 		if( player.getCarDescriptor().velocity_wc.len2() < 1 ) {
 			return;
 		}
 
 		// avoid blatant overdrawing
+		tmp.set( player.state().position );
 		if( (int)tmp.x == (int)last.x && (int)tmp.y == (int)last.y ) {
 			return;
 		}

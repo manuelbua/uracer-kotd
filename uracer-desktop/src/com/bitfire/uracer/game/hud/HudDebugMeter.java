@@ -47,7 +47,7 @@ public class HudDebugMeter {
 		region = new TextureRegion( texture, 0, 0, pixels.getWidth(), pixels.getHeight() );
 	}
 
-	// TODO dispose!!!
+	// FIXME dispose!!!
 	public void setValue( float value ) {
 		this.value = value;
 	}

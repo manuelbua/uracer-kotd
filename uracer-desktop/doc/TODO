@@ -109,3 +109,7 @@ data in GameData? GameData::<Component>?
 [ ] event listeners as3-style
 [ ] think, player drifts will raise a SuPeRpOwA-bAr, in seconds: these seconds can be consumed by using the time dilation super-power for the accumulated drift seconds! 
 [ ] remember, i'm writing an engine AND a game thus split meanings wisely
+
+[ ] general redesign
+	- Hud and DebugHud are completely different things, separate now!!!!
+	- car skid marks and car sound effects, it should be simple to allow/disallow enabling them for player or replays, just a matter of attaching things..

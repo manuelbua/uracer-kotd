@@ -57,6 +57,9 @@ public class GameLogic implements CarEvent.Listener, PlayerStateEvent.Listener {
 
 		GameEvents.playerState.addListener( this );
 		GameEvents.carEvent.addListener( this );
+
+
+		// initialize player position in the world
 		GameData.States.playerState.car.setTransform( world.playerStartPos, world.playerStartOrient );
 
 		controller = new DirectorController( Config.Graphics.CameraInterpolationMode, Director.halfViewport, world.worldSizeScaledPx, world.worldSizeTiles );

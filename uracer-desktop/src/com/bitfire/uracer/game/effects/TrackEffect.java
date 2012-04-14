@@ -3,8 +3,9 @@ package com.bitfire.uracer.game.effects;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 
 public abstract class TrackEffect {
+	/** Defines the type of special effect, it also describer their rendering order */
 	public enum Type {
-		CarSkidMarks( 1 ), SmokeTrails( 2 );	// FIXME, effects are destined to be drawn in this precise order in the same queue
+		CarSkidMarks( 1 ), SmokeTrails( 2 );
 		public final int id;
 
 		private Type( int id ) {
@@ -28,4 +29,3 @@ public abstract class TrackEffect {
 
 	public abstract int getParticleCount();
 }
-
