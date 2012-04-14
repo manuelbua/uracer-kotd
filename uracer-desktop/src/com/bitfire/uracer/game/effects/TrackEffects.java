@@ -1,16 +1,12 @@
 package com.bitfire.uracer.game.effects;
 
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
-import com.badlogic.gdx.utils.Array;
 import com.bitfire.uracer.game.GameEvents;
+import com.bitfire.uracer.game.Manager;
 import com.bitfire.uracer.game.events.GameLogicEvent;
 import com.bitfire.uracer.game.events.GameRendererEvent;
-import com.bitfire.uracer.task.Task;
 
-public final class TrackEffects extends Task {
-	private Array<TrackEffect> effects = new Array<TrackEffect>();
-	private Array<Boolean> owned = new Array<Boolean>();
-
+public final class TrackEffects extends Manager<TrackEffect> {
 	private final GameLogicEvent.Listener gameLogicEvent = new GameLogicEvent.Listener() {
 		@Override
 		public void gameLogicEvent( com.bitfire.uracer.game.events.GameLogicEvent.Type type ) {
@@ -27,8 +23,8 @@ public final class TrackEffects extends Task {
 		@Override
 		public void gameRendererEvent( GameRendererEvent.Type type ) {
 			SpriteBatch batch = GameEvents.gameRenderer.batch;
-			for( int i = 0; i < effects.size; i++ ) {
-				TrackEffect effect = effects.get( i );
+			for( int i = 0; i < items.size; i++ ) {
+				TrackEffect effect = items.get( i );
 				if( effect != null ) {
 					effect.render( batch );
 				}
@@ -47,56 +43,27 @@ public final class TrackEffects extends Task {
 		// GameRendererEvent.Order.Order_Minus_3 );
 	}
 
-	/** Add a new effect to the manager, if own is true the manager will manage its lifecycle */
-	public void add( TrackEffect effect, boolean own ) {
-		if( effect == null ) {
-			return;
-		}
 
-		effects.add( effect );
-		owned.add( own );
-	}
-
-	/** Add a new effect to the manager and transfer resource's ownership to it */
-	public void add( TrackEffect effect ) {
-		add( effect, true );
-	}
-
-	public void remove( TrackEffect effect ) {
-		int index = effects.indexOf( effect, true );
-		effects.removeIndex( index );
-		owned.removeIndex( index );
-	}
 
 	@Override
 	public void onTick() {
-		for( int i = 0; i < effects.size; i++ ) {
-			TrackEffect effect = effects.get( i );
+		for( int i = 0; i < items.size; i++ ) {
+			TrackEffect effect = items.get( i );
 			effect.onTick();
 		}
 	}
 
 	public void reset() {
-		for( int i = 0; i < effects.size; i++ ) {
-			TrackEffect effect = effects.get( i );
+		for( int i = 0; i < items.size; i++ ) {
+			TrackEffect effect = items.get( i );
 			effect.reset();
 		}
 	}
 
-	@Override
-	public void dispose() {
-		for( int i = 0; i < effects.size; i++ ) {
-			TrackEffect effect = effects.get( i );
-			effect.dispose();
-		}
-
-		effects = null;
-	}
-
 	public int getParticleCount() {
 		int total = 0;
-		for( int i = 0; i < effects.size; i++ ) {
-			TrackEffect effect = effects.get( i );
+		for( int i = 0; i < items.size; i++ ) {
+			TrackEffect effect = items.get( i );
 			total += effect.getParticleCount();
 		}
 

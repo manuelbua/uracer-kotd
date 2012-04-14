@@ -1,8 +1,9 @@
 package com.bitfire.uracer.game.effects;
 
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
+import com.badlogic.gdx.utils.Disposable;
 
-public abstract class TrackEffect {
+public abstract class TrackEffect implements Disposable {
 	/** Defines the type of special effect, it also describer their rendering order */
 	public enum Type {
 		CarSkidMarks( 1 ), SmokeTrails( 2 );
@@ -23,6 +24,7 @@ public abstract class TrackEffect {
 
 	public abstract void reset();
 
+	@Override
 	public abstract void dispose();
 
 	public abstract void render( SpriteBatch batch );

@@ -112,6 +112,10 @@ public final class HudDrifting extends HudElement {
 	}
 
 	@Override
+	public void dispose() {
+	}
+
+	@Override
 	void onReset() {
 		labelRealtime.setAlpha( 0 );
 		for( int i = 0; i < MaxLabelResult; i++ ) {
@@ -129,10 +133,10 @@ public final class HudDrifting extends HudElement {
 	private float lastDistance = 0f;
 
 	@Override
-	void onRender( SpriteBatch batch ) {
+	void onRender( SpriteBatch batch, Vector2 playerPosition, float playerOrientation ) {
 		DriftState drift = GameData.States.drift;
 
-		this.playerPosition = Director.screenPosForPx( this.playerPosition );
+		playerPosition = Director.screenPosForPx( playerPosition );
 
 		// float secRatio = 1f;
 		// float distance = 0f;
@@ -146,7 +150,7 @@ public final class HudDrifting extends HudElement {
 
 		labelRealtime.setPosition(
 		// offset by heading.mul(distance factor)
-				this.playerPosition.x - heading.x * (carWidthPx + labelRealtime.halfBoundsWidth + lastDistance), this.playerPosition.y - heading.y
+				playerPosition.x - heading.x * (carWidthPx + labelRealtime.halfBoundsWidth + lastDistance), playerPosition.y - heading.y
 						* (carLengthPx + labelRealtime.halfBoundsHeight + lastDistance) );
 
 		//

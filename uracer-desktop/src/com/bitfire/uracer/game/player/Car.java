@@ -287,12 +287,6 @@ public class Car extends Box2DEntity {
 	}
 
 	@Override
-	public void onTemporalAliasing( float temporalAliasingFactor ) {
-		super.onTemporalAliasing( temporalAliasingFactor );
-		stateRender.toPixels();
-	}
-
-	@Override
 	public void onRender( SpriteBatch batch ) {
 		graphics.render( batch, stateRender );
 	}
