@@ -125,16 +125,17 @@ public final class HudDrifting extends HudElement {
 		heading.set( car.getSimulator().heading );
 	}
 
-
 	private Vector2 tmpv = new Vector2();
+	private Vector2 position = new Vector2();
 	private float lastDistance = 0f;
+
+	public void setPosition( Vector2 screenPositionPx ) {
+		position.set( screenPositionPx );
+	}
 
 	@Override
 	void onRender( SpriteBatch batch ) {
 		DriftState drift = GameData.States.drift;
-
-		// update from subframe-interpolated player position
-		Vector2 pos = tmpv.set( Director.screenPosForPx( car.state().position ) );
 
 		// float secRatio = 1f;
 		// float distance = 0f;
@@ -148,7 +149,7 @@ public final class HudDrifting extends HudElement {
 
 		labelRealtime.setPosition(
 		// offset by heading.mul(distance factor)
-				pos.x - heading.x * (carWidthPx + labelRealtime.halfBoundsWidth + lastDistance), pos.y - heading.y
+				position.x - heading.x * (carWidthPx + labelRealtime.halfBoundsWidth + lastDistance), position.y - heading.y
 						* (carLengthPx + labelRealtime.halfBoundsHeight + lastDistance) );
 
 		//

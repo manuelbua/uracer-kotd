@@ -203,12 +203,18 @@ public class GameLogic implements CarEvent.Listener, PlayerStateEvent.Listener {
 	}
 
 	public void onBeforeRender() {
+		// trigger the event and let's subscribers interpolate and update their state()
 		GameData.Systems.physicsStep.triggerOnTemporalAliasing( URacer.getTemporalAliasing() );
 
 		Car car = GameData.States.player.car;
 		if( car != null ) {
-			// follow the player's car
-			controller.setPosition( GameData.States.player.car.state().position );
+			Vector2 carpos = car.state().position;
+
+			// camera follows the player's car
+			controller.setPosition( carpos );
+
+			// hud drifting position itself near the car
+			hudDrifting.setPosition( Director.screenPosForPx( carpos ) );
 		}
 	}
 

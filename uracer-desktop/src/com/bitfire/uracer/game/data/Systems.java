@@ -4,7 +4,6 @@ import com.badlogic.gdx.physics.box2d.World;
 import com.bitfire.uracer.game.Input;
 import com.bitfire.uracer.game.effects.TrackEffects;
 import com.bitfire.uracer.game.logic.PhysicsStep;
-import com.bitfire.uracer.game.player.Car;
 import com.bitfire.uracer.task.TaskManagerEvent;
 
 // @formatter:off
@@ -24,7 +23,7 @@ public final class Systems {
 	public PhysicsStep physicsStep;
 	public TrackEffects trackEffects;
 
-	public Systems( World b2dWorld, Car car ) {
+	public Systems( World b2dWorld ) {
 		input = new Input( TaskManagerEvent.Order.MINUS_4 );
 		physicsStep = new PhysicsStep( b2dWorld, TaskManagerEvent.Order.MINUS_3 );
 	}

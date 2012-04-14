@@ -31,7 +31,7 @@ public final class GameData {
 		Director.init();
 
 		States = new States( CarFactory.createPlayer( carAspect, carModel ) );
-		Systems = new Systems( Environment.b2dWorld, States.player.car );
+		Systems = new Systems( Environment.b2dWorld );
 
 		// requires Art, Convert and Director
 		Environment.createWorld( Environment.b2dWorld, Environment.scalingStrategy, levelName, nightMode );
