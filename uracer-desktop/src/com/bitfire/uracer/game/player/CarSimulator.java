@@ -2,32 +2,32 @@ package com.bitfire.uracer.game.player;
 
 import com.badlogic.gdx.math.MathUtils;
 import com.badlogic.gdx.math.Vector2;
-import com.bitfire.uracer.Config;
 import com.bitfire.uracer.utils.AMath;
 import com.bitfire.uracer.utils.VMath;
 
 public final class CarSimulator {
 	public CarDescriptor carDesc;
-	public Vector2 lastCarScreenPos = new Vector2(), lastTouchPos = new Vector2(), velocity = new Vector2(), acceleration_wc = new Vector2(), heading = new Vector2(),
-			side = new Vector2(), flatf = new Vector2(), flatr = new Vector2(), ftraction = new Vector2(), resistance = new Vector2(), force = new Vector2(),
-			acceleration = new Vector2();
-
-	public float thisSign, lastSign, lastTouchAngle;
-
-	private float dampingThrottle = 0.98f;
-	// private float dampingThrottleFrame;
+	private Vector2 velocity = new Vector2();
+	private Vector2 acceleration_wc = new Vector2();
+	private Vector2 flatf = new Vector2();
+	private Vector2 flatr = new Vector2();
+	private Vector2 ftraction = new Vector2();
+	private Vector2 resistance = new Vector2();
+	private Vector2 force = new Vector2();
+	private Vector2 acceleration = new Vector2();
+	private float thisSign, lastSign;
+	private static final float DampingThrottle = 0.98f;
 
 	// exports
-	public Vector2 lateralForceFront, lateralForceRear;
+	protected Vector2 lateralForceFront, lateralForceRear;
 
 	public CarSimulator( CarDescriptor carDesc ) {
 		this.carDesc = carDesc;
 		thisSign = 1f;
 		lastSign = 1f;
-		lastTouchAngle = 0;
 
 		// precompute constants
-//		 dampingThrottleFrame = (float)Math.pow( 1f - dampingThrottle, Config.Physics.PhysicsDt );
+		// dampingThrottleFrame = (float)Math.pow( 1f - dampingThrottle, Config.Physics.PhysicsDt );
 
 		// exports
 		lateralForceFront = new Vector2();
@@ -38,12 +38,12 @@ public final class CarSimulator {
 		carDesc.set( carDesc );
 	}
 
-//	public void updateHeading( float bodyAngle ) {
-//		VMath.fromRadians( heading, AMath.normalRelativeAngle( bodyAngle ) );
-//		VMath.perp( side, heading );
-//		// System.out.println("side=" + side);
-//		// System.out.println("heading=" + heading);
-//	}
+	// public void updateHeading( float bodyAngle ) {
+	// VMath.fromRadians( heading, AMath.normalRelativeAngle( bodyAngle ) );
+	// VMath.perp( side, heading );
+	// // System.out.println("side=" + side);
+	// // System.out.println("heading=" + heading);
+	// }
 
 	public void applyInput( CarInput input ) {
 		float maxForce = carDesc.carModel.max_force;
@@ -96,8 +96,7 @@ public final class CarSimulator {
 		if( !hasDir ) {
 			if( Math.abs( carDesc.velocity_wc.x ) > 0.5f || Math.abs( carDesc.velocity_wc.y ) > 0.5f ) {
 				if( !AMath.isZero( carDesc.throttle ) ) {
-					carDesc.throttle *= dampingThrottle;
-					// carDesc.throttle *= dampingThrottleFrame;
+					carDesc.throttle *= DampingThrottle;
 				}
 
 				carDesc.brake = 350f;
@@ -111,18 +110,12 @@ public final class CarSimulator {
 
 		if( !hasSteer ) {
 			carDesc.steerangle = 0;
-			// float sa = AMath.fixup( carDesc.steerangle );
-			// // gently auto steer to 0 degrees
-			// if( sa > 0 || sa < 0)
-			// carDesc.steerangle *= 0.9f;
-			// else
-			// carDesc.steerangle = 0.f;
 		}
 
 		carDesc.throttle = AMath.clamp( carDesc.throttle, -maxForce, maxForce );
 	}
 
-	public void step( float bodyAngle ) {
+	public void step( float dt, float bodyAngle ) {
 		float sn = MathUtils.sin( AMath.normalRelativeAngle( -bodyAngle ) );
 		float cs = MathUtils.cos( AMath.normalRelativeAngle( -bodyAngle ) );
 
@@ -231,8 +224,8 @@ public final class CarSimulator {
 		VMath.fixup( acceleration_wc );
 
 		// velocity is integrated acceleration
-		carDesc.velocity_wc.x += Config.Physics.PhysicsDt * acceleration_wc.x;
-		carDesc.velocity_wc.y += Config.Physics.PhysicsDt * acceleration_wc.y;
+		carDesc.velocity_wc.x += dt * acceleration_wc.x;
+		carDesc.velocity_wc.y += dt * acceleration_wc.y;
 		VMath.fixup( carDesc.velocity_wc );
 
 		// make sure vehicle doesn't exceed maximum velocity
@@ -246,12 +239,12 @@ public final class CarSimulator {
 		float angular_acceleration = torque * carDesc.carModel.invinertia;
 
 		// integrate angular acceleration to get angular velocity
-		carDesc.angularvelocity += Config.Physics.PhysicsDt * angular_acceleration;
+		carDesc.angularvelocity += dt * angular_acceleration;
 
 		// integrate angular velocity to get angular orientation
-		carDesc.angularOrientation = Config.Physics.PhysicsDt * carDesc.angularvelocity;
+		carDesc.angularOrientation = dt * carDesc.angularvelocity;
 
-//		updateHeading( bodyAngle );
+		// updateHeading( bodyAngle );
 	}
 
 	public void resetPhysics() {

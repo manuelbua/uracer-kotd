@@ -87,8 +87,12 @@ public class Car extends Box2DEntity {
 		return carDesc.carModel;
 	}
 
-	public CarSimulator getSimulator() {
-		return carSim;
+	public Vector2 getLateralForceFront() {
+		return carSim.lateralForceFront;
+	}
+
+	public Vector2 getLateralForceRear() {
+		return carSim.lateralForceRear;
 	}
 
 	private WindowedMean frictionMean = new WindowedMean( 16 );
@@ -135,7 +139,7 @@ public class Car extends Box2DEntity {
 	@Override
 	public void setTransform( Vector2 position, float orient_degrees ) {
 		super.setTransform( position, orient_degrees );
-//		carSim.updateHeading( body.getAngle() );
+		// carSim.updateHeading( body.getAngle() );
 		// computeTilePosition();
 	}
 
@@ -242,7 +246,7 @@ public class Car extends Box2DEntity {
 		handleDecrease( carInput );
 
 		carSim.applyInput( carInput );
-		carSim.step( body.getAngle() );
+		carSim.step( Config.Physics.PhysicsDt, body.getAngle() );
 
 		// record computed forces, if recording is enabled
 		forces.velocity_x = carDesc.velocity_wc.x;

@@ -66,11 +66,11 @@ public final class DriftState {
 		float oneOnMaxGrip = 1f / car.getCarModel().max_grip;
 
 		// lateral forces are in the range [-max_grip, max_grip]
-		lateralForcesFront = AMath.lowpass( lastFront, car.getSimulator().lateralForceFront.y, 0.2f );
+		lateralForcesFront = AMath.lowpass( lastFront, car.getLateralForceFront().y, 0.2f );
 		lastFront = lateralForcesFront;
 		lateralForcesFront = AMath.clamp( Math.abs( lateralForcesFront ) * oneOnMaxGrip, 0f, 1f );	// normalize
 
-		lateralForcesRear = AMath.lowpass( lastRear, car.getSimulator().lateralForceRear.y, 0.2f );
+		lateralForcesRear = AMath.lowpass( lastRear, car.getLateralForceRear().y, 0.2f );
 		lastRear = lateralForcesRear;
 		lateralForcesRear = AMath.clamp( Math.abs( lateralForcesRear ) * oneOnMaxGrip, 0f, 1f );	// normalize
 
