@@ -19,7 +19,6 @@ public final class CarEngineSoundEffect extends CarSoundEffect {
 
 	@Override
 	public void onDispose() {
-		// carEngine.dispose();
 	}
 
 	@Override

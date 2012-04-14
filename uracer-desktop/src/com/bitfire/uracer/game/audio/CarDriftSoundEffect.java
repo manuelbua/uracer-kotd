@@ -67,7 +67,6 @@ public final class CarDriftSoundEffect extends CarSoundEffect {
 	@Override
 	public void onDispose() {
 		drift.stop();
-		drift.dispose();
 	}
 
 	@Override

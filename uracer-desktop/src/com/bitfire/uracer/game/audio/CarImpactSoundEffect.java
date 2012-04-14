@@ -58,15 +58,10 @@ public final class CarImpactSoundEffect extends CarSoundEffect {
 	@Override
 	public void onDispose() {
 		soundLow1.stop();
-		soundLow1.dispose();
 		soundLow2.stop();
-		soundLow2.dispose();
 		soundMid1.stop();
-		soundMid1.dispose();
 		soundMid2.stop();
-		soundMid2.dispose();
 		soundHigh.stop();
-		soundHigh.dispose();
 	}
 
 	// FIXME, modulate pitch while playing as CarDriftSoundEffect to handle impact also on start/end time modulation
