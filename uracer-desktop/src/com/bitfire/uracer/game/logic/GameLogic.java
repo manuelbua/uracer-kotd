@@ -137,8 +137,7 @@ public class GameLogic implements CarEvent.Listener, PlayerStateEvent.Listener {
 		effects.add( playerSkidMarks );
 
 		// hud
-		hudDrifting = new HudDrifting( GameData.States.player.car );
-		hud.addElement( hudDrifting );
+		hud.add( new HudDrifting( GameData.States.player.car ) );
 	}
 
 	public boolean onTick() {
@@ -206,15 +205,15 @@ public class GameLogic implements CarEvent.Listener, PlayerStateEvent.Listener {
 		// trigger the event and let's subscribers interpolate and update their state()
 		GameData.Systems.physicsStep.triggerOnTemporalAliasing( URacer.getTemporalAliasing() );
 
-		Car car = GameData.States.player.car;
-		if( car != null ) {
-			Vector2 carpos = car.state().position;
+		Car playerCar = GameData.States.player.car;
+		if( playerCar != null ) {
+			Vector2 carpos = playerCar.state().position;
 
 			// camera follows the player's car
 			controller.setPosition( carpos );
 
-			// hud drifting position itself near the car
-			hudDrifting.setPosition( Director.screenPosForPx( carpos ) );
+			// hud keeps track of the player's position and orientation
+			hud.trackPlayerPosition( playerCar );
 		}
 	}
 

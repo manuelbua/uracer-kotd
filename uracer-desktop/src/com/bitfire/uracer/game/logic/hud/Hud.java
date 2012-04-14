@@ -2,6 +2,7 @@ package com.bitfire.uracer.game.logic.hud;
 
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
+import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.utils.Array;
 import com.bitfire.uracer.Art;
 import com.bitfire.uracer.Config;
@@ -9,15 +10,20 @@ import com.bitfire.uracer.game.GameEvents;
 import com.bitfire.uracer.game.Replay;
 import com.bitfire.uracer.game.events.GameLogicEvent;
 import com.bitfire.uracer.game.events.GameRendererEvent;
+import com.bitfire.uracer.game.player.Car;
 import com.bitfire.uracer.game.states.LapState;
 import com.bitfire.uracer.task.Task;
 import com.bitfire.uracer.utils.NumberString;
 
 public final class Hud extends Task {
 	private Array<HudElement> elements = new Array<HudElement>();
+	private Array<Boolean> owned = new Array<Boolean>();
 
 	private HudLabel best, curr, last;
 	// private HudDebugMeter meterLatForce, meterSkidMarks, meterSmoke;
+
+	private Vector2 playerPosition = new Vector2();
+	private float playerOrientation;
 
 	private GameRendererEvent.Listener gameRendererEvent = new GameRendererEvent.Listener() {
 		@Override
@@ -38,7 +44,7 @@ public final class Hud extends Task {
 	};
 
 	private void renderAfterMeshes( SpriteBatch batch ) {
-		for(int i =0; i < elements.size; i++ ) {
+		for( int i = 0; i < elements.size; i++ ) {
 			elements.get( i ).onRender( batch );
 		}
 
@@ -58,6 +64,16 @@ public final class Hud extends Task {
 			}
 		}
 	};
+
+	public void trackPlayerPosition( Car car ) {
+		playerPosition.set( car.state().position );
+		playerOrientation = car.state().orientation;
+
+		for( int i = 0; i < elements.size; i++ ) {
+			elements.get( i ).playerPosition.set( playerPosition );
+			elements.get( i ).playerOrientation = playerOrientation;
+		}
+	}
 
 	// effects
 	public Hud() {
@@ -92,27 +108,42 @@ public final class Hud extends Task {
 		// meterSmoke.setName( "smokepar count" );
 	}
 
-	public void addElement( HudElement e ) {
-		if( e == null ) {
+	@Override
+	public void dispose() {
+
+	}
+
+	/** Add a new element to the manager, if own is true the manager will manage its lifecycle */
+	public void add( HudElement element, boolean own ) {
+		if( element == null ) {
 			return;
 		}
 
-		elements.add( e );
+		elements.add( element );
+		owned.add( own );
 	}
 
-	public void removeElement( HudElement e ) {
-		elements.removeValue( e, true );
+	/** Add a new effect to the manager and transfer resource's ownership to it */
+	public void add( HudElement element ) {
+		add( element, true );
+	}
+
+	public void remove( HudElement element ) {
+		int index = elements.indexOf( element, true );
+		elements.removeIndex( index );
+		owned.removeIndex( index );
+		elements.removeValue( element, true );
 	}
 
 	public void reset() {
-		for(int i =0; i < elements.size; i++ ) {
+		for( int i = 0; i < elements.size; i++ ) {
 			elements.get( i ).onReset();
 		}
 	}
 
 	@Override
 	protected void onTick() {
-		for(int i =0; i < elements.size; i++ ) {
+		for( int i = 0; i < elements.size; i++ ) {
 			elements.get( i ).onTick();
 		}
 	}

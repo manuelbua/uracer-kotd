@@ -57,7 +57,7 @@ public final class TrackEffects extends Task {
 		owned.add( own );
 	}
 
-	/** Add a new effect to the manager, and transfer resource's ownership to it */
+	/** Add a new effect to the manager and transfer resource's ownership to it */
 	public void add( TrackEffect effect ) {
 		add( effect, true );
 	}
