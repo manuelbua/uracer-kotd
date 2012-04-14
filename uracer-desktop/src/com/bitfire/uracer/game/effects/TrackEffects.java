@@ -1,15 +1,15 @@
 package com.bitfire.uracer.game.effects;
 
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
+import com.badlogic.gdx.utils.Array;
 import com.bitfire.uracer.game.GameEvents;
-import com.bitfire.uracer.game.effects.TrackEffect.Type;
 import com.bitfire.uracer.game.events.GameLogicEvent;
 import com.bitfire.uracer.game.events.GameRendererEvent;
-import com.bitfire.uracer.game.player.Car;
 import com.bitfire.uracer.task.Task;
 
-public class TrackEffects extends Task {
-	private TrackEffect[] effects = new TrackEffect[ Type.values().length ];
+public final class TrackEffects extends Task {
+	private Array<TrackEffect> effects = new Array<TrackEffect>();
+	private Array<Boolean> owned = new Array<Boolean>();
 
 	private final GameLogicEvent.Listener gameLogicEvent = new GameLogicEvent.Listener() {
 		@Override
@@ -27,7 +27,8 @@ public class TrackEffects extends Task {
 		@Override
 		public void gameRendererEvent( GameRendererEvent.Type type ) {
 			SpriteBatch batch = GameEvents.gameRenderer.batch;
-			for( TrackEffect effect : effects ) {
+			for( int i = 0; i < effects.size; i++ ) {
+				TrackEffect effect = effects.get( i );
 				if( effect != null ) {
 					effect.render( batch );
 				}
@@ -35,7 +36,7 @@ public class TrackEffects extends Task {
 		}
 	};
 
-	public TrackEffects( Car car ) {
+	public TrackEffects() {
 		GameEvents.gameLogic.addListener( gameLogicEvent );
 		GameEvents.gameRenderer.addListener( gameRendererEvent, GameRendererEvent.Type.BatchBeforeMeshes, GameRendererEvent.Order.MINUS_4 );
 
@@ -44,20 +45,29 @@ public class TrackEffects extends Task {
 		// GameRendererEvent.Order.Order_Minus_4 );
 		// for SmokeTrails GameRenderer.event.addListener( gameRendererEvent, GameRendererEvent.Type.BatchBeforeMeshes,
 		// GameRendererEvent.Order.Order_Minus_3 );
-
-		effects[Type.CarSkidMarks.ordinal()] = new CarSkidMarks( car );
-		// effects[Type.SmokeTrails.ordinal()] = new SmokeTrails( car );
 	}
 
-	public TrackEffect get( Type what ) {
-		return effects[what.ordinal()];
+	/** Add a new effect to the manager, if own is true the manager will manage its lifecycle */
+	public void add(TrackEffect effect, boolean own) {
+		effects.add( effect );
+		owned.add(own);
 	}
 
-	/** life */
+	/** Add a new effect to the manager, and transfer resource's ownership to it */
+	public void add(TrackEffect effect) {
+		add(effect, true);
+	}
+
+	public void remove(TrackEffect effect) {
+		int index = effects.indexOf( effect, true );
+		effects.removeIndex( index );
+		owned.removeIndex( index );
+	}
 
 	@Override
 	public void onTick() {
-		for( TrackEffect effect : effects ) {
+		for( int i = 0; i < effects.size; i++ ) {
+			TrackEffect effect = effects.get( i );
 			if( effect != null ) {
 				effect.onTick();
 			}
@@ -65,7 +75,8 @@ public class TrackEffects extends Task {
 	}
 
 	public void reset() {
-		for( TrackEffect effect : effects ) {
+		for( int i = 0; i < effects.size; i++ ) {
+			TrackEffect effect = effects.get( i );
 			if( effect != null ) {
 				effect.reset();
 			}
@@ -74,7 +85,8 @@ public class TrackEffects extends Task {
 
 	@Override
 	public void dispose() {
-		for( TrackEffect effect : effects ) {
+		for( int i = 0; i < effects.size; i++ ) {
+			TrackEffect effect = effects.get( i );
 			if( effect != null ) {
 				effect.dispose();
 			}
@@ -83,12 +95,15 @@ public class TrackEffects extends Task {
 		effects = null;
 	}
 
-	public int getParticleCount( Type what ) {
-		TrackEffect effect = effects[what.ordinal()];
-		if( effect == null ) {
-			return 0;
+	public int getParticleCount() {
+		int total = 0;
+		for( int i = 0; i < effects.size; i++ ) {
+			TrackEffect effect = effects.get( i );
+			if( effect != null ) {
+				total += effect.getParticleCount();
+			}
 		}
 
-		return effect.getParticleCount();
+		return total;
 	}
 }

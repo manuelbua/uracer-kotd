@@ -7,9 +7,6 @@ import com.bitfire.uracer.Config;
 import com.bitfire.uracer.game.GameEvents;
 import com.bitfire.uracer.game.Replay;
 import com.bitfire.uracer.game.data.GameData;
-import com.bitfire.uracer.game.effects.CarSkidMarks;
-import com.bitfire.uracer.game.effects.SmokeTrails;
-import com.bitfire.uracer.game.effects.TrackEffect.Type;
 import com.bitfire.uracer.game.events.GameLogicEvent;
 import com.bitfire.uracer.game.events.GameRendererEvent;
 import com.bitfire.uracer.game.player.Car;
@@ -20,7 +17,7 @@ import com.bitfire.uracer.utils.NumberString;
 
 public final class Hud extends Task {
 	private HudLabel best, curr, last;
-	private HudDebugMeter meterLatForce, meterSkidMarks, meterSmoke;
+//	private HudDebugMeter meterLatForce, meterSkidMarks, meterSmoke;
 
 	// components
 	private HudDrifting hudDrift;
@@ -87,19 +84,19 @@ public final class Hud extends Task {
 		last.setPosition( gridX * 3, 50 );
 		best.setPosition( gridX * 4, 50 );
 
-		// meter lateral forces
-		meterLatForce = new HudDebugMeter( car, 0, 100, 5 );
-		meterLatForce.setLimits( 0, 1 );
-		meterLatForce.setName( "lat-force-FRONT" );
-
-		// meter skid marks count
-		meterSkidMarks = new HudDebugMeter( car, 1, 100, 5 );
-		meterSkidMarks.setLimits( 0, CarSkidMarks.MaxSkidMarks );
-		meterSkidMarks.setName( "skid marks count" );
-
-		meterSmoke = new HudDebugMeter( car, 2, 100, 5 );
-		meterSmoke.setLimits( 0, SmokeTrails.MaxParticles );
-		meterSmoke.setName( "smokepar count" );
+//		// meter lateral forces
+//		meterLatForce = new HudDebugMeter( car, 0, 100, 5 );
+//		meterLatForce.setLimits( 0, 1 );
+//		meterLatForce.setName( "lat-force-FRONT" );
+//
+//		// meter skid marks count
+//		meterSkidMarks = new HudDebugMeter( car, 1, 100, 5 );
+//		meterSkidMarks.setLimits( 0, CarSkidMarks.MaxSkidMarks );
+//		meterSkidMarks.setName( "skid marks count" );
+//
+//		meterSmoke = new HudDebugMeter( car, 2, 100, 5 );
+//		meterSmoke.setLimits( 0, SmokeTrails.MaxParticles );
+//		meterSmoke.setName( "smokepar count" );
 	}
 
 	public void reset() {
@@ -147,21 +144,21 @@ public final class Hud extends Task {
 	public void onDebug( SpriteBatch batch ) {
 		DriftState drift = GameData.States.driftState;
 
-		// lateral forces
-		meterLatForce.setValue( drift.driftStrength );
+//		// lateral forces
+//		meterLatForce.setValue( drift.driftStrength );
+//
+//		if( drift.isDrifting ) {
+//			meterLatForce.color.set( .3f, 1f, .3f, 1f );
+//		} else {
+//			meterLatForce.color.set( 1f, 1f, 1f, 1f );
+//		}
+//
+//		meterLatForce.render( batch );
 
-		if( drift.isDrifting ) {
-			meterLatForce.color.set( .3f, 1f, .3f, 1f );
-		} else {
-			meterLatForce.color.set( 1f, 1f, 1f, 1f );
-		}
-
-		meterLatForce.render( batch );
-
-		meterSkidMarks.setValue( GameData.Systems.trackEffects.getParticleCount( Type.CarSkidMarks ) );
-		meterSkidMarks.render( batch );
-
-		meterSmoke.setValue( GameData.Systems.trackEffects.getParticleCount( Type.SmokeTrails ) );
-		meterSmoke.render( batch );
+//		meterSkidMarks.setValue( GameData.Systems.trackEffects.getParticleCount( Type.CarSkidMarks ) );
+//		meterSkidMarks.render( batch );
+//
+//		meterSmoke.setValue( GameData.Systems.trackEffects.getParticleCount( Type.SmokeTrails ) );
+//		meterSmoke.render( batch );
 	}
 }

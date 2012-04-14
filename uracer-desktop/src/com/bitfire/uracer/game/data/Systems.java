@@ -27,13 +27,9 @@ public final class Systems {
 	public Systems( World b2dWorld, Car car ) {
 		input = new Input( TaskManagerEvent.Order.MINUS_4 );
 		physicsStep = new PhysicsStep( b2dWorld, TaskManagerEvent.Order.MINUS_3 );
-
-		// FIXME this is just for GameRenderer, Hud and GameData
-		trackEffects = new TrackEffects( car );
 	}
 
 	public void dispose() {
-		trackEffects.dispose();
 	}
 
 	public Input input;

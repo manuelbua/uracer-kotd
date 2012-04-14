@@ -1,5 +1,8 @@
 package com.bitfire.uracer.game.logic;
 
+import java.util.ArrayList;
+import java.util.List;
+
 import aurelienribon.tweenengine.BaseTween;
 import aurelienribon.tweenengine.Timeline;
 import aurelienribon.tweenengine.Tween;
@@ -19,22 +22,29 @@ import com.bitfire.uracer.game.GameEvents;
 import com.bitfire.uracer.game.Input;
 import com.bitfire.uracer.game.Replay;
 import com.bitfire.uracer.game.Tweener;
+import com.bitfire.uracer.game.audio.CarSoundManager;
 import com.bitfire.uracer.game.data.GameData;
+import com.bitfire.uracer.game.effects.CarSkidMarks;
+import com.bitfire.uracer.game.effects.TrackEffects;
 import com.bitfire.uracer.game.events.GameLogicEvent;
 import com.bitfire.uracer.game.events.PlayerStateEvent;
+import com.bitfire.uracer.game.hud.Hud;
 import com.bitfire.uracer.game.messager.Message.MessagePosition;
 import com.bitfire.uracer.game.messager.Message.MessageSize;
 import com.bitfire.uracer.game.messager.Message.Type;
 import com.bitfire.uracer.game.player.Car;
 import com.bitfire.uracer.game.player.Car.InputMode;
 import com.bitfire.uracer.game.player.CarEvent;
+import com.bitfire.uracer.game.player.CarModel;
 import com.bitfire.uracer.game.states.LapState;
 import com.bitfire.uracer.game.states.PlayerState;
 import com.bitfire.uracer.game.world.GameWorld;
 import com.bitfire.uracer.game.world.WorldDefs.TileLayer;
+import com.bitfire.uracer.task.Task;
 import com.bitfire.uracer.utils.AMath;
 import com.bitfire.uracer.utils.BoxedFloat;
 import com.bitfire.uracer.utils.BoxedFloatAccessor;
+import com.bitfire.uracer.utils.Convert;
 import com.bitfire.uracer.utils.NumberString;
 
 public class GameLogic implements CarEvent.Listener, PlayerStateEvent.Listener {
@@ -48,23 +58,14 @@ public class GameLogic implements CarEvent.Listener, PlayerStateEvent.Listener {
 	// replay
 	private Recorder recorder = null;
 
-	public GameLogic() {
-		GameEvents.gameLogic.source = this;
-		this.world = GameData.Environment.gameWorld;
+	// tasks
+	private List<Task> gameTasks = null;
 
-		recorder = new Recorder();
-		timeMultiplier.value = 1f;
+	// special effects
+	private TrackEffects effects = null;
+	private CarSkidMarks playerSkidMarks = null;
 
-		GameEvents.playerState.addListener( this );
-		GameEvents.carEvent.addListener( this );
-
-
-		// initialize player position in the world
-		GameData.States.playerState.car.setTransform( world.playerStartPos, world.playerStartOrient );
-
-		controller = new DirectorController( Config.Graphics.CameraInterpolationMode, Director.halfViewport, world.worldSizeScaledPx, world.worldSizeTiles );
-	}
-
+	// handles timeModulationBusy onComplete event
 	boolean timeModulation = false, timeModulationBusy = false;
 	BoxedFloat timeMultiplier = new BoxedFloat();
 	float tmMin = 0.3f;
@@ -77,6 +78,50 @@ public class GameLogic implements CarEvent.Listener, PlayerStateEvent.Listener {
 			}
 		}
 	};
+
+	public GameLogic() {
+		GameEvents.gameLogic.source = this;
+		this.world = GameData.Environment.gameWorld;
+
+		recorder = new Recorder();
+		timeMultiplier.value = 1f;
+
+		GameEvents.playerState.addListener( this );
+		GameEvents.carEvent.addListener( this );
+
+		// initialize player position in the world
+		GameData.States.playerState.car.setTransform( world.playerStartPos, world.playerStartOrient );
+
+		controller = new DirectorController( Config.Graphics.CameraInterpolationMode, Director.halfViewport, world.worldSizeScaledPx, world.worldSizeTiles );
+
+		createTasks();
+	}
+
+	public void dispose() {
+		for( Task task : gameTasks ) {
+			task.dispose();
+		}
+
+		gameTasks.clear();
+	}
+
+	private void createTasks() {
+		gameTasks = new ArrayList<Task>( 10 );
+		gameTasks.add( new Hud() );
+		gameTasks.add( new CarSoundManager() );
+
+		effects = new TrackEffects();
+		gameTasks.add( effects );
+
+		// configure effects
+		configureTrackEffects( effects );
+	}
+
+	private void configureTrackEffects( TrackEffects e ) {
+		CarModel model = GameData.States.playerState.car.getCarModel();
+		playerSkidMarks = new CarSkidMarks( Convert.mt2px( model.width ), Convert.mt2px( model.length ) );
+		effects.add( playerSkidMarks );
+	}
 
 	public boolean onTick() {
 		Input input = GameData.Systems.input;
@@ -113,9 +158,19 @@ public class GameLogic implements CarEvent.Listener, PlayerStateEvent.Listener {
 		GameData.States.driftState.update();
 		updateCarFriction();
 
+		updateTrackEffects();
+
 		URacer.timeMultiplier = AMath.clamp( timeMultiplier.value, tmMin, Config.Physics.PhysicsTimeMultiplier );
 
 		return true;
+	}
+
+	private void updateTrackEffects() {
+		// update track effects
+		Car player = GameData.States.playerState.car;
+		if( player.getCarDescriptor().velocity_wc.len2() >= 1 ) {
+			playerSkidMarks.tryAddDriftMark( player.state().position, player.state().orientation, GameData.States.driftState );
+		}
 	}
 
 	public void onBeforeRender() {
@@ -250,12 +305,12 @@ public class GameLogic implements CarEvent.Listener, PlayerStateEvent.Listener {
 
 						if( lastRecordedLapId == best.id ) {
 							lapState.setLastTrackTimeSeconds( best.trackTimeSeconds );
-							GameData.Environment.messager.show( "-" + NumberString.format( worst.trackTimeSeconds - best.trackTimeSeconds ) + " seconds!", 3f,
-									Type.Good, MessagePosition.Top, MessageSize.Big );
+							GameData.Environment.messager.show( "-" + NumberString.format( worst.trackTimeSeconds - best.trackTimeSeconds ) + " seconds!", 3f, Type.Good,
+									MessagePosition.Top, MessageSize.Big );
 						} else {
 							lapState.setLastTrackTimeSeconds( worst.trackTimeSeconds );
-							GameData.Environment.messager.show( "+" + NumberString.format( worst.trackTimeSeconds - best.trackTimeSeconds ) + " seconds", 3f,
-									Type.Bad, MessagePosition.Top, MessageSize.Big );
+							GameData.Environment.messager.show( "+" + NumberString.format( worst.trackTimeSeconds - best.trackTimeSeconds ) + " seconds", 3f, Type.Bad,
+									MessagePosition.Top, MessageSize.Big );
 						}
 
 						player.ghost.setReplay( best );

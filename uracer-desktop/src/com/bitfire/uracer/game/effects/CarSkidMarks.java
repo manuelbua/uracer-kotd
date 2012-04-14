@@ -7,12 +7,8 @@ import com.badlogic.gdx.math.Vector2;
 import com.bitfire.uracer.Art;
 import com.bitfire.uracer.Config;
 import com.bitfire.uracer.Director;
-import com.bitfire.uracer.game.data.GameData;
-import com.bitfire.uracer.game.player.Car;
-import com.bitfire.uracer.game.player.CarModel;
 import com.bitfire.uracer.game.states.DriftState;
 import com.bitfire.uracer.utils.AMath;
-import com.bitfire.uracer.utils.Convert;
 
 public class CarSkidMarks extends TrackEffect {
 	public static final int MaxSkidMarks = 300;
@@ -21,23 +17,18 @@ public class CarSkidMarks extends TrackEffect {
 	private int markIndex;
 	private int visibleSkidMarksCount;
 
-	private Car player;
-	private Vector2 tmp;
 	private Vector2 last;
 
-	public CarSkidMarks( Car player ) {
+	public CarSkidMarks( float carWidthPx, float carLengthPx ) {
 		super( Type.CarSkidMarks );
 
 		markIndex = 0;
 		visibleSkidMarksCount = 0;
-		tmp = new Vector2();
 		last = new Vector2();
-		this.player = player;
 
-		CarModel model = player.getCarModel();
 		skidMarks = new SkidMark[ MaxSkidMarks ];
 		for( int i = 0; i < MaxSkidMarks; i++ ) {
-			skidMarks[i] = new SkidMark( model );
+			skidMarks[i] = new SkidMark( carWidthPx, carLengthPx );
 		}
 	}
 
@@ -60,7 +51,7 @@ public class CarSkidMarks extends TrackEffect {
 
 	@Override
 	public void onTick() {
-		addDriftMark();
+		// addDriftMark();
 
 		SkidMark d;
 		for( int i = 0; i < MaxSkidMarks; i++ ) {
@@ -96,19 +87,13 @@ public class CarSkidMarks extends TrackEffect {
 		}
 	}
 
-	private void addDriftMark() {
-		if( player.getCarDescriptor().velocity_wc.len2() < 1 ) {
-			return;
-		}
-
+	public void tryAddDriftMark( Vector2 position, float orientation, DriftState driftState ) {
 		// avoid blatant overdrawing
-		tmp.set( player.state().position );
-		if( (int)tmp.x == (int)last.x && (int)tmp.y == (int)last.y ) {
+		if( (int)position.x == (int)last.x && (int)position.y == (int)last.y ) {
 			return;
 		}
 
-		DriftState di = GameData.States.driftState;
-		if( di.driftStrength > 0.2f )
+		if( driftState.driftStrength > 0.2f )
 		// if( di.isDrifting )
 		{
 			// add front drift marks?
@@ -117,16 +102,16 @@ public class CarSkidMarks extends TrackEffect {
 				markIndex = 0;
 			}
 
-			drift.alphaFront = di.driftStrength;
-			drift.alphaRear = di.driftStrength;
-			drift.setPosition( tmp );
-			drift.setOrientation( player.state().orientation );
-			drift.front.setScale( AMath.clamp( di.lateralForcesFront + 0.8f, 0.85f, 1.1f ) );
-			drift.rear.setScale( AMath.clamp( di.lateralForcesRear + 0.8f, 0.85f, 1.1f ) );
+			drift.alphaFront = driftState.driftStrength;
+			drift.alphaRear = driftState.driftStrength;
+			drift.setPosition( position );
+			drift.setOrientation( orientation );
+			drift.front.setScale( AMath.clamp( driftState.lateralForcesFront + 0.8f, 0.85f, 1.1f ) );
+			drift.rear.setScale( AMath.clamp( driftState.lateralForcesRear + 0.8f, 0.85f, 1.1f ) );
 			drift.maxLife = 3.5f;
 			drift.life = drift.maxLife;
 
-			last.set( tmp );
+			last.set( position );
 		}
 	}
 
@@ -137,22 +122,18 @@ public class CarSkidMarks extends TrackEffect {
 		public float alphaFront, alphaRear;
 		public Vector2 position;
 
-		public SkidMark( CarModel model ) {
+		public SkidMark( float carWidthPx, float carLengthPx ) {
 			front = new Sprite();
 			rear = new Sprite();
 			position = new Vector2();
 
-			// setup sprites
-			float carWidth = Convert.mt2px( model.width );
-			float carLength = Convert.mt2px( model.length );
-
 			front.setRegion( Art.skidMarksFront );
-			front.setSize( carWidth, carLength );
+			front.setSize( carWidthPx, carLengthPx );
 			front.setOrigin( front.getWidth() / 2, front.getHeight() / 2 );
 			front.setColor( 1, 1, 1, 1 );
 
 			rear.setRegion( Art.skidMarksRear );
-			rear.setSize( carWidth, carLength );
+			rear.setSize( carWidthPx, carLengthPx );
 			rear.setOrigin( rear.getWidth() / 2, rear.getHeight() / 2 );
 			rear.setColor( 1, 1, 1, 1 );
 
