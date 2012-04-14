@@ -59,6 +59,7 @@ import com.bitfire.uracer.utils.BoxedFloatAccessor;
 import com.bitfire.uracer.utils.Convert;
 import com.bitfire.uracer.utils.NumberString;
 
+// TODO, GameTasks entity for managing them with get(name)/get(id)? Opening up to Components interacting with each other? I don't quite like that..
 public class GameLogic implements CarEvent.Listener, PlayerStateEvent.Listener, DriftStateEvent.Listener {
 	// lap
 	private boolean isFirstLap = true;
