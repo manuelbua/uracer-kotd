@@ -7,7 +7,6 @@ import com.bitfire.uracer.ScalingStrategy;
 import com.bitfire.uracer.game.GameDifficulty;
 import com.bitfire.uracer.game.GameplaySettings;
 import com.bitfire.uracer.game.collisions.GameContactListener;
-import com.bitfire.uracer.game.messager.Messager;
 import com.bitfire.uracer.game.world.GameWorld;
 
 public final class Environment {
@@ -15,7 +14,6 @@ public final class Environment {
 	public ScalingStrategy scalingStrategy;
 	public GameplaySettings gameSettings;
 	public GameWorld gameWorld;
-	public Messager messager;
 	public World b2dWorld;
 
 	public Environment( ScalingStrategy scalingStrategy, GameDifficulty difficulty ) {
@@ -29,13 +27,9 @@ public final class Environment {
 		// FIXME, Physics?
 		b2dWorld = new World( new Vector2( 0, 0 ), false );
 		b2dWorld.setContactListener( new GameContactListener() );
-
-		messager = new Messager( scalingStrategy.invTileMapZoomFactor );
 	}
 
 	public void dispose() {
-		messager.dispose();
-
 		if( gameWorld != null ) {
 			gameWorld.dispose();
 		}

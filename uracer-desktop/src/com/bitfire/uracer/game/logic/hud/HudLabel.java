@@ -37,6 +37,10 @@ public final class HudLabel {
 		setScale( 1.0f, true );
 	}
 
+	public boolean isVisible() {
+		return (alpha > 0);
+	}
+
 	public void setString( String string ) {
 		setString( string, false );
 	}

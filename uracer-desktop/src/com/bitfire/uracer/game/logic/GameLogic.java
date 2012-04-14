@@ -26,15 +26,18 @@ import com.bitfire.uracer.game.audio.CarSoundManager;
 import com.bitfire.uracer.game.data.GameData;
 import com.bitfire.uracer.game.effects.CarSkidMarks;
 import com.bitfire.uracer.game.effects.TrackEffects;
+import com.bitfire.uracer.game.events.DriftStateEvent;
 import com.bitfire.uracer.game.events.GameLogicEvent;
 import com.bitfire.uracer.game.events.PlayerStateEvent;
 import com.bitfire.uracer.game.logic.helpers.DirectorController;
 import com.bitfire.uracer.game.logic.helpers.Recorder;
 import com.bitfire.uracer.game.logic.hud.Hud;
 import com.bitfire.uracer.game.logic.hud.HudDrifting;
+import com.bitfire.uracer.game.logic.hud.HudDrifting.EndDriftType;
 import com.bitfire.uracer.game.messager.Message.MessagePosition;
 import com.bitfire.uracer.game.messager.Message.MessageSize;
 import com.bitfire.uracer.game.messager.Message.Type;
+import com.bitfire.uracer.game.messager.Messager;
 import com.bitfire.uracer.game.player.Car;
 import com.bitfire.uracer.game.player.Car.InputMode;
 import com.bitfire.uracer.game.player.CarEvent;
@@ -51,7 +54,7 @@ import com.bitfire.uracer.utils.BoxedFloatAccessor;
 import com.bitfire.uracer.utils.Convert;
 import com.bitfire.uracer.utils.NumberString;
 
-public class GameLogic implements CarEvent.Listener, PlayerStateEvent.Listener {
+public class GameLogic implements CarEvent.Listener, PlayerStateEvent.Listener, DriftStateEvent.Listener {
 	// lap
 	private boolean isFirstLap = true;
 	private long lastRecordedLapId = 0;
@@ -71,6 +74,10 @@ public class GameLogic implements CarEvent.Listener, PlayerStateEvent.Listener {
 
 	// hud
 	private Hud hud = null;
+	private HudDrifting hudDrifting = null;
+
+	// alerts and infos
+	private Messager messager = null;
 
 	// handles timeModulationBusy onComplete event
 	boolean timeModulation = false, timeModulationBusy = false;
@@ -94,6 +101,7 @@ public class GameLogic implements CarEvent.Listener, PlayerStateEvent.Listener {
 
 		GameEvents.playerState.addListener( this );
 		GameEvents.carEvent.addListener( this );
+		GameEvents.driftState.addListener( this );
 
 		// initialize player position in the world
 		GameData.States.player.car.setTransform( world.playerStartPos, world.playerStartOrient );
@@ -114,6 +122,9 @@ public class GameLogic implements CarEvent.Listener, PlayerStateEvent.Listener {
 	private void createTasks() {
 		gameTasks = new ArrayList<Task>( 10 );
 		gameTasks.add( new CarSoundManager() );
+
+		messager = new Messager( GameData.Environment.scalingStrategy.invTileMapZoomFactor );
+		gameTasks.add( messager );
 
 		hud = new Hud();
 		gameTasks.add( hud );
@@ -136,7 +147,8 @@ public class GameLogic implements CarEvent.Listener, PlayerStateEvent.Listener {
 		effects.add( playerSkidMarks );
 
 		// hud
-		hud.add( new HudDrifting( carModelWithPx, carModelLengthPx ) );
+		hudDrifting = new HudDrifting( carModelWithPx, carModelLengthPx );
+		hud.add( hudDrifting );
 	}
 
 	public boolean onTick() {
@@ -198,6 +210,7 @@ public class GameLogic implements CarEvent.Listener, PlayerStateEvent.Listener {
 
 	private void updateHud() {
 		hud.update( GameData.States.lap );
+		hudDrifting.update( GameData.States.drift );
 	}
 
 	public void onBeforeRender() {
@@ -251,6 +264,39 @@ public class GameLogic implements CarEvent.Listener, PlayerStateEvent.Listener {
 		switch( type ) {
 		case onTileChanged:
 			updateLap();
+			break;
+		}
+	}
+
+	@Override
+	public void driftStateEvent( DriftStateEvent.Type type ) {
+		switch( type ) {
+		case onBeginDrift:
+			// prologue, fades in and starts showing
+			// accumulated drifting time in realtime
+			hudDrifting.beginDrift();
+			break;
+		case onEndDrift:
+			DriftState drift = GameData.States.drift;
+			String seconds = NumberString.format( drift.driftSeconds() ) + "  seconds!";
+
+			float driftSeconds = drift.driftSeconds();
+			if( driftSeconds >= 1 && driftSeconds < 3f ) {
+				messager.enqueue( "NICE ONE!\n+" + seconds, 1f, Type.Good, MessagePosition.Middle, MessageSize.Big );
+			} else if( driftSeconds >= 3f && driftSeconds < 5f ) {
+				messager.enqueue( "FANTASTIC!\n+" + seconds, 1f, Type.Good, MessagePosition.Middle, MessageSize.Big );
+			} else if( driftSeconds >= 5f ) {
+				messager.enqueue( "UNREAL!\n+" + seconds, 1f, Type.Good, MessagePosition.Bottom, MessageSize.Big );
+			}
+
+			// epilogue, fade off drifting time label, slide in
+			// the specified epilogue message
+			if( drift.hasCollided ) {
+				hudDrifting.endDrift( "-" + NumberString.format( driftSeconds ), EndDriftType.BadDrift );
+			} else {
+				hudDrifting.endDrift( "+" + NumberString.format( driftSeconds ), EndDriftType.GoodDrift );
+			}
+
 			break;
 		}
 	}
@@ -331,19 +377,19 @@ public class GameLogic implements CarEvent.Listener, PlayerStateEvent.Listener {
 						player.ghost.setReplay( any );
 						lapState.setLastTrackTimeSeconds( any.trackTimeSeconds );
 
-						GameData.Environment.messager.show( "GO!  GO!  GO!", 3f, Type.Information, MessagePosition.Middle, MessageSize.Big );
+						messager.show( "GO!  GO!  GO!", 3f, Type.Information, MessagePosition.Middle, MessageSize.Big );
 					} else {
 						// both valid, replay best, overwrite worst
 						Replay best = lapState.getBestReplay(), worst = lapState.getWorstReplay();
 
 						if( lastRecordedLapId == best.id ) {
 							lapState.setLastTrackTimeSeconds( best.trackTimeSeconds );
-							GameData.Environment.messager.show( "-" + NumberString.format( worst.trackTimeSeconds - best.trackTimeSeconds ) + " seconds!", 3f, Type.Good,
-									MessagePosition.Top, MessageSize.Big );
+							messager.show( "-" + NumberString.format( worst.trackTimeSeconds - best.trackTimeSeconds ) + " seconds!", 3f, Type.Good, MessagePosition.Top,
+									MessageSize.Big );
 						} else {
 							lapState.setLastTrackTimeSeconds( worst.trackTimeSeconds );
-							GameData.Environment.messager.show( "+" + NumberString.format( worst.trackTimeSeconds - best.trackTimeSeconds ) + " seconds", 3f, Type.Bad,
-									MessagePosition.Top, MessageSize.Big );
+							messager.show( "+" + NumberString.format( worst.trackTimeSeconds - best.trackTimeSeconds ) + " seconds", 3f, Type.Bad, MessagePosition.Top,
+									MessageSize.Big );
 						}
 
 						player.ghost.setReplay( best );
