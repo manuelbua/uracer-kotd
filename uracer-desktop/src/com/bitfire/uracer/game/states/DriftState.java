@@ -2,7 +2,6 @@ package com.bitfire.uracer.game.states;
 
 import com.bitfire.uracer.game.GameEvents;
 import com.bitfire.uracer.game.Time;
-import com.bitfire.uracer.game.data.GameData;
 import com.bitfire.uracer.game.events.DriftStateEvent.Type;
 import com.bitfire.uracer.game.events.GameLogicEvent;
 import com.bitfire.uracer.game.player.Car;
@@ -61,8 +60,7 @@ public final class DriftState {
 		GameEvents.driftState.trigger( Type.onEndDrift );
 	}
 
-	public void update() {
-		Car car = GameData.States.player.car;
+	public void update(Car car) {
 		float oneOnMaxGrip = 1f / car.getCarModel().max_grip;
 
 		// lateral forces are in the range [-max_grip, max_grip]

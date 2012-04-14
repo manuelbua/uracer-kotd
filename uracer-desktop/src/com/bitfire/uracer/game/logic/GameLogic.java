@@ -195,13 +195,15 @@ public class GameLogic implements CarEvent.Listener, PlayerStateEvent.Listener, 
 		// update track effects
 		Car player = GameData.States.player.car;
 		if( player.getCarDescriptor().velocity_wc.len2() >= 1 ) {
-			playerSkidMarks.tryAddDriftMark( player.state().position, player.state().orientation, GameData.States.drift );
+			playerSkidMarks.tryAddDriftMark( player.state().position, player.state().orientation, GameData.States.playerDrift );
 		}
 	}
 
 	private void updateStates() {
 		GameData.States.player.update();
-		GameData.States.drift.update();
+
+		// compute drift state for player's car
+		GameData.States.playerDrift.update( GameData.States.player.car );
 	}
 
 	private void updateTimeMultiplier() {
@@ -210,7 +212,7 @@ public class GameLogic implements CarEvent.Listener, PlayerStateEvent.Listener, 
 
 	private void updateHud() {
 		hud.update( GameData.States.lap );
-		hudDrifting.update( GameData.States.drift );
+		hudDrifting.update( GameData.States.playerDrift );
 	}
 
 	public void onBeforeRender() {
@@ -245,7 +247,7 @@ public class GameLogic implements CarEvent.Listener, PlayerStateEvent.Listener, 
 	public void carEvent( CarEvent.Type type, CarEvent.Data data ) {
 		switch( type ) {
 		case onCollision:
-			DriftState driftState = GameData.States.drift;
+			DriftState driftState = GameData.States.playerDrift;
 			Car car = GameEvents.carEvent.data.car;
 			if( car.getInputMode() == InputMode.InputFromPlayer && driftState.isDrifting ) {
 				driftState.invalidateByCollision();
@@ -277,7 +279,7 @@ public class GameLogic implements CarEvent.Listener, PlayerStateEvent.Listener, 
 			hudDrifting.beginDrift();
 			break;
 		case onEndDrift:
-			DriftState drift = GameData.States.drift;
+			DriftState drift = GameData.States.playerDrift;
 			String seconds = NumberString.format( drift.driftSeconds() ) + "  seconds!";
 
 			float driftSeconds = drift.driftSeconds();

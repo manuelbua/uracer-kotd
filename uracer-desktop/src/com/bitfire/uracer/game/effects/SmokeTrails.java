@@ -108,7 +108,7 @@ public class SmokeTrails extends TrackEffect {
 
 	@Override
 	public void onTick() {
-		isDrifting = GameData.States.drift.isDrifting;
+		isDrifting = GameData.States.playerDrift.isDrifting;
 
 		if( isDrifting && !wasDrifting ) {
 			// started drifting

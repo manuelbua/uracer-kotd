@@ -134,7 +134,7 @@ public final class CarDriftSoundEffect extends CarSoundEffect {
 
 			lastDriftId = driftId;
 			lastVolume = AMath.clamp( lastVolume, 0, 1f );
-			drift.setVolume( driftId, GameData.States.drift.driftStrength * lastVolume );
+			drift.setVolume( driftId, GameData.States.playerDrift.driftStrength * lastVolume );
 		}
 	}
 }
