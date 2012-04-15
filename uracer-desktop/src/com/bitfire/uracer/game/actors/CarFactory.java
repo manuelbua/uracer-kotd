@@ -8,9 +8,9 @@ import com.badlogic.gdx.physics.box2d.World;
 import com.bitfire.uracer.Art;
 import com.bitfire.uracer.Config;
 import com.bitfire.uracer.entities.EntityType;
-import com.bitfire.uracer.game.Input;
 import com.bitfire.uracer.game.actors.Car.Aspect;
 import com.bitfire.uracer.game.collisions.CollisionFilters;
+import com.bitfire.uracer.game.input.Input;
 import com.bitfire.uracer.utils.Convert;
 import com.bitfire.uracer.utils.FixtureAtlas;
 

@@ -123,7 +123,7 @@ public final class FixtureAtlas {
 			is = new DataInputStream( stream );
 			while( is.available() > 0 ) {
 				String name = is.readUTF();
-				Vector2[][] points = readVecss( is );
+				/* Vector2[][] points = */readVecss( is );
 				Vector2[][] polygons = readVecss( is );
 
 				BodyModel bm = new BodyModel( polygons );

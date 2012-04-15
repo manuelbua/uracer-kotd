@@ -1,4 +1,4 @@
-package com.bitfire.uracer.game;
+package com.bitfire.uracer.game.input;
 
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.InputAdapter;
