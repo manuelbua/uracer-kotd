@@ -45,7 +45,7 @@ public class Stats {
 
 		PanelWidth = width;
 		PanelHeight = height;
-		intervalNs = (long)(1000000000L * updateHz);
+		intervalNs = (long)(1000000000L * (1f/updateHz));
 
 		pixels = new Pixmap( PanelWidth, PanelHeight, Format.RGBA8888 );
 		texture = new Texture( 256, 256, Format.RGBA8888 );
