@@ -1,4 +1,4 @@
-package com.bitfire.uracer.game.player;
+package com.bitfire.uracer.game.actors;
 
 /** Represents the forces computed by the car simulator.
  *

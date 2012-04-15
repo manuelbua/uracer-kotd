@@ -1,4 +1,4 @@
-package com.bitfire.uracer.game.player;
+package com.bitfire.uracer.game.actors;
 
 /** Represents the input forces for the simulator.
  *

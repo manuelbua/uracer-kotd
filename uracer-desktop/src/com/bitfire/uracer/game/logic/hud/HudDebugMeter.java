@@ -10,7 +10,7 @@ import com.badlogic.gdx.graphics.g2d.TextureRegion;
 import com.badlogic.gdx.math.Vector2;
 import com.bitfire.uracer.Art;
 import com.bitfire.uracer.Director;
-import com.bitfire.uracer.game.player.Car;
+import com.bitfire.uracer.game.actors.Car;
 import com.bitfire.uracer.utils.AMath;
 import com.bitfire.uracer.utils.SpriteBatchUtils;
 import com.bitfire.uracer.utils.Convert;

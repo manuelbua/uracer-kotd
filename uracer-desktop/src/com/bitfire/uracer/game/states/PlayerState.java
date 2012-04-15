@@ -2,11 +2,10 @@ package com.bitfire.uracer.game.states;
 
 import com.badlogic.gdx.math.Vector2;
 import com.bitfire.uracer.game.GameEvents;
-import com.bitfire.uracer.game.data.GameData;
+import com.bitfire.uracer.game.actors.Car;
+import com.bitfire.uracer.game.actors.GhostCar;
 import com.bitfire.uracer.game.events.GameLogicEvent;
 import com.bitfire.uracer.game.events.PlayerStateEvent;
-import com.bitfire.uracer.game.player.Car;
-import com.bitfire.uracer.game.player.GhostCar;
 import com.bitfire.uracer.game.world.GameWorld;
 import com.bitfire.uracer.utils.AMath;
 
@@ -40,10 +39,9 @@ public final class PlayerState {
 	};
 
 	// FIXME remove GhostCar nonsense from here
-	public PlayerState( /*GameWorld world, */Car car, GhostCar ghost ) {
+	public PlayerState( GameWorld world, Car car, GhostCar ghost ) {
 		GameEvents.gameLogic.addListener( gameLogicEvent );
-//		this.world = world;
-		this.world = GameData.Environment.gameWorld;
+		this.world = world;
 		setData( car, ghost );
 	}
 

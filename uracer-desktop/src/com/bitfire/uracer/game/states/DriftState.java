@@ -2,9 +2,9 @@ package com.bitfire.uracer.game.states;
 
 import com.bitfire.uracer.game.GameEvents;
 import com.bitfire.uracer.game.Time;
+import com.bitfire.uracer.game.actors.Car;
 import com.bitfire.uracer.game.events.DriftStateEvent.Type;
 import com.bitfire.uracer.game.events.GameLogicEvent;
-import com.bitfire.uracer.game.player.Car;
 import com.bitfire.uracer.utils.AMath;
 
 public final class DriftState {
@@ -16,6 +16,7 @@ public final class DriftState {
 	private float lastRear = 0, lastFront = 0;
 
 	private Time time, collisionTime;
+	public Car car;
 
 	private final GameLogicEvent.Listener gameLogicEvent = new GameLogicEvent.Listener() {
 		@Override
@@ -29,8 +30,9 @@ public final class DriftState {
 		}
 	};
 
-	public DriftState() {
+	public DriftState( Car car ) {
 		GameEvents.gameLogic.addListener( gameLogicEvent );
+		this.car = car;
 		reset();
 	}
 
@@ -57,10 +59,10 @@ public final class DriftState {
 		hasCollided = true;
 		collisionTime.start();
 		time.stop();
-		GameEvents.playerDriftState.trigger( Type.onEndDrift );
+		GameEvents.playerDriftState.trigger( this, Type.onEndDrift );
 	}
 
-	public void update( Car car ) {
+	public void update() {
 		float oneOnMaxGrip = 1f / car.getCarModel().max_grip;
 
 		// lateral forces are in the range [-max_grip, max_grip]
@@ -93,7 +95,7 @@ public final class DriftState {
 					hasCollided = false;
 					// driftStartTime = System.currentTimeMillis();
 					time.start();
-					GameEvents.playerDriftState.trigger( Type.onBeginDrift );
+					GameEvents.playerDriftState.trigger( this, Type.onBeginDrift );
 				}
 			} else {
 				// search for onEndDrift
@@ -101,7 +103,7 @@ public final class DriftState {
 					time.stop();
 					isDrifting = false;
 					hasCollided = false;
-					GameEvents.playerDriftState.trigger( Type.onEndDrift );
+					GameEvents.playerDriftState.trigger( this, Type.onEndDrift );
 				}
 			}
 		}

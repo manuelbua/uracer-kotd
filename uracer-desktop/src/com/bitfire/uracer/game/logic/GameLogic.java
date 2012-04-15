@@ -21,6 +21,13 @@ import com.bitfire.uracer.URacer;
 import com.bitfire.uracer.game.GameEvents;
 import com.bitfire.uracer.game.Input;
 import com.bitfire.uracer.game.Replay;
+import com.bitfire.uracer.game.actors.Car;
+import com.bitfire.uracer.game.actors.Car.Aspect;
+import com.bitfire.uracer.game.actors.Car.InputMode;
+import com.bitfire.uracer.game.actors.CarEvent;
+import com.bitfire.uracer.game.actors.CarFactory;
+import com.bitfire.uracer.game.actors.CarModel;
+import com.bitfire.uracer.game.actors.GhostCar;
 import com.bitfire.uracer.game.audio.CarDriftSoundEffect;
 import com.bitfire.uracer.game.audio.CarImpactSoundEffect;
 import com.bitfire.uracer.game.data.GameData;
@@ -44,12 +51,6 @@ import com.bitfire.uracer.game.messager.Message.MessageSize;
 import com.bitfire.uracer.game.messager.Message.Type;
 import com.bitfire.uracer.game.messager.MessageAccessor;
 import com.bitfire.uracer.game.messager.Messager;
-import com.bitfire.uracer.game.player.Car;
-import com.bitfire.uracer.game.player.Car.Aspect;
-import com.bitfire.uracer.game.player.Car.InputMode;
-import com.bitfire.uracer.game.player.CarEvent;
-import com.bitfire.uracer.game.player.CarFactory;
-import com.bitfire.uracer.game.player.CarModel;
 import com.bitfire.uracer.game.states.DriftState;
 import com.bitfire.uracer.game.states.LapState;
 import com.bitfire.uracer.game.states.PlayerState;
@@ -57,9 +58,6 @@ import com.bitfire.uracer.game.tween.GameTweener;
 import com.bitfire.uracer.game.tween.WcTweener;
 import com.bitfire.uracer.game.world.GameWorld;
 import com.bitfire.uracer.game.world.WorldDefs.TileLayer;
-import com.bitfire.uracer.postprocessing.PostProcessor;
-import com.bitfire.uracer.postprocessing.effects.Bloom;
-import com.bitfire.uracer.postprocessing.effects.Zoom;
 import com.bitfire.uracer.task.Task;
 import com.bitfire.uracer.utils.AMath;
 import com.bitfire.uracer.utils.BoxedFloat;
@@ -70,19 +68,18 @@ import com.bitfire.uracer.utils.NumberString;
 // TODO, GameTasks entity for managing them with get(name)/get(id)? Opening up to Components interacting with each
 // other? I don't quite like that..
 public class GameLogic implements CarEvent.Listener, PlayerStateEvent.Listener, DriftStateEvent.Listener {
+	// world
+	private GameWorld gameWorld = null;
+
 	// player
 	private Car playerCar = null;
+	private GhostCar ghostCar = null;
 
 	// lap
 	private boolean isFirstLap = true;
 	private long lastRecordedLapId = 0;
 
 	private DirectorController controller = null;
-
-	// post-processing
-	private PostProcessor postProcessor;
-	private Bloom bloom = null;
-	private Zoom zoom = null;
 
 	// replay
 	private Recorder recorder = null;
@@ -106,6 +103,8 @@ public class GameLogic implements CarEvent.Listener, PlayerStateEvent.Listener, 
 
 	// states
 	private PlayerState playerState = null;
+	private DriftState playerDriftState = null;
+	private LapState lapState = null;
 
 	// handles timeModulationBusy onComplete event
 	boolean timeModulation = false, timeModulationBusy = false;
@@ -121,7 +120,12 @@ public class GameLogic implements CarEvent.Listener, PlayerStateEvent.Listener, 
 		}
 	};
 
-	public GameLogic( PostProcessor postProcessor, Aspect carAspect, CarModel carModel ) {
+	public GameLogic( String levelName, Aspect carAspect, CarModel carModel ) {
+		// register event handlers
+		GameEvents.playerState.addListener( this );
+		GameEvents.carEvent.addListener( this );
+		GameEvents.playerDriftState.addListener( this );
+
 		// create tweening support
 		Tween.registerAccessor( Message.class, new MessageAccessor() );
 		Tween.registerAccessor( HudLabel.class, new HudLabelAccessor() );
@@ -133,30 +137,24 @@ public class GameLogic implements CarEvent.Listener, PlayerStateEvent.Listener, 
 		// game tweener, for all the rest
 		GameTweener.init();
 
-		this.postProcessor = postProcessor;
+		gameWorld = new GameWorld( GameData.Environment.b2dWorld, GameData.Environment.scalingStrategy, levelName, false );
 
 		recorder = new Recorder();
 		timeMultiplier.value = 1f;
 
-		GameEvents.playerState.addListener( this );
-		GameEvents.carEvent.addListener( this );
-		GameEvents.playerDriftState.addListener( this );
-
-		GameWorld world = GameData.Environment.gameWorld;
-
 		// create player and setup its position in the world
 		playerCar = CarFactory.createPlayer( carAspect, carModel );
-		playerCar.setTransform( world.playerStartPos, world.playerStartOrient );
+		playerCar.setTransform( gameWorld.playerStartPos, gameWorld.playerStartOrient );
+		ghostCar = CarFactory.createGhost( playerCar );
 
-		createStates( playerCar );
+		createStates( playerCar, ghostCar );
 
 		// creates global camera controller
-		controller = new DirectorController( Config.Graphics.CameraInterpolationMode, Director.halfViewport, world.worldSizeScaledPx, world.worldSizeTiles );
+		controller = new DirectorController( Config.Graphics.CameraInterpolationMode, Director.halfViewport, gameWorld.worldSizeScaledPx, gameWorld.worldSizeTiles );
 
 		createGameTasks();
-		setupPostProcessing();
 
-//		messager.show( "COOL STUFF!", 60, Message.Type.Information, MessagePosition.Bottom, MessageSize.Big );
+		// messager.show( "COOL STUFF!", 60, Message.Type.Information, MessagePosition.Bottom, MessageSize.Big );
 	}
 
 	public void dispose() {
@@ -165,32 +163,22 @@ public class GameLogic implements CarEvent.Listener, PlayerStateEvent.Listener, 
 		}
 
 		gameTasks.clear();
+
+		gameWorld.dispose();
 	}
 
-	private void setupPostProcessing() {
-		if( !Config.Graphics.EnablePostProcessingFx || postProcessor == null ) {
-			return;
-		}
-
-		bloom = new Bloom( Config.PostProcessing.RttFboWidth, Config.PostProcessing.RttFboHeight );
-
-		// Bloom.Settings bs = new Bloom.Settings( "arrogance-1 / rtt=0.25 / @1920x1050", BlurType.Gaussian5x5b, 1, 1,
-		// 0.25f, 1f, 0.1f, 0.8f, 1.4f );
-		// Bloom.Settings bs = new Bloom.Settings( "arrogance-2 / rtt=0.25 / @1920x1050", BlurType.Gaussian5x5b, 1, 1,
-		// 0.35f, 1f, 0.1f, 1.4f, 0.75f );
-
-		float threshold = ((GameData.Environment.gameWorld.isNightMode() && !Config.Graphics.DumbNightMode) ? 0.2f : 0.45f);
-		Bloom.Settings bloomSettings = new Bloom.Settings( "subtle", Config.PostProcessing.BlurType, 1, 1.5f, threshold, 1f, 0.5f, 1f, 1.5f );
-		bloom.setSettings( bloomSettings );
-
-		zoom = new Zoom( Config.PostProcessing.ZoomQuality );
-		postProcessor.addEffect( zoom );
-
-		postProcessor.addEffect( bloom );
+	public GameWorld getGameWorld() {
+		return gameWorld;
 	}
 
-	private void createStates( Car player ) {
-		playerState = new PlayerState( player, CarFactory.createGhost( player ) );
+	public Car getPlayer() {
+		return playerCar;
+	}
+
+	private void createStates( Car player, GhostCar playerGhost ) {
+		playerState = new PlayerState( gameWorld, player, playerGhost );
+		playerDriftState = new DriftState( player );
+		lapState = new LapState();
 	}
 
 	private void createGameTasks() {
@@ -218,7 +206,7 @@ public class GameLogic implements CarEvent.Listener, PlayerStateEvent.Listener, 
 		float carModelLengthPx = Convert.mt2px( model.length );
 
 		// sounds
-		ISoundEffect fx = new CarDriftSoundEffect( playerState );
+		ISoundEffect fx = new CarDriftSoundEffect( playerState, playerDriftState );
 		fx.start();
 		sound.add( fx );
 		sound.add( new CarImpactSoundEffect( playerState ) );
@@ -268,8 +256,6 @@ public class GameLogic implements CarEvent.Listener, PlayerStateEvent.Listener, 
 		updateGameTasks();
 		updateTimeMultiplier();
 
-		updatePostProcessing();
-
 		return true;
 	}
 
@@ -281,7 +267,7 @@ public class GameLogic implements CarEvent.Listener, PlayerStateEvent.Listener, 
 	private void updateTrackEffects() {
 		// update track effects
 		if( playerCar.getCarDescriptor().velocity_wc.len2() >= 1 ) {
-			playerSkidMarks.tryAddDriftMark( playerCar.state().position, playerCar.state().orientation, GameData.States.playerDrift );
+			playerSkidMarks.tryAddDriftMark( playerCar.state().position, playerCar.state().orientation, playerDriftState );
 		}
 	}
 
@@ -289,7 +275,7 @@ public class GameLogic implements CarEvent.Listener, PlayerStateEvent.Listener, 
 		playerState.update();
 
 		// compute drift state for player's car
-		GameData.States.playerDrift.update( playerCar );
+		playerDriftState.update();
 	}
 
 	private void updateTimeMultiplier() {
@@ -297,23 +283,8 @@ public class GameLogic implements CarEvent.Listener, PlayerStateEvent.Listener, 
 	}
 
 	private void updateHud() {
-		hud.update( GameData.States.lap );
-		hudDrifting.update( GameData.States.playerDrift );
-	}
-
-	private void updatePostProcessing() {
-		float factor = 1 - (URacer.timeMultiplier - 0.3f) / (Config.Physics.PhysicsTimeMultiplier - 0.3f);
-
-		if( Config.Graphics.EnablePostProcessingFx && zoom != null ) {
-			zoom.setOrigin( Director.screenPosFor( playerCar.getBody() ) );
-			zoom.setStrength( -0.05f * factor );
-		}
-
-		if( Config.Graphics.EnablePostProcessingFx && bloom != null && zoom != null ) {
-			bloom.setBaseSaturation( 0.5f - 0.5f * factor );
-			bloom.setBloomSaturation( 1.5f - factor * 1.15f );
-			bloom.setBloomIntesity( 1f + factor * 1.75f );
-		}
+		hud.update( lapState );
+		hudDrifting.update( playerDriftState );
 	}
 
 	//
@@ -363,10 +334,10 @@ public class GameLogic implements CarEvent.Listener, PlayerStateEvent.Listener, 
 	public void carEvent( CarEvent.Type type, CarEvent.Data data ) {
 		switch( type ) {
 		case onCollision:
-			DriftState driftState = GameData.States.playerDrift;
 			Car car = GameEvents.carEvent.data.car;
-			if( car.getInputMode() == InputMode.InputFromPlayer && driftState.isDrifting ) {
-				driftState.invalidateByCollision();
+			boolean isPlayerCar = (car.getInputMode() == InputMode.InputFromPlayer);
+			if( isPlayerCar && playerDriftState.isDrifting ) {
+				playerDriftState.invalidateByCollision();
 			}
 			break;
 		case onComputeForces:
@@ -395,10 +366,9 @@ public class GameLogic implements CarEvent.Listener, PlayerStateEvent.Listener, 
 			hudDrifting.beginDrift();
 			break;
 		case onEndDrift:
-			DriftState drift = GameData.States.playerDrift;
-			String seconds = NumberString.format( drift.driftSeconds() ) + "  seconds!";
+			String seconds = NumberString.format( playerDriftState.driftSeconds() ) + "  seconds!";
 
-			float driftSeconds = drift.driftSeconds();
+			float driftSeconds = playerDriftState.driftSeconds();
 			if( driftSeconds >= 1 && driftSeconds < 3f ) {
 				messager.enqueue( "NICE ONE!\n+" + seconds, 1f, Type.Good, MessagePosition.Middle, MessageSize.Big );
 			} else if( driftSeconds >= 3f && driftSeconds < 5f ) {
@@ -409,7 +379,7 @@ public class GameLogic implements CarEvent.Listener, PlayerStateEvent.Listener, 
 
 			// epilogue, fade off drifting time label, slide in
 			// the specified epilogue message
-			if( drift.hasCollided ) {
+			if( playerDriftState.hasCollided ) {
 				hudDrifting.endDrift( "-" + NumberString.format( driftSeconds ), EndDriftType.BadDrift );
 			} else {
 				hudDrifting.endDrift( "+" + NumberString.format( driftSeconds ), EndDriftType.GoodDrift );
@@ -428,27 +398,26 @@ public class GameLogic implements CarEvent.Listener, PlayerStateEvent.Listener, 
 	private void updateCarFriction() {
 		Vector2 tilePosition = playerState.tilePosition;
 
-		GameWorld world = GameData.Environment.gameWorld;
-		if( world.isValidTilePosition( tilePosition ) ) {
+		if( gameWorld.isValidTilePosition( tilePosition ) ) {
 			// compute realsize-based pixel offset car-tile (top-left origin)
-			float scaledTileSize = GameData.Environment.gameWorld.getTileSizeScaled();
+			float scaledTileSize = gameWorld.getTileSizeScaled();
 			float tsx = tilePosition.x * scaledTileSize;
 			float tsy = tilePosition.y * scaledTileSize;
 			offset.set( playerCar.state().position );
-			offset.y = world.worldSizeScaledPx.y - offset.y;
+			offset.y = gameWorld.worldSizeScaledPx.y - offset.y;
 			offset.x = offset.x - tsx;
 			offset.y = offset.y - tsy;
-			offset.mul( GameData.Environment.gameWorld.getTileSizeInvScaled() ).mul( world.map.tileWidth );
+			offset.mul( gameWorld.getTileSizeInvScaled() ).mul( gameWorld.map.tileWidth );
 
-			TiledLayer layerTrack = GameData.Environment.gameWorld.getLayer( TileLayer.Track );
+			TiledLayer layerTrack = gameWorld.getLayer( TileLayer.Track );
 			int id = layerTrack.tiles[(int)tilePosition.y][(int)tilePosition.x] - 1;
 
 			// int xOnMap = (id %4) * 224 + (int)offset.x;
 			// int yOnMap = (int)( id/4f ) * 224 + (int)offset.y;
 
 			// bit twiddling, faster versions
-			int xOnMap = (id & 3) * (int)world.map.tileWidth + (int)offset.x;
-			int yOnMap = (id >> 2) * (int)world.map.tileWidth + (int)offset.y;
+			int xOnMap = (id & 3) * (int)gameWorld.map.tileWidth + (int)offset.x;
+			int yOnMap = (id >> 2) * (int)gameWorld.map.tileWidth + (int)offset.y;
 
 			int pixel = Art.frictionNature.getPixel( xOnMap, yOnMap );
 			playerCar.setFriction( (pixel == -256 ? 0 : -1) );
@@ -460,12 +429,9 @@ public class GameLogic implements CarEvent.Listener, PlayerStateEvent.Listener, 
 	// FIXME looks like this function is doing MUCH more than what's stated in its name..
 	private void updateLap() {
 		if( playerState.car != null ) {
-			GameWorld world = GameData.Environment.gameWorld;
+			boolean onStartZone = (playerState.currTileX == gameWorld.playerStartTileX && playerState.currTileY == gameWorld.playerStartTileY);
 
-			boolean onStartZone = (playerState.currTileX == world.playerStartTileX && playerState.currTileY == world.playerStartTileY);
-
-			LapState lapState = GameData.States.lap;
-			String name = world.name;
+			String name = gameWorld.name;
 
 			if( onStartZone ) {
 				if( isFirstLap ) {

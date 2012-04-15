@@ -19,7 +19,7 @@ public class GameRenderer {
 	private final GameWorld world;
 	private final GameBatchRenderer batchRenderer;
 	private final GameWorldRenderer worldRenderer;
-	public final PostProcessor postProcessor;
+	private final PostProcessor postProcessor;
 	private boolean postProcessorEnabled = Config.Graphics.EnablePostProcessingFx;
 
 	public GameRenderer( ScalingStrategy scalingStrategy, GameWorld gameWorld ) {
@@ -44,6 +44,10 @@ public class GameRenderer {
 
 	public void setPostProcessorEnabled( boolean enable ) {
 		postProcessorEnabled = enable;
+	}
+
+	public PostProcessor getPostProcessor() {
+		return postProcessor;
 	}
 
 	public void render() {

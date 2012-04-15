@@ -7,8 +7,9 @@ import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.math.Vector2;
 import com.bitfire.uracer.Art;
 import com.bitfire.uracer.URacer;
+import com.bitfire.uracer.game.actors.Car;
 import com.bitfire.uracer.game.data.GameData;
-import com.bitfire.uracer.game.player.Car;
+import com.bitfire.uracer.game.states.DriftState;
 
 public class SmokeTrails extends TrackEffect {
 	private SmokeEffect fx[];
@@ -16,7 +17,7 @@ public class SmokeTrails extends TrackEffect {
 	public static final int MaxParticles = 100;
 
 	private boolean isDrifting, wasDrifting;
-	private Car player;
+	private DriftState driftState;
 
 	private class SmokeEffect {
 		private ParticleEffect effect;
@@ -84,8 +85,9 @@ public class SmokeTrails extends TrackEffect {
 		}
 	}
 
-	public SmokeTrails( Car player ) {
+	public SmokeTrails( DriftState driftState ) {
 		super( Type.SmokeTrails );
+		this.driftState = driftState;
 
 		fx = new SmokeEffect[ SmokeEffectsCount ];
 
@@ -97,7 +99,6 @@ public class SmokeTrails extends TrackEffect {
 			fx[i].stop();
 		}
 
-		this.player = player;
 		isDrifting = false;
 		wasDrifting = false;
 	}
@@ -108,7 +109,7 @@ public class SmokeTrails extends TrackEffect {
 
 	@Override
 	public void tick() {
-		isDrifting = GameData.States.playerDrift.isDrifting;
+		isDrifting = driftState.isDrifting;
 
 		if( isDrifting && !wasDrifting ) {
 			// started drifting
@@ -135,7 +136,8 @@ public class SmokeTrails extends TrackEffect {
 
 	@Override
 	public void render( SpriteBatch batch ) {
-		tmp.set( player.state().position.x, player.state().position.y );
+		Car car = driftState.car;
+		tmp.set( car.state().position.x, car.state().position.y );
 		fx[0].render( batch, tmp.x, tmp.y );
 
 		// // rear left

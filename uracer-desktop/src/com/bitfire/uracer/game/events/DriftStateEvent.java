@@ -1,5 +1,6 @@
 package com.bitfire.uracer.game.events;
 
+import com.bitfire.uracer.game.states.DriftState;
 import com.bitfire.uracer.utils.Event;
 import com.bitfire.uracer.utils.EventListener;
 import com.bitfire.uracer.utils.EventNotifier;
@@ -17,10 +18,12 @@ public final class DriftStateEvent extends Event {
 		notify.addListener( listener );
 	}
 
-	public void trigger( Type type ) {
+	public void trigger( DriftState driftState, Type type ) {
+		this.driftState = driftState;
 		notify.driftStateEvent( type );
 	}
 
+	public DriftState driftState;
 	private final Notifier notify = new Notifier();
 
 	private class Notifier extends EventNotifier<Listener> implements Listener {

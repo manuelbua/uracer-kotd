@@ -13,23 +13,18 @@ import com.bitfire.uracer.utils.SpriteBatchUtils;
  * @author bmanuel */
 public final class GameData {
 
-	public static States States;
 	public static Systems Systems;
 	public static Environment Environment;
 
 	// 1st
-	public static void create( ScalingStrategy scalingStrategy, String levelName, boolean nightMode, GameDifficulty difficulty ) {
+	public static void create( ScalingStrategy scalingStrategy, GameDifficulty difficulty ) {
 		Environment = new Environment( scalingStrategy, difficulty );
 
 		SpriteBatchUtils.init( Art.base6 );
 		Convert.init( GameData.Environment.scalingStrategy.invTileMapZoomFactor, Config.Physics.PixelsPerMeter );
 		Director.init();
 
-		States = new States( /*CarFactory.createPlayer( carAspect, carModel )*/ );
 		Systems = new Systems( Environment.b2dWorld );
-
-		// requires Art, Convert and Director
-		Environment.createWorld( Environment.b2dWorld, Environment.scalingStrategy, levelName, nightMode );
 	}
 
 	public static void dispose() {

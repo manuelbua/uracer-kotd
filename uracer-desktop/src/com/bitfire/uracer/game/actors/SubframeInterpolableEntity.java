@@ -1,4 +1,4 @@
-package com.bitfire.uracer.game.player;
+package com.bitfire.uracer.game.actors;
 
 import com.bitfire.uracer.entities.Entity;
 import com.bitfire.uracer.entities.EntityRenderState;

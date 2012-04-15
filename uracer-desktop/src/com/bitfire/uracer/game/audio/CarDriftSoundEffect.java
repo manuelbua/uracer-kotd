@@ -5,10 +5,10 @@ import com.bitfire.uracer.Config;
 import com.bitfire.uracer.Sounds;
 import com.bitfire.uracer.URacer;
 import com.bitfire.uracer.game.GameEvents;
-import com.bitfire.uracer.game.data.GameData;
 import com.bitfire.uracer.game.events.DriftStateEvent;
 import com.bitfire.uracer.game.events.DriftStateEvent.Type;
 import com.bitfire.uracer.game.logic.sounds.SoundEffect;
+import com.bitfire.uracer.game.states.DriftState;
 import com.bitfire.uracer.game.states.PlayerState;
 import com.bitfire.uracer.utils.AMath;
 import com.bitfire.uracer.utils.AudioUtils;
@@ -31,6 +31,7 @@ public final class CarDriftSoundEffect extends SoundEffect {
 	private boolean doFadeOut = false;
 	private float lastVolume = 0f;
 	private PlayerState playerState;
+	private DriftState driftState;
 
 	private DriftStateEvent.Listener driftListener = new DriftStateEvent.Listener() {
 		@Override
@@ -62,9 +63,10 @@ public final class CarDriftSoundEffect extends SoundEffect {
 		doFadeOut = true;
 	}
 
-	public CarDriftSoundEffect( PlayerState playerState ) {
+	public CarDriftSoundEffect( PlayerState playerState, DriftState driftState ) {
 		GameEvents.playerDriftState.addListener( driftListener );
 		this.playerState = playerState;
+		this.driftState = driftState;
 		drift = Sounds.carDrift;
 	}
 
@@ -138,7 +140,7 @@ public final class CarDriftSoundEffect extends SoundEffect {
 
 			lastDriftId = driftId;
 			lastVolume = AMath.clamp( lastVolume, 0, 1f );
-			drift.setVolume( driftId, GameData.States.playerDrift.driftStrength * lastVolume );
+			drift.setVolume( driftId, driftState.driftStrength * lastVolume );
 		}
 	}
 }
