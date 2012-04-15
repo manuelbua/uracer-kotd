@@ -85,7 +85,7 @@ public final class PostProcessor implements Disposable {
 
 	/** Removes the specified effect from the effect chain. */
 	public void removeEffect( PostProcessorEffect effect ) {
-		effects.removeValue( effect, false );
+		effects.removeValue( effect, true );
 	}
 
 	/** Returns the internal framebuffer format, computed from the

@@ -14,8 +14,8 @@ import com.bitfire.uracer.game.data.GameData;
 import com.bitfire.uracer.game.events.GameRendererEvent;
 import com.bitfire.uracer.game.rendering.debug.Stats;
 import com.bitfire.uracer.game.world.GameWorld;
-import com.bitfire.uracer.utils.SpriteBatchUtils;
 import com.bitfire.uracer.utils.NumberString;
+import com.bitfire.uracer.utils.SpriteBatchUtils;
 
 public final class Debug {
 
@@ -122,7 +122,7 @@ public final class Debug {
 			}
 
 			Debug.renderVersionInfo( batch );
-			Debug.renderGraphicalStats( batch, Gdx.graphics.getWidth() - Debug.getStatsWidth(), Gdx.graphics.getHeight() - Debug.getStatsHeight() - Art.fontHeight );
+			Debug.renderGraphicalStats( batch, Gdx.graphics.getWidth() - Debug.getStatsWidth(), Gdx.graphics.getHeight() - Debug.getStatsHeight() - Art.fontHeight - 5 );
 			Debug.renderTextualStats( batch );
 			Debug.renderMemoryUsage( batch );
 			SpriteBatchUtils.drawString( batch, "total meshes=" + GameWorld.TotalMeshes, 0, Gdx.graphics.getHeight() - 14 );

@@ -8,42 +8,6 @@ import com.badlogic.gdx.utils.Disposable;
  *
  * @author bmanuel */
 public abstract class PostProcessorEffect implements Disposable {
-	public final int id;
-	public final String name;
-
-	/** Construct a new post-processor effect, computing
-	 * the hash code by its class name. */
-	public PostProcessorEffect() {
-		this.name = this.getClass().getSimpleName();
-		this.id = this.name.hashCode();
-	}
-
-	/** Returns the custom hashcode. */
-	@Override
-	public int hashCode() {
-		return this.id;
-	}
-
-	/** Returns whether or not this instance is equal to the other by
-	 * comparing the ids (hashcodes). */
-	@Override
-	public boolean equals( Object obj ) {
-		if( this == obj ) {
-			return true;
-		}
-
-		if( obj == null ) {
-			return false;
-		}
-
-		if( getClass() != obj.getClass() ) {
-			return false;
-		}
-
-		PostProcessorEffect e = (PostProcessorEffect)obj;
-		return e.id == this.id;
-	};
-
 	/** Concrete objects shall be responsible to recreate or rebind its own
 	 * resources whenever its needed, usually when the OpenGL context
 	 * is lost.
