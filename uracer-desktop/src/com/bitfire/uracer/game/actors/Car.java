@@ -98,7 +98,7 @@ public class Car extends Box2DEntity {
 	public void setInputSystem( Input inputSystem ) {
 		this.inputSystem = inputSystem;
 		this.inputMode = (inputSystem != null ? InputMode.InputFromPlayer : InputMode.NoInput);
-		Gdx.app.log( "Car", "Switched nput mode to " + this.inputMode.toString() );
+		Gdx.app.log( "Car", "Switched input mode to " + this.inputMode.toString() );
 	}
 
 	private WindowedMean frictionMean = new WindowedMean( 16 );

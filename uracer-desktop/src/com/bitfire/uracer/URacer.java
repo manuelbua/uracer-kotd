@@ -182,7 +182,7 @@ public class URacer implements ApplicationListener {
 		screen = newScreen;
 
 		if( screen != null ) {
-			screen.init();
+			screen.init( scalingStrategy );
 		}
 	}
 
@@ -216,9 +216,5 @@ public class URacer implements ApplicationListener {
 
 	public static String getVersionInfo() {
 		return versionInfo;
-	}
-
-	public static ScalingStrategy getScalingStrategy() {
-		return scalingStrategy;
 	}
 }

@@ -2,19 +2,19 @@ package com.bitfire.uracer;
 
 import com.bitfire.uracer.game.Game;
 import com.bitfire.uracer.game.GameDifficulty;
-import com.bitfire.uracer.game.actors.CarModel;
 import com.bitfire.uracer.game.actors.Car.Aspect;
+import com.bitfire.uracer.game.actors.CarModel;
 
 public class GameScreen extends Screen {
 	private Game game = null;
 	private boolean quit = false;
 
 	public GameScreen() {
-		game = new Game( "tutorial-3", GameDifficulty.Hard, Aspect.OldSkool, new CarModel().toModel2() );
 	}
 
 	@Override
-	public void init() {
+	public void init( ScalingStrategy scalingStrategy ) {
+		game = new Game( "tutorial-3", scalingStrategy, GameDifficulty.Hard, Aspect.OldSkool, new CarModel().toModel2() );
 	}
 
 	@Override

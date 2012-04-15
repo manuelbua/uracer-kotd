@@ -6,10 +6,10 @@ import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.utils.Array;
 import com.bitfire.uracer.Art;
 import com.bitfire.uracer.Config;
+import com.bitfire.uracer.ScalingStrategy;
 import com.bitfire.uracer.game.GameEvents;
 import com.bitfire.uracer.game.Replay;
 import com.bitfire.uracer.game.actors.Car;
-import com.bitfire.uracer.game.data.GameData;
 import com.bitfire.uracer.game.events.GameLogicEvent;
 import com.bitfire.uracer.game.events.GameRendererEvent;
 import com.bitfire.uracer.game.states.LapState;
@@ -69,7 +69,7 @@ public final class Hud extends Task {
 	};
 
 	// effects
-	public Hud() {
+	public Hud( ScalingStrategy scalingStrategy ) {
 		GameEvents.gameRenderer.addListener( gameRendererEvent, GameRendererEvent.Type.BatchAfterMeshes, GameRendererEvent.Order.DEFAULT );
 		GameEvents.gameRenderer.addListener( gameRendererEvent, GameRendererEvent.Type.BatchDebug, GameRendererEvent.Order.DEFAULT );
 		GameEvents.gameLogic.addListener( gameLogicEvent, GameLogicEvent.Type.onReset );
@@ -83,9 +83,9 @@ public final class Hud extends Task {
 		curr = new HudLabel( Art.fontCurseYR, "YOUR  TIME\n-.----" );
 		last = new HudLabel( Art.fontCurseYR, "LAST  TIME\n-.----" );
 
-		curr.setPosition( gridX, 50 * GameData.Environment.scalingStrategy.invTileMapZoomFactor );
-		last.setPosition( gridX * 3, 50 * GameData.Environment.scalingStrategy.invTileMapZoomFactor );
-		best.setPosition( gridX * 4, 50 * GameData.Environment.scalingStrategy.invTileMapZoomFactor );
+		curr.setPosition( gridX, 50 * scalingStrategy.invTileMapZoomFactor );
+		last.setPosition( gridX * 3, 50 * scalingStrategy.invTileMapZoomFactor );
+		best.setPosition( gridX * 4, 50 * scalingStrategy.invTileMapZoomFactor );
 
 		// // meter lateral forces
 		// meterLatForce = new HudDebugMeter( car, 0, 100, 5 );
