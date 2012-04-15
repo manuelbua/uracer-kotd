@@ -7,6 +7,7 @@ import com.bitfire.uracer.game.events.GameLogicEvent;
 import com.bitfire.uracer.game.events.PlayerStateEvent;
 import com.bitfire.uracer.game.player.Car;
 import com.bitfire.uracer.game.player.GhostCar;
+import com.bitfire.uracer.game.world.GameWorld;
 import com.bitfire.uracer.utils.AMath;
 
 public final class PlayerState {
@@ -24,6 +25,8 @@ public final class PlayerState {
 	public Vector2 tilePosition = new Vector2();
 	private int lastTileX = 0, lastTileY = 0;
 
+	private GameWorld world;
+
 	private final GameLogicEvent.Listener gameLogicEvent = new GameLogicEvent.Listener() {
 		@Override
 		public void gameLogicEvent( GameLogicEvent.Type type ) {
@@ -37,8 +40,10 @@ public final class PlayerState {
 	};
 
 	// FIXME remove GhostCar nonsense from here
-	public PlayerState( Car car, GhostCar ghost ) {
+	public PlayerState( /*GameWorld world, */Car car, GhostCar ghost ) {
 		GameEvents.gameLogic.addListener( gameLogicEvent );
+//		this.world = world;
+		this.world = GameData.Environment.gameWorld;
 		setData( car, ghost );
 	}
 
@@ -60,7 +65,7 @@ public final class PlayerState {
 			lastTileY = currTileY;
 
 			// compute car's tile position
-			tilePosition.set( GameData.Environment.gameWorld.pxToTile( car.state().position.x, car.state().position.y ) );
+			tilePosition.set( world.pxToTile( car.state().position.x, car.state().position.y ) );
 
 			currTileX = (int)tilePosition.x;
 			currTileY = (int)tilePosition.y;
@@ -79,7 +84,7 @@ public final class PlayerState {
 	public void reset() {
 		if( car != null ) {
 			car.reset();
-			car.setTransform( GameData.Environment.gameWorld.playerStartPos, GameData.Environment.gameWorld.playerStartOrient );
+			car.setTransform( world.playerStartPos, world.playerStartOrient );
 		}
 
 		if( ghost != null ) {

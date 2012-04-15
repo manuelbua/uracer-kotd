@@ -9,6 +9,7 @@ import com.bitfire.uracer.game.data.GameData;
 import com.bitfire.uracer.game.events.DriftStateEvent;
 import com.bitfire.uracer.game.events.DriftStateEvent.Type;
 import com.bitfire.uracer.game.logic.sounds.SoundEffect;
+import com.bitfire.uracer.game.states.PlayerState;
 import com.bitfire.uracer.utils.AMath;
 import com.bitfire.uracer.utils.AudioUtils;
 
@@ -29,6 +30,7 @@ public final class CarDriftSoundEffect extends SoundEffect {
 	private boolean doFadeIn = false;
 	private boolean doFadeOut = false;
 	private float lastVolume = 0f;
+	private PlayerState playerState;
 
 	private DriftStateEvent.Listener driftListener = new DriftStateEvent.Listener() {
 		@Override
@@ -60,8 +62,9 @@ public final class CarDriftSoundEffect extends SoundEffect {
 		doFadeOut = true;
 	}
 
-	public CarDriftSoundEffect() {
+	public CarDriftSoundEffect( PlayerState playerState ) {
 		GameEvents.playerDriftState.addListener( driftListener );
+		this.playerState = playerState;
 		drift = Sounds.carDrift;
 	}
 
@@ -103,7 +106,7 @@ public final class CarDriftSoundEffect extends SoundEffect {
 	public void tick() {
 		if( driftId > -1 ) {
 			boolean anotherDriftId = (driftId != lastDriftId);
-			float speedFactor = GameData.States.player.currSpeedFactor;
+			float speedFactor = playerState.currSpeedFactor;
 
 			// compute behavior
 			float pitch = speedFactor * pitchFactor + pitchMin;

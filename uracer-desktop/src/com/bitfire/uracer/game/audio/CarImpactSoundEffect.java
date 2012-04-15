@@ -5,19 +5,21 @@ import com.badlogic.gdx.math.MathUtils;
 import com.bitfire.uracer.Sounds;
 import com.bitfire.uracer.URacer;
 import com.bitfire.uracer.game.GameEvents;
-import com.bitfire.uracer.game.data.GameData;
 import com.bitfire.uracer.game.logic.sounds.SoundEffect;
 import com.bitfire.uracer.game.player.Car;
 import com.bitfire.uracer.game.player.Car.InputMode;
 import com.bitfire.uracer.game.player.CarEvent;
 import com.bitfire.uracer.game.player.CarEvent.Data;
 import com.bitfire.uracer.game.player.CarEvent.Type;
+import com.bitfire.uracer.game.states.PlayerState;
 import com.bitfire.uracer.utils.AMath;
 import com.bitfire.uracer.utils.AudioUtils;
 
 public final class CarImpactSoundEffect extends SoundEffect {
 	private Sound soundLow1, soundLow2, soundMid1, soundMid2, soundHigh;
 	private long lastSoundTimeMs = 0;
+	private PlayerState playerState;
+
 	private static final long MinElapsedBetweenSoundsMs = 500;
 	private static final float MinImpactForce = 20;
 	private static final float MaxImpactForce = 200;
@@ -37,7 +39,7 @@ public final class CarImpactSoundEffect extends SoundEffect {
 			case onCollision:
 				Car car = GameEvents.carEvent.data.car;
 				if( car.getInputMode() == InputMode.InputFromPlayer ) {
-					impact( data.impulses.len(), GameData.States.player.currSpeedFactor );
+					impact( data.impulses.len(), playerState.currSpeedFactor );
 				}
 				break;
 			case onComputeForces:
@@ -46,8 +48,9 @@ public final class CarImpactSoundEffect extends SoundEffect {
 		}
 	};
 
-	public CarImpactSoundEffect() {
+	public CarImpactSoundEffect( PlayerState playerState ) {
 		GameEvents.carEvent.addListener( carEvent );
+		this.playerState = playerState;
 
 		soundLow1 = Sounds.carImpacts[0];
 		soundLow2 = Sounds.carImpacts[1];

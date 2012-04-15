@@ -21,12 +21,12 @@ public class Game implements Disposable {
 	private GameRenderer gameRenderer = null;
 
 	public Game( String levelName, GameDifficulty difficulty, Aspect carAspect, CarModel carModel ) {
-		GameData.create( URacer.getScalingStrategy(), levelName, false, difficulty, carAspect, carModel );
+		GameData.create( URacer.getScalingStrategy(), levelName, false, difficulty );
 
 		gameRenderer = new GameRenderer( GameData.Environment.scalingStrategy, GameData.Environment.gameWorld );
 
 		// handle game rules and mechanics, it's all about game data
-		gameLogic = new GameLogic( gameRenderer.postProcessor );
+		gameLogic = new GameLogic( gameRenderer.postProcessor, carAspect, carModel );
 	}
 
 	@Override

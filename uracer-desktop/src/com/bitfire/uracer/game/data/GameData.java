@@ -5,11 +5,8 @@ import com.bitfire.uracer.Config;
 import com.bitfire.uracer.Director;
 import com.bitfire.uracer.ScalingStrategy;
 import com.bitfire.uracer.game.GameDifficulty;
-import com.bitfire.uracer.game.player.Car.Aspect;
-import com.bitfire.uracer.game.player.CarFactory;
-import com.bitfire.uracer.game.player.CarModel;
-import com.bitfire.uracer.utils.SpriteBatchUtils;
 import com.bitfire.uracer.utils.Convert;
+import com.bitfire.uracer.utils.SpriteBatchUtils;
 
 /** Encapsulates and abstracts the dynamic state of the game.
  *
@@ -21,14 +18,14 @@ public final class GameData {
 	public static Environment Environment;
 
 	// 1st
-	public static void create( ScalingStrategy scalingStrategy, String levelName, boolean nightMode, GameDifficulty difficulty, Aspect carAspect, CarModel carModel ) {
+	public static void create( ScalingStrategy scalingStrategy, String levelName, boolean nightMode, GameDifficulty difficulty ) {
 		Environment = new Environment( scalingStrategy, difficulty );
 
 		SpriteBatchUtils.init( Art.base6 );
 		Convert.init( GameData.Environment.scalingStrategy.invTileMapZoomFactor, Config.Physics.PixelsPerMeter );
 		Director.init();
 
-		States = new States( CarFactory.createPlayer( carAspect, carModel ) );
+		States = new States( /*CarFactory.createPlayer( carAspect, carModel )*/ );
 		Systems = new Systems( Environment.b2dWorld );
 
 		// requires Art, Convert and Director
