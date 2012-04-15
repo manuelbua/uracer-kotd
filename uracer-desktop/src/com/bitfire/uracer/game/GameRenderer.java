@@ -18,7 +18,6 @@ import com.bitfire.uracer.postprocessing.PostProcessor;
 public class GameRenderer {
 	private final GL20 gl;
 	private final GameWorld world;
-	private final World box2dWorld;
 	private final GameBatchRenderer batchRenderer;
 	private final GameWorldRenderer worldRenderer;
 	private final PostProcessor postProcessor;
@@ -27,7 +26,6 @@ public class GameRenderer {
 	public GameRenderer( ScalingStrategy scalingStrategy, GameWorld gameWorld, World box2dWorld ) {
 		gl = Gdx.graphics.getGL20();
 		world = gameWorld;
-		this.box2dWorld = box2dWorld;
 
 		int width = Gdx.graphics.getWidth();
 		int height = Gdx.graphics.getHeight();
