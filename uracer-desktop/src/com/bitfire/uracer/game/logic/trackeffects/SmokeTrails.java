@@ -6,9 +6,9 @@ import com.badlogic.gdx.graphics.g2d.ParticleEmitter;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.math.Vector2;
 import com.bitfire.uracer.Art;
+import com.bitfire.uracer.ScalingStrategy;
 import com.bitfire.uracer.URacer;
 import com.bitfire.uracer.game.actors.Car;
-import com.bitfire.uracer.game.data.GameData;
 import com.bitfire.uracer.game.states.DriftState;
 
 public class SmokeTrails extends TrackEffect {
@@ -18,6 +18,7 @@ public class SmokeTrails extends TrackEffect {
 
 	private boolean isDrifting, wasDrifting;
 	private DriftState driftState;
+	private ScalingStrategy scalingStrategy;
 
 	private class SmokeEffect {
 		private ParticleEffect effect;
@@ -51,7 +52,7 @@ public class SmokeTrails extends TrackEffect {
 		}
 
 		public final void setScaleMul( float value ) {
-			baseEmitter.getScale().setHigh( OriginalParticleScaling * value * GameData.Environment.scalingStrategy.invTileMapZoomFactor );
+			baseEmitter.getScale().setHigh( OriginalParticleScaling * value * scalingStrategy.invTileMapZoomFactor );
 		}
 
 		public void setEmissionMul( float value ) {
@@ -85,9 +86,10 @@ public class SmokeTrails extends TrackEffect {
 		}
 	}
 
-	public SmokeTrails( DriftState driftState ) {
+	public SmokeTrails( ScalingStrategy scalingStrategy, DriftState driftState ) {
 		super( Type.SmokeTrails );
 		this.driftState = driftState;
+		this.scalingStrategy = scalingStrategy;
 
 		fx = new SmokeEffect[ SmokeEffectsCount ];
 
