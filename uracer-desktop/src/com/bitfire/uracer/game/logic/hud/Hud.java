@@ -3,19 +3,23 @@ package com.bitfire.uracer.game.logic.hud;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.math.Vector2;
+import com.badlogic.gdx.utils.Array;
 import com.bitfire.uracer.Art;
 import com.bitfire.uracer.Config;
 import com.bitfire.uracer.game.GameEvents;
-import com.bitfire.uracer.game.Manager;
 import com.bitfire.uracer.game.Replay;
 import com.bitfire.uracer.game.data.GameData;
 import com.bitfire.uracer.game.events.GameLogicEvent;
 import com.bitfire.uracer.game.events.GameRendererEvent;
 import com.bitfire.uracer.game.player.Car;
 import com.bitfire.uracer.game.states.LapState;
+import com.bitfire.uracer.task.Task;
+import com.bitfire.uracer.utils.Manager;
 import com.bitfire.uracer.utils.NumberString;
 
-public final class Hud extends Manager<HudElement> {
+public final class Hud extends Task {
+
+	private final Manager<HudElement> elementsManager = new Manager<HudElement>();
 
 	private HudLabel best, curr, last;
 	// private HudDebugMeter meterLatForce, meterSkidMarks, meterSmoke;
@@ -42,6 +46,7 @@ public final class Hud extends Manager<HudElement> {
 	};
 
 	private void renderAfterMeshes( SpriteBatch batch ) {
+		Array<HudElement> items = elementsManager.items;
 		for( int i = 0; i < items.size; i++ ) {
 			items.get( i ).onRender( batch, playerPosition, playerOrientation );
 		}
@@ -96,12 +101,22 @@ public final class Hud extends Manager<HudElement> {
 		// meterSmoke.setName( "smokepar count" );
 	}
 
+	public void add( HudElement element ) {
+		elementsManager.add( element );
+	}
+
+	public void remove( HudElement element ) {
+		elementsManager.remove( element );
+	}
+
 	@Override
 	public void dispose() {
-
+		super.dispose();
+		elementsManager.dispose();
 	}
 
 	public void reset() {
+		Array<HudElement> items = elementsManager.items;
 		for( int i = 0; i < items.size; i++ ) {
 			items.get( i ).onReset();
 		}
@@ -118,8 +133,8 @@ public final class Hud extends Manager<HudElement> {
 
 	@Override
 	protected void onTick() {
-		for( int i = 0; i < items.size; i++ ) {
-			items.get( i ).onTick();
+		for( int i = 0; i < elementsManager.items.size; i++ ) {
+			elementsManager.items.get( i ).onTick();
 		}
 	}
 

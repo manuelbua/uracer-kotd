@@ -1,14 +1,13 @@
-package com.bitfire.uracer.game;
+package com.bitfire.uracer.utils;
 
 import com.badlogic.gdx.utils.Array;
 import com.badlogic.gdx.utils.Disposable;
-import com.bitfire.uracer.task.Task;
 
-public abstract class Manager<T extends Disposable> extends Task implements Disposable {
+public class Manager<T extends Disposable> implements Disposable {
 	private static final int ItemNotFound = -1;
 
-	protected Array<T> items = new Array<T>();
-	protected Array<Boolean> owned = new Array<Boolean>();
+	public final Array<T> items = new Array<T>();
+	protected final Array<Boolean> owned = new Array<Boolean>();
 
 	@Override
 	public void dispose() {
@@ -20,9 +19,6 @@ public abstract class Manager<T extends Disposable> extends Task implements Disp
 
 		items.clear();
 		owned.clear();
-
-		items = null;
-		owned = null;
 	}
 
 	/** Add an item to the manager, if own is true the manager will manage the resource's lifecycle */

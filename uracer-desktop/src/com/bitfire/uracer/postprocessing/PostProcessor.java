@@ -7,6 +7,7 @@ import com.badlogic.gdx.graphics.Pixmap.Format;
 import com.badlogic.gdx.graphics.glutils.FrameBuffer;
 import com.badlogic.gdx.utils.Array;
 import com.badlogic.gdx.utils.Disposable;
+import com.bitfire.uracer.utils.Manager;
 
 /** Provides a way to capture the rendered scene to an off-screen buffer
  * and to apply a chain of effects on it before rendering to screen.
@@ -18,7 +19,7 @@ import com.badlogic.gdx.utils.Disposable;
 public final class PostProcessor implements Disposable {
 	private final PingPongBuffer composite;
 	private static Format fbFormat;
-	private final Array<PostProcessorEffect> effects = new Array<PostProcessorEffect>();
+	private final Manager<PostProcessorEffect> effectManager = new Manager<PostProcessorEffect>();
 	private static final Array<PingPongBuffer> buffers = new Array<PingPongBuffer>( 5 );
 	private final Color clearColor = Color.CLEAR;
 	private boolean capturing = false;
@@ -62,11 +63,7 @@ public final class PostProcessor implements Disposable {
 	/** Frees owned resources. */
 	@Override
 	public void dispose() {
-		for( int i = 0; i < effects.size; i++ ) {
-			effects.get( i ).dispose();
-		}
-
-		effects.clear();
+		effectManager.dispose();
 
 		// cleanup managed buffers, if any
 		for( int i = 0; i < buffers.size; i++ ) {
@@ -80,12 +77,12 @@ public final class PostProcessor implements Disposable {
 	 * since effects will be applied in a FIFO fashion, the first added
 	 * is the first being applied. */
 	public void addEffect( PostProcessorEffect effect ) {
-		effects.add( effect );
+		effectManager.add( effect );
 	}
 
 	/** Removes the specified effect from the effect chain. */
 	public void removeEffect( PostProcessorEffect effect ) {
-		effects.removeValue( effect, true );
+		effectManager.remove( effect );
 	}
 
 	/** Returns the internal framebuffer format, computed from the
@@ -147,8 +144,9 @@ public final class PostProcessor implements Disposable {
 	/** Regenerates and/or rebinds owned resources when needed, eg. when
 	 * the OpenGL context is lost. */
 	public void rebind() {
-		for( int i = 0; i < effects.size; i++ ) {
-			effects.get( i ).rebind();
+		Array<PostProcessorEffect> items = effectManager.items;
+		for( int i = 0; i < items.size; i++ ) {
+			items.get( i ).rebind();
 		}
 
 		for( int i = 0; i < buffers.size; i++ ) {
@@ -160,10 +158,11 @@ public final class PostProcessor implements Disposable {
 	public void render() {
 		captureEnd();
 
-		if( effects.size > 0 ) {
+		Array<PostProcessorEffect> items = effectManager.items;
+		if( items.size > 0 ) {
 			// render effects chain, [0,n-1]
-			for( int i = 0; i < effects.size - 1; i++ ) {
-				PostProcessorEffect e = effects.get( i );
+			for( int i = 0; i < items.size - 1; i++ ) {
+				PostProcessorEffect e = items.get( i );
 
 				composite.capture();
 				{
@@ -175,7 +174,7 @@ public final class PostProcessor implements Disposable {
 			composite.end();
 
 			// render with null dest (to screen)
-			effects.get( effects.size - 1 ).render( composite.getResultBuffer(), null );
+			items.get( items.size - 1 ).render( composite.getResultBuffer(), null );
 		}
 	}
 }
