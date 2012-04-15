@@ -4,11 +4,12 @@ import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
 import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.physics.box2d.FixtureDef;
+import com.badlogic.gdx.physics.box2d.World;
 import com.bitfire.uracer.Art;
 import com.bitfire.uracer.Config;
 import com.bitfire.uracer.entities.EntityType;
+import com.bitfire.uracer.game.Input;
 import com.bitfire.uracer.game.actors.Car.Aspect;
-import com.bitfire.uracer.game.actors.Car.InputMode;
 import com.bitfire.uracer.game.collisions.CollisionFilters;
 import com.bitfire.uracer.utils.Convert;
 import com.bitfire.uracer.utils.FixtureAtlas;
@@ -17,20 +18,20 @@ public final class CarFactory {
 	private CarFactory() {
 	}
 
-	public static GhostCar createGhost( Aspect type, CarModel model ) {
+	public static GhostCar createGhost( World box2dWorld, Aspect type, CarModel model ) {
 		CarRenderer graphics = createCarGraphics( type, model );
-		GhostCar ghost = GhostCar.createForFactory( graphics, type, model );
+		GhostCar ghost = new GhostCar( box2dWorld, graphics, type, model );
 		applyCarPhysics( ghost, EntityType.CarReplay );
 		return ghost;
 	}
 
-	public static GhostCar createGhost( Car car ) {
-		return CarFactory.createGhost( car.getCarAspect(), car.getCarModel() );
+	public static GhostCar createGhost( World box2dWorld, Car car ) {
+		return CarFactory.createGhost( box2dWorld, car.getCarAspect(), car.getCarModel() );
 	}
 
-	public static Car createPlayer( Aspect carAspect, CarModel model ) {
+	public static Car createPlayer( World box2dWorld, Input input, Aspect carAspect, CarModel model ) {
 		CarRenderer graphics = createCarGraphics( carAspect, model );
-		Car car = Car.createForFactory( graphics, model, carAspect, InputMode.InputFromPlayer );
+		Car car = new Car( box2dWorld, input, graphics, model, carAspect );
 		applyCarPhysics( car, EntityType.Car );
 		return car;
 	}

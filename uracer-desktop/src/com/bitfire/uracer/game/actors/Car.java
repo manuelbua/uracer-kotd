@@ -8,14 +8,15 @@ import com.badlogic.gdx.math.WindowedMean;
 import com.badlogic.gdx.physics.box2d.BodyDef;
 import com.badlogic.gdx.physics.box2d.BodyDef.BodyType;
 import com.badlogic.gdx.physics.box2d.Fixture;
+import com.badlogic.gdx.physics.box2d.World;
 import com.bitfire.uracer.Config;
 import com.bitfire.uracer.Director;
 import com.bitfire.uracer.game.GameEvents;
 import com.bitfire.uracer.game.Input;
 import com.bitfire.uracer.game.data.GameData;
 import com.bitfire.uracer.utils.AMath;
-import com.bitfire.uracer.utils.SpriteBatchUtils;
 import com.bitfire.uracer.utils.Convert;
+import com.bitfire.uracer.utils.SpriteBatchUtils;
 import com.bitfire.uracer.utils.VMath;
 
 public class Car extends Box2DEntity {
@@ -33,17 +34,20 @@ public class Car extends Box2DEntity {
 	private CarSimulator carSim;
 	private CarInput carInput;
 	private CarForces carForces;
+	private Input inputSystem;
 	private int impacts;
 
 	private InputMode carInputMode;
 	private Aspect carAspect;
 
-	protected Car( CarRenderer graphics, CarModel model, Aspect type, InputMode inputMode ) {
-		super( GameData.Environment.b2dWorld );
+	protected Car( World box2dWorld, Input input, CarRenderer graphics, CarModel model, Aspect type ) {
+		super( box2dWorld );
 		this.graphics = graphics;
-		this.carInputMode = inputMode;
 		this.carAspect = type;
 		this.impacts = 0;
+		this.inputSystem = input;
+
+		this.carInputMode = (input == null ? InputMode.InputFromReplay : InputMode.InputFromPlayer);
 
 		carDesc = new CarDescriptor();
 		carDesc.carModel.set( model );
@@ -60,11 +64,6 @@ public class Car extends Box2DEntity {
 		body = GameData.Environment.b2dWorld.createBody( bd );
 		body.setBullet( true );
 		body.setUserData( this );
-	}
-
-	// factory method
-	public static Car createForFactory( CarRenderer graphics, CarModel model, Aspect type, InputMode inputMode ) {
-		return new Car( graphics, model, type, inputMode );
 	}
 
 	public Aspect getCarAspect() {
@@ -152,9 +151,8 @@ public class Car extends Box2DEntity {
 	protected CarInput acquireInput() {
 		carPos.set( Director.screenPosFor( body ) );
 
-		Input input = GameData.Systems.input;
-		touchPos.set( input.getXY() );
-		carInput.updated = input.isTouching();
+		touchPos.set( inputSystem.getXY() );
+		carInput.updated = inputSystem.isTouching();
 
 		if( carInput.updated ) {
 			float angle = 0;

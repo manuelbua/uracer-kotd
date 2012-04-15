@@ -13,7 +13,6 @@ import com.bitfire.uracer.utils.SpriteBatchUtils;
  * @author bmanuel */
 public final class GameData {
 
-	public static Systems Systems;
 	public static Environment Environment;
 
 	// 1st
@@ -23,15 +22,11 @@ public final class GameData {
 		SpriteBatchUtils.init( Art.base6 );
 		Convert.init( GameData.Environment.scalingStrategy.invTileMapZoomFactor, Config.Physics.PixelsPerMeter );
 		Director.init();
-
-		Systems = new Systems( Environment.b2dWorld );
 	}
 
 	public static void dispose() {
 		Director.dispose();
-
 		Environment.dispose();
-		Systems.dispose();
 	}
 
 	private GameData() {

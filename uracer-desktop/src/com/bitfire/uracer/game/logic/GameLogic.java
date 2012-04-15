@@ -59,6 +59,7 @@ import com.bitfire.uracer.game.tween.WcTweener;
 import com.bitfire.uracer.game.world.GameWorld;
 import com.bitfire.uracer.game.world.WorldDefs.TileLayer;
 import com.bitfire.uracer.task.Task;
+import com.bitfire.uracer.task.TaskManagerEvent;
 import com.bitfire.uracer.utils.AMath;
 import com.bitfire.uracer.utils.BoxedFloat;
 import com.bitfire.uracer.utils.BoxedFloatAccessor;
@@ -70,6 +71,12 @@ import com.bitfire.uracer.utils.NumberString;
 public class GameLogic implements CarEvent.Listener, PlayerStateEvent.Listener, DriftStateEvent.Listener {
 	// world
 	private GameWorld gameWorld = null;
+
+	// input system
+	private Input input = null;
+
+	// physics step
+	private PhysicsStep physicsStep;
 
 	// player
 	private Car playerCar = null;
@@ -138,14 +145,16 @@ public class GameLogic implements CarEvent.Listener, PlayerStateEvent.Listener, 
 
 		gameWorld = new GameWorld( GameData.Environment.b2dWorld, GameData.Environment.scalingStrategy, levelName, false );
 
+		input = new Input( TaskManagerEvent.Order.MINUS_4 );
+
 		recorder = new Recorder();
 		timeMultiplier.value = 1f;
 
 		// create player and setup its position in the world
-		playerCar = CarFactory.createPlayer( carAspect, carModel );
+		playerCar = CarFactory.createPlayer( GameData.Environment.b2dWorld, input, carAspect, carModel );
 		playerCar.setTransform( gameWorld.playerStartPos, gameWorld.playerStartOrient );
 
-		createStates( playerCar, CarFactory.createGhost( playerCar ) );
+		createStates( playerCar, CarFactory.createGhost( GameData.Environment.b2dWorld, playerCar ) );
 
 		// creates global camera controller
 		controller = new DirectorController( Config.Graphics.CameraInterpolationMode, Director.halfViewport, gameWorld.worldSizeScaledPx, gameWorld.worldSizeTiles );
@@ -182,15 +191,22 @@ public class GameLogic implements CarEvent.Listener, PlayerStateEvent.Listener, 
 	private void createGameTasks() {
 		gameTasks = new ArrayList<Task>( 10 );
 
+		// physics step
+		physicsStep = new PhysicsStep( GameData.Environment.b2dWorld, TaskManagerEvent.Order.MINUS_3 );
+
+		// sound manager
 		sound = new SoundManager();
 		gameTasks.add( sound );
 
+		// message manager
 		messager = new Messager( GameData.Environment.scalingStrategy.invTileMapZoomFactor );
 		gameTasks.add( messager );
 
+		// hud manager
 		hud = new Hud();
 		gameTasks.add( hud );
 
+		// effects manager
 		effects = new TrackEffects();
 		gameTasks.add( effects );
 
@@ -219,8 +235,6 @@ public class GameLogic implements CarEvent.Listener, PlayerStateEvent.Listener, 
 	}
 
 	public boolean onTick() {
-		Input input = GameData.Systems.input;
-
 		if( input.isOn( Keys.R ) ) {
 			restart();
 			GameEvents.gameLogic.trigger( GameLogicEvent.Type.onRestart );
@@ -291,7 +305,7 @@ public class GameLogic implements CarEvent.Listener, PlayerStateEvent.Listener, 
 
 	public void onBeforeRender() {
 		// trigger the event and let's subscribers interpolate and update their state()
-		GameData.Systems.physicsStep.triggerOnTemporalAliasing( URacer.getTemporalAliasing() );
+		physicsStep.triggerOnTemporalAliasing( URacer.getTemporalAliasing() );
 
 		if( playerCar != null ) {
 			Vector2 carpos = playerCar.state().position;

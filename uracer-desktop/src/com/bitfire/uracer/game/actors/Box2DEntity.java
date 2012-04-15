@@ -15,7 +15,7 @@ import com.bitfire.uracer.utils.Convert;
 
 public abstract class Box2DEntity extends SubframeInterpolableEntity {
 	protected Body body;
-	protected World world;
+	protected World box2dWorld;
 
 	private final GameRendererEvent.Listener gameRendererEvent = new GameRendererEvent.Listener() {
 		@Override
@@ -39,7 +39,7 @@ public abstract class Box2DEntity extends SubframeInterpolableEntity {
 	public Box2DEntity(World world) {
 		GameEvents.gameRenderer.addListener( gameRendererEvent, GameRendererEvent.Type.BatchBeforeMeshes, GameRendererEvent.Order.DEFAULT );
 		GameEvents.gameRenderer.addListener( gameRendererEvent, GameRendererEvent.Type.BatchDebug, GameRendererEvent.Order.DEFAULT );
-		this.world = world;
+		this.box2dWorld = world;
 	}
 
 //	public Box2DEntity(GameRendererEvent.Order orderForBatchBeforeMeshes, GameRendererEvent.Order orderForDebug) {
@@ -49,7 +49,7 @@ public abstract class Box2DEntity extends SubframeInterpolableEntity {
 
 	@Override
 	public void dispose() {
-		world.destroyBody( body );
+		box2dWorld.destroyBody( body );
 	}
 
 	public Body getBody() {

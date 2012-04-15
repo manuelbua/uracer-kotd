@@ -1,6 +1,7 @@
 package com.bitfire.uracer.game.actors;
 
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
+import com.badlogic.gdx.physics.box2d.World;
 import com.bitfire.uracer.game.Replay;
 
 /** Implements an automated Car, playing previously recorded events. It will
@@ -14,18 +15,12 @@ public final class GhostCar extends Car {
 	private int indexPlay;
 	private boolean hasReplay;
 
-	private GhostCar( CarRenderer graphics, Aspect type, CarModel model ) {
-		super( graphics, model, type, InputMode.InputFromReplay );
+	public GhostCar( World box2dWorld, CarRenderer graphics, Aspect type, CarModel model ) {
+		super( box2dWorld, null, graphics, model, type );
 		indexPlay = 0;
 		hasReplay = false;
 		replay = null;
 		setActive( false, true );
-	}
-
-	// factory methods
-
-	public static GhostCar createForFactory( CarRenderer graphics, Aspect type, CarModel model ) {
-		return new GhostCar( graphics, type, model );
 	}
 
 	public void setReplay( Replay replay ) {
