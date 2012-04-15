@@ -90,6 +90,7 @@ public class GameLogic implements CarEvent.Listener, PlayerStateEvent.Listener, 
 
 	// player
 	private Car playerCar = null;
+	private GhostCar playerGhostCar = null;
 
 	// lap
 	private boolean isFirstLap = true;
@@ -169,8 +170,9 @@ public class GameLogic implements CarEvent.Listener, PlayerStateEvent.Listener, 
 		timeMultiplier.value = 1f;
 
 		playerCar = CarFactory.createPlayer( box2dWorld, input, carAspect, carModel );
+		playerGhostCar = CarFactory.createGhost( box2dWorld, playerCar );
 
-		createStates( playerCar, CarFactory.createGhost( box2dWorld, playerCar ) );
+		createStates( playerCar, playerGhostCar );
 
 		// creates global camera controller
 		controller = new DirectorController( Config.Graphics.CameraInterpolationMode, Director.halfViewport, gameWorld.worldSizeScaledPx, gameWorld.worldSizeTiles );
@@ -371,7 +373,19 @@ public class GameLogic implements CarEvent.Listener, PlayerStateEvent.Listener, 
 	// TODO, COULD THIS BE A TASK HANDLING IN-GAME USER CHOICES ??
 	//
 
+	private void resetPlayer( Car playerCar, GhostCar playerGhostCar ) {
+		if( playerCar != null ) {
+			playerCar.reset();
+			playerCar.setTransform( gameWorld.playerStartPos, gameWorld.playerStartOrient );
+		}
+
+		if( playerGhostCar != null ) {
+			playerGhostCar.reset();
+		}
+	}
+
 	private void restart() {
+		resetPlayer( playerCar, playerGhostCar );
 		isFirstLap = true;
 		timeModulationBusy = false;
 		timeModulation = false;

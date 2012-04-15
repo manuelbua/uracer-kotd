@@ -81,15 +81,6 @@ public final class PlayerState {
 	}
 
 	public void reset() {
-		if( car != null ) {
-			car.reset();
-			car.setTransform( world.playerStartPos, world.playerStartOrient );
-		}
-
-		if( ghost != null ) {
-			ghost.reset();
-		}
-
 		// causes an onTileChanged event to be raised
 		lastTileX = -1;
 		lastTileY = -1;
