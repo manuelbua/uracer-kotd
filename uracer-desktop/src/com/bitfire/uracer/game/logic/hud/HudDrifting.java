@@ -4,6 +4,7 @@ import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.math.Vector2;
 import com.bitfire.uracer.Art;
 import com.bitfire.uracer.Director;
+import com.bitfire.uracer.ScalingStrategy;
 import com.bitfire.uracer.game.states.DriftState;
 import com.bitfire.uracer.utils.NumberString;
 import com.bitfire.uracer.utils.VMath;
@@ -34,19 +35,19 @@ public final class HudDrifting extends HudElement {
 	private Vector2 lastRealtimePos = new Vector2();
 	private boolean began = false;
 
-	public HudDrifting( float carModelWidthPx, float carModelLengthPx ) {
+	public HudDrifting( ScalingStrategy scalingStrategy, float carModelWidthPx, float carModelLengthPx ) {
 		this.carModelWidthPx = carModelWidthPx;
 		this.carModelLengthPx = carModelLengthPx;
 
 		// 99.99, reserve some space and do not recompute bounds
-		labelRealtime = new HudLabel( Art.fontCurseYRbig, "+10.99", 0.5f );
+		labelRealtime = new HudLabel( scalingStrategy, Art.fontCurseYRbig, "+10.99", 0.5f );
 		labelRealtime.setAlpha( 0 );
 		lastRealtimePos.set( 0, 0 );
 
 		labelResult = new HudLabel[ MaxLabelResult ];
 		nextLabelResult = 0;
 		for( int i = 0; i < MaxLabelResult; i++ ) {
-			labelResult[i] = new HudLabel( Art.fontCurseR, "+10.99", 0.85f );
+			labelResult[i] = new HudLabel( scalingStrategy, Art.fontCurseR, "+10.99", 0.85f );
 			labelResult[i].setAlpha( 0 );
 		}
 	}

@@ -239,7 +239,7 @@ public class GameLogic implements CarEvent.Listener, PlayerStateEvent.Listener, 
 		effects.add( playerSkidMarks );
 
 		// hud
-		hudDrifting = new HudDrifting( carModelWithPx, carModelLengthPx );
+		hudDrifting = new HudDrifting( scalingStrategy, carModelWithPx, carModelLengthPx );
 		hud.add( hudDrifting );
 	}
 
