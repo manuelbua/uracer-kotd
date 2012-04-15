@@ -79,9 +79,9 @@ public final class Hud extends Task {
 		int gridX = (int)((float)Gdx.graphics.getWidth() / 5f);
 
 		// laptimes component
-		best = new HudLabel( Art.fontCurseYR, "BEST  TIME\n-.----" );
-		curr = new HudLabel( Art.fontCurseYR, "YOUR  TIME\n-.----" );
-		last = new HudLabel( Art.fontCurseYR, "LAST  TIME\n-.----" );
+		best = new HudLabel( scalingStrategy, Art.fontCurseYR, "BEST  TIME\n-.----" );
+		curr = new HudLabel( scalingStrategy, Art.fontCurseYR, "YOUR  TIME\n-.----" );
+		last = new HudLabel( scalingStrategy, Art.fontCurseYR, "LAST  TIME\n-.----" );
 
 		curr.setPosition( gridX, 50 * scalingStrategy.invTileMapZoomFactor );
 		last.setPosition( gridX * 3, 50 * scalingStrategy.invTileMapZoomFactor );

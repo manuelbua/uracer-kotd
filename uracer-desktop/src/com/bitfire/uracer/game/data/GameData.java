@@ -20,7 +20,7 @@ public final class GameData {
 		Environment = new Environment( scalingStrategy, difficulty );
 
 		SpriteBatchUtils.init( Art.base6 );
-		Convert.init( GameData.Environment.scalingStrategy.invTileMapZoomFactor, Config.Physics.PixelsPerMeter );
+		Convert.init( scalingStrategy.invTileMapZoomFactor, Config.Physics.PixelsPerMeter );
 		Director.init();
 	}
 

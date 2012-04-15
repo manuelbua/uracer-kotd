@@ -266,7 +266,7 @@ public final class GameWorld {
 
 					List<Vector2> points = MapUtils.extractPolyData( o.polyline );
 					if( points.size() >= 2 ) {
-						float factor = GameData.Environment.scalingStrategy.invTileMapZoomFactor;
+						float factor = scalingStrategy.invTileMapZoomFactor;
 						float wallSizeMt = 0.3f * factor;
 						float[] mags = new float[ points.size() - 1 ];
 
@@ -294,7 +294,7 @@ public final class GameWorld {
 						StillSubMesh[] subMeshes = new StillSubMesh[ 1 ];
 						subMeshes[0] = new StillSubMesh( "wall", mesh, GL10.GL_TRIANGLES );
 
-						OrthographicAlignedStillModel model = new OrthographicAlignedStillModel( new StillModel( subMeshes ), mat, GameData.Environment.scalingStrategy );
+						OrthographicAlignedStillModel model = new OrthographicAlignedStillModel( new StillModel( subMeshes ), mat, scalingStrategy );
 
 						model.setPosition( o.x, o.y );
 						model.setScale( 1 );
@@ -324,7 +324,7 @@ public final class GameWorld {
 		MathUtils.random.setSeed( Long.MIN_VALUE );
 
 		// scaling factors
-		float factor = GameData.Environment.scalingStrategy.invTileMapZoomFactor;
+		float factor = scalingStrategy.invTileMapZoomFactor;
 		float oneOnWorld3DFactor = 1f / OrthographicAlignedStillModel.World3DScalingFactor;
 		float wallHeightMt = 5f * factor * oneOnWorld3DFactor;
 		float textureScalingU = 1f;

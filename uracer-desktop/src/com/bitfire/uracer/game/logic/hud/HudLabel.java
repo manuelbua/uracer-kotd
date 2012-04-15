@@ -9,7 +9,7 @@ import com.badlogic.gdx.graphics.g2d.BitmapFont;
 import com.badlogic.gdx.graphics.g2d.BitmapFont.TextBounds;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.math.Vector2;
-import com.bitfire.uracer.game.data.GameData;
+import com.bitfire.uracer.ScalingStrategy;
 import com.bitfire.uracer.game.tween.GameTweener;
 
 public final class HudLabel {
@@ -18,19 +18,21 @@ public final class HudLabel {
 	public TextBounds bounds = new TextBounds();
 	public float halfBoundsWidth, halfBoundsHeight;
 
-	// need controlled access
 	private String what;
 	private BitmapFont font;
 	private float scale;
+	private ScalingStrategy scalingStrategy;
 
-	public HudLabel( BitmapFont font, String string, float scale ) {
+	public HudLabel( ScalingStrategy scalingStrategy, BitmapFont font, String string, float scale ) {
+		this.scalingStrategy = scalingStrategy;
 		this.font = font;
 		what = string;
 		alpha = 1f;
 		setScale( scale, true );
 	}
 
-	public HudLabel( BitmapFont font, String string ) {
+	public HudLabel( ScalingStrategy scalingStrategy, BitmapFont font, String string ) {
+		this.scalingStrategy = scalingStrategy;
 		this.font = font;
 		what = string;
 		alpha = 1f;
@@ -70,7 +72,7 @@ public final class HudLabel {
 	}
 
 	public void recomputeBounds() {
-		font.setScale( scale * GameData.Environment.scalingStrategy.invTileMapZoomFactor );
+		font.setScale( scale * scalingStrategy.invTileMapZoomFactor );
 		bounds.set( font.getMultiLineBounds( what ) );
 		halfBoundsWidth = bounds.width * 0.5f;
 		halfBoundsHeight = bounds.height * 0.5f;
@@ -126,7 +128,7 @@ public final class HudLabel {
 
 	public void render( SpriteBatch batch ) {
 		if( alpha > 0 ) {
-			font.setScale( scale * GameData.Environment.scalingStrategy.invTileMapZoomFactor );
+			font.setScale( scale * scalingStrategy.invTileMapZoomFactor );
 			font.setColor( 1, 1, 1, alpha );
 
 			font.drawMultiLine( batch, what, x, y );

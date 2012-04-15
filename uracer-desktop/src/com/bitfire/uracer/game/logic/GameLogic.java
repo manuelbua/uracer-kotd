@@ -17,6 +17,7 @@ import com.badlogic.gdx.math.Vector2;
 import com.bitfire.uracer.Art;
 import com.bitfire.uracer.Config;
 import com.bitfire.uracer.Director;
+import com.bitfire.uracer.ScalingStrategy;
 import com.bitfire.uracer.URacer;
 import com.bitfire.uracer.game.GameEvents;
 import com.bitfire.uracer.game.Input;
@@ -69,6 +70,9 @@ import com.bitfire.uracer.utils.NumberString;
 // TODO, GameTasks entity for managing them with get(name)/get(id)? Opening up to Components interacting with each
 // other? I don't quite like that..
 public class GameLogic implements CarEvent.Listener, PlayerStateEvent.Listener, DriftStateEvent.Listener {
+	// scaling
+	private ScalingStrategy scalingStrategy = null;
+
 	// world
 	private GameWorld gameWorld = null;
 
@@ -126,7 +130,9 @@ public class GameLogic implements CarEvent.Listener, PlayerStateEvent.Listener, 
 		}
 	};
 
-	public GameLogic( String levelName, Aspect carAspect, CarModel carModel ) {
+	public GameLogic( ScalingStrategy scalingStrategy, String levelName, Aspect carAspect, CarModel carModel ) {
+		this.scalingStrategy = scalingStrategy;
+
 		// register event handlers
 		GameEvents.playerState.addListener( this );
 		GameEvents.carEvent.addListener( this, CarEvent.Type.onCollision );
@@ -145,7 +151,7 @@ public class GameLogic implements CarEvent.Listener, PlayerStateEvent.Listener, 
 		// game tweener, for all the rest
 		GameTweener.init();
 
-		gameWorld = new GameWorld( GameData.Environment.b2dWorld, GameData.Environment.scalingStrategy, levelName, false );
+		gameWorld = new GameWorld( GameData.Environment.b2dWorld, scalingStrategy, levelName, false );
 
 		recorder = new Recorder();
 		timeMultiplier.value = 1f;
@@ -202,11 +208,11 @@ public class GameLogic implements CarEvent.Listener, PlayerStateEvent.Listener, 
 		gameTasks.add( sound );
 
 		// message manager
-		messager = new Messager( GameData.Environment.scalingStrategy.invTileMapZoomFactor );
+		messager = new Messager( scalingStrategy.invTileMapZoomFactor );
 		gameTasks.add( messager );
 
 		// hud manager
-		hud = new Hud( GameData.Environment.scalingStrategy );
+		hud = new Hud( scalingStrategy );
 		gameTasks.add( hud );
 
 		// effects manager

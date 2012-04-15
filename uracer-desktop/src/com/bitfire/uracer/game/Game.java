@@ -36,7 +36,7 @@ public class Game implements Disposable {
 		GameData.create( scalingStrategy, difficulty );
 
 		// handle game rules and mechanics, it's all about game data
-		gameLogic = new GameLogic( levelName, carAspect, carModel );
+		gameLogic = new GameLogic( scalingStrategy, levelName, carAspect, carModel );
 		GameWorld world = gameLogic.getGameWorld();
 
 		// handles rendering
