@@ -14,6 +14,7 @@ import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Input.Keys;
 import com.badlogic.gdx.graphics.g2d.tiled.TiledLayer;
 import com.badlogic.gdx.math.Vector2;
+import com.badlogic.gdx.physics.box2d.World;
 import com.bitfire.uracer.Art;
 import com.bitfire.uracer.Config;
 import com.bitfire.uracer.Director;
@@ -31,7 +32,7 @@ import com.bitfire.uracer.game.actors.CarModel;
 import com.bitfire.uracer.game.actors.GhostCar;
 import com.bitfire.uracer.game.audio.CarDriftSoundEffect;
 import com.bitfire.uracer.game.audio.CarImpactSoundEffect;
-import com.bitfire.uracer.game.data.GameData;
+import com.bitfire.uracer.game.collisions.GameContactListener;
 import com.bitfire.uracer.game.events.DriftStateEvent;
 import com.bitfire.uracer.game.events.GameLogicEvent;
 import com.bitfire.uracer.game.events.PlayerStateEvent;
@@ -75,6 +76,7 @@ public class GameLogic implements CarEvent.Listener, PlayerStateEvent.Listener, 
 
 	// world
 	private GameWorld gameWorld = null;
+	private World box2dWorld = null;
 
 	// input system
 	private Input input = null;
@@ -132,6 +134,8 @@ public class GameLogic implements CarEvent.Listener, PlayerStateEvent.Listener, 
 
 	public GameLogic( ScalingStrategy scalingStrategy, String levelName, Aspect carAspect, CarModel carModel ) {
 		this.scalingStrategy = scalingStrategy;
+		this.box2dWorld = new World( new Vector2( 0, 0 ), false );
+		this.box2dWorld.setContactListener( new GameContactListener() );
 
 		// register event handlers
 		GameEvents.playerState.addListener( this );
@@ -151,19 +155,20 @@ public class GameLogic implements CarEvent.Listener, PlayerStateEvent.Listener, 
 		// game tweener, for all the rest
 		GameTweener.init();
 
-		gameWorld = new GameWorld( GameData.Environment.b2dWorld, scalingStrategy, levelName, false );
+		gameWorld = new GameWorld( box2dWorld, scalingStrategy, levelName, false );
 
 		recorder = new Recorder();
 		timeMultiplier.value = 1f;
 
-		playerCar = CarFactory.createPlayer( GameData.Environment.b2dWorld, input, carAspect, carModel );
+		playerCar = CarFactory.createPlayer( box2dWorld, input, carAspect, carModel );
 
-		createStates( playerCar, CarFactory.createGhost( GameData.Environment.b2dWorld, playerCar ) );
+		createStates( playerCar, CarFactory.createGhost( box2dWorld, playerCar ) );
 
 		// creates global camera controller
 		controller = new DirectorController( Config.Graphics.CameraInterpolationMode, Director.halfViewport, gameWorld.worldSizeScaledPx, gameWorld.worldSizeTiles );
 
 		createGameTasks();
+		configureTasks();
 
 		configurePlayer( gameWorld, playerCar );
 
@@ -177,7 +182,18 @@ public class GameLogic implements CarEvent.Listener, PlayerStateEvent.Listener, 
 
 		gameTasks.clear();
 
+		if( playerState.car != null ) {
+			playerState.car.dispose();
+		}
+
+		if( playerState.ghost != null ) {
+			playerState.ghost.dispose();
+		}
+
 		gameWorld.dispose();
+		GameTweener.dispose();
+		WcTweener.dispose();
+		box2dWorld.dispose();
 	}
 
 	public GameWorld getGameWorld() {
@@ -186,6 +202,10 @@ public class GameLogic implements CarEvent.Listener, PlayerStateEvent.Listener, 
 
 	public Car getPlayer() {
 		return playerCar;
+	}
+
+	public World getBox2dWorld() {
+		return box2dWorld;
 	}
 
 	private void createStates( Car player, GhostCar playerGhost ) {
@@ -201,7 +221,7 @@ public class GameLogic implements CarEvent.Listener, PlayerStateEvent.Listener, 
 		input = new Input( TaskManagerEvent.Order.MINUS_4 );
 
 		// physics step
-		physicsStep = new PhysicsStep( GameData.Environment.b2dWorld, TaskManagerEvent.Order.MINUS_3 );
+		physicsStep = new PhysicsStep( box2dWorld, TaskManagerEvent.Order.MINUS_3 );
 
 		// sound manager
 		sound = new SoundManager();
@@ -218,9 +238,6 @@ public class GameLogic implements CarEvent.Listener, PlayerStateEvent.Listener, 
 		// effects manager
 		effects = new TrackEffects();
 		gameTasks.add( effects );
-
-		// configure effects
-		configureTasks();
 	}
 
 	private void configureTasks() {

@@ -10,7 +10,6 @@ import com.bitfire.uracer.Config;
 import com.bitfire.uracer.Director;
 import com.bitfire.uracer.URacer;
 import com.bitfire.uracer.game.GameEvents;
-import com.bitfire.uracer.game.data.GameData;
 import com.bitfire.uracer.game.events.GameRendererEvent;
 import com.bitfire.uracer.game.rendering.debug.Stats;
 import com.bitfire.uracer.game.world.GameWorld;
@@ -27,6 +26,7 @@ public final class Debug {
 
 	// box2d
 	private static Box2DDebugRenderer b2drenderer;
+	private static World box2dWorld;
 
 	private static final GameRendererEvent.Listener onRender = new GameRendererEvent.Listener() {
 		@Override
@@ -42,12 +42,13 @@ public final class Debug {
 	private Debug() {
 	}
 
-	public static void create() {
+	public static void create( World box2dWorld ) {
 		GameEvents.gameRenderer.addListener( onRender, GameRendererEvent.Type.BatchDebug, GameRendererEvent.Order.PLUS_4 );
 		physicsTime = 0;
 		renderTime = 0;
 		b2drenderer = new Box2DDebugRenderer();
 		frameStart = System.nanoTime();
+		Debug.box2dWorld = box2dWorld;
 
 		// extrapolate version information
 		uRacerInfo = URacer.getVersionInfo();
@@ -118,7 +119,7 @@ public final class Debug {
 	private static void render( SpriteBatch batch ) {
 		if( Config.isDesktop ) {
 			if( Config.Graphics.RenderBox2DWorldWireframe ) {
-				Debug.renderB2dWorld( GameData.Environment.b2dWorld, Director.getMatViewProjMt() );
+				Debug.renderB2dWorld( box2dWorld, Director.getMatViewProjMt() );
 			}
 
 			Debug.renderVersionInfo( batch );

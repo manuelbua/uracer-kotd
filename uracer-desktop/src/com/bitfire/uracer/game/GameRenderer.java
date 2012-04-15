@@ -4,6 +4,7 @@ import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.GL20;
 import com.badlogic.gdx.graphics.OrthographicCamera;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
+import com.badlogic.gdx.physics.box2d.World;
 import com.bitfire.uracer.Config;
 import com.bitfire.uracer.Director;
 import com.bitfire.uracer.ScalingStrategy;
@@ -17,14 +18,16 @@ import com.bitfire.uracer.postprocessing.PostProcessor;
 public class GameRenderer {
 	private final GL20 gl;
 	private final GameWorld world;
+	private final World box2dWorld;
 	private final GameBatchRenderer batchRenderer;
 	private final GameWorldRenderer worldRenderer;
 	private final PostProcessor postProcessor;
 	private boolean postProcessorEnabled = Config.Graphics.EnablePostProcessingFx;
 
-	public GameRenderer( ScalingStrategy scalingStrategy, GameWorld gameWorld ) {
+	public GameRenderer( ScalingStrategy scalingStrategy, GameWorld gameWorld, World box2dWorld ) {
 		gl = Gdx.graphics.getGL20();
 		world = gameWorld;
+		this.box2dWorld = box2dWorld;
 
 		int width = Gdx.graphics.getWidth();
 		int height = Gdx.graphics.getHeight();
@@ -33,7 +36,7 @@ public class GameRenderer {
 		batchRenderer = new GameBatchRenderer( gl );
 		postProcessor = new PostProcessor( width, height, false /* depth */, false /* alpha */, Config.isDesktop /* 32bpp */);
 
-		Debug.create();
+		Debug.create( box2dWorld );
 	}
 
 	public void dispose() {

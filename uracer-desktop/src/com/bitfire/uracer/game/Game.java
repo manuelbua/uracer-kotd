@@ -1,5 +1,6 @@
 package com.bitfire.uracer.game;
 
+import com.badlogic.gdx.physics.box2d.World;
 import com.badlogic.gdx.utils.Disposable;
 import com.bitfire.uracer.Config;
 import com.bitfire.uracer.Director;
@@ -38,9 +39,10 @@ public class Game implements Disposable {
 		// handle game rules and mechanics, it's all about game data
 		gameLogic = new GameLogic( scalingStrategy, levelName, carAspect, carModel );
 		GameWorld world = gameLogic.getGameWorld();
+		World box2dWorld = gameLogic.getBox2dWorld();
 
 		// handles rendering
-		gameRenderer = new GameRenderer( scalingStrategy, world );
+		gameRenderer = new GameRenderer( scalingStrategy, world, box2dWorld );
 		configurePostProcessing( gameRenderer.getPostProcessor(), world );
 	}
 

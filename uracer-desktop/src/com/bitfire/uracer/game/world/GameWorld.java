@@ -33,7 +33,6 @@ import com.bitfire.uracer.Config;
 import com.bitfire.uracer.ScalingStrategy;
 import com.bitfire.uracer.game.Box2DFactory;
 import com.bitfire.uracer.game.collisions.CollisionFilters;
-import com.bitfire.uracer.game.data.GameData;
 import com.bitfire.uracer.game.world.WorldDefs.LayerProperties;
 import com.bitfire.uracer.game.world.WorldDefs.ObjectGroup;
 import com.bitfire.uracer.game.world.WorldDefs.ObjectProperties;
@@ -61,7 +60,7 @@ public final class GameWorld {
 	private MapUtils mapUtils = null;
 	public Vector2 worldSizeScaledPx = null, worldSizeScaledMt = null, worldSizeTiles = null;
 	private ScalingStrategy scalingStrategy;
-	private World b2dWorld;
+	private World box2dWorld;
 
 	// player data
 	public Vector2 playerStartPos = new Vector2();
@@ -78,9 +77,9 @@ public final class GameWorld {
 	protected TrackTrees trackTrees = null;
 	protected List<OrthographicAlignedStillModel> staticMeshes = new ArrayList<OrthographicAlignedStillModel>();
 
-	public GameWorld( World b2dWorld, ScalingStrategy strategy, String levelName, boolean nightMode ) {
+	public GameWorld( World box2dWorld, ScalingStrategy strategy, String levelName, boolean nightMode ) {
 		scalingStrategy = strategy;
-		this.b2dWorld = b2dWorld;
+		this.box2dWorld = box2dWorld;
 		this.name = levelName;
 		this.nightMode = nightMode;
 
@@ -205,7 +204,7 @@ public final class GameWorld {
 		}
 
 		RayHandler.setColorPrecisionMediump();
-		rayHandler = new RayHandler( b2dWorld, maxRays, (int)(Gdx.graphics.getWidth() * rttScale), (int)(Gdx.graphics.getHeight() * rttScale) );
+		rayHandler = new RayHandler( box2dWorld, maxRays, (int)(Gdx.graphics.getWidth() * rttScale), (int)(Gdx.graphics.getHeight() * rttScale) );
 		rayHandler.setShadows( true );
 		rayHandler.setCulling( true );
 		rayHandler.setBlur( true );
@@ -281,7 +280,7 @@ public final class GameWorld {
 							toMt.y = worldSizeScaledMt.y - toMt.y;
 
 							// create box2d wall
-							Box2DFactory.createWall( GameData.Environment.b2dWorld, fromMt, toMt, wallSizeMt, 0f );
+							Box2DFactory.createWall( box2dWorld, fromMt, toMt, wallSizeMt, 0f );
 
 							// compute magnitude
 							mags[j - 1] = (float)Math.sqrt( (toMt.x - fromMt.x) * (toMt.x - fromMt.x) + (toMt.y - fromMt.y) * (toMt.y - fromMt.y) );

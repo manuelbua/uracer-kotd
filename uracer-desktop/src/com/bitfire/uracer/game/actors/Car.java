@@ -60,7 +60,7 @@ public class Car extends Box2DEntity {
 		bd.angle = 0;
 		bd.type = BodyType.DynamicBody;
 
-		body = GameData.Environment.b2dWorld.createBody( bd );
+		body = box2dWorld.createBody( bd );
 		body.setBullet( true );
 		body.setUserData( this );
 

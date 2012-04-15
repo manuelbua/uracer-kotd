@@ -26,7 +26,6 @@ public final class GameData {
 
 	public static void dispose() {
 		Director.dispose();
-		Environment.dispose();
 	}
 
 	private GameData() {
