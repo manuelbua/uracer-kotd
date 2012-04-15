@@ -47,7 +47,8 @@ public class Messager extends Task {
 
 	public Messager( float invZoomFactor ) {
 		GameEvents.gameRenderer.addListener( gameRendererEvent, GameRendererEvent.Type.BatchAfterMeshes, GameRendererEvent.Order.MINUS_4 );
-		GameEvents.gameLogic.addListener( gameLogicEvent );
+		GameEvents.gameLogic.addListener( gameLogicEvent, GameLogicEvent.Type.onReset );
+		GameEvents.gameLogic.addListener( gameLogicEvent, GameLogicEvent.Type.onRestart );
 
 		currents = new Array<Message>( 3 );
 		for( MessagePosition group : MessagePosition.values() ) {

@@ -13,15 +13,21 @@ public final class GameLogicEvent extends Event {
 		void gameLogicEvent( Type type );
 	}
 
-	public void addListener( Listener listener ) {
-		notify.addListener( listener );
+	public GameLogicEvent() {
+		for( Type t : Type.values() ) {
+			notifiers[t.ordinal()] = new Notifier();
+		}
+	}
+
+	public void addListener( Listener listener, Type type ) {
+		notifiers[type.ordinal()].addListener( listener );
 	}
 
 	public void trigger( Type type ) {
-		notify.gameLogicEvent( type );
+		notifiers[type.ordinal()].gameLogicEvent( type );
 	}
 
-	private final Notifier notify = new Notifier();
+	private Notifier[] notifiers = new Notifier[ Type.values().length ];
 
 	private class Notifier extends EventNotifier<Listener> implements Listener {
 		@Override

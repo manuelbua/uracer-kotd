@@ -24,7 +24,8 @@ public final class GameTweener {
 	};
 
 	public static void init() {
-		GameEvents.gameLogic.addListener( gameLogicEvent );
+		GameEvents.gameLogic.addListener( gameLogicEvent, GameLogicEvent.Type.onReset );
+		GameEvents.gameLogic.addListener( gameLogicEvent, GameLogicEvent.Type.onRestart );
 	}
 
 	private GameTweener() {

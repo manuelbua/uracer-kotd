@@ -26,7 +26,8 @@ public final class LapState {
 	};
 
 	public LapState() {
-		GameEvents.gameLogic.addListener( gameLogicEvent );
+		GameEvents.gameLogic.addListener( gameLogicEvent, GameLogicEvent.Type.onReset );
+		GameEvents.gameLogic.addListener( gameLogicEvent, GameLogicEvent.Type.onRestart );
 
 		startTimeNs = 0;
 		lastTrackTimeSecs = 0;

@@ -23,7 +23,8 @@ public class SoundManager extends Task {
 	};
 
 	public SoundManager() {
-		GameEvents.gameLogic.addListener( gameLogicEvent );
+		GameEvents.gameLogic.addListener( gameLogicEvent, GameLogicEvent.Type.onReset );
+		GameEvents.gameLogic.addListener( gameLogicEvent, GameLogicEvent.Type.onRestart );
 	}
 
 	@Override

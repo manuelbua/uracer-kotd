@@ -64,7 +64,8 @@ public final class CarDriftSoundEffect extends SoundEffect {
 	}
 
 	public CarDriftSoundEffect( PlayerState playerState, DriftState driftState ) {
-		GameEvents.playerDriftState.addListener( driftListener );
+		GameEvents.playerDriftState.addListener( driftListener, DriftStateEvent.Type.onBeginDrift );
+		GameEvents.playerDriftState.addListener( driftListener, DriftStateEvent.Type.onEndDrift );
 		this.playerState = playerState;
 		this.driftState = driftState;
 		drift = Sounds.carDrift;

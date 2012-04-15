@@ -31,7 +31,8 @@ public final class DriftState {
 	};
 
 	public DriftState( Car car ) {
-		GameEvents.gameLogic.addListener( gameLogicEvent );
+		GameEvents.gameLogic.addListener( gameLogicEvent, GameLogicEvent.Type.onReset );
+		GameEvents.gameLogic.addListener( gameLogicEvent, GameLogicEvent.Type.onRestart );
 		this.car = car;
 		reset();
 	}

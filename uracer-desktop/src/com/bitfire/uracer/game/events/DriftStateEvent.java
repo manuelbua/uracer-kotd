@@ -14,17 +14,23 @@ public final class DriftStateEvent extends Event {
 		void driftStateEvent( Type type );
 	}
 
-	public void addListener( Listener listener ) {
-		notify.addListener( listener );
+	public DriftStateEvent() {
+		for( Type t : Type.values() ) {
+			notifiers[t.ordinal()] = new Notifier();
+		}
+	}
+
+	public void addListener( Listener listener, Type type ) {
+		notifiers[type.ordinal()].addListener( listener );
 	}
 
 	public void trigger( DriftState driftState, Type type ) {
 		this.driftState = driftState;
-		notify.driftStateEvent( type );
+		notifiers[type.ordinal()].driftStateEvent( type );
 	}
 
 	public DriftState driftState;
-	private final Notifier notify = new Notifier();
+	private Notifier[] notifiers = new Notifier[ Type.values().length ];
 
 	private class Notifier extends EventNotifier<Listener> implements Listener {
 		@Override

@@ -131,7 +131,8 @@ public class GameLogic implements CarEvent.Listener, PlayerStateEvent.Listener, 
 		GameEvents.playerState.addListener( this );
 		GameEvents.carEvent.addListener( this, CarEvent.Type.onCollision );
 		GameEvents.carEvent.addListener( this, CarEvent.Type.onComputeForces );
-		GameEvents.playerDriftState.addListener( this );
+		GameEvents.playerDriftState.addListener( this, DriftStateEvent.Type.onBeginDrift );
+		GameEvents.playerDriftState.addListener( this, DriftStateEvent.Type.onEndDrift );
 
 		// create tweening support
 		Tween.registerAccessor( Message.class, new MessageAccessor() );

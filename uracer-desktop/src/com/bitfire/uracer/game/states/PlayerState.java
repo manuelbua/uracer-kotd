@@ -40,7 +40,8 @@ public final class PlayerState {
 
 	// FIXME remove GhostCar nonsense from here
 	public PlayerState( GameWorld world, Car car, GhostCar ghost ) {
-		GameEvents.gameLogic.addListener( gameLogicEvent );
+		GameEvents.gameLogic.addListener( gameLogicEvent, GameLogicEvent.Type.onReset );
+		GameEvents.gameLogic.addListener( gameLogicEvent, GameLogicEvent.Type.onRestart );
 		this.world = world;
 		setData( car, ghost );
 	}

@@ -27,7 +27,8 @@ public class Recorder {
 	};
 
 	public Recorder() {
-		GameEvents.gameLogic.addListener( gameLogicEvent );
+		GameEvents.gameLogic.addListener( gameLogicEvent, GameLogicEvent.Type.onReset );
+		GameEvents.gameLogic.addListener( gameLogicEvent, GameLogicEvent.Type.onRestart );
 		isRecording = false;
 		replay = null;
 	}
