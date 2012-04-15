@@ -24,9 +24,6 @@ public class Game implements Disposable {
 	// logic
 	private GameLogic gameLogic = null;
 
-	// world
-	private GameWorld gameWorld = null;
-
 	// rendering
 	private GameRenderer gameRenderer = null;
 
@@ -39,11 +36,11 @@ public class Game implements Disposable {
 
 		// handle game rules and mechanics, it's all about game data
 		gameLogic = new GameLogic( levelName, carAspect, carModel );
-		gameWorld = gameLogic.getGameWorld();
+		GameWorld world = gameLogic.getGameWorld();
 
 		// handles rendering
-		gameRenderer = new GameRenderer( URacer.getScalingStrategy(), gameWorld );
-		setupPostProcessing( gameRenderer.getPostProcessor(), gameWorld );
+		gameRenderer = new GameRenderer( URacer.getScalingStrategy(), world );
+		setupPostProcessing( gameRenderer.getPostProcessor(), world );
 	}
 
 	@Override

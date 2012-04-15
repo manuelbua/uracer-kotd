@@ -73,7 +73,6 @@ public class GameLogic implements CarEvent.Listener, PlayerStateEvent.Listener, 
 
 	// player
 	private Car playerCar = null;
-	private GhostCar ghostCar = null;
 
 	// lap
 	private boolean isFirstLap = true;
@@ -145,9 +144,8 @@ public class GameLogic implements CarEvent.Listener, PlayerStateEvent.Listener, 
 		// create player and setup its position in the world
 		playerCar = CarFactory.createPlayer( carAspect, carModel );
 		playerCar.setTransform( gameWorld.playerStartPos, gameWorld.playerStartOrient );
-		ghostCar = CarFactory.createGhost( playerCar );
 
-		createStates( playerCar, ghostCar );
+		createStates( playerCar, CarFactory.createGhost( playerCar ) );
 
 		// creates global camera controller
 		controller = new DirectorController( Config.Graphics.CameraInterpolationMode, Director.halfViewport, gameWorld.worldSizeScaledPx, gameWorld.worldSizeTiles );
