@@ -1,11 +1,11 @@
-package com.bitfire.uracer.game.audio;
+package com.bitfire.uracer.game.logic.sounds.effects;
 
 import com.badlogic.gdx.audio.Sound;
 import com.bitfire.uracer.Config;
 import com.bitfire.uracer.Sounds;
 import com.bitfire.uracer.URacer;
-import com.bitfire.uracer.game.GameEvents;
 import com.bitfire.uracer.game.events.DriftStateEvent;
+import com.bitfire.uracer.game.events.GameEvents;
 import com.bitfire.uracer.game.events.DriftStateEvent.Type;
 import com.bitfire.uracer.game.logic.sounds.SoundEffect;
 import com.bitfire.uracer.game.states.DriftState;
@@ -30,7 +30,7 @@ public final class CarDriftSoundEffect extends SoundEffect {
 	private boolean doFadeIn = false;
 	private boolean doFadeOut = false;
 	private float lastVolume = 0f;
-	private CarState playerState;
+	private CarState carState;
 	private DriftState driftState;
 
 	private DriftStateEvent.Listener driftListener = new DriftStateEvent.Listener() {
@@ -63,10 +63,10 @@ public final class CarDriftSoundEffect extends SoundEffect {
 		doFadeOut = true;
 	}
 
-	public CarDriftSoundEffect( CarState playerState, DriftState driftState ) {
-		GameEvents.playerDriftState.addListener( driftListener, DriftStateEvent.Type.onBeginDrift );
-		GameEvents.playerDriftState.addListener( driftListener, DriftStateEvent.Type.onEndDrift );
-		this.playerState = playerState;
+	public CarDriftSoundEffect( CarState carState, DriftState driftState ) {
+		GameEvents.driftState.addListener( driftListener, DriftStateEvent.Type.onBeginDrift );
+		GameEvents.driftState.addListener( driftListener, DriftStateEvent.Type.onEndDrift );
+		this.carState = carState;
 		this.driftState = driftState;
 		drift = Sounds.carDrift;
 	}
@@ -109,7 +109,7 @@ public final class CarDriftSoundEffect extends SoundEffect {
 	public void tick() {
 		if( driftId > -1 ) {
 			boolean anotherDriftId = (driftId != lastDriftId);
-			float speedFactor = playerState.currSpeedFactor;
+			float speedFactor = carState.currSpeedFactor;
 
 			// compute behavior
 			float pitch = speedFactor * pitchFactor + pitchMin;

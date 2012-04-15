@@ -6,7 +6,7 @@ import com.badlogic.gdx.utils.Disposable;
 public abstract class TrackEffect implements Disposable {
 	/** Defines the type of special effect, it also describer their rendering order */
 	public enum Type {
-		CarSkidMarks( 1 ), SmokeTrails( 2 );
+		CarSkidMarks( 1 ), CarSmokeTrails( 2 );
 		public final int id;
 
 		private Type( int id ) {

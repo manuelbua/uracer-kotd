@@ -20,7 +20,6 @@ import com.bitfire.uracer.Config;
 import com.bitfire.uracer.Director;
 import com.bitfire.uracer.ScalingStrategy;
 import com.bitfire.uracer.URacer;
-import com.bitfire.uracer.game.GameEvents;
 import com.bitfire.uracer.game.GameplaySettings;
 import com.bitfire.uracer.game.Input;
 import com.bitfire.uracer.game.Replay;
@@ -31,12 +30,11 @@ import com.bitfire.uracer.game.actors.CarEvent;
 import com.bitfire.uracer.game.actors.CarFactory;
 import com.bitfire.uracer.game.actors.CarModel;
 import com.bitfire.uracer.game.actors.GhostCar;
-import com.bitfire.uracer.game.audio.CarDriftSoundEffect;
-import com.bitfire.uracer.game.audio.CarImpactSoundEffect;
 import com.bitfire.uracer.game.collisions.GameContactListener;
+import com.bitfire.uracer.game.events.CarStateEvent;
 import com.bitfire.uracer.game.events.DriftStateEvent;
+import com.bitfire.uracer.game.events.GameEvents;
 import com.bitfire.uracer.game.events.GameLogicEvent;
-import com.bitfire.uracer.game.events.PlayerStateEvent;
 import com.bitfire.uracer.game.logic.helpers.DirectorController;
 import com.bitfire.uracer.game.logic.helpers.Recorder;
 import com.bitfire.uracer.game.logic.hud.Hud;
@@ -46,6 +44,8 @@ import com.bitfire.uracer.game.logic.hud.HudLabel;
 import com.bitfire.uracer.game.logic.hud.HudLabelAccessor;
 import com.bitfire.uracer.game.logic.sounds.ISoundEffect;
 import com.bitfire.uracer.game.logic.sounds.SoundManager;
+import com.bitfire.uracer.game.logic.sounds.effects.CarDriftSoundEffect;
+import com.bitfire.uracer.game.logic.sounds.effects.CarImpactSoundEffect;
 import com.bitfire.uracer.game.logic.trackeffects.CarSkidMarks;
 import com.bitfire.uracer.game.logic.trackeffects.TrackEffects;
 import com.bitfire.uracer.game.messager.Message;
@@ -54,9 +54,9 @@ import com.bitfire.uracer.game.messager.Message.MessageSize;
 import com.bitfire.uracer.game.messager.Message.Type;
 import com.bitfire.uracer.game.messager.MessageAccessor;
 import com.bitfire.uracer.game.messager.Messager;
+import com.bitfire.uracer.game.states.CarState;
 import com.bitfire.uracer.game.states.DriftState;
 import com.bitfire.uracer.game.states.LapState;
-import com.bitfire.uracer.game.states.CarState;
 import com.bitfire.uracer.game.tween.GameTweener;
 import com.bitfire.uracer.game.tween.WcTweener;
 import com.bitfire.uracer.game.world.GameWorld;
@@ -71,7 +71,7 @@ import com.bitfire.uracer.utils.NumberString;
 
 // TODO, GameTasks entity for managing them with get(name)/get(id)? Opening up to Components interacting with each
 // other? I don't quite like that..
-public class GameLogic implements CarEvent.Listener, PlayerStateEvent.Listener, DriftStateEvent.Listener {
+public class GameLogic implements CarEvent.Listener, CarStateEvent.Listener, DriftStateEvent.Listener {
 	// scaling
 	private ScalingStrategy scalingStrategy = null;
 
@@ -119,7 +119,7 @@ public class GameLogic implements CarEvent.Listener, PlayerStateEvent.Listener, 
 	private Messager messager = null;
 
 	// states
-	private CarState playerState = null;
+	private CarState carState = null;
 	private DriftState playerDriftState = null;
 	private LapState lapState = null;
 
@@ -144,11 +144,11 @@ public class GameLogic implements CarEvent.Listener, PlayerStateEvent.Listener, 
 		this.box2dWorld.setContactListener( new GameContactListener() );
 
 		// register event handlers
-		GameEvents.playerState.addListener( this );
+		GameEvents.carState.addListener( this );
 		GameEvents.carEvent.addListener( this, CarEvent.Type.onCollision );
 		GameEvents.carEvent.addListener( this, CarEvent.Type.onComputeForces );
-		GameEvents.playerDriftState.addListener( this, DriftStateEvent.Type.onBeginDrift );
-		GameEvents.playerDriftState.addListener( this, DriftStateEvent.Type.onEndDrift );
+		GameEvents.driftState.addListener( this, DriftStateEvent.Type.onBeginDrift );
+		GameEvents.driftState.addListener( this, DriftStateEvent.Type.onEndDrift );
 
 		// initializes the Director helper
 		Director.init();
@@ -169,10 +169,10 @@ public class GameLogic implements CarEvent.Listener, PlayerStateEvent.Listener, 
 		recorder = new Recorder();
 		timeMultiplier.value = 1f;
 
-		playerCar = CarFactory.createPlayer( box2dWorld, input, carAspect, carModel );
-		playerGhostCar = CarFactory.createGhost( box2dWorld, playerCar );
+		// creates playerCar and playerGhostCar
+		createPlayer( carAspect, carModel );
 
-		createStates( playerCar, playerGhostCar );
+		createStates( playerCar );
 
 		// creates global camera controller
 		controller = new DirectorController( Config.Graphics.CameraInterpolationMode, Director.halfViewport, gameWorld.worldSizeScaledPx, gameWorld.worldSizeTiles );
@@ -192,12 +192,12 @@ public class GameLogic implements CarEvent.Listener, PlayerStateEvent.Listener, 
 
 		gameTasks.clear();
 
-		if( playerState.car != null ) {
-			playerState.car.dispose();
+		if( playerCar != null ) {
+			playerCar.dispose();
 		}
 
-		if( playerState.ghost != null ) {
-			playerState.ghost.dispose();
+		if( playerGhostCar != null ) {
+			playerGhostCar.dispose();
 		}
 
 		gameWorld.dispose();
@@ -219,9 +219,11 @@ public class GameLogic implements CarEvent.Listener, PlayerStateEvent.Listener, 
 		return box2dWorld;
 	}
 
-	private void createStates( Car player, GhostCar playerGhost ) {
-		playerState = new CarState( gameWorld, player, playerGhost );
+	private void createStates( Car player  ) {
+		// player-bound states
+		carState = new CarState( gameWorld, player );
 		playerDriftState = new DriftState( player );
+
 		lapState = new LapState();
 	}
 
@@ -257,10 +259,10 @@ public class GameLogic implements CarEvent.Listener, PlayerStateEvent.Listener, 
 		float carModelLengthPx = Convert.mt2px( model.length );
 
 		// sounds
-		ISoundEffect fx = new CarDriftSoundEffect( playerState, playerDriftState );
+		ISoundEffect fx = new CarDriftSoundEffect( carState, playerDriftState );
 		fx.start();
 		sound.add( fx );
-		sound.add( new CarImpactSoundEffect( playerState ) );
+		sound.add( new CarImpactSoundEffect( carState, true /* from Config? */) );
 
 		// track effects
 		playerSkidMarks = new CarSkidMarks( carModelWithPx, carModelLengthPx );
@@ -269,6 +271,11 @@ public class GameLogic implements CarEvent.Listener, PlayerStateEvent.Listener, 
 		// hud
 		hudDrifting = new HudDrifting( scalingStrategy, carModelWithPx, carModelLengthPx );
 		hud.add( hudDrifting );
+	}
+
+	private void createPlayer( Aspect carAspect, CarModel carModel ) {
+		playerCar = CarFactory.createPlayer( box2dWorld, input, carAspect, carModel );
+		playerGhostCar = CarFactory.createGhost( box2dWorld, playerCar );
 	}
 
 	private void configurePlayer( GameplaySettings settings, GameWorld world, Car player ) {
@@ -331,7 +338,7 @@ public class GameLogic implements CarEvent.Listener, PlayerStateEvent.Listener, 
 	}
 
 	private void updateStates() {
-		playerState.update();
+		carState.update();
 
 		// compute drift state for player's car
 		playerDriftState.update();
@@ -420,7 +427,7 @@ public class GameLogic implements CarEvent.Listener, PlayerStateEvent.Listener, 
 	};
 
 	@Override
-	public void playerStateEvent( PlayerStateEvent.Type type ) {
+	public void playerStateEvent( CarStateEvent.Type type ) {
 		switch( type ) {
 		case onTileChanged:
 			updateLap();
@@ -428,8 +435,11 @@ public class GameLogic implements CarEvent.Listener, PlayerStateEvent.Listener, 
 		}
 	}
 
+	// FIXME? TODO? Pay attention here! Multiple DriftState objects trigger the same event! Check the source for
+	// handling multiple and crossing beginDrift/endDrift calls!
 	@Override
 	public void driftStateEvent( DriftStateEvent.Type type ) {
+
 		switch( type ) {
 		case onBeginDrift:
 			// prologue, fades in and starts showing
@@ -467,7 +477,7 @@ public class GameLogic implements CarEvent.Listener, PlayerStateEvent.Listener, 
 	private Vector2 offset = new Vector2();
 
 	private void updateCarFriction() {
-		Vector2 tilePosition = playerState.tilePosition;
+		Vector2 tilePosition = carState.tilePosition;
 
 		if( gameWorld.isValidTilePosition( tilePosition ) ) {
 			// compute realsize-based pixel offset car-tile (top-left origin)
@@ -499,8 +509,8 @@ public class GameLogic implements CarEvent.Listener, PlayerStateEvent.Listener, 
 
 	// FIXME looks like this function is doing MUCH more than what's stated in its name..
 	private void updateLap() {
-		if( playerState.car != null ) {
-			boolean onStartZone = (playerState.currTileX == gameWorld.playerStartTileX && playerState.currTileY == gameWorld.playerStartTileY);
+		if( carState.car != null ) {
+			boolean onStartZone = (carState.currTileX == gameWorld.playerStartTileX && carState.currTileY == gameWorld.playerStartTileY);
 
 			String name = gameWorld.name;
 
@@ -515,7 +525,7 @@ public class GameLogic implements CarEvent.Listener, PlayerStateEvent.Listener, 
 
 					if( lapState.hasAnyReplayData() ) {
 						Replay any = lapState.getAnyReplay();
-						playerState.ghost.setReplay( any );
+						playerGhostCar.setReplay( any );
 					}
 				} else {
 					if( recorder.isRecording() ) {
@@ -534,7 +544,7 @@ public class GameLogic implements CarEvent.Listener, PlayerStateEvent.Listener, 
 						lastRecordedLapId = buf.id;
 
 						Replay any = lapState.getAnyReplay();
-						playerState.ghost.setReplay( any );
+						playerGhostCar.setReplay( any );
 						lapState.setLastTrackTimeSeconds( any.trackTimeSeconds );
 
 						messager.show( "GO!  GO!  GO!", 3f, Type.Information, MessagePosition.Middle, MessageSize.Big );
@@ -552,7 +562,7 @@ public class GameLogic implements CarEvent.Listener, PlayerStateEvent.Listener, 
 									MessageSize.Big );
 						}
 
-						playerState.ghost.setReplay( best );
+						playerGhostCar.setReplay( best );
 
 						lapState.restart();
 						recorder.beginRecording( playerCar, worst, name, gameplaySettings.difficulty );

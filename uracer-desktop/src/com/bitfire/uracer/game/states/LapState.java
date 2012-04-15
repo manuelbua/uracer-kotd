@@ -1,8 +1,8 @@
 package com.bitfire.uracer.game.states;
 
-import com.bitfire.uracer.game.GameEvents;
 import com.bitfire.uracer.game.Replay;
 import com.bitfire.uracer.game.Time;
+import com.bitfire.uracer.game.events.GameEvents;
 import com.bitfire.uracer.game.events.GameLogicEvent;
 
 public final class LapState {

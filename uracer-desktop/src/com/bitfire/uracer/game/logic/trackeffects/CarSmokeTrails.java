@@ -11,7 +11,7 @@ import com.bitfire.uracer.URacer;
 import com.bitfire.uracer.game.actors.Car;
 import com.bitfire.uracer.game.states.DriftState;
 
-public class SmokeTrails extends TrackEffect {
+public class CarSmokeTrails extends TrackEffect {
 	private SmokeEffect fx[];
 	private static final int SmokeEffectsCount = 1;
 	public static final int MaxParticles = 100;
@@ -86,8 +86,8 @@ public class SmokeTrails extends TrackEffect {
 		}
 	}
 
-	public SmokeTrails( ScalingStrategy scalingStrategy, DriftState driftState ) {
-		super( Type.SmokeTrails );
+	public CarSmokeTrails( ScalingStrategy scalingStrategy, DriftState driftState ) {
+		super( Type.CarSmokeTrails );
 		this.driftState = driftState;
 		this.scalingStrategy = scalingStrategy;
 

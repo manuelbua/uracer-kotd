@@ -1,10 +1,12 @@
 package com.bitfire.uracer.game.events;
 
+import com.bitfire.uracer.game.states.CarState;
 import com.bitfire.uracer.utils.Event;
 import com.bitfire.uracer.utils.EventListener;
 import com.bitfire.uracer.utils.EventNotifier;
 
-public final class PlayerStateEvent extends Event {
+// FIXME, add support for notifiers instead..
+public final class CarStateEvent extends Event {
 	public enum Type {
 		onTileChanged
 	}
@@ -17,10 +19,12 @@ public final class PlayerStateEvent extends Event {
 		notify.addListener( listener );
 	}
 
-	public void trigger( Type type ) {
+	public void trigger( CarState carState, Type type ) {
+		this.source = carState;
 		notify.playerStateEvent( type );
 	}
 
+	public CarState source;
 	private final Notifier notify = new Notifier();
 
 	private class Notifier extends EventNotifier<Listener> implements Listener {

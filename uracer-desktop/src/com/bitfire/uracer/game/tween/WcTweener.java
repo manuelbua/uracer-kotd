@@ -4,7 +4,7 @@ import aurelienribon.tweenengine.Timeline;
 import aurelienribon.tweenengine.TweenManager;
 
 import com.bitfire.uracer.URacer;
-import com.bitfire.uracer.game.GameEvents;
+import com.bitfire.uracer.game.events.GameEvents;
 import com.bitfire.uracer.game.events.GameLogicEvent;
 
 /** This tweener is a wall-clocked tweener, thus it will NOT take the timeMultiplier modulation into account */

@@ -25,11 +25,11 @@ public final class DriftStateEvent extends Event {
 	}
 
 	public void trigger( DriftState driftState, Type type ) {
-		this.driftState = driftState;
+		this.source = driftState;
 		notifiers[type.ordinal()].driftStateEvent( type );
 	}
 
-	public DriftState driftState;
+	public DriftState source;
 	private Notifier[] notifiers = new Notifier[ Type.values().length ];
 
 	private class Notifier extends EventNotifier<Listener> implements Listener {

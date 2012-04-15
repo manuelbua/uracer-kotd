@@ -1,17 +1,15 @@
 package com.bitfire.uracer.game.states;
 
 import com.badlogic.gdx.math.Vector2;
-import com.bitfire.uracer.game.GameEvents;
 import com.bitfire.uracer.game.actors.Car;
-import com.bitfire.uracer.game.actors.GhostCar;
+import com.bitfire.uracer.game.events.CarStateEvent;
+import com.bitfire.uracer.game.events.GameEvents;
 import com.bitfire.uracer.game.events.GameLogicEvent;
-import com.bitfire.uracer.game.events.PlayerStateEvent;
 import com.bitfire.uracer.game.world.GameWorld;
 import com.bitfire.uracer.utils.AMath;
 
 public final class CarState {
 	public Car car;
-	public GhostCar ghost;
 
 	public float carMaxSpeedSquared = 0;
 	public float carMaxForce = 0;
@@ -22,8 +20,8 @@ public final class CarState {
 	/* position */
 	public int currTileX = 1, currTileY = 1;
 	public Vector2 tilePosition = new Vector2();
-	private int lastTileX = 0, lastTileY = 0;
 
+	private int lastTileX = 0, lastTileY = 0;
 	private GameWorld world;
 
 	private final GameLogicEvent.Listener gameLogicEvent = new GameLogicEvent.Listener() {
@@ -38,17 +36,15 @@ public final class CarState {
 		}
 	};
 
-	// FIXME remove GhostCar nonsense from here
-	public CarState( GameWorld world, Car car, GhostCar ghost ) {
+	public CarState( GameWorld world, Car car ) {
 		GameEvents.gameLogic.addListener( gameLogicEvent, GameLogicEvent.Type.onReset );
 		GameEvents.gameLogic.addListener( gameLogicEvent, GameLogicEvent.Type.onRestart );
 		this.world = world;
-		setData( car, ghost );
+		setData( car );
 	}
 
-	public void setData( Car car, GhostCar ghost ) {
+	private void setData( Car car ) {
 		this.car = car;
-		this.ghost = ghost;
 
 		// precompute factors
 		if( car != null ) {
@@ -70,7 +66,7 @@ public final class CarState {
 			currTileY = (int)tilePosition.y;
 
 			if( (lastTileX != currTileX) || (lastTileY != currTileY) ) {
-				GameEvents.playerState.trigger( PlayerStateEvent.Type.onTileChanged );
+				GameEvents.carState.trigger( this, CarStateEvent.Type.onTileChanged );
 			}
 
 			// speed/force normalized factors

@@ -27,11 +27,14 @@ public final class GhostCar extends Car {
 	public void setReplay( Replay replay ) {
 		this.replay = replay;
 		hasReplay = (replay != null && replay.getEventsCount() > 0);
+
 		setActive( hasReplay, true );
+
 		if( hasReplay ) {
 			// System.out.println( "Replaying " + replay.id );
 			restart( replay );
 		}
+
 		// else
 		// {
 		// if(replay==null)

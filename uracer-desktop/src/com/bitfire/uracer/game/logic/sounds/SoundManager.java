@@ -1,7 +1,7 @@
 package com.bitfire.uracer.game.logic.sounds;
 
 import com.badlogic.gdx.utils.Array;
-import com.bitfire.uracer.game.GameEvents;
+import com.bitfire.uracer.game.events.GameEvents;
 import com.bitfire.uracer.game.events.GameLogicEvent;
 import com.bitfire.uracer.game.events.GameLogicEvent.Type;
 import com.bitfire.uracer.task.Task;

@@ -105,8 +105,6 @@ public final class HudDrifting extends HudElement {
 
 	@Override
 	void onRender( SpriteBatch batch, Vector2 playerPosition, float playerOrientation ) {
-		tmpv.set( Director.screenPosForPx( playerPosition ) );
-
 		// compute heading
 		displacement.set( VMath.fromDegrees( playerOrientation ) );
 
@@ -114,7 +112,8 @@ public final class HudDrifting extends HudElement {
 		displacement.x *= (carModelWidthPx + labelRealtime.halfBoundsWidth);
 		displacement.y *= (carModelLengthPx + labelRealtime.halfBoundsHeight);
 
-		// displace the position
+		// gets pixel position and then displaces it
+		tmpv.set( Director.screenPosForPx( playerPosition ) );
 		tmpv.sub( displacement );
 
 		labelRealtime.setPosition( tmpv );

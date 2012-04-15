@@ -2,7 +2,7 @@ package com.bitfire.uracer.game.actors;
 
 import com.bitfire.uracer.entities.Entity;
 import com.bitfire.uracer.entities.EntityRenderState;
-import com.bitfire.uracer.game.GameEvents;
+import com.bitfire.uracer.game.events.GameEvents;
 import com.bitfire.uracer.game.events.PhysicsStepEvent;
 import com.bitfire.uracer.game.events.PhysicsStepEvent.Type;
 

@@ -11,8 +11,8 @@ import com.badlogic.gdx.physics.box2d.Fixture;
 import com.badlogic.gdx.physics.box2d.World;
 import com.bitfire.uracer.Config;
 import com.bitfire.uracer.Director;
-import com.bitfire.uracer.game.GameEvents;
 import com.bitfire.uracer.game.Input;
+import com.bitfire.uracer.game.events.GameEvents;
 import com.bitfire.uracer.utils.AMath;
 import com.bitfire.uracer.utils.Convert;
 import com.bitfire.uracer.utils.SpriteBatchUtils;
@@ -99,20 +99,20 @@ public class Car extends Box2DEntity {
 
 	/** After processing collision's feedback this damping will be applied
 	 * to the car's linear velocity. */
-	public void setLinearVelocityDampingAF(float damping) {
+	public void setLinearVelocityDampingAF( float damping ) {
 		linearVelocityDampAF = damping;
 	}
 
 	/** After processing collision's feedback this damping will be applied
 	 * to the car's input throttle */
-	public void setThrottleDampingAF(float damping) {
+	public void setThrottleDampingAF( float damping ) {
 		throttleDampAF = damping;
 	}
 
 	public void setInputSystem( Input inputSystem ) {
 		this.inputSystem = inputSystem;
 		this.inputMode = (inputSystem != null ? InputMode.InputFromPlayer : InputMode.NoInput);
-		Gdx.app.log( "Car", "Switched input mode to " + this.inputMode.toString() );
+		Gdx.app.log( getClass().getSimpleName(), "Switched input mode to " + this.inputMode.toString() );
 	}
 
 	private WindowedMean frictionMean = new WindowedMean( 16 );
