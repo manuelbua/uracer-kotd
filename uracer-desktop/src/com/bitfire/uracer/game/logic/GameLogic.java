@@ -24,15 +24,13 @@ import com.bitfire.uracer.game.Replay;
 import com.bitfire.uracer.game.actors.Car;
 import com.bitfire.uracer.game.actors.Car.Aspect;
 import com.bitfire.uracer.game.actors.Car.InputMode;
+import com.bitfire.uracer.game.actors.CarEvent;
 import com.bitfire.uracer.game.actors.CarFactory;
 import com.bitfire.uracer.game.actors.CarModel;
 import com.bitfire.uracer.game.actors.GhostCar;
 import com.bitfire.uracer.game.audio.CarDriftSoundEffect;
 import com.bitfire.uracer.game.audio.CarImpactSoundEffect;
 import com.bitfire.uracer.game.data.GameData;
-import com.bitfire.uracer.game.effects.CarSkidMarks;
-import com.bitfire.uracer.game.effects.TrackEffects;
-import com.bitfire.uracer.game.events.CarEvent;
 import com.bitfire.uracer.game.events.DriftStateEvent;
 import com.bitfire.uracer.game.events.GameLogicEvent;
 import com.bitfire.uracer.game.events.PlayerStateEvent;
@@ -45,6 +43,8 @@ import com.bitfire.uracer.game.logic.hud.HudLabel;
 import com.bitfire.uracer.game.logic.hud.HudLabelAccessor;
 import com.bitfire.uracer.game.logic.sounds.ISoundEffect;
 import com.bitfire.uracer.game.logic.sounds.SoundManager;
+import com.bitfire.uracer.game.logic.trackeffects.CarSkidMarks;
+import com.bitfire.uracer.game.logic.trackeffects.TrackEffects;
 import com.bitfire.uracer.game.messager.Message;
 import com.bitfire.uracer.game.messager.Message.MessagePosition;
 import com.bitfire.uracer.game.messager.Message.MessageSize;
@@ -147,15 +147,10 @@ public class GameLogic implements CarEvent.Listener, PlayerStateEvent.Listener, 
 
 		gameWorld = new GameWorld( GameData.Environment.b2dWorld, GameData.Environment.scalingStrategy, levelName, false );
 
-		input = new Input( TaskManagerEvent.Order.MINUS_4 );
-
 		recorder = new Recorder();
 		timeMultiplier.value = 1f;
 
-		// create player and setup its position in the world
 		playerCar = CarFactory.createPlayer( GameData.Environment.b2dWorld, input, carAspect, carModel );
-		playerCar.setTransform( gameWorld.playerStartPos, gameWorld.playerStartOrient );
-		playerCar.setInputSystem( input );
 
 		createStates( playerCar, CarFactory.createGhost( GameData.Environment.b2dWorld, playerCar ) );
 
@@ -163,6 +158,8 @@ public class GameLogic implements CarEvent.Listener, PlayerStateEvent.Listener, 
 		controller = new DirectorController( Config.Graphics.CameraInterpolationMode, Director.halfViewport, gameWorld.worldSizeScaledPx, gameWorld.worldSizeTiles );
 
 		createGameTasks();
+
+		configurePlayer( gameWorld, playerCar );
 
 		// messager.show( "COOL STUFF!", 60, Message.Type.Information, MessagePosition.Bottom, MessageSize.Big );
 	}
@@ -193,6 +190,9 @@ public class GameLogic implements CarEvent.Listener, PlayerStateEvent.Listener, 
 
 	private void createGameTasks() {
 		gameTasks = new ArrayList<Task>( 10 );
+
+		// input system
+		input = new Input( TaskManagerEvent.Order.MINUS_4 );
 
 		// physics step
 		physicsStep = new PhysicsStep( GameData.Environment.b2dWorld, TaskManagerEvent.Order.MINUS_3 );
@@ -235,6 +235,12 @@ public class GameLogic implements CarEvent.Listener, PlayerStateEvent.Listener, 
 		// hud
 		hudDrifting = new HudDrifting( carModelWithPx, carModelLengthPx );
 		hud.add( hudDrifting );
+	}
+
+	private void configurePlayer( GameWorld world, Car player ) {
+		// create player and setup player input system and initial position in the world
+		player.setTransform( world.playerStartPos, world.playerStartOrient );
+		player.setInputSystem( input );
 	}
 
 	public boolean onTick() {

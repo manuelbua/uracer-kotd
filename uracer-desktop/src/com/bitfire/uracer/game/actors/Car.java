@@ -14,7 +14,6 @@ import com.bitfire.uracer.Director;
 import com.bitfire.uracer.game.GameEvents;
 import com.bitfire.uracer.game.Input;
 import com.bitfire.uracer.game.data.GameData;
-import com.bitfire.uracer.game.events.CarEvent;
 import com.bitfire.uracer.utils.AMath;
 import com.bitfire.uracer.utils.Convert;
 import com.bitfire.uracer.utils.SpriteBatchUtils;
@@ -64,6 +63,8 @@ public class Car extends Box2DEntity {
 		body = GameData.Environment.b2dWorld.createBody( bd );
 		body.setBullet( true );
 		body.setUserData( this );
+
+		Gdx.app.log( "Car", "Input mode is " + this.inputMode.toString() );
 	}
 
 	public Aspect getCarAspect() {
@@ -97,6 +98,7 @@ public class Car extends Box2DEntity {
 	public void setInputSystem( Input inputSystem ) {
 		this.inputSystem = inputSystem;
 		this.inputMode = (inputSystem != null ? InputMode.InputFromPlayer : InputMode.NoInput);
+		Gdx.app.log( "Car", "Switched nput mode to " + this.inputMode.toString() );
 	}
 
 	private WindowedMean frictionMean = new WindowedMean( 16 );

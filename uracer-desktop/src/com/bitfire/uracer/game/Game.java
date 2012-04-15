@@ -40,7 +40,7 @@ public class Game implements Disposable {
 
 		// handles rendering
 		gameRenderer = new GameRenderer( URacer.getScalingStrategy(), world );
-		setupPostProcessing( gameRenderer.getPostProcessor(), world );
+		configurePostProcessing( gameRenderer.getPostProcessor(), world );
 	}
 
 	@Override
@@ -50,7 +50,7 @@ public class Game implements Disposable {
 		GameData.dispose();
 	}
 
-	private void setupPostProcessing( PostProcessor processor, GameWorld world ) {
+	private void configurePostProcessing( PostProcessor processor, GameWorld world ) {
 		if( !Config.Graphics.EnablePostProcessingFx || processor == null ) {
 			return;
 		}

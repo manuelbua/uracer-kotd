@@ -1,4 +1,4 @@
-package com.bitfire.uracer.game.effects;
+package com.bitfire.uracer.game.logic.trackeffects;
 
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.g2d.ParticleEffect;
