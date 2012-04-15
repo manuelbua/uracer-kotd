@@ -13,7 +13,6 @@ import com.bitfire.uracer.Config;
 import com.bitfire.uracer.Director;
 import com.bitfire.uracer.game.GameEvents;
 import com.bitfire.uracer.game.Input;
-import com.bitfire.uracer.game.data.GameData;
 import com.bitfire.uracer.utils.AMath;
 import com.bitfire.uracer.utils.Convert;
 import com.bitfire.uracer.utils.SpriteBatchUtils;
@@ -36,6 +35,9 @@ public class Car extends Box2DEntity {
 	private CarForces carForces = null;
 	private Input inputSystem = null;
 	private int impacts = 0;
+
+	private float linearVelocityDampAF = 0.99f;
+	private float throttleDampAF = 0.99f;
 
 	protected InputMode inputMode = InputMode.NoInput;
 	private Aspect aspect = Aspect.OldSkool;
@@ -93,6 +95,18 @@ public class Car extends Box2DEntity {
 
 	public Vector2 getLateralForceRear() {
 		return carSim.lateralForceRear;
+	}
+
+	/** After processing collision's feedback this damping will be applied
+	 * to the car's linear velocity. */
+	public void setLinearVelocityDampingAF(float damping) {
+		linearVelocityDampAF = damping;
+	}
+
+	/** After processing collision's feedback this damping will be applied
+	 * to the car's input throttle */
+	public void setThrottleDampingAF(float damping) {
+		throttleDampAF = damping;
 	}
 
 	public void setInputSystem( Input inputSystem ) {
@@ -222,7 +236,7 @@ public class Car extends Box2DEntity {
 		// process impact feedback
 		while( impacts > 0 ) {
 			impacts--;
-			carDesc.velocity_wc.set( body.getLinearVelocity() ).mul( GameData.Environment.gameSettings.linearVelocityAfterFeedback );
+			carDesc.velocity_wc.set( body.getLinearVelocity() ).mul( linearVelocityDampAF );
 			carDesc.angularvelocity = -body.getAngularVelocity() * 0.85f;
 			start_decrease = true;
 		}
@@ -235,7 +249,7 @@ public class Car extends Box2DEntity {
 				start_timer = System.nanoTime();
 			}
 
-			input.throttle *= GameData.Environment.gameSettings.throttleDampingAfterFeedback;
+			input.throttle *= throttleDampAF;
 		}
 	}
 

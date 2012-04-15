@@ -1,11 +1,11 @@
 package com.bitfire.uracer.game.logic.helpers;
 
 import com.badlogic.gdx.Gdx;
+import com.bitfire.uracer.game.GameDifficulty;
 import com.bitfire.uracer.game.GameEvents;
 import com.bitfire.uracer.game.Replay;
 import com.bitfire.uracer.game.actors.Car;
 import com.bitfire.uracer.game.actors.CarForces;
-import com.bitfire.uracer.game.data.GameData;
 import com.bitfire.uracer.game.events.GameLogicEvent;
 
 public class Recorder {
@@ -38,15 +38,15 @@ public class Recorder {
 		replay = null;
 	}
 
-	public void beginRecording( Car car, Replay replay, /* long startTimeNs, */String trackName ) {
+	public void beginRecording( Car car, Replay replay, String trackName, GameDifficulty gameDifficulty ) {
 		isRecording = true;
 		this.replay = replay;
-		replay.begin( trackName, GameData.Environment.gameSettings.difficulty, car );
+		replay.begin( trackName, gameDifficulty, car );
 	}
 
 	public void add( CarForces f ) {
 		if( !isRecording ) {
-			// System.out.println("Cannot add event, recording not enabled!");
+			Gdx.app.log( "Recorder", "Cannot add event, recording not enabled!" );
 			return;
 		}
 
@@ -57,22 +57,11 @@ public class Recorder {
 
 	public void endRecording() {
 		if( !isRecording ) {
-			// System.out.println("Cannot end a recording that wasn't enabled!");
+			Gdx.app.log( "Recorder", "Cannot end a recording that wasn't enabled!" );
 			return;
 		}
 
 		replay.end();
-		// float secs = (float)(System.nanoTime() - replay.trackStartTimeNs) / 1000000000f;
-		// secs *= URacer.timeMultiplier;
-		// replay.setReplayData( name, GameData.gameSettings.difficulty, replay.time.elapsed( Time.Reference.Ticks ));
-
-		// System.out.println( "Recorded " + replay.getEventsCount() + " events" );
-		// System.out.println("Recorded " + secs + " seconds" );
-		// System.out.println("Time: " +
-		// replay.time.elapsed( Time.Reference.Absolute ) + " abs, " +
-		// replay.time.elapsed( Time.Reference.NumberOfTicks ) + " ticks, " +
-		// replay.time.elapsed( Time.Reference.Ticks ) + " secs" );
-
 		isRecording = false;
 		replay = null;
 	}

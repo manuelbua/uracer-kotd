@@ -21,6 +21,7 @@ import com.bitfire.uracer.Director;
 import com.bitfire.uracer.ScalingStrategy;
 import com.bitfire.uracer.URacer;
 import com.bitfire.uracer.game.GameEvents;
+import com.bitfire.uracer.game.GameplaySettings;
 import com.bitfire.uracer.game.Input;
 import com.bitfire.uracer.game.Replay;
 import com.bitfire.uracer.game.actors.Car;
@@ -73,6 +74,9 @@ import com.bitfire.uracer.utils.NumberString;
 public class GameLogic implements CarEvent.Listener, PlayerStateEvent.Listener, DriftStateEvent.Listener {
 	// scaling
 	private ScalingStrategy scalingStrategy = null;
+
+	// settings
+	private GameplaySettings gameplaySettings = null;
 
 	// world
 	private GameWorld gameWorld = null;
@@ -132,7 +136,8 @@ public class GameLogic implements CarEvent.Listener, PlayerStateEvent.Listener, 
 		}
 	};
 
-	public GameLogic( ScalingStrategy scalingStrategy, String levelName, Aspect carAspect, CarModel carModel ) {
+	public GameLogic( GameplaySettings settings, ScalingStrategy scalingStrategy, String levelName, Aspect carAspect, CarModel carModel ) {
+		this.gameplaySettings = settings;
 		this.scalingStrategy = scalingStrategy;
 		this.box2dWorld = new World( new Vector2( 0, 0 ), false );
 		this.box2dWorld.setContactListener( new GameContactListener() );
@@ -143,6 +148,9 @@ public class GameLogic implements CarEvent.Listener, PlayerStateEvent.Listener, 
 		GameEvents.carEvent.addListener( this, CarEvent.Type.onComputeForces );
 		GameEvents.playerDriftState.addListener( this, DriftStateEvent.Type.onBeginDrift );
 		GameEvents.playerDriftState.addListener( this, DriftStateEvent.Type.onEndDrift );
+
+		// initializes the Director helper
+		Director.init();
 
 		// create tweening support
 		Tween.registerAccessor( Message.class, new MessageAccessor() );
@@ -170,7 +178,7 @@ public class GameLogic implements CarEvent.Listener, PlayerStateEvent.Listener, 
 		createGameTasks();
 		configureTasks();
 
-		configurePlayer( gameWorld, playerCar );
+		configurePlayer( gameplaySettings, gameWorld, playerCar );
 
 		// messager.show( "COOL STUFF!", 60, Message.Type.Information, MessagePosition.Bottom, MessageSize.Big );
 	}
@@ -193,6 +201,7 @@ public class GameLogic implements CarEvent.Listener, PlayerStateEvent.Listener, 
 		gameWorld.dispose();
 		GameTweener.dispose();
 		WcTweener.dispose();
+		Director.dispose();
 		box2dWorld.dispose();
 	}
 
@@ -260,10 +269,14 @@ public class GameLogic implements CarEvent.Listener, PlayerStateEvent.Listener, 
 		hud.add( hudDrifting );
 	}
 
-	private void configurePlayer( GameWorld world, Car player ) {
+	private void configurePlayer( GameplaySettings settings, GameWorld world, Car player ) {
 		// create player and setup player input system and initial position in the world
 		player.setTransform( world.playerStartPos, world.playerStartOrient );
 		player.setInputSystem( input );
+
+		// apply handicaps
+		player.setLinearVelocityDampingAF( settings.linearVelocityDampingAfterFeedback );
+		player.setThrottleDampingAF( settings.throttleDampingAfterFeedback );
 	}
 
 	public boolean onTick() {
@@ -483,7 +496,7 @@ public class GameLogic implements CarEvent.Listener, PlayerStateEvent.Listener, 
 
 					lapState.restart();
 					Replay buf = lapState.getNextBuffer();
-					recorder.beginRecording( playerCar, buf, name );
+					recorder.beginRecording( playerCar, buf, name, gameplaySettings.difficulty );
 					lastRecordedLapId = buf.id;
 
 					if( lapState.hasAnyReplayData() ) {
@@ -503,7 +516,7 @@ public class GameLogic implements CarEvent.Listener, PlayerStateEvent.Listener, 
 						// only one single replay
 						lapState.restart();
 						Replay buf = lapState.getNextBuffer();
-						recorder.beginRecording( playerCar, buf, name );
+						recorder.beginRecording( playerCar, buf, name, gameplaySettings.difficulty );
 						lastRecordedLapId = buf.id;
 
 						Replay any = lapState.getAnyReplay();
@@ -528,7 +541,7 @@ public class GameLogic implements CarEvent.Listener, PlayerStateEvent.Listener, 
 						playerState.ghost.setReplay( best );
 
 						lapState.restart();
-						recorder.beginRecording( playerCar, worst, name );
+						recorder.beginRecording( playerCar, worst, name, gameplaySettings.difficulty );
 						lastRecordedLapId = worst.id;
 					}
 				}

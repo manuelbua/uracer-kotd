@@ -9,7 +9,6 @@ import com.bitfire.uracer.URacer;
 import com.bitfire.uracer.game.actors.Car;
 import com.bitfire.uracer.game.actors.Car.Aspect;
 import com.bitfire.uracer.game.actors.CarModel;
-import com.bitfire.uracer.game.data.GameData;
 import com.bitfire.uracer.game.logic.GameLogic;
 import com.bitfire.uracer.game.rendering.Debug;
 import com.bitfire.uracer.game.world.GameWorld;
@@ -21,7 +20,7 @@ import com.bitfire.uracer.task.TaskManager;
 public class Game implements Disposable {
 
 	// config
-	public GameplaySettings gameSettings = null;
+	public GameplaySettings gameplaySettings = null;
 
 	// logic
 	private GameLogic gameLogic = null;
@@ -34,10 +33,10 @@ public class Game implements Disposable {
 	private Zoom zoom = null;
 
 	public Game( String levelName, ScalingStrategy scalingStrategy, GameDifficulty difficulty, Aspect carAspect, CarModel carModel ) {
-		GameData.create( scalingStrategy, difficulty );
+		gameplaySettings = new GameplaySettings( difficulty );
 
 		// handle game rules and mechanics, it's all about game data
-		gameLogic = new GameLogic( scalingStrategy, levelName, carAspect, carModel );
+		gameLogic = new GameLogic( gameplaySettings, scalingStrategy, levelName, carAspect, carModel );
 		GameWorld world = gameLogic.getGameWorld();
 		World box2dWorld = gameLogic.getBox2dWorld();
 
@@ -50,7 +49,6 @@ public class Game implements Disposable {
 	public void dispose() {
 		gameLogic.dispose();
 		gameRenderer.dispose();
-		GameData.dispose();
 	}
 
 	private void configurePostProcessing( PostProcessor processor, GameWorld world ) {

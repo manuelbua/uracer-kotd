@@ -6,6 +6,8 @@ import com.badlogic.gdx.ApplicationListener;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.math.Vector2;
 import com.bitfire.uracer.utils.AMath;
+import com.bitfire.uracer.utils.Convert;
+import com.bitfire.uracer.utils.SpriteBatchUtils;
 
 public class URacer implements ApplicationListener {
 	private Screen screen;
@@ -59,10 +61,15 @@ public class URacer implements ApplicationListener {
 		// computed for a 256px tile size target (compute needed conversion factors)
 		scalingStrategy = new ScalingStrategy( new Vector2( 1280, 800 ), 70f, 224, 1f );
 
+		// everything has been setup on a 256px tile, scale back if that's the case
+		Config.asDefault();
+		Config.Physics.PixelsPerMeter /= (scalingStrategy.targetScreenRatio / scalingStrategy.to256);
+
+		Convert.init( scalingStrategy.invTileMapZoomFactor, Config.Physics.PixelsPerMeter );
 		Art.init( scalingStrategy.invTileMapZoomFactor );
+		SpriteBatchUtils.init( Art.base6 );
 		Sounds.init();
 
-		Config.asDefault();
 		Gdx.graphics.setVSync( true );
 
 		running = true;
@@ -163,8 +170,8 @@ public class URacer implements ApplicationListener {
 	public void dispose() {
 		setScreen( null );
 
-		Art.dispose();
 		Sounds.dispose();
+		Art.dispose();
 
 		if( uRacerFinalizer != null ) {
 			uRacerFinalizer.dispose();
