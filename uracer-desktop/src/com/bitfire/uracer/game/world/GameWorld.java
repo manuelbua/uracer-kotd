@@ -31,7 +31,6 @@ import com.badlogic.gdx.physics.box2d.World;
 import com.bitfire.uracer.Art;
 import com.bitfire.uracer.Config;
 import com.bitfire.uracer.ScalingStrategy;
-import com.bitfire.uracer.game.Box2DFactory;
 import com.bitfire.uracer.game.collisions.CollisionFilters;
 import com.bitfire.uracer.game.world.WorldDefs.LayerProperties;
 import com.bitfire.uracer.game.world.WorldDefs.ObjectGroup;
