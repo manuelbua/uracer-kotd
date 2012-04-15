@@ -19,7 +19,7 @@ import com.bitfire.uracer.utils.Manager;
 public final class PostProcessor implements Disposable {
 	private final PingPongBuffer composite;
 	private static Format fbFormat;
-	private final Manager<PostProcessorEffect> effectManager = new Manager<PostProcessorEffect>();
+	private final Manager<PostProcessorEffect> manager = new Manager<PostProcessorEffect>();
 	private static final Array<PingPongBuffer> buffers = new Array<PingPongBuffer>( 5 );
 	private final Color clearColor = Color.CLEAR;
 	private boolean capturing = false;
@@ -63,7 +63,7 @@ public final class PostProcessor implements Disposable {
 	/** Frees owned resources. */
 	@Override
 	public void dispose() {
-		effectManager.dispose();
+		manager.dispose();
 
 		// cleanup managed buffers, if any
 		for( int i = 0; i < buffers.size; i++ ) {
@@ -77,12 +77,12 @@ public final class PostProcessor implements Disposable {
 	 * since effects will be applied in a FIFO fashion, the first added
 	 * is the first being applied. */
 	public void addEffect( PostProcessorEffect effect ) {
-		effectManager.add( effect );
+		manager.add( effect );
 	}
 
 	/** Removes the specified effect from the effect chain. */
 	public void removeEffect( PostProcessorEffect effect ) {
-		effectManager.remove( effect );
+		manager.remove( effect );
 	}
 
 	/** Returns the internal framebuffer format, computed from the
@@ -144,7 +144,7 @@ public final class PostProcessor implements Disposable {
 	/** Regenerates and/or rebinds owned resources when needed, eg. when
 	 * the OpenGL context is lost. */
 	public void rebind() {
-		Array<PostProcessorEffect> items = effectManager.items;
+		Array<PostProcessorEffect> items = manager.items;
 		for( int i = 0; i < items.size; i++ ) {
 			items.get( i ).rebind();
 		}
@@ -158,7 +158,7 @@ public final class PostProcessor implements Disposable {
 	public void render() {
 		captureEnd();
 
-		Array<PostProcessorEffect> items = effectManager.items;
+		Array<PostProcessorEffect> items = manager.items;
 		if( items.size > 0 ) {
 			// render effects chain, [0,n-1]
 			for( int i = 0; i < items.size - 1; i++ ) {

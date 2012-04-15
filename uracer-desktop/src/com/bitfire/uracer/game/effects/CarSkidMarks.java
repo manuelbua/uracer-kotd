@@ -50,7 +50,7 @@ public class CarSkidMarks extends TrackEffect {
 	}
 
 	@Override
-	public void onTick() {
+	public void tick() {
 		// addDriftMark();
 
 		SkidMark d;

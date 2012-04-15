@@ -57,7 +57,7 @@ public final class DriftState {
 		hasCollided = true;
 		collisionTime.start();
 		time.stop();
-		GameEvents.driftState.trigger( Type.onEndDrift );
+		GameEvents.playerDriftState.trigger( Type.onEndDrift );
 	}
 
 	public void update( Car car ) {
@@ -93,7 +93,7 @@ public final class DriftState {
 					hasCollided = false;
 					// driftStartTime = System.currentTimeMillis();
 					time.start();
-					GameEvents.driftState.trigger( Type.onBeginDrift );
+					GameEvents.playerDriftState.trigger( Type.onBeginDrift );
 				}
 			} else {
 				// search for onEndDrift
@@ -101,7 +101,7 @@ public final class DriftState {
 					time.stop();
 					isDrifting = false;
 					hasCollided = false;
-					GameEvents.driftState.trigger( Type.onEndDrift );
+					GameEvents.playerDriftState.trigger( Type.onEndDrift );
 				}
 			}
 		}

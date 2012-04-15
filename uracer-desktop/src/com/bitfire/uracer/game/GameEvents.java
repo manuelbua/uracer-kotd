@@ -14,7 +14,7 @@ public final class GameEvents {
 	public static final PhysicsStepEvent physicsStep = new PhysicsStepEvent();
 	public static final GameLogicEvent gameLogic = new GameLogicEvent();
 	public static final CarEvent carEvent = new CarEvent();
-	public static final DriftStateEvent driftState = new DriftStateEvent();
+	public static final DriftStateEvent playerDriftState = new DriftStateEvent();
 
 	private GameEvents() {
 	}

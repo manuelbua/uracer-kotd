@@ -4,9 +4,10 @@ import com.badlogic.gdx.audio.Sound;
 import com.bitfire.uracer.Config;
 import com.bitfire.uracer.Sounds;
 import com.bitfire.uracer.game.data.GameData;
+import com.bitfire.uracer.game.logic.sounds.SoundEffect;
 import com.bitfire.uracer.utils.AMath;
 
-public final class CarEngineSoundEffect extends CarSoundEffect {
+public final class CarEngineSoundEffect extends SoundEffect {
 	private Sound carEngine = null;
 	private long carEngineId = -1;
 	private static float carEnginePitchStart = 0;
@@ -18,11 +19,11 @@ public final class CarEngineSoundEffect extends CarSoundEffect {
 	}
 
 	@Override
-	public void onDispose() {
+	public void dispose() {
 	}
 
 	@Override
-	public void onTick() {
+	public void tick() {
 		if( carEngineId > -1 ) {
 			float speedFactor = GameData.States.player.currSpeedFactor;
 
@@ -35,7 +36,7 @@ public final class CarEngineSoundEffect extends CarSoundEffect {
 	}
 
 	@Override
-	public void onStart() {
+	public void start() {
 		if( Config.isDesktop ) {
 			carEngineId = carEngine.loop( 1f );
 		} else {
@@ -43,17 +44,17 @@ public final class CarEngineSoundEffect extends CarSoundEffect {
 			carEngineId = checkedLoop( carEngine, 1f );
 		}
 
-		onReset();
+		reset();
 	}
 
 	@Override
-	public void onStop() {
+	public void stop() {
 		carEngine.stop();
 	}
 
 	@Override
-	public void onReset() {
-		onStop();
+	public void reset() {
+		stop();
 		carEnginePitchStart = carEnginePitchMin;
 		carEnginePitchLast = carEnginePitchMin;
 		carEngine.setPitch( carEngineId, carEnginePitchStart );

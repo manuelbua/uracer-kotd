@@ -6,6 +6,7 @@ import com.bitfire.uracer.Sounds;
 import com.bitfire.uracer.URacer;
 import com.bitfire.uracer.game.GameEvents;
 import com.bitfire.uracer.game.data.GameData;
+import com.bitfire.uracer.game.logic.sounds.SoundEffect;
 import com.bitfire.uracer.game.player.Car;
 import com.bitfire.uracer.game.player.Car.InputMode;
 import com.bitfire.uracer.game.player.CarEvent;
@@ -14,7 +15,7 @@ import com.bitfire.uracer.game.player.CarEvent.Type;
 import com.bitfire.uracer.utils.AMath;
 import com.bitfire.uracer.utils.AudioUtils;
 
-public final class CarImpactSoundEffect extends CarSoundEffect {
+public final class CarImpactSoundEffect extends SoundEffect {
 	private Sound soundLow1, soundLow2, soundMid1, soundMid2, soundHigh;
 	private long lastSoundTimeMs = 0;
 	private static final long MinElapsedBetweenSoundsMs = 500;
@@ -56,7 +57,7 @@ public final class CarImpactSoundEffect extends CarSoundEffect {
 	}
 
 	@Override
-	public void onDispose() {
+	public void dispose() {
 		soundLow1.stop();
 		soundLow2.stop();
 		soundMid1.stop();
@@ -109,17 +110,17 @@ public final class CarImpactSoundEffect extends CarSoundEffect {
 	}
 
 	@Override
-	public void onStart() {
+	public void start() {
 		// unused
 	}
 
 	@Override
-	public void onStop() {
+	public void stop() {
 		// unused
 	}
 
 	@Override
-	public void onReset() {
+	public void reset() {
 		// unused
 	}
 }

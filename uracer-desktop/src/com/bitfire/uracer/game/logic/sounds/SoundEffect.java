@@ -1,8 +1,8 @@
-package com.bitfire.uracer.game.audio;
+package com.bitfire.uracer.game.logic.sounds;
 
 import com.badlogic.gdx.audio.Sound;
 
-public abstract class CarSoundEffect implements ISoundEffect {
+public abstract class SoundEffect implements ISoundEffect {
 	// implements a workaround for Android, need to async-wait
 	// for sound loaded but libgdx doesn't expose anything for this!
 
@@ -56,18 +56,18 @@ public abstract class CarSoundEffect implements ISoundEffect {
 	}
 
 	@Override
-	public void onStart() {
+	public void start() {
 	}
 
 	@Override
-	public void onStop() {
+	public void stop() {
 	}
 
 	@Override
-	public void onReset() {
+	public void reset() {
 	}
 
 	@Override
-	public void onTick() {
+	public void tick() {
 	}
 }

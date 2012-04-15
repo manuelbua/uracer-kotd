@@ -21,7 +21,8 @@ import com.bitfire.uracer.URacer;
 import com.bitfire.uracer.game.GameEvents;
 import com.bitfire.uracer.game.Input;
 import com.bitfire.uracer.game.Replay;
-import com.bitfire.uracer.game.audio.CarSoundManager;
+import com.bitfire.uracer.game.audio.CarDriftSoundEffect;
+import com.bitfire.uracer.game.audio.CarImpactSoundEffect;
 import com.bitfire.uracer.game.data.GameData;
 import com.bitfire.uracer.game.effects.CarSkidMarks;
 import com.bitfire.uracer.game.effects.TrackEffects;
@@ -35,6 +36,8 @@ import com.bitfire.uracer.game.logic.hud.HudDrifting;
 import com.bitfire.uracer.game.logic.hud.HudDrifting.EndDriftType;
 import com.bitfire.uracer.game.logic.hud.HudLabel;
 import com.bitfire.uracer.game.logic.hud.HudLabelAccessor;
+import com.bitfire.uracer.game.logic.sounds.ISoundEffect;
+import com.bitfire.uracer.game.logic.sounds.SoundManager;
 import com.bitfire.uracer.game.messager.Message;
 import com.bitfire.uracer.game.messager.Message.MessagePosition;
 import com.bitfire.uracer.game.messager.Message.MessageSize;
@@ -81,6 +84,9 @@ public class GameLogic implements CarEvent.Listener, PlayerStateEvent.Listener, 
 	private Hud hud = null;
 	private HudDrifting hudDrifting = null;
 
+	// sound
+	private SoundManager sound = null;
+
 	// alerts and infos
 	private Messager messager = null;
 
@@ -115,7 +121,7 @@ public class GameLogic implements CarEvent.Listener, PlayerStateEvent.Listener, 
 
 		GameEvents.playerState.addListener( this );
 		GameEvents.carEvent.addListener( this );
-		GameEvents.driftState.addListener( this );
+		GameEvents.playerDriftState.addListener( this );
 
 		GameWorld world = GameData.Environment.gameWorld;
 
@@ -140,7 +146,9 @@ public class GameLogic implements CarEvent.Listener, PlayerStateEvent.Listener, 
 
 	private void createGameTasks() {
 		gameTasks = new ArrayList<Task>( 10 );
-		gameTasks.add( new CarSoundManager() );
+
+		sound = new SoundManager();
+		gameTasks.add( sound );
 
 		messager = new Messager( GameData.Environment.scalingStrategy.invTileMapZoomFactor );
 		gameTasks.add( messager );
@@ -160,6 +168,12 @@ public class GameLogic implements CarEvent.Listener, PlayerStateEvent.Listener, 
 		CarModel model = car.getCarModel();
 		float carModelWithPx = Convert.mt2px( model.width );
 		float carModelLengthPx = Convert.mt2px( model.length );
+
+		// sounds
+		ISoundEffect fx = new CarDriftSoundEffect();
+		fx.start();
+		sound.add( fx );
+		sound.add( new CarImpactSoundEffect() );
 
 		// track effects
 		playerSkidMarks = new CarSkidMarks( carModelWithPx, carModelLengthPx );

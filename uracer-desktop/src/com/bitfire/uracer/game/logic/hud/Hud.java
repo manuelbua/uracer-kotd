@@ -19,7 +19,7 @@ import com.bitfire.uracer.utils.NumberString;
 
 public final class Hud extends Task {
 
-	private final Manager<HudElement> elementsManager = new Manager<HudElement>();
+	private final Manager<HudElement> manager = new Manager<HudElement>();
 
 	private HudLabel best, curr, last;
 	// private HudDebugMeter meterLatForce, meterSkidMarks, meterSmoke;
@@ -46,7 +46,7 @@ public final class Hud extends Task {
 	};
 
 	private void renderAfterMeshes( SpriteBatch batch ) {
-		Array<HudElement> items = elementsManager.items;
+		Array<HudElement> items = manager.items;
 		for( int i = 0; i < items.size; i++ ) {
 			items.get( i ).onRender( batch, playerPosition, playerOrientation );
 		}
@@ -102,21 +102,21 @@ public final class Hud extends Task {
 	}
 
 	public void add( HudElement element ) {
-		elementsManager.add( element );
+		manager.add( element );
 	}
 
 	public void remove( HudElement element ) {
-		elementsManager.remove( element );
+		manager.remove( element );
 	}
 
 	@Override
 	public void dispose() {
 		super.dispose();
-		elementsManager.dispose();
+		manager.dispose();
 	}
 
 	public void reset() {
-		Array<HudElement> items = elementsManager.items;
+		Array<HudElement> items = manager.items;
 		for( int i = 0; i < items.size; i++ ) {
 			items.get( i ).onReset();
 		}
@@ -133,8 +133,8 @@ public final class Hud extends Task {
 
 	@Override
 	protected void onTick() {
-		for( int i = 0; i < elementsManager.items.size; i++ ) {
-			elementsManager.items.get( i ).onTick();
+		for( int i = 0; i < manager.items.size; i++ ) {
+			manager.items.get( i ).onTick();
 		}
 	}
 

@@ -36,10 +36,7 @@ public final class PlayerState {
 		}
 	};
 
-	public PlayerState() {
-		this( null, null );
-	}
-
+	// FIXME remove GhostCar nonsense from here
 	public PlayerState( Car car, GhostCar ghost ) {
 		GameEvents.gameLogic.addListener( gameLogicEvent );
 		setData( car, ghost );

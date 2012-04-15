@@ -9,7 +9,7 @@ import com.bitfire.uracer.task.Task;
 import com.bitfire.uracer.utils.Manager;
 
 public final class TrackEffects extends Task {
-	private Manager<TrackEffect> effectsManager = new Manager<TrackEffect>();
+	private Manager<TrackEffect> manager = new Manager<TrackEffect>();
 
 	private final GameLogicEvent.Listener gameLogicEvent = new GameLogicEvent.Listener() {
 		@Override
@@ -27,7 +27,7 @@ public final class TrackEffects extends Task {
 		@Override
 		public void gameRendererEvent( GameRendererEvent.Type type ) {
 			SpriteBatch batch = GameEvents.gameRenderer.batch;
-			Array<TrackEffect> items = effectsManager.items;
+			Array<TrackEffect> items = manager.items;
 
 			for( int i = 0; i < items.size; i++ ) {
 				TrackEffect effect = items.get( i );
@@ -50,30 +50,30 @@ public final class TrackEffects extends Task {
 	}
 
 	public void add( TrackEffect effect ) {
-		effectsManager.add( effect );
+		manager.add( effect );
 	}
 
 	public void remove( TrackEffect effect ) {
-		effectsManager.remove( effect );
+		manager.remove( effect );
 	}
 
 	@Override
 	public void dispose() {
 		super.dispose();
-		effectsManager.dispose();
+		manager.dispose();
 	}
 
 	@Override
 	public void onTick() {
-		Array<TrackEffect> items = effectsManager.items;
+		Array<TrackEffect> items = manager.items;
 		for( int i = 0; i < items.size; i++ ) {
 			TrackEffect effect = items.get( i );
-			effect.onTick();
+			effect.tick();
 		}
 	}
 
 	public void reset() {
-		Array<TrackEffect> items = effectsManager.items;
+		Array<TrackEffect> items = manager.items;
 		for( int i = 0; i < items.size; i++ ) {
 			TrackEffect effect = items.get( i );
 			effect.reset();
@@ -81,7 +81,7 @@ public final class TrackEffects extends Task {
 	}
 
 	public int getParticleCount() {
-		Array<TrackEffect> items = effectsManager.items;
+		Array<TrackEffect> items = manager.items;
 		int total = 0;
 		for( int i = 0; i < items.size; i++ ) {
 			TrackEffect effect = items.get( i );

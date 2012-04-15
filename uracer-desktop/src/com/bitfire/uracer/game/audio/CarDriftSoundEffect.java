@@ -8,6 +8,7 @@ import com.bitfire.uracer.game.GameEvents;
 import com.bitfire.uracer.game.data.GameData;
 import com.bitfire.uracer.game.events.DriftStateEvent;
 import com.bitfire.uracer.game.events.DriftStateEvent.Type;
+import com.bitfire.uracer.game.logic.sounds.SoundEffect;
 import com.bitfire.uracer.utils.AMath;
 import com.bitfire.uracer.utils.AudioUtils;
 
@@ -17,7 +18,7 @@ import com.bitfire.uracer.utils.AudioUtils;
  * input interaction with the car simulator.
  *
  * @author bmanuel */
-public final class CarDriftSoundEffect extends CarSoundEffect {
+public final class CarDriftSoundEffect extends SoundEffect {
 	private Sound drift = null;
 	private long driftId = -1, lastDriftId = -1;
 	private float driftLastPitch = 0;
@@ -60,17 +61,17 @@ public final class CarDriftSoundEffect extends CarSoundEffect {
 	}
 
 	public CarDriftSoundEffect() {
-		GameEvents.driftState.addListener( driftListener );
+		GameEvents.playerDriftState.addListener( driftListener );
 		drift = Sounds.carDrift;
 	}
 
 	@Override
-	public void onDispose() {
+	public void dispose() {
 		drift.stop();
 	}
 
 	@Override
-	public void onStart() {
+	public void start() {
 		// UGLY HACK FOR ANDROID
 		if( Config.isDesktop ) {
 			driftId = drift.loop( 0f );
@@ -83,7 +84,7 @@ public final class CarDriftSoundEffect extends CarSoundEffect {
 	}
 
 	@Override
-	public void onStop() {
+	public void stop() {
 		if( driftId > -1 ) {
 			drift.stop( driftId );
 		}
@@ -93,13 +94,13 @@ public final class CarDriftSoundEffect extends CarSoundEffect {
 	}
 
 	@Override
-	public void onReset() {
-		onStop();
+	public void reset() {
+		stop();
 		lastVolume = 0;
 	}
 
 	@Override
-	public void onTick() {
+	public void tick() {
 		if( driftId > -1 ) {
 			boolean anotherDriftId = (driftId != lastDriftId);
 			float speedFactor = GameData.States.player.currSpeedFactor;

@@ -20,12 +20,9 @@ public abstract class TrackEffect implements Disposable {
 		this.type = what;
 	}
 
-	public abstract void onTick();
+	public abstract void tick();
 
 	public abstract void reset();
-
-	@Override
-	public abstract void dispose();
 
 	public abstract void render( SpriteBatch batch );
 
