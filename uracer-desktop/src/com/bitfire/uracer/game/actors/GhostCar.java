@@ -16,10 +16,11 @@ public final class GhostCar extends Car {
 	private boolean hasReplay;
 
 	public GhostCar( World box2dWorld, CarRenderer graphics, Aspect type, CarModel model ) {
-		super( box2dWorld, null, graphics, model, type );
+		super( box2dWorld, graphics, model, type );
 		indexPlay = 0;
 		hasReplay = false;
 		replay = null;
+		this.inputMode = InputMode.InputFromReplay;
 		setActive( false, true );
 	}
 

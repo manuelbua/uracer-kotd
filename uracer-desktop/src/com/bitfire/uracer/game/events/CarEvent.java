@@ -1,7 +1,9 @@
-package com.bitfire.uracer.game.actors;
+package com.bitfire.uracer.game.events;
 
 import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.physics.box2d.Fixture;
+import com.bitfire.uracer.game.actors.Car;
+import com.bitfire.uracer.game.actors.CarForces;
 import com.bitfire.uracer.utils.Event;
 import com.bitfire.uracer.utils.EventListener;
 import com.bitfire.uracer.utils.EventNotifier;
@@ -37,16 +39,22 @@ public final class CarEvent extends Event {
 
 	public final Data data = new Data();
 
-	public void addListener( Listener listener ) {
-		notify.addListener( listener );
+	public CarEvent() {
+		for( Type t : Type.values() ) {
+			notifiers[t.ordinal()] = new Notifier();
+		}
+	}
+
+	public void addListener( Listener listener, Type type ) {
+		notifiers[type.ordinal()].addListener( listener );
 	}
 
 	public void trigger( Car car, Type type ) {
 		data.car = car;
-		notify.carEvent( type, data );
+		notifiers[type.ordinal()].carEvent( type, data );
 	}
 
-	private final Notifier notify = new Notifier();
+	private Notifier[] notifiers = new Notifier[ Type.values().length ];
 
 	private class Notifier extends EventNotifier<Listener> implements Listener {
 		@Override

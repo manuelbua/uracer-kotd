@@ -31,7 +31,7 @@ public final class CarFactory {
 
 	public static Car createPlayer( World box2dWorld, Input input, Aspect carAspect, CarModel model ) {
 		CarRenderer graphics = createCarGraphics( carAspect, model );
-		Car car = new Car( box2dWorld, input, graphics, model, carAspect );
+		Car car = new Car( box2dWorld, graphics, model, carAspect );
 		applyCarPhysics( car, EntityType.Car );
 		return car;
 	}

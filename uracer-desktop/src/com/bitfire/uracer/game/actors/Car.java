@@ -14,6 +14,7 @@ import com.bitfire.uracer.Director;
 import com.bitfire.uracer.game.GameEvents;
 import com.bitfire.uracer.game.Input;
 import com.bitfire.uracer.game.data.GameData;
+import com.bitfire.uracer.game.events.CarEvent;
 import com.bitfire.uracer.utils.AMath;
 import com.bitfire.uracer.utils.Convert;
 import com.bitfire.uracer.utils.SpriteBatchUtils;
@@ -21,7 +22,7 @@ import com.bitfire.uracer.utils.VMath;
 
 public class Car extends Box2DEntity {
 	public enum InputMode {
-		InputFromPlayer, InputFromReplay
+		NoInput, InputFromPlayer, InputFromReplay
 	}
 
 	public enum Aspect {
@@ -30,24 +31,23 @@ public class Car extends Box2DEntity {
 
 	protected CarRenderer graphics;
 
-	private CarDescriptor carDesc;
-	private CarSimulator carSim;
-	private CarInput carInput;
-	private CarForces carForces;
-	private Input inputSystem;
-	private int impacts;
+	private CarDescriptor carDesc = null;
+	private CarSimulator carSim = null;
+	private CarInput carInput = null;
+	private CarForces carForces = null;
+	private Input inputSystem = null;
+	private int impacts = 0;
 
-	private InputMode carInputMode;
-	private Aspect carAspect;
+	protected InputMode inputMode = InputMode.NoInput;
+	private Aspect aspect = Aspect.OldSkool;
 
-	protected Car( World box2dWorld, Input input, CarRenderer graphics, CarModel model, Aspect type ) {
+	protected Car( World box2dWorld, CarRenderer graphics, CarModel model, Aspect type ) {
 		super( box2dWorld );
 		this.graphics = graphics;
-		this.carAspect = type;
+		this.aspect = type;
 		this.impacts = 0;
-		this.inputSystem = input;
-
-		this.carInputMode = (input == null ? InputMode.InputFromReplay : InputMode.InputFromPlayer);
+		this.inputSystem = null;
+		this.inputMode = InputMode.NoInput;
 
 		carDesc = new CarDescriptor();
 		carDesc.carModel.set( model );
@@ -67,11 +67,11 @@ public class Car extends Box2DEntity {
 	}
 
 	public Aspect getCarAspect() {
-		return carAspect;
+		return aspect;
 	}
 
 	public InputMode getInputMode() {
-		return carInputMode;
+		return inputMode;
 	}
 
 	public CarRenderer getGraphics() {
@@ -92,6 +92,11 @@ public class Car extends Box2DEntity {
 
 	public Vector2 getLateralForceRear() {
 		return carSim.lateralForceRear;
+	}
+
+	public void setInputSystem( Input inputSystem ) {
+		this.inputSystem = inputSystem;
+		this.inputMode = (inputSystem != null ? InputMode.InputFromPlayer : InputMode.NoInput);
 	}
 
 	private WindowedMean frictionMean = new WindowedMean( 16 );
@@ -295,7 +300,7 @@ public class Car extends Box2DEntity {
 
 	@Override
 	public void onDebug( SpriteBatch batch ) {
-		if( carInputMode != InputMode.InputFromPlayer ) {
+		if( inputMode != InputMode.InputFromPlayer ) {
 			return;
 		}
 

@@ -24,7 +24,6 @@ import com.bitfire.uracer.game.Replay;
 import com.bitfire.uracer.game.actors.Car;
 import com.bitfire.uracer.game.actors.Car.Aspect;
 import com.bitfire.uracer.game.actors.Car.InputMode;
-import com.bitfire.uracer.game.actors.CarEvent;
 import com.bitfire.uracer.game.actors.CarFactory;
 import com.bitfire.uracer.game.actors.CarModel;
 import com.bitfire.uracer.game.actors.GhostCar;
@@ -33,6 +32,7 @@ import com.bitfire.uracer.game.audio.CarImpactSoundEffect;
 import com.bitfire.uracer.game.data.GameData;
 import com.bitfire.uracer.game.effects.CarSkidMarks;
 import com.bitfire.uracer.game.effects.TrackEffects;
+import com.bitfire.uracer.game.events.CarEvent;
 import com.bitfire.uracer.game.events.DriftStateEvent;
 import com.bitfire.uracer.game.events.GameLogicEvent;
 import com.bitfire.uracer.game.events.PlayerStateEvent;
@@ -129,7 +129,8 @@ public class GameLogic implements CarEvent.Listener, PlayerStateEvent.Listener, 
 	public GameLogic( String levelName, Aspect carAspect, CarModel carModel ) {
 		// register event handlers
 		GameEvents.playerState.addListener( this );
-		GameEvents.carEvent.addListener( this );
+		GameEvents.carEvent.addListener( this, CarEvent.Type.onCollision );
+		GameEvents.carEvent.addListener( this, CarEvent.Type.onComputeForces );
 		GameEvents.playerDriftState.addListener( this );
 
 		// create tweening support
@@ -153,6 +154,7 @@ public class GameLogic implements CarEvent.Listener, PlayerStateEvent.Listener, 
 		// create player and setup its position in the world
 		playerCar = CarFactory.createPlayer( GameData.Environment.b2dWorld, input, carAspect, carModel );
 		playerCar.setTransform( gameWorld.playerStartPos, gameWorld.playerStartOrient );
+		playerCar.setInputSystem( input );
 
 		createStates( playerCar, CarFactory.createGhost( GameData.Environment.b2dWorld, playerCar ) );
 
