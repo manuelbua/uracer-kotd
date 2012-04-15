@@ -56,7 +56,7 @@ import com.bitfire.uracer.game.messager.MessageAccessor;
 import com.bitfire.uracer.game.messager.Messager;
 import com.bitfire.uracer.game.states.DriftState;
 import com.bitfire.uracer.game.states.LapState;
-import com.bitfire.uracer.game.states.PlayerState;
+import com.bitfire.uracer.game.states.CarState;
 import com.bitfire.uracer.game.tween.GameTweener;
 import com.bitfire.uracer.game.tween.WcTweener;
 import com.bitfire.uracer.game.world.GameWorld;
@@ -119,7 +119,7 @@ public class GameLogic implements CarEvent.Listener, PlayerStateEvent.Listener, 
 	private Messager messager = null;
 
 	// states
-	private PlayerState playerState = null;
+	private CarState playerState = null;
 	private DriftState playerDriftState = null;
 	private LapState lapState = null;
 
@@ -220,7 +220,7 @@ public class GameLogic implements CarEvent.Listener, PlayerStateEvent.Listener, 
 	}
 
 	private void createStates( Car player, GhostCar playerGhost ) {
-		playerState = new PlayerState( gameWorld, player, playerGhost );
+		playerState = new CarState( gameWorld, player, playerGhost );
 		playerDriftState = new DriftState( player );
 		lapState = new LapState();
 	}

@@ -11,14 +11,14 @@ import com.bitfire.uracer.game.actors.Car.InputMode;
 import com.bitfire.uracer.game.actors.CarEvent.Data;
 import com.bitfire.uracer.game.actors.CarEvent.Type;
 import com.bitfire.uracer.game.logic.sounds.SoundEffect;
-import com.bitfire.uracer.game.states.PlayerState;
+import com.bitfire.uracer.game.states.CarState;
 import com.bitfire.uracer.utils.AMath;
 import com.bitfire.uracer.utils.AudioUtils;
 
 public final class CarImpactSoundEffect extends SoundEffect {
 	private Sound soundLow1, soundLow2, soundMid1, soundMid2, soundHigh;
 	private long lastSoundTimeMs = 0;
-	private PlayerState playerState;
+	private CarState playerState;
 
 	private static final long MinElapsedBetweenSoundsMs = 500;
 	private static final float MinImpactForce = 20;
@@ -41,7 +41,7 @@ public final class CarImpactSoundEffect extends SoundEffect {
 		}
 	};
 
-	public CarImpactSoundEffect( PlayerState playerState ) {
+	public CarImpactSoundEffect( CarState playerState ) {
 		GameEvents.carEvent.addListener( carEvent, CarEvent.Type.onCollision );
 		this.playerState = playerState;
 

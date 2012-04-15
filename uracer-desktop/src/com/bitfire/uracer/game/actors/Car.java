@@ -42,7 +42,7 @@ public class Car extends Box2DEntity {
 	protected InputMode inputMode = InputMode.NoInput;
 	private Aspect aspect = Aspect.OldSkool;
 
-	protected Car( World box2dWorld, CarRenderer graphics, CarModel model, Aspect type ) {
+	public Car( World box2dWorld, CarRenderer graphics, CarModel model, Aspect type ) {
 		super( box2dWorld );
 		this.graphics = graphics;
 		this.aspect = type;
@@ -66,7 +66,7 @@ public class Car extends Box2DEntity {
 		body.setBullet( true );
 		body.setUserData( this );
 
-		Gdx.app.log( "Car", "Input mode is " + this.inputMode.toString() );
+		Gdx.app.log( getClass().getSimpleName(), "Input mode is " + this.inputMode.toString() );
 	}
 
 	public Aspect getCarAspect() {

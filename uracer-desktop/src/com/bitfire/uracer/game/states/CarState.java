@@ -9,7 +9,7 @@ import com.bitfire.uracer.game.events.PlayerStateEvent;
 import com.bitfire.uracer.game.world.GameWorld;
 import com.bitfire.uracer.utils.AMath;
 
-public final class PlayerState {
+public final class CarState {
 	public Car car;
 	public GhostCar ghost;
 
@@ -39,7 +39,7 @@ public final class PlayerState {
 	};
 
 	// FIXME remove GhostCar nonsense from here
-	public PlayerState( GameWorld world, Car car, GhostCar ghost ) {
+	public CarState( GameWorld world, Car car, GhostCar ghost ) {
 		GameEvents.gameLogic.addListener( gameLogicEvent, GameLogicEvent.Type.onReset );
 		GameEvents.gameLogic.addListener( gameLogicEvent, GameLogicEvent.Type.onRestart );
 		this.world = world;
