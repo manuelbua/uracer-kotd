@@ -55,6 +55,9 @@ import com.bitfire.uracer.game.tween.GameTweener;
 import com.bitfire.uracer.game.tween.WcTweener;
 import com.bitfire.uracer.game.world.GameWorld;
 import com.bitfire.uracer.game.world.WorldDefs.TileLayer;
+import com.bitfire.uracer.postprocessing.PostProcessor;
+import com.bitfire.uracer.postprocessing.effects.Bloom;
+import com.bitfire.uracer.postprocessing.effects.Zoom;
 import com.bitfire.uracer.task.Task;
 import com.bitfire.uracer.utils.AMath;
 import com.bitfire.uracer.utils.BoxedFloat;
@@ -62,13 +65,19 @@ import com.bitfire.uracer.utils.BoxedFloatAccessor;
 import com.bitfire.uracer.utils.Convert;
 import com.bitfire.uracer.utils.NumberString;
 
-// TODO, GameTasks entity for managing them with get(name)/get(id)? Opening up to Components interacting with each other? I don't quite like that..
+// TODO, GameTasks entity for managing them with get(name)/get(id)? Opening up to Components interacting with each
+// other? I don't quite like that..
 public class GameLogic implements CarEvent.Listener, PlayerStateEvent.Listener, DriftStateEvent.Listener {
 	// lap
 	private boolean isFirstLap = true;
 	private long lastRecordedLapId = 0;
 
 	private DirectorController controller = null;
+
+	// post-processing
+	private PostProcessor postProcessor;
+	private Bloom bloom = null;
+	private Zoom zoom = null;
 
 	// replay
 	private Recorder recorder = null;
@@ -104,7 +113,7 @@ public class GameLogic implements CarEvent.Listener, PlayerStateEvent.Listener, 
 		}
 	};
 
-	public GameLogic() {
+	public GameLogic( PostProcessor postProcessor ) {
 		// create tweening support
 		Tween.registerAccessor( Message.class, new MessageAccessor() );
 		Tween.registerAccessor( HudLabel.class, new HudLabelAccessor() );
@@ -115,6 +124,8 @@ public class GameLogic implements CarEvent.Listener, PlayerStateEvent.Listener, 
 
 		// game tweener, for all the rest
 		GameTweener.init();
+
+		this.postProcessor = postProcessor;
 
 		recorder = new Recorder();
 		timeMultiplier.value = 1f;
@@ -132,6 +143,7 @@ public class GameLogic implements CarEvent.Listener, PlayerStateEvent.Listener, 
 		controller = new DirectorController( Config.Graphics.CameraInterpolationMode, Director.halfViewport, world.worldSizeScaledPx, world.worldSizeTiles );
 
 		createGameTasks();
+		setupPostProcessing();
 
 		messager.show( "COOL STUFF!", 60, Message.Type.Information, MessagePosition.Bottom, MessageSize.Big );
 	}
@@ -142,6 +154,28 @@ public class GameLogic implements CarEvent.Listener, PlayerStateEvent.Listener, 
 		}
 
 		gameTasks.clear();
+	}
+
+	private void setupPostProcessing() {
+		if( !Config.Graphics.EnablePostProcessingFx || postProcessor == null ) {
+			return;
+		}
+
+		bloom = new Bloom( Config.PostProcessing.RttFboWidth, Config.PostProcessing.RttFboHeight );
+
+		// Bloom.Settings bs = new Bloom.Settings( "arrogance-1 / rtt=0.25 / @1920x1050", BlurType.Gaussian5x5b, 1, 1,
+		// 0.25f, 1f, 0.1f, 0.8f, 1.4f );
+		// Bloom.Settings bs = new Bloom.Settings( "arrogance-2 / rtt=0.25 / @1920x1050", BlurType.Gaussian5x5b, 1, 1,
+		// 0.35f, 1f, 0.1f, 1.4f, 0.75f );
+
+		float threshold = ((GameData.Environment.gameWorld.isNightMode() && !Config.Graphics.DumbNightMode) ? 0.2f : 0.45f);
+		Bloom.Settings bloomSettings = new Bloom.Settings( "subtle", Config.PostProcessing.BlurType, 1, 1.5f, threshold, 1f, 0.5f, 1f, 1.5f );
+		bloom.setSettings( bloomSettings );
+
+		zoom = new Zoom( Config.PostProcessing.ZoomQuality );
+		postProcessor.addEffect( zoom );
+
+		postProcessor.addEffect( bloom );
 	}
 
 	private void createGameTasks() {
@@ -220,6 +254,8 @@ public class GameLogic implements CarEvent.Listener, PlayerStateEvent.Listener, 
 		updateGameTasks();
 		updateTimeMultiplier();
 
+		updatePostProcessing();
+
 		return true;
 	}
 
@@ -250,6 +286,21 @@ public class GameLogic implements CarEvent.Listener, PlayerStateEvent.Listener, 
 	private void updateHud() {
 		hud.update( GameData.States.lap );
 		hudDrifting.update( GameData.States.playerDrift );
+	}
+
+	private void updatePostProcessing() {
+		float factor = 1 - (URacer.timeMultiplier - 0.3f) / (Config.Physics.PhysicsTimeMultiplier - 0.3f);
+
+		if( Config.Graphics.EnablePostProcessingFx && zoom != null ) {
+			zoom.setOrigin( Director.screenPosFor( GameData.States.player.car.getBody() ) );
+			zoom.setStrength( -0.05f * factor );
+		}
+
+		if( Config.Graphics.EnablePostProcessingFx && bloom != null && zoom != null ) {
+			bloom.setBaseSaturation( 0.5f - 0.5f * factor );
+			bloom.setBloomSaturation( 1.5f - factor * 1.15f );
+			bloom.setBloomIntesity( 1f + factor * 1.75f );
+		}
 	}
 
 	//
