@@ -72,7 +72,7 @@ public final class LapState {
 
 	public float getElapsedSeconds() {
 		// return ((float)(System.nanoTime() - startTimeNs) / 1000000000f) * URacer.timeMultiplier;
-		return time.elapsed( Time.Reference.Ticks );
+		return time.elapsed( Time.Reference.TickSeconds );
 	}
 
 	public Replay getReplay( int index ) {

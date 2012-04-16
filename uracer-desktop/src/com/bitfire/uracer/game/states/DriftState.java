@@ -2,9 +2,9 @@ package com.bitfire.uracer.game.states;
 
 import com.bitfire.uracer.game.Time;
 import com.bitfire.uracer.game.actors.Car;
+import com.bitfire.uracer.game.events.DriftStateEvent.Type;
 import com.bitfire.uracer.game.events.GameEvents;
 import com.bitfire.uracer.game.events.GameLogicEvent;
-import com.bitfire.uracer.game.events.DriftStateEvent.Type;
 import com.bitfire.uracer.utils.AMath;
 
 public final class DriftState {
@@ -19,7 +19,7 @@ public final class DriftState {
 
 	private final GameLogicEvent.Listener gameLogicEvent = new GameLogicEvent.Listener() {
 		@Override
-		public void gameLogicEvent( com.bitfire.uracer.game.events.GameLogicEvent.Type type ) {
+		public void gameLogicEvent( GameLogicEvent.Type type ) {
 			switch( type ) {
 			case onReset:
 			case onRestart:
@@ -36,7 +36,8 @@ public final class DriftState {
 		reset();
 	}
 
-	// TODO, a State interface with a reset() method! this way it could be assumed the state can be bound to some other car
+	// TODO, a State interface with a reset() method! this way it could be assumed the state can be bound to some other
+	// car
 	public void reset() {
 		time = new Time();
 		collisionTime = new Time();
@@ -60,7 +61,7 @@ public final class DriftState {
 		hasCollided = true;
 		collisionTime.start();
 		time.stop();
-		GameEvents.driftState.trigger( this, Type.onEndDrift );
+		GameEvents.driftState.trigger( car, Type.onEndDrift );
 	}
 
 	public void update() {
@@ -81,12 +82,12 @@ public final class DriftState {
 		if( hasCollided ) {
 			// ignore drifts for a couple of seconds
 			// TODO use this in a penalty system
-			if( collisionTime.elapsed( Time.Reference.Ticks ) >= 2 ) {
+			if( collisionTime.elapsed( Time.Reference.TickSeconds ) >= 2 ) {
 				collisionTime.stop();
 				hasCollided = false;
 			}
 		} else {
-			// TODO should be expressed as a percent value ref. maxvel, to scale to different max velocities
+			// FIXME should be expressed as a percent value ref. maxvel, to scale to different max velocities
 			float vel = car.getCarDescriptor().velocity_wc.len();
 
 			if( !isDrifting ) {
@@ -96,7 +97,8 @@ public final class DriftState {
 					hasCollided = false;
 					// driftStartTime = System.currentTimeMillis();
 					time.start();
-					GameEvents.driftState.trigger( this, Type.onBeginDrift );
+					GameEvents.driftState.trigger( car, Type.onBeginDrift );
+//					Gdx.app.log( "DriftState", car.getClass().getSimpleName() + " onBeginDrift()" );
 				}
 			} else {
 				// search for onEndDrift
@@ -104,13 +106,14 @@ public final class DriftState {
 					time.stop();
 					isDrifting = false;
 					hasCollided = false;
-					GameEvents.driftState.trigger( this, Type.onEndDrift );
+					GameEvents.driftState.trigger( car, Type.onEndDrift );
+//					Gdx.app.log( "DriftState", car.getClass().getSimpleName() + " onEndDrift(), " + time.elapsed( Time.Reference.TickSeconds ) + "s" );
 				}
 			}
 		}
 	}
 
 	public float driftSeconds() {
-		return time.elapsed( Time.Reference.Ticks );
+		return time.elapsed( Time.Reference.TickSeconds );
 	}
 }

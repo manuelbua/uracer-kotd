@@ -12,7 +12,7 @@ import com.bitfire.uracer.task.TaskManagerEvent.Order;
  * @author bmanuel */
 public final class Time extends Task {
 	public enum Reference {
-		Absolute, Ticks, NumberOfTicks
+		Absolute, TickSeconds, NumberOfTicks
 	}
 
 	private static final float oneOnOneBillion = 1.0f / 1000000000.0f;
@@ -72,7 +72,7 @@ public final class Time extends Task {
 		long now = (stopped ? nsStopTime : System.nanoTime());
 
 		switch( timeReference ) {
-		case Ticks:				// returns seconds
+		case TickSeconds:				// returns seconds
 			return ticksInSeconds;
 		case NumberOfTicks:		// returns the tick count so far
 			return ticks;

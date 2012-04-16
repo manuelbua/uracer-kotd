@@ -1,6 +1,5 @@
 package com.bitfire.uracer.game.states;
 
-import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.math.Vector2;
 import com.bitfire.uracer.game.actors.Car;
 import com.bitfire.uracer.game.events.CarStateEvent;
@@ -63,7 +62,7 @@ public final class CarState {
 
 		if( (lastTileX != currTileX) || (lastTileY != currTileY) ) {
 			GameEvents.carState.trigger( car, CarStateEvent.Type.onTileChanged );
-			Gdx.app.log( "CarState", car.getClass().getSimpleName() + " onTileChanged(" + currTileX + "," + currTileY + ")" );
+//			Gdx.app.log( "CarState", car.getClass().getSimpleName() + " onTileChanged(" + currTileX + "," + currTileY + ")" );
 		}
 
 		// speed/force normalized factors

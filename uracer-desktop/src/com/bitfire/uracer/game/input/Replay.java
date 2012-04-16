@@ -60,7 +60,7 @@ public class Replay {
 
 	public void end() {
 		time.stop();
-		trackTimeSeconds = time.elapsed( Time.Reference.Ticks );
+		trackTimeSeconds = time.elapsed( Time.Reference.TickSeconds );
 		isValid = true;
 	}
 
