@@ -1,5 +1,6 @@
 package com.bitfire.uracer.game.states;
 
+import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.math.Vector2;
 import com.bitfire.uracer.game.actors.Car;
 import com.bitfire.uracer.game.events.CarStateEvent;
@@ -37,14 +38,11 @@ public final class CarState {
 	};
 
 	public CarState( GameWorld world, Car car ) {
+		this.world = world;
+		this.car = car;
+
 		GameEvents.gameLogic.addListener( gameLogicEvent, GameLogicEvent.Type.onReset );
 		GameEvents.gameLogic.addListener( gameLogicEvent, GameLogicEvent.Type.onRestart );
-		this.world = world;
-		setData( car );
-	}
-
-	private void setData( Car car ) {
-		this.car = car;
 
 		// precompute factors
 		if( car != null ) {
@@ -54,30 +52,28 @@ public final class CarState {
 	}
 
 	public void update() {
-		if( car != null ) {
-			// onTileChanged
-			lastTileX = currTileX;
-			lastTileY = currTileY;
+		lastTileX = currTileX;
+		lastTileY = currTileY;
 
-			// compute car's tile position
-			tilePosition.set( world.pxToTile( car.state().position.x, car.state().position.y ) );
+		// compute car's tile position
+		tilePosition.set( world.pxToTile( car.state().position.x, car.state().position.y ) );
 
-			currTileX = (int)tilePosition.x;
-			currTileY = (int)tilePosition.y;
+		currTileX = (int)tilePosition.x;
+		currTileY = (int)tilePosition.y;
 
-			if( (lastTileX != currTileX) || (lastTileY != currTileY) ) {
-				GameEvents.carState.trigger( this, CarStateEvent.Type.onTileChanged );
-			}
-
-			// speed/force normalized factors
-			currCarSpeedSquared = car.getCarDescriptor().velocity_wc.len2();
-			currSpeedFactor = AMath.clamp( currCarSpeedSquared / carMaxSpeedSquared, 0f, 1f );
-			currForceFactor = AMath.clamp( car.getCarDescriptor().throttle / carMaxForce, 0f, 1f );
+		if( (lastTileX != currTileX) || (lastTileY != currTileY) ) {
+			GameEvents.carState.trigger( car, CarStateEvent.Type.onTileChanged );
+			Gdx.app.log( "CarState", car.getClass().getSimpleName() + " onTileChanged(" + currTileX + "," + currTileY + ")" );
 		}
+
+		// speed/force normalized factors
+		currCarSpeedSquared = car.getCarDescriptor().velocity_wc.len2();
+		currSpeedFactor = AMath.clamp( currCarSpeedSquared / carMaxSpeedSquared, 0f, 1f );
+		currForceFactor = AMath.clamp( car.getCarDescriptor().throttle / carMaxForce, 0f, 1f );
 	}
 
 	public void reset() {
-		// causes an onTileChanged event to be raised
+		// causes an onTileChanged event to be raised the next update step
 		lastTileX = -1;
 		lastTileY = -1;
 		currTileX = -1;

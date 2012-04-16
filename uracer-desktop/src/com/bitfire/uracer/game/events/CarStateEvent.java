@@ -1,6 +1,6 @@
 package com.bitfire.uracer.game.events;
 
-import com.bitfire.uracer.game.states.CarState;
+import com.bitfire.uracer.game.actors.Car;
 import com.bitfire.uracer.utils.Event;
 import com.bitfire.uracer.utils.EventListener;
 import com.bitfire.uracer.utils.EventNotifier;
@@ -24,12 +24,12 @@ public final class CarStateEvent extends Event {
 		notifiers[type.ordinal()].addListener( listener );
 	}
 
-	public void trigger( CarState carState, Type type ) {
-		this.source = carState;
+	public void trigger( Car source, Type type ) {
+		this.source = source;
 		notifiers[type.ordinal()].playerStateEvent( type );
 	}
 
-	public CarState source;
+	public Car source;
 	private Notifier[] notifiers = new Notifier[ Type.values().length ];
 
 	private class Notifier extends EventNotifier<Listener> implements Listener {
