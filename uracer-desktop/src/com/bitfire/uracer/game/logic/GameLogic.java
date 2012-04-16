@@ -29,8 +29,6 @@ import com.bitfire.uracer.game.actors.CarFactory;
 import com.bitfire.uracer.game.actors.CarModel;
 import com.bitfire.uracer.game.actors.GhostCar;
 import com.bitfire.uracer.game.collisions.GameContactListener;
-import com.bitfire.uracer.game.events.CarStateEvent;
-import com.bitfire.uracer.game.events.DriftStateEvent;
 import com.bitfire.uracer.game.events.GameEvents;
 import com.bitfire.uracer.game.events.GameLogicEvent;
 import com.bitfire.uracer.game.input.Input;
@@ -55,7 +53,9 @@ import com.bitfire.uracer.game.messager.Message.Type;
 import com.bitfire.uracer.game.messager.MessageAccessor;
 import com.bitfire.uracer.game.messager.Messager;
 import com.bitfire.uracer.game.states.CarState;
+import com.bitfire.uracer.game.states.CarStateEvent;
 import com.bitfire.uracer.game.states.DriftState;
+import com.bitfire.uracer.game.states.DriftStateEvent;
 import com.bitfire.uracer.game.states.LapState;
 import com.bitfire.uracer.game.tween.GameTweener;
 import com.bitfire.uracer.game.tween.WcTweener;
@@ -144,7 +144,7 @@ public class GameLogic implements CarEvent.Listener, CarStateEvent.Listener, Dri
 		this.box2dWorld.setContactListener( new GameContactListener() );
 
 		// register event handlers
-		GameEvents.carState.addListener( this );
+		GameEvents.carState.addListener( this, CarStateEvent.Type.onTileChanged );
 		GameEvents.car.addListener( this, CarEvent.Type.onCollision );
 		GameEvents.car.addListener( this, CarEvent.Type.onComputeForces );
 		GameEvents.driftState.addListener( this, DriftStateEvent.Type.onBeginDrift );

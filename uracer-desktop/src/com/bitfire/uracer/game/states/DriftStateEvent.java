@@ -1,6 +1,5 @@
-package com.bitfire.uracer.game.events;
+package com.bitfire.uracer.game.states;
 
-import com.bitfire.uracer.game.states.DriftState;
 import com.bitfire.uracer.utils.Event;
 import com.bitfire.uracer.utils.EventListener;
 import com.bitfire.uracer.utils.EventNotifier;

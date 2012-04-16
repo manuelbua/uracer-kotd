@@ -5,7 +5,7 @@ import com.bitfire.uracer.utils.EventListener;
 import com.bitfire.uracer.utils.EventNotifier;
 
 public class GameRendererEvent {
-	/** types of render queue */
+	/** defines the type of render queue */
 	public enum Type {
 		BatchBeforeMeshes, BatchAfterMeshes, BatchDebug;
 	}

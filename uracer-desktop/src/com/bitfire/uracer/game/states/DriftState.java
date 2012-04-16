@@ -2,9 +2,9 @@ package com.bitfire.uracer.game.states;
 
 import com.bitfire.uracer.game.Time;
 import com.bitfire.uracer.game.actors.Car;
-import com.bitfire.uracer.game.events.DriftStateEvent.Type;
 import com.bitfire.uracer.game.events.GameEvents;
 import com.bitfire.uracer.game.events.GameLogicEvent;
+import com.bitfire.uracer.game.states.DriftStateEvent.Type;
 import com.bitfire.uracer.utils.AMath;
 
 public final class DriftState {
