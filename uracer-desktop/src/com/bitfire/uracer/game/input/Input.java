@@ -9,7 +9,7 @@ import com.bitfire.uracer.task.TaskManagerEvent;
 // FIXME, this should update at constant rate even when time dilation/compression are active!
 public final class Input extends InputAdapter {
 	// keys
-	private int[] buttons = new int[ 256 ];;
+	private int[] buttons = new int[ 256 ];
 
 	// touches
 	private Vector2 touchCoords = new Vector2( 0, 0 );
