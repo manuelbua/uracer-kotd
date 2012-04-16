@@ -1,19 +1,20 @@
-package com.bitfire.uracer.game.states;
+package com.bitfire.uracer.game.events;
 
+import com.bitfire.uracer.game.states.DriftState;
 import com.bitfire.uracer.utils.Event;
 import com.bitfire.uracer.utils.EventListener;
 import com.bitfire.uracer.utils.EventNotifier;
 
-public final class CarStateEvent extends Event {
+public final class DriftStateEvent extends Event {
 	public enum Type {
-		onTileChanged
+		onBeginDrift, onEndDrift
 	}
 
 	public interface Listener extends EventListener {
-		void playerStateEvent( Type type );
+		void driftStateEvent( Type type );
 	}
 
-	public CarStateEvent() {
+	public DriftStateEvent() {
 		for( Type t : Type.values() ) {
 			notifiers[t.ordinal()] = new Notifier();
 		}
@@ -23,19 +24,19 @@ public final class CarStateEvent extends Event {
 		notifiers[type.ordinal()].addListener( listener );
 	}
 
-	public void trigger( CarState carState, Type type ) {
-		this.source = carState;
-		notifiers[type.ordinal()].playerStateEvent( type );
+	public void trigger( DriftState driftState, Type type ) {
+		this.source = driftState;
+		notifiers[type.ordinal()].driftStateEvent( type );
 	}
 
-	public CarState source;
+	public DriftState source;
 	private Notifier[] notifiers = new Notifier[ Type.values().length ];
 
 	private class Notifier extends EventNotifier<Listener> implements Listener {
 		@Override
-		public void playerStateEvent( Type type ) {
+		public void driftStateEvent( Type type ) {
 			for( Listener listener : listeners ) {
-				listener.playerStateEvent( type );
+				listener.driftStateEvent( type );
 			}
 		}
 	};

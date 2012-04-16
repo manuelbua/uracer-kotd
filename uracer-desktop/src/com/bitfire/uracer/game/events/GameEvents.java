@@ -1,8 +1,6 @@
 package com.bitfire.uracer.game.events;
 
 import com.bitfire.uracer.game.actors.CarEvent;
-import com.bitfire.uracer.game.states.CarStateEvent;
-import com.bitfire.uracer.game.states.DriftStateEvent;
 
 public final class GameEvents {
 
