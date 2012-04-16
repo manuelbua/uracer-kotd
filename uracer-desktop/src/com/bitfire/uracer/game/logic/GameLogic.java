@@ -163,7 +163,7 @@ public class GameLogic implements CarEvent.Listener, CarStateEvent.Listener, Dri
 		// creates playerCar and playerGhostCar
 		createPlayer( carAspect, carModel );
 
-		createStates( playerCar, playerGhostCar );
+		createStates( playerCar );
 
 		// creates global camera controller
 		controller = new DirectorController( Config.Graphics.CameraInterpolationMode, Director.halfViewport, gameWorld.worldSizeScaledPx, gameWorld.worldSizeTiles );
@@ -222,7 +222,7 @@ public class GameLogic implements CarEvent.Listener, CarStateEvent.Listener, Dri
 		GameTweener.init();
 	}
 
-	private void createStates( Car player, GhostCar ghost ) {
+	private void createStates( Car player ) {
 		// player-bound states
 		playerState = new CarState( gameWorld, player );
 		playerDriftState = new DriftState( player );
