@@ -145,8 +145,8 @@ public class GameLogic implements CarEvent.Listener, CarStateEvent.Listener, Dri
 
 		// register event handlers
 		GameEvents.carState.addListener( this );
-		GameEvents.carEvent.addListener( this, CarEvent.Type.onCollision );
-		GameEvents.carEvent.addListener( this, CarEvent.Type.onComputeForces );
+		GameEvents.car.addListener( this, CarEvent.Type.onCollision );
+		GameEvents.car.addListener( this, CarEvent.Type.onComputeForces );
 		GameEvents.driftState.addListener( this, DriftStateEvent.Type.onBeginDrift );
 		GameEvents.driftState.addListener( this, DriftStateEvent.Type.onEndDrift );
 
@@ -412,7 +412,7 @@ public class GameLogic implements CarEvent.Listener, CarStateEvent.Listener, Dri
 	public void carEvent( CarEvent.Type type, CarEvent.Data data ) {
 		switch( type ) {
 		case onCollision:
-			Car car = GameEvents.carEvent.data.car;
+			Car car = GameEvents.car.data.car;
 			boolean isPlayerCar = (car.getInputMode() == InputMode.InputFromPlayer);
 			if( isPlayerCar && playerDriftState.isDrifting ) {
 				playerDriftState.invalidateByCollision();

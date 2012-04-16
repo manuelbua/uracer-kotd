@@ -35,7 +35,7 @@ public final class CarImpactSoundEffect extends SoundEffect {
 	private CarEvent.Listener carEvent = new CarEvent.Listener() {
 		@Override
 		public void carEvent( Type type, Data data ) {
-			Car car = GameEvents.carEvent.data.car;
+			Car car = GameEvents.car.data.car;
 			if( !forPlayerOnly || (forPlayerOnly && (car.getInputMode() == InputMode.InputFromPlayer)) ) {
 				impact( data.impulses.len(), carState.currSpeedFactor );
 			}
@@ -43,7 +43,7 @@ public final class CarImpactSoundEffect extends SoundEffect {
 	};
 
 	public CarImpactSoundEffect( CarState carState, boolean playOnlyAtPlayerImpacts ) {
-		GameEvents.carEvent.addListener( carEvent, CarEvent.Type.onCollision );
+		GameEvents.car.addListener( carEvent, CarEvent.Type.onCollision );
 		this.carState = carState;
 		this.forPlayerOnly = playOnlyAtPlayerImpacts;
 

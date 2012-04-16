@@ -272,15 +272,15 @@ public class Car extends Box2DEntity {
 		forces.velocity_y = carDesc.velocity_wc.y;
 		forces.angularVelocity = carDesc.angularvelocity;
 
-		GameEvents.carEvent.data.setForces( forces );
-		GameEvents.carEvent.trigger( this, CarEvent.Type.onComputeForces );
+		GameEvents.car.data.setForces( forces );
+		GameEvents.car.trigger( this, CarEvent.Type.onComputeForces );
 	}
 
 	public void onCollide( Fixture other, Vector2 normalImpulses ) {
 		impacts++;
 
-		GameEvents.carEvent.data.setCollisionData( other, normalImpulses );
-		GameEvents.carEvent.trigger( this, CarEvent.Type.onCollision );
+		GameEvents.car.data.setCollisionData( other, normalImpulses );
+		GameEvents.car.trigger( this, CarEvent.Type.onCollision );
 	}
 
 	@Override
