@@ -128,21 +128,21 @@ public final class Input extends InputAdapter {
 		return (isOff( keycode ) && wasOn( keycode ));
 	}
 
-	private long last = 0;
-	private boolean start = true;
+//	private long last = 0;
+//	private boolean start = true;
 
 	private void tick() {
 
-		if( start ) {
-			last = System.nanoTime();
-			start = false;
-		} else {
-			long now = System.nanoTime();
-			float delta = now - last;
-			last = now;
-			delta /= 1000000000f;
-			Gdx.app.log( "Input", "ticked " + delta + " seconds ago" );
-		}
+//		if( start ) {
+//			last = System.nanoTime();
+//			start = false;
+//		} else {
+//			long now = System.nanoTime();
+//			float delta = now - last;
+//			last = now;
+//			delta /= 1000000000f;
+//			Gdx.app.log( "Input", "ticked " + delta + " seconds ago" );
+//		}
 
 		// if( Gdx.input.isPeripheralAvailable( Peripheral.Accelerometer ) )
 		// {
