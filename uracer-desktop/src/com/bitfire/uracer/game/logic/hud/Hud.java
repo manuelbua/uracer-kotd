@@ -17,6 +17,7 @@ import com.bitfire.uracer.task.Task;
 import com.bitfire.uracer.utils.Manager;
 import com.bitfire.uracer.utils.NumberString;
 
+// FIXME should extrapolate the lap times thing.. this is just a fucking manager
 public final class Hud extends Task {
 
 	private final Manager<HudElement> manager = new Manager<HudElement>();
@@ -79,9 +80,9 @@ public final class Hud extends Task {
 		int gridX = (int)((float)Gdx.graphics.getWidth() / 5f);
 
 		// laptimes component
-		best = new HudLabel( scalingStrategy, Art.fontCurseYR, "BEST  TIME\n-.----" );
-		curr = new HudLabel( scalingStrategy, Art.fontCurseYR, "YOUR  TIME\n-.----" );
-		last = new HudLabel( scalingStrategy, Art.fontCurseYR, "LAST  TIME\n-.----" );
+		best = new HudLabel( scalingStrategy, Art.fontCurseYRbig, "BEST  TIME\n-.----" );
+		curr = new HudLabel( scalingStrategy, Art.fontCurseYRbig, "YOUR  TIME\n-.----" );
+		last = new HudLabel( scalingStrategy, Art.fontCurseYRbig, "LAST  TIME\n-.----" );
 
 		curr.setPosition( gridX, 50 * scalingStrategy.invTileMapZoomFactor );
 		last.setPosition( gridX * 3, 50 * scalingStrategy.invTileMapZoomFactor );

@@ -6,7 +6,6 @@ import com.badlogic.gdx.math.Vector2;
 import com.bitfire.uracer.task.Task;
 import com.bitfire.uracer.task.TaskManagerEvent;
 
-// FIXME, this should update at constant rate even when time dilation/compression are active!
 public final class Input extends InputAdapter {
 	// keys
 	private int[] buttons = new int[ 256 ];

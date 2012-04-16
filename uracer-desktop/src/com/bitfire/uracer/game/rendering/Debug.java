@@ -101,7 +101,7 @@ public final class Debug {
 
 		String text = "java heap = " + NumberString.format( javaHeapMb ) + "MB" + " - native heap = " + NumberString.format( nativeHeapMb ) + "MB";
 
-		SpriteBatchUtils.drawString( batch, text, (Gdx.graphics.getWidth() - text.length() * Art.fontWidth) / 2, 0 );
+		SpriteBatchUtils.drawString( batch, text, (Gdx.graphics.getWidth() - text.length() * Art.fontWidth) / 2, Gdx.graphics.getHeight() - Art.fontHeight );
 	}
 
 	public static void renderB2dWorld( World world, Matrix4 modelViewProj ) {
