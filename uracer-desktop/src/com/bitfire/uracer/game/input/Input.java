@@ -19,8 +19,8 @@ public final class Input extends InputAdapter {
 	private boolean is_dragging = false;
 
 	// mouse (desktop only)
-	private int mouseX, mouseY;
-	private Vector2 mouseCoords = new Vector2( 0, 0 );
+//	private int mouseX, mouseY;
+//	private Vector2 mouseCoords = new Vector2( 0, 0 );
 
 	// accelerometer
 	// private float accelX = 0, accelY = 0, accelZ = 0;
@@ -76,18 +76,18 @@ public final class Input extends InputAdapter {
 	public Vector2 getXY() {
 		return touchCoords;
 	}
-
-	public int getMouseX() {
-		return mouseX;
-	}
-
-	public int getMouseY() {
-		return mouseY;
-	}
-
-	public Vector2 getMouseXY() {
-		return mouseCoords;
-	}
+//
+//	public int getMouseX() {
+//		return mouseX;
+//	}
+//
+//	public int getMouseY() {
+//		return mouseY;
+//	}
+//
+//	public Vector2 getMouseXY() {
+//		return mouseCoords;
+//	}
 
 	// public float getAccelX()
 	// {
@@ -128,7 +128,22 @@ public final class Input extends InputAdapter {
 		return (isOff( keycode ) && wasOn( keycode ));
 	}
 
+	private long last = 0;
+	private boolean start = true;
+
 	private void tick() {
+
+		if( start ) {
+			last = System.nanoTime();
+			start = false;
+		} else {
+			long now = System.nanoTime();
+			float delta = now - last;
+			last = now;
+			delta /= 1000000000f;
+			Gdx.app.log( "Input", "ticked " + delta + " seconds ago" );
+		}
+
 		// if( Gdx.input.isPeripheralAvailable( Peripheral.Accelerometer ) )
 		// {
 		// accelX = Gdx.input.getAccelerometerX();
@@ -136,9 +151,9 @@ public final class Input extends InputAdapter {
 		// accelZ = Gdx.input.getAccelerometerZ();
 		// }
 
-		mouseX = Gdx.input.getX();
-		mouseY = Gdx.input.getY();
-		mouseCoords.set( mouseX, mouseY );
+//		mouseX = Gdx.input.getX();
+//		mouseY = Gdx.input.getY();
+//		mouseCoords.set( mouseX, mouseY );
 
 		int flag;
 		for( int i = 0; i < buttons.length; i++ ) {
