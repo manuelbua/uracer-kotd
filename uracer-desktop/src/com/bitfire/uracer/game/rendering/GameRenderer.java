@@ -1,4 +1,4 @@
-package com.bitfire.uracer.game;
+package com.bitfire.uracer.game.rendering;
 
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.GL20;
@@ -10,9 +10,6 @@ import com.bitfire.uracer.Director;
 import com.bitfire.uracer.ScalingStrategy;
 import com.bitfire.uracer.game.events.GameEvents;
 import com.bitfire.uracer.game.events.GameRendererEvent;
-import com.bitfire.uracer.game.rendering.Debug;
-import com.bitfire.uracer.game.rendering.GameBatchRenderer;
-import com.bitfire.uracer.game.rendering.GameWorldRenderer;
 import com.bitfire.uracer.game.world.GameWorld;
 import com.bitfire.uracer.postprocessing.PostProcessor;
 
