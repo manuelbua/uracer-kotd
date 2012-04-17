@@ -68,8 +68,10 @@ import com.bitfire.uracer.utils.BoxedFloatAccessor;
 import com.bitfire.uracer.utils.Convert;
 import com.bitfire.uracer.utils.NumberString;
 
-// TODO, GameTasks entity for managing them with get(name)/get(id)? Opening up to Components interacting with each
-// other? I don't quite like that..
+/** This concrete class manages to handle the inner game logic and its evolving states: it's all about gamedata, baby!
+ * This should be refactored into smaller pieces of logic, that's where the components should came into.
+ *
+ * @author bmanuel */
 public class GameLogic implements CarEvent.Listener, CarStateEvent.Listener, DriftStateEvent.Listener {
 	// scaling
 	private ScalingStrategy scalingStrategy = null;
@@ -467,22 +469,22 @@ public class GameLogic implements CarEvent.Listener, CarStateEvent.Listener, Dri
 			break;
 		case onEndDrift:
 			String seconds = NumberString.format( playerDriftState.driftSeconds() ) + "  seconds!";
-
+			boolean driftEndByCollision = playerDriftState.hasCollided;
 			float driftSeconds = playerDriftState.driftSeconds();
-			if( driftSeconds >= 1 && driftSeconds < 3f ) {
-				messager.enqueue( "NICE ONE!\n+" + seconds, 1f, Type.Good, MessagePosition.Middle, MessageSize.Big );
-			} else if( driftSeconds >= 3f && driftSeconds < 5f ) {
-				messager.enqueue( "FANTASTIC!\n+" + seconds, 1f, Type.Good, MessagePosition.Middle, MessageSize.Big );
-			} else if( driftSeconds >= 5f ) {
-				messager.enqueue( "UNREAL!\n+" + seconds, 1f, Type.Good, MessagePosition.Bottom, MessageSize.Big );
-			}
 
-			// epilogue, fade off drifting time label, slide in
-			// the specified epilogue message
-			if( playerDriftState.hasCollided ) {
-				hudDrifting.endDrift( "-" + NumberString.format( driftSeconds ), EndDriftType.BadDrift );
-			} else {
+			if( !driftEndByCollision ) {
+				if( driftSeconds >= 1 && driftSeconds < 3f ) {
+					messager.enqueue( "NICE ONE!\n+" + seconds, 1f, Type.Good, MessagePosition.Middle, MessageSize.Big );
+				} else if( driftSeconds >= 3f && driftSeconds < 5f ) {
+					messager.enqueue( "FANTASTIC!\n+" + seconds, 1f, Type.Good, MessagePosition.Middle, MessageSize.Big );
+				} else if( driftSeconds >= 5f ) {
+					messager.enqueue( "UNREAL!\n+" + seconds, 1f, Type.Good, MessagePosition.Bottom, MessageSize.Big );
+				}
+
 				hudDrifting.endDrift( "+" + NumberString.format( driftSeconds ), EndDriftType.GoodDrift );
+
+			} else {
+				hudDrifting.endDrift( "-" + NumberString.format( driftSeconds ), EndDriftType.BadDrift );
 			}
 
 			break;
