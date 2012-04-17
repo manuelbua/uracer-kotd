@@ -126,11 +126,7 @@ public class Car extends Box2DEntity {
 		frictionMean.clear();
 	}
 
-	public void setActive( boolean active, boolean resetPhysics ) {
-		if( resetPhysics ) {
-			resetPhysics();
-		}
-
+	public void setActive( boolean active ) {
 		if( active != body.isActive() ) {
 			body.setActive( active );
 		}
@@ -140,7 +136,7 @@ public class Car extends Box2DEntity {
 		return body.isActive();
 	}
 
-	private void resetPhysics() {
+	public void resetPhysics() {
 		boolean wasActive = isActive();
 
 		if( wasActive ) {
@@ -272,6 +268,7 @@ public class Car extends Box2DEntity {
 		forces.velocity_y = carDesc.velocity_wc.y;
 		forces.angularVelocity = carDesc.angularvelocity;
 
+		// trigger event, new forces have been computed
 		GameEvents.car.data.setForces( forces );
 		GameEvents.car.trigger( this, CarEvent.Type.onComputeForces );
 	}
@@ -287,6 +284,7 @@ public class Car extends Box2DEntity {
 	public void onBeforePhysicsSubstep() {
 		super.onBeforePhysicsSubstep();
 
+		// let's subclasses behave as needed, ask them to fill carForces with new data
 		onComputeCarForces( carForces );
 
 		// update the car descriptor with newly computed forces

@@ -21,14 +21,16 @@ public final class GhostCar extends Car {
 		hasReplay = false;
 		replay = null;
 		this.inputMode = InputMode.InputFromReplay;
-		setActive( false, true );
+		setActive( false );
+		resetPhysics();
 	}
 
 	public void setReplay( Replay replay ) {
 		this.replay = replay;
 		hasReplay = (replay != null && replay.getEventsCount() > 0);
 
-		setActive( hasReplay, true );
+		setActive( hasReplay );
+		resetPhysics();
 
 		if( hasReplay ) {
 			// System.out.println( "Replaying " + replay.id );
