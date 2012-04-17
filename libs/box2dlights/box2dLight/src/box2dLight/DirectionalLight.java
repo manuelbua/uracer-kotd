@@ -4,6 +4,7 @@ import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.GL10;
 import com.badlogic.gdx.graphics.GL20;
 import com.badlogic.gdx.graphics.Mesh;
+import com.badlogic.gdx.graphics.Mesh.VertexDataType;
 import com.badlogic.gdx.graphics.VertexAttribute;
 import com.badlogic.gdx.graphics.VertexAttributes.Usage;
 import com.badlogic.gdx.math.MathUtils;
@@ -42,14 +43,26 @@ public class DirectionalLight extends Light {
 		}
 		setDirection(direction);
 
-		lightMesh = new Mesh(staticLight, vertexNum, 0, new VertexAttribute(
+//		lightMesh = new Mesh(staticLight, vertexNum, 0, new VertexAttribute(
+//				Usage.Position, 2, "vertex_positions"), new VertexAttribute(
+//						Usage.ColorPacked, 4, "quad_colors"), new VertexAttribute(
+//								Usage.Generic, 1, "s"));
+//
+//		softShadowMesh = new Mesh(staticLight, vertexNum, 0,
+//				new VertexAttribute(Usage.Position, 2, "vertex_positions"),
+//				new VertexAttribute(Usage.ColorPacked, 4, "quad_colors"),
+//				new VertexAttribute(Usage.Generic, 1, "s"));
+
+		lightMesh = new Mesh(VertexDataType.VertexArray, staticLight, vertexNum, 0, new VertexAttribute(
 				Usage.Position, 2, "vertex_positions"), new VertexAttribute(
 				Usage.ColorPacked, 4, "quad_colors"), new VertexAttribute(
 				Usage.Generic, 1, "s"));
-		softShadowMesh = new Mesh(staticLight, vertexNum, 0,
+
+		softShadowMesh = new Mesh(VertexDataType.VertexArray, staticLight, vertexNum, 0,
 				new VertexAttribute(Usage.Position, 2, "vertex_positions"),
 				new VertexAttribute(Usage.ColorPacked, 4, "quad_colors"),
 				new VertexAttribute(Usage.Generic, 1, "s"));
+
 		update();
 	}
 

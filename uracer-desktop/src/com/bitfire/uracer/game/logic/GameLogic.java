@@ -157,7 +157,7 @@ public class GameLogic implements CarEvent.Listener, CarStateEvent.Listener, Dri
 		// create tweening support
 		createTweeners();
 
-		gameWorld = new GameWorld( box2dWorld, scalingStrategy, levelName, false );
+		gameWorld = new GameWorld( box2dWorld, scalingStrategy, levelName, true );
 
 		recorder = new Recorder();
 		timeMultiplier.value = 1f;
@@ -463,8 +463,6 @@ public class GameLogic implements CarEvent.Listener, CarStateEvent.Listener, Dri
 
 		switch( type ) {
 		case onBeginDrift:
-			// prologue, fades in and starts showing
-			// accumulated drifting time in realtime
 			hudDrifting.beginDrift();
 			break;
 		case onEndDrift:

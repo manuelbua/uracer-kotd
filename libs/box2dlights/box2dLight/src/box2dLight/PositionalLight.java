@@ -4,6 +4,7 @@ import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.GL10;
 import com.badlogic.gdx.graphics.GL20;
 import com.badlogic.gdx.graphics.Mesh;
+import com.badlogic.gdx.graphics.Mesh.VertexDataType;
 import com.badlogic.gdx.graphics.VertexAttribute;
 import com.badlogic.gdx.graphics.VertexAttributes.Usage;
 import com.badlogic.gdx.math.MathUtils;
@@ -243,20 +244,20 @@ public abstract class PositionalLight extends Light {
 		endY = new float[rays];
 
 		if (rayHandler.isGL20) {
-			lightMesh = new Mesh(staticLight, vertexNum, 0,
+			lightMesh = new Mesh(VertexDataType.VertexArray, staticLight, vertexNum, 0,
 					new VertexAttribute(Usage.Position, 2, "vertex_positions"),
 					new VertexAttribute(Usage.ColorPacked, 4, "quad_colors"),
 					new VertexAttribute(Usage.Generic, 1, "s"));
-			softShadowMesh = new Mesh(staticLight, vertexNum * 2, 0,
+			softShadowMesh = new Mesh(VertexDataType.VertexArray, staticLight, vertexNum * 2, 0,
 					new VertexAttribute(Usage.Position, 2, "vertex_positions"),
 					new VertexAttribute(Usage.ColorPacked, 4, "quad_colors"),
 					new VertexAttribute(Usage.Generic, 1, "s"));
 
 		} else {
-			lightMesh = new Mesh(staticLight, vertexNum, 0,
+			lightMesh = new Mesh(VertexDataType.VertexArray, staticLight, vertexNum, 0,
 					new VertexAttribute(Usage.Position, 2, "vertex_positions"),
 					new VertexAttribute(Usage.ColorPacked, 4, "quad_colors"));
-			softShadowMesh = new Mesh(staticLight, vertexNum * 2, 0,
+			softShadowMesh = new Mesh(VertexDataType.VertexArray, staticLight, vertexNum * 2, 0,
 					new VertexAttribute(Usage.Position, 2, "vertex_positions"),
 					new VertexAttribute(Usage.ColorPacked, 4, "quad_colors"));
 		}
