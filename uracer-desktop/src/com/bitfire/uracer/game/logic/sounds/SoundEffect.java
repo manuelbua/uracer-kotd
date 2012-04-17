@@ -1,5 +1,6 @@
 package com.bitfire.uracer.game.logic.sounds;
 
+import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.audio.Sound;
 
 public abstract class SoundEffect implements ISoundEffect {
@@ -24,11 +25,11 @@ public abstract class SoundEffect implements ISoundEffect {
 		boolean ready = false;
 		while( !ready && waitCounter < WaitLimit ) {
 			soundId = sound.play( volume );
-			ready = (soundId == 0);
+			ready = (soundId != 0);
 			waitCounter++;
 			try {
 				Thread.sleep( ThrottleMs );
-//				Gdx.app.log( "CarSoundEffect", "sleeping" );
+				Gdx.app.log( "CarSoundEffect", "sleeping" );
 			} catch( InterruptedException e ) {
 			}
 		}
@@ -43,11 +44,11 @@ public abstract class SoundEffect implements ISoundEffect {
 		boolean ready = false;
 		while( !ready && waitCounter < WaitLimit ) {
 			soundId = sound.loop( volume );
-			ready = (soundId == 0);
+			ready = (soundId != 0);
 			waitCounter++;
 			try {
 				Thread.sleep( ThrottleMs );
-//				Gdx.app.log( "CarSoundEffect", "sleeping" );
+				Gdx.app.log( "CarSoundEffect", "sleeping" );
 			} catch( InterruptedException e ) {
 			}
 		}
