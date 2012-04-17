@@ -45,8 +45,8 @@ public final class CarState {
 
 		// precompute factors
 		if( car != null ) {
-			carMaxSpeedSquared = car.getCarDescriptor().carModel.max_speed * car.getCarDescriptor().carModel.max_speed;
-			carMaxForce = car.getCarDescriptor().carModel.max_force;
+			carMaxSpeedSquared = car.getCarModel().max_speed * car.getCarModel().max_speed;
+			carMaxForce = car.getCarModel().max_force;
 		}
 	}
 
@@ -66,9 +66,9 @@ public final class CarState {
 		}
 
 		// speed/force normalized factors
-		currCarSpeedSquared = car.getCarDescriptor().velocity_wc.len2();
+		currCarSpeedSquared = car.getVelocityWc().len2();
 		currSpeedFactor = AMath.clamp( currCarSpeedSquared / carMaxSpeedSquared, 0f, 1f );
-		currForceFactor = AMath.clamp( car.getCarDescriptor().throttle / carMaxForce, 0f, 1f );
+		currForceFactor = AMath.clamp( car.getThrottle() / carMaxForce, 0f, 1f );
 	}
 
 	public void reset() {

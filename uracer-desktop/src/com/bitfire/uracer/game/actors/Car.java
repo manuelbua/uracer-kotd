@@ -81,8 +81,12 @@ public class Car extends Box2DEntity {
 		return graphics;
 	}
 
-	public CarDescriptor getCarDescriptor() {
-		return carDesc;
+	public Vector2 getVelocityWc() {
+		return carDesc.velocity_wc;
+	}
+
+	public float getThrottle() {
+		return carDesc.throttle;
 	}
 
 	public CarModel getCarModel() {

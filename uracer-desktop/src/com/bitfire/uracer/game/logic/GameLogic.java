@@ -338,7 +338,7 @@ public class GameLogic implements CarEvent.Listener, CarStateEvent.Listener, Dri
 
 	private void updateTrackEffects() {
 		// update track effects
-		if( playerCar.getCarDescriptor().velocity_wc.len2() >= 1 ) {
+		if( playerCar.getVelocityWc().len2() >= 1 ) {
 			playerSkidMarks.tryAddDriftMark( playerCar.state().position, playerCar.state().orientation, playerDriftState );
 		}
 	}
