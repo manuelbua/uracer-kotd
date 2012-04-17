@@ -5,7 +5,6 @@ import java.io.InputStream;
 
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.Texture;
-import com.badlogic.gdx.graphics.g3d.loaders.g3d.G3dtLoader;
 import com.badlogic.gdx.graphics.g3d.loaders.wavefront.ObjLoader;
 import com.badlogic.gdx.graphics.g3d.materials.Material;
 import com.badlogic.gdx.graphics.g3d.materials.TextureAttribute;
@@ -13,6 +12,7 @@ import com.badlogic.gdx.graphics.g3d.model.still.StillModel;
 import com.badlogic.gdx.utils.LongMap;
 import com.bitfire.uracer.Art;
 import com.bitfire.uracer.ScalingStrategy;
+import com.bitfire.uracer.game.world.models.loaders.UG3dtLoader;
 import com.bitfire.uracer.utils.Hash;
 
 public final class ModelFactory {
@@ -225,12 +225,13 @@ public final class ModelFactory {
 				if( ext[1].equals( "g3dt" ) ) {
 					// NO opengl coords, NO invert v
 					InputStream in = Gdx.files.internal( model ).read();
-					m = G3dtLoader.loadStillModel( in, true );
+					m = UG3dtLoader.loadStillModel( in, true );
 					in.close();
 				} else if( ext[1].equals( "obj" ) ) {
 					// y-forward, z-up
 					ObjLoader l = new ObjLoader();
 					m = l.loadObj( Gdx.files.internal( model ), true );
+					Gdx.app.log( "ModelFactory", "Attention, using deprecated model format!" );
 				}
 
 				cachedModels.put( modelHash, m );
