@@ -32,7 +32,11 @@ import com.badlogic.gdx.utils.ObjectMap;
 /** Class to import the G3D text format.
  *
  * @author mzechner */
-public class UG3dtLoader {
+public final class UG3dtLoader {
+
+	private UG3dtLoader() {
+	}
+
 	public static KeyframedModel loadKeyframedModel( FileHandle handle, boolean flipV ) {
 		return loadKeyframedModel( handle.read(), flipV );
 	}
@@ -50,16 +54,18 @@ public class UG3dtLoader {
 		lineNum = 1;
 		try {
 			String version = readString( in );
-			if( !version.equals( "g3dt-still-1.0" ) )
+			if( !version.equals( "g3dt-still-1.0" ) ) {
 				throw new GdxRuntimeException( "incorrect version" );
+			}
+
 			int numMeshes = readInt( in );
 			StillSubMesh[] subMeshes = new StillSubMesh[ numMeshes ];
 			for( int i = 0; i < numMeshes; i++ ) {
 				subMeshes[i] = readStillSubMesh( in, flipV );
 			}
-			StillModel model = new StillModel( subMeshes );
-			return model;
-		} catch( Throwable e ) {
+
+			return new StillModel( subMeshes );
+		} catch( Exception e ) {
 			throw new GdxRuntimeException( "Couldn't read keyframed model, error in line " + lineNum + ", '" + line + "' : " + e.getMessage(), e );
 		}
 	}
@@ -70,19 +76,24 @@ public class UG3dtLoader {
 		int numVertices = readInt( in );
 		int numAttributes = readInt( in );
 
-		if( !readString( in ).equals( "position" ) )
+		if( !readString( in ).equals( "position" ) ) {
 			throw new GdxRuntimeException( "first attribute must be position." );
+		}
+
 		int numUvs = 0;
 		boolean hasNormals = false;
 		for( int i = 1; i < numAttributes; i++ ) {
 			String attributeType = readString( in );
 
-			if( !attributeType.equals( "normal" ) && !attributeType.equals( "uv" ) )
+			if( !attributeType.equals( "normal" ) && !attributeType.equals( "uv" ) ) {
 				throw new GdxRuntimeException( "attribute name must be normal or uv" );
+			}
 
 			if( attributeType.equals( "normal" ) ) {
-				if( i != 1 )
+				if( i != 1 ) {
 					throw new GdxRuntimeException( "attribute normal must be second attribute" );
+				}
+
 				hasNormals = true;
 			}
 			if( attributeType.equals( "uv" ) ) {
@@ -116,8 +127,10 @@ public class UG3dtLoader {
 		lineNum = 1;
 		try {
 			String version = readString( in );
-			if( !version.equals( "g3dt-keyframed-1.0" ) )
+			if( !version.equals( "g3dt-keyframed-1.0" ) ) {
 				throw new GdxRuntimeException( "incorrect version" );
+			}
+
 			int numMeshes = readInt( in );
 			KeyframedSubMesh[] subMeshes = new KeyframedSubMesh[ numMeshes ];
 			for( int i = 0; i < numMeshes; i++ ) {
@@ -126,7 +139,7 @@ public class UG3dtLoader {
 			KeyframedModel model = new KeyframedModel( subMeshes );
 			model.setAnimation( model.getAnimations()[0].name, 0, false );
 			return model;
-		} catch( Throwable e ) {
+		} catch( Exception e ) {
 			throw new GdxRuntimeException( "Couldn't read keyframed model, error in line " + lineNum + ", '" + line + "' : " + e.getMessage(), e );
 		}
 	}
@@ -137,19 +150,24 @@ public class UG3dtLoader {
 		int numVertices = readInt( in );
 		int numAttributes = readInt( in );
 
-		if( !readString( in ).equals( "position" ) )
+		if( !readString( in ).equals( "position" ) ) {
 			throw new GdxRuntimeException( "first attribute must be position." );
+		}
+
 		Array<FloatArray> uvSets = new Array<FloatArray>();
 		boolean hasNormals = false;
 		for( int i = 1; i < numAttributes; i++ ) {
 			String attributeType = readString( in );
 
-			if( !attributeType.equals( "normal" ) && !attributeType.equals( "uv" ) )
+			if( !attributeType.equals( "normal" ) && !attributeType.equals( "uv" ) ) {
 				throw new GdxRuntimeException( "attribute name must be normal or uv" );
+			}
 
 			if( attributeType.equals( "normal" ) ) {
-				if( i != 1 )
+				if( i != 1 ) {
 					throw new GdxRuntimeException( "attribute normal must be second attribute" );
+				}
+
 				hasNormals = true;
 			}
 			if( attributeType.equals( "uv" ) ) {
@@ -158,7 +176,7 @@ public class UG3dtLoader {
 		}
 		int animatedComponents = hasNormals ? 6 : 3;
 
-		VertexAttribute[] vertexAttributes = createVertexAttributes( hasNormals, uvSets.size );
+		// VertexAttribute[] vertexAttributes = createVertexAttributes( hasNormals, uvSets.size );
 
 		int numAnimations = readInt( in );
 		ObjectMap<String, KeyframedAnimation> animations = new ObjectMap<String, KeyframedAnimation>( numAnimations );
@@ -169,7 +187,7 @@ public class UG3dtLoader {
 
 			Keyframe[] keyframes = new Keyframe[ numKeyframes ];
 			float time = 0;
-			FloatArray vertex = new FloatArray( animatedComponents );
+			// FloatArray vertex = new FloatArray( animatedComponents );
 			for( int frame = 0; frame < numKeyframes; frame++ ) {
 				float[] vertices = new float[ numVertices * (animatedComponents) ];
 				int idx = 0;
@@ -219,11 +237,14 @@ public class UG3dtLoader {
 		VertexAttribute[] attributes = new VertexAttribute[ 1 + (hasNormals ? 1 : 0) + uvs ];
 		int idx = 0;
 		attributes[idx++] = new VertexAttribute( Usage.Position, 3, ShaderProgram.POSITION_ATTRIBUTE );
-		if( hasNormals )
+		if( hasNormals ) {
 			attributes[idx++] = new VertexAttribute( Usage.Normal, 3, ShaderProgram.NORMAL_ATTRIBUTE );
+		}
+
 		for( int i = 0; i < uvs; i++ ) {
 			attributes[idx++] = new VertexAttribute( Usage.TextureCoordinates, 2, ShaderProgram.TEXCOORD_ATTRIBUTE + i );
 		}
+
 		return attributes;
 	}
 
@@ -269,12 +290,12 @@ public class UG3dtLoader {
 		return shortArray;
 	}
 
-	private static float readFloat( BufferedReader in ) throws NumberFormatException, IOException {
+	private static float readFloat( BufferedReader in ) throws IOException {
 		lineNum++;
 		return Float.parseFloat( read( in ).trim() );
 	}
 
-	private static int readInt( BufferedReader in ) throws NumberFormatException, IOException {
+	private static int readInt( BufferedReader in ) throws IOException {
 		lineNum++;
 		return (int)(Math.floor( Float.parseFloat( read( in ).trim() ) ));
 	}
@@ -299,7 +320,8 @@ public class UG3dtLoader {
 		String[] tokens = read( in ).split( "," );
 		int len = tokens.length;
 		for( int i = 0; i < len; i++ ) {
-			array[idx++] = Float.parseFloat( tokens[i].trim() );
+			array[idx] = Float.parseFloat( tokens[i].trim() );
+			idx++;
 		}
 		return idx;
 	}
