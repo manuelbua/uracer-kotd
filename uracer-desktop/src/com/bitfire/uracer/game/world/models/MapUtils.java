@@ -1,4 +1,4 @@
-package com.bitfire.uracer.game.world;
+package com.bitfire.uracer.game.world.models;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -13,6 +13,7 @@ import com.bitfire.uracer.game.world.WorldDefs.ObjectGroup;
 import com.bitfire.uracer.game.world.WorldDefs.TileLayer;
 import com.bitfire.uracer.utils.Convert;
 import com.bitfire.uracer.utils.VMath;
+
 
 public final class MapUtils {
 

@@ -38,6 +38,7 @@ import com.bitfire.uracer.game.world.WorldDefs.ObjectGroup;
 import com.bitfire.uracer.game.world.WorldDefs.ObjectProperties;
 import com.bitfire.uracer.game.world.WorldDefs.TileLayer;
 import com.bitfire.uracer.game.world.WorldDefs.TileProperties;
+import com.bitfire.uracer.game.world.models.MapUtils;
 import com.bitfire.uracer.game.world.models.ModelFactory;
 import com.bitfire.uracer.game.world.models.OrthographicAlignedStillModel;
 import com.bitfire.uracer.game.world.models.TrackTrees;

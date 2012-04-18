@@ -8,7 +8,6 @@ import com.badlogic.gdx.math.Matrix4;
 import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.math.Vector3;
 import com.bitfire.uracer.Director;
-import com.bitfire.uracer.game.world.MapUtils;
 import com.bitfire.uracer.utils.Convert;
 
 public class TrackTrees {
