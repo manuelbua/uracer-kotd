@@ -259,7 +259,7 @@ public final class UG3dtLoader {
 		return uvSet;
 	}
 
-	private static IntArray readFaces( BufferedReader in ) throws NumberFormatException, IOException {
+	private static IntArray readFaces( BufferedReader in ) throws IOException {
 		int numFaces = readInt( in );
 		IntArray faceIndices = new IntArray();
 		IntArray triangles = new IntArray();
@@ -319,11 +319,11 @@ public final class UG3dtLoader {
 		lineNum++;
 		String[] tokens = read( in ).split( "," );
 		int len = tokens.length;
+		int tmpidx = idx;
 		for( int i = 0; i < len; i++ ) {
-			array[idx] = Float.parseFloat( tokens[i].trim() );
-			idx++;
+			array[tmpidx++] = Float.parseFloat( tokens[i].trim() );
 		}
-		return idx;
+		return tmpidx;
 	}
 
 	private static void readIntArray( BufferedReader in, IntArray array ) throws IOException {
