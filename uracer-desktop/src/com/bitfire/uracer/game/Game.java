@@ -9,6 +9,7 @@ import com.bitfire.uracer.URacer;
 import com.bitfire.uracer.game.actors.Car;
 import com.bitfire.uracer.game.actors.Car.Aspect;
 import com.bitfire.uracer.game.actors.CarModel;
+import com.bitfire.uracer.game.logic.GameLogic;
 import com.bitfire.uracer.game.rendering.Debug;
 import com.bitfire.uracer.game.rendering.GameRenderer;
 import com.bitfire.uracer.game.world.GameWorld;

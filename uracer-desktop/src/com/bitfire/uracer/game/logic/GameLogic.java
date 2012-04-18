@@ -1,4 +1,4 @@
-package com.bitfire.uracer.game;
+package com.bitfire.uracer.game.logic;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -20,6 +20,7 @@ import com.bitfire.uracer.Config;
 import com.bitfire.uracer.Director;
 import com.bitfire.uracer.ScalingStrategy;
 import com.bitfire.uracer.URacer;
+import com.bitfire.uracer.game.GameplaySettings;
 import com.bitfire.uracer.game.actors.Car;
 import com.bitfire.uracer.game.actors.Car.Aspect;
 import com.bitfire.uracer.game.actors.CarEvent;
@@ -33,7 +34,6 @@ import com.bitfire.uracer.game.events.GameEvents;
 import com.bitfire.uracer.game.events.GameLogicEvent;
 import com.bitfire.uracer.game.input.Input;
 import com.bitfire.uracer.game.input.Replay;
-import com.bitfire.uracer.game.logic.PhysicsStep;
 import com.bitfire.uracer.game.logic.helpers.DirectorController;
 import com.bitfire.uracer.game.logic.helpers.Recorder;
 import com.bitfire.uracer.game.logic.hud.Hud;
