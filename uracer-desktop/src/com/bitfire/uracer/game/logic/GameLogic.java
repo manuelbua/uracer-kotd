@@ -20,7 +20,6 @@ import com.bitfire.uracer.Config;
 import com.bitfire.uracer.Director;
 import com.bitfire.uracer.ScalingStrategy;
 import com.bitfire.uracer.URacer;
-import com.bitfire.uracer.game.GameplaySettings;
 import com.bitfire.uracer.game.actors.Car;
 import com.bitfire.uracer.game.actors.Car.Aspect;
 import com.bitfire.uracer.game.actors.CarEvent;
