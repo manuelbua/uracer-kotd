@@ -50,7 +50,7 @@ public class Replay {
 
 	public void begin( String trackName, GameDifficulty difficulty, Car car ) {
 		reset();
-		carAspect = car.getCarAspect();
+		carAspect = car.getAspect();
 		carPosition = new Vector2( car.pos() );
 		carOrientation = car.orient();
 		this.trackName = trackName;

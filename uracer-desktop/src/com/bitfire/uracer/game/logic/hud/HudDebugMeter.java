@@ -12,8 +12,8 @@ import com.bitfire.uracer.Art;
 import com.bitfire.uracer.Director;
 import com.bitfire.uracer.game.actors.Car;
 import com.bitfire.uracer.utils.AMath;
-import com.bitfire.uracer.utils.SpriteBatchUtils;
 import com.bitfire.uracer.utils.Convert;
+import com.bitfire.uracer.utils.SpriteBatchUtils;
 
 public class HudDebugMeter {
 	// graphics data
@@ -27,7 +27,7 @@ public class HudDebugMeter {
 
 	private Vector2 pos;
 	private int row;
-	private Car playerCar;
+	private Car car;
 
 	public Color color = new Color( 1, 1, 1, 1 );
 
@@ -39,7 +39,7 @@ public class HudDebugMeter {
 		this.height = height;
 		this.pos = new Vector2();
 		this.row = row;
-		playerCar = car;
+		this.car = car;
 
 		pixels = new Pixmap( this.width, this.height, Format.RGBA8888 );
 		texture = new Texture( 256, 256, Format.RGBA8888 );
@@ -74,14 +74,14 @@ public class HudDebugMeter {
 	}
 
 	private void update() {
-		pos.set( Director.screenPosForPx( playerCar.state().position ) );
+		pos.set( Director.screenPosForPx( car.state().position ) );
 		// pos.set( Director.screenPosFor( playerCar.getBody() ) );
 
 		// center horizontally
 		pos.x -= width * 0.5f;
 
 		// offset by half car length
-		pos.y += Convert.mt2px( playerCar.getCarModel().length ) * 0.5f;
+		pos.y += Convert.mt2px( car.getCarModel().length ) * 0.5f;
 
 		// offset by row
 		pos.y += row * (height + Art.fontHeight);

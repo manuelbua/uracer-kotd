@@ -88,7 +88,7 @@ public final class DriftState {
 			}
 		} else {
 			// FIXME should be expressed as a percent value ref. maxvel, to scale to different max velocities
-			float vel = car.getVelocityWc().len();
+			float vel = car.getVelocity().len();
 
 			if( !isDrifting ) {
 				// search for onBeginDrift

@@ -1,6 +1,7 @@
 package com.bitfire.uracer.game.actors;
 
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
+import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.physics.box2d.World;
 import com.bitfire.uracer.game.input.Replay;
 
@@ -15,8 +16,8 @@ public final class GhostCar extends Car {
 	private int indexPlay;
 	private boolean hasReplay;
 
-	public GhostCar( World box2dWorld, CarRenderer graphics, Aspect type, CarModel model ) {
-		super( box2dWorld, graphics, model, type );
+	public GhostCar( World box2dWorld, CarRenderer graphics, CarModel model, Aspect aspect ) {
+		super( box2dWorld, graphics, model, aspect );
 		indexPlay = 0;
 		hasReplay = false;
 		replay = null;
@@ -25,6 +26,27 @@ public final class GhostCar extends Car {
 		resetPhysics();
 	}
 
+	@Override
+	public Vector2 getVelocity() {
+		return null;
+	}
+
+	@Override
+	public float getThrottle() {
+		return 0;
+	}
+
+	@Override
+	public Vector2 getLateralForceFront() {
+		return null;
+	}
+
+	@Override
+	public Vector2 getLateralForceRear() {
+		return null;
+	}
+
+	// input data for this car cames from a Replay object
 	public void setReplay( Replay replay ) {
 		this.replay = replay;
 		hasReplay = (replay != null && replay.getEventsCount() > 0);

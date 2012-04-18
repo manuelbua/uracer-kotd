@@ -18,20 +18,20 @@ public final class CarFactory {
 	private CarFactory() {
 	}
 
-	public static GhostCar createGhost( World box2dWorld, Aspect type, CarModel model ) {
+	public static GhostCar createGhost( World box2dWorld, CarModel model, Aspect type ) {
 		CarRenderer graphics = createCarGraphics( type, model );
-		GhostCar ghost = new GhostCar( box2dWorld, graphics, type, model );
+		GhostCar ghost = new GhostCar( box2dWorld, graphics, model, type );
 		applyCarPhysics( ghost, EntityType.CarReplay );
 		return ghost;
 	}
 
 	public static GhostCar createGhost( World box2dWorld, Car car ) {
-		return CarFactory.createGhost( box2dWorld, car.getCarAspect(), car.getCarModel() );
+		return CarFactory.createGhost( box2dWorld, car.getCarModel(), car.getAspect() );
 	}
 
-	public static Car createPlayer( World box2dWorld, Input input, Aspect carAspect, CarModel model ) {
+	public static PlayerCar createPlayer( World box2dWorld, Input input, Aspect carAspect, CarModel model ) {
 		CarRenderer graphics = createCarGraphics( carAspect, model );
-		Car car = new Car( box2dWorld, graphics, model, carAspect );
+		PlayerCar car = new PlayerCar( box2dWorld, graphics, model, carAspect );
 		applyCarPhysics( car, EntityType.Car );
 		return car;
 	}
@@ -59,7 +59,7 @@ public final class CarFactory {
 		String shapeName = null;
 		String shapeRef = null;
 
-		switch( car.getCarAspect() ) {
+		switch( car.getAspect() ) {
 		case OldSkool:
 			region = Art.cars.findRegion( "electron" );
 			shapeName = "data/base/electron.shape";

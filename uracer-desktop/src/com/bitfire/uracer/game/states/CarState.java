@@ -66,7 +66,7 @@ public final class CarState {
 		}
 
 		// speed/force normalized factors
-		currCarSpeedSquared = car.getVelocityWc().len2();
+		currCarSpeedSquared = car.getVelocity().len2();
 		currSpeedFactor = AMath.clamp( currCarSpeedSquared / carMaxSpeedSquared, 0f, 1f );
 		currForceFactor = AMath.clamp( car.getThrottle() / carMaxForce, 0f, 1f );
 	}

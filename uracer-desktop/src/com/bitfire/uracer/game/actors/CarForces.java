@@ -23,11 +23,10 @@ public final class CarForces {
 		angularVelocity = 0;
 	}
 
-	public CarForces set( CarForces other ) {
+	public void set( CarForces other ) {
 		this.velocity_x = other.velocity_x;
 		this.velocity_y = other.velocity_y;
 		this.angularVelocity = other.angularVelocity;
-		return this;
 	}
 
 //	public CarForces newCopy() {

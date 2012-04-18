@@ -27,6 +27,7 @@ import com.bitfire.uracer.game.actors.CarEvent;
 import com.bitfire.uracer.game.actors.CarFactory;
 import com.bitfire.uracer.game.actors.CarModel;
 import com.bitfire.uracer.game.actors.GhostCar;
+import com.bitfire.uracer.game.actors.PlayerCar;
 import com.bitfire.uracer.game.collisions.GameContactListener;
 import com.bitfire.uracer.game.events.CarStateEvent;
 import com.bitfire.uracer.game.events.DriftStateEvent;
@@ -90,7 +91,7 @@ public class GameLogic implements CarEvent.Listener, CarStateEvent.Listener, Dri
 	private PhysicsStep physicsStep;
 
 	// player
-	private Car playerCar = null;
+	private PlayerCar playerCar = null;
 	private GhostCar playerGhostCar = null;
 
 	// lap
@@ -284,7 +285,7 @@ public class GameLogic implements CarEvent.Listener, CarStateEvent.Listener, Dri
 		playerGhostCar = CarFactory.createGhost( box2dWorld, playerCar );
 	}
 
-	private void configurePlayer( GameplaySettings settings, GameWorld world, Car player ) {
+	private void configurePlayer( GameplaySettings settings, GameWorld world, PlayerCar player ) {
 		// create player and setup player input system and initial position in the world
 		player.setTransform( world.playerStartPos, world.playerStartOrient );
 		player.setInputSystem( input );
@@ -338,7 +339,7 @@ public class GameLogic implements CarEvent.Listener, CarStateEvent.Listener, Dri
 
 	private void updateTrackEffects() {
 		// update track effects
-		if( playerCar.getVelocityWc().len2() >= 1 ) {
+		if( playerCar.getVelocity().len2() >= 1 ) {
 			playerSkidMarks.tryAddDriftMark( playerCar.state().position, playerCar.state().orientation, playerDriftState );
 		}
 	}

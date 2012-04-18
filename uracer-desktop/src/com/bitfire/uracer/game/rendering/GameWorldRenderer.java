@@ -25,7 +25,7 @@ import com.bitfire.uracer.Art;
 import com.bitfire.uracer.Config;
 import com.bitfire.uracer.Director;
 import com.bitfire.uracer.ScalingStrategy;
-import com.bitfire.uracer.game.actors.Car;
+import com.bitfire.uracer.game.actors.PlayerCar;
 import com.bitfire.uracer.game.world.GameWorld;
 import com.bitfire.uracer.game.world.models.OrthographicAlignedStillModel;
 import com.bitfire.uracer.game.world.models.TrackTrees;
@@ -61,7 +61,7 @@ public class GameWorldRenderer {
 	// @formatter:on
 
 	private GameWorld world = null;
-	private Car carPlayer = null;
+	private PlayerCar carPlayer = null;
 	private PerspectiveCamera camPersp = null;
 	private OrthographicCamera camOrtho = null;
 	private ShaderProgram treeShader = null;
@@ -112,8 +112,8 @@ public class GameWorldRenderer {
 		tileAtlas.dispose();
 	}
 
-	public void setPlayerCar( Car car ) {
-		carPlayer = car;
+	public void setPlayerCar( PlayerCar player ) {
+		carPlayer = player;
 	}
 
 	public void resetCounters() {
