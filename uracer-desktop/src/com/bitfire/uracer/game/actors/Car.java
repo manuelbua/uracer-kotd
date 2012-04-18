@@ -34,6 +34,7 @@ public abstract class Car extends Box2DEntity {
 		this.graphics = graphics;
 		this.aspect = aspect;
 		this.impacts = 0;
+		this.model = model;
 		this.inputMode = InputMode.NoInput;
 
 		// body

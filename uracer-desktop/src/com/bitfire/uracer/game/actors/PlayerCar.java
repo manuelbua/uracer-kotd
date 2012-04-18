@@ -18,7 +18,7 @@ public class PlayerCar extends Car {
 
 	// car forces simulator
 	private CarSimulator carSim = null;
-	protected CarDescriptor carDesc = null;
+	private CarDescriptor carDesc = null;
 
 	// input
 	private CarInput carInput = null;
@@ -67,10 +67,12 @@ public class PlayerCar extends Car {
 		return carDesc.throttle;
 	}
 
+	@Override
 	public Vector2 getLateralForceFront() {
 		return carSim.lateralForceFront;
 	}
 
+	@Override
 	public Vector2 getLateralForceRear() {
 		return carSim.lateralForceRear;
 	}
