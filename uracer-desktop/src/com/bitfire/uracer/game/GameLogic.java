@@ -1,4 +1,4 @@
-package com.bitfire.uracer.game.logic;
+package com.bitfire.uracer.game;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -33,6 +33,7 @@ import com.bitfire.uracer.game.events.GameEvents;
 import com.bitfire.uracer.game.events.GameLogicEvent;
 import com.bitfire.uracer.game.input.Input;
 import com.bitfire.uracer.game.input.Replay;
+import com.bitfire.uracer.game.logic.PhysicsStep;
 import com.bitfire.uracer.game.logic.helpers.DirectorController;
 import com.bitfire.uracer.game.logic.helpers.Recorder;
 import com.bitfire.uracer.game.logic.hud.Hud;

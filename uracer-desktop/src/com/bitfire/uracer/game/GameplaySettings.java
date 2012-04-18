@@ -1,6 +1,5 @@
-package com.bitfire.uracer.game.logic;
+package com.bitfire.uracer.game;
 
-import com.bitfire.uracer.game.GameDifficulty;
 
 public final class GameplaySettings {
 	// settings
