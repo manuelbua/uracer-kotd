@@ -8,7 +8,6 @@ import com.bitfire.uracer.game.actors.Car.Aspect;
 import com.bitfire.uracer.game.actors.CarForces;
 import com.bitfire.uracer.utils.UUid;
 
-
 /** Represents replay data to be feed to a GhostCar, the replay player.
  *
  * @author manuel */

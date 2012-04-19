@@ -4,15 +4,13 @@ import com.bitfire.uracer.Config;
 import com.bitfire.uracer.task.Task;
 import com.bitfire.uracer.task.TaskManagerEvent.Order;
 
-
 /** Tracks elapsed time both in absolute terms (wall clock time) or
  * relative to the tick-based system.
- * This should guarantee some level of fair handicap for any user.
  *
  * @author bmanuel */
 public final class Time extends Task {
 	public enum Reference {
-		Absolute, TickSeconds, NumberOfTicks
+		AbsoluteSeconds, TickSeconds, NumberOfTicks
 	}
 
 	private static final float oneOnOneBillion = 1.0f / 1000000000.0f;
@@ -72,11 +70,11 @@ public final class Time extends Task {
 		long now = (stopped ? nsStopTime : System.nanoTime());
 
 		switch( timeReference ) {
-		case TickSeconds:				// returns seconds
+		case TickSeconds:		// returns seconds
 			return ticksInSeconds;
 		case NumberOfTicks:		// returns the tick count so far
 			return ticks;
-		case Absolute:			// returns seconds
+		case AbsoluteSeconds:			// returns seconds
 		default:
 			return (now - nsStartTime) * oneOnOneBillion;
 		}
