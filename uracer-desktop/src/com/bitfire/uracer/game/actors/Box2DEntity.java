@@ -34,7 +34,7 @@ public abstract class Box2DEntity extends SubframeInterpolableEntity {
 	};
 
 	public abstract void onRender( SpriteBatch batch );
-	public abstract void onDebug( SpriteBatch batch );
+	public void onDebug( SpriteBatch batch ) {}
 
 	public Box2DEntity(World world) {
 		GameEvents.gameRenderer.addListener( gameRendererEvent, GameRendererEvent.Type.BatchBeforeMeshes, GameRendererEvent.Order.DEFAULT );

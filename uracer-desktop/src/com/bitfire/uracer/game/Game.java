@@ -120,7 +120,7 @@ public class Game implements Disposable {
 
 	public void render() {
 		gameLogic.onBeforeRender();
-		gameRenderer.render();
+		gameRenderer.render( gameLogic.getPlayer() );
 	}
 
 	public void pause() {

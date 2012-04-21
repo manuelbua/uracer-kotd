@@ -8,6 +8,7 @@ import com.badlogic.gdx.physics.box2d.World;
 import com.bitfire.uracer.Config;
 import com.bitfire.uracer.Director;
 import com.bitfire.uracer.ScalingStrategy;
+import com.bitfire.uracer.game.actors.PlayerCar;
 import com.bitfire.uracer.game.events.GameEvents;
 import com.bitfire.uracer.game.events.GameRendererEvent;
 import com.bitfire.uracer.game.world.GameWorld;
@@ -49,7 +50,7 @@ public class GameRenderer {
 		return postProcessor;
 	}
 
-	public void render() {
+	public void render( PlayerCar player ) {
 		OrthographicCamera ortho = Director.getCamera();
 
 		// resync
@@ -93,12 +94,12 @@ public class GameRenderer {
 					postProcessor.render();
 				}
 
-				worldRenderer.generatePlayerHeadlightsLightMap();
+				worldRenderer.generatePlayerHeadlightsLightMap( player );
 				worldRenderer.renderLigthMap( null );
 			} else {
 				// render nightmode
 				if( world.isNightMode() ) {
-					worldRenderer.generatePlayerHeadlightsLightMap();
+					worldRenderer.generatePlayerHeadlightsLightMap( player );
 
 					// hook into the next PostProcessor source buffer (the last result)
 					// and blend the lightmap on it

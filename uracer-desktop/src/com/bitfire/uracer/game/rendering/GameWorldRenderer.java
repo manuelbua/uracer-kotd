@@ -61,7 +61,6 @@ public class GameWorldRenderer {
 	// @formatter:on
 
 	private GameWorld world = null;
-	private PlayerCar carPlayer = null;
 	private PerspectiveCamera camPersp = null;
 	private OrthographicCamera camOrtho = null;
 	private ShaderProgram treeShader = null;
@@ -112,9 +111,9 @@ public class GameWorldRenderer {
 		tileAtlas.dispose();
 	}
 
-	public void setPlayerCar( PlayerCar player ) {
-		carPlayer = player;
-	}
+//	public void setPlayerCar( PlayerCar player ) {
+//		carPlayer = player;
+//	}
 
 	public void resetCounters() {
 		culledMeshes = 0;
@@ -122,11 +121,11 @@ public class GameWorldRenderer {
 		renderedWalls = 0;
 	}
 
-	public void generatePlayerHeadlightsLightMap() {
-		if( carPlayer != null ) {
-			Vector2 carPosition = carPlayer.state().position;
-			float carOrientation = carPlayer.state().orientation;
-			float carLength = carPlayer.getCarModel().length;
+	public void generatePlayerHeadlightsLightMap(PlayerCar player) {
+		if( player != null ) {
+			Vector2 carPosition = player.state().position;
+			float carOrientation = player.state().orientation;
+			float carLength = player.getCarModel().length;
 
 			// update player light (subframe interpolation ready)
 			float ang = 90 + carOrientation;
@@ -145,9 +144,9 @@ public class GameWorldRenderer {
 
 			playerLights.setDirection( ang );
 			playerLights.setPosition( px, py );
-			playerLights.setActive( false );
-		} else {
 			playerLights.setActive( true );
+		} else {
+			playerLights.setActive( false );
 		}
 
 		rayHandler.setCombinedMatrix( Director.getMatViewProjMt(), Convert.px2mt( camOrtho.position.x * scalingStrategy.invTileMapZoomFactor ),

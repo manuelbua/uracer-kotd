@@ -80,19 +80,16 @@ public final class GhostCar extends Car {
 	public void reset() {
 		super.reset();
 		setReplay( null );
+		renderer.setAlpha( 0 );
 	}
 
 	@Override
 	public void onRender( SpriteBatch batch ) {
-		if( isActive() ) {
+		if( hasReplay && isActive() && renderer.getAlpha() > 0 ) {
 			renderer.render( batch, stateRender );
 		}
 	}
 
-	@Override
-	public void onDebug( SpriteBatch batch ) {
-		// no output
-	}
 
 	@Override
 	protected void onComputeCarForces( CarForces forces ) {

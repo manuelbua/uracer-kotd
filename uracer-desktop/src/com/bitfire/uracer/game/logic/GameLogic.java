@@ -158,7 +158,7 @@ public class GameLogic implements CarEvent.Listener, CarStateEvent.Listener, Dri
 		// create tweening support
 		createTweeners();
 
-		gameWorld = new GameWorld( box2dWorld, scalingStrategy, levelName, false );
+		gameWorld = new GameWorld( box2dWorld, scalingStrategy, levelName, true );
 
 		recorder = new Recorder();
 		timeMultiplier.value = 1f;
@@ -205,7 +205,7 @@ public class GameLogic implements CarEvent.Listener, CarStateEvent.Listener, Dri
 		return gameWorld;
 	}
 
-	public Car getPlayer() {
+	public PlayerCar getPlayer() {
 		return playerCar;
 	}
 
