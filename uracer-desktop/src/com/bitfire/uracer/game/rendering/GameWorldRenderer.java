@@ -111,9 +111,9 @@ public class GameWorldRenderer {
 		tileAtlas.dispose();
 	}
 
-//	public void setPlayerCar( PlayerCar player ) {
-//		carPlayer = player;
-//	}
+	// public void setPlayerCar( PlayerCar player ) {
+	// carPlayer = player;
+	// }
 
 	public void resetCounters() {
 		culledMeshes = 0;
@@ -121,7 +121,7 @@ public class GameWorldRenderer {
 		renderedWalls = 0;
 	}
 
-	public void generatePlayerHeadlightsLightMap(PlayerCar player) {
+	public void generatePlayerHeadlightsLightMap( PlayerCar player ) {
 		if( player != null ) {
 			Vector2 carPosition = player.state().position;
 			float carOrientation = player.state().orientation;
@@ -149,17 +149,23 @@ public class GameWorldRenderer {
 			playerLights.setActive( false );
 		}
 
-		rayHandler.setCombinedMatrix( Director.getMatViewProjMt(), Convert.px2mt( camOrtho.position.x * scalingStrategy.invTileMapZoomFactor ),
-				Convert.px2mt( camOrtho.position.y * scalingStrategy.invTileMapZoomFactor ), Convert.px2mt( camOrtho.viewportWidth ),
-				Convert.px2mt( camOrtho.viewportHeight ) );
-
-		rayHandler.update();
+		// updateRayHandler();
 		rayHandler.generateLightMap();
 
 		// if( Config.isDesktop && (URacer.getFrameCount()&0x1f)==0x1f)
 		// {
 		// System.out.println("lights rendered="+rayHandler.lightRenderedLastFrame);
 		// }
+	}
+
+	public void updateRayHandler() {
+		if( rayHandler != null ) {
+			rayHandler.setCombinedMatrix( Director.getMatViewProjMt(), Convert.px2mt( camOrtho.position.x * scalingStrategy.invTileMapZoomFactor ),
+					Convert.px2mt( camOrtho.position.y * scalingStrategy.invTileMapZoomFactor ), Convert.px2mt( camOrtho.viewportWidth ),
+					Convert.px2mt( camOrtho.viewportHeight ) );
+
+			rayHandler.update();
+		}
 	}
 
 	public void renderLigthMap( FrameBuffer dest ) {
@@ -288,7 +294,7 @@ public class GameWorldRenderer {
 			submesh = m.model.subMeshes[0];
 
 			// compute position
-			pospx.set(m.positionPx);
+			pospx.set( m.positionPx );
 			pospx.set( world.positionFor( pospx ) );
 			tmpvec.x = Convert.scaledPixels( m.positionOffsetPx.x - camOrtho.position.x ) + Director.halfViewport.x + pospx.x;
 			tmpvec.y = Convert.scaledPixels( m.positionOffsetPx.y + camOrtho.position.y ) + Director.halfViewport.y - pospx.y;

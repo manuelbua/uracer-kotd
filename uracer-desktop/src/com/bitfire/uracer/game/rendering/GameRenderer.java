@@ -50,6 +50,10 @@ public class GameRenderer {
 		return postProcessor;
 	}
 
+	public GameWorldRenderer getWorldRenderer() {
+		return worldRenderer;
+	}
+
 	public void render( PlayerCar player ) {
 		OrthographicCamera ortho = Director.getCamera();
 

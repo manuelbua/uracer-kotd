@@ -98,8 +98,8 @@ public class Game implements Disposable {
 			bloom.setBloomSaturation( 1.5f - factor * 1.15f );
 			bloom.setBloomIntesity( 1f + factor * 1.75f );
 
-//			vignette.setY( (1 - factor) * 0.74f + factor * 0.4f );
-//			vignette.setIntensity( 1f );
+			// vignette.setY( (1 - factor) * 0.74f + factor * 0.4f );
+			// vignette.setIntensity( 1f );
 
 			vignette.setIntensity( factor );
 		}
@@ -112,6 +112,7 @@ public class Game implements Disposable {
 			return false;
 		}
 
+		gameRenderer.getWorldRenderer().updateRayHandler();
 		updatePostProcessing();
 
 		Debug.tick();

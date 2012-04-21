@@ -196,8 +196,8 @@ public final class GameWorld {
 			return;
 		}
 
-		float rttScale = .5f;
-		int maxRays = 720;
+		float rttScale = .25f;
+		int maxRays = 360;
 
 		if( !Config.isDesktop ) {
 			rttScale = 0.2f;
@@ -243,6 +243,7 @@ public final class GameWorld {
 	//
 	// construct walls
 	//
+
 	public List<OrthographicAlignedStillModel> createWalls() {
 		List<OrthographicAlignedStillModel> models = null;
 
@@ -390,8 +391,8 @@ public final class GameWorld {
 			}
 		}
 
-		Mesh mesh = new Mesh( VertexDataType.VertexArray, true, vertexCount, indexCount, new VertexAttribute( Usage.Position, 3, ShaderProgram.POSITION_ATTRIBUTE ), new VertexAttribute(
-				Usage.TextureCoordinates, 2, ShaderProgram.TEXCOORD_ATTRIBUTE + "0" ) );
+		Mesh mesh = new Mesh( VertexDataType.VertexArray, true, vertexCount, indexCount, new VertexAttribute( Usage.Position, 3, ShaderProgram.POSITION_ATTRIBUTE ),
+				new VertexAttribute( Usage.TextureCoordinates, 2, ShaderProgram.TEXCOORD_ATTRIBUTE + "0" ) );
 
 		mesh.setVertices( verts );
 		mesh.setIndices( indices );
@@ -402,6 +403,7 @@ public final class GameWorld {
 	//
 	// construct trees
 	//
+
 	private float[] treeRotations = new float[ 4 ];
 
 	private List<TreeStillModel> createTrees() {

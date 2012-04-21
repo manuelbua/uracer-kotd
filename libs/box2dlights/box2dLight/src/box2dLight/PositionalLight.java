@@ -113,7 +113,7 @@ public abstract class PositionalLight extends Light {
 			rayHandler.m_x[i] = tmpEnd.x;
 			tmpEnd.y = endY[i] + start.y;
 			rayHandler.m_y[i] = tmpEnd.y;
-			if (rayHandler.world != null && !xray) {
+			if (/*rayHandler.world != null && */ !xray) {
 				rayHandler.doRaycast( this, start, tmpEnd );
 			}
 		}
