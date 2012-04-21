@@ -66,7 +66,7 @@ public final class Vignetting extends Filter<Vignetting> {
 	@Override
 	public void rebind() {
 		setParams( Param.Texture1, u_texture_1 );
-//		setParams( Param.VignetteIntensity, intensity );
+		setParams( Param.VignetteIntensity, intensity );
 		setParams( Param.VignetteX, x );
 		setParams( Param.VignetteY, y );
 		endParams();
