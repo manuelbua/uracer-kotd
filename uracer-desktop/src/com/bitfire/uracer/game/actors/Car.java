@@ -19,7 +19,7 @@ public abstract class Car extends Box2DEntity {
 	}
 
 	protected CarModel model;
-	protected CarRenderer graphics;
+	protected CarRenderer renderer;
 
 	protected int impacts = 0;
 
@@ -29,9 +29,9 @@ public abstract class Car extends Box2DEntity {
 	private Aspect aspect = Aspect.OldSkool;
 	protected InputMode inputMode = InputMode.NoInput;
 
-	public Car( World box2dWorld, CarRenderer graphics, CarModel model, Aspect aspect ) {
+	public Car( World box2dWorld, CarRenderer renderer, CarModel model, Aspect aspect ) {
 		super( box2dWorld );
-		this.graphics = graphics;
+		this.renderer = renderer;
 		this.aspect = aspect;
 		this.impacts = 0;
 		this.model = model;
@@ -75,8 +75,8 @@ public abstract class Car extends Box2DEntity {
 		return inputMode;
 	}
 
-	public CarRenderer getGraphics() {
-		return graphics;
+	public CarRenderer getRenderer() {
+		return renderer;
 	}
 
 	public void setActive( boolean active ) {
@@ -137,6 +137,6 @@ public abstract class Car extends Box2DEntity {
 
 	@Override
 	public void onRender( SpriteBatch batch ) {
-		graphics.render( batch, stateRender );
+		renderer.render( batch, stateRender );
 	}
 }

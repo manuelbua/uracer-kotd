@@ -16,12 +16,14 @@ public final class GhostCar extends Car {
 	private int indexPlay;
 	private boolean hasReplay;
 
-	public GhostCar( World box2dWorld, CarRenderer graphics, CarModel model, Aspect aspect ) {
-		super( box2dWorld, graphics, model, aspect );
+	public GhostCar( World box2dWorld, CarRenderer renderer, CarModel model, Aspect aspect ) {
+		super( box2dWorld, renderer, model, aspect );
 		indexPlay = 0;
 		hasReplay = false;
 		replay = null;
 		this.inputMode = InputMode.InputFromReplay;
+		this.renderer.setAlpha( 0.5f );
+
 		setActive( false );
 		resetPhysics();
 	}
@@ -83,7 +85,7 @@ public final class GhostCar extends Car {
 	@Override
 	public void onRender( SpriteBatch batch ) {
 		if( isActive() ) {
-			graphics.render( batch, stateRender, 0.5f );
+			renderer.render( batch, stateRender );
 		}
 	}
 
@@ -103,6 +105,19 @@ public final class GhostCar extends Car {
 			}
 
 			forces.set( replay.forces[indexPlay++] );
+
+//			Gdx.app.log( "GhostCar", "play index is " + indexPlay + "/" + replay.getEventsCount() );
 		}
+
+		// also change opacity, fade in/out based on
+		// events played, events remaining
+		final int Steps = 30;
+		if( indexPlay <= Steps ) {
+			renderer.setAlpha( ((float)indexPlay / (float)Steps) * 0.5f );
+		} else if( replay.getEventsCount() - indexPlay <= Steps ) {
+			float val = (float)(replay.getEventsCount() - indexPlay) / (float)Steps;
+			renderer.setAlpha( val * 0.5f );
+		}
+
 	}
 }

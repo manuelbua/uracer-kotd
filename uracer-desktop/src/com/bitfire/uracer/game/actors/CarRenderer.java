@@ -11,6 +11,7 @@ public class CarRenderer {
 	private Sprite facet;
 	private Sprite ambientOcclusion;
 	private TextureRegion region;
+	private float alpha;
 
 	public CarRenderer( CarModel model, TextureRegion region ) {
 		// aspect
@@ -26,6 +27,8 @@ public class CarRenderer {
 		ambientOcclusion.setSize( facet.getWidth(), facet.getHeight() );
 		ambientOcclusion.setScale( 2f, 2.3f );
 		ambientOcclusion.setOrigin( ambientOcclusion.getWidth() / 2, ambientOcclusion.getHeight() / 2 );
+
+		alpha = 1;
 	}
 
 	public Sprite getFacet() {
@@ -36,17 +39,21 @@ public class CarRenderer {
 		return region;
 	}
 
-	public void render( SpriteBatch batch, EntityRenderState state ) {
-		render( batch, state, 1f );
+	public void setAlpha(float alpha) {
+		this.alpha = alpha;
 	}
 
-	public void render( SpriteBatch batch, EntityRenderState state, float opacity ) {
+	public float getAlpha() {
+		return alpha;
+	}
+
+	public void render( SpriteBatch batch, EntityRenderState state ) {
 		ambientOcclusion.setPosition( state.position.x - ambientOcclusion.getOriginX(), state.position.y - ambientOcclusion.getOriginY() );
 		ambientOcclusion.setRotation( state.orientation );
-		ambientOcclusion.draw( batch, 0.65f * opacity );
+		ambientOcclusion.draw( batch, 0.65f * alpha );
 
 		facet.setPosition( state.position.x - facet.getOriginX(), state.position.y - facet.getOriginY() );
 		facet.setRotation( state.orientation );
-		facet.draw( batch, opacity );
+		facet.draw( batch, alpha );
 	}
 }

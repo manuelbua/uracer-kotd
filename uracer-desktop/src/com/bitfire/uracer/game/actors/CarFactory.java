@@ -54,7 +54,7 @@ public final class CarFactory {
 
 	private static void applyCarPhysics( Car car, EntityType entityType ) {
 		CarModel model = car.getCarModel();
-		TextureRegion region = car.getGraphics().getTextureRegion();
+		TextureRegion region = car.getRenderer().getTextureRegion();
 
 		String shapeName = null;
 		String shapeRef = null;
