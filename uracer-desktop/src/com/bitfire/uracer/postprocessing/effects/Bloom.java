@@ -71,7 +71,6 @@ public final class Bloom extends PostProcessorEffect {
 	private Settings settings;
 
 	private boolean blending = false;
-	private boolean vignetting = false;
 
 	public Bloom( int fboWidth, int fboHeight ) {
 		pingPongBuffer = new PingPongBuffer( fboWidth, fboHeight, PostProcessor.getFramebufferFormat(), false );

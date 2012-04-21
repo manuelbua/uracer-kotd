@@ -5,7 +5,8 @@ import com.bitfire.uracer.utils.ShaderLoader;
 
 public final class Vignetting extends Filter<Vignetting> {
 
-	private float intensity, x, y;
+	private float x, y;
+//	private float intensity;
 
 	public enum Param implements Parameter {
 		// @formatter:off
