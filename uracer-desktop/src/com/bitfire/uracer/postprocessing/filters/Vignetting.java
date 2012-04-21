@@ -6,12 +6,12 @@ import com.bitfire.uracer.utils.ShaderLoader;
 public final class Vignetting extends Filter<Vignetting> {
 
 	private float x, y;
-//	private float intensity;
+	private float intensity;
 
 	public enum Param implements Parameter {
 		// @formatter:off
 		Texture1("u_texture0",0),
-//		VignetteIntensity("VignetteIntensity",0),
+		VignetteIntensity("VignetteIntensity",0),
 		VignetteX("VignetteX",0),
 		VignetteY("VignetteY",0);
 		// @formatter:on
@@ -40,10 +40,10 @@ public final class Vignetting extends Filter<Vignetting> {
 		rebind();
 	}
 
-//	public void setIntensity( float intensity ) {
-//		this.intensity = intensity;
-//		setParam( Param.VignetteIntensity, intensity );
-//	}
+	public void setIntensity( float intensity ) {
+		this.intensity = intensity;
+		setParam( Param.VignetteIntensity, intensity );
+	}
 
 	public void setCoords( float x, float y ) {
 		this.x = x;
