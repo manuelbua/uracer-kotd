@@ -64,18 +64,14 @@ public final class Bloom extends PostProcessorEffect {
 
 	private PingPongBuffer pingPongBuffer;
 
-	protected int blurPasses;
-	protected float blurAmount;
-	protected float bloomIntensity, bloomSaturation;
-	protected float baseIntensity, baseSaturation;
+	private Blur blur;
+	private Threshold threshold;
+	private Combine combine;
 
-	protected Blur blur;
-	protected Threshold threshold;
-	protected Combine combine;
+	private Settings settings;
 
-	protected Settings settings;
-
-	protected boolean blending = false;
+	private boolean blending = false;
+	private boolean vignetting = false;
 
 	public Bloom( int fboWidth, int fboHeight ) {
 		pingPongBuffer = new PingPongBuffer( fboWidth, fboHeight, PostProcessor.getFramebufferFormat(), false );

@@ -6,6 +6,7 @@ precision mediump float;
 #define LOWP
 #define MED
 #endif
+
 uniform MED sampler2D u_texture0;
 uniform MED sampler2D u_texture1;
 uniform float Src1Intensity;
@@ -72,5 +73,4 @@ void main()
 
 	// combine
 	gl_FragColor = src1 + src2;
-	//gl_FragColor = texture2D(u_texture1, v_texCoords);
 }

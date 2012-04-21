@@ -19,7 +19,7 @@ public class GameRenderer {
 	private final GameBatchRenderer batchRenderer;
 	private final GameWorldRenderer worldRenderer;
 	private final PostProcessor postProcessor;
-	private boolean postProcessorEnabled = Config.Graphics.EnablePostProcessingFx;
+	private boolean postProcessorEnabled = Config.PostProcessing.Enabled;
 
 	public GameRenderer( ScalingStrategy scalingStrategy, GameWorld gameWorld, World box2dWorld ) {
 		gl = Gdx.graphics.getGL20();

@@ -15,6 +15,7 @@ import com.bitfire.uracer.game.rendering.GameRenderer;
 import com.bitfire.uracer.game.world.GameWorld;
 import com.bitfire.uracer.postprocessing.PostProcessor;
 import com.bitfire.uracer.postprocessing.effects.Bloom;
+import com.bitfire.uracer.postprocessing.effects.Vignette;
 import com.bitfire.uracer.postprocessing.effects.Zoom;
 import com.bitfire.uracer.task.TaskManager;
 
@@ -32,6 +33,7 @@ public class Game implements Disposable {
 	// post processing
 	private Bloom bloom = null;
 	private Zoom zoom = null;
+	private Vignette vignette = null;
 
 	public Game( String levelName, ScalingStrategy scalingStrategy, GameDifficulty difficulty, Aspect carAspect, CarModel carModel ) {
 		gameplaySettings = new GameplaySettings( difficulty );
@@ -53,7 +55,7 @@ public class Game implements Disposable {
 	}
 
 	private void configurePostProcessing( PostProcessor processor, GameWorld world ) {
-		if( !Config.Graphics.EnablePostProcessingFx || processor == null ) {
+		if( !Config.PostProcessing.Enabled || processor == null ) {
 			return;
 		}
 
@@ -72,23 +74,31 @@ public class Game implements Disposable {
 		processor.addEffect( zoom );
 
 		processor.addEffect( bloom );
+
+		if( Config.PostProcessing.EnableVignetting ) {
+			vignette = new Vignette();
+			vignette.setCoords( 0.75f, 0.5f );
+			processor.addEffect( vignette );
+		}
 	}
 
-	// FIXME, this is logic and it shouldn't not belong here
+	// FIXME, this is logic and it shouldn't be here
 	private void updatePostProcessing() {
 		float factor = 1 - (URacer.timeMultiplier - 0.3f) / (Config.Physics.PhysicsTimeMultiplier - 0.3f);
 
 		Car playerCar = gameLogic.getPlayer();
 
-		if( Config.Graphics.EnablePostProcessingFx && zoom != null && playerCar != null ) {
+		if( Config.PostProcessing.Enabled && zoom != null && playerCar != null ) {
 			zoom.setOrigin( Director.screenPosFor( gameLogic.getPlayer().getBody() ) );
 			zoom.setStrength( -0.05f * factor );
 		}
 
-		if( Config.Graphics.EnablePostProcessingFx && bloom != null && zoom != null ) {
+		if( Config.PostProcessing.Enabled && bloom != null && zoom != null ) {
 			bloom.setBaseSaturation( 0.5f - 0.5f * factor );
 			bloom.setBloomSaturation( 1.5f - factor * 1.15f );
 			bloom.setBloomIntesity( 1f + factor * 1.75f );
+
+			vignette.setY( (1 - factor) * 0.74f + factor * 0.4f );
 		}
 	}
 

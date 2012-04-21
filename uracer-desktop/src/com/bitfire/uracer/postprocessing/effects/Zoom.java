@@ -8,26 +8,20 @@ import com.bitfire.uracer.postprocessing.filters.ZoomBlur.Quality;
 
 public class Zoom extends PostProcessorEffect {
 	private ZoomBlur zoomBlur;
-	private float x, y, strength;
 
 	public Zoom( Quality quality ) {
 		zoomBlur = new ZoomBlur( quality );
 	}
 
 	public void setOrigin( Vector2 o ) {
-		this.x = o.x;
-		this.y = o.y;
 		zoomBlur.setOrigin( o.x, o.y );
 	}
 
 	public void setOrigin( float x, float y ) {
-		this.x = x;
-		this.y = y;
 		zoomBlur.setOrigin( x, y );
 	}
 
 	public void setStrength( float strength ) {
-		this.strength = strength;
 		zoomBlur.setStrength( strength );
 	}
 
@@ -39,8 +33,6 @@ public class Zoom extends PostProcessorEffect {
 	@Override
 	public void rebind() {
 		zoomBlur.rebind();
-		zoomBlur.setOrigin( x, y );
-		zoomBlur.setStrength( strength );
 	}
 
 	@Override

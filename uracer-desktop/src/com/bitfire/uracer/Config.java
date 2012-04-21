@@ -13,6 +13,8 @@ public final class Config {
 	public static final String LevelsStore = "data/levels/";
 
 	public static final class PostProcessing {
+		public static boolean Enabled;
+		public static boolean EnableVignetting;
 		public static BlurType BlurType;
 		public static float RttRatio = 0.25f;
 		public static int PotRttFboWidth, PotRttFboHeight;
@@ -24,6 +26,9 @@ public final class Config {
 		// compute per-resolution constants
 		public static void asDefault() {
 			int w = Gdx.graphics.getWidth();
+
+			Enabled = true;
+			EnableVignetting = true;
 
 			RttFboWidth = (int)(Gdx.graphics.getWidth() * RttRatio);
 			RttFboHeight = (int)(Gdx.graphics.getHeight() * RttRatio);
@@ -62,7 +67,6 @@ public final class Config {
 
 	public static final class Graphics {
 		public static boolean EnableMipMapping;
-		public static boolean EnablePostProcessingFx;
 		public static boolean SubframeInterpolation;
 		public static boolean RenderBox2DWorldWireframe;
 		public static boolean RenderPlayerDebugInfo;
@@ -73,7 +77,6 @@ public final class Config {
 
 
 		public static void asDefault() {
-			EnablePostProcessingFx = true;
 			EnableMipMapping = true;
 			SubframeInterpolation = true;
 
