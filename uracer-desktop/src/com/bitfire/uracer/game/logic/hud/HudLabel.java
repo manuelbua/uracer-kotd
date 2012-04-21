@@ -147,7 +147,7 @@ public final class HudLabel {
 		GameTweener.start( Timeline.createSequence().push( Tween.to( this, HudLabelAccessor.OPACITY, milliseconds ).target( 0f ).ease( Expo.INOUT ) ) );
 	}
 
-	public void slide() {
+	public void slide( boolean slideUp ) {
 		setScale( 1f, true );
 
 		setPosition( getPosition().x, getPosition().y + 50 );
@@ -155,6 +155,9 @@ public final class HudLabel {
 		float targetNearY = getPosition().y;
 		float targetFarX = getPosition().x;
 		float targetFarY = getPosition().y - 100;
+		if( !slideUp ) {
+			targetFarY = getPosition().y + 100;
+		}
 
 		GameTweener.start( Timeline
 				.createParallel()

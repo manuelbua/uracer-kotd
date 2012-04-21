@@ -89,7 +89,7 @@ public final class HudDrifting extends HudElement {
 		}
 
 		result.setString( message );
-		result.slide();
+		result.slide( type == EndDriftType.GoodDrift );
 		labelRealtime.fadeOut( 300 );
 	}
 
