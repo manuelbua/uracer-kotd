@@ -1,15 +1,13 @@
 package com.bitfire.uracer.game.logic.sounds;
 
 import com.badlogic.gdx.utils.Array;
-import com.bitfire.uracer.game.logic.GameLogic;
 import com.bitfire.uracer.game.logic.GameTask;
 import com.bitfire.uracer.utils.Manager;
 
 public class SoundManager extends GameTask {
 	private final Manager<SoundEffect> manager = new Manager<SoundEffect>();
 
-	public SoundManager( GameLogic logic ) {
-		super( logic );
+	public SoundManager() {
 	}
 
 	@Override

@@ -1,8 +1,5 @@
 package com.bitfire.uracer.game.logic;
 
-import java.util.ArrayList;
-import java.util.List;
-
 import aurelienribon.tweenengine.BaseTween;
 import aurelienribon.tweenengine.Timeline;
 import aurelienribon.tweenengine.Tween;
@@ -58,7 +55,6 @@ import com.bitfire.uracer.game.tween.GameTweener;
 import com.bitfire.uracer.game.tween.WcTweener;
 import com.bitfire.uracer.game.world.GameWorld;
 import com.bitfire.uracer.game.world.WorldDefs.TileLayer;
-import com.bitfire.uracer.task.Task;
 import com.bitfire.uracer.task.TaskManagerEvent;
 import com.bitfire.uracer.utils.AMath;
 import com.bitfire.uracer.utils.BoxedFloat;
@@ -103,7 +99,7 @@ public class GameLogic implements CarEvent.Listener, PlayerCarStateEvent.Listene
 	private Recorder recorder = null;
 
 	// tasks
-	private List<Task> gameTasks = null;
+	private GameTasksManager gameTasksManager = null;
 
 	// special effects
 	private TrackEffects effects = null;
@@ -178,11 +174,7 @@ public class GameLogic implements CarEvent.Listener, PlayerCarStateEvent.Listene
 	}
 
 	public void dispose() {
-		for( Task task : gameTasks ) {
-			task.dispose();
-		}
-
-		gameTasks.clear();
+		gameTasksManager.dispose();
 
 		if( playerCar != null ) {
 			playerCar.dispose();
@@ -226,7 +218,7 @@ public class GameLogic implements CarEvent.Listener, PlayerCarStateEvent.Listene
 	}
 
 	private void createGameTasks( LapState lapState ) {
-		gameTasks = new ArrayList<Task>( 10 );
+		gameTasksManager = new GameTasksManager();
 
 		// input system
 		input = new Input( TaskManagerEvent.Order.MINUS_4 );
@@ -235,20 +227,20 @@ public class GameLogic implements CarEvent.Listener, PlayerCarStateEvent.Listene
 		physicsStep = new PhysicsStep( box2dWorld, TaskManagerEvent.Order.MINUS_3 );
 
 		// sound manager
-		sound = new SoundManager( this );
-		gameTasks.add( sound );
+		sound = new SoundManager();
+		gameTasksManager.add( sound );
 
 		// message manager
-		messager = new Notifier( this, scalingStrategy.invTileMapZoomFactor );
-		gameTasks.add( messager );
+		messager = new Notifier( scalingStrategy.invTileMapZoomFactor );
+		gameTasksManager.add( messager );
 
 		// hud manager
-		hud = new Hud( this, scalingStrategy, lapState );
-		gameTasks.add( hud );
+		hud = new Hud( scalingStrategy, lapState );
+		gameTasksManager.add( hud );
 
 		// effects manager
-		effects = new TrackEffects( this );
-		gameTasks.add( effects );
+		effects = new TrackEffects();
+		gameTasksManager.add( effects );
 	}
 
 	private void configureTasks( PlayerCar player ) {
@@ -365,12 +357,14 @@ public class GameLogic implements CarEvent.Listener, PlayerCarStateEvent.Listene
 		WcTweener.clear();
 		GameTweener.clear();
 		recorder.reset();
+		gameTasksManager.restart();
 	}
 
 	private void resetLogic() {
 		restartLogic();
 		lastRecordedLapId = 0;
 		playerLapState.reset();
+		gameTasksManager.reset();
 	}
 
 	//

@@ -33,7 +33,7 @@ public abstract class Car extends Box2DEntity {
 	private Aspect aspect = Aspect.OldSkool;
 	protected InputMode inputMode = InputMode.NoInput;
 
-	public Car( World box2dWorld,  GameWorld gameWorld, CarModel model, Aspect aspect ) {
+	public Car( World box2dWorld, GameWorld gameWorld, CarModel model, Aspect aspect ) {
 		super( box2dWorld );
 		this.gameWorld = gameWorld;
 		this.renderer = new CarRenderer( model, aspect );

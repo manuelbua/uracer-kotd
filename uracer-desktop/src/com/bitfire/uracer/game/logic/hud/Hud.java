@@ -9,7 +9,6 @@ import com.bitfire.uracer.ScalingStrategy;
 import com.bitfire.uracer.game.events.GameEvents;
 import com.bitfire.uracer.game.events.GameRendererEvent;
 import com.bitfire.uracer.game.input.Replay;
-import com.bitfire.uracer.game.logic.GameLogic;
 import com.bitfire.uracer.game.logic.GameTask;
 import com.bitfire.uracer.game.states.LapState;
 import com.bitfire.uracer.utils.Manager;
@@ -54,8 +53,7 @@ public final class Hud extends GameTask {
 	}
 
 	// effects
-	public Hud( GameLogic logic, ScalingStrategy scalingStrategy, LapState lapState ) {
-		super(logic);
+	public Hud( ScalingStrategy scalingStrategy, LapState lapState ) {
 		GameEvents.gameRenderer.addListener( gameRendererEvent, GameRendererEvent.Type.BatchAfterMeshes, GameRendererEvent.Order.DEFAULT );
 		GameEvents.gameRenderer.addListener( gameRendererEvent, GameRendererEvent.Type.BatchDebug, GameRendererEvent.Order.DEFAULT );
 

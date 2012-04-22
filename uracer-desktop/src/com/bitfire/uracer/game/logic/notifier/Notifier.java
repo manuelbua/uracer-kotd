@@ -7,7 +7,6 @@ import com.badlogic.gdx.utils.Array;
 import com.bitfire.uracer.game.events.GameEvents;
 import com.bitfire.uracer.game.events.GameRendererEvent;
 import com.bitfire.uracer.game.events.GameRendererEvent.Type;
-import com.bitfire.uracer.game.logic.GameLogic;
 import com.bitfire.uracer.game.logic.GameTask;
 import com.bitfire.uracer.game.logic.notifier.Message.MessagePosition;
 import com.bitfire.uracer.game.logic.notifier.Message.MessageSize;
@@ -33,8 +32,7 @@ public class Notifier extends GameTask {
 	private static final int MaxMessagesInStore = 10;
 	private int idxMessageStore;
 
-	public Notifier( GameLogic logic, float invZoomFactor ) {
-		super( logic );
+	public Notifier( float invZoomFactor ) {
 		GameEvents.gameRenderer.addListener( gameRendererEvent, GameRendererEvent.Type.BatchAfterMeshes, GameRendererEvent.Order.MINUS_4 );
 
 		currents = new Array<Message>( 3 );

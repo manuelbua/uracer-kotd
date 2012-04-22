@@ -4,7 +4,6 @@ import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.utils.Array;
 import com.bitfire.uracer.game.events.GameEvents;
 import com.bitfire.uracer.game.events.GameRendererEvent;
-import com.bitfire.uracer.game.logic.GameLogic;
 import com.bitfire.uracer.game.logic.GameTask;
 import com.bitfire.uracer.utils.Manager;
 
@@ -26,8 +25,7 @@ public final class TrackEffects extends GameTask {
 		}
 	};
 
-	public TrackEffects( GameLogic logic ) {
-		super( logic );
+	public TrackEffects() {
 		GameEvents.gameRenderer.addListener( gameRendererEvent, GameRendererEvent.Type.BatchBeforeMeshes, GameRendererEvent.Order.MINUS_4 );
 
 		// NOTE for custom render event
