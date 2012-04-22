@@ -48,6 +48,7 @@ public class HudDebugMeter {
 	}
 
 	// FIXME dispose!!!
+
 	public void setValue( float value ) {
 		this.value = value;
 	}

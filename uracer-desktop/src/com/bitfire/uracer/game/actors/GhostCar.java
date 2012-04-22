@@ -12,6 +12,7 @@ import com.bitfire.uracer.game.input.Replay;
  * @author manuel */
 
 public final class GhostCar extends Car {
+	private static final int FadeEvents = 30;
 	private Replay replay;
 	private int indexPlay;
 	private boolean hasReplay;
@@ -29,7 +30,12 @@ public final class GhostCar extends Car {
 	}
 
 	@Override
-	public Vector2 getVelocity() {
+	public Vector2 getLateralForceFront() {
+		return null;
+	}
+
+	@Override
+	public Vector2 getLateralForceRear() {
 		return null;
 	}
 
@@ -39,12 +45,7 @@ public final class GhostCar extends Car {
 	}
 
 	@Override
-	public Vector2 getLateralForceFront() {
-		return null;
-	}
-
-	@Override
-	public Vector2 getLateralForceRear() {
+	public Vector2 getVelocity() {
 		return null;
 	}
 
@@ -90,7 +91,6 @@ public final class GhostCar extends Car {
 		}
 	}
 
-
 	@Override
 	protected void onComputeCarForces( CarForces forces ) {
 		forces.reset();
@@ -103,16 +103,15 @@ public final class GhostCar extends Car {
 
 			forces.set( replay.forces[indexPlay++] );
 
-//			Gdx.app.log( "GhostCar", "play index is " + indexPlay + "/" + replay.getEventsCount() );
+			// Gdx.app.log( "GhostCar", "play index is " + indexPlay + "/" + replay.getEventsCount() );
 		}
 
 		// also change opacity, fade in/out based on
 		// events played, events remaining
-		final int Steps = 30;
-		if( indexPlay <= Steps ) {
-			renderer.setAlpha( ((float)indexPlay / (float)Steps) * 0.5f );
-		} else if( replay.getEventsCount() - indexPlay <= Steps ) {
-			float val = (float)(replay.getEventsCount() - indexPlay) / (float)Steps;
+		if( indexPlay <= FadeEvents ) {
+			renderer.setAlpha( ((float)indexPlay / (float)FadeEvents) * 0.5f );
+		} else if( replay.getEventsCount() - indexPlay <= FadeEvents ) {
+			float val = (float)(replay.getEventsCount() - indexPlay) / (float)FadeEvents;
 			renderer.setAlpha( val * 0.5f );
 		}
 

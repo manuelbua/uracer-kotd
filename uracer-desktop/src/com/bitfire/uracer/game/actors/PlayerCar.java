@@ -46,7 +46,6 @@ public class PlayerCar extends Car {
 
 	@Override
 	public void reset() {
-		// TODO Auto-generated method stub
 		super.reset();
 		frictionMean.clear();
 	}
@@ -141,7 +140,6 @@ public class PlayerCar extends Car {
 			VMath.clamp( carPos, 0, 1 );
 
 			// compute throttle
-			// TODO think, in car::compute_throttle, could be modulated by user's game settings? (multiplier? strength?)
 			carInput.throttle = touchPos.dst( carPos ) * 4 * carDesc.carModel.max_force;
 			// carInput.throttle = touchPos.dst( carPos ) * 2 * carDesc.carModel.max_force; // x2 = 0<->halfscreen is
 			// considered 0<->1
@@ -179,6 +177,8 @@ public class PlayerCar extends Car {
 		// (no interface on carsim for performance reasons!)
 		carDesc.velocity_wc.set( forces.velocity_x, forces.velocity_y );
 		carDesc.angularvelocity = forces.angularVelocity;
+
+		// update speed/force factors
 	}
 
 	@Override

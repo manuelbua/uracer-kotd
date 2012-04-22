@@ -98,7 +98,7 @@ public final class DriftState {
 					// driftStartTime = System.currentTimeMillis();
 					time.start();
 					GameEvents.driftState.trigger( car, Type.onBeginDrift );
-//					Gdx.app.log( "DriftState", car.getClass().getSimpleName() + " onBeginDrift()" );
+					// Gdx.app.log( "DriftState", car.getClass().getSimpleName() + " onBeginDrift()" );
 				}
 			} else {
 				// search for onEndDrift
@@ -107,7 +107,8 @@ public final class DriftState {
 					isDrifting = false;
 					hasCollided = false;
 					GameEvents.driftState.trigger( car, Type.onEndDrift );
-//					Gdx.app.log( "DriftState", car.getClass().getSimpleName() + " onEndDrift(), " + time.elapsed( Time.Reference.TickSeconds ) + "s" );
+					// Gdx.app.log( "DriftState", car.getClass().getSimpleName() + " onEndDrift(), " + time.elapsed(
+					// Time.Reference.TickSeconds ) + "s" );
 				}
 			}
 		}

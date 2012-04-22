@@ -11,8 +11,8 @@ import com.bitfire.uracer.utils.AMath;
 public final class CarState {
 	public Car car;
 
-	public float carMaxSpeedSquared = 0;
-	public float carMaxForce = 0;
+	private float carMaxSpeedSquared = 0;
+	private float carMaxForce = 0;
 	public float currCarSpeedSquared = 0;
 	public float currSpeedFactor = 0;
 	public float currForceFactor = 0;
