@@ -13,16 +13,19 @@ public final class CarState {
 
 	private float carMaxSpeedSquared = 0;
 	private float carMaxForce = 0;
-	public float currCarSpeedSquared = 0;
-	public float currSpeedFactor = 0;
-	public float currForceFactor = 0;
+
+	private int lastTileX = 0, lastTileY = 0;
+	private GameWorld world;
+
 
 	/* position */
 	public int currTileX = 1, currTileY = 1;
 	public Vector2 tilePosition = new Vector2();
 
-	private int lastTileX = 0, lastTileY = 0;
-	private GameWorld world;
+	/* speed/force factors */
+	public float currCarSpeedSquared = 0;
+	public float currSpeedFactor = 0;
+	public float currForceFactor = 0;
 
 	private final GameLogicEvent.Listener gameLogicEvent = new GameLogicEvent.Listener() {
 		@Override
