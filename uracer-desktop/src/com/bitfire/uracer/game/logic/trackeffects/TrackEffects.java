@@ -26,8 +26,8 @@ public final class TrackEffects extends GameTask {
 		}
 	};
 
-	public TrackEffects(GameLogic logic) {
-		super(logic);
+	public TrackEffects( GameLogic logic ) {
+		super( logic );
 		GameEvents.gameRenderer.addListener( gameRendererEvent, GameRendererEvent.Type.BatchBeforeMeshes, GameRendererEvent.Order.MINUS_4 );
 
 		// NOTE for custom render event

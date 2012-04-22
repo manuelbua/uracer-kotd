@@ -34,7 +34,7 @@ public class Notifier extends GameTask {
 	private int idxMessageStore;
 
 	public Notifier( GameLogic logic, float invZoomFactor ) {
-		super(logic);
+		super( logic );
 		GameEvents.gameRenderer.addListener( gameRendererEvent, GameRendererEvent.Type.BatchAfterMeshes, GameRendererEvent.Order.MINUS_4 );
 
 		currents = new Array<Message>( 3 );
