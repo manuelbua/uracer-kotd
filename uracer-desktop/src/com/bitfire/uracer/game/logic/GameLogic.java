@@ -23,11 +23,11 @@ import com.bitfire.uracer.URacer;
 import com.bitfire.uracer.game.GameplaySettings;
 import com.bitfire.uracer.game.actors.Car;
 import com.bitfire.uracer.game.actors.Car.Aspect;
+import com.bitfire.uracer.game.actors.player.PlayerCar;
 import com.bitfire.uracer.game.actors.CarEvent;
 import com.bitfire.uracer.game.actors.CarFactory;
 import com.bitfire.uracer.game.actors.CarModel;
 import com.bitfire.uracer.game.actors.GhostCar;
-import com.bitfire.uracer.game.actors.PlayerCar;
 import com.bitfire.uracer.game.collisions.GameContactListener;
 import com.bitfire.uracer.game.events.GameEvents;
 import com.bitfire.uracer.game.events.GameLogicEvent;
@@ -384,7 +384,7 @@ public class GameLogic implements CarEvent.Listener, PlayerCarStateEvent.Listene
 	public void carStateEvent( Car source, PlayerCarStateEvent.Type type ) {
 		switch( type ) {
 		case onTileChanged:
-			updatePlayerLapState();
+			updatePlayerLapState( playerLapState );
 			break;
 		}
 	}
@@ -463,7 +463,7 @@ public class GameLogic implements CarEvent.Listener, PlayerCarStateEvent.Listene
 	}
 
 	// FIXME looks like this function is doing MUCH more than what's stated in its name..
-	private void updatePlayerLapState() {
+	private void updatePlayerLapState( LapState lapState ) {
 		if( playerCar != null ) {
 			boolean onStartZone = (playerCar.carState.currTileX == gameWorld.playerStartTileX && playerCar.carState.currTileY == gameWorld.playerStartTileY);
 

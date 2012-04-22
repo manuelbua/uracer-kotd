@@ -9,6 +9,7 @@ import com.bitfire.uracer.Art;
 import com.bitfire.uracer.Config;
 import com.bitfire.uracer.entities.EntityType;
 import com.bitfire.uracer.game.actors.Car.Aspect;
+import com.bitfire.uracer.game.actors.player.PlayerCar;
 import com.bitfire.uracer.game.collisions.CollisionFilters;
 import com.bitfire.uracer.game.input.Input;
 import com.bitfire.uracer.game.world.GameWorld;

@@ -1,7 +1,6 @@
-package com.bitfire.uracer.game.states;
+package com.bitfire.uracer.game.actors.player;
 
 import com.bitfire.uracer.game.Time;
-import com.bitfire.uracer.game.actors.PlayerCar;
 import com.bitfire.uracer.game.events.PlayerDriftStateEvent;
 import com.bitfire.uracer.game.events.PlayerDriftStateEvent.Type;
 import com.bitfire.uracer.utils.AMath;

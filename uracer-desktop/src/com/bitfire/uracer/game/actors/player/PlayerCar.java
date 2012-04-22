@@ -1,4 +1,4 @@
-package com.bitfire.uracer.game.actors;
+package com.bitfire.uracer.game.actors.player;
 
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
@@ -8,9 +8,11 @@ import com.badlogic.gdx.math.WindowedMean;
 import com.badlogic.gdx.physics.box2d.World;
 import com.bitfire.uracer.Config;
 import com.bitfire.uracer.Director;
+import com.bitfire.uracer.game.actors.Car;
+import com.bitfire.uracer.game.actors.CarDescriptor;
+import com.bitfire.uracer.game.actors.CarForces;
+import com.bitfire.uracer.game.actors.CarModel;
 import com.bitfire.uracer.game.input.Input;
-import com.bitfire.uracer.game.states.PlayerCarState;
-import com.bitfire.uracer.game.states.PlayerDriftState;
 import com.bitfire.uracer.game.world.GameWorld;
 import com.bitfire.uracer.utils.AMath;
 import com.bitfire.uracer.utils.Convert;

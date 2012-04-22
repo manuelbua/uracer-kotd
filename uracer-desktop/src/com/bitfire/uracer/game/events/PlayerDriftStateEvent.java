@@ -1,6 +1,6 @@
 package com.bitfire.uracer.game.events;
 
-import com.bitfire.uracer.game.actors.PlayerCar;
+import com.bitfire.uracer.game.actors.player.PlayerCar;
 import com.bitfire.uracer.utils.Event;
 import com.bitfire.uracer.utils.EventListener;
 import com.bitfire.uracer.utils.EventNotifier;

@@ -5,7 +5,7 @@ import com.badlogic.gdx.math.Vector2;
 import com.bitfire.uracer.Art;
 import com.bitfire.uracer.Director;
 import com.bitfire.uracer.ScalingStrategy;
-import com.bitfire.uracer.game.actors.PlayerCar;
+import com.bitfire.uracer.game.actors.player.PlayerCar;
 import com.bitfire.uracer.utils.Convert;
 import com.bitfire.uracer.utils.NumberString;
 import com.bitfire.uracer.utils.VMath;

@@ -3,8 +3,8 @@ package com.bitfire.uracer.game.logic.sounds.effects;
 import com.badlogic.gdx.audio.Sound;
 import com.bitfire.uracer.Config;
 import com.bitfire.uracer.Sounds;
+import com.bitfire.uracer.game.actors.player.PlayerCarState;
 import com.bitfire.uracer.game.logic.sounds.SoundEffect;
-import com.bitfire.uracer.game.states.PlayerCarState;
 import com.bitfire.uracer.utils.AMath;
 
 public final class CarEngineSoundEffect extends SoundEffect {

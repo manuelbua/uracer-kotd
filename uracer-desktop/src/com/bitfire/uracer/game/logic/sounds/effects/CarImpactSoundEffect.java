@@ -8,7 +8,7 @@ import com.bitfire.uracer.URacer;
 import com.bitfire.uracer.game.actors.CarEvent;
 import com.bitfire.uracer.game.actors.CarEvent.Data;
 import com.bitfire.uracer.game.actors.CarEvent.Type;
-import com.bitfire.uracer.game.actors.PlayerCar;
+import com.bitfire.uracer.game.actors.player.PlayerCar;
 import com.bitfire.uracer.game.logic.sounds.SoundEffect;
 import com.bitfire.uracer.utils.AMath;
 import com.bitfire.uracer.utils.AudioUtils;

@@ -1,7 +1,8 @@
-package com.bitfire.uracer.game.actors;
+package com.bitfire.uracer.game.actors.player;
 
 import com.badlogic.gdx.math.MathUtils;
 import com.badlogic.gdx.math.Vector2;
+import com.bitfire.uracer.game.actors.CarDescriptor;
 import com.bitfire.uracer.utils.AMath;
 import com.bitfire.uracer.utils.VMath;
 

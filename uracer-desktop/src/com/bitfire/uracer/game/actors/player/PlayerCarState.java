@@ -1,4 +1,4 @@
-package com.bitfire.uracer.game.states;
+package com.bitfire.uracer.game.actors.player;
 
 import com.badlogic.gdx.math.Vector2;
 import com.bitfire.uracer.game.actors.Car;

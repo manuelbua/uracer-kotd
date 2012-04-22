@@ -7,9 +7,9 @@ import com.badlogic.gdx.math.Vector2;
 import com.bitfire.uracer.Art;
 import com.bitfire.uracer.Config;
 import com.bitfire.uracer.Director;
-import com.bitfire.uracer.game.actors.PlayerCar;
+import com.bitfire.uracer.game.actors.player.PlayerCar;
+import com.bitfire.uracer.game.actors.player.PlayerDriftState;
 import com.bitfire.uracer.game.logic.trackeffects.TrackEffect;
-import com.bitfire.uracer.game.states.PlayerDriftState;
 import com.bitfire.uracer.utils.AMath;
 import com.bitfire.uracer.utils.Convert;
 
