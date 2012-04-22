@@ -1,8 +1,9 @@
 package com.bitfire.uracer.game.logic.sounds;
 
 import com.badlogic.gdx.audio.Sound;
+import com.badlogic.gdx.utils.Disposable;
 
-public abstract class SoundEffect implements ISoundEffect {
+public abstract class SoundEffect implements Disposable {
 	// implements a workaround for Android, need to async-wait
 	// for sound loaded but libgdx doesn't expose anything for this!
 
@@ -55,19 +56,15 @@ public abstract class SoundEffect implements ISoundEffect {
 		return soundId;
 	}
 
-	@Override
 	public void start() {
 	}
 
-	@Override
 	public void stop() {
 	}
 
-	@Override
 	public void reset() {
 	}
 
-	@Override
 	public void tick() {
 	}
 }

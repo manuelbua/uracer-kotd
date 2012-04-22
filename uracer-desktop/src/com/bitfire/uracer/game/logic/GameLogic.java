@@ -42,7 +42,7 @@ import com.bitfire.uracer.game.logic.hud.HudDrifting;
 import com.bitfire.uracer.game.logic.hud.HudDrifting.EndDriftType;
 import com.bitfire.uracer.game.logic.hud.HudLabel;
 import com.bitfire.uracer.game.logic.hud.HudLabelAccessor;
-import com.bitfire.uracer.game.logic.sounds.ISoundEffect;
+import com.bitfire.uracer.game.logic.sounds.SoundEffect;
 import com.bitfire.uracer.game.logic.sounds.SoundManager;
 import com.bitfire.uracer.game.logic.sounds.effects.CarImpactSoundEffect;
 import com.bitfire.uracer.game.logic.sounds.effects.PlayerDriftSoundEffect;
@@ -241,7 +241,7 @@ public class GameLogic implements CarEvent.Listener, PlayerCarStateEvent.Listene
 
 	private void configureTasks( PlayerCar player ) {
 		// sounds
-		ISoundEffect fx = new PlayerDriftSoundEffect( player );
+		SoundEffect fx = new PlayerDriftSoundEffect( player );
 		fx.start();
 		sound.add( fx );
 		sound.add( new CarImpactSoundEffect( player ) );

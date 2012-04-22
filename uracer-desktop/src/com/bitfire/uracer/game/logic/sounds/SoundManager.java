@@ -8,7 +8,7 @@ import com.bitfire.uracer.task.Task;
 import com.bitfire.uracer.utils.Manager;
 
 public class SoundManager extends Task {
-	private final Manager<ISoundEffect> manager = new Manager<ISoundEffect>();
+	private final Manager<SoundEffect> manager = new Manager<SoundEffect>();
 
 	private final GameLogicEvent.Listener gameLogicEvent = new GameLogicEvent.Listener() {
 		@Override
@@ -32,24 +32,24 @@ public class SoundManager extends Task {
 		manager.dispose();
 	}
 
-	public void add( ISoundEffect effect ) {
+	public void add( SoundEffect effect ) {
 		manager.add( effect );
 	}
 
-	public void remove( ISoundEffect effect ) {
+	public void remove( SoundEffect effect ) {
 		manager.remove( effect );
 	}
 
 	@Override
 	protected void onTick() {
-		Array<ISoundEffect> items = manager.items;
+		Array<SoundEffect> items = manager.items;
 		for( int i = 0; i < items.size; i++ ) {
 			items.get( i ).tick();
 		}
 	}
 
 	public void reset() {
-		Array<ISoundEffect> items = manager.items;
+		Array<SoundEffect> items = manager.items;
 		for( int i = 0; i < items.size; i++ ) {
 			items.get( i ).reset();
 		}
