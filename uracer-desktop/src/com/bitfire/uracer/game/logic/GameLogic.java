@@ -46,8 +46,8 @@ import com.bitfire.uracer.game.logic.sounds.ISoundEffect;
 import com.bitfire.uracer.game.logic.sounds.SoundManager;
 import com.bitfire.uracer.game.logic.sounds.effects.CarImpactSoundEffect;
 import com.bitfire.uracer.game.logic.sounds.effects.PlayerDriftSoundEffect;
-import com.bitfire.uracer.game.logic.trackeffects.PlayerSkidMarks;
 import com.bitfire.uracer.game.logic.trackeffects.TrackEffects;
+import com.bitfire.uracer.game.logic.trackeffects.effects.PlayerSkidMarks;
 import com.bitfire.uracer.game.messager.Message;
 import com.bitfire.uracer.game.messager.Message.MessagePosition;
 import com.bitfire.uracer.game.messager.Message.MessageSize;
@@ -105,7 +105,6 @@ public class GameLogic implements CarEvent.Listener, PlayerCarStateEvent.Listene
 
 	// special effects
 	private TrackEffects effects = null;
-	private PlayerSkidMarks carSkidMarks = null;
 
 	// hud
 	private Hud hud = null;
@@ -248,7 +247,7 @@ public class GameLogic implements CarEvent.Listener, PlayerCarStateEvent.Listene
 		sound.add( new CarImpactSoundEffect( player ) );
 
 		// track effects
-		carSkidMarks = new PlayerSkidMarks( player );
+		PlayerSkidMarks carSkidMarks = new PlayerSkidMarks( player );
 		effects.add( carSkidMarks );
 
 		// hud

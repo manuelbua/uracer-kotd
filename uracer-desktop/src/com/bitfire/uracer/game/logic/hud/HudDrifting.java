@@ -82,8 +82,6 @@ public final class HudDrifting extends HudElement {
 			nextLabelResult = 0;
 		}
 
-		result.setPosition( lastRealtimePos );
-
 		switch( type ) {
 		case BadDrift:
 			result.setFont( Art.fontCurseRbig );
@@ -95,6 +93,7 @@ public final class HudDrifting extends HudElement {
 		}
 
 		result.setString( message );
+		result.setPosition( lastRealtimePos );
 		result.slide( type == EndDriftType.GoodDrift );
 
 		labelRealtime.setString( "+" + NumberString.format( player.driftState.driftSeconds() ) );

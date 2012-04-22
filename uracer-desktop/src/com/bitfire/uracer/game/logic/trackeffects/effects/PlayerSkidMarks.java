@@ -1,4 +1,4 @@
-package com.bitfire.uracer.game.logic.trackeffects;
+package com.bitfire.uracer.game.logic.trackeffects.effects;
 
 import com.badlogic.gdx.graphics.g2d.Sprite;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
@@ -8,9 +8,11 @@ import com.bitfire.uracer.Art;
 import com.bitfire.uracer.Config;
 import com.bitfire.uracer.Director;
 import com.bitfire.uracer.game.actors.PlayerCar;
+import com.bitfire.uracer.game.logic.trackeffects.TrackEffect;
 import com.bitfire.uracer.game.states.PlayerDriftState;
 import com.bitfire.uracer.utils.AMath;
 import com.bitfire.uracer.utils.Convert;
+
 
 public class PlayerSkidMarks extends TrackEffect {
 	public static final int MaxSkidMarks = 300;

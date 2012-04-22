@@ -1,4 +1,4 @@
-package com.bitfire.uracer.game.logic.trackeffects;
+package com.bitfire.uracer.game.logic.trackeffects.effects;
 
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.g2d.ParticleEffect;
@@ -8,15 +8,21 @@ import com.badlogic.gdx.math.Vector2;
 import com.bitfire.uracer.Art;
 import com.bitfire.uracer.ScalingStrategy;
 import com.bitfire.uracer.URacer;
-import com.bitfire.uracer.game.states.PlayerDriftState;
+import com.bitfire.uracer.game.actors.PlayerCar;
+import com.bitfire.uracer.game.logic.trackeffects.TrackEffect;
 
-public class CarSmokeTrails extends TrackEffect {
-	private SmokeEffect fx[];
-	private static final int SmokeEffectsCount = 1;
+/**
+ * FIXME disabled for a long time, need testing again
+ *
+ * @author bmanuel
+ */
+public class PlayerSmokeTrails extends TrackEffect {
 	public static final int MaxParticles = 100;
 
+	private SmokeEffect fx[];
+	private static final int SmokeEffectsCount = 1;
+	private PlayerCar player;
 	private boolean isDrifting, wasDrifting;
-	private PlayerDriftState driftState;
 	private ScalingStrategy scalingStrategy;
 	private float posX, posY;
 
@@ -86,9 +92,9 @@ public class CarSmokeTrails extends TrackEffect {
 		}
 	}
 
-	public CarSmokeTrails( ScalingStrategy scalingStrategy, PlayerDriftState driftState ) {
+	public PlayerSmokeTrails( ScalingStrategy scalingStrategy, PlayerCar player ) {
 		super( Type.CarSmokeTrails );
-		this.driftState = driftState;
+		this.player = player;
 		this.scalingStrategy = scalingStrategy;
 
 		fx = new SmokeEffect[ SmokeEffectsCount ];
@@ -118,7 +124,7 @@ public class CarSmokeTrails extends TrackEffect {
 
 	@Override
 	public void tick() {
-		isDrifting = driftState.isDrifting;
+		isDrifting = player.driftState.isDrifting;
 
 		if( isDrifting && !wasDrifting ) {
 			// started drifting
