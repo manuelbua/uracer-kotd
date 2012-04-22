@@ -1,6 +1,5 @@
 package com.bitfire.uracer.game.logic;
 
-import com.bitfire.uracer.game.events.GameEvents;
 import com.bitfire.uracer.game.events.GameLogicEvent;
 import com.bitfire.uracer.game.events.GameLogicEvent.Type;
 import com.bitfire.uracer.task.Task;
@@ -8,8 +7,8 @@ import com.bitfire.uracer.task.Task;
 public abstract class GameTask extends Task {
 
 	public GameTask( GameLogic logic ) {
-		GameEvents.gameLogic.addListener( gameLogicEvent, GameLogicEvent.Type.onReset );
-		GameEvents.gameLogic.addListener( gameLogicEvent, GameLogicEvent.Type.onRestart );
+		logic.event.addListener( gameLogicEvent, GameLogicEvent.Type.onReset );
+		logic.event.addListener( gameLogicEvent, GameLogicEvent.Type.onRestart );
 	}
 
 	public abstract void onReset();

@@ -29,7 +29,6 @@ import com.bitfire.uracer.game.actors.CarModel;
 import com.bitfire.uracer.game.actors.GhostCar;
 import com.bitfire.uracer.game.actors.player.PlayerCar;
 import com.bitfire.uracer.game.collisions.GameContactListener;
-import com.bitfire.uracer.game.events.GameEvents;
 import com.bitfire.uracer.game.events.GameLogicEvent;
 import com.bitfire.uracer.game.events.PlayerCarStateEvent;
 import com.bitfire.uracer.game.events.PlayerDriftStateEvent;
@@ -38,10 +37,10 @@ import com.bitfire.uracer.game.input.Replay;
 import com.bitfire.uracer.game.logic.helpers.DirectorController;
 import com.bitfire.uracer.game.logic.helpers.Recorder;
 import com.bitfire.uracer.game.logic.hud.Hud;
-import com.bitfire.uracer.game.logic.hud.elements.HudDrifting;
-import com.bitfire.uracer.game.logic.hud.elements.HudDrifting.EndDriftType;
 import com.bitfire.uracer.game.logic.hud.HudLabel;
 import com.bitfire.uracer.game.logic.hud.HudLabelAccessor;
+import com.bitfire.uracer.game.logic.hud.elements.HudDrifting;
+import com.bitfire.uracer.game.logic.hud.elements.HudDrifting.EndDriftType;
 import com.bitfire.uracer.game.logic.notifier.Message;
 import com.bitfire.uracer.game.logic.notifier.Message.MessagePosition;
 import com.bitfire.uracer.game.logic.notifier.Message.MessageSize;
@@ -71,6 +70,9 @@ import com.bitfire.uracer.utils.NumberString;
  *
  * @author bmanuel */
 public class GameLogic implements CarEvent.Listener, PlayerCarStateEvent.Listener, PlayerDriftStateEvent.Listener {
+	// event
+	public final GameLogicEvent event = new GameLogicEvent();
+
 	// scaling
 	private ScalingStrategy scalingStrategy = null;
 
@@ -273,11 +275,11 @@ public class GameLogic implements CarEvent.Listener, PlayerCarStateEvent.Listene
 	public boolean onTick() {
 		if( input.isOn( Keys.R ) ) {
 			restartLogic();
-			GameEvents.gameLogic.trigger( GameLogicEvent.Type.onRestart );
+			event.trigger( GameLogicEvent.Type.onRestart );
 		} else if( input.isOn( Keys.T ) ) {
 			restartLogic();
 			resetLogic();
-			GameEvents.gameLogic.trigger( GameLogicEvent.Type.onReset );
+			event.trigger( GameLogicEvent.Type.onReset );
 		} else if( input.isOn( Keys.Q ) ) {
 			Gdx.app.exit();
 			return false;
@@ -352,11 +354,13 @@ public class GameLogic implements CarEvent.Listener, PlayerCarStateEvent.Listene
 		timeMultiplier.value = Config.Physics.PhysicsTimeMultiplier;
 		WcTweener.clear();
 		GameTweener.clear();
+		recorder.reset();
 	}
 
 	private void resetLogic() {
 		restartLogic();
 		lastRecordedLapId = 0;
+		playerLapState.reset();
 	}
 
 	//

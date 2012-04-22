@@ -4,8 +4,6 @@ import com.badlogic.gdx.Gdx;
 import com.bitfire.uracer.game.GameDifficulty;
 import com.bitfire.uracer.game.actors.Car;
 import com.bitfire.uracer.game.actors.CarForces;
-import com.bitfire.uracer.game.events.GameEvents;
-import com.bitfire.uracer.game.events.GameLogicEvent;
 import com.bitfire.uracer.game.input.Replay;
 
 public class Recorder {
@@ -14,21 +12,7 @@ public class Recorder {
 	// replay data
 	private Replay replay;
 
-	private final GameLogicEvent.Listener gameLogicEvent = new GameLogicEvent.Listener() {
-		@Override
-		public void gameLogicEvent( GameLogicEvent.Type type ) {
-			switch( type ) {
-			case onReset:
-			case onRestart:
-				reset();
-				break;
-			}
-		}
-	};
-
 	public Recorder() {
-		GameEvents.gameLogic.addListener( gameLogicEvent, GameLogicEvent.Type.onReset );
-		GameEvents.gameLogic.addListener( gameLogicEvent, GameLogicEvent.Type.onRestart );
 		isRecording = false;
 		replay = null;
 	}
