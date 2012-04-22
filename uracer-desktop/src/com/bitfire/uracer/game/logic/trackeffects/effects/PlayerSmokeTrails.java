@@ -8,8 +8,8 @@ import com.badlogic.gdx.math.Vector2;
 import com.bitfire.uracer.Art;
 import com.bitfire.uracer.ScalingStrategy;
 import com.bitfire.uracer.URacer;
-import com.bitfire.uracer.game.actors.player.PlayerCar;
 import com.bitfire.uracer.game.logic.trackeffects.TrackEffect;
+import com.bitfire.uracer.game.player.PlayerCar;
 
 /**
  * FIXME disabled for a long time, need testing again

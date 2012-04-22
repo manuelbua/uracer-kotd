@@ -1,4 +1,4 @@
-package com.bitfire.uracer.game.actors.player;
+package com.bitfire.uracer.game.player;
 
 import com.bitfire.uracer.game.Time;
 import com.bitfire.uracer.game.events.PlayerDriftStateEvent;
