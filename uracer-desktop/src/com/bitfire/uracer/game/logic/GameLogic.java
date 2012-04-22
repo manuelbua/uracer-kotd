@@ -108,7 +108,7 @@ public class GameLogic implements CarEvent.Listener, CarStateEvent.Listener, Dri
 
 	// special effects
 	private TrackEffects effects = null;
-	private CarSkidMarks playerSkidMarks = null;
+	private CarSkidMarks carSkidMarks = null;
 
 	// hud
 	private Hud hud = null;
@@ -158,7 +158,7 @@ public class GameLogic implements CarEvent.Listener, CarStateEvent.Listener, Dri
 		// create tweening support
 		createTweeners();
 
-		gameWorld = new GameWorld( box2dWorld, scalingStrategy, levelName, true );
+		gameWorld = new GameWorld( box2dWorld, scalingStrategy, levelName, false );
 
 		recorder = new Recorder();
 		timeMultiplier.value = 1f;
@@ -271,9 +271,8 @@ public class GameLogic implements CarEvent.Listener, CarStateEvent.Listener, Dri
 
 		// track effects
 
-		// FIXME where is the relation between player and fx?????!!! ASSUMPTIONS INSIDE CARSKIDMARK!???
-		playerSkidMarks = new CarSkidMarks( carModelWidthPx, carModelLengthPx );
-		effects.add( playerSkidMarks );
+		carSkidMarks = new CarSkidMarks( carModelWidthPx, carModelLengthPx );
+		effects.add( carSkidMarks );
 
 		// hud
 		hudDrifting = new HudDrifting( scalingStrategy, carModelWidthPx, carModelLengthPx );
@@ -340,7 +339,7 @@ public class GameLogic implements CarEvent.Listener, CarStateEvent.Listener, Dri
 	private void updateTrackEffects() {
 		// update track effects
 		if( playerCar.getVelocity().len2() >= 1 ) {
-			playerSkidMarks.tryAddDriftMark( playerCar.state().position, playerCar.state().orientation, playerDriftState );
+			carSkidMarks.tryAddDriftMark( playerCar.state().position, playerCar.state().orientation, playerDriftState );
 		}
 	}
 
