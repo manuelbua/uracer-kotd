@@ -23,11 +23,11 @@ import com.bitfire.uracer.URacer;
 import com.bitfire.uracer.game.GameplaySettings;
 import com.bitfire.uracer.game.actors.Car;
 import com.bitfire.uracer.game.actors.Car.Aspect;
-import com.bitfire.uracer.game.actors.player.PlayerCar;
 import com.bitfire.uracer.game.actors.CarEvent;
 import com.bitfire.uracer.game.actors.CarFactory;
 import com.bitfire.uracer.game.actors.CarModel;
 import com.bitfire.uracer.game.actors.GhostCar;
+import com.bitfire.uracer.game.actors.player.PlayerCar;
 import com.bitfire.uracer.game.collisions.GameContactListener;
 import com.bitfire.uracer.game.events.GameEvents;
 import com.bitfire.uracer.game.events.GameLogicEvent;
@@ -473,13 +473,13 @@ public class GameLogic implements CarEvent.Listener, PlayerCarStateEvent.Listene
 				if( isFirstLap ) {
 					isFirstLap = false;
 
-					playerLapState.restart();
-					Replay buf = playerLapState.getNextBuffer();
+					lapState.restart();
+					Replay buf = lapState.getNextBuffer();
 					recorder.beginRecording( playerCar, buf, name, gameplaySettings.difficulty );
 					lastRecordedLapId = buf.id;
 
-					if( playerLapState.hasAnyReplayData() ) {
-						Replay any = playerLapState.getAnyReplay();
+					if( lapState.hasAnyReplayData() ) {
+						Replay any = lapState.getAnyReplay();
 						playerGhostCar.setReplay( any );
 					}
 				} else {
@@ -487,39 +487,39 @@ public class GameLogic implements CarEvent.Listener, PlayerCarStateEvent.Listene
 						recorder.endRecording();
 					}
 
-					playerLapState.updateReplays();
+					lapState.updateReplays();
 
 					// replay best, overwrite worst logic
 
-					if( !playerLapState.hasAllReplayData() ) {
+					if( !lapState.hasAllReplayData() ) {
 						// only one single replay
-						playerLapState.restart();
-						Replay buf = playerLapState.getNextBuffer();
+						lapState.restart();
+						Replay buf = lapState.getNextBuffer();
 						recorder.beginRecording( playerCar, buf, name, gameplaySettings.difficulty );
 						lastRecordedLapId = buf.id;
 
-						Replay any = playerLapState.getAnyReplay();
+						Replay any = lapState.getAnyReplay();
 						playerGhostCar.setReplay( any );
-						playerLapState.setLastTrackTimeSeconds( any.trackTimeSeconds );
+						lapState.setLastTrackTimeSeconds( any.trackTimeSeconds );
 
 						messager.show( "GO!  GO!  GO!", 3f, Type.Information, MessagePosition.Middle, MessageSize.Big );
 					} else {
 						// both valid, replay best, overwrite worst
-						Replay best = playerLapState.getBestReplay(), worst = playerLapState.getWorstReplay();
+						Replay best = lapState.getBestReplay(), worst = lapState.getWorstReplay();
 
 						if( lastRecordedLapId == best.id ) {
-							playerLapState.setLastTrackTimeSeconds( best.trackTimeSeconds );
+							lapState.setLastTrackTimeSeconds( best.trackTimeSeconds );
 							messager.show( "-" + NumberString.format( worst.trackTimeSeconds - best.trackTimeSeconds ) + " seconds!", 3f, Type.Good, MessagePosition.Top,
 									MessageSize.Big );
 						} else {
-							playerLapState.setLastTrackTimeSeconds( worst.trackTimeSeconds );
+							lapState.setLastTrackTimeSeconds( worst.trackTimeSeconds );
 							messager.show( "+" + NumberString.format( worst.trackTimeSeconds - best.trackTimeSeconds ) + " seconds", 3f, Type.Bad, MessagePosition.Top,
 									MessageSize.Big );
 						}
 
 						playerGhostCar.setReplay( best );
 
-						playerLapState.restart();
+						lapState.restart();
 						recorder.beginRecording( playerCar, worst, name, gameplaySettings.difficulty );
 						lastRecordedLapId = worst.id;
 					}
