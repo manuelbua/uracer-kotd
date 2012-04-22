@@ -7,7 +7,6 @@ import com.badlogic.gdx.physics.box2d.BodyDef;
 import com.badlogic.gdx.physics.box2d.BodyDef.BodyType;
 import com.badlogic.gdx.physics.box2d.Fixture;
 import com.badlogic.gdx.physics.box2d.World;
-import com.bitfire.uracer.game.logic.PhysicsStep;
 import com.bitfire.uracer.game.world.GameWorld;
 
 public abstract class Car extends Box2DEntity {
@@ -34,8 +33,8 @@ public abstract class Car extends Box2DEntity {
 	private Aspect aspect = Aspect.OldSkool;
 	protected InputMode inputMode = InputMode.NoInput;
 
-	public Car( World box2dWorld, PhysicsStep physicsStep, GameWorld gameWorld, CarModel model, Aspect aspect ) {
-		super( box2dWorld, physicsStep );
+	public Car( World box2dWorld,  GameWorld gameWorld, CarModel model, Aspect aspect ) {
+		super( box2dWorld );
 		this.gameWorld = gameWorld;
 		this.renderer = new CarRenderer( model, aspect );
 		this.aspect = aspect;

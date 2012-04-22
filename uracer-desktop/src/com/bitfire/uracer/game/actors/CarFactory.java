@@ -11,7 +11,6 @@ import com.bitfire.uracer.entities.EntityType;
 import com.bitfire.uracer.game.actors.Car.Aspect;
 import com.bitfire.uracer.game.collisions.CollisionFilters;
 import com.bitfire.uracer.game.input.Input;
-import com.bitfire.uracer.game.logic.PhysicsStep;
 import com.bitfire.uracer.game.player.PlayerCar;
 import com.bitfire.uracer.game.world.GameWorld;
 import com.bitfire.uracer.utils.Convert;
@@ -21,18 +20,18 @@ public final class CarFactory {
 	private CarFactory() {
 	}
 
-	public static GhostCar createGhost( World box2dWorld, PhysicsStep physicsStep, GameWorld gameWorld, CarModel model, Aspect type ) {
-		GhostCar ghost = new GhostCar( box2dWorld, physicsStep, gameWorld, model, type );
+	public static GhostCar createGhost( World box2dWorld, GameWorld gameWorld, CarModel model, Aspect type ) {
+		GhostCar ghost = new GhostCar( box2dWorld, gameWorld, model, type );
 		applyCarPhysics( ghost, EntityType.CarReplay );
 		return ghost;
 	}
 
-	public static GhostCar createGhost( World box2dWorld, PhysicsStep physicsStep, GameWorld gameWorld, Car car ) {
-		return CarFactory.createGhost( box2dWorld, physicsStep, gameWorld, car.getCarModel(), car.getAspect() );
+	public static GhostCar createGhost( World box2dWorld, GameWorld gameWorld, Car car ) {
+		return CarFactory.createGhost( box2dWorld, gameWorld, car.getCarModel(), car.getAspect() );
 	}
 
-	public static PlayerCar createPlayer( World box2dWorld, PhysicsStep physicsStep, GameWorld gameWorld, Input input, Aspect carAspect, CarModel model ) {
-		PlayerCar car = new PlayerCar( box2dWorld, physicsStep, gameWorld, model, carAspect );
+	public static PlayerCar createPlayer( World box2dWorld, GameWorld gameWorld, Input input, Aspect carAspect, CarModel model ) {
+		PlayerCar car = new PlayerCar( box2dWorld, gameWorld, model, carAspect );
 		applyCarPhysics( car, EntityType.Car );
 		return car;
 	}

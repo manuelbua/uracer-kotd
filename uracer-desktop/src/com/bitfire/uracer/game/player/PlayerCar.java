@@ -13,7 +13,6 @@ import com.bitfire.uracer.game.actors.CarDescriptor;
 import com.bitfire.uracer.game.actors.CarForces;
 import com.bitfire.uracer.game.actors.CarModel;
 import com.bitfire.uracer.game.input.Input;
-import com.bitfire.uracer.game.logic.PhysicsStep;
 import com.bitfire.uracer.game.world.GameWorld;
 import com.bitfire.uracer.utils.AMath;
 import com.bitfire.uracer.utils.Convert;
@@ -43,8 +42,8 @@ public class PlayerCar extends Car {
 	public PlayerCarState carState = null;
 	public PlayerDriftState driftState = null;
 
-	public PlayerCar( World box2dWorld, PhysicsStep physicsStep, GameWorld gameWorld, CarModel model, Aspect aspect ) {
-		super( box2dWorld, physicsStep, gameWorld, model, aspect );
+	public PlayerCar( World box2dWorld, GameWorld gameWorld, CarModel model, Aspect aspect ) {
+		super( box2dWorld, gameWorld, model, aspect );
 		carInput = new CarInput();
 		inputSystem = null;
 		impacts = 0;

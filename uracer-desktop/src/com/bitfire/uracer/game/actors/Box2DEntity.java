@@ -10,7 +10,6 @@ import com.bitfire.uracer.entities.EntityRenderState;
 import com.bitfire.uracer.game.events.GameEvents;
 import com.bitfire.uracer.game.events.GameRendererEvent;
 import com.bitfire.uracer.game.events.GameRendererEvent.Type;
-import com.bitfire.uracer.game.logic.PhysicsStep;
 import com.bitfire.uracer.utils.AMath;
 import com.bitfire.uracer.utils.Convert;
 
@@ -39,8 +38,8 @@ public abstract class Box2DEntity extends SubframeInterpolableEntity {
 	public void onDebug( SpriteBatch batch ) {
 	}
 
-	public Box2DEntity( World world, PhysicsStep physicsStep ) {
-		super( physicsStep );
+	public Box2DEntity( World world  ) {
+		super();
 		GameEvents.gameRenderer.addListener( gameRendererEvent, GameRendererEvent.Type.BatchBeforeMeshes, GameRendererEvent.Order.DEFAULT );
 		GameEvents.gameRenderer.addListener( gameRendererEvent, GameRendererEvent.Type.BatchDebug, GameRendererEvent.Order.DEFAULT );
 		this.box2dWorld = world;

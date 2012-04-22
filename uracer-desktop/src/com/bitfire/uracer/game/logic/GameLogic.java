@@ -159,20 +159,20 @@ public class GameLogic implements CarEvent.Listener, PlayerCarStateEvent.Listene
 		// creates global camera controller
 		controller = new DirectorController( Config.Graphics.CameraInterpolationMode, Director.halfViewport, gameWorld.worldSizeScaledPx, gameWorld.worldSizeTiles );
 
-		createGameTasks( playerLapState );
-		Gdx.app.log( "GameLogic", "Game tasks created" );
-
 		// creates player and ghost cars
-		createPlayer( physicsStep, gameWorld, carAspect, carModel );
-		configurePlayer( gameplaySettings, gameWorld, playerCar );
-		Gdx.app.log( "GameLogic", "Player created and configured" );
+		createPlayer( gameWorld, carAspect, carModel );
+		Gdx.app.log( "GameLogic", "Player created" );
 
+		createGameTasks( playerLapState );
 		configureTasks( playerCar );
-		Gdx.app.log( "GameLogic", "Tasks configured" );
+		Gdx.app.log( "GameLogic", "Game tasks created and configured" );
+
+		configurePlayer( gameplaySettings, gameWorld, playerCar, input );
+		Gdx.app.log( "GameLogic", "Player configured" );
 
 		// subscribe to player-related events
 		registerPlayerEvents( playerCar );
-		Gdx.app.log( "GameLogic", "Player events registered" );
+		Gdx.app.log( "GameLogic", "Registered player-related events" );
 
 		// messager.show( "COOL STUFF!", 60, Message.Type.Information, MessagePosition.Bottom, MessageSize.Big );
 	}
@@ -267,12 +267,12 @@ public class GameLogic implements CarEvent.Listener, PlayerCarStateEvent.Listene
 		hud.add( hudDrifting );
 	}
 
-	private void createPlayer( PhysicsStep step, GameWorld gameWorld, Aspect carAspect, CarModel carModel ) {
-		playerCar = CarFactory.createPlayer( box2dWorld, step, gameWorld, input, carAspect, carModel );
-		playerGhostCar = CarFactory.createGhost( box2dWorld, step, gameWorld, playerCar );
+	private void createPlayer( GameWorld gameWorld, Aspect carAspect, CarModel carModel ) {
+		playerCar = CarFactory.createPlayer( box2dWorld, gameWorld, input, carAspect, carModel );
+		playerGhostCar = CarFactory.createGhost( box2dWorld, gameWorld, playerCar );
 	}
 
-	private void configurePlayer( GameplaySettings settings, GameWorld world, PlayerCar player ) {
+	private void configurePlayer( GameplaySettings settings, GameWorld world, PlayerCar player, Input input ) {
 		// create player and setup player input system and initial position in the world
 		player.setTransform( world.playerStartPos, world.playerStartOrient );
 		player.setInputSystem( input );
