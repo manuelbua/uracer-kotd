@@ -4,10 +4,10 @@ import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.utils.Disposable;
 
 public abstract class HudElement implements Disposable {
-	void onTick() {
+	public void onTick() {
 	}
 
-	abstract void onReset();
+	public abstract void onReset();
 
-	abstract void onRender( SpriteBatch batch );
+	public abstract void onRender( SpriteBatch batch );
 }

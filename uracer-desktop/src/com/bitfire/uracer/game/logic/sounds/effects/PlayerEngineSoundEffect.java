@@ -3,20 +3,20 @@ package com.bitfire.uracer.game.logic.sounds.effects;
 import com.badlogic.gdx.audio.Sound;
 import com.bitfire.uracer.Config;
 import com.bitfire.uracer.Sounds;
-import com.bitfire.uracer.game.actors.player.PlayerCarState;
+import com.bitfire.uracer.game.actors.player.PlayerCar;
 import com.bitfire.uracer.game.logic.sounds.SoundEffect;
 import com.bitfire.uracer.utils.AMath;
 
-public final class CarEngineSoundEffect extends SoundEffect {
+public final class PlayerEngineSoundEffect extends SoundEffect {
 	private Sound carEngine = null;
 	private long carEngineId = -1;
 	private static float carEnginePitchStart = 0;
 	private float carEnginePitchLast = 0;
 	private static final float carEnginePitchMin = 1f;
-	private PlayerCarState carState;
+	private PlayerCar player;
 
-	public CarEngineSoundEffect( PlayerCarState carState ) {
-		this.carState = carState;
+	public PlayerEngineSoundEffect( PlayerCar player ) {
+		this.player = player;
 		carEngine = Sounds.carEngine;
 	}
 
@@ -27,7 +27,7 @@ public final class CarEngineSoundEffect extends SoundEffect {
 	@Override
 	public void tick() {
 		if( carEngineId > -1 ) {
-			float speedFactor = carState.currSpeedFactor;
+			float speedFactor = player.carState.currSpeedFactor;
 
 			float pitch = carEnginePitchMin + speedFactor * 0.65f;
 			if( !AMath.equals( pitch, carEnginePitchLast ) ) {

@@ -38,22 +38,22 @@ import com.bitfire.uracer.game.input.Replay;
 import com.bitfire.uracer.game.logic.helpers.DirectorController;
 import com.bitfire.uracer.game.logic.helpers.Recorder;
 import com.bitfire.uracer.game.logic.hud.Hud;
-import com.bitfire.uracer.game.logic.hud.HudDrifting;
-import com.bitfire.uracer.game.logic.hud.HudDrifting.EndDriftType;
+import com.bitfire.uracer.game.logic.hud.elements.HudDrifting;
+import com.bitfire.uracer.game.logic.hud.elements.HudDrifting.EndDriftType;
 import com.bitfire.uracer.game.logic.hud.HudLabel;
 import com.bitfire.uracer.game.logic.hud.HudLabelAccessor;
+import com.bitfire.uracer.game.logic.notifier.Message;
+import com.bitfire.uracer.game.logic.notifier.Message.MessagePosition;
+import com.bitfire.uracer.game.logic.notifier.Message.MessageSize;
+import com.bitfire.uracer.game.logic.notifier.Message.Type;
+import com.bitfire.uracer.game.logic.notifier.MessageAccessor;
+import com.bitfire.uracer.game.logic.notifier.Notifier;
 import com.bitfire.uracer.game.logic.sounds.SoundEffect;
 import com.bitfire.uracer.game.logic.sounds.SoundManager;
-import com.bitfire.uracer.game.logic.sounds.effects.CarImpactSoundEffect;
 import com.bitfire.uracer.game.logic.sounds.effects.PlayerDriftSoundEffect;
+import com.bitfire.uracer.game.logic.sounds.effects.PlayerImpactSoundEffect;
 import com.bitfire.uracer.game.logic.trackeffects.TrackEffects;
 import com.bitfire.uracer.game.logic.trackeffects.effects.PlayerSkidMarks;
-import com.bitfire.uracer.game.messager.Message;
-import com.bitfire.uracer.game.messager.Message.MessagePosition;
-import com.bitfire.uracer.game.messager.Message.MessageSize;
-import com.bitfire.uracer.game.messager.Message.Type;
-import com.bitfire.uracer.game.messager.MessageAccessor;
-import com.bitfire.uracer.game.messager.Messager;
 import com.bitfire.uracer.game.states.LapState;
 import com.bitfire.uracer.game.tween.GameTweener;
 import com.bitfire.uracer.game.tween.WcTweener;
@@ -114,7 +114,7 @@ public class GameLogic implements CarEvent.Listener, PlayerCarStateEvent.Listene
 	private SoundManager sound = null;
 
 	// alerts and infos
-	private Messager messager = null;
+	private Notifier messager = null;
 
 	// states
 	private LapState playerLapState = null;
@@ -223,19 +223,19 @@ public class GameLogic implements CarEvent.Listener, PlayerCarStateEvent.Listene
 		physicsStep = new PhysicsStep( box2dWorld, TaskManagerEvent.Order.MINUS_3 );
 
 		// sound manager
-		sound = new SoundManager();
+		sound = new SoundManager( this );
 		gameTasks.add( sound );
 
 		// message manager
-		messager = new Messager( scalingStrategy.invTileMapZoomFactor );
+		messager = new Notifier( this, scalingStrategy.invTileMapZoomFactor );
 		gameTasks.add( messager );
 
 		// hud manager
-		hud = new Hud( scalingStrategy, lapState );
+		hud = new Hud( this, scalingStrategy, lapState );
 		gameTasks.add( hud );
 
 		// effects manager
-		effects = new TrackEffects();
+		effects = new TrackEffects( this );
 		gameTasks.add( effects );
 	}
 
@@ -244,7 +244,7 @@ public class GameLogic implements CarEvent.Listener, PlayerCarStateEvent.Listene
 		SoundEffect fx = new PlayerDriftSoundEffect( player );
 		fx.start();
 		sound.add( fx );
-		sound.add( new CarImpactSoundEffect( player ) );
+		sound.add( new PlayerImpactSoundEffect( player ) );
 
 		// track effects
 		PlayerSkidMarks carSkidMarks = new PlayerSkidMarks( player );
@@ -299,7 +299,7 @@ public class GameLogic implements CarEvent.Listener, PlayerCarStateEvent.Listene
 			}
 		}
 
-		updateCarFriction();
+		updatePlayerCarFriction();
 		updateTimeMultiplier();
 
 		return true;
@@ -352,7 +352,6 @@ public class GameLogic implements CarEvent.Listener, PlayerCarStateEvent.Listene
 		timeMultiplier.value = Config.Physics.PhysicsTimeMultiplier;
 		WcTweener.clear();
 		GameTweener.clear();
-		hud.reset();
 	}
 
 	private void resetLogic() {
@@ -429,7 +428,7 @@ public class GameLogic implements CarEvent.Listener, PlayerCarStateEvent.Listene
 
 	private Vector2 offset = new Vector2();
 
-	private void updateCarFriction() {
+	private void updatePlayerCarFriction() {
 		if( playerCar != null ) {
 			Vector2 tilePosition = playerCar.carState.tilePosition;
 

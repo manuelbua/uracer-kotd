@@ -3,25 +3,13 @@ package com.bitfire.uracer.game.logic.trackeffects;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.utils.Array;
 import com.bitfire.uracer.game.events.GameEvents;
-import com.bitfire.uracer.game.events.GameLogicEvent;
 import com.bitfire.uracer.game.events.GameRendererEvent;
-import com.bitfire.uracer.task.Task;
+import com.bitfire.uracer.game.logic.GameLogic;
+import com.bitfire.uracer.game.logic.GameTask;
 import com.bitfire.uracer.utils.Manager;
 
-public final class TrackEffects extends Task {
+public final class TrackEffects extends GameTask {
 	private Manager<TrackEffect> manager = new Manager<TrackEffect>();
-
-	private final GameLogicEvent.Listener gameLogicEvent = new GameLogicEvent.Listener() {
-		@Override
-		public void gameLogicEvent( com.bitfire.uracer.game.events.GameLogicEvent.Type type ) {
-			switch( type ) {
-			case onReset:
-			case onRestart:
-				reset();
-				break;
-			}
-		}
-	};
 
 	private final GameRendererEvent.Listener gameRendererEvent = new GameRendererEvent.Listener() {
 		@Override
@@ -38,9 +26,8 @@ public final class TrackEffects extends Task {
 		}
 	};
 
-	public TrackEffects() {
-		GameEvents.gameLogic.addListener( gameLogicEvent, GameLogicEvent.Type.onReset );
-		GameEvents.gameLogic.addListener( gameLogicEvent, GameLogicEvent.Type.onRestart );
+	public TrackEffects(GameLogic logic) {
+		super(logic);
 		GameEvents.gameRenderer.addListener( gameRendererEvent, GameRendererEvent.Type.BatchBeforeMeshes, GameRendererEvent.Order.MINUS_4 );
 
 		// NOTE for custom render event
@@ -73,7 +60,8 @@ public final class TrackEffects extends Task {
 		}
 	}
 
-	public void reset() {
+	@Override
+	public void onReset() {
 		Array<TrackEffect> items = manager.items;
 		for( int i = 0; i < items.size; i++ ) {
 			TrackEffect effect = items.get( i );

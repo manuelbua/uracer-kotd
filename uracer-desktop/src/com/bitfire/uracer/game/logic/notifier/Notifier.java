@@ -1,18 +1,18 @@
-package com.bitfire.uracer.game.messager;
+package com.bitfire.uracer.game.logic.notifier;
 
 import java.util.LinkedList;
 
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.utils.Array;
 import com.bitfire.uracer.game.events.GameEvents;
-import com.bitfire.uracer.game.events.GameLogicEvent;
 import com.bitfire.uracer.game.events.GameRendererEvent;
 import com.bitfire.uracer.game.events.GameRendererEvent.Type;
-import com.bitfire.uracer.game.messager.Message.MessagePosition;
-import com.bitfire.uracer.game.messager.Message.MessageSize;
-import com.bitfire.uracer.task.Task;
+import com.bitfire.uracer.game.logic.GameLogic;
+import com.bitfire.uracer.game.logic.GameTask;
+import com.bitfire.uracer.game.logic.notifier.Message.MessagePosition;
+import com.bitfire.uracer.game.logic.notifier.Message.MessageSize;
 
-public class Messager extends Task {
+public class Notifier extends GameTask {
 	private final GameRendererEvent.Listener gameRendererEvent = new GameRendererEvent.Listener() {
 		@Override
 		public void gameRendererEvent( Type type ) {
@@ -26,18 +26,6 @@ public class Messager extends Task {
 		}
 	};
 
-	private final GameLogicEvent.Listener gameLogicEvent = new GameLogicEvent.Listener() {
-		@Override
-		public void gameLogicEvent( GameLogicEvent.Type type ) {
-			switch( type ) {
-			case onReset:
-			case onRestart:
-				reset();
-				break;
-			}
-		}
-	};
-
 	// data
 	private Array<LinkedList<Message>> messages;
 	private Array<Message> currents;
@@ -45,10 +33,9 @@ public class Messager extends Task {
 	private static final int MaxMessagesInStore = 10;
 	private int idxMessageStore;
 
-	public Messager( float invZoomFactor ) {
+	public Notifier( GameLogic logic, float invZoomFactor ) {
+		super(logic);
 		GameEvents.gameRenderer.addListener( gameRendererEvent, GameRendererEvent.Type.BatchAfterMeshes, GameRendererEvent.Order.MINUS_4 );
-		GameEvents.gameLogic.addListener( gameLogicEvent, GameLogicEvent.Type.onReset );
-		GameEvents.gameLogic.addListener( gameLogicEvent, GameLogicEvent.Type.onRestart );
 
 		currents = new Array<Message>( 3 );
 		for( MessagePosition group : MessagePosition.values() ) {
@@ -70,7 +57,7 @@ public class Messager extends Task {
 
 	@Override
 	public void dispose() {
-		reset();
+		onReset();
 	}
 
 	@Override
@@ -84,7 +71,8 @@ public class Messager extends Task {
 		return (currents.get( group.ordinal() ) != null);
 	}
 
-	public void reset() {
+	@Override
+	public void onReset() {
 		for( MessagePosition group : MessagePosition.values() ) {
 			messages.get( group.ordinal() ).clear();
 		}

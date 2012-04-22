@@ -13,7 +13,7 @@ import com.bitfire.uracer.game.logic.sounds.SoundEffect;
 import com.bitfire.uracer.utils.AMath;
 import com.bitfire.uracer.utils.AudioUtils;
 
-public final class CarImpactSoundEffect extends SoundEffect {
+public final class PlayerImpactSoundEffect extends SoundEffect {
 	private Sound soundLow1, soundLow2, soundMid1, soundMid2, soundHigh;
 	private long lastSoundTimeMs = 0;
 	private PlayerCar player;
@@ -36,7 +36,7 @@ public final class CarImpactSoundEffect extends SoundEffect {
 		}
 	};
 
-	public CarImpactSoundEffect( PlayerCar player ) {
+	public PlayerImpactSoundEffect( PlayerCar player ) {
 		this.player = player;
 		player.event.addListener( carEvent, CarEvent.Type.onCollision );
 

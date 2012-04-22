@@ -1,30 +1,15 @@
 package com.bitfire.uracer.game.logic.sounds;
 
 import com.badlogic.gdx.utils.Array;
-import com.bitfire.uracer.game.events.GameEvents;
-import com.bitfire.uracer.game.events.GameLogicEvent;
-import com.bitfire.uracer.game.events.GameLogicEvent.Type;
-import com.bitfire.uracer.task.Task;
+import com.bitfire.uracer.game.logic.GameLogic;
+import com.bitfire.uracer.game.logic.GameTask;
 import com.bitfire.uracer.utils.Manager;
 
-public class SoundManager extends Task {
+public class SoundManager extends GameTask {
 	private final Manager<SoundEffect> manager = new Manager<SoundEffect>();
 
-	private final GameLogicEvent.Listener gameLogicEvent = new GameLogicEvent.Listener() {
-		@Override
-		public void gameLogicEvent( Type type ) {
-			switch( type ) {
-			case onRestart:
-			case onReset:
-				reset();
-				break;
-			}
-		}
-	};
-
-	public SoundManager() {
-		GameEvents.gameLogic.addListener( gameLogicEvent, GameLogicEvent.Type.onReset );
-		GameEvents.gameLogic.addListener( gameLogicEvent, GameLogicEvent.Type.onRestart );
+	public SoundManager( GameLogic logic ) {
+		super( logic );
 	}
 
 	@Override
@@ -48,7 +33,8 @@ public class SoundManager extends Task {
 		}
 	}
 
-	public void reset() {
+	@Override
+	public void onReset() {
 		Array<SoundEffect> items = manager.items;
 		for( int i = 0; i < items.size; i++ ) {
 			items.get( i ).reset();
