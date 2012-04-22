@@ -7,6 +7,7 @@ import com.badlogic.gdx.physics.box2d.BodyDef;
 import com.badlogic.gdx.physics.box2d.BodyDef.BodyType;
 import com.badlogic.gdx.physics.box2d.Fixture;
 import com.badlogic.gdx.physics.box2d.World;
+import com.bitfire.uracer.game.logic.PhysicsStep;
 import com.bitfire.uracer.game.world.GameWorld;
 
 public abstract class Car extends Box2DEntity {
@@ -33,8 +34,8 @@ public abstract class Car extends Box2DEntity {
 	private Aspect aspect = Aspect.OldSkool;
 	protected InputMode inputMode = InputMode.NoInput;
 
-	public Car( World box2dWorld, GameWorld gameWorld, CarModel model, Aspect aspect ) {
-		super( box2dWorld );
+	public Car( World box2dWorld, PhysicsStep physicsStep, GameWorld gameWorld, CarModel model, Aspect aspect ) {
+		super( box2dWorld, physicsStep );
 		this.gameWorld = gameWorld;
 		this.renderer = new CarRenderer( model, aspect );
 		this.aspect = aspect;
@@ -53,14 +54,6 @@ public abstract class Car extends Box2DEntity {
 
 		Gdx.app.log( getClass().getSimpleName(), "Input mode is " + this.inputMode.toString() );
 	}
-
-//	public abstract Vector2 getLateralForceFront();
-//
-//	public abstract Vector2 getLateralForceRear();
-//
-//	public abstract float getThrottle();
-//
-//	public abstract Vector2 getVelocity();
 
 	/** Subclasses will feed forces to the simulator, such as Replay data stored
 	 * elsewhere or from user input.

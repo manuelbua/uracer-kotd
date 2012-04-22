@@ -146,14 +146,13 @@ public class GameLogic implements CarEvent.Listener, PlayerCarStateEvent.Listene
 
 		// create tweening support
 		createTweeners();
+		Gdx.app.log( "GameLogic", "Helpers created" );
 
 		gameWorld = new GameWorld( box2dWorld, scalingStrategy, levelName, false );
+		Gdx.app.log( "GameLogic", "Game world ready" );
 
 		recorder = new Recorder();
 		timeMultiplier.value = 1f;
-
-		// creates playerCar and playerGhostCar
-		createPlayer( gameWorld, carAspect, carModel );
 
 		playerLapState = new LapState();
 
@@ -161,16 +160,19 @@ public class GameLogic implements CarEvent.Listener, PlayerCarStateEvent.Listene
 		controller = new DirectorController( Config.Graphics.CameraInterpolationMode, Director.halfViewport, gameWorld.worldSizeScaledPx, gameWorld.worldSizeTiles );
 
 		createGameTasks( playerLapState );
+		Gdx.app.log( "GameLogic", "Game tasks created" );
 
+		// creates player and ghost cars
+		createPlayer( physicsStep, gameWorld, carAspect, carModel );
 		configurePlayer( gameplaySettings, gameWorld, playerCar );
-		configureTasks( playerCar );
+		Gdx.app.log( "GameLogic", "Player created and configured" );
 
-		// register event handlers
-		playerCar.carState.event.addListener( this, PlayerCarStateEvent.Type.onTileChanged );
-		playerCar.driftState.event.addListener( this, PlayerDriftStateEvent.Type.onBeginDrift );
-		playerCar.driftState.event.addListener( this, PlayerDriftStateEvent.Type.onEndDrift );
-		playerCar.event.addListener( this, CarEvent.Type.onCollision );
-		playerCar.event.addListener( this, CarEvent.Type.onComputeForces );
+		configureTasks( playerCar );
+		Gdx.app.log( "GameLogic", "Tasks configured" );
+
+		// subscribe to player-related events
+		registerPlayerEvents( playerCar );
+		Gdx.app.log( "GameLogic", "Player events registered" );
 
 		// messager.show( "COOL STUFF!", 60, Message.Type.Information, MessagePosition.Bottom, MessageSize.Big );
 	}
@@ -207,6 +209,14 @@ public class GameLogic implements CarEvent.Listener, PlayerCarStateEvent.Listene
 
 	public World getBox2dWorld() {
 		return box2dWorld;
+	}
+
+	private void registerPlayerEvents( PlayerCar player ) {
+		player.carState.event.addListener( this, PlayerCarStateEvent.Type.onTileChanged );
+		player.driftState.event.addListener( this, PlayerDriftStateEvent.Type.onBeginDrift );
+		player.driftState.event.addListener( this, PlayerDriftStateEvent.Type.onEndDrift );
+		player.event.addListener( this, CarEvent.Type.onCollision );
+		player.event.addListener( this, CarEvent.Type.onComputeForces );
 	}
 
 	private void createTweeners() {
@@ -257,9 +267,9 @@ public class GameLogic implements CarEvent.Listener, PlayerCarStateEvent.Listene
 		hud.add( hudDrifting );
 	}
 
-	private void createPlayer( GameWorld gameWorld, Aspect carAspect, CarModel carModel ) {
-		playerCar = CarFactory.createPlayer( box2dWorld, gameWorld, input, carAspect, carModel );
-		playerGhostCar = CarFactory.createGhost( box2dWorld, gameWorld, playerCar );
+	private void createPlayer( PhysicsStep step, GameWorld gameWorld, Aspect carAspect, CarModel carModel ) {
+		playerCar = CarFactory.createPlayer( box2dWorld, step, gameWorld, input, carAspect, carModel );
+		playerGhostCar = CarFactory.createGhost( box2dWorld, step, gameWorld, playerCar );
 	}
 
 	private void configurePlayer( GameplaySettings settings, GameWorld world, PlayerCar player ) {

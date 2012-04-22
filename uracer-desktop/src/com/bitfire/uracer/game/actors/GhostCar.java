@@ -3,6 +3,7 @@ package com.bitfire.uracer.game.actors;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.physics.box2d.World;
 import com.bitfire.uracer.game.input.Replay;
+import com.bitfire.uracer.game.logic.PhysicsStep;
 import com.bitfire.uracer.game.world.GameWorld;
 
 /** Implements an automated Car, playing previously recorded events. It will
@@ -17,8 +18,8 @@ public final class GhostCar extends Car {
 	private int indexPlay;
 	private boolean hasReplay;
 
-	public GhostCar( World box2dWorld, GameWorld gameWorld, CarModel model, Aspect aspect ) {
-		super( box2dWorld, gameWorld, model, aspect );
+	public GhostCar( World box2dWorld, PhysicsStep physicsStep, GameWorld gameWorld, CarModel model, Aspect aspect ) {
+		super( box2dWorld, physicsStep, gameWorld, model, aspect );
 		indexPlay = 0;
 		hasReplay = false;
 		replay = null;

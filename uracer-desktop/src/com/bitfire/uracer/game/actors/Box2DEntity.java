@@ -10,6 +10,7 @@ import com.bitfire.uracer.entities.EntityRenderState;
 import com.bitfire.uracer.game.events.GameEvents;
 import com.bitfire.uracer.game.events.GameRendererEvent;
 import com.bitfire.uracer.game.events.GameRendererEvent.Type;
+import com.bitfire.uracer.game.logic.PhysicsStep;
 import com.bitfire.uracer.utils.AMath;
 import com.bitfire.uracer.utils.Convert;
 
@@ -34,18 +35,22 @@ public abstract class Box2DEntity extends SubframeInterpolableEntity {
 	};
 
 	public abstract void onRender( SpriteBatch batch );
-	public void onDebug( SpriteBatch batch ) {}
 
-	public Box2DEntity(World world) {
+	public void onDebug( SpriteBatch batch ) {
+	}
+
+	public Box2DEntity( World world, PhysicsStep physicsStep ) {
+		super( physicsStep );
 		GameEvents.gameRenderer.addListener( gameRendererEvent, GameRendererEvent.Type.BatchBeforeMeshes, GameRendererEvent.Order.DEFAULT );
 		GameEvents.gameRenderer.addListener( gameRendererEvent, GameRendererEvent.Type.BatchDebug, GameRendererEvent.Order.DEFAULT );
 		this.box2dWorld = world;
 	}
 
-//	public Box2DEntity(GameRendererEvent.Order orderForBatchBeforeMeshes, GameRendererEvent.Order orderForDebug) {
-//		GameRenderer.event.addListener( gameRendererEvent, GameRendererEvent.Type.BatchBeforeMeshes, orderForBatchBeforeMeshes );
-//		GameRenderer.event.addListener( gameRendererEvent, GameRendererEvent.Type.BatchDebug, orderForDebug );
-//	}
+	// public Box2DEntity(GameRendererEvent.Order orderForBatchBeforeMeshes, GameRendererEvent.Order orderForDebug) {
+	// GameRenderer.event.addListener( gameRendererEvent, GameRendererEvent.Type.BatchBeforeMeshes,
+	// orderForBatchBeforeMeshes );
+	// GameRenderer.event.addListener( gameRendererEvent, GameRendererEvent.Type.BatchDebug, orderForDebug );
+	// }
 
 	@Override
 	public void dispose() {

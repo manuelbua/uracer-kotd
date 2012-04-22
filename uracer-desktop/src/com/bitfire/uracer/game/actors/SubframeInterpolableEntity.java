@@ -2,17 +2,17 @@ package com.bitfire.uracer.game.actors;
 
 import com.bitfire.uracer.entities.Entity;
 import com.bitfire.uracer.entities.EntityRenderState;
-import com.bitfire.uracer.game.events.GameEvents;
 import com.bitfire.uracer.game.events.PhysicsStepEvent;
 import com.bitfire.uracer.game.events.PhysicsStepEvent.Type;
+import com.bitfire.uracer.game.logic.PhysicsStep;
 
 public abstract class SubframeInterpolableEntity extends Entity implements PhysicsStepEvent.Listener {
 	// world-coords
 	protected EntityRenderState statePrevious = new EntityRenderState();
 	protected EntityRenderState stateCurrent = new EntityRenderState();
 
-	public SubframeInterpolableEntity() {
-		GameEvents.physicsStep.addListener( this );
+	public SubframeInterpolableEntity( PhysicsStep physicsStep ) {
+		physicsStep.event.addListener( this );
 	}
 
 	public abstract void saveStateTo( EntityRenderState state );
@@ -27,7 +27,7 @@ public abstract class SubframeInterpolableEntity extends Entity implements Physi
 	}
 
 	@Override
-	public void physicsEvent( Type type ) {
+	public void physicsEvent( float temporalAliasing, Type type ) {
 		switch( type ) {
 		case onBeforeTimestep:
 			onBeforePhysicsSubstep();
@@ -36,7 +36,7 @@ public abstract class SubframeInterpolableEntity extends Entity implements Physi
 			onAfterPhysicsSubstep();
 			break;
 		case onTemporalAliasing:
-			onTemporalAliasing( GameEvents.physicsStep.temporalAliasingFactor );
+			onTemporalAliasing( temporalAliasing );
 			break;
 		}
 	}

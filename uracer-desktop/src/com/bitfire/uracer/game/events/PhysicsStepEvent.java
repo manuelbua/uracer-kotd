@@ -10,15 +10,15 @@ public class PhysicsStepEvent extends Event {
 	}
 
 	public interface Listener extends EventListener {
-		void physicsEvent( Type type );
+		void physicsEvent( float temporalAliasing, Type type );
 	}
 
 	public void addListener( Listener listener ) {
 		notify.addListener( listener );
 	}
 
-	public void trigger( Type type ) {
-		notify.physicsEvent( type );
+	public void trigger( float temporalAliasing, Type type ) {
+		notify.physicsEvent( temporalAliasing, type );
 	}
 
 	public float temporalAliasingFactor = 0;
@@ -27,9 +27,9 @@ public class PhysicsStepEvent extends Event {
 
 	private class Notifier extends EventNotifier<Listener> implements Listener {
 		@Override
-		public void physicsEvent( Type type ) {
+		public void physicsEvent( float temporalAliasing, Type type ) {
 			for( Listener listener : listeners ) {
-				listener.physicsEvent( type );
+				listener.physicsEvent( temporalAliasing, type );
 			}
 		}
 	};
