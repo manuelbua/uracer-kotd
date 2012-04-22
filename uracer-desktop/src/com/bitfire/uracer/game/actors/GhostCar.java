@@ -1,9 +1,9 @@
 package com.bitfire.uracer.game.actors;
 
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
-import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.physics.box2d.World;
 import com.bitfire.uracer.game.input.Replay;
+import com.bitfire.uracer.game.world.GameWorld;
 
 /** Implements an automated Car, playing previously recorded events. It will
  * ignore car-to-car collisions, but will respect in-track collisions and
@@ -17,8 +17,8 @@ public final class GhostCar extends Car {
 	private int indexPlay;
 	private boolean hasReplay;
 
-	public GhostCar( World box2dWorld, CarRenderer renderer, CarModel model, Aspect aspect ) {
-		super( box2dWorld, renderer, model, aspect );
+	public GhostCar( World box2dWorld, GameWorld gameWorld, CarModel model, Aspect aspect ) {
+		super( box2dWorld, gameWorld, model, aspect );
 		indexPlay = 0;
 		hasReplay = false;
 		replay = null;
@@ -27,26 +27,6 @@ public final class GhostCar extends Car {
 
 		setActive( false );
 		resetPhysics();
-	}
-
-	@Override
-	public Vector2 getLateralForceFront() {
-		return null;
-	}
-
-	@Override
-	public Vector2 getLateralForceRear() {
-		return null;
-	}
-
-	@Override
-	public float getThrottle() {
-		return 0;
-	}
-
-	@Override
-	public Vector2 getVelocity() {
-		return null;
 	}
 
 	// input data for this car cames from a Replay object
@@ -103,17 +83,14 @@ public final class GhostCar extends Car {
 
 			forces.set( replay.forces[indexPlay++] );
 
-			// Gdx.app.log( "GhostCar", "play index is " + indexPlay + "/" + replay.getEventsCount() );
+			// also change opacity, fade in/out based on
+			// events played, events remaining
+			if( indexPlay <= FadeEvents ) {
+				renderer.setAlpha( ((float)indexPlay / (float)FadeEvents) * 0.5f );
+			} else if( replay.getEventsCount() - indexPlay <= FadeEvents ) {
+				float val = (float)(replay.getEventsCount() - indexPlay) / (float)FadeEvents;
+				renderer.setAlpha( val * 0.5f );
+			}
 		}
-
-		// also change opacity, fade in/out based on
-		// events played, events remaining
-		if( indexPlay <= FadeEvents ) {
-			renderer.setAlpha( ((float)indexPlay / (float)FadeEvents) * 0.5f );
-		} else if( replay.getEventsCount() - indexPlay <= FadeEvents ) {
-			float val = (float)(replay.getEventsCount() - indexPlay) / (float)FadeEvents;
-			renderer.setAlpha( val * 0.5f );
-		}
-
 	}
 }

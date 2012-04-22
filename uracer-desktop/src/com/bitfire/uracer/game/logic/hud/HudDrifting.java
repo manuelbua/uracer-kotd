@@ -5,7 +5,8 @@ import com.badlogic.gdx.math.Vector2;
 import com.bitfire.uracer.Art;
 import com.bitfire.uracer.Director;
 import com.bitfire.uracer.ScalingStrategy;
-import com.bitfire.uracer.game.states.DriftState;
+import com.bitfire.uracer.game.actors.PlayerCar;
+import com.bitfire.uracer.utils.Convert;
 import com.bitfire.uracer.utils.NumberString;
 import com.bitfire.uracer.utils.VMath;
 
@@ -30,14 +31,18 @@ public final class HudDrifting extends HudElement {
 	private int nextLabelResult = 0;
 	private float carModelWidthPx, carModelLengthPx;
 
+	private PlayerCar player;
+	private Vector2 playerPosition = new Vector2();
+
 	private Vector2 displacement = new Vector2();
 	private Vector2 tmpv = new Vector2();
 	private Vector2 lastRealtimePos = new Vector2();
 	private boolean began = false;
 
-	public HudDrifting( ScalingStrategy scalingStrategy, float carModelWidthPx, float carModelLengthPx ) {
-		this.carModelWidthPx = carModelWidthPx;
-		this.carModelLengthPx = carModelLengthPx;
+	public HudDrifting( ScalingStrategy scalingStrategy, PlayerCar player ) {
+		this.player = player;
+		this.carModelWidthPx = Convert.mt2px( player.getCarModel().width );
+		this.carModelLengthPx = Convert.mt2px( player.getCarModel().length );
 
 		// 99.99, reserve some space and do not recompute bounds
 		labelRealtime = new HudLabel( scalingStrategy, Art.fontCurseYRbig, "+10.99", 0.5f );
@@ -61,9 +66,9 @@ public final class HudDrifting extends HudElement {
 		began = true;
 	}
 
-	public void update( DriftState drift ) {
+	public void update() {
 		if( began && labelRealtime.isVisible() ) {
-			labelRealtime.setString( "+" + NumberString.format( drift.driftSeconds() ) );
+			labelRealtime.setString( "+" + NumberString.format( player.driftState.driftSeconds() ) );
 		}
 	}
 
@@ -104,7 +109,10 @@ public final class HudDrifting extends HudElement {
 	}
 
 	@Override
-	void onRender( SpriteBatch batch, Vector2 playerPosition, float playerOrientation ) {
+	void onRender( SpriteBatch batch ) {
+		playerPosition.set( player.state().position );
+		float playerOrientation = player.state().orientation;
+
 		// compute heading
 		displacement.set( VMath.fromDegrees( playerOrientation ) );
 

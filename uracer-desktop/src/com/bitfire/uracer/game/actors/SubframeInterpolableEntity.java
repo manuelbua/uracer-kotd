@@ -49,7 +49,7 @@ public abstract class SubframeInterpolableEntity extends Entity implements Physi
 		saveStateTo( stateCurrent );
 	}
 
-	/** Issued after a tick/physicsStep but before render onBeforeRender :P */
+	/** Issued after a tick/physicsStep but before render :P */
 	public void onTemporalAliasing( float aliasingFactor ) {
 		if( isSubframeInterpolated() ) {
 			stateRender.set( EntityRenderState.interpolate( statePrevious, stateCurrent, aliasingFactor ) );

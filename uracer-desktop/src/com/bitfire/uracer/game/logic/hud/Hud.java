@@ -2,14 +2,11 @@ package com.bitfire.uracer.game.logic.hud;
 
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
-import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.utils.Array;
 import com.bitfire.uracer.Art;
 import com.bitfire.uracer.Config;
 import com.bitfire.uracer.ScalingStrategy;
-import com.bitfire.uracer.game.actors.Car;
 import com.bitfire.uracer.game.events.GameEvents;
-import com.bitfire.uracer.game.events.GameLogicEvent;
 import com.bitfire.uracer.game.events.GameRendererEvent;
 import com.bitfire.uracer.game.input.Replay;
 import com.bitfire.uracer.game.states.LapState;
@@ -24,9 +21,6 @@ public final class Hud extends Task {
 
 	private HudLabel best, curr, last;
 	// private HudDebugMeter meterLatForce, meterSkidMarks, meterSmoke;
-
-	private Vector2 playerPosition = new Vector2();
-	private float playerOrientation;
 
 	private GameRendererEvent.Listener gameRendererEvent = new GameRendererEvent.Listener() {
 		@Override
@@ -49,7 +43,7 @@ public final class Hud extends Task {
 	private void renderAfterMeshes( SpriteBatch batch ) {
 		Array<HudElement> items = manager.items;
 		for( int i = 0; i < items.size; i++ ) {
-			items.get( i ).onRender( batch, playerPosition, playerOrientation );
+			items.get( i ).onRender( batch );
 		}
 
 		curr.render( batch );
@@ -57,24 +51,10 @@ public final class Hud extends Task {
 		last.render( batch );
 	}
 
-	private GameLogicEvent.Listener gameLogicEvent = new GameLogicEvent.Listener() {
-		@Override
-		public void gameLogicEvent( com.bitfire.uracer.game.events.GameLogicEvent.Type type ) {
-			switch( type ) {
-			case onReset:
-			case onRestart:
-				reset();
-				break;
-			}
-		}
-	};
-
 	// effects
 	public Hud( ScalingStrategy scalingStrategy ) {
 		GameEvents.gameRenderer.addListener( gameRendererEvent, GameRendererEvent.Type.BatchAfterMeshes, GameRendererEvent.Order.DEFAULT );
 		GameEvents.gameRenderer.addListener( gameRendererEvent, GameRendererEvent.Type.BatchDebug, GameRendererEvent.Order.DEFAULT );
-		GameEvents.gameLogic.addListener( gameLogicEvent, GameLogicEvent.Type.onReset );
-		GameEvents.gameLogic.addListener( gameLogicEvent, GameLogicEvent.Type.onRestart );
 
 		// grid-based position
 		int gridX = (int)((float)Gdx.graphics.getWidth() / 5f);
@@ -122,15 +102,6 @@ public final class Hud extends Task {
 		for( int i = 0; i < items.size; i++ ) {
 			items.get( i ).onReset();
 		}
-	}
-
-	public void trackPlayerPosition( Car car ) {
-		playerPosition.set( car.state().position );
-		playerOrientation = car.state().orientation;
-
-		// no subframe
-		// playerPosition.set( Convert.mt2px(car.getBody().getPosition()) );
-		// playerOrientation = car.getBody().getAngle() * MathUtils.radiansToDegrees;
 	}
 
 	@Override

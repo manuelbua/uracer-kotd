@@ -4,29 +4,10 @@ import aurelienribon.tweenengine.Timeline;
 import aurelienribon.tweenengine.TweenManager;
 
 import com.bitfire.uracer.URacer;
-import com.bitfire.uracer.game.events.GameEvents;
-import com.bitfire.uracer.game.events.GameLogicEvent;
 
 /** This tweener is a wall-clocked tweener, thus it will NOT take the timeMultiplier modulation into account */
 public final class WcTweener {
 	private static final TweenManager manager = new TweenManager();
-
-	private static final GameLogicEvent.Listener gameLogicEvent = new GameLogicEvent.Listener() {
-		@Override
-		public void gameLogicEvent( GameLogicEvent.Type type ) {
-			switch( type ) {
-			case onReset:
-			case onRestart:
-				clear();
-				break;
-			}
-		}
-	};
-
-	public static void init() {
-		GameEvents.gameLogic.addListener( gameLogicEvent, GameLogicEvent.Type.onReset );
-		GameEvents.gameLogic.addListener( gameLogicEvent, GameLogicEvent.Type.onRestart );
-	}
 
 	private WcTweener() {
 	}

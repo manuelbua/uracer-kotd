@@ -8,8 +8,7 @@ import com.badlogic.gdx.math.Vector2;
 import com.bitfire.uracer.Art;
 import com.bitfire.uracer.ScalingStrategy;
 import com.bitfire.uracer.URacer;
-import com.bitfire.uracer.game.actors.Car;
-import com.bitfire.uracer.game.states.DriftState;
+import com.bitfire.uracer.game.states.PlayerDriftState;
 
 public class CarSmokeTrails extends TrackEffect {
 	private SmokeEffect fx[];
@@ -17,8 +16,9 @@ public class CarSmokeTrails extends TrackEffect {
 	public static final int MaxParticles = 100;
 
 	private boolean isDrifting, wasDrifting;
-	private DriftState driftState;
+	private PlayerDriftState driftState;
 	private ScalingStrategy scalingStrategy;
+	private float posX, posY;
 
 	private class SmokeEffect {
 		private ParticleEffect effect;
@@ -86,7 +86,7 @@ public class CarSmokeTrails extends TrackEffect {
 		}
 	}
 
-	public CarSmokeTrails( ScalingStrategy scalingStrategy, DriftState driftState ) {
+	public CarSmokeTrails( ScalingStrategy scalingStrategy, PlayerDriftState driftState ) {
 		super( Type.CarSmokeTrails );
 		this.driftState = driftState;
 		this.scalingStrategy = scalingStrategy;
@@ -103,6 +103,13 @@ public class CarSmokeTrails extends TrackEffect {
 
 		isDrifting = false;
 		wasDrifting = false;
+		posX = 0;
+		posY = 0;
+	}
+
+	public void setPosition(float x, float y) {
+		posX = x;
+		posY = y;
 	}
 
 	@Override
@@ -138,8 +145,7 @@ public class CarSmokeTrails extends TrackEffect {
 
 	@Override
 	public void render( SpriteBatch batch ) {
-		Car car = driftState.car;
-		tmp.set( car.state().position.x, car.state().position.y );
+		tmp.set( posX, posY );
 		fx[0].render( batch, tmp.x, tmp.y );
 
 		// // rear left

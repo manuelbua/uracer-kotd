@@ -7,10 +7,12 @@ import com.badlogic.gdx.math.Vector2;
 import com.bitfire.uracer.Art;
 import com.bitfire.uracer.Config;
 import com.bitfire.uracer.Director;
-import com.bitfire.uracer.game.states.DriftState;
+import com.bitfire.uracer.game.actors.PlayerCar;
+import com.bitfire.uracer.game.states.PlayerDriftState;
 import com.bitfire.uracer.utils.AMath;
+import com.bitfire.uracer.utils.Convert;
 
-public class CarSkidMarks extends TrackEffect {
+public class PlayerSkidMarks extends TrackEffect {
 	public static final int MaxSkidMarks = 300;
 
 	private SkidMark[] skidMarks;
@@ -18,17 +20,19 @@ public class CarSkidMarks extends TrackEffect {
 	private int visibleSkidMarksCount;
 
 	private Vector2 last;
+	private PlayerCar player;
 
-	public CarSkidMarks( float carWidthPx, float carLengthPx ) {
+	public PlayerSkidMarks( PlayerCar player ) {
 		super( Type.CarSkidMarks );
 
+		this.player = player;
 		markIndex = 0;
 		visibleSkidMarksCount = 0;
 		last = new Vector2();
 
 		skidMarks = new SkidMark[ MaxSkidMarks ];
 		for( int i = 0; i < MaxSkidMarks; i++ ) {
-			skidMarks[i] = new SkidMark( carWidthPx, carLengthPx );
+			skidMarks[i] = new SkidMark( Convert.mt2px( player.getCarModel().width ), Convert.mt2px( player.getCarModel().length ) );
 		}
 	}
 
@@ -51,7 +55,9 @@ public class CarSkidMarks extends TrackEffect {
 
 	@Override
 	public void tick() {
-		// addDriftMark();
+		if( player.carState.currVelocityLenSquared >= 1 ) {
+			tryAddDriftMark( player.state().position, player.state().orientation, player.driftState );
+		}
 
 		SkidMark d;
 		for( int i = 0; i < MaxSkidMarks; i++ ) {
@@ -87,7 +93,7 @@ public class CarSkidMarks extends TrackEffect {
 		}
 	}
 
-	public void tryAddDriftMark( Vector2 position, float orientation, DriftState driftState ) {
+	private void tryAddDriftMark( Vector2 position, float orientation, PlayerDriftState driftState ) {
 		// avoid blatant overdrawing
 		if( (int)position.x == (int)last.x && (int)position.y == (int)last.y ) {
 			return;

@@ -11,6 +11,7 @@ import com.bitfire.uracer.entities.EntityType;
 import com.bitfire.uracer.game.actors.Car.Aspect;
 import com.bitfire.uracer.game.collisions.CollisionFilters;
 import com.bitfire.uracer.game.input.Input;
+import com.bitfire.uracer.game.world.GameWorld;
 import com.bitfire.uracer.utils.Convert;
 import com.bitfire.uracer.utils.FixtureAtlas;
 
@@ -18,38 +19,20 @@ public final class CarFactory {
 	private CarFactory() {
 	}
 
-	public static GhostCar createGhost( World box2dWorld, CarModel model, Aspect type ) {
-		CarRenderer graphics = createCarGraphics( type, model );
-		GhostCar ghost = new GhostCar( box2dWorld, graphics, model, type );
+	public static GhostCar createGhost( World box2dWorld, GameWorld gameWorld, CarModel model, Aspect type ) {
+		GhostCar ghost = new GhostCar( box2dWorld, gameWorld, model, type );
 		applyCarPhysics( ghost, EntityType.CarReplay );
 		return ghost;
 	}
 
-	public static GhostCar createGhost( World box2dWorld, Car car ) {
-		return CarFactory.createGhost( box2dWorld, car.getCarModel(), car.getAspect() );
+	public static GhostCar createGhost( World box2dWorld, GameWorld gameWorld, Car car ) {
+		return CarFactory.createGhost( box2dWorld, gameWorld, car.getCarModel(), car.getAspect() );
 	}
 
-	public static PlayerCar createPlayer( World box2dWorld, Input input, Aspect carAspect, CarModel model ) {
-		CarRenderer graphics = createCarGraphics( carAspect, model );
-		PlayerCar car = new PlayerCar( box2dWorld, graphics, model, carAspect );
+	public static PlayerCar createPlayer( World box2dWorld, GameWorld gameWorld, Input input, Aspect carAspect, CarModel model ) {
+		PlayerCar car = new PlayerCar( box2dWorld, gameWorld, model, carAspect );
 		applyCarPhysics( car, EntityType.Car );
 		return car;
-	}
-
-	private static CarRenderer createCarGraphics( Aspect type, CarModel model ) {
-		TextureRegion region = null;
-
-		switch( type ) {
-		case OldSkool:
-			region = Art.cars.findRegion( "electron" );
-			break;
-
-		case OldSkool2:
-			region = Art.cars.findRegion( "spider" );
-			break;
-		}
-
-		return new CarRenderer( model, region );
 	}
 
 	private static void applyCarPhysics( Car car, EntityType entityType ) {
@@ -98,6 +81,5 @@ public final class CarFactory {
 
 		FixtureAtlas atlas = new FixtureAtlas( Gdx.files.internal( shapeName ) );
 		atlas.createFixtures( car.getBody(), shapeRef, factor.x, factor.y, fd, offset, entityType );
-
 	}
 }

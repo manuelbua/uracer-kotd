@@ -47,8 +47,8 @@ public final class CarEvent extends Event {
 		notifiers[type.ordinal()].addListener( listener );
 	}
 
-	public void trigger( Car car, Type type ) {
-		data.car = car;
+	public void trigger( Car source, Type type ) {
+		data.car = source;
 		notifiers[type.ordinal()].carEvent( type, data );
 	}
 

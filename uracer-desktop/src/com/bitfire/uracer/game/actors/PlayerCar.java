@@ -9,6 +9,9 @@ import com.badlogic.gdx.physics.box2d.World;
 import com.bitfire.uracer.Config;
 import com.bitfire.uracer.Director;
 import com.bitfire.uracer.game.input.Input;
+import com.bitfire.uracer.game.states.PlayerCarState;
+import com.bitfire.uracer.game.states.PlayerDriftState;
+import com.bitfire.uracer.game.world.GameWorld;
 import com.bitfire.uracer.utils.AMath;
 import com.bitfire.uracer.utils.Convert;
 import com.bitfire.uracer.utils.SpriteBatchUtils;
@@ -33,8 +36,12 @@ public class PlayerCar extends Car {
 	private float linearVelocityDampAF = 0.99f;
 	private float throttleDampAF = 0.99f;
 
-	public PlayerCar( World box2dWorld, CarRenderer graphics, CarModel model, Aspect aspect ) {
-		super( box2dWorld, graphics, model, aspect );
+	// states
+	public PlayerCarState carState = null;
+	public PlayerDriftState driftState = null;
+
+	public PlayerCar( World box2dWorld, GameWorld gameWorld, CarModel model, Aspect aspect ) {
+		super( box2dWorld, gameWorld, model, aspect );
 		carInput = new CarInput();
 		inputSystem = null;
 		impacts = 0;
@@ -42,38 +49,24 @@ public class PlayerCar extends Car {
 		carDesc = new CarDescriptor();
 		carDesc.carModel.set( model );
 		carSim = new CarSimulator( carDesc );
+
+		// states
+		this.carState = new PlayerCarState( gameWorld, this );
+		this.driftState = new PlayerDriftState( this );
 	}
 
 	@Override
 	public void reset() {
 		super.reset();
 		frictionMean.clear();
+		carState.reset();
+		driftState.reset();
 	}
 
 	@Override
 	protected void resetPhysics() {
 		super.resetPhysics();
 		carSim.resetPhysics();
-	}
-
-	@Override
-	public Vector2 getVelocity() {
-		return carDesc.velocity_wc;
-	}
-
-	@Override
-	public float getThrottle() {
-		return carDesc.throttle;
-	}
-
-	@Override
-	public Vector2 getLateralForceFront() {
-		return carSim.lateralForceFront;
-	}
-
-	@Override
-	public Vector2 getLateralForceRear() {
-		return carSim.lateralForceRear;
 	}
 
 	/** After processing collision's feedback this damping will be applied
@@ -141,8 +134,7 @@ public class PlayerCar extends Car {
 
 			// compute throttle
 			carInput.throttle = touchPos.dst( carPos ) * 4 * carDesc.carModel.max_force;
-			// carInput.throttle = touchPos.dst( carPos ) * 2 * carDesc.carModel.max_force; // x2 = 0<->halfscreen is
-			// considered 0<->1
+			// carInput.throttle = touchPos.dst( carPos ) * 2 * carDesc.carModel.max_force; // x2 = 0<->halfscreen is considered 0<->1
 		}
 
 		return carInput;
@@ -177,8 +169,6 @@ public class PlayerCar extends Car {
 		// (no interface on carsim for performance reasons!)
 		carDesc.velocity_wc.set( forces.velocity_x, forces.velocity_y );
 		carDesc.angularvelocity = forces.angularVelocity;
-
-		// update speed/force factors
 	}
 
 	@Override
@@ -187,6 +177,9 @@ public class PlayerCar extends Car {
 
 		// inspect impact feedback, accumulate vel/ang velocities
 		handleImpactFeedback();
+
+		carState.update( carDesc.velocity_wc.len2(), carDesc.throttle );
+		driftState.update( carSim.lateralForceFront.y, carSim.lateralForceRear.y, carDesc.velocity_wc.len() );
 	}
 
 	private long start_timer = 0;

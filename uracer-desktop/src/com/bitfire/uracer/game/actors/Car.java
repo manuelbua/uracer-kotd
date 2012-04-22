@@ -7,7 +7,7 @@ import com.badlogic.gdx.physics.box2d.BodyDef;
 import com.badlogic.gdx.physics.box2d.BodyDef.BodyType;
 import com.badlogic.gdx.physics.box2d.Fixture;
 import com.badlogic.gdx.physics.box2d.World;
-import com.bitfire.uracer.game.events.GameEvents;
+import com.bitfire.uracer.game.world.GameWorld;
 
 public abstract class Car extends Box2DEntity {
 	public enum InputMode {
@@ -18,6 +18,10 @@ public abstract class Car extends Box2DEntity {
 		OldSkool, OldSkool2
 	}
 
+	/* event */
+	public final CarEvent event = new CarEvent();
+
+	protected GameWorld gameWorld;
 	protected CarModel model;
 	protected CarRenderer renderer;
 
@@ -29,9 +33,10 @@ public abstract class Car extends Box2DEntity {
 	private Aspect aspect = Aspect.OldSkool;
 	protected InputMode inputMode = InputMode.NoInput;
 
-	public Car( World box2dWorld, CarRenderer renderer, CarModel model, Aspect aspect ) {
+	public Car( World box2dWorld, GameWorld gameWorld, CarModel model, Aspect aspect ) {
 		super( box2dWorld );
-		this.renderer = renderer;
+		this.gameWorld = gameWorld;
+		this.renderer = new CarRenderer( model, aspect );
 		this.aspect = aspect;
 		this.impacts = 0;
 		this.model = model;
@@ -49,13 +54,13 @@ public abstract class Car extends Box2DEntity {
 		Gdx.app.log( getClass().getSimpleName(), "Input mode is " + this.inputMode.toString() );
 	}
 
-	public abstract Vector2 getLateralForceFront();
-
-	public abstract Vector2 getLateralForceRear();
-
-	public abstract float getThrottle();
-
-	public abstract Vector2 getVelocity();
+//	public abstract Vector2 getLateralForceFront();
+//
+//	public abstract Vector2 getLateralForceRear();
+//
+//	public abstract float getThrottle();
+//
+//	public abstract Vector2 getVelocity();
 
 	/** Subclasses will feed forces to the simulator, such as Replay data stored
 	 * elsewhere or from user input.
@@ -111,8 +116,8 @@ public abstract class Car extends Box2DEntity {
 	public void onCollide( Fixture other, Vector2 normalImpulses ) {
 		impacts++;
 
-		GameEvents.car.data.setCollisionData( other, normalImpulses );
-		GameEvents.car.trigger( this, CarEvent.Type.onCollision );
+		event.data.setCollisionData( other, normalImpulses );
+		event.trigger( this, CarEvent.Type.onCollision );
 	}
 
 	@Override
@@ -123,8 +128,8 @@ public abstract class Car extends Box2DEntity {
 		onComputeCarForces( carForces );
 
 		// trigger event, new forces have been computed
-		GameEvents.car.data.setForces( carForces );
-		GameEvents.car.trigger( this, CarEvent.Type.onComputeForces );
+		event.data.setForces( carForces );
+		event.trigger( this, CarEvent.Type.onComputeForces );
 
 		// FIXME is it really necessary? that's an expensive jni call..
 		body.setAwake( true );

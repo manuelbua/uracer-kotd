@@ -4,12 +4,10 @@ import com.badlogic.gdx.audio.Sound;
 import com.bitfire.uracer.Config;
 import com.bitfire.uracer.Sounds;
 import com.bitfire.uracer.URacer;
-import com.bitfire.uracer.game.events.DriftStateEvent;
-import com.bitfire.uracer.game.events.GameEvents;
-import com.bitfire.uracer.game.events.DriftStateEvent.Type;
+import com.bitfire.uracer.game.actors.PlayerCar;
+import com.bitfire.uracer.game.events.PlayerDriftStateEvent;
+import com.bitfire.uracer.game.events.PlayerDriftStateEvent.Type;
 import com.bitfire.uracer.game.logic.sounds.SoundEffect;
-import com.bitfire.uracer.game.states.DriftState;
-import com.bitfire.uracer.game.states.CarState;
 import com.bitfire.uracer.utils.AMath;
 import com.bitfire.uracer.utils.AudioUtils;
 
@@ -19,7 +17,7 @@ import com.bitfire.uracer.utils.AudioUtils;
  * input interaction with the car simulator.
  *
  * @author bmanuel */
-public final class CarDriftSoundEffect extends SoundEffect {
+public final class PlayerDriftSoundEffect extends SoundEffect {
 	private Sound drift = null;
 	private long driftId = -1, lastDriftId = -1;
 	private float driftLastPitch = 0;
@@ -30,12 +28,11 @@ public final class CarDriftSoundEffect extends SoundEffect {
 	private boolean doFadeIn = false;
 	private boolean doFadeOut = false;
 	private float lastVolume = 0f;
-	private CarState carState;
-	private DriftState driftState;
+	private PlayerCar player;
 
-	private DriftStateEvent.Listener driftListener = new DriftStateEvent.Listener() {
+	private PlayerDriftStateEvent.Listener driftListener = new PlayerDriftStateEvent.Listener() {
 		@Override
-		public void driftStateEvent( Type type ) {
+		public void driftStateEvent( PlayerCar player, Type type ) {
 			switch( type ) {
 			case onBeginDrift:
 				onBeginDrift();
@@ -63,11 +60,10 @@ public final class CarDriftSoundEffect extends SoundEffect {
 		doFadeOut = true;
 	}
 
-	public CarDriftSoundEffect( CarState carState, DriftState driftState ) {
-		GameEvents.driftState.addListener( driftListener, DriftStateEvent.Type.onBeginDrift );
-		GameEvents.driftState.addListener( driftListener, DriftStateEvent.Type.onEndDrift );
-		this.carState = carState;
-		this.driftState = driftState;
+	public PlayerDriftSoundEffect( PlayerCar player ) {
+		this.player = player;
+		player.driftState.event.addListener( driftListener, PlayerDriftStateEvent.Type.onBeginDrift );
+		player.driftState.event.addListener( driftListener, PlayerDriftStateEvent.Type.onEndDrift );
 		drift = Sounds.carDrift;
 	}
 
@@ -109,7 +105,7 @@ public final class CarDriftSoundEffect extends SoundEffect {
 	public void tick() {
 		if( driftId > -1 ) {
 			boolean anotherDriftId = (driftId != lastDriftId);
-			float speedFactor = carState.currSpeedFactor;
+			float speedFactor = player.carState.currSpeedFactor;
 
 			// compute behavior
 			float pitch = speedFactor * pitchFactor + pitchMin;
@@ -141,7 +137,7 @@ public final class CarDriftSoundEffect extends SoundEffect {
 
 			lastDriftId = driftId;
 			lastVolume = AMath.clamp( lastVolume, 0, 1f );
-			drift.setVolume( driftId, driftState.driftStrength * lastVolume );
+			drift.setVolume( driftId, player.driftState.driftStrength * lastVolume );
 		}
 	}
 }

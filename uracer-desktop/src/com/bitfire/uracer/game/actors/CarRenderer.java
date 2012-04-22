@@ -5,6 +5,7 @@ import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
 import com.bitfire.uracer.Art;
 import com.bitfire.uracer.entities.EntityRenderState;
+import com.bitfire.uracer.game.actors.Car.Aspect;
 import com.bitfire.uracer.utils.Convert;
 
 public class CarRenderer {
@@ -13,9 +14,17 @@ public class CarRenderer {
 	private TextureRegion region;
 	private float alpha;
 
-	public CarRenderer( CarModel model, TextureRegion region ) {
-		// aspect
-		this.region = region;
+	public CarRenderer( CarModel model, Aspect aspect ) {
+		switch( aspect ) {
+		case OldSkool:
+			this.region = Art.cars.findRegion( "electron" );
+			break;
+
+		case OldSkool2:
+			this.region = Art.cars.findRegion( "spider" );
+			break;
+		}
+
 		facet = new Sprite();
 		facet.setRegion( region );
 		facet.setSize( Convert.mt2px( model.width ), Convert.mt2px( model.length ) );
@@ -39,7 +48,7 @@ public class CarRenderer {
 		return region;
 	}
 
-	public void setAlpha(float alpha) {
+	public void setAlpha( float alpha ) {
 		this.alpha = alpha;
 	}
 
