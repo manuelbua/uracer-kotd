@@ -119,8 +119,6 @@ public class GameLogic implements CarEvent.Listener, PlayerCarStateEvent.Listene
 
 	// states
 	private LapState playerLapState = null;
-	// private CarState playerState = null;
-	// private DriftState playerDriftState = null;
 
 	// handles timeModulationBusy onComplete event
 	boolean timeModulation = false, timeModulationBusy = false;
@@ -142,13 +140,6 @@ public class GameLogic implements CarEvent.Listener, PlayerCarStateEvent.Listene
 		this.box2dWorld = new World( new Vector2( 0, 0 ), false );
 		this.box2dWorld.setContactListener( new GameContactListener() );
 
-		// register event handlers
-		// GameEvents.carState.addListener( this, CarStateEvent.Type.onTileChanged );
-		// GameEvents.car.addListener( this, CarEvent.Type.onCollision );
-		// GameEvents.car.addListener( this, CarEvent.Type.onComputeForces );
-		// GameEvents.driftState.addListener( this, DriftStateEvent.Type.onBeginDrift );
-		// GameEvents.driftState.addListener( this, DriftStateEvent.Type.onEndDrift );
-
 		// initializes the Director helper
 		Director.init();
 
@@ -163,12 +154,12 @@ public class GameLogic implements CarEvent.Listener, PlayerCarStateEvent.Listene
 		// creates playerCar and playerGhostCar
 		createPlayer( gameWorld, carAspect, carModel );
 
-		createStates( playerCar );
+		playerLapState = new LapState();
 
 		// creates global camera controller
 		controller = new DirectorController( Config.Graphics.CameraInterpolationMode, Director.halfViewport, gameWorld.worldSizeScaledPx, gameWorld.worldSizeTiles );
 
-		createGameTasks();
+		createGameTasks( playerLapState );
 
 		configurePlayer( gameplaySettings, gameWorld, playerCar );
 		configureTasks( playerCar );
@@ -221,19 +212,9 @@ public class GameLogic implements CarEvent.Listener, PlayerCarStateEvent.Listene
 		Tween.registerAccessor( Message.class, new MessageAccessor() );
 		Tween.registerAccessor( HudLabel.class, new HudLabelAccessor() );
 		Tween.registerAccessor( BoxedFloat.class, new BoxedFloatAccessor() );
-
-		// wall-clocked tweener, use this to tween the timeMultiplier
-		// game tweener, for all the rest
 	}
 
-	private void createStates( Car player ) {
-		// player-bound states
-		// playerState = new CarState( gameWorld, player );
-		// playerDriftState = new DriftState( player );
-		playerLapState = new LapState();
-	}
-
-	private void createGameTasks() {
+	private void createGameTasks( LapState lapState ) {
 		gameTasks = new ArrayList<Task>( 10 );
 
 		// input system
@@ -251,7 +232,7 @@ public class GameLogic implements CarEvent.Listener, PlayerCarStateEvent.Listene
 		gameTasks.add( messager );
 
 		// hud manager
-		hud = new Hud( scalingStrategy );
+		hud = new Hud( scalingStrategy, lapState );
 		gameTasks.add( hud );
 
 		// effects manager
@@ -320,26 +301,14 @@ public class GameLogic implements CarEvent.Listener, PlayerCarStateEvent.Listene
 		}
 
 		updateCarFriction();
-		updateGameTasks();
 		updateTimeMultiplier();
 
 		return true;
 	}
 
-	private void updateGameTasks() {
-		updateHud();
-	}
-
-
-	private void updateHud() {
-		hud.update( playerLapState );
-		hudDrifting.update();
-	}
-
 	private void updateTimeMultiplier() {
 		URacer.timeMultiplier = AMath.clamp( timeMultiplier.value, tmMin, Config.Physics.PhysicsTimeMultiplier );
 	}
-
 
 	//
 	// RENDERING-BOUND LOGIC

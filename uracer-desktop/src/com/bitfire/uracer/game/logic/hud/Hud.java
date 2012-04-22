@@ -20,6 +20,7 @@ public final class Hud extends Task {
 	private final Manager<HudElement> manager = new Manager<HudElement>();
 
 	private HudLabel best, curr, last;
+	private LapState lapState;
 	// private HudDebugMeter meterLatForce, meterSkidMarks, meterSmoke;
 
 	private GameRendererEvent.Listener gameRendererEvent = new GameRendererEvent.Listener() {
@@ -52,9 +53,11 @@ public final class Hud extends Task {
 	}
 
 	// effects
-	public Hud( ScalingStrategy scalingStrategy ) {
+	public Hud( ScalingStrategy scalingStrategy, LapState lapState ) {
 		GameEvents.gameRenderer.addListener( gameRendererEvent, GameRendererEvent.Type.BatchAfterMeshes, GameRendererEvent.Order.DEFAULT );
 		GameEvents.gameRenderer.addListener( gameRendererEvent, GameRendererEvent.Type.BatchDebug, GameRendererEvent.Order.DEFAULT );
+
+		this.lapState = lapState;
 
 		// grid-based position
 		int gridX = (int)((float)Gdx.graphics.getWidth() / 5f);
@@ -109,10 +112,11 @@ public final class Hud extends Task {
 		for( int i = 0; i < manager.items.size; i++ ) {
 			manager.items.get( i ).onTick();
 		}
+
+		update();
 	}
 
-	public void update( LapState lapState ) {
-
+	private void update() {
 		// current time
 		curr.setString( "YOUR  TIME\n" + NumberString.format( lapState.getElapsedSeconds() ) + "s" );
 
