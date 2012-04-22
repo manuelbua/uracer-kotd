@@ -32,7 +32,7 @@ public final class PlayerDriftSoundEffect extends SoundEffect {
 
 	private PlayerDriftStateEvent.Listener driftListener = new PlayerDriftStateEvent.Listener() {
 		@Override
-		public void driftStateEvent( PlayerCar player, Type type ) {
+		public void playerDriftStateEvent( PlayerCar player, Type type ) {
 			switch( type ) {
 			case onBeginDrift:
 				onBeginDrift();

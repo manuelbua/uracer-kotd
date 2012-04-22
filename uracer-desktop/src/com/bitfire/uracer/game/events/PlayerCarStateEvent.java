@@ -11,7 +11,7 @@ public final class PlayerCarStateEvent extends Event {
 	}
 
 	public interface Listener extends EventListener {
-		void carStateEvent( Car source, Type type );
+		void playerCarStateEvent( Car source, Type type );
 	}
 
 	public PlayerCarStateEvent() {
@@ -25,16 +25,16 @@ public final class PlayerCarStateEvent extends Event {
 	}
 
 	public void trigger( Car source, Type type ) {
-		notifiers[type.ordinal()].carStateEvent( source, type );
+		notifiers[type.ordinal()].playerCarStateEvent( source, type );
 	}
 
 	private Notifier[] notifiers = new Notifier[ Type.values().length ];
 
 	private class Notifier extends EventNotifier<Listener> implements Listener {
 		@Override
-		public void carStateEvent( Car source, Type type ) {
+		public void playerCarStateEvent( Car source, Type type ) {
 			for( Listener listener : listeners ) {
-				listener.carStateEvent( source, type );
+				listener.playerCarStateEvent( source, type );
 			}
 		}
 	};

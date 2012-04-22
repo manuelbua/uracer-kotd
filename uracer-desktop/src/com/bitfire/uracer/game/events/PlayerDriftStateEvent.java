@@ -11,7 +11,7 @@ public final class PlayerDriftStateEvent extends Event {
 	}
 
 	public interface Listener extends EventListener {
-		void driftStateEvent( PlayerCar source, Type type );
+		void playerDriftStateEvent( PlayerCar source, Type type );
 	}
 
 	public PlayerDriftStateEvent() {
@@ -26,7 +26,7 @@ public final class PlayerDriftStateEvent extends Event {
 
 	public void trigger( PlayerCar source, Type type ) {
 		this.source = source;
-		notifiers[type.ordinal()].driftStateEvent( source, type );
+		notifiers[type.ordinal()].playerDriftStateEvent( source, type );
 	}
 
 	public PlayerCar source;
@@ -34,9 +34,9 @@ public final class PlayerDriftStateEvent extends Event {
 
 	private class Notifier extends EventNotifier<Listener> implements Listener {
 		@Override
-		public void driftStateEvent( PlayerCar source, Type type ) {
+		public void playerDriftStateEvent( PlayerCar source, Type type ) {
 			for( Listener listener : listeners ) {
-				listener.driftStateEvent( source, type );
+				listener.playerDriftStateEvent( source, type );
 			}
 		}
 	};
