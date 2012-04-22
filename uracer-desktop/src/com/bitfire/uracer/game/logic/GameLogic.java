@@ -25,7 +25,6 @@ import com.bitfire.uracer.game.actors.CarFactory;
 import com.bitfire.uracer.game.actors.CarModel;
 import com.bitfire.uracer.game.actors.GhostCar;
 import com.bitfire.uracer.game.collisions.GameContactListener;
-import com.bitfire.uracer.game.events.GameLogicEvent;
 import com.bitfire.uracer.game.events.PlayerCarStateEvent;
 import com.bitfire.uracer.game.events.PlayerDriftStateEvent;
 import com.bitfire.uracer.game.input.Input;
@@ -67,7 +66,7 @@ import com.bitfire.uracer.utils.NumberString;
  * @author bmanuel */
 public class GameLogic implements CarEvent.Listener, PlayerCarStateEvent.Listener, PlayerDriftStateEvent.Listener {
 	// event
-	public final GameLogicEvent event = new GameLogicEvent();
+//	public final GameLogicEvent event = new GameLogicEvent();
 
 	// scaling
 	private ScalingStrategy scalingStrategy = null;
@@ -277,11 +276,13 @@ public class GameLogic implements CarEvent.Listener, PlayerCarStateEvent.Listene
 	public boolean onTick() {
 		if( input.isOn( Keys.R ) ) {
 			restartLogic();
-			event.trigger( GameLogicEvent.Type.onRestart );
+			gameTasksManager.restart();
+//			event.trigger( GameLogicEvent.Type.onRestart );
 		} else if( input.isOn( Keys.T ) ) {
 			restartLogic();
 			resetLogic();
-			event.trigger( GameLogicEvent.Type.onReset );
+			gameTasksManager.reset();
+//			event.trigger( GameLogicEvent.Type.onReset );
 		} else if( input.isOn( Keys.Q ) ) {
 			Gdx.app.exit();
 			return false;
@@ -361,7 +362,6 @@ public class GameLogic implements CarEvent.Listener, PlayerCarStateEvent.Listene
 	}
 
 	private void resetLogic() {
-		restartLogic();
 		lastRecordedLapId = 0;
 		playerLapState.reset();
 		gameTasksManager.reset();
