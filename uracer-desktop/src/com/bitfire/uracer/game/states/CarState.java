@@ -17,7 +17,6 @@ public final class CarState {
 	private int lastTileX = 0, lastTileY = 0;
 	private GameWorld world;
 
-
 	/* position */
 	public int currTileX = 1, currTileY = 1;
 	public Vector2 tilePosition = new Vector2();

@@ -1,5 +1,6 @@
 package com.bitfire.uracer.game.logic.sounds.effects;
 
+import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.audio.Sound;
 import com.badlogic.gdx.math.MathUtils;
 import com.bitfire.uracer.Sounds;
@@ -97,6 +98,7 @@ public final class CarImpactSoundEffect extends SoundEffect {
 				volumeFactor = 0.75f + (impactFactor - 0.75f);
 			}
 
+			Gdx.app.log( "CarImpactSoundEffect", "" + volumeFactor );
 			long id = s.play( MaxVolume * volumeFactor );
 			float pitch = speedFactor * pitchFactor + pitchMin;
 			pitch = AMath.clamp( pitch, pitchMin, pitchMax );
