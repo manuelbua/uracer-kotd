@@ -5,7 +5,6 @@ import com.badlogic.gdx.math.MathUtils;
 import com.bitfire.uracer.Sounds;
 import com.bitfire.uracer.URacer;
 import com.bitfire.uracer.game.actors.Car;
-import com.bitfire.uracer.game.actors.Car.InputMode;
 import com.bitfire.uracer.game.actors.CarEvent;
 import com.bitfire.uracer.game.actors.CarEvent.Data;
 import com.bitfire.uracer.game.actors.CarEvent.Type;
@@ -18,8 +17,8 @@ import com.bitfire.uracer.utils.AudioUtils;
 public final class CarImpactSoundEffect extends SoundEffect {
 	private Sound soundLow1, soundLow2, soundMid1, soundMid2, soundHigh;
 	private long lastSoundTimeMs = 0;
+	private Car car;
 	private CarState carState;
-	private boolean forPlayerOnly = false;
 
 	private static final long MinElapsedBetweenSoundsMs = 500;
 	private static final float MinImpactForce = 20;
@@ -35,17 +34,16 @@ public final class CarImpactSoundEffect extends SoundEffect {
 	private CarEvent.Listener carEvent = new CarEvent.Listener() {
 		@Override
 		public void carEvent( Type type, Data data ) {
-			Car car = GameEvents.car.data.car;
-			if( !forPlayerOnly || (forPlayerOnly && (car.getInputMode() == InputMode.InputFromPlayer)) ) {
+			if( car == GameEvents.car.data.car ) {
 				impact( data.impulses.len(), carState.currSpeedFactor );
 			}
 		}
 	};
 
-	public CarImpactSoundEffect( CarState carState, boolean playOnlyAtPlayerImpacts ) {
+	public CarImpactSoundEffect( Car car, CarState carState ) {
 		GameEvents.car.addListener( carEvent, CarEvent.Type.onCollision );
+		this.car = car;
 		this.carState = carState;
-		this.forPlayerOnly = playOnlyAtPlayerImpacts;
 
 		soundLow1 = Sounds.carImpacts[0];
 		soundLow2 = Sounds.carImpacts[1];
@@ -63,7 +61,7 @@ public final class CarImpactSoundEffect extends SoundEffect {
 		soundHigh.stop();
 	}
 
-	// FIXME, modulate pitch while playing as CarDriftSoundEffect to handle impact also on start/end time modulation
+	// TODO modulate pitch while playing as CarDriftSoundEffect to handle impact also on start/end time modulation
 	private void impact( float impactForce, float speedFactor ) {
 		// early exit
 		if( impactForce < MinImpactForce ) {
