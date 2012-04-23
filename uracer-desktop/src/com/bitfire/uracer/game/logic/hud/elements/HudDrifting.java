@@ -47,6 +47,8 @@ public final class HudDrifting extends HudElement {
 		this.carModelLengthPx = Convert.mt2px( player.getCarModel().length );
 
 		// 99.99, reserve some space and do not recompute bounds
+
+		// labelRealtime role is to display PlayerCar values in real-time!
 		labelRealtime = new HudLabel( scalingStrategy, Art.fontCurseYRbig, "+10.99", 0.5f );
 		labelRealtime.setAlpha( 0 );
 		lastRealtimePos.set( 0, 0 );
@@ -70,14 +72,16 @@ public final class HudDrifting extends HudElement {
 
 	@Override
 	public void onTick() {
+		refreshLabelRealtime();
+	}
+
+	private void refreshLabelRealtime() {
 		if( began && labelRealtime.isVisible() ) {
 			labelRealtime.setString( "+" + NumberString.format( player.driftState.driftSeconds() ) );
 		}
 	}
 
 	public void endDrift( String message, EndDriftType type ) {
-		began = false;
-
 		HudLabel result = labelResult[nextLabelResult++];
 
 		if( nextLabelResult == MaxLabelResult ) {
@@ -98,8 +102,11 @@ public final class HudDrifting extends HudElement {
 		result.setPosition( lastRealtimePos );
 		result.slide( type == EndDriftType.GoodDrift );
 
-//		labelRealtime.setString( "+" + NumberString.format( player.driftState.driftSeconds() ) );
-		labelRealtime.setString( message );
+		began = true;
+		refreshLabelRealtime();
+
+		began = false; // disable refresh
+
 		labelRealtime.fadeOut( 300 );
 	}
 

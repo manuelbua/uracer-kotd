@@ -5,7 +5,7 @@ import aurelienribon.tweenengine.Timeline;
 import aurelienribon.tweenengine.Tween;
 import aurelienribon.tweenengine.TweenCallback;
 import aurelienribon.tweenengine.TweenEquation;
-import aurelienribon.tweenengine.equations.Sine;
+import aurelienribon.tweenengine.equations.Quad;
 
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Input.Keys;
@@ -117,10 +117,10 @@ public class GameLogic implements CarEvent.Listener, PlayerCarStateEvent.Listene
 	private LapState playerLapState = null;
 
 	// handles timeModulationBusy onComplete event
-	boolean timeModulation = false, timeModulationBusy = false;
-	BoxedFloat timeMultiplier = new BoxedFloat();
-	float tmMin = 0.3f;
-	TweenCallback timeModulationFinished = new TweenCallback() {
+	private boolean timeModulation = false, timeModulationBusy = false;
+	private BoxedFloat timeMultiplier = new BoxedFloat();
+	public static final float tmMin = 0.3f;
+	private TweenCallback timeModulationFinished = new TweenCallback() {
 		@Override
 		public void onEvent( int type, BaseTween<?> source ) {
 			switch( type ) {
@@ -283,18 +283,18 @@ public class GameLogic implements CarEvent.Listener, PlayerCarStateEvent.Listene
 			return false;
 		} else if( input.isOn( Keys.SPACE ) && !timeModulationBusy ) {
 
-			TweenEquation eqIn = Sine.INOUT;
-			TweenEquation eqOut = Sine.INOUT;
+			TweenEquation eqIn = Quad.OUT;
+			TweenEquation eqOut = Quad.IN;
 
 			timeModulation = !timeModulation;
 			if( timeModulation ) {
 				timeModulationBusy = true;
-				WcTweener.start( Timeline.createSequence().push( Tween.to( timeMultiplier, BoxedFloatAccessor.VALUE, 1000 ).target( tmMin ).ease( eqIn ) )
+				WcTweener.start( Timeline.createSequence().push( Tween.to( timeMultiplier, BoxedFloatAccessor.VALUE, 750 ).target( tmMin ).ease( eqIn ) )
 						.setCallback( timeModulationFinished ) );
 			} else {
 				timeModulationBusy = true;
 				WcTweener.start( Timeline.createSequence()
-						.push( Tween.to( timeMultiplier, BoxedFloatAccessor.VALUE, 1000 ).target( Config.Physics.PhysicsTimeMultiplier ).ease( eqOut ) )
+						.push( Tween.to( timeMultiplier, BoxedFloatAccessor.VALUE, 1250 ).target( Config.Physics.PhysicsTimeMultiplier ).ease( eqOut ) )
 						.setCallback( timeModulationFinished ) );
 			}
 		}
@@ -434,6 +434,8 @@ public class GameLogic implements CarEvent.Listener, PlayerCarStateEvent.Listene
 
 			break;
 		}
+
+		Gdx.app.log( "GameLogic", "playerDriftStateEvent::ds=" + NumberString.format( player.driftState.driftSeconds() ) + " (" + player.driftState.driftSeconds() + ")" );
 	}
 
 	//
