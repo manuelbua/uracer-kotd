@@ -77,7 +77,7 @@ public class Game implements Disposable {
 
 		if( Config.PostProcessing.EnableVignetting ) {
 			vignette = new Vignette();
-			vignette.setCoords( 0.75f, 0.4f );
+			vignette.setCoords( 0.75f, 0.35f );
 			processor.addEffect( vignette );
 		}
 	}
@@ -90,12 +90,12 @@ public class Game implements Disposable {
 
 		if( Config.PostProcessing.Enabled && zoom != null && playerCar != null ) {
 			zoom.setOrigin( Director.screenPosFor( playerCar.getBody() ) );
-			zoom.setStrength( -0.05f * factor );
+			zoom.setStrength( -0.08f * factor );
 		}
 
 		if( Config.PostProcessing.Enabled && bloom != null && zoom != null ) {
 			bloom.setBaseSaturation( 0.5f - 0.5f * factor );
-			bloom.setBloomSaturation( 1.5f - factor * 1.15f );
+			bloom.setBloomSaturation( 1.5f - factor * 1.425f );
 			bloom.setBloomIntesity( 1f + factor * 1.75f );
 
 			// vignette.setY( (1 - factor) * 0.74f + factor * 0.4f );

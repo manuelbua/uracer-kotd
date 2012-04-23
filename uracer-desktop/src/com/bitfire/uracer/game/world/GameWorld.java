@@ -328,9 +328,9 @@ public final class GameWorld {
 		float factor = scalingStrategy.invTileMapZoomFactor;
 		float oneOnWorld3DFactor = 1f / OrthographicAlignedStillModel.World3DScalingFactor;
 		float wallHeightMt = 5f * factor * oneOnWorld3DFactor;
-		float textureScalingU = 1f;
+		float textureScalingU = 0.5f;
 		float coordU = 1f;
-		float coordV = 3f;
+		float coordV = 1f;
 
 		// jitter
 		float jitterPositional = .5f * factor * oneOnWorld3DFactor;
@@ -354,7 +354,7 @@ public final class GameWorld {
 				magidx = 0;
 			}
 
-			mag = AMath.lerp( prevmag, magnitudes[magidx], .25f );
+			mag = AMath.lerp( prevmag, magnitudes[magidx], .5f );
 			prevmag = mag;
 
 			coordU = mag * textureScalingU;

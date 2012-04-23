@@ -66,7 +66,7 @@ import com.bitfire.uracer.utils.NumberString;
  * @author bmanuel */
 public class GameLogic implements CarEvent.Listener, PlayerCarStateEvent.Listener, PlayerDriftStateEvent.Listener {
 	// event
-//	public final GameLogicEvent event = new GameLogicEvent();
+	// public final GameLogicEvent event = new GameLogicEvent();
 
 	// scaling
 	private ScalingStrategy scalingStrategy = null;
@@ -275,14 +275,9 @@ public class GameLogic implements CarEvent.Listener, PlayerCarStateEvent.Listene
 
 	public boolean onTick() {
 		if( input.isOn( Keys.R ) ) {
-			restartLogic();
-			gameTasksManager.restart();
-//			event.trigger( GameLogicEvent.Type.onRestart );
+			restartGame();
 		} else if( input.isOn( Keys.T ) ) {
-			restartLogic();
-			resetLogic();
-			gameTasksManager.reset();
-//			event.trigger( GameLogicEvent.Type.onReset );
+			resetGame();
 		} else if( input.isOn( Keys.Q ) ) {
 			Gdx.app.exit();
 			return false;
@@ -337,6 +332,17 @@ public class GameLogic implements CarEvent.Listener, PlayerCarStateEvent.Listene
 	//
 	// TODO, COULD THIS BE A TASK HANDLING IN-GAME USER CHOICES ??
 	//
+
+	public void restartGame() {
+		restartLogic();
+		gameTasksManager.restart();
+	}
+
+	public void resetGame() {
+		restartLogic();
+		resetLogic();
+		gameTasksManager.reset();
+	}
 
 	private void resetPlayer( Car playerCar, GhostCar playerGhostCar ) {
 		if( playerCar != null ) {
@@ -514,14 +520,20 @@ public class GameLogic implements CarEvent.Listener, PlayerCarStateEvent.Listene
 						// both valid, replay best, overwrite worst
 						Replay best = lapState.getBestReplay(), worst = lapState.getWorstReplay();
 
-						if( lastRecordedLapId == best.id ) {
-							lapState.setLastTrackTimeSeconds( best.trackTimeSeconds );
-							messager.show( "-" + NumberString.format( worst.trackTimeSeconds - best.trackTimeSeconds ) + " seconds!", 3f, Type.Good, MessagePosition.Top,
-									MessageSize.Big );
+						if( AMath.equals( worst.trackTimeSeconds, best.trackTimeSeconds ) ) {
+							// draw!
+							messager.show( "DRAW!", 3f, Type.Information,
+									MessagePosition.Top, MessageSize.Big );
 						} else {
-							lapState.setLastTrackTimeSeconds( worst.trackTimeSeconds );
-							messager.show( "+" + NumberString.format( worst.trackTimeSeconds - best.trackTimeSeconds ) + " seconds", 3f, Type.Bad, MessagePosition.Top,
-									MessageSize.Big );
+							if( lastRecordedLapId == best.id ) {
+								lapState.setLastTrackTimeSeconds( best.trackTimeSeconds );
+								messager.show( "-" + NumberString.format( worst.trackTimeSeconds - best.trackTimeSeconds ) + " seconds!", 3f, Type.Good,
+										MessagePosition.Top, MessageSize.Big );
+							} else {
+								lapState.setLastTrackTimeSeconds( worst.trackTimeSeconds );
+								messager.show( "+" + NumberString.format( worst.trackTimeSeconds - best.trackTimeSeconds ) + " seconds", 3f, Type.Bad,
+										MessagePosition.Top, MessageSize.Big );
+							}
 						}
 
 						playerGhostCar.setReplay( best );

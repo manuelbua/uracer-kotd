@@ -98,7 +98,8 @@ public final class HudDrifting extends HudElement {
 		result.setPosition( lastRealtimePos );
 		result.slide( type == EndDriftType.GoodDrift );
 
-		labelRealtime.setString( "+" + NumberString.format( player.driftState.driftSeconds() ) );
+//		labelRealtime.setString( "+" + NumberString.format( player.driftState.driftSeconds() ) );
+		labelRealtime.setString( message );
 		labelRealtime.fadeOut( 300 );
 	}
 
