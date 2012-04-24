@@ -1,4 +1,4 @@
-package com.bitfire.uracer.game.states;
+package com.bitfire.uracer.game.logic;
 
 import com.bitfire.uracer.game.Time;
 import com.bitfire.uracer.game.input.Replay;

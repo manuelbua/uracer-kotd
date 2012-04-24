@@ -84,7 +84,7 @@ public class Game implements Disposable {
 
 	// FIXME, this is logic and it shouldn't be here
 	private void updatePostProcessing() {
-		float factor = 1 - (URacer.timeMultiplier - gameLogic.tmMin) / (Config.Physics.PhysicsTimeMultiplier - gameLogic.tmMin);
+		float factor = 1 - (URacer.timeMultiplier - GameLogic.TimeMultiplierMin) / (Config.Physics.PhysicsTimeMultiplier - GameLogic.TimeMultiplierMin);
 
 		Car playerCar = gameLogic.getPlayer();
 

@@ -49,7 +49,6 @@ import com.bitfire.uracer.game.logic.sounds.effects.PlayerImpactSoundEffect;
 import com.bitfire.uracer.game.logic.trackeffects.TrackEffects;
 import com.bitfire.uracer.game.logic.trackeffects.effects.PlayerSkidMarks;
 import com.bitfire.uracer.game.player.PlayerCar;
-import com.bitfire.uracer.game.states.LapState;
 import com.bitfire.uracer.game.tween.GameTweener;
 import com.bitfire.uracer.game.tween.WcTweener;
 import com.bitfire.uracer.game.world.GameWorld;
@@ -119,7 +118,7 @@ public class GameLogic implements CarEvent.Listener, PlayerCarStateEvent.Listene
 	// handles timeModulationBusy onComplete event
 	private boolean timeModulation = false, timeModulationBusy = false;
 	private BoxedFloat timeMultiplier = new BoxedFloat();
-	public static final float tmMin = 0.3f;
+	public static final float TimeMultiplierMin = 0.3f;
 	private TweenCallback timeModulationFinished = new TweenCallback() {
 		@Override
 		public void onEvent( int type, BaseTween<?> source ) {
@@ -289,7 +288,7 @@ public class GameLogic implements CarEvent.Listener, PlayerCarStateEvent.Listene
 			timeModulation = !timeModulation;
 			if( timeModulation ) {
 				timeModulationBusy = true;
-				WcTweener.start( Timeline.createSequence().push( Tween.to( timeMultiplier, BoxedFloatAccessor.VALUE, 750 ).target( tmMin ).ease( eqIn ) )
+				WcTweener.start( Timeline.createSequence().push( Tween.to( timeMultiplier, BoxedFloatAccessor.VALUE, 750 ).target( TimeMultiplierMin ).ease( eqIn ) )
 						.setCallback( timeModulationFinished ) );
 			} else {
 				timeModulationBusy = true;
@@ -306,7 +305,7 @@ public class GameLogic implements CarEvent.Listener, PlayerCarStateEvent.Listene
 	}
 
 	private void updateTimeMultiplier() {
-		URacer.timeMultiplier = AMath.clamp( timeMultiplier.value, tmMin, Config.Physics.PhysicsTimeMultiplier );
+		URacer.timeMultiplier = AMath.clamp( timeMultiplier.value, TimeMultiplierMin, Config.Physics.PhysicsTimeMultiplier );
 	}
 
 	//
@@ -435,7 +434,7 @@ public class GameLogic implements CarEvent.Listener, PlayerCarStateEvent.Listene
 			break;
 		}
 
-		Gdx.app.log( "GameLogic", "playerDriftStateEvent::ds=" + NumberString.format( player.driftState.driftSeconds() ) + " (" + player.driftState.driftSeconds() + ")" );
+//		Gdx.app.log( "GameLogic", "playerDriftStateEvent::ds=" + NumberString.format( player.driftState.driftSeconds() ) + " (" + player.driftState.driftSeconds() + ")" );
 	}
 
 	//

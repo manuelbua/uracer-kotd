@@ -1,11 +1,9 @@
 package com.bitfire.uracer.game.player;
 
-import com.badlogic.gdx.Gdx;
 import com.bitfire.uracer.game.Time;
 import com.bitfire.uracer.game.events.PlayerDriftStateEvent;
 import com.bitfire.uracer.game.events.PlayerDriftStateEvent.Type;
 import com.bitfire.uracer.utils.AMath;
-import com.bitfire.uracer.utils.NumberString;
 
 public final class PlayerDriftState {
 	/* event */
@@ -98,8 +96,8 @@ public final class PlayerDriftState {
 					isDrifting = false;
 					hasCollided = false;
 
-					float elapsed = time.elapsed( Time.Reference.TickSeconds );
-					Gdx.app.log( "PlayerDriftState", "playerDriftStateEvent::ds=" + NumberString.format( elapsed ) + " (" + elapsed + ")" );
+//					float elapsed = time.elapsed( Time.Reference.TickSeconds );
+//					Gdx.app.log( "PlayerDriftState", "playerDriftStateEvent::ds=" + NumberString.format( elapsed ) + " (" + elapsed + ")" );
 
 					event.trigger( player, Type.onEndDrift );
 					// Gdx.app.log( "DriftState", car.getClass().getSimpleName() + " onEndDrift(), " + time.elapsed(

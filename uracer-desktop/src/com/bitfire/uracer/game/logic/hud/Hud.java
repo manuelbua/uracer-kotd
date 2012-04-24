@@ -10,7 +10,7 @@ import com.bitfire.uracer.game.events.GameEvents;
 import com.bitfire.uracer.game.events.GameRendererEvent;
 import com.bitfire.uracer.game.input.Replay;
 import com.bitfire.uracer.game.logic.GameTask;
-import com.bitfire.uracer.game.states.LapState;
+import com.bitfire.uracer.game.logic.LapState;
 import com.bitfire.uracer.utils.Manager;
 import com.bitfire.uracer.utils.NumberString;
 
