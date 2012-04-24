@@ -72,11 +72,11 @@ public final class HudDrifting extends HudElement {
 
 	@Override
 	public void onTick() {
-		refreshLabelRealtime();
+		refreshLabelRealtime( false );
 	}
 
-	private void refreshLabelRealtime() {
-		if( began && labelRealtime.isVisible() ) {
+	private void refreshLabelRealtime( boolean force ) {
+		if( force || (began && labelRealtime.isVisible()) ) {
 			labelRealtime.setString( "+" + NumberString.format( player.driftState.driftSeconds() ) );
 		}
 	}
@@ -102,10 +102,8 @@ public final class HudDrifting extends HudElement {
 		result.setPosition( lastRealtimePos );
 		result.slide( type == EndDriftType.GoodDrift );
 
-		began = true;
-		refreshLabelRealtime();
-
 		began = false; // disable refresh
+		refreshLabelRealtime( true );
 
 		labelRealtime.fadeOut( 300 );
 	}
