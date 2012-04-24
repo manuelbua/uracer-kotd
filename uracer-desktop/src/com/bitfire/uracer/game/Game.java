@@ -77,7 +77,8 @@ public class Game implements Disposable {
 
 		if( Config.PostProcessing.EnableVignetting ) {
 			vignette = new Vignette();
-			vignette.setCoords( 0.75f, 0.35f );
+			 vignette.setCoords( 0.75f, 0.4f );
+			// vignette.setCoords( 0.7f, 0f );
 			processor.addEffect( vignette );
 		}
 	}
@@ -95,7 +96,7 @@ public class Game implements Disposable {
 
 		if( Config.PostProcessing.Enabled && bloom != null && zoom != null ) {
 			bloom.setBaseSaturation( 0.5f - 0.5f * factor );
-			bloom.setBloomSaturation( 1.5f - factor * 1.425f );
+			bloom.setBloomSaturation( 1.5f - factor * 1.2f );
 			bloom.setBloomIntesity( 1f + factor * 1.75f );
 
 			// vignette.setY( (1 - factor) * 0.74f + factor * 0.4f );

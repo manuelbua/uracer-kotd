@@ -96,8 +96,9 @@ public final class PlayerDriftState {
 					isDrifting = false;
 					hasCollided = false;
 
-//					float elapsed = time.elapsed( Time.Reference.TickSeconds );
-//					Gdx.app.log( "PlayerDriftState", "playerDriftStateEvent::ds=" + NumberString.format( elapsed ) + " (" + elapsed + ")" );
+					// float elapsed = time.elapsed( Time.Reference.TickSeconds );
+					// Gdx.app.log( "PlayerDriftState", "playerDriftStateEvent::ds=" + NumberString.format( elapsed ) +
+					// " (" + elapsed + ")" );
 
 					event.trigger( player, Type.onEndDrift );
 					// Gdx.app.log( "DriftState", car.getClass().getSimpleName() + " onEndDrift(), " + time.elapsed(
