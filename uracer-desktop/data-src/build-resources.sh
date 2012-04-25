@@ -12,6 +12,13 @@ TILED_PACKER="java -classpath ${JARS}:${GDX_TOOLS_PATH}:${GDX_TILED_PREP_PATH} c
 
 DEST="/home/manuel/dev/uracer-libgdx/uracer-desktop/data"
 
+# base
+echo -n "Cooking base..."
+rm -rf "${DEST}/base/"
+mkdir -p "${DEST}/base"
+cp base/*.png ${DEST}/base
+cp base/*.shape ${DEST}/base
+echo "done!"
 
 # tileset graphics and tmx levels
 echo -n "Cooking levels..."
