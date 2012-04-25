@@ -4,16 +4,16 @@ import java.lang.reflect.Field;
 
 import com.badlogic.gdx.ApplicationListener;
 import com.badlogic.gdx.Gdx;
-import com.bitfire.uracer.debug.Debug;
-import com.bitfire.uracer.screen.GameScreen;
-import com.bitfire.uracer.screen.Screen;
+import com.badlogic.gdx.math.Vector2;
 import com.bitfire.uracer.utils.AMath;
+import com.bitfire.uracer.utils.Convert;
+import com.bitfire.uracer.utils.SpriteBatchUtils;
 
 public class URacer implements ApplicationListener {
 	private Screen screen;
-	private Input input = new Input();
 	private static boolean running = false;
 
+	private static ScalingStrategy scalingStrategy;
 	private float temporalAliasing = 0;
 	private float timeAccumSecs = 0;
 	private float oneOnOneBillion = 0;
@@ -32,7 +32,7 @@ public class URacer implements ApplicationListener {
 	private URacerFinalizer uRacerFinalizer;
 
 	public interface URacerFinalizer {
-		public void dispose();
+		void dispose();
 	}
 
 	public void setFinalizer( URacerFinalizer finalizer ) {
@@ -40,7 +40,7 @@ public class URacer implements ApplicationListener {
 	}
 
 	private static void updateVersionInformation() {
-		// extrapolate version information
+		// extract version information
 		versionInfo = "uRacer";
 		try {
 			Field f = Class.forName( "com.bitfire.uracer.VersionInfo" ).getDeclaredField( "versionName" );
@@ -56,34 +56,48 @@ public class URacer implements ApplicationListener {
 	@Override
 	public void create() {
 		URacer.updateVersionInformation();
+		Gdx.app.log( "URacer", "booting version " + versionInfo );
 
+		// computed for a 256px tile size target (compute needed conversion factors)
+		scalingStrategy = new ScalingStrategy( new Vector2( 1280, 800 ), 70f, 224, 1f );
+
+		// everything has been setup on a 256px tile, scale back if that's the case
 		Config.asDefault();
-		Debug.create();
-		input.releaseAllKeys();
+		Config.Physics.PixelsPerMeter /= (scalingStrategy.targetScreenRatio / scalingStrategy.to256);
 
-		Gdx.input.setInputProcessor( input );
+		Convert.init( scalingStrategy.invTileMapZoomFactor, Config.Physics.PixelsPerMeter );
+		Art.init( scalingStrategy.invTileMapZoomFactor );
+		SpriteBatchUtils.init( Art.base6 );
+		Sounds.init();
+
 		Gdx.graphics.setVSync( true );
 
 		running = true;
 		oneOnOneBillion = 1.0f / 1000000000.0f;
 		temporalAliasing = 0;
-		timeAccumSecs = Config.Physics.PhysicsDt;
 		timeMultiplier = Config.Physics.PhysicsTimeMultiplier;
+
+		// ensures the first iteration ever is going to at least perform one single tick
+		lastDeltaTimeSec = MaxDeltaTime;
+		timeAccumSecs = Config.Physics.PhysicsDt;
 
 		setScreen( new GameScreen() );
 	}
 
 	// private long lastTimeNs = 0;
-	private static float lastDeltaTimeSec = MaxDeltaTime;
+	private static float lastDeltaTimeSec;
 
 	// private WindowedMean mean = new WindowedMean( 120 );
 	// NOTE: this render() method will get called by JoglGraphics when screen.tick will ask to finish!!
 	@Override
 	public void render() {
-		if( screen == null )
+		if( screen == null ) {
 			return;
-		if( screen.quit() )
+		}
+
+		if( screen.quit() ) {
 			return;
+		}
 
 		// this is not good for Android since the value often hop around
 		// long currNanos = System.nanoTime();
@@ -100,12 +114,12 @@ public class URacer implements ApplicationListener {
 			hasStepped = false;
 			timeAccumSecs += lastDeltaTimeSec * timeMultiplier;
 			while( timeAccumSecs > Config.Physics.PhysicsDt ) {
-				input.tick();
 				screen.tick();
 				timeAccumSecs -= Config.Physics.PhysicsDt;
 				hasStepped = true;
-				if( screen.quit() )
+				if( screen.quit() ) {
 					return;
+				}
 			}
 
 			// simulate slowness
@@ -155,9 +169,13 @@ public class URacer implements ApplicationListener {
 	@Override
 	public void dispose() {
 		setScreen( null );
-		Debug.dispose();
-		if( uRacerFinalizer != null )
+
+		Sounds.dispose();
+		Art.dispose();
+
+		if( uRacerFinalizer != null ) {
 			uRacerFinalizer.dispose();
+		}
 
 		// if(!Config.isDesktop || )
 		System.exit( 0 );
@@ -171,7 +189,7 @@ public class URacer implements ApplicationListener {
 		screen = newScreen;
 
 		if( screen != null ) {
-			screen.init( this );
+			screen.init( scalingStrategy );
 		}
 	}
 

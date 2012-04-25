@@ -13,7 +13,7 @@ import com.bitfire.uracer.postprocessing.filters.Combine;
 import com.bitfire.uracer.postprocessing.filters.Combine.Param;
 import com.bitfire.uracer.postprocessing.filters.Threshold;
 
-public class Bloom extends PostProcessorEffect {
+public final class Bloom extends PostProcessorEffect {
 	public static class Settings {
 		public final String name;
 
@@ -64,22 +64,16 @@ public class Bloom extends PostProcessorEffect {
 
 	private PingPongBuffer pingPongBuffer;
 
-	protected int blurPasses;
-	protected float blurAmount;
-	protected float bloomIntensity, bloomSaturation;
-	protected float baseIntensity, baseSaturation;
+	private Blur blur;
+	private Threshold threshold;
+	private Combine combine;
 
-	protected Blur blur;
-	protected Threshold threshold;
-	protected Combine combine;
+	private Settings settings;
 
-	protected Settings settings;
+	private boolean blending = false;
 
-	protected boolean blending = false;
-
-	public Bloom( PostProcessor postProcessor, int fboWidth, int fboHeight ) {
-		super( postProcessor );
-		pingPongBuffer = postProcessor.newPingPongBuffer( fboWidth, fboHeight, postProcessor.getFramebufferFormat(), false );
+	public Bloom( int fboWidth, int fboHeight ) {
+		pingPongBuffer = new PingPongBuffer( fboWidth, fboHeight, PostProcessor.getFramebufferFormat(), false );
 
 		blur = new Blur( fboWidth, fboHeight );
 		threshold = new Threshold();
@@ -93,6 +87,7 @@ public class Bloom extends PostProcessorEffect {
 		combine.dispose();
 		threshold.dispose();
 		blur.dispose();
+		pingPongBuffer.dispose();
 	}
 
 	public void setBaseIntesity( float intensity ) {

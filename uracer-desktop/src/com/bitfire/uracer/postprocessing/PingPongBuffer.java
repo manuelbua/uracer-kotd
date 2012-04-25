@@ -40,13 +40,16 @@ public final class PingPongBuffer {
 	/** Creates a new ping-pong buffer and owns the resources. */
 	public PingPongBuffer( int width, int height, Format frameBufferFormat, boolean hasDepth ) {
 		ownResources = true;
-		set( owned1 = new FrameBuffer( frameBufferFormat, width, height, hasDepth ), owned2 = new FrameBuffer( frameBufferFormat, width, height, hasDepth ) );
+		owned1 = new FrameBuffer( frameBufferFormat, width, height, hasDepth );
+		owned2 = new FrameBuffer( frameBufferFormat, width, height, hasDepth );
+		set( owned1, owned2 );
 	}
 
 	/** Creates a new ping-pong buffer with the given buffers. */
 	public PingPongBuffer( FrameBuffer buffer1, FrameBuffer buffer2 ) {
 		ownResources = false;
-		owned1 = owned2 = null;
+		owned1 = null;
+		owned2 = null;
 		set( buffer1, buffer2 );
 	}
 
@@ -105,7 +108,8 @@ public final class PingPongBuffer {
 	// internal use
 	// set the object to a known initial state
 	private void restore() {
-		pending1 = pending2 = false;
+		pending1 = false;
+		pending2 = false;
 		writeState = true;
 
 		texSrc = texture1;

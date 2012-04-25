@@ -1,10 +1,9 @@
 package com.bitfire.uracer.game.logic;
 
-import com.bitfire.uracer.carsimulation.Replay;
-import com.bitfire.uracer.events.GameLogicEvent;
-import com.bitfire.uracer.game.GameLogic;
+import com.bitfire.uracer.game.Time;
+import com.bitfire.uracer.game.input.Replay;
 
-public class LapState {
+public final class LapState {
 	// replays
 	private Replay[] replays;
 	private Replay best, worst;
@@ -13,19 +12,7 @@ public class LapState {
 	private float lastTrackTimeSecs;
 	private boolean hasLastTrackTimeSecs;
 
-	private final GameLogicEvent.Listener gameLogicEvent = new GameLogicEvent.Listener() {
-		@Override
-		public void gameLogicEvent( com.bitfire.uracer.events.GameLogicEvent.Type type ) {
-			switch( type ) {
-			case onReset:
-				reset();
-				break;
-			}
-		}
-	};
-
 	public LapState() {
-		GameLogic.event.addListener( gameLogicEvent );
 
 		startTimeNs = 0;
 		lastTrackTimeSecs = 0;
@@ -37,7 +24,8 @@ public class LapState {
 		replays[0] = new Replay();
 		replays[1] = new Replay();
 
-		best = worst = null;
+		best = null;
+		worst = null;
 
 		reset();
 		updateReplays();
@@ -45,7 +33,8 @@ public class LapState {
 
 	public void reset() {
 		hasLastTrackTimeSecs = false;
-		best = worst = null;
+		best = null;
+		worst = null;
 		time.start();
 		replays[0].reset();
 		replays[1].reset();
@@ -55,16 +44,20 @@ public class LapState {
 	public long restart() {
 		startTimeNs = System.nanoTime();
 		time.start();
-		if( !replays[0].isValid )
+		if( !replays[0].isValid ) {
 			replays[0].reset();
-		if( !replays[1].isValid )
+		}
+
+		if( !replays[1].isValid ) {
 			replays[1].reset();
+		}
+
 		return startTimeNs;
 	}
 
 	public float getElapsedSeconds() {
 		// return ((float)(System.nanoTime() - startTimeNs) / 1000000000f) * URacer.timeMultiplier;
-		return time.elapsed( Time.Reference.Ticks );
+		return time.elapsed( Time.Reference.TickSeconds );
 	}
 
 	public Replay getReplay( int index ) {
@@ -128,10 +121,14 @@ public class LapState {
 	}
 
 	public Replay getAnyReplay() {
-		if( replays[0].isValid )
+		if( replays[0].isValid ) {
 			return replays[0];
-		if( replays[1].isValid )
+		}
+
+		if( replays[1].isValid ) {
 			return replays[1];
+		}
+
 		return null;
 	}
 }

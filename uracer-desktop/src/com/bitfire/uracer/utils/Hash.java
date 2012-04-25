@@ -15,7 +15,11 @@ package com.bitfire.uracer.utils;
  * *
  * ************************************************************************* */
 
-public class Hash {
+public final class Hash {
+
+	private Hash() {
+	}
+
 	public static long RSHash( String str ) {
 		int b = 378551;
 		int a = 63689;
@@ -54,7 +58,8 @@ public class Hash {
 		for( int i = 0; i < str.length(); i++ ) {
 			hash = (hash << OneEighth) + str.charAt( i );
 
-			if( (test = hash & HighBits) != 0 ) {
+			test = hash & HighBits;
+			if( test != 0 ) {
 				hash = ((hash ^ (test >> ThreeQuarters)) & (~HighBits));
 			}
 		}
@@ -71,7 +76,8 @@ public class Hash {
 		for( int i = 0; i < str.length(); i++ ) {
 			hash = (hash << 4) + str.charAt( i );
 
-			if( (x = hash & 0xF0000000L) != 0 ) {
+			x = hash & 0xF0000000L;
+			if( x != 0 ) {
 				hash ^= (x >> 24);
 			}
 			hash &= ~x;

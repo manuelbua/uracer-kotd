@@ -8,9 +8,8 @@ import com.badlogic.gdx.graphics.Texture.TextureFilter;
 import com.badlogic.gdx.graphics.g2d.BitmapFont;
 import com.badlogic.gdx.graphics.g2d.TextureAtlas;
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
-import com.bitfire.uracer.game.GameData;
 
-public class Art {
+public final class Art {
 	public static TextureRegion[][] base6;
 	public static TextureRegion quad;
 
@@ -38,8 +37,16 @@ public class Art {
 	public static BitmapFont fontCurseYRbig, fontCurseRbig, fontCurseGbig;
 
 	private static boolean mipMap;
+	public static int fontWidth;
+	public static int fontHeight;
 
-	public static void init() {
+	private Art() {
+	}
+
+	public static void init( float invZoomFactor ) {
+		fontWidth = 6;
+		fontHeight = 6;
+
 		mipMap = Config.Graphics.EnableMipMapping;
 
 		base6 = split( "data/base/base6.png", 6, 6, mipMap );
@@ -53,8 +60,9 @@ public class Art {
 		// trees
 		meshTreeTrunk = newTexture( "data/3d/textures/trunk_6_col.png", mipMap );
 		meshTreeLeavesSpring = new Texture[ 7 ];
-		for( int i = 0; i < 7; i++ )
+		for( int i = 0; i < 7; i++ ) {
 			meshTreeLeavesSpring[i] = newTexture( "data/3d/textures/leaves_" + (i + 1) + "_spring_1.png", mipMap );
+		}
 
 		// cars
 		carTextures = new TextureAtlas( "data/cars/pack" );
@@ -80,10 +88,10 @@ public class Art {
 		fontCurseGbig = new BitmapFont( Gdx.files.internal( "data/font/curse-g-big.fnt" ), Art.fonts.findRegion( "curse-g-big" ), true );
 		fontCurseRbig = new BitmapFont( Gdx.files.internal( "data/font/curse-r-big.fnt" ), Art.fonts.findRegion( "curse-r-big" ), true );
 
+		Art.scaleFonts( invZoomFactor );
+
 		// friction maps
 		frictionNature = new Pixmap( Gdx.files.internal( "data/levels/tilesets/nature/224-friction.png" ) );
-
-		Art.scaleFonts( GameData.scalingStrategy.invTileMapZoomFactor );
 	}
 
 	public static void dispose() {
@@ -99,8 +107,10 @@ public class Art {
 		meshTribune.dispose();
 
 		// trees
-		for( int i = 0; i < 7; i++ )
+		for( int i = 0; i < 7; i++ ) {
 			meshTreeLeavesSpring[i].dispose();
+		}
+
 		meshTreeTrunk.dispose();
 
 		fonts.dispose();
@@ -129,20 +139,21 @@ public class Art {
 		return res;
 	}
 
-	private static TextureRegion load( String name, int width, int height, boolean mipMap ) {
-		Texture texture = newTexture( name, mipMap );
-		TextureRegion region = new TextureRegion( texture, 0, 0, width, height );
-		region.flip( false, true );
-		return region;
-	}
+	// private static TextureRegion load( String name, int width, int height, boolean mipMap ) {
+	// Texture texture = newTexture( name, mipMap );
+	// TextureRegion region = new TextureRegion( texture, 0, 0, width, height );
+	// region.flip( false, true );
+	// return region;
+	// }
 
 	private static Texture newTexture( String name, boolean mipMap ) {
 		Texture t = new Texture( Gdx.files.internal( name ), Format.RGBA8888, mipMap );
 
-		if( mipMap )
+		if( mipMap ) {
 			t.setFilter( TextureFilter.MipMapLinearNearest, TextureFilter.Nearest );
-		else
+		} else {
 			t.setFilter( TextureFilter.Nearest, TextureFilter.Nearest );
+		}
 
 		return t;
 	}

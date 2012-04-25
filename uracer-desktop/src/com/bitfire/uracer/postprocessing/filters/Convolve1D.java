@@ -3,7 +3,7 @@ package com.bitfire.uracer.postprocessing.filters;
 import com.bitfire.uracer.postprocessing.IFilter;
 import com.bitfire.uracer.utils.ShaderLoader;
 
-public class Convolve1D extends Filter<Convolve1D> {
+public final class Convolve1D extends Filter<Convolve1D> {
 	public enum Param implements Parameter {
 		// @formatter:off
 		Texture( "u_texture", 0 ),

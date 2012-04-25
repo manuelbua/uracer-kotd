@@ -10,7 +10,7 @@ import com.badlogic.gdx.math.Vector3;
 import com.badlogic.gdx.physics.box2d.Body;
 import com.bitfire.uracer.utils.Convert;
 
-public class Director {
+public final class Director {
 	public static Vector2 halfViewport;
 
 	private static OrthographicCamera camera;
@@ -18,6 +18,9 @@ public class Director {
 	private static Matrix4 mvpMt, mvpPx;
 
 	private static Vector2 tmp;
+
+	private Director() {
+	}
 
 	public static void init() {
 		screenPosFor = new Vector2();

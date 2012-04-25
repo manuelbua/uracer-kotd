@@ -17,12 +17,13 @@ DEST="/home/manuel/dev/uracer-libgdx/uracer-desktop/data"
 echo -n "Cooking levels..."
 rm -rf "${DEST}/levels/"
 mkdir -p ${DEST}
-${TILED_PACKER} levels/ ${DEST}/levels >/dev/null
+${TILED_PACKER} levels/ ${DEST}/levels
 echo "done!"
 
 # tileset friction maps
 echo -n "Cooking friction maps..."
 cp levels/tilesets/nature/224-friction.png ${DEST}/levels/tilesets/nature/
+cp levels/tilesets/test-1/224-friction.png ${DEST}/levels/tilesets/test-1/
 echo "done!"
 
 # fonts

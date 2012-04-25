@@ -6,6 +6,7 @@ import java.io.InputStream;
 import java.util.HashMap;
 import java.util.Map;
 
+import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.files.FileHandle;
 import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.physics.box2d.Body;
@@ -15,9 +16,9 @@ import com.badlogic.gdx.physics.box2d.PolygonShape;
 
 /** Loads shapes (fixture sets) defined with the Box2D Editor and applies them
  * to bodies. Has to be disposed to free some resources.
- * 
+ *
  * @author Aurelien Ribon (aurelien.ribon@gmail.com) */
-public class FixtureAtlas {
+public final class FixtureAtlas {
 	private static final FixtureDef DEFAULT_FIXTURE = new FixtureDef();
 
 	private final Map<String, BodyModel> bodyMap = new HashMap<String, BodyModel>();
@@ -25,11 +26,12 @@ public class FixtureAtlas {
 
 	/** Creates a new fixture atlas from the selected file. This file has to
 	 * exist and to be valid.
-	 * 
+	 *
 	 * @param shapeFile A file created with the editor. */
 	public FixtureAtlas( FileHandle shapeFile ) {
-		if( shapeFile == null )
-			throw new NullPointerException( "shapeFile is null" );
+		if( shapeFile == null ) {
+			Gdx.app.log( "FixtureAtlas", "Serious error, shapeFile is null!" );
+		}
 
 		importFromFile( shapeFile.read() );
 	}
@@ -48,16 +50,16 @@ public class FixtureAtlas {
 	 * Therefore, it _HAS_ to be the exact same name as the one that appeared.
 	 * in the editor. <br/>
 	 * <br/>
-	 * 
+	 *
 	 * WARNING: The body reference point is supposed to be the bottom left
 	 * corner. As a result, calling "getPosition()" on the body will return
 	 * its bottom left corner. This is useful to draw a Sprite directly by
 	 * setting its position to the body position. <br/>
 	 * <br/>
-	 * 
+	 *
 	 * Also, saved shapes are normalized. Thus, you need to provide the desired
 	 * width and height of your body for them to scale according to your needs.
-	 * 
+	 *
 	 * @param body A box2d Body, previously created.
 	 * @param name The name of the shape you want to load.
 	 * @param width The desired width of the body.
@@ -71,20 +73,20 @@ public class FixtureAtlas {
 	 * Therefore, it _HAS_ to be the exact same name as the one that appeared.
 	 * in the editor. <br/>
 	 * <br/>
-	 * 
+	 *
 	 * WARNING: The body reference point is supposed to be the bottom left
 	 * corner. As a result, calling "getPosition()" on the body will return
 	 * its bottom left corner. This is useful to draw a Sprite directly by
 	 * setting its position to the body position. <br/>
 	 * <br/>
-	 * 
+	 *
 	 * Also, saved shapes are normalized. Thus, you need to provide the desired
 	 * width and height of your body for them to scale according to your needs. <br/>
 	 * <br/>
-	 * 
+	 *
 	 * Moreover, you can submit a custom FixtureDef object. Its parameters will
 	 * be applied to every fixture applied to the body by this method.
-	 * 
+	 *
 	 * @param body A box2d Body, previously created.
 	 * @param name The name of the shape you want to load.
 	 * @param width The desired width of the body.
@@ -92,12 +94,14 @@ public class FixtureAtlas {
 	 * @param params Custom fixture parameters to apply. */
 	public void createFixtures( Body body, String name, float width, float height, FixtureDef params, Vector2 offset, Object userData ) {
 		BodyModel bm = bodyMap.get( name );
-		if( bm == null )
-			throw new RuntimeException( name + " does not exist in the fixture list." );
+		if( bm == null ) {
+			Gdx.app.log( "FixtureAtlas", name + " does not exist in the fixture list." );
+		}
 
 		Vector2[][] polygons = bm.getPolygons( width, height, offset );
-		if( polygons == null )
-			throw new RuntimeException( name + " does not declare any polygon. " + "Should not happen. Is your shape file corrupted ?" );
+		if( polygons == null ) {
+			Gdx.app.log( "FixtureAtlas", name + " does not declare any polygon. " + "Should not happen. Is your shape file corrupted ?" );
+		}
 
 		for( Vector2[] polygon : polygons ) {
 			shape.set( polygon );
@@ -119,7 +123,7 @@ public class FixtureAtlas {
 			is = new DataInputStream( stream );
 			while( is.available() > 0 ) {
 				String name = is.readUTF();
-				Vector2[][] points = readVecss( is );
+				/* Vector2[][] points = */readVecss( is );
 				Vector2[][] polygons = readVecss( is );
 
 				BodyModel bm = new BodyModel( polygons );
@@ -127,14 +131,15 @@ public class FixtureAtlas {
 			}
 
 		} catch( IOException ex ) {
-			throw new RuntimeException( ex.getMessage() );
+			Gdx.app.log( "FixtureAtlas", ex.getMessage() );
 
 		} finally {
-			if( is != null )
+			if( is != null ) {
 				try {
 					is.close();
 				} catch( IOException ex ) {
 				}
+			}
 		}
 	}
 
@@ -150,16 +155,18 @@ public class FixtureAtlas {
 	private Vector2[] readVecs( DataInputStream is ) throws IOException {
 		int len = is.readInt();
 		Vector2[] vs = new Vector2[ len ];
-		for( int i = 0; i < len; i++ )
+		for( int i = 0; i < len; i++ ) {
 			vs[i] = readVec( is );
+		}
 		return vs;
 	}
 
 	private Vector2[][] readVecss( DataInputStream is ) throws IOException {
 		int len = is.readInt();
 		Vector2[][] vss = new Vector2[ len ][];
-		for( int i = 0; i < len; i++ )
+		for( int i = 0; i < len; i++ ) {
 			vss[i] = readVecs( is );
+		}
 		return vss;
 	}
 
@@ -177,13 +184,10 @@ public class FixtureAtlas {
 
 			for( int i = 0; i < polygons.length; i++ ) {
 				this.polygons[i] = new Vector2[ polygons[i].length ];
-				for( int ii = 0; ii < polygons[i].length; ii++ )
+				for( int ii = 0; ii < polygons[i].length; ii++ ) {
 					this.polygons[i][ii] = new Vector2( polygons[i][ii] );
+				}
 			}
-		}
-
-		public Vector2[][] getPolygons( float width, float height ) {
-			return getPolygons( width, height, new Vector2( 0, 0 ) );
 		}
 
 		public Vector2[][] getPolygons( float width, float height, Vector2 offset ) {

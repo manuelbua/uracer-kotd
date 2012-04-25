@@ -1,10 +1,10 @@
 package com.bitfire.uracer.utils;
 
 /** Algebra math utils.
- * 
+ *
  * @author manuel */
 
-public class AMath {
+public final class AMath {
 	public static final float TWO_PI = 6.28318530717958647692f;
 	public static final float PI = 3.14159265358979323846f;
 	public static final float PI_2 = 1.57079632679489661923f;
@@ -13,64 +13,71 @@ public class AMath {
 
 	public static final float CMP_EPSILON = 0.001f;
 
-	public static final boolean equals( float a, float b ) {
-		if( a == b )
-			return true;
-		return Math.abs( a - b ) < CMP_EPSILON;
+	private AMath() {
 	}
 
-	public static final boolean isZero( float a ) {
+	public static boolean equals( float a, float b ) {
+
+		return Math.abs( Math.abs( a ) - Math.abs( b ) ) < CMP_EPSILON;
+	}
+
+	public static boolean isZero( float a ) {
 		return Math.abs( a ) < CMP_EPSILON;
 	}
 
-	public static final float lerp( float prev, float curr, float alpha ) {
+	public static float lerp( float prev, float curr, float alpha ) {
 		return curr * alpha + prev * (1f - alpha);
 	}
 
-	public static final float lowpass( float prev, float curr, float alpha ) {
+	public static float lowpass( float prev, float curr, float alpha ) {
 		return lerp( prev, curr, alpha );
 	}
 
-	public static final float hipass( float prev, float curr, float alpha ) {
+	public static float hipass( float prev, float curr, float alpha ) {
 		return curr - lowpass( prev, curr, alpha );
 	}
 
-	public static final float modulo( float value, float div ) {
+	public static float modulo( float value, float div ) {
 		int result = (int)(value / div);
 		return (value - (float)result * div);
 	}
 
-	public static final float wrap( float value, float lower, float upper ) {
+	public static float wrap( float value, float lower, float upper ) {
 		float wrapped = modulo( value, (upper - lower) );
 		return wrapped + lower;
 	}
 
-	public static final float wrap2PI( float value ) {
+	public static float wrap2PI( float value ) {
 		return wrap( value, 0.f, TWO_PI );
 	}
 
-	public static final float clamp( float value, float min, float max ) {
+	public static float clamp( float value, float min, float max ) {
 		return Math.min( max, Math.max( min, value ) );
 	}
 
-	public static final int clamp( int value, int min, int max ) {
+	public static int clamp( int value, int min, int max ) {
 		return Math.min( max, Math.max( min, value ) );
 	}
 
-	public static final float fixup( float v ) {
-		if( Math.abs( v ) < CMP_EPSILON )
+	public static float fixup( float v ) {
+		if( Math.abs( v ) < CMP_EPSILON ) {
 			return 0;
+		}
+
 		return v;
 	}
 
-	public static final float sign( float v ) {
-		if( v < 0 )
+	public static float sign( float v ) {
+		if( v < 0 ) {
 			return -1f;
+		}
+
 		return 1f;
 	}
 
-	public static float normalRelativeAngle( float angle ) {
-		return (angle %= TWO_PI) >= 0 ? (angle < PI) ? angle : angle - TWO_PI : (angle >= -PI) ? angle : angle + TWO_PI;
+	public static float normalRelativeAngle( float angleRad ) {
+		float wrapped = (angleRad % TWO_PI);
+		return wrapped >= 0 ? (wrapped < PI) ? wrapped : wrapped - TWO_PI : (wrapped >= -PI) ? wrapped : wrapped + TWO_PI;
 	}
 
 	public static float sigmoid( float strength ) {

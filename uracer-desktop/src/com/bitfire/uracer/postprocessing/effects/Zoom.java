@@ -2,34 +2,26 @@ package com.bitfire.uracer.postprocessing.effects;
 
 import com.badlogic.gdx.graphics.glutils.FrameBuffer;
 import com.badlogic.gdx.math.Vector2;
-import com.bitfire.uracer.postprocessing.PostProcessor;
 import com.bitfire.uracer.postprocessing.PostProcessorEffect;
 import com.bitfire.uracer.postprocessing.filters.ZoomBlur;
 import com.bitfire.uracer.postprocessing.filters.ZoomBlur.Quality;
 
 public class Zoom extends PostProcessorEffect {
 	private ZoomBlur zoomBlur;
-	private float x, y, strength;
 
-	public Zoom( PostProcessor postProcessor, Quality quality ) {
-		super( postProcessor );
+	public Zoom( Quality quality ) {
 		zoomBlur = new ZoomBlur( quality );
 	}
 
 	public void setOrigin( Vector2 o ) {
-		this.x = o.x;
-		this.y = o.y;
 		zoomBlur.setOrigin( o.x, o.y );
 	}
 
 	public void setOrigin( float x, float y ) {
-		this.x = x;
-		this.y = y;
 		zoomBlur.setOrigin( x, y );
 	}
 
 	public void setStrength( float strength ) {
-		this.strength = strength;
 		zoomBlur.setStrength( strength );
 	}
 
@@ -41,8 +33,6 @@ public class Zoom extends PostProcessorEffect {
 	@Override
 	public void rebind() {
 		zoomBlur.rebind();
-		zoomBlur.setOrigin( x, y );
-		zoomBlur.setStrength( strength );
 	}
 
 	@Override

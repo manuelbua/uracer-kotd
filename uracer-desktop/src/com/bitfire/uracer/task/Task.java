@@ -1,14 +1,14 @@
 package com.bitfire.uracer.task;
 
-import com.bitfire.uracer.events.TaskManagerEvent;
-import com.bitfire.uracer.events.TaskManagerEvent.Order;
-import com.bitfire.uracer.events.TaskManagerEvent.Type;
+import com.bitfire.uracer.task.TaskManagerEvent.Order;
+import com.bitfire.uracer.task.TaskManagerEvent.Type;
 
 public abstract class Task implements TaskManagerEvent.Listener {
 
 	private Order order;
+
 	public Task() {
-		this( Order.Order_0 );
+		this( Order.DEFAULT );
 	}
 
 	public Task( Order order ) {
@@ -24,7 +24,7 @@ public abstract class Task implements TaskManagerEvent.Listener {
 
 	@Override
 	public void taskManagerEvent( Type type ) {
-		switch(type) {
+		switch( type ) {
 		case onTick:
 			onTick();
 			break;

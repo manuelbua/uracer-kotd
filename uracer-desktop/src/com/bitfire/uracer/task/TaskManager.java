@@ -1,9 +1,10 @@
 package com.bitfire.uracer.task;
 
-import com.bitfire.uracer.events.TaskManagerEvent;
+public final class TaskManager {
+	protected static final TaskManagerEvent event = new TaskManagerEvent();
 
-public class TaskManager {
-	public static final TaskManagerEvent event = new TaskManagerEvent();
+	private TaskManager() {
+	}
 
 	public static void dispatchTick() {
 		event.trigger( TaskManagerEvent.Type.onTick );

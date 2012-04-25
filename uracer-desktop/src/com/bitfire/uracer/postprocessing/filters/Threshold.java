@@ -3,7 +3,7 @@ package com.bitfire.uracer.postprocessing.filters;
 import com.bitfire.uracer.postprocessing.IFilter;
 import com.bitfire.uracer.utils.ShaderLoader;
 
-public class Threshold extends Filter<Threshold> {
+public final class Threshold extends Filter<Threshold> {
 
 	public enum Param implements Parameter {
 		// @formatter:off
@@ -45,7 +45,7 @@ public class Threshold extends Filter<Threshold> {
 	}
 
 	@Override
-	public final void rebind() {
+	public void rebind() {
 		setParams( Param.Texture, u_texture_1 );
 		setTreshold( this.gamma );
 	}

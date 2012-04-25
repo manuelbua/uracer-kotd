@@ -1,6 +1,6 @@
 package com.bitfire.uracer.game.rendering;
 
-import java.util.ArrayList;
+import java.util.List;
 
 import box2dLight.ConeLight;
 import box2dLight.RayHandler;
@@ -18,20 +18,19 @@ import com.badlogic.gdx.graphics.glutils.ImmediateModeRenderer20;
 import com.badlogic.gdx.graphics.glutils.ShaderProgram;
 import com.badlogic.gdx.math.MathUtils;
 import com.badlogic.gdx.math.Matrix4;
+import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.math.Vector3;
 import com.badlogic.gdx.math.collision.BoundingBox;
 import com.bitfire.uracer.Art;
 import com.bitfire.uracer.Config;
 import com.bitfire.uracer.Director;
-import com.bitfire.uracer.entities.vehicles.Car;
-import com.bitfire.uracer.game.GameData;
-import com.bitfire.uracer.game.GameData.State;
-import com.bitfire.uracer.game.GameWorld;
-import com.bitfire.uracer.tiled.OrthographicAlignedStillModel;
-import com.bitfire.uracer.tiled.TrackTrees;
-import com.bitfire.uracer.tiled.TrackWalls;
-import com.bitfire.uracer.tiled.TreeStillModel;
-import com.bitfire.uracer.tiled.UTileMapRenderer;
+import com.bitfire.uracer.ScalingStrategy;
+import com.bitfire.uracer.game.player.PlayerCar;
+import com.bitfire.uracer.game.world.GameWorld;
+import com.bitfire.uracer.game.world.models.OrthographicAlignedStillModel;
+import com.bitfire.uracer.game.world.models.TrackTrees;
+import com.bitfire.uracer.game.world.models.TrackWalls;
+import com.bitfire.uracer.game.world.models.TreeStillModel;
 import com.bitfire.uracer.utils.Convert;
 
 public class GameWorldRenderer {
@@ -61,6 +60,7 @@ public class GameWorldRenderer {
 		"}														\n";
 	// @formatter:on
 
+	private GameWorld world = null;
 	private PerspectiveCamera camPersp = null;
 	private OrthographicCamera camOrtho = null;
 	private ShaderProgram treeShader = null;
@@ -68,6 +68,7 @@ public class GameWorldRenderer {
 	private TileAtlas tileAtlas = null;
 
 	public UTileMapRenderer tileMapRenderer = null;
+	private ScalingStrategy scalingStrategy = null;
 
 	// render stats
 	private ImmediateModeRenderer20 dbg = new ImmediateModeRenderer20( false, true, 0 );
@@ -77,12 +78,14 @@ public class GameWorldRenderer {
 
 	// world refs
 	private RayHandler rayHandler = null;
-	private ArrayList<OrthographicAlignedStillModel> staticMeshes = null;
+	private List<OrthographicAlignedStillModel> staticMeshes = null;
 	private TrackTrees trackTrees = null;
 	private TrackWalls trackWalls = null;
 	private ConeLight playerLights = null;
 
-	public GameWorldRenderer( GameWorld world, int width, int height ) {
+	public GameWorldRenderer( ScalingStrategy strategy, GameWorld world, int width, int height ) {
+		scalingStrategy = strategy;
+		this.world = world;
 		rayHandler = world.getRayHandler();
 		trackTrees = world.getTrackTrees();
 		trackWalls = world.getTrackWalls();
@@ -98,8 +101,9 @@ public class GameWorldRenderer {
 		ShaderProgram.pedantic = false;
 		treeShader = new ShaderProgram( vertexShader, fragmentShader );
 
-		if( treeShader.isCompiled() == false )
+		if( !treeShader.isCompiled() ) {
 			throw new IllegalStateException( treeShader.getLog() );
+		}
 	}
 
 	public void dispose() {
@@ -107,42 +111,61 @@ public class GameWorldRenderer {
 		tileAtlas.dispose();
 	}
 
+	// public void setPlayerCar( PlayerCar player ) {
+	// carPlayer = player;
+	// }
+
 	public void resetCounters() {
-		culledMeshes = renderedTrees = renderedWalls = 0;
+		culledMeshes = 0;
+		renderedTrees = 0;
+		renderedWalls = 0;
 	}
 
-	public void generateLightMap() {
-		Car car = State.playerState.car;
+	public void generatePlayerHeadlightsLightMap( PlayerCar player ) {
+		if( player != null ) {
+			Vector2 carPosition = player.state().position;
+			float carOrientation = player.state().orientation;
+			float carLength = player.getCarModel().length;
 
-		// update player light (subframe interpolation ready)
-		float ang = 90 + car.state().orientation;
+			// update player light (subframe interpolation ready)
+			float ang = 90 + carOrientation;
 
-		// the body's compound shape should be created with some clever thinking in it :)
-		float offx = (car.getCarModel().length / 2f) + .25f;
-		float offy = 0f;
+			// the body's compound shape should be created with some clever thinking in it :)
+			float offx = (carLength / 2f) + .25f;
+			float offy = 0f;
 
-		float cos = MathUtils.cosDeg( ang );
-		float sin = MathUtils.sinDeg( ang );
-		float dX = offx * cos - offy * sin;
-		float dY = offx * sin + offy * cos;
+			float cos = MathUtils.cosDeg( ang );
+			float sin = MathUtils.sinDeg( ang );
+			float dX = offx * cos - offy * sin;
+			float dY = offx * sin + offy * cos;
 
-		float px = Convert.px2mt( car.state().position.x ) + dX;
-		float py = Convert.px2mt( car.state().position.y ) + dY;
+			float px = Convert.px2mt( carPosition.x ) + dX;
+			float py = Convert.px2mt( carPosition.y ) + dY;
 
-		playerLights.setDirection( ang );
-		playerLights.setPosition( px, py );
+			playerLights.setDirection( ang );
+			playerLights.setPosition( px, py );
+			playerLights.setActive( true );
+		} else {
+			playerLights.setActive( false );
+		}
 
-		rayHandler.setCombinedMatrix( Director.getMatViewProjMt(), Convert.px2mt( camOrtho.position.x * GameData.scalingStrategy.invTileMapZoomFactor ),
-				Convert.px2mt( camOrtho.position.y * GameData.scalingStrategy.invTileMapZoomFactor ), Convert.px2mt( camOrtho.viewportWidth ),
-				Convert.px2mt( camOrtho.viewportHeight ) );
-
-		rayHandler.update();
+		// updateRayHandler();
 		rayHandler.generateLightMap();
 
 		// if( Config.isDesktop && (URacer.getFrameCount()&0x1f)==0x1f)
 		// {
 		// System.out.println("lights rendered="+rayHandler.lightRenderedLastFrame);
 		// }
+	}
+
+	public void updateRayHandler() {
+		if( rayHandler != null ) {
+			rayHandler.setCombinedMatrix( Director.getMatViewProjMt(), Convert.px2mt( camOrtho.position.x * scalingStrategy.invTileMapZoomFactor ),
+					Convert.px2mt( camOrtho.position.y * scalingStrategy.invTileMapZoomFactor ), Convert.px2mt( camOrtho.viewportWidth ),
+					Convert.px2mt( camOrtho.viewportHeight ) );
+
+			rayHandler.update();
+		}
 	}
 
 	public void renderLigthMap( FrameBuffer dest ) {
@@ -152,17 +175,17 @@ public class GameWorldRenderer {
 	public void syncWithCam( OrthographicCamera orthoCam ) {
 		// scale position
 		camOrtho.position.set( orthoCam.position );
-		camOrtho.position.mul( GameData.scalingStrategy.tileMapZoomFactor );
+		camOrtho.position.mul( scalingStrategy.tileMapZoomFactor );
 
 		camOrtho.viewportWidth = Gdx.graphics.getWidth();
 		camOrtho.viewportHeight = Gdx.graphics.getHeight();
-		camOrtho.zoom = GameData.scalingStrategy.tileMapZoomFactor;
+		camOrtho.zoom = scalingStrategy.tileMapZoomFactor;
 		camOrtho.update();
 
 		camPersp.viewportWidth = camOrtho.viewportWidth;
 		camPersp.viewportHeight = camOrtho.viewportHeight;
 		camPersp.position.set( camOrtho.position.x, camOrtho.position.y, camPerspElevation );
-		camPersp.fieldOfView = GameData.scalingStrategy.verticalFov;
+		camPersp.fieldOfView = scalingStrategy.verticalFov;
 		camPersp.update();
 	}
 
@@ -181,7 +204,7 @@ public class GameWorldRenderer {
 		float perspPlaneFar = 240;
 		camPerspElevation = 100;
 
-		camPersp = new PerspectiveCamera( GameData.scalingStrategy.verticalFov, width, height );
+		camPersp = new PerspectiveCamera( scalingStrategy.verticalFov, width, height );
 		camPersp.near = perspPlaneNear;
 		camPersp.far = perspPlaneFar;
 		camPersp.lookAt( 0, 0, -1 );
@@ -189,67 +212,63 @@ public class GameWorldRenderer {
 	}
 
 	private void renderWalls( GL20 gl, TrackWalls walls ) {
-		if( walls.walls.size() > 0 ) {
-			gl.glDisable( GL20.GL_CULL_FACE );
-			gl.glEnable( GL20.GL_BLEND );
-			gl.glBlendFunc( GL20.GL_SRC_ALPHA, GL20.GL_ONE_MINUS_SRC_ALPHA );
-			renderedWalls = renderOrthographicAlignedModels( gl, walls.walls );
-		}
+		gl.glDisable( GL20.GL_CULL_FACE );
+		gl.glEnable( GL20.GL_BLEND );
+		gl.glBlendFunc( GL20.GL_SRC_ALPHA, GL20.GL_ONE_MINUS_SRC_ALPHA );
+		renderedWalls = renderOrthographicAlignedModels( walls.models );
 	}
 
 	private void renderTrees( GL20 gl, TrackTrees trees ) {
-		if( trees.trees.size() > 0 ) {
-			trees.transform( camPersp, camOrtho );
+		trees.transform( camPersp, camOrtho );
 
-			gl.glDisable( GL20.GL_BLEND );
-			gl.glEnable( GL20.GL_CULL_FACE );
+		gl.glDisable( GL20.GL_BLEND );
+		gl.glEnable( GL20.GL_CULL_FACE );
 
-			Art.meshTreeTrunk.bind();
+		Art.meshTreeTrunk.bind();
 
-			treeShader.begin();
+		treeShader.begin();
 
-			// trunk
-			for( int i = 0; i < trees.trees.size(); i++ ) {
-				TreeStillModel m = trees.trees.get( i );
-				treeShader.setUniformMatrix( "u_mvpMatrix", m.transformed );
-				m.trunk.render( treeShader, m.smTrunk.primitiveType );
+		// all trunks
+		for( int i = 0; i < trees.models.size(); i++ ) {
+			TreeStillModel m = trees.models.get( i );
+			treeShader.setUniformMatrix( "u_mvpMatrix", m.transformed );
+			m.trunk.render( treeShader, m.smTrunk.primitiveType );
+		}
+
+		// all transparent foliage
+		gl.glDisable( GL20.GL_CULL_FACE );
+		gl.glEnable( GL20.GL_BLEND );
+		gl.glBlendFunc( GL20.GL_SRC_ALPHA, GL20.GL_ONE_MINUS_SRC_ALPHA );
+
+		boolean needRebind = false;
+		for( int i = 0; i < trees.models.size(); i++ ) {
+			TreeStillModel m = trees.models.get( i );
+
+			if( Config.Debug.FrustumCulling && !camPersp.frustum.boundsInFrustum( m.boundingBox ) ) {
+				needRebind = true;
+				culledMeshes++;
+				continue;
 			}
 
-			// transparent foliage
-			gl.glDisable( GL20.GL_CULL_FACE );
-			gl.glEnable( GL20.GL_BLEND );
-			gl.glBlendFunc( GL20.GL_SRC_ALPHA, GL20.GL_ONE_MINUS_SRC_ALPHA );
-
-			boolean needRebind = false;
-			for( int i = 0; i < trees.trees.size(); i++ ) {
-				TreeStillModel m = trees.trees.get( i );
-
-				if( Config.Debug.FrustumCulling && !camPersp.frustum.boundsInFrustum( m.boundingBox ) ) {
-					needRebind = true;
-					culledMeshes++;
-					continue;
-				}
-
-				if( i == 0 || needRebind ) {
-					m.material.bind( treeShader );
-				} else if( !trees.trees.get( i - 1 ).material.equals( m.material ) ) {
-					m.material.bind( treeShader );
-				}
-
-				treeShader.setUniformMatrix( "u_mvpMatrix", m.transformed );
-				m.leaves.render( treeShader, m.smLeaves.primitiveType );
-
-				renderedTrees++;
+			if( i == 0 || needRebind ) {
+				m.material.bind( treeShader );
+			} else if( !trees.models.get( i - 1 ).material.equals( m.material ) ) {
+				m.material.bind( treeShader );
 			}
 
-			treeShader.end();
+			treeShader.setUniformMatrix( "u_mvpMatrix", m.transformed );
+			m.leaves.render( treeShader, m.smLeaves.primitiveType );
 
-			if( Config.Graphics.Render3DBoundingBoxes ) {
-				// debug
-				for( int i = 0; i < trees.trees.size(); i++ ) {
-					TreeStillModel m = trees.trees.get( i );
-					renderBoundingBox( m.boundingBox );
-				}
+			renderedTrees++;
+		}
+
+		treeShader.end();
+
+		if( Config.Graphics.Render3DBoundingBoxes ) {
+			// debug
+			for( int i = 0; i < trees.models.size(); i++ ) {
+				TreeStillModel m = trees.models.get( i );
+				renderBoundingBox( m.boundingBox );
 			}
 		}
 	}
@@ -257,8 +276,9 @@ public class GameWorldRenderer {
 	private Vector3 tmpvec = new Vector3();
 	private Matrix4 mtx = new Matrix4();
 	private Matrix4 mtx2 = new Matrix4();
+	private Vector2 pospx = new Vector2();
 
-	private int renderOrthographicAlignedModels( GL20 gl, ArrayList<OrthographicAlignedStillModel> models ) {
+	private int renderOrthographicAlignedModels( List<OrthographicAlignedStillModel> models ) {
 		int renderedCount = 0;
 		OrthographicAlignedStillModel m;
 		StillSubMesh submesh;
@@ -274,8 +294,10 @@ public class GameWorldRenderer {
 			submesh = m.model.subMeshes[0];
 
 			// compute position
-			tmpvec.x = Convert.scaledPixels( m.positionOffsetPx.x - camOrtho.position.x ) + Director.halfViewport.x + m.positionPx.x;
-			tmpvec.y = Convert.scaledPixels( m.positionOffsetPx.y + camOrtho.position.y ) + Director.halfViewport.y - m.positionPx.y;
+			pospx.set( m.positionPx );
+			pospx.set( world.positionFor( pospx ) );
+			tmpvec.x = Convert.scaledPixels( m.positionOffsetPx.x - camOrtho.position.x ) + Director.halfViewport.x + pospx.x;
+			tmpvec.y = Convert.scaledPixels( m.positionOffsetPx.y + camOrtho.position.y ) + Director.halfViewport.y - pospx.y;
 			tmpvec.z = 1;
 
 			// transform to world space
@@ -342,11 +364,14 @@ public class GameWorldRenderer {
 		gl.glBlendEquation( GL20.GL_FUNC_ADD );
 
 		renderWalls( gl, trackWalls );
-		renderTrees( gl, trackTrees );
+
+		if( trackTrees.count() > 0 ) {
+			renderTrees( gl, trackTrees );
+		}
 
 		// render "static-meshes" layer
 		gl.glEnable( GL20.GL_CULL_FACE );
-		renderOrthographicAlignedModels( gl, staticMeshes );
+		renderOrthographicAlignedModels( staticMeshes );
 
 		gl.glDisable( GL20.GL_DEPTH_TEST );
 		gl.glDisable( GL20.GL_CULL_FACE );
