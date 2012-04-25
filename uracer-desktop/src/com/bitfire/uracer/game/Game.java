@@ -91,13 +91,13 @@ public class Game implements Disposable {
 
 		if( Config.PostProcessing.Enabled && zoom != null && playerCar != null ) {
 			zoom.setOrigin( Director.screenPosFor( playerCar.getBody() ) );
-			zoom.setStrength( -0.08f * factor );
+			zoom.setStrength( -0.1f * factor );
 		}
 
 		if( Config.PostProcessing.Enabled && bloom != null && zoom != null ) {
-			bloom.setBaseSaturation( 0.5f - 0.5f * factor );
-			bloom.setBloomSaturation( 1.5f - factor * 1.2f );
-			bloom.setBloomIntesity( 1f + factor * 1.75f );
+			bloom.setBaseSaturation( 0.5f - 0f * factor );
+			bloom.setBloomSaturation( 1.5f - factor * 0f );
+			bloom.setBloomIntesity( 1f + factor * 0f );
 
 			// vignette.setY( (1 - factor) * 0.74f + factor * 0.4f );
 			// vignette.setIntensity( 1f );

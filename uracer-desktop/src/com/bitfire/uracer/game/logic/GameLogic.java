@@ -283,17 +283,17 @@ public class GameLogic implements CarEvent.Listener, PlayerCarStateEvent.Listene
 		} else if( input.isOn( Keys.SPACE ) && !timeModulationBusy ) {
 
 			TweenEquation eqIn = Quad.OUT;
-			TweenEquation eqOut = Quad.IN;
+			TweenEquation eqOut = Quad.INOUT;
 
 			timeModulation = !timeModulation;
 			if( timeModulation ) {
 				timeModulationBusy = true;
-				WcTweener.start( Timeline.createSequence().push( Tween.to( timeMultiplier, BoxedFloatAccessor.VALUE, 750 ).target( TimeMultiplierMin ).ease( eqIn ) )
+				WcTweener.start( Timeline.createSequence().push( Tween.to( timeMultiplier, BoxedFloatAccessor.VALUE, 1000 ).target( TimeMultiplierMin ).ease( eqIn ) )
 						.setCallback( timeModulationFinished ) );
 			} else {
 				timeModulationBusy = true;
 				WcTweener.start( Timeline.createSequence()
-						.push( Tween.to( timeMultiplier, BoxedFloatAccessor.VALUE, 1250 ).target( Config.Physics.PhysicsTimeMultiplier ).ease( eqOut ) )
+						.push( Tween.to( timeMultiplier, BoxedFloatAccessor.VALUE, 1000 ).target( Config.Physics.PhysicsTimeMultiplier ).ease( eqOut ) )
 						.setCallback( timeModulationFinished ) );
 			}
 		}

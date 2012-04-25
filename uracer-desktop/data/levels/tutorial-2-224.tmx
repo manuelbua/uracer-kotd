@@ -1,0 +1,178 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?><map height="6" orientation="orthogonal" tileheight="224" tilewidth="224" version="1.0" width="8"><properties><property name="blended tiles" value=""/></properties>
+ <tileset firstgid="1" name="tileset" tileheight="224" tilewidth="224">
+  <image height="3360" source="tilesets/nature/224.png" width="896"/>
+  <tile id="0">
+   <properties>
+    <property name="orient" value="v"/>
+   </properties>
+  </tile>
+  <tile id="1">
+   <properties>
+    <property name="orient" value="h"/>
+   </properties>
+  </tile>
+  <tile id="2">
+   <properties>
+    <property name="orient" value="v"/>
+   </properties>
+  </tile>
+  <tile id="3">
+   <properties>
+    <property name="orient" value="h"/>
+   </properties>
+  </tile>
+  <tile id="4">
+   <properties>
+    <property name="orient" value="tl"/>
+   </properties>
+  </tile>
+  <tile id="5">
+   <properties>
+    <property name="orient" value="tr"/>
+   </properties>
+  </tile>
+  <tile id="6">
+   <properties>
+    <property name="orient" value="v"/>
+   </properties>
+  </tile>
+  <tile id="7">
+   <properties>
+    <property name="orient" value="h"/>
+    <property name="type" value="start"/>
+   </properties>
+  </tile>
+  <tile id="8">
+   <properties>
+    <property name="orient" value="bl"/>
+   </properties>
+  </tile>
+  <tile id="9">
+   <properties>
+    <property name="orient" value="br"/>
+   </properties>
+  </tile>
+  <tile id="10">
+   <properties>
+    <property name="orient" value="h"/>
+   </properties>
+  </tile>
+  <tile id="11">
+   <properties>
+    <property name="orient" value="v"/>
+    <property name="type" value="start"/>
+   </properties>
+  </tile>
+  <tile id="12">
+   <properties>
+    <property name="orient" value="v"/>
+   </properties>
+  </tile>
+  <tile id="13">
+   <properties>
+    <property name="orient" value="h"/>
+   </properties>
+  </tile>
+  <tile id="14">
+   <properties>
+    <property name="orient" value="v"/>
+   </properties>
+  </tile>
+  <tile id="15">
+   <properties>
+    <property name="orient" value="h"/>
+   </properties>
+  </tile>
+  <tile id="16">
+   <properties>
+    <property name="orient" value="tl"/>
+   </properties>
+  </tile>
+  <tile id="17">
+   <properties>
+    <property name="orient" value="tr"/>
+   </properties>
+  </tile>
+  <tile id="18">
+   <properties>
+    <property name="orient" value="v"/>
+   </properties>
+  </tile>
+  <tile id="20">
+   <properties>
+    <property name="orient" value="bl"/>
+   </properties>
+  </tile>
+  <tile id="21">
+   <properties>
+    <property name="orient" value="br"/>
+   </properties>
+  </tile>
+  <tile id="22">
+   <properties>
+    <property name="orient" value="h"/>
+   </properties>
+  </tile>
+  <tile id="27">
+   <properties>
+    <property name="orient" value="x"/>
+   </properties>
+  </tile>
+  <tile id="52">
+   <properties>
+    <property name="orient" value="h"/>
+   </properties>
+  </tile>
+  <tile id="53">
+   <properties>
+    <property name="orient" value="v"/>
+   </properties>
+  </tile>
+ </tileset>
+ <layer height="6" name="track" width="8">
+  <properties>
+   <property name="start" value="left"/>
+  </properties>
+  <data compression="gzip" encoding="base64">
+   H4sIAAAAAAAAA7NiYGCQRMPWUNoSiCWAWBCImYCYD0qDMBtUDUieEUmvCZRmRDKDEc1cZHmQflEkczmgtBiSPMhMKygb3a0Abjk8DcAAAAA=
+  </data>
+ </layer>
+ <objectgroup color="#00ff00" height="6" name="static-meshes" width="8">
+  <object height="60" name="palm" type="palm" width="52" x="540" y="519">
+   <properties>
+    <property name="scale" value="0.4"/>
+   </properties>
+  </object>
+  <object height="68" name="palm" type="palm" width="80" x="703" y="488">
+   <properties>
+    <property name="scale" value="0.5"/>
+   </properties>
+  </object>
+  <object height="49" name="palm" type="palm" width="43" x="799" y="576"/>
+  <object height="53" name="palm" type="palm" width="60" x="1155" y="636"/>
+  <object height="39" name="palm" type="palm" width="27" x="1243" y="476">
+   <properties>
+    <property name="scale" value="0.6"/>
+   </properties>
+  </object>
+  <object height="44" name="palm" type="palm" width="37" x="1329" y="861">
+   <properties>
+    <property name="scale" value="0.65"/>
+   </properties>
+  </object>
+  <object height="40" name="palm" type="palm" width="49" x="1071" y="793"/>
+  <object height="36" name="palm" type="palm" width="48" x="608" y="857">
+   <properties>
+    <property name="scale" value="0.8"/>
+   </properties>
+  </object>
+  <object height="37" name="palm" type="palm" width="43" x="609" y="747"/>
+  <object height="43" name="palm" type="palm" width="41" x="436" y="843">
+   <properties>
+    <property name="scale" value="0.5"/>
+   </properties>
+  </object>
+  <object height="44" name="palm" type="palm" width="47" x="1039" y="516"/>
+  <object height="39" name="palm" type="palm" width="33" x="895" y="784"/>
+ </objectgroup>
+</map>

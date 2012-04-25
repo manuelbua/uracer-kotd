@@ -1,0 +1,166 @@
+
+cars1.png
+format: RGBA8888
+filter: Nearest,Nearest
+repeat: none
+skid-smoke
+  rotate: false
+  xy: 2, 2
+  size: 256, 256
+  orig: 256, 256
+  offset: 0, 0
+  index: -1
+car-ao
+  rotate: false
+  xy: 260, 2
+  size: 34, 62
+  orig: 34, 62
+  offset: 0, 0
+  index: -1
+skid-marks-front
+  rotate: false
+  xy: 260, 66
+  size: 34, 62
+  orig: 34, 62
+  offset: 0, 0
+  index: -1
+skid-marks-rear
+  rotate: false
+  xy: 260, 130
+  size: 34, 62
+  orig: 34, 62
+  offset: 0, 0
+  index: -1
+skid-smoke-small
+  rotate: false
+  xy: 260, 194
+  size: 32, 32
+  orig: 32, 32
+  offset: 0, 0
+  index: -1
+thebeast
+  rotate: false
+  xy: 296, 2
+  size: 17, 31
+  orig: 17, 31
+  offset: 0, 0
+  index: -1
+spider
+  rotate: false
+  xy: 315, 2
+  size: 17, 31
+  orig: 17, 31
+  offset: 0, 0
+  index: -1
+redB
+  rotate: false
+  xy: 334, 2
+  size: 17, 31
+  orig: 17, 31
+  offset: 0, 0
+  index: -1
+electron
+  rotate: false
+  xy: 353, 2
+  size: 17, 31
+  orig: 17, 31
+  offset: 0, 0
+  index: -1
+pinkflash
+  rotate: false
+  xy: 372, 2
+  size: 17, 31
+  orig: 17, 31
+  offset: 0, 0
+  index: -1
+tornado
+  rotate: false
+  xy: 260, 228
+  size: 17, 30
+  orig: 17, 30
+  offset: 0, 0
+  index: -1
+snake
+  rotate: false
+  xy: 391, 2
+  size: 17, 30
+  orig: 17, 30
+  offset: 0, 0
+  index: -1
+joka
+  rotate: false
+  xy: 410, 2
+  size: 17, 30
+  orig: 17, 30
+  offset: 0, 0
+  index: -1
+Theghost
+  rotate: false
+  xy: 429, 2
+  size: 17, 30
+  orig: 17, 30
+  offset: 0, 0
+  index: -1
+goblin
+  rotate: false
+  xy: 448, 2
+  size: 17, 30
+  orig: 17, 30
+  offset: 0, 0
+  index: -1
+acid
+  rotate: false
+  xy: 467, 2
+  size: 17, 30
+  orig: 17, 30
+  offset: 0, 0
+  index: -1
+firedwarf
+  rotate: false
+  xy: 486, 2
+  size: 17, 29
+  orig: 17, 29
+  offset: 0, 0
+  index: -1
+loki
+  rotate: false
+  xy: 296, 35
+  size: 17, 29
+  orig: 17, 29
+  offset: 0, 0
+  index: -1
+inferno
+  rotate: false
+  xy: 296, 66
+  size: 17, 29
+  orig: 17, 29
+  offset: 0, 0
+  index: -1
+striker
+  rotate: false
+  xy: 296, 97
+  size: 17, 29
+  orig: 17, 29
+  offset: 0, 0
+  index: -1
+debuggee
+  rotate: false
+  xy: 296, 128
+  size: 17, 28
+  orig: 17, 28
+  offset: 0, 0
+  index: -1
+invisible
+  rotate: false
+  xy: 279, 228
+  size: 15, 28
+  orig: 15, 28
+  offset: 0, 0
+  index: -1
+Bugzta
+  rotate: false
+  xy: 296, 158
+  size: 17, 26
+  orig: 17, 26
+  offset: 0, 0
+  index: -1

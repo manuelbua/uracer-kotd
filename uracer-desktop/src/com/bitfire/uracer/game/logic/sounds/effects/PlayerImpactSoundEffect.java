@@ -1,6 +1,5 @@
 package com.bitfire.uracer.game.logic.sounds.effects;
 
-import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.audio.Sound;
 import com.badlogic.gdx.math.MathUtils;
 import com.bitfire.uracer.Sounds;
@@ -71,6 +70,8 @@ public final class PlayerImpactSoundEffect extends SoundEffect {
 			// avoid volumes==0, min-clamp at 20
 			float clampedImpactForce = AMath.clamp( impactForce, MinImpactForce, MaxImpactForce );
 
+//			Gdx.app.log( this.getClass().getSimpleName(), impactForce + " (" + clampedImpactForce + ")" );
+
 			float impactFactor = clampedImpactForce * OneOnMaxImpactForce;
 			float volumeFactor = 1f;
 
@@ -92,7 +93,8 @@ public final class PlayerImpactSoundEffect extends SoundEffect {
 				volumeFactor = 0.75f + (impactFactor - 0.75f);
 			}
 
-			Gdx.app.log( "CarImpactSoundEffect", "" + volumeFactor );
+//			Gdx.app.log( this.getClass().getSimpleName(), volumeFactor+"" );
+
 			long id = s.play( MaxVolume * volumeFactor );
 			float pitch = speedFactor * pitchFactor + pitchMin;
 			pitch = AMath.clamp( pitch, pitchMin, pitchMax );
