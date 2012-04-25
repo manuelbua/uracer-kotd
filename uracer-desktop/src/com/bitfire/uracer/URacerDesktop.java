@@ -44,6 +44,7 @@ public final class URacerDesktop {
 		config.useCPUSynch = false;
 		config.useGL20 = true;
 		config.fullscreen = false;
+		config.resizable = false;
 
 		URacer uracer = new URacer();
 		LwjglApplication app = new LwjglApplication( uracer, config );
