@@ -7,7 +7,7 @@ import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.math.WindowedMean;
 import com.badlogic.gdx.physics.box2d.World;
 import com.bitfire.uracer.Config;
-import com.bitfire.uracer.Director;
+import com.bitfire.uracer.game.Director;
 import com.bitfire.uracer.game.actors.Car;
 import com.bitfire.uracer.game.actors.CarDescriptor;
 import com.bitfire.uracer.game.actors.CarForces;

@@ -5,7 +5,7 @@ import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.utils.Array;
 import com.bitfire.uracer.Art;
 import com.bitfire.uracer.Config;
-import com.bitfire.uracer.Director;
+import com.bitfire.uracer.game.Director;
 import com.bitfire.uracer.game.events.GameEvents;
 import com.bitfire.uracer.game.logic.hud.HudElement;
 import com.bitfire.uracer.game.logic.trackeffects.effects.PlayerSkidMarks;

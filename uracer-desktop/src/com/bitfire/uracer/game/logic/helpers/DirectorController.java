@@ -2,7 +2,7 @@ package com.bitfire.uracer.game.logic.helpers;
 
 import com.badlogic.gdx.math.Rectangle;
 import com.badlogic.gdx.math.Vector2;
-import com.bitfire.uracer.Director;
+import com.bitfire.uracer.game.Director;
 import com.bitfire.uracer.utils.AMath;
 
 public class DirectorController {
