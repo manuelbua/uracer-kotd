@@ -20,5 +20,5 @@ void main() {
 	vec3 rgb = texture2D(u_texture0, v_texCoords).xyz;
 	float d = distance(v_texCoords, Mid);
 	float factor = smoothstep(VignetteX, VignetteY, d);
-	gl_FragColor = vec4( rgb*factor + rgb*(1-factor) * (1-VignetteIntensity),1);
+	gl_FragColor = vec4( rgb*factor + rgb*(1.0-factor) * (1.0-VignetteIntensity),1.0);
 }

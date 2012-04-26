@@ -29,6 +29,7 @@ public class Game implements Disposable {
 
 	// rendering
 	private GameRenderer gameRenderer = null;
+	private boolean canPostProcess = false;
 
 	// post processing
 	private Bloom bloom = null;
@@ -44,8 +45,11 @@ public class Game implements Disposable {
 		World box2dWorld = gameLogic.getBox2dWorld();
 
 		// handles rendering
-		gameRenderer = new GameRenderer( scalingStrategy, world, box2dWorld, true );
-		if( gameRenderer.hasPostProcessor() ) {
+		gameRenderer = new GameRenderer( scalingStrategy, world, box2dWorld, Config.PostProcessing.Enabled );
+		canPostProcess = gameRenderer.hasPostProcessor();
+
+		// post-processing
+		if( canPostProcess ) {
 			configurePostProcessing( gameRenderer.getPostProcessor(), world );
 		}
 	}
@@ -58,7 +62,7 @@ public class Game implements Disposable {
 
 	private void configurePostProcessing( PostProcessor processor, GameWorld world ) {
 
-		processor.setEnabled( Config.PostProcessing.Enabled );
+		processor.setEnabled( true );
 
 		bloom = new Bloom( Config.PostProcessing.RttFboWidth, Config.PostProcessing.RttFboHeight );
 
@@ -85,15 +89,14 @@ public class Game implements Disposable {
 	// FIXME, this is logic and it shouldn't be here
 	private void updatePostProcessingEffects() {
 		float factor = 1 - (URacer.timeMultiplier - GameLogic.TimeMultiplierMin) / (Config.Physics.PhysicsTimeMultiplier - GameLogic.TimeMultiplierMin);
-
 		Car playerCar = gameLogic.getPlayer();
 
-		if( Config.PostProcessing.Enabled && zoom != null && playerCar != null ) {
+		if( zoom != null && playerCar != null ) {
 			zoom.setOrigin( Director.screenPosFor( playerCar.getBody() ) );
 			zoom.setStrength( -0.1f * factor );
 		}
 
-		if( Config.PostProcessing.Enabled && bloom != null && zoom != null ) {
+		if( bloom != null && zoom != null ) {
 			bloom.setBaseSaturation( 0.5f - 0.5f * factor );
 			bloom.setBloomSaturation( 1.5f + factor * 0.5f );
 			bloom.setBloomIntesity( 1f + factor * 0f );
@@ -113,7 +116,10 @@ public class Game implements Disposable {
 		}
 
 		gameRenderer.getWorldRenderer().updateRayHandler();
-		updatePostProcessingEffects();
+
+		if( canPostProcess ) {
+			updatePostProcessingEffects();
+		}
 
 		Debug.tick();
 		return true;
