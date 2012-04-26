@@ -14,7 +14,7 @@ public class GameScreen extends Screen {
 
 	@Override
 	public void init( ScalingStrategy scalingStrategy ) {
-		game = new Game( "tutorial-4", scalingStrategy, GameDifficulty.Hard, Aspect.OldSkool, new CarModel().toModel2() );
+		game = new Game( "tutorial-3", scalingStrategy, GameDifficulty.Hard, Aspect.OldSkool, new CarModel().toModel2() );
 	}
 
 	@Override

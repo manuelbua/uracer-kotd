@@ -1,4 +1,4 @@
-package com.bitfire.uracer.game.actors;
+package com.bitfire.uracer.game.logic;
 
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
@@ -8,6 +8,9 @@ import com.badlogic.gdx.physics.box2d.World;
 import com.bitfire.uracer.Art;
 import com.bitfire.uracer.Config;
 import com.bitfire.uracer.entities.EntityType;
+import com.bitfire.uracer.game.actors.Car;
+import com.bitfire.uracer.game.actors.CarModel;
+import com.bitfire.uracer.game.actors.GhostCar;
 import com.bitfire.uracer.game.actors.Car.Aspect;
 import com.bitfire.uracer.game.collisions.CollisionFilters;
 import com.bitfire.uracer.game.player.PlayerCar;
