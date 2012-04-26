@@ -206,7 +206,9 @@ public final class PostProcessor implements Disposable {
 
 	/** Stops capturing the scene and apply the effect chain, if there is one. */
 	public void render() {
-		if( capturing || !hasCaptured ) {
+		captureEnd();
+
+		if( !hasCaptured ) {
 			return;
 		}
 
