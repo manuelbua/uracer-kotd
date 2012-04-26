@@ -10,7 +10,6 @@ import com.bitfire.uracer.Config;
 import com.bitfire.uracer.entities.EntityType;
 import com.bitfire.uracer.game.actors.Car.Aspect;
 import com.bitfire.uracer.game.collisions.CollisionFilters;
-import com.bitfire.uracer.game.input.Input;
 import com.bitfire.uracer.game.player.PlayerCar;
 import com.bitfire.uracer.game.world.GameWorld;
 import com.bitfire.uracer.utils.Convert;
@@ -30,7 +29,7 @@ public final class CarFactory {
 		return CarFactory.createGhost( box2dWorld, gameWorld, car.getCarModel(), car.getAspect() );
 	}
 
-	public static PlayerCar createPlayer( World box2dWorld, GameWorld gameWorld, Input input, Aspect carAspect, CarModel model ) {
+	public static PlayerCar createPlayer( World box2dWorld, GameWorld gameWorld, Aspect carAspect, CarModel model ) {
 		PlayerCar car = new PlayerCar( box2dWorld, gameWorld, model, carAspect );
 		applyCarPhysics( car, EntityType.Car );
 		return car;
