@@ -34,12 +34,9 @@ public class GameRenderer {
 		// post-processing
 		boolean supports32Bpp = Config.isDesktop;
 		postProcessor = (createPostProcessing ? new PostProcessor( width, height, false /* depth */, false /* alpha */, supports32Bpp ) : null);
-
-		Debug.create( box2dWorld );
 	}
 
 	public void dispose() {
-		Debug.dispose();
 		batchRenderer.dispose();
 		postProcessor.dispose();
 	}

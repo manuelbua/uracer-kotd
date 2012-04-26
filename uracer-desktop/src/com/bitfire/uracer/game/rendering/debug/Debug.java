@@ -1,4 +1,4 @@
-package com.bitfire.uracer.game.rendering;
+package com.bitfire.uracer.game.rendering.debug;
 
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
@@ -11,7 +11,7 @@ import com.bitfire.uracer.Director;
 import com.bitfire.uracer.URacer;
 import com.bitfire.uracer.game.events.GameEvents;
 import com.bitfire.uracer.game.events.GameRendererEvent;
-import com.bitfire.uracer.game.rendering.debug.Stats;
+import com.bitfire.uracer.game.rendering.GameWorldRenderer;
 import com.bitfire.uracer.game.world.GameWorld;
 import com.bitfire.uracer.utils.NumberString;
 import com.bitfire.uracer.utils.SpriteBatchUtils;
@@ -19,36 +19,33 @@ import com.bitfire.uracer.utils.SpriteBatchUtils;
 public final class Debug {
 
 	// frame stats
-	private static long frameStart;
-	private static float physicsTime, renderTime;
-	private static Stats gfxStats;
-	private static String uRacerInfo;
+	private long frameStart;
+	private float physicsTime, renderTime;
+	private Stats gfxStats;
+	private String uRacerInfo;
 
 	// box2d
-	private static Box2DDebugRenderer b2drenderer;
-	private static World box2dWorld;
+	private Box2DDebugRenderer b2drenderer;
+	private World box2dWorld;
 
-	private static final GameRendererEvent.Listener onRender = new GameRendererEvent.Listener() {
+	private final GameRendererEvent.Listener onRender = new GameRendererEvent.Listener() {
 		@Override
 		public void gameRendererEvent( GameRendererEvent.Type type ) {
 			switch( type ) {
 			case BatchDebug:
-				Debug.render( GameEvents.gameRenderer.batch );
+				render( GameEvents.gameRenderer.batch );
 				break;
 			}
 		}
 	};
 
-	private Debug() {
-	}
-
-	public static void create( World box2dWorld ) {
+	public Debug( World box2dWorld ) {
 		GameEvents.gameRenderer.addListener( onRender, GameRendererEvent.Type.BatchDebug, GameRendererEvent.Order.PLUS_4 );
 		physicsTime = 0;
 		renderTime = 0;
 		b2drenderer = new Box2DDebugRenderer();
 		frameStart = System.nanoTime();
-		Debug.box2dWorld = box2dWorld;
+		this.box2dWorld = box2dWorld;
 
 		// extrapolate version information
 		uRacerInfo = URacer.getVersionInfo();
@@ -62,12 +59,12 @@ public final class Debug {
 		gfxStats = new Stats( updateHz );
 	}
 
-	public static void dispose() {
+	public void dispose() {
 		b2drenderer.dispose();
 		gfxStats.dispose();
 	}
 
-	public static void tick() {
+	public void tick() {
 		gfxStats.update();
 
 		long time = System.nanoTime();
@@ -79,22 +76,22 @@ public final class Debug {
 		}
 	}
 
-	public static void renderGraphicalStats( SpriteBatch batch, int x, int y ) {
+	private void renderGraphicalStats( SpriteBatch batch, int x, int y ) {
 		batch.draw( gfxStats.getRegion(), x, y );
 	}
 
-	public static void renderTextualStats( SpriteBatch batch ) {
+	private void renderTextualStats( SpriteBatch batch ) {
 		String text = "fps: " + NumberString.formatLong( Gdx.graphics.getFramesPerSecond() ) + ", physics: " + NumberString.formatLong( physicsTime ) + ", graphics: "
 				+ NumberString.formatLong( renderTime );
 
 		SpriteBatchUtils.drawString( batch, text, Gdx.graphics.getWidth() - text.length() * Art.fontWidth, Gdx.graphics.getHeight() - Art.fontHeight );
 	}
 
-	public static void renderVersionInfo( SpriteBatch batch ) {
+	private void renderVersionInfo( SpriteBatch batch ) {
 		SpriteBatchUtils.drawString( batch, uRacerInfo, Gdx.graphics.getWidth() - uRacerInfo.length() * Art.fontWidth, 0, Art.fontWidth, Art.fontHeight * 2 );
 	}
 
-	public static void renderMemoryUsage( SpriteBatch batch ) {
+	private void renderMemoryUsage( SpriteBatch batch ) {
 		float oneOnMb = 1f / 1048576f;
 		float javaHeapMb = (float)Gdx.app.getJavaHeap() * oneOnMb;
 		float nativeHeapMb = (float)Gdx.app.getNativeHeap() * oneOnMb;
@@ -104,37 +101,36 @@ public final class Debug {
 		SpriteBatchUtils.drawString( batch, text, (Gdx.graphics.getWidth() - text.length() * Art.fontWidth) / 2, Gdx.graphics.getHeight() - Art.fontHeight );
 	}
 
-	public static void renderB2dWorld( World world, Matrix4 modelViewProj ) {
+	private void renderB2dWorld( World world, Matrix4 modelViewProj ) {
 		b2drenderer.render( world, modelViewProj );
 	}
 
-	public static int getStatsWidth() {
+	private int getStatsWidth() {
 		return gfxStats.getWidth();
 	}
 
-	public static int getStatsHeight() {
+	private int getStatsHeight() {
 		return gfxStats.getHeight();
 	}
 
-	private static void render( SpriteBatch batch ) {
+	private void render( SpriteBatch batch ) {
 		if( Config.isDesktop ) {
 			if( Config.Graphics.RenderBox2DWorldWireframe ) {
-				Debug.renderB2dWorld( box2dWorld, Director.getMatViewProjMt() );
+				renderB2dWorld( box2dWorld, Director.getMatViewProjMt() );
 			}
 
-			Debug.renderVersionInfo( batch );
-			Debug.renderGraphicalStats( batch, Gdx.graphics.getWidth() - Debug.getStatsWidth(), Gdx.graphics.getHeight() - Debug.getStatsHeight() - Art.fontHeight - 5 );
-			Debug.renderTextualStats( batch );
-			Debug.renderMemoryUsage( batch );
+			renderVersionInfo( batch );
+			renderGraphicalStats( batch, Gdx.graphics.getWidth() - getStatsWidth(), Gdx.graphics.getHeight() - getStatsHeight() - Art.fontHeight - 5 );
+			renderTextualStats( batch );
+			renderMemoryUsage( batch );
 			SpriteBatchUtils.drawString( batch, "total meshes=" + GameWorld.TotalMeshes, 0, Gdx.graphics.getHeight() - 14 );
 			SpriteBatchUtils.drawString( batch, "rendered meshes=" + (GameWorldRenderer.renderedTrees + GameWorldRenderer.renderedWalls) + ", trees="
 					+ GameWorldRenderer.renderedTrees + ", walls=" + GameWorldRenderer.renderedWalls + ", culled=" + GameWorldRenderer.culledMeshes, 0,
 					Gdx.graphics.getHeight() - 7 );
 
 		} else {
-
-			Debug.renderVersionInfo( batch );
-			Debug.renderTextualStats( batch );
+			renderVersionInfo( batch );
+			renderTextualStats( batch );
 		}
 	}
 }
