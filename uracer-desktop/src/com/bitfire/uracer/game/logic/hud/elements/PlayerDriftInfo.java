@@ -12,7 +12,8 @@ import com.bitfire.uracer.utils.Convert;
 import com.bitfire.uracer.utils.NumberString;
 import com.bitfire.uracer.utils.VMath;
 
-public final class HudDrifting extends HudElement {
+/** Encapsulates player's drifting information shown on screen */
+public final class PlayerDriftInfo extends HudElement {
 	public enum EndDriftType {
 		GoodDrift, BadDrift
 	}
@@ -41,7 +42,7 @@ public final class HudDrifting extends HudElement {
 	private Vector2 lastRealtimePos = new Vector2();
 	private boolean began = false;
 
-	public HudDrifting( ScalingStrategy scalingStrategy, PlayerCar player ) {
+	public PlayerDriftInfo( ScalingStrategy scalingStrategy, PlayerCar player ) {
 		this.player = player;
 		this.carModelWidthPx = Convert.mt2px( player.getCarModel().width );
 		this.carModelLengthPx = Convert.mt2px( player.getCarModel().length );
@@ -61,26 +62,13 @@ public final class HudDrifting extends HudElement {
 		}
 	}
 
-	@Override
-	public void dispose() {
-	}
-
+	/** Signals the hud element that the player is initiating a drift */
 	public void beginDrift() {
 		labelRealtime.fadeIn( 300 );
 		began = true;
 	}
 
-	@Override
-	public void onTick() {
-		refreshLabelRealtime( false );
-	}
-
-	private void refreshLabelRealtime( boolean force ) {
-		if( force || (began && labelRealtime.isVisible()) ) {
-			labelRealtime.setString( "+" + NumberString.format( player.driftState.driftSeconds() ) );
-		}
-	}
-
+	/** Signals the hud element that the player has finished drifting */
 	public void endDrift( String message, EndDriftType type ) {
 		HudLabel result = labelResult[nextLabelResult++];
 
@@ -102,10 +90,25 @@ public final class HudDrifting extends HudElement {
 		result.setPosition( lastRealtimePos );
 		result.slide( type == EndDriftType.GoodDrift );
 
-		began = false; // disable refresh
+		began = false;
 		refreshLabelRealtime( true );
 
 		labelRealtime.fadeOut( 300 );
+	}
+
+	@Override
+	public void dispose() {
+	}
+
+	@Override
+	public void onTick() {
+		refreshLabelRealtime( false );
+	}
+
+	private void refreshLabelRealtime( boolean force ) {
+		if( force || (began && labelRealtime.isVisible()) ) {
+			labelRealtime.setString( "+" + NumberString.format( player.driftState.driftSeconds() ) );
+		}
 	}
 
 	@Override

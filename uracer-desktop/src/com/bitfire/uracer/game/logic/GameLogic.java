@@ -34,8 +34,9 @@ import com.bitfire.uracer.game.logic.helpers.Recorder;
 import com.bitfire.uracer.game.logic.hud.Hud;
 import com.bitfire.uracer.game.logic.hud.HudLabel;
 import com.bitfire.uracer.game.logic.hud.HudLabelAccessor;
-import com.bitfire.uracer.game.logic.hud.elements.HudDrifting;
-import com.bitfire.uracer.game.logic.hud.elements.HudDrifting.EndDriftType;
+import com.bitfire.uracer.game.logic.hud.elements.PlayerDriftInfo;
+import com.bitfire.uracer.game.logic.hud.elements.PlayerDriftInfo.EndDriftType;
+import com.bitfire.uracer.game.logic.hud.elements.PlayerLapTimes;
 import com.bitfire.uracer.game.logic.notifier.Message;
 import com.bitfire.uracer.game.logic.notifier.Message.MessagePosition;
 import com.bitfire.uracer.game.logic.notifier.Message.MessageSize;
@@ -104,7 +105,7 @@ public class GameLogic implements CarEvent.Listener, PlayerCarStateEvent.Listene
 
 	// hud
 	private Hud hud = null;
-	private HudDrifting hudDrifting = null;
+	private PlayerDriftInfo hudDrifting = null;
 
 	// sound
 	private SoundManager sound = null;
@@ -157,8 +158,8 @@ public class GameLogic implements CarEvent.Listener, PlayerCarStateEvent.Listene
 		createPlayer( gameWorld, carAspect, carModel );
 		Gdx.app.log( "GameLogic", "Player created" );
 
-		createGameTasks( playerLapState );
-		configureTasks( playerCar );
+		createGameTasks();
+		configureTasks( playerCar, playerLapState );
 		Gdx.app.log( "GameLogic", "Game tasks created and configured" );
 
 		configurePlayer( gameplaySettings, gameWorld, playerCar, input );
@@ -215,7 +216,7 @@ public class GameLogic implements CarEvent.Listener, PlayerCarStateEvent.Listene
 		Tween.registerAccessor( BoxedFloat.class, new BoxedFloatAccessor() );
 	}
 
-	private void createGameTasks( LapState lapState ) {
+	private void createGameTasks() {
 		gameTasksManager = new GameTasksManager();
 
 		// input system
@@ -233,7 +234,7 @@ public class GameLogic implements CarEvent.Listener, PlayerCarStateEvent.Listene
 		gameTasksManager.add( messager );
 
 		// hud manager
-		hud = new Hud( scalingStrategy, lapState );
+		hud = new Hud( scalingStrategy );
 		gameTasksManager.add( hud );
 
 		// effects manager
@@ -241,7 +242,7 @@ public class GameLogic implements CarEvent.Listener, PlayerCarStateEvent.Listene
 		gameTasksManager.add( effects );
 	}
 
-	private void configureTasks( PlayerCar player ) {
+	private void configureTasks( PlayerCar player, LapState lapState ) {
 		// sounds
 		SoundEffect fx = new PlayerDriftSoundEffect( player );
 		fx.start();
@@ -252,9 +253,12 @@ public class GameLogic implements CarEvent.Listener, PlayerCarStateEvent.Listene
 		PlayerSkidMarks carSkidMarks = new PlayerSkidMarks( player );
 		effects.add( carSkidMarks );
 
-		// hud
-		hudDrifting = new HudDrifting( scalingStrategy, player );
+		// hud, player's drift information
+		hudDrifting = new PlayerDriftInfo( scalingStrategy, player );
 		hud.add( hudDrifting );
+
+		PlayerLapTimes lapTimes = new PlayerLapTimes( scalingStrategy, lapState );
+		hud.add( lapTimes );
 	}
 
 	private void createPlayer( GameWorld gameWorld, Aspect carAspect, CarModel carModel ) {
@@ -434,7 +438,8 @@ public class GameLogic implements CarEvent.Listener, PlayerCarStateEvent.Listene
 			break;
 		}
 
-//		Gdx.app.log( "GameLogic", "playerDriftStateEvent::ds=" + NumberString.format( player.driftState.driftSeconds() ) + " (" + player.driftState.driftSeconds() + ")" );
+		// Gdx.app.log( "GameLogic", "playerDriftStateEvent::ds=" + NumberString.format(
+		// player.driftState.driftSeconds() ) + " (" + player.driftState.driftSeconds() + ")" );
 	}
 
 	//
@@ -523,8 +528,7 @@ public class GameLogic implements CarEvent.Listener, PlayerCarStateEvent.Listene
 
 						if( AMath.equals( worst.trackTimeSeconds, best.trackTimeSeconds ) ) {
 							// draw!
-							messager.show( "DRAW!", 3f, Type.Information,
-									MessagePosition.Top, MessageSize.Big );
+							messager.show( "DRAW!", 3f, Type.Information, MessagePosition.Top, MessageSize.Big );
 						} else {
 							if( lastRecordedLapId == best.id ) {
 								lapState.setLastTrackTimeSeconds( best.trackTimeSeconds );
