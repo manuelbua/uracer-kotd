@@ -1,4 +1,4 @@
-package com.bitfire.uracer.game.logic.hud;
+package com.bitfire.uracer.game.logic.hud.debug;
 
 import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.Pixmap;
@@ -9,10 +9,7 @@ import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
 import com.badlogic.gdx.math.Vector2;
 import com.bitfire.uracer.Art;
-import com.bitfire.uracer.Director;
-import com.bitfire.uracer.game.actors.Car;
 import com.bitfire.uracer.utils.AMath;
-import com.bitfire.uracer.utils.Convert;
 import com.bitfire.uracer.utils.SpriteBatchUtils;
 
 public class HudDebugMeter {
@@ -26,20 +23,16 @@ public class HudDebugMeter {
 	private String name;
 
 	private Vector2 pos;
-	private int row;
-	private Car car;
 
 	public Color color = new Color( 1, 1, 1, 1 );
 
-	public HudDebugMeter( Car car, int row, int width, int height ) {
+	public HudDebugMeter( int width, int height ) {
 		assert (width < 256 && height < 256);
 
 		this.name = "";
 		this.width = width;
 		this.height = height;
 		this.pos = new Vector2();
-		this.row = row;
-		this.car = car;
 
 		pixels = new Pixmap( this.width, this.height, Format.RGBA8888 );
 		texture = new Texture( 256, 256, Format.RGBA8888 );
@@ -74,29 +67,18 @@ public class HudDebugMeter {
 		return name + String.format( "%.04f", Math.abs( value ) );
 	}
 
-	private void update() {
-		pos.set( Director.screenPosForPx( car.state().position ) );
-		// pos.set( Director.screenPosFor( playerCar.getBody() ) );
-
-		// center horizontally
-		pos.x -= width * 0.5f;
-
-		// offset by half car length
-		pos.y += Convert.mt2px( car.getCarModel().length ) * 0.5f;
-
-		// offset by row
-		pos.y += row * (height + Art.fontHeight);
+	public void setPosition( Vector2 position ) {
+		pos.set( position );
 	}
 
 	public void render( SpriteBatch batch ) {
-		update();
-		draw();
+		drawMeter();
 		SpriteBatchUtils.drawString( batch, getMessage(), pos.x, pos.y );
 
 		batch.draw( region, pos.x, pos.y + Art.fontHeight );
 	}
 
-	private void draw() {
+	private void drawMeter() {
 		pixels.setColor( 0, 0, 0, 1 );
 		pixels.fill();
 

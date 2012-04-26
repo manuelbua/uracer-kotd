@@ -76,6 +76,27 @@ public final class Debug {
 		}
 	}
 
+	private void render( SpriteBatch batch ) {
+		if( Config.isDesktop ) {
+			if( Config.Graphics.RenderBox2DWorldWireframe ) {
+				renderB2dWorld( box2dWorld, Director.getMatViewProjMt() );
+			}
+
+			renderVersionInfo( batch );
+			renderGraphicalStats( batch, Gdx.graphics.getWidth() - getStatsWidth(), Gdx.graphics.getHeight() - getStatsHeight() - Art.fontHeight - 5 );
+			renderTextualStats( batch );
+			renderMemoryUsage( batch );
+			SpriteBatchUtils.drawString( batch, "total meshes=" + GameWorld.TotalMeshes, 0, Gdx.graphics.getHeight() - 14 );
+			SpriteBatchUtils.drawString( batch, "rendered meshes=" + (GameWorldRenderer.renderedTrees + GameWorldRenderer.renderedWalls) + ", trees="
+					+ GameWorldRenderer.renderedTrees + ", walls=" + GameWorldRenderer.renderedWalls + ", culled=" + GameWorldRenderer.culledMeshes, 0,
+					Gdx.graphics.getHeight() - 7 );
+
+		} else {
+			renderVersionInfo( batch );
+			renderTextualStats( batch );
+		}
+	}
+
 	private void renderGraphicalStats( SpriteBatch batch, int x, int y ) {
 		batch.draw( gfxStats.getRegion(), x, y );
 	}
@@ -111,26 +132,5 @@ public final class Debug {
 
 	private int getStatsHeight() {
 		return gfxStats.getHeight();
-	}
-
-	private void render( SpriteBatch batch ) {
-		if( Config.isDesktop ) {
-			if( Config.Graphics.RenderBox2DWorldWireframe ) {
-				renderB2dWorld( box2dWorld, Director.getMatViewProjMt() );
-			}
-
-			renderVersionInfo( batch );
-			renderGraphicalStats( batch, Gdx.graphics.getWidth() - getStatsWidth(), Gdx.graphics.getHeight() - getStatsHeight() - Art.fontHeight - 5 );
-			renderTextualStats( batch );
-			renderMemoryUsage( batch );
-			SpriteBatchUtils.drawString( batch, "total meshes=" + GameWorld.TotalMeshes, 0, Gdx.graphics.getHeight() - 14 );
-			SpriteBatchUtils.drawString( batch, "rendered meshes=" + (GameWorldRenderer.renderedTrees + GameWorldRenderer.renderedWalls) + ", trees="
-					+ GameWorldRenderer.renderedTrees + ", walls=" + GameWorldRenderer.renderedWalls + ", culled=" + GameWorldRenderer.culledMeshes, 0,
-					Gdx.graphics.getHeight() - 7 );
-
-		} else {
-			renderVersionInfo( batch );
-			renderTextualStats( batch );
-		}
 	}
 }

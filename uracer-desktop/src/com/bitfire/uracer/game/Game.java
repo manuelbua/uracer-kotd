@@ -49,7 +49,7 @@ public class Game implements Disposable {
 		debug = new Debug( box2dWorld );
 
 		// handles rendering
-		gameRenderer = new GameRenderer( scalingStrategy, world, box2dWorld, Config.PostProcessing.Enabled );
+		gameRenderer = new GameRenderer( scalingStrategy, world, Config.PostProcessing.Enabled );
 		canPostProcess = gameRenderer.hasPostProcessor();
 
 		// post-processing

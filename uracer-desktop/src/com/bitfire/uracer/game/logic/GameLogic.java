@@ -34,6 +34,7 @@ import com.bitfire.uracer.game.logic.helpers.Recorder;
 import com.bitfire.uracer.game.logic.hud.Hud;
 import com.bitfire.uracer.game.logic.hud.HudLabel;
 import com.bitfire.uracer.game.logic.hud.HudLabelAccessor;
+import com.bitfire.uracer.game.logic.hud.debug.HudDebug;
 import com.bitfire.uracer.game.logic.hud.elements.PlayerDriftInfo;
 import com.bitfire.uracer.game.logic.hud.elements.PlayerDriftInfo.EndDriftType;
 import com.bitfire.uracer.game.logic.hud.elements.PlayerLapTimes;
@@ -257,8 +258,13 @@ public class GameLogic implements CarEvent.Listener, PlayerCarStateEvent.Listene
 		hudDrifting = new PlayerDriftInfo( scalingStrategy, player );
 		hud.add( hudDrifting );
 
+		// hud, player's lap times
 		PlayerLapTimes lapTimes = new PlayerLapTimes( scalingStrategy, lapState );
 		hud.add( lapTimes );
+
+		// hud, debug information
+		HudDebug hudDebug = new HudDebug( player, player.driftState, carSkidMarks );
+		hud.add( hudDebug );
 	}
 
 	private void createPlayer( GameWorld gameWorld, Aspect carAspect, CarModel carModel ) {

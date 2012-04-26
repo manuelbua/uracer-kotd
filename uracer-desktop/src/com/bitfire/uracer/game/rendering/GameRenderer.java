@@ -3,7 +3,6 @@ package com.bitfire.uracer.game.rendering;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.GL20;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
-import com.badlogic.gdx.physics.box2d.World;
 import com.bitfire.uracer.Config;
 import com.bitfire.uracer.Director;
 import com.bitfire.uracer.ScalingStrategy;
@@ -20,7 +19,7 @@ public class GameRenderer {
 	private final GameWorldRenderer worldRenderer;
 	private final PostProcessor postProcessor;
 
-	public GameRenderer( ScalingStrategy scalingStrategy, GameWorld gameWorld, World box2dWorld, boolean createPostProcessing ) {
+	public GameRenderer( ScalingStrategy scalingStrategy, GameWorld gameWorld, boolean createPostProcessing ) {
 		gl = Gdx.graphics.getGL20();
 		world = gameWorld;
 
@@ -123,7 +122,7 @@ public class GameRenderer {
 		// debug
 		//
 
-		batch = batchRenderer.beginTopLeft();
+		GameEvents.gameRenderer.batch = batchRenderer.beginTopLeft();
 		GameEvents.gameRenderer.trigger( GameRendererEvent.Type.BatchDebug );
 		batchRenderer.end();
 	}
