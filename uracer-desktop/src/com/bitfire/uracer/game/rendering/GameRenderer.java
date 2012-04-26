@@ -2,7 +2,6 @@ package com.bitfire.uracer.game.rendering;
 
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.GL20;
-import com.badlogic.gdx.graphics.OrthographicCamera;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.physics.box2d.World;
 import com.bitfire.uracer.Config;
@@ -33,8 +32,8 @@ public class GameRenderer {
 		batchRenderer = new GameBatchRenderer( gl );
 
 		// post-processing
-		boolean support32Bpp = Config.isDesktop;
-		postProcessor = (createPostProcessing ? new PostProcessor( width, height, false /* depth */, false /* alpha */, support32Bpp ) : null);
+		boolean supports32Bpp = Config.isDesktop;
+		postProcessor = (createPostProcessing ? new PostProcessor( width, height, false /* depth */, false /* alpha */, supports32Bpp ) : null);
 
 		Debug.create( box2dWorld );
 	}
@@ -57,12 +56,14 @@ public class GameRenderer {
 		return worldRenderer;
 	}
 
-	public void render( PlayerCar player ) {
-		OrthographicCamera ortho = Director.getCamera();
-
+	public void onBeforeRender( PlayerCar player ) {
 		// resync
-		worldRenderer.syncWithCam( ortho );
+		worldRenderer.syncWithCam( Director.getCamera() );
 
+		worldRenderer.updateRayHandler( Director.getMatViewProjMt(), player );
+	}
+
+	public void render( PlayerCar player ) {
 		boolean postProcessorReady = hasPostProcessor() && postProcessor.isEnabled();
 		if( postProcessorReady ) {
 			postProcessorReady = postProcessor.capture();
@@ -80,7 +81,7 @@ public class GameRenderer {
 
 		// BatchBeforeMeshes
 		SpriteBatch batch = null;
-		batch = batchRenderer.begin( ortho );
+		batch = batchRenderer.begin( Director.getCamera() );
 		{
 			GameEvents.gameRenderer.batch = batch;
 			GameEvents.gameRenderer.trigger( GameRendererEvent.Type.BatchBeforeMeshes );
@@ -104,24 +105,15 @@ public class GameRenderer {
 					postProcessor.render();
 				}
 
-				worldRenderer.generatePlayerHeadlightsLightMap( player );
 				worldRenderer.renderLigthMap( null );
 			} else {
-				// render nightmode
-				if( world.isNightMode() ) {
-					worldRenderer.generatePlayerHeadlightsLightMap( player );
-
-					// hook into the next PostProcessor source buffer (the last result)
-					// and blend the lightmap on it
-					if( postProcessorReady ) {
-						worldRenderer.renderLigthMap( postProcessor.captureEnd() );
-					} else {
-						worldRenderer.renderLigthMap( null );
-					}
-				}
-
+				// hook into the next PostProcessor source buffer (the last result)
+				// and blend the lightmap on it
 				if( postProcessorReady ) {
+					worldRenderer.renderLigthMap( postProcessor.captureEnd() );
 					postProcessor.render();
+				} else {
+					worldRenderer.renderLigthMap( null );
 				}
 			}
 		} else {

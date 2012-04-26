@@ -208,7 +208,7 @@ public class RayHandler implements Disposable {
 	 * bodies */
 	public final void updateAndRender() {
 		update();
-		generateLightMap();
+		updateLightMap();
 	}
 
 	/** Manual update method for all lights. Use this if you have less physic
@@ -231,7 +231,7 @@ public class RayHandler implements Disposable {
 	 * after you have rendered background but before UI. Box2d bodies can be
 	 * rendered before or after depending how you want x-ray light interact with
 	 * bodies */
-	public void generateLightMap() {
+	public void updateLightMap() {
 
 		lightRenderedLastFrame = 0;
 

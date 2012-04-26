@@ -115,8 +115,6 @@ public class Game implements Disposable {
 			return false;
 		}
 
-		gameRenderer.getWorldRenderer().updateRayHandler();
-
 		if( canPostProcess ) {
 			updatePostProcessingEffects();
 		}
@@ -127,6 +125,7 @@ public class Game implements Disposable {
 
 	public void render() {
 		gameLogic.onBeforeRender();
+		gameRenderer.onBeforeRender( gameLogic.getPlayer() );
 		gameRenderer.render( gameLogic.getPlayer() );
 	}
 

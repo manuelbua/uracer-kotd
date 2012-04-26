@@ -32,10 +32,11 @@ import com.bitfire.uracer.game.world.models.TrackTrees;
 import com.bitfire.uracer.game.world.models.TrackWalls;
 import com.bitfire.uracer.game.world.models.TreeStillModel;
 import com.bitfire.uracer.utils.Convert;
+import com.bitfire.uracer.utils.ShaderLoader;
 
 public class GameWorldRenderer {
 	// @formatter:off
-	private static final String vertexShader =
+	private static final String treeVertexShader =
 		"uniform mat4 u_mvpMatrix;					\n" +
 		"attribute vec4 a_position;					\n" +
 		"attribute vec2 a_texCoord0;				\n" +
@@ -46,7 +47,7 @@ public class GameWorldRenderer {
 		"	v_TexCoord = a_texCoord0;				\n" +
 		"}											\n";
 
-	private static final String fragmentShader =
+	private static final String treeFragmentShader =
 		"#ifdef GL_ES											\n" +
 		"precision mediump float;								\n" +
 		"#endif													\n" +
@@ -99,7 +100,7 @@ public class GameWorldRenderer {
 		tileMapRenderer = new UTileMapRenderer( world.map, tileAtlas, 1, 1, world.map.tileWidth, world.map.tileHeight );
 
 		ShaderProgram.pedantic = false;
-		treeShader = new ShaderProgram( vertexShader, fragmentShader );
+		treeShader = ShaderLoader.fromString( treeVertexShader, treeFragmentShader, "tree-fragment", "tree-vertex" );
 
 		if( !treeShader.isCompiled() ) {
 			throw new IllegalStateException( treeShader.getLog() );
@@ -121,7 +122,7 @@ public class GameWorldRenderer {
 		renderedWalls = 0;
 	}
 
-	public void generatePlayerHeadlightsLightMap( PlayerCar player ) {
+	public void updatePlayerHeadlightsLightMap( PlayerCar player ) {
 		if( player != null ) {
 			Vector2 carPosition = player.state().position;
 			float carOrientation = player.state().orientation;
@@ -149,22 +150,23 @@ public class GameWorldRenderer {
 			playerLights.setActive( false );
 		}
 
-		// updateRayHandler();
-		rayHandler.generateLightMap();
-
 		// if( Config.isDesktop && (URacer.getFrameCount()&0x1f)==0x1f)
 		// {
 		// System.out.println("lights rendered="+rayHandler.lightRenderedLastFrame);
 		// }
 	}
 
-	public void updateRayHandler() {
+	public void updateRayHandler( Matrix4 matViewProj, PlayerCar player ) {
 		if( rayHandler != null ) {
-			rayHandler.setCombinedMatrix( Director.getMatViewProjMt(), Convert.px2mt( camOrtho.position.x * scalingStrategy.invTileMapZoomFactor ),
+			updatePlayerHeadlightsLightMap( player );
+
+			rayHandler.setCombinedMatrix( matViewProj, Convert.px2mt( camOrtho.position.x * scalingStrategy.invTileMapZoomFactor ),
 					Convert.px2mt( camOrtho.position.y * scalingStrategy.invTileMapZoomFactor ), Convert.px2mt( camOrtho.viewportWidth ),
 					Convert.px2mt( camOrtho.viewportHeight ) );
 
 			rayHandler.update();
+
+			rayHandler.updateLightMap();
 		}
 	}
 

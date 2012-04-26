@@ -142,7 +142,7 @@ public class GameLogic implements CarEvent.Listener, PlayerCarStateEvent.Listene
 		createTweeners();
 		Gdx.app.log( "GameLogic", "Helpers created" );
 
-		gameWorld = new GameWorld( box2dWorld, scalingStrategy, levelName, false );
+		gameWorld = new GameWorld( box2dWorld, scalingStrategy, levelName, true );
 		Gdx.app.log( "GameLogic", "Game world ready" );
 
 		recorder = new Recorder();
