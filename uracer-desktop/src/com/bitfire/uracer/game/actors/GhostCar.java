@@ -4,7 +4,6 @@ import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.physics.box2d.World;
 import com.bitfire.uracer.game.input.Replay;
-import com.bitfire.uracer.game.player.CarState;
 import com.bitfire.uracer.game.world.GameWorld;
 
 /** Implements an automated Car, playing previously recorded events. It will
@@ -19,7 +18,7 @@ public final class GhostCar extends Car {
 	private int indexPlay;
 	private boolean hasReplay;
 
-	public CarState carState = null;
+//	public CarState carState = null;
 
 	public GhostCar( World box2dWorld, GameWorld gameWorld, CarModel model, Aspect aspect ) {
 		super( box2dWorld, gameWorld, model, aspect );
@@ -28,7 +27,7 @@ public final class GhostCar extends Car {
 		replay = null;
 		this.inputMode = InputMode.InputFromReplay;
 		this.renderer.setAlpha( 0.5f );
-		this.carState = new CarState( gameWorld, this );
+//		this.carState = new CarState( gameWorld, this );
 
 		setActive( false );
 		resetPhysics();
@@ -102,7 +101,7 @@ public final class GhostCar extends Car {
 	@Override
 	public void onAfterPhysicsSubstep() {
 		super.onAfterPhysicsSubstep();
-		carState.update( 0, 0 );
+//		carState.update( 0, 0 );
 
 		if( hasReplay && indexPlay == replay.getEventsCount() ) {
 			Gdx.app.log( "GameLogic", "Ghost traveled " + getTraveledDistance() + " mt (" + getSums() + ")" );
