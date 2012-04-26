@@ -138,7 +138,7 @@ public class GameLogic implements CarEvent.Listener, CarStateEvent.Listener, Pla
 		this.box2dWorld.setContactListener( new GameContactListener() );
 
 		// initializes the Director helper
-		Director.init();
+		Director.init( Config.Physics.PixelsPerMeter );
 
 		// create tweening support
 		createTweeners();

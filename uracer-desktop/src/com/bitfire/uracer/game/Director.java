@@ -8,13 +8,12 @@ import com.badlogic.gdx.math.Rectangle;
 import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.math.Vector3;
 import com.badlogic.gdx.physics.box2d.Body;
-import com.bitfire.uracer.Config;
-import com.bitfire.uracer.Config.Physics;
 import com.bitfire.uracer.utils.Convert;
 
 public final class Director {
 	public static Vector2 halfViewport;
 
+	private static float pixelsPerMeter;
 	private static OrthographicCamera camera;
 	private static Vector2 screenPosFor;
 	private static Matrix4 mvpMt, mvpPx;
@@ -24,7 +23,8 @@ public final class Director {
 	private Director() {
 	}
 
-	public static void init() {
+	public static void init( float pixelsPerMeter ) {
+		Director.pixelsPerMeter = pixelsPerMeter;
 		screenPosFor = new Vector2();
 		mvpMt = new Matrix4();
 		mvpPx = new Matrix4();
@@ -49,10 +49,10 @@ public final class Director {
 		mvpMt.set( mvpPx );
 
 		// rescale
-		mvpMt.val[Matrix4.M00] *= Config.Physics.PixelsPerMeter;
-		mvpMt.val[Matrix4.M01] *= Config.Physics.PixelsPerMeter;
-		mvpMt.val[Matrix4.M10] *= Config.Physics.PixelsPerMeter;
-		mvpMt.val[Matrix4.M11] *= Config.Physics.PixelsPerMeter;
+		mvpMt.val[Matrix4.M00] *= pixelsPerMeter;
+		mvpMt.val[Matrix4.M01] *= pixelsPerMeter;
+		mvpMt.val[Matrix4.M10] *= pixelsPerMeter;
+		mvpMt.val[Matrix4.M11] *= pixelsPerMeter;
 	}
 
 	public static void setPositionPx( Vector2 pos, boolean round ) {
