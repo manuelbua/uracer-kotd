@@ -1,4 +1,4 @@
-package com.bitfire.uracer.game.world;
+package com.bitfire.uracer.game.world.models;
 
 public final class WorldDefs {
 

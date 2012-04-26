@@ -9,8 +9,8 @@ import com.badlogic.gdx.graphics.g2d.tiled.TiledLayer;
 import com.badlogic.gdx.graphics.g2d.tiled.TiledMap;
 import com.badlogic.gdx.graphics.g2d.tiled.TiledObjectGroup;
 import com.badlogic.gdx.math.Vector2;
-import com.bitfire.uracer.game.world.WorldDefs.ObjectGroup;
-import com.bitfire.uracer.game.world.WorldDefs.TileLayer;
+import com.bitfire.uracer.game.world.models.WorldDefs.ObjectGroup;
+import com.bitfire.uracer.game.world.models.WorldDefs.TileLayer;
 import com.bitfire.uracer.utils.Convert;
 import com.bitfire.uracer.utils.VMath;
 

@@ -53,7 +53,7 @@ import com.bitfire.uracer.game.player.PlayerCar;
 import com.bitfire.uracer.game.tween.GameTweener;
 import com.bitfire.uracer.game.tween.WcTweener;
 import com.bitfire.uracer.game.world.GameWorld;
-import com.bitfire.uracer.game.world.WorldDefs.TileLayer;
+import com.bitfire.uracer.game.world.models.WorldDefs.TileLayer;
 import com.bitfire.uracer.task.TaskManagerEvent;
 import com.bitfire.uracer.utils.AMath;
 import com.bitfire.uracer.utils.BoxedFloat;
