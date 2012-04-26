@@ -13,6 +13,10 @@ import com.bitfire.uracer.game.logic.trackeffects.effects.PlayerSkidMarks;
 import com.bitfire.uracer.game.player.PlayerCar;
 import com.bitfire.uracer.game.player.PlayerDriftState;
 
+/** Encapsulates a special hud element that won't render as usual, but it will schedule
+ * its drawing operations by registering to the GameRenderer's BatchDebug event.
+ *
+ * @author bmanuel */
 public class HudDebug extends HudElement {
 
 	private PlayerCar player;

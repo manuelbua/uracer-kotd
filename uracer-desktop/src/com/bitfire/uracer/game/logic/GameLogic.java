@@ -235,7 +235,7 @@ public class GameLogic implements CarEvent.Listener, PlayerCarStateEvent.Listene
 		gameTasksManager.add( messager );
 
 		// hud manager
-		hud = new Hud( scalingStrategy );
+		hud = new Hud();
 		gameTasksManager.add( hud );
 
 		// effects manager

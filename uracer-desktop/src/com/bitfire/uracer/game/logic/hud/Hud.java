@@ -2,13 +2,13 @@ package com.bitfire.uracer.game.logic.hud;
 
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.utils.Array;
-import com.bitfire.uracer.ScalingStrategy;
 import com.bitfire.uracer.game.events.GameEvents;
 import com.bitfire.uracer.game.events.GameRendererEvent;
 import com.bitfire.uracer.game.logic.GameTask;
 import com.bitfire.uracer.utils.Manager;
 
-// FIXME should extrapolate the lap times thing.. this is just a fucking manager
+/** Encapsulates an head-up manager that will callback HudElement events for
+ * their updating and drawing operations. */
 public final class Hud extends GameTask {
 
 	private final Manager<HudElement> manager = new Manager<HudElement>();
@@ -28,7 +28,7 @@ public final class Hud extends GameTask {
 	}
 
 	// effects
-	public Hud( ScalingStrategy scalingStrategy ) {
+	public Hud() {
 		GameEvents.gameRenderer.addListener( gameRendererEvent, GameRendererEvent.Type.BatchAfterMeshes, GameRendererEvent.Order.DEFAULT );
 	}
 
