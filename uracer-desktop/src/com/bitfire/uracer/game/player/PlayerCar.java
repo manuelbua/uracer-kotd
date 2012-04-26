@@ -39,7 +39,7 @@ public class PlayerCar extends Car {
 	private float throttleDampAF = 0.99f;
 
 	// states
-	public PlayerCarState carState = null;
+	public CarState carState = null;
 	public PlayerDriftState driftState = null;
 
 	public PlayerCar( World box2dWorld, GameWorld gameWorld, CarModel model, Aspect aspect ) {
@@ -53,7 +53,7 @@ public class PlayerCar extends Car {
 		carSim = new CarSimulator( carDesc );
 
 		// states
-		this.carState = new PlayerCarState( gameWorld, this );
+		this.carState = new CarState( gameWorld, this );
 		this.driftState = new PlayerDriftState( this );
 	}
 

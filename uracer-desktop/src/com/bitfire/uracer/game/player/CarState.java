@@ -2,13 +2,13 @@ package com.bitfire.uracer.game.player;
 
 import com.badlogic.gdx.math.Vector2;
 import com.bitfire.uracer.game.actors.Car;
-import com.bitfire.uracer.game.events.PlayerCarStateEvent;
+import com.bitfire.uracer.game.events.CarStateEvent;
 import com.bitfire.uracer.game.world.GameWorld;
 import com.bitfire.uracer.utils.AMath;
 
-public final class PlayerCarState {
+public final class CarState {
 	/* event */
-	public final PlayerCarStateEvent event = new PlayerCarStateEvent();
+	public final CarStateEvent event = new CarStateEvent();
 
 	/* position */
 	public int currTileX = 1, currTileY = 1;
@@ -31,7 +31,7 @@ public final class PlayerCarState {
 	private int lastTileX = 0, lastTileY = 0;
 	private GameWorld world;
 
-	public PlayerCarState( GameWorld world, Car car ) {
+	public CarState( GameWorld world, Car car ) {
 		this.world = world;
 		this.car = car;
 
@@ -53,7 +53,7 @@ public final class PlayerCarState {
 		currTileY = (int)tilePosition.y;
 
 		if( (lastTileX != currTileX) || (lastTileY != currTileY) ) {
-			event.trigger( car, PlayerCarStateEvent.Type.onTileChanged );
+			event.trigger( car, CarStateEvent.Type.onTileChanged );
 			// Gdx.app.log( "CarState", car.getClass().getSimpleName() + " onTileChanged(" + currTileX + "," + currTileY + ")" );
 		}
 

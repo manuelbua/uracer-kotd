@@ -24,7 +24,7 @@ import com.bitfire.uracer.game.actors.CarEvent;
 import com.bitfire.uracer.game.actors.CarModel;
 import com.bitfire.uracer.game.actors.GhostCar;
 import com.bitfire.uracer.game.collisions.GameContactListener;
-import com.bitfire.uracer.game.events.PlayerCarStateEvent;
+import com.bitfire.uracer.game.events.CarStateEvent;
 import com.bitfire.uracer.game.events.PlayerDriftStateEvent;
 import com.bitfire.uracer.game.input.Input;
 import com.bitfire.uracer.game.input.Replay;
@@ -64,7 +64,7 @@ import com.bitfire.uracer.utils.NumberString;
  * This should be refactored into smaller pieces of logic, that's where the components should came into.
  *
  * @author bmanuel */
-public class GameLogic implements CarEvent.Listener, PlayerCarStateEvent.Listener, PlayerDriftStateEvent.Listener {
+public class GameLogic implements CarEvent.Listener, CarStateEvent.Listener, PlayerDriftStateEvent.Listener {
 	// event
 	// public final GameLogicEvent event = new GameLogicEvent();
 
@@ -105,7 +105,7 @@ public class GameLogic implements CarEvent.Listener, PlayerCarStateEvent.Listene
 
 	// hud
 	private Hud hud = null;
-	private PlayerDriftInfo hudDrifting = null;
+	private PlayerDriftInfo hudPlayerDrift = null;
 
 	// sound
 	private SoundManager sound = null;
@@ -203,7 +203,7 @@ public class GameLogic implements CarEvent.Listener, PlayerCarStateEvent.Listene
 	}
 
 	private void registerPlayerEvents( PlayerCar player ) {
-		player.carState.event.addListener( this, PlayerCarStateEvent.Type.onTileChanged );
+		player.carState.event.addListener( this, CarStateEvent.Type.onTileChanged );
 		player.driftState.event.addListener( this, PlayerDriftStateEvent.Type.onBeginDrift );
 		player.driftState.event.addListener( this, PlayerDriftStateEvent.Type.onEndDrift );
 		player.event.addListener( this, CarEvent.Type.onCollision );
@@ -254,14 +254,14 @@ public class GameLogic implements CarEvent.Listener, PlayerCarStateEvent.Listene
 		effects.add( carSkidMarks );
 
 		// hud, player's drift information
-		hudDrifting = new PlayerDriftInfo( scalingStrategy, player );
-		hud.add( hudDrifting );
+		hudPlayerDrift = new PlayerDriftInfo( scalingStrategy, player );
+		hud.add( hudPlayerDrift );
 
 		// hud, player's lap times
 		PlayerLapTimes lapTimes = new PlayerLapTimes( scalingStrategy, lapState );
 		hud.add( lapTimes );
 
-		// hud, debug information
+		// hud-style debug information for various data (player's drift state, number of skid marks particles, ..)
 		HudDebug hudDebug = new HudDebug( player, player.driftState, carSkidMarks );
 		hud.add( hudDebug );
 	}
@@ -402,10 +402,10 @@ public class GameLogic implements CarEvent.Listener, PlayerCarStateEvent.Listene
 	};
 
 	@Override
-	public void playerCarStateEvent( Car source, PlayerCarStateEvent.Type type ) {
+	public void carStateEvent( Car source, CarStateEvent.Type type ) {
 		switch( type ) {
 		case onTileChanged:
-			updatePlayerLapState( playerLapState );
+			playerTileChanged( playerLapState );
 			break;
 		}
 	}
@@ -418,7 +418,7 @@ public class GameLogic implements CarEvent.Listener, PlayerCarStateEvent.Listene
 	public void playerDriftStateEvent( PlayerCar player, PlayerDriftStateEvent.Type type ) {
 		switch( type ) {
 		case onBeginDrift:
-			hudDrifting.beginDrift();
+			hudPlayerDrift.beginDrift();
 			break;
 		case onEndDrift:
 			String seconds = NumberString.format( player.driftState.driftSeconds() ) + "  seconds!";
@@ -434,10 +434,10 @@ public class GameLogic implements CarEvent.Listener, PlayerCarStateEvent.Listene
 					messager.enqueue( "UNREAL!\n+" + seconds, 1f, Type.Good, MessagePosition.Bottom, MessageSize.Big );
 				}
 
-				hudDrifting.endDrift( "+" + NumberString.format( driftSeconds ), EndDriftType.GoodDrift );
+				hudPlayerDrift.endDrift( "+" + NumberString.format( driftSeconds ), EndDriftType.GoodDrift );
 
 			} else {
-				hudDrifting.endDrift( "-" + NumberString.format( driftSeconds ), EndDriftType.BadDrift );
+				hudPlayerDrift.endDrift( "-" + NumberString.format( driftSeconds ), EndDriftType.BadDrift );
 			}
 
 			break;
@@ -487,7 +487,7 @@ public class GameLogic implements CarEvent.Listener, PlayerCarStateEvent.Listene
 	}
 
 	// FIXME looks like this function is doing MUCH more than what's stated in its name..
-	private void updatePlayerLapState( LapState lapState ) {
+	private void playerTileChanged( LapState lapState ) {
 		if( playerCar != null ) {
 			boolean onStartZone = (playerCar.carState.currTileX == gameWorld.playerStartTileX && playerCar.carState.currTileY == gameWorld.playerStartTileY);
 
@@ -507,6 +507,8 @@ public class GameLogic implements CarEvent.Listener, PlayerCarStateEvent.Listene
 						playerGhostCar.setReplay( any );
 					}
 				} else {
+					Gdx.app.log( "GameLogic", "Player traveled " + playerCar.getTraveledDistance() + " mt (" + playerCar.getSums() + ")" );
+
 					if( recorder.isRecording() ) {
 						recorder.endRecording();
 					}
@@ -516,7 +518,9 @@ public class GameLogic implements CarEvent.Listener, PlayerCarStateEvent.Listene
 					// replay best, overwrite worst logic
 
 					if( !lapState.hasAllReplayData() ) {
+
 						// only one single replay
+
 						lapState.restart();
 						Replay buf = lapState.getNextBuffer();
 						recorder.beginRecording( playerCar, buf, name, gameplaySettings.difficulty );
@@ -528,7 +532,9 @@ public class GameLogic implements CarEvent.Listener, PlayerCarStateEvent.Listene
 
 						messager.show( "GO!  GO!  GO!", 3f, Type.Information, MessagePosition.Middle, MessageSize.Big );
 					} else {
+
 						// both valid, replay best, overwrite worst
+
 						Replay best = lapState.getBestReplay(), worst = lapState.getWorstReplay();
 
 						if( AMath.equals( worst.trackTimeSeconds, best.trackTimeSeconds ) ) {
@@ -553,6 +559,8 @@ public class GameLogic implements CarEvent.Listener, PlayerCarStateEvent.Listene
 						lastRecordedLapId = worst.id;
 					}
 				}
+
+				playerCar.resetTraveledDistance();
 			}
 		}
 	}

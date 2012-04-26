@@ -8,6 +8,7 @@ import com.badlogic.gdx.physics.box2d.BodyDef.BodyType;
 import com.badlogic.gdx.physics.box2d.Fixture;
 import com.badlogic.gdx.physics.box2d.World;
 import com.bitfire.uracer.game.world.GameWorld;
+import com.bitfire.uracer.utils.AMath;
 
 public abstract class Car extends Box2DEntity {
 	public enum InputMode {
@@ -30,6 +31,12 @@ public abstract class Car extends Box2DEntity {
 	private CarForces carForces = new CarForces();
 	private Vector2 carForcesVelocity = new Vector2();
 
+	// distance
+	private Vector2 previousPosition = new Vector2();
+	private Vector2 distmp = new Vector2();
+	private float carTraveledDistance = 0;
+	private int sums = 0;
+
 	private Aspect aspect = Aspect.OldSkool;
 	protected InputMode inputMode = InputMode.NoInput;
 
@@ -41,6 +48,7 @@ public abstract class Car extends Box2DEntity {
 		this.impacts = 0;
 		this.model = model;
 		this.inputMode = InputMode.NoInput;
+		this.carTraveledDistance = 0;
 
 		// body
 		BodyDef bd = new BodyDef();
@@ -76,6 +84,16 @@ public abstract class Car extends Box2DEntity {
 		return renderer;
 	}
 
+	/** Returns the traveled distance, in meters, so far.
+	 * Calling reset() will also reset the traveled distance. */
+	public float getTraveledDistance() {
+		return carTraveledDistance;
+	}
+
+	public int getSums() {
+		return sums;
+	}
+
 	public void setActive( boolean active ) {
 		if( active != body.isActive() ) {
 			body.setActive( active );
@@ -88,6 +106,12 @@ public abstract class Car extends Box2DEntity {
 
 	public void reset() {
 		resetPhysics();
+		resetTraveledDistance();
+	}
+
+	public void resetTraveledDistance() {
+		carTraveledDistance = 0;
+		sums = 0;
 	}
 
 	protected void resetPhysics() {
@@ -113,8 +137,25 @@ public abstract class Car extends Box2DEntity {
 	}
 
 	@Override
+	public void setTransform( Vector2 position, float orient ) {
+		super.setTransform( position, orient );
+
+		// keeps track of the previous position to be able
+		// to compute the cumulative traveled distance
+		previousPosition.set( body.getPosition() );
+	}
+
+	@Override
 	public void onBeforePhysicsSubstep() {
 		super.onBeforePhysicsSubstep();
+
+		// keeps track of the previous position to be able
+		// to compute the cumulative traveled distance
+		previousPosition.set( body.getPosition() );
+
+		// // accumulte it
+		// carTraveledDistance += distmp.len();
+		// sums++;
 
 		// let's subclasses behave as needed, ask them to fill carForces with new data
 		onComputeCarForces( carForces );
@@ -130,6 +171,23 @@ public abstract class Car extends Box2DEntity {
 		carForcesVelocity.set( carForces.velocity_x, carForces.velocity_y );
 		body.setLinearVelocity( carForcesVelocity );
 		body.setAngularVelocity( -carForces.angularVelocity );
+	}
+
+	@Override
+	public void onAfterPhysicsSubstep() {
+		super.onAfterPhysicsSubstep();
+
+		// compute traveled distance, in meters
+		distmp.set( body.getPosition() );
+		distmp.sub( previousPosition );
+
+		// filter out zero distance
+		float dist = AMath.fixup( distmp.len() );
+		if( !AMath.isZero( dist ) ) {
+			// accumulte it
+			carTraveledDistance += dist;
+			sums++;
+		}
 	}
 
 	@Override
