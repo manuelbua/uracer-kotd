@@ -46,7 +46,7 @@ public class Game implements Disposable {
 		// handles rendering
 		gameRenderer = new GameRenderer( scalingStrategy, world, box2dWorld, true );
 		if( gameRenderer.hasPostProcessor() ) {
-			configurePostProcessing( gameRenderer, world );
+			configurePostProcessing( gameRenderer.getPostProcessor(), world );
 		}
 	}
 
@@ -56,8 +56,7 @@ public class Game implements Disposable {
 		gameRenderer.dispose();
 	}
 
-	private void configurePostProcessing( GameRenderer renderer, GameWorld world ) {
-		PostProcessor processor = gameRenderer.getPostProcessor();
+	private void configurePostProcessing( PostProcessor processor, GameWorld world ) {
 
 		processor.setEnabled( Config.PostProcessing.Enabled );
 
