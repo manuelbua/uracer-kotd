@@ -98,8 +98,8 @@ public class Game implements Disposable {
 
 		if( bloom != null && zoom != null ) {
 			bloom.setBaseSaturation( 0.5f - 0.5f * factor );
-			bloom.setBloomSaturation( 1.5f + factor * 0.5f );
-			bloom.setBloomIntesity( 1f + factor * 0f );
+			bloom.setBloomSaturation( 1.5f - factor * 0.85f );
+			bloom.setBloomIntesity( 1f + factor * 1.75f );
 
 			// vignette.setY( (1 - factor) * 0.74f + factor * 0.4f );
 			// vignette.setIntensity( 1f );
