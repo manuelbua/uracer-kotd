@@ -5,11 +5,11 @@ import java.util.LinkedList;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.utils.Array;
 import com.bitfire.uracer.game.events.GameEvents;
-import com.bitfire.uracer.game.events.GameRendererEvent;
-import com.bitfire.uracer.game.events.GameRendererEvent.Type;
 import com.bitfire.uracer.game.logic.GameTask;
 import com.bitfire.uracer.game.logic.notifier.Message.MessagePosition;
 import com.bitfire.uracer.game.logic.notifier.Message.MessageSize;
+import com.bitfire.uracer.game.rendering.GameRendererEvent;
+import com.bitfire.uracer.game.rendering.GameRendererEvent.Type;
 
 public class Notifier extends GameTask {
 	private final GameRendererEvent.Listener gameRendererEvent = new GameRendererEvent.Listener() {

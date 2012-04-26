@@ -1,8 +1,7 @@
 package com.bitfire.uracer.game.player;
 
 import com.bitfire.uracer.game.Time;
-import com.bitfire.uracer.game.events.PlayerDriftStateEvent;
-import com.bitfire.uracer.game.events.PlayerDriftStateEvent.Type;
+import com.bitfire.uracer.game.player.PlayerDriftStateEvent.Type;
 import com.bitfire.uracer.utils.AMath;
 
 public final class PlayerDriftState {

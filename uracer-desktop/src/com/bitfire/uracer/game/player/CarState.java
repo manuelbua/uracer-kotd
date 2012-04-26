@@ -2,7 +2,6 @@ package com.bitfire.uracer.game.player;
 
 import com.badlogic.gdx.math.Vector2;
 import com.bitfire.uracer.game.actors.Car;
-import com.bitfire.uracer.game.events.CarStateEvent;
 import com.bitfire.uracer.game.world.GameWorld;
 import com.bitfire.uracer.utils.AMath;
 

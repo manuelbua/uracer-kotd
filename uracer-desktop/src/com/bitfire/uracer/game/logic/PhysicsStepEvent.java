@@ -1,6 +1,5 @@
-package com.bitfire.uracer.game.events;
+package com.bitfire.uracer.game.logic;
 
-import com.bitfire.uracer.game.logic.PhysicsStep;
 import com.bitfire.uracer.utils.Event;
 import com.bitfire.uracer.utils.EventListener;
 import com.bitfire.uracer.utils.EventNotifier;

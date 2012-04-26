@@ -1,5 +1,8 @@
 package com.bitfire.uracer.game.events;
 
+import com.bitfire.uracer.game.logic.PhysicsStepEvent;
+import com.bitfire.uracer.game.rendering.GameRendererEvent;
+
 
 public final class GameEvents {
 

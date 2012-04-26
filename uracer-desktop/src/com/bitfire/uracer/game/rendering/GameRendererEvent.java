@@ -1,7 +1,6 @@
-package com.bitfire.uracer.game.events;
+package com.bitfire.uracer.game.rendering;
 
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
-import com.bitfire.uracer.game.rendering.GameRenderer;
 import com.bitfire.uracer.utils.Event;
 import com.bitfire.uracer.utils.EventListener;
 import com.bitfire.uracer.utils.EventNotifier;

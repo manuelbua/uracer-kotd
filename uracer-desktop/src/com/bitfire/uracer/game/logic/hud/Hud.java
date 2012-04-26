@@ -3,8 +3,8 @@ package com.bitfire.uracer.game.logic.hud;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.utils.Array;
 import com.bitfire.uracer.game.events.GameEvents;
-import com.bitfire.uracer.game.events.GameRendererEvent;
 import com.bitfire.uracer.game.logic.GameTask;
+import com.bitfire.uracer.game.rendering.GameRendererEvent;
 import com.bitfire.uracer.utils.Manager;
 
 /** Encapsulates an head-up manager that will callback HudElement events for

@@ -8,8 +8,8 @@ import com.badlogic.gdx.physics.box2d.World;
 import com.bitfire.uracer.Config;
 import com.bitfire.uracer.entities.EntityRenderState;
 import com.bitfire.uracer.game.events.GameEvents;
-import com.bitfire.uracer.game.events.GameRendererEvent;
-import com.bitfire.uracer.game.events.GameRendererEvent.Type;
+import com.bitfire.uracer.game.rendering.GameRendererEvent;
+import com.bitfire.uracer.game.rendering.GameRendererEvent.Type;
 import com.bitfire.uracer.utils.AMath;
 import com.bitfire.uracer.utils.Convert;
 

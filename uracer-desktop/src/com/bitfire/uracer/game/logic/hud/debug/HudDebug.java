@@ -7,11 +7,11 @@ import com.bitfire.uracer.Art;
 import com.bitfire.uracer.Config;
 import com.bitfire.uracer.Director;
 import com.bitfire.uracer.game.events.GameEvents;
-import com.bitfire.uracer.game.events.GameRendererEvent;
 import com.bitfire.uracer.game.logic.hud.HudElement;
 import com.bitfire.uracer.game.logic.trackeffects.effects.PlayerSkidMarks;
 import com.bitfire.uracer.game.player.PlayerCar;
 import com.bitfire.uracer.game.player.PlayerDriftState;
+import com.bitfire.uracer.game.rendering.GameRendererEvent;
 
 /** Encapsulates a special hud element that won't render as usual, but it will schedule
  * its drawing operations by registering to the GameRenderer's BatchDebug event.
