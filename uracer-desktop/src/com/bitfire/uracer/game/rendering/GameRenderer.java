@@ -20,18 +20,21 @@ public class GameRenderer {
 	private final GameBatchRenderer batchRenderer;
 	private final GameWorldRenderer worldRenderer;
 	private final PostProcessor postProcessor;
-	private boolean postProcessorEnabled = Config.PostProcessing.Enabled;
 
-	public GameRenderer( ScalingStrategy scalingStrategy, GameWorld gameWorld, World box2dWorld ) {
+	public GameRenderer( ScalingStrategy scalingStrategy, GameWorld gameWorld, World box2dWorld, boolean createPostProcessing ) {
 		gl = Gdx.graphics.getGL20();
 		world = gameWorld;
 
 		int width = Gdx.graphics.getWidth();
 		int height = Gdx.graphics.getHeight();
 
+		// world rendering
 		worldRenderer = new GameWorldRenderer( scalingStrategy, world, width, height );
 		batchRenderer = new GameBatchRenderer( gl );
-		postProcessor = new PostProcessor( width, height, false /* depth */, false /* alpha */, Config.isDesktop /* 32bpp */);
+
+		// post-processing
+		boolean support32Bpp = Config.isDesktop;
+		postProcessor = (createPostProcessing ? new PostProcessor( width, height, false /* depth */, false /* alpha */, support32Bpp ) : null);
 
 		Debug.create( box2dWorld );
 	}
@@ -42,8 +45,8 @@ public class GameRenderer {
 		postProcessor.dispose();
 	}
 
-	public void setPostProcessorEnabled( boolean enable ) {
-		postProcessorEnabled = enable;
+	public boolean hasPostProcessor() {
+		return (postProcessor != null);
 	}
 
 	public PostProcessor getPostProcessor() {
@@ -60,9 +63,12 @@ public class GameRenderer {
 		// resync
 		worldRenderer.syncWithCam( ortho );
 
-		if( postProcessorEnabled ) {
-			postProcessor.capture();
-		} else {
+		boolean postProcessorReady = hasPostProcessor() && postProcessor.isEnabled();
+		if( postProcessorReady ) {
+			postProcessorReady = postProcessor.capture();
+		}
+
+		if( !postProcessorReady ) {
 			gl.glViewport( 0, 0, Gdx.graphics.getWidth(), Gdx.graphics.getHeight() );
 			gl.glClearDepthf( 1 );
 			gl.glClearColor( 0, 0, 0, 0 );
@@ -94,7 +100,7 @@ public class GameRenderer {
 
 		if( world.isNightMode() ) {
 			if( Config.Graphics.DumbNightMode ) {
-				if( postProcessorEnabled ) {
+				if( postProcessorReady ) {
 					postProcessor.render();
 				}
 
@@ -107,19 +113,19 @@ public class GameRenderer {
 
 					// hook into the next PostProcessor source buffer (the last result)
 					// and blend the lightmap on it
-					if( postProcessorEnabled ) {
+					if( postProcessorReady ) {
 						worldRenderer.renderLigthMap( postProcessor.captureEnd() );
 					} else {
 						worldRenderer.renderLigthMap( null );
 					}
 				}
 
-				if( postProcessorEnabled ) {
+				if( postProcessorReady ) {
 					postProcessor.render();
 				}
 			}
 		} else {
-			if( postProcessorEnabled ) {
+			if( postProcessorReady ) {
 				postProcessor.render();
 			}
 		}

@@ -44,8 +44,10 @@ public class Game implements Disposable {
 		World box2dWorld = gameLogic.getBox2dWorld();
 
 		// handles rendering
-		gameRenderer = new GameRenderer( scalingStrategy, world, box2dWorld );
-		configurePostProcessing( gameRenderer.getPostProcessor(), world );
+		gameRenderer = new GameRenderer( scalingStrategy, world, box2dWorld, true );
+		if( gameRenderer.hasPostProcessor() ) {
+			configurePostProcessing( gameRenderer, world );
+		}
 	}
 
 	@Override
@@ -54,10 +56,10 @@ public class Game implements Disposable {
 		gameRenderer.dispose();
 	}
 
-	private void configurePostProcessing( PostProcessor processor, GameWorld world ) {
-		if( !Config.PostProcessing.Enabled || processor == null ) {
-			return;
-		}
+	private void configurePostProcessing( GameRenderer renderer, GameWorld world ) {
+		PostProcessor processor = gameRenderer.getPostProcessor();
+
+		processor.setEnabled( Config.PostProcessing.Enabled );
 
 		bloom = new Bloom( Config.PostProcessing.RttFboWidth, Config.PostProcessing.RttFboHeight );
 
@@ -72,19 +74,17 @@ public class Game implements Disposable {
 
 		zoom = new Zoom( Config.PostProcessing.ZoomQuality );
 		processor.addEffect( zoom );
-
 		processor.addEffect( bloom );
 
 		if( Config.PostProcessing.EnableVignetting ) {
 			vignette = new Vignette();
-			 vignette.setCoords( 0.75f, 0.4f );
-			// vignette.setCoords( 0.7f, 0f );
+			vignette.setCoords( 0.75f, 0.4f );
 			processor.addEffect( vignette );
 		}
 	}
 
 	// FIXME, this is logic and it shouldn't be here
-	private void updatePostProcessing() {
+	private void updatePostProcessingEffects() {
 		float factor = 1 - (URacer.timeMultiplier - GameLogic.TimeMultiplierMin) / (Config.Physics.PhysicsTimeMultiplier - GameLogic.TimeMultiplierMin);
 
 		Car playerCar = gameLogic.getPlayer();
@@ -95,8 +95,8 @@ public class Game implements Disposable {
 		}
 
 		if( Config.PostProcessing.Enabled && bloom != null && zoom != null ) {
-			bloom.setBaseSaturation( 0.5f - 0f * factor );
-			bloom.setBloomSaturation( 1.5f - factor * 0f );
+			bloom.setBaseSaturation( 0.5f - 0.5f * factor );
+			bloom.setBloomSaturation( 1.5f + factor * 0.5f );
 			bloom.setBloomIntesity( 1f + factor * 0f );
 
 			// vignette.setY( (1 - factor) * 0.74f + factor * 0.4f );
@@ -114,7 +114,7 @@ public class Game implements Disposable {
 		}
 
 		gameRenderer.getWorldRenderer().updateRayHandler();
-		updatePostProcessing();
+		updatePostProcessingEffects();
 
 		Debug.tick();
 		return true;

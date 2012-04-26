@@ -20,9 +20,15 @@ public final class PostProcessor implements Disposable {
 	private final PingPongBuffer composite;
 	private static Format fbFormat;
 	private final Manager<PostProcessorEffect> manager = new Manager<PostProcessorEffect>();
-	private static final Array<PingPongBuffer> buffers = new Array<PingPongBuffer>( 5 );
+	private final Array<PingPongBuffer> buffers = new Array<PingPongBuffer>( 5 );
 	private final Color clearColor = Color.CLEAR;
+
+	private boolean enabled = true;
 	private boolean capturing = false;
+	private boolean hasCaptured = false;
+
+	// maintains a per-frame updated list of enabled effects
+	private Array<PostProcessorEffect> enabledEffects = null;
 
 	/** Construct a new PostProcessor with the given parameters. */
 	public PostProcessor( int fboWidth, int fboHeight, boolean useDepth, boolean useAlphaChannel, boolean use32Bits ) {
@@ -42,6 +48,7 @@ public final class PostProcessor implements Disposable {
 
 		composite = newPingPongBuffer( fboWidth, fboHeight, fbFormat, useDepth );
 		capturing = false;
+		hasCaptured = false;
 	}
 
 	/** Construct a new PostProcessor with FBO dimensions set to the size of the
@@ -71,6 +78,20 @@ public final class PostProcessor implements Disposable {
 		}
 
 		buffers.clear();
+
+		if( enabledEffects != null ) {
+			enabledEffects.clear();
+		}
+	}
+
+	/** Whether or not the post-procesor is enabled */
+	public boolean isEnabled() {
+		return enabled;
+	}
+
+	/** Sets whether or not the post-processor should be enabled */
+	public void setEnabled( boolean enabled ) {
+		this.enabled = enabled;
 	}
 
 	/** Adds the specified effect to the effect chain: the order IS important
@@ -103,32 +124,57 @@ public final class PostProcessor implements Disposable {
 	}
 
 	/** Starts capturing the scene, clears the buffer with the clear
-	 * color specified by {@link #setClearColor(Color)} or {@link #setClearColor(float r, float g, float b, float a)}. */
-	public void capture() {
-		if( !capturing ) {
+	 * color specified by {@link #setClearColor(Color)} or {@link #setClearColor(float r, float g, float b, float a)}.
+	 *
+	 * @return true or false, whether or not capturing has been initiated. */
+	public boolean capture() {
+		if( enabled && !capturing ) {
+			if( buildEnabledEffectsList() == 0 ) {
+				// no enabled effects
+				// Gdx.app.log( "PostProcessor::capture()", "No post-processor effects enabled" );
+				return false;
+			}
+
 			capturing = true;
+			hasCaptured = false;
 			composite.begin();
 			composite.capture();
 
 			Gdx.gl.glClearColor( clearColor.r, clearColor.g, clearColor.b, clearColor.a );
 			Gdx.gl.glClear( GL10.GL_COLOR_BUFFER_BIT | GL10.GL_DEPTH_BUFFER_BIT );
+			return true;
 		}
+
+		return false;
 	}
 
-	/** Starts capturing the scene as {@link #capture()}, but <strong>without</strong> clearing the screen. */
-	public void captureNoClear() {
-		if( !capturing ) {
+	/** Starts capturing the scene as {@link #capture()}, but <strong>without</strong> clearing the screen.
+	 *
+	 * @return true or false, whether or not capturing has been initiated. */
+	public boolean captureNoClear() {
+		if( enabled && !capturing ) {
+			if( buildEnabledEffectsList() == 0 ) {
+				// no enabled effects
+				// Gdx.app.log( "PostProcessor::captureNoClear", "No post-processor effects enabled" );
+				return false;
+			}
+
 			capturing = true;
+			hasCaptured = false;
 			composite.begin();
 			composite.capture();
+			return true;
 		}
+
+		return false;
 	}
 
 	/** Stops capturing the scene and returns the result, or null if nothing was
 	 * captured. */
 	public FrameBuffer captureEnd() {
-		if( capturing ) {
+		if( enabled && capturing ) {
 			capturing = false;
+			hasCaptured = true;
 			composite.end();
 			return composite.getResultBuffer();
 		}
@@ -138,7 +184,11 @@ public final class PostProcessor implements Disposable {
 
 	/** After a capture/captureEnd action, returns the just captured buffer */
 	public FrameBuffer captured() {
-		return composite.getResultBuffer();
+		if( enabled && hasCaptured ) {
+			return composite.getResultBuffer();
+		}
+
+		return null;
 	}
 
 	/** Regenerates and/or rebinds owned resources when needed, eg. when
@@ -156,9 +206,13 @@ public final class PostProcessor implements Disposable {
 
 	/** Stops capturing the scene and apply the effect chain, if there is one. */
 	public void render() {
-		captureEnd();
+		if( captureEnd() == null ) {
+			return;
+		}
 
-		Array<PostProcessorEffect> items = manager.items;
+		// Array<PostProcessorEffect> items = manager.items;
+		Array<PostProcessorEffect> items = enabledEffects;
+
 		if( items.size > 0 ) {
 			// render effects chain, [0,n-1]
 			for( int i = 0; i < items.size - 1; i++ ) {
@@ -175,6 +229,26 @@ public final class PostProcessor implements Disposable {
 
 			// render with null dest (to screen)
 			items.get( items.size - 1 ).render( composite.getResultBuffer(), null );
+		} else {
+			Gdx.app.log( "PostProcessor", "No post-processor effects enabled, aborting render" );
 		}
+	}
+
+	private int buildEnabledEffectsList() {
+		if( enabledEffects == null ) {
+			enabledEffects = new Array<PostProcessorEffect>( manager.items.size );
+		} else {
+			enabledEffects.clear();
+		}
+
+		Array<PostProcessorEffect> items = manager.items;
+		for( int i = 0; i < items.size; i++ ) {
+			PostProcessorEffect effect = items.get( i );
+			if( effect.isEnabled() ) {
+				enabledEffects.add( effect );
+			}
+		}
+
+		return enabledEffects.size;
 	}
 }
