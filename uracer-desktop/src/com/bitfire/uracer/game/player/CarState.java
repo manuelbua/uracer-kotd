@@ -8,7 +8,10 @@ import com.bitfire.uracer.utils.AMath;
 
 public final class CarState {
 	/* event */
-	public final CarStateEvent event = new CarStateEvent();
+	public CarStateEvent event = null;
+
+	/* observed car */
+	public final Car car;
 
 	/* position */
 	public int currTileX = 1, currTileY = 1;
@@ -23,8 +26,6 @@ public final class CarState {
 	/* lateral forces */
 	public Vector2 lateralForceFront = new Vector2(), lateralForceRear = new Vector2();
 
-	private Car car;
-
 	private float carMaxSpeedSquared = 0;
 	private float carMaxForce = 0;
 
@@ -32,6 +33,7 @@ public final class CarState {
 	private GameWorld world;
 
 	public CarState( GameWorld world, Car car ) {
+		this.event = new CarStateEvent( this );
 		this.world = world;
 		this.car = car;
 
@@ -53,8 +55,9 @@ public final class CarState {
 		currTileY = (int)tilePosition.y;
 
 		if( (lastTileX != currTileX) || (lastTileY != currTileY) ) {
-			event.trigger( car, CarStateEvent.Type.onTileChanged );
-			// Gdx.app.log( "CarState", car.getClass().getSimpleName() + " onTileChanged(" + currTileX + "," + currTileY + ")" );
+			event.trigger( this, CarStateEvent.Type.onTileChanged );
+			// Gdx.app.log( "CarState", car.getClass().getSimpleName() + " onTileChanged(" + currTileX + "," + currTileY
+			// + ")" );
 		}
 
 		// speed/force normalized factors

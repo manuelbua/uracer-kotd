@@ -1,10 +1,11 @@
 package com.bitfire.uracer.game.events;
 
+import com.bitfire.uracer.game.logic.PhysicsStep;
 import com.bitfire.uracer.utils.Event;
 import com.bitfire.uracer.utils.EventListener;
 import com.bitfire.uracer.utils.EventNotifier;
 
-public class PhysicsStepEvent extends Event {
+public class PhysicsStepEvent extends Event<PhysicsStep> {
 	public enum Type {
 		onBeforeTimestep, onAfterTimestep, onTemporalAliasing
 	}
@@ -13,17 +14,26 @@ public class PhysicsStepEvent extends Event {
 		void physicsEvent( float temporalAliasing, Type type );
 	}
 
-	public void addListener( Listener listener ) {
-		notify.addListener( listener );
+	/* This constructor will permits late-binding of the "source" member via the "trigger" method */
+	public PhysicsStepEvent() {
+		super( null );
+		for( Type t : Type.values() ) {
+			notifiers[t.ordinal()] = new Notifier();
+		}
 	}
 
-	public void trigger( float temporalAliasing, Type type ) {
-		notify.physicsEvent( temporalAliasing, type );
+	public void addListener( Listener listener, Type type ) {
+		notifiers[type.ordinal()].addListener( listener );
+	}
+
+	public void trigger( PhysicsStep source, float temporalAliasing, Type type ) {
+		this.source = source;
+		notifiers[type.ordinal()].physicsEvent( temporalAliasing, type );
 	}
 
 	public float temporalAliasingFactor = 0;
 
-	private final Notifier notify = new Notifier();
+	private Notifier[] notifiers = new Notifier[ Type.values().length ];
 
 	private class Notifier extends EventNotifier<Listener> implements Listener {
 		@Override

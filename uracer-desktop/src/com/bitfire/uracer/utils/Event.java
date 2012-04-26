@@ -1,13 +1,9 @@
 package com.bitfire.uracer.utils;
 
-public abstract class Event {
-//	public Object source;
+public abstract class Event<T> {
+	public T source;
 
-	public Event(){
-//		this.source = null;
+	public Event( T source ) {
+		this.source = source;
 	}
-
-//	public Event(Object source) {
-//		this.source = source;
-//	}
 }

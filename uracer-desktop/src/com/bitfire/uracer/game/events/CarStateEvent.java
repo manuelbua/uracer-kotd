@@ -1,20 +1,21 @@
 package com.bitfire.uracer.game.events;
 
-import com.bitfire.uracer.game.actors.Car;
+import com.bitfire.uracer.game.player.CarState;
 import com.bitfire.uracer.utils.Event;
 import com.bitfire.uracer.utils.EventListener;
 import com.bitfire.uracer.utils.EventNotifier;
 
-public final class CarStateEvent extends Event {
+public final class CarStateEvent extends Event<CarState> {
 	public enum Type {
 		onTileChanged
 	}
 
 	public interface Listener extends EventListener {
-		void carStateEvent( Car source, Type type );
+		void carStateEvent( CarState source, Type type );
 	}
 
-	public CarStateEvent() {
+	public CarStateEvent( CarState source ) {
+		super( source );
 		for( Type t : Type.values() ) {
 			notifiers[t.ordinal()] = new Notifier();
 		}
@@ -24,7 +25,7 @@ public final class CarStateEvent extends Event {
 		notifiers[type.ordinal()].addListener( listener );
 	}
 
-	public void trigger( Car source, Type type ) {
+	public void trigger( CarState source, Type type ) {
 		notifiers[type.ordinal()].carStateEvent( source, type );
 	}
 
@@ -32,7 +33,7 @@ public final class CarStateEvent extends Event {
 
 	private class Notifier extends EventNotifier<Listener> implements Listener {
 		@Override
-		public void carStateEvent( Car source, Type type ) {
+		public void carStateEvent( CarState source, Type type ) {
 			for( Listener listener : listeners ) {
 				listener.carStateEvent( source, type );
 			}

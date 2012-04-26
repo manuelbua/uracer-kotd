@@ -6,7 +6,7 @@ import com.bitfire.uracer.utils.Event;
 import com.bitfire.uracer.utils.EventListener;
 import com.bitfire.uracer.utils.EventNotifier;
 
-public final class CarEvent extends Event {
+public final class CarEvent extends Event<Car> {
 	public enum Type {
 		onComputeForces, onCollision
 	}
@@ -37,7 +37,8 @@ public final class CarEvent extends Event {
 
 	public final Data data = new Data();
 
-	public CarEvent() {
+	public CarEvent( Car car ) {
+		super( car );
 		for( Type t : Type.values() ) {
 			notifiers[t.ordinal()] = new Notifier();
 		}

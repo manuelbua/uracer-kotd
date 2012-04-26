@@ -49,6 +49,7 @@ import com.bitfire.uracer.game.logic.sounds.effects.PlayerDriftSoundEffect;
 import com.bitfire.uracer.game.logic.sounds.effects.PlayerImpactSoundEffect;
 import com.bitfire.uracer.game.logic.trackeffects.TrackEffects;
 import com.bitfire.uracer.game.logic.trackeffects.effects.PlayerSkidMarks;
+import com.bitfire.uracer.game.player.CarState;
 import com.bitfire.uracer.game.player.PlayerCar;
 import com.bitfire.uracer.game.tween.GameTweener;
 import com.bitfire.uracer.game.tween.WcTweener;
@@ -200,6 +201,10 @@ public class GameLogic implements CarEvent.Listener, CarStateEvent.Listener, Pla
 
 	public World getBox2dWorld() {
 		return box2dWorld;
+	}
+
+	public PhysicsStep getPhysicsStep() {
+		return physicsStep;
 	}
 
 	private void registerPlayerEvents( PlayerCar player ) {
@@ -402,7 +407,7 @@ public class GameLogic implements CarEvent.Listener, CarStateEvent.Listener, Pla
 	};
 
 	@Override
-	public void carStateEvent( Car source, CarStateEvent.Type type ) {
+	public void carStateEvent( CarState source, CarStateEvent.Type type ) {
 		switch( type ) {
 		case onTileChanged:
 			playerTileChanged( playerLapState );

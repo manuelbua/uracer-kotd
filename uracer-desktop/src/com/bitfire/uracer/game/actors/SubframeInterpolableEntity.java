@@ -12,7 +12,9 @@ public abstract class SubframeInterpolableEntity extends Entity implements Physi
 	protected EntityRenderState stateCurrent = new EntityRenderState();
 
 	public SubframeInterpolableEntity() {
-		GameEvents.physicsStep.addListener( this );
+		GameEvents.physicsStep.addListener( this, PhysicsStepEvent.Type.onBeforeTimestep );
+		GameEvents.physicsStep.addListener( this, PhysicsStepEvent.Type.onAfterTimestep );
+		GameEvents.physicsStep.addListener( this, PhysicsStepEvent.Type.onTemporalAliasing );
 	}
 
 	public abstract void saveStateTo( EntityRenderState state );

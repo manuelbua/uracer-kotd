@@ -1,5 +1,6 @@
 package com.bitfire.uracer.game.events;
 
+
 public final class GameEvents {
 
 	public static final GameRendererEvent gameRenderer = new GameRendererEvent();

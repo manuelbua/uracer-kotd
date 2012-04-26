@@ -7,7 +7,7 @@ import com.bitfire.uracer.utils.AMath;
 
 public final class PlayerDriftState {
 	/* event */
-	public final PlayerDriftStateEvent event = new PlayerDriftStateEvent();
+	public PlayerDriftStateEvent event = null;
 
 	private PlayerCar player;
 	public boolean isDrifting = false;
@@ -19,6 +19,7 @@ public final class PlayerDriftState {
 	private Time time, collisionTime;
 
 	public PlayerDriftState( PlayerCar player ) {
+		this.event = new PlayerDriftStateEvent( this );
 		this.player = player;
 		this.time = new Time();
 		this.collisionTime = new Time();

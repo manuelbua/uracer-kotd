@@ -1,10 +1,12 @@
 package com.bitfire.uracer.game.events;
 
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
+import com.bitfire.uracer.game.rendering.GameRenderer;
+import com.bitfire.uracer.utils.Event;
 import com.bitfire.uracer.utils.EventListener;
 import com.bitfire.uracer.utils.EventNotifier;
 
-public class GameRendererEvent {
+public class GameRendererEvent extends Event<GameRenderer> {
 	/** defines the type of render queue */
 	public enum Type {
 		BatchBeforeMeshes, BatchAfterMeshes, BatchDebug;
@@ -30,7 +32,9 @@ public class GameRendererEvent {
 		}
 	};
 
+	/* This constructor will permits late-binding of the "source" member via the "trigger" method */
 	public GameRendererEvent() {
+		super( null );
 		for( Type t : Type.values() ) {
 			for( Order o : Order.values() ) {
 				notifiers[t.ordinal()][o.ordinal()] = new Notifier();
@@ -55,7 +59,8 @@ public class GameRendererEvent {
 		notifiers[type.ordinal()][order.ordinal()].removeListener( listener );
 	}
 
-	public void trigger( Type type ) {
+	public void trigger( GameRenderer source, Type type ) {
+		this.source = source;
 		for( Order order : Order.values() ) {
 			notifiers[type.ordinal()][order.ordinal()].gameRendererEvent( type );
 		}

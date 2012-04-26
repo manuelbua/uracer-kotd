@@ -20,7 +20,7 @@ public abstract class Car extends Box2DEntity {
 	}
 
 	/* event */
-	public final CarEvent event = new CarEvent();
+	public CarEvent event = null;
 
 	protected GameWorld gameWorld;
 	protected CarModel model;
@@ -42,6 +42,7 @@ public abstract class Car extends Box2DEntity {
 
 	public Car( World box2dWorld, GameWorld gameWorld, CarModel model, Aspect aspect ) {
 		super( box2dWorld );
+		this.event = new CarEvent( this );
 		this.gameWorld = gameWorld;
 		this.renderer = new CarRenderer( model, aspect );
 		this.aspect = aspect;

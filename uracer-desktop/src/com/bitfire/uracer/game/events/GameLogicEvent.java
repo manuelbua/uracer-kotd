@@ -1,10 +1,11 @@
 package com.bitfire.uracer.game.events;
 
+import com.bitfire.uracer.game.logic.GameLogic;
 import com.bitfire.uracer.utils.Event;
 import com.bitfire.uracer.utils.EventListener;
 import com.bitfire.uracer.utils.EventNotifier;
 
-public final class GameLogicEvent extends Event {
+public final class GameLogicEvent extends Event<GameLogic> {
 	public enum Type {
 		onRestart, onReset
 	}
@@ -13,7 +14,8 @@ public final class GameLogicEvent extends Event {
 		void gameLogicEvent( Type type );
 	}
 
-	public GameLogicEvent() {
+	public GameLogicEvent( GameLogic logic ) {
+		super( logic );
 		for( Type t : Type.values() ) {
 			notifiers[t.ordinal()] = new Notifier();
 		}

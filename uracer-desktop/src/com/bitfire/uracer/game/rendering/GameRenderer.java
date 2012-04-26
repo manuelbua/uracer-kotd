@@ -84,7 +84,7 @@ public class GameRenderer {
 		batch = batchRenderer.begin( Director.getCamera() );
 		{
 			GameEvents.gameRenderer.batch = batch;
-			GameEvents.gameRenderer.trigger( GameRendererEvent.Type.BatchBeforeMeshes );
+			GameEvents.gameRenderer.trigger( this, GameRendererEvent.Type.BatchBeforeMeshes );
 		}
 		batchRenderer.end();
 
@@ -95,7 +95,7 @@ public class GameRenderer {
 		batch = batchRenderer.beginTopLeft();
 		{
 			GameEvents.gameRenderer.batch = batch;
-			GameEvents.gameRenderer.trigger( GameRendererEvent.Type.BatchAfterMeshes );
+			GameEvents.gameRenderer.trigger( this, GameRendererEvent.Type.BatchAfterMeshes );
 		}
 		batchRenderer.end();
 
@@ -127,7 +127,7 @@ public class GameRenderer {
 		//
 
 		GameEvents.gameRenderer.batch = batchRenderer.beginTopLeft();
-		GameEvents.gameRenderer.trigger( GameRendererEvent.Type.BatchDebug );
+		GameEvents.gameRenderer.trigger( this, GameRendererEvent.Type.BatchDebug );
 		batchRenderer.end();
 	}
 

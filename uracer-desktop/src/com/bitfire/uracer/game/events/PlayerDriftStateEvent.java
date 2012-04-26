@@ -1,11 +1,12 @@
 package com.bitfire.uracer.game.events;
 
 import com.bitfire.uracer.game.player.PlayerCar;
+import com.bitfire.uracer.game.player.PlayerDriftState;
 import com.bitfire.uracer.utils.Event;
 import com.bitfire.uracer.utils.EventListener;
 import com.bitfire.uracer.utils.EventNotifier;
 
-public final class PlayerDriftStateEvent extends Event {
+public final class PlayerDriftStateEvent extends Event<PlayerDriftState> {
 	public enum Type {
 		onBeginDrift, onEndDrift
 	}
@@ -14,7 +15,8 @@ public final class PlayerDriftStateEvent extends Event {
 		void playerDriftStateEvent( PlayerCar source, Type type );
 	}
 
-	public PlayerDriftStateEvent() {
+	public PlayerDriftStateEvent( PlayerDriftState playerDriftState ) {
+		super( playerDriftState );
 		for( Type t : Type.values() ) {
 			notifiers[t.ordinal()] = new Notifier();
 		}
