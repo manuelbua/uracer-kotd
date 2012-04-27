@@ -3,7 +3,10 @@ package com.bitfire.uracer.utils;
 import com.badlogic.gdx.Gdx;
 import com.bitfire.uracer.game.actors.Car;
 
-public class CarUtils {
+public final class CarUtils {
+
+	private CarUtils() {
+	}
 
 	public static float mtSecToKmHour( float mtsec ) {
 		return mtsec * 3.6f;

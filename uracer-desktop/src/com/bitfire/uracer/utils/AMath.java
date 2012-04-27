@@ -104,8 +104,7 @@ public final class AMath {
 
 	public static float round( float value, int decimal ) {
 		float p = (float)Math.pow( 10, decimal );
-		value = value * p;
-		float tmp = Math.round( value );
+		float tmp = Math.round( value * p );
 		return (float)tmp / p;
 	}
 
