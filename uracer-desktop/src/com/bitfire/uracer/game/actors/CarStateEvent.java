@@ -1,4 +1,4 @@
-package com.bitfire.uracer.game.player;
+package com.bitfire.uracer.game.actors;
 
 import com.bitfire.uracer.utils.Event;
 import com.bitfire.uracer.utils.EventListener;
