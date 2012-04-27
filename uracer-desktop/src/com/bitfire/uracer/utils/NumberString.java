@@ -15,7 +15,7 @@ public final class NumberString {
 			NumberString.formatter = new DecimalFormat( "#.###" );
 		}
 
-		return NumberString.formatter.format( (double)value );
+		return NumberString.formatter.format( AMath.round( value, 3 ) );
 	}
 
 	public static String formatLong( float value ) {
@@ -23,7 +23,7 @@ public final class NumberString {
 			NumberString.formatterLong = new DecimalFormat( "#.######" );
 		}
 
-		return NumberString.formatterLong.format( (double)value );
+		return NumberString.formatterLong.format( AMath.round( value, 6 ) );
 	}
 
 }
