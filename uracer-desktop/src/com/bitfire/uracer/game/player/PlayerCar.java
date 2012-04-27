@@ -182,7 +182,7 @@ public class PlayerCar extends Car {
 		// inspect impact feedback, accumulate vel/ang velocities
 		handleImpactFeedback();
 
-		carState.update( carDesc.velocity_wc.len2(), carDesc.throttle );
+		carState.update( carDesc );
 		driftState.update( carSim.lateralForceFront.y, carSim.lateralForceRear.y, carDesc.velocity_wc.len() );
 	}
 

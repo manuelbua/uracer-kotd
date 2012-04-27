@@ -42,7 +42,20 @@ public final class CarState {
 		}
 	}
 
-	public void update( float velocityLenSquared, float throttle ) {
+	public void update( CarDescriptor carDescriptor ) {
+		triggerTileChanged();
+		updateFactors( carDescriptor );
+	}
+
+	private void updateFactors( CarDescriptor carDescriptor ) {
+		// speed/force normalized factors
+		currVelocityLenSquared = carDescriptor.velocity_wc.len2();
+		currThrottle = carDescriptor.throttle;
+		currSpeedFactor = AMath.clamp( currVelocityLenSquared / carMaxSpeedSquared, 0f, 1f );
+		currForceFactor = AMath.clamp( currThrottle / carMaxForce, 0f, 1f );
+	}
+
+	private void triggerTileChanged() {
 		lastTileX = currTileX;
 		lastTileY = currTileY;
 
@@ -57,12 +70,6 @@ public final class CarState {
 			// Gdx.app.log( "CarState", car.getClass().getSimpleName() + " onTileChanged(" + currTileX + "," + currTileY
 			// + ")" );
 		}
-
-		// speed/force normalized factors
-		currVelocityLenSquared = velocityLenSquared;
-		currThrottle = throttle;
-		currSpeedFactor = AMath.clamp( currVelocityLenSquared / carMaxSpeedSquared, 0f, 1f );
-		currForceFactor = AMath.clamp( currThrottle / carMaxForce, 0f, 1f );
 	}
 
 	public void reset() {
