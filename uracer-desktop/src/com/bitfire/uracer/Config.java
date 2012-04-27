@@ -27,7 +27,7 @@ public final class Config {
 		public static void asDefault() {
 			int w = Gdx.graphics.getWidth();
 
-			Enabled = true;
+			Enabled = Config.isDesktop;
 			EnableVignetting = true;
 
 			RttFboWidth = (int)(Gdx.graphics.getWidth() * RttRatio);
@@ -72,9 +72,12 @@ public final class Config {
 		public static boolean RenderPlayerDebugInfo;
 		public static boolean RenderHudDebugInfo;
 		public static boolean Render3DBoundingBoxes;
+		public static boolean RenderDebugInfoGraphics;
+		public static boolean RenderDebugInfoFpsStats;
+		public static boolean RenderDebugInfoMeshStats;
+		public static boolean RenderDebugInfoMemoryStats;
 		public static boolean DumbNightMode;	// night-mode rendered as an overlay *after* PostProcessor
 		public static InterpolationMode CameraInterpolationMode;
-
 
 		public static void asDefault() {
 			EnableMipMapping = true;
@@ -82,8 +85,12 @@ public final class Config {
 
 			DumbNightMode = false;
 			RenderBox2DWorldWireframe = false;
-			RenderPlayerDebugInfo = true;
-			RenderHudDebugInfo = true;
+			RenderPlayerDebugInfo = Config.isDesktop;
+			RenderHudDebugInfo = Config.isDesktop;
+			RenderDebugInfoFpsStats = true;
+			RenderDebugInfoGraphics = true;
+			RenderDebugInfoMemoryStats = Config.isDesktop;
+			RenderDebugInfoMeshStats = Config.isDesktop;
 			Render3DBoundingBoxes = false;
 
 			CameraInterpolationMode = InterpolationMode.Sigmoid;
@@ -139,12 +146,10 @@ public final class Config {
 	public static void asDefault() {
 		isDesktop = (Gdx.app.getType() == ApplicationType.Desktop);
 
+		Debug.asDefault();
 		Graphics.asDefault();
 		Physics.asDefault();
 		PostProcessing.asDefault();
-
-		// always call as last
-		Debug.asDefault();
 	}
 
 	private Config() {

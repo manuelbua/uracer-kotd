@@ -23,7 +23,7 @@ public final class CarUtils {
 		Gdx.app.log( msg,
 			"Car traveled " + dist + " mt (" + car.getAccuDistCount() + ") " +
 			"in "+ timeElapsed + "s (" + kmh + "km/h) " + "(" + car.getAccuSpeedCount() + ")" +
-			"[" + AMath.round( kmh, 3 ) + "km/h, " + AMath.round( dist, 3 ) + "m]"
+			"[" + AMath.round( kmh, 2 ) + "km/h, " + AMath.round( dist, 2 ) + "m]"
 		);
 
 		// @formatter:on

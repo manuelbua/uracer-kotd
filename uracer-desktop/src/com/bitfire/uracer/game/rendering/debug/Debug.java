@@ -77,31 +77,38 @@ public final class Debug {
 	}
 
 	private void render( SpriteBatch batch ) {
-		if( Config.isDesktop ) {
-			if( Config.Graphics.RenderBox2DWorldWireframe ) {
-				renderB2dWorld( box2dWorld, Director.getMatViewProjMt() );
-			}
+		renderVersionInfo(batch);
 
-			renderVersionInfo( batch );
+		if( Config.Graphics.RenderBox2DWorldWireframe ) {
+			renderB2dWorld( box2dWorld, Director.getMatViewProjMt() );
+		}
+
+		if( Config.Graphics.RenderDebugInfoGraphics ) {
 			renderGraphicalStats( batch, Gdx.graphics.getWidth() - getStatsWidth(), Gdx.graphics.getHeight() - getStatsHeight() - Art.fontHeight - 5 );
-			renderTextualStats( batch );
+		}
+
+		if( Config.Graphics.RenderDebugInfoMemoryStats ) {
 			renderMemoryUsage( batch );
+		}
+
+		if( Config.Graphics.RenderDebugInfoFpsStats ) {
+			renderFpsStats( batch );
+		}
+
+		if( Config.Graphics.RenderDebugInfoMeshStats ) {
 			SpriteBatchUtils.drawString( batch, "total meshes=" + GameWorld.TotalMeshes, 0, Gdx.graphics.getHeight() - 14 );
 			SpriteBatchUtils.drawString( batch, "rendered meshes=" + (GameWorldRenderer.renderedTrees + GameWorldRenderer.renderedWalls) + ", trees="
 					+ GameWorldRenderer.renderedTrees + ", walls=" + GameWorldRenderer.renderedWalls + ", culled=" + GameWorldRenderer.culledMeshes, 0,
 					Gdx.graphics.getHeight() - 7 );
-
-		} else {
-			renderVersionInfo( batch );
-			renderTextualStats( batch );
 		}
+
 	}
 
 	private void renderGraphicalStats( SpriteBatch batch, int x, int y ) {
 		batch.draw( gfxStats.getRegion(), x, y );
 	}
 
-	private void renderTextualStats( SpriteBatch batch ) {
+	private void renderFpsStats( SpriteBatch batch ) {
 		String text = "fps: " + NumberString.formatLong( Gdx.graphics.getFramesPerSecond() ) + ", physics: " + NumberString.formatLong( physicsTime ) + ", graphics: "
 				+ NumberString.formatLong( renderTime );
 

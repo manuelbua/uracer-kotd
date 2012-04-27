@@ -268,8 +268,10 @@ public class GameLogic implements CarEvent.Listener, CarStateEvent.Listener, Pla
 		hud.add( lapTimes );
 
 		// hud-style debug information for various data (player's drift state, number of skid marks particles, ..)
-		HudDebug hudDebug = new HudDebug( player, player.driftState, carSkidMarks );
-		hud.add( hudDebug );
+		if( Config.Graphics.RenderHudDebugInfo ) {
+			HudDebug hudDebug = new HudDebug( player, player.driftState, carSkidMarks );
+			hud.add( hudDebug );
+		}
 	}
 
 	private void createPlayer( GameWorld gameWorld, Aspect carAspect, CarModel carModel ) {
@@ -575,7 +577,7 @@ public class GameLogic implements CarEvent.Listener, CarStateEvent.Listener, Pla
 
 					if( thisReplay != null ) {
 						CarUtils.dumpSpeedInfo( "Player", playerCar, thisReplay.trackTimeSeconds );
-//						Gdx.app.log( "GameLogic", "speed=" + speedKmh + "km/h (" + mtsec + "mt/s)" );
+						// Gdx.app.log( "GameLogic", "speed=" + speedKmh + "km/h (" + mtsec + "mt/s)" );
 
 					}
 				}

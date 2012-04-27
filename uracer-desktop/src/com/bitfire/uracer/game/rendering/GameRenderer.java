@@ -40,7 +40,10 @@ public class GameRenderer {
 
 	public void dispose() {
 		batchRenderer.dispose();
-		postProcessor.dispose();
+
+		if( hasPostProcessor() ) {
+			postProcessor.dispose();
+		}
 	}
 
 	public boolean hasPostProcessor() {
@@ -122,7 +125,7 @@ public class GameRenderer {
 		}
 
 		//
-		// debug
+		// manages and triggers debug event
 		//
 
 		GameEvents.gameRenderer.batch = batchRenderer.beginTopLeft();

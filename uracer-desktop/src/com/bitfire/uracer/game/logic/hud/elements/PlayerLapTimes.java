@@ -21,9 +21,9 @@ public class PlayerLapTimes extends HudElement {
 		int gridX = (int)((float)Gdx.graphics.getWidth() / 5f);
 
 		// laptimes component
-		best = new HudLabel( scalingStrategy, Art.fontCurseYRbig, "BEST  TIME\n-.----" );
-		curr = new HudLabel( scalingStrategy, Art.fontCurseYRbig, "YOUR  TIME\n-.----" );
-		last = new HudLabel( scalingStrategy, Art.fontCurseYRbig, "LAST  TIME\n-.----" );
+		best = new HudLabel( scalingStrategy, Art.fontCurseYRbig, "BEST  TIME\n--.--" );
+		curr = new HudLabel( scalingStrategy, Art.fontCurseYRbig, "YOUR  TIME\n--.--" );
+		last = new HudLabel( scalingStrategy, Art.fontCurseYRbig, "LAST  TIME\n--.--" );
 
 		curr.setPosition( gridX, 50 * scalingStrategy.invTileMapZoomFactor );
 		last.setPosition( gridX * 3, 50 * scalingStrategy.invTileMapZoomFactor );
@@ -51,7 +51,7 @@ public class PlayerLapTimes extends HudElement {
 			if( lapState.hasLastTrackTimeSeconds() ) {
 				best.setString( "BEST  TIME\n" + NumberString.format( lapState.getLastTrackTimeSeconds() ) + "s" );
 			} else {
-				best.setString( "BEST TIME\n-:----" );
+				best.setString( "BEST TIME\n--:--" );
 			}
 		}
 
@@ -60,7 +60,7 @@ public class PlayerLapTimes extends HudElement {
 			// has only last
 			last.setString( "LAST  TIME\n" + NumberString.format( lapState.getLastTrackTimeSeconds() ) + "s" );
 		} else {
-			last.setString( "LAST  TIME\n-:----" );
+			last.setString( "LAST  TIME\n--:--" );
 		}
 	}
 
