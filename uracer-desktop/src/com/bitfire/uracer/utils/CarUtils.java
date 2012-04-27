@@ -15,12 +15,15 @@ public final class CarUtils {
 	public static void dumpSpeedInfo( String msg, Car car, float timeElapsed ) {
 		// @formatter:off
 
-		float kmh = AMath.round( mtSecToKmHour(car.getAverageSpeed()), 3 );
-		float dist = AMath.round( car.getTraveledDistance(), 3);
+//		float kmh = AMath.round( mtSecToKmHour(car.getAverageSpeed()), 3 );
+//		float dist = AMath.round( car.getTraveledDistance(), 3);
+		float kmh = mtSecToKmHour(car.getAverageSpeed());
+		float dist = car.getTraveledDistance();
 
 		Gdx.app.log( msg,
 			"Car traveled " + dist + " mt (" + car.getAccuDistCount() + ") " +
-			"in "+ timeElapsed + "s (" + kmh + "km/h) " + "(" + car.getAccuSpeedCount() + ")"
+			"in "+ timeElapsed + "s (" + kmh + "km/h) " + "(" + car.getAccuSpeedCount() + ")" +
+			"[" + AMath.round( kmh, 3 ) + "km/h, " + AMath.round( dist, 3 ) + "m]"
 		);
 
 		// @formatter:on

@@ -217,7 +217,7 @@ public abstract class Car extends Box2DEntity {
 	}
 
 	@Override
-	public void onAfterPhysicsSubstep() {
+	public strictfp void onAfterPhysicsSubstep() {
 		super.onAfterPhysicsSubstep();
 
 		// compute traveled distance, in meters
