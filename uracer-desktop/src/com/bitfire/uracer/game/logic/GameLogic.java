@@ -495,6 +495,7 @@ public class GameLogic implements CarEvent.Listener, CarStateEvent.Listener, Pla
 	}
 
 	// FIXME looks like this function is doing MUCH more than what's stated in its name..
+	// TODO this looks like a game policy thing... this one is for "You vs. Yourself"
 	private void playerTileChanged( LapState lapState ) {
 		if( playerCar != null ) {
 			boolean onStartZone = (playerCar.carState.currTileX == gameWorld.playerStartTileX && playerCar.carState.currTileY == gameWorld.playerStartTileY);
