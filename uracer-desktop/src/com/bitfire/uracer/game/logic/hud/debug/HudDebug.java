@@ -12,6 +12,7 @@ import com.bitfire.uracer.game.logic.trackeffects.effects.PlayerSkidMarks;
 import com.bitfire.uracer.game.player.PlayerCar;
 import com.bitfire.uracer.game.player.PlayerDriftState;
 import com.bitfire.uracer.game.rendering.GameRendererEvent;
+import com.bitfire.uracer.utils.CarUtils;
 
 /** Encapsulates a special hud element that won't render as usual, but it will schedule
  * its drawing operations by registering to the GameRenderer's BatchDebug event.
@@ -22,7 +23,7 @@ public class HudDebug extends HudElement {
 	private PlayerCar player;
 	private PlayerDriftState driftState;
 	private PlayerSkidMarks skidMarks;
-	private HudDebugMeter meterLatForce, meterSkidMarks;
+	private HudDebugMeter meterLatForce, meterSkidMarks, meterSpeed;
 	private Array<HudDebugMeter> meters = new Array<HudDebugMeter>();
 	private Vector2 pos = new Vector2();
 
@@ -53,6 +54,12 @@ public class HudDebug extends HudElement {
 		meterSkidMarks.setLimits( 0, PlayerSkidMarks.MaxSkidMarks );
 		meterSkidMarks.setName( "sm" );
 		meters.add( meterSkidMarks );
+
+		// player speed, km/h
+		meterSpeed = new HudDebugMeter( 100, 5 );
+		meterSpeed.setLimits( 0, CarUtils.mtSecToKmHour(player.getCarModel().max_speed) );
+		meterSpeed.setName( "speed" );
+		meters.add( meterSpeed );
 	}
 
 	@Override
@@ -61,8 +68,7 @@ public class HudDebug extends HudElement {
 
 	@Override
 	public void onTick() {
-		// update values
-
+		// lateral forces
 		meterLatForce.setValue( driftState.driftStrength );
 		if( driftState.isDrifting ) {
 			meterLatForce.color.set( .3f, 1f, .3f, 1f );
@@ -70,7 +76,11 @@ public class HudDebug extends HudElement {
 			meterLatForce.color.set( 1f, 1f, 1f, 1f );
 		}
 
+		// skid marks count
 		meterSkidMarks.setValue( skidMarks.getParticleCount() );
+
+		// player's speed
+		meterSpeed.setValue( CarUtils.mtSecToKmHour(player.getInstantSpeed()) );
 	}
 
 	public void onDebug( SpriteBatch batch ) {

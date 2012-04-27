@@ -7,6 +7,7 @@ import com.badlogic.gdx.physics.box2d.BodyDef;
 import com.badlogic.gdx.physics.box2d.BodyDef.BodyType;
 import com.badlogic.gdx.physics.box2d.Fixture;
 import com.badlogic.gdx.physics.box2d.World;
+import com.bitfire.uracer.Config;
 import com.bitfire.uracer.game.world.GameWorld;
 import com.bitfire.uracer.utils.AMath;
 
@@ -34,8 +35,21 @@ public abstract class Car extends Box2DEntity {
 	// distance
 	private Vector2 previousPosition = new Vector2();
 	private Vector2 distmp = new Vector2();
+
+	// the car's traveled distance so far, in meters
 	private float carTraveledDistance = 0;
-	private int sums = 0;
+	private int accuDistCount = 0;
+
+	// the car's traveled distance performed in the last dt, in meters
+	private float carTraveledDistanceDt = 0;
+
+	// the car's average speed, in meters/sec, so far.
+	private float carAvgSpeedMtSec = 0;
+	private float accuSpeed = 0;
+	private int accuSpeedCount = 0;
+
+	// the car's instant speed, in meters/sec
+	private float carInstantSpeedMtSec = 0;
 
 	private Aspect aspect = Aspect.OldSkool;
 	protected InputMode inputMode = InputMode.NoInput;
@@ -50,6 +64,10 @@ public abstract class Car extends Box2DEntity {
 		this.model = model;
 		this.inputMode = InputMode.NoInput;
 		this.carTraveledDistance = 0;
+		this.carTraveledDistanceDt = 0;
+		this.accuDistCount = 0;
+		this.accuSpeed = 0;
+		this.accuSpeedCount = 0;
 
 		// body
 		BodyDef bd = new BodyDef();
@@ -91,8 +109,27 @@ public abstract class Car extends Box2DEntity {
 		return carTraveledDistance;
 	}
 
-	public int getSums() {
-		return sums;
+	/** Returns the traveled distance, in meters, performed in the last dt */
+	public float getTraveledDistanceDt() {
+		return carTraveledDistanceDt;
+	}
+
+	/** Returns the average speed, in meters/s, so far. */
+	public float getAverageSpeed() {
+		return carAvgSpeedMtSec;
+	}
+
+	/** Returns the instant speed, in meters/s */
+	public float getInstantSpeed() {
+		return carInstantSpeedMtSec;
+	}
+
+	public int getAccuDistCount() {
+		return accuDistCount;
+	}
+
+	public int getAccuSpeedCount() {
+		return accuSpeedCount;
 	}
 
 	public void setActive( boolean active ) {
@@ -112,7 +149,10 @@ public abstract class Car extends Box2DEntity {
 
 	public void resetTraveledDistance() {
 		carTraveledDistance = 0;
-		sums = 0;
+		carTraveledDistanceDt = 0;
+		accuDistCount = 0;
+		accuSpeed = 0;
+		accuSpeedCount = 0;
 	}
 
 	protected void resetPhysics() {
@@ -154,9 +194,11 @@ public abstract class Car extends Box2DEntity {
 		// to compute the cumulative traveled distance
 		previousPosition.set( body.getPosition() );
 
-		// // accumulte it
-		// carTraveledDistance += distmp.len();
-		// sums++;
+		// reset mt/dt
+		carTraveledDistanceDt = 0;
+
+		// reset instant speed
+		carInstantSpeedMtSec = 0;
 
 		// let's subclasses behave as needed, ask them to fill carForces with new data
 		onComputeCarForces( carForces );
@@ -179,16 +221,28 @@ public abstract class Car extends Box2DEntity {
 		super.onAfterPhysicsSubstep();
 
 		// compute traveled distance, in meters
+
 		distmp.set( body.getPosition() );
 		distmp.sub( previousPosition );
 
 		// filter out zero distance
 		float dist = AMath.fixup( distmp.len() );
 		if( !AMath.isZero( dist ) ) {
-			// accumulte it
+			// keeps track of it
+			carTraveledDistanceDt = dist;
+
+			// accumulate distance it
 			carTraveledDistance += dist;
-			sums++;
+			accuDistCount++;
 		}
+
+		// compute instant speed, these should be valid w/ a stddev of ~0.001
+		carInstantSpeedMtSec = AMath.fixup( carTraveledDistanceDt * Config.Physics.PhysicsTimestepHz );
+		accuSpeed += carInstantSpeedMtSec;
+		accuSpeedCount++;
+
+		// compute average speed, these should be valid w/ a stddev of ~0.001
+		carAvgSpeedMtSec = AMath.fixup( accuSpeed / (float)accuSpeedCount );
 	}
 
 	@Override

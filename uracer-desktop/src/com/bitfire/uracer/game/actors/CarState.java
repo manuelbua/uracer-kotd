@@ -21,17 +21,14 @@ public final class CarState {
 	public float currSpeedFactor = 0;
 	public float currForceFactor = 0;
 
-	/* speed */
-	public float speedMtSec = 0;
-
 	/* lateral forces */
 	public Vector2 lateralForceFront = new Vector2(), lateralForceRear = new Vector2();
 
-	// factors
+	// temporaries
 	private float carMaxSpeedSquared = 0;
 	private float carMaxForce = 0;
-
 	private int lastTileX = 0, lastTileY = 0;
+
 	private GameWorld world;
 
 	public CarState( GameWorld world, Car car ) {
@@ -57,7 +54,6 @@ public final class CarState {
 	public void update( CarDescriptor carDescriptor ) {
 		triggerTileChanged();
 		updateFactors( carDescriptor );
-		updateSpeed( carDescriptor );
 	}
 
 	private void updateFactors( CarDescriptor carDescriptor ) {
@@ -66,10 +62,6 @@ public final class CarState {
 		currThrottle = carDescriptor.throttle;
 		currSpeedFactor = AMath.clamp( currVelocityLenSquared / carMaxSpeedSquared, 0f, 1f );
 		currForceFactor = AMath.clamp( currThrottle / carMaxForce, 0f, 1f );
-	}
-
-	private void updateSpeed( CarDescriptor carDescriptor ) {
-//		speedMtSec
 	}
 
 	/* Keeps track of the car's tile position and trigger a TileChanged event whenever
@@ -87,8 +79,6 @@ public final class CarState {
 
 		if( (lastTileX != currTileX) || (lastTileY != currTileY) ) {
 			event.trigger( this, CarStateEvent.Type.onTileChanged );
-			// Gdx.app.log( "CarState", car.getClass().getSimpleName() + " onTileChanged(" + currTileX + "," + currTileY
-			// + ")" );
 		}
 	}
 }

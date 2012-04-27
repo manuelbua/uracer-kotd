@@ -83,4 +83,30 @@ public final class AMath {
 	public static float sigmoid( float strength ) {
 		return (float)(1f / (1f + Math.pow( Math.E, -strength )));
 	}
+
+	public static float truncate( float value, int decimal ) {
+		float temp = value;
+
+		switch( decimal ) {
+		case 1:
+			temp = (int)(value * 10) / 10f;
+			break;
+		case 2:
+			temp = (int)(value * 100) / 100f;
+			break;
+		case 3:
+			temp = (int)(value * 1000) / 1000f;
+			break;
+		}
+
+		return temp;
+	}
+
+	public static float round( float value, int decimal ) {
+		float p = (float)Math.pow( 10, decimal );
+		value = value * p;
+		float tmp = Math.round( value );
+		return (float)tmp / p;
+	}
+
 }

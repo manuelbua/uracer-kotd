@@ -10,7 +10,7 @@ public class PhysicsStepEvent extends Event<PhysicsStep> {
 	}
 
 	public interface Listener extends EventListener {
-		void physicsEvent( float temporalAliasing, Type type );
+		void physicsEvent( boolean stepped, float temporalAliasing, Type type );
 	}
 
 	/* This constructor will permits late-binding of the "source" member via the "trigger" method */
@@ -25,9 +25,9 @@ public class PhysicsStepEvent extends Event<PhysicsStep> {
 		notifiers[type.ordinal()].addListener( listener );
 	}
 
-	public void trigger( PhysicsStep source, float temporalAliasing, Type type ) {
+	public void trigger( PhysicsStep source, boolean stepped, float temporalAliasing, Type type ) {
 		this.source = source;
-		notifiers[type.ordinal()].physicsEvent( temporalAliasing, type );
+		notifiers[type.ordinal()].physicsEvent( stepped, temporalAliasing, type );
 	}
 
 	public float temporalAliasingFactor = 0;
@@ -36,9 +36,9 @@ public class PhysicsStepEvent extends Event<PhysicsStep> {
 
 	private class Notifier extends EventNotifier<Listener> implements Listener {
 		@Override
-		public void physicsEvent( float temporalAliasing, Type type ) {
+		public void physicsEvent( boolean stepped, float temporalAliasing, Type type ) {
 			for( Listener listener : listeners ) {
-				listener.physicsEvent( temporalAliasing, type );
+				listener.physicsEvent( stepped, temporalAliasing, type );
 			}
 		}
 	};

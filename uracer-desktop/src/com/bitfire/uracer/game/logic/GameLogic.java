@@ -59,6 +59,7 @@ import com.bitfire.uracer.task.TaskManagerEvent;
 import com.bitfire.uracer.utils.AMath;
 import com.bitfire.uracer.utils.BoxedFloat;
 import com.bitfire.uracer.utils.BoxedFloatAccessor;
+import com.bitfire.uracer.utils.CarUtils;
 import com.bitfire.uracer.utils.NumberString;
 
 /** This concrete class manages to handle the inner game logic and its evolving states: it's all about gamedata, baby!
@@ -328,7 +329,7 @@ public class GameLogic implements CarEvent.Listener, CarStateEvent.Listener, Pla
 
 	public void onBeforeRender() {
 		// trigger the event and let's subscribers interpolate and update their state()
-		physicsStep.triggerOnTemporalAliasing( URacer.getTemporalAliasing() );
+		physicsStep.triggerOnTemporalAliasing( URacer.hasStepped(), URacer.getTemporalAliasing() );
 
 		if( playerCar != null ) {
 			Vector2 carpos = playerCar.state().position;
@@ -512,7 +513,8 @@ public class GameLogic implements CarEvent.Listener, CarStateEvent.Listener, Pla
 						playerGhostCar.setReplay( any );
 					}
 				} else {
-					Gdx.app.log( "GameLogic", "Player traveled " + playerCar.getTraveledDistance() + " mt (" + playerCar.getSums() + ")" );
+
+					Replay thisReplay = null;
 
 					if( recorder.isRecording() ) {
 						recorder.endRecording();
@@ -535,22 +537,29 @@ public class GameLogic implements CarEvent.Listener, CarStateEvent.Listener, Pla
 						playerGhostCar.setReplay( any );
 						lapState.setLastTrackTimeSeconds( any.trackTimeSeconds );
 
+						thisReplay = any;
+
 						messager.show( "GO!  GO!  GO!", 3f, Type.Information, MessagePosition.Middle, MessageSize.Big );
 					} else {
 
 						// both valid, replay best, overwrite worst
 
-						Replay best = lapState.getBestReplay(), worst = lapState.getWorstReplay();
+						Replay best = lapState.getBestReplay();
+						Replay worst = lapState.getWorstReplay();
 
 						if( AMath.equals( worst.trackTimeSeconds, best.trackTimeSeconds ) ) {
 							// draw!
 							messager.show( "DRAW!", 3f, Type.Information, MessagePosition.Top, MessageSize.Big );
 						} else {
 							if( lastRecordedLapId == best.id ) {
+								thisReplay = best;
+
 								lapState.setLastTrackTimeSeconds( best.trackTimeSeconds );
 								messager.show( "-" + NumberString.format( worst.trackTimeSeconds - best.trackTimeSeconds ) + " seconds!", 3f, Type.Good,
 										MessagePosition.Top, MessageSize.Big );
 							} else {
+								thisReplay = worst;
+
 								lapState.setLastTrackTimeSeconds( worst.trackTimeSeconds );
 								messager.show( "+" + NumberString.format( worst.trackTimeSeconds - best.trackTimeSeconds ) + " seconds", 3f, Type.Bad,
 										MessagePosition.Top, MessageSize.Big );
@@ -562,6 +571,12 @@ public class GameLogic implements CarEvent.Listener, CarStateEvent.Listener, Pla
 						lapState.restart();
 						recorder.beginRecording( playerCar, worst, name, gameplaySettings.difficulty );
 						lastRecordedLapId = worst.id;
+					}
+
+					if( thisReplay != null ) {
+						CarUtils.dumpSpeedInfo( "Player", playerCar, thisReplay.trackTimeSeconds );
+//						Gdx.app.log( "GameLogic", "speed=" + speedKmh + "km/h (" + mtsec + "mt/s)" );
+
 					}
 				}
 

@@ -138,7 +138,8 @@ public class PlayerCar extends Car {
 
 			// compute throttle
 			carInput.throttle = touchPos.dst( carPos ) * 4 * carDesc.carModel.max_force;
-			// carInput.throttle = touchPos.dst( carPos ) * 2 * carDesc.carModel.max_force; // x2 = 0<->halfscreen is considered 0<->1
+			// carInput.throttle = touchPos.dst( carPos ) * 2 * carDesc.carModel.max_force; // x2 = 0<->halfscreen is
+			// considered 0<->1
 		}
 
 		return carInput;
@@ -181,7 +182,13 @@ public class PlayerCar extends Car {
 
 		// inspect impact feedback, accumulate vel/ang velocities
 		handleImpactFeedback();
+	}
 
+	@Override
+	public void onTemporalAliasing( boolean stepped, float aliasingFactor ) {
+		super.onTemporalAliasing( stepped, aliasingFactor );
+
+		// update the states once ticking has finished, if any
 		carState.update( carDesc );
 		driftState.update( carSim.lateralForceFront.y, carSim.lateralForceRear.y, carDesc.velocity_wc.len() );
 	}
