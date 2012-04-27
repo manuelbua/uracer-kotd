@@ -21,9 +21,13 @@ public final class CarState {
 	public float currSpeedFactor = 0;
 	public float currForceFactor = 0;
 
+	/* speed */
+	public float speedMtSec = 0;
+
 	/* lateral forces */
 	public Vector2 lateralForceFront = new Vector2(), lateralForceRear = new Vector2();
 
+	// factors
 	private float carMaxSpeedSquared = 0;
 	private float carMaxForce = 0;
 
@@ -42,9 +46,18 @@ public final class CarState {
 		}
 	}
 
+	public void reset() {
+		// causes an onTileChanged event to be raised the next update step
+		lastTileX = -1;
+		lastTileY = -1;
+		currTileX = -1;
+		currTileY = -1;
+	}
+
 	public void update( CarDescriptor carDescriptor ) {
 		triggerTileChanged();
 		updateFactors( carDescriptor );
+		updateSpeed( carDescriptor );
 	}
 
 	private void updateFactors( CarDescriptor carDescriptor ) {
@@ -55,6 +68,13 @@ public final class CarState {
 		currForceFactor = AMath.clamp( currThrottle / carMaxForce, 0f, 1f );
 	}
 
+	private void updateSpeed( CarDescriptor carDescriptor ) {
+//		speedMtSec
+	}
+
+	/* Keeps track of the car's tile position and trigger a TileChanged event whenever
+	 * the car's world position translates to a tile index that is different than the
+	 * previous one */
 	private void triggerTileChanged() {
 		lastTileX = currTileX;
 		lastTileY = currTileY;
@@ -70,13 +90,5 @@ public final class CarState {
 			// Gdx.app.log( "CarState", car.getClass().getSimpleName() + " onTileChanged(" + currTileX + "," + currTileY
 			// + ")" );
 		}
-	}
-
-	public void reset() {
-		// causes an onTileChanged event to be raised the next update step
-		lastTileX = -1;
-		lastTileY = -1;
-		currTileX = -1;
-		currTileY = -1;
 	}
 }
