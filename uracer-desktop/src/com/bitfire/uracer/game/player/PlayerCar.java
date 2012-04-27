@@ -96,6 +96,7 @@ public class PlayerCar extends Car {
 	}
 
 	protected CarInput acquireInput() {
+		// FIXME check if inputSystem is valid!
 		carPos.set( Director.screenPosFor( body ) );
 
 		touchPos.set( inputSystem.getXY() );

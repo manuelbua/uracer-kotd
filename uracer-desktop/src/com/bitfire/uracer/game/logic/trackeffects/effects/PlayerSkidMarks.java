@@ -10,6 +10,7 @@ import com.bitfire.uracer.game.Director;
 import com.bitfire.uracer.game.logic.trackeffects.TrackEffect;
 import com.bitfire.uracer.game.player.PlayerCar;
 import com.bitfire.uracer.game.player.PlayerDriftState;
+import com.bitfire.uracer.game.rendering.GameRenderer;
 import com.bitfire.uracer.utils.AMath;
 import com.bitfire.uracer.utils.Convert;
 
@@ -73,7 +74,7 @@ public class PlayerSkidMarks extends TrackEffect {
 	}
 
 	@Override
-	public void render( SpriteBatch batch ) {
+	public void render( GameRenderer gameRenderer, SpriteBatch batch ) {
 		float lifeRatio;
 		SkidMark d;
 		visibleSkidMarksCount = 0;
@@ -81,6 +82,7 @@ public class PlayerSkidMarks extends TrackEffect {
 		// front drift marks
 		for( int i = 0; i < MaxSkidMarks; i++ ) {
 			d = skidMarks[i];
+			// FIXME implement gameRenderer.isVisible instead
 			if( d.life > 0 && Director.isVisible( d.getBoundingRectangle() ) ) {
 				visibleSkidMarksCount++;
 

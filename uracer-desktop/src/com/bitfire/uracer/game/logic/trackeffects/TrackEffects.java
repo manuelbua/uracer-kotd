@@ -4,6 +4,7 @@ import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.utils.Array;
 import com.bitfire.uracer.game.events.GameEvents;
 import com.bitfire.uracer.game.logic.GameTask;
+import com.bitfire.uracer.game.rendering.GameRenderer;
 import com.bitfire.uracer.game.rendering.GameRendererEvent;
 import com.bitfire.uracer.utils.Manager;
 
@@ -13,13 +14,15 @@ public final class TrackEffects extends GameTask {
 	private final GameRendererEvent.Listener gameRendererEvent = new GameRendererEvent.Listener() {
 		@Override
 		public void gameRendererEvent( GameRendererEvent.Type type ) {
+			GameRenderer gameRenderer = GameEvents.gameRenderer.source;
+
 			SpriteBatch batch = GameEvents.gameRenderer.batch;
 			Array<TrackEffect> items = manager.items;
 
 			for( int i = 0; i < items.size; i++ ) {
 				TrackEffect effect = items.get( i );
 				if( effect != null ) {
-					effect.render( batch );
+					effect.render( gameRenderer, batch );
 				}
 			}
 		}
