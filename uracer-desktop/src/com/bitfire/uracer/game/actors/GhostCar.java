@@ -30,7 +30,7 @@ public final class GhostCar extends Car {
 		// this.carState = new CarState( gameWorld, this );
 
 		setActive( false );
-		resetPhysics();
+		reset();
 	}
 
 	// input data for this car cames from a Replay object
