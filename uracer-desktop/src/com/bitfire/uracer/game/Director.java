@@ -16,7 +16,7 @@ public final class Director {
 	private static OrthographicCamera camera;
 	private static Vector2 screenPosFor;
 	private static Matrix4 mvpMt, mvpPx;
-
+	private static Rectangle cameraRect;
 	private static Vector2 tmp;
 
 	private Director() {
@@ -91,8 +91,6 @@ public final class Director {
 		screenPosFor.y = camera.position.y - worldPosition.y + halfViewport.y;
 		return screenPosFor;
 	}
-
-	private static Rectangle cameraRect;
 
 	public static boolean isVisible( Rectangle rect ) {
 		cameraRect.set( camera.position.x - halfViewport.x, camera.position.y - halfViewport.y, camera.viewportWidth, camera.viewportHeight );
