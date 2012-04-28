@@ -51,6 +51,7 @@ import com.bitfire.uracer.game.logic.trackeffects.TrackEffects;
 import com.bitfire.uracer.game.logic.trackeffects.effects.PlayerSkidMarks;
 import com.bitfire.uracer.game.player.PlayerCar;
 import com.bitfire.uracer.game.player.PlayerDriftStateEvent;
+import com.bitfire.uracer.game.rendering.debug.Debug;
 import com.bitfire.uracer.game.tween.GameTweener;
 import com.bitfire.uracer.game.tween.WcTweener;
 import com.bitfire.uracer.game.world.GameWorld;
@@ -69,6 +70,9 @@ import com.bitfire.uracer.utils.NumberString;
 public class GameLogic implements CarEvent.Listener, CarStateEvent.Listener, PlayerDriftStateEvent.Listener {
 	// event
 	// public final GameLogicEvent event = new GameLogicEvent();
+
+	// debug helper
+	private Debug debug = null;
 
 	// scaling
 	private ScalingStrategy scalingStrategy = null;
@@ -141,6 +145,9 @@ public class GameLogic implements CarEvent.Listener, CarStateEvent.Listener, Pla
 		// initializes the Director helper
 		Director.init( Config.Physics.PixelsPerMeter );
 
+		// initialize debug helper
+		debug = new Debug( box2dWorld );
+
 		// create tweening support
 		createTweeners();
 		Gdx.app.log( "GameLogic", "Helpers created" );
@@ -159,6 +166,9 @@ public class GameLogic implements CarEvent.Listener, CarStateEvent.Listener, Pla
 		// creates player and ghost cars
 		createPlayer( gameWorld, carAspect, carModel );
 		Gdx.app.log( "GameLogic", "Player created" );
+
+		debug.setPlayer( playerCar );
+		Gdx.app.log( "GameLogic", "Debug helper initialized with player instance" );
 
 		createGameTasks();
 		configureTasks( playerCar, playerLapState );
@@ -188,6 +198,7 @@ public class GameLogic implements CarEvent.Listener, CarStateEvent.Listener, Pla
 		gameWorld.dispose();
 		GameTweener.dispose();
 		WcTweener.dispose();
+		debug.dispose();
 		Director.dispose();
 		box2dWorld.dispose();
 	}
@@ -317,6 +328,8 @@ public class GameLogic implements CarEvent.Listener, CarStateEvent.Listener, Pla
 
 		updatePlayerCarFriction();
 		updateTimeMultiplier();
+
+		debug.tick();
 
 		return true;
 	}

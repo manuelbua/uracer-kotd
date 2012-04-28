@@ -6,7 +6,6 @@ import com.badlogic.gdx.math.MathUtils;
 import com.badlogic.gdx.math.Matrix4;
 import com.badlogic.gdx.math.Rectangle;
 import com.badlogic.gdx.math.Vector2;
-import com.badlogic.gdx.math.Vector3;
 import com.badlogic.gdx.physics.box2d.Body;
 import com.bitfire.uracer.utils.Convert;
 
@@ -48,7 +47,7 @@ public final class Director {
 		mvpPx.set( camera.combined );
 		mvpMt.set( mvpPx );
 
-		// rescale
+		// pixels to meters
 		mvpMt.val[Matrix4.M00] *= pixelsPerMeter;
 		mvpMt.val[Matrix4.M01] *= pixelsPerMeter;
 		mvpMt.val[Matrix4.M10] *= pixelsPerMeter;
@@ -70,18 +69,6 @@ public final class Director {
 		camera.position.z = 0;
 
 		update();
-	}
-
-	public static void setPositionMt( Vector2 pos, boolean round ) {
-		setPositionPx( Convert.mt2px( pos ), round );
-	}
-
-	public static Vector3 pos() {
-		return camera.position;
-	}
-
-	public static Matrix4 getMatViewProjPx() {
-		return mvpPx;
 	}
 
 	public static Matrix4 getMatViewProjMt() {

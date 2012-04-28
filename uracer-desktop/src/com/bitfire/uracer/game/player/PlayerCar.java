@@ -1,7 +1,6 @@
 package com.bitfire.uracer.game.player;
 
 import com.badlogic.gdx.Gdx;
-import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.math.MathUtils;
 import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.math.WindowedMean;
@@ -16,8 +15,6 @@ import com.bitfire.uracer.game.actors.CarState;
 import com.bitfire.uracer.game.input.Input;
 import com.bitfire.uracer.game.world.GameWorld;
 import com.bitfire.uracer.utils.AMath;
-import com.bitfire.uracer.utils.Convert;
-import com.bitfire.uracer.utils.SpriteBatchUtils;
 import com.bitfire.uracer.utils.VMath;
 
 public class PlayerCar extends Car {
@@ -56,6 +53,11 @@ public class PlayerCar extends Car {
 		// states
 		this.carState = new CarState( gameWorld, this );
 		this.driftState = new PlayerDriftState( this );
+	}
+
+	// use strictly for debug purposes *ONLY*!
+	public CarDescriptor getCarDescriptor() {
+		return carDesc;
 	}
 
 	@Override
@@ -214,26 +216,6 @@ public class PlayerCar extends Car {
 			}
 
 			input.throttle *= throttleDampAF;
-		}
-	}
-
-	@Override
-	public void onDebug( SpriteBatch batch ) {
-		if( Config.Graphics.RenderPlayerDebugInfo ) {
-			SpriteBatchUtils.drawString( batch, "vel_wc len =" + carDesc.velocity_wc.len(), 0, 13 );
-			SpriteBatchUtils.drawString( batch, "vel_wc [x=" + carDesc.velocity_wc.x + ", y=" + carDesc.velocity_wc.y + "]", 0, 20 );
-			SpriteBatchUtils.drawString( batch, "steerangle=" + carDesc.steerangle, 0, 27 );
-			SpriteBatchUtils.drawString( batch, "throttle=" + carDesc.throttle, 0, 34 );
-			SpriteBatchUtils.drawString( batch, "screen x=" + Director.screenPosFor( body ).x + ",y=" + Director.screenPosFor( body ).y, 0, 80 );
-			SpriteBatchUtils.drawString( batch, "world-mt x=" + body.getPosition().x + ",y=" + body.getPosition().y, 0, 87 );
-			SpriteBatchUtils.drawString( batch, "world-px x=" + Convert.mt2px( body.getPosition().x ) + ",y=" + Convert.mt2px( body.getPosition().y ), 0, 93 );
-			// Debug.drawString( "dir worldsize x=" + Director.worldSizeScaledPx.x + ",y=" +
-			// Director.worldSizeScaledPx.y, 0, 100 );
-			// Debug.drawString( "dir bounds x=" + Director.boundsPx.x + ",y=" + Director.boundsPx.width, 0, 107 );
-			SpriteBatchUtils.drawString( batch, "orient=" + body.getAngle(), 0, 114 );
-			SpriteBatchUtils.drawString( batch, "render.interp=" + (state().position.x + "," + state().position.y), 0, 121 );
-
-			// BatchUtils.drawString( batch, "on tile " + tilePosition, 0, 0 );
 		}
 	}
 }

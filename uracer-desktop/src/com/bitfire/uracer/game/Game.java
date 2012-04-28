@@ -1,6 +1,5 @@
 package com.bitfire.uracer.game;
 
-import com.badlogic.gdx.physics.box2d.World;
 import com.badlogic.gdx.utils.Disposable;
 import com.bitfire.uracer.Config;
 import com.bitfire.uracer.ScalingStrategy;
@@ -10,7 +9,6 @@ import com.bitfire.uracer.game.actors.Car.Aspect;
 import com.bitfire.uracer.game.actors.CarModel;
 import com.bitfire.uracer.game.logic.GameLogic;
 import com.bitfire.uracer.game.rendering.GameRenderer;
-import com.bitfire.uracer.game.rendering.debug.Debug;
 import com.bitfire.uracer.game.world.GameWorld;
 import com.bitfire.uracer.postprocessing.PostProcessor;
 import com.bitfire.uracer.postprocessing.effects.Bloom;
@@ -27,7 +25,6 @@ public class Game implements Disposable {
 	private GameLogic gameLogic = null;
 
 	// rendering
-	private Debug debug = null;
 	private GameRenderer gameRenderer = null;
 	private boolean canPostProcess = false;
 
@@ -42,10 +39,6 @@ public class Game implements Disposable {
 		// handle game rules and mechanics, it's all about game data
 		gameLogic = new GameLogic( gameplaySettings, scalingStrategy, levelName, carAspect, carModel );
 		GameWorld world = gameLogic.getGameWorld();
-		World box2dWorld = gameLogic.getBox2dWorld();
-
-		// initialize debug helpers
-		debug = new Debug( box2dWorld );
 
 		// handles rendering
 		gameRenderer = new GameRenderer( scalingStrategy, world, Config.PostProcessing.Enabled );
@@ -59,7 +52,6 @@ public class Game implements Disposable {
 
 	@Override
 	public void dispose() {
-		debug.dispose();
 		gameRenderer.dispose();
 		gameLogic.dispose();
 	}
@@ -124,7 +116,6 @@ public class Game implements Disposable {
 			updatePostProcessingEffects();
 		}
 
-		debug.tick();
 		return true;
 	}
 
