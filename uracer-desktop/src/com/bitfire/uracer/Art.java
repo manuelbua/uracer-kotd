@@ -42,57 +42,17 @@ public final class Art {
 
 	public static void init( float invZoomFactor ) {
 		mipMap = Config.Graphics.EnableMipMapping;
-
-		debugFont = split( "data/base/debug-font.png", DebugFontWidth, DebugFontHeight, mipMap );
-
-		meshTrackWall = newTexture( "data/track/wall.png", false );
-		meshMissing = newTexture( "data/3d/textures/missing-mesh.png", mipMap );
-		meshPalm = newTexture( "data/3d/textures/palm.png", mipMap );
-		meshTribune = newTexture( "data/3d/textures/tribune.png", mipMap );
-
-		// trees
-		meshTreeTrunk = newTexture( "data/3d/textures/trunk_6_col.png", mipMap );
-		meshTreeLeavesSpring = new Texture[ 7 ];
-		for( int i = 0; i < 7; i++ ) {
-			meshTreeLeavesSpring[i] = newTexture( "data/3d/textures/leaves_" + (i + 1) + "_spring_1.png", mipMap );
-		}
-
-		// cars
-		cars = new TextureAtlas( "data/cars/pack" );
-
-		skidMarksFront = cars.findRegion( "skid-marks-front" );
-		skidMarksRear = cars.findRegion( "skid-marks-rear" );
-		carAmbientOcclusion = cars.findRegion( "car-ao" );
-
-		Art.loadFonts( invZoomFactor );
-
-		// friction maps
-		frictionNature = new Pixmap( Gdx.files.internal( "data/levels/tilesets/nature/224-friction.png" ) );
+		loadFonts( invZoomFactor );
+		loadCarGraphics();
+		loadMeshesGraphics();
+		loadFrictionMaps();
 	}
 
 	public static void dispose() {
-		debugFont[0][0].getTexture().dispose();
-
-		cars.dispose();
-
-		meshMissing.dispose();
-		meshTrackWall.dispose();
-		meshPalm.dispose();
-		meshTribune.dispose();
-
-		// trees
-		for( int i = 0; i < 7; i++ ) {
-			meshTreeLeavesSpring[i].dispose();
-		}
-
-		meshTreeTrunk.dispose();
-
-		fonts.dispose();
-
-		frictionNature.dispose();
-
-		skidMarksFront.getTexture().dispose();
-		skidMarksRear.getTexture().dispose();
+		disposeFonts();
+		disposeCarGraphics();
+		disposeMeshesGraphics();
+		disposeFrictionMaps();
 	}
 
 	private static TextureRegion[][] split( String name, int width, int height, boolean mipMap ) {
@@ -125,8 +85,64 @@ public final class Art {
 		return t;
 	}
 
+	// friction maps
+	private static void loadFrictionMaps() {
+		// friction maps
+		frictionNature = new Pixmap( Gdx.files.internal( "data/levels/tilesets/nature/224-friction.png" ) );
+	}
+
+	private static void disposeFrictionMaps() {
+		frictionNature.dispose();
+	}
+
+	// meshes
+	private static void loadMeshesGraphics() {
+		meshTrackWall = newTexture( "data/track/wall.png", false );
+		meshMissing = newTexture( "data/3d/textures/missing-mesh.png", mipMap );
+		meshPalm = newTexture( "data/3d/textures/palm.png", mipMap );
+		meshTribune = newTexture( "data/3d/textures/tribune.png", mipMap );
+
+		// trees
+		meshTreeTrunk = newTexture( "data/3d/textures/trunk_6_col.png", mipMap );
+		meshTreeLeavesSpring = new Texture[ 7 ];
+		for( int i = 0; i < 7; i++ ) {
+			meshTreeLeavesSpring[i] = newTexture( "data/3d/textures/leaves_" + (i + 1) + "_spring_1.png", mipMap );
+		}
+	}
+
+	private static void disposeMeshesGraphics() {
+		meshMissing.dispose();
+		meshTrackWall.dispose();
+		meshPalm.dispose();
+		meshTribune.dispose();
+
+		// trees
+		for( int i = 0; i < 7; i++ ) {
+			meshTreeLeavesSpring[i].dispose();
+		}
+
+		meshTreeTrunk.dispose();
+	}
+
+	// cars
+	private static void loadCarGraphics() {
+		cars = new TextureAtlas( "data/cars/pack" );
+
+		skidMarksFront = cars.findRegion( "skid-marks-front" );
+		skidMarksRear = cars.findRegion( "skid-marks-rear" );
+		carAmbientOcclusion = cars.findRegion( "car-ao" );
+	}
+
+	private static void disposeCarGraphics() {
+		cars.dispose();
+	}
+
+	// fonts
 	private static void loadFonts( float scale ) {
-		// fonts
+		// debug font, no need to scale it
+		debugFont = split( "data/base/debug-font.png", DebugFontWidth, DebugFontHeight, mipMap );
+
+		// game fonts
 		fonts = new TextureAtlas( "data/font/pack" );
 		for( TextureRegion r : fonts.getRegions() ) {
 			r.getTexture().setFilter( TextureFilter.Linear, TextureFilter.Linear );
@@ -149,5 +165,10 @@ public final class Art {
 		fontCurseYRbig.setScale( scale );
 		fontCurseGbig.setScale( scale );
 		fontCurseRbig.setScale( scale );
+	}
+
+	private static void disposeFonts() {
+		debugFont[0][0].getTexture().dispose();
+		fonts.dispose();
 	}
 }
