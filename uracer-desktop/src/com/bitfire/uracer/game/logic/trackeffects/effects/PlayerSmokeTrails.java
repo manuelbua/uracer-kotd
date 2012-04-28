@@ -12,11 +12,9 @@ import com.bitfire.uracer.game.logic.trackeffects.TrackEffect;
 import com.bitfire.uracer.game.player.PlayerCar;
 import com.bitfire.uracer.game.rendering.GameRenderer;
 
-/**
- * FIXME disabled for a long time, need testing again
+/** FIXME disabled for a long time, need testing again
  *
- * @author bmanuel
- */
+ * @author bmanuel */
 public class PlayerSmokeTrails extends TrackEffect {
 	public static final int MaxParticles = 100;
 
@@ -38,7 +36,7 @@ public class PlayerSmokeTrails extends TrackEffect {
 
 		public SmokeEffect() {
 			effect = new ParticleEffect();
-			effect.load( Gdx.files.internal( "data/partfx/smoke.p" ), Art.carTextures );
+			effect.load( Gdx.files.internal( "data/partfx/smoke.p" ), Art.cars );
 
 			baseEmitter = effect.getEmitters().get( 0 );
 
@@ -114,7 +112,7 @@ public class PlayerSmokeTrails extends TrackEffect {
 		posY = 0;
 	}
 
-	public void setPosition(float x, float y) {
+	public void setPosition( float x, float y ) {
 		posX = x;
 		posY = y;
 	}

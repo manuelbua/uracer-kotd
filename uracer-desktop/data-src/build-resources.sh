@@ -41,13 +41,6 @@ ${TEX_PACKER} font ${DEST}/font >/dev/null
 cp -f font/*.fnt ${DEST}/font
 echo "done!"
 
-# 3d
-#echo -n "Cooking models textures..."
-#rm -rf "${DEST}/3d/textures/"
-#mkdir -p "${DEST}/3d/textures/"
-#${TEX_PACKER} 3d ${DEST}/3d/textures >/dev/null
-#echo "done!"
-
 # track
 echo -n "Cooking track meshes..."
 rm -rf "${DEST}/track/"

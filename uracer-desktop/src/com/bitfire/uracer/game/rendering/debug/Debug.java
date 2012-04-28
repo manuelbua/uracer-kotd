@@ -84,7 +84,7 @@ public final class Debug {
 		}
 
 		if( Config.Graphics.RenderDebugInfoGraphics ) {
-			renderGraphicalStats( batch, Gdx.graphics.getWidth() - getStatsWidth(), Gdx.graphics.getHeight() - getStatsHeight() - Art.fontHeight - 5 );
+			renderGraphicalStats( batch, Gdx.graphics.getWidth() - getStatsWidth(), Gdx.graphics.getHeight() - getStatsHeight() - Art.DebugFontHeight - 5 );
 		}
 
 		if( Config.Graphics.RenderDebugInfoMemoryStats ) {
@@ -112,11 +112,11 @@ public final class Debug {
 		String text = "fps: " + NumberString.formatLong( Gdx.graphics.getFramesPerSecond() ) + ", physics: " + NumberString.formatLong( physicsTime ) + ", graphics: "
 				+ NumberString.formatLong( renderTime );
 
-		SpriteBatchUtils.drawString( batch, text, Gdx.graphics.getWidth() - text.length() * Art.fontWidth, Gdx.graphics.getHeight() - Art.fontHeight );
+		SpriteBatchUtils.drawString( batch, text, Gdx.graphics.getWidth() - text.length() * Art.DebugFontWidth, Gdx.graphics.getHeight() - Art.DebugFontHeight );
 	}
 
 	private void renderVersionInfo( SpriteBatch batch ) {
-		SpriteBatchUtils.drawString( batch, uRacerInfo, Gdx.graphics.getWidth() - uRacerInfo.length() * Art.fontWidth, 0, Art.fontWidth, Art.fontHeight * 2 );
+		SpriteBatchUtils.drawString( batch, uRacerInfo, Gdx.graphics.getWidth() - uRacerInfo.length() * Art.DebugFontWidth, 0, Art.DebugFontWidth, Art.DebugFontHeight * 2 );
 	}
 
 	private void renderMemoryUsage( SpriteBatch batch ) {
@@ -126,7 +126,7 @@ public final class Debug {
 
 		String text = "java heap = " + NumberString.format( javaHeapMb ) + "MB" + " - native heap = " + NumberString.format( nativeHeapMb ) + "MB";
 
-		SpriteBatchUtils.drawString( batch, text, (Gdx.graphics.getWidth() - text.length() * Art.fontWidth) / 2, Gdx.graphics.getHeight() - Art.fontHeight );
+		SpriteBatchUtils.drawString( batch, text, (Gdx.graphics.getWidth() - text.length() * Art.DebugFontWidth) / 2, Gdx.graphics.getHeight() - Art.DebugFontHeight );
 	}
 
 	private void renderB2dWorld( World world, Matrix4 modelViewProj ) {

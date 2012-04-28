@@ -75,7 +75,7 @@ public class HudDebugMeter {
 		drawMeter();
 		SpriteBatchUtils.drawString( batch, getMessage(), pos.x, pos.y );
 
-		batch.draw( region, pos.x, pos.y + Art.fontHeight );
+		batch.draw( region, pos.x, pos.y + Art.DebugFontHeight );
 	}
 
 	private void drawMeter() {

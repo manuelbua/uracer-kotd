@@ -67,7 +67,7 @@ public class URacer implements ApplicationListener {
 
 		Convert.init( scalingStrategy.invTileMapZoomFactor, Config.Physics.PixelsPerMeter );
 		Art.init( scalingStrategy.invTileMapZoomFactor );
-		SpriteBatchUtils.init( Art.base6 );
+		SpriteBatchUtils.init( Art.debugFont, Art.DebugFontWidth );
 		Sounds.init();
 
 		Gdx.graphics.setVSync( true );

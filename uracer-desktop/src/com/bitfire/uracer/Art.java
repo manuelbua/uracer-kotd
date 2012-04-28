@@ -10,10 +10,7 @@ import com.badlogic.gdx.graphics.g2d.TextureAtlas;
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
 
 public final class Art {
-	public static TextureRegion[][] base6;
-	public static TextureRegion quad;
-
-	public static TextureAtlas fonts;
+	public static TextureRegion[][] debugFont;
 
 	// tileset friction maps
 	public static Pixmap frictionNature;
@@ -27,30 +24,26 @@ public final class Art {
 	public static Texture meshTrackWall;
 
 	// cars
-	public static TextureAtlas carTextures;
 	public static TextureAtlas cars;
 	public static TextureRegion carAmbientOcclusion;
 	public static TextureRegion skidMarksFront, skidMarksRear;
 
 	// fonts
+	public static final int DebugFontWidth = 6;
+	public static final int DebugFontHeight = 6;
 	public static BitmapFont fontCurseYR, fontCurseR, fontCurseG;
 	public static BitmapFont fontCurseYRbig, fontCurseRbig, fontCurseGbig;
 
 	private static boolean mipMap;
-	public static int fontWidth;
-	public static int fontHeight;
+	private static TextureAtlas fonts;
 
 	private Art() {
 	}
 
 	public static void init( float invZoomFactor ) {
-		fontWidth = 6;
-		fontHeight = 6;
-
 		mipMap = Config.Graphics.EnableMipMapping;
 
-		base6 = split( "data/base/base6.png", 6, 6, mipMap );
-		quad = new TextureRegion( base6[0][10], 0, 0, 18, 18 );
+		debugFont = split( "data/base/debug-font.png", DebugFontWidth, DebugFontHeight, mipMap );
 
 		meshTrackWall = newTexture( "data/track/wall.png", false );
 		meshMissing = newTexture( "data/3d/textures/missing-mesh.png", mipMap );
@@ -65,40 +58,21 @@ public final class Art {
 		}
 
 		// cars
-		carTextures = new TextureAtlas( "data/cars/pack" );
+		cars = new TextureAtlas( "data/cars/pack" );
 
-		cars = carTextures;
-		skidMarksFront = carTextures.findRegion( "skid-marks-front" );
-		skidMarksRear = carTextures.findRegion( "skid-marks-rear" );
-		carAmbientOcclusion = carTextures.findRegion( "car-ao" );
+		skidMarksFront = cars.findRegion( "skid-marks-front" );
+		skidMarksRear = cars.findRegion( "skid-marks-rear" );
+		carAmbientOcclusion = cars.findRegion( "car-ao" );
 
-		// fonts
-		fonts = new TextureAtlas( "data/font/pack" );
-		for( TextureRegion r : fonts.getRegions() ) {
-			r.getTexture().setFilter( TextureFilter.Linear, TextureFilter.Linear );
-		}
-
-		// default size
-		fontCurseYR = new BitmapFont( Gdx.files.internal( "data/font/curse-y-r.fnt" ), Art.fonts.findRegion( "curse-y-r" ), true );
-		fontCurseG = new BitmapFont( Gdx.files.internal( "data/font/curse-g.fnt" ), Art.fonts.findRegion( "curse-g" ), true );
-		fontCurseR = new BitmapFont( Gdx.files.internal( "data/font/curse-r.fnt" ), Art.fonts.findRegion( "curse-r" ), true );
-
-		// big size
-		fontCurseYRbig = new BitmapFont( Gdx.files.internal( "data/font/curse-y-r-big.fnt" ), Art.fonts.findRegion( "curse-y-r-big" ), true );
-		fontCurseGbig = new BitmapFont( Gdx.files.internal( "data/font/curse-g-big.fnt" ), Art.fonts.findRegion( "curse-g-big" ), true );
-		fontCurseRbig = new BitmapFont( Gdx.files.internal( "data/font/curse-r-big.fnt" ), Art.fonts.findRegion( "curse-r-big" ), true );
-
-		Art.scaleFonts( invZoomFactor );
+		Art.loadFonts( invZoomFactor );
 
 		// friction maps
 		frictionNature = new Pixmap( Gdx.files.internal( "data/levels/tilesets/nature/224-friction.png" ) );
 	}
 
 	public static void dispose() {
-		base6[0][0].getTexture().dispose();
-		quad.getTexture().dispose();
+		debugFont[0][0].getTexture().dispose();
 
-		carAmbientOcclusion.getTexture().dispose();
 		cars.dispose();
 
 		meshMissing.dispose();
@@ -139,15 +113,8 @@ public final class Art {
 		return res;
 	}
 
-	// private static TextureRegion load( String name, int width, int height, boolean mipMap ) {
-	// Texture texture = newTexture( name, mipMap );
-	// TextureRegion region = new TextureRegion( texture, 0, 0, width, height );
-	// region.flip( false, true );
-	// return region;
-	// }
-
 	private static Texture newTexture( String name, boolean mipMap ) {
-		Texture t = new Texture( Gdx.files.internal( name ), Format.RGBA8888, mipMap );
+		Texture t = new Texture( Gdx.files.internal( name ), Format.RGBA4444, mipMap );
 
 		if( mipMap ) {
 			t.setFilter( TextureFilter.MipMapLinearNearest, TextureFilter.Nearest );
@@ -158,12 +125,29 @@ public final class Art {
 		return t;
 	}
 
-	private static void scaleFonts( float scale ) {
-		Art.fontCurseYR.setScale( scale );
-		Art.fontCurseG.setScale( scale );
-		Art.fontCurseR.setScale( scale );
-		Art.fontCurseYRbig.setScale( scale );
-		Art.fontCurseGbig.setScale( scale );
-		Art.fontCurseRbig.setScale( scale );
+	private static void loadFonts( float scale ) {
+		// fonts
+		fonts = new TextureAtlas( "data/font/pack" );
+		for( TextureRegion r : fonts.getRegions() ) {
+			r.getTexture().setFilter( TextureFilter.Linear, TextureFilter.Linear );
+		}
+
+		// default size
+		fontCurseYR = new BitmapFont( Gdx.files.internal( "data/font/curse-y-r.fnt" ), Art.fonts.findRegion( "curse-y-r" ), true );
+		fontCurseG = new BitmapFont( Gdx.files.internal( "data/font/curse-g.fnt" ), Art.fonts.findRegion( "curse-g" ), true );
+		fontCurseR = new BitmapFont( Gdx.files.internal( "data/font/curse-r.fnt" ), Art.fonts.findRegion( "curse-r" ), true );
+
+		// big size
+		fontCurseYRbig = new BitmapFont( Gdx.files.internal( "data/font/curse-y-r-big.fnt" ), Art.fonts.findRegion( "curse-y-r-big" ), true );
+		fontCurseGbig = new BitmapFont( Gdx.files.internal( "data/font/curse-g-big.fnt" ), Art.fonts.findRegion( "curse-g-big" ), true );
+		fontCurseRbig = new BitmapFont( Gdx.files.internal( "data/font/curse-r-big.fnt" ), Art.fonts.findRegion( "curse-r-big" ), true );
+
+		// adjust scaling
+		fontCurseYR.setScale( scale );
+		fontCurseG.setScale( scale );
+		fontCurseR.setScale( scale );
+		fontCurseYRbig.setScale( scale );
+		fontCurseGbig.setScale( scale );
+		fontCurseRbig.setScale( scale );
 	}
 }
