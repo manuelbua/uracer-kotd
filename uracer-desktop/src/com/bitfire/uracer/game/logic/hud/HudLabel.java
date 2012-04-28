@@ -32,11 +32,7 @@ public final class HudLabel {
 	}
 
 	public HudLabel( ScalingStrategy scalingStrategy, BitmapFont font, String string ) {
-		this.scalingStrategy = scalingStrategy;
-		this.font = font;
-		what = string;
-		alpha = 1f;
-		setScale( 1.0f, true );
+		this( scalingStrategy, font, string, 1.0f );
 	}
 
 	public boolean isVisible() {
