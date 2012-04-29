@@ -86,7 +86,7 @@ public final class Config {
 			SubframeInterpolation = true;
 
 			DumbNightMode = false;
-			RenderBox2DWorldWireframe = true;
+			RenderBox2DWorldWireframe = false;
 			RenderPlayerDebugInfo = Config.isDesktop;
 			RenderHudDebugInfo = Config.isDesktop;
 			RenderDebugInfoFpsStats = true;

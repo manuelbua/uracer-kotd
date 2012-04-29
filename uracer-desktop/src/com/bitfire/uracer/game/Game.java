@@ -20,6 +20,9 @@ import com.bitfire.uracer.task.TaskManager;
 
 public class Game implements Disposable {
 
+	// world
+	public GameWorld gameWorld = null;
+
 	// config
 	public GameplaySettings gameplaySettings = null;
 
@@ -38,10 +41,10 @@ public class Game implements Disposable {
 	private Zoom zoom = null;
 	private Vignette vignette = null;
 
-	public Game( String levelName, ScalingStrategy scalingStrategy, GameDifficulty difficulty, Aspect carAspect, CarModel carModel ) {
+	public Game( String levelName, ScalingStrategy scalingStrategy, GameDifficulty difficulty, CarModel carModel, Aspect carAspect ) {
 		gameplaySettings = new GameplaySettings( difficulty );
 
-		GameWorld gameWorld = new GameWorld( scalingStrategy, levelName, false );
+		gameWorld = new GameWorld( scalingStrategy, levelName, false );
 		Gdx.app.log( "Game", "Game world ready" );
 
 		// handles rendering
@@ -70,6 +73,10 @@ public class Game implements Disposable {
 		debug.dispose();
 		gameRenderer.dispose();
 		gameLogic.dispose();
+	}
+
+	public void setPlayer(CarModel model, Aspect aspect) {
+		gameLogic.setPlayer( aspect, model );
 	}
 
 	private void configurePostProcessing( PostProcessor processor, GameWorld world ) {
