@@ -330,14 +330,19 @@ public class GameLogic implements CarEvent.Listener, CarStateEvent.Listener, Pla
 		physicsStep.triggerOnTemporalAliasing( URacer.hasStepped(), URacer.getTemporalAliasing() );
 
 		// update player's headlights and move the world camera to follows it, if there is a player
+		GameWorldRenderer worldRenderer = gameRenderer.getWorldRenderer();
 		if( playerCar != null ) {
-			GameWorldRenderer worldRenderer = gameRenderer.getWorldRenderer();
 
 			if( gameWorld.isNightMode() ) {
 				worldRenderer.updatePlayerHeadlights( playerCar );
 			}
 
 			worldRenderer.setCameraPosition( playerCar.state().position, true );
+		} else if( ghostCar.hasReplay() ) {
+			worldRenderer.setCameraPosition( ghostCar.state().position, true );
+		} else {
+			// no ghost, no player, WTF?
+			worldRenderer.setCameraPosition( gameWorld.playerStartPos, true );
 		}
 
 		// tweener step
@@ -538,6 +543,7 @@ public class GameLogic implements CarEvent.Listener, CarStateEvent.Listener, Pla
 					lapState.setLastTrackTimeSeconds( any.trackTimeSeconds );
 
 					thisReplay = any;
+					thisReplay.save();
 
 					messager.show( "GO!  GO!  GO!", 3f, Type.Information, MessagePosition.Middle, MessageSize.Big );
 				} else {
@@ -567,6 +573,7 @@ public class GameLogic implements CarEvent.Listener, CarStateEvent.Listener, Pla
 					}
 
 					ghostCar.setReplay( best );
+					best.save();
 
 					lapState.restart();
 					recorder.beginRecording( playerCar, worst, name, gameplaySettings.difficulty );

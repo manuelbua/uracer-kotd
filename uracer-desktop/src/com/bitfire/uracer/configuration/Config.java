@@ -13,6 +13,8 @@ public final class Config {
 	public static final String LevelsStore = "data/levels/";
 	public static final String ShapesStore = "data/base/";
 	public static final String ShapesRefs = "../../data-src/base/cars/";
+	public static final String URacerConfigFolder = "uracer/";
+	public static final String LocalReplaysStore = "local-replays/";
 
 	public static final class PostProcessing {
 		public static boolean Enabled;

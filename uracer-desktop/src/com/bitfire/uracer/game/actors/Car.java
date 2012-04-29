@@ -158,12 +158,12 @@ public abstract class Car extends Box2DEntity {
 		renderer.setAspect( aspect, model );
 	}
 
-	public void setCarModel( CarModel model ) {
-		if( !this.model.name.equals( model.name ) ) {
-			this.model.set( model );
+	public void setCarModel( CarModel.Type modelType ) {
+		if( model.type != modelType ) {
+			model.toModelType( modelType );
 			applyCarPhysics( carType );
 			renderer.setAspect( aspect, model );
-			Gdx.app.log( this.getClass().getSimpleName(), "Switched to car model \"" + this.model.name + "\"" );
+			Gdx.app.log( this.getClass().getSimpleName(), "Switched to car model \"" + model.type.toString() + "\"" );
 		}
 	}
 

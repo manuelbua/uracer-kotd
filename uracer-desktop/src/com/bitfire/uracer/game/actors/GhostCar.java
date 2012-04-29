@@ -41,7 +41,7 @@ public final class GhostCar extends Car {
 
 		if( hasReplay ) {
 			setAspect( replay.carAspect );
-			setCarModel( replay.carModel );
+			setCarModel( replay.carModelType );
 			renderer.setAlpha( 0 );
 
 			// System.out.println( "Replaying " + replay.id );

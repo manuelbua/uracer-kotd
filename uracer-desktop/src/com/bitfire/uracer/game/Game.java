@@ -96,6 +96,7 @@ public class Game implements Disposable {
 		bloom.setSettings( bloomSettings );
 
 		zoom = new Zoom( Config.PostProcessing.ZoomQuality );
+		zoom.setStrength( 0 );
 		processor.addEffect( zoom );
 		processor.addEffect( bloom );
 

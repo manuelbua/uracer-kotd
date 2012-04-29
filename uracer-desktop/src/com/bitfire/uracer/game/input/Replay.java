@@ -1,6 +1,12 @@
 package com.bitfire.uracer.game.input;
 
+import java.io.DataOutputStream;
+import java.io.IOException;
+
+import com.badlogic.gdx.Gdx;
+import com.badlogic.gdx.files.FileHandle;
 import com.badlogic.gdx.math.Vector2;
+import com.bitfire.uracer.configuration.Config;
 import com.bitfire.uracer.game.GameDifficulty;
 import com.bitfire.uracer.game.Time;
 import com.bitfire.uracer.game.actors.Car;
@@ -19,18 +25,17 @@ public class Replay {
 
 	// car data
 	public Aspect carAspect;
-	public CarModel carModel = new CarModel();
+	public CarModel.Type carModelType;
 	public Vector2 carPosition = new Vector2();
 	public float carOrientation;
 
 	// replay data
+	public final long id;
 	public String trackName = "no-track";
 	public GameDifficulty difficultyLevel = GameDifficulty.Easy;
 	public float trackTimeSeconds = 0;
-	// public long trackStartTimeNs = 0;
 	public CarForces[] forces = null;
 	public boolean isValid = false;
-	public final long id;
 
 	// time track
 	private Time time = new Time();
@@ -54,7 +59,7 @@ public class Replay {
 		carPosition.set( car.pos() );
 		carOrientation = car.orient();
 		carAspect = car.getAspect();
-		carModel.set( car.getCarModel() );
+		carModelType = car.getCarModel().type;
 		this.trackName = trackName;
 		difficultyLevel = difficulty;
 		time.start();
@@ -84,5 +89,39 @@ public class Replay {
 		}
 
 		return true;
+	}
+
+	public void save() {
+		if( isValid ) {
+			new Thread( new Runnable() {
+
+				@Override
+				public void run() {
+					String filename = Config.URacerConfigFolder + Config.LocalReplaysStore + trackName + "-" + difficultyLevel + "-" + carModelType.toString();
+					FileHandle hf = Gdx.files.external( filename );
+
+					DataOutputStream os = new DataOutputStream( hf.write( false ) );
+
+					try {
+						os.writeLong( id );
+						os.writeChars( trackName );
+						os.writeChars( difficultyLevel.toString() );
+						os.writeFloat( trackTimeSeconds );
+
+						for( int i = 0; i < eventsCount; i++ ) {
+							CarForces f = forces[i];
+							os.writeFloat( f.velocity_x );
+							os.writeFloat( f.velocity_y );
+							os.writeFloat( f.angularVelocity );
+						}
+
+						os.close();
+						Gdx.app.log( "Replay", "Done saving replay" );
+					} catch( IOException e ) {
+						Gdx.app.log( "Replay", "Couldn't save replay, reason: " + e.getMessage() );
+					}
+				}
+			} ).start();
+		}
 	}
 }
