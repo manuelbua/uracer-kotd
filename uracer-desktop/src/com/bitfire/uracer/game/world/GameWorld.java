@@ -234,7 +234,7 @@ public final class GameWorld {
 			pos.y = worldSizeScaledPx.y - pos.y;
 			pos.set( Convert.px2mt( pos ) );
 
-			PointLight l = new PointLight( rayHandler, maxRays, c, 30f, pos.x, pos.y );
+			PointLight l = new PointLight( rayHandler, maxRays, c, 10f, pos.x, pos.y );
 			l.setSoft( false );
 			l.setMaskBits( CollisionFilters.CategoryPlayer | CollisionFilters.CategoryTrackWalls );
 		}

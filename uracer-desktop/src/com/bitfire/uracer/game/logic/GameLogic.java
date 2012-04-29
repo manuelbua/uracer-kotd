@@ -16,7 +16,6 @@ import com.bitfire.uracer.Art;
 import com.bitfire.uracer.Config;
 import com.bitfire.uracer.ScalingStrategy;
 import com.bitfire.uracer.URacer;
-import com.bitfire.uracer.game.Director;
 import com.bitfire.uracer.game.GameplaySettings;
 import com.bitfire.uracer.game.actors.Car;
 import com.bitfire.uracer.game.actors.Car.Aspect;
@@ -28,7 +27,6 @@ import com.bitfire.uracer.game.actors.GhostCar;
 import com.bitfire.uracer.game.collisions.GameContactListener;
 import com.bitfire.uracer.game.input.Input;
 import com.bitfire.uracer.game.input.Replay;
-import com.bitfire.uracer.game.logic.helpers.DirectorController;
 import com.bitfire.uracer.game.logic.helpers.Recorder;
 import com.bitfire.uracer.game.logic.hud.Hud;
 import com.bitfire.uracer.game.logic.hud.HudLabel;
@@ -51,7 +49,6 @@ import com.bitfire.uracer.game.logic.trackeffects.TrackEffects;
 import com.bitfire.uracer.game.logic.trackeffects.effects.PlayerSkidMarks;
 import com.bitfire.uracer.game.player.PlayerCar;
 import com.bitfire.uracer.game.player.PlayerDriftStateEvent;
-import com.bitfire.uracer.game.rendering.debug.Debug;
 import com.bitfire.uracer.game.tween.GameTweener;
 import com.bitfire.uracer.game.tween.WcTweener;
 import com.bitfire.uracer.game.world.GameWorld;
@@ -70,9 +67,6 @@ import com.bitfire.uracer.utils.NumberString;
 public class GameLogic implements CarEvent.Listener, CarStateEvent.Listener, PlayerDriftStateEvent.Listener {
 	// event
 	// public final GameLogicEvent event = new GameLogicEvent();
-
-	// debug helper
-	private Debug debug = null;
 
 	// scaling
 	private ScalingStrategy scalingStrategy = null;
@@ -97,8 +91,6 @@ public class GameLogic implements CarEvent.Listener, CarStateEvent.Listener, Pla
 	// lap
 	private boolean isFirstLap = true;
 	private long lastRecordedLapId = 0;
-
-	private DirectorController controller = null;
 
 	// replay
 	private Recorder recorder = null;
@@ -142,12 +134,6 @@ public class GameLogic implements CarEvent.Listener, CarStateEvent.Listener, Pla
 		this.box2dWorld = new World( new Vector2( 0, 0 ), false );
 		this.box2dWorld.setContactListener( new GameContactListener() );
 
-		// initializes the Director helper
-		Director.init( Config.Physics.PixelsPerMeter );
-
-		// initialize debug helper
-		debug = new Debug( box2dWorld );
-
 		// create tweening support
 		createTweeners();
 		Gdx.app.log( "GameLogic", "Helpers created" );
@@ -160,15 +146,9 @@ public class GameLogic implements CarEvent.Listener, CarStateEvent.Listener, Pla
 
 		playerLapState = new LapState();
 
-		// creates global camera controller
-		controller = new DirectorController( Config.Graphics.CameraInterpolationMode, Director.halfViewport, gameWorld.worldSizeScaledPx, gameWorld.worldSizeTiles );
-
 		// creates player and ghost cars
 		createPlayer( gameWorld, carAspect, carModel );
 		Gdx.app.log( "GameLogic", "Player created" );
-
-		debug.setPlayer( playerCar );
-		Gdx.app.log( "GameLogic", "Debug helper initialized with player instance" );
 
 		createGameTasks();
 		configureTasks( playerCar, playerLapState );
@@ -198,8 +178,6 @@ public class GameLogic implements CarEvent.Listener, CarStateEvent.Listener, Pla
 		gameWorld.dispose();
 		GameTweener.dispose();
 		WcTweener.dispose();
-		debug.dispose();
-		Director.dispose();
 		box2dWorld.dispose();
 	}
 
@@ -329,8 +307,6 @@ public class GameLogic implements CarEvent.Listener, CarStateEvent.Listener, Pla
 		updatePlayerCarFriction();
 		updateTimeMultiplier();
 
-		debug.tick();
-
 		return true;
 	}
 
@@ -345,13 +321,6 @@ public class GameLogic implements CarEvent.Listener, CarStateEvent.Listener, Pla
 	public void onBeforeRender() {
 		// trigger the event and let's subscribers interpolate and update their state()
 		physicsStep.triggerOnTemporalAliasing( URacer.hasStepped(), URacer.getTemporalAliasing() );
-
-		if( playerCar != null ) {
-			Vector2 carpos = playerCar.state().position;
-
-			// camera follows the player's car
-			controller.setPosition( carpos );
-		}
 
 		// tweener step
 		WcTweener.update();

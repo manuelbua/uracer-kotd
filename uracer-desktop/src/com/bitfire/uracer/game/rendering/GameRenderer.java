@@ -3,28 +3,33 @@ package com.bitfire.uracer.game.rendering;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.GL20;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
+import com.badlogic.gdx.math.Rectangle;
+import com.badlogic.gdx.math.Vector2;
 import com.bitfire.uracer.Config;
 import com.bitfire.uracer.ScalingStrategy;
-import com.bitfire.uracer.game.Director;
 import com.bitfire.uracer.game.events.GameEvents;
 import com.bitfire.uracer.game.player.PlayerCar;
 import com.bitfire.uracer.game.world.GameWorld;
 import com.bitfire.uracer.postprocessing.PostProcessor;
+import com.bitfire.uracer.utils.Convert;
 
 /** Manages the high-level rendering of the whole world and triggers all the GameRendererEvent events
  * associated with the rendering timeline, realized with the event's renderqueue mechanism.
  *
  * @author bmanuel */
-public class GameRenderer {
+public final class GameRenderer {
 	private final GL20 gl;
 	private final GameWorld world;
 	private final GameBatchRenderer batchRenderer;
-	private final GameWorldRenderer worldRenderer;
 	private final PostProcessor postProcessor;
+	// private static ScalingStrategy scalingStrategy;
+	private static GameWorldRenderer worldRenderer;
+	private static Vector2 screenPosFor = new Vector2();
 
 	public GameRenderer( ScalingStrategy scalingStrategy, GameWorld gameWorld, boolean createPostProcessing ) {
 		gl = Gdx.graphics.getGL20();
 		world = gameWorld;
+		// GameRenderer.scalingStrategy = scalingStrategy;
 
 		int width = Gdx.graphics.getWidth();
 		int height = Gdx.graphics.getHeight();
@@ -59,10 +64,7 @@ public class GameRenderer {
 	}
 
 	public void onBeforeRender( PlayerCar player ) {
-		// resync
-		worldRenderer.syncWithCam( Director.getCamera() );
-
-		worldRenderer.updateRayHandler( Director.getMatViewProjMt(), player );
+		worldRenderer.syncWithPlayer( player );
 	}
 
 	public void render( PlayerCar player ) {
@@ -83,7 +85,8 @@ public class GameRenderer {
 
 		// BatchBeforeMeshes
 		SpriteBatch batch = null;
-		batch = batchRenderer.begin( Director.getCamera() );
+		batch = batchRenderer.begin( worldRenderer.getOrthographicCamera() );
+		batch.enableBlending();
 		{
 			GameEvents.gameRenderer.batch = batch;
 			GameEvents.gameRenderer.trigger( this, GameRendererEvent.Type.BatchBeforeMeshes );
@@ -127,13 +130,33 @@ public class GameRenderer {
 		//
 		// manages and triggers debug event
 		//
-
-		GameEvents.gameRenderer.batch = batchRenderer.beginTopLeft();
+		batch = batchRenderer.beginTopLeft();
+		batch.disableBlending();
+		GameEvents.gameRenderer.batch = batch;
 		GameEvents.gameRenderer.trigger( this, GameRendererEvent.Type.BatchDebug );
 		batchRenderer.end();
+
+		GameEvents.gameRenderer.batch = null;
+		GameEvents.gameRenderer.trigger( this, GameRendererEvent.Type.Debug );
 	}
 
 	public void rebind() {
 		postProcessor.rebind();
+	}
+
+	public static Vector2 screenPosForMt( Vector2 worldPositionMt ) {
+		screenPosFor.x = Convert.mt2px( worldPositionMt.x ) - worldRenderer.camOrtho.position.x + worldRenderer.halfViewport.x;
+		screenPosFor.y = worldRenderer.camOrtho.position.y - Convert.mt2px( worldPositionMt.y ) + worldRenderer.halfViewport.y;
+		return screenPosFor;
+	}
+
+	public static Vector2 screenPosForPx( Vector2 worldPositionPx ) {
+		screenPosFor.x = worldPositionPx.x - worldRenderer.camOrtho.position.x + worldRenderer.halfViewport.x;
+		screenPosFor.y = worldRenderer.camOrtho.position.y - worldPositionPx.y + worldRenderer.halfViewport.y;
+		return screenPosFor;
+	}
+
+	public static boolean isVisible( Rectangle rect ) {
+		return worldRenderer.camOrthoRect.overlaps( rect );
 	}
 }

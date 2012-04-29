@@ -6,7 +6,6 @@ import com.badlogic.gdx.math.Rectangle;
 import com.badlogic.gdx.math.Vector2;
 import com.bitfire.uracer.Art;
 import com.bitfire.uracer.Config;
-import com.bitfire.uracer.game.Director;
 import com.bitfire.uracer.game.logic.trackeffects.TrackEffect;
 import com.bitfire.uracer.game.player.PlayerCar;
 import com.bitfire.uracer.game.player.PlayerDriftState;
@@ -83,7 +82,7 @@ public class PlayerSkidMarks extends TrackEffect {
 		for( int i = 0; i < MaxSkidMarks; i++ ) {
 			d = skidMarks[i];
 			// FIXME implement gameRenderer.isVisible instead
-			if( d.life > 0 && Director.isVisible( d.getBoundingRectangle() ) ) {
+			if( d.life > 0 && GameRenderer.isVisible( d.getBoundingRectangle() ) ) {
 				visibleSkidMarksCount++;
 
 				lifeRatio = d.life / d.maxLife;
@@ -95,6 +94,8 @@ public class PlayerSkidMarks extends TrackEffect {
 				d.rear.draw( batch );
 			}
 		}
+
+//		Gdx.app.log( "PlayerSkidMarks", "visibles=" + visibleSkidMarksCount );
 	}
 
 	private void tryAddDriftMark( Vector2 position, float orientation, PlayerDriftState driftState ) {

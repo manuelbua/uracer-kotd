@@ -2,12 +2,11 @@ package com.bitfire.uracer.game.logic.helpers;
 
 import com.badlogic.gdx.math.Rectangle;
 import com.badlogic.gdx.math.Vector2;
-import com.bitfire.uracer.game.Director;
 import com.bitfire.uracer.utils.AMath;
 
-public class DirectorController {
+public class CameraController {
 	public enum InterpolationMode {
-		Off, Linear, Sigmoid
+		OffNoBounds, Off, Linear, Sigmoid
 	}
 
 	private float boundsWidth = 0, boundsHeight = 0;
@@ -15,7 +14,7 @@ public class DirectorController {
 	private float sigmoidStrengthX = 1f;
 	private float sigmoidStrengthY = 1f;
 
-	public DirectorController( InterpolationMode mode, Vector2 halfViewport, final Vector2 worldSizeScaledPx, Vector2 worldSizeTiles ) {
+	public CameraController( InterpolationMode mode, Vector2 halfViewport, final Vector2 worldSizeScaledPx, Vector2 worldSizeTiles ) {
 		final Rectangle cameraBounds = new Rectangle();
 		cameraBounds.x = halfViewport.x;
 		cameraBounds.width = worldSizeScaledPx.x - halfViewport.x;
@@ -63,25 +62,34 @@ public class DirectorController {
 				}
 			};
 			break;
-		default:
 		case Off:
 			interpolator = new PositionInterpolator() {
 				@Override
 				public Vector2 transform( Vector2 targetPosition ) {
+					tmp.set( targetPosition );
 
-					if( targetPosition.x < cameraBounds.x ) {
-						targetPosition.x = cameraBounds.x;
+					if( tmp.x < cameraBounds.x ) {
+						tmp.x = cameraBounds.x;
 					}
-					if( targetPosition.x > cameraBounds.width ) {
-						targetPosition.x = cameraBounds.width;
+					if( tmp.x > cameraBounds.width ) {
+						tmp.x = cameraBounds.width;
 					}
-					if( targetPosition.y > cameraBounds.y ) {
-						targetPosition.y = cameraBounds.y;
+					if( tmp.y > cameraBounds.y ) {
+						tmp.y = cameraBounds.y;
 					}
-					if( targetPosition.y < cameraBounds.height ) {
-						targetPosition.y = cameraBounds.height;
+					if( tmp.y < cameraBounds.height ) {
+						tmp.y = cameraBounds.height;
 					}
 
+					return tmp;
+				}
+			};
+			break;
+		default:
+		case OffNoBounds:
+			interpolator = new PositionInterpolator() {
+				@Override
+				public Vector2 transform( Vector2 targetPosition ) {
 					return targetPosition;
 				}
 			};
@@ -89,9 +97,13 @@ public class DirectorController {
 		}
 	}
 
-	public void setPosition( Vector2 pos ) {
-		Director.setPositionPx( interpolator.transform( pos ), true );
+	public Vector2 transform( Vector2 position ) {
+		return interpolator.transform( position );
 	}
+
+//	public void setPosition( Vector2 pos ) {
+//		Director.setPositionPx( interpolator.transform( pos ), true );
+//	}
 
 	private abstract class PositionInterpolator {
 		protected Vector2 tmp = new Vector2();

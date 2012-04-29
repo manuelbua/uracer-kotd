@@ -20,16 +20,7 @@ public abstract class Box2DEntity extends SubframeInterpolableEntity {
 	private final GameRendererEvent.Listener gameRendererEvent = new GameRendererEvent.Listener() {
 		@Override
 		public void gameRendererEvent( Type type ) {
-			SpriteBatch batch = GameEvents.gameRenderer.batch;
-
-			switch( type ) {
-			case BatchBeforeMeshes:
-				onRender( batch );
-				break;
-			case BatchDebug:
-				onDebug( batch );
-				break;
-			}
+			onRender( GameEvents.gameRenderer.batch );
 		}
 	};
 
@@ -38,10 +29,11 @@ public abstract class Box2DEntity extends SubframeInterpolableEntity {
 	public void onDebug( SpriteBatch batch ) {
 	}
 
-	public Box2DEntity( World world  ) {
+	public Box2DEntity( World world ) {
 		super();
 		GameEvents.gameRenderer.addListener( gameRendererEvent, GameRendererEvent.Type.BatchBeforeMeshes, GameRendererEvent.Order.DEFAULT );
-		GameEvents.gameRenderer.addListener( gameRendererEvent, GameRendererEvent.Type.BatchDebug, GameRendererEvent.Order.DEFAULT );
+		// GameEvents.gameRenderer.addListener( gameRendererEvent, GameRendererEvent.Type.BatchDebug,
+		// GameRendererEvent.Order.DEFAULT );
 		this.box2dWorld = world;
 	}
 

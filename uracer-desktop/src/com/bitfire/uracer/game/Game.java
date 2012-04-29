@@ -1,5 +1,6 @@
 package com.bitfire.uracer.game;
 
+import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.utils.Disposable;
 import com.bitfire.uracer.Config;
 import com.bitfire.uracer.ScalingStrategy;
@@ -8,7 +9,9 @@ import com.bitfire.uracer.game.actors.Car;
 import com.bitfire.uracer.game.actors.Car.Aspect;
 import com.bitfire.uracer.game.actors.CarModel;
 import com.bitfire.uracer.game.logic.GameLogic;
+import com.bitfire.uracer.game.player.PlayerCar;
 import com.bitfire.uracer.game.rendering.GameRenderer;
+import com.bitfire.uracer.game.rendering.debug.DebugHelper;
 import com.bitfire.uracer.game.world.GameWorld;
 import com.bitfire.uracer.postprocessing.PostProcessor;
 import com.bitfire.uracer.postprocessing.effects.Bloom;
@@ -20,6 +23,9 @@ public class Game implements Disposable {
 
 	// config
 	public GameplaySettings gameplaySettings = null;
+
+	// debug
+	private DebugHelper debug = null;
 
 	// logic
 	private GameLogic gameLogic = null;
@@ -38,6 +44,7 @@ public class Game implements Disposable {
 
 		// handle game rules and mechanics, it's all about game data
 		gameLogic = new GameLogic( gameplaySettings, scalingStrategy, levelName, carAspect, carModel );
+
 		GameWorld world = gameLogic.getGameWorld();
 
 		// handles rendering
@@ -48,10 +55,16 @@ public class Game implements Disposable {
 		if( canPostProcess ) {
 			configurePostProcessing( gameRenderer.getPostProcessor(), world );
 		}
+
+		// initialize the debug helper
+		debug = new DebugHelper( gameRenderer.getWorldRenderer(), gameLogic.getBox2dWorld() );
+		debug.setPlayer( gameLogic.getPlayer() );
+		Gdx.app.log( "Game", "Debug helper initialized with player instance" );
 	}
 
 	@Override
 	public void dispose() {
+		debug.dispose();
 		gameRenderer.dispose();
 		gameLogic.dispose();
 	}
@@ -88,7 +101,7 @@ public class Game implements Disposable {
 		Car playerCar = gameLogic.getPlayer();
 
 		if( zoom != null && playerCar != null ) {
-			zoom.setOrigin( Director.screenPosFor( playerCar.getBody() ) );
+			zoom.setOrigin( GameRenderer.screenPosForMt( playerCar.getBody().getPosition() ) );
 			zoom.setStrength( -0.1f * factor );
 		}
 
@@ -116,13 +129,17 @@ public class Game implements Disposable {
 			updatePostProcessingEffects();
 		}
 
+		debug.tick();
+
 		return true;
 	}
 
 	public void render() {
+		PlayerCar player = gameLogic.getPlayer();
+
 		gameLogic.onBeforeRender();
-		gameRenderer.onBeforeRender( gameLogic.getPlayer() );
-		gameRenderer.render( gameLogic.getPlayer() );
+		gameRenderer.onBeforeRender( player );
+		gameRenderer.render( player );
 	}
 
 	public void pause() {

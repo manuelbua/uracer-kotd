@@ -2,7 +2,7 @@ package com.bitfire.uracer;
 
 import com.badlogic.gdx.Application.ApplicationType;
 import com.badlogic.gdx.Gdx;
-import com.bitfire.uracer.game.logic.helpers.DirectorController.InterpolationMode;
+import com.bitfire.uracer.game.logic.helpers.CameraController.InterpolationMode;
 import com.bitfire.uracer.postprocessing.filters.Blur;
 import com.bitfire.uracer.postprocessing.filters.Blur.BlurType;
 import com.bitfire.uracer.postprocessing.filters.ZoomBlur;
@@ -66,6 +66,8 @@ public final class Config {
 	}
 
 	public static final class Graphics {
+//		public static final int TargetWidth = 1280;
+//		public static final int TargetHeight = 800;
 		public static boolean EnableMipMapping;
 		public static boolean SubframeInterpolation;
 		public static boolean RenderBox2DWorldWireframe;
@@ -84,7 +86,7 @@ public final class Config {
 			SubframeInterpolation = true;
 
 			DumbNightMode = false;
-			RenderBox2DWorldWireframe = false;
+			RenderBox2DWorldWireframe = true;
 			RenderPlayerDebugInfo = Config.isDesktop;
 			RenderHudDebugInfo = Config.isDesktop;
 			RenderDebugInfoFpsStats = true;
