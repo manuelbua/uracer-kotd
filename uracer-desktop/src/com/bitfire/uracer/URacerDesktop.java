@@ -32,7 +32,7 @@ public final class URacerDesktop {
 //		 config.width = 1920;	config.height = 1050;
 		// config.width = 1730; config.height = 1016;
 //		 config.width = 1680; config.height = 1050;
-		 config.width = 1280; config.height = 752;
+		 config.width = 1280; config.height = 800;
 
 		// config.width = 1280; config.height = 720;
 //		 config.width = 800; config.height = 480;

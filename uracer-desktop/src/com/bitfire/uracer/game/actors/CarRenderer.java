@@ -3,18 +3,24 @@ package com.bitfire.uracer.game.actors;
 import com.badlogic.gdx.graphics.g2d.Sprite;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
-import com.bitfire.uracer.Art;
 import com.bitfire.uracer.entities.EntityRenderState;
 import com.bitfire.uracer.game.actors.Car.Aspect;
+import com.bitfire.uracer.resources.Art;
 import com.bitfire.uracer.utils.Convert;
 
-public class CarRenderer {
+public final class CarRenderer {
 	private Sprite facet;
 	private Sprite ambientOcclusion;
 	private TextureRegion region;
 	private float alpha;
 
 	public CarRenderer( CarModel model, Aspect aspect ) {
+		facet = new Sprite();
+		ambientOcclusion = new Sprite();
+		setAspect( aspect, model );
+	}
+
+	public void setAspect( Aspect aspect, CarModel model ) {
 		switch( aspect ) {
 		case OldSkool:
 			this.region = Art.cars.findRegion( "electron" );
@@ -25,13 +31,11 @@ public class CarRenderer {
 			break;
 		}
 
-		facet = new Sprite();
 		facet.setRegion( region );
 		facet.setSize( Convert.mt2px( model.width ), Convert.mt2px( model.length ) );
 		facet.setOrigin( facet.getWidth() / 2, facet.getHeight() / 2 );
 
 		// ambient occlusion
-		ambientOcclusion = new Sprite();
 		ambientOcclusion.setRegion( Art.carAmbientOcclusion );
 		ambientOcclusion.setSize( facet.getWidth(), facet.getHeight() );
 		ambientOcclusion.setScale( 2f, 2.3f );

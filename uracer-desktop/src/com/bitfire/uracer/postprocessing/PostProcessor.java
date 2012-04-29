@@ -194,13 +194,13 @@ public final class PostProcessor implements Disposable {
 	/** Regenerates and/or rebinds owned resources when needed, eg. when
 	 * the OpenGL context is lost. */
 	public void rebind() {
+		for( int i = 0; i < buffers.size; i++ ) {
+			buffers.get( i ).rebind();
+		}
+
 		Array<PostProcessorEffect> items = manager.items;
 		for( int i = 0; i < items.size; i++ ) {
 			items.get( i ).rebind();
-		}
-
-		for( int i = 0; i < buffers.size; i++ ) {
-			buffers.get( i ).rebind();
 		}
 	}
 

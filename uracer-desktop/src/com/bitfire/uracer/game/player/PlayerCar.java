@@ -4,15 +4,13 @@ import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.math.MathUtils;
 import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.math.WindowedMean;
-import com.badlogic.gdx.physics.box2d.World;
-import com.bitfire.uracer.Config;
-import com.bitfire.uracer.game.Director;
+import com.bitfire.uracer.configuration.Config;
 import com.bitfire.uracer.game.actors.Car;
 import com.bitfire.uracer.game.actors.CarDescriptor;
 import com.bitfire.uracer.game.actors.CarForces;
 import com.bitfire.uracer.game.actors.CarModel;
 import com.bitfire.uracer.game.actors.CarState;
-import com.bitfire.uracer.game.input.Input;
+import com.bitfire.uracer.game.rendering.GameRenderer;
 import com.bitfire.uracer.game.world.GameWorld;
 import com.bitfire.uracer.utils.AMath;
 import com.bitfire.uracer.utils.VMath;
@@ -25,7 +23,7 @@ public class PlayerCar extends Car {
 
 	// input
 	private CarInput carInput = null;
-	private Input inputSystem = null;
+//	private Input inputSystem = null;
 	private float lastTouchAngle;
 	private Vector2 touchPos = new Vector2();
 	private Vector2 carPos = new Vector2();
@@ -40,10 +38,12 @@ public class PlayerCar extends Car {
 	public CarState carState = null;
 	public PlayerDriftState driftState = null;
 
-	public PlayerCar( World box2dWorld, GameWorld gameWorld, CarModel model, Aspect aspect ) {
-		super( box2dWorld, gameWorld, model, aspect );
+	public PlayerCar( GameWorld gameWorld, CarModel model, Aspect aspect ) {
+		super( gameWorld, model, aspect );
 		carInput = new CarInput();
-		inputSystem = null;
+		inputMode = InputMode.InputFromPlayer;
+//		inputMode = InputMode.NoInput;
+//		inputSystem = null;
 		impacts = 0;
 
 		carDesc = new CarDescriptor();
@@ -54,6 +54,12 @@ public class PlayerCar extends Car {
 		this.carState = new CarState( gameWorld, this );
 		this.driftState = new PlayerDriftState( this );
 	}
+
+//	public void setInputSystem( Input inputSystem ) {
+//		this.inputSystem = inputSystem;
+//		this.inputMode = (inputSystem != null ? InputMode.InputFromPlayer : InputMode.NoInput);
+//		Gdx.app.log( getClass().getSimpleName(), "Switched input mode to " + this.inputMode.toString() );
+//	}
 
 	// use strictly for debug purposes *ONLY*!
 	public CarDescriptor getCarDescriptor() {
@@ -90,19 +96,17 @@ public class PlayerCar extends Car {
 		frictionMean.addValue( value );
 	}
 
-	// input data for this car cames from an Input object
-	public void setInputSystem( Input inputSystem ) {
-		this.inputSystem = inputSystem;
-		this.inputMode = (inputSystem != null ? InputMode.InputFromPlayer : InputMode.NoInput);
-		Gdx.app.log( getClass().getSimpleName(), "Switched input mode to " + this.inputMode.toString() );
-	}
-
 	protected CarInput acquireInput() {
-		// FIXME check if inputSystem is valid!
-		carPos.set( Director.screenPosFor( body ) );
+//		if( inputSystem == null ) {
+//			return carInput;
+//		}
 
-		touchPos.set( inputSystem.getXY() );
-		carInput.updated = inputSystem.isTouching();
+		carPos.set( GameRenderer.ScreenUtils.screenPosForMt( body.getPosition() ) );
+
+//		touchPos.set( inputSystem.getXY() );
+//		carInput.updated = inputSystem.isTouching();
+		touchPos.set( Gdx.input.getX(), Gdx.input.getY() );
+		carInput.updated = Gdx.input.isTouched();
 
 		if( carInput.updated ) {
 			float angle = 0;

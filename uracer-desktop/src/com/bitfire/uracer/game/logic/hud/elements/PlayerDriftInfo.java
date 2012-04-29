@@ -2,12 +2,12 @@ package com.bitfire.uracer.game.logic.hud.elements;
 
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.math.Vector2;
-import com.bitfire.uracer.Art;
 import com.bitfire.uracer.ScalingStrategy;
-import com.bitfire.uracer.game.Director;
 import com.bitfire.uracer.game.logic.hud.HudElement;
 import com.bitfire.uracer.game.logic.hud.HudLabel;
 import com.bitfire.uracer.game.player.PlayerCar;
+import com.bitfire.uracer.game.rendering.GameRenderer;
+import com.bitfire.uracer.resources.Art;
 import com.bitfire.uracer.utils.Convert;
 import com.bitfire.uracer.utils.NumberString;
 import com.bitfire.uracer.utils.VMath;
@@ -134,7 +134,7 @@ public final class PlayerDriftInfo extends HudElement {
 		displacement.y *= (carModelLengthPx + labelRealtime.halfBoundsHeight);
 
 		// gets pixel position and then displaces it
-		tmpv.set( Director.screenPosForPx( playerPosition ) );
+		tmpv.set( GameRenderer.ScreenUtils.screenPosForPx( playerPosition ) );
 		tmpv.sub( displacement );
 
 		labelRealtime.setPosition( tmpv );

@@ -29,10 +29,10 @@ import com.badlogic.gdx.graphics.glutils.ShaderProgram;
 import com.badlogic.gdx.math.MathUtils;
 import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.physics.box2d.World;
-import com.bitfire.uracer.Art;
-import com.bitfire.uracer.Config;
 import com.bitfire.uracer.ScalingStrategy;
+import com.bitfire.uracer.configuration.Config;
 import com.bitfire.uracer.game.collisions.CollisionFilters;
+import com.bitfire.uracer.game.collisions.GameWorldContactListener;
 import com.bitfire.uracer.game.world.models.MapUtils;
 import com.bitfire.uracer.game.world.models.ModelFactory;
 import com.bitfire.uracer.game.world.models.OrthographicAlignedStillModel;
@@ -44,6 +44,7 @@ import com.bitfire.uracer.game.world.models.WorldDefs.ObjectGroup;
 import com.bitfire.uracer.game.world.models.WorldDefs.ObjectProperties;
 import com.bitfire.uracer.game.world.models.WorldDefs.TileLayer;
 import com.bitfire.uracer.game.world.models.WorldDefs.TileProperties;
+import com.bitfire.uracer.resources.Art;
 import com.bitfire.uracer.utils.AMath;
 import com.bitfire.uracer.utils.Convert;
 
@@ -78,9 +79,12 @@ public final class GameWorld {
 	protected TrackTrees trackTrees = null;
 	protected List<OrthographicAlignedStillModel> staticMeshes = new ArrayList<OrthographicAlignedStillModel>();
 
-	public GameWorld( World box2dWorld, ScalingStrategy strategy, String levelName, boolean nightMode ) {
+	public GameWorld( ScalingStrategy strategy, String levelName, boolean nightMode ) {
 		scalingStrategy = strategy;
-		this.box2dWorld = box2dWorld;
+		this.box2dWorld = new World( new Vector2( 0, 0 ), false );
+		box2dWorld.setContactListener( new GameWorldContactListener() );
+		Gdx.app.log( "GameWorld", "Box2D world created" );
+
 		this.name = levelName;
 		this.nightMode = nightMode;
 
@@ -102,7 +106,7 @@ public final class GameWorld {
 		ModelFactory.init( strategy );
 
 		createMeshes();
-		loadPlayer( map );
+		loadPlayerData( map );
 
 		// FIXME, read night mode from level?
 		if( nightMode ) {
@@ -119,6 +123,7 @@ public final class GameWorld {
 
 		trackWalls.dispose();
 		trackTrees.dispose();
+		box2dWorld.dispose();
 	}
 
 	private void createMeshes() {
@@ -154,7 +159,7 @@ public final class GameWorld {
 		TotalMeshes = staticMeshes.size() + trackWalls.count() + trackTrees.count();
 	}
 
-	private void loadPlayer( TiledMap map ) {
+	private void loadPlayerData( TiledMap map ) {
 		// search the map for the start marker and create
 		// the player with the found tile coordinates
 		float halfTile = map.tileWidth / 2;
@@ -212,15 +217,15 @@ public final class GameWorld {
 		rayHandler.setBlurNum( 1 );
 		rayHandler.setAmbientLight( 0f, 0, 0.25f, 0.2f );
 
-		// attach light to player
 		final Color c = new Color();
 
-		// setup player headlights
+		// setup player headlights data
 		c.set( .4f, .4f, .75f, .85f );
 		playerHeadlights = new ConeLight( rayHandler, maxRays, c, 30, 0, 0, 0, 15 );
 		playerHeadlights.setSoft( false );
 		playerHeadlights.setMaskBits( CollisionFilters.CategoryTrackWalls );
 
+		// setup level lights data, if any
 		Vector2 pos = new Vector2();
 		TiledObjectGroup group = mapUtils.getObjectGroup( ObjectGroup.Lights );
 		for( int i = 0; i < group.objects.size(); i++ ) {
@@ -234,7 +239,7 @@ public final class GameWorld {
 			pos.y = worldSizeScaledPx.y - pos.y;
 			pos.set( Convert.px2mt( pos ) );
 
-			PointLight l = new PointLight( rayHandler, maxRays, c, 30f, pos.x, pos.y );
+			PointLight l = new PointLight( rayHandler, maxRays, c, 10f, pos.x, pos.y );
 			l.setSoft( false );
 			l.setMaskBits( CollisionFilters.CategoryPlayer | CollisionFilters.CategoryTrackWalls );
 		}
@@ -489,6 +494,10 @@ public final class GameWorld {
 
 	public ConeLight getPlayerHeadLights() {
 		return playerHeadlights;
+	}
+
+	public World getBox2DWorld() {
+		return box2dWorld;
 	}
 
 	// helpers from maputils

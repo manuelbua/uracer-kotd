@@ -1,6 +1,6 @@
 package com.bitfire.uracer.game;
 
-import com.bitfire.uracer.Config;
+import com.bitfire.uracer.configuration.Config;
 import com.bitfire.uracer.task.Task;
 import com.bitfire.uracer.task.TaskManagerEvent.Order;
 

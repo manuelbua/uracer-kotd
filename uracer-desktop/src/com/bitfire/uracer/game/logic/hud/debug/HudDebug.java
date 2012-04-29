@@ -3,14 +3,14 @@ package com.bitfire.uracer.game.logic.hud.debug;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.utils.Array;
-import com.bitfire.uracer.Art;
-import com.bitfire.uracer.game.Director;
 import com.bitfire.uracer.game.events.GameEvents;
 import com.bitfire.uracer.game.logic.hud.HudElement;
 import com.bitfire.uracer.game.logic.trackeffects.effects.PlayerSkidMarks;
 import com.bitfire.uracer.game.player.PlayerCar;
 import com.bitfire.uracer.game.player.PlayerDriftState;
+import com.bitfire.uracer.game.rendering.GameRenderer;
 import com.bitfire.uracer.game.rendering.GameRendererEvent;
+import com.bitfire.uracer.resources.Art;
 import com.bitfire.uracer.utils.CarUtils;
 
 /** Encapsulates a special hud element that won't render as usual, but it will schedule
@@ -86,9 +86,9 @@ public class HudDebug extends HudElement {
 		int index = 0;
 		for( HudDebugMeter m : meters ) {
 
-			pos.set( Director.screenPosForPx( player.state().position ) );
+			pos.set( GameRenderer.ScreenUtils.screenPosForPx( player.state().position ) );
 			pos.x -= m.getWidth() * 0.5f;
-			pos.y += 50;// * displacement.x;
+			pos.y += 50;
 
 			// offset by index
 			pos.y += index * (prevHeight + Art.DebugFontHeight);

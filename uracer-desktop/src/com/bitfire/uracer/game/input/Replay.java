@@ -6,6 +6,7 @@ import com.bitfire.uracer.game.Time;
 import com.bitfire.uracer.game.actors.Car;
 import com.bitfire.uracer.game.actors.Car.Aspect;
 import com.bitfire.uracer.game.actors.CarForces;
+import com.bitfire.uracer.game.actors.CarModel;
 import com.bitfire.uracer.utils.UUid;
 
 /** Represents replay data to be feed to a GhostCar, the replay player.
@@ -18,7 +19,8 @@ public class Replay {
 
 	// car data
 	public Aspect carAspect;
-	public Vector2 carPosition;
+	public CarModel carModel = new CarModel();
+	public Vector2 carPosition = new Vector2();
 	public float carOrientation;
 
 	// replay data
@@ -49,9 +51,10 @@ public class Replay {
 
 	public void begin( String trackName, GameDifficulty difficulty, Car car ) {
 		reset();
-		carAspect = car.getAspect();
-		carPosition = new Vector2( car.pos() );
+		carPosition.set( car.pos() );
 		carOrientation = car.orient();
+		carAspect = car.getAspect();
+		carModel.set( car.getCarModel() );
 		this.trackName = trackName;
 		difficultyLevel = difficulty;
 		time.start();

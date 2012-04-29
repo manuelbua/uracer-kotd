@@ -18,23 +18,24 @@ import com.badlogic.gdx.graphics.glutils.ImmediateModeRenderer20;
 import com.badlogic.gdx.graphics.glutils.ShaderProgram;
 import com.badlogic.gdx.math.MathUtils;
 import com.badlogic.gdx.math.Matrix4;
+import com.badlogic.gdx.math.Rectangle;
 import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.math.Vector3;
 import com.badlogic.gdx.math.collision.BoundingBox;
-import com.bitfire.uracer.Art;
-import com.bitfire.uracer.Config;
 import com.bitfire.uracer.ScalingStrategy;
-import com.bitfire.uracer.game.Director;
-import com.bitfire.uracer.game.player.PlayerCar;
+import com.bitfire.uracer.configuration.Config;
+import com.bitfire.uracer.game.actors.Car;
+import com.bitfire.uracer.game.logic.helpers.CameraController;
 import com.bitfire.uracer.game.world.GameWorld;
 import com.bitfire.uracer.game.world.models.OrthographicAlignedStillModel;
 import com.bitfire.uracer.game.world.models.TrackTrees;
 import com.bitfire.uracer.game.world.models.TrackWalls;
 import com.bitfire.uracer.game.world.models.TreeStillModel;
+import com.bitfire.uracer.resources.Art;
 import com.bitfire.uracer.utils.Convert;
 import com.bitfire.uracer.utils.ShaderLoader;
 
-public class GameWorldRenderer {
+public final class GameWorldRenderer {
 	// @formatter:off
 	private static final String treeVertexShader =
 		"uniform mat4 u_mvpMatrix;					\n" +
@@ -62,10 +63,19 @@ public class GameWorldRenderer {
 	// @formatter:on
 
 	private GameWorld world = null;
+
+	// camera view
 	private PerspectiveCamera camPersp = null;
-	private OrthographicCamera camOrtho = null;
-	private ShaderProgram treeShader = null;
+	protected OrthographicCamera camTilemap = null;
+	protected OrthographicCamera camOrtho = null;
+	protected Vector2 halfViewport = new Vector2();
+	protected Rectangle camOrthoRect = new Rectangle();
+	private Matrix4 camOrthoMvpMt = new Matrix4();
+	private CameraController camController;
 	private float camPerspElevation = 0f;
+
+	// rendering
+	private ShaderProgram treeShader = null;
 	private TileAtlas tileAtlas = null;
 
 	public UTileMapRenderer tileMapRenderer = null;
@@ -112,9 +122,39 @@ public class GameWorldRenderer {
 		tileAtlas.dispose();
 	}
 
-	// public void setPlayerCar( PlayerCar player ) {
-	// carPlayer = player;
-	// }
+	private void createCams( int width, int height ) {
+		camOrtho = new OrthographicCamera( width, height );
+		halfViewport.set( camOrtho.viewportWidth / 2, camOrtho.viewportHeight / 2 );
+
+		// creates and setup orthographic camera
+		camTilemap = new OrthographicCamera( width, height );
+		camTilemap.near = 0;
+		camTilemap.far = 100;
+		camTilemap.zoom = 1;
+
+		// creates and setup perspective camera
+		// strategically choosen, Blender models' 14.2 meters <=> one 256px tile
+		// with far plane @48
+		float perspPlaneNear = 1;
+		float perspPlaneFar = 240;
+		camPerspElevation = 100;
+
+		camPersp = new PerspectiveCamera( scalingStrategy.verticalFov, width, height );
+		camPersp.near = perspPlaneNear;
+		camPersp.far = perspPlaneFar;
+		camPersp.lookAt( 0, 0, -1 );
+		camPersp.position.set( 0, 0, camPerspElevation );
+
+		camController = new CameraController( Config.Graphics.CameraInterpolationMode, halfViewport, world.worldSizeScaledPx, world.worldSizeTiles );
+	}
+
+	public OrthographicCamera getOrthographicCamera() {
+		return camOrtho;
+	}
+
+	public Matrix4 getOrthographicMvpMt() {
+		return camOrthoMvpMt;
+	}
 
 	public void resetCounters() {
 		culledMeshes = 0;
@@ -122,11 +162,11 @@ public class GameWorldRenderer {
 		renderedWalls = 0;
 	}
 
-	public void updatePlayerHeadlightsLightMap( PlayerCar player ) {
-		if( player != null ) {
-			Vector2 carPosition = player.state().position;
-			float carOrientation = player.state().orientation;
-			float carLength = player.getCarModel().length;
+	public void updatePlayerHeadlights( Car car ) {
+		if( car != null ) {
+			Vector2 carPosition = car.state().position;
+			float carOrientation = car.state().orientation;
+			float carLength = car.getCarModel().length;
 
 			// update player light (subframe interpolation ready)
 			float ang = 90 + carOrientation;
@@ -156,61 +196,63 @@ public class GameWorldRenderer {
 		// }
 	}
 
-	public void updateRayHandler( Matrix4 matViewProj, PlayerCar player ) {
+	private void updateRayHandler() {
 		if( rayHandler != null ) {
-			updatePlayerHeadlightsLightMap( player );
-
-			rayHandler.setCombinedMatrix( matViewProj, Convert.px2mt( camOrtho.position.x * scalingStrategy.invTileMapZoomFactor ),
-					Convert.px2mt( camOrtho.position.y * scalingStrategy.invTileMapZoomFactor ), Convert.px2mt( camOrtho.viewportWidth ),
-					Convert.px2mt( camOrtho.viewportHeight ) );
+			rayHandler.setCombinedMatrix( camOrthoMvpMt, Convert.px2mt( camOrtho.position.x ), Convert.px2mt( camOrtho.position.y ),
+					Convert.px2mt( camOrtho.viewportWidth ), Convert.px2mt( camOrtho.viewportHeight ) );
 
 			rayHandler.update();
+			// Gdx.app.log( "GameWorldRenderer", "lights rendered=" + rayHandler.lightRenderedLastFrame );
 
 			rayHandler.updateLightMap();
 		}
+	}
+
+	public void setCameraPosition( Vector2 position, boolean round ) {
+		Vector2 interpPos = camController.transform( position );
+
+		// update orthographic camera
+		if( round ) {
+			// remove subpixel accuracy (jagged behavior)
+			camOrtho.position.x = MathUtils.round( interpPos.x );
+			camOrtho.position.y = MathUtils.round( interpPos.y );
+		} else {
+			camOrtho.position.x = interpPos.x;
+			camOrtho.position.y = interpPos.y;
+		}
+
+		camOrtho.position.z = 0;
+		camOrtho.update();
+
+		// update the unscaled orthographic camera rectangle, for visibility queries
+		camOrthoRect.set( camOrtho.position.x - halfViewport.x, camOrtho.position.y - halfViewport.y, camOrtho.viewportWidth, camOrtho.viewportHeight );
+
+		// update the model-view-projection matrix, in meters, from the unscaled orthographic camera
+		camOrthoMvpMt.set( camOrtho.combined );
+		camOrthoMvpMt.val[Matrix4.M00] *= Config.Physics.PixelsPerMeter;
+		camOrthoMvpMt.val[Matrix4.M01] *= Config.Physics.PixelsPerMeter;
+		camOrthoMvpMt.val[Matrix4.M10] *= Config.Physics.PixelsPerMeter;
+		camOrthoMvpMt.val[Matrix4.M11] *= Config.Physics.PixelsPerMeter;
+
+		// update the tilemap renderer orthographic camera
+		camTilemap.position.set( camOrtho.position ).mul( scalingStrategy.tileMapZoomFactor );
+		camTilemap.zoom = scalingStrategy.tileMapZoomFactor;
+		camTilemap.update();
+
+		// sync perspective camera to the orthographic camera
+		camPersp.position.set( camTilemap.position.x, camTilemap.position.y, camPerspElevation );
+		camPersp.update();
+
+		updateRayHandler();
 	}
 
 	public void renderLigthMap( FrameBuffer dest ) {
 		rayHandler.renderLightMap( dest );
 	}
 
-	public void syncWithCam( OrthographicCamera orthoCam ) {
-		// scale position
-		camOrtho.position.set( orthoCam.position );
-		camOrtho.position.mul( scalingStrategy.tileMapZoomFactor );
-
-		camOrtho.viewportWidth = Gdx.graphics.getWidth();
-		camOrtho.viewportHeight = Gdx.graphics.getHeight();
-		camOrtho.zoom = scalingStrategy.tileMapZoomFactor;
-		camOrtho.update();
-
-		camPersp.viewportWidth = camOrtho.viewportWidth;
-		camPersp.viewportHeight = camOrtho.viewportHeight;
-		camPersp.position.set( camOrtho.position.x, camOrtho.position.y, camPerspElevation );
-		camPersp.fieldOfView = scalingStrategy.verticalFov;
-		camPersp.update();
-	}
-
-	private void createCams( int width, int height ) {
-		// creates and setup orthographic camera
-		camOrtho = new OrthographicCamera( width, height );
-		camOrtho.near = 0;
-		camOrtho.far = 100;
-		camOrtho.zoom = 1;
-
-		// creates and setup perspective camera
-		float perspPlaneNear = 1;
-
-		// strategically choosen, Blender models' 14.2 meters <=> one 256px tile
-		// with far plane @48
-		float perspPlaneFar = 240;
-		camPerspElevation = 100;
-
-		camPersp = new PerspectiveCamera( scalingStrategy.verticalFov, width, height );
-		camPersp.near = perspPlaneNear;
-		camPersp.far = perspPlaneFar;
-		camPersp.lookAt( 0, 0, -1 );
-		camPersp.position.set( 0, 0, camPerspElevation );
+	public void renderTilemap( GL20 gl ) {
+		gl.glDisable( GL20.GL_BLEND );
+		tileMapRenderer.render( camTilemap );
 	}
 
 	private void renderWalls( GL20 gl, TrackWalls walls ) {
@@ -221,7 +263,7 @@ public class GameWorldRenderer {
 	}
 
 	private void renderTrees( GL20 gl, TrackTrees trees ) {
-		trees.transform( camPersp, camOrtho );
+		trees.transform( camPersp, camOrtho, halfViewport );
 
 		gl.glDisable( GL20.GL_BLEND );
 		gl.glEnable( GL20.GL_CULL_FACE );
@@ -298,8 +340,8 @@ public class GameWorldRenderer {
 			// compute position
 			pospx.set( m.positionPx );
 			pospx.set( world.positionFor( pospx ) );
-			tmpvec.x = Convert.scaledPixels( m.positionOffsetPx.x - camOrtho.position.x ) + Director.halfViewport.x + pospx.x;
-			tmpvec.y = Convert.scaledPixels( m.positionOffsetPx.y + camOrtho.position.y ) + Director.halfViewport.y - pospx.y;
+			tmpvec.x = /* Convert.scaledPixels */(m.positionOffsetPx.x - camOrtho.position.x) + halfViewport.x + pospx.x;
+			tmpvec.y = /* Convert.scaledPixels */(m.positionOffsetPx.y + camOrtho.position.y) + halfViewport.y - pospx.y;
 			tmpvec.z = 1;
 
 			// transform to world space
@@ -348,11 +390,6 @@ public class GameWorldRenderer {
 		}
 
 		return renderedCount;
-	}
-
-	public void renderTilemap( GL20 gl ) {
-		gl.glDisable( GL20.GL_BLEND );
-		tileMapRenderer.render( camOrtho );
 	}
 
 	public void renderAllMeshes( GL20 gl ) {

@@ -1,14 +1,16 @@
 package com.bitfire.uracer.game;
 
+import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.utils.Disposable;
-import com.bitfire.uracer.Config;
 import com.bitfire.uracer.ScalingStrategy;
 import com.bitfire.uracer.URacer;
+import com.bitfire.uracer.configuration.Config;
 import com.bitfire.uracer.game.actors.Car;
 import com.bitfire.uracer.game.actors.Car.Aspect;
 import com.bitfire.uracer.game.actors.CarModel;
 import com.bitfire.uracer.game.logic.GameLogic;
 import com.bitfire.uracer.game.rendering.GameRenderer;
+import com.bitfire.uracer.game.rendering.debug.DebugHelper;
 import com.bitfire.uracer.game.world.GameWorld;
 import com.bitfire.uracer.postprocessing.PostProcessor;
 import com.bitfire.uracer.postprocessing.effects.Bloom;
@@ -18,8 +20,14 @@ import com.bitfire.uracer.task.TaskManager;
 
 public class Game implements Disposable {
 
+	// world
+	public GameWorld gameWorld = null;
+
 	// config
 	public GameplaySettings gameplaySettings = null;
+
+	// debug
+	private DebugHelper debug = null;
 
 	// logic
 	private GameLogic gameLogic = null;
@@ -33,27 +41,42 @@ public class Game implements Disposable {
 	private Zoom zoom = null;
 	private Vignette vignette = null;
 
-	public Game( String levelName, ScalingStrategy scalingStrategy, GameDifficulty difficulty, Aspect carAspect, CarModel carModel ) {
+	public Game( String levelName, ScalingStrategy scalingStrategy, GameDifficulty difficulty, CarModel carModel, Aspect carAspect ) {
 		gameplaySettings = new GameplaySettings( difficulty );
 
-		// handle game rules and mechanics, it's all about game data
-		gameLogic = new GameLogic( gameplaySettings, scalingStrategy, levelName, carAspect, carModel );
-		GameWorld world = gameLogic.getGameWorld();
+		gameWorld = new GameWorld( scalingStrategy, levelName, false );
+		Gdx.app.log( "Game", "Game world ready" );
 
 		// handles rendering
-		gameRenderer = new GameRenderer( scalingStrategy, world, Config.PostProcessing.Enabled );
+		gameRenderer = new GameRenderer( gameWorld, scalingStrategy, Config.PostProcessing.Enabled );
 		canPostProcess = gameRenderer.hasPostProcessor();
+		Gdx.app.log( "Game", "GameRenderer ready" );
 
 		// post-processing
 		if( canPostProcess ) {
-			configurePostProcessing( gameRenderer.getPostProcessor(), world );
+			configurePostProcessing( gameRenderer.getPostProcessor(), gameWorld );
+			Gdx.app.log( "Game", "Post-processing configured" );
 		}
+
+		// handles game rules and mechanics, it's all about game data
+		gameLogic = new GameLogic( gameWorld, gameplaySettings, scalingStrategy, carAspect, carModel );
+		Gdx.app.log( "Game", "GameLogic created" );
+
+		// initialize the debug helper
+		debug = new DebugHelper( gameRenderer.getWorldRenderer(), gameWorld.getBox2DWorld() );
+		debug.setPlayer( gameLogic.getPlayer() );
+		Gdx.app.log( "Game", "Debug helper initialized with player instance" );
 	}
 
 	@Override
 	public void dispose() {
+		debug.dispose();
 		gameRenderer.dispose();
 		gameLogic.dispose();
+	}
+
+	public void setPlayer(CarModel model, Aspect aspect) {
+		gameLogic.setPlayer( aspect, model );
 	}
 
 	private void configurePostProcessing( PostProcessor processor, GameWorld world ) {
@@ -88,13 +111,13 @@ public class Game implements Disposable {
 		Car playerCar = gameLogic.getPlayer();
 
 		if( zoom != null && playerCar != null ) {
-			zoom.setOrigin( Director.screenPosFor( playerCar.getBody() ) );
+			zoom.setOrigin( GameRenderer.ScreenUtils.screenPosForMt( playerCar.getBody().getPosition() ) );
 			zoom.setStrength( -0.1f * factor );
 		}
 
 		if( bloom != null && zoom != null ) {
 			bloom.setBaseSaturation( 0.5f - 0.5f * factor );
-//			bloom.setBloomSaturation( 1.5f - factor * 0.85f );	// TODO when charged
+			// bloom.setBloomSaturation( 1.5f - factor * 0.85f ); // TODO when charged
 			bloom.setBloomSaturation( 1.5f - factor * 1.5f );	// TODO when completely discharged
 			bloom.setBloomIntesity( 1f + factor * 1.75f );
 
@@ -116,13 +139,14 @@ public class Game implements Disposable {
 			updatePostProcessingEffects();
 		}
 
+		debug.tick();
+
 		return true;
 	}
 
 	public void render() {
-		gameLogic.onBeforeRender();
-		gameRenderer.onBeforeRender( gameLogic.getPlayer() );
-		gameRenderer.render( gameLogic.getPlayer() );
+		gameLogic.onBeforeRender( gameRenderer );
+		gameRenderer.render();
 	}
 
 	public void pause() {

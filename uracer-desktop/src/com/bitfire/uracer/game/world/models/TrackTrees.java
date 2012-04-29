@@ -7,8 +7,6 @@ import com.badlogic.gdx.graphics.PerspectiveCamera;
 import com.badlogic.gdx.math.Matrix4;
 import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.math.Vector3;
-import com.bitfire.uracer.game.Director;
-import com.bitfire.uracer.utils.Convert;
 
 public class TrackTrees {
 	public final List<TreeStillModel> models;
@@ -40,7 +38,7 @@ public class TrackTrees {
 	private Matrix4 tmpmtx2 = new Matrix4();
 	private Vector2 pospx = new Vector2();
 
-	public void transform( PerspectiveCamera camPersp, OrthographicCamera camOrtho ) {
+	public void transform( PerspectiveCamera camPersp, OrthographicCamera camOrtho, Vector2 halfViewport ) {
 		float meshZ = -(camPersp.far - camPersp.position.z);
 
 		for( int i = 0; i < models.size(); i++ ) {
@@ -51,8 +49,8 @@ public class TrackTrees {
 			// compute position
 			pospx.set(m.positionPx);
 			pospx.set(mapUtils.positionFor( pospx ));
-			tmpvec.x = Convert.scaledPixels( m.positionOffsetPx.x - camOrtho.position.x ) + Director.halfViewport.x + pospx.x;
-			tmpvec.y = Convert.scaledPixels( m.positionOffsetPx.y + camOrtho.position.y ) + Director.halfViewport.y - pospx.y;
+			tmpvec.x = ( m.positionOffsetPx.x - camOrtho.position.x ) + halfViewport.x + pospx.x;
+			tmpvec.y = ( m.positionOffsetPx.y + camOrtho.position.y ) + halfViewport.y - pospx.y;
 			tmpvec.z = 1;
 
 			// transform to world space
