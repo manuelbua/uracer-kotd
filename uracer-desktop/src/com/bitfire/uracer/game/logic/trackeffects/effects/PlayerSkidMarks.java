@@ -82,7 +82,7 @@ public class PlayerSkidMarks extends TrackEffect {
 		for( int i = 0; i < MaxSkidMarks; i++ ) {
 			d = skidMarks[i];
 			// FIXME implement gameRenderer.isVisible instead
-			if( d.life > 0 && GameRenderer.isVisible( d.getBoundingRectangle() ) ) {
+			if( d.life > 0 && GameRenderer.ScreenUtils.isVisible( d.getBoundingRectangle() ) ) {
 				visibleSkidMarksCount++;
 
 				lifeRatio = d.life / d.maxLife;

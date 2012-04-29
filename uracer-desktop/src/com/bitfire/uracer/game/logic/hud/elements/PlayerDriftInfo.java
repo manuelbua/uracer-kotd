@@ -134,7 +134,7 @@ public final class PlayerDriftInfo extends HudElement {
 		displacement.y *= (carModelLengthPx + labelRealtime.halfBoundsHeight);
 
 		// gets pixel position and then displaces it
-		tmpv.set( GameRenderer.screenPosForPx( playerPosition ) );
+		tmpv.set( GameRenderer.ScreenUtils.screenPosForPx( playerPosition ) );
 		tmpv.sub( displacement );
 
 		labelRealtime.setPosition( tmpv );

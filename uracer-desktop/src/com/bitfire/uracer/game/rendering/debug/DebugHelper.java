@@ -163,7 +163,7 @@ public final class DebugHelper {
 	private void renderPlayerInfo( SpriteBatch batch, PlayerCar player ) {
 		CarDescriptor carDesc = player.getCarDescriptor();
 		Body body = player.getBody();
-		Vector2 pos = GameRenderer.screenPosForMt( body.getPosition() );
+		Vector2 pos = GameRenderer.ScreenUtils.screenPosForMt( body.getPosition() );
 		EntityRenderState state = player.state();
 
 		SpriteBatchUtils.drawString( batch, "vel_wc len =" + carDesc.velocity_wc.len(), 0, 13 );

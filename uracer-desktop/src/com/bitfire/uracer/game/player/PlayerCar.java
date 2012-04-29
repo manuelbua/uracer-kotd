@@ -104,7 +104,7 @@ public class PlayerCar extends Car {
 		}
 
 		// FIXME check if inputSystem is valid!
-		carPos.set( GameRenderer.screenPosForMt( body.getPosition() ) );
+		carPos.set( GameRenderer.ScreenUtils.screenPosForMt( body.getPosition() ) );
 
 		touchPos.set( inputSystem.getXY() );
 		carInput.updated = inputSystem.isTouching();

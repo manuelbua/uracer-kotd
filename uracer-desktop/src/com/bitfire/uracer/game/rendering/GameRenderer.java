@@ -22,14 +22,41 @@ public final class GameRenderer {
 	private final GameWorld world;
 	private final GameBatchRenderer batchRenderer;
 	private final PostProcessor postProcessor;
-	// private static ScalingStrategy scalingStrategy;
-	private static GameWorldRenderer worldRenderer;
-	private static Vector2 screenPosFor = new Vector2();
+	private final GameWorldRenderer worldRenderer;
+
+	/** Manages to convert world positions expressed in meters or pixels to screen pixels.
+	 * To use this class, the GameWorldRenderer MUST be already constructed and initialized. */
+	public static final class ScreenUtils {
+		private static Vector2 screenPosFor = new Vector2();
+		private static GameWorldRenderer worldRenderer;
+
+		public static void init( GameWorldRenderer worldRenderer ) {
+			ScreenUtils.worldRenderer = worldRenderer;
+		}
+
+		public static Vector2 screenPosForMt( Vector2 worldPositionMt ) {
+			screenPosFor.x = Convert.mt2px( worldPositionMt.x ) - worldRenderer.camOrtho.position.x + worldRenderer.halfViewport.x;
+			screenPosFor.y = worldRenderer.camOrtho.position.y - Convert.mt2px( worldPositionMt.y ) + worldRenderer.halfViewport.y;
+			return screenPosFor;
+		}
+
+		public static Vector2 screenPosForPx( Vector2 worldPositionPx ) {
+			screenPosFor.x = worldPositionPx.x - worldRenderer.camOrtho.position.x + worldRenderer.halfViewport.x;
+			screenPosFor.y = worldRenderer.camOrtho.position.y - worldPositionPx.y + worldRenderer.halfViewport.y;
+			return screenPosFor;
+		}
+
+		public static boolean isVisible( Rectangle rect ) {
+			return worldRenderer.camOrthoRect.overlaps( rect );
+		}
+
+		private ScreenUtils() {
+		}
+	}
 
 	public GameRenderer( ScalingStrategy scalingStrategy, GameWorld gameWorld, boolean createPostProcessing ) {
 		gl = Gdx.graphics.getGL20();
 		world = gameWorld;
-		// GameRenderer.scalingStrategy = scalingStrategy;
 
 		int width = Gdx.graphics.getWidth();
 		int height = Gdx.graphics.getHeight();
@@ -37,6 +64,9 @@ public final class GameRenderer {
 		// world rendering
 		worldRenderer = new GameWorldRenderer( scalingStrategy, world, width, height );
 		batchRenderer = new GameBatchRenderer( gl );
+
+		// initialize utils
+		ScreenUtils.init( worldRenderer );
 
 		// post-processing
 		boolean supports32Bpp = Config.isDesktop;
@@ -142,21 +172,5 @@ public final class GameRenderer {
 
 	public void rebind() {
 		postProcessor.rebind();
-	}
-
-	public static Vector2 screenPosForMt( Vector2 worldPositionMt ) {
-		screenPosFor.x = Convert.mt2px( worldPositionMt.x ) - worldRenderer.camOrtho.position.x + worldRenderer.halfViewport.x;
-		screenPosFor.y = worldRenderer.camOrtho.position.y - Convert.mt2px( worldPositionMt.y ) + worldRenderer.halfViewport.y;
-		return screenPosFor;
-	}
-
-	public static Vector2 screenPosForPx( Vector2 worldPositionPx ) {
-		screenPosFor.x = worldPositionPx.x - worldRenderer.camOrtho.position.x + worldRenderer.halfViewport.x;
-		screenPosFor.y = worldRenderer.camOrtho.position.y - worldPositionPx.y + worldRenderer.halfViewport.y;
-		return screenPosFor;
-	}
-
-	public static boolean isVisible( Rectangle rect ) {
-		return worldRenderer.camOrthoRect.overlaps( rect );
 	}
 }

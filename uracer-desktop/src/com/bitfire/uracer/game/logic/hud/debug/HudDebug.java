@@ -86,7 +86,7 @@ public class HudDebug extends HudElement {
 		int index = 0;
 		for( HudDebugMeter m : meters ) {
 
-			pos.set( GameRenderer.screenPosForPx( player.state().position ) );
+			pos.set( GameRenderer.ScreenUtils.screenPosForPx( player.state().position ) );
 			pos.x -= m.getWidth() * 0.5f;
 			pos.y += 50;
 
