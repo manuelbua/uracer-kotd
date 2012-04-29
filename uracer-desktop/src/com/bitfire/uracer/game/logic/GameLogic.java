@@ -125,7 +125,7 @@ public class GameLogic implements CarEvent.Listener, CarStateEvent.Listener, Pla
 		}
 	};
 
-	public GameLogic( GameWorld gameWorld, GameplaySettings settings, ScalingStrategy scalingStrategy, String levelName, Aspect carAspect, CarModel carModel ) {
+	public GameLogic( GameWorld gameWorld, GameplaySettings settings, ScalingStrategy scalingStrategy, Aspect carAspect, CarModel carModel ) {
 		this.gameplaySettings = settings;
 		this.scalingStrategy = scalingStrategy;
 		this.gameWorld = gameWorld;

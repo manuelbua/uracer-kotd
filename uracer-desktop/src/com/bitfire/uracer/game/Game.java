@@ -57,7 +57,7 @@ public class Game implements Disposable {
 		}
 
 		// handles game rules and mechanics, it's all about game data
-		gameLogic = new GameLogic( gameWorld, gameplaySettings, scalingStrategy, levelName, carAspect, carModel );
+		gameLogic = new GameLogic( gameWorld, gameplaySettings, scalingStrategy, carAspect, carModel );
 		Gdx.app.log( "Game", "GameLogic created" );
 
 		// initialize the debug helper
