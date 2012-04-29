@@ -20,11 +20,10 @@ public final class GhostCar extends Car {
 	// public CarState carState = null;
 
 	public GhostCar( GameWorld gameWorld, CarModel model, Aspect aspect ) {
-		super( gameWorld, model, aspect );
+		super( gameWorld, CarType.ReplayCar, InputMode.InputFromReplay, model, aspect );
 		indexPlay = 0;
 		hasReplay = false;
 		replay = null;
-		this.inputMode = InputMode.InputFromReplay;
 		this.renderer.setAlpha( 0.5f );
 		// this.carState = new CarState( gameWorld, this );
 

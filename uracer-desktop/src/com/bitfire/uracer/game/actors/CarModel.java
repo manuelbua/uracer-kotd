@@ -5,6 +5,8 @@ package com.bitfire.uracer.game.actors;
  *
  * @author manuel */
 public final class CarModel {
+	public String name;
+
 	public float wheelbase; // wheelbase in m
 	public float b; // in m, distance from CG to front axle
 	public float c; // in m, idem to rear axle
@@ -44,6 +46,7 @@ public final class CarModel {
 	}
 
 	public void set( CarModel other ) {
+		this.name = other.name;
 		this.wheelbase = other.wheelbase;
 		this.b = other.b;
 		this.c = other.c;
@@ -71,6 +74,8 @@ public final class CarModel {
 
 	// default car model
 	public CarModel toDefault() {
+		name = "model-default";
+
 		// physical model
 		// h = 1f; // m
 		mass = 1500.f; // kg
@@ -111,6 +116,8 @@ public final class CarModel {
 	public CarModel toModel1() {
 		toDefault();
 
+		name = "model-1";
+
 		// physical model
 		b = 1.f; // m
 		c = 1.f; // m
@@ -136,6 +143,7 @@ public final class CarModel {
 
 	public CarModel toModel2() {
 		toDefault();
+		name = "model-2";
 
 		// physical model
 		// h = .85f; // m
@@ -164,6 +172,7 @@ public final class CarModel {
 
 	public CarModel toModel3() {
 		toModel2();
+		name = "model-3";
 
 		// physical model
 		// h = .85f; // m
@@ -196,6 +205,7 @@ public final class CarModel {
 
 	public CarModel toBlackCar() {
 		toModel1();
+		name = "black-car";
 
 		width = 3.1f; // m
 		length = 4.5f; // m (must be > wheelbase)

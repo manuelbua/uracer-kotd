@@ -11,6 +11,8 @@ public final class Config {
 	// generic
 	public static boolean isDesktop;
 	public static final String LevelsStore = "data/levels/";
+	public static final String ShapesStore = "data/base/";
+	public static final String ShapesRefs = "../../data-src/base/cars/";
 
 	public static final class PostProcessing {
 		public static boolean Enabled;
