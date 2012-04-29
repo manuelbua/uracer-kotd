@@ -10,6 +10,7 @@ import com.badlogic.gdx.physics.box2d.Fixture;
 import com.badlogic.gdx.physics.box2d.FixtureDef;
 import com.bitfire.uracer.configuration.Config;
 import com.bitfire.uracer.game.collisions.CollisionFilters;
+import com.bitfire.uracer.game.rendering.GameRendererEvent;
 import com.bitfire.uracer.game.world.GameWorld;
 import com.bitfire.uracer.resources.Art;
 import com.bitfire.uracer.utils.AMath;
@@ -66,8 +67,8 @@ public abstract class Car extends Box2DEntity {
 	private Aspect aspect = Aspect.OldSkool;
 	protected InputMode inputMode = InputMode.NoInput;
 
-	public Car( GameWorld gameWorld, CarType carType, InputMode inputMode, CarModel model, Aspect aspect ) {
-		super( gameWorld.getBox2DWorld() );
+	public Car( GameWorld gameWorld, CarType carType, InputMode inputMode, GameRendererEvent.Order drawingOrder, CarModel model, Aspect aspect ) {
+		super( gameWorld.getBox2DWorld(), drawingOrder );
 		this.aspect = aspect;
 		this.model.set( model );
 		this.carType = carType;
@@ -103,8 +104,8 @@ public abstract class Car extends Box2DEntity {
 		body.setUserData( this );
 
 		TextureRegion region = Art.cars.findRegion( aspect.name );
-		String shapeName = Config.ShapesStore + aspect.name + ".shape";
-		String shapeRef = Config.ShapesRefs + aspect.name + ".png";
+		String shapeName = Config.ShapesStore + "electron" /* aspect.name */+ ".shape";
+		String shapeRef = Config.ShapesRefs + "electron" /* aspect.name */+ ".png";
 
 		// set physical properties and apply shape
 		FixtureDef fd = new FixtureDef();
@@ -155,7 +156,11 @@ public abstract class Car extends Box2DEntity {
 	}
 
 	public void setAspect( Aspect aspect ) {
-		renderer.setAspect( aspect, model );
+		if( this.aspect != aspect ) {
+			this.aspect = aspect;
+			renderer.setAspect( aspect, model );
+			Gdx.app.log( this.getClass().getSimpleName(), "Switched to car aspect type \"" + aspect.toString() + "\"" );
+		}
 	}
 
 	public void setCarModel( CarModel.Type modelType ) {

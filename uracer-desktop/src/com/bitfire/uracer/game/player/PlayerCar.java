@@ -12,6 +12,7 @@ import com.bitfire.uracer.game.actors.CarModel;
 import com.bitfire.uracer.game.actors.CarState;
 import com.bitfire.uracer.game.actors.CarType;
 import com.bitfire.uracer.game.rendering.GameRenderer;
+import com.bitfire.uracer.game.rendering.GameRendererEvent;
 import com.bitfire.uracer.game.world.GameWorld;
 import com.bitfire.uracer.utils.AMath;
 import com.bitfire.uracer.utils.VMath;
@@ -39,7 +40,7 @@ public class PlayerCar extends Car {
 	public PlayerDriftState driftState = null;
 
 	public PlayerCar( GameWorld gameWorld, CarModel model, Aspect aspect ) {
-		super( gameWorld, CarType.PlayerCar, InputMode.InputFromPlayer, model, aspect );
+		super( gameWorld, CarType.PlayerCar, InputMode.InputFromPlayer, GameRendererEvent.Order.DEFAULT, model, aspect );
 		carInput = new CarInput();
 		impacts = 0;
 
