@@ -259,10 +259,10 @@ public class GameLogic implements CarEvent.Listener, CarStateEvent.Listener, Pla
 		}
 	}
 
-	private void createPlayer( GameWorld gameWorld, Aspect carAspect, CarModel carModel ) {
-		playerCar = CarFactory.createPlayer( gameWorld, carAspect, carModel );
-		// ghostCar = CarFactory.createGhost( gameWorld, playerCar );
-	}
+//	private void createPlayer( GameWorld gameWorld, Aspect carAspect, CarModel carModel ) {
+//		playerCar = CarFactory.createPlayer( gameWorld, carAspect, carModel );
+//		// ghostCar = CarFactory.createGhost( gameWorld, playerCar );
+//	}
 
 	private void configurePlayer( GameWorld world, GameplaySettings settings, PlayerCar player ) {
 		// create player and setup player input system and initial position in the world

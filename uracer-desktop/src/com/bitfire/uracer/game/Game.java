@@ -42,7 +42,7 @@ public class Game implements Disposable {
 	private Zoom zoom = null;
 	private Vignette vignette = null;
 
-	public Game( String levelName, ScalingStrategy scalingStrategy, GameDifficulty difficulty, CarModel carModel, Aspect carAspect ) {
+	public Game( String levelName, ScalingStrategy scalingStrategy, GameDifficulty difficulty ) {
 		gameplaySettings = new GameplaySettings( difficulty );
 
 		gameWorld = new GameWorld( scalingStrategy, levelName, false );
