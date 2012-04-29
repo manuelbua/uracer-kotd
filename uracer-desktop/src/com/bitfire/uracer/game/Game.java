@@ -8,6 +8,7 @@ import com.bitfire.uracer.configuration.Config;
 import com.bitfire.uracer.game.actors.Car;
 import com.bitfire.uracer.game.actors.Car.Aspect;
 import com.bitfire.uracer.game.actors.CarModel;
+import com.bitfire.uracer.game.input.Replay;
 import com.bitfire.uracer.game.logic.CarFactory;
 import com.bitfire.uracer.game.logic.GameLogic;
 import com.bitfire.uracer.game.rendering.GameRenderer;
@@ -78,6 +79,10 @@ public class Game implements Disposable {
 	public void setPlayer(CarModel model, Aspect aspect) {
 		gameLogic.setPlayer( CarFactory.createPlayer( gameWorld, aspect, model ) );
 		debug.setPlayer( gameLogic.getPlayer() );
+	}
+
+	public void setLocalReplay( Replay replay ) {
+		gameLogic.setLocalReplay( replay );
 	}
 
 	private void configurePostProcessing( PostProcessor processor, GameWorld world ) {

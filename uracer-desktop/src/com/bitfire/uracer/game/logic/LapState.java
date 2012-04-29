@@ -55,6 +55,11 @@ public final class LapState {
 		return startTimeNs;
 	}
 
+	public void setReplay( Replay replay ) {
+		replays[0] = replay;
+		updateReplays();
+	}
+
 	public float getElapsedSeconds() {
 		return time.elapsed( Time.Reference.TickSeconds );
 	}
@@ -71,17 +76,30 @@ public final class LapState {
 		return (replays[0].isValid || replays[1].isValid);
 	}
 
-	public void updateReplays() {
-		if( !hasAllReplayData() ) {
-			return;
+	private Replay getFirstValid() {
+		if( replays[0].isValid ) {
+			return replays[0];
+		} else {
+			return replays[1];
 		}
+	}
 
-		best = replays[1];
-		worst = replays[0];
+	public void updateReplays() {
+		// if( !hasAllReplayData() ) {
+		// return;
+		// }
 
-		if( replays[0].trackTimeSeconds < replays[1].trackTimeSeconds ) {
-			best = replays[0];
-			worst = replays[1];
+		if( hasAllReplayData() ) {
+			best = replays[1];
+			worst = replays[0];
+
+			if( replays[0].trackTimeSeconds < replays[1].trackTimeSeconds ) {
+				best = replays[0];
+				worst = replays[1];
+			}
+		} else {
+			Replay r = getFirstValid();
+			best = r;
 		}
 	}
 

@@ -192,11 +192,12 @@ public class GameLogic implements CarEvent.Listener, CarStateEvent.Listener, Pla
 
 			registerPlayerEvents( player );
 			Gdx.app.log( "GameLogic", "Registered player-related events" );
-
 		}
 	}
 
-	public void setReplay( Replay replay ) {
+	public void setLocalReplay( Replay replay ) {
+		playerLapState.setReplay( replay );
+		restartGame();
 	}
 
 	private void registerPlayerEvents( PlayerCar player ) {
@@ -259,10 +260,10 @@ public class GameLogic implements CarEvent.Listener, CarStateEvent.Listener, Pla
 		}
 	}
 
-//	private void createPlayer( GameWorld gameWorld, Aspect carAspect, CarModel carModel ) {
-//		playerCar = CarFactory.createPlayer( gameWorld, carAspect, carModel );
-//		// ghostCar = CarFactory.createGhost( gameWorld, playerCar );
-//	}
+	// private void createPlayer( GameWorld gameWorld, Aspect carAspect, CarModel carModel ) {
+	// playerCar = CarFactory.createPlayer( gameWorld, carAspect, carModel );
+	// // ghostCar = CarFactory.createGhost( gameWorld, playerCar );
+	// }
 
 	private void configurePlayer( GameWorld world, GameplaySettings settings, PlayerCar player ) {
 		// create player and setup player input system and initial position in the world
@@ -543,7 +544,8 @@ public class GameLogic implements CarEvent.Listener, CarStateEvent.Listener, Pla
 					lapState.setLastTrackTimeSeconds( any.trackTimeSeconds );
 
 					thisReplay = any;
-					thisReplay.save();
+
+					thisReplay.saveLocal();
 
 					messager.show( "GO!  GO!  GO!", 3f, Type.Information, MessagePosition.Middle, MessageSize.Big );
 				} else {
@@ -573,7 +575,8 @@ public class GameLogic implements CarEvent.Listener, CarStateEvent.Listener, Pla
 					}
 
 					ghostCar.setReplay( best );
-					best.save();
+
+					best.saveLocal();
 
 					lapState.restart();
 					recorder.beginRecording( playerCar, worst, name, gameplaySettings.difficulty );

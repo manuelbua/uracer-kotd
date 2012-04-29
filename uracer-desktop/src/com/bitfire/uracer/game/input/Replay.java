@@ -1,5 +1,6 @@
 package com.bitfire.uracer.game.input;
 
+import java.io.DataInputStream;
 import java.io.DataOutputStream;
 import java.io.IOException;
 
@@ -36,18 +37,24 @@ public class Replay {
 	public float trackTimeSeconds = 0;
 	public CarForces[] forces = null;
 	public boolean isValid = false;
+	private boolean isLoaded = false;
+	private boolean isSaved = false;
 
 	// time track
 	private Time time = new Time();
 
 	public Replay() {
+		this( UUid.get() );
+	}
+
+	public Replay( long id ) {
 		eventsCount = 0;
 		forces = new CarForces[ MaxEvents ];
 		for( int i = 0; i < MaxEvents; i++ ) {
 			forces[i] = new CarForces();
 		}
 
-		id = UUid.get();
+		this.id = id;
 	}
 
 	public void dispose() {
@@ -63,17 +70,27 @@ public class Replay {
 		this.trackName = trackName;
 		difficultyLevel = difficulty;
 		time.start();
+
+		// if a previously loaded replay is being used, reset the loaded state
+		// since its invalid
+		isLoaded = false;
+
+		isSaved = false;
 	}
 
 	public void end() {
 		time.stop();
 		trackTimeSeconds = time.elapsed( Time.Reference.TickSeconds );
 		isValid = true;
+		isLoaded = false;
+		isSaved = false;
 	}
 
 	public void reset() {
 		eventsCount = 0;
 		isValid = false;
+		isLoaded = false;
+		isSaved = false;
 	}
 
 	// recording
@@ -91,8 +108,59 @@ public class Replay {
 		return true;
 	}
 
-	public void save() {
-		if( isValid ) {
+	public static Replay loadLocal( String trackname ) {
+		String filename = Config.URacerConfigFolder + Config.LocalReplaysStore + trackname;
+		FileHandle fh = Gdx.files.external( filename );
+		if( fh.exists() ) {
+			DataInputStream is = new DataInputStream( fh.read() );
+
+			try {
+				// read header
+				Replay r = new Replay( is.readLong() );
+
+				// replay info data
+				r.trackName = is.readUTF();
+				r.difficultyLevel = GameDifficulty.valueOf( is.readUTF() );
+				r.trackTimeSeconds = is.readFloat();
+				r.eventsCount = is.readInt();
+
+				// car data
+				r.carAspect = Aspect.valueOf( is.readUTF() );
+				r.carModelType = CarModel.Type.valueOf( is.readUTF() );
+				r.carPosition.x = is.readFloat();
+				r.carPosition.y = is.readFloat();
+				r.carOrientation = is.readFloat();
+
+				for( int i = 0; i < r.eventsCount; i++ ) {
+					r.forces[i].velocity_x = is.readFloat();
+					r.forces[i].velocity_y = is.readFloat();
+					r.forces[i].angularVelocity = is.readFloat();
+				}
+
+				is.close();
+
+				r.isValid = true;
+				r.isSaved = true;
+				r.isLoaded = true;
+
+				Gdx.app.log( "Replay", "Done loading local replay" );
+				return r;
+
+			} catch( IOException e ) {
+				Gdx.app.log( "Replay", "Couldn't load local replay, reason: " + e.getMessage() );
+			}
+		} else {
+			Gdx.app.log( "Replay", "There are no replays available for this track (" + trackname + ")" );
+		}
+
+		return null;
+	}
+
+	public void saveLocal() {
+		if( isValid && !isLoaded && !isSaved ) {
+
+			// this is an asynchronous operation, but it's safe since saving a replay
+			// imply this replay won't get overwritten anytime soon
 			new Thread( new Runnable() {
 
 				@Override
@@ -103,11 +171,23 @@ public class Replay {
 					DataOutputStream os = new DataOutputStream( hf.write( false ) );
 
 					try {
-						os.writeLong( id );
-						os.writeChars( trackName );
-						os.writeChars( difficultyLevel.toString() );
-						os.writeFloat( trackTimeSeconds );
+						// write header
 
+						// replay info data
+						os.writeLong( id );
+						os.writeUTF( trackName );
+						os.writeUTF( difficultyLevel.toString() );
+						os.writeFloat( trackTimeSeconds );
+						os.writeInt( eventsCount );
+
+						// car data
+						os.writeUTF( carAspect.toString() );
+						os.writeUTF( carModelType.toString() );
+						os.writeFloat( carPosition.x );
+						os.writeFloat( carPosition.y );
+						os.writeFloat( carOrientation );
+
+						// write the effective number of captured CarForces events
 						for( int i = 0; i < eventsCount; i++ ) {
 							CarForces f = forces[i];
 							os.writeFloat( f.velocity_x );
@@ -116,9 +196,13 @@ public class Replay {
 						}
 
 						os.close();
-						Gdx.app.log( "Replay", "Done saving replay" );
+
+						isSaved = true;
+
+						Gdx.app.log( "Replay", "Done saving local replay (" + trackTimeSeconds + ")" );
+
 					} catch( IOException e ) {
-						Gdx.app.log( "Replay", "Couldn't save replay, reason: " + e.getMessage() );
+						Gdx.app.log( "Replay", "Couldn't save local replay, reason: " + e.getMessage() );
 					}
 				}
 			} ).start();
