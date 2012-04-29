@@ -1,8 +1,6 @@
 package com.bitfire.uracer.game;
 
 import com.badlogic.gdx.Gdx;
-import com.badlogic.gdx.math.Vector2;
-import com.badlogic.gdx.physics.box2d.World;
 import com.badlogic.gdx.utils.Disposable;
 import com.bitfire.uracer.Config;
 import com.bitfire.uracer.ScalingStrategy;
@@ -10,7 +8,6 @@ import com.bitfire.uracer.URacer;
 import com.bitfire.uracer.game.actors.Car;
 import com.bitfire.uracer.game.actors.Car.Aspect;
 import com.bitfire.uracer.game.actors.CarModel;
-import com.bitfire.uracer.game.collisions.GameContactListener;
 import com.bitfire.uracer.game.logic.GameLogic;
 import com.bitfire.uracer.game.player.PlayerCar;
 import com.bitfire.uracer.game.rendering.GameRenderer;
@@ -45,15 +42,11 @@ public class Game implements Disposable {
 	public Game( String levelName, ScalingStrategy scalingStrategy, GameDifficulty difficulty, Aspect carAspect, CarModel carModel ) {
 		gameplaySettings = new GameplaySettings( difficulty );
 
-		World box2dWorld = new World( new Vector2( 0, 0 ), false );
-		box2dWorld.setContactListener( new GameContactListener() );
-		Gdx.app.log( "Game", "Box2D world created" );
-
-		GameWorld gameWorld = new GameWorld( box2dWorld, scalingStrategy, levelName, false );
+		GameWorld gameWorld = new GameWorld( scalingStrategy, levelName, false );
 		Gdx.app.log( "Game", "Game world ready" );
 
 		// handles rendering
-		gameRenderer = new GameRenderer( scalingStrategy, gameWorld, Config.PostProcessing.Enabled );
+		gameRenderer = new GameRenderer( gameWorld, scalingStrategy, Config.PostProcessing.Enabled );
 		canPostProcess = gameRenderer.hasPostProcessor();
 		Gdx.app.log( "Game", "GameRenderer ready" );
 
@@ -64,11 +57,11 @@ public class Game implements Disposable {
 		}
 
 		// handles game rules and mechanics, it's all about game data
-		gameLogic = new GameLogic( gameWorld, box2dWorld, gameplaySettings, scalingStrategy, levelName, carAspect, carModel );
+		gameLogic = new GameLogic( gameWorld, gameplaySettings, scalingStrategy, levelName, carAspect, carModel );
 		Gdx.app.log( "Game", "GameLogic created" );
 
 		// initialize the debug helper
-		debug = new DebugHelper( gameRenderer.getWorldRenderer(), gameLogic.getBox2dWorld() );
+		debug = new DebugHelper( gameRenderer.getWorldRenderer(), gameWorld.getBox2DWorld() );
 		debug.setPlayer( gameLogic.getPlayer() );
 		Gdx.app.log( "Game", "Debug helper initialized with player instance" );
 	}

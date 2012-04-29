@@ -1,7 +1,6 @@
 package com.bitfire.uracer.game.actors;
 
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
-import com.badlogic.gdx.physics.box2d.World;
 import com.bitfire.uracer.game.input.Replay;
 import com.bitfire.uracer.game.world.GameWorld;
 import com.bitfire.uracer.utils.CarUtils;
@@ -20,8 +19,8 @@ public final class GhostCar extends Car {
 
 	// public CarState carState = null;
 
-	public GhostCar( World box2dWorld, GameWorld gameWorld, CarModel model, Aspect aspect ) {
-		super( box2dWorld, gameWorld, model, aspect );
+	public GhostCar( GameWorld gameWorld, CarModel model, Aspect aspect ) {
+		super( gameWorld, model, aspect );
 		indexPlay = 0;
 		hasReplay = false;
 		replay = null;

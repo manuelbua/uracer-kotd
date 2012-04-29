@@ -33,6 +33,7 @@ import com.bitfire.uracer.Art;
 import com.bitfire.uracer.Config;
 import com.bitfire.uracer.ScalingStrategy;
 import com.bitfire.uracer.game.collisions.CollisionFilters;
+import com.bitfire.uracer.game.collisions.GameWorldContactListener;
 import com.bitfire.uracer.game.world.models.MapUtils;
 import com.bitfire.uracer.game.world.models.ModelFactory;
 import com.bitfire.uracer.game.world.models.OrthographicAlignedStillModel;
@@ -78,9 +79,12 @@ public final class GameWorld {
 	protected TrackTrees trackTrees = null;
 	protected List<OrthographicAlignedStillModel> staticMeshes = new ArrayList<OrthographicAlignedStillModel>();
 
-	public GameWorld( World box2dWorld, ScalingStrategy strategy, String levelName, boolean nightMode ) {
+	public GameWorld( ScalingStrategy strategy, String levelName, boolean nightMode ) {
 		scalingStrategy = strategy;
-		this.box2dWorld = box2dWorld;
+		this.box2dWorld = new World( new Vector2( 0, 0 ), false );
+		box2dWorld.setContactListener( new GameWorldContactListener() );
+		Gdx.app.log( "GameWorld", "Box2D world created" );
+
 		this.name = levelName;
 		this.nightMode = nightMode;
 
@@ -119,6 +123,7 @@ public final class GameWorld {
 
 		trackWalls.dispose();
 		trackTrees.dispose();
+		box2dWorld.dispose();
 	}
 
 	private void createMeshes() {
@@ -489,6 +494,10 @@ public final class GameWorld {
 
 	public ConeLight getPlayerHeadLights() {
 		return playerHeadlights;
+	}
+
+	public World getBox2DWorld() {
+		return box2dWorld;
 	}
 
 	// helpers from maputils

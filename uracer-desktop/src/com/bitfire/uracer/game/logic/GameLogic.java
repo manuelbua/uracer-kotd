@@ -11,7 +11,6 @@ import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Input.Keys;
 import com.badlogic.gdx.graphics.g2d.tiled.TiledLayer;
 import com.badlogic.gdx.math.Vector2;
-import com.badlogic.gdx.physics.box2d.World;
 import com.bitfire.uracer.Art;
 import com.bitfire.uracer.Config;
 import com.bitfire.uracer.ScalingStrategy;
@@ -75,7 +74,6 @@ public class GameLogic implements CarEvent.Listener, CarStateEvent.Listener, Pla
 
 	// world
 	private GameWorld gameWorld = null;
-	private World box2dWorld = null;
 
 	// input system
 	private Input input = null;
@@ -127,10 +125,9 @@ public class GameLogic implements CarEvent.Listener, CarStateEvent.Listener, Pla
 		}
 	};
 
-	public GameLogic( GameWorld gameWorld, World b2dWorld, GameplaySettings settings, ScalingStrategy scalingStrategy, String levelName, Aspect carAspect, CarModel carModel ) {
+	public GameLogic( GameWorld gameWorld, GameplaySettings settings, ScalingStrategy scalingStrategy, String levelName, Aspect carAspect, CarModel carModel ) {
 		this.gameplaySettings = settings;
 		this.scalingStrategy = scalingStrategy;
-		this.box2dWorld = b2dWorld;
 		this.gameWorld = gameWorld;
 
 		// create tweening support
@@ -174,7 +171,6 @@ public class GameLogic implements CarEvent.Listener, CarStateEvent.Listener, Pla
 		gameWorld.dispose();
 		GameTweener.dispose();
 		WcTweener.dispose();
-		box2dWorld.dispose();
 	}
 
 	public GameWorld getGameWorld() {
@@ -183,10 +179,6 @@ public class GameLogic implements CarEvent.Listener, CarStateEvent.Listener, Pla
 
 	public PlayerCar getPlayer() {
 		return playerCar;
-	}
-
-	public World getBox2dWorld() {
-		return box2dWorld;
 	}
 
 	public PhysicsStep getPhysicsStep() {
@@ -214,7 +206,7 @@ public class GameLogic implements CarEvent.Listener, CarStateEvent.Listener, Pla
 		input = new Input( TaskManagerEvent.Order.MINUS_4 );
 
 		// physics step
-		physicsStep = new PhysicsStep( box2dWorld, TaskManagerEvent.Order.MINUS_3 );
+		physicsStep = new PhysicsStep( gameWorld.getBox2DWorld(), TaskManagerEvent.Order.MINUS_3 );
 
 		// sound manager
 		sound = new SoundManager();
@@ -260,8 +252,8 @@ public class GameLogic implements CarEvent.Listener, CarStateEvent.Listener, Pla
 	}
 
 	private void createPlayer( GameWorld gameWorld, Aspect carAspect, CarModel carModel ) {
-		playerCar = CarFactory.createPlayer( box2dWorld, gameWorld, carAspect, carModel );
-		playerGhostCar = CarFactory.createGhost( box2dWorld, gameWorld, playerCar );
+		playerCar = CarFactory.createPlayer( gameWorld, carAspect, carModel );
+		playerGhostCar = CarFactory.createGhost( gameWorld, playerCar );
 	}
 
 	private void configurePlayer( GameplaySettings settings, GameWorld world, PlayerCar player, Input input ) {

@@ -56,9 +56,9 @@ public final class GameRenderer {
 		}
 	}
 
-	public GameRenderer( ScalingStrategy scalingStrategy, GameWorld gameWorld, boolean createPostProcessing ) {
-		gl = Gdx.graphics.getGL20();
+	public GameRenderer( GameWorld gameWorld, ScalingStrategy scalingStrategy, boolean createPostProcessor ) {
 		world = gameWorld;
+		gl = Gdx.graphics.getGL20();
 
 		int width = Gdx.graphics.getWidth();
 		int height = Gdx.graphics.getHeight();
@@ -73,7 +73,7 @@ public final class GameRenderer {
 
 		// post-processing
 		boolean supports32Bpp = Config.isDesktop;
-		postProcessor = (createPostProcessing ? new PostProcessor( width, height, false /* depth */, false /* alpha */, supports32Bpp ) : null);
+		postProcessor = (createPostProcessor ? new PostProcessor( width, height, false /* depth */, false /* alpha */, supports32Bpp ) : null);
 	}
 
 	public void dispose() {

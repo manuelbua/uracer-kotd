@@ -4,7 +4,6 @@ import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.math.MathUtils;
 import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.math.WindowedMean;
-import com.badlogic.gdx.physics.box2d.World;
 import com.bitfire.uracer.Config;
 import com.bitfire.uracer.game.actors.Car;
 import com.bitfire.uracer.game.actors.CarDescriptor;
@@ -40,8 +39,8 @@ public class PlayerCar extends Car {
 	public CarState carState = null;
 	public PlayerDriftState driftState = null;
 
-	public PlayerCar( World box2dWorld, GameWorld gameWorld, CarModel model, Aspect aspect ) {
-		super( box2dWorld, gameWorld, model, aspect );
+	public PlayerCar( GameWorld gameWorld, CarModel model, Aspect aspect ) {
+		super( gameWorld, model, aspect );
 		carInput = new CarInput();
 		inputSystem = null;
 		impacts = 0;
