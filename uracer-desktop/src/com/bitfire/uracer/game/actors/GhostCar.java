@@ -41,6 +41,10 @@ public final class GhostCar extends Car {
 		resetPhysics();
 
 		if( hasReplay ) {
+			setAspect( replay.carAspect );
+			setCarModel( replay.carModel );
+			renderer.setAlpha( 0 );
+
 			// System.out.println( "Replaying " + replay.id );
 			restart( replay );
 //			Gdx.app.log( "GhostCar", "Replaying " + replay.trackTimeSeconds + "s" );

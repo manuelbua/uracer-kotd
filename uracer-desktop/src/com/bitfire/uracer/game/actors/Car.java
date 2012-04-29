@@ -23,7 +23,7 @@ public abstract class Car extends Box2DEntity {
 	public CarEvent event = null;
 
 	protected GameWorld gameWorld;
-	protected CarModel model;
+	protected CarModel model = new CarModel();
 	protected CarRenderer renderer;
 
 	protected int impacts = 0;
@@ -55,12 +55,13 @@ public abstract class Car extends Box2DEntity {
 
 	public Car( GameWorld gameWorld, CarModel model, Aspect aspect ) {
 		super( gameWorld.getBox2DWorld() );
+		this.aspect = aspect;
+		this.model.set( model );
+
 		this.event = new CarEvent( this );
 		this.gameWorld = gameWorld;
 		this.renderer = new CarRenderer( model, aspect );
-		this.aspect = aspect;
 		this.impacts = 0;
-		this.model = model;
 		this.inputMode = InputMode.NoInput;
 		this.carTraveledDistance = 0;
 		this.carTraveledDistanceDt = 0;
@@ -100,6 +101,15 @@ public abstract class Car extends Box2DEntity {
 
 	public CarRenderer getRenderer() {
 		return renderer;
+	}
+
+	public void setAspect( Aspect aspect ) {
+		renderer.setAspect( aspect, model );
+	}
+
+	public void setCarModel(CarModel model) {
+		this.model.set( model );
+		renderer.setAspect( aspect, model );
 	}
 
 	/** Returns the traveled distance, in meters, so far.
