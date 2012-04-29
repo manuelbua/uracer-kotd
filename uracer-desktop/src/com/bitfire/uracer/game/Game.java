@@ -8,6 +8,7 @@ import com.bitfire.uracer.configuration.Config;
 import com.bitfire.uracer.game.actors.Car;
 import com.bitfire.uracer.game.actors.Car.Aspect;
 import com.bitfire.uracer.game.actors.CarModel;
+import com.bitfire.uracer.game.logic.CarFactory;
 import com.bitfire.uracer.game.logic.GameLogic;
 import com.bitfire.uracer.game.rendering.GameRenderer;
 import com.bitfire.uracer.game.rendering.debug.DebugHelper;
@@ -59,13 +60,12 @@ public class Game implements Disposable {
 		}
 
 		// handles game rules and mechanics, it's all about game data
-		gameLogic = new GameLogic( gameWorld, gameplaySettings, scalingStrategy, carAspect, carModel );
+		gameLogic = new GameLogic( gameWorld, gameplaySettings, scalingStrategy/*, carAspect, carModel */);
 		Gdx.app.log( "Game", "GameLogic created" );
 
 		// initialize the debug helper
 		debug = new DebugHelper( gameRenderer.getWorldRenderer(), gameWorld.getBox2DWorld() );
-		debug.setPlayer( gameLogic.getPlayer() );
-		Gdx.app.log( "Game", "Debug helper initialized with player instance" );
+		Gdx.app.log( "Game", "Debug helper initialized" );
 	}
 
 	@Override
@@ -76,7 +76,8 @@ public class Game implements Disposable {
 	}
 
 	public void setPlayer(CarModel model, Aspect aspect) {
-		gameLogic.setPlayer( aspect, model );
+		gameLogic.setPlayer( CarFactory.createPlayer( gameWorld, aspect, model ) );
+		debug.setPlayer( gameLogic.getPlayer() );
 	}
 
 	private void configurePostProcessing( PostProcessor processor, GameWorld world ) {

@@ -127,7 +127,9 @@ public class GameLogic implements CarEvent.Listener, CarStateEvent.Listener, Pla
 		}
 	};
 
-	public GameLogic( GameWorld gameWorld, GameplaySettings settings, ScalingStrategy scalingStrategy, Aspect carAspect, CarModel carModel ) {
+	public GameLogic( GameWorld gameWorld, GameplaySettings settings, ScalingStrategy scalingStrategy/* , Aspect
+																									 * carAspect,
+																									 * CarModel carModel */) {
 		this.gameplaySettings = settings;
 		this.scalingStrategy = scalingStrategy;
 		this.gameWorld = gameWorld;
@@ -144,19 +146,20 @@ public class GameLogic implements CarEvent.Listener, CarStateEvent.Listener, Pla
 		playerLapState = new LapState();
 
 		// creates player and ghost cars
-		createPlayer( gameWorld, carAspect, carModel );
-		Gdx.app.log( "GameLogic", "Player created" );
+		ghostCar = CarFactory.createGhost( gameWorld, (new CarModel()).toDefault(), Aspect.OldSkool );
+		// createPlayer( gameWorld, carAspect, carModel );
+		// Gdx.app.log( "GameLogic", "Player created" );
 
-		configurePlayer( gameWorld, gameplaySettings, playerCar );
-		Gdx.app.log( "GameLogic", "Player configured" );
+		// configurePlayer( gameWorld, gameplaySettings, playerCar );
+		// Gdx.app.log( "GameLogic", "Player configured" );
 
 		createGameTasks( gameWorld, scalingStrategy );
-		configurePlayerTasks( playerCar, playerLapState );
-		Gdx.app.log( "GameLogic", "Game tasks created and configured" );
+		// configurePlayerTasks( playerCar, playerLapState );
+		// Gdx.app.log( "GameLogic", "Game tasks created and configured" );
 
 		// subscribe to player-related events
-		registerPlayerEvents( playerCar );
-		Gdx.app.log( "GameLogic", "Registered player-related events" );
+		// registerPlayerEvents( playerCar );
+		// Gdx.app.log( "GameLogic", "Registered player-related events" );
 
 		// messager.show( "COOL STUFF!", 60, Message.Type.Information, MessagePosition.Bottom, MessageSize.Big );
 	}
@@ -177,8 +180,20 @@ public class GameLogic implements CarEvent.Listener, CarStateEvent.Listener, Pla
 		WcTweener.dispose();
 	}
 
-	public void setPlayer( Aspect carAspect, CarModel carModel ) {
+	public void setPlayer( PlayerCar player ) {
+		this.playerCar = player;
 
+		if( player != null ) {
+			configurePlayer( gameWorld, gameplaySettings, player );
+			Gdx.app.log( "GameLogic", "Player configured" );
+
+			configurePlayerTasks( player, playerLapState );
+			Gdx.app.log( "GameLogic", "Game tasks created and configured" );
+
+			registerPlayerEvents( player );
+			Gdx.app.log( "GameLogic", "Registered player-related events" );
+
+		}
 	}
 
 	public void setReplay( Replay replay ) {
@@ -245,13 +260,13 @@ public class GameLogic implements CarEvent.Listener, CarStateEvent.Listener, Pla
 	}
 
 	private void createPlayer( GameWorld gameWorld, Aspect carAspect, CarModel carModel ) {
-		ghostCar = CarFactory.createGhost( gameWorld, carModel, carAspect );
 		playerCar = CarFactory.createPlayer( gameWorld, carAspect, carModel );
+		// ghostCar = CarFactory.createGhost( gameWorld, playerCar );
 	}
 
 	private void configurePlayer( GameWorld world, GameplaySettings settings, PlayerCar player ) {
 		// create player and setup player input system and initial position in the world
-//		player.setInputSystem( input );
+		// player.setInputSystem( input );
 		player.setTransform( world.playerStartPos, world.playerStartOrient );
 
 		// apply handicaps
@@ -293,7 +308,10 @@ public class GameLogic implements CarEvent.Listener, CarStateEvent.Listener, Pla
 			}
 		}
 
-		updatePlayerCarFriction();
+		if( playerCar != null ) {
+			updatePlayerCarFriction();
+		}
+
 		updateTimeMultiplier();
 
 		return true;
