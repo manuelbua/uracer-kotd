@@ -8,7 +8,6 @@ import com.badlogic.gdx.math.Vector2;
 import com.bitfire.uracer.ScalingStrategy;
 import com.bitfire.uracer.configuration.Config;
 import com.bitfire.uracer.game.events.GameEvents;
-import com.bitfire.uracer.game.player.PlayerCar;
 import com.bitfire.uracer.game.world.GameWorld;
 import com.bitfire.uracer.postprocessing.PostProcessor;
 import com.bitfire.uracer.utils.Convert;
@@ -96,11 +95,7 @@ public final class GameRenderer {
 		return worldRenderer;
 	}
 
-	public void onBeforeRender( PlayerCar player ) {
-		worldRenderer.syncWithPlayer( player );
-	}
-
-	public void render( PlayerCar player ) {
+	public void render() {
 		boolean postProcessorReady = hasPostProcessor() && postProcessor.isEnabled();
 		if( postProcessorReady ) {
 			postProcessorReady = postProcessor.capture();

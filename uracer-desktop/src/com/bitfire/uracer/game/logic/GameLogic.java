@@ -46,6 +46,8 @@ import com.bitfire.uracer.game.logic.trackeffects.TrackEffects;
 import com.bitfire.uracer.game.logic.trackeffects.effects.PlayerSkidMarks;
 import com.bitfire.uracer.game.player.PlayerCar;
 import com.bitfire.uracer.game.player.PlayerDriftStateEvent;
+import com.bitfire.uracer.game.rendering.GameRenderer;
+import com.bitfire.uracer.game.rendering.GameWorldRenderer;
 import com.bitfire.uracer.game.tween.GameTweener;
 import com.bitfire.uracer.game.tween.WcTweener;
 import com.bitfire.uracer.game.world.GameWorld;
@@ -83,7 +85,7 @@ public class GameLogic implements CarEvent.Listener, CarStateEvent.Listener, Pla
 
 	// player
 	private PlayerCar playerCar = null;
-	private GhostCar playerGhostCar = null;
+	private GhostCar ghostCar = null;
 
 	// lap
 	private boolean isFirstLap = true;
@@ -164,8 +166,8 @@ public class GameLogic implements CarEvent.Listener, CarStateEvent.Listener, Pla
 			playerCar.dispose();
 		}
 
-		if( playerGhostCar != null ) {
-			playerGhostCar.dispose();
+		if( ghostCar != null ) {
+			ghostCar.dispose();
 		}
 
 		gameWorld.dispose();
@@ -253,7 +255,7 @@ public class GameLogic implements CarEvent.Listener, CarStateEvent.Listener, Pla
 
 	private void createPlayer( GameWorld gameWorld, Aspect carAspect, CarModel carModel ) {
 		playerCar = CarFactory.createPlayer( gameWorld, carAspect, carModel );
-		playerGhostCar = CarFactory.createGhost( gameWorld, playerCar );
+		ghostCar = CarFactory.createGhost( gameWorld, playerCar );
 	}
 
 	private void configurePlayer( GameplaySettings settings, GameWorld world, PlayerCar player, Input input ) {
@@ -303,12 +305,23 @@ public class GameLogic implements CarEvent.Listener, CarStateEvent.Listener, Pla
 	}
 
 	//
-	// RENDERING-BOUND LOGIC
+	// RENDERING LOGIC
 	//
 
-	public void onBeforeRender() {
+	public void onBeforeRender( GameRenderer gameRenderer ) {
 		// trigger the event and let's subscribers interpolate and update their state()
 		physicsStep.triggerOnTemporalAliasing( URacer.hasStepped(), URacer.getTemporalAliasing() );
+
+		// update player's headlights and move the world camera to follows it, if there is a player
+		if( playerCar != null ) {
+			GameWorldRenderer worldRenderer = gameRenderer.getWorldRenderer();
+
+			if( gameWorld.isNightMode() ) {
+				worldRenderer.updatePlayerHeadlights( playerCar );
+			}
+
+			worldRenderer.setCameraPosition( playerCar.state().position, true );
+		}
 
 		// tweener step
 		WcTweener.update();
@@ -342,7 +355,7 @@ public class GameLogic implements CarEvent.Listener, CarStateEvent.Listener, Pla
 	}
 
 	private void restartLogic() {
-		resetPlayer( playerCar, playerGhostCar );
+		resetPlayer( playerCar, ghostCar );
 		isFirstLap = true;
 		timeModulationBusy = false;
 		timeModulation = false;
@@ -483,7 +496,7 @@ public class GameLogic implements CarEvent.Listener, CarStateEvent.Listener, Pla
 
 					if( lapState.hasAnyReplayData() ) {
 						Replay any = lapState.getAnyReplay();
-						playerGhostCar.setReplay( any );
+						ghostCar.setReplay( any );
 					}
 				} else {
 
@@ -507,7 +520,7 @@ public class GameLogic implements CarEvent.Listener, CarStateEvent.Listener, Pla
 						lastRecordedLapId = buf.id;
 
 						Replay any = lapState.getAnyReplay();
-						playerGhostCar.setReplay( any );
+						ghostCar.setReplay( any );
 						lapState.setLastTrackTimeSeconds( any.trackTimeSeconds );
 
 						thisReplay = any;
@@ -539,7 +552,7 @@ public class GameLogic implements CarEvent.Listener, CarStateEvent.Listener, Pla
 							}
 						}
 
-						playerGhostCar.setReplay( best );
+						ghostCar.setReplay( best );
 
 						lapState.restart();
 						recorder.beginRecording( playerCar, worst, name, gameplaySettings.difficulty );

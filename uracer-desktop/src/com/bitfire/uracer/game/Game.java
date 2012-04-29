@@ -9,7 +9,6 @@ import com.bitfire.uracer.game.actors.Car;
 import com.bitfire.uracer.game.actors.Car.Aspect;
 import com.bitfire.uracer.game.actors.CarModel;
 import com.bitfire.uracer.game.logic.GameLogic;
-import com.bitfire.uracer.game.player.PlayerCar;
 import com.bitfire.uracer.game.rendering.GameRenderer;
 import com.bitfire.uracer.game.rendering.debug.DebugHelper;
 import com.bitfire.uracer.game.world.GameWorld;
@@ -139,11 +138,8 @@ public class Game implements Disposable {
 	}
 
 	public void render() {
-		PlayerCar player = gameLogic.getPlayer();
-
-		gameLogic.onBeforeRender();
-		gameRenderer.onBeforeRender( player );
-		gameRenderer.render( player );
+		gameLogic.onBeforeRender( gameRenderer );
+		gameRenderer.render();
 	}
 
 	public void pause() {

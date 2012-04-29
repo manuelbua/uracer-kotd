@@ -24,8 +24,8 @@ import com.badlogic.gdx.math.Vector3;
 import com.badlogic.gdx.math.collision.BoundingBox;
 import com.bitfire.uracer.ScalingStrategy;
 import com.bitfire.uracer.configuration.Config;
+import com.bitfire.uracer.game.actors.Car;
 import com.bitfire.uracer.game.logic.helpers.CameraController;
-import com.bitfire.uracer.game.player.PlayerCar;
 import com.bitfire.uracer.game.world.GameWorld;
 import com.bitfire.uracer.game.world.models.OrthographicAlignedStillModel;
 import com.bitfire.uracer.game.world.models.TrackTrees;
@@ -35,7 +35,7 @@ import com.bitfire.uracer.resources.Art;
 import com.bitfire.uracer.utils.Convert;
 import com.bitfire.uracer.utils.ShaderLoader;
 
-public class GameWorldRenderer {
+public final class GameWorldRenderer {
 	// @formatter:off
 	private static final String treeVertexShader =
 		"uniform mat4 u_mvpMatrix;					\n" +
@@ -162,11 +162,11 @@ public class GameWorldRenderer {
 		renderedWalls = 0;
 	}
 
-	private void updatePlayerHeadlightsLightMap( PlayerCar player ) {
-		if( player != null ) {
-			Vector2 carPosition = player.state().position;
-			float carOrientation = player.state().orientation;
-			float carLength = player.getCarModel().length;
+	public void updatePlayerHeadlights( Car car ) {
+		if( car != null ) {
+			Vector2 carPosition = car.state().position;
+			float carOrientation = car.state().orientation;
+			float carLength = car.getCarModel().length;
 
 			// update player light (subframe interpolation ready)
 			float ang = 90 + carOrientation;
@@ -196,50 +196,36 @@ public class GameWorldRenderer {
 		// }
 	}
 
-	private void updateRayHandler( Matrix4 matViewProj, PlayerCar player ) {
+	private void updateRayHandler() {
 		if( rayHandler != null ) {
-			updatePlayerHeadlightsLightMap( player );
-
-			rayHandler.setCombinedMatrix( matViewProj,
-					Convert.px2mt( camOrtho.position.x ),
-					Convert.px2mt( camOrtho.position.y ),
-					Convert.px2mt( camOrtho.viewportWidth ),
-					Convert.px2mt( camOrtho.viewportHeight )
-			);
+			rayHandler.setCombinedMatrix( camOrthoMvpMt, Convert.px2mt( camOrtho.position.x ), Convert.px2mt( camOrtho.position.y ),
+					Convert.px2mt( camOrtho.viewportWidth ), Convert.px2mt( camOrtho.viewportHeight ) );
 
 			rayHandler.update();
-//			Gdx.app.log( "GameWorldRenderer", "lights rendered=" + rayHandler.lightRenderedLastFrame );
+			// Gdx.app.log( "GameWorldRenderer", "lights rendered=" + rayHandler.lightRenderedLastFrame );
 
 			rayHandler.updateLightMap();
 		}
 	}
 
-	public void syncWithPlayer( PlayerCar player ) {
-		// follows the player's car
-		if( player != null ) {
-			setCameraPosition( camController.transform( player.state().position ), true );
-		}
+	public void setCameraPosition( Vector2 position, boolean round ) {
+		Vector2 interpPos = camController.transform( position );
 
-		updateRayHandler( camOrthoMvpMt, player );
-	}
-
-	private void setCameraPosition( Vector2 position, boolean round ) {
 		// update orthographic camera
 		if( round ) {
 			// remove subpixel accuracy (jagged behavior)
-			camOrtho.position.x = MathUtils.round( position.x );
-			camOrtho.position.y = MathUtils.round( position.y );
+			camOrtho.position.x = MathUtils.round( interpPos.x );
+			camOrtho.position.y = MathUtils.round( interpPos.y );
 		} else {
-			camOrtho.position.x = position.x;
-			camOrtho.position.y = position.y;
+			camOrtho.position.x = interpPos.x;
+			camOrtho.position.y = interpPos.y;
 		}
 
 		camOrtho.position.z = 0;
 		camOrtho.update();
 
 		// update the unscaled orthographic camera rectangle, for visibility queries
-		camOrthoRect.set( camOrtho.position.x - halfViewport.x, camOrtho.position.y - halfViewport.y, camOrtho.viewportWidth,
-				camOrtho.viewportHeight );
+		camOrthoRect.set( camOrtho.position.x - halfViewport.x, camOrtho.position.y - halfViewport.y, camOrtho.viewportWidth, camOrtho.viewportHeight );
 
 		// update the model-view-projection matrix, in meters, from the unscaled orthographic camera
 		camOrthoMvpMt.set( camOrtho.combined );
@@ -256,6 +242,8 @@ public class GameWorldRenderer {
 		// sync perspective camera to the orthographic camera
 		camPersp.position.set( camTilemap.position.x, camTilemap.position.y, camPerspElevation );
 		camPersp.update();
+
+		updateRayHandler();
 	}
 
 	public void renderLigthMap( FrameBuffer dest ) {
@@ -352,8 +340,8 @@ public class GameWorldRenderer {
 			// compute position
 			pospx.set( m.positionPx );
 			pospx.set( world.positionFor( pospx ) );
-			tmpvec.x = /*Convert.scaledPixels*/( m.positionOffsetPx.x - camOrtho.position.x ) + halfViewport.x + pospx.x;
-			tmpvec.y = /*Convert.scaledPixels*/( m.positionOffsetPx.y + camOrtho.position.y ) + halfViewport.y - pospx.y;
+			tmpvec.x = /* Convert.scaledPixels */(m.positionOffsetPx.x - camOrtho.position.x) + halfViewport.x + pospx.x;
+			tmpvec.y = /* Convert.scaledPixels */(m.positionOffsetPx.y + camOrtho.position.y) + halfViewport.y - pospx.y;
 			tmpvec.z = 1;
 
 			// transform to world space

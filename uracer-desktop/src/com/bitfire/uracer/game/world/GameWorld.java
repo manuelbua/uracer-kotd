@@ -106,7 +106,7 @@ public final class GameWorld {
 		ModelFactory.init( strategy );
 
 		createMeshes();
-		loadPlayer( map );
+		loadPlayerData( map );
 
 		// FIXME, read night mode from level?
 		if( nightMode ) {
@@ -159,7 +159,7 @@ public final class GameWorld {
 		TotalMeshes = staticMeshes.size() + trackWalls.count() + trackTrees.count();
 	}
 
-	private void loadPlayer( TiledMap map ) {
+	private void loadPlayerData( TiledMap map ) {
 		// search the map for the start marker and create
 		// the player with the found tile coordinates
 		float halfTile = map.tileWidth / 2;
@@ -217,15 +217,15 @@ public final class GameWorld {
 		rayHandler.setBlurNum( 1 );
 		rayHandler.setAmbientLight( 0f, 0, 0.25f, 0.2f );
 
-		// attach light to player
 		final Color c = new Color();
 
-		// setup player headlights
+		// setup player headlights data
 		c.set( .4f, .4f, .75f, .85f );
 		playerHeadlights = new ConeLight( rayHandler, maxRays, c, 30, 0, 0, 0, 15 );
 		playerHeadlights.setSoft( false );
 		playerHeadlights.setMaskBits( CollisionFilters.CategoryTrackWalls );
 
+		// setup level lights data, if any
 		Vector2 pos = new Vector2();
 		TiledObjectGroup group = mapUtils.getObjectGroup( ObjectGroup.Lights );
 		for( int i = 0; i < group.objects.size(); i++ ) {
