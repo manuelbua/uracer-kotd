@@ -97,7 +97,7 @@ public class Replay {
 
 				@Override
 				public void run() {
-					String filename = Config.URacerConfigFolder + Config.LocalReplaysStore + trackName + "-" + difficultyLevel + "-" + carModelType.toString();
+					String filename = Config.URacerConfigFolder + Config.LocalReplaysStore + trackName;
 					FileHandle hf = Gdx.files.external( filename );
 
 					DataOutputStream os = new DataOutputStream( hf.write( false ) );
