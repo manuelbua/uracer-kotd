@@ -24,7 +24,6 @@ import com.bitfire.uracer.game.actors.CarModel;
 import com.bitfire.uracer.game.actors.CarState;
 import com.bitfire.uracer.game.actors.CarStateEvent;
 import com.bitfire.uracer.game.actors.GhostCar;
-import com.bitfire.uracer.game.collisions.GameContactListener;
 import com.bitfire.uracer.game.input.Input;
 import com.bitfire.uracer.game.input.Replay;
 import com.bitfire.uracer.game.logic.helpers.Recorder;
@@ -128,18 +127,15 @@ public class GameLogic implements CarEvent.Listener, CarStateEvent.Listener, Pla
 		}
 	};
 
-	public GameLogic( GameplaySettings settings, ScalingStrategy scalingStrategy, String levelName, Aspect carAspect, CarModel carModel ) {
+	public GameLogic( GameWorld gameWorld, World b2dWorld, GameplaySettings settings, ScalingStrategy scalingStrategy, String levelName, Aspect carAspect, CarModel carModel ) {
 		this.gameplaySettings = settings;
 		this.scalingStrategy = scalingStrategy;
-		this.box2dWorld = new World( new Vector2( 0, 0 ), false );
-		this.box2dWorld.setContactListener( new GameContactListener() );
+		this.box2dWorld = b2dWorld;
+		this.gameWorld = gameWorld;
 
 		// create tweening support
 		createTweeners();
 		Gdx.app.log( "GameLogic", "Helpers created" );
-
-		gameWorld = new GameWorld( box2dWorld, scalingStrategy, levelName, false );
-		Gdx.app.log( "GameLogic", "Game world ready" );
 
 		recorder = new Recorder();
 		timeMultiplier.value = 1f;

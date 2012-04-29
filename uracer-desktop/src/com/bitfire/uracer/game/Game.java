@@ -1,6 +1,8 @@
 package com.bitfire.uracer.game;
 
 import com.badlogic.gdx.Gdx;
+import com.badlogic.gdx.math.Vector2;
+import com.badlogic.gdx.physics.box2d.World;
 import com.badlogic.gdx.utils.Disposable;
 import com.bitfire.uracer.Config;
 import com.bitfire.uracer.ScalingStrategy;
@@ -8,6 +10,7 @@ import com.bitfire.uracer.URacer;
 import com.bitfire.uracer.game.actors.Car;
 import com.bitfire.uracer.game.actors.Car.Aspect;
 import com.bitfire.uracer.game.actors.CarModel;
+import com.bitfire.uracer.game.collisions.GameContactListener;
 import com.bitfire.uracer.game.logic.GameLogic;
 import com.bitfire.uracer.game.player.PlayerCar;
 import com.bitfire.uracer.game.rendering.GameRenderer;
@@ -42,19 +45,27 @@ public class Game implements Disposable {
 	public Game( String levelName, ScalingStrategy scalingStrategy, GameDifficulty difficulty, Aspect carAspect, CarModel carModel ) {
 		gameplaySettings = new GameplaySettings( difficulty );
 
-		// handle game rules and mechanics, it's all about game data
-		gameLogic = new GameLogic( gameplaySettings, scalingStrategy, levelName, carAspect, carModel );
+		World box2dWorld = new World( new Vector2( 0, 0 ), false );
+		box2dWorld.setContactListener( new GameContactListener() );
+		Gdx.app.log( "Game", "Box2D world created" );
 
-		GameWorld world = gameLogic.getGameWorld();
+		GameWorld gameWorld = new GameWorld( box2dWorld, scalingStrategy, levelName, false );
+		Gdx.app.log( "Game", "Game world ready" );
 
 		// handles rendering
-		gameRenderer = new GameRenderer( scalingStrategy, world, Config.PostProcessing.Enabled );
+		gameRenderer = new GameRenderer( scalingStrategy, gameWorld, Config.PostProcessing.Enabled );
 		canPostProcess = gameRenderer.hasPostProcessor();
+		Gdx.app.log( "Game", "GameRenderer ready" );
 
 		// post-processing
 		if( canPostProcess ) {
-			configurePostProcessing( gameRenderer.getPostProcessor(), world );
+			configurePostProcessing( gameRenderer.getPostProcessor(), gameWorld );
+			Gdx.app.log( "Game", "Post-processing configured" );
 		}
+
+		// handles game rules and mechanics, it's all about game data
+		gameLogic = new GameLogic( gameWorld, box2dWorld, gameplaySettings, scalingStrategy, levelName, carAspect, carModel );
+		Gdx.app.log( "Game", "GameLogic created" );
 
 		// initialize the debug helper
 		debug = new DebugHelper( gameRenderer.getWorldRenderer(), gameLogic.getBox2dWorld() );
@@ -107,7 +118,7 @@ public class Game implements Disposable {
 
 		if( bloom != null && zoom != null ) {
 			bloom.setBaseSaturation( 0.5f - 0.5f * factor );
-//			bloom.setBloomSaturation( 1.5f - factor * 0.85f );	// TODO when charged
+			// bloom.setBloomSaturation( 1.5f - factor * 0.85f ); // TODO when charged
 			bloom.setBloomSaturation( 1.5f - factor * 1.5f );	// TODO when completely discharged
 			bloom.setBloomIntesity( 1f + factor * 1.75f );
 

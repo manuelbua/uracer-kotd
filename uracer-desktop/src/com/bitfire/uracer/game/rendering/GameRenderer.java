@@ -24,14 +24,16 @@ public final class GameRenderer {
 	private final PostProcessor postProcessor;
 	private final GameWorldRenderer worldRenderer;
 
-	/** Manages to convert world positions expressed in meters or pixels to screen pixels.
+	/** Manages to convert world positions expressed in meters or pixels to the corresponding position to screen pixels.
 	 * To use this class, the GameWorldRenderer MUST be already constructed and initialized. */
 	public static final class ScreenUtils {
+		public static boolean ready = false;
 		private static Vector2 screenPosFor = new Vector2();
 		private static GameWorldRenderer worldRenderer;
 
 		public static void init( GameWorldRenderer worldRenderer ) {
 			ScreenUtils.worldRenderer = worldRenderer;
+			ScreenUtils.ready = true;
 		}
 
 		public static Vector2 screenPosForMt( Vector2 worldPositionMt ) {
@@ -67,6 +69,7 @@ public final class GameRenderer {
 
 		// initialize utils
 		ScreenUtils.init( worldRenderer );
+		Gdx.app.log( "GameRenderer", "ScreenUtils initialized (ready=" + ScreenUtils.ready + ")" );
 
 		// post-processing
 		boolean supports32Bpp = Config.isDesktop;
