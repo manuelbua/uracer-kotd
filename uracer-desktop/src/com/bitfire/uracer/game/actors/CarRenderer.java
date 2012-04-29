@@ -3,9 +3,9 @@ package com.bitfire.uracer.game.actors;
 import com.badlogic.gdx.graphics.g2d.Sprite;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
-import com.bitfire.uracer.Art;
 import com.bitfire.uracer.entities.EntityRenderState;
 import com.bitfire.uracer.game.actors.Car.Aspect;
+import com.bitfire.uracer.resources.Art;
 import com.bitfire.uracer.utils.Convert;
 
 public class CarRenderer {

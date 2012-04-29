@@ -1,7 +1,7 @@
 package com.bitfire.uracer.game.logic;
 
 import com.badlogic.gdx.physics.box2d.World;
-import com.bitfire.uracer.Config;
+import com.bitfire.uracer.configuration.Config;
 import com.bitfire.uracer.game.events.GameEvents;
 import com.bitfire.uracer.game.logic.PhysicsStepEvent.Type;
 import com.bitfire.uracer.task.Task;

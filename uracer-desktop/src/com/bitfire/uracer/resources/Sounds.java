@@ -1,4 +1,4 @@
-package com.bitfire.uracer;
+package com.bitfire.uracer.resources;
 
 import com.badlogic.gdx.Files.FileType;
 import com.badlogic.gdx.Gdx;

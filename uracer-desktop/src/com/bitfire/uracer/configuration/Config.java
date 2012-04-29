@@ -1,4 +1,4 @@
-package com.bitfire.uracer;
+package com.bitfire.uracer.configuration;
 
 import com.badlogic.gdx.Application.ApplicationType;
 import com.badlogic.gdx.Gdx;

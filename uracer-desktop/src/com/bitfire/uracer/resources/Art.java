@@ -1,4 +1,4 @@
-package com.bitfire.uracer;
+package com.bitfire.uracer.resources;
 
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.Pixmap;
@@ -8,6 +8,7 @@ import com.badlogic.gdx.graphics.Texture.TextureFilter;
 import com.badlogic.gdx.graphics.g2d.BitmapFont;
 import com.badlogic.gdx.graphics.g2d.TextureAtlas;
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
+import com.bitfire.uracer.configuration.Config;
 
 public final class Art {
 	public static TextureRegion[][] debugFont;

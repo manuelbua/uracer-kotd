@@ -29,9 +29,8 @@ import com.badlogic.gdx.graphics.glutils.ShaderProgram;
 import com.badlogic.gdx.math.MathUtils;
 import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.physics.box2d.World;
-import com.bitfire.uracer.Art;
-import com.bitfire.uracer.Config;
 import com.bitfire.uracer.ScalingStrategy;
+import com.bitfire.uracer.configuration.Config;
 import com.bitfire.uracer.game.collisions.CollisionFilters;
 import com.bitfire.uracer.game.collisions.GameWorldContactListener;
 import com.bitfire.uracer.game.world.models.MapUtils;
@@ -45,6 +44,7 @@ import com.bitfire.uracer.game.world.models.WorldDefs.ObjectGroup;
 import com.bitfire.uracer.game.world.models.WorldDefs.ObjectProperties;
 import com.bitfire.uracer.game.world.models.WorldDefs.TileLayer;
 import com.bitfire.uracer.game.world.models.WorldDefs.TileProperties;
+import com.bitfire.uracer.resources.Art;
 import com.bitfire.uracer.utils.AMath;
 import com.bitfire.uracer.utils.Convert;
 
