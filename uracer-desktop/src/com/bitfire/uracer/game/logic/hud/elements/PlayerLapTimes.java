@@ -3,10 +3,10 @@ package com.bitfire.uracer.game.logic.hud.elements;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.bitfire.uracer.ScalingStrategy;
-import com.bitfire.uracer.game.input.Replay;
 import com.bitfire.uracer.game.logic.LapState;
 import com.bitfire.uracer.game.logic.hud.HudElement;
 import com.bitfire.uracer.game.logic.hud.HudLabel;
+import com.bitfire.uracer.game.logic.replaying.Replay;
 import com.bitfire.uracer.resources.Art;
 import com.bitfire.uracer.utils.NumberString;
 

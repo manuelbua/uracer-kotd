@@ -1,4 +1,4 @@
-package com.bitfire.uracer.game.input;
+package com.bitfire.uracer.game.logic.replaying;
 
 import java.io.IOException;
 import java.io.ObjectInputStream;

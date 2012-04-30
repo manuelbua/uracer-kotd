@@ -1,7 +1,7 @@
 package com.bitfire.uracer.game.actors;
 
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
-import com.bitfire.uracer.game.input.Replay;
+import com.bitfire.uracer.game.logic.replaying.Replay;
 import com.bitfire.uracer.game.rendering.GameRendererEvent;
 import com.bitfire.uracer.game.world.GameWorld;
 import com.bitfire.uracer.utils.CarUtils;

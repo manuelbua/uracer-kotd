@@ -4,7 +4,7 @@ import com.bitfire.uracer.game.Game;
 import com.bitfire.uracer.game.GameDifficulty;
 import com.bitfire.uracer.game.actors.Car.Aspect;
 import com.bitfire.uracer.game.actors.CarModel;
-import com.bitfire.uracer.game.input.Replay;
+import com.bitfire.uracer.game.logic.replaying.Replay;
 
 public class GameScreen extends Screen {
 	private Game game = null;

@@ -4,7 +4,7 @@ import com.badlogic.gdx.Gdx;
 import com.bitfire.uracer.game.GameDifficulty;
 import com.bitfire.uracer.game.actors.Car;
 import com.bitfire.uracer.game.actors.CarForces;
-import com.bitfire.uracer.game.input.Replay;
+import com.bitfire.uracer.game.logic.replaying.Replay;
 
 public class Recorder {
 	private boolean isRecording;
