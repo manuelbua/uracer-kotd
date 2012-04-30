@@ -6,20 +6,25 @@ import com.bitfire.uracer.game.actors.Car;
 import com.bitfire.uracer.game.actors.CarForces;
 import com.bitfire.uracer.game.logic.replaying.Replay;
 
-public class Recorder {
+public final class ReplayRecorder {
 	private boolean isRecording;
 
 	// replay data
 	private Replay replay;
 
-	public Recorder() {
+	public ReplayRecorder() {
 		isRecording = false;
 		replay = null;
 	}
 
 	public void reset() {
 		isRecording = false;
-		replay = null;
+
+		// ensure data is discarded
+		if( replay != null ) {
+			replay.reset();
+			replay = null;
+		}
 	}
 
 	public void beginRecording( Car car, Replay replay, String trackName, GameDifficulty gameDifficulty ) {
@@ -39,15 +44,17 @@ public class Recorder {
 		}
 	}
 
-	public void endRecording() {
+	public Replay endRecording() {
 		if( !isRecording ) {
 			Gdx.app.log( "Recorder", "Cannot end a recording that wasn't enabled!" );
-			return;
+			return null;
 		}
 
+		Replay r = replay;
 		replay.end();
 		isRecording = false;
 		replay = null;
+		return r;
 	}
 
 	public boolean isRecording() {

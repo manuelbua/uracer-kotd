@@ -1,6 +1,8 @@
 package com.bitfire.uracer.game.logic.replaying;
 
 /** Encapsulates a Replay buffering scheme, where a double-buffer approach is being used as the main implementation.
+ * This is an intelligent ring-buffer, in the sense it encapsulates Replay classification and know whether a replay
+ * is better than another, easing management at higher level.
  *
  * @author bmanuel */
 public final class ReplayBuffer {
@@ -23,18 +25,6 @@ public final class ReplayBuffer {
 		worst = null;
 		replays[0].reset();
 		replays[1].reset();
-	}
-
-	public void restart() {
-		if( !replays[0].isValid ) {
-			replays[0].reset();
-		}
-
-		if( !replays[1].isValid ) {
-			replays[1].reset();
-		}
-
-		updateReplays();
 	}
 
 	public void setBestReplay( Replay replay ) {
@@ -95,7 +85,7 @@ public final class ReplayBuffer {
 		}
 
 		// if both are valid
-		return getWorstReplay();
+		return worst;
 	}
 
 	public Replay getBestReplay() {
