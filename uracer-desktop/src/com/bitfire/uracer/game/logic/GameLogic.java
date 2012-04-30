@@ -37,6 +37,7 @@ import com.bitfire.uracer.game.logic.notifier.Message.Type;
 import com.bitfire.uracer.game.logic.notifier.MessageAccessor;
 import com.bitfire.uracer.game.logic.notifier.Messager;
 import com.bitfire.uracer.game.logic.replaying.Replay;
+import com.bitfire.uracer.game.logic.replaying.ReplayBuffer;
 import com.bitfire.uracer.game.logic.sounds.SoundEffect;
 import com.bitfire.uracer.game.logic.sounds.SoundManager;
 import com.bitfire.uracer.game.logic.sounds.effects.PlayerDriftSoundEffect;
@@ -87,8 +88,10 @@ public class GameLogic implements CarEvent.Listener, CarStateEvent.Listener, Pla
 	private GhostCar ghostCar = null;
 
 	// lap
+	private TrackLapInfo playerLapInfo = null;
 	private boolean isFirstLap = true;
 	private long lastRecordedLapId = 0;
+	private ReplayBuffer replayBuffer = null;
 
 	// replay
 	private Recorder recorder = null;
@@ -108,9 +111,6 @@ public class GameLogic implements CarEvent.Listener, CarStateEvent.Listener, Pla
 
 	// alerts and infos
 	private Messager messager = null;
-
-	// states
-	private LapState playerLapState = null;
 
 	// handles timeModulationBusy onComplete event
 	private boolean timeModulation = false, timeModulationBusy = false;
@@ -142,7 +142,8 @@ public class GameLogic implements CarEvent.Listener, CarStateEvent.Listener, Pla
 		recorder = new Recorder();
 		timeMultiplier.value = 1f;
 
-		playerLapState = new LapState();
+		replayBuffer = new ReplayBuffer();
+		playerLapInfo = new TrackLapInfo();
 
 		// creates player and ghost cars
 		ghostCar = CarFactory.createGhost( gameWorld, (new CarModel()).toDefault(), Aspect.OldSkool );
@@ -186,7 +187,7 @@ public class GameLogic implements CarEvent.Listener, CarStateEvent.Listener, Pla
 			configurePlayer( gameWorld, gameplaySettings, player );
 			Gdx.app.log( "GameLogic", "Player configured" );
 
-			configurePlayerTasks( player, playerLapState );
+			configurePlayerTasks( player, playerLapInfo );
 			Gdx.app.log( "GameLogic", "Game tasks created and configured" );
 
 			registerPlayerEvents( player );
@@ -194,8 +195,9 @@ public class GameLogic implements CarEvent.Listener, CarStateEvent.Listener, Pla
 		}
 	}
 
-	public void setLocalReplay( Replay replay ) {
-		playerLapState.setReplay( replay );
+	public void setBestLocalReplay( Replay replay ) {
+		replayBuffer.setBestReplay( replay );
+		playerLapInfo.setBestTrackTimeSeconds( replay.trackTimeSeconds );
 		restartGame();
 	}
 
@@ -233,7 +235,7 @@ public class GameLogic implements CarEvent.Listener, CarStateEvent.Listener, Pla
 		gameTasksManager.add( effects );
 	}
 
-	private void configurePlayerTasks( PlayerCar player, LapState lapState ) {
+	private void configurePlayerTasks( PlayerCar player, TrackLapInfo lapState ) {
 		// sounds
 		SoundEffect fx = new PlayerDriftSoundEffect( player );
 		fx.start();
@@ -390,7 +392,7 @@ public class GameLogic implements CarEvent.Listener, CarStateEvent.Listener, Pla
 
 	private void resetLogic() {
 		lastRecordedLapId = 0;
-		playerLapState.reset();
+		playerLapInfo.reset();
 		gameTasksManager.reset();
 	}
 
@@ -418,7 +420,7 @@ public class GameLogic implements CarEvent.Listener, CarStateEvent.Listener, Pla
 	public void carStateEvent( CarState source, CarStateEvent.Type type ) {
 		switch( type ) {
 		case onTileChanged:
-			playerTileChanged( playerLapState );
+			playerTileChanged( playerLapInfo );
 			break;
 		}
 	}
@@ -499,7 +501,7 @@ public class GameLogic implements CarEvent.Listener, CarStateEvent.Listener, Pla
 
 	// FIXME looks like this function is doing MUCH more than what's stated in its name..
 	// TODO this looks like a game policy thing... this one is for "You vs. Yourself"
-	private void playerTileChanged( LapState lapState ) {
+	private void playerTileChanged( TrackLapInfo lapInfo ) {
 		boolean onStartZone = (playerCar.carState.currTileX == gameWorld.playerStartTileX && playerCar.carState.currTileY == gameWorld.playerStartTileY);
 
 		String name = gameWorld.name;
@@ -508,13 +510,13 @@ public class GameLogic implements CarEvent.Listener, CarStateEvent.Listener, Pla
 			if( isFirstLap ) {
 				isFirstLap = false;
 
-				lapState.restart();
-				Replay buf = lapState.getNextBuffer();
+				lapInfo.restart();
+				Replay buf = replayBuffer.getNextBuffer();
 				recorder.beginRecording( playerCar, buf, name, gameplaySettings.difficulty );
 				lastRecordedLapId = buf.id;
 
-				if( lapState.hasAnyReplayData() ) {
-					Replay any = lapState.getAnyReplay();
+				if( replayBuffer.hasAnyReplayData() ) {
+					Replay any = replayBuffer.getAnyReplay();
 					ghostCar.setReplay( any );
 				}
 			} else {
@@ -525,22 +527,22 @@ public class GameLogic implements CarEvent.Listener, CarStateEvent.Listener, Pla
 					recorder.endRecording();
 				}
 
-				lapState.updateReplays();
+				replayBuffer.updateReplays();
 
 				// replay best, overwrite worst logic
 
-				if( !lapState.hasAllReplayData() ) {
+				if( !replayBuffer.hasAllReplayData() ) {
 
 					// only one single replay
 
-					lapState.restart();
-					Replay buf = lapState.getNextBuffer();
+					lapInfo.restart();
+					Replay buf = replayBuffer.getNextBuffer();
 					recorder.beginRecording( playerCar, buf, name, gameplaySettings.difficulty );
 					lastRecordedLapId = buf.id;
 
-					Replay any = lapState.getAnyReplay();
+					Replay any = replayBuffer.getAnyReplay();
 					ghostCar.setReplay( any );
-					lapState.setLastTrackTimeSeconds( any.trackTimeSeconds );
+					lapInfo.setLastTrackTimeSeconds( any.trackTimeSeconds );
 
 					thisReplay = any;
 
@@ -551,8 +553,8 @@ public class GameLogic implements CarEvent.Listener, CarStateEvent.Listener, Pla
 
 					// both valid, replay best, overwrite worst
 
-					Replay best = lapState.getBestReplay();
-					Replay worst = lapState.getWorstReplay();
+					Replay best = replayBuffer.getBestReplay();
+					Replay worst = replayBuffer.getWorstReplay();
 
 					if( AMath.equals( worst.trackTimeSeconds, best.trackTimeSeconds ) ) {
 						// draw!
@@ -561,13 +563,13 @@ public class GameLogic implements CarEvent.Listener, CarStateEvent.Listener, Pla
 						if( lastRecordedLapId == best.id ) {
 							thisReplay = best;
 
-							lapState.setLastTrackTimeSeconds( best.trackTimeSeconds );
+							lapInfo.setLastTrackTimeSeconds( best.trackTimeSeconds );
 							messager.show( "-" + NumberString.format( worst.trackTimeSeconds - best.trackTimeSeconds ) + " seconds!", 3f, Type.Good, Position.Top,
 									Size.Big );
 						} else {
 							thisReplay = worst;
 
-							lapState.setLastTrackTimeSeconds( worst.trackTimeSeconds );
+							lapInfo.setLastTrackTimeSeconds( worst.trackTimeSeconds );
 							messager.show( "+" + NumberString.format( worst.trackTimeSeconds - best.trackTimeSeconds ) + " seconds", 3f, Type.Bad, Position.Top,
 									Size.Big );
 						}
@@ -577,7 +579,7 @@ public class GameLogic implements CarEvent.Listener, CarStateEvent.Listener, Pla
 
 					best.saveLocal( messager );
 
-					lapState.restart();
+					lapInfo.restart();
 					recorder.beginRecording( playerCar, worst, name, gameplaySettings.difficulty );
 					lastRecordedLapId = worst.id;
 				}

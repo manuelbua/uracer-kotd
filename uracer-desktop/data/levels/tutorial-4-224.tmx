@@ -1,4 +1,4 @@
-<?xml version="1.0" encoding="UTF-8" standalone="no"?><map height="12" orientation="orthogonal" tileheight="224" tilewidth="224" version="1.0" width="9"><properties><property name="blended tiles" value=""/></properties>
+<?xml version="1.0" encoding="UTF-8" standalone="no"?><map height="12" orientation="orthogonal" tileheight="224" tilewidth="224" version="1.0" width="10"><properties><property name="blended tiles" value=""/></properties>
  <tileset firstgid="1" name="tileset" tileheight="224" tilewidth="224">
   <image height="3360" source="tilesets/nature/224.png" width="896"/>
   <tile id="0">
@@ -129,15 +129,15 @@
    </properties>
   </tile>
  </tileset>
- <layer height="12" name="track" width="9">
+ <layer height="12" name="track" width="10">
   <properties>
    <property name="start" value="left"/>
   </properties>
   <data compression="zlib" encoding="base64">
-   eJyFz00LgkAQxvFNKkopAhHWQ75kL1oevajf/3v1X5jDQxgefszuzswykzvn8hUTriiQIMLW4l7qatx+el9o5Z5iZ73BGR/0UnPCEReUqBZmyiTX4P5nds098JSct1nCDDEGdHjLXqFmIz2DSO1tlL9nqdPdvfwd9j5Y1N299U121j1Gi18knwum
+   eJyN0MkKAkEMRdFSVBxQBBGqF86z9rI2pf//X95AGh5ZiItDNUnoDE1KqfnDGxtsMUMfA39HofaAY4jdcA+xFYb+D7PAC22om2OCJXbYS67K91ryJ5x/7KP5C66yp73ZZ7OZpih44BlmsLpeuFNx2qNKn4/Hujq9TZY+dpOx3Ke7TfW64v1y2E1v8gWzBQ14
   </data>
  </layer>
- <objectgroup color="#00ff00" height="12" name="trees" width="9">
+ <objectgroup color="#00ff00" height="12" name="trees" width="10">
   <object height="43" name="tree-8" type="tree-8" width="41" x="388" y="2345">
    <properties>
     <property name="scale" value="6"/>
@@ -194,7 +194,7 @@
    </properties>
   </object>
  </objectgroup>
- <objectgroup color="#00aaff" height="12" name="lights" width="9">
+ <objectgroup color="#00aaff" height="12" name="lights" width="10">
   <object height="21" width="27" x="676" y="2429"/>
   <object height="21" width="27" x="268" y="2016"/>
   <object height="21" width="27" x="641" y="1391"/>
@@ -205,7 +205,7 @@
   <object height="21" width="27" x="1681" y="310"/>
   <object height="21" width="27" x="389" y="368"/>
  </objectgroup>
- <objectgroup color="#ff0004" height="12" name="walls" width="9">
+ <objectgroup color="#ff0004" height="12" name="walls" width="10">
   <object x="259" y="1831">
    <polyline points="2,-1 4,-76 26,-140 67,-189 121,-220 179,-228 377,-227 416,-230 435,-238 446,-254 447,-302 438,-350 426,-383 409,-415"/>
   </object>
@@ -219,10 +219,16 @@
    <polyline points="0,0 -53,-5 -104,-24 -143,-48 -181,-80 -212,-125 -231,-175 -240,-228 -242,-289 -242,-351 -241,-409 -241,-460 -241,-489 -234,-506 -219,-518 -173,-518 -122,-517"/>
   </object>
   <object x="1197" y="1540">
-   <polyline points="10,2 42,50 78,90 115,125 159,158 220,190 284,208 352,217 379,219 400,230 405,255 405,328 405,392 405,457"/>
+   <polyline points="10,2 42,50 78,90 115,125 159,158 220,190 284,208 352,217 416,219 463,227 507,247 545,273 578,309 606,350"/>
   </object>
   <object x="1343" y="1469">
-   <polyline points="-8,3 18,46 58,83 98,109 158,130 214,136 262,138 301,150 345,177 378,212 403,259 411,307 412,374 412,433 413,482 412,527"/>
+   <polyline points="-8,3 18,46 58,83 98,109 158,130 214,136 262,138 316,146 370,160 423,183 475,222 522,262 564,314 592,360 612,411 625,461"/>
+  </object>
+  <object x="797" y="2470">
+   <polyline points="0,0 62,-22 120,1 276,-24 394,-2 478,-23"/>
+  </object>
+  <object x="851" y="2242">
+   <polyline points="0,0 80,15 184,5 278,25 382,12 467,19"/>
   </object>
  </objectgroup>
 </map>
