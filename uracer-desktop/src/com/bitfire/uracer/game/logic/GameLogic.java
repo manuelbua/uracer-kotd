@@ -556,22 +556,24 @@ public class GameLogic implements CarEvent.Listener, CarStateEvent.Listener, Pla
 					Replay best = replayBuffer.getBestReplay();
 					Replay worst = replayBuffer.getWorstReplay();
 
-					if( AMath.equals( worst.trackTimeSeconds, best.trackTimeSeconds ) ) {
+					float worstTime = AMath.round( worst.trackTimeSeconds, 2 );
+					float bestTime = AMath.round( best.trackTimeSeconds, 2 );
+					float diffTime = AMath.round( worstTime - bestTime, 2 );
+
+					if( AMath.equals( worstTime, bestTime ) ) {
 						// draw!
 						messager.show( "DRAW!", 3f, Type.Information, Position.Top, Size.Big );
 					} else {
 						if( lastRecordedLapId == best.id ) {
 							thisReplay = best;
 
-							lapInfo.setLastTrackTimeSeconds( best.trackTimeSeconds );
-							messager.show( "-" + NumberString.format( worst.trackTimeSeconds - best.trackTimeSeconds ) + " seconds!", 3f, Type.Good, Position.Top,
-									Size.Big );
+							lapInfo.setLastTrackTimeSeconds( bestTime );
+							messager.show( "-" + NumberString.format( diffTime ) + " seconds!", 3f, Type.Good, Position.Top, Size.Big );
 						} else {
 							thisReplay = worst;
 
-							lapInfo.setLastTrackTimeSeconds( worst.trackTimeSeconds );
-							messager.show( "+" + NumberString.format( worst.trackTimeSeconds - best.trackTimeSeconds ) + " seconds", 3f, Type.Bad, Position.Top,
-									Size.Big );
+							lapInfo.setLastTrackTimeSeconds( worstTime );
+							messager.show( "+" + NumberString.format( diffTime ) + " seconds", 3f, Type.Bad, Position.Top, Size.Big );
 						}
 					}
 
