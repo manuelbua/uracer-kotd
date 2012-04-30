@@ -493,7 +493,6 @@ public class GameLogic implements CarEvent.Listener, CarStateEvent.Listener, Pla
 
 		if( onStartZone ) {
 			if( isFirstLap ) {
-//				lapManager.onStartFirstLap( playerCar );
 				isFirstLap = false;
 
 				// any record to play?
@@ -504,11 +503,9 @@ public class GameLogic implements CarEvent.Listener, CarStateEvent.Listener, Pla
 				lapManager.startRecording( playerCar );
 
 			} else {
-//				lapManager.onFinishLap( playerCar );
 				lapManager.stopRecording();
 
-
-				if( !lapManager.hasAllReplay() ) {
+				if( !lapManager.hasAllReplays() ) {
 					// only one single valid replay
 
 					Replay any = lapManager.getAnyReplay();

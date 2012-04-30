@@ -73,7 +73,7 @@ public class TrackLapManager implements Disposable {
 	}
 
 	/** Returns whether or not the Best and Worst replays are available */
-	public boolean hasAllReplay() {
+	public boolean hasAllReplays() {
 		return replayBuffer.hasAllReplayData();
 	}
 
