@@ -18,16 +18,16 @@ public final class TrackLapInfo {
 		hasLastTrackTimeSecs = false;
 		hasBestTrackTimeSecs = false;
 		time = new Time();
-		reset();
+		resetTime();
 	}
 
-	public void reset() {
+	public void resetTime() {
 		hasLastTrackTimeSecs = false;
 		hasBestTrackTimeSecs = false;
 		time.start();
 	}
 
-	public void restart() {
+	public void restartTime() {
 		time.start();
 	}
 

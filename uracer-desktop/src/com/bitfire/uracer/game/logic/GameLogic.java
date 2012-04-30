@@ -392,7 +392,7 @@ public class GameLogic implements CarEvent.Listener, CarStateEvent.Listener, Pla
 
 	private void resetLogic() {
 		lastRecordedLapId = 0;
-		playerLapInfo.reset();
+		playerLapInfo.resetTime();
 		gameTasksManager.reset();
 	}
 
@@ -508,9 +508,12 @@ public class GameLogic implements CarEvent.Listener, CarStateEvent.Listener, Pla
 
 		if( onStartZone ) {
 			if( isFirstLap ) {
+				// onStartFirstLap
+				Gdx.app.log( "GameLogic", "onStartFirstLap" );
+
 				isFirstLap = false;
 
-				lapInfo.restart();
+				lapInfo.restartTime();
 				Replay buf = replayBuffer.getNextBuffer();
 				recorder.beginRecording( playerCar, buf, name, gameplaySettings.difficulty );
 				lastRecordedLapId = buf.id;
@@ -520,6 +523,8 @@ public class GameLogic implements CarEvent.Listener, CarStateEvent.Listener, Pla
 					ghostCar.setReplay( any );
 				}
 			} else {
+				// onLapFinish
+				Gdx.app.log( "GameLogic", "onFinishLap" );
 
 				Replay thisReplay = null;
 
@@ -535,7 +540,7 @@ public class GameLogic implements CarEvent.Listener, CarStateEvent.Listener, Pla
 
 					// only one single replay
 
-					lapInfo.restart();
+					lapInfo.restartTime();
 					Replay buf = replayBuffer.getNextBuffer();
 					recorder.beginRecording( playerCar, buf, name, gameplaySettings.difficulty );
 					lastRecordedLapId = buf.id;
@@ -581,7 +586,7 @@ public class GameLogic implements CarEvent.Listener, CarStateEvent.Listener, Pla
 
 					best.saveLocal( messager );
 
-					lapInfo.restart();
+					lapInfo.restartTime();
 					recorder.beginRecording( playerCar, worst, name, gameplaySettings.difficulty );
 					lastRecordedLapId = worst.id;
 				}
