@@ -1,8 +1,11 @@
 package com.bitfire.uracer.game.input;
 
-import java.io.DataInputStream;
-import java.io.DataOutputStream;
 import java.io.IOException;
+import java.io.ObjectInputStream;
+import java.io.ObjectOutputStream;
+import java.util.zip.Deflater;
+import java.util.zip.GZIPInputStream;
+import java.util.zip.GZIPOutputStream;
 
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.files.FileHandle;
@@ -14,6 +17,10 @@ import com.bitfire.uracer.game.actors.Car;
 import com.bitfire.uracer.game.actors.Car.Aspect;
 import com.bitfire.uracer.game.actors.CarForces;
 import com.bitfire.uracer.game.actors.CarModel;
+import com.bitfire.uracer.game.logic.notifier.Message;
+import com.bitfire.uracer.game.logic.notifier.Message.Position;
+import com.bitfire.uracer.game.logic.notifier.Message.Size;
+import com.bitfire.uracer.game.logic.notifier.Messager;
 import com.bitfire.uracer.utils.UUid;
 
 /** Represents replay data to be feed to a GhostCar, the replay player.
@@ -111,10 +118,13 @@ public class Replay {
 	public static Replay loadLocal( String trackname ) {
 		String filename = Config.URacerConfigFolder + Config.LocalReplaysStore + trackname;
 		FileHandle fh = Gdx.files.external( filename );
-		if( fh.exists() ) {
-			DataInputStream is = new DataInputStream( fh.read() );
 
+		if( fh.exists() ) {
 			try {
+				// DataInputStream is = new DataInputStream( fh.read() );
+				GZIPInputStream gzis = new GZIPInputStream( fh.read() );
+				ObjectInputStream is = new ObjectInputStream( gzis );
+
 				// read header
 				Replay r = new Replay( is.readLong() );
 
@@ -156,7 +166,7 @@ public class Replay {
 		return null;
 	}
 
-	public void saveLocal() {
+	public void saveLocal( final Messager messager ) {
 		if( isValid && !isLoaded && !isSaved ) {
 
 			// this is an asynchronous operation, but it's safe since saving a replay
@@ -165,12 +175,19 @@ public class Replay {
 
 				@Override
 				public void run() {
-					String filename = Config.URacerConfigFolder + Config.LocalReplaysStore + trackName;
-					FileHandle hf = Gdx.files.external( filename );
-
-					DataOutputStream os = new DataOutputStream( hf.write( false ) );
-
 					try {
+						String filename = Config.URacerConfigFolder + Config.LocalReplaysStore + trackName;
+						FileHandle hf = Gdx.files.external( filename );
+
+						// DataOutputStream os = new DataOutputStream( hf.write( false ) );
+						GZIPOutputStream gzos = new GZIPOutputStream( hf.write( false ) ) {
+							{
+								def.setLevel( Deflater.BEST_COMPRESSION );
+							}
+						};
+
+						ObjectOutputStream os = new ObjectOutputStream( gzos );
+
 						// write header
 
 						// replay info data
@@ -199,6 +216,7 @@ public class Replay {
 
 						isSaved = true;
 
+						messager.enqueue( "Replay saved", 1f, Message.Type.Information, Position.Bottom, Size.Normal );
 						Gdx.app.log( "Replay", "Done saving local replay (" + trackTimeSeconds + ")" );
 
 					} catch( IOException e ) {

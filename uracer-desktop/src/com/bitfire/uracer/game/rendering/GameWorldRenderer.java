@@ -308,7 +308,7 @@ public final class GameWorldRenderer {
 
 		treeShader.end();
 
-		if( Config.Graphics.Render3DBoundingBoxes ) {
+		if( Config.Debug.Render3DBoundingBoxes ) {
 			// debug
 			for( int i = 0; i < trees.models.size(); i++ ) {
 				TreeStillModel m = trees.models.get( i );
@@ -381,7 +381,7 @@ public final class GameWorldRenderer {
 
 		shader.end();
 
-		if( Config.Graphics.Render3DBoundingBoxes ) {
+		if( Config.Debug.Render3DBoundingBoxes ) {
 			// debug (tested on a single mesh only!)
 			for( int i = 0; i < models.size(); i++ ) {
 				m = models.get( i );

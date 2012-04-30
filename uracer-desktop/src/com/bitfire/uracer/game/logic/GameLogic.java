@@ -33,11 +33,11 @@ import com.bitfire.uracer.game.logic.hud.elements.PlayerDriftInfo;
 import com.bitfire.uracer.game.logic.hud.elements.PlayerDriftInfo.EndDriftType;
 import com.bitfire.uracer.game.logic.hud.elements.PlayerLapTimes;
 import com.bitfire.uracer.game.logic.notifier.Message;
-import com.bitfire.uracer.game.logic.notifier.Message.MessagePosition;
-import com.bitfire.uracer.game.logic.notifier.Message.MessageSize;
+import com.bitfire.uracer.game.logic.notifier.Message.Position;
+import com.bitfire.uracer.game.logic.notifier.Message.Size;
 import com.bitfire.uracer.game.logic.notifier.Message.Type;
 import com.bitfire.uracer.game.logic.notifier.MessageAccessor;
-import com.bitfire.uracer.game.logic.notifier.Notifier;
+import com.bitfire.uracer.game.logic.notifier.Messager;
 import com.bitfire.uracer.game.logic.sounds.SoundEffect;
 import com.bitfire.uracer.game.logic.sounds.SoundManager;
 import com.bitfire.uracer.game.logic.sounds.effects.PlayerDriftSoundEffect;
@@ -108,7 +108,7 @@ public class GameLogic implements CarEvent.Listener, CarStateEvent.Listener, Pla
 	private SoundManager sound = null;
 
 	// alerts and infos
-	private Notifier messager = null;
+	private Messager messager = null;
 
 	// states
 	private LapState playerLapState = null;
@@ -222,7 +222,7 @@ public class GameLogic implements CarEvent.Listener, CarStateEvent.Listener, Pla
 		gameTasksManager.add( sound );
 
 		// message manager
-		messager = new Notifier( strategy.invTileMapZoomFactor );
+		messager = new Messager( strategy.invTileMapZoomFactor );
 		gameTasksManager.add( messager );
 
 		// hud manager
@@ -254,7 +254,7 @@ public class GameLogic implements CarEvent.Listener, CarStateEvent.Listener, Pla
 		hud.add( lapTimes );
 
 		// hud-style debug information for various data (player's drift state, number of skid marks particles, ..)
-		if( Config.Graphics.RenderHudDebugInfo ) {
+		if( Config.Debug.RenderHudDebugInfo ) {
 			HudDebug hudDebug = new HudDebug( player, player.driftState, carSkidMarks );
 			hud.add( hudDebug );
 		}
@@ -441,11 +441,11 @@ public class GameLogic implements CarEvent.Listener, CarStateEvent.Listener, Pla
 
 			if( !driftEndByCollision ) {
 				if( driftSeconds >= 1 && driftSeconds < 3f ) {
-					messager.enqueue( "NICE ONE!\n+" + seconds, 1f, Type.Good, MessagePosition.Middle, MessageSize.Big );
+					messager.enqueue( "NICE ONE!\n+" + seconds, 1f, Type.Good, Position.Middle, Size.Big );
 				} else if( driftSeconds >= 3f && driftSeconds < 5f ) {
-					messager.enqueue( "FANTASTIC!\n+" + seconds, 1f, Type.Good, MessagePosition.Middle, MessageSize.Big );
+					messager.enqueue( "FANTASTIC!\n+" + seconds, 1f, Type.Good, Position.Middle, Size.Big );
 				} else if( driftSeconds >= 5f ) {
-					messager.enqueue( "UNREAL!\n+" + seconds, 1f, Type.Good, MessagePosition.Bottom, MessageSize.Big );
+					messager.enqueue( "UNREAL!\n+" + seconds, 1f, Type.Good, Position.Bottom, Size.Big );
 				}
 
 				hudPlayerDrift.endDrift( "+" + NumberString.format( driftSeconds ), EndDriftType.GoodDrift );
@@ -545,9 +545,9 @@ public class GameLogic implements CarEvent.Listener, CarStateEvent.Listener, Pla
 
 					thisReplay = any;
 
-					thisReplay.saveLocal();
+					thisReplay.saveLocal( messager );
 
-					messager.show( "GO!  GO!  GO!", 3f, Type.Information, MessagePosition.Middle, MessageSize.Big );
+					messager.show( "GO!  GO!  GO!", 3f, Type.Information, Position.Middle, Size.Big );
 				} else {
 
 					// both valid, replay best, overwrite worst
@@ -557,26 +557,26 @@ public class GameLogic implements CarEvent.Listener, CarStateEvent.Listener, Pla
 
 					if( AMath.equals( worst.trackTimeSeconds, best.trackTimeSeconds ) ) {
 						// draw!
-						messager.show( "DRAW!", 3f, Type.Information, MessagePosition.Top, MessageSize.Big );
+						messager.show( "DRAW!", 3f, Type.Information, Position.Top, Size.Big );
 					} else {
 						if( lastRecordedLapId == best.id ) {
 							thisReplay = best;
 
 							lapState.setLastTrackTimeSeconds( best.trackTimeSeconds );
-							messager.show( "-" + NumberString.format( worst.trackTimeSeconds - best.trackTimeSeconds ) + " seconds!", 3f, Type.Good, MessagePosition.Top,
-									MessageSize.Big );
+							messager.show( "-" + NumberString.format( worst.trackTimeSeconds - best.trackTimeSeconds ) + " seconds!", 3f, Type.Good, Position.Top,
+									Size.Big );
 						} else {
 							thisReplay = worst;
 
 							lapState.setLastTrackTimeSeconds( worst.trackTimeSeconds );
-							messager.show( "+" + NumberString.format( worst.trackTimeSeconds - best.trackTimeSeconds ) + " seconds", 3f, Type.Bad, MessagePosition.Top,
-									MessageSize.Big );
+							messager.show( "+" + NumberString.format( worst.trackTimeSeconds - best.trackTimeSeconds ) + " seconds", 3f, Type.Bad, Position.Top,
+									Size.Big );
 						}
 					}
 
 					ghostCar.setReplay( best );
 
-					best.saveLocal();
+					best.saveLocal( messager );
 
 					lapState.restart();
 					recorder.beginRecording( playerCar, worst, name, gameplaySettings.difficulty );

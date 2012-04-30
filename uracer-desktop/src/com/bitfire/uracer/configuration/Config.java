@@ -31,7 +31,7 @@ public final class Config {
 		public static void asDefault() {
 			int w = Gdx.graphics.getWidth();
 
-			Enabled = Config.isDesktop;
+			Enabled = true;
 			EnableVignetting = true;
 
 			RttFboWidth = (int)(Gdx.graphics.getWidth() * RttRatio);
@@ -74,31 +74,13 @@ public final class Config {
 //		public static final int TargetHeight = 800;
 		public static boolean EnableMipMapping;
 		public static boolean SubframeInterpolation;
-		public static boolean RenderBox2DWorldWireframe;
-		public static boolean RenderPlayerDebugInfo;
-		public static boolean RenderHudDebugInfo;
-		public static boolean Render3DBoundingBoxes;
-		public static boolean RenderDebugInfoGraphics;
-		public static boolean RenderDebugInfoFpsStats;
-		public static boolean RenderDebugInfoMeshStats;
-		public static boolean RenderDebugInfoMemoryStats;
 		public static boolean DumbNightMode;	// night-mode rendered as an overlay *after* PostProcessor
 		public static InterpolationMode CameraInterpolationMode;
 
 		public static void asDefault() {
 			EnableMipMapping = true;
 			SubframeInterpolation = true;
-
 			DumbNightMode = false;
-			RenderBox2DWorldWireframe = true;
-			RenderPlayerDebugInfo = Config.isDesktop;
-			RenderHudDebugInfo = Config.isDesktop;
-			RenderDebugInfoFpsStats = true;
-			RenderDebugInfoGraphics = true;
-			RenderDebugInfoMemoryStats = Config.isDesktop;
-			RenderDebugInfoMeshStats = Config.isDesktop;
-			Render3DBoundingBoxes = false;
-
 			CameraInterpolationMode = InterpolationMode.Sigmoid;
 		}
 
@@ -134,11 +116,31 @@ public final class Config {
 	}
 
 	public static final class Debug {
+		public static boolean RenderBox2DWorldWireframe;
+		public static boolean RenderPlayerDebugInfo;
+		public static boolean RenderHudDebugInfo;
+		public static boolean Render3DBoundingBoxes;
+		public static boolean RenderDebugInfoGraphics;
+		public static boolean RenderDebugInfoFpsStats;
+		public static boolean RenderDebugInfoMeshStats;
+		public static boolean RenderDebugInfoMemoryStats;
+		public static boolean RenderDebugInfoPostProcessor;
+
 		public static boolean TraverseWalls;
 		public static boolean ApplyCarFrictionFromMap;
 		public static boolean FrustumCulling;
 
 		public static void asDefault() {
+			RenderBox2DWorldWireframe = Config.isDesktop;
+			RenderPlayerDebugInfo = Config.isDesktop;
+			RenderHudDebugInfo = Config.isDesktop;
+			RenderDebugInfoFpsStats = true;
+			RenderDebugInfoGraphics = true;
+			RenderDebugInfoMemoryStats = Config.isDesktop;
+			RenderDebugInfoMeshStats = Config.isDesktop;
+			RenderDebugInfoPostProcessor = Config.isDesktop;
+			Render3DBoundingBoxes = false;
+
 			TraverseWalls = false;
 			ApplyCarFrictionFromMap = true;
 			FrustumCulling = true;

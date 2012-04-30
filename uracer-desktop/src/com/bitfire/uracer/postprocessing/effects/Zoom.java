@@ -23,6 +23,12 @@ public class Zoom extends PostProcessorEffect {
 
 	public void setStrength( float strength ) {
 		zoomBlur.setStrength( strength );
+
+		if( strength == 0 && isEnabled() ) {
+			setEnabled( false );
+		} else if( strength != 0 && !isEnabled() ) {
+			setEnabled( true );
+		}
 	}
 
 	@Override

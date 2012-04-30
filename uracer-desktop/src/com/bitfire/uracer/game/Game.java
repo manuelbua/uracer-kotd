@@ -12,7 +12,6 @@ import com.bitfire.uracer.game.input.Replay;
 import com.bitfire.uracer.game.logic.CarFactory;
 import com.bitfire.uracer.game.logic.GameLogic;
 import com.bitfire.uracer.game.rendering.GameRenderer;
-import com.bitfire.uracer.game.rendering.debug.DebugHelper;
 import com.bitfire.uracer.game.world.GameWorld;
 import com.bitfire.uracer.postprocessing.PostProcessor;
 import com.bitfire.uracer.postprocessing.effects.Bloom;
@@ -65,7 +64,7 @@ public class Game implements Disposable {
 		Gdx.app.log( "Game", "GameLogic created" );
 
 		// initialize the debug helper
-		debug = new DebugHelper( gameRenderer.getWorldRenderer(), gameWorld.getBox2DWorld() );
+		debug = new DebugHelper( gameRenderer.getWorldRenderer(), gameWorld.getBox2DWorld(), gameRenderer.getPostProcessor() );
 		Gdx.app.log( "Game", "Debug helper initialized" );
 	}
 
