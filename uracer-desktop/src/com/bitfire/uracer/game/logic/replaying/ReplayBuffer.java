@@ -54,10 +54,6 @@ public final class ReplayBuffer {
 		return null;
 	}
 
-	public Replay getReplay( int index ) {
-		return replays[index];
-	}
-
 	public boolean hasAllReplayData() {
 		return (replays[0].isValid && replays[1].isValid);
 	}

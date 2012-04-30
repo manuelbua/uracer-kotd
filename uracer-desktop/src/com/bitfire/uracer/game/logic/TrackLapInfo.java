@@ -2,23 +2,22 @@ package com.bitfire.uracer.game.logic;
 
 import com.bitfire.uracer.game.Time;
 
+/** Encapsulates the track's lap information, such as elapsed time so far, best
+ * lap times and last lap's time.
+ *
+ * @author bmanuel */
 public final class TrackLapInfo {
-	// replays
 	private Time time;
-	private long startTimeNs;
 	private float lastTrackTimeSecs;
 	private float bestTrackTimeSecs;
 	private boolean hasLastTrackTimeSecs;
 	private boolean hasBestTrackTimeSecs;
 
 	public TrackLapInfo() {
-
-		startTimeNs = 0;
 		lastTrackTimeSecs = 0;
 		hasLastTrackTimeSecs = false;
 		hasBestTrackTimeSecs = false;
 		time = new Time();
-
 		reset();
 	}
 
@@ -26,13 +25,14 @@ public final class TrackLapInfo {
 		hasLastTrackTimeSecs = false;
 		hasBestTrackTimeSecs = false;
 		time.start();
-		startTimeNs = System.nanoTime();
 	}
 
-	public long restart() {
-		startTimeNs = System.nanoTime();
+	public void restart() {
 		time.start();
-		return startTimeNs;
+	}
+
+	public float getElapsedSeconds() {
+		return time.elapsed( Time.Reference.TickSeconds );
 	}
 
 	public void setLastTrackTimeSeconds( float value ) {
@@ -43,10 +43,6 @@ public final class TrackLapInfo {
 	public void setBestTrackTimeSeconds( float value ) {
 		bestTrackTimeSecs = value;
 		hasBestTrackTimeSecs = true;
-	}
-
-	public float getElapsedSeconds() {
-		return time.elapsed( Time.Reference.TickSeconds );
 	}
 
 	public boolean hasLastTrackTimeSeconds() {
