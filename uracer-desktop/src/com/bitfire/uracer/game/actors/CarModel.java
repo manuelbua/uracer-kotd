@@ -5,6 +5,18 @@ package com.bitfire.uracer.game.actors;
  *
  * @author manuel */
 public final class CarModel {
+	public enum Type {
+		ModelDefault( "model-default" ), Model1( "model-1" ), Model2( "model-2" ), Model3( "model-3" ), ModelBlack( "model-black" );
+
+		public final String modelName;
+
+		private Type( String modelName ) {
+			this.modelName = modelName;
+		}
+	}
+
+	public Type type;
+
 	public float wheelbase; // wheelbase in m
 	public float b; // in m, distance from CG to front axle
 	public float c; // in m, idem to rear axle
@@ -39,15 +51,31 @@ public final class CarModel {
 		set( other );
 	}
 
+	public static CarModel fromType( Type type ) {
+		switch( type ) {
+		case Model1:
+			return (new CarModel()).toModel1();
+		case Model2:
+			return (new CarModel()).toModel2();
+		case Model3:
+			return (new CarModel()).toModel3();
+		case ModelBlack:
+			return (new CarModel()).toBlackCar();
+		default:
+		case ModelDefault:
+			return (new CarModel()).toDefault();
+		}
+	}
+
 	public CarModel newCopy() {
 		return new CarModel( this );
 	}
 
 	public void set( CarModel other ) {
+		this.type = other.type;
 		this.wheelbase = other.wheelbase;
 		this.b = other.b;
 		this.c = other.c;
-		// this.h = other.h;
 		this.mass = other.mass;
 		this.inertia = other.inertia;
 		this.length = other.length;
@@ -69,8 +97,31 @@ public final class CarModel {
 		this.weight = other.weight;
 	}
 
+	public void toModelType( CarModel.Type type ) {
+		switch( type ) {
+		case Model1:
+			this.toModel1();
+			break;
+		case Model2:
+			this.toModel2();
+			break;
+		case Model3:
+			this.toModel3();
+			break;
+		case ModelBlack:
+			this.toBlackCar();
+			break;
+		default:
+		case ModelDefault:
+			this.toDefault();
+			break;
+		}
+	}
+
 	// default car model
 	public CarModel toDefault() {
+		type = Type.ModelDefault;
+
 		// physical model
 		// h = 1f; // m
 		mass = 1500.f; // kg
@@ -110,6 +161,7 @@ public final class CarModel {
 
 	public CarModel toModel1() {
 		toDefault();
+		type = Type.Model1;
 
 		// physical model
 		b = 1.f; // m
@@ -136,6 +188,7 @@ public final class CarModel {
 
 	public CarModel toModel2() {
 		toDefault();
+		type = Type.Model2;
 
 		// physical model
 		// h = .85f; // m
@@ -164,6 +217,7 @@ public final class CarModel {
 
 	public CarModel toModel3() {
 		toModel2();
+		type = Type.Model3;
 
 		// physical model
 		// h = .85f; // m
@@ -196,6 +250,7 @@ public final class CarModel {
 
 	public CarModel toBlackCar() {
 		toModel1();
+		type = Type.ModelBlack;
 
 		width = 3.1f; // m
 		length = 4.5f; // m (must be > wheelbase)

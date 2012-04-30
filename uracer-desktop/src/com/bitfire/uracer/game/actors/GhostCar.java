@@ -1,7 +1,8 @@
 package com.bitfire.uracer.game.actors;
 
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
-import com.bitfire.uracer.game.input.Replay;
+import com.bitfire.uracer.game.logic.replaying.Replay;
+import com.bitfire.uracer.game.rendering.GameRendererEvent;
 import com.bitfire.uracer.game.world.GameWorld;
 import com.bitfire.uracer.utils.CarUtils;
 
@@ -20,11 +21,10 @@ public final class GhostCar extends Car {
 	// public CarState carState = null;
 
 	public GhostCar( GameWorld gameWorld, CarModel model, Aspect aspect ) {
-		super( gameWorld, model, aspect );
+		super( gameWorld, CarType.ReplayCar, InputMode.InputFromReplay, GameRendererEvent.Order.MINUS_1, model, aspect );
 		indexPlay = 0;
 		hasReplay = false;
 		replay = null;
-		this.inputMode = InputMode.InputFromReplay;
 		this.renderer.setAlpha( 0.5f );
 		// this.carState = new CarState( gameWorld, this );
 
@@ -42,7 +42,7 @@ public final class GhostCar extends Car {
 
 		if( hasReplay ) {
 			setAspect( replay.carAspect );
-			setCarModel( replay.carModel );
+			setCarModel( replay.carModelType );
 			renderer.setAlpha( 0 );
 
 			// System.out.println( "Replaying " + replay.id );

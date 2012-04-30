@@ -6,18 +6,18 @@ import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.utils.Array;
 import com.bitfire.uracer.game.events.GameEvents;
 import com.bitfire.uracer.game.logic.GameTask;
-import com.bitfire.uracer.game.logic.notifier.Message.MessagePosition;
-import com.bitfire.uracer.game.logic.notifier.Message.MessageSize;
+import com.bitfire.uracer.game.logic.notifier.Message.Position;
+import com.bitfire.uracer.game.logic.notifier.Message.Size;
 import com.bitfire.uracer.game.rendering.GameRendererEvent;
 import com.bitfire.uracer.game.rendering.GameRendererEvent.Type;
 
-public class Notifier extends GameTask {
+public class Messager extends GameTask {
 	private final GameRendererEvent.Listener gameRendererEvent = new GameRendererEvent.Listener() {
 		@Override
 		public void gameRendererEvent( Type type ) {
 			SpriteBatch batch = GameEvents.gameRenderer.batch;
 
-			for( MessagePosition group : MessagePosition.values() ) {
+			for( Position group : Position.values() ) {
 				if( isBusy( group ) ) {
 					currents.get( group.ordinal() ).render( batch );
 				}
@@ -32,16 +32,16 @@ public class Notifier extends GameTask {
 	private static final int MaxMessagesInStore = 10;
 	private int idxMessageStore;
 
-	public Notifier( float invZoomFactor ) {
+	public Messager( float invZoomFactor ) {
 		GameEvents.gameRenderer.addListener( gameRendererEvent, GameRendererEvent.Type.BatchAfterMeshes, GameRendererEvent.Order.MINUS_4 );
 
 		currents = new Array<Message>( 3 );
-		for( MessagePosition group : MessagePosition.values() ) {
+		for( Position group : Position.values() ) {
 			currents.insert( group.ordinal(), null );
 		}
 
 		messages = new Array<LinkedList<Message>>( 3 );
-		for( MessagePosition group : MessagePosition.values() ) {
+		for( Position group : Position.values() ) {
 			messages.insert( group.ordinal(), new LinkedList<Message>() );
 		}
 
@@ -60,29 +60,29 @@ public class Notifier extends GameTask {
 
 	@Override
 	protected void onTick() {
-		update( MessagePosition.Top );
-		update( MessagePosition.Middle );
-		update( MessagePosition.Bottom );
+		update( Position.Top );
+		update( Position.Middle );
+		update( Position.Bottom );
 	}
 
-	public boolean isBusy( MessagePosition group ) {
+	public boolean isBusy( Position group ) {
 		return (currents.get( group.ordinal() ) != null);
 	}
 
 	@Override
 	public void onReset() {
-		for( MessagePosition group : MessagePosition.values() ) {
+		for( Position group : Position.values() ) {
 			messages.get( group.ordinal() ).clear();
 		}
 
-		for( MessagePosition group : MessagePosition.values() ) {
+		for( Position group : Position.values() ) {
 			currents.set( group.ordinal(), null );
 		}
 
 		idxMessageStore = 0;
 	}
 
-	private void update( MessagePosition group ) {
+	private void update( Position group ) {
 		LinkedList<Message> msgs = messages.get( group.ordinal() );
 		Message msg = currents.get( group.ordinal() );
 
@@ -115,7 +115,7 @@ public class Notifier extends GameTask {
 		}
 	}
 
-	public void show( String message, float durationSecs, Message.Type type, MessagePosition position, MessageSize size ) {
+	public void show( String message, float durationSecs, Message.Type type, Position position, Size size ) {
 		if( isBusy( position ) ) {
 			currents.get( position.ordinal() ).onHide();
 		}
@@ -123,7 +123,7 @@ public class Notifier extends GameTask {
 		enqueue( message, durationSecs, type, position, size );
 	}
 
-	public void enqueue( String message, float durationSecs, Message.Type type, MessagePosition position, MessageSize size ) {
+	public void enqueue( String message, float durationSecs, Message.Type type, Position position, Size size ) {
 		Message m = nextFreeMessage();
 		m.set( message, durationSecs, type, position, size );
 		messages.get( position.ordinal() ).add( m );

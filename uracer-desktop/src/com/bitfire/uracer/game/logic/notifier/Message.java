@@ -22,11 +22,11 @@ public class Message {
 	}
 
 	/** the position of the displayed message, this also reflects the order in which messages are rendered */
-	public enum MessagePosition {
+	public enum Position {
 		Top, Middle, Bottom
 	}
 
-	public enum MessageSize {
+	public enum Size {
 		Normal, Big
 	}
 
@@ -35,7 +35,7 @@ public class Message {
 	public boolean started;
 
 	private String what;
-	private MessagePosition position;
+	private Position position;
 	private float whereX, whereY;
 	private float finalY;
 	private float scaleX, scaleY;
@@ -52,12 +52,12 @@ public class Message {
 		this.invZoomFactor = invZoomFactor;
 	}
 
-	public Message( String message, float durationSecs, Type type, MessagePosition position, MessageSize size, float invZoomFactor ) {
+	public Message( String message, float durationSecs, Type type, Position position, Size size, float invZoomFactor ) {
 		this( invZoomFactor );
 		set( message, durationSecs, type, position, size );
 	}
 
-	public final void set( String message, float durationSecs, Type type, MessagePosition position, MessageSize size ) {
+	public final void set( String message, float durationSecs, Type type, Position position, Size size ) {
 		startMs = 0;
 		started = false;
 		halfWidth = (int)(Gdx.graphics.getWidth() / 2);
@@ -72,14 +72,14 @@ public class Message {
 
 		switch( type ) {
 		case Good:
-			if( size == MessageSize.Normal ) {
+			if( size == Size.Normal ) {
 				font = Art.fontCurseG;
 			} else {
 				font = Art.fontCurseGbig;
 			}
 			break;
 		case Bad:
-			if( size == MessageSize.Normal ) {
+			if( size == Size.Normal ) {
 				font = Art.fontCurseR;
 			} else {
 				font = Art.fontCurseRbig;
@@ -87,7 +87,7 @@ public class Message {
 			break;
 		default:
 		case Information:
-			if( size == MessageSize.Normal ) {
+			if( size == Size.Normal ) {
 				font = Art.fontCurseYR;
 			} else {
 				font = Art.fontCurseYRbig;

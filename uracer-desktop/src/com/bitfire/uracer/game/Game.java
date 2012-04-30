@@ -8,9 +8,10 @@ import com.bitfire.uracer.configuration.Config;
 import com.bitfire.uracer.game.actors.Car;
 import com.bitfire.uracer.game.actors.Car.Aspect;
 import com.bitfire.uracer.game.actors.CarModel;
+import com.bitfire.uracer.game.logic.CarFactory;
 import com.bitfire.uracer.game.logic.GameLogic;
+import com.bitfire.uracer.game.logic.replaying.Replay;
 import com.bitfire.uracer.game.rendering.GameRenderer;
-import com.bitfire.uracer.game.rendering.debug.DebugHelper;
 import com.bitfire.uracer.game.world.GameWorld;
 import com.bitfire.uracer.postprocessing.PostProcessor;
 import com.bitfire.uracer.postprocessing.effects.Bloom;
@@ -41,7 +42,7 @@ public class Game implements Disposable {
 	private Zoom zoom = null;
 	private Vignette vignette = null;
 
-	public Game( String levelName, ScalingStrategy scalingStrategy, GameDifficulty difficulty, CarModel carModel, Aspect carAspect ) {
+	public Game( String levelName, ScalingStrategy scalingStrategy, GameDifficulty difficulty ) {
 		gameplaySettings = new GameplaySettings( difficulty );
 
 		gameWorld = new GameWorld( scalingStrategy, levelName, false );
@@ -59,13 +60,12 @@ public class Game implements Disposable {
 		}
 
 		// handles game rules and mechanics, it's all about game data
-		gameLogic = new GameLogic( gameWorld, gameplaySettings, scalingStrategy, carAspect, carModel );
+		gameLogic = new GameLogic( gameWorld, gameplaySettings, scalingStrategy/*, carAspect, carModel */);
 		Gdx.app.log( "Game", "GameLogic created" );
 
 		// initialize the debug helper
-		debug = new DebugHelper( gameRenderer.getWorldRenderer(), gameWorld.getBox2DWorld() );
-		debug.setPlayer( gameLogic.getPlayer() );
-		Gdx.app.log( "Game", "Debug helper initialized with player instance" );
+		debug = new DebugHelper( gameRenderer.getWorldRenderer(), gameWorld.getBox2DWorld(), gameRenderer.getPostProcessor() );
+		Gdx.app.log( "Game", "Debug helper initialized" );
 	}
 
 	@Override
@@ -76,7 +76,12 @@ public class Game implements Disposable {
 	}
 
 	public void setPlayer(CarModel model, Aspect aspect) {
-		gameLogic.setPlayer( aspect, model );
+		gameLogic.setPlayer( CarFactory.createPlayer( gameWorld, aspect, model ) );
+		debug.setPlayer( gameLogic.getPlayer() );
+	}
+
+	public void setLocalReplay( Replay replay ) {
+		gameLogic.setLocalReplay( replay );
 	}
 
 	private void configurePostProcessing( PostProcessor processor, GameWorld world ) {
@@ -95,6 +100,7 @@ public class Game implements Disposable {
 		bloom.setSettings( bloomSettings );
 
 		zoom = new Zoom( Config.PostProcessing.ZoomQuality );
+		zoom.setStrength( 0 );
 		processor.addEffect( zoom );
 		processor.addEffect( bloom );
 

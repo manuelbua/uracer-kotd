@@ -1,4 +1,4 @@
-package com.bitfire.uracer.game.rendering.debug;
+package com.bitfire.uracer.game;
 
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
@@ -16,7 +16,9 @@ import com.bitfire.uracer.game.player.PlayerCar;
 import com.bitfire.uracer.game.rendering.GameRenderer;
 import com.bitfire.uracer.game.rendering.GameRendererEvent;
 import com.bitfire.uracer.game.rendering.GameWorldRenderer;
+import com.bitfire.uracer.game.rendering.debug.Stats;
 import com.bitfire.uracer.game.world.GameWorld;
+import com.bitfire.uracer.postprocessing.PostProcessor;
 import com.bitfire.uracer.resources.Art;
 import com.bitfire.uracer.utils.Convert;
 import com.bitfire.uracer.utils.NumberString;
@@ -24,7 +26,9 @@ import com.bitfire.uracer.utils.SpriteBatchUtils;
 
 public final class DebugHelper {
 
+	// rendering
 	private GameWorldRenderer worldRenderer;
+	private PostProcessor postProcessor;
 
 	// player
 	private PlayerCar player;
@@ -47,7 +51,7 @@ public final class DebugHelper {
 				render( GameEvents.gameRenderer.batch );
 				break;
 			case Debug:
-				if( Config.Graphics.RenderBox2DWorldWireframe ) {
+				if( Config.Debug.RenderBox2DWorldWireframe ) {
 					renderB2dWorld( box2dWorld, worldRenderer.getOrthographicMvpMt() );
 				}
 				break;
@@ -56,16 +60,19 @@ public final class DebugHelper {
 		}
 	};
 
-	public DebugHelper( GameWorldRenderer worldRenderer, World box2dWorld ) {
+	public DebugHelper( GameWorldRenderer worldRenderer, World box2dWorld, PostProcessor postProcessor ) {
+		this.worldRenderer = worldRenderer;
+		this.box2dWorld = box2dWorld;
+		this.postProcessor = postProcessor;
+
 		GameEvents.gameRenderer.addListener( onRender, GameRendererEvent.Type.BatchDebug, GameRendererEvent.Order.DEFAULT );
 		GameEvents.gameRenderer.addListener( onRender, GameRendererEvent.Type.Debug, GameRendererEvent.Order.DEFAULT );
+
 		player = null;
 		physicsTime = 0;
 		renderTime = 0;
 		b2drenderer = new Box2DDebugRenderer();
 		frameStart = System.nanoTime();
-		this.box2dWorld = box2dWorld;
-		this.worldRenderer = worldRenderer;
 
 		// extrapolate version information
 		uRacerInfo = URacer.getVersionInfo();
@@ -103,26 +110,27 @@ public final class DebugHelper {
 	private void render( SpriteBatch batch ) {
 		renderVersionInfo( batch );
 
-		if( Config.Graphics.RenderDebugInfoGraphics ) {
-			renderGraphicalStats( batch,
-			 Gdx.graphics.getWidth() - gfxStats.getWidth(),
-			 Gdx.graphics.getHeight() - gfxStats.getHeight() - Art.DebugFontHeight - 5
-			);
+		if( Config.Debug.RenderDebugInfoGraphics ) {
+			renderGraphicalStats( batch, Gdx.graphics.getWidth() - gfxStats.getWidth(), Gdx.graphics.getHeight() - gfxStats.getHeight() - Art.DebugFontHeight - 5 );
 		}
 
-		if( Config.Graphics.RenderDebugInfoMemoryStats ) {
+		if( Config.Debug.RenderDebugInfoMemoryStats ) {
 			renderMemoryUsage( batch );
 		}
 
-		if( Config.Graphics.RenderDebugInfoFpsStats ) {
+		if( Config.Debug.RenderDebugInfoFpsStats ) {
 			renderFpsStats( batch );
 		}
 
-		if( player != null && Config.Graphics.RenderPlayerDebugInfo ) {
+		if( Config.Debug.RenderPlayerDebugInfo && player != null ) {
 			renderPlayerInfo( batch, player );
 		}
 
-		if( Config.Graphics.RenderDebugInfoMeshStats ) {
+		if( Config.Debug.RenderDebugInfoPostProcessor && postProcessor != null ) {
+			renderPostProcessorInfo( batch, postProcessor );
+		}
+
+		if( Config.Debug.RenderDebugInfoMeshStats ) {
 			SpriteBatchUtils.drawString( batch, "total meshes=" + GameWorld.TotalMeshes, 0, Gdx.graphics.getHeight() - 14 );
 			SpriteBatchUtils.drawString( batch, "rendered meshes=" + (GameWorldRenderer.renderedTrees + GameWorldRenderer.renderedWalls) + ", trees="
 					+ GameWorldRenderer.renderedTrees + ", walls=" + GameWorldRenderer.renderedWalls + ", culled=" + GameWorldRenderer.culledMeshes, 0,
@@ -158,6 +166,11 @@ public final class DebugHelper {
 
 	private void renderB2dWorld( World world, Matrix4 modelViewProj ) {
 		b2drenderer.render( world, modelViewProj );
+	}
+
+	private void renderPostProcessorInfo( SpriteBatch batch, PostProcessor postProcessor ) {
+		String text = "Post-processing effects count =" + postProcessor.getEnabledEffectsCount();
+		SpriteBatchUtils.drawString( batch, text, 0, 128 );
 	}
 
 	private void renderPlayerInfo( SpriteBatch batch, PlayerCar player ) {

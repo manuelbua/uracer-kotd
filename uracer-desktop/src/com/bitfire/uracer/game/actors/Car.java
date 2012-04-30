@@ -2,13 +2,20 @@ package com.bitfire.uracer.game.actors;
 
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
+import com.badlogic.gdx.graphics.g2d.TextureRegion;
 import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.physics.box2d.BodyDef;
 import com.badlogic.gdx.physics.box2d.BodyDef.BodyType;
 import com.badlogic.gdx.physics.box2d.Fixture;
+import com.badlogic.gdx.physics.box2d.FixtureDef;
 import com.bitfire.uracer.configuration.Config;
+import com.bitfire.uracer.game.collisions.CollisionFilters;
+import com.bitfire.uracer.game.rendering.GameRendererEvent;
 import com.bitfire.uracer.game.world.GameWorld;
+import com.bitfire.uracer.resources.Art;
 import com.bitfire.uracer.utils.AMath;
+import com.bitfire.uracer.utils.Convert;
+import com.bitfire.uracer.utils.FixtureAtlas;
 
 public abstract class Car extends Box2DEntity {
 	public enum InputMode {
@@ -16,7 +23,13 @@ public abstract class Car extends Box2DEntity {
 	}
 
 	public enum Aspect {
-		OldSkool, OldSkool2
+		OldSkool( "electron" ), OldSkool2( "spider" );
+
+		public final String name;
+
+		private Aspect( String name ) {
+			this.name = name;
+		}
 	}
 
 	/* event */
@@ -24,6 +37,7 @@ public abstract class Car extends Box2DEntity {
 
 	protected GameWorld gameWorld;
 	protected CarModel model = new CarModel();
+	protected CarType carType;
 	protected CarRenderer renderer;
 
 	protected int impacts = 0;
@@ -53,21 +67,32 @@ public abstract class Car extends Box2DEntity {
 	private Aspect aspect = Aspect.OldSkool;
 	protected InputMode inputMode = InputMode.NoInput;
 
-	public Car( GameWorld gameWorld, CarModel model, Aspect aspect ) {
-		super( gameWorld.getBox2DWorld() );
+	public Car( GameWorld gameWorld, CarType carType, InputMode inputMode, GameRendererEvent.Order drawingOrder, CarModel model, Aspect aspect ) {
+		super( gameWorld.getBox2DWorld(), drawingOrder );
 		this.aspect = aspect;
 		this.model.set( model );
+		this.carType = carType;
 
 		this.event = new CarEvent( this );
 		this.gameWorld = gameWorld;
 		this.renderer = new CarRenderer( model, aspect );
 		this.impacts = 0;
-		this.inputMode = InputMode.NoInput;
+		this.inputMode = inputMode;
 		this.carTraveledDistance = 0;
 		this.carTraveledDistanceDt = 0;
 		this.accuDistCount = 0;
 		this.accuSpeed = 0;
 		this.accuSpeedCount = 0;
+
+		applyCarPhysics( carType );
+
+		Gdx.app.log( getClass().getSimpleName(), "Input mode is " + this.inputMode.toString() );
+	}
+
+	private void applyCarPhysics( CarType carType ) {
+		if( body != null ) {
+			this.box2dWorld.destroyBody( body );
+		}
 
 		// body
 		BodyDef bd = new BodyDef();
@@ -78,7 +103,34 @@ public abstract class Car extends Box2DEntity {
 		body.setBullet( true );
 		body.setUserData( this );
 
-		Gdx.app.log( getClass().getSimpleName(), "Input mode is " + this.inputMode.toString() );
+		TextureRegion region = Art.cars.findRegion( aspect.name );
+		String shapeName = Config.ShapesStore + "electron" /* aspect.name */+ ".shape";
+		String shapeRef = Config.ShapesRefs + "electron" /* aspect.name */+ ".png";
+
+		// set physical properties and apply shape
+		FixtureDef fd = new FixtureDef();
+		fd.density = model.density;
+		fd.friction = model.friction;
+		fd.restitution = model.restitution;
+
+		fd.filter.groupIndex = (short)((carType == CarType.PlayerCar) ? CollisionFilters.GroupPlayer : CollisionFilters.GroupReplay);
+		fd.filter.categoryBits = (short)((carType == CarType.PlayerCar) ? CollisionFilters.CategoryPlayer : CollisionFilters.CategoryReplay);
+		fd.filter.maskBits = (short)((carType == CarType.PlayerCar) ? CollisionFilters.MaskPlayer : CollisionFilters.MaskReplay);
+
+		if( Config.Debug.TraverseWalls ) {
+			fd.filter.groupIndex = CollisionFilters.GroupNoCollisions;
+		}
+
+		// apply scaling factors
+		Vector2 offset = new Vector2( -model.width / 2f, -model.length / 2f );
+
+		Vector2 ratio = new Vector2( model.width / Convert.px2mt( region.getRegionWidth() ), model.length / Convert.px2mt( region.getRegionHeight() ) );
+
+		// box2d editor "normalization" contemplates just a width-bound ratio..
+		Vector2 factor = new Vector2( Convert.px2mt( region.getRegionWidth() * ratio.x ), Convert.px2mt( region.getRegionWidth() * ratio.y ) );
+
+		FixtureAtlas atlas = new FixtureAtlas( Gdx.files.internal( shapeName ) );
+		atlas.createFixtures( body, shapeRef, factor.x, factor.y, fd, offset, carType );
 	}
 
 	/** Subclasses will feed forces to the simulator, such as Replay data stored
@@ -104,12 +156,20 @@ public abstract class Car extends Box2DEntity {
 	}
 
 	public void setAspect( Aspect aspect ) {
-		renderer.setAspect( aspect, model );
+		if( this.aspect != aspect ) {
+			this.aspect = aspect;
+			renderer.setAspect( aspect, model );
+			Gdx.app.log( this.getClass().getSimpleName(), "Switched to car aspect type \"" + aspect.toString() + "\"" );
+		}
 	}
 
-	public void setCarModel(CarModel model) {
-		this.model.set( model );
-		renderer.setAspect( aspect, model );
+	public void setCarModel( CarModel.Type modelType ) {
+		if( model.type != modelType ) {
+			model.toModelType( modelType );
+			applyCarPhysics( carType );
+			renderer.setAspect( aspect, model );
+			Gdx.app.log( this.getClass().getSimpleName(), "Switched to car model \"" + model.type.toString() + "\"" );
+		}
 	}
 
 	/** Returns the traveled distance, in meters, so far.

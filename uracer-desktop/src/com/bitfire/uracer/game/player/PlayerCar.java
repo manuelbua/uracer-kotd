@@ -10,7 +10,9 @@ import com.bitfire.uracer.game.actors.CarDescriptor;
 import com.bitfire.uracer.game.actors.CarForces;
 import com.bitfire.uracer.game.actors.CarModel;
 import com.bitfire.uracer.game.actors.CarState;
+import com.bitfire.uracer.game.actors.CarType;
 import com.bitfire.uracer.game.rendering.GameRenderer;
+import com.bitfire.uracer.game.rendering.GameRendererEvent;
 import com.bitfire.uracer.game.world.GameWorld;
 import com.bitfire.uracer.utils.AMath;
 import com.bitfire.uracer.utils.VMath;
@@ -23,7 +25,6 @@ public class PlayerCar extends Car {
 
 	// input
 	private CarInput carInput = null;
-//	private Input inputSystem = null;
 	private float lastTouchAngle;
 	private Vector2 touchPos = new Vector2();
 	private Vector2 carPos = new Vector2();
@@ -39,27 +40,19 @@ public class PlayerCar extends Car {
 	public PlayerDriftState driftState = null;
 
 	public PlayerCar( GameWorld gameWorld, CarModel model, Aspect aspect ) {
-		super( gameWorld, model, aspect );
+		super( gameWorld, CarType.PlayerCar, InputMode.InputFromPlayer, GameRendererEvent.Order.DEFAULT, model, aspect );
 		carInput = new CarInput();
-		inputMode = InputMode.InputFromPlayer;
-//		inputMode = InputMode.NoInput;
-//		inputSystem = null;
 		impacts = 0;
 
 		carDesc = new CarDescriptor();
 		carDesc.carModel.set( model );
 		carSim = new CarSimulator( carDesc );
+		renderer.setAlpha( 1 );
 
 		// states
 		this.carState = new CarState( gameWorld, this );
 		this.driftState = new PlayerDriftState( this );
 	}
-
-//	public void setInputSystem( Input inputSystem ) {
-//		this.inputSystem = inputSystem;
-//		this.inputMode = (inputSystem != null ? InputMode.InputFromPlayer : InputMode.NoInput);
-//		Gdx.app.log( getClass().getSimpleName(), "Switched input mode to " + this.inputMode.toString() );
-//	}
 
 	// use strictly for debug purposes *ONLY*!
 	public CarDescriptor getCarDescriptor() {
@@ -97,14 +90,8 @@ public class PlayerCar extends Car {
 	}
 
 	protected CarInput acquireInput() {
-//		if( inputSystem == null ) {
-//			return carInput;
-//		}
-
 		carPos.set( GameRenderer.ScreenUtils.screenPosForMt( body.getPosition() ) );
 
-//		touchPos.set( inputSystem.getXY() );
-//		carInput.updated = inputSystem.isTouching();
 		touchPos.set( Gdx.input.getX(), Gdx.input.getY() );
 		carInput.updated = Gdx.input.isTouched();
 

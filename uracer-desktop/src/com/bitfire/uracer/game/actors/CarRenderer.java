@@ -21,16 +21,7 @@ public final class CarRenderer {
 	}
 
 	public void setAspect( Aspect aspect, CarModel model ) {
-		switch( aspect ) {
-		case OldSkool:
-			this.region = Art.cars.findRegion( "electron" );
-			break;
-
-		case OldSkool2:
-			this.region = Art.cars.findRegion( "spider" );
-			break;
-		}
-
+		this.region = Art.cars.findRegion( aspect.name );
 		facet.setRegion( region );
 		facet.setSize( Convert.mt2px( model.width ), Convert.mt2px( model.length ) );
 		facet.setOrigin( facet.getWidth() / 2, facet.getHeight() / 2 );
@@ -40,8 +31,6 @@ public final class CarRenderer {
 		ambientOcclusion.setSize( facet.getWidth(), facet.getHeight() );
 		ambientOcclusion.setScale( 2f, 2.3f );
 		ambientOcclusion.setOrigin( ambientOcclusion.getWidth() / 2, ambientOcclusion.getHeight() / 2 );
-
-		alpha = 1;
 	}
 
 	public Sprite getFacet() {

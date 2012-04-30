@@ -17,8 +17,8 @@ import com.bitfire.uracer.utils.Manager;
  *
  * @author bmanuel */
 public final class PostProcessor implements Disposable {
-	private final PingPongBuffer composite;
 	private static Format fbFormat;
+	private final PingPongBuffer composite;
 	private final Manager<PostProcessorEffect> manager = new Manager<PostProcessorEffect>();
 	private final Array<PingPongBuffer> buffers = new Array<PingPongBuffer>( 5 );
 	private final Color clearColor = Color.CLEAR;
@@ -92,6 +92,11 @@ public final class PostProcessor implements Disposable {
 	/** Sets whether or not the post-processor should be enabled */
 	public void setEnabled( boolean enabled ) {
 		this.enabled = enabled;
+	}
+
+	/** Returns the number of the currently enabled effects */
+	public int getEnabledEffectsCount() {
+		return enabledEffects.size;
 	}
 
 	/** Adds the specified effect to the effect chain: the order IS important
