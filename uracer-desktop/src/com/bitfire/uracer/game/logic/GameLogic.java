@@ -26,17 +26,17 @@ import com.bitfire.uracer.game.logic.hud.Hud;
 import com.bitfire.uracer.game.logic.hud.HudLabel;
 import com.bitfire.uracer.game.logic.hud.HudLabelAccessor;
 import com.bitfire.uracer.game.logic.hud.debug.HudDebug;
+import com.bitfire.uracer.game.logic.hud.elements.HudLapInfo;
 import com.bitfire.uracer.game.logic.hud.elements.HudPlayerDriftInfo;
 import com.bitfire.uracer.game.logic.hud.elements.HudPlayerDriftInfo.EndDriftType;
-import com.bitfire.uracer.game.logic.hud.elements.HudLapInfo;
 import com.bitfire.uracer.game.logic.notifier.Message;
 import com.bitfire.uracer.game.logic.notifier.Message.Position;
 import com.bitfire.uracer.game.logic.notifier.Message.Size;
 import com.bitfire.uracer.game.logic.notifier.Message.Type;
 import com.bitfire.uracer.game.logic.notifier.MessageAccessor;
 import com.bitfire.uracer.game.logic.notifier.Messager;
-import com.bitfire.uracer.game.logic.replaying.Replay;
 import com.bitfire.uracer.game.logic.replaying.LapManager;
+import com.bitfire.uracer.game.logic.replaying.Replay;
 import com.bitfire.uracer.game.logic.sounds.SoundEffect;
 import com.bitfire.uracer.game.logic.sounds.SoundManager;
 import com.bitfire.uracer.game.logic.sounds.effects.PlayerDriftSoundEffect;
@@ -146,7 +146,7 @@ public class GameLogic implements CarEvent.Listener, CarStateEvent.Listener, Pla
 		// configurePlayer( gameWorld, gameplaySettings, playerCar );
 		// Gdx.app.log( "GameLogic", "Player configured" );
 
-		createGameTasks( gameWorld, scalingStrategy );
+		createGameTaskManagers( gameWorld, scalingStrategy );
 		// configurePlayerTasks( playerCar, playerLapState );
 		// Gdx.app.log( "GameLogic", "Game tasks created and configured" );
 
@@ -175,21 +175,18 @@ public class GameLogic implements CarEvent.Listener, CarStateEvent.Listener, Pla
 
 	/** Sets the player and transfer ownership to the GameLogic object */
 	public void setPlayer( PlayerCar player ) {
-		this.playerCar = player;
+		playerCar = player;
+		hasPlayer = (playerCar != null);
 
-		if( player != null ) {
+		if( hasPlayer ) {
 			configurePlayer( gameWorld, gameplaySettings, player );
 			Gdx.app.log( "GameLogic", "Player configured" );
 
-			configurePlayerTasks( player, lapManager.getLapInfo() );
+			createPlayerTasks( player, lapManager.getLapInfo() );
 			Gdx.app.log( "GameLogic", "Game tasks created and configured" );
 
 			registerPlayerEvents( player );
 			Gdx.app.log( "GameLogic", "Registered player-related events" );
-
-			hasPlayer = true;
-		} else {
-			hasPlayer = false;
 		}
 	}
 
@@ -209,7 +206,7 @@ public class GameLogic implements CarEvent.Listener, CarStateEvent.Listener, Pla
 		player.event.addListener( this, CarEvent.Type.onComputeForces );
 	}
 
-	private void createGameTasks( GameWorld gameWorld, ScalingStrategy strategy ) {
+	private void createGameTaskManagers( GameWorld gameWorld, ScalingStrategy strategy ) {
 		gameTasksManager = new GameTasksManager();
 
 		// input system
@@ -235,7 +232,7 @@ public class GameLogic implements CarEvent.Listener, CarStateEvent.Listener, Pla
 		gameTasksManager.add( effects );
 	}
 
-	private void configurePlayerTasks( PlayerCar player, LapInfo lapInfo ) {
+	private void createPlayerTasks( PlayerCar player, LapInfo lapInfo ) {
 		// sounds
 		SoundEffect fx = new PlayerDriftSoundEffect( player );
 		fx.start();
@@ -250,7 +247,7 @@ public class GameLogic implements CarEvent.Listener, CarStateEvent.Listener, Pla
 		hudPlayerDriftInfo = new HudPlayerDriftInfo( scalingStrategy, player );
 		hud.add( hudPlayerDriftInfo );
 
-		// hud, player's lap times
+		// hud, player's lap info
 		HudLapInfo hudLapInfo = new HudLapInfo( scalingStrategy, lapInfo );
 		hud.add( hudLapInfo );
 
@@ -260,11 +257,6 @@ public class GameLogic implements CarEvent.Listener, CarStateEvent.Listener, Pla
 			hud.add( hudDebug );
 		}
 	}
-
-	// private void createPlayer( GameWorld gameWorld, Aspect carAspect, CarModel carModel ) {
-	// playerCar = CarFactory.createPlayer( gameWorld, carAspect, carModel );
-	// // ghostCar = CarFactory.createGhost( gameWorld, playerCar );
-	// }
 
 	private void configurePlayer( GameWorld world, GameplaySettings settings, PlayerCar player ) {
 		// create player and setup player input system and initial position in the world

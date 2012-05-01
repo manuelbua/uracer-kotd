@@ -44,6 +44,18 @@ public final class PlayerDriftSoundEffect extends SoundEffect {
 		}
 	};
 
+	public PlayerDriftSoundEffect( PlayerCar player ) {
+		this.player = player;
+		player.driftState.event.addListener( driftListener, PlayerDriftStateEvent.Type.onBeginDrift );
+		player.driftState.event.addListener( driftListener, PlayerDriftStateEvent.Type.onEndDrift );
+		drift = Sounds.carDrift;
+	}
+
+	@Override
+	public void dispose() {
+		drift.stop();
+	}
+
 	private void onBeginDrift() {
 		if( driftId > -1 ) {
 			drift.stop( driftId );
@@ -58,18 +70,6 @@ public final class PlayerDriftSoundEffect extends SoundEffect {
 	public void onEndDrift() {
 		doFadeIn = false;
 		doFadeOut = true;
-	}
-
-	public PlayerDriftSoundEffect( PlayerCar player ) {
-		this.player = player;
-		player.driftState.event.addListener( driftListener, PlayerDriftStateEvent.Type.onBeginDrift );
-		player.driftState.event.addListener( driftListener, PlayerDriftStateEvent.Type.onEndDrift );
-		drift = Sounds.carDrift;
-	}
-
-	@Override
-	public void dispose() {
-		drift.stop();
 	}
 
 	@Override
