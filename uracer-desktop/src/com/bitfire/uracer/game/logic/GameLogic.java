@@ -22,6 +22,7 @@ import com.bitfire.uracer.game.actors.CarModel;
 import com.bitfire.uracer.game.actors.CarState;
 import com.bitfire.uracer.game.actors.CarStateEvent;
 import com.bitfire.uracer.game.actors.GhostCar;
+import com.bitfire.uracer.game.logic.helpers.PlayerTasks;
 import com.bitfire.uracer.game.logic.hud.Hud;
 import com.bitfire.uracer.game.logic.hud.HudLabel;
 import com.bitfire.uracer.game.logic.hud.HudLabelAccessor;
@@ -37,7 +38,6 @@ import com.bitfire.uracer.game.logic.notifier.MessageAccessor;
 import com.bitfire.uracer.game.logic.notifier.Messager;
 import com.bitfire.uracer.game.logic.replaying.LapManager;
 import com.bitfire.uracer.game.logic.replaying.Replay;
-import com.bitfire.uracer.game.logic.sounds.SoundEffect;
 import com.bitfire.uracer.game.logic.sounds.SoundManager;
 import com.bitfire.uracer.game.logic.sounds.effects.PlayerDriftSoundEffect;
 import com.bitfire.uracer.game.logic.sounds.effects.PlayerImpactSoundEffect;
@@ -93,6 +93,7 @@ public class GameLogic implements CarEvent.Listener, CarStateEvent.Listener, Pla
 
 	// tasks
 	private GameTasksManager gameTasksManager = null;
+	private PlayerTasks playerTasks = null;
 
 	// special effects
 	private TrackEffects effects = null;
@@ -121,12 +122,11 @@ public class GameLogic implements CarEvent.Listener, CarStateEvent.Listener, Pla
 		}
 	};
 
-	public GameLogic( GameWorld gameWorld, GameplaySettings settings, ScalingStrategy scalingStrategy/* , Aspect
-																									 * carAspect,
-																									 * CarModel carModel */) {
+	public GameLogic( GameWorld gameWorld, GameplaySettings settings, ScalingStrategy scalingStrategy ) {
 		this.gameplaySettings = settings;
 		this.scalingStrategy = scalingStrategy;
 		this.gameWorld = gameWorld;
+		timeMultiplier.value = 1f;
 
 		// create tweening support
 		Tween.registerAccessor( Message.class, new MessageAccessor() );
@@ -134,31 +134,20 @@ public class GameLogic implements CarEvent.Listener, CarStateEvent.Listener, Pla
 		Tween.registerAccessor( BoxedFloat.class, new BoxedFloatAccessor() );
 		Gdx.app.log( "GameLogic", "Tweening helpers created" );
 
-		timeMultiplier.value = 1f;
+		gameTasksManager = new GameTasksManager();
+		createGameTasks( gameWorld, scalingStrategy, gameTasksManager );
 
+		playerTasks = new PlayerTasks( gameTasksManager );
 		lapManager = new LapManager( gameWorld, settings );
 
-		// creates player and ghost cars
 		ghostCar = CarFactory.createGhost( gameWorld, (new CarModel()).toDefault(), Aspect.OldSkool );
-		// createPlayer( gameWorld, carAspect, carModel );
-		// Gdx.app.log( "GameLogic", "Player created" );
-
-		// configurePlayer( gameWorld, gameplaySettings, playerCar );
-		// Gdx.app.log( "GameLogic", "Player configured" );
-
-		createGameTasks( gameWorld, scalingStrategy );
-		// configurePlayerTasks( playerCar, playerLapState );
-		// Gdx.app.log( "GameLogic", "Game tasks created and configured" );
-
-		// subscribe to player-related events
-		// registerPlayerEvents( playerCar );
-		// Gdx.app.log( "GameLogic", "Registered player-related events" );
 
 		// messager.show( "COOL STUFF!", 60, Message.Type.Information, MessagePosition.Bottom, MessageSize.Big );
 	}
 
 	public void dispose() {
 		gameTasksManager.dispose();
+		playerTasks.dispose();
 
 		if( playerCar != null ) {
 			playerCar.dispose();
@@ -173,9 +162,7 @@ public class GameLogic implements CarEvent.Listener, CarStateEvent.Listener, Pla
 		WcTweener.dispose();
 	}
 
-	private void createGameTasks( GameWorld gameWorld, ScalingStrategy strategy ) {
-		gameTasksManager = new GameTasksManager();
-
+	private void createGameTasks( GameWorld gameWorld, ScalingStrategy strategy, GameTasksManager manager ) {
 		// input system
 		input = new Input( TaskManagerEvent.Order.MINUS_4 );
 
@@ -184,28 +171,24 @@ public class GameLogic implements CarEvent.Listener, CarStateEvent.Listener, Pla
 
 		// sound manager
 		sound = new SoundManager();
-		gameTasksManager.add( sound );
+		manager.add( sound );
 
 		// message manager
 		messager = new Messager( strategy.invTileMapZoomFactor );
-		gameTasksManager.add( messager );
+		manager.add( messager );
 
 		// hud manager
 		hud = new Hud();
-		gameTasksManager.add( hud );
+		manager.add( hud );
 
 		// effects manager
 		effects = new TrackEffects();
-		gameTasksManager.add( effects );
+		manager.add( effects );
 	}
-
 
 	/** Sets the player and transfer ownership to the GameLogic object */
 	public void setPlayer( PlayerCar player ) {
-		playerCar = player;
-		hasPlayer = (playerCar != null);
-
-		if( hasPlayer ) {
+		if( player != null ) {
 			configurePlayer( gameWorld, gameplaySettings, player );
 			Gdx.app.log( "GameLogic", "Player configured" );
 
@@ -214,6 +197,17 @@ public class GameLogic implements CarEvent.Listener, CarStateEvent.Listener, Pla
 
 			registerPlayerEvents( player );
 			Gdx.app.log( "GameLogic", "Registered player-related events" );
+
+			playerCar = player;
+			hasPlayer = true;
+		} else {
+			if( playerCar != null ) {
+				unregisterPlayerEvents( playerCar );
+				destroyPlayerTasks();
+			}
+
+			playerCar = null;
+			hasPlayer = false;
 		}
 	}
 
@@ -233,11 +227,17 @@ public class GameLogic implements CarEvent.Listener, CarStateEvent.Listener, Pla
 		player.event.addListener( this, CarEvent.Type.onComputeForces );
 	}
 
+	private void unregisterPlayerEvents( PlayerCar player ) {
+		player.carState.event.addListener( this, CarStateEvent.Type.onTileChanged );
+		player.driftState.event.addListener( this, PlayerDriftStateEvent.Type.onBeginDrift );
+		player.driftState.event.addListener( this, PlayerDriftStateEvent.Type.onEndDrift );
+		player.event.addListener( this, CarEvent.Type.onCollision );
+		player.event.addListener( this, CarEvent.Type.onComputeForces );
+	}
+
 	private void createPlayerTasks( PlayerCar player, LapInfo lapInfo ) {
 		// sounds
-		SoundEffect fx = new PlayerDriftSoundEffect( player );
-		fx.start();
-		sound.add( fx );
+		sound.add( new PlayerDriftSoundEffect( player ) );
 		sound.add( new PlayerImpactSoundEffect( player ) );
 
 		// track effects
@@ -257,6 +257,9 @@ public class GameLogic implements CarEvent.Listener, CarStateEvent.Listener, Pla
 			HudDebug hudDebug = new HudDebug( player, player.driftState, carSkidMarks );
 			hud.add( hudDebug );
 		}
+	}
+
+	private void destroyPlayerTasks() {
 	}
 
 	private void configurePlayer( GameWorld world, GameplaySettings settings, PlayerCar player ) {

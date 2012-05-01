@@ -49,6 +49,7 @@ public final class PlayerDriftSoundEffect extends SoundEffect {
 		player.driftState.event.addListener( driftListener, PlayerDriftStateEvent.Type.onBeginDrift );
 		player.driftState.event.addListener( driftListener, PlayerDriftStateEvent.Type.onEndDrift );
 		drift = Sounds.carDrift;
+		start();
 	}
 
 	@Override
