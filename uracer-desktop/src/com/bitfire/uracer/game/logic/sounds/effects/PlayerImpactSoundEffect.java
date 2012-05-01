@@ -48,6 +48,8 @@ public final class PlayerImpactSoundEffect extends SoundEffect {
 
 	@Override
 	public void dispose() {
+		player.event.removeListener( carEvent, CarEvent.Type.onCollision );
+
 		soundLow1.stop();
 		soundLow2.stop();
 		soundMid1.stop();

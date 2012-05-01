@@ -87,6 +87,9 @@ public final class DebugHelper {
 	}
 
 	public void dispose() {
+		GameEvents.gameRenderer.removeListener( onRender, GameRendererEvent.Type.BatchDebug, GameRendererEvent.Order.DEFAULT );
+		GameEvents.gameRenderer.removeListener( onRender, GameRendererEvent.Type.Debug, GameRendererEvent.Order.DEFAULT );
+
 		b2drenderer.dispose();
 		gfxStats.dispose();
 	}

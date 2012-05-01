@@ -54,6 +54,9 @@ public final class PlayerDriftSoundEffect extends SoundEffect {
 
 	@Override
 	public void dispose() {
+		player.driftState.event.removeListener( driftListener, PlayerDriftStateEvent.Type.onBeginDrift );
+		player.driftState.event.removeListener( driftListener, PlayerDriftStateEvent.Type.onEndDrift );
+
 		drift.stop();
 	}
 

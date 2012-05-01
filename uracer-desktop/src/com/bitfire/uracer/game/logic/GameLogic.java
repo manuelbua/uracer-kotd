@@ -192,11 +192,11 @@ public class GameLogic implements CarEvent.Listener, CarStateEvent.Listener, Pla
 	}
 
 	private void unregisterPlayerEvents( PlayerCar player ) {
-		player.carState.event.addListener( this, CarStateEvent.Type.onTileChanged );
-		player.driftState.event.addListener( this, PlayerDriftStateEvent.Type.onBeginDrift );
-		player.driftState.event.addListener( this, PlayerDriftStateEvent.Type.onEndDrift );
-		player.event.addListener( this, CarEvent.Type.onCollision );
-		player.event.addListener( this, CarEvent.Type.onComputeForces );
+		player.carState.event.removeListener( this, CarStateEvent.Type.onTileChanged );
+		player.driftState.event.removeListener( this, PlayerDriftStateEvent.Type.onBeginDrift );
+		player.driftState.event.removeListener( this, PlayerDriftStateEvent.Type.onEndDrift );
+		player.event.removeListener( this, CarEvent.Type.onCollision );
+		player.event.removeListener( this, CarEvent.Type.onComputeForces );
 	}
 
 	private void configurePlayer( GameWorld world, GameplaySettings settings, PlayerCar player ) {
