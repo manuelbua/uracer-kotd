@@ -17,6 +17,13 @@ public abstract class SubframeInterpolableEntity extends Entity implements Physi
 		GameEvents.physicsStep.addListener( this, PhysicsStepEvent.Type.onTemporalAliasing );
 	}
 
+	@Override
+	public void dispose() {
+		GameEvents.physicsStep.removeListener( this, PhysicsStepEvent.Type.onBeforeTimestep );
+		GameEvents.physicsStep.removeListener( this, PhysicsStepEvent.Type.onAfterTimestep );
+		GameEvents.physicsStep.removeListener( this, PhysicsStepEvent.Type.onTemporalAliasing );
+	}
+
 	public abstract void saveStateTo( EntityRenderState state );
 
 	public abstract boolean isSubframeInterpolated();

@@ -19,7 +19,7 @@ public final class CarFactory {
 		return CarFactory.createGhost( gameWorld, car.getCarModel(), car.getAspect() );
 	}
 
-	public static PlayerCar createPlayer( GameWorld gameWorld, Aspect carAspect, CarModel model ) {
+	public static PlayerCar createPlayer( GameWorld gameWorld, CarModel model, Aspect carAspect ) {
 		return new PlayerCar( gameWorld, model, carAspect );
 	}
 }

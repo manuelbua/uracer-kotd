@@ -8,11 +8,12 @@ import com.badlogic.gdx.graphics.Texture.TextureFilter;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
 import com.badlogic.gdx.math.Vector2;
+import com.badlogic.gdx.utils.Disposable;
 import com.bitfire.uracer.resources.Art;
 import com.bitfire.uracer.utils.AMath;
 import com.bitfire.uracer.utils.SpriteBatchUtils;
 
-public class HudDebugMeter {
+public class HudDebugMeter implements Disposable {
 	// graphics data
 	private Pixmap pixels;
 	private Texture texture;
@@ -40,7 +41,11 @@ public class HudDebugMeter {
 		region = new TextureRegion( texture, 0, 0, pixels.getWidth(), pixels.getHeight() );
 	}
 
-	// FIXME dispose!!!
+	@Override
+	public void dispose() {
+		texture.dispose();
+		pixels.dispose();
+	}
 
 	public void setValue( float value ) {
 		this.value = value;

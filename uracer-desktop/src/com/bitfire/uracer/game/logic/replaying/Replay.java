@@ -17,10 +17,10 @@ import com.bitfire.uracer.game.actors.Car;
 import com.bitfire.uracer.game.actors.Car.Aspect;
 import com.bitfire.uracer.game.actors.CarForces;
 import com.bitfire.uracer.game.actors.CarModel;
-import com.bitfire.uracer.game.logic.notifier.Message;
-import com.bitfire.uracer.game.logic.notifier.Message.Position;
-import com.bitfire.uracer.game.logic.notifier.Message.Size;
-import com.bitfire.uracer.game.logic.notifier.Messager;
+import com.bitfire.uracer.game.logic.messager.Message;
+import com.bitfire.uracer.game.logic.messager.Messager;
+import com.bitfire.uracer.game.logic.messager.Message.Position;
+import com.bitfire.uracer.game.logic.messager.Message.Size;
 import com.bitfire.uracer.utils.UUid;
 
 /** Represents replay data to be feed to a GhostCar, the replay player.

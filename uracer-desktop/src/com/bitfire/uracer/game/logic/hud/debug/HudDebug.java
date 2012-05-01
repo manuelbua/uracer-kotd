@@ -61,6 +61,11 @@ public class HudDebug extends HudElement {
 
 	@Override
 	public void dispose() {
+		GameEvents.gameRenderer.removeListener( gameRendererEvent, GameRendererEvent.Type.BatchDebug, GameRendererEvent.Order.DEFAULT );
+
+		for( HudDebugMeter m : meters ) {
+			m.dispose();
+		}
 	}
 
 	@Override

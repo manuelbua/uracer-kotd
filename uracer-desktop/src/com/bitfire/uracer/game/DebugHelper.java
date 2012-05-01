@@ -31,7 +31,7 @@ public final class DebugHelper {
 	private PostProcessor postProcessor;
 
 	// player
-	private PlayerCar player;
+	private static PlayerCar player;
 
 	// frame stats
 	private long frameStart;
@@ -91,8 +91,8 @@ public final class DebugHelper {
 		gfxStats.dispose();
 	}
 
-	public void setPlayer( PlayerCar player ) {
-		this.player = player;
+	public static void setPlayer( PlayerCar player ) {
+		DebugHelper.player = player;
 	}
 
 	public void tick() {

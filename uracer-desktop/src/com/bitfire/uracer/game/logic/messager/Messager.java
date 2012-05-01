@@ -1,4 +1,4 @@
-package com.bitfire.uracer.game.logic.notifier;
+package com.bitfire.uracer.game.logic.messager;
 
 import java.util.LinkedList;
 
@@ -6,8 +6,8 @@ import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.utils.Array;
 import com.bitfire.uracer.game.events.GameEvents;
 import com.bitfire.uracer.game.logic.GameTask;
-import com.bitfire.uracer.game.logic.notifier.Message.Position;
-import com.bitfire.uracer.game.logic.notifier.Message.Size;
+import com.bitfire.uracer.game.logic.messager.Message.Position;
+import com.bitfire.uracer.game.logic.messager.Message.Size;
 import com.bitfire.uracer.game.rendering.GameRendererEvent;
 import com.bitfire.uracer.game.rendering.GameRendererEvent.Type;
 

@@ -43,6 +43,10 @@ public class Manager<T extends Disposable> implements Disposable {
 			return;
 		}
 
+		if( owned.get(index) ) {
+			items.get( index ).dispose();
+		}
+
 		items.removeIndex( index );
 		owned.removeIndex( index );
 		items.removeValue( item, true );

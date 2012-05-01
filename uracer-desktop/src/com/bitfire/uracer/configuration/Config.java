@@ -116,6 +116,7 @@ public final class Config {
 	}
 
 	public static final class Debug {
+		public static boolean UseDebugHelper;
 		public static boolean RenderBox2DWorldWireframe;
 		public static boolean RenderPlayerDebugInfo;
 		public static boolean RenderHudDebugInfo;
@@ -131,6 +132,8 @@ public final class Config {
 		public static boolean FrustumCulling;
 
 		public static void asDefault() {
+
+			UseDebugHelper = true;
 			RenderBox2DWorldWireframe = Config.isDesktop;
 			RenderPlayerDebugInfo = Config.isDesktop;
 			RenderHudDebugInfo = Config.isDesktop;

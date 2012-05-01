@@ -1,4 +1,4 @@
-package com.bitfire.uracer.game.logic.notifier;
+package com.bitfire.uracer.game.logic.messager;
 
 import aurelienribon.tweenengine.TweenAccessor;
 
