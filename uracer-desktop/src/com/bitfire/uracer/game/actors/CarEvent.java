@@ -48,6 +48,10 @@ public final class CarEvent extends Event<Car> {
 		notifiers[type.ordinal()].addListener( listener );
 	}
 
+	public void removeListener( Listener listener, Type type ) {
+		notifiers[type.ordinal()].removeListener( listener );
+	}
+
 	public void trigger( Car source, Type type ) {
 		data.car = source;
 		notifiers[type.ordinal()].carEvent( type, data );

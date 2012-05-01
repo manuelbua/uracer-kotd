@@ -25,6 +25,10 @@ public class PhysicsStepEvent extends Event<PhysicsStep> {
 		notifiers[type.ordinal()].addListener( listener );
 	}
 
+	public void removeListener( Listener listener, Type type ) {
+		notifiers[type.ordinal()].removeListener( listener );
+	}
+
 	public void trigger( PhysicsStep source, boolean stepped, float temporalAliasing, Type type ) {
 		this.source = source;
 		notifiers[type.ordinal()].physicsEvent( stepped, temporalAliasing, type );

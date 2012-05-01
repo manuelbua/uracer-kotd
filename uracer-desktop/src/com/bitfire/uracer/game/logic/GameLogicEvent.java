@@ -24,6 +24,10 @@ public final class GameLogicEvent extends Event<GameLogic> {
 		notifiers[type.ordinal()].addListener( listener );
 	}
 
+	public void removeListener( Listener listener, Type type ) {
+		notifiers[type.ordinal()].removeListener( listener );
+	}
+
 	public void trigger( Type type ) {
 		notifiers[type.ordinal()].gameLogicEvent( type );
 	}

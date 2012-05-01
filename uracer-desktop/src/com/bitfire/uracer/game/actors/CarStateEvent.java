@@ -24,6 +24,10 @@ public final class CarStateEvent extends Event<CarState> {
 		notifiers[type.ordinal()].addListener( listener );
 	}
 
+	public void removeListener( Listener listener, Type type ) {
+		notifiers[type.ordinal()].removeListener( listener );
+	}
+
 	public void trigger( CarState source, Type type ) {
 		notifiers[type.ordinal()].carStateEvent( source, type );
 	}
