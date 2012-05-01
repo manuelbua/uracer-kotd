@@ -6,14 +6,14 @@ import com.bitfire.uracer.game.Time;
  * lap times and last lap's time.
  *
  * @author bmanuel */
-public final class TrackLapInfo {
+public final class LapInfo {
 	private Time time;
 	private float lastTrackTimeSecs;
 	private float bestTrackTimeSecs;
 	private boolean hasLastTrackTimeSecs;
 	private boolean hasBestTrackTimeSecs;
 
-	public TrackLapInfo() {
+	public LapInfo() {
 		lastTrackTimeSecs = 0;
 		hasLastTrackTimeSecs = false;
 		hasBestTrackTimeSecs = false;

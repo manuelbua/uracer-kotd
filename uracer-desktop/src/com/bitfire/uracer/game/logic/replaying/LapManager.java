@@ -4,27 +4,27 @@ import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.utils.Disposable;
 import com.bitfire.uracer.game.GameplaySettings;
 import com.bitfire.uracer.game.actors.CarForces;
-import com.bitfire.uracer.game.logic.TrackLapInfo;
+import com.bitfire.uracer.game.logic.LapInfo;
 import com.bitfire.uracer.game.logic.helpers.ReplayRecorder;
 import com.bitfire.uracer.game.player.PlayerCar;
 import com.bitfire.uracer.game.world.GameWorld;
 
 /** Manages to record player lap to Replay objects and keep tracks of lap information. */
-public class TrackLapManager implements Disposable {
+public class LapManager implements Disposable {
 
 	private GameWorld gameWorld;
 	private GameplaySettings settings;
 	private ReplayRecorder recorder;
 	private ReplayBufferManager bufferManager;
-	private TrackLapInfo lapInfo;
+	private LapInfo lapInfo;
 	private Replay lastRecordedReplay;
 
-	public TrackLapManager( GameWorld gameWorld, GameplaySettings settings ) {
+	public LapManager( GameWorld gameWorld, GameplaySettings settings ) {
 		this.gameWorld = gameWorld;
 		this.settings = settings;
 
 		recorder = new ReplayRecorder();
-		lapInfo = new TrackLapInfo();
+		lapInfo = new LapInfo();
 		bufferManager = new ReplayBufferManager();
 		lastRecordedReplay = null;
 	}
@@ -58,7 +58,7 @@ public class TrackLapManager implements Disposable {
 
 	// getters
 
-	public TrackLapInfo getLapInfo() {
+	public LapInfo getLapInfo() {
 		return lapInfo;
 	}
 

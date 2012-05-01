@@ -3,18 +3,18 @@ package com.bitfire.uracer.game.logic.hud.elements;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.bitfire.uracer.ScalingStrategy;
-import com.bitfire.uracer.game.logic.TrackLapInfo;
+import com.bitfire.uracer.game.logic.LapInfo;
 import com.bitfire.uracer.game.logic.hud.HudElement;
 import com.bitfire.uracer.game.logic.hud.HudLabel;
 import com.bitfire.uracer.resources.Art;
 import com.bitfire.uracer.utils.NumberString;
 
-public class PlayerLapTimes extends HudElement {
+public class HudLapInfo extends HudElement {
 
 	private HudLabel best, curr, last;
-	private TrackLapInfo lapInfo;
+	private LapInfo lapInfo;
 
-	public PlayerLapTimes( ScalingStrategy scalingStrategy, TrackLapInfo lapInfo ) {
+	public HudLapInfo( ScalingStrategy scalingStrategy, LapInfo lapInfo ) {
 		this.lapInfo = lapInfo;
 
 		int gridX = (int)((float)Gdx.graphics.getWidth() / 5f);

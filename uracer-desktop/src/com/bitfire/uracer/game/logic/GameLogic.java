@@ -26,9 +26,9 @@ import com.bitfire.uracer.game.logic.hud.Hud;
 import com.bitfire.uracer.game.logic.hud.HudLabel;
 import com.bitfire.uracer.game.logic.hud.HudLabelAccessor;
 import com.bitfire.uracer.game.logic.hud.debug.HudDebug;
-import com.bitfire.uracer.game.logic.hud.elements.PlayerDriftInfo;
-import com.bitfire.uracer.game.logic.hud.elements.PlayerDriftInfo.EndDriftType;
-import com.bitfire.uracer.game.logic.hud.elements.PlayerLapTimes;
+import com.bitfire.uracer.game.logic.hud.elements.HudPlayerDriftInfo;
+import com.bitfire.uracer.game.logic.hud.elements.HudPlayerDriftInfo.EndDriftType;
+import com.bitfire.uracer.game.logic.hud.elements.HudLapInfo;
 import com.bitfire.uracer.game.logic.notifier.Message;
 import com.bitfire.uracer.game.logic.notifier.Message.Position;
 import com.bitfire.uracer.game.logic.notifier.Message.Size;
@@ -36,7 +36,7 @@ import com.bitfire.uracer.game.logic.notifier.Message.Type;
 import com.bitfire.uracer.game.logic.notifier.MessageAccessor;
 import com.bitfire.uracer.game.logic.notifier.Messager;
 import com.bitfire.uracer.game.logic.replaying.Replay;
-import com.bitfire.uracer.game.logic.replaying.TrackLapManager;
+import com.bitfire.uracer.game.logic.replaying.LapManager;
 import com.bitfire.uracer.game.logic.sounds.SoundEffect;
 import com.bitfire.uracer.game.logic.sounds.SoundManager;
 import com.bitfire.uracer.game.logic.sounds.effects.PlayerDriftSoundEffect;
@@ -88,7 +88,7 @@ public class GameLogic implements CarEvent.Listener, CarStateEvent.Listener, Pla
 	private GhostCar ghostCar = null;
 
 	// lap
-	private TrackLapManager lapManager = null;
+	private LapManager lapManager = null;
 	private boolean isFirstLap = true;
 
 	// tasks
@@ -99,7 +99,7 @@ public class GameLogic implements CarEvent.Listener, CarStateEvent.Listener, Pla
 
 	// hud
 	private Hud hud = null;
-	private PlayerDriftInfo hudPlayerDrift = null;
+	private HudPlayerDriftInfo hudPlayerDriftInfo = null;
 
 	// sound
 	private SoundManager sound = null;
@@ -136,7 +136,7 @@ public class GameLogic implements CarEvent.Listener, CarStateEvent.Listener, Pla
 
 		timeMultiplier.value = 1f;
 
-		lapManager = new TrackLapManager( gameWorld, settings );
+		lapManager = new LapManager( gameWorld, settings );
 
 		// creates player and ghost cars
 		ghostCar = CarFactory.createGhost( gameWorld, (new CarModel()).toDefault(), Aspect.OldSkool );
@@ -235,7 +235,7 @@ public class GameLogic implements CarEvent.Listener, CarStateEvent.Listener, Pla
 		gameTasksManager.add( effects );
 	}
 
-	private void configurePlayerTasks( PlayerCar player, TrackLapInfo lapState ) {
+	private void configurePlayerTasks( PlayerCar player, LapInfo lapInfo ) {
 		// sounds
 		SoundEffect fx = new PlayerDriftSoundEffect( player );
 		fx.start();
@@ -247,12 +247,12 @@ public class GameLogic implements CarEvent.Listener, CarStateEvent.Listener, Pla
 		effects.add( carSkidMarks );
 
 		// hud, player's drift information
-		hudPlayerDrift = new PlayerDriftInfo( scalingStrategy, player );
-		hud.add( hudPlayerDrift );
+		hudPlayerDriftInfo = new HudPlayerDriftInfo( scalingStrategy, player );
+		hud.add( hudPlayerDriftInfo );
 
 		// hud, player's lap times
-		PlayerLapTimes lapTimes = new PlayerLapTimes( scalingStrategy, lapState );
-		hud.add( lapTimes );
+		HudLapInfo hudLapInfo = new HudLapInfo( scalingStrategy, lapInfo );
+		hud.add( hudLapInfo );
 
 		// hud-style debug information for various data (player's drift state, number of skid marks particles, ..)
 		if( Config.Debug.RenderHudDebugInfo ) {
@@ -430,7 +430,7 @@ public class GameLogic implements CarEvent.Listener, CarStateEvent.Listener, Pla
 	public void playerDriftStateEvent( PlayerCar player, PlayerDriftStateEvent.Type type ) {
 		switch( type ) {
 		case onBeginDrift:
-			hudPlayerDrift.beginDrift();
+			hudPlayerDriftInfo.beginDrift();
 			break;
 		case onEndDrift:
 			String seconds = NumberString.format( player.driftState.driftSeconds() ) + "  seconds!";
@@ -446,10 +446,10 @@ public class GameLogic implements CarEvent.Listener, CarStateEvent.Listener, Pla
 					messager.enqueue( "UNREAL!\n+" + seconds, 1f, Type.Good, Position.Bottom, Size.Big );
 				}
 
-				hudPlayerDrift.endDrift( "+" + NumberString.format( driftSeconds ), EndDriftType.GoodDrift );
+				hudPlayerDriftInfo.endDrift( "+" + NumberString.format( driftSeconds ), EndDriftType.GoodDrift );
 
 			} else {
-				hudPlayerDrift.endDrift( "-" + NumberString.format( driftSeconds ), EndDriftType.BadDrift );
+				hudPlayerDriftInfo.endDrift( "-" + NumberString.format( driftSeconds ), EndDriftType.BadDrift );
 			}
 
 			break;
