@@ -34,6 +34,7 @@ public abstract class Car extends Box2DEntity {
 
 	/* event */
 	public CarEvent event = null;
+	private boolean triggerEvents = false;
 
 	protected GameWorld gameWorld;
 	protected CarModel model = new CarModel();
@@ -67,11 +68,12 @@ public abstract class Car extends Box2DEntity {
 	private Aspect aspect = Aspect.OldSkool;
 	protected InputMode inputMode = InputMode.NoInput;
 
-	public Car( GameWorld gameWorld, CarType carType, InputMode inputMode, GameRendererEvent.Order drawingOrder, CarModel model, Aspect aspect ) {
+	public Car( GameWorld gameWorld, CarType carType, InputMode inputMode, GameRendererEvent.Order drawingOrder, CarModel model, Aspect aspect, boolean triggerEvents ) {
 		super( gameWorld.getBox2DWorld(), drawingOrder );
 		this.aspect = aspect;
 		this.model.set( model );
 		this.carType = carType;
+		this.triggerEvents = triggerEvents;
 
 		this.event = new CarEvent( this );
 		this.gameWorld = gameWorld;
@@ -242,8 +244,10 @@ public abstract class Car extends Box2DEntity {
 	public void onCollide( Fixture other, Vector2 normalImpulses ) {
 		impacts++;
 
-		event.data.setCollisionData( other, normalImpulses );
-		event.trigger( this, CarEvent.Type.onCollision );
+		if( triggerEvents ) {
+			event.data.setCollisionData( other, normalImpulses );
+			event.trigger( this, CarEvent.Type.onCollision );
+		}
 	}
 
 	@Override
@@ -273,8 +277,10 @@ public abstract class Car extends Box2DEntity {
 		onComputeCarForces( carForces );
 
 		// trigger event, new forces have been computed
-		event.data.setForces( carForces );
-		event.trigger( this, CarEvent.Type.onComputeForces );
+		if( triggerEvents ) {
+			event.data.setForces( carForces );
+			event.trigger( this, CarEvent.Type.onComputeForces );
+		}
 
 		// FIXME is it really necessary? that's an expensive jni call..
 		body.setAwake( true );

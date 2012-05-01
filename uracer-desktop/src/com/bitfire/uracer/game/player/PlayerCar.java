@@ -40,7 +40,7 @@ public class PlayerCar extends Car {
 	public PlayerDriftState driftState = null;
 
 	public PlayerCar( GameWorld gameWorld, CarModel model, Aspect aspect ) {
-		super( gameWorld, CarType.PlayerCar, InputMode.InputFromPlayer, GameRendererEvent.Order.DEFAULT, model, aspect );
+		super( gameWorld, CarType.PlayerCar, InputMode.InputFromPlayer, GameRendererEvent.Order.DEFAULT, model, aspect, true );
 		carInput = new CarInput();
 		impacts = 0;
 

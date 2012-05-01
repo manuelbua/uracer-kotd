@@ -21,7 +21,7 @@ public final class GhostCar extends Car {
 	// public CarState carState = null;
 
 	public GhostCar( GameWorld gameWorld, CarModel model, Aspect aspect ) {
-		super( gameWorld, CarType.ReplayCar, InputMode.InputFromReplay, GameRendererEvent.Order.MINUS_1, model, aspect );
+		super( gameWorld, CarType.ReplayCar, InputMode.InputFromReplay, GameRendererEvent.Order.MINUS_1, model, aspect, false );
 		indexPlay = 0;
 		hasReplay = false;
 		replay = null;
