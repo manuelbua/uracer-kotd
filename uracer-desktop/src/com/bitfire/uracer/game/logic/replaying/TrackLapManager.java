@@ -111,8 +111,7 @@ public class TrackLapManager implements Disposable {
 		}
 
 		lapInfo.restartTime();
-		Replay buffer = bufferManager.getNextBuffer();
-		recorder.beginRecording( player, buffer, gameWorld.levelName, settings.difficulty );
+		recorder.beginRecording( player, bufferManager.getNextBuffer(), gameWorld.levelName, settings.difficulty );
 	}
 
 	/** Ends recording the previously started lap performance */

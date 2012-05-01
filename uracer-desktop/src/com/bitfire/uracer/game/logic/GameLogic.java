@@ -83,6 +83,7 @@ public class GameLogic implements CarEvent.Listener, CarStateEvent.Listener, Pla
 	private PhysicsStep physicsStep;
 
 	// player
+	private boolean hasPlayer = false;
 	private PlayerCar playerCar = null;
 	private GhostCar ghostCar = null;
 
@@ -185,12 +186,19 @@ public class GameLogic implements CarEvent.Listener, CarStateEvent.Listener, Pla
 
 			registerPlayerEvents( player );
 			Gdx.app.log( "GameLogic", "Registered player-related events" );
+
+			hasPlayer = true;
+		} else {
+			hasPlayer = false;
 		}
 	}
 
 	public void setBestLocalReplay( Replay replay ) {
 		lapManager.setBestReplay( replay );
 		restartGame();
+		if( !hasPlayer ) {
+			ghostCar.setReplay( replay );
+		}
 	}
 
 	private void registerPlayerEvents( PlayerCar player ) {
@@ -325,7 +333,7 @@ public class GameLogic implements CarEvent.Listener, CarStateEvent.Listener, Pla
 
 		// update player's headlights and move the world camera to follows it, if there is a player
 		GameWorldRenderer worldRenderer = gameRenderer.getWorldRenderer();
-		if( playerCar != null ) {
+		if( hasPlayer ) {
 
 			if( gameWorld.isNightMode() ) {
 				worldRenderer.updatePlayerHeadlights( playerCar );
