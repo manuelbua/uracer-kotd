@@ -49,6 +49,13 @@ public final class TrackEffects extends GameTask {
 	@Override
 	public void dispose() {
 		super.dispose();
+		GameEvents.gameRenderer.removeListener( gameRendererEvent, GameRendererEvent.Type.BatchBeforeMeshes, GameRendererEvent.Order.MINUS_4 );
+
+		Array<TrackEffect> items = manager.items;
+		for( int i = 0; i < items.size; i++ ) {
+			items.get( i ).dispose();
+		}
+
 		manager.dispose();
 	}
 

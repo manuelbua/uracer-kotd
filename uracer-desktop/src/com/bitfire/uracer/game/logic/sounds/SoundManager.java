@@ -12,6 +12,13 @@ public class SoundManager extends GameTask {
 
 	@Override
 	public void dispose() {
+		super.dispose();
+
+		Array<SoundEffect> items = manager.items;
+		for( int i = 0; i < items.size; i++ ) {
+			items.get( i ).dispose();
+		}
+
 		manager.dispose();
 	}
 

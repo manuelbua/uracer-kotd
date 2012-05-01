@@ -55,6 +55,8 @@ public class Messager extends GameTask {
 
 	@Override
 	public void dispose() {
+		super.dispose();
+		GameEvents.gameRenderer.removeListener( gameRendererEvent, GameRendererEvent.Type.BatchAfterMeshes, GameRendererEvent.Order.MINUS_4 );
 		onReset();
 	}
 
