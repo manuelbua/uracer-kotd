@@ -146,7 +146,7 @@ public class GameLogic implements CarEvent.Listener, CarStateEvent.Listener, Pla
 		// configurePlayer( gameWorld, gameplaySettings, playerCar );
 		// Gdx.app.log( "GameLogic", "Player configured" );
 
-		createGameTaskManagers( gameWorld, scalingStrategy );
+		createGameTasks( gameWorld, scalingStrategy );
 		// configurePlayerTasks( playerCar, playerLapState );
 		// Gdx.app.log( "GameLogic", "Game tasks created and configured" );
 
@@ -172,6 +172,33 @@ public class GameLogic implements CarEvent.Listener, CarStateEvent.Listener, Pla
 		GameTweener.dispose();
 		WcTweener.dispose();
 	}
+
+	private void createGameTasks( GameWorld gameWorld, ScalingStrategy strategy ) {
+		gameTasksManager = new GameTasksManager();
+
+		// input system
+		input = new Input( TaskManagerEvent.Order.MINUS_4 );
+
+		// physics step
+		physicsStep = new PhysicsStep( gameWorld.getBox2DWorld(), TaskManagerEvent.Order.MINUS_3 );
+
+		// sound manager
+		sound = new SoundManager();
+		gameTasksManager.add( sound );
+
+		// message manager
+		messager = new Messager( strategy.invTileMapZoomFactor );
+		gameTasksManager.add( messager );
+
+		// hud manager
+		hud = new Hud();
+		gameTasksManager.add( hud );
+
+		// effects manager
+		effects = new TrackEffects();
+		gameTasksManager.add( effects );
+	}
+
 
 	/** Sets the player and transfer ownership to the GameLogic object */
 	public void setPlayer( PlayerCar player ) {
@@ -204,32 +231,6 @@ public class GameLogic implements CarEvent.Listener, CarStateEvent.Listener, Pla
 		player.driftState.event.addListener( this, PlayerDriftStateEvent.Type.onEndDrift );
 		player.event.addListener( this, CarEvent.Type.onCollision );
 		player.event.addListener( this, CarEvent.Type.onComputeForces );
-	}
-
-	private void createGameTaskManagers( GameWorld gameWorld, ScalingStrategy strategy ) {
-		gameTasksManager = new GameTasksManager();
-
-		// input system
-		input = new Input( TaskManagerEvent.Order.MINUS_4 );
-
-		// physics step
-		physicsStep = new PhysicsStep( gameWorld.getBox2DWorld(), TaskManagerEvent.Order.MINUS_3 );
-
-		// sound manager
-		sound = new SoundManager();
-		gameTasksManager.add( sound );
-
-		// message manager
-		messager = new Messager( strategy.invTileMapZoomFactor );
-		gameTasksManager.add( messager );
-
-		// hud manager
-		hud = new Hud();
-		gameTasksManager.add( hud );
-
-		// effects manager
-		effects = new TrackEffects();
-		gameTasksManager.add( effects );
 	}
 
 	private void createPlayerTasks( PlayerCar player, LapInfo lapInfo ) {

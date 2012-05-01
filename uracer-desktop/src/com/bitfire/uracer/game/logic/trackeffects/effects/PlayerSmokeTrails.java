@@ -138,12 +138,6 @@ public class PlayerSmokeTrails extends TrackEffect {
 		}
 
 		wasDrifting = isDrifting;
-
-		// idx++;
-		// if((idx&0x3f)==0)
-		// {
-		// System.out.println(this.getParticleCount());
-		// }
 	}
 
 	private Vector2 tmp = new Vector2();
