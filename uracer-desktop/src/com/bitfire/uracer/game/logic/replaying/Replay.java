@@ -18,9 +18,9 @@ import com.bitfire.uracer.game.actors.Car.Aspect;
 import com.bitfire.uracer.game.actors.CarForces;
 import com.bitfire.uracer.game.actors.CarModel;
 import com.bitfire.uracer.game.logic.messager.Message;
-import com.bitfire.uracer.game.logic.messager.Messager;
 import com.bitfire.uracer.game.logic.messager.Message.Position;
 import com.bitfire.uracer.game.logic.messager.Message.Size;
+import com.bitfire.uracer.game.logic.messager.Messager;
 import com.bitfire.uracer.utils.UUid;
 
 /** Represents replay data to be feed to a GhostCar, the replay player.
@@ -66,6 +66,7 @@ public class Replay {
 
 	public void dispose() {
 		reset();
+		time.dispose();
 	}
 
 	public void begin( String trackName, GameDifficulty difficulty, Car car ) {

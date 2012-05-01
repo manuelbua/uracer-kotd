@@ -26,6 +26,11 @@ public final class PlayerDriftState {
 		reset();
 	}
 
+	public void dispose() {
+		time.dispose();
+		collisionTime.dispose();
+	}
+
 	// TODO, a State interface with a reset() method! this way it could be assumed the state can be bound to some other
 	// car
 	public void reset() {

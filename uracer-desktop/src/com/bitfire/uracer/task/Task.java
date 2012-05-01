@@ -13,11 +13,11 @@ public abstract class Task implements TaskManagerEvent.Listener {
 
 	public Task( Order order ) {
 		this.order = order;
-		TaskManager.event.addListener( this, order );
+		TaskManager.event.addListener( this, TaskManagerEvent.Type.onTick, order );
 	}
 
 	public void dispose() {
-		TaskManager.event.removeListener( this, order );
+		TaskManager.event.removeListener( this, TaskManagerEvent.Type.onTick, order );
 	}
 
 	protected abstract void onTick();

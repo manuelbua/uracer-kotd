@@ -54,6 +54,12 @@ public class PlayerCar extends Car {
 		this.driftState = new PlayerDriftState( this );
 	}
 
+	@Override
+	public void dispose() {
+		super.dispose();
+		driftState.dispose();
+	}
+
 	// use strictly for debug purposes *ONLY*!
 	public CarDescriptor getCarDescriptor() {
 		return carDesc;

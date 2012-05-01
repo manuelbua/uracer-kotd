@@ -113,3 +113,9 @@ data in GameData? GameData::<Component>?
 [ ] general redesign
 	- Hud and DebugHud are completely different things, separate now!!!!
 	- car skid marks and car sound effects, it should be simple to allow/disallow enabling them for player or replays, just a matter of attaching things..
+
+[ ] statically check for addListener/removeListener paired usage:
+
+	grep -ERn "\.addListener" * 2>&1 | grep -Ev 'Binary|.*//|.*notifiers'
+	grep -ERn "\.removeListener" * 2>&1 | grep -Ev 'Binary|.*//|.*notifiers'
+	
