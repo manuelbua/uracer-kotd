@@ -57,7 +57,7 @@ public final class GameWorld {
 	public static int TotalMeshes = 0;
 
 	// level data
-	public String name = "no-level-loaded";
+	public String levelName = "no-level-loaded";
 	public TiledMap map = null;
 	private MapUtils mapUtils = null;
 	public Vector2 worldSizeScaledPx = null, worldSizeScaledMt = null, worldSizeTiles = null;
@@ -85,7 +85,7 @@ public final class GameWorld {
 		box2dWorld.setContactListener( new GameWorldContactListener() );
 		Gdx.app.log( "GameWorld", "Box2D world created" );
 
-		this.name = levelName;
+		this.levelName = levelName;
 		this.nightMode = nightMode;
 
 		// ie. "level1-128.tmx"

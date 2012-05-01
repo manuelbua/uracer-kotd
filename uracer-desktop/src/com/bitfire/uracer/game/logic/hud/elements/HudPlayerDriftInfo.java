@@ -13,7 +13,7 @@ import com.bitfire.uracer.utils.NumberString;
 import com.bitfire.uracer.utils.VMath;
 
 /** Encapsulates player's drifting information shown on screen */
-public final class PlayerDriftInfo extends HudElement {
+public final class HudPlayerDriftInfo extends HudElement {
 	public enum EndDriftType {
 		GoodDrift, BadDrift
 	}
@@ -42,7 +42,7 @@ public final class PlayerDriftInfo extends HudElement {
 	private Vector2 lastRealtimePos = new Vector2();
 	private boolean began = false;
 
-	public PlayerDriftInfo( ScalingStrategy scalingStrategy, PlayerCar player ) {
+	public HudPlayerDriftInfo( ScalingStrategy scalingStrategy, PlayerCar player ) {
 		this.player = player;
 		this.carModelWidthPx = Convert.mt2px( player.getCarModel().width );
 		this.carModelLengthPx = Convert.mt2px( player.getCarModel().length );

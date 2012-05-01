@@ -22,20 +22,20 @@ import com.bitfire.uracer.game.actors.CarModel;
 import com.bitfire.uracer.game.actors.CarState;
 import com.bitfire.uracer.game.actors.CarStateEvent;
 import com.bitfire.uracer.game.actors.GhostCar;
-import com.bitfire.uracer.game.logic.helpers.Recorder;
 import com.bitfire.uracer.game.logic.hud.Hud;
 import com.bitfire.uracer.game.logic.hud.HudLabel;
 import com.bitfire.uracer.game.logic.hud.HudLabelAccessor;
 import com.bitfire.uracer.game.logic.hud.debug.HudDebug;
-import com.bitfire.uracer.game.logic.hud.elements.PlayerDriftInfo;
-import com.bitfire.uracer.game.logic.hud.elements.PlayerDriftInfo.EndDriftType;
-import com.bitfire.uracer.game.logic.hud.elements.PlayerLapTimes;
+import com.bitfire.uracer.game.logic.hud.elements.HudLapInfo;
+import com.bitfire.uracer.game.logic.hud.elements.HudPlayerDriftInfo;
+import com.bitfire.uracer.game.logic.hud.elements.HudPlayerDriftInfo.EndDriftType;
 import com.bitfire.uracer.game.logic.notifier.Message;
 import com.bitfire.uracer.game.logic.notifier.Message.Position;
 import com.bitfire.uracer.game.logic.notifier.Message.Size;
 import com.bitfire.uracer.game.logic.notifier.Message.Type;
 import com.bitfire.uracer.game.logic.notifier.MessageAccessor;
 import com.bitfire.uracer.game.logic.notifier.Messager;
+import com.bitfire.uracer.game.logic.replaying.LapManager;
 import com.bitfire.uracer.game.logic.replaying.Replay;
 import com.bitfire.uracer.game.logic.sounds.SoundEffect;
 import com.bitfire.uracer.game.logic.sounds.SoundManager;
@@ -83,15 +83,13 @@ public class GameLogic implements CarEvent.Listener, CarStateEvent.Listener, Pla
 	private PhysicsStep physicsStep;
 
 	// player
+	private boolean hasPlayer = false;
 	private PlayerCar playerCar = null;
 	private GhostCar ghostCar = null;
 
 	// lap
+	private LapManager lapManager = null;
 	private boolean isFirstLap = true;
-	private long lastRecordedLapId = 0;
-
-	// replay
-	private Recorder recorder = null;
 
 	// tasks
 	private GameTasksManager gameTasksManager = null;
@@ -101,16 +99,13 @@ public class GameLogic implements CarEvent.Listener, CarStateEvent.Listener, Pla
 
 	// hud
 	private Hud hud = null;
-	private PlayerDriftInfo hudPlayerDrift = null;
+	private HudPlayerDriftInfo hudPlayerDriftInfo = null;
 
 	// sound
 	private SoundManager sound = null;
 
 	// alerts and infos
 	private Messager messager = null;
-
-	// states
-	private LapState playerLapState = null;
 
 	// handles timeModulationBusy onComplete event
 	private boolean timeModulation = false, timeModulationBusy = false;
@@ -139,10 +134,9 @@ public class GameLogic implements CarEvent.Listener, CarStateEvent.Listener, Pla
 		Tween.registerAccessor( BoxedFloat.class, new BoxedFloatAccessor() );
 		Gdx.app.log( "GameLogic", "Tweening helpers created" );
 
-		recorder = new Recorder();
 		timeMultiplier.value = 1f;
 
-		playerLapState = new LapState();
+		lapManager = new LapManager( gameWorld, settings );
 
 		// creates player and ghost cars
 		ghostCar = CarFactory.createGhost( gameWorld, (new CarModel()).toDefault(), Aspect.OldSkool );
@@ -152,7 +146,7 @@ public class GameLogic implements CarEvent.Listener, CarStateEvent.Listener, Pla
 		// configurePlayer( gameWorld, gameplaySettings, playerCar );
 		// Gdx.app.log( "GameLogic", "Player configured" );
 
-		createGameTasks( gameWorld, scalingStrategy );
+		createGameTaskManagers( gameWorld, scalingStrategy );
 		// configurePlayerTasks( playerCar, playerLapState );
 		// Gdx.app.log( "GameLogic", "Game tasks created and configured" );
 
@@ -179,14 +173,16 @@ public class GameLogic implements CarEvent.Listener, CarStateEvent.Listener, Pla
 		WcTweener.dispose();
 	}
 
+	/** Sets the player and transfer ownership to the GameLogic object */
 	public void setPlayer( PlayerCar player ) {
-		this.playerCar = player;
+		playerCar = player;
+		hasPlayer = (playerCar != null);
 
-		if( player != null ) {
+		if( hasPlayer ) {
 			configurePlayer( gameWorld, gameplaySettings, player );
 			Gdx.app.log( "GameLogic", "Player configured" );
 
-			configurePlayerTasks( player, playerLapState );
+			createPlayerTasks( player, lapManager.getLapInfo() );
 			Gdx.app.log( "GameLogic", "Game tasks created and configured" );
 
 			registerPlayerEvents( player );
@@ -194,9 +190,12 @@ public class GameLogic implements CarEvent.Listener, CarStateEvent.Listener, Pla
 		}
 	}
 
-	public void setLocalReplay( Replay replay ) {
-		playerLapState.setReplay( replay );
+	public void setBestLocalReplay( Replay replay ) {
+		lapManager.setBestReplay( replay );
 		restartGame();
+		if( !hasPlayer ) {
+			ghostCar.setReplay( replay );
+		}
 	}
 
 	private void registerPlayerEvents( PlayerCar player ) {
@@ -207,7 +206,7 @@ public class GameLogic implements CarEvent.Listener, CarStateEvent.Listener, Pla
 		player.event.addListener( this, CarEvent.Type.onComputeForces );
 	}
 
-	private void createGameTasks( GameWorld gameWorld, ScalingStrategy strategy ) {
+	private void createGameTaskManagers( GameWorld gameWorld, ScalingStrategy strategy ) {
 		gameTasksManager = new GameTasksManager();
 
 		// input system
@@ -233,7 +232,7 @@ public class GameLogic implements CarEvent.Listener, CarStateEvent.Listener, Pla
 		gameTasksManager.add( effects );
 	}
 
-	private void configurePlayerTasks( PlayerCar player, LapState lapState ) {
+	private void createPlayerTasks( PlayerCar player, LapInfo lapInfo ) {
 		// sounds
 		SoundEffect fx = new PlayerDriftSoundEffect( player );
 		fx.start();
@@ -245,12 +244,12 @@ public class GameLogic implements CarEvent.Listener, CarStateEvent.Listener, Pla
 		effects.add( carSkidMarks );
 
 		// hud, player's drift information
-		hudPlayerDrift = new PlayerDriftInfo( scalingStrategy, player );
-		hud.add( hudPlayerDrift );
+		hudPlayerDriftInfo = new HudPlayerDriftInfo( scalingStrategy, player );
+		hud.add( hudPlayerDriftInfo );
 
-		// hud, player's lap times
-		PlayerLapTimes lapTimes = new PlayerLapTimes( scalingStrategy, lapState );
-		hud.add( lapTimes );
+		// hud, player's lap info
+		HudLapInfo hudLapInfo = new HudLapInfo( scalingStrategy, lapInfo );
+		hud.add( hudLapInfo );
 
 		// hud-style debug information for various data (player's drift state, number of skid marks particles, ..)
 		if( Config.Debug.RenderHudDebugInfo ) {
@@ -258,11 +257,6 @@ public class GameLogic implements CarEvent.Listener, CarStateEvent.Listener, Pla
 			hud.add( hudDebug );
 		}
 	}
-
-	// private void createPlayer( GameWorld gameWorld, Aspect carAspect, CarModel carModel ) {
-	// playerCar = CarFactory.createPlayer( gameWorld, carAspect, carModel );
-	// // ghostCar = CarFactory.createGhost( gameWorld, playerCar );
-	// }
 
 	private void configurePlayer( GameWorld world, GameplaySettings settings, PlayerCar player ) {
 		// create player and setup player input system and initial position in the world
@@ -331,7 +325,7 @@ public class GameLogic implements CarEvent.Listener, CarStateEvent.Listener, Pla
 
 		// update player's headlights and move the world camera to follows it, if there is a player
 		GameWorldRenderer worldRenderer = gameRenderer.getWorldRenderer();
-		if( playerCar != null ) {
+		if( hasPlayer ) {
 
 			if( gameWorld.isNightMode() ) {
 				worldRenderer.updatePlayerHeadlights( playerCar );
@@ -384,13 +378,12 @@ public class GameLogic implements CarEvent.Listener, CarStateEvent.Listener, Pla
 		timeMultiplier.value = Config.Physics.PhysicsTimeMultiplier;
 		WcTweener.clear();
 		GameTweener.clear();
-		recorder.reset();
+		lapManager.abortRecording();
 		gameTasksManager.restart();
 	}
 
 	private void resetLogic() {
-		lastRecordedLapId = 0;
-		playerLapState.reset();
+		lapManager.reset();
 		gameTasksManager.reset();
 	}
 
@@ -407,9 +400,7 @@ public class GameLogic implements CarEvent.Listener, CarStateEvent.Listener, Pla
 			}
 			break;
 		case onComputeForces:
-			if( recorder.isRecording() ) {
-				recorder.add( data.forces );
-			}
+			lapManager.onPlayerComputeForces( data.forces );
 			break;
 		}
 	};
@@ -418,7 +409,7 @@ public class GameLogic implements CarEvent.Listener, CarStateEvent.Listener, Pla
 	public void carStateEvent( CarState source, CarStateEvent.Type type ) {
 		switch( type ) {
 		case onTileChanged:
-			playerTileChanged( playerLapState );
+			playerTileChanged();
 			break;
 		}
 	}
@@ -431,7 +422,7 @@ public class GameLogic implements CarEvent.Listener, CarStateEvent.Listener, Pla
 	public void playerDriftStateEvent( PlayerCar player, PlayerDriftStateEvent.Type type ) {
 		switch( type ) {
 		case onBeginDrift:
-			hudPlayerDrift.beginDrift();
+			hudPlayerDriftInfo.beginDrift();
 			break;
 		case onEndDrift:
 			String seconds = NumberString.format( player.driftState.driftSeconds() ) + "  seconds!";
@@ -447,10 +438,10 @@ public class GameLogic implements CarEvent.Listener, CarStateEvent.Listener, Pla
 					messager.enqueue( "UNREAL!\n+" + seconds, 1f, Type.Good, Position.Bottom, Size.Big );
 				}
 
-				hudPlayerDrift.endDrift( "+" + NumberString.format( driftSeconds ), EndDriftType.GoodDrift );
+				hudPlayerDriftInfo.endDrift( "+" + NumberString.format( driftSeconds ), EndDriftType.GoodDrift );
 
 			} else {
-				hudPlayerDrift.endDrift( "-" + NumberString.format( driftSeconds ), EndDriftType.BadDrift );
+				hudPlayerDriftInfo.endDrift( "-" + NumberString.format( driftSeconds ), EndDriftType.BadDrift );
 			}
 
 			break;
@@ -497,96 +488,61 @@ public class GameLogic implements CarEvent.Listener, CarStateEvent.Listener, Pla
 		}
 	}
 
-	// FIXME looks like this function is doing MUCH more than what's stated in its name..
-	// TODO this looks like a game policy thing... this one is for "You vs. Yourself"
-	private void playerTileChanged( LapState lapState ) {
+	private void playerTileChanged() {
 		boolean onStartZone = (playerCar.carState.currTileX == gameWorld.playerStartTileX && playerCar.carState.currTileY == gameWorld.playerStartTileY);
-
-		String name = gameWorld.name;
 
 		if( onStartZone ) {
 			if( isFirstLap ) {
 				isFirstLap = false;
 
-				lapState.restart();
-				Replay buf = lapState.getNextBuffer();
-				recorder.beginRecording( playerCar, buf, name, gameplaySettings.difficulty );
-				lastRecordedLapId = buf.id;
-
-				if( lapState.hasAnyReplayData() ) {
-					Replay any = lapState.getAnyReplay();
-					ghostCar.setReplay( any );
+				// any record to play?
+				if( lapManager.hasAnyReplay() ) {
+					ghostCar.setReplay( lapManager.getAnyReplay() );
 				}
+
+				lapManager.startRecording( playerCar );
+
 			} else {
+				lapManager.stopRecording();
 
-				Replay thisReplay = null;
+				if( !lapManager.hasAllReplays() ) {
+					// only one single valid replay
 
-				if( recorder.isRecording() ) {
-					recorder.endRecording();
-				}
-
-				lapState.updateReplays();
-
-				// replay best, overwrite worst logic
-
-				if( !lapState.hasAllReplayData() ) {
-
-					// only one single replay
-
-					lapState.restart();
-					Replay buf = lapState.getNextBuffer();
-					recorder.beginRecording( playerCar, buf, name, gameplaySettings.difficulty );
-					lastRecordedLapId = buf.id;
-
-					Replay any = lapState.getAnyReplay();
+					Replay any = lapManager.getAnyReplay();
 					ghostCar.setReplay( any );
-					lapState.setLastTrackTimeSeconds( any.trackTimeSeconds );
-
-					thisReplay = any;
-
-					thisReplay.saveLocal( messager );
-
+					any.saveLocal( messager );
 					messager.show( "GO!  GO!  GO!", 3f, Type.Information, Position.Middle, Size.Big );
+
 				} else {
 
 					// both valid, replay best, overwrite worst
 
-					Replay best = lapState.getBestReplay();
-					Replay worst = lapState.getWorstReplay();
+					Replay best = lapManager.getBestReplay();
+					Replay worst = lapManager.getWorstReplay();
 
-					if( AMath.equals( worst.trackTimeSeconds, best.trackTimeSeconds ) ) {
+					float bestTime = AMath.round( best.trackTimeSeconds, 2 );
+					float worstTime = AMath.round( worst.trackTimeSeconds, 2 );
+					float diffTime = AMath.round( worstTime - bestTime, 2 );
+
+					if( AMath.equals( worstTime, bestTime ) ) {
 						// draw!
 						messager.show( "DRAW!", 3f, Type.Information, Position.Top, Size.Big );
 					} else {
-						if( lastRecordedLapId == best.id ) {
-							thisReplay = best;
-
-							lapState.setLastTrackTimeSeconds( best.trackTimeSeconds );
-							messager.show( "-" + NumberString.format( worst.trackTimeSeconds - best.trackTimeSeconds ) + " seconds!", 3f, Type.Good, Position.Top,
-									Size.Big );
+						// has the player managed to beat the best lap?
+						if( lapManager.isLastBestLap() ) {
+							messager.show( "-" + NumberString.format( diffTime ) + " seconds!", 3f, Type.Good, Position.Top, Size.Big );
 						} else {
-							thisReplay = worst;
-
-							lapState.setLastTrackTimeSeconds( worst.trackTimeSeconds );
-							messager.show( "+" + NumberString.format( worst.trackTimeSeconds - best.trackTimeSeconds ) + " seconds", 3f, Type.Bad, Position.Top,
-									Size.Big );
+							messager.show( "+" + NumberString.format( diffTime ) + " seconds", 3f, Type.Bad, Position.Top, Size.Big );
 						}
 					}
 
 					ghostCar.setReplay( best );
-
 					best.saveLocal( messager );
-
-					lapState.restart();
-					recorder.beginRecording( playerCar, worst, name, gameplaySettings.difficulty );
-					lastRecordedLapId = worst.id;
 				}
 
-				if( thisReplay != null ) {
-					CarUtils.dumpSpeedInfo( "Player", playerCar, thisReplay.trackTimeSeconds );
-					// Gdx.app.log( "GameLogic", "speed=" + speedKmh + "km/h (" + mtsec + "mt/s)" );
+				CarUtils.dumpSpeedInfo( "Player", playerCar, lapManager.getLastRecordedReplay().trackTimeSeconds );
 
-				}
+				lapManager.startRecording( playerCar );
 			}
 
 			playerCar.resetTraveledDistance();

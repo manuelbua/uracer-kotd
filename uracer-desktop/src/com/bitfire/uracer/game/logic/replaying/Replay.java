@@ -77,12 +77,6 @@ public class Replay {
 		this.trackName = trackName;
 		difficultyLevel = difficulty;
 		time.start();
-
-		// if a previously loaded replay is being used, reset the loaded state
-		// since its invalid
-		isLoaded = false;
-
-		isSaved = false;
 	}
 
 	public void end() {
@@ -95,9 +89,12 @@ public class Replay {
 
 	public void reset() {
 		eventsCount = 0;
-		isValid = false;
+		// if a previously loaded replay is being used, reset the loaded state
+		// since its invalid
 		isLoaded = false;
+
 		isSaved = false;
+		isValid = false;
 	}
 
 	// recording

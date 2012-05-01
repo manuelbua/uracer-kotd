@@ -3,20 +3,19 @@ package com.bitfire.uracer.game.logic.hud.elements;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.bitfire.uracer.ScalingStrategy;
-import com.bitfire.uracer.game.logic.LapState;
+import com.bitfire.uracer.game.logic.LapInfo;
 import com.bitfire.uracer.game.logic.hud.HudElement;
 import com.bitfire.uracer.game.logic.hud.HudLabel;
-import com.bitfire.uracer.game.logic.replaying.Replay;
 import com.bitfire.uracer.resources.Art;
 import com.bitfire.uracer.utils.NumberString;
 
-public class PlayerLapTimes extends HudElement {
+public class HudLapInfo extends HudElement {
 
 	private HudLabel best, curr, last;
-	private LapState lapState;
+	private LapInfo lapInfo;
 
-	public PlayerLapTimes( ScalingStrategy scalingStrategy, LapState lapState ) {
-		this.lapState = lapState;
+	public HudLapInfo( ScalingStrategy scalingStrategy, LapInfo lapInfo ) {
+		this.lapInfo = lapInfo;
 
 		int gridX = (int)((float)Gdx.graphics.getWidth() / 5f);
 
@@ -37,28 +36,25 @@ public class PlayerLapTimes extends HudElement {
 	@Override
 	public void onTick() {
 		// current time
-		curr.setString( "YOUR  TIME\n" + NumberString.format( lapState.getElapsedSeconds() ) + "s" );
-
-		// render best lap time
-		Replay rbest = lapState.getBestReplay();
+		curr.setString( "YOUR  TIME\n" + NumberString.format( lapInfo.getElapsedSeconds() ) + "s" );
 
 		// best time
-		if( rbest != null && rbest.isValid ) {
+		if( lapInfo.hasBestTrackTimeSeconds() ) {
 			// has best
-			best.setString( "BEST  TIME\n" + NumberString.format( rbest.trackTimeSeconds ) + "s" );
+			best.setString( "BEST  TIME\n" + NumberString.format( lapInfo.getBestTrackTimeSeconds()) + "s" );
 		} else {
 			// temporarily use last track time
-			if( lapState.hasLastTrackTimeSeconds() ) {
-				best.setString( "BEST  TIME\n" + NumberString.format( lapState.getLastTrackTimeSeconds() ) + "s" );
+			if( lapInfo.hasLastTrackTimeSeconds() ) {
+				best.setString( "BEST  TIME\n" + NumberString.format( lapInfo.getLastTrackTimeSeconds() ) + "s" );
 			} else {
 				best.setString( "BEST TIME\n--:--" );
 			}
 		}
 
 		// last time
-		if( lapState.hasLastTrackTimeSeconds() ) {
+		if( lapInfo.hasLastTrackTimeSeconds() ) {
 			// has only last
-			last.setString( "LAST  TIME\n" + NumberString.format( lapState.getLastTrackTimeSeconds() ) + "s" );
+			last.setString( "LAST  TIME\n" + NumberString.format( lapInfo.getLastTrackTimeSeconds() ) + "s" );
 		} else {
 			last.setString( "LAST  TIME\n--:--" );
 		}

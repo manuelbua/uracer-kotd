@@ -81,7 +81,7 @@ public class Game implements Disposable {
 	}
 
 	public void setLocalReplay( Replay replay ) {
-		gameLogic.setLocalReplay( replay );
+		gameLogic.setBestLocalReplay( replay );
 	}
 
 	private void configurePostProcessing( PostProcessor processor, GameWorld world ) {
