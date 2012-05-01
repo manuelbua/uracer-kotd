@@ -15,7 +15,7 @@ public class TrackLapManager implements Disposable {
 	private GameWorld gameWorld;
 	private GameplaySettings settings;
 	private ReplayRecorder recorder;
-	private ReplayBuffer replayBuffer;
+	private ReplayBufferManager bufferManager;
 	private TrackLapInfo lapInfo;
 	private Replay lastRecordedReplay;
 
@@ -25,7 +25,7 @@ public class TrackLapManager implements Disposable {
 
 		recorder = new ReplayRecorder();
 		lapInfo = new TrackLapInfo();
-		replayBuffer = new ReplayBuffer();
+		bufferManager = new ReplayBufferManager();
 		lastRecordedReplay = null;
 	}
 
@@ -34,7 +34,7 @@ public class TrackLapManager implements Disposable {
 		recorder.reset();
 		recorder = null;
 		lapInfo = null;
-		replayBuffer = null;
+		bufferManager = null;
 	}
 
 	// operations
@@ -48,11 +48,11 @@ public class TrackLapManager implements Disposable {
 	public void reset() {
 		lastRecordedReplay = null;
 		lapInfo.resetTime();
-		replayBuffer.reset();
+		bufferManager.reset();
 	}
 
 	public void setBestReplay( Replay replay ) {
-		replayBuffer.setBestReplay( replay );
+		bufferManager.setBestReplay( replay );
 		lapInfo.setBestTrackTimeSeconds( replay.trackTimeSeconds );
 	}
 
@@ -64,27 +64,27 @@ public class TrackLapManager implements Disposable {
 
 	/** Returns whether or not the Best or Worst replay is available */
 	public boolean hasAnyReplay() {
-		return replayBuffer.hasAnyReplayData();
+		return bufferManager.hasAnyReplayData();
 	}
 
 	/** Returns the first available, and valid, replay */
 	public Replay getAnyReplay() {
-		return replayBuffer.getAnyReplay();
+		return bufferManager.getAnyReplay();
 	}
 
 	/** Returns whether or not the Best and Worst replays are available */
 	public boolean hasAllReplays() {
-		return replayBuffer.hasAllReplayData();
+		return bufferManager.hasAllReplayData();
 	}
 
 	/** Returns the best replay available, so far */
 	public Replay getBestReplay() {
-		return replayBuffer.getBestReplay();
+		return bufferManager.getBestReplay();
 	}
 
 	/** Returns the worst replay available, so far */
 	public Replay getWorstReplay() {
-		return replayBuffer.getWorstReplay();
+		return bufferManager.getWorstReplay();
 	}
 
 	public Replay getLastRecordedReplay() {
@@ -92,7 +92,7 @@ public class TrackLapManager implements Disposable {
 	}
 
 	public boolean isLastBestLap() {
-		return (lastRecordedReplay.id == replayBuffer.getBestReplay().id);
+		return (lastRecordedReplay.id == bufferManager.getBestReplay().id);
 	}
 
 	// triggered from game logic
@@ -111,7 +111,7 @@ public class TrackLapManager implements Disposable {
 		}
 
 		lapInfo.restartTime();
-		Replay buffer = replayBuffer.getNextBuffer();
+		Replay buffer = bufferManager.getNextBuffer();
 		recorder.beginRecording( player, buffer, gameWorld.levelName, settings.difficulty );
 	}
 
@@ -121,20 +121,20 @@ public class TrackLapManager implements Disposable {
 			// ends recording and keeps track of the last recorded replay
 			lastRecordedReplay = recorder.endRecording();
 
-			replayBuffer.updateReplays();
+			bufferManager.updateReplays();
 
 			// update lap info with last lap times
-			if( replayBuffer.hasAllReplayData() ) {
+			if( bufferManager.hasAllReplayData() ) {
 				// lap finished, update lapinfo with the last recorded replay
 				lapInfo.setLastTrackTimeSeconds( lastRecordedReplay.trackTimeSeconds );
 
 			} else {
 				// lap finished, update lapinfo with whatever replay data is available
-				lapInfo.setLastTrackTimeSeconds( replayBuffer.getAnyReplay().trackTimeSeconds );
+				lapInfo.setLastTrackTimeSeconds( bufferManager.getAnyReplay().trackTimeSeconds );
 			}
 
 			// update lap info with best lap time
-			lapInfo.setBestTrackTimeSeconds( replayBuffer.getBestReplay().trackTimeSeconds );
+			lapInfo.setBestTrackTimeSeconds( bufferManager.getBestReplay().trackTimeSeconds );
 		}
 	}
 }
