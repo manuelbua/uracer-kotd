@@ -432,7 +432,7 @@ public class GameLogic implements CarEvent.Listener, CarStateEvent.Listener, Pla
 			int yOnMap = (id >> 2) * (int)gameWorld.map.tileWidth + (int)offset.y;
 
 			int pixel = Art.frictionNature.getPixel( xOnMap, yOnMap );
-			playerCar.setFriction( (pixel == -256 ? 0 : -1) );
+			playerCar.addFriction( (pixel == -256 ? 0 : -1) );
 		} else {
 			Gdx.app.log( "GameLogic", "PlayerCar out of map!" );
 		}

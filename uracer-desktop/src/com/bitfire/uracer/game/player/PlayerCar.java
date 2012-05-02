@@ -105,7 +105,7 @@ public class PlayerCar extends Car {
 		dampFriction = damping;
 	}
 
-	public void setFriction( float value ) {
+	public void addFriction( float value ) {
 		frictionMean.addValue( value );
 	}
 
