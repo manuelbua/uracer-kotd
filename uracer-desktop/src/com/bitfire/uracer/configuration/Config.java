@@ -31,7 +31,7 @@ public final class Config {
 		public static void asDefault() {
 			int w = Gdx.graphics.getWidth();
 
-			Enabled = false;
+			Enabled = true;
 			EnableVignetting = true;
 
 			RttFboWidth = (int)(Gdx.graphics.getWidth() * RttRatio);
@@ -106,7 +106,7 @@ public final class Config {
 
 		public static void asDefault() {
 			PixelsPerMeter = 18.0f;
-			PhysicsTimestepHz = 60.0f;
+			PhysicsTimestepHz = 30.0f;
 			PhysicsDt = 1.0f / PhysicsTimestepHz;
 			PhysicsTimeMultiplier = 1f;
 		}
@@ -134,7 +134,7 @@ public final class Config {
 		public static void asDefault() {
 
 			UseDebugHelper = true;
-			RenderBox2DWorldWireframe = Config.isDesktop;
+			RenderBox2DWorldWireframe = false;
 			RenderPlayerDebugInfo = Config.isDesktop;
 			RenderHudDebugInfo = Config.isDesktop;
 			RenderDebugInfoFpsStats = true;

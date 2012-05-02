@@ -16,7 +16,6 @@ import com.bitfire.uracer.game.player.PlayerCar;
 import com.bitfire.uracer.game.rendering.GameRenderer;
 import com.bitfire.uracer.game.rendering.GameRendererEvent;
 import com.bitfire.uracer.game.rendering.GameWorldRenderer;
-import com.bitfire.uracer.game.rendering.debug.Stats;
 import com.bitfire.uracer.game.world.GameWorld;
 import com.bitfire.uracer.postprocessing.PostProcessor;
 import com.bitfire.uracer.resources.Art;
@@ -34,9 +33,7 @@ public final class DebugHelper {
 	private static PlayerCar player;
 
 	// frame stats
-	private long frameStart;
-	private float physicsTime, renderTime;
-	private Stats gfxStats;
+	private DebugStatistics stats;
 	private String uRacerInfo;
 
 	// box2d
@@ -69,10 +66,7 @@ public final class DebugHelper {
 		GameEvents.gameRenderer.addListener( onRender, GameRendererEvent.Type.Debug, GameRendererEvent.Order.DEFAULT );
 
 		player = null;
-		physicsTime = 0;
-		renderTime = 0;
 		b2drenderer = new Box2DDebugRenderer();
-		frameStart = System.nanoTime();
 
 		// extrapolate version information
 		uRacerInfo = URacer.getVersionInfo();
@@ -83,7 +77,7 @@ public final class DebugHelper {
 			updateHz = 5f;
 		}
 
-		gfxStats = new Stats( updateHz );
+		stats = new DebugStatistics( updateHz );
 	}
 
 	public void dispose() {
@@ -91,7 +85,7 @@ public final class DebugHelper {
 		GameEvents.gameRenderer.removeListener( onRender, GameRendererEvent.Type.Debug, GameRendererEvent.Order.DEFAULT );
 
 		b2drenderer.dispose();
-		gfxStats.dispose();
+		stats.dispose();
 	}
 
 	public static void setPlayer( PlayerCar player ) {
@@ -99,22 +93,14 @@ public final class DebugHelper {
 	}
 
 	public void update() {
-		gfxStats.update();
-
-		long time = System.nanoTime();
-
-		if( time - frameStart > 1000000000 ) {
-			physicsTime = URacer.getPhysicsTime();
-			renderTime = URacer.getRenderTime();
-			frameStart = time;
-		}
+		stats.update();
 	}
 
 	private void render( SpriteBatch batch ) {
 		renderVersionInfo( batch );
 
 		if( Config.Debug.RenderDebugInfoGraphics ) {
-			renderGraphicalStats( batch, Gdx.graphics.getWidth() - gfxStats.getWidth(), Gdx.graphics.getHeight() - gfxStats.getHeight() - Art.DebugFontHeight - 5 );
+			renderGraphicalStats( batch, Gdx.graphics.getWidth() - stats.getWidth(), Gdx.graphics.getHeight() - stats.getHeight() - Art.DebugFontHeight - 5 );
 		}
 
 		if( Config.Debug.RenderDebugInfoMemoryStats ) {
@@ -142,12 +128,12 @@ public final class DebugHelper {
 	}
 
 	private void renderGraphicalStats( SpriteBatch batch, int x, int y ) {
-		batch.draw( gfxStats.getRegion(), x, y );
+		batch.draw( stats.getRegion(), x, y );
 	}
 
 	private void renderFpsStats( SpriteBatch batch ) {
-		String text = "fps: " + NumberString.formatLong( Gdx.graphics.getFramesPerSecond() ) + ", physics: " + NumberString.formatLong( physicsTime ) + ", graphics: "
-				+ NumberString.formatLong( renderTime );
+		String text = "fps: " + NumberString.formatLong( Gdx.graphics.getFramesPerSecond() ) + ", phy: " + NumberString.formatLong( stats.meanPhysics.getMean() )
+				+ ", gfx: " + NumberString.formatLong( stats.meanRender.getMean() ) + ", ticks: " + NumberString.formatLong( stats.meanTickCount.getMean() );
 
 		SpriteBatchUtils.drawString( batch, text, Gdx.graphics.getWidth() - text.length() * Art.DebugFontWidth, Gdx.graphics.getHeight() - Art.DebugFontHeight );
 	}

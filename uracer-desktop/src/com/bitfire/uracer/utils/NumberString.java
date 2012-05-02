@@ -12,7 +12,7 @@ public final class NumberString {
 
 	public static String format( float value ) {
 		if( NumberString.formatter == null ) {
-			NumberString.formatter = new DecimalFormat( "#.###" );
+			NumberString.formatter = new DecimalFormat( "0.000" );
 		}
 
 		 return NumberString.formatter.format( AMath.round( value, 2 ) );
@@ -21,7 +21,7 @@ public final class NumberString {
 
 	public static String formatLong( float value ) {
 		if( NumberString.formatterLong == null ) {
-			NumberString.formatterLong = new DecimalFormat( "#.######" );
+			NumberString.formatterLong = new DecimalFormat( "0.000000" );
 		}
 
 		 return NumberString.formatterLong.format( AMath.round( value, 6 ) );

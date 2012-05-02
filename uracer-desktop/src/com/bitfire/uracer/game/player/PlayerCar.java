@@ -11,6 +11,7 @@ import com.bitfire.uracer.game.actors.CarForces;
 import com.bitfire.uracer.game.actors.CarModel;
 import com.bitfire.uracer.game.actors.CarState;
 import com.bitfire.uracer.game.actors.CarType;
+import com.bitfire.uracer.game.logic.Input;
 import com.bitfire.uracer.game.rendering.GameRenderer;
 import com.bitfire.uracer.game.rendering.GameRendererEvent;
 import com.bitfire.uracer.game.world.GameWorld;
@@ -24,6 +25,7 @@ public class PlayerCar extends Car {
 	private CarDescriptor carDesc = null;
 
 	// input
+	private Input input = null;
 	private CarInput carInput = null;
 	private float lastTouchAngle;
 	private Vector2 touchPos = new Vector2();
@@ -79,6 +81,11 @@ public class PlayerCar extends Car {
 		carSim.resetPhysics();
 	}
 
+	/** Sets the input system this PlayerCar will use to check for input events */
+	public void setInputSystem( Input input ) {
+		this.input = input;
+	}
+
 	/** After processing collision's feedback this damping will be applied
 	 * to the car's linear velocity. */
 	public void setLinearVelocityDampingAF( float damping ) {
@@ -96,10 +103,17 @@ public class PlayerCar extends Car {
 	}
 
 	protected CarInput acquireInput() {
+		if( input == null ) {
+			carInput.reset();
+			return carInput;
+		}
+
 		carPos.set( GameRenderer.ScreenUtils.screenPosForMt( body.getPosition() ) );
 
-		touchPos.set( Gdx.input.getX(), Gdx.input.getY() );
-		carInput.updated = Gdx.input.isTouched();
+//		touchPos.set( Gdx.input.getX(), Gdx.input.getY() );
+//		carInput.updated = Gdx.input.isTouched();
+		touchPos.set( input.getXY() );
+		carInput.updated = input.isTouching();
 
 		if( carInput.updated ) {
 			float angle = 0;
@@ -145,6 +159,7 @@ public class PlayerCar extends Car {
 	}
 
 	private void applyFriction() {
+		// FIXME, move these hard-coded values out of here
 		if( frictionMean.getMean() < -0.4 && carDesc.velocity_wc.len2() > 10 ) {
 			carDesc.velocity_wc.mul( 0.975f );
 		}
