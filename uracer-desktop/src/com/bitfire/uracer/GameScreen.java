@@ -68,4 +68,8 @@ public class GameScreen extends Screen {
 		game.resume();
 	}
 
+	@Override
+	public void debugUpdate() {
+		game.debugUpdate();
+	}
 }

@@ -126,7 +126,7 @@ public class URacer implements ApplicationListener {
 			}
 
 			// simulate slowness
-			// try { Thread.sleep( 32 ); } catch( InterruptedException e ) {}
+//			 try { Thread.sleep( 32 ); } catch( InterruptedException e ) {}
 		}
 
 		physicsTime = (System.nanoTime() - startTime) * oneOnOneBillion;
@@ -144,13 +144,16 @@ public class URacer implements ApplicationListener {
 
 			// simulate slowness
 			// if(Config.isDesktop)
-			// try { Thread.sleep( 5 ); } catch( InterruptedException e ) {}
+//			try { Thread.sleep( 32 ); } catch( InterruptedException e ) {}
 		}
 
 		graphicsTime = (System.nanoTime() - startTime) * oneOnOneBillion;
 		frameCount++;
 		// mean.addValue( graphicsTime );
 		// if((frameCount&0x3f)==0) System.out.println("gfx-mean="+mean.getMean());
+
+
+		screen.debugUpdate();
 	}
 
 	@Override

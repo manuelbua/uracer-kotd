@@ -6,6 +6,7 @@ import com.badlogic.gdx.graphics.Pixmap.Format;
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.Texture.TextureFilter;
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
+import com.badlogic.gdx.math.WindowedMean;
 import com.bitfire.uracer.URacer;
 
 public class Stats {
@@ -142,6 +143,8 @@ public class Stats {
 		texture.draw( pixels, 0, 0 );
 	}
 
+	private WindowedMean meanPhysics = new WindowedMean( 16 );
+	private WindowedMean meanRender = new WindowedMean( 16 );
 	private boolean collect() {
 		long time = System.nanoTime();
 
@@ -154,8 +157,11 @@ public class Stats {
 				// dataTimeAliasing[i] = dataTimeAliasing[i-1];
 			}
 
-			dataPhysicsTime[0] = URacer.getPhysicsTime();
-			dataRenderTime[0] = URacer.getRenderTime();
+			meanPhysics.addValue( URacer.getPhysicsTime() );
+			meanRender.addValue( URacer.getRenderTime() );
+
+			dataPhysicsTime[0] = meanPhysics.getMean();
+			dataRenderTime[0] = meanRender.getMean();
 			dataFps[0] = Gdx.graphics.getFramesPerSecond();
 			// dataTimeAliasing[0] = URacer.getTemporalAliasing();
 

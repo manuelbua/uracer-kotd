@@ -80,7 +80,7 @@ public final class DebugHelper {
 		// compute graphics stats size
 		float updateHz = 24f;
 		if( !Config.isDesktop ) {
-			updateHz = 1f;
+			updateHz = 5f;
 		}
 
 		gfxStats = new Stats( updateHz );
@@ -98,7 +98,7 @@ public final class DebugHelper {
 		DebugHelper.player = player;
 	}
 
-	public void tick() {
+	public void update() {
 		gfxStats.update();
 
 		long time = System.nanoTime();

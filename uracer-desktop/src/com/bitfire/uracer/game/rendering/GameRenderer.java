@@ -154,11 +154,11 @@ public final class GameRenderer {
 				postProcessor.render();
 			}
 		}
+	}
 
-		//
-		// manages and triggers debug event
-		//
-		batch = batchRenderer.beginTopLeft();
+	// manages and triggers debug event
+	public void debugRender() {
+		SpriteBatch batch = batchRenderer.beginTopLeft();
 		batch.disableBlending();
 		GameEvents.gameRenderer.batch = batch;
 		GameEvents.gameRenderer.trigger( this, GameRendererEvent.Type.BatchDebug );

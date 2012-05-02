@@ -123,7 +123,7 @@ public class Game implements Disposable {
 		Car playerCar = gameLogic.getPlayer();
 
 		if( zoom != null && playerCar != null ) {
-			zoom.setOrigin( GameRenderer.ScreenUtils.screenPosForMt( playerCar.getBody().getPosition() ) );
+			zoom.setOrigin( GameRenderer.ScreenUtils.screenPosForPx( playerCar.state().position ) );
 			zoom.setStrength( -0.1f * factor );
 		}
 
@@ -147,18 +147,22 @@ public class Game implements Disposable {
 			return false;
 		}
 
-		if( canPostProcess ) {
-			updatePostProcessingEffects();
-		}
-
-		debug.tick();
-
 		return true;
 	}
 
 	public void render() {
 		gameLogic.onBeforeRender( gameRenderer );
+
+		if( canPostProcess ) {
+			updatePostProcessingEffects();
+		}
+
 		gameRenderer.render();
+	}
+
+	public void debugUpdate() {
+		debug.update();
+		gameRenderer.debugRender();
 	}
 
 	public void pause() {
