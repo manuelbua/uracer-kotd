@@ -22,7 +22,7 @@ public final class TrackEffects extends GameTask {
 			for( int i = 0; i < items.size; i++ ) {
 				TrackEffect effect = items.get( i );
 				if( effect != null ) {
-					effect.render( gameRenderer, batch );
+					effect.render( batch );
 				}
 			}
 		}

@@ -1,5 +1,7 @@
 package com.bitfire.uracer.utils;
 
+import com.bitfire.uracer.configuration.Config;
+
 /** Algebra math utils.
  *
  * @author manuel */
@@ -108,4 +110,8 @@ public final class AMath {
 		return (float)tmp / p;
 	}
 
+	/** Compute a timestep-independent damping factor from the specified arbitrary factor. */
+	public static float damping( float factor ) {
+		return (float)Math.exp( -factor * Config.Physics.PhysicsDt );
+	}
 }

@@ -14,7 +14,7 @@ public final class PlayerDriftState {
 	public float lateralForcesFront = 0, lateralForcesRear = 0;
 	public float driftStrength;
 
-	private float lastRear = 0, lastFront = 0;
+	private float lastRear = 0, lastFront = 0, invMaxGrip = 0;
 	private Time time, collisionTime;
 
 	public PlayerDriftState( PlayerCar player ) {
@@ -22,6 +22,8 @@ public final class PlayerDriftState {
 		this.player = player;
 		this.time = new Time();
 		this.collisionTime = new Time();
+		this.invMaxGrip = 1f / player.getCarModel().max_grip;
+
 
 		reset();
 	}
@@ -61,16 +63,15 @@ public final class PlayerDriftState {
 	}
 
 	public void update( float latForceFrontY, float latForceRearY, float velocityLength ) {
-		float oneOnMaxGrip = 1f / player.getCarModel().max_grip;
 
 		// lateral forces are in the range [-max_grip, max_grip]
 		lateralForcesFront = AMath.lowpass( lastFront, latForceFrontY, 0.2f );
 		lastFront = lateralForcesFront;
-		lateralForcesFront = AMath.clamp( Math.abs( lateralForcesFront ) * oneOnMaxGrip, 0f, 1f );	// normalize
+		lateralForcesFront = AMath.clamp( Math.abs( lateralForcesFront ) * invMaxGrip, 0f, 1f );	// normalize
 
 		lateralForcesRear = AMath.lowpass( lastRear, latForceRearY, 0.2f );
 		lastRear = lateralForcesRear;
-		lateralForcesRear = AMath.clamp( Math.abs( lateralForcesRear ) * oneOnMaxGrip, 0f, 1f );	// normalize
+		lateralForcesRear = AMath.clamp( Math.abs( lateralForcesRear ) * invMaxGrip, 0f, 1f );	// normalize
 
 		// compute strength
 		driftStrength = AMath.fixup( (lateralForcesFront + lateralForcesRear) * 0.5f );

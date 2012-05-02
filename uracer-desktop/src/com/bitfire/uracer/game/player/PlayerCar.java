@@ -31,11 +31,12 @@ public class PlayerCar extends Car {
 	private Vector2 touchPos = new Vector2();
 	private Vector2 carPos = new Vector2();
 	private float invWidth = 1f / Gdx.graphics.getWidth(), invHeight = 1f / Gdx.graphics.getHeight();
-	private WindowedMean frictionMean = new WindowedMean( 16 );
+	private WindowedMean frictionMean = new WindowedMean( 10 );
 
-	// input damping
-	private float linearVelocityDampAF = 0.99f;
-	private float throttleDampAF = 0.99f;
+	// damping values
+	private float dampLinearVelocityAF = 0;
+	private float dampThrottleAF = 0;
+	private float dampFriction = 0;
 
 	// states
 	public CarState carState = null;
@@ -88,14 +89,20 @@ public class PlayerCar extends Car {
 
 	/** After processing collision's feedback this damping will be applied
 	 * to the car's linear velocity. */
-	public void setLinearVelocityDampingAF( float damping ) {
-		linearVelocityDampAF = damping;
+	public void setDampingLinearVelocityAF( float damping ) {
+		dampLinearVelocityAF = damping;
 	}
 
 	/** After processing collision's feedback this damping will be applied
 	 * to the car's input throttle */
-	public void setThrottleDampingAF( float damping ) {
-		throttleDampAF = damping;
+	public void setDampingThrottleAF( float damping ) {
+		dampThrottleAF = damping;
+	}
+
+	/** When the player's car is off-track this damping will be applied
+	 * to the car's linear velocity */
+	public void setDampingFriction( float damping ) {
+		dampFriction = damping;
 	}
 
 	public void setFriction( float value ) {
@@ -160,8 +167,8 @@ public class PlayerCar extends Car {
 
 	private void applyFriction() {
 		// FIXME, move these hard-coded values out of here
-		if( frictionMean.getMean() < -0.4 && carDesc.velocity_wc.len2() > 10 ) {
-			carDesc.velocity_wc.mul( 0.975f );
+		if( frictionMean.getMean() < -0.1 && carDesc.velocity_wc.len2() > 10 ) {
+			carDesc.velocity_wc.mul( dampFriction );
 		}
 	}
 
@@ -214,7 +221,7 @@ public class PlayerCar extends Car {
 		// process impact feedback
 		while( impacts > 0 ) {
 			impacts--;
-			carDesc.velocity_wc.set( body.getLinearVelocity() ).mul( linearVelocityDampAF );
+			carDesc.velocity_wc.set( body.getLinearVelocity() ).mul( dampLinearVelocityAF );
 			carDesc.angularvelocity = -body.getAngularVelocity() * 0.85f;
 			start_decrease = true;
 		}
@@ -227,7 +234,7 @@ public class PlayerCar extends Car {
 				start_timer = System.nanoTime();
 			}
 
-			input.throttle *= throttleDampAF;
+			input.throttle *= dampThrottleAF;
 		}
 	}
 }

@@ -6,6 +6,7 @@ import com.bitfire.uracer.game.logic.helpers.CameraController.InterpolationMode;
 import com.bitfire.uracer.postprocessing.filters.Blur;
 import com.bitfire.uracer.postprocessing.filters.Blur.BlurType;
 import com.bitfire.uracer.postprocessing.filters.ZoomBlur;
+import com.bitfire.uracer.utils.NumberString;
 
 public final class Config {
 	// generic
@@ -109,6 +110,8 @@ public final class Config {
 			PhysicsTimestepHz = 30.0f;
 			PhysicsDt = 1.0f / PhysicsTimestepHz;
 			PhysicsTimeMultiplier = 1f;
+
+			Gdx.app.log( "Config", "Physics at " + PhysicsTimestepHz + "Hz (dt=" + NumberString.format(PhysicsDt) + ")" );
 		}
 
 		private Physics() {

@@ -2,7 +2,6 @@ package com.bitfire.uracer.game.logic.trackeffects;
 
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.utils.Disposable;
-import com.bitfire.uracer.game.rendering.GameRenderer;
 
 public abstract class TrackEffect implements Disposable {
 	/** Defines the type of special effect, it also describer their rendering order */
@@ -26,7 +25,7 @@ public abstract class TrackEffect implements Disposable {
 	public abstract void reset();
 
 	/* The used GameRenderer instance is being passed for utilities, such as querying visibility */
-	public abstract void render( GameRenderer gameRenderer, SpriteBatch batch );
+	public abstract void render( SpriteBatch batch );
 
 	public abstract int getParticleCount();
 }

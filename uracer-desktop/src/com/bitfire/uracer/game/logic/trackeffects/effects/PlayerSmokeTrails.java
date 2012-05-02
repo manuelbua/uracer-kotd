@@ -9,7 +9,6 @@ import com.bitfire.uracer.ScalingStrategy;
 import com.bitfire.uracer.URacer;
 import com.bitfire.uracer.game.logic.trackeffects.TrackEffect;
 import com.bitfire.uracer.game.player.PlayerCar;
-import com.bitfire.uracer.game.rendering.GameRenderer;
 import com.bitfire.uracer.resources.Art;
 
 /** FIXME disabled for a long time, need testing again
@@ -143,7 +142,7 @@ public class PlayerSmokeTrails extends TrackEffect {
 	private Vector2 tmp = new Vector2();
 
 	@Override
-	public void render( GameRenderer gameRenderer, SpriteBatch batch ) {
+	public void render( SpriteBatch batch ) {
 		tmp.set( posX, posY );
 		fx[0].render( batch, tmp.x, tmp.y );
 

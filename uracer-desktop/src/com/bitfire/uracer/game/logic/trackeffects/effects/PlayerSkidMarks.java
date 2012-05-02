@@ -15,12 +15,14 @@ import com.bitfire.uracer.utils.Convert;
 
 public class PlayerSkidMarks extends TrackEffect {
 	public static final int MaxSkidMarks = 300;
+	private static final float MaxParticleLifeSeconds = 3.5f;
+	private static final float InvMaxParticleLifeSeconds = 1f / MaxParticleLifeSeconds;
 
 	private SkidMark[] skidMarks;
 	private int markIndex;
 	private int visibleSkidMarksCount;
 
-	private Vector2 last;
+	private Vector2 pos, last;
 	private PlayerCar player;
 
 	public PlayerSkidMarks( PlayerCar player ) {
@@ -29,6 +31,8 @@ public class PlayerSkidMarks extends TrackEffect {
 		this.player = player;
 		markIndex = 0;
 		visibleSkidMarksCount = 0;
+
+		pos = new Vector2();
 		last = new Vector2();
 
 		skidMarks = new SkidMark[ MaxSkidMarks ];
@@ -72,7 +76,7 @@ public class PlayerSkidMarks extends TrackEffect {
 	}
 
 	@Override
-	public void render( GameRenderer gameRenderer, SpriteBatch batch ) {
+	public void render( SpriteBatch batch ) {
 		float lifeRatio;
 		SkidMark d;
 		visibleSkidMarksCount = 0;
@@ -80,11 +84,10 @@ public class PlayerSkidMarks extends TrackEffect {
 		// front drift marks
 		for( int i = 0; i < MaxSkidMarks; i++ ) {
 			d = skidMarks[i];
-			// FIXME implement gameRenderer.isVisible instead
 			if( d.life > 0 && GameRenderer.ScreenUtils.isVisible( d.getBoundingRectangle() ) ) {
 				visibleSkidMarksCount++;
 
-				lifeRatio = d.life / d.maxLife;
+				lifeRatio = d.life * InvMaxParticleLifeSeconds;
 
 				d.front.setColor( 1, 1, 1, d.alphaFront * lifeRatio );
 				d.rear.setColor( 1, 1, 1, d.alphaRear * lifeRatio );
@@ -100,42 +103,53 @@ public class PlayerSkidMarks extends TrackEffect {
 	private void tryAddDriftMark( Vector2 position, float orientation, PlayerDriftState driftState ) {
 		// avoid blatant overdrawing
 		if( (int)position.x == (int)last.x && (int)position.y == (int)last.y ) {
+			// position.x = AMath.lerp( last.x, position.x, 0.25f );
+			// position.y = AMath.lerp( last.y, position.y, 0.25f );
+//			Gdx.app.log( "PlayerSkidMarks", "Skipping emitting particle..." );
 			return;
 		}
 
-		if( driftState.driftStrength > 0.2f )
-		// if( di.isDrifting )
-		{
-			// add front drift marks?
-			SkidMark drift = skidMarks[markIndex++];
-			if( markIndex == MaxSkidMarks ) {
-				markIndex = 0;
+		for( int i = 0; i < 2; i++ ) {
+			pos.set( position );
+
+			pos.x = AMath.lerp( last.x, position.x, 0.5f * i );
+			pos.y = AMath.lerp( last.y, position.y, 0.5f * i );
+
+			if( driftState.driftStrength > 0.2f )
+			// if( di.isDrifting )
+			{
+				// add front drift marks?
+				SkidMark drift = skidMarks[markIndex++];
+				if( markIndex == MaxSkidMarks ) {
+					markIndex = 0;
+				}
+
+				// drift.alphaFront = driftState.driftStrength;
+				// drift.alphaRear = driftState.driftStrength;
+				drift.alphaFront = driftState.lateralForcesFront;
+				drift.alphaRear = driftState.lateralForcesRear;
+				drift.setPosition( pos );
+				drift.setOrientation( orientation );
+				drift.front.setScale( AMath.clamp( driftState.lateralForcesFront + 0.8f, 0.85f, 1.1f ) );
+				drift.rear.setScale( AMath.clamp( driftState.lateralForcesRear + 0.8f, 0.85f, 1.1f ) );
+				drift.life = MaxParticleLifeSeconds;
 			}
-
-			drift.alphaFront = driftState.driftStrength;
-			drift.alphaRear = driftState.driftStrength;
-			drift.setPosition( position );
-			drift.setOrientation( orientation );
-			drift.front.setScale( AMath.clamp( driftState.lateralForcesFront + 0.8f, 0.85f, 1.1f ) );
-			drift.rear.setScale( AMath.clamp( driftState.lateralForcesRear + 0.8f, 0.85f, 1.1f ) );
-			drift.maxLife = 3.5f;
-			drift.life = drift.maxLife;
-
-			last.set( position );
 		}
+
+		last.set( position );
+
+		// Gdx.app.log( "PlayerSkidMarks", NumberString.format(driftState.driftStrength) + "/" +
+		// NumberString.format(driftState.lateralForcesFront) );
 	}
 
 	private class SkidMark {
 		public Sprite front, rear;
 		public float life;
-		public float maxLife;
 		public float alphaFront, alphaRear;
-		public Vector2 position;
 
 		public SkidMark( float carWidthPx, float carLengthPx ) {
 			front = new Sprite();
 			rear = new Sprite();
-			position = new Vector2();
 
 			front.setRegion( Art.skidMarksFront );
 			front.setSize( carWidthPx, carLengthPx );
@@ -147,12 +161,10 @@ public class PlayerSkidMarks extends TrackEffect {
 			rear.setOrigin( rear.getWidth() / 2, rear.getHeight() / 2 );
 			rear.setColor( 1, 1, 1, 1 );
 
-			life = 0;
-			maxLife = 0;
+			life = MaxParticleLifeSeconds;
 		}
 
 		public void setPosition( Vector2 pos ) {
-			position.set( pos );
 			front.setPosition( pos.x - front.getOriginX(), pos.y - front.getOriginY() );
 			rear.setPosition( pos.x - rear.getOriginX(), pos.y - rear.getOriginY() );
 		}
