@@ -1,4 +1,4 @@
-package com.bitfire.uracer.game.rendering.debug;
+package com.bitfire.uracer.game;
 
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.Pixmap;
@@ -8,36 +8,42 @@ import com.badlogic.gdx.graphics.Texture.TextureFilter;
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
 import com.badlogic.gdx.math.WindowedMean;
 import com.bitfire.uracer.URacer;
+import com.bitfire.uracer.configuration.Config;
 
-public class Stats {
-	private int PanelWidth;
-	private int PanelHeight;
+public final class DebugStatistics {
+	// public statistical data
+	public WindowedMean meanPhysics = new WindowedMean( 16 );
+	public WindowedMean meanRender = new WindowedMean( 16 );
+	public WindowedMean meanTickCount = new WindowedMean( 16 );
 
-	// graphics data
+	// internal data for graphics representation
 	private Pixmap pixels;
 	private Texture texture;
 	private TextureRegion region;
+	private int PanelWidth;
+	private int PanelHeight;
+	private float ratio_rtime, ratio_ptime, ratio_fps;
 
-	// timing data
+	// internal timing data
 	private long startTime;
 	private long intervalNs;
 
-	// stats data
+	// internal stats data
 	private float[] dataRenderTime;
 	private float[] dataFps;
 	private float[] dataPhysicsTime;
 
 	// private float[] dataTimeAliasing;
 
-	public Stats() {
+	public DebugStatistics() {
 		init( 100, 50, 0.2f );
 	}
 
-	public Stats( int width, int height, float updateHz ) {
+	public DebugStatistics( int width, int height, float updateHz ) {
 		init( width, height, updateHz );
 	}
 
-	public Stats( float updateHz ) {
+	public DebugStatistics( float updateHz ) {
 		init( 100, 50, updateHz );
 	}
 
@@ -46,7 +52,7 @@ public class Stats {
 
 		PanelWidth = width;
 		PanelHeight = height;
-		intervalNs = (long)(1000000000L * (1f/updateHz));
+		intervalNs = (long)(1000000000L * (1f / updateHz));
 
 		pixels = new Pixmap( PanelWidth, PanelHeight, Format.RGBA8888 );
 		texture = new Texture( 256, 256, Format.RGBA8888 );
@@ -58,6 +64,11 @@ public class Stats {
 		dataFps = new float[ PanelWidth ];
 		dataPhysicsTime = new float[ PanelWidth ];
 		// dataTimeAliasing = new float[ PanelWidth ];
+
+		// precompute constants
+		ratio_rtime = ((float)PanelHeight / 2f) * Config.Physics.PhysicsTimestepHz;
+		ratio_ptime = ((float)PanelHeight / 2f) * Config.Physics.PhysicsTimestepHz;
+		ratio_fps = ((float)PanelHeight / 2f) * Config.Physics.PhysicsDt;
 
 		reset();
 	}
@@ -102,11 +113,6 @@ public class Stats {
 		pixels.setColor( 0, 0, 0, 0.8f );
 		pixels.fill();
 
-		float oneOn60 = 1f / 60f;
-		float ratio_rtime = (PanelHeight / 2) / oneOn60;
-		float ratio_ptime = (PanelHeight / 2) / oneOn60;
-		float ratio_fps = (PanelHeight / 2) * oneOn60;
-
 		float alpha = 0.5f;
 		for( int x = 0; x < PanelWidth; x++ ) {
 			int xc = PanelWidth - x - 1;
@@ -143,8 +149,6 @@ public class Stats {
 		texture.draw( pixels, 0, 0 );
 	}
 
-	private WindowedMean meanPhysics = new WindowedMean( 16 );
-	private WindowedMean meanRender = new WindowedMean( 16 );
 	private boolean collect() {
 		long time = System.nanoTime();
 
@@ -159,6 +163,7 @@ public class Stats {
 
 			meanPhysics.addValue( URacer.getPhysicsTime() );
 			meanRender.addValue( URacer.getRenderTime() );
+			meanTickCount.addValue( URacer.getLastTicksCount() );
 
 			dataPhysicsTime[0] = meanPhysics.getMean();
 			dataRenderTime[0] = meanRender.getMean();

@@ -29,6 +29,7 @@ public class URacer implements ApplicationListener {
 	private static float aliasingTime = 0;
 	private static final float MaxDeltaTime = 0.25f;
 	private static long frameCount = 0;
+	private static long lastTicksCount = 0;
 
 	// version
 	private static String versionInfo;
@@ -112,6 +113,7 @@ public class URacer implements ApplicationListener {
 		// avoid spiral of death
 		lastDeltaTimeSec = AMath.clamp( lastDeltaTimeSec, 0, MaxDeltaTime );
 
+		lastTicksCount = 0;
 		long startTime = System.nanoTime();
 		{
 			hasStepped = false;
@@ -120,6 +122,7 @@ public class URacer implements ApplicationListener {
 				screen.tick();
 				timeAccumSecs -= Config.Physics.PhysicsDt;
 				hasStepped = true;
+				lastTicksCount++;
 				if( screen.quit() ) {
 					return;
 				}
@@ -225,6 +228,10 @@ public class URacer implements ApplicationListener {
 
 	public static long getFrameCount() {
 		return frameCount;
+	}
+
+	public static long getLastTicksCount() {
+		return lastTicksCount;
 	}
 
 	public static String getVersionInfo() {
