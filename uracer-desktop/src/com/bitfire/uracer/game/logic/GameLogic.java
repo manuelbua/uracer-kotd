@@ -137,6 +137,7 @@ public class GameLogic implements CarEvent.Listener, CarStateEvent.Listener, Pla
 		}
 
 		playerCar = CarFactory.createPlayer( gameWorld, model, aspect );
+		playerCar.setInputSystem( gameTasksManager.input );
 
 		configurePlayer( gameWorld, gameplaySettings, playerCar );
 		Gdx.app.log( "GameLogic", "Player configured" );
@@ -257,13 +258,7 @@ public class GameLogic implements CarEvent.Listener, CarStateEvent.Listener, Pla
 			updatePlayerCarFriction();
 		}
 
-		updateTimeMultiplier();
-
 		return true;
-	}
-
-	private void updateTimeMultiplier() {
-		URacer.timeMultiplier = AMath.clamp( timeMultiplier.value, TimeMultiplierMin, Config.Physics.PhysicsTimeMultiplier );
 	}
 
 	//
@@ -290,9 +285,12 @@ public class GameLogic implements CarEvent.Listener, CarStateEvent.Listener, Pla
 			worldRenderer.setCameraPosition( gameWorld.playerStartPos, true );
 		}
 
+		URacer.timeMultiplier = AMath.clamp( timeMultiplier.value, TimeMultiplierMin, Config.Physics.PhysicsTimeMultiplier );
+
 		// tweener step
 		WcTweener.update();
 		GameTweener.update();
+//		Gdx.app.log( "GameLogic", NumberString.format(timeMultiplier.value) );
 	}
 
 	//

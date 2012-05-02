@@ -13,7 +13,6 @@ import com.bitfire.uracer.resources.Art;
 import com.bitfire.uracer.utils.AMath;
 import com.bitfire.uracer.utils.Convert;
 
-
 public class PlayerSkidMarks extends TrackEffect {
 	public static final int MaxSkidMarks = 300;
 
@@ -95,7 +94,7 @@ public class PlayerSkidMarks extends TrackEffect {
 			}
 		}
 
-//		Gdx.app.log( "PlayerSkidMarks", "visibles=" + visibleSkidMarksCount );
+		// Gdx.app.log( "PlayerSkidMarks", "visibles=" + visibleSkidMarksCount );
 	}
 
 	private void tryAddDriftMark( Vector2 position, float orientation, PlayerDriftState driftState ) {
