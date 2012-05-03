@@ -4,7 +4,6 @@ import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.g2d.tiled.TiledLayer;
 import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.math.WindowedMean;
-import com.bitfire.uracer.ScalingStrategy;
 import com.bitfire.uracer.configuration.Config;
 import com.bitfire.uracer.game.actors.Car;
 import com.bitfire.uracer.game.actors.CarDescriptor;
@@ -23,7 +22,7 @@ import com.bitfire.uracer.utils.Convert;
 
 public class PlayerCar extends Car {
 
-	private ScalingStrategy strategy;
+//	private ScalingStrategy strategy;
 
 	// car forces simulator
 	private CarSimulator carSim = null;
@@ -52,7 +51,7 @@ public class PlayerCar extends Car {
 		carInput = new CarInput();
 		impacts = 0;
 
-		strategy = gameWorld.scalingStrategy;
+//		strategy = gameWorld.scalingStrategy;
 		carDesc = new CarDescriptor();
 		carDesc.carModel.set( model );
 		carSim = new CarSimulator( carDesc );
