@@ -9,8 +9,6 @@ import aurelienribon.tweenengine.equations.Quad;
 
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Input.Keys;
-import com.badlogic.gdx.graphics.g2d.tiled.TiledLayer;
-import com.badlogic.gdx.math.Vector2;
 import com.bitfire.uracer.ScalingStrategy;
 import com.bitfire.uracer.URacer;
 import com.bitfire.uracer.configuration.Config;
@@ -42,8 +40,6 @@ import com.bitfire.uracer.game.rendering.GameWorldRenderer;
 import com.bitfire.uracer.game.tween.GameTweener;
 import com.bitfire.uracer.game.tween.WcTweener;
 import com.bitfire.uracer.game.world.GameWorld;
-import com.bitfire.uracer.game.world.models.WorldDefs.TileLayer;
-import com.bitfire.uracer.resources.Art;
 import com.bitfire.uracer.utils.AMath;
 import com.bitfire.uracer.utils.BoxedFloat;
 import com.bitfire.uracer.utils.BoxedFloatAccessor;
@@ -255,10 +251,6 @@ public class GameLogic implements CarEvent.Listener, CarStateEvent.Listener, Pla
 			setPlayer( new CarModel().toModel2(), Aspect.OldSkool );
 		}
 
-		if( playerCar != null ) {
-			updatePlayerCarFriction();
-		}
-
 		return true;
 	}
 
@@ -291,7 +283,7 @@ public class GameLogic implements CarEvent.Listener, CarStateEvent.Listener, Pla
 		// tweener step
 		WcTweener.update();
 		GameTweener.update();
-//		Gdx.app.log( "GameLogic", NumberString.format(timeMultiplier.value) );
+		// Gdx.app.log( "GameLogic", NumberString.format(timeMultiplier.value) );
 	}
 
 	//
@@ -399,43 +391,6 @@ public class GameLogic implements CarEvent.Listener, CarStateEvent.Listener, Pla
 
 		// Gdx.app.log( "GameLogic", "playerDriftStateEvent::ds=" + NumberString.format(
 		// player.driftState.driftSeconds() ) + " (" + player.driftState.driftSeconds() + ")" );
-	}
-
-	//
-	// MORE TASKS ??
-	//
-
-	private Vector2 offset = new Vector2();
-
-	private void updatePlayerCarFriction() {
-		Vector2 tilePosition = playerCar.carState.tilePosition;
-
-		if( gameWorld.isValidTilePosition( tilePosition ) ) {
-			// compute realsize-based pixel offset car-tile (top-left origin)
-			float scaledTileSize = gameWorld.getTileSizeScaled();
-			float tsx = tilePosition.x * scaledTileSize;
-			float tsy = tilePosition.y * scaledTileSize;
-			offset.set( playerCar.state().position );
-			offset.y = gameWorld.worldSizeScaledPx.y - offset.y;
-			offset.x = offset.x - tsx;
-			offset.y = offset.y - tsy;
-			offset.mul( gameWorld.getTileSizeInvScaled() ).mul( gameWorld.map.tileWidth );
-
-			TiledLayer layerTrack = gameWorld.getLayer( TileLayer.Track );
-			int id = layerTrack.tiles[(int)tilePosition.y][(int)tilePosition.x] - 1;
-
-			// int xOnMap = (id %4) * 224 + (int)offset.x;
-			// int yOnMap = (int)( id/4f ) * 224 + (int)offset.y;
-
-			// bit twiddling, faster version
-			int xOnMap = (id & 3) * (int)gameWorld.map.tileWidth + (int)offset.x;
-			int yOnMap = (id >> 2) * (int)gameWorld.map.tileWidth + (int)offset.y;
-
-			int pixel = Art.frictionNature.getPixel( xOnMap, yOnMap );
-			playerCar.addFriction( (pixel == -256 ? 0 : -1) );
-		} else {
-			Gdx.app.log( "GameLogic", "PlayerCar out of map!" );
-		}
 	}
 
 	private void playerTileChanged() {

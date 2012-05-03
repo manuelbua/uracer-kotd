@@ -3,6 +3,7 @@ package com.bitfire.uracer.game.actors;
 import com.badlogic.gdx.math.Vector2;
 import com.bitfire.uracer.game.world.GameWorld;
 import com.bitfire.uracer.utils.AMath;
+import com.bitfire.uracer.utils.Convert;
 
 public final class CarState {
 	/* event */
@@ -12,7 +13,7 @@ public final class CarState {
 	public final Car car;
 
 	/* position */
-	public int currTileX = 1, currTileY = 1;
+	public int currTileX = -1, currTileY = -1;
 	public Vector2 tilePosition = new Vector2();
 
 	/* speed/force factors */
@@ -52,8 +53,8 @@ public final class CarState {
 	}
 
 	public void update( CarDescriptor carDescriptor ) {
-		triggerTileChanged();
 		updateFactors( carDescriptor );
+		updateTilePosition();
 	}
 
 	private void updateFactors( CarDescriptor carDescriptor ) {
@@ -67,12 +68,13 @@ public final class CarState {
 	/* Keeps track of the car's tile position and trigger a TileChanged event whenever
 	 * the car's world position translates to a tile index that is different than the
 	 * previous one */
-	private void triggerTileChanged() {
+	private void updateTilePosition() {
 		lastTileX = currTileX;
 		lastTileY = currTileY;
 
 		// compute car's tile position
-		tilePosition.set( world.pxToTile( car.state().position.x, car.state().position.y ) );
+//		tilePosition.set( world.pxToTile( car.state().position.x, car.state().position.y ) );
+		tilePosition.set( world.pxToTile( Convert.mt2px(car.getBody().getPosition().x), Convert.mt2px(car.getBody().getPosition().y) ) );
 
 		currTileX = (int)tilePosition.x;
 		currTileY = (int)tilePosition.y;

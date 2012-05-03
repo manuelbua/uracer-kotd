@@ -99,6 +99,9 @@ public final class Config {
 		/** defines physics dt duration, in hz */
 		public static float PhysicsTimestepHz;
 
+		/** defines the reference dt, in hz, to base damping and friction values on */
+		public static float PhysicsTimestepReferenceHz;
+
 		/** defines time modifier */
 		public static float PhysicsTimeMultiplier;
 
@@ -108,6 +111,7 @@ public final class Config {
 		public static void asDefault() {
 			PixelsPerMeter = 18.0f;
 			PhysicsTimestepHz = 30.0f;
+			PhysicsTimestepReferenceHz = 60.0f;
 			PhysicsDt = 1.0f / PhysicsTimestepHz;
 			PhysicsTimeMultiplier = 1f;
 

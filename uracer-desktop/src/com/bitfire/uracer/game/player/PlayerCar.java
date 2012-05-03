@@ -1,6 +1,7 @@
 package com.bitfire.uracer.game.player;
 
 import com.badlogic.gdx.Gdx;
+import com.badlogic.gdx.graphics.g2d.tiled.TiledLayer;
 import com.badlogic.gdx.math.MathUtils;
 import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.math.WindowedMean;
@@ -15,7 +16,10 @@ import com.bitfire.uracer.game.logic.Input;
 import com.bitfire.uracer.game.rendering.GameRenderer;
 import com.bitfire.uracer.game.rendering.GameRendererEvent;
 import com.bitfire.uracer.game.world.GameWorld;
+import com.bitfire.uracer.game.world.models.WorldDefs.TileLayer;
+import com.bitfire.uracer.resources.Art;
 import com.bitfire.uracer.utils.AMath;
+import com.bitfire.uracer.utils.Convert;
 import com.bitfire.uracer.utils.VMath;
 
 public class PlayerCar extends Car {
@@ -30,7 +34,7 @@ public class PlayerCar extends Car {
 	private float lastTouchAngle;
 	private Vector2 touchPos = new Vector2();
 	private Vector2 carPos = new Vector2();
-	private float invWidth = 1f / Gdx.graphics.getWidth(), invHeight = 1f / Gdx.graphics.getHeight();
+	private final float invWidth = 1f / Gdx.graphics.getWidth(), invHeight = 1f / Gdx.graphics.getHeight();
 	private WindowedMean frictionMean = new WindowedMean( 10 );
 
 	// damping values
@@ -105,80 +109,76 @@ public class PlayerCar extends Car {
 		dampFriction = damping;
 	}
 
-	public void addFriction( float value ) {
-		frictionMean.addValue( value );
-	}
-
 	protected CarInput acquireInput() {
 		if( input == null ) {
 			carInput.reset();
 			return carInput;
 		}
 
+		boolean workInNormalized = false;
 		carPos.set( GameRenderer.ScreenUtils.screenPosForMt( body.getPosition() ) );
-
-//		touchPos.set( Gdx.input.getX(), Gdx.input.getY() );
-//		carInput.updated = Gdx.input.isTouched();
 		touchPos.set( input.getXY() );
+
 		carInput.updated = input.isTouching();
 
 		if( carInput.updated ) {
 			float angle = 0;
 
-			// avoid singularity
-			if( (int)-carPos.y + (int)touchPos.y == 0 ) {
-				angle = lastTouchAngle;
+			if( workInNormalized ) {
+				carPos.x *= invWidth;
+				carPos.y *= invHeight;
+				touchPos.x *= invWidth;
+				touchPos.y *= invHeight;
+				VMath.clamp( touchPos, 0, 1 );
+				VMath.clamp( carPos, 0, 1 );
+
+				carInput.throttle = touchPos.dst( carPos ) * 4 * carDesc.carModel.max_force;
+				carInput.steerAngle = transformSteerAngle( (float)Math.atan2( -carPos.x + touchPos.x, -carPos.y + touchPos.y ) );
 			} else {
-				angle = MathUtils.atan2( -carPos.x + touchPos.x, -carPos.y + touchPos.y );
-				lastTouchAngle = angle;
+
+				if( (int)-carPos.y + (int)touchPos.y == 0 ) {
+					// avoid singularity
+					angle = lastTouchAngle;
+				} else {
+					angle = MathUtils.atan2( -carPos.x + touchPos.x, -carPos.y + touchPos.y );
+					lastTouchAngle = angle;
+				}
+
+				carInput.steerAngle = transformSteerAngle( angle );
+
+				carPos.x *= invWidth;
+				carPos.y *= invHeight;
+				touchPos.x *= invWidth;
+				touchPos.y *= invHeight;
+				VMath.clamp( touchPos, 0, 1 );
+				VMath.clamp( carPos, 0, 1 );
+				carInput.throttle = touchPos.dst( carPos ) * 4 * carDesc.carModel.max_force;
 			}
-
-			float wrapped = -body.getAngle();
-
-			angle -= AMath.PI;
-			angle += wrapped; // to local
-			if( angle < 0 ) {
-				angle += AMath.TWO_PI;
-			}
-
-			angle = -(angle - AMath.TWO_PI);
-			if( angle > AMath.PI ) {
-				angle = angle - AMath.TWO_PI;
-			}
-
-			carInput.steerAngle = angle;
-
-			// normalize and clamp
-			touchPos.x *= invWidth;
-			touchPos.y *= invHeight;
-			carPos.x *= invWidth;
-			carPos.y *= invHeight;
-			VMath.clamp( touchPos, 0, 1 );
-			VMath.clamp( carPos, 0, 1 );
-
-			// compute throttle
-			carInput.throttle = touchPos.dst( carPos ) * 4 * carDesc.carModel.max_force;
-			// carInput.throttle = touchPos.dst( carPos ) * 2 * carDesc.carModel.max_force; // x2 = 0<->halfscreen is
-			// considered 0<->1
 		}
 
 		return carInput;
 	}
 
-	private void applyFriction() {
-		// FIXME, move these hard-coded values out of here
-		if( frictionMean.getMean() < -0.1 && carDesc.velocity_wc.len2() > 10 ) {
-			carDesc.velocity_wc.mul( dampFriction );
+	private float transformSteerAngle( float angle ) {
+		float transformed = angle;
+
+		transformed -= AMath.PI;
+		transformed += -body.getAngle(); // to local
+		if( transformed < 0 ) {
+			transformed += AMath.TWO_PI;
 		}
+
+		transformed = -(transformed - AMath.TWO_PI);
+		if( transformed > AMath.PI ) {
+			transformed = transformed - AMath.TWO_PI;
+		}
+
+		return transformed;
 	}
 
 	@Override
 	protected void onComputeCarForces( CarForces forces ) {
 		carInput = acquireInput();
-
-		if( Config.Debug.ApplyCarFrictionFromMap ) {
-			applyFriction();
-		}
 
 		// handle decrease queued from previous step
 		handleDecrease( carInput );
@@ -203,15 +203,60 @@ public class PlayerCar extends Car {
 
 		// inspect impact feedback, accumulate vel/ang velocities
 		handleImpactFeedback();
-	}
 
-	@Override
-	public void onTemporalAliasing( boolean stepped, float aliasingFactor ) {
-		super.onTemporalAliasing( stepped, aliasingFactor );
-
-		// update the states once ticking has finished, if any
 		carState.update( carDesc );
 		driftState.update( carSim.lateralForceFront.y, carSim.lateralForceRear.y, carDesc.velocity_wc.len() );
+
+		if( Config.Debug.ApplyCarFrictionFromMap ) {
+			updateCarFriction();
+			applyFriction();
+		}
+	}
+
+	private Vector2 offset = new Vector2();
+
+	private void updateCarFriction() {
+		Vector2 tilePosition = carState.tilePosition;
+
+		if( gameWorld.isValidTilePosition( tilePosition ) ) {
+			// compute realsize-based pixel offset car-tile (top-left origin)
+			float scaledTileSize = gameWorld.getTileSizeScaled();
+			float tsx = tilePosition.x * scaledTileSize;
+			float tsy = tilePosition.y * scaledTileSize;
+			offset.set( Convert.mt2px( getBody().getPosition() ) );
+			offset.y = gameWorld.worldSizeScaledPx.y - offset.y;
+			offset.x = offset.x - tsx;
+			offset.y = offset.y - tsy;
+			offset.mul( gameWorld.getTileSizeInvScaled() ).mul( gameWorld.map.tileWidth );
+
+			TiledLayer layerTrack = gameWorld.getLayer( TileLayer.Track );
+			int id = layerTrack.tiles[(int)tilePosition.y][(int)tilePosition.x] - 1;
+
+//			int xOnMap = (id %4) * (int)gameWorld.map.tileWidth + (int)offset.x;
+//			int yOnMap = (int)( id/4f ) * (int)gameWorld.map.tileWidth + (int)offset.y;
+
+			// bit twiddling, faster version
+			int xOnMap = (id & 3) * (int)gameWorld.map.tileWidth + (int)offset.x;
+			int yOnMap = (id >> 2) * (int)gameWorld.map.tileWidth + (int)offset.y;
+
+			int pixel = Art.frictionNature.getPixel( xOnMap, yOnMap );
+			frictionMean.addValue( (pixel == -256 ? 0 : -1) );
+
+//			Gdx.app.log( "PlayerCar", "xmap=" + xOnMap + ", ymap=" + yOnMap );
+//			Gdx.app.log( "PlayerCar", "mean=" + frictionMean.getMean() + ", pixel=" + pixel + ", xmap=" + xOnMap + ", ymap=" + yOnMap );
+//			Gdx.app.log( "PlayerCar", "id=" + id );
+
+		} else {
+			Gdx.app.log( "PlayerCar", "PlayerCar out of map!" );
+		}
+	}
+
+	private void applyFriction() {
+		// FIXME, move these hard-coded values out of here
+		if( frictionMean.getMean() < -0.1 && carDesc.velocity_wc.len2() > 10 ) {
+			carDesc.velocity_wc.mul( dampFriction );
+//			Gdx.app.log( "PlayerCar", "Friction applied." );
+		}
 	}
 
 	private long start_timer = 0;
