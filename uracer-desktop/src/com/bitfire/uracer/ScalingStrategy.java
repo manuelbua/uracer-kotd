@@ -5,7 +5,7 @@ import com.badlogic.gdx.math.MathUtils;
 import com.badlogic.gdx.math.Vector2;
 
 public class ScalingStrategy {
-	public final Vector2 referenceScreen;
+	public final Vector2 referenceResolution;
 	public float desiredHorizontalFov;
 	public float verticalFov;
 	public float tileMapZoomFactor;
@@ -19,9 +19,9 @@ public class ScalingStrategy {
 	public float hFovScalingFactor;
 	public float to256;
 
-	public ScalingStrategy( Vector2 referenceScreen, float desiredHorizontalFov, int forTileSize, float tileMapZoomAtRef ) {
-		this.referenceScreen = new Vector2();
-		this.referenceScreen.set( referenceScreen );
+	public ScalingStrategy( Vector2 referenceResolution, float desiredHorizontalFov, int forTileSize, float tileMapZoomAtRef ) {
+		this.referenceResolution = new Vector2();
+		this.referenceResolution.set( referenceResolution );
 
 		this.forTileSize = (float)forTileSize;
 		this.tileMapZoomFactorAtRef = tileMapZoomAtRef;
@@ -42,13 +42,13 @@ public class ScalingStrategy {
 
 		// compute tilemap zoom factor (ref:1=this:x)
 		if( thisW > thisH || thisW == thisH ) {
-			tileMapZoomFactor = 1f / ((thisW * tileMapZoomFactorAtRef) / referenceScreen.x);
+			tileMapZoomFactor = 1f / ((thisW * tileMapZoomFactorAtRef) / referenceResolution.x);
 		} else {
-			tileMapZoomFactor = 1f / ((thisH * tileMapZoomFactorAtRef) / referenceScreen.y);
+			tileMapZoomFactor = 1f / ((thisH * tileMapZoomFactorAtRef) / referenceResolution.y);
 		}
 
 		verticalFov = verticalFov( thisW, thisH, desiredHorizontalFov );
-		targetScreenRatio = referenceScreen.x / thisW;
+		targetScreenRatio = referenceResolution.x / thisW;
 		invTileMapZoomFactor = 1f / tileMapZoomFactor;
 
 		meshScaleFactor = (1f / (tileMapZoomFactor * tileMapZoomFactorAtRef)) * targetScreenRatio;

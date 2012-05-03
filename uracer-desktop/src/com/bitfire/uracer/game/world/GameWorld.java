@@ -56,13 +56,15 @@ public final class GameWorld {
 	// statistics
 	public static int TotalMeshes = 0;
 
-	// level data
+	// public level data
 	public String levelName = "no-level-loaded";
 	public TiledMap map = null;
-	private MapUtils mapUtils = null;
 	public Vector2 worldSizeScaledPx = null, worldSizeScaledMt = null, worldSizeTiles = null;
-	private ScalingStrategy scalingStrategy;
+	public ScalingStrategy scalingStrategy;
+
+	// private level data
 	private World box2dWorld;
+	private MapUtils mapUtils = null;
 
 	// player data
 	public Vector2 playerStartPos = new Vector2();

@@ -2,9 +2,9 @@ package com.bitfire.uracer.game.player;
 
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.g2d.tiled.TiledLayer;
-import com.badlogic.gdx.math.MathUtils;
 import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.math.WindowedMean;
+import com.bitfire.uracer.ScalingStrategy;
 import com.bitfire.uracer.configuration.Config;
 import com.bitfire.uracer.game.actors.Car;
 import com.bitfire.uracer.game.actors.CarDescriptor;
@@ -24,6 +24,8 @@ import com.bitfire.uracer.utils.VMath;
 
 public class PlayerCar extends Car {
 
+	private ScalingStrategy strategy;
+
 	// car forces simulator
 	private CarSimulator carSim = null;
 	private CarDescriptor carDesc = null;
@@ -31,10 +33,10 @@ public class PlayerCar extends Car {
 	// input
 	private Input input = null;
 	private CarInput carInput = null;
-	private float lastTouchAngle;
 	private Vector2 touchPos = new Vector2();
 	private Vector2 carPos = new Vector2();
 	private final float invWidth = 1f / Gdx.graphics.getWidth(), invHeight = 1f / Gdx.graphics.getHeight();
+	private float relaxedInputX, relaxedInputY;
 	private WindowedMean frictionMean = new WindowedMean( 10 );
 
 	// damping values
@@ -51,10 +53,15 @@ public class PlayerCar extends Car {
 		carInput = new CarInput();
 		impacts = 0;
 
+		strategy = gameWorld.scalingStrategy;
 		carDesc = new CarDescriptor();
 		carDesc.carModel.set( model );
 		carSim = new CarSimulator( carDesc );
 		renderer.setAlpha( 1 );
+
+		// precompute relaxing factors for user input coordinates
+		relaxedInputX = invWidth * gameWorld.scalingStrategy.referenceResolution.x;
+		relaxedInputY = invHeight * gameWorld.scalingStrategy.referenceResolution.y;
 
 		// states
 		this.carState = new CarState( gameWorld, this );
@@ -115,45 +122,28 @@ public class PlayerCar extends Car {
 			return carInput;
 		}
 
-		boolean workInNormalized = false;
 		carPos.set( GameRenderer.ScreenUtils.screenPosForMt( body.getPosition() ) );
 		touchPos.set( input.getXY() );
 
 		carInput.updated = input.isTouching();
 
 		if( carInput.updated ) {
-			float angle = 0;
 
-			if( workInNormalized ) {
-				carPos.x *= invWidth;
-				carPos.y *= invHeight;
-				touchPos.x *= invWidth;
-				touchPos.y *= invHeight;
-				VMath.clamp( touchPos, 0, 1 );
-				VMath.clamp( carPos, 0, 1 );
+			// normalize and apply relaxing on input position (scaling) in one single mul op, target resolution should
+			// be good
+			// relaxing mean steering will be a little "softer" instead of being "hard", try use invWidth/invHeight instead
+			// to get a glimpse on the differenceS
+			carPos.x *= relaxedInputX;
+			carPos.y *= relaxedInputY;
+			touchPos.x *= relaxedInputX;
+			touchPos.y *= relaxedInputY;
 
-				carInput.throttle = touchPos.dst( carPos ) * 4 * carDesc.carModel.max_force;
-				carInput.steerAngle = transformSteerAngle( (float)Math.atan2( -carPos.x + touchPos.x, -carPos.y + touchPos.y ) );
-			} else {
+			Gdx.app.log( "PlayerCar", carPos.x + "-" + carPos.y );
+			VMath.clamp( touchPos, 0, strategy.referenceResolution.x, 0, strategy.referenceResolution.y );
+			VMath.clamp( carPos, 0, strategy.referenceResolution.x, 0, strategy.referenceResolution.y );
 
-				if( (int)-carPos.y + (int)touchPos.y == 0 ) {
-					// avoid singularity
-					angle = lastTouchAngle;
-				} else {
-					angle = MathUtils.atan2( -carPos.x + touchPos.x, -carPos.y + touchPos.y );
-					lastTouchAngle = angle;
-				}
-
-				carInput.steerAngle = transformSteerAngle( angle );
-
-				carPos.x *= invWidth;
-				carPos.y *= invHeight;
-				touchPos.x *= invWidth;
-				touchPos.y *= invHeight;
-				VMath.clamp( touchPos, 0, 1 );
-				VMath.clamp( carPos, 0, 1 );
-				carInput.throttle = touchPos.dst( carPos ) * 4 * carDesc.carModel.max_force;
-			}
+			carInput.throttle = touchPos.dst( carPos ) * 4 * carDesc.carModel.max_force;
+			carInput.steerAngle = transformSteerAngle( (float)Math.atan2( -carPos.x + touchPos.x, -carPos.y + touchPos.y ) );
 		}
 
 		return carInput;
@@ -232,8 +222,8 @@ public class PlayerCar extends Car {
 			TiledLayer layerTrack = gameWorld.getLayer( TileLayer.Track );
 			int id = layerTrack.tiles[(int)tilePosition.y][(int)tilePosition.x] - 1;
 
-//			int xOnMap = (id %4) * (int)gameWorld.map.tileWidth + (int)offset.x;
-//			int yOnMap = (int)( id/4f ) * (int)gameWorld.map.tileWidth + (int)offset.y;
+			// int xOnMap = (id %4) * (int)gameWorld.map.tileWidth + (int)offset.x;
+			// int yOnMap = (int)( id/4f ) * (int)gameWorld.map.tileWidth + (int)offset.y;
 
 			// bit twiddling, faster version
 			int xOnMap = (id & 3) * (int)gameWorld.map.tileWidth + (int)offset.x;
@@ -242,9 +232,10 @@ public class PlayerCar extends Car {
 			int pixel = Art.frictionNature.getPixel( xOnMap, yOnMap );
 			frictionMean.addValue( (pixel == -256 ? 0 : -1) );
 
-//			Gdx.app.log( "PlayerCar", "xmap=" + xOnMap + ", ymap=" + yOnMap );
-//			Gdx.app.log( "PlayerCar", "mean=" + frictionMean.getMean() + ", pixel=" + pixel + ", xmap=" + xOnMap + ", ymap=" + yOnMap );
-//			Gdx.app.log( "PlayerCar", "id=" + id );
+			// Gdx.app.log( "PlayerCar", "xmap=" + xOnMap + ", ymap=" + yOnMap );
+			// Gdx.app.log( "PlayerCar", "mean=" + frictionMean.getMean() + ", pixel=" + pixel + ", xmap=" + xOnMap +
+			// ", ymap=" + yOnMap );
+			// Gdx.app.log( "PlayerCar", "id=" + id );
 
 		} else {
 			Gdx.app.log( "PlayerCar", "PlayerCar out of map!" );
@@ -255,7 +246,7 @@ public class PlayerCar extends Car {
 		// FIXME, move these hard-coded values out of here
 		if( frictionMean.getMean() < -0.1 && carDesc.velocity_wc.len2() > 10 ) {
 			carDesc.velocity_wc.mul( dampFriction );
-//			Gdx.app.log( "PlayerCar", "Friction applied." );
+			// Gdx.app.log( "PlayerCar", "Friction applied." );
 		}
 	}
 
