@@ -68,7 +68,7 @@ public final class DebugStatistics {
 		// precompute constants
 		ratio_rtime = ((float)PanelHeight / 2f) * Config.Physics.PhysicsTimestepHz;
 		ratio_ptime = ((float)PanelHeight / 2f) * Config.Physics.PhysicsTimestepHz;
-		ratio_fps = ((float)PanelHeight / 2f) * Config.Physics.PhysicsDt;
+		ratio_fps = ((float)PanelHeight / 2f) * (1f/60f);
 
 		reset();
 	}
