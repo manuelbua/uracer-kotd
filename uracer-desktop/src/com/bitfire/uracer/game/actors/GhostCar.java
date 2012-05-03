@@ -64,8 +64,7 @@ public final class GhostCar extends Car {
 	}
 
 	private void restart( Replay replay ) {
-		pos( replay.carPosition );
-		orient( replay.carOrientation );
+		setWorldPosMt( replay.carWorldPositionMt, replay.carWorldOrientRads );
 		resetTraveledDistance();
 		indexPlay = 0;
 	}

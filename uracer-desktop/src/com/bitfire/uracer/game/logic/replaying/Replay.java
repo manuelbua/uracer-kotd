@@ -34,8 +34,8 @@ public class Replay {
 	// car data
 	public Aspect carAspect;
 	public CarModel.Type carModelType;
-	public Vector2 carPosition = new Vector2();
-	public float carOrientation;
+	public Vector2 carWorldPositionMt = new Vector2();
+	public float carWorldOrientRads;
 
 	// replay data
 	public final long id;
@@ -71,8 +71,8 @@ public class Replay {
 
 	public void begin( String trackName, GameDifficulty difficulty, Car car ) {
 		reset();
-		carPosition.set( car.pos() );
-		carOrientation = car.orient();
+		carWorldPositionMt.set( car.getWorldPosMt() );
+		carWorldOrientRads = car.getWorldOrientRads();
 		carAspect = car.getAspect();
 		carModelType = car.getCarModel().type;
 		this.trackName = trackName;
@@ -135,9 +135,9 @@ public class Replay {
 				// car data
 				r.carAspect = Aspect.valueOf( is.readUTF() );
 				r.carModelType = CarModel.Type.valueOf( is.readUTF() );
-				r.carPosition.x = is.readFloat();
-				r.carPosition.y = is.readFloat();
-				r.carOrientation = is.readFloat();
+				r.carWorldPositionMt.x = is.readFloat();
+				r.carWorldPositionMt.y = is.readFloat();
+				r.carWorldOrientRads = is.readFloat();
 
 				for( int i = 0; i < r.eventsCount; i++ ) {
 					r.forces[i].velocity_x = is.readFloat();
@@ -198,9 +198,9 @@ public class Replay {
 						// car data
 						os.writeUTF( carAspect.toString() );
 						os.writeUTF( carModelType.toString() );
-						os.writeFloat( carPosition.x );
-						os.writeFloat( carPosition.y );
-						os.writeFloat( carOrientation );
+						os.writeFloat( carWorldPositionMt.x );
+						os.writeFloat( carWorldPositionMt.y );
+						os.writeFloat( carWorldOrientRads );
 
 						// write the effective number of captured CarForces events
 						for( int i = 0; i < eventsCount; i++ ) {

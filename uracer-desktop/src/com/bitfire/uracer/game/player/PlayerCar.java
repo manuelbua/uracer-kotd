@@ -20,7 +20,6 @@ import com.bitfire.uracer.game.world.models.WorldDefs.TileLayer;
 import com.bitfire.uracer.resources.Art;
 import com.bitfire.uracer.utils.AMath;
 import com.bitfire.uracer.utils.Convert;
-import com.bitfire.uracer.utils.VMath;
 
 public class PlayerCar extends Car {
 
@@ -138,9 +137,9 @@ public class PlayerCar extends Car {
 			touchPos.x *= relaxedInputX;
 			touchPos.y *= relaxedInputY;
 
-			Gdx.app.log( "PlayerCar", carPos.x + "-" + carPos.y );
-			VMath.clamp( touchPos, 0, strategy.referenceResolution.x, 0, strategy.referenceResolution.y );
-			VMath.clamp( carPos, 0, strategy.referenceResolution.x, 0, strategy.referenceResolution.y );
+//			Gdx.app.log( "PlayerCar", carPos.x + "-" + carPos.y );
+//			VMath.clamp( touchPos, 0, strategy.referenceResolution.x, 0, strategy.referenceResolution.y );
+//			VMath.clamp( carPos, 0, strategy.referenceResolution.x, 0, strategy.referenceResolution.y );
 
 			carInput.throttle = touchPos.dst( carPos ) * 4 * carDesc.carModel.max_force;
 			carInput.steerAngle = transformSteerAngle( (float)Math.atan2( -carPos.x + touchPos.x, -carPos.y + touchPos.y ) );
@@ -244,7 +243,7 @@ public class PlayerCar extends Car {
 
 	private void applyFriction() {
 		// FIXME, move these hard-coded values out of here
-		if( frictionMean.getMean() < -0.1 && carDesc.velocity_wc.len2() > 10 ) {
+		if( frictionMean.getMean() < -0.3 && carDesc.velocity_wc.len2() > 10 ) {
 			carDesc.velocity_wc.mul( dampFriction );
 			// Gdx.app.log( "PlayerCar", "Friction applied." );
 		}
