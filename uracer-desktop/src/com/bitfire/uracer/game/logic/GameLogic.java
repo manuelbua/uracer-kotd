@@ -9,6 +9,7 @@ import aurelienribon.tweenengine.equations.Quad;
 
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Input.Keys;
+import com.badlogic.gdx.utils.TimeUtils;
 import com.bitfire.uracer.ScalingStrategy;
 import com.bitfire.uracer.URacer;
 import com.bitfire.uracer.configuration.Config;
@@ -70,6 +71,7 @@ public class GameLogic implements CarEvent.Listener, CarStateEvent.Listener, Pla
 	private PlayerTasks playerTasks = null;
 
 	// handles timeModulationBusy onComplete event
+	private long timeModStart = 0;
 	private boolean timeModulation = false, timeModulationBusy = false;
 	private BoxedFloat timeMultiplier = new BoxedFloat();
 	public static final float TimeMultiplierMin = 0.3f;
@@ -79,6 +81,7 @@ public class GameLogic implements CarEvent.Listener, CarStateEvent.Listener, Pla
 			switch( type ) {
 			case COMPLETE:
 				timeModulationBusy = false;
+				Gdx.app.log( "GameLogic", "Time modulation ended (took " + (TimeUtils.nanoTime() - timeModStart) + ")" );
 			}
 		}
 	};
@@ -235,6 +238,8 @@ public class GameLogic implements CarEvent.Listener, CarStateEvent.Listener, Pla
 			TweenEquation eqOut = Quad.INOUT;
 
 			timeModulation = !timeModulation;
+			timeModStart = TimeUtils.nanoTime();
+
 			if( timeModulation ) {
 				timeModulationBusy = true;
 				WcTweener.start( Timeline.createSequence().push( Tween.to( timeMultiplier, BoxedFloatAccessor.VALUE, 1000 ).target( TimeMultiplierMin ).ease( eqIn ) )

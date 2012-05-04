@@ -26,6 +26,6 @@ public final class WcTweener {
 
 	public static void update() {
 		// TODO, check this, the documentation doesn't state it, looks like milliseconds
-		manager.update( 1000 * URacer.getLastDeltaSecs() );
+		manager.update( URacer.getLastDeltaMs() );
 	}
 }

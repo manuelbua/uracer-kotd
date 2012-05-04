@@ -24,15 +24,19 @@ public class URacer implements ApplicationListener {
 	private long timeStepHz = 0;
 	private long PhysicsDtNs = 0;
 	private long lastTimeNs = 0;
+	private static long lastDeltaTimeNs = 0;
 	private static float lastDeltaTimeSec = 0;
-	private final float oneOnOneBillion = 1.0f / 1000000000.0f;
+	private static float lastDeltaTimeMs = 0;
+
+	private static final float oneOnOneBillion = 1.0f / 1000000000.0f;
 	public static float timeMultiplier = 0f;
 
 	// stats
 	private static float graphicsTime = 0;
 	private static float physicsTime = 0;
 	private static float aliasingTime = 0;
-	private static final float MaxDeltaTime = 0.25f;
+	private static final float MaxDeltaTimeSec = 0.25f;
+	private static final long MaxDeltaTimeNs = (long)(MaxDeltaTimeSec * 1000000000f);
 	private static long frameCount = 0;
 	private static long lastTicksCount = 0;
 
@@ -114,19 +118,24 @@ public class URacer implements ApplicationListener {
 		// this is not good for Android since the value often hop around
 		if( useRealFrametime ) {
 			long currTimeNs = TimeUtils.nanoTime();
-			lastDeltaTimeSec = (currTimeNs - lastTimeNs) * oneOnOneBillion;
+			lastDeltaTimeNs = (currTimeNs - lastTimeNs);
 			lastTimeNs = currTimeNs;
 		} else {
-			lastDeltaTimeSec = Gdx.graphics.getDeltaTime();
+			lastDeltaTimeNs = (long)(Gdx.graphics.getDeltaTime() * 1000000000);
 		}
 
 		// avoid spiral of death
-		lastDeltaTimeSec = AMath.clamp( lastDeltaTimeSec, 0, MaxDeltaTime );
+		lastDeltaTimeNs = AMath.clamp( lastDeltaTimeNs, 0, MaxDeltaTimeNs );
+
+		// compute values in different units so that accessors will not
+		// recompute them again and again
+		lastDeltaTimeMs = (float)(lastDeltaTimeNs / 1000000);
+		lastDeltaTimeSec = (float)lastDeltaTimeNs * oneOnOneBillion;
 
 		lastTicksCount = 0;
 		long startTime = TimeUtils.nanoTime();
 		{
-			timeAccuNs += (lastDeltaTimeSec * timeMultiplier) * 1000000000;
+			timeAccuNs += lastDeltaTimeNs * timeMultiplier;
 			while( timeAccuNs > PhysicsDtNs ) {
 				screen.tick();
 				timeAccuNs -= PhysicsDtNs;
@@ -160,8 +169,6 @@ public class URacer implements ApplicationListener {
 
 		graphicsTime = (TimeUtils.nanoTime() - startTime) * oneOnOneBillion;
 		frameCount++;
-		// mean.addValue( graphicsTime );
-		// if((frameCount&0x3f)==0) System.out.println("gfx-mean="+mean.getMean());
 
 		screen.debugUpdate();
 	}
@@ -223,6 +230,10 @@ public class URacer implements ApplicationListener {
 
 	public static float getLastDeltaSecs() {
 		return lastDeltaTimeSec;
+	}
+
+	public static float getLastDeltaMs() {
+		return lastDeltaTimeMs;
 	}
 
 	public static float getTemporalAliasing() {
