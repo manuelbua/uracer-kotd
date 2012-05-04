@@ -186,6 +186,14 @@ public class URacer implements ApplicationListener {
 	@Override
 	public void resume() {
 		running = true;
+		lastTimeNs = TimeUtils.nanoTime();
+		lastDeltaTimeNs = 0;
+		lastDeltaTimeMs = 0;
+		lastDeltaTimeSec = 0;
+
+		physicsTime = 0;
+		graphicsTime = 0;
+
 		screen.resume();
 	}
 
