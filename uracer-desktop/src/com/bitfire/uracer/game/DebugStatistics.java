@@ -7,6 +7,7 @@ import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.Texture.TextureFilter;
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
 import com.badlogic.gdx.math.WindowedMean;
+import com.badlogic.gdx.utils.TimeUtils;
 import com.bitfire.uracer.URacer;
 import com.bitfire.uracer.configuration.Config;
 
@@ -87,7 +88,7 @@ public final class DebugStatistics {
 		}
 
 		plot();
-		startTime = System.nanoTime();
+		startTime = TimeUtils.nanoTime();
 	}
 
 	public TextureRegion getRegion() {
@@ -150,7 +151,7 @@ public final class DebugStatistics {
 	}
 
 	private boolean collect() {
-		long time = System.nanoTime();
+		long time = TimeUtils.nanoTime();
 
 		if( time - startTime > intervalNs ) {
 			// shift values

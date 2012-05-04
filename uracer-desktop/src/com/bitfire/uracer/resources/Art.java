@@ -173,7 +173,7 @@ public final class Art {
 	}
 
 	private static Texture newTexture( String name, boolean mipMap ) {
-		Texture t = new Texture( Gdx.files.internal( name ), Format.RGBA4444, mipMap );
+		Texture t = new Texture( Gdx.files.internal( name ), Format.RGBA8888, mipMap );
 
 		if( mipMap ) {
 			t.setFilter( TextureFilter.MipMapLinearNearest, TextureFilter.Nearest );

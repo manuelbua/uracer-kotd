@@ -4,6 +4,7 @@ import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.g2d.tiled.TiledLayer;
 import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.math.WindowedMean;
+import com.badlogic.gdx.utils.TimeUtils;
 import com.bitfire.uracer.configuration.Config;
 import com.bitfire.uracer.game.actors.Car;
 import com.bitfire.uracer.game.actors.CarDescriptor;
@@ -262,10 +263,10 @@ public class PlayerCar extends Car {
 	}
 
 	private void handleDecrease( CarInput input ) {
-		if( start_decrease || (System.nanoTime() - start_timer < 250000000L) ) {
+		if( start_decrease || (TimeUtils.nanoTime() - start_timer < 250000000L) ) {
 			if( start_decrease ) {
 				start_decrease = false;
-				start_timer = System.nanoTime();
+				start_timer = TimeUtils.nanoTime();
 			}
 
 			input.throttle *= dampThrottleAF;

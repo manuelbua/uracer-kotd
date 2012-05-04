@@ -1,5 +1,6 @@
 package com.bitfire.uracer.game;
 
+import com.badlogic.gdx.utils.TimeUtils;
 import com.bitfire.uracer.configuration.Config;
 import com.bitfire.uracer.task.Task;
 import com.bitfire.uracer.task.TaskManagerEvent.Order;
@@ -34,7 +35,7 @@ public final class Time extends Task {
 	/** Stops tracking */
 	public void stop() {
 		stopped = true;
-		nsStopTime = System.nanoTime();
+		nsStopTime = TimeUtils.nanoTime();
 	}
 
 	/** Resumes/continues tracking, without resetting the accumulated state
@@ -48,7 +49,7 @@ public final class Time extends Task {
 		stopped = false;
 
 		// abs
-		nsStartTime = System.nanoTime();
+		nsStartTime = TimeUtils.nanoTime();
 		nsStopTime = 0;
 
 		// ticks
@@ -67,7 +68,7 @@ public final class Time extends Task {
 
 	/** Returns the elapsed time expressed as the specified measuring unit */
 	public float elapsed( Reference timeReference ) {
-		long now = (stopped ? nsStopTime : System.nanoTime());
+		long now = (stopped ? nsStopTime : TimeUtils.nanoTime());
 
 		switch( timeReference ) {
 		case TickSeconds:		// returns seconds
