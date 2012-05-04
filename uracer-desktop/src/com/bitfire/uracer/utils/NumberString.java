@@ -6,6 +6,7 @@ import java.text.NumberFormat;
 public final class NumberString {
 	private static NumberFormat formatter = null;
 	private static NumberFormat formatterLong = null;
+	private static NumberFormat formatterVeryLong = null;
 
 	private NumberString() {
 	}
@@ -29,12 +30,11 @@ public final class NumberString {
 	}
 
 	public static String formatVeryLong( float value ) {
-		if( NumberString.formatterLong == null ) {
-			NumberString.formatterLong = new DecimalFormat( "0.0000000000" );
+		if( NumberString.formatterVeryLong == null ) {
+			NumberString.formatterVeryLong = new DecimalFormat( "0.0000000000" );
 		}
 
-		 return NumberString.formatterLong.format( value );
-//		return NumberString.formatterLong.format( value );
+		 return NumberString.formatterVeryLong.format( value );
 	}
 
 }
