@@ -36,7 +36,7 @@ public abstract class SubframeInterpolableEntity extends Entity implements Physi
 	}
 
 	@Override
-	public void physicsEvent( boolean stepped, float temporalAliasing, Type type ) {
+	public void physicsEvent( float temporalAliasing, Type type ) {
 		switch( type ) {
 		case onBeforeTimestep:
 			onBeforePhysicsSubstep();
@@ -45,7 +45,7 @@ public abstract class SubframeInterpolableEntity extends Entity implements Physi
 			onAfterPhysicsSubstep();
 			break;
 		case onTemporalAliasing:
-			onTemporalAliasing( stepped, temporalAliasing );
+			onTemporalAliasing( temporalAliasing );
 			break;
 		}
 	}
@@ -59,7 +59,7 @@ public abstract class SubframeInterpolableEntity extends Entity implements Physi
 	}
 
 	/** Issued after a tick/physicsStep but before render :P */
-	public void onTemporalAliasing( boolean stepped, float aliasingFactor ) {
+	public void onTemporalAliasing( float aliasingFactor ) {
 		if( isSubframeInterpolated() ) {
 			stateRender.set( EntityRenderState.interpolate( statePrevious, stateCurrent, aliasingFactor ) );
 		} else {

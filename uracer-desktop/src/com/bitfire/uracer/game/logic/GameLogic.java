@@ -260,7 +260,7 @@ public class GameLogic implements CarEvent.Listener, CarStateEvent.Listener, Pla
 
 	public void onBeforeRender( GameRenderer gameRenderer ) {
 		// trigger the event and let's subscribers interpolate and update their state()
-		gameTasksManager.physicsStep.triggerOnTemporalAliasing( URacer.hasStepped(), URacer.getTemporalAliasing() );
+		gameTasksManager.physicsStep.triggerOnTemporalAliasing( URacer.getTemporalAliasing() );
 
 		// update player's headlights and move the world camera to follows it, if there is a player
 		GameWorldRenderer worldRenderer = gameRenderer.getWorldRenderer();

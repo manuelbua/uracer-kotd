@@ -19,9 +19,8 @@ public class URacer implements ApplicationListener {
 	private static ScalingStrategy scalingStrategy;
 	private float temporalAliasing = 0;
 	private float timeAccumSecs = 0;
-	private float oneOnOneBillion = 0;
+	private final float oneOnOneBillion = 1.0f / 1000000000.0f;
 	public static float timeMultiplier = 0f;
-	private static boolean hasStepped = false;
 
 	// stats
 	private static float graphicsTime = 0;
@@ -77,7 +76,6 @@ public class URacer implements ApplicationListener {
 		Gdx.graphics.setVSync( true );
 
 		running = true;
-		oneOnOneBillion = 1.0f / 1000000000.0f;
 		temporalAliasing = 0;
 		timeMultiplier = Config.Physics.PhysicsTimeMultiplier;
 
@@ -116,12 +114,10 @@ public class URacer implements ApplicationListener {
 		lastTicksCount = 0;
 		long startTime = System.nanoTime();
 		{
-			hasStepped = false;
 			timeAccumSecs += lastDeltaTimeSec * timeMultiplier;
 			while( timeAccumSecs > Config.Physics.PhysicsDt ) {
 				screen.tick();
 				timeAccumSecs -= Config.Physics.PhysicsDt;
-				hasStepped = true;
 				lastTicksCount++;
 				if( screen.quit() ) {
 					return;
@@ -135,7 +131,7 @@ public class URacer implements ApplicationListener {
 		physicsTime = (System.nanoTime() - startTime) * oneOnOneBillion;
 
 		// compute the temporal aliasing factor, entities will render
-		// themselves accordingly to this to avoid flickering and
+		// themselves accordingly to this to avoid flickering and jittering,
 		// permitting slow-motion effects without artifacts.
 		// (this imply accepting a one-frame-behind behavior)
 		temporalAliasing = timeAccumSecs * Config.Physics.PhysicsTimestepHz;
@@ -204,10 +200,6 @@ public class URacer implements ApplicationListener {
 
 	public static boolean isRunning() {
 		return running;
-	}
-
-	public static boolean hasStepped() {
-		return hasStepped;
 	}
 
 	public static float getRenderTime() {
