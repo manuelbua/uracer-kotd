@@ -34,8 +34,8 @@ public class PlayerCar extends Car {
 	private CarInput carInput = null;
 	private Vector2 touchPos = new Vector2();
 	private Vector2 carPos = new Vector2();
-	private final float invWidth = 1f / Gdx.graphics.getWidth(), invHeight = 1f / Gdx.graphics.getHeight();
-	private float relaxedInputX, relaxedInputY;
+//	private final float invWidth = 1f / Gdx.graphics.getWidth(), invHeight = 1f / Gdx.graphics.getHeight();
+//	private float scaleInputX, scaleInputY;
 	private WindowedMean frictionMean = new WindowedMean( 10 );
 
 	// damping values
@@ -59,8 +59,8 @@ public class PlayerCar extends Car {
 		renderer.setAlpha( 1 );
 
 		// precompute relaxing factors for user input coordinates
-		relaxedInputX = invWidth * gameWorld.scalingStrategy.referenceResolution.x;
-		relaxedInputY = invHeight * gameWorld.scalingStrategy.referenceResolution.y;
+//		scaleInputX = invWidth * gameWorld.scalingStrategy.referenceResolution.x;
+//		scaleInputY = invHeight * gameWorld.scalingStrategy.referenceResolution.y;
 
 		// states
 		this.carState = new CarState( gameWorld, this );
@@ -132,10 +132,10 @@ public class PlayerCar extends Car {
 			// be good
 			// relaxing mean steering will be a little "softer" instead of being "hard", try use invWidth/invHeight instead
 			// to get a glimpse on the differenceS
-			carPos.x *= relaxedInputX;
-			carPos.y *= relaxedInputY;
-			touchPos.x *= relaxedInputX;
-			touchPos.y *= relaxedInputY;
+//			carPos.x *= scaleInputX;
+//			carPos.y *= scaleInputY;
+//			touchPos.x *= scaleInputX;
+//			touchPos.y *= scaleInputY;
 
 //			Gdx.app.log( "PlayerCar", carPos.x + "-" + carPos.y );
 //			VMath.clamp( touchPos, 0, strategy.referenceResolution.x, 0, strategy.referenceResolution.y );

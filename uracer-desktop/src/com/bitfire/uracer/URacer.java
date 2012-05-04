@@ -24,6 +24,7 @@ public class URacer implements ApplicationListener {
 	private long timeStepHz = 0;
 	private long PhysicsDtNs = 0;
 	private long lastTimeNs = 0;
+	private static float lastDeltaTimeSec = 0;
 	private final float oneOnOneBillion = 1.0f / 1000000000.0f;
 	public static float timeMultiplier = 0f;
 
@@ -88,15 +89,15 @@ public class URacer implements ApplicationListener {
 		PhysicsDtNs = (long)((long)1000000000 / (long)Config.Physics.PhysicsTimestepHz);
 		timeStepHz = (long)Config.Physics.PhysicsTimestepHz;
 
-		// ensures the first iteration ever is going to at least perform one single tick
-		lastDeltaTimeSec = MaxDeltaTime;
-		timeAccuNs = PhysicsDtNs;
-
 		setScreen( new GameScreen() );
-	}
 
-	// private long lastTimeNs = 0;
-	private static float lastDeltaTimeSec;
+		// Initialize the timers after creating the game screen, so that there will be no huge discrepancies
+		// between the first lastDeltaTimeSec value and the followers.
+		// Note those initial values are carefully choosen to ensure that the first iteration ever is going to
+		// at least perform one single tick
+		lastTimeNs = TimeUtils.nanoTime();
+		timeAccuNs = PhysicsDtNs;
+	}
 
 	// private WindowedMean mean = new WindowedMean( 120 );
 	// NOTE: this render() method will get called by JoglGraphics when screen.tick will ask to finish!!
@@ -112,9 +113,9 @@ public class URacer implements ApplicationListener {
 
 		// this is not good for Android since the value often hop around
 		if( useRealFrametime ) {
-			long currNanos = TimeUtils.nanoTime();
-			lastDeltaTimeSec = (currNanos - lastTimeNs) * oneOnOneBillion;
-			lastTimeNs = currNanos;
+			long currTimeNs = TimeUtils.nanoTime();
+			lastDeltaTimeSec = (currTimeNs - lastTimeNs) * oneOnOneBillion;
+			lastTimeNs = currTimeNs;
 		} else {
 			lastDeltaTimeSec = Gdx.graphics.getDeltaTime();
 		}
