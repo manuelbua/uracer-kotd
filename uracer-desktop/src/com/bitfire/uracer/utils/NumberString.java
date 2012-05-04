@@ -28,4 +28,13 @@ public final class NumberString {
 //		return NumberString.formatterLong.format( value );
 	}
 
+	public static String formatVeryLong( float value ) {
+		if( NumberString.formatterLong == null ) {
+			NumberString.formatterLong = new DecimalFormat( "0.0000000000" );
+		}
+
+		 return NumberString.formatterLong.format( value );
+//		return NumberString.formatterLong.format( value );
+	}
+
 }
