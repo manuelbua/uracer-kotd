@@ -32,7 +32,6 @@ import com.badlogic.gdx.physics.box2d.World;
 import com.bitfire.uracer.ScalingStrategy;
 import com.bitfire.uracer.configuration.Config;
 import com.bitfire.uracer.game.collisions.CollisionFilters;
-import com.bitfire.uracer.game.collisions.GameWorldContactListener;
 import com.bitfire.uracer.game.world.models.MapUtils;
 import com.bitfire.uracer.game.world.models.ModelFactory;
 import com.bitfire.uracer.game.world.models.OrthographicAlignedStillModel;

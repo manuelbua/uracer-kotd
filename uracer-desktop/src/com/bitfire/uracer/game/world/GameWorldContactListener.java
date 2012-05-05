@@ -1,9 +1,10 @@
-package com.bitfire.uracer.game.collisions;
+package com.bitfire.uracer.game.world;
 
 import com.badlogic.gdx.physics.box2d.Contact;
 import com.badlogic.gdx.physics.box2d.ContactImpulse;
 import com.badlogic.gdx.physics.box2d.ContactListener;
 import com.badlogic.gdx.physics.box2d.Manifold;
+import com.bitfire.uracer.game.collisions.CarImpactManager;
 
 public class GameWorldContactListener implements ContactListener {
 	private CarImpactManager impactManager = new CarImpactManager();
