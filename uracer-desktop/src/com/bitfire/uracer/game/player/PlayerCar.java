@@ -180,10 +180,16 @@ public class PlayerCar extends Car {
 		forces.velocity_y = carDesc.velocity_wc.y;
 		forces.angularVelocity = carDesc.angularvelocity;
 
+//		Gdx.app.log( "", "cf=" +
+//				NumberString.formatVeryLong(forces.velocity_x) + ", " +
+//				NumberString.formatVeryLong(forces.velocity_y) + ", " +
+//				NumberString.formatVeryLong(forces.angularVelocity)
+//		);
+
 		// update the car descriptor (car simulator data) with newly computed forces
 		// (no interface on carsim for performance reasons!)
-		carDesc.velocity_wc.set( forces.velocity_x, forces.velocity_y );
-		carDesc.angularvelocity = forces.angularVelocity;
+//		carDesc.velocity_wc.set( forces.velocity_x, forces.velocity_y );
+//		carDesc.angularvelocity = forces.angularVelocity;
 	}
 
 	@Override

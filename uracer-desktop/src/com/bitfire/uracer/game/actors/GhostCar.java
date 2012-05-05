@@ -64,6 +64,7 @@ public final class GhostCar extends Car {
 	}
 
 	private void restart( Replay replay ) {
+		resetPhysics();
 		setWorldPosMt( replay.carWorldPositionMt, replay.carWorldOrientRads );
 		resetTraveledDistance();
 		indexPlay = 0;
@@ -93,6 +94,12 @@ public final class GhostCar extends Car {
 			// to process a non-existent event when (indexPlay == replay.getEventsCount())
 			forces.set( replay.forces[indexPlay] );
 
+//			Gdx.app.log( "", "cf=" +
+//					NumberString.formatVeryLong(forces.velocity_x) + ", " +
+//					NumberString.formatVeryLong(forces.velocity_y) + ", " +
+//					NumberString.formatVeryLong(forces.angularVelocity)
+//			);
+
 			// also change opacity, fade in/out based on
 			// events played, events remaining
 			if( indexPlay <= FadeEvents ) {
@@ -102,6 +109,9 @@ public final class GhostCar extends Car {
 				renderer.setAlpha( val * 0.5f );
 			}
 		}
+//		else {
+//			Gdx.app.log( "GhostCar", "No replay, injecting null forces" );
+//		}
 	}
 
 	@Override
