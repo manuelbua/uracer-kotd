@@ -241,9 +241,11 @@ public final class CarSimulator {
 
 		// integrate angular acceleration to get angular velocity
 		carDesc.angularvelocity += dt * angular_acceleration;
+		carDesc.angularvelocity = AMath.fixup( carDesc.angularvelocity );
 
 		// integrate angular velocity to get angular orientation
-		carDesc.angularOrientation = dt * carDesc.angularvelocity;
+//		carDesc.angularOrientation = dt * carDesc.angularvelocity;
+//		AMath.fixup( carDesc.angularOrientation );
 
 		// updateHeading( bodyAngle );
 	}

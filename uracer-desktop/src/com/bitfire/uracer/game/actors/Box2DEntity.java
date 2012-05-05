@@ -32,11 +32,11 @@ public abstract class Box2DEntity extends SubframeInterpolableEntity {
 
 	public Box2DEntity( World world, GameRendererEvent.Order drawingOrder ) {
 		super();
+		this.box2dWorld = world;
 		this.drawingOrder = drawingOrder;
 		GameEvents.gameRenderer.addListener( gameRendererEvent, GameRendererEvent.Type.BatchBeforeMeshes, drawingOrder );
 		// GameEvents.gameRenderer.addListener( gameRendererEvent, GameRendererEvent.Type.BatchDebug,
 		// GameRendererEvent.Order.DEFAULT );
-		this.box2dWorld = world;
 	}
 
 	// public Box2DEntity(GameRendererEvent.Order orderForBatchBeforeMeshes, GameRendererEvent.Order orderForDebug) {

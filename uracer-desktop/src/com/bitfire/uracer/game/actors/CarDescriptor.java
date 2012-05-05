@@ -27,14 +27,14 @@ public final class CarDescriptor {
 	public float brake; // amount of braking (input)
 
 	// internally computed
-	public float angularOrientation;
+//	public float angularOrientation;
 
 	public CarDescriptor() {
 		angularvelocity = 0;
 		steerangle = 0;
 		throttle = 0;
 		brake = 0;
-		angularOrientation = 0;
+//		angularOrientation = 0;
 		position_wc.set( 0, 0 );
 		velocity_wc.set( 0, 0 );
 	}
@@ -54,7 +54,7 @@ public final class CarDescriptor {
 		this.steerangle = desc.steerangle;
 		this.throttle = desc.throttle;
 		this.brake = desc.brake;
-		this.angularOrientation = desc.angularOrientation;
+//		this.angularOrientation = desc.angularOrientation;
 		this.position_wc.set( desc.position_wc );
 		this.velocity_wc.set( desc.velocity_wc );
 	}
