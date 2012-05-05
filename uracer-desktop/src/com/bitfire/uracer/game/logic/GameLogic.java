@@ -206,6 +206,7 @@ public class GameLogic implements CarEvent.Listener, CarStateEvent.Listener, Pla
 
 		// apply handicaps
 		player.setDampingLinearVelocityAF( AMath.damping( settings.dampingLinearVelocityAfterFeedback ) );
+		player.setDampingAngularVelocityAF( AMath.damping( settings.dampingAngularVelocityAfterFeedback ) );
 		player.setDampingThrottleAF( AMath.damping( settings.dampingThrottleAfterFeedback ) );
 		player.setDampingFriction( AMath.damping( settings.dampingFriction ) );
 	}

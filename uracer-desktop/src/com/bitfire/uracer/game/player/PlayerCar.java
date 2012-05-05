@@ -40,6 +40,7 @@ public class PlayerCar extends Car {
 
 	// damping values
 	private float dampLinearVelocityAF = 0;
+	private float dampAngularVelocityAF = 0;
 	private float dampThrottleAF = 0;
 	private float dampFriction = 0;
 
@@ -101,6 +102,12 @@ public class PlayerCar extends Car {
 	 * to the car's linear velocity. */
 	public void setDampingLinearVelocityAF( float damping ) {
 		dampLinearVelocityAF = damping;
+	}
+
+	/** After processing collision's feedback this damping will be applied
+	 * to the car's angular velocity. */
+	public void setDampingAngularVelocityAF( float damping ) {
+		dampAngularVelocityAF = damping;
 	}
 
 	/** After processing collision's feedback this damping will be applied
@@ -263,7 +270,7 @@ public class PlayerCar extends Car {
 		while( impacts > 0 ) {
 			impacts--;
 			carDesc.velocity_wc.set( body.getLinearVelocity() ).mul( dampLinearVelocityAF );
-			carDesc.angularvelocity = -body.getAngularVelocity() * 0.85f;
+			carDesc.angularvelocity = -body.getAngularVelocity() * dampAngularVelocityAF;
 			start_decrease = true;
 		}
 	}
