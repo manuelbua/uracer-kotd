@@ -158,7 +158,7 @@ public class Replay {
 				Gdx.app.log( "Replay", "Couldn't load local replay, reason: " + e.getMessage() );
 			}
 		} else {
-			Gdx.app.log( "Replay", "There are no replays available for this track (" + trackname + ")" );
+			Gdx.app.log( "Replay", "There is no replay available for this track (" + trackname + ")" );
 		}
 
 		return null;

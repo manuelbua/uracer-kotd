@@ -4,7 +4,6 @@ import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.g2d.tiled.TiledLayer;
 import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.math.WindowedMean;
-import com.badlogic.gdx.utils.TimeUtils;
 import com.bitfire.uracer.configuration.Config;
 import com.bitfire.uracer.game.actors.Car;
 import com.bitfire.uracer.game.actors.CarDescriptor;
@@ -23,7 +22,7 @@ import com.bitfire.uracer.utils.Convert;
 
 public class PlayerCar extends Car {
 
-//	private ScalingStrategy strategy;
+	// private ScalingStrategy strategy;
 
 	// car forces simulator
 	private CarSimulator carSim = null;
@@ -34,8 +33,8 @@ public class PlayerCar extends Car {
 	private CarInput carInput = null;
 	private Vector2 touchPos = new Vector2();
 	private Vector2 carPos = new Vector2();
-//	private final float invWidth = 1f / Gdx.graphics.getWidth(), invHeight = 1f / Gdx.graphics.getHeight();
-//	private float scaleInputX, scaleInputY;
+	// private final float invWidth = 1f / Gdx.graphics.getWidth(), invHeight = 1f / Gdx.graphics.getHeight();
+	// private float scaleInputX, scaleInputY;
 	private WindowedMean frictionMean = new WindowedMean( 10 );
 
 	// damping values
@@ -53,15 +52,15 @@ public class PlayerCar extends Car {
 		carInput = new CarInput();
 		impacts = 0;
 
-//		strategy = gameWorld.scalingStrategy;
+		// strategy = gameWorld.scalingStrategy;
 		carDesc = new CarDescriptor();
 		carDesc.carModel.set( model );
 		carSim = new CarSimulator( carDesc );
 		renderer.setAlpha( 1 );
 
 		// precompute relaxing factors for user input coordinates
-//		scaleInputX = invWidth * gameWorld.scalingStrategy.referenceResolution.x;
-//		scaleInputY = invHeight * gameWorld.scalingStrategy.referenceResolution.y;
+		// scaleInputX = invWidth * gameWorld.scalingStrategy.referenceResolution.x;
+		// scaleInputY = invHeight * gameWorld.scalingStrategy.referenceResolution.y;
 
 		// states
 		this.carState = new CarState( gameWorld, this );
@@ -137,16 +136,17 @@ public class PlayerCar extends Car {
 
 			// normalize and apply relaxing on input position (scaling) in one single mul op, target resolution should
 			// be good
-			// relaxing mean steering will be a little "softer" instead of being "hard", try use invWidth/invHeight instead
+			// relaxing mean steering will be a little "softer" instead of being "hard", try use invWidth/invHeight
+			// instead
 			// to get a glimpse on the differenceS
-//			carPos.x *= scaleInputX;
-//			carPos.y *= scaleInputY;
-//			touchPos.x *= scaleInputX;
-//			touchPos.y *= scaleInputY;
+			// carPos.x *= scaleInputX;
+			// carPos.y *= scaleInputY;
+			// touchPos.x *= scaleInputX;
+			// touchPos.y *= scaleInputY;
 
-//			Gdx.app.log( "PlayerCar", carPos.x + "-" + carPos.y );
-//			VMath.clamp( touchPos, 0, strategy.referenceResolution.x, 0, strategy.referenceResolution.y );
-//			VMath.clamp( carPos, 0, strategy.referenceResolution.x, 0, strategy.referenceResolution.y );
+			// Gdx.app.log( "PlayerCar", carPos.x + "-" + carPos.y );
+			// VMath.clamp( touchPos, 0, strategy.referenceResolution.x, 0, strategy.referenceResolution.y );
+			// VMath.clamp( carPos, 0, strategy.referenceResolution.x, 0, strategy.referenceResolution.y );
 
 			carInput.throttle = touchPos.dst( carPos ) * 4 * carDesc.carModel.max_force;
 			carInput.steerAngle = transformSteerAngle( (float)Math.atan2( -carPos.x + touchPos.x, -carPos.y + touchPos.y ) );
@@ -176,8 +176,9 @@ public class PlayerCar extends Car {
 	protected void onComputeCarForces( CarForces forces ) {
 		carInput = acquireInput();
 
-		// handle decrease queued from previous step
-		handleDecrease( carInput );
+		// handle decrease scheduled from previous step
+//		 handleDecrease( carInput );
+		handleImpactFeedback();
 
 		carSim.applyInput( carInput );
 		carSim.step( Config.Physics.PhysicsDt, body.getAngle() );
@@ -186,17 +187,6 @@ public class PlayerCar extends Car {
 		forces.velocity_x = carDesc.velocity_wc.x;
 		forces.velocity_y = carDesc.velocity_wc.y;
 		forces.angularVelocity = carDesc.angularvelocity;
-
-//		Gdx.app.log( "", "cf=" +
-//				NumberString.formatVeryLong(forces.velocity_x) + ", " +
-//				NumberString.formatVeryLong(forces.velocity_y) + ", " +
-//				NumberString.formatVeryLong(forces.angularVelocity)
-//		);
-
-		// update the car descriptor (car simulator data) with newly computed forces
-		// (no interface on carsim for performance reasons!)
-//		carDesc.velocity_wc.set( forces.velocity_x, forces.velocity_y );
-//		carDesc.angularvelocity = forces.angularVelocity;
 	}
 
 	@Override
@@ -204,7 +194,7 @@ public class PlayerCar extends Car {
 		super.onAfterPhysicsSubstep();
 
 		// inspect impact feedback, accumulate vel/ang velocities
-		handleImpactFeedback();
+//		handleImpactFeedback();
 
 		carState.update( carDesc );
 		driftState.update( carSim.lateralForceFront.y, carSim.lateralForceRear.y, carDesc.velocity_wc.len() );
@@ -258,31 +248,37 @@ public class PlayerCar extends Car {
 		// FIXME, move these hard-coded values out of here
 		if( frictionMean.getMean() < -0.3 && carDesc.velocity_wc.len2() > 10 ) {
 			carDesc.velocity_wc.mul( dampFriction );
-			// Gdx.app.log( "PlayerCar", "Friction applied." );
 		}
 	}
 
 	private long start_timer = 0;
-	private boolean start_decrease = false;
+	private boolean decrease_scheduled = false;
 
 	private void handleImpactFeedback() {
 		// process impact feedback
 		while( impacts > 0 ) {
 			impacts--;
-			carDesc.velocity_wc.set( body.getLinearVelocity() ).mul( dampLinearVelocityAF );
-			carDesc.angularvelocity = -body.getAngularVelocity() * dampAngularVelocityAF;
-			start_decrease = true;
+			// carDesc.velocity_wc.set( body.getLinearVelocity() ).mul( dampLinearVelocityAF );
+			// carDesc.angularvelocity = -body.getAngularVelocity() * dampAngularVelocityAF;
+			carDesc.velocity_wc.set( body.getLinearVelocity() );
+			carDesc.angularvelocity = -body.getAngularVelocity();
+			decrease_scheduled = true;
 		}
 	}
 
-	private void handleDecrease( CarInput input ) {
-		if( start_decrease || (TimeUtils.nanoTime() - start_timer < 250000000L) ) {
-			if( start_decrease ) {
-				start_decrease = false;
-				start_timer = TimeUtils.nanoTime();
-			}
-
-			input.throttle *= dampThrottleAF;
-		}
-	}
+//	private void handleDecrease( CarInput input ) {
+////		if( decrease_scheduled || (TimeUtils.nanoTime() - start_timer < 250000000L) ) {
+//		if( decrease_scheduled || (TimeUtils.nanoTime() - start_timer < 1000000000L) ) {
+//			if( decrease_scheduled ) {
+//				decrease_scheduled = false;
+//				start_timer = TimeUtils.nanoTime();
+//			}
+//
+////			input.throttle *= dampThrottleAF;
+////			input.throttle = 0;
+//			carDesc.velocity_wc.set( body.getLinearVelocity() );
+//			carDesc.angularvelocity = body.getAngularVelocity();
+//
+//		}
+//	}
 }

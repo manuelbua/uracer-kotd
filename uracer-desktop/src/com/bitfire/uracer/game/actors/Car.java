@@ -85,6 +85,7 @@ public abstract class Car extends Box2DEntity {
 		applyCarPhysics( carType );
 
 		Gdx.app.log( getClass().getSimpleName(), "Input mode is " + this.inputMode.toString() );
+		Gdx.app.log( getClass().getSimpleName(), "CarModel is " + this.model.type.toString() );
 	}
 
 	private void applyCarPhysics( CarType carType ) {
