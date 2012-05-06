@@ -16,7 +16,7 @@ public final class CarUtils {
 		// @formatter:off
 
 		float dist = car.getTraveledDistance();
-		float mts = car.getAverageSpeed();
+		float mts = dist / timeElapsed;
 //		float kmh = mtSecToKmHour(mts);
 
 		Gdx.app.log( msg,
@@ -27,8 +27,8 @@ public final class CarUtils {
 //			"(" + NumberString.formatVeryLong(kmh) + " km/h) " +
 			"(" + car.getAccuSpeedCount() + ")" +
 //			"[" + AMath.round( kmh, 2 ) + " km/h, " +
-//			AMath.round( dist, 2 ) + " m]" + " " +
-			"fpos=" + car.getBody().getPosition()
+//			AMath.round( dist, 2 ) + " m]" +
+			" fpos=" + car.getBody().getPosition()
 		);
 
 		// @formatter:on

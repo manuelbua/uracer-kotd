@@ -55,7 +55,6 @@ public strictfp abstract class Car extends Box2DEntity {
 	private int accuDistCount = 0;
 
 	// the car's average speed, in meters/sec, so far.
-	private float carAvgSpeedMtSec = 0;
 	private float accuSpeed = 0;
 	private int accuSpeedCount = 0;
 
@@ -201,11 +200,6 @@ public strictfp abstract class Car extends Box2DEntity {
 		return carTraveledDistance;
 	}
 
-	/** Returns the average speed, in meters/s, so far. */
-	public float getAverageSpeed() {
-		return carAvgSpeedMtSec;
-	}
-
 	/** Returns the instant speed, in meters/s */
 	public float getInstantSpeed() {
 		return carInstantSpeedMtSec;
@@ -231,15 +225,14 @@ public strictfp abstract class Car extends Box2DEntity {
 
 	public void reset() {
 		resetPhysics();
-		resetTraveledDistance();
+		resetDistanceAndSpeed();
 	}
 
-	public void resetTraveledDistance() {
+	public void resetDistanceAndSpeed() {
 		carTraveledDistance = 0;
 		accuDistCount = 0;
 		accuSpeed = 0;
 		accuSpeedCount = 0;
-		carAvgSpeedMtSec = 0;
 		carInstantSpeedMtSec = 0;
 	}
 
@@ -301,7 +294,7 @@ public strictfp abstract class Car extends Box2DEntity {
 		}
 
 		// FIXME is it really necessary? that's an expensive jni call..
-		 body.setAwake( true );
+//		body.setAwake( true );
 
 		// put newly computed forces into the system
 		body.setLinearVelocity( carForces.velocity_x, carForces.velocity_y );
@@ -311,12 +304,12 @@ public strictfp abstract class Car extends Box2DEntity {
 	@Override
 	public void onAfterPhysicsSubstep() {
 		super.onAfterPhysicsSubstep();
+		computeDistanceAndSpeed();
 	}
 
 	@Override
 	public void onSubstepCompleted( float aliasingFactor ) {
 		super.onSubstepCompleted( aliasingFactor );
-		computeDistanceAndSpeed();
 	}
 
 	private void computeDistanceAndSpeed() {
@@ -344,10 +337,6 @@ public strictfp abstract class Car extends Box2DEntity {
 		carInstantSpeedMtSec = AMath.fixup( dist * Config.Physics.PhysicsTimestepHz );
 		accuSpeed += carInstantSpeedMtSec;
 		accuSpeedCount++;
-
-		// compute average speed
-		carAvgSpeedMtSec = AMath.fixup( accuSpeed / accuSpeedCount );
-//		Gdx.app.log( this.getClass().getSimpleName(), "avg_speed=" + NumberString.formatVeryLong(carAvgSpeedMtSec) );
 	}
 
 	@Override

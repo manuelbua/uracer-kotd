@@ -77,7 +77,7 @@ public class URacer implements ApplicationListener {
 
 		// everything has been setup on a 256px tile, scale back if that's the case
 		Config.asDefault();
-//		Config.Physics.PixelsPerMeter /= (scalingStrategy.targetScreenRatio / scalingStrategy.to256);
+		// Config.Physics.PixelsPerMeter /= (scalingStrategy.targetScreenRatio / scalingStrategy.to256);
 
 		Convert.init( scalingStrategy.invTileMapZoomFactor, Config.Physics.PixelsPerMeter );
 		Art.init( scalingStrategy.invTileMapZoomFactor );
@@ -140,9 +140,6 @@ public class URacer implements ApplicationListener {
 				screen.tick();
 				timeAccuNs -= PhysicsDtNs;
 				lastTicksCount++;
-				if( screen.quit() ) {
-					return;
-				}
 			}
 
 			// simulate slowness
@@ -157,6 +154,15 @@ public class URacer implements ApplicationListener {
 		// (this imply accepting a one-frame-behind behavior)
 		temporalAliasing = (timeAccuNs * timeStepHz) * oneOnOneBillion;
 		aliasingTime = temporalAliasing;
+
+		if( lastTicksCount > 0 )
+		{
+			screen.update();
+
+			if( screen.quit() ) {
+				return;
+			}
+		}
 
 		startTime = TimeUtils.nanoTime();
 		{

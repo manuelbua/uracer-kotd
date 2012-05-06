@@ -13,9 +13,11 @@ public abstract class Screen {
 
 	public abstract void resume();
 
-	public abstract void render();
-
 	public abstract void tick();
+
+	public abstract void update();
+
+	public abstract void render();
 
 	public abstract boolean quit();
 

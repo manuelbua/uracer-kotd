@@ -140,18 +140,22 @@ public class Game implements Disposable {
 		}
 	}
 
-	public boolean tick() {
+	public void tick() {
 		TaskManager.dispatchTick();
+	}
 
-		if( !gameLogic.onTick() ) {
-			return false;
+	public boolean update() {
+		gameLogic.onUpdate();
+
+		if( gameLogic.doQuit ) {
+			return true;
 		}
 
-		return true;
+		return false;
 	}
 
 	public void render() {
-		gameLogic.onBeforeRender( gameRenderer );
+		gameLogic.onSubstepCompleted( gameRenderer );
 
 		if( canPostProcess ) {
 			updatePostProcessingEffects();

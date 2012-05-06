@@ -22,7 +22,7 @@ public class PhysicsStep extends Task {
 		GameEvents.physicsStep.trigger( this, 0, Type.onAfterTimestep );
 	}
 
-	public void triggerOnTemporalAliasing( float aliasingFactor ) {
+	public void triggerOnSubstepCompleted( float aliasingFactor ) {
 		world.clearForces();
 		GameEvents.physicsStep.trigger( this, aliasingFactor, Type.onSubstepCompleted );
 	}
