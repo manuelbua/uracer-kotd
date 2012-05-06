@@ -151,7 +151,7 @@ public class Replay {
 				r.isSaved = true;
 				r.isLoaded = true;
 
-				Gdx.app.log( "Replay", "Done loading local replay" );
+//				Gdx.app.log( "Replay", "Done loading local replay" );
 				return r;
 
 			} catch( IOException e ) {
@@ -215,7 +215,7 @@ public class Replay {
 						isSaved = true;
 
 						messager.enqueue( "Replay saved", 1f, Message.Type.Information, Position.Bottom, Size.Normal );
-						Gdx.app.log( "Replay", "Done saving local replay (" + trackTimeSeconds + ")" );
+//						Gdx.app.log( "Replay", "Done saving local replay (" + trackTimeSeconds + ")" );
 
 					} catch( IOException e ) {
 						Gdx.app.log( "Replay", "Couldn't save local replay, reason: " + e.getMessage() );

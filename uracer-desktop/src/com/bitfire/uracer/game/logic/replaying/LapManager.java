@@ -103,15 +103,18 @@ public class LapManager implements Disposable {
 		}
 	}
 
-	/** Starts recording the player lap performance. */
-	public void startRecording( PlayerCar player ) {
+	/** Starts recording the player lap performance.
+	 * Returns the Replay instance where the recording is being performed. */
+	public Replay startRecording( PlayerCar player ) {
 		if( recorder.isRecording() ) {
 			Gdx.app.log( "TrackLapManager", "Couldn't start recording since it's already started." );
-			return;
+			return null;
 		}
 
+		Replay next = bufferManager.getNextBuffer();
 		lapInfo.restartTime();
-		recorder.beginRecording( player, bufferManager.getNextBuffer(), gameWorld.levelName, settings.difficulty );
+		recorder.beginRecording( player, next, gameWorld.levelName, settings.difficulty );
+		return next;
 	}
 
 	/** Ends recording the previously started lap performance */
