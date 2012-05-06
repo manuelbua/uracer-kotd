@@ -14,14 +14,14 @@ public abstract class SubframeInterpolableEntity extends Entity implements Physi
 	public SubframeInterpolableEntity() {
 		GameEvents.physicsStep.addListener( this, PhysicsStepEvent.Type.onBeforeTimestep );
 		GameEvents.physicsStep.addListener( this, PhysicsStepEvent.Type.onAfterTimestep );
-		GameEvents.physicsStep.addListener( this, PhysicsStepEvent.Type.onTemporalAliasing );
+		GameEvents.physicsStep.addListener( this, PhysicsStepEvent.Type.onSubstepCompleted );
 	}
 
 	@Override
 	public void dispose() {
 		GameEvents.physicsStep.removeListener( this, PhysicsStepEvent.Type.onBeforeTimestep );
 		GameEvents.physicsStep.removeListener( this, PhysicsStepEvent.Type.onAfterTimestep );
-		GameEvents.physicsStep.removeListener( this, PhysicsStepEvent.Type.onTemporalAliasing );
+		GameEvents.physicsStep.removeListener( this, PhysicsStepEvent.Type.onSubstepCompleted );
 	}
 
 	public abstract void saveStateTo( EntityRenderState state );
@@ -44,8 +44,8 @@ public abstract class SubframeInterpolableEntity extends Entity implements Physi
 		case onAfterTimestep:
 			onAfterPhysicsSubstep();
 			break;
-		case onTemporalAliasing:
-			onTemporalAliasing( temporalAliasing );
+		case onSubstepCompleted:
+			onSubstepCompleted( temporalAliasing );
 			break;
 		}
 	}
@@ -59,7 +59,7 @@ public abstract class SubframeInterpolableEntity extends Entity implements Physi
 	}
 
 	/** Issued after a tick/physicsStep but before render :P */
-	public void onTemporalAliasing( float aliasingFactor ) {
+	public void onSubstepCompleted( float aliasingFactor ) {
 		if( isSubframeInterpolated() ) {
 			stateRender.set( EntityRenderState.interpolate( statePrevious, stateCurrent, aliasingFactor ) );
 		} else {

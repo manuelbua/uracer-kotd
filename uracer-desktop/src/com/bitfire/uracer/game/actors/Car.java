@@ -18,7 +18,7 @@ import com.bitfire.uracer.utils.AMath;
 import com.bitfire.uracer.utils.Convert;
 import com.bitfire.uracer.utils.FixtureAtlas;
 
-public abstract class Car extends Box2DEntity {
+public strictfp abstract class Car extends Box2DEntity {
 	public enum InputMode {
 		NoInput, InputFromPlayer, InputFromReplay
 	}
@@ -301,7 +301,7 @@ public abstract class Car extends Box2DEntity {
 		}
 
 		// FIXME is it really necessary? that's an expensive jni call..
-		// body.setAwake( true );
+		 body.setAwake( true );
 
 		// put newly computed forces into the system
 		body.setLinearVelocity( carForces.velocity_x, carForces.velocity_y );
@@ -314,8 +314,8 @@ public abstract class Car extends Box2DEntity {
 	}
 
 	@Override
-	public void onTemporalAliasing( float aliasingFactor ) {
-		super.onTemporalAliasing( aliasingFactor );
+	public void onSubstepCompleted( float aliasingFactor ) {
+		super.onSubstepCompleted( aliasingFactor );
 		computeDistanceAndSpeed();
 	}
 

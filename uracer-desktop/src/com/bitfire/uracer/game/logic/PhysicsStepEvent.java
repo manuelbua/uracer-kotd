@@ -6,7 +6,7 @@ import com.bitfire.uracer.utils.EventNotifier;
 
 public class PhysicsStepEvent extends Event<PhysicsStep> {
 	public enum Type {
-		onBeforeTimestep, onAfterTimestep, onTemporalAliasing
+		onBeforeTimestep, onAfterTimestep, onSubstepCompleted
 	}
 
 	public interface Listener extends EventListener {

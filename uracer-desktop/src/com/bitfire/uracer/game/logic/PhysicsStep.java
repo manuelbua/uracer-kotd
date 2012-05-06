@@ -24,6 +24,6 @@ public class PhysicsStep extends Task {
 
 	public void triggerOnTemporalAliasing( float aliasingFactor ) {
 		world.clearForces();
-		GameEvents.physicsStep.trigger( this, aliasingFactor, Type.onTemporalAliasing );
+		GameEvents.physicsStep.trigger( this, aliasingFactor, Type.onSubstepCompleted );
 	}
 }

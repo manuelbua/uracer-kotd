@@ -201,8 +201,8 @@ public class PlayerCar extends Car {
 	}
 
 	@Override
-	public void onTemporalAliasing( float aliasingFactor ) {
-		super.onTemporalAliasing( aliasingFactor );
+	public void onSubstepCompleted( float aliasingFactor ) {
+		super.onSubstepCompleted( aliasingFactor );
 
 		// inspect impact feedback, accumulate vel/ang velocities
 		// handleImpactFeedback();

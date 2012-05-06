@@ -123,20 +123,23 @@ public final class GhostCar extends Car {
 			indexPlay++;
 
 			if( indexPlay == replay.getEventsCount() ) {
-				scheduledRestart = true;
+//				scheduledRestart = true;
+				CarUtils.dumpSpeedInfo( " Ghost", this, replay.trackTimeSeconds );
+				restart( replay );
+
 			}
 		}
 	}
 
 	private boolean scheduledRestart = false;
 	@Override
-	public void onTemporalAliasing( float aliasingFactor ) {
-		super.onTemporalAliasing( aliasingFactor );
+	public void onSubstepCompleted( float aliasingFactor ) {
+		super.onSubstepCompleted( aliasingFactor );
 
-		if( scheduledRestart ) {
-			scheduledRestart = false;
-			CarUtils.dumpSpeedInfo( " Ghost", this, replay.trackTimeSeconds );
-			restart( replay );
-		}
+//		if( scheduledRestart ) {
+//			scheduledRestart = false;
+//			CarUtils.dumpSpeedInfo( " Ghost", this, replay.trackTimeSeconds );
+//			restart( replay );
+//		}
 	}
 }

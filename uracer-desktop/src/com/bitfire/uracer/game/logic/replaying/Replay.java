@@ -90,6 +90,10 @@ public class Replay {
 
 	public void reset() {
 		eventsCount = 0;
+		for( int i = 0; i < MaxEvents; i++ ) {
+			forces[i].reset();
+		}
+
 		// if a previously loaded replay is being used, reset the loaded state
 		// since its invalid
 		isLoaded = false;
