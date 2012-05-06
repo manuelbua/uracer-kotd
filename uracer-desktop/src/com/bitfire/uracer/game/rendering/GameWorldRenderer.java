@@ -103,6 +103,10 @@ public final class GameWorldRenderer {
 		playerLights = world.getPlayerHeadLights();
 		staticMeshes = world.getStaticMeshes();
 
+		// compute tilemap zoom factor
+		float thisW = (float)Gdx.graphics.getWidth();
+		float thisH = (float)Gdx.graphics.getHeight();
+
 		createCams( width, height );
 
 		FileHandle baseDir = Gdx.files.internal( Config.LevelsStore );
@@ -139,7 +143,7 @@ public final class GameWorldRenderer {
 		float perspPlaneFar = 240;
 		camPerspElevation = 100;
 
-		camPersp = new PerspectiveCamera( scalingStrategy.verticalFov, width, height );
+		camPersp = new PerspectiveCamera( 47.27123f, width, height );
 		camPersp.near = perspPlaneNear;
 		camPersp.far = perspPlaneFar;
 		camPersp.lookAt( 0, 0, -1 );
@@ -236,7 +240,7 @@ public final class GameWorldRenderer {
 
 		// update the tilemap renderer orthographic camera
 		camTilemap.position.set( camOrtho.position ).mul( scalingStrategy.tileMapZoomFactor );
-		camTilemap.zoom = scalingStrategy.tileMapZoomFactor;
+//		camTilemap.zoom = scalingStrategy.tileMapZoomFactor;
 		camTilemap.update();
 
 		// sync perspective camera to the orthographic camera

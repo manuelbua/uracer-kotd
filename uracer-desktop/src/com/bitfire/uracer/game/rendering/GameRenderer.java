@@ -59,11 +59,8 @@ public final class GameRenderer {
 		world = gameWorld;
 		gl = Gdx.graphics.getGL20();
 
-		int width = Gdx.graphics.getWidth();
-		int height = Gdx.graphics.getHeight();
-
 		// world rendering
-		worldRenderer = new GameWorldRenderer( scalingStrategy, world, width, height );
+		worldRenderer = new GameWorldRenderer( scalingStrategy, world, Config.Graphics.TargetWidth, Config.Graphics.TargetHeight );
 		batchRenderer = new GameBatchRenderer( gl );
 
 		// initialize utils
@@ -72,7 +69,7 @@ public final class GameRenderer {
 
 		// post-processing
 		boolean supports32Bpp = Config.isDesktop;
-		postProcessor = (createPostProcessor ? new PostProcessor( width, height, false /* depth */, false /* alpha */, supports32Bpp ) : null);
+		postProcessor = (createPostProcessor ? new PostProcessor( Gdx.graphics.getWidth(), Gdx.graphics.getHeight(), false /* depth */, false /* alpha */, supports32Bpp ) : null);
 	}
 
 	public void dispose() {
@@ -102,7 +99,7 @@ public final class GameRenderer {
 		}
 
 		if( !postProcessorReady ) {
-			gl.glViewport( 0, 0, Gdx.graphics.getWidth(), Gdx.graphics.getHeight() );
+//			gl.glViewport( 0, 0, Gdx.graphics.getWidth(), Gdx.graphics.getHeight() );
 			gl.glClearDepthf( 1 );
 			gl.glClearColor( 0, 0, 0, 0 );
 			gl.glClear( GL20.GL_DEPTH_BUFFER_BIT | GL20.GL_COLOR_BUFFER_BIT );
@@ -111,49 +108,49 @@ public final class GameRenderer {
 		// render base tilemap
 		worldRenderer.renderTilemap( gl );
 
-		// BatchBeforeMeshes
-		SpriteBatch batch = null;
-		batch = batchRenderer.begin( worldRenderer.getOrthographicCamera() );
-		batch.enableBlending();
-		{
-			GameEvents.gameRenderer.batch = batch;
-			GameEvents.gameRenderer.trigger( this, GameRendererEvent.Type.BatchBeforeMeshes );
-		}
-		batchRenderer.end();
-
-		// render world's meshes
-		worldRenderer.renderAllMeshes( gl );
-
-		// BatchAfterMeshes
-		batch = batchRenderer.beginTopLeft();
-		{
-			GameEvents.gameRenderer.batch = batch;
-			GameEvents.gameRenderer.trigger( this, GameRendererEvent.Type.BatchAfterMeshes );
-		}
-		batchRenderer.end();
-
-		if( world.isNightMode() ) {
-			if( Config.Graphics.DumbNightMode ) {
-				if( postProcessorReady ) {
-					postProcessor.render();
-				}
-
-				worldRenderer.renderLigthMap( null );
-			} else {
-				// hook into the next PostProcessor source buffer (the last result)
-				// and blend the lightmap on it
-				if( postProcessorReady ) {
-					worldRenderer.renderLigthMap( postProcessor.captureEnd() );
-					postProcessor.render();
-				} else {
-					worldRenderer.renderLigthMap( null );
-				}
-			}
-		} else {
-			if( postProcessorReady ) {
-				postProcessor.render();
-			}
-		}
+//		// BatchBeforeMeshes
+//		SpriteBatch batch = null;
+//		batch = batchRenderer.begin( worldRenderer.getOrthographicCamera() );
+//		batch.enableBlending();
+//		{
+//			GameEvents.gameRenderer.batch = batch;
+//			GameEvents.gameRenderer.trigger( this, GameRendererEvent.Type.BatchBeforeMeshes );
+//		}
+//		batchRenderer.end();
+//
+//		// render world's meshes
+//		worldRenderer.renderAllMeshes( gl );
+//
+//		// BatchAfterMeshes
+//		batch = batchRenderer.beginTopLeft();
+//		{
+//			GameEvents.gameRenderer.batch = batch;
+//			GameEvents.gameRenderer.trigger( this, GameRendererEvent.Type.BatchAfterMeshes );
+//		}
+//		batchRenderer.end();
+//
+//		if( world.isNightMode() ) {
+//			if( Config.Graphics.DumbNightMode ) {
+//				if( postProcessorReady ) {
+//					postProcessor.render();
+//				}
+//
+//				worldRenderer.renderLigthMap( null );
+//			} else {
+//				// hook into the next PostProcessor source buffer (the last result)
+//				// and blend the lightmap on it
+//				if( postProcessorReady ) {
+//					worldRenderer.renderLigthMap( postProcessor.captureEnd() );
+//					postProcessor.render();
+//				} else {
+//					worldRenderer.renderLigthMap( null );
+//				}
+//			}
+//		} else {
+//			if( postProcessorReady ) {
+//				postProcessor.render();
+//			}
+//		}
 	}
 
 	// manages and triggers debug event

@@ -32,7 +32,7 @@ public final class Config {
 		public static void asDefault() {
 			int w = Gdx.graphics.getWidth();
 
-			Enabled = true;
+			Enabled = false;
 			EnableVignetting = true;
 
 			RttFboWidth = (int)(Gdx.graphics.getWidth() * RttRatio);
@@ -71,8 +71,8 @@ public final class Config {
 	}
 
 	public static final class Graphics {
-//		public static final int TargetWidth = 1280;
-//		public static final int TargetHeight = 800;
+		public static final int TargetWidth = 1280;
+		public static final int TargetHeight = 800;
 		public static boolean EnableMipMapping;
 		public static boolean SubframeInterpolation;
 		public static boolean DumbNightMode;	// night-mode rendered as an overlay *after* PostProcessor
@@ -82,7 +82,7 @@ public final class Config {
 			EnableMipMapping = true;
 			SubframeInterpolation = true;
 			DumbNightMode = false;
-			CameraInterpolationMode = InterpolationMode.Sigmoid;
+			CameraInterpolationMode = InterpolationMode.OffNoBounds;
 		}
 
 		private Graphics() {
@@ -151,7 +151,7 @@ public final class Config {
 			RenderDebugInfoPostProcessor = Config.isDesktop;
 			Render3DBoundingBoxes = false;
 
-			TraverseWalls = false;
+			TraverseWalls = true;
 			ApplyCarFrictionFromMap = true;
 			FrustumCulling = true;
 		}

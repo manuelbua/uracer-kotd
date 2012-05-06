@@ -1,16 +1,17 @@
 package com.bitfire.uracer;
 
 import com.badlogic.gdx.Gdx;
-import com.badlogic.gdx.math.MathUtils;
 import com.badlogic.gdx.math.Vector2;
 
 public class ScalingStrategy {
 	public final Vector2 referenceResolution;
-	public float desiredHorizontalFov;
-	public float verticalFov;
+//	public float desiredHorizontalFov;
+//	public float verticalFov;
 	public float tileMapZoomFactor;
-	public float tileMapZoomFactorAtRef;
 	public float invTileMapZoomFactor;
+
+	public float tileMapZoomFactorAtRef;
+
 	public float forTileSize;
 	public float targetScreenRatio;
 	public float meshScaleFactor;
@@ -27,16 +28,12 @@ public class ScalingStrategy {
 		this.tileMapZoomFactorAtRef = tileMapZoomAtRef;
 
 		this.tileSizeAtRef = this.forTileSize * this.tileMapZoomFactorAtRef;
-		this.desiredHorizontalFov = desiredHorizontalFov;
+//		this.desiredHorizontalFov = desiredHorizontalFov;
 
 		// reference scaling (256 to current)
 		to256 = this.tileSizeAtRef / 256f;
 
 		// compute scaling factors
-		update();
-	}
-
-	private void update() {
 		float thisW = (float)Gdx.graphics.getWidth();
 		float thisH = (float)Gdx.graphics.getHeight();
 
@@ -47,28 +44,28 @@ public class ScalingStrategy {
 			tileMapZoomFactor = 1f / ((thisH * tileMapZoomFactorAtRef) / referenceResolution.y);
 		}
 
-		verticalFov = verticalFov( thisW, thisH, desiredHorizontalFov );
+//		verticalFov = verticalFov( thisW, thisH, desiredHorizontalFov );
 		targetScreenRatio = referenceResolution.x / thisW;
 		invTileMapZoomFactor = 1f / tileMapZoomFactor;
 
 		meshScaleFactor = (1f / (tileMapZoomFactor * tileMapZoomFactorAtRef)) * targetScreenRatio;
 
 		// adjust to the actual hfov
-		hFovScalingFactor = hFovToScalingFactor();
+		hFovScalingFactor = hFovToScalingFactor(desiredHorizontalFov);
 		meshScaleFactor *= hFovScalingFactor;
 
-		Gdx.app.log( "ScalingStrategy", "vfov=" + verticalFov + ", hfov=" + desiredHorizontalFov + ", msf=" + meshScaleFactor + ", tmzf=" + tileMapZoomFactor );
+//		Gdx.app.log( "ScalingStrategy", /*"vfov=" + verticalFov +*/ ", hfov=" + desiredHorizontalFov + ", msf=" + meshScaleFactor + ", tmzf=" + tileMapZoomFactor );
 	}
 
 	// http://rjdown.co.uk/projects/bfbc2/fovcalculator.php
-	private static float verticalFov( float width, float height, float desiredHfovDeg ) {
-		float radHfov = desiredHfovDeg * MathUtils.degreesToRadians;
-		float vfov = (float)(2f * Math.atan( Math.tan( radHfov / 2f ) * (height / width) ));
-		vfov *= MathUtils.radiansToDegrees;
-		return vfov;
-	}
+//	private static float verticalFov( float width, float height, float desiredHfovDeg ) {
+//		float radHfov = desiredHfovDeg * MathUtils.degreesToRadians;
+//		float vfov = (float)(2f * Math.atan( Math.tan( radHfov / 2f ) * (height / width) ));
+//		vfov *= MathUtils.radiansToDegrees;
+//		return vfov;
+//	}
 
-	private float hFovToScalingFactor() {
+	private float hFovToScalingFactor(float desiredHorizontalFov) {
 		// I DON'T LIKE THIS
 		//
 		// 4th degree polynomial approximation (quartic)
@@ -83,10 +80,5 @@ public class ScalingStrategy {
 		return 1.15197f * 0.00000001f * (desiredHorizontalFov * desiredHorizontalFov * desiredHorizontalFov * desiredHorizontalFov) - 1.6847f * 0.000001f
 				* (desiredHorizontalFov * desiredHorizontalFov * desiredHorizontalFov) + 0.000124545f * (desiredHorizontalFov * desiredHorizontalFov) + 0.00877285f
 				* desiredHorizontalFov + 0.022265f;
-	}
-
-	public void setHorizontalFov( float desiredHfov ) {
-		desiredHorizontalFov = desiredHfov;
-		update();
 	}
 }

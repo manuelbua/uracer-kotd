@@ -236,7 +236,7 @@ public final class GameWorld {
 			// MathUtils.random(0,1),
 			1f, .85f, .15f, .75f );
 			TiledObject o = group.objects.get( i );
-			pos.set( o.x, o.y ).mul( scalingStrategy.invTileMapZoomFactor );
+			pos.set( o.x, o.y ).mul( 1 /*scalingStrategy.invTileMapZoomFactor*/ );
 			pos.y = worldSizeScaledPx.y - pos.y;
 			pos.set( Convert.px2mt( pos ) );
 
@@ -273,7 +273,7 @@ public final class GameWorld {
 
 					List<Vector2> points = MapUtils.extractPolyData( o.polyline );
 					if( points.size() >= 2 ) {
-						float factor = scalingStrategy.invTileMapZoomFactor;
+						float factor = 1;//scalingStrategy.invTileMapZoomFactor;
 						float wallSizeMt = 0.3f * factor;
 						float[] mags = new float[ points.size() - 1 ];
 
@@ -331,7 +331,7 @@ public final class GameWorld {
 		MathUtils.random.setSeed( Long.MIN_VALUE );
 
 		// scaling factors
-		float factor = scalingStrategy.invTileMapZoomFactor;
+		float factor = 1;//scalingStrategy.invTileMapZoomFactor;
 		float oneOnWorld3DFactor = 1f / OrthographicAlignedStillModel.World3DScalingFactor;
 		float wallHeightMt = 5f * factor * oneOnWorld3DFactor;
 		float textureScalingU = 0.5f;
