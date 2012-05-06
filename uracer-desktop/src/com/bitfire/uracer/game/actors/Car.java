@@ -151,7 +151,6 @@ public abstract class Car extends Box2DEntity {
 //		body.createFixture( fd ).setUserData( carType );
 		// dbg
 
-
 		MassData mdata = body.getMassData();
 		mdata.center.set( 0, 0 );
 		body.setMassData( mdata );
@@ -240,21 +239,23 @@ public abstract class Car extends Box2DEntity {
 		accuDistCount = 0;
 		accuSpeed = 0;
 		accuSpeedCount = 0;
+		carAvgSpeedMtSec = 0;
+		carInstantSpeedMtSec = 0;
 	}
 
 	protected void resetPhysics() {
-		boolean wasActive = isActive();
+//		boolean wasActive = isActive();
 
-		if( wasActive ) {
-			body.setActive( false );
-		}
+//		if( wasActive ) {
+//			body.setActive( false );
+//		}
 
 		body.setAngularVelocity( 0 );
 		body.setLinearVelocity( 0, 0 );
 
-		if( wasActive ) {
-			body.setActive( wasActive );
-		}
+//		if( wasActive ) {
+//			body.setActive( wasActive );
+//		}
 
 		impacts = 0;
 	}
@@ -310,7 +311,15 @@ public abstract class Car extends Box2DEntity {
 	@Override
 	public void onAfterPhysicsSubstep() {
 		super.onAfterPhysicsSubstep();
+	}
 
+	@Override
+	public void onTemporalAliasing( float aliasingFactor ) {
+		super.onTemporalAliasing( aliasingFactor );
+		computeDistanceAndSpeed();
+	}
+
+	private void computeDistanceAndSpeed() {
 		// compute traveled distance, in meters
 		distmp.set( body.getPosition() );
 		distmp.sub( previousPosition );
@@ -321,6 +330,9 @@ public abstract class Car extends Box2DEntity {
 
 		if( !AMath.isZero( dist ) ) {
 //			Gdx.app.log( "", "dist=" + NumberString.formatVeryLong( dist ) );
+//			Gdx.app.log( "", "px=" + NumberString.formatVeryLong(body.getPosition().x) + ", py=" + NumberString.formatVeryLong(body.getPosition().y) +
+//							 "ppx=" + NumberString.formatVeryLong(previousPosition.x) + ", ppy=" + NumberString.formatVeryLong(previousPosition.y) );
+
 			// accumulate distance it
 			carTraveledDistance += dist;
 			accuDistCount++;

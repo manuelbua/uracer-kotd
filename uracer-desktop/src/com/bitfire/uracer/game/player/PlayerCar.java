@@ -134,7 +134,7 @@ public class PlayerCar extends Car {
 		touchPos.x *= gameWorld.scalingStrategy.targetScreenRatio.x;
 		touchPos.y *= gameWorld.scalingStrategy.targetScreenRatio.y;
 
-		Gdx.app.log( "PlayerCar", "carpos=" + carPos.toString() + ", cursor=" + touchPos.toString() );
+//		Gdx.app.log( "PlayerCar", "carpos=" + carPos.toString() + ", cursor=" + touchPos.toString() );
 
 		carInput.updated = input.isTouching();
 
@@ -198,6 +198,11 @@ public class PlayerCar extends Car {
 	@Override
 	public void onAfterPhysicsSubstep() {
 		super.onAfterPhysicsSubstep();
+	}
+
+	@Override
+	public void onTemporalAliasing( float aliasingFactor ) {
+		super.onTemporalAliasing( aliasingFactor );
 
 		// inspect impact feedback, accumulate vel/ang velocities
 		// handleImpactFeedback();

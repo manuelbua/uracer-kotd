@@ -88,11 +88,12 @@ public final class GhostCar extends Car {
 	protected void onComputeCarForces( CarForces forces ) {
 		forces.reset();
 
-		if( hasReplay ) {
+		if( hasReplay && !scheduledRestart) {
 
 			// indexPlay is NOT updated here, we don't want
 			// to process a non-existent event when (indexPlay == replay.getEventsCount())
 			forces.set( replay.forces[indexPlay] );
+//			Gdx.app.log( "ghost", "index="+indexPlay + ", px=" + NumberString.formatVeryLong(body.getPosition().x) + ", py=" + NumberString.formatVeryLong(body.getPosition().y) );
 
 //			Gdx.app.log( "", "cf=" +
 //					NumberString.formatVeryLong(forces.velocity_x) + ", " +
@@ -122,11 +123,20 @@ public final class GhostCar extends Car {
 			indexPlay++;
 
 			if( indexPlay == replay.getEventsCount() ) {
-
-				CarUtils.dumpSpeedInfo( " Ghost", this, replay.trackTimeSeconds );
-
-				restart( replay );
+				scheduledRestart = true;
 			}
+		}
+	}
+
+	private boolean scheduledRestart = false;
+	@Override
+	public void onTemporalAliasing( float aliasingFactor ) {
+		super.onTemporalAliasing( aliasingFactor );
+
+		if( scheduledRestart ) {
+			scheduledRestart = false;
+			CarUtils.dumpSpeedInfo( " Ghost", this, replay.trackTimeSeconds );
+			restart( replay );
 		}
 	}
 }

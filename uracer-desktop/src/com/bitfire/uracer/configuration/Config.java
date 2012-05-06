@@ -151,7 +151,7 @@ public final class Config {
 			RenderDebugInfoPostProcessor = Config.isDesktop;
 			Render3DBoundingBoxes = false;
 
-			TraverseWalls = true;
+			TraverseWalls = false;
 			ApplyCarFrictionFromMap = false;
 			FrustumCulling = true;
 		}

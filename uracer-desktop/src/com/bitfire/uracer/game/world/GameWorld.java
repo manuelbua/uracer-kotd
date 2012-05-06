@@ -82,8 +82,10 @@ public final class GameWorld {
 
 	public GameWorld( ScalingStrategy strategy, String levelName, boolean nightMode ) {
 		scalingStrategy = strategy;
-		this.box2dWorld = new World( new Vector2( 0, 0 ), false );
+		box2dWorld = new World( new Vector2( 0, 0 ), false );
 		box2dWorld.setContactListener( new GameWorldContactListener() );
+		box2dWorld.setAutoClearForces( false );
+
 		Gdx.app.log( "GameWorld", "Box2D world created" );
 
 		this.levelName = levelName;

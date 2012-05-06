@@ -383,6 +383,8 @@ public class GameLogic implements CarEvent.Listener, CarStateEvent.Listener, Pla
 		GameTweener.clear();
 		lapManager.abortRecording();
 		gameTasksManager.restart();
+
+		ghostCar.setReplay( lapManager.getBestReplay() );
 	}
 
 	private void resetLogic() {

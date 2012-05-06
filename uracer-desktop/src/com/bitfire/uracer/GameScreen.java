@@ -2,8 +2,6 @@ package com.bitfire.uracer;
 
 import com.bitfire.uracer.game.Game;
 import com.bitfire.uracer.game.GameDifficulty;
-import com.bitfire.uracer.game.actors.Car.Aspect;
-import com.bitfire.uracer.game.actors.CarModel;
 import com.bitfire.uracer.game.logic.replaying.Replay;
 
 public class GameScreen extends Screen {
@@ -20,7 +18,7 @@ public class GameScreen extends Screen {
 		game = new Game( levelName, scalingStrategy, GameDifficulty.Hard );
 
 		// simulate the player choosing a car type
-		game.setPlayer( new CarModel().toModel2(), Aspect.OldSkool2 );
+//		game.setPlayer( new CarModel().toModel2(), Aspect.OldSkool2 );
 
 		// simulate the player choosing local playing
 		Replay r = Replay.loadLocal( levelName );
