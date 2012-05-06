@@ -234,6 +234,8 @@ public abstract class Car extends Box2DEntity {
 		if( wasActive ) {
 			body.setActive( wasActive );
 		}
+
+		impacts = 0;
 	}
 
 	public void onCollide( Fixture other, Vector2 normalImpulses ) {
@@ -301,6 +303,7 @@ public abstract class Car extends Box2DEntity {
 
 		// filter out zero distance
 		float dist = AMath.fixup( distmp.len() );
+
 		if( !AMath.isZero( dist ) ) {
 //			Gdx.app.log( "", "dist=" + NumberString.formatVeryLong( dist ) );
 			// accumulate distance it
