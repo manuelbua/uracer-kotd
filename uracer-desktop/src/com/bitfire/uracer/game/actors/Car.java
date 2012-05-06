@@ -17,7 +17,6 @@ import com.bitfire.uracer.resources.Art;
 import com.bitfire.uracer.utils.AMath;
 import com.bitfire.uracer.utils.Convert;
 import com.bitfire.uracer.utils.FixtureAtlas;
-import com.bitfire.uracer.utils.NumberString;
 
 public abstract class Car extends Box2DEntity {
 	public enum InputMode {
@@ -240,7 +239,7 @@ public abstract class Car extends Box2DEntity {
 	public void onCollide( Fixture other, Vector2 normalImpulses ) {
 		impacts++;
 
-		Gdx.app.log( "", "x=" + NumberString.formatVeryLong(normalImpulses.x) + ", y=" + NumberString.formatVeryLong(normalImpulses.y) );
+//		Gdx.app.log( "", "x=" + NumberString.formatVeryLong(normalImpulses.x) + ", y=" + NumberString.formatVeryLong(normalImpulses.y) );
 
 		if( triggerEvents ) {
 			event.data.setCollisionData( other, normalImpulses );

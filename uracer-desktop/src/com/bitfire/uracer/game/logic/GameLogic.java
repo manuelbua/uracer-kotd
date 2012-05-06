@@ -223,16 +223,70 @@ public class GameLogic implements CarEvent.Listener, CarStateEvent.Listener, Pla
 		return playerCar;
 	}
 
+	private Replay userRec = null;
 	public boolean onTick() {
 		Input input = gameTasksManager.input;
 
 		if( input.isOn( Keys.R ) ) {
+
+			// restart
+
 			restartGame();
+
 		} else if( input.isOn( Keys.T ) ) {
+
+			// reset
+
 			resetGame();
+
+		} else if( input.isOn( Keys.Z ) ) {
+
+			// start recording
+			playerCar.resetTraveledDistance();
+			ghostCar.setReplay( null );
+			lapManager.abortRecording();
+			userRec = lapManager.startRecording( playerCar );
+
+		} else if( input.isOn( Keys.X ) ) {
+
+			// stop recording and play
+			lapManager.stopRecording();
+			userRec.saveLocal( gameTasksManager.messager );
+			ghostCar.setReplay( userRec );
+			CarUtils.dumpSpeedInfo( "Player", playerCar, lapManager.getLastRecordedReplay().trackTimeSeconds );
+//			Gdx.app.log( "GameLogic", "Player final pos="  + playerCar.getBody().getPosition() );
+
+		} else if( input.isOn( Keys.T ) ) {
+
+			// reset
+
+			resetGame();
+
+		} else if( input.isOn( Keys.T ) ) {
+
+			// reset
+
+			resetGame();
+
 		} else if( input.isOn( Keys.Q ) ) {
+
+			// quit
+
 			Gdx.app.exit();
 			return false;
+
+		} else if( input.isOn( Keys.O ) ) {
+
+			// remove player
+
+			removePlayer();
+
+		} else if( input.isOn( Keys.P ) ) {
+
+			// add player
+
+			setPlayer( new CarModel().toModel2(), Aspect.OldSkool );
+
 		} else if( input.isOn( Keys.SPACE ) && !timeModulationBusy ) {
 
 			TweenEquation eqIn = Quad.OUT;
@@ -251,10 +305,6 @@ public class GameLogic implements CarEvent.Listener, CarStateEvent.Listener, Pla
 						.push( Tween.to( timeMultiplier, BoxedFloatAccessor.VALUE, 1000 ).target( Config.Physics.PhysicsTimeMultiplier ).ease( eqOut ) )
 						.setCallback( timeModulationFinished ) );
 			}
-		} else if( input.isOn( Keys.O ) ) {
-			removePlayer();
-		} else if( input.isOn( Keys.P ) ) {
-			setPlayer( new CarModel().toModel2(), Aspect.OldSkool );
 		}
 
 		return true;

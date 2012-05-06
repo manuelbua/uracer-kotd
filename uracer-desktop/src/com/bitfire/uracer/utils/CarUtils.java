@@ -27,7 +27,8 @@ public final class CarUtils {
 			"(" + NumberString.formatVeryLong(kmh) + " km/h) " +
 			"(" + car.getAccuSpeedCount() + ")" +
 			"[" + AMath.round( kmh, 2 ) + " km/h, " +
-			AMath.round( dist, 2 ) + " m]"
+			AMath.round( dist, 2 ) + " m]" + " " +
+			"fpos=" + car.getBody().getPosition()
 		);
 
 		// @formatter:on
