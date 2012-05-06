@@ -178,7 +178,8 @@ public class GameLogic implements CarEvent.Listener, CarStateEvent.Listener, Pla
 	public void setBestLocalReplay( Replay replay ) {
 		lapManager.setBestReplay( replay );
 		restartGame();
-		if( !hasPlayer() ) {
+//		if( !hasPlayer() )
+		{
 			ghostCar.setReplay( replay );
 		}
 	}
@@ -202,7 +203,7 @@ public class GameLogic implements CarEvent.Listener, CarStateEvent.Listener, Pla
 	private void configurePlayer( GameWorld world, GameplaySettings settings, PlayerCar player ) {
 		// create player and setup player input system and initial position in the world
 		// player.setInputSystem( input );
-		player.setTransform( world.playerStartPos, world.playerStartOrient );
+		player.setWorldPosMt( world.playerStartPos, world.playerStartOrient );
 
 		// apply handicaps
 		player.setDampingLinearVelocityAF( AMath.damping( settings.dampingLinearVelocityAfterFeedback ) );
@@ -224,6 +225,7 @@ public class GameLogic implements CarEvent.Listener, CarStateEvent.Listener, Pla
 	}
 
 	private Replay userRec = null;
+
 	public boolean onTick() {
 		Input input = gameTasksManager.input;
 
@@ -251,10 +253,13 @@ public class GameLogic implements CarEvent.Listener, CarStateEvent.Listener, Pla
 
 			// stop recording and play
 			lapManager.stopRecording();
-			userRec.saveLocal( gameTasksManager.messager );
-			ghostCar.setReplay( userRec );
-			CarUtils.dumpSpeedInfo( "Player", playerCar, lapManager.getLastRecordedReplay().trackTimeSeconds );
-//			Gdx.app.log( "GameLogic", "Player final pos="  + playerCar.getBody().getPosition() );
+			if( userRec != null ) {
+				userRec.saveLocal( gameTasksManager.messager );
+				ghostCar.setReplay( userRec );
+				CarUtils.dumpSpeedInfo( "Player", playerCar, lapManager.getLastRecordedReplay().trackTimeSeconds );
+			}
+
+			// Gdx.app.log( "GameLogic", "Player final pos=" + playerCar.getBody().getPosition() );
 
 		} else if( input.isOn( Keys.T ) ) {
 
@@ -360,7 +365,7 @@ public class GameLogic implements CarEvent.Listener, CarStateEvent.Listener, Pla
 	private void resetPlayer( Car playerCar, GhostCar playerGhostCar ) {
 		if( playerCar != null ) {
 			playerCar.reset();
-			playerCar.setTransform( gameWorld.playerStartPos, gameWorld.playerStartOrient );
+			playerCar.setWorldPosMt( gameWorld.playerStartPos, gameWorld.playerStartOrient );
 		}
 
 		if( playerGhostCar != null ) {
@@ -407,7 +412,7 @@ public class GameLogic implements CarEvent.Listener, CarStateEvent.Listener, Pla
 	public void carStateEvent( CarState source, CarStateEvent.Type type ) {
 		switch( type ) {
 		case onTileChanged:
-			playerTileChanged();
+//			playerTileChanged();
 			break;
 		}
 	}

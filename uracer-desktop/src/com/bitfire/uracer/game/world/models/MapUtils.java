@@ -121,7 +121,7 @@ public final class MapUtils {
 
 	private Vector2 tmp = new Vector2();
 
-	public Vector2 positionFor( float x, float y ) {
+	private Vector2 positionFor( float x, float y ) {
 		tmp = Convert.scaledPixels( tmp.set( x, y ) );
 		tmp.y = worldSizeScaledPx.y - tmp.y;
 		return tmp;

@@ -127,10 +127,14 @@ public class PlayerCar extends Car {
 			return carInput;
 		}
 
-		carPos.set( GameRenderer.ScreenUtils.screenPosForMt( body.getPosition() ) );
-		touchPos.set( input.getXY() ).mul( gameWorld.scalingStrategy.tileMapZoomFactor );
+//		carPos.set( GameRenderer.ScreenUtils.screenPosForMt( body.getPosition() ) );
+		carPos.set( GameRenderer.ScreenUtils.worldToScreen( body.getPosition() ) ).mul( gameWorld.scalingStrategy.tileMapZoomFactor );
 
-//		Gdx.app.log( "PlayerCar", "carpos=" + carPos.toString() + ", cursor=" + touchPos.toString() );
+		touchPos.set( input.getXY() );
+		touchPos.x *= gameWorld.scalingStrategy.targetScreenRatio.x;
+		touchPos.y *= gameWorld.scalingStrategy.targetScreenRatio.y;
+
+		Gdx.app.log( "PlayerCar", "carpos=" + carPos.toString() + ", cursor=" + touchPos.toString() );
 
 		carInput.updated = input.isTouching();
 

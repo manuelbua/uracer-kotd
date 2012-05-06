@@ -66,15 +66,10 @@ public final class EntityRenderState {
 	}
 
 	public void toPixels() {
-		this.position.x = Convert.mt2px( this.position.x );
-		this.position.y = Convert.mt2px( this.position.y );
+		this.position.x = Convert.scaledPixel( Convert.mt2px( this.position.x ) );
+		this.position.y = Convert.scaledPixel( Convert.mt2px( this.position.y ) );
 		this.orientation = this.orientation * MathUtils.radiansToDegrees;
-	}
-
-	public void toMeters() {
-		this.position.x = Convert.px2mt( this.position.x );
-		this.position.y = Convert.px2mt( this.position.y );
-		this.orientation = this.orientation * MathUtils.degreesToRadians;
+//		Gdx.app.log( "Entity", "x=" + position.x + ", y=" + position.y );
 	}
 
 	@Override

@@ -94,7 +94,7 @@ public final class GameWorldRenderer {
 	private TrackWalls trackWalls = null;
 	private ConeLight playerLights = null;
 
-	public GameWorldRenderer( ScalingStrategy strategy, GameWorld world, int width, int height ) {
+	public GameWorldRenderer( ScalingStrategy strategy, GameWorld world, float width, float height ) {
 		scalingStrategy = strategy;
 		this.world = world;
 		rayHandler = world.getRayHandler();
@@ -102,10 +102,6 @@ public final class GameWorldRenderer {
 		trackWalls = world.getTrackWalls();
 		playerLights = world.getPlayerHeadLights();
 		staticMeshes = world.getStaticMeshes();
-
-		// compute tilemap zoom factor
-		float thisW = (float)Gdx.graphics.getWidth();
-		float thisH = (float)Gdx.graphics.getHeight();
 
 		createCams( width, height );
 
@@ -126,7 +122,7 @@ public final class GameWorldRenderer {
 		tileAtlas.dispose();
 	}
 
-	private void createCams( int width, int height ) {
+	private void createCams( float width, float height ) {
 		camOrtho = new OrthographicCamera( width, height );
 		halfViewport.set( camOrtho.viewportWidth / 2, camOrtho.viewportHeight / 2 );
 
@@ -226,6 +222,7 @@ public final class GameWorldRenderer {
 		}
 
 		camOrtho.position.z = 0;
+		camOrtho.zoom = scalingStrategy.tileMapZoomFactor;
 		camOrtho.update();
 
 		// update the unscaled orthographic camera rectangle, for visibility queries
@@ -240,11 +237,11 @@ public final class GameWorldRenderer {
 
 		// update the tilemap renderer orthographic camera
 		camTilemap.position.set( camOrtho.position ).mul( scalingStrategy.tileMapZoomFactor );
-//		camTilemap.zoom = scalingStrategy.tileMapZoomFactor;
+		camTilemap.zoom = scalingStrategy.tileMapZoomFactor;
 		camTilemap.update();
 
 		// sync perspective camera to the orthographic camera
-		camPersp.position.set( camTilemap.position.x, camTilemap.position.y, camPerspElevation );
+		camPersp.position.set( camTilemap.position.x, camTilemap.position.y, camPerspElevation );//.mul( scalingStrategy.tileMapZoomFactor );
 		camPersp.update();
 
 		updateRayHandler();

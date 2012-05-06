@@ -152,7 +152,7 @@ public final class Config {
 			Render3DBoundingBoxes = false;
 
 			TraverseWalls = true;
-			ApplyCarFrictionFromMap = true;
+			ApplyCarFrictionFromMap = false;
 			FrustumCulling = true;
 		}
 

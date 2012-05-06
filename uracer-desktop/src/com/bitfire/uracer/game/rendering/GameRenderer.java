@@ -29,21 +29,29 @@ public final class GameRenderer {
 		public static boolean ready = false;
 		private static Vector2 screenPosFor = new Vector2();
 		private static GameWorldRenderer worldRenderer;
+		private static GameWorld gameWorld;
 
-		public static void init( GameWorldRenderer worldRenderer ) {
+		public static void init( GameWorld world, GameWorldRenderer worldRenderer ) {
+			ScreenUtils.gameWorld = world;
 			ScreenUtils.worldRenderer = worldRenderer;
 			ScreenUtils.ready = true;
 		}
 
-		public static Vector2 screenPosForMt( Vector2 worldPositionMt ) {
-			screenPosFor.x = Convert.mt2px( worldPositionMt.x ) - worldRenderer.camOrtho.position.x + worldRenderer.halfViewport.x;
-			screenPosFor.y = worldRenderer.camOrtho.position.y - Convert.mt2px( worldPositionMt.y ) + worldRenderer.halfViewport.y;
-			return screenPosFor;
-		}
+//		public static Vector2 screenPosForMt( Vector2 worldPositionMt ) {
+//			screenPosFor.x = Convert.mt2px( worldPositionMt.x ) - worldRenderer.camOrtho.position.x + worldRenderer.halfViewport.x;
+//			screenPosFor.y = worldRenderer.camOrtho.position.y - Convert.mt2px( worldPositionMt.y ) + worldRenderer.halfViewport.y;
+//			return screenPosFor;
+//		}
 
 		public static Vector2 screenPosForPx( Vector2 worldPositionPx ) {
 			screenPosFor.x = worldPositionPx.x - worldRenderer.camOrtho.position.x + worldRenderer.halfViewport.x;
 			screenPosFor.y = worldRenderer.camOrtho.position.y - worldPositionPx.y + worldRenderer.halfViewport.y;
+			return screenPosFor;
+		}
+
+		public static Vector2 worldToScreen( Vector2 worldPositionMt ) {
+			screenPosFor.x = Convert.scaledPixel( Convert.mt2px( worldPositionMt.x ) ) - worldRenderer.camOrtho.position.x + worldRenderer.halfViewport.x;
+			screenPosFor.y = worldRenderer.camOrtho.position.y - Convert.scaledPixel( Convert.mt2px( worldPositionMt.y ) ) + worldRenderer.halfViewport.y;
 			return screenPosFor;
 		}
 
@@ -60,11 +68,11 @@ public final class GameRenderer {
 		gl = Gdx.graphics.getGL20();
 
 		// world rendering
-		worldRenderer = new GameWorldRenderer( scalingStrategy, world, Config.Graphics.TargetWidth, Config.Graphics.TargetHeight );
+		worldRenderer = new GameWorldRenderer( scalingStrategy, world, Gdx.graphics.getWidth(), Gdx.graphics.getWidth() / scalingStrategy.targetAspect /*Config.Graphics.TargetHeight*/ );
 		batchRenderer = new GameBatchRenderer( gl );
 
 		// initialize utils
-		ScreenUtils.init( worldRenderer );
+		ScreenUtils.init( gameWorld, worldRenderer );
 		Gdx.app.log( "GameRenderer", "ScreenUtils initialized (ready=" + ScreenUtils.ready + ")" );
 
 		// post-processing

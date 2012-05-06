@@ -271,12 +271,6 @@ public abstract class Car extends Box2DEntity {
 	}
 
 	@Override
-	public void setTransform( Vector2 position, float orient ) {
-		super.setTransform( position, orient );
-		previousPosition.set( body.getPosition() );
-	}
-
-	@Override
 	public void setWorldPosMt( Vector2 worldPosition ) {
 		super.setWorldPosMt( worldPosition );
 		previousPosition.set( body.getPosition() );

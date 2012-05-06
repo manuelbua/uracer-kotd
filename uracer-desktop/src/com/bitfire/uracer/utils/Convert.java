@@ -35,8 +35,8 @@ public final class Convert {
 		return ret;
 	}
 
-	public static float scaledPixels( float pixels ) {
-		return pixels * invZoomFactor;
+	public static float scaledPixel( final float pixel ) {
+		return pixel * invZoomFactor;
 	}
 
 	public static Vector2 scaledPixels( final Vector2 pixels ) {

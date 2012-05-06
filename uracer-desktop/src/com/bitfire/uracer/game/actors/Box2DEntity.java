@@ -1,7 +1,6 @@
 package com.bitfire.uracer.game.actors;
 
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
-import com.badlogic.gdx.math.MathUtils;
 import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.physics.box2d.Body;
 import com.badlogic.gdx.physics.box2d.World;
@@ -11,7 +10,6 @@ import com.bitfire.uracer.game.events.GameEvents;
 import com.bitfire.uracer.game.rendering.GameRendererEvent;
 import com.bitfire.uracer.game.rendering.GameRendererEvent.Type;
 import com.bitfire.uracer.utils.AMath;
-import com.bitfire.uracer.utils.Convert;
 
 public abstract class Box2DEntity extends SubframeInterpolableEntity {
 	protected Body body;
@@ -73,8 +71,6 @@ public abstract class Box2DEntity extends SubframeInterpolableEntity {
 		super.onBeforePhysicsSubstep();
 	}
 
-	private Vector2 _pos = new Vector2();
-
 	public Vector2 getWorldPosMt() {
 		return body.getPosition();
 	}
@@ -89,32 +85,6 @@ public abstract class Box2DEntity extends SubframeInterpolableEntity {
 
 	public void setWorldPosMt(Vector2 worldPosition, float orientationRads) {
 		body.setTransform( worldPosition, orientationRads );
-	}
-
-	public Vector2 pos() {
-		_pos.set( Convert.mt2px( body.getPosition() ) );
-		return _pos;
-	}
-
-	public void pos( Vector2 pos ) {
-		setTransform( pos, orient() );
-	}
-
-	public float orient() {
-		return -body.getAngle() * MathUtils.radiansToDegrees;
-	}
-
-	public void orient( float orient ) {
-		setTransform( pos(), orient );
-	}
-
-	private Vector2 tmp = new Vector2();
-
-	public void setTransform( Vector2 position, float orient ) {
-		tmp.set( Convert.px2mt( position ) );
-		body.setTransform( tmp, -orient * MathUtils.degreesToRadians );
-		toNormalRelativeAngle();
-		resetState();
 	}
 
 	protected void toNormalRelativeAngle() {
