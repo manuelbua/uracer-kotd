@@ -141,7 +141,7 @@ public final class Config {
 		public static void asDefault() {
 
 			UseDebugHelper = true;
-			RenderBox2DWorldWireframe = false;
+			RenderBox2DWorldWireframe = true;
 			RenderPlayerDebugInfo = Config.isDesktop;
 			RenderHudDebugInfo = Config.isDesktop;
 			RenderDebugInfoFpsStats = true;

@@ -177,7 +177,7 @@ public class PlayerCar extends Car {
 		carInput = acquireInput();
 
 		// handle decrease scheduled from previous step
-//		 handleDecrease( carInput );
+		// handleDecrease( carInput );
 		handleImpactFeedback();
 
 		carSim.applyInput( carInput );
@@ -194,7 +194,7 @@ public class PlayerCar extends Car {
 		super.onAfterPhysicsSubstep();
 
 		// inspect impact feedback, accumulate vel/ang velocities
-//		handleImpactFeedback();
+		// handleImpactFeedback();
 
 		carState.update( carDesc );
 		driftState.update( carSim.lateralForceFront.y, carSim.lateralForceRear.y, carDesc.velocity_wc.len() );
@@ -266,19 +266,19 @@ public class PlayerCar extends Car {
 		}
 	}
 
-//	private void handleDecrease( CarInput input ) {
-////		if( decrease_scheduled || (TimeUtils.nanoTime() - start_timer < 250000000L) ) {
-//		if( decrease_scheduled || (TimeUtils.nanoTime() - start_timer < 1000000000L) ) {
-//			if( decrease_scheduled ) {
-//				decrease_scheduled = false;
-//				start_timer = TimeUtils.nanoTime();
-//			}
-//
-////			input.throttle *= dampThrottleAF;
-////			input.throttle = 0;
-//			carDesc.velocity_wc.set( body.getLinearVelocity() );
-//			carDesc.angularvelocity = body.getAngularVelocity();
-//
-//		}
-//	}
+	// private void handleDecrease( CarInput input ) {
+	// // if( decrease_scheduled || (TimeUtils.nanoTime() - start_timer < 250000000L) ) {
+	// if( decrease_scheduled || (TimeUtils.nanoTime() - start_timer < 1000000000L) ) {
+	// if( decrease_scheduled ) {
+	// decrease_scheduled = false;
+	// start_timer = TimeUtils.nanoTime();
+	// }
+	//
+	// // input.throttle *= dampThrottleAF;
+	// // input.throttle = 0;
+	// carDesc.velocity_wc.set( body.getLinearVelocity() );
+	// carDesc.angularvelocity = body.getAngularVelocity();
+	//
+	// }
+	// }
 }
