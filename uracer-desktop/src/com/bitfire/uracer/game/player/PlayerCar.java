@@ -128,7 +128,9 @@ public class PlayerCar extends Car {
 		}
 
 		carPos.set( GameRenderer.ScreenUtils.screenPosForMt( body.getPosition() ) );
-		touchPos.set( input.getXY() );
+		touchPos.set( input.getXY() ).mul( gameWorld.scalingStrategy.tileMapZoomFactor );
+
+//		Gdx.app.log( "PlayerCar", "carpos=" + carPos.toString() + ", cursor=" + touchPos.toString() );
 
 		carInput.updated = input.isTouching();
 

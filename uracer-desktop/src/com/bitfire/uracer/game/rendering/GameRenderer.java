@@ -108,16 +108,16 @@ public final class GameRenderer {
 		// render base tilemap
 		worldRenderer.renderTilemap( gl );
 
-//		// BatchBeforeMeshes
-//		SpriteBatch batch = null;
-//		batch = batchRenderer.begin( worldRenderer.getOrthographicCamera() );
-//		batch.enableBlending();
-//		{
-//			GameEvents.gameRenderer.batch = batch;
-//			GameEvents.gameRenderer.trigger( this, GameRendererEvent.Type.BatchBeforeMeshes );
-//		}
-//		batchRenderer.end();
-//
+		// BatchBeforeMeshes
+		SpriteBatch batch = null;
+		batch = batchRenderer.begin( worldRenderer.getOrthographicCamera() );
+		batch.enableBlending();
+		{
+			GameEvents.gameRenderer.batch = batch;
+			GameEvents.gameRenderer.trigger( this, GameRendererEvent.Type.BatchBeforeMeshes );
+		}
+		batchRenderer.end();
+
 //		// render world's meshes
 //		worldRenderer.renderAllMeshes( gl );
 //
