@@ -79,17 +79,12 @@ public class PlayerCar extends Car {
 	}
 
 	@Override
-	public void reset() {
-		super.reset();
+	public void resetPhysics() {
+		super.resetPhysics();
+		carSim.resetPhysics();
 		frictionMean.clear();
 		carState.reset();
 		driftState.reset();
-	}
-
-	@Override
-	protected void resetPhysics() {
-		super.resetPhysics();
-		carSim.resetPhysics();
 	}
 
 	/** Sets the input system this PlayerCar will use to check for input events */
@@ -201,9 +196,7 @@ public class PlayerCar extends Car {
 	}
 
 	@Override
-	public void onSubstepCompleted( float aliasingFactor ) {
-		super.onSubstepCompleted( aliasingFactor );
-
+	public void onSubstepCompleted() {
 		// inspect impact feedback, accumulate vel/ang velocities
 		// handleImpactFeedback();
 

@@ -85,6 +85,7 @@ public final class GameWorld {
 		box2dWorld = new World( new Vector2( 0, 0 ), false );
 		box2dWorld.setContactListener( new GameWorldContactListener() );
 		box2dWorld.setAutoClearForces( false );
+		box2dWorld.setContinuousPhysics( false );
 
 		Gdx.app.log( "GameWorld", "Box2D world created" );
 
@@ -280,7 +281,7 @@ public final class GameWorld {
 					List<Vector2> points = MapUtils.extractPolyData( o.polyline );
 					if( points.size() >= 2 ) {
 						float factor = 1;// scalingStrategy.invTileMapZoomFactor;
-						float wallSizeMt = 0.3f * factor;
+						float wallSizeMt = 0.3f;// * factor;
 						float[] mags = new float[ points.size() - 1 ];
 
 						offsetMt.set( o.x, o.y );

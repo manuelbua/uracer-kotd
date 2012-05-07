@@ -41,8 +41,8 @@ public class GameScreen extends Screen {
 	}
 
 	@Override
-	public void update() {
-		quit = game.update();
+	public void tickCompleted() {
+		quit = game.tickCompleted();
 	}
 
 	@Override

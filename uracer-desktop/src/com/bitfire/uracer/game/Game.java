@@ -144,7 +144,8 @@ public class Game implements Disposable {
 		TaskManager.dispatchTick();
 	}
 
-	public boolean update() {
+	public boolean tickCompleted() {
+		gameLogic.onSubstepCompleted();
 		gameLogic.onUpdate();
 
 		if( gameLogic.doQuit ) {
@@ -155,7 +156,9 @@ public class Game implements Disposable {
 	}
 
 	public void render() {
-		gameLogic.onSubstepCompleted( gameRenderer );
+		// trigger the event and let's subscribers interpolate and update their state()
+		gameRenderer.beforeRender( URacer.getTemporalAliasing() );
+		gameLogic.onBeforeRender( gameRenderer );
 
 		if( canPostProcess ) {
 			updatePostProcessingEffects();

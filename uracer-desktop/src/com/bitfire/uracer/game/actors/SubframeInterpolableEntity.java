@@ -4,9 +4,9 @@ import com.bitfire.uracer.entities.Entity;
 import com.bitfire.uracer.entities.EntityRenderState;
 import com.bitfire.uracer.game.events.GameEvents;
 import com.bitfire.uracer.game.logic.PhysicsStepEvent;
-import com.bitfire.uracer.game.logic.PhysicsStepEvent.Type;
+import com.bitfire.uracer.game.rendering.GameRendererEvent;
 
-public abstract class SubframeInterpolableEntity extends Entity implements PhysicsStepEvent.Listener {
+public abstract class SubframeInterpolableEntity extends Entity implements PhysicsStepEvent.Listener, GameRendererEvent.Listener {
 	// world-coords
 	protected EntityRenderState statePrevious = new EntityRenderState();
 	protected EntityRenderState stateCurrent = new EntityRenderState();
@@ -15,6 +15,7 @@ public abstract class SubframeInterpolableEntity extends Entity implements Physi
 		GameEvents.physicsStep.addListener( this, PhysicsStepEvent.Type.onBeforeTimestep );
 		GameEvents.physicsStep.addListener( this, PhysicsStepEvent.Type.onAfterTimestep );
 		GameEvents.physicsStep.addListener( this, PhysicsStepEvent.Type.onSubstepCompleted );
+		GameEvents.gameRenderer.addListener( this, GameRendererEvent.Type.OnSubframeInterpolate, GameRendererEvent.Order.DEFAULT );
 	}
 
 	@Override
@@ -22,6 +23,7 @@ public abstract class SubframeInterpolableEntity extends Entity implements Physi
 		GameEvents.physicsStep.removeListener( this, PhysicsStepEvent.Type.onBeforeTimestep );
 		GameEvents.physicsStep.removeListener( this, PhysicsStepEvent.Type.onAfterTimestep );
 		GameEvents.physicsStep.removeListener( this, PhysicsStepEvent.Type.onSubstepCompleted );
+		GameEvents.gameRenderer.removeListener( this, GameRendererEvent.Type.OnSubframeInterpolate, GameRendererEvent.Order.DEFAULT );
 	}
 
 	public abstract void saveStateTo( EntityRenderState state );
@@ -36,7 +38,16 @@ public abstract class SubframeInterpolableEntity extends Entity implements Physi
 	}
 
 	@Override
-	public void physicsEvent( float temporalAliasing, Type type ) {
+	public void gameRendererEvent( GameRendererEvent.Type type ) {
+		switch( type ) {
+		case OnSubframeInterpolate:
+			onSubframeInterpolate( GameEvents.gameRenderer.timeAliasingFactor );
+			break;
+		}
+	}
+
+	@Override
+	public void physicsEvent( PhysicsStepEvent.Type type ) {
 		switch( type ) {
 		case onBeforeTimestep:
 			onBeforePhysicsSubstep();
@@ -45,7 +56,7 @@ public abstract class SubframeInterpolableEntity extends Entity implements Physi
 			onAfterPhysicsSubstep();
 			break;
 		case onSubstepCompleted:
-			onSubstepCompleted( temporalAliasing );
+			onSubstepCompleted();
 			break;
 		}
 	}
@@ -58,8 +69,12 @@ public abstract class SubframeInterpolableEntity extends Entity implements Physi
 		saveStateTo( stateCurrent );
 	}
 
+	public void onSubstepCompleted() {
+
+	}
+
 	/** Issued after a tick/physicsStep but before render :P */
-	public void onSubstepCompleted( float aliasingFactor ) {
+	public void onSubframeInterpolate( float aliasingFactor ) {
 		if( isSubframeInterpolated() ) {
 			stateRender.set( EntityRenderState.interpolate( statePrevious, stateCurrent, aliasingFactor ) );
 		} else {

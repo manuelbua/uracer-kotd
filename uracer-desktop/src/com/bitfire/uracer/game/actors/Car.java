@@ -54,13 +54,6 @@ public strictfp abstract class Car extends Box2DEntity {
 	private float carTraveledDistance = 0;
 	private int accuDistCount = 0;
 
-	// the car's average speed, in meters/sec, so far.
-	private float accuSpeed = 0;
-	private int accuSpeedCount = 0;
-
-	// the car's instant speed, in meters/sec
-	private float carInstantSpeedMtSec = 0;
-
 	private Aspect aspect = Aspect.OldSkool;
 	protected InputMode inputMode = InputMode.NoInput;
 
@@ -78,8 +71,6 @@ public strictfp abstract class Car extends Box2DEntity {
 		this.inputMode = inputMode;
 		this.carTraveledDistance = 0;
 		this.accuDistCount = 0;
-		this.accuSpeed = 0;
-		this.accuSpeedCount = 0;
 
 		applyCarPhysics( carType );
 
@@ -96,6 +87,7 @@ public strictfp abstract class Car extends Box2DEntity {
 		BodyDef bd = new BodyDef();
 		bd.angle = 0;
 		bd.type = BodyType.DynamicBody;
+//		bd.bullet = true;
 
 		body = box2dWorld.createBody( bd );
 		body.setBullet( true );
@@ -200,17 +192,8 @@ public strictfp abstract class Car extends Box2DEntity {
 		return carTraveledDistance;
 	}
 
-	/** Returns the instant speed, in meters/s */
-	public float getInstantSpeed() {
-		return carInstantSpeedMtSec;
-	}
-
 	public int getAccuDistCount() {
 		return accuDistCount;
-	}
-
-	public int getAccuSpeedCount() {
-		return accuSpeedCount;
 	}
 
 	public void setActive( boolean active ) {
@@ -223,20 +206,17 @@ public strictfp abstract class Car extends Box2DEntity {
 		return body.isActive();
 	}
 
-	public void reset() {
-		resetPhysics();
-		resetDistanceAndSpeed();
-	}
+//	public void reset() {
+//		resetPhysics();
+//		resetDistanceAndSpeed();
+//	}
 
 	public void resetDistanceAndSpeed() {
 		carTraveledDistance = 0;
 		accuDistCount = 0;
-		accuSpeed = 0;
-		accuSpeedCount = 0;
-		carInstantSpeedMtSec = 0;
 	}
 
-	protected void resetPhysics() {
+	public void resetPhysics() {
 //		boolean wasActive = isActive();
 
 //		if( wasActive ) {
@@ -307,11 +287,6 @@ public strictfp abstract class Car extends Box2DEntity {
 		computeDistanceAndSpeed();
 	}
 
-	@Override
-	public void onSubstepCompleted( float aliasingFactor ) {
-		super.onSubstepCompleted( aliasingFactor );
-	}
-
 	private void computeDistanceAndSpeed() {
 		// compute traveled distance, in meters
 		distmp.set( body.getPosition() );
@@ -332,11 +307,6 @@ public strictfp abstract class Car extends Box2DEntity {
 		} else {
 			dist = 0;
 		}
-
-		// compute instant speed
-		carInstantSpeedMtSec = AMath.fixup( dist * Config.Physics.PhysicsTimestepHz );
-		accuSpeed += carInstantSpeedMtSec;
-		accuSpeedCount++;
 	}
 
 	@Override

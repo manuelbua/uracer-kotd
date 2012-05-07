@@ -34,6 +34,14 @@ public final class NumberString {
 			NumberString.formatterVeryLong = new DecimalFormat( "0.0000000000" );
 		}
 
+		return NumberString.formatterVeryLong.format( value );
+	}
+
+	public static String formatVeryLong( double value ) {
+		if( NumberString.formatterVeryLong == null ) {
+			NumberString.formatterVeryLong = new DecimalFormat( "0.0000000000" );
+		}
+
 		 return NumberString.formatterVeryLong.format( value );
 	}
 

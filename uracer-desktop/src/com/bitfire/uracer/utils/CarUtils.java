@@ -8,6 +8,10 @@ public final class CarUtils {
 	private CarUtils() {
 	}
 
+	public static double mtSecToKmHour( double mtsec ) {
+		return mtsec * 3.6;
+	}
+
 	public static float mtSecToKmHour( float mtsec ) {
 		return mtsec * 3.6f;
 	}
@@ -15,17 +19,17 @@ public final class CarUtils {
 	public static void dumpSpeedInfo( String msg, Car car, float timeElapsed ) {
 		// @formatter:off
 
-		float dist = car.getTraveledDistance();
+		float  dist = car.getTraveledDistance();
 		float mts = dist / timeElapsed;
 //		float kmh = mtSecToKmHour(mts);
 
 		Gdx.app.log( msg,
-			"Car traveled " + NumberString.formatVeryLong(dist) + " m " +
+			"Car traveled " + dist + " m " +
 			"(" + car.getAccuDistCount() + ") " + "in " +
-			NumberString.formatVeryLong(timeElapsed) + " s " +
-			"(" + NumberString.formatVeryLong(mts) + " mt/s) " +
-//			"(" + NumberString.formatVeryLong(kmh) + " km/h) " +
-			"(" + car.getAccuSpeedCount() + ")" +
+			timeElapsed + " s " +
+			"(" + mts + " mt/s) " +
+//			"(" + kmh + " km/h) " +
+//			"(" + car.getAccuSpeedCount() + ")" +
 //			"[" + AMath.round( kmh, 2 ) + " km/h, " +
 //			AMath.round( dist, 2 ) + " m]" +
 			" fpos=" + car.getBody().getPosition()

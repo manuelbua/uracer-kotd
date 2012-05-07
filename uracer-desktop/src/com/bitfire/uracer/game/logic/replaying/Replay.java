@@ -78,6 +78,8 @@ public class Replay {
 		this.trackName = trackName;
 		difficultyLevel = difficulty;
 		time.start();
+
+//		Gdx.app.log( "Replay", "Begin at " + carWorldPositionMt + ", " + carWorldOrientRads );
 	}
 
 	public void end() {

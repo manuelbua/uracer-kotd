@@ -17,13 +17,13 @@ public class PhysicsStep extends Task {
 
 	@Override
 	protected void onTick() {
-		GameEvents.physicsStep.trigger( this, 0, Type.onBeforeTimestep );
+		GameEvents.physicsStep.trigger( this, Type.onBeforeTimestep );
 		world.step( Config.Physics.PhysicsDt, 10, 10 );
-		GameEvents.physicsStep.trigger( this, 0, Type.onAfterTimestep );
+		GameEvents.physicsStep.trigger( this, Type.onAfterTimestep );
 	}
 
-	public void triggerOnSubstepCompleted( float aliasingFactor ) {
+	public void onSubstepCompleted() {
 		world.clearForces();
-		GameEvents.physicsStep.trigger( this, aliasingFactor, Type.onSubstepCompleted );
+		GameEvents.physicsStep.trigger( this, Type.onSubstepCompleted );
 	}
 }

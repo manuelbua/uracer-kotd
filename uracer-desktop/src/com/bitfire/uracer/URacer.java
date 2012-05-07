@@ -157,7 +157,7 @@ public class URacer implements ApplicationListener {
 
 		if( lastTicksCount > 0 )
 		{
-			screen.update();
+			screen.tickCompleted();
 
 			if( screen.quit() ) {
 				return;

@@ -82,7 +82,7 @@ public class HudDebug extends HudElement {
 		meterSkidMarks.setValue( skidMarks.getParticleCount() );
 
 		// player's speed
-		meterSpeed.setValue( CarUtils.mtSecToKmHour(player.getInstantSpeed()) );
+//		meterSpeed.setValue( (float)CarUtils.mtSecToKmHour(player.getInstantSpeed()) );
 	}
 
 	public void onDebug( SpriteBatch batch ) {

@@ -37,11 +37,13 @@ public final class GameRenderer {
 			ScreenUtils.ready = true;
 		}
 
-//		public static Vector2 screenPosForMt( Vector2 worldPositionMt ) {
-//			screenPosFor.x = Convert.mt2px( worldPositionMt.x ) - worldRenderer.camOrtho.position.x + worldRenderer.halfViewport.x;
-//			screenPosFor.y = worldRenderer.camOrtho.position.y - Convert.mt2px( worldPositionMt.y ) + worldRenderer.halfViewport.y;
-//			return screenPosFor;
-//		}
+		// public static Vector2 screenPosForMt( Vector2 worldPositionMt ) {
+		// screenPosFor.x = Convert.mt2px( worldPositionMt.x ) - worldRenderer.camOrtho.position.x +
+		// worldRenderer.halfViewport.x;
+		// screenPosFor.y = worldRenderer.camOrtho.position.y - Convert.mt2px( worldPositionMt.y ) +
+		// worldRenderer.halfViewport.y;
+		// return screenPosFor;
+		// }
 
 		public static Vector2 screenPosForPx( Vector2 worldPositionPx ) {
 			screenPosFor.x = worldPositionPx.x - worldRenderer.camOrtho.position.x + worldRenderer.halfViewport.x;
@@ -67,8 +69,20 @@ public final class GameRenderer {
 		world = gameWorld;
 		gl = Gdx.graphics.getGL20();
 
+		float w = Gdx.graphics.getWidth();
+		float h = Gdx.graphics.getWidth() / scalingStrategy.targetAspect;
+
+
+//		if( h > Gdx.graphics.getHeight() ) {
+//			// use the heigth instead
+//			w = Gdx.graphics.getHeight() * scalingStrategy.targetAspect;
+//			h = Gdx.graphics.getHeight();
+//		}
+
+		Gdx.app.log( "GameRenderer", "Setting up viewport as " + w + "x" + h + " (ar=" + w/h + ", tar=" + scalingStrategy.targetAspect + ")" );
+
 		// world rendering
-		worldRenderer = new GameWorldRenderer( scalingStrategy, world, Gdx.graphics.getWidth(), Gdx.graphics.getWidth() / scalingStrategy.targetAspect /*Config.Graphics.TargetHeight*/ );
+		worldRenderer = new GameWorldRenderer( scalingStrategy, world, w, h );
 		batchRenderer = new GameBatchRenderer( gl );
 
 		// initialize utils
@@ -77,7 +91,8 @@ public final class GameRenderer {
 
 		// post-processing
 		boolean supports32Bpp = Config.isDesktop;
-		postProcessor = (createPostProcessor ? new PostProcessor( Gdx.graphics.getWidth(), Gdx.graphics.getHeight(), false /* depth */, false /* alpha */, supports32Bpp ) : null);
+		postProcessor = (createPostProcessor ? new PostProcessor( Gdx.graphics.getWidth(), Gdx.graphics.getHeight(), false /* depth */, false /* alpha */,
+				supports32Bpp ) : null);
 	}
 
 	public void dispose() {
@@ -100,6 +115,11 @@ public final class GameRenderer {
 		return worldRenderer;
 	}
 
+	public void beforeRender(float timeAliasingFactor) {
+		GameEvents.gameRenderer.timeAliasingFactor = timeAliasingFactor;
+		GameEvents.gameRenderer.trigger( this, GameRendererEvent.Type.OnSubframeInterpolate );
+	}
+
 	public void render() {
 		boolean postProcessorReady = hasPostProcessor() && postProcessor.isEnabled();
 		if( postProcessorReady ) {
@@ -107,7 +127,7 @@ public final class GameRenderer {
 		}
 
 		if( !postProcessorReady ) {
-//			gl.glViewport( 0, 0, Gdx.graphics.getWidth(), Gdx.graphics.getHeight() );
+			// gl.glViewport( 0, 0, Gdx.graphics.getWidth(), Gdx.graphics.getHeight() );
 			gl.glClearDepthf( 1 );
 			gl.glClearColor( 0, 0, 0, 0 );
 			gl.glClear( GL20.GL_DEPTH_BUFFER_BIT | GL20.GL_COLOR_BUFFER_BIT );
@@ -126,39 +146,39 @@ public final class GameRenderer {
 		}
 		batchRenderer.end();
 
-//		// render world's meshes
-//		worldRenderer.renderAllMeshes( gl );
-//
-//		// BatchAfterMeshes
-//		batch = batchRenderer.beginTopLeft();
-//		{
-//			GameEvents.gameRenderer.batch = batch;
-//			GameEvents.gameRenderer.trigger( this, GameRendererEvent.Type.BatchAfterMeshes );
-//		}
-//		batchRenderer.end();
-//
-//		if( world.isNightMode() ) {
-//			if( Config.Graphics.DumbNightMode ) {
-//				if( postProcessorReady ) {
-//					postProcessor.render();
-//				}
-//
-//				worldRenderer.renderLigthMap( null );
-//			} else {
-//				// hook into the next PostProcessor source buffer (the last result)
-//				// and blend the lightmap on it
-//				if( postProcessorReady ) {
-//					worldRenderer.renderLigthMap( postProcessor.captureEnd() );
-//					postProcessor.render();
-//				} else {
-//					worldRenderer.renderLigthMap( null );
-//				}
-//			}
-//		} else {
-//			if( postProcessorReady ) {
-//				postProcessor.render();
-//			}
-//		}
+		// // render world's meshes
+		// worldRenderer.renderAllMeshes( gl );
+		//
+		// // BatchAfterMeshes
+		// batch = batchRenderer.beginTopLeft();
+		// {
+		// GameEvents.gameRenderer.batch = batch;
+		// GameEvents.gameRenderer.trigger( this, GameRendererEvent.Type.BatchAfterMeshes );
+		// }
+		// batchRenderer.end();
+		//
+		// if( world.isNightMode() ) {
+		// if( Config.Graphics.DumbNightMode ) {
+		// if( postProcessorReady ) {
+		// postProcessor.render();
+		// }
+		//
+		// worldRenderer.renderLigthMap( null );
+		// } else {
+		// // hook into the next PostProcessor source buffer (the last result)
+		// // and blend the lightmap on it
+		// if( postProcessorReady ) {
+		// worldRenderer.renderLigthMap( postProcessor.captureEnd() );
+		// postProcessor.render();
+		// } else {
+		// worldRenderer.renderLigthMap( null );
+		// }
+		// }
+		// } else {
+		// if( postProcessorReady ) {
+		// postProcessor.render();
+		// }
+		// }
 	}
 
 	// manages and triggers debug event

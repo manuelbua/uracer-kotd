@@ -15,7 +15,7 @@ public abstract class Screen {
 
 	public abstract void tick();
 
-	public abstract void update();
+	public abstract void tickCompleted();
 
 	public abstract void render();
 

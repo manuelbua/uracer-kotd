@@ -27,6 +27,10 @@ public final class AMath {
 		return Math.abs( a ) < CMP_EPSILON;
 	}
 
+	public static boolean isZero( double a ) {
+		return Math.abs( a ) < CMP_EPSILON;
+	}
+
 	public static float lerp( float prev, float curr, float alpha ) {
 		return curr * alpha + prev * (1f - alpha);
 	}
@@ -66,6 +70,14 @@ public final class AMath {
 	}
 
 	public static float fixup( float v ) {
+		if( Math.abs( v ) < CMP_EPSILON ) {
+			return 0;
+		}
+
+		return v;
+	}
+
+	public static double fixup( double v ) {
 		if( Math.abs( v ) < CMP_EPSILON ) {
 			return 0;
 		}

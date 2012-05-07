@@ -185,6 +185,7 @@ public class GameLogic implements CarEvent.Listener, CarStateEvent.Listener, Pla
 		restartGame();
 		// if( !hasPlayer() )
 		{
+			gameWorld.getBox2DWorld().clearForces();
 			ghostCar.setReplay( replay );
 		}
 	}
@@ -229,10 +230,11 @@ public class GameLogic implements CarEvent.Listener, CarStateEvent.Listener, Pla
 		return playerCar;
 	}
 
-	public void onSubstepCompleted( GameRenderer gameRenderer ) {
-		// trigger the event and let's subscribers interpolate and update their state()
-		gameTasksManager.physicsStep.triggerOnSubstepCompleted( URacer.getTemporalAliasing() );
+	public void onSubstepCompleted() {
+		gameTasksManager.physicsStep.onSubstepCompleted();
+	}
 
+	public void onBeforeRender( GameRenderer gameRenderer ) {
 		// update player's headlights and move the world camera to follows it, if there is a player
 		GameWorldRenderer worldRenderer = gameRenderer.getWorldRenderer();
 		if( hasPlayer() ) {
@@ -287,11 +289,14 @@ public class GameLogic implements CarEvent.Listener, CarStateEvent.Listener, Pla
 		} else if( input.isOn( Keys.X ) ) {
 
 			// stop recording and play
+			playerCar.resetPhysics();
 			lapManager.stopRecording();
+
+			CarUtils.dumpSpeedInfo( "Player", playerCar, lapManager.getLastRecordedReplay().trackTimeSeconds );
+			playerCar.resetDistanceAndSpeed();
 			if( userRec != null ) {
 				userRec.saveLocal( gameTasksManager.messager );
 				ghostCar.setReplay( userRec );
-				CarUtils.dumpSpeedInfo( "Player", playerCar, lapManager.getLastRecordedReplay().trackTimeSeconds );
 			}
 
 			// Gdx.app.log( "GameLogic", "Player final pos=" + playerCar.getBody().getPosition() );
@@ -354,12 +359,15 @@ public class GameLogic implements CarEvent.Listener, CarStateEvent.Listener, Pla
 
 	private void resetPlayer( Car playerCar, GhostCar playerGhostCar ) {
 		if( playerCar != null ) {
-			playerCar.reset();
+			playerCar.resetPhysics();
+			playerCar.resetDistanceAndSpeed();
 			playerCar.setWorldPosMt( gameWorld.playerStartPos, gameWorld.playerStartOrient );
 		}
 
 		if( playerGhostCar != null ) {
-			playerGhostCar.reset();
+			playerGhostCar.resetPhysics();
+			playerGhostCar.resetDistanceAndSpeed();
+			playerGhostCar.removeReplay();
 		}
 	}
 
@@ -373,8 +381,6 @@ public class GameLogic implements CarEvent.Listener, CarStateEvent.Listener, Pla
 		GameTweener.clear();
 		lapManager.abortRecording();
 		gameTasksManager.restart();
-
-		ghostCar.setReplay( lapManager.getBestReplay() );
 	}
 
 	private void resetLogic() {

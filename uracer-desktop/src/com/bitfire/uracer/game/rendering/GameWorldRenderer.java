@@ -123,11 +123,11 @@ public final class GameWorldRenderer {
 	}
 
 	private void createCams( float width, float height ) {
-		camOrtho = new OrthographicCamera( width, height );
+		camOrtho = new OrthographicCamera( Gdx.graphics.getWidth(), Gdx.graphics.getHeight() );
 		halfViewport.set( camOrtho.viewportWidth / 2, camOrtho.viewportHeight / 2 );
 
 		// creates and setup orthographic camera
-		camTilemap = new OrthographicCamera( width, height );
+		camTilemap = new OrthographicCamera( Gdx.graphics.getWidth(), Gdx.graphics.getHeight() );
 		camTilemap.near = 0;
 		camTilemap.far = 100;
 		camTilemap.zoom = 1;
