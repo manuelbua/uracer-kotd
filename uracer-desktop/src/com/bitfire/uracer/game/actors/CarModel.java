@@ -210,7 +210,7 @@ public final class CarModel {
 		// mostly for collision response
 		density = 1f;
 		friction = 4.02f;
-		restitution = 3f;
+		restitution = 5f;
 
 		return this;
 	}

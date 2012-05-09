@@ -27,6 +27,10 @@ public final class AMath {
 		return Math.abs( a ) < CMP_EPSILON;
 	}
 
+	public static boolean isZero( double a ) {
+		return Math.abs( a ) < CMP_EPSILON;
+	}
+
 	public static float lerp( float prev, float curr, float alpha ) {
 		return curr * alpha + prev * (1f - alpha);
 	}

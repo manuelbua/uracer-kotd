@@ -140,9 +140,6 @@ public class URacer implements ApplicationListener {
 				screen.tick();
 				timeAccuNs -= PhysicsDtNs;
 				lastTicksCount++;
-				if( screen.quit() ) {
-					return;
-				}
 			}
 
 			// simulate slowness
@@ -154,9 +151,18 @@ public class URacer implements ApplicationListener {
 		// compute the temporal aliasing factor, entities will render
 		// themselves accordingly to this to avoid flickering and jittering,
 		// permitting slow-motion effects without artifacts.
-		// (this imply accepting a one-frame-behind behavior)
+		// (this imply accepting a max-one-frame-behind behavior)
 		temporalAliasing = (timeAccuNs * timeStepHz) * oneOnOneBillion;
 		aliasingTime = temporalAliasing;
+
+		if( lastTicksCount > 0 )
+		{
+			screen.tickCompleted();
+
+			if( screen.quit() ) {
+				return;
+			}
+		}
 
 		startTime = TimeUtils.nanoTime();
 		{

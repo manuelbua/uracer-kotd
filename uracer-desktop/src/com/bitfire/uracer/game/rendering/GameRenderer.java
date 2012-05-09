@@ -95,6 +95,11 @@ public final class GameRenderer {
 		return worldRenderer;
 	}
 
+	public void beforeRender(float timeAliasingFactor) {
+		GameEvents.gameRenderer.timeAliasingFactor = timeAliasingFactor;
+		GameEvents.gameRenderer.trigger( this, GameRendererEvent.Type.OnSubframeInterpolate );
+	}
+
 	public void render() {
 		boolean postProcessorReady = hasPostProcessor() && postProcessor.isEnabled();
 		if( postProcessorReady ) {

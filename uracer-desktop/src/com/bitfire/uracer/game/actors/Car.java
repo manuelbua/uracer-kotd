@@ -2,10 +2,10 @@ package com.bitfire.uracer.game.actors;
 
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
+import com.badlogic.gdx.graphics.g2d.TextureRegion;
 import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.physics.box2d.BodyDef;
 import com.badlogic.gdx.physics.box2d.BodyDef.BodyType;
-import com.badlogic.gdx.physics.box2d.CircleShape;
 import com.badlogic.gdx.physics.box2d.Fixture;
 import com.badlogic.gdx.physics.box2d.FixtureDef;
 import com.badlogic.gdx.physics.box2d.MassData;
@@ -13,9 +13,13 @@ import com.bitfire.uracer.configuration.Config;
 import com.bitfire.uracer.game.collisions.CollisionFilters;
 import com.bitfire.uracer.game.rendering.GameRendererEvent;
 import com.bitfire.uracer.game.world.GameWorld;
+import com.bitfire.uracer.resources.Art;
 import com.bitfire.uracer.utils.AMath;
+import com.bitfire.uracer.utils.Convert;
+import com.bitfire.uracer.utils.FixtureAtlas;
 
-public abstract class Car extends Box2DEntity {
+
+public strictfp abstract class Car extends Box2DEntity {
 	public enum InputMode {
 		NoInput, InputFromPlayer, InputFromReplay
 	}
@@ -51,11 +55,6 @@ public abstract class Car extends Box2DEntity {
 	private float carTraveledDistance = 0;
 	private int accuDistCount = 0;
 
-	// the car's average speed, in meters/sec, so far.
-	private float carAvgSpeedMtSec = 0;
-	private float accuSpeed = 0;
-	private int accuSpeedCount = 0;
-
 	// the car's instant speed, in meters/sec
 	private float carInstantSpeedMtSec = 0;
 
@@ -76,8 +75,6 @@ public abstract class Car extends Box2DEntity {
 		this.inputMode = inputMode;
 		this.carTraveledDistance = 0;
 		this.accuDistCount = 0;
-		this.accuSpeed = 0;
-		this.accuSpeedCount = 0;
 
 		applyCarPhysics( carType );
 
@@ -94,60 +91,60 @@ public abstract class Car extends Box2DEntity {
 		BodyDef bd = new BodyDef();
 		bd.angle = 0;
 		bd.type = BodyType.DynamicBody;
+//		bd.bullet = true;
 
 		body = box2dWorld.createBody( bd );
 		body.setBullet( true );
 		body.setUserData( this );
-//
-//		TextureRegion region = Art.cars.findRegion( aspect.name );
-//		String shapeName = Config.ShapesStore + "electron" /* aspect.name */+ ".shape";
-//		String shapeRef = Config.ShapesRefs + "electron" /* aspect.name */+ ".png";
-//
-//		// set physical properties and apply shape
-//		FixtureDef fd = new FixtureDef();
-//		fd.density = model.density;
-//		fd.friction = model.friction;
-//		fd.restitution = model.restitution;
-//
-//		fd.filter.groupIndex = (short)((carType == CarType.PlayerCar) ? CollisionFilters.GroupPlayer : CollisionFilters.GroupReplay);
-//		fd.filter.categoryBits = (short)((carType == CarType.PlayerCar) ? CollisionFilters.CategoryPlayer : CollisionFilters.CategoryReplay);
-//		fd.filter.maskBits = (short)((carType == CarType.PlayerCar) ? CollisionFilters.MaskPlayer : CollisionFilters.MaskReplay);
-//
-//		if( Config.Debug.TraverseWalls ) {
-//			fd.filter.groupIndex = CollisionFilters.GroupNoCollisions;
-//		}
-//
-//		// apply scaling factors
-//		Vector2 offset = new Vector2( -model.width / 2f, -model.length / 2f );
-//
-//		Vector2 ratio = new Vector2( model.width / Convert.px2mt( region.getRegionWidth() ), model.length / Convert.px2mt( region.getRegionHeight() ) );
-//
-//		// box2d editor "normalization" contemplates just a width-bound ratio..
-//		Vector2 factor = new Vector2( Convert.px2mt( region.getRegionWidth() * ratio.x ), Convert.px2mt( region.getRegionWidth() * ratio.y ) );
-//
-//		FixtureAtlas atlas = new FixtureAtlas( Gdx.files.internal( shapeName ) );
-//		atlas.createFixtures( body, shapeRef, factor.x, factor.y, fd, offset, carType );
 
-		// dbg
+		TextureRegion region = Art.cars.findRegion( aspect.name );
+		String shapeName = Config.ShapesStore + "electron" /* aspect.name */+ ".shape";
+		String shapeRef = Config.ShapesRefs + "electron" /* aspect.name */+ ".png";
+
+		// set physical properties and apply shape
 		FixtureDef fd = new FixtureDef();
-		Vector2 p = new Vector2();
-		CircleShape shape = new CircleShape();
-		shape.setPosition( p.set(0,0.75f) );
-		shape.setRadius( 2.5f / 2f );
-		fd.shape = shape;
+		fd.density = model.density;
+		fd.friction = model.friction;
+		fd.restitution = model.restitution;
 
-		fd.density = 1;
-		fd.friction = 2f;
-		fd.restitution = 0f;
 		fd.filter.groupIndex = (short)((carType == CarType.PlayerCar) ? CollisionFilters.GroupPlayer : CollisionFilters.GroupReplay);
 		fd.filter.categoryBits = (short)((carType == CarType.PlayerCar) ? CollisionFilters.CategoryPlayer : CollisionFilters.CategoryReplay);
 		fd.filter.maskBits = (short)((carType == CarType.PlayerCar) ? CollisionFilters.MaskPlayer : CollisionFilters.MaskReplay);
 
-		body.createFixture( fd ).setUserData( carType );
-		shape.setPosition( p.set(0,-0.75f) );
-		body.createFixture( fd ).setUserData( carType );
-		// dbg
+		if( Config.Debug.TraverseWalls ) {
+			fd.filter.groupIndex = CollisionFilters.GroupNoCollisions;
+		}
 
+		// apply scaling factors
+		Vector2 offset = new Vector2( -model.width / 2f, -model.length / 2f );
+
+		Vector2 ratio = new Vector2( model.width / Convert.px2mt( region.getRegionWidth() ), model.length / Convert.px2mt( region.getRegionHeight() ) );
+
+		// box2d editor "normalization" contemplates just a width-bound ratio..
+		Vector2 factor = new Vector2( Convert.px2mt( region.getRegionWidth() * ratio.x ), Convert.px2mt( region.getRegionWidth() * ratio.y ) );
+
+		FixtureAtlas atlas = new FixtureAtlas( Gdx.files.internal( shapeName ) );
+		atlas.createFixtures( body, shapeRef, factor.x, factor.y, fd, offset, carType );
+
+		// dbg
+//		FixtureDef fd = new FixtureDef();
+//		Vector2 p = new Vector2();
+//		CircleShape shape = new CircleShape();
+//		shape.setPosition( p.set(0,0.75f) );
+//		shape.setRadius( 2.5f / 2f );
+//		fd.shape = shape;
+//
+//		fd.density = 1;
+//		fd.friction = 2f;
+//		fd.restitution = 0f;
+//		fd.filter.groupIndex = (short)((carType == CarType.PlayerCar) ? CollisionFilters.GroupPlayer : CollisionFilters.GroupReplay);
+//		fd.filter.categoryBits = (short)((carType == CarType.PlayerCar) ? CollisionFilters.CategoryPlayer : CollisionFilters.CategoryReplay);
+//		fd.filter.maskBits = (short)((carType == CarType.PlayerCar) ? CollisionFilters.MaskPlayer : CollisionFilters.MaskReplay);
+//
+//		body.createFixture( fd ).setUserData( carType );
+//		shape.setPosition( p.set(0,-0.75f) );
+//		body.createFixture( fd ).setUserData( carType );
+		// dbg
 
 		MassData mdata = body.getMassData();
 		mdata.center.set( 0, 0 );
@@ -199,11 +196,6 @@ public abstract class Car extends Box2DEntity {
 		return carTraveledDistance;
 	}
 
-	/** Returns the average speed, in meters/s, so far. */
-	public float getAverageSpeed() {
-		return carAvgSpeedMtSec;
-	}
-
 	/** Returns the instant speed, in meters/s */
 	public float getInstantSpeed() {
 		return carInstantSpeedMtSec;
@@ -211,10 +203,6 @@ public abstract class Car extends Box2DEntity {
 
 	public int getAccuDistCount() {
 		return accuDistCount;
-	}
-
-	public int getAccuSpeedCount() {
-		return accuSpeedCount;
 	}
 
 	public void setActive( boolean active ) {
@@ -227,31 +215,30 @@ public abstract class Car extends Box2DEntity {
 		return body.isActive();
 	}
 
-	public void reset() {
-		resetPhysics();
-		resetTraveledDistance();
-	}
+//	public void reset() {
+//		resetPhysics();
+//		resetDistanceAndSpeed();
+//	}
 
-	public void resetTraveledDistance() {
+	public void resetDistanceAndSpeed() {
 		carTraveledDistance = 0;
 		accuDistCount = 0;
-		accuSpeed = 0;
-		accuSpeedCount = 0;
+		carInstantSpeedMtSec = 0;
 	}
 
-	protected void resetPhysics() {
-		boolean wasActive = isActive();
+	public void resetPhysics() {
+//		boolean wasActive = isActive();
 
-		if( wasActive ) {
-			body.setActive( false );
-		}
+//		if( wasActive ) {
+//			body.setActive( false );
+//		}
 
 		body.setAngularVelocity( 0 );
 		body.setLinearVelocity( 0, 0 );
 
-		if( wasActive ) {
-			body.setActive( wasActive );
-		}
+//		if( wasActive ) {
+//			body.setActive( wasActive );
+//		}
 
 		impacts = 0;
 	}
@@ -265,12 +252,6 @@ public abstract class Car extends Box2DEntity {
 			event.data.setCollisionData( other, normalImpulses );
 			event.trigger( this, CarEvent.Type.onCollision );
 		}
-	}
-
-	@Override
-	public void setTransform( Vector2 position, float orient ) {
-		super.setTransform( position, orient );
-		previousPosition.set( body.getPosition() );
 	}
 
 	@Override
@@ -303,7 +284,7 @@ public abstract class Car extends Box2DEntity {
 		}
 
 		// FIXME is it really necessary? that's an expensive jni call..
-		// body.setAwake( true );
+//		body.setAwake( true );
 
 		// put newly computed forces into the system
 		body.setLinearVelocity( carForces.velocity_x, carForces.velocity_y );
@@ -313,7 +294,10 @@ public abstract class Car extends Box2DEntity {
 	@Override
 	public void onAfterPhysicsSubstep() {
 		super.onAfterPhysicsSubstep();
+		computeDistanceAndSpeed();
+	}
 
+	private void computeDistanceAndSpeed() {
 		// compute traveled distance, in meters
 		distmp.set( body.getPosition() );
 		distmp.sub( previousPosition );
@@ -324,6 +308,9 @@ public abstract class Car extends Box2DEntity {
 
 		if( !AMath.isZero( dist ) ) {
 //			Gdx.app.log( "", "dist=" + NumberString.formatVeryLong( dist ) );
+//			Gdx.app.log( "", "px=" + NumberString.formatVeryLong(body.getPosition().x) + ", py=" + NumberString.formatVeryLong(body.getPosition().y) +
+//							 "ppx=" + NumberString.formatVeryLong(previousPosition.x) + ", ppy=" + NumberString.formatVeryLong(previousPosition.y) );
+
 			// accumulate distance it
 			carTraveledDistance += dist;
 			accuDistCount++;
@@ -333,12 +320,6 @@ public abstract class Car extends Box2DEntity {
 
 		// compute instant speed
 		carInstantSpeedMtSec = AMath.fixup( dist * Config.Physics.PhysicsTimestepHz );
-		accuSpeed += carInstantSpeedMtSec;
-		accuSpeedCount++;
-
-		// compute average speed
-		carAvgSpeedMtSec = AMath.fixup( accuSpeed / accuSpeedCount );
-//		Gdx.app.log( this.getClass().getSimpleName(), "avg_speed=" + NumberString.formatVeryLong(carAvgSpeedMtSec) );
 	}
 
 	@Override

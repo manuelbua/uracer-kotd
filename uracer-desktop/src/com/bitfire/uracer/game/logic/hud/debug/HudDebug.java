@@ -55,7 +55,7 @@ public class HudDebug extends HudElement {
 		// player speed, km/h
 		meterSpeed = new HudDebugMeter( 100, 5 );
 		meterSpeed.setLimits( 0, CarUtils.mtSecToKmHour(player.getCarModel().max_speed) );
-		meterSpeed.setName( "speed" );
+		meterSpeed.setName( "kmh" );
 		meters.add( meterSpeed );
 	}
 

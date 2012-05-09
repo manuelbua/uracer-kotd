@@ -73,8 +73,6 @@ public abstract class Box2DEntity extends SubframeInterpolableEntity {
 		super.onBeforePhysicsSubstep();
 	}
 
-	private Vector2 _pos = new Vector2();
-
 	public Vector2 getWorldPosMt() {
 		return body.getPosition();
 	}
@@ -89,32 +87,6 @@ public abstract class Box2DEntity extends SubframeInterpolableEntity {
 
 	public void setWorldPosMt(Vector2 worldPosition, float orientationRads) {
 		body.setTransform( worldPosition, orientationRads );
-	}
-
-	public Vector2 pos() {
-		_pos.set( Convert.mt2px( body.getPosition() ) );
-		return _pos;
-	}
-
-	public void pos( Vector2 pos ) {
-		setTransform( pos, orient() );
-	}
-
-	public float orient() {
-		return -body.getAngle() * MathUtils.radiansToDegrees;
-	}
-
-	public void orient( float orient ) {
-		setTransform( pos(), orient );
-	}
-
-	private Vector2 tmp = new Vector2();
-
-	public void setTransform( Vector2 position, float orient ) {
-		tmp.set( Convert.px2mt( position ) );
-		body.setTransform( tmp, -orient * MathUtils.degreesToRadians );
-		toNormalRelativeAngle();
-		resetState();
 	}
 
 	protected void toNormalRelativeAngle() {

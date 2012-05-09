@@ -52,6 +52,9 @@ import com.bitfire.uracer.utils.NumberString;
  *
  * @author bmanuel */
 public class GameLogic implements CarEvent.Listener, CarStateEvent.Listener, PlayerDriftStateEvent.Listener {
+	// logic
+	public boolean doQuit = false;
+
 	// settings
 	private GameplaySettings gameplaySettings = null;
 
@@ -89,6 +92,8 @@ public class GameLogic implements CarEvent.Listener, CarStateEvent.Listener, Pla
 	public GameLogic( GameWorld gameWorld, GameplaySettings settings, ScalingStrategy scalingStrategy ) {
 		this.gameplaySettings = settings;
 		this.gameWorld = gameWorld;
+		this.doQuit = false;
+
 		timeMultiplier.value = 1f;
 
 		// create tweening support
@@ -147,7 +152,7 @@ public class GameLogic implements CarEvent.Listener, CarStateEvent.Listener, Pla
 		registerPlayerEvents( playerCar );
 		Gdx.app.log( "GameLogic", "Registered player-related events" );
 
-		restartGame();
+//		restartGame();
 
 		if( Config.Debug.UseDebugHelper ) {
 			DebugHelper.setPlayer( playerCar );
@@ -178,7 +183,8 @@ public class GameLogic implements CarEvent.Listener, CarStateEvent.Listener, Pla
 	public void setBestLocalReplay( Replay replay ) {
 		lapManager.setBestReplay( replay );
 		restartGame();
-		if( !hasPlayer() ) {
+//		if( !hasPlayer() )
+		{
 			ghostCar.setReplay( replay );
 		}
 	}
@@ -202,7 +208,8 @@ public class GameLogic implements CarEvent.Listener, CarStateEvent.Listener, Pla
 	private void configurePlayer( GameWorld world, GameplaySettings settings, PlayerCar player ) {
 		// create player and setup player input system and initial position in the world
 		// player.setInputSystem( input );
-		player.setTransform( world.playerStartPos, world.playerStartOrient );
+		player.setWorldPosMt( world.playerStartPos, world.playerStartOrient );
+//		player.setWorldPosMt( new Vector2(0,0), 0 );
 
 		// apply handicaps
 		player.setDampingLinearVelocityAF( AMath.damping( settings.dampingLinearVelocityAfterFeedback ) );
@@ -223,11 +230,48 @@ public class GameLogic implements CarEvent.Listener, CarStateEvent.Listener, Pla
 		return playerCar;
 	}
 
+	public void onSubstepCompleted() {
+		gameTasksManager.physicsStep.onSubstepCompleted();
+	}
+
+	public void onBeforeRender( GameRenderer gameRenderer ) {
+		// update player's headlights and move the world camera to follows it, if there is a player
+		GameWorldRenderer worldRenderer = gameRenderer.getWorldRenderer();
+		if( hasPlayer() ) {
+
+			if( gameWorld.isNightMode() ) {
+				worldRenderer.updatePlayerHeadlights( playerCar );
+			}
+
+			worldRenderer.setCameraPosition( playerCar.state().position, true );
+		} else if( ghostCar.hasReplay() ) {
+			worldRenderer.setCameraPosition( ghostCar.state().position, true );
+		} else {
+			// no ghost, no player, WTF?
+			worldRenderer.setCameraPosition( gameWorld.playerStartPos, true );
+		}
+
+		URacer.timeMultiplier = AMath.clamp( timeMultiplier.value, TimeMultiplierMin, Config.Physics.PhysicsTimeMultiplier );
+
+		// tweener step
+		WcTweener.update();
+		GameTweener.update();
+		// Gdx.app.log( "GameLogic", NumberString.format(timeMultiplier.value) );
+	}
+
 	private Replay userRec = null;
-	public boolean onTick() {
+
+	// called only if the engine has substepped
+	public void onUpdate() {
 		Input input = gameTasksManager.input;
 
-		if( input.isOn( Keys.R ) ) {
+		if( input.isOn( Keys.C ) ) {
+
+			if( lapManager.getBestReplay() != null ) {
+				ghostCar.setReplay( lapManager.getBestReplay() );
+			}
+
+		} else if( input.isOn( Keys.R ) ) {
 
 			// restart
 
@@ -242,38 +286,35 @@ public class GameLogic implements CarEvent.Listener, CarStateEvent.Listener, Pla
 		} else if( input.isOn( Keys.Z ) ) {
 
 			// start recording
-			playerCar.resetTraveledDistance();
+			playerCar.resetDistanceAndSpeed();
 			ghostCar.setReplay( null );
 			lapManager.abortRecording();
 			userRec = lapManager.startRecording( playerCar );
+			Gdx.app.log( "GameLogic", "Recording..." );
 
 		} else if( input.isOn( Keys.X ) ) {
 
 			// stop recording and play
+			playerCar.resetPhysics();
 			lapManager.stopRecording();
-			userRec.saveLocal( gameTasksManager.messager );
-			ghostCar.setReplay( userRec );
+
 			CarUtils.dumpSpeedInfo( "Player", playerCar, lapManager.getLastRecordedReplay().trackTimeSeconds );
-//			Gdx.app.log( "GameLogic", "Player final pos="  + playerCar.getBody().getPosition() );
+			playerCar.resetDistanceAndSpeed();
+			if( userRec != null ) {
+				userRec.saveLocal( gameTasksManager.messager );
+				ghostCar.setReplay( userRec );
+			}
 
-		} else if( input.isOn( Keys.T ) ) {
-
-			// reset
-
-			resetGame();
-
-		} else if( input.isOn( Keys.T ) ) {
-
-			// reset
-
-			resetGame();
+			// Gdx.app.log( "GameLogic", "Player final pos=" + playerCar.getBody().getPosition() );
 
 		} else if( input.isOn( Keys.Q ) ) {
 
 			// quit
 
+			Gdx.app.log( "GameLogic", "Quitting..." );
 			Gdx.app.exit();
-			return false;
+			doQuit = true;
+			return;
 
 		} else if( input.isOn( Keys.O ) ) {
 
@@ -306,40 +347,6 @@ public class GameLogic implements CarEvent.Listener, CarStateEvent.Listener, Pla
 						.setCallback( timeModulationFinished ) );
 			}
 		}
-
-		return true;
-	}
-
-	//
-	// RENDERING LOGIC
-	//
-
-	public void onBeforeRender( GameRenderer gameRenderer ) {
-		// trigger the event and let's subscribers interpolate and update their state()
-		gameTasksManager.physicsStep.triggerOnTemporalAliasing( URacer.getTemporalAliasing() );
-
-		// update player's headlights and move the world camera to follows it, if there is a player
-		GameWorldRenderer worldRenderer = gameRenderer.getWorldRenderer();
-		if( hasPlayer() ) {
-
-			if( gameWorld.isNightMode() ) {
-				worldRenderer.updatePlayerHeadlights( playerCar );
-			}
-
-			worldRenderer.setCameraPosition( playerCar.state().position, true );
-		} else if( ghostCar.hasReplay() ) {
-			worldRenderer.setCameraPosition( ghostCar.state().position, true );
-		} else {
-			// no ghost, no player, WTF?
-			worldRenderer.setCameraPosition( gameWorld.playerStartPos, true );
-		}
-
-		URacer.timeMultiplier = AMath.clamp( timeMultiplier.value, TimeMultiplierMin, Config.Physics.PhysicsTimeMultiplier );
-
-		// tweener step
-		WcTweener.update();
-		GameTweener.update();
-		// Gdx.app.log( "GameLogic", NumberString.format(timeMultiplier.value) );
 	}
 
 	//
@@ -359,12 +366,16 @@ public class GameLogic implements CarEvent.Listener, CarStateEvent.Listener, Pla
 
 	private void resetPlayer( Car playerCar, GhostCar playerGhostCar ) {
 		if( playerCar != null ) {
-			playerCar.reset();
-			playerCar.setTransform( gameWorld.playerStartPos, gameWorld.playerStartOrient );
+			playerCar.resetPhysics();
+			playerCar.resetDistanceAndSpeed();
+			playerCar.setWorldPosMt( gameWorld.playerStartPos, gameWorld.playerStartOrient );
+//			playerCar.setWorldPosMt( new Vector2(0,0), 0 );
 		}
 
 		if( playerGhostCar != null ) {
-			playerGhostCar.reset();
+			playerGhostCar.resetPhysics();
+			playerGhostCar.resetDistanceAndSpeed();
+			playerGhostCar.removeReplay();
 		}
 	}
 
@@ -407,7 +418,7 @@ public class GameLogic implements CarEvent.Listener, CarStateEvent.Listener, Pla
 	public void carStateEvent( CarState source, CarStateEvent.Type type ) {
 		switch( type ) {
 		case onTileChanged:
-			playerTileChanged();
+			// playerTileChanged();
 			break;
 		}
 	}
@@ -507,7 +518,7 @@ public class GameLogic implements CarEvent.Listener, CarStateEvent.Listener, Pla
 				lapManager.startRecording( playerCar );
 			}
 
-			playerCar.resetTraveledDistance();
+			playerCar.resetDistanceAndSpeed();
 		}
 	}
 }

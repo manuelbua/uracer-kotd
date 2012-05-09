@@ -78,6 +78,8 @@ public class Replay {
 		this.trackName = trackName;
 		difficultyLevel = difficulty;
 		time.start();
+
+//		Gdx.app.log( "Replay", "Begin at " + carWorldPositionMt + ", " + carWorldOrientRads );
 	}
 
 	public void end() {
@@ -90,6 +92,10 @@ public class Replay {
 
 	public void reset() {
 		eventsCount = 0;
+		for( int i = 0; i < MaxEvents; i++ ) {
+			forces[i].reset();
+		}
+
 		// if a previously loaded replay is being used, reset the loaded state
 		// since its invalid
 		isLoaded = false;

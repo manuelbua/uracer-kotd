@@ -37,25 +37,22 @@ public class GameScreen extends Screen {
 
 	@Override
 	public void tick() {
-		if( quit ) {
-			return;
-		}
+		game.tick();
+	}
 
-		quit = !game.tick();
+	@Override
+	public void tickCompleted() {
+		quit = game.tickCompleted();
+	}
+
+	@Override
+	public void render() {
+		game.render();
 	}
 
 	@Override
 	public boolean quit() {
 		return quit;
-	}
-
-	@Override
-	public void render() {
-		if( quit ) {
-			return;
-		}
-
-		game.render();
 	}
 
 	@Override
