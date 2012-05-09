@@ -401,8 +401,8 @@ public final class GameWorldRenderer {
 	public void renderAllMeshes( GL20 gl ) {
 		resetCounters();
 
-		gl.glDepthMask( false );
-		gl.glDisable( GL20.GL_DEPTH_TEST );
+		gl.glDepthMask( true );
+		gl.glEnable( GL20.GL_DEPTH_TEST );
 		gl.glCullFace( GL20.GL_BACK );
 		gl.glFrontFace( GL20.GL_CCW );
 		gl.glDepthFunc( GL20.GL_LESS );
