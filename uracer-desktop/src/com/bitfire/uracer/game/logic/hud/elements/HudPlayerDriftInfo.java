@@ -44,8 +44,8 @@ public final class HudPlayerDriftInfo extends HudElement {
 
 	public HudPlayerDriftInfo( ScalingStrategy scalingStrategy, PlayerCar player ) {
 		this.player = player;
-		this.carModelWidthPx = Convert.mt2px( player.getCarModel().width );
-		this.carModelLengthPx = Convert.mt2px( player.getCarModel().length );
+		this.carModelWidthPx = Convert.scaledPixels(Convert.mt2px( player.getCarModel().width ));
+		this.carModelLengthPx = Convert.scaledPixels(Convert.mt2px( player.getCarModel().length ));
 
 		// 99.99, reserve some space and do not recompute bounds
 

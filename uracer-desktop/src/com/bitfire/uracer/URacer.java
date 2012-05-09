@@ -77,7 +77,7 @@ public class URacer implements ApplicationListener {
 
 		// everything has been setup on a 256px tile, scale back if that's the case
 		Config.asDefault();
-		Config.Physics.PixelsPerMeter /= (scalingStrategy.targetScreenRatio / scalingStrategy.to256);
+//		Config.Physics.PixelsPerMeter /= (scalingStrategy.targetScreenRatio / scalingStrategy.to256);
 
 		Convert.init( scalingStrategy.invTileMapZoomFactor, Config.Physics.PixelsPerMeter );
 		Art.init( scalingStrategy.invTileMapZoomFactor );

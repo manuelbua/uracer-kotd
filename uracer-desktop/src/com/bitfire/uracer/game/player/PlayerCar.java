@@ -126,6 +126,7 @@ public class PlayerCar extends Car {
 		touchPos.set( input.getXY() );
 
 		carInput.updated = input.isTouching();
+//		Gdx.app.log( "PlayerCar", "carpos=" + carPos.toString() + ", cursor=" + touchPos.toString() );
 
 		if( carInput.updated ) {
 

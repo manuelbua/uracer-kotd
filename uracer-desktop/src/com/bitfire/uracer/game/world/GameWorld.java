@@ -185,7 +185,7 @@ public final class GameWorld {
 				}
 
 				if( type.equals( "start" ) ) {
-					 start.set( mapUtils.tileToPx( x, y ).add( Convert.scaledPixels( halfTile, -halfTile ) ) );
+					 start.set( mapUtils.tileToPx( x, y ).add( /*Convert.scaledPixels*/ halfTile, -halfTile  ) );
 //					start.set( (x + 0.5f) * map.tileWidth, (map.height - (y + 0.5f)) * map.tileHeight );
 					start.set( Convert.px2mt( start ) );
 
@@ -283,7 +283,7 @@ public final class GameWorld {
 
 					List<Vector2> points = MapUtils.extractPolyData( o.polyline );
 					if( points.size() >= 2 ) {
-						float factor = scalingStrategy.invTileMapZoomFactor;
+						float factor = 1;//scalingStrategy.invTileMapZoomFactor;
 						float wallSizeMt = 0.3f * factor;
 						float[] mags = new float[ points.size() - 1 ];
 
@@ -291,11 +291,11 @@ public final class GameWorld {
 						offsetMt.set( Convert.px2mt( offsetMt ) );
 
 						fromMt.set( Convert.px2mt( points.get( 0 ) ) ).add( offsetMt ).mul( factor );
-						fromMt.y = worldSizeScaledMt.y - fromMt.y;
+						fromMt.y = worldSizeMt.y - fromMt.y;
 
 						for( int j = 1; j <= points.size() - 1; j++ ) {
 							toMt.set( Convert.px2mt( points.get( j ) ) ).add( offsetMt ).mul( factor );
-							toMt.y = worldSizeScaledMt.y - toMt.y;
+							toMt.y = worldSizeMt.y - toMt.y;
 
 							// create box2d wall
 							Box2DFactory.createWall( box2dWorld, fromMt, toMt, wallSizeMt, 0f );
@@ -341,7 +341,7 @@ public final class GameWorld {
 		MathUtils.random.setSeed( Long.MIN_VALUE );
 
 		// scaling factors
-		float factor = scalingStrategy.invTileMapZoomFactor;
+		float factor = scalingStrategy.pixelsPerMeterFactor * scalingStrategy.invTileMapZoomFactor;
 		float oneOnWorld3DFactor = 1f / OrthographicAlignedStillModel.World3DScalingFactor;
 		float wallHeightMt = 5f * factor * oneOnWorld3DFactor;
 		float textureScalingU = 0.5f;

@@ -95,7 +95,7 @@ public final class MapUtils {
 	private Vector2 retTile = new Vector2();
 
 	public Vector2 tileToPx( int tilex, int tiley ) {
-		retTile.set( tilex * scaledTilesize, (map.height - tiley) * scaledTilesize );
+		retTile.set( tilex * 224 /** scaledTilesize*/, (map.height - tiley) * 224 /** scaledTilesize*/ );
 		return retTile;
 	}
 
@@ -110,7 +110,7 @@ public final class MapUtils {
 	private Vector2 retPx = new Vector2();
 
 	public Vector2 mtToTile( float x, float y ) {
-		retPx.set( Convert.mt2px( x ), Convert.mt2px( y ) );
+		retPx.set( Convert.scaledPixels(Convert.mt2px( x )), Convert.scaledPixels(Convert.mt2px( y )) );
 		retPx = pxToTile( retPx.x, retPx.y );
 		return retPx;
 	}
