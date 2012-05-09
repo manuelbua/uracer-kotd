@@ -58,7 +58,7 @@ public final class GameWorld {
 	// public level data
 	public String levelName = "no-level-loaded";
 	public TiledMap map = null;
-	public Vector2 worldSizeScaledPx = null, worldSizeScaledMt = null, worldSizeTiles = null;
+	public Vector2 worldSizeScaledPx = null, worldSizeScaledMt = null, worldSizeTiles = null, worldSizeMt = null;
 	public ScalingStrategy scalingStrategy;
 
 	// private level data
@@ -82,9 +82,15 @@ public final class GameWorld {
 
 	public GameWorld( ScalingStrategy strategy, String levelName, boolean nightMode ) {
 		scalingStrategy = strategy;
-		this.box2dWorld = new World( new Vector2( 0, 0 ), false );
+		box2dWorld = new World( new Vector2( 0, 0 ), false );
 		box2dWorld.setContactListener( new GameWorldContactListener() );
-		Gdx.app.log( "GameWorld", "Box2D world created" );
+
+		boolean autoClearForces = false;
+		boolean continuousPhysics = false;
+		box2dWorld.setAutoClearForces( autoClearForces );
+		box2dWorld.setContinuousPhysics( continuousPhysics );
+
+		Gdx.app.log( "GameWorld", "Box2D world created (CCD=" + continuousPhysics + ", auto clear forces=" + autoClearForces + ")" );
 
 		this.levelName = levelName;
 		this.nightMode = nightMode;
@@ -101,6 +107,7 @@ public final class GameWorld {
 		worldSizeScaledPx = new Vector2( map.width * map.tileWidth, map.height * map.tileHeight );
 		worldSizeScaledPx.mul( scalingStrategy.invTileMapZoomFactor );
 		worldSizeScaledMt = new Vector2( Convert.px2mt( worldSizeScaledPx ) );
+		worldSizeMt = new Vector2( Convert.px2mt( map.width * map.tileWidth ), Convert.px2mt( map.height * map.tileHeight ) );
 
 		// initialize tilemap utils
 		mapUtils = new MapUtils( map, worldSizeScaledPx, scalingStrategy.invTileMapZoomFactor );
@@ -178,7 +185,10 @@ public final class GameWorld {
 				}
 
 				if( type.equals( "start" ) ) {
-					start.set( mapUtils.tileToPx( x, y ).add( Convert.scaledPixels( halfTile, -halfTile ) ) );
+					 start.set( mapUtils.tileToPx( x, y ).add( Convert.scaledPixels( halfTile, -halfTile ) ) );
+//					start.set( (x + 0.5f) * map.tileWidth, (map.height - (y + 0.5f)) * map.tileHeight );
+					start.set( Convert.px2mt( start ) );
+
 					startTileX = x;
 					startTileY = y;
 					break;
@@ -187,7 +197,7 @@ public final class GameWorld {
 		}
 
 		String direction = layerTrack.properties.get( LayerProperties.Start.mnemonic );
-		float startOrient = mapUtils.orientationFromDirection( direction );
+		float startOrient = -mapUtils.orientationFromDirection( direction ) * MathUtils.degreesToRadians;
 
 		// set player data
 		playerStartOrient = startOrient;

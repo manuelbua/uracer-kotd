@@ -32,7 +32,7 @@ public final class Config {
 		public static void asDefault() {
 			int w = Gdx.graphics.getWidth();
 
-			Enabled = true;
+			Enabled = false;
 			EnableVignetting = true;
 
 			RttFboWidth = (int)(Gdx.graphics.getWidth() * RttRatio);
@@ -82,7 +82,7 @@ public final class Config {
 			EnableMipMapping = true;
 			SubframeInterpolation = true;
 			DumbNightMode = false;
-			CameraInterpolationMode = InterpolationMode.Sigmoid;
+			CameraInterpolationMode = InterpolationMode.OffNoBounds;
 		}
 
 		private Graphics() {
@@ -110,7 +110,7 @@ public final class Config {
 
 		public static void asDefault() {
 			PixelsPerMeter = 18.0f;
-			PhysicsTimestepHz = 30.0f;
+			PhysicsTimestepHz = 60.0f;
 			PhysicsTimestepReferenceHz = 60.0f;
 			PhysicsDt = 1.0f / PhysicsTimestepHz;
 			PhysicsTimeMultiplier = 1f;
@@ -152,7 +152,7 @@ public final class Config {
 			Render3DBoundingBoxes = false;
 
 			TraverseWalls = false;
-			ApplyCarFrictionFromMap = true;
+			ApplyCarFrictionFromMap = false;
 			FrustumCulling = true;
 		}
 

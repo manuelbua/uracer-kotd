@@ -29,7 +29,8 @@ public final class GhostCar extends Car {
 		// this.carState = new CarState( gameWorld, this );
 
 		setActive( false );
-		reset();
+		resetPhysics();
+		resetDistanceAndSpeed();
 	}
 
 	// input data for this car cames from a Replay object
@@ -47,7 +48,7 @@ public final class GhostCar extends Car {
 
 			// System.out.println( "Replaying " + replay.id );
 			restart( replay );
-//			Gdx.app.log( "GhostCar", "Replaying " + replay.trackTimeSeconds + "s" );
+			// Gdx.app.log( "GhostCar", "Replaying " + replay.trackTimeSeconds + "s" );
 		}
 
 		// else
@@ -65,14 +66,14 @@ public final class GhostCar extends Car {
 
 	private void restart( Replay replay ) {
 		resetPhysics();
+		resetDistanceAndSpeed();
 		setWorldPosMt( replay.carWorldPositionMt, replay.carWorldOrientRads );
-		resetTraveledDistance();
 		indexPlay = 0;
+
+		// Gdx.app.log( "GhostCar", "Set to " + body.getPosition() + ", " + body.getAngle() );
 	}
 
-	@Override
-	public void reset() {
-		super.reset();
+	public void removeReplay() {
 		setReplay( null );
 		renderer.setAlpha( 0 );
 	}
@@ -93,12 +94,14 @@ public final class GhostCar extends Car {
 			// indexPlay is NOT updated here, we don't want
 			// to process a non-existent event when (indexPlay == replay.getEventsCount())
 			forces.set( replay.forces[indexPlay] );
+			// Gdx.app.log( "ghost", "index="+indexPlay + ", px=" + NumberString.formatVeryLong(body.getPosition().x) +
+			// ", py=" + NumberString.formatVeryLong(body.getPosition().y) );
 
-//			Gdx.app.log( "", "cf=" +
-//					NumberString.formatVeryLong(forces.velocity_x) + ", " +
-//					NumberString.formatVeryLong(forces.velocity_y) + ", " +
-//					NumberString.formatVeryLong(forces.angularVelocity)
-//			);
+			// Gdx.app.log( "", "cf=" +
+			// NumberString.formatVeryLong(forces.velocity_x) + ", " +
+			// NumberString.formatVeryLong(forces.velocity_y) + ", " +
+			// NumberString.formatVeryLong(forces.angularVelocity)
+			// );
 
 			// also change opacity, fade in/out based on
 			// events played, events remaining
@@ -109,9 +112,9 @@ public final class GhostCar extends Car {
 				renderer.setAlpha( val * 0.5f );
 			}
 		}
-//		else {
-//			Gdx.app.log( "GhostCar", "No replay, injecting null forces" );
-//		}
+		// else {
+		// Gdx.app.log( "GhostCar", "No replay, injecting null forces" );
+		// }
 	}
 
 	@Override
@@ -122,9 +125,7 @@ public final class GhostCar extends Car {
 			indexPlay++;
 
 			if( indexPlay == replay.getEventsCount() ) {
-
 				CarUtils.dumpSpeedInfo( " Ghost", this, replay.trackTimeSeconds );
-
 				restart( replay );
 			}
 		}
