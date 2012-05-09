@@ -80,6 +80,7 @@ public final class GameWorldRenderer {
 
 	public UTileMapRenderer tileMapRenderer = null;
 	private ScalingStrategy scalingStrategy = null;
+	private float scaledPpm = 1f;
 
 	// render stats
 	private ImmediateModeRenderer20 dbg = new ImmediateModeRenderer20( false, true, 0 );
@@ -97,6 +98,7 @@ public final class GameWorldRenderer {
 	public GameWorldRenderer( ScalingStrategy strategy, GameWorld world, int width, int height ) {
 		scalingStrategy = strategy;
 		this.world = world;
+		scaledPpm = Convert.scaledPixels(Config.Physics.PixelsPerMeter);
 		rayHandler = world.getRayHandler();
 		trackTrees = world.getTrackTrees();
 		trackWalls = world.getTrackWalls();
@@ -128,8 +130,8 @@ public final class GameWorldRenderer {
 
 		// creates and setup orthographic camera
 		camTilemap = new OrthographicCamera( Gdx.graphics.getWidth(), Gdx.graphics.getHeight() );
-//		camTilemap.near = 0;
-//		camTilemap.far = 100;
+		// camTilemap.near = 0;
+		// camTilemap.far = 100;
 		camTilemap.zoom = 1;
 
 		// creates and setup perspective camera
@@ -180,8 +182,8 @@ public final class GameWorldRenderer {
 			float dX = offx * cos - offy * sin;
 			float dY = offx * sin + offy * cos;
 
-			float px = Convert.px2mt( carPosition.x ) + dX;
-			float py = Convert.px2mt( carPosition.y ) + dY;
+			float px = Convert.px2mt( carPosition.x ) * scalingStrategy.tileMapZoomFactor + dX;
+			float py = Convert.px2mt( carPosition.y ) * scalingStrategy.tileMapZoomFactor + dY;
 
 			playerLights.setDirection( ang );
 			playerLights.setPosition( px, py );
@@ -190,16 +192,20 @@ public final class GameWorldRenderer {
 			playerLights.setActive( false );
 		}
 
-		// if( Config.isDesktop && (URacer.getFrameCount()&0x1f)==0x1f)
-		// {
-		// System.out.println("lights rendered="+rayHandler.lightRenderedLastFrame);
-		// }
+//		if( Config.isDesktop && (URacer.getFrameCount() & 0x1f) == 0x1f ) {
+//			System.out.println( "lights rendered=" + rayHandler.lightRenderedLastFrame );
+//		}
 	}
 
 	private void updateRayHandler() {
 		if( rayHandler != null ) {
-			rayHandler.setCombinedMatrix( camOrthoMvpMt, Convert.px2mt( camOrtho.position.x ), Convert.px2mt( camOrtho.position.y ),
-					Convert.px2mt( camOrtho.viewportWidth ), Convert.px2mt( camOrtho.viewportHeight ) );
+			// @formatter:off
+			rayHandler.setCombinedMatrix( camOrthoMvpMt,
+					Convert.px2mt( camOrtho.position.x * scalingStrategy.tileMapZoomFactor ),
+					Convert.px2mt( camOrtho.position.y * scalingStrategy.tileMapZoomFactor ),
+					Convert.px2mt( camOrtho.viewportWidth * scalingStrategy.tileMapZoomFactor ),
+					Convert.px2mt( camOrtho.viewportHeight * scalingStrategy.tileMapZoomFactor ) );
+			// @formatter:on
 
 			rayHandler.update();
 			// Gdx.app.log( "GameWorldRenderer", "lights rendered=" + rayHandler.lightRenderedLastFrame );
@@ -229,10 +235,10 @@ public final class GameWorldRenderer {
 
 		// update the model-view-projection matrix, in meters, from the unscaled orthographic camera
 		camOrthoMvpMt.set( camOrtho.combined );
-		camOrthoMvpMt.val[Matrix4.M00] *= Config.Physics.PixelsPerMeter;
-		camOrthoMvpMt.val[Matrix4.M01] *= Config.Physics.PixelsPerMeter;
-		camOrthoMvpMt.val[Matrix4.M10] *= Config.Physics.PixelsPerMeter;
-		camOrthoMvpMt.val[Matrix4.M11] *= Config.Physics.PixelsPerMeter;
+		camOrthoMvpMt.val[Matrix4.M00] *= scaledPpm;
+		camOrthoMvpMt.val[Matrix4.M01] *= scaledPpm;
+		camOrthoMvpMt.val[Matrix4.M10] *= scaledPpm;
+		camOrthoMvpMt.val[Matrix4.M11] *= scaledPpm;
 
 		// update the tilemap renderer orthographic camera
 		camTilemap.position.set( camOrtho.position ).mul( scalingStrategy.tileMapZoomFactor );
@@ -395,8 +401,8 @@ public final class GameWorldRenderer {
 	public void renderAllMeshes( GL20 gl ) {
 		resetCounters();
 
-		gl.glDepthMask( true );
-		gl.glEnable( GL20.GL_DEPTH_TEST );
+		gl.glDepthMask( false );
+		gl.glDisable( GL20.GL_DEPTH_TEST );
 		gl.glCullFace( GL20.GL_BACK );
 		gl.glFrontFace( GL20.GL_CCW );
 		gl.glDepthFunc( GL20.GL_LESS );
