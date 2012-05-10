@@ -110,7 +110,7 @@ public final class Config {
 
 		public static void asDefault() {
 			PixelsPerMeter = 18.0f;
-			PhysicsTimestepHz = 60.0f;
+			PhysicsTimestepHz = 30.0f;
 			PhysicsTimestepReferenceHz = 60.0f;
 			PhysicsDt = 1.0f / PhysicsTimestepHz;
 			PhysicsTimeMultiplier = 1f;
@@ -152,7 +152,7 @@ public final class Config {
 			Render3DBoundingBoxes = false;
 
 			TraverseWalls = false;
-			ApplyCarFrictionFromMap = false;
+			ApplyCarFrictionFromMap = true;
 			FrustumCulling = true;
 		}
 

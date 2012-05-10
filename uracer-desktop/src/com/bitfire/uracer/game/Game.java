@@ -123,7 +123,7 @@ public class Game implements Disposable {
 		Car playerCar = gameLogic.getPlayer();
 
 		if( zoom != null && playerCar != null ) {
-			zoom.setOrigin( GameRenderer.ScreenUtils.screenPosForPx( playerCar.state().position ) );
+			zoom.setOrigin( GameRenderer.ScreenUtils.worldPxToScreen( playerCar.state().position ) );
 			zoom.setStrength( -0.1f * factor );
 		}
 

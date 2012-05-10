@@ -98,7 +98,7 @@ public final class GameWorldRenderer {
 	public GameWorldRenderer( ScalingStrategy strategy, GameWorld world, int width, int height ) {
 		scalingStrategy = strategy;
 		this.world = world;
-		scaledPpm = Convert.scaledPixels(Config.Physics.PixelsPerMeter);
+		scaledPpm = Convert.scaledPixels( Config.Physics.PixelsPerMeter );
 		rayHandler = world.getRayHandler();
 		trackTrees = world.getTrackTrees();
 		trackWalls = world.getTrackWalls();
@@ -182,8 +182,8 @@ public final class GameWorldRenderer {
 			float dX = offx * cos - offy * sin;
 			float dY = offx * sin + offy * cos;
 
-			float px = Convert.px2mt( carPosition.x ) * scalingStrategy.tileMapZoomFactor + dX;
-			float py = Convert.px2mt( carPosition.y ) * scalingStrategy.tileMapZoomFactor + dY;
+			float px = Convert.px2mt( carPosition.x ) + dX;
+			float py = Convert.px2mt( carPosition.y ) + dY;
 
 			playerLights.setDirection( ang );
 			playerLights.setPosition( px, py );
@@ -192,23 +192,23 @@ public final class GameWorldRenderer {
 			playerLights.setActive( false );
 		}
 
-//		if( Config.isDesktop && (URacer.getFrameCount() & 0x1f) == 0x1f ) {
-//			System.out.println( "lights rendered=" + rayHandler.lightRenderedLastFrame );
-//		}
+		// if( Config.isDesktop && (URacer.getFrameCount() & 0x1f) == 0x1f ) {
+		// System.out.println( "lights rendered=" + rayHandler.lightRenderedLastFrame );
+		// }
 	}
 
 	private void updateRayHandler() {
 		if( rayHandler != null ) {
 			// @formatter:off
 			rayHandler.setCombinedMatrix( camOrthoMvpMt,
-					Convert.px2mt( camOrtho.position.x * scalingStrategy.tileMapZoomFactor ),
-					Convert.px2mt( camOrtho.position.y * scalingStrategy.tileMapZoomFactor ),
-					Convert.px2mt( camOrtho.viewportWidth * scalingStrategy.tileMapZoomFactor ),
-					Convert.px2mt( camOrtho.viewportHeight * scalingStrategy.tileMapZoomFactor ) );
+					Convert.px2mt( camOrtho.position.x ),
+					Convert.px2mt( camOrtho.position.y ),
+					Convert.px2mt( camOrtho.viewportWidth ),
+					Convert.px2mt( camOrtho.viewportHeight ) );
 			// @formatter:on
 
 			rayHandler.update();
-			// Gdx.app.log( "GameWorldRenderer", "lights rendered=" + rayHandler.lightRenderedLastFrame );
+//			Gdx.app.log( "GameWorldRenderer", "lights rendered=" + rayHandler.lightRenderedLastFrame );
 
 			rayHandler.updateLightMap();
 		}

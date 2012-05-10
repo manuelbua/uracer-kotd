@@ -38,9 +38,6 @@ public class PlayerCar extends Car {
 	private WindowedMean frictionMean = new WindowedMean( 10 );
 
 	// damping values
-	private float dampLinearVelocityAF = 0;
-	private float dampAngularVelocityAF = 0;
-	private float dampThrottleAF = 0;
 	private float dampFriction = 0;
 
 	// states
@@ -92,24 +89,6 @@ public class PlayerCar extends Car {
 		this.input = input;
 	}
 
-	/** After processing collision's feedback this damping will be applied
-	 * to the car's linear velocity. */
-	public void setDampingLinearVelocityAF( float damping ) {
-		dampLinearVelocityAF = damping;
-	}
-
-	/** After processing collision's feedback this damping will be applied
-	 * to the car's angular velocity. */
-	public void setDampingAngularVelocityAF( float damping ) {
-		dampAngularVelocityAF = damping;
-	}
-
-	/** After processing collision's feedback this damping will be applied
-	 * to the car's input throttle */
-	public void setDampingThrottleAF( float damping ) {
-		dampThrottleAF = damping;
-	}
-
 	/** When the player's car is off-track this damping will be applied
 	 * to the car's linear velocity */
 	public void setDampingFriction( float damping ) {
@@ -122,7 +101,7 @@ public class PlayerCar extends Car {
 			return carInput;
 		}
 
-		carPos.set( GameRenderer.ScreenUtils.screenPosForMt( body.getPosition() ) );
+		carPos.set( GameRenderer.ScreenUtils.worldMtToScreen( body.getPosition() ) );
 		touchPos.set( input.getXY() );
 
 		carInput.updated = input.isTouching();
@@ -186,11 +165,6 @@ public class PlayerCar extends Car {
 	}
 
 	@Override
-	public void onAfterPhysicsSubstep() {
-		super.onAfterPhysicsSubstep();
-	}
-
-	@Override
 	public void onSubstepCompleted() {
 		// inspect impact feedback, accumulate vel/ang velocities
 		// handleImpactFeedback();
@@ -250,34 +224,15 @@ public class PlayerCar extends Car {
 		}
 	}
 
-	private long start_timer = 0;
-	private boolean decrease_scheduled = false;
-
 	private void handleImpactFeedback() {
 		// process impact feedback
 		while( impacts > 0 ) {
 			impacts--;
-			// carDesc.velocity_wc.set( body.getLinearVelocity() ).mul( dampLinearVelocityAF );
-			// carDesc.angularvelocity = -body.getAngularVelocity() * dampAngularVelocityAF;
+
+			// feed back the result to the car simulator
 			carDesc.velocity_wc.set( body.getLinearVelocity() );
 			carDesc.angularvelocity = -body.getAngularVelocity();
-			decrease_scheduled = true;
 		}
 	}
 
-	// private void handleDecrease( CarInput input ) {
-	// // if( decrease_scheduled || (TimeUtils.nanoTime() - start_timer < 250000000L) ) {
-	// if( decrease_scheduled || (TimeUtils.nanoTime() - start_timer < 1000000000L) ) {
-	// if( decrease_scheduled ) {
-	// decrease_scheduled = false;
-	// start_timer = TimeUtils.nanoTime();
-	// }
-	//
-	// // input.throttle *= dampThrottleAF;
-	// // input.throttle = 0;
-	// carDesc.velocity_wc.set( body.getLinearVelocity() );
-	// carDesc.angularvelocity = body.getAngularVelocity();
-	//
-	// }
-	// }
 }

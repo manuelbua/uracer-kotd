@@ -35,13 +35,13 @@ public final class GameRenderer {
 			ScreenUtils.ready = true;
 		}
 
-		public static Vector2 screenPosForMt( Vector2 worldPositionMt ) {
+		public static Vector2 worldMtToScreen( Vector2 worldPositionMt ) {
 			screenPosFor.x = Convert.mt2px( worldPositionMt.x ) - worldRenderer.camOrtho.position.x + worldRenderer.halfViewport.x;
 			screenPosFor.y = worldRenderer.camOrtho.position.y - Convert.mt2px( worldPositionMt.y ) + worldRenderer.halfViewport.y;
 			return screenPosFor;
 		}
 
-		public static Vector2 screenPosForPx( Vector2 worldPositionPx ) {
+		public static Vector2 worldPxToScreen( Vector2 worldPositionPx ) {
 			screenPosFor.x = worldPositionPx.x - worldRenderer.camOrtho.position.x + worldRenderer.halfViewport.x;
 			screenPosFor.y = worldRenderer.camOrtho.position.y - worldPositionPx.y + worldRenderer.halfViewport.y;
 			return screenPosFor;

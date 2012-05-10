@@ -105,8 +105,8 @@ public final class GameWorld {
 		// compute world size
 		worldSizeTiles = new Vector2( map.width, map.height );
 		worldSizeScaledPx = new Vector2( map.width * map.tileWidth, map.height * map.tileHeight );
-		worldSizeScaledPx.mul( scalingStrategy.invTileMapZoomFactor );
-		worldSizeMt = new Vector2( Convert.px2mt( map.width * map.tileWidth ), Convert.px2mt( map.height * map.tileHeight ) );
+		worldSizeScaledPx.set(  Convert.scaledPixels( worldSizeScaledPx ) );
+		worldSizeMt = new Vector2( Convert.upx2mt( map.width * map.tileWidth ), Convert.upx2mt( map.height * map.tileHeight ) );
 
 		// initialize tilemap utils
 		mapUtils = new MapUtils( map, worldSizeScaledPx, scalingStrategy.invTileMapZoomFactor );
