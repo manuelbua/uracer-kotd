@@ -95,7 +95,7 @@ public final class MapUtils {
 	private Vector2 retTile = new Vector2();
 
 	public Vector2 tileToPx( int tilex, int tiley ) {
-		retTile.set( tilex * scaledTilesize, (map.height - tiley) * scaledTilesize );
+		retTile.set( tilex * 224 /** scaledTilesize*/, (map.height - tiley) * 224 /** scaledTilesize*/ );
 		return retTile;
 	}
 

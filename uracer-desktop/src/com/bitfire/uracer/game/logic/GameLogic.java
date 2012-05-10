@@ -181,8 +181,8 @@ public class GameLogic implements CarEvent.Listener, CarStateEvent.Listener, Pla
 	}
 
 	public void setBestLocalReplay( Replay replay ) {
-		lapManager.setBestReplay( replay );
 		restartGame();
+		lapManager.setBestReplay( replay );
 //		if( !hasPlayer() )
 		{
 			ghostCar.setReplay( replay );
@@ -210,11 +210,9 @@ public class GameLogic implements CarEvent.Listener, CarStateEvent.Listener, Pla
 		// player.setInputSystem( input );
 		player.setWorldPosMt( world.playerStartPos, world.playerStartOrient );
 //		player.setWorldPosMt( new Vector2(0,0), 0 );
+//		playerCar.setWorldPosMt( new Vector2(50.29133f, -15.1445f), gameWorld.playerStartOrient );
 
 		// apply handicaps
-		player.setDampingLinearVelocityAF( AMath.damping( settings.dampingLinearVelocityAfterFeedback ) );
-		player.setDampingAngularVelocityAF( AMath.damping( settings.dampingAngularVelocityAfterFeedback ) );
-		player.setDampingThrottleAF( AMath.damping( settings.dampingThrottleAfterFeedback ) );
 		player.setDampingFriction( AMath.damping( settings.dampingFriction ) );
 	}
 
@@ -388,6 +386,7 @@ public class GameLogic implements CarEvent.Listener, CarStateEvent.Listener, Pla
 		WcTweener.clear();
 		GameTweener.clear();
 		lapManager.abortRecording();
+		lapManager.reset();
 		gameTasksManager.restart();
 	}
 

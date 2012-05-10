@@ -58,7 +58,7 @@ public final class GameWorld {
 	// public level data
 	public String levelName = "no-level-loaded";
 	public TiledMap map = null;
-	public Vector2 worldSizeScaledPx = null, worldSizeScaledMt = null, worldSizeTiles = null, worldSizeMt = null;
+	public Vector2 worldSizeScaledPx = null, worldSizeTiles = null, worldSizeMt = null;
 	public ScalingStrategy scalingStrategy;
 
 	// private level data
@@ -105,9 +105,8 @@ public final class GameWorld {
 		// compute world size
 		worldSizeTiles = new Vector2( map.width, map.height );
 		worldSizeScaledPx = new Vector2( map.width * map.tileWidth, map.height * map.tileHeight );
-		worldSizeScaledPx.mul( scalingStrategy.invTileMapZoomFactor );
-		worldSizeScaledMt = new Vector2( Convert.px2mt( worldSizeScaledPx ) );
-		worldSizeMt = new Vector2( Convert.px2mt( map.width * map.tileWidth ), Convert.px2mt( map.height * map.tileHeight ) );
+		worldSizeScaledPx.set(  Convert.scaledPixels( worldSizeScaledPx ) );
+		worldSizeMt = new Vector2( Convert.upx2mt( map.width * map.tileWidth ), Convert.upx2mt( map.height * map.tileHeight ) );
 
 		// initialize tilemap utils
 		mapUtils = new MapUtils( map, worldSizeScaledPx, scalingStrategy.invTileMapZoomFactor );
@@ -185,7 +184,7 @@ public final class GameWorld {
 				}
 
 				if( type.equals( "start" ) ) {
-					 start.set( mapUtils.tileToPx( x, y ).add( Convert.scaledPixels( halfTile, -halfTile ) ) );
+					 start.set( mapUtils.tileToPx( x, y ).add( /*Convert.scaledPixels*/ halfTile, -halfTile  ) );
 //					start.set( (x + 0.5f) * map.tileWidth, (map.height - (y + 0.5f)) * map.tileHeight );
 					start.set( Convert.px2mt( start ) );
 
@@ -248,9 +247,9 @@ public final class GameWorld {
 			TiledObject o = group.objects.get( i );
 			pos.set( o.x, o.y ).mul( scalingStrategy.invTileMapZoomFactor );
 			pos.y = worldSizeScaledPx.y - pos.y;
-			pos.set( Convert.px2mt( pos ) );
+			pos.set( Convert.px2mt( pos ) ).mul( scalingStrategy.tileMapZoomFactor );
 
-			PointLight l = new PointLight( rayHandler, maxRays, c, 10f, pos.x, pos.y );
+			PointLight l = new PointLight( rayHandler, maxRays, c, 15f, pos.x, pos.y );
 			l.setSoft( false );
 			l.setMaskBits( CollisionFilters.CategoryPlayer | CollisionFilters.CategoryTrackWalls );
 		}
@@ -283,19 +282,18 @@ public final class GameWorld {
 
 					List<Vector2> points = MapUtils.extractPolyData( o.polyline );
 					if( points.size() >= 2 ) {
-						float factor = scalingStrategy.invTileMapZoomFactor;
-						float wallSizeMt = 0.3f * factor;
+						float wallSizeMt = 0.3f;
 						float[] mags = new float[ points.size() - 1 ];
 
 						offsetMt.set( o.x, o.y );
 						offsetMt.set( Convert.px2mt( offsetMt ) );
 
-						fromMt.set( Convert.px2mt( points.get( 0 ) ) ).add( offsetMt ).mul( factor );
-						fromMt.y = worldSizeScaledMt.y - fromMt.y;
+						fromMt.set( Convert.px2mt( points.get( 0 ) ) ).add( offsetMt );
+						fromMt.y = worldSizeMt.y - fromMt.y;
 
 						for( int j = 1; j <= points.size() - 1; j++ ) {
-							toMt.set( Convert.px2mt( points.get( j ) ) ).add( offsetMt ).mul( factor );
-							toMt.y = worldSizeScaledMt.y - toMt.y;
+							toMt.set( Convert.px2mt( points.get( j ) ) ).add( offsetMt );
+							toMt.y = worldSizeMt.y - toMt.y;
 
 							// create box2d wall
 							Box2DFactory.createWall( box2dWorld, fromMt, toMt, wallSizeMt, 0f );
@@ -341,7 +339,7 @@ public final class GameWorld {
 		MathUtils.random.setSeed( Long.MIN_VALUE );
 
 		// scaling factors
-		float factor = scalingStrategy.invTileMapZoomFactor;
+		float factor = scalingStrategy.pixelsPerMeterFactor * scalingStrategy.invTileMapZoomFactor;
 		float oneOnWorld3DFactor = 1f / OrthographicAlignedStillModel.World3DScalingFactor;
 		float wallHeightMt = 5f * factor * oneOnWorld3DFactor;
 		float textureScalingU = 0.5f;

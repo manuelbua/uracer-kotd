@@ -57,5 +57,7 @@ public final class CarRenderer {
 		facet.setPosition( state.position.x - facet.getOriginX(), state.position.y - facet.getOriginY() );
 		facet.setRotation( state.orientation );
 		facet.draw( batch, alpha );
+
+//		Gdx.app.log( "CarRenderer", "ipos=" + state.position.x );
 	}
 }

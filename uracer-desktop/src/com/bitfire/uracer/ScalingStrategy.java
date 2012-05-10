@@ -15,6 +15,7 @@ public class ScalingStrategy {
 	public float targetScreenRatio;
 	public float meshScaleFactor;
 	public float tileSizeAtRef;
+	public float pixelsPerMeterFactor;
 
 	public float hFovScalingFactor;
 	public float to256;
@@ -56,6 +57,8 @@ public class ScalingStrategy {
 		// adjust to the actual hfov
 		hFovScalingFactor = hFovToScalingFactor();
 		meshScaleFactor *= hFovScalingFactor;
+
+		pixelsPerMeterFactor = (targetScreenRatio / to256);
 
 		Gdx.app.log( "ScalingStrategy", "vfov=" + verticalFov + ", hfov=" + desiredHorizontalFov + ", msf=" + meshScaleFactor + ", tmzf=" + tileMapZoomFactor );
 	}

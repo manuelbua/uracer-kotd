@@ -15,7 +15,6 @@ import com.bitfire.uracer.game.rendering.GameRendererEvent;
 import com.bitfire.uracer.game.world.GameWorld;
 import com.bitfire.uracer.resources.Art;
 import com.bitfire.uracer.utils.AMath;
-import com.bitfire.uracer.utils.Convert;
 import com.bitfire.uracer.utils.FixtureAtlas;
 
 
@@ -115,16 +114,18 @@ public strictfp abstract class Car extends Box2DEntity {
 			fd.filter.groupIndex = CollisionFilters.GroupNoCollisions;
 		}
 
+		FixtureAtlas atlas = new FixtureAtlas( Gdx.files.internal( shapeName ) );
+
 		// apply scaling factors
 		Vector2 offset = new Vector2( -model.width / 2f, -model.length / 2f );
 
-		Vector2 ratio = new Vector2( model.width / Convert.px2mt( region.getRegionWidth() ), model.length / Convert.px2mt( region.getRegionHeight() ) );
-
 		// box2d editor "normalization" contemplates just a width-bound ratio..
-		Vector2 factor = new Vector2( Convert.px2mt( region.getRegionWidth() * ratio.x ), Convert.px2mt( region.getRegionWidth() * ratio.y ) );
+//		Vector2 ratio = new Vector2( model.width / Convert.px2mt( region.getRegionWidth() ), model.length / Convert.px2mt( region.getRegionHeight() ) );
+//		Vector2 factor = new Vector2( Convert.px2mt( region.getRegionWidth() * ratio.x ), Convert.px2mt( region.getRegionWidth() * ratio.y ) );
+//		atlas.createFixtures( body, shapeRef, factor.x, factor.y, fd, offset, carType );
 
-		FixtureAtlas atlas = new FixtureAtlas( Gdx.files.internal( shapeName ) );
-		atlas.createFixtures( body, shapeRef, factor.x, factor.y, fd, offset, carType );
+//		atlas.createFixtures( body, shapeRef, 2.5000002f, 2.1935484f, fd, offset, carType );
+		atlas.createFixtures( body, shapeRef, 2.5f, 2f, fd, offset, carType );
 
 		// dbg
 //		FixtureDef fd = new FixtureDef();
