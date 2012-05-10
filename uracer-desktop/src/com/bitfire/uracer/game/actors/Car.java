@@ -16,7 +16,7 @@ import com.bitfire.uracer.utils.AMath;
 import com.bitfire.uracer.utils.FixtureAtlas;
 
 
-public strictfp abstract class Car extends Box2DEntity {
+public abstract strictfp class Car extends Box2DEntity {
 	public enum InputMode {
 		NoInput, InputFromPlayer, InputFromReplay
 	}
