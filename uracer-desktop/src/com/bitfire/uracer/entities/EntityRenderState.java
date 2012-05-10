@@ -67,8 +67,8 @@ public final class EntityRenderState {
 
 	/** Transform the world position from meters to pixels. */
 	public void toPixels() {
-		this.position.x = Convert.scaledPixels(Convert.mt2px( this.position.x ));
-		this.position.y = Convert.scaledPixels(Convert.mt2px( this.position.y ));
+		this.position.x = Convert.mt2px( this.position.x );
+		this.position.y = Convert.mt2px( this.position.y );
 		this.orientation = this.orientation * MathUtils.radiansToDegrees;
 	}
 

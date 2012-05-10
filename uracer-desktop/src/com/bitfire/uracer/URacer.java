@@ -79,7 +79,7 @@ public class URacer implements ApplicationListener {
 		Config.asDefault();
 //		Config.Physics.PixelsPerMeter /= (scalingStrategy.targetScreenRatio / scalingStrategy.to256);
 
-		Convert.init( scalingStrategy.invTileMapZoomFactor, Config.Physics.PixelsPerMeter );
+		Convert.init( scalingStrategy.tileMapZoomFactor, Config.Physics.PixelsPerMeter );
 		Art.init( scalingStrategy.invTileMapZoomFactor );
 		SpriteBatchUtils.init( Art.debugFont, Art.DebugFontWidth );
 		Sounds.init();

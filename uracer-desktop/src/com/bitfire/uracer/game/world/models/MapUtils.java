@@ -110,7 +110,7 @@ public final class MapUtils {
 	private Vector2 retPx = new Vector2();
 
 	public Vector2 mtToTile( float x, float y ) {
-		retPx.set( Convert.scaledPixels(Convert.mt2px( x )), Convert.scaledPixels(Convert.mt2px( y )) );
+		retPx.set( Convert.mt2px( x ), Convert.mt2px( y ) );
 		retPx = pxToTile( retPx.x, retPx.y );
 		return retPx;
 	}

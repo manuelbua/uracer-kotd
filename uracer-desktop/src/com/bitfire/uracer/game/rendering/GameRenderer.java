@@ -36,8 +36,8 @@ public final class GameRenderer {
 		}
 
 		public static Vector2 screenPosForMt( Vector2 worldPositionMt ) {
-			screenPosFor.x = Convert.scaledPixels(Convert.mt2px( worldPositionMt.x )) - worldRenderer.camOrtho.position.x + worldRenderer.halfViewport.x;
-			screenPosFor.y = worldRenderer.camOrtho.position.y - Convert.scaledPixels(Convert.mt2px( worldPositionMt.y )) + worldRenderer.halfViewport.y;
+			screenPosFor.x = Convert.mt2px( worldPositionMt.x ) - worldRenderer.camOrtho.position.x + worldRenderer.halfViewport.x;
+			screenPosFor.y = worldRenderer.camOrtho.position.y - Convert.mt2px( worldPositionMt.y ) + worldRenderer.halfViewport.y;
 			return screenPosFor;
 		}
 

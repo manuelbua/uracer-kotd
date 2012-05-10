@@ -23,7 +23,7 @@ public final class CarRenderer {
 	public void setAspect( Aspect aspect, CarModel model ) {
 		this.region = Art.cars.findRegion( aspect.name );
 		facet.setRegion( region );
-		facet.setSize( Convert.scaledPixels(Convert.mt2px( model.width )), Convert.scaledPixels(Convert.mt2px( model.length ) ));
+		facet.setSize( Convert.mt2px( model.width ), Convert.mt2px( model.length ) );
 		facet.setOrigin( facet.getWidth() / 2, facet.getHeight() / 2 );
 
 		// ambient occlusion

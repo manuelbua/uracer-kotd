@@ -174,7 +174,7 @@ public final class DebugHelper {
 		SpriteBatchUtils.drawString( batch, "throttle=" + carDesc.throttle, 0, 34 );
 		SpriteBatchUtils.drawString( batch, "screen x=" + pos.x + ",y=" + pos.y, 0, 80 );
 		SpriteBatchUtils.drawString( batch, "world-mt x=" + body.getPosition().x + ",y=" + body.getPosition().y, 0, 87 );
-		SpriteBatchUtils.drawString( batch, "world-px x=" + Convert.scaledPixels(Convert.mt2px( body.getPosition().x )) + ",y=" + Convert.scaledPixels(Convert.mt2px( body.getPosition().y )), 0, 93 );
+		SpriteBatchUtils.drawString( batch, "world-px x=" + Convert.mt2px( body.getPosition().x ) + ",y=" + Convert.mt2px( body.getPosition().y ), 0, 93 );
 		// Debug.drawString( "dir worldsize x=" + Director.worldSizeScaledPx.x + ",y=" +
 		// Director.worldSizeScaledPx.y, 0, 100 );
 		// Debug.drawString( "dir bounds x=" + Director.boundsPx.x + ",y=" + Director.boundsPx.width, 0, 107 );

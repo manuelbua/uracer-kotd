@@ -37,7 +37,7 @@ public class PlayerSkidMarks extends TrackEffect {
 
 		skidMarks = new SkidMark[ MaxSkidMarks ];
 		for( int i = 0; i < MaxSkidMarks; i++ ) {
-			skidMarks[i] = new SkidMark( Convert.scaledPixels(Convert.mt2px( player.getCarModel().width )), Convert.scaledPixels(Convert.mt2px( player.getCarModel().length )) );
+			skidMarks[i] = new SkidMark( Convert.mt2px( player.getCarModel().width ), Convert.mt2px( player.getCarModel().length ) );
 		}
 	}
 
