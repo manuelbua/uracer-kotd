@@ -2,7 +2,6 @@ package com.bitfire.uracer.game.actors;
 
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
-import com.badlogic.gdx.graphics.g2d.TextureRegion;
 import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.physics.box2d.BodyDef;
 import com.badlogic.gdx.physics.box2d.BodyDef.BodyType;
@@ -13,7 +12,6 @@ import com.bitfire.uracer.configuration.Config;
 import com.bitfire.uracer.game.collisions.CollisionFilters;
 import com.bitfire.uracer.game.rendering.GameRendererEvent;
 import com.bitfire.uracer.game.world.GameWorld;
-import com.bitfire.uracer.resources.Art;
 import com.bitfire.uracer.utils.AMath;
 import com.bitfire.uracer.utils.FixtureAtlas;
 
@@ -96,7 +94,6 @@ public strictfp abstract class Car extends Box2DEntity {
 		body.setBullet( true );
 		body.setUserData( this );
 
-		TextureRegion region = Art.cars.findRegion( aspect.name );
 		String shapeName = Config.ShapesStore + "electron" /* aspect.name */+ ".shape";
 		String shapeRef = Config.ShapesRefs + "electron" /* aspect.name */+ ".png";
 
@@ -118,34 +115,7 @@ public strictfp abstract class Car extends Box2DEntity {
 
 		// apply scaling factors
 		Vector2 offset = new Vector2( -model.width / 2f, -model.length / 2f );
-
-		// box2d editor "normalization" contemplates just a width-bound ratio..
-//		Vector2 ratio = new Vector2( model.width / Convert.px2mt( region.getRegionWidth() ), model.length / Convert.px2mt( region.getRegionHeight() ) );
-//		Vector2 factor = new Vector2( Convert.px2mt( region.getRegionWidth() * ratio.x ), Convert.px2mt( region.getRegionWidth() * ratio.y ) );
-//		atlas.createFixtures( body, shapeRef, factor.x, factor.y, fd, offset, carType );
-
-//		atlas.createFixtures( body, shapeRef, 2.5000002f, 2.1935484f, fd, offset, carType );
 		atlas.createFixtures( body, shapeRef, 2.5f, 2f, fd, offset, carType );
-
-		// dbg
-//		FixtureDef fd = new FixtureDef();
-//		Vector2 p = new Vector2();
-//		CircleShape shape = new CircleShape();
-//		shape.setPosition( p.set(0,0.75f) );
-//		shape.setRadius( 2.5f / 2f );
-//		fd.shape = shape;
-//
-//		fd.density = 1;
-//		fd.friction = 2f;
-//		fd.restitution = 0f;
-//		fd.filter.groupIndex = (short)((carType == CarType.PlayerCar) ? CollisionFilters.GroupPlayer : CollisionFilters.GroupReplay);
-//		fd.filter.categoryBits = (short)((carType == CarType.PlayerCar) ? CollisionFilters.CategoryPlayer : CollisionFilters.CategoryReplay);
-//		fd.filter.maskBits = (short)((carType == CarType.PlayerCar) ? CollisionFilters.MaskPlayer : CollisionFilters.MaskReplay);
-//
-//		body.createFixture( fd ).setUserData( carType );
-//		shape.setPosition( p.set(0,-0.75f) );
-//		body.createFixture( fd ).setUserData( carType );
-		// dbg
 
 		MassData mdata = body.getMassData();
 		mdata.center.set( 0, 0 );
