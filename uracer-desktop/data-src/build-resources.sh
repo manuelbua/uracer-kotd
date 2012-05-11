@@ -49,11 +49,16 @@ mkdir -p "${DEST}/track/"
 cp track/wall.png ${DEST}/track >/dev/null
 echo "done!"
 
-# cars
+# cars graphics
 echo -n "Cooking car graphics..."
 rm -rf "${DEST}/cars/"
 mkdir -p "${DEST}/cars/"
 ${TEX_PACKER} cars ${DEST}/cars >/dev/null
+echo "done!"
+
+# cars physical shapes
+echo -n "Cooking car physical shapes..."
+cp cars/car-shapes ${DEST}/cars >/dev/null
 echo "done!"
 
 # particle effects
