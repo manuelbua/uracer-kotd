@@ -1,5 +1,7 @@
 package com.bitfire.uracer.game.actors;
 
+import java.util.ArrayList;
+
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.math.Vector2;
@@ -13,8 +15,7 @@ import com.bitfire.uracer.game.collisions.CollisionFilters;
 import com.bitfire.uracer.game.rendering.GameRendererEvent;
 import com.bitfire.uracer.game.world.GameWorld;
 import com.bitfire.uracer.utils.AMath;
-import com.bitfire.uracer.utils.FixtureAtlas;
-
+import com.bitfire.uracer.utils.BodyEditorLoader;
 
 public abstract strictfp class Car extends Box2DEntity {
 	public enum InputMode {
@@ -88,37 +89,64 @@ public abstract strictfp class Car extends Box2DEntity {
 		BodyDef bd = new BodyDef();
 		bd.angle = 0;
 		bd.type = BodyType.DynamicBody;
-//		bd.bullet = true;
+		// bd.bullet = true;
 
 		body = box2dWorld.createBody( bd );
 		body.setBullet( true );
 		body.setUserData( this );
 
-		String shapeName = Config.ShapesStore + "electron" /* aspect.name */+ ".shape";
-		String shapeRef = Config.ShapesRefs + "electron" /* aspect.name */+ ".png";
+			String shapeName = Config.ShapesStore + "electron" /* aspect.name */+ ".shape";
+			String shapeRef = Config.ShapesRefs + "electron" /* aspect.name */+ ".png";
 
-		// set physical properties and apply shape
-		FixtureDef fd = new FixtureDef();
-		fd.density = model.density;
-		fd.friction = model.friction;
-		fd.restitution = model.restitution;
+			// set physical properties and apply shape
+			FixtureDef fd = new FixtureDef();
+			fd.density = model.density;
+			fd.friction = model.friction;
+			fd.restitution = model.restitution;
 
-		fd.filter.groupIndex = (short)((carType == CarType.PlayerCar) ? CollisionFilters.GroupPlayer : CollisionFilters.GroupReplay);
-		fd.filter.categoryBits = (short)((carType == CarType.PlayerCar) ? CollisionFilters.CategoryPlayer : CollisionFilters.CategoryReplay);
-		fd.filter.maskBits = (short)((carType == CarType.PlayerCar) ? CollisionFilters.MaskPlayer : CollisionFilters.MaskReplay);
+			fd.filter.groupIndex = (short)((carType == CarType.PlayerCar) ? CollisionFilters.GroupPlayer : CollisionFilters.GroupReplay);
+			fd.filter.categoryBits = (short)((carType == CarType.PlayerCar) ? CollisionFilters.CategoryPlayer : CollisionFilters.CategoryReplay);
+			fd.filter.maskBits = (short)((carType == CarType.PlayerCar) ? CollisionFilters.MaskPlayer : CollisionFilters.MaskReplay);
 
-		if( Config.Debug.TraverseWalls ) {
-			fd.filter.groupIndex = CollisionFilters.GroupNoCollisions;
-		}
+			if( Config.Debug.TraverseWalls ) {
+				fd.filter.groupIndex = CollisionFilters.GroupNoCollisions;
+			}
 
-		FixtureAtlas atlas = new FixtureAtlas( Gdx.files.internal( shapeName ) );
+			// apply scaling factors
+			// Vector2 offset = new Vector2( -model.width / 2f, -model.length / 2f );
+			// FixtureAtlas atlas = new FixtureAtlas( Gdx.files.internal( shapeName ) );
+			// atlas.createFixtures( body, shapeRef, 2.5f, 2f, fd, offset, carType );
 
-		// apply scaling factors
-		Vector2 offset = new Vector2( -model.width / 2f, -model.length / 2f );
-		atlas.createFixtures( body, shapeRef, 2.5f, 2f, fd, offset, carType );
+			BodyEditorLoader loader = new BodyEditorLoader( Gdx.files.internal( "data/cars/car-shapes" ) );
+			loader.attachFixture( body, "electron.png", fd, 2f );
+			ArrayList<Fixture> fs = body.getFixtureList();
+			for( Fixture f : fs ) {
+				f.setUserData( carType );
+			}
+
+		// dbg
+//		FixtureDef fd = new FixtureDef();
+//		Vector2 p = new Vector2();
+//		CircleShape shape = new CircleShape();
+//		shape.setPosition( p.set( 0, 0.75f ) );
+//		shape.setRadius( 2.5f / 2f );
+//		fd.shape = shape;
+//
+//		fd.density = 1;
+//		fd.friction = 2f;
+//		fd.restitution = 0.25f;
+//		fd.filter.groupIndex = (short)((carType == CarType.PlayerCar) ? CollisionFilters.GroupPlayer : CollisionFilters.GroupReplay);
+//		fd.filter.categoryBits = (short)((carType == CarType.PlayerCar) ? CollisionFilters.CategoryPlayer : CollisionFilters.CategoryReplay);
+//		fd.filter.maskBits = (short)((carType == CarType.PlayerCar) ? CollisionFilters.MaskPlayer : CollisionFilters.MaskReplay);
+//		body.createFixture( fd ).setUserData( carType );
+//		shape.setPosition( p.set( 0, -0.75f ) );
+//		body.createFixture( fd ).setUserData( carType );
+		// dbg
 
 		MassData mdata = body.getMassData();
 		mdata.center.set( 0, 0 );
+		// mdata.I = 9.654258f;
+		// mdata.mass = 7.3938737f;
 		body.setMassData( mdata );
 	}
 
@@ -186,10 +214,10 @@ public abstract strictfp class Car extends Box2DEntity {
 		return body.isActive();
 	}
 
-//	public void reset() {
-//		resetPhysics();
-//		resetDistanceAndSpeed();
-//	}
+	// public void reset() {
+	// resetPhysics();
+	// resetDistanceAndSpeed();
+	// }
 
 	public void resetDistanceAndSpeed() {
 		carTraveledDistance = 0;
@@ -198,18 +226,18 @@ public abstract strictfp class Car extends Box2DEntity {
 	}
 
 	public void resetPhysics() {
-//		boolean wasActive = isActive();
+		// boolean wasActive = isActive();
 
-//		if( wasActive ) {
-//			body.setActive( false );
-//		}
+		// if( wasActive ) {
+		// body.setActive( false );
+		// }
 
 		body.setAngularVelocity( 0 );
 		body.setLinearVelocity( 0, 0 );
 
-//		if( wasActive ) {
-//			body.setActive( wasActive );
-//		}
+		// if( wasActive ) {
+		// body.setActive( wasActive );
+		// }
 
 		impacts = 0;
 	}
@@ -217,7 +245,8 @@ public abstract strictfp class Car extends Box2DEntity {
 	public void onCollide( Fixture other, Vector2 normalImpulses ) {
 		impacts++;
 
-//		Gdx.app.log( "", "x=" + NumberString.formatVeryLong(normalImpulses.x) + ", y=" + NumberString.formatVeryLong(normalImpulses.y) );
+		// Gdx.app.log( "", "x=" + NumberString.formatVeryLong(normalImpulses.x) + ", y=" +
+		// NumberString.formatVeryLong(normalImpulses.y) );
 
 		if( triggerEvents ) {
 			event.data.setCollisionData( other, normalImpulses );
@@ -241,7 +270,7 @@ public abstract strictfp class Car extends Box2DEntity {
 	public void onBeforePhysicsSubstep() {
 		// keeps track of the previous position to be able
 		// to compute the cumulative traveled distance
-//		previousPosition.set( body.getPosition() );
+		// previousPosition.set( body.getPosition() );
 
 		super.onBeforePhysicsSubstep();
 
@@ -255,7 +284,7 @@ public abstract strictfp class Car extends Box2DEntity {
 		}
 
 		// FIXME is it really necessary? that's an expensive jni call..
-//		body.setAwake( true );
+		// body.setAwake( true );
 
 		// put newly computed forces into the system
 		body.setLinearVelocity( carForces.velocity_x, carForces.velocity_y );
@@ -278,9 +307,11 @@ public abstract strictfp class Car extends Box2DEntity {
 		float dist = AMath.fixup( distmp.len() );
 
 		if( !AMath.isZero( dist ) ) {
-//			Gdx.app.log( "", "dist=" + NumberString.formatVeryLong( dist ) );
-//			Gdx.app.log( "", "px=" + NumberString.formatVeryLong(body.getPosition().x) + ", py=" + NumberString.formatVeryLong(body.getPosition().y) +
-//							 "ppx=" + NumberString.formatVeryLong(previousPosition.x) + ", ppy=" + NumberString.formatVeryLong(previousPosition.y) );
+			// Gdx.app.log( "", "dist=" + NumberString.formatVeryLong( dist ) );
+			// Gdx.app.log( "", "px=" + NumberString.formatVeryLong(body.getPosition().x) + ", py=" +
+			// NumberString.formatVeryLong(body.getPosition().y) +
+			// "ppx=" + NumberString.formatVeryLong(previousPosition.x) + ", ppy=" +
+			// NumberString.formatVeryLong(previousPosition.y) );
 
 			// accumulate distance it
 			carTraveledDistance += dist;

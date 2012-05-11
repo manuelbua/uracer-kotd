@@ -61,6 +61,10 @@ public class GameLogic implements CarEvent.Listener, CarStateEvent.Listener, Pla
 	// world
 	private GameWorld gameWorld = null;
 
+	// rendering
+	private GameRenderer gameRenderer = null;
+	private GameWorldRenderer gameWorldRenderer = null;
+
 	// player
 	private PlayerCar playerCar = null;
 	private GhostCar ghostCar = null;
@@ -89,9 +93,11 @@ public class GameLogic implements CarEvent.Listener, CarStateEvent.Listener, Pla
 		}
 	};
 
-	public GameLogic( GameWorld gameWorld, GameplaySettings settings, ScalingStrategy scalingStrategy ) {
-		this.gameplaySettings = settings;
+	public GameLogic( GameWorld gameWorld, GameRenderer gameRenderer, GameplaySettings settings, ScalingStrategy scalingStrategy ) {
 		this.gameWorld = gameWorld;
+		this.gameRenderer = gameRenderer;
+		this.gameWorldRenderer = gameRenderer.getWorldRenderer();
+		this.gameplaySettings = settings;
 		this.doQuit = false;
 
 		timeMultiplier.value = 1f;
@@ -152,7 +158,9 @@ public class GameLogic implements CarEvent.Listener, CarStateEvent.Listener, Pla
 		registerPlayerEvents( playerCar );
 		Gdx.app.log( "GameLogic", "Registered player-related events" );
 
-//		restartGame();
+		gameWorldRenderer.setRenderPlayerHeadlights( gameWorld.isNightMode() );
+
+		// restartGame();
 
 		if( Config.Debug.UseDebugHelper ) {
 			DebugHelper.setPlayer( playerCar );
@@ -175,6 +183,8 @@ public class GameLogic implements CarEvent.Listener, CarStateEvent.Listener, Pla
 
 		playerCar = null;
 
+		gameWorldRenderer.setRenderPlayerHeadlights( false );
+
 		if( Config.Debug.UseDebugHelper ) {
 			DebugHelper.setPlayer( null );
 		}
@@ -183,7 +193,7 @@ public class GameLogic implements CarEvent.Listener, CarStateEvent.Listener, Pla
 	public void setBestLocalReplay( Replay replay ) {
 		restartGame();
 		lapManager.setBestReplay( replay );
-//		if( !hasPlayer() )
+		// if( !hasPlayer() )
 		{
 			ghostCar.setReplay( replay );
 		}
@@ -209,8 +219,8 @@ public class GameLogic implements CarEvent.Listener, CarStateEvent.Listener, Pla
 		// create player and setup player input system and initial position in the world
 		// player.setInputSystem( input );
 		player.setWorldPosMt( world.playerStartPos, world.playerStartOrient );
-//		player.setWorldPosMt( new Vector2(0,0), 0 );
-//		playerCar.setWorldPosMt( new Vector2(50.29133f, -15.1445f), gameWorld.playerStartOrient );
+		// player.setWorldPosMt( new Vector2(0,0), 0 );
+		// playerCar.setWorldPosMt( new Vector2(50.29133f, -15.1445f), gameWorld.playerStartOrient );
 
 		// apply handicaps
 		player.setDampingFriction( AMath.damping( settings.dampingFriction ) );
@@ -232,21 +242,20 @@ public class GameLogic implements CarEvent.Listener, CarStateEvent.Listener, Pla
 		gameTasksManager.physicsStep.onSubstepCompleted();
 	}
 
-	public void onBeforeRender( GameRenderer gameRenderer ) {
+	public void onBeforeRender() {
 		// update player's headlights and move the world camera to follows it, if there is a player
-		GameWorldRenderer worldRenderer = gameRenderer.getWorldRenderer();
 		if( hasPlayer() ) {
 
 			if( gameWorld.isNightMode() ) {
-				worldRenderer.updatePlayerHeadlights( playerCar );
+				gameWorldRenderer.updatePlayerHeadlights( playerCar );
 			}
 
-			worldRenderer.setCameraPosition( playerCar.state().position, true );
+			gameWorldRenderer.setCameraPosition( playerCar.state().position, true );
 		} else if( ghostCar.hasReplay() ) {
-			worldRenderer.setCameraPosition( ghostCar.state().position, true );
+			gameWorldRenderer.setCameraPosition( ghostCar.state().position, true );
 		} else {
 			// no ghost, no player, WTF?
-			worldRenderer.setCameraPosition( gameWorld.playerStartPos, true );
+			gameWorldRenderer.setCameraPosition( gameWorld.playerStartPos, true );
 		}
 
 		URacer.timeMultiplier = AMath.clamp( timeMultiplier.value, TimeMultiplierMin, Config.Physics.PhysicsTimeMultiplier );
@@ -367,7 +376,7 @@ public class GameLogic implements CarEvent.Listener, CarStateEvent.Listener, Pla
 			playerCar.resetPhysics();
 			playerCar.resetDistanceAndSpeed();
 			playerCar.setWorldPosMt( gameWorld.playerStartPos, gameWorld.playerStartOrient );
-//			playerCar.setWorldPosMt( new Vector2(0,0), 0 );
+			// playerCar.setWorldPosMt( new Vector2(0,0), 0 );
 		}
 
 		if( playerGhostCar != null ) {

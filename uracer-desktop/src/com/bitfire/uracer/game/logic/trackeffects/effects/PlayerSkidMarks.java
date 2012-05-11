@@ -1,5 +1,6 @@
 package com.bitfire.uracer.game.logic.trackeffects.effects;
 
+import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.g2d.Sprite;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.math.Rectangle;
@@ -21,6 +22,7 @@ public class PlayerSkidMarks extends TrackEffect {
 	private SkidMark[] skidMarks;
 	private int markIndex;
 	private int visibleSkidMarksCount;
+	private int driftMarkAddIterations = 1;
 
 	private Vector2 pos, last;
 	private PlayerCar player;
@@ -38,6 +40,14 @@ public class PlayerSkidMarks extends TrackEffect {
 		skidMarks = new SkidMark[ MaxSkidMarks ];
 		for( int i = 0; i < MaxSkidMarks; i++ ) {
 			skidMarks[i] = new SkidMark( Convert.mt2px( player.getCarModel().width ), Convert.mt2px( player.getCarModel().length ) );
+		}
+
+		// 1 iteration at 60Hz, 2 at 30Hz..
+		if( Config.Physics.PhysicsTimestepHz > 60 ) {
+			driftMarkAddIterations = 0;
+			Gdx.app.log( "PlayerSkidMarks", "Physics is higher than expected, giving up the effect." );
+		} else {
+			driftMarkAddIterations = (int)(60 / (int)Config.Physics.PhysicsTimestepHz);
 		}
 	}
 
@@ -105,11 +115,11 @@ public class PlayerSkidMarks extends TrackEffect {
 		if( (int)position.x == (int)last.x && (int)position.y == (int)last.y ) {
 			// position.x = AMath.lerp( last.x, position.x, 0.25f );
 			// position.y = AMath.lerp( last.y, position.y, 0.25f );
-//			Gdx.app.log( "PlayerSkidMarks", "Skipping emitting particle..." );
+			// Gdx.app.log( "PlayerSkidMarks", "Skipping emitting particle..." );
 			return;
 		}
 
-		for( int i = 0; i < 2; i++ ) {
+		for( int i = 0; i < driftMarkAddIterations; i++ ) {
 			pos.set( position );
 
 			pos.x = AMath.lerp( last.x, position.x, 0.5f * i );

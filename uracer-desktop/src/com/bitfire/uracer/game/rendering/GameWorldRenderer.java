@@ -77,6 +77,7 @@ public final class GameWorldRenderer {
 	// rendering
 	private ShaderProgram treeShader = null;
 	private TileAtlas tileAtlas = null;
+	private boolean renderPlayerHeadlights = true;
 
 	public UTileMapRenderer tileMapRenderer = null;
 	private ScalingStrategy scalingStrategy = null;
@@ -158,6 +159,13 @@ public final class GameWorldRenderer {
 		return camOrthoMvpMt;
 	}
 
+	public void setRenderPlayerHeadlights( boolean value ) {
+		renderPlayerHeadlights = value;
+		if( playerLights != null ) {
+			playerLights.setActive( value );
+		}
+	}
+
 	public void resetCounters() {
 		culledMeshes = 0;
 		renderedTrees = 0;
@@ -165,7 +173,7 @@ public final class GameWorldRenderer {
 	}
 
 	public void updatePlayerHeadlights( Car car ) {
-		if( car != null ) {
+		if( renderPlayerHeadlights && car != null ) {
 			Vector2 carPosition = car.state().position;
 			float carOrientation = car.state().orientation;
 			float carLength = car.getCarModel().length;
@@ -187,9 +195,6 @@ public final class GameWorldRenderer {
 
 			playerLights.setDirection( ang );
 			playerLights.setPosition( px, py );
-			playerLights.setActive( true );
-		} else {
-			playerLights.setActive( false );
 		}
 
 		// if( Config.isDesktop && (URacer.getFrameCount() & 0x1f) == 0x1f ) {
@@ -208,7 +213,7 @@ public final class GameWorldRenderer {
 			// @formatter:on
 
 			rayHandler.update();
-//			Gdx.app.log( "GameWorldRenderer", "lights rendered=" + rayHandler.lightRenderedLastFrame );
+			// Gdx.app.log( "GameWorldRenderer", "lights rendered=" + rayHandler.lightRenderedLastFrame );
 
 			rayHandler.updateLightMap();
 		}

@@ -59,7 +59,7 @@ public class Game implements Disposable {
 		}
 
 		// handles game rules and mechanics, it's all about game data
-		gameLogic = new GameLogic( gameWorld, gameplaySettings, scalingStrategy/* , carAspect, carModel */);
+		gameLogic = new GameLogic( gameWorld, gameRenderer, gameplaySettings, scalingStrategy/* , carAspect, carModel */);
 		Gdx.app.log( "Game", "GameLogic created" );
 
 		// initialize the debug helper
@@ -158,7 +158,7 @@ public class Game implements Disposable {
 	public void render() {
 		// trigger the event and let's subscribers interpolate and update their state()
 		gameRenderer.beforeRender( URacer.getTemporalAliasing() );
-		gameLogic.onBeforeRender( gameRenderer );
+		gameLogic.onBeforeRender();
 
 		if( canPostProcess ) {
 			updatePostProcessingEffects();
