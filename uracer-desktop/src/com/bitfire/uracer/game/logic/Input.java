@@ -37,11 +37,19 @@ public final class Input extends Task {
 		for( int i = 0; i < buttons.length; i++ ) {
 			buttons[i] = 0;
 		}
+
+		for( int p = 0; p < MaxPointers; p++ ) {
+			pointer[p].reset();
+		}
 	}
 
 	// pointers
 	public boolean isTouching( int ptr ) {
 		return pointer[ptr].is_touching;
+	}
+
+	public boolean isTouched( int ptr ) {
+		return pointer[ptr].touched();
 	}
 
 	public int getX( int ptr ) {
@@ -142,7 +150,7 @@ public final class Input extends Task {
 
 		for( int p = 0; p < MaxPointers; p++ ) {
 			Pointer ptr = pointer[p];
-			ptr.is_touching = Gdx.input.isTouched( p );
+			ptr.setTouching( Gdx.input.isTouched( p ) );
 			ptr.touchX = Gdx.input.getX( p );
 			ptr.touchY = Gdx.input.getY( p );
 			ptr.touchCoords.set( ptr.touchX, ptr.touchY );
@@ -157,9 +165,28 @@ public final class Input extends Task {
 		public int touchX = 0;
 		public int touchY = 0;
 		public boolean is_touching = false;
+		private boolean was_touching = false;
 
 		public Pointer( int index ) {
 			pointerIndex = index;
+		}
+
+		public void reset() {
+			is_touching = false;
+			was_touching = false;
+			touchX = 0;
+			touchY = 0;
+		}
+
+		public void setTouching( boolean value ) {
+			was_touching = is_touching;
+			is_touching = value;
+		}
+
+		/** Returns whether or not this pointer has been touched.
+		 * This will NOT continuously returns true if the pointer is being continuoulsy touched. */
+		public boolean touched() {
+			return !was_touching && is_touching;
 		}
 	}
 }

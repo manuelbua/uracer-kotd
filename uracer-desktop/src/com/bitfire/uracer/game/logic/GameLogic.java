@@ -350,7 +350,7 @@ public class GameLogic implements CarEvent.Listener, CarStateEvent.Listener, Pla
 
 			setPlayer( new CarModel().toModel1(), Aspect.OldSkool );
 
-		} else if( input.isPressed( Keys.SPACE ) /* && !timeModulationBusy */) {
+		} else if( input.isPressed( Keys.SPACE ) || input.isTouched( 1 )) {
 
 			TweenEquation eqIn = Quad.OUT;
 			TweenEquation eqOut = Quad.INOUT;
