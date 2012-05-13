@@ -62,7 +62,7 @@ public class GameLogic implements CarEvent.Listener, CarStateEvent.Listener, Pla
 	private GameWorld gameWorld = null;
 
 	// rendering
-	private GameRenderer gameRenderer = null;
+//	private GameRenderer gameRenderer = null;
 	private GameWorldRenderer gameWorldRenderer = null;
 
 	// player
@@ -95,7 +95,7 @@ public class GameLogic implements CarEvent.Listener, CarStateEvent.Listener, Pla
 
 	public GameLogic( GameWorld gameWorld, GameRenderer gameRenderer, GameplaySettings settings, ScalingStrategy scalingStrategy ) {
 		this.gameWorld = gameWorld;
-		this.gameRenderer = gameRenderer;
+//		this.gameRenderer = gameRenderer;
 		this.gameWorldRenderer = gameRenderer.getWorldRenderer();
 		this.gameplaySettings = settings;
 		this.doQuit = false;
