@@ -96,4 +96,11 @@ public final class ReplayBufferManager {
 		return worst;
 	}
 
+	public boolean hasBestReplay() {
+		return (best != null);
+	}
+
+	public boolean hasWorstReplay() {
+		return (worst != null);
+	}
 }

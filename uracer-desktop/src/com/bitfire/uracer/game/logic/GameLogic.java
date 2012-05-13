@@ -401,13 +401,11 @@ public class GameLogic implements CarEvent.Listener, CarStateEvent.Listener, Pla
 			playerCar.resetPhysics();
 			playerCar.resetDistanceAndSpeed();
 			playerCar.setWorldPosMt( gameWorld.playerStartPos, gameWorld.playerStartOrient );
-			// playerCar.setWorldPosMt( new Vector2(0,0), 0 );
 		}
 
 		if( playerGhostCar != null ) {
 			playerGhostCar.resetPhysics();
 			playerGhostCar.resetDistanceAndSpeed();
-			playerGhostCar.removeReplay();
 		}
 	}
 
@@ -419,7 +417,6 @@ public class GameLogic implements CarEvent.Listener, CarStateEvent.Listener, Pla
 		WcTweener.clear();
 		GameTweener.clear();
 		lapManager.abortRecording();
-		lapManager.reset();
 		gameTasksManager.restart();
 	}
 
@@ -450,7 +447,7 @@ public class GameLogic implements CarEvent.Listener, CarStateEvent.Listener, Pla
 	public void carStateEvent( CarState source, CarStateEvent.Type type ) {
 		switch( type ) {
 		case onTileChanged:
-			// playerTileChanged();
+			playerTileChanged();
 			break;
 		}
 	}

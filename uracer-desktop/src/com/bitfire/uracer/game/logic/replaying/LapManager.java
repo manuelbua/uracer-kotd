@@ -95,6 +95,14 @@ public class LapManager implements Disposable {
 		return (lastRecordedReplay.id == bufferManager.getBestReplay().id);
 	}
 
+	public boolean hasBestLapReplay() {
+		return bufferManager.hasBestReplay();
+	}
+
+	public boolean hasWorstLapReplay() {
+		return bufferManager.hasWorstReplay();
+	}
+
 	// triggered from game logic
 
 	public void onPlayerComputeForces( CarForces forces ) {
