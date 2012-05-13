@@ -62,10 +62,12 @@ public abstract class SubframeInterpolableEntity extends Entity implements Physi
 	}
 
 	public void onBeforePhysicsSubstep() {
+//		Gdx.app.log( this.getClass().getSimpleName(), "beforePhysics" );
 		saveStateTo( statePrevious );
 	}
 
 	public void onAfterPhysicsSubstep() {
+//		Gdx.app.log( this.getClass().getSimpleName(), "afterPhysics" );
 		saveStateTo( stateCurrent );
 	}
 

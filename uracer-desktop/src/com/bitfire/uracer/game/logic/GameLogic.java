@@ -268,29 +268,42 @@ public class GameLogic implements CarEvent.Listener, CarStateEvent.Listener, Pla
 
 	private Replay userRec = null;
 
-	// called only if the engine has substepped
-	public void onUpdate() {
+	private int keycount = 0;
+	public void onAcquireInput() {
 		Input input = gameTasksManager.input;
 
-		if( input.isOn( Keys.C ) ) {
+		// dbg keys
+		if( input.isPressed( Keys.NUM_1 ) || input.isReleased( Keys.NUM_1 ) ) {
+			keycount++;
+			// @formatter:off
+			Gdx.app.log( "GameLogic", "Num1 => " +
+					"isOn:" + (input.isOn(Keys.NUM_1) ? "1" : "0" ) + ", " +
+					"isOff:" + (input.isOff(Keys.NUM_1) ? "1" : "0" ) + ", " +
+					"isPressed:" + (input.isPressed(Keys.NUM_1) ? "1" : "0" ) + ", " +
+					"isReleased:" + (input.isReleased(Keys.NUM_1) ? "1" : "0" ) + " (" + keycount + ")"
+			);
+			// @formatter:on
+		}
+
+		if( input.isPressed( Keys.C ) ) {
 
 			if( lapManager.getBestReplay() != null ) {
 				ghostCar.setReplay( lapManager.getBestReplay() );
 			}
 
-		} else if( input.isOn( Keys.R ) ) {
+		} else if( input.isPressed( Keys.R ) ) {
 
 			// restart
 
 			restartGame();
 
-		} else if( input.isOn( Keys.T ) ) {
+		} else if( input.isPressed( Keys.T ) ) {
 
 			// reset
 
 			resetGame();
 
-		} else if( input.isOn( Keys.Z ) ) {
+		} else if( input.isPressed( Keys.Z ) ) {
 
 			// start recording
 			playerCar.resetDistanceAndSpeed();
@@ -299,7 +312,7 @@ public class GameLogic implements CarEvent.Listener, CarStateEvent.Listener, Pla
 			userRec = lapManager.startRecording( playerCar );
 			Gdx.app.log( "GameLogic", "Recording..." );
 
-		} else if( input.isOn( Keys.X ) ) {
+		} else if( input.isPressed( Keys.X ) ) {
 
 			// stop recording and play
 			playerCar.resetPhysics();
@@ -314,7 +327,7 @@ public class GameLogic implements CarEvent.Listener, CarStateEvent.Listener, Pla
 
 			// Gdx.app.log( "GameLogic", "Player final pos=" + playerCar.getBody().getPosition() );
 
-		} else if( input.isOn( Keys.Q ) ) {
+		} else if( input.isPressed( Keys.Q ) ) {
 
 			// quit
 
@@ -323,19 +336,19 @@ public class GameLogic implements CarEvent.Listener, CarStateEvent.Listener, Pla
 			doQuit = true;
 			return;
 
-		} else if( input.isOn( Keys.O ) ) {
+		} else if( input.isPressed( Keys.O ) ) {
 
 			// remove player
 
 			removePlayer();
 
-		} else if( input.isOn( Keys.P ) ) {
+		} else if( input.isPressed( Keys.P ) ) {
 
 			// add player
 
 			setPlayer( new CarModel().toModel2(), Aspect.OldSkool );
 
-		} else if( input.isOn( Keys.SPACE ) && !timeModulationBusy ) {
+		} else if( input.isPressed( Keys.SPACE ) && !timeModulationBusy ) {
 
 			TweenEquation eqIn = Quad.OUT;
 			TweenEquation eqOut = Quad.INOUT;

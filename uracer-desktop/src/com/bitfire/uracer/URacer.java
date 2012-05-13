@@ -147,13 +147,7 @@ public class URacer implements ApplicationListener {
 
 		physicsTime = (TimeUtils.nanoTime() - startTime) * oneOnOneBillion;
 
-		// compute the temporal aliasing factor, entities will render
-		// themselves accordingly to this to avoid flickering and jittering,
-		// permitting slow-motion effects without artifacts.
-		// (this imply accepting a max-one-frame-behind behavior)
-		temporalAliasing = (timeAccuNs * timeStepHz) * oneOnOneBillion;
-		aliasingTime = temporalAliasing;
-
+		// if the system has ticked, then trigger tickCompleted
 		if( lastTicksCount > 0 )
 		{
 			screen.tickCompleted();
@@ -162,6 +156,13 @@ public class URacer implements ApplicationListener {
 				return;
 			}
 		}
+
+		// compute the temporal aliasing factor, entities will render
+		// themselves accordingly to this to avoid flickering and jittering,
+		// permitting slow-motion effects without artifacts.
+		// (this imply accepting a max-one-frame-behind behavior)
+		temporalAliasing = (timeAccuNs * timeStepHz) * oneOnOneBillion;
+		aliasingTime = temporalAliasing;
 
 		startTime = TimeUtils.nanoTime();
 		{
