@@ -62,7 +62,7 @@ public class GameLogic implements CarEvent.Listener, CarStateEvent.Listener, Pla
 	private GameWorld gameWorld = null;
 
 	// rendering
-//	private GameRenderer gameRenderer = null;
+	// private GameRenderer gameRenderer = null;
 	private GameWorldRenderer gameWorldRenderer = null;
 
 	// player
@@ -79,15 +79,15 @@ public class GameLogic implements CarEvent.Listener, CarStateEvent.Listener, Pla
 
 	// handles timeModulationBusy onComplete event
 	private long timeModStart = 0;
-	private boolean timeModulation = false, timeModulationBusy = false;
+	private boolean timeModulation = false;
 	private BoxedFloat timeMultiplier = new BoxedFloat();
+	private Timeline seqIn, seqOut;
 	public static final float TimeMultiplierMin = 0.3f;
 	private TweenCallback timeModulationFinished = new TweenCallback() {
 		@Override
 		public void onEvent( int type, BaseTween<?> source ) {
 			switch( type ) {
 			case COMPLETE:
-				timeModulationBusy = false;
 				Gdx.app.log( "GameLogic", "Time modulation ended (took " + (TimeUtils.nanoTime() - timeModStart) + ")" );
 			}
 		}
@@ -95,18 +95,20 @@ public class GameLogic implements CarEvent.Listener, CarStateEvent.Listener, Pla
 
 	public GameLogic( GameWorld gameWorld, GameRenderer gameRenderer, GameplaySettings settings, ScalingStrategy scalingStrategy ) {
 		this.gameWorld = gameWorld;
-//		this.gameRenderer = gameRenderer;
+		// this.gameRenderer = gameRenderer;
 		this.gameWorldRenderer = gameRenderer.getWorldRenderer();
 		this.gameplaySettings = settings;
 		this.doQuit = false;
-
-		timeMultiplier.value = 1f;
 
 		// create tweening support
 		Tween.registerAccessor( Message.class, new MessageAccessor() );
 		Tween.registerAccessor( HudLabel.class, new HudLabelAccessor() );
 		Tween.registerAccessor( BoxedFloat.class, new BoxedFloatAccessor() );
 		Gdx.app.log( "GameLogic", "Tweening helpers created" );
+
+		timeMultiplier.value = 1f;
+		seqIn = Timeline.createSequence();
+		seqOut = Timeline.createSequence();
 
 		// main game tasks
 		gameTasksManager = new GameTasksManager( gameWorld, scalingStrategy );
@@ -269,6 +271,7 @@ public class GameLogic implements CarEvent.Listener, CarStateEvent.Listener, Pla
 	private Replay userRec = null;
 
 	private int keycount = 0;
+
 	public void onAcquireInput() {
 		Input input = gameTasksManager.input;
 
@@ -348,7 +351,7 @@ public class GameLogic implements CarEvent.Listener, CarStateEvent.Listener, Pla
 
 			setPlayer( new CarModel().toModel2(), Aspect.OldSkool );
 
-		} else if( input.isPressed( Keys.SPACE ) && !timeModulationBusy ) {
+		} else if( input.isPressed( Keys.SPACE ) /* && !timeModulationBusy */) {
 
 			TweenEquation eqIn = Quad.OUT;
 			TweenEquation eqOut = Quad.INOUT;
@@ -357,14 +360,23 @@ public class GameLogic implements CarEvent.Listener, CarStateEvent.Listener, Pla
 			timeModStart = TimeUtils.nanoTime();
 
 			if( timeModulation ) {
-				timeModulationBusy = true;
-				WcTweener.start( Timeline.createSequence().push( Tween.to( timeMultiplier, BoxedFloatAccessor.VALUE, 1000 ).target( TimeMultiplierMin ).ease( eqIn ) )
-						.setCallback( timeModulationFinished ) );
+
+				WcTweener.stop( timeMultiplier );
+				seqIn = Timeline.createSequence();
+				seqOut = Timeline.createSequence();
+
+				seqIn.push( Tween.to( timeMultiplier, BoxedFloatAccessor.VALUE, 1000 ).target( TimeMultiplierMin ).ease( eqIn ) ).setCallback( timeModulationFinished );
+				WcTweener.start( seqIn );
+
 			} else {
-				timeModulationBusy = true;
-				WcTweener.start( Timeline.createSequence()
-						.push( Tween.to( timeMultiplier, BoxedFloatAccessor.VALUE, 1000 ).target( Config.Physics.PhysicsTimeMultiplier ).ease( eqOut ) )
-						.setCallback( timeModulationFinished ) );
+
+				WcTweener.stop( timeMultiplier );
+				seqIn = Timeline.createSequence();
+				seqOut = Timeline.createSequence();
+
+				seqOut.push( Tween.to( timeMultiplier, BoxedFloatAccessor.VALUE, 1000 ).target( Config.Physics.PhysicsTimeMultiplier ).ease( eqOut ) ).setCallback(
+						timeModulationFinished );
+				WcTweener.start( seqOut );
 			}
 		}
 	}
@@ -402,7 +414,6 @@ public class GameLogic implements CarEvent.Listener, CarStateEvent.Listener, Pla
 	private void restartLogic() {
 		resetPlayer( playerCar, ghostCar );
 		isFirstLap = true;
-		timeModulationBusy = false;
 		timeModulation = false;
 		timeMultiplier.value = Config.Physics.PhysicsTimeMultiplier;
 		WcTweener.clear();

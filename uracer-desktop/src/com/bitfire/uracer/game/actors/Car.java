@@ -95,8 +95,8 @@ public abstract strictfp class Car extends Box2DEntity {
 		body.setBullet( true );
 		body.setUserData( this );
 
-			String shapeName = Config.ShapesStore + "electron" /* aspect.name */+ ".shape";
-			String shapeRef = Config.ShapesRefs + "electron" /* aspect.name */+ ".png";
+//			String shapeName = Config.ShapesStore + "electron" /* aspect.name */+ ".shape";
+//			String shapeRef = Config.ShapesRefs + "electron" /* aspect.name */+ ".png";
 
 			// set physical properties and apply shape
 			FixtureDef fd = new FixtureDef();

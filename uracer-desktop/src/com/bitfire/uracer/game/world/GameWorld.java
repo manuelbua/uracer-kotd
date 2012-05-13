@@ -282,7 +282,7 @@ public final class GameWorld {
 
 					List<Vector2> points = MapUtils.extractPolyData( o.polyline );
 					if( points.size() >= 2 ) {
-						float wallSizeMt = 0.3f;
+						float wallSizeMt = 0.5f;
 						float[] mags = new float[ points.size() - 1 ];
 
 						offsetMt.set( o.x, o.y );

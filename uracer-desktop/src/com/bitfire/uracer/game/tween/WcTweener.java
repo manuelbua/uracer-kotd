@@ -24,8 +24,11 @@ public final class WcTweener {
 		timeline.start( manager );
 	}
 
+	public static void stop(Object target) {
+		manager.killTarget( target );
+	}
+
 	public static void update() {
-		// TODO, check this, the documentation doesn't state it, looks like milliseconds
 		manager.update( URacer.getLastDeltaMs() );
 	}
 }
