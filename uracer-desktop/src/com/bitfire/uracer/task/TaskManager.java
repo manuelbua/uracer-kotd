@@ -6,6 +6,10 @@ public final class TaskManager {
 	private TaskManager() {
 	}
 
+	public static void dispose() {
+		event.removeAllListeners();
+	}
+
 	public static void dispatchTick() {
 		event.trigger( TaskManagerEvent.Type.onTick );
 	}

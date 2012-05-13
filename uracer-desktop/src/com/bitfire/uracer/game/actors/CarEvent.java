@@ -52,6 +52,12 @@ public final class CarEvent extends Event<Car> {
 		notifiers[type.ordinal()].removeListener( listener );
 	}
 
+	public void removeAllListeners() {
+		for( Type t : Type.values() ) {
+			notifiers[t.ordinal()].removeAllListeners();
+		}
+	}
+
 	public void trigger( Car source, Type type ) {
 		data.car = source;
 		notifiers[type.ordinal()].carEvent( type, data );

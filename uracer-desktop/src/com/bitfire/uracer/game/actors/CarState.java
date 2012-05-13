@@ -44,6 +44,11 @@ public final class CarState {
 		}
 	}
 
+	public void dispose() {
+		event.removeAllListeners();
+		event = null;
+	}
+
 	public void reset() {
 		// causes an onTileChanged event to be raised the next update step
 		lastTileX = -1;

@@ -31,6 +31,8 @@ public final class PlayerDriftState {
 	public void dispose() {
 		time.dispose();
 		collisionTime.dispose();
+		event.removeAllListeners();
+		event = null;
 	}
 
 	// TODO, a State interface with a reset() method! this way it could be assumed the state can be bound to some other

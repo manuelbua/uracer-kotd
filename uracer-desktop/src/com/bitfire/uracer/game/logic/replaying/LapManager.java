@@ -3,10 +3,10 @@ package com.bitfire.uracer.game.logic.replaying;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.utils.Disposable;
 import com.bitfire.uracer.game.GameplaySettings;
+import com.bitfire.uracer.game.actors.Car;
 import com.bitfire.uracer.game.actors.CarForces;
 import com.bitfire.uracer.game.logic.LapInfo;
 import com.bitfire.uracer.game.logic.helpers.ReplayRecorder;
-import com.bitfire.uracer.game.player.PlayerCar;
 import com.bitfire.uracer.game.world.GameWorld;
 
 /** Manages to record player lap to Replay objects and keep tracks of lap information. */
@@ -58,6 +58,7 @@ public class LapManager implements Disposable {
 
 	// getters
 
+	/** Returns the LapInfo information regarding the currently active lap */
 	public LapInfo getLapInfo() {
 		return lapInfo;
 	}
@@ -87,33 +88,29 @@ public class LapManager implements Disposable {
 		return bufferManager.getWorstReplay();
 	}
 
+	/** Returns the Replay instance where the last recording took place */
 	public Replay getLastRecordedReplay() {
 		return lastRecordedReplay;
 	}
 
+	/** Returns whether or not the last recorded lap was the best one */
 	public boolean isLastBestLap() {
 		return (lastRecordedReplay.id == bufferManager.getBestReplay().id);
 	}
 
+	/** Returns whether or not a best lap is present */
 	public boolean hasBestLapReplay() {
 		return bufferManager.hasBestReplay();
 	}
 
+	/** Returns whether or not a worst lap is present */
 	public boolean hasWorstLapReplay() {
 		return bufferManager.hasWorstReplay();
 	}
 
-	// triggered from game logic
-
-	public void onPlayerComputeForces( CarForces forces ) {
-		if( recorder.isRecording() ) {
-			recorder.add( forces );
-		}
-	}
-
 	/** Starts recording the player lap performance.
 	 * Returns the Replay instance where the recording is being performed. */
-	public Replay startRecording( PlayerCar player ) {
+	public Replay startRecording( Car car ) {
 		if( recorder.isRecording() ) {
 			Gdx.app.log( "TrackLapManager", "Couldn't start recording since it's already started." );
 			return null;
@@ -121,13 +118,21 @@ public class LapManager implements Disposable {
 
 		Replay next = bufferManager.getNextBuffer();
 		lapInfo.restartTime();
-		recorder.beginRecording( player, next, gameWorld.levelName, settings.difficulty );
+		recorder.beginRecording( car, next, gameWorld.levelName, settings.difficulty );
 		return next;
+	}
+
+	/** Add and record the specified CarForces */
+	public void record( CarForces forces ) {
+		if( recorder.isRecording() ) {
+			recorder.add( forces );
+		}
 	}
 
 	/** Ends recording the previously started lap performance */
 	public void stopRecording() {
 		if( recorder.isRecording() ) {
+
 			// ends recording and keeps track of the last recorded replay
 			lastRecordedReplay = recorder.endRecording();
 

@@ -3,7 +3,7 @@ package com.bitfire.uracer.game.logic.hud.debug;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.utils.Array;
-import com.bitfire.uracer.game.events.GameEvents;
+import com.bitfire.uracer.game.GameEvents;
 import com.bitfire.uracer.game.logic.hud.HudElement;
 import com.bitfire.uracer.game.logic.trackeffects.effects.PlayerSkidMarks;
 import com.bitfire.uracer.game.player.PlayerCar;

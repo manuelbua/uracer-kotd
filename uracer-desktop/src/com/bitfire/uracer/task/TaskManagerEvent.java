@@ -36,6 +36,14 @@ public class TaskManagerEvent extends Event<TaskManager> {
 		notifiers[type.ordinal()][order.ordinal()].removeListener( listener );
 	}
 
+	public void removeAllListeners() {
+		for( Type t : Type.values() ) {
+			for( Order o : Order.values() ) {
+				notifiers[t.ordinal()][o.ordinal()].removeAllListeners();
+			}
+		}
+	}
+
 	public void trigger( Type type ) {
 		for( Order order : Order.values() ) {
 			notifiers[type.ordinal()][order.ordinal()].taskManagerEvent( type );

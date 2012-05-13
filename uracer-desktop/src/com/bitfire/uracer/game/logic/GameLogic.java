@@ -149,9 +149,8 @@ public class GameLogic implements CarEvent.Listener, CarStateEvent.Listener, Pla
 		}
 
 		playerCar = CarFactory.createPlayer( gameWorld, model, aspect );
-		playerCar.setInputSystem( gameTasksManager.input );
 
-		configurePlayer( gameWorld, gameplaySettings, playerCar );
+		configurePlayer( gameWorld, gameplaySettings, gameTasksManager.input, playerCar );
 		Gdx.app.log( "GameLogic", "Player configured" );
 
 		playerTasks.createTasks( playerCar, lapManager.getLapInfo() );
@@ -162,7 +161,7 @@ public class GameLogic implements CarEvent.Listener, CarStateEvent.Listener, Pla
 
 		gameWorldRenderer.setRenderPlayerHeadlights( gameWorld.isNightMode() );
 
-		// restartGame();
+		 restartGame();
 
 		if( Config.Debug.UseDebugHelper ) {
 			DebugHelper.setPlayer( playerCar );
@@ -192,15 +191,6 @@ public class GameLogic implements CarEvent.Listener, CarStateEvent.Listener, Pla
 		}
 	}
 
-	public void setBestLocalReplay( Replay replay ) {
-		restartGame();
-		lapManager.setBestReplay( replay );
-		// if( !hasPlayer() )
-		{
-			ghostCar.setReplay( replay );
-		}
-	}
-
 	private void registerPlayerEvents( PlayerCar player ) {
 		player.carState.event.addListener( this, CarStateEvent.Type.onTileChanged );
 		player.driftState.event.addListener( this, PlayerDriftStateEvent.Type.onBeginDrift );
@@ -217,15 +207,24 @@ public class GameLogic implements CarEvent.Listener, CarStateEvent.Listener, Pla
 		player.event.removeListener( this, CarEvent.Type.onComputeForces );
 	}
 
-	private void configurePlayer( GameWorld world, GameplaySettings settings, PlayerCar player ) {
+	private void configurePlayer( GameWorld world, GameplaySettings settings, Input inputSystem, PlayerCar player ) {
 		// create player and setup player input system and initial position in the world
-		// player.setInputSystem( input );
+		playerCar.setInputSystem( inputSystem );
 		player.setWorldPosMt( world.playerStartPos, world.playerStartOrient );
 		// player.setWorldPosMt( new Vector2(0,0), 0 );
 		// playerCar.setWorldPosMt( new Vector2(50.29133f, -15.1445f), gameWorld.playerStartOrient );
 
 		// apply handicaps
 		player.setDampingFriction( AMath.damping( settings.dampingFriction ) );
+	}
+
+	public void setBestLocalReplay( Replay replay ) {
+		restartGame();
+		lapManager.setBestReplay( replay );
+		// if( !hasPlayer() )
+		{
+			ghostCar.setReplay( replay );
+		}
 	}
 
 	public GameWorld getGameWorld() {
@@ -349,7 +348,7 @@ public class GameLogic implements CarEvent.Listener, CarStateEvent.Listener, Pla
 
 			// add player
 
-			setPlayer( new CarModel().toModel2(), Aspect.OldSkool );
+			setPlayer( new CarModel().toModel1(), Aspect.OldSkool );
 
 		} else if( input.isPressed( Keys.SPACE ) /* && !timeModulationBusy */) {
 
@@ -421,6 +420,7 @@ public class GameLogic implements CarEvent.Listener, CarStateEvent.Listener, Pla
 	}
 
 	private void resetLogic() {
+		lapManager.abortRecording();
 		lapManager.reset();
 		gameTasksManager.reset();
 	}
@@ -438,10 +438,9 @@ public class GameLogic implements CarEvent.Listener, CarStateEvent.Listener, Pla
 			}
 			break;
 		case onComputeForces:
-			lapManager.onPlayerComputeForces( data.forces );
-			break;
+			lapManager.record( data.forces );
 		}
-	};
+	}
 
 	@Override
 	public void carStateEvent( CarState source, CarStateEvent.Type type ) {

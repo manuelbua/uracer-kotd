@@ -28,6 +28,12 @@ public final class CarStateEvent extends Event<CarState> {
 		notifiers[type.ordinal()].removeListener( listener );
 	}
 
+	public void removeAllListeners() {
+		for( Type t : Type.values() ) {
+			notifiers[t.ordinal()].removeAllListeners();
+		}
+	}
+
 	public void trigger( CarState source, Type type ) {
 		notifiers[type.ordinal()].carStateEvent( source, type );
 	}

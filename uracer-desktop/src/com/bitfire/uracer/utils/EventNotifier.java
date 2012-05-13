@@ -19,4 +19,8 @@ public class EventNotifier<L> {
 			listeners.removeIndex( pos );
 		}
 	}
+
+	public void removeAllListeners() {
+		listeners.clear();
+	}
 }

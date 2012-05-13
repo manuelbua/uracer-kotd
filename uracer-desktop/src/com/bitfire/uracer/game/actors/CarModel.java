@@ -152,9 +152,9 @@ public final class CarModel {
 		max_speed = 35.f;
 		max_force = 300.f;
 
-		density = 1.f;
-		friction = .4f;
-		restitution = 0f;
+		density = 1f;
+		friction = 4f;
+		restitution = 0.25f;
 
 		return this;
 	}
@@ -174,14 +174,14 @@ public final class CarModel {
 		resistance = 30.f; // factor for rolling resistance
 		stiffness_rear = -6.7f; // front cornering stiffness
 		stiffness_front = -6.7f; // rear cornering stiffness
-		max_grip = 100f; // maximum (normalised) friction force, =diameter of friction circle
+		max_grip = 6f; // maximum (normalised) friction force, =diameter of friction circle
 
 		max_speed = 35.f;
 		max_force = 300.f;
 
-		density = 1.f;
-		friction = .5f;
-		restitution = 0f;
+		density = 1f;
+		friction = 4f;
+		restitution = 0.25f;
 
 		return this;
 	}
@@ -209,7 +209,7 @@ public final class CarModel {
 
 		// mostly for collision response
 		density = 1f;
-		friction = 4.02f;
+		friction = 4f;
 		restitution = 0.25f;
 
 		return this;

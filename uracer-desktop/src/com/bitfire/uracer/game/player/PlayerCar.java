@@ -68,6 +68,7 @@ public class PlayerCar extends Car {
 	public void dispose() {
 		super.dispose();
 		driftState.dispose();
+		frictionMean = null;
 	}
 
 	// use strictly for debug purposes *ONLY*!

@@ -80,6 +80,13 @@ public abstract strictfp class Car extends Box2DEntity {
 		Gdx.app.log( getClass().getSimpleName(), "CarModel is " + this.model.type.toString() );
 	}
 
+	@Override
+	public void dispose() {
+		super.dispose();
+		event.removeAllListeners();
+		event = null;
+	}
+
 	private void applyCarPhysics( CarType carType ) {
 		if( body != null ) {
 			this.box2dWorld.destroyBody( body );
@@ -111,11 +118,6 @@ public abstract strictfp class Car extends Box2DEntity {
 			if( Config.Debug.TraverseWalls ) {
 				fd.filter.groupIndex = CollisionFilters.GroupNoCollisions;
 			}
-
-			// apply scaling factors
-			// Vector2 offset = new Vector2( -model.width / 2f, -model.length / 2f );
-			// FixtureAtlas atlas = new FixtureAtlas( Gdx.files.internal( shapeName ) );
-			// atlas.createFixtures( body, shapeRef, 2.5f, 2f, fd, offset, carType );
 
 			BodyEditorLoader loader = new BodyEditorLoader( Gdx.files.internal( "data/cars/car-shapes" ) );
 			loader.attachFixture( body, "electron.png", fd, 2f );
@@ -176,7 +178,7 @@ public abstract strictfp class Car extends Box2DEntity {
 		if( this.aspect != aspect ) {
 			this.aspect = aspect;
 			renderer.setAspect( aspect, model );
-			Gdx.app.log( this.getClass().getSimpleName(), "Switched to car aspect type \"" + aspect.toString() + "\"" );
+			Gdx.app.log( this.getClass().getSimpleName(), "Switched to car aspect \"" + aspect.toString() + "\"" );
 		}
 	}
 
@@ -214,11 +216,6 @@ public abstract strictfp class Car extends Box2DEntity {
 		return body.isActive();
 	}
 
-	// public void reset() {
-	// resetPhysics();
-	// resetDistanceAndSpeed();
-	// }
-
 	public void resetDistanceAndSpeed() {
 		carTraveledDistance = 0;
 		accuDistCount = 0;
@@ -226,27 +223,13 @@ public abstract strictfp class Car extends Box2DEntity {
 	}
 
 	public void resetPhysics() {
-		// boolean wasActive = isActive();
-
-		// if( wasActive ) {
-		// body.setActive( false );
-		// }
-
 		body.setAngularVelocity( 0 );
 		body.setLinearVelocity( 0, 0 );
-
-		// if( wasActive ) {
-		// body.setActive( wasActive );
-		// }
-
 		impacts = 0;
 	}
 
 	public void onCollide( Fixture other, Vector2 normalImpulses ) {
 		impacts++;
-
-		// Gdx.app.log( "", "x=" + NumberString.formatVeryLong(normalImpulses.x) + ", y=" +
-		// NumberString.formatVeryLong(normalImpulses.y) );
 
 		if( triggerEvents ) {
 			event.data.setCollisionData( other, normalImpulses );
@@ -283,9 +266,6 @@ public abstract strictfp class Car extends Box2DEntity {
 			event.trigger( this, CarEvent.Type.onComputeForces );
 		}
 
-		// FIXME is it really necessary? that's an expensive jni call..
-		// body.setAwake( true );
-
 		// put newly computed forces into the system
 		body.setLinearVelocity( carForces.velocity_x, carForces.velocity_y );
 		body.setAngularVelocity( -carForces.angularVelocity );
@@ -307,13 +287,7 @@ public abstract strictfp class Car extends Box2DEntity {
 		float dist = AMath.fixup( distmp.len() );
 
 		if( !AMath.isZero( dist ) ) {
-			// Gdx.app.log( "", "dist=" + NumberString.formatVeryLong( dist ) );
-			// Gdx.app.log( "", "px=" + NumberString.formatVeryLong(body.getPosition().x) + ", py=" +
-			// NumberString.formatVeryLong(body.getPosition().y) +
-			// "ppx=" + NumberString.formatVeryLong(previousPosition.x) + ", ppy=" +
-			// NumberString.formatVeryLong(previousPosition.y) );
-
-			// accumulate distance it
+			// accumulate distance
 			carTraveledDistance += dist;
 			accuDistCount++;
 		} else {

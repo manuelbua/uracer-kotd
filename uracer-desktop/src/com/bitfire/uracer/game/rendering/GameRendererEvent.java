@@ -59,6 +59,14 @@ public class GameRendererEvent extends Event<GameRenderer> {
 		notifiers[type.ordinal()][order.ordinal()].removeListener( listener );
 	}
 
+	public void removeAllListeners() {
+		for( Type t : Type.values() ) {
+			for( Order o : Order.values() ) {
+				notifiers[t.ordinal()][o.ordinal()].removeAllListeners();
+			}
+		}
+	}
+
 	public void trigger( GameRenderer source, Type type ) {
 		this.source = source;
 		for( Order order : Order.values() ) {

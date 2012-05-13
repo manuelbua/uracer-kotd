@@ -28,6 +28,12 @@ public final class PlayerDriftStateEvent extends Event<PlayerDriftState> {
 		notifiers[type.ordinal()].removeListener( listener );
 	}
 
+	public void removeAllListeners() {
+		for( Type t : Type.values() ) {
+			notifiers[t.ordinal()].removeAllListeners();
+		}
+	}
+
 	public void trigger( PlayerCar source, Type type ) {
 		this.source = source;
 		notifiers[type.ordinal()].playerDriftStateEvent( source, type );

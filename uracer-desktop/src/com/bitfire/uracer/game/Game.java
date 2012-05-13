@@ -75,6 +75,7 @@ public class Game implements Disposable {
 			debug.dispose();
 		}
 
+		TaskManager.dispose();
 		gameRenderer.dispose();
 		gameLogic.dispose();
 	}

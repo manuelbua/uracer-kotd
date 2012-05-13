@@ -7,7 +7,7 @@ import com.badlogic.gdx.math.Rectangle;
 import com.badlogic.gdx.math.Vector2;
 import com.bitfire.uracer.ScalingStrategy;
 import com.bitfire.uracer.configuration.Config;
-import com.bitfire.uracer.game.events.GameEvents;
+import com.bitfire.uracer.game.GameEvents;
 import com.bitfire.uracer.game.world.GameWorld;
 import com.bitfire.uracer.postprocessing.PostProcessor;
 import com.bitfire.uracer.utils.Convert;
@@ -81,6 +81,8 @@ public final class GameRenderer {
 		if( hasPostProcessor() ) {
 			postProcessor.dispose();
 		}
+
+		GameEvents.gameRenderer.removeAllListeners();
 	}
 
 	public boolean hasPostProcessor() {

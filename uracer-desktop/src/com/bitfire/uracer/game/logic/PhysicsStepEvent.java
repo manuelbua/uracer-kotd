@@ -29,6 +29,12 @@ public class PhysicsStepEvent extends Event<PhysicsStep> {
 		notifiers[type.ordinal()].removeListener( listener );
 	}
 
+	public void removeAllListeners() {
+		for( Type t : Type.values() ) {
+			notifiers[t.ordinal()].removeAllListeners();
+		}
+	}
+
 	public void trigger( PhysicsStep source, Type type ) {
 		this.source = source;
 		notifiers[type.ordinal()].physicsEvent( type );

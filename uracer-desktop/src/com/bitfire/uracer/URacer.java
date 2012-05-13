@@ -148,8 +148,7 @@ public class URacer implements ApplicationListener {
 		physicsTime = (TimeUtils.nanoTime() - startTime) * oneOnOneBillion;
 
 		// if the system has ticked, then trigger tickCompleted
-		if( lastTicksCount > 0 )
-		{
+		if( lastTicksCount > 0 ) {
 			screen.tickCompleted();
 
 			if( screen.quit() ) {
