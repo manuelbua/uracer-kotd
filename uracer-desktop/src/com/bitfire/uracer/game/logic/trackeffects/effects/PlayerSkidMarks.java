@@ -45,7 +45,7 @@ public class PlayerSkidMarks extends TrackEffect {
 		// 1 iteration at 60Hz, 2 at 30Hz..
 		if( Config.Physics.PhysicsTimestepHz > 60 ) {
 			driftMarkAddIterations = 0;
-			Gdx.app.log( "PlayerSkidMarks", "Physics is higher than expected, giving up the effect." );
+			Gdx.app.log( "PlayerSkidMarks", "Physics timestep is too small, giving up the effect." );
 		} else {
 			driftMarkAddIterations = (int)(60 / (int)Config.Physics.PhysicsTimestepHz);
 		}
