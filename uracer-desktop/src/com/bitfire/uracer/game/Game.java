@@ -142,11 +142,11 @@ public class Game implements Disposable {
 
 	public void tick() {
 		TaskManager.dispatchTick();
+		gameLogic.onAcquireInput();
 	}
 
 	public boolean tickCompleted() {
 		gameLogic.onSubstepCompleted();
-		gameLogic.onUpdate();
 
 		if( gameLogic.doQuit ) {
 			return true;
