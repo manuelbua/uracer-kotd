@@ -132,6 +132,8 @@ public final class Input extends InputAdapter {
 
 	private void tick() {
 
+//		Gdx.app.log( "Input", "tick" );
+
 //		if( start ) {
 //			last = System.nanoTime();
 //			start = false;
