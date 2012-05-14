@@ -32,6 +32,7 @@ import com.bitfire.uracer.game.logic.messager.Message.Size;
 import com.bitfire.uracer.game.logic.messager.Message.Type;
 import com.bitfire.uracer.game.logic.messager.MessageAccessor;
 import com.bitfire.uracer.game.logic.messager.Messager;
+import com.bitfire.uracer.game.logic.post.PostProcessing;
 import com.bitfire.uracer.game.logic.replaying.LapManager;
 import com.bitfire.uracer.game.logic.replaying.Replay;
 import com.bitfire.uracer.game.player.PlayerCar;
@@ -64,6 +65,7 @@ public class GameLogic implements CarEvent.Listener, CarStateEvent.Listener, Pla
 	// rendering
 	// private GameRenderer gameRenderer = null;
 	private GameWorldRenderer gameWorldRenderer = null;
+	private PostProcessing postProcessing = null;
 
 	// player
 	private PlayerCar playerCar = null;
@@ -106,9 +108,13 @@ public class GameLogic implements CarEvent.Listener, CarStateEvent.Listener, Pla
 		Tween.registerAccessor( BoxedFloat.class, new BoxedFloatAccessor() );
 		Gdx.app.log( "GameLogic", "Tweening helpers created" );
 
+		// time modifier
 		timeMultiplier.value = 1f;
 		seqIn = Timeline.createSequence();
 		seqOut = Timeline.createSequence();
+
+		// post-processing
+		postProcessing = new PostProcessing( gameWorld, gameRenderer );
 
 		// main game tasks
 		gameTasksManager = new GameTasksManager( gameWorld, scalingStrategy );
@@ -161,7 +167,7 @@ public class GameLogic implements CarEvent.Listener, CarStateEvent.Listener, Pla
 
 		gameWorldRenderer.setRenderPlayerHeadlights( gameWorld.isNightMode() );
 
-		 restartGame();
+		restartGame();
 
 		if( Config.Debug.UseDebugHelper ) {
 			DebugHelper.setPlayer( playerCar );
@@ -264,6 +270,10 @@ public class GameLogic implements CarEvent.Listener, CarStateEvent.Listener, Pla
 		// tweener step
 		WcTweener.update();
 		GameTweener.update();
+
+		// post-processing step
+		postProcessing.onBeforeRender( playerCar );
+
 		// Gdx.app.log( "GameLogic", NumberString.format(timeMultiplier.value) );
 	}
 
@@ -350,7 +360,7 @@ public class GameLogic implements CarEvent.Listener, CarStateEvent.Listener, Pla
 
 			setPlayer( new CarModel().toModel1(), Aspect.OldSkool );
 
-		} else if( input.isPressed( Keys.SPACE ) || input.isTouched( 1 )) {
+		} else if( input.isPressed( Keys.SPACE ) || input.isTouched( 1 ) ) {
 
 			TweenEquation eqIn = Quad.OUT;
 			TweenEquation eqOut = Quad.INOUT;
