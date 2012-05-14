@@ -360,11 +360,11 @@ public class GameLogic implements CarEvent.Listener, CarStateEvent.Listener, Pla
 
 			setPlayer( new CarModel().toModel1(), Aspect.OldSkool );
 
-		} else if( input.isPressed( Keys.B ) ) {
+		} else if( input.isPressed( Keys.W ) ) {
 
 			Config.Debug.RenderBox2DWorldWireframe = !Config.Debug.RenderBox2DWorldWireframe;
 
-		}else if( input.isPressed( Keys.W ) ) {
+		} else if( input.isPressed( Keys.B ) ) {
 
 			Config.Debug.Render3DBoundingBoxes = !Config.Debug.Render3DBoundingBoxes;
 

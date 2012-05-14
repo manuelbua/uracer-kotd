@@ -82,6 +82,7 @@ public final class Vignetting extends Filter<Vignetting> {
 		setParams( Param.VignetteX, x );
 		setParams( Param.VignetteY, y );
 		setParams( Param.Saturation, saturation );
+		setParams( Param.SaturationMul, saturationMul );
 		endParams();
 	}
 
