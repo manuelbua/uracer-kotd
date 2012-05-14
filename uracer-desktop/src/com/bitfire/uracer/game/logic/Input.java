@@ -27,7 +27,7 @@ public final class Input extends Task {
 	public Input( TaskManagerEvent.Order order ) {
 		super( order );
 		for( int p = 0; p < MaxPointers; p++ ) {
-			pointer[p] = new Pointer( p );
+			pointer[p] = new Pointer( /* p */ );
 		}
 
 		releaseAllKeys();
@@ -159,7 +159,7 @@ public final class Input extends Task {
 
 	/** Encapsulates the touch state for a given pointer index */
 	private class Pointer {
-		public final int pointerIndex;
+//		public final int pointerIndex;
 
 		public final Vector2 touchCoords = new Vector2( 0, 0 );
 		public int touchX = 0;
@@ -167,8 +167,8 @@ public final class Input extends Task {
 		public boolean is_touching = false;
 		private boolean was_touching = false;
 
-		public Pointer( int index ) {
-			pointerIndex = index;
+		public Pointer( /*int index*/ ) {
+//			pointerIndex = index;
 		}
 
 		public void reset() {
