@@ -317,6 +317,8 @@ public class GameLogic implements CarEvent.Listener, CarStateEvent.Listener, Pla
 
 		} else if( input.isPressed( Keys.Z ) ) {
 
+			// FIXME this should go in some sort of DebugLogic thing..
+
 			// start recording
 			playerCar.resetDistanceAndSpeed();
 			ghostCar.setReplay( null );
@@ -325,6 +327,8 @@ public class GameLogic implements CarEvent.Listener, CarStateEvent.Listener, Pla
 			Gdx.app.log( "GameLogic", "Recording..." );
 
 		} else if( input.isPressed( Keys.X ) ) {
+
+			// FIXME this should go in some sort of DebugLogic thing..
 
 			// stop recording and play
 			playerCar.resetPhysics();
@@ -350,11 +354,15 @@ public class GameLogic implements CarEvent.Listener, CarStateEvent.Listener, Pla
 
 		} else if( input.isPressed( Keys.O ) ) {
 
+			// FIXME this should go in some sort of DebugLogic thing..
+
 			// remove player
 
 			removePlayer();
 
 		} else if( input.isPressed( Keys.P ) ) {
+
+			// FIXME this should go in some sort of DebugLogic thing..
 
 			// add player
 
@@ -362,10 +370,12 @@ public class GameLogic implements CarEvent.Listener, CarStateEvent.Listener, Pla
 
 		} else if( input.isPressed( Keys.W ) ) {
 
+			// FIXME this should go in some sort of DebugLogic thing..
 			Config.Debug.RenderBox2DWorldWireframe = !Config.Debug.RenderBox2DWorldWireframe;
 
 		} else if( input.isPressed( Keys.B ) ) {
 
+			// FIXME this should go in some sort of DebugLogic thing..
 			Config.Debug.Render3DBoundingBoxes = !Config.Debug.Render3DBoundingBoxes;
 
 		} else if( input.isPressed( Keys.SPACE ) || input.isTouched( 1 ) ) {

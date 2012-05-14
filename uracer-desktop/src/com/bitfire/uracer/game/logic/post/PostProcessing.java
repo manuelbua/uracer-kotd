@@ -16,8 +16,8 @@ import com.bitfire.uracer.postprocessing.effects.Zoom;
  * and enhance the gaming experience. */
 public class PostProcessing {
 
-	private final GameWorld gameWorld;
-	private final GameRenderer gameRenderer;
+//	private final GameWorld gameWorld;
+//	private final GameRenderer gameRenderer;
 	private boolean canPostProcess = false;
 
 	// effects
@@ -26,8 +26,8 @@ public class PostProcessing {
 	private Vignette vignette = null;
 
 	public PostProcessing( GameWorld gameWorld, GameRenderer gameRenderer ) {
-		this.gameWorld = gameWorld;
-		this.gameRenderer = gameRenderer;
+//		this.gameWorld = gameWorld;
+//		this.gameRenderer = gameRenderer;
 
 		canPostProcess = gameRenderer.hasPostProcessor();
 

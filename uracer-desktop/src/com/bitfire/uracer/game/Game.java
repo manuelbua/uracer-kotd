@@ -34,6 +34,7 @@ public class Game implements Disposable {
 	public Game( String levelName, ScalingStrategy scalingStrategy, GameDifficulty difficulty ) {
 		gameplaySettings = new GameplaySettings( difficulty );
 
+		// FIXME depth writes in night mode doesn't work!
 		gameWorld = new GameWorld( scalingStrategy, levelName, false );
 		Gdx.app.log( "Game", "Game world ready" );
 
