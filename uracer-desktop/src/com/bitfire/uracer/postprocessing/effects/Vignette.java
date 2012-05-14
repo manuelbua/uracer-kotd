@@ -6,9 +6,11 @@ import com.bitfire.uracer.postprocessing.filters.Vignetting;
 
 public class Vignette extends PostProcessorEffect {
 	private Vignetting vignetting;
+	public boolean controlSaturation;
 
-	public Vignette() {
-		vignetting = new Vignetting();
+	public Vignette( boolean controlSaturation ) {
+		this.controlSaturation = controlSaturation;
+		vignetting = new Vignetting( controlSaturation );
 	}
 
 	@Override
@@ -37,6 +39,14 @@ public class Vignette extends PostProcessorEffect {
 
 	public void setY( float y ) {
 		vignetting.setY( y );
+	}
+
+	public void setSaturation( float saturation ) {
+		vignetting.setSaturation( saturation );
+	}
+
+	public void setSaturationMul( float saturationMul ) {
+		vignetting.setSaturationMul( saturationMul );
 	}
 
 	@Override

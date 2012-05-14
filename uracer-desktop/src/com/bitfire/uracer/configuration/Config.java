@@ -20,6 +20,8 @@ public final class Config {
 	public static final class PostProcessing {
 		public static boolean Enabled;
 		public static boolean EnableVignetting;
+		public static boolean EnableBloom;
+		public static boolean EnableZoomBlur;
 		public static BlurType BlurType;
 		public static float RttRatio = 0.25f;
 		public static int PotRttFboWidth, PotRttFboHeight;
@@ -32,8 +34,13 @@ public final class Config {
 		public static void asDefault() {
 			int w = Gdx.graphics.getWidth();
 
+			// post-processor
 			Enabled = true;
+
+			// post-processor effects
 			EnableVignetting = true;
+			EnableBloom = false;
+			EnableZoomBlur = true;
 
 			RttFboWidth = (int)(Gdx.graphics.getWidth() * RttRatio);
 			RttFboHeight = (int)(Gdx.graphics.getHeight() * RttRatio);

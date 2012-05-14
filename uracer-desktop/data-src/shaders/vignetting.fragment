@@ -1,13 +1,11 @@
 #ifdef GL_ES
-#define LOWP lowp
-#define MED mediump
-precision mediump float;
+	#define PRECISION mediump
+precision PRECISION float;
 #else
-#define LOWP
-#define MED
+	#define PRECISION
 #endif
 
-uniform MED sampler2D u_texture0;
+uniform PRECISION sampler2D u_texture0;
 uniform float VignetteIntensity;
 uniform float VignetteX;
 uniform float VignetteY;
@@ -16,9 +14,35 @@ varying vec2 v_texCoords;
 
 const vec2 Mid = vec2(0.5, 0.5);
 
+#ifdef CONTROL_SATURATION
+	uniform float Saturation;
+	uniform float SaturationMul;
+	const vec3 GRAYSCALE = vec3(0.3, 0.59, 0.11);
+
+	// 0 = totally desaturated
+	// 1 = saturation unchanged
+	// higher = increase saturation
+	//const float BaseSat = 1;
+	//const float BloomSat = 1;
+
+	vec3 adjustSaturation(vec3 color, float saturation)
+	{
+		vec3 grey = vec3(dot(color, GRAYSCALE));
+		//vec3 grey = vec3((color.r+color.g+color.b)*0.333);	// simple
+		return mix(grey, color, saturation);	// correct
+	}
+#endif
+
+
 void main() {
 	vec3 rgb = texture2D(u_texture0, v_texCoords).xyz;
 	float d = distance(v_texCoords, Mid);
 	float factor = smoothstep(VignetteX, VignetteY, d);
-	gl_FragColor = vec4( rgb*factor + rgb*(1.0-factor) * (1.0-VignetteIntensity),1.0);
+	rgb = rgb*factor + rgb*(1.0-factor) * (1.0-VignetteIntensity);
+
+#ifdef CONTROL_SATURATION
+	rgb = adjustSaturation(rgb,Saturation)*SaturationMul;
+#endif
+
+	gl_FragColor = vec4(rgb,1);
 }

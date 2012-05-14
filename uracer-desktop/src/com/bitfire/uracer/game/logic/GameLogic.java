@@ -360,6 +360,14 @@ public class GameLogic implements CarEvent.Listener, CarStateEvent.Listener, Pla
 
 			setPlayer( new CarModel().toModel1(), Aspect.OldSkool );
 
+		} else if( input.isPressed( Keys.B ) ) {
+
+			Config.Debug.RenderBox2DWorldWireframe = !Config.Debug.RenderBox2DWorldWireframe;
+
+		}else if( input.isPressed( Keys.W ) ) {
+
+			Config.Debug.Render3DBoundingBoxes = !Config.Debug.Render3DBoundingBoxes;
+
 		} else if( input.isPressed( Keys.SPACE ) || input.isTouched( 1 ) ) {
 
 			TweenEquation eqIn = Quad.OUT;
