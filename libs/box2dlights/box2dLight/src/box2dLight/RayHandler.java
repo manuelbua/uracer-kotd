@@ -114,13 +114,11 @@ public class RayHandler implements Disposable {
 			lightMap = new LightMap( this, fboWidth, fboHeigth );
 			lightShader = LightShader.createLightShader();
 
-		}
-		else {
+		} else {
 			setGammaCorrection( false );
 			if( Gdx.graphics.getBufferFormat().a == 0 ) {
 				setShadows( false );
-			}
-			else {
+			} else {
 				box = new Mesh( true, 12, 0, new VertexAttribute( Usage.Position, 2, "vertex_positions" ), new VertexAttribute( Usage.ColorPacked, 4, "quad_colors" ) );
 				setShadowBox();
 			}
@@ -241,8 +239,7 @@ public class RayHandler implements Disposable {
 
 		if( isGL20 ) {
 			renderWithShaders();
-		}
-		else {
+		} else {
 			Gdx.gl10.glMatrixMode( GL10.GL_PROJECTION );
 			Gdx.gl10.glLoadMatrixf( combined.val, 0 );
 
@@ -266,7 +263,6 @@ public class RayHandler implements Disposable {
 			Gdx.gl.glDisable( GL10.GL_BLEND );
 		}
 	}
-
 
 	void renderWithShaders() {
 
@@ -324,8 +320,10 @@ public class RayHandler implements Disposable {
 		}
 		disabledLights.clear();
 
-		if( lightMap != null ) lightMap.dispose();
-		if( lightShader != null ) lightShader.dispose();
+		if( lightMap != null )
+			lightMap.dispose();
+		if( lightShader != null )
+			lightShader.dispose();
 	}
 
 	float m_segments[];
@@ -340,7 +338,8 @@ public class RayHandler implements Disposable {
 		@Override
 		final public float reportRayFixture( Fixture fixture, Vector2 point, Vector2 normal, float fraction ) {
 
-			if( (requestingLight.maskBits != Light.MaskConsiderAllFixtures) && !considerFixture( fixture ) ) return -1;
+			if( (requestingLight.maskBits != Light.MaskConsiderAllFixtures) && !considerFixture( fixture ) )
+				return -1;
 			// if (fixture.isSensor())
 			// return -1;
 			m_x[m_index] = point.x;
@@ -451,8 +450,10 @@ public class RayHandler implements Disposable {
 	 * @param ambientLight
 	 *            the ambientLight to set */
 	public final void setAmbientLight( float ambientLight ) {
-		if( ambientLight < 0 ) ambientLight = 0;
-		if( ambientLight > 1 ) ambientLight = 1;
+		if( ambientLight < 0 )
+			ambientLight = 0;
+		if( ambientLight > 1 )
+			ambientLight = 1;
 		this.ambientLight.a = ambientLight;
 	}
 
