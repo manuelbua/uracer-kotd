@@ -62,6 +62,7 @@ public final class GameWorldRenderer {
 		"}														\n";
 	// @formatter:on
 
+	// the game world
 	private GameWorld world = null;
 
 	// camera view
@@ -75,6 +76,7 @@ public final class GameWorldRenderer {
 	private float camPerspElevation = 0f;
 
 	// rendering
+	private GL20 gl = null;
 	private ShaderProgram treeShader = null;
 	private TileAtlas tileAtlas = null;
 	private boolean renderPlayerHeadlights = true;
@@ -99,6 +101,7 @@ public final class GameWorldRenderer {
 	public GameWorldRenderer( ScalingStrategy strategy, GameWorld world, int width, int height ) {
 		scalingStrategy = strategy;
 		this.world = world;
+		gl = Gdx.gl20;
 		scaledPpm = Convert.scaledPixels( Config.Physics.PixelsPerMeter );
 		rayHandler = world.getRayHandler();
 		trackTrees = world.getTrackTrees();
@@ -204,6 +207,7 @@ public final class GameWorldRenderer {
 
 	private void updateRayHandler() {
 		if( rayHandler != null ) {
+
 			// @formatter:off
 			rayHandler.setCombinedMatrix( camOrthoMvpMt,
 					Convert.px2mt( camOrtho.position.x ),
@@ -261,19 +265,19 @@ public final class GameWorldRenderer {
 		rayHandler.renderLightMap( dest );
 	}
 
-	public void renderTilemap( GL20 gl ) {
+	public void renderTilemap() {
 		gl.glDisable( GL20.GL_BLEND );
 		tileMapRenderer.render( camTilemap );
 	}
 
-	private void renderWalls( GL20 gl, TrackWalls walls ) {
+	private void renderWalls( TrackWalls walls ) {
 		gl.glDisable( GL20.GL_CULL_FACE );
 		gl.glEnable( GL20.GL_BLEND );
 		gl.glBlendFunc( GL20.GL_SRC_ALPHA, GL20.GL_ONE_MINUS_SRC_ALPHA );
 		renderedWalls = renderOrthographicAlignedModels( walls.models );
 	}
 
-	private void renderTrees( GL20 gl, TrackTrees trees ) {
+	private void renderTrees( TrackTrees trees ) {
 		trees.transform( camPersp, camOrtho, halfViewport );
 
 		gl.glDisable( GL20.GL_BLEND );
@@ -351,8 +355,8 @@ public final class GameWorldRenderer {
 			// compute position
 			pospx.set( m.positionPx );
 			pospx.set( world.positionFor( pospx ) );
-			tmpvec.x = /* Convert.scaledPixels */(m.positionOffsetPx.x - camOrtho.position.x) + halfViewport.x + pospx.x;
-			tmpvec.y = /* Convert.scaledPixels */(m.positionOffsetPx.y + camOrtho.position.y) + halfViewport.y - pospx.y;
+			tmpvec.x = (m.positionOffsetPx.x - camOrtho.position.x) + halfViewport.x + pospx.x;
+			tmpvec.y = (m.positionOffsetPx.y + camOrtho.position.y) + halfViewport.y - pospx.y;
 			tmpvec.z = 1;
 
 			// transform to world space
@@ -403,28 +407,29 @@ public final class GameWorldRenderer {
 		return renderedCount;
 	}
 
-	public void renderAllMeshes( GL20 gl ) {
+	public void renderAllMeshes() {
 		resetCounters();
 
 		gl.glDepthMask( true );
 		gl.glEnable( GL20.GL_DEPTH_TEST );
+		gl.glDepthFunc( GL20.GL_LESS );
 		gl.glCullFace( GL20.GL_BACK );
 		gl.glFrontFace( GL20.GL_CCW );
-		gl.glDepthFunc( GL20.GL_LESS );
 		gl.glBlendEquation( GL20.GL_FUNC_ADD );
 
-		renderWalls( gl, trackWalls );
+		renderWalls( trackWalls );
 
 		if( trackTrees.count() > 0 ) {
-			renderTrees( gl, trackTrees );
+			renderTrees( trackTrees );
 		}
 
 		// render "static-meshes" layer
 		gl.glEnable( GL20.GL_CULL_FACE );
+
 		renderOrthographicAlignedModels( staticMeshes );
 
-		gl.glDisable( GL20.GL_DEPTH_TEST );
 		gl.glDisable( GL20.GL_CULL_FACE );
+		gl.glDisable( GL20.GL_DEPTH_TEST );
 		gl.glDepthMask( false );
 	}
 
