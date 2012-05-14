@@ -30,7 +30,6 @@ public class Game implements Disposable {
 	// rendering
 	private GameRenderer gameRenderer = null;
 
-
 	public Game( String levelName, ScalingStrategy scalingStrategy, GameDifficulty difficulty ) {
 		gameplaySettings = new GameplaySettings( difficulty );
 
