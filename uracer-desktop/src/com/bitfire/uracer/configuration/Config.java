@@ -71,8 +71,6 @@ public final class Config {
 	}
 
 	public static final class Graphics {
-//		public static final int TargetWidth = 1280;
-//		public static final int TargetHeight = 800;
 		public static boolean EnableMipMapping;
 		public static boolean SubframeInterpolation;
 		public static boolean DumbNightMode;	// night-mode rendered as an overlay *after* PostProcessor

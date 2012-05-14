@@ -84,7 +84,7 @@ public final class PostProcessor implements Disposable {
 		}
 	}
 
-	/** Whether or not the post-procesor is enabled */
+	/** Whether or not the post-processor is enabled */
 	public boolean isEnabled() {
 		return enabled;
 	}
@@ -113,7 +113,7 @@ public final class PostProcessor implements Disposable {
 
 	/** Returns the internal framebuffer format, computed from the
 	 * parameters specified during construction.
-	 * NOTE: this static will be valid from upon construction and NOT early! */
+	 * NOTE: the returned Format will be valid from upon construction and NOT early! */
 	public static Format getFramebufferFormat() {
 		return fbFormat;
 	}

@@ -20,7 +20,7 @@ public final class Blur extends MultipassFilter {
 
 	public enum BlurType {
 		Gaussian3x3( Tap.Tap3x3 ),
-		Gaussian3x3b(Tap.Tap3x3 ),	// R=5 (11x11, policy "higher-then-discard")
+		Gaussian3x3b( Tap.Tap3x3 ),	// R=5 (11x11, policy "higher-then-discard")
 		Gaussian5x5( Tap.Tap5x5 ),
 		Gaussian5x5b( Tap.Tap5x5 ), // R=9 (19x19, policy "higher-then-discard")
 		;
