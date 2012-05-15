@@ -220,7 +220,7 @@ public final class GameWorld {
 		}
 
 		RayHandler.setColorPrecisionMediump();
-		rayHandler = new RayHandler( box2dWorld, maxRays, (int)(Gdx.graphics.getWidth() * rttScale), (int)(Gdx.graphics.getHeight() * rttScale) );
+		rayHandler = new RayHandler( box2dWorld, maxRays, (int)(Gdx.graphics.getWidth() * rttScale), (int)(Gdx.graphics.getHeight() * rttScale), true );
 		rayHandler.setShadows( true );
 		rayHandler.setCulling( true );
 		rayHandler.setBlur( true );
@@ -233,7 +233,7 @@ public final class GameWorld {
 		c.set( .4f, .4f, .75f, .85f );
 		playerHeadlights = new ConeLight( rayHandler, maxRays, c, 30, 0, 0, 0, 15 );
 		playerHeadlights.setSoft( false );
-		playerHeadlights.setMaskBits( CollisionFilters.CategoryTrackWalls );
+		playerHeadlights.setMaskBits( CollisionFilters.CategoryTrackWalls /*| CollisionFilters.CategoryReplay*/ );
 
 		// setup level lights data, if any
 		Vector2 pos = new Vector2();

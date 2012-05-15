@@ -2,6 +2,7 @@ package testCase;
 
 import box2dLight.PointLight;
 import box2dLight.RayHandler;
+
 import com.badlogic.gdx.ApplicationAdapter;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.GL10;
@@ -20,7 +21,7 @@ public class SimpleTest extends ApplicationAdapter {
 		camera = new OrthographicCamera(48, 32);
 		camera.update();
 		world = new World(new Vector2(0, -10), true);
-		rayHandler = new RayHandler(world);
+		rayHandler = new RayHandler(world,false);
 		new PointLight(rayHandler, 32);
 
 	}

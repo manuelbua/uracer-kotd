@@ -103,15 +103,16 @@ class LightMap {
 
 	}
 
-	public LightMap( RayHandler rayHandler, int fboWidth, int fboHeight ) {
+	public LightMap( RayHandler rayHandler, int fboWidth, int fboHeight, boolean depthMasking ) {
 		this.rayHandler = rayHandler;
 
 		if( fboWidth <= 0 )
 			fboWidth = 1;
 		if( fboHeight <= 0 )
 			fboHeight = 1;
-		frameBuffer = new FrameBuffer( Pixmap.Format.RGBA8888, fboWidth, fboHeight, false );
-		pingPongBuffer = new FrameBuffer( Pixmap.Format.RGBA8888, fboWidth, fboHeight, false );
+
+		frameBuffer = new FrameBuffer( Pixmap.Format.RGBA8888, fboWidth, fboHeight, depthMasking );
+		pingPongBuffer = new FrameBuffer( Pixmap.Format.RGBA8888, fboWidth, fboHeight, depthMasking );
 
 		lightMapMesh = createLightMapMesh();
 

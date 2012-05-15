@@ -120,7 +120,12 @@ public abstract strictfp class Car extends Box2DEntity {
 			}
 
 			BodyEditorLoader loader = new BodyEditorLoader( Gdx.files.internal( "data/cars/car-shapes" ) );
-			loader.attachFixture( body, "electron.png", fd, 2f );
+
+			// the scaling factor should be 2, but in night mode is cool to see light bleeding across the edges of
+			// the car, fading away as soon as the physical body is reached
+			//
+			// WARNING! Be sure to set a value and use it then, every time this changes replays will NOT be compatible!
+			loader.attachFixture( body, "electron.png", fd, 1.85f );
 			ArrayList<Fixture> fs = body.getFixtureList();
 			for( Fixture f : fs ) {
 				f.setUserData( carType );

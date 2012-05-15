@@ -42,6 +42,7 @@ public class RayHandler implements Disposable {
 
 	World world;
 	ShaderProgram lightShader;
+	boolean depthMasking;
 
 	/** gles1.0 shadows mesh */
 	private Mesh box;
@@ -82,8 +83,8 @@ public class RayHandler implements Disposable {
 	 *
 	 * @param world
 	 * @param camera */
-	public RayHandler( World world ) {
-		this( world, DEFAULT_MAX_RAYS, Gdx.graphics.getWidth() / 4, Gdx.graphics.getHeight() / 4 );
+	public RayHandler( World world, boolean depthMasking ) {
+		this( world, DEFAULT_MAX_RAYS, Gdx.graphics.getWidth() / 4, Gdx.graphics.getHeight() / 4, depthMasking );
 	}
 
 	/** Construct handler that manages everything related to updating and
@@ -99,8 +100,10 @@ public class RayHandler implements Disposable {
 	 * @param maxRayCount
 	 * @param fboWidth
 	 * @param fboHeigth */
-	public RayHandler( World world, int maxRayCount, int fboWidth, int fboHeigth ) {
+	public RayHandler( World world, int maxRayCount, int fboWidth, int fboHeigth, boolean depthMasking ) {
 		this.world = world;
+		this.depthMasking = depthMasking;
+
 		MAX_RAYS = maxRayCount < MIN_RAYS ? MIN_RAYS : maxRayCount;
 
 		m_segments = new float[ maxRayCount * 8 ];
@@ -111,7 +114,7 @@ public class RayHandler implements Disposable {
 		isGL20 = Gdx.graphics.isGL20Available();
 		if( isGL20 ) {
 
-			lightMap = new LightMap( this, fboWidth, fboHeigth );
+			lightMap = new LightMap( this, fboWidth, fboHeigth, depthMasking );
 			lightShader = LightShader.createLightShader();
 
 		} else {
@@ -233,7 +236,11 @@ public class RayHandler implements Disposable {
 
 		lightRenderedLastFrame = 0;
 
-		Gdx.gl.glDepthMask( false );
+		if( depthMasking ) {
+			Gdx.gl.glDepthMask( true );
+			Gdx.gl.glDisable( GL20.GL_DEPTH_TEST );
+		}
+
 		Gdx.gl.glEnable( GL10.GL_BLEND );
 		Gdx.gl.glBlendFunc( GL10.GL_SRC_ALPHA, GL10.GL_ONE );
 
@@ -268,8 +275,15 @@ public class RayHandler implements Disposable {
 
 		if( shadows || blur ) {
 			lightMap.frameBuffer.begin();
-			Gdx.gl20.glClearColor( 0f, 0f, 0f, 0f );
-			Gdx.gl20.glClear( GL20.GL_COLOR_BUFFER_BIT );
+			Gdx.gl20.glClearColor( 0, 0, 0, 0 );
+
+			if( depthMasking ) {
+				Gdx.gl20.glClearDepthf( 1 );
+				Gdx.gl20.glClear( GL20.GL_COLOR_BUFFER_BIT | GL20.GL_DEPTH_BUFFER_BIT );
+			} else {
+				Gdx.gl20.glClearColor( 0f, 0f, 0f, 0f );
+				Gdx.gl20.glClear( GL20.GL_COLOR_BUFFER_BIT );
+			}
 		}
 
 		lightShader.begin();

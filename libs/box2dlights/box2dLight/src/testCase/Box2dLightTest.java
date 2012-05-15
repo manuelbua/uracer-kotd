@@ -90,10 +90,10 @@ public class Box2dLightTest implements ApplicationListener, InputProcessor {
 
 	@Override
 	public void create() {
-		
+
 		MathUtils.random.setSeed(Long.MIN_VALUE);
-		
-		
+
+
 		camera = new OrthographicCamera(48, 32);
 		camera.position.set(0, 16, 0);
 		camera.update();
@@ -113,9 +113,9 @@ public class Box2dLightTest implements ApplicationListener, InputProcessor {
 
 		/** BOX2D LIGHT STUFF BEGIN */
 		//RayHandler.setColorPrecisionMediump();
-	//	RayHandler.setGammaCorrection(true);		
+	//	RayHandler.setGammaCorrection(true);
 		RayHandler.useDiffuseLight(true);
-		rayHandler = new RayHandler(world);
+		rayHandler = new RayHandler(world,false);
 		RayHandler.useDiffuseLight( false );
 		rayHandler.setAmbientLight( 0.85f,0,0,0.1f );
 		rayHandler.setCulling(true);
@@ -123,7 +123,7 @@ public class Box2dLightTest implements ApplicationListener, InputProcessor {
 		rayHandler.setBlurNum(1);
 		//rayHandler.setShadows(false);
 //		camera.update(true);
-	
+
 //		rayHandler.setCombinedMatrix(camera.combined, camera.position.x,
 //				camera.position.y, camera.viewportWidth * camera.zoom,
 //				camera.viewportHeight * camera.zoom);
