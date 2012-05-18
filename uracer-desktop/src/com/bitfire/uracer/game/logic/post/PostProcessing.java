@@ -1,6 +1,7 @@
 package com.bitfire.uracer.game.logic.post;
 
 import com.badlogic.gdx.Gdx;
+import com.badlogic.gdx.math.Vector2;
 import com.bitfire.uracer.URacer;
 import com.bitfire.uracer.configuration.Config;
 import com.bitfire.uracer.game.logic.GameLogic;
@@ -11,6 +12,7 @@ import com.bitfire.uracer.postprocessing.PostProcessor;
 import com.bitfire.uracer.postprocessing.effects.Bloom;
 import com.bitfire.uracer.postprocessing.effects.Vignette;
 import com.bitfire.uracer.postprocessing.effects.Zoom;
+import com.bitfire.uracer.resources.Art;
 
 /** Encapsulates a post-processor animator that manages effects such as bloom and zoomblur to compose
  * and enhance the gaming experience. */
@@ -68,8 +70,10 @@ public class PostProcessing {
 		if( Config.PostProcessing.EnableVignetting ) {
 			// if there is no bloom, let's control the final saturation via
 			// the vignette filter
-			vignette = new Vignette( Config.PostProcessing.EnableBloom ? false : true );
+			vignette = new Vignette( false /*Config.PostProcessing.EnableBloom ? false : true*/ );
 			vignette.setCoords( 0.75f, 0.4f );
+			vignette.setLut( Art.postXpro );
+			vignette.setEnabled( true );
 			processor.addEffect( vignette );
 		}
 	}
@@ -77,22 +81,24 @@ public class PostProcessing {
 	public void onBeforeRender( PlayerCar player ) {
 		if( canPostProcess ) {
 			float factor = 1 - (URacer.timeMultiplier - GameLogic.TimeMultiplierMin) / (Config.Physics.PhysicsTimeMultiplier - GameLogic.TimeMultiplierMin);
+			Vector2 playerScreenPos = GameRenderer.ScreenUtils.worldPxToScreen( player.state().position );
 
 			if( Config.PostProcessing.EnableZoomBlur && player != null ) {
-				zoom.setOrigin( GameRenderer.ScreenUtils.worldPxToScreen( player.state().position ) );
-				zoom.setStrength( -0.1f * factor );
+				zoom.setOrigin( playerScreenPos );
+				zoom.setStrength( -0.05f * factor
+						//* player.driftState.driftStrength
+						);
 			}
 
 			if( Config.PostProcessing.EnableBloom ) {
 				bloom.setBaseSaturation( 0.5f - 0.5f * factor );
-				// bloom.setBloomSaturation( 1.5f - factor * 0.85f ); // TODO when charged
-				bloom.setBloomSaturation( 1.5f - factor * 1.5f );	// TODO when completely discharged
-				bloom.setBloomIntesity( 1f + factor * 1.75f );
+//				bloom.setBloomSaturation( 1.5f - factor * 0.85f );	// TODO when charged
+//				bloom.setBloomSaturation( 1.5f - factor * 1.5f );	// TODO when completely discharged
+				bloom.setBloomSaturation( 1.5f - factor * 1.5f );
 			}
 
 			if( Config.PostProcessing.EnableVignetting ) {
 				// vignette.setY( (1 - factor) * 0.74f + factor * 0.4f );
-				// vignette.setIntensity( 1f );
 
 				if( vignette.controlSaturation ) {
 					// go with the "poor man"'s time dilation fx
@@ -100,7 +106,16 @@ public class PostProcessing {
 					vignette.setSaturationMul( 1f + factor * 0.5f );
 				}
 
+//				vignette.setIntensity( factor );
+//				vignette.setCoords( 0.8f, -0.01f );
+
+				vignette.setCenter( playerScreenPos.x, playerScreenPos.y );
+				vignette.setCoords( 1.2f, 0.1f );
+
+				vignette.setLutIntensity( factor );
+				vignette.setLutIndex( 7 );
 				vignette.setIntensity( factor );
+
 			}
 		}
 	}

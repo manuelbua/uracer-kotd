@@ -39,7 +39,7 @@ public final class Config {
 
 			// post-processor effects
 			EnableVignetting = true;
-			EnableBloom = false;
+			EnableBloom = true;
 			EnableZoomBlur = true;
 
 			RttFboWidth = (int)(Gdx.graphics.getWidth() * RttRatio);
