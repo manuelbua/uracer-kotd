@@ -46,13 +46,13 @@ public final class Threshold extends Filter<Threshold> {
 
 	@Override
 	public void rebind() {
-		setParams( Param.Texture, u_texture_1 );
+		setParams( Param.Texture, u_texture_0 );
 		setTreshold( this.gamma );
 	}
 
 	@Override
 	protected void compute() {
-		inputTexture.bind( u_texture_1 );
+		inputTexture.bind( u_texture_0 );
 		program.begin();
 		IFilter.quad.render( program );
 		program.end();

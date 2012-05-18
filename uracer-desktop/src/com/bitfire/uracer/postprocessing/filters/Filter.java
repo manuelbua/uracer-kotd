@@ -8,8 +8,8 @@ import com.bitfire.uracer.postprocessing.IFilter;
 @SuppressWarnings( "unchecked" )
 
 public abstract class Filter<T> extends IFilter {
-	protected static final int u_texture_1 = 0;
-	protected static final int u_texture_2 = 1;
+	protected static final int u_texture_0 = 0;
+	protected static final int u_texture_1 = 1;
 
 	protected Texture inputTexture = null;
 	protected FrameBuffer outputBuffer = null;
@@ -47,6 +47,12 @@ public abstract class Filter<T> extends IFilter {
 		String mnemonic();
 
 		int arrayElementSize();
+	}
+
+	public void setParam( Parameter param, int value ) {
+		program.begin();
+		program.setUniformi( param.mnemonic(), value );
+		program.end();
 	}
 
 	public void setParam( Parameter param, float value ) {

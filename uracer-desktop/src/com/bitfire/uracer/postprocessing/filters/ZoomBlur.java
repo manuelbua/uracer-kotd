@@ -81,7 +81,7 @@ public final class ZoomBlur extends Filter<ZoomBlur> {
 
 	@Override
 	public void rebind() {
-		setParams( Param.Texture, u_texture_1 );
+		setParams( Param.Texture, u_texture_0 );
 		setParams( Param.OneOnBlurLen, 1f / (float)blur_len );
 		setParams( Param.BlurDiv, this.strength / (float)blur_len );
 
@@ -92,7 +92,7 @@ public final class ZoomBlur extends Filter<ZoomBlur> {
 
 	@Override
 	protected void compute() {
-		inputTexture.bind( u_texture_1 );
+		inputTexture.bind( u_texture_0 );
 		program.begin();
 		IFilter.quad.render( program );
 		program.end();
