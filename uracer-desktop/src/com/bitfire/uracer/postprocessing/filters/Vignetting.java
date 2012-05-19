@@ -114,10 +114,10 @@ public final class Vignetting extends Filter<Vignetting> {
 	}
 
 	public void setCenter( float x, float y ) {
-		this.x = x;
-		this.y = y;
-		setParams( Param.CenterX, x / (float)Gdx.graphics.getWidth() );
-		setParams( Param.CenterY, 1f - (y / (float)Gdx.graphics.getHeight()) ).endParams();
+		this.centerX = x / (float)Gdx.graphics.getWidth();
+		this.centerY = 1f - (y / (float)Gdx.graphics.getHeight());
+		setParams( Param.CenterX, centerX );
+		setParams( Param.CenterY, centerY ).endParams();
 	}
 
 	@Override
@@ -134,6 +134,8 @@ public final class Vignetting extends Filter<Vignetting> {
 		setParams( Param.VignetteY, y );
 		setParams( Param.Saturation, saturation );
 		setParams( Param.SaturationMul, saturationMul );
+		setParams( Param.CenterX, centerX );
+		setParams( Param.CenterY, centerY );
 		endParams();
 	}
 
