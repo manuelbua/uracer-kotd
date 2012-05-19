@@ -14,6 +14,7 @@ import com.bitfire.uracer.game.actors.CarDescriptor;
 import com.bitfire.uracer.game.player.PlayerCar;
 import com.bitfire.uracer.game.rendering.GameRenderer;
 import com.bitfire.uracer.game.rendering.GameRendererEvent;
+import com.bitfire.uracer.game.rendering.GameRendererEvent.Order;
 import com.bitfire.uracer.game.rendering.GameWorldRenderer;
 import com.bitfire.uracer.game.world.GameWorld;
 import com.bitfire.uracer.postprocessing.PostProcessor;
@@ -41,7 +42,7 @@ public final class DebugHelper {
 
 	private final GameRendererEvent.Listener onRender = new GameRendererEvent.Listener() {
 		@Override
-		public void gameRendererEvent( GameRendererEvent.Type type ) {
+		public void gameRendererEvent( GameRendererEvent.Type type, Order order ) {
 			switch( type ) {
 			case BatchDebug:
 				render( GameEvents.gameRenderer.batch );

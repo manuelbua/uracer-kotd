@@ -5,6 +5,7 @@ import com.badlogic.gdx.utils.Array;
 import com.bitfire.uracer.game.GameEvents;
 import com.bitfire.uracer.game.logic.GameTask;
 import com.bitfire.uracer.game.rendering.GameRendererEvent;
+import com.bitfire.uracer.game.rendering.GameRendererEvent.Order;
 import com.bitfire.uracer.utils.Manager;
 
 public final class TrackEffects extends GameTask {
@@ -12,7 +13,7 @@ public final class TrackEffects extends GameTask {
 
 	private final GameRendererEvent.Listener gameRendererEvent = new GameRendererEvent.Listener() {
 		@Override
-		public void gameRendererEvent( GameRendererEvent.Type type ) {
+		public void gameRendererEvent( GameRendererEvent.Type type, Order order ) {
 			SpriteBatch batch = GameEvents.gameRenderer.batch;
 			Array<TrackEffect> items = manager.items;
 

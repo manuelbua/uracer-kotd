@@ -1,10 +1,12 @@
 package com.bitfire.uracer.game.actors;
 
+import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.bitfire.uracer.entities.Entity;
 import com.bitfire.uracer.entities.EntityRenderState;
 import com.bitfire.uracer.game.GameEvents;
 import com.bitfire.uracer.game.logic.PhysicsStepEvent;
 import com.bitfire.uracer.game.rendering.GameRendererEvent;
+import com.bitfire.uracer.game.rendering.GameRendererEvent.Order;
 
 public abstract class SubframeInterpolableEntity extends Entity implements PhysicsStepEvent.Listener, GameRendererEvent.Listener {
 	// world-coords
@@ -26,6 +28,10 @@ public abstract class SubframeInterpolableEntity extends Entity implements Physi
 		GameEvents.gameRenderer.removeListener( this, GameRendererEvent.Type.OnSubframeInterpolate, GameRendererEvent.Order.DEFAULT );
 	}
 
+	public abstract boolean isVisible();
+
+	public abstract void onRender( SpriteBatch batch, GameRendererEvent.Type type, Order order );
+
 	public abstract void saveStateTo( EntityRenderState state );
 
 	public abstract boolean isSubframeInterpolated();
@@ -38,8 +44,14 @@ public abstract class SubframeInterpolableEntity extends Entity implements Physi
 	}
 
 	@Override
-	public void gameRendererEvent( GameRendererEvent.Type type ) {
+	public void gameRendererEvent( GameRendererEvent.Type type, Order order ) {
 		switch( type ) {
+		case BatchBeforeMeshes:
+		case BatchAfterMeshes:
+			if( isVisible() ) {
+				onRender( GameEvents.gameRenderer.batch, type, order );
+			}
+			break;
 		case OnSubframeInterpolate:
 			onSubframeInterpolate( GameEvents.gameRenderer.timeAliasingFactor );
 			break;
@@ -62,12 +74,12 @@ public abstract class SubframeInterpolableEntity extends Entity implements Physi
 	}
 
 	public void onBeforePhysicsSubstep() {
-//		Gdx.app.log( this.getClass().getSimpleName(), "beforePhysics" );
+		// Gdx.app.log( this.getClass().getSimpleName(), "beforePhysics" );
 		saveStateTo( statePrevious );
 	}
 
 	public void onAfterPhysicsSubstep() {
-//		Gdx.app.log( this.getClass().getSimpleName(), "afterPhysics" );
+		// Gdx.app.log( this.getClass().getSimpleName(), "afterPhysics" );
 		saveStateTo( stateCurrent );
 	}
 

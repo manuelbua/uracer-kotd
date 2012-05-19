@@ -11,8 +11,11 @@ import com.badlogic.gdx.physics.box2d.Fixture;
 import com.badlogic.gdx.physics.box2d.FixtureDef;
 import com.badlogic.gdx.physics.box2d.MassData;
 import com.bitfire.uracer.configuration.Config;
+import com.bitfire.uracer.game.GameEvents;
 import com.bitfire.uracer.game.collisions.CollisionFilters;
 import com.bitfire.uracer.game.rendering.GameRendererEvent;
+import com.bitfire.uracer.game.rendering.GameRendererEvent.Order;
+import com.bitfire.uracer.game.rendering.GameRendererEvent.Type;
 import com.bitfire.uracer.game.world.GameWorld;
 import com.bitfire.uracer.utils.AMath;
 import com.bitfire.uracer.utils.BodyEditorLoader;
@@ -42,6 +45,7 @@ public abstract strictfp class Car extends Box2DEntity {
 	/* event */
 	public CarEvent event = null;
 	private boolean triggerEvents = false;
+	private static final Order ShadowsDrawingOrder = Order.MINUS_2;
 
 	protected GameWorld gameWorld;
 	protected CarModel model = new CarModel();
@@ -83,6 +87,9 @@ public abstract strictfp class Car extends Box2DEntity {
 
 		applyCarPhysics( aspect, carType, model );
 
+		// subscribe to another renderqueue to render shadows/AO early
+		GameEvents.gameRenderer.addListener( this, GameRendererEvent.Type.BatchBeforeMeshes, ShadowsDrawingOrder );
+
 		Gdx.app.log( getClass().getSimpleName(), "Input mode is " + this.inputMode.toString() );
 		Gdx.app.log( getClass().getSimpleName(), "CarModel is " + this.model.type.toString() );
 	}
@@ -90,6 +97,7 @@ public abstract strictfp class Car extends Box2DEntity {
 	@Override
 	public void dispose() {
 		super.dispose();
+		GameEvents.gameRenderer.removeListener( this, GameRendererEvent.Type.BatchBeforeMeshes, ShadowsDrawingOrder );
 		event.removeAllListeners();
 		event = null;
 	}
@@ -320,7 +328,11 @@ public abstract strictfp class Car extends Box2DEntity {
 	}
 
 	@Override
-	public void onRender( SpriteBatch batch ) {
-		renderer.render( batch, stateRender );
+	public void onRender( SpriteBatch batch, Type type, Order order ) {
+		if( order == ShadowsDrawingOrder ) {
+			renderer.renderShadows( batch, stateRender );
+		} else if( order == drawingOrder ) {
+			renderer.render( batch, stateRender );
+		}
 	}
 }

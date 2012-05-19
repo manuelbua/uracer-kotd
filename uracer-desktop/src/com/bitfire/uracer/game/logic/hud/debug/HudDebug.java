@@ -10,6 +10,7 @@ import com.bitfire.uracer.game.player.PlayerCar;
 import com.bitfire.uracer.game.player.PlayerDriftState;
 import com.bitfire.uracer.game.rendering.GameRenderer;
 import com.bitfire.uracer.game.rendering.GameRendererEvent;
+import com.bitfire.uracer.game.rendering.GameRendererEvent.Order;
 import com.bitfire.uracer.resources.Art;
 import com.bitfire.uracer.utils.CarUtils;
 
@@ -28,7 +29,7 @@ public class HudDebug extends HudElement {
 
 	private GameRendererEvent.Listener gameRendererEvent = new GameRendererEvent.Listener() {
 		@Override
-		public void gameRendererEvent( GameRendererEvent.Type type ) {
+		public void gameRendererEvent( GameRendererEvent.Type type, Order order ) {
 			onDebug( GameEvents.gameRenderer.batch );
 		}
 	};

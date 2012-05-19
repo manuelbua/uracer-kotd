@@ -1,6 +1,5 @@
 package com.bitfire.uracer.game.actors;
 
-import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.bitfire.uracer.game.logic.replaying.Replay;
 import com.bitfire.uracer.game.rendering.GameRendererEvent;
 import com.bitfire.uracer.game.world.GameWorld;
@@ -79,10 +78,8 @@ public final class GhostCar extends Car {
 	}
 
 	@Override
-	public void onRender( SpriteBatch batch ) {
-		if( hasReplay && isActive() && renderer.getAlpha() > 0 ) {
-			renderer.render( batch, stateRender );
-		}
+	public boolean isVisible() {
+		return hasReplay && isActive() && renderer.getAlpha() > 0;
 	}
 
 	@Override
