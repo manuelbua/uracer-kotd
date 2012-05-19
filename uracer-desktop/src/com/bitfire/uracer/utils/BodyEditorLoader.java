@@ -75,7 +75,7 @@ public class BodyEditorLoader {
 	 * @param fd The fixture parameters to apply to the created body fixture.
 	 * @param scale The desired scale of the body. The default width is 1.
 	 */
-	public void attachFixture(Body body, String name, FixtureDef fd, float scale) {
+	public void attachFixture(Body body, String name, FixtureDef fd, float scale, float scaleX, float scaleY ) {
 		RigidBodyModel rbModel = model.rigidBodies.get(name);
 		if (rbModel == null) throw new RuntimeException("Name '" + name + "' was not found.");
 
@@ -88,6 +88,8 @@ public class BodyEditorLoader {
 			for (int ii=0, nn=vertices.length; ii<nn; ii++) {
 				vertices[ii] = newVec().set(polygon.vertices.get(ii)).mul(scale);
 				vertices[ii].sub(origin);
+				vertices[ii].x *= scaleX;
+				vertices[ii].y *= scaleY;
 			}
 
 			polygonShape.set(vertices);
