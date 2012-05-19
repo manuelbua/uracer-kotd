@@ -120,7 +120,7 @@ public final class Config {
 			PhysicsDt = 1.0f / PhysicsTimestepHz;
 			PhysicsTimeMultiplier = 1f;
 
-			Gdx.app.log( "Config", "Physics at " + PhysicsTimestepHz + "Hz (dt=" + NumberString.format(PhysicsDt) + ")" );
+			Gdx.app.log( "Config", "Physics at " + PhysicsTimestepHz + "Hz (dt=" + NumberString.formatLong(PhysicsDt) + ")" );
 		}
 
 		private Physics() {
