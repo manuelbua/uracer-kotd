@@ -20,7 +20,7 @@ public class GameScreen extends Screen {
 		game = new Game( levelName, scalingStrategy, GameDifficulty.Hard );
 
 		// simulate the player choosing a car type
-		game.setPlayer( new CarModel().toModel3(), Aspect.FordMustangShelbyGt500Coupe );
+		game.setPlayer( new CarModel().toLamborghiniGallardoLP560(), Aspect.LamborghiniGallardoLP560 );
 
 		// simulate the player choosing local playing
 		Replay r = Replay.loadLocal( levelName );

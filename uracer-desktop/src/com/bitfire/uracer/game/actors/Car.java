@@ -32,6 +32,7 @@ public abstract strictfp class Car extends Box2DEntity {
 		Digitized("digit"),
 		AudiTtsCoupe2011("audi-tts-coupe-2011"),
 		FordMustangShelbyGt500Coupe("ford-mustang-shelby-gt500-coupe"),
+		LamborghiniGallardoLP560("lamborghini-gallardo-lp560"),
 		;
 		// @formatter:on
 
