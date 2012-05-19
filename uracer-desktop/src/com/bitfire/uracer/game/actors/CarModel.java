@@ -224,26 +224,26 @@ public final class CarModel {
 		b = 1.f; // m
 		c = 1.f; // m
 
-		width = 2.25f; // m
-		length = 3.5f; // m (must be > wheelbase)
+		width = 2f; // m
+		length = 1f * 2.28f; // m (must be > wheelbase)
 
 		// physical behavior
-		drag = 20.f; // factor for air resistance (drag)
+		drag = 15.f; // factor for air resistance (drag)
 		resistance = 30.f; // factor for rolling resistance
 
-		stiffness_rear = -4.6f; // rear cornering stiffness
-		stiffness_front = -4.4f; // front cornering stiffness
+		stiffness_rear = -4.4f; // rear cornering stiffness
+		stiffness_front = -4.2f; // front cornering stiffness
 
 		// TODO think, cars for drift (max_grip = 3/4/5f), other cars (max_grip = 6/7/8f)
-		max_grip = 7f; // maximum (normalised) friction force, =diameter of friction circle
+		max_grip = 6f; // maximum (normalised) friction force, =diameter of friction circle
 
-		max_speed = 40.f;
-		max_force = 400.f;
+		max_speed = 35.f;
+		max_force = 300.f;
 
 		// mostly for collision response
 		density = 1f;
-		friction = 8.02f;
-		restitution = 0f;
+		friction = 4f;
+		restitution = 0.25f;
 
 		return this;
 	}

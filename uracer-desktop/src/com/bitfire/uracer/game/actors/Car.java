@@ -23,7 +23,14 @@ public abstract strictfp class Car extends Box2DEntity {
 	}
 
 	public enum Aspect {
-		OldSkool( "electron" ), OldSkool2( "spider" );
+		// @formatter:off
+		OldSkool( "electron" ),
+		OldSkool2( "spider" ),
+		Digitized("digit"),
+		AudiTtsCoupe2011("audi-tts-coupe-2011"),
+		FordMustangShelbyGt500Coupe("ford-mustang-shelby-gt500-coupe"),
+		;
+		// @formatter:on
 
 		public final String name;
 
@@ -74,7 +81,7 @@ public abstract strictfp class Car extends Box2DEntity {
 		this.carTraveledDistance = 0;
 		this.accuDistCount = 0;
 
-		applyCarPhysics( carType );
+		applyCarPhysics( aspect, carType );
 
 		Gdx.app.log( getClass().getSimpleName(), "Input mode is " + this.inputMode.toString() );
 		Gdx.app.log( getClass().getSimpleName(), "CarModel is " + this.model.type.toString() );
@@ -87,7 +94,7 @@ public abstract strictfp class Car extends Box2DEntity {
 		event = null;
 	}
 
-	private void applyCarPhysics( CarType carType ) {
+	private void applyCarPhysics( Aspect aspect, CarType carType ) {
 		if( body != null ) {
 			this.box2dWorld.destroyBody( body );
 		}
@@ -102,52 +109,70 @@ public abstract strictfp class Car extends Box2DEntity {
 		body.setBullet( true );
 		body.setUserData( this );
 
-//			String shapeName = Config.ShapesStore + "electron" /* aspect.name */+ ".shape";
-//			String shapeRef = Config.ShapesRefs + "electron" /* aspect.name */+ ".png";
+		// String shapeName = Config.ShapesStore + "electron" /* aspect.name */+ ".shape";
+		// String shapeRef = Config.ShapesRefs + "electron" /* aspect.name */+ ".png";
 
-			// set physical properties and apply shape
-			FixtureDef fd = new FixtureDef();
-			fd.density = model.density;
-			fd.friction = model.friction;
-			fd.restitution = model.restitution;
+		// set physical properties and apply shape
+		FixtureDef fd = new FixtureDef();
+		fd.density = model.density;
+		fd.friction = model.friction;
+		fd.restitution = model.restitution;
 
-			fd.filter.groupIndex = (short)((carType == CarType.PlayerCar) ? CollisionFilters.GroupPlayer : CollisionFilters.GroupReplay);
-			fd.filter.categoryBits = (short)((carType == CarType.PlayerCar) ? CollisionFilters.CategoryPlayer : CollisionFilters.CategoryReplay);
-			fd.filter.maskBits = (short)((carType == CarType.PlayerCar) ? CollisionFilters.MaskPlayer : CollisionFilters.MaskReplay);
+		fd.filter.groupIndex = (short)((carType == CarType.PlayerCar) ? CollisionFilters.GroupPlayer : CollisionFilters.GroupReplay);
+		fd.filter.categoryBits = (short)((carType == CarType.PlayerCar) ? CollisionFilters.CategoryPlayer : CollisionFilters.CategoryReplay);
+		fd.filter.maskBits = (short)((carType == CarType.PlayerCar) ? CollisionFilters.MaskPlayer : CollisionFilters.MaskReplay);
 
-			if( Config.Debug.TraverseWalls ) {
-				fd.filter.groupIndex = CollisionFilters.GroupNoCollisions;
-			}
+		if( Config.Debug.TraverseWalls ) {
+			fd.filter.groupIndex = CollisionFilters.GroupNoCollisions;
+		}
 
-			BodyEditorLoader loader = new BodyEditorLoader( Gdx.files.internal( "data/cars/car-shapes" ) );
+		BodyEditorLoader loader = new BodyEditorLoader( Gdx.files.internal( "data/cars/car-shapes" ) );
 
-			// the scaling factor should be 2, but in night mode is cool to see light bleeding across the edges of
-			// the car, fading away as soon as the physical body is reached
-			//
-			// WARNING! Be sure to set a value and use it then, every time this changes replays will NOT be compatible!
-			loader.attachFixture( body, "electron.png", fd, 1.85f );
-			ArrayList<Fixture> fs = body.getFixtureList();
-			for( Fixture f : fs ) {
-				f.setUserData( carType );
-			}
+		// the scaling factor should be 2, but in night mode is cool to see light bleeding across the edges of
+		// the car, fading away as soon as the physical body is reached
+		//
+		// WARNING! Be sure to set a value and use it then, every time this changes replays will NOT be compatible!
+		float scaleX = 1f;
+		float scaleY = 1f;
+
+		switch( aspect ) {
+		case OldSkool:
+		case OldSkool2:
+			scaleX = 1f;
+			scaleY = 1f;
+			break;
+		case FordMustangShelbyGt500Coupe:
+			scaleX = 0.9f;
+			scaleY = 1.4f;
+			break;
+		}
+
+		loader.attachFixture( body, "electron.png", fd, 1.85f, scaleX, scaleY );
+		ArrayList<Fixture> fs = body.getFixtureList();
+		for( Fixture f : fs ) {
+			f.setUserData( carType );
+		}
 
 		// dbg
-//		FixtureDef fd = new FixtureDef();
-//		Vector2 p = new Vector2();
-//		CircleShape shape = new CircleShape();
-//		shape.setPosition( p.set( 0, 0.75f ) );
-//		shape.setRadius( 2.5f / 2f );
-//		fd.shape = shape;
-//
-//		fd.density = 1;
-//		fd.friction = 2f;
-//		fd.restitution = 0.25f;
-//		fd.filter.groupIndex = (short)((carType == CarType.PlayerCar) ? CollisionFilters.GroupPlayer : CollisionFilters.GroupReplay);
-//		fd.filter.categoryBits = (short)((carType == CarType.PlayerCar) ? CollisionFilters.CategoryPlayer : CollisionFilters.CategoryReplay);
-//		fd.filter.maskBits = (short)((carType == CarType.PlayerCar) ? CollisionFilters.MaskPlayer : CollisionFilters.MaskReplay);
-//		body.createFixture( fd ).setUserData( carType );
-//		shape.setPosition( p.set( 0, -0.75f ) );
-//		body.createFixture( fd ).setUserData( carType );
+		// FixtureDef fd = new FixtureDef();
+		// Vector2 p = new Vector2();
+		// CircleShape shape = new CircleShape();
+		// shape.setPosition( p.set( 0, 0.75f ) );
+		// shape.setRadius( 2.5f / 2f );
+		// fd.shape = shape;
+		//
+		// fd.density = 1;
+		// fd.friction = 2f;
+		// fd.restitution = 0.25f;
+		// fd.filter.groupIndex = (short)((carType == CarType.PlayerCar) ? CollisionFilters.GroupPlayer :
+		// CollisionFilters.GroupReplay);
+		// fd.filter.categoryBits = (short)((carType == CarType.PlayerCar) ? CollisionFilters.CategoryPlayer :
+		// CollisionFilters.CategoryReplay);
+		// fd.filter.maskBits = (short)((carType == CarType.PlayerCar) ? CollisionFilters.MaskPlayer :
+		// CollisionFilters.MaskReplay);
+		// body.createFixture( fd ).setUserData( carType );
+		// shape.setPosition( p.set( 0, -0.75f ) );
+		// body.createFixture( fd ).setUserData( carType );
 		// dbg
 
 		MassData mdata = body.getMassData();
@@ -182,6 +207,7 @@ public abstract strictfp class Car extends Box2DEntity {
 	public void setAspect( Aspect aspect ) {
 		if( this.aspect != aspect ) {
 			this.aspect = aspect;
+			applyCarPhysics( aspect, carType );
 			renderer.setAspect( aspect, model );
 			Gdx.app.log( this.getClass().getSimpleName(), "Switched to car aspect \"" + aspect.toString() + "\"" );
 		}
@@ -190,7 +216,7 @@ public abstract strictfp class Car extends Box2DEntity {
 	public void setCarModel( CarModel.Type modelType ) {
 		if( model.type != modelType ) {
 			model.toModelType( modelType );
-			applyCarPhysics( carType );
+			applyCarPhysics( aspect, carType );
 			renderer.setAspect( aspect, model );
 			Gdx.app.log( this.getClass().getSimpleName(), "Switched to car model \"" + model.type.toString() + "\"" );
 		}
