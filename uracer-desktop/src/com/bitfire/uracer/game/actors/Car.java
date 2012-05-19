@@ -81,7 +81,7 @@ public abstract strictfp class Car extends Box2DEntity {
 		this.carTraveledDistance = 0;
 		this.accuDistCount = 0;
 
-		applyCarPhysics( aspect, carType );
+		applyCarPhysics( aspect, carType, model );
 
 		Gdx.app.log( getClass().getSimpleName(), "Input mode is " + this.inputMode.toString() );
 		Gdx.app.log( getClass().getSimpleName(), "CarModel is " + this.model.type.toString() );
@@ -94,7 +94,7 @@ public abstract strictfp class Car extends Box2DEntity {
 		event = null;
 	}
 
-	private void applyCarPhysics( Aspect aspect, CarType carType ) {
+	private void applyCarPhysics( Aspect aspect, CarType carType, CarModel carModel ) {
 		if( body != null ) {
 			this.box2dWorld.destroyBody( body );
 		}
@@ -132,20 +132,10 @@ public abstract strictfp class Car extends Box2DEntity {
 		// the car, fading away as soon as the physical body is reached
 		//
 		// WARNING! Be sure to set a value and use it then, every time this changes replays will NOT be compatible!
-		float scaleX = 1f;
-		float scaleY = 1f;
 
-		switch( aspect ) {
-		case OldSkool:
-		case OldSkool2:
-			scaleX = 1f;
-			scaleY = 1f;
-			break;
-		case FordMustangShelbyGt500Coupe:
-			scaleX = 0.9f;
-			scaleY = 1.4f;
-			break;
-		}
+		// electron is made for a model2 car, w=2.5, h=3.5, h/w=1.4, w:h=1:1.4
+		float scaleX = carModel.width / 2.5f;
+		float scaleY = carModel.length / 3.5f;
 
 		loader.attachFixture( body, "electron.png", fd, 1.85f, scaleX, scaleY );
 		ArrayList<Fixture> fs = body.getFixtureList();
@@ -207,7 +197,7 @@ public abstract strictfp class Car extends Box2DEntity {
 	public void setAspect( Aspect aspect ) {
 		if( this.aspect != aspect ) {
 			this.aspect = aspect;
-			applyCarPhysics( aspect, carType );
+			applyCarPhysics( aspect, carType, model );
 			renderer.setAspect( aspect, model );
 			Gdx.app.log( this.getClass().getSimpleName(), "Switched to car aspect \"" + aspect.toString() + "\"" );
 		}
@@ -216,7 +206,7 @@ public abstract strictfp class Car extends Box2DEntity {
 	public void setCarModel( CarModel.Type modelType ) {
 		if( model.type != modelType ) {
 			model.toModelType( modelType );
-			applyCarPhysics( aspect, carType );
+			applyCarPhysics( aspect, carType, model );
 			renderer.setAspect( aspect, model );
 			Gdx.app.log( this.getClass().getSimpleName(), "Switched to car model \"" + model.type.toString() + "\"" );
 		}

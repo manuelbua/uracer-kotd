@@ -224,8 +224,8 @@ public final class CarModel {
 		b = 1.f; // m
 		c = 1.f; // m
 
-		width = 2f; // m
-		length = 1f * 2.28f; // m (must be > wheelbase)
+		width = 2.5f; // m
+		length = 4.3f; // m (must be > wheelbase)
 
 		// physical behavior
 		drag = 15.f; // factor for air resistance (drag)
