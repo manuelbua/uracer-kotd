@@ -12,7 +12,7 @@ public final class CarModel {
 		Model2( "model-2" ),
 		FordMustangShelbyGt500Coupe( "FordMustangShelbyGt500Coupe" ),
 		LamborghiniGallardoLP560( "LamborghiniGallardoLP560" ),
-		ModelBlack( "model-black" ),
+		AudiTTSCoupe2011( "AudiTTSCoupe2011" ),
 		;
 		// @formatter:on
 
@@ -100,8 +100,8 @@ public final class CarModel {
 		case FordMustangShelbyGt500Coupe:
 			this.toFordMustangShelbyGt500Coupe();
 			break;
-		case ModelBlack:
-			this.toBlackCar();
+		case AudiTTSCoupe2011:
+			this.toAudiTTSCoupe2011();
 			break;
 		default:
 		case ModelDefault:
@@ -267,21 +267,41 @@ public final class CarModel {
 
 		// mostly for collision response
 		density = 1f;
-		friction = 4f;
-		restitution = 0.25f;
+		friction = 2f;
+		restitution = 0.3f;
 
 		return this;
 	}
 
-	public CarModel toBlackCar() {
-		toModel1();
-		type = Type.ModelBlack;
+	public CarModel toAudiTTSCoupe2011() {
+		toModel2();
+		type = Type.AudiTTSCoupe2011;
 
-		width = 3.1f; // m
+		// physical model
+		// h = .85f; // m
+		b = 1.f; // m
+		c = 1.f; // m
+
+		width = 2.5f; // m
 		length = 4.5f; // m (must be > wheelbase)
-		max_grip = 10f;
-		stiffness_rear = -4.7f; // front cornering stiffness
-		stiffness_front = -4.7f; // rear cornering stiffness
+
+		// physical behavior
+		drag = 15.f; // factor for air resistance (drag)
+		resistance = 30.f; // factor for rolling resistance
+
+		stiffness_rear = -4.4f; // rear cornering stiffness
+		stiffness_front = -4.2f; // front cornering stiffness
+
+		// TODO think, cars for drift (max_grip = 3/4/5f), other cars (max_grip = 6/7/8f)
+		max_grip = 5f; // maximum (normalised) friction force, =diameter of friction circle
+
+		max_speed = 35.f;
+		max_force = 300.f;
+
+		// mostly for collision response
+		density = 1f;
+		friction = 2f;
+		restitution = 0.3f;
 
 		return this;
 	}

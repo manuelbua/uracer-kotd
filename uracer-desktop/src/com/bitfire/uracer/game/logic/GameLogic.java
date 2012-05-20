@@ -116,7 +116,7 @@ public class GameLogic implements CarEvent.Listener, CarStateEvent.Listener, Pla
 		// post-processing
 		postProcessing = new PostProcessing( gameWorld, gameRenderer );
 		postProcessing.createAnimators();
-		postProcessing.enableAnimator( "AggressiveCold" );
+		postProcessing.enableAnimator( "AggressiveWarm" );
 		Gdx.app.log( "GameLogic", "Post-processing animators created" );
 
 		// main game tasks
