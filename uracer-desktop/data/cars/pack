@@ -10,205 +10,219 @@ sport-car
   orig: 205, 354
   offset: 0, 0
   index: -1
-ford-mustang-shelby-gt500-coupe
+ford-mustang-shelby-gt500-white
   rotate: false
   xy: 209, 2
+  size: 129, 296
+  orig: 129, 296
+  offset: 0, 0
+  index: -1
+ford-mustang-shelby-gt500-coupe
+  rotate: false
+  xy: 340, 2
   size: 129, 295
   orig: 129, 295
   offset: 0, 0
   index: -1
 lamborghini-gallardo-lp560
   rotate: false
-  xy: 340, 2
+  xy: 2, 358
   size: 155, 293
   orig: 155, 293
   offset: 0, 0
   index: -1
 audi-tts-coupe-2011
   rotate: false
-  xy: 2, 358
+  xy: 159, 358
   size: 147, 293
   orig: 147, 293
   offset: 0, 0
   index: -1
+cooper-mini-coupe
+  rotate: false
+  xy: 308, 358
+  size: 158, 287
+  orig: 158, 287
+  offset: 0, 0
+  index: -1
 skid-smoke
   rotate: false
-  xy: 151, 358
+  xy: 2, 653
   size: 256, 256
   orig: 256, 256
   offset: 0, 0
   index: -1
 sport-stella
   rotate: false
-  xy: 409, 358
+  xy: 260, 653
   size: 70, 132
   orig: 70, 132
   offset: 0, 0
   index: -1
 sport-masek
   rotate: false
-  xy: 409, 492
+  xy: 2, 911
   size: 48, 101
   orig: 48, 101
   offset: 0, 0
   index: -1
 car-ao
   rotate: false
-  xy: 459, 492
+  xy: 471, 2
   size: 34, 62
   orig: 34, 62
   offset: 0, 0
   index: -1
 skid-marks-front
   rotate: false
-  xy: 2, 653
+  xy: 471, 66
   size: 34, 62
   orig: 34, 62
   offset: 0, 0
   index: -1
 skid-marks-rear
   rotate: false
-  xy: 2, 717
+  xy: 471, 130
   size: 34, 62
   orig: 34, 62
   offset: 0, 0
   index: -1
 digit
   rotate: false
-  xy: 2, 781
+  xy: 471, 194
   size: 32, 62
   orig: 32, 62
   offset: 0, 0
   index: -1
 skid-smoke-small
   rotate: false
-  xy: 209, 299
+  xy: 209, 300
   size: 32, 32
   orig: 32, 32
   offset: 0, 0
   index: -1
 thebeast
   rotate: false
-  xy: 243, 299
+  xy: 243, 300
   size: 17, 31
   orig: 17, 31
   offset: 0, 0
   index: -1
 spider
   rotate: false
-  xy: 262, 299
+  xy: 262, 300
   size: 17, 31
   orig: 17, 31
   offset: 0, 0
   index: -1
 redB
   rotate: false
-  xy: 281, 299
+  xy: 281, 300
   size: 17, 31
   orig: 17, 31
   offset: 0, 0
   index: -1
 electron
   rotate: false
-  xy: 300, 299
+  xy: 300, 300
   size: 17, 31
   orig: 17, 31
   offset: 0, 0
   index: -1
 pinkflash
   rotate: false
-  xy: 319, 299
+  xy: 319, 300
   size: 17, 31
   orig: 17, 31
   offset: 0, 0
   index: -1
 tornado
   rotate: false
-  xy: 340, 297
+  xy: 471, 258
   size: 17, 30
   orig: 17, 30
   offset: 0, 0
   index: -1
 snake
   rotate: false
-  xy: 359, 297
+  xy: 490, 258
   size: 17, 30
   orig: 17, 30
   offset: 0, 0
   index: -1
 joka
   rotate: false
-  xy: 378, 297
+  xy: 340, 299
   size: 17, 30
   orig: 17, 30
   offset: 0, 0
   index: -1
 Theghost
   rotate: false
-  xy: 397, 297
+  xy: 359, 299
   size: 17, 30
   orig: 17, 30
   offset: 0, 0
   index: -1
 goblin
   rotate: false
-  xy: 416, 297
+  xy: 378, 299
   size: 17, 30
   orig: 17, 30
   offset: 0, 0
   index: -1
 acid
   rotate: false
-  xy: 435, 297
+  xy: 397, 299
   size: 17, 30
   orig: 17, 30
   offset: 0, 0
   index: -1
 firedwarf
   rotate: false
-  xy: 454, 297
+  xy: 416, 299
   size: 17, 29
   orig: 17, 29
   offset: 0, 0
   index: -1
 loki
   rotate: false
-  xy: 473, 297
+  xy: 435, 299
   size: 17, 29
   orig: 17, 29
   offset: 0, 0
   index: -1
 inferno
   rotate: false
-  xy: 492, 297
+  xy: 454, 299
   size: 17, 29
   orig: 17, 29
   offset: 0, 0
   index: -1
 striker
   rotate: false
-  xy: 151, 616
+  xy: 473, 299
   size: 17, 29
   orig: 17, 29
   offset: 0, 0
   index: -1
 debuggee
   rotate: false
-  xy: 454, 328
+  xy: 492, 299
   size: 17, 28
   orig: 17, 28
   offset: 0, 0
   index: -1
 invisible
   rotate: false
-  xy: 473, 328
+  xy: 468, 358
   size: 15, 28
   orig: 15, 28
   offset: 0, 0
   index: -1
 Bugzta
   rotate: false
-  xy: 340, 329
+  xy: 416, 330
   size: 17, 26
   orig: 17, 26
   offset: 0, 0

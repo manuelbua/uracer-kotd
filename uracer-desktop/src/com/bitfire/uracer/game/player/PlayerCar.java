@@ -19,6 +19,7 @@ import com.bitfire.uracer.game.world.models.WorldDefs.TileLayer;
 import com.bitfire.uracer.resources.Art;
 import com.bitfire.uracer.utils.AMath;
 import com.bitfire.uracer.utils.Convert;
+import com.bitfire.uracer.utils.VMath;
 
 public class PlayerCar extends Car {
 
@@ -33,7 +34,7 @@ public class PlayerCar extends Car {
 	private CarInput carInput = null;
 	private Vector2 touchPos = new Vector2();
 	private Vector2 carPos = new Vector2();
-	// private final float invWidth = 1f / Gdx.graphics.getWidth(), invHeight = 1f / Gdx.graphics.getHeight();
+	private final float invWidth = 1f / Gdx.graphics.getWidth(), invHeight = 1f / Gdx.graphics.getHeight();
 	// private float scaleInputX, scaleInputY;
 	private WindowedMean frictionMean = new WindowedMean( 10 );
 
@@ -114,22 +115,18 @@ public class PlayerCar extends Car {
 
 		if( carInput.updated ) {
 
-			// normalize and apply relaxing on input position (scaling) in one single mul op, target resolution should
-			// be good
-			// relaxing mean steering will be a little "softer" instead of being "hard", try use invWidth/invHeight
-			// instead
-			// to get a glimpse on the differenceS
-			// carPos.x *= scaleInputX;
-			// carPos.y *= scaleInputY;
-			// touchPos.x *= scaleInputX;
-			// touchPos.y *= scaleInputY;
+			// compute steer angle first
+			carInput.steerAngle = transformSteerAngle( (float)Math.atan2( -carPos.x + touchPos.x, -carPos.y + touchPos.y ) );
 
-			// Gdx.app.log( "PlayerCar", carPos.x + "-" + carPos.y );
-			// VMath.clamp( touchPos, 0, strategy.referenceResolution.x, 0, strategy.referenceResolution.y );
-			// VMath.clamp( carPos, 0, strategy.referenceResolution.x, 0, strategy.referenceResolution.y );
+			// normalize positions and compute final throttle
+			touchPos.x *= invWidth;
+			touchPos.y *= invHeight;
+			carPos.x *= invWidth;
+			carPos.y *= invHeight;
+			VMath.clamp( touchPos, 0, 1 );
+			VMath.clamp( carPos, 0, 1 );
 
 			carInput.throttle = touchPos.dst( carPos ) * 4 * preset.model.max_force;
-			carInput.steerAngle = transformSteerAngle( (float)Math.atan2( -carPos.x + touchPos.x, -carPos.y + touchPos.y ) );
 		}
 
 		return carInput;

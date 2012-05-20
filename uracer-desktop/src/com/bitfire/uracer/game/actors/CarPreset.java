@@ -18,7 +18,9 @@ public final class CarPreset {
 		Model2( "spider" ),
 		AudiTTSCoupe2011( "audi-tts-coupe-2011" ),
 		FordMustangShelbyGt500Coupe( "ford-mustang-shelby-gt500-coupe" ),
+		FordMustangShelbyGt500White( "ford-mustang-shelby-gt500-white" ),
 		LamborghiniGallardoLP560( "lamborghini-gallardo-lp560" ),
+		CooperMiniCoupe( "cooper-mini-coupe" ),
 		SportCar( "sport-car" ),
 		SportMasek( "sport-masek" ),
 		SportStella( "sport-stella" ),
@@ -42,19 +44,28 @@ public final class CarPreset {
 			model.toDefault();
 			break;
 
+		case CooperMiniCoupe:
+			model.toModel2();
+			model.width = 2.5f;
+			model.length = model.width * 1.6f;
+			break;
+
+		case FordMustangShelbyGt500White:
 		case FordMustangShelbyGt500Coupe:
 			model.toModel2();
 			model.width = 2.5f;
 			model.length = 4.3f;
+			model.max_force = 350f;
+			model.max_grip = 6f;
 			break;
 
 		case LamborghiniGallardoLP560:
 			model.toModel2();
 			model.width = 2.5f;
 			model.length = 4.3f;
-			model.friction = 2f;
-			model.restitution = 0.3f;
-			model.max_speed = 40f;
+			model.friction = 8f;
+			model.restitution = 0.2f;
+			model.max_force = 400f;
 			model.max_grip = 5f;
 			break;
 
@@ -69,7 +80,7 @@ public final class CarPreset {
 		case SportCar:
 			model.toModel2();
 			model.width = 2.5f;
-			model.length = model.width * 1.7353f;
+			model.length = 4.3f;
 			model.friction = 2f;
 			model.restitution = 0.3f;
 			break;
@@ -85,7 +96,7 @@ public final class CarPreset {
 		case SportStella:
 			model.toModel2();
 			model.width = 2.5f;
-			model.length = model.width * 1.8857f;
+			model.length = 4.3f;
 			model.friction = 2f;
 			model.restitution = 0.3f;
 			break;

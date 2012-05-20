@@ -31,15 +31,19 @@ public class AggressiveCold implements Animator {
 	}
 
 	@Override
-	public void reset() {
-		float threshold = ((gameWorld.isNightMode() && !Config.Graphics.DumbNightMode) ? 0.2f : 0.45f);
-		Bloom.Settings bloomSettings = new Bloom.Settings( "subtle", Config.PostProcessing.BlurType, 1, 1.5f, threshold, 1f, 0.5f, 1f, 1.5f );
-		bloom.setSettings( bloomSettings );
+	public final void reset() {
+		if( Config.PostProcessing.EnableBloom ) {
+			float threshold = ((gameWorld.isNightMode() && !Config.Graphics.DumbNightMode) ? 0.2f : 0.45f);
+			Bloom.Settings bloomSettings = new Bloom.Settings( "subtle", Config.PostProcessing.BlurType, 1, 1.5f, threshold, 1f, 0.5f, 1f, 1.5f );
+			bloom.setSettings( bloomSettings );
+		}
 
-		vignette.setCoords( 0.8f, 0.45f );
-		vignette.setCenter( Gdx.graphics.getWidth() / 2, Gdx.graphics.getHeight() / 2 );
-		vignette.setLut( Art.postXpro );
-		vignette.setEnabled( true );
+		if( Config.PostProcessing.EnableVignetting ) {
+			vignette.setCoords( 0.8f, 0.45f );
+			vignette.setCenter( Gdx.graphics.getWidth() / 2, Gdx.graphics.getHeight() / 2 );
+			vignette.setLut( Art.postXpro );
+			vignette.setEnabled( true );
+		}
 	}
 
 	@Override
@@ -53,17 +57,15 @@ public class AggressiveCold implements Animator {
 
 		if( Config.PostProcessing.EnableZoomBlur && player != null ) {
 			zoom.setOrigin( playerScreenPos );
-			zoom.setStrength( -0.05f * factor
-					* player.driftState.driftStrength
-					);
+			zoom.setStrength( -0.05f * factor * player.driftState.driftStrength );
 		}
 
 		if( Config.PostProcessing.EnableBloom ) {
 			bloom.setBaseSaturation( 0.5f - 0.2f * factor );
-//			bloom.setBloomSaturation( 1.5f - factor * 0.85f );	// TODO when charged
-//			bloom.setBloomSaturation( 1.5f - factor * 1.5f );	// TODO when completely discharged
+			// bloom.setBloomSaturation( 1.5f - factor * 0.85f ); // TODO when charged
+			// bloom.setBloomSaturation( 1.5f - factor * 1.5f ); // TODO when completely discharged
 			bloom.setBloomSaturation( 1.5f - factor * 1.25f );
-			bloom.setBaseIntesity( 1f + factor * 0.1f  );
+			bloom.setBaseIntesity( 1f + factor * 0.1f );
 			bloom.setBloomIntesity( 1f + factor * 0.2f );
 		}
 
@@ -76,8 +78,8 @@ public class AggressiveCold implements Animator {
 				vignette.setSaturationMul( 1f + factor * 0.5f );
 			}
 
-//			vignette.setCenter( playerScreenPos.x, playerScreenPos.y );
-//			vignette.setCoords( 1.2f, 0.1f );
+			// vignette.setCenter( playerScreenPos.x, playerScreenPos.y );
+			// vignette.setCoords( 1.2f, 0.1f );
 
 			vignette.setLutIntensity( factor );
 			vignette.setLutIndex( 12 );
