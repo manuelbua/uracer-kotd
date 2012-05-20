@@ -41,20 +41,22 @@ public class AggressiveWarm implements Animator {
 
 	@Override
 	public void update( PlayerCar player ) {
+		if( player == null ) {
+			return;
+		}
+
 		float factor = 1 - (URacer.timeMultiplier - GameLogic.TimeMultiplierMin) / (Config.Physics.PhysicsTimeMultiplier - GameLogic.TimeMultiplierMin);
 		Vector2 playerScreenPos = GameRenderer.ScreenUtils.worldPxToScreen( player.state().position );
 
 		if( Config.PostProcessing.EnableZoomBlur && player != null ) {
 			zoom.setOrigin( playerScreenPos );
-			zoom.setStrength( -0.05f * factor
-					* player.driftState.driftStrength
-					);
+			zoom.setStrength( -0.05f * factor * player.driftState.driftStrength );
 		}
 
 		if( Config.PostProcessing.EnableBloom ) {
 			bloom.setBaseSaturation( 0.5f - 0.15f * factor );
-//			bloom.setBloomSaturation( 1.5f - factor * 0.85f );	// TODO when charged
-//			bloom.setBloomSaturation( 1.5f - factor * 1.5f );	// TODO when completely discharged
+			// bloom.setBloomSaturation( 1.5f - factor * 0.85f ); // TODO when charged
+			// bloom.setBloomSaturation( 1.5f - factor * 1.5f ); // TODO when completely discharged
 			bloom.setBloomSaturation( 1.5f - factor * 1.5f );
 		}
 

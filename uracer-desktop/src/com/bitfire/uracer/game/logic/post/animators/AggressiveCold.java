@@ -44,6 +44,10 @@ public class AggressiveCold implements Animator {
 
 	@Override
 	public void update( PlayerCar player ) {
+		if( player == null ) {
+			return;
+		}
+
 		float factor = 1 - (URacer.timeMultiplier - GameLogic.TimeMultiplierMin) / (Config.Physics.PhysicsTimeMultiplier - GameLogic.TimeMultiplierMin);
 		Vector2 playerScreenPos = GameRenderer.ScreenUtils.worldPxToScreen( player.state().position );
 
