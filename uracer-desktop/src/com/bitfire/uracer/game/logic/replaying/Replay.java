@@ -14,9 +14,8 @@ import com.bitfire.uracer.configuration.Config;
 import com.bitfire.uracer.game.GameDifficulty;
 import com.bitfire.uracer.game.Time;
 import com.bitfire.uracer.game.actors.Car;
-import com.bitfire.uracer.game.actors.Car.Aspect;
 import com.bitfire.uracer.game.actors.CarForces;
-import com.bitfire.uracer.game.actors.CarModel;
+import com.bitfire.uracer.game.actors.CarPreset;
 import com.bitfire.uracer.game.logic.messager.Message;
 import com.bitfire.uracer.game.logic.messager.Message.Position;
 import com.bitfire.uracer.game.logic.messager.Message.Size;
@@ -32,8 +31,7 @@ public class Replay {
 	private int eventsCount;
 
 	// car data
-	public Aspect carAspect;
-	public CarModel.Type carModelType;
+	public CarPreset.Type carPresetType;
 	public Vector2 carWorldPositionMt = new Vector2();
 	public float carWorldOrientRads;
 
@@ -73,8 +71,7 @@ public class Replay {
 		reset();
 		carWorldPositionMt.set( car.getWorldPosMt() );
 		carWorldOrientRads = car.getWorldOrientRads();
-		carAspect = car.getAspect();
-		carModelType = car.getCarModel().type;
+		carPresetType = car.getPresetType();
 		this.trackName = trackName;
 		difficultyLevel = difficulty;
 		time.start();
@@ -139,8 +136,7 @@ public class Replay {
 				r.eventsCount = is.readInt();
 
 				// car data
-				r.carAspect = Aspect.valueOf( is.readUTF() );
-				r.carModelType = CarModel.Type.valueOf( is.readUTF() );
+				r.carPresetType = CarPreset.Type.valueOf( is.readUTF() );
 				r.carWorldPositionMt.x = is.readFloat();
 				r.carWorldPositionMt.y = is.readFloat();
 				r.carWorldOrientRads = is.readFloat();
@@ -202,8 +198,7 @@ public class Replay {
 						os.writeInt( eventsCount );
 
 						// car data
-						os.writeUTF( carAspect.toString() );
-						os.writeUTF( carModelType.toString() );
+						os.writeUTF( carPresetType.toString() );
 						os.writeFloat( carWorldPositionMt.x );
 						os.writeFloat( carWorldPositionMt.y );
 						os.writeFloat( carWorldOrientRads );

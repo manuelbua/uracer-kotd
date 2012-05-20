@@ -27,24 +27,10 @@ public final class CarSimulator {
 		thisSign = 1f;
 		lastSign = 1f;
 
-		// precompute constants
-		// dampingThrottleFrame = (float)Math.pow( 1f - dampingThrottle, Config.Physics.PhysicsDt );
-
 		// exports
 		lateralForceFront = new Vector2();
 		lateralForceRear = new Vector2();
 	}
-
-	public void setCarDescriptor( CarDescriptor carDesc ) {
-		carDesc.set( carDesc );
-	}
-
-	// public void updateHeading( float bodyAngle ) {
-	// VMath.fromRadians( heading, AMath.normalRelativeAngle( bodyAngle ) );
-	// VMath.perp( side, heading );
-	// // System.out.println("side=" + side);
-	// // System.out.println("heading=" + heading);
-	// }
 
 	public void applyInput( CarInput input ) {
 		float maxForce = carDesc.carModel.max_force;

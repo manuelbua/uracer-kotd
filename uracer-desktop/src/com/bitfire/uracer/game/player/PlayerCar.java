@@ -8,7 +8,7 @@ import com.bitfire.uracer.configuration.Config;
 import com.bitfire.uracer.game.actors.Car;
 import com.bitfire.uracer.game.actors.CarDescriptor;
 import com.bitfire.uracer.game.actors.CarForces;
-import com.bitfire.uracer.game.actors.CarModel;
+import com.bitfire.uracer.game.actors.CarPreset;
 import com.bitfire.uracer.game.actors.CarState;
 import com.bitfire.uracer.game.actors.CarType;
 import com.bitfire.uracer.game.logic.Input;
@@ -44,14 +44,13 @@ public class PlayerCar extends Car {
 	public CarState carState = null;
 	public PlayerDriftState driftState = null;
 
-	public PlayerCar( GameWorld gameWorld, CarModel model, Aspect aspect ) {
-		super( gameWorld, CarType.PlayerCar, InputMode.InputFromPlayer, GameRendererEvent.Order.DEFAULT, model, aspect, true );
+	public PlayerCar( GameWorld gameWorld, CarPreset.Type presetType ) {
+		super( gameWorld, CarType.PlayerCar, InputMode.InputFromPlayer, GameRendererEvent.Order.DEFAULT, presetType, true );
 		carInput = new CarInput();
 		impacts = 0;
 
 		// strategy = gameWorld.scalingStrategy;
-		carDesc = new CarDescriptor();
-		carDesc.carModel.set( model );
+		carDesc = new CarDescriptor( preset.model );
 		carSim = new CarSimulator( carDesc );
 		renderer.setAlpha( 1 );
 
@@ -111,7 +110,7 @@ public class PlayerCar extends Car {
 		touchPos.set( input.getXY() );
 
 		carInput.updated = input.isTouching();
-//		Gdx.app.log( "PlayerCar", "carpos=" + carPos.toString() + ", cursor=" + touchPos.toString() );
+		// Gdx.app.log( "PlayerCar", "carpos=" + carPos.toString() + ", cursor=" + touchPos.toString() );
 
 		if( carInput.updated ) {
 
@@ -129,7 +128,7 @@ public class PlayerCar extends Car {
 			// VMath.clamp( touchPos, 0, strategy.referenceResolution.x, 0, strategy.referenceResolution.y );
 			// VMath.clamp( carPos, 0, strategy.referenceResolution.x, 0, strategy.referenceResolution.y );
 
-			carInput.throttle = touchPos.dst( carPos ) * 4 * carDesc.carModel.max_force;
+			carInput.throttle = touchPos.dst( carPos ) * 4 * preset.model.max_force;
 			carInput.steerAngle = transformSteerAngle( (float)Math.atan2( -carPos.x + touchPos.x, -carPos.y + touchPos.y ) );
 		}
 

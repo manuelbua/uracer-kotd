@@ -25,31 +25,12 @@ public abstract strictfp class Car extends Box2DEntity {
 		NoInput, InputFromPlayer, InputFromReplay
 	}
 
-	public enum Aspect {
-		// @formatter:off
-		OldSkool( "electron" ),
-		OldSkool2( "spider" ),
-		Digitized("digit"),
-		AudiTTSCoupe2011("audi-tts-coupe-2011"),
-		FordMustangShelbyGt500Coupe("ford-mustang-shelby-gt500-coupe"),
-		LamborghiniGallardoLP560("lamborghini-gallardo-lp560"),
-		;
-		// @formatter:on
-
-		public final String name;
-
-		private Aspect( String name ) {
-			this.name = name;
-		}
-	}
-
 	/* event */
 	public CarEvent event = null;
 	private boolean triggerEvents = false;
 	private static final Order ShadowsDrawingOrder = Order.MINUS_2;
 
 	protected GameWorld gameWorld;
-	protected CarModel model = new CarModel();
 	protected CarType carType;
 	protected CarRenderer renderer;
 
@@ -68,31 +49,30 @@ public abstract strictfp class Car extends Box2DEntity {
 	// the car's instant speed, in meters/sec
 	private float carInstantSpeedMtSec = 0;
 
-	private Aspect aspect = Aspect.OldSkool;
+	protected CarPreset preset;
 	protected InputMode inputMode = InputMode.NoInput;
 
-	public Car( GameWorld gameWorld, CarType carType, InputMode inputMode, GameRendererEvent.Order drawingOrder, CarModel model, Aspect aspect, boolean triggerEvents ) {
+	public Car( GameWorld gameWorld, CarType carType, InputMode inputMode, GameRendererEvent.Order drawingOrder, CarPreset.Type presetType, boolean triggerEvents ) {
 		super( gameWorld.getBox2DWorld(), drawingOrder );
-		this.aspect = aspect;
-		this.model.set( model );
+		this.preset = new CarPreset( presetType );
 		this.carType = carType;
 		this.triggerEvents = triggerEvents;
 
 		this.event = new CarEvent( this );
 		this.gameWorld = gameWorld;
-		this.renderer = new CarRenderer( model, aspect );
+		this.renderer = new CarRenderer( preset.model, preset.type );
 		this.impacts = 0;
 		this.inputMode = inputMode;
 		this.carTraveledDistance = 0;
 		this.accuDistCount = 0;
 
-		applyCarPhysics( aspect, carType, model );
+		applyCarPhysics( carType, preset.model );
 
 		// subscribe to another renderqueue to render shadows/AO early
 		GameEvents.gameRenderer.addListener( this, GameRendererEvent.Type.BatchBeforeMeshes, ShadowsDrawingOrder );
 
-		Gdx.app.log( getClass().getSimpleName(), "Input mode is " + this.inputMode.toString() );
-		Gdx.app.log( getClass().getSimpleName(), "CarModel is " + this.model.type.toString() );
+		Gdx.app.log( getClass().getSimpleName(), "Input mode is " + inputMode.toString() );
+		Gdx.app.log( getClass().getSimpleName(), "CarModel is " + preset.model.presetType.toString() );
 	}
 
 	@Override
@@ -103,7 +83,7 @@ public abstract strictfp class Car extends Box2DEntity {
 		event = null;
 	}
 
-	private void applyCarPhysics( Aspect aspect, CarType carType, CarModel carModel ) {
+	private void applyCarPhysics( CarType carType, CarModel carModel ) {
 		if( body != null ) {
 			this.box2dWorld.destroyBody( body );
 		}
@@ -118,14 +98,11 @@ public abstract strictfp class Car extends Box2DEntity {
 		body.setBullet( true );
 		body.setUserData( this );
 
-		// String shapeName = Config.ShapesStore + "electron" /* aspect.name */+ ".shape";
-		// String shapeRef = Config.ShapesRefs + "electron" /* aspect.name */+ ".png";
-
 		// set physical properties and apply shape
 		FixtureDef fd = new FixtureDef();
-		fd.density = model.density;
-		fd.friction = model.friction;
-		fd.restitution = model.restitution;
+		fd.density = carModel.density;
+		fd.friction = carModel.friction;
+		fd.restitution = carModel.restitution;
 
 		fd.filter.groupIndex = (short)((carType == CarType.PlayerCar) ? CollisionFilters.GroupPlayer : CollisionFilters.GroupReplay);
 		fd.filter.categoryBits = (short)((carType == CarType.PlayerCar) ? CollisionFilters.CategoryPlayer : CollisionFilters.CategoryReplay);
@@ -137,47 +114,22 @@ public abstract strictfp class Car extends Box2DEntity {
 
 		BodyEditorLoader loader = new BodyEditorLoader( Gdx.files.internal( "data/cars/car-shapes" ) );
 
-		// the scaling factor should be 2, but in night mode is cool to see light bleeding across the edges of
-		// the car, fading away as soon as the physical body is reached
-		//
 		// WARNING! Be sure to set a value and use it then, every time this changes replays will NOT be compatible!
 
 		// electron is made for a model2 car, w=2.5, h=3.5, h/w=1.4, w:h=1:1.4
 		float scaleX = carModel.width / 2.5f;
 		float scaleY = carModel.length / 3.5f;
 
+		// the scaling factor should be 2, but in night mode is cool to see light bleeding across the edges of
+		// the car, fading away as soon as the physical body is reached
 		loader.attachFixture( body, "electron.png", fd, 1.85f, scaleX, scaleY );
 		ArrayList<Fixture> fs = body.getFixtureList();
 		for( Fixture f : fs ) {
 			f.setUserData( carType );
 		}
 
-		// dbg
-		// FixtureDef fd = new FixtureDef();
-		// Vector2 p = new Vector2();
-		// CircleShape shape = new CircleShape();
-		// shape.setPosition( p.set( 0, 0.75f ) );
-		// shape.setRadius( 2.5f / 2f );
-		// fd.shape = shape;
-		//
-		// fd.density = 1;
-		// fd.friction = 2f;
-		// fd.restitution = 0.25f;
-		// fd.filter.groupIndex = (short)((carType == CarType.PlayerCar) ? CollisionFilters.GroupPlayer :
-		// CollisionFilters.GroupReplay);
-		// fd.filter.categoryBits = (short)((carType == CarType.PlayerCar) ? CollisionFilters.CategoryPlayer :
-		// CollisionFilters.CategoryReplay);
-		// fd.filter.maskBits = (short)((carType == CarType.PlayerCar) ? CollisionFilters.MaskPlayer :
-		// CollisionFilters.MaskReplay);
-		// body.createFixture( fd ).setUserData( carType );
-		// shape.setPosition( p.set( 0, -0.75f ) );
-		// body.createFixture( fd ).setUserData( carType );
-		// dbg
-
 		MassData mdata = body.getMassData();
 		mdata.center.set( 0, 0 );
-		// mdata.I = 9.654258f;
-		// mdata.mass = 7.3938737f;
 		body.setMassData( mdata );
 	}
 
@@ -187,12 +139,16 @@ public abstract strictfp class Car extends Box2DEntity {
 	 * @param forces computed forces shall be returned by filling the passed data structure. */
 	protected abstract void onComputeCarForces( CarForces forces );
 
-	public Aspect getAspect() {
-		return aspect;
+	public CarPreset.Type getPresetType() {
+		return preset.type;
+	}
+
+	public CarPreset getCarPreset() {
+		return preset;
 	}
 
 	public CarModel getCarModel() {
-		return model;
+		return preset.model;
 	}
 
 	public InputMode getInputMode() {
@@ -203,21 +159,47 @@ public abstract strictfp class Car extends Box2DEntity {
 		return renderer;
 	}
 
-	public void setAspect( Aspect aspect ) {
-		if( this.aspect != aspect ) {
-			this.aspect = aspect;
-			applyCarPhysics( aspect, carType, model );
-			renderer.setAspect( aspect, model );
-			Gdx.app.log( this.getClass().getSimpleName(), "Switched to car aspect \"" + aspect.toString() + "\"" );
-		}
-	}
+	// public void setAspect( Aspect aspect ) {
+	// if( this.aspect != aspect ) {
+	// this.aspect = aspect;
+	// renderer.setAspect( aspect, model );
+	// Gdx.app.log( this.getClass().getSimpleName(), "Switched to car aspect \"" + aspect.toString() + "\"" );
+	// } else {
+	// Gdx.app.log( this.getClass().getSimpleName(), "Aspect unchanged, not switching to same Aspect \"" +
+	// aspect.toString() + "\"" );
+	// }
+	// }
 
-	public void setCarModel( CarModel.Type modelType ) {
-		if( model.type != modelType ) {
-			model.toModelType( modelType );
-			applyCarPhysics( aspect, carType, model );
-			renderer.setAspect( aspect, model );
-			Gdx.app.log( this.getClass().getSimpleName(), "Switched to car model \"" + model.type.toString() + "\"" );
+	// public void setModelType( CarPreset.Type type ) {
+	// if( model.type != type ) {
+	// model.toModelType( type );
+	// applyCarPhysics( carType, model );
+	// renderer.setAspect( aspect, model );
+	// Gdx.app.log( this.getClass().getSimpleName(), "Switched to car model \"" + model.type.toString() + "\"" );
+	// } else {
+	// Gdx.app.log( this.getClass().getSimpleName(), "Model unchanged, not switching to same CarModel \"" +
+	// model.type.toString() + "\"" );
+	// }
+	// }
+
+	// // TODO car customization, uracer2?
+	// public void setModel( CarModel carModel ) {
+	// if( model != null ) {
+	// model.set( carModel );
+	// applyCarPhysics( carType, model );
+	// renderer.setAspect( aspect, model );
+	// Gdx.app.log( this.getClass().getSimpleName(), "Switched to car model \"" + model.type.toString() + "\"" );
+	// }
+	// }
+
+	public void setPreset( CarPreset.Type presetType ) {
+		if( preset.type != presetType ) {
+			preset.setTo( presetType );
+			applyCarPhysics( carType, preset.model );
+			renderer.setAspect( preset.model, preset.type );
+			Gdx.app.log( this.getClass().getSimpleName(), "Switched to car model \"" + preset.model.presetType.toString() + "\"" );
+		} else {
+			Gdx.app.log( this.getClass().getSimpleName(), "Preset unchanged, not switching to same type \"" + preset.type.toString() + "\"" );
 		}
 	}
 

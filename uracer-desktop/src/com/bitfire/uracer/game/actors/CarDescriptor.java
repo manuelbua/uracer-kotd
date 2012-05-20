@@ -10,7 +10,7 @@ import com.badlogic.gdx.math.Vector2;
 
 public final class CarDescriptor {
 	// physical model data
-	public CarModel carModel = new CarModel();
+	public CarModel carModel;
 
 	// results
 
@@ -26,40 +26,13 @@ public final class CarDescriptor {
 	public float throttle; // amount of throttle (input)
 	public float brake; // amount of braking (input)
 
-	// internally computed
-//	public float angularOrientation;
-
-	public CarDescriptor() {
+	public CarDescriptor( CarModel model ) {
 		angularvelocity = 0;
 		steerangle = 0;
 		throttle = 0;
 		brake = 0;
-//		angularOrientation = 0;
 		position_wc.set( 0, 0 );
 		velocity_wc.set( 0, 0 );
+		this.carModel = model;
 	}
-
-	public CarDescriptor( CarDescriptor other ) {
-		set( other );
-	}
-
-	public static CarDescriptor create() {
-		return new CarDescriptor();
-	}
-
-	public void set( CarDescriptor desc ) {
-		this.carModel.set( desc.carModel );
-
-		this.angularvelocity = desc.angularvelocity;
-		this.steerangle = desc.steerangle;
-		this.throttle = desc.throttle;
-		this.brake = desc.brake;
-//		this.angularOrientation = desc.angularOrientation;
-		this.position_wc.set( desc.position_wc );
-		this.velocity_wc.set( desc.velocity_wc );
-	}
-
-//	public CarDescriptor newCopy() {
-//		return new CarDescriptor( this );
-//	}
 }

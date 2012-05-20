@@ -1,29 +1,13 @@
 package com.bitfire.uracer.game.actors;
 
+import com.bitfire.uracer.game.actors.CarPreset.Type;
+
 /** Represents the physical car model on which we rely to compute
  * the forces exerted by the simulation.
  *
  * @author manuel */
 public final class CarModel {
-	public enum Type {
-		// @formatter:off
-		ModelDefault( "model-default" ),
-		Model1( "model-1" ),
-		Model2( "model-2" ),
-		FordMustangShelbyGt500Coupe( "FordMustangShelbyGt500Coupe" ),
-		LamborghiniGallardoLP560( "LamborghiniGallardoLP560" ),
-		AudiTTSCoupe2011( "AudiTTSCoupe2011" ),
-		;
-		// @formatter:on
-
-		public final String modelName;
-
-		private Type( String modelName ) {
-			this.modelName = modelName;
-		}
-	}
-
-	public Type type;
+	public CarPreset.Type presetType;
 
 	public float wheelbase; // wheelbase in m
 	public float b; // in m, distance from CG to front axle
@@ -55,16 +39,8 @@ public final class CarModel {
 		toDefault();
 	}
 
-	public CarModel( CarModel other ) {
-		set( other );
-	}
-
-	public CarModel newCopy() {
-		return new CarModel( this );
-	}
-
 	public void set( CarModel other ) {
-		this.type = other.type;
+		this.presetType = other.presetType;
 		this.wheelbase = other.wheelbase;
 		this.b = other.b;
 		this.c = other.c;
@@ -89,30 +65,9 @@ public final class CarModel {
 		this.weight = other.weight;
 	}
 
-	public void toModelType( CarModel.Type type ) {
-		switch( type ) {
-		case Model1:
-			this.toModel1();
-			break;
-		case Model2:
-			this.toModel2();
-			break;
-		case FordMustangShelbyGt500Coupe:
-			this.toFordMustangShelbyGt500Coupe();
-			break;
-		case AudiTTSCoupe2011:
-			this.toAudiTTSCoupe2011();
-			break;
-		default:
-		case ModelDefault:
-			this.toDefault();
-			break;
-		}
-	}
-
 	// default car model
 	public CarModel toDefault() {
-		type = Type.ModelDefault;
+		presetType = Type.Default;
 
 		// physical model
 		// h = 1f; // m
@@ -153,7 +108,7 @@ public final class CarModel {
 
 	public CarModel toModel1() {
 		toDefault();
-		type = Type.Model1;
+		presetType = Type.Model1;
 
 		// physical model
 		b = 1.f; // m
@@ -180,7 +135,7 @@ public final class CarModel {
 
 	public CarModel toModel2() {
 		toDefault();
-		type = Type.Model2;
+		presetType = Type.Model2;
 
 		// physical model
 		// h = .85f; // m
@@ -203,105 +158,6 @@ public final class CarModel {
 		density = 1f;
 		friction = 4f;
 		restitution = 0.25f;
-
-		return this;
-	}
-
-	public CarModel toFordMustangShelbyGt500Coupe() {
-		toModel2();
-		type = Type.FordMustangShelbyGt500Coupe;
-
-		// physical model
-		// h = .85f; // m
-		b = 1.f; // m
-		c = 1.f; // m
-
-		width = 2.5f; // m
-		length = 4.3f; // m (must be > wheelbase)
-
-		// physical behavior
-		drag = 15.f; // factor for air resistance (drag)
-		resistance = 30.f; // factor for rolling resistance
-
-		stiffness_rear = -4.4f; // rear cornering stiffness
-		stiffness_front = -4.2f; // front cornering stiffness
-
-		// TODO think, cars for drift (max_grip = 3/4/5f), other cars (max_grip = 6/7/8f)
-		max_grip = 6f; // maximum (normalised) friction force, =diameter of friction circle
-
-		max_speed = 35.f;
-		max_force = 300.f;
-
-		// mostly for collision response
-		density = 1f;
-		friction = 4f;
-		restitution = 0.25f;
-
-		return this;
-	}
-
-	public CarModel toLamborghiniGallardoLP560() {
-		toModel2();
-		type = Type.LamborghiniGallardoLP560;
-
-		// physical model
-		// h = .85f; // m
-		b = 1.f; // m
-		c = 1.f; // m
-
-		width = 2.5f; // m
-		length = 4.3f; // m (must be > wheelbase)
-
-		// physical behavior
-		drag = 15.f; // factor for air resistance (drag)
-		resistance = 30.f; // factor for rolling resistance
-
-		stiffness_rear = -4.4f; // rear cornering stiffness
-		stiffness_front = -4.2f; // front cornering stiffness
-
-		// TODO think, cars for drift (max_grip = 3/4/5f), other cars (max_grip = 6/7/8f)
-		max_grip = 6f; // maximum (normalised) friction force, =diameter of friction circle
-
-		max_speed = 35.f;
-		max_force = 300.f;
-
-		// mostly for collision response
-		density = 1f;
-		friction = 2f;
-		restitution = 0.3f;
-
-		return this;
-	}
-
-	public CarModel toAudiTTSCoupe2011() {
-		toModel2();
-		type = Type.AudiTTSCoupe2011;
-
-		// physical model
-		// h = .85f; // m
-		b = 1.f; // m
-		c = 1.f; // m
-
-		width = 2.5f; // m
-		length = 4.5f; // m (must be > wheelbase)
-
-		// physical behavior
-		drag = 15.f; // factor for air resistance (drag)
-		resistance = 30.f; // factor for rolling resistance
-
-		stiffness_rear = -4.4f; // rear cornering stiffness
-		stiffness_front = -4.2f; // front cornering stiffness
-
-		// TODO think, cars for drift (max_grip = 3/4/5f), other cars (max_grip = 6/7/8f)
-		max_grip = 5f; // maximum (normalised) friction force, =diameter of friction circle
-
-		max_speed = 35.f;
-		max_force = 300.f;
-
-		// mostly for collision response
-		density = 1f;
-		friction = 2f;
-		restitution = 0.3f;
 
 		return this;
 	}

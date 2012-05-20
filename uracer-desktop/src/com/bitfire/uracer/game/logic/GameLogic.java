@@ -16,9 +16,8 @@ import com.bitfire.uracer.configuration.Config;
 import com.bitfire.uracer.game.DebugHelper;
 import com.bitfire.uracer.game.GameplaySettings;
 import com.bitfire.uracer.game.actors.Car;
-import com.bitfire.uracer.game.actors.Car.Aspect;
 import com.bitfire.uracer.game.actors.CarEvent;
-import com.bitfire.uracer.game.actors.CarModel;
+import com.bitfire.uracer.game.actors.CarPreset;
 import com.bitfire.uracer.game.actors.CarState;
 import com.bitfire.uracer.game.actors.CarStateEvent;
 import com.bitfire.uracer.game.actors.GhostCar;
@@ -127,7 +126,7 @@ public class GameLogic implements CarEvent.Listener, CarStateEvent.Listener, Pla
 		playerTasks = new PlayerTasks( gameTasksManager, scalingStrategy );
 
 		lapManager = new LapManager( gameWorld, settings );
-		ghostCar = CarFactory.createGhost( gameWorld, (new CarModel()).toDefault(), Aspect.OldSkool );
+		ghostCar = CarFactory.createGhost( gameWorld, CarPreset.Type.Default );
 
 		// messager.show( "COOL STUFF!", 60, Message.Type.Information, MessagePosition.Bottom, MessageSize.Big );
 	}
@@ -151,13 +150,13 @@ public class GameLogic implements CarEvent.Listener, CarStateEvent.Listener, Pla
 
 	/** Sets the player and transfer ownership to the GameLogic object.
 	 * Specifying null will result in the current player being removed, if any. */
-	public void setPlayer( CarModel model, Aspect aspect ) {
+	public void setPlayer( CarPreset.Type presetType ) {
 		if( hasPlayer() ) {
 			Gdx.app.log( "GameLogic", "A player already exists." );
 			return;
 		}
 
-		playerCar = CarFactory.createPlayer( gameWorld, model, aspect );
+		playerCar = CarFactory.createPlayer( gameWorld, presetType );
 
 		configurePlayer( gameWorld, gameplaySettings, gameTasksManager.input, playerCar );
 		Gdx.app.log( "GameLogic", "Player configured" );
@@ -369,7 +368,7 @@ public class GameLogic implements CarEvent.Listener, CarStateEvent.Listener, Pla
 
 			// add player
 
-			setPlayer( new CarModel().toModel1(), Aspect.OldSkool );
+			setPlayer( CarPreset.Type.FordMustangShelbyGt500Coupe );
 
 		} else if( input.isPressed( Keys.W ) ) {
 

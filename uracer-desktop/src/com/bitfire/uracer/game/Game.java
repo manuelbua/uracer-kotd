@@ -5,8 +5,7 @@ import com.badlogic.gdx.utils.Disposable;
 import com.bitfire.uracer.ScalingStrategy;
 import com.bitfire.uracer.URacer;
 import com.bitfire.uracer.configuration.Config;
-import com.bitfire.uracer.game.actors.Car.Aspect;
-import com.bitfire.uracer.game.actors.CarModel;
+import com.bitfire.uracer.game.actors.CarPreset;
 import com.bitfire.uracer.game.logic.GameLogic;
 import com.bitfire.uracer.game.logic.replaying.Replay;
 import com.bitfire.uracer.game.rendering.GameRenderer;
@@ -63,8 +62,8 @@ public class Game implements Disposable {
 		gameLogic.dispose();
 	}
 
-	public void setPlayer( CarModel model, Aspect aspect ) {
-		gameLogic.setPlayer( model, aspect );
+	public void setPlayer( CarPreset.Type presetType ) {
+		gameLogic.setPlayer( presetType );
 		if( Config.Debug.UseDebugHelper ) {
 			DebugHelper.setPlayer( gameLogic.getPlayer() );
 		}

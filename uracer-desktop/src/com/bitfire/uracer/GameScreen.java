@@ -2,8 +2,7 @@ package com.bitfire.uracer;
 
 import com.bitfire.uracer.game.Game;
 import com.bitfire.uracer.game.GameDifficulty;
-import com.bitfire.uracer.game.actors.Car.Aspect;
-import com.bitfire.uracer.game.actors.CarModel;
+import com.bitfire.uracer.game.actors.CarPreset.Type;
 import com.bitfire.uracer.game.logic.replaying.Replay;
 
 public class GameScreen extends Screen {
@@ -15,12 +14,12 @@ public class GameScreen extends Screen {
 
 	@Override
 	public void init( ScalingStrategy scalingStrategy ) {
-		String levelName = "tutorial-4";
+		String levelName = "tutorial-3";
 
 		game = new Game( levelName, scalingStrategy, GameDifficulty.Hard );
 
 		// simulate the player choosing a car type
-		game.setPlayer( new CarModel().toAudiTTSCoupe2011(), Aspect.AudiTTSCoupe2011 );
+		game.setPlayer( Type.FordMustangShelbyGt500Coupe );
 
 		// simulate the player choosing local playing
 		Replay r = Replay.loadLocal( levelName );

@@ -19,8 +19,8 @@ public final class GhostCar extends Car {
 
 	// public CarState carState = null;
 
-	public GhostCar( GameWorld gameWorld, CarModel model, Aspect aspect ) {
-		super( gameWorld, CarType.ReplayCar, InputMode.InputFromReplay, GameRendererEvent.Order.MINUS_1, model, aspect, false );
+	public GhostCar( GameWorld gameWorld, CarPreset.Type presetType ) {
+		super( gameWorld, CarType.ReplayCar, InputMode.InputFromReplay, GameRendererEvent.Order.MINUS_1, presetType, false );
 		indexPlay = 0;
 		hasReplay = false;
 		replay = null;
@@ -41,8 +41,7 @@ public final class GhostCar extends Car {
 		resetPhysics();
 
 		if( hasReplay ) {
-			setAspect( replay.carAspect );
-			setCarModel( replay.carModelType );
+			setPreset( replay.carPresetType );
 			renderer.setAlpha( 0 );
 
 			// System.out.println( "Replaying " + replay.id );
