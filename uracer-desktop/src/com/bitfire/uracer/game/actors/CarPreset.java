@@ -63,8 +63,6 @@ public final class CarPreset {
 			model.toModel2();
 			model.width = 2.5f;
 			model.length = 4.3f;
-			model.friction = 8f;
-			model.restitution = 0.2f;
 			model.max_force = 400f;
 			model.max_grip = 5f;
 			break;
@@ -73,32 +71,24 @@ public final class CarPreset {
 			model.toModel2();
 			model.width = 2.5f;
 			model.length = 4.5f;
-			model.friction = 2f;
-			model.restitution = 0.3f;
 			break;
 
 		case SportCar:
 			model.toModel2();
 			model.width = 2.5f;
 			model.length = 4.3f;
-			model.friction = 2f;
-			model.restitution = 0.3f;
 			break;
 
 		case SportMasek:
 			model.toModel2();
 			model.width = 2.5f;
 			model.length = 3.85f;
-			model.friction = 2f;
-			model.restitution = 0.3f;
 			break;
 
 		case SportStella:
 			model.toModel2();
 			model.width = 2.5f;
 			model.length = 4.3f;
-			model.friction = 2f;
-			model.restitution = 0.3f;
 			break;
 
 		default:
