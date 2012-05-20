@@ -13,7 +13,7 @@ public final class Vignetting extends Filter<Vignetting> {
 	private Texture texLut;
 	private boolean dolut;
 	private float lutintensity;
-	private int lutindex;
+	private float lutindex;
 	private float centerX, centerY;
 
 	public enum Param implements Parameter {
@@ -109,7 +109,7 @@ public final class Vignetting extends Filter<Vignetting> {
 	public void setLutIndex( int index ) {
 		lutindex = index;
 		if(dolut) {
-			setParam( Param.LutIndex, index);
+			setParam( Param.LutIndex, lutindex);
 		}
 	}
 

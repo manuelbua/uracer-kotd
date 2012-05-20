@@ -32,23 +32,29 @@ public class AggressiveCold implements Animator {
 
 	@Override
 	public final void reset() {
-		if( Config.PostProcessing.EnableBloom ) {
-			float threshold = ((gameWorld.isNightMode() && !Config.Graphics.DumbNightMode) ? 0.2f : 0.45f);
-			Bloom.Settings bloomSettings = new Bloom.Settings( "subtle", Config.PostProcessing.BlurType, 1, 1.5f, threshold, 1f, 0.5f, 1f, 1.5f );
-			bloom.setSettings( bloomSettings );
-		}
+		if( Config.PostProcessing.Enabled ) {
+			if( Config.PostProcessing.EnableBloom ) {
+				float threshold = ((gameWorld.isNightMode() && !Config.Graphics.DumbNightMode) ? 0.2f : 0.45f);
+				Bloom.Settings bloomSettings = new Bloom.Settings( "subtle", Config.PostProcessing.BlurType, 1, 1.5f, threshold, 1f, 0.5f, 1f, 1.5f );
+				bloom.setSettings( bloomSettings );
+			}
 
-		if( Config.PostProcessing.EnableVignetting ) {
-			vignette.setCoords( 0.8f, 0.45f );
-			vignette.setCenter( Gdx.graphics.getWidth() / 2, Gdx.graphics.getHeight() / 2 );
-			vignette.setLut( Art.postXpro );
-			vignette.setEnabled( true );
+			if( Config.PostProcessing.EnableVignetting ) {
+				vignette.setCoords( 0.8f, 0.45f );
+				vignette.setCenter( Gdx.graphics.getWidth() / 2, Gdx.graphics.getHeight() / 2 );
+				vignette.setLut( Art.postXpro );
+				vignette.setEnabled( true );
+			}
 		}
 	}
 
 	@Override
 	public void update( PlayerCar player ) {
 		if( player == null ) {
+			return;
+		}
+
+		if( !Config.PostProcessing.Enabled ) {
 			return;
 		}
 

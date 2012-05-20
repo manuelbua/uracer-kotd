@@ -43,13 +43,15 @@ varying vec2 v_texCoords;
 #ifdef ENABLE_PIXEL_LUT
 	uniform PRECISION sampler2D u_texture1;	// WTF with TEXTURE_1D not supported in libgdx?
 	uniform float LutIntensity;
-	uniform int LutIndex;
+	uniform float LutIndex;
 
 	vec3 do_lookup( vec3 color ) {
 		vec3 curveColor;
-		curveColor.r = texture2D( u_texture1, vec2(color.r, (float)LutIndex * 0.05 + 0.025) ).r;
-		curveColor.g = texture2D( u_texture1, vec2(color.g, (float)LutIndex * 0.05 + 0.025) ).g;
-		curveColor.b = texture2D( u_texture1, vec2(color.b, (float)LutIndex * 0.05 + 0.025) ).b;
+
+		// for a texture with an height of 20px
+		curveColor.r = texture2D( u_texture1, vec2(color.r, LutIndex * 0.05 + 0.025) ).r;
+		curveColor.g = texture2D( u_texture1, vec2(color.g, LutIndex * 0.05 + 0.025) ).g;
+		curveColor.b = texture2D( u_texture1, vec2(color.b, LutIndex * 0.05 + 0.025) ).b;
 
 		return mix(color,curveColor,LutIntensity);
 	}

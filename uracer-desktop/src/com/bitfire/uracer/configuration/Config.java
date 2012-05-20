@@ -35,7 +35,7 @@ public final class Config {
 			int w = Gdx.graphics.getWidth();
 
 			// post-processor
-			Enabled = true;
+			Enabled = false;
 
 			// post-processor effects
 			EnableVignetting = true;
