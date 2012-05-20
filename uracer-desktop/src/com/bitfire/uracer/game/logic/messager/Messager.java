@@ -9,12 +9,13 @@ import com.bitfire.uracer.game.logic.GameTask;
 import com.bitfire.uracer.game.logic.messager.Message.Position;
 import com.bitfire.uracer.game.logic.messager.Message.Size;
 import com.bitfire.uracer.game.rendering.GameRendererEvent;
+import com.bitfire.uracer.game.rendering.GameRendererEvent.Order;
 import com.bitfire.uracer.game.rendering.GameRendererEvent.Type;
 
 public class Messager extends GameTask {
 	private final GameRendererEvent.Listener gameRendererEvent = new GameRendererEvent.Listener() {
 		@Override
-		public void gameRendererEvent( Type type ) {
+		public void gameRendererEvent( Type type, Order order ) {
 			SpriteBatch batch = GameEvents.gameRenderer.batch;
 
 			for( Position group : Position.values() ) {

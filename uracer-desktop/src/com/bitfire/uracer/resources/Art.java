@@ -5,6 +5,7 @@ import com.badlogic.gdx.graphics.Pixmap;
 import com.badlogic.gdx.graphics.Pixmap.Format;
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.Texture.TextureFilter;
+import com.badlogic.gdx.graphics.Texture.TextureWrap;
 import com.badlogic.gdx.graphics.g2d.BitmapFont;
 import com.badlogic.gdx.graphics.g2d.TextureAtlas;
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
@@ -34,14 +35,17 @@ public final class Art {
 	public static final int DebugFontHeight = 6;
 	public static BitmapFont fontCurseYR, fontCurseR, fontCurseG;
 	public static BitmapFont fontCurseYRbig, fontCurseRbig, fontCurseGbig;
-
 	private static TextureAtlas fontAtlas;
+
+	// post-processor
+	public static Texture postXpro;
 
 	public static void init( float invZoomFactor ) {
 		loadFonts( invZoomFactor );
 		loadCarGraphics();
 		loadMeshesGraphics( Config.Graphics.EnableMipMapping );
 		loadFrictionMaps();
+		loadPostProcessorMaps();
 	}
 
 	public static void dispose() {
@@ -49,6 +53,20 @@ public final class Art {
 		disposeCarGraphics();
 		disposeMeshesGraphics();
 		disposeFrictionMaps();
+		disposePostProcessorMaps();
+	}
+
+	//
+	// post processor maps
+	//
+
+	private static void loadPostProcessorMaps() {
+		postXpro = newTexture( "data/base/xpro-lut.png", false );
+		postXpro.setWrap( TextureWrap.ClampToEdge, TextureWrap.ClampToEdge );
+	}
+
+	private static void disposePostProcessorMaps() {
+		postXpro.dispose();
 	}
 
 	//

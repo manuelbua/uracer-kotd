@@ -20,14 +20,14 @@ public class GameRendererEvent extends Event<GameRenderer> {
 	public float timeAliasingFactor;
 
 	public interface Listener extends EventListener {
-		void gameRendererEvent( Type type );
+		void gameRendererEvent( Type type, Order order );
 	}
 
 	private class Notifier extends EventNotifier<Listener> implements Listener {
 		@Override
-		public void gameRendererEvent( Type type ) {
+		public void gameRendererEvent( Type type, Order order ) {
 			for( Listener listener : listeners ) {
-				listener.gameRendererEvent( type );
+				listener.gameRendererEvent( type, order );
 			}
 		}
 	};
@@ -70,7 +70,7 @@ public class GameRendererEvent extends Event<GameRenderer> {
 	public void trigger( GameRenderer source, Type type ) {
 		this.source = source;
 		for( Order order : Order.values() ) {
-			notifiers[type.ordinal()][order.ordinal()].gameRendererEvent( type );
+			notifiers[type.ordinal()][order.ordinal()].gameRendererEvent( type, order );
 		}
 	}
 

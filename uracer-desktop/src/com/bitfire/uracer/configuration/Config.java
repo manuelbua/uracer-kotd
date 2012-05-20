@@ -39,7 +39,7 @@ public final class Config {
 
 			// post-processor effects
 			EnableVignetting = true;
-			EnableBloom = false;
+			EnableBloom = true;
 			EnableZoomBlur = true;
 
 			RttFboWidth = (int)(Gdx.graphics.getWidth() * RttRatio);
@@ -120,7 +120,7 @@ public final class Config {
 			PhysicsDt = 1.0f / PhysicsTimestepHz;
 			PhysicsTimeMultiplier = 1f;
 
-			Gdx.app.log( "Config", "Physics at " + PhysicsTimestepHz + "Hz (dt=" + NumberString.format(PhysicsDt) + ")" );
+			Gdx.app.log( "Config", "Physics at " + PhysicsTimestepHz + "Hz (dt=" + NumberString.formatLong(PhysicsDt) + ")" );
 		}
 
 		private Physics() {

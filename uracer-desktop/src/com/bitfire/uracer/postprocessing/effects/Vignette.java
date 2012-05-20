@@ -1,5 +1,6 @@
 package com.bitfire.uracer.postprocessing.effects;
 
+import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.glutils.FrameBuffer;
 import com.bitfire.uracer.postprocessing.PostProcessorEffect;
 import com.bitfire.uracer.postprocessing.filters.Vignetting;
@@ -26,7 +27,6 @@ public class Vignette extends PostProcessorEffect {
 		} else if( intensity != 0 && !isEnabled() ) {
 			setEnabled( true );
 		}
-
 	}
 
 	public void setCoords( float x, float y ) {
@@ -47,6 +47,22 @@ public class Vignette extends PostProcessorEffect {
 
 	public void setSaturationMul( float saturationMul ) {
 		vignetting.setSaturationMul( saturationMul );
+	}
+
+	public void setLut( Texture texture ) {
+		vignetting.setLut( texture );
+	}
+
+	public void setLutIntensity( float value ) {
+		vignetting.setLutIntensity( value );
+	}
+
+	public void setLutIndex( int value ) {
+		vignetting.setLutIndex( value );
+	}
+
+	public void setCenter(float x, float y) {
+		vignetting.setCenter( x, y );
 	}
 
 	@Override

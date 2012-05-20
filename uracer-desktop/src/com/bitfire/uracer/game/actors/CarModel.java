@@ -6,7 +6,15 @@ package com.bitfire.uracer.game.actors;
  * @author manuel */
 public final class CarModel {
 	public enum Type {
-		ModelDefault( "model-default" ), Model1( "model-1" ), Model2( "model-2" ), Model3( "model-3" ), ModelBlack( "model-black" );
+		// @formatter:off
+		ModelDefault( "model-default" ),
+		Model1( "model-1" ),
+		Model2( "model-2" ),
+		FordMustangShelbyGt500Coupe( "FordMustangShelbyGt500Coupe" ),
+		LamborghiniGallardoLP560( "LamborghiniGallardoLP560" ),
+		AudiTTSCoupe2011( "AudiTTSCoupe2011" ),
+		;
+		// @formatter:on
 
 		public final String modelName;
 
@@ -51,22 +59,6 @@ public final class CarModel {
 		set( other );
 	}
 
-	public static CarModel fromType( Type type ) {
-		switch( type ) {
-		case Model1:
-			return (new CarModel()).toModel1();
-		case Model2:
-			return (new CarModel()).toModel2();
-		case Model3:
-			return (new CarModel()).toModel3();
-		case ModelBlack:
-			return (new CarModel()).toBlackCar();
-		default:
-		case ModelDefault:
-			return (new CarModel()).toDefault();
-		}
-	}
-
 	public CarModel newCopy() {
 		return new CarModel( this );
 	}
@@ -105,11 +97,11 @@ public final class CarModel {
 		case Model2:
 			this.toModel2();
 			break;
-		case Model3:
-			this.toModel3();
+		case FordMustangShelbyGt500Coupe:
+			this.toFordMustangShelbyGt500Coupe();
 			break;
-		case ModelBlack:
-			this.toBlackCar();
+		case AudiTTSCoupe2011:
+			this.toAudiTTSCoupe2011();
 			break;
 		default:
 		case ModelDefault:
@@ -215,48 +207,101 @@ public final class CarModel {
 		return this;
 	}
 
-	public CarModel toModel3() {
+	public CarModel toFordMustangShelbyGt500Coupe() {
 		toModel2();
-		type = Type.Model3;
+		type = Type.FordMustangShelbyGt500Coupe;
 
 		// physical model
 		// h = .85f; // m
 		b = 1.f; // m
 		c = 1.f; // m
 
-		width = 2.25f; // m
-		length = 3.5f; // m (must be > wheelbase)
+		width = 2.5f; // m
+		length = 4.3f; // m (must be > wheelbase)
 
 		// physical behavior
-		drag = 20.f; // factor for air resistance (drag)
+		drag = 15.f; // factor for air resistance (drag)
 		resistance = 30.f; // factor for rolling resistance
 
-		stiffness_rear = -4.6f; // rear cornering stiffness
-		stiffness_front = -4.4f; // front cornering stiffness
+		stiffness_rear = -4.4f; // rear cornering stiffness
+		stiffness_front = -4.2f; // front cornering stiffness
 
 		// TODO think, cars for drift (max_grip = 3/4/5f), other cars (max_grip = 6/7/8f)
-		max_grip = 7f; // maximum (normalised) friction force, =diameter of friction circle
+		max_grip = 6f; // maximum (normalised) friction force, =diameter of friction circle
 
-		max_speed = 40.f;
-		max_force = 400.f;
+		max_speed = 35.f;
+		max_force = 300.f;
 
 		// mostly for collision response
 		density = 1f;
-		friction = 8.02f;
-		restitution = 0f;
+		friction = 4f;
+		restitution = 0.25f;
 
 		return this;
 	}
 
-	public CarModel toBlackCar() {
-		toModel1();
-		type = Type.ModelBlack;
+	public CarModel toLamborghiniGallardoLP560() {
+		toModel2();
+		type = Type.LamborghiniGallardoLP560;
 
-		width = 3.1f; // m
+		// physical model
+		// h = .85f; // m
+		b = 1.f; // m
+		c = 1.f; // m
+
+		width = 2.5f; // m
+		length = 4.3f; // m (must be > wheelbase)
+
+		// physical behavior
+		drag = 15.f; // factor for air resistance (drag)
+		resistance = 30.f; // factor for rolling resistance
+
+		stiffness_rear = -4.4f; // rear cornering stiffness
+		stiffness_front = -4.2f; // front cornering stiffness
+
+		// TODO think, cars for drift (max_grip = 3/4/5f), other cars (max_grip = 6/7/8f)
+		max_grip = 6f; // maximum (normalised) friction force, =diameter of friction circle
+
+		max_speed = 35.f;
+		max_force = 300.f;
+
+		// mostly for collision response
+		density = 1f;
+		friction = 2f;
+		restitution = 0.3f;
+
+		return this;
+	}
+
+	public CarModel toAudiTTSCoupe2011() {
+		toModel2();
+		type = Type.AudiTTSCoupe2011;
+
+		// physical model
+		// h = .85f; // m
+		b = 1.f; // m
+		c = 1.f; // m
+
+		width = 2.5f; // m
 		length = 4.5f; // m (must be > wheelbase)
-		max_grip = 10f;
-		stiffness_rear = -4.7f; // front cornering stiffness
-		stiffness_front = -4.7f; // rear cornering stiffness
+
+		// physical behavior
+		drag = 15.f; // factor for air resistance (drag)
+		resistance = 30.f; // factor for rolling resistance
+
+		stiffness_rear = -4.4f; // rear cornering stiffness
+		stiffness_front = -4.2f; // front cornering stiffness
+
+		// TODO think, cars for drift (max_grip = 3/4/5f), other cars (max_grip = 6/7/8f)
+		max_grip = 5f; // maximum (normalised) friction force, =diameter of friction circle
+
+		max_speed = 35.f;
+		max_force = 300.f;
+
+		// mostly for collision response
+		density = 1f;
+		friction = 2f;
+		restitution = 0.3f;
 
 		return this;
 	}

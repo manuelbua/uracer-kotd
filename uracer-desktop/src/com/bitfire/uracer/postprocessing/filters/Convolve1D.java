@@ -58,7 +58,7 @@ public final class Convolve1D extends Filter<Convolve1D> {
 
 	@Override
 	public void rebind() {
-		setParams( Param.Texture, u_texture_1 );
+		setParams( Param.Texture, u_texture_0 );
 		setParamsv( Param.SampleWeights, weights, 0, length );
 		setParamsv( Param.SampleOffsets, offsets, 0, length * 2 /* libgdx asks for number of floats, not elements! */);
 		endParams();
@@ -66,7 +66,7 @@ public final class Convolve1D extends Filter<Convolve1D> {
 
 	@Override
 	protected void compute() {
-		inputTexture.bind( u_texture_1 );
+		inputTexture.bind( u_texture_0 );
 		program.begin();
 		IFilter.quad.render( program );
 		program.end();

@@ -9,8 +9,8 @@ public final class Combine extends Filter<Combine> {
 
 	public enum Param implements Parameter {
 		// @formatter:off
-		Texture1("u_texture0",0),
-		Texture2("u_texture1",0),
+		Texture0("u_texture0",0),
+		Texture1("u_texture1",0),
 		Source1Intensity("Src1Intensity",0),
 		Source1Saturation("Src1Saturation",0),
 		Source2Intensity("Src2Intensity",0),
@@ -57,15 +57,15 @@ public final class Combine extends Filter<Combine> {
 
 	@Override
 	public void rebind() {
+		setParams( Param.Texture0, u_texture_0 );
 		setParams( Param.Texture1, u_texture_1 );
-		setParams( Param.Texture2, u_texture_2 );
 		endParams();
 	}
 
 	@Override
 	protected void compute() {
-		inputTexture.bind( u_texture_1 );
-		inputTexture2.bind( u_texture_2 );
+		inputTexture.bind( u_texture_0 );
+		inputTexture2.bind( u_texture_1 );
 		program.begin();
 		IFilter.quad.render( program );
 		program.end();

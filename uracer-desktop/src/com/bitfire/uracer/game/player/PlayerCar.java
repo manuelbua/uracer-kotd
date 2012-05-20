@@ -71,6 +71,11 @@ public class PlayerCar extends Car {
 		frictionMean = null;
 	}
 
+	@Override
+	public boolean isVisible() {
+		return true;
+	}
+
 	// use strictly for debug purposes *ONLY*!
 	public CarDescriptor getCarDescriptor() {
 		return carDesc;

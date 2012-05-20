@@ -15,12 +15,12 @@ public class GameScreen extends Screen {
 
 	@Override
 	public void init( ScalingStrategy scalingStrategy ) {
-		String levelName = "tutorial-3";
+		String levelName = "tutorial-4";
 
 		game = new Game( levelName, scalingStrategy, GameDifficulty.Hard );
 
 		// simulate the player choosing a car type
-		game.setPlayer( new CarModel().toModel2(), Aspect.OldSkool2 );
+		game.setPlayer( new CarModel().toAudiTTSCoupe2011(), Aspect.AudiTTSCoupe2011 );
 
 		// simulate the player choosing local playing
 		Replay r = Replay.loadLocal( levelName );

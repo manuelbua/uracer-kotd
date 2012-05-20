@@ -8,22 +8,12 @@ import com.bitfire.uracer.configuration.Config;
 import com.bitfire.uracer.entities.EntityRenderState;
 import com.bitfire.uracer.game.GameEvents;
 import com.bitfire.uracer.game.rendering.GameRendererEvent;
-import com.bitfire.uracer.game.rendering.GameRendererEvent.Type;
 import com.bitfire.uracer.utils.AMath;
 
 public abstract class Box2DEntity extends SubframeInterpolableEntity {
 	protected Body body;
 	protected World box2dWorld;
-	private GameRendererEvent.Order drawingOrder;
-
-	private final GameRendererEvent.Listener gameRendererEvent = new GameRendererEvent.Listener() {
-		@Override
-		public void gameRendererEvent( Type type ) {
-			onRender( GameEvents.gameRenderer.batch );
-		}
-	};
-
-	public abstract void onRender( SpriteBatch batch );
+	protected GameRendererEvent.Order drawingOrder;
 
 	public void onDebug( SpriteBatch batch ) {
 	}
@@ -32,21 +22,13 @@ public abstract class Box2DEntity extends SubframeInterpolableEntity {
 		super();
 		this.box2dWorld = world;
 		this.drawingOrder = drawingOrder;
-		GameEvents.gameRenderer.addListener( gameRendererEvent, GameRendererEvent.Type.BatchBeforeMeshes, drawingOrder );
-		// GameEvents.gameRenderer.addListener( gameRendererEvent, GameRendererEvent.Type.BatchDebug,
-		// GameRendererEvent.Order.DEFAULT );
+		GameEvents.gameRenderer.addListener( this, GameRendererEvent.Type.BatchBeforeMeshes, drawingOrder );
 	}
-
-	// public Box2DEntity(GameRendererEvent.Order orderForBatchBeforeMeshes, GameRendererEvent.Order orderForDebug) {
-	// GameRenderer.event.addListener( gameRendererEvent, GameRendererEvent.Type.BatchBeforeMeshes,
-	// orderForBatchBeforeMeshes );
-	// GameRenderer.event.addListener( gameRendererEvent, GameRendererEvent.Type.BatchDebug, orderForDebug );
-	// }
 
 	@Override
 	public void dispose() {
 		super.dispose();
-		GameEvents.gameRenderer.removeListener( gameRendererEvent, GameRendererEvent.Type.BatchBeforeMeshes, drawingOrder );
+		GameEvents.gameRenderer.removeListener( this, GameRendererEvent.Type.BatchBeforeMeshes, drawingOrder );
 		box2dWorld.destroyBody( body );
 	}
 

@@ -49,15 +49,15 @@ public final class CarRenderer {
 		return alpha;
 	}
 
-	public void render( SpriteBatch batch, EntityRenderState state ) {
+	public void renderShadows( SpriteBatch batch, EntityRenderState state ) {
 		ambientOcclusion.setPosition( state.position.x - ambientOcclusion.getOriginX(), state.position.y - ambientOcclusion.getOriginY() );
 		ambientOcclusion.setRotation( state.orientation );
 		ambientOcclusion.draw( batch, 0.65f * alpha );
+	}
 
+	public void render( SpriteBatch batch, EntityRenderState state ) {
 		facet.setPosition( state.position.x - facet.getOriginX(), state.position.y - facet.getOriginY() );
 		facet.setRotation( state.orientation );
 		facet.draw( batch, alpha );
-
-//		Gdx.app.log( "CarRenderer", "ipos=" + state.position.x );
 	}
 }

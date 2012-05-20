@@ -1,33 +1,41 @@
 package com.bitfire.uracer.game.logic.post;
 
 import com.badlogic.gdx.Gdx;
-import com.bitfire.uracer.URacer;
+import com.badlogic.gdx.utils.LongMap;
 import com.bitfire.uracer.configuration.Config;
-import com.bitfire.uracer.game.logic.GameLogic;
+import com.bitfire.uracer.game.logic.post.animators.AggressiveCold;
+import com.bitfire.uracer.game.logic.post.animators.AggressiveWarm;
 import com.bitfire.uracer.game.player.PlayerCar;
 import com.bitfire.uracer.game.rendering.GameRenderer;
 import com.bitfire.uracer.game.world.GameWorld;
 import com.bitfire.uracer.postprocessing.PostProcessor;
+import com.bitfire.uracer.postprocessing.PostProcessorEffect;
 import com.bitfire.uracer.postprocessing.effects.Bloom;
 import com.bitfire.uracer.postprocessing.effects.Vignette;
 import com.bitfire.uracer.postprocessing.effects.Zoom;
+import com.bitfire.uracer.utils.Hash;
 
 /** Encapsulates a post-processor animator that manages effects such as bloom and zoomblur to compose
  * and enhance the gaming experience. */
 public class PostProcessing {
 
-//	private final GameWorld gameWorld;
-//	private final GameRenderer gameRenderer;
+	private final GameWorld gameWorld;
+	// private final GameRenderer gameRenderer;
 	private boolean canPostProcess = false;
 
 	// effects
+	public LongMap<PostProcessorEffect> effects = new LongMap<PostProcessorEffect>();
 	private Bloom bloom = null;
 	private Zoom zoom = null;
 	private Vignette vignette = null;
 
+	// animators
+	public LongMap<Animator> animators = new LongMap<Animator>();
+	private Animator currentAnimator;
+
 	public PostProcessing( GameWorld gameWorld, GameRenderer gameRenderer ) {
-//		this.gameWorld = gameWorld;
-//		this.gameRenderer = gameRenderer;
+		this.gameWorld = gameWorld;
+		// this.gameRenderer = gameRenderer;
 
 		canPostProcess = gameRenderer.hasPostProcessor();
 
@@ -36,6 +44,7 @@ public class PostProcessing {
 			Gdx.app.log( "PostProcessing", "Post-processing enabled and configured" );
 		}
 
+		currentAnimator = null;
 	}
 
 	private void configurePostProcessing( PostProcessor processor, GameWorld world ) {
@@ -46,6 +55,7 @@ public class PostProcessing {
 			zoom = new Zoom( Config.PostProcessing.ZoomQuality );
 			zoom.setStrength( 0 );
 			processor.addEffect( zoom );
+			effects.put( Hash.APHash( "zoom" ), zoom );
 		}
 
 		if( Config.PostProcessing.EnableBloom ) {
@@ -58,50 +68,53 @@ public class PostProcessing {
 			// 1,
 			// 0.35f, 1f, 0.1f, 1.4f, 0.75f );
 
-			float threshold = ((world.isNightMode() && !Config.Graphics.DumbNightMode) ? 0.2f : 0.45f);
-			Bloom.Settings bloomSettings = new Bloom.Settings( "subtle", Config.PostProcessing.BlurType, 1, 1.5f, threshold, 1f, 0.5f, 1f, 1.5f );
-			bloom.setSettings( bloomSettings );
-
 			processor.addEffect( bloom );
+			effects.put( Hash.APHash( "bloom" ), bloom );
 		}
 
 		if( Config.PostProcessing.EnableVignetting ) {
 			// if there is no bloom, let's control the final saturation via
 			// the vignette filter
-			vignette = new Vignette( Config.PostProcessing.EnableBloom ? false : true );
-			vignette.setCoords( 0.75f, 0.4f );
+			vignette = new Vignette( false /* Config.PostProcessing.EnableBloom ? false : true */);
 			processor.addEffect( vignette );
+			effects.put( Hash.APHash( "vignette" ), vignette );
+		}
+	}
+
+	public void createAnimators() {
+		animators.put( Hash.APHash( "AggressiveCold" ), new AggressiveCold( gameWorld, this ) );
+		animators.put( Hash.APHash( "AggressiveWarm" ), new AggressiveWarm( gameWorld, this ) );
+	}
+
+	public void addEffect( String name, PostProcessorEffect effect ) {
+		effects.put( Hash.APHash( name ), effect );
+	}
+
+	public PostProcessorEffect getEffect( String name ) {
+		return effects.get( Hash.APHash( name ) );
+	}
+
+	public void enableAnimator( String name ) {
+		Animator next = animators.get( Hash.APHash( name ) );
+		if( next != null ) {
+			if( currentAnimator != null ) {
+				currentAnimator.reset();
+			}
+
+			currentAnimator = next;
+		}
+	}
+
+	public void off() {
+		if( currentAnimator != null ) {
+			currentAnimator.reset();
+			currentAnimator = null;
 		}
 	}
 
 	public void onBeforeRender( PlayerCar player ) {
-		if( canPostProcess ) {
-			float factor = 1 - (URacer.timeMultiplier - GameLogic.TimeMultiplierMin) / (Config.Physics.PhysicsTimeMultiplier - GameLogic.TimeMultiplierMin);
-
-			if( Config.PostProcessing.EnableZoomBlur && player != null ) {
-				zoom.setOrigin( GameRenderer.ScreenUtils.worldPxToScreen( player.state().position ) );
-				zoom.setStrength( -0.1f * factor );
-			}
-
-			if( Config.PostProcessing.EnableBloom ) {
-				bloom.setBaseSaturation( 0.5f - 0.5f * factor );
-				// bloom.setBloomSaturation( 1.5f - factor * 0.85f ); // TODO when charged
-				bloom.setBloomSaturation( 1.5f - factor * 1.5f );	// TODO when completely discharged
-				bloom.setBloomIntesity( 1f + factor * 1.75f );
-			}
-
-			if( Config.PostProcessing.EnableVignetting ) {
-				// vignette.setY( (1 - factor) * 0.74f + factor * 0.4f );
-				// vignette.setIntensity( 1f );
-
-				if( vignette.controlSaturation ) {
-					// go with the "poor man"'s time dilation fx
-					vignette.setSaturation( 1 - factor );
-					vignette.setSaturationMul( 1f + factor * 0.5f );
-				}
-
-				vignette.setIntensity( factor );
-			}
+		if( canPostProcess && currentAnimator != null ) {
+			currentAnimator.update( player );
 		}
 	}
 }
