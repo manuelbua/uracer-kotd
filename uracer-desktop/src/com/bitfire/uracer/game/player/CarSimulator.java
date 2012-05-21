@@ -17,7 +17,7 @@ public final class CarSimulator {
 	private Vector2 force = new Vector2();
 	private Vector2 acceleration = new Vector2();
 	private float thisSign, lastSign;
-	private static final float DampingThrottle = 0.98f;
+	private static final float DampingThrottle = AMath.damping( 0.98f );
 
 	// exports
 	protected Vector2 lateralForceFront, lateralForceRear;

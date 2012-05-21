@@ -1,5 +1,6 @@
 package com.bitfire.uracer.postprocessing.effects;
 
+import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.glutils.FrameBuffer;
 import com.bitfire.uracer.postprocessing.PostProcessorEffect;
@@ -61,8 +62,8 @@ public class Vignette extends PostProcessorEffect {
 		vignetting.setLutIndex( value );
 	}
 
-	public void setCenter(float x, float y) {
-		vignetting.setCenter( x, y );
+	public void setCenter( float x, float y ) {
+		vignetting.setCenter( x, y, Gdx.graphics.getWidth(), Gdx.graphics.getHeight() );
 	}
 
 	@Override

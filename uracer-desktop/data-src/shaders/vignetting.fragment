@@ -65,7 +65,6 @@ void main() {
 	float factor = smoothstep(VignetteX, VignetteY, d);
 	rgb = rgb*factor + rgb*(1.0-factor) * (1.0-VignetteIntensity);
 
-
 #ifdef CONTROL_SATURATION
 	rgb = adjustSaturation(rgb,Saturation) * SaturationMul;
 #endif

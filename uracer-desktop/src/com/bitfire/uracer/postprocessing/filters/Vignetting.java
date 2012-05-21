@@ -1,6 +1,5 @@
 package com.bitfire.uracer.postprocessing.filters;
 
-import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.Texture;
 import com.bitfire.uracer.postprocessing.IFilter;
 import com.bitfire.uracer.utils.ShaderLoader;
@@ -113,9 +112,9 @@ public final class Vignetting extends Filter<Vignetting> {
 		}
 	}
 
-	public void setCenter( float x, float y ) {
-		this.centerX = x / (float)Gdx.graphics.getWidth();
-		this.centerY = 1f - (y / (float)Gdx.graphics.getHeight());
+	public void setCenter( float x, float y, float w, float h ) {
+		this.centerX = x / w;
+		this.centerY = 1f - (y / h);
 		setParams( Param.CenterX, centerX );
 		setParams( Param.CenterY, centerY ).endParams();
 	}

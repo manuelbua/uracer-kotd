@@ -36,7 +36,7 @@ public class AggressiveWarm implements Animator {
 		}
 
 		if( Config.PostProcessing.EnableVignetting ) {
-			vignette.setCoords( 0.75f, 0.4f );
+			vignette.setCoords( 0.8f, 0.45f );
 			vignette.setCenter( Gdx.graphics.getWidth() / 2, Gdx.graphics.getHeight() / 2 );
 			vignette.setLut( Art.postXpro );
 			vignette.setEnabled( true );
@@ -75,7 +75,10 @@ public class AggressiveWarm implements Animator {
 
 			vignette.setLutIntensity( factor );
 			vignette.setLutIndex( 7 );
-			vignette.setCoords( 0.8f, 0.45f );
+
+			vignette.setCenter( playerScreenPos.x, playerScreenPos.y );
+			vignette.setCoords( 1.2f, 0.1f );
+
 			vignette.setIntensity( factor );
 
 		}

@@ -65,6 +65,7 @@ public final class CarPreset {
 			model.length = 4.3f;
 			model.max_force = 400f;
 			model.max_grip = 5f;
+			model.friction = 8f;
 			break;
 
 		case AudiTTSCoupe2011:
