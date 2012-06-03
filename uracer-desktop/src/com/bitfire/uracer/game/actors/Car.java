@@ -28,7 +28,7 @@ public abstract strictfp class Car extends Box2DEntity {
 	/* event */
 	public CarEvent event = null;
 	private boolean triggerEvents = false;
-	private static final Order ShadowsDrawingOrder = Order.MINUS_2;
+	protected static final Order ShadowsDrawingOrder = Order.MINUS_2;
 
 	protected GameWorld gameWorld;
 	protected CarType carType;

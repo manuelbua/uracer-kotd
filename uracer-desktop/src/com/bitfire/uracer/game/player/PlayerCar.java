@@ -46,7 +46,7 @@ public class PlayerCar extends Car {
 	public PlayerDriftState driftState = null;
 
 	public PlayerCar( GameWorld gameWorld, CarPreset.Type presetType ) {
-		super( gameWorld, CarType.PlayerCar, InputMode.InputFromPlayer, GameRendererEvent.Order.DEFAULT, presetType, true );
+		super( gameWorld, CarType.PlayerCar, InputMode.InputFromPlayer, GameRendererEvent.Order.MINUS_1, presetType, true );
 		carInput = new CarInput();
 		impacts = 0;
 
@@ -62,6 +62,9 @@ public class PlayerCar extends Car {
 		// states
 		this.carState = new CarState( gameWorld, this );
 		this.driftState = new PlayerDriftState( this );
+
+//		getRenderer().setShader( ShaderLoader.fromFile( "ghostly", "ghostly" ) );
+//		getRenderer().setShader( ShaderLoader.fromFile( "car", "car" ) );
 	}
 
 	@Override
