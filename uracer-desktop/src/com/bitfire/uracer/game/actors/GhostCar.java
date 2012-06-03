@@ -17,8 +17,6 @@ public final class GhostCar extends Car {
 	private int indexPlay;
 	private boolean hasReplay;
 
-	// public CarState carState = null;
-
 	public GhostCar( GameWorld gameWorld, CarPreset.Type presetType ) {
 		super( gameWorld, CarType.ReplayCar, InputMode.InputFromReplay, GameRendererEvent.Order.DEFAULT, presetType, false );
 		indexPlay = 0;
@@ -30,9 +28,6 @@ public final class GhostCar extends Car {
 		setActive( false );
 		resetPhysics();
 		resetDistanceAndSpeed();
-
-//		ghostly = ShaderLoader.fromFile( "ghostly", "ghostly" );
-//		getRenderer().setShader( ghostly );
 	}
 
 	// input data for this car cames from a Replay object

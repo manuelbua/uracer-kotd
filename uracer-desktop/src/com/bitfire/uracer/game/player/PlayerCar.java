@@ -62,9 +62,6 @@ public class PlayerCar extends Car {
 		// states
 		this.carState = new CarState( gameWorld, this );
 		this.driftState = new PlayerDriftState( this );
-
-//		getRenderer().setShader( ShaderLoader.fromFile( "ghostly", "ghostly" ) );
-//		getRenderer().setShader( ShaderLoader.fromFile( "car", "car" ) );
 	}
 
 	@Override
@@ -241,5 +238,4 @@ public class PlayerCar extends Car {
 			carDesc.angularvelocity = -body.getAngularVelocity();
 		}
 	}
-
 }

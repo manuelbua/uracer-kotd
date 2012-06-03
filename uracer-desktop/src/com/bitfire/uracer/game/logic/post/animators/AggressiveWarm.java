@@ -79,21 +79,20 @@ public final class AggressiveWarm implements Animator {
 		if( Config.PostProcessing.EnableZoomBlur && player != null ) {
 			zoom.setOrigin( playerScreenPos );
 			if( Config.PostProcessing.ZoomQuality==Quality.VeryHigh) {
-				zoom.setStrength( -0.06f * player.carState.currSpeedFactor );
+				zoom.setStrength( -0.1f * player.carState.currSpeedFactor * timeFactor );
 			} else {
-				zoom.setStrength( -0.03f  * player.carState.currSpeedFactor );
+				zoom.setStrength( -0.03f  * player.carState.currSpeedFactor * timeFactor );
 			}
 		}
 
 		if( Config.PostProcessing.EnableBloom ) {
-			bloom.setBaseSaturation( 1f - timeFactor );
+			bloom.setBaseSaturation( AMath.lerp( 1, 0.15f, timeFactor ) );
 			// bloom.setBloomSaturation( 1.5f - factor * 0.85f ); // TODO when charged
 			// bloom.setBloomSaturation( 1.5f - factor * 1.5f ); // TODO when completely discharged
-			bloom.setBloomSaturation( 1f - timeFactor * 0.2f );
-//			bloom.setThreshold( 0.5f );
+			bloom.setBloomSaturation( 1f - timeFactor * 0.5f );
 
 			// testing camera motion
-			bloom.setThreshold( AMath.lerp( 0.3f, 0.5f, timeFactor ) );
+			bloom.setThreshold( AMath.lerp( 0.4f, 0.45f, timeFactor ) );
 		}
 
 		if( Config.PostProcessing.EnableVignetting ) {
@@ -108,7 +107,7 @@ public final class AggressiveWarm implements Animator {
 //			 vignette.setCenter( playerScreenPos.x, playerScreenPos.y );
 //			 vignette.setCoords( 1.5f - driftStrength * 0.8f, 0.1f );
 
-			vignette.setLutIntensity( 0.1f + timeFactor * 1.4f );
+			vignette.setLutIntensity( timeFactor * 1.25f );
 			vignette.setLutIndex( 7 );
 
 			vignette.setIntensity( timeFactor );

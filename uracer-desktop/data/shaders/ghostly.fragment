@@ -15,7 +15,7 @@ void main() {
 	vec2 offset = vec2(Offset,Offset);
 	sum.r = (v_color.r * texture2D(u_texture, v_texCoords )).r;
 	sum.g = (v_color.g * texture2D(u_texture, v_texCoords * 0.99 + offset)).g;
-	sum.b = (v_color.b * texture2D(u_texture, v_texCoords * 0.98 + 2.0 * offset)).b;
+	sum.b = (v_color.b * texture2D(u_texture, v_texCoords * 0.97 + 2.0 * offset)).b;
 	sum.a = (v_color.a * texture2D(u_texture, v_texCoords )).a;
 	gl_FragColor = sum;
 

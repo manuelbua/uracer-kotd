@@ -70,7 +70,6 @@ public class AggressiveCold implements Animator {
 		float driftStrength = AMath.clamp( AMath.lerp( prevDriftStrength, player.driftState.driftStrength, 0.01f ), 0, 1);
 		prevDriftStrength = driftStrength;
 
-
 		if( Config.PostProcessing.EnableZoomBlur && player != null ) {
 			zoom.setOrigin( playerScreenPos );
 			if( Config.PostProcessing.ZoomQuality==Quality.VeryHigh) {
