@@ -281,7 +281,6 @@ public class RayHandler implements Disposable {
 				Gdx.gl20.glClearDepthf( 1 );
 				Gdx.gl20.glClear( GL20.GL_COLOR_BUFFER_BIT | GL20.GL_DEPTH_BUFFER_BIT );
 			} else {
-				Gdx.gl20.glClearColor( 0f, 0f, 0f, 0f );
 				Gdx.gl20.glClear( GL20.GL_COLOR_BUFFER_BIT );
 			}
 		}
