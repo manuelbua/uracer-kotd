@@ -347,7 +347,7 @@ public final class GameWorld {
 		float coordV = 1f;
 
 		// jitter
-		float jitterPositional = .5f * factor * oneOnWorld3DFactor;
+		float jitterPositional = 0.75f * factor * oneOnWorld3DFactor;
 		// float jitterAltitudinal = 3f * factor * oneOnWorld3DFactor;
 		boolean addJitter = true;
 
@@ -378,7 +378,7 @@ public final class GameWorld {
 			// base
 			verts[j + X1] = in.x;
 			verts[j + Y1] = -in.y;
-			verts[j + Z1] = 0;
+			verts[j + Z1] = -0.025f;	// should be 0, but fixes some nasty flickering border issue
 
 			// elevation
 			verts[j + X2] = in.x + (addJitter ? MathUtils.random( -jitterPositional, jitterPositional ) : 0);
