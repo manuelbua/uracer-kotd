@@ -53,10 +53,12 @@ public final class CarPreset {
 		case FordMustangShelbyGt500White:
 		case FordMustangShelbyGt500Coupe:
 			model.toModel2();
-			model.width = 2.5f;
-			model.length = 4.3f;
-			model.max_force = 350f;
+			model.width = 2.4f;
+			model.length = model.width * 1.72f;
+			model.max_force = 300f;
 			model.max_grip = 6f;
+			model.friction = 8f;
+			model.restitution = 0.35f;
 			break;
 
 		case LamborghiniGallardoLP560:
