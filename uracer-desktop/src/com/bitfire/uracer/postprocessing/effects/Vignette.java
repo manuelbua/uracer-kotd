@@ -22,12 +22,6 @@ public class Vignette extends PostProcessorEffect {
 
 	public void setIntensity( float intensity ) {
 		vignetting.setIntensity( intensity );
-
-		if( intensity == 0 && isEnabled() ) {
-			setEnabled( false );
-		} else if( intensity != 0 && !isEnabled() ) {
-			setEnabled( true );
-		}
 	}
 
 	public void setCoords( float x, float y ) {
