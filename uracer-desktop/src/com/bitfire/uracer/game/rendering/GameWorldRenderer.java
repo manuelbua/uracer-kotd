@@ -57,7 +57,7 @@ public final class GameWorldRenderer {
 		"void main()											\n" +
 		"{														\n" +
 		"	vec4 texel = texture2D( u_texture, v_TexCoord );	\n" +
-		"	if(texel.a < 0.5) discard;							\n" +
+		"	//if(texel.a < 0.5) discard;							\n" +
 		"	gl_FragColor = texel;								\n" +
 		"}														\n";
 	// @formatter:on
@@ -72,8 +72,12 @@ public final class GameWorldRenderer {
 	protected Vector2 halfViewport = new Vector2();
 	protected Rectangle camOrthoRect = new Rectangle();
 	private Matrix4 camOrthoMvpMt = new Matrix4();
+	private Matrix4 camPerspInvProjView = new Matrix4();
+	private Matrix4 camPerspPrevProjView = new Matrix4();
 	private CameraController camController;
-	private float camPerspElevation = 0f;
+	private static final float CamPerspPlaneNear = 1;
+	private static final float CamPerspPlaneFar = 240;
+	private static final float CamPerspElevation = 100f;
 
 	// rendering
 	private GL20 gl = null;
@@ -139,17 +143,14 @@ public final class GameWorldRenderer {
 		camTilemap.zoom = 1;
 
 		// creates and setup perspective camera
-		// strategically choosen, Blender models' 14.2 meters <=> one 256px tile
+		// strategically choosen near/far planes, Blender models' 14.2 meters <=> one 256px tile
 		// with far plane @48
-		float perspPlaneNear = 1;
-		float perspPlaneFar = 240;
-		camPerspElevation = 100;
-
 		camPersp = new PerspectiveCamera( scalingStrategy.verticalFov, width, height );
-		camPersp.near = perspPlaneNear;
-		camPersp.far = perspPlaneFar;
+		camPersp.near = CamPerspPlaneNear;
+		camPersp.far = CamPerspPlaneFar;
 		camPersp.lookAt( 0, 0, -1 );
-		camPersp.position.set( 0, 0, camPerspElevation );
+		camPersp.position.set( camTilemap.position.x, camTilemap.position.y, CamPerspElevation );
+		camPersp.update();
 
 		camController = new CameraController( Config.Graphics.CameraInterpolationMode, halfViewport, world.worldSizeScaledPx, world.worldSizeTiles );
 	}
@@ -167,6 +168,14 @@ public final class GameWorldRenderer {
 		if( playerLights != null ) {
 			playerLights.setActive( value );
 		}
+	}
+
+	public Matrix4 getInvProjView() {
+		return camPerspInvProjView;
+	}
+
+	public Matrix4 getPrevProjView() {
+		return camPerspPrevProjView;
 	}
 
 	public void resetCounters() {
@@ -254,9 +263,15 @@ public final class GameWorldRenderer {
 		camTilemap.zoom = scalingStrategy.tileMapZoomFactor;
 		camTilemap.update();
 
+		// update previous proj view
+		camPerspPrevProjView.set( camPersp.combined );
+
 		// sync perspective camera to the orthographic camera
-		camPersp.position.set( camTilemap.position.x, camTilemap.position.y, camPerspElevation );
+		camPersp.position.set( camTilemap.position.x, camTilemap.position.y, CamPerspElevation );
 		camPersp.update();
+
+		// update inv proj view
+		camPerspInvProjView.set( camPersp.invProjectionView );
 
 		updateRayHandler();
 	}
@@ -270,34 +285,46 @@ public final class GameWorldRenderer {
 		tileMapRenderer.render( camTilemap );
 	}
 
-	private void renderWalls( TrackWalls walls ) {
-		gl.glDisable( GL20.GL_CULL_FACE );
-		gl.glEnable( GL20.GL_BLEND );
-		gl.glBlendFunc( GL20.GL_SRC_ALPHA, GL20.GL_ONE_MINUS_SRC_ALPHA );
-		renderedWalls = renderOrthographicAlignedModels( walls.models );
-	}
-
-	private void renderTrees( TrackTrees trees ) {
-		trees.transform( camPersp, camOrtho, halfViewport );
-
-		gl.glDisable( GL20.GL_BLEND );
-		gl.glEnable( GL20.GL_CULL_FACE );
-
-		Art.meshTreeTrunk.bind();
-
-		treeShader.begin();
-
-		// all trunks
-		for( int i = 0; i < trees.models.size(); i++ ) {
-			TreeStillModel m = trees.models.get( i );
-			treeShader.setUniformMatrix( "u_mvpMatrix", m.transformed );
-			m.trunk.render( treeShader, m.smTrunk.primitiveType );
+	private void renderWalls( TrackWalls walls, boolean depthOnly ) {
+		if( !depthOnly ) {
+			gl.glEnable( GL20.GL_BLEND );
+			gl.glBlendFunc( GL20.GL_SRC_ALPHA, GL20.GL_ONE_MINUS_SRC_ALPHA );
 		}
 
-		// all transparent foliage
 		gl.glDisable( GL20.GL_CULL_FACE );
-		gl.glEnable( GL20.GL_BLEND );
-		gl.glBlendFunc( GL20.GL_SRC_ALPHA, GL20.GL_ONE_MINUS_SRC_ALPHA );
+		renderedWalls = renderOrthographicAlignedModels( walls.models, depthOnly );
+	}
+
+	private void renderTrees( TrackTrees trees, boolean depthOnly ) {
+		trees.transform( camPersp, camOrtho, halfViewport );
+
+		ShaderProgram shader = treeShader;
+
+		gl.glEnable( GL20.GL_CULL_FACE );
+		gl.glDisable( GL20.GL_BLEND );
+
+		if( depthOnly ) {
+			shader = Art.depthMapGen;
+		} else {
+			Art.meshTreeTrunk.bind();
+		}
+
+		shader.begin();
+
+		// all the trunks
+		for( int i = 0; i < trees.models.size(); i++ ) {
+			TreeStillModel m = trees.models.get( i );
+			shader.setUniformMatrix( "u_projTrans", m.transformed );
+			m.trunk.render( shader, m.smTrunk.primitiveType );
+		}
+
+		// all the transparent foliage
+//		gl.glDisable( GL20.GL_CULL_FACE );
+
+		if( !depthOnly ) {
+			gl.glEnable( GL20.GL_BLEND );
+			gl.glBlendFunc( GL20.GL_SRC_ALPHA, GL20.GL_ONE_MINUS_SRC_ALPHA );
+		}
 
 		boolean needRebind = false;
 		for( int i = 0; i < trees.models.size(); i++ ) {
@@ -309,21 +336,25 @@ public final class GameWorldRenderer {
 				continue;
 			}
 
-			if( i == 0 || needRebind ) {
-				m.material.bind( treeShader );
-			} else if( !trees.models.get( i - 1 ).material.equals( m.material ) ) {
-				m.material.bind( treeShader );
+			shader.setUniformMatrix( "u_projTrans", m.transformed );
+
+//			if( !depthOnly )
+			{
+				if( i == 0 || needRebind ) {
+					m.material.bind( shader );
+				} else if( !trees.models.get( i - 1 ).material.equals( m.material ) ) {
+					m.material.bind( shader );
+				}
 			}
 
-			treeShader.setUniformMatrix( "u_mvpMatrix", m.transformed );
-			m.leaves.render( treeShader, m.smLeaves.primitiveType );
+			m.leaves.render( shader, m.smLeaves.primitiveType );
 
 			renderedTrees++;
 		}
 
-		treeShader.end();
+		shader.end();
 
-		if( Config.Debug.Render3DBoundingBoxes ) {
+		if( !depthOnly && Config.Debug.Render3DBoundingBoxes ) {
 			// debug
 			for( int i = 0; i < trees.models.size(); i++ ) {
 				TreeStillModel m = trees.models.get( i );
@@ -337,7 +368,7 @@ public final class GameWorldRenderer {
 	private Matrix4 mtx2 = new Matrix4();
 	private Vector2 pospx = new Vector2();
 
-	private int renderOrthographicAlignedModels( List<OrthographicAlignedStillModel> models ) {
+	private int renderOrthographicAlignedModels( List<OrthographicAlignedStillModel> models, boolean depthOnly ) {
 		int renderedCount = 0;
 		OrthographicAlignedStillModel m;
 		StillSubMesh submesh;
@@ -345,6 +376,11 @@ public final class GameWorldRenderer {
 		float meshZ = -(camPersp.far - camPersp.position.z);
 
 		ShaderProgram shader = OrthographicAlignedStillModel.shader;
+
+		if( depthOnly ) {
+			shader = Art.depthMapGen;
+		}
+
 		shader.begin();
 
 		boolean needRebind = false;
@@ -371,32 +407,36 @@ public final class GameWorldRenderer {
 			// comb = (proj * view) * model (fast mul)
 			Matrix4.mul( mtx2.set( camPersp.combined ).val, mtx.val );
 
-			// transform the bounding box
+			// ensure the bounding box is transformed
 			m.boundingBox.inf().set( m.localBoundingBox );
 			m.boundingBox.mul( mtx );
 
+			// perform culling
 			if( Config.Debug.FrustumCulling && !camPersp.frustum.boundsInFrustum( m.boundingBox ) ) {
 				needRebind = true;
 				culledMeshes++;
 				continue;
 			}
 
-			shader.setUniformMatrix( "u_mvpMatrix", mtx2 );
+			shader.setUniformMatrix( "u_projTrans", mtx2 );
 
-			// avoid rebinding same textures
-			if( i == 0 || needRebind ) {
-				m.material.bind( shader );
-			} else if( !models.get( i - 1 ).material.equals( m.material ) ) {
-				m.material.bind( shader );
+//			if( !depthOnly )
+			{
+				// avoid rebinding same textures
+				if( i == 0 || needRebind ) {
+					m.material.bind( shader );
+				} else if( !models.get( i - 1 ).material.equals( m.material ) ) {
+					m.material.bind( shader );
+				}
 			}
 
-			submesh.mesh.render( OrthographicAlignedStillModel.shader, submesh.primitiveType );
+			submesh.mesh.render( shader, submesh.primitiveType );
 			renderedCount++;
 		}
 
 		shader.end();
 
-		if( Config.Debug.Render3DBoundingBoxes ) {
+		if( !depthOnly && Config.Debug.Render3DBoundingBoxes ) {
 			// debug (tested on a single mesh only!)
 			for( int i = 0; i < models.size(); i++ ) {
 				m = models.get( i );
@@ -407,30 +447,27 @@ public final class GameWorldRenderer {
 		return renderedCount;
 	}
 
-	public void renderAllMeshes() {
+	public void renderAllMeshes( boolean depthOnly ) {
 		resetCounters();
 
-		gl.glDepthMask( true );
 		gl.glEnable( GL20.GL_DEPTH_TEST );
-		gl.glDepthFunc( GL20.GL_LESS );
-		gl.glCullFace( GL20.GL_BACK );
-		gl.glFrontFace( GL20.GL_CCW );
-		gl.glBlendEquation( GL20.GL_FUNC_ADD );
+		gl.glDepthFunc( GL20.GL_LEQUAL );
 
-		renderWalls( trackWalls );
+		renderWalls( trackWalls, depthOnly );
 
 		if( trackTrees.count() > 0 ) {
-			renderTrees( trackTrees );
+			renderTrees( trackTrees, depthOnly );
 		}
 
 		// render "static-meshes" layer
 		gl.glEnable( GL20.GL_CULL_FACE );
+		gl.glFrontFace( GL20.GL_CCW );
+		gl.glCullFace( GL20.GL_BACK );
 
-		renderOrthographicAlignedModels( staticMeshes );
+		renderOrthographicAlignedModels( staticMeshes, depthOnly );
 
 		gl.glDisable( GL20.GL_CULL_FACE );
 		gl.glDisable( GL20.GL_DEPTH_TEST );
-		gl.glDepthMask( false );
 	}
 
 	/** This is intentionally SLOW. Read it again!
