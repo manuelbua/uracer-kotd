@@ -74,9 +74,9 @@ public class AggressiveCold implements Animator {
 		if( Config.PostProcessing.EnableZoomBlur && player != null ) {
 			zoom.setOrigin( playerScreenPos );
 			if( Config.PostProcessing.ZoomQuality==Quality.VeryHigh) {
-				zoom.setStrength( -0.06f * player.carState.currSpeedFactor );
+				zoom.setStrength( -0.1f * player.carState.currSpeedFactor * timeFactor );
 			} else {
-				zoom.setStrength( -0.03f  * player.carState.currSpeedFactor );
+				zoom.setStrength( -0.03f  * player.carState.currSpeedFactor * timeFactor );
 			}
 		}
 

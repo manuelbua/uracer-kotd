@@ -16,7 +16,7 @@ import com.bitfire.uracer.utils.SpriteBatchUtils;
 public class URacer implements ApplicationListener {
 	private Screen screen;
 	private static boolean running = false;
-	private static final boolean useRealFrametime = true;
+	private static final boolean useRealFrametime = false;
 
 	private static ScalingStrategy scalingStrategy;
 	private float temporalAliasing = 0;
@@ -63,6 +63,7 @@ public class URacer implements ApplicationListener {
 				versionInfo += " " + value;
 			}
 		} catch( Exception e ) {
+			versionInfo += " (not found)";
 		}
 	}
 
