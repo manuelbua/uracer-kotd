@@ -73,7 +73,7 @@ public class URacer implements ApplicationListener {
 		Gdx.app.log( "URacer", "Using real frametime: " + (useRealFrametime ? "YES" : "NO") );
 
 		// computed for a 256px tile size target (compute needed conversion factors)
-		scalingStrategy = new ScalingStrategy( new Vector2( 1280, 800 ), 70f, 224, 1f );
+		scalingStrategy = new ScalingStrategy( new Vector2( 1280, 800 ),70f, 224, 1f );
 
 		// everything has been setup on a 256px tile, scale back if that's the case
 		Config.asDefault();

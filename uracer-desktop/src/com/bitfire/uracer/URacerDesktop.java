@@ -29,18 +29,18 @@ public final class URacerDesktop {
 		config.title = "uRacer: The King Of The Drift";
 
 		// @formatter:off
-//		 config.width = 1920;	config.height = 1050;
-//		 config.width = 1730;	config.height = 1016;
-//		 config.width = 1680;	config.height = 1050;
-		 config.width = 1280;	config.height = 800;
+		config.width = 1920;	config.height = 1050;
+//		config.width = 1730;	config.height = 1016;
+//		config.width = 1680;	config.height = 1050;
+//		config.width = 1280;	config.height = 800;
 
-//		 config.width = 1280;	config.height = 720;
-//		 config.width = 800;	config.height = 480;
+//		config.width = 1280;	config.height = 720;
+//		config.width = 800;	config.height = 480;
 		// @formatter:on
 
 		config.samples = 0;
 		config.depth = 0;
-		config.vSyncEnabled = true;
+		config.vSyncEnabled = false;
 		config.useCPUSynch = false;
 		config.useGL20 = true;
 		config.fullscreen = false;

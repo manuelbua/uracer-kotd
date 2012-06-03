@@ -35,19 +35,19 @@ public final class Config {
 			int w = Gdx.graphics.getWidth();
 
 			// post-processor
-			Enabled = true;
+			Enabled = Config.isDesktop;
 
 			// post-processor effects
-			EnableVignetting = true;
-			EnableBloom = true;
-			EnableZoomBlur = false;
+			EnableVignetting = Config.isDesktop;
+			EnableBloom = Config.isDesktop;
+			EnableZoomBlur = Config.isDesktop;
 
 			RttFboWidth = (int)(Gdx.graphics.getWidth() * RttRatio);
 			RttFboHeight = (int)(Gdx.graphics.getHeight() * RttRatio);
 
 			if( w >= 1680 ) {
 				BlurType = Blur.BlurType.Gaussian5x5b;
-				ZoomQuality = ZoomBlur.Quality.Normal;
+				ZoomQuality = ZoomBlur.Quality.VeryHigh;
 				ZoomMaxStrength = -0.08f;
 				PotRttFboWidth = 256;
 				PotRttFboHeight = 256;
@@ -96,9 +96,7 @@ public final class Config {
 
 	public static final class Physics {
 
-		/** defines how many pixels are 1 Box2d meter, this will be
-		 * automatically scaled accordingly to the device resolution
-		 * during the construction of GameData */
+		/** defines how many pixels are 1 Box2d meter */
 		public static float PixelsPerMeter;
 
 		/** defines physics dt duration, in hz */
@@ -120,7 +118,7 @@ public final class Config {
 			PhysicsDt = 1.0f / PhysicsTimestepHz;
 			PhysicsTimeMultiplier = 1f;
 
-			Gdx.app.log( "Config", "Physics at " + PhysicsTimestepHz + "Hz (dt=" + NumberString.formatLong(PhysicsDt) + ")" );
+			Gdx.app.log( "Config", "Physics at " + PhysicsTimestepHz + "Hz (dt=" + NumberString.formatLong( PhysicsDt ) + ")" );
 		}
 
 		private Physics() {
