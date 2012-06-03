@@ -22,6 +22,8 @@ public final class PostProcessor implements Disposable {
 	private final Manager<PostProcessorEffect> manager = new Manager<PostProcessorEffect>();
 	private final Array<PingPongBuffer> buffers = new Array<PingPongBuffer>( 5 );
 	private final Color clearColor = Color.CLEAR;
+	private int clearBits = GL10.GL_COLOR_BUFFER_BIT;
+	private float clearDepth = 1f;
 
 	private boolean enabled = true;
 	private boolean capturing = false;
@@ -128,6 +130,16 @@ public final class PostProcessor implements Disposable {
 		clearColor.set( r, g, b, a );
 	}
 
+	/** Sets the clear bit for when glClear is invoked. */
+	public void setClearBits( int bits ) {
+		clearBits = bits;
+	}
+
+	/** Sets the depth value with which to clear the depth buffer when needed. */
+	public void setClearDepth( float depth ) {
+		clearDepth = depth;
+	}
+
 	/** Starts capturing the scene, clears the buffer with the clear
 	 * color specified by {@link #setClearColor(Color)} or {@link #setClearColor(float r, float g, float b, float a)}.
 	 *
@@ -146,7 +158,8 @@ public final class PostProcessor implements Disposable {
 			composite.capture();
 
 			Gdx.gl.glClearColor( clearColor.r, clearColor.g, clearColor.b, clearColor.a );
-			Gdx.gl.glClear( GL10.GL_COLOR_BUFFER_BIT | GL10.GL_DEPTH_BUFFER_BIT );
+			Gdx.gl.glClearDepthf( clearDepth );
+			Gdx.gl.glClear( clearBits );
 			return true;
 		}
 

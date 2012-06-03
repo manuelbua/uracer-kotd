@@ -4,6 +4,7 @@ import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.math.Vector2;
 import com.bitfire.uracer.URacer;
 import com.bitfire.uracer.configuration.Config;
+import com.bitfire.uracer.game.actors.GhostCar;
 import com.bitfire.uracer.game.logic.GameLogic;
 import com.bitfire.uracer.game.logic.post.Animator;
 import com.bitfire.uracer.game.logic.post.PostProcessing;
@@ -13,7 +14,9 @@ import com.bitfire.uracer.game.world.GameWorld;
 import com.bitfire.uracer.postprocessing.effects.Bloom;
 import com.bitfire.uracer.postprocessing.effects.Vignette;
 import com.bitfire.uracer.postprocessing.effects.Zoom;
+import com.bitfire.uracer.postprocessing.filters.ZoomBlur.Quality;
 import com.bitfire.uracer.resources.Art;
+import com.bitfire.uracer.utils.AMath;
 
 public class AggressiveCold implements Animator {
 	private GameWorld gameWorld;
@@ -40,16 +43,19 @@ public class AggressiveCold implements Animator {
 			}
 
 			if( Config.PostProcessing.EnableVignetting ) {
-				vignette.setCoords( 0.8f, 0.45f );
+				vignette.setCoords( 0.8f, 0.25f );
 				vignette.setCenter( Gdx.graphics.getWidth() / 2, Gdx.graphics.getHeight() / 2 );
 				vignette.setLut( Art.postXpro );
+				vignette.setLutIndex( 16 );
 				vignette.setEnabled( true );
 			}
 		}
 	}
 
+	private float prevDriftStrength = 0;
+
 	@Override
-	public void update( PlayerCar player ) {
+	public void update( PlayerCar player, GhostCar ghost ) {
 		if( player == null ) {
 			return;
 		}
@@ -58,21 +64,27 @@ public class AggressiveCold implements Animator {
 			return;
 		}
 
-		float factor = 1 - (URacer.timeMultiplier - GameLogic.TimeMultiplierMin) / (Config.Physics.PhysicsTimeMultiplier - GameLogic.TimeMultiplierMin);
+		float timeFactor = 1 - (URacer.timeMultiplier - GameLogic.TimeMultiplierMin) / (Config.Physics.PhysicsTimeMultiplier - GameLogic.TimeMultiplierMin);
 		Vector2 playerScreenPos = GameRenderer.ScreenUtils.worldPxToScreen( player.state().position );
+
+		float driftStrength = AMath.clamp( AMath.lerp( prevDriftStrength, player.driftState.driftStrength, 0.01f ), 0, 1);
+		prevDriftStrength = driftStrength;
+
 
 		if( Config.PostProcessing.EnableZoomBlur && player != null ) {
 			zoom.setOrigin( playerScreenPos );
-			zoom.setStrength( -0.05f * factor * player.driftState.driftStrength );
+			if( Config.PostProcessing.ZoomQuality==Quality.VeryHigh) {
+				zoom.setStrength( -0.06f * player.carState.currSpeedFactor );
+			} else {
+				zoom.setStrength( -0.03f  * player.carState.currSpeedFactor );
+			}
 		}
 
 		if( Config.PostProcessing.EnableBloom ) {
-			bloom.setBaseSaturation( 0.5f - 0.2f * factor );
+			bloom.setBaseSaturation( 0.6f );
 			// bloom.setBloomSaturation( 1.5f - factor * 0.85f ); // TODO when charged
 			// bloom.setBloomSaturation( 1.5f - factor * 1.5f ); // TODO when completely discharged
-			bloom.setBloomSaturation( 1.5f - factor * 1.25f );
-			bloom.setBaseIntesity( 1f + factor * 0.1f );
-			bloom.setBloomIntesity( 1f + factor * 0.2f );
+			bloom.setBloomSaturation( 1f - timeFactor * 0.25f );
 		}
 
 		if( Config.PostProcessing.EnableVignetting ) {
@@ -80,17 +92,15 @@ public class AggressiveCold implements Animator {
 
 			if( vignette.controlSaturation ) {
 				// go with the "poor man"'s time dilation fx
-				vignette.setSaturation( 1 - factor );
-				vignette.setSaturationMul( 1f + factor * 0.5f );
+				vignette.setSaturation( 1 - timeFactor * 0.25f );
+				vignette.setSaturationMul( 1f + timeFactor * 0.2f );
 			}
 
-			// vignette.setCenter( playerScreenPos.x, playerScreenPos.y );
-			// vignette.setCoords( 1.2f, 0.1f );
+//			 vignette.setCenter( playerScreenPos.x, playerScreenPos.y );
+//			 vignette.setCoords( 1.5f - driftStrength * 0.8f, 0.1f );
 
-			vignette.setLutIntensity( factor );
-			vignette.setLutIndex( 12 );
-			vignette.setIntensity( factor );
-
+			vignette.setLutIntensity( 0.5f + timeFactor * 0.5f );
+			vignette.setIntensity( timeFactor );
 		}
 	}
 }

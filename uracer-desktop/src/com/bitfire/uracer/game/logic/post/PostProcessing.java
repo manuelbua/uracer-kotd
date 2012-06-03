@@ -1,10 +1,11 @@
 package com.bitfire.uracer.game.logic.post;
 
 import com.badlogic.gdx.Gdx;
+import com.badlogic.gdx.graphics.GL10;
 import com.badlogic.gdx.utils.LongMap;
 import com.bitfire.uracer.configuration.Config;
+import com.bitfire.uracer.game.actors.GhostCar;
 import com.bitfire.uracer.game.logic.post.animators.AggressiveCold;
-import com.bitfire.uracer.game.logic.post.animators.AggressiveWarm;
 import com.bitfire.uracer.game.player.PlayerCar;
 import com.bitfire.uracer.game.rendering.GameRenderer;
 import com.bitfire.uracer.game.world.GameWorld;
@@ -20,7 +21,7 @@ import com.bitfire.uracer.utils.Hash;
 public class PostProcessing {
 
 	private final GameWorld gameWorld;
-	// private final GameRenderer gameRenderer;
+	private final GameRenderer gameRenderer;
 	private boolean canPostProcess = false;
 
 	// effects
@@ -28,6 +29,7 @@ public class PostProcessing {
 	private Bloom bloom = null;
 	private Zoom zoom = null;
 	private Vignette vignette = null;
+	// private CameraMotion cameraMotion = null;
 
 	// animators
 	public LongMap<Animator> animators = new LongMap<Animator>();
@@ -35,7 +37,7 @@ public class PostProcessing {
 
 	public PostProcessing( GameWorld gameWorld, GameRenderer gameRenderer ) {
 		this.gameWorld = gameWorld;
-		// this.gameRenderer = gameRenderer;
+		this.gameRenderer = gameRenderer;
 
 		canPostProcess = gameRenderer.hasPostProcessor();
 
@@ -50,6 +52,8 @@ public class PostProcessing {
 	private void configurePostProcessing( PostProcessor processor, GameWorld world ) {
 
 		processor.setEnabled( true );
+		processor.setClearBits( GL10.GL_COLOR_BUFFER_BIT | GL10.GL_DEPTH_BUFFER_BIT );
+		processor.setClearDepth( 1f );
 
 		if( Config.PostProcessing.EnableZoomBlur ) {
 			zoom = new Zoom( Config.PostProcessing.ZoomQuality );
@@ -57,6 +61,10 @@ public class PostProcessing {
 			processor.addEffect( zoom );
 			effects.put( Hash.APHash( "zoom" ), zoom );
 		}
+
+		// cameraMotion = new CameraMotion( gameRenderer.getDepthMap() );
+		// processor.addEffect( cameraMotion );
+		// effects.put( Hash.APHash( "cameramotion" ), cameraMotion );
 
 		if( Config.PostProcessing.EnableBloom ) {
 			bloom = new Bloom( Config.PostProcessing.RttFboWidth, Config.PostProcessing.RttFboHeight );
@@ -75,15 +83,18 @@ public class PostProcessing {
 		if( Config.PostProcessing.EnableVignetting ) {
 			// if there is no bloom, let's control the final saturation via
 			// the vignette filter
-			vignette = new Vignette( false /* Config.PostProcessing.EnableBloom ? false : true */);
+			vignette = new Vignette( gameRenderer.getDepthMap(), Config.PostProcessing.EnableBloom ? false : true );
 			processor.addEffect( vignette );
 			effects.put( Hash.APHash( "vignette" ), vignette );
 		}
 	}
 
 	public void createAnimators() {
-		animators.put( Hash.APHash( "AggressiveCold" ), new AggressiveCold( gameWorld, this ) );
-		animators.put( Hash.APHash( "AggressiveWarm" ), new AggressiveWarm( gameWorld, this ) );
+		currentAnimator = new AggressiveCold( gameWorld, this );
+		animators.put( Hash.APHash( "AggressiveCold" ), currentAnimator );
+
+		// currentAnimator = new AggressiveWarm( gameWorld, this );
+		// animators.put( Hash.APHash( "AggressiveWarm" ), currentAnimator );
 	}
 
 	public void addEffect( String name, PostProcessorEffect effect ) {
@@ -92,6 +103,10 @@ public class PostProcessing {
 
 	public PostProcessorEffect getEffect( String name ) {
 		return effects.get( Hash.APHash( name ) );
+	}
+
+	public GameRenderer getGameRenderer() {
+		return gameRenderer;
 	}
 
 	public void enableAnimator( String name ) {
@@ -112,9 +127,9 @@ public class PostProcessing {
 		}
 	}
 
-	public void onBeforeRender( PlayerCar player ) {
+	public void onBeforeRender( PlayerCar player, GhostCar ghost ) {
 		if( canPostProcess && currentAnimator != null ) {
-			currentAnimator.update( player );
+			currentAnimator.update( player, ghost );
 		}
 	}
 }
