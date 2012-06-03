@@ -114,7 +114,6 @@ public class GameLogic implements CarEvent.Listener, CarStateEvent.Listener, Pla
 		// post-processing
 		postProcessing = new PostProcessing( gameWorld, gameRenderer );
 		postProcessing.createAnimators();
-		postProcessing.enableAnimator( "AggressiveWarm" );
 		Gdx.app.log( "GameLogic", "Post-processing animators created" );
 
 		// main game tasks
@@ -147,8 +146,7 @@ public class GameLogic implements CarEvent.Listener, CarStateEvent.Listener, Pla
 		WcTweener.dispose();
 	}
 
-	/** Sets the player and transfer ownership to the GameLogic object.
-	 * Specifying null will result in the current player being removed, if any. */
+	/** Sets the player from the specified preset */
 	public void setPlayer( CarPreset.Type presetType ) {
 		if( hasPlayer() ) {
 			Gdx.app.log( "GameLogic", "A player already exists." );
@@ -251,6 +249,8 @@ public class GameLogic implements CarEvent.Listener, CarStateEvent.Listener, Pla
 	}
 
 	public void onBeforeRender() {
+		boolean truncatePosition = true;
+
 		// update player's headlights and move the world camera to follows it, if there is a player
 		if( hasPlayer() ) {
 
@@ -258,12 +258,12 @@ public class GameLogic implements CarEvent.Listener, CarStateEvent.Listener, Pla
 				gameWorldRenderer.updatePlayerHeadlights( playerCar );
 			}
 
-			gameWorldRenderer.setCameraPosition( playerCar.state().position, true );
+			gameWorldRenderer.setCameraPosition( playerCar.state().position, truncatePosition );
 		} else if( ghostCar.hasReplay() ) {
-			gameWorldRenderer.setCameraPosition( ghostCar.state().position, true );
+			gameWorldRenderer.setCameraPosition( ghostCar.state().position, truncatePosition);
 		} else {
 			// no ghost, no player, WTF?
-			gameWorldRenderer.setCameraPosition( gameWorld.playerStartPos, true );
+			gameWorldRenderer.setCameraPosition( gameWorld.playerStartPos, truncatePosition);
 		}
 
 		URacer.timeMultiplier = AMath.clamp( timeMultiplier.value, TimeMultiplierMin, Config.Physics.PhysicsTimeMultiplier );
@@ -273,7 +273,7 @@ public class GameLogic implements CarEvent.Listener, CarStateEvent.Listener, Pla
 		GameTweener.update();
 
 		// post-processing step
-		postProcessing.onBeforeRender( playerCar );
+		postProcessing.onBeforeRender( playerCar, ghostCar );
 
 		// Gdx.app.log( "GameLogic", NumberString.format(timeMultiplier.value) );
 	}

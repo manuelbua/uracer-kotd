@@ -83,7 +83,7 @@ public class PostProcessing {
 		if( Config.PostProcessing.EnableVignetting ) {
 			// if there is no bloom, let's control the final saturation via
 			// the vignette filter
-			vignette = new Vignette( gameRenderer.getDepthMap(), Config.PostProcessing.EnableBloom ? false : true );
+			vignette = new Vignette( Config.PostProcessing.EnableBloom ? false : true );
 			processor.addEffect( vignette );
 			effects.put( Hash.APHash( "vignette" ), vignette );
 		}
