@@ -129,7 +129,7 @@ public class PlayerCar extends Car {
 			VMath.clamp( touchPos, 0, 1 );
 			VMath.clamp( carPos, 0, 1 );
 
-			carInput.throttle = touchPos.dst( carPos ) * 3 * preset.model.max_force;
+			carInput.throttle = touchPos.dst( carPos ) * 4 * preset.model.max_force;
 		}
 
 		return carInput;
@@ -140,16 +140,18 @@ public class PlayerCar extends Car {
 
 		transformed -= AMath.PI;
 		transformed += -body.getAngle(); // to local
+
 		if( transformed < 0 ) {
 			transformed += AMath.TWO_PI;
 		}
 
 		transformed = -(transformed - AMath.TWO_PI);
+
 		if( transformed > AMath.PI ) {
 			transformed = transformed - AMath.TWO_PI;
 		}
 
-		return transformed * 0.75f;
+		return transformed;// * 0.75f;
 	}
 
 	@Override
