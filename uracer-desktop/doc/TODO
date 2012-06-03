@@ -81,11 +81,13 @@
 	  when updating ONE single value, not so good for updating multiple values per-frame, this need a bit of work..
 
 [ X ] box2dlights update
+
 	x same/better features than i need?[point in shader/point in light] faster? [not quite]
 	x svn project in git?
 	x NOT GOING TO UPDATE, SLOW IMPLEMENTATION JUST BY READING IT
 
 [ ] GAME DATA
+
 	- shared between Game and GameLogic
 	- can only be modified by GameLogic
 	- can be read by whoever need
@@ -95,8 +97,10 @@
 		? no more getHud/getLevel in Game
 		
 [ ] car
+
 	- draw wheels
 	- get graphics' real size in pixels to permit artist to work on it, get pixel size at target resolution (1280x800)
+
 	
 [ ] investigate night-more + bloom + zoom performance drop?
 [ ] document map definition, objects, tile types, lights, tileset settings, tile settings
@@ -118,4 +122,13 @@ data in GameData? GameData::<Component>?
 
 	grep -ERn "\.addListener" * 2>&1 | grep -Ev 'Binary|.*//|.*notifiers'
 	grep -ERn "\.removeListener" * 2>&1 | grep -Ev 'Binary|.*//|.*notifiers'
-	
+
+
+GAME
+
+	3 main classes of cars
+		a, b, c
+		
+			more than one car for type, wide choice
+		
+		rankings based on classes, a player can choose to play only against player of the same class.
