@@ -156,7 +156,7 @@ public class Replay {
 //				Gdx.app.log( "Replay", "Done loading local replay" );
 				return r;
 
-			} catch( IOException e ) {
+			} catch( Exception e ) {
 				Gdx.app.log( "Replay", "Couldn't load local replay, reason: " + e.getMessage() );
 			}
 		} else {
