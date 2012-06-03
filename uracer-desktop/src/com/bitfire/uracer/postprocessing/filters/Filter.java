@@ -3,13 +3,16 @@ package com.bitfire.uracer.postprocessing.filters;
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.glutils.FrameBuffer;
 import com.badlogic.gdx.graphics.glutils.ShaderProgram;
+import com.badlogic.gdx.math.Matrix3;
+import com.badlogic.gdx.math.Matrix4;
 import com.bitfire.uracer.postprocessing.IFilter;
 
 @SuppressWarnings( "unchecked" )
-
 public abstract class Filter<T> extends IFilter {
-	protected static final int u_texture_0 = 0;
-	protected static final int u_texture_1 = 1;
+	protected static final int u_texture0 = 0;
+	protected static final int u_texture1 = 1;
+	protected static final int u_texture2 = 2;
+	protected static final int u_texture3 = 3;
 
 	protected Texture inputTexture = null;
 	protected FrameBuffer outputBuffer = null;
@@ -49,16 +52,45 @@ public abstract class Filter<T> extends IFilter {
 		int arrayElementSize();
 	}
 
+	/* Sets the parameter to the specified value for this filter.
+	 * This is for one-off operations since the shader is being bound and unbound once per call: for
+	 * a batch-ready version of this fuction see and use setParams instead. */
+
+	// int
 	public void setParam( Parameter param, int value ) {
 		program.begin();
 		program.setUniformi( param.mnemonic(), value );
 		program.end();
 	}
 
+	// float
 	public void setParam( Parameter param, float value ) {
 		program.begin();
 		program.setUniformf( param.mnemonic(), value );
 		program.end();
+	}
+
+	/** Sets the parameter to the specified value for this filter.
+	 * A single call OR chained function calls, for setParams methods, shall be ended by calling endParams() */
+
+	// mat3
+	public T setParams( Parameter param, Matrix3 value ) {
+		if( !programBegan ) {
+			programBegan = true;
+			program.begin();
+		}
+		program.setUniformMatrix( param.mnemonic(), value );
+		return (T)this;
+	}
+
+	// mat4
+	public T setParams( Parameter param, Matrix4 value ) {
+		if( !programBegan ) {
+			programBegan = true;
+			program.begin();
+		}
+		program.setUniformMatrix( param.mnemonic(), value );
+		return (T)this;
 	}
 
 	// float
@@ -71,7 +103,7 @@ public abstract class Filter<T> extends IFilter {
 		return (T)this;
 	}
 
-	// int
+	// int version
 	public T setParams( Parameter param, int value ) {
 		if( !programBegan ) {
 			programBegan = true;

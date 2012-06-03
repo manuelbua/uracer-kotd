@@ -51,7 +51,8 @@ public final class Vignetting extends Filter<Vignetting> {
 	}
 
 	public Vignetting( boolean controlSaturation ) {
-		super( ShaderLoader.fromFile( "screenspace", "vignetting", (controlSaturation ? "#define CONTROL_SATURATION" : "#define ENABLE_PIXEL_LUT") ) );
+		super( ShaderLoader.fromFile( "screenspace", "vignetting", (controlSaturation ? "#define CONTROL_SATURATION\n#define ENABLE_PIXEL_LUT"
+				: "#define ENABLE_PIXEL_LUT") ) );
 		dolut = false;
 		rebind();
 	}
@@ -94,21 +95,21 @@ public final class Vignetting extends Filter<Vignetting> {
 		dolut = (texLut != null);
 
 		if( dolut ) {
-			setParam( Param.TexLUT, u_texture_1 );
+			setParam( Param.TexLUT, u_texture1 );
 		}
 	}
 
 	public void setLutIntensity( float value ) {
 		lutintensity = value;
 		if( dolut ) {
-			setParam( Param.LutIntensity, lutintensity);
+			setParam( Param.LutIntensity, lutintensity );
 		}
 	}
 
 	public void setLutIndex( int index ) {
 		lutindex = index;
-		if(dolut) {
-			setParam( Param.LutIndex, lutindex);
+		if( dolut ) {
+			setParam( Param.LutIndex, lutindex );
 		}
 	}
 
@@ -121,11 +122,12 @@ public final class Vignetting extends Filter<Vignetting> {
 
 	@Override
 	public void rebind() {
-		setParams( Param.Texture0, u_texture_0 );
+		setParams( Param.Texture0, u_texture0 );
 
 		if( dolut ) {
 			setParams( Param.LutIndex, lutindex );
-			setParams( Param.TexLUT, u_texture_1 );
+			setParams( Param.TexLUT, u_texture1 );
+			setParams( Param.LutIntensity, lutintensity );
 		}
 
 		setParams( Param.VignetteIntensity, intensity );
@@ -140,10 +142,10 @@ public final class Vignetting extends Filter<Vignetting> {
 
 	@Override
 	protected void compute() {
-		inputTexture.bind( u_texture_0 );
+		inputTexture.bind( u_texture0 );
 
 		if( dolut ) {
-			texLut.bind( u_texture_1 );
+			texLut.bind( u_texture1 );
 		}
 
 		program.begin();

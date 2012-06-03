@@ -57,15 +57,15 @@ public final class Combine extends Filter<Combine> {
 
 	@Override
 	public void rebind() {
-		setParams( Param.Texture0, u_texture_0 );
-		setParams( Param.Texture1, u_texture_1 );
+		setParams( Param.Texture0, u_texture0 );
+		setParams( Param.Texture1, u_texture1 );
 		endParams();
 	}
 
 	@Override
 	protected void compute() {
-		inputTexture.bind( u_texture_0 );
-		inputTexture2.bind( u_texture_1 );
+		inputTexture.bind( u_texture0 );
+		inputTexture2.bind( u_texture1 );
 		program.begin();
 		IFilter.quad.render( program );
 		program.end();

@@ -76,23 +76,26 @@ public final class ZoomBlur extends Filter<ZoomBlur> {
 
 	public void setStrength( float strength ) {
 		this.strength = strength;
-		setParams( Param.BlurDiv, strength / (float)blur_len ).endParams();
+		setParams( Param.BlurDiv, strength / (float)blur_len );
+		endParams();
 	}
 
 	@Override
 	public void rebind() {
-		setParams( Param.Texture, u_texture_0 );
+		setParams( Param.Texture, u_texture0 );
 		setParams( Param.OneOnBlurLen, 1f / (float)blur_len );
 		setParams( Param.BlurDiv, this.strength / (float)blur_len );
 
 		// being explicit (could call setOrigin that will call endParams)
 		setParams( Param.OffsetX, x / (float)Gdx.graphics.getWidth() );
-		setParams( Param.OffsetY, 1f - (y / (float)Gdx.graphics.getHeight()) ).endParams();
+		setParams( Param.OffsetY, 1f - (y / (float)Gdx.graphics.getHeight()) );
+		endParams();
 	}
 
 	@Override
 	protected void compute() {
-		inputTexture.bind( u_texture_0 );
+		inputTexture.bind( u_texture0 );
+
 		program.begin();
 		IFilter.quad.render( program );
 		program.end();
