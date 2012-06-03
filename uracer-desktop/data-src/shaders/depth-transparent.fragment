@@ -1,0 +1,26 @@
+#ifdef GL_ES
+precision highp float;
+#endif
+
+varying vec4 v_position;
+
+uniform sampler2D u_texture;
+varying vec2 v_TexCoord;
+
+void main(void)
+{
+	vec4 texel = texture2D( u_texture, v_TexCoord );
+	if(texel.a < 0.5) discard;
+
+	float normalizedDistance  =    (240.0+v_position.z) / v_position.w;	// with glClearColor 0
+	//float normalizedDistance  = 1- (240+v_position.z) / v_position.w;	// with glClearColor 1
+	normalizedDistance += 0.001;	// fix flickering at z = 0-borders (~0)
+
+	const vec4 packFactors = vec4(256.0 * 256.0 * 256.0, 256.0 * 256.0, 256.0, 1.0);
+	const vec4 bitMask     = vec4(0.0 , 1.0 / 256.0, 1.0 / 256.0, 1.0 / 256.0);
+	vec4 packedValue = vec4(fract(packFactors*normalizedDistance));
+	packedValue -= packedValue.xxyz * bitMask;
+	gl_FragColor  = packedValue;
+	//gl_FragColor  = vec4(1-vec3(v_position.w/256),1);
+	//gl_FragColor  = vec4(vec3(normalizedDistance),1);
+}
