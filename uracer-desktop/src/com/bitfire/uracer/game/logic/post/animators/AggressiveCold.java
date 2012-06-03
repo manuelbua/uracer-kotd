@@ -81,7 +81,7 @@ public class AggressiveCold implements Animator {
 		}
 
 		if( Config.PostProcessing.EnableBloom ) {
-			bloom.setBaseSaturation( 0.6f );
+			bloom.setBaseSaturation( AMath.lerp( 0.8f, 0.3f, timeFactor ) );
 			// bloom.setBloomSaturation( 1.5f - factor * 0.85f ); // TODO when charged
 			// bloom.setBloomSaturation( 1.5f - factor * 1.5f ); // TODO when completely discharged
 			bloom.setBloomSaturation( 1f - timeFactor * 0.25f );

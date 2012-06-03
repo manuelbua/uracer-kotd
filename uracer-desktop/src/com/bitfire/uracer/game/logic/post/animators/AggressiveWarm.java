@@ -93,7 +93,7 @@ public final class AggressiveWarm implements Animator {
 //			bloom.setThreshold( 0.5f );
 
 			// testing camera motion
-			bloom.setThreshold( AMath.lerp( 0.5f, 0.5f, timeFactor ) );
+			bloom.setThreshold( AMath.lerp( 0.3f, 0.5f, timeFactor ) );
 		}
 
 		if( Config.PostProcessing.EnableVignetting ) {
