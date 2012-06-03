@@ -43,13 +43,13 @@ public class OrthographicAlignedStillModel {
 	private void loadShaders() {
 		// @formatter:off
 		String vertexShader =
-			"uniform mat4 u_mvpMatrix;					\n" +
+			"uniform mat4 u_projTrans;					\n" +
 			"attribute vec4 a_position;					\n" +
 			"attribute vec2 a_texCoord0;				\n" +
 			"varying vec2 v_TexCoord;					\n" +
 			"void main()								\n" +
 			"{											\n" +
-			"	gl_Position = u_mvpMatrix * a_position;	\n" +
+			"	gl_Position = u_projTrans * a_position;	\n" +
 			"	v_TexCoord = a_texCoord0;				\n" +
 			"}											\n";
 
