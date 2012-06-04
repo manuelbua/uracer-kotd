@@ -132,3 +132,16 @@ GAME
 			more than one car for type, wide choice
 		
 		rankings based on classes, a player can choose to play only against player of the same class.
+	
+	- player accumulates time dilation duration capabilities by drifting, the more seconds he drifts, the more seconds he can time dilate by.
+	- gameplay
+		- show user name, level and rank positions on screen, enable the player to figure out its rank for any given track with any given car's level.
+		- figure out a VERY simple model of multiplayer gameplay, but only a VERY ADDICTING one, something
+		like a simple-to-grasp-at-first-yet-practice-will-make-you-better! thing (YaY!)
+		
+		- when the player collides, automatically discharge its time dilation credits completely, stop the time dilation and make a "mistake" gfx
+		- if a warm-lap is being enforced (tournament, important races..) it would be cool to darken the scene for the very first lap (warm lap), make it
+		clear its a warm lap, then bloom as 0->1->0 by tweening a InOutExpo/InOutQuad to make it fade to white and back, post-process the scene as something
+		epic and clearly different ambience, it's an IMPORTANT race!
+		
+		- automatic opponent selection? always tournament, always start new account from the bottom..

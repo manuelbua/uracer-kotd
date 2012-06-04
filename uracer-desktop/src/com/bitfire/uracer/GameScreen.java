@@ -19,7 +19,7 @@ public class GameScreen extends Screen {
 		game = new Game( levelName, scalingStrategy, GameDifficulty.Hard );
 
 		// simulate the player choosing a car type
-		game.setPlayer( Type.CooperMiniCoupe );
+		game.setPlayer( Type.LamborghiniGallardoLP560 );
 
 		// simulate the player choosing local playing
 		Replay r = Replay.loadLocal( levelName );

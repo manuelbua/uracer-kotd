@@ -24,16 +24,18 @@ public class PostProcessing {
 	private final GameRenderer gameRenderer;
 	private boolean canPostProcess = false;
 
-	// effects
+	// public access to stored effects
 	public LongMap<PostProcessorEffect> effects = new LongMap<PostProcessorEffect>();
-	private Bloom bloom = null;
-	private Zoom zoom = null;
-	private Vignette vignette = null;
-	// private CameraMotion cameraMotion = null;
 
 	// animators
 	public LongMap<Animator> animators = new LongMap<Animator>();
 	private Animator currentAnimator;
+
+	// internally cached effects refs for faster access
+	private Bloom bloom = null;
+	private Zoom zoom = null;
+	private Vignette vignette = null;
+	// private CameraMotion cameraMotion = null;
 
 	public PostProcessing( GameWorld gameWorld, GameRenderer gameRenderer ) {
 		this.gameWorld = gameWorld;
