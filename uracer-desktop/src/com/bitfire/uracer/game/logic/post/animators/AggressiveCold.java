@@ -69,10 +69,11 @@ public class AggressiveCold implements Animator {
 	public void update( PlayerCar player, GhostCar ghost ) {
 		if( Config.PostProcessing.EnableTvLines ) {
 			float secs = (float)(TimeUtils.millis() - startMs) / 1000;
-			tv.setTime( secs );
+			tv.setTime( secs );//+ MathUtils.random() );
 		}
 
-		tv.setOffset( 0.003f );
+		tv.setOffset( 0.002f );
+		tv.setTint( 0.95f, 0.8f, 1.0f );
 
 		if( player == null ) {
 			return;
