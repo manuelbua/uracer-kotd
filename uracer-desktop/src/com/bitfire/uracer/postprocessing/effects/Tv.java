@@ -30,7 +30,8 @@ public class Tv extends PostProcessorEffect {
 		blur = new Blur( w, h );
 		blur.setPasses( 1 );
 		blur.setAmount( 1f );
-		blur.setType( BlurType.Gaussian3x3b );
+//		blur.setType( BlurType.Gaussian3x3b );	// high defocus
+		blur.setType( BlurType.Gaussian3x3 );	// modern machines defocus
 
 		combine = new Combine();
 		combine.setParam( Combine.Param.Source1Intensity, 0.15f );
@@ -96,6 +97,9 @@ public class Tv extends PostProcessorEffect {
 
 		// combine original + blurred tv-lines
 		combine.setOutput( dest ).setInput( texsrc, pingPongBuffer.getResultTexture() ).render();
+
+		// no blur
+//		combine.setOutput( dest ).setInput( texsrc, pingPongBuffer.getSouceTexture() ).render();
 	};
 
 }
