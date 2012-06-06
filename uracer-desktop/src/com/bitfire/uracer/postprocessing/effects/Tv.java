@@ -37,7 +37,7 @@ public class Tv extends PostProcessorEffect {
 		combine.setParam( Combine.Param.Source1Intensity, 0.15f );
 		combine.setParam( Combine.Param.Source2Intensity, 1.1f );
 		combine.setParam( Combine.Param.Source1Saturation, 1f );
-		combine.setParam( Combine.Param.Source2Saturation, 1f );
+		combine.setParam( Combine.Param.Source2Saturation, 0.8f );
 
 		tvlines = new TvLines();
 		tvlines.setResolution( w, h );
