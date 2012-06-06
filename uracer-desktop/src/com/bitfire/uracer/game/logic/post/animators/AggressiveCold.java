@@ -2,6 +2,7 @@ package com.bitfire.uracer.game.logic.post.animators;
 
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.math.Vector2;
+import com.badlogic.gdx.utils.TimeUtils;
 import com.bitfire.uracer.URacer;
 import com.bitfire.uracer.configuration.Config;
 import com.bitfire.uracer.game.actors.GhostCar;
@@ -12,6 +13,7 @@ import com.bitfire.uracer.game.player.PlayerCar;
 import com.bitfire.uracer.game.rendering.GameRenderer;
 import com.bitfire.uracer.game.world.GameWorld;
 import com.bitfire.uracer.postprocessing.effects.Bloom;
+import com.bitfire.uracer.postprocessing.effects.Tv;
 import com.bitfire.uracer.postprocessing.effects.Vignette;
 import com.bitfire.uracer.postprocessing.effects.Zoom;
 import com.bitfire.uracer.postprocessing.filters.ZoomBlur.Quality;
@@ -23,12 +25,14 @@ public class AggressiveCold implements Animator {
 	private Bloom bloom = null;
 	private Zoom zoom = null;
 	private Vignette vignette = null;
+	private Tv tv = null;
 
 	public AggressiveCold( GameWorld world, PostProcessing post ) {
 		gameWorld = world;
 		bloom = (Bloom)post.getEffect( "bloom" );
 		zoom = (Zoom)post.getEffect( "zoom" );
 		vignette = (Vignette)post.getEffect( "vignette" );
+		tv = (Tv)post.getEffect( "tvlines" );
 
 		reset();
 	}
@@ -49,13 +53,25 @@ public class AggressiveCold implements Animator {
 				vignette.setLutIndex( 16 );
 				vignette.setEnabled( true );
 			}
+
+			if( Config.PostProcessing.EnableTvLines ) {
+				startMs = TimeUtils.millis();
+				tv.setTime( 0 );
+				tv.setResolution( Gdx.graphics.getWidth(), Gdx.graphics.getHeight() );
+			}
 		}
 	}
 
 	private float prevDriftStrength = 0;
+	private long startMs = 0;
 
 	@Override
 	public void update( PlayerCar player, GhostCar ghost ) {
+		if( Config.PostProcessing.EnableTvLines ) {
+			float secs = (float)(TimeUtils.millis() - startMs) / 1000;
+			tv.setTime( secs );
+		}
+
 		if( player == null ) {
 			return;
 		}

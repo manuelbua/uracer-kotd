@@ -12,6 +12,7 @@ import com.bitfire.uracer.game.world.GameWorld;
 import com.bitfire.uracer.postprocessing.PostProcessor;
 import com.bitfire.uracer.postprocessing.PostProcessorEffect;
 import com.bitfire.uracer.postprocessing.effects.Bloom;
+import com.bitfire.uracer.postprocessing.effects.Tv;
 import com.bitfire.uracer.postprocessing.effects.Vignette;
 import com.bitfire.uracer.postprocessing.effects.Zoom;
 import com.bitfire.uracer.utils.Hash;
@@ -35,6 +36,8 @@ public class PostProcessing {
 	private Bloom bloom = null;
 	private Zoom zoom = null;
 	private Vignette vignette = null;
+	private Tv tv = null;
+
 	// private CameraMotion cameraMotion = null;
 
 	public PostProcessing( GameWorld gameWorld, GameRenderer gameRenderer ) {
@@ -91,6 +94,12 @@ public class PostProcessing {
 			vignette = new Vignette( Config.PostProcessing.EnableBloom ? false : true );
 			processor.addEffect( vignette );
 			effects.put( Hash.APHash( "vignette" ), vignette );
+		}
+
+		if( Config.PostProcessing.EnableTvLines ) {
+			tv = new Tv();
+			processor.addEffect( tv );
+			effects.put( Hash.APHash( "tvlines" ), tv );
 		}
 	}
 
