@@ -5,6 +5,8 @@ import com.badlogic.gdx.graphics.glutils.FrameBuffer;
 import com.badlogic.gdx.graphics.glutils.ShaderProgram;
 import com.badlogic.gdx.math.Matrix3;
 import com.badlogic.gdx.math.Matrix4;
+import com.badlogic.gdx.math.Vector2;
+import com.badlogic.gdx.math.Vector3;
 import com.bitfire.uracer.postprocessing.IFilter;
 
 @SuppressWarnings( "unchecked" )
@@ -70,6 +72,20 @@ public abstract class Filter<T> extends IFilter {
 		program.end();
 	}
 
+	// vec2
+	public void setParam( Parameter param, Vector2 value ) {
+		program.begin();
+		program.setUniformf( param.mnemonic(), value );
+		program.end();
+	}
+
+	// vec3
+	public void setParam( Parameter param, Vector3 value ) {
+		program.begin();
+		program.setUniformf( param.mnemonic(), value );
+		program.end();
+	}
+
 	/** Sets the parameter to the specified value for this filter.
 	 * A single call OR chained function calls, for setParams methods, shall be ended by calling endParams() */
 
@@ -110,6 +126,26 @@ public abstract class Filter<T> extends IFilter {
 			program.begin();
 		}
 		program.setUniformi( param.mnemonic(), value );
+		return (T)this;
+	}
+
+	// vec2 version
+	public T setParams( Parameter param, Vector2 value ) {
+		if( !programBegan ) {
+			programBegan = true;
+			program.begin();
+		}
+		program.setUniformf( param.mnemonic(), value );
+		return (T)this;
+	}
+
+	// vec3 version
+	public T setParams( Parameter param, Vector3 value ) {
+		if( !programBegan ) {
+			programBegan = true;
+			program.begin();
+		}
+		program.setUniformf( param.mnemonic(), value );
 		return (T)this;
 	}
 
