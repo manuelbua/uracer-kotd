@@ -1,6 +1,7 @@
 package com.bitfire.uracer.game.logic.post.animators;
 
 import com.badlogic.gdx.Gdx;
+import com.badlogic.gdx.math.MathUtils;
 import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.utils.TimeUtils;
 import com.bitfire.uracer.URacer;
@@ -56,7 +57,14 @@ public class AggressiveCold implements Animator {
 			if( Config.PostProcessing.EnableTvLines ) {
 				startMs = TimeUtils.millis();
 				tv.setTime( 0 );
-				tv.setResolution( Gdx.graphics.getWidth(), Gdx.graphics.getHeight() );
+
+				// FIXME should find out a way to compute this per-resolution! OR!
+				// Just try manually the game and write down the offset, this should work well, no much resolutions anyway
+				// and will work better since this is human-tested!
+//				tv.setOffset( 0.00145f );	// 1920x1080
+				tv.setOffset( 0.002f );	// 1920x1080
+
+				tv.setTint( 0.95f, 0.8f, 1.0f );
 			}
 		}
 	}
@@ -67,12 +75,15 @@ public class AggressiveCold implements Animator {
 	@Override
 	public void update( PlayerCar player, GhostCar ghost ) {
 		if( Config.PostProcessing.EnableTvLines ) {
+			// compute time (add noise)
 			float secs = (float)(TimeUtils.millis() - startMs) / 1000;
-			tv.setTime( secs );//+ MathUtils.random() );
+			boolean randomNoiseInTime = false;
+			if( randomNoiseInTime ) {
+				tv.setTime( secs + MathUtils.random() / (MathUtils.random() * 64f + 0.001f) );
+			} else {
+				tv.setTime( secs );
+			}
 		}
-
-		tv.setOffset( 0.002f );	// 1920x1080
-		tv.setTint( 0.95f, 0.8f, 1.0f );
 
 		if( player == null ) {
 			return;
