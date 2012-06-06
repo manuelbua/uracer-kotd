@@ -4,8 +4,8 @@ import com.badlogic.gdx.graphics.Texture.TextureWrap;
 import com.bitfire.uracer.postprocessing.IFilter;
 import com.bitfire.uracer.utils.ShaderLoader;
 
-public class TvLines extends Filter<TvLines> {
-	private float time;
+public final class TvLines extends Filter<TvLines> {
+	private float time, offset;
 	private float[] resolution;
 
 	public enum Param implements Parameter {
@@ -13,6 +13,7 @@ public class TvLines extends Filter<TvLines> {
 		Texture0("u_texture0",0),
 		Time("time",0),
 		Resolution("resolution",2),
+		Offset("offset",0)
 		;
 		// @formatter:on
 
@@ -54,6 +55,10 @@ public class TvLines extends Filter<TvLines> {
 		setParamsv( Param.Resolution, resolution, 0, 2 );
 	}
 
+	public void setOffset( float offset ) {
+		this.offset = offset;
+		setParam(Param.Offset, this.offset );
+	}
 	@Override
 	public void rebind() {
 		setParams( Param.Texture0, u_texture0 );

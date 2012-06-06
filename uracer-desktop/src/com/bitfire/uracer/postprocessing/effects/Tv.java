@@ -31,6 +31,10 @@ public class Tv extends PostProcessorEffect {
 		tvlines.setResolution( width, height );
 	}
 
+	public void setOffset( float offset ) {
+		tvlines.setOffset( offset );
+	}
+
 	@Override
 	public void rebind() {
 		tvlines.rebind();
