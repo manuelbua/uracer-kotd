@@ -49,7 +49,7 @@ public final class Config {
 
 			if( w >= 1680 ) {
 				BlurType = Blur.BlurType.Gaussian5x5b;
-				ZoomQuality = ZoomBlur.Quality.VeryHigh;
+				ZoomQuality = ZoomBlur.Quality.High;
 				ZoomMaxStrength = -0.08f;
 				PotRttFboWidth = 256;
 				PotRttFboHeight = 256;
