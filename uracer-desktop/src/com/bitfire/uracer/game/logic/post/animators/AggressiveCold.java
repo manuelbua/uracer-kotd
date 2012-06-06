@@ -72,7 +72,7 @@ public class AggressiveCold implements Animator {
 			tv.setTime( secs );//+ MathUtils.random() );
 		}
 
-		tv.setOffset( 0.002f );
+		tv.setOffset( 0.002f );	// 1920x1080
 		tv.setTint( 0.95f, 0.8f, 1.0f );
 
 		if( player == null ) {
