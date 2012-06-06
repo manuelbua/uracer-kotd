@@ -14,7 +14,6 @@ import com.bitfire.uracer.game.world.GameWorld;
 import com.bitfire.uracer.postprocessing.effects.Bloom;
 import com.bitfire.uracer.postprocessing.effects.Vignette;
 import com.bitfire.uracer.postprocessing.effects.Zoom;
-import com.bitfire.uracer.postprocessing.filters.ZoomBlur.Quality;
 import com.bitfire.uracer.resources.Art;
 import com.bitfire.uracer.utils.AMath;
 
@@ -78,11 +77,7 @@ public final class AggressiveWarm implements Animator {
 
 		if( Config.PostProcessing.EnableZoomBlur && player != null ) {
 			zoom.setOrigin( playerScreenPos );
-			if( Config.PostProcessing.ZoomQuality==Quality.VeryHigh) {
-				zoom.setStrength( -0.1f * player.carState.currSpeedFactor * timeFactor );
-			} else {
-				zoom.setStrength( -0.03f  * player.carState.currSpeedFactor * timeFactor );
-			}
+			zoom.setStrength( -0.1f * player.carState.currSpeedFactor * timeFactor );
 		}
 
 		if( Config.PostProcessing.EnableBloom ) {
