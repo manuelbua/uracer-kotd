@@ -64,12 +64,15 @@ public class PostProcessing {
 			effects.put( Hash.APHash( "zoom" ), zoom );
 		}
 
+		// experimental camera motion blur (need subframe-interpolated position, disable camera position's rounding
+		// before using it!)
 		// cameraMotion = new CameraMotion( gameRenderer.getDepthMap() );
 		// processor.addEffect( cameraMotion );
 		// effects.put( Hash.APHash( "cameramotion" ), cameraMotion );
 
 		if( Config.PostProcessing.EnableBloom ) {
 			bloom = new Bloom( Config.PostProcessing.RttFboWidth, Config.PostProcessing.RttFboHeight );
+			// bloom = new Bloom( Config.PostProcessing.PotRttFboWidth, Config.PostProcessing.PotRttFboHeight );
 
 			// Bloom.Settings bs = new Bloom.Settings( "arrogance-1 / rtt=0.25 / @1920x1050", BlurType.Gaussian5x5b, 1,
 			// 1,

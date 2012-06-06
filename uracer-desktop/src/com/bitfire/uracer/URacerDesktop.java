@@ -40,6 +40,11 @@ public final class URacerDesktop {
 
 		config.samples = 0;
 		config.depth = 0;
+
+		// force R8G8B8A8+D16
+//		config.depth = 16;
+//		config.r = config.g = config.b = config.a = 8;
+
 		config.vSyncEnabled = false;
 		config.useCPUSynch = false;
 		config.useGL20 = true;

@@ -67,15 +67,15 @@ public class AggressiveCold implements Animator {
 		float timeFactor = 1 - (URacer.timeMultiplier - GameLogic.TimeMultiplierMin) / (Config.Physics.PhysicsTimeMultiplier - GameLogic.TimeMultiplierMin);
 		Vector2 playerScreenPos = GameRenderer.ScreenUtils.worldPxToScreen( player.state().position );
 
-		float driftStrength = AMath.clamp( AMath.lerp( prevDriftStrength, player.driftState.driftStrength, 0.01f ), 0, 1);
+		float driftStrength = AMath.clamp( AMath.lerp( prevDriftStrength, player.driftState.driftStrength, 0.01f ), 0, 1 );
 		prevDriftStrength = driftStrength;
 
 		if( Config.PostProcessing.EnableZoomBlur && player != null ) {
 			zoom.setOrigin( playerScreenPos );
-			if( Config.PostProcessing.ZoomQuality==Quality.VeryHigh) {
+			if( Config.PostProcessing.ZoomQuality == Quality.VeryHigh ) {
 				zoom.setStrength( -0.1f * player.carState.currSpeedFactor * timeFactor );
 			} else {
-				zoom.setStrength( -0.03f  * player.carState.currSpeedFactor * timeFactor );
+				zoom.setStrength( -0.03f * player.carState.currSpeedFactor * timeFactor );
 			}
 		}
 
@@ -84,6 +84,7 @@ public class AggressiveCold implements Animator {
 			// bloom.setBloomSaturation( 1.5f - factor * 0.85f ); // TODO when charged
 			// bloom.setBloomSaturation( 1.5f - factor * 1.5f ); // TODO when completely discharged
 			bloom.setBloomSaturation( 1f - timeFactor * 0.25f );
+			bloom.setBloomIntesity( 1f );
 		}
 
 		if( Config.PostProcessing.EnableVignetting ) {
@@ -95,8 +96,8 @@ public class AggressiveCold implements Animator {
 				vignette.setSaturationMul( 1f + timeFactor * 0.2f );
 			}
 
-//			 vignette.setCenter( playerScreenPos.x, playerScreenPos.y );
-//			 vignette.setCoords( 1.5f - driftStrength * 0.8f, 0.1f );
+			// vignette.setCenter( playerScreenPos.x, playerScreenPos.y );
+			// vignette.setCoords( 1.5f - driftStrength * 0.8f, 0.1f );
 
 			vignette.setLutIntensity( 0.5f + timeFactor * 0.5f );
 			vignette.setIntensity( timeFactor );

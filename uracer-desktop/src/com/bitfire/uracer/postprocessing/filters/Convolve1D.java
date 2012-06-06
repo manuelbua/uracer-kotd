@@ -60,7 +60,7 @@ public final class Convolve1D extends Filter<Convolve1D> {
 	public void rebind() {
 		setParams( Param.Texture, u_texture0 );
 		setParamsv( Param.SampleWeights, weights, 0, length );
-		setParamsv( Param.SampleOffsets, offsets, 0, length * 2 /* libgdx asks for number of floats, not elements! */);
+		setParamsv( Param.SampleOffsets, offsets, 0, length * 2 /* libgdx asks for number of floats, NOT number of elements! */);
 		endParams();
 	}
 

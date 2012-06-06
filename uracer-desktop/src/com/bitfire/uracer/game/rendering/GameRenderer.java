@@ -80,6 +80,7 @@ public final class GameRenderer {
 		// post-processing
 		boolean supports32Bpp = Config.isDesktop;
 		postProcessor = (createPostProcessor ? new PostProcessor( width, height, true /* depth */, false /* alpha */, supports32Bpp ) : null);
+//		postProcessor = (createPostProcessor ? new PostProcessor( Config.PostProcessing.PotRttFboWidth, Config.PostProcessing.PotRttFboWidth, true /* depth */, false /* alpha */, supports32Bpp ) : null);
 	}
 
 	public void dispose() {
