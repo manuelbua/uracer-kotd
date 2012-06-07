@@ -22,7 +22,7 @@ public final class Config {
 		public static boolean EnableVignetting;
 		public static boolean EnableBloom;
 		public static boolean EnableZoomBlur;
-		public static boolean EnableTvLines;
+		public static boolean EnableCrtScreen;
 		public static BlurType BlurType;
 		public static float RttRatio = 0.25f;
 		public static int PotRttFboWidth, PotRttFboHeight;
@@ -42,7 +42,7 @@ public final class Config {
 			EnableVignetting = Config.isDesktop;
 			EnableBloom = Config.isDesktop;
 			EnableZoomBlur = Config.isDesktop;
-			EnableTvLines = Config.isDesktop;
+			EnableCrtScreen = Config.isDesktop;
 
 			RttFboWidth = (int)(Gdx.graphics.getWidth() * RttRatio);
 			RttFboHeight = (int)(Gdx.graphics.getHeight() * RttRatio);

@@ -45,7 +45,7 @@ public final class URacerDesktop {
 //		config.depth = 16;
 //		config.r = config.g = config.b = config.a = 8;
 
-		config.vSyncEnabled = false;
+		config.vSyncEnabled = true;
 		config.useCPUSynch = false;
 		config.useGL20 = true;
 		config.fullscreen = false;

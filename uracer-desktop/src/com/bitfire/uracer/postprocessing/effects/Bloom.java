@@ -174,6 +174,8 @@ public final class Bloom extends PostProcessorEffect {
 
 	@Override
 	public void rebind() {
+		// FIXME rebind filters!
+		// TODO rebind filters!
 		setSettings( settings );
 	}
 }

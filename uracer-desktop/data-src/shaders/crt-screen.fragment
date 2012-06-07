@@ -1,0 +1,72 @@
+#ifdef GL_ES
+precision highp float;
+#endif
+
+uniform vec2 resolution;
+uniform vec3 tint;// = vec3(0.8,1.0,0.7);
+uniform float time;
+uniform float offset;// = 0.003;
+uniform float Distortion;// = 0.3
+uniform sampler2D u_texture0;
+const vec4 Zero = vec4(0.0,0.0,0.0,1.0);
+
+#ifdef ENABLE_BARREL_DISTORTION
+	//#define Distortion 0.3
+
+	vec2 barrelDistortion(vec2 coord)
+	{
+		vec2 cc = coord - 0.5;
+		float dist = dot(cc, cc) * Distortion;
+		return (coord + cc * (1.0 + dist) * dist);
+	}
+
+#endif
+
+void main(void)
+{
+	vec2 q = gl_FragCoord.xy / resolution.xy;
+	q.y = 1.0 - q.y;
+
+#ifdef ENABLE_BARREL_DISTORTION
+    q = barrelDistortion(q);
+    //vec2 uv = 0.5 + (q-0.5)*(0.95);	// or 0.90 @ Distortion=0.2 for no black borders
+    vec2 uv = 0.5 + (q-0.5)*(1.0-0.049*Distortion*10.0);	// generic for ~0.01<Distortion<~0.8
+    //vec2 uv = 0.5 + (q-0.5)*(0.85);
+#else
+	//vec2 uv = 0.5 + (q-0.5)*(0.9 + 0.1*sin(0.2*time));
+	vec2 uv = q;
+#endif
+
+	vec3 oricol = texture2D(u_texture0,vec2(q.x,1.0-q.y)).xyz;
+	vec3 col;
+
+#ifdef ENABLE_BARREL_DISTORTION
+    if(uv.s<0.0 || uv.s>1.0 || uv.t<0.0 || uv.t >1.0) {
+        gl_FragColor = Zero;
+    } else {
+#endif
+
+		col.r = texture2D(u_texture0,vec2(uv.x+offset,-uv.y)).x;
+		col.g = texture2D(u_texture0,vec2(uv.x+0.000,-uv.y)).y;
+		col.b = texture2D(u_texture0,vec2(uv.x-offset,-uv.y)).z;
+
+		col = clamp(col*0.5+0.5*col*col*1.2,0.0,1.0);
+
+		col *= 0.5 + 0.5*16.0*uv.x*uv.y*(1.0-uv.x)*(1.0-uv.y);
+
+		col *= tint;
+
+		col *= 0.9+0.1*sin(10.0*time-uv.y*1000.0);
+
+		col *= 0.97+0.03*sin(110.0*time);
+
+		//float comp = smoothstep( 0.2, 0.7, sin(time) );
+		//col = mix( col, oricol, clamp(-2.0+2.0*q.x+3.0*comp,0.0,1.0) );
+
+		gl_FragColor = vec4(col,1.0);
+		//gl_FragColor = vec4(oricol,1.0);
+
+#ifdef ENABLE_BARREL_DISTORTION
+	}
+#endif
+}

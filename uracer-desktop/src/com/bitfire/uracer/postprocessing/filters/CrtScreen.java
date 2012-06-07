@@ -7,11 +7,12 @@ import com.badlogic.gdx.math.Vector3;
 import com.bitfire.uracer.postprocessing.IFilter;
 import com.bitfire.uracer.utils.ShaderLoader;
 
-public final class TvLines extends Filter<TvLines> {
+public final class CrtScreen extends Filter<CrtScreen> {
 	private float time, offset;
 	private Vector2 resolution;
 	private Vector3 vtint;
 	private Color tint;
+	private float distortion;
 
 	public enum Param implements Parameter {
 		// @formatter:off
@@ -19,7 +20,8 @@ public final class TvLines extends Filter<TvLines> {
 		Time("time",0),
 		Resolution("resolution",2),
 		Tint("tint",3),
-		Offset("offset",0)
+		Offset("offset",0),
+		Distortion("Distortion",0)
 		;
 		// @formatter:on
 
@@ -42,12 +44,13 @@ public final class TvLines extends Filter<TvLines> {
 		}
 	}
 
-	public TvLines() {
-		super( ShaderLoader.fromFile( "screenspace", "tv-lines" ) );
+	public CrtScreen( boolean barrelDistortion ) {
+		super( ShaderLoader.fromFile( "screenspace", "crt-screen", barrelDistortion ? "#define ENABLE_BARREL_DISTORTION" : "" ) );
 		time = 0;
 		resolution = new Vector2();
 		vtint = new Vector3();
 		tint = new Color( 0.8f, 1.0f, 0.7f, 1.0f );
+		distortion = 0.3f;
 
 		rebind();
 	}
@@ -73,6 +76,11 @@ public final class TvLines extends Filter<TvLines> {
 		setParam( Param.Tint, vtint );
 	}
 
+	public void setDistortion( float distortion ) {
+		this.distortion = distortion;
+		setParam( Param.Distortion, this.distortion );
+	}
+
 	@Override
 	public void rebind() {
 		setParams( Param.Texture0, u_texture0 );
@@ -81,6 +89,9 @@ public final class TvLines extends Filter<TvLines> {
 
 		vtint.set( tint.r, tint.g, tint.b );
 		setParams( Param.Tint, vtint );
+
+		setParam( Param.Distortion, distortion );
+
 		endParams();
 	}
 

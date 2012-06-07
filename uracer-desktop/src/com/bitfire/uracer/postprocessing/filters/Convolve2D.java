@@ -2,7 +2,7 @@ package com.bitfire.uracer.postprocessing.filters;
 
 import com.bitfire.uracer.postprocessing.PingPongBuffer;
 
-/** Encapsulates a separable (1D+1D) 2D convolution kernel filter
+/** Encapsulates a separable 2D convolution kernel filter
  *
  * @author bmanuel */
 public final class Convolve2D extends MultipassFilter {

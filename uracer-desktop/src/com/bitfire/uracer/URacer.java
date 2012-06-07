@@ -16,7 +16,7 @@ import com.bitfire.uracer.utils.SpriteBatchUtils;
 public class URacer implements ApplicationListener {
 	private Screen screen;
 	private static boolean running = false;
-	private static final boolean useRealFrametime = false;
+	private static final boolean useRealFrametime = Config.isDesktop;
 
 	private static ScalingStrategy scalingStrategy;
 	private float temporalAliasing = 0;

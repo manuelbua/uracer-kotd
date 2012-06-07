@@ -96,8 +96,8 @@ public class PostProcessing {
 			effects.put( Hash.APHash( "vignette" ), vignette );
 		}
 
-		if( Config.PostProcessing.EnableTvLines ) {
-			tv = new Tv();
+		if( Config.PostProcessing.EnableCrtScreen ) {
+			tv = new Tv( true, false );
 			processor.addEffect( tv );
 			effects.put( Hash.APHash( "tvlines" ), tv );
 		}
@@ -107,8 +107,8 @@ public class PostProcessing {
 		currentAnimator = new AggressiveCold( gameWorld, this );
 		animators.put( Hash.APHash( "AggressiveCold" ), currentAnimator );
 
-		// currentAnimator = new AggressiveWarm( gameWorld, this );
-		// animators.put( Hash.APHash( "AggressiveWarm" ), currentAnimator );
+//		currentAnimator = new AggressiveWarm( gameWorld, this );
+//		animators.put( Hash.APHash( "AggressiveWarm" ), currentAnimator );
 	}
 
 	public void addEffect( String name, PostProcessorEffect effect ) {

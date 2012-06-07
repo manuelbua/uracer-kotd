@@ -54,7 +54,7 @@ public class AggressiveCold implements Animator {
 				vignette.setEnabled( true );
 			}
 
-			if( Config.PostProcessing.EnableTvLines ) {
+			if( Config.PostProcessing.EnableCrtScreen ) {
 				startMs = TimeUtils.millis();
 				tv.setTime( 0 );
 
@@ -74,17 +74,6 @@ public class AggressiveCold implements Animator {
 
 	@Override
 	public void update( PlayerCar player, GhostCar ghost ) {
-		if( Config.PostProcessing.EnableTvLines ) {
-			// compute time (add noise)
-			float secs = (float)(TimeUtils.millis() - startMs) / 1000;
-			boolean randomNoiseInTime = false;
-			if( randomNoiseInTime ) {
-				tv.setTime( secs + MathUtils.random() / (MathUtils.random() * 64f + 0.001f) );
-			} else {
-				tv.setTime( secs );
-			}
-		}
-
 		if( player == null ) {
 			return;
 		}
@@ -98,6 +87,19 @@ public class AggressiveCold implements Animator {
 
 		float driftStrength = AMath.clamp( AMath.lerp( prevDriftStrength, player.driftState.driftStrength, 0.01f ), 0, 1 );
 		prevDriftStrength = driftStrength;
+
+		if( Config.PostProcessing.EnableCrtScreen ) {
+			// compute time (add noise)
+			float secs = (float)(TimeUtils.millis() - startMs) / 1000;
+			boolean randomNoiseInTime = false;
+			if( randomNoiseInTime ) {
+				tv.setTime( secs + MathUtils.random() / (MathUtils.random() * 64f + 0.001f) );
+			} else {
+				tv.setTime( secs );
+			}
+
+			tv.setDistortion( 0.2f + timeFactor * 0.05f );
+		}
 
 		if( Config.PostProcessing.EnableZoomBlur && player != null ) {
 			zoom.setOrigin( playerScreenPos );

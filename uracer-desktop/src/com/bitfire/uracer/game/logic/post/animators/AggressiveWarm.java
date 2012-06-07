@@ -1,7 +1,9 @@
 package com.bitfire.uracer.game.logic.post.animators;
 
 import com.badlogic.gdx.Gdx;
+import com.badlogic.gdx.math.MathUtils;
 import com.badlogic.gdx.math.Vector2;
+import com.badlogic.gdx.utils.TimeUtils;
 import com.bitfire.uracer.URacer;
 import com.bitfire.uracer.configuration.Config;
 import com.bitfire.uracer.game.actors.GhostCar;
@@ -12,6 +14,7 @@ import com.bitfire.uracer.game.player.PlayerCar;
 import com.bitfire.uracer.game.rendering.GameRenderer;
 import com.bitfire.uracer.game.world.GameWorld;
 import com.bitfire.uracer.postprocessing.effects.Bloom;
+import com.bitfire.uracer.postprocessing.effects.Tv;
 import com.bitfire.uracer.postprocessing.effects.Vignette;
 import com.bitfire.uracer.postprocessing.effects.Zoom;
 import com.bitfire.uracer.resources.Art;
@@ -23,7 +26,7 @@ public final class AggressiveWarm implements Animator {
 	private Bloom bloom = null;
 	private Zoom zoom = null;
 	private Vignette vignette = null;
-//	private CameraMotion cameramotion = null;
+	private Tv tv = null;
 
 	public AggressiveWarm( GameWorld world, PostProcessing post ) {
 		gameRenderer = post.getGameRenderer();
@@ -31,7 +34,7 @@ public final class AggressiveWarm implements Animator {
 		bloom = (Bloom)post.getEffect( "bloom" );
 		zoom = (Zoom)post.getEffect( "zoom" );
 		vignette = (Vignette)post.getEffect( "vignette" );
-//		cameramotion = (CameraMotion)post.getEffect( "cameramotion" );
+		tv = (Tv)post.getEffect( "tvlines" );
 
 		reset();
 	}
@@ -51,14 +54,37 @@ public final class AggressiveWarm implements Animator {
 				vignette.setLut( Art.postXpro );
 				vignette.setEnabled( true );
 			}
+
+			if( Config.PostProcessing.EnableCrtScreen ) {
+				startMs = TimeUtils.millis();
+				tv.setTime( 0 );
+
+				// FIXME should find out a way to compute this per-resolution! OR!
+				// Just try manually the game and write down the offset, this should work well, no much resolutions anyway
+				// and will work better since this is human-tested!
+//				tv.setOffset( 0.00145f );	// 1920x1080
+				tv.setOffset( 0.002f );	// 1920x1080
+
+				tv.setTint( 0.95f, 0.8f, 1.0f );
+			}
 		}
 	}
 
 	private float prevDriftStrength = 0;
+	private long startMs = 0;
 
 	@Override
 	public void update( PlayerCar player, GhostCar ghost ) {
-//		cameramotion.setMatrices( gameRenderer.getWorldRenderer().getInvProjView(), gameRenderer.getWorldRenderer().getPrevProjView() );
+		if( Config.PostProcessing.EnableCrtScreen ) {
+			// compute time (add noise)
+			float secs = (float)(TimeUtils.millis() - startMs) / 1000;
+			boolean randomNoiseInTime = false;
+			if( randomNoiseInTime ) {
+				tv.setTime( secs + MathUtils.random() / (MathUtils.random() * 64f + 0.001f) );
+			} else {
+				tv.setTime( secs );
+			}
+		}
 
 		if( player == null ) {
 			return;
