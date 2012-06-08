@@ -1,5 +1,5 @@
 #ifdef GL_ES
-precision highp float;
+precision mediump float;
 #endif
 
 uniform vec2 resolution;
@@ -25,7 +25,10 @@ const vec4 Zero = vec4(0.0,0.0,0.0,1.0);
 void main(void)
 {
 	vec2 q = gl_FragCoord.xy / resolution.xy;
+
+#ifndef GL_ES
 	q.y = 1.0 - q.y;
+#endif
 
 #ifdef ENABLE_BARREL_DISTORTION
     q = barrelDistortion(q);
