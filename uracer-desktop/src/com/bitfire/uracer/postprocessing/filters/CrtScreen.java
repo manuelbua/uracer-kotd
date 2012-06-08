@@ -7,7 +7,7 @@ import com.bitfire.uracer.postprocessing.IFilter;
 import com.bitfire.uracer.utils.ShaderLoader;
 
 public final class CrtScreen extends Filter<CrtScreen> {
-	private float time, offset;
+	private float time, offset, zoom;
 	private Vector2 resolution;
 	private Vector3 vtint;
 	private Color tint;
@@ -20,7 +20,8 @@ public final class CrtScreen extends Filter<CrtScreen> {
 		Resolution("resolution",2),
 		Tint("tint",3),
 		Offset("offset",0),
-		Distortion("Distortion",0)
+		Distortion("Distortion",0),
+		Zoom("zoom",0)
 		;
 		// @formatter:on
 
@@ -50,6 +51,7 @@ public final class CrtScreen extends Filter<CrtScreen> {
 		vtint = new Vector3();
 		tint = new Color( 0.8f, 1.0f, 0.7f, 1.0f );
 		distortion = 0.3f;
+		zoom = 1f;
 
 		rebind();
 	}
@@ -80,6 +82,11 @@ public final class CrtScreen extends Filter<CrtScreen> {
 		setParam( Param.Distortion, this.distortion );
 	}
 
+	public void setZoom( float zoom ) {
+		this.zoom = zoom;
+		setParam( Param.Zoom, this.zoom );
+	}
+
 	@Override
 	public void rebind() {
 		setParams( Param.Texture0, u_texture0 );
@@ -89,7 +96,8 @@ public final class CrtScreen extends Filter<CrtScreen> {
 		vtint.set( tint.r, tint.g, tint.b );
 		setParams( Param.Tint, vtint );
 
-		setParam( Param.Distortion, distortion );
+		setParams( Param.Distortion, distortion );
+		setParams( Param.Zoom, zoom );
 
 		endParams();
 	}

@@ -63,7 +63,8 @@ public class AggressiveCold implements Animator {
 				// and will work better since this is human-tested!
 //				tv.setOffset( 0.00145f );	// 1920x1080
 				tv.setOffset( 0.002f );	// 1920x1080
-				tv.setDistortion( 0.125f );	// 1920x1080
+				tv.setDistortion( 0.125f );	tv.setZoom( 0.94f ); // 1920x1080
+
 //				tv.setTint( 0.95f, 0.8f, 1.0f );
 				tv.setTint( 0.95f, 0.75f, 0.85f );
 			}
@@ -113,7 +114,6 @@ public class AggressiveCold implements Animator {
 			// bloom.setBloomSaturation( 1.5f - factor * 0.85f ); // TODO when charged
 			// bloom.setBloomSaturation( 1.5f - factor * 1.5f ); // TODO when completely discharged
 			bloom.setBloomSaturation( 1f - timeFactor * 0.25f );
-			bloom.setBloomIntesity( 1f );
 		}
 
 		if( Config.PostProcessing.EnableVignetting ) {

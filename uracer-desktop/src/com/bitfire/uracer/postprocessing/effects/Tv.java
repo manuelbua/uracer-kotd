@@ -91,6 +91,10 @@ public class Tv extends PostProcessorEffect {
 		crt.setDistortion( distortion );
 	}
 
+	public void setZoom( float zoom ) {
+		crt.setZoom( zoom );
+	}
+
 	@Override
 	public void rebind() {
 		crt.rebind();
