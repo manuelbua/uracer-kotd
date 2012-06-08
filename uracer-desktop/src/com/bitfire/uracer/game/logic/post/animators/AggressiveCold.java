@@ -63,8 +63,9 @@ public class AggressiveCold implements Animator {
 				// and will work better since this is human-tested!
 //				tv.setOffset( 0.00145f );	// 1920x1080
 				tv.setOffset( 0.002f );	// 1920x1080
-
-				tv.setTint( 0.95f, 0.8f, 1.0f );
+				tv.setDistortion( 0.125f );	// 1920x1080
+//				tv.setTint( 0.95f, 0.8f, 1.0f );
+				tv.setTint( 0.95f, 0.75f, 0.85f );
 			}
 		}
 	}
@@ -82,6 +83,7 @@ public class AggressiveCold implements Animator {
 			return;
 		}
 
+
 		float timeFactor = 1 - (URacer.timeMultiplier - GameLogic.TimeMultiplierMin) / (Config.Physics.PhysicsTimeMultiplier - GameLogic.TimeMultiplierMin);
 		Vector2 playerScreenPos = GameRenderer.ScreenUtils.worldPxToScreen( player.state().position );
 
@@ -98,7 +100,7 @@ public class AggressiveCold implements Animator {
 				tv.setTime( secs );
 			}
 
-			tv.setDistortion( 0.2f + timeFactor * 0.05f );
+//			tv.setDistortion( 0.2f + timeFactor * 0.05f );
 		}
 
 		if( Config.PostProcessing.EnableZoomBlur && player != null ) {
