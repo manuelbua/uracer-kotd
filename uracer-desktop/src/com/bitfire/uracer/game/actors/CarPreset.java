@@ -56,9 +56,11 @@ public final class CarPreset {
 			model.width = 2.4f;
 			model.length = model.width * 1.72f;
 			model.max_force = 300f;
-			model.max_grip = 6f;
+			model.max_grip = 4.5f;
 			model.friction = 8f;
 			model.restitution = 0.35f;
+			model.stiffness_rear = -3.8f; // rear cornering stiffness
+			model.stiffness_front = -3.5f; // front cornering stiffness
 			break;
 
 		case LamborghiniGallardoLP560:
