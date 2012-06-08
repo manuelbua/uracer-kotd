@@ -36,12 +36,12 @@ public final class Config {
 			int w = Gdx.graphics.getWidth();
 
 			// post-processor
-			Enabled = Config.isDesktop;
+			Enabled = true;//Config.isDesktop;
 
 			// post-processor effects
-			EnableVignetting = Config.isDesktop;
-			EnableBloom = Config.isDesktop;
-			EnableZoomBlur = Config.isDesktop;
+			EnableVignetting = true;//Config.isDesktop;
+			EnableBloom = true;//Config.isDesktop;
+			EnableZoomBlur = true;//Config.isDesktop;
 			EnableCrtScreen = Config.isDesktop;
 
 			RttFboWidth = (int)(Gdx.graphics.getWidth() * RttRatio);
