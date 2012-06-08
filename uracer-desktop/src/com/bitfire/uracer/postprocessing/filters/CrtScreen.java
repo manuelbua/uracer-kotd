@@ -1,7 +1,6 @@
 package com.bitfire.uracer.postprocessing.filters;
 
 import com.badlogic.gdx.graphics.Color;
-import com.badlogic.gdx.graphics.Texture.TextureWrap;
 import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.math.Vector3;
 import com.bitfire.uracer.postprocessing.IFilter;
@@ -97,17 +96,10 @@ public final class CrtScreen extends Filter<CrtScreen> {
 
 	@Override
 	protected void compute() {
-		TextureWrap u = inputTexture.getUWrap();
-		TextureWrap v = inputTexture.getVWrap();
-		inputTexture.setWrap( TextureWrap.Repeat, TextureWrap.Repeat );
-		// inputTexture.setFilter( TextureFilter.Linear, TextureFilter.Linear );
-
 		inputTexture.bind( u_texture0 );
 
 		program.begin();
 		IFilter.quad.render( program );
 		program.end();
-
-		inputTexture.setWrap( u, v );
 	}
 }

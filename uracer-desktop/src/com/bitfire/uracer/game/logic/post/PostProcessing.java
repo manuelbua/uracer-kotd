@@ -2,6 +2,7 @@ package com.bitfire.uracer.game.logic.post;
 
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.GL10;
+import com.badlogic.gdx.graphics.Texture.TextureWrap;
 import com.badlogic.gdx.utils.LongMap;
 import com.bitfire.uracer.configuration.Config;
 import com.bitfire.uracer.game.actors.GhostCar;
@@ -59,6 +60,7 @@ public class PostProcessing {
 		processor.setEnabled( true );
 		processor.setClearBits( GL10.GL_COLOR_BUFFER_BIT | GL10.GL_DEPTH_BUFFER_BIT );
 		processor.setClearDepth( 1f );
+		processor.setBufferTextureWrap( TextureWrap.Repeat, TextureWrap.Repeat );
 
 		if( Config.PostProcessing.EnableZoomBlur ) {
 			zoom = new Zoom( Config.PostProcessing.ZoomQuality );

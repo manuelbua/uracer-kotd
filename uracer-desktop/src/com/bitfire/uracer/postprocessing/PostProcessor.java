@@ -4,6 +4,7 @@ import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.GL10;
 import com.badlogic.gdx.graphics.Pixmap.Format;
+import com.badlogic.gdx.graphics.Texture.TextureWrap;
 import com.badlogic.gdx.graphics.glutils.FrameBuffer;
 import com.badlogic.gdx.utils.Array;
 import com.badlogic.gdx.utils.Disposable;
@@ -19,6 +20,8 @@ import com.bitfire.uracer.utils.Manager;
 public final class PostProcessor implements Disposable {
 	private static Format fbFormat;
 	private final PingPongBuffer composite;
+	private TextureWrap compositeWrapU;
+	private TextureWrap compositeWrapV;
 	private final Manager<PostProcessorEffect> manager = new Manager<PostProcessorEffect>();
 	private final Array<PingPongBuffer> buffers = new Array<PingPongBuffer>( 5 );
 	private final Color clearColor = Color.CLEAR;
@@ -34,6 +37,10 @@ public final class PostProcessor implements Disposable {
 
 	/** Construct a new PostProcessor with the given parameters. */
 	public PostProcessor( int fboWidth, int fboHeight, boolean useDepth, boolean useAlphaChannel, boolean use32Bits ) {
+		this( fboWidth, fboHeight, useDepth, useAlphaChannel, use32Bits, TextureWrap.Repeat, TextureWrap.Repeat );
+	}
+
+	public PostProcessor( int fboWidth, int fboHeight, boolean useDepth, boolean useAlphaChannel, boolean use32Bits, TextureWrap u, TextureWrap v ) {
 		if( use32Bits ) {
 			if( useAlphaChannel ) {
 				fbFormat = Format.RGBA8888;
@@ -49,6 +56,8 @@ public final class PostProcessor implements Disposable {
 		}
 
 		composite = newPingPongBuffer( fboWidth, fboHeight, fbFormat, useDepth );
+		setBufferTextureWrap( u, v );
+
 		capturing = false;
 		hasCaptured = false;
 	}
@@ -140,6 +149,14 @@ public final class PostProcessor implements Disposable {
 		clearDepth = depth;
 	}
 
+	public void setBufferTextureWrap( TextureWrap u, TextureWrap v ) {
+		compositeWrapU = u;
+		compositeWrapV = v;
+
+		composite.texture1.setWrap( compositeWrapU, compositeWrapV );
+		composite.texture2.setWrap( compositeWrapU, compositeWrapV );
+	}
+
 	/** Starts capturing the scene, clears the buffer with the clear
 	 * color specified by {@link #setClearColor(Color)} or {@link #setClearColor(float r, float g, float b, float a)}.
 	 *
@@ -212,6 +229,9 @@ public final class PostProcessor implements Disposable {
 	/** Regenerates and/or rebinds owned resources when needed, eg. when
 	 * the OpenGL context is lost. */
 	public void rebind() {
+		composite.texture1.setWrap( TextureWrap.Repeat, TextureWrap.Repeat );
+		composite.texture2.setWrap( TextureWrap.Repeat, TextureWrap.Repeat );
+
 		for( int i = 0; i < buffers.size; i++ ) {
 			buffers.get( i ).rebind();
 		}
