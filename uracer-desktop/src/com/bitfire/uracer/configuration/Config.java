@@ -43,7 +43,7 @@ public final class Config {
 			EnableVignetting = true;//Config.isDesktop;
 			EnableBloom = true;//Config.isDesktop;
 			EnableZoomBlur = true;//Config.isDesktop;
-			EnableCrtScreen = true;//Config.isDesktop;
+			EnableCrtScreen = false;//Config.isDesktop;
 			EnableRadialDistortion = false;
 
 			RttFboWidth = (int)(Gdx.graphics.getWidth() * RttRatio);

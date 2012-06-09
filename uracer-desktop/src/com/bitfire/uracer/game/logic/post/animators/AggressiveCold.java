@@ -42,42 +42,44 @@ public class AggressiveCold implements Animator {
 
 	@Override
 	public final void reset() {
-		if( Config.PostProcessing.Enabled ) {
-			if( bloom != null ) {
-				float threshold = ((gameWorld.isNightMode() && !Config.Graphics.DumbNightMode) ? 0.2f : 0.45f);
-				Bloom.Settings bloomSettings = new Bloom.Settings( "subtle", Config.PostProcessing.BlurType, 1, 1.5f, threshold, 1f, 0.5f, 1f, 1.5f );
-				bloom.setSettings( bloomSettings );
-			}
+		if( !Config.PostProcessing.Enabled ) {
+			return;
+		}
 
-			if( vignette != null ) {
-				vignette.setCoords( 0.8f, 0.25f );
-				vignette.setCenter( Gdx.graphics.getWidth() / 2, Gdx.graphics.getHeight() / 2 );
-				vignette.setLut( Art.postXpro );
-				vignette.setLutIndex( 16 );
-				vignette.setEnabled( true );
-			}
+		if( bloom != null ) {
+			float threshold = ((gameWorld.isNightMode() && !Config.Graphics.DumbNightMode) ? 0.2f : 0.45f);
+			Bloom.Settings bloomSettings = new Bloom.Settings( "subtle", Config.PostProcessing.BlurType, 1, 1.5f, threshold, 1f, 0.5f, 1f, 1.5f );
+			bloom.setSettings( bloomSettings );
+		}
 
-			if( crt != null ) {
-				startMs = TimeUtils.millis();
-				crt.setTime( 0 );
+		if( vignette != null ) {
+			vignette.setCoords( 0.8f, 0.25f );
+			vignette.setCenter( Gdx.graphics.getWidth() / 2, Gdx.graphics.getHeight() / 2 );
+			vignette.setLut( Art.postXpro );
+			vignette.setLutIndex( 16 );
+			vignette.setEnabled( true );
+		}
 
-				// FIXME should find out a way to compute this per-resolution! OR!
-				// Just try manually the game and write down the offset, this should work well, no much resolutions
-				// anyway
-				// and will work better since this is human-tested!
-				// tv.setOffset( 0.00145f ); // 1920x1080
-				crt.setOffset( 0.002f );	// 1920x1080
-				crt.setDistortion( 0.125f );
-				crt.setZoom( 0.94f ); // 1920x1080
+		if( crt != null ) {
+			startMs = TimeUtils.millis();
+			crt.setTime( 0 );
 
-				// tv.setTint( 0.95f, 0.8f, 1.0f );
-				crt.setTint( 0.95f, 0.75f, 0.85f );
-			}
+			// FIXME should find out a way to compute this per-resolution! OR!
+			// Just try manually the game and write down the offset, this should work well, no much resolutions
+			// anyway
+			// and will work better since this is human-tested!
+			// tv.setOffset( 0.00145f ); // 1920x1080
+			crt.setOffset( 0.002f );	// 1920x1080
+			crt.setDistortion( 0.125f );
+			crt.setZoom( 0.94f ); // 1920x1080
 
-			if( curvature != null ) {
-				curvature.setDistortion( 0.4f );
-				curvature.setZoom( 1f );
-			}
+			// tv.setTint( 0.95f, 0.8f, 1.0f );
+			crt.setTint( 0.95f, 0.75f, 0.85f );
+		}
+
+		if( curvature != null ) {
+			curvature.setDistortion( 0.4f );
+			curvature.setZoom( 1f );
 		}
 	}
 
