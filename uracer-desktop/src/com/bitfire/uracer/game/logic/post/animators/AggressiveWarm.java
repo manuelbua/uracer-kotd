@@ -14,7 +14,7 @@ import com.bitfire.uracer.game.player.PlayerCar;
 import com.bitfire.uracer.game.rendering.GameRenderer;
 import com.bitfire.uracer.game.world.GameWorld;
 import com.bitfire.uracer.postprocessing.effects.Bloom;
-import com.bitfire.uracer.postprocessing.effects.Tv;
+import com.bitfire.uracer.postprocessing.effects.CrtMonitor;
 import com.bitfire.uracer.postprocessing.effects.Vignette;
 import com.bitfire.uracer.postprocessing.effects.Zoom;
 import com.bitfire.uracer.resources.Art;
@@ -26,7 +26,7 @@ public final class AggressiveWarm implements Animator {
 	private Bloom bloom = null;
 	private Zoom zoom = null;
 	private Vignette vignette = null;
-	private Tv tv = null;
+	private CrtMonitor tv = null;
 
 	public AggressiveWarm( GameWorld world, PostProcessing post ) {
 		gameRenderer = post.getGameRenderer();
@@ -34,7 +34,7 @@ public final class AggressiveWarm implements Animator {
 		bloom = (Bloom)post.getEffect( "bloom" );
 		zoom = (Zoom)post.getEffect( "zoom" );
 		vignette = (Vignette)post.getEffect( "vignette" );
-		tv = (Tv)post.getEffect( "tvlines" );
+		tv = (CrtMonitor)post.getEffect( "tvlines" );
 
 		reset();
 	}

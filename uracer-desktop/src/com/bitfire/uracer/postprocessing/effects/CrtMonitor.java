@@ -13,7 +13,7 @@ import com.bitfire.uracer.postprocessing.filters.Blur.BlurType;
 import com.bitfire.uracer.postprocessing.filters.Combine;
 import com.bitfire.uracer.postprocessing.filters.CrtScreen;
 
-public class Tv extends PostProcessorEffect {
+public class CrtMonitor extends PostProcessorEffect {
 	private PingPongBuffer pingPongBuffer = null;
 	private FrameBuffer buffer = null;
 	private CrtScreen crt;
@@ -22,7 +22,7 @@ public class Tv extends PostProcessorEffect {
 	private Combine combine;
 	private boolean doblur;
 
-	public Tv( boolean barrelDistortion, boolean performBlur ) {
+	public CrtMonitor( boolean barrelDistortion, boolean performBlur ) {
 		// the effect is designed to work on the whole screen area, no small/mid size tricks!
 		int w = Gdx.graphics.getWidth();
 		int h = Gdx.graphics.getHeight();

@@ -13,7 +13,7 @@ import com.bitfire.uracer.game.world.GameWorld;
 import com.bitfire.uracer.postprocessing.PostProcessor;
 import com.bitfire.uracer.postprocessing.PostProcessorEffect;
 import com.bitfire.uracer.postprocessing.effects.Bloom;
-import com.bitfire.uracer.postprocessing.effects.Tv;
+import com.bitfire.uracer.postprocessing.effects.CrtMonitor;
 import com.bitfire.uracer.postprocessing.effects.Vignette;
 import com.bitfire.uracer.postprocessing.effects.Zoom;
 import com.bitfire.uracer.utils.Hash;
@@ -37,7 +37,7 @@ public class PostProcessing {
 	private Bloom bloom = null;
 	private Zoom zoom = null;
 	private Vignette vignette = null;
-	private Tv tv = null;
+	private CrtMonitor tv = null;
 
 	// private CameraMotion cameraMotion = null;
 
@@ -99,7 +99,7 @@ public class PostProcessing {
 		}
 
 		if( Config.PostProcessing.EnableCrtScreen ) {
-			tv = new Tv( false, false );
+			tv = new CrtMonitor( false, false );
 			processor.addEffect( tv );
 			effects.put( Hash.APHash( "tvlines" ), tv );
 		}
