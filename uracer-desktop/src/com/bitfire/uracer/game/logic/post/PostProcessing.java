@@ -99,7 +99,7 @@ public class PostProcessing {
 		}
 
 		if( Config.PostProcessing.EnableCrtScreen ) {
-			tv = new Tv( true, false );
+			tv = new Tv( false, false );
 			processor.addEffect( tv );
 			effects.put( Hash.APHash( "tvlines" ), tv );
 		}
