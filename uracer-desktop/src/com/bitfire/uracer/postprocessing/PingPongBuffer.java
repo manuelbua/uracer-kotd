@@ -102,12 +102,12 @@ public final class PingPongBuffer {
 	public void rebind() {
 		texture1 = buffer1.getColorBufferTexture();
 		texture2 = buffer2.getColorBufferTexture();
-		restore();
 	}
 
-	// internal use
-	// set the object to a known initial state
-	private void restore() {
+	/** Ensures the initial buffer state is always the same before starting ping-ponging. */
+	public void begin() {
+		rebind();
+
 		pending1 = false;
 		pending2 = false;
 		writeState = true;
@@ -116,11 +116,6 @@ public final class PingPongBuffer {
 		bufSrc = buffer1;
 		texResult = texture2;
 		bufResult = buffer2;
-	}
-
-	/** Ensures the initial buffer state is always the same before starting ping-ponging. */
-	public void begin() {
-		rebind();
 	}
 
 	/** Starts and/or continue ping-ponging, begin capturing on the next available buffer,

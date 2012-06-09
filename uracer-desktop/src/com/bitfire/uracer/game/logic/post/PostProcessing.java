@@ -14,6 +14,7 @@ import com.bitfire.uracer.postprocessing.PostProcessor;
 import com.bitfire.uracer.postprocessing.PostProcessorEffect;
 import com.bitfire.uracer.postprocessing.effects.Bloom;
 import com.bitfire.uracer.postprocessing.effects.CrtMonitor;
+import com.bitfire.uracer.postprocessing.effects.Curvature;
 import com.bitfire.uracer.postprocessing.effects.Vignette;
 import com.bitfire.uracer.postprocessing.effects.Zoom;
 import com.bitfire.uracer.utils.Hash;
@@ -38,6 +39,7 @@ public class PostProcessing {
 	private Zoom zoom = null;
 	private Vignette vignette = null;
 	private CrtMonitor tv = null;
+	private Curvature curvature = null;
 
 	// private CameraMotion cameraMotion = null;
 
@@ -99,9 +101,15 @@ public class PostProcessing {
 		}
 
 		if( Config.PostProcessing.EnableCrtScreen ) {
-			tv = new CrtMonitor( false, false );
+			tv = new CrtMonitor( Config.PostProcessing.EnableRadialDistortion, false );
 			processor.addEffect( tv );
 			effects.put( Hash.APHash( "tvlines" ), tv );
+		}
+
+		if( Config.PostProcessing.EnableRadialDistortion && !Config.PostProcessing.EnableCrtScreen) {
+			curvature = new Curvature();
+			processor.addEffect( curvature );
+			effects.put( Hash.APHash( "curvature" ), curvature );
 		}
 	}
 

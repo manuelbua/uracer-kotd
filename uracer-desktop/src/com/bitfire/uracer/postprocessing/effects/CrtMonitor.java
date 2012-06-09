@@ -102,29 +102,38 @@ public class CrtMonitor extends PostProcessorEffect {
 
 	@Override
 	public void render( FrameBuffer src, FrameBuffer dest ) {
-		Texture texsrc = src.getColorBufferTexture();
+		// the original scene
+		Texture in = src.getColorBufferTexture();
 
 		Gdx.gl.glDisable( GL10.GL_BLEND );
 		Gdx.gl.glDisable( GL10.GL_DEPTH_TEST );
 		Gdx.gl.glDepthMask( false );
+
+		Texture out = null;
 
 		if( doblur ) {
 
 			pingPongBuffer.begin();
 			{
 				// crt pass
-				crt.setInput( texsrc ).setOutput( pingPongBuffer.getSourceBuffer() ).render();
+				crt.setInput( in ).setOutput( pingPongBuffer.getSourceBuffer() ).render();
+
+				// blur pass
 				blur.render( pingPongBuffer );
 			}
 			pingPongBuffer.end();
-			combine.setOutput( dest ).setInput( texsrc, pingPongBuffer.getResultTexture() ).render();
+
+			out = pingPongBuffer.getResultTexture();
 		} else {
 			// crt pass
-			crt.setInput( texsrc ).setOutput( buffer ).render();
+			crt.setInput( in ).setOutput( buffer ).render();
 
-			// do combine pass
-			combine.setOutput( dest ).setInput( texsrc, buffer.getColorBufferTexture() ).render();
+			out = buffer.getColorBufferTexture();
 		}
+
+		// do combine pass
+		combine.setOutput( dest ).setInput( in, out ).render();
+
 	};
 
 }
