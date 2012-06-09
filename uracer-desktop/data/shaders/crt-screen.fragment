@@ -39,36 +39,33 @@ void main(void)
 	vec2 uv = q;
 #endif
 
-	vec3 oricol = texture2D(u_texture0,vec2(q.x,1.0-q.y)).xyz;
-	vec3 col;
-
 #ifdef ENABLE_BARREL_DISTORTION
     if(uv.s<0.0 || uv.s>1.0 || uv.t<0.0 || uv.t >1.0) {
         gl_FragColor = Zero;
-    } else {
+        return;
+    }
 #endif
 
-		col.r = texture2D(u_texture0,vec2(uv.x+offset,-uv.y)).x;
-		col.g = texture2D(u_texture0,vec2(uv.x+0.000,-uv.y)).y;
-		col.b = texture2D(u_texture0,vec2(uv.x-offset,-uv.y)).z;
+	vec3 oricol = texture2D(u_texture0,vec2(q.x,1.0-q.y)).xyz;
+	vec3 col;
 
-		col = clamp(col*0.5+0.5*col*col*1.2,0.0,1.0);
+	col.r = texture2D(u_texture0,vec2(uv.x+offset,-uv.y)).x;
+	col.g = texture2D(u_texture0,vec2(uv.x+0.000,-uv.y)).y;
+	col.b = texture2D(u_texture0,vec2(uv.x-offset,-uv.y)).z;
 
-		col *= 0.5 + 0.5*16.0*uv.x*uv.y*(1.0-uv.x)*(1.0-uv.y);
+	col = clamp(col*0.5+0.5*col*col*1.2,0.0,1.0);
 
-		col *= tint;
+	col *= 0.5 + 0.5*16.0*uv.x*uv.y*(1.0-uv.x)*(1.0-uv.y);
 
-		col *= 0.9+0.1*sin(10.0*time-uv.y*1000.0);
+	col *= tint;
 
-		col *= 0.97+0.03*sin(110.0*time);
+	col *= 0.9+0.1*sin(10.0*time-uv.y*1000.0);
 
-		//float comp = smoothstep( 0.2, 0.7, sin(time) );
-		//col = mix( col, oricol, clamp(-2.0+2.0*q.x+3.0*comp,0.0,1.0) );
+	col *= 0.97+0.03*sin(110.0*time);
 
-		gl_FragColor = vec4(col,1.0);
-		//gl_FragColor = vec4(oricol,1.0);
+	//float comp = smoothstep( 0.2, 0.7, sin(time) );
+	//col = mix( col, oricol, clamp(-2.0+2.0*q.x+3.0*comp,0.0,1.0) );
 
-#ifdef ENABLE_BARREL_DISTORTION
-	}
-#endif
+	gl_FragColor = vec4(col,1.0);
+	//gl_FragColor = vec4(oricol,1.0);
 }
