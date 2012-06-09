@@ -26,7 +26,7 @@ public class AggressiveCold implements Animator {
 	private Bloom bloom = null;
 	private Zoom zoom = null;
 	private Vignette vignette = null;
-	private CrtMonitor tv = null;
+	private CrtMonitor crt = null;
 	private Curvature curvature = null;
 
 	public AggressiveCold( GameWorld world, PostProcessing post ) {
@@ -34,7 +34,7 @@ public class AggressiveCold implements Animator {
 		bloom = (Bloom)post.getEffect( "bloom" );
 		zoom = (Zoom)post.getEffect( "zoom" );
 		vignette = (Vignette)post.getEffect( "vignette" );
-		tv = (CrtMonitor)post.getEffect( "tvlines" );
+		crt = (CrtMonitor)post.getEffect( "tvlines" );
 		curvature = (Curvature)post.getEffect( "curvature" );
 
 		reset();
@@ -57,21 +57,21 @@ public class AggressiveCold implements Animator {
 				vignette.setEnabled( true );
 			}
 
-			if( tv != null ) {
+			if( crt != null ) {
 				startMs = TimeUtils.millis();
-				tv.setTime( 0 );
+				crt.setTime( 0 );
 
 				// FIXME should find out a way to compute this per-resolution! OR!
 				// Just try manually the game and write down the offset, this should work well, no much resolutions
 				// anyway
 				// and will work better since this is human-tested!
 				// tv.setOffset( 0.00145f ); // 1920x1080
-				tv.setOffset( 0.002f );	// 1920x1080
-				tv.setDistortion( 0.125f );
-				tv.setZoom( 0.94f ); // 1920x1080
+				crt.setOffset( 0.002f );	// 1920x1080
+				crt.setDistortion( 0.125f );
+				crt.setZoom( 0.94f ); // 1920x1080
 
 				// tv.setTint( 0.95f, 0.8f, 1.0f );
-				tv.setTint( 0.95f, 0.75f, 0.85f );
+				crt.setTint( 0.95f, 0.75f, 0.85f );
 			}
 
 			if( curvature != null ) {
@@ -100,14 +100,14 @@ public class AggressiveCold implements Animator {
 		float driftStrength = AMath.clamp( AMath.lerp( prevDriftStrength, player.driftState.driftStrength, 0.01f ), 0, 1 );
 		prevDriftStrength = driftStrength;
 
-		if( tv != null ) {
+		if( crt != null ) {
 			// compute time (add noise)
 			float secs = (float)(TimeUtils.millis() - startMs) / 1000;
 			boolean randomNoiseInTime = false;
 			if( randomNoiseInTime ) {
-				tv.setTime( secs + MathUtils.random() / (MathUtils.random() * 64f + 0.001f) );
+				crt.setTime( secs + MathUtils.random() / (MathUtils.random() * 64f + 0.001f) );
 			} else {
-				tv.setTime( secs );
+				crt.setTime( secs );
 			}
 
 			// tv.setDistortion( 0.2f + timeFactor * 0.05f );
