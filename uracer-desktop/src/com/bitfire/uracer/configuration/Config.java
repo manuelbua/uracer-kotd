@@ -23,7 +23,7 @@ public final class Config {
 		public static boolean EnableBloom;
 		public static boolean EnableZoomBlur;
 		public static boolean EnableCrtScreen;
-		public static boolean EnableRadialDistortion;	// if both this and the CrtScreen are enabled, then the crt shader will do the distortion as well.
+		public static boolean EnableRadialDistortion;	// if both this and the CrtScreen are enabled, then the crt shader will do the distortion instead.
 		public static BlurType BlurType;
 		public static float RttRatio = 0.25f;
 		public static int PotRttFboWidth, PotRttFboHeight;
