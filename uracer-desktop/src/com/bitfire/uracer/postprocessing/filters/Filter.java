@@ -7,16 +7,18 @@ import com.badlogic.gdx.math.Matrix3;
 import com.badlogic.gdx.math.Matrix4;
 import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.math.Vector3;
-import com.bitfire.uracer.postprocessing.IFilter;
+import com.bitfire.uracer.postprocessing.FullscreenQuad;
 
 @SuppressWarnings( "unchecked" )
-public abstract class Filter<T> extends IFilter {
+public abstract class Filter<T> {
 
 	public interface Parameter {
 		String mnemonic();
 
 		int arrayElementSize();
 	}
+
+	protected static final FullscreenQuad quad = new FullscreenQuad();
 
 	protected static final int u_texture0 = 0;
 	protected static final int u_texture1 = 1;
@@ -231,7 +233,7 @@ public abstract class Filter<T> extends IFilter {
 		onBeforeRender();
 
 		program.begin();
-		IFilter.quad.render( program );
+		quad.render( program );
 		program.end();
 	}
 
