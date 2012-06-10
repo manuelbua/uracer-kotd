@@ -9,6 +9,10 @@ import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.math.Vector3;
 import com.bitfire.uracer.postprocessing.FullscreenQuad;
 
+/** The base class for any single-pass filter.
+ *
+ * @author bmanuel */
+
 @SuppressWarnings( "unchecked" )
 public abstract class Filter<T> {
 
