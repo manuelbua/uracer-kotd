@@ -71,13 +71,13 @@ public final class ZoomBlur extends Filter<ZoomBlur> {
 		this.x = x;
 		this.y = y;
 		setParams( Param.OffsetX, x / (float)Gdx.graphics.getWidth() );
-		setParams( Param.OffsetY, 1f - (y / (float)Gdx.graphics.getHeight()) ).endParams();
+		setParams( Param.OffsetY, 1f - (y / (float)Gdx.graphics.getHeight()) );
+		endParams();
 	}
 
 	public void setStrength( float strength ) {
 		this.strength = strength;
-		setParams( Param.BlurDiv, strength / (float)blur_len );
-		endParams();
+		setParam( Param.BlurDiv, strength / (float)blur_len );
 	}
 
 	@Override

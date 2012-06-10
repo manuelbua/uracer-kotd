@@ -31,8 +31,7 @@ public abstract class Filter<T> extends IFilter {
 	}
 
 	public T setInput( FrameBuffer input ) {
-		this.inputTexture = input.getColorBufferTexture();
-		return (T)this;
+		return setInput( input.getColorBufferTexture() );
 	}
 
 	public T setOutput( FrameBuffer output ) {
@@ -215,6 +214,7 @@ public abstract class Filter<T> extends IFilter {
 		return (T)this;
 	}
 
+	/** Should be called after any one or more of the setParams methods have been called to upload data. */
 	public void endParams() {
 		if( programBegan ) {
 			program.end();
