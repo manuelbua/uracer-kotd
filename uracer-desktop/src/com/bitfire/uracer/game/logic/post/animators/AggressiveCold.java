@@ -115,16 +115,16 @@ public final class AggressiveCold implements Animator {
 		if( zoom != null && player != null ) {
 			float zoomfactor = timeFactor;// * player.carState.currSpeedFactor;
 			zoom.setOrigin( playerScreenPos );
-			zoom.setStrength( -0.05f * zoomfactor );
+			zoom.setStrength( -0.1f * zoomfactor );
 			zoom.setZoom( 1.0f + 0.1f * zoomfactor );
 		}
 
 		if( bloom != null ) {
 //			bloom.setBaseSaturation( 0.8f - timeFactor * 0.6f );
-			bloom.setBaseSaturation( AMath.lerp( 0.8f, 0.3f, timeFactor ) );
+			bloom.setBaseSaturation( AMath.lerp( 0.8f, 0.25f, timeFactor ) );
 			// bloom.setBloomSaturation( 1.5f - factor * 0.85f ); // TODO when charged
 			// bloom.setBloomSaturation( 1.5f - factor * 1.5f ); // TODO when completely discharged
-			bloom.setBloomSaturation( 1f - timeFactor * 0.25f );
+			bloom.setBloomSaturation( 1f - timeFactor * 0.2f );
 		}
 
 		if( vignette != null ) {
@@ -139,7 +139,7 @@ public final class AggressiveCold implements Animator {
 			// vignette.setCenter( playerScreenPos.x, playerScreenPos.y );
 			// vignette.setCoords( 1.5f - driftStrength * 0.8f, 0.1f );
 
-			vignette.setLutIntensity( 0.5f + timeFactor * 0.5f );
+			vignette.setLutIntensity( 0.5f + timeFactor * 1.0f );
 			vignette.setIntensity( timeFactor );
 		}
 	}
