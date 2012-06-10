@@ -86,28 +86,48 @@ public abstract class Filter<T> extends IFilter {
 		program.end();
 	}
 
-	/** Sets the parameter to the specified value for this filter.
-	 * A single call OR chained function calls, for setParams methods, shall be ended by calling endParams() */
-
 	// mat3
-	public T setParams( Parameter param, Matrix3 value ) {
-		if( !programBegan ) {
-			programBegan = true;
-			program.begin();
-		}
+	public T setParam( Parameter param, Matrix3 value ) {
+		program.begin();
 		program.setUniformMatrix( param.mnemonic(), value );
+		program.end();
 		return (T)this;
 	}
 
 	// mat4
-	public T setParams( Parameter param, Matrix4 value ) {
-		if( !programBegan ) {
-			programBegan = true;
-			program.begin();
-		}
+	public T setParam( Parameter param, Matrix4 value ) {
+		program.begin();
 		program.setUniformMatrix( param.mnemonic(), value );
+		program.end();
 		return (T)this;
 	}
+
+	// float[], vec2[], vec3[], vec4[]
+	public T setParamv( Parameter param, float[] values, int offset, int length ) {
+		program.begin();
+
+		switch( param.arrayElementSize() ) {
+		case 4:
+			program.setUniform4fv( param.mnemonic(), values, offset, length );
+			break;
+		case 3:
+			program.setUniform3fv( param.mnemonic(), values, offset, length );
+			break;
+		case 2:
+			program.setUniform2fv( param.mnemonic(), values, offset, length );
+			break;
+		default:
+		case 1:
+			program.setUniform1fv( param.mnemonic(), values, offset, length );
+			break;
+		}
+
+		program.end();
+		return (T)this;
+	}
+
+	/** Sets the parameter to the specified value for this filter.
+	 * A single call OR chained function calls, for setParams methods, shall be ended by calling endParams() */
 
 	// float
 	public T setParams( Parameter param, float value ) {
@@ -146,6 +166,26 @@ public abstract class Filter<T> extends IFilter {
 			program.begin();
 		}
 		program.setUniformf( param.mnemonic(), value );
+		return (T)this;
+	}
+
+	// mat3
+	public T setParams( Parameter param, Matrix3 value ) {
+		if( !programBegan ) {
+			programBegan = true;
+			program.begin();
+		}
+		program.setUniformMatrix( param.mnemonic(), value );
+		return (T)this;
+	}
+
+	// mat4
+	public T setParams( Parameter param, Matrix4 value ) {
+		if( !programBegan ) {
+			programBegan = true;
+			program.begin();
+		}
+		program.setUniformMatrix( param.mnemonic(), value );
 		return (T)this;
 	}
 
