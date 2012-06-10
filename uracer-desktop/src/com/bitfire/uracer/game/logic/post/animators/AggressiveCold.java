@@ -21,7 +21,7 @@ import com.bitfire.uracer.postprocessing.effects.Zoom;
 import com.bitfire.uracer.resources.Art;
 import com.bitfire.uracer.utils.AMath;
 
-public class AggressiveCold implements Animator {
+public final class AggressiveCold implements Animator {
 	private GameWorld gameWorld;
 	private Bloom bloom = null;
 	private Zoom zoom = null;
@@ -34,7 +34,7 @@ public class AggressiveCold implements Animator {
 		bloom = (Bloom)post.getEffect( "bloom" );
 		zoom = (Zoom)post.getEffect( "zoom" );
 		vignette = (Vignette)post.getEffect( "vignette" );
-		crt = (CrtMonitor)post.getEffect( "tvlines" );
+		crt = (CrtMonitor)post.getEffect( "crt" );
 		curvature = (Curvature)post.getEffect( "curvature" );
 
 		reset();
@@ -65,8 +65,7 @@ public class AggressiveCold implements Animator {
 			crt.setTime( 0 );
 
 			// FIXME should find out a way to compute this per-resolution! OR!
-			// Just try manually the game and write down the offset, this should work well, no much resolutions
-			// anyway
+			// Just try manually the game and write down the offset, this should work well, no much resolutions anyway
 			// and will work better since this is human-tested!
 			// tv.setOffset( 0.00145f ); // 1920x1080
 			crt.setOffset( 0.002f );	// 1920x1080
@@ -111,13 +110,13 @@ public class AggressiveCold implements Animator {
 			} else {
 				crt.setTime( secs );
 			}
-
-			// tv.setDistortion( 0.2f + timeFactor * 0.05f );
 		}
 
 		if( zoom != null && player != null ) {
+			float zoomfactor = timeFactor;// * player.carState.currSpeedFactor;
 			zoom.setOrigin( playerScreenPos );
-			zoom.setStrength( -0.1f * player.carState.currSpeedFactor * timeFactor );
+			zoom.setStrength( -0.1f * zoomfactor );
+			zoom.setZoom( 1.0f + 0.15f * zoomfactor );
 		}
 
 		if( bloom != null ) {

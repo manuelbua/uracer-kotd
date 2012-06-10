@@ -9,6 +9,7 @@ uniform float blur_div;
 uniform float offset_x;
 uniform float offset_y;
 uniform float one_on_blurlen;
+uniform float zoom;
 
 #ifndef BLUR_LENGTH
 #error Please define a BLUR_LENGTH
@@ -29,7 +30,7 @@ const float blur_start = 1.0;
 // performant version
 void main()
 {
-	float scale = blur_start;
+    float scale = blur_start * zoom;
 	vec2 o = vec2(offset_x, offset_y);
 
 	vec4 c = vec4(0);

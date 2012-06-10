@@ -7,22 +7,22 @@ import com.bitfire.uracer.postprocessing.filters.RadialBlur;
 
 /** Implements a zooming effect with a radial blur to mimic a sense of motion. */
 public class Zoom extends PostProcessorEffect {
-	private RadialBlur zoomBlur;
+	private RadialBlur radialBlur;
 
 	public Zoom( RadialBlur.Quality quality ) {
-		zoomBlur = new RadialBlur( quality );
+		radialBlur = new RadialBlur( quality );
 	}
 
 	public void setOrigin( Vector2 o ) {
-		zoomBlur.setOrigin( o.x, o.y );
+		radialBlur.setOrigin( o.x, o.y );
 	}
 
 	public void setOrigin( float x, float y ) {
-		zoomBlur.setOrigin( x, y );
+		radialBlur.setOrigin( x, y );
 	}
 
 	public void setStrength( float strength ) {
-		zoomBlur.setStrength( strength );
+		radialBlur.setStrength( strength );
 
 		if( strength == 0 && isEnabled() ) {
 			setEnabled( false );
@@ -31,18 +31,22 @@ public class Zoom extends PostProcessorEffect {
 		}
 	}
 
+	public void setZoom( float zoom ) {
+		radialBlur.setZoom( zoom );
+	}
+
 	@Override
 	public void dispose() {
-		zoomBlur.dispose();
+		radialBlur.dispose();
 	}
 
 	@Override
 	public void rebind() {
-		zoomBlur.rebind();
+		radialBlur.rebind();
 	}
 
 	@Override
 	public void render( FrameBuffer src, FrameBuffer dest ) {
-		zoomBlur.setInput( src ).setOutput( dest ).render();
+		radialBlur.setInput( src ).setOutput( dest ).render();
 	}
 }
