@@ -1,6 +1,5 @@
 package com.bitfire.uracer.postprocessing.filters;
 
-import com.bitfire.uracer.postprocessing.IFilter;
 import com.bitfire.uracer.utils.ShaderLoader;
 
 public class Copy extends Filter<Copy> {
@@ -38,13 +37,4 @@ public class Copy extends Filter<Copy> {
 	public void rebind() {
 		setParam( Param.Texture0, u_texture0 );
 	}
-
-	@Override
-	protected void compute() {
-		inputTexture.bind( u_texture0 );
-		program.begin();
-		IFilter.quad.render( program );
-		program.end();
-	}
-
 }

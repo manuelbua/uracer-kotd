@@ -2,7 +2,6 @@ package com.bitfire.uracer.postprocessing.filters;
 
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.glutils.FrameBuffer;
-import com.bitfire.uracer.postprocessing.IFilter;
 import com.bitfire.uracer.utils.ShaderLoader;
 
 public final class Combine extends Filter<Combine> {
@@ -63,11 +62,8 @@ public final class Combine extends Filter<Combine> {
 	}
 
 	@Override
-	protected void compute() {
-		inputTexture.bind( u_texture0 );
+	protected void onBeforeRender() {
+		super.onBeforeRender();
 		inputTexture2.bind( u_texture1 );
-		program.begin();
-		IFilter.quad.render( program );
-		program.end();
 	}
 }

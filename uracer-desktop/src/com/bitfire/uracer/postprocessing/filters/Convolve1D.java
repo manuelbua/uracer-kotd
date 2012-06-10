@@ -1,6 +1,5 @@
 package com.bitfire.uracer.postprocessing.filters;
 
-import com.bitfire.uracer.postprocessing.IFilter;
 import com.bitfire.uracer.utils.ShaderLoader;
 
 public final class Convolve1D extends Filter<Convolve1D> {
@@ -62,13 +61,5 @@ public final class Convolve1D extends Filter<Convolve1D> {
 		setParamsv( Param.SampleWeights, weights, 0, length );
 		setParamsv( Param.SampleOffsets, offsets, 0, length * 2 /* libgdx asks for number of floats, NOT number of elements! */);
 		endParams();
-	}
-
-	@Override
-	protected void compute() {
-		inputTexture.bind( u_texture0 );
-		program.begin();
-		IFilter.quad.render( program );
-		program.end();
 	}
 }

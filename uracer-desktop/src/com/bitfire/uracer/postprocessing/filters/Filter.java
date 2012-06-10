@@ -11,6 +11,13 @@ import com.bitfire.uracer.postprocessing.IFilter;
 
 @SuppressWarnings( "unchecked" )
 public abstract class Filter<T> extends IFilter {
+
+	public interface Parameter {
+		String mnemonic();
+
+		int arrayElementSize();
+	}
+
 	protected static final int u_texture0 = 0;
 	protected static final int u_texture1 = 1;
 	protected static final int u_texture2 = 2;
@@ -44,14 +51,6 @@ public abstract class Filter<T> extends IFilter {
 	}
 
 	public abstract void rebind();
-
-	protected abstract void compute();
-
-	public interface Parameter {
-		String mnemonic();
-
-		int arrayElementSize();
-	}
 
 	/* Sets the parameter to the specified value for this filter.
 	 * This is for one-off operations since the shader is being bound and unbound once per call: for
@@ -222,13 +221,27 @@ public abstract class Filter<T> extends IFilter {
 		}
 	}
 
-	public void render() {
+	/** This method will get called just before a rendering operation occurs. */
+	protected void onBeforeRender() {
+		inputTexture.bind( u_texture0 );
+	}
+
+	private void realRender() {
+		// gives a chance to filters to perform needed operations just before the rendering operation take place.
+		onBeforeRender();
+
+		program.begin();
+		IFilter.quad.render( program );
+		program.end();
+	}
+
+	public final void render() {
 		if( outputBuffer != null ) {
 			outputBuffer.begin();
-			compute();
+			realRender();
 			outputBuffer.end();
 		} else {
-			compute();
+			realRender();
 		}
 	}
 }

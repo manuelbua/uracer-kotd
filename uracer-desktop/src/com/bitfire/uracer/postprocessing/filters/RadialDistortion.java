@@ -1,6 +1,5 @@
 package com.bitfire.uracer.postprocessing.filters;
 
-import com.bitfire.uracer.postprocessing.IFilter;
 import com.bitfire.uracer.utils.ShaderLoader;
 
 public final class RadialDistortion extends Filter<RadialDistortion> {
@@ -58,14 +57,5 @@ public final class RadialDistortion extends Filter<RadialDistortion> {
 		setParams( Param.Zoom, zoom );
 
 		endParams();
-	}
-
-	@Override
-	protected void compute() {
-		inputTexture.bind( u_texture0 );
-
-		program.begin();
-		IFilter.quad.render( program );
-		program.end();
 	}
 }

@@ -3,7 +3,6 @@ package com.bitfire.uracer.postprocessing.filters;
 import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.math.Vector3;
-import com.bitfire.uracer.postprocessing.IFilter;
 import com.bitfire.uracer.utils.ShaderLoader;
 
 public final class CrtScreen extends Filter<CrtScreen> {
@@ -100,14 +99,5 @@ public final class CrtScreen extends Filter<CrtScreen> {
 		setParams( Param.Zoom, zoom );
 
 		endParams();
-	}
-
-	@Override
-	protected void compute() {
-		inputTexture.bind( u_texture0 );
-
-		program.begin();
-		IFilter.quad.render( program );
-		program.end();
 	}
 }

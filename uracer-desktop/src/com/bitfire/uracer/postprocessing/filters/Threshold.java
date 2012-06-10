@@ -1,6 +1,5 @@
 package com.bitfire.uracer.postprocessing.filters;
 
-import com.bitfire.uracer.postprocessing.IFilter;
 import com.bitfire.uracer.utils.ShaderLoader;
 
 public final class Threshold extends Filter<Threshold> {
@@ -48,13 +47,5 @@ public final class Threshold extends Filter<Threshold> {
 	public void rebind() {
 		setParams( Param.Texture, u_texture0 );
 		setTreshold( this.gamma );
-	}
-
-	@Override
-	protected void compute() {
-		inputTexture.bind( u_texture0 );
-		program.begin();
-		IFilter.quad.render( program );
-		program.end();
 	}
 }

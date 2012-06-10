@@ -1,7 +1,6 @@
 package com.bitfire.uracer.postprocessing.filters;
 
 import com.badlogic.gdx.Gdx;
-import com.bitfire.uracer.postprocessing.IFilter;
 import com.bitfire.uracer.utils.ShaderLoader;
 
 public final class ZoomBlur extends Filter<ZoomBlur> {
@@ -90,14 +89,5 @@ public final class ZoomBlur extends Filter<ZoomBlur> {
 		setParams( Param.OffsetX, x / (float)Gdx.graphics.getWidth() );
 		setParams( Param.OffsetY, 1f - (y / (float)Gdx.graphics.getHeight()) );
 		endParams();
-	}
-
-	@Override
-	protected void compute() {
-		inputTexture.bind( u_texture0 );
-
-		program.begin();
-		IFilter.quad.render( program );
-		program.end();
 	}
 }

@@ -2,7 +2,6 @@ package com.bitfire.uracer.postprocessing.filters;
 
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.math.Matrix4;
-import com.bitfire.uracer.postprocessing.IFilter;
 import com.bitfire.uracer.utils.ShaderLoader;
 
 public final class CameraBlur extends Filter<CameraBlur> {
@@ -61,12 +60,8 @@ public final class CameraBlur extends Filter<CameraBlur> {
 	}
 
 	@Override
-	protected void compute() {
-		inputTexture.bind( u_texture0 );
+	protected void onBeforeRender() {
+		super.onBeforeRender();
 		depthMap.bind( u_texture1 );
-
-		program.begin();
-		IFilter.quad.render( program );
-		program.end();
 	}
 }
