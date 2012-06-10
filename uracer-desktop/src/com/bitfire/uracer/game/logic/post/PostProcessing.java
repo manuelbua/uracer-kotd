@@ -16,7 +16,7 @@ import com.bitfire.uracer.postprocessing.effects.Bloom;
 import com.bitfire.uracer.postprocessing.effects.CrtMonitor;
 import com.bitfire.uracer.postprocessing.effects.Curvature;
 import com.bitfire.uracer.postprocessing.effects.Vignette;
-import com.bitfire.uracer.postprocessing.effects.Zoom;
+import com.bitfire.uracer.postprocessing.effects.Zoomer;
 import com.bitfire.uracer.utils.Hash;
 
 /** Encapsulates a post-processor animator that manages effects such as bloom and zoomblur to compose
@@ -36,7 +36,7 @@ public class PostProcessing {
 
 	// internally cached effects refs for faster access
 	private Bloom bloom = null;
-	private Zoom zoom = null;
+	private Zoomer zoom = null;
 	private Vignette vignette = null;
 	private CrtMonitor crt = null;
 	private Curvature curvature = null;
@@ -64,8 +64,12 @@ public class PostProcessing {
 		processor.setClearDepth( 1f );
 		processor.setBufferTextureWrap( TextureWrap.Repeat, TextureWrap.Repeat );
 
-		if( Config.PostProcessing.EnableZoomBlur ) {
-			zoom = new Zoom( Config.PostProcessing.RadialBlurQuality );
+		if( Config.PostProcessing.EnableZoom ) {
+			if( Config.PostProcessing.EnableZoomRadialBlur ) {
+				zoom = new Zoomer( Config.PostProcessing.RadialBlurQuality );
+			} else {
+				zoom = new Zoomer();
+			}
 			zoom.setStrength( 0 );
 			processor.addEffect( zoom );
 			effects.put( Hash.APHash( "zoom" ), zoom );
@@ -106,7 +110,7 @@ public class PostProcessing {
 			effects.put( Hash.APHash( "crt" ), crt );
 		}
 
-		if( Config.PostProcessing.EnableRadialDistortion && !Config.PostProcessing.EnableCrtScreen) {
+		if( Config.PostProcessing.EnableRadialDistortion && !Config.PostProcessing.EnableCrtScreen ) {
 			curvature = new Curvature();
 			processor.addEffect( curvature );
 			effects.put( Hash.APHash( "curvature" ), curvature );
@@ -117,8 +121,8 @@ public class PostProcessing {
 		currentAnimator = new AggressiveCold( gameWorld, this );
 		animators.put( Hash.APHash( "AggressiveCold" ), currentAnimator );
 
-//		currentAnimator = new AggressiveWarm( gameWorld, this );
-//		animators.put( Hash.APHash( "AggressiveWarm" ), currentAnimator );
+		// currentAnimator = new AggressiveWarm( gameWorld, this );
+		// animators.put( Hash.APHash( "AggressiveWarm" ), currentAnimator );
 	}
 
 	public void addEffect( String name, PostProcessorEffect effect ) {

@@ -17,14 +17,14 @@ import com.bitfire.uracer.postprocessing.effects.Bloom;
 import com.bitfire.uracer.postprocessing.effects.CrtMonitor;
 import com.bitfire.uracer.postprocessing.effects.Curvature;
 import com.bitfire.uracer.postprocessing.effects.Vignette;
-import com.bitfire.uracer.postprocessing.effects.Zoom;
+import com.bitfire.uracer.postprocessing.effects.Zoomer;
 import com.bitfire.uracer.resources.Art;
 import com.bitfire.uracer.utils.AMath;
 
 public final class AggressiveCold implements Animator {
 	private GameWorld gameWorld;
 	private Bloom bloom = null;
-	private Zoom zoom = null;
+	private Zoomer zoom = null;
 	private Vignette vignette = null;
 	private CrtMonitor crt = null;
 	private Curvature curvature = null;
@@ -32,7 +32,7 @@ public final class AggressiveCold implements Animator {
 	public AggressiveCold( GameWorld world, PostProcessing post ) {
 		gameWorld = world;
 		bloom = (Bloom)post.getEffect( "bloom" );
-		zoom = (Zoom)post.getEffect( "zoom" );
+		zoom = (Zoomer)post.getEffect( "zoom" );
 		vignette = (Vignette)post.getEffect( "vignette" );
 		crt = (CrtMonitor)post.getEffect( "crt" );
 		curvature = (Curvature)post.getEffect( "curvature" );

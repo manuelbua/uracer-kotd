@@ -21,9 +21,11 @@ public final class Config {
 		public static boolean Enabled;
 		public static boolean EnableVignetting;
 		public static boolean EnableBloom;
-		public static boolean EnableZoomBlur;
+		public static boolean EnableZoom;
+		public static boolean EnableZoomRadialBlur;
 		public static boolean EnableCrtScreen;
 		public static boolean EnableRadialDistortion;	// if both this and the CrtScreen are enabled, then the crt shader will do the distortion instead.
+
 		public static BlurType BlurType;
 		public static float RttRatio = 0.25f;
 		public static int PotRttFboWidth, PotRttFboHeight;
@@ -42,7 +44,8 @@ public final class Config {
 			// post-processor effects
 			EnableVignetting = true;//Config.isDesktop;
 			EnableBloom = true;//Config.isDesktop;
-			EnableZoomBlur = true;//Config.isDesktop;
+			EnableZoom = true;
+			EnableZoomRadialBlur = false;//Config.isDesktop;
 			EnableCrtScreen = false;//Config.isDesktop;
 			EnableRadialDistortion = false;
 
