@@ -38,7 +38,7 @@ public class PostProcessing {
 	private Bloom bloom = null;
 	private Zoom zoom = null;
 	private Vignette vignette = null;
-	private CrtMonitor tv = null;
+	private CrtMonitor crt = null;
 	private Curvature curvature = null;
 
 	// private CameraMotion cameraMotion = null;
@@ -101,9 +101,9 @@ public class PostProcessing {
 		}
 
 		if( Config.PostProcessing.EnableCrtScreen ) {
-			tv = new CrtMonitor( Config.PostProcessing.EnableRadialDistortion, false );
-			processor.addEffect( tv );
-			effects.put( Hash.APHash( "tvlines" ), tv );
+			crt = new CrtMonitor( Config.PostProcessing.EnableRadialDistortion, false );
+			processor.addEffect( crt );
+			effects.put( Hash.APHash( "crt" ), crt );
 		}
 
 		if( Config.PostProcessing.EnableRadialDistortion && !Config.PostProcessing.EnableCrtScreen) {
