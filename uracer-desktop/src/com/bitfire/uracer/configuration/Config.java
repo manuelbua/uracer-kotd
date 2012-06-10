@@ -45,7 +45,7 @@ public final class Config {
 			EnableVignetting = true;//Config.isDesktop;
 			EnableBloom = true;//Config.isDesktop;
 			EnableZoom = true;
-			EnableZoomRadialBlur = false;//Config.isDesktop;
+			EnableZoomRadialBlur = true;//Config.isDesktop;
 			EnableCrtScreen = false;//Config.isDesktop;
 			EnableRadialDistortion = false;
 
