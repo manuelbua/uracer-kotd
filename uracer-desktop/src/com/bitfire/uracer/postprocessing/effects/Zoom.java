@@ -3,14 +3,14 @@ package com.bitfire.uracer.postprocessing.effects;
 import com.badlogic.gdx.graphics.glutils.FrameBuffer;
 import com.badlogic.gdx.math.Vector2;
 import com.bitfire.uracer.postprocessing.PostProcessorEffect;
-import com.bitfire.uracer.postprocessing.filters.ZoomBlur;
-import com.bitfire.uracer.postprocessing.filters.ZoomBlur.Quality;
+import com.bitfire.uracer.postprocessing.filters.RadialBlur;
 
+/** Implements a zooming effect with a radial blur to mimic a sense of motion. */
 public class Zoom extends PostProcessorEffect {
-	private ZoomBlur zoomBlur;
+	private RadialBlur zoomBlur;
 
-	public Zoom( Quality quality ) {
-		zoomBlur = new ZoomBlur( quality );
+	public Zoom( RadialBlur.Quality quality ) {
+		zoomBlur = new RadialBlur( quality );
 	}
 
 	public void setOrigin( Vector2 o ) {

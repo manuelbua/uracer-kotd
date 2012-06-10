@@ -5,7 +5,7 @@ import com.badlogic.gdx.Gdx;
 import com.bitfire.uracer.game.logic.helpers.CameraController.InterpolationMode;
 import com.bitfire.uracer.postprocessing.filters.Blur;
 import com.bitfire.uracer.postprocessing.filters.Blur.BlurType;
-import com.bitfire.uracer.postprocessing.filters.ZoomBlur;
+import com.bitfire.uracer.postprocessing.filters.RadialBlur;
 import com.bitfire.uracer.utils.NumberString;
 
 public final class Config {
@@ -29,7 +29,7 @@ public final class Config {
 		public static int PotRttFboWidth, PotRttFboHeight;
 		public static int RttFboWidth, RttFboHeight;
 
-		public static ZoomBlur.Quality ZoomQuality;
+		public static RadialBlur.Quality RadialBlurQuality;
 		public static float ZoomMaxStrength;
 
 		// compute per-resolution constants
@@ -51,26 +51,26 @@ public final class Config {
 
 			if( w >= 1680 ) {
 				BlurType = Blur.BlurType.Gaussian5x5b;
-				ZoomQuality = ZoomBlur.Quality.High;
+				RadialBlurQuality = RadialBlur.Quality.High;
 				ZoomMaxStrength = -0.08f;
 				PotRttFboWidth = 256;
 				PotRttFboHeight = 256;
 			} else if( w >= 1280 ) {
 				BlurType = Blur.BlurType.Gaussian3x3b;
-				ZoomQuality = ZoomBlur.Quality.Medium;
+				RadialBlurQuality = RadialBlur.Quality.Medium;
 				ZoomMaxStrength = -0.08f;
 				PotRttFboWidth = 256;
 				PotRttFboHeight = 256;
 			} else if( w >= 800 ) {
 				BlurType = Blur.BlurType.Gaussian3x3;
-				ZoomQuality = ZoomBlur.Quality.Low;
+				RadialBlurQuality = RadialBlur.Quality.Low;
 				ZoomMaxStrength = -0.08f;
 				PotRttFboWidth = 128;
 				PotRttFboHeight = 128;
 			}
 
 			Gdx.app.log( "Config", "blurType=" + BlurType );
-			Gdx.app.log( "Config", "zoomQuality=" + ZoomQuality );
+			Gdx.app.log( "Config", "zoomQuality=" + RadialBlurQuality );
 			Gdx.app.log( "Config", "zoomMaxStrength=" + ZoomMaxStrength );
 			Gdx.app.log( "Config", "SmallFboWidth=" + PotRttFboWidth );
 			Gdx.app.log( "Config", "SmallFboHeight=" + PotRttFboHeight );

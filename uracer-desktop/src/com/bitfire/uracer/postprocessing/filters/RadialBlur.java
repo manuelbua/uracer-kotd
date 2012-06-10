@@ -3,14 +3,14 @@ package com.bitfire.uracer.postprocessing.filters;
 import com.badlogic.gdx.Gdx;
 import com.bitfire.uracer.utils.ShaderLoader;
 
-public final class ZoomBlur extends Filter<ZoomBlur> {
+public final class RadialBlur extends Filter<RadialBlur> {
 	// ctrl quality
 	private int blur_len;
 
 	// ctrl quantity
 	private float strength, x, y;
 
-	public ZoomBlur() {
+	public RadialBlur() {
 		this( Quality.Low );
 	}
 
@@ -58,7 +58,7 @@ public final class ZoomBlur extends Filter<ZoomBlur> {
 		}
 	}
 
-	public ZoomBlur( Quality quality ) {
+	public RadialBlur( Quality quality ) {
 		super( ShaderLoader.fromFile( "zoom-blur", "zoom-blur", "#define BLUR_LENGTH " + quality.length + "\n#define ONE_ON_BLUR_LENGTH " + 1f / (float)quality.length ) );
 		this.blur_len = quality.length;
 		rebind();

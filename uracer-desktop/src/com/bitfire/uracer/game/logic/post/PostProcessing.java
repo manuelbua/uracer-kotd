@@ -65,7 +65,7 @@ public class PostProcessing {
 		processor.setBufferTextureWrap( TextureWrap.Repeat, TextureWrap.Repeat );
 
 		if( Config.PostProcessing.EnableZoomBlur ) {
-			zoom = new Zoom( Config.PostProcessing.ZoomQuality );
+			zoom = new Zoom( Config.PostProcessing.RadialBlurQuality );
 			zoom.setStrength( 0 );
 			processor.addEffect( zoom );
 			effects.put( Hash.APHash( "zoom" ), zoom );
