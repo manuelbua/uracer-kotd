@@ -108,9 +108,7 @@ public class PostProcessing {
 			crt = new CrtMonitor( Config.PostProcessing.EnableRadialDistortion, false );
 			processor.addEffect( crt );
 			effects.put( Hash.APHash( "crt" ), crt );
-		}
-
-		if( Config.PostProcessing.EnableRadialDistortion && !Config.PostProcessing.EnableCrtScreen ) {
+		} else if( Config.PostProcessing.EnableRadialDistortion ) {
 			curvature = new Curvature();
 			processor.addEffect( curvature );
 			effects.put( Hash.APHash( "curvature" ), curvature );
