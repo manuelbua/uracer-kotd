@@ -77,8 +77,8 @@ public final class AggressiveCold implements Animator {
 		}
 
 		if( curvature != null ) {
-			curvature.setDistortion( 0.2f );
-			curvature.setZoom( 0.9f );
+			curvature.setDistortion( 0.125f );
+			curvature.setZoom( 0.94f );
 		}
 	}
 

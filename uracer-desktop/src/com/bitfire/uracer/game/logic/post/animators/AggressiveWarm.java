@@ -70,12 +70,13 @@ public final class AggressiveWarm implements Animator {
 			// tv.setOffset( 0.00145f ); // 1920x1080
 			crt.setOffset( 0.002f );	// 1920x1080
 			crt.setDistortion( 0.2f );
+			crt.setZoom( 0.9f );
 			crt.setTint( 0.95f, 0.8f, 1.0f );
 		}
 
 		if( curvature != null ) {
-			curvature.setDistortion( 0.4f );
-			curvature.setZoom( 1f );
+			curvature.setDistortion( 0.2f );
+			curvature.setZoom( 0.9f );
 		}
 	}
 
@@ -138,11 +139,6 @@ public final class AggressiveWarm implements Animator {
 
 			vignette.setLutIntensity( timeFactor * 1.25f );
 			vignette.setIntensity( timeFactor );
-		}
-
-		if( curvature != null ) {
-			curvature.setDistortion( 0.2f );
-			curvature.setZoom( 0.90f );
 		}
 	}
 }
