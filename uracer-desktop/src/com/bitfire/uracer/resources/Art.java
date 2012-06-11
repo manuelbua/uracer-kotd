@@ -9,9 +9,7 @@ import com.badlogic.gdx.graphics.Texture.TextureWrap;
 import com.badlogic.gdx.graphics.g2d.BitmapFont;
 import com.badlogic.gdx.graphics.g2d.TextureAtlas;
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
-import com.badlogic.gdx.graphics.glutils.ShaderProgram;
 import com.bitfire.uracer.configuration.Config;
-import com.bitfire.uracer.utils.ShaderLoader;
 
 public final class Art {
 	public static TextureRegion[][] debugFont;
@@ -40,7 +38,7 @@ public final class Art {
 	private static TextureAtlas fontAtlas;
 
 	// post-processor
-	public static ShaderProgram depthMapGen, depthMapGenTransparent;
+//	public static ShaderProgram depthMapGen, depthMapGenTransparent;
 	public static Texture postXpro;
 
 	public static void init( float invZoomFactor ) {
@@ -67,14 +65,14 @@ public final class Art {
 		postXpro = newTexture( "data/base/xpro-lut.png", false );
 		postXpro.setWrap( TextureWrap.ClampToEdge, TextureWrap.ClampToEdge );
 
-		depthMapGen = ShaderLoader.fromFile( "depth", "depth" );
-		depthMapGenTransparent = ShaderLoader.fromFile(  "depth-transparent", "depth-transparent" );
+//		depthMapGen = ShaderLoader.fromFile( "depth", "depth" );
+//		depthMapGenTransparent = ShaderLoader.fromFile(  "depth-transparent", "depth-transparent" );
 	}
 
 	private static void disposePostProcessorMaps() {
 		postXpro.dispose();
-		depthMapGenTransparent.dispose();
-		depthMapGen.dispose();
+//		depthMapGenTransparent.dispose();
+//		depthMapGen.dispose();
 	}
 
 	//

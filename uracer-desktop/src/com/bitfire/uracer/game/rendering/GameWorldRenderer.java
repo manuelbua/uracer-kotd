@@ -304,7 +304,7 @@ public final class GameWorldRenderer {
 		gl.glDisable( GL20.GL_BLEND );
 
 		if( depthOnly ) {
-			shader = Art.depthMapGen;
+//			shader = Art.depthMapGen;
 		} else {
 			Art.meshTreeTrunk.bind();
 		}
@@ -378,7 +378,7 @@ public final class GameWorldRenderer {
 		ShaderProgram shader = OrthographicAlignedStillModel.shader;
 
 		if( depthOnly ) {
-			shader = Art.depthMapGen;
+//			shader = Art.depthMapGen;
 		}
 
 		shader.begin();
