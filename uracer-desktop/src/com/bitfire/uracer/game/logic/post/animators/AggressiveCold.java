@@ -32,7 +32,7 @@ public final class AggressiveCold implements Animator {
 	public AggressiveCold( GameWorld world, PostProcessing post ) {
 		gameWorld = world;
 		bloom = (Bloom)post.getEffect( "bloom" );
-		zoom = (Zoomer)post.getEffect( "zoom" );
+		zoom = (Zoomer)post.getEffect( "zoomer" );
 		vignette = (Vignette)post.getEffect( "vignette" );
 		crt = (CrtMonitor)post.getEffect( "crt" );
 		curvature = (Curvature)post.getEffect( "curvature" );

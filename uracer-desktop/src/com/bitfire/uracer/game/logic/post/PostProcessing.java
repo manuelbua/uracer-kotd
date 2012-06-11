@@ -36,7 +36,7 @@ public class PostProcessing {
 
 	// internally cached effects refs for faster access
 	private Bloom bloom = null;
-	private Zoomer zoom = null;
+	private Zoomer zoomer = null;
 	private Vignette vignette = null;
 	private CrtMonitor crt = null;
 	private Curvature curvature = null;
@@ -66,13 +66,13 @@ public class PostProcessing {
 
 		if( Config.PostProcessing.EnableZoom ) {
 			if( Config.PostProcessing.EnableZoomRadialBlur ) {
-				zoom = new Zoomer( Config.PostProcessing.RadialBlurQuality );
+				zoomer = new Zoomer( Config.PostProcessing.RadialBlurQuality );
 			} else {
-				zoom = new Zoomer();
+				zoomer = new Zoomer();
 			}
-			zoom.setStrength( 0 );
-			processor.addEffect( zoom );
-			effects.put( Hash.APHash( "zoom" ), zoom );
+			zoomer.setBlurStrength( 0 );
+			processor.addEffect( zoomer );
+			effects.put( Hash.APHash( "zoomer" ), zoomer );
 		}
 
 		// experimental camera motion blur (need subframe-interpolated position, disable camera position's rounding

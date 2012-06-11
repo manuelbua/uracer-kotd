@@ -36,22 +36,22 @@ public final class Config {
 
 		// compute per-resolution constants
 		public static void asDefault() {
-			int w = Gdx.graphics.getWidth();
 
 			// post-processor
 			Enabled = true;//Config.isDesktop;
 
 			// post-processor effects
-			EnableVignetting = true;//Config.isDesktop;
+			EnableVignetting = false;//Config.isDesktop;
 			EnableBloom = true;//Config.isDesktop;
-			EnableZoom = true;
-			EnableZoomRadialBlur = true;//Config.isDesktop;
-			EnableCrtScreen = true;//Config.isDesktop;
+			EnableZoom = false;
+			EnableZoomRadialBlur = false;//Config.isDesktop;
+			EnableCrtScreen = false;//Config.isDesktop;
 			EnableRadialDistortion = false;
 
 			RttFboWidth = (int)(Gdx.graphics.getWidth() * RttRatio);
 			RttFboHeight = (int)(Gdx.graphics.getHeight() * RttRatio);
 
+			int w = Gdx.graphics.getWidth();
 			if( w >= 1680 ) {
 				BlurType = Blur.BlurType.Gaussian5x5b;
 				RadialBlurQuality = RadialBlur.Quality.High;
