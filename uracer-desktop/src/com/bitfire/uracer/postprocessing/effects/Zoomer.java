@@ -6,11 +6,11 @@ import com.bitfire.uracer.postprocessing.PostProcessorEffect;
 import com.bitfire.uracer.postprocessing.filters.RadialBlur;
 import com.bitfire.uracer.postprocessing.filters.Zoom;
 
-/** Implements a zooming effect: a radial blur effect can be performed too if specified, to add sense of motion. */
+/** Implements a zooming effect: either a radial blur filter or a zoom filter is used. */
 public class Zoomer extends PostProcessorEffect {
 	private boolean doRadial = false;
-	private RadialBlur radialBlur;
-	private Zoom zoom;
+	private RadialBlur radialBlur = null;
+	private Zoom zoom = null;
 
 	public Zoomer( RadialBlur.Quality quality ) {
 		radialBlur = new RadialBlur( quality );
@@ -42,7 +42,7 @@ public class Zoomer extends PostProcessorEffect {
 		}
 	}
 
-	public void setStrength( float strength ) {
+	public void setBlurStrength( float strength ) {
 		if( doRadial ) {
 			radialBlur.setStrength( strength );
 
@@ -71,6 +71,7 @@ public class Zoomer extends PostProcessorEffect {
 
 		if( zoom != null ) {
 			zoom.dispose();
+			zoom = null;
 		}
 	}
 

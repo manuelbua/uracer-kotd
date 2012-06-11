@@ -115,7 +115,7 @@ public final class AggressiveCold implements Animator {
 		if( zoom != null && player != null ) {
 			float zoomfactor = timeFactor;// * player.carState.currSpeedFactor;
 			zoom.setOrigin( playerScreenPos );
-			zoom.setStrength( -0.1f * zoomfactor );
+			zoom.setBlurStrength( -0.1f * zoomfactor );
 			zoom.setZoom( 1.0f + 0.1f * zoomfactor );
 		}
 
