@@ -9,9 +9,7 @@ import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.math.Vector3;
 import com.bitfire.uracer.postprocessing.FullscreenQuad;
 
-/** The base class for any single-pass filter.
- *
- * @author bmanuel */
+/** The base class for any single-pass filter. */
 
 @SuppressWarnings( "unchecked" )
 public abstract class Filter<T> {
@@ -20,6 +18,30 @@ public abstract class Filter<T> {
 		String mnemonic();
 
 		int arrayElementSize();
+	}
+
+	public enum Param implements Parameter {
+		// @formatter:off
+		Texture( "u_texture0", 0 );
+		// @formatter:on
+
+		private String mnemonic;
+		private int elementSize;
+
+		private Param( String mnemonic, int arrayElementSize ) {
+			this.mnemonic = mnemonic;
+			this.elementSize = arrayElementSize;
+		}
+
+		@Override
+		public String mnemonic() {
+			return this.mnemonic;
+		}
+
+		@Override
+		public int arrayElementSize() {
+			return this.elementSize;
+		}
 	}
 
 	protected static final FullscreenQuad quad = new FullscreenQuad();
@@ -56,7 +78,11 @@ public abstract class Filter<T> {
 		program.dispose();
 	}
 
-	public abstract void rebind();
+	/** Subclasses need to override this if they make use of more parameters other than the defaults and want to
+	 * batch the shader parameters' passing. */
+	public void rebind() {
+		setParam( Param.Texture, u_texture0 );
+	}
 
 	/* Sets the parameter to the specified value for this filter.
 	 * This is for one-off operations since the shader is being bound and unbound once per call: for
@@ -131,7 +157,7 @@ public abstract class Filter<T> {
 	}
 
 	/** Sets the parameter to the specified value for this filter.
-	 * A single call OR chained function calls, for setParams methods, shall be ended by calling endParams() */
+	 * When you are finished building the batch you shall signal it by invoking endParams(). */
 
 	// float
 	public T setParams( Parameter param, float value ) {
@@ -232,15 +258,6 @@ public abstract class Filter<T> {
 		inputTexture.bind( u_texture0 );
 	}
 
-	private void realRender() {
-		// gives a chance to filters to perform needed operations just before the rendering operation take place.
-		onBeforeRender();
-
-		program.begin();
-		quad.render( program );
-		program.end();
-	}
-
 	public final void render() {
 		if( outputBuffer != null ) {
 			outputBuffer.begin();
@@ -249,5 +266,14 @@ public abstract class Filter<T> {
 		} else {
 			realRender();
 		}
+	}
+
+	private void realRender() {
+		// gives a chance to filters to perform needed operations just before the rendering operation take place.
+		onBeforeRender();
+
+		program.begin();
+		quad.render( program );
+		program.end();
 	}
 }
