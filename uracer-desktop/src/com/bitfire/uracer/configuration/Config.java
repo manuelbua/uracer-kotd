@@ -41,10 +41,10 @@ public final class Config {
 			Enabled = true;//Config.isDesktop;
 
 			// post-processor effects
-			EnableVignetting = false;//Config.isDesktop;
+			EnableVignetting = true;//Config.isDesktop;
 			EnableBloom = true;//Config.isDesktop;
-			EnableZoom = false;
-			EnableZoomRadialBlur = false;//Config.isDesktop;
+			EnableZoom = true;
+			EnableZoomRadialBlur = true;//Config.isDesktop;
 			EnableCrtScreen = false;//Config.isDesktop;
 			EnableRadialDistortion = false;
 
