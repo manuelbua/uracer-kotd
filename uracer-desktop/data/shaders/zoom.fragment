@@ -10,5 +10,5 @@ varying vec2 v_texCoord0;
 
 void main()
 {
-	gl_FragColor = texture2D(u_texture0, (v_texCoord0 * zoom) + vec2(offset_x, offset_y));
+	gl_FragColor = texture2D(u_texture0, (v_texCoord0) + vec2(offset_x, offset_y));
 }
