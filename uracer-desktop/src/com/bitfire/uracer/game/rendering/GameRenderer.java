@@ -146,6 +146,9 @@ public final class GameRenderer {
 
 //			generateDepthMap();
 			postProcessorReady = postProcessor.capture();
+			if(!postProcessorReady) {
+				Gdx.app.error( "GameRenderer", "postprocessor::capture() error" );
+			}
 		}
 
 		gl.glClearDepthf( 1 );
