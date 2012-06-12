@@ -22,7 +22,7 @@ public abstract class Filter<T> {
 
 	public enum Param implements Parameter {
 		// @formatter:off
-		Texture( "u_texture0", 0 );
+		Texture0( "u_texture0", 0 );
 		// @formatter:on
 
 		private String mnemonic;
@@ -58,6 +58,7 @@ public abstract class Filter<T> {
 
 	public Filter( ShaderProgram program ) {
 		this.program = program;
+//		rebind();
 	}
 
 	public T setInput( Texture input ) {
@@ -78,10 +79,10 @@ public abstract class Filter<T> {
 		program.dispose();
 	}
 
-	/** Subclasses need to override this if they make use of more parameters other than the defaults and want to
-	 * batch the shader parameters' passing. */
+	/** Subclasses need to override and reimplement this only if they make use of more parameters other than the defaults
+	 * and want to batch the shader parameters' passing. */
 	public void rebind() {
-		setParam( Param.Texture, u_texture0 );
+		setParam( Param.Texture0, u_texture0 );
 	}
 
 	/* Sets the parameter to the specified value for this filter.
