@@ -197,7 +197,7 @@ public final class ModelFactory {
 		if( cachedMaterials.containsKey( materialHash ) ) {
 			return cachedMaterials.get( materialHash );
 		} else {
-			TextureAttribute ta = new TextureAttribute( texture, 0, "textureAttributes" );
+			TextureAttribute ta = new TextureAttribute( texture, 0, "u_texture" );
 			m = new Material( "default", ta );
 
 			cachedMaterials.put( materialHash, m );

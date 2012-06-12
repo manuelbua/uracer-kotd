@@ -119,7 +119,6 @@ public final class GameWorldRenderer {
 		tileAtlas = new TileAtlas( world.map, baseDir );
 		tileMapRenderer = new UTileMapRenderer( world.map, tileAtlas, 1, 1, world.map.tileWidth, world.map.tileHeight );
 
-		ShaderProgram.pedantic = false;
 		treeShader = ShaderLoader.fromString( treeVertexShader, treeFragmentShader, "tree-fragment", "tree-vertex" );
 
 		if( !treeShader.isCompiled() ) {

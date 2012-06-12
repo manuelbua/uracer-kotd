@@ -268,7 +268,7 @@ public final class GameWorld {
 			Vector2 offsetMt = new Vector2();
 
 			// create material
-			TextureAttribute ta = new TextureAttribute( Art.meshTrackWall, 0, "textureAttributes" );
+			TextureAttribute ta = new TextureAttribute( Art.meshTrackWall, 0, "u_texture" );
 			ta.uWrap = TextureWrap.Repeat.getGLEnum();
 			ta.vWrap = TextureWrap.Repeat.getGLEnum();
 			Material mat = new Material( "trackWall", ta );

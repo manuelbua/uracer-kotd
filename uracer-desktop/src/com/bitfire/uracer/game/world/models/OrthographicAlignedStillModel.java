@@ -66,7 +66,6 @@ public class OrthographicAlignedStillModel {
 		// @formatter:on
 
 		if( !(shader instanceof ShaderProgram) ) {
-			ShaderProgram.pedantic = false;
 			shader = ShaderLoader.fromString( vertexShader, fragmentShader, "OASM::vert", "OASM::frag" );
 		}
 	}

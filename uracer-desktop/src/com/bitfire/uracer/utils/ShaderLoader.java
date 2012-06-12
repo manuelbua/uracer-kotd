@@ -21,7 +21,7 @@ public final class ShaderLoader {
 	}
 
 	public static ShaderProgram fromString( String vertex, String fragment, String vertexName, String fragmentName, String defines ) {
-		ShaderProgram.pedantic = false;
+		ShaderProgram.pedantic = true;
 		ShaderProgram shader = new ShaderProgram( defines + "\n" + vertex, defines + "\n" + fragment );
 		if( !shader.isCompiled() ) {
 			Gdx.app.log( "ShaderLoader", shader.getLog() );
