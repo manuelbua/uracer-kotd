@@ -229,8 +229,8 @@ public final class PostProcessor implements Disposable {
 	/** Regenerates and/or rebinds owned resources when needed, eg. when
 	 * the OpenGL context is lost. */
 	public void rebind() {
-		composite.texture1.setWrap( TextureWrap.Repeat, TextureWrap.Repeat );
-		composite.texture2.setWrap( TextureWrap.Repeat, TextureWrap.Repeat );
+		composite.texture1.setWrap( compositeWrapU, compositeWrapV );
+		composite.texture2.setWrap( compositeWrapU, compositeWrapV );
 
 		for( int i = 0; i < buffers.size; i++ ) {
 			buffers.get( i ).rebind();
