@@ -272,7 +272,7 @@ public final class PostProcessor implements Disposable {
 			}
 
 			// render with null dest (to screen)
-			items.get( items.size - 1 ).render( composite.getResultBuffer(), null );
+			items.get( count - 1 ).render( composite.getResultBuffer(), null );
 		} else {
 			Gdx.app.log( "PostProcessor", "No post-processor effects enabled, aborting render" );
 		}
