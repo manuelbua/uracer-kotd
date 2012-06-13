@@ -9,7 +9,7 @@ public final class Vignetting extends Filter<Vignetting> {
 	private float intensity, saturation, saturationMul;
 
 	private Texture texLut;
-	private boolean dolut;
+	private boolean dolut, dosat;
 	private float lutintensity;
 	private float lutindex;
 	private float centerX, centerY;
@@ -53,6 +53,7 @@ public final class Vignetting extends Filter<Vignetting> {
 		super( ShaderLoader.fromFile( "screenspace", "vignetting", (controlSaturation ? "#define CONTROL_SATURATION\n#define ENABLE_PIXEL_LUT"
 				: "#define ENABLE_PIXEL_LUT") ) );
 		dolut = false;
+		dosat = controlSaturation;
 		rebind();
 	}
 
@@ -63,12 +64,16 @@ public final class Vignetting extends Filter<Vignetting> {
 
 	public void setSaturation( float saturation ) {
 		this.saturation = saturation;
-		setParam( Param.Saturation, saturation );
+		if( dosat ) {
+			setParam( Param.Saturation, saturation );
+		}
 	}
 
 	public void setSaturationMul( float saturationMul ) {
 		this.saturationMul = saturationMul;
-		setParam( Param.SaturationMul, saturationMul );
+		if( dosat ) {
+			setParam( Param.SaturationMul, saturationMul );
+		}
 	}
 
 	public void setCoords( float x, float y ) {
@@ -129,11 +134,14 @@ public final class Vignetting extends Filter<Vignetting> {
 			setParams( Param.LutIntensity, lutintensity );
 		}
 
+		if( dosat ) {
+			setParams( Param.Saturation, saturation );
+			setParams( Param.SaturationMul, saturationMul );
+		}
+
 		setParams( Param.VignetteIntensity, intensity );
 		setParams( Param.VignetteX, x );
 		setParams( Param.VignetteY, y );
-		setParams( Param.Saturation, saturation );
-		setParams( Param.SaturationMul, saturationMul );
 		setParams( Param.CenterX, centerX );
 		setParams( Param.CenterY, centerY );
 		endParams();

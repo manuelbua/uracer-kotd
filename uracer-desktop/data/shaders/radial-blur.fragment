@@ -8,7 +8,7 @@ uniform sampler2D u_texture;
 uniform float blur_div;
 uniform float offset_x;
 uniform float offset_y;
-uniform float one_on_blurlen;
+//uniform float one_on_blurlen;
 uniform float zoom;
 
 #ifndef BLUR_LENGTH

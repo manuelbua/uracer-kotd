@@ -6,8 +6,11 @@ uniform vec2 resolution;
 uniform vec3 tint;// = vec3(0.8,1.0,0.7);
 uniform float time;
 uniform float offset;// = 0.003;
-uniform float Distortion;// = 0.3
-uniform float zoom;
+#ifdef ENABLE_BARREL_DISTORTION
+	uniform float Distortion;// = 0.3
+	uniform float zoom;
+#endif
+
 uniform sampler2D u_texture0;
 const vec4 Zero = vec4(0.0,0.0,0.0,1.0);
 

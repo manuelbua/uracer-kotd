@@ -34,7 +34,7 @@ public final class RadialBlur extends Filter<RadialBlur> {
 		BlurDiv( "blur_div", 0 ),
 		OffsetX( "offset_x", 0 ),
 		OffsetY( "offset_y", 0 ),
-		OneOnBlurLen( "one_on_blurlen", 0 ),
+//		OneOnBlurLen( "one_on_blurlen", 0 ),
 		Zoom("zoom",0),
 		;
 		// @formatter:on
@@ -93,7 +93,7 @@ public final class RadialBlur extends Filter<RadialBlur> {
 	@Override
 	public void rebind() {
 		setParams( Param.Texture, u_texture0 );
-		setParams( Param.OneOnBlurLen, 1f / (float)blur_len );
+//		setParams( Param.OneOnBlurLen, 1f / (float)blur_len );
 		setParams( Param.BlurDiv, this.strength / (float)blur_len );
 
 		// being explicit (could call setOrigin that will call endParams)

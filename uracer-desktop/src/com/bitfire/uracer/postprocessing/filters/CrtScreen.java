@@ -11,6 +11,7 @@ public final class CrtScreen extends Filter<CrtScreen> {
 	private Vector3 vtint;
 	private Color tint;
 	private float distortion;
+	private boolean dodistortion;
 
 	public enum Param implements Parameter {
 		// @formatter:off
@@ -51,6 +52,7 @@ public final class CrtScreen extends Filter<CrtScreen> {
 		tint = new Color( 0.8f, 1.0f, 0.7f, 1.0f );
 		distortion = 0.3f;
 		zoom = 1f;
+		dodistortion = barrelDistortion;
 
 		rebind();
 	}
@@ -78,12 +80,16 @@ public final class CrtScreen extends Filter<CrtScreen> {
 
 	public void setDistortion( float distortion ) {
 		this.distortion = distortion;
-		setParam( Param.Distortion, this.distortion );
+		if( dodistortion ) {
+			setParam( Param.Distortion, this.distortion );
+		}
 	}
 
 	public void setZoom( float zoom ) {
 		this.zoom = zoom;
-		setParam( Param.Zoom, this.zoom );
+		if( dodistortion ) {
+			setParam( Param.Zoom, this.zoom );
+		}
 	}
 
 	@Override
@@ -95,8 +101,10 @@ public final class CrtScreen extends Filter<CrtScreen> {
 		vtint.set( tint.r, tint.g, tint.b );
 		setParams( Param.Tint, vtint );
 
-		setParams( Param.Distortion, distortion );
-		setParams( Param.Zoom, zoom );
+		if( dodistortion ) {
+			setParams( Param.Distortion, distortion );
+			setParams( Param.Zoom, zoom );
+		}
 
 		endParams();
 	}
