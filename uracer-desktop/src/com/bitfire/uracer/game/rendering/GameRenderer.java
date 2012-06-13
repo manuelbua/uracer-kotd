@@ -22,7 +22,8 @@ public final class GameRenderer {
 	private final GameBatchRenderer batchRenderer;
 	private final PostProcessor postProcessor;
 	private final GameWorldRenderer worldRenderer;
-//	private final FrameBuffer depthMap;
+
+	// private final FrameBuffer depthMap;
 
 	/** Manages to convert world positions expressed in meters or pixels to the corresponding position to screen pixels.
 	 * To use this class, the GameWorldRenderer MUST be already constructed and initialized. */
@@ -73,14 +74,15 @@ public final class GameRenderer {
 
 		// depth map support via auxiliary texture
 		// TODO make it optional
-//		if( true ) {
-//			depthMap = new FrameBuffer( Format.RGBA8888, width, height, true );
-//		}
+		// if( true ) {
+		// depthMap = new FrameBuffer( Format.RGBA8888, width, height, true );
+		// }
 
 		// post-processing
 		boolean supports32Bpp = Config.isDesktop;
 		postProcessor = (createPostProcessor ? new PostProcessor( width, height, true /* depth */, false /* alpha */, supports32Bpp ) : null);
-//		postProcessor = (createPostProcessor ? new PostProcessor( Config.PostProcessing.PotRttFboWidth, Config.PostProcessing.PotRttFboWidth, true /* depth */, false /* alpha */, supports32Bpp ) : null);
+		// postProcessor = (createPostProcessor ? new PostProcessor( Config.PostProcessing.PotRttFboWidth,
+		// Config.PostProcessing.PotRttFboWidth, true /* depth */, false /* alpha */, supports32Bpp ) : null);
 	}
 
 	public void dispose() {
@@ -88,7 +90,7 @@ public final class GameRenderer {
 			postProcessor.dispose();
 		}
 
-//		depthMap.dispose();
+		// depthMap.dispose();
 		batchRenderer.dispose();
 
 		GameEvents.gameRenderer.removeAllListeners();
@@ -106,30 +108,30 @@ public final class GameRenderer {
 		return worldRenderer;
 	}
 
-//	public Texture getDepthMap() {
-//		if( depthMap != null ) {
-//			return depthMap.getColorBufferTexture();
-//		}
-//
-//		return null;
-//	}
+	// public Texture getDepthMap() {
+	// if( depthMap != null ) {
+	// return depthMap.getColorBufferTexture();
+	// }
+	//
+	// return null;
+	// }
 
-//	private void generateDepthMap() {
-//		// capture depth
-//		gl.glDepthMask( true );
-//		depthMap.begin();
-//		{
-//			float v = 0f;
-//			gl.glClearDepthf( v );
-//			// Gdx.gl.glClearColor( 1, 1, 1, 1 );
-//			Gdx.gl.glClearColor( v, v, v, v );
-//			Gdx.gl.glClear( GL20.GL_COLOR_BUFFER_BIT | GL20.GL_DEPTH_BUFFER_BIT );
-//
-//			// TODO implement box2d entities to render depth
-//			worldRenderer.renderAllMeshes( true );
-//		}
-//		depthMap.end();
-//	}
+	// private void generateDepthMap() {
+	// // capture depth
+	// gl.glDepthMask( true );
+	// depthMap.begin();
+	// {
+	// float v = 0f;
+	// gl.glClearDepthf( v );
+	// // Gdx.gl.glClearColor( 1, 1, 1, 1 );
+	// Gdx.gl.glClearColor( v, v, v, v );
+	// Gdx.gl.glClear( GL20.GL_COLOR_BUFFER_BIT | GL20.GL_DEPTH_BUFFER_BIT );
+	//
+	// // TODO implement box2d entities to render depth
+	// worldRenderer.renderAllMeshes( true );
+	// }
+	// depthMap.end();
+	// }
 
 	public void beforeRender( float timeAliasingFactor ) {
 		GameEvents.gameRenderer.timeAliasingFactor = timeAliasingFactor;
@@ -144,16 +146,16 @@ public final class GameRenderer {
 
 		if( postProcessorReady ) {
 
-//			generateDepthMap();
+			// generateDepthMap();
 			postProcessorReady = postProcessor.capture();
-			if(!postProcessorReady) {
+			if( !postProcessorReady ) {
 				Gdx.app.error( "GameRenderer", "postprocessor::capture() error" );
 			}
+		} else {
+			gl.glClearDepthf( 1 );
+			gl.glClearColor( 0, 0, 0, 0 );
+			gl.glClear( GL20.GL_COLOR_BUFFER_BIT | GL20.GL_DEPTH_BUFFER_BIT );
 		}
-
-		gl.glClearDepthf( 1 );
-		gl.glClearColor( 0, 0, 0, 0 );
-		gl.glClear( GL20.GL_COLOR_BUFFER_BIT | GL20.GL_DEPTH_BUFFER_BIT );
 
 		// render base tilemap
 		worldRenderer.renderTilemap();

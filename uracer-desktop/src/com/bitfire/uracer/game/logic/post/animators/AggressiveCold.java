@@ -41,7 +41,7 @@ public final class AggressiveCold implements Animator {
 	}
 
 	@Override
-	public final void reset() {
+	public void reset() {
 		if( !Config.PostProcessing.Enabled ) {
 			return;
 		}

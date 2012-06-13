@@ -42,10 +42,10 @@ public final class Config {
 
 			// post-processor effects
 			EnableVignetting = true;//Config.isDesktop;
-			EnableBloom = false;//Config.isDesktop;
+			EnableBloom = true;//Config.isDesktop;
 			EnableZoom = true;
-			EnableZoomRadialBlur = false;//Config.isDesktop;
-			EnableCrtScreen = false;//Config.isDesktop;
+			EnableZoomRadialBlur = true;//Config.isDesktop;
+			EnableCrtScreen = true;//Config.isDesktop;
 			EnableRadialDistortion = false;
 
 			RttFboWidth = (int)(Gdx.graphics.getWidth() * RttRatio);
@@ -62,8 +62,8 @@ public final class Config {
 				BlurType = Blur.BlurType.Gaussian3x3b;
 				RadialBlurQuality = RadialBlur.Quality.Medium;
 				ZoomMaxStrength = -0.08f;
-				PotRttFboWidth = 256;
-				PotRttFboHeight = 256;
+				PotRttFboWidth = 128;
+				PotRttFboHeight = 128;
 			} else if( w >= 800 ) {
 				BlurType = Blur.BlurType.Gaussian3x3;
 				RadialBlurQuality = RadialBlur.Quality.Low;
