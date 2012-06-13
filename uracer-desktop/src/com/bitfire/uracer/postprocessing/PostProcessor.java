@@ -253,19 +253,23 @@ public final class PostProcessor implements Disposable {
 		// Array<PostProcessorEffect> items = manager.items;
 		Array<PostProcessorEffect> items = enabledEffects;
 
-		if( items.size > 0 ) {
+		int count = items.size;
+		if( count > 0 ) {
+
 			// render effects chain, [0,n-1]
-			for( int i = 0; i < items.size - 1; i++ ) {
-				PostProcessorEffect e = items.get( i );
+			if( count > 1 ) {
+				for( int i = 0; i < count - 1; i++ ) {
+					PostProcessorEffect e = items.get( i );
 
-				composite.capture();
-				{
-					e.render( composite.getSourceBuffer(), composite.getResultBuffer() );
+					composite.capture();
+					{
+						e.render( composite.getSourceBuffer(), composite.getResultBuffer() );
+					}
 				}
-			}
 
-			// complete
-			composite.end();
+				// complete
+				composite.end();
+			}
 
 			// render with null dest (to screen)
 			items.get( items.size - 1 ).render( composite.getResultBuffer(), null );
