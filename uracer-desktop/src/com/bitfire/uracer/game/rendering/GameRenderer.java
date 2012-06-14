@@ -70,7 +70,7 @@ public final class GameRenderer {
 
 		// initialize utils
 		ScreenUtils.init( worldRenderer );
-		Gdx.app.log( "GameRenderer", "ScreenUtils initialized (ready=" + ScreenUtils.ready + ")" );
+		Gdx.app.log( "GameRenderer", "ScreenUtils " + (ScreenUtils.ready ? "initialized." : "NOT initialized!") );
 
 		// depth map support via auxiliary texture
 		// TODO make it optional
