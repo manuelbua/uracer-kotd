@@ -31,6 +31,11 @@ public final class Convolve2D extends MultipassFilter {
 	}
 
 	public void upload() {
+		rebind();
+	}
+
+	@Override
+	public void rebind() {
 		hor.rebind();
 		vert.rebind();
 	}

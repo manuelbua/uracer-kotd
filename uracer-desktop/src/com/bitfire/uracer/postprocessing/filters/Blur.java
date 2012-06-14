@@ -238,4 +238,11 @@ public final class Blur extends MultipassFilter {
 		}
 	}
 
+	@Override
+	public void rebind() {
+//		for( Convolve2D c : convolve.values() ) {
+//			c.rebind();
+//		}
+		computeBlurWeightings();
+	}
 }
