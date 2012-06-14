@@ -182,7 +182,7 @@ public final class GameRenderer {
 		batchRenderer.end();
 
 		if( world.isNightMode() ) {
-			if( Config.Graphics.DumbNightMode ) {
+			if( Config.Graphics.NightAsOverlay ) {
 				if( postProcessorReady ) {
 					postProcessor.render();
 				}

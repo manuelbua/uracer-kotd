@@ -41,11 +41,11 @@ public final class Config {
 			Enabled = true;//Config.isDesktop;
 
 			// post-processor effects
-			EnableVignetting = true;//Config.isDesktop;
-			EnableBloom = true;//Config.isDesktop;
+			EnableVignetting = false;//Config.isDesktop;
+			EnableBloom = false;//Config.isDesktop;
 			EnableZoom = true;
-			EnableZoomRadialBlur = true;//Config.isDesktop;
-			EnableCrtScreen = true;//Config.isDesktop;
+			EnableZoomRadialBlur = false;//Config.isDesktop;
+			EnableCrtScreen = false;//Config.isDesktop;
 			EnableRadialDistortion = false;
 
 			RttFboWidth = (int)(Gdx.graphics.getWidth() * RttRatio);
@@ -87,13 +87,13 @@ public final class Config {
 	public static final class Graphics {
 		public static boolean EnableMipMapping;
 		public static boolean SubframeInterpolation;
-		public static boolean DumbNightMode;	// night-mode rendered as an overlay *after* PostProcessor
+		public static boolean NightAsOverlay;	// night-mode rendered as an overlay *after* PostProcessor
 		public static InterpolationMode CameraInterpolationMode;
 
 		public static void asDefault() {
 			EnableMipMapping = true;
 			SubframeInterpolation = true;
-			DumbNightMode = false;
+			NightAsOverlay = false;
 			CameraInterpolationMode = InterpolationMode.Sigmoid;
 		}
 

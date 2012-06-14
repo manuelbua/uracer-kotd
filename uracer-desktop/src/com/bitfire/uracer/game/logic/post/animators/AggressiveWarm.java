@@ -47,7 +47,7 @@ public final class AggressiveWarm implements Animator {
 		}
 
 		if( bloom != null ) {
-			float threshold = ((gameWorld.isNightMode() && !Config.Graphics.DumbNightMode) ? 0.2f : 0.45f);
+			float threshold = ((gameWorld.isNightMode() && !Config.Graphics.NightAsOverlay) ? 0.2f : 0.45f);
 			Bloom.Settings bloomSettings = new Bloom.Settings( "subtle", Config.PostProcessing.BlurType, 1, 1.5f, threshold, 1f, 0.5f, 1f, 1.5f );
 			bloom.setSettings( bloomSettings );
 		}
