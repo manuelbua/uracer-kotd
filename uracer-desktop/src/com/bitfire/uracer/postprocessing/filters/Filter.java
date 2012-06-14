@@ -20,30 +20,6 @@ public abstract class Filter<T> {
 		int arrayElementSize();
 	}
 
-	public enum Param implements Parameter {
-		// @formatter:off
-		Texture0( "u_texture0", 0 );
-		// @formatter:on
-
-		private String mnemonic;
-		private int elementSize;
-
-		private Param( String mnemonic, int arrayElementSize ) {
-			this.mnemonic = mnemonic;
-			this.elementSize = arrayElementSize;
-		}
-
-		@Override
-		public String mnemonic() {
-			return this.mnemonic;
-		}
-
-		@Override
-		public int arrayElementSize() {
-			return this.elementSize;
-		}
-	}
-
 	protected static final FullscreenQuad quad = new FullscreenQuad();
 
 	protected static final int u_texture0 = 0;
@@ -58,7 +34,6 @@ public abstract class Filter<T> {
 
 	public Filter( ShaderProgram program ) {
 		this.program = program;
-//		rebind();
 	}
 
 	public T setInput( Texture input ) {
@@ -79,11 +54,8 @@ public abstract class Filter<T> {
 		program.dispose();
 	}
 
-	/** Subclasses need to override and reimplement this only if they make use of more parameters other than the defaults
-	 * and want to batch the shader parameters' passing. */
-	public void rebind() {
-		setParam( Param.Texture0, u_texture0 );
-	}
+	/** FIXME add comment */
+	public abstract void rebind();
 
 	/* Sets the parameter to the specified value for this filter.
 	 * This is for one-off operations since the shader is being bound and unbound once per call: for
