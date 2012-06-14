@@ -38,8 +38,8 @@ public final class CameraBlur extends Filter<CameraBlur> {
 
 	public CameraBlur() {
 		super( ShaderLoader.fromFile( "screenspace", "camerablur" ) );
-		// dolut = false;
 		rebind();
+		// dolut = false;
 	}
 
 	public void setDepthMap( Texture texture ) {

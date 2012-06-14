@@ -52,7 +52,6 @@ public final class Zoom extends Filter<Zoom> {
 //		this.program = shader;
 
 		super( ShaderLoader.fromFile( "zoom", "zoom" ) );
-
 		rebind();
 		setOrigin( 0.5f, 0.5f );
 		setZoom( 1f );

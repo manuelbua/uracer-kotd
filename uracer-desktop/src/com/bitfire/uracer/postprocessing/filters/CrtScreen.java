@@ -1,5 +1,6 @@
 package com.bitfire.uracer.postprocessing.filters;
 
+import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.math.Vector3;
@@ -7,9 +8,9 @@ import com.bitfire.uracer.utils.ShaderLoader;
 
 public final class CrtScreen extends Filter<CrtScreen> {
 	private float time, offset, zoom;
-	private Vector2 resolution;
-	private Vector3 vtint;
-	private Color tint;
+	private final Vector2 resolution;
+	private final Vector3 vtint;
+	private final Color tint;
 	private float distortion;
 	private boolean dodistortion;
 
@@ -46,15 +47,19 @@ public final class CrtScreen extends Filter<CrtScreen> {
 
 	public CrtScreen( boolean barrelDistortion ) {
 		super( ShaderLoader.fromFile( "screenspace", "crt-screen", barrelDistortion ? "#define ENABLE_BARREL_DISTORTION" : "" ) );
-		time = 0;
-		resolution = new Vector2();
-		vtint = new Vector3();
-		tint = new Color( 0.8f, 1.0f, 0.7f, 1.0f );
-		distortion = 0.3f;
-		zoom = 1f;
 		dodistortion = barrelDistortion;
 
+		resolution = new Vector2();
+		vtint = new Vector3();
+		tint = new Color();
+
 		rebind();
+
+		setTime( 0f );
+		setResolution( Gdx.graphics.getWidth(), Gdx.graphics.getHeight() );
+		setTint( 0.8f, 1.0f, 0.7f );
+		setDistortion( 0.3f );
+		setZoom( 1f );
 	}
 
 	public void setTime( float time ) {
@@ -74,6 +79,12 @@ public final class CrtScreen extends Filter<CrtScreen> {
 
 	public void setTint( Color color ) {
 		tint.set( color );
+		vtint.set( tint.r, tint.g, tint.b );
+		setParam( Param.Tint, vtint );
+	}
+
+	public void setTint( float r, float g, float b ) {
+		tint.set( r, g, b, 1f );
 		vtint.set( tint.r, tint.g, tint.b );
 		setParam( Param.Tint, vtint );
 	}

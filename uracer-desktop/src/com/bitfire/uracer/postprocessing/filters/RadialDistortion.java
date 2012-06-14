@@ -34,10 +34,9 @@ public final class RadialDistortion extends Filter<RadialDistortion> {
 
 	public RadialDistortion() {
 		super( ShaderLoader.fromFile( "screenspace", "radial-distortion" ) );
-		distortion = 0.3f;
-		zoom = 1f;
-
 		rebind();
+		setDistortion( 0.3f );
+		setZoom( 1f );
 	}
 
 	public void setDistortion( float distortion ) {
