@@ -141,9 +141,6 @@ public final class GameRenderer {
 	public void render() {
 		boolean postProcessorReady = hasPostProcessor() && postProcessor.isEnabled();
 
-		gl.glViewport( 0, 0, Gdx.graphics.getWidth(), Gdx.graphics.getHeight() );
-		gl.glDepthMask( true );
-
 		if( postProcessorReady ) {
 
 			// generateDepthMap();
@@ -152,10 +149,13 @@ public final class GameRenderer {
 				Gdx.app.error( "GameRenderer", "postprocessor::capture() error" );
 			}
 		} else {
+			gl.glViewport( 0, 0, Gdx.graphics.getWidth(), Gdx.graphics.getHeight() );
 			gl.glClearDepthf( 1 );
 			gl.glClearColor( 0, 0, 0, 0 );
 			gl.glClear( GL20.GL_COLOR_BUFFER_BIT | GL20.GL_DEPTH_BUFFER_BIT );
 		}
+
+		gl.glDepthMask( true );
 
 		// render base tilemap
 		worldRenderer.renderTilemap();
@@ -181,6 +181,7 @@ public final class GameRenderer {
 		}
 		batchRenderer.end();
 
+		gl.glDisable( GL20.GL_CULL_FACE );
 		if( world.isNightMode() ) {
 			if( Config.Graphics.NightAsOverlay ) {
 				if( postProcessorReady ) {
