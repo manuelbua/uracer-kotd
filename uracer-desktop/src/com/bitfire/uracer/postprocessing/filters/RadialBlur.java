@@ -30,7 +30,7 @@ public final class RadialBlur extends Filter<RadialBlur> {
 
 	public enum Param implements Parameter {
 		// @formatter:off
-		Texture( "u_texture", 0 ),
+		Texture( "u_texture0", 0 ),
 		BlurDiv( "blur_div", 0 ),
 		OffsetX( "offset_x", 0 ),
 		OffsetY( "offset_y", 0 ),

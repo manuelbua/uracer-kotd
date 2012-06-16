@@ -5,7 +5,7 @@ import com.bitfire.uracer.utils.ShaderLoader;
 public final class Convolve1D extends Filter<Convolve1D> {
 	public enum Param implements Parameter {
 		// @formatter:off
-		Texture( "u_texture", 0 ),
+		Texture( "u_texture0", 0 ),
 		SampleWeights( "SampleWeights", 1 ),
 		SampleOffsets( "SampleOffsets", 2 /* vec2 */ );
 		// @formatter:on
