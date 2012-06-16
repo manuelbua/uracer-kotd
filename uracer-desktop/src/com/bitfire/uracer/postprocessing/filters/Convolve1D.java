@@ -68,4 +68,9 @@ public final class Convolve1D extends Filter<Convolve1D> {
 		setParamsv( Param.SampleOffsets, offsets, 0, length * 2 /* libgdx asks for number of floats, NOT number of elements! */);
 		endParams();
 	}
+
+	@Override
+	protected void onBeforeRender() {
+		inputTexture.bind( u_texture0 );
+	}
 }

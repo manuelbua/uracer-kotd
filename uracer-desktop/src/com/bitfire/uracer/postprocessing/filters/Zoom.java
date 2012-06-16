@@ -35,21 +35,21 @@ public final class Zoom extends Filter<Zoom> {
 	}
 
 	public Zoom() {
-//		super(null);
-//
-//		String vertexShaderSrc = Gdx.files.internal( "data/shaders/zoom.vertex" ).readString();
-//		String fragmentShaderSrc = Gdx.files.external( Config.URacerConfigFolder + "/zoom.fragment").readString();
-//
-//		ShaderProgram.pedantic = false;
-//		ShaderProgram shader = new ShaderProgram( vertexShaderSrc, fragmentShaderSrc );
-//		if( !shader.isCompiled() ) {
-//			Gdx.app.log( "Zoom::ShaderLoader", shader.getLog() );
-//			Gdx.app.exit();
-//		} else {
-//			Gdx.app.log( "Zoom::ShaderLoader", shader.getLog() );
-//		}
-//
-//		this.program = shader;
+		// super(null);
+		//
+		// String vertexShaderSrc = Gdx.files.internal( "data/shaders/zoom.vertex" ).readString();
+		// String fragmentShaderSrc = Gdx.files.external( Config.URacerConfigFolder + "/zoom.fragment").readString();
+		//
+		// ShaderProgram.pedantic = false;
+		// ShaderProgram shader = new ShaderProgram( vertexShaderSrc, fragmentShaderSrc );
+		// if( !shader.isCompiled() ) {
+		// Gdx.app.log( "Zoom::ShaderLoader", shader.getLog() );
+		// Gdx.app.exit();
+		// } else {
+		// Gdx.app.log( "Zoom::ShaderLoader", shader.getLog() );
+		// }
+		//
+		// this.program = shader;
 
 		super( ShaderLoader.fromFile( "zoom", "zoom" ) );
 		rebind();
@@ -80,5 +80,8 @@ public final class Zoom extends Filter<Zoom> {
 		endParams();
 	}
 
-
+	@Override
+	protected void onBeforeRender() {
+		inputTexture.bind( u_texture0 );
+	}
 }

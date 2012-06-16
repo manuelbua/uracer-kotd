@@ -61,7 +61,7 @@ public final class CameraBlur extends Filter<CameraBlur> {
 
 	@Override
 	protected void onBeforeRender() {
-		super.onBeforeRender();
+		inputTexture.bind( u_texture0 );
 		depthMap.bind( u_texture1 );
 	}
 }

@@ -50,6 +50,11 @@ public final class RadialDistortion extends Filter<RadialDistortion> {
 	}
 
 	@Override
+	protected void onBeforeRender() {
+		inputTexture.bind( u_texture0 );
+	}
+
+	@Override
 	public void rebind() {
 		setParams( Param.Texture0, u_texture0 );
 		setParams( Param.Distortion, distortion );

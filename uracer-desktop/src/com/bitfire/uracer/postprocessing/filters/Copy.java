@@ -30,11 +30,15 @@ public class Copy extends Filter<Copy> {
 
 	public Copy() {
 		super( ShaderLoader.fromFile( "screenspace", "copy" ) );
-		rebind();
 	}
 
 	@Override
 	public void rebind() {
 		setParam( Param.Texture0, u_texture0 );
+	}
+
+	@Override
+	protected void onBeforeRender() {
+		inputTexture.bind( u_texture0 );
 	}
 }

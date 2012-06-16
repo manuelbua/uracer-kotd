@@ -91,9 +91,14 @@ public final class RadialBlur extends Filter<RadialBlur> {
 	}
 
 	@Override
+	protected void onBeforeRender() {
+		inputTexture.bind( u_texture0 );
+	}
+
+	@Override
 	public void rebind() {
 		setParams( Param.Texture, u_texture0 );
-//		setParams( Param.OneOnBlurLen, 1f / (float)blur_len );
+		// setParams( Param.OneOnBlurLen, 1f / (float)blur_len );
 		setParams( Param.BlurDiv, this.strength / (float)blur_len );
 
 		// being explicit (could call setOrigin that will call endParams)

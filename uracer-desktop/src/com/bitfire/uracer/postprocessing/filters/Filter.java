@@ -218,7 +218,7 @@ public abstract class Filter<T> {
 		return (T)this;
 	}
 
-	/** Should be called after any one or more of the setParams methods have been called to upload data. */
+	/** Should be called after any one or more setParams method calls. */
 	public void endParams() {
 		if( programBegan ) {
 			program.end();
@@ -227,9 +227,7 @@ public abstract class Filter<T> {
 	}
 
 	/** This method will get called just before a rendering operation occurs. */
-	protected void onBeforeRender() {
-		inputTexture.bind( u_texture0 );
-	}
+	protected abstract void onBeforeRender();
 
 	public final void render() {
 		if( outputBuffer != null ) {

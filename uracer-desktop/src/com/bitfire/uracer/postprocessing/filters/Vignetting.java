@@ -149,7 +149,7 @@ public final class Vignetting extends Filter<Vignetting> {
 
 	@Override
 	protected void onBeforeRender() {
-		super.onBeforeRender();
+		inputTexture.bind( u_texture0 );
 		if( dolut ) {
 			texLut.bind( u_texture1 );
 		}

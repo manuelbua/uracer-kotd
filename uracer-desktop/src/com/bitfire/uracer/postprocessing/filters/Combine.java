@@ -63,7 +63,7 @@ public final class Combine extends Filter<Combine> {
 
 	@Override
 	protected void onBeforeRender() {
-		super.onBeforeRender();
+		inputTexture.bind( u_texture0 );
 		inputTexture2.bind( u_texture1 );
 	}
 }

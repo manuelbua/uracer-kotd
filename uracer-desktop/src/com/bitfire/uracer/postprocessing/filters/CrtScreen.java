@@ -104,6 +104,11 @@ public final class CrtScreen extends Filter<CrtScreen> {
 	}
 
 	@Override
+	protected void onBeforeRender() {
+		inputTexture.bind( u_texture0 );
+	}
+
+	@Override
 	public void rebind() {
 		setParams( Param.Texture0, u_texture0 );
 		setParams( Param.Time, time );
