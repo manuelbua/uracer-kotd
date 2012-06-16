@@ -62,7 +62,7 @@ public class PostProcessing {
 		processor.setEnabled( true );
 		processor.setClearBits( GL10.GL_COLOR_BUFFER_BIT | GL10.GL_DEPTH_BUFFER_BIT );
 		processor.setClearDepth( 1f );
-		processor.setBufferTextureWrap( TextureWrap.Repeat, TextureWrap.Repeat );
+		processor.setBufferTextureWrap( TextureWrap.ClampToEdge, TextureWrap.ClampToEdge );
 
 		if( Config.PostProcessing.EnableZoom ) {
 			if( Config.PostProcessing.EnableZoomRadialBlur ) {

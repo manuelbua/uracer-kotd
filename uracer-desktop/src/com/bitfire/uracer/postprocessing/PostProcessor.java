@@ -37,7 +37,7 @@ public final class PostProcessor implements Disposable {
 
 	/** Construct a new PostProcessor with the given parameters. */
 	public PostProcessor( int fboWidth, int fboHeight, boolean useDepth, boolean useAlphaChannel, boolean use32Bits ) {
-		this( fboWidth, fboHeight, useDepth, useAlphaChannel, use32Bits, TextureWrap.Repeat, TextureWrap.Repeat );
+		this( fboWidth, fboHeight, useDepth, useAlphaChannel, use32Bits, TextureWrap.ClampToEdge, TextureWrap.ClampToEdge );
 	}
 
 	public PostProcessor( int fboWidth, int fboHeight, boolean useDepth, boolean useAlphaChannel, boolean use32Bits, TextureWrap u, TextureWrap v ) {

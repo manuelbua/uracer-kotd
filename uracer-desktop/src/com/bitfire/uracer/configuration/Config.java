@@ -42,10 +42,10 @@ public final class Config {
 
 			// post-processor effects
 			EnableVignetting = false;//Config.isDesktop;
-			EnableBloom = true;//Config.isDesktop;
+			EnableBloom = false;//Config.isDesktop;
 			EnableZoom = true;
 			EnableZoomRadialBlur = false;//Config.isDesktop;
-			EnableCrtScreen = false;//Config.isDesktop;
+			EnableCrtScreen = true;//Config.isDesktop;
 			EnableRadialDistortion = false;
 
 			RttFboWidth = (int)(Gdx.graphics.getWidth() * RttRatio);
@@ -151,7 +151,7 @@ public final class Config {
 		public static void asDefault() {
 
 			UseDebugHelper = true;
-			RenderBox2DWorldWireframe = true;
+			RenderBox2DWorldWireframe = false;
 			RenderPlayerDebugInfo = Config.isDesktop;
 			RenderHudDebugInfo = Config.isDesktop;
 			RenderDebugInfoFpsStats = true;
