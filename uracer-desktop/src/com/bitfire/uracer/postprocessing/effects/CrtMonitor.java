@@ -4,7 +4,6 @@ import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.GL10;
 import com.badlogic.gdx.graphics.Texture;
-import com.badlogic.gdx.graphics.Texture.TextureWrap;
 import com.badlogic.gdx.graphics.glutils.FrameBuffer;
 import com.bitfire.uracer.postprocessing.PingPongBuffer;
 import com.bitfire.uracer.postprocessing.PostProcessor;
@@ -47,7 +46,6 @@ public class CrtMonitor extends PostProcessorEffect {
 		combine.setParam( Combine.Param.Source2Saturation, 0.8f );
 
 		crt = new CrtScreen( barrelDistortion );
-		crt.setResolution( w, h );
 	}
 
 	@Override
@@ -69,10 +67,6 @@ public class CrtMonitor extends PostProcessorEffect {
 
 	public void setTime( float time ) {
 		crt.setTime( time );
-	}
-
-	public void setResolution( float width, float height ) {
-		crt.setResolution( width, height );
 	}
 
 	public void setOffset( float offset ) {
@@ -103,12 +97,6 @@ public class CrtMonitor extends PostProcessorEffect {
 
 	@Override
 	public void render( FrameBuffer src, FrameBuffer dest ) {
-		TextureWrap u, v;
-		u = src.getColorBufferTexture().getUWrap();
-		v = src.getColorBufferTexture().getVWrap();
-
-		src.getColorBufferTexture().setWrap( TextureWrap.Repeat, TextureWrap.Repeat );
-
 		// the original scene
 		Texture in = src.getColorBufferTexture();
 
@@ -140,6 +128,5 @@ public class CrtMonitor extends PostProcessorEffect {
 
 		// do combine pass
 		combine.setOutput( dest ).setInput( in, out ).render();
-		src.getColorBufferTexture().setWrap( u, v );
 	};
 }

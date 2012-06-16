@@ -1,6 +1,5 @@
 package com.bitfire.uracer.postprocessing.filters;
 
-import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.math.Vector3;
@@ -18,7 +17,6 @@ public final class CrtScreen extends Filter<CrtScreen> {
 		// @formatter:off
 		Texture0("u_texture0",0),
 		Time("time",0),
-		Resolution("resolution",2),
 		Tint("tint",3),
 		Offset("offset",0),
 		Distortion("Distortion",0),
@@ -56,7 +54,6 @@ public final class CrtScreen extends Filter<CrtScreen> {
 		rebind();
 
 		setTime( 0f );
-		setResolution( Gdx.graphics.getWidth(), Gdx.graphics.getHeight() );
 		setTint( 0.8f, 1.0f, 0.7f );
 		setDistortion( 0.3f );
 		setZoom( 1f );
@@ -65,11 +62,6 @@ public final class CrtScreen extends Filter<CrtScreen> {
 	public void setTime( float time ) {
 		this.time = time;
 		setParam( Param.Time, time );
-	}
-
-	public void setResolution( float width, float height ) {
-		resolution.set( width, height );
-		setParam( Param.Resolution, resolution );
 	}
 
 	public void setOffset( float offset ) {
@@ -112,7 +104,6 @@ public final class CrtScreen extends Filter<CrtScreen> {
 	public void rebind() {
 		setParams( Param.Texture0, u_texture0 );
 		setParams( Param.Time, time );
-		setParams( Param.Resolution, resolution );
 
 		vtint.set( tint.r, tint.g, tint.b );
 		setParams( Param.Tint, vtint );

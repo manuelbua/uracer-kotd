@@ -28,7 +28,6 @@ public final class Config {
 
 		public static BlurType BlurType;
 		public static float RttRatio = 0.25f;
-//		public static int PotRttFboWidth, PotRttFboHeight;
 		public static int RttFboWidth, RttFboHeight;
 
 		public static RadialBlur.Quality RadialBlurQuality;
@@ -41,12 +40,12 @@ public final class Config {
 			Enabled = true;//Config.isDesktop;
 
 			// post-processor effects
-			EnableVignetting = false;//Config.isDesktop;
-			EnableBloom = false;//Config.isDesktop;
+			EnableVignetting = true;//Config.isDesktop;
+			EnableBloom = true;//Config.isDesktop;
 			EnableZoom = true;
-			EnableZoomRadialBlur = false;//Config.isDesktop;
+			EnableZoomRadialBlur = true;//Config.isDesktop;
 			EnableCrtScreen = true;//Config.isDesktop;
-			EnableRadialDistortion = false;
+			EnableRadialDistortion = true;
 
 			RttFboWidth = (int)(Gdx.graphics.getWidth() * RttRatio);
 			RttFboHeight = (int)(Gdx.graphics.getHeight() * RttRatio);
@@ -56,27 +55,19 @@ public final class Config {
 				BlurType = Blur.BlurType.Gaussian5x5b;
 				RadialBlurQuality = RadialBlur.Quality.High;
 				ZoomMaxStrength = -0.08f;
-//				PotRttFboWidth = 256;
-//				PotRttFboHeight = 256;
 			} else if( w >= 1280 ) {
 				BlurType = Blur.BlurType.Gaussian3x3b;
 				RadialBlurQuality = RadialBlur.Quality.Medium;
 				ZoomMaxStrength = -0.08f;
-//				PotRttFboWidth = 128;
-//				PotRttFboHeight = 128;
 			} else if( w >= 800 ) {
 				BlurType = Blur.BlurType.Gaussian3x3;
 				RadialBlurQuality = RadialBlur.Quality.Low;
 				ZoomMaxStrength = -0.08f;
-//				PotRttFboWidth = 128;
-//				PotRttFboHeight = 128;
 			}
 
 			Gdx.app.log( "Config", "blurType=" + BlurType );
 			Gdx.app.log( "Config", "zoomQuality=" + RadialBlurQuality );
 			Gdx.app.log( "Config", "zoomMaxStrength=" + ZoomMaxStrength );
-//			Gdx.app.log( "Config", "SmallFboWidth=" + PotRttFboWidth );
-//			Gdx.app.log( "Config", "SmallFboHeight=" + PotRttFboHeight );
 			Gdx.app.log( "Config", "FBO size is =" + (int)(Gdx.graphics.getWidth() * RttRatio) + "x" + (int)(Gdx.graphics.getHeight() * RttRatio) );
 		}
 
