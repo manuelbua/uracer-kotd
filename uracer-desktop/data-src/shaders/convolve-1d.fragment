@@ -14,7 +14,7 @@ precision mediump float;
 // passed in at shader compile-time!
 //#define LENGTH  5
 
-varying vec2 v_texCoord0;
+varying vec2 v_texCoords;
 uniform MED sampler2D u_texture0;
 uniform MED vec2 SampleOffsets[LENGTH];
 uniform MED float SampleWeights[LENGTH];
@@ -26,7 +26,7 @@ void main()
 	// Combine a number of weighted image filter taps.
 	for (int i = 0; i < LENGTH; i++)
 	{
-		c += texture2D(u_texture0, v_texCoord0 + SampleOffsets[i]) * SampleWeights[i];
+		c += texture2D(u_texture0, v_texCoords + SampleOffsets[i]) * SampleWeights[i];
 	}
 
 	gl_FragColor = c;
