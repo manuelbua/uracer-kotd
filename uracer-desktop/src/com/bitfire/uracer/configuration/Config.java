@@ -44,8 +44,8 @@ public final class Config {
 			EnableBloom = true;//Config.isDesktop;
 			EnableZoom = true;
 			EnableZoomRadialBlur = true;//Config.isDesktop;
-			EnableCrtScreen = true;//Config.isDesktop;
-			EnableRadialDistortion = true;
+			EnableCrtScreen = false;//Config.isDesktop;
+			EnableRadialDistortion = false;
 
 			RttFboWidth = (int)(Gdx.graphics.getWidth() * RttRatio);
 			RttFboHeight = (int)(Gdx.graphics.getHeight() * RttRatio);
