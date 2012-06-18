@@ -31,8 +31,8 @@ public class PostProcessing {
 	public LongMap<PostProcessorEffect> effects = new LongMap<PostProcessorEffect>();
 
 	// animators
-	public LongMap<Animator> animators = new LongMap<Animator>();
-	private Animator currentAnimator;
+	public LongMap<PostProcessingAnimator> animators = new LongMap<PostProcessingAnimator>();
+	private PostProcessingAnimator currentAnimator;
 
 	// internally cached effects refs for faster access
 	private Bloom bloom = null;
@@ -136,7 +136,7 @@ public class PostProcessing {
 	}
 
 	public void enableAnimator( String name ) {
-		Animator next = animators.get( Hash.APHash( name ) );
+		PostProcessingAnimator next = animators.get( Hash.APHash( name ) );
 		if( next != null ) {
 			if( currentAnimator != null ) {
 				currentAnimator.reset();

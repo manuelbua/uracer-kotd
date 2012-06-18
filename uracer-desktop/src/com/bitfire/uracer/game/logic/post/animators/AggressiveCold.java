@@ -8,7 +8,7 @@ import com.bitfire.uracer.URacer;
 import com.bitfire.uracer.configuration.Config;
 import com.bitfire.uracer.game.actors.GhostCar;
 import com.bitfire.uracer.game.logic.GameLogic;
-import com.bitfire.uracer.game.logic.post.Animator;
+import com.bitfire.uracer.game.logic.post.PostProcessingAnimator;
 import com.bitfire.uracer.game.logic.post.PostProcessing;
 import com.bitfire.uracer.game.player.PlayerCar;
 import com.bitfire.uracer.game.rendering.GameRenderer;
@@ -21,7 +21,7 @@ import com.bitfire.uracer.postprocessing.effects.Zoomer;
 import com.bitfire.uracer.resources.Art;
 import com.bitfire.uracer.utils.AMath;
 
-public final class AggressiveCold implements Animator {
+public final class AggressiveCold implements PostProcessingAnimator {
 	private GameWorld gameWorld;
 	private Bloom bloom = null;
 	private Zoomer zoom = null;
