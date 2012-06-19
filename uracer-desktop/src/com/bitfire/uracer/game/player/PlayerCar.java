@@ -5,6 +5,7 @@ import com.badlogic.gdx.graphics.g2d.tiled.TiledLayer;
 import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.math.WindowedMean;
 import com.bitfire.uracer.configuration.Config;
+import com.bitfire.uracer.game.GameplaySettings;
 import com.bitfire.uracer.game.actors.Car;
 import com.bitfire.uracer.game.actors.CarDescriptor;
 import com.bitfire.uracer.game.actors.CarForces;
@@ -62,6 +63,9 @@ public class PlayerCar extends Car {
 		// states
 		this.carState = new CarState( gameWorld, this );
 		this.driftState = new PlayerDriftState( this );
+
+		// set physical properties
+		dampFriction = GameplaySettings.DampingFriction;
 	}
 
 	@Override
@@ -97,9 +101,9 @@ public class PlayerCar extends Car {
 
 	/** When the player's car is off-track this damping will be applied
 	 * to the car's linear velocity */
-	public void setDampingFriction( float damping ) {
-		dampFriction = damping;
-	}
+//	public void setDampingFriction( float damping ) {
+//		dampFriction = damping;
+//	}
 
 	protected CarInput acquireInput() {
 		if( input == null ) {

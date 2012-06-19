@@ -1,7 +1,6 @@
 package com.bitfire.uracer.game.logic.helpers;
 
 import com.badlogic.gdx.Gdx;
-import com.bitfire.uracer.game.GameDifficulty;
 import com.bitfire.uracer.game.actors.Car;
 import com.bitfire.uracer.game.actors.CarForces;
 import com.bitfire.uracer.game.logic.replaying.Replay;
@@ -27,10 +26,10 @@ public final class ReplayRecorder {
 		}
 	}
 
-	public void beginRecording( Car car, Replay replay, String trackName, GameDifficulty gameDifficulty ) {
+	public void beginRecording( Car car, Replay replay, String trackName ) {
 		isRecording = true;
 		this.replay = replay;
-		replay.begin( trackName, gameDifficulty, car );
+		replay.begin( trackName, car );
 	}
 
 	public void add( CarForces f ) {

@@ -2,7 +2,6 @@ package com.bitfire.uracer.game.logic.replaying;
 
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.utils.Disposable;
-import com.bitfire.uracer.game.GameplaySettings;
 import com.bitfire.uracer.game.actors.Car;
 import com.bitfire.uracer.game.actors.CarForces;
 import com.bitfire.uracer.game.logic.LapInfo;
@@ -13,15 +12,13 @@ import com.bitfire.uracer.game.world.GameWorld;
 public class LapManager implements Disposable {
 
 	private GameWorld gameWorld;
-	private GameplaySettings settings;
 	private ReplayRecorder recorder;
 	private ReplayBufferManager bufferManager;
 	private LapInfo lapInfo;
 	private Replay lastRecordedReplay;
 
-	public LapManager( GameWorld gameWorld, GameplaySettings settings ) {
+	public LapManager( GameWorld gameWorld ) {
 		this.gameWorld = gameWorld;
-		this.settings = settings;
 
 		recorder = new ReplayRecorder();
 		lapInfo = new LapInfo();
@@ -118,7 +115,7 @@ public class LapManager implements Disposable {
 
 		Replay next = bufferManager.getNextBuffer();
 		lapInfo.restartTime();
-		recorder.beginRecording( car, next, gameWorld.levelName, settings.difficulty );
+		recorder.beginRecording( car, next, gameWorld.levelName );
 		return next;
 	}
 

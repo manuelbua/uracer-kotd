@@ -13,7 +13,6 @@ import com.bitfire.uracer.ScalingStrategy;
 import com.bitfire.uracer.URacer;
 import com.bitfire.uracer.configuration.Config;
 import com.bitfire.uracer.game.DebugHelper;
-import com.bitfire.uracer.game.GameplaySettings;
 import com.bitfire.uracer.game.actors.Car;
 import com.bitfire.uracer.game.actors.CarEvent;
 import com.bitfire.uracer.game.actors.CarPreset;
@@ -54,9 +53,6 @@ public class GameLogic implements CarEvent.Listener, CarStateEvent.Listener, Pla
 	// logic
 	public boolean doQuit = false;
 
-	// settings
-	private GameplaySettings gameplaySettings = null;
-
 	// world
 	private GameWorld gameWorld = null;
 
@@ -93,11 +89,10 @@ public class GameLogic implements CarEvent.Listener, CarStateEvent.Listener, Pla
 		}
 	};
 
-	public GameLogic( GameWorld gameWorld, GameRenderer gameRenderer, GameplaySettings settings, ScalingStrategy scalingStrategy ) {
+	public GameLogic( GameWorld gameWorld, GameRenderer gameRenderer, ScalingStrategy scalingStrategy ) {
 		this.gameWorld = gameWorld;
 		// this.gameRenderer = gameRenderer;
 		this.gameWorldRenderer = gameRenderer.getWorldRenderer();
-		this.gameplaySettings = settings;
 		this.doQuit = false;
 
 		// create tweening support
@@ -123,7 +118,7 @@ public class GameLogic implements CarEvent.Listener, CarStateEvent.Listener, Pla
 		// player tasks
 		playerTasks = new PlayerTasks( gameTasksManager, scalingStrategy );
 
-		lapManager = new LapManager( gameWorld, settings );
+		lapManager = new LapManager( gameWorld );
 		ghostCar = CarFactory.createGhost( gameWorld, CarPreset.Type.Default );
 
 		// messager.show( "COOL STUFF!", 60, Message.Type.Information, MessagePosition.Bottom, MessageSize.Big );
@@ -155,7 +150,7 @@ public class GameLogic implements CarEvent.Listener, CarStateEvent.Listener, Pla
 
 		playerCar = CarFactory.createPlayer( gameWorld, presetType );
 
-		configurePlayer( gameWorld, gameplaySettings, gameTasksManager.input, playerCar );
+		configurePlayer( gameWorld, gameTasksManager.input, playerCar );
 		Gdx.app.log( "GameLogic", "Player configured" );
 
 		playerTasks.createTasks( playerCar, lapManager.getLapInfo() );
@@ -212,15 +207,12 @@ public class GameLogic implements CarEvent.Listener, CarStateEvent.Listener, Pla
 		player.event.removeListener( this, CarEvent.Type.onComputeForces );
 	}
 
-	private void configurePlayer( GameWorld world, GameplaySettings settings, Input inputSystem, PlayerCar player ) {
+	private void configurePlayer( GameWorld world, Input inputSystem, PlayerCar player ) {
 		// create player and setup player input system and initial position in the world
 		playerCar.setInputSystem( inputSystem );
 		player.setWorldPosMt( world.playerStartPos, world.playerStartOrient );
 		// player.setWorldPosMt( new Vector2(0,0), 0 );
 		// playerCar.setWorldPosMt( new Vector2(50.29133f, -15.1445f), gameWorld.playerStartOrient );
-
-		// apply handicaps
-		player.setDampingFriction( AMath.damping( settings.dampingFriction ) );
 	}
 
 	public void setBestLocalReplay( Replay replay ) {

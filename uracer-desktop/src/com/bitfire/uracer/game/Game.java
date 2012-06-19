@@ -17,9 +17,6 @@ public class Game implements Disposable {
 	// world
 	public GameWorld gameWorld = null;
 
-	// config
-	public GameplaySettings gameplaySettings = null;
-
 	// debug
 	private DebugHelper debug = null;
 
@@ -29,8 +26,7 @@ public class Game implements Disposable {
 	// rendering
 	private GameRenderer gameRenderer = null;
 
-	public Game( String levelName, ScalingStrategy scalingStrategy, GameDifficulty difficulty ) {
-		gameplaySettings = new GameplaySettings( difficulty );
+	public Game( String levelName, ScalingStrategy scalingStrategy ) {
 
 		// FIXME depth writes in night mode doesn't work!
 		gameWorld = new GameWorld( scalingStrategy, levelName, false );
@@ -41,7 +37,7 @@ public class Game implements Disposable {
 		Gdx.app.log( "Game", "GameRenderer ready" );
 
 		// handles game rules and mechanics, it's all about game data
-		gameLogic = new GameLogic( gameWorld, gameRenderer, gameplaySettings, scalingStrategy );
+		gameLogic = new GameLogic( gameWorld, gameRenderer, scalingStrategy );
 		Gdx.app.log( "Game", "GameLogic created" );
 
 		// initialize the debug helper

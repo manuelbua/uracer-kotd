@@ -11,7 +11,6 @@ import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.files.FileHandle;
 import com.badlogic.gdx.math.Vector2;
 import com.bitfire.uracer.configuration.Config;
-import com.bitfire.uracer.game.GameDifficulty;
 import com.bitfire.uracer.game.Time;
 import com.bitfire.uracer.game.actors.Car;
 import com.bitfire.uracer.game.actors.CarForces;
@@ -38,7 +37,6 @@ public class Replay {
 	// replay data
 	public final long id;
 	public String trackName = "no-track";
-	public GameDifficulty difficultyLevel = GameDifficulty.Easy;
 	public float trackTimeSeconds = 0;
 	public CarForces[] forces = null;
 	public boolean isValid = false;
@@ -67,13 +65,12 @@ public class Replay {
 		time.dispose();
 	}
 
-	public void begin( String trackName, GameDifficulty difficulty, Car car ) {
+	public void begin( String trackName, Car car ) {
 		reset();
 		carWorldPositionMt.set( car.getWorldPosMt() );
 		carWorldOrientRads = car.getWorldOrientRads();
 		carPresetType = car.getPresetType();
 		this.trackName = trackName;
-		difficultyLevel = difficulty;
 		time.start();
 
 //		Gdx.app.log( "Replay", "Begin at " + carWorldPositionMt + ", " + carWorldOrientRads );
@@ -131,7 +128,7 @@ public class Replay {
 
 				// replay info data
 				r.trackName = is.readUTF();
-				r.difficultyLevel = GameDifficulty.valueOf( is.readUTF() );
+//				r.difficultyLevel = GameDifficulty.valueOf( is.readUTF() );
 				r.trackTimeSeconds = is.readFloat();
 				r.eventsCount = is.readInt();
 
@@ -193,7 +190,7 @@ public class Replay {
 						// replay info data
 						os.writeLong( id );
 						os.writeUTF( trackName );
-						os.writeUTF( difficultyLevel.toString() );
+//						os.writeUTF( difficultyLevel.toString() );
 						os.writeFloat( trackTimeSeconds );
 						os.writeInt( eventsCount );
 
