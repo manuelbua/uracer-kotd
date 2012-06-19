@@ -57,7 +57,7 @@ public final class URacerDesktop {
 		opts[2] = new LongOpt( "no-vsync", LongOpt.NO_ARGUMENT, null, 'v' );
 		opts[3] = new LongOpt( "cpusync", LongOpt.NO_ARGUMENT, null, 'C' );
 		opts[4] = new LongOpt( "fullscreen", LongOpt.NO_ARGUMENT, null, 'f' );
-		opts[4] = new LongOpt( "right-screen", LongOpt.NO_ARGUMENT, null, 't' );
+		opts[5] = new LongOpt( "right-screen", LongOpt.NO_ARGUMENT, null, 't' );
 
 		Getopt g = new Getopt( "URacer", argv, ":hr:vCft", opts );
 		g.setOpterr( false );
