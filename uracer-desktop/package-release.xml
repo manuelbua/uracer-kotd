@@ -1,0 +1,35 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<project default="zip" name="Create Runnable Jar for Project uracer-desktop with libraries in sub-folder">
+	<!-- ant 1.7 is required -->
+	<target name="create_package">
+		<delete dir="./build"/>
+		<mkdir dir="./build"/>
+		<mkdir dir="./build/libs"/>
+		<jar destfile="./build/uracer-kotd.jar">
+			<manifest>
+				<attribute name="Main-Class" value="com.bitfire.uracer.URacerDesktop"/>
+				<attribute name="Class-Path" value=". libs/gdx.jar libs/gdx-backend-lwjgl.jar libs/gdx-backend-lwjgl-natives.jar libs/gdx-natives.jar libs/gdx-openal.jar libs/java-getopt-1.0.14.jar"/>
+			</manifest>
+			<fileset dir="/home/manuel/dev/uracer-libgdx/uracer-desktop/bin"/>
+			<fileset dir="/home/manuel/dev/libgdx/extensions/model-loaders/model-loaders/bin"/>
+			<fileset dir="/home/manuel/dev/uracer-libgdx/libs/box2dlights/box2dLight/bin"/>
+		</jar>
+
+		<!-- resources -->
+		<copy todir="./build/data">
+			<fileset dir="/home/manuel/dev/uracer-libgdx/uracer-desktop/data" />
+		</copy>
+
+		<!-- libs -->
+		<copy file="/home/manuel/dev/libgdx-nightly/gdx.jar" todir="./build/libs"/>
+		<copy file="/home/manuel/dev/libgdx-nightly/gdx-backend-lwjgl.jar" todir="./build/libs"/>
+		<copy file="/home/manuel/dev/libgdx-nightly/gdx-backend-lwjgl-natives.jar" todir="./build/libs"/>
+		<copy file="/home/manuel/dev/libgdx-nightly/gdx-natives.jar" todir="./build/libs"/>
+		<copy file="/home/manuel/dev/libgdx-nightly/gdx-openal.jar" todir="./build/libs"/>
+		<copy file="/home/manuel/dev/uracer-libgdx/libs/java-getopt-1.0.14.jar" todir="./build/libs"/>
+	</target>
+
+	<target name="zip" depends="create_package">
+		<zip destfile="./build/uracer-kotd-release.zip" basedir="./build" excludes="uracer-kotd-release.zip" />
+	</target>
+</project>
