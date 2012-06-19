@@ -14,9 +14,11 @@ import com.bitfire.uracer.utils.Convert;
 import com.bitfire.uracer.utils.SpriteBatchUtils;
 
 public class URacer implements ApplicationListener {
+	public static final String Name = "URacer: The King Of The Drift";
+
 	private Screen screen;
 	private static boolean running = false;
-	private static final boolean useRealFrametime = false;//Config.isDesktop;
+	private static final boolean useRealFrametime = false;// Config.isDesktop;
 
 	private static ScalingStrategy scalingStrategy;
 	private float temporalAliasing = 0;
@@ -41,7 +43,7 @@ public class URacer implements ApplicationListener {
 	private static long lastTicksCount = 0;
 
 	// version
-	private static String versionInfo;
+	private static String versionInfo = "";
 	private URacerFinalizer uRacerFinalizer;
 
 	public interface URacerFinalizer {
@@ -52,29 +54,37 @@ public class URacer implements ApplicationListener {
 		this.uRacerFinalizer = finalizer;
 	}
 
-	private static void updateVersionInformation() {
-		// extract version information
-		versionInfo = "uRacer";
-		try {
-			Field f = Class.forName( "com.bitfire.uracer.VersionInfo" ).getDeclaredField( "versionName" );
-			f.setAccessible( true );
-			String value = f.get( null ).toString();
-			if( value.length() > 0 ) {
-				versionInfo += " " + value;
+	public static String getVersionInformation() {
+		if( versionInfo.length() == 0 ) {
+			// extract version information
+			String info = "";
+			try {
+				Field f = Class.forName( "com.bitfire.uracer.VersionInfo" ).getDeclaredField( "versionName" );
+				f.setAccessible( true );
+				String value = f.get( null ).toString();
+				if( value.length() > 0 ) {
+					info = value;
+				}
+			} catch( Exception e ) {
+				info = "(version not found)";
 			}
-		} catch( Exception e ) {
-			versionInfo += " (not found)";
+
+			versionInfo = info;
+			return info;
+		} else {
+			return versionInfo;
 		}
 	}
 
 	@Override
 	public void create() {
-		URacer.updateVersionInformation();
+		versionInfo = URacer.getVersionInformation();
+
 		Gdx.app.log( "URacer", "booting version " + versionInfo );
 		Gdx.app.log( "URacer", "Using real frametime: " + (useRealFrametime ? "YES" : "NO") );
 
 		// computed for a 256px tile size target (compute needed conversion factors)
-		scalingStrategy = new ScalingStrategy( new Vector2( 1280, 800 ),70f, 224, 1f );
+		scalingStrategy = new ScalingStrategy( new Vector2( 1280, 800 ), 70f, 224, 1f );
 
 		// everything has been setup on a 256px tile, scale back if that's the case
 		Config.asDefault();
@@ -260,9 +270,5 @@ public class URacer implements ApplicationListener {
 
 	public static long getLastTicksCount() {
 		return lastTicksCount;
-	}
-
-	public static String getVersionInfo() {
-		return versionInfo;
 	}
 }
