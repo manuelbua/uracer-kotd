@@ -141,7 +141,7 @@ GAME
 		
 		- when the player collides, automatically discharge its time dilation credits completely, stop the time dilation and make a "mistake" gfx
 		- if a warm-lap is being enforced (tournament, important races..) it would be cool to darken the scene for the very first lap (warm lap), make it
-		clear its a warm lap, then bloom as 0->1->0 by tweening a InOutExpo/InOutQuad to make it fade to white and back, post-process the scene as something
+		clear its a warm lap, then bloom as 0->1->0 by tweening an InOutExpo/InOutQuad to make it fade to white and back, post-process the scene as something
 		epic and clearly different ambience, it's an IMPORTANT race!
 		
 		- automatic opponent selection? always tournament, always start new account from the bottom..
