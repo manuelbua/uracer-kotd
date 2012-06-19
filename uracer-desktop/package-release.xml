@@ -16,17 +16,24 @@
 		</jar>
 
 		<!-- resources -->
+
 		<copy todir="./build/data">
 			<fileset dir="/home/manuel/dev/uracer-libgdx/uracer-desktop/data" />
 		</copy>
 
 		<!-- libs -->
+
 		<copy file="/home/manuel/dev/libgdx-nightly/gdx.jar" todir="./build/libs"/>
 		<copy file="/home/manuel/dev/libgdx-nightly/gdx-backend-lwjgl.jar" todir="./build/libs"/>
 		<copy file="/home/manuel/dev/libgdx-nightly/gdx-backend-lwjgl-natives.jar" todir="./build/libs"/>
 		<copy file="/home/manuel/dev/libgdx-nightly/gdx-natives.jar" todir="./build/libs"/>
 		<copy file="/home/manuel/dev/libgdx-nightly/gdx-openal.jar" todir="./build/libs"/>
 		<copy file="/home/manuel/dev/uracer-libgdx/libs/java-getopt-1.0.14.jar" todir="./build/libs"/>
+
+		<!-- launchers -->
+		<copy file="/home/manuel/dev/uracer-libgdx/uracer-desktop/data-src/launcher.bat" todir="./build"/>
+		<copy file="/home/manuel/dev/uracer-libgdx/uracer-desktop/data-src/launcher.sh" todir="./build"/>
+
 	</target>
 
 	<target name="zip" depends="create_package">
