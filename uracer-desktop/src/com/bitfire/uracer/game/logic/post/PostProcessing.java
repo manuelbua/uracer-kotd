@@ -46,7 +46,7 @@ public class PostProcessing {
 	}
 
 	public void configurePostProcessor( PostProcessor postProcessor ) {
-		postProcessor.setEnabled( true );
+		postProcessor.setEnabled( Config.PostProcessing.EnableGamePostProcessing );
 		postProcessor.setClearBits( GL10.GL_COLOR_BUFFER_BIT | GL10.GL_DEPTH_BUFFER_BIT );
 		postProcessor.setClearDepth( 1f );
 		postProcessor.setBufferTextureWrap( TextureWrap.ClampToEdge, TextureWrap.ClampToEdge );
