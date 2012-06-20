@@ -6,7 +6,6 @@ import com.badlogic.gdx.graphics.Texture.TextureWrap;
 import com.badlogic.gdx.utils.LongMap;
 import com.bitfire.uracer.configuration.Config;
 import com.bitfire.uracer.game.actors.GhostCar;
-import com.bitfire.uracer.game.logic.post.animators.AggressiveCold;
 import com.bitfire.uracer.game.player.PlayerCar;
 import com.bitfire.uracer.game.rendering.GameRenderer;
 import com.bitfire.uracer.game.world.GameWorld;
@@ -22,6 +21,15 @@ import com.bitfire.uracer.utils.Hash;
 /** Encapsulates a post-processor animator that manages effects such as bloom and zoomblur to compose
  * and enhance the gaming experience. */
 public class PostProcessing {
+
+	public enum Effects {
+		Zoomer, Bloom, Vignette, Crt, Curvature;
+
+		public String name;
+		private Effects() {
+			name = this.toString();
+		}
+	}
 
 	private final GameWorld gameWorld;
 	private final PostProcessor postProcessor;
@@ -58,41 +66,27 @@ public class PostProcessing {
 		postProcessor.setBufferTextureWrap( TextureWrap.ClampToEdge, TextureWrap.ClampToEdge );
 
 		if( Config.PostProcessing.EnableZoom ) {
-			Zoomer z = ( Config.PostProcessing.EnableZoomRadialBlur ? new Zoomer( Config.PostProcessing.RadialBlurQuality ) : new Zoomer() );
+			Zoomer z = (Config.PostProcessing.EnableZoomRadialBlur ? new Zoomer( Config.PostProcessing.RadialBlurQuality ) : new Zoomer());
 			z.setBlurStrength( 0 );
-			addEffect( "zoomer", z );
+			addEffect( Effects.Zoomer.name, z );
 		}
 
-		// experimental camera motion blur (need subframe-interpolated position, disable camera position's rounding
-		// before using it!)
-		// cameraMotion = new CameraMotion( gameRenderer.getDepthMap() );
-		// processor.addEffect( cameraMotion );
-		// effects.put( Hash.APHash( "cameramotion" ), cameraMotion );
-
 		if( Config.PostProcessing.EnableBloom ) {
-			addEffect( "bloom", new Bloom( Config.PostProcessing.RttFboWidth, Config.PostProcessing.RttFboHeight ));
+			addEffect( Effects.Bloom.name, new Bloom( Config.PostProcessing.RttFboWidth, Config.PostProcessing.RttFboHeight ) );
 		}
 
 		if( Config.PostProcessing.EnableVignetting ) {
 			// if there is no bloom, let's control the final saturation via
 			// the vignette filter
-			addEffect( "vignette", new Vignette( Config.PostProcessing.EnableBloom ? false : true ) );
+			addEffect( Effects.Vignette.name, new Vignette( !Config.PostProcessing.EnableBloom ) );
 		}
 
 		if( Config.PostProcessing.EnableCrtScreen ) {
-			addEffect( "crt", new CrtMonitor( Config.PostProcessing.EnableRadialDistortion, false ));
+			addEffect( Effects.Crt.name, new CrtMonitor( Config.PostProcessing.EnableRadialDistortion, false ) );
 
 		} else if( Config.PostProcessing.EnableRadialDistortion ) {
-			addEffect( "curvature", new Curvature() );
+			addEffect( Effects.Curvature.name, new Curvature() );
 		}
-	}
-
-	public void createAnimators() {
-		currentAnimator = new AggressiveCold( gameWorld, this );
-		animators.put( Hash.APHash( "AggressiveCold" ), currentAnimator );
-
-		// currentAnimator = new AggressiveWarm( gameWorld, this );
-		// animators.put( Hash.APHash( "AggressiveWarm" ), currentAnimator );
 	}
 
 	public void addEffect( String name, PostProcessorEffect effect ) {
@@ -104,18 +98,23 @@ public class PostProcessing {
 		return effects.get( Hash.APHash( name ) );
 	}
 
+	public void addAnimator( String name, PostProcessingAnimator animator ) {
+		animators.put( Hash.APHash( name ), animator );
+	}
+
+	public PostProcessingAnimator getAnimator( String name ) {
+		return animators.get( Hash.APHash( name ) );
+	}
+
 	public void enableAnimator( String name ) {
 		PostProcessingAnimator next = animators.get( Hash.APHash( name ) );
 		if( next != null ) {
-			if( currentAnimator != null ) {
-				currentAnimator.reset();
-			}
-
 			currentAnimator = next;
+			currentAnimator.reset();
 		}
 	}
 
-	public void off() {
+	public void disableAnimator() {
 		if( currentAnimator != null ) {
 			currentAnimator.reset();
 			currentAnimator = null;

@@ -30,6 +30,7 @@ import com.bitfire.uracer.game.logic.messager.Message.Type;
 import com.bitfire.uracer.game.logic.messager.MessageAccessor;
 import com.bitfire.uracer.game.logic.messager.Messager;
 import com.bitfire.uracer.game.logic.post.PostProcessing;
+import com.bitfire.uracer.game.logic.post.animators.AggressiveCold;
 import com.bitfire.uracer.game.logic.replaying.LapManager;
 import com.bitfire.uracer.game.logic.replaying.Replay;
 import com.bitfire.uracer.game.player.PlayerCar;
@@ -108,8 +109,9 @@ public class GameLogic implements CarEvent.Listener, CarStateEvent.Listener, Pla
 
 		// post-processing
 		postProcessing = new PostProcessing( gameWorld, gameRenderer );
-		postProcessing.createAnimators();
-		Gdx.app.log( "GameLogic", "Post-processing animators created" );
+		postProcessing.addAnimator( AggressiveCold.Name, new AggressiveCold( gameWorld, postProcessing ) );
+		postProcessing.enableAnimator( AggressiveCold.Name );
+		Gdx.app.log( "GameLogic", "Post-processing animator created" );
 
 		// main game tasks
 		gameTasksManager = new GameTasksManager( gameWorld, scalingStrategy );

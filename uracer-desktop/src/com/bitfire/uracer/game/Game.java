@@ -28,7 +28,6 @@ public class Game implements Disposable {
 
 	public Game( String levelName, ScalingStrategy scalingStrategy ) {
 
-		// FIXME depth writes in night mode doesn't work!
 		gameWorld = new GameWorld( scalingStrategy, levelName, false );
 		Gdx.app.log( "Game", "Game world ready" );
 
@@ -88,6 +87,8 @@ public class Game implements Disposable {
 		// trigger the event and let's subscribers interpolate and update their state()
 		gameRenderer.beforeRender( URacer.getTemporalAliasing() );
 		gameLogic.onBeforeRender();
+
+
 		gameRenderer.render();
 	}
 

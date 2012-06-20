@@ -22,6 +22,8 @@ import com.bitfire.uracer.resources.Art;
 import com.bitfire.uracer.utils.AMath;
 
 public final class AggressiveWarm implements PostProcessingAnimator {
+	public static final String Name = "AggressiveWarm";
+
 	private GameWorld gameWorld;
 	private Bloom bloom = null;
 	private Zoomer zoom = null;

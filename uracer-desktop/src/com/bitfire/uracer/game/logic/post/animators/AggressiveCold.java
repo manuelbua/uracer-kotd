@@ -22,6 +22,8 @@ import com.bitfire.uracer.resources.Art;
 import com.bitfire.uracer.utils.AMath;
 
 public final class AggressiveCold implements PostProcessingAnimator {
+	public static final String Name = "AggressiveCold";
+
 	private GameWorld gameWorld;
 	private Bloom bloom = null;
 	private Zoomer zoom = null;
@@ -31,11 +33,11 @@ public final class AggressiveCold implements PostProcessingAnimator {
 
 	public AggressiveCold( GameWorld world, PostProcessing post ) {
 		gameWorld = world;
-		bloom = (Bloom)post.getEffect( "bloom" );
-		zoom = (Zoomer)post.getEffect( "zoomer" );
-		vignette = (Vignette)post.getEffect( "vignette" );
-		crt = (CrtMonitor)post.getEffect( "crt" );
-		curvature = (Curvature)post.getEffect( "curvature" );
+		bloom = (Bloom)post.getEffect( PostProcessing.Effects.Bloom.name );
+		zoom = (Zoomer)post.getEffect( PostProcessing.Effects.Zoomer.name );
+		vignette = (Vignette)post.getEffect( PostProcessing.Effects.Vignette.name );
+		crt = (CrtMonitor)post.getEffect( PostProcessing.Effects.Crt.name );
+		curvature = (Curvature)post.getEffect( PostProcessing.Effects.Curvature.name );
 
 		reset();
 	}
