@@ -99,21 +99,25 @@ public final class GameRenderer {
 
 	public void render( FrameBuffer dest ) {
 		// postproc begins
-		boolean postProcessorReady = postProcessor.isEnabled();
+		boolean postProcessorReady = false;
+		boolean hasDest = (dest != null);
 
-		if( postProcessorReady ) {
-
+		if( postProcessor.isEnabled() ) {
 			postProcessorReady = postProcessor.capture();
 			if( !postProcessorReady ) {
-				Gdx.app.error( "GameRenderer", "postprocessor::capture() error" );
+				Gdx.app.error( "GameRenderer", "postprocessor::capture() error!" );
 			}
 		} else {
-			gl.glViewport( 0, 0, Gdx.graphics.getWidth(), Gdx.graphics.getHeight() );
+			if( hasDest ) {
+				dest.begin();
+			} else {
+				gl.glViewport( 0, 0, Gdx.graphics.getWidth(), Gdx.graphics.getHeight() );
+			}
+
 			gl.glClearDepthf( 1 );
 			gl.glClearColor( 0, 0, 0, 0 );
 			gl.glClear( GL20.GL_COLOR_BUFFER_BIT | GL20.GL_DEPTH_BUFFER_BIT );
 		}
-
 		// postproc ends
 
 		gl.glDepthMask( true );
@@ -143,18 +147,17 @@ public final class GameRenderer {
 		batchRenderer.end();
 
 		// postproc begins
-		gl.glDisable( GL20.GL_CULL_FACE );
-		if( world.isNightMode() ) {
-			// get the result until now and blend the night/shadows lightmap on it
-			if( postProcessorReady ) {
-				worldRenderer.renderLigthMap( postProcessor.captureEnd() );
-				postProcessor.render( null );
-			} else {
-				worldRenderer.renderLigthMap( null );
+		if( postProcessorReady ) {
+			gl.glDisable( GL20.GL_CULL_FACE );
+			if( world.isNightMode() ) {
+				FrameBuffer result = postProcessor.captureEnd();
+				worldRenderer.renderLigthMap( result );
 			}
+			postProcessor.render( dest );
 		} else {
-			if( postProcessorReady ) {
-				postProcessor.render( null );
+			dest.end();
+			if( world.isNightMode() ) {
+				worldRenderer.renderLigthMap( dest );
 			}
 		}
 		// postproc ends
