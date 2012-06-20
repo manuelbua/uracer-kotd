@@ -144,8 +144,7 @@ public final class GameRenderer {
 		// postproc begins
 		gl.glDisable( GL20.GL_CULL_FACE );
 		if( world.isNightMode() ) {
-			// hook into the next PostProcessor source buffer (the last result)
-			// and blend the lightmap on it
+			// get the result until now and blend the night/shadows lightmap on it
 			if( postProcessorReady ) {
 				worldRenderer.renderLigthMap( postProcessor.captureEnd() );
 				postProcessor.render();

@@ -302,11 +302,11 @@ public final class GameWorldRenderer {
 		gl.glEnable( GL20.GL_CULL_FACE );
 		gl.glDisable( GL20.GL_BLEND );
 
-		if( depthOnly ) {
-//			shader = Art.depthMapGen;
-		} else {
-			Art.meshTreeTrunk.bind();
-		}
+		// if( depthOnly ) {
+		// shader = Art.depthMapGen;
+		// } else {
+		Art.meshTreeTrunk.bind();
+		// }
 
 		shader.begin();
 
@@ -318,7 +318,7 @@ public final class GameWorldRenderer {
 		}
 
 		// all the transparent foliage
-//		gl.glDisable( GL20.GL_CULL_FACE );
+		// gl.glDisable( GL20.GL_CULL_FACE );
 
 		if( !depthOnly ) {
 			gl.glEnable( GL20.GL_BLEND );
@@ -337,7 +337,7 @@ public final class GameWorldRenderer {
 
 			shader.setUniformMatrix( "u_projTrans", m.transformed );
 
-//			if( !depthOnly )
+			// if( !depthOnly )
 			{
 				if( i == 0 || needRebind ) {
 					m.material.bind( shader );
@@ -376,9 +376,9 @@ public final class GameWorldRenderer {
 
 		ShaderProgram shader = OrthographicAlignedStillModel.shader;
 
-		if( depthOnly ) {
-//			shader = Art.depthMapGen;
-		}
+		// if( depthOnly ) {
+		// shader = Art.depthMapGen;
+		// }
 
 		shader.begin();
 
@@ -419,7 +419,7 @@ public final class GameWorldRenderer {
 
 			shader.setUniformMatrix( "u_projTrans", mtx2 );
 
-//			if( !depthOnly )
+			// if( !depthOnly )
 			{
 				// avoid rebinding same textures
 				if( i == 0 || needRebind ) {

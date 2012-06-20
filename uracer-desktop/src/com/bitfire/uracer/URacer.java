@@ -113,8 +113,21 @@ public class URacer implements ApplicationListener {
 		timeAccuNs = PhysicsDtNs;
 	}
 
-	// private WindowedMean mean = new WindowedMean( 120 );
-	// NOTE: this render() method will get called by JoglGraphics when screen.tick will ask to finish!!
+	@Override
+	public void dispose() {
+		setScreen( null );
+
+		Sounds.dispose();
+		Art.dispose();
+
+		if( uRacerFinalizer != null ) {
+			uRacerFinalizer.dispose();
+		}
+
+		// if(!Config.isDesktop || )
+		System.exit( 0 );
+	}
+
 	@Override
 	public void render() {
 		if( screen == null ) {
@@ -179,7 +192,6 @@ public class URacer implements ApplicationListener {
 			screen.render();
 
 			// simulate slowness
-			// if(Config.isDesktop)
 			// try { Thread.sleep( 32 ); } catch( InterruptedException e ) {}
 		}
 
@@ -213,21 +225,6 @@ public class URacer implements ApplicationListener {
 		screen.resume();
 	}
 
-	@Override
-	public void dispose() {
-		setScreen( null );
-
-		Sounds.dispose();
-		Art.dispose();
-
-		if( uRacerFinalizer != null ) {
-			uRacerFinalizer.dispose();
-		}
-
-		// if(!Config.isDesktop || )
-		System.exit( 0 );
-	}
-
 	public void setScreen( Screen newScreen ) {
 		if( screen != null ) {
 			screen.removed();
@@ -239,6 +236,10 @@ public class URacer implements ApplicationListener {
 			screen.init( scalingStrategy );
 		}
 	}
+
+	//
+	// export utility functions
+	//
 
 	public static boolean isRunning() {
 		return running;

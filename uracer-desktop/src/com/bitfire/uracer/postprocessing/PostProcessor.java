@@ -35,6 +35,12 @@ public final class PostProcessor implements Disposable {
 	// maintains a per-frame updated list of enabled effects
 	private Array<PostProcessorEffect> enabledEffects = null;
 
+	/** Construct a new PostProcessor with FBO dimensions set to the size of the
+	 * screen */
+	public PostProcessor( boolean useDepth, boolean useAlphaChannel, boolean use32Bits ) {
+		this( Gdx.graphics.getWidth(), Gdx.graphics.getHeight(), useDepth, useAlphaChannel, use32Bits );
+	}
+
 	/** Construct a new PostProcessor with the given parameters. */
 	public PostProcessor( int fboWidth, int fboHeight, boolean useDepth, boolean useAlphaChannel, boolean use32Bits ) {
 		this( fboWidth, fboHeight, useDepth, useAlphaChannel, use32Bits, TextureWrap.ClampToEdge, TextureWrap.ClampToEdge );
@@ -60,12 +66,6 @@ public final class PostProcessor implements Disposable {
 
 		capturing = false;
 		hasCaptured = false;
-	}
-
-	/** Construct a new PostProcessor with FBO dimensions set to the size of the
-	 * screen */
-	public PostProcessor( boolean useDepth, boolean useAlphaChannel, boolean use32Bits ) {
-		this( Gdx.graphics.getWidth(), Gdx.graphics.getHeight(), useDepth, useAlphaChannel, use32Bits );
 	}
 
 	/** Creates and returns a managed PingPongBuffer buffer, just create and
