@@ -124,7 +124,7 @@ public final class PostProcessor implements Disposable {
 
 	/** Returns the internal framebuffer format, computed from the
 	 * parameters specified during construction.
-	 * NOTE: the returned Format will be valid from upon construction and NOT early! */
+	 * NOTE: the returned Format will be valid after construction and NOT early! */
 	public static Format getFramebufferFormat() {
 		return fbFormat;
 	}
