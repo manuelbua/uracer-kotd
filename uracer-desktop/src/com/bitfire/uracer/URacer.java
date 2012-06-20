@@ -7,6 +7,7 @@ import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.utils.TimeUtils;
 import com.bitfire.uracer.configuration.Config;
+import com.bitfire.uracer.game.tween.SysTweener;
 import com.bitfire.uracer.resources.Art;
 import com.bitfire.uracer.resources.Sounds;
 import com.bitfire.uracer.utils.AMath;
@@ -119,6 +120,7 @@ public class URacer implements ApplicationListener {
 
 		Sounds.dispose();
 		Art.dispose();
+		SysTweener.dispose();
 
 		if( uRacerFinalizer != null ) {
 			uRacerFinalizer.dispose();
@@ -189,6 +191,7 @@ public class URacer implements ApplicationListener {
 
 		startTime = TimeUtils.nanoTime();
 		{
+			SysTweener.update();
 			screen.render();
 
 			// simulate slowness

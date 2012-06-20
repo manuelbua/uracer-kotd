@@ -6,10 +6,10 @@ import aurelienribon.tweenengine.TweenManager;
 import com.bitfire.uracer.URacer;
 
 /** This tweener is a wall-clocked tweener, thus it will NOT take the timeMultiplier modulation into account */
-public final class WcTweener {
+public final class SysTweener {
 	private static final TweenManager manager = new TweenManager();
 
-	private WcTweener() {
+	private SysTweener() {
 	}
 
 	public static void dispose() {

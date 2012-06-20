@@ -38,7 +38,7 @@ import com.bitfire.uracer.game.player.PlayerDriftStateEvent;
 import com.bitfire.uracer.game.rendering.GameRenderer;
 import com.bitfire.uracer.game.rendering.GameWorldRenderer;
 import com.bitfire.uracer.game.tween.GameTweener;
-import com.bitfire.uracer.game.tween.WcTweener;
+import com.bitfire.uracer.game.tween.SysTweener;
 import com.bitfire.uracer.game.world.GameWorld;
 import com.bitfire.uracer.utils.AMath;
 import com.bitfire.uracer.utils.BoxedFloat;
@@ -140,7 +140,6 @@ public class GameLogic implements CarEvent.Listener, CarStateEvent.Listener, Pla
 
 		gameWorld.dispose();
 		GameTweener.dispose();
-		WcTweener.dispose();
 	}
 
 	/** Sets the player from the specified preset */
@@ -260,8 +259,7 @@ public class GameLogic implements CarEvent.Listener, CarStateEvent.Listener, Pla
 
 		URacer.timeMultiplier = AMath.clamp( timeMultiplier.value, TimeMultiplierMin, Config.Physics.PhysicsTimeMultiplier );
 
-		// tweener step
-		WcTweener.update();
+		// game tweener step
 		GameTweener.update();
 
 		// post-processing step
@@ -381,22 +379,22 @@ public class GameLogic implements CarEvent.Listener, CarStateEvent.Listener, Pla
 
 			if( timeModulation ) {
 
-				WcTweener.stop( timeMultiplier );
+				SysTweener.stop( timeMultiplier );
 				seqIn = Timeline.createSequence();
 				seqOut = Timeline.createSequence();
 
 				seqIn.push( Tween.to( timeMultiplier, BoxedFloatAccessor.VALUE, 1000 ).target( TimeMultiplierMin ).ease( eqIn ) ).setCallback( timeModulationFinished );
-				WcTweener.start( seqIn );
+				SysTweener.start( seqIn );
 
 			} else {
 
-				WcTweener.stop( timeMultiplier );
+				SysTweener.stop( timeMultiplier );
 				seqIn = Timeline.createSequence();
 				seqOut = Timeline.createSequence();
 
 				seqOut.push( Tween.to( timeMultiplier, BoxedFloatAccessor.VALUE, 1000 ).target( Config.Physics.PhysicsTimeMultiplier ).ease( eqOut ) ).setCallback(
 						timeModulationFinished );
-				WcTweener.start( seqOut );
+				SysTweener.start( seqOut );
 			}
 		}
 	}
@@ -430,7 +428,7 @@ public class GameLogic implements CarEvent.Listener, CarStateEvent.Listener, Pla
 		isFirstLap = true;
 		timeModulation = false;
 		timeMultiplier.value = Config.Physics.PhysicsTimeMultiplier;
-		WcTweener.clear();
+		SysTweener.clear();
 		GameTweener.clear();
 		lapManager.abortRecording();
 		gameTasksManager.restart();
