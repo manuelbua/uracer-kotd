@@ -78,13 +78,11 @@ public final class Config {
 	public static final class Graphics {
 		public static boolean EnableMipMapping;
 		public static boolean SubframeInterpolation;
-		public static boolean NightAsOverlay;	// night-mode rendered as an overlay *after* PostProcessor
 		public static InterpolationMode CameraInterpolationMode;
 
 		public static void asDefault() {
 			EnableMipMapping = true;
 			SubframeInterpolation = true;
-			NightAsOverlay = false;
 			CameraInterpolationMode = InterpolationMode.Sigmoid;
 		}
 

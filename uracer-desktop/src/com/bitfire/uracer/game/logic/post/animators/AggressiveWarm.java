@@ -8,8 +8,8 @@ import com.bitfire.uracer.URacer;
 import com.bitfire.uracer.configuration.Config;
 import com.bitfire.uracer.game.actors.GhostCar;
 import com.bitfire.uracer.game.logic.GameLogic;
-import com.bitfire.uracer.game.logic.post.PostProcessingAnimator;
 import com.bitfire.uracer.game.logic.post.PostProcessing;
+import com.bitfire.uracer.game.logic.post.PostProcessingAnimator;
 import com.bitfire.uracer.game.player.PlayerCar;
 import com.bitfire.uracer.game.rendering.GameRenderer;
 import com.bitfire.uracer.game.world.GameWorld;
@@ -47,7 +47,7 @@ public final class AggressiveWarm implements PostProcessingAnimator {
 		}
 
 		if( bloom != null ) {
-			float threshold = ((gameWorld.isNightMode() && !Config.Graphics.NightAsOverlay) ? 0.2f : 0.45f);
+			float threshold = (gameWorld.isNightMode() ? 0.2f : 0.45f);
 			Bloom.Settings bloomSettings = new Bloom.Settings( "subtle", Config.PostProcessing.BlurType, 1, 1.5f, threshold, 1f, 0.5f, 1f, 1.5f );
 			bloom.setSettings( bloomSettings );
 		}
