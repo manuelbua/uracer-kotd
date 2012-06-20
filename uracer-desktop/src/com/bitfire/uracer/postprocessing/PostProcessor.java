@@ -242,8 +242,9 @@ public final class PostProcessor implements Disposable {
 		}
 	}
 
-	/** Stops capturing the scene and apply the effect chain, if there is one. */
-	public void render() {
+	/** Stops capturing the scene and apply the effect chain, if there is one.
+	 * If the specified output framebuffer is NULL, then the rendering will be performed to screen. */
+	public void render( FrameBuffer dest ) {
 		captureEnd();
 
 		if( !hasCaptured ) {
@@ -272,7 +273,7 @@ public final class PostProcessor implements Disposable {
 			}
 
 			// render with null dest (to screen)
-			items.get( count - 1 ).render( composite.getResultBuffer(), null );
+			items.get( count - 1 ).render( composite.getResultBuffer(), dest );
 		} else {
 			Gdx.app.log( "PostProcessor", "No post-processor effects enabled, aborting render" );
 		}

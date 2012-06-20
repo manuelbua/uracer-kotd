@@ -1,10 +1,8 @@
 package com.bitfire.uracer;
 
-import java.util.Random;
+import com.badlogic.gdx.graphics.glutils.FrameBuffer;
 
 public abstract class Screen {
-	protected static Random random = new Random();
-
 	public abstract void init( ScalingStrategy scalingStrategy );
 
 	public abstract void removed();
@@ -17,7 +15,7 @@ public abstract class Screen {
 
 	public abstract void tickCompleted();
 
-	public abstract void render();
+	public abstract void render( FrameBuffer dest );
 
 	public abstract boolean quit();
 

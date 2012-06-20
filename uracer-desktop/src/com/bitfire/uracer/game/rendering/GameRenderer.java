@@ -3,6 +3,7 @@ package com.bitfire.uracer.game.rendering;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.GL20;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
+import com.badlogic.gdx.graphics.glutils.FrameBuffer;
 import com.badlogic.gdx.math.Rectangle;
 import com.badlogic.gdx.math.Vector2;
 import com.bitfire.uracer.ScalingStrategy;
@@ -96,7 +97,7 @@ public final class GameRenderer {
 		GameEvents.gameRenderer.trigger( this, GameRendererEvent.Type.OnSubframeInterpolate );
 	}
 
-	public void render() {
+	public void render( FrameBuffer dest ) {
 		// postproc begins
 		boolean postProcessorReady = postProcessor.isEnabled();
 
@@ -147,13 +148,13 @@ public final class GameRenderer {
 			// get the result until now and blend the night/shadows lightmap on it
 			if( postProcessorReady ) {
 				worldRenderer.renderLigthMap( postProcessor.captureEnd() );
-				postProcessor.render();
+				postProcessor.render( null );
 			} else {
 				worldRenderer.renderLigthMap( null );
 			}
 		} else {
 			if( postProcessorReady ) {
-				postProcessor.render();
+				postProcessor.render( null );
 			}
 		}
 		// postproc ends

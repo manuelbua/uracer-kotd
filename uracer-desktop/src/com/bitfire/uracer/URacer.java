@@ -192,7 +192,7 @@ public class URacer implements ApplicationListener {
 		startTime = TimeUtils.nanoTime();
 		{
 			SysTweener.update();
-			screen.render();
+			screen.render( null );
 
 			// simulate slowness
 			// try { Thread.sleep( 32 ); } catch( InterruptedException e ) {}
