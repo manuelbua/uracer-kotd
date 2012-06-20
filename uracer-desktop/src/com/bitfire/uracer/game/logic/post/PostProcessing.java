@@ -69,7 +69,6 @@ public class PostProcessing {
 
 		if( Config.PostProcessing.EnableCrtScreen ) {
 			addEffect( Effects.Crt.name, new CrtMonitor( Config.PostProcessing.EnableRadialDistortion, false ) );
-
 		} else if( Config.PostProcessing.EnableRadialDistortion ) {
 			addEffect( Effects.Curvature.name, new Curvature() );
 		}
