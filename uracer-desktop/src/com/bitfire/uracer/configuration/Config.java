@@ -18,7 +18,6 @@ public final class Config {
 	public static final String LocalReplaysStore = "local-replays/";
 
 	public static final class PostProcessing {
-		public static boolean Enabled;
 		public static boolean EnableVignetting;
 		public static boolean EnableBloom;
 		public static boolean EnableZoom;
@@ -35,9 +34,6 @@ public final class Config {
 
 		// compute per-resolution constants
 		public static void asDefault() {
-
-			// post-processor
-			Enabled = true;//Config.isDesktop;
 
 			// post-processor effects
 			EnableVignetting = true;//Config.isDesktop;

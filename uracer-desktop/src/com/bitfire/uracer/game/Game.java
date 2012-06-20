@@ -32,7 +32,7 @@ public class Game implements Disposable {
 		Gdx.app.log( "Game", "Game world ready" );
 
 		// handles rendering
-		gameRenderer = new GameRenderer( gameWorld, scalingStrategy, Config.PostProcessing.Enabled );
+		gameRenderer = new GameRenderer( gameWorld, scalingStrategy );
 		Gdx.app.log( "Game", "GameRenderer ready" );
 
 		// handles game rules and mechanics, it's all about game data

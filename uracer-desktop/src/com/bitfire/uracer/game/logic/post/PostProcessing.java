@@ -7,8 +7,6 @@ import com.badlogic.gdx.utils.LongMap;
 import com.bitfire.uracer.configuration.Config;
 import com.bitfire.uracer.game.actors.GhostCar;
 import com.bitfire.uracer.game.player.PlayerCar;
-import com.bitfire.uracer.game.rendering.GameRenderer;
-import com.bitfire.uracer.game.world.GameWorld;
 import com.bitfire.uracer.postprocessing.PostProcessor;
 import com.bitfire.uracer.postprocessing.PostProcessorEffect;
 import com.bitfire.uracer.postprocessing.effects.Bloom;
@@ -26,14 +24,13 @@ public class PostProcessing {
 		Zoomer, Bloom, Vignette, Crt, Curvature;
 
 		public String name;
+
 		private Effects() {
 			name = this.toString();
 		}
 	}
 
-	private final GameWorld gameWorld;
 	private final PostProcessor postProcessor;
-	private boolean canPostProcess = false;
 
 	// public access to stored effects
 	public LongMap<PostProcessorEffect> effects = new LongMap<PostProcessorEffect>();
@@ -42,24 +39,13 @@ public class PostProcessing {
 	public LongMap<PostProcessingAnimator> animators = new LongMap<PostProcessingAnimator>();
 	private PostProcessingAnimator currentAnimator;
 
-	public PostProcessing( GameWorld gameWorld, GameRenderer gameRenderer ) {
-		this.gameWorld = gameWorld;
-
-		canPostProcess = gameRenderer.hasPostProcessor();
-
-		if( canPostProcess ) {
-			postProcessor = gameRenderer.getPostProcessor();
-			configurePostProcessing();
-			Gdx.app.log( "PostProcessing", "Post-processing enabled and configured" );
-		} else {
-			postProcessor = null;
-		}
-
+	public PostProcessing( PostProcessor postProcessor ) {
+		this.postProcessor = postProcessor;
+		configurePostProcessor( postProcessor );
 		currentAnimator = null;
 	}
 
-	private void configurePostProcessing() {
-
+	public void configurePostProcessor( PostProcessor postProcessor ) {
 		postProcessor.setEnabled( true );
 		postProcessor.setClearBits( GL10.GL_COLOR_BUFFER_BIT | GL10.GL_DEPTH_BUFFER_BIT );
 		postProcessor.setClearDepth( 1f );
@@ -87,6 +73,8 @@ public class PostProcessing {
 		} else if( Config.PostProcessing.EnableRadialDistortion ) {
 			addEffect( Effects.Curvature.name, new Curvature() );
 		}
+
+		Gdx.app.log( "PostProcessing", "Post-processing enabled and configured" );
 	}
 
 	public void addEffect( String name, PostProcessorEffect effect ) {
@@ -122,7 +110,7 @@ public class PostProcessing {
 	}
 
 	public void onBeforeRender( PlayerCar player, GhostCar ghost ) {
-		if( canPostProcess && currentAnimator != null ) {
+		if( currentAnimator != null ) {
 			currentAnimator.update( player, ghost );
 		}
 	}

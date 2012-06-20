@@ -108,7 +108,7 @@ public class GameLogic implements CarEvent.Listener, CarStateEvent.Listener, Pla
 		seqOut = Timeline.createSequence();
 
 		// post-processing
-		postProcessing = new PostProcessing( gameWorld, gameRenderer );
+		postProcessing = new PostProcessing( gameRenderer.getPostProcessor() );
 		postProcessing.addAnimator( AggressiveCold.Name, new AggressiveCold( gameWorld, postProcessing ) );
 		postProcessing.enableAnimator( AggressiveCold.Name );
 		Gdx.app.log( "GameLogic", "Post-processing animator created" );
@@ -213,8 +213,6 @@ public class GameLogic implements CarEvent.Listener, CarStateEvent.Listener, Pla
 		// create player and setup player input system and initial position in the world
 		playerCar.setInputSystem( inputSystem );
 		player.setWorldPosMt( world.playerStartPos, world.playerStartOrient );
-		// player.setWorldPosMt( new Vector2(0,0), 0 );
-		// playerCar.setWorldPosMt( new Vector2(50.29133f, -15.1445f), gameWorld.playerStartOrient );
 	}
 
 	public void setBestLocalReplay( Replay replay ) {
@@ -402,10 +400,6 @@ public class GameLogic implements CarEvent.Listener, CarStateEvent.Listener, Pla
 			}
 		}
 	}
-
-	//
-	// TODO, COULD THIS BE A TASK HANDLING IN-GAME USER CHOICES ??
-	//
 
 	public void restartGame() {
 		restartLogic();

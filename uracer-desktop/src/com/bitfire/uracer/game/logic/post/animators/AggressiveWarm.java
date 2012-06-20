@@ -44,10 +44,6 @@ public final class AggressiveWarm implements PostProcessingAnimator {
 
 	@Override
 	public void reset() {
-		if( !Config.PostProcessing.Enabled ) {
-			return;
-		}
-
 		if( bloom != null ) {
 			float threshold = (gameWorld.isNightMode() ? 0.2f : 0.45f);
 			Bloom.Settings bloomSettings = new Bloom.Settings( "subtle", Config.PostProcessing.BlurType, 1, 1.5f, threshold, 1f, 0.5f, 1f, 1.5f );
@@ -66,11 +62,7 @@ public final class AggressiveWarm implements PostProcessingAnimator {
 			startMs = TimeUtils.millis();
 			crt.setTime( 0 );
 
-			// FIXME should find out a way to compute this per-resolution! OR!
-			// Just try manually the game and write down the offset, this should work well, no much resolutions anyway
-			// and will work better since this is human-tested!
-			// tv.setOffset( 0.00145f ); // 1920x1080
-			crt.setOffset( 0.002f );	// 1920x1080
+			crt.setOffset( 0.002f );
 			crt.setDistortion( 0.2f );
 			crt.setZoom( 0.9f );
 			crt.setTint( 0.95f, 0.8f, 1.0f );
@@ -88,10 +80,6 @@ public final class AggressiveWarm implements PostProcessingAnimator {
 	@Override
 	public void update( PlayerCar player, GhostCar ghost ) {
 		if( player == null ) {
-			return;
-		}
-
-		if( !Config.PostProcessing.Enabled ) {
 			return;
 		}
 

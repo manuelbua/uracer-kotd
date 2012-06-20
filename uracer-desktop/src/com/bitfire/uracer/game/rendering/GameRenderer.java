@@ -55,7 +55,7 @@ public final class GameRenderer {
 		}
 	}
 
-	public GameRenderer( GameWorld gameWorld, ScalingStrategy scalingStrategy, boolean createPostProcessor ) {
+	public GameRenderer( GameWorld gameWorld, ScalingStrategy scalingStrategy ) {
 		world = gameWorld;
 		gl = Gdx.graphics.getGL20();
 
@@ -71,22 +71,16 @@ public final class GameRenderer {
 		Gdx.app.log( "GameRenderer", "ScreenUtils " + (ScreenUtils.ready ? "initialized." : "NOT initialized!") );
 
 		// post-processing
-		postProcessor = (createPostProcessor ? new PostProcessor( width, height, true /* depth */, false /* alpha */, Config.isDesktop /* supports32Bpp */) : null);
+		postProcessor = new PostProcessor( width, height, true /* depth */, false /* alpha */, Config.isDesktop /* supports32Bpp */);
 	}
 
 	public void dispose() {
-		if( hasPostProcessor() ) {
-			postProcessor.dispose();
-		}
+		postProcessor.dispose();
 
 		// depthMap.dispose();
 		batchRenderer.dispose();
 
 		GameEvents.gameRenderer.removeAllListeners();
-	}
-
-	public boolean hasPostProcessor() {
-		return (postProcessor != null);
 	}
 
 	public PostProcessor getPostProcessor() {
@@ -104,7 +98,7 @@ public final class GameRenderer {
 
 	public void render() {
 		// postproc begins
-		boolean postProcessorReady = hasPostProcessor() && postProcessor.isEnabled();
+		boolean postProcessorReady = postProcessor.isEnabled();
 
 		if( postProcessorReady ) {
 
