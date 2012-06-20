@@ -6,13 +6,11 @@ import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.utils.TimeUtils;
 import com.bitfire.uracer.URacer;
 import com.bitfire.uracer.configuration.Config;
-import com.bitfire.uracer.game.actors.GhostCar;
 import com.bitfire.uracer.game.logic.GameLogic;
 import com.bitfire.uracer.game.logic.post.PostProcessing;
 import com.bitfire.uracer.game.logic.post.PostProcessingAnimator;
 import com.bitfire.uracer.game.player.PlayerCar;
 import com.bitfire.uracer.game.rendering.GameRenderer;
-import com.bitfire.uracer.game.world.GameWorld;
 import com.bitfire.uracer.postprocessing.effects.Bloom;
 import com.bitfire.uracer.postprocessing.effects.CrtMonitor;
 import com.bitfire.uracer.postprocessing.effects.Curvature;
@@ -24,20 +22,22 @@ import com.bitfire.uracer.utils.AMath;
 public final class AggressiveWarm implements PostProcessingAnimator {
 	public static final String Name = "AggressiveWarm";
 
-	private GameWorld gameWorld;
+	private boolean nightMode = false;
+	private GameLogic logic = null;
 	private Bloom bloom = null;
 	private Zoomer zoom = null;
 	private Vignette vignette = null;
 	private CrtMonitor crt = null;
 	private Curvature curvature = null;
 
-	public AggressiveWarm( GameWorld world, PostProcessing post ) {
-		gameWorld = world;
-		bloom = (Bloom)post.getEffect( "bloom" );
-		zoom = (Zoomer)post.getEffect( "zoom" );
-		vignette = (Vignette)post.getEffect( "vignette" );
-		crt = (CrtMonitor)post.getEffect( "crt" );
-		curvature = (Curvature)post.getEffect( "curvature" );
+	public AggressiveWarm( GameLogic logic, PostProcessing post, boolean nightMode ) {
+		this.nightMode = nightMode;
+		this.logic = logic;
+		bloom = (Bloom)post.getEffect( PostProcessing.Effects.Bloom.name );
+		zoom = (Zoomer)post.getEffect( PostProcessing.Effects.Zoomer.name );
+		vignette = (Vignette)post.getEffect( PostProcessing.Effects.Vignette.name );
+		crt = (CrtMonitor)post.getEffect( PostProcessing.Effects.Crt.name );
+		curvature = (Curvature)post.getEffect( PostProcessing.Effects.Curvature.name );
 
 		reset();
 	}
@@ -45,7 +45,7 @@ public final class AggressiveWarm implements PostProcessingAnimator {
 	@Override
 	public void reset() {
 		if( bloom != null ) {
-			float threshold = (gameWorld.isNightMode() ? 0.2f : 0.45f);
+			float threshold = (nightMode ? 0.2f : 0.45f);
 			Bloom.Settings bloomSettings = new Bloom.Settings( "subtle", Config.PostProcessing.BlurType, 1, 1.5f, threshold, 1f, 0.5f, 1f, 1.5f );
 			bloom.setSettings( bloomSettings );
 		}
@@ -78,7 +78,9 @@ public final class AggressiveWarm implements PostProcessingAnimator {
 	private long startMs = 0;
 
 	@Override
-	public void update( PlayerCar player, GhostCar ghost ) {
+	public void update() {
+		PlayerCar player = logic.getPlayer();
+
 		if( player == null ) {
 			return;
 		}

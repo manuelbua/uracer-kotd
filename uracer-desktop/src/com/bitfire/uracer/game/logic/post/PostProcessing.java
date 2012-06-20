@@ -5,8 +5,6 @@ import com.badlogic.gdx.graphics.GL10;
 import com.badlogic.gdx.graphics.Texture.TextureWrap;
 import com.badlogic.gdx.utils.LongMap;
 import com.bitfire.uracer.configuration.Config;
-import com.bitfire.uracer.game.actors.GhostCar;
-import com.bitfire.uracer.game.player.PlayerCar;
 import com.bitfire.uracer.postprocessing.PostProcessor;
 import com.bitfire.uracer.postprocessing.PostProcessorEffect;
 import com.bitfire.uracer.postprocessing.effects.Bloom;
@@ -108,9 +106,9 @@ public class PostProcessing {
 		}
 	}
 
-	public void onBeforeRender( PlayerCar player, GhostCar ghost ) {
+	public void onBeforeRender() {
 		if( currentAnimator != null ) {
-			currentAnimator.update( player, ghost );
+			currentAnimator.update();
 		}
 	}
 }
