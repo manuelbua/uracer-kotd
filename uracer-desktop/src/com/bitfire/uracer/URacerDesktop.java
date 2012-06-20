@@ -37,6 +37,7 @@ public final class URacerDesktop {
 		config.vSyncEnabled = flags.vSyncEnabled;
 		config.useCPUSynch = flags.useCPUSynch;
 		config.fullscreen = flags.fullscreen;
+		useRightScreen = flags.useRightScreen;
 
 		// parse opts --
 
