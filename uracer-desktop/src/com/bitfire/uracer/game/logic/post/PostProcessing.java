@@ -24,7 +24,7 @@ import com.bitfire.uracer.utils.Hash;
 public class PostProcessing {
 
 	private final GameWorld gameWorld;
-	private final GameRenderer gameRenderer;
+	private final PostProcessor postProcessor;
 	private boolean canPostProcess = false;
 
 	// public access to stored effects
@@ -34,45 +34,33 @@ public class PostProcessing {
 	public LongMap<PostProcessingAnimator> animators = new LongMap<PostProcessingAnimator>();
 	private PostProcessingAnimator currentAnimator;
 
-	// internally cached effects refs for faster access
-	private Bloom bloom = null;
-	private Zoomer zoomer = null;
-	private Vignette vignette = null;
-	private CrtMonitor crt = null;
-	private Curvature curvature = null;
-
-	// private CameraMotion cameraMotion = null;
-
 	public PostProcessing( GameWorld gameWorld, GameRenderer gameRenderer ) {
 		this.gameWorld = gameWorld;
-		this.gameRenderer = gameRenderer;
 
 		canPostProcess = gameRenderer.hasPostProcessor();
 
 		if( canPostProcess ) {
-			configurePostProcessing( gameRenderer.getPostProcessor(), gameWorld );
+			postProcessor = gameRenderer.getPostProcessor();
+			configurePostProcessing();
 			Gdx.app.log( "PostProcessing", "Post-processing enabled and configured" );
+		} else {
+			postProcessor = null;
 		}
 
 		currentAnimator = null;
 	}
 
-	private void configurePostProcessing( PostProcessor processor, GameWorld world ) {
+	private void configurePostProcessing() {
 
-		processor.setEnabled( true );
-		processor.setClearBits( GL10.GL_COLOR_BUFFER_BIT | GL10.GL_DEPTH_BUFFER_BIT );
-		processor.setClearDepth( 1f );
-		processor.setBufferTextureWrap( TextureWrap.ClampToEdge, TextureWrap.ClampToEdge );
+		postProcessor.setEnabled( true );
+		postProcessor.setClearBits( GL10.GL_COLOR_BUFFER_BIT | GL10.GL_DEPTH_BUFFER_BIT );
+		postProcessor.setClearDepth( 1f );
+		postProcessor.setBufferTextureWrap( TextureWrap.ClampToEdge, TextureWrap.ClampToEdge );
 
 		if( Config.PostProcessing.EnableZoom ) {
-			if( Config.PostProcessing.EnableZoomRadialBlur ) {
-				zoomer = new Zoomer( Config.PostProcessing.RadialBlurQuality );
-			} else {
-				zoomer = new Zoomer();
-			}
-			zoomer.setBlurStrength( 0 );
-			processor.addEffect( zoomer );
-			effects.put( Hash.APHash( "zoomer" ), zoomer );
+			Zoomer z = ( Config.PostProcessing.EnableZoomRadialBlur ? new Zoomer( Config.PostProcessing.RadialBlurQuality ) : new Zoomer() );
+			z.setBlurStrength( 0 );
+			addEffect( "zoomer", z );
 		}
 
 		// experimental camera motion blur (need subframe-interpolated position, disable camera position's rounding
@@ -82,36 +70,20 @@ public class PostProcessing {
 		// effects.put( Hash.APHash( "cameramotion" ), cameraMotion );
 
 		if( Config.PostProcessing.EnableBloom ) {
-			bloom = new Bloom( Config.PostProcessing.RttFboWidth, Config.PostProcessing.RttFboHeight );
-			// bloom = new Bloom( Config.PostProcessing.PotRttFboWidth, Config.PostProcessing.PotRttFboHeight );
-
-			// Bloom.Settings bs = new Bloom.Settings( "arrogance-1 / rtt=0.25 / @1920x1050", BlurType.Gaussian5x5b, 1,
-			// 1,
-			// 0.25f, 1f, 0.1f, 0.8f, 1.4f );
-			// Bloom.Settings bs = new Bloom.Settings( "arrogance-2 / rtt=0.25 / @1920x1050", BlurType.Gaussian5x5b, 1,
-			// 1,
-			// 0.35f, 1f, 0.1f, 1.4f, 0.75f );
-
-			processor.addEffect( bloom );
-			effects.put( Hash.APHash( "bloom" ), bloom );
+			addEffect( "bloom", new Bloom( Config.PostProcessing.RttFboWidth, Config.PostProcessing.RttFboHeight ));
 		}
 
 		if( Config.PostProcessing.EnableVignetting ) {
 			// if there is no bloom, let's control the final saturation via
 			// the vignette filter
-			vignette = new Vignette( Config.PostProcessing.EnableBloom ? false : true );
-			processor.addEffect( vignette );
-			effects.put( Hash.APHash( "vignette" ), vignette );
+			addEffect( "vignette", new Vignette( Config.PostProcessing.EnableBloom ? false : true ) );
 		}
 
 		if( Config.PostProcessing.EnableCrtScreen ) {
-			crt = new CrtMonitor( Config.PostProcessing.EnableRadialDistortion, false );
-			processor.addEffect( crt );
-			effects.put( Hash.APHash( "crt" ), crt );
+			addEffect( "crt", new CrtMonitor( Config.PostProcessing.EnableRadialDistortion, false ));
+
 		} else if( Config.PostProcessing.EnableRadialDistortion ) {
-			curvature = new Curvature();
-			processor.addEffect( curvature );
-			effects.put( Hash.APHash( "curvature" ), curvature );
+			addEffect( "curvature", new Curvature() );
 		}
 	}
 
@@ -124,15 +96,12 @@ public class PostProcessing {
 	}
 
 	public void addEffect( String name, PostProcessorEffect effect ) {
+		postProcessor.addEffect( effect );
 		effects.put( Hash.APHash( name ), effect );
 	}
 
 	public PostProcessorEffect getEffect( String name ) {
 		return effects.get( Hash.APHash( name ) );
-	}
-
-	public GameRenderer getGameRenderer() {
-		return gameRenderer;
 	}
 
 	public void enableAnimator( String name ) {
