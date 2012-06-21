@@ -20,6 +20,7 @@ public class URacer implements ApplicationListener {
 	public static final String Name = "URacer: The King Of The Drift";
 
 	private static ScreenManager screenMgr;
+	private static Input input;
 	private static boolean running = false;
 	private static final boolean useRealFrametime = false;// Config.isDesktop;
 
@@ -85,6 +86,9 @@ public class URacer implements ApplicationListener {
 
 		Gdx.app.log( "URacer", "booting version " + versionInfo );
 		Gdx.app.log( "URacer", "Using real frametime: " + (useRealFrametime ? "YES" : "NO") );
+
+		// create input system
+		input = new Input();
 
 		// computed for a 256px tile size target (compute needed conversion factors)
 		scalingStrategy = new ScalingStrategy( new Vector2( 1280, 800 ), 70f, 224, 1f );
@@ -160,6 +164,7 @@ public class URacer implements ApplicationListener {
 			{
 				timeAccuNs += lastDeltaTimeNs * timeMultiplier;
 				while( timeAccuNs > PhysicsDtNs ) {
+					input.tick();
 					screenMgr.tick();
 					timeAccuNs -= PhysicsDtNs;
 					lastTicksCount++;
@@ -266,5 +271,9 @@ public class URacer implements ApplicationListener {
 
 	public static ScreenManager getScreenManager() {
 		return screenMgr;
+	}
+
+	public static Input getInputSystem() {
+		return input;
 	}
 }

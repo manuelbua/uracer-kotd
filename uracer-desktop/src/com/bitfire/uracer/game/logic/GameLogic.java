@@ -9,6 +9,7 @@ import aurelienribon.tweenengine.equations.Quad;
 
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Input.Keys;
+import com.bitfire.uracer.Input;
 import com.bitfire.uracer.ScalingStrategy;
 import com.bitfire.uracer.URacer;
 import com.bitfire.uracer.configuration.Config;
@@ -52,6 +53,9 @@ import com.bitfire.uracer.utils.NumberString;
  *
  * @author bmanuel */
 public class GameLogic implements CarEvent.Listener, CarStateEvent.Listener, PlayerDriftStateEvent.Listener {
+	// input
+	private Input input = null;
+
 	// world
 	private GameWorld gameWorld = null;
 
@@ -92,6 +96,7 @@ public class GameLogic implements CarEvent.Listener, CarStateEvent.Listener, Pla
 		this.gameWorld = gameWorld;
 		// this.gameRenderer = gameRenderer;
 		this.gameWorldRenderer = gameRenderer.getWorldRenderer();
+		this.input = URacer.getInputSystem();
 
 		// create tweening support
 		Tween.registerAccessor( Message.class, new MessageAccessor() );
@@ -148,7 +153,7 @@ public class GameLogic implements CarEvent.Listener, CarStateEvent.Listener, Pla
 
 		playerCar = CarFactory.createPlayer( gameWorld, presetType );
 
-		configurePlayer( gameWorld, gameTasksManager.input, playerCar );
+		configurePlayer( gameWorld, input /*gameTasksManager.input*/, playerCar );
 		Gdx.app.log( "GameLogic", "Player configured" );
 
 		playerTasks.createTasks( playerCar, lapManager.getLapInfo() );
@@ -270,7 +275,7 @@ public class GameLogic implements CarEvent.Listener, CarStateEvent.Listener, Pla
 	private int keycount = 0;
 
 	public void onAcquireInput() {
-		Input input = gameTasksManager.input;
+//		Input input = gameTasksManager.input;
 
 		// dbg keys
 		if( input.isPressed( Keys.NUM_1 ) || input.isReleased( Keys.NUM_1 ) ) {

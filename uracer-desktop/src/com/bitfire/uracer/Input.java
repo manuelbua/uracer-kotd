@@ -1,14 +1,12 @@
-package com.bitfire.uracer.game.logic;
+package com.bitfire.uracer;
 
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.math.Vector2;
-import com.bitfire.uracer.game.task.Task;
-import com.bitfire.uracer.game.task.TaskManagerEvent;
 
-/** Encapsulates a buffered input state object that can be queried to know the individual key state.
+/** Encapsulates a buffered input state object that can be queried to know the individual key/button/pointer state.
  *
  * @author bmanuel */
-public final class Input extends Task {
+public final class Input {
 	public static final int MaxPointers = 2;
 
 	// keys
@@ -24,10 +22,9 @@ public final class Input extends Task {
 	private static final int FLAG_CUR_ON = 4;
 	private static final int FLAG_LAST_ON = 8;
 
-	public Input( TaskManagerEvent.Order order ) {
-		super( order );
+	public Input() {
 		for( int p = 0; p < MaxPointers; p++ ) {
-			pointer[p] = new Pointer( /* p */ );
+			pointer[p] = new Pointer( /* p */);
 		}
 
 		releaseAllKeys();
@@ -145,8 +142,7 @@ public final class Input extends Task {
 	}
 
 	// update key state and transform unbuffered to buffered
-	@Override
-	protected void onTick() {
+	public void tick() {
 		updateKeyState();
 
 		for( int p = 0; p < MaxPointers; p++ ) {
@@ -156,11 +152,11 @@ public final class Input extends Task {
 			ptr.touchY = Gdx.input.getY( p );
 			ptr.touchCoords.set( ptr.touchX, ptr.touchY );
 		}
-	};
+	}
 
 	/** Encapsulates the touch state for a given pointer index */
 	private class Pointer {
-//		public final int pointerIndex;
+		// public final int pointerIndex;
 
 		public final Vector2 touchCoords = new Vector2( 0, 0 );
 		public int touchX = 0;
@@ -168,8 +164,8 @@ public final class Input extends Task {
 		public boolean is_touching = false;
 		private boolean was_touching = false;
 
-		public Pointer( /*int index*/ ) {
-//			pointerIndex = index;
+		public Pointer( /* int index */) {
+			// pointerIndex = index;
 		}
 
 		public void reset() {
