@@ -56,12 +56,12 @@ public final class Config {
 				RadialBlurQuality = RadialBlur.Quality.High;
 				ZoomMaxStrength = -0.08f;
 			} else if( w >= 1200 ) {
-				BlurType = Blur.BlurType.Gaussian3x3b;
+				BlurType = Blur.BlurType.Gaussian5x5b;
 				RadialBlurQuality = RadialBlur.Quality.Medium;
 				ZoomMaxStrength = -0.08f;
 			} else if( w >= 800 ) {
-				BlurType = Blur.BlurType.Gaussian3x3;
-				RadialBlurQuality = RadialBlur.Quality.Low;
+				BlurType = Blur.BlurType.Gaussian5x5b;
+				RadialBlurQuality = RadialBlur.Quality.Medium;
 				ZoomMaxStrength = -0.08f;
 			}
 
