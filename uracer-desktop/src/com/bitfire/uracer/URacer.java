@@ -10,8 +10,8 @@ import com.bitfire.uracer.configuration.Config;
 import com.bitfire.uracer.game.tween.SysTweener;
 import com.bitfire.uracer.resources.Art;
 import com.bitfire.uracer.resources.Sounds;
-import com.bitfire.uracer.screen.GameScreen;
-import com.bitfire.uracer.screen.Screen;
+import com.bitfire.uracer.screen.ScreenFactory.ScreenType;
+import com.bitfire.uracer.screen.ScreenManager;
 import com.bitfire.uracer.utils.AMath;
 import com.bitfire.uracer.utils.Convert;
 import com.bitfire.uracer.utils.SpriteBatchUtils;
@@ -19,7 +19,7 @@ import com.bitfire.uracer.utils.SpriteBatchUtils;
 public class URacer implements ApplicationListener {
 	public static final String Name = "URacer: The King Of The Drift";
 
-	private Screen screen;
+	private ScreenManager screenMgr;
 	private static boolean running = false;
 	private static final boolean useRealFrametime = false;// Config.isDesktop;
 
@@ -106,7 +106,8 @@ public class URacer implements ApplicationListener {
 		PhysicsDtNs = (long)((long)1000000000 / (long)Config.Physics.PhysicsTimestepHz);
 		timeStepHz = (long)Config.Physics.PhysicsTimestepHz;
 
-		setScreen( new GameScreen() );
+		screenMgr = new ScreenManager( scalingStrategy );
+		screenMgr.setScreen( ScreenType.GameScreen );
 
 		// Initialize the timers after creating the game screen, so that there will be no huge discrepancies
 		// between the first lastDeltaTimeSec value and the followers.
@@ -118,7 +119,7 @@ public class URacer implements ApplicationListener {
 
 	@Override
 	public void dispose() {
-		setScreen( null );
+		screenMgr.dispose();
 
 		Sounds.dispose();
 		Art.dispose();
@@ -134,76 +135,72 @@ public class URacer implements ApplicationListener {
 
 	@Override
 	public void render() {
-		if( screen == null ) {
-			return;
-		}
+		if( screenMgr.begin() ) {
 
-		if( screen.quit() ) {
-			return;
-		}
-
-		// this is not good for Android since the value often hop around
-		if( useRealFrametime ) {
-			long currTimeNs = TimeUtils.nanoTime();
-			lastDeltaTimeNs = (currTimeNs - lastTimeNs);
-			lastTimeNs = currTimeNs;
-		} else {
-			lastDeltaTimeNs = (long)(Gdx.graphics.getDeltaTime() * 1000000000);
-		}
-
-		// avoid spiral of death
-		lastDeltaTimeNs = AMath.clamp( lastDeltaTimeNs, 0, MaxDeltaTimeNs );
-
-		// compute values in different units so that accessors will not
-		// recompute them again and again
-		lastDeltaTimeMs = (float)(lastDeltaTimeNs / 1000000);
-		lastDeltaTimeSec = (float)lastDeltaTimeNs * oneOnOneBillion;
-
-		lastTicksCount = 0;
-		long startTime = TimeUtils.nanoTime();
-		{
-			timeAccuNs += lastDeltaTimeNs * timeMultiplier;
-			while( timeAccuNs > PhysicsDtNs ) {
-				screen.tick();
-				timeAccuNs -= PhysicsDtNs;
-				lastTicksCount++;
+			// this is not good for Android since the value often hop around
+			if( useRealFrametime ) {
+				long currTimeNs = TimeUtils.nanoTime();
+				lastDeltaTimeNs = (currTimeNs - lastTimeNs);
+				lastTimeNs = currTimeNs;
+			} else {
+				lastDeltaTimeNs = (long)(Gdx.graphics.getDeltaTime() * 1000000000);
 			}
 
-			// simulate slowness
-			// try { Thread.sleep( 32 ); } catch( InterruptedException e ) {}
-		}
+			// avoid spiral of death
+			lastDeltaTimeNs = AMath.clamp( lastDeltaTimeNs, 0, MaxDeltaTimeNs );
 
-		physicsTime = (TimeUtils.nanoTime() - startTime) * oneOnOneBillion;
+			// compute values in different units so that accessors will not
+			// recompute them again and again
+			lastDeltaTimeMs = (float)(lastDeltaTimeNs / 1000000);
+			lastDeltaTimeSec = (float)lastDeltaTimeNs * oneOnOneBillion;
 
-		// if the system has ticked, then trigger tickCompleted
-		if( lastTicksCount > 0 ) {
-			screen.tickCompleted();
+			lastTicksCount = 0;
+			long startTime = TimeUtils.nanoTime();
+			{
+				timeAccuNs += lastDeltaTimeNs * timeMultiplier;
+				while( timeAccuNs > PhysicsDtNs ) {
+					screenMgr.tick();
+					timeAccuNs -= PhysicsDtNs;
+					lastTicksCount++;
+				}
 
-			if( screen.quit() ) {
-				return;
+				// simulate slowness
+				// try { Thread.sleep( 32 ); } catch( InterruptedException e ) {}
 			}
+
+			physicsTime = (TimeUtils.nanoTime() - startTime) * oneOnOneBillion;
+
+			// if the system has ticked, then trigger tickCompleted
+			if( lastTicksCount > 0 ) {
+				screenMgr.tickCompleted();
+
+				if( screenMgr.quit() ) {
+					return;
+				}
+			}
+
+			// compute the temporal aliasing factor, entities will render
+			// themselves accordingly to this to avoid flickering and jittering,
+			// permitting slow-motion effects without artifacts.
+			// (this imply accepting a max-one-frame-behind behavior)
+			temporalAliasing = (timeAccuNs * timeStepHz) * oneOnOneBillion;
+			aliasingTime = temporalAliasing;
+
+			startTime = TimeUtils.nanoTime();
+			{
+				SysTweener.update();
+				screenMgr.render( null );
+
+				// simulate slowness
+				// try { Thread.sleep( 32 ); } catch( InterruptedException e ) {}
+			}
+
+			graphicsTime = (TimeUtils.nanoTime() - startTime) * oneOnOneBillion;
+			frameCount++;
+
+			screenMgr.debugUpdate();
+			screenMgr.end();
 		}
-
-		// compute the temporal aliasing factor, entities will render
-		// themselves accordingly to this to avoid flickering and jittering,
-		// permitting slow-motion effects without artifacts.
-		// (this imply accepting a max-one-frame-behind behavior)
-		temporalAliasing = (timeAccuNs * timeStepHz) * oneOnOneBillion;
-		aliasingTime = temporalAliasing;
-
-		startTime = TimeUtils.nanoTime();
-		{
-			SysTweener.update();
-			screen.render( null );
-
-			// simulate slowness
-			// try { Thread.sleep( 32 ); } catch( InterruptedException e ) {}
-		}
-
-		graphicsTime = (TimeUtils.nanoTime() - startTime) * oneOnOneBillion;
-		frameCount++;
-
-		screen.debugUpdate();
 	}
 
 	@Override
@@ -213,7 +210,7 @@ public class URacer implements ApplicationListener {
 	@Override
 	public void pause() {
 		running = false;
-		screen.pause();
+		screenMgr.pause();
 	}
 
 	@Override
@@ -227,19 +224,7 @@ public class URacer implements ApplicationListener {
 		physicsTime = 0;
 		graphicsTime = 0;
 
-		screen.resume();
-	}
-
-	public void setScreen( Screen newScreen ) {
-		if( screen != null ) {
-			screen.removed();
-		}
-
-		screen = newScreen;
-
-		if( screen != null ) {
-			screen.init( scalingStrategy );
-		}
+		screenMgr.resume();
 	}
 
 	//
