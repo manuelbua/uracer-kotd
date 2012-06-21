@@ -69,23 +69,26 @@ public final class TransitionManager {
 		}
 	}
 
-	public void start( Screen curr, Screen next ) {
+	/** Starts the specified transition (transfer ownerships) */
+	public void start( Screen curr, Screen next, ScreenTransition transition ) {
 		removeTransition();
-		transition = new Fader( 1000 );
+		this.transition = transition;
 
+		// build source textures
 		initFrameBuffer( fbFrom, curr );
 		initFrameBuffer( fbTo, next );
 
+		// enable depth writing if its the case
 		Gdx.gl20.glDepthMask( usedepth );
-		transition.init( fbFrom, fbTo );
+		this.transition.init( fbFrom, fbTo );
 	}
 
 	public boolean isActive() {
 		return (transition != null);
 	}
 
-	public boolean hasFinished() {
-		return transition.hasFinished();
+	public boolean isComplete() {
+		return transition.isComplete();
 	}
 
 	public void removeTransition() {

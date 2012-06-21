@@ -5,6 +5,9 @@ import com.badlogic.gdx.graphics.glutils.FrameBuffer;
 import com.bitfire.uracer.ScalingStrategy;
 import com.bitfire.uracer.configuration.Config;
 import com.bitfire.uracer.screen.ScreenFactory.ScreenType;
+import com.bitfire.uracer.screen.transitions.ScreenTransition;
+import com.bitfire.uracer.screen.transitions.TransitionFactory;
+import com.bitfire.uracer.screen.transitions.TransitionFactory.TransitionType;
 import com.bitfire.uracer.screen.transitions.TransitionManager;
 
 public final class ScreenManager {
@@ -12,7 +15,7 @@ public final class ScreenManager {
 	private ScalingStrategy strategy;
 	private TransitionManager transMgr;
 	private Screen current, next;
-	private boolean quitPending;
+	private boolean quitPending, doSetScreenImmediate;
 
 	public ScreenManager( ScalingStrategy scalingStrategy ) {
 		transMgr = new TransitionManager( Config.isDesktop /* 32bits */, false, true );
@@ -20,6 +23,7 @@ public final class ScreenManager {
 		current = null;
 		next = null;
 		quitPending = false;
+		doSetScreenImmediate = false;
 	}
 
 	public void dispose() {
@@ -36,13 +40,15 @@ public final class ScreenManager {
 	}
 
 	public void end() {
-		if( transMgr.isActive() && transMgr.hasFinished() ) {
-			// transition finished
+		if( (transMgr.isActive() && transMgr.isComplete()) || doSetScreenImmediate ) {
+			doSetScreenImmediate = false;
+
+			// transition finished, current is updated at the *very end*
 			transMgr.removeTransition();
 			current = next;
 			next = null;
 
-			// if the current screen is null, then quit
+			// just switched to a null screen? Quit
 			if( current == null ) {
 				quitPending = true;
 				Gdx.app.log( "GameLogic", "Quitting..." );
@@ -51,14 +57,28 @@ public final class ScreenManager {
 		}
 	}
 
-	public void setScreen( ScreenType screen ) {
+	// FIXME, queue for buffered screen operations such as adding/removal
+	/** Switch to the screen identified by the specified screen type,. */
+	public void setScreen( ScreenType screen, TransitionType transitionType, long transitionDurationMs ) {
 		if( transMgr.isActive() ) {
 			// quit since already busy
 			return;
 		}
 
-		next = ScreenFactory.createScreen( screen, strategy );
-		transMgr.start( current, next );
+		doSetScreenImmediate = false;
+		Screen newScreen = ScreenFactory.createScreen( screen, strategy );
+
+		if( transitionType != TransitionType.None && transitionDurationMs > 0 ) {
+			// create transition
+			ScreenTransition transition = TransitionFactory.createTransition( transitionType );
+			transition.setDuration( transitionDurationMs );
+
+			next = newScreen;
+			transMgr.start( current, next, transition );
+		} else {
+			next = newScreen;
+			doSetScreenImmediate = true;
+		}
 	}
 
 	public boolean quit() {
@@ -70,7 +90,9 @@ public final class ScreenManager {
 			return;
 		}
 
-		current.tick();
+		if( current != null ) {
+			current.tick();
+		}
 	}
 
 	public void tickCompleted() {
@@ -79,7 +101,9 @@ public final class ScreenManager {
 			return;
 		}
 
-		current.tickCompleted();
+		if( current != null ) {
+			current.tickCompleted();
+		}
 	}
 
 	public void render( FrameBuffer dest ) {
@@ -87,7 +111,9 @@ public final class ScreenManager {
 			transMgr.update();
 			transMgr.render();
 		} else {
-			current.render( dest );
+			if( current != null ) {
+				current.render( dest );
+			}
 		}
 	}
 
@@ -96,7 +122,9 @@ public final class ScreenManager {
 			return;
 		}
 
-		current.debugRender();
+		if( current != null ) {
+			current.debugRender();
+		}
 	}
 
 	public void pause() {
@@ -107,7 +135,9 @@ public final class ScreenManager {
 		if( transMgr.isActive() ) {
 			transMgr.pause();
 		} else {
-			current.pause();
+			if( current != null ) {
+				current.pause();
+			}
 		}
 	}
 
@@ -119,7 +149,9 @@ public final class ScreenManager {
 		if( transMgr.isActive() ) {
 			transMgr.resume();
 		} else {
-			current.resume();
+			if( current != null ) {
+				current.resume();
+			}
 		}
 	}
 }

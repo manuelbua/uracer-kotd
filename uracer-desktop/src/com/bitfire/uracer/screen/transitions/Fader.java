@@ -13,8 +13,7 @@ public class Fader extends ScreenTransition {
 	FullscreenQuad quad;
 	ShaderProgram fade;
 
-	public Fader( long durationMs ) {
-		duration = durationMs;
+	public Fader() {
 		quad = new FullscreenQuad();
 		fade = ShaderLoader.fromFile( "fade", "fade" );
 		rebind();
@@ -28,6 +27,12 @@ public class Fader extends ScreenTransition {
 	}
 
 	@Override
+	public void dispose() {
+		quad.dispose();
+		fade.dispose();
+	}
+
+	@Override
 	public void init( FrameBuffer curr, FrameBuffer next ) {
 		from = curr;
 		to = next;
@@ -37,14 +42,15 @@ public class Fader extends ScreenTransition {
 		last = 0;
 	}
 
+	/** Sets the duration of the effect, in milliseconds. */
 	@Override
-	public void dispose() {
-		quad.dispose();
-		fade.dispose();
+	public void setDuration( long durationMs ) {
+		duration = durationMs;
 	}
 
-	@Override
-	public void pause() {
+	public void restart() {
+		elapsed = 0;
+		last = 0;
 	}
 
 	@Override
@@ -90,7 +96,7 @@ public class Fader extends ScreenTransition {
 	}
 
 	@Override
-	public boolean hasFinished() {
+	public boolean isComplete() {
 		return elapsed >= duration;
 	}
 }
