@@ -4,6 +4,7 @@ import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.GL20;
 import com.badlogic.gdx.graphics.Pixmap.Format;
 import com.badlogic.gdx.graphics.glutils.FrameBuffer;
+import com.bitfire.uracer.configuration.Config;
 import com.bitfire.uracer.screen.Screen;
 
 public final class TransitionManager {
@@ -59,6 +60,12 @@ public final class TransitionManager {
 			source.tick();
 			source.tickCompleted();
 			source.render( buffer );
+
+			if( Config.Debug.RenderDebugDrawsInTransitions ) {
+				buffer.begin();
+				source.debugRender();
+				buffer.end();
+			}
 		}
 	}
 

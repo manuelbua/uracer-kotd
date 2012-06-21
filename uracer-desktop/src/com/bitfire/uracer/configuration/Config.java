@@ -132,6 +132,7 @@ public final class Config {
 		public static boolean RenderDebugInfoMeshStats;
 		public static boolean RenderDebugInfoMemoryStats;
 		public static boolean RenderDebugInfoPostProcessor;
+		public static boolean RenderDebugDrawsInTransitions;
 
 		public static boolean TraverseWalls;
 		public static boolean ApplyCarFrictionFromMap;
@@ -149,6 +150,7 @@ public final class Config {
 			RenderDebugInfoMeshStats = Config.isDesktop;
 			RenderDebugInfoPostProcessor = Config.isDesktop;
 			Render3DBoundingBoxes = false;
+			RenderDebugDrawsInTransitions = Config.isDesktop;
 
 			TraverseWalls = false;
 			ApplyCarFrictionFromMap = true;
