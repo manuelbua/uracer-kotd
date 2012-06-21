@@ -10,9 +10,6 @@ public class GameScreen extends Screen {
 	private Game game = null;
 	private boolean quit = false;
 
-	public GameScreen() {
-	}
-
 	@Override
 	public void init( ScalingStrategy scalingStrategy ) {
 		String levelName = "tutorial-3";
