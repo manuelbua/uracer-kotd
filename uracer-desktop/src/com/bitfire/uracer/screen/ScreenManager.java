@@ -91,12 +91,12 @@ public final class ScreenManager {
 		}
 	}
 
-	public void debugUpdate() {
+	public void debugRender() {
 		if( transMgr.isActive() ) {
 			return;
 		}
 
-		current.debugUpdate();
+		current.debugRender();
 	}
 
 	public void pause() {

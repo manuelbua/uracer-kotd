@@ -199,7 +199,7 @@ public class URacer implements ApplicationListener {
 			graphicsTime = (TimeUtils.nanoTime() - startTime) * oneOnOneBillion;
 			frameCount++;
 
-			screenMgr.debugUpdate();
+			screenMgr.debugRender();
 			screenMgr.end();
 		}
 	}

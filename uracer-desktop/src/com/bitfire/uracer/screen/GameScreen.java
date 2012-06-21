@@ -57,7 +57,7 @@ public class GameScreen extends Screen {
 	}
 
 	@Override
-	public void debugUpdate() {
+	public void debugRender() {
 		game.debugUpdate();
 	}
 }

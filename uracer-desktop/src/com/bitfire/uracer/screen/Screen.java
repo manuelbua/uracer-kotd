@@ -21,6 +21,6 @@ public abstract class Screen {
 
 	/** This debug call will gets called *after* tick and render are raised for all the entities, but
 	 * the computational time will not be part of the cumulative time statistics */
-	public void debugUpdate() {
+	public void debugRender() {
 	};
 }
