@@ -1,6 +1,7 @@
-package com.bitfire.uracer;
+package com.bitfire.uracer.screen;
 
 import com.badlogic.gdx.graphics.glutils.FrameBuffer;
+import com.bitfire.uracer.ScalingStrategy;
 import com.bitfire.uracer.game.Game;
 import com.bitfire.uracer.game.actors.CarPreset.Type;
 import com.bitfire.uracer.game.logic.replaying.Replay;

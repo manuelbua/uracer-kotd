@@ -1,6 +1,7 @@
-package com.bitfire.uracer;
+package com.bitfire.uracer.screen;
 
 import com.badlogic.gdx.graphics.glutils.FrameBuffer;
+import com.bitfire.uracer.ScalingStrategy;
 
 public abstract class Screen {
 	public abstract void init( ScalingStrategy scalingStrategy );

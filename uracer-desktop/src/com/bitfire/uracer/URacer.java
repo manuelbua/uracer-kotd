@@ -10,6 +10,8 @@ import com.bitfire.uracer.configuration.Config;
 import com.bitfire.uracer.game.tween.SysTweener;
 import com.bitfire.uracer.resources.Art;
 import com.bitfire.uracer.resources.Sounds;
+import com.bitfire.uracer.screen.GameScreen;
+import com.bitfire.uracer.screen.Screen;
 import com.bitfire.uracer.utils.AMath;
 import com.bitfire.uracer.utils.Convert;
 import com.bitfire.uracer.utils.SpriteBatchUtils;
