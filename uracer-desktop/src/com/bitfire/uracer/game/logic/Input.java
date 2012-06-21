@@ -2,8 +2,8 @@ package com.bitfire.uracer.game.logic;
 
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.math.Vector2;
-import com.bitfire.uracer.task.Task;
-import com.bitfire.uracer.task.TaskManagerEvent;
+import com.bitfire.uracer.game.task.Task;
+import com.bitfire.uracer.game.task.TaskManagerEvent;
 
 /** Encapsulates a buffered input state object that can be queried to know the individual key state.
  *

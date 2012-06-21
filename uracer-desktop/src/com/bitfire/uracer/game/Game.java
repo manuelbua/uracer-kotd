@@ -10,8 +10,8 @@ import com.bitfire.uracer.game.actors.CarPreset;
 import com.bitfire.uracer.game.logic.GameLogic;
 import com.bitfire.uracer.game.logic.replaying.Replay;
 import com.bitfire.uracer.game.rendering.GameRenderer;
+import com.bitfire.uracer.game.task.TaskManager;
 import com.bitfire.uracer.game.world.GameWorld;
-import com.bitfire.uracer.task.TaskManager;
 
 public class Game implements Disposable {
 

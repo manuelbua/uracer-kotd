@@ -1,4 +1,4 @@
-package com.bitfire.uracer.task;
+package com.bitfire.uracer.game.task;
 
 public final class TaskManager {
 	protected static final TaskManagerEvent event = new TaskManagerEvent();

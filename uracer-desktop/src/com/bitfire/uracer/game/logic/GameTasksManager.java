@@ -6,8 +6,8 @@ import com.bitfire.uracer.game.logic.hud.Hud;
 import com.bitfire.uracer.game.logic.messager.Messager;
 import com.bitfire.uracer.game.logic.sounds.SoundManager;
 import com.bitfire.uracer.game.logic.trackeffects.TrackEffects;
+import com.bitfire.uracer.game.task.TaskManagerEvent;
 import com.bitfire.uracer.game.world.GameWorld;
-import com.bitfire.uracer.task.TaskManagerEvent;
 
 /** Manages the creation and destruction of the main game tasks. */
 public final class GameTasksManager {

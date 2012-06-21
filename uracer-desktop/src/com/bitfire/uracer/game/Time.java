@@ -2,8 +2,8 @@ package com.bitfire.uracer.game;
 
 import com.badlogic.gdx.utils.TimeUtils;
 import com.bitfire.uracer.configuration.Config;
-import com.bitfire.uracer.task.Task;
-import com.bitfire.uracer.task.TaskManagerEvent.Order;
+import com.bitfire.uracer.game.task.Task;
+import com.bitfire.uracer.game.task.TaskManagerEvent.Order;
 
 /** Tracks elapsed time both in absolute terms (wall clock time) or
  * relative to the tick-based system.
