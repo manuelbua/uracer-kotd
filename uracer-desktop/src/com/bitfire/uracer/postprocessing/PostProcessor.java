@@ -33,7 +33,7 @@ public final class PostProcessor implements Disposable {
 	private boolean hasCaptured = false;
 
 	// maintains a per-frame updated list of enabled effects
-	private Array<PostProcessorEffect> enabledEffects = null;
+	private Array<PostProcessorEffect> enabledEffects = new Array<PostProcessorEffect>( 5 );
 
 	/** Construct a new PostProcessor with FBO dimensions set to the size of the
 	 * screen */
@@ -280,11 +280,7 @@ public final class PostProcessor implements Disposable {
 	}
 
 	private int buildEnabledEffectsList() {
-		if( enabledEffects == null ) {
-			enabledEffects = new Array<PostProcessorEffect>( manager.items.size );
-		} else {
-			enabledEffects.clear();
-		}
+		enabledEffects.clear();
 
 		Array<PostProcessorEffect> items = manager.items;
 		for( int i = 0; i < items.size; i++ ) {
