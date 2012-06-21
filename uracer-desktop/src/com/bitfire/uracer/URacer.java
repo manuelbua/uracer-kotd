@@ -19,7 +19,7 @@ import com.bitfire.uracer.utils.SpriteBatchUtils;
 public class URacer implements ApplicationListener {
 	public static final String Name = "URacer: The King Of The Drift";
 
-	private ScreenManager screenMgr;
+	private static ScreenManager screenMgr;
 	private static boolean running = false;
 	private static final boolean useRealFrametime = false;// Config.isDesktop;
 
@@ -261,5 +261,9 @@ public class URacer implements ApplicationListener {
 
 	public static long getLastTicksCount() {
 		return lastTicksCount;
+	}
+
+	public static ScreenManager getScreenManager() {
+		return screenMgr;
 	}
 }
