@@ -15,6 +15,7 @@ public final class ScreenFactory {
 		case GameScreen:
 			s = new GameScreen();
 			break;
+		default:
 		case ExitScreen:
 			s = null;
 			break;
