@@ -115,6 +115,7 @@ public class URacer implements ApplicationListener {
 		// at least perform one single tick
 		lastTimeNs = TimeUtils.nanoTime();
 		timeAccuNs = PhysicsDtNs;
+//		try { Thread.sleep( 1000 ); } catch( InterruptedException e ) {}
 	}
 
 	@Override
