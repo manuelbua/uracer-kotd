@@ -31,6 +31,7 @@ public final class Input extends Task {
 		}
 
 		releaseAllKeys();
+		Gdx.input.setCatchBackKey( true );
 	}
 
 	public void releaseAllKeys() {

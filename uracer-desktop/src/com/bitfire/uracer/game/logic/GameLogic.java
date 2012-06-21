@@ -331,7 +331,7 @@ public class GameLogic implements CarEvent.Listener, CarStateEvent.Listener, Pla
 
 			// Gdx.app.log( "GameLogic", "Player final pos=" + playerCar.getBody().getPosition() );
 
-		} else if( input.isPressed( Keys.Q ) ) {
+		} else if( input.isPressed( Keys.Q ) || input.isPressed( Keys.BACK ) ) {
 
 			// quit
 			URacer.getScreenManager().setScreen( ScreenType.ExitScreen );
