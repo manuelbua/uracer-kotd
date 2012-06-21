@@ -18,7 +18,7 @@ public final class Config {
 	public static final String LocalReplaysStore = "local-replays/";
 
 	public static final class PostProcessing {
-		public static boolean Enabled;
+		public static boolean EnableGamePostProcessing;
 		public static boolean EnableVignetting;
 		public static boolean EnableBloom;
 		public static boolean EnableZoom;
@@ -36,8 +36,8 @@ public final class Config {
 		// compute per-resolution constants
 		public static void asDefault() {
 
-			// post-processor
-			Enabled = true;//Config.isDesktop;
+			// global switch
+			EnableGamePostProcessing = true;
 
 			// post-processor effects
 			EnableVignetting = true;//Config.isDesktop;
@@ -78,13 +78,11 @@ public final class Config {
 	public static final class Graphics {
 		public static boolean EnableMipMapping;
 		public static boolean SubframeInterpolation;
-		public static boolean NightAsOverlay;	// night-mode rendered as an overlay *after* PostProcessor
 		public static InterpolationMode CameraInterpolationMode;
 
 		public static void asDefault() {
 			EnableMipMapping = true;
 			SubframeInterpolation = true;
-			NightAsOverlay = false;
 			CameraInterpolationMode = InterpolationMode.Sigmoid;
 		}
 

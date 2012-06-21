@@ -3,6 +3,7 @@ package com.bitfire.uracer.game.rendering;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.GL20;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
+import com.badlogic.gdx.graphics.glutils.FrameBuffer;
 import com.badlogic.gdx.math.Rectangle;
 import com.badlogic.gdx.math.Vector2;
 import com.bitfire.uracer.ScalingStrategy;
@@ -22,8 +23,6 @@ public final class GameRenderer {
 	private final GameBatchRenderer batchRenderer;
 	private final PostProcessor postProcessor;
 	private final GameWorldRenderer worldRenderer;
-
-	// private final FrameBuffer depthMap;
 
 	/** Manages to convert world positions expressed in meters or pixels to the corresponding position to screen pixels.
 	 * To use this class, the GameWorldRenderer MUST be already constructed and initialized. */
@@ -57,7 +56,7 @@ public final class GameRenderer {
 		}
 	}
 
-	public GameRenderer( GameWorld gameWorld, ScalingStrategy scalingStrategy, boolean createPostProcessor ) {
+	public GameRenderer( GameWorld gameWorld, ScalingStrategy scalingStrategy ) {
 		world = gameWorld;
 		gl = Gdx.graphics.getGL20();
 
@@ -72,32 +71,17 @@ public final class GameRenderer {
 		ScreenUtils.init( worldRenderer );
 		Gdx.app.log( "GameRenderer", "ScreenUtils " + (ScreenUtils.ready ? "initialized." : "NOT initialized!") );
 
-		// depth map support via auxiliary texture
-		// TODO make it optional
-		// if( true ) {
-		// depthMap = new FrameBuffer( Format.RGBA8888, width, height, true );
-		// }
-
 		// post-processing
-		boolean supports32Bpp = Config.isDesktop;
-		postProcessor = (createPostProcessor ? new PostProcessor( width, height, true /* depth */, false /* alpha */, supports32Bpp ) : null);
-		// postProcessor = (createPostProcessor ? new PostProcessor( Config.PostProcessing.PotRttFboWidth,
-		// Config.PostProcessing.PotRttFboWidth, true /* depth */, false /* alpha */, supports32Bpp ) : null);
+		postProcessor = new PostProcessor( width, height, true /* depth */, false /* alpha */, Config.isDesktop /* supports32Bpp */);
 	}
 
 	public void dispose() {
-		if( hasPostProcessor() ) {
-			postProcessor.dispose();
-		}
+		postProcessor.dispose();
 
 		// depthMap.dispose();
 		batchRenderer.dispose();
 
 		GameEvents.gameRenderer.removeAllListeners();
-	}
-
-	public boolean hasPostProcessor() {
-		return (postProcessor != null);
 	}
 
 	public PostProcessor getPostProcessor() {
@@ -108,52 +92,33 @@ public final class GameRenderer {
 		return worldRenderer;
 	}
 
-	// public Texture getDepthMap() {
-	// if( depthMap != null ) {
-	// return depthMap.getColorBufferTexture();
-	// }
-	//
-	// return null;
-	// }
-
-	// private void generateDepthMap() {
-	// // capture depth
-	// gl.glDepthMask( true );
-	// depthMap.begin();
-	// {
-	// float v = 0f;
-	// gl.glClearDepthf( v );
-	// // Gdx.gl.glClearColor( 1, 1, 1, 1 );
-	// Gdx.gl.glClearColor( v, v, v, v );
-	// Gdx.gl.glClear( GL20.GL_COLOR_BUFFER_BIT | GL20.GL_DEPTH_BUFFER_BIT );
-	//
-	// // TODO implement box2d entities to render depth
-	// worldRenderer.renderAllMeshes( true );
-	// }
-	// depthMap.end();
-	// }
-
 	public void beforeRender( float timeAliasingFactor ) {
 		GameEvents.gameRenderer.timeAliasingFactor = timeAliasingFactor;
 		GameEvents.gameRenderer.trigger( this, GameRendererEvent.Type.OnSubframeInterpolate );
 	}
 
-	public void render() {
-		boolean postProcessorReady = hasPostProcessor() && postProcessor.isEnabled();
+	public void render( FrameBuffer dest ) {
+		// postproc begins
+		boolean postProcessorReady = false;
+		boolean hasDest = (dest != null);
 
-		if( postProcessorReady ) {
-
-			// generateDepthMap();
+		if( postProcessor.isEnabled() ) {
 			postProcessorReady = postProcessor.capture();
 			if( !postProcessorReady ) {
-				Gdx.app.error( "GameRenderer", "postprocessor::capture() error" );
+				Gdx.app.error( "GameRenderer", "postprocessor::capture() error!" );
 			}
 		} else {
-			gl.glViewport( 0, 0, Gdx.graphics.getWidth(), Gdx.graphics.getHeight() );
+			if( hasDest ) {
+				dest.begin();
+			} else {
+				gl.glViewport( 0, 0, Gdx.graphics.getWidth(), Gdx.graphics.getHeight() );
+			}
+
 			gl.glClearDepthf( 1 );
 			gl.glClearColor( 0, 0, 0, 0 );
 			gl.glClear( GL20.GL_COLOR_BUFFER_BIT | GL20.GL_DEPTH_BUFFER_BIT );
 		}
+		// postproc ends
 
 		gl.glDepthMask( true );
 
@@ -181,29 +146,21 @@ public final class GameRenderer {
 		}
 		batchRenderer.end();
 
-		gl.glDisable( GL20.GL_CULL_FACE );
-		if( world.isNightMode() ) {
-			if( Config.Graphics.NightAsOverlay ) {
-				if( postProcessorReady ) {
-					postProcessor.render();
-				}
-
-				worldRenderer.renderLigthMap( null );
-			} else {
-				// hook into the next PostProcessor source buffer (the last result)
-				// and blend the lightmap on it
-				if( postProcessorReady ) {
-					worldRenderer.renderLigthMap( postProcessor.captureEnd() );
-					postProcessor.render();
-				} else {
-					worldRenderer.renderLigthMap( null );
-				}
+		// postproc begins
+		if( postProcessorReady ) {
+			gl.glDisable( GL20.GL_CULL_FACE );
+			if( world.isNightMode() ) {
+				FrameBuffer result = postProcessor.captureEnd();
+				worldRenderer.renderLigthMap( result );
 			}
+			postProcessor.render( dest );
 		} else {
-			if( postProcessorReady ) {
-				postProcessor.render();
+			dest.end();
+			if( world.isNightMode() ) {
+				worldRenderer.renderLigthMap( dest );
 			}
 		}
+		// postproc ends
 	}
 
 	// manages and triggers debug event

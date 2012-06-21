@@ -1,6 +1,7 @@
 package com.bitfire.uracer.game;
 
 import com.badlogic.gdx.Gdx;
+import com.badlogic.gdx.graphics.glutils.FrameBuffer;
 import com.badlogic.gdx.utils.Disposable;
 import com.bitfire.uracer.ScalingStrategy;
 import com.bitfire.uracer.URacer;
@@ -28,12 +29,11 @@ public class Game implements Disposable {
 
 	public Game( String levelName, ScalingStrategy scalingStrategy ) {
 
-		// FIXME depth writes in night mode doesn't work!
 		gameWorld = new GameWorld( scalingStrategy, levelName, false );
 		Gdx.app.log( "Game", "Game world ready" );
 
 		// handles rendering
-		gameRenderer = new GameRenderer( gameWorld, scalingStrategy, Config.PostProcessing.Enabled );
+		gameRenderer = new GameRenderer( gameWorld, scalingStrategy );
 		Gdx.app.log( "Game", "GameRenderer ready" );
 
 		// handles game rules and mechanics, it's all about game data
@@ -84,11 +84,12 @@ public class Game implements Disposable {
 		return false;
 	}
 
-	public void render() {
+	public void render( FrameBuffer dest ) {
 		// trigger the event and let's subscribers interpolate and update their state()
 		gameRenderer.beforeRender( URacer.getTemporalAliasing() );
 		gameLogic.onBeforeRender();
-		gameRenderer.render();
+
+		gameRenderer.render( dest );
 	}
 
 	public void debugUpdate() {

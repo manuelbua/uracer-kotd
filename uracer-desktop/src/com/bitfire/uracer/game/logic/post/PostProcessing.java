@@ -5,11 +5,6 @@ import com.badlogic.gdx.graphics.GL10;
 import com.badlogic.gdx.graphics.Texture.TextureWrap;
 import com.badlogic.gdx.utils.LongMap;
 import com.bitfire.uracer.configuration.Config;
-import com.bitfire.uracer.game.actors.GhostCar;
-import com.bitfire.uracer.game.logic.post.animators.AggressiveCold;
-import com.bitfire.uracer.game.player.PlayerCar;
-import com.bitfire.uracer.game.rendering.GameRenderer;
-import com.bitfire.uracer.game.world.GameWorld;
 import com.bitfire.uracer.postprocessing.PostProcessor;
 import com.bitfire.uracer.postprocessing.PostProcessorEffect;
 import com.bitfire.uracer.postprocessing.effects.Bloom;
@@ -23,9 +18,17 @@ import com.bitfire.uracer.utils.Hash;
  * and enhance the gaming experience. */
 public class PostProcessing {
 
-	private final GameWorld gameWorld;
-	private final GameRenderer gameRenderer;
-	private boolean canPostProcess = false;
+	public enum Effects {
+		Zoomer, Bloom, Vignette, Crt, Curvature;
+
+		public String name;
+
+		private Effects() {
+			name = this.toString();
+		}
+	}
+
+	private final PostProcessor postProcessor;
 
 	// public access to stored effects
 	public LongMap<PostProcessorEffect> effects = new LongMap<PostProcessorEffect>();
@@ -34,96 +37,45 @@ public class PostProcessing {
 	public LongMap<PostProcessingAnimator> animators = new LongMap<PostProcessingAnimator>();
 	private PostProcessingAnimator currentAnimator;
 
-	// internally cached effects refs for faster access
-	private Bloom bloom = null;
-	private Zoomer zoomer = null;
-	private Vignette vignette = null;
-	private CrtMonitor crt = null;
-	private Curvature curvature = null;
-
-	// private CameraMotion cameraMotion = null;
-
-	public PostProcessing( GameWorld gameWorld, GameRenderer gameRenderer ) {
-		this.gameWorld = gameWorld;
-		this.gameRenderer = gameRenderer;
-
-		canPostProcess = gameRenderer.hasPostProcessor();
-
-		if( canPostProcess ) {
-			configurePostProcessing( gameRenderer.getPostProcessor(), gameWorld );
-			Gdx.app.log( "PostProcessing", "Post-processing enabled and configured" );
-		}
-
+	public PostProcessing( PostProcessor postProcessor ) {
+		this.postProcessor = postProcessor;
+		configurePostProcessor( postProcessor );
 		currentAnimator = null;
 	}
 
-	private void configurePostProcessing( PostProcessor processor, GameWorld world ) {
-
-		processor.setEnabled( true );
-		processor.setClearBits( GL10.GL_COLOR_BUFFER_BIT | GL10.GL_DEPTH_BUFFER_BIT );
-		processor.setClearDepth( 1f );
-		processor.setBufferTextureWrap( TextureWrap.ClampToEdge, TextureWrap.ClampToEdge );
+	public void configurePostProcessor( PostProcessor postProcessor ) {
+		postProcessor.setEnabled( Config.PostProcessing.EnableGamePostProcessing );
+		postProcessor.setClearBits( GL10.GL_COLOR_BUFFER_BIT | GL10.GL_DEPTH_BUFFER_BIT );
+		postProcessor.setClearDepth( 1f );
+		postProcessor.setBufferTextureWrap( TextureWrap.ClampToEdge, TextureWrap.ClampToEdge );
 
 		if( Config.PostProcessing.EnableZoom ) {
-			if( Config.PostProcessing.EnableZoomRadialBlur ) {
-				zoomer = new Zoomer( Config.PostProcessing.RadialBlurQuality );
-			} else {
-				zoomer = new Zoomer();
-			}
-			zoomer.setBlurStrength( 0 );
-			processor.addEffect( zoomer );
-			effects.put( Hash.APHash( "zoomer" ), zoomer );
+			Zoomer z = (Config.PostProcessing.EnableZoomRadialBlur ? new Zoomer( Config.PostProcessing.RadialBlurQuality ) : new Zoomer());
+			z.setBlurStrength( 0 );
+			addEffect( Effects.Zoomer.name, z );
 		}
 
-		// experimental camera motion blur (need subframe-interpolated position, disable camera position's rounding
-		// before using it!)
-		// cameraMotion = new CameraMotion( gameRenderer.getDepthMap() );
-		// processor.addEffect( cameraMotion );
-		// effects.put( Hash.APHash( "cameramotion" ), cameraMotion );
-
 		if( Config.PostProcessing.EnableBloom ) {
-			bloom = new Bloom( Config.PostProcessing.RttFboWidth, Config.PostProcessing.RttFboHeight );
-			// bloom = new Bloom( Config.PostProcessing.PotRttFboWidth, Config.PostProcessing.PotRttFboHeight );
-
-			// Bloom.Settings bs = new Bloom.Settings( "arrogance-1 / rtt=0.25 / @1920x1050", BlurType.Gaussian5x5b, 1,
-			// 1,
-			// 0.25f, 1f, 0.1f, 0.8f, 1.4f );
-			// Bloom.Settings bs = new Bloom.Settings( "arrogance-2 / rtt=0.25 / @1920x1050", BlurType.Gaussian5x5b, 1,
-			// 1,
-			// 0.35f, 1f, 0.1f, 1.4f, 0.75f );
-
-			processor.addEffect( bloom );
-			effects.put( Hash.APHash( "bloom" ), bloom );
+			addEffect( Effects.Bloom.name, new Bloom( Config.PostProcessing.RttFboWidth, Config.PostProcessing.RttFboHeight ) );
 		}
 
 		if( Config.PostProcessing.EnableVignetting ) {
 			// if there is no bloom, let's control the final saturation via
 			// the vignette filter
-			vignette = new Vignette( Config.PostProcessing.EnableBloom ? false : true );
-			processor.addEffect( vignette );
-			effects.put( Hash.APHash( "vignette" ), vignette );
+			addEffect( Effects.Vignette.name, new Vignette( !Config.PostProcessing.EnableBloom ) );
 		}
 
 		if( Config.PostProcessing.EnableCrtScreen ) {
-			crt = new CrtMonitor( Config.PostProcessing.EnableRadialDistortion, false );
-			processor.addEffect( crt );
-			effects.put( Hash.APHash( "crt" ), crt );
+			addEffect( Effects.Crt.name, new CrtMonitor( Config.PostProcessing.EnableRadialDistortion, false ) );
 		} else if( Config.PostProcessing.EnableRadialDistortion ) {
-			curvature = new Curvature();
-			processor.addEffect( curvature );
-			effects.put( Hash.APHash( "curvature" ), curvature );
+			addEffect( Effects.Curvature.name, new Curvature() );
 		}
-	}
 
-	public void createAnimators() {
-		currentAnimator = new AggressiveCold( gameWorld, this );
-		animators.put( Hash.APHash( "AggressiveCold" ), currentAnimator );
-
-		// currentAnimator = new AggressiveWarm( gameWorld, this );
-		// animators.put( Hash.APHash( "AggressiveWarm" ), currentAnimator );
+		Gdx.app.log( "PostProcessing", "Post-processing enabled and configured" );
 	}
 
 	public void addEffect( String name, PostProcessorEffect effect ) {
+		postProcessor.addEffect( effect );
 		effects.put( Hash.APHash( name ), effect );
 	}
 
@@ -131,31 +83,32 @@ public class PostProcessing {
 		return effects.get( Hash.APHash( name ) );
 	}
 
-	public GameRenderer getGameRenderer() {
-		return gameRenderer;
+	public void addAnimator( String name, PostProcessingAnimator animator ) {
+		animators.put( Hash.APHash( name ), animator );
+	}
+
+	public PostProcessingAnimator getAnimator( String name ) {
+		return animators.get( Hash.APHash( name ) );
 	}
 
 	public void enableAnimator( String name ) {
 		PostProcessingAnimator next = animators.get( Hash.APHash( name ) );
 		if( next != null ) {
-			if( currentAnimator != null ) {
-				currentAnimator.reset();
-			}
-
 			currentAnimator = next;
+			currentAnimator.reset();
 		}
 	}
 
-	public void off() {
+	public void disableAnimator() {
 		if( currentAnimator != null ) {
 			currentAnimator.reset();
 			currentAnimator = null;
 		}
 	}
 
-	public void onBeforeRender( PlayerCar player, GhostCar ghost ) {
-		if( canPostProcess && currentAnimator != null ) {
-			currentAnimator.update( player, ghost );
+	public void onBeforeRender() {
+		if( currentAnimator != null ) {
+			currentAnimator.update();
 		}
 	}
 }

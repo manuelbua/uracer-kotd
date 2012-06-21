@@ -106,8 +106,6 @@ public final class PingPongBuffer {
 
 	/** Ensures the initial buffer state is always the same before starting ping-ponging. */
 	public void begin() {
-//		rebind();
-
 		pending1 = false;
 		pending2 = false;
 		writeState = true;

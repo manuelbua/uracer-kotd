@@ -31,7 +31,7 @@ public class Manager<T extends Disposable> implements Disposable {
 		owned.add( own );
 	}
 
-	/** Add an item to the manager and transfer resource's ownership to it */
+	/** Add an item to the manager and transfer ownership to it */
 	public void add( T item ) {
 		add( item, true );
 	}

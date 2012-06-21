@@ -35,6 +35,12 @@ public final class PostProcessor implements Disposable {
 	// maintains a per-frame updated list of enabled effects
 	private Array<PostProcessorEffect> enabledEffects = null;
 
+	/** Construct a new PostProcessor with FBO dimensions set to the size of the
+	 * screen */
+	public PostProcessor( boolean useDepth, boolean useAlphaChannel, boolean use32Bits ) {
+		this( Gdx.graphics.getWidth(), Gdx.graphics.getHeight(), useDepth, useAlphaChannel, use32Bits );
+	}
+
 	/** Construct a new PostProcessor with the given parameters. */
 	public PostProcessor( int fboWidth, int fboHeight, boolean useDepth, boolean useAlphaChannel, boolean use32Bits ) {
 		this( fboWidth, fboHeight, useDepth, useAlphaChannel, use32Bits, TextureWrap.ClampToEdge, TextureWrap.ClampToEdge );
@@ -60,12 +66,6 @@ public final class PostProcessor implements Disposable {
 
 		capturing = false;
 		hasCaptured = false;
-	}
-
-	/** Construct a new PostProcessor with FBO dimensions set to the size of the
-	 * screen */
-	public PostProcessor( boolean useDepth, boolean useAlphaChannel, boolean use32Bits ) {
-		this( Gdx.graphics.getWidth(), Gdx.graphics.getHeight(), useDepth, useAlphaChannel, use32Bits );
 	}
 
 	/** Creates and returns a managed PingPongBuffer buffer, just create and
@@ -124,7 +124,7 @@ public final class PostProcessor implements Disposable {
 
 	/** Returns the internal framebuffer format, computed from the
 	 * parameters specified during construction.
-	 * NOTE: the returned Format will be valid from upon construction and NOT early! */
+	 * NOTE: the returned Format will be valid after construction and NOT early! */
 	public static Format getFramebufferFormat() {
 		return fbFormat;
 	}
@@ -242,8 +242,9 @@ public final class PostProcessor implements Disposable {
 		}
 	}
 
-	/** Stops capturing the scene and apply the effect chain, if there is one. */
-	public void render() {
+	/** Stops capturing the scene and apply the effect chain, if there is one.
+	 * If the specified output framebuffer is NULL, then the rendering will be performed to screen. */
+	public void render( FrameBuffer dest ) {
 		captureEnd();
 
 		if( !hasCaptured ) {
@@ -272,7 +273,7 @@ public final class PostProcessor implements Disposable {
 			}
 
 			// render with null dest (to screen)
-			items.get( count - 1 ).render( composite.getResultBuffer(), null );
+			items.get( count - 1 ).render( composite.getResultBuffer(), dest );
 		} else {
 			Gdx.app.log( "PostProcessor", "No post-processor effects enabled, aborting render" );
 		}

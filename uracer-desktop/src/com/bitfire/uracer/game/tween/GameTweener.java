@@ -24,11 +24,11 @@ public final class GameTweener {
 		timeline.start( manager );
 	}
 
-	public static void stop(Object target) {
+	public static void stop( Object target ) {
 		manager.killTarget( target );
 	}
 
 	public static void update() {
-		manager.update( URacer.getLastDeltaMs() * URacer.timeMultiplier);
+		manager.update( URacer.getLastDeltaMs() * URacer.timeMultiplier );
 	}
 }

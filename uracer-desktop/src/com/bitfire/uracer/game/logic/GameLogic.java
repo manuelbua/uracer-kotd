@@ -30,6 +30,7 @@ import com.bitfire.uracer.game.logic.messager.Message.Type;
 import com.bitfire.uracer.game.logic.messager.MessageAccessor;
 import com.bitfire.uracer.game.logic.messager.Messager;
 import com.bitfire.uracer.game.logic.post.PostProcessing;
+import com.bitfire.uracer.game.logic.post.animators.AggressiveCold;
 import com.bitfire.uracer.game.logic.replaying.LapManager;
 import com.bitfire.uracer.game.logic.replaying.Replay;
 import com.bitfire.uracer.game.player.PlayerCar;
@@ -37,7 +38,7 @@ import com.bitfire.uracer.game.player.PlayerDriftStateEvent;
 import com.bitfire.uracer.game.rendering.GameRenderer;
 import com.bitfire.uracer.game.rendering.GameWorldRenderer;
 import com.bitfire.uracer.game.tween.GameTweener;
-import com.bitfire.uracer.game.tween.WcTweener;
+import com.bitfire.uracer.game.tween.SysTweener;
 import com.bitfire.uracer.game.world.GameWorld;
 import com.bitfire.uracer.utils.AMath;
 import com.bitfire.uracer.utils.BoxedFloat;
@@ -107,9 +108,10 @@ public class GameLogic implements CarEvent.Listener, CarStateEvent.Listener, Pla
 		seqOut = Timeline.createSequence();
 
 		// post-processing
-		postProcessing = new PostProcessing( gameWorld, gameRenderer );
-		postProcessing.createAnimators();
-		Gdx.app.log( "GameLogic", "Post-processing animators created" );
+		postProcessing = new PostProcessing( gameRenderer.getPostProcessor() );
+		postProcessing.addAnimator( AggressiveCold.Name, new AggressiveCold( this, postProcessing, gameWorld.isNightMode() ) );
+		postProcessing.enableAnimator( AggressiveCold.Name );
+		Gdx.app.log( "GameLogic", "Post-processing animator created" );
 
 		// main game tasks
 		gameTasksManager = new GameTasksManager( gameWorld, scalingStrategy );
@@ -138,7 +140,6 @@ public class GameLogic implements CarEvent.Listener, CarStateEvent.Listener, Pla
 
 		gameWorld.dispose();
 		GameTweener.dispose();
-		WcTweener.dispose();
 	}
 
 	/** Sets the player from the specified preset */
@@ -211,8 +212,6 @@ public class GameLogic implements CarEvent.Listener, CarStateEvent.Listener, Pla
 		// create player and setup player input system and initial position in the world
 		playerCar.setInputSystem( inputSystem );
 		player.setWorldPosMt( world.playerStartPos, world.playerStartOrient );
-		// player.setWorldPosMt( new Vector2(0,0), 0 );
-		// playerCar.setWorldPosMt( new Vector2(50.29133f, -15.1445f), gameWorld.playerStartOrient );
 	}
 
 	public void setBestLocalReplay( Replay replay ) {
@@ -260,12 +259,11 @@ public class GameLogic implements CarEvent.Listener, CarStateEvent.Listener, Pla
 
 		URacer.timeMultiplier = AMath.clamp( timeMultiplier.value, TimeMultiplierMin, Config.Physics.PhysicsTimeMultiplier );
 
-		// tweener step
-		WcTweener.update();
+		// game tweener step
 		GameTweener.update();
 
 		// post-processing step
-		postProcessing.onBeforeRender( playerCar, ghostCar );
+		postProcessing.onBeforeRender();
 
 		// Gdx.app.log( "GameLogic", NumberString.format(timeMultiplier.value) );
 	}
@@ -381,29 +379,25 @@ public class GameLogic implements CarEvent.Listener, CarStateEvent.Listener, Pla
 
 			if( timeModulation ) {
 
-				WcTweener.stop( timeMultiplier );
+				SysTweener.stop( timeMultiplier );
 				seqIn = Timeline.createSequence();
 				seqOut = Timeline.createSequence();
 
 				seqIn.push( Tween.to( timeMultiplier, BoxedFloatAccessor.VALUE, 1000 ).target( TimeMultiplierMin ).ease( eqIn ) ).setCallback( timeModulationFinished );
-				WcTweener.start( seqIn );
+				SysTweener.start( seqIn );
 
 			} else {
 
-				WcTweener.stop( timeMultiplier );
+				SysTweener.stop( timeMultiplier );
 				seqIn = Timeline.createSequence();
 				seqOut = Timeline.createSequence();
 
 				seqOut.push( Tween.to( timeMultiplier, BoxedFloatAccessor.VALUE, 1000 ).target( Config.Physics.PhysicsTimeMultiplier ).ease( eqOut ) ).setCallback(
 						timeModulationFinished );
-				WcTweener.start( seqOut );
+				SysTweener.start( seqOut );
 			}
 		}
 	}
-
-	//
-	// TODO, COULD THIS BE A TASK HANDLING IN-GAME USER CHOICES ??
-	//
 
 	public void restartGame() {
 		restartLogic();
@@ -434,7 +428,7 @@ public class GameLogic implements CarEvent.Listener, CarStateEvent.Listener, Pla
 		isFirstLap = true;
 		timeModulation = false;
 		timeMultiplier.value = Config.Physics.PhysicsTimeMultiplier;
-		WcTweener.clear();
+		SysTweener.clear();
 		GameTweener.clear();
 		lapManager.abortRecording();
 		gameTasksManager.restart();

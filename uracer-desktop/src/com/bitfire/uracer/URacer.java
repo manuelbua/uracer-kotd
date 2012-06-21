@@ -7,8 +7,11 @@ import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.utils.TimeUtils;
 import com.bitfire.uracer.configuration.Config;
+import com.bitfire.uracer.game.tween.SysTweener;
 import com.bitfire.uracer.resources.Art;
 import com.bitfire.uracer.resources.Sounds;
+import com.bitfire.uracer.screen.GameScreen;
+import com.bitfire.uracer.screen.Screen;
 import com.bitfire.uracer.utils.AMath;
 import com.bitfire.uracer.utils.Convert;
 import com.bitfire.uracer.utils.SpriteBatchUtils;
@@ -113,8 +116,22 @@ public class URacer implements ApplicationListener {
 		timeAccuNs = PhysicsDtNs;
 	}
 
-	// private WindowedMean mean = new WindowedMean( 120 );
-	// NOTE: this render() method will get called by JoglGraphics when screen.tick will ask to finish!!
+	@Override
+	public void dispose() {
+		setScreen( null );
+
+		Sounds.dispose();
+		Art.dispose();
+		SysTweener.dispose();
+
+		if( uRacerFinalizer != null ) {
+			uRacerFinalizer.dispose();
+		}
+
+		// if(!Config.isDesktop || )
+		System.exit( 0 );
+	}
+
 	@Override
 	public void render() {
 		if( screen == null ) {
@@ -176,10 +193,10 @@ public class URacer implements ApplicationListener {
 
 		startTime = TimeUtils.nanoTime();
 		{
-			screen.render();
+			SysTweener.update();
+			screen.render( null );
 
 			// simulate slowness
-			// if(Config.isDesktop)
 			// try { Thread.sleep( 32 ); } catch( InterruptedException e ) {}
 		}
 
@@ -213,21 +230,6 @@ public class URacer implements ApplicationListener {
 		screen.resume();
 	}
 
-	@Override
-	public void dispose() {
-		setScreen( null );
-
-		Sounds.dispose();
-		Art.dispose();
-
-		if( uRacerFinalizer != null ) {
-			uRacerFinalizer.dispose();
-		}
-
-		// if(!Config.isDesktop || )
-		System.exit( 0 );
-	}
-
 	public void setScreen( Screen newScreen ) {
 		if( screen != null ) {
 			screen.removed();
@@ -239,6 +241,10 @@ public class URacer implements ApplicationListener {
 			screen.init( scalingStrategy );
 		}
 	}
+
+	//
+	// export utility functions
+	//
 
 	public static boolean isRunning() {
 		return running;
