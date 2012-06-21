@@ -69,7 +69,7 @@ public final class TransitionManager {
 		initFrameBuffer( fbFrom, curr );
 		initFrameBuffer( fbTo, next );
 
-		Gdx.gl20.glDepthMask( false );
+		Gdx.gl20.glDepthMask( usedepth );
 		transition.init( fbFrom, fbTo );
 	}
 
@@ -107,10 +107,6 @@ public final class TransitionManager {
 	}
 
 	public void render() {
-		Gdx.gl20.glClearDepthf( 1 );
-		Gdx.gl20.glClearColor( 0, 0, 0, 0 );
-		Gdx.gl20.glClear( GL20.GL_COLOR_BUFFER_BIT | GL20.GL_DEPTH_BUFFER_BIT );
-
 		if( paused ) {
 			return;
 		}
