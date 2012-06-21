@@ -43,28 +43,28 @@ public final class TransitionManager {
 	}
 
 	private void initFrameBuffer( FrameBuffer buffer, Screen source ) {
+		Gdx.gl20.glClearColor( 0, 0, 0, 0 );
+		buffer.begin();
+		{
+			if( usedepth ) {
+				Gdx.gl20.glClearDepthf( 1 );
+				Gdx.gl20.glClear( GL20.GL_COLOR_BUFFER_BIT | GL20.GL_DEPTH_BUFFER_BIT );
+			} else {
+				Gdx.gl20.glClear( GL20.GL_COLOR_BUFFER_BIT );
+			}
+		}
+		buffer.end();
+
 		if( source != null ) {
 			source.tick();
 			source.tickCompleted();
 			source.render( buffer );
-		} else {
-			Gdx.gl20.glClearColor( 0, 0, 0, 0 );
-			buffer.begin();
-			{
-				if( usedepth ) {
-					Gdx.gl20.glClearDepthf( 1 );
-					Gdx.gl20.glClear( GL20.GL_COLOR_BUFFER_BIT | GL20.GL_DEPTH_BUFFER_BIT );
-				} else {
-					Gdx.gl20.glClear( GL20.GL_COLOR_BUFFER_BIT );
-				}
-			}
-			buffer.end();
 		}
 	}
 
 	public void start( Screen curr, Screen next ) {
 		removeTransition();
-		transition = new Fader( 1 );
+		transition = new Fader( 1000 );
 
 		initFrameBuffer( fbFrom, curr );
 		initFrameBuffer( fbTo, next );
@@ -89,11 +89,25 @@ public final class TransitionManager {
 	}
 
 	public void pause() {
+		if( paused ) {
+			return;
+		}
+
 		paused = true;
+		if( transition != null ) {
+			transition.pause();
+		}
 	}
 
 	public void resume() {
+		if( !paused ) {
+			return;
+		}
+
 		paused = false;
+		if( transition != null ) {
+			transition.resume();
+		}
 	}
 
 	public void update() {

@@ -11,6 +11,10 @@ public abstract class ScreenTransition implements Disposable {
 	@Override
 	public abstract void dispose();
 
+	public abstract void pause();
+
+	public abstract void resume();
+
 	public abstract void update();
 
 	public abstract void render();

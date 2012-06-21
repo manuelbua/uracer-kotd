@@ -2,20 +2,19 @@ package com.bitfire.uracer.screen.transitions;
 
 import com.badlogic.gdx.graphics.glutils.FrameBuffer;
 import com.badlogic.gdx.graphics.glutils.ShaderProgram;
-import com.bitfire.uracer.URacer;
+import com.badlogic.gdx.utils.TimeUtils;
 import com.bitfire.uracer.postprocessing.FullscreenQuad;
 import com.bitfire.uracer.utils.ShaderLoader;
 
 public class Fader extends ScreenTransition {
 	FrameBuffer from, to;
-	float durationSecs;
-	float elapsedSecs;
+	long duration, elapsed, last;
 	float factor;
 	FullscreenQuad quad;
 	ShaderProgram fade;
 
-	public Fader( float durationSecs ) {
-		this.durationSecs = durationSecs;
+	public Fader( long durationMs ) {
+		duration = durationMs;
 		quad = new FullscreenQuad();
 		fade = ShaderLoader.fromFile( "fade", "fade" );
 		rebind();
@@ -32,8 +31,10 @@ public class Fader extends ScreenTransition {
 	public void init( FrameBuffer curr, FrameBuffer next ) {
 		from = curr;
 		to = next;
-		elapsedSecs = 0;
 		factor = 0;
+
+		elapsed = 0;
+		last = 0;
 	}
 
 	@Override
@@ -43,24 +44,44 @@ public class Fader extends ScreenTransition {
 	}
 
 	@Override
-	public void update() {
-		elapsedSecs += URacer.getLastDeltaSecs();
+	public void pause() {
+	}
 
-		if( elapsedSecs < 0 ) {
+	@Override
+	public void resume() {
+		rebind();
+		last = 0;
+	}
+
+	@Override
+	public void update() {
+		long now = TimeUtils.millis();
+
+		if( last == 0 ) {
+			last = now;
 			return;
 		}
 
-		if( elapsedSecs > durationSecs ) {
-			elapsedSecs = durationSecs;
+		long incr = now - last;
+
+		elapsed += incr;
+		last = now;
+
+		if( elapsed < 0 ) {
+			return;
 		}
 
-		factor = elapsedSecs / durationSecs;
+		if( elapsed > duration ) {
+			elapsed = duration;
+		}
+
+		factor = (float)elapsed / (float)duration;
 	}
 
 	@Override
 	public void render() {
-		from.getColorBufferTexture().bind(0);
-		to.getColorBufferTexture().bind(1);
+		from.getColorBufferTexture().bind( 0 );
+		to.getColorBufferTexture().bind( 1 );
 
 		fade.begin();
 		fade.setUniformf( "Ratio", factor );
@@ -70,6 +91,6 @@ public class Fader extends ScreenTransition {
 
 	@Override
 	public boolean hasFinished() {
-		return elapsedSecs >= durationSecs;
+		return elapsed >= duration;
 	}
 }
