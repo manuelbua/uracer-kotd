@@ -5,7 +5,7 @@ import com.bitfire.uracer.ScalingStrategy;
 public final class ScreenFactory {
 
 	public enum ScreenType {
-		GameScreen
+		ExitScreen, GameScreen
 	}
 
 	public static Screen createScreen( ScreenType screen, ScalingStrategy strategy ) {
@@ -14,6 +14,9 @@ public final class ScreenFactory {
 		switch( screen ) {
 		case GameScreen:
 			s = new GameScreen();
+			break;
+		case ExitScreen:
+			s = null;
 			break;
 		}
 

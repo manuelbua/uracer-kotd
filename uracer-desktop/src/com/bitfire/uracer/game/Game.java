@@ -74,14 +74,8 @@ public class Game implements Disposable {
 		gameLogic.onAcquireInput();
 	}
 
-	public boolean tickCompleted() {
+	public void tickCompleted() {
 		gameLogic.onSubstepCompleted();
-
-		if( gameLogic.doQuit ) {
-			return true;
-		}
-
-		return false;
 	}
 
 	public void render( FrameBuffer dest ) {

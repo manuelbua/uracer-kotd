@@ -40,6 +40,7 @@ import com.bitfire.uracer.game.rendering.GameWorldRenderer;
 import com.bitfire.uracer.game.tween.GameTweener;
 import com.bitfire.uracer.game.tween.SysTweener;
 import com.bitfire.uracer.game.world.GameWorld;
+import com.bitfire.uracer.screen.ScreenFactory.ScreenType;
 import com.bitfire.uracer.utils.AMath;
 import com.bitfire.uracer.utils.BoxedFloat;
 import com.bitfire.uracer.utils.BoxedFloatAccessor;
@@ -51,9 +52,6 @@ import com.bitfire.uracer.utils.NumberString;
  *
  * @author bmanuel */
 public class GameLogic implements CarEvent.Listener, CarStateEvent.Listener, PlayerDriftStateEvent.Listener {
-	// logic
-	public boolean doQuit = false;
-
 	// world
 	private GameWorld gameWorld = null;
 
@@ -94,7 +92,6 @@ public class GameLogic implements CarEvent.Listener, CarStateEvent.Listener, Pla
 		this.gameWorld = gameWorld;
 		// this.gameRenderer = gameRenderer;
 		this.gameWorldRenderer = gameRenderer.getWorldRenderer();
-		this.doQuit = false;
 
 		// create tweening support
 		Tween.registerAccessor( Message.class, new MessageAccessor() );
@@ -337,11 +334,12 @@ public class GameLogic implements CarEvent.Listener, CarStateEvent.Listener, Pla
 		} else if( input.isPressed( Keys.Q ) ) {
 
 			// quit
+			URacer.getScreenManager().setScreen( ScreenType.ExitScreen );
 
-			Gdx.app.log( "GameLogic", "Quitting..." );
-			Gdx.app.exit();
-			doQuit = true;
-			return;
+//			Gdx.app.log( "GameLogic", "Quitting..." );
+//			Gdx.app.exit();
+//			doQuit = true;
+//			return;
 
 		} else if( input.isPressed( Keys.O ) ) {
 

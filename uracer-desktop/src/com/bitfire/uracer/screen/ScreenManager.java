@@ -1,5 +1,6 @@
 package com.bitfire.uracer.screen;
 
+import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.glutils.FrameBuffer;
 import com.bitfire.uracer.ScalingStrategy;
 import com.bitfire.uracer.configuration.Config;
@@ -11,12 +12,14 @@ public final class ScreenManager {
 	private ScalingStrategy strategy;
 	private TransitionManager transMgr;
 	private Screen current, next;
+	private boolean quitPending;
 
 	public ScreenManager( ScalingStrategy scalingStrategy ) {
 		transMgr = new TransitionManager( Config.isDesktop /* 32bits */, false );
 		strategy = scalingStrategy;
 		current = null;
 		next = null;
+		quitPending = false;
 	}
 
 	public void dispose() {
@@ -29,11 +32,7 @@ public final class ScreenManager {
 	}
 
 	public boolean begin() {
-		if( current != null ) {
-			return !current.quit();
-		}
-
-		return true;
+		return !quitPending;
 	}
 
 	public void end() {
@@ -42,6 +41,13 @@ public final class ScreenManager {
 			transMgr.removeTransition();
 			current = next;
 			next = null;
+
+			// if the current screen is null, then quit
+			if( current == null ) {
+				quitPending = true;
+				Gdx.app.log( "GameLogic", "Quitting..." );
+				Gdx.app.exit();
+			}
 		}
 	}
 
@@ -56,20 +62,15 @@ public final class ScreenManager {
 	}
 
 	public boolean quit() {
-		if( current != null ) {
-			return current.quit();
-		}
-
-		return false;
+		return quitPending;
 	}
 
 	public void tick() {
 		if( transMgr.isActive() ) {
-			transMgr.update();
-		} else {
-			// normal screen
-			current.tick();
+			return;
 		}
+
+		current.tick();
 	}
 
 	public void tickCompleted() {
@@ -83,6 +84,7 @@ public final class ScreenManager {
 
 	public void render( FrameBuffer dest ) {
 		if( transMgr.isActive() ) {
+			transMgr.update();
 			transMgr.render();
 		} else {
 			current.render( dest );
@@ -98,6 +100,10 @@ public final class ScreenManager {
 	}
 
 	public void pause() {
+		if( quitPending ) {
+			return;
+		}
+
 		if( transMgr.isActive() ) {
 			transMgr.pause();
 		} else {
@@ -106,6 +112,10 @@ public final class ScreenManager {
 	}
 
 	public void resume() {
+		if( quitPending ) {
+			return;
+		}
+
 		if( transMgr.isActive() ) {
 			transMgr.resume();
 		} else {

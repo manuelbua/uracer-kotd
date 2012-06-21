@@ -8,7 +8,6 @@ import com.bitfire.uracer.game.logic.replaying.Replay;
 
 public class GameScreen extends Screen {
 	private Game game = null;
-	private boolean quit = false;
 
 	@Override
 	public void init( ScalingStrategy scalingStrategy ) {
@@ -39,17 +38,12 @@ public class GameScreen extends Screen {
 
 	@Override
 	public void tickCompleted() {
-		quit = game.tickCompleted();
+		game.tickCompleted();
 	}
 
 	@Override
 	public void render( FrameBuffer dest ) {
 		game.render( dest );
-	}
-
-	@Override
-	public boolean quit() {
-		return quit;
 	}
 
 	@Override
