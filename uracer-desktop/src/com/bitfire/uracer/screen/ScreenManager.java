@@ -15,7 +15,7 @@ public final class ScreenManager {
 	private boolean quitPending;
 
 	public ScreenManager( ScalingStrategy scalingStrategy ) {
-		transMgr = new TransitionManager( Config.isDesktop /* 32bits */, false );
+		transMgr = new TransitionManager( Config.isDesktop /* 32bits */, false, true );
 		strategy = scalingStrategy;
 		current = null;
 		next = null;

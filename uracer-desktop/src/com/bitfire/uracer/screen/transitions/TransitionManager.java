@@ -8,15 +8,16 @@ import com.bitfire.uracer.screen.Screen;
 
 public final class TransitionManager {
 
-	boolean paused;
+	boolean paused, usedepth;
 	Format fbFormat;
 	FrameBuffer fbFrom, fbTo;
 	ScreenTransition transition;
 
-	public TransitionManager( boolean use32Bits, boolean useAlphaChannel ) {
+	public TransitionManager( boolean use32Bits, boolean useAlphaChannel, boolean useDepth ) {
 		transition = null;
 		paused = false;
 		fbFormat = Format.RGB565;
+		usedepth = useDepth;
 
 		if( use32Bits ) {
 			if( useAlphaChannel ) {
@@ -32,8 +33,8 @@ public final class TransitionManager {
 			}
 		}
 
-		fbFrom = new FrameBuffer( fbFormat, Gdx.graphics.getWidth(), Gdx.graphics.getHeight(), false );
-		fbTo = new FrameBuffer( fbFormat, Gdx.graphics.getWidth(), Gdx.graphics.getHeight(), false );
+		fbFrom = new FrameBuffer( fbFormat, Gdx.graphics.getWidth(), Gdx.graphics.getHeight(), useDepth );
+		fbTo = new FrameBuffer( fbFormat, Gdx.graphics.getWidth(), Gdx.graphics.getHeight(), useDepth );
 	}
 
 	public void dispose() {
@@ -47,10 +48,16 @@ public final class TransitionManager {
 			source.tickCompleted();
 			source.render( buffer );
 		} else {
-			buffer.begin();
-			Gdx.gl20.glClearDepthf( 1 );
 			Gdx.gl20.glClearColor( 0, 0, 0, 0 );
-			Gdx.gl20.glClear( GL20.GL_COLOR_BUFFER_BIT | GL20.GL_DEPTH_BUFFER_BIT );
+			buffer.begin();
+			{
+				if( usedepth ) {
+					Gdx.gl20.glClearDepthf( 1 );
+					Gdx.gl20.glClear( GL20.GL_COLOR_BUFFER_BIT | GL20.GL_DEPTH_BUFFER_BIT );
+				} else {
+					Gdx.gl20.glClear( GL20.GL_COLOR_BUFFER_BIT );
+				}
+			}
 			buffer.end();
 		}
 	}
