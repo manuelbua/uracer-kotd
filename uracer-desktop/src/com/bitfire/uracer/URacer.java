@@ -12,6 +12,7 @@ import com.bitfire.uracer.resources.Art;
 import com.bitfire.uracer.resources.Sounds;
 import com.bitfire.uracer.screen.ScreenFactory.ScreenType;
 import com.bitfire.uracer.screen.ScreenManager;
+import com.bitfire.uracer.screen.transitions.TransitionFactory.TransitionType;
 import com.bitfire.uracer.utils.AMath;
 import com.bitfire.uracer.utils.Convert;
 import com.bitfire.uracer.utils.SpriteBatchUtils;
@@ -111,7 +112,7 @@ public class URacer implements ApplicationListener {
 		timeStepHz = (long)Config.Physics.PhysicsTimestepHz;
 
 		screenMgr = new ScreenManager( scalingStrategy );
-		screenMgr.setScreen( ScreenType.GameScreen );
+		screenMgr.setScreen( ScreenType.GameScreen, TransitionType.Fader, 250 );
 
 		// Initialize the timers after creating the game screen, so that there will be no huge discrepancies
 		// between the first lastDeltaTimeSec value and the followers.
@@ -269,8 +270,8 @@ public class URacer implements ApplicationListener {
 		return lastTicksCount;
 	}
 
-	public static ScreenManager getScreenManager() {
-		return screenMgr;
+	public static void setScreen( ScreenType screen, TransitionType transitionType, long transitionDurationMs ) {
+		screenMgr.setScreen( screen, transitionType, transitionDurationMs );
 	}
 
 	public static Input getInputSystem() {

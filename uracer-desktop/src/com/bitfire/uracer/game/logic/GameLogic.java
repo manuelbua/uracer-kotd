@@ -42,6 +42,7 @@ import com.bitfire.uracer.game.tween.GameTweener;
 import com.bitfire.uracer.game.tween.SysTweener;
 import com.bitfire.uracer.game.world.GameWorld;
 import com.bitfire.uracer.screen.ScreenFactory.ScreenType;
+import com.bitfire.uracer.screen.transitions.TransitionFactory.TransitionType;
 import com.bitfire.uracer.utils.AMath;
 import com.bitfire.uracer.utils.BoxedFloat;
 import com.bitfire.uracer.utils.BoxedFloatAccessor;
@@ -339,7 +340,7 @@ public class GameLogic implements CarEvent.Listener, CarStateEvent.Listener, Pla
 		} else if( input.isPressed( Keys.Q ) || input.isPressed( Keys.BACK ) ) {
 
 			// quit
-			URacer.getScreenManager().setScreen( ScreenType.ExitScreen );
+			URacer.setScreen( ScreenType.ExitScreen, TransitionType.Fader, 250 );
 
 //			Gdx.app.log( "GameLogic", "Quitting..." );
 //			Gdx.app.exit();
