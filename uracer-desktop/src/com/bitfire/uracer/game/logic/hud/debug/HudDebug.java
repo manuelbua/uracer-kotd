@@ -23,7 +23,7 @@ public class HudDebug extends HudElement {
 	private PlayerCar player;
 	private PlayerDriftState driftState;
 	private PlayerSkidMarks skidMarks;
-	private HudDebugMeter meterLatForce, meterSkidMarks, meterSpeed;
+	private HudDebugMeter meterDriftStrength, meterSkidMarks, meterSpeed;
 	private Array<HudDebugMeter> meters = new Array<HudDebugMeter>();
 	private Vector2 pos = new Vector2();
 
@@ -42,10 +42,10 @@ public class HudDebug extends HudElement {
 		this.skidMarks = skidMarks;
 
 		// meter lateral forces
-		meterLatForce = new HudDebugMeter( 100, 5 );
-		meterLatForce.setLimits( 0, 1 );
-		meterLatForce.setName( "ds" );
-		meters.add( meterLatForce );
+		meterDriftStrength = new HudDebugMeter( 100, 5 );
+		meterDriftStrength.setLimits( 0, 1 );
+		meterDriftStrength.setName( "ds" );
+		meters.add( meterDriftStrength );
 
 		// meter skid marks count
 		meterSkidMarks = new HudDebugMeter( 100, 5 );
@@ -72,11 +72,12 @@ public class HudDebug extends HudElement {
 	@Override
 	public void onTick() {
 		// lateral forces
-		meterLatForce.setValue( driftState.driftStrength );
+		meterDriftStrength.setValue( driftState.driftStrength );
+
 		if( driftState.isDrifting ) {
-			meterLatForce.color.set( .3f, 1f, .3f, 1f );
+			meterDriftStrength.color.set( .3f, 1f, .3f, 1f );
 		} else {
-			meterLatForce.color.set( 1f, 1f, 1f, 1f );
+			meterDriftStrength.color.set( 1f, 1f, 1f, 1f );
 		}
 
 		// skid marks count
