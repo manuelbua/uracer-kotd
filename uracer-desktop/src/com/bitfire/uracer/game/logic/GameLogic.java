@@ -342,11 +342,6 @@ public class GameLogic implements CarEvent.Listener, CarStateEvent.Listener, Pla
 			// quit
 			URacer.setScreen( ScreenType.ExitScreen, TransitionType.Fader, 250 );
 
-//			Gdx.app.log( "GameLogic", "Quitting..." );
-//			Gdx.app.exit();
-//			doQuit = true;
-//			return;
-
 		} else if( input.isPressed( Keys.O ) ) {
 
 			// FIXME this should go in some sort of DebugLogic thing..
