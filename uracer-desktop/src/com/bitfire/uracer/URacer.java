@@ -24,7 +24,7 @@ public class URacer implements ApplicationListener {
 	private static ScreenManager screenMgr;
 	private static Input input;
 	private static boolean running = false;
-	private static final boolean useRealFrametime = false;// Config.isDesktop;
+	private static final boolean useRealFrametime = true;// Config.isDesktop;
 
 	private static ScalingStrategy scalingStrategy;
 	private float temporalAliasing = 0;
