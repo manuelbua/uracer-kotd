@@ -8,23 +8,23 @@ public final class ScreenFactory {
 		ExitScreen, GameScreen
 	}
 
-	public static Screen createScreen( ScreenType screen, ScalingStrategy strategy ) {
-		Screen s = null;
+	public static Screen createScreen( ScreenType screenType, ScalingStrategy strategy ) {
+		Screen screen = null;
 
-		switch( screen ) {
+		switch( screenType ) {
 		case GameScreen:
-			s = new GameScreen();
+			screen = new GameScreen();
 			break;
 		default:
 		case ExitScreen:
-			s = null;
+			screen = null;
 			break;
 		}
 
-		if( s != null ) {
-			s.init( strategy );
+		if( screen != null ) {
+			screen.init( strategy );
 		}
 
-		return s;
+		return screen;
 	}
 }
