@@ -40,8 +40,8 @@ public final class Config {
 			EnableGamePostProcessing = true;
 
 			// post-processor effects
-			EnableVignetting = false;//Config.isDesktop;
-			EnableBloom = false;//Config.isDesktop;
+			EnableVignetting = true;//Config.isDesktop;
+			EnableBloom = Config.isDesktop;
 			EnableZoom = true;
 			EnableZoomRadialBlur = true;//Config.isDesktop;
 			EnableCrtScreen = false;//Config.isDesktop;
@@ -101,7 +101,7 @@ public final class Config {
 		public static TimeDilateInputMode TimeDilationMode;
 
 		public static void asDefault() {
-			Gameplay.TimeDilationMode = TimeDilateInputMode.TouchAndRelease;
+			Gameplay.TimeDilationMode = TimeDilateInputMode.Toggle;
 		}
 	}
 
