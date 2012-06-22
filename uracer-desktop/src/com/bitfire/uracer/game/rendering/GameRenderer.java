@@ -104,9 +104,6 @@ public final class GameRenderer {
 
 		if( postProcessor.isEnabled() ) {
 			postProcessorReady = postProcessor.capture();
-			if( !postProcessorReady ) {
-				Gdx.app.error( "GameRenderer", "postprocessor::capture() error!" );
-			}
 		}
 
 		if( !postProcessorReady ) {
