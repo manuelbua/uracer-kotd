@@ -4,11 +4,13 @@ import com.badlogic.gdx.graphics.glutils.FrameBuffer;
 import com.badlogic.gdx.utils.Disposable;
 
 public abstract class ScreenTransition implements Disposable {
-	protected abstract void init( FrameBuffer curr, FrameBuffer next );
+	protected abstract void setupFrameBuffers( FrameBuffer curr, FrameBuffer next );
 
 	public abstract void setDuration( long durationMs );
 
 	public abstract boolean isComplete();
+
+	public abstract void reset();
 
 	@Override
 	public abstract void dispose();

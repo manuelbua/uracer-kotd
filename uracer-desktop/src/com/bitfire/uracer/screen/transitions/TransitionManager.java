@@ -80,7 +80,7 @@ public final class TransitionManager {
 
 		// enable depth writing if its the case
 		Gdx.gl20.glDepthMask( usedepth );
-		this.transition.init( fbFrom, fbTo );
+		this.transition.setupFrameBuffers( fbFrom, fbTo );
 	}
 
 	public boolean isActive() {
