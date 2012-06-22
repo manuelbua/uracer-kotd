@@ -12,6 +12,7 @@ import com.bitfire.uracer.resources.Art;
 import com.bitfire.uracer.resources.Sounds;
 import com.bitfire.uracer.screen.ScreenFactory.ScreenType;
 import com.bitfire.uracer.screen.ScreenManager;
+import com.bitfire.uracer.screen.transitions.TransitionFactory;
 import com.bitfire.uracer.screen.transitions.TransitionFactory.TransitionType;
 import com.bitfire.uracer.utils.AMath;
 import com.bitfire.uracer.utils.Convert;
@@ -112,6 +113,7 @@ public class URacer implements ApplicationListener {
 		timeStepHz = (long)Config.Physics.PhysicsTimestepHz;
 
 		screenMgr = new ScreenManager( scalingStrategy );
+
 		screenMgr.setScreen( ScreenType.GameScreen, TransitionType.Fader, 250 );
 
 		// Initialize the timers after creating the game screen, so that there will be no huge discrepancies
@@ -126,6 +128,7 @@ public class URacer implements ApplicationListener {
 	@Override
 	public void dispose() {
 		screenMgr.dispose();
+		TransitionFactory.dispose();
 
 		Sounds.dispose();
 		Art.dispose();
