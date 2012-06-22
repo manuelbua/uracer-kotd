@@ -40,8 +40,8 @@ public final class Config {
 			EnableGamePostProcessing = true;
 
 			// post-processor effects
-			EnableVignetting = true;//Config.isDesktop;
-			EnableBloom = true;//Config.isDesktop;
+			EnableVignetting = false;//Config.isDesktop;
+			EnableBloom = false;//Config.isDesktop;
 			EnableZoom = true;
 			EnableZoomRadialBlur = true;//Config.isDesktop;
 			EnableCrtScreen = false;//Config.isDesktop;
