@@ -36,43 +36,60 @@ public final class ScreenManager {
 	}
 
 	public boolean begin() {
-		return !quitPending;
-	}
+		if( quitPending ) {
+			return false;
+		}
 
-	public void end() {
 		if( (transMgr.isActive() && transMgr.isComplete()) || doSetScreenImmediate ) {
 			doSetScreenImmediate = false;
 
-			// transition finished, current is updated at the *very end*
 			transMgr.removeTransition();
 			current = next;
 			next = null;
 
-			// just switched to a null screen? Quit
+			// switched to a null screen?
 			if( current == null ) {
 				quitPending = true;
-				Gdx.app.log( "GameLogic", "Quitting..." );
-				Gdx.app.exit();
+				Gdx.app.log( "ScreenManager", "Bye!" );
+				Gdx.app.exit();	// async exit
 			}
 		}
+
+		return true;
 	}
 
-	// FIXME, queue for buffered screen operations such as adding/removal
-	/** Switch to the screen identified by the specified screen type,. */
+	public void end() {
+	}
+
+
+	/** Switch to the screen identified by the specified screen type, using the specified transition type in its default
+	 * configuration.
+	 * The screen change is scheduled to happen at the start of the next frame. */
 	public void setScreen( ScreenType screen, TransitionType transitionType, long transitionDurationMs ) {
+		ScreenTransition transition = null;
+
+		// if no transition or no duration avoid everything and pass a null reference
+		if( transitionType != TransitionType.None && transitionDurationMs > 0 ) {
+			transition = TransitionFactory.getTransition( transitionType );
+			transition.setDuration( transitionDurationMs );
+		}
+
+		setScreen( screen, transition );
+	}
+
+	/** Switch to the screen identified by the specified screen type, using the specified transition.
+	 * The screen change is scheduled to happen at the start of the next frame. */
+	public void setScreen( ScreenType screen, ScreenTransition transition ) {
+		// early exit
 		if( transMgr.isActive() ) {
-			// quit since already busy
 			return;
 		}
 
 		doSetScreenImmediate = false;
 		Screen newScreen = ScreenFactory.createScreen( screen, strategy );
 
-		if( transitionType != TransitionType.None && transitionDurationMs > 0 ) {
-			// create transition
-			ScreenTransition transition = TransitionFactory.createTransition( transitionType );
-			transition.setDuration( transitionDurationMs );
-
+		// if no transition then just setup a screen switch
+		if( transition != null ) {
 			next = newScreen;
 			transMgr.start( current, next, transition );
 		} else {

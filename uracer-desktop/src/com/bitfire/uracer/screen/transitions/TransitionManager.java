@@ -69,7 +69,7 @@ public final class TransitionManager {
 		}
 	}
 
-	/** Starts the specified transition (transfer ownerships) */
+	/** Starts the specified transition */
 	public void start( Screen curr, Screen next, ScreenTransition transition ) {
 		removeTransition();
 		this.transition = transition;
@@ -92,10 +92,7 @@ public final class TransitionManager {
 	}
 
 	public void removeTransition() {
-		if( transition != null ) {
-			transition.dispose();
-			transition = null;
-		}
+		transition = null;
 	}
 
 	public void pause() {
