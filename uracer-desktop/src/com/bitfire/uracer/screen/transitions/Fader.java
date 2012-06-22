@@ -6,7 +6,7 @@ import com.badlogic.gdx.utils.TimeUtils;
 import com.bitfire.uracer.postprocessing.FullscreenQuad;
 import com.bitfire.uracer.utils.ShaderLoader;
 
-public class Fader extends ScreenTransition {
+public final class Fader extends ScreenTransition {
 	FrameBuffer from, to;
 	long duration, elapsed, last;
 	float factor;
@@ -16,7 +16,7 @@ public class Fader extends ScreenTransition {
 	public Fader() {
 		quad = new FullscreenQuad();
 		fade = ShaderLoader.fromFile( "fade", "fade" );
-		rebind();
+		reset();
 	}
 
 	private void rebind() {
@@ -24,6 +24,15 @@ public class Fader extends ScreenTransition {
 		fade.setUniformi( "u_texture0", 0 );
 		fade.setUniformi( "u_texture1", 1 );
 		fade.end();
+	}
+
+	@Override
+	public void reset() {
+		rebind();
+		factor = 0;
+		elapsed = 0;
+		last = 0;
+		duration = 0;
 	}
 
 	@Override
@@ -36,10 +45,6 @@ public class Fader extends ScreenTransition {
 	protected void setupFrameBuffers( FrameBuffer curr, FrameBuffer next ) {
 		from = curr;
 		to = next;
-		factor = 0;
-
-		elapsed = 0;
-		last = 0;
 	}
 
 	/** Sets the duration of the effect, in milliseconds. */
