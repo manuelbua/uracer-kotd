@@ -90,6 +90,21 @@ public final class Config {
 		}
 	}
 
+	public static final class Gameplay {
+		public enum TimeDilateInputMode {
+			// @formatter:off
+			Toggle,				// (spacebar to act on desktop, touch to enable + touch to disable acting on device
+			TouchAndRelease,	// touch to act, release to stop acting
+			// @formatter:off
+		}
+
+		public static TimeDilateInputMode TimeDilationMode;
+
+		public static void asDefault() {
+			Gameplay.TimeDilationMode = TimeDilateInputMode.TouchAndRelease;
+		}
+	}
+
 	public static final class Physics {
 
 		/** defines how many pixels are 1 Box2d meter */
@@ -169,6 +184,7 @@ public final class Config {
 		Graphics.asDefault();
 		Physics.asDefault();
 		PostProcessing.asDefault();
+		Gameplay.asDefault();
 	}
 
 	private Config() {

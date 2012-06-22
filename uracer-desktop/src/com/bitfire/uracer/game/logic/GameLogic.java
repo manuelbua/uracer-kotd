@@ -1,9 +1,7 @@
 package com.bitfire.uracer.game.logic;
 
-import aurelienribon.tweenengine.BaseTween;
 import aurelienribon.tweenengine.Timeline;
 import aurelienribon.tweenengine.Tween;
-import aurelienribon.tweenengine.TweenCallback;
 import aurelienribon.tweenengine.TweenEquation;
 import aurelienribon.tweenengine.equations.Quad;
 
@@ -78,20 +76,22 @@ public class GameLogic implements CarEvent.Listener, CarStateEvent.Listener, Pla
 	private PlayerTasks playerTasks = null;
 
 	// handles timeModulationBusy onComplete event
-//	private long timeModStart = 0;
+	// private long timeModStart = 0;
 	private boolean timeModulation = false;
 	private BoxedFloat timeMultiplier = new BoxedFloat();
 	private Timeline seqIn, seqOut;
 	public static final float TimeMultiplierMin = 0.3f;
-	private TweenCallback timeModulationFinished = new TweenCallback() {
-		@Override
-		public void onEvent( int type, BaseTween<?> source ) {
-			switch( type ) {
-			case COMPLETE:
-//				Gdx.app.log( "GameLogic", "Time modulation ended (took " + (TimeUtils.nanoTime() - timeModStart) + ")" );
-			}
-		}
-	};
+
+	// private TweenCallback timeModulationFinished = new TweenCallback() {
+	// @Override
+	// public void onEvent( int type, BaseTween<?> source ) {
+	// switch( type ) {
+	// case COMPLETE:
+	// // Gdx.app.log( "GameLogic", "Time modulation ended (took " + (TimeUtils.nanoTime() - timeModStart) +
+	// // ")" );
+	// }
+	// }
+	// };
 
 	public GameLogic( GameWorld gameWorld, GameRenderer gameRenderer, ScalingStrategy scalingStrategy ) {
 		this.gameWorld = gameWorld;
@@ -154,7 +154,7 @@ public class GameLogic implements CarEvent.Listener, CarStateEvent.Listener, Pla
 
 		playerCar = CarFactory.createPlayer( gameWorld, presetType );
 
-		configurePlayer( gameWorld, input /*gameTasksManager.input*/, playerCar );
+		configurePlayer( gameWorld, input /* gameTasksManager.input */, playerCar );
 		Gdx.app.log( "GameLogic", "Player configured" );
 
 		playerTasks.createTasks( playerCar, lapManager.getLapInfo() );
@@ -254,10 +254,10 @@ public class GameLogic implements CarEvent.Listener, CarStateEvent.Listener, Pla
 
 			gameWorldRenderer.setCameraPosition( playerCar.state().position, truncatePosition );
 		} else if( ghostCar.hasReplay() ) {
-			gameWorldRenderer.setCameraPosition( ghostCar.state().position, truncatePosition);
+			gameWorldRenderer.setCameraPosition( ghostCar.state().position, truncatePosition );
 		} else {
 			// no ghost, no player, WTF?
-			gameWorldRenderer.setCameraPosition( gameWorld.playerStartPos, truncatePosition);
+			gameWorldRenderer.setCameraPosition( gameWorld.playerStartPos, truncatePosition );
 		}
 
 		URacer.timeMultiplier = AMath.clamp( timeMultiplier.value, TimeMultiplierMin, Config.Physics.PhysicsTimeMultiplier );
@@ -276,7 +276,7 @@ public class GameLogic implements CarEvent.Listener, CarStateEvent.Listener, Pla
 	private int keycount = 0;
 
 	public void onAcquireInput() {
-//		Input input = gameTasksManager.input;
+		// Input input = gameTasksManager.input;
 
 		// dbg keys
 		if( input.isPressed( Keys.NUM_1 ) || input.isReleased( Keys.NUM_1 ) ) {
@@ -368,33 +368,67 @@ public class GameLogic implements CarEvent.Listener, CarStateEvent.Listener, Pla
 			// FIXME this should go in some sort of DebugLogic thing..
 			Config.Debug.Render3DBoundingBoxes = !Config.Debug.Render3DBoundingBoxes;
 
-		} else if( input.isPressed( Keys.SPACE ) || input.isTouched( 1 ) ) {
+		}
 
+		// time dilation behavior
+		switch( Config.Gameplay.TimeDilationMode ) {
+		case Toggle:
+			if( input.isPressed( Keys.SPACE ) || input.isTouched( 1 ) ) {
+				timeModulation = !timeModulation;
+
+				TweenEquation eqIn = Quad.OUT;
+				TweenEquation eqOut = Quad.INOUT;
+
+				if( timeModulation ) {
+
+					SysTweener.stop( timeMultiplier );
+					seqIn = Timeline.createSequence();
+					seqOut = Timeline.createSequence();
+
+					seqIn.push( Tween.to( timeMultiplier, BoxedFloatAccessor.VALUE, 1000 ).target( TimeMultiplierMin ).ease( eqIn ) );	// .setCallback(
+																																		// timeModulationFinished
+																																		// );
+					SysTweener.start( seqIn );
+
+				} else {
+
+					SysTweener.stop( timeMultiplier );
+					seqIn = Timeline.createSequence();
+					seqOut = Timeline.createSequence();
+
+					seqOut.push( Tween.to( timeMultiplier, BoxedFloatAccessor.VALUE, 1000 ).target( Config.Physics.PhysicsTimeMultiplier ).ease( eqOut ) );	// .setCallback(
+																																							// timeModulationFinished
+																																							// );
+					SysTweener.start( seqOut );
+				}
+			}
+
+			break;
+
+		case TouchAndRelease:
 			TweenEquation eqIn = Quad.OUT;
 			TweenEquation eqOut = Quad.INOUT;
 
-			timeModulation = !timeModulation;
-//			timeModStart = TimeUtils.nanoTime();
-
-			if( timeModulation ) {
+			if( input.isPressed( Keys.SPACE ) ) {
+				timeModulation = !timeModulation;
 
 				SysTweener.stop( timeMultiplier );
 				seqIn = Timeline.createSequence();
 				seqOut = Timeline.createSequence();
-
-				seqIn.push( Tween.to( timeMultiplier, BoxedFloatAccessor.VALUE, 1000 ).target( TimeMultiplierMin ).ease( eqIn ) ).setCallback( timeModulationFinished );
+				seqIn.push( Tween.to( timeMultiplier, BoxedFloatAccessor.VALUE, 1000 ).target( TimeMultiplierMin ).ease( eqIn ) );
 				SysTweener.start( seqIn );
 
-			} else {
+			} else if( input.isReleased( Keys.SPACE ) ) {
+				timeModulation = !timeModulation;
 
 				SysTweener.stop( timeMultiplier );
 				seqIn = Timeline.createSequence();
 				seqOut = Timeline.createSequence();
-
-				seqOut.push( Tween.to( timeMultiplier, BoxedFloatAccessor.VALUE, 1000 ).target( Config.Physics.PhysicsTimeMultiplier ).ease( eqOut ) ).setCallback(
-						timeModulationFinished );
+				seqOut.push( Tween.to( timeMultiplier, BoxedFloatAccessor.VALUE, 1000 ).target( Config.Physics.PhysicsTimeMultiplier ).ease( eqOut ) );
 				SysTweener.start( seqOut );
 			}
+
+			break;
 		}
 	}
 
