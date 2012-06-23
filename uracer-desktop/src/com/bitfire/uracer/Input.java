@@ -10,8 +10,8 @@ public final class Input {
 	public static final int MaxPointers = 2;
 
 	// keys
-	private long[] buttons = new long[ 256 ];
-	private long anyKeyButton = 0;
+	private int[] buttons = new int[ 256 ];
+	private int anyKeyButton = 0;
 
 	// touches
 	private Pointer[] pointer = new Pointer[ MaxPointers ];
