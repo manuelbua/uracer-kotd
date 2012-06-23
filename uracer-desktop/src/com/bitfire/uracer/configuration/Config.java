@@ -101,7 +101,7 @@ public final class Config {
 		public static TimeDilateInputMode TimeDilationMode;
 
 		public static void asDefault() {
-			Gameplay.TimeDilationMode = TimeDilateInputMode.Toggle;
+			Gameplay.TimeDilationMode = TimeDilateInputMode.TouchAndRelease;
 		}
 	}
 
