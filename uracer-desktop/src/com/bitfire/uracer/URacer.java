@@ -10,8 +10,10 @@ import com.bitfire.uracer.configuration.Config;
 import com.bitfire.uracer.game.tween.SysTweener;
 import com.bitfire.uracer.resources.Art;
 import com.bitfire.uracer.resources.Sounds;
-import com.bitfire.uracer.screen.GameScreen;
-import com.bitfire.uracer.screen.Screen;
+import com.bitfire.uracer.screen.ScreenFactory.ScreenType;
+import com.bitfire.uracer.screen.ScreenManager;
+import com.bitfire.uracer.screen.transitions.TransitionFactory;
+import com.bitfire.uracer.screen.transitions.TransitionFactory.TransitionType;
 import com.bitfire.uracer.utils.AMath;
 import com.bitfire.uracer.utils.Convert;
 import com.bitfire.uracer.utils.SpriteBatchUtils;
@@ -19,9 +21,10 @@ import com.bitfire.uracer.utils.SpriteBatchUtils;
 public class URacer implements ApplicationListener {
 	public static final String Name = "URacer: The King Of The Drift";
 
-	private Screen screen;
+	private static ScreenManager screenMgr;
+	private static Input input;
 	private static boolean running = false;
-	private static final boolean useRealFrametime = false;// Config.isDesktop;
+	private static final boolean useRealFrametime = true;// Config.isDesktop;
 
 	private static ScalingStrategy scalingStrategy;
 	private float temporalAliasing = 0;
@@ -86,6 +89,9 @@ public class URacer implements ApplicationListener {
 		Gdx.app.log( "URacer", "booting version " + versionInfo );
 		Gdx.app.log( "URacer", "Using real frametime: " + (useRealFrametime ? "YES" : "NO") );
 
+		// create input system
+		input = new Input();
+
 		// computed for a 256px tile size target (compute needed conversion factors)
 		scalingStrategy = new ScalingStrategy( new Vector2( 1280, 800 ), 70f, 224, 1f );
 
@@ -106,7 +112,9 @@ public class URacer implements ApplicationListener {
 		PhysicsDtNs = (long)((long)1000000000 / (long)Config.Physics.PhysicsTimestepHz);
 		timeStepHz = (long)Config.Physics.PhysicsTimestepHz;
 
-		setScreen( new GameScreen() );
+		screenMgr = new ScreenManager( scalingStrategy );
+
+		screenMgr.setScreen( ScreenType.GameScreen, TransitionType.Fader, 250 );
 
 		// Initialize the timers after creating the game screen, so that there will be no huge discrepancies
 		// between the first lastDeltaTimeSec value and the followers.
@@ -114,11 +122,13 @@ public class URacer implements ApplicationListener {
 		// at least perform one single tick
 		lastTimeNs = TimeUtils.nanoTime();
 		timeAccuNs = PhysicsDtNs;
+//		try { Thread.sleep( 1000 ); } catch( InterruptedException e ) {}
 	}
 
 	@Override
 	public void dispose() {
-		setScreen( null );
+		screenMgr.dispose();
+		TransitionFactory.dispose();
 
 		Sounds.dispose();
 		Art.dispose();
@@ -134,76 +144,73 @@ public class URacer implements ApplicationListener {
 
 	@Override
 	public void render() {
-		if( screen == null ) {
-			return;
-		}
+		if( screenMgr.begin() ) {
 
-		if( screen.quit() ) {
-			return;
-		}
-
-		// this is not good for Android since the value often hop around
-		if( useRealFrametime ) {
-			long currTimeNs = TimeUtils.nanoTime();
-			lastDeltaTimeNs = (currTimeNs - lastTimeNs);
-			lastTimeNs = currTimeNs;
-		} else {
-			lastDeltaTimeNs = (long)(Gdx.graphics.getDeltaTime() * 1000000000);
-		}
-
-		// avoid spiral of death
-		lastDeltaTimeNs = AMath.clamp( lastDeltaTimeNs, 0, MaxDeltaTimeNs );
-
-		// compute values in different units so that accessors will not
-		// recompute them again and again
-		lastDeltaTimeMs = (float)(lastDeltaTimeNs / 1000000);
-		lastDeltaTimeSec = (float)lastDeltaTimeNs * oneOnOneBillion;
-
-		lastTicksCount = 0;
-		long startTime = TimeUtils.nanoTime();
-		{
-			timeAccuNs += lastDeltaTimeNs * timeMultiplier;
-			while( timeAccuNs > PhysicsDtNs ) {
-				screen.tick();
-				timeAccuNs -= PhysicsDtNs;
-				lastTicksCount++;
+			// this is not good for Android since the value often hop around
+			if( useRealFrametime ) {
+				long currTimeNs = TimeUtils.nanoTime();
+				lastDeltaTimeNs = (currTimeNs - lastTimeNs);
+				lastTimeNs = currTimeNs;
+			} else {
+				lastDeltaTimeNs = (long)(Gdx.graphics.getDeltaTime() * 1000000000);
 			}
 
-			// simulate slowness
-			// try { Thread.sleep( 32 ); } catch( InterruptedException e ) {}
-		}
+			// avoid spiral of death
+			lastDeltaTimeNs = AMath.clamp( lastDeltaTimeNs, 0, MaxDeltaTimeNs );
 
-		physicsTime = (TimeUtils.nanoTime() - startTime) * oneOnOneBillion;
+			// compute values in different units so that accessors will not
+			// recompute them again and again
+			lastDeltaTimeMs = (float)(lastDeltaTimeNs / 1000000);
+			lastDeltaTimeSec = (float)lastDeltaTimeNs * oneOnOneBillion;
 
-		// if the system has ticked, then trigger tickCompleted
-		if( lastTicksCount > 0 ) {
-			screen.tickCompleted();
+			lastTicksCount = 0;
+			long startTime = TimeUtils.nanoTime();
+			{
+				timeAccuNs += lastDeltaTimeNs * timeMultiplier;
+				while( timeAccuNs > PhysicsDtNs ) {
+					input.tick();
+					screenMgr.tick();
+					timeAccuNs -= PhysicsDtNs;
+					lastTicksCount++;
+				}
 
-			if( screen.quit() ) {
-				return;
+				// simulate slowness
+				// try { Thread.sleep( 32 ); } catch( InterruptedException e ) {}
 			}
+
+			physicsTime = (TimeUtils.nanoTime() - startTime) * oneOnOneBillion;
+
+			// if the system has ticked, then trigger tickCompleted
+			if( lastTicksCount > 0 ) {
+				screenMgr.tickCompleted();
+
+				if( screenMgr.quit() ) {
+					return;
+				}
+			}
+
+			// compute the temporal aliasing factor, entities will render
+			// themselves accordingly to this to avoid flickering and jittering,
+			// permitting slow-motion effects without artifacts.
+			// (this imply accepting a max-one-frame-behind behavior)
+			temporalAliasing = (timeAccuNs * timeStepHz) * oneOnOneBillion;
+			aliasingTime = temporalAliasing;
+
+			startTime = TimeUtils.nanoTime();
+			{
+				SysTweener.update();
+				screenMgr.render( null );
+
+				// simulate slowness
+				// try { Thread.sleep( 32 ); } catch( InterruptedException e ) {}
+			}
+
+			graphicsTime = (TimeUtils.nanoTime() - startTime) * oneOnOneBillion;
+			frameCount++;
+
+			screenMgr.debugRender();
+			screenMgr.end();
 		}
-
-		// compute the temporal aliasing factor, entities will render
-		// themselves accordingly to this to avoid flickering and jittering,
-		// permitting slow-motion effects without artifacts.
-		// (this imply accepting a max-one-frame-behind behavior)
-		temporalAliasing = (timeAccuNs * timeStepHz) * oneOnOneBillion;
-		aliasingTime = temporalAliasing;
-
-		startTime = TimeUtils.nanoTime();
-		{
-			SysTweener.update();
-			screen.render( null );
-
-			// simulate slowness
-			// try { Thread.sleep( 32 ); } catch( InterruptedException e ) {}
-		}
-
-		graphicsTime = (TimeUtils.nanoTime() - startTime) * oneOnOneBillion;
-		frameCount++;
-
-		screen.debugUpdate();
 	}
 
 	@Override
@@ -213,7 +220,7 @@ public class URacer implements ApplicationListener {
 	@Override
 	public void pause() {
 		running = false;
-		screen.pause();
+		screenMgr.pause();
 	}
 
 	@Override
@@ -227,19 +234,7 @@ public class URacer implements ApplicationListener {
 		physicsTime = 0;
 		graphicsTime = 0;
 
-		screen.resume();
-	}
-
-	public void setScreen( Screen newScreen ) {
-		if( screen != null ) {
-			screen.removed();
-		}
-
-		screen = newScreen;
-
-		if( screen != null ) {
-			screen.init( scalingStrategy );
-		}
+		screenMgr.resume();
 	}
 
 	//
@@ -276,5 +271,13 @@ public class URacer implements ApplicationListener {
 
 	public static long getLastTicksCount() {
 		return lastTicksCount;
+	}
+
+	public static void setScreen( ScreenType screen, TransitionType transitionType, long transitionDurationMs ) {
+		screenMgr.setScreen( screen, transitionType, transitionDurationMs );
+	}
+
+	public static Input getInputSystem() {
+		return input;
 	}
 }

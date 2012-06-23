@@ -41,7 +41,7 @@ public final class Config {
 
 			// post-processor effects
 			EnableVignetting = true;//Config.isDesktop;
-			EnableBloom = true;//Config.isDesktop;
+			EnableBloom = Config.isDesktop;
 			EnableZoom = true;
 			EnableZoomRadialBlur = true;//Config.isDesktop;
 			EnableCrtScreen = false;//Config.isDesktop;
@@ -56,12 +56,12 @@ public final class Config {
 				RadialBlurQuality = RadialBlur.Quality.High;
 				ZoomMaxStrength = -0.08f;
 			} else if( w >= 1200 ) {
-				BlurType = Blur.BlurType.Gaussian3x3b;
+				BlurType = Blur.BlurType.Gaussian5x5b;
 				RadialBlurQuality = RadialBlur.Quality.Medium;
 				ZoomMaxStrength = -0.08f;
 			} else if( w >= 800 ) {
-				BlurType = Blur.BlurType.Gaussian3x3;
-				RadialBlurQuality = RadialBlur.Quality.Low;
+				BlurType = Blur.BlurType.Gaussian5x5b;
+				RadialBlurQuality = RadialBlur.Quality.Medium;
 				ZoomMaxStrength = -0.08f;
 			}
 
@@ -87,6 +87,21 @@ public final class Config {
 		}
 
 		private Graphics() {
+		}
+	}
+
+	public static final class Gameplay {
+		public enum TimeDilateInputMode {
+			// @formatter:off
+			Toggle,				// (spacebar to act on desktop, touch to enable + touch to disable acting on device
+			TouchAndRelease,	// touch to act, release to stop acting
+			// @formatter:off
+		}
+
+		public static TimeDilateInputMode TimeDilationMode;
+
+		public static void asDefault() {
+			Gameplay.TimeDilationMode = TimeDilateInputMode.TouchAndRelease;
 		}
 	}
 
@@ -132,6 +147,7 @@ public final class Config {
 		public static boolean RenderDebugInfoMeshStats;
 		public static boolean RenderDebugInfoMemoryStats;
 		public static boolean RenderDebugInfoPostProcessor;
+		public static boolean RenderDebugDrawsInTransitions;
 
 		public static boolean TraverseWalls;
 		public static boolean ApplyCarFrictionFromMap;
@@ -149,6 +165,7 @@ public final class Config {
 			RenderDebugInfoMeshStats = Config.isDesktop;
 			RenderDebugInfoPostProcessor = Config.isDesktop;
 			Render3DBoundingBoxes = false;
+			RenderDebugDrawsInTransitions = Config.isDesktop;
 
 			TraverseWalls = false;
 			ApplyCarFrictionFromMap = true;
@@ -167,6 +184,7 @@ public final class Config {
 		Graphics.asDefault();
 		Physics.asDefault();
 		PostProcessing.asDefault();
+		Gameplay.asDefault();
 	}
 
 	private Config() {

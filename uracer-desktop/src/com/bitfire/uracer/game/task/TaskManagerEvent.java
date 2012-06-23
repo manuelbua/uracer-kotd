@@ -1,4 +1,4 @@
-package com.bitfire.uracer.task;
+package com.bitfire.uracer.game.task;
 
 import com.bitfire.uracer.utils.Event;
 import com.bitfire.uracer.utils.EventListener;

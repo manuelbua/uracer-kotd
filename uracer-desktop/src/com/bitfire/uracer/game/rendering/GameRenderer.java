@@ -104,10 +104,9 @@ public final class GameRenderer {
 
 		if( postProcessor.isEnabled() ) {
 			postProcessorReady = postProcessor.capture();
-			if( !postProcessorReady ) {
-				Gdx.app.error( "GameRenderer", "postprocessor::capture() error!" );
-			}
-		} else {
+		}
+
+		if( !postProcessorReady ) {
 			if( hasDest ) {
 				dest.begin();
 			} else {
@@ -155,7 +154,10 @@ public final class GameRenderer {
 			}
 			postProcessor.render( dest );
 		} else {
-			dest.end();
+			if( hasDest ) {
+				dest.end();
+			}
+
 			if( world.isNightMode() ) {
 				worldRenderer.renderLigthMap( dest );
 			}

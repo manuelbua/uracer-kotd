@@ -281,6 +281,7 @@ public final class GameWorldRenderer {
 
 	public void renderTilemap() {
 		gl.glDisable( GL20.GL_BLEND );
+		gl.glActiveTexture( GL10.GL_TEXTURE0 );
 		tileMapRenderer.render( camTilemap );
 	}
 

@@ -33,7 +33,7 @@ public final class PostProcessor implements Disposable {
 	private boolean hasCaptured = false;
 
 	// maintains a per-frame updated list of enabled effects
-	private Array<PostProcessorEffect> enabledEffects = null;
+	private Array<PostProcessorEffect> enabledEffects = new Array<PostProcessorEffect>( 5 );
 
 	/** Construct a new PostProcessor with FBO dimensions set to the size of the
 	 * screen */
@@ -160,7 +160,9 @@ public final class PostProcessor implements Disposable {
 	/** Starts capturing the scene, clears the buffer with the clear
 	 * color specified by {@link #setClearColor(Color)} or {@link #setClearColor(float r, float g, float b, float a)}.
 	 *
-	 * @return true or false, whether or not capturing has been initiated. */
+	 * @return true or false, whether or not capturing has been initiated.
+	 *         Capturing will fail in case there are no enabled effects in the chain or
+	 *         this instance is not enabled or capturing is already started. */
 	public boolean capture() {
 		if( enabled && !capturing ) {
 			if( buildEnabledEffectsList() == 0 ) {
@@ -280,11 +282,7 @@ public final class PostProcessor implements Disposable {
 	}
 
 	private int buildEnabledEffectsList() {
-		if( enabledEffects == null ) {
-			enabledEffects = new Array<PostProcessorEffect>( manager.items.size );
-		} else {
-			enabledEffects.clear();
-		}
+		enabledEffects.clear();
 
 		Array<PostProcessorEffect> items = manager.items;
 		for( int i = 0; i < items.size; i++ ) {

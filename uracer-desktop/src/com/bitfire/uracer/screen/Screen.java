@@ -4,6 +4,7 @@ import com.badlogic.gdx.graphics.glutils.FrameBuffer;
 import com.bitfire.uracer.ScalingStrategy;
 
 public abstract class Screen {
+
 	public abstract void init( ScalingStrategy scalingStrategy );
 
 	public abstract void removed();
@@ -18,9 +19,8 @@ public abstract class Screen {
 
 	public abstract void render( FrameBuffer dest );
 
-	public abstract boolean quit();
-
 	/** This debug call will gets called *after* tick and render are raised for all the entities, but
 	 * the computational time will not be part of the cumulative time statistics */
-	public abstract void debugUpdate();
+	public void debugRender() {
+	};
 }

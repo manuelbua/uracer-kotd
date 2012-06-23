@@ -1,7 +1,7 @@
 package com.bitfire.uracer.game.logic;
 
 import com.badlogic.gdx.utils.Disposable;
-import com.bitfire.uracer.task.Task;
+import com.bitfire.uracer.game.task.Task;
 
 public abstract class GameTask extends Task implements Disposable {
 
