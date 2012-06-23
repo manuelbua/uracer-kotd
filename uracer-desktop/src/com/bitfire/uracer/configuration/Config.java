@@ -9,7 +9,7 @@ import com.bitfire.uracer.postprocessing.filters.RadialBlur;
 import com.bitfire.uracer.utils.NumberString;
 
 public final class Config {
-	// generic
+	// TODO move out storage data folders
 	public static boolean isDesktop;
 	public static final String LevelsStore = "data/levels/";
 	public static final String ShapesStore = "data/base/";
@@ -17,6 +17,7 @@ public final class Config {
 	public static final String URacerConfigFolder = "uracer/";
 	public static final String LocalReplaysStore = "local-replays/";
 
+	// TODO make it user configurable
 	public static final class PostProcessing {
 		public static boolean EnableGamePostProcessing;
 		public static boolean EnableVignetting;
@@ -75,21 +76,7 @@ public final class Config {
 		}
 	}
 
-	public static final class Graphics {
-		public static boolean EnableMipMapping;
-		public static boolean SubframeInterpolation;
-		public static InterpolationMode CameraInterpolationMode;
-
-		public static void asDefault() {
-			EnableMipMapping = true;
-			SubframeInterpolation = true;
-			CameraInterpolationMode = InterpolationMode.Sigmoid;
-		}
-
-		private Graphics() {
-		}
-	}
-
+	// TODO make it user configurable
 	public static final class Gameplay {
 		public enum TimeDilateInputMode {
 			// @formatter:off
@@ -102,6 +89,21 @@ public final class Config {
 
 		public static void asDefault() {
 			Gameplay.TimeDilationMode = TimeDilateInputMode.TouchAndRelease;
+		}
+	}
+
+	public static final class Graphics {
+		public static boolean EnableMipMapping;
+		public static boolean SubframeInterpolation;
+		public static InterpolationMode CameraInterpolationMode;
+
+		public static void asDefault() {
+			EnableMipMapping = true;
+			SubframeInterpolation = true;
+			CameraInterpolationMode = InterpolationMode.Sigmoid;
+		}
+
+		private Graphics() {
 		}
 	}
 
