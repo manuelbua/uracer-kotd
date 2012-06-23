@@ -402,14 +402,13 @@ public class GameLogic implements CarEvent.Listener, CarStateEvent.Listener, Pla
 					SysTweener.start( seqOut );
 				}
 			}
-
 			break;
 
 		case TouchAndRelease:
 			TweenEquation eqIn = Quad.OUT;
 			TweenEquation eqOut = Quad.INOUT;
 
-			if( input.isPressed( Keys.SPACE ) ) {
+			if( input.isPressed( Keys.SPACE ) || input.isTouched( 1 ) ) {
 				timeModulation = !timeModulation;
 
 				SysTweener.stop( timeMultiplier );
@@ -418,7 +417,7 @@ public class GameLogic implements CarEvent.Listener, CarStateEvent.Listener, Pla
 				seqIn.push( Tween.to( timeMultiplier, BoxedFloatAccessor.VALUE, 1000 ).target( TimeMultiplierMin ).ease( eqIn ) );
 				SysTweener.start( seqIn );
 
-			} else if( input.isReleased( Keys.SPACE ) ) {
+			} else if( input.isReleased( Keys.SPACE ) || input.isUntouched( 1 ) ) {
 				timeModulation = !timeModulation;
 
 				SysTweener.stop( timeMultiplier );
@@ -427,7 +426,6 @@ public class GameLogic implements CarEvent.Listener, CarStateEvent.Listener, Pla
 				seqOut.push( Tween.to( timeMultiplier, BoxedFloatAccessor.VALUE, 1000 ).target( Config.Physics.PhysicsTimeMultiplier ).ease( eqOut ) );
 				SysTweener.start( seqOut );
 			}
-
 			break;
 		}
 	}
