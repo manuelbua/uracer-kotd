@@ -3,7 +3,7 @@ package com.bitfire.uracer;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.math.Vector2;
 
-/** Encapsulates a buffered input state object that can be queried to know the individual key/button/pointer state.
+/** Encapsulates a buffered input state object that can be queried to know the individual key/button/pointer states.
  *
  * @author bmanuel */
 public final class Input {
@@ -48,6 +48,10 @@ public final class Input {
 
 	public boolean isTouched( int ptr ) {
 		return pointer[ptr].touched();
+	}
+
+	public boolean isUntouched( int ptr ) {
+		return pointer[ptr].untouched();
 	}
 
 	public int getX( int ptr ) {
@@ -99,10 +103,15 @@ public final class Input {
 		long flag;
 		boolean is_any_key_on = false;
 
+		boolean isKeyPressed = false;
+
 		for( int i = 0; i < buttons.length; i++ ) {
 
 			// acquire input
-			if( Gdx.input.isKeyPressed( i ) ) {
+			isKeyPressed = Gdx.input.isKeyPressed( i );
+
+			// update flags
+			if( isKeyPressed ) {
 				buttons[i] |= (FLAG_REAL_ON | FLAG_DELAY_ON);
 			} else {
 				buttons[i] &= ~FLAG_REAL_ON;
@@ -141,10 +150,7 @@ public final class Input {
 		}
 	}
 
-	// update key state and transform unbuffered to buffered
-	public void tick() {
-		updateKeyState();
-
+	private void updatePointerState() {
 		for( int p = 0; p < MaxPointers; p++ ) {
 			Pointer ptr = pointer[p];
 			ptr.setTouching( Gdx.input.isTouched( p ) );
@@ -154,19 +160,19 @@ public final class Input {
 		}
 	}
 
-	/** Encapsulates the touch state for a given pointer index */
-	private class Pointer {
-		// public final int pointerIndex;
+	// update key state and transform unbuffered to buffered
+	public void tick() {
+		updateKeyState();
+		updatePointerState();
+	}
 
+	/** Encapsulates the touch state for a pointer. */
+	private class Pointer {
 		public final Vector2 touchCoords = new Vector2( 0, 0 );
 		public int touchX = 0;
 		public int touchY = 0;
 		public boolean is_touching = false;
 		private boolean was_touching = false;
-
-		public Pointer( /* int index */) {
-			// pointerIndex = index;
-		}
 
 		public void reset() {
 			is_touching = false;
@@ -180,10 +186,14 @@ public final class Input {
 			is_touching = value;
 		}
 
-		/** Returns whether or not this pointer has been touched.
-		 * This will NOT continuously returns true if the pointer is being continuoulsy touched. */
+		/** Returns whether or not this pointer wasn't touching AND now it is. */
 		public boolean touched() {
 			return !was_touching && is_touching;
+		}
+
+		/** Returns whether or not this pointer was touching AND now it is not. */
+		public boolean untouched() {
+			return was_touching && !is_touching;
 		}
 	}
 }
