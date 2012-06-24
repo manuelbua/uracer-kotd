@@ -50,7 +50,7 @@ public final class ScreenManager {
 			// switched to a null screen?
 			if( current == null ) {
 				quitPending = true;
-				Gdx.app.log( "ScreenManager", "Bye!" );
+				Gdx.app.log( "ScreenManager", "No screens selected, bye!" );
 				Gdx.app.exit();	// async exit
 			}
 		}

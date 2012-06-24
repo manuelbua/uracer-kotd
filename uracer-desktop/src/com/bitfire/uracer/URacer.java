@@ -280,4 +280,8 @@ public class URacer implements ApplicationListener {
 	public static Input getInputSystem() {
 		return input;
 	}
+
+	public static void quit() {
+		setScreen( ScreenType.ExitScreen, TransitionType.Fader, 250 );
+	}
 }
