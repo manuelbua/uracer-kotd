@@ -162,9 +162,9 @@ public final class DebugStatistics {
 				// dataTimeAliasing[i] = dataTimeAliasing[i-1];
 			}
 
-			meanPhysics.addValue( URacer.getPhysicsTime() );
-			meanRender.addValue( URacer.getRenderTime() );
-			meanTickCount.addValue( URacer.getLastTicksCount() );
+			meanPhysics.addValue( URacer.Game.getPhysicsTime() );
+			meanRender.addValue( URacer.Game.getRenderTime() );
+			meanTickCount.addValue( URacer.Game.getLastTicksCount() );
 
 			dataPhysicsTime[0] = meanPhysics.getMean();
 			dataRenderTime[0] = meanRender.getMean();

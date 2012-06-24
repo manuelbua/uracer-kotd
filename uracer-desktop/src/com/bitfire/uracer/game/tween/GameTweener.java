@@ -29,6 +29,6 @@ public final class GameTweener {
 	}
 
 	public static void update() {
-		manager.update( URacer.getLastDeltaMs() * URacer.timeMultiplier );
+		manager.update( URacer.Game.getLastDeltaMs() * URacer.timeMultiplier );
 	}
 }

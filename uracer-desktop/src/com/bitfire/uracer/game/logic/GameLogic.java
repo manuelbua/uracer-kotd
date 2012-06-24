@@ -11,6 +11,10 @@ import com.bitfire.uracer.Input;
 import com.bitfire.uracer.ScalingStrategy;
 import com.bitfire.uracer.URacer;
 import com.bitfire.uracer.configuration.Config;
+import com.bitfire.uracer.configuration.Gameplay;
+import com.bitfire.uracer.configuration.Gameplay.TimeDilateInputMode;
+import com.bitfire.uracer.configuration.UserPreferences;
+import com.bitfire.uracer.configuration.UserPreferences.Preference;
 import com.bitfire.uracer.game.DebugHelper;
 import com.bitfire.uracer.game.actors.Car;
 import com.bitfire.uracer.game.actors.CarEvent;
@@ -39,16 +43,16 @@ import com.bitfire.uracer.game.rendering.GameWorldRenderer;
 import com.bitfire.uracer.game.tween.GameTweener;
 import com.bitfire.uracer.game.tween.SysTweener;
 import com.bitfire.uracer.game.world.GameWorld;
-import com.bitfire.uracer.screen.ScreenFactory.ScreenType;
-import com.bitfire.uracer.screen.transitions.TransitionFactory.TransitionType;
 import com.bitfire.uracer.utils.AMath;
 import com.bitfire.uracer.utils.BoxedFloat;
 import com.bitfire.uracer.utils.BoxedFloatAccessor;
 import com.bitfire.uracer.utils.CarUtils;
 import com.bitfire.uracer.utils.NumberString;
 
-/** This concrete class manages to handle the inner game logic and its evolving states: it's all about gamedata, baby!
- * This should be refactored into smaller pieces of logic, that's where the components should came into.
+/** This concrete class manages to handle the inner game logic and its evolving
+ * states: it's all about gamedata, baby!
+ * This should be refactored into smaller pieces of logic, that's where the
+ * components should came into.
  *
  * @author bmanuel */
 public class GameLogic implements CarEvent.Listener, CarStateEvent.Listener, PlayerDriftStateEvent.Listener {
@@ -82,12 +86,16 @@ public class GameLogic implements CarEvent.Listener, CarStateEvent.Listener, Pla
 	private Timeline seqIn, seqOut;
 	public static final float TimeMultiplierMin = 0.3f;
 
+	// gameplay
+	private TimeDilateInputMode timeDilateMode;
+
 	// private TweenCallback timeModulationFinished = new TweenCallback() {
 	// @Override
 	// public void onEvent( int type, BaseTween<?> source ) {
 	// switch( type ) {
 	// case COMPLETE:
-	// // Gdx.app.log( "GameLogic", "Time modulation ended (took " + (TimeUtils.nanoTime() - timeModStart) +
+	// // Gdx.app.log( "GameLogic", "Time modulation ended (took " +
+	// (TimeUtils.nanoTime() - timeModStart) +
 	// // ")" );
 	// }
 	// }
@@ -97,7 +105,8 @@ public class GameLogic implements CarEvent.Listener, CarStateEvent.Listener, Pla
 		this.gameWorld = gameWorld;
 		// this.gameRenderer = gameRenderer;
 		this.gameWorldRenderer = gameRenderer.getWorldRenderer();
-		this.input = URacer.getInputSystem();
+		this.input = URacer.Game.getInputSystem();
+		this.timeDilateMode = Gameplay.TimeDilateInputMode.valueOf( UserPreferences.string( Preference.TimeDilateInputMode ) );
 
 		// create tweening support
 		Tween.registerAccessor( Message.class, new MessageAccessor() );
@@ -112,8 +121,12 @@ public class GameLogic implements CarEvent.Listener, CarStateEvent.Listener, Pla
 
 		// post-processing
 		postProcessing = new PostProcessing( gameRenderer.getPostProcessor() );
-		postProcessing.addAnimator( AggressiveCold.Name, new AggressiveCold( this, postProcessing, gameWorld.isNightMode() ) );
-		postProcessing.enableAnimator( AggressiveCold.Name );
+
+		if( gameRenderer.hasPostProcessor() ) {
+			postProcessing.addAnimator( AggressiveCold.Name, new AggressiveCold( this, postProcessing, gameWorld.isNightMode() ) );
+			postProcessing.enableAnimator( AggressiveCold.Name );
+		}
+
 		Gdx.app.log( "GameLogic", "Post-processing animator created" );
 
 		// main game tasks
@@ -126,7 +139,8 @@ public class GameLogic implements CarEvent.Listener, CarStateEvent.Listener, Pla
 		lapManager = new LapManager( gameWorld );
 		ghostCar = CarFactory.createGhost( gameWorld, CarPreset.Type.Default );
 
-		// messager.show( "COOL STUFF!", 60, Message.Type.Information, MessagePosition.Bottom, MessageSize.Big );
+		// messager.show( "COOL STUFF!", 60, Message.Type.Information,
+		// MessagePosition.Bottom, MessageSize.Big );
 	}
 
 	public void dispose() {
@@ -212,7 +226,8 @@ public class GameLogic implements CarEvent.Listener, CarStateEvent.Listener, Pla
 	}
 
 	private void configurePlayer( GameWorld world, Input inputSystem, PlayerCar player ) {
-		// create player and setup player input system and initial position in the world
+		// create player and setup player input system and initial position in
+		// the world
 		playerCar.setInputSystem( inputSystem );
 		player.setWorldPosMt( world.playerStartPos, world.playerStartOrient );
 	}
@@ -238,6 +253,10 @@ public class GameLogic implements CarEvent.Listener, CarStateEvent.Listener, Pla
 		return playerCar;
 	}
 
+	public void setTimeDilateInputMode( TimeDilateInputMode mode ) {
+		timeDilateMode = mode;
+	}
+
 	public void onSubstepCompleted() {
 		gameTasksManager.physicsStep.onSubstepCompleted();
 	}
@@ -245,7 +264,8 @@ public class GameLogic implements CarEvent.Listener, CarStateEvent.Listener, Pla
 	public void onBeforeRender() {
 		boolean truncatePosition = true;
 
-		// update player's headlights and move the world camera to follows it, if there is a player
+		// update player's headlights and move the world camera to follows it,
+		// if there is a player
 		if( hasPlayer() ) {
 
 			if( gameWorld.isNightMode() ) {
@@ -268,7 +288,8 @@ public class GameLogic implements CarEvent.Listener, CarStateEvent.Listener, Pla
 		// post-processing step
 		postProcessing.onBeforeRender();
 
-		// Gdx.app.log( "GameLogic", NumberString.format(timeMultiplier.value) );
+		// Gdx.app.log( "GameLogic", NumberString.format(timeMultiplier.value)
+		// );
 	}
 
 	private Replay userRec = null;
@@ -335,12 +356,13 @@ public class GameLogic implements CarEvent.Listener, CarStateEvent.Listener, Pla
 				ghostCar.setReplay( userRec );
 			}
 
-			// Gdx.app.log( "GameLogic", "Player final pos=" + playerCar.getBody().getPosition() );
+			// Gdx.app.log( "GameLogic", "Player final pos=" +
+			// playerCar.getBody().getPosition() );
 
 		} else if( input.isPressed( Keys.Q ) || input.isPressed( Keys.BACK ) ) {
 
 			// quit
-			URacer.setScreen( ScreenType.ExitScreen, TransitionType.Fader, 250 );
+			URacer.Game.quit();
 
 		} else if( input.isPressed( Keys.O ) ) {
 
@@ -371,7 +393,7 @@ public class GameLogic implements CarEvent.Listener, CarStateEvent.Listener, Pla
 		}
 
 		// time dilation behavior
-		switch( Config.Gameplay.TimeDilationMode ) {
+		switch( timeDilateMode ) {
 		case Toggle:
 			if( input.isPressed( Keys.SPACE ) || input.isTouched( 1 ) ) {
 				timeModulation = !timeModulation;
@@ -497,10 +519,12 @@ public class GameLogic implements CarEvent.Listener, CarStateEvent.Listener, Pla
 		}
 	}
 
-	// Pay attention here! Multiple DriftState objects trigger the same event! Check the source for
+	// Pay attention here! Multiple DriftState objects trigger the same event!
+	// Check the source for
 	// handling multiple and crossing beginDrift/endDrift calls!
 	//
-	// Anyway, we can't track GhostCar's drift states since we record the forces generated by the CarSimulator!
+	// Anyway, we can't track GhostCar's drift states since we record the forces
+	// generated by the CarSimulator!
 	@Override
 	public void playerDriftStateEvent( PlayerCar player, PlayerDriftStateEvent.Type type ) {
 		switch( type ) {
@@ -530,8 +554,10 @@ public class GameLogic implements CarEvent.Listener, CarStateEvent.Listener, Pla
 			break;
 		}
 
-		// Gdx.app.log( "GameLogic", "playerDriftStateEvent::ds=" + NumberString.format(
-		// player.driftState.driftSeconds() ) + " (" + player.driftState.driftSeconds() + ")" );
+		// Gdx.app.log( "GameLogic", "playerDriftStateEvent::ds=" +
+		// NumberString.format(
+		// player.driftState.driftSeconds() ) + " (" +
+		// player.driftState.driftSeconds() + ")" );
 	}
 
 	private void playerTileChanged() {

@@ -77,7 +77,7 @@ public class PlayerSmokeTrails extends TrackEffect {
 
 		public void render( SpriteBatch batch, float x, float y ) {
 			effect.setPosition( x, y );
-			effect.draw( batch, URacer.getLastDeltaSecs() );
+			effect.draw( batch, URacer.Game.getLastDeltaSecs() );
 		}
 
 		public int getParticleCount() {

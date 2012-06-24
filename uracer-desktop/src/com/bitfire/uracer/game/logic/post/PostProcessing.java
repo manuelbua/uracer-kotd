@@ -5,6 +5,8 @@ import com.badlogic.gdx.graphics.GL10;
 import com.badlogic.gdx.graphics.Texture.TextureWrap;
 import com.badlogic.gdx.utils.LongMap;
 import com.bitfire.uracer.configuration.Config;
+import com.bitfire.uracer.configuration.UserPreferences;
+import com.bitfire.uracer.configuration.UserPreferences.Preference;
 import com.bitfire.uracer.postprocessing.PostProcessor;
 import com.bitfire.uracer.postprocessing.PostProcessorEffect;
 import com.bitfire.uracer.postprocessing.effects.Bloom;
@@ -12,11 +14,13 @@ import com.bitfire.uracer.postprocessing.effects.CrtMonitor;
 import com.bitfire.uracer.postprocessing.effects.Curvature;
 import com.bitfire.uracer.postprocessing.effects.Vignette;
 import com.bitfire.uracer.postprocessing.effects.Zoomer;
+import com.bitfire.uracer.postprocessing.filters.RadialBlur;
 import com.bitfire.uracer.utils.Hash;
 
-/** Encapsulates a post-processor animator that manages effects such as bloom and zoomblur to compose
+/** Encapsulates a post-processor animator that manages effects such as bloom and
+ * zoomblur to compose
  * and enhance the gaming experience. */
-public class PostProcessing {
+public final class PostProcessing {
 
 	public enum Effects {
 		Zoomer, Bloom, Vignette, Crt, Curvature;
@@ -28,6 +32,7 @@ public class PostProcessing {
 		}
 	}
 
+	private boolean hasPostProcessor;
 	private final PostProcessor postProcessor;
 
 	// public access to stored effects
@@ -39,35 +44,39 @@ public class PostProcessing {
 
 	public PostProcessing( PostProcessor postProcessor ) {
 		this.postProcessor = postProcessor;
-		configurePostProcessor( postProcessor );
-		currentAnimator = null;
+		hasPostProcessor = (this.postProcessor != null);
+
+		if( hasPostProcessor ) {
+			configurePostProcessor( postProcessor );
+			currentAnimator = null;
+		}
 	}
 
 	public void configurePostProcessor( PostProcessor postProcessor ) {
-		postProcessor.setEnabled( Config.PostProcessing.EnableGamePostProcessing );
+		postProcessor.setEnabled( true );
 		postProcessor.setClearBits( GL10.GL_COLOR_BUFFER_BIT | GL10.GL_DEPTH_BUFFER_BIT );
 		postProcessor.setClearDepth( 1f );
 		postProcessor.setBufferTextureWrap( TextureWrap.ClampToEdge, TextureWrap.ClampToEdge );
 
-		if( Config.PostProcessing.EnableZoom ) {
-			Zoomer z = (Config.PostProcessing.EnableZoomRadialBlur ? new Zoomer( Config.PostProcessing.RadialBlurQuality ) : new Zoomer());
+		if( UserPreferences.bool( Preference.Zoom ) ) {
+			Zoomer z = (UserPreferences.bool( Preference.ZoomRadialBlur ) ? new Zoomer( RadialBlur.Quality.valueOf( UserPreferences.string( Preference.ZoomRadialBlurQuality ) ) ) : new Zoomer());
 			z.setBlurStrength( 0 );
 			addEffect( Effects.Zoomer.name, z );
 		}
 
-		if( Config.PostProcessing.EnableBloom ) {
+		if( UserPreferences.bool( Preference.Bloom ) ) {
 			addEffect( Effects.Bloom.name, new Bloom( Config.PostProcessing.RttFboWidth, Config.PostProcessing.RttFboHeight ) );
 		}
 
-		if( Config.PostProcessing.EnableVignetting ) {
+		if( UserPreferences.bool( Preference.Vignetting ) ) {
 			// if there is no bloom, let's control the final saturation via
 			// the vignette filter
-			addEffect( Effects.Vignette.name, new Vignette( !Config.PostProcessing.EnableBloom ) );
+			addEffect( Effects.Vignette.name, new Vignette( !UserPreferences.bool( Preference.Bloom ) ) );
 		}
 
-		if( Config.PostProcessing.EnableCrtScreen ) {
-			addEffect( Effects.Crt.name, new CrtMonitor( Config.PostProcessing.EnableRadialDistortion, false ) );
-		} else if( Config.PostProcessing.EnableRadialDistortion ) {
+		if( UserPreferences.bool( Preference.CrtScreen ) ) {
+			addEffect( Effects.Crt.name, new CrtMonitor( UserPreferences.bool( Preference.RadialDistortion ), false ) );
+		} else if( UserPreferences.bool( Preference.RadialDistortion ) ) {
 			addEffect( Effects.Curvature.name, new Curvature() );
 		}
 
@@ -75,8 +84,10 @@ public class PostProcessing {
 	}
 
 	public void addEffect( String name, PostProcessorEffect effect ) {
-		postProcessor.addEffect( effect );
-		effects.put( Hash.APHash( name ), effect );
+		if( hasPostProcessor ) {
+			postProcessor.addEffect( effect );
+			effects.put( Hash.APHash( name ), effect );
+		}
 	}
 
 	public PostProcessorEffect getEffect( String name ) {
@@ -92,6 +103,10 @@ public class PostProcessing {
 	}
 
 	public void enableAnimator( String name ) {
+		if( !hasPostProcessor ) {
+			return;
+		}
+
 		PostProcessingAnimator next = animators.get( Hash.APHash( name ) );
 		if( next != null ) {
 			currentAnimator = next;
@@ -100,14 +115,14 @@ public class PostProcessing {
 	}
 
 	public void disableAnimator() {
-		if( currentAnimator != null ) {
+		if( hasPostProcessor && currentAnimator != null ) {
 			currentAnimator.reset();
 			currentAnimator = null;
 		}
 	}
 
 	public void onBeforeRender() {
-		if( currentAnimator != null ) {
+		if( hasPostProcessor && currentAnimator != null ) {
 			currentAnimator.update();
 		}
 	}

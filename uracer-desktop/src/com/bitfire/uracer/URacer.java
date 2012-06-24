@@ -7,6 +7,7 @@ import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.utils.TimeUtils;
 import com.bitfire.uracer.configuration.Config;
+import com.bitfire.uracer.configuration.UserPreferences;
 import com.bitfire.uracer.game.tween.SysTweener;
 import com.bitfire.uracer.resources.Art;
 import com.bitfire.uracer.resources.Sounds;
@@ -91,12 +92,15 @@ public class URacer implements ApplicationListener {
 
 		// create input system
 		input = new Input();
+		Gdx.app.log( "URacer", "input system created." );
 
 		// computed for a 256px tile size target (compute needed conversion factors)
 		scalingStrategy = new ScalingStrategy( new Vector2( 1280, 800 ), 70f, 224, 1f );
 
-		// everything has been setup on a 256px tile, scale back if that's the case
+		// load default private configuration
 		Config.asDefault();
+
+		UserPreferences.load();
 
 		Convert.init( scalingStrategy.tileMapZoomFactor, Config.Physics.PixelsPerMeter );
 		Art.init( scalingStrategy.invTileMapZoomFactor );
@@ -127,6 +131,8 @@ public class URacer implements ApplicationListener {
 
 	@Override
 	public void dispose() {
+		UserPreferences.save();
+
 		screenMgr.dispose();
 		TransitionFactory.dispose();
 
@@ -238,46 +244,54 @@ public class URacer implements ApplicationListener {
 	}
 
 	//
-	// export utility functions
+	// export utilities
 	//
 
-	public static boolean isRunning() {
-		return running;
+	public static final class Game {
+		public static boolean isRunning() {
+			return running;
+		}
+
+		public static float getRenderTime() {
+			return graphicsTime;
+		}
+
+		public static float getPhysicsTime() {
+			return physicsTime;
+		}
+
+		public static float getLastDeltaSecs() {
+			return lastDeltaTimeSec;
+		}
+
+		public static float getLastDeltaMs() {
+			return lastDeltaTimeMs;
+		}
+
+		public static float getTemporalAliasing() {
+			return aliasingTime;
+		}
+
+		public static long getFrameCount() {
+			return frameCount;
+		}
+
+		public static long getLastTicksCount() {
+			return lastTicksCount;
+		}
+
+		public static Input getInputSystem() {
+			return input;
+		}
+
+		public static void quit() {
+			setScreen( ScreenType.ExitScreen, TransitionType.Fader, 250 );
+		}
 	}
 
-	public static float getRenderTime() {
-		return graphicsTime;
-	}
-
-	public static float getPhysicsTime() {
-		return physicsTime;
-	}
-
-	public static float getLastDeltaSecs() {
-		return lastDeltaTimeSec;
-	}
-
-	public static float getLastDeltaMs() {
-		return lastDeltaTimeMs;
-	}
-
-	public static float getTemporalAliasing() {
-		return aliasingTime;
-	}
-
-	public static long getFrameCount() {
-		return frameCount;
-	}
-
-	public static long getLastTicksCount() {
-		return lastTicksCount;
-	}
 
 	public static void setScreen( ScreenType screen, TransitionType transitionType, long transitionDurationMs ) {
 		screenMgr.setScreen( screen, transitionType, transitionDurationMs );
 	}
 
-	public static Input getInputSystem() {
-		return input;
-	}
 }

@@ -1,13 +1,11 @@
 package com.bitfire.uracer.postprocessing.filters;
 
 import com.badlogic.gdx.graphics.Color;
-import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.math.Vector3;
 import com.bitfire.uracer.utils.ShaderLoader;
 
 public final class CrtScreen extends Filter<CrtScreen> {
 	private float time, offset, zoom;
-	private final Vector2 resolution;
 	private final Vector3 vtint;
 	private final Color tint;
 	private float distortion;
@@ -47,7 +45,6 @@ public final class CrtScreen extends Filter<CrtScreen> {
 		super( ShaderLoader.fromFile( "screenspace", "crt-screen", barrelDistortion ? "#define ENABLE_BARREL_DISTORTION" : "" ) );
 		dodistortion = barrelDistortion;
 
-		resolution = new Vector2();
 		vtint = new Vector3();
 		tint = new Color();
 

@@ -12,6 +12,7 @@ public class Zoomer extends PostProcessorEffect {
 	private RadialBlur radialBlur = null;
 	private Zoom zoom = null;
 
+	/** Creating a Zoomer specifying the radial blur quality will enable radial blur */
 	public Zoomer( RadialBlur.Quality quality ) {
 		radialBlur = new RadialBlur( quality );
 		zoom = null;
@@ -19,6 +20,7 @@ public class Zoomer extends PostProcessorEffect {
 		doRadial = true;
 	}
 
+	/** Creating a Zoomer without any parameter will use plain simple zooming */
 	public Zoomer() {
 		radialBlur = null;
 		zoom = new Zoom();

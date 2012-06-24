@@ -15,13 +15,11 @@ import com.badlogic.gdx.utils.Array;
 import com.badlogic.gdx.utils.JsonReader;
 import com.badlogic.gdx.utils.OrderedMap;
 
-/**
- * Loads the collision fixtures defined with the Physics Body Editor
+/** Loads the collision fixtures defined with the Physics Body Editor
  * application. You only need to give it a body and the corresponding fixture
  * name, and it will attach these fixtures to your body.
  *
- * @author Aurelien Ribon | http://www.aurelienribon.com
- */
+ * @author Aurelien Ribon | http://www.aurelienribon.com */
 public class BodyEditorLoader {
 
 	// Model
@@ -37,24 +35,26 @@ public class BodyEditorLoader {
 	// Ctors
 	// -------------------------------------------------------------------------
 
-	public BodyEditorLoader(FileHandle file) {
-		if (file == null) throw new NullPointerException("file is null");
-		model = readJson(file.readString());
+	public BodyEditorLoader( FileHandle file ) {
+		if( file == null ) {
+			throw new NullPointerException( "file is null" );
+		}
+		model = readJson( file.readString() );
 	}
 
-	public BodyEditorLoader(String str) {
-		if (str == null) throw new NullPointerException("str is null");
-		model = readJson(str);
+	public BodyEditorLoader( String str ) {
+		if( str == null ) {
+			throw new NullPointerException( "str is null" ); }
+		model = readJson( str );
 	}
 
 	// -------------------------------------------------------------------------
 	// Public API
 	// -------------------------------------------------------------------------
 
-	/**
-	 * Creates and applies the fixtures defined in the editor. The name
-	 * parameter is used to retrieve the right fixture from the loaded file.
-	 * <br/><br/>
+	/** Creates and applies the fixtures defined in the editor. The name
+	 * parameter is used to retrieve the right fixture from the loaded file. <br/>
+	 * <br/>
 	 *
 	 * The body reference point (the red cross in the tool) is by default
 	 * located at the bottom left corner of the image. This reference point
@@ -62,8 +62,8 @@ public class BodyEditorLoader {
 	 * place this reference point carefully to let you place your body in your
 	 * world easily with its BodyDef.position point. Note that to draw an image
 	 * at the position of your body, you will need to know this reference point
-	 * (see {@link #getOrigin(java.lang.String, float)}.
-	 * <br/><br/>
+	 * (see {@link #getOrigin(java.lang.String, float)}. <br/>
+	 * <br/>
 	 *
 	 * Also, saved shapes are normalized. As shown in the tool, the width of
 	 * the image is considered to be always 1 meter. Thus, you need to provide
@@ -73,76 +73,74 @@ public class BodyEditorLoader {
 	 * @param body The Box2d body you want to attach the fixture to.
 	 * @param name The name of the fixture you want to load.
 	 * @param fd The fixture parameters to apply to the created body fixture.
-	 * @param scale The desired scale of the body. The default width is 1.
-	 */
-	public void attachFixture(Body body, String name, FixtureDef fd, float scale, float scaleX, float scaleY ) {
-		RigidBodyModel rbModel = model.rigidBodies.get(name);
-		if (rbModel == null) throw new RuntimeException("Name '" + name + "' was not found.");
+	 * @param scale The desired scale of the body. The default width is 1. */
+	public void attachFixture( Body body, String name, FixtureDef fd, float scale, float scaleX, float scaleY ) {
+		RigidBodyModel rbModel = model.rigidBodies.get( name );
+		if( rbModel == null ) {
+			throw new RuntimeException( "Name '" + name + "' was not found." );
+		}
 
-		Vector2 origin = vec.set(rbModel.origin).mul(scale);
+		Vector2 origin = vec.set( rbModel.origin ).mul( scale );
 
-		for (int i=0, n=rbModel.polygons.size(); i<n; i++) {
-			PolygonModel polygon = rbModel.polygons.get(i);
+		for( int i = 0, n = rbModel.polygons.size(); i < n; i++ ) {
+			PolygonModel polygon = rbModel.polygons.get( i );
 			Vector2[] vertices = polygon.buffer;
 
-			for (int ii=0, nn=vertices.length; ii<nn; ii++) {
-				vertices[ii] = newVec().set(polygon.vertices.get(ii)).mul(scale);
-				vertices[ii].sub(origin);
+			for( int ii = 0, nn = vertices.length; ii < nn; ii++ ) {
+				vertices[ii] = newVec().set( polygon.vertices.get( ii ) ).mul( scale );
+				vertices[ii].sub( origin );
 				vertices[ii].x *= scaleX;
 				vertices[ii].y *= scaleY;
 			}
 
-			polygonShape.set(vertices);
+			polygonShape.set( vertices );
 			fd.shape = polygonShape;
-			body.createFixture(fd);
+			body.createFixture( fd );
 
-			for (int ii=0, nn=vertices.length; ii<nn; ii++) {
-				free(vertices[ii]);
+			for( int ii = 0, nn = vertices.length; ii < nn; ii++ ) {
+				free( vertices[ii] );
 			}
 		}
 
-		for (int i=0, n=rbModel.circles.size(); i<n; i++) {
-			CircleModel circle = rbModel.circles.get(i);
-			Vector2 center = newVec().set(circle.center).mul(scale);
+		for( int i = 0, n = rbModel.circles.size(); i < n; i++ ) {
+			CircleModel circle = rbModel.circles.get( i );
+			Vector2 center = newVec().set( circle.center ).mul( scale );
 			float radius = circle.radius * scale;
 
-			circleShape.setPosition(center);
-			circleShape.setRadius(radius);
+			circleShape.setPosition( center );
+			circleShape.setRadius( radius );
 			fd.shape = circleShape;
-			body.createFixture(fd);
+			body.createFixture( fd );
 
-			free(center);
+			free( center );
 		}
 	}
 
-	/**
-	 * Gets the image path attached to the given name.
-	 */
-	public String getImagePath(String name) {
-		RigidBodyModel rbModel = model.rigidBodies.get(name);
-		if (rbModel == null) throw new RuntimeException("Name '" + name + "' was not found.");
+	/** Gets the image path attached to the given name. */
+	public String getImagePath( String name ) {
+		RigidBodyModel rbModel = model.rigidBodies.get( name );
+		if( rbModel == null ) {
+			throw new RuntimeException( "Name '" + name + "' was not found." );
+		}
 
 		return rbModel.imagePath;
 	}
 
-	/**
-	 * Gets the origin point attached to the given name. Since the point is
+	/** Gets the origin point attached to the given name. Since the point is
 	 * normalized in [0,1] coordinates, it needs to be scaled to your body
 	 * size. Warning: this method returns the same Vector2 object each time, so
-	 * copy it if you need it for later use.
-	 */
-	public Vector2 getOrigin(String name, float scale) {
-		RigidBodyModel rbModel = model.rigidBodies.get(name);
-		if (rbModel == null) throw new RuntimeException("Name '" + name + "' was not found.");
+	 * copy it if you need it for later use. */
+	public Vector2 getOrigin( String name, float scale ) {
+		RigidBodyModel rbModel = model.rigidBodies.get( name );
+		if( rbModel == null )
+			throw new RuntimeException( "Name '" + name + "' was not found." );
 
-		return vec.set(rbModel.origin).mul(scale);
+		return vec.set( rbModel.origin ).mul( scale );
 	}
 
-	/**
-	 * <b>For advanced users only.</b> Lets you access the internal model of
+	/** <b>For advanced users only.</b> Lets you access the internal model of
 	 * this loader and modify it. Be aware that any modification is permanent
-	 * and that you should really know what you are doing.
-	 */
+	 * and that you should really know what you are doing. */
 	public Model getInternalModel() {
 		return model;
 	}
@@ -177,61 +175,61 @@ public class BodyEditorLoader {
 	// Json reading process
 	// -------------------------------------------------------------------------
 
-	private Model readJson(String str) {
+	private Model readJson( String str ) {
 		Model m = new Model();
-		OrderedMap<String,?> rootElem = (OrderedMap<String,?>) new JsonReader().parse(str);
+		OrderedMap<String, ?> rootElem = (OrderedMap<String, ?>)new JsonReader().parse( str );
 
-		Array<?> bodiesElems = (Array<?>) rootElem.get("rigidBodies");
+		Array<?> bodiesElems = (Array<?>)rootElem.get( "rigidBodies" );
 
-		for (int i=0; i<bodiesElems.size; i++) {
-			OrderedMap<String,?> bodyElem = (OrderedMap<String,?>) bodiesElems.get(i);
-			RigidBodyModel rbModel = readRigidBody(bodyElem);
-			m.rigidBodies.put(rbModel.name, rbModel);
+		for( int i = 0; i < bodiesElems.size; i++ ) {
+			OrderedMap<String, ?> bodyElem = (OrderedMap<String, ?>)bodiesElems.get( i );
+			RigidBodyModel rbModel = readRigidBody( bodyElem );
+			m.rigidBodies.put( rbModel.name, rbModel );
 		}
 
 		return m;
 	}
 
-	private RigidBodyModel readRigidBody(OrderedMap<String,?> bodyElem) {
+	private RigidBodyModel readRigidBody( OrderedMap<String, ?> bodyElem ) {
 		RigidBodyModel rbModel = new RigidBodyModel();
-		rbModel.name = (String) bodyElem.get("name");
-		rbModel.imagePath = (String) bodyElem.get("imagePath");
+		rbModel.name = (String)bodyElem.get( "name" );
+		rbModel.imagePath = (String)bodyElem.get( "imagePath" );
 
-		OrderedMap<String,?> originElem = (OrderedMap<String,?>) bodyElem.get("origin");
-		rbModel.origin.x = (Float) originElem.get("x");
-		rbModel.origin.y = (Float) originElem.get("y");
+		OrderedMap<String, ?> originElem = (OrderedMap<String, ?>)bodyElem.get( "origin" );
+		rbModel.origin.x = (Float)originElem.get( "x" );
+		rbModel.origin.y = (Float)originElem.get( "y" );
 
 		// polygons
 
-		Array<?> polygonsElem = (Array<?>) bodyElem.get("polygons");
+		Array<?> polygonsElem = (Array<?>)bodyElem.get( "polygons" );
 
-		for (int i=0; i<polygonsElem.size; i++) {
+		for( int i = 0; i < polygonsElem.size; i++ ) {
 			PolygonModel polygon = new PolygonModel();
-			rbModel.polygons.add(polygon);
+			rbModel.polygons.add( polygon );
 
-			Array<?> verticesElem = (Array<?>) polygonsElem.get(i);
-			for (int ii=0; ii<verticesElem.size; ii++) {
-				OrderedMap<String,?> vertexElem = (OrderedMap<String,?>) verticesElem.get(ii);
-				float x = (Float) vertexElem.get("x");
-				float y = (Float) vertexElem.get("y");
-				polygon.vertices.add(new Vector2(x, y));
+			Array<?> verticesElem = (Array<?>)polygonsElem.get( i );
+			for( int ii = 0; ii < verticesElem.size; ii++ ) {
+				OrderedMap<String, ?> vertexElem = (OrderedMap<String, ?>)verticesElem.get( ii );
+				float x = (Float)vertexElem.get( "x" );
+				float y = (Float)vertexElem.get( "y" );
+				polygon.vertices.add( new Vector2( x, y ) );
 			}
 
-			polygon.buffer = new Vector2[polygon.vertices.size()];
+			polygon.buffer = new Vector2[ polygon.vertices.size() ];
 		}
 
 		// circles
 
-		Array<?> circlesElem = (Array<?>) bodyElem.get("circles");
+		Array<?> circlesElem = (Array<?>)bodyElem.get( "circles" );
 
-		for (int i=0; i<circlesElem.size; i++) {
+		for( int i = 0; i < circlesElem.size; i++ ) {
 			CircleModel circle = new CircleModel();
-			rbModel.circles.add(circle);
+			rbModel.circles.add( circle );
 
-			OrderedMap<String,?> circleElem = (OrderedMap<String,?>) circlesElem.get(i);
-			circle.center.x = (Float) circleElem.get("cx");
-			circle.center.y = (Float) circleElem.get("cy");
-			circle.radius = (Float) circleElem.get("r");
+			OrderedMap<String, ?> circleElem = (OrderedMap<String, ?>)circlesElem.get( i );
+			circle.center.x = (Float)circleElem.get( "cx" );
+			circle.center.y = (Float)circleElem.get( "cy" );
+			circle.radius = (Float)circleElem.get( "r" );
 		}
 
 		return rbModel;
@@ -242,10 +240,10 @@ public class BodyEditorLoader {
 	// -------------------------------------------------------------------------
 
 	private Vector2 newVec() {
-		return vectorPool.isEmpty() ? new Vector2() : vectorPool.remove(0);
+		return vectorPool.isEmpty() ? new Vector2() : vectorPool.remove( 0 );
 	}
 
-	private void free(Vector2 v) {
-		vectorPool.add(v);
+	private void free( Vector2 v ) {
+		vectorPool.add( v );
 	}
 }

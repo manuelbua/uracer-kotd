@@ -24,6 +24,7 @@ import com.badlogic.gdx.math.Vector3;
 import com.badlogic.gdx.math.collision.BoundingBox;
 import com.bitfire.uracer.ScalingStrategy;
 import com.bitfire.uracer.configuration.Config;
+import com.bitfire.uracer.configuration.Storage;
 import com.bitfire.uracer.game.actors.Car;
 import com.bitfire.uracer.game.logic.helpers.CameraController;
 import com.bitfire.uracer.game.world.GameWorld;
@@ -115,7 +116,7 @@ public final class GameWorldRenderer {
 
 		createCams( width, height );
 
-		FileHandle baseDir = Gdx.files.internal( Config.LevelsStore );
+		FileHandle baseDir = Gdx.files.internal( Storage.Levels );
 		tileAtlas = new TileAtlas( world.map, baseDir );
 		tileMapRenderer = new UTileMapRenderer( world.map, tileAtlas, 1, 1, world.map.tileWidth, world.map.tileHeight );
 

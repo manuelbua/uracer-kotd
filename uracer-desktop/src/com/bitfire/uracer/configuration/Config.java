@@ -5,75 +5,11 @@ import com.badlogic.gdx.Gdx;
 import com.bitfire.uracer.game.logic.helpers.CameraController.InterpolationMode;
 import com.bitfire.uracer.postprocessing.filters.Blur;
 import com.bitfire.uracer.postprocessing.filters.Blur.BlurType;
-import com.bitfire.uracer.postprocessing.filters.RadialBlur;
 import com.bitfire.uracer.utils.NumberString;
 
 public final class Config {
-	// generic
 	public static boolean isDesktop;
-	public static final String LevelsStore = "data/levels/";
-	public static final String ShapesStore = "data/base/";
-	public static final String ShapesRefs = "../../data-src/base/cars/";
-	public static final String URacerConfigFolder = "uracer/";
-	public static final String LocalReplaysStore = "local-replays/";
-
-	public static final class PostProcessing {
-		public static boolean EnableGamePostProcessing;
-		public static boolean EnableVignetting;
-		public static boolean EnableBloom;
-		public static boolean EnableZoom;
-		public static boolean EnableZoomRadialBlur;
-		public static boolean EnableCrtScreen;
-		public static boolean EnableRadialDistortion;	// if both this and the CrtScreen are enabled, then the crt shader will do the distortion instead.
-
-		public static BlurType BlurType;
-		public static float RttRatio = 0.25f;
-		public static int RttFboWidth, RttFboHeight;
-
-		public static RadialBlur.Quality RadialBlurQuality;
-		public static float ZoomMaxStrength;
-
-		// compute per-resolution constants
-		public static void asDefault() {
-
-			// global switch
-			EnableGamePostProcessing = true;
-
-			// post-processor effects
-			EnableVignetting = true;//Config.isDesktop;
-			EnableBloom = Config.isDesktop;
-			EnableZoom = true;
-			EnableZoomRadialBlur = true;//Config.isDesktop;
-			EnableCrtScreen = false;//Config.isDesktop;
-			EnableRadialDistortion = false;
-
-			RttFboWidth = (int)(Gdx.graphics.getWidth() * RttRatio);
-			RttFboHeight = (int)(Gdx.graphics.getHeight() * RttRatio);
-
-			int w = Gdx.graphics.getWidth();
-			if( w >= 1680 ) {
-				BlurType = Blur.BlurType.Gaussian5x5b;
-				RadialBlurQuality = RadialBlur.Quality.High;
-				ZoomMaxStrength = -0.08f;
-			} else if( w >= 1200 ) {
-				BlurType = Blur.BlurType.Gaussian5x5b;
-				RadialBlurQuality = RadialBlur.Quality.Medium;
-				ZoomMaxStrength = -0.08f;
-			} else if( w >= 800 ) {
-				BlurType = Blur.BlurType.Gaussian5x5b;
-				RadialBlurQuality = RadialBlur.Quality.Medium;
-				ZoomMaxStrength = -0.08f;
-			}
-
-			Gdx.app.log( "Config", "blurType=" + BlurType );
-			Gdx.app.log( "Config", "zoomQuality=" + RadialBlurQuality );
-			Gdx.app.log( "Config", "zoomMaxStrength=" + ZoomMaxStrength );
-			Gdx.app.log( "Config", "FBO size is =" + (int)(Gdx.graphics.getWidth() * RttRatio) + "x" + (int)(Gdx.graphics.getHeight() * RttRatio) );
-		}
-
-		private PostProcessing() {
-		}
-	}
+	public static String UserPreferences = "uracer-preferences";
 
 	public static final class Graphics {
 		public static boolean EnableMipMapping;
@@ -87,21 +23,6 @@ public final class Config {
 		}
 
 		private Graphics() {
-		}
-	}
-
-	public static final class Gameplay {
-		public enum TimeDilateInputMode {
-			// @formatter:off
-			Toggle,				// (spacebar to act on desktop, touch to enable + touch to disable acting on device
-			TouchAndRelease,	// touch to act, release to stop acting
-			// @formatter:off
-		}
-
-		public static TimeDilateInputMode TimeDilationMode;
-
-		public static void asDefault() {
-			Gameplay.TimeDilationMode = TimeDilateInputMode.TouchAndRelease;
 		}
 	}
 
@@ -176,6 +97,34 @@ public final class Config {
 		}
 	}
 
+	public static final class PostProcessing {
+	
+		public static BlurType BlurType;
+		public static float RttRatio = 0.25f;
+		public static int RttFboWidth, RttFboHeight;
+	
+		// compute per-resolution constants
+		public static void asDefault() {
+	
+			RttFboWidth = (int)(Gdx.graphics.getWidth() * RttRatio);
+			RttFboHeight = (int)(Gdx.graphics.getHeight() * RttRatio);
+	
+			int w = Gdx.graphics.getWidth();
+			if( w >= 1680 ) {
+				BlurType = Blur.BlurType.Gaussian5x5b;
+			} else if( w >= 1200 ) {
+				BlurType = Blur.BlurType.Gaussian5x5b;
+			} else if( w >= 800 ) {
+				BlurType = Blur.BlurType.Gaussian5x5b;
+			}
+	
+			Gdx.app.log( "Config", "blurType=" + BlurType );
+		}
+	
+		private PostProcessing() {
+		}
+	}
+
 	// set default configuration values
 	public static void asDefault() {
 		isDesktop = (Gdx.app.getType() == ApplicationType.Desktop);
@@ -183,8 +132,6 @@ public final class Config {
 		Debug.asDefault();
 		Graphics.asDefault();
 		Physics.asDefault();
-		PostProcessing.asDefault();
-		Gameplay.asDefault();
 	}
 
 	private Config() {
