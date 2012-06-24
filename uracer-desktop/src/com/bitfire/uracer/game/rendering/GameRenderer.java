@@ -8,13 +8,17 @@ import com.badlogic.gdx.math.Rectangle;
 import com.badlogic.gdx.math.Vector2;
 import com.bitfire.uracer.ScalingStrategy;
 import com.bitfire.uracer.configuration.Config;
+import com.bitfire.uracer.configuration.UserPreferences;
+import com.bitfire.uracer.configuration.UserPreferences.Preference;
 import com.bitfire.uracer.game.GameEvents;
 import com.bitfire.uracer.game.world.GameWorld;
 import com.bitfire.uracer.postprocessing.PostProcessor;
 import com.bitfire.uracer.utils.Convert;
 
-/** Manages the high-level rendering of the whole world and triggers all the GameRendererEvent events
- * associated with the rendering timeline, realized with the event's renderqueue mechanism.
+/** Manages the high-level rendering of the whole world and triggers all the
+ * GameRendererEvent events
+ * associated with the rendering timeline, realized with the event's renderqueue
+ * mechanism.
  *
  * @author bmanuel */
 public final class GameRenderer {
@@ -24,8 +28,10 @@ public final class GameRenderer {
 	private final PostProcessor postProcessor;
 	private final GameWorldRenderer worldRenderer;
 
-	/** Manages to convert world positions expressed in meters or pixels to the corresponding position to screen pixels.
-	 * To use this class, the GameWorldRenderer MUST be already constructed and initialized. */
+	/** Manages to convert world positions expressed in meters or pixels to the
+	 * corresponding position to screen pixels.
+	 * To use this class, the GameWorldRenderer MUST be already constructed and
+	 * initialized. */
 	public static final class ScreenUtils {
 		public static boolean ready = false;
 		private static Vector2 screenPosFor = new Vector2();

@@ -5,6 +5,8 @@ import com.badlogic.gdx.graphics.GL10;
 import com.badlogic.gdx.graphics.Texture.TextureWrap;
 import com.badlogic.gdx.utils.LongMap;
 import com.bitfire.uracer.configuration.Config;
+import com.bitfire.uracer.configuration.UserPreferences;
+import com.bitfire.uracer.configuration.UserPreferences.Preference;
 import com.bitfire.uracer.postprocessing.PostProcessor;
 import com.bitfire.uracer.postprocessing.PostProcessorEffect;
 import com.bitfire.uracer.postprocessing.effects.Bloom;
@@ -12,11 +14,13 @@ import com.bitfire.uracer.postprocessing.effects.CrtMonitor;
 import com.bitfire.uracer.postprocessing.effects.Curvature;
 import com.bitfire.uracer.postprocessing.effects.Vignette;
 import com.bitfire.uracer.postprocessing.effects.Zoomer;
+import com.bitfire.uracer.postprocessing.filters.RadialBlur;
 import com.bitfire.uracer.utils.Hash;
 
-/** Encapsulates a post-processor animator that manages effects such as bloom and zoomblur to compose
+/** Encapsulates a post-processor animator that manages effects such as bloom and
+ * zoomblur to compose
  * and enhance the gaming experience. */
-public class PostProcessing {
+public final class PostProcessing {
 
 	public enum Effects {
 		Zoomer, Bloom, Vignette, Crt, Curvature;
