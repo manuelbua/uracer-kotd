@@ -80,6 +80,9 @@ public class GameLogic implements CarEvent.Listener, CarStateEvent.Listener, Pla
 	private Timeline seqIn, seqOut;
 	public static final float TimeMultiplierMin = 0.3f;
 
+	// gameplay
+	private TimeDilateInputMode timeDilateMode;
+
 	// private TweenCallback timeModulationFinished = new TweenCallback() {
 	// @Override
 	// public void onEvent( int type, BaseTween<?> source ) {
@@ -96,6 +99,7 @@ public class GameLogic implements CarEvent.Listener, CarStateEvent.Listener, Pla
 		// this.gameRenderer = gameRenderer;
 		this.gameWorldRenderer = gameRenderer.getWorldRenderer();
 		this.input = URacer.Game.getInputSystem();
+		this.timeDilateMode = Gameplay.TimeDilateInputMode.valueOf( UserPreferences.string( Preference.TimeDilateInputMode ) );
 
 		// create tweening support
 		Tween.registerAccessor( Message.class, new MessageAccessor() );
@@ -236,6 +240,10 @@ public class GameLogic implements CarEvent.Listener, CarStateEvent.Listener, Pla
 		return playerCar;
 	}
 
+	public void setTimeDilateInputMode( TimeDilateInputMode mode ) {
+		timeDilateMode = mode;
+	}
+
 	public void onSubstepCompleted() {
 		gameTasksManager.physicsStep.onSubstepCompleted();
 	}
@@ -369,7 +377,7 @@ public class GameLogic implements CarEvent.Listener, CarStateEvent.Listener, Pla
 		}
 
 		// time dilation behavior
-		switch( Config.Gameplay.TimeDilationMode ) {
+		switch( timeDilateMode ) {
 		case Toggle:
 			if( input.isPressed( Keys.SPACE ) || input.isTouched( 1 ) ) {
 				timeModulation = !timeModulation;

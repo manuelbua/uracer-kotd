@@ -44,30 +44,30 @@ public class PostProcessing {
 	}
 
 	public void configurePostProcessor( PostProcessor postProcessor ) {
-		postProcessor.setEnabled( Config.PostProcessing.EnableGamePostProcessing );
+		postProcessor.setEnabled( true );
 		postProcessor.setClearBits( GL10.GL_COLOR_BUFFER_BIT | GL10.GL_DEPTH_BUFFER_BIT );
 		postProcessor.setClearDepth( 1f );
 		postProcessor.setBufferTextureWrap( TextureWrap.ClampToEdge, TextureWrap.ClampToEdge );
 
-		if( Config.PostProcessing.EnableZoom ) {
-			Zoomer z = (Config.PostProcessing.EnableZoomRadialBlur ? new Zoomer( Config.PostProcessing.RadialBlurQuality ) : new Zoomer());
+		if( UserPreferences.bool( Preference.Zoom ) ) {
+			Zoomer z = (UserPreferences.bool( Preference.ZoomRadialBlur ) ? new Zoomer( RadialBlur.Quality.valueOf( UserPreferences.string( Preference.ZoomRadialBlurQuality ) ) ) : new Zoomer());
 			z.setBlurStrength( 0 );
 			addEffect( Effects.Zoomer.name, z );
 		}
 
-		if( Config.PostProcessing.EnableBloom ) {
+		if( UserPreferences.bool( Preference.Bloom ) ) {
 			addEffect( Effects.Bloom.name, new Bloom( Config.PostProcessing.RttFboWidth, Config.PostProcessing.RttFboHeight ) );
 		}
 
-		if( Config.PostProcessing.EnableVignetting ) {
+		if( UserPreferences.bool( Preference.Vignetting ) ) {
 			// if there is no bloom, let's control the final saturation via
 			// the vignette filter
-			addEffect( Effects.Vignette.name, new Vignette( !Config.PostProcessing.EnableBloom ) );
+			addEffect( Effects.Vignette.name, new Vignette( !UserPreferences.bool( Preference.Bloom ) ) );
 		}
 
-		if( Config.PostProcessing.EnableCrtScreen ) {
-			addEffect( Effects.Crt.name, new CrtMonitor( Config.PostProcessing.EnableRadialDistortion, false ) );
-		} else if( Config.PostProcessing.EnableRadialDistortion ) {
+		if( UserPreferences.bool( Preference.CrtScreen ) ) {
+			addEffect( Effects.Crt.name, new CrtMonitor( UserPreferences.bool( Preference.RadialDistortion ), false ) );
+		} else if( UserPreferences.bool( Preference.RadialDistortion ) ) {
 			addEffect( Effects.Curvature.name, new Curvature() );
 		}
 

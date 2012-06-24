@@ -98,6 +98,8 @@ public class URacer implements ApplicationListener {
 		// everything has been setup on a 256px tile, scale back if that's the case
 		Config.asDefault();
 
+		UserPreferences.load();
+
 		Convert.init( scalingStrategy.tileMapZoomFactor, Config.Physics.PixelsPerMeter );
 		Art.init( scalingStrategy.invTileMapZoomFactor );
 		SpriteBatchUtils.init( Art.debugFont, Art.DebugFontWidth );
@@ -127,6 +129,8 @@ public class URacer implements ApplicationListener {
 
 	@Override
 	public void dispose() {
+		UserPreferences.save();
+
 		screenMgr.dispose();
 		TransitionFactory.dispose();
 

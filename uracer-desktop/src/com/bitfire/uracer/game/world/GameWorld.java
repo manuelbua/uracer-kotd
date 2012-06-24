@@ -31,6 +31,7 @@ import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.physics.box2d.World;
 import com.bitfire.uracer.ScalingStrategy;
 import com.bitfire.uracer.configuration.Config;
+import com.bitfire.uracer.configuration.Storage;
 import com.bitfire.uracer.game.collisions.CollisionFilters;
 import com.bitfire.uracer.game.world.models.MapUtils;
 import com.bitfire.uracer.game.world.models.ModelFactory;
@@ -97,7 +98,7 @@ public final class GameWorld {
 
 		// ie. "level1-128.tmx"
 		String mapname = levelName + "-" + (int)scalingStrategy.forTileSize + ".tmx";
-		FileHandle mapHandle = Gdx.files.internal( Config.LevelsStore + mapname );
+		FileHandle mapHandle = Gdx.files.internal( Storage.Levels + mapname );
 
 		// load tilemap
 		map = TiledLoader.createMap( mapHandle );

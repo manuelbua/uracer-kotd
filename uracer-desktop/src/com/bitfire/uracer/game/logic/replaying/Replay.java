@@ -10,7 +10,7 @@ import java.util.zip.GZIPOutputStream;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.files.FileHandle;
 import com.badlogic.gdx.math.Vector2;
-import com.bitfire.uracer.configuration.Config;
+import com.bitfire.uracer.configuration.Storage;
 import com.bitfire.uracer.game.Time;
 import com.bitfire.uracer.game.actors.Car;
 import com.bitfire.uracer.game.actors.CarForces;
@@ -114,7 +114,7 @@ public class Replay {
 	}
 
 	public static Replay loadLocal( String trackname ) {
-		String filename = Config.URacerConfigFolder + Config.LocalReplaysStore + trackname;
+		String filename = Storage.URacerConfig + Storage.LocalReplays + trackname;
 		FileHandle fh = Gdx.files.external( filename );
 
 		if( fh.exists() ) {
@@ -173,7 +173,7 @@ public class Replay {
 				@Override
 				public void run() {
 					try {
-						String filename = Config.URacerConfigFolder + Config.LocalReplaysStore + trackName;
+						String filename = Storage.URacerConfig + Storage.LocalReplays + trackName;
 						FileHandle hf = Gdx.files.external( filename );
 
 						// DataOutputStream os = new DataOutputStream( hf.write( false ) );
