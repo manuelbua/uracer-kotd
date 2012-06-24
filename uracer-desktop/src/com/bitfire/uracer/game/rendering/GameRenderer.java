@@ -72,7 +72,11 @@ public final class GameRenderer {
 		Gdx.app.log( "GameRenderer", "ScreenUtils " + (ScreenUtils.ready ? "initialized." : "NOT initialized!") );
 
 		// post-processing
-		postProcessor = new PostProcessor( width, height, true /* depth */, false /* alpha */, Config.isDesktop /* supports32Bpp */);
+		if( UserPreferences.bool( Preference.PostProcessing ) ) {
+			postProcessor = new PostProcessor( width, height, true /* depth */, false /* alpha */, Config.isDesktop /* supports32Bpp */);
+		} else {
+			postProcessor = null;
+		}
 	}
 
 	public void dispose() {
@@ -84,6 +88,9 @@ public final class GameRenderer {
 		GameEvents.gameRenderer.removeAllListeners();
 	}
 
+	public boolean hasPostProcessor() {
+		return postProcessor != null;
+	}
 	public PostProcessor getPostProcessor() {
 		return postProcessor;
 	}

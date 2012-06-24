@@ -28,6 +28,7 @@ public class PostProcessing {
 		}
 	}
 
+	private boolean hasPostProcessor;
 	private final PostProcessor postProcessor;
 
 	// public access to stored effects
@@ -39,8 +40,12 @@ public class PostProcessing {
 
 	public PostProcessing( PostProcessor postProcessor ) {
 		this.postProcessor = postProcessor;
-		configurePostProcessor( postProcessor );
-		currentAnimator = null;
+		hasPostProcessor = (this.postProcessor != null);
+
+		if( hasPostProcessor ) {
+			configurePostProcessor( postProcessor );
+			currentAnimator = null;
+		}
 	}
 
 	public void configurePostProcessor( PostProcessor postProcessor ) {
@@ -75,8 +80,10 @@ public class PostProcessing {
 	}
 
 	public void addEffect( String name, PostProcessorEffect effect ) {
-		postProcessor.addEffect( effect );
-		effects.put( Hash.APHash( name ), effect );
+		if( hasPostProcessor ) {
+			postProcessor.addEffect( effect );
+			effects.put( Hash.APHash( name ), effect );
+		}
 	}
 
 	public PostProcessorEffect getEffect( String name ) {
@@ -92,6 +99,10 @@ public class PostProcessing {
 	}
 
 	public void enableAnimator( String name ) {
+		if( !hasPostProcessor ) {
+			return;
+		}
+
 		PostProcessingAnimator next = animators.get( Hash.APHash( name ) );
 		if( next != null ) {
 			currentAnimator = next;
@@ -100,14 +111,14 @@ public class PostProcessing {
 	}
 
 	public void disableAnimator() {
-		if( currentAnimator != null ) {
+		if( hasPostProcessor && currentAnimator != null ) {
 			currentAnimator.reset();
 			currentAnimator = null;
 		}
 	}
 
 	public void onBeforeRender() {
-		if( currentAnimator != null ) {
+		if( hasPostProcessor && currentAnimator != null ) {
 			currentAnimator.update();
 		}
 	}
