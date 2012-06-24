@@ -59,23 +59,23 @@ public final class CommandLine {
 						flags.width = 1920;
 						flags.height = 1080;
 					} else {
-						System.out.println( "Invalid resolution specified (" + arg + "), defaulting to " + (flags.width + "x" + flags.height) );
+						System.out.print( "Invalid resolution specified (" + arg + "), defaulting to " + (flags.width + "x" + flags.height) );
 					}
 				}
 
 				break;
 			case 'h':
-				System.out.println( "Valid command-line options:\n" );
-				System.out.println( "  -h, --help\t\tshows this help" );
-				System.out.println( "  -r, --resolution=RES\tspecify the resolution to use: you can either specify" );
-				System.out.println( "  \t\t\ta real resolution =, e.g. --resolution=800x600, or use " );
-				System.out.println( "  \t\t\ta built-in shortcut (one of \"low\", \"mid\" or \"high\")." );
-				System.out.println( "  \t\t\t(low=800x480, mid=1280x800, high=1920x1080)" );
-				System.out.println( "  -v, --no-vsync\tdisable VSync" );
-				System.out.println( "  -c, --cpusync\t\tenable CPU sync" );
-				System.out.println( "  -f, --fullscreen\tenable fullscreen" );
-				System.out.println( "  -t, --right-screen\treposition the game's window to the screen on the right,\n\t\t\tif available." );
-				System.out.println( "" );
+				System.out.print( "Valid command-line options:\n" );
+				System.out.print( "  -h, --help\t\tshows this help" );
+				System.out.print( "  -r, --resolution=RES\tspecify the resolution to use: you can either specify" );
+				System.out.print( "  \t\t\ta real resolution =, e.g. --resolution=800x600, or use " );
+				System.out.print( "  \t\t\ta built-in shortcut (one of \"low\", \"mid\" or \"high\")." );
+				System.out.print( "  \t\t\t(low=800x480, mid=1280x800, high=1920x1080)" );
+				System.out.print( "  -v, --no-vsync\tdisable VSync" );
+				System.out.print( "  -c, --cpusync\t\tenable CPU sync" );
+				System.out.print( "  -f, --fullscreen\tenable fullscreen" );
+				System.out.print( "  -t, --right-screen\treposition the game's window to the screen on the right,\n\t\t\tif available." );
+				System.out.print( "" );
 				return false;
 			case 'v':
 				flags.vSyncEnabled = false;
@@ -90,13 +90,13 @@ public final class CommandLine {
 				flags.useRightScreen = true;
 				break;
 			case '?':
-				System.out.println( "The specified parameter is not valid.\nTry --help for a list of valid parameters." );
+				System.out.print( "The specified parameter is not valid.\nTry --help for a list of valid parameters." );
 				return false;
 			case ':':
-				System.out.println( "The specified argument is missing some values.\nTry --help for more information." );
+				System.out.print( "The specified argument is missing some values.\nTry --help for more information." );
 				return false;
 			default:
-				System.out.println( "getopt() returned " + c + " (" + (char)c + ")\n" );
+				System.out.print( "getopt() returned " + c + " (" + (char)c + ")\n" );
 				return false;
 			}
 		}
