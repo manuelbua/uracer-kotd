@@ -95,7 +95,7 @@ public class GameLogic implements CarEvent.Listener, CarStateEvent.Listener, Pla
 		this.gameWorld = gameWorld;
 		// this.gameRenderer = gameRenderer;
 		this.gameWorldRenderer = gameRenderer.getWorldRenderer();
-		this.input = URacer.getInputSystem();
+		this.input = URacer.Game.getInputSystem();
 
 		// create tweening support
 		Tween.registerAccessor( Message.class, new MessageAccessor() );
@@ -338,7 +338,7 @@ public class GameLogic implements CarEvent.Listener, CarStateEvent.Listener, Pla
 		} else if( input.isPressed( Keys.Q ) || input.isPressed( Keys.BACK ) ) {
 
 			// quit
-			URacer.quit();
+			URacer.Game.quit();
 
 		} else if( input.isPressed( Keys.O ) ) {
 

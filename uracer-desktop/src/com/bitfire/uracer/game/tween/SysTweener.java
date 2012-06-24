@@ -29,6 +29,6 @@ public final class SysTweener {
 	}
 
 	public static void update() {
-		manager.update( URacer.getLastDeltaMs() );
+		manager.update( URacer.Game.getLastDeltaMs() );
 	}
 }

@@ -238,50 +238,54 @@ public class URacer implements ApplicationListener {
 	}
 
 	//
-	// export utility functions
+	// export utilities
 	//
 
-	public static boolean isRunning() {
-		return running;
+	public static final class Game {
+		public static boolean isRunning() {
+			return running;
+		}
+
+		public static float getRenderTime() {
+			return graphicsTime;
+		}
+
+		public static float getPhysicsTime() {
+			return physicsTime;
+		}
+
+		public static float getLastDeltaSecs() {
+			return lastDeltaTimeSec;
+		}
+
+		public static float getLastDeltaMs() {
+			return lastDeltaTimeMs;
+		}
+
+		public static float getTemporalAliasing() {
+			return aliasingTime;
+		}
+
+		public static long getFrameCount() {
+			return frameCount;
+		}
+
+		public static long getLastTicksCount() {
+			return lastTicksCount;
+		}
+
+		public static Input getInputSystem() {
+			return input;
+		}
+
+		public static void quit() {
+			setScreen( ScreenType.ExitScreen, TransitionType.Fader, 250 );
+		}
 	}
 
-	public static float getRenderTime() {
-		return graphicsTime;
-	}
-
-	public static float getPhysicsTime() {
-		return physicsTime;
-	}
-
-	public static float getLastDeltaSecs() {
-		return lastDeltaTimeSec;
-	}
-
-	public static float getLastDeltaMs() {
-		return lastDeltaTimeMs;
-	}
-
-	public static float getTemporalAliasing() {
-		return aliasingTime;
-	}
-
-	public static long getFrameCount() {
-		return frameCount;
-	}
-
-	public static long getLastTicksCount() {
-		return lastTicksCount;
-	}
 
 	public static void setScreen( ScreenType screen, TransitionType transitionType, long transitionDurationMs ) {
 		screenMgr.setScreen( screen, transitionType, transitionDurationMs );
 	}
 
-	public static Input getInputSystem() {
-		return input;
-	}
-
-	public static void quit() {
-		setScreen( ScreenType.ExitScreen, TransitionType.Fader, 250 );
-	}
 }

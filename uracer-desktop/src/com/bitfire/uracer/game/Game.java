@@ -80,7 +80,7 @@ public class Game implements Disposable {
 
 	public void render( FrameBuffer dest ) {
 		// trigger the event and let's subscribers interpolate and update their state()
-		gameRenderer.beforeRender( URacer.getTemporalAliasing() );
+		gameRenderer.beforeRender( URacer.Game.getTemporalAliasing() );
 		gameLogic.onBeforeRender();
 
 		gameRenderer.render( dest );

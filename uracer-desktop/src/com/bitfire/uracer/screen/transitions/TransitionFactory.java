@@ -16,6 +16,9 @@ public final class TransitionFactory {
 		}
 	}
 
+	private TransitionFactory() {
+	}
+
 	public static ScreenTransition getTransition( TransitionType transitionType ) {
 		ScreenTransition transition = null;
 
