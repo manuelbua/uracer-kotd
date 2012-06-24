@@ -7,6 +7,7 @@ import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.utils.TimeUtils;
 import com.bitfire.uracer.configuration.Config;
+import com.bitfire.uracer.configuration.UserPreferences;
 import com.bitfire.uracer.game.tween.SysTweener;
 import com.bitfire.uracer.resources.Art;
 import com.bitfire.uracer.resources.Sounds;
@@ -91,11 +92,12 @@ public class URacer implements ApplicationListener {
 
 		// create input system
 		input = new Input();
+		Gdx.app.log( "URacer", "input system created." );
 
 		// computed for a 256px tile size target (compute needed conversion factors)
 		scalingStrategy = new ScalingStrategy( new Vector2( 1280, 800 ), 70f, 224, 1f );
 
-		// everything has been setup on a 256px tile, scale back if that's the case
+		// load default private configuration
 		Config.asDefault();
 
 		UserPreferences.load();
