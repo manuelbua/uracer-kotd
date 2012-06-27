@@ -114,7 +114,7 @@ public class Replay {
 	}
 
 	public static Replay loadLocal( String trackname ) {
-		String filename = Storage.URacerConfig + Storage.LocalReplays + trackname;
+		String filename = Storage.LocalReplays + trackname;
 		FileHandle fh = Gdx.files.external( filename );
 
 		if( fh.exists() ) {
@@ -173,7 +173,7 @@ public class Replay {
 				@Override
 				public void run() {
 					try {
-						String filename = Storage.URacerConfig + Storage.LocalReplays + trackName;
+						String filename = Storage.LocalReplays + trackName;
 						FileHandle hf = Gdx.files.external( filename );
 
 						// DataOutputStream os = new DataOutputStream( hf.write( false ) );

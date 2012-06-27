@@ -29,6 +29,22 @@ public final class ModelFactory {
 		ModelFactory.scalingStrategy = strategy;
 	}
 
+	public static void dispose() {
+
+		// finally, delete cached shared still models
+		if( cachedStillModels != null ) {
+			for( StillModel m : cachedStillModels.values() ) {
+				m.dispose();
+			}
+
+			cachedStillModels.clear();
+		}
+
+		if( cachedMaterials != null ) {
+			cachedMaterials.clear();
+		}
+	}
+
 	private static ModelMesh fromString( String mesh ) {
 		if( mesh == null ) {
 			return ModelMesh.Missing;
@@ -61,30 +77,39 @@ public final class ModelFactory {
 
 	public static OrthographicAlignedStillModel create( String meshType, float posPxX, float posPxY, float scale ) {
 		ModelMesh type = fromString( meshType );
-		return ModelFactory.create( type, posPxX, posPxY, scale );
+		OrthographicAlignedStillModel m = ModelFactory.create( type, posPxX, posPxY, scale );
+		// createdOASModels.add( m );
+		return m;
 	}
+
+	// private static Array<OrthographicAlignedStillModel> createdOASModels =
+	// new Array<OrthographicAlignedStillModel>();
+	// private static Array<TreeStillModel> createdTreeModels = new
+	// Array<TreeStillModel>();
 
 	public static OrthographicAlignedStillModel create( ModelMesh modelMesh, float posPxX, float posPxY, float scale ) {
 		OrthographicAlignedStillModel stillModel = null;
 
 		switch( modelMesh ) {
 		case Palm:
-			stillModel = new OrthographicAlignedStillModel( getModel( "data/3d/models/palm.g3dt" ), getMaterial( modelMesh, Art.meshPalm ), ModelFactory.scalingStrategy );
+			stillModel = new OrthographicAlignedStillModel( getStillModel( "data/3d/models/palm.g3dt" ), getMaterial( modelMesh, Art.meshPalm ),
+					ModelFactory.scalingStrategy );
 			break;
 
 		case Tribune:
-			stillModel = new OrthographicAlignedStillModel( getModel( "data/3d/models/tribune.g3dt" ), getMaterial( modelMesh, Art.meshTribune ),
+			stillModel = new OrthographicAlignedStillModel( getStillModel( "data/3d/models/tribune.g3dt" ), getMaterial( modelMesh, Art.meshTribune ),
 					ModelFactory.scalingStrategy );
 			break;
 
 		// missing mesh mesh
 		case Missing:
 		default:
-			stillModel = new OrthographicAlignedStillModel( getModel( "data/3d/models/missing-mesh.g3dt" ), getMaterial( modelMesh, Art.meshMissing ),
+			stillModel = new OrthographicAlignedStillModel( getStillModel( "data/3d/models/missing-mesh.g3dt" ), getMaterial( modelMesh, Art.meshMissing ),
 					ModelFactory.scalingStrategy );
 		}
 
 		if( stillModel != null ) {
+			// createdOASModels.add( stillModel );
 			stillModel.setPosition( posPxX, posPxY );
 			if( modelMesh != ModelMesh.Missing ) {
 				stillModel.setScale( scale );
@@ -98,7 +123,9 @@ public final class ModelFactory {
 
 	public static TreeStillModel createTree( String meshType, float posPxX, float posPxY, float scale ) {
 		ModelMesh type = fromString( meshType );
-		return ModelFactory.createTree( type, posPxX, posPxY, scale );
+		TreeStillModel m = ModelFactory.createTree( type, posPxX, posPxY, scale );
+		// createdTreeModels.add( m );
+		return m;
 	}
 
 	public static TreeStillModel createTree( ModelMesh modelMesh, float posPxX, float posPxY, float scale ) {
@@ -164,15 +191,17 @@ public final class ModelFactory {
 		// missing mesh mesh
 		// case Missing:
 		// default:
-		// stillModel = new OrthographicAlignedStillModel( getModel( "data/3d/models/missing-mesh.g3dt" ), getMaterial(
+		// stillModel = new OrthographicAlignedStillModel( getModel(
+		// "data/3d/models/missing-mesh.g3dt" ), getMaterial(
 		// modelMesh, Art.meshMissing ) );
 
 		}
 
-		stillModel = new TreeStillModel( getModel( "data/3d/models/" + treeModelName ), getMaterial( modelMesh, leavesTexture ), treeMeshName,
+		stillModel = new TreeStillModel( getStillModel( "data/3d/models/" + treeModelName ), getMaterial( modelMesh, leavesTexture ), treeMeshName,
 				ModelFactory.scalingStrategy );
 
 		if( stillModel != null ) {
+			// createdTreeModels.add( stillModel );
 			stillModel.setPosition( posPxX, posPxY );
 			if( modelMesh != ModelMesh.Missing ) {
 				stillModel.setScale( scale );
@@ -206,18 +235,18 @@ public final class ModelFactory {
 		return m;
 	}
 
-	private static LongMap<StillModel> cachedModels = null;
+	private static LongMap<StillModel> cachedStillModels = null;
 
-	private static StillModel getModel( String model ) {
+	private static StillModel getStillModel( String model ) {
 		StillModel m = null;
 		long modelHash = Hash.RSHash( model );
 
-		if( cachedModels == null ) {
-			cachedModels = new LongMap<StillModel>();
+		if( cachedStillModels == null ) {
+			cachedStillModels = new LongMap<StillModel>();
 		}
 
-		if( cachedModels.containsKey( modelHash ) ) {
-			return cachedModels.get( modelHash );
+		if( cachedStillModels.containsKey( modelHash ) ) {
+			return cachedStillModels.get( modelHash );
 		} else {
 			try {
 				String[] ext = model.split( "\\." );
@@ -234,7 +263,7 @@ public final class ModelFactory {
 					Gdx.app.log( "ModelFactory", "Attention, using deprecated model format!" );
 				}
 
-				cachedModels.put( modelHash, m );
+				cachedStillModels.put( modelHash, m );
 			} catch( IOException ioex ) {
 				Gdx.app.log( "ModelFactory", ioex.getMessage() );
 			}

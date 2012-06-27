@@ -2,6 +2,7 @@ package com.bitfire.uracer;
 
 import java.lang.reflect.Field;
 
+import com.badlogic.gdx.Application;
 import com.badlogic.gdx.ApplicationListener;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.math.Vector2;
@@ -9,12 +10,14 @@ import com.badlogic.gdx.utils.TimeUtils;
 import com.bitfire.uracer.configuration.Config;
 import com.bitfire.uracer.configuration.UserPreferences;
 import com.bitfire.uracer.game.tween.SysTweener;
+import com.bitfire.uracer.game.world.models.ModelFactory;
+import com.bitfire.uracer.game.world.models.OrthographicAlignedStillModel;
 import com.bitfire.uracer.resources.Art;
 import com.bitfire.uracer.resources.Sounds;
 import com.bitfire.uracer.screen.ScreenFactory.ScreenType;
 import com.bitfire.uracer.screen.ScreenManager;
-import com.bitfire.uracer.screen.transitions.TransitionFactory;
-import com.bitfire.uracer.screen.transitions.TransitionFactory.TransitionType;
+import com.bitfire.uracer.screen.TransitionFactory;
+import com.bitfire.uracer.screen.TransitionFactory.TransitionType;
 import com.bitfire.uracer.utils.AMath;
 import com.bitfire.uracer.utils.Convert;
 import com.bitfire.uracer.utils.SpriteBatchUtils;
@@ -85,6 +88,7 @@ public class URacer implements ApplicationListener {
 
 	@Override
 	public void create() {
+		Gdx.app.setLogLevel( Application.LOG_DEBUG );
 		versionInfo = URacer.getVersionInformation();
 
 		Gdx.app.log( "URacer", "booting version " + versionInfo );
@@ -94,7 +98,8 @@ public class URacer implements ApplicationListener {
 		input = new Input();
 		Gdx.app.log( "URacer", "input system created." );
 
-		// computed for a 256px tile size target (compute needed conversion factors)
+		// computed for a 256px tile size target (compute needed conversion
+		// factors)
 		scalingStrategy = new ScalingStrategy( new Vector2( 1280, 800 ), 70f, 224, 1f );
 
 		// load default private configuration
@@ -107,6 +112,8 @@ public class URacer implements ApplicationListener {
 		SpriteBatchUtils.init( Art.debugFont, Art.DebugFontWidth );
 		Sounds.init();
 
+		ModelFactory.init( scalingStrategy );
+
 		Gdx.graphics.setVSync( true );
 
 		running = true;
@@ -118,21 +125,27 @@ public class URacer implements ApplicationListener {
 
 		screenMgr = new ScreenManager( scalingStrategy );
 
-		screenMgr.setScreen( ScreenType.GameScreen, TransitionType.Fader, 250 );
+		// screenMgr.setScreen( ScreenType.GameScreen, TransitionType.Fader, 250
+		// );
+		screenMgr.setScreen( ScreenType.MainScreen, TransitionType.Fader, 250 );
 
-		// Initialize the timers after creating the game screen, so that there will be no huge discrepancies
+		// Initialize the timers after creating the game screen, so that there
+		// will be no huge discrepancies
 		// between the first lastDeltaTimeSec value and the followers.
-		// Note those initial values are carefully choosen to ensure that the first iteration ever is going to
+		// Note those initial values are carefully choosen to ensure that the
+		// first iteration ever is going to
 		// at least perform one single tick
 		lastTimeNs = TimeUtils.nanoTime();
 		timeAccuNs = PhysicsDtNs;
-//		try { Thread.sleep( 1000 ); } catch( InterruptedException e ) {}
+		// try { Thread.sleep( 1000 ); } catch( InterruptedException e ) {}
 	}
 
 	@Override
 	public void dispose() {
 		UserPreferences.save();
+		OrthographicAlignedStillModel.disposeShader();
 
+		ModelFactory.dispose();
 		screenMgr.dispose();
 		TransitionFactory.dispose();
 
@@ -144,7 +157,6 @@ public class URacer implements ApplicationListener {
 			uRacerFinalizer.dispose();
 		}
 
-		// if(!Config.isDesktop || )
 		System.exit( 0 );
 	}
 
@@ -181,7 +193,8 @@ public class URacer implements ApplicationListener {
 				}
 
 				// simulate slowness
-				// try { Thread.sleep( 32 ); } catch( InterruptedException e ) {}
+				// try { Thread.sleep( 32 ); } catch( InterruptedException e )
+				// {}
 			}
 
 			physicsTime = (TimeUtils.nanoTime() - startTime) * oneOnOneBillion;
@@ -208,7 +221,8 @@ public class URacer implements ApplicationListener {
 				screenMgr.render( null );
 
 				// simulate slowness
-				// try { Thread.sleep( 32 ); } catch( InterruptedException e ) {}
+				// try { Thread.sleep( 32 ); } catch( InterruptedException e )
+				// {}
 			}
 
 			graphicsTime = (TimeUtils.nanoTime() - startTime) * oneOnOneBillion;
@@ -284,14 +298,19 @@ public class URacer implements ApplicationListener {
 			return input;
 		}
 
+		public static void show( ScreenType screenType ) {
+			Screens.setScreen( screenType, TransitionType.Fader, 250 );
+		}
+
 		public static void quit() {
-			setScreen( ScreenType.ExitScreen, TransitionType.Fader, 250 );
+			show( ScreenType.ExitScreen );
 		}
 	}
 
-
-	public static void setScreen( ScreenType screen, TransitionType transitionType, long transitionDurationMs ) {
-		screenMgr.setScreen( screen, transitionType, transitionDurationMs );
+	public static final class Screens {
+		public static void setScreen( ScreenType screenType, TransitionType transitionType, long transitionDurationMs ) {
+			screenMgr.setScreen( screenType, transitionType, transitionDurationMs );
+		}
 	}
 
 }

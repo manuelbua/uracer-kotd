@@ -10,23 +10,11 @@ import com.badlogic.gdx.math.Vector3;
 
 public class TrackTrees {
 	public final List<TreeStillModel> models;
-	private final boolean owned;
 	private final MapUtils mapUtils;
 
-	public TrackTrees( MapUtils mapUtils, List<TreeStillModel> models, boolean owned ) {
+	public TrackTrees( MapUtils mapUtils, List<TreeStillModel> models ) {
 		this.mapUtils = mapUtils;
 		this.models = models;
-		this.owned = owned;
-	}
-
-	public void dispose() {
-		if( owned && models != null && models.size() > 0 ) {
-			for( int i = 0; i < models.size(); i++ ) {
-				models.get( i ).dispose();
-			}
-
-			models.clear();
-		}
 	}
 
 	public int count() {

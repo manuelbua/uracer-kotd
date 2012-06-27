@@ -75,7 +75,7 @@ public final class GameRenderer {
 
 		// initialize utils
 		ScreenUtils.init( worldRenderer );
-		Gdx.app.log( "GameRenderer", "ScreenUtils " + (ScreenUtils.ready ? "initialized." : "NOT initialized!") );
+		Gdx.app.debug( "GameRenderer", "ScreenUtils " + (ScreenUtils.ready ? "initialized." : "NOT initialized!") );
 
 		// post-processing
 		if( UserPreferences.bool( Preference.PostProcessing ) ) {
@@ -90,6 +90,7 @@ public final class GameRenderer {
 
 		// depthMap.dispose();
 		batchRenderer.dispose();
+		worldRenderer.dispose();
 
 		GameEvents.gameRenderer.removeAllListeners();
 	}

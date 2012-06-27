@@ -76,7 +76,8 @@ public final class GameWorld {
 	protected RayHandler rayHandler = null;
 	protected ConeLight playerHeadlights = null;
 
-	// level meshes, package-level access for GameWorldRenderer (ugly but faster than accessors)
+	// level meshes, package-level access for GameWorldRenderer (ugly but faster
+	// than accessors)
 	protected TrackWalls trackWalls = null;
 	protected TrackTrees trackTrees = null;
 	protected List<OrthographicAlignedStillModel> staticMeshes = new ArrayList<OrthographicAlignedStillModel>();
@@ -106,12 +107,11 @@ public final class GameWorld {
 		// compute world size
 		worldSizeTiles = new Vector2( map.width, map.height );
 		worldSizeScaledPx = new Vector2( map.width * map.tileWidth, map.height * map.tileHeight );
-		worldSizeScaledPx.set(  Convert.scaledPixels( worldSizeScaledPx ) );
+		worldSizeScaledPx.set( Convert.scaledPixels( worldSizeScaledPx ) );
 		worldSizeMt = new Vector2( Convert.upx2mt( map.width * map.tileWidth ), Convert.upx2mt( map.height * map.tileHeight ) );
 
 		// initialize tilemap utils
 		mapUtils = new MapUtils( map, worldSizeScaledPx, scalingStrategy.invTileMapZoomFactor );
-		ModelFactory.init( strategy );
 
 		createMeshes();
 		loadPlayerData( map );
@@ -123,15 +123,30 @@ public final class GameWorld {
 	}
 
 	public void dispose() {
-		// dispose any static mesh previously loaded
-		for( int i = 0; i < staticMeshes.size(); i++ ) {
-			OrthographicAlignedStillModel model = staticMeshes.get( i );
-			model.dispose();
+		if( rayHandler != null ) {
+			rayHandler.dispose();
+			rayHandler = null;
 		}
 
-		trackWalls.dispose();
-		trackTrees.dispose();
+		staticMeshes.clear();
+		staticMeshes = null;
+
+		if( trackWalls != null && trackWalls.models != null ) {
+			for( int i = 0; i < trackWalls.models.size(); i++ ) {
+				trackWalls.models.get( i ).model.dispose();
+			}
+			trackWalls = null;
+		}
+
+		if( trackTrees != null && trackTrees.models != null ) {
+			for( int i = 0; i < trackTrees.models.size(); i++ ) {
+				trackTrees.models.get( i ).model.dispose();
+			}
+			trackTrees = null;
+		}
+
 		box2dWorld.dispose();
+		box2dWorld = null;
 	}
 
 	private void createMeshes() {
@@ -158,11 +173,11 @@ public final class GameWorld {
 
 		// walls by polylines
 		List<OrthographicAlignedStillModel> walls = createWalls();
-		trackWalls = new TrackWalls( walls, true );
+		trackWalls = new TrackWalls( walls );
 
 		// trees
 		List<TreeStillModel> trees = createTrees();
-		trackTrees = new TrackTrees( mapUtils, trees, true );
+		trackTrees = new TrackTrees( mapUtils, trees );
 
 		TotalMeshes = staticMeshes.size() + trackWalls.count() + trackTrees.count();
 	}
@@ -185,8 +200,9 @@ public final class GameWorld {
 				}
 
 				if( type.equals( "start" ) ) {
-					 start.set( mapUtils.tileToPx( x, y ).add( /*Convert.scaledPixels*/ halfTile, -halfTile  ) );
-//					start.set( (x + 0.5f) * map.tileWidth, (map.height - (y + 0.5f)) * map.tileHeight );
+					start.set( mapUtils.tileToPx( x, y ).add( /* Convert.scaledPixels */halfTile, -halfTile ) );
+					// start.set( (x + 0.5f) * map.tileWidth, (map.height - (y +
+					// 0.5f)) * map.tileHeight );
 					start.set( Convert.px2mt( start ) );
 
 					startTileX = x;
@@ -234,7 +250,10 @@ public final class GameWorld {
 		c.set( .4f, .4f, .75f, .85f );
 		playerHeadlights = new ConeLight( rayHandler, maxRays, c, 30, 0, 0, 0, 15 );
 		playerHeadlights.setSoft( false );
-		playerHeadlights.setMaskBits( CollisionFilters.CategoryTrackWalls /*| CollisionFilters.CategoryReplay*/ );
+		playerHeadlights.setMaskBits( CollisionFilters.CategoryTrackWalls /* |
+																		 * CollisionFilters
+																		 * .
+																		 * CategoryReplay */);
 
 		// setup level lights data, if any
 		Vector2 pos = new Vector2();
@@ -260,7 +279,7 @@ public final class GameWorld {
 	// construct walls
 	//
 
-	public List<OrthographicAlignedStillModel> createWalls() {
+	private List<OrthographicAlignedStillModel> createWalls() {
 		List<OrthographicAlignedStillModel> models = null;
 
 		if( mapUtils.hasObjectGroup( ObjectGroup.Walls ) ) {
@@ -362,7 +381,8 @@ public final class GameWorld {
 		mag = magnitudes[0];
 		prevmag = magnitudes[0];
 
-		// add input (interleaved w/ later filled dupes w/ just a meaningful z-coordinate)
+		// add input (interleaved w/ later filled dupes w/ just a meaningful
+		// z-coordinate)
 		for( int i = 0, j = 0, vc = 0, vci = 0; i < points.size(); i++, j += 2 * vertSize ) {
 			int magidx = i - 1;
 			if( magidx < 0 ) {
@@ -379,12 +399,15 @@ public final class GameWorld {
 			// base
 			verts[j + X1] = in.x;
 			verts[j + Y1] = -in.y;
-			verts[j + Z1] = -0.025f;	// should be 0, but fixes some nasty flickering border issue
+			verts[j + Z1] = -0.025f;	// should be 0, but fixes some nasty
+										// flickering border issue
 
 			// elevation
 			verts[j + X2] = in.x + (addJitter ? MathUtils.random( -jitterPositional, jitterPositional ) : 0);
 			verts[j + Y2] = -in.y + (addJitter ? MathUtils.random( -jitterPositional, jitterPositional ) : 0);
-			verts[j + Z2] = wallHeightMt;// + (addJitter? MathUtils.random( -jitterAltitudinal, jitterAltitudinal ) :
+			verts[j + Z2] = wallHeightMt;// + (addJitter? MathUtils.random(
+											// -jitterAltitudinal,
+											// jitterAltitudinal ) :
 											// 0);
 
 			// tex coords
@@ -429,7 +452,8 @@ public final class GameWorld {
 			// We want to differentiate tree meshes as much as we can
 			// rotation will helps immensely, but non-orthogonal rotations
 			// will cause the bounding box to get recomputed only approximately
-			// thus loosing precision: orthogonal rotations instead provides high
+			// thus loosing precision: orthogonal rotations instead provides
+			// high
 			// quality AABB recomputation.
 			//
 			// We still have 4 variations for any given tree!
@@ -461,7 +485,8 @@ public final class GameWorld {
 					}
 
 					if( model != null ) {
-						// model.setRotation( MathUtils.random( -180f, 180f ), 0, 0, 1f );
+						// model.setRotation( MathUtils.random( -180f, 180f ),
+						// 0, 0, 1f );
 						model.setRotation( treeRotations[MathUtils.random( 0, 3 )], 0, 0, 1f );
 						models.add( nextIndexForTrees( models, model ), model );
 					}

@@ -2,11 +2,12 @@ package com.bitfire.uracer;
 
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.math.Vector2;
+import com.badlogic.gdx.utils.Disposable;
 
 /** Encapsulates a buffered input state object that can be queried to know the individual key/button/pointer states.
  *
  * @author bmanuel */
-public final class Input {
+public final class Input implements Disposable {
 	public static final int MaxPointers = 2;
 
 	// keys
@@ -29,6 +30,13 @@ public final class Input {
 
 		releaseAllKeys();
 		Gdx.input.setCatchBackKey( true );
+	}
+
+	@Override
+	public void dispose() {
+		for( int p = 0; p < MaxPointers; p++ ) {
+			pointer[p] = null;
+		}
 	}
 
 	public void releaseAllKeys() {

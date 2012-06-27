@@ -1,11 +1,18 @@
 package com.bitfire.uracer.screen;
 
 import com.bitfire.uracer.ScalingStrategy;
+import com.bitfire.uracer.screen.screens.GameScreen;
+import com.bitfire.uracer.screen.screens.MainScreen;
 
 public final class ScreenFactory {
 
 	public enum ScreenType {
-		ExitScreen, GameScreen
+		//@formatter:off
+		ExitScreen,
+		MainScreen,
+		ConfigurationScreen,
+		GameScreen
+		//@formatter:on
 	}
 
 	public static Screen createScreen( ScreenType screenType, ScalingStrategy strategy ) {
@@ -15,8 +22,11 @@ public final class ScreenFactory {
 		case GameScreen:
 			screen = new GameScreen();
 			break;
+		case MainScreen:
+			screen = new MainScreen();
+			break;
+		case ConfigurationScreen:
 		default:
-		case ExitScreen:
 			screen = null;
 			break;
 		}
@@ -26,5 +36,8 @@ public final class ScreenFactory {
 		}
 
 		return screen;
+	}
+
+	private ScreenFactory() {
 	}
 }

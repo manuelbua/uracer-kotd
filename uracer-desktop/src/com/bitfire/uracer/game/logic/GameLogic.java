@@ -43,6 +43,7 @@ import com.bitfire.uracer.game.rendering.GameWorldRenderer;
 import com.bitfire.uracer.game.tween.GameTweener;
 import com.bitfire.uracer.game.tween.SysTweener;
 import com.bitfire.uracer.game.world.GameWorld;
+import com.bitfire.uracer.screen.ScreenFactory.ScreenType;
 import com.bitfire.uracer.utils.AMath;
 import com.bitfire.uracer.utils.BoxedFloat;
 import com.bitfire.uracer.utils.BoxedFloatAccessor;
@@ -155,7 +156,6 @@ public class GameLogic implements CarEvent.Listener, CarStateEvent.Listener, Pla
 			ghostCar.dispose();
 		}
 
-		gameWorld.dispose();
 		GameTweener.dispose();
 	}
 
@@ -359,10 +359,10 @@ public class GameLogic implements CarEvent.Listener, CarStateEvent.Listener, Pla
 			// Gdx.app.log( "GameLogic", "Player final pos=" +
 			// playerCar.getBody().getPosition() );
 
-		} else if( input.isPressed( Keys.Q ) || input.isPressed( Keys.BACK ) ) {
+		} else if( input.isPressed( Keys.Q ) || input.isPressed( Keys.ESCAPE ) || input.isPressed( Keys.BACK ) ) {
 
 			// quit
-			URacer.Game.quit();
+			URacer.Game.show( ScreenType.MainScreen );
 
 		} else if( input.isPressed( Keys.O ) ) {
 

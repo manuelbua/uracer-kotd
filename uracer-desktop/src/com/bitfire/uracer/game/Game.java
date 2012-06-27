@@ -30,20 +30,20 @@ public class Game implements Disposable {
 	public Game( String levelName, ScalingStrategy scalingStrategy ) {
 
 		gameWorld = new GameWorld( scalingStrategy, levelName, false );
-		Gdx.app.log( "Game", "Game world ready" );
+		Gdx.app.debug( "Game", "Game world ready" );
 
 		// handles rendering
 		gameRenderer = new GameRenderer( gameWorld, scalingStrategy );
-		Gdx.app.log( "Game", "GameRenderer ready" );
+		Gdx.app.debug( "Game", "GameRenderer ready" );
 
 		// handles game rules and mechanics, it's all about game data
 		gameLogic = new GameLogic( gameWorld, gameRenderer, scalingStrategy );
-		Gdx.app.log( "Game", "GameLogic created" );
+		Gdx.app.debug( "Game", "GameLogic created" );
 
 		// initialize the debug helper
 		if( Config.Debug.UseDebugHelper ) {
 			debug = new DebugHelper( gameRenderer.getWorldRenderer(), gameWorld.getBox2DWorld(), gameRenderer.getPostProcessor() );
-			Gdx.app.log( "Game", "Debug helper initialized" );
+			Gdx.app.debug( "Game", "Debug helper initialized" );
 		}
 	}
 
@@ -53,9 +53,11 @@ public class Game implements Disposable {
 			debug.dispose();
 		}
 
-		TaskManager.dispose();
-		gameRenderer.dispose();
 		gameLogic.dispose();
+		gameRenderer.dispose();
+		gameWorld.dispose();
+
+		TaskManager.dispose();
 	}
 
 	public void setPlayer( CarPreset.Type presetType ) {

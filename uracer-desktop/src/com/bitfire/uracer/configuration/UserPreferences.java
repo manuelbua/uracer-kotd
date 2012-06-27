@@ -74,7 +74,7 @@ public final class UserPreferences {
 		} else if( w >= 1200 ) {
 			string( Preference.ZoomRadialBlurQuality, RadialBlur.Quality.Medium.toString() );
 		} else if( w >= 800 ) {
-			string( Preference.ZoomRadialBlurQuality, RadialBlur.Quality.Medium.toString() );
+			string( Preference.ZoomRadialBlurQuality, RadialBlur.Quality.Low.toString() );
 		}
 
 		bool( Preference.CrtScreen, false );

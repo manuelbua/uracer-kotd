@@ -1,10 +1,11 @@
-package com.bitfire.uracer.screen;
+package com.bitfire.uracer.screen.screens;
 
 import com.badlogic.gdx.graphics.glutils.FrameBuffer;
 import com.bitfire.uracer.ScalingStrategy;
 import com.bitfire.uracer.game.Game;
 import com.bitfire.uracer.game.actors.CarPreset.Type;
 import com.bitfire.uracer.game.logic.replaying.Replay;
+import com.bitfire.uracer.screen.Screen;
 
 public class GameScreen extends Screen {
 	private Game game = null;
@@ -26,7 +27,7 @@ public class GameScreen extends Screen {
 	}
 
 	@Override
-	public void removed() {
+	public void dispose() {
 		game.dispose();
 		game = null;
 	}

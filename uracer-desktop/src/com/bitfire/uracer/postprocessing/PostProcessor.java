@@ -13,8 +13,8 @@ import com.bitfire.uracer.utils.Manager;
 /** Provides a way to capture the rendered scene to an off-screen buffer
  * and to apply a chain of effects on it before rendering to screen.
  *
- * Effects can be added or removed via {@link #addEffect(PostProcessorEffect)} and
- * {@link #removeEffect(PostProcessorEffect)}.
+ * Effects can be added or removed via {@link #addEffect(PostProcessorEffect)}
+ * and {@link #removeEffect(PostProcessorEffect)}.
  *
  * @author bmanuel */
 public final class PostProcessor implements Disposable {
@@ -110,8 +110,10 @@ public final class PostProcessor implements Disposable {
 		return enabledEffects.size;
 	}
 
-	/** Adds the specified effect to the effect chain: the order IS important
-	 * since effects will be applied in a FIFO fashion, the first added
+	/** Adds the specified effect to the effect chain and transfer ownership
+	 * to the PostProcessor, it will manage cleaning it up for you.
+	 * The order of the inserted effects IS important, since effects will be
+	 * applied in a FIFO fashion, the first added
 	 * is the first being applied. */
 	public void addEffect( PostProcessorEffect effect ) {
 		manager.add( effect );
@@ -158,16 +160,19 @@ public final class PostProcessor implements Disposable {
 	}
 
 	/** Starts capturing the scene, clears the buffer with the clear
-	 * color specified by {@link #setClearColor(Color)} or {@link #setClearColor(float r, float g, float b, float a)}.
+	 * color specified by {@link #setClearColor(Color)} or
+	 * {@link #setClearColor(float r, float g, float b, float a)}.
 	 *
 	 * @return true or false, whether or not capturing has been initiated.
-	 *         Capturing will fail in case there are no enabled effects in the chain or
+	 *         Capturing will fail in case there are no enabled effects in the
+	 *         chain or
 	 *         this instance is not enabled or capturing is already started. */
 	public boolean capture() {
 		if( enabled && !capturing ) {
 			if( buildEnabledEffectsList() == 0 ) {
 				// no enabled effects
-				// Gdx.app.log( "PostProcessor::capture()", "No post-processor effects enabled" );
+				// Gdx.app.log( "PostProcessor::capture()",
+				// "No post-processor effects enabled" );
 				return false;
 			}
 
@@ -185,14 +190,16 @@ public final class PostProcessor implements Disposable {
 		return false;
 	}
 
-	/** Starts capturing the scene as {@link #capture()}, but <strong>without</strong> clearing the screen.
+	/** Starts capturing the scene as {@link #capture()}, but
+	 * <strong>without</strong> clearing the screen.
 	 *
 	 * @return true or false, whether or not capturing has been initiated. */
 	public boolean captureNoClear() {
 		if( enabled && !capturing ) {
 			if( buildEnabledEffectsList() == 0 ) {
 				// no enabled effects
-				// Gdx.app.log( "PostProcessor::captureNoClear", "No post-processor effects enabled" );
+				// Gdx.app.log( "PostProcessor::captureNoClear",
+				// "No post-processor effects enabled" );
 				return false;
 			}
 
@@ -245,7 +252,8 @@ public final class PostProcessor implements Disposable {
 	}
 
 	/** Stops capturing the scene and apply the effect chain, if there is one.
-	 * If the specified output framebuffer is NULL, then the rendering will be performed to screen. */
+	 * If the specified output framebuffer is NULL, then the rendering will be
+	 * performed to screen. */
 	public void render( FrameBuffer dest ) {
 		captureEnd();
 

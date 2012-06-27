@@ -9,13 +9,14 @@ import com.badlogic.gdx.graphics.g2d.tiled.TiledLayer;
 import com.badlogic.gdx.graphics.g2d.tiled.TiledMap;
 import com.badlogic.gdx.graphics.g2d.tiled.TiledObjectGroup;
 import com.badlogic.gdx.math.Vector2;
+import com.badlogic.gdx.utils.Disposable;
 import com.bitfire.uracer.game.world.models.WorldDefs.ObjectGroup;
 import com.bitfire.uracer.game.world.models.WorldDefs.TileLayer;
 import com.bitfire.uracer.utils.Convert;
 import com.bitfire.uracer.utils.VMath;
 
 
-public final class MapUtils {
+public final class MapUtils implements Disposable {
 
 	// cache
 	public static final Map<String, TiledLayer> cachedLayers = new HashMap<String, TiledLayer>( 10 );
@@ -30,6 +31,12 @@ public final class MapUtils {
 		this.worldSizeScaledPx.set( worldSizeScaledPx );
 		scaledTilesize = map.tileWidth * invZoomFactor;
 		invScaledTilesize = 1f / scaledTilesize;
+	}
+
+	@Override
+	public void dispose() {
+		cachedGroups.clear();
+		cachedLayers.clear();
 	}
 
 	public TiledObjectGroup getObjectGroup( ObjectGroup group ) {

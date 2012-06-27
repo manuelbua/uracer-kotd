@@ -52,14 +52,18 @@ public final class PostProcessing {
 		}
 	}
 
-	public void configurePostProcessor( PostProcessor postProcessor ) {
+	/** Creates the effects that will be available to the animators/manipulators
+	 * to use, remember that the ownership of the instantiated objects is
+	 * transfered to the PostProcessor when adding the effect to it. */
+	private void configurePostProcessor( PostProcessor postProcessor ) {
 		postProcessor.setEnabled( true );
 		postProcessor.setClearBits( GL10.GL_COLOR_BUFFER_BIT | GL10.GL_DEPTH_BUFFER_BIT );
 		postProcessor.setClearDepth( 1f );
 		postProcessor.setBufferTextureWrap( TextureWrap.ClampToEdge, TextureWrap.ClampToEdge );
 
 		if( UserPreferences.bool( Preference.Zoom ) ) {
-			Zoomer z = (UserPreferences.bool( Preference.ZoomRadialBlur ) ? new Zoomer( RadialBlur.Quality.valueOf( UserPreferences.string( Preference.ZoomRadialBlurQuality ) ) ) : new Zoomer());
+			Zoomer z = (UserPreferences.bool( Preference.ZoomRadialBlur ) ? new Zoomer( RadialBlur.Quality.valueOf( UserPreferences
+					.string( Preference.ZoomRadialBlurQuality ) ) ) : new Zoomer());
 			z.setBlurStrength( 0 );
 			addEffect( Effects.Zoomer.name, z );
 		}

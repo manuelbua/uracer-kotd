@@ -5,10 +5,12 @@ CLASS_PATH="/home/manuel/dev/libgdx/dist"
 JARS="${CLASS_PATH}/gdx.jar:${CLASS_PATH}/gdx-natives.jar:${CLASS_PATH}/gdx-backend-jogl.jar:${CLASS_PATH}/gdx-backend-jogl-natives.jar"
 
 GDX_TOOLS_PATH="/home/manuel/dev/libgdx/extensions/gdx-tools/target/java"
-TEX_PACKER="java -classpath ${JARS}:${GDX_TOOLS_PATH} com.badlogic.gdx.tools.imagepacker.TexturePacker $1 $2"
+TEX_PACKER="java -classpath ${JARS}:${GDX_TOOLS_PATH} com.badlogic.gdx.tools.imagepacker.TexturePacker"
 
 GDX_TILED_PREP_PATH="/home/manuel/dev/libgdx/extensions/gdx-tiled-preprocessor/target/java"
-TILED_PACKER="java -classpath ${JARS}:${GDX_TOOLS_PATH}:${GDX_TILED_PREP_PATH} com.badlogic.gdx.tiledmappacker.TiledMapPacker $1 $2"
+TILED_PACKER="java -classpath ${JARS}:${GDX_TOOLS_PATH}:${GDX_TILED_PREP_PATH} com.badlogic.gdx.tiledmappacker.TiledMapPacker"
+
+SKIN_PACKER="java -classpath ${JARS}:${GDX_TOOLS_PATH}:/home/manuel/dev/uracer-skin-packer/bin com.bitfire.uracer.skinpacker.Packer"
 
 DEST="/home/manuel/dev/uracer-libgdx/uracer-desktop/data"
 
@@ -73,4 +75,16 @@ echo -n "Cooking GLSL shaders..."
 rm -rf "${DEST}/shaders/"
 mkdir -p "${DEST}/shaders/"
 cp -r shaders/* ${DEST}/shaders > /dev/null
+echo "done!"
+
+# ui skin
+echo -n "Cooking UI skin..."
+rm -rf "${DEST}/ui/"
+mkdir -p "${DEST}/ui/"
+${SKIN_PACKER} ui/skin
+cp ui/skin/skin.png ${DEST}/ui >/dev/null
+cp ui/skin/skin.json ${DEST}/ui >/dev/null
+cp ui/font/default.fnt ${DEST}/ui >/dev/null
+cp ui/font/default.png ${DEST}/ui >/dev/null
+cp ui/*.tl ${DEST}/ui >/dev/null
 echo "done!"

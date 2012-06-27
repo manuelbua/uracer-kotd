@@ -59,6 +59,10 @@ public final class TransitionManager {
 		if( source != null ) {
 			source.tick();
 			source.tickCompleted();
+
+			// ensures default active texture is active
+			Gdx.gl20.glActiveTexture( GL20.GL_TEXTURE0 );
+
 			source.render( buffer );
 
 			if( Config.Debug.RenderDebugDrawsInTransitions ) {

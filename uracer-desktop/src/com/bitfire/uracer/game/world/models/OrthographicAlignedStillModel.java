@@ -74,7 +74,7 @@ public class OrthographicAlignedStillModel {
 		loadShaders();
 
 		try {
-			model = new UStillModel( aModel.subMeshes.clone() );
+			model = new UStillModel( aModel.subMeshes );
 
 			this.material = material;
 			model.setMaterial( this.material );
@@ -87,14 +87,14 @@ public class OrthographicAlignedStillModel {
 			setRotation( 0, 0, 0, 0 );
 		} catch( Exception e ) {
 			Gdx.app.log( "OrthographicAlignedStillModel", e.getMessage() );
+			Gdx.app.exit();
 		}
 	}
 
-	public void dispose() {
-		try {
-			model.dispose();
-		} catch( IllegalArgumentException e ) {
-			// buffer already disposed
+	public static void disposeShader() {
+		if( shader instanceof ShaderProgram ) {
+			shader.dispose();
+			shader = null;
 		}
 	}
 
@@ -108,7 +108,8 @@ public class OrthographicAlignedStillModel {
 	 * @param posPxX
 	 * @param posPxY */
 	public final void setPosition( float posPxX, float posPxY ) {
-		// positionPx.set( GameData.Environment.gameWorld.positionFor( posPxX, posPxY ) );
+		// positionPx.set( GameData.Environment.gameWorld.positionFor( posPxX,
+		// posPxY ) );
 		positionPx.set( posPxX, posPxY );
 	}
 

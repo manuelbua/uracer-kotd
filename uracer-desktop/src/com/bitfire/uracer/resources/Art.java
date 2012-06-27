@@ -9,7 +9,9 @@ import com.badlogic.gdx.graphics.Texture.TextureWrap;
 import com.badlogic.gdx.graphics.g2d.BitmapFont;
 import com.badlogic.gdx.graphics.g2d.TextureAtlas;
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
+import com.badlogic.gdx.scenes.scene2d.ui.Skin;
 import com.bitfire.uracer.configuration.Config;
+import com.bitfire.uracer.configuration.Storage;
 
 public final class Art {
 	public static TextureRegion[][] debugFont;
@@ -38,8 +40,13 @@ public final class Art {
 	private static TextureAtlas fontAtlas;
 
 	// post-processor
-//	public static ShaderProgram depthMapGen, depthMapGenTransparent;
+	// public static ShaderProgram depthMapGen, depthMapGenTransparent;
 	public static Texture postXpro;
+
+	// screns
+	public static Texture scrBackground;
+	public static Skin scrSkin;
+	public static String scrDefMain;
 
 	public static void init( float invZoomFactor ) {
 		loadFonts( invZoomFactor );
@@ -47,6 +54,7 @@ public final class Art {
 		loadMeshesGraphics( Config.Graphics.EnableMipMapping );
 		loadFrictionMaps();
 		loadPostProcessorMaps();
+		loadScreensData();
 	}
 
 	public static void dispose() {
@@ -55,6 +63,21 @@ public final class Art {
 		disposeMeshesGraphics();
 		disposeFrictionMaps();
 		disposePostProcessorMaps();
+		disposeScreensData();
+	}
+
+	//
+	// screens
+	//
+	private static void loadScreensData() {
+		scrBackground = newTexture( "data/base/titlescreen.png", true );
+		scrSkin = new Skin( Gdx.files.internal( Storage.UI + "skin.json" ), Gdx.files.internal( Storage.UI + "skin.png" ) );
+		scrDefMain = Gdx.files.internal( Storage.UI + "/main-screen.tl" ).readString();
+	}
+
+	private static void disposeScreensData() {
+		scrBackground.dispose();
+		scrSkin.dispose();
 	}
 
 	//
@@ -65,14 +88,15 @@ public final class Art {
 		postXpro = newTexture( "data/base/xpro-lut.png", false );
 		postXpro.setWrap( TextureWrap.ClampToEdge, TextureWrap.ClampToEdge );
 
-//		depthMapGen = ShaderLoader.fromFile( "depth", "depth" );
-//		depthMapGenTransparent = ShaderLoader.fromFile(  "depth-transparent", "depth-transparent" );
+		// depthMapGen = ShaderLoader.fromFile( "depth", "depth" );
+		// depthMapGenTransparent = ShaderLoader.fromFile( "depth-transparent",
+		// "depth-transparent" );
 	}
 
 	private static void disposePostProcessorMaps() {
 		postXpro.dispose();
-//		depthMapGenTransparent.dispose();
-//		depthMapGen.dispose();
+		// depthMapGenTransparent.dispose();
+		// depthMapGen.dispose();
 	}
 
 	//

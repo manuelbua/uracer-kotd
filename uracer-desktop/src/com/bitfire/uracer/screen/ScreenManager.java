@@ -1,13 +1,13 @@
 package com.bitfire.uracer.screen;
 
 import com.badlogic.gdx.Gdx;
+import com.badlogic.gdx.graphics.GL20;
 import com.badlogic.gdx.graphics.glutils.FrameBuffer;
 import com.bitfire.uracer.ScalingStrategy;
 import com.bitfire.uracer.configuration.Config;
 import com.bitfire.uracer.screen.ScreenFactory.ScreenType;
+import com.bitfire.uracer.screen.TransitionFactory.TransitionType;
 import com.bitfire.uracer.screen.transitions.ScreenTransition;
-import com.bitfire.uracer.screen.transitions.TransitionFactory;
-import com.bitfire.uracer.screen.transitions.TransitionFactory.TransitionType;
 import com.bitfire.uracer.screen.transitions.TransitionManager;
 
 public final class ScreenManager {
@@ -15,7 +15,8 @@ public final class ScreenManager {
 	private ScalingStrategy strategy;
 	private TransitionManager transMgr;
 	private Screen current, next;
-	private boolean quitPending, doSetScreenImmediate;
+	private boolean quitPending, doSetScreenImmediate, justTransitioned;
+	private GL20 gl;
 
 	public ScreenManager( ScalingStrategy scalingStrategy ) {
 		transMgr = new TransitionManager( Config.isDesktop /* 32bits */, false, true );
@@ -24,11 +25,13 @@ public final class ScreenManager {
 		next = null;
 		quitPending = false;
 		doSetScreenImmediate = false;
+		justTransitioned = false;
+		gl = Gdx.gl20;
 	}
 
 	public void dispose() {
 		if( current != null ) {
-			current.removed();
+			current.dispose();
 			current = null;
 		}
 
@@ -61,14 +64,15 @@ public final class ScreenManager {
 	public void end() {
 	}
 
-
-	/** Switch to the screen identified by the specified screen type, using the specified transition type in its default
+	/** Switch to the screen identified by the specified screen type, using the
+	 * specified transition type in its default
 	 * configuration.
 	 * The screen change is scheduled to happen at the start of the next frame. */
 	public void setScreen( ScreenType screen, TransitionType transitionType, long transitionDurationMs ) {
 		ScreenTransition transition = null;
 
-		// if no transition or no duration avoid everything and pass a null reference
+		// if no transition or no duration avoid everything and pass a null
+		// reference
 		if( transitionType != TransitionType.None && transitionDurationMs > 0 ) {
 			transition = TransitionFactory.getTransition( transitionType );
 			transition.setDuration( transitionDurationMs );
@@ -77,7 +81,8 @@ public final class ScreenManager {
 		setScreen( screen, transition );
 	}
 
-	/** Switch to the screen identified by the specified screen type, using the specified transition.
+	/** Switch to the screen identified by the specified screen type, using the
+	 * specified transition.
 	 * The screen change is scheduled to happen at the start of the next frame. */
 	public void setScreen( ScreenType screen, ScreenTransition transition ) {
 		// early exit
@@ -95,6 +100,13 @@ public final class ScreenManager {
 		} else {
 			next = newScreen;
 			doSetScreenImmediate = true;
+		}
+
+		if( current != null ) {
+			Gdx.app.debug( "ScreenManager", "Destroying " + current.getClass().getSimpleName() );
+			current.dispose();
+			current = null;
+			System.gc();
 		}
 	}
 
@@ -127,8 +139,16 @@ public final class ScreenManager {
 		if( transMgr.isActive() ) {
 			transMgr.update();
 			transMgr.render();
+			justTransitioned = true;
 		} else {
 			if( current != null ) {
+				if( justTransitioned ) {
+					justTransitioned = false;
+
+					// ensures default active texture is active
+					gl.glActiveTexture( GL20.GL_TEXTURE0 );
+				}
+
 				current.render( dest );
 			}
 		}
