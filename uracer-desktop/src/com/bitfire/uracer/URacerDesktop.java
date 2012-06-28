@@ -18,7 +18,7 @@ public final class URacerDesktop {
 
 	private static boolean parseConfig( String[] argv, LwjglApplicationConfiguration config ) {
 
-		System.out.println( URacer.Name + " v" + URacer.getVersionInformation() + "\nCopyright (c) 2012 Manuel Bua.\n" );
+		System.out.println( URacer.Name + " " + URacer.getVersionInformation() + "\nCopyright (c) 2012 Manuel Bua.\n" );
 
 		LaunchFlags flags = new LaunchFlags();
 		if( !CommandLine.parseLaunchFlags( argv, flags ) ) {
@@ -41,10 +41,10 @@ public final class URacerDesktop {
 
 		// parse opts --
 
-		System.out.println( "Resolution set at " + (config.width + "x" + config.height) );
-		System.out.println( "Vertical sync: " + (config.vSyncEnabled ? "On" : "Off") );
-		System.out.println( "CPU sync: " + (config.useCPUSynch ? "On" : "Off") );
-		System.out.println( "Fullscreen: " + (config.fullscreen ? "Yes" : "No") );
+		System.out.print( "Resolution set at " + (config.width + "x" + config.height) + "\n" );
+		System.out.print( "Vertical sync: " + (config.vSyncEnabled ? "On" : "Off") + "\n" );
+		System.out.print( "CPU sync: " + (config.useCPUSynch ? "On" : "Off") + "\n" );
+		System.out.print( "Fullscreen: " + (config.fullscreen ? "Yes" : "No") + "\n" );
 
 		return true;
 	}
