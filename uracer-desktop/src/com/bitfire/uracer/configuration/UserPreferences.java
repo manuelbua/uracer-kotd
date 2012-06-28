@@ -118,7 +118,7 @@ public final class UserPreferences {
 		prefs.putLong( pref.name, value );
 	}
 
-	/** get integer */
+	/** get float */
 	public static float real( Preference pref ) {
 		return prefs.getFloat( pref.name );
 	}
@@ -127,7 +127,7 @@ public final class UserPreferences {
 		prefs.putFloat( pref.name, value );
 	}
 
-	/** get integer */
+	/** get string */
 	public static String string( Preference pref ) {
 		return prefs.getString( pref.name );
 	}
