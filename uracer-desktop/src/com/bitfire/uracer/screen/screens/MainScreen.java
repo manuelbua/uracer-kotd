@@ -22,14 +22,13 @@ public class MainScreen extends Screen {
 
 	private Stage ui;
 	private Input input;
-	private Image bg;
 
 	private void setupUI() {
 		ui = new Stage( Gdx.graphics.getWidth(), Gdx.graphics.getHeight(), false );
 		Gdx.input.setInputProcessor( ui );
 
 		// background
-		bg = new Image( Art.scrBackground );
+		Image bg = new Image( Art.scrBackground );
 		bg.width = Gdx.graphics.getWidth();
 		bg.height = Gdx.graphics.getHeight();
 		ui.addActor( bg );
@@ -93,9 +92,7 @@ public class MainScreen extends Screen {
 
 	@Override
 	public void tick() {
-		input.tick();
-
-		if( input.isPressed( Keys.Q ) ) {
+		if( input.isPressed( Keys.Q )  || input.isPressed( Keys.BACK ) || input.isPressed( Keys.ESCAPE ) ) {
 			URacer.Game.quit();
 		}
 	}
@@ -104,7 +101,6 @@ public class MainScreen extends Screen {
 	public void tickCompleted() {
 	}
 
-	// FIXME / TODO make a default render()
 	@Override
 	public void render( FrameBuffer dest ) {
 		boolean hasDest = (dest != null);
