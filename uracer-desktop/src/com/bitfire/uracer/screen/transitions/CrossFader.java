@@ -1,6 +1,5 @@
 package com.bitfire.uracer.screen.transitions;
 
-import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.glutils.FrameBuffer;
 import com.badlogic.gdx.graphics.glutils.ShaderProgram;
 import com.badlogic.gdx.utils.GdxRuntimeException;
@@ -14,28 +13,19 @@ import com.bitfire.uracer.screen.ScreenUtils;
 import com.bitfire.uracer.utils.AMath;
 import com.bitfire.uracer.utils.ShaderLoader;
 
-/** Implements a fader, transitioning from one screen to another by first
- * transitioning the current screen to the specified color, then
- * transitioning from the specified color to the next screen. */
-public final class Fader extends ScreenTransition {
+/** Implements a cross fader, transitioning between the current and the next screen. */
+public final class CrossFader extends ScreenTransition {
 	FrameBuffer from, to;
-	long duration, elapsed, half;
+	long duration, elapsed;
 	float factor;
 	FullscreenQuad quad;
 	ShaderProgram fade;
 	Screen next;
-	ScreenType nextType;
-	Color color = Color.BLACK;
-	boolean nextPrepared;
 
-	public Fader() {
+	public CrossFader() {
 		quad = new FullscreenQuad();
 		fade = ShaderLoader.fromFile( "fade", "fade" );
 		reset();
-	}
-
-	public void setColor( Color color ) {
-		this.color.set( color );
 	}
 
 	private void rebind() {
@@ -53,8 +43,6 @@ public final class Fader extends ScreenTransition {
 		factor = 0;
 		elapsed = 0;
 		setDuration( 1000 );
-		nextPrepared = false;
-		nextType = ScreenType.NoScreen;
 	}
 
 	@Override
@@ -67,10 +55,11 @@ public final class Fader extends ScreenTransition {
 	public void frameBuffersReady( Screen current, FrameBuffer from, ScreenType nextScreen, FrameBuffer to ) {
 		this.from = from;
 		this.to = to;
-		this.nextType = nextScreen;
 
 		ScreenUtils.copyScreen( current, from );
-		ScreenUtils.clear( to, Color.BLACK );
+
+		next = ScreenFactory.createScreen( nextScreen );
+		ScreenUtils.copyScreen( next, to );
 	}
 
 	@Override
@@ -82,7 +71,6 @@ public final class Fader extends ScreenTransition {
 	@Override
 	public void setDuration( long durationMs ) {
 		duration = durationMs;
-		half = duration / 2;
 		if( durationMs == 0 ) {
 			throw new GdxRuntimeException( "Invalid transition duration specified." );
 		}
@@ -104,19 +92,7 @@ public final class Fader extends ScreenTransition {
 			elapsed = duration;
 		}
 
-		if( elapsed < half ) {
-			factor = 1 - (float)(half - elapsed) / (float)half;
-		} else {
-			factor = (float)(elapsed - half) / (float)half;
-
-			if( !nextPrepared ) {
-				nextPrepared = true;
-				next = ScreenFactory.createScreen( nextType );
-
-				ScreenUtils.clear( from, Color.BLACK );
-				ScreenUtils.copyScreen( next, to );
-			}
-		}
+		factor = (float)elapsed / (float)duration;
 	}
 
 	@Override
