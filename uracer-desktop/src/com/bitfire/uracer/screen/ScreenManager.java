@@ -8,7 +8,6 @@ import com.bitfire.uracer.configuration.Config;
 import com.bitfire.uracer.screen.ScreenFactory.ScreenType;
 import com.bitfire.uracer.screen.TransitionFactory.TransitionType;
 import com.bitfire.uracer.screen.transitions.ScreenTransition;
-import com.bitfire.uracer.screen.transitions.TransitionManager;
 
 public final class ScreenManager {
 

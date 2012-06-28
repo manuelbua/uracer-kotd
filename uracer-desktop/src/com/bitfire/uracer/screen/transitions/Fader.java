@@ -42,7 +42,7 @@ public final class Fader extends ScreenTransition {
 	}
 
 	@Override
-	protected void setupFrameBuffers( FrameBuffer curr, FrameBuffer next ) {
+	public void setupFrameBuffers( FrameBuffer curr, FrameBuffer next ) {
 		from = curr;
 		to = next;
 	}

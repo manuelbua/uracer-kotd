@@ -1,11 +1,11 @@
-package com.bitfire.uracer.screen.transitions;
+package com.bitfire.uracer.screen;
 
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.GL20;
 import com.badlogic.gdx.graphics.Pixmap.Format;
 import com.badlogic.gdx.graphics.glutils.FrameBuffer;
 import com.bitfire.uracer.configuration.Config;
-import com.bitfire.uracer.screen.Screen;
+import com.bitfire.uracer.screen.transitions.ScreenTransition;
 
 public final class TransitionManager {
 
