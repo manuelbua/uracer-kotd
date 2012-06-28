@@ -17,6 +17,7 @@ import com.bitfire.uracer.URacer;
 import com.bitfire.uracer.resources.Art;
 import com.bitfire.uracer.screen.Screen;
 import com.bitfire.uracer.screen.ScreenFactory.ScreenType;
+import com.bitfire.uracer.screen.TransitionFactory.TransitionType;
 
 public class MainScreen extends Screen {
 
@@ -44,7 +45,8 @@ public class MainScreen extends Screen {
 		startGameButton.setClickListener( new ClickListener() {
 			@Override
 			public void click( Actor actor, float x, float y ) {
-				URacer.Game.show( ScreenType.GameScreen );
+//				URacer.Game.show( ScreenType.GameScreen );
+				URacer.Screens.setScreen( ScreenType.GameScreen, TransitionType.Fader, 1000 );
 			}
 		} );
 

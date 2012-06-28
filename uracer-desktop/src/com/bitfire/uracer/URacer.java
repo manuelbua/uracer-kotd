@@ -131,7 +131,7 @@ public class URacer implements ApplicationListener {
 
 		// screenMgr.setScreen( ScreenType.GameScreen, TransitionType.Fader, 250
 		// );
-		screenMgr.setScreen( ScreenType.MainScreen, TransitionType.Fader, 250 );
+		screenMgr.setScreen( ScreenType.MainScreen, TransitionType.CrossFader, 250 );
 
 		// Initialize the timers after creating the game screen, so that there
 		// will be no huge discrepancies
@@ -303,7 +303,7 @@ public class URacer implements ApplicationListener {
 		}
 
 		public static void show( ScreenType screenType ) {
-			Screens.setScreen( screenType, TransitionType.Fader, 250 );
+			Screens.setScreen( screenType, TransitionType.CrossFader, 250 );
 		}
 
 		public static void quit() {
