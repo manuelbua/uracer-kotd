@@ -11,16 +11,14 @@ import com.bitfire.uracer.screen.transitions.ScreenTransition;
 
 public final class ScreenManager {
 
-	private ScalingStrategy strategy;
 	private TransitionManager transMgr;
-	private Screen current;
+	private static Screen current;
 	private ScreenType next;
 	private boolean quitPending, doSetScreenImmediate, justTransitioned;
 	private GL20 gl;
 
 	public ScreenManager( ScalingStrategy scalingStrategy ) {
 		transMgr = new TransitionManager( Config.isDesktop /* 32bits */, false, true );
-		strategy = scalingStrategy;
 		current = null;
 		next = ScreenType.NoScreen;
 		quitPending = false;
@@ -109,6 +107,10 @@ public final class ScreenManager {
 			current = null;
 			System.gc();
 		}
+	}
+
+	public static Screen currentScreen() {
+		return current;
 	}
 
 	public boolean quit() {
