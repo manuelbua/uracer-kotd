@@ -14,7 +14,7 @@ public class GameScreen extends Screen {
 	public void init( ScalingStrategy scalingStrategy ) {
 
 		// simulate slowness
-		try { Thread.sleep( 1000 ); } catch( InterruptedException e ) {}
+//		try { Thread.sleep( 1000 ); } catch( InterruptedException e ) {}
 
 		String levelName = "tutorial-3";
 

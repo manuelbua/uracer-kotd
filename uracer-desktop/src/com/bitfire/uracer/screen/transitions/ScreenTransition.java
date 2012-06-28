@@ -6,7 +6,10 @@ import com.bitfire.uracer.screen.Screen;
 import com.bitfire.uracer.screen.ScreenFactory.ScreenType;
 
 public abstract class ScreenTransition implements Disposable {
+	/** Called before the transition is started. */
 	public abstract void frameBuffersReady( Screen current, FrameBuffer from, ScreenType next, FrameBuffer to );
+
+	/** Called when the transition is finished. */
 	public abstract Screen nextScreen();
 
 	public abstract void setDuration( long durationMs );
