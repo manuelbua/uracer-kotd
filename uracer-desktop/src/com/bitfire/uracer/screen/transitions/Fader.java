@@ -2,16 +2,24 @@ package com.bitfire.uracer.screen.transitions;
 
 import com.badlogic.gdx.graphics.glutils.FrameBuffer;
 import com.badlogic.gdx.graphics.glutils.ShaderProgram;
-import com.badlogic.gdx.utils.TimeUtils;
+import com.badlogic.gdx.utils.GdxRuntimeException;
+import com.bitfire.uracer.URacer;
+import com.bitfire.uracer.configuration.Config;
 import com.bitfire.uracer.postprocessing.FullscreenQuad;
+import com.bitfire.uracer.screen.Screen;
+import com.bitfire.uracer.screen.ScreenFactory;
+import com.bitfire.uracer.screen.ScreenFactory.ScreenType;
+import com.bitfire.uracer.screen.ScreenUtils;
+import com.bitfire.uracer.utils.AMath;
 import com.bitfire.uracer.utils.ShaderLoader;
 
 public final class Fader extends ScreenTransition {
 	FrameBuffer from, to;
-	long duration, elapsed, last;
+	long duration, elapsed, lastFrametime;
 	float factor;
 	FullscreenQuad quad;
 	ShaderProgram fade;
+	Screen next;
 
 	public Fader() {
 		quad = new FullscreenQuad();
@@ -31,8 +39,8 @@ public final class Fader extends ScreenTransition {
 		rebind();
 		factor = 0;
 		elapsed = 0;
-		last = 0;
 		duration = 0;
+		lastFrametime = 0;
 	}
 
 	@Override
@@ -42,45 +50,46 @@ public final class Fader extends ScreenTransition {
 	}
 
 	@Override
-	public void setupFrameBuffers( FrameBuffer curr, FrameBuffer next ) {
-		from = curr;
-		to = next;
+	public void frameBuffersReady( Screen current, FrameBuffer from, ScreenType nextScreen, FrameBuffer to ) {
+		this.from = from;
+		this.to = to;
+
+		next = ScreenFactory.createScreen( nextScreen );
+
+		ScreenUtils.copyScreen( current, from );
+		ScreenUtils.copyScreen( next, to );
+	}
+
+	@Override
+	public Screen nextScreen() {
+		return next;
 	}
 
 	/** Sets the duration of the effect, in milliseconds. */
 	@Override
 	public void setDuration( long durationMs ) {
 		duration = durationMs;
+		if( durationMs == 0 ) {
+			throw new GdxRuntimeException( "Invalid transition duration specified." );
+		}
 	}
 
 	public void restart() {
 		elapsed = 0;
-		last = 0;
 	}
 
 	@Override
 	public void resume() {
 		rebind();
-		last = 0;
 	}
 
 	@Override
 	public void update() {
-		long now = TimeUtils.millis();
+		long delta = (long)URacer.Game.getLastDeltaMs();
+		delta = AMath.clamp( delta, 0, (long)(Config.Physics.PhysicsDt * 1000) );
 
-		if( last == 0 ) {
-			last = now;
-			return;
-		}
-
-		long incr = now - last;
-
-		elapsed += incr;
-		last = now;
-
-		if( elapsed < 0 ) {
-			return;
-		}
+		elapsed += delta;
+		lastFrametime = delta;
 
 		if( elapsed > duration ) {
 			elapsed = duration;

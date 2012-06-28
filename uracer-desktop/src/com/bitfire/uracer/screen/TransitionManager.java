@@ -1,10 +1,9 @@
 package com.bitfire.uracer.screen;
 
 import com.badlogic.gdx.Gdx;
-import com.badlogic.gdx.graphics.GL20;
 import com.badlogic.gdx.graphics.Pixmap.Format;
 import com.badlogic.gdx.graphics.glutils.FrameBuffer;
-import com.bitfire.uracer.configuration.Config;
+import com.bitfire.uracer.screen.ScreenFactory.ScreenType;
 import com.bitfire.uracer.screen.transitions.ScreenTransition;
 
 public final class TransitionManager {
@@ -43,48 +42,17 @@ public final class TransitionManager {
 		fbTo.dispose();
 	}
 
-	private void initFrameBuffer( FrameBuffer buffer, Screen source ) {
-		Gdx.gl20.glClearColor( 0, 0, 0, 0 );
-		buffer.begin();
-		{
-			if( usedepth ) {
-				Gdx.gl20.glClearDepthf( 1 );
-				Gdx.gl20.glClear( GL20.GL_COLOR_BUFFER_BIT | GL20.GL_DEPTH_BUFFER_BIT );
-			} else {
-				Gdx.gl20.glClear( GL20.GL_COLOR_BUFFER_BIT );
-			}
-		}
-		buffer.end();
-
-		if( source != null ) {
-			source.tick();
-			source.tickCompleted();
-
-			// ensures default active texture is active
-			Gdx.gl20.glActiveTexture( GL20.GL_TEXTURE0 );
-
-			source.render( buffer );
-
-			if( Config.Debug.RenderDebugDrawsInTransitions ) {
-				buffer.begin();
-				source.debugRender();
-				buffer.end();
-			}
-		}
-	}
-
 	/** Starts the specified transition */
-	public void start( Screen curr, Screen next, ScreenTransition transition ) {
+	public void start( Screen curr, ScreenType next, ScreenTransition transition ) {
 		removeTransition();
 		this.transition = transition;
 
 		// build source textures
-		initFrameBuffer( fbFrom, curr );
-		initFrameBuffer( fbTo, next );
+		ScreenUtils.copyScreen( curr, fbFrom );
 
 		// enable depth writing if its the case
 		Gdx.gl20.glDepthMask( usedepth );
-		this.transition.setupFrameBuffers( fbFrom, fbTo );
+		this.transition.frameBuffersReady( curr, fbFrom, next, fbTo );
 	}
 
 	public boolean isActive() {
@@ -97,6 +65,10 @@ public final class TransitionManager {
 
 	public void removeTransition() {
 		transition = null;
+	}
+
+	public ScreenTransition getTransition() {
+		return transition;
 	}
 
 	public void pause() {

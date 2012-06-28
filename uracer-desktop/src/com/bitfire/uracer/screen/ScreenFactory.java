@@ -8,6 +8,7 @@ public final class ScreenFactory {
 
 	public enum ScreenType {
 		//@formatter:off
+		NoScreen,
 		ExitScreen,
 		MainScreen,
 		ConfigurationScreen,
@@ -15,7 +16,7 @@ public final class ScreenFactory {
 		//@formatter:on
 	}
 
-	public static Screen createScreen( ScreenType screenType, ScalingStrategy strategy ) {
+	public static Screen createScreen( ScreenType screenType ) {
 		Screen screen = null;
 
 		switch( screenType ) {
@@ -37,6 +38,12 @@ public final class ScreenFactory {
 
 		return screen;
 	}
+
+	public static void init( ScalingStrategy strategy ) {
+		ScreenFactory.strategy = strategy;
+	}
+
+	private static ScalingStrategy strategy;
 
 	private ScreenFactory() {
 	}

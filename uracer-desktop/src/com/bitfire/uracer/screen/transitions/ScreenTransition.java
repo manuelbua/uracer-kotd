@@ -2,9 +2,12 @@ package com.bitfire.uracer.screen.transitions;
 
 import com.badlogic.gdx.graphics.glutils.FrameBuffer;
 import com.badlogic.gdx.utils.Disposable;
+import com.bitfire.uracer.screen.Screen;
+import com.bitfire.uracer.screen.ScreenFactory.ScreenType;
 
 public abstract class ScreenTransition implements Disposable {
-	public abstract void setupFrameBuffers( FrameBuffer curr, FrameBuffer next );
+	public abstract void frameBuffersReady( Screen current, FrameBuffer from, ScreenType next, FrameBuffer to );
+	public abstract Screen nextScreen();
 
 	public abstract void setDuration( long durationMs );
 

@@ -13,7 +13,8 @@ public final class ScreenManager {
 
 	private ScalingStrategy strategy;
 	private TransitionManager transMgr;
-	private Screen current, next;
+	private Screen current;
+	private ScreenType next;
 	private boolean quitPending, doSetScreenImmediate, justTransitioned;
 	private GL20 gl;
 
@@ -21,7 +22,7 @@ public final class ScreenManager {
 		transMgr = new TransitionManager( Config.isDesktop /* 32bits */, false, true );
 		strategy = scalingStrategy;
 		current = null;
-		next = null;
+		next = ScreenType.NoScreen;
 		quitPending = false;
 		doSetScreenImmediate = false;
 		justTransitioned = false;
@@ -42,12 +43,10 @@ public final class ScreenManager {
 			return false;
 		}
 
-		if( (transMgr.isActive() && transMgr.isComplete()) || doSetScreenImmediate ) {
-			doSetScreenImmediate = false;
-
+		if( (transMgr.isActive() && transMgr.isComplete()) ) {
+			current = transMgr.getTransition().nextScreen();
+			next = ScreenType.NoScreen;
 			transMgr.removeTransition();
-			current = next;
-			next = null;
 
 			// switched to a null screen?
 			if( current == null ) {
@@ -55,6 +54,9 @@ public final class ScreenManager {
 				Gdx.app.log( "ScreenManager", "No screens available, bye!" );
 				Gdx.app.exit();	// async exit
 			}
+		} else if( doSetScreenImmediate ) {
+			doSetScreenImmediate = false;
+			current = ScreenFactory.createScreen( next );
 		}
 
 		return true;
@@ -90,17 +92,17 @@ public final class ScreenManager {
 		}
 
 		doSetScreenImmediate = false;
-		Screen newScreen = ScreenFactory.createScreen( screen, strategy );
+//		Screen newScreen = ScreenFactory.createScreen( screen );
+		next = screen;
 
 		// if no transition then just setup a screen switch
 		if( transition != null ) {
-			next = newScreen;
-			transMgr.start( current, next, transition );
+			transMgr.start( current, screen, transition );
 		} else {
-			next = newScreen;
 			doSetScreenImmediate = true;
 		}
 
+		// dispose the current screen
 		if( current != null ) {
 			Gdx.app.debug( "ScreenManager", "Destroying " + current.getClass().getSimpleName() );
 			current.dispose();

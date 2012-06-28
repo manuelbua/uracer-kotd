@@ -14,6 +14,7 @@ import com.bitfire.uracer.game.world.models.ModelFactory;
 import com.bitfire.uracer.game.world.models.OrthographicAlignedStillModel;
 import com.bitfire.uracer.resources.Art;
 import com.bitfire.uracer.resources.Sounds;
+import com.bitfire.uracer.screen.ScreenFactory;
 import com.bitfire.uracer.screen.ScreenFactory.ScreenType;
 import com.bitfire.uracer.screen.ScreenManager;
 import com.bitfire.uracer.screen.TransitionFactory;
@@ -47,8 +48,9 @@ public class URacer implements ApplicationListener {
 	private static float graphicsTime = 0;
 	private static float physicsTime = 0;
 	private static float aliasingTime = 0;
-	private static final float MaxDeltaTimeSec = 0.25f;
-	private static final long MaxDeltaTimeNs = (long)(MaxDeltaTimeSec * 1000000000f);
+	public static final float MaxDeltaTimeSec = 0.25f;
+	public static final long MaxDeltaTimeMs = (long)(MaxDeltaTimeSec * 1000f);
+	public static final long MaxDeltaTimeNs = (long)(MaxDeltaTimeSec * 1000000000f);
 	private static long frameCount = 0;
 	private static long lastTicksCount = 0;
 
@@ -101,6 +103,8 @@ public class URacer implements ApplicationListener {
 		// computed for a 256px tile size target (compute needed conversion
 		// factors)
 		scalingStrategy = new ScalingStrategy( new Vector2( 1280, 800 ), 70f, 224, 1f );
+
+		ScreenFactory.init( scalingStrategy );
 
 		// load default private configuration
 		Config.asDefault();
