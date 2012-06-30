@@ -62,8 +62,8 @@ public final class PostProcessing {
 		postProcessor.setBufferTextureWrap( TextureWrap.ClampToEdge, TextureWrap.ClampToEdge );
 
 		if( UserPreferences.bool( Preference.Zoom ) ) {
-			Zoomer z = (UserPreferences.bool( Preference.ZoomRadialBlur ) ? new Zoomer( RadialBlur.Quality.valueOf( UserPreferences
-					.string( Preference.ZoomRadialBlurQuality ) ) ) : new Zoomer());
+			RadialBlur.Quality rbq = RadialBlur.Quality.valueOf( UserPreferences.string( Preference.ZoomRadialBlurQuality ) );
+			Zoomer z = (UserPreferences.bool( Preference.ZoomRadialBlur ) ? new Zoomer( rbq ) : new Zoomer());
 			z.setBlurStrength( 0 );
 			addEffect( Effects.Zoomer.name, z );
 		}
