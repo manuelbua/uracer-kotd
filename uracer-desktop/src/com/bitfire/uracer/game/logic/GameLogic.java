@@ -363,7 +363,8 @@ public class GameLogic implements CarEvent.Listener, CarStateEvent.Listener, Pla
 		} else if( input.isPressed( Keys.Q ) || input.isPressed( Keys.ESCAPE ) || input.isPressed( Keys.BACK ) ) {
 
 			// quit
-			URacer.Screens.setScreen( ScreenType.MainScreen, TransitionType.Fader, 1000 );
+//			URacer.Screens.setScreen( ScreenType.MainScreen, TransitionType.Fader, 1000 );
+			URacer.Screens.setScreen( ScreenType.ExitScreen, TransitionType.None, 0 );
 
 		} else if( input.isPressed( Keys.O ) ) {
 

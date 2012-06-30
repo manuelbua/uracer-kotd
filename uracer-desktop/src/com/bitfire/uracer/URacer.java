@@ -129,9 +129,8 @@ public class URacer implements ApplicationListener {
 
 		screenMgr = new ScreenManager( scalingStrategy );
 
-		// screenMgr.setScreen( ScreenType.GameScreen, TransitionType.Fader, 250
-		// );
-		screenMgr.setScreen( ScreenType.MainScreen, TransitionType.CrossFader, 250 );
+		screenMgr.setScreen( ScreenType.GameScreen, TransitionType.Fader, 250 );
+//		screenMgr.setScreen( ScreenType.MainScreen, TransitionType.CrossFader, 250 );
 
 		// Initialize the timers after creating the game screen, so that there
 		// will be no huge discrepancies
@@ -174,7 +173,7 @@ public class URacer implements ApplicationListener {
 				lastDeltaTimeNs = (currTimeNs - lastTimeNs);
 				lastTimeNs = currTimeNs;
 			} else {
-				lastDeltaTimeNs = (long)(Gdx.graphics.getDeltaTime() * 1000000000);
+				lastDeltaTimeNs = (long)(Gdx.graphics.getDeltaTime() * 1000000000f);
 			}
 
 			// avoid spiral of death
@@ -182,7 +181,7 @@ public class URacer implements ApplicationListener {
 
 			// compute values in different units so that accessors will not
 			// recompute them again and again
-			lastDeltaTimeMs = (float)(lastDeltaTimeNs / 1000000);
+			lastDeltaTimeMs = (float)lastDeltaTimeNs / 1000000f;
 			lastDeltaTimeSec = (float)lastDeltaTimeNs * oneOnOneBillion;
 
 			lastTicksCount = 0;

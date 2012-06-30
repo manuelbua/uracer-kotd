@@ -27,8 +27,6 @@ public final class URacerDesktop {
 
 		// set to default
 		config.title = URacer.Name;
-		config.samples = 0;
-		config.depth = 0;
 		config.useGL20 = true;
 		config.resizable = false;
 
