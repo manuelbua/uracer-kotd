@@ -41,20 +41,23 @@ public final class ScreenManager {
 			return false;
 		}
 
+		boolean switchedScreen = false;
 		if( (transMgr.isActive() && transMgr.isComplete()) ) {
 			current = transMgr.getTransition().nextScreen();
 			next = ScreenType.NoScreen;
 			transMgr.removeTransition();
-
-			// switched to a null screen?
-			if( current == null ) {
-				quitPending = true;
-				Gdx.app.log( "ScreenManager", "No screens available, bye!" );
-				Gdx.app.exit();	// async exit
-			}
+			switchedScreen = true;
 		} else if( doSetScreenImmediate ) {
 			doSetScreenImmediate = false;
 			current = ScreenFactory.createScreen( next );
+			switchedScreen = true;
+		}
+
+		// switched to a null screen?
+		if( switchedScreen && current == null ) {
+			quitPending = true;
+			Gdx.app.log( "ScreenManager", "No screens available, bye!" );
+			Gdx.app.exit();	// async exit
 		}
 
 		return true;
