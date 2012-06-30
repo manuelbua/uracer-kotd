@@ -16,6 +16,7 @@ public class URacerAndroid extends AndroidApplication {
 		config.useAccelerometer = false;
 		config.useCompass = false;
 		config.useGL20 = true;
+		config.useWakelock = true;
 
 		URacer uracer = new URacer();
 		initialize( uracer, config );

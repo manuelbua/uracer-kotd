@@ -84,7 +84,7 @@ public final class Config {
 			RenderDebugInfoGraphics = true;
 			RenderDebugInfoMemoryStats = Config.isDesktop;
 			RenderDebugInfoMeshStats = Config.isDesktop;
-			RenderDebugInfoPostProcessor = Config.isDesktop;
+			RenderDebugInfoPostProcessor = true;
 			Render3DBoundingBoxes = false;
 			RenderDebugDrawsInTransitions = Config.isDesktop;
 
@@ -98,17 +98,17 @@ public final class Config {
 	}
 
 	public static final class PostProcessing {
-	
+
 		public static BlurType BlurType;
 		public static float RttRatio = 0.25f;
 		public static int RttFboWidth, RttFboHeight;
-	
+
 		// compute per-resolution constants
 		public static void asDefault() {
-	
+
 			RttFboWidth = (int)(Gdx.graphics.getWidth() * RttRatio);
 			RttFboHeight = (int)(Gdx.graphics.getHeight() * RttRatio);
-	
+
 			int w = Gdx.graphics.getWidth();
 			if( w >= 1680 ) {
 				BlurType = Blur.BlurType.Gaussian5x5b;
@@ -117,10 +117,10 @@ public final class Config {
 			} else if( w >= 800 ) {
 				BlurType = Blur.BlurType.Gaussian5x5b;
 			}
-	
+
 			Gdx.app.log( "Config", "blurType=" + BlurType );
 		}
-	
+
 		private PostProcessing() {
 		}
 	}

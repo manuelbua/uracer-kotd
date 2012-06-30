@@ -12,11 +12,11 @@
 	<buildSpec>
 		<buildCommand>
 			<name>org.eclipse.ui.externaltools.ExternalToolBuilder</name>
-			<triggers>full,incremental,</triggers>
+			<triggers>auto,</triggers>
 			<arguments>
 				<dictionary>
 					<key>LaunchConfigHandle</key>
-					<value>&lt;project&gt;/.externalToolBuilders/force-refresh.launch</value>
+					<value>&lt;project&gt;/.externalToolBuilders/force-clean.launch</value>
 				</dictionary>
 			</arguments>
 		</buildCommand>
