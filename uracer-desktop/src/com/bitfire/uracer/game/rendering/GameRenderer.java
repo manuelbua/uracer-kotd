@@ -86,7 +86,9 @@ public final class GameRenderer {
 	}
 
 	public void dispose() {
-		postProcessor.dispose();
+		if( UserPreferences.bool( Preference.PostProcessing ) ) {
+			postProcessor.dispose();
+		}
 
 		// depthMap.dispose();
 		batchRenderer.dispose();
@@ -98,6 +100,7 @@ public final class GameRenderer {
 	public boolean hasPostProcessor() {
 		return postProcessor != null;
 	}
+
 	public PostProcessor getPostProcessor() {
 		return postProcessor;
 	}
@@ -116,7 +119,7 @@ public final class GameRenderer {
 		boolean postProcessorReady = false;
 		boolean hasDest = (dest != null);
 
-		if( postProcessor.isEnabled() ) {
+		if( postProcessor != null && postProcessor.isEnabled() ) {
 			postProcessorReady = postProcessor.capture();
 		}
 
