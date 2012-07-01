@@ -3,6 +3,7 @@ package com.bitfire.uracer.screen;
 import com.bitfire.uracer.ScalingStrategy;
 import com.bitfire.uracer.screen.screens.GameScreen;
 import com.bitfire.uracer.screen.screens.MainScreen;
+import com.bitfire.uracer.screen.screens.OptionsScreen;
 
 public final class ScreenFactory {
 
@@ -11,7 +12,7 @@ public final class ScreenFactory {
 		NoScreen,
 		ExitScreen,
 		MainScreen,
-		ConfigurationScreen,
+		OptionsScreen,
 		GameScreen
 		//@formatter:on
 	}
@@ -26,7 +27,10 @@ public final class ScreenFactory {
 		case MainScreen:
 			screen = new MainScreen();
 			break;
-		case ConfigurationScreen:
+		case OptionsScreen:
+			screen = new OptionsScreen();
+			break;
+		case ExitScreen:
 		default:
 			screen = null;
 			break;

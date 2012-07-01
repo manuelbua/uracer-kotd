@@ -57,6 +57,7 @@ public final class UserPreferences {
 
 	public static void save() {
 		prefs.flush();
+		Gdx.app.debug( "UserPreferences", "User preferences updated." );
 	}
 
 	private static void toDefault() {

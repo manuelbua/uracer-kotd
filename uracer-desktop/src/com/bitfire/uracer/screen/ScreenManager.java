@@ -44,6 +44,10 @@ public final class ScreenManager {
 		boolean switchedScreen = false;
 		if( (transMgr.isActive() && transMgr.isComplete()) ) {
 			current = transMgr.getTransition().nextScreen();
+			if( current != null ) {
+				current.enable();
+			}
+
 			next = ScreenType.NoScreen;
 			transMgr.removeTransition();
 			switchedScreen = true;
@@ -71,6 +75,11 @@ public final class ScreenManager {
 	 * configuration.
 	 * The screen change is scheduled to happen at the start of the next frame. */
 	public void setScreen( ScreenType screen, TransitionType transitionType, long transitionDurationMs ) {
+		// early exit
+		if( transMgr.isActive() ) {
+			return;
+		}
+
 		ScreenTransition transition = null;
 
 		// if no transition or no duration avoid everything and pass a null
@@ -93,11 +102,15 @@ public final class ScreenManager {
 		}
 
 		doSetScreenImmediate = false;
-//		Screen newScreen = ScreenFactory.createScreen( screen );
+		// Screen newScreen = ScreenFactory.createScreen( screen );
 		next = screen;
 
 		// if no transition then just setup a screen switch
 		if( transition != null ) {
+			if( current != null ) {
+				current.disable();
+			}
+
 			transMgr.start( current, screen, transition );
 		} else {
 			doSetScreenImmediate = true;

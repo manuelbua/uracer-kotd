@@ -8,69 +8,21 @@ import com.badlogic.gdx.scenes.scene2d.Actor;
 import com.badlogic.gdx.scenes.scene2d.Stage;
 import com.badlogic.gdx.scenes.scene2d.ui.ClickListener;
 import com.badlogic.gdx.scenes.scene2d.ui.Image;
+import com.badlogic.gdx.scenes.scene2d.ui.Label;
 import com.badlogic.gdx.scenes.scene2d.ui.TextButton;
 import com.badlogic.gdx.scenes.scene2d.ui.tablelayout.Table;
-import com.badlogic.gdx.scenes.scene2d.ui.tablelayout.TableLayout;
 import com.bitfire.uracer.Input;
 import com.bitfire.uracer.ScalingStrategy;
 import com.bitfire.uracer.URacer;
 import com.bitfire.uracer.resources.Art;
 import com.bitfire.uracer.screen.Screen;
 import com.bitfire.uracer.screen.ScreenFactory.ScreenType;
-import com.bitfire.uracer.screen.TransitionFactory.TransitionType;
+import com.bitfire.uracer.utils.UIUtils;
 
-public class MainScreen extends Screen {
+public final class MainScreen extends Screen {
 
 	private Stage ui;
 	private Input input;
-
-	private void setupUI() {
-		ui = new Stage( Gdx.graphics.getWidth(), Gdx.graphics.getHeight(), false );
-		Gdx.input.setInputProcessor( ui );
-
-		// background
-		Image bg = new Image( Art.scrBackground );
-		bg.width = Gdx.graphics.getWidth();
-		bg.height = Gdx.graphics.getHeight();
-		ui.addActor( bg );
-
-		Table table = new Table( Art.scrSkin );
-		table.debug();
-		table.width = Gdx.graphics.getWidth();
-		table.height = Gdx.graphics.getHeight();
-		ui.addActor( table );
-		TableLayout layout = table.getTableLayout();
-
-		TextButton startGameButton = new TextButton( "Start game", Art.scrSkin );
-		startGameButton.setClickListener( new ClickListener() {
-			@Override
-			public void click( Actor actor, float x, float y ) {
-//				URacer.Game.show( ScreenType.GameScreen );
-				URacer.Screens.setScreen( ScreenType.GameScreen, TransitionType.Fader, 1000 );
-			}
-		} );
-
-		TextButton optionsButton = new TextButton( "Options", Art.scrSkin );
-		optionsButton.setClickListener( new ClickListener() {
-			@Override
-			public void click( Actor actor, float x, float y ) {
-				Gdx.app.log( "MainScreen", "soon..." );
-			}
-		} );
-
-		TextButton quitButton = new TextButton( "Quit", Art.scrSkin );
-		quitButton.setClickListener( new ClickListener() {
-			@Override
-			public void click( Actor actor, float x, float y ) {
-				URacer.Game.quit();
-			}
-		} );
-
-		layout.register( "startGameButton", startGameButton );
-		layout.register( "optionsButton", optionsButton );
-		layout.register( "quitButton", quitButton );
-		layout.parse( Art.scrDefMain );
-	}
 
 	@Override
 	public void init( ScalingStrategy scalingStrategy ) {
@@ -79,9 +31,65 @@ public class MainScreen extends Screen {
 	}
 
 	@Override
+	public void enable() {
+		Gdx.input.setInputProcessor( ui );
+	}
+
+	private void setupUI() {
+		ui = new Stage( Gdx.graphics.getWidth(), Gdx.graphics.getHeight(), false );
+
+		// background
+		Image bg = new Image( Art.scrBackground );
+		bg.width = Gdx.graphics.getWidth();
+		bg.height = Gdx.graphics.getHeight();
+		ui.addActor( bg );
+
+		Table buttonsTable = new Table( Art.scrSkin );
+		buttonsTable.debug();
+		buttonsTable.setFillParent( true );
+		ui.addActor( buttonsTable );
+
+		TextButton startGameButton = UIUtils.newTextButton( "Start game", new ClickListener() {
+			@Override
+			public void click( Actor actor, float x, float y ) {
+				URacer.Game.show( ScreenType.GameScreen );
+			}
+		} );
+
+		TextButton optionsButton = UIUtils.newTextButton( "Options", new ClickListener() {
+			@Override
+			public void click( Actor actor, float x, float y ) {
+				URacer.Game.show( ScreenType.OptionsScreen );
+			}
+		} );
+
+		TextButton quitButton = UIUtils.newTextButton( "Quit", new ClickListener() {
+			@Override
+			public void click( Actor actor, float x, float y ) {
+				URacer.Game.quit();
+			}
+		} );
+
+		buttonsTable.add( startGameButton ).width( 300 ).height( 50 ).pad( 5 );
+		buttonsTable.row();
+		buttonsTable.add( optionsButton ).width( 300 ).height( 50 ).pad( 5 );
+		buttonsTable.row();
+		buttonsTable.add( quitButton ).width( 300 ).height( 50 ).pad( 5 );
+
+		Table infoTable = new Table( Art.scrSkin );
+		// infoTable.debug();
+		infoTable.setFillParent( true );
+		ui.addActor( infoTable );
+
+		Label versionLabel = new Label( URacer.getVersionInformation(), Art.scrSkin );
+		infoTable.row();
+		infoTable.add( versionLabel ).expand().bottom().left();
+	}
+
+	@Override
 	public void dispose() {
 		ui.dispose();
-		Gdx.input.setInputProcessor( null );
+		disable();
 	}
 
 	@Override
@@ -94,7 +102,7 @@ public class MainScreen extends Screen {
 
 	@Override
 	public void tick() {
-		if( input.isPressed( Keys.Q )  || input.isPressed( Keys.BACK ) || input.isPressed( Keys.ESCAPE ) ) {
+		if( input.isPressed( Keys.Q ) || input.isPressed( Keys.BACK ) || input.isPressed( Keys.ESCAPE ) ) {
 			URacer.Game.quit();
 		}
 	}

@@ -46,7 +46,6 @@ public final class Art {
 	// screns
 	public static Texture scrBackground;
 	public static Skin scrSkin;
-	public static String scrDefMain;
 
 	public static void init( float invZoomFactor ) {
 		loadFonts( invZoomFactor );
@@ -72,7 +71,6 @@ public final class Art {
 	private static void loadScreensData() {
 		scrBackground = newTexture( "data/base/titlescreen.png", true );
 		scrSkin = new Skin( Gdx.files.internal( Storage.UI + "skin.json" ), Gdx.files.internal( Storage.UI + "skin.png" ) );
-		scrDefMain = Gdx.files.internal( Storage.UI + "/main-screen.tl" ).readString();
 	}
 
 	private static void disposeScreensData() {
