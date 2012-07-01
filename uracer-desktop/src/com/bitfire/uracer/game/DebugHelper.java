@@ -72,7 +72,7 @@ public final class DebugHelper {
 		uRacerInfo = "URacer " + URacer.getVersionInformation();
 
 		// compute graphics stats size
-		float updateHz = 24f;
+		float updateHz = 60f;
 		if( !Config.isDesktop ) {
 			updateHz = 5f;
 		}

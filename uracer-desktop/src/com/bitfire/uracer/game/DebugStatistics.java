@@ -10,6 +10,7 @@ import com.badlogic.gdx.math.WindowedMean;
 import com.badlogic.gdx.utils.TimeUtils;
 import com.bitfire.uracer.URacer;
 import com.bitfire.uracer.configuration.Config;
+import com.bitfire.uracer.utils.AMath;
 
 public final class DebugStatistics {
 	// public statistical data
@@ -33,8 +34,7 @@ public final class DebugStatistics {
 	private float[] dataRenderTime;
 	private float[] dataFps;
 	private float[] dataPhysicsTime;
-
-	// private float[] dataTimeAliasing;
+	private float[] dataTimeAliasing;
 
 	public DebugStatistics() {
 		init( 100, 50, 0.2f );
@@ -64,12 +64,12 @@ public final class DebugStatistics {
 		dataRenderTime = new float[ PanelWidth ];
 		dataFps = new float[ PanelWidth ];
 		dataPhysicsTime = new float[ PanelWidth ];
-		// dataTimeAliasing = new float[ PanelWidth ];
+		dataTimeAliasing = new float[ PanelWidth ];
 
 		// precompute constants
 		ratio_rtime = ((float)PanelHeight / 2f) * Config.Physics.PhysicsTimestepHz;
 		ratio_ptime = ((float)PanelHeight / 2f) * Config.Physics.PhysicsTimestepHz;
-		ratio_fps = ((float)PanelHeight / 2f) * (1f/60f);
+		ratio_fps = ((float)PanelHeight / 2f) * (1f / 60f);
 
 		reset();
 	}
@@ -84,7 +84,7 @@ public final class DebugStatistics {
 			dataRenderTime[i] = 0;
 			dataPhysicsTime[i] = 0;
 			dataFps[i] = 0;
-			// dataTimeAliasing[i] = 0;
+			dataTimeAliasing[i] = 0;
 		}
 
 		plot();
@@ -139,12 +139,11 @@ public final class DebugStatistics {
 			}
 
 			// time aliasing
-			// value = (int)( AMath.clamp(dataTimeAliasing[x] * PanelHeight, 0, PanelHeight) );
-			// if( value > 0 )
-			// {
-			// pixels.setColor( 1, 0, 1, .8f );
-			// pixels.drawPixel( xc, value );
-			// }
+			value = (int)(AMath.clamp( dataTimeAliasing[x] * PanelHeight, 0, PanelHeight ));
+			if( value > 0 ) {
+				pixels.setColor( 1, 0, 1, .8f );
+				pixels.drawPixel( xc, value );
+			}
 		}
 
 		texture.draw( pixels, 0, 0 );
@@ -159,7 +158,7 @@ public final class DebugStatistics {
 				dataRenderTime[i] = dataRenderTime[i - 1];
 				dataPhysicsTime[i] = dataPhysicsTime[i - 1];
 				dataFps[i] = dataFps[i - 1];
-				// dataTimeAliasing[i] = dataTimeAliasing[i-1];
+				dataTimeAliasing[i] = dataTimeAliasing[i - 1];
 			}
 
 			meanPhysics.addValue( URacer.Game.getPhysicsTime() );
@@ -169,7 +168,7 @@ public final class DebugStatistics {
 			dataPhysicsTime[0] = meanPhysics.getMean();
 			dataRenderTime[0] = meanRender.getMean();
 			dataFps[0] = Gdx.graphics.getFramesPerSecond();
-			// dataTimeAliasing[0] = URacer.getTemporalAliasing();
+			dataTimeAliasing[0] = URacer.Game.getTemporalAliasing();
 
 			startTime = time;
 

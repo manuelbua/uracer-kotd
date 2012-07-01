@@ -130,7 +130,8 @@ public class URacer implements ApplicationListener {
 		screenMgr = new ScreenManager( scalingStrategy );
 
 		screenMgr.setScreen( ScreenType.GameScreen, TransitionType.Fader, 250 );
-//		screenMgr.setScreen( ScreenType.MainScreen, TransitionType.CrossFader, 250 );
+		// screenMgr.setScreen( ScreenType.MainScreen,
+		// TransitionType.CrossFader, 250 );
 
 		// Initialize the timers after creating the game screen, so that there
 		// will be no huge discrepancies
@@ -195,9 +196,13 @@ public class URacer implements ApplicationListener {
 					lastTicksCount++;
 				}
 
-				// simulate slowness
-				// try { Thread.sleep( 32 ); } catch( InterruptedException e )
-				// {}
+				// // simulate slowness
+				// if( timeMultiplier < 1 ) {
+				// try {
+				// Thread.sleep( 48 );
+				// } catch( InterruptedException e ) {
+				// }
+				// }
 			}
 
 			physicsTime = (TimeUtils.nanoTime() - startTime) * oneOnOneBillion;
@@ -224,8 +229,12 @@ public class URacer implements ApplicationListener {
 				screenMgr.render( null );
 
 				// simulate slowness
-				// try { Thread.sleep( 32 ); } catch( InterruptedException e )
-				// {}
+//				if( timeMultiplier < 1 ) {
+//					try {
+//						Thread.sleep( 48 );
+//					} catch( InterruptedException e ) {
+//					}
+//				}
 			}
 
 			graphicsTime = (TimeUtils.nanoTime() - startTime) * oneOnOneBillion;
