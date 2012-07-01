@@ -36,7 +36,6 @@ public class URacer implements ApplicationListener {
 	private long timeAccuNs = 0;
 	private long timeStepHz = 0;
 	private long PhysicsDtNs = 0;
-	private long lastTimeNs = 0;
 	private static long lastDeltaTimeNs = 0;
 	private static float lastDeltaTimeSec = 0;
 	private static float lastDeltaTimeMs = 0;
@@ -139,7 +138,6 @@ public class URacer implements ApplicationListener {
 		// Note those initial values are carefully choosen to ensure that the
 		// first iteration ever is going to
 		// at least perform one single tick
-		lastTimeNs = TimeUtils.nanoTime();
 		timeAccuNs = PhysicsDtNs;
 		// try { Thread.sleep( 1000 ); } catch( InterruptedException e ) {}
 	}
@@ -170,9 +168,7 @@ public class URacer implements ApplicationListener {
 
 			// this is not good for Android since the value often hop around
 			if( useRealFrametime ) {
-				long currTimeNs = TimeUtils.nanoTime();
-				lastDeltaTimeNs = (currTimeNs - lastTimeNs);
-				lastTimeNs = currTimeNs;
+				lastDeltaTimeNs = (long)(Gdx.graphics.getRawDeltaTime() * 1000000000f);
 			} else {
 				lastDeltaTimeNs = (long)(Gdx.graphics.getDeltaTime() * 1000000000f);
 			}
@@ -258,7 +254,6 @@ public class URacer implements ApplicationListener {
 	@Override
 	public void resume() {
 		running = true;
-		lastTimeNs = TimeUtils.nanoTime();
 		lastDeltaTimeNs = 0;
 		lastDeltaTimeMs = 0;
 		lastDeltaTimeSec = 0;
