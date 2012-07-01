@@ -86,5 +86,4 @@ cp ui/skin/skin.png ${DEST}/ui >/dev/null
 cp ui/skin/skin.json ${DEST}/ui >/dev/null
 cp ui/font/default.fnt ${DEST}/ui >/dev/null
 cp ui/font/default.png ${DEST}/ui >/dev/null
-cp ui/*.tl ${DEST}/ui >/dev/null
 echo "done!"
