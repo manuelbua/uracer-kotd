@@ -18,7 +18,7 @@ public final class URacerDesktop {
 
 	private static boolean parseConfig( String[] argv, LwjglApplicationConfiguration config ) {
 
-		System.out.println( URacer.Name + " " + URacer.getVersionInformation() + "\nCopyright (c) 2012 Manuel Bua.\n" );
+		System.out.print( URacer.Name + " " + URacer.getVersionInformation() + "\nCopyright (c) 2012 Manuel Bua.\n\n" );
 
 		LaunchFlags flags = new LaunchFlags();
 		if( !CommandLine.parseLaunchFlags( argv, flags ) ) {
