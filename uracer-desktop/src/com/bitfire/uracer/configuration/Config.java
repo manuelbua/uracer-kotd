@@ -100,14 +100,14 @@ public final class Config {
 	public static final class PostProcessing {
 
 		public static BlurType BlurType;
-		public static float RttRatio = 0.25f;
-		public static int RttFboWidth, RttFboHeight;
+		public static int ScaledFboWidth, ScaledFboHeight;
+		private static float RttRatio = 0.25f;
 
 		// compute per-resolution constants
 		public static void asDefault() {
 
-			RttFboWidth = (int)(Gdx.graphics.getWidth() * RttRatio);
-			RttFboHeight = (int)(Gdx.graphics.getHeight() * RttRatio);
+			ScaledFboWidth = (int)(Gdx.graphics.getWidth() * RttRatio);
+			ScaledFboHeight = (int)(Gdx.graphics.getHeight() * RttRatio);
 
 			int w = Gdx.graphics.getWidth();
 			if( w >= 1680 ) {
@@ -132,6 +132,7 @@ public final class Config {
 		Debug.asDefault();
 		Graphics.asDefault();
 		Physics.asDefault();
+		PostProcessing.asDefault();
 	}
 
 	private Config() {
