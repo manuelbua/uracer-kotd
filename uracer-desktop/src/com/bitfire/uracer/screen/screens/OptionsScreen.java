@@ -137,6 +137,7 @@ public class OptionsScreen extends Screen {
 						ppZoom.setChecked( false );
 						ppZoomBlur.setChecked( false );
 					}
+
 					UserPreferences.bool( Preference.PostProcessing, postProcessingCb.isChecked() );
 					UserPreferences.bool( Preference.Vignetting, ppVignetting.isChecked() );
 					UserPreferences.bool( Preference.Bloom, ppBloom.isChecked() );
