@@ -254,10 +254,6 @@ public class GameLogic implements CarEvent.Listener, CarStateEvent.Listener, Pla
 		return playerCar;
 	}
 
-	public void setTimeDilateInputMode( TimeDilateInputMode mode ) {
-		timeDilateMode = mode;
-	}
-
 	public void onSubstepCompleted() {
 		gameTasksManager.physicsStep.onSubstepCompleted();
 	}

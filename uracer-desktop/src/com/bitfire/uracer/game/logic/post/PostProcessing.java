@@ -69,7 +69,7 @@ public final class PostProcessing {
 		}
 
 		if( UserPreferences.bool( Preference.Bloom ) ) {
-			addEffect( Effects.Bloom.name, new Bloom( Config.PostProcessing.RttFboWidth, Config.PostProcessing.RttFboHeight ) );
+			addEffect( Effects.Bloom.name, new Bloom( Config.PostProcessing.ScaledFboWidth, Config.PostProcessing.ScaledFboHeight ) );
 		}
 
 		if( UserPreferences.bool( Preference.Vignetting ) ) {

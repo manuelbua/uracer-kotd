@@ -128,8 +128,9 @@ public class URacer implements ApplicationListener {
 
 		screenMgr = new ScreenManager( scalingStrategy );
 
-//		screenMgr.setScreen( ScreenType.GameScreen, TransitionType.Fader, 250 );
-		screenMgr.setScreen( ScreenType.MainScreen, TransitionType.CrossFader, 250 );
+//		screenMgr.setScreen( ScreenType.GameScreen, TransitionType.Fader, 500 );
+		screenMgr.setScreen( ScreenType.MainScreen, TransitionType.CrossFader, 500 );
+//		screenMgr.setScreen( ScreenType.OptionsScreen, TransitionType.CrossFader, 500 );
 
 		// Initialize the timers after creating the game screen, so that there
 		// will be no huge discrepancies
@@ -305,11 +306,11 @@ public class URacer implements ApplicationListener {
 		}
 
 		public static void show( ScreenType screenType ) {
-			Screens.setScreen( screenType, TransitionType.CrossFader, 250 );
+			Screens.setScreen( screenType, TransitionType.Fader, 1000 );
 		}
 
 		public static void quit() {
-			show( ScreenType.ExitScreen );
+			Screens.setScreen( ScreenType.ExitScreen, TransitionType.CrossFader, 500 );
 		}
 	}
 
