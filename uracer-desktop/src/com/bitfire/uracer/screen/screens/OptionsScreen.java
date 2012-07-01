@@ -30,6 +30,7 @@ public class OptionsScreen extends Screen {
 
 	private Stage ui;
 	private Input input;
+	private CheckBox ppVignetting, ppBloom, ppZoom, ppZoomBlur;
 
 	@Override
 	public void init( ScalingStrategy scalingStrategy ) {
@@ -77,10 +78,10 @@ public class OptionsScreen extends Screen {
 
 		// post-processing
 		{
-			final CheckBox ppVignetting = UIUtils.newCheckBox( "Vignetting and gradient mapping", 200, UserPreferences.bool( Preference.Vignetting ) );
-			final CheckBox ppBloom = UIUtils.newCheckBox( "Bloom", 100, UserPreferences.bool( Preference.Bloom ) );
-			final CheckBox ppZoom = UIUtils.newCheckBox( "Zoom", 100, UserPreferences.bool( Preference.Zoom ) );
-			final CheckBox ppZoomBlur = UIUtils.newCheckBox( "Zoom blur", 100, UserPreferences.bool( Preference.ZoomRadialBlur ) );
+			ppVignetting = UIUtils.newCheckBox( "Vignetting and gradient mapping", 200, UserPreferences.bool( Preference.Vignetting ) );
+			ppBloom = UIUtils.newCheckBox( "Bloom", 100, UserPreferences.bool( Preference.Bloom ) );
+			ppZoom = UIUtils.newCheckBox( "Zoom", 100, UserPreferences.bool( Preference.Zoom ) );
+			ppZoomBlur = UIUtils.newCheckBox( "Zoom blur", 100, UserPreferences.bool( Preference.ZoomRadialBlur ) );
 
 			ppVignetting.setClickListener( new ClickListener() {
 				@Override
