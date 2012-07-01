@@ -5,11 +5,17 @@ import com.badlogic.gdx.Preferences;
 import com.bitfire.uracer.postprocessing.filters.RadialBlur;
 
 /** Represents user-configurable configuration properties.
- * The functionalities can be safely accessed statically just after user
- * preferences have benn loaded.
  *
- *  On the desktop, user settings are stored in ~/.prefs/ while on mobile we
- *  are wrapping SharedPreferences. */
+ * The functionalities can be safely accessed statically just after user
+ * preferences have been loaded.
+ *
+ * Keep in mind that querying configuration values is time consuming so use it
+ * with care and use for initialization or one-off stuff.
+ * If you really need to do that per-frame then think about caching the values
+ * and just refresh them once every n-frames.
+ *
+ * On the desktop, user settings are stored in ~/.prefs/ while on mobile we
+ * are wrapping SharedPreferences. */
 public final class UserPreferences {
 
 	public enum Preference {
@@ -79,7 +85,6 @@ public final class UserPreferences {
 
 		bool( Preference.CrtScreen, false );
 		bool( Preference.RadialDistortion, false );
-
 
 		//
 		// gameplay
