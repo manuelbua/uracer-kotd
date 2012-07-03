@@ -23,6 +23,7 @@ public final class MainScreen extends Screen {
 
 	private Stage ui;
 	private Input input;
+	private Image bg;
 
 	@Override
 	public void init( ScalingStrategy scalingStrategy ) {
@@ -39,9 +40,8 @@ public final class MainScreen extends Screen {
 		ui = new Stage( Gdx.graphics.getWidth(), Gdx.graphics.getHeight(), false );
 
 		// background
-		Image bg = new Image( Art.scrBackground );
-		bg.width = Gdx.graphics.getWidth();
-		bg.height = Gdx.graphics.getHeight();
+		bg = new Image( Art.scrBackground );
+		bg.setFillParent( true );
 		ui.addActor( bg );
 
 		Table buttonsTable = new Table( Art.scrSkin );
