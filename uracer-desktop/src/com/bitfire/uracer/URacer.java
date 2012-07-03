@@ -126,7 +126,7 @@ public class URacer implements ApplicationListener {
 		PhysicsDtNs = (long)((long)1000000000 / (long)Config.Physics.PhysicsTimestepHz);
 		timeStepHz = (long)Config.Physics.PhysicsTimestepHz;
 
-		screenMgr = new ScreenManager( scalingStrategy );
+		screenMgr = new ScreenManager();
 
 //		screenMgr.setScreen( ScreenType.GameScreen, TransitionType.Fader, 500 );
 		screenMgr.setScreen( ScreenType.MainScreen, TransitionType.CrossFader, 500 );

@@ -5,7 +5,7 @@ CLASS_PATH="/home/manuel/dev/libgdx/dist"
 JARS="${CLASS_PATH}/gdx.jar:${CLASS_PATH}/gdx-natives.jar:${CLASS_PATH}/gdx-backend-jogl.jar:${CLASS_PATH}/gdx-backend-jogl-natives.jar"
 
 GDX_TOOLS_PATH="/home/manuel/dev/libgdx/extensions/gdx-tools/target/java"
-TEX_PACKER="java -classpath ${JARS}:${GDX_TOOLS_PATH} com.badlogic.gdx.tools.imagepacker.TexturePacker"
+TEX_PACKER="java -classpath ${JARS}:${GDX_TOOLS_PATH} com.badlogic.gdx.tools.imagepacker.TexturePacker2"
 
 GDX_TILED_PREP_PATH="/home/manuel/dev/libgdx/extensions/gdx-tiled-preprocessor/target/java"
 TILED_PACKER="java -classpath ${JARS}:${GDX_TOOLS_PATH}:${GDX_TILED_PREP_PATH} com.badlogic.gdx.tiledmappacker.TiledMapPacker"
@@ -26,7 +26,7 @@ echo "done!"
 echo -n "Cooking levels..."
 rm -rf "${DEST}/levels/"
 mkdir -p ${DEST}
-${TILED_PACKER} levels/ ${DEST}/levels
+${TILED_PACKER} levels/ ${DEST}/levels >/dev/null
 echo "done!"
 
 # tileset friction maps
@@ -81,8 +81,9 @@ echo "done!"
 echo -n "Cooking UI skin..."
 rm -rf "${DEST}/ui/"
 mkdir -p "${DEST}/ui/"
-${SKIN_PACKER} ui/skin
-cp ui/skin/skin.png ${DEST}/ui >/dev/null
+${TEX_PACKER} ui/skin ${DEST}/ui skin >/dev/null
+#${SKIN_PACKER} ui/skin
+#cp ui/skin/skin.png ${DEST}/ui >/dev/null
 cp ui/skin/skin.json ${DEST}/ui >/dev/null
 cp ui/font/default.fnt ${DEST}/ui >/dev/null
 cp ui/font/default.png ${DEST}/ui >/dev/null

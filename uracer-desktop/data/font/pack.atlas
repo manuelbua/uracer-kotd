@@ -1,56 +1,56 @@
 
-font1.png
+pack.png
 format: RGBA8888
 filter: Nearest,Nearest
 repeat: none
-curse-r-big
+curse-g-big
   rotate: false
-  xy: 2, 2
+  xy: 1, 259
   size: 512, 512
   orig: 512, 512
   offset: 0, 0
   index: -1
-curse-y-r
+curse-r
   rotate: false
-  xy: 516, 2
+  xy: 1, 1
   size: 256, 256
   orig: 256, 256
   offset: 0, 0
   index: -1
 curse-g
   rotate: false
-  xy: 2, 516
+  xy: 515, 515
   size: 256, 256
   orig: 256, 256
   offset: 0, 0
   index: -1
-curse-r
+curse-y-r
   rotate: false
-  xy: 260, 516
+  xy: 259, 1
   size: 256, 256
   orig: 256, 256
   offset: 0, 0
   index: -1
 
-font2.png
+pack2.png
 format: RGBA8888
 filter: Nearest,Nearest
 repeat: none
 curse-y-r-big
   rotate: false
-  xy: 2, 2
+  xy: 1, 1
   size: 512, 512
   orig: 512, 512
   offset: 0, 0
   index: -1
 
-font3.png
+pack3.png
 format: RGBA8888
 filter: Nearest,Nearest
 repeat: none
-curse-g-big
+curse-r-big
   rotate: false
-  xy: 2, 2
+  xy: 1, 1
   size: 512, 512
   orig: 512, 512
   offset: 0, 0

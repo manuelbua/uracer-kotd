@@ -70,4 +70,7 @@ public final class ScreenUtils {
 	public static void clear( FrameBuffer buffer, Color clearColor ) {
 		clear( buffer, clearColor, 1f, false );
 	}
+
+	private ScreenUtils() {
+	}
 }

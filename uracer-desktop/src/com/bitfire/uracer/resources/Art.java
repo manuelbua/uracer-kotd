@@ -70,12 +70,13 @@ public final class Art {
 	//
 	private static void loadScreensData() {
 		scrBackground = newTexture( "data/base/titlescreen.png", true );
-		scrSkin = new Skin( Gdx.files.internal( Storage.UI + "skin.json" ), Gdx.files.internal( Storage.UI + "skin.png" ) );
+		// the skin will automatically search and load the same filename+".atlas" extension
+		scrSkin = new Skin( Gdx.files.internal( Storage.UI + "skin.json" ) );
 	}
 
 	private static void disposeScreensData() {
-		scrBackground.dispose();
 		scrSkin.dispose();
+		scrBackground.dispose();
 	}
 
 	//
@@ -149,7 +150,7 @@ public final class Art {
 	//
 
 	private static void loadCarGraphics() {
-		cars = new TextureAtlas( "data/cars/pack" );
+		cars = new TextureAtlas( "data/cars/pack.atlas" );
 
 		skidMarksFront = cars.findRegion( "skid-marks-front" );
 		skidMarksRear = cars.findRegion( "skid-marks-rear" );
@@ -169,7 +170,7 @@ public final class Art {
 		debugFont = split( "data/base/debug-font.png", DebugFontWidth, DebugFontHeight, false );
 
 		// game fonts
-		fontAtlas = new TextureAtlas( "data/font/pack" );
+		fontAtlas = new TextureAtlas( "data/font/pack.atlas" );
 		for( TextureRegion r : fontAtlas.getRegions() ) {
 			r.getTexture().setFilter( TextureFilter.Linear, TextureFilter.Linear );
 		}

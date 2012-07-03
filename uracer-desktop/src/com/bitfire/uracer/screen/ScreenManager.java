@@ -3,7 +3,6 @@ package com.bitfire.uracer.screen;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.GL20;
 import com.badlogic.gdx.graphics.glutils.FrameBuffer;
-import com.bitfire.uracer.ScalingStrategy;
 import com.bitfire.uracer.configuration.Config;
 import com.bitfire.uracer.screen.ScreenFactory.ScreenType;
 import com.bitfire.uracer.screen.TransitionFactory.TransitionType;
@@ -17,7 +16,7 @@ public final class ScreenManager {
 	private boolean quitPending, doSetScreenImmediate, justTransitioned;
 	private GL20 gl;
 
-	public ScreenManager( ScalingStrategy scalingStrategy ) {
+	public ScreenManager() {
 		transMgr = new TransitionManager( Config.isDesktop /* 32bits */, false, true );
 		current = null;
 		next = ScreenType.NoScreen;

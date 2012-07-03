@@ -4,13 +4,13 @@ import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Input.Keys;
 import com.badlogic.gdx.graphics.GL20;
 import com.badlogic.gdx.graphics.glutils.FrameBuffer;
-import com.badlogic.gdx.scenes.scene2d.Actor;
+import com.badlogic.gdx.scenes.scene2d.ActorEvent;
 import com.badlogic.gdx.scenes.scene2d.Stage;
-import com.badlogic.gdx.scenes.scene2d.ui.ClickListener;
 import com.badlogic.gdx.scenes.scene2d.ui.Image;
 import com.badlogic.gdx.scenes.scene2d.ui.Label;
+import com.badlogic.gdx.scenes.scene2d.ui.Table;
 import com.badlogic.gdx.scenes.scene2d.ui.TextButton;
-import com.badlogic.gdx.scenes.scene2d.ui.tablelayout.Table;
+import com.badlogic.gdx.scenes.scene2d.utils.ClickListener;
 import com.bitfire.uracer.Input;
 import com.bitfire.uracer.ScalingStrategy;
 import com.bitfire.uracer.URacer;
@@ -24,6 +24,9 @@ public final class MainScreen extends Screen {
 	private Stage ui;
 	private Input input;
 	private Image bg;
+	private Table buttonsTable, infoTable;
+	private TextButton quitButton, optionsButton, startGameButton;
+	private Label versionLabel;
 
 	@Override
 	public void init( ScalingStrategy scalingStrategy ) {
@@ -44,28 +47,28 @@ public final class MainScreen extends Screen {
 		bg.setFillParent( true );
 		ui.addActor( bg );
 
-		Table buttonsTable = new Table( Art.scrSkin );
+		buttonsTable = new Table( Art.scrSkin );
 		buttonsTable.debug();
 		buttonsTable.setFillParent( true );
 		ui.addActor( buttonsTable );
 
-		TextButton startGameButton = UIUtils.newTextButton( "Start game", new ClickListener() {
+		startGameButton = UIUtils.newTextButton( "Start game", new ClickListener() {
 			@Override
-			public void click( Actor actor, float x, float y ) {
+			public void clicked( ActorEvent event, float x, float y ) {
 				URacer.Game.show( ScreenType.GameScreen );
 			}
 		} );
 
-		TextButton optionsButton = UIUtils.newTextButton( "Options", new ClickListener() {
+		optionsButton = UIUtils.newTextButton( "Options", new ClickListener() {
 			@Override
-			public void click( Actor actor, float x, float y ) {
+			public void clicked( ActorEvent event, float x, float y ) {
 				URacer.Game.show( ScreenType.OptionsScreen );
 			}
 		} );
 
-		TextButton quitButton = UIUtils.newTextButton( "Quit", new ClickListener() {
+		quitButton = UIUtils.newTextButton( "Quit", new ClickListener() {
 			@Override
-			public void click( Actor actor, float x, float y ) {
+			public void clicked( ActorEvent event, float x, float y ) {
 				URacer.Game.quit();
 			}
 		} );
@@ -76,12 +79,12 @@ public final class MainScreen extends Screen {
 		buttonsTable.row();
 		buttonsTable.add( quitButton ).width( 300 ).height( 50 ).pad( 5 );
 
-		Table infoTable = new Table( Art.scrSkin );
+		infoTable = new Table( Art.scrSkin );
 		// infoTable.debug();
 		infoTable.setFillParent( true );
 		ui.addActor( infoTable );
 
-		Label versionLabel = new Label( URacer.getVersionInformation(), Art.scrSkin );
+		versionLabel = new Label( URacer.getVersionInformation(), Art.scrSkin );
 		infoTable.row();
 		infoTable.add( versionLabel ).expand().bottom().left();
 	}
