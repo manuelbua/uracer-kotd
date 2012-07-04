@@ -1,5 +1,6 @@
 package com.bitfire.uracer.screen.transitions;
 
+import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.glutils.FrameBuffer;
 import com.badlogic.gdx.graphics.glutils.ShaderProgram;
@@ -26,7 +27,7 @@ public final class Fader extends ScreenTransition {
 	Screen next;
 	ScreenType nextType;
 	Color color = Color.BLACK;
-	boolean nextPrepared;
+	boolean nextPrepared, delayNextHalf;
 
 	public Fader() {
 		quad = new FullscreenQuad();
@@ -106,15 +107,21 @@ public final class Fader extends ScreenTransition {
 
 		if( elapsed < half ) {
 			factor = 1 - (float)(half - elapsed) / (float)half;
+			delayNextHalf = true;
 		} else {
-			factor = (float)(elapsed - half) / (float)half;
+			if( delayNextHalf ) {
+				// ensures the other half will start at perfect time
+				factor = 1f;
+				delayNextHalf = false;
+			} else {
+				factor = (float)(elapsed - half) / (float)half;
 
-			if( !nextPrepared ) {
-				nextPrepared = true;
-				next = ScreenFactory.createScreen( nextType );
-
-				ScreenUtils.clear( from, Color.BLACK );
-				ScreenUtils.copyScreen( next, to );
+				if( !nextPrepared ) {
+					nextPrepared = true;
+					next = ScreenFactory.createScreen( nextType );
+					ScreenUtils.clear( from, Color.BLACK );
+					ScreenUtils.copyScreen( next, to );
+				}
 			}
 		}
 	}
@@ -128,6 +135,8 @@ public final class Fader extends ScreenTransition {
 		fade.setUniformf( "Ratio", factor );
 		quad.render( fade );
 		fade.end();
+
+		Gdx.app.debug( "Fader", "f=" + factor );
 	}
 
 	@Override
