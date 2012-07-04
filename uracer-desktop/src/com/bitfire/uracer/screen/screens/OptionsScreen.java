@@ -180,6 +180,11 @@ public class OptionsScreen extends Screen {
 	}
 
 	@Override
+	public void resize( int width, int height ) {
+		ui.setViewport( Gdx.graphics.getWidth(), Gdx.graphics.getHeight(), false );
+	}
+
+	@Override
 	public void pause() {
 	}
 

@@ -101,7 +101,6 @@ public final class ScreenManager {
 		}
 
 		doSetScreenImmediate = false;
-		// Screen newScreen = ScreenFactory.createScreen( screen );
 		next = screen;
 
 		// if no transition then just setup a screen switch
@@ -130,6 +129,17 @@ public final class ScreenManager {
 
 	public boolean quit() {
 		return quitPending;
+	}
+
+	public void resize( int width, int height ) {
+//		if( transMgr.isActive()) {
+//			transMgr.getTransition().reset();
+//			transMgr.removeTransition();
+//		}
+//
+//		if( current != null ) {
+//			current.resize( width, height );
+//		}
 	}
 
 	public void tick() {
