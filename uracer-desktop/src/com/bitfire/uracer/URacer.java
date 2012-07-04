@@ -26,7 +26,7 @@ import com.bitfire.uracer.utils.SpriteBatchUtils;
 public class URacer implements ApplicationListener {
 	public static final String Name = "URacer: The King Of The Drift";
 
-	private static ScreenManager screenMgr;
+	private static ScreenManager screenMgr = null;
 	private static Input input;
 	private static boolean running = false;
 	private static final boolean useRealFrametime = true;// Config.isDesktop;
@@ -128,9 +128,11 @@ public class URacer implements ApplicationListener {
 
 		screenMgr = new ScreenManager();
 
-//		screenMgr.setScreen( ScreenType.GameScreen, TransitionType.Fader, 500 );
+		// screenMgr.setScreen( ScreenType.GameScreen, TransitionType.Fader, 500
+		// );
 		screenMgr.setScreen( ScreenType.MainScreen, TransitionType.CrossFader, 500 );
-//		screenMgr.setScreen( ScreenType.OptionsScreen, TransitionType.CrossFader, 500 );
+		// screenMgr.setScreen( ScreenType.OptionsScreen,
+		// TransitionType.CrossFader, 500 );
 
 		// Initialize the timers after creating the game screen, so that there
 		// will be no huge discrepancies
