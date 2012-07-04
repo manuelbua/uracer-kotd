@@ -31,9 +31,9 @@ public class OptionsScreen extends Screen {
 
 	private Stage ui;
 	private Input input;
+	private Table container;
 	private CheckBox ppVignetting, ppBloom, ppZoom, ppZoomBlur;
 	private SelectBox timeInputModeSel, ppZoomBlurQ ;
-	private Image bg;
 
 	@Override
 	public void init( ScalingStrategy scalingStrategy ) {
@@ -50,14 +50,14 @@ public class OptionsScreen extends Screen {
 		ui = new Stage();
 
 		// background
-		bg = new Image( Art.scrBackground );
+		Image bg = new Image( Art.scrBackground );
 		bg.setFillParent( true );
 		ui.addActor( bg );
 
-		Table table = new Table( Art.scrSkin );
-		table.debug();
-		table.setFillParent( true );
-		ui.addActor( table );
+		container = new Table( Art.scrSkin );
+//		container.debug();
+		container.setFillParent( true );
+		ui.addActor( container );
 
 		// time dilation input mode
 		{
@@ -74,8 +74,8 @@ public class OptionsScreen extends Screen {
 				}
 			} );
 
-			table.add( timeInputModeLabel ).width( 200 ).pad( 5 );
-			table.add( timeInputModeSel );
+			container.add( timeInputModeLabel ).width( 200 ).pad( 5 );
+			container.add( timeInputModeSel );
 		}
 
 		// post-processing
@@ -151,24 +151,24 @@ public class OptionsScreen extends Screen {
 			} );
 
 			// lay out things
-			table.row().colspan( 2 );
-			table.add( postProcessingCb );
+			container.row().colspan( 2 );
+			container.add( postProcessingCb );
 
-			table.row().colspan( 2 );
-			table.add( ppVignetting );
+			container.row().colspan( 2 );
+			container.add( ppVignetting );
 
-			table.row().colspan( 2 );
-			table.add( ppBloom );
+			container.row().colspan( 2 );
+			container.add( ppBloom );
 
-			table.row().colspan( 2 );
-			table.add( ppZoom );
+			container.row().colspan( 2 );
+			container.add( ppZoom );
 			{
-				table.row().colspan( 2 );
-				table.add( ppZoomBlur );
+				container.row().colspan( 2 );
+				container.add( ppZoomBlur );
 
-				table.row();
-				table.add( new Label( "Zoom blur quality", Art.scrSkin ) );
-				table.add( ppZoomBlurQ );
+				container.row();
+				container.add( new Label( "Zoom blur quality", Art.scrSkin ) );
+				container.add( ppZoomBlurQ );
 			}
 		}
 	}
@@ -177,11 +177,6 @@ public class OptionsScreen extends Screen {
 	public void dispose() {
 		ui.dispose();
 		disable();
-	}
-
-	@Override
-	public void resize( int width, int height ) {
-		ui.setViewport( Gdx.graphics.getWidth(), Gdx.graphics.getHeight(), false );
 	}
 
 	@Override
@@ -214,7 +209,7 @@ public class OptionsScreen extends Screen {
 		Gdx.gl.glClearColor( 0, 0, 0, 0 );
 		Gdx.gl.glClear( GL20.GL_COLOR_BUFFER_BIT );
 		ui.draw();
-		Table.drawDebug( ui );
+//		Table.drawDebug( ui );
 
 		if( hasDest ) {
 			dest.end();
