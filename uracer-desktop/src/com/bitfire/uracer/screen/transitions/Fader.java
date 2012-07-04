@@ -1,6 +1,5 @@
 package com.bitfire.uracer.screen.transitions;
 
-import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.glutils.FrameBuffer;
 import com.badlogic.gdx.graphics.glutils.ShaderProgram;
@@ -135,8 +134,6 @@ public final class Fader extends ScreenTransition {
 		fade.setUniformf( "Ratio", factor );
 		quad.render( fade );
 		fade.end();
-
-		Gdx.app.debug( "Fader", "f=" + factor );
 	}
 
 	@Override
