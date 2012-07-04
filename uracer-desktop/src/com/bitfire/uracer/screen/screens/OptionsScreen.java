@@ -47,7 +47,7 @@ public class OptionsScreen extends Screen {
 	}
 
 	private void setupUI() {
-		ui = new Stage( Gdx.graphics.getWidth(), Gdx.graphics.getHeight(), false );
+		ui = new Stage();
 
 		// background
 		bg = new Image( Art.scrBackground );
@@ -80,10 +80,10 @@ public class OptionsScreen extends Screen {
 
 		// post-processing
 		{
-			ppVignetting = UIUtils.newCheckBox( "Vignetting and gradient mapping", 200, UserPreferences.bool( Preference.Vignetting ) );
-			ppBloom = UIUtils.newCheckBox( "Bloom", 100, UserPreferences.bool( Preference.Bloom ) );
-			ppZoom = UIUtils.newCheckBox( "Zoom", 100, UserPreferences.bool( Preference.Zoom ) );
-			ppZoomBlur = UIUtils.newCheckBox( "Zoom blur", 100, UserPreferences.bool( Preference.ZoomRadialBlur ) );
+			ppVignetting = UIUtils.newCheckBox( "Vignetting and gradient mapping", UserPreferences.bool( Preference.Vignetting ) );
+			ppBloom = UIUtils.newCheckBox( "Bloom", UserPreferences.bool( Preference.Bloom ) );
+			ppZoom = UIUtils.newCheckBox( "Zoom", UserPreferences.bool( Preference.Zoom ) );
+			ppZoomBlur = UIUtils.newCheckBox( "Zoom blur", UserPreferences.bool( Preference.ZoomRadialBlur ) );
 
 			ppVignetting.addListener( new ClickListener() {
 				@Override
@@ -129,7 +129,7 @@ public class OptionsScreen extends Screen {
 				}
 			} );
 
-			final CheckBox postProcessingCb = UIUtils.newCheckBox( "Enable post-processing effects", 200, UserPreferences.bool( Preference.PostProcessing ) );
+			final CheckBox postProcessingCb = UIUtils.newCheckBox( "Enable post-processing effects", UserPreferences.bool( Preference.PostProcessing ) );
 			postProcessingCb.addListener( new ClickListener() {
 				@Override
 				public void clicked( ActorEvent event, float x, float y ) {

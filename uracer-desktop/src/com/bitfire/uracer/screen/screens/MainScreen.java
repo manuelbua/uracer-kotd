@@ -40,17 +40,17 @@ public final class MainScreen extends Screen {
 	}
 
 	private void setupUI() {
-		ui = new Stage( Gdx.graphics.getWidth(), Gdx.graphics.getHeight(), false );
+		ui = new Stage();
 
 		// background
 		bg = new Image( Art.scrBackground );
 		bg.setFillParent( true );
 		ui.addActor( bg );
 
-		buttonsTable = new Table( Art.scrSkin );
+		buttonsTable = new Table();
+		ui.addActor( buttonsTable );
 		buttonsTable.debug();
 		buttonsTable.setFillParent( true );
-		ui.addActor( buttonsTable );
 
 		startGameButton = UIUtils.newTextButton( "Start game", new ClickListener() {
 			@Override
@@ -73,6 +73,7 @@ public final class MainScreen extends Screen {
 			}
 		} );
 
+		buttonsTable.row();
 		buttonsTable.add( startGameButton ).width( 300 ).height( 50 ).pad( 5 );
 		buttonsTable.row();
 		buttonsTable.add( optionsButton ).width( 300 ).height( 50 ).pad( 5 );
@@ -80,8 +81,6 @@ public final class MainScreen extends Screen {
 		buttonsTable.add( quitButton ).width( 300 ).height( 50 ).pad( 5 );
 
 		infoTable = new Table( Art.scrSkin );
-		// infoTable.debug();
-		infoTable.setFillParent( true );
 		ui.addActor( infoTable );
 
 		versionLabel = new Label( URacer.getVersionInformation(), Art.scrSkin );

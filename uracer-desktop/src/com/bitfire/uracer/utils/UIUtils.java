@@ -13,10 +13,8 @@ public final class UIUtils {
 		return btn;
 	}
 
-	public static CheckBox newCheckBox( String text, int width, boolean checked ) {
+	public static CheckBox newCheckBox( String text, boolean checked ) {
 		CheckBox cb = new CheckBox( text, Art.scrSkin );
-		cb.setWidth( width );
-		cb.getLabelCell().pad( 5 );
 		cb.setChecked( checked );
 		return cb;
 	}
