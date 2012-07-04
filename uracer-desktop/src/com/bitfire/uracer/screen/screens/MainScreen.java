@@ -23,7 +23,6 @@ public final class MainScreen extends Screen {
 
 	private Stage ui;
 	private Input input;
-	private Image bg;
 	private Table buttonsTable, infoTable;
 	private TextButton quitButton, optionsButton, startGameButton;
 	private Label versionLabel;
@@ -43,13 +42,13 @@ public final class MainScreen extends Screen {
 		ui = new Stage();
 
 		// background
-		bg = new Image( Art.scrBackground );
+		Image bg = new Image( Art.scrBackground );
 		bg.setFillParent( true );
 		ui.addActor( bg );
 
 		buttonsTable = new Table();
 		ui.addActor( buttonsTable );
-		buttonsTable.debug();
+//		buttonsTable.debug();
 		buttonsTable.setFillParent( true );
 
 		startGameButton = UIUtils.newTextButton( "Start game", new ClickListener() {
@@ -123,7 +122,7 @@ public final class MainScreen extends Screen {
 		Gdx.gl.glClearColor( 0, 0, 0, 0 );
 		Gdx.gl.glClear( GL20.GL_COLOR_BUFFER_BIT );
 		ui.draw();
-		Table.drawDebug( ui );
+//		Table.drawDebug( ui );
 
 		if( hasDest ) {
 			dest.end();
