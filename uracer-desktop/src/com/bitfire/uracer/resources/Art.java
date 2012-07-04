@@ -69,7 +69,7 @@ public final class Art {
 	// screens
 	//
 	private static void loadScreensData() {
-		scrBackground = newTexture( "data/base/titlescreen.png", true );
+		scrBackground = newTexture( "data/base/titlescreen.png", false );
 		// the skin will automatically search and load the same filename+".atlas" extension
 		scrSkin = new Skin( Gdx.files.internal( Storage.UI + "skin.json" ) );
 	}
