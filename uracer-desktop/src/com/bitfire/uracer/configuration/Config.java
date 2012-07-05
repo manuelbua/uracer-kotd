@@ -86,7 +86,7 @@ public final class Config {
 			RenderDebugInfoMeshStats = Config.isDesktop;
 			RenderDebugInfoPostProcessor = true;
 			Render3DBoundingBoxes = false;
-			RenderDebugDrawsInTransitions = Config.isDesktop;
+			RenderDebugDrawsInTransitions = true;
 
 			TraverseWalls = false;
 			ApplyCarFrictionFromMap = true;
