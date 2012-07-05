@@ -109,6 +109,9 @@ public final class TransitionManager {
 		}
 
 		if( transition != null ) {
+			// enable depth writing if its the case
+			Gdx.gl20.glDepthMask( usedepth );
+
 			transition.render();
 		}
 	}
