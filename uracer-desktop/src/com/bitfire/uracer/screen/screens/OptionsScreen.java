@@ -47,16 +47,17 @@ public class OptionsScreen extends Screen {
 	}
 
 	private void setupUI() {
-		ui = new Stage();
+		ui = new Stage(Gdx.graphics.getWidth(),Gdx.graphics.getHeight(),false);
 
 		// background
 		Image bg = new Image( Art.scrBackground );
 		bg.setFillParent( true );
 		ui.addActor( bg );
 
-		container = new Table( Art.scrSkin );
+		container = new Table();
 //		container.debug();
 		container.setFillParent( true );
+		container.defaults().pad( 2 );
 		ui.addActor( container );
 
 		// time dilation input mode

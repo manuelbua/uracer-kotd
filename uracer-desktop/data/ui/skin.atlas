@@ -1,11 +1,11 @@
 
 skin.png
 format: RGBA8888
-filter: Nearest,Nearest
+filter: Linear,Linear
 repeat: none
 default-window
   rotate: false
-  xy: 1, 97
+  xy: 1, 109
   size: 27, 29
   split: 4, 3, 20, 3
   orig: 27, 29
@@ -13,7 +13,7 @@ default-window
   index: -1
 default-select
   rotate: false
-  xy: 1, 75
+  xy: 1, 87
   size: 27, 20
   split: 4, 14, 4, 4
   orig: 27, 20
@@ -21,7 +21,7 @@ default-select
   index: -1
 default-round-large
   rotate: false
-  xy: 1, 53
+  xy: 1, 65
   size: 20, 20
   split: 5, 5, 5, 4
   orig: 20, 20
@@ -29,45 +29,22 @@ default-round-large
   index: -1
 default-round-down
   rotate: false
-  xy: 1, 31
+  xy: 1, 43
   size: 12, 20
   split: 5, 5, 5, 4
   orig: 12, 20
-  offset: 0, 0
-  index: -1
-default-round
-  rotate: false
-  xy: 1, 9
-  size: 12, 20
-  split: 5, 5, 5, 4
-  orig: 12, 20
-  offset: 0, 0
-  index: -1
-default-slider-knob
-  rotate: false
-  xy: 15, 33
-  size: 9, 18
-  orig: 9, 18
-  offset: 0, 0
-  index: -1
-default-slider
-  rotate: false
-  xy: 23, 65
-  size: 8, 8
-  split: 2, 2, 2, 2
-  orig: 8, 8
   offset: 0, 0
   index: -1
 check-on
   rotate: false
-  xy: 15, 17
+  xy: 15, 49
   size: 14, 14
   orig: 14, 14
   offset: 0, 0
   index: -1
 textfield
   rotate: false
-  xy: 15, 1
+  xy: 15, 33
   size: 14, 14
   split: 3, 3, 3, 3
   orig: 14, 14
@@ -75,14 +52,37 @@ textfield
   index: -1
 check-off
   rotate: false
-  xy: 15, 1
+  xy: 15, 33
   size: 14, 14
   orig: 14, 14
   offset: 0, 0
   index: -1
+default-round
+  rotate: false
+  xy: 1, 21
+  size: 12, 20
+  split: 5, 5, 5, 4
+  orig: 12, 20
+  offset: 0, 0
+  index: -1
+default-slider-knob
+  rotate: false
+  xy: 1, 1
+  size: 9, 18
+  orig: 9, 18
+  offset: 0, 0
+  index: -1
+default-slider
+  rotate: false
+  xy: 15, 23
+  size: 8, 8
+  split: 2, 2, 2, 2
+  orig: 8, 8
+  offset: 0, 0
+  index: -1
 default-pane
   rotate: false
-  xy: 23, 60
+  xy: 23, 82
   size: 5, 3
   split: 1, 1, 1, 1
   orig: 5, 3
@@ -90,7 +90,7 @@ default-pane
   index: -1
 default-rect-pad
   rotate: false
-  xy: 23, 60
+  xy: 23, 82
   size: 5, 3
   split: 1, 1, 1, 1
   orig: 5, 3
@@ -98,15 +98,23 @@ default-rect-pad
   index: -1
 default-splitpane-vertical
   rotate: false
-  xy: 23, 53
+  xy: 25, 26
   size: 3, 5
   split: 0, 0, 0, 5
   orig: 3, 5
   offset: 0, 0
   index: -1
+default-splitpane
+  rotate: false
+  xy: 23, 77
+  size: 5, 3
+  split: 0, 5, 0, 0
+  orig: 5, 3
+  offset: 0, 0
+  index: -1
 default-rect
   rotate: false
-  xy: 28, 55
+  xy: 23, 72
   size: 3, 3
   split: 1, 1, 1, 1
   orig: 3, 3
@@ -114,31 +122,7 @@ default-rect
   index: -1
 default-rect-down
   rotate: false
-  xy: 28, 50
-  size: 3, 3
-  split: 1, 1, 1, 1
-  orig: 3, 3
-  offset: 0, 0
-  index: -1
-default-splitpane
-  rotate: false
-  xy: 26, 45
-  size: 5, 3
-  split: 0, 5, 0, 0
-  orig: 5, 3
-  offset: 0, 0
-  index: -1
-default-select-selection
-  rotate: false
-  xy: 1, 4
-  size: 3, 3
-  split: 1, 1, 1, 1
-  orig: 3, 3
-  offset: 0, 0
-  index: -1
-cursor
-  rotate: false
-  xy: 26, 40
+  xy: 23, 67
   size: 3, 3
   split: 1, 1, 1, 1
   orig: 3, 3
@@ -146,16 +130,32 @@ cursor
   index: -1
 selection
   rotate: false
-  xy: 30, 125
+  xy: 28, 74
   size: 1, 1
   orig: 1, 1
   offset: 0, 0
   index: -1
 default-pane-noborder
   rotate: false
-  xy: 30, 62
+  xy: 28, 71
   size: 1, 1
   split: 0, 0, 0, 0
   orig: 1, 1
+  offset: 0, 0
+  index: -1
+default-select-selection
+  rotate: false
+  xy: 12, 16
+  size: 3, 3
+  split: 1, 1, 1, 1
+  orig: 3, 3
+  offset: 0, 0
+  index: -1
+cursor
+  rotate: false
+  xy: 12, 11
+  size: 3, 3
+  split: 1, 1, 1, 1
+  orig: 3, 3
   offset: 0, 0
   index: -1
