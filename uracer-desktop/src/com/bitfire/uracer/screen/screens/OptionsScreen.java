@@ -47,7 +47,7 @@ public class OptionsScreen extends Screen {
 	}
 
 	private void setupUI() {
-		ui = new Stage(Gdx.graphics.getWidth(),Gdx.graphics.getHeight(),false);
+		ui = new Stage();
 
 		// background
 		Image bg = new Image( Art.scrBackground );
