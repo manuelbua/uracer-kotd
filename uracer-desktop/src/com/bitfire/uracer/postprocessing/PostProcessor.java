@@ -8,7 +8,7 @@ import com.badlogic.gdx.graphics.Texture.TextureWrap;
 import com.badlogic.gdx.graphics.glutils.FrameBuffer;
 import com.badlogic.gdx.utils.Array;
 import com.badlogic.gdx.utils.Disposable;
-import com.bitfire.uracer.utils.Manager;
+import com.bitfire.uracer.utils.ItemsManager;
 
 /** Provides a way to capture the rendered scene to an off-screen buffer
  * and to apply a chain of effects on it before rendering to screen.
@@ -22,7 +22,7 @@ public final class PostProcessor implements Disposable {
 	private final PingPongBuffer composite;
 	private TextureWrap compositeWrapU;
 	private TextureWrap compositeWrapV;
-	private final Manager<PostProcessorEffect> manager = new Manager<PostProcessorEffect>();
+	private final ItemsManager<PostProcessorEffect> manager = new ItemsManager<PostProcessorEffect>();
 	private final Array<PingPongBuffer> buffers = new Array<PingPongBuffer>( 5 );
 	private final Color clearColor = Color.CLEAR;
 	private int clearBits = GL10.GL_COLOR_BUFFER_BIT;

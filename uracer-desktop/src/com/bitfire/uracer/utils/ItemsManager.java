@@ -3,7 +3,7 @@ package com.bitfire.uracer.utils;
 import com.badlogic.gdx.utils.Array;
 import com.badlogic.gdx.utils.Disposable;
 
-public class Manager<T extends Disposable> implements Disposable {
+public class ItemsManager<T extends Disposable> implements Disposable {
 	private static final int ItemNotFound = -1;
 
 	public final Array<T> items = new Array<T>();

@@ -6,13 +6,13 @@ import com.bitfire.uracer.game.GameEvents;
 import com.bitfire.uracer.game.logic.GameTask;
 import com.bitfire.uracer.game.rendering.GameRendererEvent;
 import com.bitfire.uracer.game.rendering.GameRendererEvent.Order;
-import com.bitfire.uracer.utils.Manager;
+import com.bitfire.uracer.utils.ItemsManager;
 
 /** Encapsulates an head-up manager that will callback HudElement events for
  * their updating and drawing operations. */
 public final class Hud extends GameTask {
 
-	private final Manager<HudElement> manager = new Manager<HudElement>();
+	private final ItemsManager<HudElement> manager = new ItemsManager<HudElement>();
 
 	private GameRendererEvent.Listener gameRendererEvent = new GameRendererEvent.Listener() {
 		@Override

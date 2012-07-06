@@ -6,10 +6,10 @@ import com.bitfire.uracer.game.GameEvents;
 import com.bitfire.uracer.game.logic.GameTask;
 import com.bitfire.uracer.game.rendering.GameRendererEvent;
 import com.bitfire.uracer.game.rendering.GameRendererEvent.Order;
-import com.bitfire.uracer.utils.Manager;
+import com.bitfire.uracer.utils.ItemsManager;
 
 public final class TrackEffects extends GameTask {
-	private Manager<TrackEffect> manager = new Manager<TrackEffect>();
+	private ItemsManager<TrackEffect> manager = new ItemsManager<TrackEffect>();
 
 	private final GameRendererEvent.Listener gameRendererEvent = new GameRendererEvent.Listener() {
 		@Override
