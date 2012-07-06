@@ -79,8 +79,8 @@ public final class PostProcessing {
 		}
 
 		if( UserPreferences.bool( Preference.CrtScreen ) ) {
-			addEffect( Effects.Crt.name, new CrtMonitor( UserPreferences.bool( Preference.RadialDistortion ), false ) );
-		} else if( UserPreferences.bool( Preference.RadialDistortion ) ) {
+			addEffect( Effects.Crt.name, new CrtMonitor( UserPreferences.bool( Preference.Curvature ), false ) );
+		} else if( UserPreferences.bool( Preference.Curvature ) ) {
 			addEffect( Effects.Curvature.name, new Curvature() );
 		}
 

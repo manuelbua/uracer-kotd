@@ -29,7 +29,7 @@ public final class UserPreferences {
 		ZoomRadialBlur,
 		ZoomRadialBlurQuality,
 		CrtScreen,
-		RadialDistortion,
+		Curvature,
 
 		// gameplay
 		TimeDilateInputMode,
@@ -85,7 +85,7 @@ public final class UserPreferences {
 		}
 
 		bool( Preference.CrtScreen, false );
-		bool( Preference.RadialDistortion, false );
+		bool( Preference.Curvature, false );
 
 		//
 		// gameplay
