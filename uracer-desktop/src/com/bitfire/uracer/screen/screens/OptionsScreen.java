@@ -33,7 +33,7 @@ public class OptionsScreen extends Screen {
 	private Input input;
 	private Table container;
 	private CheckBox ppVignetting, ppBloom, ppZoom, ppZoomBlur;
-	private SelectBox timeInputModeSel, ppZoomBlurQ ;
+	private SelectBox timeInputModeSel, ppZoomBlurQ;
 
 	@Override
 	public void init( ScalingStrategy scalingStrategy ) {
@@ -55,7 +55,7 @@ public class OptionsScreen extends Screen {
 		ui.addActor( bg );
 
 		container = new Table();
-//		container.debug();
+		// container.debug();
 		container.setFillParent( true );
 		container.defaults().pad( 2 );
 		ui.addActor( container );
@@ -210,7 +210,7 @@ public class OptionsScreen extends Screen {
 		Gdx.gl.glClearColor( 0, 0, 0, 0 );
 		Gdx.gl.glClear( GL20.GL_COLOR_BUFFER_BIT );
 		ui.draw();
-//		Table.drawDebug( ui );
+		// Table.drawDebug( ui );
 
 		if( hasDest ) {
 			dest.end();
