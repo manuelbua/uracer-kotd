@@ -2,9 +2,9 @@ package com.bitfire.uracer.configuration;
 
 import com.badlogic.gdx.Application.ApplicationType;
 import com.badlogic.gdx.Gdx;
+import com.bitfire.postprocessing.filters.Blur;
+import com.bitfire.postprocessing.filters.Blur.BlurType;
 import com.bitfire.uracer.game.logic.helpers.CameraController.InterpolationMode;
-import com.bitfire.uracer.postprocessing.filters.Blur;
-import com.bitfire.uracer.postprocessing.filters.Blur.BlurType;
 import com.bitfire.uracer.utils.NumberString;
 
 public final class Config {

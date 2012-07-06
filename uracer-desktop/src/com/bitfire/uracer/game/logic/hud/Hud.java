@@ -6,7 +6,7 @@ import com.bitfire.uracer.game.GameEvents;
 import com.bitfire.uracer.game.logic.GameTask;
 import com.bitfire.uracer.game.rendering.GameRendererEvent;
 import com.bitfire.uracer.game.rendering.GameRendererEvent.Order;
-import com.bitfire.uracer.utils.ItemsManager;
+import com.bitfire.utils.ItemsManager;
 
 /** Encapsulates an head-up manager that will callback HudElement events for
  * their updating and drawing operations. */

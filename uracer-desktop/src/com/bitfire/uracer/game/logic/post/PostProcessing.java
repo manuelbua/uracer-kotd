@@ -4,17 +4,17 @@ import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.GL10;
 import com.badlogic.gdx.graphics.Texture.TextureWrap;
 import com.badlogic.gdx.utils.LongMap;
+import com.bitfire.postprocessing.PostProcessor;
+import com.bitfire.postprocessing.PostProcessorEffect;
+import com.bitfire.postprocessing.effects.Bloom;
+import com.bitfire.postprocessing.effects.CrtMonitor;
+import com.bitfire.postprocessing.effects.Curvature;
+import com.bitfire.postprocessing.effects.Vignette;
+import com.bitfire.postprocessing.effects.Zoomer;
+import com.bitfire.postprocessing.filters.RadialBlur;
 import com.bitfire.uracer.configuration.Config;
 import com.bitfire.uracer.configuration.UserPreferences;
 import com.bitfire.uracer.configuration.UserPreferences.Preference;
-import com.bitfire.uracer.postprocessing.PostProcessor;
-import com.bitfire.uracer.postprocessing.PostProcessorEffect;
-import com.bitfire.uracer.postprocessing.effects.Bloom;
-import com.bitfire.uracer.postprocessing.effects.CrtMonitor;
-import com.bitfire.uracer.postprocessing.effects.Curvature;
-import com.bitfire.uracer.postprocessing.effects.Vignette;
-import com.bitfire.uracer.postprocessing.effects.Zoomer;
-import com.bitfire.uracer.postprocessing.filters.RadialBlur;
 import com.bitfire.uracer.utils.Hash;
 
 /** Encapsulates a post-processor animator that manages effects such as bloom and

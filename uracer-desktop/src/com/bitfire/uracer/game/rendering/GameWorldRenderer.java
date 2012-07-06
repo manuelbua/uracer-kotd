@@ -34,7 +34,7 @@ import com.bitfire.uracer.game.world.models.TrackWalls;
 import com.bitfire.uracer.game.world.models.TreeStillModel;
 import com.bitfire.uracer.resources.Art;
 import com.bitfire.uracer.utils.Convert;
-import com.bitfire.uracer.utils.ShaderLoader;
+import com.bitfire.utils.ShaderLoader;
 
 public final class GameWorldRenderer {
 	// @formatter:off

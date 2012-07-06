@@ -2,7 +2,7 @@ package com.bitfire.uracer.game.logic.sounds;
 
 import com.badlogic.gdx.utils.Array;
 import com.bitfire.uracer.game.logic.GameTask;
-import com.bitfire.uracer.utils.ItemsManager;
+import com.bitfire.utils.ItemsManager;
 
 public class SoundManager extends GameTask {
 	private final ItemsManager<SoundEffect> manager = new ItemsManager<SoundEffect>();

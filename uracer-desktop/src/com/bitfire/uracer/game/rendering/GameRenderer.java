@@ -6,13 +6,13 @@ import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.graphics.glutils.FrameBuffer;
 import com.badlogic.gdx.math.Rectangle;
 import com.badlogic.gdx.math.Vector2;
+import com.bitfire.postprocessing.PostProcessor;
 import com.bitfire.uracer.ScalingStrategy;
 import com.bitfire.uracer.configuration.Config;
 import com.bitfire.uracer.configuration.UserPreferences;
 import com.bitfire.uracer.configuration.UserPreferences.Preference;
 import com.bitfire.uracer.game.GameEvents;
 import com.bitfire.uracer.game.world.GameWorld;
-import com.bitfire.uracer.postprocessing.PostProcessor;
 import com.bitfire.uracer.utils.Convert;
 
 /** Manages the high-level rendering of the whole world and triggers all the

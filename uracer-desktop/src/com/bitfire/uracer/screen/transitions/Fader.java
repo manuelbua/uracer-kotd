@@ -4,15 +4,15 @@ import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.glutils.FrameBuffer;
 import com.badlogic.gdx.graphics.glutils.ShaderProgram;
 import com.badlogic.gdx.utils.GdxRuntimeException;
+import com.bitfire.postprocessing.FullscreenQuad;
 import com.bitfire.uracer.URacer;
 import com.bitfire.uracer.configuration.Config;
-import com.bitfire.uracer.postprocessing.FullscreenQuad;
 import com.bitfire.uracer.screen.Screen;
 import com.bitfire.uracer.screen.ScreenFactory;
 import com.bitfire.uracer.screen.ScreenFactory.ScreenType;
 import com.bitfire.uracer.screen.ScreenUtils;
 import com.bitfire.uracer.utils.AMath;
-import com.bitfire.uracer.utils.ShaderLoader;
+import com.bitfire.utils.ShaderLoader;
 
 /** Implements a fader, transitioning from one screen to another by first
  * transitioning the current screen to the specified color, then

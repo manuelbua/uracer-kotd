@@ -2,7 +2,7 @@ package com.bitfire.uracer.configuration;
 
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Preferences;
-import com.bitfire.uracer.postprocessing.filters.RadialBlur;
+import com.bitfire.postprocessing.filters.RadialBlur;
 
 /** Represents user-configurable configuration properties.
  *

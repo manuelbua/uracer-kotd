@@ -31,9 +31,19 @@
 	</natures>
 	<linkedResources>
 		<link>
+			<name>postprocessing</name>
+			<type>2</type>
+			<location>/home/manuel/dev/libgdx-contribs/postprocessing/src</location>
+		</link>
+		<link>
 			<name>tweenengine</name>
 			<type>2</type>
 			<location>/home/manuel/dev/java-universal-tween-engine/tween-engine-api/src</location>
+		</link>
+		<link>
+			<name>utilities</name>
+			<type>2</type>
+			<location>/home/manuel/dev/libgdx-contribs/utilities</location>
 		</link>
 	</linkedResources>
 </projectDescription>

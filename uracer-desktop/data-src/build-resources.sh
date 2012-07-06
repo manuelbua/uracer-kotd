@@ -71,6 +71,11 @@ cp partfx/* ${DEST}/partfx > /dev/null
 echo "done!"
 
 # shaders
+echo -n "Merging GLSL shaders from libgdx-contribs/postprocessing to data-src..."
+cp -r /home/manuel/dev/libgdx-contribs/postprocessing/shaders/ ./
+echo "done!"
+
+# shaders
 echo -n "Cooking GLSL shaders..."
 rm -rf "${DEST}/shaders/"
 mkdir -p "${DEST}/shaders/"
