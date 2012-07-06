@@ -86,7 +86,7 @@ public class OptionsScreen extends Screen {
 			ppZoom = UIUtils.newCheckBox( "Zoom", UserPreferences.bool( Preference.Zoom ) );
 			ppZoomBlur = UIUtils.newCheckBox( "Zoom blur", UserPreferences.bool( Preference.ZoomRadialBlur ) );
 			ppCrtScreen = UIUtils.newCheckBox( "CRT screen emulation", UserPreferences.bool( Preference.CrtScreen ) );
-			ppCurvature = UIUtils.newCheckBox( "Earth curvature", UserPreferences.bool( Preference.Curvature ) );
+			ppCurvature = UIUtils.newCheckBox( "Screen curvature", UserPreferences.bool( Preference.Curvature ) );
 
 			ppVignetting.addListener( new ClickListener() {
 				@Override
