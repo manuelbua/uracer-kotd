@@ -7,6 +7,7 @@
 		<project>gdx</project>
 		<project>gdx-audio</project>
 		<project>model-loaders</project>
+		<project>postprocessing</project>
 	</projects>
 	<buildSpec>
 		<buildCommand>
@@ -30,11 +31,6 @@
 		<nature>org.eclipse.jdt.core.javanature</nature>
 	</natures>
 	<linkedResources>
-		<link>
-			<name>postprocessing</name>
-			<type>2</type>
-			<location>/home/manuel/dev/libgdx-contribs/postprocessing/src</location>
-		</link>
 		<link>
 			<name>tweenengine</name>
 			<type>2</type>
