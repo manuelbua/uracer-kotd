@@ -32,7 +32,7 @@ public class OptionsScreen extends Screen {
 	private Stage ui;
 	private Input input;
 	private Table container;
-	private CheckBox ppVignetting, ppBloom, ppZoom, ppZoomBlur;
+	private CheckBox ppVignetting, ppBloom, ppZoom, ppZoomBlur, ppCrtScreen, ppCurvature;
 	private SelectBox timeInputModeSel, ppZoomBlurQ;
 
 	@Override
@@ -85,6 +85,8 @@ public class OptionsScreen extends Screen {
 			ppBloom = UIUtils.newCheckBox( "Bloom", UserPreferences.bool( Preference.Bloom ) );
 			ppZoom = UIUtils.newCheckBox( "Zoom", UserPreferences.bool( Preference.Zoom ) );
 			ppZoomBlur = UIUtils.newCheckBox( "Zoom blur", UserPreferences.bool( Preference.ZoomRadialBlur ) );
+			ppCrtScreen = UIUtils.newCheckBox( "CRT screen emulation", UserPreferences.bool( Preference.CrtScreen ) );
+			ppCurvature = UIUtils.newCheckBox( "Earth curvature", UserPreferences.bool( Preference.Curvature ) );
 
 			ppVignetting.addListener( new ClickListener() {
 				@Override
@@ -110,25 +112,44 @@ public class OptionsScreen extends Screen {
 				}
 			} );
 
-			ppZoomBlur.addListener( new ClickListener() {
+			{
+				ppZoomBlur.addListener( new ClickListener() {
+					@Override
+					public void clicked( ActorEvent event, float x, float y ) {
+						UserPreferences.bool( Preference.ZoomRadialBlur, ppZoomBlur.isChecked() );
+						UserPreferences.save();
+					}
+				} );
+
+				RadialBlur.Quality rbq = RadialBlur.Quality.valueOf( UserPreferences.string( Preference.ZoomRadialBlurQuality ) );
+				ppZoomBlurQ = new SelectBox( new String[] { "Very high", "High", "Normal", "Medium", "Low" }, Art.scrSkin );
+				ppZoomBlurQ.setSelection( rbq.ordinal() );
+				ppZoomBlurQ.addListener( new ChangeListener() {
+					@Override
+					public void changed( ChangeEvent event, Actor actor ) {
+						int index = ppZoomBlurQ.getSelectionIndex();
+						UserPreferences.string( Preference.ZoomRadialBlurQuality, RadialBlur.Quality.values()[index].toString() );
+						UserPreferences.save();
+					}
+				} );
+			}
+
+			ppCrtScreen.addListener( new ClickListener() {
 				@Override
 				public void clicked( ActorEvent event, float x, float y ) {
-					UserPreferences.bool( Preference.ZoomRadialBlur, ppZoomBlur.isChecked() );
+					UserPreferences.bool( Preference.CrtScreen, ppCrtScreen.isChecked() );
 					UserPreferences.save();
 				}
 			} );
 
-			RadialBlur.Quality rbq = RadialBlur.Quality.valueOf( UserPreferences.string( Preference.ZoomRadialBlurQuality ) );
-			ppZoomBlurQ = new SelectBox( new String[] { "Very high", "High", "Normal", "Medium", "Low" }, Art.scrSkin );
-			ppZoomBlurQ.setSelection( rbq.ordinal() );
-			ppZoomBlurQ.addListener( new ChangeListener() {
+			ppCurvature.addListener( new ClickListener() {
 				@Override
-				public void changed( ChangeEvent event, Actor actor ) {
-					int index = ppZoomBlurQ.getSelectionIndex();
-					UserPreferences.string( Preference.ZoomRadialBlurQuality, RadialBlur.Quality.values()[index].toString() );
+				public void clicked( ActorEvent event, float x, float y ) {
+					UserPreferences.bool( Preference.Curvature, ppCurvature.isChecked() );
 					UserPreferences.save();
 				}
 			} );
+
 
 			final CheckBox postProcessingCb = UIUtils.newCheckBox( "Enable post-processing effects", UserPreferences.bool( Preference.PostProcessing ) );
 			postProcessingCb.addListener( new ClickListener() {
@@ -140,6 +161,8 @@ public class OptionsScreen extends Screen {
 						ppBloom.setChecked( false );
 						ppZoom.setChecked( false );
 						ppZoomBlur.setChecked( false );
+						ppCrtScreen.setChecked( false );
+						ppCurvature.setChecked( false );
 					}
 
 					UserPreferences.bool( Preference.PostProcessing, postProcessingCb.isChecked() );
@@ -147,6 +170,9 @@ public class OptionsScreen extends Screen {
 					UserPreferences.bool( Preference.Bloom, ppBloom.isChecked() );
 					UserPreferences.bool( Preference.Zoom, ppZoom.isChecked() );
 					UserPreferences.bool( Preference.ZoomRadialBlur, ppZoomBlur.isChecked() );
+					UserPreferences.bool( Preference.CrtScreen, ppCrtScreen.isChecked() );
+					UserPreferences.bool( Preference.Curvature, ppCurvature.isChecked() );
+
 					UserPreferences.save();
 				}
 			} );
@@ -171,6 +197,12 @@ public class OptionsScreen extends Screen {
 				container.add( new Label( "Zoom blur quality", Art.scrSkin ) );
 				container.add( ppZoomBlurQ );
 			}
+
+			container.row().colspan( 2 );
+			container.add( ppCrtScreen );
+
+			container.row().colspan( 2 );
+			container.add( ppCurvature );
 		}
 	}
 
