@@ -3,9 +3,7 @@ package com.bitfire.uracer.utils;
 import com.badlogic.gdx.math.Vector2;
 
 public final class Convert {
-//	private static float zoomFactor;
 	private static float invZoomFactor;
-//	private static float pixelsPerMeter;
 	private static float invPixelsPerMeter;
 
 	private static float ppmMulInvZoomFactor;
@@ -18,9 +16,7 @@ public final class Convert {
 	}
 
 	public static void init( float zoomFactor, float pixelsPerMeter ) {
-//		Convert.zoomFactor = zoomFactor;
 		Convert.invZoomFactor = 1f / zoomFactor;
-//		Convert.pixelsPerMeter = pixelsPerMeter;
 		Convert.invPixelsPerMeter = 1f / pixelsPerMeter;
 
 		Convert.ppmMulInvZoomFactor = pixelsPerMeter * invZoomFactor;
