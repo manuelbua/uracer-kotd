@@ -12,6 +12,7 @@ import com.badlogic.gdx.graphics.g2d.TextureRegion;
 import com.badlogic.gdx.scenes.scene2d.ui.Skin;
 import com.bitfire.uracer.configuration.Config;
 import com.bitfire.uracer.configuration.Storage;
+import com.bitfire.utils.ShaderLoader;
 
 public final class Art {
 	public static TextureRegion[][] debugFont;
@@ -48,6 +49,7 @@ public final class Art {
 	public static Skin scrSkin;
 
 	public static void init( float invZoomFactor ) {
+		ShaderLoader.BasePath = "data/shaders/";
 		loadFonts( invZoomFactor );
 		loadCarGraphics();
 		loadMeshesGraphics( Config.Graphics.EnableMipMapping );
