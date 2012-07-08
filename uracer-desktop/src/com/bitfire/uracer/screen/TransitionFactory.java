@@ -4,7 +4,7 @@ import com.badlogic.gdx.utils.LongMap;
 import com.bitfire.uracer.screen.transitions.CrossFader;
 import com.bitfire.uracer.screen.transitions.Fader;
 import com.bitfire.uracer.screen.transitions.ScreenTransition;
-import com.bitfire.uracer.utils.Hash;
+import com.bitfire.utils.Hash;
 
 public final class TransitionFactory {
 

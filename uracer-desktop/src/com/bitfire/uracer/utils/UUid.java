@@ -1,6 +1,7 @@
 package com.bitfire.uracer.utils;
 
 import com.badlogic.gdx.utils.TimeUtils;
+import com.bitfire.utils.Hash;
 
 public final class UUid {
 	public static long incr = 0;

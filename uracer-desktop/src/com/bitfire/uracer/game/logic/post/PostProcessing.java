@@ -15,7 +15,7 @@ import com.bitfire.postprocessing.filters.RadialBlur;
 import com.bitfire.uracer.configuration.Config;
 import com.bitfire.uracer.configuration.UserPreferences;
 import com.bitfire.uracer.configuration.UserPreferences.Preference;
-import com.bitfire.uracer.utils.Hash;
+import com.bitfire.utils.Hash;
 
 /** Encapsulates a post-processor animator that manages effects such as bloom and
  * zoomblur to compose

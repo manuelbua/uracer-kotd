@@ -13,7 +13,7 @@ import com.badlogic.gdx.utils.LongMap;
 import com.bitfire.uracer.ScalingStrategy;
 import com.bitfire.uracer.game.world.models.loaders.UG3dtLoader;
 import com.bitfire.uracer.resources.Art;
-import com.bitfire.uracer.utils.Hash;
+import com.bitfire.utils.Hash;
 
 public final class ModelFactory {
 	public enum ModelMesh {
