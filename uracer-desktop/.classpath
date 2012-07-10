@@ -9,7 +9,8 @@
 	<classpathentry combineaccessrules="false" kind="src" path="/model-loaders"/>
 	<classpathentry combineaccessrules="false" kind="src" path="/gdx-backend-lwjgl"/>
 	<classpathentry combineaccessrules="false" kind="src" path="/box2dLight"/>
-	<classpathentry combineaccessrules="false" kind="src" path="/postprocessing"/>
 	<classpathentry kind="lib" path="/home/manuel/dev/uracer-libgdx/libs/java-getopt-1.0.14.jar"/>
+	<classpathentry combineaccessrules="false" kind="src" path="/libgdx-contribs-postprocessing"/>
+	<classpathentry combineaccessrules="false" kind="src" path="/libgdx-contribs-utils"/>
 	<classpathentry kind="output" path="bin"/>
 </classpath>
