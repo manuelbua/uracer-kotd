@@ -62,7 +62,7 @@ public final class AggressiveWarm implements PostProcessingAnimator {
 			startMs = TimeUtils.millis();
 			crt.setTime( 0 );
 
-			crt.setOffset( 0.002f );
+			crt.setColorOffset( 0.002f );
 			crt.setDistortion( 0.2f );
 			crt.setZoom( 0.9f );
 			crt.setTint( 0.95f, 0.8f, 1.0f );

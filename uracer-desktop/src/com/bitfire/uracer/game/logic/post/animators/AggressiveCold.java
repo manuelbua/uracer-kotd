@@ -62,7 +62,7 @@ public final class AggressiveCold implements PostProcessingAnimator {
 			startMs = TimeUtils.millis();
 			crt.setTime( 0 );
 
-			crt.setOffset( 0.002f );
+			crt.setColorOffset( 0.002f );
 			crt.setDistortion( 0.125f );
 			crt.setZoom( 0.94f );
 
