@@ -48,9 +48,11 @@ import com.bitfire.uracer.resources.Art;
 import com.bitfire.uracer.utils.AMath;
 import com.bitfire.uracer.utils.Convert;
 
-/** Encapsulates the game's world. Yay!
- *
- * @author bmanuel */
+/**
+ * Encapsulates the game's world. Yay!
+ * 
+ * @author bmanuel
+ */
 public final class GameWorld {
 
 	// statistics
@@ -92,7 +94,8 @@ public final class GameWorld {
 		box2dWorld.setAutoClearForces( autoClearForces );
 		box2dWorld.setContinuousPhysics( continuousPhysics );
 
-		Gdx.app.log( "GameWorld", "Box2D world created (CCD=" + continuousPhysics + ", auto clear forces=" + autoClearForces + ")" );
+		Gdx.app.log( "GameWorld", "Box2D world created (CCD=" + continuousPhysics + ", auto clear forces=" + autoClearForces
+				+ ")" );
 
 		this.levelName = levelName;
 		this.nightMode = nightMode;
@@ -230,7 +233,8 @@ public final class GameWorld {
 		}
 
 		RayHandler.setColorPrecisionMediump();
-		rayHandler = new RayHandler( box2dWorld, maxRays, (int)(Gdx.graphics.getWidth() * rttScale), (int)(Gdx.graphics.getHeight() * rttScale), true );
+		rayHandler = new RayHandler( box2dWorld, maxRays, (int)(Gdx.graphics.getWidth() * rttScale),
+				(int)(Gdx.graphics.getHeight() * rttScale), true );
 		rayHandler.setShadows( true );
 		rayHandler.setCulling( true );
 		rayHandler.setBlur( true );
@@ -312,7 +316,8 @@ public final class GameWorld {
 							Box2DFactory.createWall( box2dWorld, fromMt, toMt, wallSizeMt, 0f );
 
 							// compute magnitude
-							mags[j - 1] = (float)Math.sqrt( (toMt.x - fromMt.x) * (toMt.x - fromMt.x) + (toMt.y - fromMt.y) * (toMt.y - fromMt.y) );
+							mags[j - 1] = (float)Math.sqrt( (toMt.x - fromMt.x) * (toMt.x - fromMt.x) + (toMt.y - fromMt.y)
+									* (toMt.y - fromMt.y) );
 
 							fromMt.set( toMt );
 						}
@@ -322,7 +327,8 @@ public final class GameWorld {
 						StillSubMesh[] subMeshes = new StillSubMesh[ 1 ];
 						subMeshes[0] = new StillSubMesh( "wall", mesh, GL10.GL_TRIANGLES );
 
-						OrthographicAlignedStillModel model = new OrthographicAlignedStillModel( new StillModel( subMeshes ), mat, scalingStrategy );
+						OrthographicAlignedStillModel model = new OrthographicAlignedStillModel( new StillModel( subMeshes ),
+								mat, scalingStrategy );
 
 						model.setPosition( o.x, o.y );
 						model.setScale( 1 );
@@ -422,8 +428,9 @@ public final class GameWorld {
 			}
 		}
 
-		Mesh mesh = new Mesh( VertexDataType.VertexArray, true, vertexCount, indexCount, new VertexAttribute( Usage.Position, 3, ShaderProgram.POSITION_ATTRIBUTE ),
-				new VertexAttribute( Usage.TextureCoordinates, 2, ShaderProgram.TEXCOORD_ATTRIBUTE + "0" ) );
+		Mesh mesh = new Mesh( VertexDataType.VertexArray, true, vertexCount, indexCount, new VertexAttribute( Usage.Position, 3,
+				ShaderProgram.POSITION_ATTRIBUTE ), new VertexAttribute( Usage.TextureCoordinates, 2,
+				ShaderProgram.TEXCOORD_ATTRIBUTE + "0" ) );
 
 		mesh.setVertices( verts );
 		mesh.setIndices( indices );
