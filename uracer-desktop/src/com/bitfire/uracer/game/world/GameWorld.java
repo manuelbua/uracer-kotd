@@ -138,13 +138,6 @@ public final class GameWorld {
 			trackWalls = null;
 		}
 
-		if( trackTrees != null && trackTrees.models != null ) {
-			for( int i = 0; i < trackTrees.models.size(); i++ ) {
-				trackTrees.models.get( i ).model.dispose();
-			}
-			trackTrees = null;
-		}
-
 		box2dWorld.dispose();
 		box2dWorld = null;
 	}
