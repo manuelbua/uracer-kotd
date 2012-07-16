@@ -5,7 +5,7 @@ import com.badlogic.gdx.Input.Keys;
 import com.badlogic.gdx.graphics.GL20;
 import com.badlogic.gdx.graphics.glutils.FrameBuffer;
 import com.badlogic.gdx.scenes.scene2d.Actor;
-import com.badlogic.gdx.scenes.scene2d.ActorEvent;
+import com.badlogic.gdx.scenes.scene2d.InputEvent;
 import com.badlogic.gdx.scenes.scene2d.Stage;
 import com.badlogic.gdx.scenes.scene2d.ui.CheckBox;
 import com.badlogic.gdx.scenes.scene2d.ui.Image;
@@ -70,7 +70,8 @@ public class OptionsScreen extends Screen {
 				@Override
 				public void changed( ChangeEvent event, Actor actor ) {
 					int index = timeInputModeSel.getSelectionIndex();
-					UserPreferences.string( Preference.TimeDilateInputMode, Gameplay.TimeDilateInputMode.values()[index].toString() );
+					UserPreferences.string( Preference.TimeDilateInputMode,
+							Gameplay.TimeDilateInputMode.values()[index].toString() );
 					UserPreferences.save();
 				}
 			} );
@@ -90,7 +91,7 @@ public class OptionsScreen extends Screen {
 
 			ppVignetting.addListener( new ClickListener() {
 				@Override
-				public void clicked( ActorEvent event, float x, float y ) {
+				public void clicked( InputEvent event, float x, float y ) {
 					UserPreferences.bool( Preference.Vignetting, ppVignetting.isChecked() );
 					UserPreferences.save();
 				}
@@ -98,7 +99,7 @@ public class OptionsScreen extends Screen {
 
 			ppBloom.addListener( new ClickListener() {
 				@Override
-				public void clicked( ActorEvent event, float x, float y ) {
+				public void clicked( InputEvent event, float x, float y ) {
 					UserPreferences.bool( Preference.Bloom, ppBloom.isChecked() );
 					UserPreferences.save();
 				}
@@ -106,7 +107,7 @@ public class OptionsScreen extends Screen {
 
 			ppZoom.addListener( new ClickListener() {
 				@Override
-				public void clicked( ActorEvent event, float x, float y ) {
+				public void clicked( InputEvent event, float x, float y ) {
 					UserPreferences.bool( Preference.Zoom, ppZoom.isChecked() );
 					UserPreferences.save();
 				}
@@ -115,7 +116,7 @@ public class OptionsScreen extends Screen {
 			{
 				ppZoomBlur.addListener( new ClickListener() {
 					@Override
-					public void clicked( ActorEvent event, float x, float y ) {
+					public void clicked( InputEvent event, float x, float y ) {
 						UserPreferences.bool( Preference.ZoomRadialBlur, ppZoomBlur.isChecked() );
 						UserPreferences.save();
 					}
@@ -136,7 +137,7 @@ public class OptionsScreen extends Screen {
 
 			ppCrtScreen.addListener( new ClickListener() {
 				@Override
-				public void clicked( ActorEvent event, float x, float y ) {
+				public void clicked( InputEvent event, float x, float y ) {
 					UserPreferences.bool( Preference.CrtScreen, ppCrtScreen.isChecked() );
 					UserPreferences.save();
 				}
@@ -144,17 +145,17 @@ public class OptionsScreen extends Screen {
 
 			ppCurvature.addListener( new ClickListener() {
 				@Override
-				public void clicked( ActorEvent event, float x, float y ) {
+				public void clicked( InputEvent event, float x, float y ) {
 					UserPreferences.bool( Preference.Curvature, ppCurvature.isChecked() );
 					UserPreferences.save();
 				}
 			} );
 
-
-			final CheckBox postProcessingCb = UIUtils.newCheckBox( "Enable post-processing effects", UserPreferences.bool( Preference.PostProcessing ) );
+			final CheckBox postProcessingCb = UIUtils.newCheckBox( "Enable post-processing effects",
+					UserPreferences.bool( Preference.PostProcessing ) );
 			postProcessingCb.addListener( new ClickListener() {
 				@Override
-				public void clicked( ActorEvent event, float x, float y ) {
+				public void clicked( InputEvent event, float x, float y ) {
 					if( !postProcessingCb.isChecked() ) {
 						// disable all post-processing
 						ppVignetting.setChecked( false );

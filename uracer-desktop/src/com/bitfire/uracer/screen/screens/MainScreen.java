@@ -4,7 +4,7 @@ import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Input.Keys;
 import com.badlogic.gdx.graphics.GL20;
 import com.badlogic.gdx.graphics.glutils.FrameBuffer;
-import com.badlogic.gdx.scenes.scene2d.ActorEvent;
+import com.badlogic.gdx.scenes.scene2d.InputEvent;
 import com.badlogic.gdx.scenes.scene2d.Stage;
 import com.badlogic.gdx.scenes.scene2d.ui.Image;
 import com.badlogic.gdx.scenes.scene2d.ui.Label;
@@ -48,26 +48,26 @@ public final class MainScreen extends Screen {
 
 		buttonsTable = new Table();
 		ui.addActor( buttonsTable );
-//		buttonsTable.debug();
+		// buttonsTable.debug();
 		buttonsTable.setFillParent( true );
 
 		startGameButton = UIUtils.newTextButton( "Start game", new ClickListener() {
 			@Override
-			public void clicked( ActorEvent event, float x, float y ) {
+			public void clicked( InputEvent event, float x, float y ) {
 				URacer.Game.show( ScreenType.GameScreen );
 			}
 		} );
 
 		optionsButton = UIUtils.newTextButton( "Options", new ClickListener() {
 			@Override
-			public void clicked( ActorEvent event, float x, float y ) {
+			public void clicked( InputEvent event, float x, float y ) {
 				URacer.Game.show( ScreenType.OptionsScreen );
 			}
 		} );
 
 		quitButton = UIUtils.newTextButton( "Quit", new ClickListener() {
 			@Override
-			public void clicked( ActorEvent event, float x, float y ) {
+			public void clicked( InputEvent event, float x, float y ) {
 				URacer.Game.quit();
 			}
 		} );
@@ -122,7 +122,7 @@ public final class MainScreen extends Screen {
 		Gdx.gl.glClearColor( 0, 0, 0, 0 );
 		Gdx.gl.glClear( GL20.GL_COLOR_BUFFER_BIT );
 		ui.draw();
-//		Table.drawDebug( ui );
+		// Table.drawDebug( ui );
 
 		if( hasDest ) {
 			dest.end();
