@@ -12,6 +12,7 @@ import com.bitfire.postprocessing.effects.Zoomer;
 import com.bitfire.uracer.URacer;
 import com.bitfire.uracer.configuration.Config;
 import com.bitfire.uracer.game.logic.GameLogic;
+import com.bitfire.uracer.game.logic.TimeModulator;
 import com.bitfire.uracer.game.logic.post.PostProcessing;
 import com.bitfire.uracer.game.logic.post.PostProcessingAnimator;
 import com.bitfire.uracer.game.player.PlayerCar;
@@ -46,7 +47,8 @@ public final class AggressiveCold implements PostProcessingAnimator {
 	public void reset() {
 		if( bloom != null ) {
 			float threshold = (nightMode ? 0.2f : 0.45f);
-			Bloom.Settings bloomSettings = new Bloom.Settings( "subtle", Config.PostProcessing.BlurType, 1, 1.5f, threshold, 1f, 0.5f, 1f, 1.5f );
+			Bloom.Settings bloomSettings = new Bloom.Settings( "subtle", Config.PostProcessing.BlurType, 1, 1.5f, threshold, 1f,
+					0.5f, 1f, 1.5f );
 			bloom.setSettings( bloomSettings );
 		}
 
@@ -87,7 +89,7 @@ public final class AggressiveCold implements PostProcessingAnimator {
 			return;
 		}
 
-		float timeFactor = 1 - (URacer.timeMultiplier - GameLogic.TimeMultiplierMin) / (Config.Physics.PhysicsTimeMultiplier - GameLogic.TimeMultiplierMin);
+		float timeFactor = 1 - (URacer.timeMultiplier - TimeModulator.MinTime) / (TimeModulator.MaxTime - TimeModulator.MinTime);
 		Vector2 playerScreenPos = GameRenderer.ScreenUtils.worldPxToScreen( player.state().position );
 
 		float driftStrength = AMath.clamp( AMath.lerp( prevDriftStrength, player.driftState.driftStrength, 0.01f ), 0, 1 );
