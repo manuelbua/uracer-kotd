@@ -381,9 +381,15 @@ public class GameLogic implements CarEvent.Listener, CarStateEvent.Listener, Pla
 		case TouchAndRelease:
 
 			if( input.isPressed( Keys.SPACE ) || input.isTouched( 1 ) ) {
-				timeMod.toDilatedTime();
+				if( !timeModulation ) {
+					timeModulation = true;
+					timeMod.toDilatedTime();
+				}
 			} else if( input.isReleased( Keys.SPACE ) || input.isUntouched( 1 ) ) {
-				timeMod.toNormalTime();
+				if( timeModulation ) {
+					timeModulation = false;
+					timeMod.toNormalTime();
+				}
 			}
 			break;
 		}
@@ -438,9 +444,18 @@ public class GameLogic implements CarEvent.Listener, CarStateEvent.Listener, Pla
 	public void carEvent( CarEvent.Type type, CarEvent.Data data ) {
 		switch( type ) {
 		case onCollision:
+
+			// invalidate drifting
 			if( playerCar.driftState.isDrifting ) {
 				playerCar.driftState.invalidateByCollision();
 			}
+
+			// invalidate time modulation
+			if( timeModulation ) {
+				timeModulation = false;
+				timeMod.toNormalTime();
+			}
+
 			break;
 		case onComputeForces:
 			lapManager.record( data.forces );
