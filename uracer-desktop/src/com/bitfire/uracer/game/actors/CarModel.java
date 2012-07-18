@@ -2,10 +2,12 @@ package com.bitfire.uracer.game.actors;
 
 import com.bitfire.uracer.game.actors.CarPreset.Type;
 
-/** Represents the physical car model on which we rely to compute
+/**
+ * Represents the physical car model on which we rely to compute
  * the forces exerted by the simulation.
- *
- * @author manuel */
+ * 
+ * @author manuel
+ */
 public final class CarModel {
 	public CarPreset.Type presetType;
 
@@ -36,7 +38,7 @@ public final class CarModel {
 	public float weight;
 
 	public CarModel() {
-		toDefault();
+		toModel2();
 	}
 
 	public void set( CarModel other ) {
@@ -106,36 +108,35 @@ public final class CarModel {
 		return this;
 	}
 
-	public CarModel toModel1() {
-		toDefault();
-		presetType = Type.Model1;
-
-		// physical model
-		b = 1.f; // m
-		c = 1.f; // m
-		width = 2.3f; // m
-		length = 3.5f; // m (must be > wheelbase)
-
-		// physical behavior
-		drag = 12.f; // factor for air resistance (drag)
-		resistance = 30.f; // factor for rolling resistance
-		stiffness_rear = -6.7f; // front cornering stiffness
-		stiffness_front = -6.7f; // rear cornering stiffness
-		max_grip = 6f; // maximum (normalised) friction force, =diameter of friction circle
-
-		max_speed = 35.f;
-		max_force = 300.f;
-
-		density = 1f;
-		friction = 4f;
-		restitution = 0.25f;
-
-		return this;
-	}
+	// public CarModel toModel1() {
+	// toDefault();
+	// presetType = Type.Model1;
+	//
+	// // physical model
+	// b = 1.f; // m
+	// c = 1.f; // m
+	// width = 2.3f; // m
+	// length = 3.5f; // m (must be > wheelbase)
+	//
+	// // physical behavior
+	// drag = 12.f; // factor for air resistance (drag)
+	// resistance = 30.f; // factor for rolling resistance
+	// stiffness_rear = -6.7f; // front cornering stiffness
+	// stiffness_front = -6.7f; // rear cornering stiffness
+	// max_grip = 6f; // maximum (normalised) friction force, =diameter of friction circle
+	//
+	// max_speed = 35.f;
+	// max_force = 300.f;
+	//
+	// density = 1f;
+	// friction = 4f;
+	// restitution = 0.25f;
+	//
+	// return this;
+	// }
 
 	public CarModel toModel2() {
 		toDefault();
-		presetType = Type.Model2;
 
 		// physical model
 		// h = .85f; // m

@@ -2,10 +2,12 @@ package com.bitfire.uracer.game.actors;
 
 import com.badlogic.gdx.Gdx;
 
-/** Encapsulates a set of one CarModel and one CarAspect, indicized by a single mnemonic, describing both physical and
+/**
+ * Encapsulates a set of one CarModel and one CarAspect, indicized by a single mnemonic, describing both physical and
  * graphical settings for the specified Type.
- *
- * @author bmanuel */
+ * 
+ * @author bmanuel
+ */
 public final class CarPreset {
 
 	public Type type;
@@ -13,17 +15,19 @@ public final class CarPreset {
 
 	public enum Type {
 		// @formatter:off
-		Default( "electron" ),
-		Model1( "electron" ),
-		Model2( "spider" ),
-		AudiTTSCoupe2011( "audi-tts-coupe-2011" ),
-		FordMustangShelbyGt500Coupe( "ford-mustang-shelby-gt500-coupe" ),
-		FordMustangShelbyGt500White( "ford-mustang-shelby-gt500-white" ),
-		LamborghiniGallardoLP560( "lamborghini-gallardo-lp560" ),
-		CooperMiniCoupe( "cooper-mini-coupe" ),
-		SportCar( "sport-car" ),
-		SportMasek( "sport-masek" ),
-		SportStella( "sport-stella" ),
+		L1_MiniCooper( "l1_minicooper" ),
+		L1_GoblinOrange( "l1_orange_goblin" ),
+		
+		L2_MustangRed( "l2_mustang_red" ),
+		L2_MustangWhite( "l2_mustang_white" ),
+		L2_BlueBeast("l2_blue_beast"),
+		L2_PinkBeast("l2_pink_beast"),
+		L2_RedBeast("l2_red_beast"),
+		L2_YellowBeast("l2_yellow_beast"),
+		
+		L3_Gallardo( "l3_gallardo" ),
+
+		Default("l1_minicooper"),
 		;
 		// @formatter:on
 
@@ -40,18 +44,21 @@ public final class CarPreset {
 
 	public void setTo( Type type ) {
 		switch( type ) {
-		case Default:
-			model.toDefault();
-			break;
+		case L1_MiniCooper:
 
-		case CooperMiniCoupe:
+		case L1_GoblinOrange:
 			model.toModel2();
 			model.width = 2.5f;
 			model.length = model.width * 1.6f;
 			break;
 
-		case FordMustangShelbyGt500White:
-		case FordMustangShelbyGt500Coupe:
+		case L2_MustangRed:
+		case L2_MustangWhite:
+
+		case L2_BlueBeast:
+		case L2_PinkBeast:
+		case L2_RedBeast:
+		case L2_YellowBeast:
 			model.toModel2();
 			model.width = 2.4f;
 			model.length = model.width * 1.72f;
@@ -63,37 +70,13 @@ public final class CarPreset {
 			model.stiffness_front = -3.5f; // front cornering stiffness
 			break;
 
-		case LamborghiniGallardoLP560:
+		case L3_Gallardo:
 			model.toModel2();
 			model.width = 2.5f;
 			model.length = 4.3f;
 			model.max_force = 400f;
 			model.max_grip = 5f;
 			model.friction = 8f;
-			break;
-
-		case AudiTTSCoupe2011:
-			model.toModel2();
-			model.width = 2.5f;
-			model.length = 4.5f;
-			break;
-
-		case SportCar:
-			model.toModel2();
-			model.width = 2.5f;
-			model.length = 4.3f;
-			break;
-
-		case SportMasek:
-			model.toModel2();
-			model.width = 2.5f;
-			model.length = 3.85f;
-			break;
-
-		case SportStella:
-			model.toModel2();
-			model.width = 2.5f;
-			model.length = 4.3f;
 			break;
 
 		default:
