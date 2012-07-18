@@ -63,10 +63,12 @@ public abstract class Box2DEntity extends SubframeInterpolableEntity {
 
 	public void setWorldPosMt(Vector2 worldPosition) {
 		body.setTransform( worldPosition, body.getAngle() );
+		resetState();
 	}
 
 	public void setWorldPosMt(Vector2 worldPosition, float orientationRads) {
 		body.setTransform( worldPosition, orientationRads );
+		resetState();
 	}
 
 	protected void toNormalRelativeAngle() {
