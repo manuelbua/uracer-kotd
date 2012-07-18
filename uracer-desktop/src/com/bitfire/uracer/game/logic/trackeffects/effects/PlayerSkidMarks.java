@@ -1,6 +1,5 @@
 package com.bitfire.uracer.game.logic.trackeffects.effects;
 
-import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.g2d.Sprite;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.math.Rectangle;
@@ -22,7 +21,7 @@ public class PlayerSkidMarks extends TrackEffect {
 	private SkidMark[] skidMarks;
 	private int markIndex;
 	private int visibleSkidMarksCount;
-	private int driftMarkAddIterations = 1;
+	// private int driftMarkAddIterations = 1;
 
 	private Vector2 pos, last;
 	private PlayerCar player;
@@ -43,12 +42,12 @@ public class PlayerSkidMarks extends TrackEffect {
 		}
 
 		// 1 iteration at 60Hz, 2 at 30Hz..
-		if( Config.Physics.PhysicsTimestepHz > 60 ) {
-			driftMarkAddIterations = 0;
-			Gdx.app.log( "PlayerSkidMarks", "Physics timestep is too small, giving up the effect." );
-		} else {
-			driftMarkAddIterations = (int)(60 / (int)Config.Physics.PhysicsTimestepHz);
-		}
+		// if( Config.Physics.PhysicsTimestepHz > 60 ) {
+		// driftMarkAddIterations = 0;
+		// Gdx.app.log( "PlayerSkidMarks", "Physics timestep is too small, giving up the effect." );
+		// } else {
+		// driftMarkAddIterations = (int)(60 / (int)Config.Physics.PhysicsTimestepHz);
+		// }
 	}
 
 	@Override
@@ -119,32 +118,34 @@ public class PlayerSkidMarks extends TrackEffect {
 			return;
 		}
 
-		for( int i = 0; i < driftMarkAddIterations; i++ ) {
-			pos.set( position );
+		// for( int i = 0; i < driftMarkAddIterations; i++ ) {
+		pos.set( position );
 
-			pos.x = AMath.lerp( last.x, position.x, 0.5f * i );
-			pos.y = AMath.lerp( last.y, position.y, 0.5f * i );
+		// pos.x = AMath.lerp( last.x, position.x, 0.5f * i );
+		// pos.y = AMath.lerp( last.y, position.y, 0.5f * i );
+		pos.x = AMath.lerp( last.x, position.x, 0.5f );
+		pos.y = AMath.lerp( last.y, position.y, 0.5f );
 
-			if( driftState.driftStrength > 0.2f )
-			// if( di.isDrifting )
-			{
-				// add front drift marks?
-				SkidMark drift = skidMarks[markIndex++];
-				if( markIndex == MaxSkidMarks ) {
-					markIndex = 0;
-				}
-
-				// drift.alphaFront = driftState.driftStrength;
-				// drift.alphaRear = driftState.driftStrength;
-				drift.alphaFront = driftState.lateralForcesFront;
-				drift.alphaRear = driftState.lateralForcesRear;
-				drift.setPosition( pos );
-				drift.setOrientation( orientation );
-				drift.front.setScale( AMath.clamp( driftState.lateralForcesFront + 0.8f, 0.85f, 1.1f ) );
-				drift.rear.setScale( AMath.clamp( driftState.lateralForcesRear + 0.8f, 0.85f, 1.1f ) );
-				drift.life = MaxParticleLifeSeconds;
+		// if( driftState.driftStrength > 0.2f )
+		// if( di.isDrifting )
+		{
+			// add front drift marks?
+			SkidMark drift = skidMarks[markIndex++];
+			if( markIndex == MaxSkidMarks ) {
+				markIndex = 0;
 			}
+
+			// drift.alphaFront = driftState.driftStrength;
+			// drift.alphaRear = driftState.driftStrength;
+			drift.alphaFront = driftState.lateralForcesFront;
+			drift.alphaRear = driftState.lateralForcesRear;
+			drift.setPosition( pos );
+			drift.setOrientation( orientation );
+			drift.front.setScale( AMath.clamp( driftState.lateralForcesFront + 0f, 0.85f, 1.1f ) );
+			drift.rear.setScale( AMath.clamp( driftState.lateralForcesRear + 0f, 0.85f, 1.1f ) );
+			drift.life = MaxParticleLifeSeconds;
 		}
+		// }
 
 		last.set( position );
 
