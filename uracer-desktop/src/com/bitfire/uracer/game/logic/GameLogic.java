@@ -117,7 +117,7 @@ public class GameLogic implements CarEvent.Listener, CarStateEvent.Listener, Pla
 		playerTasks = new PlayerTasks( gameTasksManager, scalingStrategy );
 
 		lapManager = new LapManager( gameWorld );
-		ghostCar = CarFactory.createGhost( gameWorld, CarPreset.Type.Default );
+		ghostCar = CarFactory.createGhost( gameWorld, CarPreset.Type.L1_GoblinOrange );
 
 		// messager.show( "COOL STUFF!", 60, Message.Type.Information,
 		// MessagePosition.Bottom, MessageSize.Big );
@@ -209,6 +209,7 @@ public class GameLogic implements CarEvent.Listener, CarStateEvent.Listener, Pla
 		// the world
 		playerCar.setInputSystem( inputSystem );
 		player.setWorldPosMt( world.playerStartPos, world.playerStartOrient );
+		player.resetPhysics();
 	}
 
 	public void setBestLocalReplay( Replay replay ) {
@@ -266,22 +267,16 @@ public class GameLogic implements CarEvent.Listener, CarStateEvent.Listener, Pla
 
 	private Replay userRec = null;
 
-	private int keycount = 0;
-
 	public void onAcquireInput() {
 		// Input input = gameTasksManager.input;
 
-		// dbg keys
-		if( input.isPressed( Keys.NUM_1 ) || input.isReleased( Keys.NUM_1 ) ) {
-			keycount++;
-			// @formatter:off
-			Gdx.app.log( "GameLogic", "Num1 => " +
-					"isOn:" + (input.isOn(Keys.NUM_1) ? "1" : "0" ) + ", " +
-					"isOff:" + (input.isOff(Keys.NUM_1) ? "1" : "0" ) + ", " +
-					"isPressed:" + (input.isPressed(Keys.NUM_1) ? "1" : "0" ) + ", " +
-					"isReleased:" + (input.isReleased(Keys.NUM_1) ? "1" : "0" ) + " (" + keycount + ")"
-			);
-			// @formatter:on
+		// fast car switch (debug!)
+		for( int i = Keys.NUM_1; i <= Keys.NUM_9; i++ ) {
+			if( input.isPressed( i ) ) {
+				CarPreset.Type type = CarPreset.Type.values()[i - Keys.NUM_1];
+				removePlayer();
+				setPlayer( type );
+			}
 		}
 
 		if( input.isPressed( Keys.C ) ) {
@@ -334,8 +329,8 @@ public class GameLogic implements CarEvent.Listener, CarStateEvent.Listener, Pla
 		} else if( input.isPressed( Keys.Q ) || input.isPressed( Keys.ESCAPE ) || input.isPressed( Keys.BACK ) ) {
 
 			// quit
-			URacer.Screens.setScreen( ScreenType.MainScreen, TransitionType.Fader, 1000 );
-			// URacer.Screens.setScreen( ScreenType.ExitScreen, TransitionType.None, 0 );
+			// URacer.Screens.setScreen( ScreenType.MainScreen, TransitionType.Fader, 1000 );
+			URacer.Screens.setScreen( ScreenType.ExitScreen, TransitionType.None, 0 );
 
 		} else if( input.isPressed( Keys.O ) ) {
 
@@ -351,7 +346,7 @@ public class GameLogic implements CarEvent.Listener, CarStateEvent.Listener, Pla
 
 			// add player
 
-			setPlayer( CarPreset.Type.FordMustangShelbyGt500Coupe );
+			setPlayer( CarPreset.Type.L1_GoblinOrange );
 
 		} else if( input.isPressed( Keys.W ) ) {
 
