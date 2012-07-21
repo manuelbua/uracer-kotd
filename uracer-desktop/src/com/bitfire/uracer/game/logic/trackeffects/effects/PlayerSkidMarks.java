@@ -152,8 +152,8 @@ public class PlayerSkidMarks extends TrackEffect {
 				drift.alphaRear = driftState.lateralForcesRear * driftState.driftStrength * theta;
 				drift.setPosition( pos );
 				drift.setOrientation( orientation );
-				drift.front.setScale( AMath.clamp( driftState.lateralForcesFront + 0.25f, 0.75f, 1.0f ) );
-				drift.rear.setScale( AMath.clamp( driftState.lateralForcesRear + 0.25f, 0.75f, 1.0f ) );
+				drift.front.setScale( AMath.clamp( driftState.lateralForcesFront, 0.75f, 1.0f ) );
+				drift.rear.setScale( AMath.clamp( driftState.lateralForcesRear, 0.75f, 1.0f ) );
 				drift.life = MaxParticleLifeSeconds;
 			}
 		}
