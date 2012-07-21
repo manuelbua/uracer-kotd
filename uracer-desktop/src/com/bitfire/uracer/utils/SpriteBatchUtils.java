@@ -22,7 +22,7 @@ public final class SpriteBatchUtils {
 			width = -width;
 		}
 
-		batch.draw( region, x, y, width, -region.getRegionHeight() );
+		batch.draw( region, x, y, width, region.getRegionHeight() );
 	}
 
 	public static void draw( SpriteBatch batch, TextureRegion region, float x, float y, float width, float height ) {
