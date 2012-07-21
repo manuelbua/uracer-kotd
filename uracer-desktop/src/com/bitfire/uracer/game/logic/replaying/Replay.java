@@ -10,6 +10,7 @@ import java.util.zip.GZIPOutputStream;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.files.FileHandle;
 import com.badlogic.gdx.math.Vector2;
+import com.badlogic.gdx.utils.GdxRuntimeException;
 import com.bitfire.uracer.configuration.Storage;
 import com.bitfire.uracer.game.Time;
 import com.bitfire.uracer.game.actors.Car;
@@ -21,9 +22,11 @@ import com.bitfire.uracer.game.logic.messager.Message.Size;
 import com.bitfire.uracer.game.logic.messager.Messager;
 import com.bitfire.uracer.utils.UUid;
 
-/** Represents replay data to be feed to a GhostCar, the replay player.
- *
- * @author manuel */
+/**
+ * Represents replay data to be feed to a GhostCar, the replay player.
+ * 
+ * @author manuel
+ */
 
 public class Replay {
 	public static final int MaxEvents = 5000;
@@ -73,7 +76,7 @@ public class Replay {
 		this.trackName = trackName;
 		time.start();
 
-//		Gdx.app.log( "Replay", "Begin at " + carWorldPositionMt + ", " + carWorldOrientRads );
+		// Gdx.app.log( "Replay", "Begin at " + carWorldPositionMt + ", " + carWorldOrientRads );
 	}
 
 	public void end() {
@@ -128,7 +131,7 @@ public class Replay {
 
 				// replay info data
 				r.trackName = is.readUTF();
-//				r.difficultyLevel = GameDifficulty.valueOf( is.readUTF() );
+				// r.difficultyLevel = GameDifficulty.valueOf( is.readUTF() );
 				r.trackTimeSeconds = is.readFloat();
 				r.eventsCount = is.readInt();
 
@@ -150,7 +153,7 @@ public class Replay {
 				r.isSaved = true;
 				r.isLoaded = true;
 
-//				Gdx.app.log( "Replay", "Done loading local replay" );
+				// Gdx.app.log( "Replay", "Done loading local replay" );
 				return r;
 
 			} catch( Exception e ) {
@@ -177,11 +180,19 @@ public class Replay {
 						FileHandle hf = Gdx.files.external( filename );
 
 						// DataOutputStream os = new DataOutputStream( hf.write( false ) );
-						GZIPOutputStream gzos = new GZIPOutputStream( hf.write( false ) ) {
-							{
-								def.setLevel( Deflater.BEST_COMPRESSION );
-							}
-						};
+						GZIPOutputStream gzos = null;
+
+						try {
+							gzos = new GZIPOutputStream( hf.write( false ) ) {
+								{
+									def.setLevel( Deflater.BEST_COMPRESSION );
+								}
+							};
+						} catch( GdxRuntimeException e ) {
+							messager.enqueue( "Couldn't save local replay, no space?", 3f, Message.Type.Bad, Position.Bottom,
+									Size.Normal );
+							return;
+						}
 
 						ObjectOutputStream os = new ObjectOutputStream( gzos );
 
@@ -190,7 +201,7 @@ public class Replay {
 						// replay info data
 						os.writeLong( id );
 						os.writeUTF( trackName );
-//						os.writeUTF( difficultyLevel.toString() );
+						// os.writeUTF( difficultyLevel.toString() );
 						os.writeFloat( trackTimeSeconds );
 						os.writeInt( eventsCount );
 
@@ -213,7 +224,7 @@ public class Replay {
 						isSaved = true;
 
 						messager.enqueue( "Replay saved", 1f, Message.Type.Information, Position.Bottom, Size.Normal );
-//						Gdx.app.log( "Replay", "Done saving local replay (" + trackTimeSeconds + ")" );
+						// Gdx.app.log( "Replay", "Done saving local replay (" + trackTimeSeconds + ")" );
 
 					} catch( IOException e ) {
 						Gdx.app.log( "Replay", "Couldn't save local replay, reason: " + e.getMessage() );
