@@ -3,12 +3,12 @@
 	<classpathentry kind="src" path="src"/>
 	<classpathentry kind="src" path="tweenengine"/>
 	<classpathentry kind="con" path="org.eclipse.jdt.launching.JRE_CONTAINER/org.eclipse.jdt.internal.debug.ui.launcher.StandardVMType/JavaSE-1.6"/>
+	<classpathentry combineaccessrules="false" kind="src" path="/gdx-backend-lwjgl"/>
 	<classpathentry combineaccessrules="false" kind="src" path="/gdx"/>
 	<classpathentry combineaccessrules="false" kind="src" path="/model-loaders"/>
 	<classpathentry combineaccessrules="false" kind="src" path="/box2dLight"/>
 	<classpathentry kind="lib" path="/home/manuel/dev/uracer-libgdx/libs/java-getopt-1.0.14.jar"/>
 	<classpathentry combineaccessrules="false" kind="src" path="/libgdx-contribs-postprocessing"/>
 	<classpathentry combineaccessrules="false" kind="src" path="/libgdx-contribs-utils"/>
-	<classpathentry combineaccessrules="false" kind="src" path="/gdx-backend-lwjgl"/>
 	<classpathentry kind="output" path="bin"/>
 </classpath>
