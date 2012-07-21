@@ -22,7 +22,7 @@ public class PlayerSkidMarks extends TrackEffect {
 	private SkidMark[] skidMarks;
 	private int markIndex;
 	private int visibleSkidMarksCount;
-	private int driftMarkAddIterations = 1;
+	// private int driftMarkAddIterations = 1;
 
 	private Vector2 pos, last;
 	private PlayerCar player;
@@ -43,12 +43,12 @@ public class PlayerSkidMarks extends TrackEffect {
 		}
 
 		// 1 iteration at 60Hz, 2 at 30Hz..
-		if( Config.Physics.PhysicsTimestepHz > 60 ) {
-			driftMarkAddIterations = 0;
-			Gdx.app.log( "PlayerSkidMarks", "Physics timestep is too small, giving up the effect." );
-		} else {
-			driftMarkAddIterations = (int)(60 / (int)Config.Physics.PhysicsTimestepHz);
-		}
+		// if( Config.Physics.PhysicsTimestepHz > 60 ) {
+		// driftMarkAddIterations = 0;
+		// Gdx.app.log( "PlayerSkidMarks", "Physics timestep is too small, giving up the effect." );
+		// } else {
+		// driftMarkAddIterations = (int)(60 / (int)Config.Physics.PhysicsTimestepHz);
+		// }
 	}
 
 	@Override
@@ -119,11 +119,17 @@ public class PlayerSkidMarks extends TrackEffect {
 			return;
 		}
 
+		int driftMarkAddIterations = 1;
+		float target = Config.Physics.PhysicsDt;
+		float curr = Gdx.graphics.getDeltaTime();
+		driftMarkAddIterations = Math.round( curr / target );
+
+		float alpha = 1f / (float)driftMarkAddIterations;
 		for( int i = 0; i < driftMarkAddIterations; i++ ) {
 			pos.set( position );
 
-			pos.x = AMath.lerp( last.x, position.x, 0.5f * i );
-			pos.y = AMath.lerp( last.y, position.y, 0.5f * i );
+			pos.x = AMath.lerp( last.x, position.x, alpha * i );
+			pos.y = AMath.lerp( last.y, position.y, alpha * i );
 
 			if( driftState.driftStrength > 0.2f )
 			// if( di.isDrifting )
@@ -136,12 +142,12 @@ public class PlayerSkidMarks extends TrackEffect {
 
 				// drift.alphaFront = driftState.driftStrength;
 				// drift.alphaRear = driftState.driftStrength;
-				drift.alphaFront = driftState.lateralForcesFront;
-				drift.alphaRear = driftState.lateralForcesRear;
+				drift.alphaFront = driftState.lateralForcesFront * 0.75f * driftState.driftStrength;
+				drift.alphaRear = driftState.lateralForcesRear * 0.75f * driftState.driftStrength;
 				drift.setPosition( pos );
 				drift.setOrientation( orientation );
-				drift.front.setScale( AMath.clamp( driftState.lateralForcesFront + 0.8f, 0.85f, 1.1f ) );
-				drift.rear.setScale( AMath.clamp( driftState.lateralForcesRear + 0.8f, 0.85f, 1.1f ) );
+				drift.front.setScale( AMath.clamp( driftState.lateralForcesFront + 0.25f, 0.75f, 1.0f ) );
+				drift.rear.setScale( AMath.clamp( driftState.lateralForcesRear + 0.25f, 0.75f, 1.0f ) );
 				drift.life = MaxParticleLifeSeconds;
 			}
 		}

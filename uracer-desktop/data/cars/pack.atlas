@@ -5,99 +5,99 @@ filter: Nearest,Nearest
 repeat: none
 skid-smoke
   rotate: false
-  xy: 1, 683
+  xy: 1, 649
   size: 256, 256
   orig: 256, 256
   offset: 0, 0
   index: -1
 l3_gallardo
   rotate: false
-  xy: 1, 388
+  xy: 1, 354
   size: 155, 293
   orig: 155, 293
   offset: 0, 0
   index: -1
 l1_minicooper
   rotate: false
-  xy: 1, 99
+  xy: 1, 65
   size: 158, 287
   orig: 158, 287
   offset: 0, 0
   index: -1
 l1_orange_goblin
   rotate: false
-  xy: 259, 652
+  xy: 259, 618
   size: 158, 287
   orig: 158, 287
   offset: 0, 0
   index: -1
 l2_mustang_red
   rotate: false
-  xy: 419, 644
+  xy: 419, 610
   size: 129, 295
   orig: 129, 295
   offset: 0, 0
   index: -1
 l2_yellow_beast
   rotate: false
-  xy: 550, 644
+  xy: 550, 610
   size: 129, 295
   orig: 129, 295
   offset: 0, 0
   index: -1
 l2_blue_beast
   rotate: false
-  xy: 681, 644
+  xy: 681, 610
   size: 129, 295
   orig: 129, 295
   offset: 0, 0
   index: -1
 l2_mustang_white
   rotate: false
-  xy: 812, 643
+  xy: 812, 609
   size: 129, 296
   orig: 129, 296
   offset: 0, 0
   index: -1
-skid-marks-rear
+car-ao
   rotate: false
-  xy: 1, 35
+  xy: 1, 1
   size: 34, 62
   orig: 34, 62
+  offset: 0, 0
+  index: -1
+skid-smoke-small
+  rotate: false
+  xy: 158, 615
+  size: 32, 32
+  orig: 32, 32
+  offset: 0, 0
+  index: -1
+skid-marks-rear
+  rotate: false
+  xy: 161, 318
+  size: 129, 295
+  orig: 129, 295
   offset: 0, 0
   index: -1
 skid-marks-front
   rotate: false
-  xy: 158, 619
-  size: 34, 62
-  orig: 34, 62
-  offset: 0, 0
-  index: -1
-car-ao
-  rotate: false
-  xy: 943, 877
-  size: 34, 62
-  orig: 34, 62
+  xy: 161, 21
+  size: 129, 295
+  orig: 129, 295
   offset: 0, 0
   index: -1
 l2_pink_beast
   rotate: false
-  xy: 194, 355
+  xy: 292, 313
   size: 129, 295
   orig: 129, 295
   offset: 0, 0
   index: -1
 l2_red_beast
   rotate: false
-  xy: 161, 58
+  xy: 423, 313
   size: 129, 295
   orig: 129, 295
-  offset: 0, 0
-  index: -1
-skid-smoke-small
-  rotate: false
-  xy: 1, 1
-  size: 32, 32
-  orig: 32, 32
   offset: 0, 0
   index: -1
