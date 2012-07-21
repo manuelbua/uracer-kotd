@@ -152,7 +152,8 @@ public final class GameWorldRenderer {
 		camPersp.position.set( camTilemap.position.x, camTilemap.position.y, CamPerspElevation );
 		camPersp.update();
 
-		camController = new CameraController( Config.Graphics.CameraInterpolationMode, halfViewport, world.worldSizeScaledPx, world.worldSizeTiles );
+		camController = new CameraController( Config.Graphics.CameraInterpolationMode, halfViewport, world.worldSizeScaledPx,
+				world.worldSizeTiles );
 	}
 
 	public OrthographicCamera getOrthographicCamera() {
@@ -249,7 +250,8 @@ public final class GameWorldRenderer {
 		camOrtho.update();
 
 		// update the unscaled orthographic camera rectangle, for visibility queries
-		camOrthoRect.set( camOrtho.position.x - halfViewport.x, camOrtho.position.y - halfViewport.y, camOrtho.viewportWidth, camOrtho.viewportHeight );
+		camOrthoRect.set( camOrtho.position.x - halfViewport.x, camOrtho.position.y - halfViewport.y, camOrtho.viewportWidth,
+				camOrtho.viewportHeight );
 
 		// update the model-view-projection matrix, in meters, from the unscaled orthographic camera
 		camOrthoMvpMt.set( camOrtho.combined );
@@ -473,9 +475,11 @@ public final class GameWorldRenderer {
 		gl.glDisable( GL20.GL_DEPTH_TEST );
 	}
 
-	/** This is intentionally SLOW. Read it again!
-	 *
-	 * @param boundingBox */
+	/**
+	 * This is intentionally SLOW. Read it again!
+	 * 
+	 * @param boundingBox
+	 */
 	private void renderBoundingBox( BoundingBox boundingBox ) {
 		float alpha = .15f;
 		float r = 0f;
