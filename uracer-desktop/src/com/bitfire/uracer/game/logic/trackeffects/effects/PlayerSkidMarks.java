@@ -68,10 +68,16 @@ public class PlayerSkidMarks extends TrackEffect {
 		markIndex = 0;
 	}
 
+	private Vector2 ppos = new Vector2();
+
 	@Override
 	public void tick() {
 		if( player.carState.currVelocityLenSquared >= 1 ) {
-			tryAddDriftMark( player.state().position, player.state().orientation, player.driftState );
+			ppos.x = Convert.mt2px( player.getBody().getPosition().x );
+			ppos.y = Convert.mt2px( player.getBody().getPosition().y );
+
+			// tryAddDriftMark( player.state().position, player.state().orientation, player.driftState );
+			tryAddDriftMark( ppos, player.state().orientation, player.driftState );
 		}
 
 		SkidMark d;
@@ -121,15 +127,15 @@ public class PlayerSkidMarks extends TrackEffect {
 
 		int driftMarkAddIterations = 1;
 		float target = Config.Physics.PhysicsDt;
-		float curr = Gdx.graphics.getDeltaTime();
-		driftMarkAddIterations = Math.round( curr / target );
+		float curr = Gdx.graphics.getDeltaTime();// deltaMean.getMean();
+		driftMarkAddIterations = AMath.clamp( Math.round( curr / target ), 1, 3 );
 
-		float alpha = 1f / (float)driftMarkAddIterations;
+		float theta = 1f / (float)driftMarkAddIterations;
 		for( int i = 0; i < driftMarkAddIterations; i++ ) {
 			pos.set( position );
 
-			pos.x = AMath.lerp( last.x, position.x, alpha * i );
-			pos.y = AMath.lerp( last.y, position.y, alpha * i );
+			pos.x = AMath.lerp( last.x, position.x, theta * i );
+			pos.y = AMath.lerp( last.y, position.y, theta * i );
 
 			if( driftState.driftStrength > 0.2f )
 			// if( di.isDrifting )
@@ -142,8 +148,8 @@ public class PlayerSkidMarks extends TrackEffect {
 
 				// drift.alphaFront = driftState.driftStrength;
 				// drift.alphaRear = driftState.driftStrength;
-				drift.alphaFront = driftState.lateralForcesFront * 0.75f * driftState.driftStrength;
-				drift.alphaRear = driftState.lateralForcesRear * 0.75f * driftState.driftStrength;
+				drift.alphaFront = driftState.lateralForcesFront * driftState.driftStrength * theta;
+				drift.alphaRear = driftState.lateralForcesRear * driftState.driftStrength * theta;
 				drift.setPosition( pos );
 				drift.setOrientation( orientation );
 				drift.front.setScale( AMath.clamp( driftState.lateralForcesFront + 0.25f, 0.75f, 1.0f ) );
