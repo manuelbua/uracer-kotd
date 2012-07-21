@@ -6,8 +6,11 @@
 		<project>box2dLight</project>
 		<project>gdx</project>
 		<project>gdx-audio</project>
+		<project>gdx-backend-jogl</project>
+		<project>gdx-backend-lwjgl</project>
+		<project>gdx-openal</project>
+		<project>libgdx-contribs-postprocessing</project>
 		<project>model-loaders</project>
-		<project>postprocessing</project>
 	</projects>
 	<buildSpec>
 		<buildCommand>
@@ -35,11 +38,6 @@
 			<name>tweenengine</name>
 			<type>2</type>
 			<location>/home/manuel/dev/java-universal-tween-engine/tween-engine-api/src</location>
-		</link>
-		<link>
-			<name>utilities</name>
-			<type>2</type>
-			<location>/home/manuel/dev/libgdx-contribs/utilities</location>
 		</link>
 	</linkedResources>
 </projectDescription>
