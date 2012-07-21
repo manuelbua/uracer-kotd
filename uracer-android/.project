@@ -6,6 +6,8 @@
 		<project>box2dLight</project>
 		<project>gdx</project>
 		<project>gdx-backend-android</project>
+		<project>libgdx-contribs-postprocessing</project>
+		<project>libgdx-contribs-utils</project>
 		<project>model-loaders-android</project>
 		<project>uracer-desktop</project>
 	</projects>
