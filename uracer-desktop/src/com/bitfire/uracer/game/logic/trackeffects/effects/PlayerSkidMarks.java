@@ -1,5 +1,6 @@
 package com.bitfire.uracer.game.logic.trackeffects.effects;
 
+import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.g2d.Sprite;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.math.Rectangle;
@@ -118,34 +119,38 @@ public class PlayerSkidMarks extends TrackEffect {
 			return;
 		}
 
-		// for( int i = 0; i < driftMarkAddIterations; i++ ) {
-		pos.set( position );
+		int driftMarkAddIterations = 1;
+		float target = Config.Physics.PhysicsDt;
+		float curr = Gdx.graphics.getDeltaTime();
+		driftMarkAddIterations = Math.round( curr / target );
 
-		// pos.x = AMath.lerp( last.x, position.x, 0.5f * i );
-		// pos.y = AMath.lerp( last.y, position.y, 0.5f * i );
-		pos.x = AMath.lerp( last.x, position.x, 0.5f );
-		pos.y = AMath.lerp( last.y, position.y, 0.5f );
+		float alpha = 1f / (float)driftMarkAddIterations;
+		for( int i = 0; i < driftMarkAddIterations; i++ ) {
+			pos.set( position );
 
-		if( driftState.driftStrength > 0.2f )
-		// if( di.isDrifting )
-		{
-			// add front drift marks?
-			SkidMark drift = skidMarks[markIndex++];
-			if( markIndex == MaxSkidMarks ) {
-				markIndex = 0;
+			pos.x = AMath.lerp( last.x, position.x, alpha * i );
+			pos.y = AMath.lerp( last.y, position.y, alpha * i );
+
+			if( driftState.driftStrength > 0.2f )
+			// if( di.isDrifting )
+			{
+				// add front drift marks?
+				SkidMark drift = skidMarks[markIndex++];
+				if( markIndex == MaxSkidMarks ) {
+					markIndex = 0;
+				}
+
+				// drift.alphaFront = driftState.driftStrength;
+				// drift.alphaRear = driftState.driftStrength;
+				drift.alphaFront = driftState.lateralForcesFront * 0.75f * driftState.driftStrength;
+				drift.alphaRear = driftState.lateralForcesRear * 0.75f * driftState.driftStrength;
+				drift.setPosition( pos );
+				drift.setOrientation( orientation );
+				drift.front.setScale( AMath.clamp( driftState.lateralForcesFront + 0.25f, 0.75f, 1.0f ) );
+				drift.rear.setScale( AMath.clamp( driftState.lateralForcesRear + 0.25f, 0.75f, 1.0f ) );
+				drift.life = MaxParticleLifeSeconds;
 			}
-
-			// drift.alphaFront = driftState.driftStrength;
-			// drift.alphaRear = driftState.driftStrength;
-			drift.alphaFront = driftState.lateralForcesFront * 0.75f * driftState.driftStrength;
-			drift.alphaRear = driftState.lateralForcesRear * 0.75f * driftState.driftStrength;
-			drift.setPosition( pos );
-			drift.setOrientation( orientation );
-			drift.front.setScale( AMath.clamp( driftState.lateralForcesFront + 0.25f, 0.75f, 1.0f ) );
-			drift.rear.setScale( AMath.clamp( driftState.lateralForcesRear + 0.25f, 0.75f, 1.0f ) );
-			drift.life = MaxParticleLifeSeconds;
 		}
-		// }
 
 		last.set( position );
 
