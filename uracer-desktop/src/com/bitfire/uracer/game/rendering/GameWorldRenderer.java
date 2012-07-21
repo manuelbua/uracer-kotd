@@ -454,7 +454,9 @@ public final class GameWorldRenderer {
 		gl.glEnable( GL20.GL_DEPTH_TEST );
 		gl.glDepthFunc( GL20.GL_LEQUAL );
 
-		renderWalls( trackWalls, depthOnly );
+		if( trackWalls.count() > 0 ) {
+			renderWalls( trackWalls, depthOnly );
+		}
 
 		if( trackTrees.count() > 0 ) {
 			renderTrees( trackTrees, depthOnly );
