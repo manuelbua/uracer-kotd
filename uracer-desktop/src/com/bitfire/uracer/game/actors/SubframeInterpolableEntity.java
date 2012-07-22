@@ -25,7 +25,8 @@ public abstract class SubframeInterpolableEntity extends Entity implements Physi
 		GameEvents.physicsStep.removeListener( this, PhysicsStepEvent.Type.onBeforeTimestep );
 		GameEvents.physicsStep.removeListener( this, PhysicsStepEvent.Type.onAfterTimestep );
 		GameEvents.physicsStep.removeListener( this, PhysicsStepEvent.Type.onSubstepCompleted );
-		GameEvents.gameRenderer.removeListener( this, GameRendererEvent.Type.OnSubframeInterpolate, GameRendererEvent.Order.DEFAULT );
+		GameEvents.gameRenderer.removeListener( this, GameRendererEvent.Type.OnSubframeInterpolate,
+				GameRendererEvent.Order.DEFAULT );
 	}
 
 	public abstract boolean isVisible();

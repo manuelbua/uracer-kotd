@@ -23,7 +23,7 @@ public class PhysicsStep extends Task {
 
 	@Override
 	protected void onTick() {
-//		Gdx.app.log( "PhysicsStep", "tick" );
+		// Gdx.app.log( "PhysicsStep", "tick" );
 		GameEvents.physicsStep.trigger( this, Type.onBeforeTimestep );
 		world.step( Config.Physics.PhysicsDt, 10, 10 );
 		GameEvents.physicsStep.trigger( this, Type.onAfterTimestep );
