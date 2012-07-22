@@ -233,19 +233,31 @@ public final class GameWorldRenderer {
 		}
 	}
 
-	public void setCameraPosition( Vector2 position, boolean round ) {
-		Vector2 interpPos = camController.transform( position );
+	private Vector2 cameraPos = new Vector2();
 
+	// private Vector2 tmpCameraPos = new Vector2();
+
+	public void setInitialCameraPositionOrient( Car car ) {
+		cameraPos.set( Convert.mt2px( car.getWorldPosMt() ) );
+		camController.setInitialPositionOrient( cameraPos, car.getWorldOrientRads() * MathUtils.radiansToDegrees );
+	}
+
+	public void setCameraPosition( Car car ) {
+		// tmpCameraPos.set( Convert.mt2px( car.getWorldPosMt() ) );
+		// setCameraPosition( tmpCameraPos, car.getWorldOrientRads() * MathUtils.radiansToDegrees );
+		cameraPos.set( camController.transform( car.state().position, car.state().orientation ) );
+	}
+
+	public void setCameraPosition( Vector2 position, float orient ) {
+		cameraPos.set( camController.transform( position, orient ) );
+	}
+
+	public void onBeforeRender() {
 		// update orthographic camera
-		if( round ) {
-			// remove subpixel accuracy (jagged behavior)
-			camOrtho.position.x = MathUtils.round( interpPos.x );
-			camOrtho.position.y = MathUtils.round( interpPos.y );
-		} else {
-			camOrtho.position.x = interpPos.x;
-			camOrtho.position.y = interpPos.y;
-		}
 
+		// remove subpixel accuracy (jagged behavior)
+		camOrtho.position.x = MathUtils.round( cameraPos.x );
+		camOrtho.position.y = MathUtils.round( cameraPos.y );
 		camOrtho.position.z = 0;
 		camOrtho.update();
 

@@ -238,25 +238,29 @@ public class GameLogic implements CarEvent.Listener, CarStateEvent.Listener, Pla
 	}
 
 	public void onBeforeRender() {
-		boolean truncatePosition = true;
-
-		// update player's headlights and move the world camera to follows it,
-		// if there is a player
+		// update player's headlights and move the world camera to follows it, if there is a player
 		if( hasPlayer() ) {
 
 			if( gameWorld.isNightMode() ) {
 				gameWorldRenderer.updatePlayerHeadlights( playerCar );
 			}
 
-			gameWorldRenderer.setCameraPosition( playerCar.state().position, truncatePosition );
+			gameWorldRenderer.setCameraPosition( playerCar );
+
 		} else if( ghostCar.hasReplay() ) {
-			gameWorldRenderer.setCameraPosition( ghostCar.state().position, truncatePosition );
+
+			gameWorldRenderer.setCameraPosition( ghostCar );
+
 		} else {
+
 			// no ghost, no player, WTF?
-			gameWorldRenderer.setCameraPosition( gameWorld.playerStartPos, truncatePosition );
+			gameWorldRenderer.setCameraPosition( gameWorld.playerStartPos, gameWorld.playerStartOrient );
+
 		}
 
 		URacer.timeMultiplier = timeMod.getTime();
+
+		gameWorldRenderer.onBeforeRender();
 
 		// game tweener step
 		GameTweener.update();
@@ -265,11 +269,13 @@ public class GameLogic implements CarEvent.Listener, CarStateEvent.Listener, Pla
 		postProcessing.onBeforeRender();
 	}
 
+	public void onTick() {
+		acquireInput();
+	}
+
 	private Replay userRec = null;
 
-	public void onAcquireInput() {
-		// Input input = gameTasksManager.input;
-
+	private void acquireInput() {
 		// fast car switch (debug!)
 		for( int i = Keys.NUM_1; i <= Keys.NUM_9; i++ ) {
 			if( input.isPressed( i ) ) {
@@ -416,6 +422,8 @@ public class GameLogic implements CarEvent.Listener, CarStateEvent.Listener, Pla
 
 	private void restartLogic() {
 		resetPlayer( playerCar, ghostCar );
+		gameWorldRenderer.setInitialCameraPositionOrient( playerCar );
+
 		isFirstLap = true;
 		timeModulation = false;
 		timeMod.reset();

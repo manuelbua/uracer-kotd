@@ -73,7 +73,7 @@ public class Game implements Disposable {
 
 	public void tick() {
 		TaskManager.dispatchTick();
-		gameLogic.onAcquireInput();
+		gameLogic.onTick();
 	}
 
 	public void tickCompleted() {
