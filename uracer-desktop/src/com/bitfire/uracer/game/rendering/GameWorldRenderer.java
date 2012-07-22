@@ -58,7 +58,7 @@ public final class GameWorldRenderer {
 		"void main()											\n" +
 		"{														\n" +
 		"	vec4 texel = texture2D( u_texture, v_TexCoord );	\n" +
-		"	//if(texel.a < 0.5) discard;							\n" +
+		"	if(texel.a < 0.5) discard;							\n" +
 		"	gl_FragColor = texel;								\n" +
 		"}														\n";
 	// @formatter:on
