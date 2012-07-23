@@ -417,6 +417,7 @@ public class GameLogic implements CarEvent.Listener, CarStateEvent.Listener, Pla
 		if( playerGhostCar != null ) {
 			playerGhostCar.resetPhysics();
 			playerGhostCar.resetDistanceAndSpeed();
+			playerGhostCar.removeReplay();
 		}
 	}
 
