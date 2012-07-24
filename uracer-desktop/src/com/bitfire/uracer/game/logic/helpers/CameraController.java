@@ -4,11 +4,12 @@ import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.math.Rectangle;
 import com.badlogic.gdx.math.Vector2;
 import com.bitfire.uracer.utils.AMath;
+import com.bitfire.uracer.utils.Convert;
 import com.bitfire.uracer.utils.VMath;
 
 public class CameraController {
 	public enum InterpolationMode {
-		OffNoBounds, Off, Linear, Sigmoid, Gentle
+		OffNoBounds, Off, Linear, Sigmoid, Predictive
 	}
 
 	private float boundsWidth = 0, boundsHeight = 0;
@@ -18,7 +19,9 @@ public class CameraController {
 	private Vector2 worldTiles = new Vector2();
 
 	public CameraController( InterpolationMode mode, Vector2 halfViewport, final Vector2 worldSizeScaledPx, Vector2 worldSizeTiles ) {
+
 		final Rectangle cameraBounds = new Rectangle();
+
 		cameraBounds.x = halfViewport.x;
 		cameraBounds.width = worldSizeScaledPx.x - halfViewport.x;
 		cameraBounds.height = halfViewport.y;
@@ -36,7 +39,7 @@ public class CameraController {
 		case Linear:
 			interpolator = new PositionInterpolator() {
 				@Override
-				public Vector2 transform( Vector2 target, float orient ) {
+				public Vector2 transform( Vector2 target, float orient, float velocityFactor ) {
 					// [0,1]
 					float x_ratio = target.x / worldSizeScaledPx.x;
 					float y_ratio = target.y / worldSizeScaledPx.y;
@@ -52,7 +55,7 @@ public class CameraController {
 		case Sigmoid:
 			interpolator = new PositionInterpolator() {
 				@Override
-				public Vector2 transform( Vector2 target, float orient ) {
+				public Vector2 transform( Vector2 target, float orient, float velocityFactor ) {
 					float tx = target.x;
 					float ty = target.y;
 
@@ -67,23 +70,24 @@ public class CameraController {
 				}
 			};
 			break;
-		case Gentle:
+		case Predictive:
 			interpolator = new PositionInterpolator() {
-				private float amount = 150f;
-				private float speed = 1f;
+				private float amount = 0f;
+				private float speed = 0.5f;
 
 				@Override
 				public void setInitialPositionOrientation( Vector2 position, float orient ) {
+					amount = Convert.scaledPixels( 224 );
 					float x_ratio = position.x / (worldSizeScaledPx.x);
 					float y_ratio = position.y / (worldSizeScaledPx.y);
 					pheading.set( VMath.fromDegrees( orient ) );
-					tmp.x = cameraBounds.x + x_ratio * (boundsWidth) + pheading.x * amount;
-					tmp.y = cameraBounds.height + y_ratio * (boundsHeight) - pheading.y * amount;
+					tmp.x = cameraBounds.x + x_ratio * (boundsWidth);// + pheading.x * amount;
+					tmp.y = cameraBounds.height + y_ratio * (boundsHeight);// - pheading.y * amount;
 					prev.set( tmp );
 				}
 
 				@Override
-				public Vector2 transform( Vector2 target, float orient ) {
+				public Vector2 transform( Vector2 target, float orient, float velocityFactor ) {
 					float dt = Gdx.graphics.getDeltaTime();
 
 					heading.set( VMath.fromDegrees( orient ) );
@@ -95,8 +99,11 @@ public class CameraController {
 					float x_ratio = target.x / (worldSizeScaledPx.x);
 					float y_ratio = target.y / (worldSizeScaledPx.y);
 
-					tmp.x = cameraBounds.x + x_ratio * (boundsWidth) + heading.x * amount;
-					tmp.y = cameraBounds.height + y_ratio * (boundsHeight) - heading.y * amount;
+					float predictX = heading.x * amount * velocityFactor;
+					float predictY = heading.y * amount * velocityFactor;
+
+					tmp.x = cameraBounds.x + x_ratio * (boundsWidth) + predictX;
+					tmp.y = cameraBounds.height + y_ratio * (boundsHeight) - predictY;
 
 					tmp.x = AMath.lerp( prev.x, tmp.x, 0.1f );
 					tmp.y = AMath.lerp( prev.y, tmp.y, 0.1f );
@@ -110,7 +117,7 @@ public class CameraController {
 		case Off:
 			interpolator = new PositionInterpolator() {
 				@Override
-				public Vector2 transform( Vector2 target, float orient ) {
+				public Vector2 transform( Vector2 target, float orient, float velocityFactor ) {
 					tmp.set( target );
 
 					if( tmp.x < cameraBounds.x ) {
@@ -134,7 +141,7 @@ public class CameraController {
 		case OffNoBounds:
 			interpolator = new PositionInterpolator() {
 				@Override
-				public Vector2 transform( Vector2 targetPosition, float orient ) {
+				public Vector2 transform( Vector2 targetPosition, float orient, float velocityFactor ) {
 					return targetPosition;
 				}
 			};
@@ -142,8 +149,8 @@ public class CameraController {
 		}
 	}
 
-	public Vector2 transform( Vector2 position, float orient ) {
-		return interpolator.transform( position, orient );
+	public Vector2 transform( Vector2 position, float orient, float velocityFactor ) {
+		return interpolator.transform( position, orient, velocityFactor );
 	}
 
 	public void setInitialPositionOrient( Vector2 position, float orient ) {
@@ -162,6 +169,6 @@ public class CameraController {
 		public void setInitialPositionOrientation( Vector2 position, float orient ) {
 		}
 
-		public abstract Vector2 transform( Vector2 targetPosition, float orient );
+		public abstract Vector2 transform( Vector2 targetPosition, float orient, float velocityFactor );
 	}
 }

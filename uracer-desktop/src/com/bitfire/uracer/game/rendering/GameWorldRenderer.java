@@ -26,7 +26,9 @@ import com.bitfire.uracer.ScalingStrategy;
 import com.bitfire.uracer.configuration.Config;
 import com.bitfire.uracer.configuration.Storage;
 import com.bitfire.uracer.game.actors.Car;
+import com.bitfire.uracer.game.actors.GhostCar;
 import com.bitfire.uracer.game.logic.helpers.CameraController;
+import com.bitfire.uracer.game.player.PlayerCar;
 import com.bitfire.uracer.game.world.GameWorld;
 import com.bitfire.uracer.game.world.models.OrthographicAlignedStillModel;
 import com.bitfire.uracer.game.world.models.TrackTrees;
@@ -235,21 +237,22 @@ public final class GameWorldRenderer {
 
 	private Vector2 cameraPos = new Vector2();
 
-	// private Vector2 tmpCameraPos = new Vector2();
-
 	public void setInitialCameraPositionOrient( Car car ) {
 		cameraPos.set( Convert.mt2px( car.getWorldPosMt() ) );
 		camController.setInitialPositionOrient( cameraPos, car.getWorldOrientRads() * MathUtils.radiansToDegrees );
 	}
 
-	public void setCameraPosition( Car car ) {
-		// tmpCameraPos.set( Convert.mt2px( car.getWorldPosMt() ) );
-		// setCameraPosition( tmpCameraPos, car.getWorldOrientRads() * MathUtils.radiansToDegrees );
-		cameraPos.set( camController.transform( car.state().position, car.state().orientation ) );
+	public void setCameraPosition( GhostCar ghost ) {
+		cameraPos.set( camController.transform( ghost.state().position, ghost.state().orientation, 0 ) );
+	}
+
+	public void setCameraPosition( PlayerCar player ) {
+		cameraPos.set( camController.transform( player.state().position, player.state().orientation,
+				player.carState.currSpeedFactor ) );
 	}
 
 	public void setCameraPosition( Vector2 position, float orient ) {
-		cameraPos.set( camController.transform( position, orient ) );
+		cameraPos.set( camController.transform( position, orient, 0 ) );
 	}
 
 	public void onBeforeRender() {
