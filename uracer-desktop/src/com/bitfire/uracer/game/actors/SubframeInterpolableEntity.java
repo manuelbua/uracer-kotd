@@ -91,7 +91,11 @@ public abstract class SubframeInterpolableEntity extends Entity implements Physi
 	/** Issued after a tick/physicsStep but before render :P */
 	public void onSubframeInterpolate( float aliasingFactor ) {
 		if( isSubframeInterpolated() ) {
-			stateRender.set( EntityRenderState.interpolate( statePrevious, stateCurrent, aliasingFactor ) );
+			if( !EntityRenderState.isEqual( statePrevious, stateCurrent ) ) {
+				stateRender.set( EntityRenderState.interpolate( statePrevious, stateCurrent, aliasingFactor ) );
+			} else {
+				stateRender.set( stateCurrent );
+			}
 		} else {
 			stateRender.set( stateCurrent );
 		}

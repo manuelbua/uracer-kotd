@@ -65,6 +65,17 @@ public final class EntityRenderState {
 		return result;
 	}
 
+	/** Returns whether or not the specified render states are equal with a bias of AMath.CMP_EPSILON */
+	public static boolean isEqual( EntityRenderState first, EntityRenderState second ) {
+		boolean xIsEqual = AMath.isZero( (float)(Math.abs( first.position.x ) - Math.abs( second.position.x )) );
+
+		if( !xIsEqual ) {
+			return false;
+		}
+
+		return AMath.isZero( (float)(Math.abs( first.position.y ) - Math.abs( second.position.y )) );
+	}
+
 	/** Transform the world position from meters to pixels. */
 	public void toPixels() {
 		this.position.x = Convert.mt2px( this.position.x );
