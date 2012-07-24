@@ -140,5 +140,12 @@ public final class AggressiveCold implements PostProcessingAnimator {
 			vignette.setIntensity( timeFactor );
 			vignette.setLutIndex( 6 );
 		}
+
+		// test
+		// if( curvature != null ) {
+		// curvature.setDistortion( player.carState.currSpeedFactor * 0.25f );
+		// curvature.setZoom( 1 - 0.12f * player.carState.currSpeedFactor );
+		// }
+
 	}
 }
