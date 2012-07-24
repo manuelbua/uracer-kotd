@@ -19,7 +19,7 @@ public final class Config {
 		public static void asDefault() {
 			EnableMipMapping = true;
 			SubframeInterpolation = true;
-			CameraInterpolationMode = InterpolationMode.Gentle;
+			CameraInterpolationMode = InterpolationMode.Predictive;
 		}
 
 		private Graphics() {
