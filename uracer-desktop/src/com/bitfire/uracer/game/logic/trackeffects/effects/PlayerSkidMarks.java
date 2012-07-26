@@ -3,6 +3,7 @@ package com.bitfire.uracer.game.logic.trackeffects.effects;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.g2d.Sprite;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
+import com.badlogic.gdx.math.MathUtils;
 import com.badlogic.gdx.math.Rectangle;
 import com.badlogic.gdx.math.Vector2;
 import com.bitfire.uracer.configuration.Config;
@@ -77,7 +78,8 @@ public class PlayerSkidMarks extends TrackEffect {
 			ppos.y = Convert.mt2px( player.getBody().getPosition().y );
 
 			// tryAddDriftMark( player.state().position, player.state().orientation, player.driftState );
-			tryAddDriftMark( ppos, player.state().orientation, player.driftState );
+			tryAddDriftMark( ppos, player.state().orientation, player.getCarDescriptor().steerangle * MathUtils.radiansToDegrees,
+					player.driftState );
 		}
 
 		SkidMark d;
@@ -116,7 +118,7 @@ public class PlayerSkidMarks extends TrackEffect {
 		// Gdx.app.log( "PlayerSkidMarks", "visibles=" + visibleSkidMarksCount );
 	}
 
-	private void tryAddDriftMark( Vector2 position, float orientation, PlayerDriftState driftState ) {
+	private void tryAddDriftMark( Vector2 position, float orientation, float steerAngle, PlayerDriftState driftState ) {
 		// avoid blatant overdrawing
 		if( (int)position.x == (int)last.x && (int)position.y == (int)last.y ) {
 			// position.x = AMath.lerp( last.x, position.x, 0.25f );
@@ -137,7 +139,7 @@ public class PlayerSkidMarks extends TrackEffect {
 			pos.x = AMath.lerp( last.x, position.x, theta * i );
 			pos.y = AMath.lerp( last.y, position.y, theta * i );
 
-			if( driftState.driftStrength > 0.2f )
+			// if( driftState.driftStrength > 0.2f )
 			// if( di.isDrifting )
 			{
 				// add front drift marks?
@@ -152,6 +154,9 @@ public class PlayerSkidMarks extends TrackEffect {
 				drift.alphaRear = driftState.lateralForcesRear * driftState.driftStrength * theta;
 				drift.setPosition( pos );
 				drift.setOrientation( orientation );
+				// drift.front.setRotation( orientation - steerAngle );
+				// drift.rear.setRotation( orientation );
+
 				drift.front.setScale( AMath.clamp( driftState.lateralForcesFront, 0.75f, 1.0f ) );
 				drift.rear.setScale( AMath.clamp( driftState.lateralForcesRear, 0.75f, 1.0f ) );
 				drift.life = MaxParticleLifeSeconds;
