@@ -3,7 +3,6 @@ package com.bitfire.uracer.game.logic.trackeffects.effects;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.g2d.Sprite;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
-import com.badlogic.gdx.math.MathUtils;
 import com.badlogic.gdx.math.Rectangle;
 import com.badlogic.gdx.math.Vector2;
 import com.bitfire.uracer.configuration.Config;
@@ -78,8 +77,9 @@ public class PlayerSkidMarks extends TrackEffect {
 			ppos.y = Convert.mt2px( player.getBody().getPosition().y );
 
 			// tryAddDriftMark( player.state().position, player.state().orientation, player.driftState );
-			tryAddDriftMark( ppos, player.state().orientation, player.getCarDescriptor().steerangle * MathUtils.radiansToDegrees,
-					player.driftState );
+			// tryAddDriftMark( ppos, player.state().orientation, player.getCarDescriptor().steerangle *
+			// MathUtils.radiansToDegrees, player.driftState );
+			tryAddDriftMark( ppos, player.state().orientation, player.driftState );
 		}
 
 		SkidMark d;
@@ -118,7 +118,7 @@ public class PlayerSkidMarks extends TrackEffect {
 		// Gdx.app.log( "PlayerSkidMarks", "visibles=" + visibleSkidMarksCount );
 	}
 
-	private void tryAddDriftMark( Vector2 position, float orientation, float steerAngle, PlayerDriftState driftState ) {
+	private void tryAddDriftMark( Vector2 position, float orientation, /* float steerAngle, */PlayerDriftState driftState ) {
 		// avoid blatant overdrawing
 		if( (int)position.x == (int)last.x && (int)position.y == (int)last.y ) {
 			// position.x = AMath.lerp( last.x, position.x, 0.25f );
