@@ -139,7 +139,7 @@ public class PlayerSkidMarks extends TrackEffect {
 			pos.x = AMath.lerp( last.x, position.x, theta * i );
 			pos.y = AMath.lerp( last.y, position.y, theta * i );
 
-			// if( driftState.driftStrength > 0.2f )
+			if( driftState.driftStrength > 0.2f )
 			// if( di.isDrifting )
 			{
 				// add front drift marks?
@@ -157,8 +157,8 @@ public class PlayerSkidMarks extends TrackEffect {
 				// drift.front.setRotation( orientation - steerAngle );
 				// drift.rear.setRotation( orientation );
 
-				drift.front.setScale( AMath.clamp( driftState.lateralForcesFront, 0.75f, 1.0f ) );
-				drift.rear.setScale( AMath.clamp( driftState.lateralForcesRear, 0.75f, 1.0f ) );
+				drift.front.setScale( AMath.clamp( drift.alphaFront, 0.75f, 1.0f ) );
+				drift.rear.setScale( AMath.clamp( drift.alphaRear, 0.75f, 1.0f ) );
 				drift.life = MaxParticleLifeSeconds;
 			}
 		}
