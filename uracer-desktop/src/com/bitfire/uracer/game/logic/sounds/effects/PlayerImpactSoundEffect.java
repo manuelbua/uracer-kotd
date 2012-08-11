@@ -1,5 +1,6 @@
 package com.bitfire.uracer.game.logic.sounds.effects;
 
+import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.audio.Sound;
 import com.badlogic.gdx.math.MathUtils;
 import com.bitfire.uracer.URacer;
@@ -21,7 +22,8 @@ public final class PlayerImpactSoundEffect extends SoundEffect {
 	private static final float MinImpactForce = 20;
 	private static final float MaxImpactForce = 200;
 	private static final float OneOnMaxImpactForce = 1f / MaxImpactForce;
-	private static final float MaxVolume = 1f;
+	// private static final float MaxVolume = 1f;
+	private static final float MaxVolume = .8f;
 
 	// pitch modulation
 	private static final float pitchFactor = 1f;
@@ -60,7 +62,8 @@ public final class PlayerImpactSoundEffect extends SoundEffect {
 	// TODO modulate pitch while playing as CarDriftSoundEffect to handle impact also on start/end time modulation
 	private void impact( float impactForce, float speedFactor ) {
 		// early exit
-		if( speedFactor < 0.1f ) {
+		// if( speedFactor < 0.1f ) {
+		if( impactForce < MinImpactForce ) {
 			return;
 		}
 
@@ -72,10 +75,10 @@ public final class PlayerImpactSoundEffect extends SoundEffect {
 			// avoid volumes==0, min-clamp at 20
 			float clampedImpactForce = AMath.clamp( impactForce, MinImpactForce, MaxImpactForce );
 
-//			Gdx.app.log( this.getClass().getSimpleName(), impactForce + " (" + clampedImpactForce + ")" );
+			Gdx.app.log( this.getClass().getSimpleName(), impactForce + " (" + clampedImpactForce + ")" );
 
 			float impactFactor = clampedImpactForce * OneOnMaxImpactForce;
-			impactFactor = speedFactor;
+			// impactFactor = speedFactor;
 			float volumeFactor = 1f;
 
 			Sound s = soundLow1;
@@ -96,7 +99,7 @@ public final class PlayerImpactSoundEffect extends SoundEffect {
 				volumeFactor = 0.75f + (impactFactor - 0.75f);
 			}
 
-//			Gdx.app.log( this.getClass().getSimpleName(), volumeFactor+"" );
+			// Gdx.app.log( this.getClass().getSimpleName(), volumeFactor+"" );
 
 			long id = s.play( MaxVolume * volumeFactor );
 			float pitch = speedFactor * pitchFactor + pitchMin;
