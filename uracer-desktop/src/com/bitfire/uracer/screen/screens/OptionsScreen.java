@@ -32,7 +32,7 @@ public class OptionsScreen extends Screen {
 	private Stage ui;
 	private Input input;
 	private Table container;
-	private CheckBox ppVignetting, ppBloom, ppZoom, ppZoomBlur, ppCrtScreen, ppCurvature;
+	private CheckBox ppVignetting, ppBloom, ppZoom, ppZoomBlur, ppCrtScreen, ppCurvature, ppComplexTrees;
 	private SelectBox timeInputModeSel, ppZoomBlurQ;
 
 	@Override
@@ -78,6 +78,21 @@ public class OptionsScreen extends Screen {
 
 			container.add( timeInputModeLabel ).width( 200 ).pad( 5 );
 			container.add( timeInputModeSel );
+		}
+
+		// rendering
+		{
+			ppComplexTrees = UIUtils.newCheckBox( "Complex trees", UserPreferences.bool( Preference.ComplexTrees ) );
+			ppComplexTrees.addListener( new ClickListener() {
+				@Override
+				public void clicked( InputEvent event, float x, float y ) {
+					UserPreferences.bool( Preference.ComplexTrees, ppComplexTrees.isChecked() );
+					UserPreferences.save();
+				}
+			} );
+
+			container.row().colspan( 2 );
+			container.add( ppComplexTrees );
 		}
 
 		// post-processing

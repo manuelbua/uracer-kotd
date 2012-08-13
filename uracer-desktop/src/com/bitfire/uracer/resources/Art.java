@@ -178,14 +178,18 @@ public final class Art {
 		}
 
 		// default size
-		fontCurseYR = new BitmapFont( Gdx.files.internal( "data/font/curse-y-r.fnt" ), Art.fontAtlas.findRegion( "curse-y-r" ), true );
+		fontCurseYR = new BitmapFont( Gdx.files.internal( "data/font/curse-y-r.fnt" ), Art.fontAtlas.findRegion( "curse-y-r" ),
+				true );
 		fontCurseG = new BitmapFont( Gdx.files.internal( "data/font/curse-g.fnt" ), Art.fontAtlas.findRegion( "curse-g" ), true );
 		fontCurseR = new BitmapFont( Gdx.files.internal( "data/font/curse-r.fnt" ), Art.fontAtlas.findRegion( "curse-r" ), true );
 
 		// big size
-		fontCurseYRbig = new BitmapFont( Gdx.files.internal( "data/font/curse-y-r-big.fnt" ), Art.fontAtlas.findRegion( "curse-y-r-big" ), true );
-		fontCurseGbig = new BitmapFont( Gdx.files.internal( "data/font/curse-g-big.fnt" ), Art.fontAtlas.findRegion( "curse-g-big" ), true );
-		fontCurseRbig = new BitmapFont( Gdx.files.internal( "data/font/curse-r-big.fnt" ), Art.fontAtlas.findRegion( "curse-r-big" ), true );
+		fontCurseYRbig = new BitmapFont( Gdx.files.internal( "data/font/curse-y-r-big.fnt" ),
+				Art.fontAtlas.findRegion( "curse-y-r-big" ), true );
+		fontCurseGbig = new BitmapFont( Gdx.files.internal( "data/font/curse-g-big.fnt" ),
+				Art.fontAtlas.findRegion( "curse-g-big" ), true );
+		fontCurseRbig = new BitmapFont( Gdx.files.internal( "data/font/curse-r-big.fnt" ),
+				Art.fontAtlas.findRegion( "curse-r-big" ), true );
 
 		// adjust scaling
 		fontCurseYR.setScale( scale );

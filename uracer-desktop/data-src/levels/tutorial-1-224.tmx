@@ -135,7 +135,7 @@
    <property name="start" value="right"/>
   </properties>
   <data encoding="base64" compression="zlib">
-   eJy90jkKwCAQBVBjkzQhTZoU2fflAt7/YvkpBBmcQYJJ8UBUPn9Eo5QykVWRfJ1XQwMtdJ597cg892heDwOMMHn2aR96j+YlAetHyZy9zXPlQl7qrGdYYIVNeNsisN8OB5xwCW8rzWs70ZlsR647l2c7acJ25Lr/9Z9j5cV0A7X/I8o=
+   eJy90jkKwCAQBVBjkzQhTZoU2fflAt7/YvkpBBl0kDBJ8UBUPn9Eo5QywiohX+fV0EALnWc/A+2g92heDwOMMHn2aR96j+YlEetHGTh7m+fKmbzUWc+wwAob87ZFZL8dDjjhYt6Wm9d2ojPZjqHuoTzbSRO2Y6j7X/9ZKk/SDbZHI8o=
   </data>
  </layer>
  <objectgroup color="#00ff00" name="static-meshes" width="20" height="14" visible="0"/>

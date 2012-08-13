@@ -4,18 +4,20 @@ import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Preferences;
 import com.bitfire.postprocessing.filters.RadialBlur;
 
-/** Represents user-configurable configuration properties.
- *
+/**
+ * Represents user-configurable configuration properties.
+ * 
  * The functionalities can be safely accessed statically just after user
  * preferences have been loaded.
- *
+ * 
  * Keep in mind that querying configuration values is time consuming so use it
  * with care and use for initialization or one-off stuff.
  * If you really need to do that per-frame then think about caching the values
  * and just refresh them once every n-frames.
- *
+ * 
  * On the desktop, user settings are stored in ~/.prefs/ while on mobile we
- * are wrapping SharedPreferences. */
+ * are wrapping SharedPreferences.
+ */
 public final class UserPreferences {
 
 	public enum Preference {
@@ -31,6 +33,9 @@ public final class UserPreferences {
 		CrtScreen,
 		Curvature,
 
+		// rendering
+		ComplexTrees,
+		
 		// gameplay
 		TimeDilateInputMode,
 		;
@@ -72,6 +77,12 @@ public final class UserPreferences {
 		bool( Preference.Bloom, false );
 		bool( Preference.Zoom, true );
 		bool( Preference.ZoomRadialBlur, true );
+
+		//
+		// rendering
+		//
+
+		bool( Preference.ComplexTrees, false );
 
 		// detect default radial blur quality inspecting
 		// the current game resolution

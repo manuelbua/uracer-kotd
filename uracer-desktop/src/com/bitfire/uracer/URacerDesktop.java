@@ -6,6 +6,7 @@ import java.awt.GraphicsEnvironment;
 
 import org.lwjgl.opengl.Display;
 
+import com.badlogic.gdx.Files.FileType;
 import com.badlogic.gdx.backends.lwjgl.LwjglApplication;
 import com.badlogic.gdx.backends.lwjgl.LwjglApplicationConfiguration;
 import com.badlogic.gdx.backends.openal.OpenALAudio;
@@ -49,6 +50,7 @@ public final class URacerDesktop {
 
 	public static void main( String[] argv ) {
 		LwjglApplicationConfiguration config = new LwjglApplicationConfiguration();
+		config.addIcon( "data/base/icon.png", FileType.Internal );
 
 		if( !parseConfig( argv, config ) ) {
 			return;
@@ -79,7 +81,8 @@ public final class URacerDesktop {
 				DisplayMode pmode = primary.getDisplayMode();
 				DisplayMode tmode = target.getDisplayMode();
 
-				Display.setLocation( pmode.getWidth() + (tmode.getWidth() - config.width) / 2, (tmode.getHeight() - config.height) / 2 );
+				Display.setLocation( pmode.getWidth() + (tmode.getWidth() - config.width) / 2,
+						(tmode.getHeight() - config.height) / 2 );
 			}
 		}
 	}

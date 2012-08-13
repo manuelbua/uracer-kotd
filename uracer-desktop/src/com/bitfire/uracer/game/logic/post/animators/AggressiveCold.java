@@ -53,7 +53,8 @@ public final class AggressiveCold implements PostProcessingAnimator {
 		}
 
 		if( vignette != null ) {
-			vignette.setCoords( 0.8f, 0.25f );
+			// vignette.setCoords( 0.8f, 0.25f );
+			vignette.setCoords( 1.5f, 0.1f );
 			vignette.setCenter( Gdx.graphics.getWidth() / 2, Gdx.graphics.getHeight() / 2 );
 			vignette.setLut( Art.postXpro );
 			vignette.setLutIndex( 16 );
@@ -73,27 +74,34 @@ public final class AggressiveCold implements PostProcessingAnimator {
 		}
 
 		if( curvature != null ) {
-			curvature.setDistortion( 0.125f );
-			curvature.setZoom( 0.94f );
+			float dist = 0.25f;
+			curvature.setDistortion( dist );
+			curvature.setZoom( 1 - (dist / 2) );
+
+			// curvature.setDistortion( 0.125f );
+			// curvature.setZoom( 0.94f );
 		}
 	}
 
 	private float prevDriftStrength = 0;
 	private long startMs = 0;
+	Vector2 playerScreenPos = new Vector2();
 
 	@Override
 	public void update() {
+		float driftStrength = 0;
 		PlayerCar player = logic.getPlayer();
+		boolean hasPlayer = (player != null);
 
-		if( player == null ) {
-			return;
+		if( hasPlayer ) {
+			playerScreenPos.set( GameRenderer.ScreenUtils.worldPxToScreen( player.state().position ) );
+			driftStrength = AMath.clamp( AMath.lerp( prevDriftStrength, player.driftState.driftStrength, 0.01f ), 0, 1 );
+			prevDriftStrength = driftStrength;
+		} else {
+			playerScreenPos.set( 0.5f, 0.5f );
 		}
 
 		float timeFactor = 1 - (URacer.timeMultiplier - TimeModulator.MinTime) / (TimeModulator.MaxTime - TimeModulator.MinTime);
-		Vector2 playerScreenPos = GameRenderer.ScreenUtils.worldPxToScreen( player.state().position );
-
-		float driftStrength = AMath.clamp( AMath.lerp( prevDriftStrength, player.driftState.driftStrength, 0.01f ), 0, 1 );
-		prevDriftStrength = driftStrength;
 
 		if( crt != null ) {
 			// compute time (add noise)
@@ -107,6 +115,7 @@ public final class AggressiveCold implements PostProcessingAnimator {
 		}
 
 		if( zoom != null && player != null ) {
+
 			zoom.setOrigin( playerScreenPos );
 
 			zoom.setBlurStrength( -0.1f * driftStrength * timeFactor );
@@ -118,10 +127,10 @@ public final class AggressiveCold implements PostProcessingAnimator {
 
 		if( bloom != null ) {
 			// bloom.setBaseSaturation( 0.8f - timeFactor * 0.6f );
-			bloom.setBaseSaturation( AMath.lerp( 0.8f, 0.25f, timeFactor ) );
+			bloom.setBaseSaturation( AMath.lerp( 0.8f, 0.2f, timeFactor ) );
 			// bloom.setBloomSaturation( 1.5f - factor * 0.85f ); // TODO when charged
 			// bloom.setBloomSaturation( 1.5f - factor * 1.5f ); // TODO when completely discharged
-			bloom.setBloomSaturation( 1f - timeFactor * 0.2f );
+			bloom.setBloomSaturation( 1f - timeFactor * 0.8f );
 		}
 
 		if( vignette != null ) {
@@ -133,19 +142,24 @@ public final class AggressiveCold implements PostProcessingAnimator {
 				vignette.setSaturationMul( 1 + timeFactor * 0.2f );
 			}
 
-			// vignette.setCenter( playerScreenPos.x, playerScreenPos.y );
-			// vignette.setCoords( 1.5f - driftStrength * 0.8f, 0.1f );
+			if( player != null ) {
+				vignette.setCenter( playerScreenPos.x, playerScreenPos.y );
+				// vignette.setCoords( 1.5f - driftStrength * 0.8f, 0.1f );
+			}
 
-			vignette.setLutIntensity( timeFactor * 1.5f );
+			vignette.setLutIntensity( timeFactor * 1.618f );
 			vignette.setIntensity( timeFactor );
-			vignette.setLutIndex( 6 );
+			vignette.setLutIndex( 5 );
 		}
 
-		// test
-		// if( curvature != null ) {
-		// curvature.setDistortion( player.carState.currSpeedFactor * 0.25f );
-		// curvature.setZoom( 1 - 0.12f * player.carState.currSpeedFactor );
-		// }
+		// // test
+		if( curvature != null ) {
+			// curvature.setDistortion( player.carState.currSpeedFactor * 0.25f );
+			// curvature.setZoom( 1 - 0.12f * player.carState.currSpeedFactor );
 
+			float dist = 0.1618f * 0.85f;
+			curvature.setDistortion( dist );
+			curvature.setZoom( 1 - (dist / 2) );
+		}
 	}
 }

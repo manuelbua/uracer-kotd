@@ -25,6 +25,8 @@ import com.badlogic.gdx.math.collision.BoundingBox;
 import com.bitfire.uracer.ScalingStrategy;
 import com.bitfire.uracer.configuration.Config;
 import com.bitfire.uracer.configuration.Storage;
+import com.bitfire.uracer.configuration.UserPreferences;
+import com.bitfire.uracer.configuration.UserPreferences.Preference;
 import com.bitfire.uracer.game.actors.Car;
 import com.bitfire.uracer.game.actors.GhostCar;
 import com.bitfire.uracer.game.logic.helpers.CameraController;
@@ -101,7 +103,8 @@ public final class GameWorldRenderer {
 	// world refs
 	private RayHandler rayHandler = null;
 	private List<OrthographicAlignedStillModel> staticMeshes = null;
-	private TrackTrees trackTrees = null;
+	private boolean showComplexTrees = false;
+	private TrackTrees trackTrees = null;	// complex trees
 	private TrackWalls trackWalls = null;
 	private ConeLight playerLights = null;
 
@@ -111,7 +114,6 @@ public final class GameWorldRenderer {
 		gl = Gdx.gl20;
 		scaledPpm = Convert.scaledPixels( Config.Physics.PixelsPerMeter );
 		rayHandler = world.getRayHandler();
-		trackTrees = world.getTrackTrees();
 		trackWalls = world.getTrackWalls();
 		playerLights = world.getPlayerHeadLights();
 		staticMeshes = world.getStaticMeshes();
@@ -122,10 +124,17 @@ public final class GameWorldRenderer {
 		tileAtlas = new TileAtlas( world.map, baseDir );
 		tileMapRenderer = new UTileMapRenderer( world.map, tileAtlas, 1, 1, world.map.tileWidth, world.map.tileHeight );
 
-		treeShader = ShaderLoader.fromString( treeVertexShader, treeFragmentShader, "tree-fragment", "tree-vertex" );
+		showComplexTrees = UserPreferences.bool( Preference.ComplexTrees );
 
-		if( !treeShader.isCompiled() ) {
-			throw new IllegalStateException( treeShader.getLog() );
+		if( showComplexTrees ) {
+			trackTrees = world.getTrackTrees();
+			treeShader = ShaderLoader.fromString( treeVertexShader, treeFragmentShader, "tree-fragment", "tree-vertex" );
+			if( treeShader == null || !treeShader.isCompiled() ) {
+				throw new IllegalStateException( treeShader.getLog() );
+			}
+		} else {
+			trackTrees = null;
+			treeShader = null;
 		}
 	}
 
@@ -475,7 +484,7 @@ public final class GameWorldRenderer {
 			renderWalls( trackWalls, depthOnly );
 		}
 
-		if( trackTrees.count() > 0 ) {
+		if( showComplexTrees && trackTrees.count() > 0 ) {
 			renderTrees( trackTrees, depthOnly );
 		}
 
