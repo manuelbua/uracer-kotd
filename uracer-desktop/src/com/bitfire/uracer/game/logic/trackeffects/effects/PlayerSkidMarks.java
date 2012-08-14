@@ -15,8 +15,11 @@ import com.bitfire.uracer.utils.AMath;
 import com.bitfire.uracer.utils.Convert;
 
 public class PlayerSkidMarks extends TrackEffect {
-	public static final int MaxSkidMarks = 300;
-	private static final float MaxParticleLifeSeconds = 3.5f;
+	// public static final int MaxSkidMarks = 5000;
+	// private static final float MaxParticleLifeSeconds = 60f;
+	public static final int MaxSkidMarks = 150;
+	private static final float MaxParticleLifeSeconds = 3f;
+
 	private static final float InvMaxParticleLifeSeconds = 1f / MaxParticleLifeSeconds;
 
 	private SkidMark[] skidMarks;
