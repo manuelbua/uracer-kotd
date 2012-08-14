@@ -8,7 +8,7 @@ import com.bitfire.uracer.utils.EventNotifier;
 public class GameRendererEvent extends Event<GameRenderer> {
 	/** defines the type of render queue */
 	public enum Type {
-		OnSubframeInterpolate, BatchBeforeMeshes, BatchAfterMeshes, BatchDebug, Debug;
+		OnSubframeInterpolate, BatchBeforeMeshes, BatchAfterMeshes, BatchAfterPostProcessing, BatchDebug, Debug;
 	}
 
 	/** defines the position in the render queue specified by the Type parameter */
@@ -44,13 +44,15 @@ public class GameRendererEvent extends Event<GameRenderer> {
 
 	private Notifier[][] notifiers = new Notifier[ Type.values().length ][ Order.values().length ];
 
-	/** Adds the specified Listener to the rendering queue identified
+	/**
+	 * Adds the specified Listener to the rendering queue identified
 	 * by Type and Order: only the specified event type will trigger
 	 * the event for the specified listener.
-	 *
+	 * 
 	 * @param listener the listener to be notified of the event
 	 * @param type the event type
-	 * @param order the order in the rendering queue for the specified event type */
+	 * @param order the order in the rendering queue for the specified event type
+	 */
 	public void addListener( Listener listener, Type type, Order order ) {
 		notifiers[type.ordinal()][order.ordinal()].addListener( listener );
 	}

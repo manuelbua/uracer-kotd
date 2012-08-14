@@ -176,8 +176,19 @@ public final class GameRenderer {
 				FrameBuffer result = postProcessor.captureEnd();
 				worldRenderer.renderLigthMap( result );
 			}
+
 			postProcessor.render( dest );
+
+			if( hasDest ) {
+				dest.begin();
+			}
+
+			batchAfterPostProcessing();
+			if( hasDest ) {
+				dest.end();
+			}
 		} else {
+			batchAfterPostProcessing();
 			if( hasDest ) {
 				dest.end();
 			}
@@ -187,6 +198,13 @@ public final class GameRenderer {
 			}
 		}
 		// postproc ends
+	}
+
+	private void batchAfterPostProcessing() {
+		// BatchAfterPostProcessing
+		GameEvents.gameRenderer.batch = batchRenderer.beginTopLeft();
+		GameEvents.gameRenderer.trigger( this, GameRendererEvent.Type.BatchAfterPostProcessing );
+		batchRenderer.end();
 	}
 
 	// manages and triggers debug event
