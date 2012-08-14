@@ -110,7 +110,7 @@ public final class Config {
 			ScaledFboHeight = (int)(Gdx.graphics.getHeight() * RttRatio);
 
 			int w = Gdx.graphics.getWidth();
-			if( w >= 1680 ) {
+			if( w >= 1400 ) {
 				BlurType = Blur.BlurType.Gaussian5x5b;
 			} else if( w >= 1200 ) {
 				BlurType = Blur.BlurType.Gaussian5x5b;
