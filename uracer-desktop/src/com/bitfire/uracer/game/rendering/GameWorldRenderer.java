@@ -104,6 +104,7 @@ public final class GameWorldRenderer {
 	private RayHandler rayHandler = null;
 	private List<OrthographicAlignedStillModel> staticMeshes = null;
 	private boolean showComplexTrees = false;
+	private boolean showWalls = false;
 	private TrackTrees trackTrees = null;	// complex trees
 	private TrackWalls trackWalls = null;
 	private ConeLight playerLights = null;
@@ -114,7 +115,6 @@ public final class GameWorldRenderer {
 		gl = Gdx.gl20;
 		scaledPpm = Convert.scaledPixels( Config.Physics.PixelsPerMeter );
 		rayHandler = world.getRayHandler();
-		trackWalls = world.getTrackWalls();
 		playerLights = world.getPlayerHeadLights();
 		staticMeshes = world.getStaticMeshes();
 
@@ -125,6 +125,7 @@ public final class GameWorldRenderer {
 		tileMapRenderer = new UTileMapRenderer( world.map, tileAtlas, 1, 1, world.map.tileWidth, world.map.tileHeight );
 
 		showComplexTrees = UserPreferences.bool( Preference.ComplexTrees );
+		showWalls = UserPreferences.bool( Preference.Walls );
 
 		if( showComplexTrees ) {
 			trackTrees = world.getTrackTrees();
@@ -135,6 +136,10 @@ public final class GameWorldRenderer {
 		} else {
 			trackTrees = null;
 			treeShader = null;
+		}
+
+		if( showWalls ) {
+			trackWalls = world.getTrackWalls();
 		}
 	}
 
@@ -480,7 +485,7 @@ public final class GameWorldRenderer {
 		gl.glEnable( GL20.GL_DEPTH_TEST );
 		gl.glDepthFunc( GL20.GL_LEQUAL );
 
-		if( trackWalls.count() > 0 ) {
+		if( showWalls && trackWalls.count() > 0 ) {
 			renderWalls( trackWalls, depthOnly );
 		}
 

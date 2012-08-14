@@ -35,6 +35,7 @@ public final class UserPreferences {
 
 		// rendering
 		ComplexTrees,
+		Walls,
 		
 		// gameplay
 		TimeDilateInputMode,

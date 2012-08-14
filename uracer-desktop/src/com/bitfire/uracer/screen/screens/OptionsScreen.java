@@ -32,7 +32,7 @@ public class OptionsScreen extends Screen {
 	private Stage ui;
 	private Input input;
 	private Table container;
-	private CheckBox ppVignetting, ppBloom, ppZoom, ppZoomBlur, ppCrtScreen, ppCurvature, ppComplexTrees;
+	private CheckBox ppVignetting, ppBloom, ppZoom, ppZoomBlur, ppCrtScreen, ppCurvature, ppComplexTrees, ppWalls;
 	private SelectBox timeInputModeSel, ppZoomBlurQ;
 
 	@Override
@@ -93,6 +93,18 @@ public class OptionsScreen extends Screen {
 
 			container.row().colspan( 2 );
 			container.add( ppComplexTrees );
+
+			ppWalls = UIUtils.newCheckBox( "Track walls", UserPreferences.bool( Preference.Walls ) );
+			ppWalls.addListener( new ClickListener() {
+				@Override
+				public void clicked( InputEvent event, float x, float y ) {
+					UserPreferences.bool( Preference.Walls, ppWalls.isChecked() );
+					UserPreferences.save();
+				}
+			} );
+
+			container.row().colspan( 2 );
+			container.add( ppWalls );
 		}
 
 		// post-processing
