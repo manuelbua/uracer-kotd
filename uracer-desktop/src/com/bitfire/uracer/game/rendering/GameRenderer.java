@@ -15,12 +15,14 @@ import com.bitfire.uracer.game.GameEvents;
 import com.bitfire.uracer.game.world.GameWorld;
 import com.bitfire.uracer.utils.Convert;
 
-/** Manages the high-level rendering of the whole world and triggers all the
+/**
+ * Manages the high-level rendering of the whole world and triggers all the
  * GameRendererEvent events
  * associated with the rendering timeline, realized with the event's renderqueue
  * mechanism.
- *
- * @author bmanuel */
+ * 
+ * @author bmanuel
+ */
 public final class GameRenderer {
 	private final GL20 gl;
 	private final GameWorld world;
@@ -28,10 +30,12 @@ public final class GameRenderer {
 	private final PostProcessor postProcessor;
 	private final GameWorldRenderer worldRenderer;
 
-	/** Manages to convert world positions expressed in meters or pixels to the
+	/**
+	 * Manages to convert world positions expressed in meters or pixels to the
 	 * corresponding position to screen pixels.
 	 * To use this class, the GameWorldRenderer MUST be already constructed and
-	 * initialized. */
+	 * initialized.
+	 */
 	public static final class ScreenUtils {
 		public static boolean ready = false;
 		private static Vector2 screenPosFor = new Vector2();
@@ -43,8 +47,10 @@ public final class GameRenderer {
 		}
 
 		public static Vector2 worldMtToScreen( Vector2 worldPositionMt ) {
-			screenPosFor.x = Convert.mt2px( worldPositionMt.x ) - worldRenderer.camOrtho.position.x + worldRenderer.halfViewport.x;
-			screenPosFor.y = worldRenderer.camOrtho.position.y - Convert.mt2px( worldPositionMt.y ) + worldRenderer.halfViewport.y;
+			screenPosFor.x = Convert.mt2px( worldPositionMt.x ) - worldRenderer.camOrtho.position.x
+					+ worldRenderer.halfViewport.x;
+			screenPosFor.y = worldRenderer.camOrtho.position.y - Convert.mt2px( worldPositionMt.y )
+					+ worldRenderer.halfViewport.y;
 			return screenPosFor;
 		}
 
