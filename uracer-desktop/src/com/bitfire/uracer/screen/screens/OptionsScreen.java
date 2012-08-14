@@ -239,7 +239,8 @@ public class OptionsScreen extends Screen {
 	@Override
 	public void tick() {
 		if( input.isPressed( Keys.Q ) || input.isPressed( Keys.BACK ) || input.isPressed( Keys.ESCAPE ) ) {
-			URacer.Game.show( ScreenType.MainScreen );
+			// URacer.Game.show( ScreenType.MainScreen );
+			URacer.Game.show( ScreenType.GameScreen );
 			// URacer.Game.quit();
 		}
 	}
