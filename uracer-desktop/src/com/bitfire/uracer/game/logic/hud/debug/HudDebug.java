@@ -14,10 +14,12 @@ import com.bitfire.uracer.game.rendering.GameRendererEvent.Order;
 import com.bitfire.uracer.resources.Art;
 import com.bitfire.uracer.utils.CarUtils;
 
-/** Encapsulates a special hud element that won't render as usual, but it will schedule
+/**
+ * Encapsulates a special hud element that won't render as usual, but it will schedule
  * its drawing operations by registering to the GameRenderer's BatchDebug event.
- *
- * @author bmanuel */
+ * 
+ * @author bmanuel
+ */
 public class HudDebug extends HudElement {
 
 	private PlayerCar player;
@@ -35,7 +37,8 @@ public class HudDebug extends HudElement {
 	};
 
 	public HudDebug( PlayerCar player, PlayerDriftState driftState, PlayerSkidMarks skidMarks ) {
-		GameEvents.gameRenderer.addListener( gameRendererEvent, GameRendererEvent.Type.BatchDebug, GameRendererEvent.Order.DEFAULT );
+		GameEvents.gameRenderer.addListener( gameRendererEvent, GameRendererEvent.Type.BatchDebug,
+				GameRendererEvent.Order.DEFAULT );
 
 		this.player = player;
 		this.driftState = driftState;
@@ -48,21 +51,24 @@ public class HudDebug extends HudElement {
 		meters.add( meterDriftStrength );
 
 		// meter skid marks count
-		meterSkidMarks = new HudDebugMeter( 100, 5 );
-		meterSkidMarks.setLimits( 0, PlayerSkidMarks.MaxSkidMarks );
-		meterSkidMarks.setName( "sm" );
-		meters.add( meterSkidMarks );
+		if( skidMarks != null ) {
+			meterSkidMarks = new HudDebugMeter( 100, 5 );
+			meterSkidMarks.setLimits( 0, PlayerSkidMarks.MaxSkidMarks );
+			meterSkidMarks.setName( "sm" );
+			meters.add( meterSkidMarks );
+		}
 
 		// player speed, km/h
 		meterSpeed = new HudDebugMeter( 100, 5 );
-		meterSpeed.setLimits( 0, CarUtils.mtSecToKmHour(player.getCarModel().max_speed) );
+		meterSpeed.setLimits( 0, CarUtils.mtSecToKmHour( player.getCarModel().max_speed ) );
 		meterSpeed.setName( "kmh" );
 		meters.add( meterSpeed );
 	}
 
 	@Override
 	public void dispose() {
-		GameEvents.gameRenderer.removeListener( gameRendererEvent, GameRendererEvent.Type.BatchDebug, GameRendererEvent.Order.DEFAULT );
+		GameEvents.gameRenderer.removeListener( gameRendererEvent, GameRendererEvent.Type.BatchDebug,
+				GameRendererEvent.Order.DEFAULT );
 
 		for( HudDebugMeter m : meters ) {
 			m.dispose();
@@ -81,10 +87,12 @@ public class HudDebug extends HudElement {
 		}
 
 		// skid marks count
-		meterSkidMarks.setValue( skidMarks.getParticleCount() );
+		if( skidMarks != null ) {
+			meterSkidMarks.setValue( skidMarks.getParticleCount() );
+		}
 
 		// player's speed
-		meterSpeed.setValue( CarUtils.mtSecToKmHour(player.getInstantSpeed()) );
+		meterSpeed.setValue( CarUtils.mtSecToKmHour( player.getInstantSpeed() ) );
 	}
 
 	public void onDebug( SpriteBatch batch ) {

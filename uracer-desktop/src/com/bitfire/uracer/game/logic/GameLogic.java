@@ -336,7 +336,7 @@ public class GameLogic implements CarEvent.Listener, CarStateEvent.Listener, Pla
 
 			// quit
 			// URacer.Screens.setScreen( ScreenType.MainScreen, TransitionType.Fader, 1000 );
-			URacer.Screens.setScreen( ScreenType.ExitScreen, TransitionType.None, 0 );
+			URacer.Screens.setScreen( ScreenType.ExitScreen, TransitionType.Fader, 500 );
 
 		} else if( input.isPressed( Keys.O ) ) {
 

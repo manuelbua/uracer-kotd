@@ -18,8 +18,10 @@ public class PlayerTasks {
 	private GameTasksManager manager = null;
 	private ScalingStrategy scalingStrategy = null;
 
-	/** keeps track of the concrete player tasks
-	 * (note that they are all publicly accessible for performance reasons) */
+	/**
+	 * keeps track of the concrete player tasks
+	 * (note that they are all publicly accessible for performance reasons)
+	 */
 
 	public HudPlayerDriftInfo hudPlayerDriftInfo = null;
 	public HudLapInfo hudLapInfo = null;
@@ -59,7 +61,7 @@ public class PlayerTasks {
 
 		// hud-style debug information for various data (player's drift state, number of skid marks particles, ..)
 		if( Config.Debug.RenderHudDebugInfo ) {
-			hudDebug = new HudDebug( player, player.driftState, playerSkidMarks );
+			hudDebug = new HudDebug( player, player.driftState, playerSkidMarks /* can be null */);
 			manager.hud.add( hudDebug );
 		}
 	}
