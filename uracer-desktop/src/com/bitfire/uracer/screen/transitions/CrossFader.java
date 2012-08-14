@@ -3,7 +3,7 @@ package com.bitfire.uracer.screen.transitions;
 import com.badlogic.gdx.graphics.glutils.FrameBuffer;
 import com.badlogic.gdx.graphics.glutils.ShaderProgram;
 import com.badlogic.gdx.utils.GdxRuntimeException;
-import com.bitfire.postprocessing.FullscreenQuad;
+import com.bitfire.postprocessing.utils.FullscreenQuad;
 import com.bitfire.uracer.URacer;
 import com.bitfire.uracer.configuration.Config;
 import com.bitfire.uracer.screen.Screen;

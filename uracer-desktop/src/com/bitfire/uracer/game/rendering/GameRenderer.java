@@ -80,6 +80,7 @@ public final class GameRenderer {
 		// post-processing
 		if( UserPreferences.bool( Preference.PostProcessing ) ) {
 			postProcessor = new PostProcessor( width, height, true /* depth */, false /* alpha */, Config.isDesktop /* supports32Bpp */);
+			PostProcessor.EnableQueryStates = false;
 		} else {
 			postProcessor = null;
 		}
