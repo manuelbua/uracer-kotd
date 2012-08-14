@@ -95,7 +95,8 @@ public final class AggressiveCold implements PostProcessingAnimator {
 
 		if( hasPlayer ) {
 			playerScreenPos.set( GameRenderer.ScreenUtils.worldPxToScreen( player.state().position ) );
-			driftStrength = AMath.clamp( AMath.lerp( prevDriftStrength, player.driftState.driftStrength, 0.01f ), 0, 1 );
+			driftStrength = AMath.fixup( AMath.clamp( AMath.lerp( prevDriftStrength, player.driftState.driftStrength, 0.1f ), 0,
+					1 ) );
 			prevDriftStrength = driftStrength;
 		} else {
 			playerScreenPos.set( 0.5f, 0.5f );
@@ -134,6 +135,12 @@ public final class AggressiveCold implements PostProcessingAnimator {
 		}
 
 		if( vignette != null ) {
+			if( timeFactor > 0 && !vignette.isEnabled() ) {
+				vignette.setEnabled( true );
+			} else if( AMath.equals( 0, timeFactor ) && vignette.isEnabled() ) {
+				vignette.setEnabled( false );
+			}
+
 			// vignette.setY( (1 - factor) * 0.74f + factor * 0.4f );
 
 			if( vignette.controlSaturation ) {
@@ -143,11 +150,13 @@ public final class AggressiveCold implements PostProcessingAnimator {
 			}
 
 			if( player != null ) {
-				vignette.setCenter( playerScreenPos.x, playerScreenPos.y );
-				// vignette.setCoords( 1.5f - driftStrength * 0.8f, 0.1f );
+				// vignette.setCenter( playerScreenPos.x, playerScreenPos.y );
+				// vignette.setCenter( Gdx.graphics.getWidth() / 2, Gdx.graphics.getHeight() / 2 );
+				vignette.setCoords( 0.85f, 0.3f );
 			}
 
-			vignette.setLutIntensity( timeFactor * 1.618f );
+			// vignette.setLutIntensity( timeFactor * 1.618f );
+			vignette.setLutIntensity( timeFactor * 1.618f * AMath.clamp( driftStrength * 1.25f, 0, 1 ) );
 			vignette.setIntensity( timeFactor );
 			vignette.setLutIndex( 5 );
 		}
@@ -157,7 +166,7 @@ public final class AggressiveCold implements PostProcessingAnimator {
 			// curvature.setDistortion( player.carState.currSpeedFactor * 0.25f );
 			// curvature.setZoom( 1 - 0.12f * player.carState.currSpeedFactor );
 
-			float dist = 0.1618f * 0.85f;
+			float dist = 0.1618f * 0.5f;
 			curvature.setDistortion( dist );
 			curvature.setZoom( 1 - (dist / 2) );
 		}
