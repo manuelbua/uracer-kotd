@@ -18,6 +18,7 @@ import com.bitfire.postprocessing.filters.RadialBlur;
 import com.bitfire.uracer.Input;
 import com.bitfire.uracer.ScalingStrategy;
 import com.bitfire.uracer.URacer;
+import com.bitfire.uracer.configuration.Config;
 import com.bitfire.uracer.configuration.Gameplay;
 import com.bitfire.uracer.configuration.Gameplay.TimeDilateInputMode;
 import com.bitfire.uracer.configuration.UserPreferences;
@@ -254,6 +255,8 @@ public class OptionsScreen extends Screen {
 			// URacer.Game.show( ScreenType.MainScreen );
 			URacer.Game.show( ScreenType.GameScreen );
 			// URacer.Game.quit();
+		} else {
+			ui.act( Config.Physics.PhysicsDt );
 		}
 	}
 
@@ -271,6 +274,7 @@ public class OptionsScreen extends Screen {
 		Gdx.gl.glClearColor( 0, 0, 0, 0 );
 		Gdx.gl.glClear( GL20.GL_COLOR_BUFFER_BIT );
 		ui.draw();
+
 		// Table.drawDebug( ui );
 
 		if( hasDest ) {
