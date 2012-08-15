@@ -6,6 +6,7 @@ import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.graphics.glutils.FrameBuffer;
 import com.badlogic.gdx.math.Rectangle;
 import com.badlogic.gdx.math.Vector2;
+import com.badlogic.gdx.math.Vector3;
 import com.bitfire.postprocessing.PostProcessor;
 import com.bitfire.uracer.ScalingStrategy;
 import com.bitfire.uracer.configuration.Config;
@@ -37,6 +38,7 @@ public final class GameRenderer {
 	 * initialized.
 	 */
 	public static final class ScreenUtils {
+		public static int ScreenWidth, ScreenHeight;
 		public static boolean ready = false;
 		private static Vector2 screenPosFor = new Vector2();
 		private static GameWorldRenderer worldRenderer;
@@ -44,19 +46,20 @@ public final class GameRenderer {
 		public static void init( GameWorldRenderer worldRenderer ) {
 			ScreenUtils.worldRenderer = worldRenderer;
 			ScreenUtils.ready = true;
+			ScreenUtils.ScreenWidth = Gdx.graphics.getWidth();
+			ScreenUtils.ScreenHeight = Gdx.graphics.getHeight();
 		}
 
+		private static Vector3 vtmp = new Vector3();
+
 		public static Vector2 worldMtToScreen( Vector2 worldPositionMt ) {
-			screenPosFor.x = Convert.mt2px( worldPositionMt.x ) - worldRenderer.camOrtho.position.x
-					+ worldRenderer.halfViewport.x;
-			screenPosFor.y = worldRenderer.camOrtho.position.y - Convert.mt2px( worldPositionMt.y )
-					+ worldRenderer.halfViewport.y;
-			return screenPosFor;
+			return worldPxToScreen( Convert.mt2px( worldPositionMt ) );
 		}
 
 		public static Vector2 worldPxToScreen( Vector2 worldPositionPx ) {
-			screenPosFor.x = worldPositionPx.x - worldRenderer.camOrtho.position.x + worldRenderer.halfViewport.x;
-			screenPosFor.y = worldRenderer.camOrtho.position.y - worldPositionPx.y + worldRenderer.halfViewport.y;
+			vtmp.set( worldPositionPx.x, worldPositionPx.y, 0 );
+			worldRenderer.camOrtho.project( vtmp, 0, 0, ScreenWidth, ScreenHeight );
+			screenPosFor.set( vtmp.x, Gdx.graphics.getHeight() - vtmp.y );
 			return screenPosFor;
 		}
 
