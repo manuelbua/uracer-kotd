@@ -113,13 +113,13 @@ public final class AggressiveCold implements PostProcessingAnimator {
 
 		if( zoom != null && player != null ) {
 
-			// zoom.setOrigin( playerScreenPos );
+			zoom.setOrigin( playerScreenPos );
 
-			// zoom.setBlurStrength( -0.1f * driftStrength * timeFactor );
-			// zoom.setZoom( 1.0f + 0.5f * driftStrength * timeFactor );
+			zoom.setBlurStrength( -0.1f * driftStrength * timeModFactor );
+			// zoom.setZoom( 1.0f + 0.5f * driftStrength * timeModFactor );
 
 			// zoom.setBlurStrength( -0.1f * driftStrength );
-			// zoom.setZoom( 1.0f + 0.5f * driftStrength + 0.2f * timeFactor );
+			// zoom.setZoom( 1.0f + 0.5f * driftStrength + 0.2f * timeModFactor );
 		}
 
 		if( bloom != null ) {

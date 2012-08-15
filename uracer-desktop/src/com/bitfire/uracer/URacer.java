@@ -227,10 +227,10 @@ public class URacer implements ApplicationListener {
 				// simulate slowness
 				// if( timeMultiplier < 1 )
 				// {
-				try {
-					Thread.sleep( 10 );
-				} catch( InterruptedException e ) {
-				}
+				// try {
+				// Thread.sleep( 10 );
+				// } catch( InterruptedException e ) {
+				// }
 				// }
 			}
 
@@ -310,7 +310,7 @@ public class URacer implements ApplicationListener {
 		}
 
 		public static void show( ScreenType screenType ) {
-			Screens.setScreen( screenType, TransitionType.Fader, 1500 );
+			Screens.setScreen( screenType, TransitionType.Fader, 500 );
 		}
 
 		public static void quit() {
