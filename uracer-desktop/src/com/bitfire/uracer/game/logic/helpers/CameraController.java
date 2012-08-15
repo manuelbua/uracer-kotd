@@ -3,6 +3,7 @@ package com.bitfire.uracer.game.logic.helpers;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.math.Rectangle;
 import com.badlogic.gdx.math.Vector2;
+import com.bitfire.uracer.game.rendering.GameWorldRenderer;
 import com.bitfire.uracer.utils.AMath;
 import com.bitfire.uracer.utils.Convert;
 import com.bitfire.uracer.utils.VMath;
@@ -47,24 +48,37 @@ public class CameraController {
 
 					tmp.x = cameraBounds.x + x_ratio * boundsWidth;
 					tmp.y = cameraBounds.height + y_ratio * boundsHeight;
+					if( tmp.x < cameraBounds.x ) {
+						tmp.x = cameraBounds.x;
+					}
+					if( tmp.x > cameraBounds.width ) {
+						tmp.x = cameraBounds.width;
+					}
+					if( tmp.y > cameraBounds.y ) {
+						tmp.y = cameraBounds.y;
+					}
+					if( tmp.y < cameraBounds.height ) {
+						tmp.y = cameraBounds.height;
+					}
 
-					// tmp2.set( target );
-					//
-					// if( tmp2.x < cameraBounds.x ) {
-					// tmp2.x = cameraBounds.x;
-					// }
-					// if( tmp2.x > cameraBounds.width ) {
-					// tmp2.x = cameraBounds.width;
-					// }
-					// if( tmp2.y > cameraBounds.y ) {
-					// tmp2.y = cameraBounds.y;
-					// }
-					// if( tmp2.y < cameraBounds.height ) {
-					// tmp2.y = cameraBounds.height;
-					// }
-					//
-					// float zoomFactor = (zoom - 1) / (GameWorldRenderer.MaxCameraZoom - 1);
-					// tmp.lerp( tmp2, zoomFactor );
+					// default target
+					tmp2.set( target );
+					if( tmp2.x < cameraBounds.x ) {
+						tmp2.x = cameraBounds.x;
+					}
+					if( tmp2.x > cameraBounds.width ) {
+						tmp2.x = cameraBounds.width;
+					}
+					if( tmp2.y > cameraBounds.y ) {
+						tmp2.y = cameraBounds.y;
+					}
+					if( tmp2.y < cameraBounds.height ) {
+						tmp2.y = cameraBounds.height;
+					}
+
+					// give meaning only to the positive side [0,1,2]
+					float zoomFactor = (zoom - 1) / (GameWorldRenderer.MaxCameraZoom - 1);
+					tmp.lerp( tmp2, zoomFactor * 0.2f );
 
 					// Gdx.app.log( "", "" + zoom + "/" + zoomFactor );
 

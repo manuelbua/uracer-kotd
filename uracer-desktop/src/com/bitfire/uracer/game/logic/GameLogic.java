@@ -243,7 +243,7 @@ public class GameLogic implements CarEvent.Listener, CarStateEvent.Listener, Pla
 
 		URacer.timeMultiplier = timeMod.getTime();
 
-		gameWorldRenderer.setCameraZoom( 1.0f + 0.5f * timeModFactor );
+		gameWorldRenderer.setCameraZoom( 1.0f + (GameWorldRenderer.MaxCameraZoom - 1) * timeModFactor );
 		// gameWorldRenderer.setCameraZoom( 1.0f + 0.5f );
 
 		// update player's headlights and move the world camera to follows it, if there is a player
