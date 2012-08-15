@@ -17,9 +17,10 @@ import com.bitfire.uracer.configuration.UserPreferences;
 import com.bitfire.uracer.configuration.UserPreferences.Preference;
 import com.bitfire.utils.Hash;
 
-/** Encapsulates a post-processor animator that manages effects such as bloom and
- * zoomblur to compose
- * and enhance the gaming experience. */
+/**
+ * Encapsulates a post-processor animator that manages effects such as bloom and
+ * zoomblur to compose and enhance the gaming experience.
+ */
 public final class PostProcessing {
 
 	public enum Effects {
@@ -52,9 +53,11 @@ public final class PostProcessing {
 		}
 	}
 
-	/** Creates the effects that will be available to the animators/manipulators
+	/**
+	 * Creates the effects that will be available to the animators/manipulators
 	 * to use, remember that the ownership of the instantiated objects is
-	 * transfered to the PostProcessor when adding the effect to it. */
+	 * transfered to the PostProcessor when adding the effect to it.
+	 */
 	private void configurePostProcessor( PostProcessor postProcessor ) {
 		postProcessor.setEnabled( true );
 		postProcessor.setClearBits( GL10.GL_COLOR_BUFFER_BIT | GL10.GL_DEPTH_BUFFER_BIT );
@@ -69,7 +72,8 @@ public final class PostProcessing {
 		}
 
 		if( UserPreferences.bool( Preference.Bloom ) ) {
-			addEffect( Effects.Bloom.name, new Bloom( Config.PostProcessing.ScaledFboWidth, Config.PostProcessing.ScaledFboHeight ) );
+			addEffect( Effects.Bloom.name,
+					new Bloom( Config.PostProcessing.ScaledFboWidth, Config.PostProcessing.ScaledFboHeight ) );
 		}
 
 		if( UserPreferences.bool( Preference.Vignetting ) ) {
@@ -125,9 +129,9 @@ public final class PostProcessing {
 		}
 	}
 
-	public void onBeforeRender() {
+	public void onBeforeRender( float timeModFactor ) {
 		if( hasPostProcessor && currentAnimator != null ) {
-			currentAnimator.update();
+			currentAnimator.update( timeModFactor );
 		}
 	}
 }

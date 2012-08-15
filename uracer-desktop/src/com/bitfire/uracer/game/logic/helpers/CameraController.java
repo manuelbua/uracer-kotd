@@ -39,13 +39,37 @@ public class CameraController {
 		case Linear:
 			interpolator = new PositionInterpolator() {
 				@Override
-				public Vector2 transform( Vector2 target, float orient, float velocityFactor ) {
+				public Vector2 transform( Vector2 target, float orient, float velocityFactor, float zoom ) {
+
 					// [0,1]
 					float x_ratio = target.x / worldSizeScaledPx.x;
 					float y_ratio = target.y / worldSizeScaledPx.y;
 
 					tmp.x = cameraBounds.x + x_ratio * boundsWidth;
 					tmp.y = cameraBounds.height + y_ratio * boundsHeight;
+
+					// tmp2.set( target );
+					//
+					// if( tmp2.x < cameraBounds.x ) {
+					// tmp2.x = cameraBounds.x;
+					// }
+					// if( tmp2.x > cameraBounds.width ) {
+					// tmp2.x = cameraBounds.width;
+					// }
+					// if( tmp2.y > cameraBounds.y ) {
+					// tmp2.y = cameraBounds.y;
+					// }
+					// if( tmp2.y < cameraBounds.height ) {
+					// tmp2.y = cameraBounds.height;
+					// }
+					//
+					// float zoomFactor = (zoom - 1) / (GameWorldRenderer.MaxCameraZoom - 1);
+					// tmp.lerp( tmp2, zoomFactor );
+
+					// Gdx.app.log( "", "" + zoom + "/" + zoomFactor );
+
+					// tmp.x = target.x;
+					// tmp.y = target.y;
 
 					return tmp;
 				}
@@ -55,7 +79,7 @@ public class CameraController {
 		case Sigmoid:
 			interpolator = new PositionInterpolator() {
 				@Override
-				public Vector2 transform( Vector2 target, float orient, float velocityFactor ) {
+				public Vector2 transform( Vector2 target, float orient, float velocityFactor, float zoom ) {
 					float tx = target.x;
 					float ty = target.y;
 
@@ -76,7 +100,7 @@ public class CameraController {
 				private float speed = 0.5f;
 
 				@Override
-				public void setInitialPositionOrientation( Vector2 position, float orient ) {
+				public void setInitialPositionOrientation( Vector2 position, float orient, float zoom ) {
 					amount = Convert.scaledPixels( 224 );
 					float x_ratio = position.x / (worldSizeScaledPx.x);
 					float y_ratio = position.y / (worldSizeScaledPx.y);
@@ -87,7 +111,7 @@ public class CameraController {
 				}
 
 				@Override
-				public Vector2 transform( Vector2 target, float orient, float velocityFactor ) {
+				public Vector2 transform( Vector2 target, float orient, float velocityFactor, float zoom ) {
 					float dt = Gdx.graphics.getDeltaTime();
 
 					heading.set( VMath.fromDegrees( orient ) );
@@ -117,7 +141,7 @@ public class CameraController {
 		case Off:
 			interpolator = new PositionInterpolator() {
 				@Override
-				public Vector2 transform( Vector2 target, float orient, float velocityFactor ) {
+				public Vector2 transform( Vector2 target, float orient, float velocityFactor, float zoom ) {
 					tmp.set( target );
 
 					if( tmp.x < cameraBounds.x ) {
@@ -141,7 +165,7 @@ public class CameraController {
 		case OffNoBounds:
 			interpolator = new PositionInterpolator() {
 				@Override
-				public Vector2 transform( Vector2 targetPosition, float orient, float velocityFactor ) {
+				public Vector2 transform( Vector2 targetPosition, float orient, float velocityFactor, float zoom ) {
 					return targetPosition;
 				}
 			};
@@ -149,16 +173,17 @@ public class CameraController {
 		}
 	}
 
-	public Vector2 transform( Vector2 position, float orient, float velocityFactor ) {
-		return interpolator.transform( position, orient, velocityFactor );
+	public Vector2 transform( Vector2 position, float orient, float velocityFactor, float zoom ) {
+		return interpolator.transform( position, orient, velocityFactor, zoom );
 	}
 
-	public void setInitialPositionOrient( Vector2 position, float orient ) {
-		interpolator.setInitialPositionOrientation( position, orient );
+	public void setInitialPositionOrient( Vector2 position, float orient, float zoom ) {
+		interpolator.setInitialPositionOrientation( position, orient, zoom );
 	}
 
 	private abstract class PositionInterpolator {
 		protected Vector2 tmp = new Vector2();
+		protected Vector2 tmp2 = new Vector2();
 		protected Vector2 prev = new Vector2();
 		protected Vector2 heading = new Vector2();
 		protected Vector2 pheading = new Vector2();
@@ -166,9 +191,9 @@ public class CameraController {
 		public PositionInterpolator() {
 		}
 
-		public void setInitialPositionOrientation( Vector2 position, float orient ) {
+		public void setInitialPositionOrientation( Vector2 position, float orient, float zoom ) {
 		}
 
-		public abstract Vector2 transform( Vector2 targetPosition, float orient, float velocityFactor );
+		public abstract Vector2 transform( Vector2 targetPosition, float orient, float velocityFactor, float zoom );
 	}
 }

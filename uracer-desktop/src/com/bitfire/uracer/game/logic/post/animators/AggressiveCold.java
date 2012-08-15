@@ -9,10 +9,8 @@ import com.bitfire.postprocessing.effects.CrtMonitor;
 import com.bitfire.postprocessing.effects.Curvature;
 import com.bitfire.postprocessing.effects.Vignette;
 import com.bitfire.postprocessing.effects.Zoomer;
-import com.bitfire.uracer.URacer;
 import com.bitfire.uracer.configuration.Config;
 import com.bitfire.uracer.game.logic.GameLogic;
-import com.bitfire.uracer.game.logic.TimeModulator;
 import com.bitfire.uracer.game.logic.post.PostProcessing;
 import com.bitfire.uracer.game.logic.post.PostProcessingAnimator;
 import com.bitfire.uracer.game.player.PlayerCar;
@@ -32,8 +30,8 @@ public final class AggressiveCold implements PostProcessingAnimator {
 	private Curvature curvature = null;
 
 	public AggressiveCold( GameLogic logic, PostProcessing post, boolean nightMode ) {
-		this.nightMode = nightMode;
 		this.logic = logic;
+		this.nightMode = nightMode;
 		bloom = (Bloom)post.getEffect( PostProcessing.Effects.Bloom.name );
 		zoom = (Zoomer)post.getEffect( PostProcessing.Effects.Zoomer.name );
 		vignette = (Vignette)post.getEffect( PostProcessing.Effects.Vignette.name );
@@ -53,8 +51,8 @@ public final class AggressiveCold implements PostProcessingAnimator {
 		}
 
 		if( vignette != null ) {
-			// vignette.setCoords( 0.8f, 0.25f );
-			vignette.setCoords( 1.5f, 0.1f );
+			vignette.setCoords( 0.85f, 0.3f );
+			// vignette.setCoords( 1.5f, 0.1f );
 			vignette.setCenter( Gdx.graphics.getWidth() / 2, Gdx.graphics.getHeight() / 2 );
 			vignette.setLut( Art.postXpro );
 			vignette.setLutIndex( 16 );
@@ -88,7 +86,7 @@ public final class AggressiveCold implements PostProcessingAnimator {
 	Vector2 playerScreenPos = new Vector2();
 
 	@Override
-	public void update() {
+	public void update( float timeModFactor ) {
 		float driftStrength = 0;
 		PlayerCar player = logic.getPlayer();
 		boolean hasPlayer = (player != null);
@@ -101,8 +99,6 @@ public final class AggressiveCold implements PostProcessingAnimator {
 		} else {
 			playerScreenPos.set( 0.5f, 0.5f );
 		}
-
-		float timeFactor = 1 - (URacer.timeMultiplier - TimeModulator.MinTime) / (TimeModulator.MaxTime - TimeModulator.MinTime);
 
 		if( crt != null ) {
 			// compute time (add noise)
@@ -117,10 +113,10 @@ public final class AggressiveCold implements PostProcessingAnimator {
 
 		if( zoom != null && player != null ) {
 
-			zoom.setOrigin( playerScreenPos );
+			// zoom.setOrigin( playerScreenPos );
 
-			zoom.setBlurStrength( -0.1f * driftStrength * timeFactor );
-			zoom.setZoom( 1.0f + 0.5f * driftStrength * timeFactor );
+			// zoom.setBlurStrength( -0.1f * driftStrength * timeFactor );
+			// zoom.setZoom( 1.0f + 0.5f * driftStrength * timeFactor );
 
 			// zoom.setBlurStrength( -0.1f * driftStrength );
 			// zoom.setZoom( 1.0f + 0.5f * driftStrength + 0.2f * timeFactor );
@@ -128,36 +124,27 @@ public final class AggressiveCold implements PostProcessingAnimator {
 
 		if( bloom != null ) {
 			// bloom.setBaseSaturation( 0.8f - timeFactor * 0.6f );
-			bloom.setBaseSaturation( AMath.lerp( 0.8f, 0.2f, timeFactor ) );
+			bloom.setBaseSaturation( AMath.lerp( 0.8f, 0.2f, timeModFactor ) );
 			// bloom.setBloomSaturation( 1.5f - factor * 0.85f ); // TODO when charged
 			// bloom.setBloomSaturation( 1.5f - factor * 1.5f ); // TODO when completely discharged
-			bloom.setBloomSaturation( 1f - timeFactor * 0.8f );
+			bloom.setBloomSaturation( 1f - timeModFactor * 0.8f );
 		}
 
 		if( vignette != null ) {
-			if( timeFactor > 0 && !vignette.isEnabled() ) {
-				vignette.setEnabled( true );
-			} else if( AMath.equals( 0, timeFactor ) && vignette.isEnabled() ) {
-				vignette.setEnabled( false );
-			}
-
-			// vignette.setY( (1 - factor) * 0.74f + factor * 0.4f );
-
 			if( vignette.controlSaturation ) {
 				// go with the "poor man"'s time dilation fx
-				vignette.setSaturation( 1 - timeFactor * 0.25f );
-				vignette.setSaturationMul( 1 + timeFactor * 0.2f );
+				vignette.setSaturation( 1 - timeModFactor * 0.25f );
+				vignette.setSaturationMul( 1 + timeModFactor * 0.2f );
 			}
 
 			if( player != null ) {
 				// vignette.setCenter( playerScreenPos.x, playerScreenPos.y );
 				// vignette.setCenter( Gdx.graphics.getWidth() / 2, Gdx.graphics.getHeight() / 2 );
-				vignette.setCoords( 0.85f, 0.3f );
 			}
 
 			// vignette.setLutIntensity( timeFactor * 1.618f );
-			vignette.setLutIntensity( timeFactor * 1.618f * AMath.clamp( driftStrength * 1.25f, 0, 1 ) );
-			vignette.setIntensity( timeFactor );
+			vignette.setLutIntensity( timeModFactor * 1.618f );// * AMath.clamp( driftStrength * 1.25f, 0, 1 ) );
+			vignette.setIntensity( timeModFactor );
 			vignette.setLutIndex( 5 );
 		}
 

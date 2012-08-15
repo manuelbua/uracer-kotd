@@ -88,8 +88,8 @@ public final class Config {
 			Render3DBoundingBoxes = false;
 			RenderDebugDrawsInTransitions = true;
 
-			TraverseWalls = false;
-			ApplyCarFrictionFromMap = true;
+			TraverseWalls = true;
+			ApplyCarFrictionFromMap = false;
 			FrustumCulling = true;
 		}
 

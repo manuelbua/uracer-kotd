@@ -9,10 +9,8 @@ import com.bitfire.postprocessing.effects.CrtMonitor;
 import com.bitfire.postprocessing.effects.Curvature;
 import com.bitfire.postprocessing.effects.Vignette;
 import com.bitfire.postprocessing.effects.Zoomer;
-import com.bitfire.uracer.URacer;
 import com.bitfire.uracer.configuration.Config;
 import com.bitfire.uracer.game.logic.GameLogic;
-import com.bitfire.uracer.game.logic.TimeModulator;
 import com.bitfire.uracer.game.logic.post.PostProcessing;
 import com.bitfire.uracer.game.logic.post.PostProcessingAnimator;
 import com.bitfire.uracer.game.player.PlayerCar;
@@ -80,14 +78,13 @@ public final class AggressiveWarm implements PostProcessingAnimator {
 	private long startMs = 0;
 
 	@Override
-	public void update() {
+	public void update( float timeModFactor ) {
 		PlayerCar player = logic.getPlayer();
 
 		if( player == null ) {
 			return;
 		}
 
-		float timeFactor = 1 - (URacer.timeMultiplier - TimeModulator.MinTime) / (TimeModulator.MaxTime - TimeModulator.MinTime);
 		Vector2 playerScreenPos = GameRenderer.ScreenUtils.worldPxToScreen( player.state().position );
 
 		float driftStrength = AMath.clamp( AMath.lerp( prevDriftStrength, player.driftState.driftStrength, 0.01f ), 0, 1 );
@@ -105,18 +102,18 @@ public final class AggressiveWarm implements PostProcessingAnimator {
 		}
 
 		if( zoom != null && player != null ) {
-			float zoomfactor = timeFactor;// * player.carState.currSpeedFactor;
+			float zoomfactor = timeModFactor;// * player.carState.currSpeedFactor;
 			zoom.setOrigin( playerScreenPos );
 			zoom.setBlurStrength( -0.1f * zoomfactor );
 			zoom.setZoom( 1.0f + 0.15f * zoomfactor );
 		}
 
 		if( bloom != null ) {
-			bloom.setBaseSaturation( AMath.lerp( 1, 0.15f, timeFactor ) );
+			bloom.setBaseSaturation( AMath.lerp( 1, 0.15f, timeModFactor ) );
 			// bloom.setBloomSaturation( 1.5f - factor * 0.85f ); // TODO when charged
 			// bloom.setBloomSaturation( 1.5f - factor * 1.5f ); // TODO when completely discharged
-			bloom.setBloomSaturation( 1f - timeFactor * 0.5f );
-			bloom.setThreshold( AMath.lerp( 0.4f, 0.45f, timeFactor ) );
+			bloom.setBloomSaturation( 1f - timeModFactor * 0.5f );
+			bloom.setThreshold( AMath.lerp( 0.4f, 0.45f, timeModFactor ) );
 		}
 
 		if( vignette != null ) {
@@ -124,15 +121,15 @@ public final class AggressiveWarm implements PostProcessingAnimator {
 
 			if( vignette.controlSaturation ) {
 				// go with the "poor man"'s time dilation fx
-				vignette.setSaturation( 1f - timeFactor * 0.55f );
-				vignette.setSaturationMul( 1f + timeFactor * 0.125f );
+				vignette.setSaturation( 1f - timeModFactor * 0.55f );
+				vignette.setSaturationMul( 1f + timeModFactor * 0.125f );
 			}
 
 			// vignette.setCenter( playerScreenPos.x, playerScreenPos.y );
 			// vignette.setCoords( 1.5f - driftStrength * 0.8f, 0.1f );
 
-			vignette.setLutIntensity( timeFactor * 1.25f );
-			vignette.setIntensity( timeFactor );
+			vignette.setLutIntensity( timeModFactor * 1.25f );
+			vignette.setIntensity( timeModFactor );
 		}
 	}
 }

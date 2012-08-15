@@ -10,9 +10,11 @@ import com.badlogic.gdx.math.collision.BoundingBox;
 import com.bitfire.uracer.ScalingStrategy;
 import com.bitfire.utils.ShaderLoader;
 
-/** The model is expected to follow the z-up convention.
- *
- * @author manuel */
+/**
+ * The model is expected to follow the z-up convention.
+ * 
+ * @author manuel
+ */
 public class OrthographicAlignedStillModel {
 	public UStillModel model;
 	public Material material;
@@ -103,10 +105,12 @@ public class OrthographicAlignedStillModel {
 		positionOffsetPx.y = offsetPxY;
 	}
 
-	/** Sets the world position in pixels, top-left origin.
-	 *
+	/**
+	 * Sets the world position in pixels, top-left origin.
+	 * 
 	 * @param posPxX
-	 * @param posPxY */
+	 * @param posPxY
+	 */
 	public final void setPosition( float posPxX, float posPxY ) {
 		// positionPx.set( GameData.Environment.gameWorld.positionFor( posPxX,
 		// posPxY ) );
@@ -121,7 +125,7 @@ public class OrthographicAlignedStillModel {
 		iRotationAxis.set( x_axis, y_axis, z_axis );
 	}
 
-	private void setScalingFactor( float factor ) {
+	public void setScalingFactor( float factor ) {
 		scalingFactor = factor;
 		scaleAxis.set( scale, scale, scale );
 	}

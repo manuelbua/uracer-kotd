@@ -99,11 +99,13 @@ public class PlayerCar extends Car {
 		this.input = input;
 	}
 
-	/** When the player's car is off-track this damping will be applied
-	 * to the car's linear velocity */
-//	public void setDampingFriction( float damping ) {
-//		dampFriction = damping;
-//	}
+	/**
+	 * When the player's car is off-track this damping will be applied
+	 * to the car's linear velocity
+	 */
+	// public void setDampingFriction( float damping ) {
+	// dampFriction = damping;
+	// }
 
 	protected CarInput acquireInput() {
 		if( input == null ) {

@@ -81,7 +81,8 @@ public final class GameWorldRenderer {
 	private Matrix4 camPerspPrevProjView = new Matrix4();
 	private CameraController camController;
 	private static final float CamPerspPlaneNear = 1;
-	private static final float CamPerspPlaneFar = 240;
+	public static final float CamPerspPlaneFar = 240;
+	public static final float MaxCameraZoom = 2f;
 	private static final float CamPerspElevation = 100f;
 
 	// rendering
@@ -250,32 +251,45 @@ public final class GameWorldRenderer {
 	}
 
 	private Vector2 cameraPos = new Vector2();
+	private float cameraZoom = 1;
 
 	public void setInitialCameraPositionOrient( Car car ) {
 		cameraPos.set( Convert.mt2px( car.getWorldPosMt() ) );
-		camController.setInitialPositionOrient( cameraPos, car.getWorldOrientRads() * MathUtils.radiansToDegrees );
+		camController.setInitialPositionOrient( cameraPos, car.getWorldOrientRads() * MathUtils.radiansToDegrees, cameraZoom );
 	}
 
 	public void setCameraPosition( GhostCar ghost ) {
-		cameraPos.set( camController.transform( ghost.state().position, ghost.state().orientation, 0 ) );
+		cameraPos.set( camController.transform( ghost.state().position, ghost.state().orientation, 0, cameraZoom ) );
 	}
 
 	public void setCameraPosition( PlayerCar player ) {
 		cameraPos.set( camController.transform( player.state().position, player.state().orientation,
-				player.carState.currSpeedFactor ) );
+				player.carState.currSpeedFactor, cameraZoom ) );
 	}
 
 	public void setCameraPosition( Vector2 position, float orient ) {
-		cameraPos.set( camController.transform( position, orient, 0 ) );
+		cameraPos.set( camController.transform( position, orient, 0, cameraZoom ) );
 	}
 
-	public void onBeforeRender() {
+	public void setCameraZoom( float zoom ) {
+		cameraZoom = MathUtils.clamp( zoom, 0f, MaxCameraZoom );
+	}
+
+	// do not ask for camOrtho.zoom directly since it will be bound later at updateCamera!
+	public float getCameraZoom() {
+		return cameraZoom;
+	}
+
+	public void updateCamera() {
 		// update orthographic camera
+
+		float zoom = 1f / cameraZoom;
 
 		// remove subpixel accuracy (jagged behavior)
 		camOrtho.position.x = MathUtils.round( cameraPos.x );
 		camOrtho.position.y = MathUtils.round( cameraPos.y );
 		camOrtho.position.z = 0;
+		camOrtho.zoom = zoom;
 		camOrtho.update();
 
 		// update the unscaled orthographic camera rectangle, for visibility queries
@@ -291,7 +305,7 @@ public final class GameWorldRenderer {
 
 		// update the tilemap renderer orthographic camera
 		camTilemap.position.set( camOrtho.position ).mul( scalingStrategy.tileMapZoomFactor );
-		camTilemap.zoom = scalingStrategy.tileMapZoomFactor;
+		camTilemap.zoom = scalingStrategy.tileMapZoomFactor * zoom;
 		camTilemap.update();
 
 		// update previous proj view
@@ -405,7 +419,7 @@ public final class GameWorldRenderer {
 		OrthographicAlignedStillModel m;
 		StillSubMesh submesh;
 
-		float meshZ = -(camPersp.far - camPersp.position.z);
+		float meshZ = -(camPersp.far - camPersp.position.z) + (CamPerspPlaneFar * (1 - (camOrtho.zoom)));
 
 		ShaderProgram shader = OrthographicAlignedStillModel.shader;
 

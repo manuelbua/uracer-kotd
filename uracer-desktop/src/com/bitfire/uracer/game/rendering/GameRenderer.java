@@ -187,6 +187,7 @@ public final class GameRenderer {
 			}
 
 			batchAfterPostProcessing();
+
 			if( hasDest ) {
 				dest.end();
 			}

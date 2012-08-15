@@ -237,7 +237,15 @@ public class GameLogic implements CarEvent.Listener, CarStateEvent.Listener, Pla
 		gameTasksManager.physicsStep.onSubstepCompleted();
 	}
 
-	public void onBeforeRender() {
+	public void updateCamera() {
+		float timeModFactor = 1 - (URacer.timeMultiplier - TimeModulator.MinTime)
+				/ (TimeModulator.MaxTime - TimeModulator.MinTime);
+
+		URacer.timeMultiplier = timeMod.getTime();
+
+		gameWorldRenderer.setCameraZoom( 1.0f + 0.5f * timeModFactor );
+		// gameWorldRenderer.setCameraZoom( 1.0f + 0.5f );
+
 		// update player's headlights and move the world camera to follows it, if there is a player
 		if( hasPlayer() ) {
 
@@ -255,18 +263,16 @@ public class GameLogic implements CarEvent.Listener, CarStateEvent.Listener, Pla
 
 			// no ghost, no player, WTF?
 			gameWorldRenderer.setCameraPosition( gameWorld.playerStartPos, gameWorld.playerStartOrient );
-
 		}
 
-		URacer.timeMultiplier = timeMod.getTime();
+		// post-processing step
+		postProcessing.onBeforeRender( timeModFactor );
 
-		gameWorldRenderer.onBeforeRender();
+		// camera update
+		gameWorldRenderer.updateCamera();
 
 		// game tweener step
 		GameTweener.update();
-
-		// post-processing step
-		postProcessing.onBeforeRender();
 	}
 
 	public void onTick() {
