@@ -2,7 +2,7 @@
 
 
 CLASS_PATH="/home/manuel/dev/libgdx/dist"
-JARS="${CLASS_PATH}/gdx.jar:${CLASS_PATH}/gdx-natives.jar:${CLASS_PATH}/gdx-backend-jogl.jar:${CLASS_PATH}/gdx-backend-jogl-natives.jar"
+JARS="${CLASS_PATH}/gdx.jar:${CLASS_PATH}/gdx-natives.jar:${CLASS_PATH}/gdx-backend-lwjgl.jar:${CLASS_PATH}/gdx-backend-lwjgl-natives.jar"
 
 GDX_TOOLS_PATH="/home/manuel/dev/libgdx/extensions/gdx-tools/target/java"
 TEX_PACKER="java -classpath ${JARS}:${GDX_TOOLS_PATH} com.badlogic.gdx.tools.imagepacker.TexturePacker2"
