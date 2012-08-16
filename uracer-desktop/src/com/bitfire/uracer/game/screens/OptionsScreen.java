@@ -1,5 +1,5 @@
 
-package com.bitfire.uracer.screen.screens;
+package com.bitfire.uracer.game.screens;
 
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Input.Keys;
@@ -24,9 +24,9 @@ import com.bitfire.uracer.configuration.Gameplay;
 import com.bitfire.uracer.configuration.Gameplay.TimeDilateInputMode;
 import com.bitfire.uracer.configuration.UserPreferences;
 import com.bitfire.uracer.configuration.UserPreferences.Preference;
+import com.bitfire.uracer.game.screens.GameScreenFactory.ScreenType;
 import com.bitfire.uracer.resources.Art;
 import com.bitfire.uracer.screen.Screen;
-import com.bitfire.uracer.screen.ScreenFactory.ScreenType;
 import com.bitfire.uracer.utils.UIUtils;
 
 public class OptionsScreen extends Screen {

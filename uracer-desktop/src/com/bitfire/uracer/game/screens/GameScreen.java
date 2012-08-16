@@ -1,5 +1,5 @@
 
-package com.bitfire.uracer.screen.screens;
+package com.bitfire.uracer.game.screens;
 
 import com.badlogic.gdx.graphics.glutils.FrameBuffer;
 import com.bitfire.uracer.ScalingStrategy;

@@ -5,19 +5,21 @@ import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.GL20;
 import com.badlogic.gdx.graphics.glutils.FrameBuffer;
 import com.bitfire.uracer.configuration.Config;
-import com.bitfire.uracer.screen.ScreenFactory.ScreenType;
+import com.bitfire.uracer.game.screens.GameScreenFactory.ScreenType;
+import com.bitfire.uracer.screen.ScreenFactory.ScreenId;
 import com.bitfire.uracer.screen.TransitionFactory.TransitionType;
-import com.bitfire.uracer.screen.transitions.ScreenTransition;
 
 public final class ScreenManager {
 
 	private TransitionManager transMgr;
 	private static Screen current;
-	private ScreenType next;
+	private ScreenId next;
+	private ScreenFactory screenFactory;
 	private boolean quitPending, doSetScreenImmediate, justTransitioned;
 	private GL20 gl;
 
-	public ScreenManager () {
+	public ScreenManager (ScreenFactory factory) {
+		screenFactory = factory;
 		transMgr = new TransitionManager(Config.isDesktop /* 32bits */, false, true);
 		current = null;
 		next = ScreenType.NoScreen;
@@ -53,7 +55,7 @@ public final class ScreenManager {
 			switchedScreen = true;
 		} else if (doSetScreenImmediate) {
 			doSetScreenImmediate = false;
-			current = ScreenFactory.createScreen(next);
+			current = screenFactory.createScreen(next);
 			switchedScreen = true;
 		}
 

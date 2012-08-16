@@ -9,7 +9,8 @@ import com.bitfire.uracer.URacer;
 import com.bitfire.uracer.configuration.Config;
 import com.bitfire.uracer.screen.Screen;
 import com.bitfire.uracer.screen.ScreenFactory;
-import com.bitfire.uracer.screen.ScreenFactory.ScreenType;
+import com.bitfire.uracer.screen.ScreenFactory.ScreenId;
+import com.bitfire.uracer.screen.ScreenTransition;
 import com.bitfire.uracer.screen.ScreenUtils;
 import com.bitfire.uracer.utils.AMath;
 import com.bitfire.utils.ShaderLoader;
@@ -23,7 +24,8 @@ public final class CrossFader extends ScreenTransition {
 	ShaderProgram fade;
 	Screen next;
 
-	public CrossFader () {
+	public CrossFader (ScreenFactory factory) {
+		super(factory);
 		quad = new FullscreenQuad();
 		fade = ShaderLoader.fromFile("fade", "fade");
 		reset();
@@ -53,13 +55,13 @@ public final class CrossFader extends ScreenTransition {
 	}
 
 	@Override
-	public void frameBuffersReady (Screen current, FrameBuffer from, ScreenType nextScreen, FrameBuffer to) {
+	public void frameBuffersReady (Screen current, FrameBuffer from, ScreenId nextScreen, FrameBuffer to) {
 		this.from = from;
 		this.to = to;
 
 		ScreenUtils.copyScreen(current, from);
 
-		next = ScreenFactory.createScreen(nextScreen);
+		next = createScreen(nextScreen);
 		ScreenUtils.copyScreen(next, to);
 	}
 
