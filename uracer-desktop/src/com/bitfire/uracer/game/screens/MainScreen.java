@@ -15,7 +15,7 @@ import com.badlogic.gdx.scenes.scene2d.utils.ClickListener;
 import com.bitfire.uracer.Input;
 import com.bitfire.uracer.ScalingStrategy;
 import com.bitfire.uracer.URacer;
-import com.bitfire.uracer.game.screens.GameScreenFactory.ScreenType;
+import com.bitfire.uracer.game.screens.GameScreensFactory.ScreenType;
 import com.bitfire.uracer.resources.Art;
 import com.bitfire.uracer.screen.Screen;
 import com.bitfire.uracer.utils.UIUtils;

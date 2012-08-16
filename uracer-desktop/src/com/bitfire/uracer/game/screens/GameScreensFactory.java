@@ -5,7 +5,7 @@ import com.bitfire.uracer.ScalingStrategy;
 import com.bitfire.uracer.screen.Screen;
 import com.bitfire.uracer.screen.ScreenFactory;
 
-public final class GameScreenFactory implements ScreenFactory {
+public final class GameScreensFactory implements ScreenFactory {
 
 	public enum ScreenType implements ScreenId {
 		// @off
@@ -49,7 +49,7 @@ public final class GameScreenFactory implements ScreenFactory {
 	private ScalingStrategy strategy;
 	private ScreenType[] types = ScreenType.values();
 
-	public GameScreenFactory (ScalingStrategy strategy) {
+	public GameScreensFactory (ScalingStrategy strategy) {
 		this.strategy = strategy;
 	}
 }

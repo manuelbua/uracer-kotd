@@ -8,7 +8,7 @@ import com.badlogic.gdx.utils.GdxRuntimeException;
 import com.bitfire.postprocessing.utils.FullscreenQuad;
 import com.bitfire.uracer.URacer;
 import com.bitfire.uracer.configuration.Config;
-import com.bitfire.uracer.game.screens.GameScreenFactory.ScreenType;
+import com.bitfire.uracer.game.screens.GameScreensFactory.ScreenType;
 import com.bitfire.uracer.screen.Screen;
 import com.bitfire.uracer.screen.ScreenFactory;
 import com.bitfire.uracer.screen.ScreenFactory.ScreenId;

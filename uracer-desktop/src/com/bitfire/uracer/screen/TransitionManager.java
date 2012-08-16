@@ -4,7 +4,7 @@ package com.bitfire.uracer.screen;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.Pixmap.Format;
 import com.badlogic.gdx.graphics.glutils.FrameBuffer;
-import com.bitfire.uracer.game.screens.GameScreenFactory.ScreenType;
+import com.bitfire.uracer.game.screens.GameScreensFactory.ScreenType;
 
 public final class TransitionManager {
 

@@ -5,7 +5,7 @@ import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.GL20;
 import com.badlogic.gdx.graphics.glutils.FrameBuffer;
 import com.bitfire.uracer.configuration.Config;
-import com.bitfire.uracer.game.screens.GameScreenFactory.ScreenType;
+import com.bitfire.uracer.game.screens.GameScreensFactory.ScreenType;
 import com.bitfire.uracer.screen.ScreenFactory.ScreenId;
 import com.bitfire.uracer.screen.TransitionFactory.TransitionType;
 

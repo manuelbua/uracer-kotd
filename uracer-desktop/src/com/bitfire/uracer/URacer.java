@@ -10,8 +10,8 @@ import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.utils.TimeUtils;
 import com.bitfire.uracer.configuration.Config;
 import com.bitfire.uracer.configuration.UserPreferences;
-import com.bitfire.uracer.game.screens.GameScreenFactory;
-import com.bitfire.uracer.game.screens.GameScreenFactory.ScreenType;
+import com.bitfire.uracer.game.screens.GameScreensFactory;
+import com.bitfire.uracer.game.screens.GameScreensFactory.ScreenType;
 import com.bitfire.uracer.game.tween.SysTweener;
 import com.bitfire.uracer.game.world.models.ModelFactory;
 import com.bitfire.uracer.game.world.models.OrthographicAlignedStillModel;
@@ -105,7 +105,7 @@ public class URacer implements ApplicationListener {
 		// factors)
 		scalingStrategy = new ScalingStrategy(new Vector2(1280, 800), 70f, 224, 1f);
 
-		ScreenFactory screenFactory = new GameScreenFactory(scalingStrategy);
+		ScreenFactory screenFactory = new GameScreensFactory(scalingStrategy);
 		TransitionFactory.init(screenFactory);
 
 		// load default private configuration
