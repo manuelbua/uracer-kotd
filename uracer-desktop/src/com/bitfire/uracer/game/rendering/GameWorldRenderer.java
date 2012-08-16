@@ -141,8 +141,6 @@ public final class GameWorldRenderer {
 
 		// creates and setup orthographic camera
 		camTilemap = new OrthographicCamera(Gdx.graphics.getWidth(), Gdx.graphics.getHeight());
-		// camTilemap.near = 0;
-		// camTilemap.far = 100;
 		camTilemap.zoom = 1;
 
 		// creates and setup perspective camera
