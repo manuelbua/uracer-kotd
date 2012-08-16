@@ -53,7 +53,7 @@ import com.bitfire.uracer.utils.BoxedFloatAccessor;
 import com.bitfire.uracer.utils.CarUtils;
 import com.bitfire.uracer.utils.NumberString;
 
-public abstract class CommonGameLogic implements GameLogic, CarEvent.Listener, CarStateEvent.Listener,
+public abstract class CommonLogic implements GameLogic, CarEvent.Listener, CarStateEvent.Listener,
 	PlayerDriftStateEvent.Listener {
 	// input
 	protected Input input = null;
@@ -83,7 +83,7 @@ public abstract class CommonGameLogic implements GameLogic, CarEvent.Listener, C
 	private TimeModulator timeMod = null;
 	private TimeDilateInputMode timeDilateMode;
 
-	public CommonGameLogic (GameWorld gameWorld, GameRenderer gameRenderer, ScalingStrategy scalingStrategy) {
+	public CommonLogic (GameWorld gameWorld, GameRenderer gameRenderer, ScalingStrategy scalingStrategy) {
 		this.gameWorld = gameWorld;
 		// this.gameRenderer = gameRenderer;
 		this.gameWorldRenderer = gameRenderer.getWorldRenderer();
