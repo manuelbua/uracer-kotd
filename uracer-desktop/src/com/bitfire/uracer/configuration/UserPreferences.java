@@ -16,7 +16,7 @@ import com.bitfire.postprocessing.filters.RadialBlur;
 public final class UserPreferences {
 
 	public enum Preference {
-		// @formatter:off
+		// @off
 
 		// post-processing
 		PostProcessing, Vignetting, Bloom, ZoomRadialBlur, ZoomRadialBlurQuality, CrtScreen, Curvature,
@@ -26,7 +26,7 @@ public final class UserPreferences {
 
 		// gameplay
 		TimeDilateInputMode, ;
-		// @formatter:on
+		// @on
 
 		public String name;
 

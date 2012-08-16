@@ -5,9 +5,9 @@ public final class WorldDefs {
 
 	/** Attributes for Tiled's object properties. */
 	public enum ObjectProperties {
-		// @formatter:off
+		// @off
 		MeshScale("scale");
-		// @formatter:on
+		// @on
 
 		public final String mnemonic;
 
@@ -18,9 +18,9 @@ public final class WorldDefs {
 
 	/** Tiled's world tile layers */
 	public enum TileLayer {
-		// @formatter:off
+		// @off
 		Track("track");
-		// @formatter:on
+		// @on
 
 		public final String mnemonic;
 
@@ -31,9 +31,9 @@ public final class WorldDefs {
 
 	/** Tiled's world object layer/group */
 	public enum ObjectGroup {
-		// @formatter:off
+		// @off
 		Lights("lights"), StaticMeshes("static-meshes"), Trees("trees"), Walls("walls");
-		// @formatter:on
+		// @on
 
 		public final String mnemonic;
 
@@ -44,9 +44,9 @@ public final class WorldDefs {
 
 	/** Tiled's layer properties */
 	public enum LayerProperties {
-		// @formatter:off
+		// @off
 		Start("start");
-		// @formatter:on
+		// @on
 		public final String mnemonic;
 
 		private LayerProperties (String mnemonic) {
@@ -57,9 +57,9 @@ public final class WorldDefs {
 
 	/** Tiled's tile properties */
 	public enum TileProperties {
-		// @formatter:off
+		// @off
 		Type("type");
-		// @formatter:on
+		// @on
 		public final String mnemonic;
 
 		private TileProperties (String mnemonic) {

@@ -13,7 +13,7 @@ public final class CarPreset {
 	public CarModel model = new CarModel();
 
 	public enum Type {
-		// @formatter:off
+		// @off
 		L1_MiniCooper("l1_minicooper"), L1_GoblinOrange("l1_orange_goblin"),
 
 		L2_MustangRed("l2_mustang_red"), L2_MustangWhite("l2_mustang_white"), L2_BlueBeast("l2_blue_beast"), L2_PinkBeast(
@@ -22,7 +22,7 @@ public final class CarPreset {
 		L3_Gallardo("l3_gallardo"),
 
 		Default("l1_minicooper"), ;
-		// @formatter:on
+		// @on
 
 		public String regionName;
 

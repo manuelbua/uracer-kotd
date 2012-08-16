@@ -9,9 +9,9 @@ import com.bitfire.uracer.screen.screens.OptionsScreen;
 public final class ScreenFactory {
 
 	public enum ScreenType {
-		// @formatter:off
+		// @off
 		NoScreen, ExitScreen, MainScreen, OptionsScreen, GameScreen
-		// @formatter:on
+		// @on
 	}
 
 	public static Screen createScreen (ScreenType screenType) {

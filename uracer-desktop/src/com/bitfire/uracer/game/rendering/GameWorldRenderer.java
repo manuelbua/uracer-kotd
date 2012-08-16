@@ -42,16 +42,31 @@ import com.bitfire.uracer.utils.Convert;
 import com.bitfire.utils.ShaderLoader;
 
 public final class GameWorldRenderer {
-	// @formatter:off
-	private static final String treeVertexShader = "uniform mat4 u_projTrans;					\n" + "attribute vec4 a_position;					\n"
-		+ "attribute vec2 a_texCoord0;				\n" + "varying vec2 v_TexCoord;					\n" + "void main()								\n" + "{											\n"
-		+ "	gl_Position = u_projTrans * a_position;	\n" + "	v_TexCoord = a_texCoord0;				\n" + "}											\n";
+	// @off
+	private static final String treeVertexShader =
+		"uniform mat4 u_projTrans;					\n" +
+		"attribute vec4 a_position;				\n" +
+		"attribute vec2 a_texCoord0;				\n" +
+		"varying vec2 v_TexCoord;					\n" +
+		"void main()									\n" +
+		"{\n" +
+		"	gl_Position = u_projTrans * a_position;	\n" +
+		"	v_TexCoord = a_texCoord0;						\n" +
+		"}\n";
 
-	private static final String treeFragmentShader = "#ifdef GL_ES											\n" + "precision mediump float;								\n"
-		+ "#endif													\n" + "uniform sampler2D u_texture;							\n" + "varying vec2 v_TexCoord;								\n"
-		+ "void main()											\n" + "{														\n" + "	vec4 texel = texture2D( u_texture, v_TexCoord );	\n"
-		+ "	if(texel.a < 0.5) discard;							\n" + "	gl_FragColor = texel;								\n" + "}														\n";
-	// @formatter:on
+	private static final String treeFragmentShader =
+		"#ifdef GL_ES											\n" +
+		"precision mediump float;							\n" +
+		"#endif													\n" +
+		"uniform sampler2D u_texture;						\n" +
+		"varying vec2 v_TexCoord;							\n" +
+		"void main()											\n" +
+		"{\n" +
+		"	vec4 texel = texture2D( u_texture, v_TexCoord );	\n" +
+		"	if(texel.a < 0.5) discard;							\n" +
+		"	gl_FragColor = texel;								\n" +
+		"}\n";
+	// @on
 
 	// the game world
 	private GameWorld world = null;
@@ -219,10 +234,10 @@ public final class GameWorldRenderer {
 	private void updateRayHandler () {
 		if (rayHandler != null) {
 
-			// @formatter:off
+			// @off
 			rayHandler.setCombinedMatrix(camOrthoMvpMt, Convert.px2mt(camOrtho.position.x), Convert.px2mt(camOrtho.position.y),
 				Convert.px2mt(camOrtho.viewportWidth), Convert.px2mt(camOrtho.viewportHeight));
-			// @formatter:on
+			// @on
 
 			rayHandler.update();
 			// Gdx.app.log( "GameWorldRenderer", "lights rendered=" + rayHandler.lightRenderedLastFrame );

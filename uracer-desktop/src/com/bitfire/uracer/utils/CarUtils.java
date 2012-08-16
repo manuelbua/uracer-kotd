@@ -14,7 +14,7 @@ public final class CarUtils {
 	}
 
 	public static void dumpSpeedInfo (String msg, Car car, float timeElapsed) {
-		// @formatter:off
+		// @off
 
 		float dist = car.getTraveledDistance();
 		float mts = dist / timeElapsed;
@@ -28,6 +28,6 @@ public final class CarUtils {
 // AMath.round( dist, 2 ) + " m]" +
 			" fpos=" + car.getBody().getPosition());
 
-		// @formatter:on
+		// @on
 	}
 }
