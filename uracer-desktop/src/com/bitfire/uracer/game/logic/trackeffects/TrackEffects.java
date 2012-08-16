@@ -10,9 +10,12 @@ import com.bitfire.uracer.game.rendering.GameRendererEvent.Order;
 import com.bitfire.utils.ItemsManager;
 
 public final class TrackEffects extends GameTask {
+	private static final GameRendererEvent.Type RenderEvent = GameRendererEvent.Type.BatchBeforeMeshes;
+	private static final GameRendererEvent.Order RenderOrder = GameRendererEvent.Order.MINUS_4;
+
 	private ItemsManager<TrackEffect> manager = new ItemsManager<TrackEffect>();
 
-	private final GameRendererEvent.Listener gameRendererEvent = new GameRendererEvent.Listener() {
+	private final GameRendererEvent.Listener listener = new GameRendererEvent.Listener() {
 		@Override
 		public void gameRendererEvent (GameRendererEvent.Type type, Order order) {
 			SpriteBatch batch = GameEvents.gameRenderer.batch;
@@ -28,8 +31,7 @@ public final class TrackEffects extends GameTask {
 	};
 
 	public TrackEffects () {
-		GameEvents.gameRenderer.addListener(gameRendererEvent, GameRendererEvent.Type.BatchBeforeMeshes,
-			GameRendererEvent.Order.MINUS_4);
+		GameEvents.gameRenderer.addListener(listener, RenderEvent, RenderOrder);
 
 		// NOTE for custom render event
 		// for CarSkidMarks GameRenderer.event.addListener( gameRendererEvent, GameRendererEvent.Type.BatchBeforeMeshes,
@@ -49,8 +51,7 @@ public final class TrackEffects extends GameTask {
 	@Override
 	public void dispose () {
 		super.dispose();
-		GameEvents.gameRenderer.removeListener(gameRendererEvent, GameRendererEvent.Type.BatchBeforeMeshes,
-			GameRendererEvent.Order.MINUS_4);
+		GameEvents.gameRenderer.removeListener(listener, RenderEvent, RenderOrder);
 
 		Array<TrackEffect> items = manager.items;
 		for (int i = 0; i < items.size; i++) {

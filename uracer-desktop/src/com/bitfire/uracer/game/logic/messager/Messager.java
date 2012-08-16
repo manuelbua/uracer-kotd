@@ -14,6 +14,9 @@ import com.bitfire.uracer.game.rendering.GameRendererEvent.Order;
 import com.bitfire.uracer.game.rendering.GameRendererEvent.Type;
 
 public class Messager extends GameTask {
+	private static final GameRendererEvent.Type RenderEvent = GameRendererEvent.Type.BatchAfterPostProcessing;
+	private static final GameRendererEvent.Order RenderOrder = GameRendererEvent.Order.MINUS_4;
+
 	private final GameRendererEvent.Listener gameRendererEvent = new GameRendererEvent.Listener() {
 		@Override
 		public void gameRendererEvent (Type type, Order order) {
@@ -35,8 +38,7 @@ public class Messager extends GameTask {
 	private int idxMessageStore;
 
 	public Messager (float invZoomFactor) {
-		GameEvents.gameRenderer.addListener(gameRendererEvent, GameRendererEvent.Type.BatchAfterMeshes,
-			GameRendererEvent.Order.MINUS_4);
+		GameEvents.gameRenderer.addListener(gameRendererEvent, RenderEvent, RenderOrder);
 
 		currents = new Array<Message>(3);
 		for (Position group : Position.values()) {
@@ -59,8 +61,7 @@ public class Messager extends GameTask {
 	@Override
 	public void dispose () {
 		super.dispose();
-		GameEvents.gameRenderer.removeListener(gameRendererEvent, GameRendererEvent.Type.BatchAfterMeshes,
-			GameRendererEvent.Order.MINUS_4);
+		GameEvents.gameRenderer.removeListener(gameRendererEvent, RenderEvent, RenderOrder);
 		onReset();
 	}
 
