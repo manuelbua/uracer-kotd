@@ -1,3 +1,4 @@
+
 package com.bitfire.uracer.screen.screens;
 
 import com.badlogic.gdx.graphics.glutils.FrameBuffer;
@@ -11,58 +12,58 @@ public class GameScreen extends Screen {
 	private Game game = null;
 
 	@Override
-	public void init( ScalingStrategy scalingStrategy ) {
+	public void init (ScalingStrategy scalingStrategy) {
 
 		// simulate slowness
 		// try { Thread.sleep( 1000 ); } catch( InterruptedException e ) {}
 
 		String levelName = "tutorial-1";
 
-		game = new Game( levelName, scalingStrategy );
+		game = new Game(levelName, scalingStrategy);
 
 		// simulate the player choosing a car type
-		game.setPlayer( Type.L2_PinkBeast );
+		game.setPlayer(Type.L2_PinkBeast);
 
 		// simulate the player choosing local playing
-		Replay r = Replay.loadLocal( levelName );
-		if( r != null ) {
-			game.setLocalReplay( r );
+		Replay r = Replay.loadLocal(levelName);
+		if (r != null) {
+			game.setLocalReplay(r);
 		}
 	}
 
 	@Override
-	public void dispose() {
+	public void dispose () {
 		game.dispose();
 		game = null;
 	}
 
 	@Override
-	public void tick() {
+	public void tick () {
 		game.tick();
 	}
 
 	@Override
-	public void tickCompleted() {
+	public void tickCompleted () {
 		game.tickCompleted();
 	}
 
 	@Override
-	public void render( FrameBuffer dest ) {
-		game.render( dest );
+	public void render (FrameBuffer dest) {
+		game.render(dest);
 	}
 
 	@Override
-	public void pause() {
+	public void pause () {
 		game.pause();
 	}
 
 	@Override
-	public void resume() {
+	public void resume () {
 		game.resume();
 	}
 
 	@Override
-	public void debugRender() {
+	public void debugRender () {
 		game.debugUpdate();
 	}
 }

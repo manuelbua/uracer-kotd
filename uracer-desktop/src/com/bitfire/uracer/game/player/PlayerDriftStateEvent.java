@@ -1,3 +1,4 @@
+
 package com.bitfire.uracer.game.player;
 
 import com.bitfire.uracer.utils.Event;
@@ -10,43 +11,43 @@ public final class PlayerDriftStateEvent extends Event<PlayerDriftState> {
 	}
 
 	public interface Listener extends EventListener {
-		void playerDriftStateEvent( PlayerCar source, Type type );
+		void playerDriftStateEvent (PlayerCar source, Type type);
 	}
 
-	public PlayerDriftStateEvent( PlayerDriftState playerDriftState ) {
-		super( playerDriftState );
-		for( Type t : Type.values() ) {
+	public PlayerDriftStateEvent (PlayerDriftState playerDriftState) {
+		super(playerDriftState);
+		for (Type t : Type.values()) {
 			notifiers[t.ordinal()] = new Notifier();
 		}
 	}
 
-	public void addListener( Listener listener, Type type ) {
-		notifiers[type.ordinal()].addListener( listener );
+	public void addListener (Listener listener, Type type) {
+		notifiers[type.ordinal()].addListener(listener);
 	}
 
-	public void removeListener( Listener listener, Type type ) {
-		notifiers[type.ordinal()].removeListener( listener );
+	public void removeListener (Listener listener, Type type) {
+		notifiers[type.ordinal()].removeListener(listener);
 	}
 
-	public void removeAllListeners() {
-		for( Type t : Type.values() ) {
+	public void removeAllListeners () {
+		for (Type t : Type.values()) {
 			notifiers[t.ordinal()].removeAllListeners();
 		}
 	}
 
-	public void trigger( PlayerCar source, Type type ) {
+	public void trigger (PlayerCar source, Type type) {
 		this.source = source;
-		notifiers[type.ordinal()].playerDriftStateEvent( source, type );
+		notifiers[type.ordinal()].playerDriftStateEvent(source, type);
 	}
 
 	public PlayerCar source;
-	private Notifier[] notifiers = new Notifier[ Type.values().length ];
+	private Notifier[] notifiers = new Notifier[Type.values().length];
 
 	private class Notifier extends EventNotifier<Listener> implements Listener {
 		@Override
-		public void playerDriftStateEvent( PlayerCar source, Type type ) {
-			for( Listener listener : listeners ) {
-				listener.playerDriftStateEvent( source, type );
+		public void playerDriftStateEvent (PlayerCar source, Type type) {
+			for (Listener listener : listeners) {
+				listener.playerDriftStateEvent(source, type);
 			}
 		}
 	};

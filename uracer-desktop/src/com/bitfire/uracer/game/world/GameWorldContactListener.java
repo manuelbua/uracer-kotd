@@ -1,3 +1,4 @@
+
 package com.bitfire.uracer.game.world;
 
 import com.badlogic.gdx.physics.box2d.Contact;
@@ -10,23 +11,23 @@ public class GameWorldContactListener implements ContactListener {
 	private CarImpactManager impactManager = new CarImpactManager();
 
 	@Override
-	public void beginContact( Contact contact ) {
+	public void beginContact (Contact contact) {
 		// if(Box2DUtils.isCar(contact.getFixtureA()) || Box2DUtils.isCar(contact.getFixtureB()))
 		// System.out.println("beginContact");
 	}
 
 	@Override
-	public void endContact( Contact contact ) {
+	public void endContact (Contact contact) {
 		// if(Box2DUtils.isCar(contact.getFixtureA()) || Box2DUtils.isCar(contact.getFixtureB()))
 		// System.out.println("endContact");
 	}
 
 	@Override
-	public void preSolve( Contact contact, Manifold oldManifold ) {
+	public void preSolve (Contact contact, Manifold oldManifold) {
 	}
 
 	@Override
-	public void postSolve( Contact contact, ContactImpulse impulse ) {
-		impactManager.process( contact, impulse );
+	public void postSolve (Contact contact, ContactImpulse impulse) {
+		impactManager.process(contact, impulse);
 	}
 }

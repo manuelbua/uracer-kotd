@@ -1,3 +1,4 @@
+
 package com.bitfire.uracer.screen.screens;
 
 import com.badlogic.gdx.Gdx;
@@ -28,103 +29,103 @@ public final class MainScreen extends Screen {
 	private Label versionLabel;
 
 	@Override
-	public void init( ScalingStrategy scalingStrategy ) {
+	public void init (ScalingStrategy scalingStrategy) {
 		input = URacer.Game.getInputSystem();
 		setupUI();
 	}
 
 	@Override
-	public void enable() {
-		Gdx.input.setInputProcessor( ui );
+	public void enable () {
+		Gdx.input.setInputProcessor(ui);
 	}
 
-	private void setupUI() {
+	private void setupUI () {
 		ui = new Stage();
 
 		// background
-		Image bg = new Image( Art.scrBackground );
-		bg.setFillParent( true );
-		ui.addActor( bg );
+		Image bg = new Image(Art.scrBackground);
+		bg.setFillParent(true);
+		ui.addActor(bg);
 
 		buttonsTable = new Table();
-		ui.addActor( buttonsTable );
+		ui.addActor(buttonsTable);
 		// buttonsTable.debug();
-		buttonsTable.setFillParent( true );
+		buttonsTable.setFillParent(true);
 
-		startGameButton = UIUtils.newTextButton( "Start game", new ClickListener() {
+		startGameButton = UIUtils.newTextButton("Start game", new ClickListener() {
 			@Override
-			public void clicked( InputEvent event, float x, float y ) {
-				URacer.Game.show( ScreenType.GameScreen );
+			public void clicked (InputEvent event, float x, float y) {
+				URacer.Game.show(ScreenType.GameScreen);
 			}
-		} );
+		});
 
-		optionsButton = UIUtils.newTextButton( "Options", new ClickListener() {
+		optionsButton = UIUtils.newTextButton("Options", new ClickListener() {
 			@Override
-			public void clicked( InputEvent event, float x, float y ) {
-				URacer.Game.show( ScreenType.OptionsScreen );
+			public void clicked (InputEvent event, float x, float y) {
+				URacer.Game.show(ScreenType.OptionsScreen);
 			}
-		} );
+		});
 
-		quitButton = UIUtils.newTextButton( "Quit", new ClickListener() {
+		quitButton = UIUtils.newTextButton("Quit", new ClickListener() {
 			@Override
-			public void clicked( InputEvent event, float x, float y ) {
+			public void clicked (InputEvent event, float x, float y) {
 				URacer.Game.quit();
 			}
-		} );
+		});
 
 		buttonsTable.row();
-		buttonsTable.add( startGameButton ).width( 300 ).height( 50 ).pad( 5 );
+		buttonsTable.add(startGameButton).width(300).height(50).pad(5);
 		buttonsTable.row();
-		buttonsTable.add( optionsButton ).width( 300 ).height( 50 ).pad( 5 );
+		buttonsTable.add(optionsButton).width(300).height(50).pad(5);
 		buttonsTable.row();
-		buttonsTable.add( quitButton ).width( 300 ).height( 50 ).pad( 5 );
+		buttonsTable.add(quitButton).width(300).height(50).pad(5);
 
-		infoTable = new Table( Art.scrSkin );
-		ui.addActor( infoTable );
+		infoTable = new Table(Art.scrSkin);
+		ui.addActor(infoTable);
 
-		versionLabel = new Label( URacer.getVersionInformation(), Art.scrSkin );
+		versionLabel = new Label(URacer.getVersionInformation(), Art.scrSkin);
 		infoTable.row();
-		infoTable.add( versionLabel ).expand().bottom().left();
+		infoTable.add(versionLabel).expand().bottom().left();
 	}
 
 	@Override
-	public void dispose() {
+	public void dispose () {
 		ui.dispose();
 		disable();
 	}
 
 	@Override
-	public void pause() {
+	public void pause () {
 	}
 
 	@Override
-	public void resume() {
+	public void resume () {
 	}
 
 	@Override
-	public void tick() {
-		if( input.isPressed( Keys.Q ) || input.isPressed( Keys.BACK ) || input.isPressed( Keys.ESCAPE ) ) {
+	public void tick () {
+		if (input.isPressed(Keys.Q) || input.isPressed(Keys.BACK) || input.isPressed(Keys.ESCAPE)) {
 			URacer.Game.quit();
 		}
 	}
 
 	@Override
-	public void tickCompleted() {
+	public void tickCompleted () {
 	}
 
 	@Override
-	public void render( FrameBuffer dest ) {
+	public void render (FrameBuffer dest) {
 		boolean hasDest = (dest != null);
-		if( hasDest ) {
+		if (hasDest) {
 			dest.begin();
 		}
 
-		Gdx.gl.glClearColor( 0, 0, 0, 0 );
-		Gdx.gl.glClear( GL20.GL_COLOR_BUFFER_BIT );
+		Gdx.gl.glClearColor(0, 0, 0, 0);
+		Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT);
 		ui.draw();
 		// Table.drawDebug( ui );
 
-		if( hasDest ) {
+		if (hasDest) {
 			dest.end();
 		}
 	}

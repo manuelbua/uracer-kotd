@@ -1,3 +1,4 @@
+
 package com.bitfire.uracer.game.logic;
 
 import aurelienribon.tweenengine.Timeline;
@@ -21,33 +22,33 @@ public final class TimeModulator {
 	private BoxedFloat timeMultiplier;
 	private Timeline timeSeq;
 
-	public TimeModulator() {
+	public TimeModulator () {
 		timeMultiplier = new BoxedFloat();
 		timeMultiplier.value = 1f;
 		timeSeq = Timeline.createSequence();
 	}
 
 	// returns the modulate time value
-	public float getTime() {
-		return AMath.clamp( timeMultiplier.value, MinTime, MaxTime );
+	public float getTime () {
+		return AMath.clamp(timeMultiplier.value, MinTime, MaxTime);
 	}
 
-	public void reset() {
+	public void reset () {
 		timeMultiplier.value = MaxTime;
 	}
 
-	public void toDilatedTime() {
-		modulateTo( EqIn, MinTime, 1000 );
+	public void toDilatedTime () {
+		modulateTo(EqIn, MinTime, 1000);
 	}
 
-	public void toNormalTime() {
-		modulateTo( EqOut, MaxTime, 1000 );
+	public void toNormalTime () {
+		modulateTo(EqOut, MaxTime, 1000);
 	}
 
-	private void modulateTo( TweenEquation eq, float to, float durationMs ) {
-		SysTweener.stop( timeMultiplier );
+	private void modulateTo (TweenEquation eq, float to, float durationMs) {
+		SysTweener.stop(timeMultiplier);
 		timeSeq = Timeline.createSequence();
-		timeSeq.push( Tween.to( timeMultiplier, BoxedFloatAccessor.VALUE, 1000 ).target( to ).ease( eq ) );
-		SysTweener.start( timeSeq );
+		timeSeq.push(Tween.to(timeMultiplier, BoxedFloatAccessor.VALUE, 1000).target(to).ease(eq));
+		SysTweener.start(timeSeq);
 	}
 }

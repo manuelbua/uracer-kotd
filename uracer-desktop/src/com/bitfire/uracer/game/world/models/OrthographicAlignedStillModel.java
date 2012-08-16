@@ -1,3 +1,4 @@
+
 package com.bitfire.uracer.game.world.models;
 
 import com.badlogic.gdx.Gdx;
@@ -11,7 +12,7 @@ import com.bitfire.uracer.ScalingStrategy;
 import com.bitfire.utils.ShaderLoader;
 
 /** The model is expected to follow the z-up convention.
- *
+ * 
  * @author manuel */
 public class OrthographicAlignedStillModel {
 	public UStillModel model;
@@ -35,99 +36,85 @@ public class OrthographicAlignedStillModel {
 	public Vector3 scaleAxis = new Vector3();
 
 	// position
-	public Vector2 positionOffsetPx = new Vector2( 0, 0 );
+	public Vector2 positionOffsetPx = new Vector2(0, 0);
 	public Vector2 positionPx = new Vector2();
 
 	// explicitle initialize the static iShader member
 	// (Android: statics need to be re-initialized!)
-	private void loadShaders() {
+	private void loadShaders () {
 		// @formatter:off
-		String vertexShader =
-			"uniform mat4 u_projTrans;					\n" +
-			"attribute vec4 a_position;					\n" +
-			"attribute vec2 a_texCoord0;				\n" +
-			"varying vec2 v_TexCoord;					\n" +
-			"void main()								\n" +
-			"{											\n" +
-			"	gl_Position = u_projTrans * a_position;	\n" +
-			"	v_TexCoord = a_texCoord0;				\n" +
-			"}											\n";
+		String vertexShader = "uniform mat4 u_projTrans;					\n" + "attribute vec4 a_position;					\n"
+			+ "attribute vec2 a_texCoord0;				\n" + "varying vec2 v_TexCoord;					\n" + "void main()								\n" + "{											\n"
+			+ "	gl_Position = u_projTrans * a_position;	\n" + "	v_TexCoord = a_texCoord0;				\n" + "}											\n";
 
-		String fragmentShader =
-			"#ifdef GL_ES											\n" +
-			"precision mediump float;								\n" +
-			"#endif													\n" +
-			"uniform sampler2D u_texture;							\n" +
-			"varying vec2 v_TexCoord;								\n" +
-			"void main()											\n" +
-			"{														\n" +
-			"	gl_FragColor = texture2D( u_texture, v_TexCoord );	\n" +
-			"}														\n";
+		String fragmentShader = "#ifdef GL_ES											\n" + "precision mediump float;								\n" + "#endif													\n"
+			+ "uniform sampler2D u_texture;							\n" + "varying vec2 v_TexCoord;								\n" + "void main()											\n"
+			+ "{														\n" + "	gl_FragColor = texture2D( u_texture, v_TexCoord );	\n" + "}														\n";
 		// @formatter:on
 
-		if( !(shader instanceof ShaderProgram) ) {
-			shader = ShaderLoader.fromString( vertexShader, fragmentShader, "OASM::vert", "OASM::frag" );
+		if (!(shader instanceof ShaderProgram)) {
+			shader = ShaderLoader.fromString(vertexShader, fragmentShader, "OASM::vert", "OASM::frag");
 		}
 	}
 
-	public OrthographicAlignedStillModel( StillModel aModel, Material material, ScalingStrategy strategy ) {
+	public OrthographicAlignedStillModel (StillModel aModel, Material material, ScalingStrategy strategy) {
 		loadShaders();
 
 		try {
-			model = new UStillModel( aModel.subMeshes );
+			model = new UStillModel(aModel.subMeshes);
 
 			this.material = material;
-			model.setMaterial( this.material );
+			model.setMaterial(this.material);
 
-			model.getBoundingBox( localBoundingBox );
-			boundingBox.set( localBoundingBox );
+			model.getBoundingBox(localBoundingBox);
+			boundingBox.set(localBoundingBox);
 
-			setScalingFactor( strategy.meshScaleFactor * BlenderToURacer * strategy.to256 );
-			setPosition( 0, 0 );
-			setRotation( 0, 0, 0, 0 );
-		} catch( Exception e ) {
-			Gdx.app.log( "OrthographicAlignedStillModel", e.getMessage() );
+			setScalingFactor(strategy.meshScaleFactor * BlenderToURacer * strategy.to256);
+			setPosition(0, 0);
+			setRotation(0, 0, 0, 0);
+		} catch (Exception e) {
+			Gdx.app.log("OrthographicAlignedStillModel", e.getMessage());
 			Gdx.app.exit();
 		}
 	}
 
-	public static void disposeShader() {
-		if( shader instanceof ShaderProgram ) {
+	public static void disposeShader () {
+		if (shader instanceof ShaderProgram) {
 			shader.dispose();
 			shader = null;
 		}
 	}
 
-	public final void setPositionOffsetPixels( int offsetPxX, int offsetPxY ) {
+	public final void setPositionOffsetPixels (int offsetPxX, int offsetPxY) {
 		positionOffsetPx.x = offsetPxX;
 		positionOffsetPx.y = offsetPxY;
 	}
 
 	/** Sets the world position in pixels, top-left origin.
-	 *
+	 * 
 	 * @param posPxX
 	 * @param posPxY */
-	public final void setPosition( float posPxX, float posPxY ) {
+	public final void setPosition (float posPxX, float posPxY) {
 		// positionPx.set( GameData.Environment.gameWorld.positionFor( posPxX,
 		// posPxY ) );
-		positionPx.set( posPxX, posPxY );
+		positionPx.set(posPxX, posPxY);
 	}
 
 	public float iRotationAngle;
 	public Vector3 iRotationAxis = new Vector3();
 
-	public final void setRotation( float angle, float x_axis, float y_axis, float z_axis ) {
+	public final void setRotation (float angle, float x_axis, float y_axis, float z_axis) {
 		iRotationAngle = angle;
-		iRotationAxis.set( x_axis, y_axis, z_axis );
+		iRotationAxis.set(x_axis, y_axis, z_axis);
 	}
 
-	private void setScalingFactor( float factor ) {
+	public void setScalingFactor (float factor) {
 		scalingFactor = factor;
-		scaleAxis.set( scale, scale, scale );
+		scaleAxis.set(scale, scale, scale);
 	}
 
-	public final void setScale( float scale ) {
+	public final void setScale (float scale) {
 		this.scale = scalingFactor * scale;
-		scaleAxis.set( this.scale, this.scale, this.scale );
+		scaleAxis.set(this.scale, this.scale, this.scale);
 	}
 }

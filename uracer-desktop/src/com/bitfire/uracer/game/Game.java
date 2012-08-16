@@ -1,3 +1,4 @@
+
 package com.bitfire.uracer.game;
 
 import com.badlogic.gdx.Gdx;
@@ -27,29 +28,29 @@ public class Game implements Disposable {
 	// rendering
 	private GameRenderer gameRenderer = null;
 
-	public Game( String levelName, ScalingStrategy scalingStrategy ) {
+	public Game (String levelName, ScalingStrategy scalingStrategy) {
 
-		gameWorld = new GameWorld( scalingStrategy, levelName, false );
-		Gdx.app.debug( "Game", "Game world ready" );
+		gameWorld = new GameWorld(scalingStrategy, levelName, false);
+		Gdx.app.debug("Game", "Game world ready");
 
 		// handles rendering
-		gameRenderer = new GameRenderer( gameWorld, scalingStrategy );
-		Gdx.app.debug( "Game", "GameRenderer ready" );
+		gameRenderer = new GameRenderer(gameWorld, scalingStrategy);
+		Gdx.app.debug("Game", "GameRenderer ready");
 
 		// handles game rules and mechanics, it's all about game data
-		gameLogic = new GameLogic( gameWorld, gameRenderer, scalingStrategy );
-		Gdx.app.debug( "Game", "GameLogic created" );
+		gameLogic = new GameLogic(gameWorld, gameRenderer, scalingStrategy);
+		Gdx.app.debug("Game", "GameLogic created");
 
 		// initialize the debug helper
-		if( Config.Debug.UseDebugHelper ) {
-			debug = new DebugHelper( gameRenderer.getWorldRenderer(), gameWorld.getBox2DWorld(), gameRenderer.getPostProcessor() );
-			Gdx.app.debug( "Game", "Debug helper initialized" );
+		if (Config.Debug.UseDebugHelper) {
+			debug = new DebugHelper(gameRenderer.getWorldRenderer(), gameWorld.getBox2DWorld(), gameRenderer.getPostProcessor());
+			Gdx.app.debug("Game", "Debug helper initialized");
 		}
 	}
 
 	@Override
-	public void dispose() {
-		if( Config.Debug.UseDebugHelper ) {
+	public void dispose () {
+		if (Config.Debug.UseDebugHelper) {
 			debug.dispose();
 		}
 
@@ -60,43 +61,43 @@ public class Game implements Disposable {
 		TaskManager.dispose();
 	}
 
-	public void setPlayer( CarPreset.Type presetType ) {
-		gameLogic.setPlayer( presetType );
-		if( Config.Debug.UseDebugHelper ) {
-			DebugHelper.setPlayer( gameLogic.getPlayer() );
+	public void setPlayer (CarPreset.Type presetType) {
+		gameLogic.setPlayer(presetType);
+		if (Config.Debug.UseDebugHelper) {
+			DebugHelper.setPlayer(gameLogic.getPlayer());
 		}
 	}
 
-	public void setLocalReplay( Replay replay ) {
-		gameLogic.setBestLocalReplay( replay );
+	public void setLocalReplay (Replay replay) {
+		gameLogic.setBestLocalReplay(replay);
 	}
 
-	public void tick() {
+	public void tick () {
 		TaskManager.dispatchTick();
 		gameLogic.onTick();
 	}
 
-	public void tickCompleted() {
+	public void tickCompleted () {
 		gameLogic.onSubstepCompleted();
 	}
 
-	public void render( FrameBuffer dest ) {
+	public void render (FrameBuffer dest) {
 		// trigger the event and let's subscribers interpolate and update their state()
-		gameRenderer.beforeRender( URacer.Game.getTemporalAliasing() );
-		gameLogic.onBeforeRender();
+		gameRenderer.beforeRender(URacer.Game.getTemporalAliasing());
+		gameLogic.updateCamera();
 
-		gameRenderer.render( dest );
+		gameRenderer.render(dest);
 	}
 
-	public void debugUpdate() {
+	public void debugUpdate () {
 		debug.update();
 		gameRenderer.debugRender();
 	}
 
-	public void pause() {
+	public void pause () {
 	}
 
-	public void resume() {
+	public void resume () {
 		gameRenderer.rebind();
 	}
 }

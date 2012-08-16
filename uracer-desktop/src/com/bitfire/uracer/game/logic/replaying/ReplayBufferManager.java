@@ -1,17 +1,17 @@
+
 package com.bitfire.uracer.game.logic.replaying;
 
-/** Provides a buffering scheme for Replay objects.
- * This is an intelligent ring-buffer, in the sense it encapsulates Replay classification and know whether a replay
- * is better than another, easing management at higher level.
- *
+/** Provides a buffering scheme for Replay objects. This is an intelligent ring-buffer, in the sense it encapsulates Replay
+ * classification and know whether a replay is better than another, easing management at higher level.
+ * 
  * @author bmanuel */
 public final class ReplayBufferManager {
 	private Replay[] replays;
 	private Replay best, worst;
 
-	public ReplayBufferManager() {
+	public ReplayBufferManager () {
 		// construct replay buffers
-		replays = new Replay[ 2 ];
+		replays = new Replay[2];
 		replays[0] = new Replay();
 		replays[1] = new Replay();
 
@@ -20,52 +20,52 @@ public final class ReplayBufferManager {
 		updateReplays();
 	}
 
-	public void reset() {
+	public void reset () {
 		best = null;
 		worst = null;
 		replays[0].reset();
 		replays[1].reset();
 	}
 
-	public void setBestReplay( Replay replay ) {
+	public void setBestReplay (Replay replay) {
 		replays[0] = replay;
 		best = replays[0];
 	}
 
-	public Replay getAnyReplay() {
-		if( replays[0].isValid ) {
+	public Replay getAnyReplay () {
+		if (replays[0].isValid) {
 			return replays[0];
 		}
 
-		if( replays[1].isValid ) {
+		if (replays[1].isValid) {
 			return replays[1];
 		}
 
 		return null;
 	}
 
-	public boolean hasAllReplayData() {
+	public boolean hasAllReplayData () {
 		return (replays[0].isValid && replays[1].isValid);
 	}
 
-	public boolean hasAnyReplayData() {
+	public boolean hasAnyReplayData () {
 		return (replays[0].isValid || replays[1].isValid);
 	}
 
-	private Replay getFirstValid() {
-		if( replays[0].isValid ) {
+	private Replay getFirstValid () {
+		if (replays[0].isValid) {
 			return replays[0];
 		} else {
 			return replays[1];
 		}
 	}
 
-	public void updateReplays() {
-		if( hasAllReplayData() ) {
+	public void updateReplays () {
+		if (hasAllReplayData()) {
 			best = replays[1];
 			worst = replays[0];
 
-			if( replays[0].trackTimeSeconds < replays[1].trackTimeSeconds ) {
+			if (replays[0].trackTimeSeconds < replays[1].trackTimeSeconds) {
 				best = replays[0];
 				worst = replays[1];
 			}
@@ -75,12 +75,12 @@ public final class ReplayBufferManager {
 		}
 	}
 
-	public Replay getNextBuffer() {
+	public Replay getNextBuffer () {
 		updateReplays();
-		if( !replays[0].isValid ) {
+		if (!replays[0].isValid) {
 			return replays[0];
 		}
-		if( !replays[1].isValid ) {
+		if (!replays[1].isValid) {
 			return replays[1];
 		}
 
@@ -88,19 +88,19 @@ public final class ReplayBufferManager {
 		return worst;
 	}
 
-	public Replay getBestReplay() {
+	public Replay getBestReplay () {
 		return best;
 	}
 
-	public Replay getWorstReplay() {
+	public Replay getWorstReplay () {
 		return worst;
 	}
 
-	public boolean hasBestReplay() {
+	public boolean hasBestReplay () {
 		return (best != null);
 	}
 
-	public boolean hasWorstReplay() {
+	public boolean hasWorstReplay () {
 		return (worst != null);
 	}
 }

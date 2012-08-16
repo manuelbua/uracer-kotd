@@ -1,3 +1,4 @@
+
 package com.bitfire.uracer.game.player;
 
 import com.badlogic.gdx.math.MathUtils;
@@ -17,12 +18,12 @@ public final class CarSimulator {
 	private Vector2 force = new Vector2();
 	private Vector2 acceleration = new Vector2();
 	private float thisSign, lastSign;
-	private static final float DampingThrottle = AMath.damping( 0.98f );
+	private static final float DampingThrottle = AMath.damping(0.98f);
 
 	// exports
 	protected Vector2 lateralForceFront, lateralForceRear;
 
-	public CarSimulator( CarDescriptor carDesc ) {
+	public CarSimulator (CarDescriptor carDesc) {
 		this.carDesc = carDesc;
 		thisSign = 1f;
 		lastSign = 1f;
@@ -32,15 +33,15 @@ public final class CarSimulator {
 		lateralForceRear = new Vector2();
 	}
 
-	public void applyInput( CarInput input ) {
+	public void applyInput (CarInput input) {
 		float maxForce = carDesc.carModel.max_force;
 		boolean hasDir = false, hasSteer = false;
 
-		if( input.updated ) {
+		if (input.updated) {
 			// throttle
-			if( AMath.fixup( input.throttle ) > 0 ) {
+			if (AMath.fixup(input.throttle) > 0) {
 				// acceleration
-				if( input.throttle < maxForce ) {
+				if (input.throttle < maxForce) {
 					carDesc.throttle = input.throttle;
 				} else {
 					carDesc.throttle = maxForce;
@@ -48,9 +49,9 @@ public final class CarSimulator {
 
 				carDesc.brake = 0;
 				hasDir = true;
-			} else if( AMath.fixup( input.throttle ) < 0 ) {
+			} else if (AMath.fixup(input.throttle) < 0) {
 				// deceleration
-				if( input.throttle > -maxForce ) {
+				if (input.throttle > -maxForce) {
 					carDesc.throttle = input.throttle;
 				} else {
 					carDesc.throttle = -maxForce;
@@ -61,18 +62,18 @@ public final class CarSimulator {
 			}
 
 			// steering
-			if( AMath.fixup( input.steerAngle ) < 0 ) {
+			if (AMath.fixup(input.steerAngle) < 0) {
 				// left
 				carDesc.steerangle = input.steerAngle;
-				if( carDesc.steerangle < -AMath.PI_4 ) {
+				if (carDesc.steerangle < -AMath.PI_4) {
 					carDesc.steerangle = -AMath.PI_4;
 				}
 
 				hasSteer = true;
-			} else if( AMath.fixup( input.steerAngle ) > 0 ) {
+			} else if (AMath.fixup(input.steerAngle) > 0) {
 				// right
 				carDesc.steerangle = input.steerAngle;
-				if( carDesc.steerangle > AMath.PI_4 ) {
+				if (carDesc.steerangle > AMath.PI_4) {
 					carDesc.steerangle = AMath.PI_4;
 				}
 
@@ -80,31 +81,31 @@ public final class CarSimulator {
 			}
 		}
 
-		if( !hasDir ) {
-			if( Math.abs( carDesc.velocity_wc.x ) > 0.5f || Math.abs( carDesc.velocity_wc.y ) > 0.5f ) {
-				if( !AMath.isZero( carDesc.throttle ) ) {
+		if (!hasDir) {
+			if (Math.abs(carDesc.velocity_wc.x) > 0.5f || Math.abs(carDesc.velocity_wc.y) > 0.5f) {
+				if (!AMath.isZero(carDesc.throttle)) {
 					carDesc.throttle *= DampingThrottle;
 				}
 
 				carDesc.brake = 350f;
 			} else {
-				carDesc.velocity_wc.set( 0, 0 );
+				carDesc.velocity_wc.set(0, 0);
 				carDesc.angularvelocity = 0;
 				carDesc.brake = 0;
 				carDesc.throttle = 0;
 			}
 		}
 
-		if( !hasSteer ) {
+		if (!hasSteer) {
 			carDesc.steerangle = 0;
 		}
 
-		carDesc.throttle = AMath.clamp( carDesc.throttle, -maxForce, maxForce );
+		carDesc.throttle = AMath.clamp(carDesc.throttle, -maxForce, maxForce);
 	}
 
-	public void step( float dt, float bodyAngle ) {
-		float sn = MathUtils.sin( AMath.normalRelativeAngle( -bodyAngle ) );
-		float cs = MathUtils.cos( AMath.normalRelativeAngle( -bodyAngle ) );
+	public void step (float dt, float bodyAngle) {
+		float sn = MathUtils.sin(AMath.normalRelativeAngle(-bodyAngle));
+		float cs = MathUtils.cos(AMath.normalRelativeAngle(-bodyAngle));
 
 		//
 		// SAE convention: x is to the front of the car, y is to the right, z is
@@ -116,7 +117,7 @@ public final class CarSimulator {
 		// reference frame
 		velocity.x = cs * carDesc.velocity_wc.y + sn * carDesc.velocity_wc.x;
 		velocity.y = -sn * carDesc.velocity_wc.y + cs * carDesc.velocity_wc.x;
-		VMath.fixup( velocity );
+		VMath.fixup(velocity);
 
 		//
 		// Lateral force on wheels
@@ -133,15 +134,15 @@ public final class CarSimulator {
 
 		// velocity.x = fVLong_, velocity.y = fVLat_
 		// fix singularity
-		if( AMath.isZero( velocity.x ) ) {
+		if (AMath.isZero(velocity.x)) {
 			rot_angle = 0;
 			sideslip = 0;
 		} else {
 			// compute rotational angle
-			rot_angle = MathUtils.atan2( yawspeed, velocity.x );
+			rot_angle = MathUtils.atan2(yawspeed, velocity.x);
 
 			// compute the side slip angle of the car (a.k.a. beta)
-			sideslip = MathUtils.atan2( velocity.y, velocity.x );
+			sideslip = MathUtils.atan2(velocity.y, velocity.x);
 		}
 
 		// Calculate slip angles for front and rear wheels (a.k.a. alpha)
@@ -156,40 +157,40 @@ public final class CarSimulator {
 		// circle * load
 		flatf.x = 0;
 		flatf.y = carDesc.carModel.stiffness_front * slipanglefront;
-		flatf.y = Math.min( carDesc.carModel.max_grip, flatf.y );
-		flatf.y = Math.max( -carDesc.carModel.max_grip, flatf.y );
-		lateralForceFront.set( flatf );
+		flatf.y = Math.min(carDesc.carModel.max_grip, flatf.y);
+		flatf.y = Math.max(-carDesc.carModel.max_grip, flatf.y);
+		lateralForceFront.set(flatf);
 		flatf.y *= carDesc.carModel.weight;
 
 		// lateral force on rear wheels
 		flatr.x = 0;
 		flatr.y = carDesc.carModel.stiffness_rear * slipanglerear;
-		flatr.y = Math.min( carDesc.carModel.max_grip, flatr.y );
-		flatr.y = Math.max( -carDesc.carModel.max_grip, flatr.y );
-		lateralForceRear.set( flatr );
+		flatr.y = Math.min(carDesc.carModel.max_grip, flatr.y);
+		flatr.y = Math.max(-carDesc.carModel.max_grip, flatr.y);
+		lateralForceRear.set(flatr);
 		flatr.y *= carDesc.carModel.weight;
 
 		// float s = SGN(velocity.x);
-		thisSign = AMath.lowpass( lastSign, AMath.sign( velocity.x ), 0.2f );
+		thisSign = AMath.lowpass(lastSign, AMath.sign(velocity.x), 0.2f);
 		lastSign = thisSign;
 
-		ftraction.set( 100f * (carDesc.throttle - carDesc.brake * thisSign), 0 );
+		ftraction.set(100f * (carDesc.throttle - carDesc.brake * thisSign), 0);
 
 		// torque on body from lateral forces
 		float torque = carDesc.carModel.b * flatf.y - carDesc.carModel.c * flatr.y;
-		torque = AMath.fixup( torque );
+		torque = AMath.fixup(torque);
 
 		//
 		// Forces and torque on body
 		//
 
 		// drag and rolling resistance
-		resistance.x = -(carDesc.carModel.resistance * velocity.x + carDesc.carModel.drag * velocity.x * Math.abs( velocity.x ));
-		resistance.y = -(carDesc.carModel.resistance * velocity.y + carDesc.carModel.drag * velocity.y * Math.abs( velocity.y ));
+		resistance.x = -(carDesc.carModel.resistance * velocity.x + carDesc.carModel.drag * velocity.x * Math.abs(velocity.x));
+		resistance.y = -(carDesc.carModel.resistance * velocity.y + carDesc.carModel.drag * velocity.y * Math.abs(velocity.y));
 
 		// sum forces
-		force.x = ftraction.x + MathUtils.sin( carDesc.steerangle ) * flatf.x + flatr.x + resistance.x;
-		force.y = ftraction.y + MathUtils.cos( carDesc.steerangle ) * flatf.y + flatr.y + resistance.y;
+		force.x = ftraction.x + MathUtils.sin(carDesc.steerangle) * flatf.x + flatr.x + resistance.x;
+		force.y = ftraction.y + MathUtils.cos(carDesc.steerangle) * flatf.y + flatr.y + resistance.y;
 
 		//
 		// Acceleration
@@ -197,8 +198,8 @@ public final class CarSimulator {
 
 		// Convert the force into acceleration
 		// Newton F = m.a, therefore a = F/m
-		acceleration.set( force.x * carDesc.carModel.invmass, force.y * carDesc.carModel.invmass );
-		VMath.fixup( acceleration );
+		acceleration.set(force.x * carDesc.carModel.invmass, force.y * carDesc.carModel.invmass);
+		VMath.fixup(acceleration);
 
 		//
 		// Velocity and position
@@ -208,15 +209,15 @@ public final class CarSimulator {
 		// frame
 		acceleration_wc.x = cs * acceleration.y + sn * acceleration.x;
 		acceleration_wc.y = -sn * acceleration.y + cs * acceleration.x;
-		VMath.fixup( acceleration_wc );
+		VMath.fixup(acceleration_wc);
 
 		// velocity is integrated acceleration
 		carDesc.velocity_wc.x += dt * acceleration_wc.x;
 		carDesc.velocity_wc.y += dt * acceleration_wc.y;
-		VMath.fixup( carDesc.velocity_wc );
+		VMath.fixup(carDesc.velocity_wc);
 
 		// make sure vehicle doesn't exceed maximum velocity
-		VMath.truncate( carDesc.velocity_wc, carDesc.carModel.max_speed );
+		VMath.truncate(carDesc.velocity_wc, carDesc.carModel.max_speed);
 
 		//
 		// Angular acceleration, angular velocity and heading
@@ -227,23 +228,23 @@ public final class CarSimulator {
 
 		// integrate angular acceleration to get angular velocity
 		carDesc.angularvelocity += dt * angular_acceleration;
-		carDesc.angularvelocity = AMath.fixup( carDesc.angularvelocity );
+		carDesc.angularvelocity = AMath.fixup(carDesc.angularvelocity);
 
 		// integrate angular velocity to get angular orientation
-//		carDesc.angularOrientation = dt * carDesc.angularvelocity;
-//		AMath.fixup( carDesc.angularOrientation );
+// carDesc.angularOrientation = dt * carDesc.angularvelocity;
+// AMath.fixup( carDesc.angularOrientation );
 
 		// updateHeading( bodyAngle );
 	}
 
-	public void resetPhysics() {
-		carDesc.velocity_wc.set( 0, 0 );
+	public void resetPhysics () {
+		carDesc.velocity_wc.set(0, 0);
 		carDesc.angularvelocity = 0;
 		carDesc.brake = 0;
 		carDesc.throttle = 0;
 		carDesc.steerangle = 0;
-		acceleration_wc.set( 0, 0 );
-		velocity.set( 0, 0 );
+		acceleration_wc.set(0, 0);
+		velocity.set(0, 0);
 		thisSign = 1f;
 		lastSign = 1f;
 	}

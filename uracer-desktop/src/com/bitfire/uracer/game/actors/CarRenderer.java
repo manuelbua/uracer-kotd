@@ -1,3 +1,4 @@
+
 package com.bitfire.uracer.game.actors;
 
 import com.badlogic.gdx.graphics.g2d.Sprite;
@@ -15,77 +16,78 @@ public final class CarRenderer {
 	private float alpha;
 	private ShaderProgram shader;
 
-	public CarRenderer( CarModel model, CarPreset.Type type ) {
+	public CarRenderer (CarModel model, CarPreset.Type type) {
 		facet = new Sprite();
 		ambientOcclusion = new Sprite();
 		shader = null;
-		setAspect( model, type );
+		setAspect(model, type);
 	}
 
-	public void setAspect( CarModel model, CarPreset.Type type ) {
-		this.region = Art.cars.findRegion( type.regionName );
-		facet.setRegion( region );
-		facet.setSize( Convert.mt2px( model.width ), Convert.mt2px( model.length ) );
-		facet.setOrigin( facet.getWidth() / 2, facet.getHeight() / 2 );
+	public void setAspect (CarModel model, CarPreset.Type type) {
+		this.region = Art.cars.findRegion(type.regionName);
+		facet.setRegion(region);
+		facet.setSize(Convert.mt2px(model.width), Convert.mt2px(model.length));
+		facet.setOrigin(facet.getWidth() / 2, facet.getHeight() / 2);
 
 		// ambient occlusion
-		ambientOcclusion.setRegion( Art.carAmbientOcclusion );
-		ambientOcclusion.setSize( facet.getWidth(), facet.getHeight() );
-		ambientOcclusion.setScale( 2f, 2.3f );
-		ambientOcclusion.setOrigin( ambientOcclusion.getWidth() / 2, ambientOcclusion.getHeight() / 2 );
+		ambientOcclusion.setRegion(Art.carAmbientOcclusion);
+		ambientOcclusion.setSize(facet.getWidth(), facet.getHeight());
+		ambientOcclusion.setScale(2f, 2.3f);
+		ambientOcclusion.setOrigin(ambientOcclusion.getWidth() / 2, ambientOcclusion.getHeight() / 2);
 	}
 
-	public void setShader( ShaderProgram program ) {
+	public void setShader (ShaderProgram program) {
 		shader = program;
 	}
 
-	public Sprite getFacet() {
+	public Sprite getFacet () {
 		return facet;
 	}
 
-	public TextureRegion getTextureRegion() {
+	public TextureRegion getTextureRegion () {
 		return region;
 	}
 
-	public void setAlpha( float alpha ) {
+	public void setAlpha (float alpha) {
 		this.alpha = alpha;
 	}
 
-	public float getAlpha() {
+	public float getAlpha () {
 		return alpha;
 	}
 
-//	public void renderDepth( Matrix4 projTrans, EntityRenderState renderState ) {
-//		ShaderProgram depthgen = Art.depthMapGen;
+// public void renderDepth( Matrix4 projTrans, EntityRenderState renderState ) {
+// ShaderProgram depthgen = Art.depthMapGen;
 //
-//		depthgen.begin();
-//		depthgen.setUniformMatrix( "u_projTrans", projTrans );
+// depthgen.begin();
+// depthgen.setUniformMatrix( "u_projTrans", projTrans );
 //
-//		facet.setPosition( renderState.position.x - facet.getOriginX(), renderState.position.y - facet.getOriginY() );
-//		facet.setRotation( renderState.orientation );
-//		facet.
+// facet.setPosition( renderState.position.x - facet.getOriginX(), renderState.position.y - facet.getOriginY() );
+// facet.setRotation( renderState.orientation );
+// facet.
 //
-//		depthgen.end();
-//	}
+// depthgen.end();
+// }
 
-	public void renderShadows( SpriteBatch batch, EntityRenderState state ) {
-		ambientOcclusion.setPosition( state.position.x - ambientOcclusion.getOriginX(), state.position.y - ambientOcclusion.getOriginY() );
-		ambientOcclusion.setRotation( state.orientation );
-		ambientOcclusion.draw( batch, 0.65f * alpha );
+	public void renderShadows (SpriteBatch batch, EntityRenderState state) {
+		ambientOcclusion.setPosition(state.position.x - ambientOcclusion.getOriginX(),
+			state.position.y - ambientOcclusion.getOriginY());
+		ambientOcclusion.setRotation(state.orientation);
+		ambientOcclusion.draw(batch, 0.65f * alpha);
 	}
 
-	public void render( SpriteBatch batch, EntityRenderState state ) {
-		facet.setPosition( state.position.x - facet.getOriginX(), state.position.y - facet.getOriginY() );
-		facet.setRotation( state.orientation );
+	public void render (SpriteBatch batch, EntityRenderState state) {
+		facet.setPosition(state.position.x - facet.getOriginX(), state.position.y - facet.getOriginY());
+		facet.setRotation(state.orientation);
 
-		if( shader != null ) {
-			batch.setShader( shader );
+		if (shader != null) {
+			batch.setShader(shader);
 		}
 
-		facet.draw( batch, alpha );
+		facet.draw(batch, alpha);
 
-		if( shader != null ) {
-			batch.setShader( null );
+		if (shader != null) {
+			batch.setShader(null);
 		}
 	}
 }

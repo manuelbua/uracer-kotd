@@ -1,3 +1,4 @@
+
 package com.bitfire.uracer.game.logic.hud.elements;
 
 import com.badlogic.gdx.Gdx;
@@ -14,60 +15,60 @@ public class HudLapInfo extends HudElement {
 	private HudLabel best, curr, last;
 	private LapInfo lapInfo;
 
-	public HudLapInfo( ScalingStrategy scalingStrategy, LapInfo lapInfo ) {
+	public HudLapInfo (ScalingStrategy scalingStrategy, LapInfo lapInfo) {
 		this.lapInfo = lapInfo;
 
 		int gridX = (int)((float)Gdx.graphics.getWidth() / 5f);
 
 		// laptimes component
-		best = new HudLabel( scalingStrategy, Art.fontCurseYRbig, "BEST  TIME\n--.--" );
-		curr = new HudLabel( scalingStrategy, Art.fontCurseYRbig, "YOUR  TIME\n--.--" );
-		last = new HudLabel( scalingStrategy, Art.fontCurseYRbig, "LAST  TIME\n--.--" );
+		best = new HudLabel(scalingStrategy, Art.fontCurseYRbig, "BEST  TIME\n--.--");
+		curr = new HudLabel(scalingStrategy, Art.fontCurseYRbig, "YOUR  TIME\n--.--");
+		last = new HudLabel(scalingStrategy, Art.fontCurseYRbig, "LAST  TIME\n--.--");
 
-		curr.setPosition( gridX, 50 * scalingStrategy.invTileMapZoomFactor );
-		last.setPosition( gridX * 3, 50 * scalingStrategy.invTileMapZoomFactor );
-		best.setPosition( gridX * 4, 50 * scalingStrategy.invTileMapZoomFactor );
+		curr.setPosition(gridX, 50 * scalingStrategy.invTileMapZoomFactor);
+		last.setPosition(gridX * 3, 50 * scalingStrategy.invTileMapZoomFactor);
+		best.setPosition(gridX * 4, 50 * scalingStrategy.invTileMapZoomFactor);
 	}
 
 	@Override
-	public void dispose() {
+	public void dispose () {
 	}
 
 	@Override
-	public void onTick() {
+	public void onTick () {
 		// current time
-		curr.setString( "YOUR  TIME\n" + NumberString.format( lapInfo.getElapsedSeconds() ) + "s" );
+		curr.setString("YOUR  TIME\n" + NumberString.format(lapInfo.getElapsedSeconds()) + "s");
 
 		// best time
-		if( lapInfo.hasBestTrackTimeSeconds() ) {
+		if (lapInfo.hasBestTrackTimeSeconds()) {
 			// has best
-			best.setString( "BEST  TIME\n" + NumberString.format( lapInfo.getBestTrackTimeSeconds()) + "s" );
+			best.setString("BEST  TIME\n" + NumberString.format(lapInfo.getBestTrackTimeSeconds()) + "s");
 		} else {
 			// temporarily use last track time
-			if( lapInfo.hasLastTrackTimeSeconds() ) {
-				best.setString( "BEST  TIME\n" + NumberString.format( lapInfo.getLastTrackTimeSeconds() ) + "s" );
+			if (lapInfo.hasLastTrackTimeSeconds()) {
+				best.setString("BEST  TIME\n" + NumberString.format(lapInfo.getLastTrackTimeSeconds()) + "s");
 			} else {
-				best.setString( "BEST TIME\n--:--" );
+				best.setString("BEST TIME\n--:--");
 			}
 		}
 
 		// last time
-		if( lapInfo.hasLastTrackTimeSeconds() ) {
+		if (lapInfo.hasLastTrackTimeSeconds()) {
 			// has only last
-			last.setString( "LAST  TIME\n" + NumberString.format( lapInfo.getLastTrackTimeSeconds() ) + "s" );
+			last.setString("LAST  TIME\n" + NumberString.format(lapInfo.getLastTrackTimeSeconds()) + "s");
 		} else {
-			last.setString( "LAST  TIME\n--:--" );
+			last.setString("LAST  TIME\n--:--");
 		}
 	}
 
 	@Override
-	public void onRender( SpriteBatch batch ) {
-		curr.render( batch );
-		best.render( batch );
-		last.render( batch );
+	public void onRender (SpriteBatch batch) {
+		curr.render(batch);
+		best.render(batch);
+		last.render(batch);
 	}
 
 	@Override
-	public void onReset() {
+	public void onReset () {
 	}
 }

@@ -1,3 +1,4 @@
+
 package com.bitfire.uracer.game.logic;
 
 import com.badlogic.gdx.physics.box2d.World;
@@ -10,27 +11,27 @@ import com.bitfire.uracer.game.task.TaskManagerEvent;
 public class PhysicsStep extends Task {
 	private World world;
 
-	public PhysicsStep( World world, TaskManagerEvent.Order order ) {
-		super( order );
+	public PhysicsStep (World world, TaskManagerEvent.Order order) {
+		super(order);
 		this.world = world;
 	}
 
 	@Override
-	public void dispose() {
+	public void dispose () {
 		super.dispose();
 		GameEvents.physicsStep.removeAllListeners();
 	}
 
 	@Override
-	protected void onTick() {
+	protected void onTick () {
 		// Gdx.app.log( "PhysicsStep", "tick" );
-		GameEvents.physicsStep.trigger( this, Type.onBeforeTimestep );
-		world.step( Config.Physics.PhysicsDt, 10, 10 );
-		GameEvents.physicsStep.trigger( this, Type.onAfterTimestep );
+		GameEvents.physicsStep.trigger(this, Type.onBeforeTimestep);
+		world.step(Config.Physics.PhysicsDt, 10, 10);
+		GameEvents.physicsStep.trigger(this, Type.onAfterTimestep);
 	}
 
-	public void onSubstepCompleted() {
+	public void onSubstepCompleted () {
 		world.clearForces();
-		GameEvents.physicsStep.trigger( this, Type.onSubstepCompleted );
+		GameEvents.physicsStep.trigger(this, Type.onSubstepCompleted);
 	}
 }

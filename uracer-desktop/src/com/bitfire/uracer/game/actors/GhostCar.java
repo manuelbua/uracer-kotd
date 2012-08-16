@@ -1,3 +1,4 @@
+
 package com.bitfire.uracer.game.actors;
 
 import com.bitfire.uracer.game.logic.replaying.Replay;
@@ -5,10 +6,9 @@ import com.bitfire.uracer.game.rendering.GameRendererEvent;
 import com.bitfire.uracer.game.world.GameWorld;
 import com.bitfire.uracer.utils.CarUtils;
 
-/** Implements an automated Car, playing previously recorded events. It will
- * ignore car-to-car collisions, but will respect in-track collisions and
- * responses.
- *
+/** Implements an automated Car, playing previously recorded events. It will ignore car-to-car collisions, but will respect
+ * in-track collisions and responses.
+ * 
  * @author manuel */
 
 public final class GhostCar extends Car {
@@ -17,33 +17,33 @@ public final class GhostCar extends Car {
 	private int indexPlay;
 	private boolean hasReplay;
 
-	public GhostCar( GameWorld gameWorld, CarPreset.Type presetType ) {
-		super( gameWorld, CarType.ReplayCar, InputMode.InputFromReplay, GameRendererEvent.Order.DEFAULT, presetType, false );
+	public GhostCar (GameWorld gameWorld, CarPreset.Type presetType) {
+		super(gameWorld, CarType.ReplayCar, InputMode.InputFromReplay, GameRendererEvent.Order.DEFAULT, presetType, false);
 		indexPlay = 0;
 		hasReplay = false;
 		replay = null;
-		this.renderer.setAlpha( 0.5f );
+		this.renderer.setAlpha(0.5f);
 		// this.carState = new CarState( gameWorld, this );
 
-		setActive( false );
+		setActive(false);
 		resetPhysics();
 		resetDistanceAndSpeed();
 	}
 
 	// input data for this car cames from a Replay object
-	public void setReplay( Replay replay ) {
+	public void setReplay (Replay replay) {
 		this.replay = replay;
 		hasReplay = (replay != null && replay.getEventsCount() > 0);
 
-		setActive( hasReplay );
+		setActive(hasReplay);
 		resetPhysics();
 
-		if( hasReplay ) {
-			setPreset( replay.carPresetType );
-			renderer.setAlpha( 0 );
+		if (hasReplay) {
+			setPreset(replay.carPresetType);
+			renderer.setAlpha(0);
 
 			// System.out.println( "Replaying " + replay.id );
-			restart( replay );
+			restart(replay);
 			// Gdx.app.log( "GhostCar", "Replaying " + replay.trackTimeSeconds + "s" );
 		}
 
@@ -56,38 +56,38 @@ public final class GhostCar extends Car {
 		// }
 	}
 
-	public boolean hasReplay() {
+	public boolean hasReplay () {
 		return hasReplay;
 	}
 
-	private void restart( Replay replay ) {
+	private void restart (Replay replay) {
 		resetPhysics();
 		resetDistanceAndSpeed();
-		setWorldPosMt( replay.carWorldPositionMt, replay.carWorldOrientRads );
+		setWorldPosMt(replay.carWorldPositionMt, replay.carWorldOrientRads);
 		indexPlay = 0;
 
 		// Gdx.app.log( "GhostCar", "Set to " + body.getPosition() + ", " + body.getAngle() );
 	}
 
-	public void removeReplay() {
-		setReplay( null );
-		renderer.setAlpha( 0 );
+	public void removeReplay () {
+		setReplay(null);
+		renderer.setAlpha(0);
 	}
 
 	@Override
-	public boolean isVisible() {
+	public boolean isVisible () {
 		return hasReplay && isActive() && renderer.getAlpha() > 0;
 	}
 
 	@Override
-	protected void onComputeCarForces( CarForces forces ) {
+	protected void onComputeCarForces (CarForces forces) {
 		forces.reset();
 
-		if( hasReplay ) {
+		if (hasReplay) {
 
 			// indexPlay is NOT updated here, we don't want
 			// to process a non-existent event when (indexPlay == replay.getEventsCount())
-			forces.set( replay.forces[indexPlay] );
+			forces.set(replay.forces[indexPlay]);
 			// Gdx.app.log( "ghost", "index="+indexPlay + ", px=" + NumberString.formatVeryLong(body.getPosition().x) +
 			// ", py=" + NumberString.formatVeryLong(body.getPosition().y) );
 
@@ -99,11 +99,11 @@ public final class GhostCar extends Car {
 
 			// also change opacity, fade in/out based on
 			// events played, events remaining
-			if( indexPlay <= FadeEvents ) {
-				renderer.setAlpha( ((float)indexPlay / (float)FadeEvents) * 0.5f );
-			} else if( replay.getEventsCount() - indexPlay <= FadeEvents ) {
+			if (indexPlay <= FadeEvents) {
+				renderer.setAlpha(((float)indexPlay / (float)FadeEvents) * 0.5f);
+			} else if (replay.getEventsCount() - indexPlay <= FadeEvents) {
 				float val = (float)(replay.getEventsCount() - indexPlay) / (float)FadeEvents;
-				renderer.setAlpha( val * 0.5f );
+				renderer.setAlpha(val * 0.5f);
 			}
 		}
 		// else {
@@ -112,15 +112,15 @@ public final class GhostCar extends Car {
 	}
 
 	@Override
-	public void onAfterPhysicsSubstep() {
+	public void onAfterPhysicsSubstep () {
 		super.onAfterPhysicsSubstep();
 
-		if( hasReplay ) {
+		if (hasReplay) {
 			indexPlay++;
 
-			if( indexPlay == replay.getEventsCount() ) {
-				CarUtils.dumpSpeedInfo( " Ghost", this, replay.trackTimeSeconds );
-				restart( replay );
+			if (indexPlay == replay.getEventsCount()) {
+				CarUtils.dumpSpeedInfo(" Ghost", this, replay.trackTimeSeconds);
+				restart(replay);
 			}
 		}
 	}

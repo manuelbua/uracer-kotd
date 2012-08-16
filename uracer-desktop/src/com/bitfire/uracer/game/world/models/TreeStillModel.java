@@ -1,3 +1,4 @@
+
 package com.bitfire.uracer.game.world.models;
 
 import com.badlogic.gdx.graphics.Mesh;
@@ -15,15 +16,15 @@ public class TreeStillModel extends OrthographicAlignedStillModel {
 	public BoundingBox boundingBox = new BoundingBox();
 	public BoundingBox localBoundingBox = new BoundingBox();
 
-	public TreeStillModel( StillModel aModel, Material material, String meshName, ScalingStrategy strategy ) {
-		super( aModel, material, strategy );
+	public TreeStillModel (StillModel aModel, Material material, String meshName, ScalingStrategy strategy) {
+		super(aModel, material, strategy);
 
-		smTrunk = model.getSubMesh( meshName + "trunk" );
-		smLeaves = model.getSubMesh( meshName + "leaves" );
+		smTrunk = model.getSubMesh(meshName + "trunk");
+		smLeaves = model.getSubMesh(meshName + "leaves");
 		trunk = smTrunk.mesh;
 		leaves = smLeaves.mesh;
 
-		model.getBoundingBox( localBoundingBox );
-		boundingBox.set( localBoundingBox );
+		model.getBoundingBox(localBoundingBox);
+		boundingBox.set(localBoundingBox);
 	}
 }

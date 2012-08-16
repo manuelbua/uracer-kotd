@@ -1,11 +1,11 @@
+
 package com.bitfire.uracer.game.actors;
 
 import com.badlogic.gdx.math.Vector2;
 
-/** Describes the global state of the car entity providing access to both the base
- * physical model information and the processed per-timestep data resulting
- * after each integration.
- *
+/** Describes the global state of the car entity providing access to both the base physical model information and the processed
+ * per-timestep data resulting after each integration.
+ * 
  * @author manuel */
 
 public final class CarDescriptor {
@@ -26,13 +26,13 @@ public final class CarDescriptor {
 	public float throttle; // amount of throttle (input)
 	public float brake; // amount of braking (input)
 
-	public CarDescriptor( CarModel model ) {
+	public CarDescriptor (CarModel model) {
 		angularvelocity = 0;
 		steerangle = 0;
 		throttle = 0;
 		brake = 0;
-		position_wc.set( 0, 0 );
-		velocity_wc.set( 0, 0 );
+		position_wc.set(0, 0);
+		velocity_wc.set(0, 0);
 		this.carModel = model;
 	}
 }

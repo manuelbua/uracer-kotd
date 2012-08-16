@@ -1,3 +1,4 @@
+
 package com.bitfire.uracer.game.logic.replaying;
 
 import java.io.IOException;
@@ -22,11 +23,9 @@ import com.bitfire.uracer.game.logic.messager.Message.Size;
 import com.bitfire.uracer.game.logic.messager.Messager;
 import com.bitfire.uracer.utils.UUid;
 
-/**
- * Represents replay data to be feed to a GhostCar, the replay player.
+/** Represents replay data to be feed to a GhostCar, the replay player.
  * 
- * @author manuel
- */
+ * @author manuel */
 
 public class Replay {
 	public static final int MaxEvents = 5000;
@@ -49,28 +48,28 @@ public class Replay {
 	// time track
 	private Time time = new Time();
 
-	public Replay() {
-		this( UUid.get() );
+	public Replay () {
+		this(UUid.get());
 	}
 
-	public Replay( long id ) {
+	public Replay (long id) {
 		eventsCount = 0;
-		forces = new CarForces[ MaxEvents ];
-		for( int i = 0; i < MaxEvents; i++ ) {
+		forces = new CarForces[MaxEvents];
+		for (int i = 0; i < MaxEvents; i++) {
 			forces[i] = new CarForces();
 		}
 
 		this.id = id;
 	}
 
-	public void dispose() {
+	public void dispose () {
 		reset();
 		time.dispose();
 	}
 
-	public void begin( String trackName, Car car ) {
+	public void begin (String trackName, Car car) {
 		reset();
-		carWorldPositionMt.set( car.getWorldPosMt() );
+		carWorldPositionMt.set(car.getWorldPosMt());
 		carWorldOrientRads = car.getWorldOrientRads();
 		carPresetType = car.getPresetType();
 		this.trackName = trackName;
@@ -79,17 +78,17 @@ public class Replay {
 		// Gdx.app.log( "Replay", "Begin at " + carWorldPositionMt + ", " + carWorldOrientRads );
 	}
 
-	public void end() {
+	public void end () {
 		time.stop();
-		trackTimeSeconds = time.elapsed( Time.Reference.TickSeconds );
+		trackTimeSeconds = time.elapsed(Time.Reference.TickSeconds);
 		isValid = true;
 		isLoaded = false;
 		isSaved = false;
 	}
 
-	public void reset() {
+	public void reset () {
 		eventsCount = 0;
-		for( int i = 0; i < MaxEvents; i++ ) {
+		for (int i = 0; i < MaxEvents; i++) {
 			forces[i].reset();
 		}
 
@@ -102,13 +101,13 @@ public class Replay {
 	}
 
 	// recording
-	public int getEventsCount() {
+	public int getEventsCount () {
 		return eventsCount;
 	}
 
-	public boolean add( CarForces f ) {
-		forces[eventsCount++].set( f );
-		if( eventsCount == MaxEvents ) {
+	public boolean add (CarForces f) {
+		forces[eventsCount++].set(f);
+		if (eventsCount == MaxEvents) {
 			eventsCount = 0;
 			return false;
 		}
@@ -116,18 +115,18 @@ public class Replay {
 		return true;
 	}
 
-	public static Replay loadLocal( String trackname ) {
+	public static Replay loadLocal (String trackname) {
 		String filename = Storage.LocalReplays + trackname;
-		FileHandle fh = Gdx.files.external( filename );
+		FileHandle fh = Gdx.files.external(filename);
 
-		if( fh.exists() ) {
+		if (fh.exists()) {
 			try {
 				// DataInputStream is = new DataInputStream( fh.read() );
-				GZIPInputStream gzis = new GZIPInputStream( fh.read() );
-				ObjectInputStream is = new ObjectInputStream( gzis );
+				GZIPInputStream gzis = new GZIPInputStream(fh.read());
+				ObjectInputStream is = new ObjectInputStream(gzis);
 
 				// read header
-				Replay r = new Replay( is.readLong() );
+				Replay r = new Replay(is.readLong());
 
 				// replay info data
 				r.trackName = is.readUTF();
@@ -136,12 +135,12 @@ public class Replay {
 				r.eventsCount = is.readInt();
 
 				// car data
-				r.carPresetType = CarPreset.Type.valueOf( is.readUTF() );
+				r.carPresetType = CarPreset.Type.valueOf(is.readUTF());
 				r.carWorldPositionMt.x = is.readFloat();
 				r.carWorldPositionMt.y = is.readFloat();
 				r.carWorldOrientRads = is.readFloat();
 
-				for( int i = 0; i < r.eventsCount; i++ ) {
+				for (int i = 0; i < r.eventsCount; i++) {
 					r.forces[i].velocity_x = is.readFloat();
 					r.forces[i].velocity_y = is.readFloat();
 					r.forces[i].angularVelocity = is.readFloat();
@@ -156,81 +155,81 @@ public class Replay {
 				// Gdx.app.log( "Replay", "Done loading local replay" );
 				return r;
 
-			} catch( Exception e ) {
-				Gdx.app.log( "Replay", "Couldn't load local replay, reason: " + e.getMessage() );
+			} catch (Exception e) {
+				Gdx.app.log("Replay", "Couldn't load local replay, reason: " + e.getMessage());
 			}
 		} else {
-			Gdx.app.log( "Replay", "There is no replay available for this track (" + trackname + ")" );
+			Gdx.app.log("Replay", "There is no replay available for this track (" + trackname + ")");
 		}
 
 		return null;
 	}
 
-	public void saveLocal( final Messager messager ) {
-		if( isValid && !isLoaded && !isSaved ) {
+	public void saveLocal (final Messager messager) {
+		if (isValid && !isLoaded && !isSaved) {
 
 			// this is an asynchronous operation, but it's safe since saving a replay
 			// imply this replay won't get overwritten anytime soon
-			new Thread( new Runnable() {
+			new Thread(new Runnable() {
 
 				@Override
-				public void run() {
+				public void run () {
 					try {
 						String filename = Storage.LocalReplays + trackName;
-						FileHandle hf = Gdx.files.external( filename );
+						FileHandle hf = Gdx.files.external(filename);
 
 						// DataOutputStream os = new DataOutputStream( hf.write( false ) );
 						GZIPOutputStream gzos = null;
 
 						try {
-							gzos = new GZIPOutputStream( hf.write( false ) ) {
+							gzos = new GZIPOutputStream(hf.write(false)) {
 								{
-									def.setLevel( Deflater.BEST_COMPRESSION );
+									def.setLevel(Deflater.BEST_COMPRESSION);
 								}
 							};
-						} catch( GdxRuntimeException e ) {
-							messager.enqueue( "Couldn't save local replay, no space?", 3f, Message.Type.Bad, Position.Bottom,
-									Size.Normal );
+						} catch (GdxRuntimeException e) {
+							messager
+								.enqueue("Couldn't save local replay, no space?", 3f, Message.Type.Bad, Position.Bottom, Size.Normal);
 							return;
 						}
 
-						ObjectOutputStream os = new ObjectOutputStream( gzos );
+						ObjectOutputStream os = new ObjectOutputStream(gzos);
 
 						// write header
 
 						// replay info data
-						os.writeLong( id );
-						os.writeUTF( trackName );
+						os.writeLong(id);
+						os.writeUTF(trackName);
 						// os.writeUTF( difficultyLevel.toString() );
-						os.writeFloat( trackTimeSeconds );
-						os.writeInt( eventsCount );
+						os.writeFloat(trackTimeSeconds);
+						os.writeInt(eventsCount);
 
 						// car data
-						os.writeUTF( carPresetType.toString() );
-						os.writeFloat( carWorldPositionMt.x );
-						os.writeFloat( carWorldPositionMt.y );
-						os.writeFloat( carWorldOrientRads );
+						os.writeUTF(carPresetType.toString());
+						os.writeFloat(carWorldPositionMt.x);
+						os.writeFloat(carWorldPositionMt.y);
+						os.writeFloat(carWorldOrientRads);
 
 						// write the effective number of captured CarForces events
-						for( int i = 0; i < eventsCount; i++ ) {
+						for (int i = 0; i < eventsCount; i++) {
 							CarForces f = forces[i];
-							os.writeFloat( f.velocity_x );
-							os.writeFloat( f.velocity_y );
-							os.writeFloat( f.angularVelocity );
+							os.writeFloat(f.velocity_x);
+							os.writeFloat(f.velocity_y);
+							os.writeFloat(f.angularVelocity);
 						}
 
 						os.close();
 
 						isSaved = true;
 
-						messager.enqueue( "Replay saved", 1f, Message.Type.Information, Position.Bottom, Size.Normal );
+						messager.enqueue("Replay saved", 1f, Message.Type.Information, Position.Bottom, Size.Normal);
 						// Gdx.app.log( "Replay", "Done saving local replay (" + trackTimeSeconds + ")" );
 
-					} catch( IOException e ) {
-						Gdx.app.log( "Replay", "Couldn't save local replay, reason: " + e.getMessage() );
+					} catch (IOException e) {
+						Gdx.app.log("Replay", "Couldn't save local replay, reason: " + e.getMessage());
 					}
 				}
-			} ).start();
+			}).start();
 		}
 	}
 }

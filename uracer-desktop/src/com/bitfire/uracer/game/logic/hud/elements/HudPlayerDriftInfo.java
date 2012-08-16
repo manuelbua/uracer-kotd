@@ -1,3 +1,4 @@
+
 package com.bitfire.uracer.game.logic.hud.elements;
 
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
@@ -42,112 +43,112 @@ public final class HudPlayerDriftInfo extends HudElement {
 	private Vector2 lastRealtimePos = new Vector2();
 	private boolean began = false;
 
-	public HudPlayerDriftInfo( ScalingStrategy scalingStrategy, PlayerCar player ) {
+	public HudPlayerDriftInfo (ScalingStrategy scalingStrategy, PlayerCar player) {
 		this.player = player;
-		this.carModelWidthPx = Convert.mt2px( player.getCarModel().width );
-		this.carModelLengthPx = Convert.mt2px( player.getCarModel().length );
+		this.carModelWidthPx = Convert.mt2px(player.getCarModel().width);
+		this.carModelLengthPx = Convert.mt2px(player.getCarModel().length);
 
 		// 99.99, reserve some space and do not recompute bounds
 
 		// labelRealtime role is to display PlayerCar values in real-time!
-		labelRealtime = new HudLabel( scalingStrategy, Art.fontCurseYRbig, "+10.99", 0.5f );
-		labelRealtime.setAlpha( 0 );
-		lastRealtimePos.set( 0, 0 );
+		labelRealtime = new HudLabel(scalingStrategy, Art.fontCurseYRbig, "+10.99", 0.5f);
+		labelRealtime.setAlpha(0);
+		lastRealtimePos.set(0, 0);
 
-		labelResult = new HudLabel[ MaxLabelResult ];
+		labelResult = new HudLabel[MaxLabelResult];
 		nextLabelResult = 0;
-		for( int i = 0; i < MaxLabelResult; i++ ) {
-			labelResult[i] = new HudLabel( scalingStrategy, Art.fontCurseR, "+10.99", 0.85f );
-			labelResult[i].setAlpha( 0 );
+		for (int i = 0; i < MaxLabelResult; i++) {
+			labelResult[i] = new HudLabel(scalingStrategy, Art.fontCurseR, "+10.99", 0.85f);
+			labelResult[i].setAlpha(0);
 		}
 	}
 
 	/** Signals the hud element that the player is initiating a drift */
-	public void beginDrift() {
-		labelRealtime.fadeIn( 300 );
+	public void beginDrift () {
+		labelRealtime.fadeIn(300);
 		began = true;
 	}
 
 	/** Signals the hud element that the player has finished drifting */
-	public void endDrift( String message, EndDriftType type ) {
+	public void endDrift (String message, EndDriftType type) {
 		HudLabel result = labelResult[nextLabelResult++];
 
-		if( nextLabelResult == MaxLabelResult ) {
+		if (nextLabelResult == MaxLabelResult) {
 			nextLabelResult = 0;
 		}
 
-		switch( type ) {
+		switch (type) {
 		case BadDrift:
-			result.setFont( Art.fontCurseRbig );
+			result.setFont(Art.fontCurseRbig);
 			break;
 		case GoodDrift:
 		default:
-			result.setFont( Art.fontCurseGbig );
+			result.setFont(Art.fontCurseGbig);
 			break;
 		}
 
-		result.setString( message );
-		result.setPosition( lastRealtimePos );
-		result.slide( type == EndDriftType.GoodDrift );
+		result.setString(message);
+		result.setPosition(lastRealtimePos);
+		result.slide(type == EndDriftType.GoodDrift);
 
 		began = false;
-		refreshLabelRealtime( true );
+		refreshLabelRealtime(true);
 
-		labelRealtime.fadeOut( 300 );
+		labelRealtime.fadeOut(300);
 	}
 
 	@Override
-	public void dispose() {
+	public void dispose () {
 	}
 
 	@Override
-	public void onTick() {
-		refreshLabelRealtime( false );
+	public void onTick () {
+		refreshLabelRealtime(false);
 	}
 
-	private void refreshLabelRealtime( boolean force ) {
-		if( force || (began && labelRealtime.isVisible()) ) {
-			labelRealtime.setString( "+" + NumberString.format( player.driftState.driftSeconds() ) );
+	private void refreshLabelRealtime (boolean force) {
+		if (force || (began && labelRealtime.isVisible())) {
+			labelRealtime.setString("+" + NumberString.format(player.driftState.driftSeconds()));
 		}
 	}
 
 	@Override
-	public void onReset() {
-		labelRealtime.setAlpha( 0 );
-		for( int i = 0; i < MaxLabelResult; i++ ) {
-			labelResult[i].setAlpha( 0 );
+	public void onReset () {
+		labelRealtime.setAlpha(0);
+		for (int i = 0; i < MaxLabelResult; i++) {
+			labelResult[i].setAlpha(0);
 		}
 
 		nextLabelResult = 0;
 	}
 
 	@Override
-	public void onRender( SpriteBatch batch ) {
-		playerPosition.set( player.state().position );
+	public void onRender (SpriteBatch batch) {
+		playerPosition.set(player.state().position);
 		float playerOrientation = player.state().orientation;
 
 		// compute heading
-		displacement.set( VMath.fromDegrees( playerOrientation ) );
+		displacement.set(VMath.fromDegrees(playerOrientation));
 
 		// compute displacement
 		displacement.x *= (carModelWidthPx + labelRealtime.halfBoundsWidth);
 		displacement.y *= (carModelLengthPx + labelRealtime.halfBoundsHeight);
 
 		// gets pixel position and then displaces it
-		tmpv.set( GameRenderer.ScreenUtils.worldPxToScreen( playerPosition ) );
-		tmpv.sub( displacement );
+		tmpv.set(GameRenderer.ScreenUtils.worldPxToScreen(playerPosition));
+		tmpv.sub(displacement);
 
-		labelRealtime.setPosition( tmpv );
-		lastRealtimePos.set( tmpv );
+		labelRealtime.setPosition(tmpv);
+		lastRealtimePos.set(tmpv);
 
 		// draw earned/lost seconds
-		if( labelRealtime.isVisible() ) {
-			labelRealtime.render( batch );
+		if (labelRealtime.isVisible()) {
+			labelRealtime.render(batch);
 		}
 
 		// draw result
-		for( int i = 0; i < MaxLabelResult; i++ ) {
-			labelResult[i].render( batch );
+		for (int i = 0; i < MaxLabelResult; i++) {
+			labelResult[i].render(batch);
 		}
 	}
 }

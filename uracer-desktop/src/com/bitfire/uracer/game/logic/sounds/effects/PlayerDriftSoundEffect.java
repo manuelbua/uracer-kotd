@@ -1,3 +1,4 @@
+
 package com.bitfire.uracer.game.logic.sounds.effects;
 
 import com.badlogic.gdx.audio.Sound;
@@ -11,11 +12,9 @@ import com.bitfire.uracer.resources.Sounds;
 import com.bitfire.uracer.utils.AMath;
 import com.bitfire.uracer.utils.AudioUtils;
 
-/** Implements car drifting sound effects, modulating amplitude's volume and pitch
- * accordingly to the car's physical behavior and properties.
- * The behavior is extrapolated from the resultant computed forces upon user
- * input interaction with the car simulator.
- *
+/** Implements car drifting sound effects, modulating amplitude's volume and pitch accordingly to the car's physical behavior and
+ * properties. The behavior is extrapolated from the resultant computed forces upon user input interaction with the car simulator.
+ * 
  * @author bmanuel */
 public final class PlayerDriftSoundEffect extends SoundEffect {
 	private Sound drift = null;
@@ -32,8 +31,8 @@ public final class PlayerDriftSoundEffect extends SoundEffect {
 
 	private PlayerDriftStateEvent.Listener driftListener = new PlayerDriftStateEvent.Listener() {
 		@Override
-		public void playerDriftStateEvent( PlayerCar player, Type type ) {
-			switch( type ) {
+		public void playerDriftStateEvent (PlayerCar player, Type type) {
+			switch (type) {
 			case onBeginDrift:
 				onBeginDrift();
 				break;
@@ -44,55 +43,55 @@ public final class PlayerDriftSoundEffect extends SoundEffect {
 		}
 	};
 
-	public PlayerDriftSoundEffect( PlayerCar player ) {
+	public PlayerDriftSoundEffect (PlayerCar player) {
 		this.player = player;
-		player.driftState.event.addListener( driftListener, PlayerDriftStateEvent.Type.onBeginDrift );
-		player.driftState.event.addListener( driftListener, PlayerDriftStateEvent.Type.onEndDrift );
+		player.driftState.event.addListener(driftListener, PlayerDriftStateEvent.Type.onBeginDrift);
+		player.driftState.event.addListener(driftListener, PlayerDriftStateEvent.Type.onEndDrift);
 		drift = Sounds.carDrift;
 		start();
 	}
 
 	@Override
-	public void dispose() {
-		player.driftState.event.removeListener( driftListener, PlayerDriftStateEvent.Type.onBeginDrift );
-		player.driftState.event.removeListener( driftListener, PlayerDriftStateEvent.Type.onEndDrift );
+	public void dispose () {
+		player.driftState.event.removeListener(driftListener, PlayerDriftStateEvent.Type.onBeginDrift);
+		player.driftState.event.removeListener(driftListener, PlayerDriftStateEvent.Type.onEndDrift);
 
 		drift.stop();
 	}
 
-	private void onBeginDrift() {
-		if( driftId > -1 ) {
-			drift.stop( driftId );
-			driftId = drift.loop( 0f );
-			drift.setVolume( driftId, 0f );
+	private void onBeginDrift () {
+		if (driftId > -1) {
+			drift.stop(driftId);
+			driftId = drift.loop(0f);
+			drift.setVolume(driftId, 0f);
 		}
 
 		doFadeIn = true;
 		doFadeOut = false;
 	}
 
-	public void onEndDrift() {
+	public void onEndDrift () {
 		doFadeIn = false;
 		doFadeOut = true;
 	}
 
 	@Override
-	public void start() {
+	public void start () {
 		// UGLY HACK FOR ANDROID
-		if( Config.isDesktop ) {
-			driftId = drift.loop( 0f );
+		if (Config.isDesktop) {
+			driftId = drift.loop(0f);
 		} else {
-			driftId = checkedLoop( drift, 0f );
+			driftId = checkedLoop(drift, 0f);
 		}
 
-		drift.setPitch( driftId, pitchMin );
-		drift.setVolume( driftId, 0f );
+		drift.setPitch(driftId, pitchMin);
+		drift.setVolume(driftId, 0f);
 	}
 
 	@Override
-	public void stop() {
-		if( driftId > -1 ) {
-			drift.stop( driftId );
+	public void stop () {
+		if (driftId > -1) {
+			drift.stop(driftId);
 		}
 
 		doFadeIn = false;
@@ -100,38 +99,38 @@ public final class PlayerDriftSoundEffect extends SoundEffect {
 	}
 
 	@Override
-	public void reset() {
+	public void reset () {
 		stop();
 		lastVolume = 0;
 	}
 
 	@Override
-	public void tick() {
-		if( driftId > -1 ) {
+	public void tick () {
+		if (driftId > -1) {
 			boolean anotherDriftId = (driftId != lastDriftId);
 			float speedFactor = player.carState.currSpeedFactor;
 
 			// compute behavior
 			float pitch = speedFactor * pitchFactor + pitchMin;
-			pitch = AMath.clamp( pitch, pitchMin, pitchMax );
-			pitch = AudioUtils.timeDilationToAudioPitch( pitch, URacer.timeMultiplier );
+			pitch = AMath.clamp(pitch, pitchMin, pitchMax);
+			pitch = AudioUtils.timeDilationToAudioPitch(pitch, URacer.timeMultiplier);
 			// System.out.println( pitch );
 
-			if( !AMath.equals( pitch, driftLastPitch ) || anotherDriftId ) {
-				drift.setPitch( driftId, pitch );
+			if (!AMath.equals(pitch, driftLastPitch) || anotherDriftId) {
+				drift.setPitch(driftId, pitch);
 				driftLastPitch = pitch;
 			}
 
 			// modulate volume
-			if( doFadeIn ) {
-				if( lastVolume < 1f ) {
+			if (doFadeIn) {
+				if (lastVolume < 1f) {
 					lastVolume += 0.01f;
 				} else {
 					lastVolume = 1f;
 					doFadeIn = false;
 				}
-			} else if( doFadeOut ) {
-				if( lastVolume > 0f ) {
+			} else if (doFadeOut) {
+				if (lastVolume > 0f) {
 					lastVolume -= 0.03f;
 				} else {
 					lastVolume = 0f;
@@ -140,8 +139,8 @@ public final class PlayerDriftSoundEffect extends SoundEffect {
 			}
 
 			lastDriftId = driftId;
-			lastVolume = AMath.clamp( lastVolume, 0, 1f );
-			drift.setVolume( driftId, player.driftState.driftStrength * lastVolume );
+			lastVolume = AMath.clamp(lastVolume, 0, 1f);
+			drift.setVolume(driftId, player.driftState.driftStrength * lastVolume);
 		}
 	}
 }

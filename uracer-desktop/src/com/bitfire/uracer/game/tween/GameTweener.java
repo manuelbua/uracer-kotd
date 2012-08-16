@@ -1,3 +1,4 @@
+
 package com.bitfire.uracer.game.tween;
 
 import aurelienribon.tweenengine.Timeline;
@@ -9,26 +10,26 @@ import com.bitfire.uracer.URacer;
 public final class GameTweener {
 	private static final TweenManager manager = new TweenManager();
 
-	private GameTweener() {
+	private GameTweener () {
 	}
 
-	public static void dispose() {
+	public static void dispose () {
 		clear();
 	}
 
-	public static void clear() {
+	public static void clear () {
 		manager.killAll();
 	}
 
-	public static void start( Timeline timeline ) {
-		timeline.start( manager );
+	public static void start (Timeline timeline) {
+		timeline.start(manager);
 	}
 
-	public static void stop( Object target ) {
-		manager.killTarget( target );
+	public static void stop (Object target) {
+		manager.killTarget(target);
 	}
 
-	public static void update() {
-		manager.update( URacer.Game.getLastDeltaMs() * URacer.timeMultiplier );
+	public static void update () {
+		manager.update(URacer.Game.getLastDeltaMs() * URacer.timeMultiplier);
 	}
 }

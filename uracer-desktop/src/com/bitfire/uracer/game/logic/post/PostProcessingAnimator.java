@@ -1,7 +1,8 @@
+
 package com.bitfire.uracer.game.logic.post;
 
-
 public interface PostProcessingAnimator {
-	void update();
-	void reset();
+	void update (float timeModFactor);
+
+	void reset ();
 }

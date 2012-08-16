@@ -1,3 +1,4 @@
+
 package com.bitfire.uracer.game.player;
 
 import com.badlogic.gdx.Gdx;
@@ -37,7 +38,7 @@ public class PlayerCar extends Car {
 	private Vector2 carPos = new Vector2();
 	private final float invWidth = 1f / Gdx.graphics.getWidth(), invHeight = 1f / Gdx.graphics.getHeight();
 	// private float scaleInputX, scaleInputY;
-	private WindowedMean frictionMean = new WindowedMean( 10 );
+	private WindowedMean frictionMean = new WindowedMean(10);
 
 	// damping values
 	private float dampFriction = 0;
@@ -46,47 +47,47 @@ public class PlayerCar extends Car {
 	public CarState carState = null;
 	public PlayerDriftState driftState = null;
 
-	public PlayerCar( GameWorld gameWorld, CarPreset.Type presetType ) {
-		super( gameWorld, CarType.PlayerCar, InputMode.InputFromPlayer, GameRendererEvent.Order.MINUS_1, presetType, true );
+	public PlayerCar (GameWorld gameWorld, CarPreset.Type presetType) {
+		super(gameWorld, CarType.PlayerCar, InputMode.InputFromPlayer, GameRendererEvent.Order.MINUS_1, presetType, true);
 		carInput = new CarInput();
 		impacts = 0;
 
 		// strategy = gameWorld.scalingStrategy;
-		carDesc = new CarDescriptor( preset.model );
-		carSim = new CarSimulator( carDesc );
-		renderer.setAlpha( 1 );
+		carDesc = new CarDescriptor(preset.model);
+		carSim = new CarSimulator(carDesc);
+		renderer.setAlpha(1);
 
 		// precompute relaxing factors for user input coordinates
 		// scaleInputX = invWidth * gameWorld.scalingStrategy.referenceResolution.x;
 		// scaleInputY = invHeight * gameWorld.scalingStrategy.referenceResolution.y;
 
 		// states
-		this.carState = new CarState( gameWorld, this );
-		this.driftState = new PlayerDriftState( this );
+		this.carState = new CarState(gameWorld, this);
+		this.driftState = new PlayerDriftState(this);
 
 		// set physical properties
 		dampFriction = GameplaySettings.DampingFriction;
 	}
 
 	@Override
-	public void dispose() {
+	public void dispose () {
 		super.dispose();
 		driftState.dispose();
 		frictionMean = null;
 	}
 
 	@Override
-	public boolean isVisible() {
+	public boolean isVisible () {
 		return true;
 	}
 
 	// use strictly for debug purposes *ONLY*!
-	public CarDescriptor getCarDescriptor() {
+	public CarDescriptor getCarDescriptor () {
 		return carDesc;
 	}
 
 	@Override
-	public void resetPhysics() {
+	public void resetPhysics () {
 		super.resetPhysics();
 		carSim.resetPhysics();
 		frictionMean.clear();
@@ -95,60 +96,59 @@ public class PlayerCar extends Car {
 	}
 
 	/** Sets the input system this PlayerCar will use to check for input events */
-	public void setInputSystem( Input input ) {
+	public void setInputSystem (Input input) {
 		this.input = input;
 	}
 
-	/** When the player's car is off-track this damping will be applied
-	 * to the car's linear velocity */
-//	public void setDampingFriction( float damping ) {
-//		dampFriction = damping;
-//	}
+	/** When the player's car is off-track this damping will be applied to the car's linear velocity */
+	// public void setDampingFriction( float damping ) {
+	// dampFriction = damping;
+	// }
 
-	protected CarInput acquireInput() {
-		if( input == null ) {
+	protected CarInput acquireInput () {
+		if (input == null) {
 			carInput.reset();
 			return carInput;
 		}
 
-		carPos.set( GameRenderer.ScreenUtils.worldMtToScreen( body.getPosition() ) );
-		touchPos.set( input.getXY() );
+		carPos.set(GameRenderer.ScreenUtils.worldMtToScreen(body.getPosition()));
+		touchPos.set(input.getXY());
 
 		carInput.updated = input.isTouching();
 		// Gdx.app.log( "PlayerCar", "carpos=" + carPos.toString() + ", cursor=" + touchPos.toString() );
 
-		if( carInput.updated ) {
+		if (carInput.updated) {
 
 			// compute steer angle first
-			carInput.steerAngle = transformSteerAngle( (float)Math.atan2( -carPos.x + touchPos.x, -carPos.y + touchPos.y ) );
+			carInput.steerAngle = transformSteerAngle((float)Math.atan2(-carPos.x + touchPos.x, -carPos.y + touchPos.y));
 
 			// normalize positions and compute final throttle
 			touchPos.x *= invWidth;
 			touchPos.y *= invHeight;
 			carPos.x *= invWidth;
 			carPos.y *= invHeight;
-			VMath.clamp( touchPos, 0, 1 );
-			VMath.clamp( carPos, 0, 1 );
+			VMath.clamp(touchPos, 0, 1);
+			VMath.clamp(carPos, 0, 1);
 
-			carInput.throttle = touchPos.dst( carPos ) * 4 * preset.model.max_force;
+			carInput.throttle = touchPos.dst(carPos) * 4 * preset.model.max_force;
 		}
 
 		return carInput;
 	}
 
-	private float transformSteerAngle( float angle ) {
+	private float transformSteerAngle (float angle) {
 		float transformed = angle;
 
 		transformed -= AMath.PI;
 		transformed += -body.getAngle(); // to local
 
-		if( transformed < 0 ) {
+		if (transformed < 0) {
 			transformed += AMath.TWO_PI;
 		}
 
 		transformed = -(transformed - AMath.TWO_PI);
 
-		if( transformed > AMath.PI ) {
+		if (transformed > AMath.PI) {
 			transformed = transformed - AMath.TWO_PI;
 		}
 
@@ -156,15 +156,15 @@ public class PlayerCar extends Car {
 	}
 
 	@Override
-	protected void onComputeCarForces( CarForces forces ) {
+	protected void onComputeCarForces (CarForces forces) {
 		carInput = acquireInput();
 
 		// handle decrease scheduled from previous step
 		// handleDecrease( carInput );
 		handleImpactFeedback();
 
-		carSim.applyInput( carInput );
-		carSim.step( Config.Physics.PhysicsDt, body.getAngle() );
+		carSim.applyInput(carInput);
+		carSim.step(Config.Physics.PhysicsDt, body.getAngle());
 
 		// update computed forces
 		forces.velocity_x = carDesc.velocity_wc.x;
@@ -173,14 +173,14 @@ public class PlayerCar extends Car {
 	}
 
 	@Override
-	public void onSubstepCompleted() {
+	public void onSubstepCompleted () {
 		// inspect impact feedback, accumulate vel/ang velocities
 		// handleImpactFeedback();
 
-		carState.update( carDesc );
-		driftState.update( carSim.lateralForceFront.y, carSim.lateralForceRear.y, carDesc.velocity_wc.len() );
+		carState.update(carDesc);
+		driftState.update(carSim.lateralForceFront.y, carSim.lateralForceRear.y, carDesc.velocity_wc.len());
 
-		if( Config.Debug.ApplyCarFrictionFromMap ) {
+		if (Config.Debug.ApplyCarFrictionFromMap) {
 			updateCarFriction();
 			applyFriction();
 		}
@@ -188,21 +188,21 @@ public class PlayerCar extends Car {
 
 	private Vector2 offset = new Vector2();
 
-	private void updateCarFriction() {
+	private void updateCarFriction () {
 		Vector2 tilePosition = carState.tilePosition;
 
-		if( gameWorld.isValidTilePosition( tilePosition ) ) {
+		if (gameWorld.isValidTilePosition(tilePosition)) {
 			// compute realsize-based pixel offset car-tile (top-left origin)
 			float scaledTileSize = gameWorld.getTileSizeScaled();
 			float tsx = tilePosition.x * scaledTileSize;
 			float tsy = tilePosition.y * scaledTileSize;
-			offset.set( Convert.mt2px( getBody().getPosition() ) );
+			offset.set(Convert.mt2px(getBody().getPosition()));
 			offset.y = gameWorld.worldSizeScaledPx.y - offset.y;
 			offset.x = offset.x - tsx;
 			offset.y = offset.y - tsy;
-			offset.mul( gameWorld.getTileSizeInvScaled() ).mul( gameWorld.map.tileWidth );
+			offset.mul(gameWorld.getTileSizeInvScaled()).mul(gameWorld.map.tileWidth);
 
-			TiledLayer layerTrack = gameWorld.getLayer( TileLayer.Track );
+			TiledLayer layerTrack = gameWorld.getLayer(TileLayer.Track);
 			int id = layerTrack.tiles[(int)tilePosition.y][(int)tilePosition.x] - 1;
 
 			// int xOnMap = (id %4) * (int)gameWorld.map.tileWidth + (int)offset.x;
@@ -212,8 +212,8 @@ public class PlayerCar extends Car {
 			int xOnMap = (id & 3) * (int)gameWorld.map.tileWidth + (int)offset.x;
 			int yOnMap = (id >> 2) * (int)gameWorld.map.tileWidth + (int)offset.y;
 
-			int pixel = Art.frictionNature.getPixel( xOnMap, yOnMap );
-			frictionMean.addValue( (pixel == -256 ? 0 : -1) );
+			int pixel = Art.frictionNature.getPixel(xOnMap, yOnMap);
+			frictionMean.addValue((pixel == -256 ? 0 : -1));
 
 			// Gdx.app.log( "PlayerCar", "xmap=" + xOnMap + ", ymap=" + yOnMap );
 			// Gdx.app.log( "PlayerCar", "mean=" + frictionMean.getMean() + ", pixel=" + pixel + ", xmap=" + xOnMap +
@@ -221,24 +221,24 @@ public class PlayerCar extends Car {
 			// Gdx.app.log( "PlayerCar", "id=" + id );
 
 		} else {
-			Gdx.app.log( "PlayerCar", "PlayerCar out of map!" );
+			Gdx.app.log("PlayerCar", "PlayerCar out of map!");
 		}
 	}
 
-	private void applyFriction() {
+	private void applyFriction () {
 		// FIXME, move these hard-coded values out of here
-		if( frictionMean.getMean() < -0.3 && carDesc.velocity_wc.len2() > 10 ) {
-			carDesc.velocity_wc.mul( dampFriction );
+		if (frictionMean.getMean() < -0.3 && carDesc.velocity_wc.len2() > 10) {
+			carDesc.velocity_wc.mul(dampFriction);
 		}
 	}
 
-	private void handleImpactFeedback() {
+	private void handleImpactFeedback () {
 		// process impact feedback
-		while( impacts > 0 ) {
+		while (impacts > 0) {
 			impacts--;
 
 			// feed back the result to the car simulator
-			carDesc.velocity_wc.set( body.getLinearVelocity() );
+			carDesc.velocity_wc.set(body.getLinearVelocity());
 			carDesc.angularvelocity = -body.getAngularVelocity();
 		}
 	}

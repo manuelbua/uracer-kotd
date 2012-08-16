@@ -1,3 +1,4 @@
+
 package com.bitfire.uracer.screen.transitions;
 
 import com.badlogic.gdx.graphics.glutils.FrameBuffer;
@@ -22,73 +23,73 @@ public final class CrossFader extends ScreenTransition {
 	ShaderProgram fade;
 	Screen next;
 
-	public CrossFader() {
+	public CrossFader () {
 		quad = new FullscreenQuad();
-		fade = ShaderLoader.fromFile( "fade", "fade" );
+		fade = ShaderLoader.fromFile("fade", "fade");
 		reset();
 	}
 
-	private void rebind() {
+	private void rebind () {
 		fade.begin();
-		fade.setUniformi( "u_texture0", 0 );
-		fade.setUniformi( "u_texture1", 1 );
-		fade.setUniformf( "Ratio", 0 );
+		fade.setUniformi("u_texture0", 0);
+		fade.setUniformi("u_texture1", 1);
+		fade.setUniformf("Ratio", 0);
 		fade.end();
 	}
 
 	@Override
-	public void reset() {
+	public void reset () {
 		rebind();
 		next = null;
 		factor = 0;
 		elapsed = 0;
-		setDuration( 1000 );
+		setDuration(1000);
 	}
 
 	@Override
-	public void dispose() {
+	public void dispose () {
 		quad.dispose();
 		fade.dispose();
 	}
 
 	@Override
-	public void frameBuffersReady( Screen current, FrameBuffer from, ScreenType nextScreen, FrameBuffer to ) {
+	public void frameBuffersReady (Screen current, FrameBuffer from, ScreenType nextScreen, FrameBuffer to) {
 		this.from = from;
 		this.to = to;
 
-		ScreenUtils.copyScreen( current, from );
+		ScreenUtils.copyScreen(current, from);
 
-		next = ScreenFactory.createScreen( nextScreen );
-		ScreenUtils.copyScreen( next, to );
+		next = ScreenFactory.createScreen(nextScreen);
+		ScreenUtils.copyScreen(next, to);
 	}
 
 	@Override
-	public Screen nextScreen() {
+	public Screen nextScreen () {
 		return next;
 	}
 
 	/** Sets the duration of the effect, in milliseconds. */
 	@Override
-	public void setDuration( long durationMs ) {
+	public void setDuration (long durationMs) {
 		duration = durationMs;
-		if( durationMs == 0 ) {
-			throw new GdxRuntimeException( "Invalid transition duration specified." );
+		if (durationMs == 0) {
+			throw new GdxRuntimeException("Invalid transition duration specified.");
 		}
 	}
 
 	@Override
-	public void resume() {
+	public void resume () {
 		rebind();
 	}
 
 	@Override
-	public void update() {
+	public void update () {
 		long delta = (long)URacer.Game.getLastDeltaMs();
-		delta = AMath.clamp( delta, 0, (long)(Config.Physics.PhysicsDt * 1000) );
+		delta = AMath.clamp(delta, 0, (long)(Config.Physics.PhysicsDt * 1000));
 
 		elapsed += delta;
 
-		if( elapsed > duration ) {
+		if (elapsed > duration) {
 			elapsed = duration;
 		}
 
@@ -96,18 +97,18 @@ public final class CrossFader extends ScreenTransition {
 	}
 
 	@Override
-	public void render() {
-		from.getColorBufferTexture().bind( 0 );
-		to.getColorBufferTexture().bind( 1 );
+	public void render () {
+		from.getColorBufferTexture().bind(0);
+		to.getColorBufferTexture().bind(1);
 
 		fade.begin();
-		fade.setUniformf( "Ratio", factor );
-		quad.render( fade );
+		fade.setUniformf("Ratio", factor);
+		quad.render(fade);
 		fade.end();
 	}
 
 	@Override
-	public boolean isComplete() {
+	public boolean isComplete () {
 		return elapsed >= duration;
 	}
 }

@@ -1,3 +1,4 @@
+
 package com.bitfire.uracer.game.world.models;
 
 import java.io.IOException;
@@ -22,62 +23,62 @@ public final class ModelFactory {
 
 	private static ScalingStrategy scalingStrategy;
 
-	private ModelFactory() {
+	private ModelFactory () {
 	}
 
-	public static void init( ScalingStrategy strategy ) {
+	public static void init (ScalingStrategy strategy) {
 		ModelFactory.scalingStrategy = strategy;
 	}
 
-	public static void dispose() {
+	public static void dispose () {
 
 		// finally, delete cached shared still models
-		if( cachedStillModels != null ) {
-			for( StillModel m : cachedStillModels.values() ) {
+		if (cachedStillModels != null) {
+			for (StillModel m : cachedStillModels.values()) {
 				m.dispose();
 			}
 
 			cachedStillModels.clear();
 		}
 
-		if( cachedMaterials != null ) {
+		if (cachedMaterials != null) {
 			cachedMaterials.clear();
 		}
 	}
 
-	private static ModelMesh fromString( String mesh ) {
-		if( mesh == null ) {
+	private static ModelMesh fromString (String mesh) {
+		if (mesh == null) {
 			return ModelMesh.Missing;
-		} else if( mesh.equalsIgnoreCase( "palm" ) ) {
+		} else if (mesh.equalsIgnoreCase("palm")) {
 			return ModelMesh.Palm;
-		} else if( mesh.equalsIgnoreCase( "tribune" ) ) {
+		} else if (mesh.equalsIgnoreCase("tribune")) {
 			return ModelMesh.Tribune;
-		} else if( mesh.equalsIgnoreCase( "tree-1" ) ) {
+		} else if (mesh.equalsIgnoreCase("tree-1")) {
 			return ModelMesh.Tree_1;
-		} else if( mesh.equalsIgnoreCase( "tree-2" ) ) {
+		} else if (mesh.equalsIgnoreCase("tree-2")) {
 			return ModelMesh.Tree_2;
-		} else if( mesh.equalsIgnoreCase( "tree-3" ) ) {
+		} else if (mesh.equalsIgnoreCase("tree-3")) {
 			return ModelMesh.Tree_3;
-		} else if( mesh.equalsIgnoreCase( "tree-4" ) ) {
+		} else if (mesh.equalsIgnoreCase("tree-4")) {
 			return ModelMesh.Tree_4;
-		} else if( mesh.equalsIgnoreCase( "tree-5" ) ) {
+		} else if (mesh.equalsIgnoreCase("tree-5")) {
 			return ModelMesh.Tree_5;
-		} else if( mesh.equalsIgnoreCase( "tree-6" ) ) {
+		} else if (mesh.equalsIgnoreCase("tree-6")) {
 			return ModelMesh.Tree_6;
-		} else if( mesh.equalsIgnoreCase( "tree-7" ) ) {
+		} else if (mesh.equalsIgnoreCase("tree-7")) {
 			return ModelMesh.Tree_7;
-		} else if( mesh.equalsIgnoreCase( "tree-8" ) ) {
+		} else if (mesh.equalsIgnoreCase("tree-8")) {
 			return ModelMesh.Tree_8;
-		} else if( mesh.equalsIgnoreCase( "tree-9" ) ) {
+		} else if (mesh.equalsIgnoreCase("tree-9")) {
 			return ModelMesh.Tree_9;
 		}
 
 		return ModelMesh.Missing;
 	}
 
-	public static OrthographicAlignedStillModel create( String meshType, float posPxX, float posPxY, float scale ) {
-		ModelMesh type = fromString( meshType );
-		OrthographicAlignedStillModel m = ModelFactory.create( type, posPxX, posPxY, scale );
+	public static OrthographicAlignedStillModel create (String meshType, float posPxX, float posPxY, float scale) {
+		ModelMesh type = fromString(meshType);
+		OrthographicAlignedStillModel m = ModelFactory.create(type, posPxX, posPxY, scale);
 		// createdOASModels.add( m );
 		return m;
 	}
@@ -87,54 +88,54 @@ public final class ModelFactory {
 	// private static Array<TreeStillModel> createdTreeModels = new
 	// Array<TreeStillModel>();
 
-	public static OrthographicAlignedStillModel create( ModelMesh modelMesh, float posPxX, float posPxY, float scale ) {
+	public static OrthographicAlignedStillModel create (ModelMesh modelMesh, float posPxX, float posPxY, float scale) {
 		OrthographicAlignedStillModel stillModel = null;
 
-		switch( modelMesh ) {
+		switch (modelMesh) {
 		case Palm:
-			stillModel = new OrthographicAlignedStillModel( getStillModel( "data/3d/models/palm.g3dt" ), getMaterial( modelMesh, Art.meshPalm ),
-					ModelFactory.scalingStrategy );
+			stillModel = new OrthographicAlignedStillModel(getStillModel("data/3d/models/palm.g3dt"), getMaterial(modelMesh,
+				Art.meshPalm), ModelFactory.scalingStrategy);
 			break;
 
 		case Tribune:
-			stillModel = new OrthographicAlignedStillModel( getStillModel( "data/3d/models/tribune.g3dt" ), getMaterial( modelMesh, Art.meshTribune ),
-					ModelFactory.scalingStrategy );
+			stillModel = new OrthographicAlignedStillModel(getStillModel("data/3d/models/tribune.g3dt"), getMaterial(modelMesh,
+				Art.meshTribune), ModelFactory.scalingStrategy);
 			break;
 
 		// missing mesh mesh
 		case Missing:
 		default:
-			stillModel = new OrthographicAlignedStillModel( getStillModel( "data/3d/models/missing-mesh.g3dt" ), getMaterial( modelMesh, Art.meshMissing ),
-					ModelFactory.scalingStrategy );
+			stillModel = new OrthographicAlignedStillModel(getStillModel("data/3d/models/missing-mesh.g3dt"), getMaterial(modelMesh,
+				Art.meshMissing), ModelFactory.scalingStrategy);
 		}
 
-		if( stillModel != null ) {
+		if (stillModel != null) {
 			// createdOASModels.add( stillModel );
-			stillModel.setPosition( posPxX, posPxY );
-			if( modelMesh != ModelMesh.Missing ) {
-				stillModel.setScale( scale );
+			stillModel.setPosition(posPxX, posPxY);
+			if (modelMesh != ModelMesh.Missing) {
+				stillModel.setScale(scale);
 			} else {
-				stillModel.setScale( 1 );
+				stillModel.setScale(1);
 			}
 		}
 
 		return stillModel;
 	}
 
-	public static TreeStillModel createTree( String meshType, float posPxX, float posPxY, float scale ) {
-		ModelMesh type = fromString( meshType );
-		TreeStillModel m = ModelFactory.createTree( type, posPxX, posPxY, scale );
+	public static TreeStillModel createTree (String meshType, float posPxX, float posPxY, float scale) {
+		ModelMesh type = fromString(meshType);
+		TreeStillModel m = ModelFactory.createTree(type, posPxX, posPxY, scale);
 		// createdTreeModels.add( m );
 		return m;
 	}
 
-	public static TreeStillModel createTree( ModelMesh modelMesh, float posPxX, float posPxY, float scale ) {
+	public static TreeStillModel createTree (ModelMesh modelMesh, float posPxX, float posPxY, float scale) {
 		TreeStillModel stillModel = null;
 
 		String treeModelName = "", treeMeshName = "";
 		Texture leavesTexture = null;
 
-		switch( modelMesh ) {
+		switch (modelMesh) {
 		case Tree_1:
 			treeModelName = "tree-1.g3dt";
 			treeMeshName = "tree_1_";
@@ -197,16 +198,16 @@ public final class ModelFactory {
 
 		}
 
-		stillModel = new TreeStillModel( getStillModel( "data/3d/models/" + treeModelName ), getMaterial( modelMesh, leavesTexture ), treeMeshName,
-				ModelFactory.scalingStrategy );
+		stillModel = new TreeStillModel(getStillModel("data/3d/models/" + treeModelName), getMaterial(modelMesh, leavesTexture),
+			treeMeshName, ModelFactory.scalingStrategy);
 
-		if( stillModel != null ) {
+		if (stillModel != null) {
 			// createdTreeModels.add( stillModel );
-			stillModel.setPosition( posPxX, posPxY );
-			if( modelMesh != ModelMesh.Missing ) {
-				stillModel.setScale( scale );
+			stillModel.setPosition(posPxX, posPxY);
+			if (modelMesh != ModelMesh.Missing) {
+				stillModel.setScale(scale);
 			} else {
-				stillModel.setScale( 1 );
+				stillModel.setScale(1);
 			}
 		}
 
@@ -215,21 +216,21 @@ public final class ModelFactory {
 
 	private static LongMap<Material> cachedMaterials = null;
 
-	private static Material getMaterial( ModelMesh modelMesh, Texture texture ) {
+	private static Material getMaterial (ModelMesh modelMesh, Texture texture) {
 		Material m = null;
 
-		long materialHash = Hash.RSHash( modelMesh.toString() );
-		if( cachedMaterials == null ) {
+		long materialHash = Hash.RSHash(modelMesh.toString());
+		if (cachedMaterials == null) {
 			cachedMaterials = new LongMap<Material>();
 		}
 
-		if( cachedMaterials.containsKey( materialHash ) ) {
-			return cachedMaterials.get( materialHash );
+		if (cachedMaterials.containsKey(materialHash)) {
+			return cachedMaterials.get(materialHash);
 		} else {
-			TextureAttribute ta = new TextureAttribute( texture, 0, "u_texture" );
-			m = new Material( "default", ta );
+			TextureAttribute ta = new TextureAttribute(texture, 0, "u_texture");
+			m = new Material("default", ta);
 
-			cachedMaterials.put( materialHash, m );
+			cachedMaterials.put(materialHash, m);
 		}
 
 		return m;
@@ -237,35 +238,35 @@ public final class ModelFactory {
 
 	private static LongMap<StillModel> cachedStillModels = null;
 
-	private static StillModel getStillModel( String model ) {
+	private static StillModel getStillModel (String model) {
 		StillModel m = null;
-		long modelHash = Hash.RSHash( model );
+		long modelHash = Hash.RSHash(model);
 
-		if( cachedStillModels == null ) {
+		if (cachedStillModels == null) {
 			cachedStillModels = new LongMap<StillModel>();
 		}
 
-		if( cachedStillModels.containsKey( modelHash ) ) {
-			return cachedStillModels.get( modelHash );
+		if (cachedStillModels.containsKey(modelHash)) {
+			return cachedStillModels.get(modelHash);
 		} else {
 			try {
-				String[] ext = model.split( "\\." );
+				String[] ext = model.split("\\.");
 
-				if( ext[1].equals( "g3dt" ) ) {
+				if (ext[1].equals("g3dt")) {
 					// NO opengl coords, NO invert v
-					InputStream in = Gdx.files.internal( model ).read();
-					m = UG3dtLoader.loadStillModel( in, true );
+					InputStream in = Gdx.files.internal(model).read();
+					m = UG3dtLoader.loadStillModel(in, true);
 					in.close();
-				} else if( ext[1].equals( "obj" ) ) {
+				} else if (ext[1].equals("obj")) {
 					// y-forward, z-up
 					ObjLoader l = new ObjLoader();
-					m = l.loadObj( Gdx.files.internal( model ), true );
-					Gdx.app.log( "ModelFactory", "Attention, using deprecated model format!" );
+					m = l.loadObj(Gdx.files.internal(model), true);
+					Gdx.app.log("ModelFactory", "Attention, using deprecated model format!");
 				}
 
-				cachedStillModels.put( modelHash, m );
-			} catch( IOException ioex ) {
-				Gdx.app.log( "ModelFactory", ioex.getMessage() );
+				cachedStillModels.put(modelHash, m);
+			} catch (IOException ioex) {
+				Gdx.app.log("ModelFactory", ioex.getMessage());
 			}
 		}
 
