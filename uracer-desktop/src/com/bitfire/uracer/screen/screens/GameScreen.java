@@ -5,7 +5,6 @@ import com.badlogic.gdx.graphics.glutils.FrameBuffer;
 import com.bitfire.uracer.ScalingStrategy;
 import com.bitfire.uracer.game.Game;
 import com.bitfire.uracer.game.actors.CarPreset.Type;
-import com.bitfire.uracer.game.logic.replaying.Replay;
 import com.bitfire.uracer.screen.Screen;
 
 public class GameScreen extends Screen {
@@ -25,10 +24,10 @@ public class GameScreen extends Screen {
 		game.setPlayer(Type.L2_PinkBeast);
 
 		// simulate the player choosing local playing
-		Replay r = Replay.loadLocal(levelName);
-		if (r != null) {
-			game.setLocalReplay(r);
-		}
+// Replay r = Replay.loadLocal(levelName);
+// if (r != null) {
+// game.setLocalReplay(r);
+// }
 	}
 
 	@Override

@@ -11,9 +11,9 @@ import com.bitfire.postprocessing.effects.Curvature;
 import com.bitfire.postprocessing.effects.Vignette;
 import com.bitfire.postprocessing.effects.Zoomer;
 import com.bitfire.uracer.configuration.Config;
-import com.bitfire.uracer.game.logic.GameLogic;
 import com.bitfire.uracer.game.logic.post.PostProcessing;
 import com.bitfire.uracer.game.logic.post.PostProcessingAnimator;
+import com.bitfire.uracer.game.logic.types.CommonGameLogic;
 import com.bitfire.uracer.game.player.PlayerCar;
 import com.bitfire.uracer.game.rendering.GameRenderer;
 import com.bitfire.uracer.resources.Art;
@@ -23,14 +23,14 @@ public final class AggressiveWarm implements PostProcessingAnimator {
 	public static final String Name = "AggressiveWarm";
 
 	private boolean nightMode = false;
-	private GameLogic logic = null;
+	private CommonGameLogic logic = null;
 	private Bloom bloom = null;
 	private Zoomer zoom = null;
 	private Vignette vignette = null;
 	private CrtMonitor crt = null;
 	private Curvature curvature = null;
 
-	public AggressiveWarm (GameLogic logic, PostProcessing post, boolean nightMode) {
+	public AggressiveWarm (CommonGameLogic logic, PostProcessing post, boolean nightMode) {
 		this.nightMode = nightMode;
 		this.logic = logic;
 		bloom = (Bloom)post.getEffect(PostProcessing.Effects.Bloom.name);

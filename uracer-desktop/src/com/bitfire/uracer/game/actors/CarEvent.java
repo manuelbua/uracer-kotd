@@ -3,9 +3,9 @@ package com.bitfire.uracer.game.actors;
 
 import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.physics.box2d.Fixture;
-import com.bitfire.uracer.utils.Event;
-import com.bitfire.uracer.utils.EventListener;
-import com.bitfire.uracer.utils.EventNotifier;
+import com.bitfire.uracer.events.Event;
+import com.bitfire.uracer.events.EventListener;
+import com.bitfire.uracer.events.EventNotifier;
 
 public final class CarEvent extends Event<Car> {
 	public enum Type {

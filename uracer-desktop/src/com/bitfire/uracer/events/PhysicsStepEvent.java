@@ -1,21 +1,20 @@
 
-package com.bitfire.uracer.game.player;
+package com.bitfire.uracer.events;
 
-import com.bitfire.uracer.events.Event;
-import com.bitfire.uracer.events.EventListener;
-import com.bitfire.uracer.events.EventNotifier;
+import com.bitfire.uracer.game.logic.gametasks.PhysicsStep;
 
-public final class PlayerDriftStateEvent extends Event<PlayerDriftState> {
+public class PhysicsStepEvent extends Event<PhysicsStep> {
 	public enum Type {
-		onBeginDrift, onEndDrift
+		onBeforeTimestep, onAfterTimestep, onSubstepCompleted
 	}
 
 	public interface Listener extends EventListener {
-		void playerDriftStateEvent (PlayerCar source, Type type);
+		void physicsEvent (Type type);
 	}
 
-	public PlayerDriftStateEvent (PlayerDriftState playerDriftState) {
-		super(playerDriftState);
+	/* This constructor will permits late-binding of the "source" member via the "trigger" method */
+	public PhysicsStepEvent () {
+		super(null);
 		for (Type t : Type.values()) {
 			notifiers[t.ordinal()] = new Notifier();
 		}
@@ -35,19 +34,20 @@ public final class PlayerDriftStateEvent extends Event<PlayerDriftState> {
 		}
 	}
 
-	public void trigger (PlayerCar source, Type type) {
+	public void trigger (PhysicsStep source, Type type) {
 		this.source = source;
-		notifiers[type.ordinal()].playerDriftStateEvent(source, type);
+		notifiers[type.ordinal()].physicsEvent(type);
 	}
 
-	public PlayerCar source;
+	public float temporalAliasingFactor = 0;
+
 	private Notifier[] notifiers = new Notifier[Type.values().length];
 
 	private class Notifier extends EventNotifier<Listener> implements Listener {
 		@Override
-		public void playerDriftStateEvent (PlayerCar source, Type type) {
+		public void physicsEvent (Type type) {
 			for (Listener listener : listeners) {
-				listener.playerDriftStateEvent(source, type);
+				listener.physicsEvent(type);
 			}
 		}
 	};

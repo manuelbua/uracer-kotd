@@ -8,8 +8,8 @@ import com.bitfire.uracer.ScalingStrategy;
 import com.bitfire.uracer.URacer;
 import com.bitfire.uracer.configuration.Config;
 import com.bitfire.uracer.game.actors.CarPreset;
-import com.bitfire.uracer.game.logic.GameLogic;
-import com.bitfire.uracer.game.logic.replaying.Replay;
+import com.bitfire.uracer.game.logic.types.CommonGameLogic;
+import com.bitfire.uracer.game.logic.types.SinglePlayer;
 import com.bitfire.uracer.game.rendering.GameRenderer;
 import com.bitfire.uracer.game.task.TaskManager;
 import com.bitfire.uracer.game.world.GameWorld;
@@ -23,7 +23,7 @@ public class Game implements Disposable {
 	private DebugHelper debug = null;
 
 	// logic
-	private GameLogic gameLogic = null;
+	private CommonGameLogic gameLogic = null;
 
 	// rendering
 	private GameRenderer gameRenderer = null;
@@ -38,7 +38,7 @@ public class Game implements Disposable {
 		Gdx.app.debug("Game", "GameRenderer ready");
 
 		// handles game rules and mechanics, it's all about game data
-		gameLogic = new GameLogic(gameWorld, gameRenderer, scalingStrategy);
+		gameLogic = new SinglePlayer(gameWorld, gameRenderer, scalingStrategy);
 		Gdx.app.debug("Game", "GameLogic created");
 
 		// initialize the debug helper
@@ -68,23 +68,25 @@ public class Game implements Disposable {
 		}
 	}
 
-	public void setLocalReplay (Replay replay) {
-		gameLogic.setBestLocalReplay(replay);
-	}
+// public void setLocalReplay (Replay replay) {
+// gameLogic.setBestLocalReplay(replay);
+// }
 
 	public void tick () {
 		TaskManager.dispatchTick();
-		gameLogic.onTick();
+		gameLogic.tick();
 	}
 
 	public void tickCompleted () {
-		gameLogic.onSubstepCompleted();
+		gameLogic.tickCompleted();
 	}
 
 	public void render (FrameBuffer dest) {
-		// trigger the event and let's subscribers interpolate and update their state()
+		// the order is important: first trigger interpolable to update their
+		// position and orientation, then give a chance to use this information
+		// to the game logic
 		gameRenderer.beforeRender(URacer.Game.getTemporalAliasing());
-		gameLogic.updateCamera();
+		gameLogic.beforeRender();
 
 		gameRenderer.render(dest);
 	}
