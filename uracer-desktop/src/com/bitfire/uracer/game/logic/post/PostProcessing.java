@@ -60,10 +60,11 @@ public final class PostProcessing {
 		postProcessor.setClearDepth(1f);
 		postProcessor.setBufferTextureWrap(TextureWrap.ClampToEdge, TextureWrap.ClampToEdge);
 
-		if (UserPreferences.bool(Preference.Zoom)) {
+		if (UserPreferences.bool(Preference.ZoomRadialBlur)) {
 			RadialBlur.Quality rbq = RadialBlur.Quality.valueOf(UserPreferences.string(Preference.ZoomRadialBlurQuality));
 			Zoomer z = (UserPreferences.bool(Preference.ZoomRadialBlur) ? new Zoomer(rbq) : new Zoomer());
 			z.setBlurStrength(0);
+			z.setZoom(1);
 			addEffect(Effects.Zoomer.name, z);
 		}
 

@@ -34,7 +34,7 @@ public class OptionsScreen extends Screen {
 	private Stage ui;
 	private Input input;
 	private Table container;
-	private CheckBox ppVignetting, ppBloom, ppZoom, ppZoomBlur, ppCrtScreen, ppCurvature, ppComplexTrees, ppWalls;
+	private CheckBox ppVignetting, ppBloom, ppRadialBlur, ppCrtScreen, ppCurvature, ppComplexTrees, ppWalls;
 	private SelectBox timeInputModeSel, ppZoomBlurQ;
 
 	@Override
@@ -112,8 +112,7 @@ public class OptionsScreen extends Screen {
 		{
 			ppVignetting = UIUtils.newCheckBox("Vignetting and gradient mapping", UserPreferences.bool(Preference.Vignetting));
 			ppBloom = UIUtils.newCheckBox("Bloom", UserPreferences.bool(Preference.Bloom));
-			ppZoom = UIUtils.newCheckBox("Zoom", UserPreferences.bool(Preference.Zoom));
-			ppZoomBlur = UIUtils.newCheckBox("Zoom blur", UserPreferences.bool(Preference.ZoomRadialBlur));
+			ppRadialBlur = UIUtils.newCheckBox("Zoom blur", UserPreferences.bool(Preference.ZoomRadialBlur));
 			ppCrtScreen = UIUtils.newCheckBox("CRT screen emulation", UserPreferences.bool(Preference.CrtScreen));
 			ppCurvature = UIUtils.newCheckBox("Screen curvature", UserPreferences.bool(Preference.Curvature));
 
@@ -133,19 +132,11 @@ public class OptionsScreen extends Screen {
 				}
 			});
 
-			ppZoom.addListener(new ClickListener() {
-				@Override
-				public void clicked (InputEvent event, float x, float y) {
-					UserPreferences.bool(Preference.Zoom, ppZoom.isChecked());
-					UserPreferences.save();
-				}
-			});
-
 			{
-				ppZoomBlur.addListener(new ClickListener() {
+				ppRadialBlur.addListener(new ClickListener() {
 					@Override
 					public void clicked (InputEvent event, float x, float y) {
-						UserPreferences.bool(Preference.ZoomRadialBlur, ppZoomBlur.isChecked());
+						UserPreferences.bool(Preference.ZoomRadialBlur, ppRadialBlur.isChecked());
 						UserPreferences.save();
 					}
 				});
@@ -188,8 +179,7 @@ public class OptionsScreen extends Screen {
 						// disable all post-processing
 						ppVignetting.setChecked(false);
 						ppBloom.setChecked(false);
-						ppZoom.setChecked(false);
-						ppZoomBlur.setChecked(false);
+						ppRadialBlur.setChecked(false);
 						ppCrtScreen.setChecked(false);
 						ppCurvature.setChecked(false);
 					}
@@ -197,8 +187,7 @@ public class OptionsScreen extends Screen {
 					UserPreferences.bool(Preference.PostProcessing, postProcessingCb.isChecked());
 					UserPreferences.bool(Preference.Vignetting, ppVignetting.isChecked());
 					UserPreferences.bool(Preference.Bloom, ppBloom.isChecked());
-					UserPreferences.bool(Preference.Zoom, ppZoom.isChecked());
-					UserPreferences.bool(Preference.ZoomRadialBlur, ppZoomBlur.isChecked());
+					UserPreferences.bool(Preference.ZoomRadialBlur, ppRadialBlur.isChecked());
 					UserPreferences.bool(Preference.CrtScreen, ppCrtScreen.isChecked());
 					UserPreferences.bool(Preference.Curvature, ppCurvature.isChecked());
 
@@ -216,11 +205,9 @@ public class OptionsScreen extends Screen {
 			container.row().colspan(2);
 			container.add(ppBloom);
 
-			container.row().colspan(2);
-			container.add(ppZoom);
 			{
 				container.row().colspan(2);
-				container.add(ppZoomBlur);
+				container.add(ppRadialBlur);
 
 				container.row();
 				container.add(new Label("Zoom blur quality", Art.scrSkin));

@@ -19,7 +19,7 @@ public final class UserPreferences {
 		// @formatter:off
 
 		// post-processing
-		PostProcessing, Vignetting, Bloom, Zoom, ZoomRadialBlur, ZoomRadialBlurQuality, CrtScreen, Curvature,
+		PostProcessing, Vignetting, Bloom, ZoomRadialBlur, ZoomRadialBlurQuality, CrtScreen, Curvature,
 
 		// rendering
 		ComplexTrees, Walls,
@@ -62,7 +62,6 @@ public final class UserPreferences {
 		bool(Preference.PostProcessing, true);
 		bool(Preference.Vignetting, Config.isDesktop);
 		bool(Preference.Bloom, false);
-		bool(Preference.Zoom, true);
 		bool(Preference.ZoomRadialBlur, true);
 
 		//
