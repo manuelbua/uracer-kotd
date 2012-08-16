@@ -13,6 +13,7 @@ import com.badlogic.gdx.files.FileHandle;
 import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.utils.GdxRuntimeException;
 import com.bitfire.uracer.configuration.Storage;
+import com.bitfire.uracer.game.GameplaySettings;
 import com.bitfire.uracer.game.Time;
 import com.bitfire.uracer.game.actors.Car;
 import com.bitfire.uracer.game.actors.CarForces;
@@ -132,6 +133,10 @@ public class Replay {
 				r.trackName = is.readUTF();
 				// r.difficultyLevel = GameDifficulty.valueOf( is.readUTF() );
 				r.trackTimeSeconds = is.readFloat();
+				if (!Replay.isValidLength(r.trackTimeSeconds)) {
+					throw new Exception("invalid duration (" + r.trackTimeSeconds + "sec < " + GameplaySettings.ReplayMinDurationSecs
+						+ ")");
+				}
 				r.eventsCount = is.readInt();
 
 				// car data
@@ -167,6 +172,12 @@ public class Replay {
 
 	public void saveLocal (final Messager messager) {
 		if (isValid && !isLoaded && !isSaved) {
+
+			if (!Replay.isValidLength(trackTimeSeconds)) {
+				Gdx.app.log("Replay", "Couldn't save local replay, reason: invalid duration (" + trackTimeSeconds + "sec < "
+					+ GameplaySettings.ReplayMinDurationSecs + ")");
+				return;
+			}
 
 			// this is an asynchronous operation, but it's safe since saving a replay
 			// imply this replay won't get overwritten anytime soon
@@ -231,5 +242,9 @@ public class Replay {
 				}
 			}).start();
 		}
+	}
+
+	private static boolean isValidLength (float seconds) {
+		return (seconds < GameplaySettings.ReplayMinDurationSecs);
 	}
 }

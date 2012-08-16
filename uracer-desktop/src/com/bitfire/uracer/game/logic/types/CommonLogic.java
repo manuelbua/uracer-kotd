@@ -535,6 +535,13 @@ public abstract class CommonLogic implements GameLogic, CarEvent.Listener, CarSt
 				lapManager.startRecording(playerCar);
 
 			} else {
+				// detect invalid laps
+				if (lapManager.getLapInfo().getElapsedSeconds() < 5) {
+					Gdx.app.log("CommonLogic", "Invalid lap detected, too short (" + lapManager.getLapInfo().getElapsedSeconds()
+						+ "sec < 5)");
+					return;
+				}
+
 				lapManager.stopRecording();
 
 				if (!lapManager.hasAllReplays()) {
