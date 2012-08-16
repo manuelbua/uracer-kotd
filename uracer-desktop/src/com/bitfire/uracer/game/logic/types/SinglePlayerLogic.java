@@ -7,9 +7,9 @@ import com.bitfire.uracer.game.rendering.GameRenderer;
 import com.bitfire.uracer.game.rendering.GameWorldRenderer;
 import com.bitfire.uracer.game.world.GameWorld;
 
-public class SinglePlayer extends CommonLogic {
+public class SinglePlayerLogic extends CommonLogic {
 
-	public SinglePlayer (GameWorld gameWorld, GameRenderer gameRenderer, ScalingStrategy scalingStrategy) {
+	public SinglePlayerLogic (GameWorld gameWorld, GameRenderer gameRenderer, ScalingStrategy scalingStrategy) {
 		super(gameWorld, gameRenderer, scalingStrategy);
 	}
 

@@ -9,7 +9,7 @@ import com.bitfire.uracer.URacer;
 import com.bitfire.uracer.configuration.Config;
 import com.bitfire.uracer.game.actors.CarPreset;
 import com.bitfire.uracer.game.logic.types.CommonLogic;
-import com.bitfire.uracer.game.logic.types.SinglePlayer;
+import com.bitfire.uracer.game.logic.types.SinglePlayerLogic;
 import com.bitfire.uracer.game.rendering.GameRenderer;
 import com.bitfire.uracer.game.task.TaskManager;
 import com.bitfire.uracer.game.world.GameWorld;
@@ -38,7 +38,7 @@ public class Game implements Disposable {
 		Gdx.app.debug("Game", "GameRenderer ready");
 
 		// handles game rules and mechanics, it's all about game data
-		gameLogic = new SinglePlayer(gameWorld, gameRenderer, scalingStrategy);
+		gameLogic = new SinglePlayerLogic(gameWorld, gameRenderer, scalingStrategy);
 		Gdx.app.debug("Game", "GameLogic created");
 
 		// initialize the debug helper
