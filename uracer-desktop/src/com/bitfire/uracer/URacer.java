@@ -1,3 +1,4 @@
+
 package com.bitfire.uracer;
 
 import java.lang.reflect.Field;
@@ -58,25 +59,25 @@ public class URacer implements ApplicationListener {
 	private URacerFinalizer uRacerFinalizer;
 
 	public interface URacerFinalizer {
-		void dispose();
+		void dispose ();
 	}
 
-	public void setFinalizer( URacerFinalizer finalizer ) {
+	public void setFinalizer (URacerFinalizer finalizer) {
 		this.uRacerFinalizer = finalizer;
 	}
 
-	public static String getVersionInformation() {
-		if( versionInfo.length() == 0 ) {
+	public static String getVersionInformation () {
+		if (versionInfo.length() == 0) {
 			// extract version information
 			String info = "";
 			try {
-				Field f = Class.forName( "com.bitfire.uracer.VersionInfo" ).getDeclaredField( "versionName" );
-				f.setAccessible( true );
-				String value = f.get( null ).toString();
-				if( value.length() > 0 ) {
+				Field f = Class.forName("com.bitfire.uracer.VersionInfo").getDeclaredField("versionName");
+				f.setAccessible(true);
+				String value = f.get(null).toString();
+				if (value.length() > 0) {
 					info = value;
 				}
-			} catch( Exception e ) {
+			} catch (Exception e) {
 				info = "(version not found)";
 			}
 
@@ -88,36 +89,36 @@ public class URacer implements ApplicationListener {
 	}
 
 	@Override
-	public void create() {
-		Gdx.app.setLogLevel( Application.LOG_DEBUG );
+	public void create () {
+		Gdx.app.setLogLevel(Application.LOG_DEBUG);
 		versionInfo = URacer.getVersionInformation();
 
-		Gdx.app.log( "URacer", "booting version " + versionInfo );
-		Gdx.app.log( "URacer", "Using real frametime: " + (useRealFrametime ? "YES" : "NO") );
+		Gdx.app.log("URacer", "booting version " + versionInfo);
+		Gdx.app.log("URacer", "Using real frametime: " + (useRealFrametime ? "YES" : "NO"));
 
 		// create input system
 		input = new Input();
-		Gdx.app.log( "URacer", "input system created." );
+		Gdx.app.log("URacer", "input system created.");
 
 		// computed for a 256px tile size target (compute needed conversion
 		// factors)
-		scalingStrategy = new ScalingStrategy( new Vector2( 1280, 800 ), 70f, 224, 1f );
+		scalingStrategy = new ScalingStrategy(new Vector2(1280, 800), 70f, 224, 1f);
 
-		ScreenFactory.init( scalingStrategy );
+		ScreenFactory.init(scalingStrategy);
 
 		// load default private configuration
 		Config.asDefault();
 
 		UserPreferences.load();
 
-		Convert.init( scalingStrategy.tileMapZoomFactor, Config.Physics.PixelsPerMeter );
-		Art.init( scalingStrategy.invTileMapZoomFactor );
-		SpriteBatchUtils.init( Art.debugFont, Art.DebugFontWidth );
+		Convert.init(scalingStrategy.tileMapZoomFactor, Config.Physics.PixelsPerMeter);
+		Art.init(scalingStrategy.invTileMapZoomFactor);
+		SpriteBatchUtils.init(Art.debugFont, Art.DebugFontWidth);
 		Sounds.init();
 
-		ModelFactory.init( scalingStrategy );
+		ModelFactory.init(scalingStrategy);
 
-		Gdx.graphics.setVSync( true );
+		Gdx.graphics.setVSync(true);
 
 		running = true;
 		temporalAliasing = 0;
@@ -129,7 +130,7 @@ public class URacer implements ApplicationListener {
 		screenMgr = new ScreenManager();
 
 		// screenMgr.setScreen( ScreenType.GameScreen, TransitionType.Fader, 500 );
-		screenMgr.setScreen( ScreenType.MainScreen, TransitionType.CrossFader, 500 );
+		screenMgr.setScreen(ScreenType.MainScreen, TransitionType.CrossFader, 500);
 		// screenMgr.setScreen( ScreenType.OptionsScreen, TransitionType.CrossFader, 500 );
 
 		// Initialize the timers after creating the game screen, so that there
@@ -143,7 +144,7 @@ public class URacer implements ApplicationListener {
 	}
 
 	@Override
-	public void dispose() {
+	public void dispose () {
 		UserPreferences.save();
 		OrthographicAlignedStillModel.disposeShader();
 
@@ -155,26 +156,26 @@ public class URacer implements ApplicationListener {
 		Art.dispose();
 		SysTweener.dispose();
 
-		if( uRacerFinalizer != null ) {
+		if (uRacerFinalizer != null) {
 			uRacerFinalizer.dispose();
 		}
 
-		System.exit( 0 );
+		System.exit(0);
 	}
 
 	@Override
-	public void render() {
-		if( screenMgr.begin() ) {
+	public void render () {
+		if (screenMgr.begin()) {
 
 			// this is not good for Android since the value often hop around
-			if( useRealFrametime ) {
+			if (useRealFrametime) {
 				lastDeltaTimeNs = (long)(Gdx.graphics.getRawDeltaTime() * 1000000000f);
 			} else {
 				lastDeltaTimeNs = (long)(Gdx.graphics.getDeltaTime() * 1000000000f);
 			}
 
 			// avoid spiral of death
-			lastDeltaTimeNs = AMath.clamp( lastDeltaTimeNs, 0, MaxDeltaTimeNs );
+			lastDeltaTimeNs = AMath.clamp(lastDeltaTimeNs, 0, MaxDeltaTimeNs);
 
 			// compute values in different units so that accessors will not
 			// recompute them again and again
@@ -185,7 +186,7 @@ public class URacer implements ApplicationListener {
 			long startTime = TimeUtils.nanoTime();
 			{
 				timeAccuNs += lastDeltaTimeNs * timeMultiplier;
-				while( timeAccuNs > PhysicsDtNs ) {
+				while (timeAccuNs > PhysicsDtNs) {
 					input.tick();
 					screenMgr.tick();
 					timeAccuNs -= PhysicsDtNs;
@@ -204,10 +205,10 @@ public class URacer implements ApplicationListener {
 			physicsTime = (TimeUtils.nanoTime() - startTime) * oneOnOneBillion;
 
 			// if the system has ticked, then trigger tickCompleted
-			if( lastTicksCount > 0 ) {
+			if (lastTicksCount > 0) {
 				screenMgr.tickCompleted();
 
-				if( screenMgr.quit() ) {
+				if (screenMgr.quit()) {
 					return;
 				}
 			}
@@ -222,7 +223,7 @@ public class URacer implements ApplicationListener {
 			startTime = TimeUtils.nanoTime();
 			{
 				SysTweener.update();
-				screenMgr.render( null );
+				screenMgr.render(null);
 
 				// simulate slowness
 				// if( timeMultiplier < 1 )
@@ -243,20 +244,20 @@ public class URacer implements ApplicationListener {
 	}
 
 	@Override
-	public void resize( int width, int height ) {
-		if( screenMgr != null ) {
-			screenMgr.resize( width, height );
+	public void resize (int width, int height) {
+		if (screenMgr != null) {
+			screenMgr.resize(width, height);
 		}
 	}
 
 	@Override
-	public void pause() {
+	public void pause () {
 		running = false;
 		screenMgr.pause();
 	}
 
 	@Override
-	public void resume() {
+	public void resume () {
 		running = true;
 		lastDeltaTimeNs = 0;
 		lastDeltaTimeMs = 0;
@@ -273,54 +274,54 @@ public class URacer implements ApplicationListener {
 	//
 
 	public static final class Game {
-		public static boolean isRunning() {
+		public static boolean isRunning () {
 			return running;
 		}
 
-		public static float getRenderTime() {
+		public static float getRenderTime () {
 			return graphicsTime;
 		}
 
-		public static float getPhysicsTime() {
+		public static float getPhysicsTime () {
 			return physicsTime;
 		}
 
-		public static float getLastDeltaSecs() {
+		public static float getLastDeltaSecs () {
 			return lastDeltaTimeSec;
 		}
 
-		public static float getLastDeltaMs() {
+		public static float getLastDeltaMs () {
 			return lastDeltaTimeMs;
 		}
 
-		public static float getTemporalAliasing() {
+		public static float getTemporalAliasing () {
 			return aliasingTime;
 		}
 
-		public static long getFrameCount() {
+		public static long getFrameCount () {
 			return frameCount;
 		}
 
-		public static long getLastTicksCount() {
+		public static long getLastTicksCount () {
 			return lastTicksCount;
 		}
 
-		public static Input getInputSystem() {
+		public static Input getInputSystem () {
 			return input;
 		}
 
-		public static void show( ScreenType screenType ) {
-			Screens.setScreen( screenType, TransitionType.Fader, 500 );
+		public static void show (ScreenType screenType) {
+			Screens.setScreen(screenType, TransitionType.Fader, 500);
 		}
 
-		public static void quit() {
-			Screens.setScreen( ScreenType.ExitScreen, TransitionType.CrossFader, 500 );
+		public static void quit () {
+			Screens.setScreen(ScreenType.ExitScreen, TransitionType.CrossFader, 500);
 		}
 	}
 
 	public static final class Screens {
-		public static void setScreen( ScreenType screenType, TransitionType transitionType, long transitionDurationMs ) {
-			screenMgr.setScreen( screenType, transitionType, transitionDurationMs );
+		public static void setScreen (ScreenType screenType, TransitionType transitionType, long transitionDurationMs) {
+			screenMgr.setScreen(screenType, transitionType, transitionDurationMs);
 		}
 	}
 

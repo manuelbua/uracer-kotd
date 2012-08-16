@@ -1,3 +1,4 @@
+
 package com.bitfire.uracer.game.actors;
 
 import com.badlogic.gdx.math.Vector2;
@@ -32,24 +33,24 @@ public final class CarState {
 
 	private GameWorld world;
 
-	public CarState( GameWorld world, Car car ) {
-		this.event = new CarStateEvent( this );
+	public CarState (GameWorld world, Car car) {
+		this.event = new CarStateEvent(this);
 		this.world = world;
 		this.car = car;
 
 		// precompute factors
-		if( car != null ) {
+		if (car != null) {
 			carMaxSpeedSquared = car.getCarModel().max_speed * car.getCarModel().max_speed;
 			carMaxForce = car.getCarModel().max_force;
 		}
 	}
 
-	public void dispose() {
+	public void dispose () {
 		event.removeAllListeners();
 		event = null;
 	}
 
-	public void reset() {
+	public void reset () {
 		// causes an onTileChanged event to be raised the next update step
 		lastTileX = -1;
 		lastTileY = -1;
@@ -57,35 +58,37 @@ public final class CarState {
 		currTileY = -1;
 	}
 
-	public void update( CarDescriptor carDescriptor ) {
-		updateFactors( carDescriptor );
+	public void update (CarDescriptor carDescriptor) {
+		updateFactors(carDescriptor);
 		updateTilePosition();
 	}
 
-	private void updateFactors( CarDescriptor carDescriptor ) {
+	private void updateFactors (CarDescriptor carDescriptor) {
 		// speed/force normalized factors
 		currVelocityLenSquared = carDescriptor.velocity_wc.len2();
 		currThrottle = carDescriptor.throttle;
-		currSpeedFactor = AMath.clamp( currVelocityLenSquared / carMaxSpeedSquared, 0f, 1f );
-		currForceFactor = AMath.clamp( currThrottle / carMaxForce, 0f, 1f );
+		currSpeedFactor = AMath.clamp(currVelocityLenSquared / carMaxSpeedSquared, 0f, 1f);
+		currForceFactor = AMath.clamp(currThrottle / carMaxForce, 0f, 1f);
 	}
 
-	/* Keeps track of the car's tile position and trigger a TileChanged event whenever
-	 * the car's world position translates to a tile index that is different than the
-	 * previous one */
-	private void updateTilePosition() {
+	/*
+	 * Keeps track of the car's tile position and trigger a TileChanged event whenever the car's world position translates to a
+	 * tile index that is different than the previous one
+	 */
+	private void updateTilePosition () {
 		lastTileX = currTileX;
 		lastTileY = currTileY;
 
 		// compute car's tile position
-//		tilePosition.set( world.pxToTile( car.state().position.x, car.state().position.y ) );
-		tilePosition.set( world.pxToTile( Convert.mt2px(car.getBody().getPosition().x), Convert.mt2px(car.getBody().getPosition().y) ) );
+// tilePosition.set( world.pxToTile( car.state().position.x, car.state().position.y ) );
+		tilePosition
+			.set(world.pxToTile(Convert.mt2px(car.getBody().getPosition().x), Convert.mt2px(car.getBody().getPosition().y)));
 
 		currTileX = (int)tilePosition.x;
 		currTileY = (int)tilePosition.y;
 
-		if( (lastTileX != currTileX) || (lastTileY != currTileY) ) {
-			event.trigger( this, CarStateEvent.Type.onTileChanged );
+		if ((lastTileX != currTileX) || (lastTileY != currTileY)) {
+			event.trigger(this, CarStateEvent.Type.onTileChanged);
 		}
 	}
 }

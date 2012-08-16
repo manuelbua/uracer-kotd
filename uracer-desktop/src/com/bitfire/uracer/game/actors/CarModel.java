@@ -1,13 +1,11 @@
+
 package com.bitfire.uracer.game.actors;
 
 import com.bitfire.uracer.game.actors.CarPreset.Type;
 
-/**
- * Represents the physical car model on which we rely to compute
- * the forces exerted by the simulation.
+/** Represents the physical car model on which we rely to compute the forces exerted by the simulation.
  * 
- * @author manuel
- */
+ * @author manuel */
 public final class CarModel {
 	public CarPreset.Type presetType;
 
@@ -28,20 +26,20 @@ public final class CarModel {
 
 	// physical behavior
 	public float drag, // factor for air resistance (drag)
-			resistance, // factor for rolling resistance
-			stiffness_front, // front cornering stiffness
-			stiffness_rear, // rear cornering stiffness
-			max_grip, // maximum (normalised) friction force, =diameter of friction circle
-			max_speed, max_force;
+		resistance, // factor for rolling resistance
+		stiffness_front, // front cornering stiffness
+		stiffness_rear, // rear cornering stiffness
+		max_grip, // maximum (normalised) friction force, =diameter of friction circle
+		max_speed, max_force;
 
 	// physically computed
 	public float weight;
 
-	public CarModel() {
+	public CarModel () {
 		toModel2();
 	}
 
-	public void set( CarModel other ) {
+	public void set (CarModel other) {
 		this.presetType = other.presetType;
 		this.wheelbase = other.wheelbase;
 		this.b = other.b;
@@ -68,7 +66,7 @@ public final class CarModel {
 	}
 
 	// default car model
-	public CarModel toDefault() {
+	public CarModel toDefault () {
 		presetType = Type.Default;
 
 		// physical model
@@ -96,7 +94,7 @@ public final class CarModel {
 		stiffness_rear = -4.2f; // front cornering stiffness
 		stiffness_front = -4.4f; // rear cornering stiffness
 		max_grip = 8.f; // maximum (normalised) friction force, =diameter of
-						// friction circle
+		// friction circle
 
 		max_speed = 35.f;
 		max_force = 300.f;
@@ -135,7 +133,7 @@ public final class CarModel {
 	// return this;
 	// }
 
-	public CarModel toModel2() {
+	public CarModel toModel2 () {
 		toDefault();
 
 		// physical model

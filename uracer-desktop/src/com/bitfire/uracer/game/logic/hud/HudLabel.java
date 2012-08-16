@@ -1,3 +1,4 @@
+
 package com.bitfire.uracer.game.logic.hud;
 
 import aurelienribon.tweenengine.Timeline;
@@ -23,111 +24,111 @@ public final class HudLabel {
 	private float scale;
 	private ScalingStrategy scalingStrategy;
 
-	public HudLabel( ScalingStrategy scalingStrategy, BitmapFont font, String string, float scale ) {
+	public HudLabel (ScalingStrategy scalingStrategy, BitmapFont font, String string, float scale) {
 		this.scalingStrategy = scalingStrategy;
 		this.font = font;
 		what = string;
 		alpha = 1f;
-		setScale( scale, true );
+		setScale(scale, true);
 	}
 
-	public HudLabel( ScalingStrategy scalingStrategy, BitmapFont font, String string ) {
-		this( scalingStrategy, font, string, 1.0f );
+	public HudLabel (ScalingStrategy scalingStrategy, BitmapFont font, String string) {
+		this(scalingStrategy, font, string, 1.0f);
 	}
 
-	public boolean isVisible() {
+	public boolean isVisible () {
 		return (alpha > 0);
 	}
 
-	public void setString( String string ) {
-		setString( string, false );
+	public void setString (String string) {
+		setString(string, false);
 	}
 
-	public void setString( String string, boolean computeBounds ) {
+	public void setString (String string, boolean computeBounds) {
 		what = string;
-		if( computeBounds ) {
+		if (computeBounds) {
 			recomputeBounds();
 		}
 	}
 
-	public void setPosition( float posX, float posY ) {
+	public void setPosition (float posX, float posY) {
 		x = posX - halfBoundsWidth;
 		y = posY - halfBoundsHeight;
 	}
 
-	public void setPosition( Vector2 position ) {
+	public void setPosition (Vector2 position) {
 		x = position.x - halfBoundsWidth;
 		y = position.y - halfBoundsHeight;
 	}
 
 	private Vector2 tmpos = new Vector2();
 
-	public Vector2 getPosition() {
-		tmpos.set( x + halfBoundsWidth, y + halfBoundsHeight );
+	public Vector2 getPosition () {
+		tmpos.set(x + halfBoundsWidth, y + halfBoundsHeight);
 		return tmpos;
 	}
 
-	public void recomputeBounds() {
-		font.setScale( scale * scalingStrategy.invTileMapZoomFactor );
-		bounds.set( font.getMultiLineBounds( what ) );
+	public void recomputeBounds () {
+		font.setScale(scale * scalingStrategy.invTileMapZoomFactor);
+		bounds.set(font.getMultiLineBounds(what));
 		halfBoundsWidth = bounds.width * 0.5f;
 		halfBoundsHeight = bounds.height * 0.5f;
 	}
 
-	public TextBounds getBounds() {
+	public TextBounds getBounds () {
 		return bounds;
 	}
 
-	public float getX() {
+	public float getX () {
 		return x + halfBoundsWidth;
 	}
 
-	public float getY() {
+	public float getY () {
 		return y + halfBoundsHeight;
 	}
 
-	public void setX( float v ) {
+	public void setX (float v) {
 		x = v - halfBoundsWidth;
 	}
 
-	public void setY( float v ) {
+	public void setY (float v) {
 		y = v - halfBoundsHeight;
 	}
 
-	public float getAlpha() {
+	public float getAlpha () {
 		return alpha;
 	}
 
-	public void setAlpha( float value ) {
+	public void setAlpha (float value) {
 		alpha = value;
 	}
 
-	public void setFont( BitmapFont font ) {
+	public void setFont (BitmapFont font) {
 		this.font = font;
 		recomputeBounds();
 	}
 
-	public float getScale() {
+	public float getScale () {
 		return scale;
 	}
 
-	public void setScale( float scale ) {
-		setScale( scale, true );
+	public void setScale (float scale) {
+		setScale(scale, true);
 	}
 
-	private void setScale( float scale, boolean recomputeBounds ) {
+	private void setScale (float scale, boolean recomputeBounds) {
 		this.scale = scale;
-		if( recomputeBounds ) {
+		if (recomputeBounds) {
 			recomputeBounds();
 		}
 	}
 
-	public void render( SpriteBatch batch ) {
-		if( alpha > 0 ) {
-			font.setScale( scale * scalingStrategy.invTileMapZoomFactor );
-			font.setColor( 1, 1, 1, alpha );
+	public void render (SpriteBatch batch) {
+		if (alpha > 0) {
+			font.setScale(scale * scalingStrategy.invTileMapZoomFactor);
+			font.setColor(1, 1, 1, alpha);
 
-			font.drawMultiLine( batch, what, x, y );
+			font.drawMultiLine(batch, what, x, y);
 
 			// font.setColor( 1, 1, 1, 1 );
 		}
@@ -135,33 +136,41 @@ public final class HudLabel {
 
 	/** effects */
 
-	public void fadeIn( int milliseconds ) {
-		GameTweener.start( Timeline.createSequence().push( Tween.to( this, HudLabelAccessor.OPACITY, milliseconds ).target( 1f ).ease( Expo.INOUT ) ) );
+	public void fadeIn (int milliseconds) {
+		GameTweener.start(Timeline.createSequence().push(
+			Tween.to(this, HudLabelAccessor.OPACITY, milliseconds).target(1f).ease(Expo.INOUT)));
 	}
 
-	public void fadeOut( int milliseconds ) {
-		GameTweener.start( Timeline.createSequence().push( Tween.to( this, HudLabelAccessor.OPACITY, milliseconds ).target( 0f ).ease( Expo.INOUT ) ) );
+	public void fadeOut (int milliseconds) {
+		GameTweener.start(Timeline.createSequence().push(
+			Tween.to(this, HudLabelAccessor.OPACITY, milliseconds).target(0f).ease(Expo.INOUT)));
 	}
 
-	public void slide( boolean slideUp ) {
-		setScale( 1f, true );
+	public void slide (boolean slideUp) {
+		setScale(1f, true);
 
-		setPosition( getPosition().x, getPosition().y + 50 );
+		setPosition(getPosition().x, getPosition().y + 50);
 		float targetNearX = getPosition().x;
 		float targetNearY = getPosition().y;
 		float targetFarX = getPosition().x;
 		float targetFarY = getPosition().y - 100;
-		if( !slideUp ) {
+		if (!slideUp) {
 			targetFarY = getPosition().y + 100;
 		}
 
-		GameTweener.start( Timeline
+		GameTweener
+			.start(Timeline
 				.createParallel()
-				.push( Tween.to( this, HudLabelAccessor.OPACITY, 500 ).target( 1f ).ease( Quint.INOUT ) )
-				.push( Timeline
+				.push(Tween.to(this, HudLabelAccessor.OPACITY, 500).target(1f).ease(Quint.INOUT))
+				.push(
+					Timeline
 						.createSequence()
-						.push( Tween.to( this, HudLabelAccessor.POSITION_XY, 500 ).target( targetNearX, targetNearY ).ease( Quint.INOUT ).delay( 300 ) )
-						.push( Timeline.createParallel().push( Tween.to( this, HudLabelAccessor.POSITION_XY, 500 ).target( targetFarX, targetFarY ).ease( Expo.OUT ) )
-								.push( Tween.to( this, HudLabelAccessor.OPACITY, 500 ).target( 0f ).ease( Expo.OUT ) ) ) ) );
+						.push(
+							Tween.to(this, HudLabelAccessor.POSITION_XY, 500).target(targetNearX, targetNearY).ease(Quint.INOUT)
+								.delay(300))
+						.push(
+							Timeline.createParallel()
+								.push(Tween.to(this, HudLabelAccessor.POSITION_XY, 500).target(targetFarX, targetFarY).ease(Expo.OUT))
+								.push(Tween.to(this, HudLabelAccessor.OPACITY, 500).target(0f).ease(Expo.OUT)))));
 	}
 }

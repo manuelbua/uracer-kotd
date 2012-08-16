@@ -1,3 +1,4 @@
+
 package com.bitfire.uracer;
 
 import java.awt.DisplayMode;
@@ -17,12 +18,12 @@ public final class URacerDesktop {
 
 	private static boolean useRightScreen = false;
 
-	private static boolean parseConfig( String[] argv, LwjglApplicationConfiguration config ) {
+	private static boolean parseConfig (String[] argv, LwjglApplicationConfiguration config) {
 
-		System.out.print( URacer.Name + " " + URacer.getVersionInformation() + "\nCopyright (c) 2012 Manuel Bua.\n\n" );
+		System.out.print(URacer.Name + " " + URacer.getVersionInformation() + "\nCopyright (c) 2012 Manuel Bua.\n\n");
 
 		LaunchFlags flags = new LaunchFlags();
-		if( !CommandLine.parseLaunchFlags( argv, flags ) ) {
+		if (!CommandLine.parseLaunchFlags(argv, flags)) {
 			return false;
 		}
 
@@ -40,53 +41,53 @@ public final class URacerDesktop {
 
 		// parse opts --
 
-		System.out.print( "Resolution set at " + (config.width + "x" + config.height) + "\n" );
-		System.out.print( "Vertical sync: " + (config.vSyncEnabled ? "On" : "Off") + "\n" );
-		System.out.print( "CPU sync: " + (config.useCPUSynch ? "On" : "Off") + "\n" );
-		System.out.print( "Fullscreen: " + (config.fullscreen ? "Yes" : "No") + "\n" );
+		System.out.print("Resolution set at " + (config.width + "x" + config.height) + "\n");
+		System.out.print("Vertical sync: " + (config.vSyncEnabled ? "On" : "Off") + "\n");
+		System.out.print("CPU sync: " + (config.useCPUSynch ? "On" : "Off") + "\n");
+		System.out.print("Fullscreen: " + (config.fullscreen ? "Yes" : "No") + "\n");
 
 		return true;
 	}
 
-	public static void main( String[] argv ) {
+	public static void main (String[] argv) {
 		LwjglApplicationConfiguration config = new LwjglApplicationConfiguration();
-		config.addIcon( "data/base/icon.png", FileType.Internal );
+		config.addIcon("data/base/icon.png", FileType.Internal);
 
-		if( !parseConfig( argv, config ) ) {
+		if (!parseConfig(argv, config)) {
 			return;
 		}
 
 		URacer uracer = new URacer();
-		LwjglApplication app = new LwjglApplication( uracer, config );
+		LwjglApplication app = new LwjglApplication(uracer, config);
 
-		URacerDesktopFinalizer finalizr = new URacerDesktopFinalizer( (OpenALAudio)app.getAudio() );
-		uracer.setFinalizer( finalizr );
+		URacerDesktopFinalizer finalizr = new URacerDesktopFinalizer((OpenALAudio)app.getAudio());
+		uracer.setFinalizer(finalizr);
 
-		if( useRightScreen ) {
+		if (useRightScreen) {
 			GraphicsEnvironment env = GraphicsEnvironment.getLocalGraphicsEnvironment();
 			GraphicsDevice primary = env.getDefaultScreenDevice();
 			GraphicsDevice[] devices = env.getScreenDevices();
 			GraphicsDevice target = null;
 
 			// search for the first target screen
-			for( int i = 0; i < devices.length; i++ ) {
+			for (int i = 0; i < devices.length; i++) {
 				boolean isPrimary = (primary == devices[i]);
-				if( !isPrimary ) {
+				if (!isPrimary) {
 					target = devices[i];
 					break;
 				}
 			}
 
-			if( target != null ) {
+			if (target != null) {
 				DisplayMode pmode = primary.getDisplayMode();
 				DisplayMode tmode = target.getDisplayMode();
 
-				Display.setLocation( pmode.getWidth() + (tmode.getWidth() - config.width) / 2,
-						(tmode.getHeight() - config.height) / 2 );
+				Display
+					.setLocation(pmode.getWidth() + (tmode.getWidth() - config.width) / 2, (tmode.getHeight() - config.height) / 2);
 			}
 		}
 	}
 
-	private URacerDesktop() {
+	private URacerDesktop () {
 	}
 }

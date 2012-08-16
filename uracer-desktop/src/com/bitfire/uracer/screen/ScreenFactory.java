@@ -1,3 +1,4 @@
+
 package com.bitfire.uracer.screen;
 
 import com.bitfire.uracer.ScalingStrategy;
@@ -8,19 +9,15 @@ import com.bitfire.uracer.screen.screens.OptionsScreen;
 public final class ScreenFactory {
 
 	public enum ScreenType {
-		//@formatter:off
-		NoScreen,
-		ExitScreen,
-		MainScreen,
-		OptionsScreen,
-		GameScreen
-		//@formatter:on
+		// @formatter:off
+		NoScreen, ExitScreen, MainScreen, OptionsScreen, GameScreen
+		// @formatter:on
 	}
 
-	public static Screen createScreen( ScreenType screenType ) {
+	public static Screen createScreen (ScreenType screenType) {
 		Screen screen = null;
 
-		switch( screenType ) {
+		switch (screenType) {
 		case GameScreen:
 			screen = new GameScreen();
 			break;
@@ -36,19 +33,19 @@ public final class ScreenFactory {
 			break;
 		}
 
-		if( screen != null ) {
-			screen.init( strategy );
+		if (screen != null) {
+			screen.init(strategy);
 		}
 
 		return screen;
 	}
 
-	public static void init( ScalingStrategy strategy ) {
+	public static void init (ScalingStrategy strategy) {
 		ScreenFactory.strategy = strategy;
 	}
 
 	private static ScalingStrategy strategy;
 
-	private ScreenFactory() {
+	private ScreenFactory () {
 	}
 }

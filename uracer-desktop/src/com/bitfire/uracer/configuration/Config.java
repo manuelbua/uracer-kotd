@@ -1,3 +1,4 @@
+
 package com.bitfire.uracer.configuration;
 
 import com.badlogic.gdx.Application.ApplicationType;
@@ -16,13 +17,13 @@ public final class Config {
 		public static boolean SubframeInterpolation;
 		public static InterpolationMode CameraInterpolationMode;
 
-		public static void asDefault() {
+		public static void asDefault () {
 			EnableMipMapping = true;
 			SubframeInterpolation = true;
 			CameraInterpolationMode = InterpolationMode.Linear;
 		}
 
-		private Graphics() {
+		private Graphics () {
 		}
 	}
 
@@ -43,17 +44,17 @@ public final class Config {
 		/** defines physics dt duration, in seconds */
 		public static float PhysicsDt;
 
-		public static void asDefault() {
+		public static void asDefault () {
 			PixelsPerMeter = 18.0f;
 			PhysicsTimestepHz = 60.0f;
 			PhysicsTimestepReferenceHz = 60.0f;
 			PhysicsDt = 1.0f / PhysicsTimestepHz;
 			PhysicsTimeMultiplier = 1f;
 
-			Gdx.app.log( "Config", "Physics at " + PhysicsTimestepHz + "Hz (dt=" + NumberString.formatLong( PhysicsDt ) + ")" );
+			Gdx.app.log("Config", "Physics at " + PhysicsTimestepHz + "Hz (dt=" + NumberString.formatLong(PhysicsDt) + ")");
 		}
 
-		private Physics() {
+		private Physics () {
 		}
 	}
 
@@ -74,7 +75,7 @@ public final class Config {
 		public static boolean ApplyCarFrictionFromMap;
 		public static boolean FrustumCulling;
 
-		public static void asDefault() {
+		public static void asDefault () {
 
 			UseDebugHelper = true;
 			RenderBox2DWorldWireframe = false;
@@ -93,7 +94,7 @@ public final class Config {
 			FrustumCulling = true;
 		}
 
-		private Debug() {
+		private Debug () {
 		}
 	}
 
@@ -104,29 +105,29 @@ public final class Config {
 		private static float RttRatio = 0.25f;
 
 		// compute per-resolution constants
-		public static void asDefault() {
+		public static void asDefault () {
 
 			ScaledFboWidth = (int)(Gdx.graphics.getWidth() * RttRatio);
 			ScaledFboHeight = (int)(Gdx.graphics.getHeight() * RttRatio);
 
 			int w = Gdx.graphics.getWidth();
-			if( w >= 1400 ) {
+			if (w >= 1400) {
 				BlurType = Blur.BlurType.Gaussian5x5b;
-			} else if( w >= 1200 ) {
+			} else if (w >= 1200) {
 				BlurType = Blur.BlurType.Gaussian5x5b;
-			} else if( w >= 800 ) {
+			} else if (w >= 800) {
 				BlurType = Blur.BlurType.Gaussian5x5b;
 			}
 
-			Gdx.app.log( "Config", "blurType=" + BlurType );
+			Gdx.app.log("Config", "blurType=" + BlurType);
 		}
 
-		private PostProcessing() {
+		private PostProcessing () {
 		}
 	}
 
 	// set default configuration values
-	public static void asDefault() {
+	public static void asDefault () {
 		isDesktop = (Gdx.app.getType() == ApplicationType.Desktop);
 
 		Debug.asDefault();
@@ -135,6 +136,6 @@ public final class Config {
 		PostProcessing.asDefault();
 	}
 
-	private Config() {
+	private Config () {
 	}
 }

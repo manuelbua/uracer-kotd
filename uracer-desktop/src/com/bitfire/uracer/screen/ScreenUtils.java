@@ -1,3 +1,4 @@
+
 package com.bitfire.uracer.screen;
 
 import com.badlogic.gdx.Gdx;
@@ -12,32 +13,32 @@ public final class ScreenUtils {
 	public static Screen currentScreen;
 
 	/** Render the specified screen to the specified buffer. */
-	public static void copyScreen( Screen screen, FrameBuffer buffer, Color clearColor, float clearDepth, boolean useDepth ) {
-		Gdx.gl20.glClearColor( clearColor.r, clearColor.g, clearColor.b, clearColor.a );
+	public static void copyScreen (Screen screen, FrameBuffer buffer, Color clearColor, float clearDepth, boolean useDepth) {
+		Gdx.gl20.glClearColor(clearColor.r, clearColor.g, clearColor.b, clearColor.a);
 
 		buffer.begin();
 		{
-			if( useDepth ) {
-				Gdx.gl20.glClearDepthf( clearDepth );
-				Gdx.gl20.glClear( GL20.GL_COLOR_BUFFER_BIT | GL20.GL_DEPTH_BUFFER_BIT );
+			if (useDepth) {
+				Gdx.gl20.glClearDepthf(clearDepth);
+				Gdx.gl20.glClear(GL20.GL_COLOR_BUFFER_BIT | GL20.GL_DEPTH_BUFFER_BIT);
 			} else {
-				Gdx.gl20.glClear( GL20.GL_COLOR_BUFFER_BIT );
+				Gdx.gl20.glClear(GL20.GL_COLOR_BUFFER_BIT);
 			}
 		}
 		buffer.end();
 
-		if( screen != null ) {
-			if( ScreenManager.currentScreen() != screen ) {
+		if (screen != null) {
+			if (ScreenManager.currentScreen() != screen) {
 				screen.tick();
 				screen.tickCompleted();
 			}
 
 			// ensures default active texture is active
-			Gdx.gl20.glActiveTexture( GL20.GL_TEXTURE0 );
+			Gdx.gl20.glActiveTexture(GL20.GL_TEXTURE0);
 
-			screen.render( buffer );
+			screen.render(buffer);
 
-			if( Config.Debug.RenderDebugDrawsInTransitions ) {
+			if (Config.Debug.RenderDebugDrawsInTransitions) {
 				buffer.begin();
 				screen.debugRender();
 				buffer.end();
@@ -46,31 +47,31 @@ public final class ScreenUtils {
 	}
 
 	/** Render the specified screen to the specified buffer. */
-	public static void copyScreen( Screen screen, FrameBuffer buffer ) {
-		copyScreen( screen, buffer, Color.BLACK, 1f, false );
+	public static void copyScreen (Screen screen, FrameBuffer buffer) {
+		copyScreen(screen, buffer, Color.BLACK, 1f, false);
 	}
 
 	/** Clear the specified buffer. */
-	public static void clear( FrameBuffer buffer, Color clearColor, float clearDepth, boolean useDepth ) {
-		Gdx.gl20.glClearColor( clearColor.r, clearColor.g, clearColor.b, clearColor.a );
+	public static void clear (FrameBuffer buffer, Color clearColor, float clearDepth, boolean useDepth) {
+		Gdx.gl20.glClearColor(clearColor.r, clearColor.g, clearColor.b, clearColor.a);
 
 		buffer.begin();
 		{
-			if( useDepth ) {
-				Gdx.gl20.glClearDepthf( clearDepth );
-				Gdx.gl20.glClear( GL20.GL_COLOR_BUFFER_BIT | GL20.GL_DEPTH_BUFFER_BIT );
+			if (useDepth) {
+				Gdx.gl20.glClearDepthf(clearDepth);
+				Gdx.gl20.glClear(GL20.GL_COLOR_BUFFER_BIT | GL20.GL_DEPTH_BUFFER_BIT);
 			} else {
-				Gdx.gl20.glClear( GL20.GL_COLOR_BUFFER_BIT );
+				Gdx.gl20.glClear(GL20.GL_COLOR_BUFFER_BIT);
 			}
 		}
 		buffer.end();
 	}
 
 	/** Clear the specified buffer. */
-	public static void clear( FrameBuffer buffer, Color clearColor ) {
-		clear( buffer, clearColor, 1f, false );
+	public static void clear (FrameBuffer buffer, Color clearColor) {
+		clear(buffer, clearColor, 1f, false);
 	}
 
-	private ScreenUtils() {
+	private ScreenUtils () {
 	}
 }

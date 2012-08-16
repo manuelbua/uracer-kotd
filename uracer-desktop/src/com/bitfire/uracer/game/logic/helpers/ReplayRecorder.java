@@ -1,3 +1,4 @@
+
 package com.bitfire.uracer.game.logic.helpers;
 
 import com.badlogic.gdx.Gdx;
@@ -11,41 +12,41 @@ public final class ReplayRecorder {
 	// replay data
 	private Replay replay;
 
-	public ReplayRecorder() {
+	public ReplayRecorder () {
 		isRecording = false;
 		replay = null;
 	}
 
-	public void reset() {
+	public void reset () {
 		isRecording = false;
 
 		// ensure data is discarded
-		if( replay != null ) {
+		if (replay != null) {
 			replay.reset();
 			replay = null;
 		}
 	}
 
-	public void beginRecording( Car car, Replay replay, String trackName ) {
+	public void beginRecording (Car car, Replay replay, String trackName) {
 		isRecording = true;
 		this.replay = replay;
-		replay.begin( trackName, car );
+		replay.begin(trackName, car);
 	}
 
-	public void add( CarForces f ) {
-		if( !isRecording ) {
-			Gdx.app.log( "Recorder", "Cannot add event, recording not enabled!" );
+	public void add (CarForces f) {
+		if (!isRecording) {
+			Gdx.app.log("Recorder", "Cannot add event, recording not enabled!");
 			return;
 		}
 
-		if( !replay.add( f ) ) {
-			Gdx.app.log( "Recorder", "Replay memory limit reached (" + Replay.MaxEvents + " events), restarting." );
+		if (!replay.add(f)) {
+			Gdx.app.log("Recorder", "Replay memory limit reached (" + Replay.MaxEvents + " events), restarting.");
 		}
 	}
 
-	public Replay endRecording() {
-		if( !isRecording ) {
-			Gdx.app.log( "Recorder", "Cannot end a recording that wasn't enabled!" );
+	public Replay endRecording () {
+		if (!isRecording) {
+			Gdx.app.log("Recorder", "Cannot end a recording that wasn't enabled!");
 			return null;
 		}
 
@@ -56,7 +57,7 @@ public final class ReplayRecorder {
 		return r;
 	}
 
-	public boolean isRecording() {
+	public boolean isRecording () {
 		return isRecording;
 	}
 }

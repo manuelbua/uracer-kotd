@@ -1,3 +1,4 @@
+
 package com.bitfire.uracer.game.logic.hud.debug;
 
 import com.badlogic.gdx.graphics.Color;
@@ -25,9 +26,9 @@ public class HudDebugMeter implements Disposable {
 
 	private Vector2 pos;
 
-	public Color color = new Color( 1, 1, 1, 1 );
+	public Color color = new Color(1, 1, 1, 1);
 
-	public HudDebugMeter( int width, int height ) {
+	public HudDebugMeter (int width, int height) {
 		assert (width < 256 && height < 256);
 
 		this.name = "";
@@ -35,65 +36,65 @@ public class HudDebugMeter implements Disposable {
 		this.height = height;
 		this.pos = new Vector2();
 
-		pixels = new Pixmap( this.width, this.height, Format.RGBA8888 );
-		texture = new Texture( 256, 256, Format.RGBA8888 );
-		texture.setFilter( TextureFilter.Nearest, TextureFilter.Nearest );
-		region = new TextureRegion( texture, 0, 0, pixels.getWidth(), pixels.getHeight() );
+		pixels = new Pixmap(this.width, this.height, Format.RGBA8888);
+		texture = new Texture(256, 256, Format.RGBA8888);
+		texture.setFilter(TextureFilter.Nearest, TextureFilter.Nearest);
+		region = new TextureRegion(texture, 0, 0, pixels.getWidth(), pixels.getHeight());
 	}
 
 	@Override
-	public void dispose() {
+	public void dispose () {
 		texture.dispose();
 		pixels.dispose();
 	}
 
-	public void setValue( float value ) {
+	public void setValue (float value) {
 		this.value = value;
 	}
 
-	public void setName( String name ) {
+	public void setName (String name) {
 		this.name = name + " = ";
 	}
 
-	public void setLimits( float min, float max ) {
+	public void setLimits (float min, float max) {
 		minValue = min;
 		maxValue = max;
 	}
 
-	public int getWidth() {
+	public int getWidth () {
 		return width;
 	}
 
-	public int getHeight() {
+	public int getHeight () {
 		return height;
 	}
 
-	public String getMessage() {
-		return name + String.format( "%.04f", Math.abs( value ) );
+	public String getMessage () {
+		return name + String.format("%.04f", Math.abs(value));
 	}
 
-	public void setPosition( Vector2 position ) {
-		pos.set( position );
+	public void setPosition (Vector2 position) {
+		pos.set(position);
 	}
 
-	public void render( SpriteBatch batch ) {
+	public void render (SpriteBatch batch) {
 		drawMeter();
-		SpriteBatchUtils.drawString( batch, getMessage(), pos.x, pos.y );
+		SpriteBatchUtils.drawString(batch, getMessage(), pos.x, pos.y);
 
-		batch.draw( region, pos.x, pos.y + Art.DebugFontHeight );
+		batch.draw(region, pos.x, pos.y + Art.DebugFontHeight);
 	}
 
-	private void drawMeter() {
-		pixels.setColor( 0, 0, 0, 1 );
+	private void drawMeter () {
+		pixels.setColor(0, 0, 0, 1);
 		pixels.fill();
 
 		float range = maxValue - minValue;
-		float ratio = Math.abs( value ) / range;
-		ratio = AMath.clamp( ratio, 0, 1 );
+		float ratio = Math.abs(value) / range;
+		ratio = AMath.clamp(ratio, 0, 1);
 
-		pixels.setColor( color );
-		pixels.fillRectangle( 1, 1, (int)(width * ratio) - 2, height - 2 );
+		pixels.setColor(color);
+		pixels.fillRectangle(1, 1, (int)(width * ratio) - 2, height - 2);
 
-		texture.draw( pixels, 0, 0 );
+		texture.draw(pixels, 0, 0);
 	}
 }

@@ -1,3 +1,4 @@
+
 package com.bitfire.uracer.game.logic.trackeffects.effects;
 
 import com.badlogic.gdx.Gdx;
@@ -12,7 +13,7 @@ import com.bitfire.uracer.game.player.PlayerCar;
 import com.bitfire.uracer.resources.Art;
 
 /** FIXME disabled for a long time, need testing again
- *
+ * 
  * @author bmanuel */
 public class PlayerSmokeTrails extends TrackEffect {
 	public static final int MaxParticles = 100;
@@ -33,75 +34,75 @@ public class PlayerSmokeTrails extends TrackEffect {
 		private final float OriginalParticleScaling;
 		private final float MaxParticlesPerEmitterPerSec;
 
-		public SmokeEffect() {
+		public SmokeEffect () {
 			effect = new ParticleEffect();
-			effect.load( Gdx.files.internal( "data/partfx/smoke.p" ), Art.cars );
+			effect.load(Gdx.files.internal("data/partfx/smoke.p"), Art.cars);
 
-			baseEmitter = effect.getEmitters().get( 0 );
+			baseEmitter = effect.getEmitters().get(0);
 
-			baseEmitter.setMaxParticleCount( MaxParticles );
+			baseEmitter.setMaxParticleCount(MaxParticles);
 			MaxParticleLifeMinMs = baseEmitter.getLife().getHighMin();
 			MaxParticleLifeMaxMs = baseEmitter.getLife().getHighMax();
 			OriginalParticleScaling = baseEmitter.getScale().getHighMax();
 			MaxParticlesPerEmitterPerSec = baseEmitter.getEmission().getHighMax();
 
-			baseEmitter.setAdditive( true );
+			baseEmitter.setAdditive(true);
 
-			setScaleMul( 1f );
+			setScaleMul(1f);
 		}
 
-		public void setLifeMul( float value ) {
-			baseEmitter.getLife().setHighMin( MaxParticleLifeMinMs * value );
-			baseEmitter.getLife().setHighMax( MaxParticleLifeMaxMs * value );
+		public void setLifeMul (float value) {
+			baseEmitter.getLife().setHighMin(MaxParticleLifeMinMs * value);
+			baseEmitter.getLife().setHighMax(MaxParticleLifeMaxMs * value);
 		}
 
-		public final void setScaleMul( float value ) {
-			baseEmitter.getScale().setHigh( OriginalParticleScaling * value * scalingStrategy.invTileMapZoomFactor );
+		public final void setScaleMul (float value) {
+			baseEmitter.getScale().setHigh(OriginalParticleScaling * value * scalingStrategy.invTileMapZoomFactor);
 		}
 
-		public void setEmissionMul( float value ) {
-			baseEmitter.getEmission().setHigh( MaxParticlesPerEmitterPerSec * value );
+		public void setEmissionMul (float value) {
+			baseEmitter.getEmission().setHigh(MaxParticlesPerEmitterPerSec * value);
 		}
 
-		public void start() {
+		public void start () {
 			baseEmitter.start();
 		}
 
-		public void stop() {
+		public void stop () {
 			baseEmitter.allowCompletion();
 		}
 
-		public void reset() {
+		public void reset () {
 			stop();
 		}
 
-		public void render( SpriteBatch batch, float x, float y ) {
-			effect.setPosition( x, y );
-			effect.draw( batch, URacer.Game.getLastDeltaSecs() );
+		public void render (SpriteBatch batch, float x, float y) {
+			effect.setPosition(x, y);
+			effect.draw(batch, URacer.Game.getLastDeltaSecs());
 		}
 
-		public int getParticleCount() {
+		public int getParticleCount () {
 			int count = 0, max = effect.getEmitters().size;
-			for( int i = 0; i < max; i++ ) {
-				count += effect.getEmitters().get( i ).getActiveCount();
+			for (int i = 0; i < max; i++) {
+				count += effect.getEmitters().get(i).getActiveCount();
 			}
 
 			return count;
 		}
 	}
 
-	public PlayerSmokeTrails( ScalingStrategy scalingStrategy, PlayerCar player ) {
-		super( Type.CarSmokeTrails );
+	public PlayerSmokeTrails (ScalingStrategy scalingStrategy, PlayerCar player) {
+		super(Type.CarSmokeTrails);
 		this.player = player;
 		this.scalingStrategy = scalingStrategy;
 
-		fx = new SmokeEffect[ SmokeEffectsCount ];
+		fx = new SmokeEffect[SmokeEffectsCount];
 
-		for( int i = 0; i < SmokeEffectsCount; i++ ) {
+		for (int i = 0; i < SmokeEffectsCount; i++) {
 			fx[i] = new SmokeEffect();
-			fx[i].setLifeMul( 2.25f );
+			fx[i].setLifeMul(2.25f);
 			// fx[i].setScaleMul( .9f );
-			fx[i].setEmissionMul( .8f );
+			fx[i].setEmissionMul(.8f);
 			fx[i].stop();
 		}
 
@@ -111,27 +112,27 @@ public class PlayerSmokeTrails extends TrackEffect {
 		posY = 0;
 	}
 
-	public void setPosition( float x, float y ) {
+	public void setPosition (float x, float y) {
 		posX = x;
 		posY = y;
 	}
 
 	@Override
-	public void dispose() {
+	public void dispose () {
 	}
 
 	@Override
-	public void tick() {
+	public void tick () {
 		isDrifting = player.driftState.isDrifting;
 
-		if( isDrifting && !wasDrifting ) {
+		if (isDrifting && !wasDrifting) {
 			// started drifting
-			for( int i = 0; i < SmokeEffectsCount; i++ ) {
+			for (int i = 0; i < SmokeEffectsCount; i++) {
 				fx[i].start();
 			}
-		} else if( !isDrifting && wasDrifting ) {
+		} else if (!isDrifting && wasDrifting) {
 			// ended drifting
-			for( int i = 0; i < SmokeEffectsCount; i++ ) {
+			for (int i = 0; i < SmokeEffectsCount; i++) {
 				fx[i].stop();
 			}
 		}
@@ -142,9 +143,9 @@ public class PlayerSmokeTrails extends TrackEffect {
 	private Vector2 tmp = new Vector2();
 
 	@Override
-	public void render( SpriteBatch batch ) {
-		tmp.set( posX, posY );
-		fx[0].render( batch, tmp.x, tmp.y );
+	public void render (SpriteBatch batch) {
+		tmp.set(posX, posY);
+		fx[0].render(batch, tmp.x, tmp.y);
 
 		// // rear left
 		// fx[0].render( batch, tmp.x - 10, tmp.y - 10 );
@@ -160,18 +161,18 @@ public class PlayerSmokeTrails extends TrackEffect {
 	}
 
 	@Override
-	public void reset() {
+	public void reset () {
 		isDrifting = false;
 		wasDrifting = false;
-		for( int i = 0; i < SmokeEffectsCount; i++ ) {
+		for (int i = 0; i < SmokeEffectsCount; i++) {
 			fx[i].reset();
 		}
 	}
 
 	@Override
-	public int getParticleCount() {
+	public int getParticleCount () {
 		int count = 0;
-		for( int i = 0; i < SmokeEffectsCount; i++ ) {
+		for (int i = 0; i < SmokeEffectsCount; i++) {
 			count += fx[i].getParticleCount();
 		}
 

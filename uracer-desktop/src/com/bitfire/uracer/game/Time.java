@@ -1,3 +1,4 @@
+
 package com.bitfire.uracer.game;
 
 import com.badlogic.gdx.utils.TimeUtils;
@@ -5,9 +6,8 @@ import com.bitfire.uracer.configuration.Config;
 import com.bitfire.uracer.game.task.Task;
 import com.bitfire.uracer.game.task.TaskManagerEvent.Order;
 
-/** Tracks elapsed time both in absolute terms (wall clock time) or
- * relative to the tick-based system.
- *
+/** Tracks elapsed time both in absolute terms (wall clock time) or relative to the tick-based system.
+ * 
  * @author bmanuel */
 public final class Time extends Task {
 	public enum Reference {
@@ -22,30 +22,29 @@ public final class Time extends Task {
 	private long nsStopTime;
 
 	/** Constructs a new Time object */
-	public Time() {
-		super( Order.PLUS_4 );
+	public Time () {
+		super(Order.PLUS_4);
 		reset();
 	}
 
 	/** Starts tracking */
-	public void start() {
+	public void start () {
 		reset();
 	}
 
 	/** Stops tracking */
-	public void stop() {
+	public void stop () {
 		stopped = true;
 		nsStopTime = TimeUtils.nanoTime();
 	}
 
-	/** Resumes/continues tracking, without resetting the accumulated state
-	 * (should be called "continue" but can't */
-	public void resume() {
+	/** Resumes/continues tracking, without resetting the accumulated state (should be called "continue" but can't */
+	public void resume () {
 		stopped = false;
 	}
 
 	/** Resets the internal state */
-	public void reset() {
+	public void reset () {
 		stopped = false;
 
 		// abs
@@ -59,23 +58,23 @@ public final class Time extends Task {
 
 	/** Counts this tick */
 	@Override
-	protected void onTick() {
-		if( !stopped ) {
+	protected void onTick () {
+		if (!stopped) {
 			ticks++;
 			ticksInSeconds += Config.Physics.PhysicsDt;
 		}
 	};
 
 	/** Returns the elapsed time expressed as the specified measuring unit */
-	public float elapsed( Reference timeReference ) {
+	public float elapsed (Reference timeReference) {
 		long now = (stopped ? nsStopTime : TimeUtils.nanoTime());
 
-		switch( timeReference ) {
-		case TickSeconds:		// returns seconds
+		switch (timeReference) {
+		case TickSeconds: // returns seconds
 			return ticksInSeconds;
-		case NumberOfTicks:		// returns the tick count so far
+		case NumberOfTicks: // returns the tick count so far
 			return ticks;
-		case AbsoluteSeconds:			// returns seconds
+		case AbsoluteSeconds: // returns seconds
 		default:
 			return (now - nsStartTime) * oneOnOneBillion;
 		}

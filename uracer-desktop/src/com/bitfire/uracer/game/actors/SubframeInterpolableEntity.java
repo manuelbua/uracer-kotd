@@ -1,3 +1,4 @@
+
 package com.bitfire.uracer.game.actors;
 
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
@@ -13,55 +14,54 @@ public abstract class SubframeInterpolableEntity extends Entity implements Physi
 	protected EntityRenderState statePrevious = new EntityRenderState();
 	protected EntityRenderState stateCurrent = new EntityRenderState();
 
-	public SubframeInterpolableEntity() {
-		GameEvents.physicsStep.addListener( this, PhysicsStepEvent.Type.onBeforeTimestep );
-		GameEvents.physicsStep.addListener( this, PhysicsStepEvent.Type.onAfterTimestep );
-		GameEvents.physicsStep.addListener( this, PhysicsStepEvent.Type.onSubstepCompleted );
-		GameEvents.gameRenderer.addListener( this, GameRendererEvent.Type.OnSubframeInterpolate, GameRendererEvent.Order.DEFAULT );
+	public SubframeInterpolableEntity () {
+		GameEvents.physicsStep.addListener(this, PhysicsStepEvent.Type.onBeforeTimestep);
+		GameEvents.physicsStep.addListener(this, PhysicsStepEvent.Type.onAfterTimestep);
+		GameEvents.physicsStep.addListener(this, PhysicsStepEvent.Type.onSubstepCompleted);
+		GameEvents.gameRenderer.addListener(this, GameRendererEvent.Type.OnSubframeInterpolate, GameRendererEvent.Order.DEFAULT);
 	}
 
 	@Override
-	public void dispose() {
-		GameEvents.physicsStep.removeListener( this, PhysicsStepEvent.Type.onBeforeTimestep );
-		GameEvents.physicsStep.removeListener( this, PhysicsStepEvent.Type.onAfterTimestep );
-		GameEvents.physicsStep.removeListener( this, PhysicsStepEvent.Type.onSubstepCompleted );
-		GameEvents.gameRenderer.removeListener( this, GameRendererEvent.Type.OnSubframeInterpolate,
-				GameRendererEvent.Order.DEFAULT );
+	public void dispose () {
+		GameEvents.physicsStep.removeListener(this, PhysicsStepEvent.Type.onBeforeTimestep);
+		GameEvents.physicsStep.removeListener(this, PhysicsStepEvent.Type.onAfterTimestep);
+		GameEvents.physicsStep.removeListener(this, PhysicsStepEvent.Type.onSubstepCompleted);
+		GameEvents.gameRenderer.removeListener(this, GameRendererEvent.Type.OnSubframeInterpolate, GameRendererEvent.Order.DEFAULT);
 	}
 
-	public abstract boolean isVisible();
+	public abstract boolean isVisible ();
 
-	public abstract void onRender( SpriteBatch batch, GameRendererEvent.Type type, Order order );
+	public abstract void onRender (SpriteBatch batch, GameRendererEvent.Type type, Order order);
 
-	public abstract void saveStateTo( EntityRenderState state );
+	public abstract void saveStateTo (EntityRenderState state);
 
-	public abstract boolean isSubframeInterpolated();
+	public abstract boolean isSubframeInterpolated ();
 
-	protected void resetState() {
-		saveStateTo( stateCurrent );
-		statePrevious.set( stateCurrent );
-		stateRender.set( stateCurrent );
+	protected void resetState () {
+		saveStateTo(stateCurrent);
+		statePrevious.set(stateCurrent);
+		stateRender.set(stateCurrent);
 		stateRender.toPixels();
 	}
 
 	@Override
-	public void gameRendererEvent( GameRendererEvent.Type type, Order order ) {
-		switch( type ) {
+	public void gameRendererEvent (GameRendererEvent.Type type, Order order) {
+		switch (type) {
 		case BatchBeforeMeshes:
 		case BatchAfterMeshes:
-			if( isVisible() ) {
-				onRender( GameEvents.gameRenderer.batch, type, order );
+			if (isVisible()) {
+				onRender(GameEvents.gameRenderer.batch, type, order);
 			}
 			break;
 		case OnSubframeInterpolate:
-			onSubframeInterpolate( GameEvents.gameRenderer.timeAliasingFactor );
+			onSubframeInterpolate(GameEvents.gameRenderer.timeAliasingFactor);
 			break;
 		}
 	}
 
 	@Override
-	public void physicsEvent( PhysicsStepEvent.Type type ) {
-		switch( type ) {
+	public void physicsEvent (PhysicsStepEvent.Type type) {
+		switch (type) {
 		case onBeforeTimestep:
 			onBeforePhysicsSubstep();
 			break;
@@ -74,30 +74,30 @@ public abstract class SubframeInterpolableEntity extends Entity implements Physi
 		}
 	}
 
-	public void onBeforePhysicsSubstep() {
+	public void onBeforePhysicsSubstep () {
 		// Gdx.app.log( this.getClass().getSimpleName(), "beforePhysics" );
-		saveStateTo( statePrevious );
+		saveStateTo(statePrevious);
 	}
 
-	public void onAfterPhysicsSubstep() {
+	public void onAfterPhysicsSubstep () {
 		// Gdx.app.log( this.getClass().getSimpleName(), "afterPhysics" );
-		saveStateTo( stateCurrent );
+		saveStateTo(stateCurrent);
 	}
 
-	public void onSubstepCompleted() {
+	public void onSubstepCompleted () {
 
 	}
 
 	/** Issued after a tick/physicsStep but before render :P */
-	public void onSubframeInterpolate( float aliasingFactor ) {
-		if( isSubframeInterpolated() ) {
-			if( !EntityRenderState.isEqual( statePrevious, stateCurrent ) ) {
-				stateRender.set( EntityRenderState.interpolate( statePrevious, stateCurrent, aliasingFactor ) );
+	public void onSubframeInterpolate (float aliasingFactor) {
+		if (isSubframeInterpolated()) {
+			if (!EntityRenderState.isEqual(statePrevious, stateCurrent)) {
+				stateRender.set(EntityRenderState.interpolate(statePrevious, stateCurrent, aliasingFactor));
 			} else {
-				stateRender.set( stateCurrent );
+				stateRender.set(stateCurrent);
 			}
 		} else {
-			stateRender.set( stateCurrent );
+			stateRender.set(stateCurrent);
 		}
 
 		stateRender.toPixels();

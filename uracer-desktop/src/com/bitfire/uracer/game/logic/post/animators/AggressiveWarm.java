@@ -1,3 +1,4 @@
+
 package com.bitfire.uracer.game.logic.post.animators;
 
 import com.badlogic.gdx.Gdx;
@@ -29,48 +30,48 @@ public final class AggressiveWarm implements PostProcessingAnimator {
 	private CrtMonitor crt = null;
 	private Curvature curvature = null;
 
-	public AggressiveWarm( GameLogic logic, PostProcessing post, boolean nightMode ) {
+	public AggressiveWarm (GameLogic logic, PostProcessing post, boolean nightMode) {
 		this.nightMode = nightMode;
 		this.logic = logic;
-		bloom = (Bloom)post.getEffect( PostProcessing.Effects.Bloom.name );
-		zoom = (Zoomer)post.getEffect( PostProcessing.Effects.Zoomer.name );
-		vignette = (Vignette)post.getEffect( PostProcessing.Effects.Vignette.name );
-		crt = (CrtMonitor)post.getEffect( PostProcessing.Effects.Crt.name );
-		curvature = (Curvature)post.getEffect( PostProcessing.Effects.Curvature.name );
+		bloom = (Bloom)post.getEffect(PostProcessing.Effects.Bloom.name);
+		zoom = (Zoomer)post.getEffect(PostProcessing.Effects.Zoomer.name);
+		vignette = (Vignette)post.getEffect(PostProcessing.Effects.Vignette.name);
+		crt = (CrtMonitor)post.getEffect(PostProcessing.Effects.Crt.name);
+		curvature = (Curvature)post.getEffect(PostProcessing.Effects.Curvature.name);
 
 		reset();
 	}
 
 	@Override
-	public void reset() {
-		if( bloom != null ) {
+	public void reset () {
+		if (bloom != null) {
 			float threshold = (nightMode ? 0.2f : 0.45f);
-			Bloom.Settings bloomSettings = new Bloom.Settings( "subtle", Config.PostProcessing.BlurType, 1, 1.5f, threshold, 1f,
-					0.5f, 1f, 1.5f );
-			bloom.setSettings( bloomSettings );
+			Bloom.Settings bloomSettings = new Bloom.Settings("subtle", Config.PostProcessing.BlurType, 1, 1.5f, threshold, 1f,
+				0.5f, 1f, 1.5f);
+			bloom.setSettings(bloomSettings);
 		}
 
-		if( vignette != null ) {
-			vignette.setCoords( 0.8f, 0.25f );
-			vignette.setCenter( Gdx.graphics.getWidth() / 2, Gdx.graphics.getHeight() / 2 );
-			vignette.setLut( Art.postXpro );
-			vignette.setLutIndex( 7 );
-			vignette.setEnabled( true );
+		if (vignette != null) {
+			vignette.setCoords(0.8f, 0.25f);
+			vignette.setCenter(Gdx.graphics.getWidth() / 2, Gdx.graphics.getHeight() / 2);
+			vignette.setLut(Art.postXpro);
+			vignette.setLutIndex(7);
+			vignette.setEnabled(true);
 		}
 
-		if( crt != null ) {
+		if (crt != null) {
 			startMs = TimeUtils.millis();
-			crt.setTime( 0 );
+			crt.setTime(0);
 
-			crt.setColorOffset( 0.002f );
-			crt.setDistortion( 0.2f );
-			crt.setZoom( 0.9f );
-			crt.setTint( 0.95f, 0.8f, 1.0f );
+			crt.setColorOffset(0.002f);
+			crt.setDistortion(0.2f);
+			crt.setZoom(0.9f);
+			crt.setTint(0.95f, 0.8f, 1.0f);
 		}
 
-		if( curvature != null ) {
-			curvature.setDistortion( 0.2f );
-			curvature.setZoom( 0.9f );
+		if (curvature != null) {
+			curvature.setDistortion(0.2f);
+			curvature.setZoom(0.9f);
 		}
 	}
 
@@ -78,58 +79,58 @@ public final class AggressiveWarm implements PostProcessingAnimator {
 	private long startMs = 0;
 
 	@Override
-	public void update( float timeModFactor ) {
+	public void update (float timeModFactor) {
 		PlayerCar player = logic.getPlayer();
 
-		if( player == null ) {
+		if (player == null) {
 			return;
 		}
 
-		Vector2 playerScreenPos = GameRenderer.ScreenUtils.worldPxToScreen( player.state().position );
+		Vector2 playerScreenPos = GameRenderer.ScreenUtils.worldPxToScreen(player.state().position);
 
-		float driftStrength = AMath.clamp( AMath.lerp( prevDriftStrength, player.driftState.driftStrength, 0.01f ), 0, 1 );
+		float driftStrength = AMath.clamp(AMath.lerp(prevDriftStrength, player.driftState.driftStrength, 0.01f), 0, 1);
 		prevDriftStrength = driftStrength;
 
-		if( crt != null ) {
+		if (crt != null) {
 			// compute time (add noise)
 			float secs = (float)(TimeUtils.millis() - startMs) / 1000;
 			boolean randomNoiseInTime = false;
-			if( randomNoiseInTime ) {
-				crt.setTime( secs + MathUtils.random() / (MathUtils.random() * 64f + 0.001f) );
+			if (randomNoiseInTime) {
+				crt.setTime(secs + MathUtils.random() / (MathUtils.random() * 64f + 0.001f));
 			} else {
-				crt.setTime( secs );
+				crt.setTime(secs);
 			}
 		}
 
-		if( zoom != null && player != null ) {
+		if (zoom != null && player != null) {
 			float zoomfactor = timeModFactor;// * player.carState.currSpeedFactor;
-			zoom.setOrigin( playerScreenPos );
-			zoom.setBlurStrength( -0.1f * zoomfactor );
-			zoom.setZoom( 1.0f + 0.15f * zoomfactor );
+			zoom.setOrigin(playerScreenPos);
+			zoom.setBlurStrength(-0.1f * zoomfactor);
+			zoom.setZoom(1.0f + 0.15f * zoomfactor);
 		}
 
-		if( bloom != null ) {
-			bloom.setBaseSaturation( AMath.lerp( 1, 0.15f, timeModFactor ) );
+		if (bloom != null) {
+			bloom.setBaseSaturation(AMath.lerp(1, 0.15f, timeModFactor));
 			// bloom.setBloomSaturation( 1.5f - factor * 0.85f ); // TODO when charged
 			// bloom.setBloomSaturation( 1.5f - factor * 1.5f ); // TODO when completely discharged
-			bloom.setBloomSaturation( 1f - timeModFactor * 0.5f );
-			bloom.setThreshold( AMath.lerp( 0.4f, 0.45f, timeModFactor ) );
+			bloom.setBloomSaturation(1f - timeModFactor * 0.5f);
+			bloom.setThreshold(AMath.lerp(0.4f, 0.45f, timeModFactor));
 		}
 
-		if( vignette != null ) {
+		if (vignette != null) {
 			// vignette.setY( (1 - factor) * 0.74f + factor * 0.4f );
 
-			if( vignette.controlSaturation ) {
+			if (vignette.controlSaturation) {
 				// go with the "poor man"'s time dilation fx
-				vignette.setSaturation( 1f - timeModFactor * 0.55f );
-				vignette.setSaturationMul( 1f + timeModFactor * 0.125f );
+				vignette.setSaturation(1f - timeModFactor * 0.55f);
+				vignette.setSaturationMul(1f + timeModFactor * 0.125f);
 			}
 
 			// vignette.setCenter( playerScreenPos.x, playerScreenPos.y );
 			// vignette.setCoords( 1.5f - driftStrength * 0.8f, 0.1f );
 
-			vignette.setLutIntensity( timeModFactor * 1.25f );
-			vignette.setIntensity( timeModFactor );
+			vignette.setLutIntensity(timeModFactor * 1.25f);
+			vignette.setIntensity(timeModFactor);
 		}
 	}
 }

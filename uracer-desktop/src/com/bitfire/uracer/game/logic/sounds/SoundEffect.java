@@ -1,3 +1,4 @@
+
 package com.bitfire.uracer.game.logic.sounds;
 
 import com.badlogic.gdx.audio.Sound;
@@ -10,61 +11,61 @@ public abstract class SoundEffect implements Disposable {
 	private static final int WaitLimit = 1000;
 	private static final int ThrottleMs = 100;
 
-	protected long checkedPlay( Sound sound ) {
-		return checkedPlay( sound, 1 );
+	protected long checkedPlay (Sound sound) {
+		return checkedPlay(sound, 1);
 	}
 
-	protected long checkedLoop( Sound sound ) {
-		return checkedLoop( sound, 1 );
+	protected long checkedLoop (Sound sound) {
+		return checkedLoop(sound, 1);
 	}
 
-	protected long checkedPlay( Sound sound, float volume ) {
+	protected long checkedPlay (Sound sound, float volume) {
 		int waitCounter = 0;
 		long soundId = 0;
 
 		boolean ready = false;
-		while( !ready && waitCounter < WaitLimit ) {
-			soundId = sound.play( volume );
+		while (!ready && waitCounter < WaitLimit) {
+			soundId = sound.play(volume);
 			ready = (soundId != 0);
 			waitCounter++;
 			try {
-				Thread.sleep( ThrottleMs );
-//				Gdx.app.log( "CarSoundEffect", "sleeping" );
-			} catch( InterruptedException e ) {
+				Thread.sleep(ThrottleMs);
+// Gdx.app.log( "CarSoundEffect", "sleeping" );
+			} catch (InterruptedException e) {
 			}
 		}
 
 		return soundId;
 	}
 
-	protected long checkedLoop( Sound sound, float volume ) {
+	protected long checkedLoop (Sound sound, float volume) {
 		int waitCounter = 0;
 		long soundId = 0;
 
 		boolean ready = false;
-		while( !ready && waitCounter < WaitLimit ) {
-			soundId = sound.loop( volume );
+		while (!ready && waitCounter < WaitLimit) {
+			soundId = sound.loop(volume);
 			ready = (soundId != 0);
 			waitCounter++;
 			try {
-				Thread.sleep( ThrottleMs );
-//				Gdx.app.log( "CarSoundEffect", "sleeping" );
-			} catch( InterruptedException e ) {
+				Thread.sleep(ThrottleMs);
+// Gdx.app.log( "CarSoundEffect", "sleeping" );
+			} catch (InterruptedException e) {
 			}
 		}
 
 		return soundId;
 	}
 
-	public void start() {
+	public void start () {
 	}
 
-	public void stop() {
+	public void stop () {
 	}
 
-	public void reset() {
+	public void reset () {
 	}
 
-	public void tick() {
+	public void tick () {
 	}
 }

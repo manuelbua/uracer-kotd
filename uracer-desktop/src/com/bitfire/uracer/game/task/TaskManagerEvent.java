@@ -1,3 +1,4 @@
+
 package com.bitfire.uracer.game.task;
 
 import com.bitfire.uracer.utils.Event;
@@ -15,48 +16,48 @@ public class TaskManagerEvent extends Event<TaskManager> {
 	}
 
 	/* This constructor will permits late-binding of the "source" member via the "trigger" method */
-	public TaskManagerEvent() {
-		super( null );
-		for( Type t : Type.values() ) {
-			for( Order o : Order.values() ) {
+	public TaskManagerEvent () {
+		super(null);
+		for (Type t : Type.values()) {
+			for (Order o : Order.values()) {
 				notifiers[t.ordinal()][o.ordinal()] = new Notifier();
 			}
 		}
 	}
 
 	protected interface Listener extends EventListener {
-		void taskManagerEvent( Type type );
+		void taskManagerEvent (Type type);
 	}
 
-	public void addListener( Listener listener, Type type, Order order ) {
-		notifiers[type.ordinal()][order.ordinal()].addListener( listener );
+	public void addListener (Listener listener, Type type, Order order) {
+		notifiers[type.ordinal()][order.ordinal()].addListener(listener);
 	}
 
-	public void removeListener( Listener listener, Type type, Order order ) {
-		notifiers[type.ordinal()][order.ordinal()].removeListener( listener );
+	public void removeListener (Listener listener, Type type, Order order) {
+		notifiers[type.ordinal()][order.ordinal()].removeListener(listener);
 	}
 
-	public void removeAllListeners() {
-		for( Type t : Type.values() ) {
-			for( Order o : Order.values() ) {
+	public void removeAllListeners () {
+		for (Type t : Type.values()) {
+			for (Order o : Order.values()) {
 				notifiers[t.ordinal()][o.ordinal()].removeAllListeners();
 			}
 		}
 	}
 
-	public void trigger( Type type ) {
-		for( Order order : Order.values() ) {
-			notifiers[type.ordinal()][order.ordinal()].taskManagerEvent( type );
+	public void trigger (Type type) {
+		for (Order order : Order.values()) {
+			notifiers[type.ordinal()][order.ordinal()].taskManagerEvent(type);
 		}
 	}
 
-	private Notifier[][] notifiers = new Notifier[ Type.values().length ][ Order.values().length ];
+	private Notifier[][] notifiers = new Notifier[Type.values().length][Order.values().length];
 
 	public class Notifier extends EventNotifier<Listener> implements Listener {
 		@Override
-		public void taskManagerEvent( Type type ) {
-			for( Listener listener : listeners ) {
-				listener.taskManagerEvent( type );
+		public void taskManagerEvent (Type type) {
+			for (Listener listener : listeners) {
+				listener.taskManagerEvent(type);
 			}
 		}
 	};

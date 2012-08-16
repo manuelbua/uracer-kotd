@@ -1,10 +1,10 @@
+
 package com.bitfire.uracer.game.logic;
 
 import com.bitfire.uracer.game.Time;
 
-/** Encapsulates the track's lap information, such as elapsed time so far, best
- * lap times and last lap's time.
- *
+/** Encapsulates the track's lap information, such as elapsed time so far, best lap times and last lap's time.
+ * 
  * @author bmanuel */
 public final class LapInfo {
 	private Time time;
@@ -13,7 +13,7 @@ public final class LapInfo {
 	private boolean hasLastTrackTimeSecs;
 	private boolean hasBestTrackTimeSecs;
 
-	public LapInfo() {
+	public LapInfo () {
 		lastTrackTimeSecs = 0;
 		hasLastTrackTimeSecs = false;
 		hasBestTrackTimeSecs = false;
@@ -21,43 +21,43 @@ public final class LapInfo {
 		resetTime();
 	}
 
-	public void resetTime() {
+	public void resetTime () {
 		hasLastTrackTimeSecs = false;
 		hasBestTrackTimeSecs = false;
 		time.start();
 	}
 
-	public void restartTime() {
+	public void restartTime () {
 		time.start();
 	}
 
-	public float getElapsedSeconds() {
-		return time.elapsed( Time.Reference.TickSeconds );
+	public float getElapsedSeconds () {
+		return time.elapsed(Time.Reference.TickSeconds);
 	}
 
-	public void setLastTrackTimeSeconds( float value ) {
+	public void setLastTrackTimeSeconds (float value) {
 		lastTrackTimeSecs = value;
 		hasLastTrackTimeSecs = true;
 	}
 
-	public void setBestTrackTimeSeconds( float value ) {
+	public void setBestTrackTimeSeconds (float value) {
 		bestTrackTimeSecs = value;
 		hasBestTrackTimeSecs = true;
 	}
 
-	public boolean hasLastTrackTimeSeconds() {
+	public boolean hasLastTrackTimeSeconds () {
 		return hasLastTrackTimeSecs;
 	}
 
-	public float getLastTrackTimeSeconds() {
+	public float getLastTrackTimeSeconds () {
 		return lastTrackTimeSecs;
 	}
 
-	public boolean hasBestTrackTimeSeconds() {
+	public boolean hasBestTrackTimeSeconds () {
 		return hasBestTrackTimeSecs;
 	}
 
-	public float getBestTrackTimeSeconds() {
+	public float getBestTrackTimeSeconds () {
 		return bestTrackTimeSecs;
 	}
 }

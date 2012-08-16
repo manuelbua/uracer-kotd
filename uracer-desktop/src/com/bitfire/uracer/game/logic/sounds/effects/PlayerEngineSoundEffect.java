@@ -1,3 +1,4 @@
+
 package com.bitfire.uracer.game.logic.sounds.effects;
 
 import com.badlogic.gdx.audio.Sound;
@@ -15,50 +16,50 @@ public final class PlayerEngineSoundEffect extends SoundEffect {
 	private static final float carEnginePitchMin = 1f;
 	private PlayerCar player;
 
-	public PlayerEngineSoundEffect( PlayerCar player ) {
+	public PlayerEngineSoundEffect (PlayerCar player) {
 		this.player = player;
 		carEngine = Sounds.carEngine;
 	}
 
 	@Override
-	public void dispose() {
+	public void dispose () {
 	}
 
 	@Override
-	public void tick() {
-		if( carEngineId > -1 ) {
+	public void tick () {
+		if (carEngineId > -1) {
 			float speedFactor = player.carState.currSpeedFactor;
 
 			float pitch = carEnginePitchMin + speedFactor * 0.65f;
-			if( !AMath.equals( pitch, carEnginePitchLast ) ) {
-				carEngine.setPitch( carEngineId, pitch );
+			if (!AMath.equals(pitch, carEnginePitchLast)) {
+				carEngine.setPitch(carEngineId, pitch);
 				carEnginePitchLast = pitch;
 			}
 		}
 	}
 
 	@Override
-	public void start() {
-		if( Config.isDesktop ) {
-			carEngineId = carEngine.loop( 1f );
+	public void start () {
+		if (Config.isDesktop) {
+			carEngineId = carEngine.loop(1f);
 		} else {
 			// UGLY HACK FOR ANDROID
-			carEngineId = checkedLoop( carEngine, 1f );
+			carEngineId = checkedLoop(carEngine, 1f);
 		}
 
 		reset();
 	}
 
 	@Override
-	public void stop() {
+	public void stop () {
 		carEngine.stop();
 	}
 
 	@Override
-	public void reset() {
+	public void reset () {
 		stop();
 		carEnginePitchStart = carEnginePitchMin;
 		carEnginePitchLast = carEnginePitchMin;
-		carEngine.setPitch( carEngineId, carEnginePitchStart );
+		carEngine.setPitch(carEngineId, carEnginePitchStart);
 	}
 }

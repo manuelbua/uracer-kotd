@@ -1,13 +1,12 @@
+
 package com.bitfire.uracer.game.actors;
 
 import com.badlogic.gdx.Gdx;
 
-/**
- * Encapsulates a set of one CarModel and one CarAspect, indicized by a single mnemonic, describing both physical and
- * graphical settings for the specified Type.
+/** Encapsulates a set of one CarModel and one CarAspect, indicized by a single mnemonic, describing both physical and graphical
+ * settings for the specified Type.
  * 
- * @author bmanuel
- */
+ * @author bmanuel */
 public final class CarPreset {
 
 	public Type type;
@@ -15,35 +14,29 @@ public final class CarPreset {
 
 	public enum Type {
 		// @formatter:off
-		L1_MiniCooper( "l1_minicooper" ),
-		L1_GoblinOrange( "l1_orange_goblin" ),
-		
-		L2_MustangRed( "l2_mustang_red" ),
-		L2_MustangWhite( "l2_mustang_white" ),
-		L2_BlueBeast("l2_blue_beast"),
-		L2_PinkBeast("l2_pink_beast"),
-		L2_RedBeast("l2_red_beast"),
-		L2_YellowBeast("l2_yellow_beast"),
-		
-		L3_Gallardo( "l3_gallardo" ),
+		L1_MiniCooper("l1_minicooper"), L1_GoblinOrange("l1_orange_goblin"),
 
-		Default("l1_minicooper"),
-		;
+		L2_MustangRed("l2_mustang_red"), L2_MustangWhite("l2_mustang_white"), L2_BlueBeast("l2_blue_beast"), L2_PinkBeast(
+			"l2_pink_beast"), L2_RedBeast("l2_red_beast"), L2_YellowBeast("l2_yellow_beast"),
+
+		L3_Gallardo("l3_gallardo"),
+
+		Default("l1_minicooper"), ;
 		// @formatter:on
 
 		public String regionName;
 
-		private Type( String name ) {
+		private Type (String name) {
 			regionName = name;
 		}
 	}
 
-	public CarPreset( Type type ) {
-		setTo( type );
+	public CarPreset (Type type) {
+		setTo(type);
 	}
 
-	public void setTo( Type type ) {
-		switch( type ) {
+	public void setTo (Type type) {
+		switch (type) {
 		case L1_MiniCooper:
 
 		case L1_GoblinOrange:
@@ -80,7 +73,7 @@ public final class CarPreset {
 			break;
 
 		default:
-			Gdx.app.log( "CarPreset", "No type definition available for \"" + type.toString() + "\"" );
+			Gdx.app.log("CarPreset", "No type definition available for \"" + type.toString() + "\"");
 			break;
 		}
 

@@ -1,3 +1,4 @@
+
 package com.bitfire.uracer.configuration;
 
 public final class LaunchFlags {

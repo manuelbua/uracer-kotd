@@ -1,3 +1,4 @@
+
 package com.bitfire.uracer.game.world.models;
 
 import java.util.List;
@@ -13,12 +14,12 @@ public class TrackTrees {
 	public final List<TreeStillModel> models;
 	private final MapUtils mapUtils;
 
-	public TrackTrees( MapUtils mapUtils, List<TreeStillModel> models ) {
+	public TrackTrees (MapUtils mapUtils, List<TreeStillModel> models) {
 		this.mapUtils = mapUtils;
 		this.models = models;
 	}
 
-	public int count() {
+	public int count () {
 		return (models != null ? models.size() : 0);
 	}
 
@@ -27,36 +28,36 @@ public class TrackTrees {
 	private Matrix4 tmpmtx2 = new Matrix4();
 	private Vector2 pospx = new Vector2();
 
-	public void transform( PerspectiveCamera camPersp, OrthographicCamera camOrtho, Vector2 halfViewport ) {
+	public void transform (PerspectiveCamera camPersp, OrthographicCamera camOrtho, Vector2 halfViewport) {
 		// float meshZ = -(camPersp.far - camPersp.position.z);
 		float meshZ = -(camPersp.far - camPersp.position.z) + (GameWorldRenderer.CamPerspPlaneFar * (1 - (camOrtho.zoom)));
 
-		for( int i = 0; i < models.size(); i++ ) {
-			TreeStillModel m = models.get( i );
+		for (int i = 0; i < models.size(); i++) {
+			TreeStillModel m = models.get(i);
 
 			Matrix4 transf = m.transformed;
 
 			// compute position
-			pospx.set( m.positionPx );
-			pospx.set( mapUtils.positionFor( pospx ) );
+			pospx.set(m.positionPx);
+			pospx.set(mapUtils.positionFor(pospx));
 			tmpvec.x = (m.positionOffsetPx.x - camOrtho.position.x) + halfViewport.x + pospx.x;
 			tmpvec.y = (m.positionOffsetPx.y + camOrtho.position.y) + halfViewport.y - pospx.y;
 			tmpvec.z = 1;
 
 			// transform to world space
-			camPersp.unproject( tmpvec );
+			camPersp.unproject(tmpvec);
 
 			// build model matrix
-			tmpmtx.setToTranslation( tmpvec.x, tmpvec.y, meshZ );
-			Matrix4.mul( tmpmtx.val, tmpmtx2.setToScaling( m.scaleAxis ).val );
-			Matrix4.mul( tmpmtx.val, tmpmtx2.setToRotation( m.iRotationAxis, m.iRotationAngle ).val );
+			tmpmtx.setToTranslation(tmpvec.x, tmpvec.y, meshZ);
+			Matrix4.mul(tmpmtx.val, tmpmtx2.setToScaling(m.scaleAxis).val);
+			Matrix4.mul(tmpmtx.val, tmpmtx2.setToRotation(m.iRotationAxis, m.iRotationAngle).val);
 
 			// comb = (proj * view) * model (fast mul)
-			Matrix4.mul( transf.set( camPersp.combined ).val, tmpmtx.val );
+			Matrix4.mul(transf.set(camPersp.combined).val, tmpmtx.val);
 
 			// transform the bounding box
-			m.boundingBox.inf().set( m.localBoundingBox );
-			m.boundingBox.mul( tmpmtx );
+			m.boundingBox.inf().set(m.localBoundingBox);
+			m.boundingBox.mul(tmpmtx);
 
 			// create an AABB out of the corners of the original
 			// AABB transformed by the model matrix
