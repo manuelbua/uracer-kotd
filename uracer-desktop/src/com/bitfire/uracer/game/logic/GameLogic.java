@@ -235,9 +235,8 @@ public class GameLogic implements CarEvent.Listener, CarStateEvent.Listener, Pla
 	}
 
 	public void updateCamera () {
-		float timeModFactor = 1 - (URacer.timeMultiplier - TimeModulator.MinTime) / (TimeModulator.MaxTime - TimeModulator.MinTime);
-
 		URacer.timeMultiplier = timeMod.getTime();
+		float timeModFactor = 1 - (URacer.timeMultiplier - TimeModulator.MinTime) / (TimeModulator.MaxTime - TimeModulator.MinTime);
 
 		gameWorldRenderer.setCameraZoom(1.0f + (GameWorldRenderer.MaxCameraZoom - 1) * timeModFactor);
 		// gameWorldRenderer.setCameraZoom( 1.0f + 0.5f );
