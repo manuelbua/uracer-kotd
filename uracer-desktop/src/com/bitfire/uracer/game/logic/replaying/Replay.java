@@ -245,6 +245,6 @@ public class Replay {
 	}
 
 	private static boolean isValidLength (float seconds) {
-		return (seconds < GameplaySettings.ReplayMinDurationSecs);
+		return (seconds > GameplaySettings.ReplayMinDurationSecs);
 	}
 }

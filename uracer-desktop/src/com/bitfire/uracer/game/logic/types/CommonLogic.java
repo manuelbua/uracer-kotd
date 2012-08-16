@@ -15,6 +15,7 @@ import com.bitfire.uracer.configuration.UserPreferences;
 import com.bitfire.uracer.configuration.UserPreferences.Preference;
 import com.bitfire.uracer.game.DebugHelper;
 import com.bitfire.uracer.game.GameLogic;
+import com.bitfire.uracer.game.GameplaySettings;
 import com.bitfire.uracer.game.actors.Car;
 import com.bitfire.uracer.game.actors.CarEvent;
 import com.bitfire.uracer.game.actors.CarPreset;
@@ -536,9 +537,9 @@ public abstract class CommonLogic implements GameLogic, CarEvent.Listener, CarSt
 
 			} else {
 				// detect invalid laps
-				if (lapManager.getLapInfo().getElapsedSeconds() < 5) {
+				if (lapManager.getLapInfo().getElapsedSeconds() < GameplaySettings.ReplayMinDurationSecs) {
 					Gdx.app.log("CommonLogic", "Invalid lap detected, too short (" + lapManager.getLapInfo().getElapsedSeconds()
-						+ "sec < 5)");
+						+ "sec < " + GameplaySettings.ReplayMinDurationSecs + ")");
 					return;
 				}
 
