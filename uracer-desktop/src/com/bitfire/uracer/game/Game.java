@@ -61,13 +61,6 @@ public class Game implements Disposable {
 		TaskManager.dispose();
 	}
 
-	public void setPlayer (CarPreset.Type presetType) {
-		gameLogic.setPlayer(presetType);
-		if (Config.Debug.UseDebugHelper) {
-			DebugHelper.setPlayer(gameLogic.getPlayer());
-		}
-	}
-
 // public void setLocalReplay (Replay replay) {
 // gameLogic.setBestLocalReplay(replay);
 // }
@@ -102,4 +95,17 @@ public class Game implements Disposable {
 	public void resume () {
 		gameRenderer.rebind();
 	}
+
+	//
+	// OPERATIONS
+	//
+
+	public void setPlayer (CarPreset.Type presetType) {
+		gameLogic.setPlayer(presetType);
+
+		if (Config.Debug.UseDebugHelper) {
+			DebugHelper.setPlayer(gameLogic.getPlayer());
+		}
+	}
+
 }

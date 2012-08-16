@@ -1,6 +1,7 @@
 
 package com.bitfire.uracer.game.logic.types;
 
+import com.badlogic.gdx.Gdx;
 import com.bitfire.uracer.ScalingStrategy;
 import com.bitfire.uracer.game.logic.replaying.Replay;
 import com.bitfire.uracer.game.rendering.GameRenderer;
@@ -14,7 +15,6 @@ public class SinglePlayerLogic extends CommonLogic {
 	}
 
 	public void setBestLocalReplay (Replay replay) {
-		restartGame();
 		lapManager.setBestReplay(replay);
 		// if( !hasPlayer() )
 		{
@@ -45,6 +45,21 @@ public class SinglePlayerLogic extends CommonLogic {
 			// no ghost, no player, WTF?
 			gameWorldRenderer.setCameraPosition(gameWorld.playerStartPos, gameWorld.playerStartOrient, 0);
 		}
+	}
+
+	@Override
+	protected void restart () {
+		Gdx.app.log("SinglePlayerLogic", "Starting/restarting game");
+
+		Replay r = Replay.loadLocal(gameWorld.levelName);
+		if (r != null) {
+			setBestLocalReplay(r);
+		}
+	}
+
+	@Override
+	protected void reset () {
+		Gdx.app.log("SinglePlayerLogic", "Resetting game");
 	}
 
 }

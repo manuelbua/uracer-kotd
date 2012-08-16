@@ -53,8 +53,7 @@ import com.bitfire.uracer.utils.BoxedFloatAccessor;
 import com.bitfire.uracer.utils.CarUtils;
 import com.bitfire.uracer.utils.NumberString;
 
-public abstract class CommonLogic implements GameLogic, CarEvent.Listener, CarStateEvent.Listener,
-	PlayerDriftStateEvent.Listener {
+public abstract class CommonLogic implements GameLogic, CarEvent.Listener, CarStateEvent.Listener, PlayerDriftStateEvent.Listener {
 	// input
 	protected Input input = null;
 
@@ -137,6 +136,35 @@ public abstract class CommonLogic implements GameLogic, CarEvent.Listener, CarSt
 		GameTweener.dispose();
 	}
 
+	//
+	// specific game logic shall also implement these
+	//
+
+	protected abstract void updateCamera (float timeModFactor);
+
+	protected abstract void restart ();
+
+	protected abstract void reset ();
+
+	//
+	// SHARED OPERATIONS (Subclass Sandbox pattern)
+	//
+
+	/** Restarts the current game */
+	protected void restartGame () {
+		restartLogic();
+		gameTasksManager.restart();
+		restart();
+	}
+
+	/** Restart and completely resets the game, removing any playing replay so far */
+	protected void resetGame () {
+		restartLogic();
+		resetLogic();
+		gameTasksManager.reset();
+		reset();
+	}
+
 	/** Sets the player from the specified preset */
 	@Override
 	public void setPlayer (CarPreset.Type presetType) {
@@ -165,7 +193,7 @@ public abstract class CommonLogic implements GameLogic, CarEvent.Listener, CarSt
 		}
 	}
 
-	public void removePlayer () {
+	protected void removePlayer () {
 		if (!hasPlayer()) {
 			Gdx.app.log("GameLogic", "There is no player to remove.");
 			return;
@@ -187,6 +215,22 @@ public abstract class CommonLogic implements GameLogic, CarEvent.Listener, CarSt
 			DebugHelper.setPlayer(null);
 		}
 	}
+
+	public GameWorld getGameWorld () {
+		return gameWorld;
+	}
+
+	public boolean hasPlayer () {
+		return playerCar != null;
+	}
+
+	public PlayerCar getPlayer () {
+		return playerCar;
+	}
+
+	//
+	// private implementation
+	//
 
 	private void registerPlayerEvents (PlayerCar player) {
 		player.carState.event.addListener(this, CarStateEvent.Type.onTileChanged);
@@ -212,23 +256,46 @@ public abstract class CommonLogic implements GameLogic, CarEvent.Listener, CarSt
 		player.resetPhysics();
 	}
 
-	public GameWorld getGameWorld () {
-		return gameWorld;
+	private void resetPlayer (Car playerCar, GhostCar playerGhostCar) {
+		if (playerCar != null) {
+			playerCar.resetPhysics();
+			playerCar.resetDistanceAndSpeed();
+			playerCar.setWorldPosMt(gameWorld.playerStartPos, gameWorld.playerStartOrient);
+		}
+
+		if (playerGhostCar != null) {
+			playerGhostCar.resetPhysics();
+			playerGhostCar.resetDistanceAndSpeed();
+			playerGhostCar.removeReplay();
+		}
 	}
 
-	public boolean hasPlayer () {
-		return playerCar != null;
+	private void restartLogic () {
+		resetPlayer(playerCar, ghostCar);
+		gameWorldRenderer.setInitialCameraPositionOrient(playerCar);
+
+		isFirstLap = true;
+		timeModulation = false;
+		timeMod.reset();
+		SysTweener.clear();
+		GameTweener.clear();
+		lapManager.abortRecording();
+		gameTasksManager.restart();
 	}
 
-	public PlayerCar getPlayer () {
-		return playerCar;
+	private void resetLogic () {
+		lapManager.abortRecording();
+		lapManager.reset();
+		gameTasksManager.reset();
 	}
 
-	protected abstract void updateCamera (float timeModFactor);
+	//
+	// implement interfaces and listeners callbacks
+	//
 
 	@Override
 	public void tick () {
-		acquireInput();
+		processInput();
 	}
 
 	@Override
@@ -255,7 +322,7 @@ public abstract class CommonLogic implements GameLogic, CarEvent.Listener, CarSt
 
 	private Replay userRec = null;
 
-	private void acquireInput () {
+	private void processInput () {
 		// fast car switch (debug!)
 		for (int i = Keys.NUM_1; i <= Keys.NUM_9; i++) {
 			if (input.isPressed(i)) {
@@ -374,50 +441,6 @@ public abstract class CommonLogic implements GameLogic, CarEvent.Listener, CarSt
 			}
 			break;
 		}
-	}
-
-	public void restartGame () {
-		restartLogic();
-		gameTasksManager.restart();
-	}
-
-	public void resetGame () {
-		restartLogic();
-		resetLogic();
-		gameTasksManager.reset();
-	}
-
-	private void resetPlayer (Car playerCar, GhostCar playerGhostCar) {
-		if (playerCar != null) {
-			playerCar.resetPhysics();
-			playerCar.resetDistanceAndSpeed();
-			playerCar.setWorldPosMt(gameWorld.playerStartPos, gameWorld.playerStartOrient);
-		}
-
-		if (playerGhostCar != null) {
-			playerGhostCar.resetPhysics();
-			playerGhostCar.resetDistanceAndSpeed();
-			playerGhostCar.removeReplay();
-		}
-	}
-
-	private void restartLogic () {
-		resetPlayer(playerCar, ghostCar);
-		gameWorldRenderer.setInitialCameraPositionOrient(playerCar);
-
-		isFirstLap = true;
-		timeModulation = false;
-		timeMod.reset();
-		SysTweener.clear();
-		GameTweener.clear();
-		lapManager.abortRecording();
-		gameTasksManager.restart();
-	}
-
-	private void resetLogic () {
-		lapManager.abortRecording();
-		lapManager.reset();
-		gameTasksManager.reset();
 	}
 
 	//

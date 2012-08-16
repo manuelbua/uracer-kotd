@@ -22,12 +22,6 @@ public class GameScreen extends Screen {
 
 		// simulate the player choosing a car type
 		game.setPlayer(Type.L2_PinkBeast);
-
-		// simulate the player choosing local playing
-// Replay r = Replay.loadLocal(levelName);
-// if (r != null) {
-// game.setLocalReplay(r);
-// }
 	}
 
 	@Override
