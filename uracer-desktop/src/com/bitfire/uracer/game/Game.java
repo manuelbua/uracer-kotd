@@ -102,10 +102,6 @@ public class Game implements Disposable {
 
 	public void setPlayer (CarPreset.Type presetType) {
 		gameLogic.setPlayer(presetType);
-
-		if (Config.Debug.UseDebugHelper) {
-			DebugHelper.setPlayer(gameLogic.getPlayer());
-		}
 	}
 
 }
