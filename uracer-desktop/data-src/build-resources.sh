@@ -2,16 +2,25 @@
 
 
 CLASS_PATH="/home/manuel/dev/libgdx/dist"
-JARS="${CLASS_PATH}/gdx.jar:${CLASS_PATH}/gdx-natives.jar:${CLASS_PATH}/gdx-backend-jogl.jar:${CLASS_PATH}/gdx-backend-jogl-natives.jar"
+JARS="${CLASS_PATH}/gdx.jar:${CLASS_PATH}/gdx-natives.jar:${CLASS_PATH}/gdx-backend-lwjgl.jar:${CLASS_PATH}/gdx-backend-lwjgl-natives.jar"
 
 GDX_TOOLS_PATH="/home/manuel/dev/libgdx/extensions/gdx-tools/target/java"
-TEX_PACKER="java -classpath ${JARS}:${GDX_TOOLS_PATH} com.badlogic.gdx.tools.imagepacker.TexturePacker $1 $2"
+TEX_PACKER="java -classpath ${JARS}:${GDX_TOOLS_PATH} com.badlogic.gdx.tools.imagepacker.TexturePacker2"
 
 GDX_TILED_PREP_PATH="/home/manuel/dev/libgdx/extensions/gdx-tiled-preprocessor/target/java"
-TILED_PACKER="java -classpath ${JARS}:${GDX_TOOLS_PATH}:${GDX_TILED_PREP_PATH} com.badlogic.gdx.tiledmappacker.TiledMapPacker $1 $2"
+TILED_PACKER="java -classpath ${JARS}:${GDX_TOOLS_PATH}:${GDX_TILED_PREP_PATH} com.badlogic.gdx.tiledmappacker.TiledMapPacker"
+
+SKIN_PACKER="java -classpath ${JARS}:${GDX_TOOLS_PATH}:/home/manuel/dev/uracer-skin-packer/bin com.bitfire.uracer.skinpacker.Packer"
 
 DEST="/home/manuel/dev/uracer-libgdx/uracer-desktop/data"
 
+# base
+echo -n "Cooking base..."
+rm -rf "${DEST}/base/"
+mkdir -p "${DEST}/base"
+cp base/*.png ${DEST}/base
+cp base/*.shape ${DEST}/base
+echo "done!"
 
 # tileset graphics and tmx levels
 echo -n "Cooking levels..."
@@ -23,6 +32,7 @@ echo "done!"
 # tileset friction maps
 echo -n "Cooking friction maps..."
 cp levels/tilesets/nature/224-friction.png ${DEST}/levels/tilesets/nature/
+echo "done!"
 
 # fonts
 echo -n "Cooking fonts..."
@@ -32,13 +42,6 @@ ${TEX_PACKER} font ${DEST}/font >/dev/null
 cp -f font/*.fnt ${DEST}/font
 echo "done!"
 
-# 3d
-#echo -n "Cooking models textures..."
-#rm -rf "${DEST}/3d/textures/"
-#mkdir -p "${DEST}/3d/textures/"
-#${TEX_PACKER} 3d ${DEST}/3d/textures >/dev/null
-#echo "done!"
-
 # track
 echo -n "Cooking track meshes..."
 rm -rf "${DEST}/track/"
@@ -47,11 +50,16 @@ mkdir -p "${DEST}/track/"
 cp track/wall.png ${DEST}/track >/dev/null
 echo "done!"
 
-# cars
+# cars graphics
 echo -n "Cooking car graphics..."
 rm -rf "${DEST}/cars/"
 mkdir -p "${DEST}/cars/"
 ${TEX_PACKER} cars ${DEST}/cars >/dev/null
+echo "done!"
+
+# cars physical shapes
+echo -n "Cooking car physical shapes..."
+cp cars/car-shapes ${DEST}/cars >/dev/null
 echo "done!"
 
 # particle effects
@@ -62,8 +70,25 @@ cp partfx/* ${DEST}/partfx > /dev/null
 echo "done!"
 
 # shaders
+echo -n "Merging GLSL shaders from libgdx-contribs/postprocessing to data-src..."
+cp -r /home/manuel/dev/libgdx-contribs/postprocessing/shaders/ ./
+echo "done!"
+
+# shaders
 echo -n "Cooking GLSL shaders..."
 rm -rf "${DEST}/shaders/"
 mkdir -p "${DEST}/shaders/"
 cp -r shaders/* ${DEST}/shaders > /dev/null
+echo "done!"
+
+# ui skin
+echo -n "Cooking UI skin..."
+rm -rf "${DEST}/ui/"
+mkdir -p "${DEST}/ui/"
+${TEX_PACKER} ui/skin ${DEST}/ui skin >/dev/null
+#${SKIN_PACKER} ui/skin
+#cp ui/skin/skin.png ${DEST}/ui >/dev/null
+cp ui/skin/skin.json ${DEST}/ui >/dev/null
+cp ui/font/default.fnt ${DEST}/ui >/dev/null
+cp ui/font/default.png ${DEST}/ui >/dev/null
 echo "done!"

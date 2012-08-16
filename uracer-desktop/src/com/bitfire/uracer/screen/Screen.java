@@ -1,31 +1,37 @@
+
 package com.bitfire.uracer.screen;
 
-import java.util.Random;
+import com.badlogic.gdx.Gdx;
+import com.badlogic.gdx.graphics.glutils.FrameBuffer;
+import com.badlogic.gdx.utils.Disposable;
+import com.bitfire.uracer.ScalingStrategy;
 
-import com.bitfire.uracer.URacer;
+public abstract class Screen implements Disposable {
 
-public abstract class Screen
-{
-	protected static Random random = new Random();
-	private URacer uracer;
+	public abstract void init (ScalingStrategy scalingStrategy);
 
-	public final void init( URacer uracer )
-	{
-		this.uracer = uracer;
+	public void enable () {
 	}
 
-	public void removed()
-	{
+	public void disable () {
+		Gdx.input.setInputProcessor(null);
 	}
 
-	protected void setScreen( Screen screen )
-	{
-		uracer.setScreen( screen );
+	public void resize (int width, int height) {
 	}
 
-	public abstract void render();
+	public abstract void pause ();
 
-	public void tick()
-	{
-	}
+	public abstract void resume ();
+
+	public abstract void tick ();
+
+	public abstract void tickCompleted ();
+
+	public abstract void render (FrameBuffer dest);
+
+	/** This debug call will gets called *after* tick and render are raised for all the entities, but the computational time will
+	 * not be part of the cumulative time statistics */
+	public void debugRender () {
+	};
 }

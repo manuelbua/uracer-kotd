@@ -1,58 +1,93 @@
+
 package com.bitfire.uracer;
+
+import java.awt.DisplayMode;
+import java.awt.GraphicsDevice;
+import java.awt.GraphicsEnvironment;
 
 import org.lwjgl.opengl.Display;
 
+import com.badlogic.gdx.Files.FileType;
 import com.badlogic.gdx.backends.lwjgl.LwjglApplication;
 import com.badlogic.gdx.backends.lwjgl.LwjglApplicationConfiguration;
 import com.badlogic.gdx.backends.openal.OpenALAudio;
+import com.bitfire.uracer.configuration.LaunchFlags;
+import com.bitfire.uracer.utils.CommandLine;
 
+public final class URacerDesktop {
 
-//public class URacerDesktop
-//{
-//	public static void main (String[] argv) {
-//		// (width!=height) && (width > height)
-//
-////		new JoglApplication(new URacer(), "uRacer: The King Of The Drift", 480, 320, true);
-////		new JoglApplication(new URacer(), "uRacer: The King Of The Drift", 720, 480, true);
-////		new JoglApplication(new URacer(), "uRacer: The King Of The Drift", 800, 480, true);
-////		new JoglApplication(new URacer(), "uRacer: The King Of The Drift", 800, 800, true);
-//		new JoglApplication(new URacer(), "uRacer: The King Of The Drift", 1280, 800, true);	// target
-////		new JoglApplication(new URacer(), "uRacer: The King Of The Drift", 1280, 1024, true);
-//
-//		// higher resolutions than the target can't be supported without Track artifacts of
-//		// some sort cropping out
-////		new JoglApplication(new URacer(), "uRacer: The King Of The Drift", 1920, 1050, true);
-//
-//	}
-//
-//}
+	private static boolean useRightScreen = false;
 
-public class URacerDesktop
-{
-	public static void main( String[] argv )
-	{
-		LwjglApplicationConfiguration config = new LwjglApplicationConfiguration();
-		config.title = "uRacer: The King Of The Drift";
+	private static boolean parseConfig (String[] argv, LwjglApplicationConfiguration config) {
 
-		config.width = 1280; config.height = 800;
-//		config.width = 1280; config.height = 720;
-//		config.width = 800; config.height = 480;
+		System.out.print(URacer.Name + " " + URacer.getVersionInformation() + "\nCopyright (c) 2012 Manuel Bua.\n\n");
 
-		config.samples = 0;
-		config.depth = 0;
-		config.vSyncEnabled = true;
-		config.useCPUSynch = false;
+		LaunchFlags flags = new LaunchFlags();
+		if (!CommandLine.parseLaunchFlags(argv, flags)) {
+			return false;
+		}
+
+		// set to default
+		config.title = URacer.Name;
 		config.useGL20 = true;
-		config.fullscreen = false;
+		config.resizable = false;
+
+		config.width = flags.width;
+		config.height = flags.height;
+		config.vSyncEnabled = flags.vSyncEnabled;
+		config.useCPUSynch = flags.useCPUSynch;
+		config.fullscreen = flags.fullscreen;
+		useRightScreen = flags.useRightScreen;
+
+		// parse opts --
+
+		System.out.print("Resolution set at " + (config.width + "x" + config.height) + "\n");
+		System.out.print("Vertical sync: " + (config.vSyncEnabled ? "On" : "Off") + "\n");
+		System.out.print("CPU sync: " + (config.useCPUSynch ? "On" : "Off") + "\n");
+		System.out.print("Fullscreen: " + (config.fullscreen ? "Yes" : "No") + "\n");
+
+		return true;
+	}
+
+	public static void main (String[] argv) {
+		LwjglApplicationConfiguration config = new LwjglApplicationConfiguration();
+		config.addIcon("data/base/icon.png", FileType.Internal);
+
+		if (!parseConfig(argv, config)) {
+			return;
+		}
 
 		URacer uracer = new URacer();
 		LwjglApplication app = new LwjglApplication(uracer, config);
 
-		URacerDesktopFinalizer finalizr = new URacerDesktopFinalizer( (OpenALAudio)app.getAudio() );
-		uracer.setFinalizer( finalizr );
+		URacerDesktopFinalizer finalizr = new URacerDesktopFinalizer((OpenALAudio)app.getAudio());
+		uracer.setFinalizer(finalizr);
 
-		Display.setLocation( (1920-config.width)/2, (1080-config.height)/2 );
+		if (useRightScreen) {
+			GraphicsEnvironment env = GraphicsEnvironment.getLocalGraphicsEnvironment();
+			GraphicsDevice primary = env.getDefaultScreenDevice();
+			GraphicsDevice[] devices = env.getScreenDevices();
+			GraphicsDevice target = null;
+
+			// search for the first target screen
+			for (int i = 0; i < devices.length; i++) {
+				boolean isPrimary = (primary == devices[i]);
+				if (!isPrimary) {
+					target = devices[i];
+					break;
+				}
+			}
+
+			if (target != null) {
+				DisplayMode pmode = primary.getDisplayMode();
+				DisplayMode tmode = target.getDisplayMode();
+
+				Display
+					.setLocation(pmode.getWidth() + (tmode.getWidth() - config.width) / 2, (tmode.getHeight() - config.height) / 2);
+			}
+		}
 	}
 
-
+	private URacerDesktop () {
+	}
 }

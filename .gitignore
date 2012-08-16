@@ -1,7 +1,11 @@
 /uracer-desktop/bin
 /uracer-android/bin
 /uracer-android/gen
+/uracer-desktop/target
+/uracer-desktop/build
 AndroidManifest.xml
 VersionInfo.java
 *.so
 *.log
+*.class
+pom.xml

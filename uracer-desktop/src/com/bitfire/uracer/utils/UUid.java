@@ -1,12 +1,18 @@
+
 package com.bitfire.uracer.utils;
 
-public class UUid
-{
+import com.badlogic.gdx.utils.TimeUtils;
+import com.bitfire.utils.Hash;
+
+public final class UUid {
 	public static long incr = 0;
-	public static long get()
-	{
+
+	public static long get () {
 		incr++;
-		Long time = System.nanoTime() + incr;
-		return Hash.RSHash( time.toString() );
+		Long time = TimeUtils.nanoTime() + incr;
+		return Hash.RSHash(time.toString());
+	}
+
+	private UUid () {
 	}
 }

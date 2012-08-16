@@ -1,145 +1,63 @@
+
 package com.bitfire.uracer.game.logic;
 
-import com.bitfire.uracer.Config;
-import com.bitfire.uracer.carsimulation.Replay;
+import com.bitfire.uracer.game.Time;
 
-public class LapInfo
-{
-	// replays
-	private Replay[] replays;
-	private Replay best, worst;
-	private long startTimeNs;
+/** Encapsulates the track's lap information, such as elapsed time so far, best lap times and last lap's time.
+ * 
+ * @author bmanuel */
+public final class LapInfo {
+	private Time time;
 	private float lastTrackTimeSecs;
+	private float bestTrackTimeSecs;
 	private boolean hasLastTrackTimeSecs;
+	private boolean hasBestTrackTimeSecs;
 
-	private static LapInfo instance = null;
-
-	private LapInfo()
-	{
-		startTimeNs = 0;
+	public LapInfo () {
 		lastTrackTimeSecs = 0;
 		hasLastTrackTimeSecs = false;
-
-		// construct replay buffers
-		replays = new Replay[ 2 ];
-		replays[0] = new Replay();
-		replays[1] = new Replay();
-
-		best = worst = null;
-
-		reset();
-		update();
+		hasBestTrackTimeSecs = false;
+		time = new Time();
+		resetTime();
 	}
 
-	public static void init()
-	{
-		instance = new LapInfo();
-	}
-
-	public static LapInfo get()
-	{
-		return instance;
-	}
-
-	public void reset()
-	{
+	public void resetTime () {
 		hasLastTrackTimeSecs = false;
-		best = worst = null;
-		replays[0].clearForces();
-		replays[1].clearForces();
-		startTimeNs = System.nanoTime();
+		hasBestTrackTimeSecs = false;
+		time.start();
 	}
 
-	public long restart()
-	{
-		startTimeNs = System.nanoTime();
-		if(!replays[0].isValid) replays[0].clearForces();
-		if(!replays[1].isValid) replays[1].clearForces();
-		return startTimeNs;
+	public void restartTime () {
+		time.start();
 	}
 
-	public float getElapsedSeconds()
-	{
-		return ((float)(System.nanoTime() - startTimeNs) / 1000000000f) * Config.Physics.PhysicsTimeMultiplier;
+	public float getElapsedSeconds () {
+		return time.elapsed(Time.Reference.TickSeconds);
 	}
 
-	public long getStartNanotime()
-	{
-		return startTimeNs;
-	}
-
-	public Replay getReplay( int index )
-	{
-		return replays[index];
-	}
-
-	public boolean hasAllReplayData()
-	{
-		return (replays[0].isValid && replays[1].isValid);
-	}
-
-	public boolean hasAnyReplayData()
-	{
-		return (replays[0].isValid || replays[1].isValid);
-	}
-
-	public void update()
-	{
-		if( !hasAllReplayData() )
-		{
-			return;
-		}
-
-		best = replays[1];
-		worst = replays[0];
-
-		if( replays[0].trackTimeSeconds < replays[1].trackTimeSeconds )
-		{
-			best = replays[0];
-			worst = replays[1];
-		}
-	}
-
-	public Replay getNextBuffer()
-	{
-		update();
-		if( !replays[0].isValid ) { return replays[0]; }
-		if( !replays[1].isValid ) { return replays[1]; }
-
-		// if both are valid
-		return getWorstReplay();
-	}
-
-	public Replay getBestReplay()
-	{
-		return best;
-	}
-
-	public Replay getWorstReplay()
-	{
-		return worst;
-	}
-
-	public void setLastTrackTimeSeconds( float value )
-	{
+	public void setLastTrackTimeSeconds (float value) {
 		lastTrackTimeSecs = value;
 		hasLastTrackTimeSecs = true;
 	}
 
-	public float getLastTrackTimeSeconds()
-	{
-		return lastTrackTimeSecs;
+	public void setBestTrackTimeSeconds (float value) {
+		bestTrackTimeSecs = value;
+		hasBestTrackTimeSecs = true;
 	}
 
-	public boolean hasLastTrackTimeSeconds()
-	{
+	public boolean hasLastTrackTimeSeconds () {
 		return hasLastTrackTimeSecs;
 	}
 
-	public Replay getAnyReplay()
-	{
-		if(replays[0].isValid) return replays[0];
-		if(replays[1].isValid) return replays[1];
-		return null;
+	public float getLastTrackTimeSeconds () {
+		return lastTrackTimeSecs;
+	}
+
+	public boolean hasBestTrackTimeSeconds () {
+		return hasBestTrackTimeSecs;
+	}
+
+	public float getBestTrackTimeSeconds () {
+		return bestTrackTimeSecs;
 	}
 }
