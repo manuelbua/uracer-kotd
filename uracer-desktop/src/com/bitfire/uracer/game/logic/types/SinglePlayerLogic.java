@@ -14,7 +14,12 @@ public class SinglePlayerLogic extends CommonLogic {
 		super(gameWorld, gameRenderer, scalingStrategy);
 	}
 
-	public void setBestLocalReplay (Replay replay) {
+	public void setBestLocalReplay () {
+		Replay replay = Replay.loadLocal(gameWorld.levelName);
+		if (replay == null) {
+			return;
+		}
+
 		lapManager.setBestReplay(replay);
 		// if( !hasPlayer() )
 		{
@@ -50,11 +55,7 @@ public class SinglePlayerLogic extends CommonLogic {
 	@Override
 	protected void restart () {
 		Gdx.app.log("SinglePlayerLogic", "Starting/restarting game");
-
-		Replay r = Replay.loadLocal(gameWorld.levelName);
-		if (r != null) {
-			setBestLocalReplay(r);
-		}
+		setBestLocalReplay();
 	}
 
 	@Override

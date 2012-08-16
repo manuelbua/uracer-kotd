@@ -58,14 +58,14 @@ public final class GameWorld {
 	public static int TotalMeshes = 0;
 
 	// public level data
-	public String levelName = "no-level-loaded";
-	public TiledMap map = null;
-	public Vector2 worldSizeScaledPx = null, worldSizeTiles = null, worldSizeMt = null;
-	public ScalingStrategy scalingStrategy;
+	public final String levelName;
+	public final TiledMap map;
+	public final Vector2 worldSizeScaledPx, worldSizeTiles, worldSizeMt;
+	public final ScalingStrategy scalingStrategy;
 
 	// private level data
 	private World box2dWorld;
-	private MapUtils mapUtils = null;
+	private final MapUtils mapUtils;
 
 	// player data
 	public Vector2 playerStartPos = new Vector2();
