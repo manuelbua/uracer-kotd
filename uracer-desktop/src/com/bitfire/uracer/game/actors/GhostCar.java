@@ -1,8 +1,8 @@
 
 package com.bitfire.uracer.game.actors;
 
+import com.bitfire.uracer.events.GameRendererEvent;
 import com.bitfire.uracer.game.logic.replaying.Replay;
-import com.bitfire.uracer.game.rendering.GameRendererEvent;
 import com.bitfire.uracer.game.world.GameWorld;
 import com.bitfire.uracer.utils.CarUtils;
 

@@ -10,13 +10,14 @@ import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.utils.TimeUtils;
 import com.bitfire.uracer.configuration.Config;
 import com.bitfire.uracer.configuration.UserPreferences;
+import com.bitfire.uracer.game.screens.GameScreensFactory;
+import com.bitfire.uracer.game.screens.GameScreensFactory.ScreenType;
 import com.bitfire.uracer.game.tween.SysTweener;
 import com.bitfire.uracer.game.world.models.ModelFactory;
 import com.bitfire.uracer.game.world.models.OrthographicAlignedStillModel;
 import com.bitfire.uracer.resources.Art;
 import com.bitfire.uracer.resources.Sounds;
 import com.bitfire.uracer.screen.ScreenFactory;
-import com.bitfire.uracer.screen.ScreenFactory.ScreenType;
 import com.bitfire.uracer.screen.ScreenManager;
 import com.bitfire.uracer.screen.TransitionFactory;
 import com.bitfire.uracer.screen.TransitionFactory.TransitionType;
@@ -104,7 +105,8 @@ public class URacer implements ApplicationListener {
 		// factors)
 		scalingStrategy = new ScalingStrategy(new Vector2(1280, 800), 70f, 224, 1f);
 
-		ScreenFactory.init(scalingStrategy);
+		ScreenFactory screenFactory = new GameScreensFactory(scalingStrategy);
+		TransitionFactory.init(screenFactory);
 
 		// load default private configuration
 		Config.asDefault();
@@ -127,7 +129,7 @@ public class URacer implements ApplicationListener {
 		PhysicsDtNs = (long)((long)1000000000 / (long)Config.Physics.PhysicsTimestepHz);
 		timeStepHz = (long)Config.Physics.PhysicsTimestepHz;
 
-		screenMgr = new ScreenManager();
+		screenMgr = new ScreenManager(screenFactory);
 
 		// screenMgr.setScreen( ScreenType.GameScreen, TransitionType.Fader, 500 );
 		screenMgr.setScreen(ScreenType.MainScreen, TransitionType.CrossFader, 500);

@@ -4,12 +4,12 @@ package com.bitfire.uracer.screen;
 import com.badlogic.gdx.utils.LongMap;
 import com.bitfire.uracer.screen.transitions.CrossFader;
 import com.bitfire.uracer.screen.transitions.Fader;
-import com.bitfire.uracer.screen.transitions.ScreenTransition;
 import com.bitfire.utils.Hash;
 
 public final class TransitionFactory {
 
 	private static LongMap<ScreenTransition> transitions = new LongMap<ScreenTransition>();
+	private static ScreenFactory screenFactory = null;
 
 	public enum TransitionType {
 		None, CrossFader, Fader;
@@ -22,6 +22,10 @@ public final class TransitionFactory {
 	}
 
 	private TransitionFactory () {
+	}
+
+	public static void init (ScreenFactory factory) {
+		screenFactory = factory;
 	}
 
 	public static ScreenTransition getTransition (TransitionType transitionType) {
@@ -41,9 +45,9 @@ public final class TransitionFactory {
 	private static ScreenTransition createTransition (TransitionType transitionType) {
 		switch (transitionType) {
 		case CrossFader:
-			return new CrossFader();
+			return new CrossFader(screenFactory);
 		case Fader:
-			return new Fader();
+			return new Fader(screenFactory);
 		default:
 		case None:
 			return null;

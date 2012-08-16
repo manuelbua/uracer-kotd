@@ -1,9 +1,9 @@
 
 package com.bitfire.uracer.game.player;
 
-import com.bitfire.uracer.utils.Event;
-import com.bitfire.uracer.utils.EventListener;
-import com.bitfire.uracer.utils.EventNotifier;
+import com.bitfire.uracer.events.Event;
+import com.bitfire.uracer.events.EventListener;
+import com.bitfire.uracer.events.EventNotifier;
 
 public final class PlayerDriftStateEvent extends Event<PlayerDriftState> {
 	public enum Type {

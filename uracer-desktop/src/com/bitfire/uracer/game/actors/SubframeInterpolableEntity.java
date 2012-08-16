@@ -4,10 +4,10 @@ package com.bitfire.uracer.game.actors;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.bitfire.uracer.entities.Entity;
 import com.bitfire.uracer.entities.EntityRenderState;
+import com.bitfire.uracer.events.GameRendererEvent;
+import com.bitfire.uracer.events.PhysicsStepEvent;
+import com.bitfire.uracer.events.GameRendererEvent.Order;
 import com.bitfire.uracer.game.GameEvents;
-import com.bitfire.uracer.game.logic.PhysicsStepEvent;
-import com.bitfire.uracer.game.rendering.GameRendererEvent;
-import com.bitfire.uracer.game.rendering.GameRendererEvent.Order;
 
 public abstract class SubframeInterpolableEntity extends Entity implements PhysicsStepEvent.Listener, GameRendererEvent.Listener {
 	// world-coords
@@ -15,17 +15,13 @@ public abstract class SubframeInterpolableEntity extends Entity implements Physi
 	protected EntityRenderState stateCurrent = new EntityRenderState();
 
 	public SubframeInterpolableEntity () {
-		GameEvents.physicsStep.addListener(this, PhysicsStepEvent.Type.onBeforeTimestep);
-		GameEvents.physicsStep.addListener(this, PhysicsStepEvent.Type.onAfterTimestep);
-		GameEvents.physicsStep.addListener(this, PhysicsStepEvent.Type.onSubstepCompleted);
+		GameEvents.addPhysicsListener(this);
 		GameEvents.gameRenderer.addListener(this, GameRendererEvent.Type.OnSubframeInterpolate, GameRendererEvent.Order.DEFAULT);
 	}
 
 	@Override
 	public void dispose () {
-		GameEvents.physicsStep.removeListener(this, PhysicsStepEvent.Type.onBeforeTimestep);
-		GameEvents.physicsStep.removeListener(this, PhysicsStepEvent.Type.onAfterTimestep);
-		GameEvents.physicsStep.removeListener(this, PhysicsStepEvent.Type.onSubstepCompleted);
+		GameEvents.removePhysicsListener(this);
 		GameEvents.gameRenderer.removeListener(this, GameRendererEvent.Type.OnSubframeInterpolate, GameRendererEvent.Order.DEFAULT);
 	}
 
