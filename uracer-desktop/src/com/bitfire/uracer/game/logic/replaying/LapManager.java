@@ -6,9 +6,8 @@ import com.badlogic.gdx.utils.Disposable;
 import com.bitfire.uracer.game.actors.Car;
 import com.bitfire.uracer.game.actors.CarForces;
 import com.bitfire.uracer.game.logic.LapInfo;
-import com.bitfire.uracer.game.logic.helpers.ReplayRecorder;
 
-/** Manages to record player lap to Replay objects and keep tracks of lap information. */
+/** Records player laps and keeps updated information for the current lap. */
 public class LapManager implements Disposable {
 
 	private final String levelName;

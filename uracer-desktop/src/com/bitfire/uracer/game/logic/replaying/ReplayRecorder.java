@@ -1,10 +1,9 @@
 
-package com.bitfire.uracer.game.logic.helpers;
+package com.bitfire.uracer.game.logic.replaying;
 
 import com.badlogic.gdx.Gdx;
 import com.bitfire.uracer.game.actors.Car;
 import com.bitfire.uracer.game.actors.CarForces;
-import com.bitfire.uracer.game.logic.replaying.Replay;
 
 public final class ReplayRecorder {
 	private boolean isRecording;
