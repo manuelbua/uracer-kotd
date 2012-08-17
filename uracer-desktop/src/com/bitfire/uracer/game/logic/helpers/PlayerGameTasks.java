@@ -43,7 +43,9 @@ public final class PlayerGameTasks {
 		playerImpactSoundFx = new PlayerImpactSoundEffect(player);
 
 		// track effects
-		playerSkidMarks = new PlayerSkidMarks(player);
+		int maxSkidMarks = Config.isDesktop ? 5000 : 150;
+		float maxLife = Config.isDesktop ? 60 : 3;
+		playerSkidMarks = new PlayerSkidMarks(player, maxSkidMarks, maxLife);
 
 		// hud, player's drift information
 		hudPlayerDriftInfo = new HudPlayerDriftInfo(scalingStrategy, player);
