@@ -22,7 +22,6 @@ import com.bitfire.uracer.game.logic.gametasks.messager.Message;
 import com.bitfire.uracer.game.logic.gametasks.messager.Message.Position;
 import com.bitfire.uracer.game.logic.gametasks.messager.Message.Size;
 import com.bitfire.uracer.game.logic.gametasks.messager.Messager;
-import com.bitfire.uracer.utils.UUid;
 
 /** Represents replay data to be feed to a GhostCar, the replay player.
  * 
@@ -38,7 +37,6 @@ public class Replay {
 	public float carWorldOrientRads;
 
 	// replay data
-	public final long id;
 	public String trackName = "no-track";
 	public float trackTimeSeconds = 0;
 	public CarForces[] forces = null;
@@ -50,17 +48,11 @@ public class Replay {
 	private Time time = new Time();
 
 	public Replay () {
-		this(UUid.get());
-	}
-
-	public Replay (long id) {
 		eventsCount = 0;
 		forces = new CarForces[MaxEvents];
 		for (int i = 0; i < MaxEvents; i++) {
 			forces[i] = new CarForces();
 		}
-
-		this.id = id;
 	}
 
 	public void dispose () {
@@ -83,7 +75,6 @@ public class Replay {
 		for (int i = 0; i < MaxEvents; i++) {
 			forces[i].set(replay.forces[i]);
 		}
-
 	}
 
 	public void begin (String trackName, Car car) {
@@ -145,7 +136,7 @@ public class Replay {
 				ObjectInputStream is = new ObjectInputStream(gzis);
 
 				// read header
-				Replay r = new Replay(is.readLong());
+				Replay r = new Replay();
 
 				// replay info data
 				r.trackName = is.readUTF();
@@ -227,7 +218,6 @@ public class Replay {
 						// write header
 
 						// replay info data
-						os.writeLong(id);
 						os.writeUTF(trackName);
 						// os.writeUTF( difficultyLevel.toString() );
 						os.writeFloat(trackTimeSeconds);

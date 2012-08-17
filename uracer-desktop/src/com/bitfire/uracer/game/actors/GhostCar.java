@@ -45,7 +45,7 @@ public final class GhostCar extends Car {
 
 			// System.out.println( "Replaying " + replay.id );
 			restart(replay);
-			Gdx.app.log("GhostCar", "Replaying #" + replay.id + "s");
+			Gdx.app.log("GhostCar", "Replaying #" + System.identityHashCode(replay) + "s");
 		}
 
 		// else
