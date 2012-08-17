@@ -20,13 +20,16 @@ public class SinglePlayerLogic extends CommonLogic {
 		super(gameWorld, gameRenderer, scalingStrategy);
 	}
 
+	//
+	// utilities
+	//
 	private void setBestLocalReplay () {
 		Replay replay = Replay.loadLocal(gameWorld.levelName);
 		if (replay == null) {
 			return;
 		}
 
-		lapManager.setBestReplay(replay);
+		lapManager.setAsBestReplay(replay);
 		ghostCar.setReplay(replay);
 	}
 
