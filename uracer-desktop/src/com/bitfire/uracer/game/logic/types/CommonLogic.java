@@ -167,8 +167,7 @@ public abstract class CommonLogic implements GameLogic, CarEvent.Listener, CarSt
 	}
 
 	/** Sets the player from the specified preset */
-	@Override
-	public void setPlayer (CarPreset.Type presetType) {
+	protected void setPlayer (CarPreset.Type presetType) {
 		if (hasPlayer()) {
 			Gdx.app.log("GameLogic", "A player already exists.");
 			return;
