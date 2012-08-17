@@ -18,10 +18,10 @@ import com.bitfire.uracer.utils.Convert;
 public class PlayerSkidMarks extends TrackEffect {
 	// public static final int MaxSkidMarks = 5000;
 	// private static final float MaxParticleLifeSeconds = 60f;
-	public static final int MaxSkidMarks = 150;
-	private static final float MaxParticleLifeSeconds = 3f;
 
-	private static final float InvMaxParticleLifeSeconds = 1f / MaxParticleLifeSeconds;
+	private final int MaxSkidMarks;
+	private final float MaxParticleLifeSeconds;
+	private final float InvMaxParticleLifeSeconds;
 
 	private SkidMark[] skidMarks;
 	private int markIndex;
@@ -32,7 +32,15 @@ public class PlayerSkidMarks extends TrackEffect {
 	private PlayerCar player;
 
 	public PlayerSkidMarks (PlayerCar player) {
+		this(player, 150, 3f);
+	}
+
+	public PlayerSkidMarks (PlayerCar player, int maxSkidMarks, float maxParticleLifeSecs) {
 		super(Type.CarSkidMarks);
+
+		MaxSkidMarks = maxSkidMarks;
+		MaxParticleLifeSeconds = maxParticleLifeSecs;
+		InvMaxParticleLifeSeconds = 1f / MaxParticleLifeSeconds;
 
 		this.player = player;
 		markIndex = 0;
@@ -58,6 +66,11 @@ public class PlayerSkidMarks extends TrackEffect {
 	@Override
 	public int getParticleCount () {
 		return visibleSkidMarksCount;
+	}
+
+	@Override
+	public int getMaxParticleCount () {
+		return MaxSkidMarks;
 	}
 
 	@Override

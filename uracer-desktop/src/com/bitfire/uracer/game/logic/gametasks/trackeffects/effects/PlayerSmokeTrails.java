@@ -170,6 +170,11 @@ public class PlayerSmokeTrails extends TrackEffect {
 	}
 
 	@Override
+	public int getMaxParticleCount () {
+		return MaxParticles * SmokeEffectsCount;
+	}
+
+	@Override
 	public int getParticleCount () {
 		int count = 0;
 		for (int i = 0; i < SmokeEffectsCount; i++) {

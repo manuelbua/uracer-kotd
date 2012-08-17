@@ -29,4 +29,6 @@ public abstract class TrackEffect implements Disposable {
 	public abstract void render (SpriteBatch batch);
 
 	public abstract int getParticleCount ();
+
+	public abstract int getMaxParticleCount ();
 }

@@ -51,7 +51,7 @@ public class HudDebug extends HudElement {
 		// meter skid marks count
 		if (skidMarks != null) {
 			meterSkidMarks = new HudDebugMeter(100, 5);
-			meterSkidMarks.setLimits(0, PlayerSkidMarks.MaxSkidMarks);
+			meterSkidMarks.setLimits(0, skidMarks.getMaxParticleCount());
 			meterSkidMarks.setName("sm");
 			meters.add(meterSkidMarks);
 		}
