@@ -31,7 +31,6 @@ import com.bitfire.uracer.game.logic.gametasks.messager.Message.Position;
 import com.bitfire.uracer.game.logic.gametasks.messager.Message.Size;
 import com.bitfire.uracer.game.logic.gametasks.messager.Message.Type;
 import com.bitfire.uracer.game.logic.gametasks.messager.MessageAccessor;
-import com.bitfire.uracer.game.logic.gametasks.messager.Messager;
 import com.bitfire.uracer.game.logic.helpers.CarFactory;
 import com.bitfire.uracer.game.logic.helpers.PlayerGameTasks;
 import com.bitfire.uracer.game.logic.post.PostProcessing;
@@ -522,7 +521,6 @@ public abstract class CommonLogic implements GameLogic, CarEvent.Listener, CarSt
 	// TODO: the method used to detect the player completing a lap can be more decent than this
 	private void playerTileChanged () {
 		boolean onStartZone = (playerCar.carState.currTileX == gameWorld.playerStartTileX && playerCar.carState.currTileY == gameWorld.playerStartTileY);
-		Messager messager = gameTasksManager.messager;
 
 		if (onStartZone) {
 			if (isFirstLap) {
@@ -531,7 +529,8 @@ public abstract class CommonLogic implements GameLogic, CarEvent.Listener, CarSt
 				lapManager.startRecording(playerCar);
 
 			} else {
-				// detect invalid laps
+
+				// detect and ignore invalid laps
 				if (lapManager.getLapInfo().getElapsedSeconds() < GameplaySettings.ReplayMinDurationSecs) {
 					Gdx.app.log("CommonLogic", "Invalid lap detected, too short (" + lapManager.getLapInfo().getElapsedSeconds()
 						+ "sec < " + GameplaySettings.ReplayMinDurationSecs + ")");
@@ -539,11 +538,7 @@ public abstract class CommonLogic implements GameLogic, CarEvent.Listener, CarSt
 				}
 
 				lapManager.stopRecording();
-
-				newReplay(lapManager.getLastRecordedReplay());
-
-				CarUtils.dumpSpeedInfo("Player", playerCar, lapManager.getLastRecordedReplay().trackTimeSeconds);
-
+				newReplay();
 				lapManager.startRecording(playerCar);
 			}
 

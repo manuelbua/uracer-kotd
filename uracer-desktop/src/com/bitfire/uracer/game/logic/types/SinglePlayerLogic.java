@@ -12,6 +12,7 @@ import com.bitfire.uracer.game.rendering.GameRenderer;
 import com.bitfire.uracer.game.rendering.GameWorldRenderer;
 import com.bitfire.uracer.game.world.GameWorld;
 import com.bitfire.uracer.utils.AMath;
+import com.bitfire.uracer.utils.CarUtils;
 import com.bitfire.uracer.utils.NumberString;
 
 public class SinglePlayerLogic extends CommonLogic {
@@ -74,15 +75,15 @@ public class SinglePlayerLogic extends CommonLogic {
 	}
 
 	@Override
-	public void newReplay (Replay replay) {
+	public void newReplay () {
 		Messager messager = gameTasksManager.messager;
+		Replay replay = lapManager.getLastRecordedReplay();
 
 		if (!lapManager.hasAllReplays()) {
 			// only one single valid replay
 
-			Replay any = lapManager.getAnyReplay();
-			ghostCar.setReplay(any);
-			any.saveLocal(messager);
+			ghostCar.setReplay(replay);
+			replay.saveLocal(messager);
 			messager.show("GO!  GO!  GO!", 3f, Type.Information, Position.Middle, Size.Big);
 
 		} else {
@@ -112,5 +113,6 @@ public class SinglePlayerLogic extends CommonLogic {
 			best.saveLocal(messager);
 		}
 
+		CarUtils.dumpSpeedInfo("Player", playerCar, replay.trackTimeSeconds);
 	}
 }
