@@ -80,7 +80,6 @@ public final class CarState {
 		lastTileY = currTileY;
 
 		// compute car's tile position
-// tilePosition.set( world.pxToTile( car.state().position.x, car.state().position.y ) );
 		tilePosition
 			.set(world.pxToTile(Convert.mt2px(car.getBody().getPosition().x), Convert.mt2px(car.getBody().getPosition().y)));
 

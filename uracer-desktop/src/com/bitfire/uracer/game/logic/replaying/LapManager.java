@@ -7,20 +7,18 @@ import com.bitfire.uracer.game.actors.Car;
 import com.bitfire.uracer.game.actors.CarForces;
 import com.bitfire.uracer.game.logic.LapInfo;
 import com.bitfire.uracer.game.logic.helpers.ReplayRecorder;
-import com.bitfire.uracer.game.world.GameWorld;
 
 /** Manages to record player lap to Replay objects and keep tracks of lap information. */
 public class LapManager implements Disposable {
 
-	private GameWorld gameWorld;
-	private ReplayRecorder recorder;
-	private ReplayBufferManager bufferManager;
-	private LapInfo lapInfo;
+	private final String levelName;
+	private final ReplayRecorder recorder;
+	private final ReplayBufferManager bufferManager;
+	private final LapInfo lapInfo;
 	private Replay lastRecordedReplay;
 
-	public LapManager (GameWorld gameWorld) {
-		this.gameWorld = gameWorld;
-
+	public LapManager (String levelName) {
+		this.levelName = levelName;
 		recorder = new ReplayRecorder();
 		lapInfo = new LapInfo();
 		bufferManager = new ReplayBufferManager();
@@ -30,9 +28,6 @@ public class LapManager implements Disposable {
 	@Override
 	public void dispose () {
 		recorder.reset();
-		recorder = null;
-		lapInfo = null;
-		bufferManager = null;
 	}
 
 	// operations
@@ -115,7 +110,7 @@ public class LapManager implements Disposable {
 
 		Replay next = bufferManager.getNextBuffer();
 		lapInfo.restartTime();
-		recorder.beginRecording(car, next, gameWorld.levelName);
+		recorder.beginRecording(car, next, levelName);
 		return next;
 	}
 

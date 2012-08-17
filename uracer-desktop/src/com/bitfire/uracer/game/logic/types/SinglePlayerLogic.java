@@ -14,7 +14,11 @@ public class SinglePlayerLogic extends CommonLogic {
 		super(gameWorld, gameRenderer, scalingStrategy);
 	}
 
-	public void setBestLocalReplay () {
+	//
+	// SINGLE PLAYER OPERATIONS
+	//
+
+	private void setBestLocalReplay () {
 		Replay replay = Replay.loadLocal(gameWorld.levelName);
 		if (replay == null) {
 			return;
