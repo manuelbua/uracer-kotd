@@ -45,7 +45,7 @@ public class LapManager implements Disposable {
 	}
 
 	public void setBestReplay (Replay replay) {
-		bufferManager.setBestReplay(replay);
+		bufferManager.setAsBestReplay(replay);
 		lapInfo.setBestTrackTimeSeconds(replay.trackTimeSeconds);
 	}
 

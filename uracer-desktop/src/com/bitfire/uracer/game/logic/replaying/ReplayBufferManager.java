@@ -27,7 +27,7 @@ public final class ReplayBufferManager {
 		replays[1].reset();
 	}
 
-	public void setBestReplay (Replay replay) {
+	public void setAsBestReplay (Replay replay) {
 		replays[0] = replay;
 		best = replays[0];
 	}

@@ -31,6 +31,10 @@ public class SinglePlayerLogic extends CommonLogic {
 		}
 	}
 
+	//
+	// event listeners / callbacks
+	//
+
 	@Override
 	protected void updateCamera (float timeModFactor) {
 		gameWorldRenderer.setCameraZoom(1.0f + (GameWorldRenderer.MaxCameraZoom - 1) * timeModFactor);
