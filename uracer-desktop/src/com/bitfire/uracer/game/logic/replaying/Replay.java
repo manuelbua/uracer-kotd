@@ -68,6 +68,24 @@ public class Replay {
 		time.dispose();
 	}
 
+	public void copyData (Replay replay) {
+		trackTimeSeconds = replay.trackTimeSeconds;
+		trackName = replay.trackName;
+		eventsCount = replay.eventsCount;
+		carPresetType = replay.carPresetType;
+		carWorldPositionMt.set(replay.carWorldPositionMt);
+		carWorldOrientRads = replay.carWorldOrientRads;
+
+		isValid = replay.isValid;
+		isLoaded = replay.isLoaded;
+		isSaved = replay.isSaved;
+
+		for (int i = 0; i < MaxEvents; i++) {
+			forces[i].set(replay.forces[i]);
+		}
+
+	}
+
 	public void begin (String trackName, Car car) {
 		reset();
 		carWorldPositionMt.set(car.getWorldPosMt());

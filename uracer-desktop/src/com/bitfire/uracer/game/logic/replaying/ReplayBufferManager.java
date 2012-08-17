@@ -28,7 +28,7 @@ public final class ReplayBufferManager {
 	}
 
 	public void setAsBestReplay (Replay replay) {
-		replays[0] = replay;
+		replays[0].copyData(replay);
 		best = replays[0];
 	}
 

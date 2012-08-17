@@ -48,7 +48,6 @@ import com.bitfire.uracer.game.tween.GameTweener;
 import com.bitfire.uracer.game.tween.SysTweener;
 import com.bitfire.uracer.game.world.GameWorld;
 import com.bitfire.uracer.screen.TransitionFactory.TransitionType;
-import com.bitfire.uracer.utils.AMath;
 import com.bitfire.uracer.utils.BoxedFloat;
 import com.bitfire.uracer.utils.BoxedFloatAccessor;
 import com.bitfire.uracer.utils.CarUtils;
@@ -75,8 +74,8 @@ public abstract class CommonLogic implements GameLogic, CarEvent.Listener, CarSt
 	protected boolean isFirstLap = true;
 
 	// tasks
-	private GameTasksManager gameTasksManager = null;
-	private PlayerGameTasks playerTasks = null;
+	protected GameTasksManager gameTasksManager = null;
+	protected PlayerGameTasks playerTasks = null;
 
 	// time modulation logic
 	private boolean timeModulation;
@@ -154,7 +153,7 @@ public abstract class CommonLogic implements GameLogic, CarEvent.Listener, CarSt
 	/** Restarts the current game */
 	protected void restartGame () {
 		restartLogic();
-		gameTasksManager.restart();
+// gameTasksManager.restart();
 		restart();
 	}
 
@@ -162,7 +161,7 @@ public abstract class CommonLogic implements GameLogic, CarEvent.Listener, CarSt
 	protected void resetGame () {
 		restartLogic();
 		resetLogic();
-		gameTasksManager.reset();
+// gameTasksManager.reset();
 		reset();
 	}
 
@@ -520,6 +519,7 @@ public abstract class CommonLogic implements GameLogic, CarEvent.Listener, CarSt
 		// player.driftState.driftSeconds() + ")" );
 	}
 
+	// TODO: the method used to detect the player completing a lap can be more decent than this
 	private void playerTileChanged () {
 		boolean onStartZone = (playerCar.carState.currTileX == gameWorld.playerStartTileX && playerCar.carState.currTileY == gameWorld.playerStartTileY);
 		Messager messager = gameTasksManager.messager;
@@ -527,11 +527,6 @@ public abstract class CommonLogic implements GameLogic, CarEvent.Listener, CarSt
 		if (onStartZone) {
 			if (isFirstLap) {
 				isFirstLap = false;
-
-				// any record to play?
-				if (lapManager.hasAnyReplay()) {
-					ghostCar.setReplay(lapManager.getAnyReplay());
-				}
 
 				lapManager.startRecording(playerCar);
 
@@ -545,40 +540,7 @@ public abstract class CommonLogic implements GameLogic, CarEvent.Listener, CarSt
 
 				lapManager.stopRecording();
 
-				if (!lapManager.hasAllReplays()) {
-					// only one single valid replay
-
-					Replay any = lapManager.getAnyReplay();
-					ghostCar.setReplay(any);
-					any.saveLocal(messager);
-					messager.show("GO!  GO!  GO!", 3f, Type.Information, Position.Middle, Size.Big);
-
-				} else {
-
-					// both valid, replay best, overwrite worst
-
-					Replay best = lapManager.getBestReplay();
-					Replay worst = lapManager.getWorstReplay();
-
-					float bestTime = AMath.round(best.trackTimeSeconds, 2);
-					float worstTime = AMath.round(worst.trackTimeSeconds, 2);
-					float diffTime = AMath.round(worstTime - bestTime, 2);
-
-					if (AMath.equals(worstTime, bestTime)) {
-						// draw!
-						messager.show("DRAW!", 3f, Type.Information, Position.Top, Size.Big);
-					} else {
-						// has the player managed to beat the best lap?
-						if (lapManager.isLastBestLap()) {
-							messager.show("-" + NumberString.format(diffTime) + " seconds!", 3f, Type.Good, Position.Top, Size.Big);
-						} else {
-							messager.show("+" + NumberString.format(diffTime) + " seconds", 3f, Type.Bad, Position.Top, Size.Big);
-						}
-					}
-
-					ghostCar.setReplay(best);
-					best.saveLocal(messager);
-				}
+				newReplay(lapManager.getLastRecordedReplay());
 
 				CarUtils.dumpSpeedInfo("Player", playerCar, lapManager.getLastRecordedReplay().trackTimeSeconds);
 

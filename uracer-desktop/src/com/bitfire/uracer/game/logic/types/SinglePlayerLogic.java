@@ -3,20 +3,22 @@ package com.bitfire.uracer.game.logic.types;
 
 import com.badlogic.gdx.Gdx;
 import com.bitfire.uracer.ScalingStrategy;
+import com.bitfire.uracer.game.logic.gametasks.messager.Message.Position;
+import com.bitfire.uracer.game.logic.gametasks.messager.Message.Size;
+import com.bitfire.uracer.game.logic.gametasks.messager.Message.Type;
+import com.bitfire.uracer.game.logic.gametasks.messager.Messager;
 import com.bitfire.uracer.game.logic.replaying.Replay;
 import com.bitfire.uracer.game.rendering.GameRenderer;
 import com.bitfire.uracer.game.rendering.GameWorldRenderer;
 import com.bitfire.uracer.game.world.GameWorld;
+import com.bitfire.uracer.utils.AMath;
+import com.bitfire.uracer.utils.NumberString;
 
 public class SinglePlayerLogic extends CommonLogic {
 
 	public SinglePlayerLogic (GameWorld gameWorld, GameRenderer gameRenderer, ScalingStrategy scalingStrategy) {
 		super(gameWorld, gameRenderer, scalingStrategy);
 	}
-
-	//
-	// SINGLE PLAYER OPERATIONS
-	//
 
 	private void setBestLocalReplay () {
 		Replay replay = Replay.loadLocal(gameWorld.levelName);
@@ -25,10 +27,7 @@ public class SinglePlayerLogic extends CommonLogic {
 		}
 
 		lapManager.setBestReplay(replay);
-		// if( !hasPlayer() )
-		{
-			ghostCar.setReplay(replay);
-		}
+		ghostCar.setReplay(replay);
 	}
 
 	//
@@ -71,4 +70,44 @@ public class SinglePlayerLogic extends CommonLogic {
 		Gdx.app.log("SinglePlayerLogic", "Resetting game");
 	}
 
+	@Override
+	public void newReplay (Replay replay) {
+		Messager messager = gameTasksManager.messager;
+
+		if (!lapManager.hasAllReplays()) {
+			// only one single valid replay
+
+			Replay any = lapManager.getAnyReplay();
+			ghostCar.setReplay(any);
+			any.saveLocal(messager);
+			messager.show("GO!  GO!  GO!", 3f, Type.Information, Position.Middle, Size.Big);
+
+		} else {
+
+			// both valid, replay best, overwrite worst
+
+			Replay best = lapManager.getBestReplay();
+			Replay worst = lapManager.getWorstReplay();
+
+			float bestTime = AMath.round(best.trackTimeSeconds, 2);
+			float worstTime = AMath.round(worst.trackTimeSeconds, 2);
+			float diffTime = AMath.round(worstTime - bestTime, 2);
+
+			if (AMath.equals(worstTime, bestTime)) {
+				// draw!
+				messager.show("DRAW!", 3f, Type.Information, Position.Top, Size.Big);
+			} else {
+				// has the player managed to beat the best lap?
+				if (lapManager.isLastBestLap()) {
+					messager.show("-" + NumberString.format(diffTime) + " seconds!", 3f, Type.Good, Position.Top, Size.Big);
+				} else {
+					messager.show("+" + NumberString.format(diffTime) + " seconds", 3f, Type.Bad, Position.Top, Size.Big);
+				}
+			}
+
+			ghostCar.setReplay(best);
+			best.saveLocal(messager);
+		}
+
+	}
 }

@@ -29,6 +29,7 @@ public final class ReplayRecorder {
 	public void beginRecording (Car car, Replay replay, String trackName) {
 		isRecording = true;
 		this.replay = replay;
+		Gdx.app.log("Recorder", "Beginning recording #" + replay.id);
 		replay.begin(trackName, car);
 	}
 
@@ -49,6 +50,7 @@ public final class ReplayRecorder {
 			return null;
 		}
 
+		Gdx.app.log("Recorder", "Finished recording #" + replay.id);
 		Replay r = replay;
 		replay.end();
 		isRecording = false;
