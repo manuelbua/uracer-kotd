@@ -17,7 +17,7 @@ import com.bitfire.uracer.game.actors.CarState;
 import com.bitfire.uracer.game.actors.CarType;
 import com.bitfire.uracer.game.rendering.GameRenderer;
 import com.bitfire.uracer.game.world.GameWorld;
-import com.bitfire.uracer.game.world.models.WorldDefs.TileLayer;
+import com.bitfire.uracer.game.world.WorldDefs.TileLayer;
 import com.bitfire.uracer.resources.Art;
 import com.bitfire.uracer.utils.AMath;
 import com.bitfire.uracer.utils.Convert;
