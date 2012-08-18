@@ -145,6 +145,16 @@ public abstract class CommonLogic implements GameLogic, CarEvent.Listener, CarSt
 
 	protected abstract void reset ();
 
+	protected abstract void newReplay ();
+
+	protected abstract void driftBegins ();
+
+	protected abstract void driftEnds ();
+
+	protected abstract void timeDilationBegins ();
+
+	protected abstract void timeDilationEnds ();
+
 	//
 	// SHARED OPERATIONS (Subclass Sandbox pattern)
 	//
@@ -419,8 +429,10 @@ public abstract class CommonLogic implements GameLogic, CarEvent.Listener, CarSt
 
 				if (timeModulation) {
 					timeMod.toDilatedTime();
+					timeDilationBegins();
 				} else {
 					timeMod.toNormalTime();
+					timeDilationEnds();
 				}
 			}
 			break;
@@ -431,11 +443,13 @@ public abstract class CommonLogic implements GameLogic, CarEvent.Listener, CarSt
 				if (!timeModulation) {
 					timeModulation = true;
 					timeMod.toDilatedTime();
+					timeDilationBegins();
 				}
 			} else if (input.isReleased(Keys.SPACE) || input.isUntouched(1)) {
 				if (timeModulation) {
 					timeModulation = false;
 					timeMod.toNormalTime();
+					timeDilationEnds();
 				}
 			}
 			break;

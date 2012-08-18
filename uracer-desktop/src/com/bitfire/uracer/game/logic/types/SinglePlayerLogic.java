@@ -69,7 +69,6 @@ public class SinglePlayerLogic extends CommonLogic {
 	}
 
 	// the game has been restarted
-
 	@Override
 	protected void restart () {
 		Gdx.app.log("SinglePlayerLogic", "Starting/restarting game");
@@ -77,7 +76,6 @@ public class SinglePlayerLogic extends CommonLogic {
 	}
 
 	// the game has been reset
-
 	@Override
 	protected void reset () {
 		Gdx.app.log("SinglePlayerLogic", "Resetting game");
@@ -126,7 +124,6 @@ public class SinglePlayerLogic extends CommonLogic {
 	}
 
 	// the player begins drifting
-
 	@Override
 	public void driftBegins () {
 	}
@@ -135,5 +132,15 @@ public class SinglePlayerLogic extends CommonLogic {
 	@Override
 	public void driftEnds () {
 		Gdx.app.log("SinglePlayerLogic", "drifted for " + playerCar.driftState.driftSeconds() + "s");
+	}
+
+	// the player begins slowing down time
+	@Override
+	public void timeDilationBegins () {
+	}
+
+	// the player ends slowing down time
+	@Override
+	public void timeDilationEnds () {
 	}
 }

@@ -13,11 +13,4 @@ public interface GameLogic {
 	void tickCompleted ();
 
 	void beforeRender ();
-
-	// from player
-	void newReplay ();
-
-	void driftBegins ();
-
-	void driftEnds ();
 }
