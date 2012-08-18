@@ -2,6 +2,7 @@
 package com.bitfire.uracer.game.logic.replaying;
 
 import com.badlogic.gdx.Gdx;
+import com.badlogic.gdx.utils.Array;
 import com.badlogic.gdx.utils.Disposable;
 import com.bitfire.uracer.game.GameplaySettings;
 import com.bitfire.utils.ItemsManager;
@@ -9,9 +10,11 @@ import com.bitfire.utils.ItemsManager;
 /** Maintains an updated list of the best <n> Replay objects for the specified track level */
 public final class ReplayManager implements Disposable {
 
-	private static final int MaxReplays = 10;
+	private final static int MaxReplays = 5;
 	private final String trackId;
-	private ItemsManager<Replay> replays = new ItemsManager<Replay>();
+	private final ItemsManager<Replay> replays = new ItemsManager<Replay>();
+	private final Array<Replay> replayItems = replays.items;
+
 	private Replay best, worst;
 	private int ridx;
 
@@ -101,12 +104,12 @@ public final class ReplayManager implements Disposable {
 		}
 
 		// dump replays
-		for (int i = 0; i < MaxReplays; i++) {
-			Replay r = replays.items.get(i);
-			if (r.isValid) {
-				Gdx.app.log("ReplayManager", "#" + i + ", seconds=" + r.trackTimeSeconds);
-			}
-		}
+// for (int i = 0; i < MaxReplays; i++) {
+// Replay r = replays.items.get(i);
+// if (r.isValid) {
+// Gdx.app.log("ReplayManager", "#" + i + ", seconds=" + r.trackTimeSeconds);
+// }
+// }
 
 		return added;
 	}
@@ -132,5 +135,9 @@ public final class ReplayManager implements Disposable {
 
 	public Replay getWorstReplay () {
 		return worst;
+	}
+
+	public Array<Replay> getReplays () {
+		return replayItems;
 	}
 }
