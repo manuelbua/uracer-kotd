@@ -86,6 +86,7 @@ public class SinglePlayerLogic extends CommonLogic {
 	public void newReplay () {
 		Replay replay = lapManager.getLastRecordedReplay();
 
+		// choose wich replay(s) to start playing
 		if (!lapManager.hasAllReplays()) {
 			// only one single valid replay
 
