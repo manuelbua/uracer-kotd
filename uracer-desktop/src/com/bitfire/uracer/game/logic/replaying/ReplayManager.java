@@ -10,7 +10,7 @@ import com.bitfire.utils.ItemsManager;
 /** Maintains an updated list of the best <n> Replay objects for the specified track level */
 public final class ReplayManager implements Disposable {
 
-	private final static int MaxReplays = 5;
+	public static final int MaxReplays = 5;
 	private final String trackId;
 	private final ItemsManager<Replay> replays = new ItemsManager<Replay>();
 	private final Array<Replay> replayItems = replays.items;
@@ -67,39 +67,40 @@ public final class ReplayManager implements Disposable {
 			best = replay;
 			worst = replay;
 		} else {
-			if (replay.trackTimeSeconds < worst.trackTimeSeconds) {
 
-				if (ridx == MaxReplays) {
-					// full, overwrite worst
-					worst.copyData(replay);
-					added = worst;
+			if (replay.trackTimeSeconds >= worst.trackTimeSeconds) {
+				Gdx.app.log("ReplayManager", "Discarded, worse than the worst!");
+				return null;
+			}
 
-					// recompute best/worst
-					worst = replays.items.get(0);
-					best = replays.items.get(0);
-					for (int i = 1; i < MaxReplays; i++) {
-						Replay r = replays.items.get(i);
+			if (ridx == MaxReplays) {
+				// full, overwrite worst
+				worst.copyData(replay);
+				added = worst;
 
-						if (worst.trackTimeSeconds < r.trackTimeSeconds) {
-							worst = r;
-						}
+				// recompute best/worst
+				worst = replays.items.get(0);
+				best = replays.items.get(0);
+				for (int i = 1; i < MaxReplays; i++) {
+					Replay r = replays.items.get(i);
 
-						if (best.trackTimeSeconds > r.trackTimeSeconds) {
-							best = r;
-						}
+					if (worst.trackTimeSeconds < r.trackTimeSeconds) {
+						worst = r;
 					}
-				} else {
-					// add new
-					added = replays.items.get(ridx++);
-					added.copyData(replay);
 
-					// compute best
-					if (best.trackTimeSeconds > added.trackTimeSeconds) {
-						best = added;
+					if (best.trackTimeSeconds > r.trackTimeSeconds) {
+						best = r;
 					}
 				}
 			} else {
-				Gdx.app.log("ReplayManager", "Discarded, worse than the worst!");
+				// add new
+				added = replays.items.get(ridx++);
+				added.copyData(replay);
+
+				// compute best
+				if (best.trackTimeSeconds > added.trackTimeSeconds) {
+					best = added;
+				}
 			}
 		}
 

@@ -2,6 +2,7 @@
 package com.bitfire.uracer.game.logic.types;
 
 import com.badlogic.gdx.Gdx;
+import com.badlogic.gdx.utils.Array;
 import com.bitfire.uracer.ScalingStrategy;
 import com.bitfire.uracer.game.logic.gametasks.messager.Message.Position;
 import com.bitfire.uracer.game.logic.gametasks.messager.Message.Size;
@@ -61,9 +62,9 @@ public class SinglePlayerLogic extends CommonLogic {
 			gameWorldRenderer.setCameraPosition(playerCar.state().position, playerCar.state().orientation,
 				playerCar.carState.currSpeedFactor);
 
-		} else if (ghostCar.hasReplay()) {
+		} else if (getGhost(0).hasReplay()) {
 
-			gameWorldRenderer.setCameraPosition(ghostCar.state().position, ghostCar.state().orientation, 0);
+			gameWorldRenderer.setCameraPosition(getGhost(0).state().position, getGhost(0).state().orientation, 0);
 
 		} else {
 
@@ -86,16 +87,18 @@ public class SinglePlayerLogic extends CommonLogic {
 		replayManager.reset();
 	}
 
-	// a freshly-recorded Replay from the player is available
+	// a new Replay from the player is available: note that CommonLogic already perform
+	// some basic filtering such as null checking, length validity, better-than-worst...
 	@Override
 	public void newReplay (Replay replay) {
 
 		CarUtils.dumpSpeedInfo("Player", playerCar, replay.trackTimeSeconds);
 
 		if (!replayManager.canClassify()) {
-			ghostCar.setReplay(replay);
+			getGhost(0).setReplay(replay);
+			// ghostCar.setReplay(replay);
 			// replay.saveLocal(messager);
-			messager.show("GO!  GO!  GO!", 3f, Type.Information, Position.Middle, Size.Big);
+			messager.show("GO!  GO!  GO!", 3f, Type.Information, Position.Bottom, Size.Big);
 		} else {
 			Replay best = replayManager.getBestReplay();
 			Replay worst = replayManager.getWorstReplay();
@@ -116,7 +119,12 @@ public class SinglePlayerLogic extends CommonLogic {
 				}
 			}
 
-			ghostCar.setReplay(best);
+			Array<Replay> replays = replayManager.getReplays();
+			for (int i = 0; i < replays.size; i++) {
+				getGhost(i).setReplay(replays.get(i));
+			}
+
+			// ghostCar.setReplay(best);
 			// best.saveLocal(messager);
 		}
 

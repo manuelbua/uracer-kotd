@@ -67,7 +67,7 @@ public abstract class CommonLogic implements GameLogic, CarEvent.Listener, CarSt
 
 	// player
 	protected PlayerCar playerCar = null;
-	protected GhostCar ghostCar = null;
+	protected GhostCar[] ghostCars = new GhostCar[ReplayManager.MaxReplays];
 
 	// lap
 	protected LapManager lapManager = null;
@@ -116,7 +116,9 @@ public abstract class CommonLogic implements GameLogic, CarEvent.Listener, CarSt
 		playerTasks = new PlayerGameTasks(gameTasksManager, scalingStrategy);
 
 		lapManager = new LapManager(gameWorld.trackId);
-		ghostCar = CarFactory.createGhost(gameWorld, CarPreset.Type.L1_GoblinOrange);
+		for (int i = 0; i < ReplayManager.MaxReplays; i++) {
+			ghostCars[i] = CarFactory.createGhost(gameWorld, CarPreset.Type.L1_GoblinOrange);
+		}
 
 		replayManager = new ReplayManager(gameWorld.trackId);
 
@@ -133,8 +135,10 @@ public abstract class CommonLogic implements GameLogic, CarEvent.Listener, CarSt
 			playerCar.dispose();
 		}
 
-		if (ghostCar != null) {
-			ghostCar.dispose();
+		for (int i = 0; i < ReplayManager.MaxReplays; i++) {
+			if (ghostCars[i] != null) {
+				ghostCars[i].dispose();
+			}
 		}
 
 		GameTweener.dispose();
@@ -271,22 +275,36 @@ public abstract class CommonLogic implements GameLogic, CarEvent.Listener, CarSt
 		player.resetPhysics();
 	}
 
-	private void resetPlayer (Car playerCar, GhostCar playerGhostCar) {
+	private void resetPlayer (Car playerCar) {
 		if (playerCar != null) {
 			playerCar.resetPhysics();
 			playerCar.resetDistanceAndSpeed();
 			playerCar.setWorldPosMt(gameWorld.playerStartPos, gameWorld.playerStartOrient);
 		}
+	}
 
-		if (playerGhostCar != null) {
-			playerGhostCar.resetPhysics();
-			playerGhostCar.resetDistanceAndSpeed();
-			playerGhostCar.removeReplay();
+	private void resetGhost (int handle) {
+		GhostCar ghost = ghostCars[handle];
+		if (ghost != null) {
+			ghost.resetPhysics();
+			ghost.resetDistanceAndSpeed();
+			ghost.removeReplay();
+		}
+	}
+
+	protected GhostCar getGhost (int handle) {
+		return ghostCars[handle];
+	}
+
+	private void resetAllGhosts () {
+		for (int i = 0; i < ReplayManager.MaxReplays; i++) {
+			resetGhost(i);
 		}
 	}
 
 	private void restartLogic () {
-		resetPlayer(playerCar, ghostCar);
+		resetPlayer(playerCar);
+		resetAllGhosts();
 		gameWorldRenderer.setInitialCameraPositionOrient(playerCar);
 
 		isFirstLap = true;
@@ -350,7 +368,8 @@ public abstract class CommonLogic implements GameLogic, CarEvent.Listener, CarSt
 		if (input.isPressed(Keys.C)) {
 
 			if (lapManager.getBestReplay() != null) {
-				ghostCar.setReplay(lapManager.getBestReplay());
+				resetAllGhosts();
+				getGhost(0).setReplay(lapManager.getBestReplay());
 			}
 
 		} else if (input.isPressed(Keys.R)) {
@@ -371,7 +390,7 @@ public abstract class CommonLogic implements GameLogic, CarEvent.Listener, CarSt
 
 			// start recording
 			playerCar.resetDistanceAndSpeed();
-			ghostCar.setReplay(null);
+			resetAllGhosts();
 			lapManager.abortRecording();
 			userRec = lapManager.startRecording(playerCar);
 			Gdx.app.log("GameLogic", "Recording...");
@@ -388,7 +407,7 @@ public abstract class CommonLogic implements GameLogic, CarEvent.Listener, CarSt
 			playerCar.resetDistanceAndSpeed();
 			if (userRec != null) {
 				userRec.saveLocal(gameTasksManager.messager);
-				ghostCar.setReplay(userRec);
+				getGhost(0).setReplay(userRec);
 			}
 
 			// Gdx.app.log( "GameLogic", "Player final pos=" +
