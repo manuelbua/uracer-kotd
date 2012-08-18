@@ -1,4 +1,7 @@
-<?xml version="1.0" encoding="UTF-8" standalone="no"?><map height="14" orientation="orthogonal" tileheight="224" tilewidth="224" version="1.0" width="20"><properties><property name="blended tiles" value=""/></properties>
+<?xml version="1.0" encoding="UTF-8" standalone="no"?><map height="14" orientation="orthogonal" tileheight="224" tilewidth="224" version="1.0" width="20">
+ <properties><property name="blended tiles" value=""/>
+  <property name="name" value="Boring long"/>
+ </properties>
  <tileset firstgid="1" name="tileset" tileheight="224" tilewidth="224">
   <image height="3360" source="tilesets/nature/224.png" width="896"/>
   <tile id="0">
