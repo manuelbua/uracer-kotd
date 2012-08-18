@@ -151,6 +151,7 @@ GAME
 
 
 ReplayManager
+
 	RESPONSIBILITIES
-	- maintains the best <n> records
-	- load/save replays
+		- maintains the best <n> records
+		- load/save replays

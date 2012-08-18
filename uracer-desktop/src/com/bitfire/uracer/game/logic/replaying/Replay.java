@@ -68,6 +68,8 @@ public class Replay {
 		carWorldPositionMt.set(replay.carWorldPositionMt);
 		carWorldOrientRads = replay.carWorldOrientRads;
 
+		// inherits its data state, eg: if it was saved
+		// there is no need to save it again
 		isValid = replay.isValid;
 		isLoaded = replay.isLoaded;
 		isSaved = replay.isSaved;
