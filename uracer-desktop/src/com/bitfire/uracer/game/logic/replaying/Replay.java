@@ -11,6 +11,7 @@ import java.util.zip.GZIPOutputStream;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.files.FileHandle;
 import com.badlogic.gdx.math.Vector2;
+import com.badlogic.gdx.utils.Disposable;
 import com.badlogic.gdx.utils.GdxRuntimeException;
 import com.bitfire.uracer.configuration.Storage;
 import com.bitfire.uracer.game.GameplaySettings;
@@ -27,7 +28,7 @@ import com.bitfire.uracer.game.logic.gametasks.messager.Messager;
  * 
  * @author manuel */
 
-public class Replay {
+public class Replay implements Disposable {
 	public static final int MaxEvents = 5000;
 	private int eventsCount;
 
@@ -55,9 +56,14 @@ public class Replay {
 		}
 	}
 
+	@Override
 	public void dispose () {
 		reset();
 		time.dispose();
+
+		for (int i = 0; i < MaxEvents; i++) {
+			forces[i] = null;
+		}
 	}
 
 	public void copyData (Replay replay) {
