@@ -112,7 +112,7 @@ public abstract class CommonLogic implements GameLogic, CarEvent.Listener, CarSt
 		// player tasks
 		playerTasks = new PlayerGameTasks(gameTasksManager, scalingStrategy);
 
-		lapManager = new LapManager(gameWorld.levelName);
+		lapManager = new LapManager(gameWorld.trackName);
 		ghostCar = CarFactory.createGhost(gameWorld, CarPreset.Type.L1_GoblinOrange);
 
 		// messager.show( "COOL STUFF!", 60, Message.Type.Information,

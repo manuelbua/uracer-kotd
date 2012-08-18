@@ -10,6 +10,7 @@ import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.utils.TimeUtils;
 import com.bitfire.uracer.configuration.Config;
 import com.bitfire.uracer.configuration.UserPreferences;
+import com.bitfire.uracer.game.GameTracks;
 import com.bitfire.uracer.game.screens.GameScreensFactory;
 import com.bitfire.uracer.game.screens.GameScreensFactory.ScreenType;
 import com.bitfire.uracer.game.tween.SysTweener;
@@ -100,6 +101,11 @@ public class URacer implements ApplicationListener {
 		// create input system
 		input = new Input();
 		Gdx.app.log("URacer", "input system created.");
+
+		// enumerate available game tracks
+		if (!GameTracks.init()) {
+			System.exit(-1);
+		}
 
 		// computed for a 256px tile size target (compute needed conversion
 		// factors)

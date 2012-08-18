@@ -29,7 +29,7 @@ public class SinglePlayerLogic extends CommonLogic {
 	// utilities
 	//
 	private void setBestLocalReplay () {
-		Replay replay = Replay.loadLocal(gameWorld.levelName);
+		Replay replay = Replay.loadLocal(gameWorld.trackName);
 		if (replay == null) {
 			return;
 		}
@@ -88,7 +88,7 @@ public class SinglePlayerLogic extends CommonLogic {
 
 		// choose wich replay(s) to start playing
 		if (!lapManager.hasAllReplays()) {
-			// only one single valid replay
+			// only one replay
 
 			ghostCar.setReplay(replay);
 			replay.saveLocal(messager);

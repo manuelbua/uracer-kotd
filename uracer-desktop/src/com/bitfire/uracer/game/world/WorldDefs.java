@@ -52,7 +52,6 @@ public final class WorldDefs {
 		private LayerProperties (String mnemonic) {
 			this.mnemonic = mnemonic;
 		}
-
 	}
 
 	/** Tiled's tile properties */
@@ -65,6 +64,5 @@ public final class WorldDefs {
 		private TileProperties (String mnemonic) {
 			this.mnemonic = mnemonic;
 		}
-
 	}
 }
