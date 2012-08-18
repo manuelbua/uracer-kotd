@@ -14,7 +14,7 @@ import com.badlogic.gdx.graphics.g2d.tiled.TiledMap;
 import com.badlogic.gdx.utils.Array;
 import com.bitfire.uracer.configuration.Storage;
 
-/** Manages available game tracks. */
+/** Enumerates and maintains a list of available game tracks. */
 public final class GameTracks {
 
 	private static MessageDigest digest;

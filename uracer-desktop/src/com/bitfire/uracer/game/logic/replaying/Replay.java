@@ -38,7 +38,7 @@ public class Replay implements Disposable {
 	public float carWorldOrientRads;
 
 	// replay data
-	public String trackName = "no-track";
+	public String trackId = "";
 	public float trackTimeSeconds = 0;
 	public CarForces[] forces = null;
 	public boolean isValid = false;
@@ -68,7 +68,7 @@ public class Replay implements Disposable {
 
 	public void copyData (Replay replay) {
 		trackTimeSeconds = replay.trackTimeSeconds;
-		trackName = replay.trackName;
+		trackId = replay.trackId;
 		eventsCount = replay.eventsCount;
 		carPresetType = replay.carPresetType;
 		carWorldPositionMt.set(replay.carWorldPositionMt);
@@ -85,12 +85,12 @@ public class Replay implements Disposable {
 		}
 	}
 
-	public void begin (String trackName, Car car) {
+	public void begin (String trackId, Car car) {
 		reset();
 		carWorldPositionMt.set(car.getWorldPosMt());
 		carWorldOrientRads = car.getWorldOrientRads();
 		carPresetType = car.getPresetType();
-		this.trackName = trackName;
+		this.trackId = trackId;
 		time.start();
 
 		// Gdx.app.log( "Replay", "Begin at " + carWorldPositionMt + ", " + carWorldOrientRads );
@@ -147,7 +147,7 @@ public class Replay implements Disposable {
 				Replay r = new Replay();
 
 				// replay info data
-				r.trackName = is.readUTF();
+				r.trackId = is.readUTF();
 				// r.difficultyLevel = GameDifficulty.valueOf( is.readUTF() );
 				r.trackTimeSeconds = is.readFloat();
 				if (!Replay.isValidLength(r.trackTimeSeconds)) {
@@ -203,7 +203,7 @@ public class Replay implements Disposable {
 				@Override
 				public void run () {
 					try {
-						String filename = Storage.LocalReplays + trackName;
+						String filename = Storage.LocalReplays + trackId;
 						FileHandle hf = Gdx.files.external(filename);
 
 						// DataOutputStream os = new DataOutputStream( hf.write( false ) );
@@ -226,7 +226,7 @@ public class Replay implements Disposable {
 						// write header
 
 						// replay info data
-						os.writeUTF(trackName);
+						os.writeUTF(trackId);
 						// os.writeUTF( difficultyLevel.toString() );
 						os.writeFloat(trackTimeSeconds);
 						os.writeInt(eventsCount);

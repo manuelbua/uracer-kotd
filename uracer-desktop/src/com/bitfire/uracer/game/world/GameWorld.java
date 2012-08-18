@@ -57,6 +57,7 @@ public final class GameWorld {
 
 	// public level data
 	public final String trackName;
+	public final String trackId;
 	public final TiledMap map;
 	public final Vector2 worldSizeScaledPx, worldSizeTiles, worldSizeMt;
 	public final ScalingStrategy scalingStrategy;
@@ -94,6 +95,7 @@ public final class GameWorld {
 		Gdx.app.log("GameWorld", "Box2D world created (CCD=" + continuousPhysics + ", auto clear forces=" + autoClearForces + ")");
 
 		map = GameTracks.load(trackId);
+		this.trackId = trackId;
 		this.trackName = map.properties.get("name");
 		this.nightMode = nightMode;
 
