@@ -16,4 +16,8 @@ public interface GameLogic {
 
 	// from player
 	void newReplay ();
+
+	void driftBegins ();
+
+	void driftEnds ();
 }

@@ -17,8 +17,12 @@ import com.bitfire.uracer.utils.NumberString;
 
 public class SinglePlayerLogic extends CommonLogic {
 
+	private Messager messager;
+
 	public SinglePlayerLogic (GameWorld gameWorld, GameRenderer gameRenderer, ScalingStrategy scalingStrategy) {
 		super(gameWorld, gameRenderer, scalingStrategy);
+
+		messager = gameTasksManager.messager;
 	}
 
 	//
@@ -38,6 +42,7 @@ public class SinglePlayerLogic extends CommonLogic {
 	// event listeners / callbacks
 	//
 
+	// the camera needs to be positioned
 	@Override
 	protected void updateCamera (float timeModFactor) {
 		gameWorldRenderer.setCameraZoom(1.0f + (GameWorldRenderer.MaxCameraZoom - 1) * timeModFactor);
@@ -63,20 +68,24 @@ public class SinglePlayerLogic extends CommonLogic {
 		}
 	}
 
+	// the game has been restarted
+
 	@Override
 	protected void restart () {
 		Gdx.app.log("SinglePlayerLogic", "Starting/restarting game");
 		setBestLocalReplay();
 	}
 
+	// the game has been reset
+
 	@Override
 	protected void reset () {
 		Gdx.app.log("SinglePlayerLogic", "Resetting game");
 	}
 
+	// a freshly-recorded Replay from the player is available
 	@Override
 	public void newReplay () {
-		Messager messager = gameTasksManager.messager;
 		Replay replay = lapManager.getLastRecordedReplay();
 
 		if (!lapManager.hasAllReplays()) {
@@ -99,13 +108,13 @@ public class SinglePlayerLogic extends CommonLogic {
 
 			if (AMath.equals(worstTime, bestTime)) {
 				// draw!
-				messager.show("DRAW!", 3f, Type.Information, Position.Top, Size.Big);
+				messager.show("DRAW!", 3f, Type.Information, Position.Bottom, Size.Big);
 			} else {
 				// has the player managed to beat the best lap?
 				if (lapManager.isLastBestLap()) {
-					messager.show("-" + NumberString.format(diffTime) + " seconds!", 3f, Type.Good, Position.Top, Size.Big);
+					messager.show("-" + NumberString.format(diffTime) + " seconds!", 3f, Type.Good, Position.Bottom, Size.Big);
 				} else {
-					messager.show("+" + NumberString.format(diffTime) + " seconds", 3f, Type.Bad, Position.Top, Size.Big);
+					messager.show("+" + NumberString.format(diffTime) + " seconds", 3f, Type.Bad, Position.Bottom, Size.Big);
 				}
 			}
 
@@ -114,5 +123,17 @@ public class SinglePlayerLogic extends CommonLogic {
 		}
 
 		CarUtils.dumpSpeedInfo("Player", playerCar, replay.trackTimeSeconds);
+	}
+
+	// the player begins drifting
+
+	@Override
+	public void driftBegins () {
+	}
+
+	// the player's drift ended
+	@Override
+	public void driftEnds () {
+		Gdx.app.log("SinglePlayerLogic", "drifted for " + playerCar.driftState.driftSeconds() + "s");
 	}
 }
