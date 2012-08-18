@@ -37,6 +37,7 @@ import com.bitfire.uracer.game.logic.post.PostProcessing;
 import com.bitfire.uracer.game.logic.post.animators.AggressiveCold;
 import com.bitfire.uracer.game.logic.replaying.LapManager;
 import com.bitfire.uracer.game.logic.replaying.Replay;
+import com.bitfire.uracer.game.logic.replaying.ReplayManager;
 import com.bitfire.uracer.game.logic.types.common.TimeModulator;
 import com.bitfire.uracer.game.player.PlayerCar;
 import com.bitfire.uracer.game.player.PlayerDriftStateEvent;
@@ -81,6 +82,8 @@ public abstract class CommonLogic implements GameLogic, CarEvent.Listener, CarSt
 	private TimeModulator timeMod = null;
 	private TimeDilateInputMode timeDilateMode;
 
+	protected ReplayManager replayManager;
+
 	public CommonLogic (GameWorld gameWorld, GameRenderer gameRenderer, ScalingStrategy scalingStrategy) {
 		this.gameWorld = gameWorld;
 		// this.gameRenderer = gameRenderer;
@@ -112,8 +115,10 @@ public abstract class CommonLogic implements GameLogic, CarEvent.Listener, CarSt
 		// player tasks
 		playerTasks = new PlayerGameTasks(gameTasksManager, scalingStrategy);
 
-		lapManager = new LapManager(gameWorld.trackName);
+		lapManager = new LapManager(gameWorld.trackId);
 		ghostCar = CarFactory.createGhost(gameWorld, CarPreset.Type.L1_GoblinOrange);
+
+		replayManager = new ReplayManager(gameWorld.trackId);
 
 		// messager.show( "COOL STUFF!", 60, Message.Type.Information,
 		// MessagePosition.Bottom, MessageSize.Big );
@@ -133,6 +138,7 @@ public abstract class CommonLogic implements GameLogic, CarEvent.Listener, CarSt
 		}
 
 		GameTweener.dispose();
+		replayManager.dispose();
 	}
 
 	//
@@ -145,7 +151,7 @@ public abstract class CommonLogic implements GameLogic, CarEvent.Listener, CarSt
 
 	protected abstract void reset ();
 
-	protected abstract void newReplay ();
+	protected abstract void newReplay (Replay replay);
 
 	protected abstract void driftBegins ();
 
@@ -545,7 +551,13 @@ public abstract class CommonLogic implements GameLogic, CarEvent.Listener, CarSt
 				}
 
 				lapManager.stopRecording();
-				newReplay();
+
+				// always work on the ReplayManager copy!
+				Replay replay = replayManager.addReplay(lapManager.getLastRecordedReplay());
+				if (replay != null) {
+					newReplay(replay);
+				}
+
 				lapManager.startRecording(playerCar);
 			}
 

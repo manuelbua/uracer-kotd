@@ -10,14 +10,14 @@ import com.bitfire.uracer.game.logic.LapInfo;
 /** Records player laps and keeps updated information for the current lap. */
 public class LapManager implements Disposable {
 
-	private final String levelName;
+	private final String trackId;
 	private final ReplayRecorder recorder;
 	private final ReplayBufferManager bufferManager;
 	private final LapInfo lapInfo;
 	private Replay lastRecordedReplay;
 
-	public LapManager (String levelName) {
-		this.levelName = levelName;
+	public LapManager (String trackId) {
+		this.trackId = trackId;
 		recorder = new ReplayRecorder();
 		lapInfo = new LapInfo();
 		bufferManager = new ReplayBufferManager();
@@ -114,7 +114,7 @@ public class LapManager implements Disposable {
 
 		Replay next = bufferManager.getNextBuffer();
 		lapInfo.restartTime();
-		recorder.beginRecording(car, next, levelName);
+		recorder.beginRecording(car, next, trackId);
 		return next;
 	}
 

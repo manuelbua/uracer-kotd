@@ -21,22 +21,26 @@ public class SinglePlayerLogic extends CommonLogic {
 
 	public SinglePlayerLogic (GameWorld gameWorld, GameRenderer gameRenderer, ScalingStrategy scalingStrategy) {
 		super(gameWorld, gameRenderer, scalingStrategy);
-
 		messager = gameTasksManager.messager;
+	}
+
+	@Override
+	public void dispose () {
+		super.dispose();
 	}
 
 	//
 	// utilities
 	//
-	private void setBestLocalReplay () {
-		Replay replay = Replay.loadLocal(gameWorld.trackName);
-		if (replay == null) {
-			return;
-		}
-
-		lapManager.setAsBestReplay(replay);
-		ghostCar.setReplay(replay);
-	}
+// private void setBestLocalReplay () {
+// Replay replay = Replay.loadLocal(gameWorld.trackName);
+// if (replay == null) {
+// return;
+// }
+//
+// lapManager.setAsBestReplay(replay);
+// ghostCar.setReplay(replay);
+// }
 
 	//
 	// event listeners / callbacks
@@ -72,34 +76,29 @@ public class SinglePlayerLogic extends CommonLogic {
 	@Override
 	protected void restart () {
 		Gdx.app.log("SinglePlayerLogic", "Starting/restarting game");
-		setBestLocalReplay();
+// setBestLocalReplay();
 	}
 
 	// the game has been reset
 	@Override
 	protected void reset () {
 		Gdx.app.log("SinglePlayerLogic", "Resetting game");
+		replayManager.reset();
 	}
 
 	// a freshly-recorded Replay from the player is available
 	@Override
-	public void newReplay () {
-		Replay replay = lapManager.getLastRecordedReplay();
+	public void newReplay (Replay replay) {
 
-		// choose wich replay(s) to start playing
-		if (!lapManager.hasAllReplays()) {
-			// only one replay
+		CarUtils.dumpSpeedInfo("Player", playerCar, replay.trackTimeSeconds);
 
+		if (!replayManager.canClassify()) {
 			ghostCar.setReplay(replay);
-			replay.saveLocal(messager);
+			// replay.saveLocal(messager);
 			messager.show("GO!  GO!  GO!", 3f, Type.Information, Position.Middle, Size.Big);
-
 		} else {
-
-			// both valid, replay best, overwrite worst
-
-			Replay best = lapManager.getBestReplay();
-			Replay worst = lapManager.getWorstReplay();
+			Replay best = replayManager.getBestReplay();
+			Replay worst = replayManager.getWorstReplay();
 
 			float bestTime = AMath.round(best.trackTimeSeconds, 2);
 			float worstTime = AMath.round(worst.trackTimeSeconds, 2);
@@ -118,10 +117,45 @@ public class SinglePlayerLogic extends CommonLogic {
 			}
 
 			ghostCar.setReplay(best);
-			best.saveLocal(messager);
+			// best.saveLocal(messager);
 		}
 
-		CarUtils.dumpSpeedInfo("Player", playerCar, replay.trackTimeSeconds);
+		//@off
+		// choose wich replay(s) to start playing
+//		if (!lapManager.hasAllReplays()) {
+//			// only one replay
+//
+//			ghostCar.setReplay(replay);
+//			replay.saveLocal(messager);
+//			messager.show("GO!  GO!  GO!", 3f, Type.Information, Position.Middle, Size.Big);
+//
+//		} else {
+//
+//			// both valid, replay best, overwrite worst
+//
+//			Replay best = lapManager.getBestReplay();
+//			Replay worst = lapManager.getWorstReplay();
+//
+//			float bestTime = AMath.round(best.trackTimeSeconds, 2);
+//			float worstTime = AMath.round(worst.trackTimeSeconds, 2);
+//			float diffTime = AMath.round(worstTime - bestTime, 2);
+//
+//			if (AMath.equals(worstTime, bestTime)) {
+//				// draw!
+//				messager.show("DRAW!", 3f, Type.Information, Position.Bottom, Size.Big);
+//			} else {
+//				// has the player managed to beat the best lap?
+//				if (lapManager.isLastBestLap()) {
+//					messager.show("-" + NumberString.format(diffTime) + " seconds!", 3f, Type.Good, Position.Bottom, Size.Big);
+//				} else {
+//					messager.show("+" + NumberString.format(diffTime) + " seconds", 3f, Type.Bad, Position.Bottom, Size.Big);
+//				}
+//			}
+//
+//			ghostCar.setReplay(best);
+//			best.saveLocal(messager);
+//		}
+		//@on
 	}
 
 	// the player begins drifting
