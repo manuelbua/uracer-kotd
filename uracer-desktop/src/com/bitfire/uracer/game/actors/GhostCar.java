@@ -57,6 +57,11 @@ public final class GhostCar extends Car {
 		// }
 	}
 
+	public void removeReplay () {
+		setReplay(null);
+		renderer.setAlpha(0);
+	}
+
 	public boolean hasReplay () {
 		return hasReplay;
 	}
@@ -68,11 +73,6 @@ public final class GhostCar extends Car {
 		indexPlay = 0;
 
 		// Gdx.app.log( "GhostCar", "Set to " + body.getPosition() + ", " + body.getAngle() );
-	}
-
-	public void removeReplay () {
-		setReplay(null);
-		renderer.setAlpha(0);
 	}
 
 	@Override
