@@ -11,6 +11,7 @@ import java.util.zip.GZIPOutputStream;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.files.FileHandle;
 import com.badlogic.gdx.math.Vector2;
+import com.badlogic.gdx.utils.Disposable;
 import com.badlogic.gdx.utils.GdxRuntimeException;
 import com.bitfire.uracer.configuration.Storage;
 import com.bitfire.uracer.game.GameplaySettings;
@@ -27,7 +28,7 @@ import com.bitfire.uracer.game.logic.gametasks.messager.Messager;
  * 
  * @author manuel */
 
-public class Replay {
+public class Replay implements Disposable {
 	public static final int MaxEvents = 5000;
 	private int eventsCount;
 
@@ -37,7 +38,7 @@ public class Replay {
 	public float carWorldOrientRads;
 
 	// replay data
-	public String trackName = "no-track";
+	public String trackId = "";
 	public float trackTimeSeconds = 0;
 	public CarForces[] forces = null;
 	public boolean isValid = false;
@@ -55,14 +56,19 @@ public class Replay {
 		}
 	}
 
+	@Override
 	public void dispose () {
 		reset();
 		time.dispose();
+
+		for (int i = 0; i < MaxEvents; i++) {
+			forces[i] = null;
+		}
 	}
 
 	public void copyData (Replay replay) {
 		trackTimeSeconds = replay.trackTimeSeconds;
-		trackName = replay.trackName;
+		trackId = replay.trackId;
 		eventsCount = replay.eventsCount;
 		carPresetType = replay.carPresetType;
 		carWorldPositionMt.set(replay.carWorldPositionMt);
@@ -79,12 +85,12 @@ public class Replay {
 		}
 	}
 
-	public void begin (String trackName, Car car) {
+	public void begin (String trackId, Car car) {
 		reset();
 		carWorldPositionMt.set(car.getWorldPosMt());
 		carWorldOrientRads = car.getWorldOrientRads();
 		carPresetType = car.getPresetType();
-		this.trackName = trackName;
+		this.trackId = trackId;
 		time.start();
 
 		// Gdx.app.log( "Replay", "Begin at " + carWorldPositionMt + ", " + carWorldOrientRads );
@@ -141,7 +147,7 @@ public class Replay {
 				Replay r = new Replay();
 
 				// replay info data
-				r.trackName = is.readUTF();
+				r.trackId = is.readUTF();
 				// r.difficultyLevel = GameDifficulty.valueOf( is.readUTF() );
 				r.trackTimeSeconds = is.readFloat();
 				if (!Replay.isValidLength(r.trackTimeSeconds)) {
@@ -197,7 +203,7 @@ public class Replay {
 				@Override
 				public void run () {
 					try {
-						String filename = Storage.LocalReplays + trackName;
+						String filename = Storage.LocalReplays + trackId;
 						FileHandle hf = Gdx.files.external(filename);
 
 						// DataOutputStream os = new DataOutputStream( hf.write( false ) );
@@ -220,7 +226,7 @@ public class Replay {
 						// write header
 
 						// replay info data
-						os.writeUTF(trackName);
+						os.writeUTF(trackId);
 						// os.writeUTF( difficultyLevel.toString() );
 						os.writeFloat(trackTimeSeconds);
 						os.writeInt(eventsCount);

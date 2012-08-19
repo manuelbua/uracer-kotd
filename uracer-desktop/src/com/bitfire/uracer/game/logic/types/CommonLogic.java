@@ -37,6 +37,7 @@ import com.bitfire.uracer.game.logic.post.PostProcessing;
 import com.bitfire.uracer.game.logic.post.animators.AggressiveCold;
 import com.bitfire.uracer.game.logic.replaying.LapManager;
 import com.bitfire.uracer.game.logic.replaying.Replay;
+import com.bitfire.uracer.game.logic.replaying.ReplayManager;
 import com.bitfire.uracer.game.logic.types.common.TimeModulator;
 import com.bitfire.uracer.game.player.PlayerCar;
 import com.bitfire.uracer.game.player.PlayerDriftStateEvent;
@@ -66,7 +67,7 @@ public abstract class CommonLogic implements GameLogic, CarEvent.Listener, CarSt
 
 	// player
 	protected PlayerCar playerCar = null;
-	protected GhostCar ghostCar = null;
+	protected GhostCar[] ghostCars = new GhostCar[ReplayManager.MaxReplays];
 
 	// lap
 	protected LapManager lapManager = null;
@@ -80,6 +81,8 @@ public abstract class CommonLogic implements GameLogic, CarEvent.Listener, CarSt
 	private boolean timeModulation;
 	private TimeModulator timeMod = null;
 	private TimeDilateInputMode timeDilateMode;
+
+	protected ReplayManager replayManager;
 
 	public CommonLogic (GameWorld gameWorld, GameRenderer gameRenderer, ScalingStrategy scalingStrategy) {
 		this.gameWorld = gameWorld;
@@ -112,8 +115,12 @@ public abstract class CommonLogic implements GameLogic, CarEvent.Listener, CarSt
 		// player tasks
 		playerTasks = new PlayerGameTasks(gameTasksManager, scalingStrategy);
 
-		lapManager = new LapManager(gameWorld.levelName);
-		ghostCar = CarFactory.createGhost(gameWorld, CarPreset.Type.L1_GoblinOrange);
+		lapManager = new LapManager(gameWorld.trackId);
+		for (int i = 0; i < ReplayManager.MaxReplays; i++) {
+			ghostCars[i] = CarFactory.createGhost(i, gameWorld, CarPreset.Type.L1_GoblinOrange);
+		}
+
+		replayManager = new ReplayManager(gameWorld.trackId);
 
 		// messager.show( "COOL STUFF!", 60, Message.Type.Information,
 		// MessagePosition.Bottom, MessageSize.Big );
@@ -128,11 +135,14 @@ public abstract class CommonLogic implements GameLogic, CarEvent.Listener, CarSt
 			playerCar.dispose();
 		}
 
-		if (ghostCar != null) {
-			ghostCar.dispose();
+		for (int i = 0; i < ReplayManager.MaxReplays; i++) {
+			if (ghostCars[i] != null) {
+				ghostCars[i].dispose();
+			}
 		}
 
 		GameTweener.dispose();
+		replayManager.dispose();
 	}
 
 	//
@@ -145,7 +155,11 @@ public abstract class CommonLogic implements GameLogic, CarEvent.Listener, CarSt
 
 	protected abstract void reset ();
 
-	protected abstract void newReplay ();
+	protected abstract void newReplay (Replay replay);
+
+	protected abstract void discardedReplay (Replay replay);
+
+	protected abstract void lapComplete (boolean firstLap);
 
 	protected abstract void driftBegins ();
 
@@ -162,7 +176,6 @@ public abstract class CommonLogic implements GameLogic, CarEvent.Listener, CarSt
 	/** Restarts the current game */
 	protected void restartGame () {
 		restartLogic();
-// gameTasksManager.restart();
 		restart();
 	}
 
@@ -170,7 +183,6 @@ public abstract class CommonLogic implements GameLogic, CarEvent.Listener, CarSt
 	protected void resetGame () {
 		restartLogic();
 		resetLogic();
-// gameTasksManager.reset();
 		reset();
 	}
 
@@ -265,22 +277,36 @@ public abstract class CommonLogic implements GameLogic, CarEvent.Listener, CarSt
 		player.resetPhysics();
 	}
 
-	private void resetPlayer (Car playerCar, GhostCar playerGhostCar) {
+	private void resetPlayer (Car playerCar) {
 		if (playerCar != null) {
 			playerCar.resetPhysics();
 			playerCar.resetDistanceAndSpeed();
 			playerCar.setWorldPosMt(gameWorld.playerStartPos, gameWorld.playerStartOrient);
 		}
+	}
 
-		if (playerGhostCar != null) {
-			playerGhostCar.resetPhysics();
-			playerGhostCar.resetDistanceAndSpeed();
-			playerGhostCar.removeReplay();
+	private void resetGhost (int handle) {
+		GhostCar ghost = ghostCars[handle];
+		if (ghost != null) {
+			ghost.resetPhysics();
+			ghost.resetDistanceAndSpeed();
+			ghost.removeReplay();
+		}
+	}
+
+	protected GhostCar getGhost (int handle) {
+		return ghostCars[handle];
+	}
+
+	private void resetAllGhosts () {
+		for (int i = 0; i < ReplayManager.MaxReplays; i++) {
+			resetGhost(i);
 		}
 	}
 
 	private void restartLogic () {
-		resetPlayer(playerCar, ghostCar);
+		resetPlayer(playerCar);
+		resetAllGhosts();
 		gameWorldRenderer.setInitialCameraPositionOrient(playerCar);
 
 		isFirstLap = true;
@@ -344,7 +370,8 @@ public abstract class CommonLogic implements GameLogic, CarEvent.Listener, CarSt
 		if (input.isPressed(Keys.C)) {
 
 			if (lapManager.getBestReplay() != null) {
-				ghostCar.setReplay(lapManager.getBestReplay());
+				resetAllGhosts();
+				getGhost(0).setReplay(lapManager.getBestReplay());
 			}
 
 		} else if (input.isPressed(Keys.R)) {
@@ -365,7 +392,7 @@ public abstract class CommonLogic implements GameLogic, CarEvent.Listener, CarSt
 
 			// start recording
 			playerCar.resetDistanceAndSpeed();
-			ghostCar.setReplay(null);
+			resetAllGhosts();
 			lapManager.abortRecording();
 			userRec = lapManager.startRecording(playerCar);
 			Gdx.app.log("GameLogic", "Recording...");
@@ -382,7 +409,7 @@ public abstract class CommonLogic implements GameLogic, CarEvent.Listener, CarSt
 			playerCar.resetDistanceAndSpeed();
 			if (userRec != null) {
 				userRec.saveLocal(gameTasksManager.messager);
-				ghostCar.setReplay(userRec);
+				getGhost(0).setReplay(userRec);
 			}
 
 			// Gdx.app.log( "GameLogic", "Player final pos=" +
@@ -535,6 +562,7 @@ public abstract class CommonLogic implements GameLogic, CarEvent.Listener, CarSt
 
 				lapManager.startRecording(playerCar);
 
+				lapComplete(true);
 			} else {
 
 				// detect and ignore invalid laps
@@ -545,7 +573,19 @@ public abstract class CommonLogic implements GameLogic, CarEvent.Listener, CarSt
 				}
 
 				lapManager.stopRecording();
-				newReplay();
+
+				// always work on the ReplayManager copy!
+				Replay lastRecorded = lapManager.getLastRecordedReplay();
+				Replay replay = replayManager.addReplay(lastRecorded);
+				if (replay != null) {
+					newReplay(replay);
+				} else {
+					if (lastRecorded != null && lastRecorded.isValid) {
+						discardedReplay(lastRecorded);
+					}
+				}
+
+				lapComplete(false);
 				lapManager.startRecording(playerCar);
 			}
 

@@ -2,6 +2,7 @@
 package com.bitfire.uracer.game.logic.types;
 
 import com.badlogic.gdx.Gdx;
+import com.badlogic.gdx.utils.Array;
 import com.bitfire.uracer.ScalingStrategy;
 import com.bitfire.uracer.game.logic.gametasks.messager.Message.Position;
 import com.bitfire.uracer.game.logic.gametasks.messager.Message.Size;
@@ -21,21 +22,12 @@ public class SinglePlayerLogic extends CommonLogic {
 
 	public SinglePlayerLogic (GameWorld gameWorld, GameRenderer gameRenderer, ScalingStrategy scalingStrategy) {
 		super(gameWorld, gameRenderer, scalingStrategy);
-
 		messager = gameTasksManager.messager;
 	}
 
-	//
-	// utilities
-	//
-	private void setBestLocalReplay () {
-		Replay replay = Replay.loadLocal(gameWorld.levelName);
-		if (replay == null) {
-			return;
-		}
-
-		lapManager.setAsBestReplay(replay);
-		ghostCar.setReplay(replay);
+	@Override
+	public void dispose () {
+		super.dispose();
 	}
 
 	//
@@ -57,9 +49,9 @@ public class SinglePlayerLogic extends CommonLogic {
 			gameWorldRenderer.setCameraPosition(playerCar.state().position, playerCar.state().orientation,
 				playerCar.carState.currSpeedFactor);
 
-		} else if (ghostCar.hasReplay()) {
+		} else if (getGhost(0).hasReplay()) {
 
-			gameWorldRenderer.setCameraPosition(ghostCar.state().position, ghostCar.state().orientation, 0);
+			gameWorldRenderer.setCameraPosition(getGhost(0).state().position, getGhost(0).state().orientation, 0);
 
 		} else {
 
@@ -72,33 +64,31 @@ public class SinglePlayerLogic extends CommonLogic {
 	@Override
 	protected void restart () {
 		Gdx.app.log("SinglePlayerLogic", "Starting/restarting game");
-		setBestLocalReplay();
+
+		// restart all replays
+		restartAllReplays();
 	}
 
 	// the game has been reset
 	@Override
 	protected void reset () {
 		Gdx.app.log("SinglePlayerLogic", "Resetting game");
+		replayManager.reset();
 	}
 
-	// a freshly-recorded Replay from the player is available
+	// a new Replay from the player is available: note that CommonLogic already perform
+	// some basic filtering such as null checking, length validity, better-than-worst...
 	@Override
-	public void newReplay () {
-		Replay replay = lapManager.getLastRecordedReplay();
+	public void newReplay (Replay replay) {
 
-		if (!lapManager.hasAllReplays()) {
-			// only one single valid replay
+		CarUtils.dumpSpeedInfo("Player", playerCar, replay.trackTimeSeconds);
 
-			ghostCar.setReplay(replay);
-			replay.saveLocal(messager);
-			messager.show("GO!  GO!  GO!", 3f, Type.Information, Position.Middle, Size.Big);
-
+		if (!replayManager.canClassify()) {
+			getGhost(0).setReplay(replay);
+			messager.show("GO!  GO!  GO!", 3f, Type.Information, Position.Bottom, Size.Big);
 		} else {
-
-			// both valid, replay best, overwrite worst
-
-			Replay best = lapManager.getBestReplay();
-			Replay worst = lapManager.getWorstReplay();
+			Replay best = replayManager.getBestReplay();
+			Replay worst = replayManager.getWorstReplay();
 
 			float bestTime = AMath.round(best.trackTimeSeconds, 2);
 			float worstTime = AMath.round(worst.trackTimeSeconds, 2);
@@ -115,12 +105,11 @@ public class SinglePlayerLogic extends CommonLogic {
 					messager.show("+" + NumberString.format(diffTime) + " seconds", 3f, Type.Bad, Position.Bottom, Size.Big);
 				}
 			}
-
-			ghostCar.setReplay(best);
-			best.saveLocal(messager);
 		}
+	}
 
-		CarUtils.dumpSpeedInfo("Player", playerCar, replay.trackTimeSeconds);
+	@Override
+	protected void discardedReplay (Replay replay) {
 	}
 
 	// the player begins drifting
@@ -131,7 +120,7 @@ public class SinglePlayerLogic extends CommonLogic {
 	// the player's drift ended
 	@Override
 	public void driftEnds () {
-		Gdx.app.log("SinglePlayerLogic", "drifted for " + playerCar.driftState.driftSeconds() + "s");
+// Gdx.app.log("SinglePlayerLogic", "drifted for " + playerCar.driftState.driftSeconds() + "s");
 	}
 
 	// the player begins slowing down time
@@ -142,5 +131,24 @@ public class SinglePlayerLogic extends CommonLogic {
 	// the player ends slowing down time
 	@Override
 	public void timeDilationEnds () {
+	}
+
+	@Override
+	protected void lapComplete (boolean firstLap) {
+		restartAllReplays();
+	}
+
+	//
+	// utilities
+	//
+
+	private void restartAllReplays () {
+		Array<Replay> replays = replayManager.getReplays();
+		for (int i = 0; i < replays.size; i++) {
+			Replay r = replays.get(i);
+			if (r.isValid) {
+				getGhost(i).setReplay(replays.get(i));
+			}
+		}
 	}
 }

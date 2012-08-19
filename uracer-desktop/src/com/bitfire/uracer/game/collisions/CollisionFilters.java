@@ -16,7 +16,7 @@ public final class CollisionFilters {
 	public static final short GroupNoCollisions = -1;
 
 	public static final short GroupPlayer = 0x0001;
-	public static final short GroupReplay = 0x0002;
+	public static final short GroupReplay = -0x0002;
 	public static final short GroupTrackWalls = 0x0003;
 
 	public static final short CategoryPlayer = 0x0001;

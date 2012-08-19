@@ -1,9 +1,11 @@
 
 package com.bitfire.uracer.game.screens;
 
+import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.glutils.FrameBuffer;
 import com.bitfire.uracer.ScalingStrategy;
 import com.bitfire.uracer.game.Game;
+import com.bitfire.uracer.game.GameTracks;
 import com.bitfire.uracer.game.actors.CarPreset.Type;
 import com.bitfire.uracer.screen.Screen;
 
@@ -16,9 +18,13 @@ public class GameScreen extends Screen {
 		// simulate slowness
 		// try { Thread.sleep( 1000 ); } catch( InterruptedException e ) {}
 
-		String levelName = "tutorial-1";
+		String tid = GameTracks.getTrackId("Boring long");
+		if (tid == null) {
+			Gdx.app.log("GameScreen", "The specified track could not be found");
+			System.exit(-1);
+		}
 
-		game = new Game(levelName, scalingStrategy);
+		game = new Game(tid, scalingStrategy);
 
 		// simulate the player choosing a car type
 		game.setPlayer(Type.L2_PinkBeast);

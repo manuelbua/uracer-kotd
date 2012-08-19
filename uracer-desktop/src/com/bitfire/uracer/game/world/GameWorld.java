@@ -9,7 +9,6 @@ import box2dLight.PointLight;
 import box2dLight.RayHandler;
 
 import com.badlogic.gdx.Gdx;
-import com.badlogic.gdx.files.FileHandle;
 import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.GL10;
 import com.badlogic.gdx.graphics.Mesh;
@@ -18,7 +17,6 @@ import com.badlogic.gdx.graphics.Texture.TextureWrap;
 import com.badlogic.gdx.graphics.VertexAttribute;
 import com.badlogic.gdx.graphics.VertexAttributes.Usage;
 import com.badlogic.gdx.graphics.g2d.tiled.TiledLayer;
-import com.badlogic.gdx.graphics.g2d.tiled.TiledLoader;
 import com.badlogic.gdx.graphics.g2d.tiled.TiledMap;
 import com.badlogic.gdx.graphics.g2d.tiled.TiledObject;
 import com.badlogic.gdx.graphics.g2d.tiled.TiledObjectGroup;
@@ -32,19 +30,19 @@ import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.physics.box2d.World;
 import com.bitfire.uracer.ScalingStrategy;
 import com.bitfire.uracer.configuration.Config;
-import com.bitfire.uracer.configuration.Storage;
+import com.bitfire.uracer.game.GameTracks;
 import com.bitfire.uracer.game.collisions.CollisionFilters;
+import com.bitfire.uracer.game.world.WorldDefs.LayerProperties;
+import com.bitfire.uracer.game.world.WorldDefs.ObjectGroup;
+import com.bitfire.uracer.game.world.WorldDefs.ObjectProperties;
+import com.bitfire.uracer.game.world.WorldDefs.TileLayer;
+import com.bitfire.uracer.game.world.WorldDefs.TileProperties;
 import com.bitfire.uracer.game.world.models.MapUtils;
 import com.bitfire.uracer.game.world.models.ModelFactory;
 import com.bitfire.uracer.game.world.models.OrthographicAlignedStillModel;
 import com.bitfire.uracer.game.world.models.TrackTrees;
 import com.bitfire.uracer.game.world.models.TrackWalls;
 import com.bitfire.uracer.game.world.models.TreeStillModel;
-import com.bitfire.uracer.game.world.models.WorldDefs.LayerProperties;
-import com.bitfire.uracer.game.world.models.WorldDefs.ObjectGroup;
-import com.bitfire.uracer.game.world.models.WorldDefs.ObjectProperties;
-import com.bitfire.uracer.game.world.models.WorldDefs.TileLayer;
-import com.bitfire.uracer.game.world.models.WorldDefs.TileProperties;
 import com.bitfire.uracer.resources.Art;
 import com.bitfire.uracer.utils.AMath;
 import com.bitfire.uracer.utils.Convert;
@@ -58,7 +56,8 @@ public final class GameWorld {
 	public static int TotalMeshes = 0;
 
 	// public level data
-	public final String levelName;
+	public final String trackName;
+	public final String trackId;
 	public final TiledMap map;
 	public final Vector2 worldSizeScaledPx, worldSizeTiles, worldSizeMt;
 	public final ScalingStrategy scalingStrategy;
@@ -83,7 +82,7 @@ public final class GameWorld {
 	protected TrackTrees trackTrees = null;
 	protected List<OrthographicAlignedStillModel> staticMeshes = new ArrayList<OrthographicAlignedStillModel>();
 
-	public GameWorld (ScalingStrategy strategy, String levelName, boolean nightMode) {
+	public GameWorld (ScalingStrategy strategy, String trackId, boolean nightMode) {
 		scalingStrategy = strategy;
 		box2dWorld = new World(new Vector2(0, 0), false);
 		box2dWorld.setContactListener(new GameWorldContactListener());
@@ -95,15 +94,10 @@ public final class GameWorld {
 
 		Gdx.app.log("GameWorld", "Box2D world created (CCD=" + continuousPhysics + ", auto clear forces=" + autoClearForces + ")");
 
-		this.levelName = levelName;
+		map = GameTracks.load(trackId);
+		this.trackId = trackId;
+		this.trackName = map.properties.get("name");
 		this.nightMode = nightMode;
-
-		// ie. "level1-128.tmx"
-		String mapname = levelName + "-" + (int)scalingStrategy.forTileSize + ".tmx";
-		FileHandle mapHandle = Gdx.files.internal(Storage.Levels + mapname);
-
-		// load tilemap
-		map = TiledLoader.createMap(mapHandle);
 
 		// compute world size
 		worldSizeTiles = new Vector2(map.width, map.height);
