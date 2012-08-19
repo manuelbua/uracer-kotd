@@ -44,7 +44,7 @@ public final class PlayerGameTasks {
 
 		// track effects
 		int maxSkidMarks = Config.isDesktop ? 500 : 100;
-		float maxLife = Config.isDesktop ? 30 : 3;
+		float maxLife = Config.isDesktop ? 10 : 3;
 		playerSkidMarks = new PlayerSkidMarks(player, maxSkidMarks, maxLife);
 
 		// hud, player's drift information
