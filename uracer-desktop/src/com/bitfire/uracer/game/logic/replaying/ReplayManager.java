@@ -64,12 +64,17 @@ public final class ReplayManager implements Disposable {
 			added.copyData(replay);
 
 			// update state
-			best = replay;
-			worst = replay;
+			best = added;
+			worst = added;
 		} else {
 
+			if (replay == worst) {
+				Gdx.app.log("!!!!", "!!");
+			}
+
 			if (replay.trackTimeSeconds >= worst.trackTimeSeconds) {
-				Gdx.app.log("ReplayManager", "Discarded, worse than the worst!");
+				Gdx.app.log("ReplayManager", "Discarded, worse than the worst! (" + replay.trackTimeSeconds + " >= "
+					+ worst.trackTimeSeconds + ")");
 				return null;
 			}
 
@@ -112,6 +117,9 @@ public final class ReplayManager implements Disposable {
 // }
 // }
 
+		if (added != null) {
+			Gdx.app.log("ReplayManager", "added!");
+		}
 		return added;
 	}
 

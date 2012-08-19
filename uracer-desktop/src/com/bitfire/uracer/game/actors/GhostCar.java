@@ -17,9 +17,11 @@ public final class GhostCar extends Car {
 	private Replay replay;
 	private int indexPlay;
 	private boolean hasReplay;
+	public final int id;
 
-	public GhostCar (GameWorld gameWorld, CarPreset.Type presetType) {
+	public GhostCar (int id, GameWorld gameWorld, CarPreset.Type presetType) {
 		super(gameWorld, CarType.ReplayCar, InputMode.InputFromReplay, GameRendererEvent.Order.DEFAULT, presetType, false);
+		this.id = id;
 		indexPlay = 0;
 		hasReplay = false;
 		replay = null;
@@ -45,7 +47,7 @@ public final class GhostCar extends Car {
 
 			// System.out.println( "Replaying " + replay.id );
 			restart(replay);
-			Gdx.app.log("GhostCar", "Replaying #" + System.identityHashCode(replay) + "s");
+			Gdx.app.log("GhostCar #" + id, "Replaying #" + System.identityHashCode(replay) + "s");
 		}
 
 		// else
@@ -120,7 +122,7 @@ public final class GhostCar extends Car {
 			indexPlay++;
 
 			if (indexPlay == replay.getEventsCount()) {
-				CarUtils.dumpSpeedInfo(" Ghost", this, replay.trackTimeSeconds);
+				CarUtils.dumpSpeedInfo("GhostCar #" + id, this, replay.trackTimeSeconds);
 				restart(replay);
 			}
 		}

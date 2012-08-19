@@ -14,7 +14,7 @@ public final class CarFactory {
 		return new PlayerCar(gameWorld, presetType);
 	}
 
-	public static GhostCar createGhost (GameWorld gameWorld, CarPreset.Type presetType) {
-		return new GhostCar(gameWorld, presetType);
+	public static GhostCar createGhost (int id, GameWorld gameWorld, CarPreset.Type presetType) {
+		return new GhostCar(id, gameWorld, presetType);
 	}
 }

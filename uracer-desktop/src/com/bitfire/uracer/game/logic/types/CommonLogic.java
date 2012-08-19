@@ -117,7 +117,7 @@ public abstract class CommonLogic implements GameLogic, CarEvent.Listener, CarSt
 
 		lapManager = new LapManager(gameWorld.trackId);
 		for (int i = 0; i < ReplayManager.MaxReplays; i++) {
-			ghostCars[i] = CarFactory.createGhost(gameWorld, CarPreset.Type.L1_GoblinOrange);
+			ghostCars[i] = CarFactory.createGhost(i, gameWorld, CarPreset.Type.L1_GoblinOrange);
 		}
 
 		replayManager = new ReplayManager(gameWorld.trackId);
@@ -157,6 +157,8 @@ public abstract class CommonLogic implements GameLogic, CarEvent.Listener, CarSt
 
 	protected abstract void newReplay (Replay replay);
 
+	protected abstract void discardedReplay (Replay replay);
+
 	protected abstract void driftBegins ();
 
 	protected abstract void driftEnds ();
@@ -172,7 +174,6 @@ public abstract class CommonLogic implements GameLogic, CarEvent.Listener, CarSt
 	/** Restarts the current game */
 	protected void restartGame () {
 		restartLogic();
-// gameTasksManager.restart();
 		restart();
 	}
 
@@ -180,7 +181,6 @@ public abstract class CommonLogic implements GameLogic, CarEvent.Listener, CarSt
 	protected void resetGame () {
 		restartLogic();
 		resetLogic();
-// gameTasksManager.reset();
 		reset();
 	}
 
@@ -572,9 +572,14 @@ public abstract class CommonLogic implements GameLogic, CarEvent.Listener, CarSt
 				lapManager.stopRecording();
 
 				// always work on the ReplayManager copy!
-				Replay replay = replayManager.addReplay(lapManager.getLastRecordedReplay());
+				Replay lastRecorded = lapManager.getLastRecordedReplay();
+				Replay replay = replayManager.addReplay(lastRecorded);
 				if (replay != null) {
 					newReplay(replay);
+				} else {
+					if (lastRecorded != null && lastRecorded.isValid) {
+						discardedReplay(lastRecorded);
+					}
 				}
 
 				lapManager.startRecording(playerCar);

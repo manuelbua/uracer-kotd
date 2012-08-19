@@ -31,19 +31,6 @@ public class SinglePlayerLogic extends CommonLogic {
 	}
 
 	//
-	// utilities
-	//
-// private void setBestLocalReplay () {
-// Replay replay = Replay.loadLocal(gameWorld.trackName);
-// if (replay == null) {
-// return;
-// }
-//
-// lapManager.setAsBestReplay(replay);
-// ghostCar.setReplay(replay);
-// }
-
-	//
 	// event listeners / callbacks
 	//
 
@@ -77,7 +64,9 @@ public class SinglePlayerLogic extends CommonLogic {
 	@Override
 	protected void restart () {
 		Gdx.app.log("SinglePlayerLogic", "Starting/restarting game");
-// setBestLocalReplay();
+
+		// restart all replays
+		restartAllReplays();
 	}
 
 	// the game has been reset
@@ -119,10 +108,7 @@ public class SinglePlayerLogic extends CommonLogic {
 				}
 			}
 
-			Array<Replay> replays = replayManager.getReplays();
-			for (int i = 0; i < replays.size; i++) {
-				getGhost(i).setReplay(replays.get(i));
-			}
+			restartAllReplays();
 
 			// ghostCar.setReplay(best);
 			// best.saveLocal(messager);
@@ -166,6 +152,10 @@ public class SinglePlayerLogic extends CommonLogic {
 		//@on
 	}
 
+	@Override
+	protected void discardedReplay (Replay replay) {
+	}
+
 	// the player begins drifting
 	@Override
 	public void driftBegins () {
@@ -174,7 +164,7 @@ public class SinglePlayerLogic extends CommonLogic {
 	// the player's drift ended
 	@Override
 	public void driftEnds () {
-		Gdx.app.log("SinglePlayerLogic", "drifted for " + playerCar.driftState.driftSeconds() + "s");
+// Gdx.app.log("SinglePlayerLogic", "drifted for " + playerCar.driftState.driftSeconds() + "s");
 	}
 
 	// the player begins slowing down time
@@ -185,5 +175,19 @@ public class SinglePlayerLogic extends CommonLogic {
 	// the player ends slowing down time
 	@Override
 	public void timeDilationEnds () {
+	}
+
+	//
+	// utilities
+	//
+
+	private void restartAllReplays () {
+		Array<Replay> replays = replayManager.getReplays();
+		for (int i = 0; i < replays.size; i++) {
+			Replay r = replays.get(i);
+			if (r.isValid) {
+				getGhost(i).setReplay(replays.get(i));
+			}
+		}
 	}
 }
