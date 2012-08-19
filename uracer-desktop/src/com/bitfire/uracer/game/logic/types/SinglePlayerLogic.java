@@ -108,8 +108,6 @@ public class SinglePlayerLogic extends CommonLogic {
 				}
 			}
 
-			restartAllReplays();
-
 			// ghostCar.setReplay(best);
 			// best.saveLocal(messager);
 		}
@@ -175,6 +173,11 @@ public class SinglePlayerLogic extends CommonLogic {
 	// the player ends slowing down time
 	@Override
 	public void timeDilationEnds () {
+	}
+
+	@Override
+	protected void lapComplete (boolean firstLap) {
+		restartAllReplays();
 	}
 
 	//

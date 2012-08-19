@@ -159,6 +159,8 @@ public abstract class CommonLogic implements GameLogic, CarEvent.Listener, CarSt
 
 	protected abstract void discardedReplay (Replay replay);
 
+	protected abstract void lapComplete (boolean firstLap);
+
 	protected abstract void driftBegins ();
 
 	protected abstract void driftEnds ();
@@ -560,6 +562,7 @@ public abstract class CommonLogic implements GameLogic, CarEvent.Listener, CarSt
 
 				lapManager.startRecording(playerCar);
 
+				lapComplete(true);
 			} else {
 
 				// detect and ignore invalid laps
@@ -582,6 +585,7 @@ public abstract class CommonLogic implements GameLogic, CarEvent.Listener, CarSt
 					}
 				}
 
+				lapComplete(false);
 				lapManager.startRecording(playerCar);
 			}
 
