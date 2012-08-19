@@ -18,6 +18,7 @@ public final class HudLabel {
 	public float alpha;
 	public TextBounds bounds = new TextBounds();
 	public float halfBoundsWidth, halfBoundsHeight;
+	public float boundsWidth, boundsHeight;
 
 	private String what;
 	private BitmapFont font;
@@ -73,6 +74,8 @@ public final class HudLabel {
 		bounds.set(font.getMultiLineBounds(what));
 		halfBoundsWidth = bounds.width * 0.5f;
 		halfBoundsHeight = bounds.height * 0.5f;
+		boundsWidth = bounds.width;
+		boundsHeight = bounds.height;
 	}
 
 	public TextBounds getBounds () {

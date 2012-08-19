@@ -4,6 +4,7 @@ package com.bitfire.uracer.game.logic.gametasks.hud.elements;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.math.Vector2;
 import com.bitfire.uracer.ScalingStrategy;
+import com.bitfire.uracer.entities.EntityRenderState;
 import com.bitfire.uracer.game.logic.gametasks.hud.HudElement;
 import com.bitfire.uracer.game.logic.gametasks.hud.HudLabel;
 import com.bitfire.uracer.game.player.PlayerCar;
@@ -29,22 +30,29 @@ public final class HudPlayerDriftInfo extends HudElement {
 	// current one
 	private static final int MaxLabelResult = 3;
 
+	// player info
+	private EntityRenderState playerState = null;
+
+	// presentation
 	private HudLabel labelRealtime;
 	private HudLabel[] labelResult;
+	private HudLabel labelName;
 
 	private int nextLabelResult = 0;
-	private float carModelWidthPx, carModelLengthPx;
 
 	private PlayerCar player;
-	private Vector2 playerPosition = new Vector2();
 
+	// gravitation
+	private float carModelWidthPx, carModelLengthPx;
 	private Vector2 displacement = new Vector2();
-	private Vector2 tmpv = new Vector2();
+	private Vector2 tmpg = new Vector2();
+
 	private Vector2 lastRealtimePos = new Vector2();
 	private boolean began = false;
 
 	public HudPlayerDriftInfo (ScalingStrategy scalingStrategy, PlayerCar player) {
 		this.player = player;
+		playerState = player.state();
 		this.carModelWidthPx = Convert.mt2px(player.getCarModel().width);
 		this.carModelLengthPx = Convert.mt2px(player.getCarModel().length);
 
@@ -59,7 +67,105 @@ public final class HudPlayerDriftInfo extends HudElement {
 			labelResult[i] = new HudLabel(scalingStrategy, Art.fontCurseR, "+10.99", 0.85f);
 			labelResult[i].setAlpha(0);
 		}
+
+		// name is truncated at 16 chars
+		String userName = "Manuel";
+		labelName = new HudLabel(scalingStrategy, Art.fontCurseYRbig, userName, 1f);
+		labelName.setAlpha(1);
+		labelName.setPosition(0, 0);
 	}
+
+	@Override
+	public void dispose () {
+	}
+
+	@Override
+	public void onTick () {
+		refreshLabelRealtime(false);
+
+	}
+
+	private void refreshLabelRealtime (boolean force) {
+		if (force || (began && labelRealtime.isVisible())) {
+			labelRealtime.setString("+" + NumberString.format(player.driftState.driftSeconds()));
+		}
+	}
+
+	@Override
+	public void onReset () {
+		labelRealtime.setAlpha(0);
+		for (int i = 0; i < MaxLabelResult; i++) {
+			labelResult[i].setAlpha(0);
+		}
+
+		nextLabelResult = 0;
+	}
+
+	private float test = 0;
+
+	@Override
+	public void onRender (SpriteBatch batch) {
+		test += 1;
+		if (test > 360) {
+			test -= 360;
+		}
+
+		gravitate(labelRealtime, 0);
+// gravitate(labelName, test);
+
+		lastRealtimePos.set(labelRealtime.getPosition());
+
+		// draw earned/lost seconds
+		if (labelRealtime.isVisible()) {
+			labelRealtime.render(batch);
+		}
+
+		// draw player name
+		Vector2 pp = GameRenderer.ScreenUtils.worldPxToScreen(playerState.position);
+
+		labelName.setScale(0.6f);
+// labelName.setPosition(pp.x, pp.y + (carModelWidthPx / 2 + labelName.boundsHeight / 2));
+		labelName.setPosition(pp.x, pp.y + (carModelLengthPx / 2 + labelName.boundsHeight / 2) + 10);
+
+		labelName.render(batch);
+
+		// draw result
+		for (int i = 0; i < MaxLabelResult; i++) {
+			labelResult[i].render(batch);
+		}
+	}
+
+	//
+	// internal helpers
+	//
+
+	private void gravitate (HudLabel label, float offsetDeg) {
+		label.setPosition(gravitate(label.boundsWidth, label.boundsHeight, offsetDeg));
+	}
+
+	/** Returns a position by placing a point on an imaginary circumference gravitating around the player, applying the specified
+	 * orientation offset, expressed in radians, if any. */
+	private Vector2 gravitate (float w, float h, float offsetDeg) {
+		// compute heading
+		tmpg.set(VMath.fromDegrees(playerState.orientation + offsetDeg));
+
+		// compute displacement
+		float displaceX = carModelWidthPx + w * 0.5f;
+		float displaceY = carModelLengthPx + h * 0.5f;
+		tmpg.mul(displaceX, displaceY);
+		displaceX = tmpg.x;
+		displaceY = tmpg.y;
+
+		// gets pixel position and then displaces it
+		tmpg.set(GameRenderer.ScreenUtils.worldPxToScreen(playerState.position));
+		tmpg.sub(displaceX, displaceY);
+
+		return tmpg;
+	}
+
+	//
+	// supported external operations
+	//
 
 	/** Signals the hud element that the player is initiating a drift */
 	public void beginDrift () {
@@ -95,58 +201,4 @@ public final class HudPlayerDriftInfo extends HudElement {
 		labelRealtime.fadeOut(300);
 	}
 
-	@Override
-	public void dispose () {
-	}
-
-	@Override
-	public void onTick () {
-		refreshLabelRealtime(false);
-	}
-
-	private void refreshLabelRealtime (boolean force) {
-		if (force || (began && labelRealtime.isVisible())) {
-			labelRealtime.setString("+" + NumberString.format(player.driftState.driftSeconds()));
-		}
-	}
-
-	@Override
-	public void onReset () {
-		labelRealtime.setAlpha(0);
-		for (int i = 0; i < MaxLabelResult; i++) {
-			labelResult[i].setAlpha(0);
-		}
-
-		nextLabelResult = 0;
-	}
-
-	@Override
-	public void onRender (SpriteBatch batch) {
-		playerPosition.set(player.state().position);
-		float playerOrientation = player.state().orientation;
-
-		// compute heading
-		displacement.set(VMath.fromDegrees(playerOrientation));
-
-		// compute displacement
-		displacement.x *= (carModelWidthPx + labelRealtime.halfBoundsWidth);
-		displacement.y *= (carModelLengthPx + labelRealtime.halfBoundsHeight);
-
-		// gets pixel position and then displaces it
-		tmpv.set(GameRenderer.ScreenUtils.worldPxToScreen(playerPosition));
-		tmpv.sub(displacement);
-
-		labelRealtime.setPosition(tmpv);
-		lastRealtimePos.set(tmpv);
-
-		// draw earned/lost seconds
-		if (labelRealtime.isVisible()) {
-			labelRealtime.render(batch);
-		}
-
-		// draw result
-		for (int i = 0; i < MaxLabelResult; i++) {
-			labelResult[i].render(batch);
-		}
-	}
 }
