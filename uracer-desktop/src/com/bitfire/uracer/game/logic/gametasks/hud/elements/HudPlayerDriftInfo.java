@@ -48,8 +48,6 @@ public final class HudPlayerDriftInfo extends HudElement {
 		this.carModelWidthPx = Convert.mt2px(player.getCarModel().width);
 		this.carModelLengthPx = Convert.mt2px(player.getCarModel().length);
 
-		// 99.99, reserve some space and do not recompute bounds
-
 		// labelRealtime role is to display PlayerCar values in real-time!
 		labelRealtime = new HudLabel(scalingStrategy, Art.fontCurseYRbig, "+10.99", 0.5f);
 		labelRealtime.setAlpha(0);
