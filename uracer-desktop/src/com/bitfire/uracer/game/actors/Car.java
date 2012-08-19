@@ -161,39 +161,6 @@ public abstract strictfp class Car extends Box2DEntity {
 		return renderer;
 	}
 
-	// public void setAspect( Aspect aspect ) {
-	// if( this.aspect != aspect ) {
-	// this.aspect = aspect;
-	// renderer.setAspect( aspect, model );
-	// Gdx.app.log( this.getClass().getSimpleName(), "Switched to car aspect \"" + aspect.toString() + "\"" );
-	// } else {
-	// Gdx.app.log( this.getClass().getSimpleName(), "Aspect unchanged, not switching to same Aspect \"" +
-	// aspect.toString() + "\"" );
-	// }
-	// }
-
-	// public void setModelType( CarPreset.Type type ) {
-	// if( model.type != type ) {
-	// model.toModelType( type );
-	// applyCarPhysics( carType, model );
-	// renderer.setAspect( aspect, model );
-	// Gdx.app.log( this.getClass().getSimpleName(), "Switched to car model \"" + model.type.toString() + "\"" );
-	// } else {
-	// Gdx.app.log( this.getClass().getSimpleName(), "Model unchanged, not switching to same CarModel \"" +
-	// model.type.toString() + "\"" );
-	// }
-	// }
-
-	// // TODO car customization, uracer2?
-	// public void setModel( CarModel carModel ) {
-	// if( model != null ) {
-	// model.set( carModel );
-	// applyCarPhysics( carType, model );
-	// renderer.setAspect( aspect, model );
-	// Gdx.app.log( this.getClass().getSimpleName(), "Switched to car model \"" + model.type.toString() + "\"" );
-	// }
-	// }
-
 	public void setPreset (CarPreset.Type presetType) {
 		if (preset.type != presetType) {
 			preset.setTo(presetType);

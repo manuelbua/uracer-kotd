@@ -85,8 +85,6 @@ public class SinglePlayerLogic extends CommonLogic {
 
 		if (!replayManager.canClassify()) {
 			getGhost(0).setReplay(replay);
-			// ghostCar.setReplay(replay);
-			// replay.saveLocal(messager);
 			messager.show("GO!  GO!  GO!", 3f, Type.Information, Position.Bottom, Size.Big);
 		} else {
 			Replay best = replayManager.getBestReplay();
@@ -107,47 +105,7 @@ public class SinglePlayerLogic extends CommonLogic {
 					messager.show("+" + NumberString.format(diffTime) + " seconds", 3f, Type.Bad, Position.Bottom, Size.Big);
 				}
 			}
-
-			// ghostCar.setReplay(best);
-			// best.saveLocal(messager);
 		}
-
-		//@off
-		// choose wich replay(s) to start playing
-//		if (!lapManager.hasAllReplays()) {
-//			// only one replay
-//
-//			ghostCar.setReplay(replay);
-//			replay.saveLocal(messager);
-//			messager.show("GO!  GO!  GO!", 3f, Type.Information, Position.Middle, Size.Big);
-//
-//		} else {
-//
-//			// both valid, replay best, overwrite worst
-//
-//			Replay best = lapManager.getBestReplay();
-//			Replay worst = lapManager.getWorstReplay();
-//
-//			float bestTime = AMath.round(best.trackTimeSeconds, 2);
-//			float worstTime = AMath.round(worst.trackTimeSeconds, 2);
-//			float diffTime = AMath.round(worstTime - bestTime, 2);
-//
-//			if (AMath.equals(worstTime, bestTime)) {
-//				// draw!
-//				messager.show("DRAW!", 3f, Type.Information, Position.Bottom, Size.Big);
-//			} else {
-//				// has the player managed to beat the best lap?
-//				if (lapManager.isLastBestLap()) {
-//					messager.show("-" + NumberString.format(diffTime) + " seconds!", 3f, Type.Good, Position.Bottom, Size.Big);
-//				} else {
-//					messager.show("+" + NumberString.format(diffTime) + " seconds", 3f, Type.Bad, Position.Bottom, Size.Big);
-//				}
-//			}
-//
-//			ghostCar.setReplay(best);
-//			best.saveLocal(messager);
-//		}
-		//@on
 	}
 
 	@Override
