@@ -13,6 +13,7 @@ import com.bitfire.uracer.configuration.Gameplay;
 import com.bitfire.uracer.configuration.Gameplay.TimeDilateInputMode;
 import com.bitfire.uracer.configuration.UserPreferences;
 import com.bitfire.uracer.configuration.UserPreferences.Preference;
+import com.bitfire.uracer.configuration.UserProfile;
 import com.bitfire.uracer.game.DebugHelper;
 import com.bitfire.uracer.game.GameLogic;
 import com.bitfire.uracer.game.GameplaySettings;
@@ -66,6 +67,7 @@ public abstract class CommonLogic implements GameLogic, CarEvent.Listener, CarSt
 	protected PostProcessing postProcessing = null;
 
 	// player
+	protected final UserProfile userProfile;
 	protected PlayerCar playerCar = null;
 	protected GhostCar[] ghostCars = new GhostCar[ReplayManager.MaxReplays];
 
@@ -84,7 +86,8 @@ public abstract class CommonLogic implements GameLogic, CarEvent.Listener, CarSt
 
 	protected ReplayManager replayManager;
 
-	public CommonLogic (GameWorld gameWorld, GameRenderer gameRenderer, ScalingStrategy scalingStrategy) {
+	public CommonLogic (UserProfile userProfile, GameWorld gameWorld, GameRenderer gameRenderer, ScalingStrategy scalingStrategy) {
+		this.userProfile = userProfile;
 		this.gameWorld = gameWorld;
 		// this.gameRenderer = gameRenderer;
 		this.gameWorldRenderer = gameRenderer.getWorldRenderer();
@@ -115,12 +118,12 @@ public abstract class CommonLogic implements GameLogic, CarEvent.Listener, CarSt
 		// player tasks
 		playerTasks = new PlayerGameTasks(gameTasksManager, scalingStrategy);
 
-		lapManager = new LapManager(gameWorld.trackId);
+		lapManager = new LapManager(userProfile, gameWorld.trackId);
 		for (int i = 0; i < ReplayManager.MaxReplays; i++) {
 			ghostCars[i] = CarFactory.createGhost(i, gameWorld, CarPreset.Type.L1_GoblinOrange);
 		}
 
-		replayManager = new ReplayManager(gameWorld.trackId);
+		replayManager = new ReplayManager(userProfile, gameWorld.trackId);
 
 		// messager.show( "COOL STUFF!", 60, Message.Type.Information,
 		// MessagePosition.Bottom, MessageSize.Big );

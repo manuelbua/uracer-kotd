@@ -7,6 +7,7 @@ import com.badlogic.gdx.utils.Disposable;
 import com.bitfire.uracer.ScalingStrategy;
 import com.bitfire.uracer.URacer;
 import com.bitfire.uracer.configuration.Config;
+import com.bitfire.uracer.configuration.UserProfile;
 import com.bitfire.uracer.game.actors.CarPreset;
 import com.bitfire.uracer.game.logic.types.CommonLogic;
 import com.bitfire.uracer.game.logic.types.SinglePlayerLogic;
@@ -28,7 +29,7 @@ public class Game implements Disposable {
 	// rendering
 	private GameRenderer gameRenderer = null;
 
-	public Game (String trackId, ScalingStrategy scalingStrategy) {
+	public Game (UserProfile userProfile, String trackId, ScalingStrategy scalingStrategy) {
 
 		gameWorld = new GameWorld(scalingStrategy, trackId, false);
 		Gdx.app.debug("Game", "Game world ready");
@@ -38,7 +39,7 @@ public class Game implements Disposable {
 		Gdx.app.debug("Game", "GameRenderer ready");
 
 		// handles game rules and mechanics, it's all about game data
-		gameLogic = new SinglePlayerLogic(gameWorld, gameRenderer, scalingStrategy);
+		gameLogic = new SinglePlayerLogic(userProfile, gameWorld, gameRenderer, scalingStrategy);
 		Gdx.app.debug("Game", "GameLogic created");
 
 		// initialize the debug helper

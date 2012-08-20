@@ -101,8 +101,8 @@ public final class DebugHelper {
 		renderVersionInfo(batch);
 
 		if (Config.Debug.RenderDebugInfoGraphics) {
-			renderGraphicalStats(batch, Gdx.graphics.getWidth() - stats.getWidth(), Gdx.graphics.getHeight() - stats.getHeight()
-				- Art.DebugFontHeight - 5);
+			renderGraphicalStats(batch, Gdx.graphics.getWidth() - stats.getWidth() - 266,
+				Gdx.graphics.getHeight() - stats.getHeight() - Art.DebugFontHeight - 5);
 		}
 
 		if (Config.Debug.RenderDebugInfoMemoryStats) {

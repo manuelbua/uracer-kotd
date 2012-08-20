@@ -1,7 +1,9 @@
 
 package com.bitfire.uracer.game.logic.gametasks.hud.elements;
 
+import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
+import com.badlogic.gdx.math.MathUtils;
 import com.badlogic.gdx.math.Vector2;
 import com.bitfire.uracer.ScalingStrategy;
 import com.bitfire.uracer.entities.EntityRenderState;
@@ -10,6 +12,7 @@ import com.bitfire.uracer.game.logic.gametasks.hud.HudLabel;
 import com.bitfire.uracer.game.player.PlayerCar;
 import com.bitfire.uracer.game.rendering.GameRenderer;
 import com.bitfire.uracer.resources.Art;
+import com.bitfire.uracer.utils.CarUtils;
 import com.bitfire.uracer.utils.Convert;
 import com.bitfire.uracer.utils.NumberString;
 import com.bitfire.uracer.utils.VMath;
@@ -36,7 +39,6 @@ public final class HudPlayerDriftInfo extends HudElement {
 	// presentation
 	private HudLabel labelRealtime;
 	private HudLabel[] labelResult;
-	private HudLabel labelName;
 
 	private int nextLabelResult = 0;
 
@@ -67,12 +69,6 @@ public final class HudPlayerDriftInfo extends HudElement {
 			labelResult[i] = new HudLabel(scalingStrategy, Art.fontCurseR, "+10.99", 0.85f);
 			labelResult[i].setAlpha(0);
 		}
-
-		// name is truncated at 16 chars
-		String userName = "Manuel";
-		labelName = new HudLabel(scalingStrategy, Art.fontCurseYRbig, userName, 1f);
-		labelName.setAlpha(1);
-		labelName.setPosition(0, 0);
 	}
 
 	@Override
@@ -113,14 +109,15 @@ public final class HudPlayerDriftInfo extends HudElement {
 		}
 
 		// draw player name+info
-		Vector2 pp = GameRenderer.ScreenUtils.worldPxToScreen(playerState.position);
 
-		labelName.setScale(0.45f);
-		gravitate(labelName, 90);
-		// labelName.setPosition(pp.x, pp.y + (carModelWidthPx / 2 + labelName.boundsHeight / 2));
-		// labelName.setPosition(pp.x, pp.y + (carModelLengthPx / 2 + labelName.boundsHeight / 2) + 20);
+		float x = Gdx.graphics.getWidth() - 230;
+		float y = Gdx.graphics.getHeight() - 110;
 
-		labelName.render(batch);
+		Art.fontCurseYRbig.setScale(1.3f);
+		Art.fontCurseYRbig.setColor(1, 1, 1, 1);
+		Art.fontCurseYRbig.draw(batch, MathUtils.round(CarUtils.mtSecToKmHour(player.getInstantSpeed())) + "  kmh", x, y);
+		Art.fontCurseYRbig.setScale(0.6f);
+		Art.fontCurseYRbig.draw(batch, MathUtils.round(player.getTraveledDistance()) + "  mt\n", x + 40, y + 65);
 
 		// draw result
 		for (int i = 0; i < MaxLabelResult; i++) {

@@ -198,6 +198,21 @@ public final class Art {
 		fontCurseYRbig.setScale(scale);
 		fontCurseGbig.setScale(scale);
 		fontCurseRbig.setScale(scale);
+
+		fontCurseYR.setFixedWidthGlyphs("1234567890.");
+		fontCurseG.setFixedWidthGlyphs("1234567890.");
+		fontCurseR.setFixedWidthGlyphs("1234567890.");
+		fontCurseYRbig.setFixedWidthGlyphs("1234567890.");
+		fontCurseGbig.setFixedWidthGlyphs("1234567890.");
+		fontCurseRbig.setFixedWidthGlyphs("1234567890.");
+
+		fontCurseYR.setUseIntegerPositions(false);
+		fontCurseG.setUseIntegerPositions(false);
+		fontCurseR.setUseIntegerPositions(false);
+		fontCurseYRbig.setUseIntegerPositions(false);
+		fontCurseGbig.setUseIntegerPositions(false);
+		fontCurseRbig.setUseIntegerPositions(false);
+
 	}
 
 	private static void disposeFonts () {

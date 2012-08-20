@@ -4,6 +4,7 @@ package com.bitfire.uracer.game.logic.types;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.utils.Array;
 import com.bitfire.uracer.ScalingStrategy;
+import com.bitfire.uracer.configuration.UserProfile;
 import com.bitfire.uracer.game.logic.gametasks.messager.Message.Position;
 import com.bitfire.uracer.game.logic.gametasks.messager.Message.Size;
 import com.bitfire.uracer.game.logic.gametasks.messager.Message.Type;
@@ -20,8 +21,9 @@ public class SinglePlayerLogic extends CommonLogic {
 
 	private Messager messager;
 
-	public SinglePlayerLogic (GameWorld gameWorld, GameRenderer gameRenderer, ScalingStrategy scalingStrategy) {
-		super(gameWorld, gameRenderer, scalingStrategy);
+	public SinglePlayerLogic (UserProfile userProfile, GameWorld gameWorld, GameRenderer gameRenderer,
+		ScalingStrategy scalingStrategy) {
+		super(userProfile, gameWorld, gameRenderer, scalingStrategy);
 		messager = gameTasksManager.messager;
 	}
 
