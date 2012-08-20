@@ -44,7 +44,6 @@ public final class HudPlayerDriftInfo extends HudElement {
 
 	// gravitation
 	private float carModelWidthPx, carModelLengthPx;
-	private Vector2 displacement = new Vector2();
 	private Vector2 tmpg = new Vector2();
 
 	private Vector2 lastRealtimePos = new Vector2();
@@ -52,6 +51,7 @@ public final class HudPlayerDriftInfo extends HudElement {
 
 	public HudPlayerDriftInfo (ScalingStrategy scalingStrategy, PlayerCar player) {
 		this.player = player;
+
 		playerState = player.state();
 		this.carModelWidthPx = Convert.mt2px(player.getCarModel().width);
 		this.carModelLengthPx = Convert.mt2px(player.getCarModel().length);
@@ -101,17 +101,9 @@ public final class HudPlayerDriftInfo extends HudElement {
 		nextLabelResult = 0;
 	}
 
-	private float test = 0;
-
 	@Override
 	public void onRender (SpriteBatch batch) {
-		test += 1;
-		if (test > 360) {
-			test -= 360;
-		}
-
 		gravitate(labelRealtime, 0);
-// gravitate(labelName, test);
 
 		lastRealtimePos.set(labelRealtime.getPosition());
 
@@ -120,12 +112,13 @@ public final class HudPlayerDriftInfo extends HudElement {
 			labelRealtime.render(batch);
 		}
 
-		// draw player name
+		// draw player name+info
 		Vector2 pp = GameRenderer.ScreenUtils.worldPxToScreen(playerState.position);
 
-		labelName.setScale(0.6f);
-// labelName.setPosition(pp.x, pp.y + (carModelWidthPx / 2 + labelName.boundsHeight / 2));
-		labelName.setPosition(pp.x, pp.y + (carModelLengthPx / 2 + labelName.boundsHeight / 2) + 10);
+		labelName.setScale(0.45f);
+		gravitate(labelName, 90);
+		// labelName.setPosition(pp.x, pp.y + (carModelWidthPx / 2 + labelName.boundsHeight / 2));
+		// labelName.setPosition(pp.x, pp.y + (carModelLengthPx / 2 + labelName.boundsHeight / 2) + 20);
 
 		labelName.render(batch);
 
