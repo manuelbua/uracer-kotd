@@ -113,11 +113,12 @@ public final class HudPlayerDriftInfo extends HudElement {
 		float x = Gdx.graphics.getWidth() - 230;
 		float y = Gdx.graphics.getHeight() - 110;
 
-		Art.fontCurseYRbig.setScale(1.3f);
-		Art.fontCurseYRbig.setColor(1, 1, 1, 1);
-		Art.fontCurseYRbig.draw(batch, MathUtils.round(CarUtils.mtSecToKmHour(player.getInstantSpeed())) + "  kmh", x, y);
-		Art.fontCurseYRbig.setScale(0.6f);
-		Art.fontCurseYRbig.draw(batch, MathUtils.round(player.getTraveledDistance()) + "  mt\n", x + 40, y + 65);
+		Art.fontRoboto.setUseIntegerPositions(false);
+		Art.fontRoboto.setScale(1f);
+		Art.fontRoboto.setColor(1, 1, 1, 1);
+		Art.fontRoboto.draw(batch, MathUtils.round(CarUtils.mtSecToKmHour(player.getInstantSpeed())) + " kmh", x, y);
+		Art.fontRoboto.setScale(0.6f);
+		Art.fontRoboto.draw(batch, MathUtils.round(player.getTraveledDistance()) + " mt\n", x + 40, y + 65);
 
 		// draw result
 		for (int i = 0; i < MaxLabelResult; i++) {

@@ -38,7 +38,7 @@ public final class Art {
 	public static final int DebugFontWidth = 6;
 	public static final int DebugFontHeight = 6;
 	public static BitmapFont fontCurseYR, fontCurseR, fontCurseG;
-	public static BitmapFont fontCurseYRbig, fontCurseRbig, fontCurseGbig;
+	public static BitmapFont fontCurseYRbig, fontCurseRbig, fontCurseGbig, fontMolengo, fontSourceSans, fontRoboto;
 	private static TextureAtlas fontAtlas;
 
 	// post-processor
@@ -191,6 +191,11 @@ public final class Art {
 		fontCurseRbig = new BitmapFont(Gdx.files.internal("data/font/curse-r-big.fnt"), Art.fontAtlas.findRegion("curse-r-big"),
 			true);
 
+		fontRoboto = new BitmapFont(Gdx.files.internal("data/font/roboto.fnt"), Art.fontAtlas.findRegion("roboto"), true);
+		fontMolengo = new BitmapFont(Gdx.files.internal("data/font/molengo.fnt"), Art.fontAtlas.findRegion("molengo"), true);
+		fontSourceSans = new BitmapFont(Gdx.files.internal("data/font/adobe-source-sans.fnt"),
+			Art.fontAtlas.findRegion("adobe-source-sans"), true);
+
 		// adjust scaling
 		fontCurseYR.setScale(scale);
 		fontCurseG.setScale(scale);
@@ -213,6 +218,12 @@ public final class Art {
 		fontCurseGbig.setUseIntegerPositions(false);
 		fontCurseRbig.setUseIntegerPositions(false);
 
+		fontMolengo.setUseIntegerPositions(false);
+		fontSourceSans.setUseIntegerPositions(false);
+		fontRoboto.setUseIntegerPositions(false);
+		fontMolengo.setScale(scale);
+		fontSourceSans.setScale(scale);
+		fontRoboto.setScale(scale);
 	}
 
 	private static void disposeFonts () {

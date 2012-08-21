@@ -5,28 +5,28 @@ filter: Nearest,Nearest
 repeat: none
 curse-g-big
   rotate: false
-  xy: 1, 259
+  xy: 4, 264
   size: 512, 512
   orig: 512, 512
   offset: 0, 0
   index: -1
 curse-r
   rotate: false
-  xy: 1, 1
+  xy: 4, 4
   size: 256, 256
   orig: 256, 256
   offset: 0, 0
   index: -1
 curse-g
   rotate: false
-  xy: 515, 515
+  xy: 520, 520
   size: 256, 256
   orig: 256, 256
   offset: 0, 0
   index: -1
 curse-y-r
   rotate: false
-  xy: 259, 1
+  xy: 264, 4
   size: 256, 256
   orig: 256, 256
   offset: 0, 0
@@ -36,9 +36,16 @@ pack2.png
 format: RGBA8888
 filter: Nearest,Nearest
 repeat: none
-curse-y-r-big
+adobe-source-sans
   rotate: false
-  xy: 1, 1
+  xy: 4, 4
+  size: 512, 512
+  orig: 512, 512
+  offset: 0, 0
+  index: -1
+molengo
+  rotate: false
+  xy: 4, 4
   size: 512, 512
   orig: 512, 512
   offset: 0, 0
@@ -48,9 +55,33 @@ pack3.png
 format: RGBA8888
 filter: Nearest,Nearest
 repeat: none
+roboto
+  rotate: false
+  xy: 4, 4
+  size: 512, 512
+  orig: 512, 512
+  offset: 0, 0
+  index: -1
+
+pack4.png
+format: RGBA8888
+filter: Nearest,Nearest
+repeat: none
+curse-y-r-big
+  rotate: false
+  xy: 4, 4
+  size: 512, 512
+  orig: 512, 512
+  offset: 0, 0
+  index: -1
+
+pack5.png
+format: RGBA8888
+filter: Nearest,Nearest
+repeat: none
 curse-r-big
   rotate: false
-  xy: 1, 1
+  xy: 4, 4
   size: 512, 512
   orig: 512, 512
   offset: 0, 0
