@@ -24,21 +24,29 @@ public final class HudLabel {
 	private BitmapFont font;
 	private float scale;
 	private ScalingStrategy scalingStrategy;
+	private boolean isStatic;
 
-	public HudLabel (ScalingStrategy scalingStrategy, BitmapFont font, String string, float scale) {
+	public HudLabel (ScalingStrategy scalingStrategy, BitmapFont font, String string, boolean isStatic, float scale) {
 		this.scalingStrategy = scalingStrategy;
 		this.font = font;
 		what = string;
 		alpha = 1f;
+		this.isStatic = isStatic;
 		setScale(scale, true);
+		font.setUseIntegerPositions(false);
 	}
 
-	public HudLabel (ScalingStrategy scalingStrategy, BitmapFont font, String string) {
-		this(scalingStrategy, font, string, 1.0f);
+	public HudLabel (ScalingStrategy scalingStrategy, BitmapFont font, String string, boolean isStatic) {
+		this(scalingStrategy, font, string, isStatic, 1.0f);
 	}
 
 	public boolean isVisible () {
 		return (alpha > 0);
+	}
+
+	// one should avoid rendering artifacts when possible and set this to true
+	public void setStatic (boolean isStatic) {
+		this.isStatic = isStatic;
 	}
 
 	public void setString (String string) {
@@ -128,6 +136,12 @@ public final class HudLabel {
 
 	public void render (SpriteBatch batch) {
 		if (alpha > 0) {
+			if (isStatic) {
+				font.setUseIntegerPositions(true);
+			} else {
+				font.setUseIntegerPositions(false);
+			}
+
 			font.setScale(scale * scalingStrategy.invTileMapZoomFactor);
 			font.setColor(1, 1, 1, alpha);
 

@@ -61,14 +61,14 @@ public final class HudPlayerDriftInfo extends HudElement {
 		this.carModelLengthPx = Convert.mt2px(player.getCarModel().length);
 
 		// labelRealtime role is to display PlayerCar values in real-time!
-		labelRealtime = new HudLabel(scalingStrategy, BitmapFontFactory.get(FontFace.CurseRedYellowBig), "+10.99", 0.5f);
+		labelRealtime = new HudLabel(scalingStrategy, BitmapFontFactory.get(FontFace.CurseRedYellowBig), "+10.99", false, 0.5f);
 		labelRealtime.setAlpha(0);
 		lastRealtimePos.set(0, 0);
 
 		labelResult = new HudLabel[MaxLabelResult];
 		nextLabelResult = 0;
 		for (int i = 0; i < MaxLabelResult; i++) {
-			labelResult[i] = new HudLabel(scalingStrategy, BitmapFontFactory.get(FontFace.CurseRed), "+10.99", 0.85f);
+			labelResult[i] = new HudLabel(scalingStrategy, BitmapFontFactory.get(FontFace.CurseRed), "+10.99", false, 0.85f);
 			labelResult[i].setAlpha(0);
 		}
 	}

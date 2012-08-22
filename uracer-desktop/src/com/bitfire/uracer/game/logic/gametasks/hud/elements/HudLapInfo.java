@@ -24,9 +24,9 @@ public class HudLapInfo extends HudElement {
 
 		// laptimes component
 		BitmapFont f = BitmapFontFactory.get(FontFace.CurseRedYellowNew);
-		best = new HudLabel(scalingStrategy, f, "BEST  TIME\n--.--");
-		curr = new HudLabel(scalingStrategy, f, "YOUR  TIME\n--.--");
-		last = new HudLabel(scalingStrategy, f, "LAST  TIME\n--.--");
+		best = new HudLabel(scalingStrategy, f, "BEST  TIME\n--.--", true);
+		curr = new HudLabel(scalingStrategy, f, "YOUR  TIME\n--.--", true);
+		last = new HudLabel(scalingStrategy, f, "LAST  TIME\n--.--", true);
 
 		curr.setPosition(gridX, 50 * scalingStrategy.invTileMapZoomFactor);
 		last.setPosition(gridX * 3, 50 * scalingStrategy.invTileMapZoomFactor);
