@@ -77,7 +77,7 @@ public final class BitmapFontFactory {
 
 	private static void setupFont (BitmapFont font) {
 		font.setScale(scalingStrategy.invTileMapZoomFactor);
-// font.setUseIntegerPositions(false);
+		font.setUseIntegerPositions(false);
 // font.setFixedWidthGlyphs("1234567890.");
 	}
 
