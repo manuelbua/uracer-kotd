@@ -81,7 +81,7 @@ public final class BitmapFontFactory {
 // font.setFixedWidthGlyphs("1234567890.");
 	}
 
-	// FIXME don't like to not be able to inherit from Disposable.. ;-/
+	// FIXME i don't like to not be able to inherit from Disposable.. ;-/
 	public static void dispose () {
 		fonts.dispose();
 		fontCache.clear();
