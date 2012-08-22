@@ -14,7 +14,8 @@ import com.badlogic.gdx.graphics.g2d.BitmapFont.HAlignment;
 import com.badlogic.gdx.graphics.g2d.BitmapFont.TextBounds;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.bitfire.uracer.game.tween.GameTweener;
-import com.bitfire.uracer.resources.Art;
+import com.bitfire.uracer.resources.BitmapFontFactory;
+import com.bitfire.uracer.resources.BitmapFontFactory.FontFace;
 import com.bitfire.uracer.utils.AMath;
 
 public class Message {
@@ -74,24 +75,24 @@ public class Message {
 		switch (type) {
 		case Good:
 			if (size == Size.Normal) {
-				font = Art.fontCurseG;
+				font = BitmapFontFactory.get(FontFace.CurseGreen);
 			} else {
-				font = Art.fontCurseGbig;
+				font = BitmapFontFactory.get(FontFace.CurseGreenBig);
 			}
 			break;
 		case Bad:
 			if (size == Size.Normal) {
-				font = Art.fontCurseR;
+				font = BitmapFontFactory.get(FontFace.CurseRed);
 			} else {
-				font = Art.fontCurseRbig;
+				font = BitmapFontFactory.get(FontFace.CurseRedBig);
 			}
 			break;
 		default:
 		case Information:
 			if (size == Size.Normal) {
-				font = Art.fontCurseYR;
+				font = BitmapFontFactory.get(FontFace.CurseRedYellow);
 			} else {
-				font = Art.fontCurseYRbig;
+				font = BitmapFontFactory.get(FontFace.CurseRedYellowBig);
 			}
 			break;
 		}

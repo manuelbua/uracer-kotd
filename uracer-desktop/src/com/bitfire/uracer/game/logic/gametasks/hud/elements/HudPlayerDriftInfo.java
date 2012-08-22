@@ -2,6 +2,7 @@
 package com.bitfire.uracer.game.logic.gametasks.hud.elements;
 
 import com.badlogic.gdx.Gdx;
+import com.badlogic.gdx.graphics.g2d.BitmapFont;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.math.MathUtils;
 import com.badlogic.gdx.math.Vector2;
@@ -11,7 +12,8 @@ import com.bitfire.uracer.game.logic.gametasks.hud.HudElement;
 import com.bitfire.uracer.game.logic.gametasks.hud.HudLabel;
 import com.bitfire.uracer.game.player.PlayerCar;
 import com.bitfire.uracer.game.rendering.GameRenderer;
-import com.bitfire.uracer.resources.Art;
+import com.bitfire.uracer.resources.BitmapFontFactory;
+import com.bitfire.uracer.resources.BitmapFontFactory.FontFace;
 import com.bitfire.uracer.utils.CarUtils;
 import com.bitfire.uracer.utils.Convert;
 import com.bitfire.uracer.utils.NumberString;
@@ -59,14 +61,14 @@ public final class HudPlayerDriftInfo extends HudElement {
 		this.carModelLengthPx = Convert.mt2px(player.getCarModel().length);
 
 		// labelRealtime role is to display PlayerCar values in real-time!
-		labelRealtime = new HudLabel(scalingStrategy, Art.fontCurseYRbig, "+10.99", 0.5f);
+		labelRealtime = new HudLabel(scalingStrategy, BitmapFontFactory.get(FontFace.CurseRedYellowBig), "+10.99", 0.5f);
 		labelRealtime.setAlpha(0);
 		lastRealtimePos.set(0, 0);
 
 		labelResult = new HudLabel[MaxLabelResult];
 		nextLabelResult = 0;
 		for (int i = 0; i < MaxLabelResult; i++) {
-			labelResult[i] = new HudLabel(scalingStrategy, Art.fontCurseR, "+10.99", 0.85f);
+			labelResult[i] = new HudLabel(scalingStrategy, BitmapFontFactory.get(FontFace.CurseRed), "+10.99", 0.85f);
 			labelResult[i].setAlpha(0);
 		}
 	}
@@ -113,12 +115,13 @@ public final class HudPlayerDriftInfo extends HudElement {
 		float x = Gdx.graphics.getWidth() - 230;
 		float y = Gdx.graphics.getHeight() - 110;
 
-		Art.fontRoboto.setUseIntegerPositions(false);
-		Art.fontRoboto.setScale(1f);
-		Art.fontRoboto.setColor(1, 1, 1, 1);
-		Art.fontRoboto.draw(batch, MathUtils.round(CarUtils.mtSecToKmHour(player.getInstantSpeed())) + " kmh", x, y);
-		Art.fontRoboto.setScale(0.6f);
-		Art.fontRoboto.draw(batch, MathUtils.round(player.getTraveledDistance()) + " mt\n", x + 40, y + 65);
+		BitmapFont f = BitmapFontFactory.get(FontFace.Roboto);
+		f.setUseIntegerPositions(false);
+		f.setScale(1f);
+		f.setColor(1, 1, 1, 1);
+		f.draw(batch, MathUtils.round(CarUtils.mtSecToKmHour(player.getInstantSpeed())) + " kmh", x, y);
+		f.setScale(0.6f);
+		f.draw(batch, MathUtils.round(player.getTraveledDistance()) + " mt\n", x + 40, y + 65);
 
 		// draw result
 		for (int i = 0; i < MaxLabelResult; i++) {
@@ -174,11 +177,11 @@ public final class HudPlayerDriftInfo extends HudElement {
 
 		switch (type) {
 		case BadDrift:
-			result.setFont(Art.fontCurseRbig);
+			result.setFont(BitmapFontFactory.get(FontFace.CurseRedBig));
 			break;
 		case GoodDrift:
 		default:
-			result.setFont(Art.fontCurseGbig);
+			result.setFont(BitmapFontFactory.get(FontFace.CurseGreenBig));
 			break;
 		}
 

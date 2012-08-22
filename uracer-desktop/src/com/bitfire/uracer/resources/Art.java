@@ -7,7 +7,6 @@ import com.badlogic.gdx.graphics.Pixmap.Format;
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.Texture.TextureFilter;
 import com.badlogic.gdx.graphics.Texture.TextureWrap;
-import com.badlogic.gdx.graphics.g2d.BitmapFont;
 import com.badlogic.gdx.graphics.g2d.TextureAtlas;
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
 import com.badlogic.gdx.scenes.scene2d.ui.Skin;
@@ -37,9 +36,7 @@ public final class Art {
 	// fonts
 	public static final int DebugFontWidth = 6;
 	public static final int DebugFontHeight = 6;
-	public static BitmapFont fontCurseYR, fontCurseR, fontCurseG;
-	public static BitmapFont fontCurseYRbig, fontCurseRbig, fontCurseGbig, fontMolengo, fontSourceSans, fontRoboto;
-	private static TextureAtlas fontAtlas;
+	public static TextureAtlas fontAtlas;
 
 	// post-processor
 	// public static ShaderProgram depthMapGen, depthMapGenTransparent;
@@ -49,9 +46,9 @@ public final class Art {
 	public static Texture scrBackground;
 	public static Skin scrSkin;
 
-	public static void init (float invZoomFactor) {
+	public static void init () {
 		ShaderLoader.BasePath = "data/shaders/";
-		loadFonts(invZoomFactor);
+		loadFonts();
 		loadCarGraphics();
 		loadMeshesGraphics(Config.Graphics.EnableMipMapping);
 		loadFrictionMaps();
@@ -168,7 +165,7 @@ public final class Art {
 	// fonts
 	//
 
-	private static void loadFonts (float scale) {
+	private static void loadFonts () {
 		// debug font, no need to scale it
 		debugFont = split("data/base/debug-font.png", DebugFontWidth, DebugFontHeight, false);
 
@@ -177,53 +174,6 @@ public final class Art {
 		for (TextureRegion r : fontAtlas.getRegions()) {
 			r.getTexture().setFilter(TextureFilter.Linear, TextureFilter.Linear);
 		}
-
-		// default size
-		fontCurseYR = new BitmapFont(Gdx.files.internal("data/font/curse-y-r.fnt"), Art.fontAtlas.findRegion("curse-y-r"), true);
-		fontCurseG = new BitmapFont(Gdx.files.internal("data/font/curse-g.fnt"), Art.fontAtlas.findRegion("curse-g"), true);
-		fontCurseR = new BitmapFont(Gdx.files.internal("data/font/curse-r.fnt"), Art.fontAtlas.findRegion("curse-r"), true);
-
-		// big size
-		fontCurseYRbig = new BitmapFont(Gdx.files.internal("data/font/curse-y-r-big.fnt"),
-			Art.fontAtlas.findRegion("curse-y-r-big"), true);
-		fontCurseGbig = new BitmapFont(Gdx.files.internal("data/font/curse-g-big.fnt"), Art.fontAtlas.findRegion("curse-g-big"),
-			true);
-		fontCurseRbig = new BitmapFont(Gdx.files.internal("data/font/curse-r-big.fnt"), Art.fontAtlas.findRegion("curse-r-big"),
-			true);
-
-		fontRoboto = new BitmapFont(Gdx.files.internal("data/font/roboto.fnt"), Art.fontAtlas.findRegion("roboto"), true);
-		fontMolengo = new BitmapFont(Gdx.files.internal("data/font/molengo.fnt"), Art.fontAtlas.findRegion("molengo"), true);
-		fontSourceSans = new BitmapFont(Gdx.files.internal("data/font/adobe-source-sans.fnt"),
-			Art.fontAtlas.findRegion("adobe-source-sans"), true);
-
-		// adjust scaling
-		fontCurseYR.setScale(scale);
-		fontCurseG.setScale(scale);
-		fontCurseR.setScale(scale);
-		fontCurseYRbig.setScale(scale);
-		fontCurseGbig.setScale(scale);
-		fontCurseRbig.setScale(scale);
-
-		fontCurseYR.setFixedWidthGlyphs("1234567890.");
-		fontCurseG.setFixedWidthGlyphs("1234567890.");
-		fontCurseR.setFixedWidthGlyphs("1234567890.");
-		fontCurseYRbig.setFixedWidthGlyphs("1234567890.");
-		fontCurseGbig.setFixedWidthGlyphs("1234567890.");
-		fontCurseRbig.setFixedWidthGlyphs("1234567890.");
-
-		fontCurseYR.setUseIntegerPositions(false);
-		fontCurseG.setUseIntegerPositions(false);
-		fontCurseR.setUseIntegerPositions(false);
-		fontCurseYRbig.setUseIntegerPositions(false);
-		fontCurseGbig.setUseIntegerPositions(false);
-		fontCurseRbig.setUseIntegerPositions(false);
-
-		fontMolengo.setUseIntegerPositions(false);
-		fontSourceSans.setUseIntegerPositions(false);
-		fontRoboto.setUseIntegerPositions(false);
-		fontMolengo.setScale(scale);
-		fontSourceSans.setScale(scale);
-		fontRoboto.setScale(scale);
 	}
 
 	private static void disposeFonts () {
