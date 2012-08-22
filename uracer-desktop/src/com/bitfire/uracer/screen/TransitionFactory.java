@@ -29,14 +29,13 @@ public final class TransitionFactory {
 	}
 
 	public static ScreenTransition getTransition (TransitionType transitionType) {
-		ScreenTransition transition = null;
+		ScreenTransition transition = transitions.get(transitionType.hash);
 
-		if (transitions.containsKey(transitionType.hash)) {
-			transition = transitions.get(transitionType.hash);
-			transition.reset();
-		} else {
+		if (transition == null) {
 			transition = createTransition(transitionType);
 			transitions.put(transitionType.hash, transition);
+		} else {
+			transition.reset();
 		}
 
 		return transition;
