@@ -12,6 +12,8 @@ import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.math.Vector2;
 import com.bitfire.uracer.ScalingStrategy;
 import com.bitfire.uracer.game.tween.GameTweener;
+import com.bitfire.uracer.resources.BitmapFontFactory;
+import com.bitfire.uracer.resources.BitmapFontFactory.FontFace;
 
 public final class HudLabel {
 	public float x, y;
@@ -26,18 +28,17 @@ public final class HudLabel {
 	private ScalingStrategy scalingStrategy;
 	private boolean isStatic;
 
-	public HudLabel (ScalingStrategy scalingStrategy, BitmapFont font, String string, boolean isStatic, float scale) {
+	public HudLabel (ScalingStrategy scalingStrategy, FontFace fontFace, String string, boolean isStatic, float scale) {
 		this.scalingStrategy = scalingStrategy;
-		this.font = font;
 		what = string;
 		alpha = 1f;
 		this.isStatic = isStatic;
+		this.font = BitmapFontFactory.get(fontFace);
 		setScale(scale, true);
-		font.setUseIntegerPositions(false);
 	}
 
-	public HudLabel (ScalingStrategy scalingStrategy, BitmapFont font, String string, boolean isStatic) {
-		this(scalingStrategy, font, string, isStatic, 1.0f);
+	public HudLabel (ScalingStrategy scalingStrategy, FontFace fontFace, String string, boolean isStatic) {
+		this(scalingStrategy, fontFace, string, isStatic, 1.0f);
 	}
 
 	public boolean isVisible () {
@@ -47,6 +48,11 @@ public final class HudLabel {
 	// one should avoid rendering artifacts when possible and set this to true
 	public void setStatic (boolean isStatic) {
 		this.isStatic = isStatic;
+	}
+
+	public void setFont (FontFace fontFace) {
+		this.font = BitmapFontFactory.get(fontFace);
+		recomputeBounds();
 	}
 
 	public void setString (String string) {
@@ -127,7 +133,7 @@ public final class HudLabel {
 		setScale(scale, true);
 	}
 
-	private void setScale (float scale, boolean recomputeBounds) {
+	public void setScale (float scale, boolean recomputeBounds) {
 		this.scale = scale;
 		if (recomputeBounds) {
 			recomputeBounds();

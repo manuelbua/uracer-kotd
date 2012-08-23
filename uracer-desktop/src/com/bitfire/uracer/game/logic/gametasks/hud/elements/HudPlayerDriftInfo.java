@@ -2,7 +2,6 @@
 package com.bitfire.uracer.game.logic.gametasks.hud.elements;
 
 import com.badlogic.gdx.Gdx;
-import com.badlogic.gdx.graphics.g2d.BitmapFont;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.math.MathUtils;
 import com.badlogic.gdx.math.Vector2;
@@ -39,7 +38,7 @@ public final class HudPlayerDriftInfo extends HudElement {
 	private EntityRenderState playerState = null;
 
 	// presentation
-	private HudLabel labelRealtime;
+	private HudLabel labelRealtime, labelSpeed, labelDistance;
 	private HudLabel[] labelResult;
 
 	private int nextLabelResult = 0;
@@ -61,16 +60,24 @@ public final class HudPlayerDriftInfo extends HudElement {
 		this.carModelLengthPx = Convert.mt2px(player.getCarModel().length);
 
 		// labelRealtime role is to display PlayerCar values in real-time!
-		labelRealtime = new HudLabel(scalingStrategy, BitmapFontFactory.get(FontFace.CurseRedYellowBig), "+10.99", false, 0.5f);
+		labelRealtime = new HudLabel(scalingStrategy, FontFace.CurseRedYellowBig, "+10.99", false, 0.5f);
 		labelRealtime.setAlpha(0);
 		lastRealtimePos.set(0, 0);
 
 		labelResult = new HudLabel[MaxLabelResult];
 		nextLabelResult = 0;
 		for (int i = 0; i < MaxLabelResult; i++) {
-			labelResult[i] = new HudLabel(scalingStrategy, BitmapFontFactory.get(FontFace.CurseRed), "+10.99", false, 0.85f);
+			labelResult[i] = new HudLabel(scalingStrategy, FontFace.CurseRed, "+10.99", false, 0.85f);
 			labelResult[i].setAlpha(0);
 		}
+
+		labelSpeed = new HudLabel(scalingStrategy, FontFace.Roboto, "", true, 1f);
+		labelSpeed.setPosition(Gdx.graphics.getWidth() - Convert.scaledPixels(190),
+			Gdx.graphics.getHeight() - Convert.scaledPixels(110));
+
+		labelDistance = new HudLabel(scalingStrategy, FontFace.Roboto, "", true, 0.85f);
+		labelDistance.setPosition(Gdx.graphics.getWidth() - Convert.scaledPixels(190),
+			Gdx.graphics.getHeight() - Convert.scaledPixels(50));
 	}
 
 	@Override
@@ -111,17 +118,11 @@ public final class HudPlayerDriftInfo extends HudElement {
 		}
 
 		// draw player name+info
+		labelSpeed.setString(MathUtils.round(CarUtils.mtSecToKmHour(player.getInstantSpeed())) + " kmh");
+		labelSpeed.render(batch);
 
-		float x = Gdx.graphics.getWidth() - 230;
-		float y = Gdx.graphics.getHeight() - 110;
-
-		BitmapFont f = BitmapFontFactory.get(FontFace.Roboto);
-		f.setUseIntegerPositions(false);
-		f.setScale(1f);
-		f.setColor(1, 1, 1, 1);
-		f.draw(batch, MathUtils.round(CarUtils.mtSecToKmHour(player.getInstantSpeed())) + " kmh", x, y);
-		f.setScale(0.6f);
-		f.draw(batch, MathUtils.round(player.getTraveledDistance()) + " mt\n", x + 40, y + 65);
+		labelDistance.setString(MathUtils.round(player.getTraveledDistance()) + " mt\n");
+		labelDistance.render(batch);
 
 		// draw result
 		for (int i = 0; i < MaxLabelResult; i++) {

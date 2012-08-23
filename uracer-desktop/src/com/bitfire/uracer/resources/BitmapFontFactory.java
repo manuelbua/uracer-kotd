@@ -6,7 +6,6 @@ import com.badlogic.gdx.graphics.g2d.BitmapFont;
 import com.badlogic.gdx.utils.LongMap;
 import com.bitfire.uracer.ScalingStrategy;
 import com.bitfire.utils.Hash;
-import com.bitfire.utils.ItemsManager;
 
 /** Lazy factory for BitmapFont objects
  * 
@@ -39,7 +38,6 @@ public final class BitmapFontFactory {
 	private static ScalingStrategy scalingStrategy;
 
 	// storage
-	private static ItemsManager<BitmapFont> fonts = new ItemsManager<BitmapFont>();
 	private static LongMap<BitmapFont> fontCache = new LongMap<BitmapFont>();
 
 	public static void init (ScalingStrategy strategy) {
@@ -64,7 +62,6 @@ public final class BitmapFontFactory {
 
 		setupFont(f);
 
-		fonts.add(f);
 		fontCache.put(hash, f);
 
 		return f;
@@ -83,7 +80,10 @@ public final class BitmapFontFactory {
 
 	// FIXME i don't like to not be able to inherit from Disposable.. ;-/
 	public static void dispose () {
-		fonts.dispose();
+		for (BitmapFont f : fontCache.values()) {
+			f.dispose();
+		}
+
 		fontCache.clear();
 	}
 
