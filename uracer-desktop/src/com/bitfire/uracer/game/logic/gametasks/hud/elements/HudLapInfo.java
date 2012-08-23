@@ -7,7 +7,7 @@ import com.bitfire.uracer.ScalingStrategy;
 import com.bitfire.uracer.game.logic.LapInfo;
 import com.bitfire.uracer.game.logic.gametasks.hud.HudElement;
 import com.bitfire.uracer.game.logic.gametasks.hud.HudLabel;
-import com.bitfire.uracer.resources.Art;
+import com.bitfire.uracer.resources.BitmapFontFactory.FontFace;
 import com.bitfire.uracer.utils.NumberString;
 
 public class HudLapInfo extends HudElement {
@@ -21,9 +21,9 @@ public class HudLapInfo extends HudElement {
 		int gridX = (int)((float)Gdx.graphics.getWidth() / 5f);
 
 		// laptimes component
-		best = new HudLabel(scalingStrategy, Art.fontCurseYRbig, "BEST  TIME\n--.--");
-		curr = new HudLabel(scalingStrategy, Art.fontCurseYRbig, "YOUR  TIME\n--.--");
-		last = new HudLabel(scalingStrategy, Art.fontCurseYRbig, "LAST  TIME\n--.--");
+		best = new HudLabel(scalingStrategy, FontFace.CurseRedYellowNew, "BEST  TIME\n--.--", true);
+		curr = new HudLabel(scalingStrategy, FontFace.CurseRedYellowNew, "YOUR  TIME\n--.--", true);
+		last = new HudLabel(scalingStrategy, FontFace.CurseRedYellowNew, "LAST  TIME\n--.--", true);
 
 		curr.setPosition(gridX, 50 * scalingStrategy.invTileMapZoomFactor);
 		last.setPosition(gridX * 3, 50 * scalingStrategy.invTileMapZoomFactor);

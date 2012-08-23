@@ -79,13 +79,13 @@ public final class Config {
 
 			UseDebugHelper = true;
 			RenderBox2DWorldWireframe = false;
-			RenderPlayerDebugInfo = Config.isDesktop;
+			RenderPlayerDebugInfo = false;
 			RenderHudDebugInfo = Config.isDesktop;
 			RenderDebugInfoFpsStats = true;
 			RenderDebugInfoGraphics = true;
 			RenderDebugInfoMemoryStats = Config.isDesktop;
 			RenderDebugInfoMeshStats = Config.isDesktop;
-			RenderDebugInfoPostProcessor = true;
+			RenderDebugInfoPostProcessor = false;
 			Render3DBoundingBoxes = false;
 			RenderDebugDrawsInTransitions = true;
 
