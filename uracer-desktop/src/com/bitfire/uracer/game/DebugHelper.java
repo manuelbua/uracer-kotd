@@ -101,8 +101,8 @@ public final class DebugHelper {
 		renderVersionInfo(batch);
 
 		if (Config.Debug.RenderDebugInfoGraphics) {
-			renderGraphicalStats(batch, Gdx.graphics.getWidth() - stats.getWidth() - 266,
-				Gdx.graphics.getHeight() - stats.getHeight() - Art.DebugFontHeight - 5);
+			renderGraphicalStats(batch, Gdx.graphics.getWidth() - stats.getWidth() - Convert.scaledPixels(266),
+				Gdx.graphics.getHeight() - stats.getHeight() - Art.DebugFontHeight - Convert.scaledPixels(5));
 		}
 
 		if (Config.Debug.RenderDebugInfoMemoryStats) {
@@ -130,7 +130,7 @@ public final class DebugHelper {
 		}
 	}
 
-	private void renderGraphicalStats (SpriteBatch batch, int x, int y) {
+	private void renderGraphicalStats (SpriteBatch batch, float x, float y) {
 		batch.draw(stats.getRegion(), x, y);
 	}
 
