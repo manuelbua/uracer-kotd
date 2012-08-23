@@ -23,7 +23,8 @@ public final class BitmapFontFactory {
 		CurseRedYellowBig("curse-y-r-big"),
 		Molengo("molengo"),
 		Roboto("roboto"),
-		CurseRedYellowNew("curse-new")
+		CurseRedYellowNew("curse-new"),
+		Lcd("lcd")
 		;
 		//@on
 

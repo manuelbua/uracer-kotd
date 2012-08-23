@@ -71,11 +71,11 @@ public final class HudPlayerDriftInfo extends HudElement {
 			labelResult[i].setAlpha(0);
 		}
 
-		labelSpeed = new HudLabel(scalingStrategy, FontFace.Roboto, "", true, 1f);
+		labelSpeed = new HudLabel(scalingStrategy, FontFace.Lcd, "", true, 1f);
 		labelSpeed.setPosition(Gdx.graphics.getWidth() - Convert.scaledPixels(190),
 			Gdx.graphics.getHeight() - Convert.scaledPixels(110));
 
-		labelDistance = new HudLabel(scalingStrategy, FontFace.Roboto, "", true, 0.85f);
+		labelDistance = new HudLabel(scalingStrategy, FontFace.Lcd, "", true, 0.85f);
 		labelDistance.setPosition(Gdx.graphics.getWidth() - Convert.scaledPixels(190),
 			Gdx.graphics.getHeight() - Convert.scaledPixels(50));
 	}
