@@ -50,14 +50,14 @@ public final class DebugStatistics {
 	}
 
 	private void init (int width, int height, float updateHz) {
-		assert (width < 256 && height < 256);
+// assert (width < 256 && height < 256);
 
 		PanelWidth = width;
 		PanelHeight = height;
 		intervalNs = (long)(1000000000L * (1f / updateHz));
 
 		pixels = new Pixmap(PanelWidth, PanelHeight, Format.RGBA8888);
-		texture = new Texture(256, 256, Format.RGBA8888);
+		texture = new Texture(width, height, Format.RGBA8888);
 		texture.setFilter(TextureFilter.Nearest, TextureFilter.Nearest);
 		region = new TextureRegion(texture, 0, 0, pixels.getWidth(), pixels.getHeight());
 

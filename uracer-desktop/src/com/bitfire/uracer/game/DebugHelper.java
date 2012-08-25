@@ -3,6 +3,7 @@ package com.bitfire.uracer.game;
 
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
+import com.badlogic.gdx.math.MathUtils;
 import com.badlogic.gdx.math.Matrix4;
 import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.physics.box2d.Body;
@@ -78,7 +79,8 @@ public final class DebugHelper {
 			updateHz = 5f;
 		}
 
-		stats = new DebugStatistics(updateHz);
+		int sw = MathUtils.clamp(uRacerInfo.length() * Art.DebugFontWidth, 100, 500);
+		stats = new DebugStatistics(sw, 100, updateHz);
 	}
 
 	public void dispose () {
@@ -101,8 +103,7 @@ public final class DebugHelper {
 		renderVersionInfo(batch);
 
 		if (Config.Debug.RenderDebugInfoGraphics) {
-			renderGraphicalStats(batch, Gdx.graphics.getWidth() - stats.getWidth() - Convert.scaledPixels(266),
-				Gdx.graphics.getHeight() - stats.getHeight() - Art.DebugFontHeight - Convert.scaledPixels(5));
+			renderGraphicalStats(batch, Gdx.graphics.getWidth() - stats.getWidth(), Art.DebugFontHeight * 2);
 		}
 
 		if (Config.Debug.RenderDebugInfoMemoryStats) {
@@ -131,6 +132,8 @@ public final class DebugHelper {
 	}
 
 	private void renderGraphicalStats (SpriteBatch batch, float x, float y) {
+		batch.enableBlending();
+		batch.setColor(1, 1, 1, 0.8f);
 		batch.draw(stats.getRegion(), x, y);
 	}
 
