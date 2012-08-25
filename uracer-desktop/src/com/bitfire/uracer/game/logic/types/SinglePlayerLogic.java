@@ -15,7 +15,6 @@ import com.bitfire.uracer.game.rendering.GameWorldRenderer;
 import com.bitfire.uracer.game.world.GameWorld;
 import com.bitfire.uracer.utils.AMath;
 import com.bitfire.uracer.utils.CarUtils;
-import com.bitfire.uracer.utils.NumberString;
 
 public class SinglePlayerLogic extends CommonLogic {
 
@@ -98,14 +97,14 @@ public class SinglePlayerLogic extends CommonLogic {
 
 			if (AMath.equals(worstTime, bestTime)) {
 				// draw!
-				messager.show("DRAW!", 3f, Type.Information, Position.Bottom, Size.Big);
+// messager.show("DRAW!", 3f, Type.Information, Position.Bottom, Size.Big);
 			} else {
 				// has the player managed to beat the best lap?
-				if (lapManager.isLastBestLap()) {
-					messager.show("-" + NumberString.format(diffTime) + " seconds!", 3f, Type.Good, Position.Bottom, Size.Big);
-				} else {
-					messager.show("+" + NumberString.format(diffTime) + " seconds", 3f, Type.Bad, Position.Bottom, Size.Big);
-				}
+// if (lapManager.isLastBestLap()) {
+// messager.show("-" + NumberString.format(diffTime) + " seconds!", 3f, Type.Good, Position.Bottom, Size.Big);
+// } else {
+// messager.show("+" + NumberString.format(diffTime) + " seconds", 3f, Type.Bad, Position.Bottom, Size.Big);
+// }
 			}
 		}
 	}

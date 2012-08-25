@@ -28,9 +28,6 @@ import com.bitfire.uracer.game.logic.gametasks.hud.HudLabel;
 import com.bitfire.uracer.game.logic.gametasks.hud.HudLabelAccessor;
 import com.bitfire.uracer.game.logic.gametasks.hud.elements.HudPlayerDriftInfo.EndDriftType;
 import com.bitfire.uracer.game.logic.gametasks.messager.Message;
-import com.bitfire.uracer.game.logic.gametasks.messager.Message.Position;
-import com.bitfire.uracer.game.logic.gametasks.messager.Message.Size;
-import com.bitfire.uracer.game.logic.gametasks.messager.Message.Type;
 import com.bitfire.uracer.game.logic.gametasks.messager.MessageAccessor;
 import com.bitfire.uracer.game.logic.helpers.CarFactory;
 import com.bitfire.uracer.game.logic.helpers.PlayerGameTasks;
@@ -62,7 +59,7 @@ public abstract class CommonLogic implements GameLogic, CarEvent.Listener, CarSt
 	protected GameWorld gameWorld = null;
 
 	// rendering
-	// private GameRenderer gameRenderer = null;
+	private GameRenderer gameRenderer = null;
 	protected GameWorldRenderer gameWorldRenderer = null;
 	protected PostProcessing postProcessing = null;
 
@@ -89,7 +86,7 @@ public abstract class CommonLogic implements GameLogic, CarEvent.Listener, CarSt
 	public CommonLogic (UserProfile userProfile, GameWorld gameWorld, GameRenderer gameRenderer, ScalingStrategy scalingStrategy) {
 		this.userProfile = userProfile;
 		this.gameWorld = gameWorld;
-		// this.gameRenderer = gameRenderer;
+		this.gameRenderer = gameRenderer;
 		this.gameWorldRenderer = gameRenderer.getWorldRenderer();
 		this.input = URacer.Game.getInputSystem();
 		timeDilateMode = Gameplay.TimeDilateInputMode.valueOf(UserPreferences.string(Preference.TimeDilateInputMode));
@@ -202,7 +199,7 @@ public abstract class CommonLogic implements GameLogic, CarEvent.Listener, CarSt
 		configurePlayer(gameWorld, input /* gameTasksManager.input */, playerCar);
 		Gdx.app.log("GameLogic", "Player configured");
 
-		playerTasks.createTasks(playerCar, lapManager.getLapInfo());
+		playerTasks.createTasks(playerCar, lapManager.getLapInfo(), gameRenderer);
 		Gdx.app.log("GameLogic", "Game tasks created and configured");
 
 		registerPlayerEvents(playerCar);
@@ -539,13 +536,13 @@ public abstract class CommonLogic implements GameLogic, CarEvent.Listener, CarSt
 				playerTasks.hudPlayerDriftInfo.endDrift("-" + NumberString.format(driftSeconds), EndDriftType.BadDrift);
 			} else {
 
-				if (driftSeconds >= 1 && driftSeconds < 3f) {
-					gameTasksManager.messager.enqueue("NICE ONE!\n+" + msgSeconds, 1f, Type.Good, Position.Bottom, Size.Big);
-				} else if (driftSeconds >= 3f && driftSeconds < 5f) {
-					gameTasksManager.messager.enqueue("FANTASTIC!\n+" + msgSeconds, 1f, Type.Good, Position.Bottom, Size.Big);
-				} else if (driftSeconds >= 5f) {
-					gameTasksManager.messager.enqueue("UNREAL!\n+" + msgSeconds, 1f, Type.Good, Position.Bottom, Size.Big);
-				}
+// if (driftSeconds >= 1 && driftSeconds < 3f) {
+// gameTasksManager.messager.enqueue("NICE ONE!\n+" + msgSeconds, 1f, Type.Good, Position.Bottom, Size.Big);
+// } else if (driftSeconds >= 3f && driftSeconds < 5f) {
+// gameTasksManager.messager.enqueue("FANTASTIC!\n+" + msgSeconds, 1f, Type.Good, Position.Bottom, Size.Big);
+// } else if (driftSeconds >= 5f) {
+// gameTasksManager.messager.enqueue("UNREAL!\n+" + msgSeconds, 1f, Type.Good, Position.Bottom, Size.Big);
+// }
 
 				playerTasks.hudPlayerDriftInfo.endDrift("+" + NumberString.format(driftSeconds), EndDriftType.GoodDrift);
 			}

@@ -10,7 +10,7 @@ import com.bitfire.utils.Hash;
 /** Lazy factory for BitmapFont objects
  * 
  * Used font resources number count is usually fairy low, so let's assume this and implement a "lazy loading" strategy: cache-hits
- * should be early maximized (100%) just at the first couple of framesof the real game */
+ * should be early maximized (100%) just at the first couple of frames of the real game */
 public final class BitmapFontFactory {
 	public enum FontFace {
 		//@off

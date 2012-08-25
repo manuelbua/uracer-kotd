@@ -67,19 +67,19 @@ public final class HudLabel {
 	}
 
 	public void setPosition (float posX, float posY) {
-		x = posX - halfBoundsWidth;
-		y = posY - halfBoundsHeight;
+		x = posX;// - halfBoundsWidth;
+		y = posY;// - halfBoundsHeight;
 	}
 
 	public void setPosition (Vector2 position) {
-		x = position.x - halfBoundsWidth;
-		y = position.y - halfBoundsHeight;
+		x = position.x;// - halfBoundsWidth;
+		y = position.y;// - halfBoundsHeight;
 	}
 
 	private Vector2 tmpos = new Vector2();
 
 	public Vector2 getPosition () {
-		tmpos.set(x + halfBoundsWidth, y + halfBoundsHeight);
+		tmpos.set(x/* + halfBoundsWidth */, y /* + halfBoundsHeight */);
 		return tmpos;
 	}
 
@@ -97,19 +97,19 @@ public final class HudLabel {
 	}
 
 	public float getX () {
-		return x + halfBoundsWidth;
+		return x;// + halfBoundsWidth;
 	}
 
 	public float getY () {
-		return y + halfBoundsHeight;
+		return y;// + halfBoundsHeight;
 	}
 
 	public void setX (float v) {
-		x = v - halfBoundsWidth;
+		x = v;// - halfBoundsWidth;
 	}
 
 	public void setY (float v) {
-		y = v - halfBoundsHeight;
+		y = v;// - halfBoundsHeight;
 	}
 
 	public float getAlpha () {
@@ -151,7 +151,7 @@ public final class HudLabel {
 			font.setScale(scale * scalingStrategy.invTileMapZoomFactor);
 			font.setColor(1, 1, 1, alpha);
 
-			font.drawMultiLine(batch, what, x, y);
+			font.drawMultiLine(batch, what, x - halfBoundsWidth, y - halfBoundsHeight);
 
 			// font.setColor( 1, 1, 1, 1 );
 		}

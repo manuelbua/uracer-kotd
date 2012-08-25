@@ -11,8 +11,8 @@ import com.bitfire.uracer.game.logic.gametasks.hud.HudElement;
 import com.bitfire.uracer.game.logic.gametasks.hud.HudLabel;
 import com.bitfire.uracer.game.player.PlayerCar;
 import com.bitfire.uracer.game.rendering.GameRenderer;
-import com.bitfire.uracer.resources.BitmapFontFactory;
 import com.bitfire.uracer.resources.BitmapFontFactory.FontFace;
+import com.bitfire.uracer.utils.AMath;
 import com.bitfire.uracer.utils.CarUtils;
 import com.bitfire.uracer.utils.Convert;
 import com.bitfire.uracer.utils.NumberString;
@@ -45,29 +45,36 @@ public final class HudPlayerDriftInfo extends HudElement {
 
 	private PlayerCar player;
 
+	//
+	private final GameRenderer renderer;
+
 	// gravitation
 	private float carModelWidthPx, carModelLengthPx;
 	private Vector2 tmpg = new Vector2();
+	private Vector2 tmpg2 = new Vector2();
 
 	private Vector2 lastRealtimePos = new Vector2();
 	private boolean began = false;
+	private float scale = 1f;
 
-	public HudPlayerDriftInfo (ScalingStrategy scalingStrategy, PlayerCar player) {
+	public HudPlayerDriftInfo (ScalingStrategy scalingStrategy, PlayerCar player, GameRenderer renderer) {
 		this.player = player;
-
+		this.renderer = renderer;
+		this.scale = scalingStrategy.invTileMapZoomFactor;
 		playerState = player.state();
+
 		this.carModelWidthPx = Convert.mt2px(player.getCarModel().width);
 		this.carModelLengthPx = Convert.mt2px(player.getCarModel().length);
 
 		// labelRealtime role is to display PlayerCar values in real-time!
-		labelRealtime = new HudLabel(scalingStrategy, FontFace.CurseRedYellowBig, "+10.99", false, 0.5f);
+		labelRealtime = new HudLabel(scalingStrategy, FontFace.Lcd, "+99.99", false, 0.5f);
 		labelRealtime.setAlpha(0);
 		lastRealtimePos.set(0, 0);
 
 		labelResult = new HudLabel[MaxLabelResult];
 		nextLabelResult = 0;
 		for (int i = 0; i < MaxLabelResult; i++) {
-			labelResult[i] = new HudLabel(scalingStrategy, FontFace.CurseRed, "+10.99", false, 0.85f);
+			labelResult[i] = new HudLabel(scalingStrategy, FontFace.CurseRed, "+99.99", false, 0.85f);
 			labelResult[i].setAlpha(0);
 		}
 
@@ -86,13 +93,17 @@ public final class HudPlayerDriftInfo extends HudElement {
 
 	@Override
 	public void onTick () {
-		refreshLabelRealtime(false);
-
+		updateLabelRealtime(false);
+// updateLabelRealtime(true);
 	}
 
-	private void refreshLabelRealtime (boolean force) {
+	private void updateLabelRealtime (boolean force) {
 		if (force || (began && labelRealtime.isVisible())) {
 			labelRealtime.setString("+" + NumberString.format(player.driftState.driftSeconds()));
+// labelRealtime.setString("99999.99999");
+			if (force) {
+				labelRealtime.setAlpha(1);
+			}
 		}
 	}
 
@@ -108,7 +119,8 @@ public final class HudPlayerDriftInfo extends HudElement {
 
 	@Override
 	public void onRender (SpriteBatch batch) {
-		gravitate(labelRealtime, 0);
+		labelRealtime.setScale(0.5f * renderer.getWorldRenderer().getCameraZoom(), true);
+		bottom(labelRealtime, 80);
 
 		lastRealtimePos.set(labelRealtime.getPosition());
 
@@ -134,26 +146,41 @@ public final class HudPlayerDriftInfo extends HudElement {
 	// internal helpers
 	//
 
-	private void gravitate (HudLabel label, float offsetDeg) {
-		label.setPosition(gravitate(label.boundsWidth, label.boundsHeight, offsetDeg));
+	private void bottom (HudLabel label, float distance) {
+		float zs = renderer.getWorldRenderer().getCameraZoom();
+
+		tmpg.set(GameRenderer.ScreenUtils.worldPxToScreen(playerState.position));
+		tmpg.y += distance * scale * zs;
+		label.setPosition(tmpg);
+	}
+
+	private void gravitate (HudLabel label, float offsetDegs, float distance) {
+		label.setPosition(gravitate(label.boundsWidth, label.boundsHeight, offsetDegs, distance));
 	}
 
 	/** Returns a position by placing a point on an imaginary circumference gravitating around the player, applying the specified
 	 * orientation offset, expressed in radians, if any. */
-	private Vector2 gravitate (float w, float h, float offsetDeg) {
-		// compute heading
-		tmpg.set(VMath.fromDegrees(playerState.orientation + offsetDeg));
+	private Vector2 gravitate (float w, float h, float offsetDegs, float distance) {
+		float zs = renderer.getWorldRenderer().getCameraZoom();
+		float border = distance * scale;
+
+		Vector2 sp = GameRenderer.ScreenUtils.worldPxToScreen(playerState.position);
+		Vector2 heading = VMath.fromDegrees(playerState.orientation + offsetDegs);
+
+		float horizontal = MathUtils.clamp(Math.abs(MathUtils.sinDeg(playerState.orientation)), 0.25f, 1);
+		float p = AMath.lerp(carModelWidthPx, carModelLengthPx, horizontal);
+		float q = AMath.lerp(carModelWidthPx, carModelLengthPx, 1 - horizontal);
 
 		// compute displacement
-		float displaceX = carModelWidthPx + w * 0.5f;
-		float displaceY = carModelLengthPx + h * 0.5f;
+		tmpg.set(heading);
+		float displaceX = p * zs + w * 0.5f + border;
+		float displaceY = q * zs + h * 0.5f + border;
 		tmpg.mul(displaceX, displaceY);
 		displaceX = tmpg.x;
 		displaceY = tmpg.y;
 
-		// gets pixel position and then displaces it
-		tmpg.set(GameRenderer.ScreenUtils.worldPxToScreen(playerState.position));
-		tmpg.sub(displaceX, displaceY);
+		tmpg.x = sp.x - displaceX;
+		tmpg.y = sp.y - displaceY;
 
 		return tmpg;
 	}
@@ -170,28 +197,28 @@ public final class HudPlayerDriftInfo extends HudElement {
 
 	/** Signals the hud element that the player has finished drifting */
 	public void endDrift (String message, EndDriftType type) {
-		HudLabel result = labelResult[nextLabelResult++];
-
-		if (nextLabelResult == MaxLabelResult) {
-			nextLabelResult = 0;
-		}
-
-		switch (type) {
-		case BadDrift:
-			result.setFont(BitmapFontFactory.get(FontFace.CurseRedBig));
-			break;
-		case GoodDrift:
-		default:
-			result.setFont(BitmapFontFactory.get(FontFace.CurseGreenBig));
-			break;
-		}
-
-		result.setString(message);
-		result.setPosition(lastRealtimePos);
-		result.slide(type == EndDriftType.GoodDrift);
-
+// HudLabel result = labelResult[nextLabelResult++];
+//
+// if (nextLabelResult == MaxLabelResult) {
+// nextLabelResult = 0;
+// }
+//
+// switch (type) {
+// case BadDrift:
+// result.setFont(BitmapFontFactory.get(FontFace.CurseRedBig));
+// break;
+// case GoodDrift:
+// default:
+// result.setFont(BitmapFontFactory.get(FontFace.CurseGreenBig));
+// break;
+// }
+//
+// result.setString(message);
+// result.setPosition(lastRealtimePos);
+// result.slide(type == EndDriftType.GoodDrift);
+//
 		began = false;
-		refreshLabelRealtime(true);
+		updateLabelRealtime(true);
 
 		labelRealtime.fadeOut(300);
 	}
