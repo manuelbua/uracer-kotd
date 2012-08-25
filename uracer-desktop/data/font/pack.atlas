@@ -79,7 +79,7 @@ pack5.png
 format: RGBA8888
 filter: Nearest,Nearest
 repeat: none
-curse-new
+AuX DotBitC Xtra
   rotate: false
   xy: 4, 4
   size: 512, 512
@@ -91,7 +91,7 @@ pack6.png
 format: RGBA8888
 filter: Nearest,Nearest
 repeat: none
-roboto
+curse-new
   rotate: false
   xy: 4, 4
   size: 512, 512
@@ -103,7 +103,7 @@ pack7.png
 format: RGBA8888
 filter: Nearest,Nearest
 repeat: none
-curse-y-r-big
+roboto
   rotate: false
   xy: 4, 4
   size: 512, 512
@@ -115,7 +115,55 @@ pack8.png
 format: RGBA8888
 filter: Nearest,Nearest
 repeat: none
+karmatic
+  rotate: false
+  xy: 4, 4
+  size: 512, 512
+  orig: 512, 512
+  offset: 0, 0
+  index: -1
+
+pack9.png
+format: RGBA8888
+filter: Nearest,Nearest
+repeat: none
+dotty-shadow
+  rotate: false
+  xy: 4, 4
+  size: 512, 512
+  orig: 512, 512
+  offset: 0, 0
+  index: -1
+
+pack10.png
+format: RGBA8888
+filter: Nearest,Nearest
+repeat: none
+curse-y-r-big
+  rotate: false
+  xy: 4, 4
+  size: 512, 512
+  orig: 512, 512
+  offset: 0, 0
+  index: -1
+
+pack11.png
+format: RGBA8888
+filter: Nearest,Nearest
+repeat: none
 curse-r-big
+  rotate: false
+  xy: 4, 4
+  size: 512, 512
+  orig: 512, 512
+  offset: 0, 0
+  index: -1
+
+pack12.png
+format: RGBA8888
+filter: Nearest,Nearest
+repeat: none
+arcade
   rotate: false
   xy: 4, 4
   size: 512, 512

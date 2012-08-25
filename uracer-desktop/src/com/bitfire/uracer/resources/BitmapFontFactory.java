@@ -25,7 +25,11 @@ public final class BitmapFontFactory {
 		Roboto("roboto"),
 		CurseRedYellowNew("curse-new"),
 		Lcd("lcd"),
-		LcdWhite("lcd-white")
+		LcdWhite("lcd-white"),
+		Arcade("arcade"),
+		Karmatic("karmatic"),
+		DottyShadow("dotty-shadow"),
+		AuXDotBitCXtra("AuX DotBitC Xtra"),
 		;
 		//@on
 

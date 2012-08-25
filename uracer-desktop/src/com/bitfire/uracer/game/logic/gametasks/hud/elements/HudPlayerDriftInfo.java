@@ -67,7 +67,7 @@ public final class HudPlayerDriftInfo extends HudElement {
 		this.carModelLengthPx = Convert.mt2px(player.getCarModel().length);
 
 		// labelRealtime role is to display PlayerCar values in real-time!
-		labelRealtime = new HudLabel(scalingStrategy, FontFace.Lcd, "+99.99", false, 0.5f);
+		labelRealtime = new HudLabel(scalingStrategy, FontFace.Arcade, "+99.99", false, 0.5f);
 		labelRealtime.setAlpha(0);
 		lastRealtimePos.set(0, 0);
 
@@ -93,8 +93,8 @@ public final class HudPlayerDriftInfo extends HudElement {
 
 	@Override
 	public void onTick () {
-		updateLabelRealtime(false);
-// updateLabelRealtime(true);
+// updateLabelRealtime(false);
+		updateLabelRealtime(true);
 	}
 
 	private void updateLabelRealtime (boolean force) {
@@ -119,6 +119,7 @@ public final class HudPlayerDriftInfo extends HudElement {
 
 	@Override
 	public void onRender (SpriteBatch batch) {
+		labelRealtime.setFont(FontFace.Lcd);
 		labelRealtime.setScale(0.5f * renderer.getWorldRenderer().getCameraZoom(), true);
 		bottom(labelRealtime, 80);
 
