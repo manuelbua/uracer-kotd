@@ -6,7 +6,6 @@ import com.bitfire.uracer.configuration.Config;
 import com.bitfire.uracer.game.logic.LapInfo;
 import com.bitfire.uracer.game.logic.gametasks.GameTasksManager;
 import com.bitfire.uracer.game.logic.gametasks.hud.debug.HudDebug;
-import com.bitfire.uracer.game.logic.gametasks.hud.elements.HudLapInfo;
 import com.bitfire.uracer.game.logic.gametasks.hud.elements.HudPlayerDriftInfo;
 import com.bitfire.uracer.game.logic.gametasks.sounds.effects.PlayerDriftSoundEffect;
 import com.bitfire.uracer.game.logic.gametasks.sounds.effects.PlayerImpactSoundEffect;
@@ -22,7 +21,7 @@ public final class PlayerGameTasks {
 	/** keeps track of the concrete player tasks (note that they are all publicly accessible for performance reasons) */
 
 	public HudPlayerDriftInfo hudPlayerDriftInfo = null;
-	public HudLapInfo hudLapInfo = null;
+// public HudLapInfo hudLapInfo = null;
 	public HudDebug hudDebug = null;
 	public PlayerSkidMarks playerSkidMarks = null;
 	public PlayerDriftSoundEffect playerDriftSoundFx = null;
@@ -43,7 +42,7 @@ public final class PlayerGameTasks {
 		playerImpactSoundFx = new PlayerImpactSoundEffect(player);
 
 		// track effects
-		int maxSkidMarks = Config.isDesktop ? 500 : 100;
+		int maxSkidMarks = Config.isDesktop ? 300 : 100;
 		float maxLife = Config.isDesktop ? 10 : 3;
 		playerSkidMarks = new PlayerSkidMarks(player, maxSkidMarks, maxLife);
 
@@ -51,13 +50,13 @@ public final class PlayerGameTasks {
 		hudPlayerDriftInfo = new HudPlayerDriftInfo(scalingStrategy, player);
 
 		// hud, player's lap info
-		hudLapInfo = new HudLapInfo(scalingStrategy, lapInfo);
+// hudLapInfo = new HudLapInfo(scalingStrategy, lapInfo);
 
 		manager.sound.add(playerDriftSoundFx);
 		manager.sound.add(playerImpactSoundFx);
 		manager.effects.add(playerSkidMarks);
 		manager.hud.addAfterPostProcessing(hudPlayerDriftInfo);
-		manager.hud.addAfterPostProcessing(hudLapInfo);
+// manager.hud.addAfterPostProcessing(hudLapInfo);
 
 		// hud-style debug information for various data (player's drift state, number of skid marks particles, ..)
 		if (Config.Debug.RenderHudDebugInfo) {
@@ -87,10 +86,10 @@ public final class PlayerGameTasks {
 			hudPlayerDriftInfo = null;
 		}
 
-		if (hudLapInfo != null) {
-			manager.hud.remove(hudLapInfo);
-			hudLapInfo = null;
-		}
+// if (hudLapInfo != null) {
+// manager.hud.remove(hudLapInfo);
+// hudLapInfo = null;
+// }
 
 		if (hudDebug != null) {
 			manager.hud.remove(hudDebug);

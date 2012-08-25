@@ -24,7 +24,8 @@ public final class BitmapFontFactory {
 		Molengo("molengo"),
 		Roboto("roboto"),
 		CurseRedYellowNew("curse-new"),
-		Lcd("lcd")
+		Lcd("lcd"),
+		LcdWhite("lcd-white")
 		;
 		//@on
 
@@ -52,16 +53,15 @@ public final class BitmapFontFactory {
 		BitmapFont f = fontCache.get(hash);
 
 		if (f != null) {
-// Gdx.app.log("BitmapFontFactory", "Cache hit for \"" + name + "\"");
 			if (reset) {
-				setupFont(f);
+				setupFont(face, f);
 			}
 			return f;
 		}
 
 		f = new BitmapFont(Gdx.files.internal("data/font/" + name + ".fnt"), Art.fontAtlas.findRegion(name), true);
 
-		setupFont(f);
+		setupFont(face, f);
 
 		fontCache.put(hash, f);
 
@@ -73,10 +73,9 @@ public final class BitmapFontFactory {
 		return get(face, true);
 	}
 
-	private static void setupFont (BitmapFont font) {
+	private static void setupFont (FontFace face, BitmapFont font) {
 		font.setScale(scalingStrategy.invTileMapZoomFactor);
 		font.setUseIntegerPositions(false);
-// font.setFixedWidthGlyphs("1234567890.");
 	}
 
 	// FIXME i don't like to not be able to inherit from Disposable.. ;-/
