@@ -211,7 +211,16 @@ public final class Art {
 					streamBuilder.close();
 					zin.close();
 
-					TextureRegion r = new TextureRegion(new Texture(px));
+					boolean mipMap = false;
+					Texture t = new Texture(px);
+
+					if (mipMap) {
+						t.setFilter(TextureFilter.MipMapLinearNearest, TextureFilter.Nearest);
+					} else {
+						t.setFilter(TextureFilter.Nearest, TextureFilter.Nearest);
+					}
+
+					TextureRegion r = new TextureRegion(t);
 					r.flip(false, true);
 
 					return r;

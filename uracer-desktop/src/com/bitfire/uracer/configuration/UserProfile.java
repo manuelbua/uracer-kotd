@@ -14,6 +14,6 @@ public final class UserProfile {
 	public UserProfile () {
 		userId = -1;
 		userName = "Manuel";
-		userCountryCode = "gb";
+		userCountryCode = "it";
 	}
 }
