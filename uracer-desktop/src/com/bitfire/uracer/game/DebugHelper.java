@@ -136,6 +136,8 @@ public final class DebugHelper {
 		batch.enableBlending();
 		batch.setColor(1, 1, 1, 0.8f);
 		batch.draw(stats.getRegion(), Gdx.graphics.getWidth() - stats.getWidth(), Art.DebugFontHeight * 2);
+		batch.setColor(1, 1, 1, 1f);
+		batch.disableBlending();
 	}
 
 	private void renderFpsStats (SpriteBatch batch) {
