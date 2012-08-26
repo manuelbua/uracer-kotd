@@ -2,15 +2,18 @@
 package com.bitfire.uracer.game.logic.gametasks.hud.elements;
 
 import com.badlogic.gdx.Gdx;
+import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.math.MathUtils;
 import com.badlogic.gdx.math.Vector2;
 import com.bitfire.uracer.ScalingStrategy;
+import com.bitfire.uracer.configuration.UserProfile;
 import com.bitfire.uracer.entities.EntityRenderState;
 import com.bitfire.uracer.game.logic.gametasks.hud.HudElement;
 import com.bitfire.uracer.game.logic.gametasks.hud.HudLabel;
 import com.bitfire.uracer.game.player.PlayerCar;
 import com.bitfire.uracer.game.rendering.GameRenderer;
+import com.bitfire.uracer.resources.Art;
 import com.bitfire.uracer.resources.BitmapFontFactory.FontFace;
 import com.bitfire.uracer.utils.AMath;
 import com.bitfire.uracer.utils.CarUtils;
@@ -38,12 +41,14 @@ public final class HudPlayerDriftInfo extends HudElement {
 	private EntityRenderState playerState = null;
 
 	// presentation
+	private final BasicInfo basicInfo;
 	private HudLabel labelRealtime, labelSpeed, labelDistance;
 	private HudLabel[] labelResult;
 
 	private int nextLabelResult = 0;
 
 	private PlayerCar player;
+	private UserProfile userProfile;
 
 	//
 	private final GameRenderer renderer;
@@ -57,11 +62,26 @@ public final class HudPlayerDriftInfo extends HudElement {
 	private boolean began = false;
 	private float scale = 1f;
 
-	public HudPlayerDriftInfo (ScalingStrategy scalingStrategy, PlayerCar player, GameRenderer renderer) {
+	public static class BasicInfo {
+		private Texture flag;
+
+		public BasicInfo (UserProfile profile) {
+			flag = Art.getFlag("it.png");
+		}
+
+		public void render (SpriteBatch batch) {
+			batch.draw(flag, 15, 15);
+		}
+	}
+
+	public HudPlayerDriftInfo (UserProfile userProfile, ScalingStrategy scalingStrategy, PlayerCar player, GameRenderer renderer) {
+		this.userProfile = userProfile;
 		this.player = player;
 		this.renderer = renderer;
 		this.scale = scalingStrategy.invTileMapZoomFactor;
 		playerState = player.state();
+
+		basicInfo = new BasicInfo(userProfile);
 
 		this.carModelWidthPx = Convert.mt2px(player.getCarModel().width);
 		this.carModelLengthPx = Convert.mt2px(player.getCarModel().length);
@@ -119,6 +139,9 @@ public final class HudPlayerDriftInfo extends HudElement {
 
 	@Override
 	public void onRender (SpriteBatch batch) {
+
+		basicInfo.render(batch);
+
 		labelRealtime.setFont(FontFace.Lcd);
 		labelRealtime.setScale(0.5f * renderer.getWorldRenderer().getCameraZoom(), true);
 		bottom(labelRealtime, 80);

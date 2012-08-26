@@ -113,7 +113,7 @@ public abstract class CommonLogic implements GameLogic, CarEvent.Listener, CarSt
 		gameTasksManager.createTasks();
 
 		// player tasks
-		playerTasks = new PlayerGameTasks(gameTasksManager, scalingStrategy);
+		playerTasks = new PlayerGameTasks(userProfile, gameTasksManager, scalingStrategy);
 
 		lapManager = new LapManager(userProfile, gameWorld.trackId);
 		for (int i = 0; i < ReplayManager.MaxReplays; i++) {

@@ -3,6 +3,7 @@ package com.bitfire.uracer.game.logic.helpers;
 
 import com.bitfire.uracer.ScalingStrategy;
 import com.bitfire.uracer.configuration.Config;
+import com.bitfire.uracer.configuration.UserProfile;
 import com.bitfire.uracer.game.logic.LapInfo;
 import com.bitfire.uracer.game.logic.gametasks.GameTasksManager;
 import com.bitfire.uracer.game.logic.gametasks.hud.debug.HudDebug;
@@ -17,8 +18,9 @@ import com.bitfire.uracer.game.rendering.GameRenderer;
 /** Manages the creation and destruction of the player-bound game tasks. */
 public final class PlayerGameTasks {
 
-	private GameTasksManager manager = null;
-	private ScalingStrategy scalingStrategy = null;
+	private final UserProfile userProfile;
+	private final GameTasksManager manager;
+	private final ScalingStrategy scalingStrategy;
 
 	/** keeps track of the concrete player tasks (note that they are all publicly accessible for performance reasons) */
 
@@ -29,7 +31,8 @@ public final class PlayerGameTasks {
 	public PlayerDriftSoundEffect playerDriftSoundFx = null;
 	public PlayerImpactSoundEffect playerImpactSoundFx = null;
 
-	public PlayerGameTasks (GameTasksManager gameTaskManager, ScalingStrategy strategy) {
+	public PlayerGameTasks (UserProfile userProfile, GameTasksManager gameTaskManager, ScalingStrategy strategy) {
+		this.userProfile = userProfile;
 		manager = gameTaskManager;
 		scalingStrategy = strategy;
 	}
@@ -49,7 +52,7 @@ public final class PlayerGameTasks {
 		playerSkidMarks = new PlayerSkidMarks(player, maxSkidMarks, maxLife);
 
 		// hud, player's drift information
-		hudPlayerDriftInfo = new HudPlayerDriftInfo(scalingStrategy, player, renderer);
+		hudPlayerDriftInfo = new HudPlayerDriftInfo(userProfile, scalingStrategy, player, renderer);
 
 		// hud, player's lap info
 		hudLapInfo = new HudLapInfo(scalingStrategy, lapInfo);
@@ -57,8 +60,8 @@ public final class PlayerGameTasks {
 		manager.sound.add(playerDriftSoundFx);
 		manager.sound.add(playerImpactSoundFx);
 		manager.effects.add(playerSkidMarks);
-		manager.hud.addAfterMeshes(hudPlayerDriftInfo);
-		manager.hud.addAfterMeshes(hudLapInfo);
+		manager.hud.addAfterPostProcessing(hudPlayerDriftInfo);
+		manager.hud.addAfterPostProcessing(hudLapInfo);
 
 		// hud-style debug information for various data (player's drift state, number of skid marks particles, ..)
 		if (Config.Debug.RenderHudDebugInfo) {
