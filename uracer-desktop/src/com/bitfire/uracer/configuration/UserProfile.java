@@ -9,11 +9,11 @@ public final class UserProfile {
 
 	public final long userId;
 	public final String userName;
-	public final Nation userNationId;
+	public final String userNationCode;
 
 	public UserProfile () {
 		userId = -1;
 		userName = "Manuel";
-		userNationId = Nation.None;
+		userNationCode = "it";
 	}
 }
