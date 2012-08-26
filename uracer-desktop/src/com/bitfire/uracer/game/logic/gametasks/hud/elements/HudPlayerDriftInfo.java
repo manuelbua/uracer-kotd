@@ -2,8 +2,8 @@
 package com.bitfire.uracer.game.logic.gametasks.hud.elements;
 
 import com.badlogic.gdx.Gdx;
-import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
+import com.badlogic.gdx.graphics.g2d.TextureRegion;
 import com.badlogic.gdx.math.MathUtils;
 import com.badlogic.gdx.math.Vector2;
 import com.bitfire.uracer.ScalingStrategy;
@@ -52,6 +52,7 @@ public final class HudPlayerDriftInfo extends HudElement {
 
 	//
 	private final GameRenderer renderer;
+	private static ScalingStrategy scalingStrategy;
 
 	// gravitation
 	private float carModelWidthPx, carModelLengthPx;
@@ -63,19 +64,30 @@ public final class HudPlayerDriftInfo extends HudElement {
 	private float scale = 1f;
 
 	public static class BasicInfo {
-		private Texture flag;
+		private HudLabel name;
+		private TextureRegion flag;
+		private float borderX, borderY;
+		private float w, h;
 
 		public BasicInfo (UserProfile profile) {
-			flag = Art.getFlag("it.png");
+			name = new HudLabel(scalingStrategy, FontFace.CurseRedYellowBig, profile.userName, true);
+			flag = Art.getFlag("Italy-Flag-128.png");
+			borderX = Convert.scaledPixels(15);
+			borderY = Convert.scaledPixels(5);
+			w = Convert.scaledPixels(80);
+			h = Convert.scaledPixels(80);
+			name.setPosition(w + borderX * 2 + name.halfBoundsWidth, Convert.scaledPixels(42));
 		}
 
 		public void render (SpriteBatch batch) {
-			batch.draw(flag, 15, 15);
+			batch.draw(flag, borderX, borderY, w, h);
+			name.render(batch);
 		}
 	}
 
 	public HudPlayerDriftInfo (UserProfile userProfile, ScalingStrategy scalingStrategy, PlayerCar player, GameRenderer renderer) {
 		this.userProfile = userProfile;
+		HudPlayerDriftInfo.scalingStrategy = scalingStrategy;
 		this.player = player;
 		this.renderer = renderer;
 		this.scale = scalingStrategy.invTileMapZoomFactor;
@@ -145,6 +157,7 @@ public final class HudPlayerDriftInfo extends HudElement {
 		labelRealtime.setFont(FontFace.Lcd);
 		labelRealtime.setScale(0.5f * renderer.getWorldRenderer().getCameraZoom(), true);
 		bottom(labelRealtime, 80);
+		// gravitate(labelRealtime, 90, 0);
 
 		lastRealtimePos.set(labelRealtime.getPosition());
 

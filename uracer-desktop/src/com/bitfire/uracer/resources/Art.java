@@ -191,8 +191,8 @@ public final class Art {
 	// flags
 	//
 
-	public static Texture getFlag (String filename) {
-		FileHandle zip = Gdx.files.internal("data/flags.zip");
+	public static TextureRegion getFlag (String filename) {
+		FileHandle zip = Gdx.files.internal("data/flags-hq.zip");
 		ZipInputStream zin = new ZipInputStream(zip.read());
 		ZipEntry ze = null;
 		try {
@@ -210,7 +210,10 @@ public final class Art {
 					streamBuilder.close();
 					zin.close();
 
-					return new Texture(px);
+					TextureRegion r = new TextureRegion(new Texture(px));
+					r.flip(false, true);
+
+					return r;
 				}
 			}
 		} catch (IOException e) {

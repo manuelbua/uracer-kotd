@@ -26,7 +26,7 @@ public class HudLapInfo extends HudElement {
 // best = new HudLabel(scalingStrategy, FontFace.CurseRedYellowNew, "BEST  TIME\n--.--", true);
 // last = new HudLabel(scalingStrategy, FontFace.CurseRedYellowNew, "LAST  TIME\n--.--", true);
 
-		curr = new HudLabel(scalingStrategy, FontFace.LcdWhite, "999.99", true, 1.5f);
+		curr = new HudLabel(scalingStrategy, FontFace.LcdWhite, "99.99", true, 1.5f);
 		curr.setPosition(Gdx.graphics.getWidth() / 2, Gdx.graphics.getHeight() - curr.halfBoundsHeight - 10 * scale);
 
 // last.setPosition(gridX * 3, 50 * scalingStrategy.invTileMapZoomFactor);
@@ -40,7 +40,7 @@ public class HudLapInfo extends HudElement {
 	@Override
 	public void onTick () {
 		// current time
-		curr.setString(NumberString.format(lapInfo.getElapsedSeconds()));
+		curr.setString(NumberString.format(lapInfo.getElapsedSeconds()),true);
 
 // // best time
 // if (lapInfo.hasBestTrackTimeSeconds()) {
