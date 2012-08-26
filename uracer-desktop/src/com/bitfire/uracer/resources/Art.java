@@ -1,7 +1,13 @@
 
 package com.bitfire.uracer.resources;
 
+import java.io.ByteArrayOutputStream;
+import java.io.IOException;
+import java.util.zip.ZipEntry;
+import java.util.zip.ZipInputStream;
+
 import com.badlogic.gdx.Gdx;
+import com.badlogic.gdx.files.FileHandle;
 import com.badlogic.gdx.graphics.Pixmap;
 import com.badlogic.gdx.graphics.Pixmap.Format;
 import com.badlogic.gdx.graphics.Texture;
@@ -179,6 +185,38 @@ public final class Art {
 	private static void disposeFonts () {
 		debugFont[0][0].getTexture().dispose();
 		fontAtlas.dispose();
+	}
+
+	//
+	// flags
+	//
+
+	public static Texture getFlag (String filename) {
+		FileHandle zip = Gdx.files.internal("data/flags.zip");
+		ZipInputStream zin = new ZipInputStream(zip.read());
+		ZipEntry ze = null;
+		try {
+			while ((ze = zin.getNextEntry()) != null) {
+				if (ze.getName().equals(filename)) {
+					ByteArrayOutputStream streamBuilder = new ByteArrayOutputStream();
+					int bytesRead;
+					byte[] tempBuffer = new byte[8192 * 2];
+					while ((bytesRead = zin.read(tempBuffer)) != -1) {
+						streamBuilder.write(tempBuffer, 0, bytesRead);
+					}
+
+					Pixmap px = new Pixmap(streamBuilder.toByteArray(), 0, streamBuilder.size());
+
+					streamBuilder.close();
+					zin.close();
+
+					return new Texture(px);
+				}
+			}
+		} catch (IOException e) {
+		}
+
+		return null;
 	}
 
 	//
