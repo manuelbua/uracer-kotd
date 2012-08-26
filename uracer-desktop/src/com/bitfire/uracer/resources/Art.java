@@ -191,8 +191,9 @@ public final class Art {
 	// flags
 	//
 
-	public static TextureRegion getFlag (String filename) {
-		FileHandle zip = Gdx.files.internal("data/flags-hq.zip");
+	public static TextureRegion getFlag (String countryCode) {
+		String filename = countryCode + ".png";
+		FileHandle zip = Gdx.files.internal("data/flags.zip");
 		ZipInputStream zin = new ZipInputStream(zip.read());
 		ZipEntry ze = null;
 		try {

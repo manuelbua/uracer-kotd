@@ -71,7 +71,7 @@ public final class HudPlayerDriftInfo extends HudElement {
 
 		public BasicInfo (UserProfile profile) {
 			name = new HudLabel(scalingStrategy, FontFace.CurseRedYellowBig, profile.userName, true);
-			flag = Art.getFlag("Italy-Flag-128.png");
+			flag = Art.getFlag(profile.userCountryCode);
 			borderX = Convert.scaledPixels(15);
 			borderY = Convert.scaledPixels(5);
 			w = Convert.scaledPixels(80);
