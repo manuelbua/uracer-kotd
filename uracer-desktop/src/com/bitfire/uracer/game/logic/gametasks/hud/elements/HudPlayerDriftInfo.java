@@ -125,8 +125,8 @@ public final class HudPlayerDriftInfo extends HudElement {
 
 	@Override
 	public void onTick () {
-// updateLabelRealtime(false);
-		updateLabelRealtime(true);
+		updateLabelRealtime(false);
+// updateLabelRealtime(true);
 	}
 
 	private void updateLabelRealtime (boolean force) {

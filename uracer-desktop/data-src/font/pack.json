@@ -1,7 +1,7 @@
 {
 	pot: false,
-	paddingX: 4,
-	paddingY: 4,
+	paddingX: 0,
+	paddingY: 0,
 	duplicatePadding: false,
 	edgePadding: true,
 	rotation: false,

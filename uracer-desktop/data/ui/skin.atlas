@@ -43,7 +43,7 @@ default-round
   orig: 12, 20
   offset: 0, 0
   index: -1
-check-on
+check-off
   rotate: false
   xy: 51, 35
   size: 14, 14
@@ -52,13 +52,13 @@ check-on
   index: -1
 textfield
   rotate: false
-  xy: 35, 11
+  xy: 51, 35
   size: 14, 14
   split: 3, 3, 3, 3
   orig: 14, 14
   offset: 0, 0
   index: -1
-check-off
+check-on
   rotate: false
   xy: 35, 11
   size: 14, 14
@@ -112,7 +112,7 @@ default-splitpane-vertical
   orig: 3, 5
   offset: 0, 0
   index: -1
-default-rect
+cursor
   rotate: false
   xy: 4, 4
   size: 3, 3
@@ -128,14 +128,15 @@ default-rect-down
   orig: 3, 3
   offset: 0, 0
   index: -1
-selection
+default-pane-noborder
   rotate: false
   xy: 73, 18
   size: 1, 1
+  split: 0, 0, 0, 0
   orig: 1, 1
   offset: 0, 0
   index: -1
-default-select-selection
+default-rect
   rotate: false
   xy: 11, 13
   size: 3, 3
@@ -143,7 +144,7 @@ default-select-selection
   orig: 3, 3
   offset: 0, 0
   index: -1
-cursor
+default-select-selection
   rotate: false
   xy: 11, 6
   size: 3, 3
@@ -151,11 +152,10 @@ cursor
   orig: 3, 3
   offset: 0, 0
   index: -1
-default-pane-noborder
+selection
   rotate: false
   xy: 73, 13
   size: 1, 1
-  split: 0, 0, 0, 0
   orig: 1, 1
   offset: 0, 0
   index: -1
