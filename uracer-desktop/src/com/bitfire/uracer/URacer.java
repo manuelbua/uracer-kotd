@@ -240,7 +240,7 @@ public class URacer implements ApplicationListener {
 				// if( timeMultiplier < 1 )
 				// {
 				// try {
-				// Thread.sleep( 10 );
+				// Thread.sleep( 32 );
 				// } catch( InterruptedException e ) {
 				// }
 				// }
