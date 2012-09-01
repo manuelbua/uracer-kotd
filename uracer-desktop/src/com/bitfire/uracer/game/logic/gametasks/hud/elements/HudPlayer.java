@@ -3,7 +3,6 @@ package com.bitfire.uracer.game.logic.gametasks.hud.elements;
 
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
-import com.badlogic.gdx.graphics.g2d.TextureRegion;
 import com.badlogic.gdx.math.MathUtils;
 import com.badlogic.gdx.math.Vector2;
 import com.bitfire.uracer.ScalingStrategy;
@@ -11,9 +10,11 @@ import com.bitfire.uracer.configuration.UserProfile;
 import com.bitfire.uracer.entities.EntityRenderState;
 import com.bitfire.uracer.game.logic.gametasks.hud.HudElement;
 import com.bitfire.uracer.game.logic.gametasks.hud.HudLabel;
+import com.bitfire.uracer.game.logic.gametasks.hud.Positionable;
+import com.bitfire.uracer.game.logic.gametasks.hud.elements.player.BasicInfo;
+import com.bitfire.uracer.game.logic.gametasks.hud.elements.player.DriftBar;
 import com.bitfire.uracer.game.player.PlayerCar;
 import com.bitfire.uracer.game.rendering.GameRenderer;
-import com.bitfire.uracer.resources.Art;
 import com.bitfire.uracer.resources.BitmapFontFactory.FontFace;
 import com.bitfire.uracer.utils.AMath;
 import com.bitfire.uracer.utils.CarUtils;
@@ -42,6 +43,8 @@ public final class HudPlayer extends HudElement {
 
 	// presentation
 	private final BasicInfo basicInfo;
+	public final DriftBar driftBar;
+
 	private HudLabel labelRealtime, labelSpeed, labelDistance;
 	private HudLabel[] labelResult;
 
@@ -52,7 +55,6 @@ public final class HudPlayer extends HudElement {
 
 	//
 	private final GameRenderer renderer;
-	private static ScalingStrategy scalingStrategy;
 
 	// gravitation
 	private float carModelWidthPx, carModelLengthPx;
@@ -63,65 +65,44 @@ public final class HudPlayer extends HudElement {
 	private boolean began = false;
 	private float scale = 1f;
 
-	/** Displays basic information such as player name, nation flag */
-	public static class BasicInfo {
-		private HudLabel name;
-		private TextureRegion flag;
-		private float borderX, borderY;
-		private float w, h;
-
-		public BasicInfo (UserProfile profile) {
-			name = new HudLabel(scalingStrategy, FontFace.CurseRedYellowBig, profile.userName, true);
-			flag = Art.getFlag(profile.userCountryCode);
-			borderX = Convert.scaledPixels(15);
-			borderY = Convert.scaledPixels(5);
-			w = Convert.scaledPixels(80);
-			h = Convert.scaledPixels(80);
-			name.setPosition(w + borderX * 2 + name.halfBoundsWidth, Convert.scaledPixels(42));
-		}
-
-		public void render (SpriteBatch batch) {
-			batch.draw(flag, borderX, borderY, w, h);
-			name.render(batch);
-		}
-	}
-
 	public HudPlayer (UserProfile userProfile, ScalingStrategy scalingStrategy, PlayerCar player, GameRenderer renderer) {
 		this.userProfile = userProfile;
-		HudPlayer.scalingStrategy = scalingStrategy;
 		this.player = player;
 		this.renderer = renderer;
 		this.scale = scalingStrategy.invTileMapZoomFactor;
 		playerState = player.state();
 
-		basicInfo = new BasicInfo(userProfile);
-
 		this.carModelWidthPx = Convert.mt2px(player.getCarModel().width);
 		this.carModelLengthPx = Convert.mt2px(player.getCarModel().length);
 
+		basicInfo = new BasicInfo(scale, userProfile);
+		driftBar = new DriftBar(scale, carModelLengthPx);
+
 		// labelRealtime role is to display PlayerCar values in real-time!
-		labelRealtime = new HudLabel(scalingStrategy, FontFace.Arcade, "+99.99", false, 0.5f);
+		labelRealtime = new HudLabel(scale, FontFace.Arcade, "+99.99", false, 0.5f);
 		labelRealtime.setAlpha(0);
 		lastRealtimePos.set(0, 0);
 
 		labelResult = new HudLabel[MaxLabelResult];
 		nextLabelResult = 0;
 		for (int i = 0; i < MaxLabelResult; i++) {
-			labelResult[i] = new HudLabel(scalingStrategy, FontFace.CurseRed, "+99.99", false, 0.85f);
+			labelResult[i] = new HudLabel(scale, FontFace.CurseRed, "+99.99", false, 0.85f);
 			labelResult[i].setAlpha(0);
 		}
 
-		labelSpeed = new HudLabel(scalingStrategy, FontFace.Lcd, "", true, 1f);
+		labelSpeed = new HudLabel(scale, FontFace.Lcd, "", true, 1f);
 		labelSpeed.setPosition(Gdx.graphics.getWidth() - Convert.scaledPixels(190),
 			Gdx.graphics.getHeight() - Convert.scaledPixels(110));
 
-		labelDistance = new HudLabel(scalingStrategy, FontFace.Lcd, "", true, 0.85f);
+		labelDistance = new HudLabel(scale, FontFace.Lcd, "", true, 0.85f);
 		labelDistance.setPosition(Gdx.graphics.getWidth() - Convert.scaledPixels(190),
 			Gdx.graphics.getHeight() - Convert.scaledPixels(50));
 	}
 
 	@Override
 	public void dispose () {
+		driftBar.dispose();
+		basicInfo.dispose();
 	}
 
 	@Override
@@ -154,6 +135,8 @@ public final class HudPlayer extends HudElement {
 	public void onRender (SpriteBatch batch) {
 
 		basicInfo.render(batch);
+		bottom(driftBar, 50);
+		driftBar.render(batch, renderer.getWorldRenderer().getCameraZoom());
 
 		labelRealtime.setFont(FontFace.Lcd);
 		labelRealtime.setScale(0.5f * renderer.getWorldRenderer().getCameraZoom(), true);
@@ -184,16 +167,16 @@ public final class HudPlayer extends HudElement {
 	// internal helpers
 	//
 
-	private void bottom (HudLabel label, float distance) {
+	private void bottom (Positionable p, float distance) {
 		float zs = renderer.getWorldRenderer().getCameraZoom();
 
 		tmpg.set(GameRenderer.ScreenUtils.worldPxToScreen(playerState.position));
 		tmpg.y += distance * scale * zs;
-		label.setPosition(tmpg);
+		p.setPosition(tmpg);
 	}
 
-	private void gravitate (HudLabel label, float offsetDegs, float distance) {
-		label.setPosition(gravitate(label.boundsWidth, label.boundsHeight, offsetDegs, distance));
+	private void gravitate (Positionable p, float offsetDegs, float distance) {
+		p.setPosition(gravitate(p.getWidth(), p.getHeight(), offsetDegs, distance));
 	}
 
 	/** Returns a position by placing a point on an imaginary circumference gravitating around the player, applying the specified

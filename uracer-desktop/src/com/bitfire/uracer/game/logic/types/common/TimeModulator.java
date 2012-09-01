@@ -23,8 +23,7 @@ public final class TimeModulator {
 	private Timeline timeSeq;
 
 	public TimeModulator () {
-		timeMultiplier = new BoxedFloat();
-		timeMultiplier.value = 1f;
+		timeMultiplier = new BoxedFloat(1);
 		timeSeq = Timeline.createSequence();
 	}
 

@@ -1,10 +1,21 @@
 
 package com.bitfire.uracer.game.logic.types;
 
+import aurelienribon.tweenengine.BaseTween;
+import aurelienribon.tweenengine.Timeline;
+import aurelienribon.tweenengine.Tween;
+import aurelienribon.tweenengine.TweenCallback;
+import aurelienribon.tweenengine.equations.Quad;
+
 import com.badlogic.gdx.Gdx;
+import com.badlogic.gdx.math.MathUtils;
 import com.badlogic.gdx.utils.Array;
 import com.bitfire.uracer.ScalingStrategy;
+import com.bitfire.uracer.configuration.Config;
 import com.bitfire.uracer.configuration.UserProfile;
+import com.bitfire.uracer.game.Time;
+import com.bitfire.uracer.game.Time.Reference;
+import com.bitfire.uracer.game.logic.gametasks.hud.elements.player.DriftBar;
 import com.bitfire.uracer.game.logic.gametasks.messager.Message.Position;
 import com.bitfire.uracer.game.logic.gametasks.messager.Message.Size;
 import com.bitfire.uracer.game.logic.gametasks.messager.Message.Type;
@@ -12,18 +23,36 @@ import com.bitfire.uracer.game.logic.gametasks.messager.Messager;
 import com.bitfire.uracer.game.logic.replaying.Replay;
 import com.bitfire.uracer.game.rendering.GameRenderer;
 import com.bitfire.uracer.game.rendering.GameWorldRenderer;
+import com.bitfire.uracer.game.tween.GameTweener;
 import com.bitfire.uracer.game.world.GameWorld;
 import com.bitfire.uracer.utils.AMath;
+import com.bitfire.uracer.utils.BoxedFloat;
+import com.bitfire.uracer.utils.BoxedFloatAccessor;
 import com.bitfire.uracer.utils.CarUtils;
 
 public class SinglePlayerLogic extends CommonLogic {
 
 	private Messager messager;
+	private DriftBar driftBar;
+	private BoxedFloat accuDriftSeconds;
+
+	private Time dilationTime = new Time();
+	private Timeline dilationTimeline;
+	private boolean isPenalty;
 
 	public SinglePlayerLogic (UserProfile userProfile, GameWorld gameWorld, GameRenderer gameRenderer,
 		ScalingStrategy scalingStrategy) {
 		super(userProfile, gameWorld, gameRenderer, scalingStrategy);
 		messager = gameTasksManager.messager;
+
+		accuDriftSeconds = new BoxedFloat(0);
+		dilationTime.stop();
+	}
+
+	@Override
+	public void setPlayer (com.bitfire.uracer.game.actors.CarPreset.Type presetType) {
+		super.setPlayer(presetType);
+		driftBar = playerTasks.hudPlayer.driftBar;
 	}
 
 	@Override
@@ -68,6 +97,8 @@ public class SinglePlayerLogic extends CommonLogic {
 
 		// restart all replays
 		restartAllReplays();
+		accuDriftSeconds.value = 0;
+		isPenalty = false;
 	}
 
 	// the game has been reset
@@ -75,6 +106,8 @@ public class SinglePlayerLogic extends CommonLogic {
 	protected void reset () {
 		Gdx.app.log("SinglePlayerLogic", "Resetting game");
 		replayManager.reset();
+		accuDriftSeconds.value = 0;
+		isPenalty = false;
 	}
 
 	// a new Replay from the player is available: note that CommonLogic already perform
@@ -110,6 +143,19 @@ public class SinglePlayerLogic extends CommonLogic {
 	}
 
 	@Override
+	public void tick () {
+		super.tick();
+		updateDriftBar();
+
+		if (accuDriftSeconds.value == 0 && timeDilation) {
+			requestTimeDilationFinish();
+			Gdx.app.log("", "Requesting time modulation to finish");
+		}
+
+// Gdx.app.log("SPL", "drift=" + accuDriftSeconds);
+	}
+
+	@Override
 	protected void discardedReplay (Replay replay) {
 	}
 
@@ -121,18 +167,50 @@ public class SinglePlayerLogic extends CommonLogic {
 	// the player's drift ended
 	@Override
 	public void driftEnds () {
-// Gdx.app.log("SinglePlayerLogic", "drifted for " + playerCar.driftState.driftSeconds() + "s");
+	}
+
+	@Override
+	protected boolean timeDilationAvailable () {
+		return accuDriftSeconds.value > 0;
 	}
 
 	// the player begins slowing down time
 	@Override
 	public void timeDilationBegins () {
+		dilationTime.start();
 	}
 
 	// the player ends slowing down time
 	@Override
 	public void timeDilationEnds () {
+		updateDriftBar();
+// dilationTime.stop();
+// Gdx.app.log("", "dilation=" + dilationTime.elapsed(Reference.AbsoluteSeconds) + ", dec=" + dec);
+		dilationTime.reset();
 	}
+
+	@Override
+	protected void collision () {
+		if (isPenalty) return;
+
+		isPenalty = true;
+
+		GameTweener.stop(accuDriftSeconds);
+		dilationTimeline = Timeline.createSequence();
+		dilationTimeline.push(Tween.to(accuDriftSeconds, BoxedFloatAccessor.VALUE, 500).target(0).ease(Quad.INOUT)).setCallback(
+			penaltyFinished);
+		GameTweener.start(dilationTimeline);
+	}
+
+	private TweenCallback penaltyFinished = new TweenCallback() {
+		@Override
+		public void onEvent (int type, BaseTween<?> source) {
+			switch (type) {
+			case COMPLETE:
+				isPenalty = false;
+			}
+		}
+	};
 
 	@Override
 	protected void lapComplete (boolean firstLap) {
@@ -151,5 +229,26 @@ public class SinglePlayerLogic extends CommonLogic {
 				getGhost(i).setReplay(replays.get(i));
 			}
 		}
+	}
+
+	private void updateDriftBar () {
+		// if a penalty is being applied, then no drift seconds will be counted
+		if (!isPenalty) {
+
+			if (playerCar.driftState.isDrifting) {
+				accuDriftSeconds.value += Config.Physics.PhysicsDt;
+				// Gdx.app.log("", "add=" + Config.Physics.PhysicsDt);
+			}
+
+			if (!dilationTime.isStopped()) {
+				float t = dilationTime.elapsed(Reference.LastAbsoluteSeconds);
+				accuDriftSeconds.value -= t;
+				// Gdx.app.log("", "sub=" + t);
+			}
+
+			accuDriftSeconds.value = MathUtils.clamp(accuDriftSeconds.value, 0, DriftBar.MaxSeconds);
+		}
+
+		driftBar.setSeconds(accuDriftSeconds.value);
 	}
 }

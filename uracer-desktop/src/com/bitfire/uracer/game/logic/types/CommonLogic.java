@@ -77,7 +77,7 @@ public abstract class CommonLogic implements GameLogic, CarEvent.Listener, CarSt
 	protected PlayerGameTasks playerTasks = null;
 
 	// time modulation logic
-	private boolean timeModulation;
+	protected boolean timeDilation;
 	private TimeModulator timeMod = null;
 	private TimeDilateInputMode timeDilateMode;
 
@@ -165,9 +165,13 @@ public abstract class CommonLogic implements GameLogic, CarEvent.Listener, CarSt
 
 	protected abstract void driftEnds ();
 
+	protected abstract boolean timeDilationAvailable ();
+
 	protected abstract void timeDilationBegins ();
 
 	protected abstract void timeDilationEnds ();
+
+	protected abstract void collision ();
 
 	//
 	// SHARED OPERATIONS (Subclass Sandbox pattern)
@@ -184,6 +188,20 @@ public abstract class CommonLogic implements GameLogic, CarEvent.Listener, CarSt
 		restartLogic();
 		resetLogic();
 		reset();
+	}
+
+	/** Request time dilation to begin */
+	protected void requestTimeDilationStart () {
+		timeDilation = true;
+		timeMod.toDilatedTime();
+		timeDilationBegins();
+	}
+
+	/** Request time dilation to end */
+	protected void requestTimeDilationFinish () {
+		timeDilation = false;
+		timeMod.toNormalTime();
+		timeDilationEnds();
 	}
 
 	/** Sets the player from the specified preset */
@@ -310,7 +328,7 @@ public abstract class CommonLogic implements GameLogic, CarEvent.Listener, CarSt
 		gameWorldRenderer.setInitialCameraPositionOrient(playerCar);
 
 		isFirstLap = true;
-		timeModulation = false;
+		timeDilation = false;
 		timeMod.reset();
 		SysTweener.clear();
 		GameTweener.clear();
@@ -452,14 +470,16 @@ public abstract class CommonLogic implements GameLogic, CarEvent.Listener, CarSt
 		switch (timeDilateMode) {
 		case Toggle:
 			if (input.isPressed(Keys.SPACE) || input.isTouched(1)) {
-				timeModulation = !timeModulation;
+				timeDilation = !timeDilation;
 
-				if (timeModulation) {
-					timeMod.toDilatedTime();
-					timeDilationBegins();
+				if (timeDilation) {
+					if (timeDilationAvailable()) {
+						requestTimeDilationStart();
+					} else {
+						timeDilation = false;
+					}
 				} else {
-					timeMod.toNormalTime();
-					timeDilationEnds();
+					requestTimeDilationFinish();
 				}
 			}
 			break;
@@ -467,16 +487,14 @@ public abstract class CommonLogic implements GameLogic, CarEvent.Listener, CarSt
 		case TouchAndRelease:
 
 			if (input.isPressed(Keys.SPACE) || input.isTouched(1)) {
-				if (!timeModulation) {
-					timeModulation = true;
-					timeMod.toDilatedTime();
-					timeDilationBegins();
+				if (!timeDilation && timeDilationAvailable()) {
+					timeDilation = true;
+					requestTimeDilationStart();
 				}
 			} else if (input.isReleased(Keys.SPACE) || input.isUntouched(1)) {
-				if (timeModulation) {
-					timeModulation = false;
-					timeMod.toNormalTime();
-					timeDilationEnds();
+				if (timeDilation) {
+					timeDilation = false;
+					requestTimeDilationFinish();
 				}
 			}
 			break;
@@ -498,11 +516,11 @@ public abstract class CommonLogic implements GameLogic, CarEvent.Listener, CarSt
 			}
 
 			// invalidate time modulation
-			if (timeModulation) {
-				timeModulation = false;
-				timeMod.toNormalTime();
+			if (timeDilation) {
+				requestTimeDilationFinish();
 			}
 
+			collision();
 			break;
 		case onComputeForces:
 			lapManager.record(data.forces);
