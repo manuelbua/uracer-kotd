@@ -8,7 +8,7 @@ import com.bitfire.uracer.game.logic.LapInfo;
 import com.bitfire.uracer.game.logic.gametasks.GameTasksManager;
 import com.bitfire.uracer.game.logic.gametasks.hud.debug.HudDebug;
 import com.bitfire.uracer.game.logic.gametasks.hud.elements.HudLapInfo;
-import com.bitfire.uracer.game.logic.gametasks.hud.elements.HudPlayerDriftInfo;
+import com.bitfire.uracer.game.logic.gametasks.hud.elements.HudPlayer;
 import com.bitfire.uracer.game.logic.gametasks.sounds.effects.PlayerDriftSoundEffect;
 import com.bitfire.uracer.game.logic.gametasks.sounds.effects.PlayerImpactSoundEffect;
 import com.bitfire.uracer.game.logic.gametasks.trackeffects.effects.PlayerSkidMarks;
@@ -24,7 +24,7 @@ public final class PlayerGameTasks {
 
 	/** keeps track of the concrete player tasks (note that they are all publicly accessible for performance reasons) */
 
-	public HudPlayerDriftInfo hudPlayerDriftInfo = null;
+	public HudPlayer hudPlayer = null;
 	public HudLapInfo hudLapInfo = null;
 	public HudDebug hudDebug = null;
 	public PlayerSkidMarks playerSkidMarks = null;
@@ -51,8 +51,8 @@ public final class PlayerGameTasks {
 		float maxLife = Config.isDesktop ? 10 : 3;
 		playerSkidMarks = new PlayerSkidMarks(player, maxSkidMarks, maxLife);
 
-		// hud, player's drift information
-		hudPlayerDriftInfo = new HudPlayerDriftInfo(userProfile, scalingStrategy, player, renderer);
+		// hud, player's information
+		hudPlayer = new HudPlayer(userProfile, scalingStrategy, player, renderer);
 
 		// hud, player's lap info
 		hudLapInfo = new HudLapInfo(scalingStrategy, lapInfo);
@@ -60,7 +60,7 @@ public final class PlayerGameTasks {
 		manager.sound.add(playerDriftSoundFx);
 		manager.sound.add(playerImpactSoundFx);
 		manager.effects.add(playerSkidMarks);
-		manager.hud.addAfterPostProcessing(hudPlayerDriftInfo);
+		manager.hud.addAfterPostProcessing(hudPlayer);
 		manager.hud.addAfterPostProcessing(hudLapInfo);
 
 		// hud-style debug information for various data (player's drift state, number of skid marks particles, ..)
@@ -86,9 +86,9 @@ public final class PlayerGameTasks {
 			playerSkidMarks = null;
 		}
 
-		if (hudPlayerDriftInfo != null) {
-			manager.hud.remove(hudPlayerDriftInfo);
-			hudPlayerDriftInfo = null;
+		if (hudPlayer != null) {
+			manager.hud.remove(hudPlayer);
+			hudPlayer = null;
 		}
 
 		if (hudLapInfo != null) {

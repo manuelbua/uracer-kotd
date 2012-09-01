@@ -26,7 +26,7 @@ import com.bitfire.uracer.game.actors.GhostCar;
 import com.bitfire.uracer.game.logic.gametasks.GameTasksManager;
 import com.bitfire.uracer.game.logic.gametasks.hud.HudLabel;
 import com.bitfire.uracer.game.logic.gametasks.hud.HudLabelAccessor;
-import com.bitfire.uracer.game.logic.gametasks.hud.elements.HudPlayerDriftInfo.EndDriftType;
+import com.bitfire.uracer.game.logic.gametasks.hud.elements.HudPlayer.EndDriftType;
 import com.bitfire.uracer.game.logic.gametasks.messager.Message;
 import com.bitfire.uracer.game.logic.gametasks.messager.MessageAccessor;
 import com.bitfire.uracer.game.logic.helpers.CarFactory;
@@ -523,7 +523,7 @@ public abstract class CommonLogic implements GameLogic, CarEvent.Listener, CarSt
 	public void playerDriftStateEvent (PlayerCar player, PlayerDriftStateEvent.Type type) {
 		switch (type) {
 		case onBeginDrift:
-			playerTasks.hudPlayerDriftInfo.beginDrift();
+			playerTasks.hudPlayer.beginDrift();
 			driftBegins();
 			break;
 		case onEndDrift:
@@ -533,7 +533,7 @@ public abstract class CommonLogic implements GameLogic, CarEvent.Listener, CarSt
 			String msgSeconds = NumberString.format(playerCar.driftState.driftSeconds()) + "  seconds!";
 
 			if (player.driftState.hasCollided) {
-				playerTasks.hudPlayerDriftInfo.endDrift("-" + NumberString.format(driftSeconds), EndDriftType.BadDrift);
+				playerTasks.hudPlayer.endDrift("-" + NumberString.format(driftSeconds), EndDriftType.BadDrift);
 			} else {
 
 // if (driftSeconds >= 1 && driftSeconds < 3f) {
@@ -544,7 +544,7 @@ public abstract class CommonLogic implements GameLogic, CarEvent.Listener, CarSt
 // gameTasksManager.messager.enqueue("UNREAL!\n+" + msgSeconds, 1f, Type.Good, Position.Bottom, Size.Big);
 // }
 
-				playerTasks.hudPlayerDriftInfo.endDrift("+" + NumberString.format(driftSeconds), EndDriftType.GoodDrift);
+				playerTasks.hudPlayer.endDrift("+" + NumberString.format(driftSeconds), EndDriftType.GoodDrift);
 			}
 
 			break;

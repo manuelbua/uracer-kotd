@@ -22,7 +22,7 @@ import com.bitfire.uracer.utils.NumberString;
 import com.bitfire.uracer.utils.VMath;
 
 /** Encapsulates player's drifting information shown on screen */
-public final class HudPlayerDriftInfo extends HudElement {
+public final class HudPlayer extends HudElement {
 	public enum EndDriftType {
 		GoodDrift, BadDrift
 	}
@@ -63,6 +63,7 @@ public final class HudPlayerDriftInfo extends HudElement {
 	private boolean began = false;
 	private float scale = 1f;
 
+	/** Displays basic information such as player name, nation flag */
 	public static class BasicInfo {
 		private HudLabel name;
 		private TextureRegion flag;
@@ -85,9 +86,9 @@ public final class HudPlayerDriftInfo extends HudElement {
 		}
 	}
 
-	public HudPlayerDriftInfo (UserProfile userProfile, ScalingStrategy scalingStrategy, PlayerCar player, GameRenderer renderer) {
+	public HudPlayer (UserProfile userProfile, ScalingStrategy scalingStrategy, PlayerCar player, GameRenderer renderer) {
 		this.userProfile = userProfile;
-		HudPlayerDriftInfo.scalingStrategy = scalingStrategy;
+		HudPlayer.scalingStrategy = scalingStrategy;
 		this.player = player;
 		this.renderer = renderer;
 		this.scale = scalingStrategy.invTileMapZoomFactor;
