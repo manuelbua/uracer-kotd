@@ -277,6 +277,8 @@ public abstract class CommonLogic implements GameLogic, CarEvent.Listener, CarSt
 		player.driftState.event.addListener(this, PlayerDriftStateEvent.Type.onEndDrift);
 		player.event.addListener(this, CarEvent.Type.onCollision);
 		player.event.addListener(this, CarEvent.Type.onComputeForces);
+		player.event.addListener(this, CarEvent.Type.onOutOfTrack);
+		player.event.addListener(this, CarEvent.Type.onBackInTrack);
 	}
 
 	private void unregisterPlayerEvents (PlayerCar player) {
@@ -285,6 +287,8 @@ public abstract class CommonLogic implements GameLogic, CarEvent.Listener, CarSt
 		player.driftState.event.removeListener(this, PlayerDriftStateEvent.Type.onEndDrift);
 		player.event.removeListener(this, CarEvent.Type.onCollision);
 		player.event.removeListener(this, CarEvent.Type.onComputeForces);
+		player.event.removeListener(this, CarEvent.Type.onOutOfTrack);
+		player.event.removeListener(this, CarEvent.Type.onBackInTrack);
 	}
 
 	private void configurePlayer (GameWorld world, Input inputSystem, PlayerCar player) {
@@ -521,6 +525,12 @@ public abstract class CommonLogic implements GameLogic, CarEvent.Listener, CarSt
 			}
 
 			collision();
+			break;
+		case onOutOfTrack:
+			Gdx.app.log("CommonLogic", "out-of-track");
+			break;
+		case onBackInTrack:
+			Gdx.app.log("CommonLogic", "back-in-track");
 			break;
 		case onComputeForces:
 			lapManager.record(data.forces);

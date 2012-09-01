@@ -11,6 +11,7 @@ import com.bitfire.uracer.events.GameRendererEvent;
 import com.bitfire.uracer.game.GameplaySettings;
 import com.bitfire.uracer.game.actors.Car;
 import com.bitfire.uracer.game.actors.CarDescriptor;
+import com.bitfire.uracer.game.actors.CarEvent;
 import com.bitfire.uracer.game.actors.CarForces;
 import com.bitfire.uracer.game.actors.CarPreset;
 import com.bitfire.uracer.game.actors.CarState;
@@ -182,7 +183,7 @@ public class PlayerCar extends Car {
 
 		if (Config.Debug.ApplyCarFrictionFromMap) {
 			updateCarFriction();
-			applyFriction();
+			handleFriction();
 		}
 	}
 
@@ -213,7 +214,8 @@ public class PlayerCar extends Car {
 			int yOnMap = (id >> 2) * (int)gameWorld.map.tileWidth + (int)offset.y;
 
 			int pixel = Art.frictionNature.getPixel(xOnMap, yOnMap);
-			frictionMean.addValue((pixel == -256 ? 0 : -1));
+			boolean inTrack = (pixel == -256);
+			frictionMean.addValue((inTrack ? 0 : -1));
 
 			// Gdx.app.log( "PlayerCar", "xmap=" + xOnMap + ", ymap=" + yOnMap );
 			// Gdx.app.log( "PlayerCar", "mean=" + frictionMean.getMean() + ", pixel=" + pixel + ", xmap=" + xOnMap +
@@ -225,9 +227,21 @@ public class PlayerCar extends Car {
 		}
 	}
 
-	private void applyFriction () {
+	private boolean notifiedOutOfTrack = false;
+
+	private void handleFriction () {
+		boolean outOfTrack = frictionMean.getMean() < -0.3;
+
+		if (outOfTrack && !notifiedOutOfTrack) {
+			notifiedOutOfTrack = true;
+			event.trigger(this, CarEvent.Type.onOutOfTrack);
+		} else if (!outOfTrack && notifiedOutOfTrack) {
+			event.trigger(this, CarEvent.Type.onBackInTrack);
+			notifiedOutOfTrack = false;
+		}
+
 		// FIXME, move these hard-coded values out of here
-		if (frictionMean.getMean() < -0.3 && carDesc.velocity_wc.len2() > 10) {
+		if (outOfTrack && carDesc.velocity_wc.len2() > 10) {
 			carDesc.velocity_wc.mul(dampFriction);
 		}
 	}
