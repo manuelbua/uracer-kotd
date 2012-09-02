@@ -37,7 +37,8 @@ public class SinglePlayerLogic extends CommonLogic {
 	private BoxedFloat accuDriftSeconds;
 
 	private Time dilationTime = new Time();
-	private Timeline dilationTimeline;
+	private Time outOfTrackTime = new Time();
+	private Timeline driftSecondsTimeline;
 	private boolean isPenalty;
 
 	public SinglePlayerLogic (UserProfile userProfile, GameWorld gameWorld, GameRenderer gameRenderer,
@@ -47,6 +48,7 @@ public class SinglePlayerLogic extends CommonLogic {
 
 		accuDriftSeconds = new BoxedFloat(0);
 		dilationTime.stop();
+		outOfTrackTime.stop();
 	}
 
 	@Override
@@ -185,23 +187,10 @@ public class SinglePlayerLogic extends CommonLogic {
 	@Override
 	public void timeDilationEnds () {
 		updateDriftBar();
-// dilationTime.stop();
-// Gdx.app.log("", "dilation=" + dilationTime.elapsed(Reference.AbsoluteSeconds) + ", dec=" + dec);
+		// dilationTime.stop();
+		// Gdx.app.log("", "dilation=" + dilationTime.elapsed(Reference.AbsoluteSeconds) + ", dec=" + dec);
 		dilationTime.reset();
 		driftBar.hideSecondsLabel();
-	}
-
-	@Override
-	protected void collision () {
-		if (isPenalty) return;
-
-		isPenalty = true;
-
-		GameTweener.stop(accuDriftSeconds);
-		dilationTimeline = Timeline.createSequence();
-		dilationTimeline.push(Tween.to(accuDriftSeconds, BoxedFloatAccessor.VALUE, 500).target(0).ease(Quad.INOUT)).setCallback(
-			penaltyFinished);
-		GameTweener.start(dilationTimeline);
 	}
 
 	private TweenCallback penaltyFinished = new TweenCallback() {
@@ -213,6 +202,33 @@ public class SinglePlayerLogic extends CommonLogic {
 			}
 		}
 	};
+
+	@Override
+	protected void collision () {
+		if (isPenalty) return;
+
+		isPenalty = true;
+
+		GameTweener.stop(accuDriftSeconds);
+		driftSecondsTimeline = Timeline.createSequence();
+		driftSecondsTimeline.push(Tween.to(accuDriftSeconds, BoxedFloatAccessor.VALUE, 500).target(0).ease(Quad.INOUT))
+			.setCallback(penaltyFinished);
+		GameTweener.start(driftSecondsTimeline);
+	}
+
+	@Override
+	protected void outOfTrack () {
+		outOfTrackTime.start();
+		driftBar.showSecondsLabel();
+	}
+
+	@Override
+	protected void backInTrack () {
+		updateDriftBar();
+		// Gdx.app.log("SPL", "Player stayed " + outOfTrackTime.elapsed(Reference.AbsoluteSeconds) + " seconds out of track");
+		outOfTrackTime.reset();
+		driftBar.hideSecondsLabel();
+	}
 
 	@Override
 	protected void lapComplete (boolean firstLap) {
@@ -234,21 +250,30 @@ public class SinglePlayerLogic extends CommonLogic {
 	}
 
 	private void updateDriftBar () {
-		// if a penalty is being applied, then no drift seconds will be counted
-		if (!isPenalty) {
+		if (Config.Debug.InfiniteDilationTime) {
+			accuDriftSeconds.value = DriftBar.MaxSeconds;
+		} else {
 
-			if (playerCar.driftState.isDrifting) {
-				accuDriftSeconds.value += Config.Physics.PhysicsDt;
-				// Gdx.app.log("", "add=" + Config.Physics.PhysicsDt);
+			// if a penalty is being applied, then no drift seconds will be counted
+			if (!isPenalty) {
+
+				// earn game seconds by drifting
+				if (playerCar.driftState.isDrifting) {
+					accuDriftSeconds.value += Config.Physics.PhysicsDt;
+				}
+
+				// lose wall-clock seconds while in time dilation
+				if (!dilationTime.isStopped()) {
+					accuDriftSeconds.value -= dilationTime.elapsed(Reference.LastAbsoluteSeconds);
+				}
+
+				// lose wall-clock seconds while out of track
+				if (!outOfTrackTime.isStopped()) {
+					accuDriftSeconds.value -= outOfTrackTime.elapsed(Reference.LastAbsoluteSeconds);
+				}
+
+				accuDriftSeconds.value = MathUtils.clamp(accuDriftSeconds.value, 0, DriftBar.MaxSeconds);
 			}
-
-			if (!dilationTime.isStopped()) {
-				float t = dilationTime.elapsed(Reference.LastAbsoluteSeconds);
-				accuDriftSeconds.value -= t;
-				// Gdx.app.log("", "sub=" + t);
-			}
-
-			accuDriftSeconds.value = MathUtils.clamp(accuDriftSeconds.value, 0, DriftBar.MaxSeconds);
 		}
 
 		driftBar.setSeconds(accuDriftSeconds.value);

@@ -173,6 +173,10 @@ public abstract class CommonLogic implements GameLogic, CarEvent.Listener, CarSt
 
 	protected abstract void collision ();
 
+	protected abstract void outOfTrack ();
+
+	protected abstract void backInTrack ();
+
 	//
 	// SHARED OPERATIONS (Subclass Sandbox pattern)
 	//
@@ -527,10 +531,10 @@ public abstract class CommonLogic implements GameLogic, CarEvent.Listener, CarSt
 			collision();
 			break;
 		case onOutOfTrack:
-			Gdx.app.log("CommonLogic", "out-of-track");
+			outOfTrack();
 			break;
 		case onBackInTrack:
-			Gdx.app.log("CommonLogic", "back-in-track");
+			backInTrack();
 			break;
 		case onComputeForces:
 			lapManager.record(data.forces);
