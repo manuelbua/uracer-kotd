@@ -23,6 +23,10 @@ public final class HudLabel extends Positionable {
 	private final float invTileZoom;;
 	private boolean isStatic;
 
+	// show queue logic
+	private int showSemaphore;
+	private boolean showing;
+
 	public HudLabel (float invTilemapZoomFactor, FontFace fontFace, String string, boolean isStatic, float scale) {
 		this.invTileZoom = invTilemapZoomFactor;
 		what = string;
@@ -30,6 +34,9 @@ public final class HudLabel extends Positionable {
 		this.isStatic = isStatic;
 		this.font = BitmapFontFactory.get(fontFace);
 		setScale(scale, true);
+
+		showSemaphore = 1;
+		showing = true;
 	}
 
 	public HudLabel (float invTilemapZoomFactor, FontFace fontFace, String string, boolean isStatic) {
@@ -100,6 +107,17 @@ public final class HudLabel extends Positionable {
 		}
 	}
 
+	/** Performs show-queue logic */
+	public void updateShowQueue () {
+		if (showSemaphore > 0 && !showing) {
+			showing = true;
+			fadeIn(300);
+		} else if (showSemaphore == 0 && showing) {
+			showing = false;
+			fadeOut(300);
+		}
+	}
+
 	public void render (SpriteBatch batch) {
 		if (alpha > 0) {
 			if (isStatic) {
@@ -114,6 +132,18 @@ public final class HudLabel extends Positionable {
 			font.drawMultiLine(batch, what, position.x - halfBounds.x, position.y - halfBounds.y);
 
 			// font.setColor( 1, 1, 1, 1 );
+		}
+	}
+
+	/** queue operations */
+	public void queueShow () {
+		showSemaphore++;
+	}
+
+	public void queueHide () {
+		showSemaphore--;
+		if (showSemaphore < 0) {
+			showSemaphore = 0;
 		}
 	}
 

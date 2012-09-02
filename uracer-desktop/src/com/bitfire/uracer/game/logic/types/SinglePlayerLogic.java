@@ -178,6 +178,7 @@ public class SinglePlayerLogic extends CommonLogic {
 	@Override
 	public void timeDilationBegins () {
 		dilationTime.start();
+		driftBar.showSecondsLabel();
 	}
 
 	// the player ends slowing down time
@@ -187,6 +188,7 @@ public class SinglePlayerLogic extends CommonLogic {
 // dilationTime.stop();
 // Gdx.app.log("", "dilation=" + dilationTime.elapsed(Reference.AbsoluteSeconds) + ", dec=" + dec);
 		dilationTime.reset();
+		driftBar.hideSecondsLabel();
 	}
 
 	@Override
