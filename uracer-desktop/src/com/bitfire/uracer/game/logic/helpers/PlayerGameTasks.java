@@ -60,13 +60,13 @@ public final class PlayerGameTasks {
 		manager.sound.add(playerDriftSoundFx);
 		manager.sound.add(playerImpactSoundFx);
 		manager.effects.add(playerSkidMarks);
-		manager.hud.addAfterPostProcessing(hudPlayer);
-		manager.hud.addAfterPostProcessing(hudLapInfo);
+		manager.hud.addBeforePostProcessing(hudPlayer);
+		manager.hud.addBeforePostProcessing(hudLapInfo);
 
 		// hud-style debug information for various data (player's drift state, number of skid marks particles, ..)
 		if (Config.Debug.RenderHudDebugInfo) {
 			hudDebug = new HudDebug(player, player.driftState, playerSkidMarks /* can be null */);
-			manager.hud.addAfterMeshes(hudDebug);
+			manager.hud.addBeforePostProcessing(hudDebug);
 		}
 	}
 
