@@ -12,15 +12,17 @@ import com.bitfire.uracer.utils.Convert;
 public final class CarRenderer {
 	private Sprite facet;
 	private Sprite ambientOcclusion;
-	private Sprite selector;
 	private TextureRegion region;
 	private float alpha;
 	private ShaderProgram shader;
 
+	// locally cached values
+	private float occlusionOffX, occlusionOffY;
+	private float facetOffX, facetOffY;
+
 	public CarRenderer (CarModel model, CarPreset.Type type) {
 		facet = new Sprite();
 		ambientOcclusion = new Sprite();
-		selector = new Sprite();
 		shader = null;
 		setAspect(model, type);
 	}
@@ -32,16 +34,17 @@ public final class CarRenderer {
 		facet.setSize(Convert.mt2px(model.width), Convert.mt2px(model.length));
 		facet.setOrigin(facet.getWidth() / 2, facet.getHeight() / 2);
 
+		facetOffX = facet.getOriginX();
+		facetOffY = facet.getOriginY();
+
 		// ambient occlusion
 		ambientOcclusion.setRegion(Art.carAmbientOcclusion);
 		ambientOcclusion.setSize(facet.getWidth(), facet.getHeight());
 		ambientOcclusion.setScale(2f, 2.3f);
 		ambientOcclusion.setOrigin(ambientOcclusion.getWidth() / 2, ambientOcclusion.getHeight() / 2);
 
-		// selector
-		selector.setRegion(Art.cars.findRegion("selector"));
-		selector.setSize(facet.getWidth() * 1.4f, facet.getHeight() * 1.4f);
-		selector.setOrigin(selector.getWidth() / 2, selector.getHeight() / 2);
+		occlusionOffX = ambientOcclusion.getOriginX();
+		occlusionOffY = ambientOcclusion.getOriginY();
 	}
 
 	public void setShader (ShaderProgram program) {
@@ -77,14 +80,13 @@ public final class CarRenderer {
 // }
 
 	public void renderShadows (SpriteBatch batch, EntityRenderState state) {
-		ambientOcclusion.setPosition(state.position.x - ambientOcclusion.getOriginX(),
-			state.position.y - ambientOcclusion.getOriginY());
+		ambientOcclusion.setPosition(state.position.x - occlusionOffX, state.position.y - occlusionOffY);
 		ambientOcclusion.setRotation(state.orientation);
 		ambientOcclusion.draw(batch, 0.65f * alpha);
 	}
 
 	public void render (SpriteBatch batch, EntityRenderState state) {
-		facet.setPosition(state.position.x - facet.getOriginX(), state.position.y - facet.getOriginY());
+		facet.setPosition(state.position.x - facetOffX, state.position.y - facetOffY);
 		facet.setRotation(state.orientation);
 
 		if (shader != null) {
@@ -92,11 +94,6 @@ public final class CarRenderer {
 		}
 
 		facet.draw(batch, alpha);
-
-		selector.setPosition(state.position.x - selector.getOriginX(), state.position.y - selector.getOriginY());
-		selector.setRotation(state.orientation);
-		selector.setColor(1, 0.05f, 0.05f, 1);
-		selector.draw(batch);
 
 		if (shader != null) {
 			batch.setShader(null);
