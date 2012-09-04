@@ -104,8 +104,9 @@ public class DriftBar extends Positionable implements Disposable {
 		float hh = (height * cameraZoom);
 		batch.draw(texture, x, y, ww, hh);
 
+		labelSeconds.setScale(0.5f * cameraZoom, false);
 		labelSeconds.setString(NumberString.format(seconds) + "s", true);
-		labelSeconds.setPosition(position.x, position.y + 20);
+		labelSeconds.setPosition(position.x, position.y + Convert.scaledPixels(20) * cameraZoom);
 		labelSeconds.render(batch);
 	}
 }
