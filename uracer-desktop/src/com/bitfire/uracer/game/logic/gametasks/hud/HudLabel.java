@@ -9,36 +9,52 @@ import aurelienribon.tweenengine.equations.Quint;
 import com.badlogic.gdx.graphics.g2d.BitmapFont;
 import com.badlogic.gdx.graphics.g2d.BitmapFont.TextBounds;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
-import com.badlogic.gdx.math.Vector2;
-import com.bitfire.uracer.ScalingStrategy;
 import com.bitfire.uracer.game.tween.GameTweener;
+import com.bitfire.uracer.resources.BitmapFontFactory;
+import com.bitfire.uracer.resources.BitmapFontFactory.FontFace;
 
-public final class HudLabel {
-	public float x, y;
+public final class HudLabel extends Positionable {
 	public float alpha;
-	public TextBounds bounds = new TextBounds();
-	public float halfBoundsWidth, halfBoundsHeight;
-	public float boundsWidth, boundsHeight;
+	public TextBounds textBounds = new TextBounds();
 
 	private String what;
 	private BitmapFont font;
 	private float scale;
-	private ScalingStrategy scalingStrategy;
+	private final float invTileZoom;;
+	private boolean isStatic;
 
-	public HudLabel (ScalingStrategy scalingStrategy, BitmapFont font, String string, float scale) {
-		this.scalingStrategy = scalingStrategy;
-		this.font = font;
+	// show queue logic
+	private int showSemaphore;
+	private boolean showing;
+
+	public HudLabel (float invTilemapZoomFactor, FontFace fontFace, String string, boolean isStatic, float scale) {
+		this.invTileZoom = invTilemapZoomFactor;
 		what = string;
 		alpha = 1f;
+		this.isStatic = isStatic;
+		this.font = BitmapFontFactory.get(fontFace);
 		setScale(scale, true);
+
+		showSemaphore = 1;
+		showing = true;
 	}
 
-	public HudLabel (ScalingStrategy scalingStrategy, BitmapFont font, String string) {
-		this(scalingStrategy, font, string, 1.0f);
+	public HudLabel (float invTilemapZoomFactor, FontFace fontFace, String string, boolean isStatic) {
+		this(invTilemapZoomFactor, fontFace, string, isStatic, 1.0f);
 	}
 
 	public boolean isVisible () {
 		return (alpha > 0);
+	}
+
+	// one should avoid rendering artifacts when possible and set this to true
+	public void setStatic (boolean isStatic) {
+		this.isStatic = isStatic;
+	}
+
+	public void setFont (FontFace fontFace) {
+		this.font = BitmapFontFactory.get(fontFace);
+		recomputeBounds();
 	}
 
 	public void setString (String string) {
@@ -52,50 +68,15 @@ public final class HudLabel {
 		}
 	}
 
-	public void setPosition (float posX, float posY) {
-		x = posX - halfBoundsWidth;
-		y = posY - halfBoundsHeight;
-	}
-
-	public void setPosition (Vector2 position) {
-		x = position.x - halfBoundsWidth;
-		y = position.y - halfBoundsHeight;
-	}
-
-	private Vector2 tmpos = new Vector2();
-
-	public Vector2 getPosition () {
-		tmpos.set(x + halfBoundsWidth, y + halfBoundsHeight);
-		return tmpos;
-	}
-
 	public void recomputeBounds () {
-		font.setScale(scale * scalingStrategy.invTileMapZoomFactor);
-		bounds.set(font.getMultiLineBounds(what));
-		halfBoundsWidth = bounds.width * 0.5f;
-		halfBoundsHeight = bounds.height * 0.5f;
-		boundsWidth = bounds.width;
-		boundsHeight = bounds.height;
+		font.setScale(scale * invTileZoom);
+		textBounds.set(font.getMultiLineBounds(what));
+		bounds.set(textBounds.width, textBounds.height);
+		halfBounds.set(textBounds.width * 0.5f, textBounds.height * 0.5f);
 	}
 
-	public TextBounds getBounds () {
-		return bounds;
-	}
-
-	public float getX () {
-		return x + halfBoundsWidth;
-	}
-
-	public float getY () {
-		return y + halfBoundsHeight;
-	}
-
-	public void setX (float v) {
-		x = v - halfBoundsWidth;
-	}
-
-	public void setY (float v) {
-		y = v - halfBoundsHeight;
+	public TextBounds getTextBounds () {
+		return textBounds;
 	}
 
 	public float getAlpha () {
@@ -119,21 +100,50 @@ public final class HudLabel {
 		setScale(scale, true);
 	}
 
-	private void setScale (float scale, boolean recomputeBounds) {
+	public void setScale (float scale, boolean recomputeBounds) {
 		this.scale = scale;
 		if (recomputeBounds) {
 			recomputeBounds();
 		}
 	}
 
+	/** Performs show-queue logic */
+	public void updateShowQueue () {
+		if (showSemaphore > 0 && !showing) {
+			showing = true;
+			fadeIn(300);
+		} else if (showSemaphore == 0 && showing) {
+			showing = false;
+			fadeOut(300);
+		}
+	}
+
 	public void render (SpriteBatch batch) {
 		if (alpha > 0) {
-			font.setScale(scale * scalingStrategy.invTileMapZoomFactor);
+			if (isStatic) {
+				font.setUseIntegerPositions(true);
+			} else {
+				font.setUseIntegerPositions(false);
+			}
+
+			font.setScale(scale * invTileZoom);
 			font.setColor(1, 1, 1, alpha);
 
-			font.drawMultiLine(batch, what, x, y);
+			font.drawMultiLine(batch, what, position.x - halfBounds.x, position.y - halfBounds.y);
 
 			// font.setColor( 1, 1, 1, 1 );
+		}
+	}
+
+	/** queue operations */
+	public void queueShow () {
+		showSemaphore++;
+	}
+
+	public void queueHide () {
+		showSemaphore--;
+		if (showSemaphore < 0) {
+			showSemaphore = 0;
 		}
 	}
 
@@ -152,13 +162,13 @@ public final class HudLabel {
 	public void slide (boolean slideUp) {
 		setScale(1f, true);
 
-		setPosition(getPosition().x, getPosition().y + 50);
-		float targetNearX = getPosition().x;
-		float targetNearY = getPosition().y;
-		float targetFarX = getPosition().x;
-		float targetFarY = getPosition().y - 100;
+		position.y += 50;
+		float targetNearX = position.x;
+		float targetNearY = position.y;
+		float targetFarX = position.x;
+		float targetFarY = position.y - 100;
 		if (!slideUp) {
-			targetFarY = getPosition().y + 100;
+			targetFarY = position.y + 100;
 		}
 
 		GameTweener

@@ -74,24 +74,26 @@ public final class Config {
 		public static boolean TraverseWalls;
 		public static boolean ApplyCarFrictionFromMap;
 		public static boolean FrustumCulling;
+		public static boolean InfiniteDilationTime;
 
 		public static void asDefault () {
 
 			UseDebugHelper = true;
 			RenderBox2DWorldWireframe = false;
-			RenderPlayerDebugInfo = Config.isDesktop;
+			RenderPlayerDebugInfo = false;
 			RenderHudDebugInfo = Config.isDesktop;
 			RenderDebugInfoFpsStats = true;
 			RenderDebugInfoGraphics = true;
 			RenderDebugInfoMemoryStats = Config.isDesktop;
 			RenderDebugInfoMeshStats = Config.isDesktop;
-			RenderDebugInfoPostProcessor = true;
+			RenderDebugInfoPostProcessor = false;
 			Render3DBoundingBoxes = false;
 			RenderDebugDrawsInTransitions = true;
 
 			TraverseWalls = false;
 			ApplyCarFrictionFromMap = true;
 			FrustumCulling = true;
+			InfiniteDilationTime = false;
 		}
 
 		private Debug () {

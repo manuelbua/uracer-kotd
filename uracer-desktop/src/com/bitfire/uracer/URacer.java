@@ -17,6 +17,7 @@ import com.bitfire.uracer.game.tween.SysTweener;
 import com.bitfire.uracer.game.world.models.ModelFactory;
 import com.bitfire.uracer.game.world.models.OrthographicAlignedStillModel;
 import com.bitfire.uracer.resources.Art;
+import com.bitfire.uracer.resources.BitmapFontFactory;
 import com.bitfire.uracer.resources.Sounds;
 import com.bitfire.uracer.screen.ScreenFactory;
 import com.bitfire.uracer.screen.ScreenManager;
@@ -111,6 +112,7 @@ public class URacer implements ApplicationListener {
 		// factors)
 		scalingStrategy = new ScalingStrategy(new Vector2(1280, 800), 70f, 224, 1f);
 
+		BitmapFontFactory.init(scalingStrategy);
 		ScreenFactory screenFactory = new GameScreensFactory(scalingStrategy);
 		TransitionFactory.init(screenFactory);
 
@@ -120,7 +122,7 @@ public class URacer implements ApplicationListener {
 		UserPreferences.load();
 
 		Convert.init(scalingStrategy.tileMapZoomFactor, Config.Physics.PixelsPerMeter);
-		Art.init(scalingStrategy.invTileMapZoomFactor);
+		Art.init();
 		SpriteBatchUtils.init(Art.debugFont, Art.DebugFontWidth);
 		Sounds.init();
 
@@ -137,8 +139,8 @@ public class URacer implements ApplicationListener {
 
 		screenMgr = new ScreenManager(screenFactory);
 
-		// screenMgr.setScreen( ScreenType.GameScreen, TransitionType.Fader, 500 );
-		screenMgr.setScreen(ScreenType.MainScreen, TransitionType.CrossFader, 500);
+		screenMgr.setScreen(ScreenType.GameScreen, TransitionType.Fader, 500);
+		// screenMgr.setScreen(ScreenType.MainScreen, TransitionType.CrossFader, 500);
 		// screenMgr.setScreen( ScreenType.OptionsScreen, TransitionType.CrossFader, 500 );
 
 		// Initialize the timers after creating the game screen, so that there
@@ -159,6 +161,7 @@ public class URacer implements ApplicationListener {
 		ModelFactory.dispose();
 		screenMgr.dispose();
 		TransitionFactory.dispose();
+		BitmapFontFactory.dispose();
 
 		Sounds.dispose();
 		Art.dispose();
@@ -237,7 +240,7 @@ public class URacer implements ApplicationListener {
 				// if( timeMultiplier < 1 )
 				// {
 				// try {
-				// Thread.sleep( 10 );
+				// Thread.sleep( 32 );
 				// } catch( InterruptedException e ) {
 				// }
 				// }

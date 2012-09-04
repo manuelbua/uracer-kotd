@@ -13,6 +13,7 @@ import com.bitfire.uracer.configuration.Gameplay;
 import com.bitfire.uracer.configuration.Gameplay.TimeDilateInputMode;
 import com.bitfire.uracer.configuration.UserPreferences;
 import com.bitfire.uracer.configuration.UserPreferences.Preference;
+import com.bitfire.uracer.configuration.UserProfile;
 import com.bitfire.uracer.game.DebugHelper;
 import com.bitfire.uracer.game.GameLogic;
 import com.bitfire.uracer.game.GameplaySettings;
@@ -25,11 +26,8 @@ import com.bitfire.uracer.game.actors.GhostCar;
 import com.bitfire.uracer.game.logic.gametasks.GameTasksManager;
 import com.bitfire.uracer.game.logic.gametasks.hud.HudLabel;
 import com.bitfire.uracer.game.logic.gametasks.hud.HudLabelAccessor;
-import com.bitfire.uracer.game.logic.gametasks.hud.elements.HudPlayerDriftInfo.EndDriftType;
+import com.bitfire.uracer.game.logic.gametasks.hud.elements.HudPlayer.EndDriftType;
 import com.bitfire.uracer.game.logic.gametasks.messager.Message;
-import com.bitfire.uracer.game.logic.gametasks.messager.Message.Position;
-import com.bitfire.uracer.game.logic.gametasks.messager.Message.Size;
-import com.bitfire.uracer.game.logic.gametasks.messager.Message.Type;
 import com.bitfire.uracer.game.logic.gametasks.messager.MessageAccessor;
 import com.bitfire.uracer.game.logic.helpers.CarFactory;
 import com.bitfire.uracer.game.logic.helpers.PlayerGameTasks;
@@ -61,11 +59,12 @@ public abstract class CommonLogic implements GameLogic, CarEvent.Listener, CarSt
 	protected GameWorld gameWorld = null;
 
 	// rendering
-	// private GameRenderer gameRenderer = null;
+	private GameRenderer gameRenderer = null;
 	protected GameWorldRenderer gameWorldRenderer = null;
 	protected PostProcessing postProcessing = null;
 
 	// player
+	protected final UserProfile userProfile;
 	protected PlayerCar playerCar = null;
 	protected GhostCar[] ghostCars = new GhostCar[ReplayManager.MaxReplays];
 
@@ -78,15 +77,16 @@ public abstract class CommonLogic implements GameLogic, CarEvent.Listener, CarSt
 	protected PlayerGameTasks playerTasks = null;
 
 	// time modulation logic
-	private boolean timeModulation;
+	protected boolean timeDilation;
 	private TimeModulator timeMod = null;
 	private TimeDilateInputMode timeDilateMode;
 
 	protected ReplayManager replayManager;
 
-	public CommonLogic (GameWorld gameWorld, GameRenderer gameRenderer, ScalingStrategy scalingStrategy) {
+	public CommonLogic (UserProfile userProfile, GameWorld gameWorld, GameRenderer gameRenderer, ScalingStrategy scalingStrategy) {
+		this.userProfile = userProfile;
 		this.gameWorld = gameWorld;
-		// this.gameRenderer = gameRenderer;
+		this.gameRenderer = gameRenderer;
 		this.gameWorldRenderer = gameRenderer.getWorldRenderer();
 		this.input = URacer.Game.getInputSystem();
 		timeDilateMode = Gameplay.TimeDilateInputMode.valueOf(UserPreferences.string(Preference.TimeDilateInputMode));
@@ -113,14 +113,14 @@ public abstract class CommonLogic implements GameLogic, CarEvent.Listener, CarSt
 		gameTasksManager.createTasks();
 
 		// player tasks
-		playerTasks = new PlayerGameTasks(gameTasksManager, scalingStrategy);
+		playerTasks = new PlayerGameTasks(userProfile, gameTasksManager, scalingStrategy);
 
-		lapManager = new LapManager(gameWorld.trackId);
+		lapManager = new LapManager(userProfile, gameWorld.trackId);
 		for (int i = 0; i < ReplayManager.MaxReplays; i++) {
 			ghostCars[i] = CarFactory.createGhost(i, gameWorld, CarPreset.Type.L1_GoblinOrange);
 		}
 
-		replayManager = new ReplayManager(gameWorld.trackId);
+		replayManager = new ReplayManager(userProfile, gameWorld.trackId);
 
 		// messager.show( "COOL STUFF!", 60, Message.Type.Information,
 		// MessagePosition.Bottom, MessageSize.Big );
@@ -165,9 +165,17 @@ public abstract class CommonLogic implements GameLogic, CarEvent.Listener, CarSt
 
 	protected abstract void driftEnds ();
 
+	protected abstract boolean timeDilationAvailable ();
+
 	protected abstract void timeDilationBegins ();
 
 	protected abstract void timeDilationEnds ();
+
+	protected abstract void collision ();
+
+	protected abstract void outOfTrack ();
+
+	protected abstract void backInTrack ();
 
 	//
 	// SHARED OPERATIONS (Subclass Sandbox pattern)
@@ -186,6 +194,20 @@ public abstract class CommonLogic implements GameLogic, CarEvent.Listener, CarSt
 		reset();
 	}
 
+	/** Request time dilation to begin */
+	protected void requestTimeDilationStart () {
+		timeDilation = true;
+		timeMod.toDilatedTime();
+		timeDilationBegins();
+	}
+
+	/** Request time dilation to end */
+	protected void requestTimeDilationFinish () {
+		timeDilation = false;
+		timeMod.toNormalTime();
+		timeDilationEnds();
+	}
+
 	/** Sets the player from the specified preset */
 	@Override
 	public void setPlayer (CarPreset.Type presetType) {
@@ -199,7 +221,7 @@ public abstract class CommonLogic implements GameLogic, CarEvent.Listener, CarSt
 		configurePlayer(gameWorld, input /* gameTasksManager.input */, playerCar);
 		Gdx.app.log("GameLogic", "Player configured");
 
-		playerTasks.createTasks(playerCar, lapManager.getLapInfo());
+		playerTasks.createTasks(playerCar, lapManager.getLapInfo(), gameRenderer);
 		Gdx.app.log("GameLogic", "Game tasks created and configured");
 
 		registerPlayerEvents(playerCar);
@@ -259,6 +281,8 @@ public abstract class CommonLogic implements GameLogic, CarEvent.Listener, CarSt
 		player.driftState.event.addListener(this, PlayerDriftStateEvent.Type.onEndDrift);
 		player.event.addListener(this, CarEvent.Type.onCollision);
 		player.event.addListener(this, CarEvent.Type.onComputeForces);
+		player.event.addListener(this, CarEvent.Type.onOutOfTrack);
+		player.event.addListener(this, CarEvent.Type.onBackInTrack);
 	}
 
 	private void unregisterPlayerEvents (PlayerCar player) {
@@ -267,6 +291,8 @@ public abstract class CommonLogic implements GameLogic, CarEvent.Listener, CarSt
 		player.driftState.event.removeListener(this, PlayerDriftStateEvent.Type.onEndDrift);
 		player.event.removeListener(this, CarEvent.Type.onCollision);
 		player.event.removeListener(this, CarEvent.Type.onComputeForces);
+		player.event.removeListener(this, CarEvent.Type.onOutOfTrack);
+		player.event.removeListener(this, CarEvent.Type.onBackInTrack);
 	}
 
 	private void configurePlayer (GameWorld world, Input inputSystem, PlayerCar player) {
@@ -310,7 +336,7 @@ public abstract class CommonLogic implements GameLogic, CarEvent.Listener, CarSt
 		gameWorldRenderer.setInitialCameraPositionOrient(playerCar);
 
 		isFirstLap = true;
-		timeModulation = false;
+		timeDilation = false;
 		timeMod.reset();
 		SysTweener.clear();
 		GameTweener.clear();
@@ -452,14 +478,16 @@ public abstract class CommonLogic implements GameLogic, CarEvent.Listener, CarSt
 		switch (timeDilateMode) {
 		case Toggle:
 			if (input.isPressed(Keys.SPACE) || input.isTouched(1)) {
-				timeModulation = !timeModulation;
+				timeDilation = !timeDilation;
 
-				if (timeModulation) {
-					timeMod.toDilatedTime();
-					timeDilationBegins();
+				if (timeDilation) {
+					if (timeDilationAvailable()) {
+						requestTimeDilationStart();
+					} else {
+						timeDilation = false;
+					}
 				} else {
-					timeMod.toNormalTime();
-					timeDilationEnds();
+					requestTimeDilationFinish();
 				}
 			}
 			break;
@@ -467,16 +495,14 @@ public abstract class CommonLogic implements GameLogic, CarEvent.Listener, CarSt
 		case TouchAndRelease:
 
 			if (input.isPressed(Keys.SPACE) || input.isTouched(1)) {
-				if (!timeModulation) {
-					timeModulation = true;
-					timeMod.toDilatedTime();
-					timeDilationBegins();
+				if (!timeDilation && timeDilationAvailable()) {
+					timeDilation = true;
+					requestTimeDilationStart();
 				}
 			} else if (input.isReleased(Keys.SPACE) || input.isUntouched(1)) {
-				if (timeModulation) {
-					timeModulation = false;
-					timeMod.toNormalTime();
-					timeDilationEnds();
+				if (timeDilation) {
+					timeDilation = false;
+					requestTimeDilationFinish();
 				}
 			}
 			break;
@@ -498,11 +524,17 @@ public abstract class CommonLogic implements GameLogic, CarEvent.Listener, CarSt
 			}
 
 			// invalidate time modulation
-			if (timeModulation) {
-				timeModulation = false;
-				timeMod.toNormalTime();
+			if (timeDilation) {
+				requestTimeDilationFinish();
 			}
 
+			collision();
+			break;
+		case onOutOfTrack:
+			outOfTrack();
+			break;
+		case onBackInTrack:
+			backInTrack();
 			break;
 		case onComputeForces:
 			lapManager.record(data.forces);
@@ -523,7 +555,7 @@ public abstract class CommonLogic implements GameLogic, CarEvent.Listener, CarSt
 	public void playerDriftStateEvent (PlayerCar player, PlayerDriftStateEvent.Type type) {
 		switch (type) {
 		case onBeginDrift:
-			playerTasks.hudPlayerDriftInfo.beginDrift();
+			playerTasks.hudPlayer.beginDrift();
 			driftBegins();
 			break;
 		case onEndDrift:
@@ -533,18 +565,18 @@ public abstract class CommonLogic implements GameLogic, CarEvent.Listener, CarSt
 			String msgSeconds = NumberString.format(playerCar.driftState.driftSeconds()) + "  seconds!";
 
 			if (player.driftState.hasCollided) {
-				playerTasks.hudPlayerDriftInfo.endDrift("-" + NumberString.format(driftSeconds), EndDriftType.BadDrift);
+				playerTasks.hudPlayer.endDrift("-" + NumberString.format(driftSeconds), EndDriftType.BadDrift);
 			} else {
 
-				if (driftSeconds >= 1 && driftSeconds < 3f) {
-					gameTasksManager.messager.enqueue("NICE ONE!\n+" + msgSeconds, 1f, Type.Good, Position.Bottom, Size.Big);
-				} else if (driftSeconds >= 3f && driftSeconds < 5f) {
-					gameTasksManager.messager.enqueue("FANTASTIC!\n+" + msgSeconds, 1f, Type.Good, Position.Bottom, Size.Big);
-				} else if (driftSeconds >= 5f) {
-					gameTasksManager.messager.enqueue("UNREAL!\n+" + msgSeconds, 1f, Type.Good, Position.Bottom, Size.Big);
-				}
+// if (driftSeconds >= 1 && driftSeconds < 3f) {
+// gameTasksManager.messager.enqueue("NICE ONE!\n+" + msgSeconds, 1f, Type.Good, Position.Bottom, Size.Big);
+// } else if (driftSeconds >= 3f && driftSeconds < 5f) {
+// gameTasksManager.messager.enqueue("FANTASTIC!\n+" + msgSeconds, 1f, Type.Good, Position.Bottom, Size.Big);
+// } else if (driftSeconds >= 5f) {
+// gameTasksManager.messager.enqueue("UNREAL!\n+" + msgSeconds, 1f, Type.Good, Position.Bottom, Size.Big);
+// }
 
-				playerTasks.hudPlayerDriftInfo.endDrift("+" + NumberString.format(driftSeconds), EndDriftType.GoodDrift);
+				playerTasks.hudPlayer.endDrift("+" + NumberString.format(driftSeconds), EndDriftType.GoodDrift);
 			}
 
 			break;

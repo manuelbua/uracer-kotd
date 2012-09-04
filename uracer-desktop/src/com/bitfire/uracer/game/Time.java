@@ -11,7 +11,7 @@ import com.bitfire.uracer.game.task.TaskManagerEvent.Order;
  * @author bmanuel */
 public final class Time extends Task {
 	public enum Reference {
-		AbsoluteSeconds, TickSeconds, NumberOfTicks
+		AbsoluteSeconds, LastAbsoluteSeconds, TickSeconds, NumberOfTicks
 	}
 
 	private static final float oneOnOneBillion = 1.0f / 1000000000.0f;
@@ -20,6 +20,7 @@ public final class Time extends Task {
 	private float ticksInSeconds;
 	private boolean stopped;
 	private long nsStopTime;
+	private long lastStartTime;
 
 	/** Constructs a new Time object */
 	public Time () {
@@ -27,15 +28,21 @@ public final class Time extends Task {
 		reset();
 	}
 
+	/** Returns whether or not this timer is stopped */
+	public boolean isStopped () {
+		return stopped;
+	}
+
 	/** Starts tracking */
 	public void start () {
 		reset();
+		stopped = false;
 	}
 
 	/** Stops tracking */
 	public void stop () {
-		stopped = true;
 		nsStopTime = TimeUtils.nanoTime();
+		stopped = true;
 	}
 
 	/** Resumes/continues tracking, without resetting the accumulated state (should be called "continue" but can't */
@@ -45,11 +52,12 @@ public final class Time extends Task {
 
 	/** Resets the internal state */
 	public void reset () {
-		stopped = false;
+		stopped = true;
 
 		// abs
 		nsStartTime = TimeUtils.nanoTime();
 		nsStopTime = 0;
+		lastStartTime = nsStartTime;
 
 		// ticks
 		ticks = 0;
@@ -72,8 +80,14 @@ public final class Time extends Task {
 		switch (timeReference) {
 		case TickSeconds: // returns seconds
 			return ticksInSeconds;
-		case NumberOfTicks: // returns the tick count so far
+		case NumberOfTicks:
 			return ticks;
+		case LastAbsoluteSeconds:
+			float r = (now - lastStartTime) * oneOnOneBillion;
+			if (!stopped) {
+				lastStartTime = TimeUtils.nanoTime();
+			}
+			return r;
 		case AbsoluteSeconds: // returns seconds
 		default:
 			return (now - nsStartTime) * oneOnOneBillion;

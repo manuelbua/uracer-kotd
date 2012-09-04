@@ -38,6 +38,7 @@ public class Replay implements Disposable {
 	public float carWorldOrientRads;
 
 	// replay data
+	public long userId;
 	public String trackId = "";
 	public float trackTimeSeconds = 0;
 	public CarForces[] forces = null;
@@ -48,7 +49,7 @@ public class Replay implements Disposable {
 	// time track
 	private Time time = new Time();
 
-	public Replay () {
+	public Replay (long userId) {
 		eventsCount = 0;
 		forces = new CarForces[MaxEvents];
 		for (int i = 0; i < MaxEvents; i++) {
@@ -67,6 +68,7 @@ public class Replay implements Disposable {
 	}
 
 	public void copyData (Replay replay) {
+		userId = replay.userId;
 		trackTimeSeconds = replay.trackTimeSeconds;
 		trackId = replay.trackId;
 		eventsCount = replay.eventsCount;
@@ -144,7 +146,7 @@ public class Replay implements Disposable {
 				ObjectInputStream is = new ObjectInputStream(gzis);
 
 				// read header
-				Replay r = new Replay();
+				Replay r = new Replay(is.readLong());
 
 				// replay info data
 				r.trackId = is.readUTF();
@@ -224,6 +226,7 @@ public class Replay implements Disposable {
 						ObjectOutputStream os = new ObjectOutputStream(gzos);
 
 						// write header
+						os.writeLong(userId);
 
 						// replay info data
 						os.writeUTF(trackId);

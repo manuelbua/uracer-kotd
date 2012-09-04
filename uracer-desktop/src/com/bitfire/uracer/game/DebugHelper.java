@@ -3,6 +3,7 @@ package com.bitfire.uracer.game;
 
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
+import com.badlogic.gdx.math.MathUtils;
 import com.badlogic.gdx.math.Matrix4;
 import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.physics.box2d.Body;
@@ -78,7 +79,8 @@ public final class DebugHelper {
 			updateHz = 5f;
 		}
 
-		stats = new DebugStatistics(updateHz);
+		int sw = MathUtils.clamp(uRacerInfo.length() * Art.DebugFontWidth, 100, 500);
+		stats = new DebugStatistics(sw, 100, updateHz);
 	}
 
 	public void dispose () {
@@ -101,8 +103,7 @@ public final class DebugHelper {
 		renderVersionInfo(batch);
 
 		if (Config.Debug.RenderDebugInfoGraphics) {
-			renderGraphicalStats(batch, Gdx.graphics.getWidth() - stats.getWidth(), Gdx.graphics.getHeight() - stats.getHeight()
-				- Art.DebugFontHeight - 5);
+			renderGraphicalStats(batch);
 		}
 
 		if (Config.Debug.RenderDebugInfoMemoryStats) {
@@ -122,16 +123,21 @@ public final class DebugHelper {
 		}
 
 		if (Config.Debug.RenderDebugInfoMeshStats) {
-			SpriteBatchUtils.drawString(batch, "total meshes=" + GameWorld.TotalMeshes, 0, Gdx.graphics.getHeight() - 14);
+			SpriteBatchUtils.drawString(batch, "total meshes=" + GameWorld.TotalMeshes, 0, Gdx.graphics.getHeight()
+				- Art.DebugFontHeight * 3);
 			SpriteBatchUtils.drawString(batch, "rendered meshes="
 				+ (GameWorldRenderer.renderedTrees + GameWorldRenderer.renderedWalls) + ", trees=" + GameWorldRenderer.renderedTrees
 				+ ", walls=" + GameWorldRenderer.renderedWalls + ", culled=" + GameWorldRenderer.culledMeshes, 0,
-				Gdx.graphics.getHeight() - Art.DebugFontHeight);
+				Gdx.graphics.getHeight() - Art.DebugFontHeight * 2);
 		}
 	}
 
-	private void renderGraphicalStats (SpriteBatch batch, int x, int y) {
-		batch.draw(stats.getRegion(), x, y);
+	private void renderGraphicalStats (SpriteBatch batch) {
+		batch.enableBlending();
+		batch.setColor(1, 1, 1, 0.8f);
+		batch.draw(stats.getRegion(), Gdx.graphics.getWidth() - stats.getWidth(), Art.DebugFontHeight * 2);
+		batch.setColor(1, 1, 1, 1f);
+		batch.disableBlending();
 	}
 
 	private void renderFpsStats (SpriteBatch batch) {
@@ -156,8 +162,7 @@ public final class DebugHelper {
 		String text = "java heap = " + NumberString.format(javaHeapMb) + "MB" + " - native heap = "
 			+ NumberString.format(nativeHeapMb) + "MB";
 
-		SpriteBatchUtils.drawString(batch, text, (Gdx.graphics.getWidth() - text.length() * Art.DebugFontWidth) / 2,
-			Gdx.graphics.getHeight() - Art.DebugFontHeight);
+		SpriteBatchUtils.drawString(batch, text, 0, Gdx.graphics.getHeight() - Art.DebugFontHeight);
 	}
 
 	private void renderB2dWorld (World world, Matrix4 modelViewProj) {

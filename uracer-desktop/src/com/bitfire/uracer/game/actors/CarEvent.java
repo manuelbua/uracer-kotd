@@ -9,7 +9,7 @@ import com.bitfire.uracer.events.EventNotifier;
 
 public final class CarEvent extends Event<Car> {
 	public enum Type {
-		onComputeForces, onCollision
+		onComputeForces, onCollision, onOutOfTrack, onBackInTrack
 	}
 
 	public interface Listener extends EventListener {

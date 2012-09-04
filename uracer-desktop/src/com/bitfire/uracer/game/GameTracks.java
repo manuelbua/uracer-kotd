@@ -14,7 +14,7 @@ import com.badlogic.gdx.graphics.g2d.tiled.TiledMap;
 import com.badlogic.gdx.utils.Array;
 import com.bitfire.uracer.configuration.Storage;
 
-/** Enumerates and maintains a list of available game tracks. */
+/** Enumerates and maintains a list of available game tracks. FIXME add support for mini-screenshots */
 public final class GameTracks {
 
 	private static MessageDigest digest;

@@ -6,12 +6,14 @@ import com.bitfire.uracer.game.actors.Car;
 import com.bitfire.uracer.game.actors.CarForces;
 
 public final class ReplayRecorder {
+	private final long userId;
 	private boolean isRecording;
 
 	// replay data
 	private Replay replay;
 
-	public ReplayRecorder () {
+	public ReplayRecorder (long userId) {
+		this.userId = userId;
 		isRecording = false;
 		replay = null;
 	}

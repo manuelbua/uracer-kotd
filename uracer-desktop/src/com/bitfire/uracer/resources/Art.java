@@ -1,13 +1,18 @@
 
 package com.bitfire.uracer.resources;
 
+import java.io.ByteArrayOutputStream;
+import java.io.IOException;
+import java.util.zip.ZipEntry;
+import java.util.zip.ZipInputStream;
+
 import com.badlogic.gdx.Gdx;
+import com.badlogic.gdx.files.FileHandle;
 import com.badlogic.gdx.graphics.Pixmap;
 import com.badlogic.gdx.graphics.Pixmap.Format;
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.Texture.TextureFilter;
 import com.badlogic.gdx.graphics.Texture.TextureWrap;
-import com.badlogic.gdx.graphics.g2d.BitmapFont;
 import com.badlogic.gdx.graphics.g2d.TextureAtlas;
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
 import com.badlogic.gdx.scenes.scene2d.ui.Skin;
@@ -37,9 +42,7 @@ public final class Art {
 	// fonts
 	public static final int DebugFontWidth = 6;
 	public static final int DebugFontHeight = 6;
-	public static BitmapFont fontCurseYR, fontCurseR, fontCurseG;
-	public static BitmapFont fontCurseYRbig, fontCurseRbig, fontCurseGbig;
-	private static TextureAtlas fontAtlas;
+	public static TextureAtlas fontAtlas;
 
 	// post-processor
 	// public static ShaderProgram depthMapGen, depthMapGenTransparent;
@@ -49,9 +52,9 @@ public final class Art {
 	public static Texture scrBackground;
 	public static Skin scrSkin;
 
-	public static void init (float invZoomFactor) {
+	public static void init () {
 		ShaderLoader.BasePath = "data/shaders/";
-		loadFonts(invZoomFactor);
+		loadFonts();
 		loadCarGraphics();
 		loadMeshesGraphics(Config.Graphics.EnableMipMapping);
 		loadFrictionMaps();
@@ -168,7 +171,7 @@ public final class Art {
 	// fonts
 	//
 
-	private static void loadFonts (float scale) {
+	private static void loadFonts () {
 		// debug font, no need to scale it
 		debugFont = split("data/base/debug-font.png", DebugFontWidth, DebugFontHeight, false);
 
@@ -177,32 +180,56 @@ public final class Art {
 		for (TextureRegion r : fontAtlas.getRegions()) {
 			r.getTexture().setFilter(TextureFilter.Linear, TextureFilter.Linear);
 		}
-
-		// default size
-		fontCurseYR = new BitmapFont(Gdx.files.internal("data/font/curse-y-r.fnt"), Art.fontAtlas.findRegion("curse-y-r"), true);
-		fontCurseG = new BitmapFont(Gdx.files.internal("data/font/curse-g.fnt"), Art.fontAtlas.findRegion("curse-g"), true);
-		fontCurseR = new BitmapFont(Gdx.files.internal("data/font/curse-r.fnt"), Art.fontAtlas.findRegion("curse-r"), true);
-
-		// big size
-		fontCurseYRbig = new BitmapFont(Gdx.files.internal("data/font/curse-y-r-big.fnt"),
-			Art.fontAtlas.findRegion("curse-y-r-big"), true);
-		fontCurseGbig = new BitmapFont(Gdx.files.internal("data/font/curse-g-big.fnt"), Art.fontAtlas.findRegion("curse-g-big"),
-			true);
-		fontCurseRbig = new BitmapFont(Gdx.files.internal("data/font/curse-r-big.fnt"), Art.fontAtlas.findRegion("curse-r-big"),
-			true);
-
-		// adjust scaling
-		fontCurseYR.setScale(scale);
-		fontCurseG.setScale(scale);
-		fontCurseR.setScale(scale);
-		fontCurseYRbig.setScale(scale);
-		fontCurseGbig.setScale(scale);
-		fontCurseRbig.setScale(scale);
 	}
 
 	private static void disposeFonts () {
 		debugFont[0][0].getTexture().dispose();
 		fontAtlas.dispose();
+	}
+
+	//
+	// flags
+	//
+
+	public static TextureRegion getFlag (String countryCode) {
+		String filename = countryCode + ".png";
+		FileHandle zip = Gdx.files.internal("data/flags.zip");
+		ZipInputStream zin = new ZipInputStream(zip.read());
+		ZipEntry ze = null;
+		try {
+			while ((ze = zin.getNextEntry()) != null) {
+				if (ze.getName().equals(filename)) {
+					ByteArrayOutputStream streamBuilder = new ByteArrayOutputStream();
+					int bytesRead;
+					byte[] tempBuffer = new byte[8192 * 2];
+					while ((bytesRead = zin.read(tempBuffer)) != -1) {
+						streamBuilder.write(tempBuffer, 0, bytesRead);
+					}
+
+					Pixmap px = new Pixmap(streamBuilder.toByteArray(), 0, streamBuilder.size());
+
+					streamBuilder.close();
+					zin.close();
+
+					boolean mipMap = false;
+					Texture t = new Texture(px);
+
+					if (mipMap) {
+						t.setFilter(TextureFilter.MipMapLinearNearest, TextureFilter.Nearest);
+					} else {
+						t.setFilter(TextureFilter.Nearest, TextureFilter.Nearest);
+					}
+
+					TextureRegion r = new TextureRegion(t);
+					r.flip(false, true);
+
+					return r;
+				}
+			}
+		} catch (IOException e) {
+		}
+
+		return null;
 	}
 
 	//

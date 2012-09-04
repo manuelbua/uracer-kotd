@@ -3,6 +3,7 @@ package com.bitfire.uracer.game.logic.replaying;
 
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.utils.Disposable;
+import com.bitfire.uracer.configuration.UserProfile;
 import com.bitfire.uracer.game.actors.Car;
 import com.bitfire.uracer.game.actors.CarForces;
 import com.bitfire.uracer.game.logic.LapInfo;
@@ -16,11 +17,11 @@ public class LapManager implements Disposable {
 	private final LapInfo lapInfo;
 	private Replay lastRecordedReplay;
 
-	public LapManager (String trackId) {
+	public LapManager (UserProfile userProfile, String trackId) {
 		this.trackId = trackId;
-		recorder = new ReplayRecorder();
+		recorder = new ReplayRecorder(userProfile.userId);
 		lapInfo = new LapInfo();
-		bufferManager = new ReplayBufferManager();
+		bufferManager = new ReplayBufferManager(userProfile.userId);
 		lastRecordedReplay = null;
 	}
 

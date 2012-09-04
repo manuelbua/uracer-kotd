@@ -46,7 +46,7 @@ public final class Hud extends GameTask {
 		GameEvents.gameRenderer.addListener(gameRendererEvent, RenderEventAfterPost, RenderOrderAfterPost);
 	}
 
-	public void addAfterMeshes (HudElement element) {
+	public void addBeforePostProcessing (HudElement element) {
 		managerAfterMeshes.add(element);
 	}
 

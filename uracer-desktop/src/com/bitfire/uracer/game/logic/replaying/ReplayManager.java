@@ -4,6 +4,7 @@ package com.bitfire.uracer.game.logic.replaying;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.utils.Array;
 import com.badlogic.gdx.utils.Disposable;
+import com.bitfire.uracer.configuration.UserProfile;
 import com.bitfire.uracer.game.GameplaySettings;
 import com.bitfire.utils.ItemsManager;
 
@@ -18,10 +19,10 @@ public final class ReplayManager implements Disposable {
 	private Replay best, worst;
 	private int ridx;
 
-	public ReplayManager (String trackId) {
+	public ReplayManager (UserProfile userProfile, String trackId) {
 		this.trackId = trackId;
 		for (int i = 0; i < MaxReplays; i++) {
-			replays.add(new Replay());
+			replays.add(new Replay(userProfile.userId));
 		}
 
 		best = null;

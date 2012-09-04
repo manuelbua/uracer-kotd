@@ -127,7 +127,7 @@ public final class AggressiveCold implements PostProcessingAnimator {
 			bloom.setBaseSaturation(AMath.lerp(0.8f, 0.2f, timeModFactor));
 			// bloom.setBloomSaturation( 1.5f - factor * 0.85f ); // TODO when charged
 			// bloom.setBloomSaturation( 1.5f - factor * 1.5f ); // TODO when completely discharged
-			bloom.setBloomSaturation(1f - timeModFactor * 0.8f);
+			bloom.setBloomSaturation(1f - timeModFactor * 0.5f);
 		}
 
 		if (vignette != null) {
@@ -145,7 +145,7 @@ public final class AggressiveCold implements PostProcessingAnimator {
 			// vignette.setLutIntensity( timeFactor * 1.618f );
 			vignette.setLutIntensity(timeModFactor * 1.618f);// * AMath.clamp( driftStrength * 1.25f, 0, 1 ) );
 			vignette.setIntensity(timeModFactor);
-			vignette.setLutIndex(5);
+			vignette.setLutIndex(16);
 		}
 
 		// // test
