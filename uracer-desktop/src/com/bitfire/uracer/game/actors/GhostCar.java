@@ -123,7 +123,7 @@ public final class GhostCar extends Car {
 
 			if (indexPlay == replay.getEventsCount()) {
 				CarUtils.dumpSpeedInfo("GhostCar #" + id, this, replay.trackTimeSeconds);
-				restart(replay);
+// restart(replay);
 			}
 		}
 	}
