@@ -37,7 +37,7 @@ public final class HudPlayer extends HudElement {
 	private HudLabel labelSpeed, labelDistance;
 
 	private PlayerCar player;
-	private UserProfile userProfile;
+	private CarHighlighter highlightError;
 
 	//
 	private final GameRenderer renderer;
@@ -45,13 +45,10 @@ public final class HudPlayer extends HudElement {
 	// gravitation
 	private float carModelWidthPx, carModelLengthPx;
 	private Vector2 tmpg = new Vector2();
-	private Vector2 tmpg2 = new Vector2();
 
-	private boolean began = false;
 	private float scale = 1f;
 
 	public HudPlayer (UserProfile userProfile, ScalingStrategy scalingStrategy, PlayerCar player, GameRenderer renderer) {
-		this.userProfile = userProfile;
 		this.player = player;
 		this.renderer = renderer;
 		this.scale = scalingStrategy.invTileMapZoomFactor;
@@ -63,13 +60,16 @@ public final class HudPlayer extends HudElement {
 		basicInfo = new BasicInfo(scale, userProfile);
 		driftBar = new DriftBar(scale, carModelLengthPx);
 
-		labelSpeed = new HudLabel(scale, FontFace.Lcd, "", true, 1f);
+		labelSpeed = new HudLabel(scale, FontFace.Roboto, "", true, 1f);
 		labelSpeed.setPosition(Gdx.graphics.getWidth() - Convert.scaledPixels(190),
 			Gdx.graphics.getHeight() - Convert.scaledPixels(110));
 
-		labelDistance = new HudLabel(scale, FontFace.Lcd, "", true, 0.85f);
+		labelDistance = new HudLabel(scale, FontFace.Roboto, "", true, 0.85f);
 		labelDistance.setPosition(Gdx.graphics.getWidth() - Convert.scaledPixels(190),
 			Gdx.graphics.getHeight() - Convert.scaledPixels(50));
+
+		highlightError = new CarHighlighter();
+		highlightError.setCar(player);
 	}
 
 	@Override
@@ -86,14 +86,16 @@ public final class HudPlayer extends HudElement {
 	@Override
 	public void onReset () {
 		driftBar.hideSecondsLabel();
+		highlightError.stop();
 	}
 
 	@Override
 	public void onRender (SpriteBatch batch) {
 
+		float cz = renderer.getWorldRenderer().getCameraZoom();
 		basicInfo.render(batch);
 		bottom(driftBar, 50);
-		driftBar.render(batch, renderer.getWorldRenderer().getCameraZoom());
+		driftBar.render(batch, cz);
 
 		// draw player name+info
 		labelSpeed.setString(MathUtils.round(CarUtils.mtSecToKmHour(player.getInstantSpeed())) + " kmh");
@@ -101,6 +103,8 @@ public final class HudPlayer extends HudElement {
 
 		labelDistance.setString(MathUtils.round(player.getTraveledDistance()) + " mt\n");
 		labelDistance.render(batch);
+
+		highlightError.render(batch, cz);
 	}
 
 	//
@@ -160,4 +164,11 @@ public final class HudPlayer extends HudElement {
 		driftBar.hideSecondsLabel();
 	}
 
+	public void highlightOutOfTrack () {
+		highlightError.error(3);
+	}
+
+	public void highlightCollision () {
+		highlightError.error(5);
+	}
 }

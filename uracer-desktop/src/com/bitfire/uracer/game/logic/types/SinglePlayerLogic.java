@@ -154,6 +154,10 @@ public class SinglePlayerLogic extends CommonLogic {
 			Gdx.app.log("", "Requesting time modulation to finish");
 		}
 
+		if (hasPlayer() && playerCar.isOutOfTrack()) {
+			playerTasks.hudPlayer.highlightOutOfTrack();
+		}
+
 // Gdx.app.log("SPL", "drift=" + accuDriftSeconds);
 	}
 
@@ -214,6 +218,8 @@ public class SinglePlayerLogic extends CommonLogic {
 		driftSecondsTimeline.push(Tween.to(accuDriftSeconds, BoxedFloatAccessor.VALUE, 500).target(0).ease(Quad.INOUT))
 			.setCallback(penaltyFinished);
 		GameTweener.start(driftSecondsTimeline);
+
+		playerTasks.hudPlayer.highlightCollision();
 	}
 
 	@Override

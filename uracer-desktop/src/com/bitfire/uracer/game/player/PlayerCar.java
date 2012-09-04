@@ -96,6 +96,10 @@ public class PlayerCar extends Car {
 		driftState.reset();
 	}
 
+	public boolean isOutOfTrack () {
+		return isOutOfTrack;
+	}
+
 	/** Sets the input system this PlayerCar will use to check for input events */
 	public void setInputSystem (Input input) {
 		this.input = input;
@@ -228,20 +232,21 @@ public class PlayerCar extends Car {
 	}
 
 	private boolean notifiedOutOfTrack = false;
+	private boolean isOutOfTrack = false;
 
 	private void handleFriction () {
-		boolean outOfTrack = frictionMean.getMean() < -0.3;
+		isOutOfTrack = frictionMean.getMean() < -0.3;
 
-		if (outOfTrack && !notifiedOutOfTrack) {
+		if (isOutOfTrack && !notifiedOutOfTrack) {
 			notifiedOutOfTrack = true;
 			event.trigger(this, CarEvent.Type.onOutOfTrack);
-		} else if (!outOfTrack && notifiedOutOfTrack) {
+		} else if (!isOutOfTrack && notifiedOutOfTrack) {
 			event.trigger(this, CarEvent.Type.onBackInTrack);
 			notifiedOutOfTrack = false;
 		}
 
 		// FIXME, move these hard-coded values out of here
-		if (outOfTrack && carDesc.velocity_wc.len2() > 10) {
+		if (isOutOfTrack && carDesc.velocity_wc.len2() > 10) {
 			carDesc.velocity_wc.mul(dampFriction);
 		}
 	}
