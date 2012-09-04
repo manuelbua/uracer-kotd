@@ -2,6 +2,7 @@
 package com.bitfire.uracer.game.player;
 
 import com.badlogic.gdx.Gdx;
+import com.badlogic.gdx.Input.Keys;
 import com.badlogic.gdx.graphics.g2d.tiled.TiledLayer;
 import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.math.WindowedMean;
@@ -116,26 +117,67 @@ public class PlayerCar extends Car {
 			return carInput;
 		}
 
-		carPos.set(GameRenderer.ScreenUtils.worldMtToScreen(body.getPosition()));
-		touchPos.set(input.getXY());
+		boolean inputFromKeyboard = false;
 
-		carInput.updated = input.isTouching();
-		// Gdx.app.log( "PlayerCar", "carpos=" + carPos.toString() + ", cursor=" + touchPos.toString() );
+		if (!inputFromKeyboard) {
 
-		if (carInput.updated) {
+			// mouse/pointer input
 
-			// compute steer angle first
-			carInput.steerAngle = transformSteerAngle((float)Math.atan2(-carPos.x + touchPos.x, -carPos.y + touchPos.y));
+			carPos.set(GameRenderer.ScreenUtils.worldMtToScreen(body.getPosition()));
+			touchPos.set(input.getXY());
 
-			// normalize positions and compute final throttle
-			touchPos.x *= invWidth;
-			touchPos.y *= invHeight;
-			carPos.x *= invWidth;
-			carPos.y *= invHeight;
-			VMath.clamp(touchPos, 0, 1);
-			VMath.clamp(carPos, 0, 1);
+			carInput.updated = input.isTouching();
+			// Gdx.app.log( "PlayerCar", "carpos=" + carPos.toString() + ", cursor=" + touchPos.toString() );
 
-			carInput.throttle = touchPos.dst(carPos) * 4 * preset.model.max_force;
+			if (carInput.updated) {
+
+				// compute steer angle first
+				carInput.steerAngle = transformSteerAngle((float)Math.atan2(touchPos.x - carPos.x, touchPos.y - carPos.y));
+
+				// normalize positions and compute final throttle
+				touchPos.x *= invWidth;
+				touchPos.y *= invHeight;
+				carPos.x *= invWidth;
+				carPos.y *= invHeight;
+				VMath.clamp(touchPos, 0, 1);
+				VMath.clamp(carPos, 0, 1);
+
+				carInput.throttle = touchPos.dst(carPos) * 4 * preset.model.max_force;
+			}
+
+		} else {
+
+			// keyboard input
+
+			boolean kUp = input.isOn(Keys.UP);
+			boolean kLeft = input.isOn(Keys.LEFT);
+			boolean kRight = input.isOn(Keys.RIGHT);
+
+			carInput.updated = false;
+
+			if (kUp) {
+				carInput.updated = true;
+				carInput.throttle = preset.model.max_force;
+			} else {
+				carInput.throttle = 0;
+			}
+
+			if (kLeft) {
+				carInput.updated = true;
+				if (carInput.steerAngle > 0) {
+					carInput.steerAngle = 0;
+				}
+				carInput.steerAngle -= 0.05f;
+			} else if (kRight) {
+				carInput.updated = true;
+				if (carInput.steerAngle < 0) {
+					carInput.steerAngle = 0;
+				}
+				carInput.steerAngle += 0.05f;
+			} else {
+				carInput.steerAngle = 0f;
+			}
+
 		}
 
 		return carInput;
