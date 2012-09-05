@@ -26,7 +26,7 @@ echo "done!"
 echo -n "Cooking levels..."
 rm -rf "${DEST}/levels/"
 mkdir -p ${DEST}
-${TILED_PACKER} levels/ ${DEST}/levels --strip-unused
+${TILED_PACKER} levels/ ${DEST}/levels #--strip-unused
 echo "done!"
 
 # tileset friction maps
