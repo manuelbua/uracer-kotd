@@ -131,23 +131,31 @@ public final class CarSimulator {
 		//
 		float yawspeed = carDesc.carModel.wheelbase * 0.5f * carDesc.angularvelocity;
 		float sideslip = 0, rot_angle = 0;
+		float slipanglefront = 0, slipanglerear = 0;
 
 		// velocity.x = fVLong_, velocity.y = fVLat_
 		// fix singularity
 		if (AMath.isZero(velocity.x)) {
 			rot_angle = 0;
 			sideslip = 0;
+
+			slipanglefront = sideslip + rot_angle;
+			slipanglerear = sideslip - rot_angle;
+
 		} else {
 			// compute rotational angle
 			rot_angle = MathUtils.atan2(yawspeed, velocity.x);
 
 			// compute the side slip angle of the car (a.k.a. beta)
 			sideslip = MathUtils.atan2(velocity.y, velocity.x);
+
+			slipanglefront = sideslip + rot_angle - carDesc.steerangle;
+			slipanglerear = sideslip - rot_angle;
 		}
 
 		// Calculate slip angles for front and rear wheels (a.k.a. alpha)
-		float slipanglefront = sideslip + rot_angle - carDesc.steerangle;
-		float slipanglerear = sideslip - rot_angle;
+// float slipanglefront = sideslip + rot_angle - carDesc.steerangle;
+// float slipanglerear = sideslip - rot_angle;
 
 		// weight per axle = half car mass times 1G (=9.8m/s^2)
 		// (precomputed during initialization)
