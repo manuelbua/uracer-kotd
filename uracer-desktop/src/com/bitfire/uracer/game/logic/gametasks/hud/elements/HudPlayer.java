@@ -8,6 +8,7 @@ import com.badlogic.gdx.math.Vector2;
 import com.bitfire.uracer.ScalingStrategy;
 import com.bitfire.uracer.configuration.UserProfile;
 import com.bitfire.uracer.entities.EntityRenderState;
+import com.bitfire.uracer.game.actors.Car;
 import com.bitfire.uracer.game.logic.gametasks.hud.HudElement;
 import com.bitfire.uracer.game.logic.gametasks.hud.HudLabel;
 import com.bitfire.uracer.game.logic.gametasks.hud.Positionable;
@@ -38,6 +39,7 @@ public final class HudPlayer extends HudElement {
 
 	private PlayerCar player;
 	private CarHighlighter highlightError;
+	private CarHighlighter highlightNext;
 
 	//
 	private final GameRenderer renderer;
@@ -70,6 +72,8 @@ public final class HudPlayer extends HudElement {
 
 		highlightError = new CarHighlighter();
 		highlightError.setCar(player);
+
+		highlightNext = new CarHighlighter();
 	}
 
 	@Override
@@ -87,6 +91,7 @@ public final class HudPlayer extends HudElement {
 	public void onReset () {
 		driftBar.hideSecondsLabel();
 		highlightError.stop();
+		highlightNext.stop();
 	}
 
 	@Override
@@ -105,6 +110,7 @@ public final class HudPlayer extends HudElement {
 		labelDistance.render(batch);
 
 		highlightError.render(batch, cz);
+		highlightNext.render(batch, cz);
 	}
 
 	//
@@ -170,5 +176,10 @@ public final class HudPlayer extends HudElement {
 
 	public void highlightCollision () {
 		highlightError.error(5);
+	}
+
+	public void highlightNextTarget (Car car) {
+		highlightNext.setCar(car);
+		highlightNext.track();
 	}
 }

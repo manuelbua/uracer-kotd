@@ -11,7 +11,7 @@ import com.bitfire.utils.ItemsManager;
 /** Maintains an updated list of the best <n> Replay objects for the specified track level */
 public final class ReplayManager implements Disposable {
 
-	public static final int MaxReplays = 5;
+	public static final int MaxReplays = 2;
 	private final String trackId;
 	private final ItemsManager<Replay> replays = new ItemsManager<Replay>();
 	private final Array<Replay> replayItems = replays.items;

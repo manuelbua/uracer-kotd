@@ -247,10 +247,14 @@ public class SinglePlayerLogic extends CommonLogic {
 
 	private void restartAllReplays () {
 		Array<Replay> replays = replayManager.getReplays();
+
 		for (int i = 0; i < replays.size; i++) {
 			Replay r = replays.get(i);
 			if (r.isValid) {
 				getGhost(i).setReplay(replays.get(i));
+				if (replayManager.getBestReplay() == replays.get(i)) {
+					playerTasks.hudPlayer.highlightNextTarget(getGhost(i));
+				}
 			}
 		}
 	}

@@ -25,7 +25,7 @@ public final class CarHighlighter {
 	private Vector2 tmp = new Vector2();
 	private float offX, offY;
 
-	private boolean isBusy, isActive;
+	private boolean isBusy, isActive, hasCar;
 	private BoxedFloat bfScale, bfRot, bfAlpha, bfGreen, bfRed, bfBlue;
 
 	public CarHighlighter () {
@@ -36,6 +36,7 @@ public final class CarHighlighter {
 	}
 
 	public void setCar (Car car) {
+		hasCar = true;
 		followedCar = car;
 		renderState = followedCar.state();
 
@@ -58,7 +59,7 @@ public final class CarHighlighter {
 	}
 
 	public void render (SpriteBatch batch, float cameraZoom) {
-		if (isActive && isBusy) {
+		if (isActive /* && isBusy */&& hasCar) {
 			tmp.set(GameRenderer.ScreenUtils.worldPxToScreen(renderState.position));
 
 			sprite.setScale(bfScale.value * cameraZoom);
@@ -123,7 +124,7 @@ public final class CarHighlighter {
 
 		bfRed.value = 1f;
 		bfGreen.value = 1f;
-		bfBlue.value = 0f;
+		bfBlue.value = 1f;
 
 		Timeline timeline = Timeline.createParallel();
 
@@ -131,10 +132,10 @@ public final class CarHighlighter {
 		timeline
 			.push(Tween.to(bfScale, BoxedFloatAccessor.VALUE, 500).target(1).ease(Linear.INOUT))
 			.push(Tween.to(bfAlpha, BoxedFloatAccessor.VALUE, 500).target(1).ease(Linear.INOUT))
-			.push(Tween.to(bfGreen, BoxedFloatAccessor.VALUE, 500).target(0.2f).ease(Linear.INOUT))
+			//.push(Tween.to(bfGreen, BoxedFloatAccessor.VALUE, 500).target(0.2f).ease(Linear.INOUT))
 			.push(Tween.to(bfRot, BoxedFloatAccessor.VALUE, 500).target(0).ease(Linear.INOUT))
 			.pushPause(1000)
-			.repeatYoyo(1, 0)
+//			.repeatYoyo(1, 0)
 			.setCallback(busyCallback)
 			;
 		//@on

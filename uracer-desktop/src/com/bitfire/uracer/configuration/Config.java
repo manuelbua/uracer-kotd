@@ -80,7 +80,7 @@ public final class Config {
 
 			UseDebugHelper = true;
 			RenderBox2DWorldWireframe = false;
-			RenderPlayerDebugInfo = true;
+			RenderPlayerDebugInfo = false;
 			RenderHudDebugInfo = Config.isDesktop;
 			RenderDebugInfoFpsStats = true;
 			RenderDebugInfoGraphics = true;

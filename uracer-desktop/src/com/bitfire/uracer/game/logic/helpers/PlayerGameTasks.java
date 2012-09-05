@@ -47,7 +47,7 @@ public final class PlayerGameTasks {
 		playerImpactSoundFx = new PlayerImpactSoundEffect(player);
 
 		// track effects
-		int maxSkidMarks = Config.isDesktop ? 300 : 100;
+		int maxSkidMarks = Config.isDesktop ? 500 : 100;
 		float maxLife = Config.isDesktop ? 5 : 3;
 		playerSkidMarks = new PlayerSkidMarks(player, maxSkidMarks, maxLife);
 
