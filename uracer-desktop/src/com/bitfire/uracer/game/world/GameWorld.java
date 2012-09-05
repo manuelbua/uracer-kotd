@@ -290,7 +290,7 @@ public final class GameWorld {
 
 					List<Vector2> points = MapUtils.extractPolyData(o.polyline);
 					if (points.size() >= 2) {
-						float wallSizeMt = 0.5f;
+						float wallSizeMt = 0.75f;
 						float[] mags = new float[points.size() - 1];
 
 						offsetMt.set(o.x, o.y);
@@ -389,8 +389,7 @@ public final class GameWorld {
 			// base
 			verts[j + X1] = in.x;
 			verts[j + Y1] = -in.y;
-			verts[j + Z1] = -0.025f; // should be 0, but fixes some nasty
-			// flickering border issue
+			verts[j + Z1] = 0;// -0.025f; // should be 0, but fixes some nasty flickering border issue
 
 			// elevation
 			verts[j + X2] = in.x + (addJitter ? MathUtils.random(-jitterPositional, jitterPositional) : 0);
