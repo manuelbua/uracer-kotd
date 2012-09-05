@@ -594,7 +594,7 @@ public abstract class CommonLogic implements GameLogic, CarEvent.Listener, CarSt
 
 				lapManager.startRecording(playerCar);
 
-				lapComplete(true);
+// lapComplete(true);
 			} else {
 
 				// detect and ignore invalid laps
