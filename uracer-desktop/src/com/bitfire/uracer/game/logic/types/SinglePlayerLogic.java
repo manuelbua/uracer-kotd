@@ -15,6 +15,8 @@ import com.bitfire.uracer.configuration.Config;
 import com.bitfire.uracer.configuration.UserProfile;
 import com.bitfire.uracer.game.Time;
 import com.bitfire.uracer.game.Time.Reference;
+import com.bitfire.uracer.game.actors.Car;
+import com.bitfire.uracer.game.actors.GhostCar;
 import com.bitfire.uracer.game.logic.gametasks.hud.elements.player.DriftBar;
 import com.bitfire.uracer.game.logic.gametasks.messager.Message.Position;
 import com.bitfire.uracer.game.logic.gametasks.messager.Message.Size;
@@ -147,7 +149,10 @@ public class SinglePlayerLogic extends CommonLogic {
 	@Override
 	public void tick () {
 		super.tick();
-		updateDriftBar();
+
+		if (hasPlayer()) {
+			updateDriftBar();
+		}
 
 		if (accuDriftSeconds.value == 0 && timeDilation) {
 			requestTimeDilationFinish();
@@ -241,19 +246,32 @@ public class SinglePlayerLogic extends CommonLogic {
 		restartAllReplays();
 	}
 
+	@Override
+	protected void ghostFadingOut (Car ghost) {
+		if (hasPlayer() && ghost == nextTarget) {
+			playerTasks.hudPlayer.unHighlightNextTarget(ghost);
+		}
+	}
+
 	//
 	// utilities
 	//
 
+	private GhostCar nextTarget = null;
+
 	private void restartAllReplays () {
 		Array<Replay> replays = replayManager.getReplays();
+
+		nextTarget = null;
 
 		for (int i = 0; i < replays.size; i++) {
 			Replay r = replays.get(i);
 			if (r.isValid) {
 				getGhost(i).setReplay(replays.get(i));
+
 				if (replayManager.getBestReplay() == replays.get(i)) {
-					playerTasks.hudPlayer.highlightNextTarget(getGhost(i));
+					nextTarget = getGhost(i);
+					playerTasks.hudPlayer.highlightNextTarget(nextTarget);
 				}
 			}
 		}

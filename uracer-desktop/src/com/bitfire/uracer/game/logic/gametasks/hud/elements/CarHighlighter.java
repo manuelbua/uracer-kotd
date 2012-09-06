@@ -33,6 +33,7 @@ public final class CarHighlighter {
 		sprite.setRegion(Art.cars.findRegion("selector"));
 		isBusy = false;
 		isActive = false;
+		followedCar = null;
 	}
 
 	public void setCar (Car car) {
@@ -51,6 +52,10 @@ public final class CarHighlighter {
 		bfGreen = new BoxedFloat(1);
 		bfRed = new BoxedFloat(1);
 		bfBlue = new BoxedFloat(1);
+	}
+
+	public Car getCar () {
+		return followedCar;
 	}
 
 	public void stop () {
@@ -111,16 +116,16 @@ public final class CarHighlighter {
 	}
 
 	public void track () {
-		if (isBusy) {
-			return;
-		}
+// if (isBusy) {
+// return;
+// }
 
 		isBusy = true;
 		isActive = true;
 
 		bfScale.value = 4f;
-		bfRot.value = 90f;
 		bfAlpha.value = 0f;
+		bfRot.value = 90f;
 
 		bfRed.value = 1f;
 		bfGreen.value = 1f;
@@ -132,10 +137,37 @@ public final class CarHighlighter {
 		timeline
 			.push(Tween.to(bfScale, BoxedFloatAccessor.VALUE, 500).target(1).ease(Linear.INOUT))
 			.push(Tween.to(bfAlpha, BoxedFloatAccessor.VALUE, 500).target(1).ease(Linear.INOUT))
-			//.push(Tween.to(bfGreen, BoxedFloatAccessor.VALUE, 500).target(0.2f).ease(Linear.INOUT))
 			.push(Tween.to(bfRot, BoxedFloatAccessor.VALUE, 500).target(0).ease(Linear.INOUT))
-			.pushPause(1000)
-//			.repeatYoyo(1, 0)
+			.setCallback(busyCallback)
+			;
+		//@on
+
+		GameTweener.start(timeline);
+	}
+
+	public void untrack () {
+// if (isBusy) {
+// return;
+// }
+
+		isBusy = true;
+		isActive = true;
+
+		bfScale.value = 1f;
+		bfAlpha.value = 1f;
+		bfRot.value = 0f;
+
+		bfRed.value = 1f;
+		bfGreen.value = 1f;
+		bfBlue.value = 1f;
+
+		Timeline timeline = Timeline.createParallel();
+
+		//@off
+		timeline
+			.push(Tween.to(bfScale, BoxedFloatAccessor.VALUE, 500).target(4).ease(Linear.INOUT))
+			.push(Tween.to(bfAlpha, BoxedFloatAccessor.VALUE, 500).target(0).ease(Linear.INOUT))
+			.push(Tween.to(bfRot, BoxedFloatAccessor.VALUE, 500).target(90).ease(Linear.INOUT))
 			.setCallback(busyCallback)
 			;
 		//@on

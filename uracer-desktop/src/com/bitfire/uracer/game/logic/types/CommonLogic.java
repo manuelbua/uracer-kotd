@@ -118,6 +118,7 @@ public abstract class CommonLogic implements GameLogic, CarEvent.Listener, CarSt
 		lapManager = new LapManager(userProfile, gameWorld.trackId);
 		for (int i = 0; i < ReplayManager.MaxReplays; i++) {
 			ghostCars[i] = CarFactory.createGhost(i, gameWorld, CarPreset.Type.L1_GoblinOrange);
+			ghostCars[i].event.addListener(this, CarEvent.Type.onGhostFadingOut);
 		}
 
 		replayManager = new ReplayManager(userProfile, gameWorld.trackId);
@@ -137,6 +138,7 @@ public abstract class CommonLogic implements GameLogic, CarEvent.Listener, CarSt
 
 		for (int i = 0; i < ReplayManager.MaxReplays; i++) {
 			if (ghostCars[i] != null) {
+				ghostCars[i].event.removeListener(this, CarEvent.Type.onGhostFadingOut);
 				ghostCars[i].dispose();
 			}
 		}
@@ -176,6 +178,8 @@ public abstract class CommonLogic implements GameLogic, CarEvent.Listener, CarSt
 	protected abstract void outOfTrack ();
 
 	protected abstract void backInTrack ();
+
+	protected abstract void ghostFadingOut (Car ghost);
 
 	//
 	// SHARED OPERATIONS (Subclass Sandbox pattern)
@@ -538,6 +542,10 @@ public abstract class CommonLogic implements GameLogic, CarEvent.Listener, CarSt
 			break;
 		case onComputeForces:
 			lapManager.record(data.forces);
+			break;
+		case onGhostFadingOut:
+			ghostFadingOut(data.car);
+			break;
 		}
 	}
 
@@ -594,7 +602,6 @@ public abstract class CommonLogic implements GameLogic, CarEvent.Listener, CarSt
 
 				lapManager.startRecording(playerCar);
 
-// lapComplete(true);
 			} else {
 
 				// detect and ignore invalid laps

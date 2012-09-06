@@ -182,4 +182,8 @@ public final class HudPlayer extends HudElement {
 		highlightNext.setCar(car);
 		highlightNext.track();
 	}
+
+	public void unHighlightNextTarget (Car car) {
+		highlightNext.untrack();
+	}
 }

@@ -18,6 +18,7 @@ public final class GhostCar extends Car {
 	private int indexPlay;
 	private boolean hasReplay;
 	public final int id;
+	private boolean fadeOutEventTriggered;
 
 	public GhostCar (int id, GameWorld gameWorld, CarPreset.Type presetType) {
 		super(gameWorld, CarType.ReplayCar, InputMode.InputFromReplay, GameRendererEvent.Order.DEFAULT, presetType, false);
@@ -73,6 +74,7 @@ public final class GhostCar extends Car {
 		resetDistanceAndSpeed();
 		setWorldPosMt(replay.carWorldPositionMt, replay.carWorldOrientRads);
 		indexPlay = 0;
+		fadeOutEventTriggered = false;
 
 		// Gdx.app.log( "GhostCar", "Set to " + body.getPosition() + ", " + body.getAngle() );
 	}
@@ -110,6 +112,11 @@ public final class GhostCar extends Car {
 			} else if (replay.getEventsCount() - indexPlay <= FadeEvents) {
 				float val = (float)(replay.getEventsCount() - indexPlay) / (float)FadeEvents;
 				renderer.setAlpha(val * 0.5f);
+
+				if (!fadeOutEventTriggered) {
+					fadeOutEventTriggered = true;
+					this.event.trigger(this, CarEvent.Type.onGhostFadingOut);
+				}
 			}
 		}
 		// else {
