@@ -144,8 +144,8 @@ public final class CarModel {
 		length = 3.5f; // m (must be > wheelbase)
 
 		// physical behavior
-		drag = 15.f; // factor for air resistance (drag)
-		resistance = 30.f; // factor for rolling resistance
+		drag = 20.f; // factor for air resistance (drag)
+		resistance = 20.f; // factor for rolling resistance
 		stiffness_rear = -4.4f; // rear cornering stiffness
 		stiffness_front = -4.2f; // front cornering stiffness
 		max_grip = 6f; // maximum (normalised) friction force, =diameter of friction circle
