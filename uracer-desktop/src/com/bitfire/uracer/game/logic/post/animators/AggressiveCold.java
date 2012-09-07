@@ -56,7 +56,7 @@ public final class AggressiveCold implements PostProcessingAnimator {
 			// vignette.setCoords( 1.5f, 0.1f );
 			vignette.setCenter(Gdx.graphics.getWidth() / 2, Gdx.graphics.getHeight() / 2);
 			vignette.setLut(Art.postXpro);
-			vignette.setLutIndex(16);
+			vignette.setLutIndex(5);
 			vignette.setEnabled(true);
 		}
 
@@ -124,10 +124,10 @@ public final class AggressiveCold implements PostProcessingAnimator {
 
 		if (bloom != null) {
 			// bloom.setBaseSaturation( 0.8f - timeFactor * 0.6f );
-			bloom.setBaseSaturation(AMath.lerp(0.8f, 0.2f, timeModFactor));
+			bloom.setBaseSaturation(AMath.lerp(0.6f, 0.2f, timeModFactor));
 			// bloom.setBloomSaturation( 1.5f - factor * 0.85f ); // TODO when charged
 			// bloom.setBloomSaturation( 1.5f - factor * 1.5f ); // TODO when completely discharged
-			bloom.setBloomSaturation(1f - timeModFactor * 0.5f);
+			bloom.setBloomSaturation(1f - timeModFactor * 0.8f);
 		}
 
 		if (vignette != null) {
@@ -142,10 +142,9 @@ public final class AggressiveCold implements PostProcessingAnimator {
 				// vignette.setCenter( Gdx.graphics.getWidth() / 2, Gdx.graphics.getHeight() / 2 );
 			}
 
-			// vignette.setLutIntensity( timeFactor * 1.618f );
 			vignette.setLutIntensity(timeModFactor * 1.618f);// * AMath.clamp( driftStrength * 1.25f, 0, 1 ) );
 			vignette.setIntensity(timeModFactor);
-			vignette.setLutIndex(16);
+			vignette.setLutIndex(5);
 		}
 
 		// // test
@@ -153,7 +152,7 @@ public final class AggressiveCold implements PostProcessingAnimator {
 			// curvature.setDistortion( player.carState.currSpeedFactor * 0.25f );
 			// curvature.setZoom( 1 - 0.12f * player.carState.currSpeedFactor );
 
-			float dist = 0.1618f * 0.5f;
+			float dist = 0.1618f * 0.75f;
 			curvature.setDistortion(dist);
 			curvature.setZoom(1 - (dist / 2));
 		}

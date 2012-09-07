@@ -17,7 +17,7 @@ import com.bitfire.uracer.utils.Convert;
 import com.bitfire.uracer.utils.NumberString;
 
 public class DriftBar extends Positionable implements Disposable {
-	public static final float MaxSeconds = 2f;
+	public static final float MaxSeconds = 5f;
 	public static final int MaxTicks = (int)(MaxSeconds * Config.Physics.PhysicsTimestepHz);
 
 	private final float invTilemapZoom;
