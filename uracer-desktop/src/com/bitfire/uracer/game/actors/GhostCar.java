@@ -19,6 +19,7 @@ public final class GhostCar extends Car {
 	private boolean hasReplay;
 	public final int id;
 	private boolean fadeOutEventTriggered;
+	public CarState carState;
 
 	public GhostCar (int id, GameWorld gameWorld, CarPreset.Type presetType) {
 		super(gameWorld, CarType.ReplayCar, InputMode.InputFromReplay, GameRendererEvent.Order.DEFAULT, presetType, false);
@@ -27,7 +28,7 @@ public final class GhostCar extends Car {
 		hasReplay = false;
 		replay = null;
 		this.renderer.setAlpha(0.5f);
-		// this.carState = new CarState( gameWorld, this );
+		this.carState = new CarState(gameWorld, this);
 
 		setActive(false);
 		resetPhysics();
@@ -63,6 +64,12 @@ public final class GhostCar extends Car {
 	public void removeReplay () {
 		setReplay(null);
 		renderer.setAlpha(0);
+	}
+
+	@Override
+	public strictfp void resetPhysics () {
+		super.resetPhysics();
+		carState.reset();
 	}
 
 	public boolean hasReplay () {
@@ -137,5 +144,10 @@ public final class GhostCar extends Car {
 				// restart(replay);
 			}
 		}
+	}
+
+	@Override
+	public void onSubstepCompleted () {
+		carState.update(null);
 	}
 }

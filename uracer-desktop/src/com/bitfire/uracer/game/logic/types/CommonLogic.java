@@ -119,6 +119,7 @@ public abstract class CommonLogic implements GameLogic, CarEvent.Listener, CarSt
 		for (int i = 0; i < ReplayManager.MaxReplays; i++) {
 			ghostCars[i] = CarFactory.createGhost(i, gameWorld, CarPreset.Type.L1_GoblinOrange);
 			ghostCars[i].event.addListener(this, CarEvent.Type.onGhostFadingOut);
+			ghostCars[i].carState.event.addListener(this, CarStateEvent.Type.onTileChanged);
 		}
 
 		replayManager = new ReplayManager(userProfile, gameWorld.trackId);
@@ -139,6 +140,7 @@ public abstract class CommonLogic implements GameLogic, CarEvent.Listener, CarSt
 		for (int i = 0; i < ReplayManager.MaxReplays; i++) {
 			if (ghostCars[i] != null) {
 				ghostCars[i].event.removeListener(this, CarEvent.Type.onGhostFadingOut);
+				ghostCars[i].carState.event.removeListener(this, CarStateEvent.Type.onTileChanged);
 				ghostCars[i].dispose();
 			}
 		}
@@ -553,7 +555,11 @@ public abstract class CommonLogic implements GameLogic, CarEvent.Listener, CarSt
 	public void carStateEvent (CarState source, CarStateEvent.Type type) {
 		switch (type) {
 		case onTileChanged:
-			playerTileChanged();
+			if (source.isPlayer) {
+				playerTileChanged(source);
+			} else {
+				ghostTileChanged(source);
+			}
 			break;
 		}
 	}
@@ -593,8 +599,9 @@ public abstract class CommonLogic implements GameLogic, CarEvent.Listener, CarSt
 
 	// FIXME: the method used to detect the player completing a lap can be more decent than this
 	// and also perform "wrong way" checks and such
-	private void playerTileChanged () {
-		boolean onStartZone = (playerCar.carState.currTileX == gameWorld.playerStartTileX && playerCar.carState.currTileY == gameWorld.playerStartTileY);
+	private void playerTileChanged (CarState state) {
+		boolean onStartZone = (state.currTileX == gameWorld.playerStartTileX && state.currTileY == gameWorld.playerStartTileY);
+// Gdx.app.log("", "player at (" + state.currTileX + "," + state.currTileY + ")");
 
 		if (onStartZone) {
 			if (isFirstLap) {
@@ -630,5 +637,9 @@ public abstract class CommonLogic implements GameLogic, CarEvent.Listener, CarSt
 
 			playerCar.resetDistanceAndSpeed();
 		}
+	}
+
+	private void ghostTileChanged (CarState state) {
+// Gdx.app.log("", "ghost at (" + state.currTileX + "," + state.currTileY + ")");
 	}
 }

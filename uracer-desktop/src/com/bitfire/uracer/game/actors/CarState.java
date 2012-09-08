@@ -2,6 +2,7 @@
 package com.bitfire.uracer.game.actors;
 
 import com.badlogic.gdx.math.Vector2;
+import com.bitfire.uracer.game.player.PlayerCar;
 import com.bitfire.uracer.game.world.GameWorld;
 import com.bitfire.uracer.utils.AMath;
 import com.bitfire.uracer.utils.Convert;
@@ -12,6 +13,7 @@ public final class CarState {
 
 	/* observed car */
 	public final Car car;
+	public boolean isPlayer;
 
 	/* position */
 	public int currTileX = -1, currTileY = -1;
@@ -24,7 +26,7 @@ public final class CarState {
 	public float currForceFactor = 0;
 
 	/* lateral forces */
-	public Vector2 lateralForceFront = new Vector2(), lateralForceRear = new Vector2();
+// public Vector2 lateralForceFront = new Vector2(), lateralForceRear = new Vector2();
 
 	// temporaries
 	private float carMaxSpeedSquared = 0;
@@ -37,6 +39,7 @@ public final class CarState {
 		this.event = new CarStateEvent(this);
 		this.world = world;
 		this.car = car;
+		this.isPlayer = (car instanceof PlayerCar);
 
 		// precompute factors
 		if (car != null) {
@@ -59,7 +62,10 @@ public final class CarState {
 	}
 
 	public void update (CarDescriptor carDescriptor) {
-		updateFactors(carDescriptor);
+		if (carDescriptor != null) {
+			updateFactors(carDescriptor);
+		}
+
 		updateTilePosition();
 	}
 
