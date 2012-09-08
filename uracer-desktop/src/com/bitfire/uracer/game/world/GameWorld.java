@@ -28,6 +28,7 @@ import com.badlogic.gdx.graphics.glutils.ShaderProgram;
 import com.badlogic.gdx.math.MathUtils;
 import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.physics.box2d.World;
+import com.badlogic.gdx.utils.GdxRuntimeException;
 import com.bitfire.uracer.ScalingStrategy;
 import com.bitfire.uracer.configuration.Config;
 import com.bitfire.uracer.game.GameTracks;
@@ -71,7 +72,7 @@ public final class GameWorld {
 	public float playerStartOrient;
 	public int playerStartTileX, playerStartTileY;
 
-	// lighting system
+	// night system
 	private boolean nightMode;
 	protected RayHandler rayHandler = null;
 	protected ConeLight playerHeadlights = null;
@@ -81,6 +82,9 @@ public final class GameWorld {
 	protected TrackWalls trackWalls = null;
 	protected TrackTrees trackTrees = null;
 	protected List<OrthographicAlignedStillModel> staticMeshes = new ArrayList<OrthographicAlignedStillModel>();
+
+	// routes
+	private List<Vector2> route = new ArrayList<Vector2>();
 
 	public GameWorld (ScalingStrategy strategy, String trackId, boolean nightMode) {
 		scalingStrategy = strategy;
@@ -110,6 +114,11 @@ public final class GameWorld {
 
 		createMeshes();
 		loadPlayerData(map);
+		route = createRoute();
+
+		if (route == null) {
+			throw new GdxRuntimeException("No route for this track");
+		}
 
 		// FIXME, read night mode from level?
 		if (nightMode) {
@@ -261,6 +270,49 @@ public final class GameWorld {
 			l.setSoft(false);
 			l.setMaskBits(CollisionFilters.CategoryPlayer | CollisionFilters.CategoryTrackWalls);
 		}
+	}
+
+	//
+	// construct route
+	//
+	private List<Vector2> createRoute () {
+		List<Vector2> r = null;
+
+		if (mapUtils.hasObjectGroup(ObjectGroup.Route)) {
+			Vector2 fromMt = new Vector2();
+			Vector2 toMt = new Vector2();
+			Vector2 offsetMt = new Vector2();
+
+			TiledObjectGroup group = mapUtils.getObjectGroup(ObjectGroup.Route);
+			if (group.objects.size() == 1) {
+				TiledObject o = group.objects.get(0);
+				List<Vector2> points = MapUtils.extractPolyData(o.polyline);
+
+				r = new ArrayList<Vector2>(points.size());
+
+				// ensure first and last coincide
+				// points.get(points.size() - 1).set(points.get(0));
+
+				offsetMt.set(o.x, o.y);
+				offsetMt.set(Convert.px2mt(offsetMt));
+
+				fromMt.set(Convert.px2mt(points.get(0))).add(offsetMt);
+				fromMt.y = worldSizeMt.y - fromMt.y;
+
+				r.add(new Vector2(fromMt));
+
+				for (int j = 1; j <= points.size() - 1; j++) {
+					toMt.set(Convert.px2mt(points.get(j))).add(offsetMt);
+					toMt.y = worldSizeMt.y - toMt.y;
+					r.add(new Vector2(toMt));
+				}
+			} else {
+				throw new GdxRuntimeException("Too many routes");
+			}
+
+		}
+
+		return r;
 	}
 
 	//
@@ -507,6 +559,10 @@ public final class GameWorld {
 
 	public TrackTrees getTrackTrees () {
 		return trackTrees;
+	}
+
+	public List<Vector2> getTrackRoute () {
+		return route;
 	}
 
 	public List<OrthographicAlignedStillModel> getStaticMeshes () {

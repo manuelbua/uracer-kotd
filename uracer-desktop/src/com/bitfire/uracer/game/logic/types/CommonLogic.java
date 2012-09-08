@@ -31,6 +31,7 @@ import com.bitfire.uracer.game.logic.gametasks.messager.Message;
 import com.bitfire.uracer.game.logic.gametasks.messager.MessageAccessor;
 import com.bitfire.uracer.game.logic.helpers.CarFactory;
 import com.bitfire.uracer.game.logic.helpers.PlayerGameTasks;
+import com.bitfire.uracer.game.logic.helpers.RouteTracker;
 import com.bitfire.uracer.game.logic.post.PostProcessing;
 import com.bitfire.uracer.game.logic.post.animators.AggressiveCold;
 import com.bitfire.uracer.game.logic.replaying.LapManager;
@@ -57,6 +58,7 @@ public abstract class CommonLogic implements GameLogic, CarEvent.Listener, CarSt
 
 	// world
 	protected GameWorld gameWorld = null;
+	protected RouteTracker routeTracker = null;
 
 	// rendering
 	private GameRenderer gameRenderer = null;
@@ -124,6 +126,8 @@ public abstract class CommonLogic implements GameLogic, CarEvent.Listener, CarSt
 
 		replayManager = new ReplayManager(userProfile, gameWorld.trackId);
 
+		routeTracker = new RouteTracker(gameWorld.getTrackRoute(), gameRenderer.getWorldRenderer());
+
 		// messager.show( "COOL STUFF!", 60, Message.Type.Information,
 		// MessagePosition.Bottom, MessageSize.Big );
 	}
@@ -147,6 +151,7 @@ public abstract class CommonLogic implements GameLogic, CarEvent.Listener, CarSt
 
 		GameTweener.dispose();
 		replayManager.dispose();
+		routeTracker.dispose();
 	}
 
 	//
@@ -234,6 +239,7 @@ public abstract class CommonLogic implements GameLogic, CarEvent.Listener, CarSt
 		Gdx.app.log("GameLogic", "Registered player-related events");
 
 		gameWorldRenderer.setRenderPlayerHeadlights(gameWorld.isNightMode());
+		routeTracker.setCar(playerCar);
 
 		restartGame();
 
@@ -368,6 +374,7 @@ public abstract class CommonLogic implements GameLogic, CarEvent.Listener, CarSt
 	@Override
 	public void tickCompleted () {
 		gameTasksManager.physicsStep.onSubstepCompleted();
+		routeTracker.update();
 	}
 
 	@Override

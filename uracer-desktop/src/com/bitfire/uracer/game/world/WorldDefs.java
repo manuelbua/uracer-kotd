@@ -32,7 +32,12 @@ public final class WorldDefs {
 	/** Tiled's world object layer/group */
 	public enum ObjectGroup {
 		// @off
-		Lights("lights"), StaticMeshes("static-meshes"), Trees("trees"), Walls("walls");
+		Lights("lights"), 
+		StaticMeshes("static-meshes"), 
+		Trees("trees"), 
+		Walls("walls"),
+		Route("route"),
+		;
 		// @on
 
 		public final String mnemonic;
