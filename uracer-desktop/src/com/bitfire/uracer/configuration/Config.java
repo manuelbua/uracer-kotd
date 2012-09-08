@@ -86,7 +86,7 @@ public final class Config {
 			RenderDebugInfoGraphics = true;
 			RenderDebugInfoMemoryStats = Config.isDesktop;
 			RenderDebugInfoMeshStats = Config.isDesktop;
-			RenderDebugInfoPostProcessor = false;
+			RenderDebugInfoPostProcessor = true;
 			Render3DBoundingBoxes = false;
 			RenderDebugDrawsInTransitions = true;
 

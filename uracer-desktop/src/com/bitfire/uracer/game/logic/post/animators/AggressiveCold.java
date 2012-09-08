@@ -111,15 +111,19 @@ public final class AggressiveCold implements PostProcessingAnimator {
 			}
 		}
 
-		if (zoom != null && player != null) {
+		if (zoom != null && hasPlayer) {
 
-			zoom.setOrigin(playerScreenPos);
+			boolean zoomEnabled = zoom.isEnabled();
+			if (AMath.isZero(timeModFactor) && zoomEnabled) {
+				zoom.setEnabled(false);
+			} else if (timeModFactor > 0 && !zoomEnabled) {
+				zoom.setEnabled(true);
+			}
 
-			zoom.setBlurStrength(-0.1f * driftStrength * timeModFactor);
-			// zoom.setZoom( 1.0f + 0.5f * driftStrength * timeModFactor );
-
-			// zoom.setBlurStrength( -0.1f * driftStrength );
-			// zoom.setZoom( 1.0f + 0.5f * driftStrength + 0.2f * timeModFactor );
+			if (zoom.isEnabled()) {
+				zoom.setOrigin(playerScreenPos);
+				zoom.setBlurStrength(-0.1f * driftStrength * timeModFactor);
+			}
 		}
 
 		if (bloom != null) {
@@ -137,14 +141,13 @@ public final class AggressiveCold implements PostProcessingAnimator {
 				vignette.setSaturationMul(1 + timeModFactor * 0.2f);
 			}
 
-			if (player != null) {
-				// vignette.setCenter( playerScreenPos.x, playerScreenPos.y );
-				// vignette.setCenter( Gdx.graphics.getWidth() / 2, Gdx.graphics.getHeight() / 2 );
-			}
+			// if (player != null) {
+			// vignette.setCenter( playerScreenPos.x, playerScreenPos.y );
+			// vignette.setCenter( Gdx.graphics.getWidth() / 2, Gdx.graphics.getHeight() / 2 );
+			// }
 
 			vignette.setLutIntensity(timeModFactor * 1.618f);// * AMath.clamp( driftStrength * 1.25f, 0, 1 ) );
 			vignette.setIntensity(timeModFactor);
-			vignette.setLutIndex(5);
 		}
 
 		// // test
