@@ -185,6 +185,9 @@ public final class GameWorld {
 		float halfTile = map.tileWidth / 2;
 
 		TiledLayer layerTrack = mapUtils.getLayer(TileLayer.Track);
+		String direction = layerTrack.properties.get(LayerProperties.Start.mnemonic);
+		float startOrient = -mapUtils.orientationFromDirection(direction) * MathUtils.degreesToRadians;
+
 		Vector2 start = new Vector2();
 		int startTileX = 0, startTileY = 0;
 
@@ -197,7 +200,13 @@ public final class GameWorld {
 				}
 
 				if (type.equals("start")) {
-					start.set(mapUtils.tileToPx(x, y).add( /* Convert.scaledPixels */halfTile, -halfTile));
+
+					float mul = 1;
+					if (direction.equals("left")) {
+						mul = 1.9f;
+					}
+
+					start.set(mapUtils.tileToPx(x, y).add( /* Convert.scaledPixels */halfTile * mul, -halfTile));
 					// start.set( (x + 0.5f) * map.tileWidth, (map.height - (y +
 					// 0.5f)) * map.tileHeight );
 					start.set(Convert.px2mt(start));
@@ -208,9 +217,6 @@ public final class GameWorld {
 				}
 			}
 		}
-
-		String direction = layerTrack.properties.get(LayerProperties.Start.mnemonic);
-		float startOrient = -mapUtils.orientationFromDirection(direction) * MathUtils.degreesToRadians;
 
 		// set player data
 		playerStartOrient = startOrient;
