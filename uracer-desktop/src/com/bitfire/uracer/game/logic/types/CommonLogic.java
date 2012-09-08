@@ -354,6 +354,7 @@ public abstract class CommonLogic implements GameLogic, CarEvent.Listener, CarSt
 		GameTweener.clear();
 		lapManager.abortRecording();
 		gameTasksManager.restart();
+		routeTracker.reset();
 	}
 
 	private void resetLogic () {

@@ -117,7 +117,7 @@ public class PlayerCar extends Car {
 			return carInput;
 		}
 
-		boolean inputFromKeyboard = false;
+		boolean inputFromKeyboard = true;
 
 		if (!inputFromKeyboard) {
 
