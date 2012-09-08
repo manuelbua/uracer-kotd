@@ -150,9 +150,7 @@ public class SinglePlayerLogic extends CommonLogic {
 	public void tick () {
 		super.tick();
 
-		if (hasPlayer()) {
-			updateDriftBar();
-		}
+		updateDriftBar();
 
 		if (accuDriftSeconds.value == 0 && timeDilation) {
 			requestTimeDilationFinish();
@@ -278,6 +276,10 @@ public class SinglePlayerLogic extends CommonLogic {
 	}
 
 	private void updateDriftBar () {
+		if (!hasPlayer()) {
+			return;
+		}
+
 		if (Config.Debug.InfiniteDilationTime) {
 			accuDriftSeconds.value = DriftBar.MaxSeconds;
 		} else {
