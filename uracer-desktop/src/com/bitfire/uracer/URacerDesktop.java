@@ -28,7 +28,7 @@ public final class URacerDesktop {
 		}
 
 		// set to default
-		config.title = URacer.Name;
+		config.title = URacer.Name + " (" + URacer.getVersionInformation() + ")";
 		config.useGL20 = true;
 		config.resizable = false;
 

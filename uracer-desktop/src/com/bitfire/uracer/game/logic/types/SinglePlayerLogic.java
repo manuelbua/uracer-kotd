@@ -23,6 +23,7 @@ import com.bitfire.uracer.game.logic.gametasks.messager.Message.Size;
 import com.bitfire.uracer.game.logic.gametasks.messager.Message.Type;
 import com.bitfire.uracer.game.logic.gametasks.messager.Messager;
 import com.bitfire.uracer.game.logic.replaying.Replay;
+import com.bitfire.uracer.game.logic.replaying.ReplayManager;
 import com.bitfire.uracer.game.rendering.GameRenderer;
 import com.bitfire.uracer.game.rendering.GameWorldRenderer;
 import com.bitfire.uracer.game.tween.GameTweener;
@@ -162,6 +163,51 @@ public class SinglePlayerLogic extends CommonLogic {
 		}
 
 // Gdx.app.log("SPL", "drift=" + accuDriftSeconds);
+	}
+
+	@Override
+	public void tickCompleted () {
+		super.tickCompleted();
+
+		String completion = "";
+		String winner = "";
+		int winningGhost = -1;
+		float pl = 0;
+
+		if (hasPlayer()) {
+			pl = gameTrack.getTrackCompletion(playerCar);
+			if (pl < 0) {
+				completion += "player=n/a";
+			} else {
+				completion += "player=" + Math.round(pl * 100) + "%";
+			}
+		}
+
+		boolean playerWins = true;
+		for (int i = 0; i < ReplayManager.MaxReplays; i++) {
+			GhostCar ghost = getGhost(i);
+			if (ghost.isActive()) {
+				float gh = gameTrack.getTrackCompletion(ghost);
+				if (gh < 0) {
+					completion += ", g" + (i + 1) + "=n/a";
+				} else {
+					playerWins &= (pl > gh);
+					if (!playerWins) {
+						winningGhost = i;
+					}
+
+					completion += ", g" + (i + 1) + "=" + Math.round(gh * 100) + "%";
+				}
+			}
+		}
+
+		if (playerWins) {
+			winner = "(PLAYER ahead!)";
+		} else if (winningGhost > -1) {
+			winner = "(ghost #" + (winningGhost + 1) + " ahead)";
+		}
+
+		Gdx.app.log("RouteTracker", completion + " - " + winner);
 	}
 
 	@Override

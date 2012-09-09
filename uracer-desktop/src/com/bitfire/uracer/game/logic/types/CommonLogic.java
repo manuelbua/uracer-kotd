@@ -30,8 +30,8 @@ import com.bitfire.uracer.game.logic.gametasks.hud.elements.HudPlayer.EndDriftTy
 import com.bitfire.uracer.game.logic.gametasks.messager.Message;
 import com.bitfire.uracer.game.logic.gametasks.messager.MessageAccessor;
 import com.bitfire.uracer.game.logic.helpers.CarFactory;
+import com.bitfire.uracer.game.logic.helpers.GameTrack;
 import com.bitfire.uracer.game.logic.helpers.PlayerGameTasks;
-import com.bitfire.uracer.game.logic.helpers.RouteTracker;
 import com.bitfire.uracer.game.logic.post.PostProcessing;
 import com.bitfire.uracer.game.logic.post.animators.AggressiveCold;
 import com.bitfire.uracer.game.logic.replaying.LapManager;
@@ -58,7 +58,7 @@ public abstract class CommonLogic implements GameLogic, CarEvent.Listener, CarSt
 
 	// world
 	protected GameWorld gameWorld = null;
-	protected RouteTracker routeTracker = null;
+	protected GameTrack gameTrack = null;
 
 	// rendering
 	private GameRenderer gameRenderer = null;
@@ -126,7 +126,7 @@ public abstract class CommonLogic implements GameLogic, CarEvent.Listener, CarSt
 
 		replayManager = new ReplayManager(userProfile, gameWorld.trackId);
 
-		routeTracker = new RouteTracker(gameWorld, gameRenderer.getWorldRenderer());
+		gameTrack = new GameTrack(gameWorld);
 
 		// messager.show( "COOL STUFF!", 60, Message.Type.Information,
 		// MessagePosition.Bottom, MessageSize.Big );
@@ -151,7 +151,7 @@ public abstract class CommonLogic implements GameLogic, CarEvent.Listener, CarSt
 
 		GameTweener.dispose();
 		replayManager.dispose();
-		routeTracker.dispose();
+		gameTrack.dispose();
 	}
 
 	//
@@ -239,7 +239,10 @@ public abstract class CommonLogic implements GameLogic, CarEvent.Listener, CarSt
 		Gdx.app.log("GameLogic", "Registered player-related events");
 
 		gameWorldRenderer.setRenderPlayerHeadlights(gameWorld.isNightMode());
-		routeTracker.setCar(playerCar);
+
+		if (Config.Debug.RenderTrackSectors) {
+			gameTrack.setDebugCar(playerCar);
+		}
 
 		restartGame();
 
@@ -354,7 +357,6 @@ public abstract class CommonLogic implements GameLogic, CarEvent.Listener, CarSt
 		GameTweener.clear();
 		lapManager.abortRecording();
 		gameTasksManager.restart();
-		routeTracker.reset();
 	}
 
 	private void resetLogic () {
@@ -375,7 +377,6 @@ public abstract class CommonLogic implements GameLogic, CarEvent.Listener, CarSt
 	@Override
 	public void tickCompleted () {
 		gameTasksManager.physicsStep.onSubstepCompleted();
-		routeTracker.update();
 	}
 
 	@Override

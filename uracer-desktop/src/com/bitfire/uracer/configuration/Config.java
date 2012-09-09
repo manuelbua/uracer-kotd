@@ -70,6 +70,7 @@ public final class Config {
 		public static boolean RenderDebugInfoMemoryStats;
 		public static boolean RenderDebugInfoPostProcessor;
 		public static boolean RenderDebugDrawsInTransitions;
+		public static boolean RenderTrackSectors;
 
 		public static boolean TraverseWalls;
 		public static boolean ApplyCarFrictionFromMap;
@@ -89,9 +90,10 @@ public final class Config {
 			RenderDebugInfoPostProcessor = true;
 			Render3DBoundingBoxes = false;
 			RenderDebugDrawsInTransitions = true;
+			RenderTrackSectors = true;
 
-			TraverseWalls = true;
-			ApplyCarFrictionFromMap = false;
+			TraverseWalls = false;
+			ApplyCarFrictionFromMap = true;
 			FrustumCulling = true;
 			InfiniteDilationTime = true;
 		}

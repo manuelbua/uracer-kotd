@@ -206,11 +206,16 @@ public final class GameWorld {
 				if (type.equals("start")) {
 
 					float mul = 1;
+					float add = 0;
+
 					if (direction.equals("left")) {
 						mul = 2;
+						add = -3.5f;
+					} else if (direction.equals("right")) {
+						mul = 0;
 					}
 
-					start.set(mapUtils.tileToPx(x, y).add( /* Convert.scaledPixels */halfTile * mul - 3.5f, -halfTile));
+					start.set(mapUtils.tileToPx(x, y).add( /* Convert.scaledPixels */halfTile * mul + add, -halfTile));
 					// start.set( (x + 0.5f) * map.tileWidth, (map.height - (y +
 					// 0.5f)) * map.tileHeight );
 					start.set(Convert.px2mt(start));
