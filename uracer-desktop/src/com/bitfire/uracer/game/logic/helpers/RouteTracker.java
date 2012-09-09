@@ -18,7 +18,6 @@ import com.bitfire.uracer.game.GameEvents;
 import com.bitfire.uracer.game.actors.Car;
 import com.bitfire.uracer.game.rendering.GameWorldRenderer;
 import com.bitfire.uracer.game.world.GameWorld;
-import com.bitfire.uracer.utils.NumberString;
 
 public final class RouteTracker implements Disposable, GameRendererEvent.Listener {
 
@@ -84,7 +83,7 @@ public final class RouteTracker implements Disposable, GameRendererEvent.Listene
 			TrackSector ts = new TrackSector(polys.get(p), len, accuLength, from, to);
 			sectors[i] = ts;
 
-			Gdx.app.log("RouteTracker", from + " -> " + to + ", poly=" + p + ", len=" + len);
+			Gdx.app.log("RouteTracker::sectorizer", from + " -> " + to + ", poly=" + p + ", len=" + len);
 
 			accuLength += len;
 		}
@@ -117,8 +116,7 @@ public final class RouteTracker implements Disposable, GameRendererEvent.Listene
 			TrackSector s = sectors[carSector];
 			float carlen = (s.relativeTotal + s.length * distInSector(s, pt));
 			float trackPercent = (carlen / totalLength) * 100;
-			String perc = NumberString.formatSmall(trackPercent);
-			Gdx.app.log("RouteTracker", "tracklen=" + carlen + ", track_completion=" + perc + "%");
+			Gdx.app.log("RouteTracker", "tracklen=" + carlen + ", track_completion=" + Math.round(trackPercent) + "%");
 		}
 	}
 
