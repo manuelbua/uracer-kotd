@@ -29,7 +29,9 @@ public final class RouteTracker implements Disposable, GameRendererEvent.Listene
 	private final float totalLength;
 
 	Vector2 tmp = new Vector2();
-	private int nearestWp = -1, prevNearestWp = -1, nextNearestWp = -1;
+	private int currWp = -1, prevWp = -1, nextWp = -1;
+	private Vector2 tmprj = new Vector2();
+	private Vector2 prj1 = new Vector2(0, 0), prj2 = new Vector2(0, 0), prjf = new Vector2(0, 0);
 
 	public RouteTracker (List<Vector2> route, GameWorldRenderer gameWorldRenderer) {
 		this.route = route;
@@ -68,12 +70,12 @@ public final class RouteTracker implements Disposable, GameRendererEvent.Listene
 	}
 
 	public void reset () {
-		nearestWp = -1;
-		prevNearestWp = -1;
-		nextNearestWp = -1;
+		currWp = -1;
+		prevWp = -1;
+		nextWp = -1;
 	}
 
-	private Vector2 tmprj = new Vector2();
+	private Vector2 lerped = new Vector2(), plerped = new Vector2();
 
 	public void update () {
 		if (car == null) {
@@ -83,17 +85,35 @@ public final class RouteTracker implements Disposable, GameRendererEvent.Listene
 		updateDistances();
 		updateNearestWaypoints();
 
-		if (nearestWp > -1 && nextNearestWp > -1 && prevNearestWp > -1) {
-			project(route.get(nearestWp), route.get(prevNearestWp), car.getWorldPosMt());
-			tmprj.set(prj);
-			project(route.get(nearestWp), route.get(nextNearestWp), car.getWorldPosMt());
-			tmprj.lerp(prj, 0.5f);
-			prj.set(tmprj);
+		if (currWp > -1 && nextWp > -1 && prevWp > -1) {
+			// car to curr
+			prj1.set(project(route.get(currWp), route.get(prevWp), car.getWorldPosMt()));
+			boolean prj1In = isBetween(route.get(currWp), route.get(prevWp), prj1);
+
+			// car to next
+			prj2.set(project(route.get(currWp), route.get(nextWp), car.getWorldPosMt()));
+			boolean prj2In = isBetween(route.get(currWp), route.get(nextWp), prj2);
+
+			if (prj1In) {
+				prjf.set(prj1);
+			} else if (prj2In) {
+				prjf.set(prj2);
+			} else {
+// prjf.set(project(route.get(currWp), route.get(nextWp), prj1));
+			}
+
+			lerped.set(plerped);
+			lerped.lerp(prjf, 0.3f);
+			prjf.set(lerped);
+			plerped.set(prjf);
+
+// Gdx.app.log("RouteTracker", "prj1in=" + prj1In + ", prj2in=" + prj2In);
+
+// if (distances[currWp] > 5) {
+// prjf.set(project(route.get(currWp), route.get(nextWp), prj1));
+// prjf.set(project(route.get(currWp), route.get(prevWp), prj2));
+// }
 		}
-
-// float d = route.get(nearestWp).crs(car.getWorldPosMt());
-// Gdx.app.log("RouteTracker", "d=" + d);
-
 	}
 
 	// compute player-to-waypoint distances
@@ -117,28 +137,28 @@ public final class RouteTracker implements Disposable, GameRendererEvent.Listene
 			}
 		}
 
-		if (nearest != nearestWp) {
-			prevNearestWp = nearestWp;
-			nearestWp = nearest;
+		if (nearest != currWp) {
+			prevWp = currWp;
+			currWp = nearest;
 		}
 
-		if (nearestWp == -1 || prevNearestWp == -1) {
+		if (currWp == -1 || prevWp == -1) {
 			return;
 		}
 
 		// compute next nearest
-		boolean forward = (nearestWp > prevNearestWp) || (nearestWp == 0 && prevNearestWp == route.size() - 1);
-		forward &= !(nearestWp == route.size() - 1 && prevNearestWp == 0);
+		boolean forward = (currWp > prevWp) || (currWp == 0 && prevWp == route.size() - 1);
+		forward &= !(currWp == route.size() - 1 && prevWp == 0);
 
 		if (forward) {
-			nextNearestWp = nearestWp + 1;
-			if (nextNearestWp >= route.size()) {
-				nextNearestWp = 0;
+			nextWp = currWp + 1;
+			if (nextWp >= route.size()) {
+				nextWp = 0;
 			}
 		} else {
-			nextNearestWp = nearestWp - 1;
-			if (nextNearestWp < 0) {
-				nextNearestWp = route.size() - 1;
+			nextWp = currWp - 1;
+			if (nextWp < 0) {
+				nextWp = route.size() - 1;
 			}
 		}
 
@@ -153,8 +173,6 @@ public final class RouteTracker implements Disposable, GameRendererEvent.Listene
 // }
 	}
 
-	private Vector2 prj = new Vector2(0, 0);
-
 	private Vector2 project (Vector2 line1, Vector2 line2, Vector2 toProject) {
 		float m = (line2.y - line1.y) / (line2.x - line1.x);
 		float b = line1.y - (m * line1.x);
@@ -162,8 +180,22 @@ public final class RouteTracker implements Disposable, GameRendererEvent.Listene
 		float x = (m * toProject.y + toProject.x - m * b) / (m * m + 1);
 		float y = (m * m * toProject.y + m * toProject.x + b) / (m * m + 1);
 
-		prj.set(x, y);
-		return prj;
+		tmprj.set(x, y);
+		return tmprj;
+	}
+
+	private boolean isBetween (Vector2 a, Vector2 b, Vector2 c) {
+		float dotproduct = (c.x - a.x) * (b.x - a.x) + (c.y - a.y) * (b.y - a.y);
+		if (dotproduct < 0) {
+			return false;
+		}
+
+		float squaredlengthba = a.dst2(b);
+		if (dotproduct > squaredlengthba) {
+			return false;
+		}
+
+		return true;
 	}
 
 	//
@@ -200,15 +232,15 @@ public final class RouteTracker implements Disposable, GameRendererEvent.Listene
 		shape.begin(ShapeType.FilledCircle);
 		for (int i = 0; i < route.size(); i++) {
 			Vector2 p = route.get(i);
-			if (i == nearestWp) {
+			if (i == currWp) {
 				// nearest
 				shape.setColor(1f, 0.2f, 0.2f, 0.85f);
 				shape.filledCircle(p.x, p.y, 0.8f, 100);
-			} else if (i == prevNearestWp) {
+			} else if (i == prevWp) {
 				// previous nearest
 				shape.setColor(1f, 0.5f, 0.2f, 0.5f);
 				shape.filledCircle(p.x, p.y, 0.65f, 100);
-			} else if (i == nextNearestWp) {
+			} else if (i == nextWp) {
 				// next nearest
 				shape.setColor(0.2f, 0.5f, 1f, 0.5f);
 				shape.filledCircle(p.x, p.y, 0.65f, 100);
@@ -227,10 +259,22 @@ public final class RouteTracker implements Disposable, GameRendererEvent.Listene
 		shape.filledCircle(car.getBody().getPosition().x, car.getBody().getPosition().y, 0.5f, 100);
 		shape.end();
 
-		// prj dot
+		// prj1 dot
+		shape.begin(ShapeType.FilledCircle);
+		shape.setColor(1, 0.2f, 0.2f, 1);
+		shape.filledCircle(prj1.x, prj1.y, 0.25f, 100);
+		shape.end();
+
+		// prj2 dot
+		shape.begin(ShapeType.FilledCircle);
+		shape.setColor(0.2f, 0.5f, 1, 1);
+		shape.filledCircle(prj2.x, prj2.y, 0.25f, 100);
+		shape.end();
+
+		// prjf dot
 		shape.begin(ShapeType.FilledCircle);
 		shape.setColor(1, 1, 1, 1);
-		shape.filledCircle(prj.x, prj.y, 0.25f, 100);
+		shape.filledCircle(prjf.x, prjf.y, 0.15f, 100);
 		shape.end();
 
 		Gdx.gl.glDisable(GL20.GL_BLEND);
