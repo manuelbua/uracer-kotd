@@ -415,4 +415,122 @@
    <polyline points="0,0 96,28 179,4 226,-60"/>
   </object>
  </objectgroup>
+ <objectgroup color="#e5f100" name="sectors" width="20" height="14">
+  <object x="2463" y="627">
+   <polygon points="-1,18 -1,282 228,294 227,9"/>
+  </object>
+  <object x="2690" y="627">
+   <polygon points="0,9 667,25 658,265 1,293"/>
+  </object>
+  <object x="3357" y="611">
+   <polygon points="0,41 296,150 163,379 -7,281"/>
+  </object>
+  <object x="3683" y="687">
+   <polygon points="-30,75 111,273 -132,365 -162,302"/>
+  </object>
+  <object x="3572" y="1126">
+   <polygon points="-1,-3 16,951 219,939 228,-4"/>
+  </object>
+  <object x="3587" y="2077">
+   <polygon points="0,0 205,-12 117,234 -47,94"/>
+  </object>
+  <object x="3342" y="2257">
+   <polygon points="0,0 20,204 273,113 152,-40"/>
+  </object>
+  <object x="3342" y="2256">
+   <polygon points="0,0 -147,-49 -294,95 20,205"/>
+  </object>
+  <object x="3047" y="2351">
+   <polygon points="0,0 -113,-261 63,-325 148,-145"/>
+  </object>
+  <object x="3110" y="2025">
+   <polygon points="0,0 -45,-255 -257,-202 -175,65"/>
+  </object>
+  <object x="3064" y="1771">
+   <polygon points="0,0 -201,-157 -283,10 -211,53"/>
+  </object>
+  <object x="2863" y="1614">
+   <polygon points="0,0 -235,-25 -243,157 -83,167"/>
+  </object>
+  <object x="2629" y="1590">
+   <polygon points="0,0 -192,85 -139,254 -9,180"/>
+  </object>
+  <object x="2437" y="1673">
+   <polygon points="0,0 -155,169 1,263 53,171"/>
+  </object>
+  <object x="2281" y="1842">
+   <polygon points="2,1 -11,207 160,227 157,95"/>
+  </object>
+  <object x="2269" y="2048">
+   <polygon points="1,1 -59,135 67,254 172,20"/>
+  </object>
+  <object x="2210" y="2182">
+   <polygon points="0,0 -185,81 -83,262 126,119"/>
+  </object>
+  <object x="2128" y="2444">
+   <polygon points="0,0 -205,3 -206,-178 -103,-181"/>
+  </object>
+  <object x="1923" y="2265">
+   <polygon points="0,0 -851,-7 -859,183 1,181"/>
+  </object>
+  <object x="1072" y="2259">
+   <polygon points="0,0 -167,-106 -307,45 -9,190"/>
+  </object>
+  <object x="766" y="2304">
+   <polygon points="-1,0 -67,-198 102,-247 139,-151"/>
+  </object>
+  <object x="699" y="2106">
+   <polygon points="0,0 2,-1057 181,-1052 168,-49"/>
+  </object>
+  <object x="881" y="1055">
+   <polygon points="-2,-1 50,-121 -75,-215 -180,-5"/>
+  </object>
+  <object x="932" y="933">
+   <polygon points="-1,1 166,-67 117,-251 -125,-93"/>
+  </object>
+  <object x="1099" y="867">
+   <polygon points="0,-1 217,84 332,-98 -49,-183"/>
+  </object>
+  <object x="1432" y="770">
+   <polygon points="-1,-1 137,240 -64,313 -117,181"/>
+  </object>
+  <object x="1369" y="1084">
+   <polygon points="-1,-1 3,493 189,495 200,-74"/>
+  </object>
+  <object x="1559" y="1579">
+   <polygon points="0,0 29,152 -169,203 -187,-3"/>
+  </object>
+  <object x="1589" y="1732">
+   <polygon points="-1,-1 137,86 31,248 -200,51"/>
+  </object>
+  <object x="1727" y="1819">
+   <polygon points="-1,0 187,-17 263,186 -108,162"/>
+  </object>
+  <object x="1914" y="1801">
+   <polygon points="0,0 119,-158 282,-45 76,204"/>
+  </object>
+  <object x="2035" y="1643">
+   <polygon points="0,0 161,113 180,-102 1,-143"/>
+  </object>
+  <object x="2037" y="1501">
+   <polygon points="0,0 2,-493 203,-471 179,41"/>
+  </object>
+  <object x="2040" y="1007">
+   <polygon points="0,0 106,-221 267,-97 201,24"/>
+  </object>
+  <object x="2309" y="911">
+   <polygon points="0,0 153,0 154,-266 -162,-126"/>
+  </object>
+  <object x="3494" y="2217">
+   <polygon points="0,0 47,-45 210,94 121,153"/>
+  </object>
+  <object x="3552" y="1051">
+   <polygon points="0,0 19,71 248,70 242,-92"/>
+  </object>
+ </objectgroup>
+ <objectgroup color="#e3e600" name="route" width="20" height="14">
+  <object x="2464" y="783">
+   <polyline points="0,0 227,1 888,-5 1124,93 1211,223 1232,340 1226,1287 1152,1451 1090,1510 888,1577 669,1485 566,1272 490,1016 359,915 160,902 -1,976 -91,1113 -112,1275 -195,1454 -389,1568 -541,1575 -1396,1567 -1619,1435 -1676,1297 -1673,269 -1591,106 -1387,1 -1099,89 -1006,266 -1003,794 -961,968 -786,1107 -520,1100 -355,912 -340,738 -321,236 -224,74"/>
+  </object>
+ </objectgroup>
 </map>
