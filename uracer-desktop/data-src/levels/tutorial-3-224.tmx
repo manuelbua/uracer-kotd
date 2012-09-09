@@ -269,8 +269,8 @@
    <polyline points="-45,-2 41,-9 131,-21 242,-15 339,-19 437,-9"/>
   </object>
  </objectgroup>
- <objectgroup color="#ecde0e" name="sectors" width="8" height="6" visible="0">
-  <object name="b" x="677" y="249">
+ <objectgroup color="#ecde0e" name="sectors" width="8" height="6">
+  <object x="677" y="249">
    <polygon points="-11,-2 -8,169 450,178 451,-3"/>
   </object>
   <object x="1139" y="421">
@@ -279,7 +279,7 @@
   <object x="1310" y="496">
    <polygon points="-9,-9 89,-170 228,41 56,114"/>
   </object>
-  <object name="c" x="1368" y="627">
+  <object x="1368" y="627">
    <polygon points="-2,-18 171,-91 161,177 -18,163"/>
   </object>
   <object x="1342" y="808">
@@ -303,11 +303,16 @@
   <object x="275" y="488">
    <polygon points="-15,17 182,37 282,-43 179,-195"/>
   </object>
-  <object name="a" x="453" y="293">
+  <object x="453" y="293">
    <polygon points="0,0 103,152 217,125 213,-47"/>
   </object>
  </objectgroup>
  <objectgroup color="#ffec18" name="route" width="8" height="6">
+  <object x="1117" y="1010">
+   <polyline points="0,0 -459,-3 -653,-63 -774,-257 -761,-496 -612,-641 -451,-679 11,-677 229,-599 329,-437 322,-214 177,-45"/>
+  </object>
+ </objectgroup>
+ <objectgroup color="#ffec18" name="route-" width="8" height="6" visible="0">
   <object x="1118" y="1010">
    <polyline points="1,0 -92,0 -192,-1 -276,-1 -361,-1 -445,-1 -522,-5 -585,-29 -648,-70 -711,-145 -768,-244 -784,-334 -780,-429 -723,-521 -666,-594 -583,-650 -491,-672 -381,-675 -266,-676 -134,-677 -1,-678 116,-659 195,-611 284,-534 323,-448 339,-339 323,-220 271,-135 172,-48 73,-6"/>
   </object>

@@ -26,6 +26,8 @@ import com.badlogic.gdx.graphics.g3d.model.still.StillModel;
 import com.badlogic.gdx.graphics.g3d.model.still.StillSubMesh;
 import com.badlogic.gdx.graphics.glutils.ShaderProgram;
 import com.badlogic.gdx.math.MathUtils;
+import com.badlogic.gdx.math.Polygon;
+import com.badlogic.gdx.math.Rectangle;
 import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.physics.box2d.World;
 import com.badlogic.gdx.utils.GdxRuntimeException;
@@ -85,6 +87,7 @@ public final class GameWorld {
 
 	// routes
 	private List<Vector2> route = new ArrayList<Vector2>();
+	private List<Polygon> polys = new ArrayList<Polygon>();
 
 	public GameWorld (ScalingStrategy strategy, String trackId, boolean nightMode) {
 		scalingStrategy = strategy;
@@ -115,6 +118,7 @@ public final class GameWorld {
 		createMeshes();
 		loadPlayerData(map);
 		route = createRoute();
+		polys = createTrackPolygons();
 
 		if (route == null) {
 			throw new GdxRuntimeException("No route for this track");
@@ -203,10 +207,10 @@ public final class GameWorld {
 
 					float mul = 1;
 					if (direction.equals("left")) {
-						mul = 1.9f;
+						mul = 2;
 					}
 
-					start.set(mapUtils.tileToPx(x, y).add( /* Convert.scaledPixels */halfTile * mul, -halfTile));
+					start.set(mapUtils.tileToPx(x, y).add( /* Convert.scaledPixels */halfTile * mul - 3.5f, -halfTile));
 					// start.set( (x + 0.5f) * map.tileWidth, (map.height - (y +
 					// 0.5f)) * map.tileHeight );
 					start.set(Convert.px2mt(start));
@@ -279,8 +283,9 @@ public final class GameWorld {
 	}
 
 	//
-	// construct route
+	// construct route/sectors
 	//
+
 	private List<Vector2> createRoute () {
 		List<Vector2> r = null;
 
@@ -319,6 +324,56 @@ public final class GameWorld {
 		}
 
 		return r;
+	}
+
+	private List<Polygon> createTrackPolygons () {
+		List<Polygon> s = null;
+
+		if (mapUtils.hasObjectGroup(ObjectGroup.Sectors)) {
+			Vector2 pt = new Vector2();
+			Vector2 offsetMt = new Vector2();
+
+			TiledObjectGroup group = mapUtils.getObjectGroup(ObjectGroup.Sectors);
+			if (group.objects.size() > 0) {
+				s = new ArrayList<Polygon>(group.objects.size());
+
+				for (int i = 0; i < group.objects.size(); i++) {
+					TiledObject o = group.objects.get(i);
+					List<Vector2> points = MapUtils.extractPolyData(o.polygon);
+					if (points.size() != 4) {
+						throw new GdxRuntimeException("A quadrilateral is required!");
+					}
+
+					offsetMt.set(o.x, o.y);
+					offsetMt.set(Convert.px2mt(offsetMt));
+
+					float[] vertices = new float[8];
+					for (int j = 0; j < points.size(); j++) {
+						// convert to uracer convention
+						pt.set(Convert.px2mt(points.get(j))).add(offsetMt);
+						pt.y = worldSizeMt.y - pt.y;
+
+						vertices[j * 2] = pt.x;
+						vertices[j * 2 + 1] = pt.y;
+					}
+
+					Polygon p = new Polygon(vertices);
+					Rectangle r = p.getBoundingRectangle();
+					float oX = r.x + r.width / 2;
+					float oY = r.y + r.height / 2;
+					p.setOrigin(oX, oY);
+
+					s.add(p);
+				}
+
+			} else {
+				throw new GdxRuntimeException("There are no defined sectors for this track");
+			}
+
+		}
+
+		return s;
+
 	}
 
 	//
@@ -569,6 +624,10 @@ public final class GameWorld {
 
 	public List<Vector2> getTrackRoute () {
 		return route;
+	}
+
+	public List<Polygon> getTrackPolygons () {
+		return polys;
 	}
 
 	public List<OrthographicAlignedStillModel> getStaticMeshes () {

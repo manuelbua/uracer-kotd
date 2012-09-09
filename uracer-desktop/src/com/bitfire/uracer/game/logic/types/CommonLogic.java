@@ -126,7 +126,7 @@ public abstract class CommonLogic implements GameLogic, CarEvent.Listener, CarSt
 
 		replayManager = new ReplayManager(userProfile, gameWorld.trackId);
 
-		routeTracker = new RouteTracker(gameWorld.getTrackRoute(), gameRenderer.getWorldRenderer());
+		routeTracker = new RouteTracker(gameWorld, gameRenderer.getWorldRenderer());
 
 		// messager.show( "COOL STUFF!", 60, Message.Type.Information,
 		// MessagePosition.Bottom, MessageSize.Big );

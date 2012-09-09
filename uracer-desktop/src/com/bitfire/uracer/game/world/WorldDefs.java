@@ -37,6 +37,7 @@ public final class WorldDefs {
 		Trees("trees"), 
 		Walls("walls"),
 		Route("route"),
+		Sectors("sectors")
 		;
 		// @on
 
