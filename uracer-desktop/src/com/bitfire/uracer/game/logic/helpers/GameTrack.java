@@ -7,6 +7,7 @@ import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.GL20;
 import com.badlogic.gdx.graphics.glutils.ShapeRenderer;
 import com.badlogic.gdx.graphics.glutils.ShapeRenderer.ShapeType;
+import com.badlogic.gdx.math.MathUtils;
 import com.badlogic.gdx.math.Polygon;
 import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.utils.Disposable;
@@ -101,7 +102,7 @@ public final class GameTrack implements Disposable {
 
 			int p = findPolygon(from, to);
 			if (p == -1) {
-				throw new GdxRuntimeException("Cannot find a matching sectors for points (" + (i - 1) + "," + i);
+				throw new GdxRuntimeException("Cannot find a matching sectors for points (" + (i - 1) + "," + i + ")");
 			}
 
 			TrackSector ts = new TrackSector(polys.get(p), len, accuLength, from, to);
@@ -141,7 +142,8 @@ public final class GameTrack implements Disposable {
 
 		if (carSector != -1) {
 			TrackSector s = sectors[carSector];
-			float carlen = (s.relativeTotal + s.length * distInSector(s, pt));
+			float dist = MathUtils.clamp(distInSector(s, pt), 0, 1);
+			float carlen = (s.relativeTotal + s.length * dist);
 			return (carlen * oneOnTotalLength);
 			// float trackPercent = (carlen / totalLength) * 100;
 			// Gdx.app.log("RouteTracker", "tracklen=" + carlen + ", track_completion=" + Math.round(trackPercent) + "%");

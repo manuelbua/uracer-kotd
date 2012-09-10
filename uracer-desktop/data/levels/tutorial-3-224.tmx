@@ -270,50 +270,48 @@
  </objectgroup>
  <objectgroup color="#ecde0e" height="6" name="sectors" width="8">
   <object x="677" y="249">
-   <polygon points="-11,-2 -8,169 450,178 451,-3"/>
+   <polygon points="-5,-25 -5,199 443,199 443,-25"/>
   </object>
   <object x="1139" y="421">
-   <polygon points="-12,6 -10,-176 259,-95 161,67"/>
+   <polygon points="-19,27 -19,-197 261,-85 149,83"/>
   </object>
   <object x="1310" y="496">
-   <polygon points="-9,-9 89,-170 228,41 56,114"/>
+   <polygon points="-22,8 90,-160 258,8 34,120"/>
   </object>
   <object x="1368" y="627">
-   <polygon points="-2,-18 171,-91 161,177 -18,163"/>
+   <polygon points="-24,-11 200,-123 200,157 -24,157"/>
   </object>
   <object x="1342" y="808">
-   <polygon points="9,-18 187,-4 41,231 -122,99"/>
+   <polygon points="2,-24 226,-24 58,200 -110,88"/>
   </object>
   <object x="1210" y="910">
-   <polygon points="11,-3 -92,9 -93,182 173,129"/>
-  </object>
-  <object x="1117" y="919">
-   <polygon points="0,0 0,174 -459,171 -460,-3"/>
+   <polygon points="22,-14 -90,-14 -90,210 190,98"/>
   </object>
   <object x="658" y="1090">
-   <polygon points="0,0 -232,-54 -161,-230 -1,-175"/>
+   <polygon points="14,30 -266,-82 -154,-250 14,-194"/>
   </object>
   <object x="417" y="1015">
-   <polygon points="9,21 -156,-221 3,-300 81,-154"/>
+   <polygon points="-25,-7 -193,-175 31,-287 87,-175"/>
   </object>
   <object x="254" y="779">
-   <polygon points="7,14 167,-65 201,-254 6,-275"/>
+   <polygon points="-30,61 194,-51 194,-219 -30,-275"/>
   </object>
   <object x="275" y="488">
-   <polygon points="-15,17 182,37 282,-43 179,-195"/>
+   <polygon points="-51,16 173,72 285,-40 173,-208"/>
   </object>
   <object x="453" y="293">
-   <polygon points="0,0 103,152 217,125 213,-47"/>
+   <polygon points="-5,-13 107,155 219,155 219,-69"/>
+  </object>
+  <object x="662" y="915">
+   <polygon points="10,-19 10,205 234,205 234,-19"/>
+  </object>
+  <object x="899" y="913">
+   <polygon points="-3,-17 -3,207 221,207 221,-17"/>
   </object>
  </objectgroup>
  <objectgroup color="#ffec18" height="6" name="route" width="8">
-  <object x="1117" y="1010">
-   <polyline points="0,0 -459,-3 -653,-63 -774,-257 -761,-496 -612,-641 -451,-679 11,-677 229,-599 329,-437 322,-214 177,-45"/>
-  </object>
- </objectgroup>
- <objectgroup color="#ffec18" height="6" name="route-" visible="0" width="8">
-  <object x="1118" y="1010">
-   <polyline points="1,0 -92,0 -192,-1 -276,-1 -361,-1 -445,-1 -522,-5 -585,-29 -648,-70 -711,-145 -768,-244 -784,-334 -780,-429 -723,-521 -666,-594 -583,-650 -491,-672 -381,-675 -266,-676 -134,-677 -1,-678 116,-659 195,-611 284,-534 323,-448 339,-339 323,-220 271,-135 172,-48 73,-6"/>
+  <object x="1121" y="1007">
+   <polyline points="0,0 -225,1 -449,0 -668,-90 -770,-231 -760,-470 -613,-638 -448,-676 0,-679 223,-587 321,-443 322,-225 194,-57"/>
   </object>
  </objectgroup>
 </map>

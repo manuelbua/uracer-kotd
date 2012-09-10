@@ -323,7 +323,11 @@ public final class GameWorld {
 					r.add(new Vector2(toMt));
 				}
 			} else {
-				throw new GdxRuntimeException("Too many routes");
+				if (group.objects.size() > 1) {
+					throw new GdxRuntimeException("Too many routes");
+				} else if (group.objects.size() == 0) {
+					throw new GdxRuntimeException("No route defined for this track");
+				}
 			}
 
 		}

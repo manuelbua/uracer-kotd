@@ -32,6 +32,7 @@ import com.bitfire.uracer.utils.AMath;
 import com.bitfire.uracer.utils.BoxedFloat;
 import com.bitfire.uracer.utils.BoxedFloatAccessor;
 import com.bitfire.uracer.utils.CarUtils;
+import com.bitfire.uracer.utils.NumberString;
 
 public class SinglePlayerLogic extends CommonLogic {
 
@@ -179,7 +180,7 @@ public class SinglePlayerLogic extends CommonLogic {
 			if (pl < 0) {
 				completion += "player=n/a";
 			} else {
-				completion += "player=" + Math.round(pl * 100) + "%";
+				completion += "player=" + NumberString.formatSmall(pl * 100) + "%";
 			}
 		}
 
@@ -196,7 +197,7 @@ public class SinglePlayerLogic extends CommonLogic {
 						winningGhost = i;
 					}
 
-					completion += ", g" + (i + 1) + "=" + Math.round(gh * 100) + "%";
+					completion += ", g" + (i + 1) + "=" + NumberString.formatSmall(gh * 100) + "%";
 				}
 			}
 		}

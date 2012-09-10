@@ -19,7 +19,7 @@ public class GameScreen extends Screen {
 		// simulate slowness
 		// try { Thread.sleep( 1000 ); } catch( InterruptedException e ) {}
 
-		String trackId = GameTracks.getTrackId("Simple");
+		String trackId = GameTracks.getTrackId("Boring long");
 		if (trackId == null) {
 			Gdx.app.log("GameScreen", "The specified track could not be found");
 			System.exit(-1);
