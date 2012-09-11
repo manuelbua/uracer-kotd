@@ -90,7 +90,7 @@ public final class Config {
 			RenderDebugInfoPostProcessor = true;
 			Render3DBoundingBoxes = false;
 			RenderDebugDrawsInTransitions = true;
-			RenderTrackSectors = true;
+			RenderTrackSectors = false;
 
 			TraverseWalls = false;
 			ApplyCarFrictionFromMap = true;

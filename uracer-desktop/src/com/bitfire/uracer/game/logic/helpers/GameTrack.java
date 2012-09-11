@@ -79,7 +79,6 @@ public final class GameTrack implements Disposable {
 			dbg = null;
 			isDebugged = false;
 		}
-
 	}
 
 	/** Load and follows the supplied route waypoints, identifying sectors containing the two leading/trailing waypoints. The
@@ -235,6 +234,8 @@ public final class GameTrack implements Disposable {
 		}
 
 		private void render () {
+			float alpha = 0.25f;
+			float ialpha = 1f / 0.25f;
 			int carSector = -1;
 
 			if (hasCar) {
@@ -251,7 +252,7 @@ public final class GameTrack implements Disposable {
 			shape.begin(ShapeType.Line);
 			for (int i = 1; i <= route.size() - 1; i++) {
 				Vector2 to = route.get(i);
-				shape.setColor(1, 1, 1, 1);
+				shape.setColor(1, 1, 1, alpha);
 				shape.line(tmp.x, tmp.y, to.x, to.y);
 				tmp.set(to);
 			}
@@ -261,7 +262,7 @@ public final class GameTrack implements Disposable {
 			shape.begin(ShapeType.FilledCircle);
 			for (int i = 0; i < route.size(); i++) {
 				Vector2 p = route.get(i);
-				shape.setColor(0.8f, 1, 0.9f, 0.5f);
+				shape.setColor(0.8f, 1, 0.9f, alpha);
 				shape.filledCircle(p.x, p.y, 0.5f, 100);
 			}
 			shape.end();
@@ -275,13 +276,14 @@ public final class GameTrack implements Disposable {
 					continue;
 				}
 
-				shape.setColor(1, 1, 1, 1f);
+				shape.setColor(1, 1, 1, alpha);
 				drawSector(sectors[i]);
 			}
 
 			// car sector
+			float carAlpha = (1 / alpha) * 0.6f;
 			if (carSector > -1) {
-				shape.setColor(1, 0, 0, 1f);
+				shape.setColor(1, 0, 0, alpha * carAlpha);
 				drawSector(sectors[carSector]);
 			}
 
@@ -293,7 +295,7 @@ public final class GameTrack implements Disposable {
 
 				shape.begin(ShapeType.FilledCircle);
 
-				shape.setColor(1f, 0, 0f, 0.85f);
+				shape.setColor(1f, 0, 0f, alpha * carAlpha);
 				shape.filledCircle(s.leading.x, s.leading.y, 0.5f, 100);
 				shape.filledCircle(s.trailing.x, s.trailing.y, 0.5f, 100);
 
