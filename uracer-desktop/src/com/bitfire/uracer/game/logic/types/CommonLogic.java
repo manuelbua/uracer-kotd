@@ -238,6 +238,9 @@ public abstract class CommonLogic implements GameLogic, CarEvent.Listener, CarSt
 		registerPlayerEvents(playerCar);
 		Gdx.app.log("GameLogic", "Registered player-related events");
 
+		updateCamera(0);
+		gameWorldRenderer.updateCamera();
+		postProcessing.setPlayer(playerCar);
 		gameWorldRenderer.setRenderPlayerHeadlights(gameWorld.isNightMode());
 
 		if (Config.Debug.RenderTrackSectors) {

@@ -16,6 +16,7 @@ import com.bitfire.postprocessing.filters.RadialBlur;
 import com.bitfire.uracer.configuration.Config;
 import com.bitfire.uracer.configuration.UserPreferences;
 import com.bitfire.uracer.configuration.UserPreferences.Preference;
+import com.bitfire.uracer.game.player.PlayerCar;
 import com.bitfire.utils.Hash;
 
 /** Encapsulates a post-processor animator that manages effects such as bloom and zoomblur to compose and enhance the gaming
@@ -128,6 +129,12 @@ public final class PostProcessing {
 	public void onBeforeRender (float timeModFactor) {
 		if (hasPostProcessor && currentAnimator != null) {
 			currentAnimator.update(timeModFactor);
+		}
+	}
+
+	public void setPlayer (PlayerCar player) {
+		if (hasPostProcessor && currentAnimator != null) {
+			currentAnimator.setPlayer(player);
 		}
 	}
 }
