@@ -127,12 +127,12 @@ public final class AggressiveCold implements PostProcessingAnimator {
 
 		if (zoom != null && hasPlayer) {
 			// auto-disable zoom
-			// boolean zoomEnabled = zoom.isEnabled();
-			// if (AMath.isZero(timeModFactor) && zoomEnabled) {
-			// zoom.setEnabled(false);
-			// } else if (timeModFactor > 0 && !zoomEnabled) {
-			// zoom.setEnabled(true);
-			// }
+			boolean zoomEnabled = zoom.isEnabled();
+			if (AMath.isZero(player.carState.currSpeedFactor) && zoomEnabled) {
+				zoom.setEnabled(false);
+			} else if (player.carState.currSpeedFactor > 0 && !zoomEnabled) {
+				zoom.setEnabled(true);
+			}
 
 			if (zoom.isEnabled()) {
 				zoom.setOrigin(playerScreenPos);
@@ -179,14 +179,14 @@ public final class AggressiveCold implements PostProcessingAnimator {
 
 		if (crt != null) {
 			float dist = 0.0f;
-			dist = player.carState.currSpeedFactor * 0.1618f * 2f;
+			dist = player.carState.currSpeedFactor * 0.1618f * 1f;
 			crt.setDistortion(dist);
 			crt.setZoom(1 - (dist / 2));
 		}
 
 		if (zoom.isEnabled()) {
 			zoom.setOrigin(playerScreenPos);
-			zoom.setBlurStrength(-0.10f);// * player.carState.currSpeedFactor);
+			zoom.setBlurStrength(-0.10f * player.carState.currSpeedFactor);
 
 		}
 	}

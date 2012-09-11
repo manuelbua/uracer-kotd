@@ -18,9 +18,6 @@ import com.bitfire.uracer.game.Time.Reference;
 import com.bitfire.uracer.game.actors.Car;
 import com.bitfire.uracer.game.actors.GhostCar;
 import com.bitfire.uracer.game.logic.gametasks.hud.elements.player.DriftBar;
-import com.bitfire.uracer.game.logic.gametasks.messager.Message.Position;
-import com.bitfire.uracer.game.logic.gametasks.messager.Message.Size;
-import com.bitfire.uracer.game.logic.gametasks.messager.Message.Type;
 import com.bitfire.uracer.game.logic.gametasks.messager.Messager;
 import com.bitfire.uracer.game.logic.replaying.Replay;
 import com.bitfire.uracer.game.logic.replaying.ReplayManager;
@@ -32,7 +29,6 @@ import com.bitfire.uracer.utils.AMath;
 import com.bitfire.uracer.utils.BoxedFloat;
 import com.bitfire.uracer.utils.BoxedFloatAccessor;
 import com.bitfire.uracer.utils.CarUtils;
-import com.bitfire.uracer.utils.NumberString;
 
 public class SinglePlayerLogic extends CommonLogic {
 
@@ -125,7 +121,7 @@ public class SinglePlayerLogic extends CommonLogic {
 
 		if (!replayManager.canClassify()) {
 			getGhost(0).setReplay(replay);
-			messager.show("GO!  GO!  GO!", 3f, Type.Information, Position.Bottom, Size.Big);
+			// messager.show("GO!  GO!  GO!", 3f, Type.Information, Position.Bottom, Size.Big);
 		} else {
 			Replay best = replayManager.getBestReplay();
 			Replay worst = replayManager.getWorstReplay();
@@ -170,45 +166,60 @@ public class SinglePlayerLogic extends CommonLogic {
 	public void tickCompleted () {
 		super.tickCompleted();
 
-		String completion = "";
-		String winner = "";
-		int winningGhost = -1;
-		float pl = 0;
-
 		if (hasPlayer()) {
-			pl = gameTrack.getTrackCompletion(playerCar);
-			if (pl < 0) {
-				completion += "player=n/a";
-			} else {
-				completion += "player=" + NumberString.formatSmall(pl * 100) + "%";
-			}
-		}
+			float pl = gameTrack.getTrackCompletion(playerCar);
+			playerTasks.hudLapInfo.setPlayerProgression(pl);
 
-		boolean playerWins = true;
-		for (int i = 0; i < ReplayManager.MaxReplays; i++) {
-			GhostCar ghost = getGhost(i);
-			if (ghost.isActive()) {
-				float gh = gameTrack.getTrackCompletion(ghost);
-				if (gh < 0) {
-					completion += ", g" + (i + 1) + "=n/a";
-				} else {
+			boolean playerWins = true;
+			for (int i = 0; i < ReplayManager.MaxReplays; i++) {
+				GhostCar ghost = getGhost(i);
+				float gh = gameTrack.getTrackCompletion(getGhost(i));
+				if (getGhost(i).isActive()) {
 					playerWins &= (pl > gh);
-					if (!playerWins) {
-						winningGhost = i;
-					}
-
-					completion += ", g" + (i + 1) + "=" + NumberString.formatSmall(gh * 100) + "%";
 				}
 			}
+
+			if (playerWins) {
+				playerTasks.hudLapInfo.setProgressionGood();
+			} else {
+				playerTasks.hudLapInfo.setProgressionBad();
+			}
 		}
 
-		if (playerWins) {
-			winner = "(PLAYER ahead!)";
-		} else if (winningGhost > -1) {
-			winner = "(ghost #" + (winningGhost + 1) + " ahead)";
-		}
-
-		Gdx.app.log("RouteTracker", completion + " - " + winner);
+// if (hasPlayer()) {
+// pl = gameTrack.getTrackCompletion(playerCar);
+// if (pl < 0) {
+// completion += "player=n/a";
+// } else {
+// completion += "player=" + NumberString.formatSmall(pl * 100) + "%";
+// }
+// }
+//
+// boolean playerWins = true;
+// for (int i = 0; i < ReplayManager.MaxReplays; i++) {
+// GhostCar ghost = getGhost(i);
+// if (ghost.isActive()) {
+// float gh = gameTrack.getTrackCompletion(ghost);
+// if (gh < 0) {
+// completion += ", g" + (i + 1) + "=n/a";
+// } else {
+// playerWins &= (pl > gh);
+// if (!playerWins) {
+// winningGhost = i;
+// }
+//
+// completion += ", g" + (i + 1) + "=" + NumberString.formatSmall(gh * 100) + "%";
+// }
+// }
+// }
+//
+// if (playerWins) {
+// winner = "(PLAYER ahead!)";
+// } else if (winningGhost > -1) {
+// winner = "(ghost #" + (winningGhost + 1) + " ahead)";
+// }
+//
+// Gdx.app.log("RouteTracker", completion + " - " + winner);
 	}
 
 	@Override
