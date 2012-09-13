@@ -14,6 +14,7 @@ import com.bitfire.uracer.game.logic.gametasks.hud.HudLabel;
 import com.bitfire.uracer.game.logic.gametasks.hud.Positionable;
 import com.bitfire.uracer.game.logic.gametasks.hud.elements.player.BasicInfo;
 import com.bitfire.uracer.game.logic.gametasks.hud.elements.player.DriftBar;
+import com.bitfire.uracer.game.logic.gametasks.hud.elements.player.TrackProgress;
 import com.bitfire.uracer.game.player.PlayerCar;
 import com.bitfire.uracer.game.rendering.GameRenderer;
 import com.bitfire.uracer.resources.BitmapFontFactory.FontFace;
@@ -31,9 +32,10 @@ public final class HudPlayer extends HudElement {
 	// player info
 	private EntityRenderState playerState = null;
 
-	// presentation
+	// player elements
 	private final BasicInfo basicInfo;
 	public final DriftBar driftBar;
+	public final TrackProgress trackProgress;
 
 	private HudLabel labelSpeed, labelDistance;
 
@@ -59,9 +61,12 @@ public final class HudPlayer extends HudElement {
 		this.carModelWidthPx = Convert.mt2px(player.getCarModel().width);
 		this.carModelLengthPx = Convert.mt2px(player.getCarModel().length);
 
+		// elements
 		basicInfo = new BasicInfo(scale, userProfile);
 		driftBar = new DriftBar(scale, carModelLengthPx);
+		trackProgress = new TrackProgress(scale);
 
+		// labels
 		labelSpeed = new HudLabel(scale, FontFace.Roboto, "", true, 1f);
 		labelSpeed.setPosition(Gdx.graphics.getWidth() - Convert.scaledPixels(190),
 			Gdx.graphics.getHeight() - Convert.scaledPixels(110));
@@ -78,6 +83,7 @@ public final class HudPlayer extends HudElement {
 
 	@Override
 	public void dispose () {
+		trackProgress.dispose();
 		driftBar.dispose();
 		basicInfo.dispose();
 	}
@@ -101,6 +107,9 @@ public final class HudPlayer extends HudElement {
 		basicInfo.render(batch);
 		bottom(driftBar, 50);
 		driftBar.render(batch, cz);
+
+		gravitate(trackProgress, 0, 32);
+		trackProgress.render(batch, cz);
 
 		// draw player name+info
 		labelSpeed.setString(MathUtils.round(CarUtils.mtSecToKmHour(player.getInstantSpeed())) + " kmh");

@@ -186,8 +186,7 @@ public final class AggressiveCold implements PostProcessingAnimator {
 
 		if (zoom.isEnabled()) {
 			zoom.setOrigin(playerScreenPos);
-			zoom.setBlurStrength(-0.10f * player.carState.currSpeedFactor);
-
+			zoom.setBlurStrength(-0.10f * player.carState.currSpeedFactor * 0.5f + -0.10f * driftStrength * 0.5f);
 		}
 	}
 }

@@ -20,7 +20,7 @@ public class DriftBar extends Positionable implements Disposable {
 	public static final float MaxSeconds = 5f;
 	public static final int MaxTicks = (int)(MaxSeconds * Config.Physics.PhysicsTimestepHz);
 
-	private final float invTilemapZoom;
+	private final float scale;
 	private final float width, height, halfWidth, halfHeight;
 	private final Pixmap pixels;
 	private final Texture texture;
@@ -28,8 +28,8 @@ public class DriftBar extends Positionable implements Disposable {
 	private Color barColor;
 	private HudLabel labelSeconds;
 
-	public DriftBar (float invTilemapZoomFactor, float width) {
-		this.invTilemapZoom = invTilemapZoomFactor;
+	public DriftBar (float scale, float width) {
+		this.scale = scale;
 		this.width = width;
 		this.height = Convert.scaledPixels(7);
 		halfWidth = width / 2;
@@ -41,7 +41,7 @@ public class DriftBar extends Positionable implements Disposable {
 		texture = new Texture(pixels);
 		texture.setFilter(TextureFilter.Nearest, TextureFilter.Nearest);
 
-		labelSeconds = new HudLabel(invTilemapZoom, FontFace.Roboto, "s", false, 0.5f);
+		labelSeconds = new HudLabel(scale, FontFace.Roboto, "s", false, 0.5f);
 		labelSeconds.setAlpha(0);
 	}
 
@@ -68,7 +68,7 @@ public class DriftBar extends Positionable implements Disposable {
 	}
 
 	public void tick () {
-		labelSeconds.updateShowQueue();
+		labelSeconds.tick();
 	}
 
 	public void render (SpriteBatch batch, float cameraZoom) {
@@ -106,7 +106,7 @@ public class DriftBar extends Positionable implements Disposable {
 
 		labelSeconds.setScale(0.5f * cameraZoom, false);
 		labelSeconds.setString(NumberString.format(seconds) + "s", true);
-		labelSeconds.setPosition(position.x, position.y + Convert.scaledPixels(20) * cameraZoom);
+		labelSeconds.setPosition(position.x, position.y + Convert.scaledPixels(20) * cameraZoom * scale);
 		labelSeconds.render(batch);
 	}
 }

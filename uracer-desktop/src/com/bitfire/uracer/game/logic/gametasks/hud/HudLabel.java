@@ -108,7 +108,7 @@ public final class HudLabel extends Positionable {
 	}
 
 	/** Performs show-queue logic */
-	public void updateShowQueue () {
+	public void tick () {
 		if (showSemaphore > 0 && !showing) {
 			showing = true;
 			fadeIn(300);

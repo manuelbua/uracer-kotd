@@ -168,7 +168,7 @@ public class SinglePlayerLogic extends CommonLogic {
 
 		if (hasPlayer()) {
 			float pl = gameTrack.getTrackCompletion(playerCar);
-			playerTasks.hudLapInfo.setPlayerProgression(pl);
+			playerTasks.hudPlayer.trackProgress.setPlayerProgression(pl);
 
 			boolean playerWins = true;
 			for (int i = 0; i < ReplayManager.MaxReplays; i++) {
@@ -180,9 +180,9 @@ public class SinglePlayerLogic extends CommonLogic {
 			}
 
 			if (playerWins) {
-				playerTasks.hudLapInfo.setProgressionGood();
+				playerTasks.hudPlayer.trackProgress.setProgressionGood();
 			} else {
-				playerTasks.hudLapInfo.setProgressionBad();
+				playerTasks.hudPlayer.trackProgress.setProgressionBad();
 			}
 		}
 
