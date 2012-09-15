@@ -20,6 +20,7 @@ rm -rf "${DEST}/base/"
 mkdir -p "${DEST}/base"
 cp base/*.png ${DEST}/base
 cp base/*.shape ${DEST}/base
+cp -r base/progress ${DEST}/base
 echo "done!"
 
 # tileset graphics and tmx levels

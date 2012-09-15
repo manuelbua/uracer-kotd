@@ -97,7 +97,7 @@ public final class GameTrack implements Disposable {
 				to = route.get(i + 1);
 			}
 
-			float len = from.dst2(to);
+			float len = from.dst(to);
 
 			int p = findPolygon(from, to);
 			if (p == -1) {
@@ -133,9 +133,8 @@ public final class GameTrack implements Disposable {
 		return totalLength;
 	}
 
-	/** Returns a value in the [0,1] range, meaning the specified car is at the start (0) or at the end (1) of the lap. If the car
-	 * is not on track, then a value lower than 0 is returned. */
-	public float getTrackCompletion (Car car) {
+	/** Returns the distance, in meters, of the specified car relative to the starting line of the current track */
+	public float getTrackDistance (Car car) {
 		Vector2 pt = car.getWorldPosMt();
 		int carSector = findSector(pt);
 
@@ -143,12 +142,22 @@ public final class GameTrack implements Disposable {
 			TrackSector s = sectors[carSector];
 			float dist = MathUtils.clamp(distInSector(s, pt), 0, 1);
 			float carlen = (s.relativeTotal + s.length * dist);
-			return (carlen * oneOnTotalLength);
-			// float trackPercent = (carlen / totalLength) * 100;
-			// Gdx.app.log("RouteTracker", "tracklen=" + carlen + ", track_completion=" + Math.round(trackPercent) + "%");
+			return carlen;
 		}
 
 		return -1;
+	}
+
+	/** Returns a value in the [0,1] range, meaning the specified car is at the start (0) or at the end (1) of the lap. If the car
+	 * is not on track, then a value lower than 0 is returned. */
+	public float getTrackCompletion (Car car) {
+		float ret = -1;
+		float cardist = getTrackDistance(car);
+		if (cardist > 0) {
+			ret = (cardist * oneOnTotalLength);
+		}
+
+		return ret;
 	}
 
 	private Vector2 vlp = new Vector2();

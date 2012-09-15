@@ -77,8 +77,10 @@ public final class HudPlayer extends HudElement {
 
 		highlightError = new CarHighlighter();
 		highlightError.setCar(player);
+		highlightError.setScale(1.75f);
 
 		highlightNext = new CarHighlighter();
+		highlightNext.setScale(1);
 	}
 
 	@Override
@@ -91,6 +93,7 @@ public final class HudPlayer extends HudElement {
 	@Override
 	public void onTick () {
 		driftBar.tick();
+		trackProgress.tick();
 	}
 
 	@Override
@@ -105,10 +108,11 @@ public final class HudPlayer extends HudElement {
 
 		float cz = renderer.getWorldRenderer().getCameraZoom();
 		basicInfo.render(batch);
-		bottom(driftBar, 50);
+// bottom(driftBar, 50);
+		atPlayer(driftBar);
 		driftBar.render(batch, cz);
 
-		gravitate(trackProgress, 0, 32);
+		atPlayer(trackProgress);
 		trackProgress.render(batch, cz);
 
 		// draw player name+info
@@ -136,6 +140,11 @@ public final class HudPlayer extends HudElement {
 
 	private void gravitate (Positionable p, float offsetDegs, float distance) {
 		p.setPosition(gravitate(p.getWidth(), p.getHeight(), offsetDegs, distance));
+	}
+
+	private void atPlayer (Positionable p) {
+		tmpg.set(GameRenderer.ScreenUtils.worldPxToScreen(playerState.position));
+		p.setPosition(tmpg);
 	}
 
 	/** Returns a position by placing a point on an imaginary circumference gravitating around the player, applying the specified
@@ -194,5 +203,9 @@ public final class HudPlayer extends HudElement {
 
 	public void unHighlightNextTarget (Car car) {
 		highlightNext.untrack();
+	}
+
+	public void setNextTargetAlpha (float alpha) {
+		highlightNext.setAlpha(alpha);
 	}
 }

@@ -20,7 +20,6 @@ import com.bitfire.uracer.game.actors.GhostCar;
 import com.bitfire.uracer.game.logic.gametasks.hud.elements.player.DriftBar;
 import com.bitfire.uracer.game.logic.gametasks.messager.Messager;
 import com.bitfire.uracer.game.logic.replaying.Replay;
-import com.bitfire.uracer.game.logic.replaying.ReplayManager;
 import com.bitfire.uracer.game.rendering.GameRenderer;
 import com.bitfire.uracer.game.rendering.GameWorldRenderer;
 import com.bitfire.uracer.game.tween.GameTweener;
@@ -40,6 +39,8 @@ public class SinglePlayerLogic extends CommonLogic {
 	private Time outOfTrackTime = new Time();
 	private Timeline driftSecondsTimeline;
 	private boolean isPenalty;
+
+	private float lastCompletion, lastDist;
 
 	public SinglePlayerLogic (UserProfile userProfile, GameWorld gameWorld, GameRenderer gameRenderer,
 		ScalingStrategy scalingStrategy) {
@@ -170,56 +171,27 @@ public class SinglePlayerLogic extends CommonLogic {
 			float pl = gameTrack.getTrackCompletion(playerCar);
 			playerTasks.hudPlayer.trackProgress.setPlayerProgression(pl);
 
-			boolean playerWins = true;
-			for (int i = 0; i < ReplayManager.MaxReplays; i++) {
-				GhostCar ghost = getGhost(i);
-				float gh = gameTrack.getTrackCompletion(getGhost(i));
-				if (getGhost(i).isActive()) {
-					playerWins &= (pl > gh);
-				}
+			float distNorm = 0;
+			float distMt = 0;
+
+			// use the last one if the replay is finished
+			if (nextTarget != null && nextTarget.hasReplay()) {
+				lastDist = gameTrack.getTrackDistance(nextTarget);
+				lastCompletion = gameTrack.getTrackCompletion(nextTarget);
 			}
 
-			if (playerWins) {
-				playerTasks.hudPlayer.trackProgress.setProgressionGood();
-			} else {
-				playerTasks.hudPlayer.trackProgress.setProgressionBad();
-			}
+			distNorm = pl - lastCompletion;
+			distMt = gameTrack.getTrackDistance(playerCar) - lastDist;
+
+			playerTasks.hudPlayer.trackProgress.setGhostDistance(lastDist);
+			playerTasks.hudPlayer.trackProgress.setDistanceFromBest(distNorm);
+
+			float alpha = MathUtils.clamp(Math.abs(distMt) / 50, 0.2f, 1);
+			playerTasks.hudPlayer.setNextTargetAlpha(alpha);
+
+			playerTasks.hudPlayer.trackProgress.setPlayerSpeed(playerCar.getInstantSpeed());
+			playerTasks.hudPlayer.trackProgress.setPlayerDistance(gameTrack.getTrackDistance(playerCar));
 		}
-
-// if (hasPlayer()) {
-// pl = gameTrack.getTrackCompletion(playerCar);
-// if (pl < 0) {
-// completion += "player=n/a";
-// } else {
-// completion += "player=" + NumberString.formatSmall(pl * 100) + "%";
-// }
-// }
-//
-// boolean playerWins = true;
-// for (int i = 0; i < ReplayManager.MaxReplays; i++) {
-// GhostCar ghost = getGhost(i);
-// if (ghost.isActive()) {
-// float gh = gameTrack.getTrackCompletion(ghost);
-// if (gh < 0) {
-// completion += ", g" + (i + 1) + "=n/a";
-// } else {
-// playerWins &= (pl > gh);
-// if (!playerWins) {
-// winningGhost = i;
-// }
-//
-// completion += ", g" + (i + 1) + "=" + NumberString.formatSmall(gh * 100) + "%";
-// }
-// }
-// }
-//
-// if (playerWins) {
-// winner = "(PLAYER ahead!)";
-// } else if (winningGhost > -1) {
-// winner = "(ghost #" + (winningGhost + 1) + " ahead)";
-// }
-//
-// Gdx.app.log("RouteTracker", completion + " - " + winner);
 	}
 
 	@Override
@@ -252,8 +224,6 @@ public class SinglePlayerLogic extends CommonLogic {
 	@Override
 	public void timeDilationEnds () {
 		updateDriftBar();
-		// dilationTime.stop();
-		// Gdx.app.log("", "dilation=" + dilationTime.elapsed(Reference.AbsoluteSeconds) + ", dec=" + dec);
 		dilationTime.reset();
 		driftBar.hideSecondsLabel();
 	}
@@ -292,7 +262,6 @@ public class SinglePlayerLogic extends CommonLogic {
 	@Override
 	protected void backInTrack () {
 		updateDriftBar();
-		// Gdx.app.log("SPL", "Player stayed " + outOfTrackTime.elapsed(Reference.AbsoluteSeconds) + " seconds out of track");
 		outOfTrackTime.reset();
 		driftBar.hideSecondsLabel();
 	}
@@ -300,6 +269,7 @@ public class SinglePlayerLogic extends CommonLogic {
 	@Override
 	protected void lapComplete (boolean firstLap) {
 		restartAllReplays();
+		playerTasks.hudPlayer.trackProgress.lapCompleted();
 	}
 
 	@Override
@@ -319,6 +289,8 @@ public class SinglePlayerLogic extends CommonLogic {
 		Array<Replay> replays = replayManager.getReplays();
 
 		nextTarget = null;
+		lastDist = 0;
+		lastCompletion = 0;
 
 		for (int i = 0; i < replays.size; i++) {
 			Replay r = replays.get(i);

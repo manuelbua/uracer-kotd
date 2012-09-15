@@ -22,10 +22,12 @@ public final class HudLabel extends Positionable {
 	private float scale;
 	private final float invTileZoom;;
 	private boolean isStatic;
+	private FontFace fontFace; // cached
 
 	// show queue logic
 	private int showSemaphore;
 	private boolean showing;
+	private int qInMs, qOutMs;
 
 	public HudLabel (float invTilemapZoomFactor, FontFace fontFace, String string, boolean isStatic, float scale) {
 		this.invTileZoom = invTilemapZoomFactor;
@@ -35,8 +37,8 @@ public final class HudLabel extends Positionable {
 		this.font = BitmapFontFactory.get(fontFace);
 		setScale(scale, true);
 
-		showSemaphore = 1;
-		showing = true;
+		showSemaphore = 0;
+		showing = false;
 	}
 
 	public HudLabel (float invTilemapZoomFactor, FontFace fontFace, String string, boolean isStatic) {
@@ -53,8 +55,13 @@ public final class HudLabel extends Positionable {
 	}
 
 	public void setFont (FontFace fontFace) {
+		this.fontFace = fontFace;
 		this.font = BitmapFontFactory.get(fontFace);
 		recomputeBounds();
+	}
+
+	public FontFace getFont () {
+		return fontFace;
 	}
 
 	public void setString (String string) {
@@ -87,11 +94,6 @@ public final class HudLabel extends Positionable {
 		alpha = value;
 	}
 
-	public void setFont (BitmapFont font) {
-		this.font = font;
-		recomputeBounds();
-	}
-
 	public float getScale () {
 		return scale;
 	}
@@ -111,10 +113,10 @@ public final class HudLabel extends Positionable {
 	public void tick () {
 		if (showSemaphore > 0 && !showing) {
 			showing = true;
-			fadeIn(300);
+			fadeIn(qInMs);
 		} else if (showSemaphore == 0 && showing) {
 			showing = false;
-			fadeOut(300);
+			fadeOut(qOutMs);
 		}
 	}
 
@@ -136,12 +138,14 @@ public final class HudLabel extends Positionable {
 	}
 
 	/** queue operations */
-	public void queueShow () {
+	public void queueShow (int millis) {
 		showSemaphore++;
+		qInMs = millis;
 	}
 
-	public void queueHide () {
+	public void queueHide (int millis) {
 		showSemaphore--;
+		qOutMs = millis;
 		if (showSemaphore < 0) {
 			showSemaphore = 0;
 		}

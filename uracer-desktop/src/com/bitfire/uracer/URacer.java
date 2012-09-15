@@ -26,6 +26,7 @@ import com.bitfire.uracer.screen.TransitionFactory.TransitionType;
 import com.bitfire.uracer.utils.AMath;
 import com.bitfire.uracer.utils.Convert;
 import com.bitfire.uracer.utils.SpriteBatchUtils;
+import com.bitfire.utils.ShaderLoader;
 
 public class URacer implements ApplicationListener {
 	public static final String Name = "URacer: The King Of The Drift";
@@ -93,6 +94,8 @@ public class URacer implements ApplicationListener {
 
 	@Override
 	public void create () {
+		ShaderLoader.Pedantic = false;
+
 		Gdx.app.setLogLevel(Application.LOG_DEBUG);
 		versionInfo = URacer.getVersionInformation();
 
@@ -237,13 +240,10 @@ public class URacer implements ApplicationListener {
 				screenMgr.render(null);
 
 				// simulate slowness
-				// if( timeMultiplier < 1 )
-				// {
-				// try {
-				// Thread.sleep( 32 );
-				// } catch( InterruptedException e ) {
-				// }
-				// }
+// try {
+// Thread.sleep(10);
+// } catch (InterruptedException e) {
+// }
 			}
 
 			graphicsTime = (TimeUtils.nanoTime() - startTime) * oneOnOneBillion;

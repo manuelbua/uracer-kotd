@@ -324,7 +324,7 @@ public abstract class CommonLogic implements GameLogic, CarEvent.Listener, CarSt
 	private void resetPlayer (Car playerCar) {
 		if (playerCar != null) {
 			playerCar.resetPhysics();
-			playerCar.resetDistanceAndSpeed();
+			playerCar.resetDistanceAndSpeed(true, true);
 			playerCar.setWorldPosMt(gameWorld.playerStartPos, gameWorld.playerStartOrient);
 		}
 	}
@@ -333,7 +333,7 @@ public abstract class CommonLogic implements GameLogic, CarEvent.Listener, CarSt
 		GhostCar ghost = ghostCars[handle];
 		if (ghost != null) {
 			ghost.resetPhysics();
-			ghost.resetDistanceAndSpeed();
+			ghost.resetDistanceAndSpeed(true, true);
 			ghost.removeReplay();
 		}
 	}
@@ -435,7 +435,7 @@ public abstract class CommonLogic implements GameLogic, CarEvent.Listener, CarSt
 			// FIXME this should go in some sort of DebugLogic thing..
 
 			// start recording
-			playerCar.resetDistanceAndSpeed();
+			playerCar.resetDistanceAndSpeed(true, true);
 			resetAllGhosts();
 			lapManager.abortRecording();
 			userRec = lapManager.startRecording(playerCar);
@@ -450,7 +450,7 @@ public abstract class CommonLogic implements GameLogic, CarEvent.Listener, CarSt
 			lapManager.stopRecording();
 
 			CarUtils.dumpSpeedInfo("Player", playerCar, lapManager.getLastRecordedReplay().trackTimeSeconds);
-			playerCar.resetDistanceAndSpeed();
+			playerCar.resetDistanceAndSpeed(true, true);
 			if (userRec != null) {
 				userRec.saveLocal(gameTasksManager.messager);
 				getGhost(0).setReplay(userRec);
@@ -647,7 +647,7 @@ public abstract class CommonLogic implements GameLogic, CarEvent.Listener, CarSt
 				lapManager.startRecording(playerCar);
 			}
 
-			playerCar.resetDistanceAndSpeed();
+			playerCar.resetDistanceAndSpeed(true, false);
 		}
 	}
 

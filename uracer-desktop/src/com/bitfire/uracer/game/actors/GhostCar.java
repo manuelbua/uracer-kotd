@@ -32,7 +32,7 @@ public final class GhostCar extends Car {
 
 		setActive(false);
 		resetPhysics();
-		resetDistanceAndSpeed();
+		resetDistanceAndSpeed(true, true);
 	}
 
 	// input data for this car cames from a Replay object
@@ -78,7 +78,7 @@ public final class GhostCar extends Car {
 
 	private void restart (Replay replay) {
 		resetPhysics();
-		resetDistanceAndSpeed();
+		resetDistanceAndSpeed(true, true);
 		setWorldPosMt(replay.carWorldPositionMt, replay.carWorldOrientRads);
 		indexPlay = 0;
 		fadeOutEventTriggered = false;

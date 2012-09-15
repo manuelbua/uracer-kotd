@@ -23,7 +23,7 @@ public final class CarHighlighter {
 	private Car followedCar;
 	private EntityRenderState renderState;
 	private Vector2 tmp = new Vector2();
-	private float offX, offY;
+	private float offX, offY, alpha, scale;
 
 	private boolean isBusy, isActive, hasCar;
 	private BoxedFloat bfScale, bfRot, bfAlpha, bfGreen, bfRed, bfBlue;
@@ -34,6 +34,7 @@ public final class CarHighlighter {
 		isBusy = false;
 		isActive = false;
 		followedCar = null;
+		alpha = 1;
 	}
 
 	public void setCar (Car car) {
@@ -54,6 +55,14 @@ public final class CarHighlighter {
 		bfBlue = new BoxedFloat(1);
 	}
 
+	public void setAlpha (float alpha) {
+		this.alpha = alpha;
+	}
+
+	public void setScale (float scale) {
+		this.scale = scale;
+	}
+
 	public Car getCar () {
 		return followedCar;
 	}
@@ -67,11 +76,11 @@ public final class CarHighlighter {
 		if (isActive /* && isBusy */&& hasCar) {
 			tmp.set(GameRenderer.ScreenUtils.worldPxToScreen(renderState.position));
 
-			sprite.setScale(bfScale.value * cameraZoom);
+			sprite.setScale(bfScale.value * cameraZoom * scale);
 			sprite.setPosition(tmp.x - offX, tmp.y - offY);
 			sprite.setRotation(-renderState.orientation + bfRot.value);
 			sprite.setColor(bfRed.value, bfGreen.value, bfBlue.value, bfAlpha.value);
-			sprite.draw(batch);
+			sprite.draw(batch, alpha);
 		}
 	}
 

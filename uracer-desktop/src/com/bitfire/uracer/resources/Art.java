@@ -52,6 +52,10 @@ public final class Art {
 	public static Texture scrBackground;
 	public static Skin scrSkin;
 
+	// circle progress
+	public static Texture texCircleProgress;
+	public static Texture texCircleProgressMask;
+
 	public static void init () {
 		ShaderLoader.BasePath = "data/shaders/";
 		loadFonts();
@@ -60,6 +64,7 @@ public final class Art {
 		loadFrictionMaps();
 		loadPostProcessorMaps();
 		loadScreensData();
+		loadCircleProgress();
 	}
 
 	public static void dispose () {
@@ -69,6 +74,23 @@ public final class Art {
 		disposeFrictionMaps();
 		disposePostProcessorMaps();
 		disposeScreensData();
+		disposeCircleProgress();
+	}
+
+	//
+	// circle progress
+	//
+	private static void loadCircleProgress () {
+		texCircleProgress = Art.newTexture("data/base/progress/circle-progress-full.png", true);
+		texCircleProgress.setFilter(TextureFilter.MipMapLinearNearest, TextureFilter.Linear);
+
+		texCircleProgressMask = Art.newTexture("data/base/progress/circle-progress-mask.png", true);
+		texCircleProgressMask.setFilter(TextureFilter.MipMapLinearNearest, TextureFilter.Linear);
+	}
+
+	private static void disposeCircleProgress () {
+		texCircleProgress.dispose();
+		texCircleProgressMask.dispose();
 	}
 
 	//
@@ -254,7 +276,7 @@ public final class Art {
 		return res;
 	}
 
-	private static Texture newTexture (String name, boolean mipMap) {
+	public static Texture newTexture (String name, boolean mipMap) {
 		Texture t = new Texture(Gdx.files.internal(name), Format.RGBA8888, mipMap);
 
 		if (mipMap) {
