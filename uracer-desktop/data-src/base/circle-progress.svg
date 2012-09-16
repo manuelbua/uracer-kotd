@@ -21,6 +21,75 @@
   <defs
      id="defs4">
     <linearGradient
+       id="linearGradient4111"
+       osb:paint="solid">
+      <stop
+         style="stop-color:#000000;stop-opacity:1;"
+         offset="0"
+         id="stop4113" />
+    </linearGradient>
+    <linearGradient
+       id="linearGradient4105"
+       osb:paint="solid">
+      <stop
+         style="stop-color:#000000;stop-opacity:1;"
+         offset="0"
+         id="stop4107" />
+    </linearGradient>
+    <linearGradient
+       id="linearGradient4059">
+      <stop
+         id="stop4067"
+         offset="0"
+         style="stop-color:#000000;stop-opacity:0.49803922;" />
+      <stop
+         style="stop-color:#000000;stop-opacity:0.24705882;"
+         offset="0.5"
+         id="stop4071" />
+      <stop
+         style="stop-color:#000000;stop-opacity:0;"
+         offset="1"
+         id="stop4063" />
+    </linearGradient>
+    <linearGradient
+       id="linearGradient4051">
+      <stop
+         id="stop4053"
+         offset="0"
+         style="stop-color:#000000;stop-opacity:1;" />
+      <stop
+         style="stop-color:#000000;stop-opacity:0.68627451;"
+         offset="0.27142859"
+         id="stop4055" />
+      <stop
+         id="stop4057"
+         offset="1"
+         style="stop-color:#000000;stop-opacity:0;" />
+    </linearGradient>
+    <linearGradient
+       id="linearGradient4041">
+      <stop
+         style="stop-color:#000000;stop-opacity:1;"
+         offset="0"
+         id="stop4043" />
+      <stop
+         id="stop4049"
+         offset="0.27142859"
+         style="stop-color:#000000;stop-opacity:0.68627451;" />
+      <stop
+         style="stop-color:#000000;stop-opacity:0;"
+         offset="1"
+         id="stop4045" />
+    </linearGradient>
+    <linearGradient
+       id="linearGradient4029"
+       osb:paint="solid">
+      <stop
+         style="stop-color:#ffde00;stop-opacity:1;"
+         offset="0"
+         id="stop4031" />
+    </linearGradient>
+    <linearGradient
        id="linearGradient3977"
        osb:paint="solid">
       <stop
@@ -246,14 +315,14 @@
     </filter>
     <linearGradient
        inkscape:collect="always"
-       xlink:href="#linearGradient3977"
-       id="linearGradient3981"
-       x1="228.27251"
-       y1="237.46006"
-       x2="514.95818"
-       y2="237.46006"
+       xlink:href="#linearGradient4111"
+       id="linearGradient4118"
        gradientUnits="userSpaceOnUse"
-       gradientTransform="translate(-1.6153455,16.97076)" />
+       x1="229.1026"
+       y1="251.21021"
+       x2="520.78415"
+       y2="251.21021"
+       gradientTransform="matrix(1,0,0,0.75396947,8.2201155,52.935262)" />
   </defs>
   <sodipodi:namedview
      id="base"
@@ -262,18 +331,18 @@
      borderopacity="1.0"
      inkscape:pageopacity="0.0"
      inkscape:pageshadow="2"
-     inkscape:zoom="3.6800001"
-     inkscape:cx="370.74508"
-     inkscape:cy="692.43112"
+     inkscape:zoom="4"
+     inkscape:cx="369.94968"
+     inkscape:cy="704.25832"
      inkscape:document-units="px"
-     inkscape:current-layer="g7000"
+     inkscape:current-layer="g4095"
      showgrid="true"
      inkscape:window-width="1671"
      inkscape:window-height="965"
-     inkscape:window-x="61"
-     inkscape:window-y="51"
+     inkscape:window-x="133"
+     inkscape:window-y="59"
      inkscape:window-maximized="0"
-     inkscape:snap-global="false">
+     inkscape:snap-global="true">
     <inkscape:grid
        type="xygrid"
        id="grid6317" />
@@ -286,7 +355,7 @@
         <dc:format>image/svg+xml</dc:format>
         <dc:type
            rdf:resource="http://purl.org/dc/dcmitype/StillImage" />
-        <dc:title />
+        <dc:title></dc:title>
       </cc:Work>
     </rdf:RDF>
   </metadata>
@@ -341,22 +410,20 @@
   <g
      style="display:inline"
      inkscape:label="a copy"
-     id="g7000"
+     id="g4095"
      inkscape:groupmode="layer">
     <path
        style="fill:#ffffff;fill-opacity:1;fill-rule:nonzero;stroke:none"
-       d="M 252.4375 326.5 C 263.60388 381.21195 311.98885 422.375 370 422.375 C 428.01115 422.375 476.39612 381.21195 487.5625 326.5 L 476.53125 326.5 C 466.25306 378.14653 420.66975 417.0625 366 417.0625 C 311.33025 417.0625 265.74694 378.14653 255.46875 326.5 L 252.4375 326.5 z "
-       id="path7002" />
-    <rect
-       style="fill:#00ff00;fill-opacity:0;fill-rule:nonzero;stroke:none"
-       id="rect3966"
-       width="282.07413"
-       height="138.34697"
-       x="227.50392"
-       y="161.17708" />
+       d="m 250,302.3125 c -1e-5,0.0209 0,0.0416 0,0.0625 0,66.27417 53.72583,120 120,120 66.27417,0 120,-53.72583 120,-120 0,-0.0209 10e-6,-0.0416 0,-0.0625 l -7.3125,0 c 10e-6,0.0209 0,0.0416 0,0.0625 0,62.24158 -50.44592,112.6875 -112.6875,112.6875 -62.24158,0 -112.6875,-50.44592 -112.6875,-112.6875 0,-0.0209 -10e-6,-0.0416 0,-0.0625 l -7.3125,0 z"
+       id="path4097"
+       inkscape:connector-curvature="0"
+       inkscape:export-filename="/home/manuel/dev/uracer-libgdx/uracer-desktop/data-src/base/progress/circle-progress-half.png"
+       inkscape:export-xdpi="48"
+       inkscape:export-ydpi="48" />
   </g>
   <g
      inkscape:groupmode="layer"
-     id="layer1"
-     inkscape:label="mask" />
+     id="layer6"
+     inkscape:label="mask"
+     style="display:inline" />
 </svg>

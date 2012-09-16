@@ -111,8 +111,8 @@ public class TrackProgress extends Positionable implements Disposable {
 
 			float s = speed;
 			if (distPlayer > distGhost && ghspeed > 0 && !useGhostSpeed) {
-				s = ghspeed;
 				useGhostSpeed = true;
+				s = ghspeed;
 				prevDistSecs = 0;
 			} else if (distPlayer < distGhost && useGhostSpeed) {
 				useGhostSpeed = false;
@@ -178,7 +178,7 @@ public class TrackProgress extends Positionable implements Disposable {
 		// advantage/disadvantage
 		if (distGhost > 0) {
 			Color c = ColorUtils.paletteRYG(dist + 0.7f, 1f);
-			shProgress.setUniformf("progress", Math.abs(distanceFromBest * 4));
+			shProgress.setUniformf("progress", Math.abs(distanceFromBest));
 			sAdvantage.setColor(c);
 			sAdvantage.setScale(scl * 1.1f);
 			sAdvantage.setPosition(position.x - sAdvantage.getWidth() / 2, position.y - sAdvantage.getHeight() / 2);
