@@ -68,13 +68,11 @@ public class TrackProgress extends Positionable implements Disposable {
 	}
 
 	public void setPlayerDistance (float mt) {
-// distPlayer = mt;
 		distPlayer = AMath.lerp(prevDistPlayer, mt, 0.25f);
 		prevDistPlayer = distPlayer;
 	}
 
 	public void setTargetDistance (float mt) {
-// distGhost = mt;
 		distGhost = AMath.lerp(prevDistGhost, mt, 0.25f);
 		prevDistGhost = distGhost;
 	}
@@ -98,6 +96,15 @@ public class TrackProgress extends Positionable implements Disposable {
 	}
 
 	public void lapCompleted () {
+		progressval = 0;
+		progressTargetVal = 0;
+		distGhost = 0;
+		distPlayer = 0;
+
+// prevDistGhost = 0;
+// prevDistPlayer = 0;
+// prevVal = 0;
+// prevTargetVal = 0;
 	}
 
 	public void tick () {
