@@ -23,8 +23,10 @@ import com.bitfire.utils.ShaderLoader;
 public class TrackProgress extends Positionable implements Disposable {
 	private HudLabel lblAdvantage;
 	private float progressval, prevVal, speed, ghspeed;
-	private float distanceFromBest, prevDist, distPlayer, distGhost, prevDistSecs;
-	private boolean advantageShown, useGhostSpeed;
+	private float distPlayer, distGhost;
+	private float prevDistPlayer, prevDistGhost;
+	private float progressTargetVal, prevTargetVal;
+	private boolean advantageShown;
 
 	private final Texture texMask;
 	private final ShaderProgram shProgress;
@@ -50,7 +52,6 @@ public class TrackProgress extends Positionable implements Disposable {
 
 		sProgress = new Sprite(Art.texRadLinesProgress);
 		sProgress.flip(false, true);
-		useGhostSpeed = false;
 	}
 
 	@Override
@@ -58,7 +59,27 @@ public class TrackProgress extends Positionable implements Disposable {
 		shProgress.dispose();
 	}
 
-	/** Sets the player's progression in the range [0,1] inclusive, to indicate player's track progress. 0 means on starting ine, 1
+	public void setPlayerSpeed (float mts) {
+		speed = mts;
+	}
+
+	public void setTargetSpeed (float mts) {
+		ghspeed = mts;
+	}
+
+	public void setPlayerDistance (float mt) {
+// distPlayer = mt;
+		distPlayer = AMath.lerp(prevDistPlayer, mt, 0.25f);
+		prevDistPlayer = distPlayer;
+	}
+
+	public void setTargetDistance (float mt) {
+// distGhost = mt;
+		distGhost = AMath.lerp(prevDistGhost, mt, 0.25f);
+		prevDistGhost = distGhost;
+	}
+
+	/** Sets the player's progression in the range [0,1] inclusive, to indicate player's track progress. 0 means on starting line, 1
 	 * means finished.
 	 * @param progress The progress so far */
 	public void setPlayerProgression (float progress) {
@@ -67,32 +88,16 @@ public class TrackProgress extends Positionable implements Disposable {
 		prevVal = progressval;
 	}
 
-	/** Sets the player's advantage/disadvantage respect to the best replay, in normalized track space ([0,1]) */
-	public void setDistanceFromBest (float distance) {
+	/** Sets the target's progression in the range [0,1] inclusive, to indicate car's track progress. 0 means on starting line, 1
+	 * means finished.
+	 * @param progress The progress so far */
+	public void setTargetProgression (float progress) {
 		// smooth out high freq
-		distanceFromBest = AMath.lerp(prevDist, distance, 0.25f);
-		prevDist = distanceFromBest;
-	}
-
-	public void setGhostDistance (float mt) {
-		distGhost = mt;
-	}
-
-	public void setPlayerDistance (float mt) {
-		distPlayer = mt;
-	}
-
-	public void setPlayerSpeed (float mts) {
-		speed = mts;
-	}
-
-	public void setGhostSpeed (float mts) {
-		ghspeed = mts;
+		progressTargetVal = AMath.lerp(prevTargetVal, progress, 0.25f);
+		prevTargetVal = progressTargetVal;
 	}
 
 	public void lapCompleted () {
-		prevDist = 0;
-		distanceFromBest = 0;
 	}
 
 	public void tick () {
@@ -101,36 +106,48 @@ public class TrackProgress extends Positionable implements Disposable {
 
 	public void render (SpriteBatch batch, float cameraZoom) {
 
-// lblAdvantage.setString("none");
-		if (distPlayer > 0 && distGhost > 0 && speed > 15) {
+		float playerToTarget = 0;
+
+		if (distPlayer > 0) {
 			if (!advantageShown) {
 				advantageShown = true;
 				lblAdvantage.queueShow(500);
 				// Gdx.app.log("", "show");
 			}
 
-			float s = speed;
-			if (distPlayer > distGhost && ghspeed > 0 && !useGhostSpeed) {
-				useGhostSpeed = true;
-				s = ghspeed;
-				prevDistSecs = 0;
-			} else if (distPlayer < distGhost && useGhostSpeed) {
-				useGhostSpeed = false;
-				prevDistSecs = 0;
+// float s = speed;
+// if (distPlayer > distGhost && ghspeed > 0 && !useGhostSpeed) {
+// useGhostSpeed = true;
+// s = ghspeed;
+// prevDistSecs = 0;
+// } else if (distPlayer < distGhost && useGhostSpeed) {
+// useGhostSpeed = false;
+// prevDistSecs = 0;
+// }
+//
+// float distSecs = AMath.lerp(prevDistSecs, (distPlayer - distGhost) / s, 0.1f);
+// prevDistSecs = distSecs;
+//
+// lblAdvantage.setString(NumberString.format(distSecs), true);
+
+			playerToTarget = AMath.fixup(progressval - progressTargetVal);
+// Gdx.app.log("", "p2t=" + playerToTarget);
+
+			if (distPlayer >= distGhost) {
+				if (lblAdvantage.getFont() != FontFace.CurseGreenBig) {
+					lblAdvantage.setFont(FontFace.CurseGreenBig);
+				}
 			}
 
-			float distSecs = AMath.lerp(prevDistSecs, (distPlayer - distGhost) / s, 0.1f);
-			prevDistSecs = distSecs;
-
-			lblAdvantage.setString(NumberString.format(distSecs), true);
-
-			if (distPlayer > distGhost && lblAdvantage.getFont() != FontFace.CurseGreenBig) {
-				lblAdvantage.setFont(FontFace.CurseGreenBig);
-			} else if (distPlayer < distGhost && lblAdvantage.getFont() != FontFace.CurseRedBig) {
-				lblAdvantage.setFont(FontFace.CurseRedBig);
+			if (distPlayer < distGhost) {
+				if (lblAdvantage.getFont() != FontFace.CurseRedBig) {
+					lblAdvantage.setFont(FontFace.CurseRedBig);
+				}
 			}
 
-		} else if (advantageShown && speed < 15) {
+			lblAdvantage.setString(NumberString.format(distPlayer - distGhost));
+
+		} else if (advantageShown) {
 			advantageShown = false;
 			lblAdvantage.queueHide(1000);
 			// Gdx.app.log("", "hide");
@@ -141,22 +158,12 @@ public class TrackProgress extends Positionable implements Disposable {
 		lblAdvantage.render(batch);
 
 		float scl = cameraZoom * scale;
-		float dist = MathUtils.clamp(distanceFromBest * 8, -1, 1);
 
 		// dbg
 // dist = 0.35f;
 // progressval = 0.5f;
 // distGhost = 0.15f;
 // distanceFromBest = 0.15f;
-
-		boolean isBack = (dist < 0);
-		if (isBack && !flipped) {
-			flipped = true;
-			sAdvantage.flip(true, false);
-		} else if (!isBack && flipped) {
-			flipped = false;
-			sAdvantage.flip(true, false);
-		}
 
 		float a = 1f;
 
@@ -176,15 +183,24 @@ public class TrackProgress extends Positionable implements Disposable {
 		batch.flush();
 
 		// advantage/disadvantage
-		if (distGhost > 0) {
-			Color c = ColorUtils.paletteRYG(dist + 0.7f, 1f);
-			shProgress.setUniformf("progress", Math.abs(distanceFromBest));
-			sAdvantage.setColor(c);
-			sAdvantage.setScale(scl * 1.1f);
-			sAdvantage.setPosition(position.x - sAdvantage.getWidth() / 2, position.y - sAdvantage.getHeight() / 2);
-			sAdvantage.draw(batch, 1);
-			batch.flush();
+		float dist = MathUtils.clamp(playerToTarget * 8, -1, 1);
+
+		boolean isBack = (dist < 0);
+		if (isBack && !flipped) {
+			flipped = true;
+			sAdvantage.flip(true, false);
+		} else if (!isBack && flipped) {
+			flipped = false;
+			sAdvantage.flip(true, false);
 		}
+
+		Color c = ColorUtils.paletteRYG(dist + 0.7f, 1f);
+		shProgress.setUniformf("progress", Math.abs(playerToTarget));
+		sAdvantage.setColor(c);
+		sAdvantage.setScale(scl * 1.1f);
+		sAdvantage.setPosition(position.x - sAdvantage.getWidth() / 2, position.y - sAdvantage.getHeight() / 2);
+		sAdvantage.draw(batch, 1);
+		batch.flush();
 
 		batch.setShader(null);
 	}

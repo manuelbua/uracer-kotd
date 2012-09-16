@@ -40,7 +40,7 @@ public class SinglePlayerLogic extends CommonLogic {
 	private Timeline driftSecondsTimeline;
 	private boolean isPenalty;
 
-	private float lastCompletion, lastDist;
+	private float lastDist, lastCompletion;
 
 	public SinglePlayerLogic (UserProfile userProfile, GameWorld gameWorld, GameRenderer gameRenderer,
 		ScalingStrategy scalingStrategy) {
@@ -168,11 +168,6 @@ public class SinglePlayerLogic extends CommonLogic {
 		super.tickCompleted();
 
 		if (hasPlayer()) {
-			float pl = gameTrack.getTrackCompletion(playerCar);
-			playerTasks.hudPlayer.trackProgress.setPlayerProgression(pl);
-
-			float distNorm = 0;
-			float distMt = 0;
 			float ghSpeed = 0;
 
 			// use the last one if the replay is finished
@@ -182,17 +177,16 @@ public class SinglePlayerLogic extends CommonLogic {
 				ghSpeed = nextTarget.getInstantSpeed();
 			}
 
-			distNorm = pl - lastCompletion;
-			distMt = gameTrack.getTrackDistance(playerCar) - lastDist;
-			playerTasks.hudPlayer.trackProgress.setDistanceFromBest(distNorm);
-
 			playerTasks.hudPlayer.trackProgress.setPlayerSpeed(playerCar.getInstantSpeed());
 			playerTasks.hudPlayer.trackProgress.setPlayerDistance(gameTrack.getTrackDistance(playerCar));
+			playerTasks.hudPlayer.trackProgress.setPlayerProgression(gameTrack.getTrackCompletion(playerCar));
 
-			playerTasks.hudPlayer.trackProgress.setGhostSpeed(ghSpeed);
-			playerTasks.hudPlayer.trackProgress.setGhostDistance(lastDist);
+			playerTasks.hudPlayer.trackProgress.setTargetSpeed(ghSpeed);
+			playerTasks.hudPlayer.trackProgress.setTargetDistance(lastDist);
+			playerTasks.hudPlayer.trackProgress.setTargetProgression(lastCompletion);
 
 			// target tracker
+			float distMt = gameTrack.getTrackDistance(playerCar) - lastDist;
 			float alpha = MathUtils.clamp(Math.abs(distMt) / 50, 0.2f, 1);
 			playerTasks.hudPlayer.setNextTargetAlpha(alpha);
 		}
@@ -294,7 +288,6 @@ public class SinglePlayerLogic extends CommonLogic {
 
 		nextTarget = null;
 		lastDist = 0;
-		lastCompletion = 0;
 
 		for (int i = 0; i < replays.size; i++) {
 			Replay r = replays.get(i);

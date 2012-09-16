@@ -213,6 +213,7 @@ public final class GameWorld {
 						add = -3.5f;
 					} else if (direction.equals("right")) {
 						mul = 0;
+						add = 0;
 					}
 
 					start.set(mapUtils.tileToPx(x, y).add( /* Convert.scaledPixels */halfTile * mul + add, -halfTile));
