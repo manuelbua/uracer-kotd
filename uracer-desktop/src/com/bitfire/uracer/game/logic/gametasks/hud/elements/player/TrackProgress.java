@@ -22,39 +22,35 @@ import com.bitfire.utils.ShaderLoader;
 
 public class TrackProgress extends Positionable implements Disposable {
 	private HudLabel lblAdvantage;
-	private float progressval, prevVal, speed;
-	private float distanceFromBest, prevDist, distPlayer, distGhost;
-	private boolean advantageShown;
+	private float progressval, prevVal, speed, ghspeed;
+	private float distanceFromBest, prevDist, distPlayer, distGhost, prevDistSecs;
+	private boolean advantageShown, useGhostSpeed;
 
-	private final Texture texProgress, texMask;
+	private final Texture texMask;
 	private final ShaderProgram shProgress;
 	private final Sprite sAdvantage, sProgress;
 	private boolean flipped;
 
-	private final float offX, offY, w, h, scale;
+	private final float scale;
 
 	public TrackProgress (float scale) {
 
 		this.scale = scale;
 		lblAdvantage = new HudLabel(scale, FontFace.CurseGreen, "", false, 2f);
 		advantageShown = false;
-		lblAdvantage.setAlpha(0);
+		lblAdvantage.setAlpha(1);
 
-		texProgress = Art.texCircleProgress;
 		texMask = Art.texCircleProgressMask;
 
-		w = texProgress.getWidth();
-		h = texProgress.getHeight();
-		offX = w / 2;
-		offY = h / 2;
 		shProgress = ShaderLoader.fromFile("progress", "progress");
 
-		sAdvantage = new Sprite(texProgress);
+		sAdvantage = new Sprite(Art.texCircleProgress);
 		sAdvantage.flip(false, true);
 		flipped = false;
 
-		sProgress = new Sprite(texProgress);
+		sProgress = new Sprite(Art.texRadLinesProgress);
 		sProgress.flip(false, true);
+		useGhostSpeed = false;
 	}
 
 	@Override
@@ -90,6 +86,10 @@ public class TrackProgress extends Positionable implements Disposable {
 		speed = mts;
 	}
 
+	public void setGhostSpeed (float mts) {
+		ghspeed = mts;
+	}
+
 	public void lapCompleted () {
 		prevDist = 0;
 		distanceFromBest = 0;
@@ -101,6 +101,7 @@ public class TrackProgress extends Positionable implements Disposable {
 
 	public void render (SpriteBatch batch, float cameraZoom) {
 
+// lblAdvantage.setString("none");
 		if (distPlayer > 0 && distGhost > 0 && speed > 15) {
 			if (!advantageShown) {
 				advantageShown = true;
@@ -108,12 +109,24 @@ public class TrackProgress extends Positionable implements Disposable {
 				// Gdx.app.log("", "show");
 			}
 
-			float distSecs = -(distPlayer - distGhost) / speed;
+			float s = speed;
+			if (distPlayer > distGhost && ghspeed > 0 && !useGhostSpeed) {
+				s = ghspeed;
+				useGhostSpeed = true;
+				prevDistSecs = 0;
+			} else if (distPlayer < distGhost && useGhostSpeed) {
+				useGhostSpeed = false;
+				prevDistSecs = 0;
+			}
+
+			float distSecs = AMath.lerp(prevDistSecs, (distPlayer - distGhost) / s, 0.1f);
+			prevDistSecs = distSecs;
+
 			lblAdvantage.setString(NumberString.format(distSecs), true);
 
-			if (distSecs < 0 && lblAdvantage.getFont() != FontFace.CurseGreenBig) {
+			if (distPlayer > distGhost && lblAdvantage.getFont() != FontFace.CurseGreenBig) {
 				lblAdvantage.setFont(FontFace.CurseGreenBig);
-			} else if (distSecs > 0 && lblAdvantage.getFont() != FontFace.CurseRedBig) {
+			} else if (distPlayer < distGhost && lblAdvantage.getFont() != FontFace.CurseRedBig) {
 				lblAdvantage.setFont(FontFace.CurseRedBig);
 			}
 
@@ -123,15 +136,15 @@ public class TrackProgress extends Positionable implements Disposable {
 			// Gdx.app.log("", "hide");
 		}
 
-		lblAdvantage.setScale(cameraZoom * 0.6f);
-		lblAdvantage.setPosition(position.x, position.y - cameraZoom * Convert.scaledPixels(90));
+		lblAdvantage.setScale(cameraZoom * 1f);
+		lblAdvantage.setPosition(position.x, position.y - cameraZoom * Convert.scaledPixels(120));
 		lblAdvantage.render(batch);
 
-		float scl = cameraZoom * scale * 1.2f;
+		float scl = cameraZoom * scale;
 		float dist = MathUtils.clamp(distanceFromBest * 8, -1, 1);
 
 		// dbg
-// dist = 0.15f;
+// dist = 0.35f;
 // progressval = 0.5f;
 // distGhost = 0.15f;
 // distanceFromBest = 0.15f;
@@ -145,9 +158,7 @@ public class TrackProgress extends Positionable implements Disposable {
 			sAdvantage.flip(true, false);
 		}
 
-		float px = position.x - offX;
-		float py = position.y - offY;
-		float a = 0.8f;
+		float a = 1f;
 
 		batch.setShader(shProgress);
 
@@ -160,18 +171,18 @@ public class TrackProgress extends Positionable implements Disposable {
 		shProgress.setUniformf("progress", progressval);
 		sProgress.setColor(Color.WHITE);
 		sProgress.setScale(scl);
-		sProgress.setPosition(px, py);
+		sProgress.setPosition(position.x - sProgress.getWidth() / 2, position.y - sProgress.getHeight() / 2);
 		sProgress.draw(batch, a);
 		batch.flush();
 
 		// advantage/disadvantage
 		if (distGhost > 0) {
-			Color c = ColorUtils.paletteRYG(dist + 0.7f, 1);
+			Color c = ColorUtils.paletteRYG(dist + 0.7f, 1f);
 			shProgress.setUniformf("progress", Math.abs(distanceFromBest * 4));
 			sAdvantage.setColor(c);
-			sAdvantage.setScale(scl * 1.2f);
-			sAdvantage.setPosition(px, py);
-			sAdvantage.draw(batch, a);
+			sAdvantage.setScale(scl * 1.1f);
+			sAdvantage.setPosition(position.x - sAdvantage.getWidth() / 2, position.y - sAdvantage.getHeight() / 2);
+			sAdvantage.draw(batch, 1);
 			batch.flush();
 		}
 

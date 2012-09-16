@@ -55,6 +55,9 @@ public final class Art {
 	// circle progress
 	public static Texture texCircleProgress;
 	public static Texture texCircleProgressMask;
+	public static Texture texCircleProgressHalf;
+	public static Texture texCircleProgressHalfMask;
+	public static Texture texRadLinesProgress;
 
 	public static void init () {
 		ShaderLoader.BasePath = "data/shaders/";
@@ -84,6 +87,15 @@ public final class Art {
 		texCircleProgress = Art.newTexture("data/base/progress/circle-progress-full.png", true);
 		texCircleProgress.setFilter(TextureFilter.MipMapLinearNearest, TextureFilter.Linear);
 
+		texCircleProgressHalf = Art.newTexture("data/base/progress/circle-progress-half.png", true);
+		texCircleProgressHalf.setFilter(TextureFilter.MipMapLinearNearest, TextureFilter.Linear);
+
+		texCircleProgressHalfMask = Art.newTexture("data/base/progress/circle-progress-half-mask.png", true);
+		texCircleProgressHalfMask.setFilter(TextureFilter.MipMapLinearNearest, TextureFilter.Linear);
+
+		texRadLinesProgress = Art.newTexture("data/base/progress/radlines-progress-full.png", true);
+		texRadLinesProgress.setFilter(TextureFilter.MipMapLinearNearest, TextureFilter.Linear);
+
 		texCircleProgressMask = Art.newTexture("data/base/progress/circle-progress-mask.png", true);
 		texCircleProgressMask.setFilter(TextureFilter.MipMapLinearNearest, TextureFilter.Linear);
 	}
@@ -91,6 +103,9 @@ public final class Art {
 	private static void disposeCircleProgress () {
 		texCircleProgress.dispose();
 		texCircleProgressMask.dispose();
+		texRadLinesProgress.dispose();
+		texCircleProgressHalf.dispose();
+		texCircleProgressHalfMask.dispose();
 	}
 
 	//

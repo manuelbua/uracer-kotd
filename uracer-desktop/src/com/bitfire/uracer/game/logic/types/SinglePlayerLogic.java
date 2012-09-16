@@ -173,24 +173,28 @@ public class SinglePlayerLogic extends CommonLogic {
 
 			float distNorm = 0;
 			float distMt = 0;
+			float ghSpeed = 0;
 
 			// use the last one if the replay is finished
 			if (nextTarget != null && nextTarget.hasReplay()) {
 				lastDist = gameTrack.getTrackDistance(nextTarget);
 				lastCompletion = gameTrack.getTrackCompletion(nextTarget);
+				ghSpeed = nextTarget.getInstantSpeed();
 			}
 
 			distNorm = pl - lastCompletion;
 			distMt = gameTrack.getTrackDistance(playerCar) - lastDist;
-
-			playerTasks.hudPlayer.trackProgress.setGhostDistance(lastDist);
 			playerTasks.hudPlayer.trackProgress.setDistanceFromBest(distNorm);
-
-			float alpha = MathUtils.clamp(Math.abs(distMt) / 50, 0.2f, 1);
-			playerTasks.hudPlayer.setNextTargetAlpha(alpha);
 
 			playerTasks.hudPlayer.trackProgress.setPlayerSpeed(playerCar.getInstantSpeed());
 			playerTasks.hudPlayer.trackProgress.setPlayerDistance(gameTrack.getTrackDistance(playerCar));
+
+			playerTasks.hudPlayer.trackProgress.setGhostSpeed(ghSpeed);
+			playerTasks.hudPlayer.trackProgress.setGhostDistance(lastDist);
+
+			// target tracker
+			float alpha = MathUtils.clamp(Math.abs(distMt) / 50, 0.2f, 1);
+			playerTasks.hudPlayer.setNextTargetAlpha(alpha);
 		}
 	}
 

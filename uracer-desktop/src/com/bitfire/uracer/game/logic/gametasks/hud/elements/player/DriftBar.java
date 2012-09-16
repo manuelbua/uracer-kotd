@@ -24,7 +24,7 @@ import com.bitfire.uracer.utils.NumberString;
 import com.bitfire.utils.ShaderLoader;
 
 public class DriftBar extends Positionable implements Disposable {
-	public static final float MaxSeconds = 5f;
+	public static final float MaxSeconds = 10f;
 	public static final int MaxTicks = (int)(MaxSeconds * Config.Physics.PhysicsTimestepHz);
 
 	private final float scale;
@@ -57,8 +57,8 @@ public class DriftBar extends Positionable implements Disposable {
 		labelSeconds.setAlpha(0);
 
 		//
-		texProgress = Art.texCircleProgress;
-		texMask = Art.texCircleProgressMask;
+		texProgress = Art.texCircleProgressHalf;
+		texMask = Art.texCircleProgressHalfMask;
 
 		w = texProgress.getWidth();
 		h = texProgress.getHeight();
@@ -66,7 +66,7 @@ public class DriftBar extends Positionable implements Disposable {
 		offY = h / 2;
 		shProgress = ShaderLoader.fromFile("progress", "progress");
 		sProgress = new Sprite(texProgress);
-		sProgress.flip(true, true);
+		sProgress.flip(false, true);
 	}
 
 	public void setSeconds (float seconds) {
@@ -129,14 +129,15 @@ public class DriftBar extends Positionable implements Disposable {
 
 		labelSeconds.setScale(0.5f * cameraZoom, false);
 		labelSeconds.setString(NumberString.format(seconds) + "s", true);
-		labelSeconds.setPosition(position.x, position.y + Convert.scaledPixels(20) * cameraZoom * scale);
+		labelSeconds.setPosition(position.x, position.y + Convert.scaledPixels(80) * cameraZoom * scale);
 		labelSeconds.render(batch);
 
 		// circle progress for remaining time
-		float scl = cameraZoom * scale;
+		float s = 0.8f;
+		float scl = cameraZoom * scale * s;
 		float px = position.x - offX;
-		float py = position.y - offY;
-		float a = 0.8f;
+		float py = position.y - offY + Convert.scaledPixels(32) * cameraZoom * s;
+		float a = 1f;
 
 		batch.setShader(shProgress);
 		texMask.bind(1);
@@ -150,5 +151,7 @@ public class DriftBar extends Positionable implements Disposable {
 		sProgress.setPosition(px, py);
 		sProgress.draw(batch, a);
 		batch.flush();
+
+		batch.setShader(null);
 	}
 }
