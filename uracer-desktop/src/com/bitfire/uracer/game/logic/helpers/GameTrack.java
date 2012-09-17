@@ -133,8 +133,9 @@ public final class GameTrack implements Disposable {
 		return totalLength;
 	}
 
-	/** Returns the distance, in meters, of the specified car relative to the starting line of the current track */
-	public float getTrackDistance (Car car) {
+	/** Returns the distance, in meters, of the specified car relative to the starting line of the current track. If it fails
+	 * determining the value, then the value specified by the @param retDefault is returned. */
+	public float getTrackDistance (Car car, float retDefault) {
 		Vector2 pt = car.getWorldPosMt();
 		int carSector = findSector(pt);
 
@@ -145,14 +146,14 @@ public final class GameTrack implements Disposable {
 			return carlen;
 		}
 
-		return -1;
+		return retDefault;
 	}
 
 	/** Returns a value in the [0,1] range, meaning the specified car is at the start (0) or at the end (1) of the lap. If the car
-	 * is not on track, then a value lower than 0 is returned. */
-	public float getTrackCompletion (Car car) {
-		float ret = -1;
-		float cardist = getTrackDistance(car);
+	 * is not on track, then the value specified by the @param retDefault is returned. */
+	public float getTrackCompletion (Car car, float retDefault) {
+		float ret = retDefault;
+		float cardist = getTrackDistance(car, 0);
 		if (cardist > 0) {
 			ret = (cardist * oneOnTotalLength);
 		}

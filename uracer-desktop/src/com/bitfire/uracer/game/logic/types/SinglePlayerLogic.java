@@ -16,6 +16,7 @@ import com.bitfire.uracer.configuration.UserProfile;
 import com.bitfire.uracer.game.Time;
 import com.bitfire.uracer.game.Time.Reference;
 import com.bitfire.uracer.game.actors.Car;
+import com.bitfire.uracer.game.actors.CarPreset;
 import com.bitfire.uracer.game.actors.GhostCar;
 import com.bitfire.uracer.game.logic.gametasks.hud.elements.player.DriftBar;
 import com.bitfire.uracer.game.logic.gametasks.messager.Messager;
@@ -53,7 +54,7 @@ public class SinglePlayerLogic extends CommonLogic {
 	}
 
 	@Override
-	public void setPlayer (com.bitfire.uracer.game.actors.CarPreset.Type presetType) {
+	public void setPlayer (CarPreset.Type presetType) {
 		super.setPlayer(presetType);
 		driftBar = playerTasks.hudPlayer.driftBar;
 	}
@@ -172,21 +173,21 @@ public class SinglePlayerLogic extends CommonLogic {
 
 			// use the last one if the replay is finished
 			if (nextTarget != null && nextTarget.hasReplay()) {
-				lastDist = gameTrack.getTrackDistance(nextTarget);
-				lastCompletion = gameTrack.getTrackCompletion(nextTarget);
+				lastDist = gameTrack.getTrackDistance(nextTarget, 0);
+				lastCompletion = gameTrack.getTrackCompletion(nextTarget, 0);
 				ghSpeed = nextTarget.getInstantSpeed();
 			}
 
 			playerTasks.hudPlayer.trackProgress.setPlayerSpeed(playerCar.getInstantSpeed());
-			playerTasks.hudPlayer.trackProgress.setPlayerDistance(gameTrack.getTrackDistance(playerCar));
-			playerTasks.hudPlayer.trackProgress.setPlayerProgression(gameTrack.getTrackCompletion(playerCar));
+			playerTasks.hudPlayer.trackProgress.setPlayerDistance(gameTrack.getTrackDistance(playerCar, 0));
+			playerTasks.hudPlayer.trackProgress.setPlayerProgression(gameTrack.getTrackCompletion(playerCar, 0));
 
 			playerTasks.hudPlayer.trackProgress.setTargetSpeed(ghSpeed);
 			playerTasks.hudPlayer.trackProgress.setTargetDistance(lastDist);
 			playerTasks.hudPlayer.trackProgress.setTargetProgression(lastCompletion);
 
 			// target tracker
-			float distMt = gameTrack.getTrackDistance(playerCar) - lastDist;
+			float distMt = gameTrack.getTrackDistance(playerCar, 0) - lastDist;
 			float alpha = MathUtils.clamp(Math.abs(distMt) / 50, 0.2f, 1);
 			playerTasks.hudPlayer.setNextTargetAlpha(alpha);
 		}
