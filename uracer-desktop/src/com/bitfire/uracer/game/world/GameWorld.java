@@ -77,7 +77,7 @@ public final class GameWorld {
 	// night system
 	private boolean nightMode;
 	protected RayHandler rayHandler = null;
-	protected ConeLight playerHeadlights = null;
+	protected ConeLight playerHeadlightsA, playerHeadlightsB = null;
 
 	// level meshes, package-level access for GameWorldRenderer (ugly but faster
 	// than accessors)
@@ -241,8 +241,8 @@ public final class GameWorld {
 			return;
 		}
 
-		float rttScale = .25f;
-		int maxRays = 360;
+		float rttScale = .75f;
+		int maxRays = 1440;
 
 		if (!Config.isDesktop) {
 			rttScale = 0.2f;
@@ -255,18 +255,21 @@ public final class GameWorld {
 		rayHandler.setShadows(true);
 		rayHandler.setCulling(true);
 		rayHandler.setBlur(true);
-		rayHandler.setBlurNum(1);
-		rayHandler.setAmbientLight(0f, 0, 0.25f, 0.2f);
+		rayHandler.setBlurNum(4);
+		rayHandler.setAmbientLight(0f, 0, 0.25f, 0.3f);
 
 		final Color c = new Color();
 
 		// setup player headlights data
 		c.set(.4f, .4f, .75f, .85f);
-		playerHeadlights = new ConeLight(rayHandler, maxRays, c, 30, 0, 0, 0, 15);
-		playerHeadlights.setSoft(false);
-		playerHeadlights.setMaskBits(CollisionFilters.CategoryTrackWalls /*
-																								 * | CollisionFilters . CategoryReplay
-																								 */);
+
+		playerHeadlightsA = new ConeLight(rayHandler, maxRays, c, 40, 0, 0, 0, 10);
+		playerHeadlightsA.setSoft(true);
+		playerHeadlightsA.setMaskBits(CollisionFilters.CategoryTrackWalls | CollisionFilters.CategoryReplay);
+
+		playerHeadlightsB = new ConeLight(rayHandler, maxRays, c, 40, 0, 0, 0, 10);
+		playerHeadlightsB.setSoft(true);
+		playerHeadlightsB.setMaskBits(CollisionFilters.CategoryTrackWalls | CollisionFilters.CategoryReplay);
 
 		// setup level lights data, if any
 		Vector2 pos = new Vector2();
@@ -276,13 +279,13 @@ public final class GameWorld {
 			// MathUtils.random(0,1),
 			// MathUtils.random(0,1),
 			// MathUtils.random(0,1),
-				1f, .85f, .15f, .75f);
+				1f, .85f, .25f, .75f);
 			TiledObject o = group.objects.get(i);
 			pos.set(o.x, o.y).mul(scalingStrategy.invTileMapZoomFactor);
 			pos.y = worldSizeScaledPx.y - pos.y;
 			pos.set(Convert.px2mt(pos)).mul(scalingStrategy.tileMapZoomFactor);
 
-			PointLight l = new PointLight(rayHandler, maxRays, c, 15f, pos.x, pos.y);
+			PointLight l = new PointLight(rayHandler, maxRays, c, MathUtils.random(15f, 25f), pos.x, pos.y);
 			l.setSoft(false);
 			l.setMaskBits(CollisionFilters.CategoryPlayer | CollisionFilters.CategoryTrackWalls);
 		}
@@ -648,8 +651,8 @@ public final class GameWorld {
 		return rayHandler;
 	}
 
-	public ConeLight getPlayerHeadLights () {
-		return playerHeadlights;
+	public ConeLight getPlayerHeadLights (boolean aOrB) {
+		return aOrB ? playerHeadlightsA : playerHeadlightsB;
 	}
 
 	public World getBox2DWorld () {

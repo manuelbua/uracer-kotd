@@ -107,7 +107,7 @@ public final class GameWorldRenderer {
 	private boolean showWalls = false;
 	private TrackTrees trackTrees = null; // complex trees
 	private TrackWalls trackWalls = null;
-	private ConeLight playerLights = null;
+	private ConeLight playerLightsA = null, playerLightsB = null;
 
 	public GameWorldRenderer (ScalingStrategy strategy, GameWorld world, int width, int height) {
 		scalingStrategy = strategy;
@@ -115,7 +115,8 @@ public final class GameWorldRenderer {
 		gl = Gdx.gl20;
 		scaledPpm = Convert.scaledPixels(Config.Physics.PixelsPerMeter);
 		rayHandler = world.getRayHandler();
-		playerLights = world.getPlayerHeadLights();
+		playerLightsA = world.getPlayerHeadLights(true);
+		playerLightsB = world.getPlayerHeadLights(false);
 		staticMeshes = world.getStaticMeshes();
 
 		createCams(width, height);
@@ -180,9 +181,8 @@ public final class GameWorldRenderer {
 
 	public void setRenderPlayerHeadlights (boolean value) {
 		renderPlayerHeadlights = value;
-		if (playerLights != null) {
-			playerLights.setActive(value);
-		}
+		if (playerLightsA != null) playerLightsA.setActive(value);
+		if (playerLightsB != null) playerLightsB.setActive(value);
 	}
 
 	public Matrix4 getInvProjView () {
@@ -199,29 +199,43 @@ public final class GameWorldRenderer {
 		renderedWalls = 0;
 	}
 
+	private Vector2 _o2p = new Vector2();
+
+	private Vector2 orientationToPosition (Car car, float angle, float offsetX, float offsetY) {
+		Vector2 carPosition = car.state().position;
+		float carLength = car.getCarModel().length;
+
+		// the body's compound shape should be created with some clever thinking in it :)
+		float offx = (carLength / 2f) + .25f + offsetX;
+		float offy = offsetY;
+
+		float cos = MathUtils.cosDeg(angle);
+		float sin = MathUtils.sinDeg(angle);
+		float dX = offx * cos - offy * sin;
+		float dY = offx * sin + offy * cos;
+
+		float mx = Convert.px2mt(carPosition.x) + dX;
+		float my = Convert.px2mt(carPosition.y) + dY;
+		_o2p.set(mx, my);
+		return _o2p;
+	}
+
 	public void updatePlayerHeadlights (Car car) {
 		if (renderPlayerHeadlights && car != null) {
-			Vector2 carPosition = car.state().position;
-			float carOrientation = car.state().orientation;
-			float carLength = car.getCarModel().length;
 
 			// update player light (subframe interpolation ready)
-			float ang = 90 + carOrientation;
+			float ang = 90 + car.state().orientation;
+			Vector2 v = orientationToPosition(car, ang, 0, 0.55f);
+			playerLightsA.setColor(0.1f, 0.2f, 0.6f, 0.6f);
+			playerLightsA.setDistance(30);
+			playerLightsA.setDirection(ang + 2);
+			playerLightsA.setPosition(v.x, v.y);
 
-			// the body's compound shape should be created with some clever thinking in it :)
-			float offx = (carLength / 2f) + .25f;
-			float offy = 0f;
-
-			float cos = MathUtils.cosDeg(ang);
-			float sin = MathUtils.sinDeg(ang);
-			float dX = offx * cos - offy * sin;
-			float dY = offx * sin + offy * cos;
-
-			float px = Convert.px2mt(carPosition.x) + dX;
-			float py = Convert.px2mt(carPosition.y) + dY;
-
-			playerLights.setDirection(ang);
-			playerLights.setPosition(px, py);
+			v = orientationToPosition(car, ang, 0, -0.55f);
+			playerLightsB.setColor(0.1f, 0.2f, 0.6f, 0.6f);
+			playerLightsB.setDistance(30);
+			playerLightsB.setDirection(ang - 2);
+			playerLightsB.setPosition(v.x, v.y);
 		}
 
 		// if( Config.isDesktop && (URacer.getFrameCount() & 0x1f) == 0x1f ) {

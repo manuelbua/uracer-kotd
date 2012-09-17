@@ -240,10 +240,10 @@ public class URacer implements ApplicationListener {
 				screenMgr.render(null);
 
 				// simulate slowness
-// try {
-// Thread.sleep(20);
-// } catch (InterruptedException e) {
-// }
+				try {
+					Thread.sleep(10);
+				} catch (InterruptedException e) {
+				}
 			}
 
 			graphicsTime = (TimeUtils.nanoTime() - startTime) * oneOnOneBillion;
