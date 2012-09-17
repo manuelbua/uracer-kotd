@@ -107,8 +107,9 @@ public final class HudPlayer extends HudElement {
 	public void onRender (SpriteBatch batch) {
 
 		float cz = renderer.getWorldRenderer().getCameraZoom();
+
 		basicInfo.render(batch);
-// bottom(driftBar, 50);
+
 		atPlayer(driftBar);
 		driftBar.render(batch, cz);
 
