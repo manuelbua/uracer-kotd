@@ -95,16 +95,18 @@ public class TrackProgress extends Positionable implements Disposable {
 		prevTargetVal = progressTargetVal;
 	}
 
-	public void lapCompleted () {
+	public void resetCounters (boolean resetState) {
 		progressval = 0;
 		progressTargetVal = 0;
 		distGhost = 0;
 		distPlayer = 0;
 
-// prevDistGhost = 0;
-// prevDistPlayer = 0;
-// prevVal = 0;
-// prevTargetVal = 0;
+		if (resetState) {
+			prevDistGhost = 0;
+			prevDistPlayer = 0;
+			prevVal = 0;
+			prevTargetVal = 0;
+		}
 	}
 
 	public void tick () {

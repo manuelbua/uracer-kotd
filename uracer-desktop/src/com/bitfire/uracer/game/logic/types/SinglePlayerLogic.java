@@ -103,6 +103,10 @@ public class SinglePlayerLogic extends CommonLogic {
 		restartAllReplays();
 		accuDriftSeconds.value = 0;
 		isPenalty = false;
+
+		playerTasks.hudPlayer.trackProgress.resetCounters(false);
+		lastDist = 0;
+		lastCompletion = 0;
 	}
 
 	// the game has been reset
@@ -112,6 +116,10 @@ public class SinglePlayerLogic extends CommonLogic {
 		replayManager.reset();
 		accuDriftSeconds.value = 0;
 		isPenalty = false;
+
+		playerTasks.hudPlayer.trackProgress.resetCounters(true);
+		lastDist = 0;
+		lastCompletion = 0;
 	}
 
 	// a new Replay from the player is available: note that CommonLogic already perform
@@ -268,7 +276,7 @@ public class SinglePlayerLogic extends CommonLogic {
 	@Override
 	protected void lapComplete (boolean firstLap) {
 		restartAllReplays();
-		playerTasks.hudPlayer.trackProgress.lapCompleted();
+		playerTasks.hudPlayer.trackProgress.resetCounters(false);
 	}
 
 	@Override
