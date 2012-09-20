@@ -5,6 +5,7 @@ import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.g2d.ParticleEffect;
 import com.badlogic.gdx.graphics.g2d.ParticleEmitter;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
+import com.badlogic.gdx.math.MathUtils;
 import com.badlogic.gdx.math.Vector2;
 import com.bitfire.uracer.ScalingStrategy;
 import com.bitfire.uracer.URacer;
@@ -16,7 +17,7 @@ import com.bitfire.uracer.resources.Art;
  * 
  * @author bmanuel */
 public class PlayerSmokeTrails extends TrackEffect {
-	public static final int MaxParticles = 1000;
+	public static final int MaxParticles = 5000;
 
 	private SmokeEffect fx[];
 	private static final int SmokeEffectsCount = 1;
@@ -103,7 +104,8 @@ public class PlayerSmokeTrails extends TrackEffect {
 			fx[i].setLifeMul(3.5f);
 			fx[i].setScaleMul(1.5f);
 			fx[i].setEmissionMul(1.2f);
-			fx[i].stop();
+// fx[i].stop();
+// fx[i].start();
 		}
 
 		isDrifting = false;
@@ -123,7 +125,7 @@ public class PlayerSmokeTrails extends TrackEffect {
 
 	@Override
 	public void tick () {
-		isDrifting = player.driftState.isDrifting && player.driftState.driftStrength > 0.5f;
+		isDrifting = player.driftState.isDrifting && player.driftState.driftStrength > 0f;
 
 		if (isDrifting && !wasDrifting) {
 			// started drifting
@@ -149,9 +151,20 @@ public class PlayerSmokeTrails extends TrackEffect {
 	public void render (SpriteBatch batch) {
 		tmp.set(posX, posY);
 
-		fx[0].setLifeMul(8f * player.driftState.driftStrength);
-		fx[0].setScaleMul(2f * player.driftState.driftStrength);
-		fx[0].setEmissionMul(1.1f);
+// fx[0].baseEmitter.setAdditive(true);
+		fx[0].setLifeMul(60f * player.driftState.driftStrength);
+		fx[0].setScaleMul(MathUtils.random(0.1f, 0.1f + 10f * player.driftState.driftStrength));
+		fx[0].setEmissionMul(0.9f);
+
+		float t = player.driftState.driftStrength * 0.75f;
+		fx[0].baseEmitter.getTransparency().setHighMin(t);
+		fx[0].baseEmitter.getTransparency().setHighMax(t);
+
+		float[] colors = fx[0].baseEmitter.getTint().getColors();
+		float v = 0.1f;
+		colors[0] = v * player.driftState.driftStrength;
+		colors[1] = v * player.driftState.driftStrength;
+		colors[2] = v * player.driftState.driftStrength;
 
 		fx[0].render(batch, tmp.x, tmp.y);
 

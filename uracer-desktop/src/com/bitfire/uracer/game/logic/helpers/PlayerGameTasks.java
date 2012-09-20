@@ -53,7 +53,7 @@ public final class PlayerGameTasks {
 
 		// track effects
 		int maxSkidMarks = Config.isDesktop ? 500 : 100;
-		float maxLife = Config.isDesktop ? 5 : 3;
+		float maxLife = Config.isDesktop ? 7 : 3;
 		playerSkidMarks = new PlayerSkidMarks(player, maxSkidMarks, maxLife);
 		playerTrails = new PlayerSmokeTrails(scalingStrategy, player);
 
@@ -66,8 +66,8 @@ public final class PlayerGameTasks {
 		manager.sound.add(playerDriftSoundFx);
 		manager.sound.add(playerImpactSoundFx);
 		manager.sound.add(playerEngineSoundFx);
-		manager.effects.add(playerSkidMarks);
-		manager.effects.add(playerTrails);
+		manager.effects.addBeforeEntities(playerSkidMarks);
+		manager.effects.addAfterEntities(playerTrails);
 		manager.hud.addBeforePostProcessing(hudPlayer);
 		manager.hud.addBeforePostProcessing(hudLapInfo);
 
