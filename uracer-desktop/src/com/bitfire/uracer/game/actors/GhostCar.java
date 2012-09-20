@@ -22,7 +22,7 @@ public final class GhostCar extends Car {
 	public CarState carState;
 
 	public GhostCar (int id, GameWorld gameWorld, CarPreset.Type presetType) {
-		super(gameWorld, CarType.ReplayCar, InputMode.InputFromReplay, GameRendererEvent.Order.DEFAULT, presetType, false);
+		super(gameWorld, CarType.ReplayCar, InputMode.InputFromReplay, GameRendererEvent.Order.MINUS_1, presetType, false);
 		this.id = id;
 		indexPlay = 0;
 		hasReplay = false;

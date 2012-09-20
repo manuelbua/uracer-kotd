@@ -50,7 +50,7 @@ public class PlayerCar extends Car {
 	public PlayerDriftState driftState = null;
 
 	public PlayerCar (GameWorld gameWorld, CarPreset.Type presetType) {
-		super(gameWorld, CarType.PlayerCar, InputMode.InputFromPlayer, GameRendererEvent.Order.MINUS_1, presetType, true);
+		super(gameWorld, CarType.PlayerCar, InputMode.InputFromPlayer, GameRendererEvent.Order.DEFAULT, presetType, true);
 		carInput = new CarInput();
 		impacts = 0;
 
