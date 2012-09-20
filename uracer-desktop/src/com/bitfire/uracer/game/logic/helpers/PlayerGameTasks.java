@@ -10,6 +10,7 @@ import com.bitfire.uracer.game.logic.gametasks.hud.debug.HudDebug;
 import com.bitfire.uracer.game.logic.gametasks.hud.elements.HudLapInfo;
 import com.bitfire.uracer.game.logic.gametasks.hud.elements.HudPlayer;
 import com.bitfire.uracer.game.logic.gametasks.sounds.effects.PlayerDriftSoundEffect;
+import com.bitfire.uracer.game.logic.gametasks.sounds.effects.PlayerEngineSoundEffect;
 import com.bitfire.uracer.game.logic.gametasks.sounds.effects.PlayerImpactSoundEffect;
 import com.bitfire.uracer.game.logic.gametasks.trackeffects.effects.PlayerSkidMarks;
 import com.bitfire.uracer.game.player.PlayerCar;
@@ -30,6 +31,7 @@ public final class PlayerGameTasks {
 	public PlayerSkidMarks playerSkidMarks = null;
 	public PlayerDriftSoundEffect playerDriftSoundFx = null;
 	public PlayerImpactSoundEffect playerImpactSoundFx = null;
+	public PlayerEngineSoundEffect playerEngineSoundFx = null;
 
 	public PlayerGameTasks (UserProfile userProfile, GameTasksManager gameTaskManager, ScalingStrategy strategy) {
 		this.userProfile = userProfile;
@@ -45,6 +47,7 @@ public final class PlayerGameTasks {
 		// sounds
 		playerDriftSoundFx = new PlayerDriftSoundEffect(player);
 		playerImpactSoundFx = new PlayerImpactSoundEffect(player);
+		playerEngineSoundFx = new PlayerEngineSoundEffect(player);
 
 		// track effects
 		int maxSkidMarks = Config.isDesktop ? 500 : 100;
@@ -59,6 +62,7 @@ public final class PlayerGameTasks {
 
 		manager.sound.add(playerDriftSoundFx);
 		manager.sound.add(playerImpactSoundFx);
+		manager.sound.add(playerEngineSoundFx);
 		manager.effects.add(playerSkidMarks);
 		manager.hud.addBeforePostProcessing(hudPlayer);
 		manager.hud.addBeforePostProcessing(hudLapInfo);
@@ -79,6 +83,11 @@ public final class PlayerGameTasks {
 		if (playerImpactSoundFx != null) {
 			manager.sound.remove(playerImpactSoundFx);
 			playerImpactSoundFx = null;
+		}
+
+		if (playerEngineSoundFx != null) {
+			manager.sound.remove(playerEngineSoundFx);
+			playerEngineSoundFx = null;
 		}
 
 		if (playerSkidMarks != null) {

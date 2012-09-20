@@ -28,7 +28,15 @@ public class SoundManager extends GameTask {
 	}
 
 	public void remove (SoundEffect effect) {
+		effect.stop();
 		manager.remove(effect);
+	}
+
+	public void stop () {
+		Array<SoundEffect> items = manager.items;
+		for (int i = 0; i < items.size; i++) {
+			items.get(i).stop();
+		}
 	}
 
 	@Override

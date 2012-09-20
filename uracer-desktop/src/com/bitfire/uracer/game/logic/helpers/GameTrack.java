@@ -20,8 +20,8 @@ import com.bitfire.uracer.game.GameEvents;
 import com.bitfire.uracer.game.actors.Car;
 import com.bitfire.uracer.game.world.GameWorld;
 
-/** Represents a view onto the logical portion of a game level track: it does sectorization and can perform queries against its
- * length.
+/** Implements the track sectorizer and represents a view onto the logical portion of a track: it does sectorization and can be
+ * queried against tracklength-based information, such as normalized position in track-coordinate space.
  * 
  * @author bmanuel */
 public final class GameTrack implements Disposable {
@@ -82,9 +82,9 @@ public final class GameTrack implements Disposable {
 	}
 
 	/** Load and follows the supplied route waypoints, identifying sectors containing the two leading/trailing waypoints. The
-	 * waypoint structure direction IS important and should follow the intended playing direction.
+	 * waypoint structure walking direction at creation time IS important and should follow the intended playing direction.
 	 * 
-	 * @return the total length of the track as computed by the sum of the lengths of a waypoint to the following one. */
+	 * @return the total length of the track as computed by the sum of the lengths between a waypoint and the next. */
 	private float sectorize () {
 		float accuLength = 0;
 		for (int i = 0; i < route.size(); i++) {
@@ -207,7 +207,7 @@ public final class GameTrack implements Disposable {
 	}
 
 	//
-	// debug render
+	// add naive debug output
 	//
 
 	private static class DebugRenderer implements Disposable, GameRendererEvent.Listener {
@@ -245,7 +245,6 @@ public final class GameTrack implements Disposable {
 
 		private void render () {
 			float alpha = 0.25f;
-			float ialpha = 1f / 0.25f;
 			int carSector = -1;
 
 			if (hasCar) {

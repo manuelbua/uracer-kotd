@@ -13,12 +13,13 @@ public final class PlayerEngineSoundEffect extends SoundEffect {
 	private long carEngineId = -1;
 	private static float carEnginePitchStart = 0;
 	private float carEnginePitchLast = 0;
-	private static final float carEnginePitchMin = 1f;
+	private static final float carEnginePitchMin = 0.8f;
 	private PlayerCar player;
 
 	public PlayerEngineSoundEffect (PlayerCar player) {
 		this.player = player;
 		carEngine = Sounds.carEngine;
+// start();
 	}
 
 	@Override
@@ -30,7 +31,8 @@ public final class PlayerEngineSoundEffect extends SoundEffect {
 		if (carEngineId > -1) {
 			float speedFactor = player.carState.currSpeedFactor;
 
-			float pitch = carEnginePitchMin + speedFactor * 0.65f;
+			float pitch = carEnginePitchMin + speedFactor * 1.25f;
+// float pitch = carEnginePitchMin + 0.8f;
 			if (!AMath.equals(pitch, carEnginePitchLast)) {
 				carEngine.setPitch(carEngineId, pitch);
 				carEnginePitchLast = pitch;
@@ -46,8 +48,6 @@ public final class PlayerEngineSoundEffect extends SoundEffect {
 			// UGLY HACK FOR ANDROID
 			carEngineId = checkedLoop(carEngine, 1f);
 		}
-
-		reset();
 	}
 
 	@Override

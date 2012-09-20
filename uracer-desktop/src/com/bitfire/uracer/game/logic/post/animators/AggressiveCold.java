@@ -164,7 +164,7 @@ public final class AggressiveCold implements PostProcessingAnimator {
 			// vignette.setCenter( Gdx.graphics.getWidth() / 2, Gdx.graphics.getHeight() / 2 );
 			// }
 
-			vignette.setLutIntensity(timeModFactor * 1.618f);// * AMath.clamp( driftStrength * 1.25f, 0, 1 ) );
+			vignette.setLutIntensity(timeModFactor * 1.25f);// * AMath.clamp( driftStrength * 1.25f, 0, 1 ) );
 			vignette.setIntensity(timeModFactor);
 			vignette.setLutIndex(6);
 		}

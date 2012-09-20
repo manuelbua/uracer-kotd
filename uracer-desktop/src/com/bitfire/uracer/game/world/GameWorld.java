@@ -242,7 +242,7 @@ public final class GameWorld {
 		}
 
 		float rttScale = .75f;
-		int maxRays = 1440;
+		int maxRays = 720;
 
 		if (!Config.isDesktop) {
 			rttScale = 0.2f;

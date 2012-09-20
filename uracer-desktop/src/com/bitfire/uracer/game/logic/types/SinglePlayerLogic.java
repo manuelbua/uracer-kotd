@@ -96,7 +96,7 @@ public class SinglePlayerLogic extends CommonLogic {
 
 	// the game has been restarted
 	@Override
-	protected void restart () {
+	protected void gameRestart () {
 		Gdx.app.log("SinglePlayerLogic", "Starting/restarting game");
 
 		// restart all replays
@@ -111,7 +111,7 @@ public class SinglePlayerLogic extends CommonLogic {
 
 	// the game has been reset
 	@Override
-	protected void reset () {
+	protected void gameReset () {
 		Gdx.app.log("SinglePlayerLogic", "Resetting game");
 		replayManager.reset();
 		accuDriftSeconds.value = 0;
@@ -198,6 +198,7 @@ public class SinglePlayerLogic extends CommonLogic {
 			float distMt = gameTrack.getTrackDistance(playerCar, 0) - lastDist;
 			float alpha = MathUtils.clamp(Math.abs(distMt) / 50, 0.2f, 1);
 			playerTasks.hudPlayer.setNextTargetAlpha(alpha);
+			playerTasks.hudPlayer.driftBar.setDriftStrength(playerCar.driftState.driftStrength);
 		}
 	}
 

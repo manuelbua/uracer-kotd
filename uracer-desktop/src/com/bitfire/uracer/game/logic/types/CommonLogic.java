@@ -160,9 +160,9 @@ public abstract class CommonLogic implements GameLogic, CarEvent.Listener, CarSt
 
 	protected abstract void updateCamera (float timeModFactor);
 
-	protected abstract void restart ();
+	protected abstract void gameRestart ();
 
-	protected abstract void reset ();
+	protected abstract void gameReset ();
 
 	protected abstract void newReplay (Replay replay);
 
@@ -195,14 +195,18 @@ public abstract class CommonLogic implements GameLogic, CarEvent.Listener, CarSt
 	/** Restarts the current game */
 	protected void restartGame () {
 		restartLogic();
-		restart();
+
+		// raise event
+		gameRestart();
 	}
 
 	/** Restart and completely resets the game, removing any playing replay so far */
 	protected void resetGame () {
 		restartLogic();
 		resetLogic();
-		reset();
+
+		// raise event
+		gameReset();
 	}
 
 	/** Request time dilation to begin */
@@ -349,6 +353,7 @@ public abstract class CommonLogic implements GameLogic, CarEvent.Listener, CarSt
 	}
 
 	private void restartLogic () {
+		gameTasksManager.sound.stop();
 		resetPlayer(playerCar);
 		resetAllGhosts();
 		gameWorldRenderer.setInitialCameraPositionOrient(playerCar);
@@ -360,6 +365,9 @@ public abstract class CommonLogic implements GameLogic, CarEvent.Listener, CarSt
 		GameTweener.clear();
 		lapManager.abortRecording();
 		gameTasksManager.restart();
+
+		playerTasks.playerDriftSoundFx.start();
+// playerTasks.playerEngineSoundFx.start();
 	}
 
 	private void resetLogic () {
@@ -460,6 +468,8 @@ public abstract class CommonLogic implements GameLogic, CarEvent.Listener, CarSt
 			// playerCar.getBody().getPosition() );
 
 		} else if (input.isPressed(Keys.Q) || input.isPressed(Keys.ESCAPE) || input.isPressed(Keys.BACK)) {
+
+			gameTasksManager.sound.stop();
 
 			// quit
 			URacer.Screens.setScreen(ScreenType.MainScreen, TransitionType.Fader, 500);

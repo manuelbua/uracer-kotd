@@ -3,6 +3,7 @@ package com.bitfire.uracer.game.logic.gametasks.hud;
 
 import com.badlogic.gdx.math.Vector2;
 
+// FIXME force implementation to initialize bounds/halfbounds (but not always needed!!)
 public abstract class Positionable {
 	protected Vector2 position = new Vector2();
 	protected Vector2 bounds = new Vector2();

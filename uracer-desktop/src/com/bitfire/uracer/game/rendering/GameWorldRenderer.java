@@ -225,17 +225,21 @@ public final class GameWorldRenderer {
 
 			// update player light (subframe interpolation ready)
 			float ang = 90 + car.state().orientation;
-			Vector2 v = orientationToPosition(car, ang, 0, 0.55f);
-			playerLightsA.setColor(0.1f, 0.2f, 0.6f, 0.6f);
-			playerLightsA.setDistance(30);
-			playerLightsA.setDirection(ang + 2);
+			Vector2 v = orientationToPosition(car, ang, 0, 0.5f);
+			playerLightsA.setColor(0.1f, 0.2f, 0.9f, 0.6f);
+			playerLightsA.setDistance(25);
+			playerLightsA.setConeDegree(9);
+			playerLightsA.setDirection(ang + 5);
 			playerLightsA.setPosition(v.x, v.y);
+			playerLightsA.setSoft(true);
 
-			v = orientationToPosition(car, ang, 0, -0.55f);
-			playerLightsB.setColor(0.1f, 0.2f, 0.6f, 0.6f);
-			playerLightsB.setDistance(30);
-			playerLightsB.setDirection(ang - 2);
+			v = orientationToPosition(car, ang, 0, -0.5f);
+			playerLightsB.setColor(0.1f, 0.2f, 0.9f, 0.6f);
+			playerLightsB.setDistance(25);
+			playerLightsB.setConeDegree(9);
+			playerLightsB.setDirection(ang - 5);
 			playerLightsB.setPosition(v.x, v.y);
+			playerLightsB.setSoft(true);
 		}
 
 		// if( Config.isDesktop && (URacer.getFrameCount() & 0x1f) == 0x1f ) {
@@ -274,7 +278,7 @@ public final class GameWorldRenderer {
 		cameraZoom = MathUtils.clamp(zoom, 0f, MaxCameraZoom);
 	}
 
-	// do not ask for camOrtho.zoom directly since it will be bound later at updateCamera!
+	// do not use camOrtho.zoom directly since it will be bound later at updateCamera!
 	public float getCameraZoom () {
 		return cameraZoom;
 	}
@@ -285,8 +289,8 @@ public final class GameWorldRenderer {
 		float zoom = 1f / cameraZoom;
 
 		// remove subpixel accuracy (jagged behavior)
-		camOrtho.position.x = MathUtils.round(cameraPos.x);
-		camOrtho.position.y = MathUtils.round(cameraPos.y);
+		camOrtho.position.x = /* MathUtils.round */(cameraPos.x);
+		camOrtho.position.y = /* MathUtils.round */(cameraPos.y);
 		camOrtho.position.z = 0;
 		camOrtho.zoom = zoom;
 		camOrtho.update();
