@@ -16,7 +16,7 @@ import com.bitfire.uracer.resources.Art;
  * 
  * @author bmanuel */
 public class PlayerSmokeTrails extends TrackEffect {
-	public static final int MaxParticles = 100;
+	public static final int MaxParticles = 1000;
 
 	private SmokeEffect fx[];
 	private static final int SmokeEffectsCount = 1;
@@ -78,7 +78,7 @@ public class PlayerSmokeTrails extends TrackEffect {
 
 		public void render (SpriteBatch batch, float x, float y) {
 			effect.setPosition(x, y);
-			effect.draw(batch, URacer.Game.getLastDeltaSecs());
+			effect.draw(batch, URacer.Game.getLastDeltaSecs() * URacer.timeMultiplier);
 		}
 
 		public int getParticleCount () {
@@ -100,9 +100,9 @@ public class PlayerSmokeTrails extends TrackEffect {
 
 		for (int i = 0; i < SmokeEffectsCount; i++) {
 			fx[i] = new SmokeEffect();
-			fx[i].setLifeMul(2.25f);
-			// fx[i].setScaleMul( .9f );
-			fx[i].setEmissionMul(.8f);
+			fx[i].setLifeMul(3.5f);
+			fx[i].setScaleMul(1.5f);
+			fx[i].setEmissionMul(1.2f);
 			fx[i].stop();
 		}
 
@@ -123,21 +123,24 @@ public class PlayerSmokeTrails extends TrackEffect {
 
 	@Override
 	public void tick () {
-		isDrifting = player.driftState.isDrifting;
+		isDrifting = player.driftState.isDrifting && player.driftState.driftStrength > 0.5f;
 
 		if (isDrifting && !wasDrifting) {
 			// started drifting
 			for (int i = 0; i < SmokeEffectsCount; i++) {
 				fx[i].start();
+				Gdx.app.log("", "start smoke trails");
 			}
-		} else if (!isDrifting && wasDrifting) {
+		} else if ((!isDrifting && wasDrifting)) {
 			// ended drifting
 			for (int i = 0; i < SmokeEffectsCount; i++) {
 				fx[i].stop();
+				Gdx.app.log("", "stop smoke trails");
 			}
 		}
 
 		wasDrifting = isDrifting;
+		setPosition(player.state().position.x, player.state().position.y);
 	}
 
 	private Vector2 tmp = new Vector2();
@@ -145,6 +148,11 @@ public class PlayerSmokeTrails extends TrackEffect {
 	@Override
 	public void render (SpriteBatch batch) {
 		tmp.set(posX, posY);
+
+		fx[0].setLifeMul(8f * player.driftState.driftStrength);
+		fx[0].setScaleMul(2f * player.driftState.driftStrength);
+		fx[0].setEmissionMul(1.1f);
+
 		fx[0].render(batch, tmp.x, tmp.y);
 
 		// // rear left
