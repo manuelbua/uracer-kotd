@@ -12,7 +12,7 @@ import com.badlogic.gdx.graphics.GL10;
 import com.badlogic.gdx.graphics.GL20;
 import com.badlogic.gdx.graphics.OrthographicCamera;
 import com.badlogic.gdx.graphics.PerspectiveCamera;
-import com.badlogic.gdx.graphics.g2d.tiled.TileAtlas;
+import com.badlogic.gdx.graphics.Texture.TextureFilter;
 import com.badlogic.gdx.graphics.g3d.model.still.StillSubMesh;
 import com.badlogic.gdx.graphics.glutils.FrameBuffer;
 import com.badlogic.gdx.graphics.glutils.ImmediateModeRenderer20;
@@ -87,7 +87,7 @@ public final class GameWorldRenderer {
 	// rendering
 	private GL20 gl = null;
 	private ShaderProgram treeShader = null;
-	private TileAtlas tileAtlas = null;
+	private UTileAtlas tileAtlas = null;
 	private boolean renderPlayerHeadlights = true;
 
 	public UTileMapRenderer tileMapRenderer = null;
@@ -122,7 +122,8 @@ public final class GameWorldRenderer {
 		createCams(width, height);
 
 		FileHandle baseDir = Gdx.files.internal(Storage.Levels);
-		tileAtlas = new TileAtlas(world.map, baseDir);
+		tileAtlas = new UTileAtlas(world.map, baseDir);
+		tileAtlas.setFilter(TextureFilter.Linear, TextureFilter.Linear);
 		tileMapRenderer = new UTileMapRenderer(world.map, tileAtlas, 1, 1, world.map.tileWidth, world.map.tileHeight);
 
 		showComplexTrees = UserPreferences.bool(Preference.ComplexTrees);
