@@ -279,8 +279,6 @@ public final class GameTrack implements Disposable {
 			// sectors
 			shape.begin(ShapeType.Line);
 			for (int i = 0; i < sectors.length; i++) {
-				Polygon p = sectors[i].poly;
-
 				if (i == carSector) {
 					continue;
 				}
