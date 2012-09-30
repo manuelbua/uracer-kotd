@@ -50,6 +50,7 @@ public class Replay implements Disposable {
 	private Time time = new Time();
 
 	public Replay (long userId) {
+		this.userId = userId;
 		eventsCount = 0;
 		forces = new CarForces[MaxEvents];
 		for (int i = 0; i < MaxEvents; i++) {
