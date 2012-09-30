@@ -59,8 +59,6 @@ public final class GameWorld {
 	public static int TotalMeshes = 0;
 
 	// public level data
-	public final String trackName;
-	public final String trackId;
 	public final TiledMap map;
 	public final Vector2 worldSizeScaledPx, worldSizeTiles, worldSizeMt;
 	public final ScalingStrategy scalingStrategy;
@@ -68,6 +66,7 @@ public final class GameWorld {
 	// private level data
 	private World box2dWorld;
 	private final MapUtils mapUtils;
+	private final String trackId;
 
 	// player data
 	public Vector2 playerStartPos = new Vector2();
@@ -103,7 +102,6 @@ public final class GameWorld {
 
 		map = GameTracks.load(trackId);
 		this.trackId = trackId;
-		this.trackName = map.properties.get("name");
 		this.nightMode = nightMode;
 
 		// compute world size
@@ -641,6 +639,10 @@ public final class GameWorld {
 
 	public List<Polygon> getTrackPolygons () {
 		return polys;
+	}
+
+	public String getTrackId () {
+		return trackId;
 	}
 
 	public List<OrthographicAlignedStillModel> getStaticMeshes () {
