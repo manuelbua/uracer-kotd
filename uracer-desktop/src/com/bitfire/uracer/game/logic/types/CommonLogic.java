@@ -46,6 +46,7 @@ import com.bitfire.uracer.game.screens.GameScreensFactory.ScreenType;
 import com.bitfire.uracer.game.tween.GameTweener;
 import com.bitfire.uracer.game.tween.SysTweener;
 import com.bitfire.uracer.game.world.GameWorld;
+import com.bitfire.uracer.resources.Art;
 import com.bitfire.uracer.screen.TransitionFactory.TransitionType;
 import com.bitfire.uracer.utils.BoxedFloat;
 import com.bitfire.uracer.utils.BoxedFloatAccessor;
@@ -320,7 +321,11 @@ public abstract class CommonLogic implements GameLogic, CarEvent.Listener, CarSt
 	private void configurePlayer (GameWorld world, Input inputSystem, PlayerCar player) {
 		// create player and setup player input system and initial position in
 		// the world
-		playerCar.setInputSystem(inputSystem);
+		player.setInputSystem(inputSystem);
+
+		// FIXME this is for debug
+		player.setFrictionMap(Art.frictionDesert);
+
 		player.setWorldPosMt(world.playerStartPos, world.playerStartOrient);
 		player.resetPhysics();
 	}

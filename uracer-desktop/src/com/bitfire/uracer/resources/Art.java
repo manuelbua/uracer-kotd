@@ -25,6 +25,7 @@ public final class Art {
 
 	// tileset friction maps
 	public static Pixmap frictionNature;
+	public static Pixmap frictionDesert;
 
 	// 3d
 	public static Texture meshMissing;
@@ -148,10 +149,12 @@ public final class Art {
 	private static void loadFrictionMaps () {
 		// friction maps
 		frictionNature = new Pixmap(Gdx.files.internal("data/levels/tilesets/nature/224-friction.png"));
+		frictionDesert = new Pixmap(Gdx.files.internal("data/levels/tilesets/desert/224-friction-easy.png"));
 	}
 
 	private static void disposeFrictionMaps () {
 		frictionNature.dispose();
+		frictionDesert.dispose();
 	}
 
 	//
