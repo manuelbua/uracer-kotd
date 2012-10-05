@@ -18,7 +18,7 @@ import com.bitfire.uracer.resources.Art;
  * 
  * @author bmanuel */
 public class PlayerSmokeTrails extends TrackEffect {
-	public static final int MaxParticles = 5000;
+	public static final int MaxParticles = 3000;
 
 	private SmokeEffect fx[];
 	private static final int SmokeEffectsCount = 1;
@@ -155,7 +155,7 @@ public class PlayerSmokeTrails extends TrackEffect {
 // fx[0].baseEmitter.setAdditive(true);
 		fx[0].setLifeMul(MathUtils.random(10f, 40f) * player.driftState.driftStrength);
 		fx[0].setScaleMul(MathUtils.random(0.1f, 0.1f + 15f * player.driftState.driftStrength));
-		fx[0].setEmissionMul(0.9f);
+		fx[0].setEmissionMul(0.7f);
 
 		float t = player.driftState.driftStrength * 0.75f;
 		fx[0].baseEmitter.getTransparency().setHighMin(t);
@@ -172,7 +172,7 @@ public class PlayerSmokeTrails extends TrackEffect {
 
 		Gdx.gl.glBlendFunc(GL20.GL_SRC_ALPHA, GL20.GL_ONE_MINUS_DST_ALPHA);
 		fx[0].render(batch, tmp.x, tmp.y);
-		Gdx.gl.glBlendFunc(GL20.GL_SRC_ALPHA, GL20.GL_ONE_MINUS_SRC_ALPHA);
+// Gdx.gl.glBlendFunc(GL20.GL_SRC_ALPHA, GL20.GL_ONE_MINUS_SRC_ALPHA);
 
 		// // rear left
 		// fx[0].render( batch, tmp.x - 10, tmp.y - 10 );

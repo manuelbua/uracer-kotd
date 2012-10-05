@@ -217,9 +217,9 @@ public final class Art {
 
 		// game fonts
 		fontAtlas = new TextureAtlas("data/font/pack.atlas");
-		for (TextureRegion r : fontAtlas.getRegions()) {
-			r.getTexture().setFilter(TextureFilter.Linear, TextureFilter.Linear);
-		}
+// for (TextureRegion r : fontAtlas.getRegions()) {
+// r.getTexture().setFilter(TextureFilter.Linear, TextureFilter.Linear);
+// }
 	}
 
 	private static void disposeFonts () {

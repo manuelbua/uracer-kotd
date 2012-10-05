@@ -37,7 +37,7 @@ public final class CommandLine {
 		opts[4] = new LongOpt("fullscreen", LongOpt.NO_ARGUMENT, null, 'f');
 		opts[5] = new LongOpt("right-screen", LongOpt.NO_ARGUMENT, null, 't');
 
-		Getopt g = new Getopt("URacer", argv, ":hr:vCft", opts);
+		Getopt g = new Getopt("URacer", argv, ":hr:vcft", opts);
 		g.setOpterr(false);
 		while ((c = g.getopt()) != -1) {
 			arg = g.getOptarg();
@@ -83,7 +83,7 @@ public final class CommandLine {
 			case 'v':
 				flags.vSyncEnabled = false;
 				break;
-			case 'C':
+			case 'c':
 				flags.useCPUSynch = true;
 				break;
 			case 'f':

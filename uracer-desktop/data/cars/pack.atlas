@@ -1,109 +1,109 @@
 
 pack.png
 format: RGBA8888
-filter: Nearest,Nearest
+filter: Linear,Linear
 repeat: none
 skid-smoke
   rotate: false
-  xy: 1, 678
+  xy: 0, 334
   size: 256, 256
   orig: 256, 256
   offset: 0, 0
   index: -1
 l3_gallardo
   rotate: false
-  xy: 1, 383
+  xy: 0, 41
   size: 155, 293
   orig: 155, 293
   offset: 0, 0
   index: -1
 l1_minicooper
   rotate: false
-  xy: 1, 94
+  xy: 256, 303
   size: 158, 287
   orig: 158, 287
   offset: 0, 0
   index: -1
 l1_orange_goblin
   rotate: false
-  xy: 259, 647
+  xy: 414, 303
   size: 158, 287
   orig: 158, 287
   offset: 0, 0
   index: -1
 l2_blue_beast
   rotate: false
-  xy: 419, 639
+  xy: 572, 295
   size: 129, 295
   orig: 129, 295
   offset: 0, 0
   index: -1
 l2_mustang_red
   rotate: false
-  xy: 550, 639
+  xy: 701, 295
   size: 129, 295
   orig: 129, 295
   offset: 0, 0
   index: -1
 l2_mustang_white
   rotate: false
-  xy: 681, 638
+  xy: 830, 294
   size: 129, 296
   orig: 129, 296
   offset: 0, 0
   index: -1
 l2_pink_beast
   rotate: false
-  xy: 812, 639
+  xy: 155, 0
   size: 129, 295
   orig: 129, 295
   offset: 0, 0
   index: -1
-selector
-  rotate: false
-  xy: 1, 1
-  size: 78, 91
-  orig: 78, 91
-  offset: 0, 0
-  index: -1
 l2_red_beast
   rotate: false
-  xy: 812, 342
+  xy: 284, 0
   size: 129, 295
   orig: 129, 295
   offset: 0, 0
   index: -1
 l2_yellow_beast
   rotate: false
-  xy: 161, 45
+  xy: 413, 0
   size: 129, 295
   orig: 129, 295
   offset: 0, 0
   index: -1
 skid-marks-front
   rotate: false
-  xy: 292, 45
+  xy: 542, 0
   size: 129, 295
   orig: 129, 295
   offset: 0, 0
   index: -1
 skid-marks-rear
   rotate: false
-  xy: 423, 45
+  xy: 671, 0
   size: 129, 295
   orig: 129, 295
   offset: 0, 0
   index: -1
+selector
+  rotate: false
+  xy: 800, 203
+  size: 78, 91
+  orig: 78, 91
+  offset: 0, 0
+  index: -1
 car-ao
   rotate: false
-  xy: 158, 614
+  xy: 800, 141
   size: 34, 62
   orig: 34, 62
   offset: 0, 0
   index: -1
 skid-smoke-small
   rotate: false
-  xy: 943, 902
+  xy: 0, 9
   size: 32, 32
   orig: 32, 32
   offset: 0, 0

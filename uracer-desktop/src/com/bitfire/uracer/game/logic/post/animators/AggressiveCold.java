@@ -4,6 +4,7 @@ package com.bitfire.uracer.game.logic.post.animators;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.math.MathUtils;
 import com.badlogic.gdx.math.Vector2;
+import com.badlogic.gdx.math.WindowedMean;
 import com.badlogic.gdx.utils.TimeUtils;
 import com.bitfire.postprocessing.effects.Bloom;
 import com.bitfire.postprocessing.effects.CrtMonitor;
@@ -101,15 +102,22 @@ public final class AggressiveCold implements PostProcessingAnimator {
 	private float prevDriftStrength = 0;
 	private long startMs = 0;
 	Vector2 playerScreenPos = new Vector2();
+	private WindowedMean meanSpeed = new WindowedMean(2);
+	private WindowedMean meanStrength = new WindowedMean(5);
 
 	@Override
 	public void update (float timeModFactor) {
-		float driftStrength = 0;
+		float currDriftStrength = 0;
+		float currSpeedFactor = 0;
 
 		if (hasPlayer) {
 			playerScreenPos.set(GameRenderer.ScreenUtils.worldPxToScreen(player.state().position));
-			driftStrength = AMath.fixup(AMath.clamp(AMath.lerp(prevDriftStrength, player.driftState.driftStrength, 0.1f), 0, 1));
-			prevDriftStrength = driftStrength;
+
+			meanStrength.addValue(player.driftState.driftStrength);
+			meanSpeed.addValue(player.carState.currSpeedFactor);
+
+			currDriftStrength = AMath.fixup(AMath.clamp(meanStrength.getMean(), 0, 1));
+			currSpeedFactor = AMath.fixup(AMath.clamp(meanSpeed.getMean(), 0, 1));
 		} else {
 			playerScreenPos.set(0.5f, 0.5f);
 		}
@@ -127,21 +135,20 @@ public final class AggressiveCold implements PostProcessingAnimator {
 
 		if (zoom != null && hasPlayer) {
 			// auto-disable zoom
+			float blurStrength = -0.1f * 0.5f * timeModFactor * currSpeedFactor;
+
 			boolean zoomEnabled = zoom.isEnabled();
-			if (AMath.isZero(player.carState.currSpeedFactor) && zoomEnabled) {
+			boolean strengthIsZero = AMath.isZero(blurStrength);
+			if (strengthIsZero && zoomEnabled) {
 				zoom.setEnabled(false);
-			} else if (player.carState.currSpeedFactor > 0 && !zoomEnabled) {
+			} else if (!strengthIsZero && !zoomEnabled) {
 				zoom.setEnabled(true);
 			}
 
 			if (zoom.isEnabled()) {
 				zoom.setOrigin(playerScreenPos);
-				// zoom.setBlurStrength(-0.1f * driftStrength * timeModFactor);
-				zoom.setBlurStrength(-0.1f * driftStrength * player.carState.currSpeedFactor);
+				zoom.setBlurStrength(blurStrength);
 			}
-
-			zoom.setOrigin(playerScreenPos);
-			zoom.setBlurStrength(-0.20f * player.carState.currSpeedFactor * 0.5f * timeModFactor + -0.10f * driftStrength * 0.5f);
 		}
 
 		if (bloom != null) {
@@ -164,8 +171,8 @@ public final class AggressiveCold implements PostProcessingAnimator {
 			// vignette.setCenter( Gdx.graphics.getWidth() / 2, Gdx.graphics.getHeight() / 2 );
 			// }
 
-			vignette.setLutIntensity(timeModFactor * 1.25f);// * AMath.clamp( driftStrength * 1.25f, 0, 1 ) );
-			vignette.setIntensity(timeModFactor);
+			vignette.setLutIntensity(0.25f + timeModFactor * 1.25f);// * AMath.clamp( driftStrength * 1.25f, 0, 1 ) );
+			vignette.setIntensity(1);
 			vignette.setLutIndex(6);
 		}
 

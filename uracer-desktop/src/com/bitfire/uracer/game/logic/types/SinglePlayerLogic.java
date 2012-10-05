@@ -131,6 +131,7 @@ public class SinglePlayerLogic extends CommonLogic {
 
 		if (!replayManager.canClassify()) {
 			getGhost(0).setReplay(replay);
+			replay.saveLocal(messager);
 			// messager.show("GO!  GO!  GO!", 3f, Type.Information, Position.Bottom, Size.Big);
 		} else {
 			Replay best = replayManager.getBestReplay();

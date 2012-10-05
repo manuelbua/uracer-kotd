@@ -1,9 +1,9 @@
 <?xml version="1.0" encoding="UTF-8" standalone="no"?><map height="14" orientation="orthogonal" tileheight="224" tilewidth="224" version="1.0" width="20">
  <properties><property name="blended tiles" value=""/>
-  <property name="name" value="Boring long desert"/>
+  <property name="name" value="Boring long grass"/>
  </properties>
- <tileset firstgid="1" name="desert" tileheight="224" tilewidth="224">
-  <image height="2464" source="tilesets/desert/224.png" width="896"/>
+ <tileset firstgid="1" name="grass" tileheight="224" tilewidth="224">
+  <image height="2464" source="tilesets/grass/224.png" width="896"/>
   <tile id="7">
    <properties>
     <property name="type" value="start"/>
@@ -207,56 +207,24 @@
     <property name="scale" value="5"/>
    </properties>
   </object>
-  <object height="68" name="tree-6" type="tree-6" width="61" x="3867" y="1043">
+  <object height="68" name="tree-6" type="tree-6" width="61" x="3769" y="1035">
    <properties>
     <property name="scale" value="5"/>
    </properties>
   </object>
-  <object height="68" name="tree-6" type="tree-6" width="61" x="3882" y="1643">
+  <object height="68" name="tree-6" type="tree-6" width="61" x="3766" y="1641">
    <properties>
     <property name="scale" value="5"/>
    </properties>
   </object>
  </objectgroup>
- <objectgroup color="#ffff00" height="14" name="lights" width="20">
-  <object height="21" width="27" x="1440" y="1183"/>
-  <object height="21" width="27" x="770" y="1082"/>
-  <object height="21" width="27" x="1361" y="887"/>
-  <object height="21" width="27" x="2353" y="788"/>
-  <object height="21" width="27" x="2108" y="1514"/>
-  <object height="21" width="27" x="1747" y="1886"/>
-  <object x="1300" y="2480"/>
-  <object x="1260" y="1954"/>
-  <object x="2222" y="2404"/>
-  <object x="2322" y="1740"/>
-  <object x="2688" y="1996"/>
-  <object x="3972" y="1682"/>
-  <object x="3952" y="1080"/>
-  <object x="3038" y="1302"/>
-  <object x="2672" y="1240"/>
-  <object x="3390" y="2462"/>
-  <object x="3002" y="1688"/>
-  <object x="2008" y="1966"/>
-  <object x="1470" y="1554"/>
-  <object x="2826" y="786"/>
-  <object x="996" y="802"/>
-  <object x="782" y="1892"/>
-  <object x="3698" y="1114"/>
-  <object x="3574" y="1734"/>
-  <object x="3702" y="1546"/>
-  <object x="3302" y="788"/>
-  <object x="2776" y="2468"/>
-  <object x="2136" y="1166"/>
-  <object x="782" y="1514"/>
-  <object x="3700" y="1924"/>
-  <object x="3580" y="2270"/>
-  <object x="3158" y="2284"/>
-  <object x="2962" y="1830"/>
-  <object x="2550" y="1718"/>
-  <object x="2344" y="2066"/>
-  <object x="1974" y="2358"/>
-  <object x="1482" y="2356"/>
-  <object x="1024" y="2338"/>
+ <objectgroup color="#ffaa00" height="14" name="lights" visible="0" width="20">
+  <object height="21" width="27" x="1348" y="1533"/>
+  <object height="21" width="27" x="940" y="1120"/>
+  <object height="21" width="27" x="1343" y="715"/>
+  <object height="21" width="27" x="2199" y="1122"/>
+  <object height="21" width="27" x="1794" y="712"/>
+  <object height="21" width="27" x="1793" y="1524"/>
  </objectgroup>
  <objectgroup color="#a40002" height="14" name="walls" width="20">
   <object x="2469" y="1955">
