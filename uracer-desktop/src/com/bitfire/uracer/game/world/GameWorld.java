@@ -277,13 +277,13 @@ public final class GameWorld {
 			// MathUtils.random(0,1),
 			// MathUtils.random(0,1),
 			// MathUtils.random(0,1),
-				1f, .85f, .25f, .5f);
+				1f, .85f, 1f, .75f);
 			TiledObject o = group.objects.get(i);
 			pos.set(o.x, o.y).mul(scalingStrategy.invTileMapZoomFactor);
 			pos.y = worldSizeScaledPx.y - pos.y;
 			pos.set(Convert.px2mt(pos)).mul(scalingStrategy.tileMapZoomFactor);
 
-			PointLight l = new PointLight(rayHandler, maxRays, c, MathUtils.random(15f, 25f), pos.x, pos.y);
+			PointLight l = new PointLight(rayHandler, maxRays, c, MathUtils.random(5f, 30f), pos.x, pos.y);
 			l.setSoft(true);
 			l.setStaticLight(true);
 			l.setMaskBits(CollisionFilters.CategoryPlayer | CollisionFilters.CategoryTrackWalls);
