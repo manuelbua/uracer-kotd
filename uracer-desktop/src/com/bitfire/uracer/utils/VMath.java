@@ -20,7 +20,7 @@ public final class VMath {
 	private static Vector2 tmprj = new Vector2();
 
 	public static Vector2 fromRadians (float radians) {
-		retRad.set(-MathUtils.sin(radians), -MathUtils.cos(radians));
+		retRad.set(AMath.fixup(-MathUtils.sin(radians)), AMath.fixup(-MathUtils.cos(radians)));
 		return retRad;
 	}
 
