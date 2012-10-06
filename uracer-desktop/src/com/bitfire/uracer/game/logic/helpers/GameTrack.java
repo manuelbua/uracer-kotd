@@ -18,6 +18,7 @@ import com.bitfire.uracer.events.GameRendererEvent.Type;
 import com.bitfire.uracer.game.GameEvents;
 import com.bitfire.uracer.game.actors.Car;
 import com.bitfire.uracer.game.world.GameWorld;
+import com.bitfire.uracer.utils.VMath;
 
 /** Implements the track sectorizer and represents a view onto the logical portion of a track: it does sectorization and can be
  * queried against tracklength-based information, such as normalized position in track-coordinate space.
@@ -33,7 +34,7 @@ public final class GameTrack implements Disposable {
 	private final float totalLength;
 	private final float oneOnTotalLength;
 
-	Vector2 tmp = new Vector2();
+	private Vector2 tmp = new Vector2();
 
 	/** Represents a track sector, see Game Programming Gems pag. 416 */
 	private static class TrackSector {
@@ -157,6 +158,38 @@ public final class GameTrack implements Disposable {
 		}
 
 		return ret;
+	}
+
+	/** Returns a value in the [-1,1] range, meaning the specified car is following the path with a confidence value as expressed by
+	 * the returned value.
+	 * @param car
+	 * @return The confidence value with which a car is following the current waypoint path. */
+	public float getTrackRouteConfidence (Car car) {
+		Vector2 pt = car.getWorldPosMt();
+		int carSector = findSector(pt);
+
+		if (carSector != -1) {
+			TrackSector s = sectors[carSector];
+
+			Vector2 heading = VMath.fromDegrees(car.state().orientation);
+			Vector2 dir = tmp.set(s.nLeading);
+
+			// switch coordinate space and rotate it so that both the player and the track sector converge
+			// to the same value when they are parallel
+			dir.mul(-1, 1);
+
+			float dot = dir.dot(heading);
+
+// // @formatter:off
+// Gdx.app.log("GameTrack", "dir=(" + NumberString.formatSmall(dir.x) + "," + NumberString.formatSmall(dir.y)
+// + ", heading=" + NumberString.formatSmall(heading.x) + "," + NumberString.formatSmall(heading.x) + ", dot="
+// + NumberString.formatSmall(dot));
+// // @formatter:on
+
+			return dot;
+		}
+
+		return -1;
 	}
 
 	private Vector2 vlp = new Vector2();

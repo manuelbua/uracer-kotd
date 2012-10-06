@@ -6,6 +6,7 @@ import aurelienribon.tweenengine.Tween;
 import aurelienribon.tweenengine.equations.Expo;
 import aurelienribon.tweenengine.equations.Quint;
 
+import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.g2d.BitmapFont;
 import com.badlogic.gdx.graphics.g2d.BitmapFont.TextBounds;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
@@ -23,6 +24,7 @@ public final class HudLabel extends Positionable {
 	private final float invTileZoom;;
 	private boolean isStatic;
 	private FontFace fontFace; // cached
+	private Color color = new Color(Color.WHITE);
 
 	// show queue logic
 	private int showSemaphore;
@@ -58,6 +60,14 @@ public final class HudLabel extends Positionable {
 		this.fontFace = fontFace;
 		this.font = BitmapFontFactory.get(fontFace);
 		recomputeBounds();
+	}
+
+	public void setColor (Color color) {
+		this.color.set(color);
+	}
+
+	public void setColor (float r, float g, float b) {
+		this.color.set(r, g, b, 0);
 	}
 
 	public FontFace getFont () {
@@ -129,7 +139,7 @@ public final class HudLabel extends Positionable {
 			}
 
 			font.setScale(scale * invTileZoom);
-			font.setColor(1, 1, 1, alpha);
+			font.setColor(color.r, color.g, color.b, alpha);
 
 			font.drawMultiLine(batch, what, position.x - halfBounds.x, position.y - halfBounds.y);
 

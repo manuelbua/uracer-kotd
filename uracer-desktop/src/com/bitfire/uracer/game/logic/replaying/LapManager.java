@@ -35,6 +35,7 @@ public class LapManager implements Disposable {
 	/** Discard the performance currently being recorded so far */
 	public void abortRecording () {
 		recorder.reset();
+		lapInfo.reset();
 	}
 
 	/** Reset any recorded replay so far */
@@ -114,7 +115,7 @@ public class LapManager implements Disposable {
 		}
 
 		Replay next = bufferManager.getNextBuffer();
-		lapInfo.restartTime();
+		lapInfo.start();
 		recorder.beginRecording(car, next, trackId);
 		return next;
 	}
@@ -126,9 +127,15 @@ public class LapManager implements Disposable {
 		}
 	}
 
+	/** Returns whether or not the lap manager is recording the player's performance */
+	public boolean isRecording () {
+		return recorder.isRecording();
+	}
+
 	/** Ends recording the previously started lap performance */
 	public void stopRecording () {
 		if (recorder.isRecording()) {
+			lapInfo.stop();
 
 			// ends recording and keeps track of the last recorded replay
 			lastRecordedReplay = recorder.endRecording();

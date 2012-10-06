@@ -18,17 +18,24 @@ public final class LapInfo {
 		hasLastTrackTimeSecs = false;
 		hasBestTrackTimeSecs = false;
 		time = new Time();
-		resetTime();
 	}
 
 	public void resetTime () {
 		hasLastTrackTimeSecs = false;
 		hasBestTrackTimeSecs = false;
+		time.reset();
+	}
+
+	public void start () {
 		time.start();
 	}
 
-	public void restartTime () {
-		time.start();
+	public void stop () {
+		time.stop();
+	}
+
+	public void reset () {
+		time.reset();
 	}
 
 	public float getElapsedSeconds () {

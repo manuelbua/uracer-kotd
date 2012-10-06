@@ -18,7 +18,7 @@ import com.bitfire.uracer.resources.Art;
  * 
  * @author bmanuel */
 public class PlayerSmokeTrails extends TrackEffect {
-	public static final int MaxParticles = 3000;
+	public static final int MaxParticles = 1000;
 
 	private SmokeEffect fx[];
 	private static final int SmokeEffectsCount = 1;

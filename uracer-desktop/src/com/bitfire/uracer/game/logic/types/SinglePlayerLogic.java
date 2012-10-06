@@ -104,7 +104,6 @@ public class SinglePlayerLogic extends CommonLogic {
 		accuDriftSeconds.value = 0;
 		isPenalty = false;
 
-		playerTasks.hudPlayer.trackProgress.resetCounters(false);
 		lastDist = 0;
 		lastCompletion = 0;
 	}
@@ -117,7 +116,6 @@ public class SinglePlayerLogic extends CommonLogic {
 		accuDriftSeconds.value = 0;
 		isPenalty = false;
 
-		playerTasks.hudPlayer.trackProgress.resetCounters(true);
 		lastDist = 0;
 		lastCompletion = 0;
 	}
@@ -161,15 +159,6 @@ public class SinglePlayerLogic extends CommonLogic {
 
 		updateDriftBar();
 
-		if (accuDriftSeconds.value == 0 && timeDilation) {
-			requestTimeDilationFinish();
-			Gdx.app.log("", "Requesting time modulation to finish");
-		}
-
-		if (hasPlayer() && playerCar.isOutOfTrack()) {
-			playerTasks.hudPlayer.highlightOutOfTrack();
-		}
-
 // Gdx.app.log("SPL", "drift=" + accuDriftSeconds);
 	}
 
@@ -177,9 +166,15 @@ public class SinglePlayerLogic extends CommonLogic {
 	public void tickCompleted () {
 		super.tickCompleted();
 
+		if (accuDriftSeconds.value == 0 && timeDilation) {
+			requestTimeDilationFinish();
+			Gdx.app.log("", "Requesting time modulation to finish");
+		}
+
 		if (hasPlayer()) {
 			float ghSpeed = 0;
 
+			// FIXME this should go in CommonLogic!
 			// use the last one if the replay is finished
 			if (nextTarget != null && nextTarget.hasReplay()) {
 				lastDist = gameTrack.getTrackDistance(nextTarget, 0);
@@ -276,7 +271,7 @@ public class SinglePlayerLogic extends CommonLogic {
 	}
 
 	@Override
-	protected void lapComplete (boolean firstLap) {
+	protected void lapStarted () {
 		restartAllReplays();
 		playerTasks.hudPlayer.trackProgress.resetCounters(false);
 	}

@@ -15,6 +15,7 @@ import com.bitfire.uracer.game.logic.gametasks.hud.Positionable;
 import com.bitfire.uracer.game.logic.gametasks.hud.elements.player.BasicInfo;
 import com.bitfire.uracer.game.logic.gametasks.hud.elements.player.DriftBar;
 import com.bitfire.uracer.game.logic.gametasks.hud.elements.player.TrackProgress;
+import com.bitfire.uracer.game.logic.gametasks.hud.elements.player.WrongWay;
 import com.bitfire.uracer.game.player.PlayerCar;
 import com.bitfire.uracer.game.rendering.GameRenderer;
 import com.bitfire.uracer.resources.BitmapFontFactory.FontFace;
@@ -34,6 +35,7 @@ public final class HudPlayer extends HudElement {
 
 	// player elements
 	private final BasicInfo basicInfo;
+	public final WrongWay wrongWay;
 	public final DriftBar driftBar;
 	public final TrackProgress trackProgress;
 
@@ -63,6 +65,7 @@ public final class HudPlayer extends HudElement {
 
 		// elements
 		basicInfo = new BasicInfo(scale, userProfile);
+		wrongWay = new WrongWay();
 		driftBar = new DriftBar(scale, carModelLengthPx);
 		trackProgress = new TrackProgress(scale);
 
@@ -101,6 +104,7 @@ public final class HudPlayer extends HudElement {
 		driftBar.hideSecondsLabel();
 		highlightError.stop();
 		highlightNext.stop();
+		wrongWay.fadeOut(200);
 	}
 
 	@Override
@@ -109,6 +113,7 @@ public final class HudPlayer extends HudElement {
 		float cz = renderer.getWorldRenderer().getCameraZoom();
 
 		basicInfo.render(batch);
+		wrongWay.render(batch);
 
 		atPlayer(driftBar);
 		driftBar.render(batch, cz);
@@ -194,6 +199,10 @@ public final class HudPlayer extends HudElement {
 	}
 
 	public void highlightCollision () {
+		highlightError.error(5);
+	}
+
+	public void highlightWrongWay () {
 		highlightError.error(5);
 	}
 

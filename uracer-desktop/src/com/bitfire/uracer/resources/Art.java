@@ -39,6 +39,7 @@ public final class Art {
 	public static TextureAtlas cars;
 	public static TextureRegion carAmbientOcclusion;
 	public static TextureRegion skidMarksFront, skidMarksRear;
+	public static Texture wrongWay;
 
 	// fonts
 	public static final int DebugFontWidth = 6;
@@ -49,7 +50,7 @@ public final class Art {
 	// public static ShaderProgram depthMapGen, depthMapGenTransparent;
 	public static Texture postXpro;
 
-	// screns
+	// screens
 	public static Texture scrBackground;
 	public static Skin scrSkin;
 
@@ -201,9 +202,13 @@ public final class Art {
 		skidMarksFront = cars.findRegion("skid-marks-front");
 		skidMarksRear = cars.findRegion("skid-marks-rear");
 		carAmbientOcclusion = cars.findRegion("car-ao");
+
+		wrongWay = newTexture("data/base/wrong-way.png", false);
+		wrongWay.setFilter(TextureFilter.Linear, TextureFilter.Linear);
 	}
 
 	private static void disposeCarGraphics () {
+		wrongWay.dispose();
 		cars.dispose();
 	}
 
@@ -217,9 +222,9 @@ public final class Art {
 
 		// game fonts
 		fontAtlas = new TextureAtlas("data/font/pack.atlas");
-// for (TextureRegion r : fontAtlas.getRegions()) {
-// r.getTexture().setFilter(TextureFilter.Linear, TextureFilter.Linear);
-// }
+		for (TextureRegion r : fontAtlas.getRegions()) {
+			r.getTexture().setFilter(TextureFilter.Linear, TextureFilter.Linear);
+		}
 	}
 
 	private static void disposeFonts () {
