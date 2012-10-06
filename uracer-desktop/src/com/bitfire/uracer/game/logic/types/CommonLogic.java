@@ -245,6 +245,7 @@ public abstract class CommonLogic implements GameLogic, CarEvent.Listener, CarSt
 
 		updateCamera(0);
 		gameWorldRenderer.updateCamera();
+
 		postProcessing.setPlayer(playerCar);
 		gameWorldRenderer.setRenderPlayerHeadlights(gameWorld.isNightMode());
 
@@ -481,31 +482,22 @@ public abstract class CommonLogic implements GameLogic, CarEvent.Listener, CarSt
 			// URacer.Screens.setScreen( ScreenType.ExitScreen, TransitionType.Fader, 500 );
 
 		} else if (input.isPressed(Keys.O)) {
-
 			// FIXME this should go in some sort of DebugLogic thing..
-
-			// remove player
-
 			removePlayer();
-
 		} else if (input.isPressed(Keys.P)) {
-
 			// FIXME this should go in some sort of DebugLogic thing..
-
-			// add player
-
 			setPlayer(CarPreset.Type.L1_GoblinOrange);
-
 		} else if (input.isPressed(Keys.W)) {
-
 			// FIXME this should go in some sort of DebugLogic thing..
 			Config.Debug.RenderBox2DWorldWireframe = !Config.Debug.RenderBox2DWorldWireframe;
-
 		} else if (input.isPressed(Keys.B)) {
-
 			// FIXME this should go in some sort of DebugLogic thing..
 			Config.Debug.Render3DBoundingBoxes = !Config.Debug.Render3DBoundingBoxes;
-
+		} else if (input.isPressed(Keys.TAB)) {
+			// FIXME this should go in some sort of DebugLogic thing..
+			Config.Debug.RenderTrackSectors = !Config.Debug.RenderTrackSectors;
+			gameTrack.showDebug(Config.Debug.RenderTrackSectors);
+			gameTrack.setDebugCar(playerCar);
 		}
 
 		switch (timeDilateMode) {

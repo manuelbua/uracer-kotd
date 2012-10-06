@@ -12,7 +12,6 @@ import com.badlogic.gdx.math.Polygon;
 import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.utils.Disposable;
 import com.badlogic.gdx.utils.GdxRuntimeException;
-import com.bitfire.uracer.configuration.Config;
 import com.bitfire.uracer.events.GameRendererEvent;
 import com.bitfire.uracer.events.GameRendererEvent.Order;
 import com.bitfire.uracer.events.GameRendererEvent.Type;
@@ -26,9 +25,7 @@ import com.bitfire.uracer.game.world.GameWorld;
  * @author bmanuel */
 public final class GameTrack implements Disposable {
 
-	// dbg render
 	private final DebugRenderer dbg;
-	private final boolean isDebugged;
 
 	private final List<Vector2> route;
 	private final List<Polygon> polys;
@@ -43,6 +40,9 @@ public final class GameTrack implements Disposable {
 		public final Polygon poly;
 		public final float length;
 		public final float relativeTotal;
+
+		// do not allocate new vectors, just reference the original ones and
+		// treat them as read-only data
 		public final Vector2 leading;
 		public final Vector2 trailing;
 		public final Vector2 nLeading;
@@ -72,12 +72,14 @@ public final class GameTrack implements Disposable {
 		oneOnTotalLength = 1f / totalLength;
 		Gdx.app.log("RouteTracker", "total waypoint length = " + totalLength);
 
-		if (Config.Debug.RenderTrackSectors) {
-			dbg = new DebugRenderer(this, sectors, route);
-			isDebugged = true;
+		dbg = new DebugRenderer(this, sectors, route);
+	}
+
+	public void showDebug (boolean show) {
+		if (show) {
+			dbg.attach();
 		} else {
-			dbg = null;
-			isDebugged = false;
+			dbg.detach();
 		}
 	}
 
@@ -101,7 +103,7 @@ public final class GameTrack implements Disposable {
 
 			int p = findPolygon(from, to);
 			if (p == -1) {
-				throw new GdxRuntimeException("Cannot find a matching sectors for points (" + (i - 1) + "," + i + ")");
+				throw new GdxRuntimeException("Cannot find a matching sectors for (" + (i - 1) + "," + i + ")");
 			}
 
 			TrackSector ts = new TrackSector(polys.get(p), len, accuLength, from, to);
@@ -118,15 +120,11 @@ public final class GameTrack implements Disposable {
 
 	@Override
 	public void dispose () {
-		if (isDebugged) {
-			dbg.dispose();
-		}
+		dbg.dispose();
 	}
 
 	public void setDebugCar (Car car) {
-		if (isDebugged) {
-			dbg.setCar(car);
-		}
+		dbg.setCar(car);
 	}
 
 	public float getTotalLength () {
@@ -179,6 +177,11 @@ public final class GameTrack implements Disposable {
 		return fdl / (fdl + fdt);
 	}
 
+	protected float distInSector (int sectorIndex, Vector2 p) {
+		TrackSector s = sectors[sectorIndex];
+		return distInSector(s, p);
+	}
+
 	private int findSector (Vector2 point) {
 		for (int i = 0; i < sectors.length; i++) {
 			TrackSector s = sectors[i];
@@ -210,7 +213,7 @@ public final class GameTrack implements Disposable {
 	// add naive debug output
 	//
 
-	private static class DebugRenderer implements Disposable, GameRendererEvent.Listener {
+	private class DebugRenderer implements Disposable, GameRendererEvent.Listener {
 
 		private final ShapeRenderer shape;
 		private Car car;
@@ -220,6 +223,7 @@ public final class GameTrack implements Disposable {
 		private final GameTrack track;
 
 		private final Vector2 tmp = new Vector2();
+		private boolean attached = false;
 
 		public DebugRenderer (GameTrack track, TrackSector[] sectors, List<Vector2> route) {
 			this.shape = new ShapeRenderer();
@@ -228,13 +232,25 @@ public final class GameTrack implements Disposable {
 			this.car = null;
 			this.track = track;
 			hasCar = false;
+		}
 
-			GameEvents.gameRenderer.addListener(this, GameRendererEvent.Type.Debug, GameRendererEvent.Order.PLUS_4);
+		public void attach () {
+			if (!attached) {
+				GameEvents.gameRenderer.addListener(this, GameRendererEvent.Type.Debug, GameRendererEvent.Order.PLUS_4);
+				attached = true;
+			}
+		}
+
+		public void detach () {
+			if (attached) {
+				GameEvents.gameRenderer.removeListener(this, GameRendererEvent.Type.Debug, GameRendererEvent.Order.PLUS_4);
+				attached = false;
+			}
 		}
 
 		@Override
 		public void dispose () {
-			GameEvents.gameRenderer.removeListener(this, GameRendererEvent.Type.Debug, GameRendererEvent.Order.PLUS_4);
+			detach();
 			shape.dispose();
 		}
 
@@ -245,11 +261,30 @@ public final class GameTrack implements Disposable {
 
 		private void render () {
 			float alpha = 0.25f;
+			float carAlpha = alpha * 3;
+			float sectorCenterFactor = 0;
+
 			int carSector = -1;
 
 			if (hasCar) {
 				carSector = track.findSector(car.getWorldPosMt());
+
+				if (carSector > -1) {
+					float d = MathUtils.clamp(distInSector(carSector, car.getWorldPosMt()), 0, 1);
+
+					if (d < 0.5f) {
+						sectorCenterFactor = d / 0.5f;
+					} else {
+						d -= 0.5f;
+						d *= 2;
+						sectorCenterFactor = MathUtils.clamp(1 - d, 0, 1);
+					}
+				}
 			}
+
+			// precompute alpha from center factor
+			float scol = 1 - sectorCenterFactor;
+			float sa = alpha + (carAlpha - alpha) * sectorCenterFactor;
 
 			Gdx.gl.glDisable(GL20.GL_CULL_FACE);
 			Gdx.gl.glEnable(GL20.GL_BLEND);
@@ -257,13 +292,18 @@ public final class GameTrack implements Disposable {
 
 			shape.setProjectionMatrix(GameEvents.gameRenderer.mtxOrthographicMvpMt);
 
-			tmp.set(route.get(0));
+			// draw waypoint segments
 			shape.begin(ShapeType.Line);
-			for (int i = 1; i <= route.size() - 1; i++) {
-				Vector2 to = route.get(i);
-				shape.setColor(1, 1, 1, alpha);
-				shape.line(tmp.x, tmp.y, to.x, to.y);
-				tmp.set(to);
+			for (int i = 0; i < sectors.length; i++) {
+				TrackSector s = sectors[i];
+
+				if (carSector == i) {
+					shape.setColor(1, 1, scol, sa);
+				} else {
+					shape.setColor(1, 1, 1, alpha);
+				}
+
+				shape.line(s.leading.x, s.leading.y, s.trailing.x, s.trailing.y);
 			}
 			shape.end();
 
@@ -271,7 +311,7 @@ public final class GameTrack implements Disposable {
 			shape.begin(ShapeType.FilledCircle);
 			for (int i = 0; i < route.size(); i++) {
 				Vector2 p = route.get(i);
-				shape.setColor(0.8f, 1, 0.9f, alpha);
+				shape.setColor(1, 1, 1, alpha);
 				shape.filledCircle(p.x, p.y, 0.5f, 100);
 			}
 			shape.end();
@@ -288,9 +328,8 @@ public final class GameTrack implements Disposable {
 			}
 
 			// car sector
-			float carAlpha = (1 / alpha) * 0.6f;
 			if (carSector > -1) {
-				shape.setColor(1, 0, 0, alpha * carAlpha);
+				shape.setColor(1, 1, scol, sa);
 				drawSector(sectors[carSector]);
 			}
 
@@ -302,7 +341,7 @@ public final class GameTrack implements Disposable {
 
 				shape.begin(ShapeType.FilledCircle);
 
-				shape.setColor(1f, 0, 0f, alpha * carAlpha);
+				shape.setColor(1, 1, scol, sa - alpha);
 				shape.filledCircle(s.leading.x, s.leading.y, 0.5f, 100);
 				shape.filledCircle(s.trailing.x, s.trailing.y, 0.5f, 100);
 
