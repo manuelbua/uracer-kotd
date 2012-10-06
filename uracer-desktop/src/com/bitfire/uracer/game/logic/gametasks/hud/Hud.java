@@ -12,6 +12,8 @@ import com.bitfire.utils.ItemsManager;
 /** Encapsulates an head-up manager that will callback HudElement events for their updating and drawing operations. */
 public final class Hud extends GameTask {
 
+	public static final int DefaultFadeMilliseconds = 500;
+
 	private static final GameRendererEvent.Type RenderEventBeforePost = GameRendererEvent.Type.BatchAfterMeshes;
 	private static final GameRendererEvent.Type RenderEventAfterPost = GameRendererEvent.Type.BatchAfterPostProcessing;
 	private static final GameRendererEvent.Order RenderOrderBeforePost = GameRendererEvent.Order.DEFAULT;

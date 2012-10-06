@@ -8,6 +8,7 @@ import aurelienribon.tweenengine.equations.Linear;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.g2d.Sprite;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
+import com.bitfire.uracer.game.logic.gametasks.hud.Hud;
 import com.bitfire.uracer.game.tween.GameTweener;
 import com.bitfire.uracer.resources.Art;
 import com.bitfire.uracer.utils.AMath;
@@ -36,11 +37,11 @@ public class WrongWay {
 	}
 
 	public void fadeIn () {
-		fadeIn(500);
+		fadeIn(Hud.DefaultFadeMilliseconds);
 	}
 
 	public void fadeOut () {
-		fadeOut(500);
+		fadeOut(Hud.DefaultFadeMilliseconds);
 	}
 
 	public void fadeIn (int millisecs) {

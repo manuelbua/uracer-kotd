@@ -415,8 +415,9 @@ public abstract class CommonLogic implements GameLogic, CarEvent.Listener, CarSt
 						wrongWayTimer.start();
 					}
 
+					// if confidence stays negative for more than one second after staying positive, then
+					// assume the wrong way is being played
 					if (wrongWayTimer.elapsed(Reference.TickSeconds) > 1) {
-						// wrong way started
 						wrongWayTimer.reset();
 
 						// invalidate the lap
@@ -429,8 +430,8 @@ public abstract class CommonLogic implements GameLogic, CarEvent.Listener, CarSt
 
 						playerTasks.hudPlayer.wrongWay.fadeIn();
 						playerTasks.hudLapInfo.toColor(1, 0, 0);
-						playerTasks.hudLapInfo.setInvalid("invalid.lap");
-						Gdx.app.log("SinglePlayerLogic", "--> wrong way");
+						playerTasks.hudLapInfo.setInvalid("invalid lap");
+// Gdx.app.log("SinglePlayerLogic", "--> wrong way");
 					}
 				}
 			} else if (conf > 0) {
@@ -440,6 +441,9 @@ public abstract class CommonLogic implements GameLogic, CarEvent.Listener, CarSt
 						Gdx.app.log("CommonLogic", "<-- wrong way end detector");
 					}
 
+					// if confidence stays positive for more than one second after staying negative, then
+					// assume the right way is being played
+
 					if (wrongWayTimer.elapsed(Reference.TickSeconds) > 1f) {
 						// wrong way finished
 
@@ -448,8 +452,8 @@ public abstract class CommonLogic implements GameLogic, CarEvent.Listener, CarSt
 
 						playerTasks.hudPlayer.wrongWay.fadeOut();
 						playerTasks.hudLapInfo.toColor(1, 1, 0);
-						playerTasks.hudLapInfo.setInvalid("back.to.start");
-						Gdx.app.log("SinglePlayerLogic", "<-- wrong way");
+						playerTasks.hudLapInfo.setInvalid("back to start");
+// Gdx.app.log("SinglePlayerLogic", "<-- wrong way");
 					}
 				}
 			}

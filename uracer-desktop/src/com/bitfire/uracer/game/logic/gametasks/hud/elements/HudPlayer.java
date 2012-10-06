@@ -9,6 +9,7 @@ import com.bitfire.uracer.ScalingStrategy;
 import com.bitfire.uracer.configuration.UserProfile;
 import com.bitfire.uracer.entities.EntityRenderState;
 import com.bitfire.uracer.game.actors.Car;
+import com.bitfire.uracer.game.logic.gametasks.hud.Hud;
 import com.bitfire.uracer.game.logic.gametasks.hud.HudElement;
 import com.bitfire.uracer.game.logic.gametasks.hud.HudLabel;
 import com.bitfire.uracer.game.logic.gametasks.hud.Positionable;
@@ -104,7 +105,7 @@ public final class HudPlayer extends HudElement {
 		driftBar.hideSecondsLabel();
 		highlightError.stop();
 		highlightNext.stop();
-		wrongWay.fadeOut(200);
+		wrongWay.fadeOut(Hud.DefaultFadeMilliseconds);
 	}
 
 	@Override

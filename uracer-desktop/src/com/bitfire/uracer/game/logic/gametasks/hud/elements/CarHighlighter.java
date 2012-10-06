@@ -12,6 +12,7 @@ import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.math.Vector2;
 import com.bitfire.uracer.entities.EntityRenderState;
 import com.bitfire.uracer.game.actors.Car;
+import com.bitfire.uracer.game.logic.gametasks.hud.Hud;
 import com.bitfire.uracer.game.rendering.GameRenderer;
 import com.bitfire.uracer.game.tween.GameTweener;
 import com.bitfire.uracer.resources.Art;
@@ -141,12 +142,13 @@ public final class CarHighlighter {
 		bfBlue.value = 1f;
 
 		Timeline timeline = Timeline.createParallel();
+		float ms = Hud.DefaultFadeMilliseconds;
 
 		//@off
 		timeline
-			.push(Tween.to(bfScale, BoxedFloatAccessor.VALUE, 500).target(1).ease(Linear.INOUT))
-			.push(Tween.to(bfAlpha, BoxedFloatAccessor.VALUE, 500).target(1).ease(Linear.INOUT))
-			.push(Tween.to(bfRot, BoxedFloatAccessor.VALUE, 500).target(0).ease(Linear.INOUT))
+			.push(Tween.to(bfScale, BoxedFloatAccessor.VALUE, ms).target(1).ease(Linear.INOUT))
+			.push(Tween.to(bfAlpha, BoxedFloatAccessor.VALUE, ms).target(1).ease(Linear.INOUT))
+			.push(Tween.to(bfRot, BoxedFloatAccessor.VALUE, ms).target(0).ease(Linear.INOUT))
 			.setCallback(busyCallback)
 			;
 		//@on
@@ -171,12 +173,13 @@ public final class CarHighlighter {
 		bfBlue.value = 1f;
 
 		Timeline timeline = Timeline.createParallel();
+		float ms = Hud.DefaultFadeMilliseconds;
 
 		//@off
 		timeline
-			.push(Tween.to(bfScale, BoxedFloatAccessor.VALUE, 500).target(4).ease(Linear.INOUT))
-			.push(Tween.to(bfAlpha, BoxedFloatAccessor.VALUE, 500).target(0).ease(Linear.INOUT))
-			.push(Tween.to(bfRot, BoxedFloatAccessor.VALUE, 500).target(90).ease(Linear.INOUT))
+			.push(Tween.to(bfScale, BoxedFloatAccessor.VALUE, ms).target(4).ease(Linear.INOUT))
+			.push(Tween.to(bfAlpha, BoxedFloatAccessor.VALUE, ms).target(0).ease(Linear.INOUT))
+			.push(Tween.to(bfRot, BoxedFloatAccessor.VALUE, ms).target(90).ease(Linear.INOUT))
 			.setCallback(busyCallback)
 			;
 		//@on
