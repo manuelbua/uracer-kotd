@@ -114,7 +114,7 @@ public final class Art {
 	// screens
 	//
 	private static void loadScreensData () {
-		scrBackground = newTexture("data/base/titlescreen.png", false);
+		scrBackground = newTexture("data/base/titlescreen.png", true);
 		// the skin will automatically search and load the same filename+".atlas" extension
 		scrSkin = new Skin(Gdx.files.internal(Storage.UI + "skin.json"));
 	}
@@ -163,7 +163,7 @@ public final class Art {
 	//
 
 	private static void loadMeshesGraphics (boolean mipmap) {
-		meshTrackWall = newTexture("data/track/wall.png", false);
+		meshTrackWall = newTexture("data/track/wall.png", true);
 		meshTrackWall.setWrap(TextureWrap.ClampToEdge, TextureWrap.ClampToEdge);
 
 		meshMissing = newTexture("data/3d/textures/missing-mesh.png", mipmap);
@@ -222,9 +222,6 @@ public final class Art {
 
 		// game fonts
 		fontAtlas = new TextureAtlas("data/font/pack.atlas");
-		for (TextureRegion r : fontAtlas.getRegions()) {
-			r.getTexture().setFilter(TextureFilter.Linear, TextureFilter.Linear);
-		}
 	}
 
 	private static void disposeFonts () {
