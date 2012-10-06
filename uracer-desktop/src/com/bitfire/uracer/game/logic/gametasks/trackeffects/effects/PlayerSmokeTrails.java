@@ -2,7 +2,6 @@
 package com.bitfire.uracer.game.logic.gametasks.trackeffects.effects;
 
 import com.badlogic.gdx.Gdx;
-import com.badlogic.gdx.graphics.GL20;
 import com.badlogic.gdx.graphics.g2d.ParticleEffect;
 import com.badlogic.gdx.graphics.g2d.ParticleEmitter;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
@@ -153,16 +152,16 @@ public class PlayerSmokeTrails extends TrackEffect {
 		tmp.set(posX, posY);
 
 // fx[0].baseEmitter.setAdditive(true);
-		fx[0].setLifeMul(MathUtils.random(10f, 40f) * player.driftState.driftStrength);
-		fx[0].setScaleMul(MathUtils.random(0.1f, 0.1f + 15f * player.driftState.driftStrength));
-		fx[0].setEmissionMul(0.7f);
+		fx[0].setLifeMul(MathUtils.random(10f, 15f) * player.driftState.driftStrength);
+		fx[0].setScaleMul(MathUtils.random(0.1f, 0.1f + 10f * player.driftState.driftStrength));
+		fx[0].setEmissionMul(0.25f);
 
 		float t = player.driftState.driftStrength * 0.75f;
 		fx[0].baseEmitter.getTransparency().setHighMin(t);
 		fx[0].baseEmitter.getTransparency().setHighMax(t);
 
 		float[] colors = fx[0].baseEmitter.getTint().getColors();
-		float v = 0.1f;
+		float v = 0.2f;
 // float r = 0.5f;
 // float g = 0.5f;
 // float b = 0.5f;
@@ -170,8 +169,9 @@ public class PlayerSmokeTrails extends TrackEffect {
 		colors[1] = v * player.driftState.driftStrength;
 		colors[2] = v * player.driftState.driftStrength;
 
-		Gdx.gl.glBlendFunc(GL20.GL_SRC_ALPHA, GL20.GL_ONE_MINUS_DST_ALPHA);
+// Gdx.gl.glBlendFunc(GL20.GL_SRC_ALPHA, GL20.GL_ONE_MINUS_DST_ALPHA);
 		fx[0].render(batch, tmp.x, tmp.y);
+
 // Gdx.gl.glBlendFunc(GL20.GL_SRC_ALPHA, GL20.GL_ONE_MINUS_SRC_ALPHA);
 
 		// // rear left
