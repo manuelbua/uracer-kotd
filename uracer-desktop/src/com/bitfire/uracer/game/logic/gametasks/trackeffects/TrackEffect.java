@@ -5,19 +5,9 @@ import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.utils.Disposable;
 
 public abstract class TrackEffect implements Disposable {
-	/** Defines the type of special effect, it also describer their rendering order */
-	public enum Type {
-		CarSkidMarks(1), CarSmokeTrails(2);
-		public final int id;
+	public final TrackEffectType type;
 
-		private Type (int id) {
-			this.id = id;
-		}
-	}
-
-	public final Type type;
-
-	public TrackEffect (Type what) {
+	public TrackEffect (TrackEffectType what) {
 		this.type = what;
 	}
 

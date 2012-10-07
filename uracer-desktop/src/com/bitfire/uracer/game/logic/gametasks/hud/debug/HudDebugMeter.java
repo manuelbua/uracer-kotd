@@ -37,7 +37,7 @@ public class HudDebugMeter implements Disposable {
 		this.pos = new Vector2();
 
 		pixels = new Pixmap(this.width, this.height, Format.RGBA8888);
-		texture = new Texture(256, 256, Format.RGBA8888);
+		texture = new Texture(width, height, Format.RGBA8888);
 		texture.setFilter(TextureFilter.Nearest, TextureFilter.Nearest);
 		region = new TextureRegion(texture, 0, 0, pixels.getWidth(), pixels.getHeight());
 	}
@@ -79,9 +79,9 @@ public class HudDebugMeter implements Disposable {
 
 	public void render (SpriteBatch batch) {
 		drawMeter();
-		SpriteBatchUtils.drawString(batch, getMessage(), pos.x, pos.y);
+		SpriteBatchUtils.drawString(batch, getMessage(), (int)pos.x, (int)pos.y);
 
-		batch.draw(region, pos.x, pos.y + Art.DebugFontHeight);
+		batch.draw(region, (int)pos.x, (int)pos.y + Art.DebugFontHeight);
 	}
 
 	private void drawMeter () {

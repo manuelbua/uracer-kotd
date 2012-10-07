@@ -10,6 +10,7 @@ import com.badlogic.gdx.math.Vector2;
 import com.bitfire.uracer.ScalingStrategy;
 import com.bitfire.uracer.URacer;
 import com.bitfire.uracer.game.logic.gametasks.trackeffects.TrackEffect;
+import com.bitfire.uracer.game.logic.gametasks.trackeffects.TrackEffectType;
 import com.bitfire.uracer.game.player.PlayerCar;
 import com.bitfire.uracer.resources.Art;
 
@@ -89,7 +90,7 @@ public class PlayerSmokeTrails extends TrackEffect {
 	}
 
 	public PlayerSmokeTrails (ScalingStrategy scalingStrategy, PlayerCar player) {
-		super(Type.CarSmokeTrails);
+		super(TrackEffectType.CarSmokeTrails);
 		this.player = player;
 		this.scalingStrategy = scalingStrategy;
 

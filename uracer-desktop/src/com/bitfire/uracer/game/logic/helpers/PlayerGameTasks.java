@@ -30,7 +30,7 @@ public final class PlayerGameTasks {
 	public HudLapInfo hudLapInfo = null;
 	public HudDebug hudDebug = null;
 	public PlayerSkidMarks playerSkidMarks = null;
-	public PlayerSmokeTrails playerTrails = null;
+	public PlayerSmokeTrails playerSmokeTrails = null;
 	public PlayerDriftSoundEffect playerDriftSoundFx = null;
 	public PlayerImpactSoundEffect playerImpactSoundFx = null;
 	public PlayerEngineSoundEffect playerEngineSoundFx = null;
@@ -55,7 +55,7 @@ public final class PlayerGameTasks {
 		int maxSkidMarks = Config.isDesktop ? 500 : 100;
 		float maxLife = Config.isDesktop ? 7 : 3;
 		playerSkidMarks = new PlayerSkidMarks(player, maxSkidMarks, maxLife);
-		playerTrails = new PlayerSmokeTrails(scalingStrategy, player);
+		playerSmokeTrails = new PlayerSmokeTrails(scalingStrategy, player);
 
 		// hud, player's information
 		hudPlayer = new HudPlayer(userProfile, scalingStrategy, player, renderer);
@@ -67,14 +67,15 @@ public final class PlayerGameTasks {
 		manager.sound.add(playerImpactSoundFx);
 		manager.sound.add(playerEngineSoundFx);
 		manager.effects.addBeforeEntities(playerSkidMarks);
-		manager.effects.addAfterEntities(playerTrails);
+		manager.effects.addAfterEntities(playerSmokeTrails);
 		manager.hud.addBeforePostProcessing(hudPlayer);
 		manager.hud.addBeforePostProcessing(hudLapInfo);
 
+		// at last, create debug helper since it will probably use most of the stuff just created above
 		// hud-style debug information for various data (player's drift state, number of skid marks particles, ..)
 		if (Config.Debug.RenderHudDebugInfo) {
-			hudDebug = new HudDebug(player, player.driftState, playerSkidMarks /* can be null */);
-			manager.hud.addBeforePostProcessing(hudDebug);
+			hudDebug = new HudDebug(player, player.driftState, manager);
+			manager.hud.addAfterPostProcessing(hudDebug);
 		}
 	}
 
@@ -99,9 +100,9 @@ public final class PlayerGameTasks {
 			playerSkidMarks = null;
 		}
 
-		if (playerTrails != null) {
-			manager.effects.remove(playerTrails);
-			playerTrails = null;
+		if (playerSmokeTrails != null) {
+			manager.effects.remove(playerSmokeTrails);
+			playerSmokeTrails = null;
 		}
 
 		if (hudPlayer != null) {

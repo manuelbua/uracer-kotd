@@ -8,6 +8,7 @@ import com.badlogic.gdx.math.Rectangle;
 import com.badlogic.gdx.math.Vector2;
 import com.bitfire.uracer.configuration.Config;
 import com.bitfire.uracer.game.logic.gametasks.trackeffects.TrackEffect;
+import com.bitfire.uracer.game.logic.gametasks.trackeffects.TrackEffectType;
 import com.bitfire.uracer.game.player.PlayerCar;
 import com.bitfire.uracer.game.player.PlayerDriftState;
 import com.bitfire.uracer.game.rendering.GameRenderer;
@@ -36,7 +37,7 @@ public class PlayerSkidMarks extends TrackEffect {
 	}
 
 	public PlayerSkidMarks (PlayerCar player, int maxSkidMarks, float maxParticleLifeSecs) {
-		super(Type.CarSkidMarks);
+		super(TrackEffectType.CarSkidMarks);
 
 		MaxSkidMarks = maxSkidMarks;
 		MaxParticleLifeSeconds = maxParticleLifeSecs;

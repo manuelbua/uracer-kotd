@@ -7,8 +7,11 @@ import com.badlogic.gdx.utils.Array;
 import com.bitfire.uracer.events.GameRendererEvent;
 import com.bitfire.uracer.events.GameRendererEvent.Order;
 import com.bitfire.uracer.game.GameEvents;
+import com.bitfire.uracer.game.logic.gametasks.GameTasksManager;
 import com.bitfire.uracer.game.logic.gametasks.hud.HudElement;
+import com.bitfire.uracer.game.logic.gametasks.trackeffects.TrackEffectType;
 import com.bitfire.uracer.game.logic.gametasks.trackeffects.effects.PlayerSkidMarks;
+import com.bitfire.uracer.game.logic.gametasks.trackeffects.effects.PlayerSmokeTrails;
 import com.bitfire.uracer.game.player.PlayerCar;
 import com.bitfire.uracer.game.player.PlayerDriftState;
 import com.bitfire.uracer.game.rendering.GameRenderer;
@@ -21,10 +24,14 @@ import com.bitfire.uracer.utils.CarUtils;
  * @author bmanuel */
 public class HudDebug extends HudElement {
 
-	private PlayerCar player;
-	private PlayerDriftState driftState;
-	private PlayerSkidMarks skidMarks;
-	private HudDebugMeter meterDriftStrength, meterSkidMarks, meterSpeed;
+	private final PlayerCar player;
+	private final PlayerDriftState driftState;
+	private final GameTasksManager gameTaskManager;
+	private final PlayerSmokeTrails smokeTrails;
+	private final PlayerSkidMarks skidMarks;
+
+	private HudDebugMeter meterDriftStrength, meterSkidMarks, meterSpeed, meterSmokeTrails;
+
 	private Array<HudDebugMeter> meters = new Array<HudDebugMeter>();
 	private Vector2 pos = new Vector2();
 
@@ -35,31 +42,42 @@ public class HudDebug extends HudElement {
 		}
 	};
 
-	public HudDebug (PlayerCar player, PlayerDriftState driftState, PlayerSkidMarks skidMarks) {
+	public HudDebug (PlayerCar player, PlayerDriftState driftState, GameTasksManager manager) {
 		GameEvents.gameRenderer.addListener(gameRendererEvent, GameRendererEvent.Type.BatchDebug, GameRendererEvent.Order.DEFAULT);
 
 		this.player = player;
 		this.driftState = driftState;
-		this.skidMarks = skidMarks;
+		this.gameTaskManager = manager;
+
+		skidMarks = (PlayerSkidMarks)gameTaskManager.effects.getEffect(TrackEffectType.CarSkidMarks);
+		smokeTrails = (PlayerSmokeTrails)gameTaskManager.effects.getEffect(TrackEffectType.CarSmokeTrails);
 
 		// meter lateral forces
 		meterDriftStrength = new HudDebugMeter(100, 5);
 		meterDriftStrength.setLimits(0, 1);
-		meterDriftStrength.setName("ds");
+		meterDriftStrength.setName("drift strength");
 		meters.add(meterDriftStrength);
 
 		// meter skid marks count
 		if (skidMarks != null) {
 			meterSkidMarks = new HudDebugMeter(100, 5);
 			meterSkidMarks.setLimits(0, skidMarks.getMaxParticleCount());
-			meterSkidMarks.setName("sm");
+			meterSkidMarks.setName("skid marks");
 			meters.add(meterSkidMarks);
+		}
+
+		// meter smoke trails count
+		if (smokeTrails != null) {
+			meterSmokeTrails = new HudDebugMeter(100, 5);
+			meterSmokeTrails.setLimits(0, smokeTrails.getMaxParticleCount());
+			meterSmokeTrails.setName("smoke trails");
+			meters.add(meterSmokeTrails);
 		}
 
 		// player speed, km/h
 		meterSpeed = new HudDebugMeter(100, 5);
 		meterSpeed.setLimits(0, CarUtils.mtSecToKmHour(player.getCarModel().max_speed));
-		meterSpeed.setName("kmh");
+		meterSpeed.setName("speed km/h");
 		meters.add(meterSpeed);
 	}
 
@@ -87,6 +105,11 @@ public class HudDebug extends HudElement {
 		// skid marks count
 		if (skidMarks != null) {
 			meterSkidMarks.setValue(skidMarks.getParticleCount());
+		}
+
+		// smoke trails count
+		if (smokeTrails != null) {
+			meterSmokeTrails.setValue(smokeTrails.getParticleCount());
 		}
 
 		// player's speed
