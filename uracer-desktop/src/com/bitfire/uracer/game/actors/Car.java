@@ -197,10 +197,15 @@ public abstract strictfp class Car extends Box2DEntity {
 		return body.isActive();
 	}
 
-	public void resetDistanceAndSpeed () {
-		carTraveledDistance = 0;
-		accuDistCount = 0;
-		carInstantSpeedMtSec = 0;
+	public void resetDistanceAndSpeed (boolean resetDistance, boolean resetSpeed) {
+		if (resetDistance) {
+			carTraveledDistance = 0;
+			accuDistCount = 0;
+		}
+
+		if (resetSpeed) {
+			carInstantSpeedMtSec = 0;
+		}
 	}
 
 	public void resetPhysics () {

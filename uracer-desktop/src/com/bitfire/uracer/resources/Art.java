@@ -25,6 +25,7 @@ public final class Art {
 
 	// tileset friction maps
 	public static Pixmap frictionNature;
+	public static Pixmap frictionDesert;
 
 	// 3d
 	public static Texture meshMissing;
@@ -38,6 +39,7 @@ public final class Art {
 	public static TextureAtlas cars;
 	public static TextureRegion carAmbientOcclusion;
 	public static TextureRegion skidMarksFront, skidMarksRear;
+	public static Texture wrongWay;
 
 	// fonts
 	public static final int DebugFontWidth = 6;
@@ -48,9 +50,16 @@ public final class Art {
 	// public static ShaderProgram depthMapGen, depthMapGenTransparent;
 	public static Texture postXpro;
 
-	// screns
+	// screens
 	public static Texture scrBackground;
 	public static Skin scrSkin;
+
+	// circle progress
+	public static Texture texCircleProgress;
+	public static Texture texCircleProgressMask;
+	public static Texture texCircleProgressHalf;
+	public static Texture texCircleProgressHalfMask;
+	public static Texture texRadLinesProgress;
 
 	public static void init () {
 		ShaderLoader.BasePath = "data/shaders/";
@@ -60,6 +69,7 @@ public final class Art {
 		loadFrictionMaps();
 		loadPostProcessorMaps();
 		loadScreensData();
+		loadCircleProgress();
 	}
 
 	public static void dispose () {
@@ -69,13 +79,42 @@ public final class Art {
 		disposeFrictionMaps();
 		disposePostProcessorMaps();
 		disposeScreensData();
+		disposeCircleProgress();
+	}
+
+	//
+	// circle progress
+	//
+	private static void loadCircleProgress () {
+		texCircleProgress = Art.newTexture("data/base/progress/circle-progress-full.png", true);
+		texCircleProgress.setFilter(TextureFilter.MipMapLinearNearest, TextureFilter.Linear);
+
+		texCircleProgressHalf = Art.newTexture("data/base/progress/circle-progress-half.png", true);
+		texCircleProgressHalf.setFilter(TextureFilter.MipMapLinearNearest, TextureFilter.Linear);
+
+		texCircleProgressHalfMask = Art.newTexture("data/base/progress/circle-progress-half-mask.png", true);
+		texCircleProgressHalfMask.setFilter(TextureFilter.MipMapLinearNearest, TextureFilter.Linear);
+
+		texRadLinesProgress = Art.newTexture("data/base/progress/radlines-progress-full.png", true);
+		texRadLinesProgress.setFilter(TextureFilter.MipMapLinearNearest, TextureFilter.Linear);
+
+		texCircleProgressMask = Art.newTexture("data/base/progress/circle-progress-mask.png", true);
+		texCircleProgressMask.setFilter(TextureFilter.MipMapLinearNearest, TextureFilter.Linear);
+	}
+
+	private static void disposeCircleProgress () {
+		texCircleProgress.dispose();
+		texCircleProgressMask.dispose();
+		texRadLinesProgress.dispose();
+		texCircleProgressHalf.dispose();
+		texCircleProgressHalfMask.dispose();
 	}
 
 	//
 	// screens
 	//
 	private static void loadScreensData () {
-		scrBackground = newTexture("data/base/titlescreen.png", false);
+		scrBackground = newTexture("data/base/titlescreen.png", true);
 		// the skin will automatically search and load the same filename+".atlas" extension
 		scrSkin = new Skin(Gdx.files.internal(Storage.UI + "skin.json"));
 	}
@@ -111,10 +150,12 @@ public final class Art {
 	private static void loadFrictionMaps () {
 		// friction maps
 		frictionNature = new Pixmap(Gdx.files.internal("data/levels/tilesets/nature/224-friction.png"));
+		frictionDesert = new Pixmap(Gdx.files.internal("data/levels/tilesets/desert/224-friction-easy.png"));
 	}
 
 	private static void disposeFrictionMaps () {
 		frictionNature.dispose();
+		frictionDesert.dispose();
 	}
 
 	//
@@ -122,7 +163,7 @@ public final class Art {
 	//
 
 	private static void loadMeshesGraphics (boolean mipmap) {
-		meshTrackWall = newTexture("data/track/wall.png", false);
+		meshTrackWall = newTexture("data/track/wall.png", true);
 		meshTrackWall.setWrap(TextureWrap.ClampToEdge, TextureWrap.ClampToEdge);
 
 		meshMissing = newTexture("data/3d/textures/missing-mesh.png", mipmap);
@@ -161,9 +202,13 @@ public final class Art {
 		skidMarksFront = cars.findRegion("skid-marks-front");
 		skidMarksRear = cars.findRegion("skid-marks-rear");
 		carAmbientOcclusion = cars.findRegion("car-ao");
+
+		wrongWay = newTexture("data/base/wrong-way.png", false);
+		wrongWay.setFilter(TextureFilter.Linear, TextureFilter.Linear);
 	}
 
 	private static void disposeCarGraphics () {
+		wrongWay.dispose();
 		cars.dispose();
 	}
 
@@ -177,9 +222,6 @@ public final class Art {
 
 		// game fonts
 		fontAtlas = new TextureAtlas("data/font/pack.atlas");
-		for (TextureRegion r : fontAtlas.getRegions()) {
-			r.getTexture().setFilter(TextureFilter.Linear, TextureFilter.Linear);
-		}
 	}
 
 	private static void disposeFonts () {
@@ -254,7 +296,7 @@ public final class Art {
 		return res;
 	}
 
-	private static Texture newTexture (String name, boolean mipMap) {
+	public static Texture newTexture (String name, boolean mipMap) {
 		Texture t = new Texture(Gdx.files.internal(name), Format.RGBA8888, mipMap);
 
 		if (mipMap) {

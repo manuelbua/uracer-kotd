@@ -5,11 +5,21 @@ import java.text.DecimalFormat;
 import java.text.NumberFormat;
 
 public final class NumberString {
+	private static NumberFormat formatterSmall = null;
 	private static NumberFormat formatter = null;
 	private static NumberFormat formatterLong = null;
 	private static NumberFormat formatterVeryLong = null;
 
 	private NumberString () {
+	}
+
+	public static String formatSmall (float value) {
+		if (NumberString.formatterSmall == null) {
+			NumberString.formatterSmall = new DecimalFormat("0.0");
+		}
+
+		return NumberString.formatterSmall.format(AMath.round(value, 1));
+// return NumberString.formatter.format( value );
 	}
 
 	public static String format (float value) {

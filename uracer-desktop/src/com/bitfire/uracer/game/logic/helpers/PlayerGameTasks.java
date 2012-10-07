@@ -10,8 +10,10 @@ import com.bitfire.uracer.game.logic.gametasks.hud.debug.HudDebug;
 import com.bitfire.uracer.game.logic.gametasks.hud.elements.HudLapInfo;
 import com.bitfire.uracer.game.logic.gametasks.hud.elements.HudPlayer;
 import com.bitfire.uracer.game.logic.gametasks.sounds.effects.PlayerDriftSoundEffect;
+import com.bitfire.uracer.game.logic.gametasks.sounds.effects.PlayerEngineSoundEffect;
 import com.bitfire.uracer.game.logic.gametasks.sounds.effects.PlayerImpactSoundEffect;
 import com.bitfire.uracer.game.logic.gametasks.trackeffects.effects.PlayerSkidMarks;
+import com.bitfire.uracer.game.logic.gametasks.trackeffects.effects.PlayerSmokeTrails;
 import com.bitfire.uracer.game.player.PlayerCar;
 import com.bitfire.uracer.game.rendering.GameRenderer;
 
@@ -28,8 +30,10 @@ public final class PlayerGameTasks {
 	public HudLapInfo hudLapInfo = null;
 	public HudDebug hudDebug = null;
 	public PlayerSkidMarks playerSkidMarks = null;
+	public PlayerSmokeTrails playerTrails = null;
 	public PlayerDriftSoundEffect playerDriftSoundFx = null;
 	public PlayerImpactSoundEffect playerImpactSoundFx = null;
+	public PlayerEngineSoundEffect playerEngineSoundFx = null;
 
 	public PlayerGameTasks (UserProfile userProfile, GameTasksManager gameTaskManager, ScalingStrategy strategy) {
 		this.userProfile = userProfile;
@@ -45,11 +49,13 @@ public final class PlayerGameTasks {
 		// sounds
 		playerDriftSoundFx = new PlayerDriftSoundEffect(player);
 		playerImpactSoundFx = new PlayerImpactSoundEffect(player);
+		playerEngineSoundFx = new PlayerEngineSoundEffect(player);
 
 		// track effects
 		int maxSkidMarks = Config.isDesktop ? 500 : 100;
-		float maxLife = Config.isDesktop ? 5 : 3;
+		float maxLife = Config.isDesktop ? 7 : 3;
 		playerSkidMarks = new PlayerSkidMarks(player, maxSkidMarks, maxLife);
+		playerTrails = new PlayerSmokeTrails(scalingStrategy, player);
 
 		// hud, player's information
 		hudPlayer = new HudPlayer(userProfile, scalingStrategy, player, renderer);
@@ -59,7 +65,9 @@ public final class PlayerGameTasks {
 
 		manager.sound.add(playerDriftSoundFx);
 		manager.sound.add(playerImpactSoundFx);
-		manager.effects.add(playerSkidMarks);
+		manager.sound.add(playerEngineSoundFx);
+		manager.effects.addBeforeEntities(playerSkidMarks);
+		manager.effects.addAfterEntities(playerTrails);
 		manager.hud.addBeforePostProcessing(hudPlayer);
 		manager.hud.addBeforePostProcessing(hudLapInfo);
 
@@ -81,9 +89,19 @@ public final class PlayerGameTasks {
 			playerImpactSoundFx = null;
 		}
 
+		if (playerEngineSoundFx != null) {
+			manager.sound.remove(playerEngineSoundFx);
+			playerEngineSoundFx = null;
+		}
+
 		if (playerSkidMarks != null) {
 			manager.effects.remove(playerSkidMarks);
 			playerSkidMarks = null;
+		}
+
+		if (playerTrails != null) {
+			manager.effects.remove(playerTrails);
+			playerTrails = null;
 		}
 
 		if (hudPlayer != null) {

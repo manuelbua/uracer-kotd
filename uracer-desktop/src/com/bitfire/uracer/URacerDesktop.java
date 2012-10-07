@@ -28,7 +28,7 @@ public final class URacerDesktop {
 		}
 
 		// set to default
-		config.title = URacer.Name;
+		config.title = URacer.Name + " (" + URacer.getVersionInformation() + ")";
 		config.useGL20 = true;
 		config.resizable = false;
 
@@ -63,11 +63,12 @@ public final class URacerDesktop {
 		URacerDesktopFinalizer finalizr = new URacerDesktopFinalizer((OpenALAudio)app.getAudio());
 		uracer.setFinalizer(finalizr);
 
+		GraphicsEnvironment env = GraphicsEnvironment.getLocalGraphicsEnvironment();
+		GraphicsDevice primary = env.getDefaultScreenDevice();
+		GraphicsDevice target = primary;
+
 		if (useRightScreen) {
-			GraphicsEnvironment env = GraphicsEnvironment.getLocalGraphicsEnvironment();
-			GraphicsDevice primary = env.getDefaultScreenDevice();
 			GraphicsDevice[] devices = env.getScreenDevices();
-			GraphicsDevice target = null;
 
 			// search for the first target screen
 			for (int i = 0; i < devices.length; i++) {
@@ -78,13 +79,17 @@ public final class URacerDesktop {
 				}
 			}
 
-			if (target != null) {
-				DisplayMode pmode = primary.getDisplayMode();
-				DisplayMode tmode = target.getDisplayMode();
+		}
 
-				Display
-					.setLocation(pmode.getWidth() + (tmode.getWidth() - config.width) / 2, (tmode.getHeight() - config.height) / 2);
+		if (target != null) {
+			DisplayMode pmode = primary.getDisplayMode();
+			DisplayMode tmode = target.getDisplayMode();
+			int offset = 0;
+			if (useRightScreen) {
+				offset = pmode.getWidth();
 			}
+
+			Display.setLocation(offset + (tmode.getWidth() - config.width) / 2, (tmode.getHeight() - config.height) / 2);
 		}
 	}
 

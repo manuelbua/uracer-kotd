@@ -29,6 +29,8 @@ public final class AggressiveWarm implements PostProcessingAnimator {
 	private Vignette vignette = null;
 	private CrtMonitor crt = null;
 	private Curvature curvature = null;
+	private PlayerCar player = null;
+	private boolean hasPlayer = false;
 
 	public AggressiveWarm (CommonLogic logic, PostProcessing post, boolean nightMode) {
 		this.nightMode = nightMode;
@@ -40,6 +42,12 @@ public final class AggressiveWarm implements PostProcessingAnimator {
 		curvature = (Curvature)post.getEffect(PostProcessing.Effects.Curvature.name);
 
 		reset();
+	}
+
+	@Override
+	public void setPlayer (PlayerCar player) {
+		this.player = player;
+		hasPlayer = (player != null);
 	}
 
 	@Override
@@ -80,9 +88,7 @@ public final class AggressiveWarm implements PostProcessingAnimator {
 
 	@Override
 	public void update (float timeModFactor) {
-		PlayerCar player = logic.getPlayer();
-
-		if (player == null) {
+		if (!hasPlayer) {
 			return;
 		}
 

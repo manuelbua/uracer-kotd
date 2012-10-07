@@ -107,7 +107,7 @@ public class HudDebug extends HudElement {
 			pos.y += index * (prevHeight + Art.DebugFontHeight);
 
 			m.setPosition(pos);
-// m.render(batch);
+			m.render(batch);
 
 			index++;
 			prevHeight = m.getHeight();

@@ -16,11 +16,9 @@ import com.bitfire.uracer.configuration.UserProfile;
 import com.bitfire.uracer.game.Time;
 import com.bitfire.uracer.game.Time.Reference;
 import com.bitfire.uracer.game.actors.Car;
+import com.bitfire.uracer.game.actors.CarPreset;
 import com.bitfire.uracer.game.actors.GhostCar;
 import com.bitfire.uracer.game.logic.gametasks.hud.elements.player.DriftBar;
-import com.bitfire.uracer.game.logic.gametasks.messager.Message.Position;
-import com.bitfire.uracer.game.logic.gametasks.messager.Message.Size;
-import com.bitfire.uracer.game.logic.gametasks.messager.Message.Type;
 import com.bitfire.uracer.game.logic.gametasks.messager.Messager;
 import com.bitfire.uracer.game.logic.replaying.Replay;
 import com.bitfire.uracer.game.rendering.GameRenderer;
@@ -43,6 +41,8 @@ public class SinglePlayerLogic extends CommonLogic {
 	private Timeline driftSecondsTimeline;
 	private boolean isPenalty;
 
+	private float lastDist, lastCompletion;
+
 	public SinglePlayerLogic (UserProfile userProfile, GameWorld gameWorld, GameRenderer gameRenderer,
 		ScalingStrategy scalingStrategy) {
 		super(userProfile, gameWorld, gameRenderer, scalingStrategy);
@@ -54,7 +54,7 @@ public class SinglePlayerLogic extends CommonLogic {
 	}
 
 	@Override
-	public void setPlayer (com.bitfire.uracer.game.actors.CarPreset.Type presetType) {
+	public void setPlayer (CarPreset.Type presetType) {
 		super.setPlayer(presetType);
 		driftBar = playerTasks.hudPlayer.driftBar;
 	}
@@ -83,7 +83,7 @@ public class SinglePlayerLogic extends CommonLogic {
 			gameWorldRenderer.setCameraPosition(playerCar.state().position, playerCar.state().orientation,
 				playerCar.carState.currSpeedFactor);
 
-		} else if (getGhost(0).hasReplay()) {
+		} else if (getGhost(0) != null && getGhost(0).hasReplay()) {
 
 			gameWorldRenderer.setCameraPosition(getGhost(0).state().position, getGhost(0).state().orientation, 0);
 
@@ -96,22 +96,28 @@ public class SinglePlayerLogic extends CommonLogic {
 
 	// the game has been restarted
 	@Override
-	protected void restart () {
+	protected void gameRestart () {
 		Gdx.app.log("SinglePlayerLogic", "Starting/restarting game");
 
 		// restart all replays
 		restartAllReplays();
 		accuDriftSeconds.value = 0;
 		isPenalty = false;
+
+		lastDist = 0;
+		lastCompletion = 0;
 	}
 
 	// the game has been reset
 	@Override
-	protected void reset () {
+	protected void gameReset () {
 		Gdx.app.log("SinglePlayerLogic", "Resetting game");
 		replayManager.reset();
 		accuDriftSeconds.value = 0;
 		isPenalty = false;
+
+		lastDist = 0;
+		lastCompletion = 0;
 	}
 
 	// a new Replay from the player is available: note that CommonLogic already perform
@@ -123,7 +129,8 @@ public class SinglePlayerLogic extends CommonLogic {
 
 		if (!replayManager.canClassify()) {
 			getGhost(0).setReplay(replay);
-			messager.show("GO!  GO!  GO!", 3f, Type.Information, Position.Bottom, Size.Big);
+			replay.saveLocal(messager);
+			// messager.show("GO!  GO!  GO!", 3f, Type.Information, Position.Bottom, Size.Big);
 		} else {
 			Replay best = replayManager.getBestReplay();
 			Replay worst = replayManager.getWorstReplay();
@@ -150,20 +157,45 @@ public class SinglePlayerLogic extends CommonLogic {
 	public void tick () {
 		super.tick();
 
-		if (hasPlayer()) {
-			updateDriftBar();
-		}
+		updateDriftBar();
+
+// Gdx.app.log("SPL", "drift=" + accuDriftSeconds);
+	}
+
+	@Override
+	public void tickCompleted () {
+		super.tickCompleted();
 
 		if (accuDriftSeconds.value == 0 && timeDilation) {
 			requestTimeDilationFinish();
 			Gdx.app.log("", "Requesting time modulation to finish");
 		}
 
-		if (hasPlayer() && playerCar.isOutOfTrack()) {
-			playerTasks.hudPlayer.highlightOutOfTrack();
-		}
+		if (hasPlayer()) {
+			float ghSpeed = 0;
 
-// Gdx.app.log("SPL", "drift=" + accuDriftSeconds);
+			// FIXME this should go in CommonLogic!
+			// use the last one if the replay is finished
+			if (nextTarget != null && nextTarget.hasReplay()) {
+				lastDist = gameTrack.getTrackDistance(nextTarget, 0);
+				lastCompletion = gameTrack.getTrackCompletion(nextTarget, 0);
+				ghSpeed = nextTarget.getInstantSpeed();
+			}
+
+			playerTasks.hudPlayer.trackProgress.setPlayerSpeed(playerCar.getInstantSpeed());
+			playerTasks.hudPlayer.trackProgress.setPlayerDistance(gameTrack.getTrackDistance(playerCar, 0));
+			playerTasks.hudPlayer.trackProgress.setPlayerProgression(gameTrack.getTrackCompletion(playerCar, 0));
+
+			playerTasks.hudPlayer.trackProgress.setTargetSpeed(ghSpeed);
+			playerTasks.hudPlayer.trackProgress.setTargetDistance(lastDist);
+			playerTasks.hudPlayer.trackProgress.setTargetProgression(lastCompletion);
+
+			// target tracker
+			float distMt = gameTrack.getTrackDistance(playerCar, 0) - lastDist;
+			float alpha = MathUtils.clamp(Math.abs(distMt) / 50, 0.2f, 1);
+			playerTasks.hudPlayer.setNextTargetAlpha(alpha);
+			playerTasks.hudPlayer.driftBar.setDriftStrength(playerCar.driftState.driftStrength);
+		}
 	}
 
 	@Override
@@ -196,8 +228,6 @@ public class SinglePlayerLogic extends CommonLogic {
 	@Override
 	public void timeDilationEnds () {
 		updateDriftBar();
-		// dilationTime.stop();
-		// Gdx.app.log("", "dilation=" + dilationTime.elapsed(Reference.AbsoluteSeconds) + ", dec=" + dec);
 		dilationTime.reset();
 		driftBar.hideSecondsLabel();
 	}
@@ -236,14 +266,14 @@ public class SinglePlayerLogic extends CommonLogic {
 	@Override
 	protected void backInTrack () {
 		updateDriftBar();
-		// Gdx.app.log("SPL", "Player stayed " + outOfTrackTime.elapsed(Reference.AbsoluteSeconds) + " seconds out of track");
 		outOfTrackTime.reset();
 		driftBar.hideSecondsLabel();
 	}
 
 	@Override
-	protected void lapComplete (boolean firstLap) {
+	protected void lapStarted () {
 		restartAllReplays();
+		playerTasks.hudPlayer.trackProgress.resetCounters(false);
 	}
 
 	@Override
@@ -263,6 +293,7 @@ public class SinglePlayerLogic extends CommonLogic {
 		Array<Replay> replays = replayManager.getReplays();
 
 		nextTarget = null;
+		lastDist = 0;
 
 		for (int i = 0; i < replays.size; i++) {
 			Replay r = replays.get(i);
@@ -278,6 +309,10 @@ public class SinglePlayerLogic extends CommonLogic {
 	}
 
 	private void updateDriftBar () {
+		if (!hasPlayer()) {
+			return;
+		}
+
 		if (Config.Debug.InfiniteDilationTime) {
 			accuDriftSeconds.value = DriftBar.MaxSeconds;
 		} else {

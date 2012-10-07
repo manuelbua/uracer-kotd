@@ -9,11 +9,14 @@ import com.bitfire.uracer.ScalingStrategy;
 import com.bitfire.uracer.configuration.UserProfile;
 import com.bitfire.uracer.entities.EntityRenderState;
 import com.bitfire.uracer.game.actors.Car;
+import com.bitfire.uracer.game.logic.gametasks.hud.Hud;
 import com.bitfire.uracer.game.logic.gametasks.hud.HudElement;
 import com.bitfire.uracer.game.logic.gametasks.hud.HudLabel;
 import com.bitfire.uracer.game.logic.gametasks.hud.Positionable;
 import com.bitfire.uracer.game.logic.gametasks.hud.elements.player.BasicInfo;
 import com.bitfire.uracer.game.logic.gametasks.hud.elements.player.DriftBar;
+import com.bitfire.uracer.game.logic.gametasks.hud.elements.player.TrackProgress;
+import com.bitfire.uracer.game.logic.gametasks.hud.elements.player.WrongWay;
 import com.bitfire.uracer.game.player.PlayerCar;
 import com.bitfire.uracer.game.rendering.GameRenderer;
 import com.bitfire.uracer.resources.BitmapFontFactory.FontFace;
@@ -31,9 +34,11 @@ public final class HudPlayer extends HudElement {
 	// player info
 	private EntityRenderState playerState = null;
 
-	// presentation
+	// player elements
 	private final BasicInfo basicInfo;
+	public final WrongWay wrongWay;
 	public final DriftBar driftBar;
+	public final TrackProgress trackProgress;
 
 	private HudLabel labelSpeed, labelDistance;
 
@@ -59,9 +64,13 @@ public final class HudPlayer extends HudElement {
 		this.carModelWidthPx = Convert.mt2px(player.getCarModel().width);
 		this.carModelLengthPx = Convert.mt2px(player.getCarModel().length);
 
+		// elements
 		basicInfo = new BasicInfo(scale, userProfile);
+		wrongWay = new WrongWay();
 		driftBar = new DriftBar(scale, carModelLengthPx);
+		trackProgress = new TrackProgress(scale);
 
+		// labels
 		labelSpeed = new HudLabel(scale, FontFace.Roboto, "", true, 1f);
 		labelSpeed.setPosition(Gdx.graphics.getWidth() - Convert.scaledPixels(190),
 			Gdx.graphics.getHeight() - Convert.scaledPixels(110));
@@ -72,12 +81,15 @@ public final class HudPlayer extends HudElement {
 
 		highlightError = new CarHighlighter();
 		highlightError.setCar(player);
+		highlightError.setScale(1.75f);
 
 		highlightNext = new CarHighlighter();
+		highlightNext.setScale(1);
 	}
 
 	@Override
 	public void dispose () {
+		trackProgress.dispose();
 		driftBar.dispose();
 		basicInfo.dispose();
 	}
@@ -85,6 +97,7 @@ public final class HudPlayer extends HudElement {
 	@Override
 	public void onTick () {
 		driftBar.tick();
+		trackProgress.tick();
 	}
 
 	@Override
@@ -92,15 +105,22 @@ public final class HudPlayer extends HudElement {
 		driftBar.hideSecondsLabel();
 		highlightError.stop();
 		highlightNext.stop();
+		wrongWay.fadeOut(Hud.DefaultFadeMilliseconds);
 	}
 
 	@Override
 	public void onRender (SpriteBatch batch) {
 
 		float cz = renderer.getWorldRenderer().getCameraZoom();
+
 		basicInfo.render(batch);
-		bottom(driftBar, 50);
+		wrongWay.render(batch);
+
+		atPlayer(driftBar);
 		driftBar.render(batch, cz);
+
+		atPlayer(trackProgress);
+		trackProgress.render(batch, cz);
 
 		// draw player name+info
 		labelSpeed.setString(MathUtils.round(CarUtils.mtSecToKmHour(player.getInstantSpeed())) + " kmh");
@@ -127,6 +147,11 @@ public final class HudPlayer extends HudElement {
 
 	private void gravitate (Positionable p, float offsetDegs, float distance) {
 		p.setPosition(gravitate(p.getWidth(), p.getHeight(), offsetDegs, distance));
+	}
+
+	private void atPlayer (Positionable p) {
+		tmpg.set(GameRenderer.ScreenUtils.worldPxToScreen(playerState.position));
+		p.setPosition(tmpg);
 	}
 
 	/** Returns a position by placing a point on an imaginary circumference gravitating around the player, applying the specified
@@ -178,6 +203,10 @@ public final class HudPlayer extends HudElement {
 		highlightError.error(5);
 	}
 
+	public void highlightWrongWay () {
+		highlightError.error(5);
+	}
+
 	public void highlightNextTarget (Car car) {
 		highlightNext.setCar(car);
 		highlightNext.track();
@@ -185,5 +214,9 @@ public final class HudPlayer extends HudElement {
 
 	public void unHighlightNextTarget (Car car) {
 		highlightNext.untrack();
+	}
+
+	public void setNextTargetAlpha (float alpha) {
+		highlightNext.setAlpha(alpha);
 	}
 }

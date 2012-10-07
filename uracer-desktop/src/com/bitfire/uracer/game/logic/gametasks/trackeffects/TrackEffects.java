@@ -11,15 +11,22 @@ import com.bitfire.utils.ItemsManager;
 
 public final class TrackEffects extends GameTask {
 	private static final GameRendererEvent.Type RenderEvent = GameRendererEvent.Type.BatchBeforeMeshes;
-	private static final GameRendererEvent.Order RenderOrder = GameRendererEvent.Order.MINUS_4;
 
-	private ItemsManager<TrackEffect> manager = new ItemsManager<TrackEffect>();
+	private ItemsManager<TrackEffect> managerBeforeEntities = new ItemsManager<TrackEffect>();
+	private ItemsManager<TrackEffect> managerAfterEntities = new ItemsManager<TrackEffect>();
 
 	private final GameRendererEvent.Listener listener = new GameRendererEvent.Listener() {
 		@Override
 		public void gameRendererEvent (GameRendererEvent.Type type, Order order) {
 			SpriteBatch batch = GameEvents.gameRenderer.batch;
-			Array<TrackEffect> items = manager.items;
+
+			Array<TrackEffect> items = managerBeforeEntities.items;
+			if (order == GameRendererEvent.Order.MINUS_4) {
+				// before entities
+			} else if (order == GameRendererEvent.Order.PLUS_4) {
+				// after entities
+				items = managerAfterEntities.items;
+			}
 
 			for (int i = 0; i < items.size; i++) {
 				TrackEffect effect = items.get(i);
@@ -31,7 +38,8 @@ public final class TrackEffects extends GameTask {
 	};
 
 	public TrackEffects () {
-		GameEvents.gameRenderer.addListener(listener, RenderEvent, RenderOrder);
+		GameEvents.gameRenderer.addListener(listener, RenderEvent, GameRendererEvent.Order.MINUS_4);
+		GameEvents.gameRenderer.addListener(listener, RenderEvent, GameRendererEvent.Order.PLUS_4);
 
 		// NOTE for custom render event
 		// for CarSkidMarks GameRenderer.event.addListener( gameRendererEvent, GameRendererEvent.Type.BatchBeforeMeshes,
@@ -40,48 +48,81 @@ public final class TrackEffects extends GameTask {
 		// GameRendererEvent.Order.Order_Minus_3 );
 	}
 
-	public void add (TrackEffect effect) {
-		manager.add(effect);
+	public void addBeforeEntities (TrackEffect effect) {
+		managerBeforeEntities.add(effect);
+	}
+
+	public void addAfterEntities (TrackEffect effect) {
+		managerAfterEntities.add(effect);
 	}
 
 	public void remove (TrackEffect effect) {
-		manager.remove(effect);
+		managerBeforeEntities.remove(effect);
+		managerAfterEntities.remove(effect);
 	}
 
 	@Override
 	public void dispose () {
 		super.dispose();
-		GameEvents.gameRenderer.removeListener(listener, RenderEvent, RenderOrder);
+		GameEvents.gameRenderer.removeListener(listener, RenderEvent, GameRendererEvent.Order.MINUS_4);
+		GameEvents.gameRenderer.removeListener(listener, RenderEvent, GameRendererEvent.Order.PLUS_4);
 
-		Array<TrackEffect> items = manager.items;
+		Array<TrackEffect> items = managerBeforeEntities.items;
 		for (int i = 0; i < items.size; i++) {
 			items.get(i).dispose();
 		}
 
-		manager.dispose();
+		items = managerAfterEntities.items;
+		for (int i = 0; i < items.size; i++) {
+			items.get(i).dispose();
+		}
+
+		managerBeforeEntities.dispose();
+		managerAfterEntities.dispose();
 	}
 
 	@Override
 	public void onTick () {
-		Array<TrackEffect> items = manager.items;
+		Array<TrackEffect> items = managerBeforeEntities.items;
 		for (int i = 0; i < items.size; i++) {
 			TrackEffect effect = items.get(i);
 			effect.tick();
 		}
+
+		items = managerAfterEntities.items;
+		for (int i = 0; i < items.size; i++) {
+			TrackEffect effect = items.get(i);
+			effect.tick();
+		}
+
 	}
 
 	@Override
 	public void onReset () {
-		Array<TrackEffect> items = manager.items;
+		Array<TrackEffect> items = managerBeforeEntities.items;
 		for (int i = 0; i < items.size; i++) {
 			TrackEffect effect = items.get(i);
 			effect.reset();
 		}
+
+		items = managerAfterEntities.items;
+		for (int i = 0; i < items.size; i++) {
+			TrackEffect effect = items.get(i);
+			effect.reset();
+		}
+
 	}
 
 	public int getParticleCount () {
-		Array<TrackEffect> items = manager.items;
 		int total = 0;
+
+		Array<TrackEffect> items = managerBeforeEntities.items;
+		for (int i = 0; i < items.size; i++) {
+			TrackEffect effect = items.get(i);
+			total += effect.getParticleCount();
+		}
+
+		items = managerAfterEntities.items;
 		for (int i = 0; i < items.size; i++) {
 			TrackEffect effect = items.get(i);
 			total += effect.getParticleCount();

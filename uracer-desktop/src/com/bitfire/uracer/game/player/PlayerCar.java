@@ -3,6 +3,7 @@ package com.bitfire.uracer.game.player;
 
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Input.Keys;
+import com.badlogic.gdx.graphics.Pixmap;
 import com.badlogic.gdx.graphics.g2d.tiled.TiledLayer;
 import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.math.WindowedMean;
@@ -20,7 +21,6 @@ import com.bitfire.uracer.game.actors.CarType;
 import com.bitfire.uracer.game.rendering.GameRenderer;
 import com.bitfire.uracer.game.world.GameWorld;
 import com.bitfire.uracer.game.world.WorldDefs.TileLayer;
-import com.bitfire.uracer.resources.Art;
 import com.bitfire.uracer.utils.AMath;
 import com.bitfire.uracer.utils.Convert;
 import com.bitfire.uracer.utils.VMath;
@@ -50,7 +50,7 @@ public class PlayerCar extends Car {
 	public PlayerDriftState driftState = null;
 
 	public PlayerCar (GameWorld gameWorld, CarPreset.Type presetType) {
-		super(gameWorld, CarType.PlayerCar, InputMode.InputFromPlayer, GameRendererEvent.Order.MINUS_1, presetType, true);
+		super(gameWorld, CarType.PlayerCar, InputMode.InputFromPlayer, GameRendererEvent.Order.DEFAULT, presetType, true);
 		carInput = new CarInput();
 		impacts = 0;
 
@@ -233,12 +233,18 @@ public class PlayerCar extends Car {
 		}
 	}
 
+	private Pixmap frictionMap = null;
+
+	public void setFrictionMap (Pixmap map) {
+		frictionMap = map;
+	}
+
 	private Vector2 offset = new Vector2();
 
 	private void updateCarFriction () {
 		Vector2 tilePosition = carState.tilePosition;
 
-		if (gameWorld.isValidTilePosition(tilePosition)) {
+		if (frictionMap != null && gameWorld.isValidTilePosition(tilePosition)) {
 			// compute realsize-based pixel offset car-tile (top-left origin)
 			float scaledTileSize = gameWorld.getTileSizeScaled();
 			float tsx = tilePosition.x * scaledTileSize;
@@ -259,7 +265,7 @@ public class PlayerCar extends Car {
 			int xOnMap = (id & 3) * (int)gameWorld.map.tileWidth + (int)offset.x;
 			int yOnMap = (id >> 2) * (int)gameWorld.map.tileWidth + (int)offset.y;
 
-			int pixel = Art.frictionNature.getPixel(xOnMap, yOnMap);
+			int pixel = frictionMap.getPixel(xOnMap, yOnMap);
 			boolean inTrack = (pixel == -256);
 			frictionMean.addValue((inTrack ? 0 : -1));
 

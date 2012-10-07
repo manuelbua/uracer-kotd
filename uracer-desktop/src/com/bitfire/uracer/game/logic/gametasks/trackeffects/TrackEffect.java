@@ -15,7 +15,7 @@ public abstract class TrackEffect implements Disposable {
 		}
 	}
 
-	public Type type;
+	public final Type type;
 
 	public TrackEffect (Type what) {
 		this.type = what;

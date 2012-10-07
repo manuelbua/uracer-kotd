@@ -21,7 +21,7 @@ public final class PlayerDriftSoundEffect extends SoundEffect {
 	private long driftId = -1, lastDriftId = -1;
 	private float driftLastPitch = 0;
 	private static final float pitchFactor = 1f;
-	private static final float pitchMin = 0.75f;
+	private static final float pitchMin = 0.7f;
 	private static final float pitchMax = 1f;
 
 	private boolean doFadeIn = false;
@@ -48,7 +48,7 @@ public final class PlayerDriftSoundEffect extends SoundEffect {
 		player.driftState.event.addListener(driftListener, PlayerDriftStateEvent.Type.onBeginDrift);
 		player.driftState.event.addListener(driftListener, PlayerDriftStateEvent.Type.onEndDrift);
 		drift = Sounds.carDrift;
-		start();
+// start();
 	}
 
 	@Override

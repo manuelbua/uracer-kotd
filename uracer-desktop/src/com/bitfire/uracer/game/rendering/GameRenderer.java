@@ -119,6 +119,8 @@ public final class GameRenderer {
 	}
 
 	public void render (FrameBuffer dest) {
+		GameEvents.gameRenderer.mtxOrthographicMvpMt = worldRenderer.getOrthographicMvpMt();
+
 		// postproc begins
 		boolean postProcessorReady = false;
 		boolean hasDest = (dest != null);

@@ -20,6 +20,7 @@ rm -rf "${DEST}/base/"
 mkdir -p "${DEST}/base"
 cp base/*.png ${DEST}/base
 cp base/*.shape ${DEST}/base
+cp -r base/progress ${DEST}/base
 echo "done!"
 
 # tileset graphics and tmx levels
@@ -32,6 +33,8 @@ echo "done!"
 # tileset friction maps
 echo -n "Cooking friction maps..."
 cp levels/tilesets/nature/224-friction.png ${DEST}/levels/tilesets/nature/
+cp levels/tilesets/desert/224-friction-easy.png ${DEST}/levels/tilesets/desert/
+cp levels/tilesets/desert/224-friction-hard.png ${DEST}/levels/tilesets/desert/
 echo "done!"
 
 # fonts

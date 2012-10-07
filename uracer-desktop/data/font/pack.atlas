@@ -1,7 +1,7 @@
 
 pack.png
 format: RGBA8888
-filter: Nearest,Nearest
+filter: Linear,Linear
 repeat: none
 AuX DotBitC Xtra
   rotate: false
@@ -41,7 +41,7 @@ curse-g-big
 
 pack2.png
 format: RGBA8888
-filter: Nearest,Nearest
+filter: Linear,Linear
 repeat: none
 curse-new
   rotate: false
@@ -74,7 +74,7 @@ dotty-shadow
 
 pack3.png
 format: RGBA8888
-filter: Nearest,Nearest
+filter: Linear,Linear
 repeat: none
 karmatic
   rotate: false
@@ -107,7 +107,7 @@ roboto
 
 pack4.png
 format: RGBA8888
-filter: Nearest,Nearest
+filter: Linear,Linear
 repeat: none
 curse-g
   rotate: false

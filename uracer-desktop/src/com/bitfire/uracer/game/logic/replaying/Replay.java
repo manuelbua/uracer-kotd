@@ -1,10 +1,9 @@
 
 package com.bitfire.uracer.game.logic.replaying;
 
+import java.io.DataOutputStream;
 import java.io.IOException;
 import java.io.ObjectInputStream;
-import java.io.ObjectOutputStream;
-import java.util.zip.Deflater;
 import java.util.zip.GZIPInputStream;
 import java.util.zip.GZIPOutputStream;
 
@@ -50,6 +49,7 @@ public class Replay implements Disposable {
 	private Time time = new Time();
 
 	public Replay (long userId) {
+		this.userId = userId;
 		eventsCount = 0;
 		forces = new CarForces[MaxEvents];
 		for (int i = 0; i < MaxEvents; i++) {
@@ -198,6 +198,9 @@ public class Replay implements Disposable {
 				return;
 			}
 
+			final String filename = Storage.LocalReplays + trackId;
+			final FileHandle hf = Gdx.files.external(filename);
+
 			// this is an asynchronous operation, but it's safe since saving a replay
 			// imply this replay won't get overwritten anytime soon
 			new Thread(new Runnable() {
@@ -205,25 +208,24 @@ public class Replay implements Disposable {
 				@Override
 				public void run () {
 					try {
-						String filename = Storage.LocalReplays + trackId;
-						FileHandle hf = Gdx.files.external(filename);
 
-						// DataOutputStream os = new DataOutputStream( hf.write( false ) );
+						// DataOutputStream os = new DataOutputStream(hf.write(false));
 						GZIPOutputStream gzos = null;
 
 						try {
-							gzos = new GZIPOutputStream(hf.write(false)) {
-								{
-									def.setLevel(Deflater.BEST_COMPRESSION);
-								}
-							};
+							gzos = new GZIPOutputStream(hf.write(false));/*
+																						 * { { def.setLevel(Deflater.BEST_COMPRESSION); } };
+																						 */
 						} catch (GdxRuntimeException e) {
 							messager
-								.enqueue("Couldn't save local replay, no space?", 3f, Message.Type.Bad, Position.Bottom, Size.Normal);
+								.enqueue("Couldn't save local replay, no space?", 5f, Message.Type.Bad, Position.Bottom, Size.Normal);
 							return;
 						}
 
-						ObjectOutputStream os = new ObjectOutputStream(gzos);
+						DataOutputStream os = new DataOutputStream(gzos);
+						// ObjectOutputStream os = new ObjectOutputStream(gzos);
+
+						// final Long luid = userId;
 
 						// write header
 						os.writeLong(userId);
@@ -252,7 +254,7 @@ public class Replay implements Disposable {
 
 						isSaved = true;
 
-						messager.enqueue("Replay saved", 1f, Message.Type.Information, Position.Bottom, Size.Normal);
+						messager.enqueue("Replay saved", 2f, Message.Type.Information, Position.Bottom, Size.Normal);
 						// Gdx.app.log( "Replay", "Done saving local replay (" + trackTimeSeconds + ")" );
 
 					} catch (IOException e) {

@@ -12,7 +12,7 @@ import com.badlogic.gdx.graphics.GL10;
 import com.badlogic.gdx.graphics.GL20;
 import com.badlogic.gdx.graphics.OrthographicCamera;
 import com.badlogic.gdx.graphics.PerspectiveCamera;
-import com.badlogic.gdx.graphics.g2d.tiled.TileAtlas;
+import com.badlogic.gdx.graphics.Texture.TextureFilter;
 import com.badlogic.gdx.graphics.g3d.model.still.StillSubMesh;
 import com.badlogic.gdx.graphics.glutils.FrameBuffer;
 import com.badlogic.gdx.graphics.glutils.ImmediateModeRenderer20;
@@ -87,7 +87,7 @@ public final class GameWorldRenderer {
 	// rendering
 	private GL20 gl = null;
 	private ShaderProgram treeShader = null;
-	private TileAtlas tileAtlas = null;
+	private UTileAtlas tileAtlas = null;
 	private boolean renderPlayerHeadlights = true;
 
 	public UTileMapRenderer tileMapRenderer = null;
@@ -107,7 +107,7 @@ public final class GameWorldRenderer {
 	private boolean showWalls = false;
 	private TrackTrees trackTrees = null; // complex trees
 	private TrackWalls trackWalls = null;
-	private ConeLight playerLights = null;
+	private ConeLight playerLightsA = null, playerLightsB = null;
 
 	public GameWorldRenderer (ScalingStrategy strategy, GameWorld world, int width, int height) {
 		scalingStrategy = strategy;
@@ -115,13 +115,15 @@ public final class GameWorldRenderer {
 		gl = Gdx.gl20;
 		scaledPpm = Convert.scaledPixels(Config.Physics.PixelsPerMeter);
 		rayHandler = world.getRayHandler();
-		playerLights = world.getPlayerHeadLights();
+		playerLightsA = world.getPlayerHeadLights(true);
+		playerLightsB = world.getPlayerHeadLights(false);
 		staticMeshes = world.getStaticMeshes();
 
 		createCams(width, height);
 
 		FileHandle baseDir = Gdx.files.internal(Storage.Levels);
-		tileAtlas = new TileAtlas(world.map, baseDir);
+		tileAtlas = new UTileAtlas(world.map, baseDir);
+		tileAtlas.setFilter(TextureFilter.Linear, TextureFilter.Linear);
 		tileMapRenderer = new UTileMapRenderer(world.map, tileAtlas, 1, 1, world.map.tileWidth, world.map.tileHeight);
 
 		showComplexTrees = UserPreferences.bool(Preference.ComplexTrees);
@@ -180,9 +182,8 @@ public final class GameWorldRenderer {
 
 	public void setRenderPlayerHeadlights (boolean value) {
 		renderPlayerHeadlights = value;
-		if (playerLights != null) {
-			playerLights.setActive(value);
-		}
+		if (playerLightsA != null) playerLightsA.setActive(value);
+		if (playerLightsB != null) playerLightsB.setActive(value);
 	}
 
 	public Matrix4 getInvProjView () {
@@ -199,29 +200,47 @@ public final class GameWorldRenderer {
 		renderedWalls = 0;
 	}
 
+	private Vector2 _o2p = new Vector2();
+
+	private Vector2 orientationToPosition (Car car, float angle, float offsetX, float offsetY) {
+		Vector2 carPosition = car.state().position;
+		float carLength = car.getCarModel().length;
+
+		// the body's compound shape should be created with some clever thinking in it :)
+		float offx = (carLength / 2f) + .25f + offsetX;
+		float offy = offsetY;
+
+		float cos = MathUtils.cosDeg(angle);
+		float sin = MathUtils.sinDeg(angle);
+		float dX = offx * cos - offy * sin;
+		float dY = offx * sin + offy * cos;
+
+		float mx = Convert.px2mt(carPosition.x) + dX;
+		float my = Convert.px2mt(carPosition.y) + dY;
+		_o2p.set(mx, my);
+		return _o2p;
+	}
+
 	public void updatePlayerHeadlights (Car car) {
 		if (renderPlayerHeadlights && car != null) {
-			Vector2 carPosition = car.state().position;
-			float carOrientation = car.state().orientation;
-			float carLength = car.getCarModel().length;
 
 			// update player light (subframe interpolation ready)
-			float ang = 90 + carOrientation;
+			float ang = 90 + car.state().orientation;
+			Vector2 v = orientationToPosition(car, ang, 0, 0.5f);
+			playerLightsA.setColor(0.1f, 0.2f, 0.9f, 0.7f);
+			playerLightsA.setDistance(25);
+			playerLightsA.setConeDegree(9);
+			playerLightsA.setDirection(ang + 5);
+			playerLightsA.setPosition(v.x, v.y);
+			playerLightsA.setSoft(true);
 
-			// the body's compound shape should be created with some clever thinking in it :)
-			float offx = (carLength / 2f) + .25f;
-			float offy = 0f;
-
-			float cos = MathUtils.cosDeg(ang);
-			float sin = MathUtils.sinDeg(ang);
-			float dX = offx * cos - offy * sin;
-			float dY = offx * sin + offy * cos;
-
-			float px = Convert.px2mt(carPosition.x) + dX;
-			float py = Convert.px2mt(carPosition.y) + dY;
-
-			playerLights.setDirection(ang);
-			playerLights.setPosition(px, py);
+			v = orientationToPosition(car, ang, 0, -0.5f);
+			playerLightsB.setColor(0.1f, 0.2f, 0.9f, 0.7f);
+			playerLightsB.setDistance(25);
+			playerLightsB.setConeDegree(9);
+			playerLightsB.setDirection(ang - 5);
+			playerLightsB.setPosition(v.x, v.y);
+			playerLightsB.setSoft(true);
 		}
 
 		// if( Config.isDesktop && (URacer.getFrameCount() & 0x1f) == 0x1f ) {
@@ -231,6 +250,8 @@ public final class GameWorldRenderer {
 
 	private void updateRayHandler () {
 		if (rayHandler != null) {
+
+			rayHandler.setAmbientLight(0.1f, 0.05f, 0.7f, 0.3f);
 
 			// @off
 			rayHandler.setCombinedMatrix(camOrthoMvpMt, Convert.px2mt(camOrtho.position.x), Convert.px2mt(camOrtho.position.y),
@@ -260,7 +281,7 @@ public final class GameWorldRenderer {
 		cameraZoom = MathUtils.clamp(zoom, 0f, MaxCameraZoom);
 	}
 
-	// do not ask for camOrtho.zoom directly since it will be bound later at updateCamera!
+	// do not use camOrtho.zoom directly since it will be bound later at updateCamera!
 	public float getCameraZoom () {
 		return cameraZoom;
 	}
@@ -271,8 +292,8 @@ public final class GameWorldRenderer {
 		float zoom = 1f / cameraZoom;
 
 		// remove subpixel accuracy (jagged behavior)
-		camOrtho.position.x = MathUtils.round(cameraPos.x);
-		camOrtho.position.y = MathUtils.round(cameraPos.y);
+		camOrtho.position.x = /* MathUtils.round */(cameraPos.x);
+		camOrtho.position.y = /* MathUtils.round */(cameraPos.y);
 		camOrtho.position.z = 0;
 		camOrtho.zoom = zoom;
 		camOrtho.update();

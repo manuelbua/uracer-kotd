@@ -26,8 +26,11 @@ import com.badlogic.gdx.graphics.g3d.model.still.StillModel;
 import com.badlogic.gdx.graphics.g3d.model.still.StillSubMesh;
 import com.badlogic.gdx.graphics.glutils.ShaderProgram;
 import com.badlogic.gdx.math.MathUtils;
+import com.badlogic.gdx.math.Polygon;
+import com.badlogic.gdx.math.Rectangle;
 import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.physics.box2d.World;
+import com.badlogic.gdx.utils.GdxRuntimeException;
 import com.bitfire.uracer.ScalingStrategy;
 import com.bitfire.uracer.configuration.Config;
 import com.bitfire.uracer.game.GameTracks;
@@ -56,8 +59,6 @@ public final class GameWorld {
 	public static int TotalMeshes = 0;
 
 	// public level data
-	public final String trackName;
-	public final String trackId;
 	public final TiledMap map;
 	public final Vector2 worldSizeScaledPx, worldSizeTiles, worldSizeMt;
 	public final ScalingStrategy scalingStrategy;
@@ -65,22 +66,27 @@ public final class GameWorld {
 	// private level data
 	private World box2dWorld;
 	private final MapUtils mapUtils;
+	private final String trackId;
 
 	// player data
 	public Vector2 playerStartPos = new Vector2();
 	public float playerStartOrient;
 	public int playerStartTileX, playerStartTileY;
 
-	// lighting system
+	// night system
 	private boolean nightMode;
 	protected RayHandler rayHandler = null;
-	protected ConeLight playerHeadlights = null;
+	protected ConeLight playerHeadlightsA, playerHeadlightsB = null;
 
 	// level meshes, package-level access for GameWorldRenderer (ugly but faster
 	// than accessors)
 	protected TrackWalls trackWalls = null;
 	protected TrackTrees trackTrees = null;
 	protected List<OrthographicAlignedStillModel> staticMeshes = new ArrayList<OrthographicAlignedStillModel>();
+
+	// routes
+	private List<Vector2> route = new ArrayList<Vector2>();
+	private List<Polygon> polys = new ArrayList<Polygon>();
 
 	public GameWorld (ScalingStrategy strategy, String trackId, boolean nightMode) {
 		scalingStrategy = strategy;
@@ -96,7 +102,6 @@ public final class GameWorld {
 
 		map = GameTracks.load(trackId);
 		this.trackId = trackId;
-		this.trackName = map.properties.get("name");
 		this.nightMode = nightMode;
 
 		// compute world size
@@ -110,6 +115,12 @@ public final class GameWorld {
 
 		createMeshes();
 		loadPlayerData(map);
+		route = createRoute();
+		polys = createTrackPolygons();
+
+		if (route == null) {
+			throw new GdxRuntimeException("No route for this track");
+		}
 
 		// FIXME, read night mode from level?
 		if (nightMode) {
@@ -176,6 +187,9 @@ public final class GameWorld {
 		float halfTile = map.tileWidth / 2;
 
 		TiledLayer layerTrack = mapUtils.getLayer(TileLayer.Track);
+		String direction = layerTrack.properties.get(LayerProperties.Start.mnemonic);
+		float startOrient = -mapUtils.orientationFromDirection(direction) * MathUtils.degreesToRadians;
+
 		Vector2 start = new Vector2();
 		int startTileX = 0, startTileY = 0;
 
@@ -188,7 +202,19 @@ public final class GameWorld {
 				}
 
 				if (type.equals("start")) {
-					start.set(mapUtils.tileToPx(x, y).add( /* Convert.scaledPixels */halfTile, -halfTile));
+
+					float mul = 1;
+					float add = 0;
+
+					if (direction.equals("left")) {
+						mul = 2;
+						add = -3.5f;
+					} else if (direction.equals("right")) {
+						mul = 0;
+						add = 0;
+					}
+
+					start.set(mapUtils.tileToPx(x, y).add( /* Convert.scaledPixels */halfTile * mul + add, -halfTile));
 					// start.set( (x + 0.5f) * map.tileWidth, (map.height - (y +
 					// 0.5f)) * map.tileHeight );
 					start.set(Convert.px2mt(start));
@@ -199,9 +225,6 @@ public final class GameWorld {
 				}
 			}
 		}
-
-		String direction = layerTrack.properties.get(LayerProperties.Start.mnemonic);
-		float startOrient = -mapUtils.orientationFromDirection(direction) * MathUtils.degreesToRadians;
 
 		// set player data
 		playerStartOrient = startOrient;
@@ -216,8 +239,8 @@ public final class GameWorld {
 			return;
 		}
 
-		float rttScale = .25f;
-		int maxRays = 360;
+		float rttScale = .75f;
+		int maxRays = 720;
 
 		if (!Config.isDesktop) {
 			rttScale = 0.2f;
@@ -230,18 +253,21 @@ public final class GameWorld {
 		rayHandler.setShadows(true);
 		rayHandler.setCulling(true);
 		rayHandler.setBlur(true);
-		rayHandler.setBlurNum(1);
-		rayHandler.setAmbientLight(0f, 0, 0.25f, 0.2f);
+		rayHandler.setBlurNum(4);
+		rayHandler.setAmbientLight(0f, 0, 0.25f, 0.3f);
 
 		final Color c = new Color();
 
 		// setup player headlights data
 		c.set(.4f, .4f, .75f, .85f);
-		playerHeadlights = new ConeLight(rayHandler, maxRays, c, 30, 0, 0, 0, 15);
-		playerHeadlights.setSoft(false);
-		playerHeadlights.setMaskBits(CollisionFilters.CategoryTrackWalls /*
-																								 * | CollisionFilters . CategoryReplay
-																								 */);
+
+		playerHeadlightsA = new ConeLight(rayHandler, maxRays, c, 40, 0, 0, 0, 10);
+		playerHeadlightsA.setSoft(true);
+		playerHeadlightsA.setMaskBits(CollisionFilters.CategoryTrackWalls | CollisionFilters.CategoryReplay);
+
+		playerHeadlightsB = new ConeLight(rayHandler, maxRays, c, 40, 0, 0, 0, 10);
+		playerHeadlightsB.setSoft(true);
+		playerHeadlightsB.setMaskBits(CollisionFilters.CategoryTrackWalls | CollisionFilters.CategoryReplay);
 
 		// setup level lights data, if any
 		Vector2 pos = new Vector2();
@@ -251,16 +277,115 @@ public final class GameWorld {
 			// MathUtils.random(0,1),
 			// MathUtils.random(0,1),
 			// MathUtils.random(0,1),
-				1f, .85f, .15f, .75f);
+				1f, .85f, 1f, .75f);
 			TiledObject o = group.objects.get(i);
 			pos.set(o.x, o.y).mul(scalingStrategy.invTileMapZoomFactor);
 			pos.y = worldSizeScaledPx.y - pos.y;
 			pos.set(Convert.px2mt(pos)).mul(scalingStrategy.tileMapZoomFactor);
 
-			PointLight l = new PointLight(rayHandler, maxRays, c, 15f, pos.x, pos.y);
-			l.setSoft(false);
+			PointLight l = new PointLight(rayHandler, maxRays, c, MathUtils.random(5f, 30f), pos.x, pos.y);
+			l.setSoft(true);
+			l.setStaticLight(true);
 			l.setMaskBits(CollisionFilters.CategoryPlayer | CollisionFilters.CategoryTrackWalls);
 		}
+	}
+
+	//
+	// construct route/sectors
+	//
+
+	private List<Vector2> createRoute () {
+		List<Vector2> r = null;
+
+		if (mapUtils.hasObjectGroup(ObjectGroup.Route)) {
+			Vector2 fromMt = new Vector2();
+			Vector2 toMt = new Vector2();
+			Vector2 offsetMt = new Vector2();
+
+			TiledObjectGroup group = mapUtils.getObjectGroup(ObjectGroup.Route);
+			if (group.objects.size() == 1) {
+				TiledObject o = group.objects.get(0);
+				List<Vector2> points = MapUtils.extractPolyData(o.polyline);
+
+				r = new ArrayList<Vector2>(points.size());
+
+				// ensure first and last coincide
+				// points.get(points.size() - 1).set(points.get(0));
+
+				offsetMt.set(o.x, o.y);
+				offsetMt.set(Convert.px2mt(offsetMt));
+
+				fromMt.set(Convert.px2mt(points.get(0))).add(offsetMt);
+				fromMt.y = worldSizeMt.y - fromMt.y;
+
+				r.add(new Vector2(fromMt));
+
+				for (int j = 1; j <= points.size() - 1; j++) {
+					toMt.set(Convert.px2mt(points.get(j))).add(offsetMt);
+					toMt.y = worldSizeMt.y - toMt.y;
+					r.add(new Vector2(toMt));
+				}
+			} else {
+				if (group.objects.size() > 1) {
+					throw new GdxRuntimeException("Too many routes");
+				} else if (group.objects.size() == 0) {
+					throw new GdxRuntimeException("No route defined for this track");
+				}
+			}
+
+		}
+
+		return r;
+	}
+
+	private List<Polygon> createTrackPolygons () {
+		List<Polygon> s = null;
+
+		if (mapUtils.hasObjectGroup(ObjectGroup.Sectors)) {
+			Vector2 pt = new Vector2();
+			Vector2 offsetMt = new Vector2();
+
+			TiledObjectGroup group = mapUtils.getObjectGroup(ObjectGroup.Sectors);
+			if (group.objects.size() > 0) {
+				s = new ArrayList<Polygon>(group.objects.size());
+
+				for (int i = 0; i < group.objects.size(); i++) {
+					TiledObject o = group.objects.get(i);
+					List<Vector2> points = MapUtils.extractPolyData(o.polygon);
+					if (points.size() != 4) {
+						throw new GdxRuntimeException("A quadrilateral is required!");
+					}
+
+					offsetMt.set(o.x, o.y);
+					offsetMt.set(Convert.px2mt(offsetMt));
+
+					float[] vertices = new float[8];
+					for (int j = 0; j < points.size(); j++) {
+						// convert to uracer convention
+						pt.set(Convert.px2mt(points.get(j))).add(offsetMt);
+						pt.y = worldSizeMt.y - pt.y;
+
+						vertices[j * 2] = pt.x;
+						vertices[j * 2 + 1] = pt.y;
+					}
+
+					Polygon p = new Polygon(vertices);
+					Rectangle r = p.getBoundingRectangle();
+					float oX = r.x + r.width / 2;
+					float oY = r.y + r.height / 2;
+					p.setOrigin(oX, oY);
+
+					s.add(p);
+				}
+
+			} else {
+				throw new GdxRuntimeException("There are no defined sectors for this track");
+			}
+
+		}
+
+		return s;
+
 	}
 
 	//
@@ -509,6 +634,18 @@ public final class GameWorld {
 		return trackTrees;
 	}
 
+	public List<Vector2> getTrackRoute () {
+		return route;
+	}
+
+	public List<Polygon> getTrackPolygons () {
+		return polys;
+	}
+
+	public String getTrackId () {
+		return trackId;
+	}
+
 	public List<OrthographicAlignedStillModel> getStaticMeshes () {
 		return staticMeshes;
 	}
@@ -517,8 +654,8 @@ public final class GameWorld {
 		return rayHandler;
 	}
 
-	public ConeLight getPlayerHeadLights () {
-		return playerHeadlights;
+	public ConeLight getPlayerHeadLights (boolean aOrB) {
+		return aOrB ? playerHeadlightsA : playerHeadlightsB;
 	}
 
 	public World getBox2DWorld () {

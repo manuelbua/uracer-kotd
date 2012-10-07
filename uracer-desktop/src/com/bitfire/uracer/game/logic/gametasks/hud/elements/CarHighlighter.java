@@ -12,6 +12,7 @@ import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.math.Vector2;
 import com.bitfire.uracer.entities.EntityRenderState;
 import com.bitfire.uracer.game.actors.Car;
+import com.bitfire.uracer.game.logic.gametasks.hud.Hud;
 import com.bitfire.uracer.game.rendering.GameRenderer;
 import com.bitfire.uracer.game.tween.GameTweener;
 import com.bitfire.uracer.resources.Art;
@@ -23,7 +24,7 @@ public final class CarHighlighter {
 	private Car followedCar;
 	private EntityRenderState renderState;
 	private Vector2 tmp = new Vector2();
-	private float offX, offY;
+	private float offX, offY, alpha, scale;
 
 	private boolean isBusy, isActive, hasCar;
 	private BoxedFloat bfScale, bfRot, bfAlpha, bfGreen, bfRed, bfBlue;
@@ -34,6 +35,7 @@ public final class CarHighlighter {
 		isBusy = false;
 		isActive = false;
 		followedCar = null;
+		alpha = 1;
 	}
 
 	public void setCar (Car car) {
@@ -54,6 +56,14 @@ public final class CarHighlighter {
 		bfBlue = new BoxedFloat(1);
 	}
 
+	public void setAlpha (float alpha) {
+		this.alpha = alpha;
+	}
+
+	public void setScale (float scale) {
+		this.scale = scale;
+	}
+
 	public Car getCar () {
 		return followedCar;
 	}
@@ -67,11 +77,11 @@ public final class CarHighlighter {
 		if (isActive /* && isBusy */&& hasCar) {
 			tmp.set(GameRenderer.ScreenUtils.worldPxToScreen(renderState.position));
 
-			sprite.setScale(bfScale.value * cameraZoom);
+			sprite.setScale(bfScale.value * cameraZoom * scale);
 			sprite.setPosition(tmp.x - offX, tmp.y - offY);
 			sprite.setRotation(-renderState.orientation + bfRot.value);
 			sprite.setColor(bfRed.value, bfGreen.value, bfBlue.value, bfAlpha.value);
-			sprite.draw(batch);
+			sprite.draw(batch, alpha);
 		}
 	}
 
@@ -132,12 +142,13 @@ public final class CarHighlighter {
 		bfBlue.value = 1f;
 
 		Timeline timeline = Timeline.createParallel();
+		float ms = Hud.DefaultFadeMilliseconds;
 
 		//@off
 		timeline
-			.push(Tween.to(bfScale, BoxedFloatAccessor.VALUE, 500).target(1).ease(Linear.INOUT))
-			.push(Tween.to(bfAlpha, BoxedFloatAccessor.VALUE, 500).target(1).ease(Linear.INOUT))
-			.push(Tween.to(bfRot, BoxedFloatAccessor.VALUE, 500).target(0).ease(Linear.INOUT))
+			.push(Tween.to(bfScale, BoxedFloatAccessor.VALUE, ms).target(1).ease(Linear.INOUT))
+			.push(Tween.to(bfAlpha, BoxedFloatAccessor.VALUE, ms).target(1).ease(Linear.INOUT))
+			.push(Tween.to(bfRot, BoxedFloatAccessor.VALUE, ms).target(0).ease(Linear.INOUT))
 			.setCallback(busyCallback)
 			;
 		//@on
@@ -162,12 +173,13 @@ public final class CarHighlighter {
 		bfBlue.value = 1f;
 
 		Timeline timeline = Timeline.createParallel();
+		float ms = Hud.DefaultFadeMilliseconds;
 
 		//@off
 		timeline
-			.push(Tween.to(bfScale, BoxedFloatAccessor.VALUE, 500).target(4).ease(Linear.INOUT))
-			.push(Tween.to(bfAlpha, BoxedFloatAccessor.VALUE, 500).target(0).ease(Linear.INOUT))
-			.push(Tween.to(bfRot, BoxedFloatAccessor.VALUE, 500).target(90).ease(Linear.INOUT))
+			.push(Tween.to(bfScale, BoxedFloatAccessor.VALUE, ms).target(4).ease(Linear.INOUT))
+			.push(Tween.to(bfAlpha, BoxedFloatAccessor.VALUE, ms).target(0).ease(Linear.INOUT))
+			.push(Tween.to(bfRot, BoxedFloatAccessor.VALUE, ms).target(90).ease(Linear.INOUT))
 			.setCallback(busyCallback)
 			;
 		//@on

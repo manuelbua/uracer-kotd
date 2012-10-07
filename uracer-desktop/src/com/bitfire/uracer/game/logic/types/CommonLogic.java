@@ -17,6 +17,8 @@ import com.bitfire.uracer.configuration.UserProfile;
 import com.bitfire.uracer.game.DebugHelper;
 import com.bitfire.uracer.game.GameLogic;
 import com.bitfire.uracer.game.GameplaySettings;
+import com.bitfire.uracer.game.Time;
+import com.bitfire.uracer.game.Time.Reference;
 import com.bitfire.uracer.game.actors.Car;
 import com.bitfire.uracer.game.actors.CarEvent;
 import com.bitfire.uracer.game.actors.CarPreset;
@@ -30,6 +32,7 @@ import com.bitfire.uracer.game.logic.gametasks.hud.elements.HudPlayer.EndDriftTy
 import com.bitfire.uracer.game.logic.gametasks.messager.Message;
 import com.bitfire.uracer.game.logic.gametasks.messager.MessageAccessor;
 import com.bitfire.uracer.game.logic.helpers.CarFactory;
+import com.bitfire.uracer.game.logic.helpers.GameTrack;
 import com.bitfire.uracer.game.logic.helpers.PlayerGameTasks;
 import com.bitfire.uracer.game.logic.post.PostProcessing;
 import com.bitfire.uracer.game.logic.post.animators.AggressiveCold;
@@ -45,6 +48,7 @@ import com.bitfire.uracer.game.screens.GameScreensFactory.ScreenType;
 import com.bitfire.uracer.game.tween.GameTweener;
 import com.bitfire.uracer.game.tween.SysTweener;
 import com.bitfire.uracer.game.world.GameWorld;
+import com.bitfire.uracer.resources.Art;
 import com.bitfire.uracer.screen.TransitionFactory.TransitionType;
 import com.bitfire.uracer.utils.BoxedFloat;
 import com.bitfire.uracer.utils.BoxedFloatAccessor;
@@ -57,6 +61,7 @@ public abstract class CommonLogic implements GameLogic, CarEvent.Listener, CarSt
 
 	// world
 	protected GameWorld gameWorld = null;
+	protected GameTrack gameTrack = null;
 
 	// rendering
 	private GameRenderer gameRenderer = null;
@@ -67,6 +72,8 @@ public abstract class CommonLogic implements GameLogic, CarEvent.Listener, CarSt
 	protected final UserProfile userProfile;
 	protected PlayerCar playerCar = null;
 	protected GhostCar[] ghostCars = new GhostCar[ReplayManager.MaxReplays];
+	protected Time wrongWayTimer = new Time();
+	protected boolean isWrongWay = false;
 
 	// lap
 	protected LapManager lapManager = null;
@@ -115,14 +122,16 @@ public abstract class CommonLogic implements GameLogic, CarEvent.Listener, CarSt
 		// player tasks
 		playerTasks = new PlayerGameTasks(userProfile, gameTasksManager, scalingStrategy);
 
-		lapManager = new LapManager(userProfile, gameWorld.trackId);
+		lapManager = new LapManager(userProfile, gameWorld.getTrackId());
 		for (int i = 0; i < ReplayManager.MaxReplays; i++) {
 			ghostCars[i] = CarFactory.createGhost(i, gameWorld, CarPreset.Type.L1_GoblinOrange);
 			ghostCars[i].event.addListener(this, CarEvent.Type.onGhostFadingOut);
 			ghostCars[i].carState.event.addListener(this, CarStateEvent.Type.onTileChanged);
 		}
 
-		replayManager = new ReplayManager(userProfile, gameWorld.trackId);
+		replayManager = new ReplayManager(userProfile, gameWorld.getTrackId());
+
+		gameTrack = new GameTrack(gameWorld);
 
 		// messager.show( "COOL STUFF!", 60, Message.Type.Information,
 		// MessagePosition.Bottom, MessageSize.Big );
@@ -147,6 +156,7 @@ public abstract class CommonLogic implements GameLogic, CarEvent.Listener, CarSt
 
 		GameTweener.dispose();
 		replayManager.dispose();
+		gameTrack.dispose();
 	}
 
 	//
@@ -155,15 +165,15 @@ public abstract class CommonLogic implements GameLogic, CarEvent.Listener, CarSt
 
 	protected abstract void updateCamera (float timeModFactor);
 
-	protected abstract void restart ();
+	protected abstract void gameRestart ();
 
-	protected abstract void reset ();
+	protected abstract void gameReset ();
 
 	protected abstract void newReplay (Replay replay);
 
 	protected abstract void discardedReplay (Replay replay);
 
-	protected abstract void lapComplete (boolean firstLap);
+	protected abstract void lapStarted ();
 
 	protected abstract void driftBegins ();
 
@@ -190,14 +200,18 @@ public abstract class CommonLogic implements GameLogic, CarEvent.Listener, CarSt
 	/** Restarts the current game */
 	protected void restartGame () {
 		restartLogic();
-		restart();
+
+		// raise event
+		gameRestart();
 	}
 
 	/** Restart and completely resets the game, removing any playing replay so far */
 	protected void resetGame () {
 		restartLogic();
 		resetLogic();
-		reset();
+
+		// raise event
+		gameReset();
 	}
 
 	/** Request time dilation to begin */
@@ -233,7 +247,15 @@ public abstract class CommonLogic implements GameLogic, CarEvent.Listener, CarSt
 		registerPlayerEvents(playerCar);
 		Gdx.app.log("GameLogic", "Registered player-related events");
 
+		updateCamera(0);
+		gameWorldRenderer.updateCamera();
+
+		postProcessing.setPlayer(playerCar);
 		gameWorldRenderer.setRenderPlayerHeadlights(gameWorld.isNightMode());
+
+		if (Config.Debug.RenderTrackSectors) {
+			gameTrack.setDebugCar(playerCar);
+		}
 
 		restartGame();
 
@@ -304,7 +326,11 @@ public abstract class CommonLogic implements GameLogic, CarEvent.Listener, CarSt
 	private void configurePlayer (GameWorld world, Input inputSystem, PlayerCar player) {
 		// create player and setup player input system and initial position in
 		// the world
-		playerCar.setInputSystem(inputSystem);
+		player.setInputSystem(inputSystem);
+
+		// FIXME this is for debug
+		player.setFrictionMap(Art.frictionDesert);
+
 		player.setWorldPosMt(world.playerStartPos, world.playerStartOrient);
 		player.resetPhysics();
 	}
@@ -312,7 +338,7 @@ public abstract class CommonLogic implements GameLogic, CarEvent.Listener, CarSt
 	private void resetPlayer (Car playerCar) {
 		if (playerCar != null) {
 			playerCar.resetPhysics();
-			playerCar.resetDistanceAndSpeed();
+			playerCar.resetDistanceAndSpeed(true, true);
 			playerCar.setWorldPosMt(gameWorld.playerStartPos, gameWorld.playerStartOrient);
 		}
 	}
@@ -321,7 +347,7 @@ public abstract class CommonLogic implements GameLogic, CarEvent.Listener, CarSt
 		GhostCar ghost = ghostCars[handle];
 		if (ghost != null) {
 			ghost.resetPhysics();
-			ghost.resetDistanceAndSpeed();
+			ghost.resetDistanceAndSpeed(true, true);
 			ghost.removeReplay();
 		}
 	}
@@ -337,6 +363,7 @@ public abstract class CommonLogic implements GameLogic, CarEvent.Listener, CarSt
 	}
 
 	private void restartLogic () {
+		gameTasksManager.sound.stop();
 		resetPlayer(playerCar);
 		resetAllGhosts();
 		gameWorldRenderer.setInitialCameraPositionOrient(playerCar);
@@ -348,6 +375,15 @@ public abstract class CommonLogic implements GameLogic, CarEvent.Listener, CarSt
 		GameTweener.clear();
 		lapManager.abortRecording();
 		gameTasksManager.restart();
+
+		isWrongWay = false;
+		wrongWayTimer.reset();
+		playerTasks.playerDriftSoundFx.start();
+		playerTasks.hudLapInfo.toDefaultColor();
+		playerTasks.hudLapInfo.setValid(true);
+		playerTasks.hudPlayer.trackProgress.resetCounters(false);
+
+// playerTasks.playerEngineSoundFx.start();
 	}
 
 	private void resetLogic () {
@@ -368,6 +404,69 @@ public abstract class CommonLogic implements GameLogic, CarEvent.Listener, CarSt
 	@Override
 	public void tickCompleted () {
 		gameTasksManager.physicsStep.onSubstepCompleted();
+
+		// determine player's isWrongWay
+		if (hasPlayer()) {
+			float conf = gameTrack.getTrackRouteConfidence(playerCar);
+			if (conf < 0) {
+				if (!isWrongWay) {
+					if (wrongWayTimer.isStopped()) {
+						Gdx.app.log("CommonLogic", "--> wrong way begin detector");
+						wrongWayTimer.start();
+					}
+
+					// if confidence stays negative for more than one second after staying positive, then
+					// assume the wrong way is being played
+					if (wrongWayTimer.elapsed(Reference.TickSeconds) > 1) {
+						wrongWayTimer.reset();
+
+						// invalidate the lap
+						isWrongWay = true;
+
+						if (lapManager.isRecording()) {
+							lapManager.abortRecording();
+							lapManager.reset();
+						}
+
+						playerTasks.hudPlayer.wrongWay.fadeIn();
+						playerTasks.hudLapInfo.toColor(1, 0, 0);
+						playerTasks.hudLapInfo.setInvalid("invalid lap");
+// Gdx.app.log("SinglePlayerLogic", "--> wrong way");
+					}
+				}
+			} else if (conf > 0) {
+				if (isWrongWay) {
+					if (wrongWayTimer.isStopped()) {
+						wrongWayTimer.start();
+						Gdx.app.log("CommonLogic", "<-- wrong way end detector");
+					}
+
+					// if confidence stays positive for more than one second after staying negative, then
+					// assume the right way is being played
+
+					if (wrongWayTimer.elapsed(Reference.TickSeconds) > 1f) {
+						// wrong way finished
+
+						wrongWayTimer.reset();
+						isWrongWay = false;
+
+						playerTasks.hudPlayer.wrongWay.fadeOut();
+						playerTasks.hudLapInfo.toColor(1, 1, 0);
+						playerTasks.hudLapInfo.setInvalid("back to start");
+// Gdx.app.log("SinglePlayerLogic", "<-- wrong way");
+					}
+				}
+			}
+		}
+
+		// blink on wrong way (keeps calling, returns if busy)
+		if (isWrongWay) {
+			playerTasks.hudPlayer.highlightWrongWay();
+		}
+		// blink on out of track (keeps calling, returns if busy)
+		if (playerCar.isOutOfTrack()) {
+			playerTasks.hudPlayer.highlightOutOfTrack();
+		}
 	}
 
 	@Override
@@ -423,7 +522,7 @@ public abstract class CommonLogic implements GameLogic, CarEvent.Listener, CarSt
 			// FIXME this should go in some sort of DebugLogic thing..
 
 			// start recording
-			playerCar.resetDistanceAndSpeed();
+			playerCar.resetDistanceAndSpeed(true, true);
 			resetAllGhosts();
 			lapManager.abortRecording();
 			userRec = lapManager.startRecording(playerCar);
@@ -438,7 +537,7 @@ public abstract class CommonLogic implements GameLogic, CarEvent.Listener, CarSt
 			lapManager.stopRecording();
 
 			CarUtils.dumpSpeedInfo("Player", playerCar, lapManager.getLastRecordedReplay().trackTimeSeconds);
-			playerCar.resetDistanceAndSpeed();
+			playerCar.resetDistanceAndSpeed(true, true);
 			if (userRec != null) {
 				userRec.saveLocal(gameTasksManager.messager);
 				getGhost(0).setReplay(userRec);
@@ -449,36 +548,29 @@ public abstract class CommonLogic implements GameLogic, CarEvent.Listener, CarSt
 
 		} else if (input.isPressed(Keys.Q) || input.isPressed(Keys.ESCAPE) || input.isPressed(Keys.BACK)) {
 
+			gameTasksManager.sound.stop();
+
 			// quit
 			URacer.Screens.setScreen(ScreenType.MainScreen, TransitionType.Fader, 500);
 			// URacer.Screens.setScreen( ScreenType.ExitScreen, TransitionType.Fader, 500 );
 
 		} else if (input.isPressed(Keys.O)) {
-
 			// FIXME this should go in some sort of DebugLogic thing..
-
-			// remove player
-
 			removePlayer();
-
 		} else if (input.isPressed(Keys.P)) {
-
 			// FIXME this should go in some sort of DebugLogic thing..
-
-			// add player
-
 			setPlayer(CarPreset.Type.L1_GoblinOrange);
-
 		} else if (input.isPressed(Keys.W)) {
-
 			// FIXME this should go in some sort of DebugLogic thing..
 			Config.Debug.RenderBox2DWorldWireframe = !Config.Debug.RenderBox2DWorldWireframe;
-
 		} else if (input.isPressed(Keys.B)) {
-
 			// FIXME this should go in some sort of DebugLogic thing..
 			Config.Debug.Render3DBoundingBoxes = !Config.Debug.Render3DBoundingBoxes;
-
+		} else if (input.isPressed(Keys.TAB)) {
+			// FIXME this should go in some sort of DebugLogic thing..
+			Config.Debug.RenderTrackSectors = !Config.Debug.RenderTrackSectors;
+			gameTrack.showDebug(Config.Debug.RenderTrackSectors);
+			gameTrack.setDebugCar(playerCar);
 		}
 
 		switch (timeDilateMode) {
@@ -601,41 +693,45 @@ public abstract class CommonLogic implements GameLogic, CarEvent.Listener, CarSt
 	// and also perform "wrong way" checks and such
 	private void playerTileChanged (CarState state) {
 		boolean onStartZone = (state.currTileX == gameWorld.playerStartTileX && state.currTileY == gameWorld.playerStartTileY);
-// Gdx.app.log("", "player at (" + state.currTileX + "," + state.currTileY + ")");
 
 		if (onStartZone) {
-			if (isFirstLap) {
-				isFirstLap = false;
 
-				lapManager.startRecording(playerCar);
-
-			} else {
-
-				// detect and ignore invalid laps
-				if (lapManager.getLapInfo().getElapsedSeconds() < GameplaySettings.ReplayMinDurationSecs) {
-					Gdx.app.log("CommonLogic", "Invalid lap detected, too short (" + lapManager.getLapInfo().getElapsedSeconds()
-						+ "sec < " + GameplaySettings.ReplayMinDurationSecs + ")");
-					return;
-				}
-
-				lapManager.stopRecording();
-
-				// always work on the ReplayManager copy!
-				Replay lastRecorded = lapManager.getLastRecordedReplay();
-				Replay replay = replayManager.addReplay(lastRecorded);
-				if (replay != null) {
-					newReplay(replay);
-				} else {
-					if (lastRecorded != null && lastRecorded.isValid) {
-						discardedReplay(lastRecorded);
-					}
-				}
-
-				lapComplete(false);
-				lapManager.startRecording(playerCar);
+			if (isWrongWay) {
+				return;
 			}
 
-			playerCar.resetDistanceAndSpeed();
+			if (!playerTasks.hudLapInfo.isValid()) {
+				playerTasks.hudLapInfo.setValid(true);
+				playerTasks.hudLapInfo.toColor(1, 1, 1);
+			}
+
+			// detect and ignore invalid laps
+			if (lapManager.isRecording() && lapManager.getLapInfo().getElapsedSeconds() < GameplaySettings.ReplayMinDurationSecs) {
+				Gdx.app.log("CommonLogic", "Invalid lap detected, too short (" + lapManager.getLapInfo().getElapsedSeconds()
+					+ "sec < " + GameplaySettings.ReplayMinDurationSecs + ")");
+				return;
+			} else if (!lapManager.isRecording()) {
+				lapManager.startRecording(playerCar);
+				lapStarted();
+				return;
+			}
+
+			lapManager.stopRecording();
+
+			// always work on the ReplayManager copy!
+			Replay lastRecorded = lapManager.getLastRecordedReplay();
+			Replay replay = replayManager.addReplay(lastRecorded);
+			if (replay != null) {
+				newReplay(replay);
+			} else {
+				if (lastRecorded != null && lastRecorded.isValid) {
+					discardedReplay(lastRecorded);
+				}
+			}
+
+			lapManager.startRecording(playerCar);
+			playerCar.resetDistanceAndSpeed(true, false);
+			lapStarted();
 		}
 	}
 

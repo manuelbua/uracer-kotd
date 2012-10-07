@@ -1,77 +1,95 @@
 
 package com.bitfire.uracer.game.logic.gametasks.hud.elements;
 
+import aurelienribon.tweenengine.Timeline;
+import aurelienribon.tweenengine.Tween;
+import aurelienribon.tweenengine.equations.Linear;
+
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.bitfire.uracer.ScalingStrategy;
 import com.bitfire.uracer.game.logic.LapInfo;
 import com.bitfire.uracer.game.logic.gametasks.hud.HudElement;
 import com.bitfire.uracer.game.logic.gametasks.hud.HudLabel;
+import com.bitfire.uracer.game.tween.GameTweener;
 import com.bitfire.uracer.resources.BitmapFontFactory.FontFace;
+import com.bitfire.uracer.utils.BoxedFloat;
+import com.bitfire.uracer.utils.BoxedFloatAccessor;
+import com.bitfire.uracer.utils.Convert;
 import com.bitfire.uracer.utils.NumberString;
 
 public class HudLapInfo extends HudElement {
 
 	private float scale = 1f;
-	private HudLabel curr;// , best, last;
+	private HudLabel curr;
 	private LapInfo lapInfo;
+	private BoxedFloat r, g, b;
+	private boolean isValid;
 
 	public HudLapInfo (ScalingStrategy scalingStrategy, LapInfo lapInfo) {
 		this.lapInfo = lapInfo;
 		scale = scalingStrategy.invTileMapZoomFactor;
 
-		int gridX = (int)((float)Gdx.graphics.getWidth() / 5f);
-
-		// laptimes component
-// best = new HudLabel(scalingStrategy, FontFace.CurseRedYellowNew, "BEST  TIME\n--.--", true);
-// last = new HudLabel(scalingStrategy, FontFace.CurseRedYellowNew, "LAST  TIME\n--.--", true);
-
 		curr = new HudLabel(scalingStrategy.invTileMapZoomFactor, FontFace.LcdWhite, "99.99", true, 1.5f);
-		curr.setPosition(Gdx.graphics.getWidth() / 2, Gdx.graphics.getHeight() - curr.getHalfHeight() - 10 * scale);
+		curr.setPosition(Gdx.graphics.getWidth() / 2, Gdx.graphics.getHeight() - curr.getHalfHeight() - Convert.scaledPixels(10)
+			* scale);
 
-// last.setPosition(gridX * 3, 50 * scalingStrategy.invTileMapZoomFactor);
-// best.setPosition(gridX * 4, 50 * scalingStrategy.invTileMapZoomFactor);
+		r = new BoxedFloat(1);
+		g = new BoxedFloat(1);
+		b = new BoxedFloat(1);
+		isValid = true;
 	}
 
 	@Override
 	public void dispose () {
 	}
 
-	@Override
-	public void onTick () {
-		// current time
-		curr.setString(NumberString.format(lapInfo.getElapsedSeconds()), true);
+	public void toDefaultColor () {
+		toColor(1, 1, 1);
+	}
 
-// // best time
-// if (lapInfo.hasBestTrackTimeSeconds()) {
-// // has best
-// best.setString("BEST  TIME\n" + NumberString.format(lapInfo.getBestTrackTimeSeconds()) + "s");
-// } else {
-// // temporarily use last track time
-// if (lapInfo.hasLastTrackTimeSeconds()) {
-// best.setString("BEST  TIME\n" + NumberString.format(lapInfo.getLastTrackTimeSeconds()) + "s");
-// } else {
-// best.setString("BEST TIME\n--:--");
-// }
-// }
-//
-// // last time
-// if (lapInfo.hasLastTrackTimeSeconds()) {
-// // has only last
-// last.setString("LAST  TIME\n" + NumberString.format(lapInfo.getLastTrackTimeSeconds()) + "s");
-// } else {
-// last.setString("LAST  TIME\n--:--");
-// }
+	public void toColor (float red, float green, float blue) {
+		toColor(500, red, green, blue);
+	}
+
+	public void toColor (int millisecs, float red, float green, float blue) {
+		Timeline seq = Timeline.createParallel();
+
+		//@off
+		seq
+			.push(Tween.to(r, BoxedFloatAccessor.VALUE, millisecs).target(red).ease(Linear.INOUT))
+			.push(Tween.to(g, BoxedFloatAccessor.VALUE, millisecs).target(green).ease(Linear.INOUT))
+			.push(Tween.to(b, BoxedFloatAccessor.VALUE, millisecs).target(blue).ease(Linear.INOUT))
+		;
+		//@on
+
+		GameTweener.start(seq);
+	}
+
+	public boolean isValid () {
+		return isValid;
+	}
+
+	public void setValid (boolean valid) {
+		isValid = valid;
+	}
+
+	public void setInvalid (String message) {
+		isValid = false;
+		curr.setString(message, true);
 	}
 
 	@Override
 	public void onRender (SpriteBatch batch) {
-		curr.render(batch);
-// best.render(batch);
-// last.render(batch);
-	}
+		// current time
+		if (isValid) {
+			curr.setString(NumberString.format(lapInfo.getElapsedSeconds()), true);
+		}
 
-	@Override
-	public void onReset () {
+		curr.setPosition(Gdx.graphics.getWidth() / 2, Gdx.graphics.getHeight() - curr.getHalfHeight() - Convert.scaledPixels(25)
+			* scale);
+
+		curr.setColor(r.value, g.value, b.value);
+		curr.render(batch);
 	}
 }
