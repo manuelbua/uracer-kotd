@@ -114,7 +114,6 @@ public final class HudPlayer extends HudElement {
 		float cz = renderer.getWorldRenderer().getCameraZoom();
 
 		basicInfo.render(batch);
-		wrongWay.render(batch);
 
 		atPlayer(driftBar);
 		driftBar.render(batch, cz);
@@ -131,6 +130,8 @@ public final class HudPlayer extends HudElement {
 
 		highlightError.render(batch, cz);
 		highlightNext.render(batch, cz);
+
+		wrongWay.render(batch);
 	}
 
 	//

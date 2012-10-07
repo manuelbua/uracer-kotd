@@ -237,10 +237,6 @@ public abstract strictfp class Car extends Box2DEntity {
 
 	@Override
 	public void onBeforePhysicsSubstep () {
-		// keeps track of the previous position to be able
-		// to compute the cumulative traveled distance
-		// previousPosition.set( body.getPosition() );
-
 		super.onBeforePhysicsSubstep();
 
 		// let's subclasses behave as needed, ask them to fill carForces with new data

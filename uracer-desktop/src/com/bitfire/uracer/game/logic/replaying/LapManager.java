@@ -7,6 +7,7 @@ import com.bitfire.uracer.configuration.UserProfile;
 import com.bitfire.uracer.game.actors.Car;
 import com.bitfire.uracer.game.actors.CarForces;
 import com.bitfire.uracer.game.logic.LapInfo;
+import com.bitfire.uracer.game.logic.replaying.ReplayRecorder.RecorderError;
 
 /** Records player laps and keeps updated information for the current lap. */
 public class LapManager implements Disposable {
@@ -121,10 +122,12 @@ public class LapManager implements Disposable {
 	}
 
 	/** Add and record the specified CarForces */
-	public void record (CarForces forces) {
+	public RecorderError record (CarForces forces) {
 		if (recorder.isRecording()) {
-			recorder.add(forces);
+			return recorder.add(forces);
 		}
+
+		return RecorderError.RecordingNotEnabled;
 	}
 
 	/** Returns whether or not the lap manager is recording the player's performance */

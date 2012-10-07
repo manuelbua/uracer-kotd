@@ -39,6 +39,7 @@ import com.bitfire.uracer.game.logic.post.animators.AggressiveCold;
 import com.bitfire.uracer.game.logic.replaying.LapManager;
 import com.bitfire.uracer.game.logic.replaying.Replay;
 import com.bitfire.uracer.game.logic.replaying.ReplayManager;
+import com.bitfire.uracer.game.logic.replaying.ReplayRecorder.RecorderError;
 import com.bitfire.uracer.game.logic.types.common.TimeModulator;
 import com.bitfire.uracer.game.player.PlayerCar;
 import com.bitfire.uracer.game.player.PlayerDriftStateEvent;
@@ -74,10 +75,10 @@ public abstract class CommonLogic implements GameLogic, CarEvent.Listener, CarSt
 	protected GhostCar[] ghostCars = new GhostCar[ReplayManager.MaxReplays];
 	protected Time wrongWayTimer = new Time();
 	protected boolean isWrongWay = false;
+	protected boolean isCurrentLapValid = true;
 
 	// lap
 	protected LapManager lapManager = null;
-	protected boolean isFirstLap = true;
 
 	// tasks
 	protected GameTasksManager gameTasksManager = null;
@@ -368,7 +369,6 @@ public abstract class CommonLogic implements GameLogic, CarEvent.Listener, CarSt
 		resetAllGhosts();
 		gameWorldRenderer.setInitialCameraPositionOrient(playerCar);
 
-		isFirstLap = true;
 		timeDilation = false;
 		timeMod.reset();
 		SysTweener.clear();
@@ -377,6 +377,7 @@ public abstract class CommonLogic implements GameLogic, CarEvent.Listener, CarSt
 		gameTasksManager.restart();
 
 		isWrongWay = false;
+		isCurrentLapValid = true;
 		wrongWayTimer.reset();
 		playerTasks.playerDriftSoundFx.start();
 		playerTasks.hudLapInfo.toDefaultColor();
@@ -408,16 +409,18 @@ public abstract class CommonLogic implements GameLogic, CarEvent.Listener, CarSt
 		// determine player's isWrongWay
 		if (hasPlayer()) {
 			float conf = gameTrack.getTrackRouteConfidence(playerCar);
-			if (conf < 0) {
+			if (conf <= 0) {
+
+				// player wrong
+
+				// if not already marked as on the wrong way, check if confidence stays negative for more than <n> seconds
+				// after staying positive, then it's safe to assume the wrong way is being played
+
 				if (!isWrongWay) {
 					if (wrongWayTimer.isStopped()) {
-						Gdx.app.log("CommonLogic", "--> wrong way begin detector");
+						Gdx.app.log("CommonLogic", "--> detect wrong way begin");
 						wrongWayTimer.start();
-					}
-
-					// if confidence stays negative for more than one second after staying positive, then
-					// assume the wrong way is being played
-					if (wrongWayTimer.elapsed(Reference.TickSeconds) > 1) {
+					} else if (wrongWayTimer.elapsed(Reference.TickSeconds) > 0.5f) {
 						wrongWayTimer.reset();
 
 						// invalidate the lap
@@ -431,20 +434,28 @@ public abstract class CommonLogic implements GameLogic, CarEvent.Listener, CarSt
 						playerTasks.hudPlayer.wrongWay.fadeIn();
 						playerTasks.hudLapInfo.toColor(1, 0, 0);
 						playerTasks.hudLapInfo.setInvalid("invalid lap");
-// Gdx.app.log("SinglePlayerLogic", "--> wrong way");
+					}
+				} else {
+					// player changed his mind earlier and there weren't enough seconds of wrong way to mark it
+					// as that, reset the timer
+					if (!wrongWayTimer.isStopped()) {
+						Gdx.app.log("CommonLogic", "Player changed his mind earlier, resetting the wrong way timer (begin detector)");
+						wrongWayTimer.reset();
 					}
 				}
+
 			} else if (conf > 0) {
+
+				// player correct
+
+				// if not already marked as on the good way, check if confidence stays positive for more than <n> seconds
+				// after staying negative, then it's safe to assume the right way is being played
+
 				if (isWrongWay) {
 					if (wrongWayTimer.isStopped()) {
 						wrongWayTimer.start();
-						Gdx.app.log("CommonLogic", "<-- wrong way end detector");
-					}
-
-					// if confidence stays positive for more than one second after staying negative, then
-					// assume the right way is being played
-
-					if (wrongWayTimer.elapsed(Reference.TickSeconds) > 1f) {
+						Gdx.app.log("CommonLogic", "<-- detect wrong way end");
+					} else if (wrongWayTimer.elapsed(Reference.TickSeconds) > 1) {
 						// wrong way finished
 
 						wrongWayTimer.reset();
@@ -453,20 +464,29 @@ public abstract class CommonLogic implements GameLogic, CarEvent.Listener, CarSt
 						playerTasks.hudPlayer.wrongWay.fadeOut();
 						playerTasks.hudLapInfo.toColor(1, 1, 0);
 						playerTasks.hudLapInfo.setInvalid("back to start");
-// Gdx.app.log("SinglePlayerLogic", "<-- wrong way");
+					}
+				} else {
+					// player changed his mind earlier and there weren't enough seconds of wrong way to mark it
+					// as that, reset the timer
+					if (!wrongWayTimer.isStopped()) {
+						Gdx.app.log("CommonLogic", "Player changed his mind earlier, resetting the wrong way timer (end detector)");
+						wrongWayTimer.reset();
 					}
 				}
+
 			}
 		}
 
-		// blink on wrong way (keeps calling, returns if busy)
+		// blink on wrong way (keeps calling, returns earlier if busy)
 		if (isWrongWay) {
 			playerTasks.hudPlayer.highlightWrongWay();
 		}
-		// blink on out of track (keeps calling, returns if busy)
+		// blink on out of track (keeps calling, returns earlier if busy)
 		if (playerCar.isOutOfTrack()) {
 			playerTasks.hudPlayer.highlightOutOfTrack();
 		}
+
+		isCurrentLapValid = !isWrongWay;
 	}
 
 	@Override
@@ -635,7 +655,9 @@ public abstract class CommonLogic implements GameLogic, CarEvent.Listener, CarSt
 			backInTrack();
 			break;
 		case onComputeForces:
-			lapManager.record(data.forces);
+			if (lapManager.record(data.forces) == RecorderError.ReplayMemoryLimitReached) {
+
+			}
 			break;
 		case onGhostFadingOut:
 			ghostFadingOut(data.car);
@@ -696,7 +718,7 @@ public abstract class CommonLogic implements GameLogic, CarEvent.Listener, CarSt
 
 		if (onStartZone) {
 
-			if (isWrongWay) {
+			if (!isCurrentLapValid) {
 				return;
 			}
 

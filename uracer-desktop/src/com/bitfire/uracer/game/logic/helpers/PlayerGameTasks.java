@@ -52,8 +52,8 @@ public final class PlayerGameTasks {
 		playerEngineSoundFx = new PlayerEngineSoundEffect(player);
 
 		// track effects
-		int maxSkidMarks = Config.isDesktop ? 500 : 100;
-		float maxLife = Config.isDesktop ? 7 : 3;
+		int maxSkidMarks = Config.isDesktop ? 150 : 100;
+		float maxLife = Config.isDesktop ? 5 : 3;
 		playerSkidMarks = new PlayerSkidMarks(player, maxSkidMarks, maxLife);
 		playerSmokeTrails = new PlayerSmokeTrails(scalingStrategy, player);
 

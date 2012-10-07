@@ -120,7 +120,7 @@ public final class Config {
 			} else if (w >= 1200) {
 				BlurType = Blur.BlurType.Gaussian5x5b;
 			} else if (w >= 800) {
-				BlurType = Blur.BlurType.Gaussian5x5b;
+				BlurType = Blur.BlurType.Gaussian3x3b;
 			}
 
 			Gdx.app.log("Config", "blurType=" + BlurType);

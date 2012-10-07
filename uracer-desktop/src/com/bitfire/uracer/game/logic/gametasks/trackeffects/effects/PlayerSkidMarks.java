@@ -10,7 +10,6 @@ import com.bitfire.uracer.configuration.Config;
 import com.bitfire.uracer.game.logic.gametasks.trackeffects.TrackEffect;
 import com.bitfire.uracer.game.logic.gametasks.trackeffects.TrackEffectType;
 import com.bitfire.uracer.game.player.PlayerCar;
-import com.bitfire.uracer.game.player.PlayerDriftState;
 import com.bitfire.uracer.game.rendering.GameRenderer;
 import com.bitfire.uracer.resources.Art;
 import com.bitfire.uracer.utils.AMath;
@@ -90,14 +89,15 @@ public class PlayerSkidMarks extends TrackEffect {
 
 	@Override
 	public void tick () {
-		if (player.carState.currVelocityLenSquared >= 1) {
+		if (player.carState.currVelocityLenSquared >= 1 && player.driftState.driftStrength > 0.3f
+			&& player.carState.currSpeedFactor > 0.1f) {
 			ppos.x = Convert.mt2px(player.getBody().getPosition().x);
 			ppos.y = Convert.mt2px(player.getBody().getPosition().y);
 
 			// tryAddDriftMark( player.state().position, player.state().orientation, player.driftState );
 			// tryAddDriftMark( ppos, player.state().orientation, player.getCarDescriptor().steerangle *
 			// MathUtils.radiansToDegrees, player.driftState );
-			tryAddDriftMark(ppos, player.state().orientation, player.driftState);
+			tryAddDriftMark(ppos, player.state().orientation);
 		}
 
 		SkidMark d;
@@ -136,12 +136,9 @@ public class PlayerSkidMarks extends TrackEffect {
 		// Gdx.app.log( "PlayerSkidMarks", "visibles=" + visibleSkidMarksCount );
 	}
 
-	private void tryAddDriftMark (Vector2 position, float orientation, /* float steerAngle, */PlayerDriftState driftState) {
+	private void tryAddDriftMark (Vector2 position, float orientation) {
 		// avoid blatant overdrawing
 		if ((int)position.x == (int)last.x && (int)position.y == (int)last.y) {
-			// position.x = AMath.lerp( last.x, position.x, 0.25f );
-			// position.y = AMath.lerp( last.y, position.y, 0.25f );
-			// Gdx.app.log( "PlayerSkidMarks", "Skipping emitting particle..." );
 			return;
 		}
 
@@ -157,8 +154,7 @@ public class PlayerSkidMarks extends TrackEffect {
 			pos.x = AMath.lerp(last.x, position.x, theta * i);
 			pos.y = AMath.lerp(last.y, position.y, theta * i);
 
-			if (driftState.driftStrength > 0.2f)
-			// if( di.isDrifting )
+// if (player.driftState.driftStrength > 0.3f && player.carState.currSpeedFactor > 0.1f)
 			{
 				// add front drift marks?
 				SkidMark drift = skidMarks[markIndex++];
@@ -168,8 +164,8 @@ public class PlayerSkidMarks extends TrackEffect {
 
 				// drift.alphaFront = driftState.driftStrength;
 				// drift.alphaRear = driftState.driftStrength;
-				drift.alphaFront = driftState.lateralForcesFront * driftState.driftStrength * theta;
-				drift.alphaRear = driftState.lateralForcesRear * driftState.driftStrength * theta;
+				drift.alphaFront = player.driftState.lateralForcesFront * player.driftState.driftStrength * theta;
+				drift.alphaRear = player.driftState.lateralForcesRear * player.driftState.driftStrength * theta;
 				drift.setPosition(pos);
 				drift.setOrientation(orientation);
 				// drift.front.setRotation( orientation - steerAngle );
@@ -219,13 +215,8 @@ public class PlayerSkidMarks extends TrackEffect {
 			rear.setRotation(degrees);
 		}
 
-		private Rectangle tmp = new Rectangle();
-
 		public Rectangle getBoundingRectangle () {
-			// front and rear rectangles always converge, just use one
-			tmp.set(front.getBoundingRectangle());
-			// tmp.merge( rear.getBoundingRectangle() );
-			return tmp;
+			return front.getBoundingRectangle();
 		}
 	}
 

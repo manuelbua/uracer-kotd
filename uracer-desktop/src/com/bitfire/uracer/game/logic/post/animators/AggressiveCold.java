@@ -56,7 +56,7 @@ public final class AggressiveCold implements PostProcessingAnimator {
 	public void reset () {
 		if (bloom != null) {
 			float threshold = (nightMode ? 0.2f : 0.45f);
-			Bloom.Settings bloomSettings = new Bloom.Settings("subtle", Config.PostProcessing.BlurType, 1, 1.5f, threshold, 1f,
+			Bloom.Settings bloomSettings = new Bloom.Settings("subtle", Config.PostProcessing.BlurType, 2, 1.5f, threshold, 1f,
 				0.5f, 1f, 1.5f);
 			bloom.setSettings(bloomSettings);
 		}
@@ -156,7 +156,7 @@ public final class AggressiveCold implements PostProcessingAnimator {
 			bloom.setBaseSaturation(AMath.lerp(0.6f, 0.2f, timeModFactor));
 			// bloom.setBloomSaturation( 1.5f - factor * 0.85f ); // TODO when charged
 			// bloom.setBloomSaturation( 1.5f - factor * 1.5f ); // TODO when completely discharged
-			bloom.setBloomSaturation(1f - timeModFactor * 0.8f);
+// bloom.setBloomSaturation(1f - timeModFactor * 0.8f);
 		}
 
 		if (vignette != null) {
@@ -171,9 +171,9 @@ public final class AggressiveCold implements PostProcessingAnimator {
 			// vignette.setCenter( Gdx.graphics.getWidth() / 2, Gdx.graphics.getHeight() / 2 );
 			// }
 
-			vignette.setLutIntensity(0.25f + timeModFactor * 1.25f);// * AMath.clamp( driftStrength * 1.25f, 0, 1 ) );
+			vignette.setLutIntensity(0f + timeModFactor * 1.25f);// * AMath.clamp( driftStrength * 1.25f, 0, 1 ) );
 			vignette.setIntensity(1);
-			vignette.setLutIndex(6);
+			vignette.setLutIndex(16);
 		}
 
 		//

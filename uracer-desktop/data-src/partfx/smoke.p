@@ -142,4 +142,4 @@ aligned: false
 additive: false
 behind: true
 - Image Path -
-/home/manuel/dev/uracer-libgdx/uracer-desktop/data-src/cars/skid-smoke-small.png
+skid-smoke-small

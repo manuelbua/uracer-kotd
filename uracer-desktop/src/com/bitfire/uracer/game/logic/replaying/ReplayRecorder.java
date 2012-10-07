@@ -6,6 +6,14 @@ import com.bitfire.uracer.game.actors.Car;
 import com.bitfire.uracer.game.actors.CarForces;
 
 public final class ReplayRecorder {
+	// @off
+	public enum RecorderError {
+		NoError,
+		RecordingNotEnabled,
+		ReplayMemoryLimitReached
+	}
+	// @on
+
 	private final long userId;
 	private boolean isRecording;
 
@@ -35,15 +43,18 @@ public final class ReplayRecorder {
 		replay.begin(trackId, car);
 	}
 
-	public void add (CarForces f) {
+	public RecorderError add (CarForces f) {
 		if (!isRecording) {
 			Gdx.app.log("Recorder", "Cannot add event, recording not enabled!");
-			return;
+			return RecorderError.RecordingNotEnabled;
 		}
 
 		if (!replay.add(f)) {
 			Gdx.app.log("Recorder", "Replay memory limit reached (" + Replay.MaxEvents + " events), restarting.");
+			return RecorderError.ReplayMemoryLimitReached;
 		}
+
+		return RecorderError.NoError;
 	}
 
 	public Replay endRecording () {

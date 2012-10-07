@@ -40,12 +40,6 @@ public final class TrackEffects extends GameTask {
 	public TrackEffects () {
 		GameEvents.gameRenderer.addListener(listener, RenderEvent, GameRendererEvent.Order.MINUS_4);
 		GameEvents.gameRenderer.addListener(listener, RenderEvent, GameRendererEvent.Order.PLUS_4);
-
-		// NOTE for custom render event
-		// for CarSkidMarks GameRenderer.event.addListener( gameRendererEvent, GameRendererEvent.Type.BatchBeforeMeshes,
-		// GameRendererEvent.Order.Order_Minus_4 );
-		// for SmokeTrails GameRenderer.event.addListener( gameRendererEvent, GameRendererEvent.Type.BatchBeforeMeshes,
-		// GameRendererEvent.Order.Order_Minus_3 );
 	}
 
 	public void addBeforeEntities (TrackEffect effect) {
