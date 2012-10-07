@@ -105,6 +105,7 @@ public final class Config {
 	public static final class PostProcessing {
 
 		public static BlurType BlurType;
+		public static int BlurNumPasses;
 		public static int ScaledFboWidth, ScaledFboHeight;
 		private static float RttRatio = 0.25f;
 
@@ -117,10 +118,13 @@ public final class Config {
 			int w = Gdx.graphics.getWidth();
 			if (w >= 1400) {
 				BlurType = Blur.BlurType.Gaussian5x5b;
+				BlurNumPasses = 2;
 			} else if (w >= 1200) {
 				BlurType = Blur.BlurType.Gaussian5x5b;
+				BlurNumPasses = 2;
 			} else if (w >= 800) {
 				BlurType = Blur.BlurType.Gaussian3x3b;
+				BlurNumPasses = 2;
 			}
 
 			Gdx.app.log("Config", "blurType=" + BlurType);
