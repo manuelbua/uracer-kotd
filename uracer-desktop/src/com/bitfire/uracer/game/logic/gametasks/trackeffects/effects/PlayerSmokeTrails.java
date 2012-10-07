@@ -46,10 +46,6 @@ public class PlayerSmokeTrails extends TrackEffect {
 			MaxParticleLifeMaxMs = baseEmitter.getLife().getHighMax();
 			OriginalParticleScaling = baseEmitter.getScale().getHighMax();
 			MaxParticlesPerEmitterPerSec = baseEmitter.getEmission().getHighMax();
-
-			baseEmitter.setAdditive(true);
-
-			setScaleMul(1f);
 		}
 
 		public void setLifeMul (float value) {
@@ -103,7 +99,7 @@ public class PlayerSmokeTrails extends TrackEffect {
 			fx[i] = new SmokeEffect();
 			fx[i].setLifeMul(3.5f);
 			fx[i].setScaleMul(1.5f);
-			fx[i].setEmissionMul(1.2f);
+			fx[i].setEmissionMul(0.25f);
 // fx[i].stop();
 // fx[i].start();
 		}
@@ -151,10 +147,9 @@ public class PlayerSmokeTrails extends TrackEffect {
 	public void render (SpriteBatch batch) {
 		tmp.set(posX, posY);
 
-// fx[0].baseEmitter.setAdditive(true);
+		fx[0].baseEmitter.setAdditive(true);
 		fx[0].setLifeMul(MathUtils.random(10f, 15f) * player.driftState.driftStrength);
 		fx[0].setScaleMul(MathUtils.random(0.1f, 0.1f + 10f * player.driftState.driftStrength));
-		fx[0].setEmissionMul(0.25f);
 
 		float t = player.driftState.driftStrength * 0.75f;
 		fx[0].baseEmitter.getTransparency().setHighMin(t);
