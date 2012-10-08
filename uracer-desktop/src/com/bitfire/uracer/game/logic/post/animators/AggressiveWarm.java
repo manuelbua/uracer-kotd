@@ -51,6 +51,14 @@ public final class AggressiveWarm implements PostProcessingAnimator {
 	}
 
 	@Override
+	public void ErrorScreenShow (int milliseconds) {
+	}
+
+	@Override
+	public void ErrorScreenHide (int milliseconds) {
+	}
+
+	@Override
 	public void reset () {
 		if (bloom != null) {
 			float threshold = (nightMode ? 0.2f : 0.45f);
@@ -62,8 +70,10 @@ public final class AggressiveWarm implements PostProcessingAnimator {
 		if (vignette != null) {
 			vignette.setCoords(0.8f, 0.25f);
 			vignette.setCenter(Gdx.graphics.getWidth() / 2, Gdx.graphics.getHeight() / 2);
-			vignette.setLut(Art.postXpro);
-			vignette.setLutIndex(7);
+			vignette.setLutTexture(Art.postXpro);
+			vignette.setLutIndexVal(0, 7);
+			vignette.setLutIndexVal(1, 0);
+			vignette.setLutIndexOffset(0);
 			vignette.setEnabled(true);
 		}
 

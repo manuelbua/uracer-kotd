@@ -107,7 +107,7 @@ public final class Config {
 		public static BlurType BlurType;
 		public static int BlurNumPasses;
 		public static int ScaledFboWidth, ScaledFboHeight;
-		private static float RttRatio = 0.25f;
+		private static float RttRatio = 0.5f;
 
 		// compute per-resolution constants
 		public static void asDefault () {

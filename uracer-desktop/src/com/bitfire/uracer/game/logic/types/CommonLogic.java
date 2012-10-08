@@ -194,6 +194,14 @@ public abstract class CommonLogic implements GameLogic, CarEvent.Listener, CarSt
 
 	protected abstract void ghostFadingOut (Car ghost);
 
+	protected void wrongWayBegins () {
+		postProcessing.getAnimator(AggressiveCold.Name).ErrorScreenShow(1500);
+	}
+
+	protected void wrongWayEnds () {
+		postProcessing.getAnimator(AggressiveCold.Name).ErrorScreenHide(5000);
+	}
+
 	//
 	// SHARED OPERATIONS (Subclass Sandbox pattern)
 	//
@@ -379,6 +387,9 @@ public abstract class CommonLogic implements GameLogic, CarEvent.Listener, CarSt
 		isWrongWay = false;
 		isCurrentLapValid = true;
 		wrongWayTimer.reset();
+
+		postProcessing.resetAnimator();
+
 		playerTasks.playerDriftSoundFx.start();
 		playerTasks.hudLapInfo.toDefaultColor();
 		playerTasks.hudLapInfo.setValid(true);
@@ -434,6 +445,8 @@ public abstract class CommonLogic implements GameLogic, CarEvent.Listener, CarSt
 						playerTasks.hudPlayer.wrongWay.fadeIn();
 						playerTasks.hudLapInfo.toColor(1, 0, 0);
 						playerTasks.hudLapInfo.setInvalid("invalid lap");
+
+						wrongWayBegins();
 					}
 				} else {
 					// player changed his mind earlier and there weren't enough seconds of wrong way to mark it
@@ -464,6 +477,8 @@ public abstract class CommonLogic implements GameLogic, CarEvent.Listener, CarSt
 						playerTasks.hudPlayer.wrongWay.fadeOut();
 						playerTasks.hudLapInfo.toColor(1, 1, 0);
 						playerTasks.hudLapInfo.setInvalid("back to start");
+
+						wrongWayEnds();
 					}
 				} else {
 					// player changed his mind earlier and there weren't enough seconds of wrong way to mark it

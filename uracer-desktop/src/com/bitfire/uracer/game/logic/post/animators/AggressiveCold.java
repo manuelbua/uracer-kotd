@@ -1,6 +1,10 @@
 
 package com.bitfire.uracer.game.logic.post.animators;
 
+import aurelienribon.tweenengine.Timeline;
+import aurelienribon.tweenengine.Tween;
+import aurelienribon.tweenengine.equations.Quad;
+
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.math.MathUtils;
 import com.badlogic.gdx.math.Vector2;
@@ -17,8 +21,11 @@ import com.bitfire.uracer.game.logic.post.PostProcessingAnimator;
 import com.bitfire.uracer.game.logic.types.CommonLogic;
 import com.bitfire.uracer.game.player.PlayerCar;
 import com.bitfire.uracer.game.rendering.GameRenderer;
+import com.bitfire.uracer.game.tween.GameTweener;
 import com.bitfire.uracer.resources.Art;
 import com.bitfire.uracer.utils.AMath;
+import com.bitfire.uracer.utils.BoxedFloat;
+import com.bitfire.uracer.utils.BoxedFloatAccessor;
 
 public final class AggressiveCold implements PostProcessingAnimator {
 	public static final String Name = "AggressiveCold";
@@ -32,6 +39,8 @@ public final class AggressiveCold implements PostProcessingAnimator {
 	private Curvature curvature = null;
 	private PlayerCar player = null;
 	private boolean hasPlayer = false;
+	private BoxedFloat lutIndexOffset;
+	private BoxedFloat errorIntensity;
 
 	public AggressiveCold (CommonLogic logic, PostProcessing post, boolean nightMode) {
 		this.logic = logic;
@@ -42,6 +51,9 @@ public final class AggressiveCold implements PostProcessingAnimator {
 		crt = (CrtMonitor)post.getEffect(PostProcessing.Effects.Crt.name);
 		curvature = (Curvature)post.getEffect(PostProcessing.Effects.Curvature.name);
 
+		lutIndexOffset = new BoxedFloat(0);
+		errorIntensity = new BoxedFloat(0);
+
 		reset();
 	}
 
@@ -50,6 +62,20 @@ public final class AggressiveCold implements PostProcessingAnimator {
 		this.player = player;
 		hasPlayer = (player != null);
 		reset();
+	}
+
+	@Override
+	public void ErrorScreenShow (int milliseconds) {
+		GameTweener.start(Timeline.createParallel()
+			.push(Tween.to(lutIndexOffset, BoxedFloatAccessor.VALUE, milliseconds).target(0.8f).ease(Quad.INOUT))
+			.push(Tween.to(errorIntensity, BoxedFloatAccessor.VALUE, milliseconds).target(0.8f).ease(Quad.INOUT)));
+	}
+
+	@Override
+	public void ErrorScreenHide (int milliseconds) {
+		GameTweener.start(Timeline.createParallel()
+			.push(Tween.to(lutIndexOffset, BoxedFloatAccessor.VALUE, milliseconds).target(0).ease(Quad.INOUT))
+			.push(Tween.to(errorIntensity, BoxedFloatAccessor.VALUE, milliseconds).target(0).ease(Quad.INOUT)));
 	}
 
 	@Override
@@ -65,8 +91,12 @@ public final class AggressiveCold implements PostProcessingAnimator {
 			vignette.setCoords(0.85f, 0.3f);
 			// vignette.setCoords( 1.5f, 0.1f );
 			vignette.setCenter(Gdx.graphics.getWidth() / 2, Gdx.graphics.getHeight() / 2);
-			vignette.setLut(Art.postXpro);
-			vignette.setLutIndex(5);
+			vignette.setLutTexture(Art.postXpro);
+			vignette.setLutIndexVal(0, 16);
+			vignette.setLutIndexVal(1, 7);
+			vignette.setLutIndexOffset(0);
+			lutIndexOffset.value = 0;
+			errorIntensity.value = 0;
 			vignette.setEnabled(true);
 		}
 
@@ -81,6 +111,7 @@ public final class AggressiveCold implements PostProcessingAnimator {
 			startMs = TimeUtils.millis();
 			crt.setTime(0);
 
+			// note, a perfect color offset depends from screen size
 			crt.setColorOffset(0.002f);
 			crt.setDistortion(0.125f);
 			crt.setZoom(0.94f);
@@ -105,6 +136,8 @@ public final class AggressiveCold implements PostProcessingAnimator {
 	private WindowedMean meanSpeed = new WindowedMean(2);
 	private WindowedMean meanStrength = new WindowedMean(5);
 
+	// FIXME shader settings should be bound by setParams instead!
+	// ^
 	@Override
 	public void update (float timeModFactor) {
 		float currDriftStrength = 0;
@@ -157,6 +190,14 @@ public final class AggressiveCold implements PostProcessingAnimator {
 			// bloom.setBloomSaturation( 1.5f - factor * 0.85f ); // TODO when charged
 			// bloom.setBloomSaturation( 1.5f - factor * 1.5f ); // TODO when completely discharged
 // bloom.setBloomSaturation(1f - timeModFactor * 0.8f);
+
+// with RttRatio = 0.5f
+// bloom.setBaseIntesity(0.9f);
+// bloom.setBaseSaturation(1f);
+// bloom.setBloomIntesity(1f);
+// bloom.setBloomSaturation(1f);
+// bloom.setThreshold(0.4f);
+// bloom.setBlurPasses(2);
 		}
 
 		if (vignette != null) {
@@ -171,9 +212,12 @@ public final class AggressiveCold implements PostProcessingAnimator {
 			// vignette.setCenter( Gdx.graphics.getWidth() / 2, Gdx.graphics.getHeight() / 2 );
 			// }
 
-			vignette.setLutIntensity(0f + timeModFactor * 1.25f);// * AMath.clamp( driftStrength * 1.25f, 0, 1 ) );
-			vignette.setIntensity(1);
-			vignette.setLutIndex(16);
+			float lutIntensity = 0.15f + timeModFactor * 0.85f + errorIntensity.value * 0.85f;
+			lutIntensity = MathUtils.clamp(lutIntensity, 0, 1);
+
+			vignette.setLutIntensity(lutIntensity);
+			vignette.setIntensity(1.1f);
+			vignette.setLutIndexOffset(lutIndexOffset.value);
 		}
 
 		//

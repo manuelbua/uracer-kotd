@@ -126,6 +126,12 @@ public final class PostProcessing {
 		}
 	}
 
+	public void resetAnimator () {
+		if (hasPostProcessor && currentAnimator != null) {
+			currentAnimator.reset();
+		}
+	}
+
 	public void onBeforeRender (float timeModFactor) {
 		if (hasPostProcessor && currentAnimator != null) {
 			currentAnimator.update(timeModFactor);
