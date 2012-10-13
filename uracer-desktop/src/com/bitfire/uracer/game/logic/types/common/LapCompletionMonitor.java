@@ -30,7 +30,7 @@ public class LapCompletionMonitor {
 
 	public void reset () {
 		previousCompletion = 0;
-		currentCompletion = 0;
+		currentCompletion = -1;
 	}
 
 	public void update () {

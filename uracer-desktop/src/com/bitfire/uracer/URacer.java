@@ -241,7 +241,7 @@ public class URacer implements ApplicationListener {
 
 				// simulate slowness
 // try {
-// Thread.sleep(20);
+// Thread.sleep(60);
 // } catch (InterruptedException e) {
 // }
 			}
