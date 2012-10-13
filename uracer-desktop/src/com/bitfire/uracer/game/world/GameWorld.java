@@ -35,11 +35,9 @@ import com.bitfire.uracer.ScalingStrategy;
 import com.bitfire.uracer.configuration.Config;
 import com.bitfire.uracer.game.GameTracks;
 import com.bitfire.uracer.game.collisions.CollisionFilters;
-import com.bitfire.uracer.game.world.WorldDefs.LayerProperties;
 import com.bitfire.uracer.game.world.WorldDefs.ObjectGroup;
 import com.bitfire.uracer.game.world.WorldDefs.ObjectProperties;
 import com.bitfire.uracer.game.world.WorldDefs.TileLayer;
-import com.bitfire.uracer.game.world.WorldDefs.TileProperties;
 import com.bitfire.uracer.game.world.models.MapUtils;
 import com.bitfire.uracer.game.world.models.ModelFactory;
 import com.bitfire.uracer.game.world.models.OrthographicAlignedStillModel;
@@ -49,6 +47,7 @@ import com.bitfire.uracer.game.world.models.TreeStillModel;
 import com.bitfire.uracer.resources.Art;
 import com.bitfire.uracer.utils.AMath;
 import com.bitfire.uracer.utils.Convert;
+import com.bitfire.uracer.utils.VMath;
 
 /** Encapsulates the game's world. Yay!
  * 
@@ -70,8 +69,7 @@ public final class GameWorld {
 
 	// player data
 	public Vector2 playerStartPos = new Vector2();
-	public float playerStartOrient;
-	public int playerStartTileX, playerStartTileY;
+	public float playerStartOrientRads;
 
 	// night system
 	private boolean nightMode;
@@ -114,13 +112,14 @@ public final class GameWorld {
 		mapUtils = new MapUtils(map, worldSizeScaledPx, scalingStrategy.invTileMapZoomFactor);
 
 		createMeshes();
-		loadPlayerData(map);
 		route = createRoute();
 		polys = createTrackPolygons();
 
 		if (route == null) {
 			throw new GdxRuntimeException("No route for this track");
 		}
+
+		loadPlayerData(map);
 
 		// FIXME, read night mode from level?
 		if (nightMode) {
@@ -182,55 +181,13 @@ public final class GameWorld {
 	}
 
 	private void loadPlayerData (TiledMap map) {
-		// search the map for the start marker and create
-		// the player with the found tile coordinates
-		float halfTile = map.tileWidth / 2;
 
-		TiledLayer layerTrack = mapUtils.getLayer(TileLayer.Track);
-		String direction = layerTrack.properties.get(LayerProperties.Start.mnemonic);
-		float startOrient = -mapUtils.orientationFromDirection(direction) * MathUtils.degreesToRadians;
-
-		Vector2 start = new Vector2();
-		int startTileX = 0, startTileY = 0;
-
-		for (int y = 0; y < map.height; y++) {
-			for (int x = 0; x < map.width; x++) {
-				int id = layerTrack.tiles[y][x];
-				String type = map.getTileProperty(id, TileProperties.Type.mnemonic);
-				if (type == null) {
-					continue;
-				}
-
-				if (type.equals("start")) {
-
-					float mul = 1;
-					float add = 0;
-
-					if (direction.equals("left")) {
-						mul = 2;
-						add = -3.5f;
-					} else if (direction.equals("right")) {
-						mul = 0;
-						add = 0;
-					}
-
-					start.set(mapUtils.tileToPx(x, y).add( /* Convert.scaledPixels */halfTile * mul + add, -halfTile));
-					// start.set( (x + 0.5f) * map.tileWidth, (map.height - (y +
-					// 0.5f)) * map.tileHeight );
-					start.set(Convert.px2mt(start));
-
-					startTileX = x;
-					startTileY = y;
-					break;
-				}
-			}
-		}
+		Vector2 tmp = new Vector2();
+		tmp.set(route.get(0)).sub(route.get(1));
 
 		// set player data
-		playerStartOrient = startOrient;
-		playerStartPos.set(start);
-		playerStartTileX = startTileX;
-		playerStartTileY = startTileY;
+		playerStartOrientRads = VMath.toRadians(tmp);
+		playerStartPos.set(route.get(0));
 	}
 
 	private void createLights () {

@@ -17,7 +17,6 @@ import com.bitfire.uracer.events.GameRendererEvent.Order;
 import com.bitfire.uracer.events.GameRendererEvent.Type;
 import com.bitfire.uracer.game.GameEvents;
 import com.bitfire.uracer.game.actors.Car;
-import com.bitfire.uracer.game.world.GameWorld;
 import com.bitfire.uracer.utils.VMath;
 
 /** Implements the track sectorizer and represents a view onto the logical portion of a track: it does sectorization and can be
@@ -64,9 +63,9 @@ public final class GameTrack implements Disposable {
 		}
 	}
 
-	public GameTrack (GameWorld gameWorld) {
-		this.route = gameWorld.getTrackRoute();
-		this.polys = gameWorld.getTrackPolygons();
+	public GameTrack (final List<Vector2> route, final List<Polygon> trackPoly) {
+		this.route = route;
+		this.polys = trackPoly;
 		this.sectors = new TrackSector[route.size()];
 
 		totalLength = sectorize();
@@ -116,7 +115,6 @@ public final class GameTrack implements Disposable {
 		}
 
 		return accuLength;
-
 	}
 
 	@Override
@@ -174,17 +172,17 @@ public final class GameTrack implements Disposable {
 			Vector2 heading = VMath.fromDegrees(car.state().orientation);
 			Vector2 dir = tmp.set(s.nLeading);
 
-			// switch coordinate space and rotate it so that both the player and the track sector converge
-			// to the same value when they are parallel
+			// switch coordinate space and rotate it so that both the car and the track sector converge
+			// to the same value when they are ~parallel and pointing to the same direction
 			dir.mul(-1, 1);
 
 			float dot = dir.dot(heading);
 
-// // @formatter:off
-// Gdx.app.log("GameTrack", "dir=(" + NumberString.formatSmall(dir.x) + "," + NumberString.formatSmall(dir.y)
-// + ", heading=" + NumberString.formatSmall(heading.x) + "," + NumberString.formatSmall(heading.x) + ", dot="
-// + NumberString.formatSmall(dot));
-// // @formatter:on
+			// @off
+//			Gdx.app.log("GameTrack", "dir=" + NumberString.formatSmall(dir.x) + "," + NumberString.formatSmall(dir.y)
+//				+ ", heading=" + NumberString.formatSmall(heading.x) + "," + NumberString.formatSmall(heading.x) + ", dot="
+//				+ NumberString.formatSmall(dot));
+			// @on
 
 			return dot;
 		}
@@ -255,7 +253,7 @@ public final class GameTrack implements Disposable {
 		private final List<Vector2> route;
 		private final GameTrack track;
 
-		private final Vector2 tmp = new Vector2();
+		// private final Vector2 tmp = new Vector2();
 		private boolean attached = false;
 
 		public DebugRenderer (GameTrack track, TrackSector[] sectors, List<Vector2> route) {

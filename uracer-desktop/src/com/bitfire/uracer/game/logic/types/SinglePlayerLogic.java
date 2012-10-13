@@ -90,7 +90,7 @@ public class SinglePlayerLogic extends CommonLogic {
 		} else {
 
 			// no ghost, no player, WTF?
-			gameWorldRenderer.setCameraPosition(gameWorld.playerStartPos, gameWorld.playerStartOrient, 0);
+			gameWorldRenderer.setCameraPosition(gameWorld.playerStartPos, gameWorld.playerStartOrientRads, 0);
 		}
 	}
 
@@ -274,6 +274,10 @@ public class SinglePlayerLogic extends CommonLogic {
 	protected void lapStarted () {
 		restartAllReplays();
 		playerTasks.hudPlayer.trackProgress.resetCounters(false);
+	}
+
+	@Override
+	protected void lapCompleted () {
 	}
 
 	@Override

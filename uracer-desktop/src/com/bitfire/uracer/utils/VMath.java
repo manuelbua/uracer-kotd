@@ -32,8 +32,12 @@ public final class VMath {
 		return retDeg;
 	}
 
-	public static float toAngle (Vector2 v) {
+	public static float toRadians (Vector2 v) {
 		return MathUtils.atan2(v.x, -v.y);
+	}
+
+	public static float toDegs (Vector2 v) {
+		return VMath.toRadians(v) * MathUtils.radDeg;
 	}
 
 	public static Vector2 perp (Vector2 result, Vector2 perpAt) {
