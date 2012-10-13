@@ -146,11 +146,11 @@ public final class CarHighlighter {
 
 		//@off
 		timeline
-			.push(Tween.to(bfScale, BoxedFloatAccessor.VALUE, ms).target(1).ease(Linear.INOUT))
-			.push(Tween.to(bfAlpha, BoxedFloatAccessor.VALUE, ms).target(1).ease(Linear.INOUT))
-			.push(Tween.to(bfRot, BoxedFloatAccessor.VALUE, ms).target(0).ease(Linear.INOUT))
+			.push(Tween.to(bfScale, BoxedFloatAccessor.VALUE, ms).target(1f).ease(Linear.INOUT))
+			.push(Tween.to(bfAlpha, BoxedFloatAccessor.VALUE, ms).target(1f).ease(Linear.INOUT))
+			.push(Tween.to(bfRot, BoxedFloatAccessor.VALUE, ms).target(0f).ease(Linear.INOUT))
 			.setCallback(busyCallback)
-			;
+		;
 		//@on
 
 		GameTweener.start(timeline);

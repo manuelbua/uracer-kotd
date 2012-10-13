@@ -6,9 +6,11 @@ import com.bitfire.uracer.game.player.PlayerCar;
 public interface PostProcessingAnimator {
 	void update (float timeModFactor);
 
-	void ErrorScreenShow (int milliseconds);
+	void alertWrongWayBegins (int milliseconds);
 
-	void ErrorScreenHide (int milliseconds);
+	void alertWrongWayEnds (int milliseconds);
+
+	public void alertCollision (float factor, int milliseconds);
 
 	void reset ();
 

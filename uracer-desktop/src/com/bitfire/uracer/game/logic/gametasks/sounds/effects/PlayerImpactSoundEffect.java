@@ -75,12 +75,11 @@ public final class PlayerImpactSoundEffect extends SoundEffect {
 
 			// avoid volumes==0, min-clamp at 20
 			float clampedImpactForce = AMath.clamp(impactForce, MinImpactForce, MaxImpactForce);
-
-			Gdx.app.log(this.getClass().getSimpleName(), impactForce + " (" + clampedImpactForce + ")");
-
 			float impactFactor = clampedImpactForce * OneOnMaxImpactForce;
 			// impactFactor = speedFactor;
 			float volumeFactor = 1f;
+
+			Gdx.app.log(this.getClass().getSimpleName(), impactForce + " (" + clampedImpactForce + ")");
 
 			Sound s = soundLow1;
 

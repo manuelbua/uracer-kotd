@@ -104,6 +104,7 @@ public abstract class CommonLogic implements GameLogic, CarEvent.Listener, CarSt
 		Tween.registerAccessor(Message.class, new MessageAccessor());
 		Tween.registerAccessor(HudLabel.class, new HudLabelAccessor());
 		Tween.registerAccessor(BoxedFloat.class, new BoxedFloatAccessor());
+
 		Gdx.app.log("GameLogic", "Tweening helpers created");
 
 		// post-processing
@@ -195,11 +196,12 @@ public abstract class CommonLogic implements GameLogic, CarEvent.Listener, CarSt
 	protected abstract void ghostFadingOut (Car ghost);
 
 	protected void wrongWayBegins () {
-		postProcessing.getAnimator(AggressiveCold.Name).ErrorScreenShow(1500);
+		postProcessing.getAnimator(AggressiveCold.Name).alertWrongWayBegins(500);
+		Gdx.app.log("CommonLogic", "wrong way begin");
 	}
 
 	protected void wrongWayEnds () {
-		postProcessing.getAnimator(AggressiveCold.Name).ErrorScreenHide(5000);
+		postProcessing.getAnimator(AggressiveCold.Name).alertWrongWayEnds(500);
 	}
 
 	//
@@ -660,6 +662,8 @@ public abstract class CommonLogic implements GameLogic, CarEvent.Listener, CarSt
 			if (timeDilation) {
 				requestTimeDilationFinish();
 			}
+
+			postProcessing.getAnimator(AggressiveCold.Name).alertCollision(0.75f, 4000);
 
 			collision();
 			break;

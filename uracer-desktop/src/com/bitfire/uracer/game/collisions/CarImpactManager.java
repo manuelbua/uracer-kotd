@@ -13,6 +13,8 @@ import com.bitfire.uracer.game.actors.CarType;
  * 
  * @author bmanuel */
 public class CarImpactManager extends ImpactManager {
+	private Vector2 tmpVec2 = new Vector2();
+
 	@Override
 	public void process (Contact contact, ContactImpulse impulse) {
 		Fixture a = contact.getFixtureA();
@@ -21,8 +23,6 @@ public class CarImpactManager extends ImpactManager {
 		ifCarThenCollide(a, b, impulse);
 		ifCarThenCollide(b, a, impulse);
 	}
-
-	private Vector2 tmpVec2 = new Vector2();
 
 	private void ifCarThenCollide (Fixture f, Fixture other, ContactImpulse impulse) {
 		Body body = f.getBody();

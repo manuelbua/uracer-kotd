@@ -14,12 +14,14 @@ public class GameWorldContactListener implements ContactListener {
 	public void beginContact (Contact contact) {
 		// if(Box2DUtils.isCar(contact.getFixtureA()) || Box2DUtils.isCar(contact.getFixtureB()))
 		// System.out.println("beginContact");
+// Gdx.app.log("Cntct", "begin");
 	}
 
 	@Override
 	public void endContact (Contact contact) {
 		// if(Box2DUtils.isCar(contact.getFixtureA()) || Box2DUtils.isCar(contact.getFixtureB()))
 		// System.out.println("endContact");
+// Gdx.app.log("Cntct", "end");
 	}
 
 	@Override

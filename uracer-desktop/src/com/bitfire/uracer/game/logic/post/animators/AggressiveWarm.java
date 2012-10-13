@@ -51,11 +51,15 @@ public final class AggressiveWarm implements PostProcessingAnimator {
 	}
 
 	@Override
-	public void ErrorScreenShow (int milliseconds) {
+	public void alertWrongWayBegins (int milliseconds) {
 	}
 
 	@Override
-	public void ErrorScreenHide (int milliseconds) {
+	public void alertWrongWayEnds (int milliseconds) {
+	}
+
+	@Override
+	public void alertCollision (float factor, int milliseconds) {
 	}
 
 	@Override

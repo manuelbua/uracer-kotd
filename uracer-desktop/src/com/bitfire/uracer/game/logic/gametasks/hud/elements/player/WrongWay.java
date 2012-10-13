@@ -23,7 +23,6 @@ public class WrongWay {
 
 	public WrongWay () {
 		sign = new Sprite(Art.wrongWay);
-		float ratio = Art.wrongWay.getWidth() / Art.wrongWay.getHeight();
 		float scale = 0.8f;
 		w = Convert.scaledPixels(Art.wrongWay.getWidth()) * scale;
 		h = Convert.scaledPixels(Art.wrongWay.getHeight()) * scale;
