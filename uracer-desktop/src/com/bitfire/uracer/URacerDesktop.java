@@ -1,11 +1,11 @@
 
 package com.bitfire.uracer;
 
-import java.awt.DisplayMode;
 import java.awt.GraphicsDevice;
 import java.awt.GraphicsEnvironment;
 
 import org.lwjgl.opengl.Display;
+import org.lwjgl.opengl.DisplayMode;
 
 import com.badlogic.gdx.Files.FileType;
 import com.badlogic.gdx.backends.lwjgl.LwjglApplication;
@@ -63,11 +63,10 @@ public final class URacerDesktop {
 		URacerDesktopFinalizer finalizr = new URacerDesktopFinalizer((OpenALAudio)app.getAudio());
 		uracer.setFinalizer(finalizr);
 
-		GraphicsEnvironment env = GraphicsEnvironment.getLocalGraphicsEnvironment();
-		GraphicsDevice primary = env.getDefaultScreenDevice();
-		GraphicsDevice target = primary;
-
 		if (useRightScreen) {
+			GraphicsEnvironment env = GraphicsEnvironment.getLocalGraphicsEnvironment();
+			GraphicsDevice primary = env.getDefaultScreenDevice();
+			GraphicsDevice target = primary;
 			GraphicsDevice[] devices = env.getScreenDevices();
 
 			// search for the first target screen
@@ -79,17 +78,21 @@ public final class URacerDesktop {
 				}
 			}
 
-		}
+			if (target != null) {
+				java.awt.DisplayMode tmode = target.getDisplayMode();
+				int offset = 0;
+				if (useRightScreen) {
+					java.awt.DisplayMode pmode = primary.getDisplayMode();
+					offset = pmode.getWidth();
+				}
 
-		if (target != null) {
-			DisplayMode pmode = primary.getDisplayMode();
-			DisplayMode tmode = target.getDisplayMode();
-			int offset = 0;
-			if (useRightScreen) {
-				offset = pmode.getWidth();
+				int x = offset + (tmode.getWidth() - config.width) / 2;
+				int y = (tmode.getHeight() - config.height) / 2;
+				Display.setLocation(x, y);
 			}
-
-			Display.setLocation(offset + (tmode.getWidth() - config.width) / 2, (tmode.getHeight() - config.height) / 2);
+		} else {
+			DisplayMode desk = Display.getDesktopDisplayMode();
+			Display.setLocation((desk.getWidth() - config.width) / 2, (desk.getHeight() - config.height) / 2);
 		}
 	}
 

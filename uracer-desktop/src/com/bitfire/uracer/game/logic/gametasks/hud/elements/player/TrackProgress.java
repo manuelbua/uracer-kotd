@@ -68,12 +68,12 @@ public class TrackProgress extends Positionable implements Disposable {
 	}
 
 	public void setPlayerDistance (float mt) {
-		distPlayer = AMath.lerp(prevDistPlayer, mt, 0.25f);
+		distPlayer = AMath.fixup(AMath.lerp(prevDistPlayer, mt, 0.25f));
 		prevDistPlayer = distPlayer;
 	}
 
 	public void setTargetDistance (float mt) {
-		distGhost = AMath.lerp(prevDistGhost, mt, 0.25f);
+		distGhost = AMath.fixup(AMath.lerp(prevDistGhost, mt, 0.25f));
 		prevDistGhost = distGhost;
 	}
 
@@ -82,7 +82,7 @@ public class TrackProgress extends Positionable implements Disposable {
 	 * @param progress The progress so far */
 	public void setPlayerProgression (float progress) {
 		// smooth out high freq
-		progressval = AMath.lerp(prevVal, progress, 0.25f);
+		progressval = AMath.fixup(AMath.lerp(prevVal, progress, 0.25f));
 		prevVal = progressval;
 	}
 
@@ -91,7 +91,7 @@ public class TrackProgress extends Positionable implements Disposable {
 	 * @param progress The progress so far */
 	public void setTargetProgression (float progress) {
 		// smooth out high freq
-		progressTargetVal = AMath.lerp(prevTargetVal, progress, 0.25f);
+		progressTargetVal = AMath.fixup(AMath.lerp(prevTargetVal, progress, 0.25f));
 		prevTargetVal = progressTargetVal;
 	}
 

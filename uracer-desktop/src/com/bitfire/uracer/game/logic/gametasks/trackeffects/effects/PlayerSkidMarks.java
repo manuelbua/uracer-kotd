@@ -75,14 +75,12 @@ public class PlayerSkidMarks extends TrackEffect {
 
 	@Override
 	public void dispose () {
-		for (int i = 0; i < MaxSkidMarks; i++) {
-			skidMarks[i] = null;
-		}
 	}
 
 	@Override
 	public void reset () {
 		markIndex = 0;
+		visibleSkidMarksCount = 0;
 	}
 
 	private Vector2 ppos = new Vector2();

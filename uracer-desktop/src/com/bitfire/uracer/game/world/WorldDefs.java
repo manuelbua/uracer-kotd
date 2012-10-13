@@ -48,27 +48,27 @@ public final class WorldDefs {
 		}
 	}
 
-	/** Tiled's layer properties */
-	public enum LayerProperties {
-		// @off
-		Start("start");
-		// @on
-		public final String mnemonic;
-
-		private LayerProperties (String mnemonic) {
-			this.mnemonic = mnemonic;
-		}
-	}
-
-	/** Tiled's tile properties */
-	public enum TileProperties {
-		// @off
-		Type("type");
-		// @on
-		public final String mnemonic;
-
-		private TileProperties (String mnemonic) {
-			this.mnemonic = mnemonic;
-		}
-	}
+// /** Tiled's layer properties */
+// public enum LayerProperties {
+//		// @off
+//		None("");
+//		// @on
+// public final String mnemonic;
+//
+// private LayerProperties (String mnemonic) {
+// this.mnemonic = mnemonic;
+// }
+// }
+//
+// /** Tiled's tile properties */
+// public enum TileProperties {
+//		// @off
+//		None("");
+//		// @on
+// public final String mnemonic;
+//
+// private TileProperties (String mnemonic) {
+// this.mnemonic = mnemonic;
+// }
+// }
 }

@@ -181,11 +181,10 @@ public final class GameWorld {
 	}
 
 	private void loadPlayerData (TiledMap map) {
-
 		Vector2 tmp = new Vector2();
 		tmp.set(route.get(0)).sub(route.get(1));
+		tmp.nor();
 
-		// set player data
 		playerStartOrientRads = VMath.toRadians(tmp);
 		playerStartPos.set(route.get(0));
 	}

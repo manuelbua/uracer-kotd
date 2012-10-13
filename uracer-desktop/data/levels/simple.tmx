@@ -4,21 +4,8 @@
  </properties>
  <tileset firstgid="1" name="desert" tileheight="224" tilewidth="224">
   <image height="2464" source="tilesets/desert/224.png" width="896"/>
-  <tile id="7">
-   <properties>
-    <property name="type" value="start"/>
-   </properties>
-  </tile>
-  <tile id="11">
-   <properties>
-    <property name="type" value="start"/>
-   </properties>
-  </tile>
  </tileset>
  <layer height="6" name="track" width="8">
-  <properties>
-   <property name="start" value="left"/>
-  </properties>
   <data compression="zlib" encoding="base64">
    eJxNzkkKgEAMRNHgShAE56GdBxTt+5/P3xAhi0dqk6S8iKzw6sWt+dCZIUeCCAVKs1Oh1vygQYtN73XoceKCw2D2R0xIEWPGYv7/wr3d9Ay9P1OOBiQ=
   </data>
@@ -186,7 +173,7 @@
  </objectgroup>
  <objectgroup color="#ffec18" height="6" name="route" width="8">
   <object x="1121" y="1017">
-   <polyline points="-113,-6 -224,-6 -449,-9 -667,-98 -762,-229 -745,-509 -628,-625 -450,-689 0,-693 230,-596 318,-449 323,-233 159,-45 0,-6"/>
+   <polyline points="-113,-9 -225,-9 -449,-9 -667,-98 -762,-229 -745,-509 -628,-625 -450,-689 0,-693 230,-596 318,-449 323,-233 159,-45 -1,-9"/>
   </object>
  </objectgroup>
 </map>

@@ -65,8 +65,15 @@ public final class PlayerImpactSoundEffect extends SoundEffect {
 		// early exit
 		// if( speedFactor < 0.1f ) {
 		if (impactForce < MinImpactForce) {
+			// FIXME
+			// windows + jre 1.7 keeps returning wrong values for multiple micro collisions! (something like this happens even on
+			// some chinese android platforms)
+			// windows + jre 1.6 is fine instead
+			// Gdx.app.log("PlayerImpactSoundEffect", "(low) impactForce=" + impactForce);
 			return;
 		}
+
+		Gdx.app.log("PlayerImpactSoundEffect", "impactForce=" + impactForce);
 
 		// enough time passed from last impact sound?
 		long millis = System.currentTimeMillis();

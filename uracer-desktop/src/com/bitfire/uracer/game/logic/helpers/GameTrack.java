@@ -17,6 +17,7 @@ import com.bitfire.uracer.events.GameRendererEvent.Order;
 import com.bitfire.uracer.events.GameRendererEvent.Type;
 import com.bitfire.uracer.game.GameEvents;
 import com.bitfire.uracer.game.actors.Car;
+import com.bitfire.uracer.utils.AMath;
 import com.bitfire.uracer.utils.VMath;
 
 /** Implements the track sectorizer and represents a view onto the logical portion of a track: it does sectorization and can be
@@ -34,34 +35,6 @@ public final class GameTrack implements Disposable {
 	private final float oneOnTotalLength;
 
 	private Vector2 tmp = new Vector2();
-
-	/** Represents a track sector, see Game Programming Gems pag. 416 */
-	private static class TrackSector {
-		public final Polygon poly;
-		public final float length;
-		public final float relativeTotal;
-
-		// do not allocate new vectors, just reference the original ones and
-		// treat them as read-only data
-		public final Vector2 leading;
-		public final Vector2 trailing;
-		public final Vector2 nLeading;
-		public final Vector2 nTrailing;
-
-		public TrackSector (Polygon poly, float length, float relativeTotalLength, Vector2 leading, Vector2 trailing) {
-			this.poly = poly;
-			this.length = length;
-			this.relativeTotal = relativeTotalLength;
-			this.leading = leading;
-			this.trailing = trailing;
-
-			this.nLeading = new Vector2();
-			this.nLeading.set(leading).sub(trailing).nor();
-
-			this.nTrailing = new Vector2();
-			this.nTrailing.set(trailing).sub(leading).nor();
-		}
-	}
 
 	public GameTrack (final List<Vector2> route, final List<Polygon> trackPoly) {
 		this.route = route;
@@ -94,6 +67,7 @@ public final class GameTrack implements Disposable {
 			Vector2 to;
 
 			if (i == route.size() - 1) {
+				// chain last to first
 				to = route.get(0);
 			} else {
 				to = route.get(i + 1);
@@ -134,16 +108,22 @@ public final class GameTrack implements Disposable {
 	 * determining the value, then the value specified by the @param retDefault is returned. */
 	public float getTrackDistance (Car car, float retDefault) {
 		Vector2 pt = car.getWorldPosMt();
+
+		// if at starting position then returns 0
+		if (AMath.equals(pt.x, route.get(0).x) && AMath.equals(pt.y, route.get(0).y)) {
+			return 0;
+		}
+
 		int carSector = findSector(pt);
 
 		if (carSector != -1) {
 			TrackSector s = sectors[carSector];
 			float dist = MathUtils.clamp(distInSector(s, pt), 0, 1);
 			float carlen = (s.relativeTotal + s.length * dist);
-			return carlen;
+			return AMath.fixup(carlen);
 		}
 
-		return retDefault;
+		return AMath.fixup(retDefault);
 	}
 
 	/** Returns a value in the [0,1] range, meaning the specified car is at the start (0) or at the end (1) of the lap. If the car
@@ -155,7 +135,7 @@ public final class GameTrack implements Disposable {
 			ret = (cardist * oneOnTotalLength);
 		}
 
-		return ret;
+		return AMath.fixup(ret);
 	}
 
 	/** Returns a value in the [-1,1] range, meaning the specified car is following the path with a confidence value as expressed by
@@ -397,4 +377,31 @@ public final class GameTrack implements Disposable {
 		}
 	}
 
+	/** Represents a track sector, see Game Programming Gems pag. 416 */
+	private static class TrackSector {
+		public final Polygon poly;
+		public final float length;
+		public final float relativeTotal;
+
+		// do not allocate new vectors, just reference the original ones and
+		// treat them as read-only data
+		public final Vector2 leading;
+		public final Vector2 trailing;
+		public final Vector2 nLeading;
+		public final Vector2 nTrailing;
+
+		public TrackSector (Polygon poly, float length, float relativeTotalLength, Vector2 leading, Vector2 trailing) {
+			this.poly = poly;
+			this.length = length;
+			this.relativeTotal = relativeTotalLength;
+			this.leading = leading;
+			this.trailing = trailing;
+
+			this.nLeading = new Vector2();
+			this.nLeading.set(leading).sub(trailing).nor();
+
+			this.nTrailing = new Vector2();
+			this.nTrailing.set(trailing).sub(leading).nor();
+		}
+	}
 }

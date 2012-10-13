@@ -4,21 +4,8 @@
  </properties>
  <tileset firstgid="1" name="desert" tileheight="224" tilewidth="224">
   <image height="2464" source="tilesets/desert/224.png" width="896"/>
-  <tile id="7">
-   <properties>
-    <property name="type" value="start"/>
-   </properties>
-  </tile>
-  <tile id="11">
-   <properties>
-    <property name="type" value="start"/>
-   </properties>
-  </tile>
  </tileset>
  <layer height="14" name="track" width="20">
-  <properties>
-   <property name="start" value="right"/>
-  </properties>
   <data compression="zlib" encoding="base64">
    eJytk1kLAjEMhFNXWF9UvO+D6OKx/v/f5ywkEGpqRfrw0TYMs5OQbYmoLcyrEJ4f/+HDCb8JmIIZmBut1gegJ4yM7pbwW4AlWIG1U3+Y2tPRWb8GBLlfQAXu8g7k99np6i/zCya7vY+NpvvG1byrjJ/2sgFbsAN7Z7ZMn9ljv9rM6ACO4ATOzmxVN0z4scmkfTZyakbVxtlT+TST7kRfTs0Y6+L6L/uc22/O+JX430ryBpu4KIE=
   </data>
@@ -329,9 +316,9 @@
    <polyline points="0,0 96,28 179,4 226,-60"/>
   </object>
  </objectgroup>
- <objectgroup color="#e5f100" height="14" name="sectors" visible="0" width="20">
+ <objectgroup color="#e5f100" height="14" name="sectors" width="20">
   <object x="2463" y="627">
-   <polygon points="1,-11 1,325 225,325 225,-11"/>
+   <polygon points="113,-11 113,325 225,325 225,-11"/>
   </object>
   <object x="2690" y="627">
    <polygon points="-2,-11 670,-11 670,269 -2,325"/>
@@ -447,10 +434,13 @@
   <object x="2305" y="613">
    <polygon points="-9,3 159,3 159,339 103,339"/>
   </object>
+  <object x="2470" y="952">
+   <polygon points="-6,0 106,0 106,-336 -6,-336"/>
+  </object>
  </objectgroup>
- <objectgroup color="#e3e600" height="14" name="route" visible="0" width="20">
+ <objectgroup color="#e3e600" height="14" name="route" width="20">
   <object x="2465" y="779">
-   <polyline points="0,0 224,-1 895,0 1121,85 1218,248 1232,454 1231,1293 1147,1458 1054,1531 896,1568 674,1486 568,1299 536,1093 389,933 168,904 -19,1000 -88,1122 -117,1302 -181,1440 -332,1550 -532,1579 -1372,1566 -1608,1446 -1675,1292 -1676,286 -1597,118 -1467,22 -1317,2 -1127,82 -1008,312 -1004,787 -958,958 -790,1103 -536,1105 -397,983 -336,762 -327,258 -247,123 -110,17"/>
+   <polyline points="111,5 223,5 895,0 1121,85 1218,248 1232,454 1231,1293 1147,1458 1054,1531 896,1568 674,1486 568,1299 536,1093 389,933 168,904 -19,1000 -88,1122 -117,1302 -181,1440 -332,1550 -532,1579 -1372,1566 -1608,1446 -1675,1292 -1676,286 -1597,118 -1467,22 -1317,2 -1127,82 -1008,312 -1004,787 -958,958 -790,1103 -536,1105 -397,983 -336,762 -327,258 -247,123 -108,18 -1,5"/>
   </object>
  </objectgroup>
 </map>

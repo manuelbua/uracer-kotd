@@ -69,6 +69,7 @@ public final class TrackEffects extends GameTask {
 	public void remove (TrackEffect effect) {
 		managerBeforeEntities.remove(effect);
 		managerAfterEntities.remove(effect);
+		effectsMap.remove(effect.type.id);
 	}
 
 	@Override
