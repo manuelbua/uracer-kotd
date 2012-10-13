@@ -1,8 +1,10 @@
 
 package com.bitfire.uracer.game.logic.post.animators;
 
+import aurelienribon.tweenengine.BaseTween;
 import aurelienribon.tweenengine.Timeline;
 import aurelienribon.tweenengine.Tween;
+import aurelienribon.tweenengine.TweenCallback;
 import aurelienribon.tweenengine.equations.Quad;
 
 import com.badlogic.gdx.Gdx;
@@ -39,8 +41,10 @@ public final class AggressiveCold implements PostProcessingAnimator {
 	private Curvature curvature = null;
 	private PlayerCar player = null;
 	private boolean hasPlayer = false;
-	private BoxedFloat lutIndexOffset;
-	private BoxedFloat errorIntensity;
+	private BoxedFloat wrongWayAmount;
+	private boolean wrongWayBegan = false;
+	private boolean alertCollision = false;
+	private float lastCollisionFactor = 0;
 
 	public AggressiveCold (CommonLogic logic, PostProcessing post, boolean nightMode) {
 		this.logic = logic;
@@ -51,8 +55,7 @@ public final class AggressiveCold implements PostProcessingAnimator {
 		crt = (CrtMonitor)post.getEffect(PostProcessing.Effects.Crt.name);
 		curvature = (Curvature)post.getEffect(PostProcessing.Effects.Curvature.name);
 
-		lutIndexOffset = new BoxedFloat(0);
-		errorIntensity = new BoxedFloat(0);
+		wrongWayAmount = new BoxedFloat(0);
 
 		reset();
 	}
@@ -65,21 +68,79 @@ public final class AggressiveCold implements PostProcessingAnimator {
 	}
 
 	@Override
-	public void ErrorScreenShow (int milliseconds) {
-		GameTweener.start(Timeline.createParallel()
-			.push(Tween.to(lutIndexOffset, BoxedFloatAccessor.VALUE, milliseconds).target(0.8f).ease(Quad.INOUT))
-			.push(Tween.to(errorIntensity, BoxedFloatAccessor.VALUE, milliseconds).target(0.8f).ease(Quad.INOUT)));
+	public void alertWrongWayBegins (int milliseconds) {
+		alertCollision = false;
+		lastCollisionFactor = 0;
+		GameTweener.stop(wrongWayAmount);
+		Timeline seq = Timeline.createSequence();
+
+		//@off
+		seq
+			.push(Tween.to(wrongWayAmount, BoxedFloatAccessor.VALUE, milliseconds).target(1.5f).ease(Quad.IN))
+			.pushPause(50)
+			.push(Tween.to(wrongWayAmount, BoxedFloatAccessor.VALUE, milliseconds).target(0.75f).ease(Quad.OUT))
+		;
+		//@on
+
+		GameTweener.start(seq);
+		wrongWayBegan = true;
 	}
 
 	@Override
-	public void ErrorScreenHide (int milliseconds) {
-		GameTweener.start(Timeline.createParallel()
-			.push(Tween.to(lutIndexOffset, BoxedFloatAccessor.VALUE, milliseconds).target(0).ease(Quad.INOUT))
-			.push(Tween.to(errorIntensity, BoxedFloatAccessor.VALUE, milliseconds).target(0).ease(Quad.INOUT)));
+	public void alertWrongWayEnds (int milliseconds) {
+		GameTweener.stop(wrongWayAmount);
+		Timeline seq = Timeline.createSequence();
+		seq.push(Tween.to(wrongWayAmount, BoxedFloatAccessor.VALUE, milliseconds).target(0).ease(Quad.INOUT));
+		GameTweener.start(seq);
+		wrongWayBegan = false;
+	}
+
+	@Override
+	public void alertCollision (float factor, int milliseconds) {
+// if (wrongWayBegan || alertCollision) {
+		if (wrongWayBegan) {
+			lastCollisionFactor = 0;
+			return;
+		}
+
+		if (factor < lastCollisionFactor && alertCollision) {
+			return;
+		}
+
+		lastCollisionFactor = factor;
+		alertCollision = true;
+		GameTweener.stop(wrongWayAmount);
+		Timeline seq = Timeline.createSequence();
+
+		factor = MathUtils.clamp(factor, 0, 1);
+
+		//@off
+		seq
+			.push(Tween.to(wrongWayAmount, BoxedFloatAccessor.VALUE, 75).target(factor).ease(Quad.IN))
+			.pushPause(50)
+			.push(Tween.to(wrongWayAmount, BoxedFloatAccessor.VALUE, milliseconds).target(0).ease(Quad.OUT))
+			.setCallback(new TweenCallback() {
+				
+				@Override
+				public void onEvent (int type, BaseTween<?> source) {
+					switch (type) {
+					case COMPLETE:
+						alertCollision = false;
+						lastCollisionFactor = 0;
+					}
+				}
+			})
+		;
+		//@on
+
+		GameTweener.start(seq);
 	}
 
 	@Override
 	public void reset () {
+		alertCollision = false;
+		wrongWayBegan = false;
+
 		if (bloom != null) {
 			float threshold = (nightMode ? 0.2f : 0.45f);
 			Bloom.Settings bloomSettings = new Bloom.Settings("subtle", Config.PostProcessing.BlurType,
@@ -95,8 +156,8 @@ public final class AggressiveCold implements PostProcessingAnimator {
 			vignette.setLutIndexVal(0, 16);
 			vignette.setLutIndexVal(1, 7);
 			vignette.setLutIndexOffset(0);
-			lutIndexOffset.value = 0;
-			errorIntensity.value = 0;
+			wrongWayAmount.value = 0;
+			lastCollisionFactor = 0;
 			vignette.setEnabled(true);
 		}
 
@@ -185,7 +246,7 @@ public final class AggressiveCold implements PostProcessingAnimator {
 		}
 
 		if (bloom != null) {
-			// bloom.setBaseSaturation( 0.8f - timeFactor * 0.6f );
+// bloom.setBaseSaturation(0.8f - timeModFactor * 0.6f);
 			bloom.setBaseSaturation(AMath.lerp(0.6f, 0.2f, timeModFactor));
 			// bloom.setBloomSaturation( 1.5f - factor * 0.85f ); // TODO when charged
 			// bloom.setBloomSaturation( 1.5f - factor * 1.5f ); // TODO when completely discharged
@@ -212,12 +273,12 @@ public final class AggressiveCold implements PostProcessingAnimator {
 			// vignette.setCenter( Gdx.graphics.getWidth() / 2, Gdx.graphics.getHeight() / 2 );
 			// }
 
-			float lutIntensity = 0.15f + timeModFactor * 0.85f + errorIntensity.value * 0.85f;
+			float lutIntensity = 0.15f + timeModFactor * 0.85f + wrongWayAmount.value * 0.85f;
 			lutIntensity = MathUtils.clamp(lutIntensity, 0, 1);
 
 			vignette.setLutIntensity(lutIntensity);
 			vignette.setIntensity(1.1f);
-			vignette.setLutIndexOffset(lutIndexOffset.value);
+			vignette.setLutIndexOffset(wrongWayAmount.value);
 		}
 
 		//
@@ -227,7 +288,7 @@ public final class AggressiveCold implements PostProcessingAnimator {
 			// curvature.setDistortion( player.carState.currSpeedFactor * 0.25f );
 			// curvature.setZoom( 1 - 0.12f * player.carState.currSpeedFactor );
 
-			float dist = 0.1618f;// * 0.75f;
+			float dist = 0.18f;// * 0.75f;
 			curvature.setDistortion(dist);
 			curvature.setZoom(1 - (dist / 2));
 		}
@@ -238,5 +299,10 @@ public final class AggressiveCold implements PostProcessingAnimator {
 			crt.setDistortion(dist);
 			crt.setZoom(1 - (dist / 2));
 		}
+
+// vignette.setLutIndexVal(0, 16);
+// vignette.setLutIndexVal(1, 7);
+// vignette.setLutIndexOffset(0);
+
 	}
 }
