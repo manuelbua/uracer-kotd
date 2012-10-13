@@ -103,8 +103,8 @@ public final class AggressiveCold implements PostProcessingAnimator {
 			return;
 		}
 
-		// do not accept subsequent collision alerts if the factor
-		// is lower than the alert currently being shown
+		// DO NOT accept subsequent collision alerts if the factor
+		// is LOWER than the alert currently being shown
 		if (factor < lastCollisionFactor && alertCollision) {
 			return;
 		}
