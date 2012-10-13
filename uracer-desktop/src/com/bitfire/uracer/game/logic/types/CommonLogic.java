@@ -17,12 +17,9 @@ import com.bitfire.uracer.configuration.UserProfile;
 import com.bitfire.uracer.game.DebugHelper;
 import com.bitfire.uracer.game.GameLogic;
 import com.bitfire.uracer.game.GameplaySettings;
-import com.bitfire.uracer.game.Time;
-import com.bitfire.uracer.game.Time.Reference;
 import com.bitfire.uracer.game.actors.Car;
 import com.bitfire.uracer.game.actors.CarEvent;
 import com.bitfire.uracer.game.actors.CarPreset;
-import com.bitfire.uracer.game.actors.CarState;
 import com.bitfire.uracer.game.actors.GhostCar;
 import com.bitfire.uracer.game.logic.gametasks.GameTasksManager;
 import com.bitfire.uracer.game.logic.gametasks.hud.HudLabel;
@@ -39,7 +36,11 @@ import com.bitfire.uracer.game.logic.replaying.LapManager;
 import com.bitfire.uracer.game.logic.replaying.Replay;
 import com.bitfire.uracer.game.logic.replaying.ReplayManager;
 import com.bitfire.uracer.game.logic.replaying.ReplayRecorder.RecorderError;
+import com.bitfire.uracer.game.logic.types.common.LapCompletionMonitor;
+import com.bitfire.uracer.game.logic.types.common.LapCompletionMonitor.LapCompletionMonitorListener;
 import com.bitfire.uracer.game.logic.types.common.TimeModulator;
+import com.bitfire.uracer.game.logic.types.common.WrongWayMonitor;
+import com.bitfire.uracer.game.logic.types.common.WrongWayMonitor.WrongWayMonitorListener;
 import com.bitfire.uracer.game.player.PlayerCar;
 import com.bitfire.uracer.game.player.PlayerDriftStateEvent;
 import com.bitfire.uracer.game.rendering.GameRenderer;
@@ -55,7 +56,8 @@ import com.bitfire.uracer.utils.BoxedFloatAccessor;
 import com.bitfire.uracer.utils.CarUtils;
 import com.bitfire.uracer.utils.NumberString;
 
-public abstract class CommonLogic implements GameLogic, CarEvent.Listener, PlayerDriftStateEvent.Listener {
+public abstract class CommonLogic implements GameLogic, CarEvent.Listener, PlayerDriftStateEvent.Listener,
+	WrongWayMonitorListener, LapCompletionMonitorListener {
 	// input
 	protected Input input = null;
 
@@ -72,13 +74,12 @@ public abstract class CommonLogic implements GameLogic, CarEvent.Listener, Playe
 	protected final UserProfile userProfile;
 	protected PlayerCar playerCar = null;
 	protected GhostCar[] ghostCars = new GhostCar[ReplayManager.MaxReplays];
-	protected Time wrongWayTimer = new Time();
-	protected boolean isWrongWay = false;
+	private WrongWayMonitor wrongWayMonitor;
 	protected boolean isCurrentLapValid = true;
-	private float previousCompletion, currentCompletion;
 
 	// lap
 	protected LapManager lapManager = null;
+	private LapCompletionMonitor lapMonitor = null;
 
 	// tasks
 	protected GameTasksManager gameTasksManager = null;
@@ -133,6 +134,9 @@ public abstract class CommonLogic implements GameLogic, CarEvent.Listener, Playe
 
 		replayManager = new ReplayManager(userProfile, gameWorld.getTrackId());
 		gameTrack = new GameTrack(gameWorld.getTrackRoute(), gameWorld.getTrackPolygons());
+
+		wrongWayMonitor = new WrongWayMonitor(this, gameTrack);
+		lapMonitor = new LapCompletionMonitor(this, gameTrack);
 
 		// messager.show( "COOL STUFF!", 60, Message.Type.Information,
 		// MessagePosition.Bottom, MessageSize.Big );
@@ -259,9 +263,6 @@ public abstract class CommonLogic implements GameLogic, CarEvent.Listener, Playe
 		registerPlayerEvents(playerCar);
 		Gdx.app.log("GameLogic", "Registered player-related events");
 
-		previousCompletion = 0;
-		currentCompletion = 0;
-
 		updateCamera(0);
 		gameWorldRenderer.updateCamera();
 
@@ -272,6 +273,8 @@ public abstract class CommonLogic implements GameLogic, CarEvent.Listener, Playe
 			gameTrack.setDebugCar(playerCar);
 		}
 
+		wrongWayMonitor.setCar(playerCar);
+		lapMonitor.setCar(playerCar);
 		restartGame();
 
 		if (Config.Debug.UseDebugHelper) {
@@ -294,8 +297,9 @@ public abstract class CommonLogic implements GameLogic, CarEvent.Listener, Playe
 		}
 
 		playerCar = null;
-
 		gameWorldRenderer.setRenderPlayerHeadlights(false);
+		wrongWayMonitor.setCar(null);
+		lapMonitor.setCar(null);
 
 		if (Config.Debug.UseDebugHelper) {
 			DebugHelper.setPlayer(null);
@@ -390,9 +394,8 @@ public abstract class CommonLogic implements GameLogic, CarEvent.Listener, Playe
 		lapManager.abortRecording();
 		gameTasksManager.restart();
 
-		isWrongWay = false;
+		wrongWayMonitor.reset();
 		isCurrentLapValid = true;
-		wrongWayTimer.reset();
 
 		postProcessing.resetAnimator();
 
@@ -403,7 +406,7 @@ public abstract class CommonLogic implements GameLogic, CarEvent.Listener, Playe
 		playerTasks.hudPlayer.trackProgress.resetCounters(false);
 
 		// 3..2..1.. playerLapComplete()!
-		playerLapComplete();
+		onLapComplete();
 	}
 
 	private void resetLogic () {
@@ -424,102 +427,22 @@ public abstract class CommonLogic implements GameLogic, CarEvent.Listener, Playe
 	@Override
 	public void tickCompleted () {
 		gameTasksManager.physicsStep.onSubstepCompleted();
+		wrongWayMonitor.update();
+		lapMonitor.update();
 
 		// determine player's isWrongWay
 		if (hasPlayer()) {
-			float conf = gameTrack.getTrackRouteConfidence(playerCar);
-			if (conf <= 0) {
+			boolean wrongWay = wrongWayMonitor.isWrongWay();
+			isCurrentLapValid = !wrongWay;
 
-				// player wrong
-
-				// if not already marked as on the wrong way, check if confidence stays negative for more than <n> seconds
-				// after staying positive, then it's safe to assume the wrong way is being played
-
-				if (!isWrongWay) {
-					if (wrongWayTimer.isStopped()) {
-						Gdx.app.log("CommonLogic", "--> detect wrong way begin");
-						wrongWayTimer.start();
-					} else if (wrongWayTimer.elapsed(Reference.TickSeconds) > 0.5f) {
-						wrongWayTimer.reset();
-
-						// invalidate the lap
-						isWrongWay = true;
-
-						if (lapManager.isRecording()) {
-							lapManager.abortRecording();
-							lapManager.reset();
-						}
-
-						playerTasks.hudPlayer.wrongWay.fadeIn();
-						playerTasks.hudLapInfo.toColor(1, 0, 0);
-						playerTasks.hudLapInfo.setInvalid("invalid lap");
-
-						wrongWayBegins();
-					}
-				} else {
-					// player changed his mind earlier and there weren't enough seconds of wrong way to mark it
-					// as that, reset the timer
-					if (!wrongWayTimer.isStopped()) {
-						Gdx.app.log("CommonLogic", "Player changed his mind earlier, resetting the wrong way timer (begin detector)");
-						wrongWayTimer.reset();
-					}
-				}
-
-			} else if (conf > 0) {
-
-				// player correct
-
-				// if not already marked as on the good way, check if confidence stays positive for more than <n> seconds
-				// after staying negative, then it's safe to assume the right way is being played
-
-				if (isWrongWay) {
-					if (wrongWayTimer.isStopped()) {
-						wrongWayTimer.start();
-						Gdx.app.log("CommonLogic", "<-- detect wrong way end");
-					} else if (wrongWayTimer.elapsed(Reference.TickSeconds) > 1) {
-						// wrong way finished
-
-						wrongWayTimer.reset();
-						isWrongWay = false;
-
-						playerTasks.hudPlayer.wrongWay.fadeOut();
-						playerTasks.hudLapInfo.toColor(1, 1, 0);
-						playerTasks.hudLapInfo.setInvalid("back to start");
-
-						wrongWayEnds();
-					}
-				} else {
-					// player changed his mind earlier and there weren't enough seconds of wrong way to mark it
-					// as that, reset the timer
-					if (!wrongWayTimer.isStopped()) {
-						Gdx.app.log("CommonLogic", "Player changed his mind earlier, resetting the wrong way timer (end detector)");
-						wrongWayTimer.reset();
-					}
-				}
-
+			// blink on wrong way (keeps calling, returns earlier if busy)
+			if (wrongWay) {
+				playerTasks.hudPlayer.highlightWrongWay();
 			}
-		}
 
-		isCurrentLapValid = !isWrongWay;
-
-		// blink on wrong way (keeps calling, returns earlier if busy)
-		if (isWrongWay) {
-			playerTasks.hudPlayer.highlightWrongWay();
-		}
-		// blink on out of track (keeps calling, returns earlier if busy)
-		if (playerCar.isOutOfTrack()) {
-			playerTasks.hudPlayer.highlightOutOfTrack();
-		}
-
-		// check player for lap completion
-		if (hasPlayer()) {
-			currentCompletion = gameTrack.getTrackCompletion(playerCar, 0);
-			if (previousCompletion > 0.9f && currentCompletion > 0 && currentCompletion < 0.1f) {
-				previousCompletion = 0;
-				currentCompletion = 0;
-				playerLapComplete();
-			} else {
-				previousCompletion = currentCompletion;
+			// blink on out of track (keeps calling, returns earlier if busy)
+			if (playerCar.isOutOfTrack()) {
+				playerTasks.hudPlayer.highlightOutOfTrack();
 			}
 		}
 	}
@@ -603,6 +526,7 @@ public abstract class CommonLogic implements GameLogic, CarEvent.Listener, Playe
 
 		} else if (input.isPressed(Keys.Q) || input.isPressed(Keys.ESCAPE) || input.isPressed(Keys.BACK)) {
 
+			lapManager.stopRecording();
 			gameTasksManager.sound.stop();
 
 			// quit
@@ -748,7 +672,31 @@ public abstract class CommonLogic implements GameLogic, CarEvent.Listener, Playe
 		}
 	}
 
-	private void playerLapComplete () {
+	@Override
+	public void onWrongWayBegins () {
+		if (lapManager.isRecording()) {
+			lapManager.abortRecording();
+			lapManager.reset();
+		}
+
+		playerTasks.hudPlayer.wrongWay.fadeIn();
+		playerTasks.hudLapInfo.toColor(1, 0, 0);
+		playerTasks.hudLapInfo.setInvalid("invalid lap");
+
+		wrongWayBegins();
+	}
+
+	@Override
+	public void onWrongWayEnds () {
+		playerTasks.hudPlayer.wrongWay.fadeOut();
+		playerTasks.hudLapInfo.toColor(1, 1, 0);
+		playerTasks.hudLapInfo.setInvalid("back to start");
+
+		wrongWayEnds();
+	}
+
+	@Override
+	public void onLapComplete () {
 		if (!isCurrentLapValid) {
 			return;
 		}
@@ -790,9 +738,5 @@ public abstract class CommonLogic implements GameLogic, CarEvent.Listener, Playe
 		lapManager.startRecording(playerCar);
 		playerCar.resetDistanceAndSpeed(true, false);
 		lapStarted();
-	}
-
-	private void ghostTileChanged (CarState state) {
-// Gdx.app.log("", "ghost at (" + state.currTileX + "," + state.currTileY + ")");
 	}
 }

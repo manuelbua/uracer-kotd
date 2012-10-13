@@ -123,8 +123,8 @@ public class HudDebug extends HudElement {
 		for (HudDebugMeter m : meters) {
 
 			pos.set(GameRenderer.ScreenUtils.worldPxToScreen(player.state().position));
-			pos.x -= m.getWidth() * 0.5f;
-			pos.y += 50;
+			pos.x += m.getWidth() * 0.5f;
+			pos.y += 100;
 
 			// offset by index
 			pos.y += index * (prevHeight + Art.DebugFontHeight);
