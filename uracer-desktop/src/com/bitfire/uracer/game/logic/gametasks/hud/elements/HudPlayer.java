@@ -1,7 +1,6 @@
 
 package com.bitfire.uracer.game.logic.gametasks.hud.elements;
 
-import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.math.MathUtils;
 import com.badlogic.gdx.math.Vector2;
@@ -11,21 +10,17 @@ import com.bitfire.uracer.entities.EntityRenderState;
 import com.bitfire.uracer.game.actors.Car;
 import com.bitfire.uracer.game.logic.gametasks.hud.Hud;
 import com.bitfire.uracer.game.logic.gametasks.hud.HudElement;
-import com.bitfire.uracer.game.logic.gametasks.hud.HudLabel;
 import com.bitfire.uracer.game.logic.gametasks.hud.Positionable;
-import com.bitfire.uracer.game.logic.gametasks.hud.elements.player.BasicInfo;
 import com.bitfire.uracer.game.logic.gametasks.hud.elements.player.DriftBar;
 import com.bitfire.uracer.game.logic.gametasks.hud.elements.player.TrackProgress;
 import com.bitfire.uracer.game.logic.gametasks.hud.elements.player.WrongWay;
 import com.bitfire.uracer.game.player.PlayerCar;
 import com.bitfire.uracer.game.rendering.GameRenderer;
-import com.bitfire.uracer.resources.BitmapFontFactory.FontFace;
 import com.bitfire.uracer.utils.AMath;
-import com.bitfire.uracer.utils.CarUtils;
 import com.bitfire.uracer.utils.Convert;
 import com.bitfire.uracer.utils.VMath;
 
-/** Encapsulates player's drifting information shown on screen */
+/** Encapsulates player's information shown on screen moving along the player position */
 public final class HudPlayer extends HudElement {
 	public enum EndDriftType {
 		GoodDrift, BadDrift
@@ -35,14 +30,10 @@ public final class HudPlayer extends HudElement {
 	private EntityRenderState playerState = null;
 
 	// player elements
-	private final BasicInfo basicInfo;
 	public final WrongWay wrongWay;
 	public final DriftBar driftBar;
 	public final TrackProgress trackProgress;
 
-	private HudLabel labelSpeed, labelDistance;
-
-	private PlayerCar player;
 	private CarHighlighter highlightError;
 	private CarHighlighter highlightNext;
 
@@ -56,7 +47,6 @@ public final class HudPlayer extends HudElement {
 	private float scale = 1f;
 
 	public HudPlayer (UserProfile userProfile, ScalingStrategy scalingStrategy, PlayerCar player, GameRenderer renderer) {
-		this.player = player;
 		this.renderer = renderer;
 		this.scale = scalingStrategy.invTileMapZoomFactor;
 		playerState = player.state();
@@ -65,19 +55,9 @@ public final class HudPlayer extends HudElement {
 		this.carModelLengthPx = Convert.mt2px(player.getCarModel().length);
 
 		// elements
-		basicInfo = new BasicInfo(scale, userProfile);
 		wrongWay = new WrongWay();
 		driftBar = new DriftBar(scale, carModelLengthPx);
 		trackProgress = new TrackProgress(scale);
-
-		// labels
-		labelSpeed = new HudLabel(scale, FontFace.Roboto, "", true, 1f);
-		labelSpeed.setPosition(Gdx.graphics.getWidth() - Convert.scaledPixels(190),
-			Gdx.graphics.getHeight() - Convert.scaledPixels(110));
-
-		labelDistance = new HudLabel(scale, FontFace.Roboto, "", true, 0.85f);
-		labelDistance.setPosition(Gdx.graphics.getWidth() - Convert.scaledPixels(190),
-			Gdx.graphics.getHeight() - Convert.scaledPixels(50));
 
 		highlightError = new CarHighlighter();
 		highlightError.setCar(player);
@@ -91,7 +71,6 @@ public final class HudPlayer extends HudElement {
 	public void dispose () {
 		trackProgress.dispose();
 		driftBar.dispose();
-		basicInfo.dispose();
 	}
 
 	@Override
@@ -113,20 +92,11 @@ public final class HudPlayer extends HudElement {
 
 		float cz = renderer.getWorldRenderer().getCameraZoom();
 
-		basicInfo.render(batch);
-
 		atPlayer(driftBar);
 		driftBar.render(batch, cz);
 
 		atPlayer(trackProgress);
 		trackProgress.render(batch, cz);
-
-		// draw player name+info
-		labelSpeed.setString(MathUtils.round(CarUtils.mtSecToKmHour(player.getInstantSpeed())) + " kmh");
-		labelSpeed.render(batch);
-
-		labelDistance.setString(MathUtils.round(player.getTraveledDistance()) + " mt\n");
-		labelDistance.render(batch);
 
 		highlightError.render(batch, cz);
 		highlightNext.render(batch, cz);
@@ -135,7 +105,7 @@ public final class HudPlayer extends HudElement {
 	}
 
 	//
-	// internal helpers
+	// internal position helpers
 	//
 
 	private void bottom (Positionable p, float distance) {

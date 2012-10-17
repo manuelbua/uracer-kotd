@@ -9,6 +9,7 @@ import com.bitfire.uracer.game.logic.gametasks.GameTasksManager;
 import com.bitfire.uracer.game.logic.gametasks.hud.debug.HudDebug;
 import com.bitfire.uracer.game.logic.gametasks.hud.elements.HudLapInfo;
 import com.bitfire.uracer.game.logic.gametasks.hud.elements.HudPlayer;
+import com.bitfire.uracer.game.logic.gametasks.hud.elements.HudPlayerStatic;
 import com.bitfire.uracer.game.logic.gametasks.sounds.effects.PlayerDriftSoundEffect;
 import com.bitfire.uracer.game.logic.gametasks.sounds.effects.PlayerEngineSoundEffect;
 import com.bitfire.uracer.game.logic.gametasks.sounds.effects.PlayerImpactSoundEffect;
@@ -27,6 +28,7 @@ public final class PlayerGameTasks {
 	/** keeps track of the concrete player tasks (note that they are all publicly accessible for performance reasons) */
 
 	public HudPlayer hudPlayer = null;
+	public HudPlayerStatic hudPlayerStatic = null;
 	public HudLapInfo hudLapInfo = null;
 	public HudDebug hudDebug = null;
 	public PlayerSkidMarks playerSkidMarks = null;
@@ -59,6 +61,7 @@ public final class PlayerGameTasks {
 
 		// hud, player's information
 		hudPlayer = new HudPlayer(userProfile, scalingStrategy, player, renderer);
+		hudPlayerStatic = new HudPlayerStatic(userProfile, scalingStrategy, player, renderer);
 
 		// hud, player's lap info
 		hudLapInfo = new HudLapInfo(scalingStrategy, lapInfo);
@@ -70,6 +73,7 @@ public final class PlayerGameTasks {
 		manager.effects.addAfterEntities(playerSmokeTrails);
 		manager.hud.addBeforePostProcessing(hudPlayer);
 		manager.hud.addBeforePostProcessing(hudLapInfo);
+		manager.hud.addAfterPostProcessing(hudPlayerStatic);
 
 		// at last, create debug helper since it will probably use most of the stuff just created above
 		// hud-style debug information for various data (player's drift state, number of skid marks particles, ..)
@@ -108,6 +112,11 @@ public final class PlayerGameTasks {
 		if (hudPlayer != null) {
 			manager.hud.remove(hudPlayer);
 			hudPlayer = null;
+		}
+
+		if (hudPlayerStatic != null) {
+			manager.hud.remove(hudPlayerStatic);
+			hudPlayerStatic = null;
 		}
 
 		if (hudLapInfo != null) {

@@ -114,6 +114,8 @@ public final class GameRenderer {
 	}
 
 	public void beforeRender (float timeAliasingFactor) {
+		gl.glViewport(0, 0, Gdx.graphics.getWidth(), Gdx.graphics.getHeight());
+
 		GameEvents.gameRenderer.timeAliasingFactor = timeAliasingFactor;
 		GameEvents.gameRenderer.trigger(this, GameRendererEvent.Type.OnSubframeInterpolate);
 	}
@@ -132,9 +134,10 @@ public final class GameRenderer {
 		if (!postProcessorReady) {
 			if (hasDest) {
 				dest.begin();
-			} else {
-				gl.glViewport(0, 0, Gdx.graphics.getWidth(), Gdx.graphics.getHeight());
 			}
+			// else {
+			// gl.glViewport(0, 0, Gdx.graphics.getWidth(), Gdx.graphics.getHeight());
+			// }
 
 			gl.glClearDepthf(1);
 			gl.glClearColor(0, 0, 0, 0);
