@@ -45,6 +45,7 @@ public final class AggressiveCold implements PostProcessingAnimator {
 	private boolean wrongWayBegan = false;
 	private boolean alertCollision = false;
 	private float lastCollisionFactor = 0;
+	private float bloomThreshold = 0.45f;
 
 	public AggressiveCold (CommonLogic logic, PostProcessing post, boolean nightMode) {
 		this.logic = logic;
@@ -144,9 +145,9 @@ public final class AggressiveCold implements PostProcessingAnimator {
 		wrongWayBegan = false;
 
 		if (bloom != null) {
-			float threshold = (nightMode ? 0.2f : 0.45f);
+			bloomThreshold = (nightMode ? 0.2f : 0.45f);
 			Bloom.Settings bloomSettings = new Bloom.Settings("subtle", Config.PostProcessing.BlurType,
-				Config.PostProcessing.BlurNumPasses, 1.5f, threshold, 1f, 0.5f, 1f, 1.5f);
+				Config.PostProcessing.BlurNumPasses, 1.5f, bloomThreshold, 1f, 0.5f, 1f, 1.5f);
 			bloom.setSettings(bloomSettings);
 		}
 
@@ -232,7 +233,7 @@ public final class AggressiveCold implements PostProcessingAnimator {
 		if (zoom != null && hasPlayer) {
 			// auto-disable zoom
 // float blurStrength = -0.1f * timeModFactor * currSpeedFactor;
-			float blurStrength = -0.05f * timeModFactor - 0.05f * currSpeedFactor * timeModFactor;
+			float blurStrength = -0.035f * timeModFactor - 0.09f * currSpeedFactor * timeModFactor;
 
 			boolean zoomEnabled = zoom.isEnabled();
 			boolean strengthIsZero = AMath.isZero(blurStrength);
@@ -250,9 +251,12 @@ public final class AggressiveCold implements PostProcessingAnimator {
 
 		if (bloom != null) {
 
-			bloom.setBaseSaturation(AMath.lerp(0.6f, 0.2f, timeModFactor));
+			bloom.setBaseSaturation(AMath.lerp(0.6f, 0.3f, timeModFactor));
 // bloom.setBaseSaturation(AMath.lerp(0.8f, 0.05f, timeModFactor));
-			bloom.setBloomSaturation(1.5f - timeModFactor * 0.25f);
+// bloom.setBloomSaturation(1.5f - timeModFactor * 0.15f);
+// if (!nightMode) {
+// bloom.setThreshold(bloomThreshold - 0.05f * timeModFactor);
+// }
 
 // with RttRatio = 0.5f
 // bloom.setBaseIntesity(0.9f);
