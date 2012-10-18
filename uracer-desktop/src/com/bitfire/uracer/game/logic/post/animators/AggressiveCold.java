@@ -231,7 +231,8 @@ public final class AggressiveCold implements PostProcessingAnimator {
 
 		if (zoom != null && hasPlayer) {
 			// auto-disable zoom
-			float blurStrength = -0.1f * timeModFactor * currSpeedFactor;
+// float blurStrength = -0.1f * timeModFactor * currSpeedFactor;
+			float blurStrength = -0.05f * timeModFactor - 0.05f * currSpeedFactor * timeModFactor;
 
 			boolean zoomEnabled = zoom.isEnabled();
 			boolean strengthIsZero = AMath.isZero(blurStrength);
@@ -248,11 +249,10 @@ public final class AggressiveCold implements PostProcessingAnimator {
 		}
 
 		if (bloom != null) {
-// bloom.setBaseSaturation(0.8f - timeModFactor * 0.6f);
+
 			bloom.setBaseSaturation(AMath.lerp(0.6f, 0.2f, timeModFactor));
-			// bloom.setBloomSaturation( 1.5f - factor * 0.85f ); // TODO when charged
-			// bloom.setBloomSaturation( 1.5f - factor * 1.5f ); // TODO when completely discharged
-// bloom.setBloomSaturation(1f - timeModFactor * 0.8f);
+// bloom.setBaseSaturation(AMath.lerp(0.8f, 0.05f, timeModFactor));
+			bloom.setBloomSaturation(1.5f - timeModFactor * 0.25f);
 
 // with RttRatio = 0.5f
 // bloom.setBaseIntesity(0.9f);
