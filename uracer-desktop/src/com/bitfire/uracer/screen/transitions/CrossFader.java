@@ -28,6 +28,7 @@ public final class CrossFader extends ScreenTransition {
 		super(factory);
 		quad = new FullscreenQuad();
 		fade = ShaderLoader.fromFile("fade", "fade");
+		duration = 1000;
 		reset();
 	}
 
@@ -45,7 +46,7 @@ public final class CrossFader extends ScreenTransition {
 		next = null;
 		factor = 0;
 		elapsed = 0;
-		setDuration(1000);
+		setDuration(duration);
 	}
 
 	@Override

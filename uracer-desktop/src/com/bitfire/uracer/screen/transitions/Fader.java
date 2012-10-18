@@ -34,6 +34,7 @@ public final class Fader extends ScreenTransition {
 		super(factory);
 		quad = new FullscreenQuad();
 		fade = ShaderLoader.fromFile("fade", "fade");
+		duration = 1000;
 		reset();
 	}
 
@@ -55,7 +56,7 @@ public final class Fader extends ScreenTransition {
 		next = null;
 		factor = 0;
 		elapsed = 0;
-		setDuration(1000);
+		setDuration(duration);
 		nextPrepared = false;
 		nextType = ScreenType.NoScreen;
 	}
