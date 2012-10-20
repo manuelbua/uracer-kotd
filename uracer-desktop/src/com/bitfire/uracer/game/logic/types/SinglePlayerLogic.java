@@ -75,7 +75,7 @@ public class SinglePlayerLogic extends CommonLogic {
 	// the camera needs to be positioned
 	@Override
 	protected float updateCamera (float timeModFactor) {
-		float speedFactor = AMath.fixup(AMath.lerp(previousVal, playerCar.carState.currSpeedFactor, 0.015f));
+		float speedFactor = AMath.fixup(AMath.lerp(previousVal, playerCar.carState.currSpeedFactor, 0.012f));
 		previousVal = speedFactor;
 		meanVal.addValue(speedFactor);
 
