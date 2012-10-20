@@ -81,7 +81,7 @@ public final class PlayerDriftState {
 		if (hasCollided) {
 			// ignore drifts for a couple of seconds
 			// TODO use this in a penalty system
-			if (collisionTime.elapsed(Time.Reference.TickSeconds) >= 2) {
+			if (collisionTime.elapsed(Time.Reference.TickSeconds) >= 0.5f) {
 				collisionTime.stop();
 				hasCollided = false;
 			}
