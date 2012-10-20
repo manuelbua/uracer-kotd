@@ -295,7 +295,7 @@ public final class AggressiveCold implements PostProcessingAnimator {
 		//
 		// TODO out of dbg
 		//
-		float maxzoom = (GameWorldRenderer.MaxCameraZoom - 0.1f);
+		float maxzoom = GameWorldRenderer.MaxCameraZoom;
 		float factor = ((zoomCamera - 1) / (maxzoom - 1));
 
 		float kdist = 0.18f;
