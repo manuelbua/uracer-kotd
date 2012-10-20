@@ -101,7 +101,7 @@ public final class AggressiveWarm implements PostProcessingAnimator {
 	private long startMs = 0;
 
 	@Override
-	public void update (float timeModFactor) {
+	public void update (float timeModFactor, float zoomCamera) {
 		if (!hasPlayer) {
 			return;
 		}

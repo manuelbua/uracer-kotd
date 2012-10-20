@@ -23,6 +23,7 @@ import com.bitfire.uracer.game.logic.post.PostProcessingAnimator;
 import com.bitfire.uracer.game.logic.types.CommonLogic;
 import com.bitfire.uracer.game.player.PlayerCar;
 import com.bitfire.uracer.game.rendering.GameRenderer;
+import com.bitfire.uracer.game.rendering.GameWorldRenderer;
 import com.bitfire.uracer.game.tween.GameTweener;
 import com.bitfire.uracer.resources.Art;
 import com.bitfire.uracer.utils.AMath;
@@ -203,7 +204,7 @@ public final class AggressiveCold implements PostProcessingAnimator {
 	// FIXME shader settings should be bound by setParams instead!
 	// ^
 	@Override
-	public void update (float timeModFactor) {
+	public void update (float timeModFactor, float zoomCamera) {
 		float currDriftStrength = 0;
 		float currSpeedFactor = 0;
 
@@ -283,7 +284,11 @@ public final class AggressiveCold implements PostProcessingAnimator {
 			lutIntensity = MathUtils.clamp(lutIntensity, 0, 1);
 
 			vignette.setLutIntensity(lutIntensity);
-			vignette.setIntensity(1.1f);
+			if (crt == null) {
+				vignette.setIntensity(1.1f);
+			} else {
+				vignette.setIntensity(0.7f);
+			}
 			vignette.setLutIndexOffset(wrongWayAmount.value);
 		}
 
@@ -291,17 +296,17 @@ public final class AggressiveCold implements PostProcessingAnimator {
 		// TODO out of dbg
 		//
 		if (curvature != null) {
-			// curvature.setDistortion( player.carState.currSpeedFactor * 0.25f );
-			// curvature.setZoom( 1 - 0.12f * player.carState.currSpeedFactor );
-
-			float dist = 0.18f;// * 0.75f;
+			float kdist = 0.1618f;
+			float dist = 0f + kdist - kdist * ((zoomCamera - 1) / (GameWorldRenderer.MaxCameraZoom - 1));
+			dist = AMath.fixup(dist);
 			curvature.setDistortion(dist);
 			curvature.setZoom(1 - (dist / 2));
 		}
 
 		if (crt != null) {
-			float dist = 0.0f;
-			dist = player.carState.currSpeedFactor * 0.1618f * 1f;
+			float kdist = 0.1618f;
+			float dist = 0f + kdist - kdist * ((zoomCamera - 1) / (GameWorldRenderer.MaxCameraZoom - 1));
+			dist = AMath.fixup(dist);
 			crt.setDistortion(dist);
 			crt.setZoom(1 - (dist / 2));
 		}

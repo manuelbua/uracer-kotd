@@ -132,9 +132,9 @@ public final class PostProcessing {
 		}
 	}
 
-	public void onBeforeRender (float timeModFactor) {
+	public void onBeforeRender (float timeModFactor, float zoom) {
 		if (hasPostProcessor && currentAnimator != null) {
-			currentAnimator.update(timeModFactor);
+			currentAnimator.update(timeModFactor, zoom);
 		}
 	}
 

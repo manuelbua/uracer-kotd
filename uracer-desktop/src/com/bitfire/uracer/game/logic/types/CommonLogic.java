@@ -168,7 +168,8 @@ public abstract class CommonLogic implements GameLogic, CarEvent.Listener, Playe
 	// specific game logic shall also implement these
 	//
 
-	protected abstract void updateCamera (float timeModFactor);
+	// implementers should returns the camera zoom amount
+	protected abstract float updateCamera (float timeModFactor);
 
 	protected abstract void gameRestart ();
 
@@ -452,10 +453,10 @@ public abstract class CommonLogic implements GameLogic, CarEvent.Listener, Playe
 		URacer.timeMultiplier = timeMod.getTime();
 		float timeModFactor = 1 - (URacer.timeMultiplier - TimeModulator.MinTime) / (TimeModulator.MaxTime - TimeModulator.MinTime);
 
-		updateCamera(timeModFactor);
+		float zoom = updateCamera(timeModFactor);
 
 		// post-processing step
-		postProcessing.onBeforeRender(timeModFactor);
+		postProcessing.onBeforeRender(timeModFactor, zoom);
 
 		// camera update
 		gameWorldRenderer.updateCamera();

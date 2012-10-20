@@ -9,6 +9,7 @@ import aurelienribon.tweenengine.equations.Quad;
 
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.math.MathUtils;
+import com.badlogic.gdx.math.WindowedMean;
 import com.badlogic.gdx.utils.Array;
 import com.bitfire.uracer.ScalingStrategy;
 import com.bitfire.uracer.configuration.Config;
@@ -68,10 +69,31 @@ public class SinglePlayerLogic extends CommonLogic {
 	// event listeners / callbacks
 	//
 
+	WindowedMean meanVal = new WindowedMean(5);
+	private float previousVal = 0;
+
 	// the camera needs to be positioned
 	@Override
-	protected void updateCamera (float timeModFactor) {
-		gameWorldRenderer.setCameraZoom(1.0f + (GameWorldRenderer.MaxCameraZoom - 1) * timeModFactor);
+	protected float updateCamera (float timeModFactor) {
+		float speedFactor = AMath.fixup(AMath.lerp(previousVal, playerCar.carState.currSpeedFactor, 0.015f));
+		previousVal = speedFactor;
+		meanVal.addValue(speedFactor);
+
+		float minZoom = 1;
+		float maxZoom = GameWorldRenderer.MaxCameraZoom;
+		float zoomRange = maxZoom - minZoom;
+
+		float zoomFromSpeed = AMath.fixup(maxZoom * meanVal.getMean());
+
+		float cameraZoom = maxZoom - zoomRange * zoomFromSpeed + zoomRange * timeModFactor * zoomFromSpeed;
+
+		cameraZoom = AMath.fixup(MathUtils.clamp(cameraZoom, 1, maxZoom));
+
+		// Gdx.app.log("SPL", "Szoom=" + zoomFromSpeed + ", camZoom=" + cameraZoom + ", Sfactor=" + speedFactor);
+// Gdx.app.log("SPL", "dbg=" + cameraZoom);
+		gameWorldRenderer.setCameraZoom(cameraZoom);
+
+// gameWorldRenderer.setCameraZoom(1.0f + (GameWorldRenderer.MaxCameraZoom - 1) * timeModFactor - (addzoom));
 
 		// update player's headlights and move the world camera to follows it, if there is a player
 		if (hasPlayer()) {
@@ -92,6 +114,8 @@ public class SinglePlayerLogic extends CommonLogic {
 			// no ghost, no player, WTF?
 			gameWorldRenderer.setCameraPosition(gameWorld.playerStartPos, gameWorld.playerStartOrientRads, 0);
 		}
+
+		return cameraZoom;
 	}
 
 	// the game has been restarted
