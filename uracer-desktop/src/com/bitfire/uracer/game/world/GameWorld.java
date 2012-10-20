@@ -195,7 +195,7 @@ public final class GameWorld {
 			return;
 		}
 
-		float rttScale = .75f;
+		float rttScale = .5f;
 		int maxRays = 720;
 
 		if (!Config.isDesktop) {
@@ -209,21 +209,21 @@ public final class GameWorld {
 		rayHandler.setShadows(true);
 		rayHandler.setCulling(true);
 		rayHandler.setBlur(true);
-		rayHandler.setBlurNum(4);
+		rayHandler.setBlurNum(2);
 		rayHandler.setAmbientLight(0f, 0, 0.25f, 0.3f);
 
 		final Color c = new Color();
 
 		// setup player headlights data
-		c.set(.4f, .4f, .75f, .85f);
+		c.set(0.1f, 0.2f, 0.9f, 0.7f);
 
-		playerHeadlightsA = new ConeLight(rayHandler, maxRays, c, 40, 0, 0, 0, 10);
+		playerHeadlightsA = new ConeLight(rayHandler, maxRays, c, 25, 0, 0, 0, 9);
 		playerHeadlightsA.setSoft(true);
-		playerHeadlightsA.setMaskBits(CollisionFilters.CategoryTrackWalls | CollisionFilters.CategoryReplay);
+		playerHeadlightsA.setMaskBits(CollisionFilters.CategoryTrackWalls /* | CollisionFilters.CategoryReplay */);
 
-		playerHeadlightsB = new ConeLight(rayHandler, maxRays, c, 40, 0, 0, 0, 10);
+		playerHeadlightsB = new ConeLight(rayHandler, maxRays, c, 25, 0, 0, 0, 9);
 		playerHeadlightsB.setSoft(true);
-		playerHeadlightsB.setMaskBits(CollisionFilters.CategoryTrackWalls | CollisionFilters.CategoryReplay);
+		playerHeadlightsB.setMaskBits(CollisionFilters.CategoryTrackWalls /* | CollisionFilters.CategoryReplay */);
 
 		// setup level lights data, if any
 		Vector2 pos = new Vector2();
@@ -233,16 +233,16 @@ public final class GameWorld {
 			// MathUtils.random(0,1),
 			// MathUtils.random(0,1),
 			// MathUtils.random(0,1),
-				1f, .85f, 1f, .75f);
+				1f, .85f, 0.5f, .55f);
 			TiledObject o = group.objects.get(i);
 			pos.set(o.x, o.y).mul(scalingStrategy.invTileMapZoomFactor);
 			pos.y = worldSizeScaledPx.y - pos.y;
 			pos.set(Convert.px2mt(pos)).mul(scalingStrategy.tileMapZoomFactor);
 
-			PointLight l = new PointLight(rayHandler, maxRays, c, MathUtils.random(5f, 30f), pos.x, pos.y);
+			PointLight l = new PointLight(rayHandler, maxRays, c, MathUtils.random(20f, 30f), pos.x, pos.y);
 			l.setSoft(true);
-			l.setStaticLight(true);
-			l.setMaskBits(CollisionFilters.CategoryPlayer | CollisionFilters.CategoryTrackWalls);
+			l.setStaticLight(false);
+			l.setMaskBits(CollisionFilters.CategoryPlayer | CollisionFilters.CategoryTrackWalls | CollisionFilters.CategoryReplay);
 		}
 	}
 

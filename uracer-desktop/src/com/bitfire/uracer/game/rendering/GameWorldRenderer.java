@@ -227,20 +227,12 @@ public final class GameWorldRenderer {
 			// update player light (subframe interpolation ready)
 			float ang = 90 + car.state().orientation;
 			Vector2 v = orientationToPosition(car, ang, 0, 0.5f);
-			playerLightsA.setColor(0.1f, 0.2f, 0.9f, 0.7f);
-			playerLightsA.setDistance(25);
-			playerLightsA.setConeDegree(9);
 			playerLightsA.setDirection(ang + 5);
 			playerLightsA.setPosition(v.x, v.y);
-			playerLightsA.setSoft(true);
 
 			v = orientationToPosition(car, ang, 0, -0.5f);
-			playerLightsB.setColor(0.1f, 0.2f, 0.9f, 0.7f);
-			playerLightsB.setDistance(25);
-			playerLightsB.setConeDegree(9);
 			playerLightsB.setDirection(ang - 5);
 			playerLightsB.setPosition(v.x, v.y);
-			playerLightsB.setSoft(true);
 		}
 
 		// if( Config.isDesktop && (URacer.getFrameCount() & 0x1f) == 0x1f ) {
@@ -251,7 +243,7 @@ public final class GameWorldRenderer {
 	private void updateRayHandler () {
 		if (rayHandler != null) {
 
-			rayHandler.setAmbientLight(0.1f, 0.05f, 0.7f, 0.3f);
+			rayHandler.setAmbientLight(0.1f, 0.05f, 0.1f, 0.35f);
 
 			// @off
 			rayHandler.setCombinedMatrix(camOrthoMvpMt, Convert.px2mt(camOrtho.position.x), Convert.px2mt(camOrtho.position.y),

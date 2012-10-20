@@ -234,7 +234,7 @@ public final class AggressiveCold implements PostProcessingAnimator {
 		if (zoom != null && hasPlayer) {
 			// auto-disable zoom
 // float blurStrength = -0.1f * timeModFactor * currSpeedFactor;
-			float blurStrength = -0.035f * timeModFactor - 0.09f * currSpeedFactor * timeModFactor;
+			float blurStrength = (-0.035f - 0.09f * currSpeedFactor - 0.07f * currDriftStrength) * timeModFactor;
 
 			boolean zoomEnabled = zoom.isEnabled();
 			boolean strengthIsZero = AMath.isZero(blurStrength);
@@ -295,17 +295,19 @@ public final class AggressiveCold implements PostProcessingAnimator {
 		//
 		// TODO out of dbg
 		//
+		float maxzoom = (GameWorldRenderer.MaxCameraZoom - 0.1f);
+		float factor = ((zoomCamera - 1) / (maxzoom - 1));
+
+		float kdist = 0.18f;
 		if (curvature != null) {
-			float kdist = 0.1618f;
-			float dist = 0f + kdist - kdist * ((zoomCamera - 1) / (GameWorldRenderer.MaxCameraZoom - 1));
+			float dist = kdist - kdist * factor;
 			dist = AMath.fixup(dist);
 			curvature.setDistortion(dist);
 			curvature.setZoom(1 - (dist / 2));
 		}
 
 		if (crt != null) {
-			float kdist = 0.1618f;
-			float dist = 0f + kdist - kdist * ((zoomCamera - 1) / (GameWorldRenderer.MaxCameraZoom - 1));
+			float dist = kdist - kdist * factor;
 			dist = AMath.fixup(dist);
 			crt.setDistortion(dist);
 			crt.setZoom(1 - (dist / 2));
