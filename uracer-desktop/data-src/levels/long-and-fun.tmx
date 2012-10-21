@@ -211,8 +211,8 @@
   <object x="1572" y="1576" width="27" height="21"/>
   <object x="1841" y="1207" width="27" height="21"/>
   <object x="2810" y="1125" width="27" height="21"/>
-  <object x="2668" y="2107" width="27" height="21"/>
-  <object x="2215" y="2438" width="27" height="21"/>
+  <object x="2664" y="1703" width="27" height="21"/>
+  <object x="2431" y="2408" width="27" height="21"/>
   <object x="1748" y="2928"/>
   <object x="1708" y="2402"/>
   <object x="2670" y="2852"/>
@@ -234,6 +234,28 @@
   <object x="2457" y="1477"/>
   <object x="1348" y="1548"/>
   <object x="1208" y="2842"/>
+  <object x="3934" y="2654"/>
+  <object x="4240" y="2544"/>
+  <object x="4188" y="1346"/>
+  <object x="1976" y="2368"/>
+  <object x="2482" y="1924"/>
+  <object x="1428" y="1140"/>
+  <object x="1376" y="2852"/>
+  <object x="1502" y="2096"/>
+  <object x="2744" y="1416"/>
+  <object x="2642" y="2194"/>
+  <object x="1112" y="1822"/>
+  <object x="1338" y="2086"/>
+  <object x="1836" y="2678"/>
+  <object x="2428" y="2692"/>
+  <object x="3394" y="2592"/>
+  <object x="3308" y="1124"/>
+  <object x="3136" y="1352"/>
+  <object x="2094" y="1466"/>
+  <object x="2344" y="1172"/>
+  <object x="2048" y="932"/>
+  <object x="3854" y="2430"/>
+  <object x="4094" y="2794"/>
  </objectgroup>
  <objectgroup color="#a40002" name="walls" width="24" height="18">
   <object x="2917" y="2403">

@@ -195,7 +195,7 @@ public final class GameWorld {
 			return;
 		}
 
-		float rttScale = .5f;
+		float rttScale = .25f;
 		int maxRays = 720;
 
 		if (!Config.isDesktop) {
@@ -219,11 +219,11 @@ public final class GameWorld {
 
 		playerHeadlightsA = new ConeLight(rayHandler, maxRays, c, 25, 0, 0, 0, 9);
 		playerHeadlightsA.setSoft(true);
-		playerHeadlightsA.setMaskBits(CollisionFilters.CategoryTrackWalls /* | CollisionFilters.CategoryReplay */);
+		playerHeadlightsA.setMaskBits(CollisionFilters.CategoryTrackWalls | CollisionFilters.CategoryReplay);
 
 		playerHeadlightsB = new ConeLight(rayHandler, maxRays, c, 25, 0, 0, 0, 9);
 		playerHeadlightsB.setSoft(true);
-		playerHeadlightsB.setMaskBits(CollisionFilters.CategoryTrackWalls /* | CollisionFilters.CategoryReplay */);
+		playerHeadlightsB.setMaskBits(CollisionFilters.CategoryTrackWalls | CollisionFilters.CategoryReplay);
 
 		// setup level lights data, if any
 		Vector2 pos = new Vector2();
@@ -233,7 +233,7 @@ public final class GameWorld {
 			// MathUtils.random(0,1),
 			// MathUtils.random(0,1),
 			// MathUtils.random(0,1),
-				1f, .85f, 0.5f, .55f);
+				1f, .85f, 0.6f, .55f);
 			TiledObject o = group.objects.get(i);
 			pos.set(o.x, o.y).mul(scalingStrategy.invTileMapZoomFactor);
 			pos.y = worldSizeScaledPx.y - pos.y;

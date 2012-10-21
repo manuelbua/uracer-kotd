@@ -256,7 +256,7 @@ public final class AggressiveCold implements PostProcessingAnimator {
 // bloom.setBaseSaturation(AMath.lerp(0.8f, 0.05f, timeModFactor));
 // bloom.setBloomSaturation(1.5f - timeModFactor * 0.15f);
 // if (!nightMode) {
-// bloom.setThreshold(bloomThreshold - 0.05f * timeModFactor);
+// bloom.setThreshold(0.3f);
 // }
 
 // with RttRatio = 0.5f
