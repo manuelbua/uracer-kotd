@@ -81,7 +81,7 @@ public final class CarRenderer {
 	public void renderShadows (SpriteBatch batch, EntityRenderState state) {
 		ambientOcclusion.setPosition(state.position.x - occlusionOffX, state.position.y - occlusionOffY);
 		ambientOcclusion.setRotation(state.orientation);
-		ambientOcclusion.draw(batch, 0.9f * alpha);
+		ambientOcclusion.draw(batch, 0.75f * alpha);
 	}
 
 	public void render (SpriteBatch batch, EntityRenderState state) {
