@@ -206,44 +206,33 @@
   </object>
  </objectgroup>
  <objectgroup color="#ffff00" height="18" name="lights" width="24">
-  <object height="21" width="27" x="1888" y="1631"/>
-  <object height="21" width="27" x="1218" y="1530"/>
-  <object height="21" width="27" x="1809" y="1335"/>
-  <object height="21" width="27" x="2801" y="1236"/>
-  <object height="21" width="27" x="2556" y="1962"/>
-  <object height="21" width="27" x="2195" y="2334"/>
+  <object height="21" width="27" x="2200" y="1813"/>
+  <object height="21" width="27" x="1572" y="1576"/>
+  <object height="21" width="27" x="1841" y="1207"/>
+  <object height="21" width="27" x="2810" y="1125"/>
+  <object height="21" width="27" x="2668" y="2107"/>
+  <object height="21" width="27" x="2215" y="2438"/>
   <object x="1748" y="2928"/>
   <object x="1708" y="2402"/>
   <object x="2670" y="2852"/>
   <object x="2770" y="2188"/>
   <object x="3136" y="2444"/>
-  <object x="4420" y="2130"/>
-  <object x="4400" y="1528"/>
+  <object x="4450" y="2266"/>
+  <object x="4376" y="1602"/>
   <object x="3486" y="1750"/>
   <object x="3120" y="1688"/>
   <object x="3838" y="2910"/>
   <object x="3450" y="2136"/>
-  <object x="2456" y="2414"/>
-  <object x="1918" y="2002"/>
-  <object x="3274" y="1234"/>
-  <object x="1444" y="1250"/>
-  <object x="1230" y="2340"/>
-  <object x="4146" y="1562"/>
+  <object x="1790" y="1912"/>
+  <object x="3475" y="1331"/>
+  <object height="15" width="15" x="1062" y="1167"/>
+  <object x="1132" y="2348"/>
   <object x="4022" y="2182"/>
-  <object x="4150" y="1994"/>
-  <object x="3750" y="1236"/>
+  <object x="4130" y="1070"/>
   <object x="3224" y="2916"/>
-  <object x="2584" y="1614"/>
-  <object x="1230" y="1962"/>
-  <object x="4148" y="2372"/>
-  <object x="4028" y="2718"/>
-  <object x="3606" y="2732"/>
-  <object x="3410" y="2278"/>
-  <object x="2998" y="2166"/>
-  <object x="2792" y="2514"/>
-  <object x="2422" y="2806"/>
-  <object x="1930" y="2804"/>
-  <object x="1472" y="2786"/>
+  <object x="2457" y="1477"/>
+  <object x="1348" y="1548"/>
+  <object x="1208" y="2842"/>
  </objectgroup>
  <objectgroup color="#a40002" height="18" name="walls" width="24">
   <object x="2917" y="2403">
@@ -316,7 +305,7 @@
    <polyline points="0,0 96,28 179,4 226,-60"/>
   </object>
  </objectgroup>
- <objectgroup color="#e5f100" height="18" name="sectors" width="24">
+ <objectgroup color="#e5f100" height="18" name="sectors" visible="0" width="24">
   <object x="2911" y="1075">
    <polygon points="113,-11 113,325 225,325 225,-11"/>
   </object>
@@ -438,7 +427,7 @@
    <polygon points="-6,0 106,0 106,-336 -6,-336"/>
   </object>
  </objectgroup>
- <objectgroup color="#e3e600" height="18" name="route" width="24">
+ <objectgroup color="#e3e600" height="18" name="route" visible="0" width="24">
   <object x="2913" y="1227">
    <polyline points="111,5 223,5 895,0 1121,85 1218,248 1232,454 1231,1293 1147,1458 1054,1531 896,1568 674,1486 568,1299 536,1093 389,933 168,904 -19,1000 -88,1122 -117,1302 -181,1440 -332,1550 -532,1579 -1372,1566 -1608,1446 -1675,1292 -1676,286 -1597,118 -1467,22 -1317,2 -1127,82 -1008,312 -1004,787 -958,958 -790,1103 -536,1105 -397,983 -336,762 -327,258 -247,123 -108,18 -1,5"/>
   </object>

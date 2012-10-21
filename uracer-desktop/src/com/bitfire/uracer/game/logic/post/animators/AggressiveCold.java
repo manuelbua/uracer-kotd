@@ -146,7 +146,7 @@ public final class AggressiveCold implements PostProcessingAnimator {
 		wrongWayBegan = false;
 
 		if (bloom != null) {
-			bloomThreshold = (nightMode ? 0.2f : 0.45f);
+			bloomThreshold = (nightMode ? 0.3f : 0.45f);
 			Bloom.Settings bloomSettings = new Bloom.Settings("subtle", Config.PostProcessing.BlurType,
 				Config.PostProcessing.BlurNumPasses, 1.5f, bloomThreshold, 1f, 0.5f, 1f, 1.5f);
 			bloom.setSettings(bloomSettings);

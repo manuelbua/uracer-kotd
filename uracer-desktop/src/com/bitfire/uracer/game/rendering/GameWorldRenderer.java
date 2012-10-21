@@ -243,7 +243,7 @@ public final class GameWorldRenderer {
 	private void updateRayHandler () {
 		if (rayHandler != null) {
 
-			rayHandler.setAmbientLight(0.1f, 0.05f, 0.1f, 0.35f);
+			rayHandler.setAmbientLight(0.1f, 0.05f, 0.1f, 0.4f);
 
 			// @off
 			rayHandler.setCombinedMatrix(camOrthoMvpMt, Convert.px2mt(camOrtho.position.x), Convert.px2mt(camOrtho.position.y),
