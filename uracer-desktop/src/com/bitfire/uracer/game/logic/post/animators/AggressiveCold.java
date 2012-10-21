@@ -234,7 +234,7 @@ public final class AggressiveCold implements PostProcessingAnimator {
 		if (zoom != null && hasPlayer) {
 			// auto-disable zoom
 // float blurStrength = -0.1f * timeModFactor * currSpeedFactor;
-			float blurStrength = (-0.035f - 0.09f * currSpeedFactor - 0.07f * currDriftStrength) * timeModFactor;
+			float blurStrength = (-0.035f - 0.09f * currSpeedFactor) * timeModFactor - 0.035f * currDriftStrength;
 
 			boolean zoomEnabled = zoom.isEnabled();
 			boolean strengthIsZero = AMath.isZero(blurStrength);

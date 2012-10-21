@@ -198,7 +198,7 @@ public final class Art {
 
 		skidMarksFront = cars.findRegion("skid-marks-front");
 		skidMarksRear = cars.findRegion("skid-marks-rear");
-		carAmbientOcclusion = cars.findRegion("car-ao");
+		carAmbientOcclusion = cars.findRegion("car-ao-new");
 
 		wrongWay = newTexture("data/base/wrong-way.png", false);
 		wrongWay.setFilter(TextureFilter.Linear, TextureFilter.Linear);

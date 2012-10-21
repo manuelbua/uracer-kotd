@@ -87,16 +87,23 @@ skid-marks-rear
   orig: 129, 295
   offset: 0, 0
   index: -1
+car-ao-new
+  rotate: false
+  xy: 800, 126
+  size: 100, 168
+  orig: 100, 168
+  offset: 0, 0
+  index: -1
 selector
   rotate: false
-  xy: 800, 203
+  xy: 800, 35
   size: 78, 91
   orig: 78, 91
   offset: 0, 0
   index: -1
 car-ao
   rotate: false
-  xy: 800, 141
+  xy: 900, 232
   size: 34, 62
   orig: 34, 62
   offset: 0, 0

@@ -39,7 +39,7 @@ public final class CarRenderer {
 		// ambient occlusion
 		ambientOcclusion.setRegion(Art.carAmbientOcclusion);
 		ambientOcclusion.setSize(facet.getWidth(), facet.getHeight());
-		ambientOcclusion.setScale(2f, 2.3f);
+		ambientOcclusion.setScale(1.9f, 1.52f);
 		ambientOcclusion.setOrigin(ambientOcclusion.getWidth() / 2, ambientOcclusion.getHeight() / 2);
 
 		occlusionOffX = ambientOcclusion.getOriginX();
@@ -81,7 +81,7 @@ public final class CarRenderer {
 	public void renderShadows (SpriteBatch batch, EntityRenderState state) {
 		ambientOcclusion.setPosition(state.position.x - occlusionOffX, state.position.y - occlusionOffY);
 		ambientOcclusion.setRotation(state.orientation);
-		ambientOcclusion.draw(batch, 0.65f * alpha);
+		ambientOcclusion.draw(batch, 0.9f * alpha);
 	}
 
 	public void render (SpriteBatch batch, EntityRenderState state) {
