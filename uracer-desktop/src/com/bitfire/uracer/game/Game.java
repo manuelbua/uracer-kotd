@@ -31,7 +31,7 @@ public class Game implements Disposable {
 
 	public Game (UserProfile userProfile, String trackId, ScalingStrategy scalingStrategy) {
 
-		gameWorld = new GameWorld(scalingStrategy, trackId, true);
+		gameWorld = new GameWorld(scalingStrategy, trackId, false);
 		Gdx.app.debug("Game", "Game world ready");
 
 		// handles rendering

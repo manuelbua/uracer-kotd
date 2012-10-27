@@ -495,7 +495,7 @@ public final class GameWorldRenderer {
 		resetCounters();
 
 		gl.glEnable(GL20.GL_DEPTH_TEST);
-		gl.glDepthFunc(GL20.GL_LEQUAL);
+		gl.glDepthFunc(GL20.GL_LESS);
 
 		if (showWalls && trackWalls.count() > 0) {
 			renderWalls(trackWalls, depthOnly);
@@ -505,14 +505,18 @@ public final class GameWorldRenderer {
 			renderTrees(trackTrees, depthOnly);
 		}
 
-		// render "static-meshes" layer
-		gl.glEnable(GL20.GL_CULL_FACE);
-		gl.glFrontFace(GL20.GL_CCW);
-		gl.glCullFace(GL20.GL_BACK);
+		if (staticMeshes.size() > 0) {
+			// render "static-meshes" layer
+			gl.glEnable(GL20.GL_CULL_FACE);
+			gl.glFrontFace(GL20.GL_CCW);
+			gl.glCullFace(GL20.GL_BACK);
 
-		renderOrthographicAlignedModels(staticMeshes, depthOnly);
+			renderOrthographicAlignedModels(staticMeshes, depthOnly);
 
-		gl.glDisable(GL20.GL_CULL_FACE);
+			gl.glDisable(GL20.GL_CULL_FACE);
+			// gl.glDisable(GL20.GL_DEPTH_TEST);
+		}
+
 		gl.glDisable(GL20.GL_DEPTH_TEST);
 	}
 
