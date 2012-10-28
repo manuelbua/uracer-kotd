@@ -13,6 +13,7 @@ public class TreeStillModel extends OrthographicAlignedStillModel {
 	public Mesh leaves, trunk;
 	public StillSubMesh smLeaves, smTrunk;
 	public Matrix4 transformed = new Matrix4();
+	public Matrix4 mtxmodel = new Matrix4();
 	public BoundingBox boundingBox = new BoundingBox();
 	public BoundingBox localBoundingBox = new BoundingBox();
 

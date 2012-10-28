@@ -106,14 +106,17 @@ public final class Config {
 
 		public static BlurType BlurType;
 		public static int BlurNumPasses;
-		public static int ScaledFboWidth, ScaledFboHeight;
+		public static int BloomFboWidth, BloomFboHeight;
+		public static float NormalDepthMapScale = 0.5f;
+		public static float SsaoMapScale = 0.5f;
+		public static float SsaoPingPongScale = 0.5f;
 		private static float RttRatio = 0.5f;
 
 		// compute per-resolution constants
 		public static void asDefault () {
 
-			ScaledFboWidth = (int)(Gdx.graphics.getWidth() * RttRatio);
-			ScaledFboHeight = (int)(Gdx.graphics.getHeight() * RttRatio);
+			BloomFboWidth = (int)(Gdx.graphics.getWidth() * RttRatio);
+			BloomFboHeight = (int)(Gdx.graphics.getHeight() * RttRatio);
 
 			int w = Gdx.graphics.getWidth();
 			if (w >= 1400) {

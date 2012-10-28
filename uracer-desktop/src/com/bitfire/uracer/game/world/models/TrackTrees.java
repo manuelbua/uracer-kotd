@@ -51,6 +51,7 @@ public class TrackTrees {
 			tmpmtx.setToTranslation(tmpvec.x, tmpvec.y, meshZ);
 			Matrix4.mul(tmpmtx.val, tmpmtx2.setToScaling(m.scaleAxis).val);
 			Matrix4.mul(tmpmtx.val, tmpmtx2.setToRotation(m.iRotationAxis, m.iRotationAngle).val);
+			m.mtxmodel.set(tmpmtx);
 
 			// comb = (proj * view) * model (fast mul)
 			Matrix4.mul(transf.set(camPersp.combined).val, tmpmtx.val);
