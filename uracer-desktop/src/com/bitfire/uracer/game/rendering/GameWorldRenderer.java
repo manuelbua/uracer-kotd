@@ -176,6 +176,7 @@ public final class GameWorldRenderer {
 
 		tileMapRenderer.dispose();
 		tileAtlas.dispose();
+		plane.dispose();
 	}
 
 	// permit to the tilemap to appear as a flat surface with the normal pointing upward, towards the tvcam
@@ -420,8 +421,6 @@ public final class GameWorldRenderer {
 
 		ShaderProgram shader = shNormalDepth;
 		float meshZ = -(camPersp.far - camPersp.position.z) + (camPersp.far * (1 - (camOrtho.zoom)));
-		// Gdx.app.log("", "" + meshZ);
-
 		float k = scalingStrategy.meshScaleFactor * OrthographicAlignedStillModel.BlenderToURacer * scalingStrategy.to256;
 		float scalex = 6, scalez = 4;
 
