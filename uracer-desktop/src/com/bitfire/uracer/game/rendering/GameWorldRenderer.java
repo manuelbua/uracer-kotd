@@ -411,6 +411,7 @@ public final class GameWorldRenderer {
 			Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT | GL20.GL_DEPTH_BUFFER_BIT);
 			// renderAllMeshes(true);
 			renderTilemapPlane();
+			renderWalls(trackWalls, true);
 			renderTrees(trackTrees, true);
 		}
 		normalDepthMap.end();
@@ -451,18 +452,18 @@ public final class GameWorldRenderer {
 		rayHandler.renderLightMap(dest);
 	}
 
-	public void renderAllMeshes (boolean depthOnly) {
+	public void renderAllMeshes () {
 		resetCounters();
 
 		gl.glEnable(GL20.GL_DEPTH_TEST);
 		gl.glDepthFunc(GL20.GL_LESS);
 
 		if (showWalls && trackWalls.count() > 0) {
-			renderWalls(trackWalls, depthOnly);
+			renderWalls(trackWalls, false);
 		}
 
 		if (showComplexTrees && trackTrees.count() > 0) {
-			renderTrees(trackTrees, depthOnly);
+			renderTrees(trackTrees, false);
 		}
 
 		if (staticMeshes.size() > 0) {
@@ -471,7 +472,7 @@ public final class GameWorldRenderer {
 			gl.glFrontFace(GL20.GL_CCW);
 			gl.glCullFace(GL20.GL_BACK);
 
-			renderOrthographicAlignedModels(staticMeshes, depthOnly);
+			renderOrthographicAlignedModels(staticMeshes, false);
 
 			gl.glDisable(GL20.GL_CULL_FACE);
 			// gl.glDisable(GL20.GL_DEPTH_TEST);
@@ -503,8 +504,8 @@ public final class GameWorldRenderer {
 
 		ShaderProgram shader = treeShader;
 
-		gl.glEnable(GL20.GL_CULL_FACE);
-		gl.glCullFace(GL20.GL_BACK);
+		gl.glDisable(GL20.GL_CULL_FACE);
+// gl.glCullFace(GL20.GL_BACK);
 		gl.glDisable(GL20.GL_BLEND);
 
 		if (depthOnly) {
@@ -540,8 +541,7 @@ public final class GameWorldRenderer {
 
 		// all the transparent foliage
 
-// if (depthOnly) return;
-
+		// do NOT cull face so that SSAO can appear on back faces as well
 		// gl.glDisable(GL20.GL_CULL_FACE);
 
 		if (!depthOnly) {
@@ -618,7 +618,15 @@ public final class GameWorldRenderer {
 			shader = shNormalDepth;
 		}
 
+		Art.meshTreeTrunk.bind();
+
 		shader.begin();
+
+		if (depthOnly) {
+			shader.setUniformMatrix("proj", camPersp.projection);
+			shader.setUniformMatrix("view", camPersp.view);
+			shader.setUniformi("u_diffuse", 0);
+		}
 
 		boolean needRebind = false;
 		for (int i = 0; i < models.size(); i++) {
@@ -635,18 +643,30 @@ public final class GameWorldRenderer {
 			// transform to world space
 			camPersp.unproject(tmpvec);
 
-			// build model matrix
 			// TODO: support proper rotation now that Mat3/Mat4 supports opengl-style rotation/translation/scaling
-			mtx.setToTranslation(tmpvec.x, tmpvec.y, meshZ);
-			Matrix4.mul(mtx.val, mtx2.setToRotation(m.iRotationAxis, m.iRotationAngle).val);
-			Matrix4.mul(mtx.val, mtx2.setToScaling(m.scaleAxis).val);
+			// mtx.setToTranslation(tmpvec.x, tmpvec.y, meshZ);
+			// Matrix4.mul(mtx.val, mtx2.setToRotation(m.iRotationAxis, m.iRotationAngle).val);
+			// Matrix4.mul(mtx.val, mtx2.setToScaling(m.scaleAxis).val);
 
+			// build model matrix
+			Matrix4 model = mtx;
+			tmpvec.z = meshZ;
+
+			// change of basis
+			model.idt();
+			model.translate(tmpvec);
+			model.rotate(m.iRotationAxis, m.iRotationAngle);
+			model.scale(m.scaleAxis.x, m.scaleAxis.y, m.scaleAxis.z);
+			model.translate(-tmpvec.x, -tmpvec.y, -tmpvec.z);
+			model.translate(tmpvec);
+
+			Matrix4 mvp = mtx2;
 			// comb = (proj * view) * model (fast mul)
-			Matrix4.mul(mtx2.set(camPersp.combined).val, mtx.val);
+			mvp.set(camPersp.combined).mul(model);
 
 			// ensure the bounding box is transformed
 			m.boundingBox.inf().set(m.localBoundingBox);
-			m.boundingBox.mul(mtx);
+			m.boundingBox.mul(model);
 
 			// perform culling
 			if (Config.Debug.FrustumCulling && !camPersp.frustum.boundsInFrustum(m.boundingBox)) {
@@ -656,17 +676,18 @@ public final class GameWorldRenderer {
 			}
 
 			if (!depthOnly) {
-				shader.setUniformMatrix("u_projTrans", mtx2);
-
-				// avoid rebinding same textures
-				if (i == 0 || needRebind) {
-					m.material.bind(shader);
-				} else if (!models.get(i - 1).material.equals(m.material)) {
-					m.material.bind(shader);
-				}
+				shader.setUniformMatrix("u_projTrans", mvp);
 			} else {
-				shader.setUniformMatrix("proj", camPersp.combined);
-				shader.setUniformMatrix("view", camPersp.view);
+				mtx.set(camPersp.view).mul(model);
+				nmat.set(mtx).inv().transpose();
+				shader.setUniformMatrix("nmat", nmat);
+				shader.setUniformMatrix("model", model);
+			}
+
+			if (i == 0 || needRebind) {
+				m.material.bind(shader);
+			} else if (!models.get(i - 1).material.equals(m.material)) {
+				m.material.bind(shader);
 			}
 
 			submesh.mesh.render(shader, submesh.primitiveType);

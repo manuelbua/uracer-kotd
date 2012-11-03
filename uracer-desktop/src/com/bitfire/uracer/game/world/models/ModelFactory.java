@@ -193,8 +193,8 @@ public final class ModelFactory {
 			break;
 
 		case Tree_10:
-			treeModelName = "tree-10.g3dt";
-			treeMeshName = "tree_10_";
+			treeModelName = "test-wall.g3dt";
+			treeMeshName = "plane_";
 			leavesTexture = Art.meshTreeLeavesSpring[6];
 			break;
 		// missing mesh mesh

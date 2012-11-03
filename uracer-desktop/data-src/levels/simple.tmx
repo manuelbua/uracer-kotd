@@ -67,6 +67,11 @@
     <property name="scale" value="5.4"/>
    </properties>
   </object>
+  <object name="tree-10" type="tree-10" x="1048" y="1158" width="61" height="68">
+   <properties>
+    <property name="scale" value="5"/>
+   </properties>
+  </object>
  </objectgroup>
  <objectgroup color="#ffaa00" name="lights" width="10" height="8" visible="0">
   <object x="735" y="1292" width="27" height="21"/>
