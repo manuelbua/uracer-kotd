@@ -506,15 +506,16 @@ public final class GameWorldRenderer {
 
 		if (depthOnly) {
 			shader = shNormalDepth;
-		} else {
-			Art.meshTreeTrunk.bind();
 		}
+
+		Art.meshTreeTrunk.bind();
 
 		shader.begin();
 
 		if (depthOnly) {
 			shader.setUniformMatrix("proj", camPersp.projection);
 			shader.setUniformMatrix("view", camPersp.view);
+			shader.setUniformi("u_diffuse", 0);
 		}
 
 		// all the trunks
@@ -564,17 +565,17 @@ public final class GameWorldRenderer {
 
 			if (!depthOnly) {
 				shader.setUniformMatrix("u_projTrans", m.transformed);
-				if (i == 0 || needRebind) {
-					m.material.bind(shader);
-				} else if (!trees.models.get(i - 1).material.equals(m.material)) {
-					m.material.bind(shader);
-				}
 			} else {
 				mtx.set(camPersp.view).mul(m.mtxmodel);
 				nmat.set(mtx).inv().transpose();
-
 				shader.setUniformMatrix("nmat", nmat);
 				shader.setUniformMatrix("model", m.mtxmodel);
+			}
+
+			if (i == 0 || needRebind) {
+				m.material.bind(shader);
+			} else if (!trees.models.get(i - 1).material.equals(m.material)) {
+				m.material.bind(shader);
 			}
 
 			m.leaves.render(shader, m.smLeaves.primitiveType);

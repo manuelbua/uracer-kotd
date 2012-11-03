@@ -6,6 +6,9 @@ uniform mat3 nmat;
 const float depth_scale = 40.0;
 const float inv_depth_scale = 1.0 / depth_scale;
 
+uniform sampler2D u_diffuse;
+varying vec2 v_texcoord;
+
 vec2 encode_normal(vec3 normal)
 {
 	float f = sqrt(8.0*normal.z+8.0);
@@ -26,6 +29,9 @@ vec2 encode_depth(vec3 position){
 }
 
 void main(void){
+	vec4 texel = texture2D( u_diffuse, v_texcoord );
+	if(texel.a < 0.5) discard;
+
 	vec3 normal = normalize(v_normal);
 	vec3 position = (view * vec4(v_position, 1.0)).xyz;
 	gl_FragColor = vec4(encode_normal(normal), encode_depth(position));

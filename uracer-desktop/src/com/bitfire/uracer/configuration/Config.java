@@ -108,8 +108,7 @@ public final class Config {
 		public static int BlurNumPasses;
 		public static int BloomFboWidth, BloomFboHeight;
 		public static float NormalDepthMapScale = 1f;
-		public static float SsaoMapScale = 0.75f;
-		public static float SsaoPingPongScale = 1f;
+		public static float SsaoMapScale = 1f;
 		private static float RttRatio = 0.5f;
 
 		// compute per-resolution constants
