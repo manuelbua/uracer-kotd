@@ -31,7 +31,9 @@ import com.bitfire.uracer.game.logic.helpers.CarFactory;
 import com.bitfire.uracer.game.logic.helpers.GameTrack;
 import com.bitfire.uracer.game.logic.helpers.PlayerGameTasks;
 import com.bitfire.uracer.game.logic.post.PostProcessing;
+import com.bitfire.uracer.game.logic.post.PostProcessing.Effects;
 import com.bitfire.uracer.game.logic.post.animators.AggressiveCold;
+import com.bitfire.uracer.game.logic.post.ssao.Ssao;
 import com.bitfire.uracer.game.logic.replaying.LapManager;
 import com.bitfire.uracer.game.logic.replaying.Replay;
 import com.bitfire.uracer.game.logic.replaying.ReplayManager;
@@ -455,11 +457,16 @@ public abstract class CommonLogic implements GameLogic, CarEvent.Listener, Playe
 
 		float zoom = updateCamera(timeModFactor);
 
-		// post-processing step
-		postProcessing.onBeforeRender(timeModFactor, zoom);
-
 		// camera update
 		gameWorldRenderer.updateCamera();
+
+		// post-processing step
+		Ssao ssao = (Ssao)postProcessing.getEffect(Effects.Ssao.name);
+		if (ssao != null) {
+			ssao.setNormalDepthMap(gameWorldRenderer.getNormalDepthMap().getColorBufferTexture());
+		}
+
+		postProcessing.onBeforeRender(timeModFactor, zoom);
 
 		// game tweener step
 		GameTweener.update();

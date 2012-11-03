@@ -10,10 +10,13 @@ import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.files.FileHandle;
 import com.badlogic.gdx.graphics.GL10;
 import com.badlogic.gdx.graphics.GL20;
+import com.badlogic.gdx.graphics.Mesh;
 import com.badlogic.gdx.graphics.OrthographicCamera;
 import com.badlogic.gdx.graphics.PerspectiveCamera;
 import com.badlogic.gdx.graphics.Pixmap.Format;
 import com.badlogic.gdx.graphics.Texture.TextureFilter;
+import com.badlogic.gdx.graphics.VertexAttribute;
+import com.badlogic.gdx.graphics.VertexAttributes.Usage;
 import com.badlogic.gdx.graphics.g3d.model.still.StillSubMesh;
 import com.badlogic.gdx.graphics.glutils.FrameBuffer;
 import com.badlogic.gdx.graphics.glutils.ImmediateModeRenderer20;
@@ -97,9 +100,9 @@ public final class GameWorldRenderer {
 	private float scaledPpm = 1f;
 
 	// deferred stuff
-	private Matrix3 mtxRot = new Matrix3();
+	private Mesh plane;
+// private final FloatFrameBuffer normalDepthMap;
 	private final FrameBuffer normalDepthMap;
-	private final float mapscale = 0.5f;
 	private ShaderProgram shNormalDepth;
 
 	// render stats
@@ -155,12 +158,16 @@ public final class GameWorldRenderer {
 		// deferred setup
 		float scale = Config.PostProcessing.NormalDepthMapScale;
 		normalDepthMap = new FrameBuffer(Format.RGBA8888, (int)(width * scale), (int)(height * scale), true);
-		normalDepthMap.getColorBufferTexture().setFilter(TextureFilter.Nearest, TextureFilter.Nearest);
+// normalDepthMap = new FloatFrameBuffer((int)(width * scale), (int)(height * scale), true);
+// normalDepthMap.getColorBufferTexture().setFilter(TextureFilter.Nearest, TextureFilter.Nearest);
+// normalDepthMap.getColorBufferTexture().setFilter(TextureFilter.Linear, TextureFilter.Linear);
 		shNormalDepth = ShaderLoader.fromFile("normaldepth", "normaldepth");
 		shNormalDepth.begin();
 		shNormalDepth.setUniformf("near", camPersp.near);
 		shNormalDepth.setUniformf("far", camPersp.far);
 		shNormalDepth.end();
+
+		createBackPlane();
 	}
 
 	public void dispose () {
@@ -169,6 +176,36 @@ public final class GameWorldRenderer {
 
 		tileMapRenderer.dispose();
 		tileAtlas.dispose();
+	}
+
+	// permit to the tilemap to appear as a flat surface with the normal pointing upward, towards the tvcam
+	private void createBackPlane () {
+		plane = new Mesh(true, 4, 4, new VertexAttribute(Usage.Position, 3, ShaderProgram.POSITION_ATTRIBUTE), new VertexAttribute(
+			Usage.Normal, 3, ShaderProgram.NORMAL_ATTRIBUTE));
+
+		// @formatter:off
+		float size = 10f;
+		float verts[] = {-size / 2, 0, size / 2, size / 2, 0, size / 2, size / 2, 0, -size / 2, -size / 2, 0, -size / 2};
+// float verts[] = {size, 0, size, size, 0, 0, 0, 0, 0, 0, 0, size};
+
+		float normals[] = {0, 1, 0, 0, 1, 0, 0, 1, 0, 0, 1, 0};
+		// @formatter:on
+
+		int vidx = 0, nidx = 0;
+		int length = 6 * 4;
+		float[] vertices = new float[length];
+		for (int i = 0; i < length;) {
+			vertices[i++] = verts[vidx++];
+			vertices[i++] = verts[vidx++];
+			vertices[i++] = verts[vidx++];
+			vertices[i++] = normals[nidx++];
+			vertices[i++] = normals[nidx++];
+			vertices[i++] = normals[nidx++];
+		}
+
+		plane.setVertices(vertices);
+		plane.setIndices(new short[] {0, 1, 2, 3});
+
 	}
 
 	private void createCams (int width, int height) {
@@ -339,8 +376,10 @@ public final class GameWorldRenderer {
 		camPerspPrevProjView.set(camPersp.combined);
 
 		// sync perspective camera to the orthographic camera
+		camPersp.fieldOfView = 43;
+// camPersp.fieldOfView = 67;
 		camPersp.position.set(camTilemap.position.x, camTilemap.position.y, CamPerspElevation);
-		// camPersp.lookAt(camOrtho.position.x, camOrtho.position.y, 0);
+// camPersp.lookAt(camOrtho.position.x, camOrtho.position.y, -5);
 		camPersp.update();
 
 		// update inv proj view
@@ -351,14 +390,58 @@ public final class GameWorldRenderer {
 
 	public void updateNormalDepthMap () {
 
+		Gdx.gl.glEnable(GL20.GL_CULL_FACE);
+		Gdx.gl.glCullFace(GL20.GL_BACK);
+		Gdx.gl.glDisable(GL20.GL_BLEND);
+
+		Gdx.gl.glEnable(GL20.GL_DEPTH_TEST);
+		Gdx.gl.glDepthFunc(GL20.GL_LESS);
+		Gdx.gl.glDepthMask(true);
+
 		normalDepthMap.begin();
 		{
-			gl.glClearDepthf(1f);
+			Gdx.gl.glClearDepthf(1f);
 			Gdx.gl.glClearColor(0, 0, 0, 1);
+			// Gdx.gl.glClearColor(1, 1, 1, 1);
 			Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT | GL20.GL_DEPTH_BUFFER_BIT);
-			renderAllMeshes(true);
+			// renderAllMeshes(true);
+			renderTilemapPlane();
+			renderTrees(trackTrees, true);
 		}
 		normalDepthMap.end();
+	}
+
+	private void renderTilemapPlane () {
+		gl.glDisable(GL20.GL_CULL_FACE);
+
+		ShaderProgram shader = shNormalDepth;
+		float meshZ = -(camPersp.far - camPersp.position.z) + (camPersp.far * (1 - (camOrtho.zoom)));
+		// Gdx.app.log("", "" + meshZ);
+
+		float k = scalingStrategy.meshScaleFactor * OrthographicAlignedStillModel.BlenderToURacer * scalingStrategy.to256;
+		float scalex = 6, scalez = 4;
+
+		Matrix4 model = mtx;
+		tmpvec.set(camPersp.position.x, camPersp.position.y, meshZ + 0.5f);
+
+		model.idt();
+		model.translate(tmpvec);
+		model.rotate(1, 0, 0, 90);
+		model.scale(scalex * k, 1, scalez * k);
+		model.translate(-tmpvec.x, -tmpvec.y, -tmpvec.z);
+		model.translate(tmpvec);
+
+		mtx2.set(camPersp.view).mul(model);
+		nmat.set(mtx2).inv().transpose();
+
+		shader.begin();
+
+		shader.setUniformMatrix("proj", camPersp.projection);
+		shader.setUniformMatrix("view", camPersp.view);
+		shader.setUniformMatrix("nmat", nmat);
+		shader.setUniformMatrix("model", model);
+		plane.render(shader, GL20.GL_TRIANGLE_FAN);
+		shader.end();
 	}
 
 	public void renderLigthMap (FrameBuffer dest) {
@@ -418,6 +501,7 @@ public final class GameWorldRenderer {
 		ShaderProgram shader = treeShader;
 
 		gl.glEnable(GL20.GL_CULL_FACE);
+		gl.glCullFace(GL20.GL_BACK);
 		gl.glDisable(GL20.GL_BLEND);
 
 		if (depthOnly) {
@@ -428,31 +512,49 @@ public final class GameWorldRenderer {
 
 		shader.begin();
 
+		if (depthOnly) {
+			shader.setUniformMatrix("proj", camPersp.projection);
+			shader.setUniformMatrix("view", camPersp.view);
+		}
+
 		// all the trunks
 		for (int i = 0; i < trees.models.size(); i++) {
 			TreeStillModel m = trees.models.get(i);
+
 			if (!depthOnly) {
-				shader.setUniformMatrix("u_projTrans", m.transformed);
+				shader.setUniformMatrix("u_projTrans", m.transformed /* combined = cam (proj * view) * model) */);
 			} else {
-				mtxRot.set(m.mtxmodel);
-				shader.setUniformMatrix("view_rot", mtxRot);
-				shader.setUniformMatrix("proj", camPersp.combined);
-				shader.setUniformMatrix("view", m.mtxmodel);
+				mtx.set(camPersp.view).mul(m.mtxmodel);
+				nmat.set(mtx).inv().transpose();
+
+				shader.setUniformMatrix("nmat", nmat);
+				shader.setUniformMatrix("model", m.mtxmodel);
 			}
+
 			m.trunk.render(shader, m.smTrunk.primitiveType);
 		}
 
 		// all the transparent foliage
-		// gl.glDisable( GL20.GL_CULL_FACE );
+
+// if (depthOnly) return;
+
+		// gl.glDisable(GL20.GL_CULL_FACE);
 
 		if (!depthOnly) {
 			gl.glEnable(GL20.GL_BLEND);
 			gl.glBlendFunc(GL20.GL_SRC_ALPHA, GL20.GL_ONE_MINUS_SRC_ALPHA);
+		} else {
+			// testing!
+			gl.glDisable(GL20.GL_CULL_FACE);
 		}
 
 		boolean needRebind = false;
 		for (int i = 0; i < trees.models.size(); i++) {
 			TreeStillModel m = trees.models.get(i);
+			if (m.leaves == null) {
+				needRebind = true;
+				continue;
+			}
 
 			if (Config.Debug.FrustumCulling && !camPersp.frustum.boundsInFrustum(m.boundingBox)) {
 				needRebind = true;
@@ -468,10 +570,11 @@ public final class GameWorldRenderer {
 					m.material.bind(shader);
 				}
 			} else {
-				mtxRot.set(m.mtxmodel);
-				shader.setUniformMatrix("view_rot", mtxRot);
-				shader.setUniformMatrix("proj", camPersp.combined);
-				shader.setUniformMatrix("view", m.mtxmodel);
+				mtx.set(camPersp.view).mul(m.mtxmodel);
+				nmat.set(mtx).inv().transpose();
+
+				shader.setUniformMatrix("nmat", nmat);
+				shader.setUniformMatrix("model", m.mtxmodel);
 			}
 
 			m.leaves.render(shader, m.smLeaves.primitiveType);
@@ -494,6 +597,7 @@ public final class GameWorldRenderer {
 
 	private Vector3 tmpvec = new Vector3();
 	private Matrix4 mtx = new Matrix4();
+	private Matrix3 nmat = new Matrix3();
 	private Matrix4 mtx2 = new Matrix4();
 	private Vector2 pospx = new Vector2();
 
@@ -502,7 +606,7 @@ public final class GameWorldRenderer {
 		OrthographicAlignedStillModel m;
 		StillSubMesh submesh;
 
-		float meshZ = -(camPersp.far - camPersp.position.z) + (CamPerspPlaneFar * (1 - (camOrtho.zoom)));
+		float meshZ = -(camPersp.far - camPersp.position.z) + (camPersp.far * (1 - (camOrtho.zoom)));
 
 		ShaderProgram shader = OrthographicAlignedStillModel.shader;
 
@@ -533,7 +637,7 @@ public final class GameWorldRenderer {
 			Matrix4.mul(mtx.val, mtx2.setToRotation(m.iRotationAxis, m.iRotationAngle).val);
 			Matrix4.mul(mtx.val, mtx2.setToScaling(m.scaleAxis).val);
 
-			// comb = (proj * view) * model
+			// comb = (proj * view) * model (fast mul)
 			Matrix4.mul(mtx2.set(camPersp.combined).val, mtx.val);
 
 			// ensure the bounding box is transformed
@@ -557,10 +661,8 @@ public final class GameWorldRenderer {
 					m.material.bind(shader);
 				}
 			} else {
-				mtxRot.set(mtx);
-				shader.setUniformMatrix("view_rot", mtxRot);
 				shader.setUniformMatrix("proj", camPersp.combined);
-				shader.setUniformMatrix("view", mtx);
+				shader.setUniformMatrix("view", camPersp.view);
 			}
 
 			submesh.mesh.render(shader, submesh.primitiveType);

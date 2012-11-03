@@ -1,9 +1,16 @@
 attribute vec3 a_position,a_normal;
 varying vec3 v_normal, v_position;
-uniform mat4 proj, view;
+uniform mat4 proj, view, model;
+uniform mat3 nmat;
 
 void main(void) {
-	gl_Position = proj * view * vec4(a_position, 1.0);
-	v_normal = a_normal;
-	v_position = a_position;
+	gl_Position = proj * view * model * vec4(a_position, 1.0);
+	//v_normal = a_normal;
+	//v_position = a_position;
+
+	//mat4 mv = view * model;
+	//v_normal = transpose(inverse(mv))*vec4(normalize(a_normal),1.0);
+
+	v_normal = nmat*a_normal;
+	v_position = model*vec4(a_position,1.0);
 }

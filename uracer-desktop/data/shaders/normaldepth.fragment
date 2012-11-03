@@ -1,7 +1,10 @@
 varying vec3 v_normal, v_position;
-uniform mat3 view_rot;
 uniform mat4 proj, view;
 uniform float near, far;
+uniform mat3 nmat;
+
+const float depth_scale = 40.0;
+const float inv_depth_scale = 1.0 / depth_scale;
 
 vec2 encode_normal(vec3 normal)
 {
@@ -11,6 +14,10 @@ vec2 encode_normal(vec3 normal)
 
 vec2 encode_depth(vec3 position){
 	float depth = (length(position)-near)/far;
+
+	depth *= inv_depth_scale;
+	depth = clamp(depth, 0, 1);
+
 	depth = depth*255.0*255.0;
 	return vec2(
 		mod(depth, 255.0)/255.0,
@@ -19,7 +26,7 @@ vec2 encode_depth(vec3 position){
 }
 
 void main(void){
-	vec3 normal = view_rot * normalize(v_normal);
+	vec3 normal = normalize(v_normal);
 	vec3 position = (view * vec4(v_position, 1.0)).xyz;
 	gl_FragColor = vec4(encode_normal(normal), encode_depth(position));
 }

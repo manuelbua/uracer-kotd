@@ -10,7 +10,7 @@
    eJyNzkcKwCAARFHJKhAIpPdiCqZ4//PlCy5EXGTxYASdUQshXuifpJPNu8vmw7uXIUeCCAXKQF+F2uYHDVps3k6HHicUBoyBvgkzUsRYsHr/u51sdnZnRwY6H++snPwBU4kLmQ==
   </data>
  </layer>
- <objectgroup color="#55ffff" height="8" name="trees" visible="0" width="10">
+ <objectgroup color="#55ffff" height="8" name="trees" width="10">
   <object height="68" name="tree-2" type="tree-2" width="61" x="1664" y="426">
    <properties>
     <property name="scale" value="2"/>
@@ -21,14 +21,14 @@
     <property name="scale" value="5"/>
    </properties>
   </object>
-  <object height="68" name="tree-6" type="tree-6" width="61" x="1217" y="788">
+  <object height="68" name="tree-6" type="tree-6" width="61" x="1203" y="1031">
    <properties>
-    <property name="scale" value="5.4"/>
+    <property name="scale" value="3"/>
    </properties>
   </object>
-  <object height="68" name="tree-9" type="tree-9" width="61" x="1088" y="871">
+  <object height="68" name="tree-9" type="tree-9" width="61" x="946" y="1014">
    <properties>
-    <property name="scale" value="7"/>
+    <property name="scale" value="5"/>
    </properties>
   </object>
   <object height="68" name="tree-9" type="tree-9" width="61" x="431" y="584">
@@ -46,9 +46,9 @@
     <property name="scale" value="2"/>
    </properties>
   </object>
-  <object height="68" name="tree-6" type="tree-6" width="61" x="877" y="834">
+  <object height="68" name="tree-6" type="tree-6" width="61" x="742" y="912">
    <properties>
-    <property name="scale" value="4"/>
+    <property name="scale" value="2.5"/>
    </properties>
   </object>
   <object height="68" name="tree-9" type="tree-9" width="61" x="1556" y="1348">
@@ -61,13 +61,13 @@
     <property name="scale" value="4"/>
    </properties>
   </object>
-  <object height="68" name="tree-6" type="tree-6" width="61" x="1040" y="1390">
+  <object height="68" name="tree-6" type="tree-6" width="61" x="876" y="1354">
    <properties>
     <property name="scale" value="5.4"/>
    </properties>
   </object>
  </objectgroup>
- <objectgroup color="#ffaa00" height="8" name="lights" width="10">
+ <objectgroup color="#ffaa00" height="8" name="lights" visible="0" width="10">
   <object height="21" width="27" x="735" y="1292"/>
   <object height="21" width="27" x="449" y="932"/>
   <object height="21" width="27" x="996" y="439"/>

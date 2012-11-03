@@ -6,5 +6,6 @@ void main(void)
 {
 	vec3 col = texture2D(scene,v_texCoords);
 	vec4 occ = texture2D(occlusion_map,v_texCoords);
-	gl_FragColor = vec4( col.rgb*occ.a, 1.0 );
+	//gl_FragColor = vec4( col.rgb*occ.a, 1.0 );
+	gl_FragColor = vec4( col.rgb, 1.0 );
 }

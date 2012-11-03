@@ -6,19 +6,19 @@ import java.io.InputStream;
 
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.Texture;
+import com.badlogic.gdx.graphics.g3d.loaders.g3d.G3dtLoader;
 import com.badlogic.gdx.graphics.g3d.loaders.wavefront.ObjLoader;
 import com.badlogic.gdx.graphics.g3d.materials.Material;
 import com.badlogic.gdx.graphics.g3d.materials.TextureAttribute;
 import com.badlogic.gdx.graphics.g3d.model.still.StillModel;
 import com.badlogic.gdx.utils.LongMap;
 import com.bitfire.uracer.ScalingStrategy;
-import com.bitfire.uracer.game.world.models.loaders.UG3dtLoader;
 import com.bitfire.uracer.resources.Art;
 import com.bitfire.utils.Hash;
 
 public final class ModelFactory {
 	public enum ModelMesh {
-		Missing, Palm, Tribune, Tree_1, Tree_2, Tree_3, Tree_4, Tree_5, Tree_6, Tree_7, Tree_8, Tree_9
+		Missing, Palm, Tribune, Tree_1, Tree_2, Tree_3, Tree_4, Tree_5, Tree_6, Tree_7, Tree_8, Tree_9, Tree_10
 	}
 
 	private static ScalingStrategy scalingStrategy;
@@ -71,6 +71,8 @@ public final class ModelFactory {
 			return ModelMesh.Tree_8;
 		} else if (mesh.equalsIgnoreCase("tree-9")) {
 			return ModelMesh.Tree_9;
+		} else if (mesh.equalsIgnoreCase("tree-10")) {
+			return ModelMesh.Tree_10;
 		}
 
 		return ModelMesh.Missing;
@@ -189,6 +191,12 @@ public final class ModelFactory {
 			treeMeshName = "tree_9_";
 			leavesTexture = Art.meshTreeLeavesSpring[6];
 			break;
+
+		case Tree_10:
+			treeModelName = "tree-10.g3dt";
+			treeMeshName = "tree_10_";
+			leavesTexture = Art.meshTreeLeavesSpring[6];
+			break;
 		// missing mesh mesh
 		// case Missing:
 		// default:
@@ -255,7 +263,7 @@ public final class ModelFactory {
 				if (ext[1].equals("g3dt")) {
 					// NO opengl coords, NO invert v
 					InputStream in = Gdx.files.internal(model).read();
-					m = UG3dtLoader.loadStillModel(in, true);
+					m = G3dtLoader.loadStillModel(in, true);
 					in.close();
 				} else if (ext[1].equals("obj")) {
 					// y-forward, z-up

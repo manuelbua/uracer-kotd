@@ -22,8 +22,13 @@ public class TreeStillModel extends OrthographicAlignedStillModel {
 
 		smTrunk = model.getSubMesh(meshName + "trunk");
 		smLeaves = model.getSubMesh(meshName + "leaves");
-		trunk = smTrunk.mesh;
-		leaves = smLeaves.mesh;
+		if (smTrunk != null) {
+			trunk = smTrunk.mesh;
+		}
+
+		if (smLeaves != null) {
+			leaves = smLeaves.mesh;
+		}
 
 		model.getBoundingBox(localBoundingBox);
 		boundingBox.set(localBoundingBox);

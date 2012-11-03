@@ -20,7 +20,7 @@ public final class Config {
 		public static void asDefault () {
 			EnableMipMapping = true;
 			SubframeInterpolation = true;
-			CameraInterpolationMode = InterpolationMode.Linear;
+			CameraInterpolationMode = InterpolationMode.OffNoBounds;
 		}
 
 		private Graphics () {
@@ -92,10 +92,10 @@ public final class Config {
 			RenderDebugDrawsInTransitions = true;
 			RenderTrackSectors = false;
 
-			TraverseWalls = false;
-			ApplyCarFrictionFromMap = true;
+			TraverseWalls = true;
+			ApplyCarFrictionFromMap = false;
 			FrustumCulling = true;
-			InfiniteDilationTime = false;
+			InfiniteDilationTime = true;
 		}
 
 		private Debug () {
@@ -107,9 +107,9 @@ public final class Config {
 		public static BlurType BlurType;
 		public static int BlurNumPasses;
 		public static int BloomFboWidth, BloomFboHeight;
-		public static float NormalDepthMapScale = 0.5f;
-		public static float SsaoMapScale = 0.5f;
-		public static float SsaoPingPongScale = 0.5f;
+		public static float NormalDepthMapScale = 1f;
+		public static float SsaoMapScale = 0.75f;
+		public static float SsaoPingPongScale = 1f;
 		private static float RttRatio = 0.5f;
 
 		// compute per-resolution constants
