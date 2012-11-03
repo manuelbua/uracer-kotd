@@ -30,6 +30,11 @@ void main(void){
 	if(texel.a < 0.5) discard;
 
 	vec3 normal = normalize(v_normal);
+
+	if(!gl_FrontFacing) {
+		normal *= -1;
+	}
+
 	vec3 position = (view * vec4(v_position, 1.0)).xyz;
 	gl_FragColor = vec4(encode_normal(normal), encode_depth(position));
 }
