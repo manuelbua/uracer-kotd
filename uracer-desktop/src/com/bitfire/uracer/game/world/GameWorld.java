@@ -420,11 +420,18 @@ public final class GameWorld {
 		final int Z1 = 2;
 		final int U1 = 3;
 		final int V1 = 4;
-		final int X2 = 5;
-		final int Y2 = 6;
-		final int Z2 = 7;
-		final int U2 = 8;
-		final int V2 = 9;
+		final int NX1 = 5;
+		final int NY1 = 6;
+		final int NZ1 = 7;
+
+		final int X2 = 8;
+		final int Y2 = 9;
+		final int Z2 = 10;
+		final int U2 = 11;
+		final int V2 = 12;
+		final int NX2 = 13;
+		final int NY2 = 14;
+		final int NZ2 = 15;
 
 		Vector2 in = new Vector2();
 		MathUtils.random.setSeed(Long.MIN_VALUE);
@@ -445,7 +452,7 @@ public final class GameWorld {
 		int vertexCount = points.size() * 2;
 		int indexCount = (points.size() - 1) * 6;
 
-		int vertSize = 5; // x, y, z, u, v
+		int vertSize = 8; // x, y, z, u, v, nx, ny, nz
 		float[] verts = new float[vertSize * vertexCount];
 		short[] indices = new short[indexCount];
 		float mag, prevmag;
@@ -487,6 +494,16 @@ public final class GameWorld {
 			verts[j + U2] = ((i & 1) == 0 ? coordU : 0f);
 			verts[j + V2] = 0f;
 
+			// normal
+			verts[j + NX1] = 0;
+			verts[j + NY1] = 0;
+			verts[j + NZ1] = 0;
+
+			verts[j + NX2] = 0;
+			verts[j + NY2] = 0;
+			verts[j + NZ2] = 0;
+
+			//
 			vc += 2;
 
 			if (vc > 2) {
@@ -499,9 +516,13 @@ public final class GameWorld {
 			}
 		}
 
-		Mesh mesh = new Mesh(VertexDataType.VertexArray, true, vertexCount, indexCount, new VertexAttribute(Usage.Position, 3,
-			ShaderProgram.POSITION_ATTRIBUTE), new VertexAttribute(Usage.TextureCoordinates, 2, ShaderProgram.TEXCOORD_ATTRIBUTE
-			+ "0"));
+		//@off
+		Mesh mesh = new Mesh(VertexDataType.VertexArray, true, vertexCount, indexCount, 
+			new VertexAttribute(Usage.Position, 3,ShaderProgram.POSITION_ATTRIBUTE), 
+			new VertexAttribute(Usage.TextureCoordinates, 2, ShaderProgram.TEXCOORD_ATTRIBUTE + "0")
+			,VertexAttribute.Normal()
+		);
+		//@on
 
 		mesh.setVertices(verts);
 		mesh.setIndices(indices);
