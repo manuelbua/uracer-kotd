@@ -1,10 +1,7 @@
 varying vec3 v_normal, v_position;
 uniform mat4 proj, view;
-uniform float near, far;
+uniform float near, far, inv_depth_scale;
 uniform mat3 nmat;
-
-const float depth_scale = 40.0;
-const float inv_depth_scale = 1.0 / depth_scale;
 
 uniform sampler2D u_diffuse;
 varying vec2 v_texcoord;

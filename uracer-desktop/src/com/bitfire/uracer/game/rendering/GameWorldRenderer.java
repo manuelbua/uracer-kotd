@@ -398,6 +398,10 @@ public final class GameWorldRenderer {
 		Gdx.gl.glDepthFunc(GL20.GL_LESS);
 		Gdx.gl.glDepthMask(true);
 
+		shNormalDepth.begin();
+		shNormalDepth.setUniformf("inv_depth_scale", 1f / 40f);
+		shNormalDepth.end();
+
 		normalDepthMap.begin();
 		{
 			Gdx.gl.glClearDepthf(1f);
