@@ -20,7 +20,7 @@ public final class Config {
 		public static void asDefault () {
 			EnableMipMapping = true;
 			SubframeInterpolation = true;
-			CameraInterpolationMode = InterpolationMode.OffNoBounds;
+			CameraInterpolationMode = InterpolationMode.Linear;
 		}
 
 		private Graphics () {
@@ -92,8 +92,8 @@ public final class Config {
 			RenderDebugDrawsInTransitions = true;
 			RenderTrackSectors = false;
 
-			TraverseWalls = true;
-			ApplyCarFrictionFromMap = false;
+			TraverseWalls = false;
+			ApplyCarFrictionFromMap = true;
 			FrustumCulling = true;
 			InfiniteDilationTime = true;
 		}

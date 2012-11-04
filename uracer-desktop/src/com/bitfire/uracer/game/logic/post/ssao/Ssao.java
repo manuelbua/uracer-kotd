@@ -33,6 +33,7 @@ import com.badlogic.gdx.math.Matrix3;
 import com.badlogic.gdx.math.Matrix4;
 import com.bitfire.postprocessing.PostProcessorEffect;
 import com.bitfire.postprocessing.filters.Blur;
+import com.bitfire.postprocessing.filters.Blur.BlurType;
 import com.bitfire.postprocessing.utils.FullscreenQuad;
 import com.bitfire.postprocessing.utils.PingPongBuffer;
 import com.bitfire.uracer.configuration.Config;
@@ -150,7 +151,7 @@ public final class Ssao extends PostProcessorEffect {
 				shSsao.setUniformf("viewport", occlusionMap.width, occlusionMap.height);
 				shSsao.setUniformf("near", cam.near);
 				shSsao.setUniformf("far", cam.far);
-				shSsao.setUniformf("radius", 0.1f);
+				shSsao.setUniformf("radius", 0.08f);
 				shSsao.setUniformf("epsilon", 0.001f);
 				shSsao.setUniformf("full_occlusion_treshold", 0.1f);
 				shSsao.setUniformf("no_occlusion_treshold", 0.3f);
@@ -158,16 +159,16 @@ public final class Ssao extends PostProcessorEffect {
 				shSsao.setUniformf("power", 2f);
 
 				shSsao.setUniformi("sample_count", 16);
-				shSsao.setUniformf("pattern_size", 4);
+				shSsao.setUniformf("pattern_size", 2);
 
 				quad.render(shSsao);
 			}
 			shSsao.end();
 
 			// blur pass
-// blur.setType(BlurType.Gaussian3x3);
-// blur.setPasses(1);
-// blur.render(occlusionMap);
+			blur.setType(BlurType.Gaussian3x3);
+			blur.setPasses(1);
+			blur.render(occlusionMap);
 		}
 		occlusionMap.end();
 
@@ -178,7 +179,7 @@ public final class Ssao extends PostProcessorEffect {
 			occlusionMap.getResultTexture().bind(1);
 			// normalDepthMap.bind(2);
 
-			shMix.setUniformi("scene", 1);
+			shMix.setUniformi("scene", 0);
 			shMix.setUniformi("occlusion_map", 1);
 
 			quad.render(shMix);

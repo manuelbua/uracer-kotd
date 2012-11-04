@@ -400,7 +400,7 @@ public final class GameWorldRenderer {
 		Gdx.gl.glDepthMask(true);
 
 		shNormalDepth.begin();
-		shNormalDepth.setUniformf("inv_depth_scale", 1f / 20f);
+		shNormalDepth.setUniformf("inv_depth_scale", 1f / 70f);
 		shNormalDepth.end();
 
 		normalDepthMap.begin();

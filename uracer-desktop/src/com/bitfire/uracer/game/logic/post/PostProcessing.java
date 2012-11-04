@@ -7,6 +7,15 @@ import com.badlogic.gdx.graphics.Texture.TextureWrap;
 import com.badlogic.gdx.utils.LongMap;
 import com.bitfire.postprocessing.PostProcessor;
 import com.bitfire.postprocessing.PostProcessorEffect;
+import com.bitfire.postprocessing.effects.Bloom;
+import com.bitfire.postprocessing.effects.CrtMonitor;
+import com.bitfire.postprocessing.effects.Curvature;
+import com.bitfire.postprocessing.effects.Vignette;
+import com.bitfire.postprocessing.effects.Zoomer;
+import com.bitfire.postprocessing.filters.RadialBlur;
+import com.bitfire.uracer.configuration.Config;
+import com.bitfire.uracer.configuration.UserPreferences;
+import com.bitfire.uracer.configuration.UserPreferences.Preference;
 import com.bitfire.uracer.game.logic.post.ssao.Ssao;
 import com.bitfire.uracer.game.player.PlayerCar;
 import com.bitfire.utils.Hash;
@@ -56,29 +65,29 @@ public final class PostProcessing {
 		// ssao
 		addEffect(Effects.Ssao.name, new Ssao());
 
-// if (UserPreferences.bool(Preference.ZoomRadialBlur)) {
-// RadialBlur.Quality rbq = RadialBlur.Quality.valueOf(UserPreferences.string(Preference.ZoomRadialBlurQuality));
-// Zoomer z = (UserPreferences.bool(Preference.ZoomRadialBlur) ? new Zoomer(rbq) : new Zoomer());
-// z.setBlurStrength(0);
-// z.setZoom(1);
-// addEffect(Effects.Zoomer.name, z);
-// }
-//
-// if (UserPreferences.bool(Preference.Bloom)) {
-// addEffect(Effects.Bloom.name, new Bloom(Config.PostProcessing.BloomFboWidth, Config.PostProcessing.BloomFboHeight));
-// }
-//
-// if (UserPreferences.bool(Preference.Vignetting)) {
-// // if there is no bloom, let's control the final saturation via
-// // the vignette filter
-// addEffect(Effects.Vignette.name, new Vignette(!UserPreferences.bool(Preference.Bloom)));
-// }
-//
-// if (UserPreferences.bool(Preference.CrtScreen)) {
-// addEffect(Effects.Crt.name, new CrtMonitor(UserPreferences.bool(Preference.Curvature), false));
-// } else if (UserPreferences.bool(Preference.Curvature)) {
-// addEffect(Effects.Curvature.name, new Curvature());
-// }
+		if (UserPreferences.bool(Preference.ZoomRadialBlur)) {
+			RadialBlur.Quality rbq = RadialBlur.Quality.valueOf(UserPreferences.string(Preference.ZoomRadialBlurQuality));
+			Zoomer z = (UserPreferences.bool(Preference.ZoomRadialBlur) ? new Zoomer(rbq) : new Zoomer());
+			z.setBlurStrength(0);
+			z.setZoom(1);
+			addEffect(Effects.Zoomer.name, z);
+		}
+
+		if (UserPreferences.bool(Preference.Bloom)) {
+			addEffect(Effects.Bloom.name, new Bloom(Config.PostProcessing.BloomFboWidth, Config.PostProcessing.BloomFboHeight));
+		}
+
+		if (UserPreferences.bool(Preference.Vignetting)) {
+			// if there is no bloom, let's control the final saturation via
+			// the vignette filter
+			addEffect(Effects.Vignette.name, new Vignette(!UserPreferences.bool(Preference.Bloom)));
+		}
+
+		if (UserPreferences.bool(Preference.CrtScreen)) {
+			addEffect(Effects.Crt.name, new CrtMonitor(UserPreferences.bool(Preference.Curvature), false));
+		} else if (UserPreferences.bool(Preference.Curvature)) {
+			addEffect(Effects.Curvature.name, new Curvature());
+		}
 
 		Gdx.app.log("PostProcessing", "Post-processing enabled and configured");
 	}
