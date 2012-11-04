@@ -187,7 +187,7 @@ public final class GameWorldRenderer {
 		// @formatter:off
 		float size = 10f;
 		float verts[] = {-size / 2, 0, size / 2, size / 2, 0, size / 2, size / 2, 0, -size / 2, -size / 2, 0, -size / 2};
-// float verts[] = {size, 0, size, size, 0, 0, 0, 0, 0, 0, 0, size};
+		// float verts[] = {size, 0, size, size, 0, 0, 0, 0, 0, 0, 0, size};
 
 		float normals[] = {0, 1, 0, 0, 1, 0, 0, 1, 0, 0, 1, 0};
 		// @formatter:on
@@ -377,7 +377,7 @@ public final class GameWorldRenderer {
 		camPerspPrevProjView.set(camPersp.combined);
 
 		// sync perspective camera to the orthographic camera
-		camPersp.fieldOfView = 43;
+// camPersp.fieldOfView = 43;
 // camPersp.fieldOfView = 67;
 		camPersp.position.set(camTilemap.position.x, camTilemap.position.y, CamPerspElevation);
 // camPersp.lookAt(camOrtho.position.x, camOrtho.position.y, -5);
@@ -400,7 +400,7 @@ public final class GameWorldRenderer {
 		Gdx.gl.glDepthMask(true);
 
 		shNormalDepth.begin();
-		shNormalDepth.setUniformf("inv_depth_scale", 1f / 40f);
+		shNormalDepth.setUniformf("inv_depth_scale", 1f / 20f);
 		shNormalDepth.end();
 
 		normalDepthMap.begin();
@@ -412,6 +412,14 @@ public final class GameWorldRenderer {
 			// renderAllMeshes(true);
 			renderTilemapPlane();
 			renderWalls(trackWalls, true);
+
+			if (staticMeshes.size() > 0) {
+				gl.glEnable(GL20.GL_DEPTH_TEST);
+				gl.glDepthFunc(GL20.GL_LESS);
+
+				renderOrthographicAlignedModels(staticMeshes, true);
+			}
+
 			renderTrees(trackTrees, true);
 		}
 		normalDepthMap.end();
@@ -618,8 +626,6 @@ public final class GameWorldRenderer {
 			shader = shNormalDepth;
 		}
 
-		Art.meshTreeTrunk.bind();
-
 		shader.begin();
 
 		if (depthOnly) {
@@ -660,10 +666,6 @@ public final class GameWorldRenderer {
 			model.translate(-tmpvec.x, -tmpvec.y, -tmpvec.z);
 			model.translate(tmpvec);
 
-			Matrix4 mvp = mtx2;
-			// comb = (proj * view) * model (fast mul)
-			mvp.set(camPersp.combined).mul(model);
-
 			// ensure the bounding box is transformed
 			m.boundingBox.inf().set(m.localBoundingBox);
 			m.boundingBox.mul(model);
@@ -676,10 +678,14 @@ public final class GameWorldRenderer {
 			}
 
 			if (!depthOnly) {
+				// comb = (proj * view) * model (fast mul)
+				Matrix4 mvp = mtx2;
+				mvp.set(camPersp.combined).mul(model);
+
 				shader.setUniformMatrix("u_projTrans", mvp);
 			} else {
-				mtx.set(camPersp.view).mul(model);
-				nmat.set(mtx).inv().transpose();
+				mtx2.set(camPersp.view).mul(model);
+				nmat.set(mtx2).inv().transpose();
 				shader.setUniformMatrix("nmat", nmat);
 				shader.setUniformMatrix("model", model);
 			}

@@ -66,11 +66,6 @@
     <property name="scale" value="5.4"/>
    </properties>
   </object>
-  <object height="68" name="tree-10" type="tree-10" width="61" x="1048" y="1158">
-   <properties>
-    <property name="scale" value="5"/>
-   </properties>
-  </object>
  </objectgroup>
  <objectgroup color="#ffaa00" height="8" name="lights" visible="0" width="10">
   <object height="21" width="27" x="735" y="1292"/>
@@ -177,4 +172,5 @@
    <polyline points="-113,-9 -225,-9 -449,-9 -667,-98 -762,-229 -745,-509 -628,-625 -450,-689 0,-693 230,-596 318,-449 323,-233 159,-45 -1,-9"/>
   </object>
  </objectgroup>
+ <objectgroup height="8" name="static-meshes" visible="0" width="10"/>
 </map>

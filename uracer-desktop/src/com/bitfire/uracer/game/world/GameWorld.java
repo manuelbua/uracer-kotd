@@ -29,6 +29,7 @@ import com.badlogic.gdx.math.MathUtils;
 import com.badlogic.gdx.math.Polygon;
 import com.badlogic.gdx.math.Rectangle;
 import com.badlogic.gdx.math.Vector2;
+import com.badlogic.gdx.math.Vector3;
 import com.badlogic.gdx.physics.box2d.World;
 import com.badlogic.gdx.utils.GdxRuntimeException;
 import com.bitfire.uracer.ScalingStrategy;
@@ -414,24 +415,27 @@ public final class GameWorld {
 		return models;
 	}
 
+	private Vector3 vec1 = new Vector3(), vec2 = new Vector3(), vec3 = new Vector3(), vecFirst = new Vector3(),
+		vecSecond = new Vector3(), vecNormal = new Vector3();
+
 	private Mesh buildWallMesh (List<Vector2> points, float[] magnitudes) {
 		final int X1 = 0;
 		final int Y1 = 1;
 		final int Z1 = 2;
-		final int U1 = 3;
-		final int V1 = 4;
-		final int NX1 = 5;
-		final int NY1 = 6;
-		final int NZ1 = 7;
+		final int NX1 = 3;
+		final int NY1 = 4;
+		final int NZ1 = 5;
+		final int U1 = 6;
+		final int V1 = 7;
 
 		final int X2 = 8;
 		final int Y2 = 9;
 		final int Z2 = 10;
-		final int U2 = 11;
-		final int V2 = 12;
-		final int NX2 = 13;
-		final int NY2 = 14;
-		final int NZ2 = 15;
+		final int NX2 = 11;
+		final int NY2 = 12;
+		final int NZ2 = 13;
+		final int U2 = 14;
+		final int V2 = 15;
 
 		Vector2 in = new Vector2();
 		MathUtils.random.setSeed(Long.MIN_VALUE);
@@ -516,11 +520,54 @@ public final class GameWorld {
 			}
 		}
 
+		// alias it
+		float[] v = verts;
+
+		// compute normals
+		int count = indices.length / 3;
+		for (int i = 0; i < count; i++) {
+			int first = indices[i * 3 + 1] * vertSize;
+			int second = indices[i * 3 + 0] * vertSize;
+			int third = indices[i * 3 + 2] * vertSize;
+
+			vec1.set(v[first + X1], v[first + Y1], v[first + Z1]);
+			vec2.set(v[second + X1], v[second + Y1], v[second + Z1]);
+			vec3.set(v[third + X1], v[third + Y1], v[third + Z1]);
+
+			vecFirst.set(vec1).sub(vec2);
+			vecSecond.set(vec2).sub(vec3);
+
+			vecNormal.set(vecSecond).crs(vecFirst);
+			vecNormal.nor();
+
+			//@off
+			v[first + NX1] += vecNormal.x;	v[first + NY1] += vecNormal.y;	v[first + NZ1] += vecNormal.z;
+			v[second + NX1] += vecNormal.x;	v[second + NY1] += vecNormal.y;	v[second + NZ1] += vecNormal.z;
+			v[third + NX1] += vecNormal.x;	v[third + NY1] += vecNormal.y;	v[third + NZ1] += vecNormal.z;
+			//@on
+		}
+
+		// normalize everything
+		count = verts.length / vertSize;
+		for (int i = 0; i < count; i++) {
+			int k = vertSize * i;
+
+			vecNormal.x = v[k + NX1];
+			vecNormal.y = v[k + NY1];
+			vecNormal.z = v[k + NZ1];
+
+			vecNormal.nor();
+
+			v[k + NX1] = vecNormal.x;
+			v[k + NY1] = vecNormal.y;
+			v[k + NZ1] = vecNormal.z;
+		}
+
 		//@off
 		Mesh mesh = new Mesh(VertexDataType.VertexArray, true, vertexCount, indexCount, 
 			new VertexAttribute(Usage.Position, 3,ShaderProgram.POSITION_ATTRIBUTE), 
+			new VertexAttribute(Usage.Normal, 3, ShaderProgram.NORMAL_ATTRIBUTE),
 			new VertexAttribute(Usage.TextureCoordinates, 2, ShaderProgram.TEXCOORD_ATTRIBUTE + "0")
-			,VertexAttribute.Normal()
 		);
 		//@on
 

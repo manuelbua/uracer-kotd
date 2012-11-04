@@ -150,7 +150,7 @@ public final class Ssao extends PostProcessorEffect {
 				shSsao.setUniformf("viewport", occlusionMap.width, occlusionMap.height);
 				shSsao.setUniformf("near", cam.near);
 				shSsao.setUniformf("far", cam.far);
-				shSsao.setUniformf("radius", 0.08f);
+				shSsao.setUniformf("radius", 0.1f);
 				shSsao.setUniformf("epsilon", 0.001f);
 				shSsao.setUniformf("full_occlusion_treshold", 0.1f);
 				shSsao.setUniformf("no_occlusion_treshold", 0.3f);
@@ -165,8 +165,8 @@ public final class Ssao extends PostProcessorEffect {
 			shSsao.end();
 
 			// blur pass
-// blur.setType(BlurType.Gaussian5x5b);
-// blur.setPasses(2);
+// blur.setType(BlurType.Gaussian3x3);
+// blur.setPasses(1);
 // blur.render(occlusionMap);
 		}
 		occlusionMap.end();
