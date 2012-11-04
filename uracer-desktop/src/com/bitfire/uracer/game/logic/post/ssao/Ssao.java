@@ -170,6 +170,8 @@ public final class Ssao extends PostProcessorEffect {
 				shSsao.setUniformMatrix("inv_proj", invPrj);
 				shSsao.setUniformMatrix("inv_rot", invRot);
 
+				// TODO most of these night/day settings are for a SsaoMapScale = 0.5f
+
 				// settings to play with
 				shSsao.setUniformf("viewport", occlusionMap.width, occlusionMap.height);
 				shSsao.setUniformf("near", cam.near);
