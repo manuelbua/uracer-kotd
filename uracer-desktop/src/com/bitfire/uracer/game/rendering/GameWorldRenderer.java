@@ -405,7 +405,7 @@ public final class GameWorldRenderer {
 		Gdx.gl.glDepthFunc(GL20.GL_LESS);
 		Gdx.gl.glDepthMask(true);
 
-		float zscale = 1f / 70f;
+		float zscale = 1f / 40f;
 		shNormalDepthAlpha.begin();
 		shNormalDepthAlpha.setUniformf("inv_depth_scale", zscale);
 		shNormalDepthAlpha.end();
@@ -431,7 +431,7 @@ public final class GameWorldRenderer {
 // renderOrthographicAlignedModels(staticMeshes, true);
 // }
 //
-// renderTrees(trackTrees, true);
+			renderTrees(trackTrees, true);
 		}
 		normalDepthMap.end();
 	}

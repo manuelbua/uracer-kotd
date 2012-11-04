@@ -130,8 +130,8 @@ public final class Ssao extends PostProcessorEffect {
 		Gdx.gl.glDisable(GL20.GL_DEPTH_TEST);
 		batch.disableBlending();
 
-		dbgTexture(batch, 0.2f, normalDepthMap, 12);
-		dbgTexture(batch, 0.4f, occlusionMap.getResultTexture(), 28);
+		dbgTexture(batch, 0.15f, normalDepthMap, 12);
+		dbgTexture(batch, 0.3f, occlusionMap.getResultTexture(), 24);
 	}
 
 	@Override
@@ -175,18 +175,18 @@ public final class Ssao extends PostProcessorEffect {
 				shSsao.setUniformf("full_occlusion_treshold", 0.1f);
 				shSsao.setUniformf("no_occlusion_treshold", 0.3f);
 				shSsao.setUniformf("occlusion_power", 1f);
-				shSsao.setUniformf("power", 2f);
+				shSsao.setUniformf("power", 3f);
 
-				shSsao.setUniformi("sample_count", 9);
-				shSsao.setUniformf("pattern_size", 3);
+				shSsao.setUniformi("sample_count", 8);
+				shSsao.setUniformf("pattern_size", 2);
 
 				quad.render(shSsao);
 			}
 			shSsao.end();
 
 			// blur pass
-			blur.setType(BlurType.Gaussian3x3);
-			blur.setPasses(1);
+			blur.setType(BlurType.Gaussian5x5b);
+			blur.setPasses(2);
 			blur.render(occlusionMap);
 		}
 		occlusionMap.end();

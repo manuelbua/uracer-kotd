@@ -285,7 +285,7 @@ public final class AggressiveCold implements PostProcessingAnimator {
 
 			vignette.setLutIntensity(lutIntensity);
 			if (crt == null) {
-				vignette.setIntensity(0.5f + 0.6f * timeModFactor);
+				vignette.setIntensity(0.8f + 0.3f * timeModFactor);
 			} else {
 				vignette.setIntensity(0.7f);
 			}
