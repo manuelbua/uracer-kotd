@@ -111,7 +111,7 @@ public abstract class CommonLogic implements GameLogic, CarEvent.Listener, Playe
 		Gdx.app.log("GameLogic", "Tweening helpers created");
 
 		// post-processing
-		postProcessing = new PostProcessing(gameRenderer.getPostProcessor());
+		postProcessing = new PostProcessing(gameRenderer.getPostProcessor(), gameWorld.isNightMode());
 
 		if (gameRenderer.hasPostProcessor()) {
 			postProcessing.addAnimator(AggressiveCold.Name, new AggressiveCold(this, postProcessing, gameWorld.isNightMode()));

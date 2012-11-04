@@ -36,6 +36,7 @@ public final class PostProcessing {
 
 	private boolean hasPostProcessor;
 	private final PostProcessor postProcessor;
+	private boolean isNightMode;
 
 	// public access to stored effects
 	public LongMap<PostProcessorEffect> effects = new LongMap<PostProcessorEffect>();
@@ -44,9 +45,10 @@ public final class PostProcessing {
 	public LongMap<PostProcessingAnimator> animators = new LongMap<PostProcessingAnimator>();
 	private PostProcessingAnimator currentAnimator;
 
-	public PostProcessing (PostProcessor postProcessor) {
+	public PostProcessing (PostProcessor postProcessor, boolean isNightMode) {
 		this.postProcessor = postProcessor;
 		hasPostProcessor = (this.postProcessor != null);
+		this.isNightMode = isNightMode;
 
 		if (hasPostProcessor) {
 			configurePostProcessor(postProcessor);
@@ -63,7 +65,7 @@ public final class PostProcessing {
 		postProcessor.setBufferTextureWrap(TextureWrap.ClampToEdge, TextureWrap.ClampToEdge);
 
 		// ssao
-		addEffect(Effects.Ssao.name, new Ssao());
+		addEffect(Effects.Ssao.name, new Ssao(isNightMode));
 
 		if (UserPreferences.bool(Preference.ZoomRadialBlur)) {
 			RadialBlur.Quality rbq = RadialBlur.Quality.valueOf(UserPreferences.string(Preference.ZoomRadialBlurQuality));

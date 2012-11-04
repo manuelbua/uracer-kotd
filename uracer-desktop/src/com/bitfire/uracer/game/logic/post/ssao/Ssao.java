@@ -37,10 +37,11 @@ public final class Ssao extends PostProcessorEffect {
 	private final FullscreenQuad quad = new FullscreenQuad();
 	private final Texture randomField;
 	private Blur blur;
+	private boolean nightMode;
 
-	Matrix3 mtxRot = new Matrix3();
-	Matrix3 invRot = new Matrix3();
-	Matrix4 invPrj = new Matrix4();
+	private Matrix3 mtxRot = new Matrix3();
+	private Matrix3 invRot = new Matrix3();
+	private Matrix4 invPrj = new Matrix4();
 
 	private GameRendererEvent.Listener gameRendererEvent = new GameRendererEvent.Listener() {
 		@Override
@@ -49,7 +50,8 @@ public final class Ssao extends PostProcessorEffect {
 		}
 	};
 
-	public Ssao () {
+	public Ssao (boolean nightMode) {
+		this.nightMode = nightMode;
 		GameEvents.gameRenderer.addListener(gameRendererEvent, GameRendererEvent.Type.BatchDebug, GameRendererEvent.Order.DEFAULT);
 
 		int w = Gdx.graphics.getWidth();
@@ -117,6 +119,8 @@ public final class Ssao extends PostProcessorEffect {
 	}
 
 	private void dbgTexture (SpriteBatch batch, float scale, Texture tex, int index) {
+		if (tex == null) return;
+
 		float w = (tex.getWidth() * scale);
 		float h = (tex.getHeight() * scale);
 		float x = Gdx.graphics.getWidth() - w - Convert.scaledPixels(10);
@@ -170,15 +174,15 @@ public final class Ssao extends PostProcessorEffect {
 				shSsao.setUniformf("viewport", occlusionMap.width, occlusionMap.height);
 				shSsao.setUniformf("near", cam.near);
 				shSsao.setUniformf("far", cam.far);
-				shSsao.setUniformf("radius", 0.08f);
+				shSsao.setUniformf("radius", nightMode ? 0.08f : 0.12f);
 				shSsao.setUniformf("epsilon", 0.001f);
 				shSsao.setUniformf("full_occlusion_treshold", 0.1f);
 				shSsao.setUniformf("no_occlusion_treshold", 0.3f);
 				shSsao.setUniformf("occlusion_power", 1f);
-				shSsao.setUniformf("power", 3f);
+				shSsao.setUniformf("power", nightMode ? 3f : 2f);
 
-				shSsao.setUniformi("sample_count", 8);
-				shSsao.setUniformf("pattern_size", 2);
+				shSsao.setUniformi("sample_count", nightMode ? 8 : 9);
+				shSsao.setUniformf("pattern_size", nightMode ? 2 : 3);
 
 				quad.render(shSsao);
 			}
