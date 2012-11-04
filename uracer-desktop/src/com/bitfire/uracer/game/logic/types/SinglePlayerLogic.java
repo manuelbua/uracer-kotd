@@ -30,6 +30,7 @@ import com.bitfire.uracer.utils.AMath;
 import com.bitfire.uracer.utils.BoxedFloat;
 import com.bitfire.uracer.utils.BoxedFloatAccessor;
 import com.bitfire.uracer.utils.CarUtils;
+import com.bitfire.uracer.utils.Convert;
 
 public class SinglePlayerLogic extends CommonLogic {
 
@@ -75,25 +76,23 @@ public class SinglePlayerLogic extends CommonLogic {
 	// the camera needs to be positioned
 	@Override
 	protected float updateCamera (float timeModFactor) {
-		float speedFactor = AMath.fixup(AMath.lerp(previousVal, playerCar.carState.currSpeedFactor, 0.012f));
+		float speedFactor = 0;
+
+		if (hasPlayer()) {
+			speedFactor = AMath.fixup(AMath.lerp(previousVal, playerCar.carState.currSpeedFactor, 0.012f));
+		}
+
 		previousVal = speedFactor;
 		meanVal.addValue(speedFactor);
 
 		float minZoom = 1;
 		float maxZoom = GameWorldRenderer.MaxCameraZoom;
 		float zoomRange = maxZoom - minZoom;
-
 		float zoomFromSpeed = AMath.fixup(maxZoom * meanVal.getMean());
 
 		float cameraZoom = (maxZoom - 0.1f) - (zoomRange) * zoomFromSpeed + (zoomRange + 0.1f) * timeModFactor * zoomFromSpeed;
-
 		cameraZoom = AMath.fixup(MathUtils.clamp(cameraZoom, 1, maxZoom));
-
-		// Gdx.app.log("SPL", "Szoom=" + zoomFromSpeed + ", camZoom=" + cameraZoom + ", Sfactor=" + speedFactor);
-// Gdx.app.log("SPL", "dbg=" + cameraZoom);
 		gameWorldRenderer.setCameraZoom(cameraZoom);
-
-// gameWorldRenderer.setCameraZoom(1.0f + (GameWorldRenderer.MaxCameraZoom - 1) * timeModFactor - (addzoom));
 
 		// update player's headlights and move the world camera to follows it, if there is a player
 		if (hasPlayer()) {
@@ -112,7 +111,7 @@ public class SinglePlayerLogic extends CommonLogic {
 		} else {
 
 			// no ghost, no player, WTF?
-			gameWorldRenderer.setCameraPosition(gameWorld.playerStartPos, gameWorld.playerStartOrientRads, 0);
+			gameWorldRenderer.setCameraPosition(Convert.mt2px(gameWorld.playerStartPos), gameWorld.playerStartOrientRads, 0);
 		}
 
 		return cameraZoom;

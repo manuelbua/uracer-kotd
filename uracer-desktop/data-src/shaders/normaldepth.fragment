@@ -3,8 +3,10 @@ uniform mat4 proj, view;
 uniform float near, far, inv_depth_scale;
 uniform mat3 nmat;
 
-uniform sampler2D u_diffuse;
-varying vec2 v_texcoord;
+#ifdef ENABLE_DIFFUSE
+	uniform sampler2D u_diffuse;
+	varying vec2 v_texcoord;
+#endif
 
 vec2 encode_normal(vec3 normal)
 {
@@ -26,8 +28,10 @@ vec2 encode_depth(vec3 position){
 }
 
 void main(void){
+#ifdef ENABLE_DIFFUSE
 	vec4 texel = texture2D( u_diffuse, v_texcoord );
 	if(texel.a < 0.5) discard;
+#endif
 
 	vec3 normal = normalize(v_normal);
 

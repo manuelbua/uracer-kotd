@@ -1,18 +1,3 @@
-/*******************************************************************************
- * Copyright 2012 bmanuel
- * 
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
- * 
- *   http://www.apache.org/licenses/LICENSE-2.0
- * 
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
- ******************************************************************************/
 
 package com.bitfire.uracer.game.logic.post.ssao;
 
@@ -26,6 +11,7 @@ import com.badlogic.gdx.graphics.Pixmap.Format;
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.Texture.TextureFilter;
 import com.badlogic.gdx.graphics.Texture.TextureWrap;
+import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.graphics.glutils.FrameBuffer;
 import com.badlogic.gdx.graphics.glutils.ShaderProgram;
 import com.badlogic.gdx.math.MathUtils;
@@ -37,7 +23,10 @@ import com.bitfire.postprocessing.filters.Blur.BlurType;
 import com.bitfire.postprocessing.utils.FullscreenQuad;
 import com.bitfire.postprocessing.utils.PingPongBuffer;
 import com.bitfire.uracer.configuration.Config;
+import com.bitfire.uracer.events.GameRendererEvent;
+import com.bitfire.uracer.events.GameRendererEvent.Order;
 import com.bitfire.uracer.game.GameEvents;
+import com.bitfire.uracer.utils.Convert;
 import com.bitfire.utils.ShaderLoader;
 
 public final class Ssao extends PostProcessorEffect {
@@ -53,7 +42,16 @@ public final class Ssao extends PostProcessorEffect {
 	Matrix3 invRot = new Matrix3();
 	Matrix4 invPrj = new Matrix4();
 
+	private GameRendererEvent.Listener gameRendererEvent = new GameRendererEvent.Listener() {
+		@Override
+		public void gameRendererEvent (GameRendererEvent.Type type, Order order) {
+			debug(GameEvents.gameRenderer.batch);
+		}
+	};
+
 	public Ssao () {
+		GameEvents.gameRenderer.addListener(gameRendererEvent, GameRendererEvent.Type.BatchDebug, GameRendererEvent.Order.DEFAULT);
+
 		int w = Gdx.graphics.getWidth();
 		int h = Gdx.graphics.getHeight();
 		float oscale = Config.PostProcessing.SsaoMapScale;
@@ -69,8 +67,8 @@ public final class Ssao extends PostProcessorEffect {
 		blur = new Blur(occlusionMap.width, occlusionMap.height);
 
 		// compute random field for the ssao shader
-		int width = 32;
-		int height = 32;
+		int width = 16;
+		int height = 16;
 		Format format = Format.RGBA8888;
 		randomField = new Texture(width, height, format);
 		randomField.setFilter(TextureFilter.Nearest, TextureFilter.Nearest);
@@ -104,6 +102,9 @@ public final class Ssao extends PostProcessorEffect {
 
 	@Override
 	public void dispose () {
+		GameEvents.gameRenderer.removeListener(gameRendererEvent, GameRendererEvent.Type.BatchDebug,
+			GameRendererEvent.Order.DEFAULT);
+
 		randomField.dispose();
 		blur.dispose();
 		shSsao.dispose();
@@ -113,6 +114,24 @@ public final class Ssao extends PostProcessorEffect {
 
 	public void setNormalDepthMap (Texture normalDepthMap) {
 		this.normalDepthMap = normalDepthMap;
+	}
+
+	private void dbgTexture (SpriteBatch batch, float scale, Texture tex, int index) {
+		float w = (tex.getWidth() * scale);
+		float h = (tex.getHeight() * scale);
+		float x = Gdx.graphics.getWidth() - w - Convert.scaledPixels(10);
+		float y = index * Convert.scaledPixels(10);
+		batch.draw(tex, x, y, w, h);
+	}
+
+	public void debug (SpriteBatch batch) {
+		Gdx.gl.glDisable(GL20.GL_BLEND);
+		Gdx.gl.glDisable(GL20.GL_CULL_FACE);
+		Gdx.gl.glDisable(GL20.GL_DEPTH_TEST);
+		batch.disableBlending();
+
+		dbgTexture(batch, 0.2f, normalDepthMap, 12);
+		dbgTexture(batch, 0.4f, occlusionMap.getResultTexture(), 28);
 	}
 
 	@Override
@@ -133,7 +152,7 @@ public final class Ssao extends PostProcessorEffect {
 		{
 			shSsao.begin();
 			{
-				Gdx.gl.glClearColor(1, 1, 1, 1);
+				Gdx.gl.glClearColor(0, 0, 0, 1);
 				Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT);
 
 				// samplers
@@ -158,8 +177,8 @@ public final class Ssao extends PostProcessorEffect {
 				shSsao.setUniformf("occlusion_power", 1f);
 				shSsao.setUniformf("power", 2f);
 
-				shSsao.setUniformi("sample_count", 16);
-				shSsao.setUniformf("pattern_size", 2);
+				shSsao.setUniformi("sample_count", 9);
+				shSsao.setUniformf("pattern_size", 3);
 
 				quad.render(shSsao);
 			}

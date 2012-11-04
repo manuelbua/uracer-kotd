@@ -224,6 +224,8 @@ public final class GameTrack implements Disposable {
 	// add naive debug output
 	//
 
+	// TODO
+	// export this class style as DebugRenderable or something like that
 	private class DebugRenderer implements Disposable, GameRendererEvent.Listener {
 
 		private final ShapeRenderer shape;

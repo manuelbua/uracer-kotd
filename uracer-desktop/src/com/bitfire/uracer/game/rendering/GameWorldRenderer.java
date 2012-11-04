@@ -103,7 +103,7 @@ public final class GameWorldRenderer {
 	private Mesh plane;
 // private final FloatFrameBuffer normalDepthMap;
 	private final FrameBuffer normalDepthMap;
-	private ShaderProgram shNormalDepth;
+	private final ShaderProgram shNormalDepthAlpha, shNormalDepth;
 
 	// render stats
 	private ImmediateModeRenderer20 dbg = new ImmediateModeRenderer20(false, true, 0);
@@ -158,6 +158,13 @@ public final class GameWorldRenderer {
 		// deferred setup
 		float scale = Config.PostProcessing.NormalDepthMapScale;
 		normalDepthMap = new FrameBuffer(Format.RGBA8888, (int)(width * scale), (int)(height * scale), true);
+		// normalDepthMap = new FloatFrameBuffer((int)(width * scale), (int)(height * scale), true);
+
+		shNormalDepthAlpha = ShaderLoader.fromFile("normaldepth", "normaldepth", "#define ENABLE_DIFFUSE");
+		shNormalDepthAlpha.begin();
+		shNormalDepthAlpha.setUniformf("near", camPersp.near);
+		shNormalDepthAlpha.setUniformf("far", camPersp.far);
+		shNormalDepthAlpha.end();
 
 		shNormalDepth = ShaderLoader.fromFile("normaldepth", "normaldepth");
 		shNormalDepth.begin();
@@ -169,6 +176,7 @@ public final class GameWorldRenderer {
 	}
 
 	public void dispose () {
+		shNormalDepthAlpha.dispose();
 		shNormalDepth.dispose();
 		normalDepthMap.dispose();
 
@@ -397,8 +405,13 @@ public final class GameWorldRenderer {
 		Gdx.gl.glDepthFunc(GL20.GL_LESS);
 		Gdx.gl.glDepthMask(true);
 
+		float zscale = 1f / 70f;
+		shNormalDepthAlpha.begin();
+		shNormalDepthAlpha.setUniformf("inv_depth_scale", zscale);
+		shNormalDepthAlpha.end();
+
 		shNormalDepth.begin();
-		shNormalDepth.setUniformf("inv_depth_scale", 1f / 70f);
+		shNormalDepth.setUniformf("inv_depth_scale", zscale);
 		shNormalDepth.end();
 
 		normalDepthMap.begin();
@@ -411,14 +424,14 @@ public final class GameWorldRenderer {
 			renderTilemapPlane();
 			renderWalls(trackWalls, true);
 
-			if (staticMeshes.size() > 0) {
-				gl.glEnable(GL20.GL_DEPTH_TEST);
-				gl.glDepthFunc(GL20.GL_LESS);
-
-				renderOrthographicAlignedModels(staticMeshes, true);
-			}
-
-			renderTrees(trackTrees, true);
+// if (staticMeshes.size() > 0) {
+// gl.glEnable(GL20.GL_DEPTH_TEST);
+// gl.glDepthFunc(GL20.GL_LESS);
+//
+// renderOrthographicAlignedModels(staticMeshes, true);
+// }
+//
+// renderTrees(trackTrees, true);
 		}
 		normalDepthMap.end();
 	}
@@ -445,7 +458,6 @@ public final class GameWorldRenderer {
 		nmat.set(mtx2).inv().transpose();
 
 		shader.begin();
-
 		shader.setUniformMatrix("proj", camPersp.projection);
 		shader.setUniformMatrix("view", camPersp.view);
 		shader.setUniformMatrix("nmat", nmat);
@@ -515,7 +527,7 @@ public final class GameWorldRenderer {
 		gl.glDisable(GL20.GL_BLEND);
 
 		if (depthOnly) {
-			shader = shNormalDepth;
+			shader = shNormalDepthAlpha;
 		}
 
 		Art.meshTreeTrunk.bind();
@@ -621,7 +633,7 @@ public final class GameWorldRenderer {
 		ShaderProgram shader = OrthographicAlignedStillModel.shader;
 
 		if (depthOnly) {
-			shader = shNormalDepth;
+			shader = shNormalDepthAlpha;
 		}
 
 		shader.begin();
