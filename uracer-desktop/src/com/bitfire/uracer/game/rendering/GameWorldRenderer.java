@@ -158,9 +158,7 @@ public final class GameWorldRenderer {
 		// deferred setup
 		float scale = Config.PostProcessing.NormalDepthMapScale;
 		normalDepthMap = new FrameBuffer(Format.RGBA8888, (int)(width * scale), (int)(height * scale), true);
-// normalDepthMap = new FloatFrameBuffer((int)(width * scale), (int)(height * scale), true);
-// normalDepthMap.getColorBufferTexture().setFilter(TextureFilter.Nearest, TextureFilter.Nearest);
-// normalDepthMap.getColorBufferTexture().setFilter(TextureFilter.Linear, TextureFilter.Linear);
+
 		shNormalDepth = ShaderLoader.fromFile("normaldepth", "normaldepth");
 		shNormalDepth.begin();
 		shNormalDepth.setUniformf("near", camPersp.near);

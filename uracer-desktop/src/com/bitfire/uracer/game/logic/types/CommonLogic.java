@@ -463,7 +463,9 @@ public abstract class CommonLogic implements GameLogic, CarEvent.Listener, Playe
 		// post-processing step
 		Ssao ssao = (Ssao)postProcessing.getEffect(Effects.Ssao.name);
 		if (ssao != null) {
-			ssao.setEnabled(true);
+			boolean enabled = false;
+			ssao.setEnabled(enabled);
+			gameRenderer.setNormalDepthMap(enabled);
 			ssao.setNormalDepthMap(gameWorldRenderer.getNormalDepthMap().getColorBufferTexture());
 		}
 

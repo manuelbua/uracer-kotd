@@ -28,6 +28,7 @@ public final class GameRenderer {
 	private final GameBatchRenderer batchRenderer;
 	private final PostProcessor postProcessor;
 	private final GameWorldRenderer worldRenderer;
+	private boolean drawNormalDepthMap;
 
 	/** Manages to convert world positions expressed in meters or pixels to the corresponding position to screen pixels. To use this
 	 * class, the GameWorldRenderer MUST be already constructed and initialized. */
@@ -90,6 +91,21 @@ public final class GameRenderer {
 		} else {
 			postProcessor = null;
 		}
+
+		// needed deferred data
+		drawNormalDepthMap = false;
+	}
+
+	public void enableNormalDepthMap () {
+		drawNormalDepthMap = true;
+	}
+
+	public void disableNormalDepthMap () {
+		drawNormalDepthMap = false;
+	}
+
+	public void setNormalDepthMap (boolean enabled) {
+		drawNormalDepthMap = enabled;
 	}
 
 	public void dispose () {
@@ -132,7 +148,9 @@ public final class GameRenderer {
 		GameEvents.gameRenderer.camOrtho = worldRenderer.getOrthographicCamera();
 		GameEvents.gameRenderer.camPersp = worldRenderer.getPerspectiveCamera();
 
-		worldRenderer.updateNormalDepthMap();
+		if (drawNormalDepthMap) {
+			worldRenderer.updateNormalDepthMap();
+		}
 
 		// postproc begins
 		boolean postProcessorReady = false;
@@ -230,18 +248,18 @@ public final class GameRenderer {
 		batchRenderer.end();
 
 		// debug local normal+depth map
-		Gdx.gl.glDisable(GL20.GL_BLEND);
-		Gdx.gl.glDisable(GL20.GL_CULL_FACE);
-		Gdx.gl.glDisable(GL20.GL_DEPTH_TEST);
-		batch.begin();
-		batch.disableBlending();
-		float scale = 0.25f;
-		int w = (int)(worldRenderer.getNormalDepthMap().getColorBufferTexture().getWidth() * scale);
-		int h = (int)(worldRenderer.getNormalDepthMap().getColorBufferTexture().getHeight() * scale);
-		int x = 10;
-		int y = Gdx.graphics.getHeight() - h - 30;
-		batch.draw(worldRenderer.getNormalDepthMap().getColorBufferTexture(), x, y, w, h);
-		batch.end();
+// Gdx.gl.glDisable(GL20.GL_BLEND);
+// Gdx.gl.glDisable(GL20.GL_CULL_FACE);
+// Gdx.gl.glDisable(GL20.GL_DEPTH_TEST);
+// batch.begin();
+// batch.disableBlending();
+// float scale = 0.25f;
+// int w = (int)(worldRenderer.getNormalDepthMap().getColorBufferTexture().getWidth() * scale);
+// int h = (int)(worldRenderer.getNormalDepthMap().getColorBufferTexture().getHeight() * scale);
+// int x = 10;
+// int y = Gdx.graphics.getHeight() - h - 30;
+// batch.draw(worldRenderer.getNormalDepthMap().getColorBufferTexture(), x, y, w, h);
+// batch.end();
 
 		GameEvents.gameRenderer.batch = null;
 		GameEvents.gameRenderer.trigger(this, GameRendererEvent.Type.Debug);

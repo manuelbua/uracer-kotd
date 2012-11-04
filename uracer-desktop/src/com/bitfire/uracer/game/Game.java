@@ -9,7 +9,6 @@ import com.bitfire.uracer.URacer;
 import com.bitfire.uracer.configuration.Config;
 import com.bitfire.uracer.configuration.UserProfile;
 import com.bitfire.uracer.game.actors.CarPreset;
-import com.bitfire.uracer.game.logic.types.CommonLogic;
 import com.bitfire.uracer.game.logic.types.SinglePlayerLogic;
 import com.bitfire.uracer.game.rendering.GameRenderer;
 import com.bitfire.uracer.game.task.TaskManager;
@@ -24,7 +23,7 @@ public class Game implements Disposable {
 	private DebugHelper debug = null;
 
 	// logic
-	private CommonLogic gameLogic = null;
+	private GameLogic gameLogic = null;
 
 	// rendering
 	private GameRenderer gameRenderer = null;
