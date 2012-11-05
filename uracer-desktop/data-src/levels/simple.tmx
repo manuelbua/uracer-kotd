@@ -22,14 +22,9 @@
     <property name="scale" value="5"/>
    </properties>
   </object>
-  <object name="tree-9" type="tree-9" x="1201" y="995" width="61" height="68">
+  <object name="tree-9" type="tree-9" x="1198" y="966" width="61" height="68">
    <properties>
-    <property name="scale" value="6.5"/>
-   </properties>
-  </object>
-  <object name="tree-9" type="tree-9" x="814" y="953" width="61" height="68">
-   <properties>
-    <property name="scale" value="5"/>
+    <property name="scale" value="8"/>
    </properties>
   </object>
   <object name="tree-9" type="tree-9" x="431" y="584" width="61" height="68">
@@ -67,18 +62,28 @@
     <property name="scale" value="5.4"/>
    </properties>
   </object>
-  <object name="tree-9" type="tree-9" x="1346" y="850" width="61" height="68">
+  <object name="tree-9" type="tree-9" x="822" y="952" width="45" height="44">
    <properties>
     <property name="scale" value="5"/>
    </properties>
   </object>
-  <object name="tree-8" type="tree-8" x="988" y="844" width="61" height="68">
+  <object name="tree-9" type="tree-9" x="1405" y="942" width="45" height="44">
    <properties>
-    <property name="scale" value="6"/>
+    <property name="scale" value="5"/>
+   </properties>
+  </object>
+  <object name="tree-9" type="tree-9" x="1327" y="739" width="45" height="44">
+   <properties>
+    <property name="scale" value="4"/>
+   </properties>
+  </object>
+  <object name="tree-9" type="tree-9" x="975" y="782" width="45" height="44">
+   <properties>
+    <property name="scale" value="5"/>
    </properties>
   </object>
  </objectgroup>
- <objectgroup color="#ffaa00" name="lights" width="10" height="8" visible="0">
+ <objectgroup color="#ffaa00" name="lights" width="10" height="8">
   <object x="735" y="1292" width="27" height="21"/>
   <object x="449" y="932" width="27" height="21"/>
   <object x="996" y="439" width="27" height="21"/>
@@ -93,7 +98,7 @@
   <object x="1075" y="778" width="27" height="21"/>
   <object x="1365" y="973" width="27" height="21"/>
  </objectgroup>
- <objectgroup color="#a40002" name="walls" width="10" height="8" visible="0">
+ <objectgroup color="#a40002" name="walls" width="10" height="8">
   <object x="900" y="663">
    <polyline points="0,0 60,0 385,0 429,7"/>
   </object>
