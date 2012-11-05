@@ -22,7 +22,6 @@ import com.bitfire.postprocessing.filters.Blur;
 import com.bitfire.postprocessing.filters.Blur.BlurType;
 import com.bitfire.postprocessing.utils.FullscreenQuad;
 import com.bitfire.postprocessing.utils.PingPongBuffer;
-import com.bitfire.uracer.configuration.Config;
 import com.bitfire.uracer.events.GameRendererEvent;
 import com.bitfire.uracer.events.GameRendererEvent.Order;
 import com.bitfire.uracer.game.GameEvents;
@@ -30,6 +29,15 @@ import com.bitfire.uracer.utils.Convert;
 import com.bitfire.utils.ShaderLoader;
 
 public final class Ssao extends PostProcessorEffect {
+
+	public enum Quality {
+		High(1), Low(0.5f);
+		public final float scale;
+
+		Quality (float scale) {
+			this.scale = scale;
+		}
+	}
 
 	private final PingPongBuffer occlusionMap;
 	private Texture normalDepthMap;
@@ -50,13 +58,14 @@ public final class Ssao extends PostProcessorEffect {
 		}
 	};
 
-	public Ssao (boolean nightMode) {
+	public Ssao (Quality quality, boolean nightMode) {
 		this.nightMode = nightMode;
 		GameEvents.gameRenderer.addListener(gameRendererEvent, GameRendererEvent.Type.BatchDebug, GameRendererEvent.Order.DEFAULT);
 
+		Gdx.app.log("SsaoProcessor", "Quality profile = " + quality.toString());
 		int w = Gdx.graphics.getWidth();
 		int h = Gdx.graphics.getHeight();
-		float oscale = Config.PostProcessing.SsaoMapScale;
+		float oscale = quality.scale;
 
 		// maps
 		occlusionMap = new PingPongBuffer((int)(w * oscale), (int)(h * oscale), Format.RGBA8888, false);
@@ -128,14 +137,24 @@ public final class Ssao extends PostProcessorEffect {
 		batch.draw(tex, x, y, w, h);
 	}
 
+	private void dbgTextureW (SpriteBatch batch, float width, Texture tex, int index) {
+		if (tex == null) return;
+
+		float ratio = ((float)Gdx.graphics.getWidth() / (float)Gdx.graphics.getHeight());
+		float h = width / ratio;
+		float x = Gdx.graphics.getWidth() - width - Convert.scaledPixels(10);
+		float y = index * Convert.scaledPixels(10);
+		batch.draw(tex, x, y, width, h);
+	}
+
 	public void debug (SpriteBatch batch) {
 		Gdx.gl.glDisable(GL20.GL_BLEND);
 		Gdx.gl.glDisable(GL20.GL_CULL_FACE);
 		Gdx.gl.glDisable(GL20.GL_DEPTH_TEST);
 		batch.disableBlending();
 
-		dbgTexture(batch, 0.15f, normalDepthMap, 12);
-		dbgTexture(batch, 0.3f, occlusionMap.getResultTexture(), 24);
+		dbgTextureW(batch, 130, normalDepthMap, 12);
+		dbgTextureW(batch, 130, occlusionMap.getResultTexture(), 20);
 	}
 
 	@Override

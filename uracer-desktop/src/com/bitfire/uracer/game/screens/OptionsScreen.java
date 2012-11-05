@@ -24,6 +24,7 @@ import com.bitfire.uracer.configuration.Gameplay;
 import com.bitfire.uracer.configuration.Gameplay.TimeDilateInputMode;
 import com.bitfire.uracer.configuration.UserPreferences;
 import com.bitfire.uracer.configuration.UserPreferences.Preference;
+import com.bitfire.uracer.game.logic.post.ssao.Ssao;
 import com.bitfire.uracer.game.screens.GameScreensFactory.ScreenType;
 import com.bitfire.uracer.resources.Art;
 import com.bitfire.uracer.screen.Screen;
@@ -34,8 +35,8 @@ public class OptionsScreen extends Screen {
 	private Stage ui;
 	private Input input;
 	private Table container;
-	private CheckBox ppVignetting, ppBloom, ppRadialBlur, ppCrtScreen, ppCurvature, ppComplexTrees, ppWalls;
-	private SelectBox timeInputModeSel, ppZoomBlurQ;
+	private CheckBox ppVignetting, ppBloom, ppRadialBlur, ppCrtScreen, ppCurvature, ppComplexTrees, ppWalls, ppSsao;
+	private SelectBox timeInputModeSel, ppZoomBlurQ, ppSsaoQuality;
 
 	@Override
 	public void init (ScalingStrategy scalingStrategy) {
@@ -115,6 +116,7 @@ public class OptionsScreen extends Screen {
 			ppRadialBlur = UIUtils.newCheckBox("Zoom blur", UserPreferences.bool(Preference.ZoomRadialBlur));
 			ppCrtScreen = UIUtils.newCheckBox("CRT screen emulation", UserPreferences.bool(Preference.CrtScreen));
 			ppCurvature = UIUtils.newCheckBox("Screen curvature", UserPreferences.bool(Preference.Curvature));
+			ppSsao = UIUtils.newCheckBox("Ambient occlusion", UserPreferences.bool(Preference.Ssao));
 
 			ppVignetting.addListener(new ClickListener() {
 				@Override
@@ -132,15 +134,14 @@ public class OptionsScreen extends Screen {
 				}
 			});
 
+			ppRadialBlur.addListener(new ClickListener() {
+				@Override
+				public void clicked (InputEvent event, float x, float y) {
+					UserPreferences.bool(Preference.ZoomRadialBlur, ppRadialBlur.isChecked());
+					UserPreferences.save();
+				}
+			});
 			{
-				ppRadialBlur.addListener(new ClickListener() {
-					@Override
-					public void clicked (InputEvent event, float x, float y) {
-						UserPreferences.bool(Preference.ZoomRadialBlur, ppRadialBlur.isChecked());
-						UserPreferences.save();
-					}
-				});
-
 				RadialBlur.Quality rbq = RadialBlur.Quality.valueOf(UserPreferences.string(Preference.ZoomRadialBlurQuality));
 				ppZoomBlurQ = new SelectBox(new String[] {"Very high", "High", "Normal", "Medium", "Low"}, Art.scrSkin);
 				ppZoomBlurQ.setSelection(rbq.ordinal());
@@ -149,6 +150,27 @@ public class OptionsScreen extends Screen {
 					public void changed (ChangeEvent event, Actor actor) {
 						int index = ppZoomBlurQ.getSelectionIndex();
 						UserPreferences.string(Preference.ZoomRadialBlurQuality, RadialBlur.Quality.values()[index].toString());
+						UserPreferences.save();
+					}
+				});
+			}
+
+			ppSsao.addListener(new ClickListener() {
+				@Override
+				public void clicked (InputEvent event, float x, float y) {
+					UserPreferences.bool(Preference.Ssao, ppSsao.isChecked());
+					UserPreferences.save();
+				}
+			});
+			{
+				Ssao.Quality q = Ssao.Quality.valueOf(UserPreferences.string(Preference.SsaoQuality));
+				ppSsaoQuality = new SelectBox(Ssao.Quality.values(), Art.scrSkin);
+				ppSsaoQuality.setSelection(q.ordinal());
+				ppSsaoQuality.addListener(new ChangeListener() {
+					@Override
+					public void changed (ChangeEvent event, Actor actor) {
+						int index = ppSsaoQuality.getSelectionIndex();
+						UserPreferences.string(Preference.SsaoQuality, Ssao.Quality.values()[index].toString());
 						UserPreferences.save();
 					}
 				});
@@ -205,13 +227,22 @@ public class OptionsScreen extends Screen {
 			container.row().colspan(2);
 			container.add(ppBloom);
 
+			container.row().colspan(2);
+			container.add(ppRadialBlur);
 			{
-				container.row().colspan(2);
-				container.add(ppRadialBlur);
 
 				container.row();
 				container.add(new Label("Zoom blur quality", Art.scrSkin));
 				container.add(ppZoomBlurQ);
+			}
+
+			container.row().colspan(2);
+			container.add(ppSsao);
+			{
+
+				container.row();
+				container.add(new Label("Ambient occlusion quality", Art.scrSkin));
+				container.add(ppSsaoQuality);
 			}
 
 			container.row().colspan(2);

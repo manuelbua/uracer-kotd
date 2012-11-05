@@ -65,7 +65,9 @@ public final class PostProcessing {
 		postProcessor.setBufferTextureWrap(TextureWrap.ClampToEdge, TextureWrap.ClampToEdge);
 
 		// ssao
-		addEffect(Effects.Ssao.name, new Ssao(isNightMode));
+		if (UserPreferences.bool(Preference.Ssao)) {
+			addEffect(Effects.Ssao.name, new Ssao(Ssao.Quality.valueOf(UserPreferences.string(Preference.SsaoQuality)), isNightMode));
+		}
 
 		if (UserPreferences.bool(Preference.ZoomRadialBlur)) {
 			RadialBlur.Quality rbq = RadialBlur.Quality.valueOf(UserPreferences.string(Preference.ZoomRadialBlurQuality));
