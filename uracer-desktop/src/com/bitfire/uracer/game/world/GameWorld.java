@@ -196,8 +196,8 @@ public final class GameWorld {
 			return;
 		}
 
-		float rttScale = .25f;
-		int maxRays = 720;
+		float rttScale = 0.25f; // i want this to be exactly that
+		int maxRays = 360 * 1; // TODO make this adjustable
 
 		if (!Config.isDesktop) {
 			rttScale = 0.2f;

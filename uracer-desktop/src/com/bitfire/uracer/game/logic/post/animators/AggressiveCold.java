@@ -182,7 +182,7 @@ public final class AggressiveCold implements PostProcessingAnimator {
 			crt.setZoom(0.94f);
 
 			// tv.setTint( 0.95f, 0.8f, 1.0f );
-			crt.setTint(0.95f, 0.75f, 0.85f);
+			crt.setTint(0.9f, 0.8f, 0.85f);
 		}
 
 		if (curvature != null) {
@@ -233,8 +233,9 @@ public final class AggressiveCold implements PostProcessingAnimator {
 
 		if (zoom != null && hasPlayer) {
 			// auto-disable zoom
-// float blurStrength = -0.1f * timeModFactor * currSpeedFactor;
-			float blurStrength = (-0.035f - 0.09f * currSpeedFactor) * timeModFactor - 0.035f * currDriftStrength;
+			// float blurStrength = -0.1f * timeModFactor * currSpeedFactor;
+			float blurStrength = (-0.035f - 0.09f * currSpeedFactor) * timeModFactor - 0.02f * currSpeedFactor;
+			// float blurStrength = (-0.035f - 0.09f * currSpeedFactor) * timeModFactor;
 
 			boolean zoomEnabled = zoom.isEnabled();
 			boolean strengthIsZero = AMath.isZero(blurStrength);
@@ -253,19 +254,19 @@ public final class AggressiveCold implements PostProcessingAnimator {
 		if (bloom != null) {
 
 			bloom.setBaseSaturation(AMath.lerp(0.6f, 0.4f, timeModFactor));
-// bloom.setBaseSaturation(AMath.lerp(0.8f, 0.05f, timeModFactor));
-// bloom.setBloomSaturation(1.5f - timeModFactor * 0.15f);
-// if (!nightMode) {
-// bloom.setThreshold(0.3f);
-// }
+			// bloom.setBaseSaturation(AMath.lerp(0.8f, 0.05f, timeModFactor));
+			// bloom.setBloomSaturation(1.5f - timeModFactor * 0.15f);
+			// if (!nightMode) {
+			// bloom.setThreshold(0.3f);
+			// }
 
-// with RttRatio = 0.5f
-// bloom.setBaseIntesity(0.9f);
-// bloom.setBaseSaturation(1f);
-// bloom.setBloomIntesity(1f);
-// bloom.setBloomSaturation(1f);
-// bloom.setThreshold(0.4f);
-// bloom.setBlurPasses(2);
+			// with RttRatio = 0.5f
+			// bloom.setBaseIntesity(0.9f);
+			// bloom.setBaseSaturation(1f);
+			// bloom.setBloomIntesity(1f);
+			// bloom.setBloomSaturation(1f);
+			// bloom.setThreshold(0.4f);
+			// bloom.setBlurPasses(2);
 		}
 
 		if (vignette != null) {

@@ -101,34 +101,35 @@ public final class DebugHelper {
 
 	private void render (SpriteBatch batch) {
 		renderVersionInfo(batch);
-
-		if (Config.Debug.RenderDebugInfoGraphics) {
-			renderGraphicalStats(batch);
-		}
-
-		if (Config.Debug.RenderDebugInfoMemoryStats) {
-			renderMemoryUsage(batch);
-		}
-
 		if (Config.Debug.RenderDebugInfoFpsStats) {
 			renderFpsStats(batch);
 		}
 
-		if (Config.Debug.RenderPlayerDebugInfo && player != null) {
-			renderPlayerInfo(batch, player);
-		}
+		if (Config.Debug.ShowAdvancedDebugInfo) {
+			if (Config.Debug.RenderDebugInfoGraphics) {
+				renderGraphicalStats(batch);
+			}
 
-		if (Config.Debug.RenderDebugInfoPostProcessor && postProcessor != null) {
-			renderPostProcessorInfo(batch, postProcessor);
-		}
+			if (Config.Debug.RenderDebugInfoMemoryStats) {
+				renderMemoryUsage(batch);
+			}
 
-		if (Config.Debug.RenderDebugInfoMeshStats) {
-			SpriteBatchUtils.drawString(batch, "total meshes=" + GameWorld.TotalMeshes, 0, Gdx.graphics.getHeight()
-				- Art.DebugFontHeight * 3);
-			SpriteBatchUtils.drawString(batch, "rendered meshes="
-				+ (GameWorldRenderer.renderedTrees + GameWorldRenderer.renderedWalls) + ", trees=" + GameWorldRenderer.renderedTrees
-				+ ", walls=" + GameWorldRenderer.renderedWalls + ", culled=" + GameWorldRenderer.culledMeshes, 0,
-				Gdx.graphics.getHeight() - Art.DebugFontHeight * 2);
+			if (Config.Debug.RenderPlayerDebugInfo && player != null) {
+				renderPlayerInfo(batch, player);
+			}
+
+			if (Config.Debug.RenderDebugInfoPostProcessor && postProcessor != null) {
+				renderPostProcessorInfo(batch, postProcessor);
+			}
+
+			if (Config.Debug.RenderDebugInfoMeshStats) {
+				SpriteBatchUtils.drawString(batch, "total meshes=" + GameWorld.TotalMeshes, 0, Gdx.graphics.getHeight()
+					- Art.DebugFontHeight * 3);
+				SpriteBatchUtils.drawString(batch, "rendered meshes="
+					+ (GameWorldRenderer.renderedTrees + GameWorldRenderer.renderedWalls) + ", trees="
+					+ GameWorldRenderer.renderedTrees + ", walls=" + GameWorldRenderer.renderedWalls + ", culled="
+					+ GameWorldRenderer.culledMeshes, 0, Gdx.graphics.getHeight() - Art.DebugFontHeight * 2);
+			}
 		}
 	}
 

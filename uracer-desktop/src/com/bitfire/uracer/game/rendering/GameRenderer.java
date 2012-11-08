@@ -104,7 +104,7 @@ public final class GameRenderer {
 		drawNormalDepthMap = false;
 	}
 
-	public void setNormalDepthMap (boolean enabled) {
+	public void enableNormalDepthMap (boolean enabled) {
 		drawNormalDepthMap = enabled;
 	}
 
@@ -137,17 +137,17 @@ public final class GameRenderer {
 	}
 
 	public void beforeRender (float timeAliasingFactor) {
-		gl.glViewport(0, 0, Gdx.graphics.getWidth(), Gdx.graphics.getHeight());
-
-		GameEvents.gameRenderer.timeAliasingFactor = timeAliasingFactor;
-		GameEvents.gameRenderer.trigger(this, GameRendererEvent.Type.OnSubframeInterpolate);
-	}
-
-	public void render (FrameBuffer dest) {
 		GameEvents.gameRenderer.mtxOrthographicMvpMt = worldRenderer.getOrthographicMvpMt();
 		GameEvents.gameRenderer.camOrtho = worldRenderer.getOrthographicCamera();
 		GameEvents.gameRenderer.camPersp = worldRenderer.getPerspectiveCamera();
 
+		GameEvents.gameRenderer.timeAliasingFactor = timeAliasingFactor;
+		GameEvents.gameRenderer.trigger(this, GameRendererEvent.Type.OnSubframeInterpolate);
+
+		gl.glViewport(0, 0, Gdx.graphics.getWidth(), Gdx.graphics.getHeight());
+	}
+
+	public void render (FrameBuffer dest) {
 		if (drawNormalDepthMap) {
 			worldRenderer.updateNormalDepthMap();
 		}

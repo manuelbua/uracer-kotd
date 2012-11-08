@@ -25,7 +25,7 @@ import com.bitfire.utils.Hash;
 public final class PostProcessing {
 
 	public enum Effects {
-		Zoomer, Bloom, Vignette, Crt, Curvature, Ssao;
+		Zoomer, Bloom, Vignette, Crt, Curvature, Ssao, MotionBlur;
 
 		public String name;
 
@@ -64,10 +64,11 @@ public final class PostProcessing {
 		postProcessor.setClearDepth(1f);
 		postProcessor.setBufferTextureWrap(TextureWrap.ClampToEdge, TextureWrap.ClampToEdge);
 
-		// ssao
 		if (UserPreferences.bool(Preference.Ssao)) {
 			addEffect(Effects.Ssao.name, new Ssao(Ssao.Quality.valueOf(UserPreferences.string(Preference.SsaoQuality)), isNightMode));
 		}
+
+// addEffect(Effects.MotionBlur.name, new CameraMotion());
 
 		if (UserPreferences.bool(Preference.ZoomRadialBlur)) {
 			RadialBlur.Quality rbq = RadialBlur.Quality.valueOf(UserPreferences.string(Preference.ZoomRadialBlurQuality));

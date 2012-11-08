@@ -24,7 +24,7 @@
   </object>
   <object name="tree-9" type="tree-9" x="1198" y="966" width="61" height="68">
    <properties>
-    <property name="scale" value="8"/>
+    <property name="scale" value="10"/>
    </properties>
   </object>
   <object name="tree-9" type="tree-9" x="431" y="584" width="61" height="68">

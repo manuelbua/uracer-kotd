@@ -86,7 +86,7 @@ public final class GameWorldRenderer {
 	private CameraController camController;
 	private static final float CamPerspPlaneNear = 1;
 	public static final float CamPerspPlaneFar = 240;
-	public static final float MaxCameraZoom = 1.4f;
+	public static final float MaxCameraZoom = 1.5f;
 	private static final float CamPerspElevation = 100f;
 
 	// rendering
@@ -386,8 +386,7 @@ public final class GameWorldRenderer {
 // camPersp.fieldOfView = 43;
 // camPersp.fieldOfView = 67;
 		camPersp.position.set(camTilemap.position.x, camTilemap.position.y, CamPerspElevation);
-// camPersp.lookAt(camOrtho.position.x, camOrtho.position.y, -5);
-		camPersp.update();
+		camPersp.update(true);
 
 		// update inv proj view
 		camPerspInvProjView.set(camPersp.invProjectionView);

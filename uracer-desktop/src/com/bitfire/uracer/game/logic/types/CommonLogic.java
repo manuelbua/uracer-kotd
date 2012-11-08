@@ -5,6 +5,8 @@ import aurelienribon.tweenengine.Tween;
 
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Input.Keys;
+import com.badlogic.gdx.graphics.Camera;
+import com.bitfire.postprocessing.effects.CameraMotion;
 import com.bitfire.uracer.Input;
 import com.bitfire.uracer.ScalingStrategy;
 import com.bitfire.uracer.URacer;
@@ -15,6 +17,7 @@ import com.bitfire.uracer.configuration.UserPreferences;
 import com.bitfire.uracer.configuration.UserPreferences.Preference;
 import com.bitfire.uracer.configuration.UserProfile;
 import com.bitfire.uracer.game.DebugHelper;
+import com.bitfire.uracer.game.GameEvents;
 import com.bitfire.uracer.game.GameLogic;
 import com.bitfire.uracer.game.GameplaySettings;
 import com.bitfire.uracer.game.actors.Car;
@@ -457,16 +460,32 @@ public abstract class CommonLogic implements GameLogic, CarEvent.Listener, Playe
 
 		float zoom = updateCamera(timeModFactor);
 
+		Camera cam = GameEvents.gameRenderer.camPersp;
+		Ssao ssao = (Ssao)postProcessing.getEffect(Effects.Ssao.name);
+		CameraMotion mot = (CameraMotion)postProcessing.getEffect(Effects.MotionBlur.name);
+
 		// camera update
 		gameWorldRenderer.updateCamera();
 
-		// post-processing step
-		Ssao ssao = (Ssao)postProcessing.getEffect(Effects.Ssao.name);
+		// normal+depth map
+		if (ssao != null || mot != null) {
+			gameRenderer.enableNormalDepthMap();
+		} else {
+			gameRenderer.disableNormalDepthMap();
+		}
+
+		// post-processing step / SSAO
 		if (ssao != null) {
-			boolean enabled = true;
-			ssao.setEnabled(enabled);
-			gameRenderer.setNormalDepthMap(enabled);
+			ssao.setEnabled(true);
 			ssao.setNormalDepthMap(gameWorldRenderer.getNormalDepthMap().getColorBufferTexture());
+		}
+
+		// post-processing step / MOTION BLUR
+		if (mot != null) {
+			mot.setEnabled(true);
+			mot.setNearFar(cam.near, cam.far);
+			mot.setMatrices(gameWorldRenderer.getInvProjView(), gameWorldRenderer.getPrevProjView());
+			mot.setNormalDepthMap(gameWorldRenderer.getNormalDepthMap().getColorBufferTexture());
 		}
 
 		postProcessing.onBeforeRender(timeModFactor, zoom);

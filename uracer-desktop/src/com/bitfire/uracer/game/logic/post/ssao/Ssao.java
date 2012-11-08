@@ -31,7 +31,7 @@ import com.bitfire.utils.ShaderLoader;
 public final class Ssao extends PostProcessorEffect {
 
 	public enum Quality {
-		High(1), Low(0.5f);
+		High(1), Medium(0.75f), Low(0.5f);
 		public final float scale;
 
 		Quality (float scale) {
@@ -60,7 +60,6 @@ public final class Ssao extends PostProcessorEffect {
 
 	public Ssao (Quality quality, boolean nightMode) {
 		this.nightMode = nightMode;
-		GameEvents.gameRenderer.addListener(gameRendererEvent, GameRendererEvent.Type.BatchDebug, GameRendererEvent.Order.DEFAULT);
 
 		Gdx.app.log("SsaoProcessor", "Quality profile = " + quality.toString());
 		int w = Gdx.graphics.getWidth();
@@ -113,14 +112,21 @@ public final class Ssao extends PostProcessorEffect {
 
 	@Override
 	public void dispose () {
-		GameEvents.gameRenderer.removeListener(gameRendererEvent, GameRendererEvent.Type.BatchDebug,
-			GameRendererEvent.Order.DEFAULT);
 
 		randomField.dispose();
 		blur.dispose();
 		shSsao.dispose();
 		shMix.dispose();
 		occlusionMap.dispose();
+	}
+
+	public void enableDebug () {
+		GameEvents.gameRenderer.addListener(gameRendererEvent, GameRendererEvent.Type.BatchDebug, GameRendererEvent.Order.DEFAULT);
+	}
+
+	public void disableDebug () {
+		GameEvents.gameRenderer.removeListener(gameRendererEvent, GameRendererEvent.Type.BatchDebug,
+			GameRendererEvent.Order.DEFAULT);
 	}
 
 	public void setNormalDepthMap (Texture normalDepthMap) {
@@ -153,8 +159,8 @@ public final class Ssao extends PostProcessorEffect {
 		Gdx.gl.glDisable(GL20.GL_DEPTH_TEST);
 		batch.disableBlending();
 
-		dbgTextureW(batch, 130, normalDepthMap, 12);
-		dbgTextureW(batch, 130, occlusionMap.getResultTexture(), 20);
+		dbgTextureW(batch, 180, normalDepthMap, 12);
+		dbgTextureW(batch, 180, occlusionMap.getResultTexture(), 24);
 	}
 
 	@Override

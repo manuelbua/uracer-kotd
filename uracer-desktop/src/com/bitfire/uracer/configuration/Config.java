@@ -77,6 +77,8 @@ public final class Config {
 		public static boolean FrustumCulling;
 		public static boolean InfiniteDilationTime;
 
+		public static boolean ShowAdvancedDebugInfo;
+
 		public static void asDefault () {
 
 			UseDebugHelper = true;
@@ -96,6 +98,8 @@ public final class Config {
 			ApplyCarFrictionFromMap = true;
 			FrustumCulling = true;
 			InfiniteDilationTime = false;
+
+			ShowAdvancedDebugInfo = true;
 		}
 
 		private Debug () {
