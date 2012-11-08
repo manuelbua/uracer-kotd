@@ -77,6 +77,8 @@ public final class Config {
 		public static boolean FrustumCulling;
 		public static boolean InfiniteDilationTime;
 
+		public static boolean ShowAdvancedDebugInfo;
+
 		public static void asDefault () {
 
 			UseDebugHelper = true;
@@ -96,6 +98,8 @@ public final class Config {
 			ApplyCarFrictionFromMap = true;
 			FrustumCulling = true;
 			InfiniteDilationTime = false;
+
+			ShowAdvancedDebugInfo = true;
 		}
 
 		private Debug () {
@@ -106,14 +110,15 @@ public final class Config {
 
 		public static BlurType BlurType;
 		public static int BlurNumPasses;
-		public static int ScaledFboWidth, ScaledFboHeight;
+		public static int BloomFboWidth, BloomFboHeight;
+		public static float NormalDepthMapScale = 1f;
 		private static float RttRatio = 0.5f;
 
 		// compute per-resolution constants
 		public static void asDefault () {
 
-			ScaledFboWidth = (int)(Gdx.graphics.getWidth() * RttRatio);
-			ScaledFboHeight = (int)(Gdx.graphics.getHeight() * RttRatio);
+			BloomFboWidth = (int)(Gdx.graphics.getWidth() * RttRatio);
+			BloomFboHeight = (int)(Gdx.graphics.getHeight() * RttRatio);
 
 			int w = Gdx.graphics.getWidth();
 			if (w >= 1400) {

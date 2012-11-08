@@ -10,14 +10,19 @@ import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.files.FileHandle;
 import com.badlogic.gdx.graphics.GL10;
 import com.badlogic.gdx.graphics.GL20;
+import com.badlogic.gdx.graphics.Mesh;
 import com.badlogic.gdx.graphics.OrthographicCamera;
 import com.badlogic.gdx.graphics.PerspectiveCamera;
+import com.badlogic.gdx.graphics.Pixmap.Format;
 import com.badlogic.gdx.graphics.Texture.TextureFilter;
+import com.badlogic.gdx.graphics.VertexAttribute;
+import com.badlogic.gdx.graphics.VertexAttributes.Usage;
 import com.badlogic.gdx.graphics.g3d.model.still.StillSubMesh;
 import com.badlogic.gdx.graphics.glutils.FrameBuffer;
 import com.badlogic.gdx.graphics.glutils.ImmediateModeRenderer20;
 import com.badlogic.gdx.graphics.glutils.ShaderProgram;
 import com.badlogic.gdx.math.MathUtils;
+import com.badlogic.gdx.math.Matrix3;
 import com.badlogic.gdx.math.Matrix4;
 import com.badlogic.gdx.math.Rectangle;
 import com.badlogic.gdx.math.Vector2;
@@ -81,7 +86,7 @@ public final class GameWorldRenderer {
 	private CameraController camController;
 	private static final float CamPerspPlaneNear = 1;
 	public static final float CamPerspPlaneFar = 240;
-	public static final float MaxCameraZoom = 1.4f;
+	public static final float MaxCameraZoom = 1.5f;
 	private static final float CamPerspElevation = 100f;
 
 	// rendering
@@ -93,6 +98,12 @@ public final class GameWorldRenderer {
 	public UTileMapRenderer tileMapRenderer = null;
 	private ScalingStrategy scalingStrategy = null;
 	private float scaledPpm = 1f;
+
+	// deferred stuff
+	private Mesh plane;
+// private final FloatFrameBuffer normalDepthMap;
+	private final FrameBuffer normalDepthMap;
+	private final ShaderProgram shNormalDepthAlpha, shNormalDepth;
 
 	// render stats
 	private ImmediateModeRenderer20 dbg = new ImmediateModeRenderer20(false, true, 0);
@@ -143,11 +154,65 @@ public final class GameWorldRenderer {
 		if (showWalls) {
 			trackWalls = world.getTrackWalls();
 		}
+
+		// deferred setup
+		float scale = Config.PostProcessing.NormalDepthMapScale;
+		normalDepthMap = new FrameBuffer(Format.RGBA8888, (int)(width * scale), (int)(height * scale), true);
+		// normalDepthMap = new FloatFrameBuffer((int)(width * scale), (int)(height * scale), true);
+
+		shNormalDepthAlpha = ShaderLoader.fromFile("normaldepth", "normaldepth", "#define ENABLE_DIFFUSE");
+		shNormalDepthAlpha.begin();
+		shNormalDepthAlpha.setUniformf("near", camPersp.near);
+		shNormalDepthAlpha.setUniformf("far", camPersp.far);
+		shNormalDepthAlpha.end();
+
+		shNormalDepth = ShaderLoader.fromFile("normaldepth", "normaldepth");
+		shNormalDepth.begin();
+		shNormalDepth.setUniformf("near", camPersp.near);
+		shNormalDepth.setUniformf("far", camPersp.far);
+		shNormalDepth.end();
+
+		createBackPlane();
 	}
 
 	public void dispose () {
+		shNormalDepthAlpha.dispose();
+		shNormalDepth.dispose();
+		normalDepthMap.dispose();
+
 		tileMapRenderer.dispose();
 		tileAtlas.dispose();
+		plane.dispose();
+	}
+
+	// permit to the tilemap to appear as a flat surface with the normal pointing upward, towards the tvcam
+	private void createBackPlane () {
+		plane = new Mesh(true, 4, 4, new VertexAttribute(Usage.Position, 3, ShaderProgram.POSITION_ATTRIBUTE), new VertexAttribute(
+			Usage.Normal, 3, ShaderProgram.NORMAL_ATTRIBUTE));
+
+		// @formatter:off
+		float size = 10f;
+		float verts[] = {-size / 2, 0, size / 2, size / 2, 0, size / 2, size / 2, 0, -size / 2, -size / 2, 0, -size / 2};
+		// float verts[] = {size, 0, size, size, 0, 0, 0, 0, 0, 0, 0, size};
+
+		float normals[] = {0, 1, 0, 0, 1, 0, 0, 1, 0, 0, 1, 0};
+		// @formatter:on
+
+		int vidx = 0, nidx = 0;
+		int length = 6 * 4;
+		float[] vertices = new float[length];
+		for (int i = 0; i < length;) {
+			vertices[i++] = verts[vidx++];
+			vertices[i++] = verts[vidx++];
+			vertices[i++] = verts[vidx++];
+			vertices[i++] = normals[nidx++];
+			vertices[i++] = normals[nidx++];
+			vertices[i++] = normals[nidx++];
+		}
+
+		plane.setVertices(vertices);
+		plane.setIndices(new short[] {0, 1, 2, 3});
+
 	}
 
 	private void createCams (int width, int height) {
@@ -176,6 +241,10 @@ public final class GameWorldRenderer {
 		return camOrtho;
 	}
 
+	public PerspectiveCamera getPerspectiveCamera () {
+		return camPersp;
+	}
+
 	public Matrix4 getOrthographicMvpMt () {
 		return camOrthoMvpMt;
 	}
@@ -184,6 +253,10 @@ public final class GameWorldRenderer {
 		renderPlayerHeadlights = value;
 		if (playerLightsA != null) playerLightsA.setActive(value);
 		if (playerLightsB != null) playerLightsB.setActive(value);
+	}
+
+	public FrameBuffer getNormalDepthMap () {
+		return normalDepthMap;
 	}
 
 	public Matrix4 getInvProjView () {
@@ -310,8 +383,10 @@ public final class GameWorldRenderer {
 		camPerspPrevProjView.set(camPersp.combined);
 
 		// sync perspective camera to the orthographic camera
+// camPersp.fieldOfView = 43;
+// camPersp.fieldOfView = 67;
 		camPersp.position.set(camTilemap.position.x, camTilemap.position.y, CamPerspElevation);
-		camPersp.update();
+		camPersp.update(true);
 
 		// update inv proj view
 		camPerspInvProjView.set(camPersp.invProjectionView);
@@ -319,11 +394,113 @@ public final class GameWorldRenderer {
 		updateRayHandler();
 	}
 
+	public void updateNormalDepthMap () {
+
+		Gdx.gl.glEnable(GL20.GL_CULL_FACE);
+		Gdx.gl.glCullFace(GL20.GL_BACK);
+		Gdx.gl.glDisable(GL20.GL_BLEND);
+
+		Gdx.gl.glEnable(GL20.GL_DEPTH_TEST);
+		Gdx.gl.glDepthFunc(GL20.GL_LESS);
+		Gdx.gl.glDepthMask(true);
+
+		float zscale = 1f / 40f;
+		shNormalDepthAlpha.begin();
+		shNormalDepthAlpha.setUniformf("inv_depth_scale", zscale);
+		shNormalDepthAlpha.end();
+
+		shNormalDepth.begin();
+		shNormalDepth.setUniformf("inv_depth_scale", zscale);
+		shNormalDepth.end();
+
+		normalDepthMap.begin();
+		{
+			Gdx.gl.glClearDepthf(1f);
+			Gdx.gl.glClearColor(0, 0, 0, 1);
+			// Gdx.gl.glClearColor(1, 1, 1, 1);
+			Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT | GL20.GL_DEPTH_BUFFER_BIT);
+			// renderAllMeshes(true);
+			renderTilemapPlane();
+			renderWalls(trackWalls, true);
+
+// if (staticMeshes.size() > 0) {
+// gl.glEnable(GL20.GL_DEPTH_TEST);
+// gl.glDepthFunc(GL20.GL_LESS);
+//
+// renderOrthographicAlignedModels(staticMeshes, true);
+// }
+//
+			renderTrees(trackTrees, true);
+		}
+		normalDepthMap.end();
+	}
+
+	private void renderTilemapPlane () {
+		gl.glDisable(GL20.GL_CULL_FACE);
+
+		ShaderProgram shader = shNormalDepth;
+		float meshZ = -(camPersp.far - camPersp.position.z) + (camPersp.far * (1 - (camOrtho.zoom)));
+		float k = scalingStrategy.meshScaleFactor * OrthographicAlignedStillModel.BlenderToURacer * scalingStrategy.to256;
+		float scalex = 6, scalez = 4;
+
+		Matrix4 model = mtx;
+		tmpvec.set(camPersp.position.x, camPersp.position.y, meshZ + 0.5f);
+
+		model.idt();
+		model.translate(tmpvec);
+		model.rotate(1, 0, 0, 90);
+		model.scale(scalex * k, 1, scalez * k);
+		model.translate(-tmpvec.x, -tmpvec.y, -tmpvec.z);
+		model.translate(tmpvec);
+
+		mtx2.set(camPersp.view).mul(model);
+		nmat.set(mtx2).inv().transpose();
+
+		shader.begin();
+		shader.setUniformMatrix("proj", camPersp.projection);
+		shader.setUniformMatrix("view", camPersp.view);
+		shader.setUniformMatrix("nmat", nmat);
+		shader.setUniformMatrix("model", model);
+		plane.render(shader, GL20.GL_TRIANGLE_FAN);
+		shader.end();
+	}
+
 	public void renderLigthMap (FrameBuffer dest) {
 		rayHandler.renderLightMap(dest);
 	}
 
+	public void renderAllMeshes () {
+		resetCounters();
+
+		gl.glEnable(GL20.GL_DEPTH_TEST);
+		gl.glDepthFunc(GL20.GL_LESS);
+
+		if (showWalls && trackWalls.count() > 0) {
+			renderWalls(trackWalls, false);
+		}
+
+		if (showComplexTrees && trackTrees.count() > 0) {
+			renderTrees(trackTrees, false);
+		}
+
+		if (staticMeshes.size() > 0) {
+			// render "static-meshes" layer
+			gl.glEnable(GL20.GL_CULL_FACE);
+			gl.glFrontFace(GL20.GL_CCW);
+			gl.glCullFace(GL20.GL_BACK);
+
+			renderOrthographicAlignedModels(staticMeshes, false);
+
+			gl.glDisable(GL20.GL_CULL_FACE);
+			// gl.glDisable(GL20.GL_DEPTH_TEST);
+		}
+
+		gl.glDisable(GL20.GL_DEPTH_TEST);
+	}
+
 	public void renderTilemap () {
+		gl.glDisable(GL20.GL_DEPTH_TEST);
+		gl.glDisable(GL20.GL_CULL_FACE);
 		gl.glDisable(GL20.GL_BLEND);
 		gl.glActiveTexture(GL10.GL_TEXTURE0);
 		tileMapRenderer.render(camTilemap);
@@ -344,35 +521,61 @@ public final class GameWorldRenderer {
 
 		ShaderProgram shader = treeShader;
 
-		gl.glEnable(GL20.GL_CULL_FACE);
+		gl.glDisable(GL20.GL_CULL_FACE);
+// gl.glCullFace(GL20.GL_BACK);
 		gl.glDisable(GL20.GL_BLEND);
 
-		// if( depthOnly ) {
-		// shader = Art.depthMapGen;
-		// } else {
+		if (depthOnly) {
+			shader = shNormalDepthAlpha;
+		}
+
 		Art.meshTreeTrunk.bind();
-		// }
 
 		shader.begin();
+
+		if (depthOnly) {
+			shader.setUniformMatrix("proj", camPersp.projection);
+			shader.setUniformMatrix("view", camPersp.view);
+			shader.setUniformi("u_diffuse", 0);
+		}
 
 		// all the trunks
 		for (int i = 0; i < trees.models.size(); i++) {
 			TreeStillModel m = trees.models.get(i);
-			shader.setUniformMatrix("u_projTrans", m.transformed);
+
+			if (!depthOnly) {
+				shader.setUniformMatrix("u_projTrans", m.transformed /* combined = cam (proj * view) * model) */);
+			} else {
+				mtx.set(camPersp.view).mul(m.mtxmodel);
+				nmat.set(mtx).inv().transpose();
+
+				shader.setUniformMatrix("nmat", nmat);
+				shader.setUniformMatrix("model", m.mtxmodel);
+			}
+
 			m.trunk.render(shader, m.smTrunk.primitiveType);
 		}
 
 		// all the transparent foliage
-		// gl.glDisable( GL20.GL_CULL_FACE );
+
+		// do NOT cull face so that SSAO can appear on back faces as well
+		// gl.glDisable(GL20.GL_CULL_FACE);
 
 		if (!depthOnly) {
 			gl.glEnable(GL20.GL_BLEND);
 			gl.glBlendFunc(GL20.GL_SRC_ALPHA, GL20.GL_ONE_MINUS_SRC_ALPHA);
+		} else {
+			// testing!
+			gl.glDisable(GL20.GL_CULL_FACE);
 		}
 
 		boolean needRebind = false;
 		for (int i = 0; i < trees.models.size(); i++) {
 			TreeStillModel m = trees.models.get(i);
+			if (m.leaves == null) {
+				needRebind = true;
+				continue;
+			}
 
 			if (Config.Debug.FrustumCulling && !camPersp.frustum.boundsInFrustum(m.boundingBox)) {
 				needRebind = true;
@@ -380,15 +583,19 @@ public final class GameWorldRenderer {
 				continue;
 			}
 
-			shader.setUniformMatrix("u_projTrans", m.transformed);
+			if (!depthOnly) {
+				shader.setUniformMatrix("u_projTrans", m.transformed);
+			} else {
+				mtx.set(camPersp.view).mul(m.mtxmodel);
+				nmat.set(mtx).inv().transpose();
+				shader.setUniformMatrix("nmat", nmat);
+				shader.setUniformMatrix("model", m.mtxmodel);
+			}
 
-			// if( !depthOnly )
-			{
-				if (i == 0 || needRebind) {
-					m.material.bind(shader);
-				} else if (!trees.models.get(i - 1).material.equals(m.material)) {
-					m.material.bind(shader);
-				}
+			if (i == 0 || needRebind) {
+				m.material.bind(shader);
+			} else if (!trees.models.get(i - 1).material.equals(m.material)) {
+				m.material.bind(shader);
 			}
 
 			m.leaves.render(shader, m.smLeaves.primitiveType);
@@ -405,10 +612,13 @@ public final class GameWorldRenderer {
 				renderBoundingBox(m.boundingBox);
 			}
 		}
+
+		gl.glDisable(GL20.GL_BLEND);
 	}
 
 	private Vector3 tmpvec = new Vector3();
 	private Matrix4 mtx = new Matrix4();
+	private Matrix3 nmat = new Matrix3();
 	private Matrix4 mtx2 = new Matrix4();
 	private Vector2 pospx = new Vector2();
 
@@ -417,15 +627,21 @@ public final class GameWorldRenderer {
 		OrthographicAlignedStillModel m;
 		StillSubMesh submesh;
 
-		float meshZ = -(camPersp.far - camPersp.position.z) + (CamPerspPlaneFar * (1 - (camOrtho.zoom)));
+		float meshZ = -(camPersp.far - camPersp.position.z) + (camPersp.far * (1 - (camOrtho.zoom)));
 
 		ShaderProgram shader = OrthographicAlignedStillModel.shader;
 
-		// if( depthOnly ) {
-		// shader = Art.depthMapGen;
-		// }
+		if (depthOnly) {
+			shader = shNormalDepthAlpha;
+		}
 
 		shader.begin();
+
+		if (depthOnly) {
+			shader.setUniformMatrix("proj", camPersp.projection);
+			shader.setUniformMatrix("view", camPersp.view);
+			shader.setUniformi("u_diffuse", 0);
+		}
 
 		boolean needRebind = false;
 		for (int i = 0; i < models.size(); i++) {
@@ -442,18 +658,26 @@ public final class GameWorldRenderer {
 			// transform to world space
 			camPersp.unproject(tmpvec);
 
-			// build model matrix
 			// TODO: support proper rotation now that Mat3/Mat4 supports opengl-style rotation/translation/scaling
-			mtx.setToTranslation(tmpvec.x, tmpvec.y, meshZ);
-			Matrix4.mul(mtx.val, mtx2.setToRotation(m.iRotationAxis, m.iRotationAngle).val);
-			Matrix4.mul(mtx.val, mtx2.setToScaling(m.scaleAxis).val);
+			// mtx.setToTranslation(tmpvec.x, tmpvec.y, meshZ);
+			// Matrix4.mul(mtx.val, mtx2.setToRotation(m.iRotationAxis, m.iRotationAngle).val);
+			// Matrix4.mul(mtx.val, mtx2.setToScaling(m.scaleAxis).val);
 
-			// comb = (proj * view) * model (fast mul)
-			Matrix4.mul(mtx2.set(camPersp.combined).val, mtx.val);
+			// build model matrix
+			Matrix4 model = mtx;
+			tmpvec.z = meshZ;
+
+			// change of basis
+			model.idt();
+			model.translate(tmpvec);
+			model.rotate(m.iRotationAxis, m.iRotationAngle);
+			model.scale(m.scaleAxis.x, m.scaleAxis.y, m.scaleAxis.z);
+			model.translate(-tmpvec.x, -tmpvec.y, -tmpvec.z);
+			model.translate(tmpvec);
 
 			// ensure the bounding box is transformed
 			m.boundingBox.inf().set(m.localBoundingBox);
-			m.boundingBox.mul(mtx);
+			m.boundingBox.mul(model);
 
 			// perform culling
 			if (Config.Debug.FrustumCulling && !camPersp.frustum.boundsInFrustum(m.boundingBox)) {
@@ -462,16 +686,23 @@ public final class GameWorldRenderer {
 				continue;
 			}
 
-			shader.setUniformMatrix("u_projTrans", mtx2);
+			if (!depthOnly) {
+				// comb = (proj * view) * model (fast mul)
+				Matrix4 mvp = mtx2;
+				mvp.set(camPersp.combined).mul(model);
 
-			// if( !depthOnly )
-			{
-				// avoid rebinding same textures
-				if (i == 0 || needRebind) {
-					m.material.bind(shader);
-				} else if (!models.get(i - 1).material.equals(m.material)) {
-					m.material.bind(shader);
-				}
+				shader.setUniformMatrix("u_projTrans", mvp);
+			} else {
+				mtx2.set(camPersp.view).mul(model);
+				nmat.set(mtx2).inv().transpose();
+				shader.setUniformMatrix("nmat", nmat);
+				shader.setUniformMatrix("model", model);
+			}
+
+			if (i == 0 || needRebind) {
+				m.material.bind(shader);
+			} else if (!models.get(i - 1).material.equals(m.material)) {
+				m.material.bind(shader);
 			}
 
 			submesh.mesh.render(shader, submesh.primitiveType);
@@ -489,35 +720,6 @@ public final class GameWorldRenderer {
 		}
 
 		return renderedCount;
-	}
-
-	public void renderAllMeshes (boolean depthOnly) {
-		resetCounters();
-
-		gl.glEnable(GL20.GL_DEPTH_TEST);
-		gl.glDepthFunc(GL20.GL_LESS);
-
-		if (showWalls && trackWalls.count() > 0) {
-			renderWalls(trackWalls, depthOnly);
-		}
-
-		if (showComplexTrees && trackTrees.count() > 0) {
-			renderTrees(trackTrees, depthOnly);
-		}
-
-		if (staticMeshes.size() > 0) {
-			// render "static-meshes" layer
-			gl.glEnable(GL20.GL_CULL_FACE);
-			gl.glFrontFace(GL20.GL_CCW);
-			gl.glCullFace(GL20.GL_BACK);
-
-			renderOrthographicAlignedModels(staticMeshes, depthOnly);
-
-			gl.glDisable(GL20.GL_CULL_FACE);
-			// gl.glDisable(GL20.GL_DEPTH_TEST);
-		}
-
-		gl.glDisable(GL20.GL_DEPTH_TEST);
 	}
 
 	/** This is intentionally SLOW. Read it again!

@@ -72,7 +72,7 @@ public final class PlayerGameTasks {
 		manager.effects.addBeforeEntities(playerSkidMarks);
 		manager.effects.addAfterEntities(playerSmokeTrails);
 		manager.hud.addBeforePostProcessing(hudPlayer);
-		manager.hud.addBeforePostProcessing(hudLapInfo);
+		manager.hud.addAfterPostProcessing(hudLapInfo);
 		manager.hud.addAfterPostProcessing(hudPlayerStatic);
 
 		// at last, create debug helper since it will probably use most of the stuff just created above

@@ -1,12 +1,12 @@
 /*******************************************************************************
  * Copyright 2012 bmanuel
- * 
+ *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
- * 
+ *
  *   http://www.apache.org/licenses/LICENSE-2.0
- * 
+ *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -24,64 +24,58 @@
 
 uniform PRECISION sampler2D u_texture0;	// scene
 uniform PRECISION sampler2D u_texture1;	// depthmap
-uniform PRECISION mat4 invMVP;
-uniform PRECISION mat4 prevMVP;
+uniform PRECISION mat4 inv_vp;
+uniform PRECISION mat4 prev_vp;
+uniform PRECISION float near, far;
 
 varying vec2 v_texCoords;
 
-float unpack(vec4 packedZValue)
-{
-	const vec4 unpackFactors = vec4( 1.0 / (256.0 * 256.0 * 256.0), 1.0 / (256.0 * 256.0), 1.0 / 256.0, 1.0 );
-	return dot(packedZValue,unpackFactors);
+float decode_depth(vec2 src){
+	float depth = src.x/255.0+src.y;
+	return depth;//*far+near;
 }
 
 void main() {
-	float depth = unpack( texture2D(u_texture1, v_texCoords) );
+	vec4 eye_data = texture2D(u_texture1, v_texCoords);
+	float depth = decode_depth(eye_data.zw);
 
-	// H is the viewport position at this pixel in the range -1 to 1.
-	vec4 H = vec4((v_texCoords.x*2.0) - 1.0, ((v_texCoords.y)*2.0)-1.0, depth, 1.0);
+	// currPos is the viewport position at this pixel in the range -1 to 1.
+	//vec4 currPos = vec4((v_texCoords.x*2.0) - 1.0, ((v_texCoords.y)*2.0)-1.0, (2*depth)-1, 1.0);
+	vec4 currPos = vec4((v_texCoords.x*2.0) - 1.0, ((v_texCoords.y)*2.0)-1.0, depth, 1.0);
 
-	// Transform by the view-projection inverse.
-	vec4 D = invMVP * H;
+	vec4 worldPos = inv_vp * currPos;	// Transform by the view-projection inverse.
+	worldPos /= worldPos.w;				// Divide by w to get the world position.
 
-	// Divide by w to get the world position.
-	vec4 worldPos = D / D.w;
+	vec4 prevPos = prev_vp * worldPos;	// Transform by the previous view-projection matrix.
+	prevPos /= prevPos.w;				// Convert to nonhomogeneous points [-1,1] by dividing by w.
 
-	// Current viewport position
-	vec4 currPos = H;
-
-	// Use the world position, and transform by the previous view-projection matrix.
-	vec4 prevPos = (prevMVP * worldPos);
-
-	// Convert to nonhomogeneous points [-1,1] by dividing by w.
-	prevPos /= prevPos.w;
+	//prevPos = currPos-vec4(0.001,0,0,0);
 
 	// Use this frame's position and last frame's to compute the pixel velocity.
-	vec2 velocity = ((prevPos - currPos)*0.005).xy;
-
-	//prevPos.xy = prevPos.xy * 0.5 + 0.5f;
-	//velocity = prevPos.xy - v_texCoords;
+	vec2 velocity = ((currPos.xy-prevPos.xy)).xy * 0.0001;
 
 	// blur pass
-	const int NumPasses = 8;
+	const int NumPasses = 15;
 
-	//vec2 texCoord = v_texCoords;
-	//vec4 result = texture2D(u_texture0, texCoord);
-	//texCoord += velocity;
-	//for(int i=1; i<NumPasses; ++i, texCoord += velocity) {
-		//result += texture2D(u_texture0, texCoord);
-	//}
+	vec2 texCoord = v_texCoords + velocity;
+	vec4 result = texture2D(u_texture0, texCoord);
+	for(int i=1; i<NumPasses; ++i, texCoord += velocity) {
+		//if (texCoord.s > 1.0 || texCoord.t > 1.0 || texCoord.s < 0.0 || texCoord.t < 0.0) {
+			//break;
+		//}
 
-	vec4 result = vec4(0.0);
-	for (int i = 0; i < NumPasses; ++i) {
-		// get offset in range [-0.5, 0.5]:
-		float scale = (float(i) / float(NumPasses) - 0.5);
-		vec2 offset = scale * velocity;
-
-		// sample & add to result:
-		result += texture(u_texture0, v_texCoords + offset);
+		result += texture2D(u_texture0, texCoord);
 	}
 
+	//vec4 result = vec4(0.0);
+	//for (int i = 0; i < NumPasses; ++i) {
+		//// get offset in range [-0.5, 0.5]:
+		//float scale = (float(i) / float(NumPasses) - 0.5);
+		//vec2 offset = scale * velocity;
+
+		//// sample & add to result:
+		//result += texture(u_texture0, v_texCoords + offset);
+	//}
+
 	gl_FragColor = result/float(NumPasses);
-	//gl_FragColor = depth;
 }

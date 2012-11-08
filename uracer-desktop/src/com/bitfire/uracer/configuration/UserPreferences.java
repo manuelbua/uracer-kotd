@@ -4,8 +4,9 @@ package com.bitfire.uracer.configuration;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Preferences;
 import com.bitfire.postprocessing.filters.RadialBlur;
+import com.bitfire.uracer.game.logic.post.ssao.Ssao;
 
-/** Represents user-configurable configuration properties.
+/** Represents user-configurable properties.
  * 
  * The functionalities can be safely accessed statically just after user preferences have been loaded.
  * 
@@ -15,17 +16,19 @@ import com.bitfire.postprocessing.filters.RadialBlur;
  * On the desktop, user settings are stored in ~/.prefs/ while on mobile we are wrapping SharedPreferences. */
 public final class UserPreferences {
 
-	public enum Preference {
+	public static enum Preference {
 		// @off
 
 		// post-processing
-		PostProcessing, Vignetting, Bloom, ZoomRadialBlur, ZoomRadialBlurQuality, CrtScreen, Curvature,
+		PostProcessing, Vignetting, Bloom, ZoomRadialBlur, ZoomRadialBlurQuality, CrtScreen, Curvature, Ssao, SsaoQuality,
 
 		// rendering
 		ComplexTrees, Walls,
 
 		// gameplay
-		TimeDilateInputMode, ;
+		TimeDilateInputMode,
+		
+		;
 		// @on
 
 		public String name;
@@ -42,8 +45,16 @@ public final class UserPreferences {
 	public static void load () {
 		prefs = Gdx.app.getPreferences(Config.UserPreferences);
 
-		if (prefs.get().size() == 0) {
-			toDefault();
+		boolean isDifferent = false;
+		for (Preference p : Preference.values()) {
+			if (!prefs.contains(p.name())) {
+				isDifferent = true;
+				break;
+			}
+		}
+
+		if (isDifferent || (prefs.get().size() == 0)) {
+			toDefaults();
 		}
 	}
 
@@ -52,7 +63,7 @@ public final class UserPreferences {
 		Gdx.app.debug("UserPreferences", "User preferences updated.");
 	}
 
-	private static void toDefault () {
+	private static void toDefaults () {
 		prefs.clear();
 
 		//
@@ -61,28 +72,31 @@ public final class UserPreferences {
 
 		bool(Preference.PostProcessing, true);
 		bool(Preference.Vignetting, Config.isDesktop);
-		bool(Preference.Bloom, false);
+		bool(Preference.Bloom, true);
 		bool(Preference.ZoomRadialBlur, true);
+		{
+			// detect default radial blur quality inspecting
+			// the current game resolution
+			int w = Gdx.graphics.getWidth();
+			if (w >= 1680) {
+				string(Preference.ZoomRadialBlurQuality, RadialBlur.Quality.High.toString());
+			} else if (w >= 1200) {
+				string(Preference.ZoomRadialBlurQuality, RadialBlur.Quality.Medium.toString());
+			} else if (w >= 800) {
+				string(Preference.ZoomRadialBlurQuality, RadialBlur.Quality.Low.toString());
+			}
+		}
+		bool(Preference.CrtScreen, false);
+		bool(Preference.Curvature, true);
+		bool(Preference.Ssao, true);
+		string(Preference.SsaoQuality, Ssao.Quality.Low.toString());
 
 		//
 		// rendering
 		//
 
-		bool(Preference.ComplexTrees, false);
-
-		// detect default radial blur quality inspecting
-		// the current game resolution
-		int w = Gdx.graphics.getWidth();
-		if (w >= 1680) {
-			string(Preference.ZoomRadialBlurQuality, RadialBlur.Quality.High.toString());
-		} else if (w >= 1200) {
-			string(Preference.ZoomRadialBlurQuality, RadialBlur.Quality.Medium.toString());
-		} else if (w >= 800) {
-			string(Preference.ZoomRadialBlurQuality, RadialBlur.Quality.Low.toString());
-		}
-
-		bool(Preference.CrtScreen, false);
-		bool(Preference.Curvature, false);
+		bool(Preference.ComplexTrees, true);
+		bool(Preference.Walls, true);
 
 		//
 		// gameplay

@@ -143,7 +143,7 @@ public class URacer implements ApplicationListener {
 		screenMgr = new ScreenManager(screenFactory);
 
 		screenMgr.setScreen(ScreenType.GameScreen, TransitionType.Fader, 1000);
-		// screenMgr.setScreen(ScreenType.MainScreen, TransitionType.CrossFader, 500);
+// screenMgr.setScreen(ScreenType.MainScreen, TransitionType.CrossFader, 500);
 		// screenMgr.setScreen( ScreenType.OptionsScreen, TransitionType.CrossFader, 500 );
 
 		// Initialize the timers after creating the game screen, so that there
@@ -241,7 +241,7 @@ public class URacer implements ApplicationListener {
 
 				// simulate slowness
 // try {
-// Thread.sleep(60);
+// Thread.sleep(15);
 // } catch (InterruptedException e) {
 // }
 			}
@@ -326,7 +326,7 @@ public class URacer implements ApplicationListener {
 		}
 
 		public static void quit () {
-			Screens.setScreen(ScreenType.ExitScreen, TransitionType.Fader, 1000);
+			Screens.setScreen(ScreenType.ExitScreen, TransitionType.Fader, 500);
 		}
 	}
 

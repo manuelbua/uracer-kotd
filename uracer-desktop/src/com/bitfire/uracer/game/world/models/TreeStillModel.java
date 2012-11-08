@@ -13,6 +13,7 @@ public class TreeStillModel extends OrthographicAlignedStillModel {
 	public Mesh leaves, trunk;
 	public StillSubMesh smLeaves, smTrunk;
 	public Matrix4 transformed = new Matrix4();
+	public Matrix4 mtxmodel = new Matrix4();
 	public BoundingBox boundingBox = new BoundingBox();
 	public BoundingBox localBoundingBox = new BoundingBox();
 
@@ -21,8 +22,13 @@ public class TreeStillModel extends OrthographicAlignedStillModel {
 
 		smTrunk = model.getSubMesh(meshName + "trunk");
 		smLeaves = model.getSubMesh(meshName + "leaves");
-		trunk = smTrunk.mesh;
-		leaves = smLeaves.mesh;
+		if (smTrunk != null) {
+			trunk = smTrunk.mesh;
+		}
+
+		if (smLeaves != null) {
+			leaves = smLeaves.mesh;
+		}
 
 		model.getBoundingBox(localBoundingBox);
 		boundingBox.set(localBoundingBox);

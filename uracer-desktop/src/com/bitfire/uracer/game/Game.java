@@ -9,7 +9,6 @@ import com.bitfire.uracer.URacer;
 import com.bitfire.uracer.configuration.Config;
 import com.bitfire.uracer.configuration.UserProfile;
 import com.bitfire.uracer.game.actors.CarPreset;
-import com.bitfire.uracer.game.logic.types.CommonLogic;
 import com.bitfire.uracer.game.logic.types.SinglePlayerLogic;
 import com.bitfire.uracer.game.rendering.GameRenderer;
 import com.bitfire.uracer.game.task.TaskManager;
@@ -24,14 +23,14 @@ public class Game implements Disposable {
 	private DebugHelper debug = null;
 
 	// logic
-	private CommonLogic gameLogic = null;
+	private GameLogic gameLogic = null;
 
 	// rendering
 	private GameRenderer gameRenderer = null;
 
 	public Game (UserProfile userProfile, String trackId, ScalingStrategy scalingStrategy) {
 
-		gameWorld = new GameWorld(scalingStrategy, trackId, false);
+		gameWorld = new GameWorld(scalingStrategy, trackId, true);
 		Gdx.app.debug("Game", "Game world ready");
 
 		// handles rendering

@@ -16,6 +16,7 @@ import com.bitfire.postprocessing.filters.RadialBlur;
 import com.bitfire.uracer.configuration.Config;
 import com.bitfire.uracer.configuration.UserPreferences;
 import com.bitfire.uracer.configuration.UserPreferences.Preference;
+import com.bitfire.uracer.game.logic.post.ssao.Ssao;
 import com.bitfire.uracer.game.player.PlayerCar;
 import com.bitfire.utils.Hash;
 
@@ -24,7 +25,7 @@ import com.bitfire.utils.Hash;
 public final class PostProcessing {
 
 	public enum Effects {
-		Zoomer, Bloom, Vignette, Crt, Curvature;
+		Zoomer, Bloom, Vignette, Crt, Curvature, Ssao, MotionBlur;
 
 		public String name;
 
@@ -35,6 +36,7 @@ public final class PostProcessing {
 
 	private boolean hasPostProcessor;
 	private final PostProcessor postProcessor;
+	private boolean isNightMode;
 
 	// public access to stored effects
 	public LongMap<PostProcessorEffect> effects = new LongMap<PostProcessorEffect>();
@@ -43,9 +45,10 @@ public final class PostProcessing {
 	public LongMap<PostProcessingAnimator> animators = new LongMap<PostProcessingAnimator>();
 	private PostProcessingAnimator currentAnimator;
 
-	public PostProcessing (PostProcessor postProcessor) {
+	public PostProcessing (PostProcessor postProcessor, boolean isNightMode) {
 		this.postProcessor = postProcessor;
 		hasPostProcessor = (this.postProcessor != null);
+		this.isNightMode = isNightMode;
 
 		if (hasPostProcessor) {
 			configurePostProcessor(postProcessor);
@@ -61,6 +64,12 @@ public final class PostProcessing {
 		postProcessor.setClearDepth(1f);
 		postProcessor.setBufferTextureWrap(TextureWrap.ClampToEdge, TextureWrap.ClampToEdge);
 
+		if (UserPreferences.bool(Preference.Ssao)) {
+			addEffect(Effects.Ssao.name, new Ssao(Ssao.Quality.valueOf(UserPreferences.string(Preference.SsaoQuality)), isNightMode));
+		}
+
+// addEffect(Effects.MotionBlur.name, new CameraMotion());
+
 		if (UserPreferences.bool(Preference.ZoomRadialBlur)) {
 			RadialBlur.Quality rbq = RadialBlur.Quality.valueOf(UserPreferences.string(Preference.ZoomRadialBlurQuality));
 			Zoomer z = (UserPreferences.bool(Preference.ZoomRadialBlur) ? new Zoomer(rbq) : new Zoomer());
@@ -70,7 +79,7 @@ public final class PostProcessing {
 		}
 
 		if (UserPreferences.bool(Preference.Bloom)) {
-			addEffect(Effects.Bloom.name, new Bloom(Config.PostProcessing.ScaledFboWidth, Config.PostProcessing.ScaledFboHeight));
+			addEffect(Effects.Bloom.name, new Bloom(Config.PostProcessing.BloomFboWidth, Config.PostProcessing.BloomFboHeight));
 		}
 
 		if (UserPreferences.bool(Preference.Vignetting)) {

@@ -1,6 +1,8 @@
 
 package com.bitfire.uracer.events;
 
+import com.badlogic.gdx.graphics.OrthographicCamera;
+import com.badlogic.gdx.graphics.PerspectiveCamera;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.math.Matrix4;
 import com.bitfire.uracer.game.rendering.GameRenderer;
@@ -18,6 +20,8 @@ public class GameRendererEvent extends Event<GameRenderer> {
 
 	public SpriteBatch batch;
 	public Matrix4 mtxOrthographicMvpMt;
+	public PerspectiveCamera camPersp;
+	public OrthographicCamera camOrtho;
 	public float timeAliasingFactor;
 
 	public interface Listener extends EventListener {

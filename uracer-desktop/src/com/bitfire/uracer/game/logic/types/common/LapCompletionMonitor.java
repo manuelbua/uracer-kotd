@@ -34,14 +34,16 @@ public class LapCompletionMonitor {
 	}
 
 	public void update () {
-		currentCompletion = gameTrack.getTrackCompletion(car, 0);
-		// Gdx.app.log("", "curr=" + currentCompletion + ", prev=" + previousCompletion);
+		if (car != null) {
+			currentCompletion = gameTrack.getTrackCompletion(car, 0);
+			// Gdx.app.log("", "curr=" + currentCompletion + ", prev=" + previousCompletion);
 
-		if (previousCompletion > 0.9f && currentCompletion >= 0 && currentCompletion < 0.1f) {
-			reset();
-			listener.onLapComplete();
-		} else {
-			previousCompletion = currentCompletion;
+			if (previousCompletion > 0.9f && currentCompletion >= 0 && currentCompletion < 0.1f) {
+				reset();
+				listener.onLapComplete();
+			} else {
+				previousCompletion = currentCompletion;
+			}
 		}
 	}
 }
