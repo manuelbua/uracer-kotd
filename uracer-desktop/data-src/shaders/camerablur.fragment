@@ -24,58 +24,68 @@
 
 uniform PRECISION sampler2D u_texture0;	// scene
 uniform PRECISION sampler2D u_texture1;	// depthmap
-uniform PRECISION mat4 inv_vp;
-uniform PRECISION mat4 prev_vp;
+uniform PRECISION mat4 ctp;
 uniform PRECISION float near, far;
+uniform vec2 viewport;
+uniform mat4 inv_proj;
+uniform float blur_scale;
+uniform float depth_scale;
+uniform int blur_passes;
 
 varying vec2 v_texCoords;
 
+vec3 get_eye_normal(){
+	vec2 frag_coord = gl_FragCoord.xy/viewport;
+	frag_coord = (frag_coord-0.5)*2.0;
+	vec4 device_normal = vec4(frag_coord, 0.0, 1.0);
+	return normalize((inv_proj * device_normal).xyz);
+}
+
+vec3 decode_normal(vec2 enc){
+	vec2 fenc = enc*4.0-2.0;
+	float f = dot(fenc,fenc);
+	float g = sqrt(1.0-f/4.0);
+	return vec3(fenc*g, 1.0-f/2.0);
+}
+
 float decode_depth(vec2 src){
 	float depth = src.x/255.0+src.y;
-	return depth;//*far+near;
+	depth *= depth_scale;
+	return depth*far+near;
 }
 
 void main() {
+	vec3 eye_ray = get_eye_normal();
 	vec4 eye_data = texture2D(u_texture1, v_texCoords);
-	float depth = decode_depth(eye_data.zw);
+	vec3 eye_normal = decode_normal(eye_data.xy);
+	float eye_depth = decode_depth(eye_data.zw);
 
-	// currPos is the viewport position at this pixel in the range -1 to 1.
-	//vec4 currPos = vec4((v_texCoords.x*2.0) - 1.0, ((v_texCoords.y)*2.0)-1.0, (2*depth)-1, 1.0);
-	vec4 currPos = vec4((v_texCoords.x*2.0) - 1.0, ((v_texCoords.y)*2.0)-1.0, depth, 1.0);
+	vec4 current = vec4(eye_ray * eye_depth, 1.0);
+	vec4 previous = ctp * current;
+	previous.xyz /= previous.w;
+	previous.xy = previous.xy * 0.5 + 0.5;
 
-	vec4 worldPos = inv_vp * currPos;	// Transform by the view-projection inverse.
-	worldPos /= worldPos.w;				// Divide by w to get the world position.
-
-	vec4 prevPos = prev_vp * worldPos;	// Transform by the previous view-projection matrix.
-	prevPos /= prevPos.w;				// Convert to nonhomogeneous points [-1,1] by dividing by w.
-
-	//prevPos = currPos-vec4(0.001,0,0,0);
-
-	// Use this frame's position and last frame's to compute the pixel velocity.
-	vec2 velocity = ((currPos.xy-prevPos.xy)).xy * 0.0001;
+	vec2 velocity = (previous.xy - v_texCoords) * 0.5 * blur_scale;
 
 	// blur pass
-	const int NumPasses = 15;
+	vec4 result = vec4(0.0);
+	float oneOnNumPasses = 1.0 / float(blur_passes);
 
-	vec2 texCoord = v_texCoords + velocity;
-	vec4 result = texture2D(u_texture0, texCoord);
-	for(int i=1; i<NumPasses; ++i, texCoord += velocity) {
-		//if (texCoord.s > 1.0 || texCoord.t > 1.0 || texCoord.s < 0.0 || texCoord.t < 0.0) {
-			//break;
-		//}
-
-		result += texture2D(u_texture0, texCoord);
+	for (int i = 0; i < blur_passes; ++i) {
+		// make offset in [-0.5, 0.5] range
+		float scale = (float(i) * oneOnNumPasses) - 0.5;
+		vec2 offset = scale * velocity;
+		result += texture2D(u_texture0, v_texCoords + offset);
 	}
 
-	//vec4 result = vec4(0.0);
-	//for (int i = 0; i < NumPasses; ++i) {
-		//// get offset in range [-0.5, 0.5]:
-		//float scale = (float(i) / float(NumPasses) - 0.5);
-		//vec2 offset = scale * velocity;
-
-		//// sample & add to result:
-		//result += texture(u_texture0, v_texCoords + offset);
+	//// Get the initial color at this pixel.
+	//result = texture2D(u_texture0, v_texCoords);
+	//vec2 texCoord = v_texCoords + velocity;
+	//for(int i = 1; i < blur_passes; ++i, texCoord += velocity)
+	//{
+		//// Add the current color to our color sum.
+		//result += texture2D(u_texture0, texCoord);
 	//}
 
-	gl_FragColor = result/float(NumPasses);
+	gl_FragColor = result * oneOnNumPasses;
 }

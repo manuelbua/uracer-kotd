@@ -327,6 +327,15 @@
   <object x="2189" y="2203">
    <polyline points="0,0 96,28 179,4 226,-60"/>
   </object>
+  <object x="2455" y="2930">
+   <polyline points="0,0 -87,-20 -188,-3 -306,-20"/>
+  </object>
+  <object x="2241" y="2937">
+   <polyline points="0,0 -114,-27 -215,-13 -289,-25"/>
+  </object>
+  <object x="1977" y="2924">
+   <polyline points="0,0 -104,17 -218,6 -289,24"/>
+  </object>
  </objectgroup>
  <objectgroup color="#e5f100" name="sectors" width="24" height="18" visible="0">
   <object x="2911" y="1075">

@@ -81,8 +81,9 @@ public final class GameWorldRenderer {
 	protected Vector2 halfViewport = new Vector2();
 	protected Rectangle camOrthoRect = new Rectangle();
 	private Matrix4 camOrthoMvpMt = new Matrix4();
-	private Matrix4 camPerspInvProjView = new Matrix4();
-	private Matrix4 camPerspPrevProjView = new Matrix4();
+	private Matrix4 camPerspInvView = new Matrix4();
+	private Matrix4 camPerspPrevViewProj = new Matrix4();
+	private Matrix4 camPerspInvProj = new Matrix4();
 	private CameraController camController;
 	private static final float CamPerspPlaneNear = 1;
 	public static final float CamPerspPlaneFar = 240;
@@ -259,12 +260,16 @@ public final class GameWorldRenderer {
 		return normalDepthMap;
 	}
 
-	public Matrix4 getInvProjView () {
-		return camPerspInvProjView;
+	public Matrix4 getInvView () {
+		return camPerspInvView;
 	}
 
-	public Matrix4 getPrevProjView () {
-		return camPerspPrevProjView;
+	public Matrix4 getPrevViewProj () {
+		return camPerspPrevViewProj;
+	}
+
+	public Matrix4 getInvProj () {
+		return camPerspInvProj;
 	}
 
 	public void resetCounters () {
@@ -380,7 +385,7 @@ public final class GameWorldRenderer {
 		camTilemap.update();
 
 		// update previous proj view
-		camPerspPrevProjView.set(camPersp.combined);
+		camPerspPrevViewProj.set(camPersp.projection).mul(camPersp.view);
 
 		// sync perspective camera to the orthographic camera
 // camPersp.fieldOfView = 43;
@@ -389,7 +394,11 @@ public final class GameWorldRenderer {
 		camPersp.update(true);
 
 		// update inv proj view
-		camPerspInvProjView.set(camPersp.invProjectionView);
+		camPerspInvView.set(camPersp.view);
+		Matrix4.inv(camPerspInvView.val);
+
+		camPerspInvProj.set(camPersp.projection);
+		Matrix4.inv(camPerspInvProj.val);
 
 		updateRayHandler();
 	}
