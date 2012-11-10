@@ -237,13 +237,13 @@ public final class AggressiveCold implements PostProcessingAnimator {
 			float blurStrength = (-0.035f - 0.09f * currSpeedFactor) * timeModFactor - 0.02f * currSpeedFactor;
 			// float blurStrength = (-0.035f - 0.09f * currSpeedFactor) * timeModFactor;
 
-// boolean zoomEnabled = zoom.isEnabled();
-// boolean strengthIsZero = AMath.isZero(blurStrength);
-// if (strengthIsZero && zoomEnabled) {
-// zoom.setEnabled(false);
-// } else if (!strengthIsZero && !zoomEnabled) {
-// zoom.setEnabled(true);
-// }
+			boolean zoomEnabled = zoom.isEnabled();
+			boolean strengthIsZero = AMath.isZero(blurStrength);
+			if (strengthIsZero && zoomEnabled) {
+				zoom.setEnabled(false);
+			} else if (!strengthIsZero && !zoomEnabled) {
+				zoom.setEnabled(true);
+			}
 
 			if (zoom.isEnabled()) {
 				zoom.setOrigin(playerScreenPos);
