@@ -17,7 +17,6 @@ import com.bitfire.uracer.resources.BitmapFontFactory.FontFace;
 import com.bitfire.uracer.utils.AMath;
 import com.bitfire.uracer.utils.ColorUtils;
 import com.bitfire.uracer.utils.Convert;
-import com.bitfire.uracer.utils.NumberString;
 import com.bitfire.utils.ShaderLoader;
 
 public class TrackProgress extends Positionable implements Disposable {
@@ -154,7 +153,7 @@ public class TrackProgress extends Positionable implements Disposable {
 				}
 			}
 
-			lblAdvantage.setString(NumberString.format(distPlayer - distGhost));
+			lblAdvantage.setString(Math.round(distPlayer - distGhost) + " mt");
 
 		} else if (advantageShown) {
 			advantageShown = false;

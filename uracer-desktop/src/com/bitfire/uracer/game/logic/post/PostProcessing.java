@@ -8,7 +8,6 @@ import com.badlogic.gdx.utils.LongMap;
 import com.bitfire.postprocessing.PostProcessor;
 import com.bitfire.postprocessing.PostProcessorEffect;
 import com.bitfire.postprocessing.effects.Bloom;
-import com.bitfire.postprocessing.effects.CameraMotion;
 import com.bitfire.postprocessing.effects.CrtMonitor;
 import com.bitfire.postprocessing.effects.Curvature;
 import com.bitfire.postprocessing.effects.Vignette;
@@ -69,7 +68,7 @@ public final class PostProcessing {
 			addEffect(Effects.Ssao.name, new Ssao(Ssao.Quality.valueOf(UserPreferences.string(Preference.SsaoQuality)), isNightMode));
 		}
 
-		addEffect(Effects.MotionBlur.name, new CameraMotion());
+// addEffect(Effects.MotionBlur.name, new CameraMotion());
 
 		if (UserPreferences.bool(Preference.ZoomRadialBlur)) {
 			RadialBlur.Quality rbq = RadialBlur.Quality.valueOf(UserPreferences.string(Preference.ZoomRadialBlurQuality));
