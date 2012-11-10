@@ -6,6 +6,7 @@ import aurelienribon.tweenengine.Tween;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Input.Keys;
 import com.badlogic.gdx.graphics.Camera;
+import com.badlogic.gdx.math.MathUtils;
 import com.bitfire.postprocessing.effects.CameraMotion;
 import com.bitfire.uracer.Input;
 import com.bitfire.uracer.ScalingStrategy;
@@ -482,10 +483,14 @@ public abstract class CommonLogic implements GameLogic, CarEvent.Listener, Playe
 
 		// post-processing step / MOTION BLUR
 		if (mot != null) {
+			float blur_scale = MathUtils.clamp(((float)Gdx.graphics.getFramesPerSecond() / 60.0f), 0, 1);
 			mot.setEnabled(true);
 			mot.setNearFar(cam.near, cam.far);
-			mot.setMatrices(gameWorldRenderer.getInvProjView(), gameWorldRenderer.getPrevProjView());
+			mot.setMatrices(gameWorldRenderer.getInvView(), gameWorldRenderer.getPrevViewProj(), gameWorldRenderer.getInvProj());
 			mot.setNormalDepthMap(gameWorldRenderer.getNormalDepthMap().getColorBufferTexture());
+			mot.setBlurScale(blur_scale);
+			mot.setBlurPasses(4);
+			mot.setDepthScale(40);
 		}
 
 		postProcessing.onBeforeRender(timeModFactor, zoom);
