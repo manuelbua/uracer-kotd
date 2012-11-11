@@ -18,5 +18,4 @@ public class ColorUtils {
 		tmpcolor.a = alpha;
 		return tmpcolor;
 	}
-
 }

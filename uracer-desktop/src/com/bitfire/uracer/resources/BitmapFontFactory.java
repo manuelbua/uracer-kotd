@@ -21,6 +21,7 @@ public final class BitmapFontFactory {
 		CurseRedBig("curse-r-big"),
 		CurseRedYellow("curse-y-r"),
 		CurseRedYellowBig("curse-y-r-big"),
+		CurseWhiteBig("curse-big-white"),
 		Molengo("molengo"),
 		Roboto("roboto"),
 		CurseRedYellowNew("curse-new"),

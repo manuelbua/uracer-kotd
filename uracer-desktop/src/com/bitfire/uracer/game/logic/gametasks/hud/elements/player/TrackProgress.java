@@ -37,7 +37,7 @@ public class TrackProgress extends Positionable implements Disposable {
 	public TrackProgress (float scale) {
 
 		this.scale = scale;
-		lblAdvantage = new HudLabel(scale, FontFace.CurseGreen, "", false, 2f);
+		lblAdvantage = new HudLabel(scale, FontFace.CurseWhiteBig, "", false, 2f);
 		advantageShown = false;
 		lblAdvantage.setAlpha(1);
 
@@ -141,17 +141,17 @@ public class TrackProgress extends Positionable implements Disposable {
 			playerToTarget = AMath.fixup(progressval - progressTargetVal);
 // Gdx.app.log("", "p2t=" + playerToTarget);
 
-			if (distPlayer >= distGhost) {
-				if (lblAdvantage.getFont() != FontFace.CurseGreenBig) {
-					lblAdvantage.setFont(FontFace.CurseGreenBig);
-				}
-			}
-
-			if (distPlayer < distGhost) {
-				if (lblAdvantage.getFont() != FontFace.CurseRedBig) {
-					lblAdvantage.setFont(FontFace.CurseRedBig);
-				}
-			}
+			// if (distPlayer >= distGhost) {
+			// if (lblAdvantage.getFont() != FontFace.CurseGreenBig) {
+			// lblAdvantage.setFont(FontFace.CurseGreenBig);
+			// }
+			// }
+			//
+			// if (distPlayer < distGhost) {
+			// if (lblAdvantage.getFont() != FontFace.CurseRedBig) {
+			// lblAdvantage.setFont(FontFace.CurseRedBig);
+			// }
+			// }
 
 			lblAdvantage.setString(Math.round(distPlayer - distGhost) + " mt");
 
@@ -161,8 +161,14 @@ public class TrackProgress extends Positionable implements Disposable {
 			// Gdx.app.log("", "hide");
 		}
 
-		lblAdvantage.setScale(cameraZoom * 1f);
-		lblAdvantage.setPosition(position.x, position.y - cameraZoom * Convert.scaledPixels(120));
+		// advantage/disadvantage
+		float dist = MathUtils.clamp(playerToTarget * 8, -1, 1);
+		Color advantageColor = ColorUtils.paletteRYG(dist + 0.7f, 1f);
+
+// Gdx.app.log("dist=", "" + dist);
+		lblAdvantage.setColor(advantageColor);
+		lblAdvantage.setScale(cameraZoom * (0.6f + 0.3f * (dist + 0.7f)));
+		lblAdvantage.setPosition(position.x, position.y - cameraZoom * Convert.scaledPixels(100));
 		lblAdvantage.render(batch);
 
 		float scl = cameraZoom * scale;
@@ -190,9 +196,6 @@ public class TrackProgress extends Positionable implements Disposable {
 		sProgress.draw(batch, a);
 		batch.flush();
 
-		// advantage/disadvantage
-		float dist = MathUtils.clamp(playerToTarget * 8, -1, 1);
-
 		boolean isBack = (dist < 0);
 		if (isBack && !flipped) {
 			flipped = true;
@@ -202,9 +205,8 @@ public class TrackProgress extends Positionable implements Disposable {
 			sAdvantage.flip(true, false);
 		}
 
-		Color c = ColorUtils.paletteRYG(dist + 0.7f, 1f);
 		shProgress.setUniformf("progress", Math.abs(playerToTarget));
-		sAdvantage.setColor(c);
+		sAdvantage.setColor(advantageColor);
 		sAdvantage.setScale(scl * 1.1f);
 		sAdvantage.setPosition(position.x - sAdvantage.getWidth() / 2, position.y - sAdvantage.getHeight() / 2);
 		sAdvantage.draw(batch, 1);

@@ -31,7 +31,7 @@ arcade
   orig: 512, 512
   offset: 0, 0
   index: -1
-curse-g-big
+curse-big-white
   rotate: false
   xy: 512, 0
   size: 512, 512
@@ -43,28 +43,28 @@ pack2.png
 format: RGBA8888
 filter: Linear,Linear
 repeat: none
-curse-new
+curse-g-big
   rotate: false
   xy: 0, 512
   size: 512, 512
   orig: 512, 512
   offset: 0, 0
   index: -1
-curse-r-big
+curse-new
   rotate: false
   xy: 0, 0
   size: 512, 512
   orig: 512, 512
   offset: 0, 0
   index: -1
-curse-y-r-big
+curse-r-big
   rotate: false
   xy: 512, 512
   size: 512, 512
   orig: 512, 512
   offset: 0, 0
   index: -1
-dotty-shadow
+curse-y-r-big
   rotate: false
   xy: 512, 0
   size: 512, 512
@@ -76,28 +76,28 @@ pack3.png
 format: RGBA8888
 filter: Linear,Linear
 repeat: none
-karmatic
+dotty-shadow
   rotate: false
   xy: 0, 512
   size: 512, 512
   orig: 512, 512
   offset: 0, 0
   index: -1
-lcd-white
+karmatic
   rotate: false
   xy: 0, 0
   size: 512, 512
   orig: 512, 512
   offset: 0, 0
   index: -1
-lcd
+lcd-white
   rotate: false
   xy: 512, 512
   size: 512, 512
   orig: 512, 512
   offset: 0, 0
   index: -1
-roboto
+lcd
   rotate: false
   xy: 512, 0
   size: 512, 512
@@ -109,6 +109,13 @@ pack4.png
 format: RGBA8888
 filter: Linear,Linear
 repeat: none
+roboto
+  rotate: false
+  xy: 0, 256
+  size: 512, 512
+  orig: 512, 512
+  offset: 0, 0
+  index: -1
 curse-g
   rotate: false
   xy: 0, 0
@@ -118,14 +125,14 @@ curse-g
   index: -1
 curse-r
   rotate: false
-  xy: 256, 0
+  xy: 512, 512
   size: 256, 256
   orig: 256, 256
   offset: 0, 0
   index: -1
 curse-y-r
   rotate: false
-  xy: 512, 0
+  xy: 256, 0
   size: 256, 256
   orig: 256, 256
   offset: 0, 0
