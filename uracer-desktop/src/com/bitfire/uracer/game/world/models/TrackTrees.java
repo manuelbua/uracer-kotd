@@ -55,12 +55,6 @@ public class TrackTrees {
 
 			// build model matrix
 			Matrix4 model = m.mtxmodel;
-
-// model.idt();
-// Matrix4.mul(model.val, tmpmtx2.setToTranslation(tmpvec.x, tmpvec.y, meshZ).val);
-// Matrix4.mul(model.val, tmpmtx2.setToRotation(m.iRotationAxis, m.iRotationAngle).val);
-// Matrix4.mul(model.val, tmpmtx2.setToScaling(m.scaleAxis).val);
-
 			tmpvec.z = meshZ;
 
 			// change of basis

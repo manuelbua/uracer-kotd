@@ -237,13 +237,13 @@ public final class GameWorld {
 			// MathUtils.random(0,1),
 			// MathUtils.random(0,1),
 			// MathUtils.random(0,1),
-				1f, .85f, 0.6f, .55f);
+				1f, .85f, 0.6f, 0.55f);
 			TiledObject o = group.objects.get(i);
 			pos.set(o.x, o.y).mul(scalingStrategy.invTileMapZoomFactor);
 			pos.y = worldSizeScaledPx.y - pos.y;
 			pos.set(Convert.px2mt(pos)).mul(scalingStrategy.tileMapZoomFactor);
 
-			PointLight l = new PointLight(rayHandler, maxRays, c, MathUtils.random(20f, 30f), pos.x, pos.y);
+			PointLight l = new PointLight(rayHandler, maxRays, c, MathUtils.random(20f, 25f), pos.x, pos.y);
 			l.setSoft(true);
 			l.setStaticLight(false);
 			l.setMaskBits(CollisionFilters.CategoryPlayer | CollisionFilters.CategoryTrackWalls | CollisionFilters.CategoryReplay);
@@ -446,7 +446,7 @@ public final class GameWorld {
 		// scaling factors
 		float factor = scalingStrategy.pixelsPerMeterFactor * scalingStrategy.invTileMapZoomFactor;
 		float oneOnWorld3DFactor = 1f / OrthographicAlignedStillModel.World3DScalingFactor;
-		float wallHeightMt = 5f * factor * oneOnWorld3DFactor;
+		float wallHeightMt = 6f * factor * oneOnWorld3DFactor;
 		float textureScalingU = 0.5f;
 		float coordU = 1f;
 		float coordV = 1f;

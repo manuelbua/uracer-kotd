@@ -667,11 +667,6 @@ public final class GameWorldRenderer {
 			// transform to world space
 			camPersp.unproject(tmpvec);
 
-			// TODO: support proper rotation now that Mat3/Mat4 supports opengl-style rotation/translation/scaling
-			// mtx.setToTranslation(tmpvec.x, tmpvec.y, meshZ);
-			// Matrix4.mul(mtx.val, mtx2.setToRotation(m.iRotationAxis, m.iRotationAngle).val);
-			// Matrix4.mul(mtx.val, mtx2.setToScaling(m.scaleAxis).val);
-
 			// build model matrix
 			Matrix4 model = mtx;
 			tmpvec.z = meshZ;

@@ -97,6 +97,13 @@
   <object x="712" y="912" width="27" height="21"/>
   <object x="1075" y="778" width="27" height="21"/>
   <object x="1365" y="973" width="27" height="21"/>
+  <object x="1082" y="1416" width="27" height="21"/>
+  <object x="519" y="1506" width="27" height="21"/>
+  <object x="268" y="628" width="27" height="21"/>
+  <object x="827" y="252" width="27" height="21"/>
+  <object x="1699" y="228" width="27" height="21"/>
+  <object x="1812" y="1268" width="27" height="21"/>
+  <object x="1967" y="716" width="27" height="21"/>
  </objectgroup>
  <objectgroup color="#a40002" name="walls" width="10" height="8">
   <object x="900" y="663">

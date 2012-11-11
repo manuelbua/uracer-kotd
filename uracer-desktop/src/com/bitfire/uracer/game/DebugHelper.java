@@ -171,8 +171,8 @@ public final class DebugHelper {
 	}
 
 	private void renderPostProcessorInfo (SpriteBatch batch, PostProcessor postProcessor) {
-		String text = "Post-processing effects count =" + postProcessor.getEnabledEffectsCount();
-		SpriteBatchUtils.drawString(batch, text, 0, 128);
+		String text = "Post-processing fx count = " + postProcessor.getEnabledEffectsCount();
+		SpriteBatchUtils.drawString(batch, text, 0, Gdx.graphics.getHeight() - Art.DebugFontHeight * 4);
 	}
 
 	private void renderPlayerInfo (SpriteBatch batch, PlayerCar player) {

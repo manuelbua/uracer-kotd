@@ -99,7 +99,7 @@ public final class Config {
 			FrustumCulling = true;
 			InfiniteDilationTime = false;
 
-			ShowAdvancedDebugInfo = false;
+			ShowAdvancedDebugInfo = true;
 		}
 
 		private Debug () {

@@ -108,11 +108,12 @@ public final class Ssao extends PostProcessorEffect {
 		bytes.flip();
 		randomField.draw(pixels, 0, 0);
 		pixels.dispose();
+// enableDebug();
 	}
 
 	@Override
 	public void dispose () {
-
+		disableDebug();
 		randomField.dispose();
 		blur.dispose();
 		shSsao.dispose();
