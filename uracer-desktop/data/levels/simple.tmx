@@ -41,7 +41,7 @@
     <property name="scale" value="2"/>
    </properties>
   </object>
-  <object height="68" name="tree-6" type="tree-6" width="61" x="445" y="1065">
+  <object height="68" name="tree-6" type="tree-6" width="61" x="359" y="941">
    <properties>
     <property name="scale" value="6"/>
    </properties>
@@ -83,22 +83,22 @@
   </object>
  </objectgroup>
  <objectgroup color="#ffaa00" height="8" name="lights" width="10">
-  <object height="21" width="27" x="735" y="1292"/>
-  <object height="21" width="27" x="449" y="932"/>
+  <object height="21" width="27" x="742" y="1280"/>
+  <object height="21" width="27" x="481" y="918"/>
   <object height="21" width="27" x="996" y="439"/>
   <object height="21" width="27" x="1751" y="898"/>
   <object height="21" width="27" x="1356" y="435"/>
   <object height="21" width="27" x="1422" y="1292"/>
-  <object x="600" y="563"/>
-  <object x="559" y="1232"/>
+  <object x="607" y="571"/>
+  <object x="581" y="1232"/>
   <object x="1624" y="1192"/>
   <object x="1659" y="546"/>
   <object height="21" width="27" x="712" y="912"/>
   <object height="21" width="27" x="1075" y="778"/>
   <object height="21" width="27" x="1365" y="973"/>
   <object height="21" width="27" x="1082" y="1416"/>
-  <object height="21" width="27" x="519" y="1506"/>
-  <object height="21" width="27" x="268" y="628"/>
+  <object height="21" width="27" x="279" y="1208"/>
+  <object height="21" width="27" x="332" y="682"/>
   <object height="21" width="27" x="827" y="252"/>
   <object height="21" width="27" x="1699" y="228"/>
   <object height="21" width="27" x="1812" y="1268"/>

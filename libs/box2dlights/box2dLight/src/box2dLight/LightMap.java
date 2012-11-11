@@ -37,6 +37,8 @@ class LightMap {
 		if( dest != null )
 			dest.begin();
 
+		Gdx.gl20.glEnable( GL20.GL_BLEND );
+
 		// at last lights are rendered over scene
 		if( rayHandler.shadows ) {
 
@@ -66,7 +68,6 @@ class LightMap {
 
 		if( dest != null )
 			dest.end();
-		Gdx.gl20.glDisable( GL20.GL_BLEND );
 	}
 
 	public void gaussianBlur() {
@@ -74,6 +75,7 @@ class LightMap {
 		Gdx.gl20.glDisable( GL20.GL_BLEND );
 		for( int i = 0; i < rayHandler.blurNum; i++ ) {
 			frameBuffer.getColorBufferTexture().bind( 0 );
+
 			// horizontal
 			pingPongBuffer.begin();
 			{
@@ -86,6 +88,7 @@ class LightMap {
 			pingPongBuffer.end();
 
 			pingPongBuffer.getColorBufferTexture().bind( 0 );
+
 			// vertical
 			frameBuffer.begin();
 			{
@@ -98,9 +101,6 @@ class LightMap {
 			}
 			frameBuffer.end();
 		}
-
-		Gdx.gl20.glEnable( GL20.GL_BLEND );
-
 	}
 
 	public LightMap( RayHandler rayHandler, int fboWidth, int fboHeight, boolean depthMasking ) {
@@ -161,7 +161,8 @@ class LightMap {
 		verts[U4] = 0f;
 		verts[V4] = 1f;
 
-		Mesh tmpMesh = new Mesh( true, 4, 0, new VertexAttribute( Usage.Position, 2, "a_position" ), new VertexAttribute( Usage.TextureCoordinates, 2, "a_texCoord" ) );
+		Mesh tmpMesh = new Mesh( true, 4, 0, new VertexAttribute( Usage.Position, 2, "a_position" ), new VertexAttribute(
+				Usage.TextureCoordinates, 2, "a_texCoord" ) );
 
 		tmpMesh.setVertices( verts );
 		return tmpMesh;

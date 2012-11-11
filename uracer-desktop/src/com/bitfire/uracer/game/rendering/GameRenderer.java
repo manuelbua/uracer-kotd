@@ -148,6 +148,8 @@ public final class GameRenderer {
 	}
 
 	public void render (FrameBuffer dest) {
+		worldRenderer.resetCounters();
+
 		if (drawNormalDepthMap) {
 			worldRenderer.updateNormalDepthMap();
 		}
@@ -189,8 +191,23 @@ public final class GameRenderer {
 		}
 		batchRenderer.end();
 
-		// render world's meshes
-		worldRenderer.renderAllMeshes();
+		gl.glEnable(GL20.GL_DEPTH_TEST);
+		gl.glDepthFunc(GL20.GL_LESS);
+
+		if (world.isNightMode()) {
+			worldRenderer.renderWalls();
+
+			FrameBuffer result = postProcessor.captureEnd();
+			gl.glDisable(GL20.GL_DEPTH_TEST);
+			worldRenderer.renderLigthMap(result);
+			postProcessor.captureNoClear();
+
+			gl.glEnable(GL20.GL_DEPTH_TEST);
+			worldRenderer.renderTrees();
+		} else {
+			worldRenderer.renderWalls();
+			worldRenderer.renderTrees();
+		}
 
 		// BatchAfterMeshes
 		batch = batchRenderer.beginTopLeft();
@@ -202,10 +219,10 @@ public final class GameRenderer {
 
 		// postproc begins
 		if (postProcessorReady) {
-			gl.glDisable(GL20.GL_CULL_FACE);
+
 			if (world.isNightMode()) {
-				FrameBuffer result = postProcessor.captureEnd();
-				worldRenderer.renderLigthMap(result);
+				// FrameBuffer result = postProcessor.captureEnd();
+				// worldRenderer.renderLigthMap(result);
 			}
 
 			postProcessor.render(dest);

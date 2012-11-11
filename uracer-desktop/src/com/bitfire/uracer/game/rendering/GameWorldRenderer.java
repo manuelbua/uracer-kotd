@@ -56,8 +56,21 @@ public final class GameWorldRenderer {
 		"	gl_Position = u_projTrans * a_position;	\n" +
 		"	v_TexCoord = a_texCoord0;						\n" +
 		"}\n";
-
+	
 	private static final String treeFragmentShader =
+		"#ifdef GL_ES											\n" +
+			"precision mediump float;							\n" +
+			"#endif													\n" +
+			"uniform sampler2D u_texture;						\n" +
+			"varying vec2 v_TexCoord;							\n" +
+			"void main()											\n" +
+			"{\n" +
+			"	vec4 texel = texture2D( u_texture, v_TexCoord );	\n" +
+			"	if(texel.a < 0.5) discard;							\n" +
+			"	gl_FragColor = texel;								\n" +
+			"}\n";
+
+	private static final String treeFragmentShaderNight =
 		"#ifdef GL_ES											\n" +
 		"precision mediump float;							\n" +
 		"#endif													\n" +
@@ -65,9 +78,11 @@ public final class GameWorldRenderer {
 		"varying vec2 v_TexCoord;							\n" +
 		"void main()											\n" +
 		"{\n" +
+		"	vec4 ambient = vec4(0.1, 0.05, 0.1, 0.4);\n" +
 		"	vec4 texel = texture2D( u_texture, v_TexCoord );	\n" +
 		"	if(texel.a < 0.5) discard;							\n" +
-		"	gl_FragColor = texel;								\n" +
+		"	vec4 c = vec4((ambient.rgb + texel.rgb*texel.a)*ambient.a, texel.a);	\n" +
+		"	gl_FragColor = c;								\n" +
 		"}\n";
 	// @on
 
@@ -143,7 +158,8 @@ public final class GameWorldRenderer {
 
 		if (showComplexTrees) {
 			trackTrees = world.getTrackTrees();
-			treeShader = ShaderLoader.fromString(treeVertexShader, treeFragmentShader, "tree-fragment", "tree-vertex");
+			treeShader = ShaderLoader.fromString(treeVertexShader, world.isNightMode() ? treeFragmentShaderNight
+				: treeFragmentShader, "tree-fragment", "tree-vertex");
 			if (treeShader == null || !treeShader.isCompiled()) {
 				throw new IllegalStateException(treeShader.getLog());
 			}
@@ -321,7 +337,8 @@ public final class GameWorldRenderer {
 	private void updateRayHandler () {
 		if (rayHandler != null) {
 
-			rayHandler.setAmbientLight(0.1f, 0.05f, 0.1f, 0.4f);
+			// RayHandler.useDiffuseLight(false);
+			// rayHandler.setAmbientLight(0.1f, 0.05f, 0.1f, 0.4f);
 
 			// @off
 			rayHandler.setCombinedMatrix(camOrthoMvpMt, Convert.px2mt(camOrtho.position.x), Convert.px2mt(camOrtho.position.y),
@@ -438,7 +455,7 @@ public final class GameWorldRenderer {
 //
 // renderOrthographicAlignedModels(staticMeshes, true);
 // }
-//
+
 			renderTrees(trackTrees, true);
 		}
 		normalDepthMap.end();
@@ -478,20 +495,7 @@ public final class GameWorldRenderer {
 		rayHandler.renderLightMap(dest);
 	}
 
-	public void renderAllMeshes () {
-		resetCounters();
-
-		gl.glEnable(GL20.GL_DEPTH_TEST);
-		gl.glDepthFunc(GL20.GL_LESS);
-
-		if (showWalls && trackWalls.count() > 0) {
-			renderWalls(trackWalls, false);
-		}
-
-		if (showComplexTrees && trackTrees.count() > 0) {
-			renderTrees(trackTrees, false);
-		}
-
+	public void renderStaticMeshes () {
 		if (staticMeshes.size() > 0) {
 			// render "static-meshes" layer
 			gl.glEnable(GL20.GL_CULL_FACE);
@@ -503,8 +507,6 @@ public final class GameWorldRenderer {
 			gl.glDisable(GL20.GL_CULL_FACE);
 			// gl.glDisable(GL20.GL_DEPTH_TEST);
 		}
-
-		gl.glDisable(GL20.GL_DEPTH_TEST);
 	}
 
 	public void renderTilemap () {
@@ -513,6 +515,18 @@ public final class GameWorldRenderer {
 		gl.glDisable(GL20.GL_BLEND);
 		gl.glActiveTexture(GL10.GL_TEXTURE0);
 		tileMapRenderer.render(camTilemap);
+	}
+
+	public void renderWalls () {
+		if (showWalls && trackWalls.count() > 0) {
+			renderWalls(trackWalls, false);
+		}
+	}
+
+	public void renderTrees () {
+		if (showComplexTrees && trackTrees.count() > 0) {
+			renderTrees(trackTrees, false);
+		}
 	}
 
 	private void renderWalls (TrackWalls walls, boolean depthOnly) {
@@ -531,7 +545,6 @@ public final class GameWorldRenderer {
 		ShaderProgram shader = treeShader;
 
 		gl.glDisable(GL20.GL_CULL_FACE);
-// gl.glCullFace(GL20.GL_BACK);
 		gl.glDisable(GL20.GL_BLEND);
 
 		if (depthOnly) {
@@ -621,8 +634,6 @@ public final class GameWorldRenderer {
 				renderBoundingBox(m.boundingBox);
 			}
 		}
-
-		gl.glDisable(GL20.GL_BLEND);
 	}
 
 	private Vector3 tmpvec = new Vector3();

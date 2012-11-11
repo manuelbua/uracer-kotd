@@ -205,13 +205,14 @@ public final class GameWorld {
 		}
 
 		RayHandler.setColorPrecisionMediump();
+
 		rayHandler = new RayHandler(box2dWorld, maxRays, (int)(Gdx.graphics.getWidth() * rttScale),
 			(int)(Gdx.graphics.getHeight() * rttScale), true);
 		rayHandler.setShadows(true);
 		rayHandler.setCulling(true);
 		rayHandler.setBlur(true);
 		rayHandler.setBlurNum(2);
-		rayHandler.setAmbientLight(0f, 0, 0.25f, 0.3f);
+		rayHandler.setAmbientLight(0.1f, 0.05f, 0.1f, 0.4f);
 
 		final Color c = new Color();
 
@@ -220,24 +221,31 @@ public final class GameWorld {
 
 		playerHeadlightsA = new ConeLight(rayHandler, maxRays, c, 25, 0, 0, 0, 9);
 		playerHeadlightsA.setSoft(true);
-// playerHeadlightsA.setMaskBits(CollisionFilters.CategoryTrackWalls | CollisionFilters.CategoryReplay);
-// playerHeadlightsA.setMaskBits(CollisionFilters.CategoryTrackWalls);
+		// playerHeadlightsA.setMaskBits(CollisionFilters.CategoryTrackWalls | CollisionFilters.CategoryReplay);
+		// playerHeadlightsA.setMaskBits(CollisionFilters.CategoryTrackWalls);
 		playerHeadlightsA.setMaskBits(0);
 
 		playerHeadlightsB = new ConeLight(rayHandler, maxRays, c, 25, 0, 0, 0, 9);
 		playerHeadlightsB.setSoft(true);
-// playerHeadlightsB.setMaskBits(CollisionFilters.CategoryTrackWalls | CollisionFilters.CategoryReplay);
+		// playerHeadlightsB.setMaskBits(CollisionFilters.CategoryTrackWalls | CollisionFilters.CategoryReplay);
 		playerHeadlightsB.setMaskBits(0);
 
 		// setup level lights data, if any
 		Vector2 pos = new Vector2();
 		TiledObjectGroup group = mapUtils.getObjectGroup(ObjectGroup.Lights);
 		for (int i = 0; i < group.objects.size(); i++) {
+			//@off
 			c.set(
 			// MathUtils.random(0,1),
 			// MathUtils.random(0,1),
 			// MathUtils.random(0,1),
-				1f, .85f, 0.6f, 0.55f);
+			//				1f, .85f, 0.6f, 0.55f
+				MathUtils.random(0.85f,1),
+				MathUtils.random(0.8f,0.85f),
+				MathUtils.random(0.6f,0.8f),
+				0.55f
+			);
+			//@on
 			TiledObject o = group.objects.get(i);
 			pos.set(o.x, o.y).mul(scalingStrategy.invTileMapZoomFactor);
 			pos.y = worldSizeScaledPx.y - pos.y;
@@ -446,7 +454,7 @@ public final class GameWorld {
 		// scaling factors
 		float factor = scalingStrategy.pixelsPerMeterFactor * scalingStrategy.invTileMapZoomFactor;
 		float oneOnWorld3DFactor = 1f / OrthographicAlignedStillModel.World3DScalingFactor;
-		float wallHeightMt = 6f * factor * oneOnWorld3DFactor;
+		float wallHeightMt = 5f * factor * oneOnWorld3DFactor;
 		float textureScalingU = 0.5f;
 		float coordU = 1f;
 		float coordV = 1f;

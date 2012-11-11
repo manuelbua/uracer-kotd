@@ -20,6 +20,7 @@ import com.bitfire.postprocessing.effects.Zoomer;
 import com.bitfire.uracer.configuration.Config;
 import com.bitfire.uracer.game.logic.post.PostProcessing;
 import com.bitfire.uracer.game.logic.post.PostProcessingAnimator;
+import com.bitfire.uracer.game.logic.post.ssao.Ssao;
 import com.bitfire.uracer.game.logic.types.CommonLogic;
 import com.bitfire.uracer.game.player.PlayerCar;
 import com.bitfire.uracer.game.rendering.GameRenderer;
@@ -40,6 +41,7 @@ public final class AggressiveCold implements PostProcessingAnimator {
 	private Vignette vignette = null;
 	private CrtMonitor crt = null;
 	private Curvature curvature = null;
+	private Ssao ssao = null;
 	private PlayerCar player = null;
 	private boolean hasPlayer = false;
 	private BoxedFloat wrongWayAmount;
@@ -56,6 +58,7 @@ public final class AggressiveCold implements PostProcessingAnimator {
 		vignette = (Vignette)post.getEffect(PostProcessing.Effects.Vignette.name);
 		crt = (CrtMonitor)post.getEffect(PostProcessing.Effects.Crt.name);
 		curvature = (Curvature)post.getEffect(PostProcessing.Effects.Curvature.name);
+		ssao = (Ssao)post.getEffect(PostProcessing.Effects.Ssao.name);
 
 		wrongWayAmount = new BoxedFloat(0);
 
@@ -145,6 +148,21 @@ public final class AggressiveCold implements PostProcessingAnimator {
 		alertCollision = false;
 		wrongWayBegan = false;
 
+		if (ssao != null) {
+			ssao.setOcclusionThresholds(0.3f, 0.1f);
+			ssao.setRadius(0.001f, nightMode ? 0.08f : 0.12f);
+			ssao.setPower(nightMode ? 3f : 2f, 1);
+			// if (Ssao.Quality.valueOf(UserPreferences.string(Preference.SsaoQuality)) == Ssao.Quality.High) {
+			// ssao.setSampleCount(16);
+			// ssao.setPatternSize(4);
+			// } else {
+			ssao.setSampleCount(nightMode ? 8 : 9);
+			ssao.setPatternSize(nightMode ? 2 : 3);
+			// }
+
+// ssao.enableDebug();
+		}
+
 		if (bloom != null) {
 			bloomThreshold = (nightMode ? 0.3f : 0.45f);
 			Bloom.Settings bloomSettings = new Bloom.Settings("subtle", Config.PostProcessing.BlurType,
@@ -195,14 +213,11 @@ public final class AggressiveCold implements PostProcessingAnimator {
 		}
 	}
 
-	private float prevDriftStrength = 0;
 	private long startMs = 0;
 	Vector2 playerScreenPos = new Vector2();
 	private WindowedMean meanSpeed = new WindowedMean(2);
 	private WindowedMean meanStrength = new WindowedMean(5);
 
-	// FIXME shader settings should be bound by setParams instead!
-	// ^
 	@Override
 	public void update (float timeModFactor, float zoomCamera) {
 		float currDriftStrength = 0;
@@ -234,7 +249,7 @@ public final class AggressiveCold implements PostProcessingAnimator {
 		if (zoom != null && hasPlayer) {
 			// auto-disable zoom
 			// float blurStrength = -0.1f * timeModFactor * currSpeedFactor;
-// float blurStrength = (-0.035f - 0.09f * currSpeedFactor) * timeModFactor - 0.02f * currSpeedFactor;
+			// float blurStrength = (-0.035f - 0.09f * currSpeedFactor) * timeModFactor - 0.02f * currSpeedFactor;
 			float blurStrength = (-0.035f - 0.09f * currSpeedFactor) * timeModFactor;
 
 			boolean zoomEnabled = zoom.isEnabled();
@@ -313,10 +328,5 @@ public final class AggressiveCold implements PostProcessingAnimator {
 			crt.setDistortion(dist);
 			crt.setZoom(1 - (dist / 2));
 		}
-
-// vignette.setLutIndexVal(0, 16);
-// vignette.setLutIndexVal(1, 7);
-// vignette.setLutIndexOffset(0);
-
 	}
 }

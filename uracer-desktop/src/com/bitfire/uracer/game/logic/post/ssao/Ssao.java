@@ -108,7 +108,7 @@ public final class Ssao extends PostProcessorEffect {
 		bytes.flip();
 		randomField.draw(pixels, 0, 0);
 		pixels.dispose();
-// enableDebug();
+		// enableDebug();
 	}
 
 	@Override
@@ -130,8 +130,41 @@ public final class Ssao extends PostProcessorEffect {
 			GameRendererEvent.Order.DEFAULT);
 	}
 
+	public void setOcclusionThresholds (float no_occlusion, float full_occlusion) {
+		shSsao.begin();
+		shSsao.setUniformf("full_occlusion_treshold", full_occlusion);
+		shSsao.setUniformf("no_occlusion_treshold", no_occlusion);
+		shSsao.end();
+	}
+
 	public void setNormalDepthMap (Texture normalDepthMap) {
 		this.normalDepthMap = normalDepthMap;
+	}
+
+	public void setRadius (float epsilon, float radius) {
+		shSsao.begin();
+		shSsao.setUniformf("radius", radius);
+		shSsao.setUniformf("epsilon", epsilon);
+		shSsao.end();
+	}
+
+	public void setPower (float power, float occlusion_power) {
+		shSsao.begin();
+		shSsao.setUniformf("occlusion_power", occlusion_power);
+		shSsao.setUniformf("power", power);
+		shSsao.end();
+	}
+
+	public void setPatternSize (int pattern_size) {
+		shSsao.begin();
+		shSsao.setUniformf("pattern_size", pattern_size);
+		shSsao.end();
+	}
+
+	public void setSampleCount (int sample_count) {
+		shSsao.begin();
+		shSsao.setUniformi("sample_count", sample_count);
+		shSsao.end();
 	}
 
 	private void dbgTexture (SpriteBatch batch, float scale, Texture tex, int index) {
@@ -196,21 +229,9 @@ public final class Ssao extends PostProcessorEffect {
 				shSsao.setUniformMatrix("inv_proj", invPrj);
 				shSsao.setUniformMatrix("inv_rot", invRot);
 
-				// TODO most of these night/day settings are for a SsaoMapScale = 0.5f
-
-				// settings to play with
 				shSsao.setUniformf("viewport", occlusionMap.width, occlusionMap.height);
 				shSsao.setUniformf("near", cam.near);
 				shSsao.setUniformf("far", cam.far);
-				shSsao.setUniformf("radius", nightMode ? 0.08f : 0.12f);
-				shSsao.setUniformf("epsilon", 0.001f);
-				shSsao.setUniformf("full_occlusion_treshold", 0.1f);
-				shSsao.setUniformf("no_occlusion_treshold", 0.3f);
-				shSsao.setUniformf("occlusion_power", 1f);
-				shSsao.setUniformf("power", nightMode ? 3f : 2f);
-
-				shSsao.setUniformi("sample_count", nightMode ? 8 : 9);
-				shSsao.setUniformf("pattern_size", nightMode ? 2 : 3);
 
 				quad.render(shSsao);
 			}
@@ -228,7 +249,6 @@ public final class Ssao extends PostProcessorEffect {
 		{
 			tsrc.bind(0);
 			occlusionMap.getResultTexture().bind(1);
-			// normalDepthMap.bind(2);
 
 			shMix.setUniformi("scene", 0);
 			shMix.setUniformi("occlusion_map", 1);
