@@ -11,6 +11,7 @@ import com.badlogic.gdx.utils.TimeUtils;
 import com.bitfire.uracer.configuration.Config;
 import com.bitfire.uracer.configuration.UserPreferences;
 import com.bitfire.uracer.game.GameTracks;
+import com.bitfire.uracer.game.logic.types.common.TimeModulator;
 import com.bitfire.uracer.game.screens.GameScreensFactory;
 import com.bitfire.uracer.game.screens.GameScreensFactory.ScreenType;
 import com.bitfire.uracer.game.tween.SysTweener;
@@ -237,7 +238,7 @@ public class URacer implements ApplicationListener {
 			startTime = TimeUtils.nanoTime();
 			{
 				SysTweener.update();
-				screenMgr.render(null);
+				screenMgr.render();
 
 				// simulate slowness
 // try {
@@ -319,6 +320,10 @@ public class URacer implements ApplicationListener {
 
 		public static Input getInputSystem () {
 			return input;
+		}
+
+		public static float getTimeModFactor () {
+			return 1 - (URacer.timeMultiplier - TimeModulator.MinTime) / (TimeModulator.MaxTime - TimeModulator.MinTime);
 		}
 
 		public static void show (ScreenType screenType) {

@@ -104,10 +104,6 @@ public final class GameRenderer {
 		drawNormalDepthMap = false;
 	}
 
-	public void enableNormalDepthMap (boolean enabled) {
-		drawNormalDepthMap = enabled;
-	}
-
 	public void dispose () {
 		if (UserPreferences.bool(Preference.PostProcessing)) {
 			postProcessor.dispose();
@@ -194,20 +190,25 @@ public final class GameRenderer {
 		gl.glEnable(GL20.GL_DEPTH_TEST);
 		gl.glDepthFunc(GL20.GL_LESS);
 
+		worldRenderer.renderWalls();
+
 		if (world.isNightMode()) {
-			worldRenderer.renderWalls();
-
-			FrameBuffer result = postProcessor.captureEnd();
 			gl.glDisable(GL20.GL_DEPTH_TEST);
-			worldRenderer.renderLigthMap(result);
-			postProcessor.captureNoClear();
-
+			if (postProcessorReady) {
+				FrameBuffer result = postProcessor.captureEnd();
+				worldRenderer.renderLigthMap(result);
+				postProcessor.captureNoClear();
+			} else {
+				if (hasDest) dest.end();
+				worldRenderer.renderLigthMap(dest);
+				if (hasDest) dest.begin();
+			}
 			gl.glEnable(GL20.GL_DEPTH_TEST);
-			worldRenderer.renderTrees();
-		} else {
-			worldRenderer.renderWalls();
-			worldRenderer.renderTrees();
 		}
+
+		worldRenderer.renderTrees();
+
+		gl.glDisable(GL20.GL_DEPTH_TEST);
 
 		// BatchAfterMeshes
 		batch = batchRenderer.beginTopLeft();
@@ -217,36 +218,17 @@ public final class GameRenderer {
 		}
 		batchRenderer.end();
 
-		// postproc begins
 		if (postProcessorReady) {
-
-			if (world.isNightMode()) {
-				// FrameBuffer result = postProcessor.captureEnd();
-				// worldRenderer.renderLigthMap(result);
-			}
-
 			postProcessor.render(dest);
 
-			if (hasDest) {
-				dest.begin();
-			}
-
+			if (hasDest) dest.begin();
 			batchAfterPostProcessing();
+			if (hasDest) dest.end();
 
-			if (hasDest) {
-				dest.end();
-			}
 		} else {
 			batchAfterPostProcessing();
-			if (hasDest) {
-				dest.end();
-			}
-
-			if (world.isNightMode()) {
-				worldRenderer.renderLigthMap(dest);
-			}
+			if (hasDest) dest.end();
 		}
-		// postproc ends
 	}
 
 	private void batchAfterPostProcessing () {
@@ -259,24 +241,11 @@ public final class GameRenderer {
 	// manages and triggers debug event
 	public void debugRender () {
 		SpriteBatch batch = batchRenderer.beginTopLeft();
-		batch.disableBlending();
+
+// batch.disableBlending();
 		GameEvents.gameRenderer.batch = batch;
 		GameEvents.gameRenderer.trigger(this, GameRendererEvent.Type.BatchDebug);
 		batchRenderer.end();
-
-		// debug local normal+depth map
-// Gdx.gl.glDisable(GL20.GL_BLEND);
-// Gdx.gl.glDisable(GL20.GL_CULL_FACE);
-// Gdx.gl.glDisable(GL20.GL_DEPTH_TEST);
-// batch.begin();
-// batch.disableBlending();
-// float scale = 0.25f;
-// int w = (int)(worldRenderer.getNormalDepthMap().getColorBufferTexture().getWidth() * scale);
-// int h = (int)(worldRenderer.getNormalDepthMap().getColorBufferTexture().getHeight() * scale);
-// int x = 10;
-// int y = Gdx.graphics.getHeight() - h - 30;
-// batch.draw(worldRenderer.getNormalDepthMap().getColorBufferTexture(), x, y, w, h);
-// batch.end();
 
 		GameEvents.gameRenderer.batch = null;
 		GameEvents.gameRenderer.trigger(this, GameRendererEvent.Type.Debug);

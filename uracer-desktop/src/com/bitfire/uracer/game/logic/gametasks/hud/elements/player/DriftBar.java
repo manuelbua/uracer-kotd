@@ -10,6 +10,7 @@ import com.badlogic.gdx.graphics.glutils.ShaderProgram;
 import com.badlogic.gdx.math.MathUtils;
 import com.badlogic.gdx.math.WindowedMean;
 import com.badlogic.gdx.utils.Disposable;
+import com.bitfire.uracer.URacer;
 import com.bitfire.uracer.configuration.Config;
 import com.bitfire.uracer.game.logic.gametasks.hud.HudLabel;
 import com.bitfire.uracer.game.logic.gametasks.hud.Positionable;
@@ -96,6 +97,8 @@ public class DriftBar extends Positionable implements Disposable {
 	}
 
 	public void render (SpriteBatch batch, float cameraZoom) {
+		float timeFactor = URacer.Game.getTimeModFactor() * 0.3f;
+
 		labelSeconds.setScale(0.5f * cameraZoom, false);
 		labelSeconds.setString(NumberString.format(seconds) + "s", true);
 		labelSeconds.setPosition(position.x, position.y + Convert.scaledPixels(80) * cameraZoom * scale);
@@ -103,9 +106,9 @@ public class DriftBar extends Positionable implements Disposable {
 
 		// circle progress for remaining time
 		float s = 0.8f;
-		float scl = cameraZoom * scale * s;
+		float scl = cameraZoom * scale * s + timeFactor;
 		float px = position.x - offX;
-		float py = position.y - offY + Convert.scaledPixels(32) * cameraZoom * s;
+		float py = position.y - offY + Convert.scaledPixels(32) * cameraZoom * s + Convert.scaledPixels(32) * timeFactor;
 		float a = 1f;
 
 		batch.setShader(shProgress);
@@ -123,10 +126,10 @@ public class DriftBar extends Positionable implements Disposable {
 
 		float amount = driftStrength.getMean();
 		if (!AMath.isZero(amount)) {
-			scl = cameraZoom * scale * 0.8f;
+			scl = cameraZoom * scale * s + timeFactor;
 
 			// drift strength
-			py = position.y - offY - Convert.scaledPixels(32) * cameraZoom * s;
+			py = position.y - offY - Convert.scaledPixels(32) * cameraZoom * s - Convert.scaledPixels(32) * timeFactor;
 			shProgress.setUniformf("progress", MathUtils.clamp(amount, 0, 1));
 
 			sDriftStrength.setColor(1, 1, 1, 1);

@@ -112,6 +112,10 @@ public final class PostProcessing {
 		animators.put(Hash.APHash(name), animator);
 	}
 
+	public boolean hasAnimator (String name) {
+		return (animators.get(Hash.APHash(name)) != null);
+	}
+
 	public PostProcessingAnimator getAnimator (String name) {
 		return animators.get(Hash.APHash(name));
 	}
@@ -141,15 +145,34 @@ public final class PostProcessing {
 		}
 	}
 
-	public void onBeforeRender (float timeModFactor, float zoom) {
+	public void onBeforeRender (float zoom) {
 		if (hasPostProcessor && currentAnimator != null) {
-			currentAnimator.update(timeModFactor, zoom);
+			currentAnimator.update(zoom);
 		}
 	}
 
 	public void setPlayer (PlayerCar player) {
 		if (hasPostProcessor && currentAnimator != null) {
 			currentAnimator.setPlayer(player);
+		}
+	}
+
+	// features
+	public void alertWrongWayBegins (int milliseconds) {
+		if (hasPostProcessor && currentAnimator != null) {
+			currentAnimator.alertWrongWayBegins(milliseconds);
+		}
+	}
+
+	public void alertWrongWayEnds (int milliseconds) {
+		if (hasPostProcessor && currentAnimator != null) {
+			currentAnimator.alertWrongWayEnds(milliseconds);
+		}
+	}
+
+	public void alertCollision (float factor, int milliseconds) {
+		if (hasPostProcessor && currentAnimator != null) {
+			currentAnimator.alertCollision(factor, milliseconds);
 		}
 	}
 }

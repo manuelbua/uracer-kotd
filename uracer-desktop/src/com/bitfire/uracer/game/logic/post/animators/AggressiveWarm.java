@@ -10,6 +10,7 @@ import com.bitfire.postprocessing.effects.CrtMonitor;
 import com.bitfire.postprocessing.effects.Curvature;
 import com.bitfire.postprocessing.effects.Vignette;
 import com.bitfire.postprocessing.effects.Zoomer;
+import com.bitfire.uracer.URacer;
 import com.bitfire.uracer.configuration.Config;
 import com.bitfire.uracer.game.logic.post.PostProcessing;
 import com.bitfire.uracer.game.logic.post.PostProcessingAnimator;
@@ -101,7 +102,9 @@ public final class AggressiveWarm implements PostProcessingAnimator {
 	private long startMs = 0;
 
 	@Override
-	public void update (float timeModFactor, float zoomCamera) {
+	public void update (float zoomCamera) {
+		float timeModFactor = URacer.Game.getTimeModFactor();
+
 		if (!hasPlayer) {
 			return;
 		}

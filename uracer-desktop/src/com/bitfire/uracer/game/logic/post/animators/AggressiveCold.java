@@ -17,6 +17,7 @@ import com.bitfire.postprocessing.effects.CrtMonitor;
 import com.bitfire.postprocessing.effects.Curvature;
 import com.bitfire.postprocessing.effects.Vignette;
 import com.bitfire.postprocessing.effects.Zoomer;
+import com.bitfire.uracer.URacer;
 import com.bitfire.uracer.configuration.Config;
 import com.bitfire.uracer.game.logic.post.PostProcessing;
 import com.bitfire.uracer.game.logic.post.PostProcessingAnimator;
@@ -219,7 +220,8 @@ public final class AggressiveCold implements PostProcessingAnimator {
 	private WindowedMean meanStrength = new WindowedMean(5);
 
 	@Override
-	public void update (float timeModFactor, float zoomCamera) {
+	public void update (float zoomCamera) {
+		float timeModFactor = URacer.Game.getTimeModFactor();
 		float currDriftStrength = 0;
 		float currSpeedFactor = 0;
 
@@ -249,8 +251,8 @@ public final class AggressiveCold implements PostProcessingAnimator {
 		if (zoom != null && hasPlayer) {
 			// auto-disable zoom
 			// float blurStrength = -0.1f * timeModFactor * currSpeedFactor;
-			// float blurStrength = (-0.035f - 0.09f * currSpeedFactor) * timeModFactor - 0.02f * currSpeedFactor;
-			float blurStrength = (-0.035f - 0.09f * currSpeedFactor) * timeModFactor;
+			float blurStrength = (-0.035f - 0.09f * currSpeedFactor) * timeModFactor - 0.02f * currSpeedFactor;
+// float blurStrength = (-0.035f - 0.09f * currSpeedFactor) * timeModFactor;
 
 			boolean zoomEnabled = zoom.isEnabled();
 			boolean strengthIsZero = AMath.isZero(blurStrength);

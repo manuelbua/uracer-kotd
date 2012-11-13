@@ -10,6 +10,7 @@ import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.graphics.glutils.ShaderProgram;
 import com.badlogic.gdx.math.MathUtils;
 import com.badlogic.gdx.utils.Disposable;
+import com.bitfire.uracer.URacer;
 import com.bitfire.uracer.game.logic.gametasks.hud.HudLabel;
 import com.bitfire.uracer.game.logic.gametasks.hud.Positionable;
 import com.bitfire.uracer.resources.Art;
@@ -171,7 +172,8 @@ public class TrackProgress extends Positionable implements Disposable {
 		lblAdvantage.setPosition(position.x, position.y - cameraZoom * Convert.scaledPixels(100));
 		lblAdvantage.render(batch);
 
-		float scl = cameraZoom * scale;
+		float timeFactor = URacer.Game.getTimeModFactor() * 0.3f;
+		float scl = cameraZoom * scale + timeFactor;
 
 		// dbg
 // dist = 0.35f;

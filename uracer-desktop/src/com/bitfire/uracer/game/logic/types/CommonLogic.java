@@ -5,9 +5,6 @@ import aurelienribon.tweenengine.Tween;
 
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Input.Keys;
-import com.badlogic.gdx.graphics.Camera;
-import com.badlogic.gdx.math.MathUtils;
-import com.bitfire.postprocessing.effects.CameraMotion;
 import com.bitfire.uracer.Input;
 import com.bitfire.uracer.ScalingStrategy;
 import com.bitfire.uracer.URacer;
@@ -18,7 +15,6 @@ import com.bitfire.uracer.configuration.UserPreferences;
 import com.bitfire.uracer.configuration.UserPreferences.Preference;
 import com.bitfire.uracer.configuration.UserProfile;
 import com.bitfire.uracer.game.DebugHelper;
-import com.bitfire.uracer.game.GameEvents;
 import com.bitfire.uracer.game.GameLogic;
 import com.bitfire.uracer.game.GameplaySettings;
 import com.bitfire.uracer.game.actors.Car;
@@ -208,12 +204,12 @@ public abstract class CommonLogic implements GameLogic, CarEvent.Listener, Playe
 	protected abstract void ghostFadingOut (Car ghost);
 
 	protected void wrongWayBegins () {
-		postProcessing.getAnimator(AggressiveCold.Name).alertWrongWayBegins(500);
+		postProcessing.alertWrongWayBegins(500);
 		Gdx.app.log("CommonLogic", "wrong way begin");
 	}
 
 	protected void wrongWayEnds () {
-		postProcessing.getAnimator(AggressiveCold.Name).alertWrongWayEnds(500);
+		postProcessing.alertWrongWayEnds(500);
 	}
 
 	//
@@ -457,19 +453,18 @@ public abstract class CommonLogic implements GameLogic, CarEvent.Listener, Playe
 	@Override
 	public void beforeRender () {
 		URacer.timeMultiplier = timeMod.getTime();
-		float timeModFactor = 1 - (URacer.timeMultiplier - TimeModulator.MinTime) / (TimeModulator.MaxTime - TimeModulator.MinTime);
+		float zoom = updateCamera(URacer.Game.getTimeModFactor());
 
-		float zoom = updateCamera(timeModFactor);
-
-		Camera cam = GameEvents.gameRenderer.camPersp;
+// Camera cam = GameEvents.gameRenderer.camPersp;
 		Ssao ssao = (Ssao)postProcessing.getEffect(Effects.Ssao.name);
-		CameraMotion mot = (CameraMotion)postProcessing.getEffect(Effects.MotionBlur.name);
+// CameraMotion mot = (CameraMotion)postProcessing.getEffect(Effects.MotionBlur.name);
 
 		// camera update
 		gameWorldRenderer.updateCamera();
 
 		// normal+depth map
-		if (ssao != null || mot != null) {
+// if (ssao != null || mot != null) {
+		if (ssao != null) {
 			gameRenderer.enableNormalDepthMap();
 		} else {
 			gameRenderer.disableNormalDepthMap();
@@ -482,18 +477,18 @@ public abstract class CommonLogic implements GameLogic, CarEvent.Listener, Playe
 		}
 
 		// post-processing step / MOTION BLUR
-		if (mot != null) {
-			float blur_scale = MathUtils.clamp(((float)Gdx.graphics.getFramesPerSecond() / 60.0f), 0, 1);
-			mot.setEnabled(true);
-			mot.setNearFar(cam.near, cam.far);
-			mot.setMatrices(gameWorldRenderer.getInvView(), gameWorldRenderer.getPrevViewProj(), gameWorldRenderer.getInvProj());
-			mot.setNormalDepthMap(gameWorldRenderer.getNormalDepthMap().getColorBufferTexture());
-			mot.setBlurScale(blur_scale);
-			mot.setBlurPasses(4);
-			mot.setDepthScale(40);
-		}
+// if (mot != null) {
+// float blur_scale = MathUtils.clamp(((float)Gdx.graphics.getFramesPerSecond() / 60.0f), 0, 1);
+// mot.setEnabled(true);
+// mot.setNearFar(cam.near, cam.far);
+// mot.setMatrices(gameWorldRenderer.getInvView(), gameWorldRenderer.getPrevViewProj(), gameWorldRenderer.getInvProj());
+// mot.setNormalDepthMap(gameWorldRenderer.getNormalDepthMap().getColorBufferTexture());
+// mot.setBlurScale(blur_scale);
+// mot.setBlurPasses(4);
+// mot.setDepthScale(40);
+// }
 
-		postProcessing.onBeforeRender(timeModFactor, zoom);
+		postProcessing.onBeforeRender(zoom);
 
 		// game tweener step
 		GameTweener.update();
@@ -640,7 +635,7 @@ public abstract class CommonLogic implements GameLogic, CarEvent.Listener, Playe
 				requestTimeDilationFinish();
 			}
 
-			postProcessing.getAnimator(AggressiveCold.Name).alertCollision(0.75f, 4000);
+			postProcessing.alertCollision(0.75f, 4000);
 
 			collision();
 			break;

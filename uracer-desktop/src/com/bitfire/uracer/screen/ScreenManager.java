@@ -3,7 +3,6 @@ package com.bitfire.uracer.screen;
 
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.GL20;
-import com.badlogic.gdx.graphics.glutils.FrameBuffer;
 import com.bitfire.uracer.configuration.Config;
 import com.bitfire.uracer.game.screens.GameScreensFactory.ScreenType;
 import com.bitfire.uracer.screen.ScreenFactory.ScreenId;
@@ -163,7 +162,7 @@ public final class ScreenManager {
 		}
 	}
 
-	public void render (FrameBuffer dest) {
+	public void render () {
 		if (transMgr.isActive()) {
 			transMgr.update();
 			transMgr.render();
@@ -177,7 +176,7 @@ public final class ScreenManager {
 					gl.glActiveTexture(GL20.GL_TEXTURE0);
 				}
 
-				current.render(dest);
+				current.render(null);
 			}
 		}
 	}
