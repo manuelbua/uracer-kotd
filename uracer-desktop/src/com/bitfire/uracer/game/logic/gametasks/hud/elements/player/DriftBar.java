@@ -121,10 +121,10 @@ public class DriftBar extends Positionable implements Disposable {
 		sProgress.setColor(ColorUtils.paletteRYG(ratio, 1));
 		sProgress.setScale(scl);
 		sProgress.setPosition(px, py);
-		sProgress.draw(batch, a);
+		sProgress.draw(batch, 1);
 		batch.flush();
 
-		float amount = 1;// driftStrength.getMean();
+		float amount = driftStrength.getMean();
 		if (!AMath.isZero(amount)) {
 			scl = cameraZoom * scale * s;
 
