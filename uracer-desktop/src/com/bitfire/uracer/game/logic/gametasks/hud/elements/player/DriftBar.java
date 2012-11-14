@@ -105,11 +105,11 @@ public class DriftBar extends Positionable implements Disposable {
 		labelSeconds.render(batch);
 
 		// circle progress for remaining time
-		float s = 0.8f;
-		float scl = cameraZoom * scale * s + timeFactor;
+		float s = 0.8f + timeFactor;
+		float scl = cameraZoom * scale * s;
 		float px = position.x - offX;
-		float py = position.y - offY + Convert.scaledPixels(32) * cameraZoom * s + Convert.scaledPixels(32) * timeFactor;
-		float a = 1f;
+		float py = position.y - offY + Convert.scaledPixels(32) * cameraZoom * s;
+		float a = 1f - 0.7f * URacer.Game.getTimeModFactor();
 
 		batch.setShader(shProgress);
 		texHalfMask.bind(1);
@@ -124,12 +124,12 @@ public class DriftBar extends Positionable implements Disposable {
 		sProgress.draw(batch, a);
 		batch.flush();
 
-		float amount = driftStrength.getMean();
+		float amount = 1;// driftStrength.getMean();
 		if (!AMath.isZero(amount)) {
-			scl = cameraZoom * scale * s + timeFactor;
+			scl = cameraZoom * scale * s;
 
 			// drift strength
-			py = position.y - offY - Convert.scaledPixels(32) * cameraZoom * s - Convert.scaledPixels(32) * timeFactor;
+			py = position.y - offY - Convert.scaledPixels(32) * cameraZoom * s;
 			shProgress.setUniformf("progress", MathUtils.clamp(amount, 0, 1));
 
 			sDriftStrength.setColor(1, 1, 1, 1);
