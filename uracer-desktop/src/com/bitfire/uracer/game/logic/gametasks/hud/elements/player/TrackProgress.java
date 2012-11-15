@@ -124,35 +124,7 @@ public class TrackProgress extends Positionable implements Disposable {
 				// Gdx.app.log("", "show");
 			}
 
-// float s = speed;
-// if (distPlayer > distGhost && ghspeed > 0 && !useGhostSpeed) {
-// useGhostSpeed = true;
-// s = ghspeed;
-// prevDistSecs = 0;
-// } else if (distPlayer < distGhost && useGhostSpeed) {
-// useGhostSpeed = false;
-// prevDistSecs = 0;
-// }
-//
-// float distSecs = AMath.lerp(prevDistSecs, (distPlayer - distGhost) / s, 0.1f);
-// prevDistSecs = distSecs;
-//
-// lblAdvantage.setString(NumberString.format(distSecs), true);
-
 			playerToTarget = AMath.fixup(progressval - progressTargetVal);
-// Gdx.app.log("", "p2t=" + playerToTarget);
-
-			// if (distPlayer >= distGhost) {
-			// if (lblAdvantage.getFont() != FontFace.CurseGreenBig) {
-			// lblAdvantage.setFont(FontFace.CurseGreenBig);
-			// }
-			// }
-			//
-			// if (distPlayer < distGhost) {
-			// if (lblAdvantage.getFont() != FontFace.CurseRedBig) {
-			// lblAdvantage.setFont(FontFace.CurseRedBig);
-			// }
-			// }
 
 			lblAdvantage.setString(Math.round(distPlayer - distGhost) + " mt");
 
@@ -166,21 +138,22 @@ public class TrackProgress extends Positionable implements Disposable {
 		float dist = MathUtils.clamp(playerToTarget * 8, -1, 1);
 		Color advantageColor = ColorUtils.paletteRYG(dist + 0.7f, 1f);
 
-// Gdx.app.log("dist=", "" + dist);
+		float timeFactor = URacer.Game.getTimeModFactor() * 0.3f;
+
 		lblAdvantage.setColor(advantageColor);
 		lblAdvantage.setScale(cameraZoom * (0.6f + 0.3f * (dist + 0.7f)));
-		lblAdvantage.setPosition(position.x, position.y - cameraZoom * Convert.scaledPixels(100));
+		lblAdvantage.setPosition(position.x, position.y - cameraZoom * Convert.scaledPixels(90) - Convert.scaledPixels(90)
+			* timeFactor * cameraZoom - Convert.scaledPixels(10) * (dist + 0.7f) * cameraZoom);
 		lblAdvantage.render(batch);
 
-		float timeFactor = URacer.Game.getTimeModFactor() * 0.4f; // why not 0.3??
 		float s = 1f + timeFactor;
 		float scl = cameraZoom * scale * s;
 
 		// dbg
-// dist = 0.35f;
-// progressval = 0.5f;
-// distGhost = 0.15f;
-// distanceFromBest = 0.15f;
+		// dist = 0.35f;
+		// progressval = 0.5f;
+		// distGhost = 0.15f;
+		// distanceFromBest = 0.15f;
 
 		float a = 1f - 0.7f * URacer.Game.getTimeModFactor();
 
@@ -190,6 +163,8 @@ public class TrackProgress extends Positionable implements Disposable {
 		texMask.bind(1);
 		Gdx.gl.glActiveTexture(GL10.GL_TEXTURE0);
 		shProgress.setUniformi("u_texture1", 1);
+
+		scl += .07f * URacer.Game.getTimeModFactor();
 
 		// player's progress
 		shProgress.setUniformf("progress", progressval);

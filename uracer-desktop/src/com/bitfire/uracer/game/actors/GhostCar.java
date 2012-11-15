@@ -100,8 +100,12 @@ public final class GhostCar extends Car {
 			// indexPlay is NOT updated here, we don't want
 			// to process a non-existent event when (indexPlay == replay.getEventsCount())
 
-			// FIXME! arrayindexoutofbounds still happens, maxevents on replay could be the cause
-			forces.set(replay.forces[indexPlay]);
+			try {
+				// FIXME! arrayindexoutofbounds still happens, maxevents on replay could be the cause
+				forces.set(replay.forces[indexPlay]);
+			} catch (ArrayIndexOutOfBoundsException e) {
+				Gdx.app.log("GhostCar", "Replay fucked up");
+			}
 
 			// Gdx.app.log( "ghost", "index="+indexPlay + ", px=" + NumberString.formatVeryLong(body.getPosition().x) +
 			// ", py=" + NumberString.formatVeryLong(body.getPosition().y) );
