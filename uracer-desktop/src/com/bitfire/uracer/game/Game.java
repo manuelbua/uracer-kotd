@@ -7,6 +7,8 @@ import com.badlogic.gdx.utils.Disposable;
 import com.bitfire.uracer.ScalingStrategy;
 import com.bitfire.uracer.URacer;
 import com.bitfire.uracer.configuration.Config;
+import com.bitfire.uracer.configuration.UserPreferences;
+import com.bitfire.uracer.configuration.UserPreferences.Preference;
 import com.bitfire.uracer.configuration.UserProfile;
 import com.bitfire.uracer.game.actors.CarPreset;
 import com.bitfire.uracer.game.logic.types.SinglePlayerLogic;
@@ -30,7 +32,7 @@ public class Game implements Disposable {
 
 	public Game (UserProfile userProfile, String trackId, ScalingStrategy scalingStrategy) {
 
-		gameWorld = new GameWorld(scalingStrategy, trackId, false);
+		gameWorld = new GameWorld(scalingStrategy, trackId, UserPreferences.bool(Preference.NightMode));
 		Gdx.app.debug("Game", "Game world ready");
 
 		// handles rendering

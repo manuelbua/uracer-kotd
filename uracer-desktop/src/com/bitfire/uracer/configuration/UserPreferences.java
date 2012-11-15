@@ -20,13 +20,23 @@ public final class UserPreferences {
 		// @off
 
 		// post-processing
-		PostProcessing, Vignetting, Bloom, ZoomRadialBlur, ZoomRadialBlurQuality, CrtScreen, Curvature, Ssao, SsaoQuality,
+		PostProcessing,
+		Vignetting,
+		Bloom,
+		ZoomRadialBlur,
+		ZoomRadialBlurQuality,
+		CrtScreen,
+		EarthCurvature,
+		Ssao,
+		SsaoQuality,
 
 		// rendering
-		ComplexTrees, Walls,
+		ComplexTrees,
+		Walls,
 
 		// gameplay
 		TimeDilateInputMode,
+		NightMode,
 		
 		;
 		// @on
@@ -87,7 +97,7 @@ public final class UserPreferences {
 			}
 		}
 		bool(Preference.CrtScreen, false);
-		bool(Preference.Curvature, true);
+		bool(Preference.EarthCurvature, true);
 		bool(Preference.Ssao, true);
 		string(Preference.SsaoQuality, Ssao.Quality.Low.toString());
 
@@ -103,6 +113,7 @@ public final class UserPreferences {
 		//
 
 		string(Preference.TimeDilateInputMode, Gameplay.TimeDilateInputMode.TouchAndRelease.toString());
+		bool(Preference.NightMode, false);
 
 		// ensure the new configuration gets saved
 		prefs.flush();

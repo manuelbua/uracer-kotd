@@ -190,7 +190,7 @@ public final class GameRenderer {
 		gl.glEnable(GL20.GL_DEPTH_TEST);
 		gl.glDepthFunc(GL20.GL_LESS);
 
-		worldRenderer.renderWalls();
+		worldRenderer.renderWalls(false);
 
 		if (world.isNightMode()) {
 			gl.glDisable(GL20.GL_DEPTH_TEST);
@@ -206,7 +206,7 @@ public final class GameRenderer {
 			gl.glEnable(GL20.GL_DEPTH_TEST);
 		}
 
-		worldRenderer.renderTrees();
+		worldRenderer.renderTrees(false);
 
 		gl.glDisable(GL20.GL_DEPTH_TEST);
 

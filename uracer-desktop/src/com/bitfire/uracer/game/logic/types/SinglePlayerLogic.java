@@ -93,6 +93,7 @@ public class SinglePlayerLogic extends CommonLogic {
 		float cameraZoom = (maxZoom - 0.1f) - (zoomRange) * zoomFromSpeed + (zoomRange + 0.1f) * timeModFactor * zoomFromSpeed;
 		cameraZoom = AMath.fixup(MathUtils.clamp(cameraZoom, 1, maxZoom));
 		gameWorldRenderer.setCameraZoom(cameraZoom);
+		// gameWorldRenderer.setCameraZoom(1f);
 
 		// update player's headlights and move the world camera to follows it, if there is a player
 		if (hasPlayer()) {

@@ -35,7 +35,7 @@ public class OptionsScreen extends Screen {
 	private Stage ui;
 	private Input input;
 	private Table container;
-	private CheckBox ppVignetting, ppBloom, ppRadialBlur, ppCrtScreen, ppCurvature, ppComplexTrees, ppWalls, ppSsao;
+	private CheckBox ppVignetting, ppBloom, ppRadialBlur, ppCrtScreen, ppCurvature, ppComplexTrees, ppWalls, ppSsao, ppNightMode;
 	private SelectBox timeInputModeSel, ppZoomBlurQ, ppSsaoQuality;
 
 	@Override
@@ -82,7 +82,9 @@ public class OptionsScreen extends Screen {
 			container.add(timeInputModeSel);
 		}
 
+		//
 		// rendering
+		//
 		{
 			ppComplexTrees = UIUtils.newCheckBox("Complex trees", UserPreferences.bool(Preference.ComplexTrees));
 			ppComplexTrees.addListener(new ClickListener() {
@@ -109,15 +111,50 @@ public class OptionsScreen extends Screen {
 			container.add(ppWalls);
 		}
 
-		// post-processing
-		{
-			ppVignetting = UIUtils.newCheckBox("Vignetting and gradient mapping", UserPreferences.bool(Preference.Vignetting));
-			ppBloom = UIUtils.newCheckBox("Bloom", UserPreferences.bool(Preference.Bloom));
-			ppRadialBlur = UIUtils.newCheckBox("Zoom blur", UserPreferences.bool(Preference.ZoomRadialBlur));
-			ppCrtScreen = UIUtils.newCheckBox("CRT screen emulation", UserPreferences.bool(Preference.CrtScreen));
-			ppCurvature = UIUtils.newCheckBox("Screen curvature", UserPreferences.bool(Preference.Curvature));
-			ppSsao = UIUtils.newCheckBox("Ambient occlusion", UserPreferences.bool(Preference.Ssao));
+		//
+		// gameplay
+		//
+		ppNightMode = UIUtils.newCheckBox("Night mode", UserPreferences.bool(Preference.NightMode));
+		ppNightMode.addListener(new ClickListener() {
+			@Override
+			public void clicked (InputEvent event, float x, float y) {
+				UserPreferences.bool(Preference.NightMode, ppNightMode.isChecked());
+				UserPreferences.save();
+			}
+		});
 
+		//
+		// post-processing
+		//
+		final CheckBox postProcessingCb = UIUtils.newCheckBox("Enable post-processing effects",
+			UserPreferences.bool(Preference.PostProcessing));
+		postProcessingCb.addListener(new ClickListener() {
+			@Override
+			public void clicked (InputEvent event, float x, float y) {
+				if (!postProcessingCb.isChecked()) {
+					// disable all post-processing
+					ppVignetting.setChecked(false);
+					ppBloom.setChecked(false);
+					ppRadialBlur.setChecked(false);
+					ppCrtScreen.setChecked(false);
+					ppCurvature.setChecked(false);
+					ppSsao.setChecked(false);
+				}
+
+				UserPreferences.bool(Preference.PostProcessing, postProcessingCb.isChecked());
+				UserPreferences.bool(Preference.Vignetting, ppVignetting.isChecked());
+				UserPreferences.bool(Preference.Bloom, ppBloom.isChecked());
+				UserPreferences.bool(Preference.ZoomRadialBlur, ppRadialBlur.isChecked());
+				UserPreferences.bool(Preference.CrtScreen, ppCrtScreen.isChecked());
+				UserPreferences.bool(Preference.EarthCurvature, ppCurvature.isChecked());
+				UserPreferences.bool(Preference.Ssao, ppCurvature.isChecked());
+
+				UserPreferences.save();
+			}
+		});
+		{
+
+			ppVignetting = UIUtils.newCheckBox("Vignetting and gradient mapping", UserPreferences.bool(Preference.Vignetting));
 			ppVignetting.addListener(new ClickListener() {
 				@Override
 				public void clicked (InputEvent event, float x, float y) {
@@ -126,6 +163,7 @@ public class OptionsScreen extends Screen {
 				}
 			});
 
+			ppBloom = UIUtils.newCheckBox("Bloom", UserPreferences.bool(Preference.Bloom));
 			ppBloom.addListener(new ClickListener() {
 				@Override
 				public void clicked (InputEvent event, float x, float y) {
@@ -134,6 +172,7 @@ public class OptionsScreen extends Screen {
 				}
 			});
 
+			ppRadialBlur = UIUtils.newCheckBox("Zoom blur", UserPreferences.bool(Preference.ZoomRadialBlur));
 			ppRadialBlur.addListener(new ClickListener() {
 				@Override
 				public void clicked (InputEvent event, float x, float y) {
@@ -155,6 +194,7 @@ public class OptionsScreen extends Screen {
 				});
 			}
 
+			ppSsao = UIUtils.newCheckBox("Ambient occlusion", UserPreferences.bool(Preference.Ssao));
 			ppSsao.addListener(new ClickListener() {
 				@Override
 				public void clicked (InputEvent event, float x, float y) {
@@ -176,6 +216,7 @@ public class OptionsScreen extends Screen {
 				});
 			}
 
+			ppCrtScreen = UIUtils.newCheckBox("CRT screen emulation", UserPreferences.bool(Preference.CrtScreen));
 			ppCrtScreen.addListener(new ClickListener() {
 				@Override
 				public void clicked (InputEvent event, float x, float y) {
@@ -184,73 +225,53 @@ public class OptionsScreen extends Screen {
 				}
 			});
 
+			ppCurvature = UIUtils.newCheckBox("Earth curvature", UserPreferences.bool(Preference.EarthCurvature));
 			ppCurvature.addListener(new ClickListener() {
 				@Override
 				public void clicked (InputEvent event, float x, float y) {
-					UserPreferences.bool(Preference.Curvature, ppCurvature.isChecked());
+					UserPreferences.bool(Preference.EarthCurvature, ppCurvature.isChecked());
 					UserPreferences.save();
 				}
 			});
-
-			final CheckBox postProcessingCb = UIUtils.newCheckBox("Enable post-processing effects",
-				UserPreferences.bool(Preference.PostProcessing));
-			postProcessingCb.addListener(new ClickListener() {
-				@Override
-				public void clicked (InputEvent event, float x, float y) {
-					if (!postProcessingCb.isChecked()) {
-						// disable all post-processing
-						ppVignetting.setChecked(false);
-						ppBloom.setChecked(false);
-						ppRadialBlur.setChecked(false);
-						ppCrtScreen.setChecked(false);
-						ppCurvature.setChecked(false);
-					}
-
-					UserPreferences.bool(Preference.PostProcessing, postProcessingCb.isChecked());
-					UserPreferences.bool(Preference.Vignetting, ppVignetting.isChecked());
-					UserPreferences.bool(Preference.Bloom, ppBloom.isChecked());
-					UserPreferences.bool(Preference.ZoomRadialBlur, ppRadialBlur.isChecked());
-					UserPreferences.bool(Preference.CrtScreen, ppCrtScreen.isChecked());
-					UserPreferences.bool(Preference.Curvature, ppCurvature.isChecked());
-
-					UserPreferences.save();
-				}
-			});
-
-			// lay out things
-			container.row().colspan(2);
-			container.add(postProcessingCb);
-
-			container.row().colspan(2);
-			container.add(ppVignetting);
-
-			container.row().colspan(2);
-			container.add(ppBloom);
-
-			container.row().colspan(2);
-			container.add(ppRadialBlur);
-			{
-
-				container.row();
-				container.add(new Label("Zoom blur quality", Art.scrSkin));
-				container.add(ppZoomBlurQ);
-			}
-
-			container.row().colspan(2);
-			container.add(ppSsao);
-			{
-
-				container.row();
-				container.add(new Label("Ambient occlusion quality", Art.scrSkin));
-				container.add(ppSsaoQuality);
-			}
-
-			container.row().colspan(2);
-			container.add(ppCrtScreen);
-
-			container.row().colspan(2);
-			container.add(ppCurvature);
 		}
+
+		// lay out things
+		container.row().colspan(2);
+		container.add(postProcessingCb);
+
+		container.row().colspan(2);
+		container.add(ppVignetting);
+
+		container.row().colspan(2);
+		container.add(ppBloom);
+
+		container.row().colspan(2);
+		container.add(ppRadialBlur);
+		{
+
+			container.row();
+			container.add(new Label("Zoom blur quality", Art.scrSkin));
+			container.add(ppZoomBlurQ);
+		}
+
+		container.row().colspan(2);
+		container.add(ppSsao);
+		{
+
+			container.row();
+			container.add(new Label("Ambient occlusion quality", Art.scrSkin));
+			container.add(ppSsaoQuality);
+		}
+
+		container.row().colspan(2);
+		container.add(ppCrtScreen);
+
+		container.row().colspan(2);
+		container.add(ppCurvature);
+
+		container.row().colspan(2);
+		container.add(ppNightMode);
+
 	}
 
 	@Override

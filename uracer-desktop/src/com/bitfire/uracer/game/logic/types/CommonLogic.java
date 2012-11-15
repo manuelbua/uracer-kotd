@@ -111,7 +111,7 @@ public abstract class CommonLogic implements GameLogic, CarEvent.Listener, Playe
 		Gdx.app.log("GameLogic", "Tweening helpers created");
 
 		// post-processing
-		postProcessing = new PostProcessing(gameRenderer.getPostProcessor(), gameWorld.isNightMode());
+		postProcessing = new PostProcessing(gameWorld, gameRenderer);
 
 		if (gameRenderer.hasPostProcessor()) {
 			postProcessing.addAnimator(AggressiveCold.Name, new AggressiveCold(this, postProcessing, gameWorld.isNightMode()));
@@ -455,20 +455,11 @@ public abstract class CommonLogic implements GameLogic, CarEvent.Listener, Playe
 		URacer.timeMultiplier = timeMod.getTime();
 		float zoom = updateCamera(URacer.Game.getTimeModFactor());
 
-// Camera cam = GameEvents.gameRenderer.camPersp;
 		Ssao ssao = (Ssao)postProcessing.getEffect(Effects.Ssao.name);
-// CameraMotion mot = (CameraMotion)postProcessing.getEffect(Effects.MotionBlur.name);
+		// CameraMotion mot = (CameraMotion)postProcessing.getEffect(Effects.MotionBlur.name);
 
 		// camera update
 		gameWorldRenderer.updateCamera();
-
-		// normal+depth map
-// if (ssao != null || mot != null) {
-		if (ssao != null) {
-			gameRenderer.enableNormalDepthMap();
-		} else {
-			gameRenderer.disableNormalDepthMap();
-		}
 
 		// post-processing step / SSAO
 		if (ssao != null) {
@@ -477,16 +468,17 @@ public abstract class CommonLogic implements GameLogic, CarEvent.Listener, Playe
 		}
 
 		// post-processing step / MOTION BLUR
-// if (mot != null) {
-// float blur_scale = MathUtils.clamp(((float)Gdx.graphics.getFramesPerSecond() / 60.0f), 0, 1);
-// mot.setEnabled(true);
-// mot.setNearFar(cam.near, cam.far);
-// mot.setMatrices(gameWorldRenderer.getInvView(), gameWorldRenderer.getPrevViewProj(), gameWorldRenderer.getInvProj());
-// mot.setNormalDepthMap(gameWorldRenderer.getNormalDepthMap().getColorBufferTexture());
-// mot.setBlurScale(blur_scale);
-// mot.setBlurPasses(4);
-// mot.setDepthScale(40);
-// }
+		// if (mot != null) {
+		// Camera cam = GameEvents.gameRenderer.camPersp;
+		// float blur_scale = MathUtils.clamp(((float)Gdx.graphics.getFramesPerSecond() / 60.0f), 0, 1);
+		// mot.setEnabled(true);
+		// mot.setNearFar(cam.near, cam.far);
+		// mot.setMatrices(gameWorldRenderer.getInvView(), gameWorldRenderer.getPrevViewProj(), gameWorldRenderer.getInvProj());
+		// mot.setNormalDepthMap(gameWorldRenderer.getNormalDepthMap().getColorBufferTexture());
+		// mot.setBlurScale(blur_scale);
+		// mot.setBlurPasses(4);
+		// mot.setDepthScale(40);
+		// }
 
 		postProcessing.onBeforeRender(zoom);
 
@@ -560,8 +552,12 @@ public abstract class CommonLogic implements GameLogic, CarEvent.Listener, Playe
 			gameTasksManager.sound.stop();
 
 			// quit
+
 			URacer.Screens.setScreen(ScreenType.MainScreen, TransitionType.Fader, 500);
 			// URacer.Screens.setScreen( ScreenType.ExitScreen, TransitionType.Fader, 500 );
+
+			timeMod.reset();
+			URacer.Game.resetTimeModFactor();
 
 		} else if (input.isPressed(Keys.O)) {
 			// FIXME this should go in some sort of DebugLogic thing..

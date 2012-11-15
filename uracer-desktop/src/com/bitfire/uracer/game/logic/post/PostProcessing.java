@@ -2,7 +2,7 @@
 package com.bitfire.uracer.game.logic.post;
 
 import com.badlogic.gdx.Gdx;
-import com.badlogic.gdx.graphics.GL10;
+import com.badlogic.gdx.graphics.GL20;
 import com.badlogic.gdx.graphics.Texture.TextureWrap;
 import com.badlogic.gdx.utils.LongMap;
 import com.bitfire.postprocessing.PostProcessor;
@@ -18,6 +18,8 @@ import com.bitfire.uracer.configuration.UserPreferences;
 import com.bitfire.uracer.configuration.UserPreferences.Preference;
 import com.bitfire.uracer.game.logic.post.ssao.Ssao;
 import com.bitfire.uracer.game.player.PlayerCar;
+import com.bitfire.uracer.game.rendering.GameRenderer;
+import com.bitfire.uracer.game.world.GameWorld;
 import com.bitfire.utils.Hash;
 
 /** Encapsulates a post-processor animator that manages effects such as bloom and zoomblur to compose and enhance the gaming
@@ -44,11 +46,13 @@ public final class PostProcessing {
 	// animators
 	public LongMap<PostProcessingAnimator> animators = new LongMap<PostProcessingAnimator>();
 	private PostProcessingAnimator currentAnimator;
+	private GameRenderer gameRenderer;
 
-	public PostProcessing (PostProcessor postProcessor, boolean isNightMode) {
-		this.postProcessor = postProcessor;
+	public PostProcessing (GameWorld gameWorld, GameRenderer gameRenderer) {
+		this.gameRenderer = gameRenderer;
+		this.postProcessor = gameRenderer.getPostProcessor();
 		hasPostProcessor = (this.postProcessor != null);
-		this.isNightMode = isNightMode;
+		this.isNightMode = gameWorld.isNightMode();
 
 		if (hasPostProcessor) {
 			configurePostProcessor(postProcessor);
@@ -60,12 +64,14 @@ public final class PostProcessing {
 	 * instantiated objects is transfered to the PostProcessor when adding the effect to it. */
 	private void configurePostProcessor (PostProcessor postProcessor) {
 		postProcessor.setEnabled(true);
-		postProcessor.setClearBits(GL10.GL_COLOR_BUFFER_BIT | GL10.GL_DEPTH_BUFFER_BIT);
+		postProcessor.setClearBits(GL20.GL_COLOR_BUFFER_BIT | GL20.GL_DEPTH_BUFFER_BIT);
 		postProcessor.setClearDepth(1f);
 		postProcessor.setBufferTextureWrap(TextureWrap.ClampToEdge, TextureWrap.ClampToEdge);
+		gameRenderer.disableNormalDepthMap();
 
 		if (UserPreferences.bool(Preference.Ssao)) {
 			addEffect(Effects.Ssao.name, new Ssao(Ssao.Quality.valueOf(UserPreferences.string(Preference.SsaoQuality)), isNightMode));
+			gameRenderer.enableNormalDepthMap();
 		}
 
 // addEffect(Effects.MotionBlur.name, new CameraMotion());
@@ -89,8 +95,8 @@ public final class PostProcessing {
 		}
 
 		if (UserPreferences.bool(Preference.CrtScreen)) {
-			addEffect(Effects.Crt.name, new CrtMonitor(UserPreferences.bool(Preference.Curvature), false));
-		} else if (UserPreferences.bool(Preference.Curvature)) {
+			addEffect(Effects.Crt.name, new CrtMonitor(UserPreferences.bool(Preference.EarthCurvature), false));
+		} else if (UserPreferences.bool(Preference.EarthCurvature)) {
 			addEffect(Effects.Curvature.name, new Curvature());
 		}
 

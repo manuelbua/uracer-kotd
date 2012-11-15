@@ -40,7 +40,7 @@ public class DriftBar extends Positionable implements Disposable {
 		this.scale = scale;
 		seconds = 0;
 
-		labelSeconds = new HudLabel(scale, FontFace.Roboto, "s", false, 0.5f);
+		labelSeconds = new HudLabel(scale, FontFace.CurseRedYellowNew, "s", false, 0.5f);
 		labelSeconds.setAlpha(0);
 
 		//
@@ -98,15 +98,18 @@ public class DriftBar extends Positionable implements Disposable {
 
 	public void render (SpriteBatch batch, float cameraZoom) {
 		float timeFactor = URacer.Game.getTimeModFactor() * 0.3f;
+		float s = 0.55f + timeFactor * 0.5f;
+		float scl = cameraZoom * s;
 
-		labelSeconds.setScale(0.5f * cameraZoom, false);
+		labelSeconds.setScale(scl, false);
 		labelSeconds.setString(NumberString.format(seconds) + "s", true);
-		labelSeconds.setPosition(position.x, position.y + Convert.scaledPixels(80) * cameraZoom * scale);
+		labelSeconds.setPosition(position.x, position.y + Convert.scaledPixels(90) * cameraZoom + Convert.scaledPixels(105)
+			* timeFactor * cameraZoom);
 		labelSeconds.render(batch);
 
 		// circle progress for remaining time
-		float s = 0.8f + timeFactor;
-		float scl = cameraZoom * scale * s;
+		s = 0.8f + timeFactor;
+		scl = cameraZoom * scale * s;
 		float px = position.x - offX;
 		float py = position.y - offY + Convert.scaledPixels(32) * cameraZoom * s;
 		float a = 1f - 0.7f * URacer.Game.getTimeModFactor();
@@ -126,8 +129,6 @@ public class DriftBar extends Positionable implements Disposable {
 
 		float amount = driftStrength.getMean();
 		if (!AMath.isZero(amount)) {
-			scl = cameraZoom * scale * s;
-
 			// drift strength
 			py = position.y - offY - Convert.scaledPixels(32) * cameraZoom * s;
 			shProgress.setUniformf("progress", MathUtils.clamp(amount, 0, 1));

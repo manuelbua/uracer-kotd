@@ -447,7 +447,7 @@ public final class GameWorldRenderer {
 			Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT | GL20.GL_DEPTH_BUFFER_BIT);
 			// renderAllMeshes(true);
 			renderTilemapPlane();
-			renderWalls(trackWalls, true);
+			renderWalls(true);
 
 // if (staticMeshes.size() > 0) {
 // gl.glEnable(GL20.GL_DEPTH_TEST);
@@ -456,7 +456,7 @@ public final class GameWorldRenderer {
 // renderOrthographicAlignedModels(staticMeshes, true);
 // }
 
-			renderTrees(trackTrees, true);
+			renderTrees(true);
 		}
 		normalDepthMap.end();
 	}
@@ -517,15 +517,15 @@ public final class GameWorldRenderer {
 		tileMapRenderer.render(camTilemap);
 	}
 
-	public void renderWalls () {
+	public void renderWalls (boolean depthOnly) {
 		if (showWalls && trackWalls.count() > 0) {
-			renderWalls(trackWalls, false);
+			renderWalls(trackWalls, depthOnly);
 		}
 	}
 
-	public void renderTrees () {
+	public void renderTrees (boolean depthOnly) {
 		if (showComplexTrees && trackTrees.count() > 0) {
-			renderTrees(trackTrees, false);
+			renderTrees(trackTrees, depthOnly);
 		}
 	}
 
