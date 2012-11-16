@@ -202,7 +202,7 @@ public final class GameWorldRenderer {
 		plane.dispose();
 	}
 
-	// permit to the tilemap to appear as a flat surface with the normal pointing upward, towards the tvcam
+	// permit to the tilemap to appear as a flat surface with the normal pointing upward, towards the camera
 	private void createBackPlane () {
 		plane = new Mesh(true, 4, 4, new VertexAttribute(Usage.Position, 3, ShaderProgram.POSITION_ATTRIBUTE), new VertexAttribute(
 			Usage.Normal, 3, ShaderProgram.NORMAL_ATTRIBUTE));
