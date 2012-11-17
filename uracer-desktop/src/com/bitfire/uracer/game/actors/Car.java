@@ -52,9 +52,11 @@ public abstract strictfp class Car extends Box2DEntity {
 
 	protected CarPreset preset;
 	protected InputMode inputMode = InputMode.NoInput;
+	private CarTrackState trackState;
 
 	public Car (GameWorld gameWorld, CarType carType, InputMode inputMode, GameRendererEvent.Order drawingOrder,
 		CarPreset.Type presetType, boolean triggerEvents) {
+
 		super(gameWorld.getBox2DWorld(), drawingOrder);
 		this.preset = new CarPreset(presetType);
 		this.carType = carType;
@@ -67,6 +69,7 @@ public abstract strictfp class Car extends Box2DEntity {
 		this.inputMode = inputMode;
 		this.carTraveledDistance = 0;
 		this.accuDistCount = 0;
+		this.trackState = new CarTrackState();
 
 		applyCarPhysics(carType, preset.model);
 
@@ -83,6 +86,10 @@ public abstract strictfp class Car extends Box2DEntity {
 		GameEvents.gameRenderer.removeListener(this, GameRendererEvent.Type.BatchBeforeMeshes, ShadowsDrawingOrder);
 		event.removeAllListeners();
 		event = null;
+	}
+
+	public CarTrackState getTrackState () {
+		return trackState;
 	}
 
 	private void applyCarPhysics (CarType carType, CarModel carModel) {

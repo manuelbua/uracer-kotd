@@ -42,6 +42,7 @@ public final class GhostCar extends Car {
 
 		setActive(hasReplay);
 		resetPhysics();
+		getTrackState().reset();
 
 		if (hasReplay) {
 			setPreset(replay.carPresetType);

@@ -12,12 +12,13 @@ import com.badlogic.gdx.math.Polygon;
 import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.utils.Disposable;
 import com.badlogic.gdx.utils.GdxRuntimeException;
-import com.badlogic.gdx.utils.ObjectIntMap;
 import com.bitfire.uracer.events.GameRendererEvent;
 import com.bitfire.uracer.events.GameRendererEvent.Order;
 import com.bitfire.uracer.events.GameRendererEvent.Type;
 import com.bitfire.uracer.game.GameEvents;
 import com.bitfire.uracer.game.actors.Car;
+import com.bitfire.uracer.game.actors.CarTrackState;
+import com.bitfire.uracer.game.player.PlayerCar;
 import com.bitfire.uracer.utils.AMath;
 import com.bitfire.uracer.utils.VMath;
 
@@ -34,21 +35,18 @@ public final class GameTrack implements Disposable {
 	private final TrackSector[] sectors;
 	private final float totalLength;
 	private final float oneOnTotalLength;
-	private final ObjectIntMap<Car> previousSector;
-
 	private Vector2 tmp = new Vector2();
 
 	public GameTrack (final List<Vector2> route, final List<Polygon> trackPoly) {
 		this.route = route;
 		this.polys = trackPoly;
 		this.sectors = new TrackSector[route.size()];
-		this.previousSector = new ObjectIntMap<Car>(10);
 
 		totalLength = sectorize();
 		oneOnTotalLength = 1f / totalLength;
 		Gdx.app.log("RouteTracker", "total waypoint length = " + totalLength);
 
-		dbg = new DebugRenderer(this, sectors, route);
+		dbg = new DebugRenderer(sectors, route);
 	}
 
 	public void showDebug (boolean show) {
@@ -96,11 +94,10 @@ public final class GameTrack implements Disposable {
 
 	@Override
 	public void dispose () {
-		previousSector.clear();
 		dbg.dispose();
 	}
 
-	public void setDebugCar (Car car) {
+	public void setDebugCar (PlayerCar car) {
 		dbg.setCar(car);
 	}
 
@@ -109,7 +106,6 @@ public final class GameTrack implements Disposable {
 	}
 
 	public void reset () {
-		previousSector.clear();
 	}
 
 	/** Returns the distance, in meters, of the specified car relative to the starting line of the current track. If it fails
@@ -122,7 +118,7 @@ public final class GameTrack implements Disposable {
 			return 0;
 		}
 
-		int carSector = findSector(car);
+		int carSector = car.getTrackState().curr;
 
 		if (carSector != -1) {
 			TrackSector s = sectors[carSector];
@@ -151,11 +147,12 @@ public final class GameTrack implements Disposable {
 	 * @param car
 	 * @return The confidence value with which a car is following the current waypoint path. */
 	public float getTrackRouteConfidence (Car car) {
-		int carSector = findSector(car);
 
-		if (carSector != -1) {
-			TrackSector s = sectors[carSector];
+		CarTrackState state = car.getTrackState();
 
+		// car is on the expected path, now check for the correct heading
+		if (state.onExpectedPath) {
+			TrackSector s = sectors[state.curr];
 			Vector2 heading = VMath.fromDegrees(car.state().orientation);
 			Vector2 dir = tmp.set(s.nLeading);
 
@@ -175,6 +172,39 @@ public final class GameTrack implements Disposable {
 		}
 
 		return -1;
+	}
+
+	public void updateTrackStates (Car car) {
+		CarTrackState state = car.getTrackState();
+		Vector2 pos = car.getWorldPosMt();
+
+		boolean inCurr = lookupSector(pos, state.curr);
+		boolean inNext = lookupSector(pos, state.next);
+
+		// start position/polygon.contains mismatch fix
+		if (state.curr == 0 && getTrackCompletion(car, 0) == 0) {
+			inCurr = true;
+		}
+
+		state.onExpectedPath = true;
+
+		if (!inCurr && !inNext) {
+			state.onExpectedPath = false;
+			return;
+		}
+
+		if (inNext) {
+			// switched
+
+			state.onExpectedPath = true;
+
+			state.curr = state.next;
+			state.next = state.curr + 1;
+
+			if (state.next == sectors.length) {
+				state.next = 0;
+			}
+		}
 	}
 
 	private Vector2 vlp = new Vector2();
@@ -200,53 +230,42 @@ public final class GameTrack implements Disposable {
 		return distInSector(s, p);
 	}
 
-// private int findSector (Vector2 point) {
-// for (int i = 0; i < sectors.length; i++) {
-// TrackSector s = sectors[i];
-// Polygon p = s.poly;
-// if (p.contains(point.x, point.y)) {
-// return i;
-// }
-// }
-//
-// return -1;
-// }
-
-	private int findSector (Car car) {
-		Vector2 position = car.getWorldPosMt();
-
-		// lookup previous sector
-		int prev = previousSector.get(car, 0);
-		if (prev == sectors.length - 1) {
-			prev = 0;
-		}
-
-		int sector = findSector(position, prev);
-
-		if (sector == -1) {
-			// try a complete lookup
-			sector = findSector(position, 0);
-		}
-
-		if (sector != prev) {
-			previousSector.put(car, sector);
-			Gdx.app.log("GameTrack", "Previous was #" + sector);
-		}
-
-		return sector;
+	private boolean lookupSector (Vector2 position, int sector) {
+		return sectors[sector].poly.contains(position.x, position.y);
 	}
 
-	private int findSector (Vector2 position, int fromSector) {
-		for (int i = fromSector; i < sectors.length; i++) {
+	// search all sectors for the given point
+	private int findSector (Vector2 point) {
+		for (int i = 0; i < sectors.length; i++) {
 			TrackSector s = sectors[i];
 			Polygon p = s.poly;
-			if (p.contains(position.x, position.y)) {
+			if (p.contains(point.x, point.y)) {
 				return i;
 			}
 		}
 
 		return -1;
 	}
+
+	// search one sector ahead of the given sector for the given point
+// private int findSector (Vector2 position, int fromSector) {
+// int from = MathUtils.clamp(fromSector, 0, sectors.length - 1);
+// if (from == sectors.length - 1) {
+// from = 0;
+// }
+//
+// int to = from + 1;
+//
+// for (int i = from; i <= to; i++) {
+// TrackSector s = sectors[i];
+// Polygon p = s.poly;
+// if (p.contains(position.x, position.y)) {
+// return i;
+// }
+// }
+//
+// return -1;
+// }
 
 	private int findPolygon (Vector2 a, Vector2 b) {
 		for (int i = 0; i < polys.size(); i++) {
@@ -272,21 +291,19 @@ public final class GameTrack implements Disposable {
 	private class DebugRenderer implements Disposable, GameRendererEvent.Listener {
 
 		private final ShapeRenderer shape;
-		private Car car;
+		private PlayerCar car;
 		private boolean hasCar;
 		private final TrackSector[] sectors;
 		private final List<Vector2> route;
-		private final GameTrack track;
 
 		// private final Vector2 tmp = new Vector2();
 		private boolean attached = false;
 
-		public DebugRenderer (GameTrack track, TrackSector[] sectors, List<Vector2> route) {
+		public DebugRenderer (TrackSector[] sectors, List<Vector2> route) {
 			this.shape = new ShapeRenderer();
 			this.sectors = sectors;
 			this.route = route;
 			this.car = null;
-			this.track = track;
 			hasCar = false;
 		}
 
@@ -323,7 +340,7 @@ public final class GameTrack implements Disposable {
 			int carSector = -1;
 
 			if (hasCar) {
-				carSector = track.findSector(car);
+				carSector = car.getTrackState().curr;
 
 				if (carSector > -1) {
 					float d = MathUtils.clamp(distInSector(carSector, car.getWorldPosMt()), 0, 1);
@@ -416,7 +433,7 @@ public final class GameTrack implements Disposable {
 			shape.line(vertices[6], vertices[7], vertices[0], vertices[1]);
 		}
 
-		public void setCar (Car car) {
+		public void setCar (PlayerCar car) {
 			this.car = car;
 			hasCar = (this.car != null);
 		}

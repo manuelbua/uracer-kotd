@@ -276,7 +276,7 @@ public abstract class CommonLogic implements GameLogic, CarEvent.Listener, Playe
 			gameTrack.setDebugCar(playerCar);
 		}
 
-		wrongWayMonitor.setCar(playerCar);
+		wrongWayMonitor.setPlayer(playerCar);
 		lapMonitor.setCar(playerCar);
 		restartGame();
 
@@ -301,7 +301,7 @@ public abstract class CommonLogic implements GameLogic, CarEvent.Listener, Playe
 
 		playerCar = null;
 		gameWorldRenderer.setRenderPlayerHeadlights(false);
-		wrongWayMonitor.setCar(null);
+		wrongWayMonitor.setPlayer(null);
 		lapMonitor.setCar(null);
 
 		if (Config.Debug.UseDebugHelper) {
@@ -360,6 +360,7 @@ public abstract class CommonLogic implements GameLogic, CarEvent.Listener, Playe
 	private void resetPlayer (Car playerCar) {
 		if (playerCar != null) {
 			playerCar.resetPhysics();
+			playerCar.getTrackState().reset();
 			playerCar.resetDistanceAndSpeed(true, true);
 			playerCar.setWorldPosMt(gameWorld.playerStartPos, gameWorld.playerStartOrientRads);
 		}
@@ -368,6 +369,7 @@ public abstract class CommonLogic implements GameLogic, CarEvent.Listener, Playe
 	private void resetGhost (int handle) {
 		GhostCar ghost = ghostCars[handle];
 		if (ghost != null) {
+			ghost.getTrackState().reset();
 			ghost.resetPhysics();
 			ghost.resetDistanceAndSpeed(true, true);
 			ghost.removeReplay();
@@ -400,8 +402,6 @@ public abstract class CommonLogic implements GameLogic, CarEvent.Listener, Playe
 		wrongWayMonitor.reset();
 		isCurrentLapValid = true;
 
-		gameTrack.reset();
-
 		postProcessing.resetAnimator();
 
 		// playerTasks.playerEngineSoundFx.start();
@@ -418,6 +418,7 @@ public abstract class CommonLogic implements GameLogic, CarEvent.Listener, Playe
 		lapManager.abortRecording();
 		lapManager.reset();
 		gameTasksManager.reset();
+		onLapComplete();
 	}
 
 	//
@@ -432,6 +433,17 @@ public abstract class CommonLogic implements GameLogic, CarEvent.Listener, Playe
 	@Override
 	public void tickCompleted () {
 		gameTasksManager.physicsStep.onSubstepCompleted();
+
+		if (hasPlayer()) {
+			gameTrack.updateTrackStates(playerCar);
+		}
+
+		for (int i = 0; i < ReplayManager.MaxReplays; i++) {
+			if (ghostCars[i] != null && ghostCars[i].hasReplay()) {
+				gameTrack.updateTrackStates(ghostCars[i]);
+			}
+		}
+
 		wrongWayMonitor.update();
 		lapMonitor.update();
 
