@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8" standalone="no"?><map height="16" orientation="orthogonal" tileheight="224" tilewidth="224" version="1.0" width="16">
  <properties><property name="blended tiles" value=""/>
-  <property name="name" value="Overlap!"/>
+  <property name="name" value="Overlap"/>
  </properties>
  <tileset firstgid="1" name="desert" tileheight="224" tilewidth="224">
   <image height="2464" source="tilesets/desert/224.png" width="896"/>
@@ -32,10 +32,10 @@
    </properties>
   </object>
  </objectgroup>
- <objectgroup color="#55ffff" height="16" name="trees" visible="0" width="16">
+ <objectgroup color="#55ffff" height="16" name="trees" width="16">
   <object height="68" name="tree-2" type="tree-2" width="61" x="1888" y="2275">
    <properties>
-    <property name="scale" value="2"/>
+    <property name="scale" value="1"/>
    </properties>
   </object>
   <object height="68" name="tree-5" type="tree-5" width="61" x="2255" y="2425">
@@ -48,12 +48,12 @@
     <property name="scale" value="6"/>
    </properties>
   </object>
-  <object height="68" name="tree-9" type="tree-9" width="61" x="1710" y="631">
+  <object height="68" name="tree-9" type="tree-9" width="61" x="1745" y="630">
    <properties>
     <property name="scale" value="8"/>
    </properties>
   </object>
-  <object height="68" name="tree-9" type="tree-9" width="61" x="1033" y="1284">
+  <object height="68" name="tree-9" type="tree-9" width="61" x="990" y="1324">
    <properties>
     <property name="scale" value="4"/>
    </properties>
@@ -65,7 +65,7 @@
   </object>
   <object height="68" name="tree-5" type="tree-5" width="61" x="1444" y="1066">
    <properties>
-    <property name="scale" value="2"/>
+    <property name="scale" value="1.1"/>
    </properties>
   </object>
   <object height="68" name="tree-6" type="tree-6" width="61" x="1281" y="1816">
@@ -174,51 +174,51 @@
  </objectgroup>
  <objectgroup color="#ecde0e" height="16" name="sectors" width="16">
   <object x="1094" y="1230">
-   <polygon points="0,0 277,-1 275,-111 -7,-111"/>
+   <polygon points="-30,2 306,2 306,-110 -30,-110"/>
   </object>
   <object x="1087" y="1117">
-   <polygon points="0,0 53,-222 419,-216 283,1"/>
+   <polygon points="-23,3 33,-221 481,-221 313,3"/>
   </object>
   <object x="1140" y="890">
-   <polygon points="0,0 198,-227 426,-248 420,10"/>
+   <polygon points="-20,6 198,-227 426,-248 428,6"/>
   </object>
   <object x="1566" y="643">
-   <polygon points="0,0 282,92 263,320 -4,258"/>
+   <polygon points="0,0 282,92 226,309 2,253"/>
   </object>
   <object x="1095" y="1233">
-   <polygon points="0,0 278,-1 278,109 0,109"/>
+   <polygon points="-31,-1 305,-1 305,111 -31,111"/>
   </object>
   <object x="1096" y="1346">
-   <polygon points="0,0 275,-2 327,184 21,290"/>
+   <polygon points="-32,-2 304,-2 360,166 24,278"/>
   </object>
   <object x="1535" y="2564">
-   <polygon points="0,0 273,-113 385,-131 303,168"/>
+   <polygon points="33,12 257,-100 369,-156 313,180"/>
   </object>
   <object x="1931" y="2421">
-   <polygon points="0,0 -81,303 353,81 55,-73"/>
+   <polygon points="-27,-13 -83,323 309,43 29,-69"/>
   </object>
   <object x="1988" y="2335">
-   <polygon points="0,0 256,131 260,-215 15,-304"/>
+   <polygon points="-28,17 252,129 252,-263 -28,-319"/>
   </object>
   <object x="2000" y="2015">
-   <polygon points="0,0 244,100 227,-281 -89,-196"/>
+   <polygon points="-40,1 240,57 240,-279 -96,-111"/>
   </object>
   <object x="1570" y="924">
-   <polygon points="0,0 0,1536 209,1512 215,45"/>
+   <polygon points="-2,-28 -2,1652 222,1540 222,28"/>
   </object>
   <object x="1433" y="1545">
-   <polygon points="0,0 611,43 456,260 -112,220"/>
+   <polygon points="79,23 639,23 415,303 -145,247"/>
   </object>
   <object x="1137" y="1645">
-   <polygon points="0,0 176,115 297,-100 285,-117"/>
+   <polygon points="-17,-21 151,147 375,-77 319,-133"/>
   </object>
-  <object x="1893" y="1803">
-   <polygon points="0,0 19,15 331,-77 159,-213"/>
+  <object x="1938" y="1766">
+   <polygon points="-34,138 302,-30 134,-198 -90,82"/>
   </object>
  </objectgroup>
- <objectgroup color="#ffec18" height="16" name="route" visible="0" width="16">
-  <object x="2017" y="2137">
-   <polyline points="-113,-9 -225,-9 -449,-9 -667,-98 -762,-229 -745,-509 -628,-625 -450,-689 0,-693 230,-596 318,-449 323,-233 159,-45 -1,-9"/>
+ <objectgroup color="#ffec18" height="16" name="route" width="16">
+  <object x="1229" y="1233">
+   <polyline points="3,-1 0,-113 69,-337 338,-465 456,-309 460,1281 647,1333 861,1173 899,818 841,588 724,487 197,423 89,326 3,111"/>
   </object>
  </objectgroup>
 </map>

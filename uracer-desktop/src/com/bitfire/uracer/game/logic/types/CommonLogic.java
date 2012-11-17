@@ -400,6 +400,8 @@ public abstract class CommonLogic implements GameLogic, CarEvent.Listener, Playe
 		wrongWayMonitor.reset();
 		isCurrentLapValid = true;
 
+		gameTrack.reset();
+
 		postProcessing.resetAnimator();
 
 		// playerTasks.playerEngineSoundFx.start();
