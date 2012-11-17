@@ -97,7 +97,7 @@ public final class Config {
 			TraverseWalls = false;
 			ApplyCarFrictionFromMap = true;
 			FrustumCulling = true;
-			InfiniteDilationTime = false;
+			InfiniteDilationTime = true;
 
 			ShowAdvancedDebugInfo = true;
 		}

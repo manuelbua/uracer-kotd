@@ -10,6 +10,7 @@ import aurelienribon.tweenengine.equations.Linear;
 import com.badlogic.gdx.graphics.g2d.Sprite;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.math.Vector2;
+import com.bitfire.uracer.URacer;
 import com.bitfire.uracer.entities.EntityRenderState;
 import com.bitfire.uracer.game.actors.Car;
 import com.bitfire.uracer.game.logic.gametasks.hud.Hud;
@@ -74,10 +75,12 @@ public final class CarHighlighter {
 	}
 
 	public void render (SpriteBatch batch, float cameraZoom) {
-		if (isActive /* && isBusy */&& hasCar) {
+		if (isActive && hasCar) {
 			tmp.set(GameRenderer.ScreenUtils.worldPxToScreen(renderState.position));
 
-			sprite.setScale(bfScale.value * cameraZoom * scale);
+			float timeFactor = URacer.Game.getTimeModFactor() * 0.3f;
+			float s = 1f + timeFactor;
+			sprite.setScale(bfScale.value * cameraZoom * scale * s);
 			sprite.setPosition(tmp.x - offX, tmp.y - offY);
 			sprite.setRotation(-renderState.orientation + bfRot.value);
 			sprite.setColor(bfRed.value, bfGreen.value, bfBlue.value, bfAlpha.value);

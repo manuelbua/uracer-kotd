@@ -49,7 +49,7 @@ public final class GhostCar extends Car {
 
 			// System.out.println( "Replaying " + replay.id );
 			restart(replay);
-			Gdx.app.log("GhostCar #" + id, "Replaying #" + System.identityHashCode(replay) + "s");
+			Gdx.app.log("GhostCar #" + id, "Replaying #" + System.identityHashCode(replay));
 		}
 
 		// else
@@ -104,7 +104,7 @@ public final class GhostCar extends Car {
 				// FIXME! arrayindexoutofbounds still happens, maxevents on replay could be the cause
 				forces.set(replay.forces[indexPlay]);
 			} catch (ArrayIndexOutOfBoundsException e) {
-				Gdx.app.log("GhostCar", "Replay fucked up");
+				Gdx.app.log("GhostCar", "!!! MANGLED DATA IN REPLAY !!!");
 			}
 
 			// Gdx.app.log( "ghost", "index="+indexPlay + ", px=" + NumberString.formatVeryLong(body.getPosition().x) +
