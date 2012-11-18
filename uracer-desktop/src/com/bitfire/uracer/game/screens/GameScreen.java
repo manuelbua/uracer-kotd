@@ -20,8 +20,8 @@ public class GameScreen extends Screen {
 		// try { Thread.sleep( 1000 ); } catch( InterruptedException e ) {}
 
 // String trackId = GameTracks.getTrackId("Long and fun");
-		String trackId = GameTracks.getTrackId("Simple");
-// String trackId = GameTracks.getTrackId("Overlap");
+// String trackId = GameTracks.getTrackId("Simple");
+		String trackId = GameTracks.getTrackId("Overlap");
 // String trackId = GameTracks.getTrackId("Atari Tribute");
 		if (trackId == null) {
 			Gdx.app.log("GameScreen", "The specified track could not be found");

@@ -355,7 +355,7 @@ public class SinglePlayerLogic extends CommonLogic {
 
 				// lose wall-clock seconds while in time dilation
 				if (!dilationTime.isStopped()) {
-					accuDriftSeconds.value -= dilationTime.elapsed(Reference.LastAbsoluteSeconds);
+					accuDriftSeconds.value -= dilationTime.elapsed(Reference.LastAbsoluteSeconds) * 2;
 				}
 
 				// lose wall-clock seconds while out of track
