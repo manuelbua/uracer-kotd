@@ -74,7 +74,7 @@ public final class PostProcessing {
 			gameRenderer.enableNormalDepthMap();
 		}
 
-// addEffect(Effects.MotionBlur.name, new CameraMotion());
+		// addEffect(Effects.MotionBlur.name, new CameraMotion());
 
 		if (UserPreferences.bool(Preference.ZoomRadialBlur)) {
 			RadialBlur.Quality rbq = RadialBlur.Quality.valueOf(UserPreferences.string(Preference.ZoomRadialBlurQuality));

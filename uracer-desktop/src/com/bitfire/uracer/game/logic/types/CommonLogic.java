@@ -276,7 +276,7 @@ public abstract class CommonLogic implements GameLogic, CarEvent.Listener, Playe
 			gameTrack.setDebugCar(playerCar);
 		}
 
-		wrongWayMonitor.setPlayer(playerCar);
+		wrongWayMonitor.setCar(playerCar);
 		lapMonitor.setCar(playerCar);
 		restartGame();
 
@@ -301,7 +301,7 @@ public abstract class CommonLogic implements GameLogic, CarEvent.Listener, Playe
 
 		playerCar = null;
 		gameWorldRenderer.setRenderPlayerHeadlights(false);
-		wrongWayMonitor.setPlayer(null);
+		wrongWayMonitor.setCar(null);
 		lapMonitor.setCar(null);
 
 		if (Config.Debug.UseDebugHelper) {

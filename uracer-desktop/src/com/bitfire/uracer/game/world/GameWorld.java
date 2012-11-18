@@ -223,12 +223,14 @@ public final class GameWorld {
 		playerHeadlightsA.setSoft(true);
 		// playerHeadlightsA.setMaskBits(CollisionFilters.CategoryTrackWalls | CollisionFilters.CategoryReplay);
 		// playerHeadlightsA.setMaskBits(CollisionFilters.CategoryTrackWalls);
-		playerHeadlightsA.setMaskBits(CollisionFilters.CategoryReplay);
+		// playerHeadlightsA.setMaskBits(CollisionFilters.CategoryReplay);
+		playerHeadlightsA.setMaskBits(0);
 
 		playerHeadlightsB = new ConeLight(rayHandler, maxRays, c, 25, 0, 0, 0, 9);
 		playerHeadlightsB.setSoft(true);
 		// playerHeadlightsB.setMaskBits(CollisionFilters.CategoryTrackWalls | CollisionFilters.CategoryReplay);
-		playerHeadlightsB.setMaskBits(CollisionFilters.CategoryReplay);
+		// playerHeadlightsB.setMaskBits(CollisionFilters.CategoryReplay);
+		playerHeadlightsB.setMaskBits(0);
 
 		// setup level lights data, if any
 		Vector2 pos = new Vector2();
