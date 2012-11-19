@@ -3,6 +3,8 @@ package com.bitfire.uracer;
 
 import java.lang.reflect.Field;
 
+import aurelienribon.tweenengine.Tween;
+
 import com.badlogic.gdx.Application;
 import com.badlogic.gdx.ApplicationListener;
 import com.badlogic.gdx.Gdx;
@@ -11,6 +13,10 @@ import com.badlogic.gdx.utils.TimeUtils;
 import com.bitfire.uracer.configuration.Config;
 import com.bitfire.uracer.configuration.UserPreferences;
 import com.bitfire.uracer.game.GameTracks;
+import com.bitfire.uracer.game.logic.gametasks.hud.HudLabel;
+import com.bitfire.uracer.game.logic.gametasks.hud.HudLabelAccessor;
+import com.bitfire.uracer.game.logic.gametasks.messager.Message;
+import com.bitfire.uracer.game.logic.gametasks.messager.MessageAccessor;
 import com.bitfire.uracer.game.logic.types.common.TimeModulator;
 import com.bitfire.uracer.game.screens.GameScreensFactory;
 import com.bitfire.uracer.game.screens.GameScreensFactory.ScreenType;
@@ -25,6 +31,8 @@ import com.bitfire.uracer.screen.ScreenManager;
 import com.bitfire.uracer.screen.TransitionFactory;
 import com.bitfire.uracer.screen.TransitionFactory.TransitionType;
 import com.bitfire.uracer.utils.AMath;
+import com.bitfire.uracer.utils.BoxedFloat;
+import com.bitfire.uracer.utils.BoxedFloatAccessor;
 import com.bitfire.uracer.utils.Convert;
 import com.bitfire.uracer.utils.SpriteBatchUtils;
 import com.bitfire.utils.ShaderLoader;
@@ -97,6 +105,11 @@ public class URacer implements ApplicationListener {
 	public void create () {
 		ShaderLoader.Pedantic = false;
 
+		// create tweening support
+		Tween.registerAccessor(Message.class, new MessageAccessor());
+		Tween.registerAccessor(HudLabel.class, new HudLabelAccessor());
+		Tween.registerAccessor(BoxedFloat.class, new BoxedFloatAccessor());
+
 		Gdx.app.setLogLevel(Application.LOG_DEBUG);
 		versionInfo = URacer.getVersionInformation();
 
@@ -143,8 +156,8 @@ public class URacer implements ApplicationListener {
 
 		screenMgr = new ScreenManager(screenFactory);
 
-		screenMgr.setScreen(ScreenType.GameScreen, TransitionType.Fader, 1000);
-// screenMgr.setScreen(ScreenType.MainScreen, TransitionType.CrossFader, 500);
+// screenMgr.setScreen(ScreenType.GameScreen, TransitionType.Fader, 1000);
+		screenMgr.setScreen(ScreenType.MainScreen, TransitionType.CrossFader, 500);
 		// screenMgr.setScreen( ScreenType.OptionsScreen, TransitionType.CrossFader, 500 );
 
 		// Initialize the timers after creating the game screen, so that there

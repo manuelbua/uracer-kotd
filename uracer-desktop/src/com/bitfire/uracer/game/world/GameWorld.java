@@ -129,6 +129,8 @@ public final class GameWorld {
 	}
 
 	public void dispose () {
+		mapUtils.dispose();
+
 		if (rayHandler != null) {
 			rayHandler.dispose();
 			rayHandler = null;

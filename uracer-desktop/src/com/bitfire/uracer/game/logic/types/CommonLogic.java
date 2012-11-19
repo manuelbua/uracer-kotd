@@ -1,8 +1,6 @@
 
 package com.bitfire.uracer.game.logic.types;
 
-import aurelienribon.tweenengine.Tween;
-
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Input.Keys;
 import com.bitfire.uracer.Input;
@@ -22,11 +20,7 @@ import com.bitfire.uracer.game.actors.CarEvent;
 import com.bitfire.uracer.game.actors.CarPreset;
 import com.bitfire.uracer.game.actors.GhostCar;
 import com.bitfire.uracer.game.logic.gametasks.GameTasksManager;
-import com.bitfire.uracer.game.logic.gametasks.hud.HudLabel;
-import com.bitfire.uracer.game.logic.gametasks.hud.HudLabelAccessor;
 import com.bitfire.uracer.game.logic.gametasks.hud.elements.HudPlayer.EndDriftType;
-import com.bitfire.uracer.game.logic.gametasks.messager.Message;
-import com.bitfire.uracer.game.logic.gametasks.messager.MessageAccessor;
 import com.bitfire.uracer.game.logic.helpers.CarFactory;
 import com.bitfire.uracer.game.logic.helpers.GameTrack;
 import com.bitfire.uracer.game.logic.helpers.PlayerGameTasks;
@@ -53,8 +47,6 @@ import com.bitfire.uracer.game.tween.SysTweener;
 import com.bitfire.uracer.game.world.GameWorld;
 import com.bitfire.uracer.resources.Art;
 import com.bitfire.uracer.screen.TransitionFactory.TransitionType;
-import com.bitfire.uracer.utils.BoxedFloat;
-import com.bitfire.uracer.utils.BoxedFloatAccessor;
 import com.bitfire.uracer.utils.CarUtils;
 import com.bitfire.uracer.utils.NumberString;
 
@@ -103,11 +95,6 @@ public abstract class CommonLogic implements GameLogic, CarEvent.Listener, Playe
 		timeDilateMode = Gameplay.TimeDilateInputMode.valueOf(UserPreferences.string(Preference.TimeDilateInputMode));
 		timeMod = new TimeModulator();
 
-		// create tweening support
-		Tween.registerAccessor(Message.class, new MessageAccessor());
-		Tween.registerAccessor(HudLabel.class, new HudLabelAccessor());
-		Tween.registerAccessor(BoxedFloat.class, new BoxedFloatAccessor());
-
 		Gdx.app.log("GameLogic", "Tweening helpers created");
 
 		// post-processing
@@ -146,6 +133,7 @@ public abstract class CommonLogic implements GameLogic, CarEvent.Listener, Playe
 
 	@Override
 	public void dispose () {
+		removePlayer();
 		gameTrack.dispose();
 		gameTasksManager.dispose();
 		playerTasks.dispose();

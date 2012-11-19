@@ -11,7 +11,6 @@ import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.files.FileHandle;
 import com.badlogic.gdx.graphics.g2d.tiled.TiledLoader;
 import com.badlogic.gdx.graphics.g2d.tiled.TiledMap;
-import com.badlogic.gdx.utils.Array;
 import com.bitfire.uracer.configuration.Storage;
 
 /** Enumerates and maintains a list of available game tracks. FIXME add support for mini-screenshots */
@@ -20,8 +19,10 @@ public final class GameTracks {
 	private static MessageDigest digest;
 	private static final Map<String, String> mapHashFilename = new HashMap<String, String>();
 	private static final Map<String, String> mapHashName = new HashMap<String, String>();
-	private static final Array<String> trackNames = new Array<String>();
-	private static final Array<String> trackIds = new Array<String>();
+// private static final Array<String> trackNames = new Array<String>();
+// private static final Array<String> trackIds = new Array<String>();
+	private static String[] trackNames;
+	private static String[] trackIds;
 
 	public static final boolean init () {
 
@@ -47,6 +48,9 @@ public final class GameTracks {
 			return false;
 		}
 
+		trackNames = new String[tracks.length];
+		trackIds = new String[tracks.length];
+
 		// build internal maps
 		for (int i = 0; i < tracks.length; i++) {
 			TiledMap m = TiledLoader.createMap(tracks[i]);
@@ -56,8 +60,8 @@ public final class GameTracks {
 
 				mapHashFilename.put(hash, tracks[i].name());
 				mapHashName.put(hash, name);
-				trackIds.add(hash);
-				trackNames.add(name);
+				trackIds[i] = hash;
+				trackNames[i] = name;
 
 				Gdx.app.log("GameTracks", "Found track \"" + name + "\" (" + hash + ")");
 			} else {
@@ -80,11 +84,11 @@ public final class GameTracks {
 		return null;
 	}
 
-	public static Array<String> getAvailableTracks () {
+	public static String[] getAvailableTracks () {
 		return trackNames;
 	}
 
-	public static Array<String> getAvailableTrackIds () {
+	public static String[] getAvailableTrackIds () {
 		return trackIds;
 	}
 

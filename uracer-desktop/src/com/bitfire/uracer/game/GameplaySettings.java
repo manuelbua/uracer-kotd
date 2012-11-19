@@ -7,6 +7,9 @@ public final class GameplaySettings {
 	// settings
 	public static final float DampingFriction = AMath.damping(0.975f);
 
+	// maximum amount of seconds for the wrong way detector before the lap is completely invalidated
+	public static final float MaxSecondsWrongWayDetector = 1.0f;
+
 	// a replay is discarded if its length is less than the specified seconds
 	public static final float ReplayMinDurationSecs = 4f;
 

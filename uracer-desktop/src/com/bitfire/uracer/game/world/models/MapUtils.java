@@ -19,8 +19,8 @@ import com.bitfire.uracer.utils.VMath;
 public final class MapUtils implements Disposable {
 
 	// cache
-	public static final Map<String, TiledLayer> cachedLayers = new HashMap<String, TiledLayer>(10);
-	public static final Map<String, TiledObjectGroup> cachedGroups = new HashMap<String, TiledObjectGroup>(10);
+	public final Map<String, TiledLayer> cachedLayers = new HashMap<String, TiledLayer>(10);
+	public final Map<String, TiledObjectGroup> cachedGroups = new HashMap<String, TiledObjectGroup>(10);
 
 	private TiledMap map;
 	private Vector2 worldSizeScaledPx = new Vector2();
@@ -151,5 +151,4 @@ public final class MapUtils implements Disposable {
 
 		return ret;
 	}
-
 }
