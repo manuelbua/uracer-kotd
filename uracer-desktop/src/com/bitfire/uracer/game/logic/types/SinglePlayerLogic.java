@@ -192,7 +192,7 @@ public class SinglePlayerLogic extends CommonLogic {
 
 		if (accuDriftSeconds.value == 0 && timeDilation) {
 			requestTimeDilationFinish();
-			Gdx.app.log("", "Requesting time modulation to finish");
+			Gdx.app.log("SinglePlayerLogic", "Requesting time modulation to finish");
 		}
 
 		if (hasPlayer()) {

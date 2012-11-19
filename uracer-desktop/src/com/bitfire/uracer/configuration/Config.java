@@ -13,6 +13,9 @@ public final class Config {
 	public static String UserPreferences = "uracer-preferences";
 
 	public static final class Graphics {
+		public static final int DefaultFadeMilliseconds = 500;
+		public static final int DefaultResetFadeMilliseconds = 250;
+
 		public static boolean EnableMipMapping;
 		public static boolean SubframeInterpolation;
 		public static InterpolationMode CameraInterpolationMode;

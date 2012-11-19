@@ -728,11 +728,11 @@ public abstract class CommonLogic implements GameLogic, CarEvent.Listener, Playe
 
 	@Override
 	public void onWrongWayEnds () {
-		playerTasks.hudPlayer.wrongWay.fadeOut();
-		playerTasks.hudLapInfo.toColor(1, 1, 0);
-		playerTasks.hudLapInfo.setInvalid("back to start");
-
-		wrongWayEnds();
+// playerTasks.hudPlayer.wrongWay.fadeOut();
+// playerTasks.hudLapInfo.toColor(1, 1, 0);
+// playerTasks.hudLapInfo.setInvalid("back to start");
+//
+// wrongWayEnds();
 	}
 
 	@Override

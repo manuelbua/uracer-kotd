@@ -11,9 +11,9 @@ import com.badlogic.gdx.graphics.g2d.Sprite;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.math.Vector2;
 import com.bitfire.uracer.URacer;
+import com.bitfire.uracer.configuration.Config;
 import com.bitfire.uracer.entities.EntityRenderState;
 import com.bitfire.uracer.game.actors.Car;
-import com.bitfire.uracer.game.logic.gametasks.hud.Hud;
 import com.bitfire.uracer.game.rendering.GameRenderer;
 import com.bitfire.uracer.game.tween.GameTweener;
 import com.bitfire.uracer.resources.Art;
@@ -145,7 +145,7 @@ public final class CarHighlighter {
 		bfBlue.value = 1f;
 
 		Timeline timeline = Timeline.createParallel();
-		float ms = Hud.DefaultFadeMilliseconds;
+		float ms = Config.Graphics.DefaultFadeMilliseconds;
 
 		//@off
 		timeline
@@ -176,7 +176,7 @@ public final class CarHighlighter {
 		bfBlue.value = 1f;
 
 		Timeline timeline = Timeline.createParallel();
-		float ms = Hud.DefaultFadeMilliseconds;
+		float ms = Config.Graphics.DefaultFadeMilliseconds;
 
 		//@off
 		timeline

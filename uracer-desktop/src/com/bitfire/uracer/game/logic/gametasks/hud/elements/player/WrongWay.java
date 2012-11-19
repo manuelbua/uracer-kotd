@@ -8,7 +8,7 @@ import aurelienribon.tweenengine.equations.Linear;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.g2d.Sprite;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
-import com.bitfire.uracer.game.logic.gametasks.hud.Hud;
+import com.bitfire.uracer.configuration.Config;
 import com.bitfire.uracer.game.tween.GameTweener;
 import com.bitfire.uracer.resources.Art;
 import com.bitfire.uracer.utils.AMath;
@@ -20,6 +20,7 @@ public class WrongWay {
 	private float w, h, x, y;
 	private Sprite sign;
 	private BoxedFloat bfAlpha;
+	private boolean isShown;
 
 	public WrongWay () {
 		sign = new Sprite(Art.wrongWay);
@@ -33,26 +34,43 @@ public class WrongWay {
 		sign.setOrigin(sign.getWidth() / 2, sign.getHeight() / 2);
 		sign.flip(false, true);
 		bfAlpha = new BoxedFloat(0);
+		isShown = false;
 	}
 
+// private TweenCallback fadeOutFinished = new TweenCallback() {
+// @Override
+// public void onEvent (int type, BaseTween<?> source) {
+// switch (type) {
+// case COMPLETE:
+// isShown = false;
+// }
+// }
+// };
+
 	public void fadeIn () {
-		fadeIn(Hud.DefaultFadeMilliseconds);
+		fadeIn(Config.Graphics.DefaultFadeMilliseconds);
 	}
 
 	public void fadeOut () {
-		fadeOut(Hud.DefaultFadeMilliseconds);
+		fadeOut(Config.Graphics.DefaultFadeMilliseconds);
 	}
 
 	public void fadeIn (int millisecs) {
-		Timeline seq = Timeline.createSequence();
-		seq.push(Tween.to(bfAlpha, BoxedFloatAccessor.VALUE, millisecs).target(1f).ease(Linear.INOUT));
-		GameTweener.start(seq);
+		if (!isShown) {
+			isShown = true;
+			Timeline seq = Timeline.createSequence();
+			seq.push(Tween.to(bfAlpha, BoxedFloatAccessor.VALUE, millisecs).target(1f).ease(Linear.INOUT));
+			GameTweener.start(seq);
+		}
 	}
 
 	public void fadeOut (int millisecs) {
-		Timeline seq = Timeline.createSequence();
-		seq.push(Tween.to(bfAlpha, BoxedFloatAccessor.VALUE, millisecs).target(0f).ease(Linear.INOUT));
-		GameTweener.start(seq);
+		if (isShown) {
+			isShown = false;
+			Timeline seq = Timeline.createSequence();
+			seq.push(Tween.to(bfAlpha, BoxedFloatAccessor.VALUE, millisecs).target(0f).ease(Linear.INOUT));
+			GameTweener.start(seq);
+		}
 	}
 
 	public void render (SpriteBatch batch) {

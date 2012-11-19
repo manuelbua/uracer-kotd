@@ -5,10 +5,10 @@ import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.math.MathUtils;
 import com.badlogic.gdx.math.Vector2;
 import com.bitfire.uracer.ScalingStrategy;
+import com.bitfire.uracer.configuration.Config;
 import com.bitfire.uracer.configuration.UserProfile;
 import com.bitfire.uracer.entities.EntityRenderState;
 import com.bitfire.uracer.game.actors.Car;
-import com.bitfire.uracer.game.logic.gametasks.hud.Hud;
 import com.bitfire.uracer.game.logic.gametasks.hud.HudElement;
 import com.bitfire.uracer.game.logic.gametasks.hud.Positionable;
 import com.bitfire.uracer.game.logic.gametasks.hud.elements.player.DriftBar;
@@ -84,7 +84,7 @@ public final class HudPlayer extends HudElement {
 		driftBar.hideSecondsLabel();
 		highlightError.stop();
 		highlightNext.stop();
-		wrongWay.fadeOut(Hud.DefaultFadeMilliseconds);
+		wrongWay.fadeOut(Config.Graphics.DefaultResetFadeMilliseconds);
 	}
 
 	@Override

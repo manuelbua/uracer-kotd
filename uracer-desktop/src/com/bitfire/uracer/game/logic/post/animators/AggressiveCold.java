@@ -75,12 +75,14 @@ public final class AggressiveCold implements PostProcessingAnimator {
 
 	@Override
 	public void alertWrongWayBegins (int milliseconds) {
-		alertCollision = false;
-		lastCollisionFactor = 0;
-		GameTweener.stop(wrongWayAmount);
-		Timeline seq = Timeline.createSequence();
+		if (!wrongWayBegan) {
+			wrongWayBegan = true;
+			alertCollision = false;
+			lastCollisionFactor = 0;
+			GameTweener.stop(wrongWayAmount);
+			Timeline seq = Timeline.createSequence();
 
-		//@off
+			//@off
 		seq
 			.push(Tween.to(wrongWayAmount, BoxedFloatAccessor.VALUE, milliseconds).target(1.5f).ease(Quad.IN))
 			.pushPause(50)
@@ -88,17 +90,19 @@ public final class AggressiveCold implements PostProcessingAnimator {
 		;
 		//@on
 
-		GameTweener.start(seq);
-		wrongWayBegan = true;
+			GameTweener.start(seq);
+		}
 	}
 
 	@Override
 	public void alertWrongWayEnds (int milliseconds) {
-		GameTweener.stop(wrongWayAmount);
-		Timeline seq = Timeline.createSequence();
-		seq.push(Tween.to(wrongWayAmount, BoxedFloatAccessor.VALUE, milliseconds).target(0).ease(Quad.INOUT));
-		GameTweener.start(seq);
-		wrongWayBegan = false;
+		if (wrongWayBegan) {
+			wrongWayBegan = false;
+			GameTweener.stop(wrongWayAmount);
+			Timeline seq = Timeline.createSequence();
+			seq.push(Tween.to(wrongWayAmount, BoxedFloatAccessor.VALUE, milliseconds).target(0).ease(Quad.INOUT));
+			GameTweener.start(seq);
+		}
 	}
 
 	@Override
@@ -147,7 +151,6 @@ public final class AggressiveCold implements PostProcessingAnimator {
 	@Override
 	public void reset () {
 		alertCollision = false;
-		wrongWayBegan = false;
 
 		if (ssao != null) {
 			ssao.setOcclusionThresholds(0.3f, 0.1f);
@@ -161,7 +164,7 @@ public final class AggressiveCold implements PostProcessingAnimator {
 			ssao.setPatternSize(nightMode ? 2 : 3);
 			// }
 
-// ssao.enableDebug();
+			// ssao.enableDebug();
 		}
 
 		if (bloom != null) {
@@ -179,9 +182,13 @@ public final class AggressiveCold implements PostProcessingAnimator {
 			vignette.setLutIndexVal(0, 16);
 			vignette.setLutIndexVal(1, 7);
 			vignette.setLutIndexOffset(0);
-			wrongWayAmount.value = 0;
 			lastCollisionFactor = 0;
 			vignette.setEnabled(true);
+
+			if (wrongWayAmount.value > 0) {
+				wrongWayBegan = true;
+				alertWrongWayEnds(Config.Graphics.DefaultResetFadeMilliseconds);
+			}
 		}
 
 		if (zoom != null && hasPlayer) {
