@@ -226,6 +226,28 @@ public final class AggressiveCold implements PostProcessingAnimator {
 	private WindowedMean meanSpeed = new WindowedMean(2);
 	private WindowedMean meanStrength = new WindowedMean(5);
 
+	private void autoEnableZoomBlur (float blurStrength) {
+		boolean enabled = zoom.isEnabled();
+		boolean isZero = AMath.isZero(blurStrength);
+
+		if (isZero && enabled) {
+			zoom.setEnabled(false);
+		} else if (!isZero && !enabled) {
+			zoom.setEnabled(true);
+		}
+	}
+
+	private void autoEnableEarthCurvature (float curvatureAmount) {
+		boolean enabled = curvature.isEnabled();
+		boolean isZero = AMath.isZero(curvatureAmount);
+
+		if (isZero && enabled) {
+			curvature.setEnabled(false);
+		} else if (!isZero && !enabled) {
+			curvature.setEnabled(true);
+		}
+	}
+
 	@Override
 	public void update (float zoomCamera) {
 		float timeModFactor = URacer.Game.getTimeModFactor();
@@ -259,20 +281,15 @@ public final class AggressiveCold implements PostProcessingAnimator {
 			// auto-disable zoom
 			// float blurStrength = -0.1f * timeModFactor * currSpeedFactor;
 			float blurStrength = (-0.035f - 0.09f * currSpeedFactor) * timeModFactor - 0.02f * currSpeedFactor;
-// float blurStrength = (-0.035f - 0.09f * currSpeedFactor) * timeModFactor;
+			// float blurStrength = (-0.035f - 0.09f * currSpeedFactor) * timeModFactor;
 
-			boolean zoomEnabled = zoom.isEnabled();
-			boolean strengthIsZero = AMath.isZero(blurStrength);
-			if (strengthIsZero && zoomEnabled) {
-				zoom.setEnabled(false);
-			} else if (!strengthIsZero && !zoomEnabled) {
-				zoom.setEnabled(true);
-			}
+			autoEnableZoomBlur(blurStrength);
 
 			if (zoom.isEnabled()) {
 				zoom.setOrigin(playerScreenPos);
 				zoom.setBlurStrength(blurStrength);
 			}
+
 		}
 
 		if (bloom != null) {
@@ -318,17 +335,23 @@ public final class AggressiveCold implements PostProcessingAnimator {
 		}
 
 		//
-		// TODO out of dbg
+		// earth curvature (+ crt, optionally)
 		//
-		float maxzoom = GameWorldRenderer.MaxCameraZoom;
-		float factor = ((zoomCamera - 1) / (maxzoom - 1));
+
+		// maxzoom needs to be lowered of the same amount that the time dilation zoom feature will add to the zoom (0.1)
+		// (see SinglePlayerLogic::updateCamera)
+		float maxzoom = GameWorldRenderer.MaxCameraZoom - 0.1f;
+		float factor = MathUtils.clamp(((zoomCamera - 1) / (maxzoom - 1)), 0, 1);
 
 		float kdist = 0.18f;
 		if (curvature != null) {
 			float dist = kdist - kdist * factor;
 			dist = AMath.fixup(dist);
-			curvature.setDistortion(dist);
-			curvature.setZoom(1 - (dist / 2));
+			autoEnableEarthCurvature(dist);
+			if (curvature.isEnabled()) {
+				curvature.setDistortion(dist);
+				curvature.setZoom(1 - (dist / 2));
+			}
 		}
 
 		if (crt != null) {
@@ -337,5 +360,6 @@ public final class AggressiveCold implements PostProcessingAnimator {
 			crt.setDistortion(dist);
 			crt.setZoom(1 - (dist / 2));
 		}
+
 	}
 }

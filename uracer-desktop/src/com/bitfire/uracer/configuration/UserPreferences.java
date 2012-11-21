@@ -37,6 +37,7 @@ public final class UserPreferences {
 		// gameplay
 		TimeDilateInputMode,
 		NightMode,
+		LastPlayedTrack,
 		
 		;
 		// @on
@@ -114,6 +115,7 @@ public final class UserPreferences {
 
 		string(Preference.TimeDilateInputMode, Gameplay.TimeDilateInputMode.TouchAndRelease.toString());
 		bool(Preference.NightMode, false);
+		string(Preference.LastPlayedTrack, "");
 
 		// ensure the new configuration gets saved
 		prefs.flush();

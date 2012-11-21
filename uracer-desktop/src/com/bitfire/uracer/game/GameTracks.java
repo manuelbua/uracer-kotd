@@ -19,8 +19,6 @@ public final class GameTracks {
 	private static MessageDigest digest;
 	private static final Map<String, String> mapHashFilename = new HashMap<String, String>();
 	private static final Map<String, String> mapHashName = new HashMap<String, String>();
-// private static final Array<String> trackNames = new Array<String>();
-// private static final Array<String> trackIds = new Array<String>();
 	private static String[] trackNames;
 	private static String[] trackIds;
 

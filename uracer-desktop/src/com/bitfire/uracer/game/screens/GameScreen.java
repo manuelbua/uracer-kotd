@@ -5,6 +5,8 @@ import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.glutils.FrameBuffer;
 import com.bitfire.uracer.ScalingStrategy;
 import com.bitfire.uracer.URacer;
+import com.bitfire.uracer.configuration.UserPreferences;
+import com.bitfire.uracer.configuration.UserPreferences.Preference;
 import com.bitfire.uracer.configuration.UserProfile;
 import com.bitfire.uracer.game.Game;
 import com.bitfire.uracer.game.GameTracks;
@@ -27,6 +29,9 @@ public class GameScreen extends Screen {
 			Gdx.app.log("GameScreen", "The specified track could not be found :(");
 			URacer.Game.show(ScreenType.MainScreen);
 		}
+
+		// save as last played track
+		UserPreferences.string(Preference.LastPlayedTrack, ScreensShared.selectedTrackId);
 
 		UserProfile userProfile = new UserProfile();
 		game = new Game(userProfile, trackId, scalingStrategy);

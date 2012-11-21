@@ -20,6 +20,7 @@ import com.bitfire.uracer.game.logic.gametasks.messager.MessageAccessor;
 import com.bitfire.uracer.game.logic.types.common.TimeModulator;
 import com.bitfire.uracer.game.screens.GameScreensFactory;
 import com.bitfire.uracer.game.screens.GameScreensFactory.ScreenType;
+import com.bitfire.uracer.game.screens.ScreensShared;
 import com.bitfire.uracer.game.tween.SysTweener;
 import com.bitfire.uracer.game.world.models.ModelFactory;
 import com.bitfire.uracer.game.world.models.OrthographicAlignedStillModel;
@@ -137,6 +138,7 @@ public class URacer implements ApplicationListener {
 		Config.asDefault();
 
 		UserPreferences.load();
+		ScreensShared.loadFromUserPrefs();
 
 		Convert.init(scalingStrategy.tileMapZoomFactor, Config.Physics.PixelsPerMeter);
 		Art.init();
