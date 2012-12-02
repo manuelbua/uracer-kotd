@@ -76,6 +76,7 @@ public final class GameWorld {
 	private boolean nightMode;
 	protected RayHandler rayHandler = null;
 	protected ConeLight playerHeadlightsA, playerHeadlightsB = null;
+	protected PointLight playerImpulse = null;
 
 	// level meshes, package-level access for GameWorldRenderer (ugly but faster
 	// than accessors)
@@ -221,18 +222,16 @@ public final class GameWorld {
 		// setup player headlights data
 		c.set(0.1f, 0.2f, 0.9f, 0.7f);
 
+		// int headlightsMask = CollisionFilters.CategoryTrackWalls | CollisionFilters.CategoryReplay;
+		int headlightsMask = 0;
+
 		playerHeadlightsA = new ConeLight(rayHandler, maxRays, c, 25, 0, 0, 0, 9);
 		playerHeadlightsA.setSoft(true);
-		// playerHeadlightsA.setMaskBits(CollisionFilters.CategoryTrackWalls | CollisionFilters.CategoryReplay);
-		// playerHeadlightsA.setMaskBits(CollisionFilters.CategoryTrackWalls);
-		// playerHeadlightsA.setMaskBits(CollisionFilters.CategoryReplay);
-		playerHeadlightsA.setMaskBits(0);
+		playerHeadlightsA.setMaskBits(headlightsMask);
 
 		playerHeadlightsB = new ConeLight(rayHandler, maxRays, c, 25, 0, 0, 0, 9);
 		playerHeadlightsB.setSoft(true);
-		// playerHeadlightsB.setMaskBits(CollisionFilters.CategoryTrackWalls | CollisionFilters.CategoryReplay);
-		// playerHeadlightsB.setMaskBits(CollisionFilters.CategoryReplay);
-		playerHeadlightsB.setMaskBits(0);
+		playerHeadlightsB.setMaskBits(headlightsMask);
 
 		// setup level lights data, if any
 		Vector2 pos = new Vector2();
@@ -258,8 +257,16 @@ public final class GameWorld {
 			PointLight l = new PointLight(rayHandler, maxRays, c, MathUtils.random(20f, 25f), pos.x, pos.y);
 			l.setSoft(true);
 			l.setStaticLight(false);
-			l.setMaskBits(CollisionFilters.CategoryPlayer | CollisionFilters.CategoryTrackWalls | CollisionFilters.CategoryReplay);
+			l.setMaskBits(CollisionFilters.CategoryPlayer | CollisionFilters.CategoryTrackWalls);
 		}
+
+		playerImpulse = new PointLight(rayHandler, maxRays);
+		playerImpulse.setMaskBits(CollisionFilters.CategoryPlayer | CollisionFilters.CategoryReplay);
+		playerImpulse.setSoft(true);
+		playerImpulse.setStaticLight(false);
+		playerImpulse.setActive(true);
+		playerImpulse.setColor(1, 1, 1, 0.5f);
+		playerImpulse.setDistance(1);
 	}
 
 	//
@@ -695,6 +702,10 @@ public final class GameWorld {
 
 	public ConeLight getPlayerHeadLights (boolean aOrB) {
 		return aOrB ? playerHeadlightsA : playerHeadlightsB;
+	}
+
+	public PointLight getPlayerImpulseLight () {
+		return playerImpulse;
 	}
 
 	public World getBox2DWorld () {

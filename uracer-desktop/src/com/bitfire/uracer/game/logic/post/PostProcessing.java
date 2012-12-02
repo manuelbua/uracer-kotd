@@ -114,6 +114,10 @@ public final class PostProcessing {
 		return effects.get(Hash.APHash(name));
 	}
 
+	public boolean hasEffect (String name) {
+		return (effects.get(Hash.APHash(name)) != null);
+	}
+
 	public void addAnimator (String name, PostProcessingAnimator animator) {
 		animators.put(Hash.APHash(name), animator);
 	}

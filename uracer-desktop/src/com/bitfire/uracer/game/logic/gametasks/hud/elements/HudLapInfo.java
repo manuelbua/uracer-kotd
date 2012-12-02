@@ -86,9 +86,6 @@ public class HudLapInfo extends HudElement {
 			curr.setString(NumberString.format(lapInfo.getElapsedSeconds()), true);
 		}
 
-		curr.setPosition(Gdx.graphics.getWidth() / 2, Gdx.graphics.getHeight() - curr.getHalfHeight() - Convert.scaledPixels(25)
-			* scale);
-
 		curr.setColor(r.value, g.value, b.value);
 		curr.render(batch);
 	}

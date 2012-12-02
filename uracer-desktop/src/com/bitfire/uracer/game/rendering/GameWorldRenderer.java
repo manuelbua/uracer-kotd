@@ -8,6 +8,7 @@ import box2dLight.RayHandler;
 
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.files.FileHandle;
+import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.GL10;
 import com.badlogic.gdx.graphics.GL20;
 import com.badlogic.gdx.graphics.Mesh;
@@ -75,13 +76,13 @@ public final class GameWorldRenderer {
 		"precision mediump float;							\n" +
 		"#endif													\n" +
 		"uniform sampler2D u_texture;						\n" +
+		"uniform vec4 u_ambient;						\n" +
 		"varying vec2 v_TexCoord;							\n" +
 		"void main()											\n" +
 		"{\n" +
-		"	vec4 ambient = vec4(0.1, 0.05, 0.1, 0.4);\n" +
 		"	vec4 texel = texture2D( u_texture, v_TexCoord );	\n" +
 		"	if(texel.a < 0.5) discard;							\n" +
-		"	vec4 c = vec4((ambient.rgb + texel.rgb*texel.a)*ambient.a, texel.a);	\n" +
+		"	vec4 c = vec4((u_ambient.rgb + texel.rgb*texel.a)*u_ambient.a, texel.a);	\n" +
 		"	gl_FragColor = c;								\n" +
 		"}\n";
 	// @on
@@ -90,7 +91,7 @@ public final class GameWorldRenderer {
 	private GameWorld world = null;
 
 	// camera view
-	private PerspectiveCamera camPersp = null;
+	protected PerspectiveCamera camPersp = null;
 	protected OrthographicCamera camTilemap = null;
 	protected OrthographicCamera camOrtho = null;
 	protected Vector2 halfViewport = new Vector2();
@@ -102,12 +103,12 @@ public final class GameWorldRenderer {
 	private CameraController camController;
 	private static final float CamPerspPlaneNear = 1;
 	public static final float CamPerspPlaneFar = 240;
-	public static final float MaxCameraZoom = 1.4f;
+	public static final float MaxCameraZoom = 1.6f;
 	private static final float CamPerspElevation = 100f;
 
 	// rendering
 	private GL20 gl = null;
-	private ShaderProgram treeShader = null;
+	private ShaderProgram treeShader = null, treeShaderNight = null;
 	private UTileAtlas tileAtlas = null;
 	private boolean renderPlayerHeadlights = true;
 
@@ -158,14 +159,21 @@ public final class GameWorldRenderer {
 
 		if (showComplexTrees) {
 			trackTrees = world.getTrackTrees();
-			treeShader = ShaderLoader.fromString(treeVertexShader, world.isNightMode() ? treeFragmentShaderNight
-				: treeFragmentShader, "tree-fragment", "tree-vertex");
+			treeShader = ShaderLoader.fromString(treeVertexShader, treeFragmentShader, "tree-fragment", "tree-vertex");
 			if (treeShader == null || !treeShader.isCompiled()) {
 				throw new IllegalStateException(treeShader.getLog());
 			}
+
+			treeShaderNight = ShaderLoader.fromString(treeVertexShader, treeFragmentShaderNight, "tree-fragment-night",
+				"tree-vertex");
+			if (treeShaderNight == null || !treeShaderNight.isCompiled()) {
+				throw new IllegalStateException(treeShaderNight.getLog());
+			}
+
 		} else {
 			trackTrees = null;
 			treeShader = null;
+			treeShaderNight = null;
 		}
 
 		if (showWalls) {
@@ -300,7 +308,7 @@ public final class GameWorldRenderer {
 		Vector2 carPosition = car.state().position;
 		float carLength = car.getCarModel().length;
 
-		// the body's compound shape should be created with some clever thinking in it :)
+		// the body's compound shape should be created with some clever thinking
 		float offx = (carLength / 2f) + .25f + offsetX;
 		float offy = offsetY;
 
@@ -316,17 +324,22 @@ public final class GameWorldRenderer {
 	}
 
 	public void updatePlayerHeadlights (Car car) {
-		if (renderPlayerHeadlights && car != null) {
+		boolean hasCar = (car != null);
 
-			// update player light (subframe interpolation ready)
-			float ang = 90 + car.state().orientation;
-			Vector2 v = orientationToPosition(car, ang, 0, 0.5f);
-			playerLightsA.setDirection(ang + 5);
-			playerLightsA.setPosition(v.x, v.y);
+		// update player light (subframe interpolation ready)
+		float ang = 90 + car.state().orientation;
 
-			v = orientationToPosition(car, ang, 0, -0.5f);
-			playerLightsB.setDirection(ang - 5);
-			playerLightsB.setPosition(v.x, v.y);
+		if (hasCar) {
+
+			if (renderPlayerHeadlights) {
+				Vector2 v = orientationToPosition(car, ang, 0, 0.5f);
+				playerLightsA.setDirection(ang + 5);
+				playerLightsA.setPosition(v.x, v.y);
+
+				v = orientationToPosition(car, ang, 0, -0.5f);
+				playerLightsB.setDirection(ang - 5);
+				playerLightsB.setPosition(v.x, v.y);
+			}
 		}
 
 		// if( Config.isDesktop && (URacer.getFrameCount() & 0x1f) == 0x1f ) {
@@ -334,11 +347,37 @@ public final class GameWorldRenderer {
 		// }
 	}
 
+	private Color ambientColor = new Color(0.1f, 0.05f, 0.1f, 0.4f);
+	private Color treesAmbientColor = new Color(0.1f, 0.05f, 0.1f, 0.4f);
+
+	public Color getAmbientColor () {
+		return ambientColor;
+	}
+
+	public void setAmbientColor (float r, float g, float b, float a) {
+		ambientColor.set(r, g, b, a);
+	}
+
+	public void setAmbientColor (Color color) {
+		ambientColor.set(color);
+	}
+
+	public Color getTreesAmbientColor () {
+		return treesAmbientColor;
+	}
+
+	public void setTreesAmbientColor (float r, float g, float b, float a) {
+		treesAmbientColor.set(r, g, b, a);
+	}
+
+	public void setTreesAmbientColor (Color color) {
+		treesAmbientColor.set(color);
+	}
+
 	private void updateRayHandler () {
 		if (rayHandler != null) {
 
-			// RayHandler.useDiffuseLight(false);
-			// rayHandler.setAmbientLight(0.1f, 0.05f, 0.1f, 0.4f);
+			rayHandler.setAmbientLight(ambientColor);
 
 			// @off
 			rayHandler.setCombinedMatrix(camOrthoMvpMt, Convert.px2mt(camOrtho.position.x), Convert.px2mt(camOrtho.position.y),
@@ -378,7 +417,7 @@ public final class GameWorldRenderer {
 
 		float zoom = 1f / cameraZoom;
 
-		// remove subpixel accuracy (jagged behavior)
+		// remove subpixel accuracy (jagged behavior) by uncommenting the round
 		camOrtho.position.x = /* MathUtils.round */(cameraPos.x);
 		camOrtho.position.y = /* MathUtils.round */(cameraPos.y);
 		camOrtho.position.z = 0;
@@ -502,7 +541,7 @@ public final class GameWorldRenderer {
 			gl.glFrontFace(GL20.GL_CCW);
 			gl.glCullFace(GL20.GL_BACK);
 
-			renderOrthographicAlignedModels(staticMeshes, false);
+			renderOrthographicAlignedModels(staticMeshes, false, world.isNightMode());
 
 			gl.glDisable(GL20.GL_CULL_FACE);
 			// gl.glDisable(GL20.GL_DEPTH_TEST);
@@ -536,29 +575,37 @@ public final class GameWorldRenderer {
 		}
 
 		gl.glDisable(GL20.GL_CULL_FACE);
-		renderedWalls = renderOrthographicAlignedModels(walls.models, depthOnly);
+		renderedWalls = renderOrthographicAlignedModels(walls.models, depthOnly, false);
 	}
 
 	private void renderTrees (TrackTrees trees, boolean depthOnly) {
 		trees.transform(camPersp, camOrtho, halfViewport);
 
-		ShaderProgram shader = treeShader;
+		ShaderProgram shader = null;
+		if (depthOnly) {
+			shader = shNormalDepthAlpha;
+		} else {
+			if (world.isNightMode()) {
+				shader = treeShaderNight;
+			} else {
+				shader = treeShader;
+			}
+		}
 
 		gl.glDisable(GL20.GL_CULL_FACE);
 		gl.glDisable(GL20.GL_BLEND);
 
-		if (depthOnly) {
-			shader = shNormalDepthAlpha;
-		}
-
-		Art.meshTreeTrunk.bind();
-
 		shader.begin();
+		Art.meshTreeTrunk.bind();
 
 		if (depthOnly) {
 			shader.setUniformMatrix("proj", camPersp.projection);
 			shader.setUniformMatrix("view", camPersp.view);
 			shader.setUniformi("u_diffuse", 0);
+		} else {
+			if (world.isNightMode()) {
+				shader.setUniformf("u_ambient", treesAmbientColor);
+			}
 		}
 
 		// all the trunks
@@ -642,17 +689,23 @@ public final class GameWorldRenderer {
 	private Matrix4 mtx2 = new Matrix4();
 	private Vector2 pospx = new Vector2();
 
-	private int renderOrthographicAlignedModels (List<OrthographicAlignedStillModel> models, boolean depthOnly) {
+	private int renderOrthographicAlignedModels (List<OrthographicAlignedStillModel> models, boolean depthOnly, boolean nightMode) {
 		int renderedCount = 0;
 		OrthographicAlignedStillModel m;
 		StillSubMesh submesh;
 
 		float meshZ = -(camPersp.far - camPersp.position.z) + (camPersp.far * (1 - (camOrtho.zoom)));
 
-		ShaderProgram shader = OrthographicAlignedStillModel.shader;
+		ShaderProgram shader = null;
 
 		if (depthOnly) {
 			shader = shNormalDepthAlpha;
+		} else {
+			if (nightMode) {
+				shader = OrthographicAlignedStillModel.shaderNight;
+			} else {
+				shader = OrthographicAlignedStillModel.shader;
+			}
 		}
 
 		shader.begin();
@@ -661,6 +714,10 @@ public final class GameWorldRenderer {
 			shader.setUniformMatrix("proj", camPersp.projection);
 			shader.setUniformMatrix("view", camPersp.view);
 			shader.setUniformi("u_diffuse", 0);
+		} else {
+			if (world.isNightMode()) {
+				shader.setUniformf("u_ambient", ambientColor);
+			}
 		}
 
 		boolean needRebind = false;

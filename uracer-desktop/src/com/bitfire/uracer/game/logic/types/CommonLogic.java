@@ -208,14 +208,20 @@ public abstract class CommonLogic implements GameLogic, CarEvent.Listener, Playe
 	protected void restartGame () {
 		restartLogic();
 
+		// 3..2..1.. playerLapComplete()!
+		onLapComplete();
+
 		// raise event
 		gameRestart();
 	}
 
 	/** Restart and completely resets the game, removing any playing replay so far */
 	protected void resetGame () {
-		restartLogic();
 		resetLogic();
+		restartLogic();
+
+		// 3..2..1.. playerLapComplete()!
+		onLapComplete();
 
 		// raise event
 		gameReset();
@@ -397,16 +403,13 @@ public abstract class CommonLogic implements GameLogic, CarEvent.Listener, Playe
 		playerTasks.hudLapInfo.toDefaultColor();
 		playerTasks.hudLapInfo.setValid(true);
 		playerTasks.hudPlayer.trackProgress.resetCounters(false);
-
-		// 3..2..1.. playerLapComplete()!
-		onLapComplete();
 	}
 
 	private void resetLogic () {
+		replayManager.reset();
 		lapManager.abortRecording();
 		lapManager.reset();
 		gameTasksManager.reset();
-		onLapComplete();
 	}
 
 	//
@@ -460,7 +463,15 @@ public abstract class CommonLogic implements GameLogic, CarEvent.Listener, Playe
 		Ssao ssao = (Ssao)postProcessing.getEffect(Effects.Ssao.name);
 		// CameraMotion mot = (CameraMotion)postProcessing.getEffect(Effects.MotionBlur.name);
 
-		// camera update
+		if (gameWorld.isNightMode() && postProcessing.hasEffect(Effects.Crt.name)) {
+			gameWorldRenderer.setAmbientColor(0.1f, 0.05f, 0.1f, 0.6f + 0.2f * URacer.Game.getTimeModFactor());
+			gameWorldRenderer.setTreesAmbientColor(0.1f, 0.05f, 0.1f, 0.5f + 0.5f * URacer.Game.getTimeModFactor());
+		} else {
+			gameWorldRenderer.setAmbientColor(0.1f, 0.05f, 0.15f, 0.4f + 0.2f * URacer.Game.getTimeModFactor());
+			gameWorldRenderer.setTreesAmbientColor(0.1f, 0.1f, 0.15f, 0.4f + 0.5f * URacer.Game.getTimeModFactor());
+		}
+
+		// camera/ray handler update
 		gameWorldRenderer.updateCamera();
 
 		// post-processing step / SSAO

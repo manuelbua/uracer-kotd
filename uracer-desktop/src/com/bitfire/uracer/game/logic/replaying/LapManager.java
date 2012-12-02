@@ -42,6 +42,7 @@ public class LapManager implements Disposable {
 	/** Reset any recorded replay so far */
 	public void reset () {
 		lastRecordedReplay = null;
+		recorder.reset();
 		lapInfo.resetTime();
 		bufferManager.reset();
 	}

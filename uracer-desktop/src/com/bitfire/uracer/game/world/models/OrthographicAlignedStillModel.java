@@ -21,6 +21,7 @@ public class OrthographicAlignedStillModel {
 	public BoundingBox boundingBox = new BoundingBox();
 
 	public static ShaderProgram shader = null;
+	public static ShaderProgram shaderNight = null;
 
 	// Blender => cube 14.2x14.2 meters = one tile (256px) w/ far plane @48
 	// (256px are 14.2mt w/ 18px/mt)
@@ -46,9 +47,9 @@ public class OrthographicAlignedStillModel {
 		String vertexShader =
 			"uniform mat4 u_projTrans;							\n" +
 			"attribute vec4 a_position;						\n" +
-				"attribute vec2 a_texCoord0;					\n" +
+			"attribute vec2 a_texCoord0;					\n" +
 			"varying vec2 v_TexCoord;							\n" +
-				"void main()										\n" +
+			"void main()										\n" +
 			"{\n"+
 			"	gl_Position = u_projTrans * a_position;	\n" +
 			"	v_TexCoord = a_texCoord0;						\n" +
@@ -56,18 +57,39 @@ public class OrthographicAlignedStillModel {
 
 		String fragmentShader =
 			"#ifdef GL_ES											\n" +
+				"	precision mediump float;						\n" +
+				"#endif													\n" +
+				"uniform sampler2D u_texture;						\n" +
+				"varying vec2 v_TexCoord;							\n" +
+				"void main()											\n"+
+				"{\n" +
+				"	vec4 texel = texture2D( u_texture, v_TexCoord );	\n" +
+				//"	if(texel.a < 0.5) discard;							\n" +
+				"	gl_FragColor = texel;								\n" +
+				"}\n";
+
+		String fragmentShaderNight =
+			"#ifdef GL_ES											\n" +
 			"	precision mediump float;						\n" +
 			"#endif													\n" +
 			"uniform sampler2D u_texture;						\n" +
+			"uniform vec4 u_ambient;						\n" +
 			"varying vec2 v_TexCoord;							\n" +
 			"void main()											\n"+
 			"{\n" +
-			"	gl_FragColor = texture2D( u_texture, v_TexCoord );	\n" +
+			"	vec4 texel = texture2D( u_texture, v_TexCoord );	\n" +
+			//"	if(texel.a < 0.5) discard;							\n" +
+			"	vec4 c = vec4((u_ambient.rgb + texel.rgb*texel.a)*u_ambient.a, texel.a);	\n" +
+			"	gl_FragColor = c;								\n" +
 			"}\n";
 		// @on
 
 		if (!(shader instanceof ShaderProgram)) {
 			shader = ShaderLoader.fromString(vertexShader, fragmentShader, "OASM::vert", "OASM::frag");
+		}
+
+		if (!(shaderNight instanceof ShaderProgram)) {
+			shaderNight = ShaderLoader.fromString(vertexShader, fragmentShaderNight, "OASM::vertNight", "OASM::fragNight");
 		}
 	}
 

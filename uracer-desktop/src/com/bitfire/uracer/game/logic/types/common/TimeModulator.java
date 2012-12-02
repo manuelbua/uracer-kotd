@@ -4,7 +4,7 @@ package com.bitfire.uracer.game.logic.types.common;
 import aurelienribon.tweenengine.Timeline;
 import aurelienribon.tweenengine.Tween;
 import aurelienribon.tweenengine.TweenEquation;
-import aurelienribon.tweenengine.equations.Quad;
+import aurelienribon.tweenengine.equations.Sine;
 
 import com.bitfire.uracer.game.tween.SysTweener;
 import com.bitfire.uracer.utils.AMath;
@@ -16,8 +16,8 @@ public final class TimeModulator {
 	public static final float MinTime = 0.25f;
 	public static final float MaxTime = 1.0f;
 
-	private static final TweenEquation EqIn = Quad.OUT;
-	private static final TweenEquation EqOut = Quad.INOUT;
+// private static final TweenEquation EqIn = Sine.INOUT;
+// private static final TweenEquation EqOut = Quad.INOUT;
 
 	private BoxedFloat timeMultiplier;
 	private Timeline timeSeq;
@@ -37,11 +37,11 @@ public final class TimeModulator {
 	}
 
 	public void toDilatedTime () {
-		modulateTo(EqIn, MinTime, 1000);
+		modulateTo(Sine.OUT, MinTime, 2000);
 	}
 
 	public void toNormalTime () {
-		modulateTo(EqOut, MaxTime, 1000);
+		modulateTo(Sine.INOUT, MaxTime, 2000);
 	}
 
 	private void modulateTo (TweenEquation eq, float to, float durationMs) {

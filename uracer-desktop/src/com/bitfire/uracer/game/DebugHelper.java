@@ -100,26 +100,27 @@ public final class DebugHelper {
 	}
 
 	private void render (SpriteBatch batch) {
-		renderVersionInfo(batch);
+		renderVersionInfo(batch, Art.DebugFontHeight * 2);
+
 		if (Config.Debug.RenderDebugInfoFpsStats) {
-			renderFpsStats(batch);
+			renderFpsStats(batch, Gdx.graphics.getHeight() - Art.DebugFontHeight);
 		}
 
 		if (Config.Debug.ShowAdvancedDebugInfo) {
 			if (Config.Debug.RenderDebugInfoGraphics) {
-				renderGraphicalStats(batch);
+				renderGraphicalStats(batch, Art.DebugFontHeight * 2);
 			}
 
 			if (Config.Debug.RenderDebugInfoMemoryStats) {
-				renderMemoryUsage(batch);
+				renderMemoryUsage(batch, Gdx.graphics.getHeight() - Art.DebugFontHeight * 4);
 			}
 
 			if (Config.Debug.RenderPlayerDebugInfo && player != null) {
-				renderPlayerInfo(batch, player);
+				renderPlayerInfo(batch, player, 0);
 			}
 
 			if (Config.Debug.RenderDebugInfoPostProcessor && postProcessor != null) {
-				renderPostProcessorInfo(batch, postProcessor);
+				renderPostProcessorInfo(batch, postProcessor, Gdx.graphics.getHeight() - Art.DebugFontHeight);
 			}
 
 			if (Config.Debug.RenderDebugInfoMeshStats) {
@@ -133,29 +134,28 @@ public final class DebugHelper {
 		}
 	}
 
-	private void renderGraphicalStats (SpriteBatch batch) {
+	private void renderGraphicalStats (SpriteBatch batch, int y) {
 		batch.enableBlending();
 		batch.setColor(1, 1, 1, 0.8f);
-		batch.draw(stats.getRegion(), Gdx.graphics.getWidth() - stats.getWidth(), Art.DebugFontHeight * 2);
+		batch.draw(stats.getRegion(), Gdx.graphics.getWidth() - stats.getWidth(), y);
 		batch.setColor(1, 1, 1, 1f);
 		batch.disableBlending();
 	}
 
-	private void renderFpsStats (SpriteBatch batch) {
+	private void renderFpsStats (SpriteBatch batch, int y) {
 		String text = "fps: " + NumberString.formatLong(Gdx.graphics.getFramesPerSecond()) + ", phy: "
 			+ NumberString.formatLong(stats.meanPhysics.getMean()) + ", gfx: " + NumberString.formatLong(stats.meanRender.getMean())
 			+ ", ticks: " + NumberString.formatLong(stats.meanTickCount.getMean());
 
-		SpriteBatchUtils.drawString(batch, text, Gdx.graphics.getWidth() - text.length() * Art.DebugFontWidth,
-			Gdx.graphics.getHeight() - Art.DebugFontHeight);
+		SpriteBatchUtils.drawString(batch, text, Gdx.graphics.getWidth() - text.length() * Art.DebugFontWidth, y);
 	}
 
-	private void renderVersionInfo (SpriteBatch batch) {
+	private void renderVersionInfo (SpriteBatch batch, int y) {
 		SpriteBatchUtils.drawString(batch, uRacerInfo, Gdx.graphics.getWidth() - uRacerInfo.length() * Art.DebugFontWidth, 0,
-			Art.DebugFontWidth, Art.DebugFontHeight * 2);
+			Art.DebugFontWidth, y);
 	}
 
-	private void renderMemoryUsage (SpriteBatch batch) {
+	private void renderMemoryUsage (SpriteBatch batch, int y) {
 		float oneOnMb = 1f / 1048576f;
 		float javaHeapMb = (float)Gdx.app.getJavaHeap() * oneOnMb;
 		float nativeHeapMb = (float)Gdx.app.getNativeHeap() * oneOnMb;
@@ -163,37 +163,41 @@ public final class DebugHelper {
 		String text = "java heap = " + NumberString.format(javaHeapMb) + "MB" + " - native heap = "
 			+ NumberString.format(nativeHeapMb) + "MB";
 
-		SpriteBatchUtils.drawString(batch, text, 0, Gdx.graphics.getHeight() - Art.DebugFontHeight);
+		SpriteBatchUtils.drawString(batch, text, 0, y);
 	}
 
 	private void renderB2dWorld (World world, Matrix4 modelViewProj) {
 		b2drenderer.render(world, modelViewProj);
 	}
 
-	private void renderPostProcessorInfo (SpriteBatch batch, PostProcessor postProcessor) {
+	private void renderPostProcessorInfo (SpriteBatch batch, PostProcessor postProcessor, int y) {
 		String text = "Post-processing fx count = " + postProcessor.getEnabledEffectsCount();
-		SpriteBatchUtils.drawString(batch, text, 0, Gdx.graphics.getHeight() - Art.DebugFontHeight * 4);
+		SpriteBatchUtils.drawString(batch, text, 0, y);
 	}
 
-	private void renderPlayerInfo (SpriteBatch batch, PlayerCar player) {
+	private void renderPlayerInfo (SpriteBatch batch, PlayerCar player, int y) {
 		CarDescriptor carDesc = player.getCarDescriptor();
 		Body body = player.getBody();
 		Vector2 pos = GameRenderer.ScreenUtils.worldMtToScreen(body.getPosition());
 		EntityRenderState state = player.state();
 
-		SpriteBatchUtils.drawString(batch, "vel_wc len =" + carDesc.velocity_wc.len(), 0, 13);
-		SpriteBatchUtils.drawString(batch, "vel_wc [x=" + carDesc.velocity_wc.x + ", y=" + carDesc.velocity_wc.y + "]", 0, 20);
-		SpriteBatchUtils.drawString(batch, "steerangle=" + carDesc.steerangle, 0, 27);
-		SpriteBatchUtils.drawString(batch, "throttle=" + carDesc.throttle, 0, 34);
-		SpriteBatchUtils.drawString(batch, "screen x=" + pos.x + ",y=" + pos.y, 0, 80);
-		SpriteBatchUtils.drawString(batch, "world-mt x=" + body.getPosition().x + ",y=" + body.getPosition().y, 0, 87);
+		SpriteBatchUtils.drawString(batch, "vel_wc len =" + carDesc.velocity_wc.len(), 0, y);
+		SpriteBatchUtils.drawString(batch, "vel_wc [x=" + carDesc.velocity_wc.x + ", y=" + carDesc.velocity_wc.y + "]", 0, y
+			+ Art.DebugFontWidth);
+		SpriteBatchUtils.drawString(batch, "steerangle=" + carDesc.steerangle, 0, y + Art.DebugFontWidth * 2);
+		SpriteBatchUtils.drawString(batch, "throttle=" + carDesc.throttle, 0, y + Art.DebugFontWidth * 3);
+		SpriteBatchUtils.drawString(batch, "screen x=" + pos.x + ",y=" + pos.y, 0, y + Art.DebugFontWidth * 4);
+		SpriteBatchUtils.drawString(batch, "world-mt x=" + body.getPosition().x + ",y=" + body.getPosition().y, 0, y
+			+ Art.DebugFontWidth * 5);
 		SpriteBatchUtils.drawString(batch,
-			"world-px x=" + Convert.mt2px(body.getPosition().x) + ",y=" + Convert.mt2px(body.getPosition().y), 0, 93);
+			"world-px x=" + Convert.mt2px(body.getPosition().x) + ",y=" + Convert.mt2px(body.getPosition().y), 0, y
+				+ Art.DebugFontWidth * 6);
 		// Debug.drawString( "dir worldsize x=" + Director.worldSizeScaledPx.x + ",y=" +
 		// Director.worldSizeScaledPx.y, 0, 100 );
 		// Debug.drawString( "dir bounds x=" + Director.boundsPx.x + ",y=" + Director.boundsPx.width, 0, 107 );
-		SpriteBatchUtils.drawString(batch, "orient=" + body.getAngle(), 0, 114);
-		SpriteBatchUtils.drawString(batch, "render.interp=" + (state.position.x + "," + state.position.y), 0, 121);
+		SpriteBatchUtils.drawString(batch, "orient=" + body.getAngle(), 0, y + Art.DebugFontWidth * 7);
+		SpriteBatchUtils.drawString(batch, "render.interp=" + (state.position.x + "," + state.position.y), 0, y
+			+ Art.DebugFontWidth * 8);
 
 		// BatchUtils.drawString( batch, "on tile " + tilePosition, 0, 0 );
 	}

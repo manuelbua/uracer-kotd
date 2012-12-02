@@ -6,18 +6,23 @@ import aurelienribon.tweenengine.Timeline;
 import aurelienribon.tweenengine.Tween;
 import aurelienribon.tweenengine.TweenCallback;
 import aurelienribon.tweenengine.equations.Quad;
+import box2dLight.PointLight;
 
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.math.MathUtils;
+import com.badlogic.gdx.math.Vector3;
 import com.badlogic.gdx.math.WindowedMean;
 import com.badlogic.gdx.utils.Array;
+import com.bitfire.uracer.Input;
 import com.bitfire.uracer.ScalingStrategy;
+import com.bitfire.uracer.URacer;
 import com.bitfire.uracer.configuration.Config;
 import com.bitfire.uracer.configuration.UserProfile;
 import com.bitfire.uracer.game.Time;
 import com.bitfire.uracer.game.Time.Reference;
 import com.bitfire.uracer.game.actors.Car;
 import com.bitfire.uracer.game.actors.CarPreset;
+import com.bitfire.uracer.game.actors.CarState;
 import com.bitfire.uracer.game.actors.GhostCar;
 import com.bitfire.uracer.game.logic.gametasks.hud.elements.player.DriftBar;
 import com.bitfire.uracer.game.logic.gametasks.messager.Messager;
@@ -93,24 +98,43 @@ public class SinglePlayerLogic extends CommonLogic {
 		float cameraZoom = (maxZoom - 0.1f) - (zoomRange) * zoomFromSpeed + (zoomRange + 0.1f) * timeModFactor * zoomFromSpeed;
 		cameraZoom = AMath.fixup(MathUtils.clamp(cameraZoom, 1, maxZoom));
 		gameWorldRenderer.setCameraZoom(cameraZoom);
-// gameWorldRenderer.setCameraZoom(1f);
+		// gameWorldRenderer.setCameraZoom(1f);
 
 		// update player's headlights and move the world camera to follows it, if there is a player
 		if (hasPlayer()) {
 
 			if (gameWorld.isNightMode()) {
 				gameWorldRenderer.updatePlayerHeadlights(playerCar);
+
+				// update player's impulse light
+				PointLight l = gameWorld.getPlayerImpulseLight();
+				CarState cs = playerCar.carState;
+
+				Input input = URacer.Game.getInputSystem();
+
+				Vector3 v3 = GameRenderer.ScreenUtils.screenToWorldMt(input.getXY());
+				l.setActive(true);
+				l.setPosition(v3.x, v3.y);
+				// playerImpulse.setPosition(car.getWorldPosMt().x, car.getWorldPosMt().y);
+
+				// float f = 1;// cs.currSpeedFactor;
+				float f = cs.currSpeedFactor * cs.currForceFactor;
+				l.setDistance(10 - 8 * f);
+				l.setSoftnessLenght(5);
+
+				float v = MathUtils.clamp(1f * f, 0, 1);
+				l.setColor(1, 1, 1, v);
+// l.setColor(0.1f, 0.2f, 0.9f, v);
+// Color p = ColorUtils.paletteRYG(v + 0.7f, v);
+// l.setColor(p);
 			}
 
 			gameWorldRenderer.setCameraPosition(playerCar.state().position, playerCar.state().orientation,
 				playerCar.carState.currSpeedFactor);
 
 		} else if (getGhost(0) != null && getGhost(0).hasReplay()) {
-
 			gameWorldRenderer.setCameraPosition(getGhost(0).state().position, getGhost(0).state().orientation, 0);
-
 		} else {
-
 			// no ghost, no player, WTF?
 			gameWorldRenderer.setCameraPosition(Convert.mt2px(gameWorld.playerStartPos), gameWorld.playerStartOrientRads, 0);
 		}
@@ -307,7 +331,7 @@ public class SinglePlayerLogic extends CommonLogic {
 	@Override
 	protected void ghostFadingOut (Car ghost) {
 		if (hasPlayer() && ghost == nextTarget) {
-			playerTasks.hudPlayer.unHighlightNextTarget(ghost);
+			playerTasks.hudPlayer.unHighlightNextTarget();
 		}
 	}
 

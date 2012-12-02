@@ -117,6 +117,11 @@ public class TrackProgress extends Positionable implements Disposable {
 
 		float playerToTarget = 0;
 
+// float a = 1f - 0.7f * URacer.Game.getTimeModFactor();
+		float a = 0.25f;
+
+		playerToTarget = AMath.fixup(progressval - progressTargetVal);
+
 		if (distPlayer > 0) {
 			if (!advantageShown) {
 				advantageShown = true;
@@ -141,6 +146,7 @@ public class TrackProgress extends Positionable implements Disposable {
 		float timeFactor = URacer.Game.getTimeModFactor() * 0.3f;
 
 		lblAdvantage.setColor(advantageColor);
+		lblAdvantage.setAlpha(a * 2);
 		lblAdvantage.setScale(cameraZoom * (0.6f + 0.3f * (dist + 0.7f)));
 		lblAdvantage.setPosition(position.x, position.y - cameraZoom * Convert.scaledPixels(90) - Convert.scaledPixels(90)
 			* timeFactor * cameraZoom - Convert.scaledPixels(10) * (dist + 0.7f) * cameraZoom);
@@ -154,8 +160,6 @@ public class TrackProgress extends Positionable implements Disposable {
 		// progressval = 0.5f;
 		// distGhost = 0.15f;
 		// distanceFromBest = 0.15f;
-
-		float a = 1f - 0.7f * URacer.Game.getTimeModFactor();
 
 		batch.setShader(shProgress);
 

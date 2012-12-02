@@ -49,7 +49,7 @@ public final class AggressiveCold implements PostProcessingAnimator {
 	private boolean wrongWayBegan = false;
 	private boolean alertCollision = false;
 	private float lastCollisionFactor = 0;
-	private float bloomThreshold = 0.45f;
+	private float bloomThreshold = 0.4f;
 
 	public AggressiveCold (CommonLogic logic, PostProcessing post, boolean nightMode) {
 		this.logic = logic;
@@ -155,7 +155,7 @@ public final class AggressiveCold implements PostProcessingAnimator {
 		if (ssao != null) {
 			ssao.setOcclusionThresholds(0.3f, 0.1f);
 			ssao.setRadius(0.001f, nightMode ? 0.08f : 0.12f);
-			ssao.setPower(nightMode ? 3f : 2f, 1);
+			ssao.setPower(nightMode ? 2.8f : 2f, 1);
 			// if (Ssao.Quality.valueOf(UserPreferences.string(Preference.SsaoQuality)) == Ssao.Quality.High) {
 			// ssao.setSampleCount(16);
 			// ssao.setPatternSize(4);
@@ -168,7 +168,7 @@ public final class AggressiveCold implements PostProcessingAnimator {
 		}
 
 		if (bloom != null) {
-			bloomThreshold = (nightMode ? 0.3f : 0.45f);
+			bloomThreshold = (nightMode ? 0.27f : bloomThreshold);
 			Bloom.Settings bloomSettings = new Bloom.Settings("subtle", Config.PostProcessing.BlurType,
 				Config.PostProcessing.BlurNumPasses, 1.5f, bloomThreshold, 1f, 0.5f, 1f, 1.5f);
 			bloom.setSettings(bloomSettings);
@@ -203,7 +203,7 @@ public final class AggressiveCold implements PostProcessingAnimator {
 			crt.setTime(0);
 
 			// note, a perfect color offset depends from screen size
-			crt.setColorOffset(0.002f);
+			crt.setColorOffset(0.0015f);
 			crt.setDistortion(0.125f);
 			crt.setZoom(0.94f);
 
@@ -280,7 +280,8 @@ public final class AggressiveCold implements PostProcessingAnimator {
 		if (zoom != null && hasPlayer) {
 			// auto-disable zoom
 			// float blurStrength = -0.1f * timeModFactor * currSpeedFactor;
-			float blurStrength = (-0.035f - 0.09f * currSpeedFactor) * timeModFactor - 0.02f * currSpeedFactor;
+			float blurStrength = (-0.035f - 0.09f * currSpeedFactor) * timeModFactor - 0.02f * currSpeedFactor - timeModFactor
+				* 0.01f;
 			// float blurStrength = (-0.035f - 0.09f * currSpeedFactor) * timeModFactor;
 
 			autoEnableZoomBlur(blurStrength);
@@ -294,11 +295,14 @@ public final class AggressiveCold implements PostProcessingAnimator {
 
 		if (bloom != null) {
 
-			bloom.setBaseSaturation(AMath.lerp(0.6f, 0.4f, timeModFactor));
-			// bloom.setBaseSaturation(AMath.lerp(0.8f, 0.05f, timeModFactor));
+			bloom.setBaseSaturation(AMath.lerp(0.8f, 0.1f, timeModFactor));
+
 			// bloom.setBloomSaturation(1.5f - timeModFactor * 0.15f);
 			// if (!nightMode) {
-			// bloom.setThreshold(0.3f);
+			// bloom.setThreshold(bloomThreshold - (bloomThreshold / 2) * timeModFactor);
+			// bloom.setThreshold(0.27f);
+
+			bloom.setBloomIntesity(1f + timeModFactor * 0.0f);
 			// }
 
 			// with RttRatio = 0.5f
@@ -355,10 +359,13 @@ public final class AggressiveCold implements PostProcessingAnimator {
 		}
 
 		if (crt != null) {
+			// zoom+earth curvature
 			float dist = kdist - kdist * factor;
 			dist = AMath.fixup(dist);
 			crt.setDistortion(dist);
 			crt.setZoom(1 - (dist / 2));
+
+			crt.setColorOffset(0.001f);
 		}
 
 	}

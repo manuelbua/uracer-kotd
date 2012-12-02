@@ -1,7 +1,6 @@
 
 package com.bitfire.uracer.game.logic.types.common;
 
-import com.badlogic.gdx.Gdx;
 import com.bitfire.uracer.game.GameplaySettings;
 import com.bitfire.uracer.game.Time;
 import com.bitfire.uracer.game.Time.Reference;
@@ -57,15 +56,15 @@ public class WrongWayMonitor {
 			if (!isWrongWay) {
 				// try mark wrong way
 				if (wrongWayTimer.isStopped()) {
-					Gdx.app.log("WrongWayMonitor", "--> detect wrong way begins");
+					// Gdx.app.log("WrongWayMonitor", "--> detect wrong way begins");
 					wrongWayTimer.start();
 				} else if (wrongWayTimer.elapsed(Reference.TickSeconds) > GameplaySettings.MaxSecondsWrongWayDetector) {
 					wrongWayTimer.reset();
 					isWrongWay = true;
 					listener.onWrongWayBegins();
-					Gdx.app.log("WrongWayMonitor", "--> wrong way detected, invalidating lap");
+					// Gdx.app.log("WrongWayMonitor", "--> wrong way detected, invalidating lap");
 				} else {
-					Gdx.app.log("WrongWayMonitor", "--> " + wrongWayTimer.elapsed(Reference.TickSeconds));
+					// Gdx.app.log("WrongWayMonitor", "--> " + wrongWayTimer.elapsed(Reference.TickSeconds));
 				}
 			}
 
@@ -76,7 +75,7 @@ public class WrongWayMonitor {
 			// player changed his mind earlier and there weren't enough seconds of wrong way to mark it
 			// as that, reset the timer
 			if (!wrongWayTimer.isStopped()) {
-				Gdx.app.log("WrongWayMonitor", "<-- player got it right in time, wrong way detection ends");
+				// Gdx.app.log("WrongWayMonitor", "<-- player got it right in time, wrong way detection ends");
 				wrongWayTimer.reset();
 			}
 		}

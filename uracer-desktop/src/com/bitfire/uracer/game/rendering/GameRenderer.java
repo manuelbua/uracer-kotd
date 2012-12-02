@@ -35,7 +35,8 @@ public final class GameRenderer {
 	public static final class ScreenUtils {
 		public static int ScreenWidth, ScreenHeight;
 		public static boolean ready = false;
-		private static Vector2 screenPosFor = new Vector2();
+		private static Vector2 tmp2 = new Vector2();
+		private static Vector3 tmp3 = new Vector3();
 		private static GameWorldRenderer worldRenderer;
 
 		public static void init (GameWorldRenderer worldRenderer) {
@@ -45,17 +46,23 @@ public final class GameRenderer {
 			ScreenUtils.ScreenHeight = Gdx.graphics.getHeight();
 		}
 
-		private static Vector3 vtmp = new Vector3();
-
 		public static Vector2 worldMtToScreen (Vector2 worldPositionMt) {
 			return worldPxToScreen(Convert.mt2px(worldPositionMt));
 		}
 
 		public static Vector2 worldPxToScreen (Vector2 worldPositionPx) {
-			vtmp.set(worldPositionPx.x, worldPositionPx.y, 0);
-			worldRenderer.camOrtho.project(vtmp, 0, 0, ScreenWidth, ScreenHeight);
-			screenPosFor.set(vtmp.x, Gdx.graphics.getHeight() - vtmp.y);
-			return screenPosFor;
+			tmp3.set(worldPositionPx.x, worldPositionPx.y, 0);
+			worldRenderer.camOrtho.project(tmp3, 0, 0, ScreenWidth, ScreenHeight);
+			tmp2.set(tmp3.x, Gdx.graphics.getHeight() - tmp3.y);
+			return tmp2;
+		}
+
+		public static Vector3 screenToWorldMt (Vector2 screenPositionPx) {
+			tmp3.set(screenPositionPx.x, screenPositionPx.y, 1);
+			worldRenderer.camOrtho.unproject(tmp3, 0, 0, ScreenWidth, ScreenHeight);
+			tmp2.set(Convert.px2mt(tmp3.x), Convert.px2mt(tmp3.y));
+			tmp3.set(tmp2.x, tmp2.y, 0);
+			return tmp3;
 		}
 
 		public static boolean isVisible (Rectangle rect) {
