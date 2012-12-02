@@ -155,7 +155,7 @@ public final class AggressiveCold implements PostProcessingAnimator {
 		if (ssao != null) {
 			ssao.setOcclusionThresholds(0.3f, 0.1f);
 			ssao.setRadius(0.001f, nightMode ? 0.08f : 0.12f);
-			ssao.setPower(nightMode ? 2.8f : 2f, 1);
+			ssao.setPower(nightMode ? 2f : 2f, 1);
 			// if (Ssao.Quality.valueOf(UserPreferences.string(Preference.SsaoQuality)) == Ssao.Quality.High) {
 			// ssao.setSampleCount(16);
 			// ssao.setPatternSize(4);
@@ -254,6 +254,8 @@ public final class AggressiveCold implements PostProcessingAnimator {
 		float currDriftStrength = 0;
 		float currSpeedFactor = 0;
 
+		vignette.setLutIndexVal(0, 16);
+
 		if (hasPlayer) {
 			playerScreenPos.set(GameRenderer.ScreenUtils.worldPxToScreen(player.state().position));
 
@@ -280,8 +282,8 @@ public final class AggressiveCold implements PostProcessingAnimator {
 		if (zoom != null && hasPlayer) {
 			// auto-disable zoom
 			// float blurStrength = -0.1f * timeModFactor * currSpeedFactor;
-			float blurStrength = (-0.035f - 0.09f * currSpeedFactor) * timeModFactor - 0.02f * currSpeedFactor - timeModFactor
-				* 0.01f;
+			float blurStrength = (-0.035f - 0.09f * currSpeedFactor) * timeModFactor - 0.033f * currSpeedFactor - timeModFactor
+				* 0.005f;
 			// float blurStrength = (-0.035f - 0.09f * currSpeedFactor) * timeModFactor;
 
 			autoEnableZoomBlur(blurStrength);
@@ -295,7 +297,7 @@ public final class AggressiveCold implements PostProcessingAnimator {
 
 		if (bloom != null) {
 
-			bloom.setBaseSaturation(AMath.lerp(0.8f, 0.1f, timeModFactor));
+			bloom.setBaseSaturation(AMath.lerp(1f, 0.1f, timeModFactor));
 
 			// bloom.setBloomSaturation(1.5f - timeModFactor * 0.15f);
 			// if (!nightMode) {
@@ -330,6 +332,7 @@ public final class AggressiveCold implements PostProcessingAnimator {
 			lutIntensity = MathUtils.clamp(lutIntensity, 0, 1);
 
 			vignette.setLutIntensity(lutIntensity);
+
 			if (crt == null) {
 				vignette.setIntensity(0.8f + 0.3f * timeModFactor);
 			} else {
