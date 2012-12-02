@@ -302,7 +302,7 @@ public final class AggressiveCold implements PostProcessingAnimator {
 			// bloom.setThreshold(bloomThreshold - (bloomThreshold / 2) * timeModFactor);
 			// bloom.setThreshold(0.27f);
 
-			bloom.setBloomIntesity(1f + timeModFactor * 0.0f);
+			// bloom.setBloomIntesity(1f + timeModFactor * 0.5f);
 			// }
 
 			// with RttRatio = 0.5f
