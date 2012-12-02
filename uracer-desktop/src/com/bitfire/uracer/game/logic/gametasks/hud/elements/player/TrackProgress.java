@@ -121,6 +121,8 @@ public class TrackProgress extends Positionable implements Disposable {
 		float a = 0.25f;
 
 		playerToTarget = AMath.fixup(progressval - progressTargetVal);
+		playerToTarget = AMath.fixup(progressval - progressTargetVal);
+		lblAdvantage.setString(Math.round(distPlayer - distGhost) + " mt");
 
 		if (distPlayer > 0) {
 			if (!advantageShown) {
@@ -128,10 +130,6 @@ public class TrackProgress extends Positionable implements Disposable {
 				lblAdvantage.queueShow(500);
 				// Gdx.app.log("", "show");
 			}
-
-			playerToTarget = AMath.fixup(progressval - progressTargetVal);
-
-			lblAdvantage.setString(Math.round(distPlayer - distGhost) + " mt");
 
 		} else if (advantageShown) {
 			advantageShown = false;
@@ -141,15 +139,16 @@ public class TrackProgress extends Positionable implements Disposable {
 
 		// advantage/disadvantage
 		float dist = MathUtils.clamp(playerToTarget * 8, -1, 1);
-		Color advantageColor = ColorUtils.paletteRYG(dist + 0.7f, 1f);
+		float ndist = (dist + 1) * 0.5f;
+		Color advantageColor = ColorUtils.paletteRYG(ndist * 2, 1f);
 
 		float timeFactor = URacer.Game.getTimeModFactor() * 0.3f;
 
 		lblAdvantage.setColor(advantageColor);
 		lblAdvantage.setAlpha(a * 2);
-		lblAdvantage.setScale(cameraZoom * (0.6f + 0.3f * (dist + 0.7f)));
+		lblAdvantage.setScale(cameraZoom * (1f - 0.4f * (1 - ndist)));
 		lblAdvantage.setPosition(position.x, position.y - cameraZoom * Convert.scaledPixels(90) - Convert.scaledPixels(90)
-			* timeFactor * cameraZoom - Convert.scaledPixels(10) * (dist + 0.7f) * cameraZoom);
+			* timeFactor * cameraZoom - Convert.scaledPixels(8) * cameraZoom);
 		lblAdvantage.render(batch);
 
 		float s = 1f + timeFactor;
