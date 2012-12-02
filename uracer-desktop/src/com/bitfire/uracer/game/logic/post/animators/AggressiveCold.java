@@ -254,7 +254,7 @@ public final class AggressiveCold implements PostProcessingAnimator {
 		float currDriftStrength = 0;
 		float currSpeedFactor = 0;
 
-		vignette.setLutIndexVal(0, 16);
+		// vignette.setLutIndexVal(0, 16);
 
 		if (hasPlayer) {
 			playerScreenPos.set(GameRenderer.ScreenUtils.worldPxToScreen(player.state().position));
