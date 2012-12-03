@@ -648,7 +648,7 @@ public final class GameWorldRenderer {
 
 			if (Config.Debug.FrustumCulling && !camPersp.frustum.boundsInFrustum(m.boundingBox)) {
 				needRebind = true;
-				culledMeshes++;
+				if (!depthOnly) culledMeshes++;
 				continue;
 			}
 
@@ -754,7 +754,7 @@ public final class GameWorldRenderer {
 			// perform culling
 			if (Config.Debug.FrustumCulling && !camPersp.frustum.boundsInFrustum(m.boundingBox)) {
 				needRebind = true;
-				culledMeshes++;
+				if (!depthOnly) culledMeshes++;
 				continue;
 			}
 
