@@ -170,7 +170,7 @@ public final class AggressiveCold implements PostProcessingAnimator {
 		if (bloom != null) {
 			bloomThreshold = (nightMode ? 0.27f : bloomThreshold);
 			Bloom.Settings bloomSettings = new Bloom.Settings("subtle", Config.PostProcessing.BlurType,
-				Config.PostProcessing.BlurNumPasses, 1.5f, bloomThreshold, 1f, 0.5f, 1f, 1.5f);
+				Config.PostProcessing.BlurNumPasses, 1.5f, bloomThreshold, 1f, 0.5f, 1f, 1.3f + (nightMode ? 0.2f : 0));
 			bloom.setSettings(bloomSettings);
 		}
 
@@ -297,12 +297,15 @@ public final class AggressiveCold implements PostProcessingAnimator {
 
 		if (bloom != null) {
 
-			bloom.setBaseSaturation(AMath.lerp(1f, 0.1f, timeModFactor));
+			float sat = 0.8f;
+			if (nightMode) sat += 0.2f;
+
+// bloom.setThreshold(0.27f);
+			bloom.setBaseSaturation(AMath.lerp(sat, 0.1f, timeModFactor));
 
 			// bloom.setBloomSaturation(1.5f - timeModFactor * 0.15f);
 			// if (!nightMode) {
 			// bloom.setThreshold(bloomThreshold - (bloomThreshold / 2) * timeModFactor);
-			// bloom.setThreshold(0.27f);
 
 			// bloom.setBloomIntesity(1f + timeModFactor * 0.5f);
 			// }
@@ -338,6 +341,7 @@ public final class AggressiveCold implements PostProcessingAnimator {
 			} else {
 				vignette.setIntensity(0.7f);
 			}
+
 			vignette.setLutIndexOffset(wrongWayAmount.value);
 		}
 
