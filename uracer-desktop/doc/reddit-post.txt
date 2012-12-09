@@ -51,7 +51,7 @@ I've been slowly working on uRacer on and off, at night, after my daily work, fo
 It just started as an [Android project](http://www.reddit.com/r/androiddev/comments/nzufs/hey_randroiddev_im_developing_a_topdown_racer_and/), targeting tablets and smartphones, but then i liked the idea of a desktop version so much that i decided to target the PC first :)
 If you are curious about the initial Android prototype, i uploaded a video on [YouTube](http://www.youtube.com/watch?v=OGUKLCTq6SY) back then.
 
-Here instead is my latest dev build running on my desktop: too bad there is still some stutter in the video at times, this is because i had to encode it at 30fps for a better playing on YouTube.
+Here instead is my latest dev build running on my desktop: despite running at 60fps, there is some stutter in the video at times because i had to encode it at 30fps for a better playing on YouTube: also the audio i had to mux it apart, so there could be some minor delay issues :)
 
 Anyway, please tell me what you think and, most especially, what's your thoughts about its chances!
 
@@ -70,7 +70,10 @@ The player performing the track in less time wins, but not only that: the more t
 
 Multiplayer mode is similar, but your replays are being sync'd automatically at the end of each lap, then the player rank is updated accordingly.
 
-I'm thinking about the server-side architecture and the mechanisms: since i want it to be simple and scalable i'll have to at least try implement a couple of ideas and see how they perform. Code maintenance is a must and Python+WSGI looks like a pretty cool thing to experiment with, but i'll see.
+I'm thinking about the server-side architecture and the mechanisms: since i want it to be simple and scalable i'll have to at least try implement a couple of ideas and see how they perform. Code maintenance is a must and Python+WSGI looks like a pretty cool thing to experiment with, but i'll see because Node.js looks like a good candidate too, so if anyone has experience with something similar please let me know your impressions as well!
+
+
+**NOTE** *i'm currently experiencing DSL problems with my ISP (Tiscali/IT), so i'll probably not be able to respond or read this until my connection is back, it took me one hour to just post this!*
 
 
 
