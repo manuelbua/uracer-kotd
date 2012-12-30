@@ -83,11 +83,10 @@ I'm thinking about the server-side architecture and the mechanisms: since i want
 
 
 
+--------------------
+UPDATED POST
+--------------------
 
 
 
-Hey Guys, i wanted to share with you a game prototype I've been working on for the past 6 months. It's a top down arcade shooter inspired by Geometry Wars and Waves, built with UDK.
-
-Have been working on an online game for a few years. We have hundreds of active players and are looking for help. I'll also gladly answer any technical questions about the game.
-
-Reddit, me and my brother have been working for 2 years on a browser-based multiplayer strategy game (similar to Risk/Civilization). It's about to be released now, what do you think of its chances?
+--------------------
