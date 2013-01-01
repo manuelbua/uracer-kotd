@@ -67,18 +67,18 @@ public final class CommandLine {
 
 				break;
 			case 'h':
-				System.out.print("Valid command-line options:\n");
-				System.out.print("  -h, --help\t\tshows this help");
-				System.out.print("  -r, --resolution=RES\tspecify the resolution to use: you can either specify");
-				System.out.print("  \t\t\ta real resolution =, e.g. --resolution=800x600, or use ");
-				System.out.print("  \t\t\ta built-in shortcut (one of \"low\", \"mid\" or \"high\").");
-				System.out.print("  \t\t\t(low=800x480, mid=1280x800, high=1920x1080)");
-				System.out.print("  -v, --no-vsync\tdisable VSync");
-				System.out.print("  -c, --cpusync\t\tenable CPU sync");
-				System.out.print("  -f, --fullscreen\tenable fullscreen");
+				System.out.println("Valid command-line options:");
+				System.out.println("  -h, --help\t\tshows this help");
+				System.out.println("  -r, --resolution=RES\tspecify the resolution to use: you can either specify");
+				System.out.println("  \t\t\ta real resolution =, e.g. --resolution=800x600, or use ");
+				System.out.println("  \t\t\ta built-in shortcut (one of \"low\", \"mid\" or \"high\").");
+				System.out.println("  \t\t\t(low=800x480, mid=1280x800, high=1920x1080)");
+				System.out.println("  -v, --no-vsync\tdisable VSync");
+				System.out.println("  -c, --cpusync\t\tenable CPU sync");
+				System.out.println("  -f, --fullscreen\tenable fullscreen");
 				System.out
-					.print("  -t, --right-screen\treposition the game's window to the screen on the right,\n\t\t\tif available.");
-				System.out.print("");
+					.println("  -t, --right-screen\treposition the game's window to the screen on the right,\n\t\t\tif available.");
+				System.out.println("");
 				return false;
 			case 'v':
 				flags.vSyncEnabled = false;
