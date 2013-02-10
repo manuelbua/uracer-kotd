@@ -4,13 +4,13 @@
 CLASS_PATH="/home/manuel/dev/libgdx/dist"
 JARS="${CLASS_PATH}/gdx.jar:${CLASS_PATH}/gdx-natives.jar:${CLASS_PATH}/gdx-backend-lwjgl.jar:${CLASS_PATH}/gdx-backend-lwjgl-natives.jar"
 
-GDX_TOOLS_PATH="/home/manuel/dev/libgdx/extensions/gdx-tools/bin"
-TEX_PACKER="java -classpath ${JARS}:${GDX_TOOLS_PATH} com.badlogic.gdx.tools.imagepacker.TexturePacker2"
+GDX_TOOLS_PATH="/home/manuel/dev/libgdx/dist/extensions/gdx-tools/"
+TEX_PACKER="java -classpath ${JARS}:${GDX_TOOLS_PATH}/gdx-tools.jar com.badlogic.gdx.tools.imagepacker.TexturePacker2"
 
-GDX_TILED_PREP_PATH="/home/manuel/dev/libgdx/extensions/gdx-tiled-preprocessor/bin"
-TILED_PACKER="java -classpath ${JARS}:${GDX_TOOLS_PATH}:${GDX_TILED_PREP_PATH} com.badlogic.gdx.tiledmappacker.TiledMapPacker"
+GDX_TILED_PREP_PATH="/home/manuel/dev/libgdx/dist/extensions/gdx-tiled-preprocessor/"
+TILED_PACKER="java -classpath ${JARS}:${GDX_TOOLS_PATH}/gdx-tools.jar:${GDX_TILED_PREP_PATH}/gdx-tiled-preprocessor.jar com.badlogic.gdx.tiledmappacker.TiledMapPacker"
 
-SKIN_PACKER="java -classpath ${JARS}:${GDX_TOOLS_PATH}:/home/manuel/dev/uracer-skin-packer/bin com.bitfire.uracer.skinpacker.Packer"
+#SKIN_PACKER="java -classpath ${JARS}:${GDX_TOOLS_PATH}:/home/manuel/dev/uracer-skin-packer/bin com.bitfire.uracer.skinpacker.Packer"
 
 DEST="/home/manuel/dev/uracer-libgdx/uracer-desktop/data"
 

@@ -374,6 +374,5 @@ public final class AggressiveCold implements PostProcessingAnimator {
 
 			crt.setColorOffset(0.001f);
 		}
-
 	}
 }

@@ -381,11 +381,11 @@ public final class GameTrack implements Disposable {
 			shape.end();
 
 			// draw dots
-			shape.begin(ShapeType.FilledCircle);
+			shape.begin(ShapeType.Filled);
 			for (int i = 0; i < route.size(); i++) {
 				Vector2 p = route.get(i);
 				shape.setColor(1, 1, 1, alpha);
-				shape.filledCircle(p.x, p.y, 0.5f, 100);
+				shape.circle(p.x, p.y, 0.5f, 100);
 			}
 			shape.end();
 
@@ -412,11 +412,11 @@ public final class GameTrack implements Disposable {
 			if (carSector > -1) {
 				TrackSector s = sectors[carSector];
 
-				shape.begin(ShapeType.FilledCircle);
+				shape.begin(ShapeType.Filled);
 
 				shape.setColor(1, 1, scol, sa - alpha);
-				shape.filledCircle(s.leading.x, s.leading.y, 0.5f, 100);
-				shape.filledCircle(s.trailing.x, s.trailing.y, 0.5f, 100);
+				shape.circle(s.leading.x, s.leading.y, 0.5f, 100);
+				shape.circle(s.trailing.x, s.trailing.y, 0.5f, 100);
 
 				shape.end();
 			}
