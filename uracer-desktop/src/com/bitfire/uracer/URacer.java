@@ -216,7 +216,7 @@ public class URacer implements ApplicationListener {
 			long startTime = TimeUtils.nanoTime();
 			{
 				timeAccuNs += lastDeltaTimeNs * timeMultiplier;
-				while (timeAccuNs > PhysicsDtNs) {
+				while (timeAccuNs >= PhysicsDtNs) {
 					input.tick();
 					screenMgr.tick();
 					timeAccuNs -= PhysicsDtNs;
