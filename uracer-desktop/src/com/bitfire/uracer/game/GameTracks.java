@@ -9,8 +9,8 @@ import java.util.Map;
 
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.files.FileHandle;
-import com.badlogic.gdx.graphics.g2d.tiled.TiledLoader;
-import com.badlogic.gdx.graphics.g2d.tiled.TiledMap;
+import com.badlogic.gdx.maps.tiled.TiledMap;
+import com.badlogic.gdx.maps.tiled.TmxMapLoader;
 import com.bitfire.uracer.configuration.Storage;
 
 /** Enumerates and maintains a list of available game tracks. FIXME add support for mini-screenshots */
@@ -21,6 +21,7 @@ public final class GameTracks {
 	private static final Map<String, String> mapHashName = new HashMap<String, String>();
 	private static String[] trackNames;
 	private static String[] trackIds;
+	private static TmxMapLoader mapLoader = new TmxMapLoader();
 
 	public static final boolean init () {
 
@@ -51,8 +52,8 @@ public final class GameTracks {
 
 		// build internal maps
 		for (int i = 0; i < tracks.length; i++) {
-			TiledMap m = TiledLoader.createMap(tracks[i]);
-			String name = m.properties.get("name");
+			TiledMap m = mapLoader.load(tracks[i].path());
+			String name = m.getProperties().get("name", String.class);
 			if (name != null) {
 				String hash = new BigInteger(1, digest.digest(name.getBytes())).toString(16);
 
@@ -75,7 +76,7 @@ public final class GameTracks {
 		if (filename != null) {
 			FileHandle h = Gdx.files.internal(Storage.Levels + filename);
 			if (h.exists()) {
-				return TiledLoader.createMap(h);
+				return mapLoader.load(h.path(), false);
 			}
 		}
 

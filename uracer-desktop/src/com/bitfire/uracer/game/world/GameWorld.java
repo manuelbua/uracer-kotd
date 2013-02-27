@@ -13,18 +13,22 @@ import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.GL10;
 import com.badlogic.gdx.graphics.Mesh;
 import com.badlogic.gdx.graphics.Mesh.VertexDataType;
+import com.badlogic.gdx.graphics.Texture.TextureFilter;
 import com.badlogic.gdx.graphics.Texture.TextureWrap;
 import com.badlogic.gdx.graphics.VertexAttribute;
 import com.badlogic.gdx.graphics.VertexAttributes.Usage;
-import com.badlogic.gdx.graphics.g2d.tiled.TiledLayer;
-import com.badlogic.gdx.graphics.g2d.tiled.TiledMap;
-import com.badlogic.gdx.graphics.g2d.tiled.TiledObject;
-import com.badlogic.gdx.graphics.g2d.tiled.TiledObjectGroup;
 import com.badlogic.gdx.graphics.g3d.materials.Material;
 import com.badlogic.gdx.graphics.g3d.materials.TextureAttribute;
 import com.badlogic.gdx.graphics.g3d.model.still.StillModel;
 import com.badlogic.gdx.graphics.g3d.model.still.StillSubMesh;
 import com.badlogic.gdx.graphics.glutils.ShaderProgram;
+import com.badlogic.gdx.maps.MapLayer;
+import com.badlogic.gdx.maps.MapObject;
+import com.badlogic.gdx.maps.objects.PolygonMapObject;
+import com.badlogic.gdx.maps.objects.PolylineMapObject;
+import com.badlogic.gdx.maps.objects.RectangleMapObject;
+import com.badlogic.gdx.maps.tiled.TiledMap;
+import com.badlogic.gdx.maps.tiled.TiledMapTileLayer;
 import com.badlogic.gdx.math.MathUtils;
 import com.badlogic.gdx.math.Polygon;
 import com.badlogic.gdx.math.Rectangle;
@@ -36,9 +40,9 @@ import com.bitfire.uracer.ScalingStrategy;
 import com.bitfire.uracer.configuration.Config;
 import com.bitfire.uracer.game.GameTracks;
 import com.bitfire.uracer.game.collisions.CollisionFilters;
+import com.bitfire.uracer.game.world.WorldDefs.Layer;
 import com.bitfire.uracer.game.world.WorldDefs.ObjectGroup;
 import com.bitfire.uracer.game.world.WorldDefs.ObjectProperties;
-import com.bitfire.uracer.game.world.WorldDefs.TileLayer;
 import com.bitfire.uracer.game.world.models.MapUtils;
 import com.bitfire.uracer.game.world.models.ModelFactory;
 import com.bitfire.uracer.game.world.models.OrthographicAlignedStillModel;
@@ -60,6 +64,7 @@ public final class GameWorld {
 
 	// public level data
 	public final TiledMap map;
+	public final int mapWidth, mapHeight, tileWidth, tileHeight;
 	public final Vector2 worldSizeScaledPx, worldSizeTiles, worldSizeMt;
 	public final ScalingStrategy scalingStrategy;
 
@@ -101,17 +106,27 @@ public final class GameWorld {
 		Gdx.app.log("GameWorld", "Box2D world created (CCD=" + continuousPhysics + ", auto clear forces=" + autoClearForces + ")");
 
 		map = GameTracks.load(trackId);
+
+		// FIXME: nothing better than this?
+		map.getTileSets().getTile(1).getTextureRegion().getTexture().setFilter(TextureFilter.Linear, TextureFilter.Linear);
+
 		this.trackId = trackId;
 		this.nightMode = nightMode;
 
+		// get map properties
+		mapWidth = map.getProperties().get("width", int.class);
+		mapHeight = map.getProperties().get("height", int.class);
+		tileWidth = map.getProperties().get("tilewidth", int.class);
+		tileHeight = map.getProperties().get("tileheight", int.class);
+
 		// compute world size
-		worldSizeTiles = new Vector2(map.width, map.height);
-		worldSizeScaledPx = new Vector2(map.width * map.tileWidth, map.height * map.tileHeight);
+		worldSizeTiles = new Vector2(mapWidth, mapHeight);
+		worldSizeScaledPx = new Vector2(mapWidth * tileWidth, mapHeight * tileHeight);
 		worldSizeScaledPx.set(Convert.scaledPixels(worldSizeScaledPx));
-		worldSizeMt = new Vector2(Convert.upx2mt(map.width * map.tileWidth), Convert.upx2mt(map.height * map.tileHeight));
+		worldSizeMt = new Vector2(Convert.upx2mt(mapWidth * tileWidth), Convert.upx2mt(mapHeight * tileHeight));
 
 		// initialize tilemap utils
-		mapUtils = new MapUtils(map, worldSizeScaledPx, scalingStrategy.invTileMapZoomFactor);
+		mapUtils = new MapUtils(map, tileWidth, mapHeight, worldSizeScaledPx, scalingStrategy.invTileMapZoomFactor);
 
 		createMeshes();
 		route = createRoute();
@@ -157,16 +172,24 @@ public final class GameWorld {
 
 		// static meshes layer
 		if (mapUtils.hasObjectGroup(ObjectGroup.StaticMeshes)) {
-			TiledObjectGroup group = mapUtils.getObjectGroup(ObjectGroup.StaticMeshes);
-			for (int i = 0; i < group.objects.size(); i++) {
-				TiledObject o = group.objects.get(i);
+			MapLayer group = mapUtils.getObjectGroup(ObjectGroup.StaticMeshes);
+			for (int i = 0; i < group.getObjects().getNumObjects(); i++) {
+				MapObject o = group.getObjects().getObject(i);
 
 				float scale = 1f;
-				if (o.properties.get(ObjectProperties.MeshScale.mnemonic) != null) {
-					scale = Float.parseFloat(o.properties.get(ObjectProperties.MeshScale.mnemonic));
+				if (o.getProperties().get(ObjectProperties.MeshScale.mnemonic) != null) {
+					scale = Float.parseFloat(o.getProperties().get(ObjectProperties.MeshScale.mnemonic, String.class));
 				}
 
-				OrthographicAlignedStillModel mesh = ModelFactory.create(o.type, o.x, o.y, scale);
+				// @off
+				OrthographicAlignedStillModel mesh = ModelFactory.create(
+					o.getProperties().get("type", String.class),
+					o.getProperties().get("x", int.class), 
+					o.getProperties().get("y", int.class), 
+					scale
+				);
+				// @on
+
 				if (mesh != null) {
 					staticMeshes.add(mesh);
 				}
@@ -235,8 +258,8 @@ public final class GameWorld {
 
 		// setup level lights data, if any
 		Vector2 pos = new Vector2();
-		TiledObjectGroup group = mapUtils.getObjectGroup(ObjectGroup.Lights);
-		for (int i = 0; i < group.objects.size(); i++) {
+		MapLayer group = mapUtils.getObjectGroup(ObjectGroup.Lights);
+		for (int i = 0; i < group.getObjects().getNumObjects(); i++) {
 			//@off
 			c.set(
 			// MathUtils.random(0,1),
@@ -249,8 +272,8 @@ public final class GameWorld {
 				0.55f
 			);
 			//@on
-			TiledObject o = group.objects.get(i);
-			pos.set(o.x, o.y).mul(scalingStrategy.invTileMapZoomFactor);
+			RectangleMapObject o = (RectangleMapObject)group.getObjects().getObject(i);
+			pos.set(o.getRectangle().x, o.getRectangle().y).mul(scalingStrategy.invTileMapZoomFactor);
 			pos.y = worldSizeScaledPx.y - pos.y;
 			pos.set(Convert.px2mt(pos)).mul(scalingStrategy.tileMapZoomFactor);
 
@@ -281,17 +304,22 @@ public final class GameWorld {
 			Vector2 toMt = new Vector2();
 			Vector2 offsetMt = new Vector2();
 
-			TiledObjectGroup group = mapUtils.getObjectGroup(ObjectGroup.Route);
-			if (group.objects.size() == 1) {
-				TiledObject o = group.objects.get(0);
-				List<Vector2> points = MapUtils.extractPolyData(o.polyline);
+			MapLayer group = mapUtils.getObjectGroup(ObjectGroup.Route);
+			if (group.getObjects().getNumObjects() == 1) {
+				PolylineMapObject o = (PolylineMapObject)group.getObjects().getObject(0);
+
+				// TESTME!
+				//@off
+				List<Vector2> points = MapUtils.extractPolyData(
+					o.getPolyline().getVertices());
+				//@on
 
 				r = new ArrayList<Vector2>(points.size());
 
 				// ensure first and last coincide
 				// points.get(points.size() - 1).set(points.get(0));
 
-				offsetMt.set(o.x, o.y);
+				offsetMt.set(o.getPolyline().getX(), o.getPolyline().getY());
 				offsetMt.set(Convert.px2mt(offsetMt));
 
 				fromMt.set(Convert.px2mt(points.get(0))).add(offsetMt);
@@ -305,9 +333,9 @@ public final class GameWorld {
 					r.add(new Vector2(toMt));
 				}
 			} else {
-				if (group.objects.size() > 1) {
+				if (group.getObjects().getNumObjects() > 1) {
 					throw new GdxRuntimeException("Too many routes");
-				} else if (group.objects.size() == 0) {
+				} else if (group.getObjects().getNumObjects() == 0) {
 					throw new GdxRuntimeException("No route defined for this track");
 				}
 			}
@@ -324,18 +352,24 @@ public final class GameWorld {
 			Vector2 pt = new Vector2();
 			Vector2 offsetMt = new Vector2();
 
-			TiledObjectGroup group = mapUtils.getObjectGroup(ObjectGroup.Sectors);
-			if (group.objects.size() > 0) {
-				s = new ArrayList<Polygon>(group.objects.size());
+			MapLayer group = mapUtils.getObjectGroup(ObjectGroup.Sectors);
+			if (group.getObjects().getNumObjects() > 0) {
+				s = new ArrayList<Polygon>(group.getObjects().getNumObjects());
 
-				for (int i = 0; i < group.objects.size(); i++) {
-					TiledObject o = group.objects.get(i);
-					List<Vector2> points = MapUtils.extractPolyData(o.polygon);
+				for (int i = 0; i < group.getObjects().getNumObjects(); i++) {
+					PolygonMapObject o = (PolygonMapObject)group.getObjects().getObject(i);
+
+					//@off
+					List<Vector2> points = MapUtils.extractPolyData(
+						o.getPolygon().getVertices()
+					);
+					//@on
+
 					if (points.size() != 4) {
 						throw new GdxRuntimeException("A quadrilateral is required!");
 					}
 
-					offsetMt.set(o.x, o.y);
+					offsetMt.set(o.getPolygon().getX(), o.getPolygon().getY());
 					offsetMt.set(Convert.px2mt(offsetMt));
 
 					float[] vertices = new float[8];
@@ -385,19 +419,22 @@ public final class GameWorld {
 			ta.vWrap = TextureWrap.Repeat.getGLEnum();
 			Material mat = new Material("trackWall", ta);
 
-			TiledObjectGroup group = mapUtils.getObjectGroup(ObjectGroup.Walls);
-			if (group.objects.size() > 0) {
-				models = new ArrayList<OrthographicAlignedStillModel>(group.objects.size());
+			MapLayer group = mapUtils.getObjectGroup(ObjectGroup.Walls);
+			if (group.getObjects().getNumObjects() > 0) {
+				models = new ArrayList<OrthographicAlignedStillModel>(group.getObjects().getNumObjects());
 
-				for (int i = 0; i < group.objects.size(); i++) {
-					TiledObject o = group.objects.get(i);
+				for (int i = 0; i < group.getObjects().getNumObjects(); i++) {
+					PolylineMapObject o = (PolylineMapObject)group.getObjects().getObject(i);
 
-					List<Vector2> points = MapUtils.extractPolyData(o.polyline);
+					//@off
+					List<Vector2> points = MapUtils.extractPolyData(
+						o.getPolyline().getVertices());
+					//@on
 					if (points.size() >= 2) {
 						float wallSizeMt = 0.75f;
 						float[] mags = new float[points.size() - 1];
 
-						offsetMt.set(o.x, o.y);
+						offsetMt.set(o.getPolyline().getX(), o.getPolyline().getY());
 						offsetMt.set(Convert.px2mt(offsetMt));
 
 						fromMt.set(Convert.px2mt(points.get(0))).add(offsetMt);
@@ -425,7 +462,7 @@ public final class GameWorld {
 						OrthographicAlignedStillModel model = new OrthographicAlignedStillModel(new StillModel(subMeshes), mat,
 							scalingStrategy);
 
-						model.setPosition(o.x, o.y);
+						model.setPosition(o.getPolyline().getX(), o.getPolyline().getY());
 						model.setScale(1);
 
 						models.add(model);
@@ -624,23 +661,29 @@ public final class GameWorld {
 			treeRotations[3] = 270;
 
 			MathUtils.random.setSeed(Long.MAX_VALUE);
-			TiledObjectGroup group = mapUtils.getObjectGroup(ObjectGroup.Trees);
+			MapLayer group = mapUtils.getObjectGroup(ObjectGroup.Trees);
 
-			if (group.objects.size() > 0) {
+			if (group.getObjects().getNumObjects() > 0) {
 
-				models = new ArrayList<TreeStillModel>(group.objects.size());
+				models = new ArrayList<TreeStillModel>(group.getObjects().getNumObjects());
 
-				for (int i = 0; i < group.objects.size(); i++) {
-					TiledObject o = group.objects.get(i);
+				for (int i = 0; i < group.getObjects().getNumObjects(); i++) {
+					RectangleMapObject o = (RectangleMapObject)group.getObjects().getObject(i);
 
 					float scale = 1f;
-					if (o.properties.get(ObjectProperties.MeshScale.mnemonic) != null) {
-						scale = Float.parseFloat(o.properties.get(ObjectProperties.MeshScale.mnemonic));
+					if (o.getProperties().get(ObjectProperties.MeshScale.mnemonic) != null) {
+						scale = Float.parseFloat(o.getProperties().get(ObjectProperties.MeshScale.mnemonic, String.class));
 					}
 
 					TreeStillModel model = null;
-					if (o.type != null) {
-						model = ModelFactory.createTree(o.type, o.x, o.y, scale);
+					if (o.getProperties().get("type") != null) {
+						//@off
+						model = ModelFactory.createTree(
+							o.getProperties().get("type", String.class),
+							o.getRectangle().x, 
+							o.getRectangle().y, 
+							scale);
+						//@on
 					} else {
 						Gdx.app.log("TrackTrees", "Load error, no type was given for the tree #" + (i + 1));
 					}
@@ -734,11 +777,11 @@ public final class GameWorld {
 		return mapUtils.invScaledTilesize;
 	}
 
-	public TiledLayer getLayer (TileLayer layer) {
+	public TiledMapTileLayer getLayer (Layer layer) {
 		return mapUtils.getLayer(layer);
 	}
 
 	public boolean isValidTilePosition (Vector2 tilePosition) {
-		return tilePosition.x >= 0 && tilePosition.x < map.width && tilePosition.y >= 0 && tilePosition.y < map.height;
+		return tilePosition.x >= 0 && tilePosition.x < mapWidth && tilePosition.y >= 0 && tilePosition.y < mapHeight;
 	}
 }

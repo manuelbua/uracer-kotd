@@ -26,8 +26,10 @@ echo "done!"
 # tileset graphics and tmx levels
 echo -n "Cooking levels..."
 rm -rf "${DEST}/levels/"
-mkdir -p ${DEST}
-${TILED_PACKER} levels/ ${DEST}/levels #--strip-unused
+mkdir -p ${DEST}/levels/
+mkdir -p ${DEST}/levels/tilesets/desert/
+cp -r levels/*.tmx ${DEST}/levels/
+cp -r levels/tilesets/desert/224.png ${DEST}/levels/tilesets/desert/
 echo "done!"
 
 # tileset friction maps
