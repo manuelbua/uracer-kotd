@@ -257,10 +257,7 @@ public class PlayerCar extends Car {
 
 			TiledMapTileLayer layerTrack = gameWorld.getLayer(Layer.Track);
 
-			// TODO FIXME!
-			int id = 0;
-// int id = layerTrack.tiles[(int)tilePosition.y][(int)tilePosition.x] - 1;
-// int id = layerTrack.getCell((int)tilePosition.x, (int)tilePosition.y) - 1;
+			int id = layerTrack.getCell((int)tilePosition.x, gameWorld.mapHeight - (int)tilePosition.y - 1).getTile().getId() - 1;
 
 			// int xOnMap = (id %4) * (int)gameWorld.map.tileWidth + (int)offset.x;
 			// int yOnMap = (int)( id/4f ) * (int)gameWorld.map.tileWidth + (int)offset.y;
@@ -276,7 +273,8 @@ public class PlayerCar extends Car {
 			// Gdx.app.log( "PlayerCar", "xmap=" + xOnMap + ", ymap=" + yOnMap );
 			// Gdx.app.log( "PlayerCar", "mean=" + frictionMean.getMean() + ", pixel=" + pixel + ", xmap=" + xOnMap +
 			// ", ymap=" + yOnMap );
-			// Gdx.app.log( "PlayerCar", "id=" + id );
+			// Gdx.app.log("PlayerCar", "id=" + id);
+			// Gdx.app.log("PlayerCar", "#" + id + ", xt=" + (int)tilePosition.x + "," + (int)tilePosition.y);
 
 		} else {
 			Gdx.app.log("PlayerCar", "PlayerCar out of map!");
