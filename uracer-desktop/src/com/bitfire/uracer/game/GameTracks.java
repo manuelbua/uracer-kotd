@@ -12,6 +12,7 @@ import com.badlogic.gdx.files.FileHandle;
 import com.badlogic.gdx.maps.tiled.TiledMap;
 import com.badlogic.gdx.maps.tiled.TmxMapLoader;
 import com.bitfire.uracer.configuration.Storage;
+import com.bitfire.uracer.game.world.URacerTmxMapLoader;
 
 /** Enumerates and maintains a list of available game tracks. FIXME add support for mini-screenshots */
 public final class GameTracks {
@@ -21,7 +22,7 @@ public final class GameTracks {
 	private static final Map<String, String> mapHashName = new HashMap<String, String>();
 	private static String[] trackNames;
 	private static String[] trackIds;
-	private static TmxMapLoader mapLoader = new TmxMapLoader();
+	private static TmxMapLoader mapLoader = new URacerTmxMapLoader();
 
 	public static final boolean init () {
 
