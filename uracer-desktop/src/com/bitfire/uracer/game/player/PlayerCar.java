@@ -257,7 +257,8 @@ public class PlayerCar extends Car {
 
 			TiledMapTileLayer layerTrack = gameWorld.getLayer(Layer.Track);
 
-			int id = layerTrack.getCell((int)tilePosition.x, gameWorld.mapHeight - (int)tilePosition.y - 1).getTile().getId() - 1;
+			// int id = layerTrack.getCell((int)tilePosition.x, gameWorld.mapHeight - (int)tilePosition.y - 1).getTile().getId() - 1;
+			int id = layerTrack.getCell((int)tilePosition.x, (int)tilePosition.y).getTile().getId() - 1;
 
 			// int xOnMap = (id %4) * (int)gameWorld.map.tileWidth + (int)offset.x;
 			// int yOnMap = (int)( id/4f ) * (int)gameWorld.map.tileWidth + (int)offset.y;

@@ -5,6 +5,7 @@ import java.io.IOException;
 
 import com.badlogic.gdx.files.FileHandle;
 import com.badlogic.gdx.graphics.Texture.TextureFilter;
+import com.badlogic.gdx.graphics.g2d.TextureRegion;
 import com.badlogic.gdx.maps.ImageResolver;
 import com.badlogic.gdx.maps.tiled.TiledMap;
 import com.badlogic.gdx.maps.tiled.TiledMapTile;
@@ -78,7 +79,11 @@ public class URacerTmxMapLoader extends TmxMapLoader {
 
 			for (int y = margin; y <= stopHeight; y += tileheight + spacing) {
 				for (int x = margin; x <= stopWidth; x += tilewidth + spacing) {
-					TiledMapTile tile = new StaticTiledMapTile(atlas.getRegion(id));
+					TextureRegion tileRegion = atlas.getRegion(id);
+					if (!yUp) {
+						tileRegion.flip(false, true);
+					}
+					TiledMapTile tile = new StaticTiledMapTile(tileRegion);
 					tile.setId(id);
 					tileset.putTile(id++, tile);
 				}
