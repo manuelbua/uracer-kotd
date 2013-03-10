@@ -24,6 +24,8 @@ public final class GameTracks {
 	private static String[] trackIds;
 	private static TmxMapLoader mapLoader = new URacerTmxMapLoader();
 
+// private static TmxMapLoader mapLoader = new TmxMapLoader();
+
 	public static final boolean init () {
 
 		try {
