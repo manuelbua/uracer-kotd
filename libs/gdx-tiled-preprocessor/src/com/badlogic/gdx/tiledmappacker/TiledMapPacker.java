@@ -132,8 +132,8 @@ public class TiledMapPacker {
 
 			for (TiledMapTileSet set : map.getTileSets()) {
 				TmxMapTileSet tmxset = (TmxMapTileSet)set;
-				if (!processedTileSets.contains(tmxset.imageName)) {
-					processedTileSets.add(tmxset.imageName);
+				if (!processedTileSets.contains(tmxset.getImageName())) {
+					processedTileSets.add(tmxset.getImageName());
 					packTileSet(map, tmxset, usedIds, inputDirHandle, outputDir, settings);
 				}
 			}
@@ -155,9 +155,9 @@ public class TiledMapPacker {
 
 		int mapWidth = map.getProperties().get("width", Integer.class);
 		int mapHeight = map.getProperties().get("height", Integer.class);
-		int tileWidth = set.tileWidth;
-		int tileHeight = set.tileHeight;
-		String imageName = set.imageName;
+		int tileWidth = set.getTileWidth();
+		int tileHeight = set.getTileHeight();
+		String imageName = set.getImageName();
 
 		TileSetLayout layout = new TileSetLayout(map, 1, set, inputDirHandle);
 

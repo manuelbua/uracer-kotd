@@ -47,14 +47,14 @@ public class TileSetLayout {
 		throws IOException {
 		int mapWidth = map.getProperties().get("width", Integer.class);
 		int mapHeight = map.getProperties().get("height", Integer.class);
-		int tileWidth = tileset.tileWidth;
-		int tileHeight = tileset.tileHeight;
-		int margin = tileset.margin;
-		int spacing = tileset.spacing;
+		int tileWidth = tileset.getTileWidth();
+		int tileHeight = tileset.getTileHeight();
+		int margin = tileset.getMargin();
+		int spacing = tileset.getSpacing();
 
 		this.firstgid = firstgid;
 
-		image = ImageIO.read(baseDir.child(tileset.imageName).read());
+		image = ImageIO.read(baseDir.child(tileset.getImageName()).read());
 
 		imageTilePositions = new IntMap<Vector2>();
 
