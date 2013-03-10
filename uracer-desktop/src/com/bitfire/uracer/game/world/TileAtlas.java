@@ -14,8 +14,7 @@ import com.badlogic.gdx.maps.tiled.TiledMap;
 import com.badlogic.gdx.utils.Array;
 import com.badlogic.gdx.utils.IntMap;
 
-/** Contains an atlas of tiles by tile id for use with {@link TileMapRenderer}
- * @author David Fraska */
+/** Contains an atlas of tiles by tile id for use with {@link TileMapRenderer} */
 public class TileAtlas {
 
 	protected IntMap<TextureRegion> regionsMap = new IntMap<TextureRegion>();
