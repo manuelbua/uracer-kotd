@@ -28,14 +28,14 @@ echo -n "Cooking levels..."
 rm -rf "${DEST}/levels/"
 
 # packer
-mkdir -p ${DEST}
-${TILED_PACKER} levels/ ${DEST}/levels #--strip-unused
+#mkdir -p ${DEST}
+#${TILED_PACKER} levels/ ${DEST}/levels #--strip-unused
 
 # no packer
-#mkdir -p ${DEST}/levels/
-#mkdir -p ${DEST}/levels/tilesets/desert/
-#cp -r levels/*.tmx ${DEST}/levels/
-#cp -r levels/tilesets/desert/224.png ${DEST}/levels/tilesets/desert/
+mkdir -p ${DEST}/levels/
+mkdir -p ${DEST}/levels/tilesets/desert/
+cp -r levels/*.tmx ${DEST}/levels/
+cp -r levels/tilesets/desert/224.png ${DEST}/levels/tilesets/desert/
 
 echo "done!"
 
