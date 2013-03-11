@@ -50,7 +50,6 @@ import com.badlogic.gdx.maps.tiled.TiledMap;
 import com.badlogic.gdx.maps.tiled.TiledMapTileLayer;
 import com.badlogic.gdx.maps.tiled.TiledMapTileSet;
 import com.badlogic.gdx.maps.tiled.TmxMapLoader;
-import com.badlogic.gdx.maps.tiled.TmxMapTileSet;
 import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.tools.imagepacker.TexturePacker;
 import com.badlogic.gdx.tools.imagepacker.TexturePacker.Settings;
@@ -131,10 +130,10 @@ public class TiledMapPacker {
 			}
 
 			for (TiledMapTileSet set : map.getTileSets()) {
-				TmxMapTileSet tmxset = (TmxMapTileSet)set;
-				if (!processedTileSets.contains(tmxset.getImageName())) {
-					processedTileSets.add(tmxset.getImageName());
-					packTileSet(map, tmxset, usedIds, inputDirHandle, outputDir, settings);
+				String imagesource = set.getProperties().get("imagesource",String.class);
+				if (!processedTileSets.contains(imagesource)) {
+					processedTileSets.add(imagesource);
+					packTileSet(map, set, usedIds, inputDirHandle, outputDir, settings);
 				}
 			}
 
@@ -143,7 +142,7 @@ public class TiledMapPacker {
 		}
 	}
 
-	private void packTileSet (TiledMap map, TmxMapTileSet set, IntArray usedIds, FileHandle inputDirHandle, File outputDir,
+	private void packTileSet (TiledMap map, TiledMapTileSet set, IntArray usedIds, FileHandle inputDirHandle, File outputDir,
 		Settings settings) throws IOException {
 		BufferedImage tile;
 		Vector2 tileLocation;
@@ -155,9 +154,9 @@ public class TiledMapPacker {
 
 		int mapWidth = map.getProperties().get("width", Integer.class);
 		int mapHeight = map.getProperties().get("height", Integer.class);
-		int tileWidth = set.getTileWidth();
-		int tileHeight = set.getTileHeight();
-		String imageName = set.getImageName();
+		int tileWidth = set.getProperties().get("tilewidth", Integer.class);
+		int tileHeight = set.getProperties().get("tileheight", Integer.class);
+		String imageName = set.getProperties().get("imagesource", String.class);
 
 		TileSetLayout layout = new TileSetLayout(map, 1, set, inputDirHandle);
 

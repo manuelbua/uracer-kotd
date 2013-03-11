@@ -24,7 +24,6 @@ import javax.imageio.ImageIO;
 import com.badlogic.gdx.files.FileHandle;
 import com.badlogic.gdx.maps.tiled.TiledMap;
 import com.badlogic.gdx.maps.tiled.TiledMapTileSet;
-import com.badlogic.gdx.maps.tiled.TmxMapTileSet;
 import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.utils.IntMap;
 
@@ -43,18 +42,18 @@ public class TileSetLayout {
 	 * being processed by {@link TiledMapPacker} (the ones actually read by Tiled).
 	 * @param tileSet the tile set to process
 	 * @param baseDir the directory in which the tile set image is stored */
-	protected TileSetLayout (TiledMap map, int firstgid, TmxMapTileSet tileset, FileHandle baseDir)
+	protected TileSetLayout (TiledMap map, int firstgid, TiledMapTileSet tileset, FileHandle baseDir)
 		throws IOException {
 		int mapWidth = map.getProperties().get("width", Integer.class);
 		int mapHeight = map.getProperties().get("height", Integer.class);
-		int tileWidth = tileset.getTileWidth();
-		int tileHeight = tileset.getTileHeight();
-		int margin = tileset.getMargin();
-		int spacing = tileset.getSpacing();
+		int tileWidth = tileset.getProperties().get("tilewidth", Integer.class);
+		int tileHeight = tileset.getProperties().get("tileheight", Integer.class);
+		int margin = tileset.getProperties().get("margin", Integer.class);
+		int spacing = tileset.getProperties().get("spacing", Integer.class);
 
 		this.firstgid = firstgid;
 
-		image = ImageIO.read(baseDir.child(tileset.getImageName()).read());
+		image = ImageIO.read(baseDir.child(tileset.getProperties().get("imagesource", String.class)).read());
 
 		imageTilePositions = new IntMap<Vector2>();
 
