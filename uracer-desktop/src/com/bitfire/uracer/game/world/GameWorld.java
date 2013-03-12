@@ -183,8 +183,8 @@ public final class GameWorld {
 				// @off
 				OrthographicAlignedStillModel mesh = ModelFactory.create(
 					o.getProperties().get("type", String.class),
-					o.getProperties().get("x", int.class), 
-					o.getProperties().get("y", int.class), 
+					o.getProperties().get("x", Integer.class), 
+					o.getProperties().get("y", Integer.class), 
 					scale
 				);
 				// @on
