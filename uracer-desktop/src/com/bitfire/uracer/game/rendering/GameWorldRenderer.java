@@ -369,23 +369,6 @@ public final class GameWorldRenderer {
 		treesAmbientColor.set(color);
 	}
 
-	private void updateRayHandler () {
-		if (rayHandler != null) {
-
-			rayHandler.setAmbientLight(ambientColor);
-
-			// @off
-			rayHandler.setCombinedMatrix(camOrthoMvpMt, Convert.px2mt(camOrtho.position.x), Convert.px2mt(camOrtho.position.y),
-				Convert.px2mt(camOrtho.viewportWidth), Convert.px2mt(camOrtho.viewportHeight));
-			// @on
-
-			rayHandler.update();
-			// Gdx.app.log( "GameWorldRenderer", "lights rendered=" + rayHandler.lightRenderedLastFrame );
-
-			rayHandler.updateLightMap();
-		}
-	}
-
 	private Vector2 cameraPos = new Vector2();
 	private float cameraZoom = 1;
 
@@ -452,6 +435,23 @@ public final class GameWorldRenderer {
 		Matrix4.inv(camPerspInvProj.val);
 
 		updateRayHandler();
+	}
+
+	private void updateRayHandler () {
+		if (rayHandler != null) {
+
+			rayHandler.setAmbientLight(ambientColor);
+
+			// @off
+			rayHandler.setCombinedMatrix(camOrthoMvpMt, Convert.px2mt(camOrtho.position.x), Convert.px2mt(camOrtho.position.y),
+				Convert.px2mt(camOrtho.viewportWidth), Convert.px2mt(camOrtho.viewportHeight));
+			// @on
+
+			rayHandler.update();
+			// Gdx.app.log( "GameWorldRenderer", "lights rendered=" + rayHandler.lightRenderedLastFrame );
+
+			rayHandler.updateLightMap();
+		}
 	}
 
 	public void updateNormalDepthMap () {
