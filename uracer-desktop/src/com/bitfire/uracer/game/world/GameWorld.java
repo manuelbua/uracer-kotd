@@ -172,8 +172,8 @@ public final class GameWorld {
 		// static meshes layer
 		if (mapUtils.hasObjectGroup(ObjectGroup.StaticMeshes)) {
 			MapLayer group = mapUtils.getObjectGroup(ObjectGroup.StaticMeshes);
-			for (int i = 0; i < group.getObjects().getNumObjects(); i++) {
-				MapObject o = group.getObjects().getObject(i);
+			for (int i = 0; i < group.getObjects().getCount(); i++) {
+				MapObject o = group.getObjects().get(i);
 
 				float scale = 1f;
 				if (o.getProperties().get(ObjectProperties.MeshScale.mnemonic) != null) {
@@ -258,7 +258,7 @@ public final class GameWorld {
 		// setup level lights data, if any
 		Vector2 pos = new Vector2();
 		MapLayer group = mapUtils.getObjectGroup(ObjectGroup.Lights);
-		for (int i = 0; i < group.getObjects().getNumObjects(); i++) {
+		for (int i = 0; i < group.getObjects().getCount(); i++) {
 			//@off
 			c.set(
 			// MathUtils.random(0,1),
@@ -271,7 +271,7 @@ public final class GameWorld {
 				0.55f
 			);
 			//@on
-			RectangleMapObject o = (RectangleMapObject)group.getObjects().getObject(i);
+			RectangleMapObject o = (RectangleMapObject)group.getObjects().get(i);
 			pos.set(o.getRectangle().x, o.getRectangle().y).mul(scalingStrategy.invTileMapZoomFactor);
 			pos.y = worldSizeScaledPx.y - pos.y;
 			pos.set(Convert.px2mt(pos)).mul(scalingStrategy.tileMapZoomFactor);
@@ -304,8 +304,8 @@ public final class GameWorld {
 			Vector2 offsetMt = new Vector2();
 
 			MapLayer group = mapUtils.getObjectGroup(ObjectGroup.Route);
-			if (group.getObjects().getNumObjects() == 1) {
-				PolylineMapObject o = (PolylineMapObject)group.getObjects().getObject(0);
+			if (group.getObjects().getCount() == 1) {
+				PolylineMapObject o = (PolylineMapObject)group.getObjects().get(0);
 
 				// TESTME!
 				//@off
@@ -332,9 +332,9 @@ public final class GameWorld {
 					r.add(new Vector2(toMt));
 				}
 			} else {
-				if (group.getObjects().getNumObjects() > 1) {
+				if (group.getObjects().getCount() > 1) {
 					throw new GdxRuntimeException("Too many routes");
-				} else if (group.getObjects().getNumObjects() == 0) {
+				} else if (group.getObjects().getCount() == 0) {
 					throw new GdxRuntimeException("No route defined for this track");
 				}
 			}
@@ -352,11 +352,11 @@ public final class GameWorld {
 			Vector2 offsetMt = new Vector2();
 
 			MapLayer group = mapUtils.getObjectGroup(ObjectGroup.Sectors);
-			if (group.getObjects().getNumObjects() > 0) {
-				s = new ArrayList<Polygon>(group.getObjects().getNumObjects());
+			if (group.getObjects().getCount() > 0) {
+				s = new ArrayList<Polygon>(group.getObjects().getCount());
 
-				for (int i = 0; i < group.getObjects().getNumObjects(); i++) {
-					PolygonMapObject o = (PolygonMapObject)group.getObjects().getObject(i);
+				for (int i = 0; i < group.getObjects().getCount(); i++) {
+					PolygonMapObject o = (PolygonMapObject)group.getObjects().get(i);
 
 					//@off
 					List<Vector2> points = MapUtils.extractPolyData(
@@ -419,11 +419,11 @@ public final class GameWorld {
 			Material mat = new Material("trackWall", ta);
 
 			MapLayer group = mapUtils.getObjectGroup(ObjectGroup.Walls);
-			if (group.getObjects().getNumObjects() > 0) {
-				models = new ArrayList<OrthographicAlignedStillModel>(group.getObjects().getNumObjects());
+			if (group.getObjects().getCount() > 0) {
+				models = new ArrayList<OrthographicAlignedStillModel>(group.getObjects().getCount());
 
-				for (int i = 0; i < group.getObjects().getNumObjects(); i++) {
-					PolylineMapObject o = (PolylineMapObject)group.getObjects().getObject(i);
+				for (int i = 0; i < group.getObjects().getCount(); i++) {
+					PolylineMapObject o = (PolylineMapObject)group.getObjects().get(i);
 
 					//@off
 					List<Vector2> points = MapUtils.extractPolyData(
@@ -534,16 +534,18 @@ public final class GameWorld {
 
 			coordU = mag * textureScalingU;
 
-			in.set(Convert.px2mt(points.get(i))).mul(factor * oneOnWorld3DFactor);
+			in.set(Convert.px2mt(points.get(i)));
+			in.y = -in.y;
+			in.mul(factor * oneOnWorld3DFactor);
 
 			// base
 			verts[j + X1] = in.x;
-			verts[j + Y1] = -in.y;
+			verts[j + Y1] = in.y;
 			verts[j + Z1] = 0;// -0.025f; // should be 0, but fixes some nasty flickering border issue
 
 			// elevation
 			verts[j + X2] = in.x + (addJitter ? MathUtils.random(-jitterPositional, jitterPositional) : 0);
-			verts[j + Y2] = -in.y + (addJitter ? MathUtils.random(-jitterPositional, jitterPositional) : 0);
+			verts[j + Y2] = in.y + (addJitter ? MathUtils.random(-jitterPositional, jitterPositional) : 0);
 			verts[j + Z2] = wallHeightMt;// + (addJitter? MathUtils.random(
 			// -jitterAltitudinal,
 			// jitterAltitudinal ) :
@@ -662,12 +664,12 @@ public final class GameWorld {
 			MathUtils.random.setSeed(Long.MAX_VALUE);
 			MapLayer group = mapUtils.getObjectGroup(ObjectGroup.Trees);
 
-			if (group.getObjects().getNumObjects() > 0) {
+			if (group.getObjects().getCount() > 0) {
 
-				models = new ArrayList<TreeStillModel>(group.getObjects().getNumObjects());
+				models = new ArrayList<TreeStillModel>(group.getObjects().getCount());
 
-				for (int i = 0; i < group.getObjects().getNumObjects(); i++) {
-					RectangleMapObject o = (RectangleMapObject)group.getObjects().getObject(i);
+				for (int i = 0; i < group.getObjects().getCount(); i++) {
+					RectangleMapObject o = (RectangleMapObject)group.getObjects().get(i);
 
 					float scale = 1f;
 					if (o.getProperties().get(ObjectProperties.MeshScale.mnemonic) != null) {

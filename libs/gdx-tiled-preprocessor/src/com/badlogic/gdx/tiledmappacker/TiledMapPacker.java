@@ -115,7 +115,7 @@ public class TiledMapPacker {
 			if (this.settings.stripUnusedTiles) {
 				int mapWidth = map.getProperties().get("width", Integer.class);
 				int mapHeight = map.getProperties().get("height", Integer.class);
-				int numlayers = map.getLayers().getNumLayers();
+				int numlayers = map.getLayers().getCount();
 				usedIds = new IntArray(numlayers * mapHeight * mapWidth);
 
 				for (MapLayer layer : map.getLayers()) {

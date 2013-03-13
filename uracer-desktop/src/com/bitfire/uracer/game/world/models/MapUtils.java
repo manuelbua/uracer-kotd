@@ -44,7 +44,7 @@ public final class MapUtils implements Disposable {
 	public TiledMapTileLayer getLayer (Layer layer) {
 		TiledMapTileLayer cached = cachedLayers.get(layer.mnemonic);
 		if (cached == null) {
-			cached = (TiledMapTileLayer)map.getLayers().getLayer(layer.mnemonic);
+			cached = (TiledMapTileLayer)map.getLayers().get(layer.mnemonic);
 			cachedLayers.put(layer.mnemonic, cached);
 		}
 
@@ -58,7 +58,7 @@ public final class MapUtils implements Disposable {
 	public MapLayer getObjectGroup (ObjectGroup group) {
 		MapLayer cached = cachedGroups.get(group.mnemonic);
 		if (cached == null) {
-			cached = map.getLayers().getLayer(group.mnemonic);
+			cached = map.getLayers().get(group.mnemonic);
 			cachedGroups.put(group.mnemonic, cached);
 		}
 
