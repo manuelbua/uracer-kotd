@@ -25,6 +25,7 @@ public final class GameTracks {
 	private static TmxMapLoader mapLoader = new URacerTmxMapLoader();
 
 // private static TmxMapLoader mapLoader = new TmxMapLoader();
+	private static final boolean yUp = false;
 
 	public static final boolean init () {
 
@@ -55,7 +56,7 @@ public final class GameTracks {
 
 		// build internal maps
 		for (int i = 0; i < tracks.length; i++) {
-			TiledMap m = mapLoader.load(tracks[i].path());
+			TiledMap m = mapLoader.load(tracks[i].path(), yUp);
 			String name = m.getProperties().get("name", String.class);
 			if (name != null) {
 				String hash = new BigInteger(1, digest.digest(name.getBytes())).toString(16);
@@ -79,7 +80,7 @@ public final class GameTracks {
 		if (filename != null) {
 			FileHandle h = Gdx.files.internal(Storage.Levels + filename);
 			if (h.exists()) {
-				return mapLoader.load(h.path(), false);
+				return mapLoader.load(h.path(), yUp);
 			}
 		}
 

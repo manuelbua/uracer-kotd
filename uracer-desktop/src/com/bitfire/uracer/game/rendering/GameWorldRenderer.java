@@ -414,7 +414,13 @@ public final class GameWorldRenderer {
 		camOrthoMvpMt.val[Matrix4.M11] *= scaledPpm;
 
 		// update the tilemap renderer orthographic camera
-		camTilemap.position.set(camOrtho.position).mul(scalingStrategy.tileMapZoomFactor);
+		// y-down
+		camTilemap.up.set(0, -1, 0);
+		camTilemap.direction.set(0, 0, 1);
+
+		camTilemap.position.set(camOrtho.position);
+		camTilemap.position.y = world.worldSizeScaledPx.y - camTilemap.position.y;
+		camTilemap.position.mul(scalingStrategy.tileMapZoomFactor);
 		camTilemap.zoom = scalingStrategy.tileMapZoomFactor * zoom;
 		camTilemap.update();
 
@@ -448,7 +454,7 @@ public final class GameWorldRenderer {
 			// @on
 
 			rayHandler.update();
-			// Gdx.app.log( "GameWorldRenderer", "lights rendered=" + rayHandler.lightRenderedLastFrame );
+			// Gdx.app.log("GameWorldRenderer", "lights rendered=" + rayHandler.lightRenderedLastFrame);
 
 			rayHandler.updateLightMap();
 		}

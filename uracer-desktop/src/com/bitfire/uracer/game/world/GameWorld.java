@@ -271,6 +271,7 @@ public final class GameWorld {
 				0.55f
 			);
 			//@on
+
 			RectangleMapObject o = (RectangleMapObject)group.getObjects().get(i);
 			pos.set(o.getRectangle().x, o.getRectangle().y).mul(scalingStrategy.invTileMapZoomFactor);
 			pos.y = worldSizeScaledPx.y - pos.y;
@@ -287,8 +288,8 @@ public final class GameWorld {
 		playerImpulse.setSoft(true);
 		playerImpulse.setStaticLight(false);
 		playerImpulse.setActive(true);
-		playerImpulse.setColor(1, 1, 1, 0.5f);
-		playerImpulse.setDistance(1);
+		playerImpulse.setColor(1, 1, 1, 1f);
+		playerImpulse.setDistance(5);
 	}
 
 	//
