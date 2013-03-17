@@ -23,11 +23,13 @@ public final class GameTracks {
 	private static String[] trackNames;
 	private static String[] trackIds;
 	private static TmxMapLoader mapLoader = new URacerTmxMapLoader();
-
 // private static TmxMapLoader mapLoader = new TmxMapLoader();
-	private static final boolean yUp = false;
+	private static TmxMapLoader.Parameters mapLoaderParams = new TmxMapLoader.Parameters();
 
 	public static final boolean init () {
+
+		mapLoaderParams.generateMipMaps = false;
+		mapLoaderParams.yUp = false;
 
 		try {
 			digest = MessageDigest.getInstance("SHA-1");
@@ -56,7 +58,7 @@ public final class GameTracks {
 
 		// build internal maps
 		for (int i = 0; i < tracks.length; i++) {
-			TiledMap m = mapLoader.load(tracks[i].path(), yUp);
+			TiledMap m = mapLoader.load(tracks[i].path(), mapLoaderParams);
 			String name = m.getProperties().get("name", String.class);
 			if (name != null) {
 				String hash = new BigInteger(1, digest.digest(name.getBytes())).toString(16);
@@ -80,7 +82,7 @@ public final class GameTracks {
 		if (filename != null) {
 			FileHandle h = Gdx.files.internal(Storage.Levels + filename);
 			if (h.exists()) {
-				return mapLoader.load(h.path(), yUp);
+				return mapLoader.load(h.path(), mapLoaderParams);
 			}
 		}
 

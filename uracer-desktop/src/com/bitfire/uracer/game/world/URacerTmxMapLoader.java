@@ -19,8 +19,8 @@ import com.badlogic.gdx.utils.XmlReader.Element;
 public class URacerTmxMapLoader extends TmxMapLoader {
 
 	@Override
-	public TiledMap load (String fileName, boolean yUp) {
-		this.yUp = yUp;
+	public TiledMap load (String fileName, TmxMapLoader.Parameters params) {
+		this.yUp = params.yUp;
 		try {
 			FileHandle tmxFile = resolve(fileName);
 			root = xml.parse(tmxFile);
