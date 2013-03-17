@@ -19,12 +19,12 @@ public class HudPlayerStatic extends HudElement {
 	private final BasicInfo basicInfo;
 	private HudLabel labelSpeed, labelDistance;
 	private PlayerCar player;
-	private final GameRenderer renderer;
+	// private final GameRenderer renderer;
 	private float scale = 1f;
 
 	public HudPlayerStatic (UserProfile userProfile, ScalingStrategy scalingStrategy, PlayerCar player, GameRenderer renderer) {
 		this.player = player;
-		this.renderer = renderer;
+		// this.renderer = renderer;
 		this.scale = scalingStrategy.invTileMapZoomFactor;
 
 		basicInfo = new BasicInfo(scale, userProfile);
