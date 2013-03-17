@@ -97,8 +97,11 @@ public class SinglePlayerLogic extends CommonLogic {
 
 		float cameraZoom = (maxZoom - 0.1f) - (zoomRange) * zoomFromSpeed + (zoomRange + 0.1f) * timeModFactor * zoomFromSpeed;
 		cameraZoom = AMath.fixup(MathUtils.clamp(cameraZoom, 1, maxZoom));
+
+		// dbg
+// cameraZoom = 1;
+
 		gameWorldRenderer.setCameraZoom(cameraZoom);
-		// gameWorldRenderer.setCameraZoom(1f);
 
 		// update player's headlights and move the world camera to follows it, if there is a player
 		if (hasPlayer()) {
@@ -127,6 +130,10 @@ public class SinglePlayerLogic extends CommonLogic {
 					// l.setColor(0.1f, 0.2f, 0.9f, v);
 					// Color p = ColorUtils.paletteRYG(v + 0.7f, v);
 					// l.setColor(p);
+
+					// dbg
+// l.setDistance(5);
+// l.setColor(1, 1, 1, 1);
 				}
 			}
 
