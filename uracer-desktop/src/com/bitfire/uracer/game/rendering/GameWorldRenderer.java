@@ -7,7 +7,6 @@ import box2dLight.ConeLight;
 import box2dLight.RayHandler;
 
 import com.badlogic.gdx.Gdx;
-import com.badlogic.gdx.files.FileHandle;
 import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.GL10;
 import com.badlogic.gdx.graphics.GL20;
@@ -15,13 +14,13 @@ import com.badlogic.gdx.graphics.Mesh;
 import com.badlogic.gdx.graphics.OrthographicCamera;
 import com.badlogic.gdx.graphics.PerspectiveCamera;
 import com.badlogic.gdx.graphics.Pixmap.Format;
-import com.badlogic.gdx.graphics.Texture.TextureFilter;
 import com.badlogic.gdx.graphics.VertexAttribute;
 import com.badlogic.gdx.graphics.VertexAttributes.Usage;
 import com.badlogic.gdx.graphics.g3d.model.still.StillSubMesh;
 import com.badlogic.gdx.graphics.glutils.FrameBuffer;
 import com.badlogic.gdx.graphics.glutils.ImmediateModeRenderer20;
 import com.badlogic.gdx.graphics.glutils.ShaderProgram;
+import com.badlogic.gdx.maps.tiled.renderers.OrthogonalTiledMapRenderer;
 import com.badlogic.gdx.math.MathUtils;
 import com.badlogic.gdx.math.Matrix3;
 import com.badlogic.gdx.math.Matrix4;
@@ -31,7 +30,6 @@ import com.badlogic.gdx.math.Vector3;
 import com.badlogic.gdx.math.collision.BoundingBox;
 import com.bitfire.uracer.ScalingStrategy;
 import com.bitfire.uracer.configuration.Config;
-import com.bitfire.uracer.configuration.Storage;
 import com.bitfire.uracer.configuration.UserPreferences;
 import com.bitfire.uracer.configuration.UserPreferences.Preference;
 import com.bitfire.uracer.game.actors.Car;
@@ -109,10 +107,9 @@ public final class GameWorldRenderer {
 	// rendering
 	private GL20 gl = null;
 	private ShaderProgram treeShader = null, treeShaderNight = null;
-	private UTileAtlas tileAtlas = null;
 	private boolean renderPlayerHeadlights = true;
 
-	public UTileMapRenderer tileMapRenderer = null;
+	public OrthogonalTiledMapRenderer tileMapRenderer = null;
 	private ScalingStrategy scalingStrategy = null;
 	private float scaledPpm = 1f;
 
@@ -149,10 +146,9 @@ public final class GameWorldRenderer {
 
 		createCams(width, height);
 
-		FileHandle baseDir = Gdx.files.internal(Storage.Levels);
-		tileAtlas = new UTileAtlas(world.map, baseDir);
-		tileAtlas.setFilter(TextureFilter.Linear, TextureFilter.Linear);
-		tileMapRenderer = new UTileMapRenderer(world.map, tileAtlas, 1, 1, world.map.tileWidth, world.map.tileHeight);
+// FileHandle baseDir = Gdx.files.internal(Storage.Levels);
+// tileMapRenderer = new UTileMapRenderer(world.map, tileAtlas, 1, 1, world.map.tileWidth, world.map.tileHeight);
+		tileMapRenderer = new OrthogonalTiledMapRenderer(world.map);
 
 		showComplexTrees = UserPreferences.bool(Preference.ComplexTrees);
 		showWalls = UserPreferences.bool(Preference.Walls);
@@ -206,7 +202,6 @@ public final class GameWorldRenderer {
 		normalDepthMap.dispose();
 
 		tileMapRenderer.dispose();
-		tileAtlas.dispose();
 		plane.dispose();
 	}
 
@@ -374,23 +369,6 @@ public final class GameWorldRenderer {
 		treesAmbientColor.set(color);
 	}
 
-	private void updateRayHandler () {
-		if (rayHandler != null) {
-
-			rayHandler.setAmbientLight(ambientColor);
-
-			// @off
-			rayHandler.setCombinedMatrix(camOrthoMvpMt, Convert.px2mt(camOrtho.position.x), Convert.px2mt(camOrtho.position.y),
-				Convert.px2mt(camOrtho.viewportWidth), Convert.px2mt(camOrtho.viewportHeight));
-			// @on
-
-			rayHandler.update();
-			// Gdx.app.log( "GameWorldRenderer", "lights rendered=" + rayHandler.lightRenderedLastFrame );
-
-			rayHandler.updateLightMap();
-		}
-	}
-
 	private Vector2 cameraPos = new Vector2();
 	private float cameraZoom = 1;
 
@@ -436,7 +414,13 @@ public final class GameWorldRenderer {
 		camOrthoMvpMt.val[Matrix4.M11] *= scaledPpm;
 
 		// update the tilemap renderer orthographic camera
-		camTilemap.position.set(camOrtho.position).mul(scalingStrategy.tileMapZoomFactor);
+		// y-down
+		camTilemap.up.set(0, -1, 0);
+		camTilemap.direction.set(0, 0, 1);
+
+		camTilemap.position.set(camOrtho.position);
+		camTilemap.position.y = world.worldSizeScaledPx.y - camTilemap.position.y;
+		camTilemap.position.scl(scalingStrategy.tileMapZoomFactor);
 		camTilemap.zoom = scalingStrategy.tileMapZoomFactor * zoom;
 		camTilemap.update();
 
@@ -457,6 +441,23 @@ public final class GameWorldRenderer {
 		Matrix4.inv(camPerspInvProj.val);
 
 		updateRayHandler();
+	}
+
+	private void updateRayHandler () {
+		if (rayHandler != null) {
+
+			rayHandler.setAmbientLight(ambientColor);
+
+			// @off
+			rayHandler.setCombinedMatrix(camOrthoMvpMt, Convert.px2mt(camOrtho.position.x), Convert.px2mt(camOrtho.position.y),
+				Convert.px2mt(camOrtho.viewportWidth), Convert.px2mt(camOrtho.viewportHeight));
+			// @on
+
+			rayHandler.update();
+			// Gdx.app.log("GameWorldRenderer", "lights rendered=" + rayHandler.lightRenderedLastFrame);
+
+			rayHandler.updateLightMap();
+		}
 	}
 
 	public void updateNormalDepthMap () {
@@ -553,7 +554,8 @@ public final class GameWorldRenderer {
 		gl.glDisable(GL20.GL_CULL_FACE);
 		gl.glDisable(GL20.GL_BLEND);
 		gl.glActiveTexture(GL10.GL_TEXTURE0);
-		tileMapRenderer.render(camTilemap);
+		tileMapRenderer.setView(camTilemap);
+		tileMapRenderer.render();
 	}
 
 	public void renderWalls (boolean depthOnly) {

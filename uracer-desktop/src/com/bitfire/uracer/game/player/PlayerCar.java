@@ -4,7 +4,7 @@ package com.bitfire.uracer.game.player;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Input.Keys;
 import com.badlogic.gdx.graphics.Pixmap;
-import com.badlogic.gdx.graphics.g2d.tiled.TiledLayer;
+import com.badlogic.gdx.maps.tiled.TiledMapTileLayer;
 import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.math.WindowedMean;
 import com.bitfire.uracer.Input;
@@ -20,7 +20,7 @@ import com.bitfire.uracer.game.actors.CarState;
 import com.bitfire.uracer.game.actors.CarType;
 import com.bitfire.uracer.game.rendering.GameRenderer;
 import com.bitfire.uracer.game.world.GameWorld;
-import com.bitfire.uracer.game.world.WorldDefs.TileLayer;
+import com.bitfire.uracer.game.world.WorldDefs.Layer;
 import com.bitfire.uracer.utils.AMath;
 import com.bitfire.uracer.utils.Convert;
 import com.bitfire.uracer.utils.VMath;
@@ -253,17 +253,19 @@ public class PlayerCar extends Car {
 			offset.y = gameWorld.worldSizeScaledPx.y - offset.y;
 			offset.x = offset.x - tsx;
 			offset.y = offset.y - tsy;
-			offset.mul(gameWorld.getTileSizeInvScaled()).mul(gameWorld.map.tileWidth);
+			offset.mul(gameWorld.getTileSizeInvScaled()).mul(gameWorld.tileWidth);
 
-			TiledLayer layerTrack = gameWorld.getLayer(TileLayer.Track);
-			int id = layerTrack.tiles[(int)tilePosition.y][(int)tilePosition.x] - 1;
+			TiledMapTileLayer layerTrack = gameWorld.getLayer(Layer.Track);
+
+// int id = layerTrack.getCell((int)tilePosition.x, gameWorld.mapHeight - (int)tilePosition.y - 1).getTile().getId() - 1;
+			int id = layerTrack.getCell((int)tilePosition.x, (int)tilePosition.y).getTile().getId() - 1;
 
 			// int xOnMap = (id %4) * (int)gameWorld.map.tileWidth + (int)offset.x;
 			// int yOnMap = (int)( id/4f ) * (int)gameWorld.map.tileWidth + (int)offset.y;
 
 			// bit twiddling, faster version
-			int xOnMap = (id & 3) * (int)gameWorld.map.tileWidth + (int)offset.x;
-			int yOnMap = (id >> 2) * (int)gameWorld.map.tileWidth + (int)offset.y;
+			int xOnMap = (id & 3) * (int)gameWorld.tileWidth + (int)offset.x;
+			int yOnMap = (id >> 2) * (int)gameWorld.tileWidth + (int)offset.y;
 
 			int pixel = frictionMap.getPixel(xOnMap, yOnMap);
 			boolean inTrack = (pixel == -256);
@@ -272,7 +274,8 @@ public class PlayerCar extends Car {
 			// Gdx.app.log( "PlayerCar", "xmap=" + xOnMap + ", ymap=" + yOnMap );
 			// Gdx.app.log( "PlayerCar", "mean=" + frictionMean.getMean() + ", pixel=" + pixel + ", xmap=" + xOnMap +
 			// ", ymap=" + yOnMap );
-			// Gdx.app.log( "PlayerCar", "id=" + id );
+			// Gdx.app.log("PlayerCar", "id=" + id);
+			// Gdx.app.log("PlayerCar", "#" + id + ", xt=" + (int)tilePosition.x + "," + (int)tilePosition.y);
 
 		} else {
 			Gdx.app.log("PlayerCar", "PlayerCar out of map!");

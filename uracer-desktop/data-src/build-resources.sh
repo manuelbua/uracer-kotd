@@ -7,8 +7,8 @@ JARS="${CLASS_PATH}/gdx.jar:${CLASS_PATH}/gdx-natives.jar:${CLASS_PATH}/gdx-back
 GDX_TOOLS_PATH="/home/manuel/dev/libgdx/dist/extensions/gdx-tools/"
 TEX_PACKER="java -classpath ${JARS}:${GDX_TOOLS_PATH}/gdx-tools.jar com.badlogic.gdx.tools.imagepacker.TexturePacker2"
 
-GDX_TILED_PREP_PATH="/home/manuel/dev/libgdx/dist/extensions/gdx-tiled-preprocessor/"
-TILED_PACKER="java -classpath ${JARS}:${GDX_TOOLS_PATH}/gdx-tools.jar:${GDX_TILED_PREP_PATH}/gdx-tiled-preprocessor.jar com.badlogic.gdx.tiledmappacker.TiledMapPacker"
+GDX_TILED_PREP_PATH="/home/manuel/dev/uracer-libgdx/libs/gdx-tiled-preprocessor/bin"
+TILED_PACKER="java -classpath ${JARS}:${GDX_TOOLS_PATH}/gdx-tools.jar:${GDX_TILED_PREP_PATH} com.badlogic.gdx.tiledmappacker.TiledMapPacker"
 
 #SKIN_PACKER="java -classpath ${JARS}:${GDX_TOOLS_PATH}:/home/manuel/dev/uracer-skin-packer/bin com.bitfire.uracer.skinpacker.Packer"
 
@@ -26,8 +26,17 @@ echo "done!"
 # tileset graphics and tmx levels
 echo -n "Cooking levels..."
 rm -rf "${DEST}/levels/"
+
+# packer
 mkdir -p ${DEST}
 ${TILED_PACKER} levels/ ${DEST}/levels #--strip-unused
+
+# no packer
+#mkdir -p ${DEST}/levels/
+#mkdir -p ${DEST}/levels/tilesets/desert/
+#cp -r levels/*.tmx ${DEST}/levels/
+#cp -r levels/tilesets/desert/224.png ${DEST}/levels/tilesets/desert/
+
 echo "done!"
 
 # tileset friction maps

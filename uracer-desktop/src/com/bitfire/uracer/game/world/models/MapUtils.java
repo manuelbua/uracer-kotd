@@ -6,50 +6,59 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import com.badlogic.gdx.graphics.g2d.tiled.TiledLayer;
-import com.badlogic.gdx.graphics.g2d.tiled.TiledMap;
-import com.badlogic.gdx.graphics.g2d.tiled.TiledObjectGroup;
+import com.badlogic.gdx.maps.MapLayer;
+import com.badlogic.gdx.maps.tiled.TiledMap;
+import com.badlogic.gdx.maps.tiled.TiledMapTileLayer;
 import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.utils.Disposable;
+import com.bitfire.uracer.game.world.WorldDefs.Layer;
 import com.bitfire.uracer.game.world.WorldDefs.ObjectGroup;
-import com.bitfire.uracer.game.world.WorldDefs.TileLayer;
 import com.bitfire.uracer.utils.Convert;
 import com.bitfire.uracer.utils.VMath;
 
 public final class MapUtils implements Disposable {
-
 	// cache
-	public final Map<String, TiledLayer> cachedLayers = new HashMap<String, TiledLayer>(10);
-	public final Map<String, TiledObjectGroup> cachedGroups = new HashMap<String, TiledObjectGroup>(10);
+	public final Map<String, MapLayer> cachedGroups = new HashMap<String, MapLayer>(10);
+	public final Map<String, TiledMapTileLayer> cachedLayers = new HashMap<String, TiledMapTileLayer>(10);
 
 	private TiledMap map;
 	private Vector2 worldSizeScaledPx = new Vector2();
 	public float scaledTilesize, invScaledTilesize;
+	private int mapHeight, tileWidth;
 
-	public MapUtils (TiledMap map, Vector2 worldSizeScaledPx, float invZoomFactor) {
+	public MapUtils (TiledMap map, int tileWidth, int mapHeight, Vector2 worldSizeScaledPx, float invZoomFactor) {
 		this.map = map;
+		this.tileWidth = tileWidth;
+		this.mapHeight = mapHeight;
 		this.worldSizeScaledPx.set(worldSizeScaledPx);
-		scaledTilesize = map.tileWidth * invZoomFactor;
+
+		scaledTilesize = tileWidth * invZoomFactor;
 		invScaledTilesize = 1f / scaledTilesize;
 	}
 
 	@Override
 	public void dispose () {
-		cachedGroups.clear();
 		cachedLayers.clear();
 	}
 
-	public TiledObjectGroup getObjectGroup (ObjectGroup group) {
-		TiledObjectGroup cached = cachedGroups.get(group.mnemonic);
+	public TiledMapTileLayer getLayer (Layer layer) {
+		TiledMapTileLayer cached = cachedLayers.get(layer.mnemonic);
 		if (cached == null) {
-			for (int i = 0; i < map.objectGroups.size(); i++) {
-				TiledObjectGroup objgroup = map.objectGroups.get(i);
-				if (objgroup.name.equals(group.mnemonic)) {
-					cached = objgroup;
-					break;
-				}
-			}
+			cached = (TiledMapTileLayer)map.getLayers().get(layer.mnemonic);
+			cachedLayers.put(layer.mnemonic, cached);
+		}
 
+		return cached;
+	}
+
+	public boolean hasLayer (Layer layer) {
+		return getLayer(layer) != null;
+	}
+
+	public MapLayer getObjectGroup (ObjectGroup group) {
+		MapLayer cached = cachedGroups.get(group.mnemonic);
+		if (cached == null) {
+			cached = map.getLayers().get(group.mnemonic);
 			cachedGroups.put(group.mnemonic, cached);
 		}
 
@@ -60,25 +69,14 @@ public final class MapUtils implements Disposable {
 		return getObjectGroup(group) != null;
 	}
 
-	public TiledLayer getLayer (TileLayer layer) {
-		TiledLayer cached = cachedLayers.get(layer.mnemonic);
-		if (cached == null) {
-			for (int i = 0; i < map.layers.size(); i++) {
-				TiledLayer tilelayer = map.layers.get(i);
-				if (tilelayer.name.equals(layer.mnemonic)) {
-					cached = tilelayer;
-					break;
-				}
-			}
-
-			cachedLayers.put(layer.mnemonic, cached);
+	public static List<Vector2> extractPolyData (float[] vertices) {
+		List<Vector2> points = new ArrayList<Vector2>();
+		int num_verts = vertices.length;
+		for (int i = 0; i < num_verts; i += 2) {
+			points.add(new Vector2(vertices[i], vertices[i + 1]));
 		}
 
-		return cached;
-	}
-
-	public boolean hasLayer (TileLayer layer) {
-		return getLayer(layer) != null;
+		return points;
 	}
 
 	public static List<Vector2> extractPolyData (String encoded) {
@@ -102,16 +100,14 @@ public final class MapUtils implements Disposable {
 	private Vector2 retTile = new Vector2();
 
 	public Vector2 tileToPx (int tilex, int tiley) {
-		retTile.set(tilex * 224 /** scaledTilesize */
-		, (map.height - tiley) * 224 /** scaledTilesize */
-		);
+		retTile.set(tilex * tileWidth, (mapHeight - tiley) * tileWidth);
 		return retTile;
 	}
 
 	public Vector2 pxToTile (float x, float y) {
 		retTile.set(x, y);
 		retTile.mul(invScaledTilesize);
-		retTile.y = map.height - retTile.y;
+		retTile.y = mapHeight - retTile.y;
 		VMath.truncateToInt(retTile);
 		return retTile;
 	}
@@ -136,6 +132,7 @@ public final class MapUtils implements Disposable {
 		return tmp;
 	}
 
+	// TODO unused?
 	public float orientationFromDirection (String direction) {
 		float ret = 0f;
 

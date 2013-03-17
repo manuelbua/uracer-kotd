@@ -17,14 +17,21 @@ public final class WorldDefs {
 	}
 
 	/** Tiled's world tile layers */
-	public enum TileLayer {
+	public enum Layer {
 		// @off
-		Track("track");
+		Track("track"),
+//		Lights("lights"), 
+//		StaticMeshes("static-meshes"), 
+//		Trees("trees"), 
+//		Walls("walls"),
+//		Route("route"),
+//		Sectors("sectors")
+		;
 		// @on
 
 		public final String mnemonic;
 
-		private TileLayer (String mnemonic) {
+		private Layer (String mnemonic) {
 			this.mnemonic = mnemonic;
 		}
 	}

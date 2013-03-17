@@ -97,8 +97,11 @@ public class SinglePlayerLogic extends CommonLogic {
 
 		float cameraZoom = (maxZoom - 0.1f) - (zoomRange) * zoomFromSpeed + (zoomRange + 0.1f) * timeModFactor * zoomFromSpeed;
 		cameraZoom = AMath.fixup(MathUtils.clamp(cameraZoom, 1, maxZoom));
+
+		// dbg
+// cameraZoom = 1;
+
 		gameWorldRenderer.setCameraZoom(cameraZoom);
-		// gameWorldRenderer.setCameraZoom(1f);
 
 		// update player's headlights and move the world camera to follows it, if there is a player
 		if (hasPlayer()) {
@@ -108,25 +111,30 @@ public class SinglePlayerLogic extends CommonLogic {
 
 				// update player's impulse light
 				PointLight l = gameWorld.getPlayerImpulseLight();
-				CarState cs = playerCar.carState;
+				if (l != null) {
+					CarState cs = playerCar.carState;
+					Input input = URacer.Game.getInputSystem();
+					Vector3 v3 = GameRenderer.ScreenUtils.screenToWorldMt(input.getXY());
+					l.setActive(true);
+					l.setPosition(v3.x, v3.y);
+					// playerImpulse.setPosition(car.getWorldPosMt().x, car.getWorldPosMt().y);
 
-				Input input = URacer.Game.getInputSystem();
+					// float f = 1;// cs.currSpeedFactor;
+					float f = cs.currSpeedFactor * cs.currForceFactor;
+					l.setDistance(10 - 8 * f);
+					l.setSoftnessLenght(5);
 
-				Vector3 v3 = GameRenderer.ScreenUtils.screenToWorldMt(input.getXY());
-				l.setActive(true);
-				l.setPosition(v3.x, v3.y);
-				// playerImpulse.setPosition(car.getWorldPosMt().x, car.getWorldPosMt().y);
+					float v = MathUtils.clamp(1f * f, 0, 1);
+					l.setColor(1, 1, 1, v);
 
-				// float f = 1;// cs.currSpeedFactor;
-				float f = cs.currSpeedFactor * cs.currForceFactor;
-				l.setDistance(10 - 8 * f);
-				l.setSoftnessLenght(5);
+					// l.setColor(0.1f, 0.2f, 0.9f, v);
+					// Color p = ColorUtils.paletteRYG(v + 0.7f, v);
+					// l.setColor(p);
 
-				float v = MathUtils.clamp(1f * f, 0, 1);
-				l.setColor(1, 1, 1, v);
-// l.setColor(0.1f, 0.2f, 0.9f, v);
-// Color p = ColorUtils.paletteRYG(v + 0.7f, v);
-// l.setColor(p);
+					// dbg
+// l.setDistance(5);
+// l.setColor(1, 1, 1, 1);
+				}
 			}
 
 			gameWorldRenderer.setCameraPosition(playerCar.state().position, playerCar.state().orientation,
