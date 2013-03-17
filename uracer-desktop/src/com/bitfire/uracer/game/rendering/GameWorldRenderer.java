@@ -420,7 +420,7 @@ public final class GameWorldRenderer {
 
 		camTilemap.position.set(camOrtho.position);
 		camTilemap.position.y = world.worldSizeScaledPx.y - camTilemap.position.y;
-		camTilemap.position.mul(scalingStrategy.tileMapZoomFactor);
+		camTilemap.position.scl(scalingStrategy.tileMapZoomFactor);
 		camTilemap.zoom = scalingStrategy.tileMapZoomFactor * zoom;
 		camTilemap.update();
 

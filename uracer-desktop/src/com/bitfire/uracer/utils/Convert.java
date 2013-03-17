@@ -53,7 +53,7 @@ public final class Convert {
 
 	public static Vector2 scaledPixels (final Vector2 pixels) {
 		retPx.set(pixels);
-		retPx.mul(invZoomFactor);
+		retPx.scl(invZoomFactor);
 		return retPx;
 	}
 

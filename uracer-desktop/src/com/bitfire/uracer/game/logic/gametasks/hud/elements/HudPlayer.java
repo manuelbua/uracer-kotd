@@ -142,7 +142,7 @@ public final class HudPlayer extends HudElement {
 		tmpg.set(heading);
 		float displaceX = p * zs + w * 0.5f + border;
 		float displaceY = q * zs + h * 0.5f + border;
-		tmpg.mul(displaceX, displaceY);
+		tmpg.scl(displaceX, displaceY);
 		displaceX = tmpg.x;
 		displaceY = tmpg.y;
 

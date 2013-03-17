@@ -273,9 +273,9 @@ public final class GameWorld {
 			//@on
 
 			RectangleMapObject o = (RectangleMapObject)group.getObjects().get(i);
-			pos.set(o.getRectangle().x, o.getRectangle().y).mul(scalingStrategy.invTileMapZoomFactor);
+			pos.set(o.getRectangle().x, o.getRectangle().y).scl(scalingStrategy.invTileMapZoomFactor);
 			pos.y = worldSizeScaledPx.y - pos.y;
-			pos.set(Convert.px2mt(pos)).mul(scalingStrategy.tileMapZoomFactor);
+			pos.set(Convert.px2mt(pos)).scl(scalingStrategy.tileMapZoomFactor);
 
 			PointLight l = new PointLight(rayHandler, maxRays, c, MathUtils.random(20f, 25f), pos.x, pos.y);
 			l.setSoft(true);
@@ -537,7 +537,7 @@ public final class GameWorld {
 
 			in.set(Convert.px2mt(points.get(i)));
 			in.y = -in.y;
-			in.mul(factor * oneOnWorld3DFactor);
+			in.scl(factor * oneOnWorld3DFactor);
 
 			// base
 			verts[j + X1] = in.x;

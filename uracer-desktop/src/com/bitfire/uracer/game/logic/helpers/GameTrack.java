@@ -158,7 +158,7 @@ public final class GameTrack implements Disposable {
 
 			// switch coordinate space and rotate it so that both the car and the track sector converge
 			// to the same value when they are ~parallel and pointing to the same direction
-			dir.mul(-1, 1);
+			dir.scl(-1, 1);
 
 			float dot = dir.dot(heading);
 
