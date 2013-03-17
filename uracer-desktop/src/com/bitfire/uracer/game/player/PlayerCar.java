@@ -8,6 +8,7 @@ import com.badlogic.gdx.maps.tiled.TiledMapTileLayer;
 import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.math.WindowedMean;
 import com.bitfire.uracer.Input;
+import com.bitfire.uracer.URacer;
 import com.bitfire.uracer.configuration.Config;
 import com.bitfire.uracer.events.GameRendererEvent;
 import com.bitfire.uracer.game.GameplaySettings;
@@ -117,7 +118,7 @@ public class PlayerCar extends Car {
 			return carInput;
 		}
 
-		boolean inputFromKeyboard = false;
+		boolean inputFromKeyboard = !URacer.Game.getInputSystem().isTouching();
 
 		if (!inputFromKeyboard) {
 
@@ -154,6 +155,8 @@ public class PlayerCar extends Car {
 			boolean kRight = input.isOn(Keys.RIGHT);
 
 			carInput.updated = false;
+			final float KeyboardSensitivity = 0.05f;
+			float keysens = KeyboardSensitivity + (KeyboardSensitivity / 2) * 0.2f;
 
 			if (kUp) {
 				carInput.updated = true;
@@ -167,13 +170,13 @@ public class PlayerCar extends Car {
 				if (carInput.steerAngle > 0) {
 					carInput.steerAngle = 0;
 				}
-				carInput.steerAngle -= 0.05f;
+				carInput.steerAngle -= keysens;
 			} else if (kRight) {
 				carInput.updated = true;
 				if (carInput.steerAngle < 0) {
 					carInput.steerAngle = 0;
 				}
-				carInput.steerAngle += 0.05f;
+				carInput.steerAngle += keysens;
 			} else {
 				carInput.steerAngle = 0f;
 			}

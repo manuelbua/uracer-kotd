@@ -101,7 +101,7 @@ public final class GameWorldRenderer {
 	private CameraController camController;
 	private static final float CamPerspPlaneNear = 1;
 	public static final float CamPerspPlaneFar = 240;
-	public static final float MaxCameraZoom = 1.6f;
+	public static final float MaxCameraZoom = 1.4f;
 	private static final float CamPerspElevation = 100f;
 
 	// rendering
