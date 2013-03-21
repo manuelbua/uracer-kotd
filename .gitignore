@@ -9,3 +9,4 @@ VersionInfo.java
 *.log
 *.class
 pom.xml
+*.*~
