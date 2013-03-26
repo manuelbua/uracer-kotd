@@ -106,7 +106,7 @@ public final class MapUtils implements Disposable {
 
 	public Vector2 pxToTile (float x, float y) {
 		retTile.set(x, y);
-		retTile.mul(invScaledTilesize);
+		retTile.scl(invScaledTilesize);
 		retTile.y = mapHeight - retTile.y;
 		VMath.truncateToInt(retTile);
 		return retTile;

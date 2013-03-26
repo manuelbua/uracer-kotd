@@ -75,7 +75,7 @@ public final class VMath {
 
 	public static Vector2 truncate (Vector2 v, float maxLength) {
 		if (v.len() > maxLength) {
-			v.nor().mul(maxLength);
+			v.nor().scl(maxLength);
 		}
 
 		return v;

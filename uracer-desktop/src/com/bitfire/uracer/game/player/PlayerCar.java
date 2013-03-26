@@ -256,7 +256,7 @@ public class PlayerCar extends Car {
 			offset.y = gameWorld.worldSizeScaledPx.y - offset.y;
 			offset.x = offset.x - tsx;
 			offset.y = offset.y - tsy;
-			offset.mul(gameWorld.getTileSizeInvScaled()).mul(gameWorld.tileWidth);
+			offset.scl(gameWorld.getTileSizeInvScaled()).scl(gameWorld.tileWidth);
 
 			TiledMapTileLayer layerTrack = gameWorld.getLayer(Layer.Track);
 
@@ -301,7 +301,7 @@ public class PlayerCar extends Car {
 
 		// FIXME, move these hard-coded values out of here
 		if (isOutOfTrack && carDesc.velocity_wc.len2() > 10) {
-			carDesc.velocity_wc.mul(dampFriction);
+			carDesc.velocity_wc.scl(dampFriction);
 		}
 	}
 
