@@ -39,6 +39,8 @@ import com.bitfire.uracer.ScalingStrategy;
 import com.bitfire.uracer.configuration.Config;
 import com.bitfire.uracer.game.GameTracks;
 import com.bitfire.uracer.game.collisions.CollisionFilters;
+import com.bitfire.uracer.game.logic.helpers.GameTrack;
+import com.bitfire.uracer.game.logic.helpers.GameTrack.TrackPosition;
 import com.bitfire.uracer.game.world.WorldDefs.Layer;
 import com.bitfire.uracer.game.world.WorldDefs.ObjectGroup;
 import com.bitfire.uracer.game.world.WorldDefs.ObjectProperties;
@@ -51,7 +53,6 @@ import com.bitfire.uracer.game.world.models.TreeStillModel;
 import com.bitfire.uracer.resources.Art;
 import com.bitfire.uracer.utils.AMath;
 import com.bitfire.uracer.utils.Convert;
-import com.bitfire.uracer.utils.VMath;
 
 /** Encapsulates the game's world. Yay!
  * 
@@ -73,8 +74,9 @@ public final class GameWorld {
 	private final String trackId;
 
 	// player data
-	public Vector2 playerStartPos = new Vector2();
-	public float playerStartOrientRads;
+	public TrackPosition playerStart = null;
+// public Vector2 playerStartPos = new Vector2();
+// public float playerStartOrientRads;
 
 	// night system
 	private boolean nightMode;
@@ -89,6 +91,7 @@ public final class GameWorld {
 	protected List<OrthographicAlignedStillModel> staticMeshes = new ArrayList<OrthographicAlignedStillModel>();
 
 	// routes
+	private GameTrack gameTrack = null;
 	private List<Vector2> route = new ArrayList<Vector2>();
 	private List<Polygon> polys = new ArrayList<Polygon>();
 
@@ -105,9 +108,6 @@ public final class GameWorld {
 		Gdx.app.log("GameWorld", "Box2D world created (CCD=" + continuousPhysics + ", auto clear forces=" + autoClearForces + ")");
 
 		map = GameTracks.load(trackId);
-
-		// FIXME: nothing better than this?
-// map.getTileSets().getTile(1).getTextureRegion().getTexture().setFilter(TextureFilter.Linear, TextureFilter.Linear);
 
 		this.trackId = trackId;
 		this.nightMode = nightMode;
@@ -130,20 +130,21 @@ public final class GameWorld {
 		createMeshes();
 		route = createRoute();
 		polys = createTrackPolygons();
+		gameTrack = new GameTrack(route, polys);
 
 		if (route == null) {
 			throw new GdxRuntimeException("No route for this track");
 		}
 
-		loadPlayerData(map);
+		playerStart = gameTrack.generateTrackPosition(-2);
 
-		// FIXME, read night mode from level?
 		if (nightMode) {
 			createLights();
 		}
 	}
 
 	public void dispose () {
+		gameTrack.dispose();
 		mapUtils.dispose();
 
 		if (rayHandler != null) {
@@ -201,18 +202,9 @@ public final class GameWorld {
 
 		// trees
 		List<TreeStillModel> trees = createTrees();
-		trackTrees = new TrackTrees(mapUtils, trees);
+		trackTrees = new TrackTrees(this, mapUtils, trees);
 
 		TotalMeshes = staticMeshes.size() + trackWalls.count() + trackTrees.count();
-	}
-
-	private void loadPlayerData (TiledMap map) {
-		Vector2 tmp = new Vector2();
-		tmp.set(route.get(0)).sub(route.get(1));
-		tmp.nor();
-
-		playerStartOrientRads = VMath.toRadians(tmp);
-		playerStartPos.set(route.get(0));
 	}
 
 	private void createLights () {
@@ -221,8 +213,8 @@ public final class GameWorld {
 			return;
 		}
 
-		float rttScale = 0.25f; // i want this to be exactly that
-		int maxRays = 360 * 1; // TODO make this adjustable
+		float rttScale = 0.25f;
+		int maxRays = 360 * 1;
 
 		if (!Config.isDesktop) {
 			rttScale = 0.2f;
@@ -733,6 +725,10 @@ public final class GameWorld {
 		return polys;
 	}
 
+	public GameTrack getGameTrack () {
+		return gameTrack;
+	}
+
 	public String getTrackId () {
 		return trackId;
 	}
@@ -759,12 +755,12 @@ public final class GameWorld {
 
 	// helpers from maputils
 
-	public Vector2 positionFor (Vector2 position) {
-		return mapUtils.positionFor(position);
-	}
-
 	public Vector2 positionFor (float x, float y) {
 		return mapUtils.positionFor(x, y);
+	}
+
+	public Vector2 positionFor (Vector2 position) {
+		return mapUtils.positionFor(position.x, position.y);
 	}
 
 	public Vector2 pxToTile (float x, float y) {

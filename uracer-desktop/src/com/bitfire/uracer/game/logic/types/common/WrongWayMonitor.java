@@ -4,16 +4,12 @@ package com.bitfire.uracer.game.logic.types.common;
 import com.bitfire.uracer.game.GameplaySettings;
 import com.bitfire.uracer.game.Time;
 import com.bitfire.uracer.game.Time.Reference;
-import com.bitfire.uracer.game.actors.Car;
-import com.bitfire.uracer.game.logic.helpers.GameTrack;
 
 public class WrongWayMonitor {
 
 	private final Time wrongWayTimer = new Time();
 	private boolean isWrongWay = false;
 	private WrongWayMonitorListener listener;
-	private Car car;
-	private GameTrack gameTrack;
 
 	public static interface WrongWayMonitorListener {
 		void onWrongWayBegins ();
@@ -21,18 +17,9 @@ public class WrongWayMonitor {
 		void onWrongWayEnds ();
 	}
 
-	public WrongWayMonitor (WrongWayMonitorListener listener, GameTrack gameTrack) {
+	public WrongWayMonitor (WrongWayMonitorListener listener) {
 		this.listener = listener;
-		this.gameTrack = gameTrack;
-		this.car = null;
 		reset();
-	}
-
-	public void setCar (Car car) {
-		this.car = car;
-		if (car == null) {
-			reset();
-		}
 	}
 
 	public void reset () {
@@ -40,13 +27,8 @@ public class WrongWayMonitor {
 		wrongWayTimer.reset();
 	}
 
-	public void update () {
-		if (car == null) {
-			return;
-		}
-
-		float confidence = gameTrack.getTrackRouteConfidence(car);
-		if (confidence <= 0) {
+	public void update (float trackRouteConfidence) {
+		if (trackRouteConfidence <= 0) {
 
 			// player wrong
 
@@ -68,7 +50,7 @@ public class WrongWayMonitor {
 				}
 			}
 
-		} else if (confidence > 0 && !isWrongWay) {
+		} else if (trackRouteConfidence > 0 && !isWrongWay) {
 
 			// player correct
 

@@ -110,6 +110,7 @@ public final class GameWorldRenderer {
 	private boolean renderPlayerHeadlights = true;
 
 	public OrthogonalTiledMapRenderer tileMapRenderer = null;
+	private GameTrackRenderer gameTrackRenderer = null;
 	private ScalingStrategy scalingStrategy = null;
 	private float scaledPpm = 1f;
 
@@ -146,9 +147,10 @@ public final class GameWorldRenderer {
 
 		createCams(width, height);
 
-// FileHandle baseDir = Gdx.files.internal(Storage.Levels);
-// tileMapRenderer = new UTileMapRenderer(world.map, tileAtlas, 1, 1, world.map.tileWidth, world.map.tileHeight);
+		// FileHandle baseDir = Gdx.files.internal(Storage.Levels);
+		// tileMapRenderer = new UTileMapRenderer(world.map, tileAtlas, 1, 1, world.map.tileWidth, world.map.tileHeight);
 		tileMapRenderer = new OrthogonalTiledMapRenderer(world.map);
+		gameTrackRenderer = new GameTrackRenderer(world.getGameTrack());
 
 		showComplexTrees = UserPreferences.bool(Preference.ComplexTrees);
 		showWalls = UserPreferences.bool(Preference.Walls);
@@ -390,6 +392,18 @@ public final class GameWorldRenderer {
 		return cameraZoom;
 	}
 
+	public void setGameTrackDebugCar (Car car) {
+		gameTrackRenderer.setCar(car);
+	}
+
+	public void showDebugGameTrack (boolean show) {
+		if (show) {
+			gameTrackRenderer.attach();
+		} else {
+			gameTrackRenderer.detach();
+		}
+	}
+
 	public void updateCamera () {
 		// update orthographic camera
 
@@ -428,8 +442,8 @@ public final class GameWorldRenderer {
 		camPerspPrevViewProj.set(camPersp.projection).mul(camPersp.view);
 
 		// sync perspective camera to the orthographic camera
-// camPersp.fieldOfView = 43;
-// camPersp.fieldOfView = 67;
+		// camPersp.fieldOfView = 43;
+		// camPersp.fieldOfView = 67;
 		camPersp.position.set(camTilemap.position.x, camTilemap.position.y, CamPerspElevation);
 		camPersp.update(true);
 
@@ -489,12 +503,12 @@ public final class GameWorldRenderer {
 			renderTilemapPlane();
 			renderWalls(true);
 
-// if (staticMeshes.size() > 0) {
-// gl.glEnable(GL20.GL_DEPTH_TEST);
-// gl.glDepthFunc(GL20.GL_LESS);
-//
-// renderOrthographicAlignedModels(staticMeshes, true);
-// }
+			// if (staticMeshes.size() > 0) {
+			// gl.glEnable(GL20.GL_DEPTH_TEST);
+			// gl.glDepthFunc(GL20.GL_LESS);
+			//
+			// renderOrthographicAlignedModels(staticMeshes, true);
+			// }
 
 			renderTrees(true);
 		}

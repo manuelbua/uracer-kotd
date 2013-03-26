@@ -120,32 +120,11 @@ public final class MapUtils implements Disposable {
 		return retPx;
 	}
 
-	public Vector2 positionFor (Vector2 position) {
-		return positionFor(position.x, position.y);
-	}
-
 	private Vector2 tmp = new Vector2();
 
 	public Vector2 positionFor (float x, float y) {
 		tmp = Convert.scaledPixels(tmp.set(x, y));
 		tmp.y = worldSizeScaledPx.y - tmp.y;
 		return tmp;
-	}
-
-	// TODO unused?
-	public float orientationFromDirection (String direction) {
-		float ret = 0f;
-
-		if (direction.equals("up")) {
-			ret = 0f;
-		} else if (direction.equals("right")) {
-			ret = 90f;
-		} else if (direction.equals("down")) {
-			ret = 180f;
-		} else if (direction.equals("left")) {
-			ret = 270f;
-		}
-
-		return ret;
 	}
 }

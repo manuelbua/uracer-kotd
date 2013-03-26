@@ -8,12 +8,15 @@ import com.badlogic.gdx.graphics.PerspectiveCamera;
 import com.badlogic.gdx.math.Matrix4;
 import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.math.Vector3;
+import com.bitfire.uracer.game.world.GameWorld;
 
 public class TrackTrees {
 	public final List<TreeStillModel> models;
 	private final MapUtils mapUtils;
+	private final GameWorld world;
 
-	public TrackTrees (MapUtils mapUtils, List<TreeStillModel> models) {
+	public TrackTrees (GameWorld world, MapUtils mapUtils, List<TreeStillModel> models) {
+		this.world = world;
 		this.mapUtils = mapUtils;
 		this.models = models;
 	}
@@ -23,7 +26,7 @@ public class TrackTrees {
 	}
 
 	private Vector3 tmpvec = new Vector3();
-	private Matrix4 tmpmtx2 = new Matrix4();
+// private Matrix4 tmpmtx2 = new Matrix4();
 	private Vector2 pospx = new Vector2();
 
 	float rotation = 0;
@@ -45,7 +48,7 @@ public class TrackTrees {
 
 			// compute position
 			pospx.set(m.positionPx);
-			pospx.set(mapUtils.positionFor(pospx));
+			pospx.set(world.positionFor(pospx));
 			tmpvec.x = (m.positionOffsetPx.x - camOrtho.position.x) + halfViewport.x + pospx.x;
 			tmpvec.y = (m.positionOffsetPx.y + camOrtho.position.y) + halfViewport.y - pospx.y;
 			tmpvec.z = 1;

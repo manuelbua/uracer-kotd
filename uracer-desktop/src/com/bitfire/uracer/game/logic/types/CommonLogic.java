@@ -122,12 +122,12 @@ public abstract class CommonLogic implements GameLogic, CarEvent.Listener, Playe
 		}
 
 		replayManager = new ReplayManager(userProfile, gameWorld.getTrackId());
-		gameTrack = new GameTrack(gameWorld.getTrackRoute(), gameWorld.getTrackPolygons());
+		gameTrack = gameWorld.getGameTrack();
 
-		wrongWayMonitor = new WrongWayMonitor(this, gameTrack);
+		wrongWayMonitor = new WrongWayMonitor(this);
 		lapMonitor = new LapCompletionMonitor(this, gameTrack);
 
-		// messager.show( "COOL STUFF!", 60, Message.Type.Information,
+		// messager.show( "THIS IS SOME FINE SHIT", 60, Message.Type.Information,
 		// MessagePosition.Bottom, MessageSize.Big );
 	}
 
@@ -266,11 +266,9 @@ public abstract class CommonLogic implements GameLogic, CarEvent.Listener, Playe
 		postProcessing.setPlayer(playerCar);
 		gameWorldRenderer.setRenderPlayerHeadlights(gameWorld.isNightMode());
 
-		if (Config.Debug.RenderTrackSectors) {
-			gameTrack.setDebugCar(playerCar);
-		}
+		gameWorldRenderer.showDebugGameTrack(Config.Debug.RenderTrackSectors);
+		gameWorldRenderer.setGameTrackDebugCar(playerCar);
 
-		wrongWayMonitor.setCar(playerCar);
 		lapMonitor.setCar(playerCar);
 		restartGame();
 
@@ -295,7 +293,7 @@ public abstract class CommonLogic implements GameLogic, CarEvent.Listener, Playe
 
 		playerCar = null;
 		gameWorldRenderer.setRenderPlayerHeadlights(false);
-		wrongWayMonitor.setCar(null);
+		wrongWayMonitor.reset();
 		lapMonitor.setCar(null);
 
 		if (Config.Debug.UseDebugHelper) {
@@ -347,16 +345,16 @@ public abstract class CommonLogic implements GameLogic, CarEvent.Listener, Playe
 		// FIXME this is for debug
 		player.setFrictionMap(Art.frictionMapDesert);
 
-		player.setWorldPosMt(world.playerStartPos, world.playerStartOrientRads);
+		player.setWorldPosMt(world.playerStart.position, world.playerStart.orientation);
 		player.resetPhysics();
 	}
 
-	private void resetPlayer (Car playerCar) {
+	private void resetPlayer (GameWorld world, Car playerCar) {
 		if (playerCar != null) {
 			playerCar.resetPhysics();
 			playerCar.getTrackState().reset();
 			playerCar.resetDistanceAndSpeed(true, true);
-			playerCar.setWorldPosMt(gameWorld.playerStartPos, gameWorld.playerStartOrientRads);
+			playerCar.setWorldPosMt(world.playerStart.position, world.playerStart.orientation);
 		}
 	}
 
@@ -382,7 +380,7 @@ public abstract class CommonLogic implements GameLogic, CarEvent.Listener, Playe
 
 	private void restartLogic () {
 		gameTasksManager.sound.stop();
-		resetPlayer(playerCar);
+		resetPlayer(gameWorld, playerCar);
 		resetAllGhosts();
 		gameWorldRenderer.setInitialCameraPositionOrient(playerCar);
 
@@ -435,7 +433,10 @@ public abstract class CommonLogic implements GameLogic, CarEvent.Listener, Playe
 			}
 		}
 
-		wrongWayMonitor.update();
+		if (hasPlayer()) {
+			wrongWayMonitor.update(gameTrack.getTrackRouteConfidence(playerCar));
+		}
+
 		lapMonitor.update();
 
 		// determine player's isWrongWay
@@ -587,8 +588,8 @@ public abstract class CommonLogic implements GameLogic, CarEvent.Listener, Playe
 		} else if (input.isPressed(Keys.TAB)) {
 			// FIXME this should go in some sort of DebugLogic thing..
 			Config.Debug.RenderTrackSectors = !Config.Debug.RenderTrackSectors;
-			gameTrack.showDebug(Config.Debug.RenderTrackSectors);
-			gameTrack.setDebugCar(playerCar);
+			gameWorldRenderer.showDebugGameTrack(Config.Debug.RenderTrackSectors);
+			gameWorldRenderer.setGameTrackDebugCar(playerCar);
 		}
 
 		switch (timeDilateMode) {

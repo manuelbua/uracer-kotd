@@ -144,7 +144,7 @@ public class SinglePlayerLogic extends CommonLogic {
 			gameWorldRenderer.setCameraPosition(getGhost(0).state().position, getGhost(0).state().orientation, 0);
 		} else {
 			// no ghost, no player, WTF?
-			gameWorldRenderer.setCameraPosition(Convert.mt2px(gameWorld.playerStartPos), gameWorld.playerStartOrientRads, 0);
+			gameWorldRenderer.setCameraPosition(Convert.mt2px(gameWorld.playerStart.position), gameWorld.playerStart.orientation, 0);
 		}
 
 		return cameraZoom;
