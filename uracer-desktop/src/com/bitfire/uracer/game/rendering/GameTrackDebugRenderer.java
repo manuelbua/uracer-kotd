@@ -15,7 +15,7 @@ import com.bitfire.uracer.game.actors.Car;
 import com.bitfire.uracer.game.logic.helpers.GameTrack;
 import com.bitfire.uracer.game.logic.helpers.GameTrack.TrackSector;
 
-public class GameTrackRenderer extends DebugRenderer {
+public class GameTrackDebugRenderer extends DebugRenderer {
 
 	private final ShapeRenderer shape;
 	private Car car;
@@ -24,7 +24,7 @@ public class GameTrackRenderer extends DebugRenderer {
 	private final List<Vector2> route;
 	private final GameTrack gameTrack;
 
-	public GameTrackRenderer (GameTrack gameTrack) {
+	public GameTrackDebugRenderer (GameTrack gameTrack) {
 		this.gameTrack = gameTrack;
 		this.sectors = gameTrack.getSectors();
 		this.route = gameTrack.getRoute();

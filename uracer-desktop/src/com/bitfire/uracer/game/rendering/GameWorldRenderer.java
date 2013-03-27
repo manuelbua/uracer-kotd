@@ -110,7 +110,7 @@ public final class GameWorldRenderer {
 	private boolean renderPlayerHeadlights = true;
 
 	public OrthogonalTiledMapRenderer tileMapRenderer = null;
-	private GameTrackRenderer gameTrackRenderer = null;
+	private GameTrackDebugRenderer gameTrackDbgRenderer = null;
 	private ScalingStrategy scalingStrategy = null;
 	private float scaledPpm = 1f;
 
@@ -150,7 +150,7 @@ public final class GameWorldRenderer {
 		// FileHandle baseDir = Gdx.files.internal(Storage.Levels);
 		// tileMapRenderer = new UTileMapRenderer(world.map, tileAtlas, 1, 1, world.map.tileWidth, world.map.tileHeight);
 		tileMapRenderer = new OrthogonalTiledMapRenderer(world.map);
-		gameTrackRenderer = new GameTrackRenderer(world.getGameTrack());
+		gameTrackDbgRenderer = new GameTrackDebugRenderer(world.getGameTrack());
 
 		showComplexTrees = UserPreferences.bool(Preference.ComplexTrees);
 		showWalls = UserPreferences.bool(Preference.Walls);
@@ -393,14 +393,14 @@ public final class GameWorldRenderer {
 	}
 
 	public void setGameTrackDebugCar (Car car) {
-		gameTrackRenderer.setCar(car);
+		gameTrackDbgRenderer.setCar(car);
 	}
 
 	public void showDebugGameTrack (boolean show) {
 		if (show) {
-			gameTrackRenderer.attach();
+			gameTrackDbgRenderer.attach();
 		} else {
-			gameTrackRenderer.detach();
+			gameTrackDbgRenderer.detach();
 		}
 	}
 
