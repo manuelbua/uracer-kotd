@@ -136,7 +136,7 @@ public final class GameWorld {
 			throw new GdxRuntimeException("No route for this track");
 		}
 
-		playerStart = gameTrack.generateTrackPosition(-2);
+		playerStart = gameTrack.generateTrackPosition(-3);
 
 		if (nightMode) {
 			createLights();
