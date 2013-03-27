@@ -182,8 +182,8 @@ public final class GameTrack implements Disposable {
 		CarTrackState state = car.getTrackState();
 		Vector2 pos = car.getWorldPosMt();
 
-		boolean inCurr = lookupSector(pos, state.curr);
-		boolean inNext = lookupSector(pos, state.next);
+		boolean inCurr = pointInSector(pos, state.curr);
+		boolean inNext = pointInSector(pos, state.next);
 
 		// start position/polygon.contains mismatch fix
 		if (state.curr == 0 && getTrackCompletion(car, 0) == 0) {
@@ -234,8 +234,8 @@ public final class GameTrack implements Disposable {
 		return distanceInSector(s, p);
 	}
 
-	private boolean lookupSector (Vector2 position, int sector) {
-		return sectors[sector].poly.contains(position.x, position.y);
+	private boolean pointInSector (Vector2 point, int sector) {
+		return sectors[sector].poly.contains(point.x, point.y);
 	}
 
 	// search all sectors for the given point
