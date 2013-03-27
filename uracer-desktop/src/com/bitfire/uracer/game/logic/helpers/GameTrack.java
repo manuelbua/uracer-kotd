@@ -178,7 +178,7 @@ public final class GameTrack implements Disposable {
 		return -1;
 	}
 
-	public void updateTrackStates (Car car) {
+	public void updateTrackState (Car car) {
 		CarTrackState state = car.getTrackState();
 		Vector2 pos = car.getWorldPosMt();
 

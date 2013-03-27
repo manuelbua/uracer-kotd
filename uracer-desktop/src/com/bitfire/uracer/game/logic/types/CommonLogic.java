@@ -424,12 +424,12 @@ public abstract class CommonLogic implements GameLogic, CarEvent.Listener, Playe
 		gameTasksManager.physicsStep.onSubstepCompleted();
 
 		if (hasPlayer()) {
-			gameTrack.updateTrackStates(playerCar);
+			gameTrack.updateTrackState(playerCar);
 		}
 
 		for (int i = 0; i < ReplayManager.MaxReplays; i++) {
 			if (ghostCars[i] != null && ghostCars[i].hasReplay()) {
-				gameTrack.updateTrackStates(ghostCars[i]);
+				gameTrack.updateTrackState(ghostCars[i]);
 			}
 		}
 
