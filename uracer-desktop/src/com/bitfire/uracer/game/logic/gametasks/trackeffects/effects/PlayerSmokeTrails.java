@@ -18,7 +18,7 @@ import com.bitfire.uracer.resources.Art;
  * 
  * @author bmanuel */
 public class PlayerSmokeTrails extends TrackEffect {
-	public static final int MaxParticles = 150;
+	public static final int MaxParticles = 15000;
 
 	private SmokeEffect fx[];
 	private static final int SmokeEffectsCount = 1;
@@ -62,19 +62,24 @@ public class PlayerSmokeTrails extends TrackEffect {
 	public void tick () {
 		isDrifting = player.driftState.isDrifting && player.driftState.driftStrength > 0f;
 
-		if (isDrifting && !wasDrifting) {
-			// started drifting
-			for (int i = 0; i < SmokeEffectsCount; i++) {
-				fx[i].start();
-// Gdx.app.log("", "start smoke trails");
-			}
-		} else if ((!isDrifting && wasDrifting)) {
-			// ended drifting
-			for (int i = 0; i < SmokeEffectsCount; i++) {
-				fx[i].stop();
-// Gdx.app.log("", "stop smoke trails");
-			}
+		for (int i = 0; i < SmokeEffectsCount; i++) {
+// fx[i].setMaxParticleCount(MaxParticles);
+			fx[i].start();
 		}
+
+		// if (isDrifting && !wasDrifting) {
+		// // started drifting
+		// for (int i = 0; i < SmokeEffectsCount; i++) {
+		// fx[i].start();
+		// // Gdx.app.log("", "start smoke trails");
+		// }
+		// } else if ((!isDrifting && wasDrifting)) {
+		// // ended drifting
+		// for (int i = 0; i < SmokeEffectsCount; i++) {
+		// fx[i].stop();
+		// // Gdx.app.log("", "stop smoke trails");
+		// }
+		// }
 
 		wasDrifting = isDrifting;
 		setPosition(player.state().position.x, player.state().position.y);
@@ -87,21 +92,32 @@ public class PlayerSmokeTrails extends TrackEffect {
 		tmp.set(posX, posY);
 
 		fx[0].baseEmitter.setAdditive(true);
-		fx[0].setLifeMul(MathUtils.random(10f, 40f) * player.driftState.driftStrength);
-		fx[0].setScaleMul(MathUtils.random(0.1f, 0.1f + 15f * player.driftState.driftStrength));
+		fx[0].baseEmitter.setBehind(true);
 
-		float t = player.driftState.driftStrength * 0.75f;
+// fx[0].setLifeMul(MathUtils.random(10f, 40f) * player.driftState.driftStrength);
+// fx[0].setScaleMul(MathUtils.random(0.1f, 0.1f + 15f * player.driftState.driftStrength));
+
+		fx[0].setLifeMul(30f);
+		fx[0].setScaleMul(player.carState.currSpeedFactor > 0 ? 2 : 0);
+		fx[0].setEmissionMul(1f);
+
+// float t = player.driftState.driftStrength * 0.15f;
+		float t = 0.3f;
 		fx[0].baseEmitter.getTransparency().setHighMin(t);
 		fx[0].baseEmitter.getTransparency().setHighMax(t);
 
 		float[] colors = fx[0].baseEmitter.getTint().getColors();
 		float v = 0.15f;
-// float r = 0.5f;
-// float g = 0.5f;
-// float b = 0.5f;
 		colors[0] = v * player.driftState.driftStrength;
 		colors[1] = v * player.driftState.driftStrength;
 		colors[2] = v * player.driftState.driftStrength;
+
+		float r = 0.25f;
+		float g = MathUtils.random(0.5f, 0.7f);
+		float b = MathUtils.random(0.95f, 1f);
+		colors[0] = r;
+		colors[1] = g;
+		colors[2] = b;
 
 // Gdx.gl.glBlendFunc(GL20.GL_SRC_ALPHA, GL20.GL_ONE_MINUS_DST_ALPHA);
 		fx[0].render(batch, tmp.x, tmp.y);
@@ -170,6 +186,10 @@ public class PlayerSmokeTrails extends TrackEffect {
 		public void setLifeMul (float value) {
 			baseEmitter.getLife().setHighMin(MaxParticleLifeMinMs * value);
 			baseEmitter.getLife().setHighMax(MaxParticleLifeMaxMs * value);
+		}
+
+		public void setMaxParticleCount (int value) {
+			baseEmitter.setMaxParticleCount(value);
 		}
 
 		public final void setScaleMul (float value) {

@@ -33,7 +33,7 @@ public final class VMath {
 	}
 
 	public static float toRadians (Vector2 v) {
-		return MathUtils.atan2(v.x, -v.y);
+		return (float)Math.atan2(v.x, -v.y);
 	}
 
 	public static float toDegs (Vector2 v) {
