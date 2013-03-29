@@ -18,7 +18,7 @@ import com.bitfire.uracer.resources.Art;
  * 
  * @author bmanuel */
 public class PlayerSmokeTrails extends TrackEffect {
-	public static final int MaxParticles = 15000;
+	public static final int MaxParticles = 10000;
 
 	private SmokeEffect fx[];
 	private static final int SmokeEffectsCount = 1;
@@ -62,9 +62,11 @@ public class PlayerSmokeTrails extends TrackEffect {
 	public void tick () {
 		isDrifting = player.driftState.isDrifting && player.driftState.driftStrength > 0f;
 
-		for (int i = 0; i < SmokeEffectsCount; i++) {
+		if (player.driftState.driftStrength > 0) {
+			for (int i = 0; i < SmokeEffectsCount; i++) {
 // fx[i].setMaxParticleCount(MaxParticles);
-			fx[i].start();
+				fx[i].start();
+			}
 		}
 
 		// if (isDrifting && !wasDrifting) {
@@ -89,20 +91,22 @@ public class PlayerSmokeTrails extends TrackEffect {
 
 	@Override
 	public void render (SpriteBatch batch) {
+		float dfactor = player.driftState.driftStrength;
+		float sfactor = player.carState.currSpeedFactor;
+
 		tmp.set(posX, posY);
 
 		fx[0].baseEmitter.setAdditive(true);
 		fx[0].baseEmitter.setBehind(true);
 
-// fx[0].setLifeMul(MathUtils.random(10f, 40f) * player.driftState.driftStrength);
-// fx[0].setScaleMul(MathUtils.random(0.1f, 0.1f + 15f * player.driftState.driftStrength));
+		fx[0].setLifeMul(MathUtils.random(10f, 40f) * player.driftState.driftStrength);
+		fx[0].setScaleMul(MathUtils.random(0.1f, 0.1f + 15f * player.driftState.driftStrength));
 
-		fx[0].setLifeMul(30f);
-		fx[0].setScaleMul(player.carState.currSpeedFactor > 0 ? 2 : 0);
-		fx[0].setEmissionMul(1f);
+// fx[0].setLifeMul(10f);
+// fx[0].setScaleMul(sfactor > 0 ? (MathUtils.random(0f, 1f)) + 6f * dfactor * sfactor : 0);
 
 // float t = player.driftState.driftStrength * 0.15f;
-		float t = 0.3f;
+		float t = 0.4f * dfactor;
 		fx[0].baseEmitter.getTransparency().setHighMin(t);
 		fx[0].baseEmitter.getTransparency().setHighMax(t);
 
@@ -112,9 +116,17 @@ public class PlayerSmokeTrails extends TrackEffect {
 		colors[1] = v * player.driftState.driftStrength;
 		colors[2] = v * player.driftState.driftStrength;
 
-		float r = 0.25f;
-		float g = MathUtils.random(0.5f, 0.7f);
-		float b = MathUtils.random(0.95f, 1f);
+		float r = 0.5f;
+		float g = 0.7f;
+		float b = 1;
+		if (MathUtils.randomBoolean()) {
+			r = g = b = 0.7f;
+		}
+
+		float colorscale = 0.15f;
+		r *= colorscale;
+		g *= colorscale;
+		b *= colorscale;
 		colors[0] = r;
 		colors[1] = g;
 		colors[2] = b;
