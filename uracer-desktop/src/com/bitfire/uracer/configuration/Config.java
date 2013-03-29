@@ -87,7 +87,7 @@ public final class Config {
 			UseDebugHelper = true;
 			RenderBox2DWorldWireframe = false;
 			RenderPlayerDebugInfo = false;
-			RenderHudDebugInfo = false;
+			RenderHudDebugInfo = true;
 			RenderDebugInfoFpsStats = true;
 			RenderDebugInfoGraphics = true;
 			RenderDebugInfoMemoryStats = false;

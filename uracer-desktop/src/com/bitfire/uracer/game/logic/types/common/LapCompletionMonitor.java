@@ -9,8 +9,11 @@ public class LapCompletionMonitor {
 	private Car car;
 	private LapCompletionMonitorListener listener;
 	private float previousCompletion, currentCompletion;
+	private boolean isLapStarted, isLapCompleted;
 
 	public static interface LapCompletionMonitorListener {
+		void onLapStarted ();
+
 		void onLapComplete ();
 	}
 
@@ -31,16 +34,25 @@ public class LapCompletionMonitor {
 	public void reset () {
 		previousCompletion = 0;
 		currentCompletion = -1;
+		isLapStarted = false;
+		isLapCompleted = false;
 	}
 
 	public void update () {
 		if (car != null) {
 			currentCompletion = gameTrack.getTrackCompletion(car, 0);
-			// Gdx.app.log("", "curr=" + currentCompletion + ", prev=" + previousCompletion);
+// Gdx.app.log("", "curr=" + currentCompletion + ", prev=" + previousCompletion);
 
-			if (previousCompletion > 0.9f && currentCompletion >= 0 && currentCompletion < 0.1f) {
+			if (!isLapStarted && (previousCompletion <= 0 && currentCompletion > 0f)) {
+				listener.onLapStarted();
+				isLapStarted = true;
+				isLapCompleted = false;
+			} else if (!isLapCompleted && (previousCompletion > 0.9f && currentCompletion >= 0 && currentCompletion < 0.1f)) {
 				reset();
 				listener.onLapComplete();
+				listener.onLapStarted();
+				isLapStarted = false;
+				isLapCompleted = true;
 			} else {
 				previousCompletion = currentCompletion;
 			}
