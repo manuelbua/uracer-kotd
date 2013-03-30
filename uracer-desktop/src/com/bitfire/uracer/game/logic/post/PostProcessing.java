@@ -155,9 +155,9 @@ public final class PostProcessing {
 		}
 	}
 
-	public void onBeforeRender (float zoom) {
+	public void onBeforeRender (float zoom, float warmUpCompletion) {
 		if (hasPostProcessor && currentAnimator != null) {
-			currentAnimator.update(zoom);
+			currentAnimator.update(zoom, warmUpCompletion);
 		}
 	}
 

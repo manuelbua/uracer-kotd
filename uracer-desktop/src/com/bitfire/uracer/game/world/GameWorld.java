@@ -103,7 +103,7 @@ public final class GameWorld {
 		boolean autoClearForces = false;
 		boolean continuousPhysics = false;
 		box2dWorld.setAutoClearForces(autoClearForces);
-		box2dWorld.setContinuousPhysics(continuousPhysics);
+		box2dWorld.setContinuousPhysics(continuousPhysics); // power off TOI and make it *really* deterministic
 
 		Gdx.app.log("GameWorld", "Box2D world created (CCD=" + continuousPhysics + ", auto clear forces=" + autoClearForces + ")");
 

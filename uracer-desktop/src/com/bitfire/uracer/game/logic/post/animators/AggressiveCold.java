@@ -249,7 +249,7 @@ public final class AggressiveCold implements PostProcessingAnimator {
 	}
 
 	@Override
-	public void update (float zoomCamera) {
+	public void update (float zoomCamera, float warmUpCompletion) {
 		float timeModFactor = URacer.Game.getTimeModFactor();
 		float currDriftStrength = 0;
 		float currSpeedFactor = 0;
@@ -299,9 +299,15 @@ public final class AggressiveCold implements PostProcessingAnimator {
 
 			float sat = 0.8f;
 			if (nightMode) sat += 0.2f;
+			sat *= warmUpCompletion;
 
-// bloom.setThreshold(0.27f);
+			float bsat = 1.3f;
+			if (nightMode) bsat += 0.2f;
+			bsat *= warmUpCompletion;
+
+			// bloom.setThreshold(0.27f);
 			bloom.setBaseSaturation(AMath.lerp(sat, 0.1f, timeModFactor));
+			bloom.setBloomSaturation(bsat);
 
 			// bloom.setBloomSaturation(1.5f - timeModFactor * 0.15f);
 			// if (!nightMode) {

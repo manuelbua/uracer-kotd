@@ -102,7 +102,7 @@ public final class AggressiveWarm implements PostProcessingAnimator {
 	private long startMs = 0;
 
 	@Override
-	public void update (float zoomCamera) {
+	public void update (float zoomCamera, float warmUpCompletion) {
 		float timeModFactor = URacer.Game.getTimeModFactor();
 
 		if (!hasPlayer) {

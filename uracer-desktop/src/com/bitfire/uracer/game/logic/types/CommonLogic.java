@@ -3,6 +3,7 @@ package com.bitfire.uracer.game.logic.types;
 
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Input.Keys;
+import com.badlogic.gdx.math.MathUtils;
 import com.bitfire.uracer.Input;
 import com.bitfire.uracer.ScalingStrategy;
 import com.bitfire.uracer.URacer;
@@ -222,7 +223,6 @@ public abstract class CommonLogic implements GameLogic, CarEvent.Listener, Playe
 	/** Restart and completely resets the game, removing any playing replay so far */
 	protected void resetGame () {
 		resetLogic();
-		restartLogic();
 		gameWorldRenderer.setInitialCameraPositionOrient(playerCar);
 // updateCamera(0);
 // gameWorldRenderer.updateCamera();
@@ -276,7 +276,6 @@ public abstract class CommonLogic implements GameLogic, CarEvent.Listener, Playe
 		gameWorldRenderer.showDebugGameTrack(Config.Debug.RenderTrackSectors);
 		gameWorldRenderer.setGameTrackDebugCar(playerCar);
 
-		lapMonitor.setCar(playerCar);
 		restartGame();
 
 		if (Config.Debug.UseDebugHelper) {
@@ -408,13 +407,20 @@ public abstract class CommonLogic implements GameLogic, CarEvent.Listener, Playe
 		playerTasks.hudLapInfo.toDefaultColor();
 		playerTasks.hudLapInfo.setValid(true);
 		playerTasks.hudPlayer.trackProgress.resetCounters(false);
+
+		lapMonitor.reset();
+		gameTrack.setInitialCarSector(playerCar);
+		lapMonitor.setCar(playerCar);
 	}
 
 	private void resetLogic () {
+		// clean everything
 		replayManager.reset();
 		lapManager.abortRecording();
 		lapManager.reset();
 		gameTasksManager.reset();
+
+		restartLogic();
 	}
 
 	//
@@ -431,20 +437,20 @@ public abstract class CommonLogic implements GameLogic, CarEvent.Listener, Playe
 		gameTasksManager.physicsStep.onSubstepCompleted();
 
 		if (hasPlayer()) {
-			gameTrack.updateTrackState(playerCar);
+			gameTrack.updateCarSector(playerCar);
 		}
 
 		for (int i = 0; i < ReplayManager.MaxReplays; i++) {
 			if (ghostCars[i] != null && ghostCars[i].hasReplay()) {
-				gameTrack.updateTrackState(ghostCars[i]);
+				gameTrack.updateCarSector(ghostCars[i]);
 			}
 		}
 
-		if (hasPlayer() && !isWarmUpLap) {
+		if (hasPlayer()) {
 			wrongWayMonitor.update(gameTrack.getTrackRouteConfidence(playerCar));
 		}
 
-		lapMonitor.update();
+		lapMonitor.update(isWarmUpLap);
 
 		// determine player's isWrongWay
 		if (hasPlayer()) {
@@ -501,13 +507,14 @@ public abstract class CommonLogic implements GameLogic, CarEvent.Listener, Playe
 		// mot.setDepthScale(40);
 		// }
 
-		postProcessing.onBeforeRender(zoom);
+		// Gdx.app.log("CommonLogic", "wuc=" + lapMonitor.getWarmUpCompletion());
+		postProcessing.onBeforeRender(zoom, MathUtils.clamp(lapMonitor.getWarmUpCompletion(), 0, 1));
 
 		// game tweener step
 		GameTweener.update();
 	}
 
-	private Replay userRec = null;
+	private Replay userRec = null; // dbg on-demand rec/play via Z/X
 
 	private void processInput () {
 		// fast car switch (debug!)
@@ -530,13 +537,11 @@ public abstract class CommonLogic implements GameLogic, CarEvent.Listener, Playe
 
 			// restart
 			restartGame();
-			lapMonitor.reset();
 
 		} else if (input.isPressed(Keys.T)) {
 
 			// reset
 			resetGame();
-			lapMonitor.reset();
 
 		} else if (input.isPressed(Keys.Z)) {
 
@@ -751,6 +756,10 @@ public abstract class CommonLogic implements GameLogic, CarEvent.Listener, Playe
 			lapManager.startRecording(playerCar);
 		}
 
+		// lap is started, warmup has ended
+		isWarmUpLap = false;
+
+		playerCar.resetDistanceAndSpeed(true, false);
 		lapStarted();
 	}
 
@@ -766,13 +775,6 @@ public abstract class CommonLogic implements GameLogic, CarEvent.Listener, Playe
 			playerTasks.hudLapInfo.setValid(true);
 			playerTasks.hudLapInfo.toColor(1, 1, 1);
 		}
-
-// if (!lapManager.isRecording()) {
-// // new race, only begin recording
-// lapManager.startRecording(playerCar);
-// lapStarted();
-// return;
-// }
 
 		// detect and ignore invalid laps
 		if (lapManager.isRecording() && lapManager.getLapInfo().getElapsedSeconds() < GameplaySettings.ReplayMinDurationSecs) {
@@ -796,8 +798,5 @@ public abstract class CommonLogic implements GameLogic, CarEvent.Listener, Playe
 
 		playerCar.resetDistanceAndSpeed(true, false);
 		lapCompleted();
-
-// lapManager.startRecording(playerCar);
-// lapStarted();
 	}
 }

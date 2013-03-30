@@ -156,7 +156,7 @@ public class SinglePlayerLogic extends CommonLogic {
 		Gdx.app.log("SinglePlayerLogic", "Starting/restarting game");
 
 		// restart all replays
-		restartAllReplays();
+// restartAllReplays();
 		accuDriftSeconds.value = 0;
 		isPenalty = false;
 
@@ -231,16 +231,17 @@ public class SinglePlayerLogic extends CommonLogic {
 			float ghSpeed = 0;
 
 			// FIXME this should go in CommonLogic!
+
 			// use the last one if the replay is finished
 			if (nextTarget != null && nextTarget.hasReplay()) {
 				lastDist = gameTrack.getTrackDistance(nextTarget, 0);
-				lastCompletion = gameTrack.getTrackCompletion(nextTarget, 0);
+				lastCompletion = gameTrack.getTrackCompletion(nextTarget);
 				ghSpeed = nextTarget.getInstantSpeed();
 			}
 
 			playerTasks.hudPlayer.trackProgress.setPlayerSpeed(playerCar.getInstantSpeed());
 			playerTasks.hudPlayer.trackProgress.setPlayerDistance(gameTrack.getTrackDistance(playerCar, 0));
-			playerTasks.hudPlayer.trackProgress.setPlayerProgression(gameTrack.getTrackCompletion(playerCar, 0));
+			playerTasks.hudPlayer.trackProgress.setPlayerProgression(gameTrack.getTrackCompletion(playerCar));
 
 			playerTasks.hudPlayer.trackProgress.setTargetSpeed(ghSpeed);
 			playerTasks.hudPlayer.trackProgress.setTargetDistance(lastDist);
