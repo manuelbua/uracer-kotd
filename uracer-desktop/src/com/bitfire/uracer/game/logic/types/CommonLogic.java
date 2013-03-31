@@ -456,6 +456,10 @@ public abstract class CommonLogic implements GameLogic, CarEvent.Listener, Playe
 		if (hasPlayer()) {
 			boolean wrongWay = wrongWayMonitor.isWrongWay();
 			isCurrentLapValid = !wrongWay;
+			if (wrongWay) {
+				isWarmUpLap = true;
+				lapMonitor.reset();
+			}
 
 			// blink on wrong way (keeps calling, returns earlier if busy)
 			if (wrongWay) {

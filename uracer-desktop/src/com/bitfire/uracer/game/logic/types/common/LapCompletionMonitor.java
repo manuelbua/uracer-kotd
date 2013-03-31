@@ -1,6 +1,7 @@
 
 package com.bitfire.uracer.game.logic.types.common;
 
+import com.badlogic.gdx.math.MathUtils;
 import com.bitfire.uracer.game.actors.Car;
 import com.bitfire.uracer.game.logic.helpers.GameTrack;
 
@@ -46,10 +47,10 @@ public class LapCompletionMonitor {
 		if (car != null) {
 
 			if (isWarmUp) {
-				// compute warmup quantity (1 at warmup start towards 0 at the start line)
-				wuPrev = wuCurr;
-				wuCurr = (gameTrack.getTrackCompletion(car) - wuStart) / (1 - wuStart);
-				wuCompletion = wuCurr;
+				// compute warmup quantity (0 at WU start pos, 0 at WU end pos)
+				wuPrev = MathUtils.clamp(wuCurr, 0, 1);
+				float complet = gameTrack.getTrackCompletion(car);
+				wuCurr = (MathUtils.clamp(complet, wuStart, 1) - wuStart) / (1 - wuStart);
 
 				if ((wuPrev > 0 && wuCurr < 0)) {
 					// warmup will ends
@@ -57,7 +58,9 @@ public class LapCompletionMonitor {
 					listener.onLapStarted();
 				}
 
-				// Gdx.app.log("LapCompletionMonitor", "wucompletion=" + wuCompletion);
+				wuCompletion = MathUtils.clamp(wuCurr, 0, 1);
+
+				// Gdx.app.log("LapCompletionMonitor", "wucompletion=" + complet);
 
 			} else {
 				previousCompletion = currentCompletion;

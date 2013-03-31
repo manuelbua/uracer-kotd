@@ -114,9 +114,9 @@ public final class GameTrack implements Disposable {
 		Vector2 pt = car.getWorldPosMt();
 
 		// if at starting position then returns 0
-		if (AMath.equals(pt.x, route.get(0).x) && AMath.equals(pt.y, route.get(0).y)) {
-			return 0;
-		}
+		// if (AMath.equals(pt.x, route.get(0).x) && AMath.equals(pt.y, route.get(0).y)) {
+		// return 0;
+		// }
 
 		int carSector = car.getTrackState().curr;
 
