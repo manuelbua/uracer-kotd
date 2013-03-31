@@ -72,6 +72,7 @@ public abstract class CommonLogic implements GameLogic, CarEvent.Listener, Playe
 	private WrongWayMonitor wrongWayMonitor;
 	protected boolean isCurrentLapValid = true;
 	protected boolean isWarmUpLap = true;
+	protected boolean isWrongWayInWarmUp = false;
 
 	// lap
 	protected LapManager lapManager = null;
@@ -399,6 +400,7 @@ public abstract class CommonLogic implements GameLogic, CarEvent.Listener, Playe
 		wrongWayMonitor.reset();
 		isCurrentLapValid = true;
 		isWarmUpLap = true;
+		isWrongWayInWarmUp = false;
 
 		postProcessing.resetAnimator();
 
@@ -456,7 +458,9 @@ public abstract class CommonLogic implements GameLogic, CarEvent.Listener, Playe
 		if (hasPlayer()) {
 			boolean wrongWay = wrongWayMonitor.isWrongWay();
 			isCurrentLapValid = !wrongWay;
-			if (wrongWay) {
+
+			if ((wrongWay && isWarmUpLap) || isWrongWayInWarmUp) {
+				isWrongWayInWarmUp = true;
 				isWarmUpLap = true;
 				lapMonitor.reset();
 			}

@@ -50,15 +50,15 @@ public class LapCompletionMonitor {
 				// compute warmup quantity (0 at WU start pos, 0 at WU end pos)
 				wuPrev = MathUtils.clamp(wuCurr, 0, 1);
 				float complet = gameTrack.getTrackCompletion(car);
-				wuCurr = (MathUtils.clamp(complet, wuStart, 1) - wuStart) / (1 - wuStart);
+				wuCurr = (complet - wuStart) / (1 - wuStart);
 
 				if ((wuPrev > 0 && wuCurr < 0)) {
 					// warmup will ends
 					wuCompletion = 1;
 					listener.onLapStarted();
+				} else {
+					wuCompletion = MathUtils.clamp(wuCurr, 0, 1);
 				}
-
-				wuCompletion = MathUtils.clamp(wuCurr, 0, 1);
 
 				// Gdx.app.log("LapCompletionMonitor", "wucompletion=" + complet);
 

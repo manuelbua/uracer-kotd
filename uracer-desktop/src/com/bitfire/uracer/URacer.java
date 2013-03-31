@@ -8,6 +8,7 @@ import aurelienribon.tweenengine.Tween;
 import com.badlogic.gdx.Application;
 import com.badlogic.gdx.ApplicationListener;
 import com.badlogic.gdx.Gdx;
+import com.badlogic.gdx.graphics.GL10;
 import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.utils.TimeUtils;
 import com.bitfire.uracer.configuration.Config;
@@ -115,6 +116,8 @@ public class URacer implements ApplicationListener {
 		versionInfo = URacer.getVersionInformation();
 
 		Gdx.app.log("URacer", "booting version " + versionInfo);
+		Gdx.app.log("URacer",
+			"Graphics card from " + Gdx.gl.glGetString(GL10.GL_VENDOR) + " (" + Gdx.gl.glGetString(GL10.GL_VERSION) + ")");
 		Gdx.app.log("URacer", "Using real frametime: " + (useRealFrametime ? "YES" : "NO"));
 
 		// create input system
