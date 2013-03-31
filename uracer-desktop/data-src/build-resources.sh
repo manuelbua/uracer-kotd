@@ -74,10 +74,19 @@ cp cars/car-shapes ${DEST}/cars >/dev/null
 echo "done!"
 
 # particle effects
-echo -n "Cooking particle effects..."
+echo "Cooking particle effects..."
 rm -rf "${DEST}/partfx/"
 mkdir -p "${DEST}/partfx/"
-cp partfx/* ${DEST}/partfx > /dev/null
+cp partfx/*.png ${DEST}/partfx > /dev/null
+	# remove abs path for release
+	PFX_FILES="partfx/*.p"
+	for f in $PFX_FILES
+	do
+		echo -en "\tProcessing ${f}..."
+		cat ${f} | sed -r 's/\/home\/manuel\/dev\/uracer-libgdx\/uracer-desktop\/data-src\/partfx\/(.*)\.png/\1/g' > ${DEST}/${f}
+		echo "done!"
+	done
+
 echo "done!"
 
 # shaders
