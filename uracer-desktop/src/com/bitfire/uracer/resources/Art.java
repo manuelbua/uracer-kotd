@@ -60,10 +60,14 @@ public final class Art {
 	public static Texture texCircleProgressHalfMask;
 	public static Texture texRadLinesProgress;
 
+	// particle effects
+	public static TextureAtlas particles;
+
 	public static void init () {
 		ShaderLoader.BasePath = "data/shaders/";
 		loadFonts();
 		loadCarGraphics();
+		loadParticlesGraphics();
 		loadMeshesGraphics(Config.Graphics.EnableMipMapping);
 		loadFrictionMaps();
 		loadPostProcessorMaps();
@@ -73,6 +77,7 @@ public final class Art {
 
 	public static void dispose () {
 		disposeFonts();
+		disposeParticlesGraphics();
 		disposeCarGraphics();
 		disposeMeshesGraphics();
 		disposeFrictionMaps();
@@ -207,6 +212,18 @@ public final class Art {
 	private static void disposeCarGraphics () {
 		wrongWay.dispose();
 		cars.dispose();
+	}
+
+	//
+	// particles
+	//
+
+	private static void loadParticlesGraphics () {
+		particles = new TextureAtlas("data/partfx/textures/pack.atlas");
+	}
+
+	private static void disposeParticlesGraphics () {
+		particles.dispose();
 	}
 
 	//

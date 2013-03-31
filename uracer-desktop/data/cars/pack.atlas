@@ -3,115 +3,101 @@ pack.png
 format: RGBA8888
 filter: Linear,Linear
 repeat: none
-skid-smoke
+l2_mustang_white
   rotate: false
-  xy: 0, 334
-  size: 256, 256
-  orig: 256, 256
-  offset: 0, 0
-  index: -1
-l3_gallardo
-  rotate: false
-  xy: 0, 41
-  size: 155, 293
-  orig: 155, 293
-  offset: 0, 0
-  index: -1
-l1_minicooper
-  rotate: false
-  xy: 256, 303
-  size: 158, 287
-  orig: 158, 287
-  offset: 0, 0
-  index: -1
-l1_orange_goblin
-  rotate: false
-  xy: 414, 303
-  size: 158, 287
-  orig: 158, 287
+  xy: 0, 295
+  size: 129, 296
+  orig: 129, 296
   offset: 0, 0
   index: -1
 l2_blue_beast
   rotate: false
-  xy: 572, 295
+  xy: 129, 296
   size: 129, 295
   orig: 129, 295
   offset: 0, 0
   index: -1
 l2_mustang_red
   rotate: false
-  xy: 701, 295
+  xy: 258, 296
   size: 129, 295
   orig: 129, 295
   offset: 0, 0
   index: -1
-l2_mustang_white
+l1_minicooper
   rotate: false
-  xy: 830, 294
-  size: 129, 296
-  orig: 129, 296
+  xy: 387, 304
+  size: 158, 287
+  orig: 158, 287
   offset: 0, 0
   index: -1
 l2_pink_beast
   rotate: false
-  xy: 155, 0
+  xy: 387, 9
   size: 129, 295
   orig: 129, 295
   offset: 0, 0
   index: -1
 l2_red_beast
   rotate: false
-  xy: 284, 0
+  xy: 129, 1
   size: 129, 295
   orig: 129, 295
   offset: 0, 0
   index: -1
 l2_yellow_beast
   rotate: false
-  xy: 413, 0
+  xy: 0, 0
   size: 129, 295
   orig: 129, 295
   offset: 0, 0
   index: -1
 skid-marks-front
   rotate: false
-  xy: 542, 0
+  xy: 258, 1
   size: 129, 295
   orig: 129, 295
   offset: 0, 0
   index: -1
 skid-marks-rear
   rotate: false
-  xy: 671, 0
+  xy: 516, 9
   size: 129, 295
   orig: 129, 295
   offset: 0, 0
   index: -1
+l1_orange_goblin
+  rotate: false
+  xy: 545, 304
+  size: 158, 287
+  orig: 158, 287
+  offset: 0, 0
+  index: -1
+l3_gallardo
+  rotate: false
+  xy: 645, 11
+  size: 155, 293
+  orig: 155, 293
+  offset: 0, 0
+  index: -1
 car-ao-new
   rotate: false
-  xy: 800, 126
+  xy: 703, 423
   size: 100, 168
   orig: 100, 168
   offset: 0, 0
   index: -1
 selector
   rotate: false
-  xy: 800, 35
+  xy: 703, 332
   size: 78, 91
   orig: 78, 91
   offset: 0, 0
   index: -1
 car-ao
   rotate: false
-  xy: 900, 232
+  xy: 781, 361
   size: 34, 62
   orig: 34, 62
-  offset: 0, 0
-  index: -1
-skid-smoke-small
-  rotate: false
-  xy: 0, 9
-  size: 32, 32
-  orig: 32, 32
   offset: 0, 0
   index: -1

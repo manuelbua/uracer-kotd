@@ -6,21 +6,21 @@ lowMin: 1000.0
 lowMax: 1000.0
 - Count - 
 min: 0
-max: 1000
+max: 10000
 - Emission - 
 lowMin: 0.0
 lowMax: 0.0
-highMin: 100.0
-highMax: 100.0
+highMin: 25.0
+highMax: 25.0
 relative: false
 scalingCount: 1
 scaling0: 1.0
 timelineCount: 1
 timeline0: 0.0
 - Life - 
-lowMin: 1000.0
-lowMax: 1000.0
-highMin: 3000.0
+lowMin: 0.0
+lowMax: 0.0
+highMin: 1400.0
 highMax: 3000.0
 relative: false
 scalingCount: 1
@@ -58,43 +58,50 @@ timeline0: 0.0
 - Scale - 
 lowMin: 0.0
 lowMax: 0.0
-highMin: 64.0
-highMax: 128.0
-relative: true
-scalingCount: 2
-scaling0: 0.3469388
-scaling1: 1.0
-timelineCount: 2
-timeline0: 0.0
-timeline1: 1.0
-- Velocity - 
-active: false
-- Angle - 
-active: true
-lowMin: 0.0
-lowMax: 360.0
-highMin: 1.0
-highMax: 360.0
-relative: true
+highMin: 32.0
+highMax: 32.0
+relative: false
 scalingCount: 2
 scaling0: 0.2857143
 scaling1: 1.0
 timelineCount: 2
 timeline0: 0.0
 timeline1: 1.0
-- Rotation - 
+- Velocity - 
 active: true
 lowMin: 0.0
-lowMax: 360.0
-highMin: -360.0
-highMax: 360.0
+lowMax: 0.0
+highMin: 10.0
+highMax: 10.0
 relative: true
 scalingCount: 2
-scaling0: 0.81632656
+scaling0: 0.0
 scaling1: 1.0
 timelineCount: 2
 timeline0: 0.0
 timeline1: 1.0
+- Angle - 
+active: true
+lowMin: 0.0
+lowMax: 0.0
+highMin: 1.0
+highMax: 360.0
+relative: true
+scalingCount: 1
+scaling0: 1.0
+timelineCount: 1
+timeline0: 0.0
+- Rotation - 
+active: true
+lowMin: 0.0
+lowMax: 0.0
+highMin: 1.0
+highMax: 360.0
+relative: true
+scalingCount: 1
+scaling0: 1.0
+timelineCount: 1
+timeline0: 0.0
 - Wind - 
 active: false
 - Gravity - 
@@ -112,21 +119,27 @@ lowMax: 0.0
 highMin: 1.0
 highMax: 1.0
 relative: false
-scalingCount: 4
+scalingCount: 7
 scaling0: 0.0
-scaling1: 1.0
-scaling2: 1.0
-scaling3: 0.0
-timelineCount: 4
+scaling1: 0.8426966
+scaling2: 0.93820226
+scaling3: 0.9550562
+scaling4: 0.44382024
+scaling5: 0.19662921
+scaling6: 0.0
+timelineCount: 7
 timeline0: 0.0
-timeline1: 0.052427184
-timeline2: 0.72427183
-timeline3: 1.0
+timeline1: 0.13871635
+timeline2: 0.2753623
+timeline3: 0.47204968
+timeline4: 0.73913044
+timeline5: 0.9026915
+timeline6: 1.0
 - Options - 
 attached: false
 continuous: true
-aligned: true
-additive: false
+aligned: false
+additive: true
 behind: true
 - Image Path -
-SmokeShape
+/home/manuel/dev/uracer-libgdx/uracer-desktop/data-src/partfx/textures/skid-smoke-small.png
