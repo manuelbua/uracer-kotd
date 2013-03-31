@@ -62,11 +62,11 @@ public final class URacerDesktop {
 		URacerDesktopFinalizer finalizr = new URacerDesktopFinalizer((OpenALAudio)app.getAudio());
 		uracer.setFinalizer(finalizr);
 
-// if (useRightScreen) {
+		// if (useRightScreen) {
 		GraphicsEnvironment env = GraphicsEnvironment.getLocalGraphicsEnvironment();
 		GraphicsDevice primary = env.getDefaultScreenDevice();
 		GraphicsDevice target = primary;
-// GraphicsDevice[] devices = env.getScreenDevices();
+		// GraphicsDevice[] devices = env.getScreenDevices();
 
 		if (target != null) {
 			java.awt.DisplayMode tmode = target.getDisplayMode();
@@ -80,10 +80,10 @@ public final class URacerDesktop {
 			int y = (tmode.getHeight() - config.height) / 2;
 			Display.setLocation(x, y);
 		}
-// } else {
-// DisplayMode desk = Display.getDesktopDisplayMode();
-// Display.setLocation((desk.getWidth() - config.width) / 2, (desk.getHeight() - config.height) / 2);
-// }
+		// } else {
+		// DisplayMode desk = Display.getDesktopDisplayMode();
+		// Display.setLocation((desk.getWidth() - config.width) / 2, (desk.getHeight() - config.height) / 2);
+		// }
 	}
 
 	private URacerDesktop () {

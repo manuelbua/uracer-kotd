@@ -46,8 +46,8 @@ public class DriftBar extends Positionable implements Disposable {
 		//
 		texHalf = Art.texCircleProgressHalf;
 		texHalfMask = Art.texCircleProgressHalfMask;
-// texProgress = Art.texCircleProgress;
-// texProgressMask = Art.texCircleProgressMask;
+		// texProgress = Art.texCircleProgress;
+		// texProgressMask = Art.texCircleProgressMask;
 
 		w = texHalf.getWidth();
 		h = texHalf.getHeight();

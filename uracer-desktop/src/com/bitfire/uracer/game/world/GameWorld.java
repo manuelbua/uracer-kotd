@@ -75,8 +75,8 @@ public final class GameWorld {
 
 	// player data
 	public TrackPosition playerStart = null;
-// public Vector2 playerStartPos = new Vector2();
-// public float playerStartOrientRads;
+	// public Vector2 playerStartPos = new Vector2();
+	// public float playerStartOrientRads;
 
 	// night system
 	private boolean nightMode;

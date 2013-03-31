@@ -13,7 +13,7 @@ public final class CarRenderer {
 	private Sprite ambientOcclusion;
 	private TextureRegion region;
 	private float alpha;
-// private ShaderProgram shader;
+	// private ShaderProgram shader;
 
 	// locally cached values
 	private float occlusionOffX, occlusionOffY;
@@ -22,7 +22,7 @@ public final class CarRenderer {
 	public CarRenderer (CarModel model, CarPreset.Type type) {
 		facet = new Sprite();
 		ambientOcclusion = new Sprite();
-// shader = null;
+		// shader = null;
 		setAspect(model, type);
 	}
 
@@ -46,9 +46,9 @@ public final class CarRenderer {
 		occlusionOffY = ambientOcclusion.getOriginY();
 	}
 
-// public void setShader (ShaderProgram program) {
-// shader = program;
-// }
+	// public void setShader (ShaderProgram program) {
+	// shader = program;
+	// }
 
 	public Sprite getFacet () {
 		return facet;
@@ -66,17 +66,17 @@ public final class CarRenderer {
 		return alpha;
 	}
 
-// public void renderDepth( Matrix4 projTrans, EntityRenderState renderState ) {
-// ShaderProgram depthgen = Art.depthMapGen;
-//
-// depthgen.begin();
-// depthgen.setUniformMatrix( "u_projTrans", projTrans );
-//
-// facet.setPosition( renderState.position.x - facet.getOriginX(), renderState.position.y - facet.getOriginY() );
-// facet.setRotation( renderState.orientation );
-//
-// depthgen.end();
-// }
+	// public void renderDepth( Matrix4 projTrans, EntityRenderState renderState ) {
+	// ShaderProgram depthgen = Art.depthMapGen;
+	//
+	// depthgen.begin();
+	// depthgen.setUniformMatrix( "u_projTrans", projTrans );
+	//
+	// facet.setPosition( renderState.position.x - facet.getOriginX(), renderState.position.y - facet.getOriginY() );
+	// facet.setRotation( renderState.orientation );
+	//
+	// depthgen.end();
+	// }
 
 	public void renderShadows (SpriteBatch batch, EntityRenderState state) {
 		ambientOcclusion.setPosition(state.position.x - occlusionOffX, state.position.y - occlusionOffY);
@@ -88,14 +88,14 @@ public final class CarRenderer {
 		facet.setPosition(state.position.x - facetOffX, state.position.y - facetOffY);
 		facet.setRotation(state.orientation);
 
-// if (shader != null) {
-// batch.setShader(shader);
-// }
+		// if (shader != null) {
+		// batch.setShader(shader);
+		// }
 
 		facet.draw(batch, alpha);
 
-// if (shader != null) {
-// batch.setShader(null);
-// }
+		// if (shader != null) {
+		// batch.setShader(null);
+		// }
 	}
 }

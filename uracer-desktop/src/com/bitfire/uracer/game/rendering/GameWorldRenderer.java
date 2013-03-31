@@ -116,7 +116,7 @@ public final class GameWorldRenderer {
 
 	// deferred stuff
 	private Mesh plane;
-// private final FloatFrameBuffer normalDepthMap;
+	// private final FloatFrameBuffer normalDepthMap;
 	private final FrameBuffer normalDepthMap;
 	private final ShaderProgram shNormalDepthAlpha, shNormalDepth;
 

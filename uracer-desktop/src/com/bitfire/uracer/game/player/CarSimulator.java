@@ -154,8 +154,8 @@ public final class CarSimulator {
 		}
 
 		// Calculate slip angles for front and rear wheels (a.k.a. alpha)
-// float slipanglefront = sideslip + rot_angle - carDesc.steerangle;
-// float slipanglerear = sideslip - rot_angle;
+		// float slipanglefront = sideslip + rot_angle - carDesc.steerangle;
+		// float slipanglerear = sideslip - rot_angle;
 
 		// weight per axle = half car mass times 1G (=9.8m/s^2)
 		// (precomputed during initialization)
@@ -239,8 +239,8 @@ public final class CarSimulator {
 		carDesc.angularvelocity = AMath.fixup(carDesc.angularvelocity);
 
 		// integrate angular velocity to get angular orientation
-// carDesc.angularOrientation = dt * carDesc.angularvelocity;
-// AMath.fixup( carDesc.angularOrientation );
+		// carDesc.angularOrientation = dt * carDesc.angularvelocity;
+		// AMath.fixup( carDesc.angularOrientation );
 
 		// updateHeading( bodyAngle );
 	}

@@ -26,7 +26,7 @@ public final class CarState {
 	public float currForceFactor = 0;
 
 	/* lateral forces */
-// public Vector2 lateralForceFront = new Vector2(), lateralForceRear = new Vector2();
+	// public Vector2 lateralForceFront = new Vector2(), lateralForceRear = new Vector2();
 
 	// temporaries
 	private float carMaxSpeedSquared = 0;

@@ -23,7 +23,7 @@ public final class GameTracks {
 	private static String[] trackNames;
 	private static String[] trackIds;
 	private static TmxMapLoader mapLoader = new URacerTmxMapLoader();
-// private static TmxMapLoader mapLoader = new TmxMapLoader();
+	// private static TmxMapLoader mapLoader = new TmxMapLoader();
 	private static TmxMapLoader.Parameters mapLoaderParams = new TmxMapLoader.Parameters();
 
 	public static final boolean init () {

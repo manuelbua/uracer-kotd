@@ -19,7 +19,7 @@ public final class NumberString {
 		}
 
 		return NumberString.formatterSmall.format(AMath.round(value, 1));
-// return NumberString.formatter.format( value );
+		// return NumberString.formatter.format( value );
 	}
 
 	public static String format (float value) {
@@ -28,7 +28,7 @@ public final class NumberString {
 		}
 
 		return NumberString.formatter.format(AMath.round(value, 2));
-// return NumberString.formatter.format( value );
+		// return NumberString.formatter.format( value );
 	}
 
 	public static String formatLong (float value) {
@@ -37,7 +37,7 @@ public final class NumberString {
 		}
 
 		return NumberString.formatterLong.format(AMath.round(value, 6));
-// return NumberString.formatterLong.format( value );
+		// return NumberString.formatterLong.format( value );
 	}
 
 	public static String formatVeryLong (float value) {

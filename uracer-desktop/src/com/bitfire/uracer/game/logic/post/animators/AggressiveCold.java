@@ -107,7 +107,7 @@ public final class AggressiveCold implements PostProcessingAnimator {
 
 	@Override
 	public void alertCollision (float factor, int milliseconds) {
-// if (wrongWayBegan || alertCollision) {
+		// if (wrongWayBegan || alertCollision) {
 		if (wrongWayBegan) {
 			lastCollisionFactor = 0;
 			return;

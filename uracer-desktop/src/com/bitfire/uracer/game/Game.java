@@ -63,9 +63,9 @@ public class Game implements Disposable {
 		TaskManager.dispose();
 	}
 
-// public void setLocalReplay (Replay replay) {
-// gameLogic.setBestLocalReplay(replay);
-// }
+	// public void setLocalReplay (Replay replay) {
+	// gameLogic.setBestLocalReplay(replay);
+	// }
 
 	public void tick () {
 		TaskManager.dispatchTick();

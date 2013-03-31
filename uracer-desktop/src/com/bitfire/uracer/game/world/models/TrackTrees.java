@@ -26,7 +26,7 @@ public class TrackTrees {
 	}
 
 	private Vector3 tmpvec = new Vector3();
-// private Matrix4 tmpmtx2 = new Matrix4();
+	// private Matrix4 tmpmtx2 = new Matrix4();
 	private Vector2 pospx = new Vector2();
 
 	float rotation = 0;
@@ -39,9 +39,9 @@ public class TrackTrees {
 			TreeStillModel m = models.get(i);
 
 			// debug
-// m.setRotation(-70, 1, 0, 0);
-// m.setScale(4);
-// rotation += 0.01f;
+			// m.setRotation(-70, 1, 0, 0);
+			// m.setScale(4);
+			// rotation += 0.01f;
 			// debug
 
 			Matrix4 transf = m.transformed;

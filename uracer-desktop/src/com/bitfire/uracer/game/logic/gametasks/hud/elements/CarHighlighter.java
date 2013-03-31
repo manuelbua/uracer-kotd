@@ -129,9 +129,9 @@ public final class CarHighlighter {
 	}
 
 	public void track () {
-// if (isBusy) {
-// return;
-// }
+		// if (isBusy) {
+		// return;
+		// }
 
 		isBusy = true;
 		isActive = true;
@@ -160,9 +160,9 @@ public final class CarHighlighter {
 	}
 
 	public void untrack () {
-// if (isBusy) {
-// return;
-// }
+		// if (isBusy) {
+		// return;
+		// }
 
 		isBusy = true;
 		isActive = true;

@@ -210,11 +210,11 @@ public abstract class CommonLogic implements GameLogic, CarEvent.Listener, Playe
 	protected void restartGame () {
 		restartLogic();
 		gameWorldRenderer.setInitialCameraPositionOrient(playerCar);
-// updateCamera(0);
-// gameWorldRenderer.updateCamera();
+		// updateCamera(0);
+		// gameWorldRenderer.updateCamera();
 
 		// 3..2..1.. playerLapComplete()!
-// onLapComplete();
+		// onLapComplete();
 
 		// raise event
 		gameRestart();
@@ -224,11 +224,11 @@ public abstract class CommonLogic implements GameLogic, CarEvent.Listener, Playe
 	protected void resetGame () {
 		resetLogic();
 		gameWorldRenderer.setInitialCameraPositionOrient(playerCar);
-// updateCamera(0);
-// gameWorldRenderer.updateCamera();
+		// updateCamera(0);
+		// gameWorldRenderer.updateCamera();
 
 		// 3..2..1.. playerLapComplete()!
-// onLapComplete();
+		// onLapComplete();
 
 		// raise event
 		gameReset();

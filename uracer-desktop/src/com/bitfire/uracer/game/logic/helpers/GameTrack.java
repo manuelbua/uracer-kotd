@@ -174,7 +174,7 @@ public final class GameTrack implements Disposable {
 		return -1;
 	}
 
-// private boolean computeStartSector = true;
+	// private boolean computeStartSector = true;
 
 	public void setInitialCarSector (Car car) {
 		CarTrackState state = car.getTrackState();
@@ -189,20 +189,20 @@ public final class GameTrack implements Disposable {
 		CarTrackState state = car.getTrackState();
 		Vector2 pos = car.getWorldPosMt();
 
-// if (computeStartSector) {
-// computeStartSector = false;
-// state.curr = findSector(pos);
-// state.next = state.curr + 1;
-// if (state.next == sectors.length) state.next = 0;
-// }
+		// if (computeStartSector) {
+		// computeStartSector = false;
+		// state.curr = findSector(pos);
+		// state.next = state.curr + 1;
+		// if (state.next == sectors.length) state.next = 0;
+		// }
 
 		boolean inCurr = pointInSector(pos, state.curr);
 		boolean inNext = pointInSector(pos, state.next);
 
 		// start position/polygon.contains mismatch fix
-// if (state.curr == 0 && getTrackCompletion(car) == 0) {
-// inCurr = true;
-// }
+		// if (state.curr == 0 && getTrackCompletion(car) == 0) {
+		// inCurr = true;
+		// }
 
 		state.onExpectedPath = true;
 
@@ -250,37 +250,37 @@ public final class GameTrack implements Disposable {
 	}
 
 	// search all sectors for the given point
-// private int findSector (Vector2 point) {
-// for (int i = 0; i < sectors.length; i++) {
-// TrackSector s = sectors[i];
-// Polygon p = s.poly;
-// if (p.contains(point.x, point.y)) {
-// return i;
-// }
-// }
-//
-// return -1;
-// }
+	// private int findSector (Vector2 point) {
+	// for (int i = 0; i < sectors.length; i++) {
+	// TrackSector s = sectors[i];
+	// Polygon p = s.poly;
+	// if (p.contains(point.x, point.y)) {
+	// return i;
+	// }
+	// }
+	//
+	// return -1;
+	// }
 
 	// search one sector ahead of the given sector for the given point
-// private int findSector (Vector2 position, int fromSector) {
-// int from = MathUtils.clamp(fromSector, 0, sectors.length - 1);
-// if (from == sectors.length - 1) {
-// from = 0;
-// }
-//
-// int to = from + 1;
-//
-// for (int i = from; i <= to; i++) {
-// TrackSector s = sectors[i];
-// Polygon p = s.poly;
-// if (p.contains(position.x, position.y)) {
-// return i;
-// }
-// }
-//
-// return -1;
-// }
+	// private int findSector (Vector2 position, int fromSector) {
+	// int from = MathUtils.clamp(fromSector, 0, sectors.length - 1);
+	// if (from == sectors.length - 1) {
+	// from = 0;
+	// }
+	//
+	// int to = from + 1;
+	//
+	// for (int i = from; i <= to; i++) {
+	// TrackSector s = sectors[i];
+	// Polygon p = s.poly;
+	// if (p.contains(position.x, position.y)) {
+	// return i;
+	// }
+	// }
+	//
+	// return -1;
+	// }
 
 	private int findPolygon (Vector2 a, Vector2 b) {
 		for (int i = 0; i < polys.size(); i++) {

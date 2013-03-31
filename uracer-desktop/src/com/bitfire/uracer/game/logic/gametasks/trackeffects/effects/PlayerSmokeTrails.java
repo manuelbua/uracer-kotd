@@ -35,9 +35,9 @@ public class PlayerSmokeTrails extends TrackEffect {
 
 		for (int i = 0; i < SmokeEffectsCount; i++) {
 			fx[i] = new SmokeEffect();
-// fx[i].setLifeMul(3.5f);
+			// fx[i].setLifeMul(3.5f);
 			fx[i].setScaleMul(1.5f);
-// fx[i].setEmissionMul(0.25f);
+			// fx[i].setEmissionMul(0.25f);
 		}
 
 		isDrifting = false;

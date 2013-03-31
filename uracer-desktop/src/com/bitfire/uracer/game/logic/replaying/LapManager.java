@@ -91,7 +91,7 @@ public class LapManager implements Disposable {
 
 	/** Returns whether or not the last recorded lap was the best one */
 	public boolean isLastBestLap () {
-// return lastRecordedReplay.id == bufferManager.getBestReplay().id;
+		// return lastRecordedReplay.id == bufferManager.getBestReplay().id;
 		if (bufferManager.getBestReplay() != null) {
 			return (System.identityHashCode(lastRecordedReplay) == System.identityHashCode(bufferManager.getBestReplay()));
 		}

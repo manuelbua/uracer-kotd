@@ -249,7 +249,7 @@ public final class GameRenderer {
 	public void debugRender () {
 		SpriteBatch batch = batchRenderer.beginTopLeft();
 
-// batch.disableBlending();
+		// batch.disableBlending();
 		GameEvents.gameRenderer.batch = batch;
 		GameEvents.gameRenderer.trigger(this, GameRendererEvent.Type.BatchDebug);
 		batchRenderer.end();

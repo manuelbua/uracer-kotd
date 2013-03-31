@@ -37,15 +37,15 @@ public class WrongWay {
 		isShown = false;
 	}
 
-// private TweenCallback fadeOutFinished = new TweenCallback() {
-// @Override
-// public void onEvent (int type, BaseTween<?> source) {
-// switch (type) {
-// case COMPLETE:
-// isShown = false;
-// }
-// }
-// };
+	// private TweenCallback fadeOutFinished = new TweenCallback() {
+	// @Override
+	// public void onEvent (int type, BaseTween<?> source) {
+	// switch (type) {
+	// case COMPLETE:
+	// isShown = false;
+	// }
+	// }
+	// };
 
 	public void fadeIn () {
 		fadeIn(Config.Graphics.DefaultFadeMilliseconds);

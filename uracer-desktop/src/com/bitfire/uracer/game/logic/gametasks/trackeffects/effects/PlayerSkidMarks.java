@@ -152,7 +152,7 @@ public class PlayerSkidMarks extends TrackEffect {
 			pos.x = AMath.lerp(last.x, position.x, theta * i);
 			pos.y = AMath.lerp(last.y, position.y, theta * i);
 
-// if (player.driftState.driftStrength > 0.3f && player.carState.currSpeedFactor > 0.1f)
+			// if (player.driftState.driftStrength > 0.3f && player.carState.currSpeedFactor > 0.1f)
 			{
 				// add front drift marks?
 				SkidMark drift = skidMarks[markIndex++];

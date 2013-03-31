@@ -50,7 +50,7 @@ public final class DebugStatistics {
 	}
 
 	private void init (int width, int height, float updateHz) {
-// assert (width < 256 && height < 256);
+		// assert (width < 256 && height < 256);
 
 		PanelWidth = width;
 		PanelHeight = height;

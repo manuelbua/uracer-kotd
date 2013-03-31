@@ -30,7 +30,7 @@ public abstract class SoundEffect implements Disposable {
 			waitCounter++;
 			try {
 				Thread.sleep(ThrottleMs);
-// Gdx.app.log( "CarSoundEffect", "sleeping" );
+				// Gdx.app.log( "CarSoundEffect", "sleeping" );
 			} catch (InterruptedException e) {
 			}
 		}
@@ -49,7 +49,7 @@ public abstract class SoundEffect implements Disposable {
 			waitCounter++;
 			try {
 				Thread.sleep(ThrottleMs);
-// Gdx.app.log( "CarSoundEffect", "sleeping" );
+				// Gdx.app.log( "CarSoundEffect", "sleeping" );
 			} catch (InterruptedException e) {
 			}
 		}

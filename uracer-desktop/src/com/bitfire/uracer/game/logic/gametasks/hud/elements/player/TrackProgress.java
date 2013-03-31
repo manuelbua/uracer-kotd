@@ -117,7 +117,7 @@ public class TrackProgress extends Positionable implements Disposable {
 
 		float playerToTarget = 0;
 
-// float a = 1f - 0.7f * URacer.Game.getTimeModFactor();
+		// float a = 1f - 0.7f * URacer.Game.getTimeModFactor();
 		float a = 0.25f;
 
 		playerToTarget = AMath.fixup(progressval - progressTargetVal);

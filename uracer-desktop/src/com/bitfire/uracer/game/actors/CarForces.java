@@ -30,7 +30,7 @@ public final class CarForces {
 		this.angularVelocity = other.angularVelocity;
 	}
 
-// public CarForces newCopy() {
-// return new CarForces( this );
-// }
+	// public CarForces newCopy() {
+	// return new CarForces( this );
+	// }
 }

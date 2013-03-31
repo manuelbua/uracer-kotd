@@ -19,7 +19,7 @@ public final class PlayerEngineSoundEffect extends SoundEffect {
 	public PlayerEngineSoundEffect (PlayerCar player) {
 		this.player = player;
 		carEngine = Sounds.carEngine;
-// start();
+		// start();
 	}
 
 	@Override
@@ -32,7 +32,7 @@ public final class PlayerEngineSoundEffect extends SoundEffect {
 			float speedFactor = player.carState.currSpeedFactor;
 
 			float pitch = carEnginePitchMin + speedFactor * 1.25f;
-// float pitch = carEnginePitchMin + 0.8f;
+			// float pitch = carEnginePitchMin + 0.8f;
 			if (!AMath.equals(pitch, carEnginePitchLast)) {
 				carEngine.setPitch(carEngineId, pitch);
 				carEnginePitchLast = pitch;

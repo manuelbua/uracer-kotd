@@ -61,7 +61,7 @@ public final class ScreenManager {
 		// switched to a null screen?
 		if (switchedScreen && current == null) {
 			quitPending = true;
-// Gdx.app.log("ScreenManager", "No screens available, bye!");
+			// Gdx.app.log("ScreenManager", "No screens available, bye!");
 			Gdx.app.exit(); // async exit
 		}
 
@@ -115,7 +115,7 @@ public final class ScreenManager {
 
 		// dispose the current screen
 		if (current != null) {
-// Gdx.app.debug("ScreenManager", "Destroying " + current.getClass().getSimpleName());
+			// Gdx.app.debug("ScreenManager", "Destroying " + current.getClass().getSimpleName());
 			current.dispose();
 			current = null;
 			System.gc();
@@ -131,14 +131,14 @@ public final class ScreenManager {
 	}
 
 	public void resize (int width, int height) {
-// if( transMgr.isActive()) {
-// transMgr.getTransition().reset();
-// transMgr.removeTransition();
-// }
-//
-// if( current != null ) {
-// current.resize( width, height );
-// }
+		// if( transMgr.isActive()) {
+		// transMgr.getTransition().reset();
+		// transMgr.removeTransition();
+		// }
+		//
+		// if( current != null ) {
+		// current.resize( width, height );
+		// }
 	}
 
 	public void tick () {
