@@ -87,7 +87,10 @@ public class Game implements Disposable {
 	}
 
 	public void debugUpdate () {
-		debug.update();
+		if (Config.Debug.UseDebugHelper) {
+			debug.update();
+		}
+
 		gameRenderer.debugRender();
 	}
 

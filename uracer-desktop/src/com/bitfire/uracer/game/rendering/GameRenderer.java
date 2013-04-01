@@ -169,9 +169,6 @@ public final class GameRenderer {
 			if (hasDest) {
 				dest.begin();
 			}
-			// else {
-			// gl.glViewport(0, 0, Gdx.graphics.getWidth(), Gdx.graphics.getHeight());
-			// }
 
 			gl.glClearDepthf(1);
 			gl.glClearColor(0, 0, 0, 1);

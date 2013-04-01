@@ -7,6 +7,7 @@ import com.badlogic.gdx.graphics.Pixmap;
 import com.badlogic.gdx.maps.tiled.TiledMapTileLayer;
 import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.math.WindowedMean;
+import com.badlogic.gdx.utils.IntMap;
 import com.bitfire.uracer.Input;
 import com.bitfire.uracer.URacer;
 import com.bitfire.uracer.configuration.Config;
@@ -24,6 +25,7 @@ import com.bitfire.uracer.game.world.GameWorld;
 import com.bitfire.uracer.game.world.WorldDefs.Layer;
 import com.bitfire.uracer.utils.AMath;
 import com.bitfire.uracer.utils.Convert;
+import com.bitfire.uracer.utils.Timer;
 import com.bitfire.uracer.utils.VMath;
 
 public class PlayerCar extends Car {
@@ -42,6 +44,8 @@ public class PlayerCar extends Car {
 	private final float invWidth = 1f / Gdx.graphics.getWidth(), invHeight = 1f / Gdx.graphics.getHeight();
 	// private float scaleInputX, scaleInputY;
 	private WindowedMean frictionMean = new WindowedMean(10);
+
+	private IntMap<Timer> keytimer = new IntMap<Timer>(3);
 
 	// damping values
 	private float dampFriction = 0;
@@ -70,6 +74,10 @@ public class PlayerCar extends Car {
 
 		// set physical properties
 		dampFriction = GameplaySettings.DampingFriction;
+
+		keytimer.put(Keys.UP, new Timer());
+		keytimer.put(Keys.LEFT, new Timer());
+		keytimer.put(Keys.RIGHT, new Timer());
 	}
 
 	@Override
@@ -155,8 +163,8 @@ public class PlayerCar extends Car {
 			boolean kRight = input.isOn(Keys.RIGHT);
 
 			carInput.updated = false;
-			final float KeyboardSensitivity = 0.05f;
-			float keysens = KeyboardSensitivity + (KeyboardSensitivity / 2) * 0.2f;
+			final float KeyboardSensitivity = 0.8f;
+			float keysens = KeyboardSensitivity;
 
 			if (kUp) {
 				carInput.updated = true;
@@ -170,20 +178,36 @@ public class PlayerCar extends Car {
 				if (carInput.steerAngle > 0) {
 					carInput.steerAngle = 0;
 				}
-				carInput.steerAngle -= keysens;
+				carInput.steerAngle -= keysens * getDirTime(Keys.LEFT);
 			} else if (kRight) {
 				carInput.updated = true;
 				if (carInput.steerAngle < 0) {
 					carInput.steerAngle = 0;
 				}
-				carInput.steerAngle += keysens;
+				carInput.steerAngle += keysens * getDirTime(Keys.RIGHT);
 			} else {
 				carInput.steerAngle = 0f;
 			}
 
 		}
 
+		// Gdx.app.log("PlayerCar", "up=" + getDirTime(Keys.UP) + ", left=" + getDirTime(Keys.LEFT) + ", right="
+		// + getDirTime(Keys.RIGHT));
 		return carInput;
+	}
+
+	private float getDirTime (int uplr) {
+		boolean ison = input.isOn(uplr);
+		float ret = 0;
+		Timer t = keytimer.get(uplr);
+		if (ison) {
+			t.update();
+			ret = t.elapsed();
+		} else {
+			t.reset();
+		}
+
+		return ret;
 	}
 
 	private float transformSteerAngle (float angle) {
