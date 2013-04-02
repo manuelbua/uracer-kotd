@@ -162,7 +162,7 @@ public final class Input implements Disposable {
 	private void updatePointerState () {
 		for (int p = 0; p < MaxPointers; p++) {
 			Pointer ptr = pointer[p];
-			ptr.setTouching(Gdx.input.isTouched(p));
+			ptr.setTouching(Gdx.input.isButtonPressed(p));
 			ptr.touchX = Gdx.input.getX(p);
 			ptr.touchY = Gdx.input.getY(p);
 			ptr.touchCoords.set(ptr.touchX, ptr.touchY);
