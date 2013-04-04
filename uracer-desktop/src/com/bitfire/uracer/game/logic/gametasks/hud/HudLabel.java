@@ -51,7 +51,6 @@ public final class HudLabel extends Positionable {
 		return (alpha > 0);
 	}
 
-	// one should avoid rendering artifacts when possible and set this to true
 	public void setStatic (boolean isStatic) {
 		this.isStatic = isStatic;
 	}

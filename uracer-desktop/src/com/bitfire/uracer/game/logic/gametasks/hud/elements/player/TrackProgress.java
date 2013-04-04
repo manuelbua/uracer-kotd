@@ -34,6 +34,7 @@ public class TrackProgress extends Positionable implements Disposable {
 	private boolean flipped;
 
 	private final float scale;
+	private String customMessage = "";
 
 	public TrackProgress (float scale) {
 
@@ -113,6 +114,10 @@ public class TrackProgress extends Positionable implements Disposable {
 		lblAdvantage.tick();
 	}
 
+	public void setMessage (String messageOrEmpty) {
+		customMessage = messageOrEmpty;
+	}
+
 	public void render (SpriteBatch batch, float cameraZoom) {
 
 		float playerToTarget = 0;
@@ -121,8 +126,11 @@ public class TrackProgress extends Positionable implements Disposable {
 		float a = 0.25f;
 
 		playerToTarget = AMath.fixup(progressval - progressTargetVal);
-		playerToTarget = AMath.fixup(progressval - progressTargetVal);
-		lblAdvantage.setString(Math.round(distPlayer - distGhost) + " mt");
+		if (customMessage.length() == 0) {
+			lblAdvantage.setString(Math.round(distPlayer - distGhost) + " mt");
+		} else {
+			lblAdvantage.setString(customMessage);
+		}
 
 		if (distPlayer > 0) {
 			if (!advantageShown) {

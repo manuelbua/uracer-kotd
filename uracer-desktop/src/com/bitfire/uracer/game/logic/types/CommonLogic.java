@@ -3,7 +3,6 @@ package com.bitfire.uracer.game.logic.types;
 
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Input.Keys;
-import com.badlogic.gdx.math.MathUtils;
 import com.bitfire.uracer.Input;
 import com.bitfire.uracer.ScalingStrategy;
 import com.bitfire.uracer.URacer;
@@ -482,7 +481,6 @@ public abstract class CommonLogic implements GameLogic, CarEvent.Listener, Playe
 		URacer.timeMultiplier = timeMod.getTime();
 		float zoom = updateCamera(URacer.Game.getTimeModFactor());
 
-		Ssao ssao = (Ssao)postProcessing.getEffect(Effects.Ssao.name);
 		// CameraMotion mot = (CameraMotion)postProcessing.getEffect(Effects.MotionBlur.name);
 
 		if (gameWorld.isNightMode() && postProcessing.hasEffect(Effects.Crt.name)) {
@@ -493,12 +491,31 @@ public abstract class CommonLogic implements GameLogic, CarEvent.Listener, Playe
 			gameWorldRenderer.setTreesAmbientColor(0.1f, 0.1f, 0.15f, 0.4f + 0.5f * URacer.Game.getTimeModFactor());
 		}
 
+		if (gameWorld.isNightMode()) {
+			float c = lapMonitor.getWarmUpCompletion();
+
+			//@off
+			gameWorldRenderer.setAmbientColor(
+				0.1f,
+				0.05f,
+				0.15f,
+				0.1f + 0.3f * c + 0.2f * URacer.Game.getTimeModFactor()
+			);
+
+			gameWorldRenderer.setTreesAmbientColor(
+				0.1f,
+				0.1f,
+				0.15f,
+				0.25f + 0.3f * c + 0.2f * URacer.Game.getTimeModFactor()
+			);
+			//@on
+		}
 		// camera/ray handler update
 		gameWorldRenderer.updateCamera();
 
 		// post-processing step / SSAO
-		if (ssao != null) {
-			ssao.setEnabled(true);
+		if (postProcessing.hasEffect(Effects.Ssao.name)) {
+			Ssao ssao = (Ssao)postProcessing.getEffect(Effects.Ssao.name);
 			ssao.setNormalDepthMap(gameWorldRenderer.getNormalDepthMap().getColorBufferTexture());
 		}
 
@@ -516,7 +533,7 @@ public abstract class CommonLogic implements GameLogic, CarEvent.Listener, Playe
 		// }
 
 		// Gdx.app.log("CommonLogic", "wuc=" + lapMonitor.getWarmUpCompletion());
-		postProcessing.onBeforeRender(zoom, MathUtils.clamp(lapMonitor.getWarmUpCompletion(), 0, 1));
+		postProcessing.onBeforeRender(zoom, lapMonitor.getWarmUpCompletion());
 
 		// game tweener step
 		GameTweener.update();
