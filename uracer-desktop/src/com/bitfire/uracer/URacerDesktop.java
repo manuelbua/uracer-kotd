@@ -19,15 +19,13 @@ public final class URacerDesktop {
 
 	private static boolean parseConfig (String[] argv, LwjglApplicationConfiguration config) {
 
-		System.out.print(URacer.Name + " " + URacer.getVersionInformation() + "\nCopyright (c) 2012 Manuel Bua.\n\n");
-
 		LaunchFlags flags = new LaunchFlags();
 		if (!CommandLine.parseLaunchFlags(argv, flags)) {
 			return false;
 		}
 
 		// set to default
-		config.title = URacer.Name + " (" + URacer.getVersionInformation() + ")";
+		config.title = URacer.Name + " (" + URacer.versionInfo + ")";
 		config.useGL20 = true;
 		config.resizable = false;
 
@@ -40,6 +38,7 @@ public final class URacerDesktop {
 
 		// parse opts --
 
+		System.out.print("Running on desktop\n");
 		System.out.print("Resolution set at " + (config.width + "x" + config.height) + "\n");
 		System.out.print("Vertical sync: " + (config.vSyncEnabled ? "On" : "Off") + "\n");
 		System.out.print("CPU sync: " + (config.useCPUSynch ? "On" : "Off") + "\n");
@@ -49,6 +48,8 @@ public final class URacerDesktop {
 	}
 
 	public static void main (String[] argv) {
+		System.out.print(URacer.Name + "\nCopyright (c) 2012-2013 Manuel Bua.\n\n");
+
 		LwjglApplicationConfiguration config = new LwjglApplicationConfiguration();
 		config.addIcon("data/base/icon.png", FileType.Internal);
 

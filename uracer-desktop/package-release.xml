@@ -48,6 +48,6 @@
 	</target>
 
 	<target name="zip" depends="create_package">
-		<zip destfile="./build/uracer-kotd-${uracer.version}.zip" basedir="./build" excludes="uracer-kotd-${uracer.version}.zip" />
+		<zip destfile="./build/uracer-kotd.zip" basedir="./build" excludes="uracer-kotd.zip" />
 	</target>
 </project>

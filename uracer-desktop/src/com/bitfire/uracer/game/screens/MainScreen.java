@@ -109,7 +109,7 @@ public final class MainScreen extends Screen {
 		infoTable = new Table(Art.scrSkin);
 		ui.addActor(infoTable);
 
-		versionLabel = new Label(URacer.getVersionInformation(), Art.scrSkin);
+		versionLabel = new Label(URacer.versionInfo, Art.scrSkin);
 		infoTable.row();
 		infoTable.add(versionLabel).expand().bottom().left();
 	}

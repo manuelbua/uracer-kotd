@@ -70,7 +70,7 @@ public class URacer implements ApplicationListener {
 	private static long lastTicksCount = 0;
 
 	// version
-	private static String versionInfo = "";
+	public static final String versionInfo = getVersionInformation();
 	private URacerFinalizer uRacerFinalizer;
 
 	public interface URacerFinalizer {
@@ -81,26 +81,21 @@ public class URacer implements ApplicationListener {
 		this.uRacerFinalizer = finalizer;
 	}
 
-	public static String getVersionInformation () {
-		if (versionInfo.length() == 0) {
-			// extract version information
-			String info = "";
-			try {
-				Field f = Class.forName("com.bitfire.uracer.VersionInfo").getDeclaredField("versionName");
-				f.setAccessible(true);
-				String value = f.get(null).toString();
-				if (value.length() > 0) {
-					info = value;
-				}
-			} catch (Exception e) {
-				info = "(version not found)";
+	private static String getVersionInformation () {
+		// extract version information
+		String info = "";
+		try {
+			Field f = Class.forName("com.bitfire.uracer.VersionInfo").getDeclaredField("versionName");
+			f.setAccessible(true);
+			String value = f.get(null).toString();
+			if (value.length() > 0) {
+				info = value;
 			}
-
-			versionInfo = info;
-			return info;
-		} else {
-			return versionInfo;
+		} catch (Exception e) {
+			info = "(version not found)";
 		}
+
+		return info;
 	}
 
 	@Override
@@ -113,7 +108,6 @@ public class URacer implements ApplicationListener {
 		Tween.registerAccessor(BoxedFloat.class, new BoxedFloatAccessor());
 
 		Gdx.app.setLogLevel(Application.LOG_DEBUG);
-		versionInfo = URacer.getVersionInformation();
 
 		System.out.println("Graphics card from " + Gdx.gl.glGetString(GL10.GL_VENDOR) + " (" + Gdx.gl.glGetString(GL10.GL_VERSION)
 			+ ")");

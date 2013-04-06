@@ -71,7 +71,7 @@ public final class DebugHelper {
 		b2drenderer = new Box2DDebugRenderer();
 
 		// extrapolate version information
-		uRacerInfo = "URacer " + URacer.getVersionInformation();
+		uRacerInfo = "URacer " + URacer.versionInfo;
 
 		// compute graphics stats size
 		float updateHz = 60f;
