@@ -115,9 +115,12 @@ public class URacer implements ApplicationListener {
 		Gdx.app.setLogLevel(Application.LOG_DEBUG);
 		versionInfo = URacer.getVersionInformation();
 
+		System.out.println("Graphics card from " + Gdx.gl.glGetString(GL10.GL_VENDOR) + " (" + Gdx.gl.glGetString(GL10.GL_VERSION)
+			+ ")");
+		System.out.println("Java version " + System.getProperty("java.version") + " from " + System.getProperty("java.vendor"));
+		System.out.println();
+
 		Gdx.app.log("URacer", "booting version " + versionInfo);
-		Gdx.app.log("URacer",
-			"Graphics card from " + Gdx.gl.glGetString(GL10.GL_VENDOR) + " (" + Gdx.gl.glGetString(GL10.GL_VERSION) + ")");
 		Gdx.app.log("URacer", "Using real frametime: " + (useRealFrametime ? "YES" : "NO"));
 
 		// create input system
