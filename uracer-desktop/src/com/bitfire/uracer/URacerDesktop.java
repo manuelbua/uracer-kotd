@@ -59,7 +59,7 @@ public final class URacerDesktop {
 		try {
 			bootConfig.load(new FileInputStream(bootConfigFile));
 		} catch (IOException e) {
-			System.out.print("CANNOT READ BOOT CONFIG (using defaults)\n");
+			System.out.print("NO BOOT CONFIG AVAILABLE\n\n");
 		}
 	}
 

@@ -37,7 +37,7 @@ public class URacerDesktopFinalizer implements URacerFinalizer {
 		try {
 			bootConfig.store(new FileOutputStream(bootConfigFile), null);
 		} catch (IOException e) {
-			System.out.print("CANNOT STORE BOOT CONFIG\n");
+			System.out.print("CANNOT STORE BOOT CONFIG\n\n");
 		}
 
 		// destroy display
