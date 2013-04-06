@@ -29,13 +29,17 @@ public final class CommandLine {
 	public static boolean parseLaunchFlags (String[] argv, LaunchFlags flags) {
 		int c;
 		String arg;
-		LongOpt[] opts = new LongOpt[6];
-		opts[0] = new LongOpt("help", LongOpt.NO_ARGUMENT, null, 'h');
-		opts[1] = new LongOpt("resolution", LongOpt.REQUIRED_ARGUMENT, null, 'r');
-		opts[2] = new LongOpt("no-vsync", LongOpt.NO_ARGUMENT, null, 'v');
-		opts[3] = new LongOpt("cpusync", LongOpt.NO_ARGUMENT, null, 'C');
-		opts[4] = new LongOpt("fullscreen", LongOpt.NO_ARGUMENT, null, 'f');
-		opts[5] = new LongOpt("right-screen", LongOpt.NO_ARGUMENT, null, 't');
+
+		//@off
+		LongOpt[] opts = {
+			new LongOpt("help", LongOpt.NO_ARGUMENT, null, 'h'),
+			new LongOpt("resolution", LongOpt.REQUIRED_ARGUMENT, null, 'r'),
+			new LongOpt("no-vsync", LongOpt.NO_ARGUMENT, null, 'v'),
+			new LongOpt("cpusync", LongOpt.NO_ARGUMENT, null, 'C'),
+			new LongOpt("fullscreen", LongOpt.NO_ARGUMENT, null, 'f'),
+			//new LongOpt("right-screen", LongOpt.NO_ARGUMENT, null, 't')
+		};
+		//@on
 
 		Getopt g = new Getopt("URacer", argv, ":hr:vcft", opts);
 		g.setOpterr(false);
@@ -76,8 +80,8 @@ public final class CommandLine {
 				System.out.println("  -v, --no-vsync\tdisable VSync");
 				System.out.println("  -c, --cpusync\t\tenable CPU sync");
 				System.out.println("  -f, --fullscreen\tenable fullscreen");
-				System.out
-					.println("  -t, --right-screen\treposition the game's window to the screen on the right,\n\t\t\tif available.");
+				// System.out
+				// .println("  -t, --right-screen\treposition the game's window to the screen on the right,\n\t\t\tif available.");
 				System.out.println("");
 				return false;
 			case 'v':
@@ -89,9 +93,9 @@ public final class CommandLine {
 			case 'f':
 				flags.fullscreen = true;
 				break;
-			case 't':
-				flags.useRightScreen = true;
-				break;
+			// case 't':
+			// flags.useRightScreen = true;
+			// break;
 			case '?':
 				System.out.print("The specified parameter is not valid.\nTry --help for a list of valid parameters.");
 				return false;

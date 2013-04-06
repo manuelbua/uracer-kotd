@@ -7,5 +7,5 @@ public final class LaunchFlags {
 	public boolean vSyncEnabled = true;
 	public boolean useCPUSynch = false;
 	public boolean fullscreen = false;
-	public boolean useRightScreen = false;
+	// public boolean useRightScreen = false;
 }

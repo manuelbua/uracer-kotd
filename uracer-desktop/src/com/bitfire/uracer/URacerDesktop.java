@@ -3,6 +3,9 @@ package com.bitfire.uracer;
 
 import java.awt.GraphicsDevice;
 import java.awt.GraphicsEnvironment;
+import java.io.FileInputStream;
+import java.io.IOException;
+import java.util.Properties;
 
 import org.lwjgl.opengl.Display;
 
@@ -15,7 +18,7 @@ import com.bitfire.uracer.utils.CommandLine;
 
 public final class URacerDesktop {
 
-	private static boolean useRightScreen = false;
+	// private static boolean useRightScreen = false;
 
 	private static boolean parseConfig (String[] argv, LwjglApplicationConfiguration config) {
 
@@ -34,7 +37,7 @@ public final class URacerDesktop {
 		config.vSyncEnabled = flags.vSyncEnabled;
 		config.useCPUSynch = flags.useCPUSynch;
 		config.fullscreen = flags.fullscreen;
-		useRightScreen = flags.useRightScreen;
+		// useRightScreen = flags.useRightScreen;
 
 		// parse opts --
 
@@ -47,8 +50,29 @@ public final class URacerDesktop {
 		return true;
 	}
 
-	public static void main (String[] argv) {
+	private static String bootConfigFile = "uracer-boot.cfg";
+	private static Properties bootConfig = new Properties();
+
+	private static void boot () {
 		System.out.print(URacer.Name + "\nCopyright (c) 2012-2013 Manuel Bua.\n\n");
+
+		try {
+			bootConfig.load(new FileInputStream(bootConfigFile));
+		} catch (IOException e) {
+			System.out.print("CANNOT READ BOOT CONFIG (using defaults)\n");
+		}
+	}
+
+	private static int bootConfigI (String name, int value) {
+		String v = bootConfig.getProperty(name);
+		if (v == null) {
+			return value;
+		}
+		return Integer.parseInt(v);
+	}
+
+	public static void main (String[] argv) {
+		boot();
 
 		LwjglApplicationConfiguration config = new LwjglApplicationConfiguration();
 		config.addIcon("data/base/icon.png", FileType.Internal);
@@ -60,31 +84,24 @@ public final class URacerDesktop {
 		URacer uracer = new URacer();
 		LwjglApplication app = new LwjglApplication(uracer, config);
 
-		URacerDesktopFinalizer finalizr = new URacerDesktopFinalizer((OpenALAudio)app.getAudio());
+		URacerDesktopFinalizer finalizr = new URacerDesktopFinalizer(bootConfigFile, (OpenALAudio)app.getAudio());
 		uracer.setFinalizer(finalizr);
 
-		// if (useRightScreen) {
 		GraphicsEnvironment env = GraphicsEnvironment.getLocalGraphicsEnvironment();
 		GraphicsDevice primary = env.getDefaultScreenDevice();
-		GraphicsDevice target = primary;
-		// GraphicsDevice[] devices = env.getScreenDevices();
 
-		if (target != null) {
-			java.awt.DisplayMode tmode = target.getDisplayMode();
-			int offset = 0;
-			if (useRightScreen) {
-				java.awt.DisplayMode pmode = primary.getDisplayMode();
-				offset = pmode.getWidth();
-			}
+		if (primary != null) {
+			java.awt.DisplayMode mode = primary.getDisplayMode();
 
-			int x = offset + (tmode.getWidth() - config.width) / 2;
-			int y = (tmode.getHeight() - config.height) / 2;
-			Display.setLocation(x, y);
+			int xoffset = 0;
+			int yoffset = 0;
+			int x = xoffset + (mode.getWidth() - config.width) / 2;
+			int y = yoffset + (mode.getHeight() - config.height) / 2;
+
+			int nx = bootConfigI("win." + mode.getWidth() + "x" + mode.getHeight() + ".x", x);
+			int ny = bootConfigI("win." + mode.getWidth() + "x" + mode.getHeight() + ".y", y);
+			Display.setLocation(nx, ny);
 		}
-		// } else {
-		// DisplayMode desk = Display.getDesktopDisplayMode();
-		// Display.setLocation((desk.getWidth() - config.width) / 2, (desk.getHeight() - config.height) / 2);
-		// }
 	}
 
 	private URacerDesktop () {
