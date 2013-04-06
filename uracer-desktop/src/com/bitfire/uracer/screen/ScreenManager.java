@@ -75,9 +75,11 @@ public final class ScreenManager {
 	 * configuration. The screen change is scheduled to happen at the start of the next frame. */
 	public void setScreen (ScreenType screen, TransitionType transitionType, long transitionDurationMs) {
 		// early exit
-		if (transMgr.isActive()) {
-			return;
-		}
+		// if (transMgr.isActive()) {
+		// return;
+		// }
+
+		transMgr.removeTransition();
 
 		ScreenTransition transition = null;
 
@@ -95,9 +97,11 @@ public final class ScreenManager {
 	 * to happen at the start of the next frame. */
 	public void setScreen (ScreenType screen, ScreenTransition transition) {
 		// early exit
-		if (transMgr.isActive()) {
-			return;
-		}
+		// if (transMgr.isActive()) {
+		// return;
+		// }
+
+		transMgr.removeTransition();
 
 		doSetScreenImmediate = false;
 		next = screen;

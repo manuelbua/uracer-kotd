@@ -26,53 +26,53 @@ public class GameScreen extends Screen {
 		String trackId = GameTracks.getTrackId(ScreensShared.selectedTrackId);
 
 		if (trackId == null) {
-			Gdx.app.log("GameScreen", "The specified track could not be found :(");
+			Gdx.app.error("GameScreen", "The specified track could not be found.");
 			URacer.Game.show(ScreenType.MainScreen);
+		} else {
+			// save as last played track
+			UserPreferences.string(Preference.LastPlayedTrack, ScreensShared.selectedTrackId);
+
+			UserProfile userProfile = new UserProfile();
+			game = new Game(userProfile, trackId, scalingStrategy);
+
+			// choose a car type
+			game.setPlayer(Type.L2_PinkBeast);
 		}
-
-		// save as last played track
-		UserPreferences.string(Preference.LastPlayedTrack, ScreensShared.selectedTrackId);
-
-		UserProfile userProfile = new UserProfile();
-		game = new Game(userProfile, trackId, scalingStrategy);
-
-		// simulate the player choosing a car type
-		game.setPlayer(Type.L2_PinkBeast);
 	}
 
 	@Override
 	public void dispose () {
-		game.dispose();
+		if (game != null) game.dispose();
 		game = null;
 	}
 
 	@Override
 	public void tick () {
-		game.tick();
+		if (game != null) game.tick();
 	}
 
 	@Override
 	public void tickCompleted () {
-		game.tickCompleted();
+		if (game != null) game.tickCompleted();
 	}
 
 	@Override
 	public void render (FrameBuffer dest) {
-		game.render(dest);
+		if (game != null) game.render(dest);
 	}
 
 	@Override
 	public void pause () {
-		game.pause();
+		if (game != null) game.pause();
 	}
 
 	@Override
 	public void resume () {
-		game.resume();
+		if (game != null) game.resume();
 	}
 
 	@Override
 	public void debugRender () {
-		game.debugUpdate();
+		if (game != null) game.debugUpdate();
 	}
 }
