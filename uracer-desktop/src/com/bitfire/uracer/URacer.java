@@ -100,7 +100,7 @@ public class URacer implements ApplicationListener {
 
 	@Override
 	public void create () {
-		ShaderLoader.Pedantic = false;
+		ShaderLoader.Pedantic = true;
 
 		// create tweening support
 		Tween.registerAccessor(Message.class, new MessageAccessor());

@@ -617,7 +617,7 @@ public final class GameWorldRenderer {
 		if (depthOnly) {
 			shader.setUniformMatrix("proj", camPersp.projection);
 			shader.setUniformMatrix("view", camPersp.view);
-			shader.setUniformi("u_diffuse", 0);
+			shader.setUniformi("u_texture", 0);
 		} else {
 			if (world.isNightMode()) {
 				shader.setUniformf("u_ambient", treesAmbientColor);
@@ -643,7 +643,7 @@ public final class GameWorldRenderer {
 
 		// all the transparent foliage
 
-		// do NOT cull face so that SSAO can appear on back faces as well
+		// do NOT cull face so that SSAO appear on back faces as well
 		// gl.glDisable(GL20.GL_CULL_FACE);
 
 		if (!depthOnly) {
@@ -729,9 +729,9 @@ public final class GameWorldRenderer {
 		if (depthOnly) {
 			shader.setUniformMatrix("proj", camPersp.projection);
 			shader.setUniformMatrix("view", camPersp.view);
-			shader.setUniformi("u_diffuse", 0);
+			shader.setUniformi("u_texture", 0);
 		} else {
-			if (world.isNightMode()) {
+			if (nightMode) {
 				shader.setUniformf("u_ambient", ambientColor);
 			}
 		}

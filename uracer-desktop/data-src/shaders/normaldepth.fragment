@@ -4,7 +4,7 @@ uniform float near, far, inv_depth_scale;
 uniform mat3 nmat;
 
 #ifdef ENABLE_DIFFUSE
-	uniform sampler2D u_diffuse;
+	uniform sampler2D u_texture;
 	varying vec2 v_texcoord;
 #endif
 
@@ -29,7 +29,7 @@ vec2 encode_depth(vec3 position){
 
 void main(void){
 #ifdef ENABLE_DIFFUSE
-	vec4 texel = texture2D( u_diffuse, v_texcoord );
+	vec4 texel = texture2D( u_texture, v_texcoord );
 	if(texel.a < 0.5) discard;
 #endif
 

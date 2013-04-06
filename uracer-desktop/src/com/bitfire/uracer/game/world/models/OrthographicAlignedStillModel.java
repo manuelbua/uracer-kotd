@@ -57,16 +57,16 @@ public class OrthographicAlignedStillModel {
 
 		String fragmentShader =
 			"#ifdef GL_ES											\n" +
-				"	precision mediump float;						\n" +
-				"#endif													\n" +
-				"uniform sampler2D u_texture;						\n" +
-				"varying vec2 v_TexCoord;							\n" +
-				"void main()											\n"+
-				"{\n" +
-				"	vec4 texel = texture2D( u_texture, v_TexCoord );	\n" +
-				//"	if(texel.a < 0.5) discard;							\n" +
-				"	gl_FragColor = texel;								\n" +
-				"}\n";
+			"	precision mediump float;						\n" +
+			"#endif													\n" +
+			"uniform sampler2D u_texture;						\n" +
+			"varying vec2 v_TexCoord;							\n" +
+			"void main()											\n"+
+			"{\n" +
+			"	vec4 texel = texture2D( u_texture, v_TexCoord );	\n" +
+			//"	if(texel.a < 0.5) discard;							\n" +
+			"	gl_FragColor = texel;								\n" +
+			"}\n";
 
 		String fragmentShaderNight =
 			"#ifdef GL_ES											\n" +
