@@ -36,13 +36,14 @@ public final class CommandLine {
 			new LongOpt("help", LongOpt.NO_ARGUMENT, null, 'h'),
 			new LongOpt("resolution", LongOpt.REQUIRED_ARGUMENT, null, 'r'),
 			new LongOpt("no-vsync", LongOpt.NO_ARGUMENT, null, 'v'),
-			new LongOpt("cpusync", LongOpt.NO_ARGUMENT, null, 'C'),
+			new LongOpt("cpusync", LongOpt.NO_ARGUMENT, null, 'c'),
 			new LongOpt("fullscreen", LongOpt.NO_ARGUMENT, null, 'f'),
+			new LongOpt("undecorated", LongOpt.NO_ARGUMENT, null, 'u'),
 			//new LongOpt("right-screen", LongOpt.NO_ARGUMENT, null, 't')
 		};
 		//@on
 
-		Getopt g = new Getopt("URacer", argv, ":hr:vcft", opts);
+		Getopt g = new Getopt("URacer", argv, ":hr:vcfu", opts);
 		g.setOpterr(false);
 		while ((c = g.getopt()) != -1) {
 			arg = g.getOptarg();
@@ -97,6 +98,7 @@ public final class CommandLine {
 				System.out.println("  -v, --no-vsync\tdisable VSync");
 				System.out.println("  -c, --cpusync\t\tenable CPU sync");
 				System.out.println("  -f, --fullscreen\tenable fullscreen");
+				System.out.println("  -u, --undecorated\tdraw window without the window manager's decorations");
 				// System.out
 				// .println("  -t, --right-screen\treposition the game's window to the screen on the right,\n\t\t\tif available.");
 				System.out.println("");
@@ -109,6 +111,9 @@ public final class CommandLine {
 				break;
 			case 'f':
 				boot.setBoolean(BootConfigFlag.FULLSCREEN, true);
+				break;
+			case 'u':
+				boot.setBoolean(BootConfigFlag.UNDECORATED, true);
 				break;
 			// case 't':
 			// flags.useRightScreen = true;

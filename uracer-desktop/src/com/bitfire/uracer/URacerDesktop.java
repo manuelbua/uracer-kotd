@@ -35,7 +35,7 @@ public final class URacerDesktop {
 	}
 
 	public static void main (String[] argv) {
-		System.out.print(URacer.Name + "\nCopyright (c) 2012-2013 Manuel Bua.\n\n");
+		System.out.print(URacer.Name + " (" + URacer.versionInfo + ")\nCopyright (c) 2012-2013 Manuel Bua.\n\n");
 
 		// load boot configuration, either from file or from defaults
 		BootConfig boot = new BootConfig();
@@ -43,21 +43,21 @@ public final class URacerDesktop {
 		// override boot config by command line flags, if any
 		if (argv.length > 0) {
 			if (!CommandLine.applyLaunchFlags(argv, boot)) {
-				System.out.println("Couldn't parse command line, please check your flags.");
 				return;
 			}
-
 			boot.store();
 		}
 
+		System.setProperty("org.lwjgl.opengl.Window.undecorated", "" + boot.getBoolean(BootConfigFlag.UNDECORATED));
+
 		LwjglApplicationConfiguration config = createLwjglConfig(boot);
 
-		System.out.print("Running on desktop\n");
 		System.out.print("Resolution set at " + (config.width + "x" + config.height) + " (x=" + boot.getWindowX() + ", y="
 			+ boot.getWindowY() + ")\n");
 		System.out.print("Vertical sync: " + (config.vSyncEnabled ? "On" : "Off") + "\n");
 		System.out.print("CPU sync: " + (config.useCPUSynch ? "On" : "Off") + "\n");
 		System.out.print("Fullscreen: " + (config.fullscreen ? "Yes" : "No") + "\n");
+		System.out.print("Decorated window: " + (boot.getBoolean(BootConfigFlag.UNDECORATED) ? "No" : "Yes") + "\n");
 
 		URacer uracer = new URacer();
 		LwjglApplication app = new LwjglApplication(uracer, config);

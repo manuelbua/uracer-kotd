@@ -18,7 +18,8 @@ public class BootConfig {
 		HEIGHT("height", 480),
 		VSYNC("vsync", true),
 		CPUSYNC("cpusync", false),
-		FULLSCREEN("fullscreen", false)
+		FULLSCREEN("fullscreen", false),
+		UNDECORATED("undecorated", false),
 		;
 		//@on
 
@@ -67,6 +68,7 @@ public class BootConfig {
 		setBoolean(BootConfigFlag.VSYNC, BootConfigFlag.VSYNC.defaultBoolean);
 		setBoolean(BootConfigFlag.CPUSYNC, BootConfigFlag.CPUSYNC.defaultBoolean);
 		setBoolean(BootConfigFlag.FULLSCREEN, false);
+		setBoolean(BootConfigFlag.UNDECORATED, false);
 
 		// auto-detect centered window position
 		setWindowX(AwtUtils.getCenteredXOnDisplay(BootConfigFlag.WIDTH.defaultInt));
