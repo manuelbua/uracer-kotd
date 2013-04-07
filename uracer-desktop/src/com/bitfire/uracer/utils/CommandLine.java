@@ -36,13 +36,16 @@ public final class CommandLine {
 		LongOpt[] opts = {
 			new LongOpt("help", LongOpt.NO_ARGUMENT, null, 'h'),
 			new LongOpt("resolution", LongOpt.REQUIRED_ARGUMENT, null, 'r'),
-			new LongOpt("no-vsync", LongOpt.NO_ARGUMENT, null, 'v'),
-			new LongOpt("fullscreen", LongOpt.NO_ARGUMENT, null, 'f'),
-			new LongOpt("undecorated", LongOpt.NO_ARGUMENT, null, 'u'),
+			new LongOpt("enable-vsync", LongOpt.NO_ARGUMENT, null, 'V'),
+			new LongOpt("disable-vsync", LongOpt.NO_ARGUMENT, null, 'v'),
+			new LongOpt("enable-fullscreen", LongOpt.NO_ARGUMENT, null, 'F'),
+			new LongOpt("disable-fullscreen", LongOpt.NO_ARGUMENT, null, 'f'),
+			new LongOpt("enable-undecorated", LongOpt.NO_ARGUMENT, null, 'U'),
+			new LongOpt("disable-undecorated", LongOpt.NO_ARGUMENT, null, 'u'),
 		};
 		//@on
 
-		Getopt g = new Getopt("URacer", argv, ":hr:vfu", opts);
+		Getopt g = new Getopt("URacer", argv, "", opts);
 		g.setOpterr(false);
 		while ((c = g.getopt()) != -1) {
 			arg = g.getOptarg();
@@ -94,19 +97,29 @@ public final class CommandLine {
 				System.out.println("  \t\t\ta real resolution =, e.g. --resolution=800x600, or use ");
 				System.out.println("  \t\t\ta built-in shortcut (one of \"low\", \"mid\" or \"high\").");
 				System.out.println("  \t\t\t(low=800x480, mid=1280x800, high=1920x1080)");
-				System.out.println("  -v, --no-vsync\tdisable VSync");
-				System.out.println("  -f, --fullscreen\tenable fullscreen");
-				System.out.println("  -u, --undecorated\tdraw window without the window manager's decorations");
+				System.out.println("  --enable-vsync, --disable-vsync\t\tenable/disable vertical sync");
+				System.out.println("  --enable-fullscreen, --disable-fullscreen\tenable/disable fullscreen");
+				System.out
+					.println("  --enable-undecorated, --disable-undecorated\twhether or not to create a window without the window manager's decorations");
 				System.out.println("");
 				return false;
+			case 'V':
+				boot.setBoolean(BootConfigFlag.VSYNC, true);
+				break;
 			case 'v':
 				boot.setBoolean(BootConfigFlag.VSYNC, false);
 				break;
-			case 'f':
+			case 'F':
 				boot.setBoolean(BootConfigFlag.FULLSCREEN, true);
 				break;
-			case 'u':
+			case 'f':
+				boot.setBoolean(BootConfigFlag.FULLSCREEN, false);
+				break;
+			case 'U':
 				boot.setBoolean(BootConfigFlag.UNDECORATED, true);
+				break;
+			case 'u':
+				boot.setBoolean(BootConfigFlag.UNDECORATED, false);
 				break;
 			case '?':
 				System.out.print("The specified parameter is not valid.\nTry --help for a list of valid parameters.");
