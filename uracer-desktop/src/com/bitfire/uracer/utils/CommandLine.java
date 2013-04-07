@@ -31,19 +31,18 @@ public final class CommandLine {
 		int c;
 		String arg;
 
+		// TODO: --enable-feature && --disable-feature
 		//@off
 		LongOpt[] opts = {
 			new LongOpt("help", LongOpt.NO_ARGUMENT, null, 'h'),
 			new LongOpt("resolution", LongOpt.REQUIRED_ARGUMENT, null, 'r'),
 			new LongOpt("no-vsync", LongOpt.NO_ARGUMENT, null, 'v'),
-			new LongOpt("cpusync", LongOpt.NO_ARGUMENT, null, 'c'),
 			new LongOpt("fullscreen", LongOpt.NO_ARGUMENT, null, 'f'),
 			new LongOpt("undecorated", LongOpt.NO_ARGUMENT, null, 'u'),
-			//new LongOpt("right-screen", LongOpt.NO_ARGUMENT, null, 't')
 		};
 		//@on
 
-		Getopt g = new Getopt("URacer", argv, ":hr:vcfu", opts);
+		Getopt g = new Getopt("URacer", argv, ":hr:vfu", opts);
 		g.setOpterr(false);
 		while ((c = g.getopt()) != -1) {
 			arg = g.getOptarg();
@@ -96,18 +95,12 @@ public final class CommandLine {
 				System.out.println("  \t\t\ta built-in shortcut (one of \"low\", \"mid\" or \"high\").");
 				System.out.println("  \t\t\t(low=800x480, mid=1280x800, high=1920x1080)");
 				System.out.println("  -v, --no-vsync\tdisable VSync");
-				System.out.println("  -c, --cpusync\t\tenable CPU sync");
 				System.out.println("  -f, --fullscreen\tenable fullscreen");
 				System.out.println("  -u, --undecorated\tdraw window without the window manager's decorations");
-				// System.out
-				// .println("  -t, --right-screen\treposition the game's window to the screen on the right,\n\t\t\tif available.");
 				System.out.println("");
 				return false;
 			case 'v':
 				boot.setBoolean(BootConfigFlag.VSYNC, false);
-				break;
-			case 'c':
-				boot.setBoolean(BootConfigFlag.CPUSYNC, true);
 				break;
 			case 'f':
 				boot.setBoolean(BootConfigFlag.FULLSCREEN, true);
@@ -115,9 +108,6 @@ public final class CommandLine {
 			case 'u':
 				boot.setBoolean(BootConfigFlag.UNDECORATED, true);
 				break;
-			// case 't':
-			// flags.useRightScreen = true;
-			// break;
 			case '?':
 				System.out.print("The specified parameter is not valid.\nTry --help for a list of valid parameters.");
 				return false;

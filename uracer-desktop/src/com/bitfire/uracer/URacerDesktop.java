@@ -28,7 +28,6 @@ public final class URacerDesktop {
 		config.width = boot.getInt(BootConfigFlag.WIDTH);
 		config.height = boot.getInt(BootConfigFlag.HEIGHT);
 		config.vSyncEnabled = boot.getBoolean(BootConfigFlag.VSYNC);
-		config.useCPUSynch = boot.getBoolean(BootConfigFlag.CPUSYNC);
 		config.fullscreen = boot.getBoolean(BootConfigFlag.FULLSCREEN);
 
 		return config;
@@ -54,8 +53,7 @@ public final class URacerDesktop {
 
 		System.out.print("Resolution set at " + (config.width + "x" + config.height) + " (x=" + boot.getWindowX() + ", y="
 			+ boot.getWindowY() + ")\n");
-		System.out.print("Vertical sync: " + (config.vSyncEnabled ? "On" : "Off") + "\n");
-		System.out.print("CPU sync: " + (config.useCPUSynch ? "On" : "Off") + "\n");
+		System.out.print("Vertical sync: " + (config.vSyncEnabled ? "Yes" : "No") + "\n");
 		System.out.print("Fullscreen: " + (config.fullscreen ? "Yes" : "No") + "\n");
 		System.out.print("Decorated window: " + (boot.getBoolean(BootConfigFlag.UNDECORATED) ? "No" : "Yes") + "\n");
 
