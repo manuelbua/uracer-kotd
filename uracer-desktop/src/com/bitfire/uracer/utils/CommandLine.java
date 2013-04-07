@@ -4,7 +4,8 @@ package com.bitfire.uracer.utils;
 import gnu.getopt.Getopt;
 import gnu.getopt.LongOpt;
 
-import com.bitfire.uracer.configuration.LaunchFlags;
+import com.bitfire.uracer.configuration.BootConfig;
+import com.bitfire.uracer.configuration.BootConfig.BootConfigFlag;
 
 public final class CommandLine {
 
@@ -26,7 +27,7 @@ public final class CommandLine {
 		return false;
 	}
 
-	public static boolean parseLaunchFlags (String[] argv, LaunchFlags flags) {
+	public static boolean applyLaunchFlags (String[] argv, BootConfig boot) {
 		int c;
 		String arg;
 
@@ -49,23 +50,39 @@ public final class CommandLine {
 			switch (c) {
 			case 'r':
 				String[] res = arg.split("x");
+				int w = 0;
+				int h = 0;
 
 				if (res.length == 2 && isInt(res[0]) && isInt(res[1])) {
-					flags.width = Integer.parseInt(res[0]);
-					flags.height = Integer.parseInt(res[1]);
+					w = Integer.parseInt(res[0]);
+					h = Integer.parseInt(res[1]);
 				} else {
 					if (arg.equals("low")) {
-						flags.width = 800;
-						flags.height = 480;
+						w = 800;
+						h = 480;
 					} else if (arg.equals("mid")) {
-						flags.width = 1280;
-						flags.height = 800;
+						w = 1280;
+						h = 800;
 					} else if (arg.equals("high")) {
-						flags.width = 1920;
-						flags.height = 1080;
+						w = 1920;
+						h = 1080;
 					} else {
-						System.out.print("Invalid resolution specified (" + arg + "), defaulting to "
-							+ (flags.width + "x" + flags.height));
+						System.out.print("Invalid resolution specified (" + arg + "), defaulting to " + (w + "x" + h));
+					}
+				}
+
+				if (w > 0 && h > 0) {
+					boot.setInt(BootConfigFlag.WIDTH, w);
+					boot.setInt(BootConfigFlag.HEIGHT, h);
+
+					// automatically compute the default x/y window position (centered) if not present already
+
+					if (boot.getWindowX() == -1) {
+						boot.setWindowX(AwtUtils.getCenteredXOnDisplay(w));
+					}
+
+					if (boot.getWindowY() == -1) {
+						boot.setWindowY(AwtUtils.getCenteredYOnDisplay(h));
 					}
 				}
 
@@ -85,13 +102,13 @@ public final class CommandLine {
 				System.out.println("");
 				return false;
 			case 'v':
-				flags.vSyncEnabled = false;
+				boot.setBoolean(BootConfigFlag.VSYNC, false);
 				break;
 			case 'c':
-				flags.useCPUSynch = true;
+				boot.setBoolean(BootConfigFlag.CPUSYNC, true);
 				break;
 			case 'f':
-				flags.fullscreen = true;
+				boot.setBoolean(BootConfigFlag.FULLSCREEN, true);
 				break;
 			// case 't':
 			// flags.useRightScreen = true;
