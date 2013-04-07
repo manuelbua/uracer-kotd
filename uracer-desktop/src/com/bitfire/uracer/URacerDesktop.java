@@ -45,6 +45,8 @@ public final class URacerDesktop {
 				return;
 			}
 			boot.store();
+		} else {
+			System.out.println("Try --help for a list of valid command-line switches.\n");
 		}
 
 		System.setProperty("org.lwjgl.opengl.Window.undecorated", "" + boot.getBoolean(BootConfigFlag.UNDECORATED));
