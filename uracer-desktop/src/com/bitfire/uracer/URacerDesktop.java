@@ -23,6 +23,7 @@ public final class URacerDesktop {
 		config.title = URacer.Name + " (" + URacer.versionInfo + ")";
 		config.useGL20 = true;
 		config.resizable = false;
+		config.samples = 0;
 
 		// apply boot config
 		config.width = boot.getInt(BootConfigFlag.WIDTH);
