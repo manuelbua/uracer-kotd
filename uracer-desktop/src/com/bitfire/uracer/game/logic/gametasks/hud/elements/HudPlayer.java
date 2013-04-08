@@ -101,7 +101,8 @@ public final class HudPlayer extends HudElement {
 		highlightError.render(batch, cz);
 		highlightNext.render(batch, cz);
 
-		wrongWay.render(batch);
+		gravitate(wrongWay, -180, 50);
+		wrongWay.render(batch, cz);
 	}
 
 	//

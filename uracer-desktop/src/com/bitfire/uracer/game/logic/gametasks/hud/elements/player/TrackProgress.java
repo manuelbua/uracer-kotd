@@ -22,7 +22,7 @@ import com.bitfire.utils.ShaderLoader;
 
 public class TrackProgress extends Positionable implements Disposable {
 	private HudLabel lblAdvantage;
-	private float progressval, prevVal, speed, ghspeed;
+	private float progressval, prevVal;// , speed, ghspeed;
 	private float distPlayer, distGhost;
 	private float prevDistPlayer, prevDistGhost;
 	private float progressTargetVal, prevTargetVal;
@@ -60,13 +60,13 @@ public class TrackProgress extends Positionable implements Disposable {
 		shProgress.dispose();
 	}
 
-	public void setPlayerSpeed (float mts) {
-		speed = mts;
-	}
-
-	public void setTargetSpeed (float mts) {
-		ghspeed = mts;
-	}
+	// public void setPlayerSpeed (float mts) {
+	// speed = mts;
+	// }
+	//
+	// public void setTargetSpeed (float mts) {
+	// ghspeed = mts;
+	// }
 
 	public void setPlayerDistance (float mt) {
 		distPlayer = AMath.fixup(AMath.lerp(prevDistPlayer, mt, 0.25f));
