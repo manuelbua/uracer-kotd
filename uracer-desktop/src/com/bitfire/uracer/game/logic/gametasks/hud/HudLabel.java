@@ -84,7 +84,7 @@ public final class HudLabel extends Positionable {
 		}
 	}
 
-	public void recomputeBounds () {
+	private void recomputeBounds () {
 		font.setScale(scale * invTileZoom);
 		textBounds.set(font.getMultiLineBounds(what));
 		bounds.set(textBounds.width, textBounds.height);
@@ -139,10 +139,7 @@ public final class HudLabel extends Positionable {
 
 			font.setScale(scale * invTileZoom);
 			font.setColor(color.r, color.g, color.b, alpha);
-
 			font.drawMultiLine(batch, what, position.x - halfBounds.x, position.y - halfBounds.y);
-
-			// font.setColor( 1, 1, 1, 1 );
 		}
 	}
 

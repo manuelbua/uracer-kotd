@@ -94,8 +94,8 @@ public class WrongWay extends Positionable implements Disposable {
 
 			s = 0.8f + timeFactor;
 			scl = cameraZoom * scale * s;
-			float px = position.x - offX;// + Convert.scaledPixels(128) * cameraZoom * s * timeFactor;
-			float py = position.y - offY;// + Convert.scaledPixels(128) * cameraZoom * s * timeFactor;
+			float px = position.x - offX;
+			float py = position.y - offY;
 
 			sign.setScale(scl);
 			sign.setPosition(px, py);

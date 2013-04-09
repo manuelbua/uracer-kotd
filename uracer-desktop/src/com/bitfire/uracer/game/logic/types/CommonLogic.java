@@ -407,7 +407,7 @@ public abstract class CommonLogic implements GameLogic, CarEvent.Listener, Playe
 		playerTasks.playerDriftSoundFx.start();
 		playerTasks.hudLapInfo.toDefaultColor();
 		playerTasks.hudLapInfo.setValid(true);
-		playerTasks.hudPlayer.trackProgress.resetCounters(false);
+		playerTasks.hudPlayer.getTrackProgressData().reset(false);
 
 		lapMonitor.reset();
 		gameTrack.setInitialCarSector(playerCar);
