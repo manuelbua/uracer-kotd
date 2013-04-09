@@ -253,9 +253,9 @@ public final class GameWorld {
 		for (int i = 0; i < group.getObjects().getCount(); i++) {
 			//@off
 			c.set(
-			// MathUtils.random(0,1),
-			// MathUtils.random(0,1),
-			// MathUtils.random(0,1),
+//			 MathUtils.random(0.25f,1),
+//			 MathUtils.random(0.25f,1),
+//			 MathUtils.random(0.25f,1),
 			//				1f, .85f, 0.6f, 0.55f
 				MathUtils.random(0.85f,1),
 				MathUtils.random(0.8f,0.85f),
@@ -269,7 +269,7 @@ public final class GameWorld {
 			pos.y = worldSizeScaledPx.y - pos.y;
 			pos.set(Convert.px2mt(pos)).scl(scalingStrategy.tileMapZoomFactor);
 
-			PointLight l = new PointLight(rayHandler, maxRays, c, MathUtils.random(20f, 25f), pos.x, pos.y);
+			PointLight l = new PointLight(rayHandler, maxRays, c, MathUtils.random(20f, 30f), pos.x, pos.y);
 			l.setSoft(true);
 			l.setStaticLight(false);
 			l.setMaskBits(CollisionFilters.CategoryPlayer | CollisionFilters.CategoryTrackWalls);
