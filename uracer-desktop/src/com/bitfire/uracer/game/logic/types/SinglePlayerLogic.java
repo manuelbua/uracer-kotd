@@ -133,8 +133,8 @@ public class SinglePlayerLogic extends CommonLogic {
 					// l.setColor(p);
 
 					// dbg
-					// l.setDistance(5);
-					// l.setColor(1, 1, 1, 1);
+					l.setDistance(5);
+					l.setColor(1, 1, 1, 1);
 				}
 			}
 

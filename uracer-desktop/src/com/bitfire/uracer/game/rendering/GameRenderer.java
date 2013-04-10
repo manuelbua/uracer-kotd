@@ -38,12 +38,14 @@ public final class GameRenderer {
 		private static Vector2 tmp2 = new Vector2();
 		private static Vector3 tmp3 = new Vector3();
 		private static GameWorldRenderer worldRenderer;
+		private static float scale = 1f;
 
-		public static void init (GameWorldRenderer worldRenderer) {
+		public static void init (GameWorldRenderer worldRenderer, int width, int height, float scale) {
 			ScreenUtils.worldRenderer = worldRenderer;
 			ScreenUtils.ready = true;
-			ScreenUtils.ScreenWidth = Gdx.graphics.getWidth();
-			ScreenUtils.ScreenHeight = Gdx.graphics.getHeight();
+			ScreenUtils.ScreenWidth = width;
+			ScreenUtils.ScreenHeight = height;
+			ScreenUtils.scale = scale;
 		}
 
 		public static Vector2 worldMtToScreen (Vector2 worldPositionMt) {
@@ -53,7 +55,7 @@ public final class GameRenderer {
 		public static Vector2 worldPxToScreen (Vector2 worldPositionPx) {
 			tmp3.set(worldPositionPx.x, worldPositionPx.y, 0);
 			worldRenderer.camOrtho.project(tmp3, 0, 0, ScreenWidth, ScreenHeight);
-			tmp2.set(tmp3.x, Gdx.graphics.getHeight() - tmp3.y);
+			tmp2.set(tmp3.x, ScreenHeight - tmp3.y);
 			return tmp2;
 		}
 
@@ -85,7 +87,10 @@ public final class GameRenderer {
 		batchRenderer = new GameBatchRenderer(gl);
 
 		// initialize utils
-		ScreenUtils.init(worldRenderer);
+		ScreenUtils.init(worldRenderer, (int)scalingStrategy.referenceResolution.x, (int)scalingStrategy.referenceResolution.y,
+			scalingStrategy.tileMapZoomFactor);
+
+		// ScreenUtils.init(worldRenderer, Gdx.graphics.getWidth(), Gdx.graphics.getHeight());
 		Gdx.app.debug("GameRenderer", "ScreenUtils " + (ScreenUtils.ready ? "initialized." : "NOT initialized!"));
 
 		// post-processing

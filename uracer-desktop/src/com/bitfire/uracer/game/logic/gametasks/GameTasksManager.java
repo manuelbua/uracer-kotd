@@ -51,7 +51,7 @@ public final class GameTasksManager {
 		add(messager);
 
 		// hud manager
-		hud = new Hud();
+		hud = new Hud(scalingStrategy.invTileMapZoomFactor);
 		add(hud);
 
 		// effects manager

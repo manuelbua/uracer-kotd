@@ -119,10 +119,6 @@ public class URacer implements ApplicationListener {
 
 		Gdx.app.log("URacer", "Using real frametime: " + (useRealFrametime ? "YES" : "NO"));
 
-		// create input system
-		input = new Input();
-		Gdx.app.log("URacer", "input system created.");
-
 		// enumerate available game tracks
 		if (!GameTracks.init()) {
 			System.exit(-1);
@@ -131,6 +127,11 @@ public class URacer implements ApplicationListener {
 		// computed for a 256px tile size target (compute needed conversion
 		// factors)
 		scalingStrategy = new ScalingStrategy(new Vector2(1280, 800), 70f, 224, 1f);
+
+		// create input system
+		input = new Input(scalingStrategy);
+		Gdx.app.log("URacer", "input system created.");
+		input.setScale(scalingStrategy.tileMapZoomFactor);
 
 		BitmapFontFactory.init(scalingStrategy);
 		ScreenFactory screenFactory = new GameScreensFactory(scalingStrategy);

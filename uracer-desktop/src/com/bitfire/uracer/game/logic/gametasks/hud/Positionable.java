@@ -2,12 +2,17 @@
 package com.bitfire.uracer.game.logic.gametasks.hud;
 
 import com.badlogic.gdx.math.Vector2;
+import com.badlogic.gdx.utils.Disposable;
 
-/** Represents a Positionable element */
-public abstract class Positionable {
+/** Represents a positionable hud element */
+public abstract class Positionable implements Disposable {
 	protected Vector2 position = new Vector2();
-	protected Vector2 bounds = new Vector2();
-	protected Vector2 halfBounds = new Vector2();
+
+	protected float scale;
+
+	@Override
+	public void dispose () {
+	}
 
 	public void setPosition (Vector2 position) {
 		this.position.set(position);
@@ -37,19 +42,15 @@ public abstract class Positionable {
 		position.y = y;
 	}
 
-	public float getWidth () {
-		return bounds.x;
+	public float getScale () {
+		return scale;
 	}
 
-	public float getHalfWidth () {
-		return halfBounds.x;
+	public void setScale (float scale) {
+		this.scale = scale;
 	}
 
-	public float getHeight () {
-		return bounds.y;
-	}
+	public abstract float getWidth ();
 
-	public float getHalfHeight () {
-		return halfBounds.y;
-	}
+	public abstract float getHeight ();
 }

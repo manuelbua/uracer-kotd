@@ -11,6 +11,10 @@ import com.badlogic.gdx.utils.Disposable;
 public final class Input implements Disposable {
 	public static final int MaxPointers = 2;
 
+	// scaling
+	private float scale = 1;
+	private ScalingStrategy scalingStrategy;
+
 	// keys
 	private int[] buttons = new int[256];
 	private int anyKeyButton = 0;
@@ -24,13 +28,19 @@ public final class Input implements Disposable {
 	private static final int FLAG_CUR_ON = 4;
 	private static final int FLAG_LAST_ON = 8;
 
-	public Input () {
+	public Input (ScalingStrategy scalingStrategy) {
+		this.scalingStrategy = scalingStrategy;
+
 		for (int p = 0; p < MaxPointers; p++) {
 			pointer[p] = new Pointer( /* p */);
 		}
 
 		releaseAllKeys();
 		Gdx.input.setCatchBackKey(true);
+	}
+
+	public void setScale (float scale) {
+		this.scale = scale;
 	}
 
 	@Override
@@ -163,8 +173,14 @@ public final class Input implements Disposable {
 		for (int p = 0; p < MaxPointers; p++) {
 			Pointer ptr = pointer[p];
 			ptr.setTouching(Gdx.input.isButtonPressed(p));
-			ptr.touchX = Gdx.input.getX(p);
-			ptr.touchY = Gdx.input.getY(p);
+			// ptr.touchX = Gdx.input.getX(p);
+			// ptr.touchY = Gdx.input.getY(p);
+			ptr.touchX = (int)(Gdx.input.getX(p) * scale);
+			ptr.touchY = (int)(Gdx.input.getY(p) * scale);
+			// ptr.touchX = (int)(((float)Gdx.input.getX(p) / (float)Gdx.graphics.getWidth()) *
+			// scalingStrategy.referenceResolution.x);
+			// ptr.touchY = (int)(((float)Gdx.input.getY(p) / (float)Gdx.graphics.getHeight()) *
+			// scalingStrategy.referenceResolution.y);
 			ptr.touchCoords.set(ptr.touchX, ptr.touchY);
 		}
 	}

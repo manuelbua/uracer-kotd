@@ -94,7 +94,7 @@ public final class MapUtils implements Disposable {
 	}
 
 	public Vector2 tileToMt (int tilex, int tiley) {
-		return Convert.px2mt(tileToPx(tilex, tiley));
+		return Convert.upx2mt(tileToPx(tilex, tiley));
 	}
 
 	private Vector2 retTile = new Vector2();

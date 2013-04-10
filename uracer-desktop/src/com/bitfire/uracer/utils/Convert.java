@@ -37,7 +37,7 @@ public final class Convert {
 		return v * invPpmMulZoomFactor;
 	}
 
-	public static Vector2 px2mt (final Vector2 v) {
+	public static Vector2 upx2mt (final Vector2 v) {
 		ret.set(v.x * invPixelsPerMeter, v.y * invPixelsPerMeter);
 		return ret;
 	}

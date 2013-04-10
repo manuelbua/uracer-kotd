@@ -267,7 +267,7 @@ public final class GameWorld {
 			RectangleMapObject o = (RectangleMapObject)group.getObjects().get(i);
 			pos.set(o.getRectangle().x, o.getRectangle().y).scl(scalingStrategy.invTileMapZoomFactor);
 			pos.y = worldSizeScaledPx.y - pos.y;
-			pos.set(Convert.px2mt(pos)).scl(scalingStrategy.tileMapZoomFactor);
+			pos.set(Convert.upx2mt(pos)).scl(scalingStrategy.tileMapZoomFactor);
 
 			PointLight l = new PointLight(rayHandler, maxRays, c, MathUtils.random(20f, 30f), pos.x, pos.y);
 			l.setSoft(true);
@@ -312,15 +312,15 @@ public final class GameWorld {
 				// points.get(points.size() - 1).set(points.get(0));
 
 				offsetMt.set(o.getPolyline().getX(), o.getPolyline().getY());
-				offsetMt.set(Convert.px2mt(offsetMt));
+				offsetMt.set(Convert.upx2mt(offsetMt));
 
-				fromMt.set(Convert.px2mt(points.get(0))).add(offsetMt);
+				fromMt.set(Convert.upx2mt(points.get(0))).add(offsetMt);
 				fromMt.y = worldSizeMt.y - fromMt.y;
 
 				r.add(new Vector2(fromMt));
 
 				for (int j = 1; j <= points.size() - 1; j++) {
-					toMt.set(Convert.px2mt(points.get(j))).add(offsetMt);
+					toMt.set(Convert.upx2mt(points.get(j))).add(offsetMt);
 					toMt.y = worldSizeMt.y - toMt.y;
 					r.add(new Vector2(toMt));
 				}
@@ -362,12 +362,12 @@ public final class GameWorld {
 					}
 
 					offsetMt.set(o.getPolygon().getX(), o.getPolygon().getY());
-					offsetMt.set(Convert.px2mt(offsetMt));
+					offsetMt.set(Convert.upx2mt(offsetMt));
 
 					float[] vertices = new float[8];
 					for (int j = 0; j < points.size(); j++) {
 						// convert to uracer convention
-						pt.set(Convert.px2mt(points.get(j))).add(offsetMt);
+						pt.set(Convert.upx2mt(points.get(j))).add(offsetMt);
 						pt.y = worldSizeMt.y - pt.y;
 
 						vertices[j * 2] = pt.x;
@@ -427,13 +427,13 @@ public final class GameWorld {
 						float[] mags = new float[points.size() - 1];
 
 						offsetMt.set(o.getPolyline().getX(), o.getPolyline().getY());
-						offsetMt.set(Convert.px2mt(offsetMt));
+						offsetMt.set(Convert.upx2mt(offsetMt));
 
-						fromMt.set(Convert.px2mt(points.get(0))).add(offsetMt);
+						fromMt.set(Convert.upx2mt(points.get(0))).add(offsetMt);
 						fromMt.y = worldSizeMt.y - fromMt.y;
 
 						for (int j = 1; j <= points.size() - 1; j++) {
-							toMt.set(Convert.px2mt(points.get(j))).add(offsetMt);
+							toMt.set(Convert.upx2mt(points.get(j))).add(offsetMt);
 							toMt.y = worldSizeMt.y - toMt.y;
 
 							// create box2d wall
@@ -527,7 +527,7 @@ public final class GameWorld {
 
 			coordU = mag * textureScalingU;
 
-			in.set(Convert.px2mt(points.get(i)));
+			in.set(Convert.upx2mt(points.get(i)));
 			in.y = -in.y;
 			in.scl(factor * oneOnWorld3DFactor);
 

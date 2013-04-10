@@ -18,12 +18,9 @@ public final class HudLabel extends Positionable {
 	public float alpha;
 	public TextBounds textBounds = new TextBounds();
 
-	private String what;
+	private String text;
 	private BitmapFont font;
-	private float scale;
-	private final float invTileZoom;;
 	private boolean isStatic;
-	private FontFace fontFace; // cached
 	private Color color = new Color(Color.WHITE);
 
 	// show queue logic
@@ -31,20 +28,15 @@ public final class HudLabel extends Positionable {
 	private boolean showing;
 	private int qInMs, qOutMs;
 
-	public HudLabel (float invTilemapZoomFactor, FontFace fontFace, String string, boolean isStatic, float scale) {
-		this.invTileZoom = invTilemapZoomFactor;
-		what = string;
+	public HudLabel (FontFace fontFace, String text, boolean isStatic) {
+		this.text = text;
 		alpha = 1f;
 		this.isStatic = isStatic;
 		this.font = BitmapFontFactory.get(fontFace);
-		setScale(scale, true);
+		setScale(1);
 
 		showSemaphore = 0;
 		showing = false;
-	}
-
-	public HudLabel (float invTilemapZoomFactor, FontFace fontFace, String string, boolean isStatic) {
-		this(invTilemapZoomFactor, fontFace, string, isStatic, 1.0f);
 	}
 
 	public boolean isVisible () {
@@ -56,9 +48,8 @@ public final class HudLabel extends Positionable {
 	}
 
 	public void setFont (FontFace fontFace) {
-		this.fontFace = fontFace;
 		this.font = BitmapFontFactory.get(fontFace);
-		recomputeBounds();
+		updateBounds();
 	}
 
 	public void setColor (Color color) {
@@ -69,30 +60,32 @@ public final class HudLabel extends Positionable {
 		this.color.set(r, g, b, 0);
 	}
 
-	public FontFace getFont () {
-		return fontFace;
-	}
-
 	public void setString (String string) {
 		setString(string, false);
 	}
 
 	public void setString (String string, boolean computeBounds) {
-		what = string;
+		text = string;
 		if (computeBounds) {
-			recomputeBounds();
+			updateBounds();
 		}
 	}
 
-	private void recomputeBounds () {
-		font.setScale(scale * invTileZoom);
-		textBounds.set(font.getMultiLineBounds(what));
-		bounds.set(textBounds.width, textBounds.height);
-		halfBounds.set(textBounds.width * 0.5f, textBounds.height * 0.5f);
+	private void updateBounds () {
+		font.setScale(scale);
+		textBounds.set(font.getMultiLineBounds(text));
 	}
 
-	public TextBounds getTextBounds () {
-		return textBounds;
+	@Override
+	public float getWidth () {
+		updateBounds();
+		return textBounds.width;
+	}
+
+	@Override
+	public float getHeight () {
+		updateBounds();
+		return textBounds.height;
 	}
 
 	public float getAlpha () {
@@ -101,21 +94,6 @@ public final class HudLabel extends Positionable {
 
 	public void setAlpha (float value) {
 		alpha = value;
-	}
-
-	public float getScale () {
-		return scale;
-	}
-
-	public void setScale (float scale) {
-		setScale(scale, true);
-	}
-
-	public void setScale (float scale, boolean recomputeBounds) {
-		this.scale = scale;
-		if (recomputeBounds) {
-			recomputeBounds();
-		}
 	}
 
 	/** Performs show-queue logic */
@@ -131,15 +109,11 @@ public final class HudLabel extends Positionable {
 
 	public void render (SpriteBatch batch) {
 		if (alpha > 0) {
-			if (isStatic) {
-				font.setUseIntegerPositions(true);
-			} else {
-				font.setUseIntegerPositions(false);
-			}
-
-			font.setScale(scale * invTileZoom);
+			font.setUseIntegerPositions(isStatic);
+			font.setScale(scale);
 			font.setColor(color.r, color.g, color.b, alpha);
-			font.drawMultiLine(batch, what, position.x - halfBounds.x, position.y - halfBounds.y);
+			updateBounds();
+			font.drawMultiLine(batch, text, position.x - textBounds.width / 2, position.y - textBounds.height / 2);
 		}
 	}
 
@@ -170,7 +144,7 @@ public final class HudLabel extends Positionable {
 	}
 
 	public void slide (boolean slideUp) {
-		setScale(1f, true);
+		setScale(1);
 
 		position.y += 50;
 		float targetNearX = position.x;

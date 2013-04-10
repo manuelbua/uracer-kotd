@@ -9,7 +9,6 @@ import com.badlogic.gdx.graphics.g2d.Sprite;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.graphics.glutils.ShaderProgram;
 import com.badlogic.gdx.math.MathUtils;
-import com.badlogic.gdx.utils.Disposable;
 import com.bitfire.uracer.URacer;
 import com.bitfire.uracer.game.logic.gametasks.hud.HudLabel;
 import com.bitfire.uracer.game.logic.gametasks.hud.Positionable;
@@ -17,10 +16,9 @@ import com.bitfire.uracer.resources.Art;
 import com.bitfire.uracer.resources.BitmapFontFactory.FontFace;
 import com.bitfire.uracer.utils.AMath;
 import com.bitfire.uracer.utils.ColorUtils;
-import com.bitfire.uracer.utils.Convert;
 import com.bitfire.utils.ShaderLoader;
 
-public class TrackProgress extends Positionable implements Disposable {
+public class TrackProgress extends Positionable {
 	private HudLabel lblAdvantage;
 	private boolean advantageShown;
 
@@ -29,7 +27,6 @@ public class TrackProgress extends Positionable implements Disposable {
 	private final Sprite sAdvantage, sProgress;
 	private boolean flipped;
 
-	private final float scale;
 	private String customMessage = "";
 	private TrackProgressData data = null;
 
@@ -87,8 +84,8 @@ public class TrackProgress extends Positionable implements Disposable {
 
 	public TrackProgress (float scale) {
 
-		this.scale = scale;
-		lblAdvantage = new HudLabel(scale, FontFace.CurseWhiteBig, "", false, 2f);
+		setScale(scale);
+		lblAdvantage = new HudLabel(FontFace.CurseWhiteBig, "", false);
 		advantageShown = false;
 		lblAdvantage.setAlpha(1);
 
@@ -116,6 +113,16 @@ public class TrackProgress extends Positionable implements Disposable {
 
 	public void setMessage (String messageOrEmpty) {
 		customMessage = messageOrEmpty;
+	}
+
+	@Override
+	public float getWidth () {
+		return 0;
+	}
+
+	@Override
+	public float getHeight () {
+		return 0;
 	}
 
 	public void render (SpriteBatch batch, float cameraZoom) {
@@ -159,8 +166,9 @@ public class TrackProgress extends Positionable implements Disposable {
 		lblAdvantage.setColor(advantageColor);
 		lblAdvantage.setAlpha(a * 2);
 		lblAdvantage.setScale(cameraZoom * (1f - 0.4f * (1 - ndist)));
-		lblAdvantage.setPosition(position.x, position.y - cameraZoom * Convert.scaledPixels(90) - Convert.scaledPixels(90)
-			* timeFactor * cameraZoom - Convert.scaledPixels(8) * cameraZoom);
+		// lblAdvantage.setPosition(position.x, position.y - cameraZoom * Convert.scaledPixels(90) - Convert.scaledPixels(90) *
+		// timeFactor * cameraZoom - Convert.scaledPixels(8) * cameraZoom);
+		lblAdvantage.setPosition(position.x, position.y - cameraZoom * 90 - 90 * timeFactor * cameraZoom - 8 * cameraZoom);
 		lblAdvantage.render(batch);
 
 		float s = 1f + timeFactor;

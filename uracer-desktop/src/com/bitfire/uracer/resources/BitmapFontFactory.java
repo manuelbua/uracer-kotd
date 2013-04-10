@@ -79,7 +79,7 @@ public final class BitmapFontFactory {
 	}
 
 	private static void setupFont (FontFace face, BitmapFont font) {
-		font.setScale(scalingStrategy.invTileMapZoomFactor);
+		// font.setScale(scalingStrategy.invTileMapZoomFactor);
 		font.setUseIntegerPositions(false);
 	}
 

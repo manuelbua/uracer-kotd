@@ -41,7 +41,7 @@ public class PlayerCar extends Car {
 	private CarInput carInput = null;
 	private Vector2 touchPos = new Vector2();
 	private Vector2 carPos = new Vector2();
-	private final float invWidth = 1f / Gdx.graphics.getWidth(), invHeight = 1f / Gdx.graphics.getHeight();
+	private final float invWidth, invHeight;
 	// private float scaleInputX, scaleInputY;
 	private WindowedMean frictionMean = new WindowedMean(10);
 
@@ -58,6 +58,9 @@ public class PlayerCar extends Car {
 		super(gameWorld, CarType.PlayerCar, InputMode.InputFromPlayer, GameRendererEvent.Order.DEFAULT, presetType, true);
 		carInput = new CarInput();
 		impacts = 0;
+
+		invWidth = 1 / gameWorld.scalingStrategy.referenceResolution.x;
+		invHeight = 1 / gameWorld.scalingStrategy.referenceResolution.y;
 
 		// strategy = gameWorld.scalingStrategy;
 		carDesc = new CarDescriptor(preset.model);

@@ -1,7 +1,6 @@
 
 package com.bitfire.uracer.game.logic.gametasks.hud.elements;
 
-import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.math.MathUtils;
 import com.bitfire.uracer.ScalingStrategy;
@@ -13,7 +12,6 @@ import com.bitfire.uracer.game.player.PlayerCar;
 import com.bitfire.uracer.game.rendering.GameRenderer;
 import com.bitfire.uracer.resources.BitmapFontFactory.FontFace;
 import com.bitfire.uracer.utils.CarUtils;
-import com.bitfire.uracer.utils.Convert;
 
 public class HudPlayerStatic extends HudElement {
 	private final BasicInfo basicInfo;
@@ -27,15 +25,19 @@ public class HudPlayerStatic extends HudElement {
 		// this.renderer = renderer;
 		this.scale = scalingStrategy.invTileMapZoomFactor;
 
-		basicInfo = new BasicInfo(scale, userProfile);
+		basicInfo = new BasicInfo(userProfile);
 
-		labelSpeed = new HudLabel(scale, FontFace.Roboto, "", true, 1f);
-		labelSpeed.setPosition(Gdx.graphics.getWidth() - Convert.scaledPixels(190),
-			Gdx.graphics.getHeight() - Convert.scaledPixels(110));
+		labelSpeed = new HudLabel(FontFace.Roboto, "", true);
+		// labelSpeed.setPosition(Gdx.graphics.getWidth() - Convert.scaledPixels(190),
+		// Gdx.graphics.getHeight() - Convert.scaledPixels(110));
+		// labelSpeed.setPosition(Gdx.graphics.getWidth() / scale - 190, Gdx.graphics.getHeight() / scale - 110);
+		labelSpeed.setPosition(scalingStrategy.referenceResolution.x - 190, scalingStrategy.referenceResolution.y - 110);
 
-		labelDistance = new HudLabel(scale, FontFace.Roboto, "", true, 0.85f);
-		labelDistance.setPosition(Gdx.graphics.getWidth() - Convert.scaledPixels(190),
-			Gdx.graphics.getHeight() - Convert.scaledPixels(50));
+		labelDistance = new HudLabel(FontFace.Roboto, "", true);
+		labelDistance.setScale(0.85f);
+		// labelDistance.setPosition(Gdx.graphics.getWidth() - Convert.scaledPixels(190),
+		// Gdx.graphics.getHeight() - Convert.scaledPixels(50));
+		labelDistance.setPosition(scalingStrategy.referenceResolution.x - 190, scalingStrategy.referenceResolution.y - 50);
 
 	}
 

@@ -5,7 +5,6 @@ import aurelienribon.tweenengine.Timeline;
 import aurelienribon.tweenengine.Tween;
 import aurelienribon.tweenengine.equations.Linear;
 
-import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.bitfire.uracer.ScalingStrategy;
 import com.bitfire.uracer.game.logic.LapInfo;
@@ -15,7 +14,6 @@ import com.bitfire.uracer.game.tween.GameTweener;
 import com.bitfire.uracer.resources.BitmapFontFactory.FontFace;
 import com.bitfire.uracer.utils.BoxedFloat;
 import com.bitfire.uracer.utils.BoxedFloatAccessor;
-import com.bitfire.uracer.utils.Convert;
 import com.bitfire.uracer.utils.NumberString;
 
 public class HudLapInfo extends HudElement {
@@ -30,9 +28,13 @@ public class HudLapInfo extends HudElement {
 		this.lapInfo = lapInfo;
 		scale = scalingStrategy.invTileMapZoomFactor;
 
-		curr = new HudLabel(scalingStrategy.invTileMapZoomFactor, FontFace.LcdWhite, "99.99", true, 1.5f);
-		curr.setPosition(Gdx.graphics.getWidth() / 2, Gdx.graphics.getHeight() - curr.getHalfHeight() - Convert.scaledPixels(10)
-			* scale);
+		curr = new HudLabel(FontFace.LcdWhite, "99.99", true);
+		curr.setScale(1.5f);
+		// curr.setPosition(Gdx.graphics.getWidth() / 2, Gdx.graphics.getHeight() - curr.getHeight() / 2 - Convert.scaledPixels(10)
+		// * scale);
+		// curr.setPosition((Gdx.graphics.getWidth() / 2) / scale, Gdx.graphics.getHeight() / scale - curr.getHeight() / 2 - 10);
+		curr.setPosition((scalingStrategy.referenceResolution.x / 2), scalingStrategy.referenceResolution.y - curr.getHeight() / 2
+			- 10);
 
 		r = new BoxedFloat(1);
 		g = new BoxedFloat(1);

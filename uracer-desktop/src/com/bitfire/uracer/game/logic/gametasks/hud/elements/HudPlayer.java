@@ -39,7 +39,7 @@ public final class HudPlayer extends HudElement {
 	private CarHighlighter highlightError;
 	private CarHighlighter highlightNext;
 
-	//
+	// rendering
 	private final GameRenderer renderer;
 
 	// gravitation
@@ -59,7 +59,7 @@ public final class HudPlayer extends HudElement {
 		// elements
 		wrongWay = new WrongWay();
 		driftBar = new DriftBar(scale, carModelLengthPx);
-		trackProgress = new TrackProgress(scale);
+		trackProgress = new TrackProgress(1);
 		trackProgressData = new TrackProgressData();
 
 		highlightError = new CarHighlighter();
@@ -96,19 +96,18 @@ public final class HudPlayer extends HudElement {
 
 	@Override
 	public void onRender (SpriteBatch batch) {
+		// FIXME find a more elegant way
+		// position *now* so that other positions have been already interpolated
+		atPlayer(driftBar);
+		atPlayer(trackProgress);
+		gravitate(wrongWay, -180, 100);
 
 		float cz = renderer.getWorldRenderer().getCameraZoom();
 
-		atPlayer(driftBar);
 		driftBar.render(batch, cz);
-
-		atPlayer(trackProgress);
 		trackProgress.render(batch, cz);
-
 		highlightError.render(batch, cz);
 		highlightNext.render(batch, cz);
-
-		gravitate(wrongWay, -180, 50);
 		wrongWay.render(batch, cz);
 	}
 
@@ -120,7 +119,7 @@ public final class HudPlayer extends HudElement {
 		float zs = renderer.getWorldRenderer().getCameraZoom();
 
 		tmpg.set(GameRenderer.ScreenUtils.worldPxToScreen(playerState.position));
-		tmpg.y += distance * scale * zs;
+		tmpg.y += distance * zs;
 		p.setPosition(tmpg);
 	}
 
@@ -137,7 +136,7 @@ public final class HudPlayer extends HudElement {
 	 * orientation offset, expressed in radians, if any. */
 	private Vector2 gravitate (float w, float h, float offsetDegs, float distance) {
 		float zs = renderer.getWorldRenderer().getCameraZoom();
-		float border = distance * scale;
+		float border = distance;
 
 		Vector2 sp = GameRenderer.ScreenUtils.worldPxToScreen(playerState.position);
 		Vector2 heading = VMath.fromDegrees(playerState.orientation + offsetDegs);
