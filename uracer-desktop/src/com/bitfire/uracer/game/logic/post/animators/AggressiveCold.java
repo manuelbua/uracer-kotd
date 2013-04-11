@@ -290,6 +290,7 @@ public final class AggressiveCold implements PostProcessingAnimator {
 
 			autoEnableZoomBlur(blurStrength);
 
+			zoom.setEnabled(true);
 			if (zoom.isEnabled()) {
 				zoom.setOrigin(playerScreenPos);
 				zoom.setBlurStrength(blurStrength);

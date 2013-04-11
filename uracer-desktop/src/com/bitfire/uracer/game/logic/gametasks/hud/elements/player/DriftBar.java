@@ -118,7 +118,7 @@ public class DriftBar extends Positionable {
 
 		// circle progress for slow-mo accumulated time
 		s = 0.8f + timeFactor;
-		scl = cameraZoom * scale * s;
+		scl = cameraZoom * s;
 		float px = position.x - offX;
 		float py = position.y - offY + Convert.scaledPixels(32) * cameraZoom * s;
 
@@ -138,7 +138,7 @@ public class DriftBar extends Positionable {
 		// drift strength
 		float amount = driftStrength.getMean();
 		if (!AMath.isZero(amount)) {
-			py = position.y - offY - Convert.scaledPixels(32) * cameraZoom * s;
+			py = position.y - offY - 32 * cameraZoom * s;
 			shProgress.setUniformf("progress", MathUtils.clamp(amount, 0, 1));
 
 			// float a = 1f - 0.7f * URacer.Game.getTimeModFactor(); // 0.5f + 0.5f * ratio

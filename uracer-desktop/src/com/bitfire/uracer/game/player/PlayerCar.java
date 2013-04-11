@@ -135,11 +135,11 @@ public class PlayerCar extends Car {
 
 			// mouse/pointer input
 
-			carPos.set(GameRenderer.ScreenUtils.worldMtToScreen(body.getPosition()));
+			carPos.set(GameRenderer.ScreenUtils.worldMtToRefScreen(body.getPosition()));
 			touchPos.set(input.getXY());
 
 			carInput.updated = input.isTouching();
-			// Gdx.app.log( "PlayerCar", "carpos=" + carPos.toString() + ", cursor=" + touchPos.toString() );
+			// Gdx.app.log("PlayerCar", "carpos=" + carPos.toString() + ", cursor=" + touchPos.toString());
 
 			if (carInput.updated) {
 

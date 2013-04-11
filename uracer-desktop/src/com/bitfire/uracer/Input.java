@@ -175,14 +175,14 @@ public final class Input implements Disposable {
 			ptr.setTouching(Gdx.input.isButtonPressed(p));
 			// ptr.touchX = Gdx.input.getX(p);
 			// ptr.touchY = Gdx.input.getY(p);
-			ptr.touchX = (int)(Gdx.input.getX(p) * scale);
-			ptr.touchY = (int)(Gdx.input.getY(p) * scale);
-			// ptr.touchX = (int)(((float)Gdx.input.getX(p) / (float)Gdx.graphics.getWidth()) *
-			// scalingStrategy.referenceResolution.x);
-			// ptr.touchY = (int)(((float)Gdx.input.getY(p) / (float)Gdx.graphics.getHeight()) *
-			// scalingStrategy.referenceResolution.y);
+			// ptr.touchX = (int)(Gdx.input.getX(p) * scale);
+			// ptr.touchY = (int)(Gdx.input.getY(p) * scale);
+			ptr.touchX = (int)(((float)Gdx.input.getX(p) / (float)Gdx.graphics.getWidth()) * scalingStrategy.referenceResolution.x);
+			ptr.touchY = (int)(((float)Gdx.input.getY(p) / (float)Gdx.graphics.getHeight()) * scalingStrategy.referenceResolution.y);
 			ptr.touchCoords.set(ptr.touchX, ptr.touchY);
 		}
+
+		// Gdx.app.log("Input", pointer[0].touchCoords.toString());
 	}
 
 	// update key state and transform unbuffered to buffered

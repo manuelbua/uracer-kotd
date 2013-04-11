@@ -48,12 +48,12 @@ public class WrongWay extends Positionable {
 
 	@Override
 	public float getWidth () {
-		return w * scale;
+		return w;
 	}
 
 	@Override
 	public float getHeight () {
-		return h * scale;
+		return h;
 	}
 
 	public void fadeIn () {

@@ -97,7 +97,7 @@ public final class Config {
 			RenderDebugDrawsInTransitions = true;
 			RenderTrackSectors = false;
 
-			TraverseWalls = false;
+			TraverseWalls = true;
 			ApplyCarFrictionFromMap = true;
 			FrustumCulling = true;
 			InfiniteDilationTime = true;

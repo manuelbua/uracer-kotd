@@ -33,35 +33,62 @@ public final class GameRenderer {
 	/** Manages to convert world positions expressed in meters or pixels to the corresponding position to screen pixels. To use this
 	 * class, the GameWorldRenderer MUST be already constructed and initialized. */
 	public static final class ScreenUtils {
+		public static int RefScreenWidth, RefScreenHeight;
 		public static int ScreenWidth, ScreenHeight;
 		public static boolean ready = false;
 		private static Vector2 tmp2 = new Vector2();
 		private static Vector3 tmp3 = new Vector3();
 		private static GameWorldRenderer worldRenderer;
-		private static float scale = 1f;
+		private static Vector2 ref2scr, scr2ref;
 
-		public static void init (GameWorldRenderer worldRenderer, int width, int height, float scale) {
+		public static void init (GameWorldRenderer worldRenderer, int width, int height) {
 			ScreenUtils.worldRenderer = worldRenderer;
 			ScreenUtils.ready = true;
-			ScreenUtils.ScreenWidth = width;
-			ScreenUtils.ScreenHeight = height;
-			ScreenUtils.scale = scale;
+			ScreenUtils.RefScreenWidth = width;
+			ScreenUtils.RefScreenHeight = height;
+			ScreenUtils.ScreenWidth = Gdx.graphics.getWidth();
+			ScreenUtils.ScreenHeight = Gdx.graphics.getHeight();
+
+			// screen-type conversion ratios
+			ref2scr = new Vector2((float)ScreenWidth / (float)RefScreenWidth, (float)ScreenHeight / (float)RefScreenHeight);
+			scr2ref = new Vector2((float)RefScreenWidth / (float)ScreenWidth, (float)RefScreenHeight / (float)ScreenHeight);
 		}
 
-		public static Vector2 worldMtToScreen (Vector2 worldPositionMt) {
-			return worldPxToScreen(Convert.mt2px(worldPositionMt));
+		/** Transforms Box2D world-mt coordinates to reference-screen pixels coordinates */
+		public static Vector2 worldMtToRefScreen (Vector2 worldPositionMt) {
+			return worldPxToRefScreen(Convert.mt2px(worldPositionMt));
 		}
 
-		public static Vector2 worldPxToScreen (Vector2 worldPositionPx) {
+		/** Transforms world-px coordinates to reference-screen pixel coordinates */
+		public static Vector2 worldPxToRefScreen (Vector2 worldPositionPx) {
 			tmp3.set(worldPositionPx.x, worldPositionPx.y, 0);
-			worldRenderer.camOrtho.project(tmp3, 0, 0, ScreenWidth, ScreenHeight);
-			tmp2.set(tmp3.x, ScreenHeight - tmp3.y);
+			worldRenderer.camOrtho.project(tmp3, 0, 0, RefScreenWidth, RefScreenHeight);
+			tmp2.set(tmp3.x, RefScreenHeight - tmp3.y);
 			return tmp2;
 		}
 
-		public static Vector3 screenToWorldMt (Vector2 screenPositionPx) {
+		public static Vector2 worldPxToScreen (Vector2 worldPositionPx) {
+			Vector2 r = worldPxToRefScreen(worldPositionPx);
+			r.scl(ref2scr);
+			return r;
+		}
+
+		public static Vector2 worldMtToScreen (Vector2 worldPositionMt) {
+			Vector2 r = worldMtToRefScreen(worldPositionMt);
+			r.scl(ref2scr);
+			return r;
+		}
+
+		/** Transforms reference-screen pixel coordinates to world-mt coordinates */
+		public static Vector3 screenRefToWorldMt (Vector2 screenPositionPx) {
 			tmp3.set(screenPositionPx.x, screenPositionPx.y, 1);
-			worldRenderer.camOrtho.unproject(tmp3, 0, 0, ScreenWidth, ScreenHeight);
+
+			// normalize and scale to the real display size
+			tmp3.x = (tmp3.x / RefScreenWidth) * Gdx.graphics.getWidth();
+			tmp3.y = (tmp3.y / RefScreenHeight) * Gdx.graphics.getHeight();
+
+			worldRenderer.camOrtho.unproject(tmp3, 0, 0, Gdx.graphics.getWidth(), Gdx.graphics.getHeight());
+
 			tmp2.set(Convert.px2mt(tmp3.x), Convert.px2mt(tmp3.y));
 			tmp3.set(tmp2.x, tmp2.y, 0);
 			return tmp3;
@@ -87,8 +114,7 @@ public final class GameRenderer {
 		batchRenderer = new GameBatchRenderer(gl);
 
 		// initialize utils
-		ScreenUtils.init(worldRenderer, (int)scalingStrategy.referenceResolution.x, (int)scalingStrategy.referenceResolution.y,
-			scalingStrategy.tileMapZoomFactor);
+		ScreenUtils.init(worldRenderer, (int)scalingStrategy.referenceResolution.x, (int)scalingStrategy.referenceResolution.y);
 
 		// ScreenUtils.init(worldRenderer, Gdx.graphics.getWidth(), Gdx.graphics.getHeight());
 		Gdx.app.debug("GameRenderer", "ScreenUtils " + (ScreenUtils.ready ? "initialized." : "NOT initialized!"));
