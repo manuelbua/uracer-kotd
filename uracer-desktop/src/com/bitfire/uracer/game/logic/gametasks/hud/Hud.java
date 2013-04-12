@@ -1,9 +1,11 @@
 
 package com.bitfire.uracer.game.logic.gametasks.hud;
 
+import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.math.Matrix4;
 import com.badlogic.gdx.utils.Array;
+import com.bitfire.uracer.ScalingStrategy;
 import com.bitfire.uracer.events.GameRendererEvent;
 import com.bitfire.uracer.events.GameRendererEvent.Order;
 import com.bitfire.uracer.events.GameRendererEvent.Type;
@@ -22,12 +24,13 @@ public final class Hud extends GameTask implements GameRendererEvent.Listener {
 	private final ItemsManager<HudElement> managerAfterMeshes = new ItemsManager<HudElement>();
 	private final ItemsManager<HudElement> managerAfterPost = new ItemsManager<HudElement>();
 
+	private ScalingStrategy strategy = null;
 	private float scale = 1f;
 	private final Matrix4 identity = new Matrix4();
 	private final Matrix4 xform = new Matrix4();
 
-	public Hud (float scale) {
-		this.scale = scale;
+	public Hud (ScalingStrategy strategy) {
+		this.strategy = strategy;
 		GameEvents.gameRenderer.addListener(this, RenderEventBeforePost, RenderOrderBeforePost);
 		GameEvents.gameRenderer.addListener(this, RenderEventAfterPost, RenderOrderAfterPost);
 	}
@@ -38,10 +41,14 @@ public final class Hud extends GameTask implements GameRendererEvent.Listener {
 		SpriteBatch batch = GameEvents.gameRenderer.batch;
 
 		if (batch != null) {
-			// enable global scale factor
+			float sx = Gdx.graphics.getWidth() / strategy.referenceResolution.x;
+			float sy = Gdx.graphics.getHeight() / strategy.referenceResolution.y;
+
 			xform.idt();
-			xform.scale(scale, scale, 1);
+			xform.scale(sx, sy, 1);
+
 			// xform.scale(1, 1, 1);
+
 			batch.setTransformMatrix(xform);
 		}
 

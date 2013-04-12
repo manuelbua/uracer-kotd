@@ -17,7 +17,6 @@ import com.bitfire.uracer.resources.Art;
 import com.bitfire.uracer.resources.BitmapFontFactory.FontFace;
 import com.bitfire.uracer.utils.AMath;
 import com.bitfire.uracer.utils.ColorUtils;
-import com.bitfire.uracer.utils.Convert;
 import com.bitfire.uracer.utils.NumberString;
 import com.bitfire.utils.ShaderLoader;
 
@@ -112,15 +111,14 @@ public class DriftBar extends Positionable {
 
 		labelSeconds.setScale(scl);
 		labelSeconds.setString(NumberString.format(seconds) + "s", true);
-		labelSeconds.setPosition(position.x, position.y + Convert.scaledPixels(90) * cameraZoom + Convert.scaledPixels(105)
-			* timeFactor * cameraZoom);
+		labelSeconds.setPosition(position.x, position.y + (90) * cameraZoom + (105) * timeFactor * cameraZoom);
 		labelSeconds.render(batch);
 
 		// circle progress for slow-mo accumulated time
 		s = 0.8f + timeFactor;
 		scl = cameraZoom * s;
 		float px = position.x - offX;
-		float py = position.y - offY + Convert.scaledPixels(32) * cameraZoom * s;
+		float py = position.y - offY + 32 * cameraZoom * s;
 
 		batch.setShader(shProgress);
 		texHalfMask.bind(1);

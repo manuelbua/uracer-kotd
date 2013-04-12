@@ -287,6 +287,8 @@ public final class GameRenderer {
 	}
 
 	public void rebind () {
-		postProcessor.rebind();
+		if (postProcessor != null && postProcessor.isEnabled()) {
+			postProcessor.rebind();
+		}
 	}
 }

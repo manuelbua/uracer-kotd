@@ -62,11 +62,11 @@ public final class HudPlayer extends HudElement {
 		trackProgress = new TrackProgress(1);
 		trackProgressData = new TrackProgressData();
 
-		highlightError = new CarHighlighter();
+		highlightError = new CarHighlighter(scalingStrategy.tileMapZoomFactor);
 		highlightError.setCar(player);
 		highlightError.setScale(1.75f);
 
-		highlightNext = new CarHighlighter();
+		highlightNext = new CarHighlighter(scalingStrategy.tileMapZoomFactor);
 		highlightNext.setScale(1);
 	}
 

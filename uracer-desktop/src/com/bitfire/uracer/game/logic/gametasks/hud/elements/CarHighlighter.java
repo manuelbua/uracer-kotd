@@ -25,12 +25,14 @@ public final class CarHighlighter {
 	private Car followedCar;
 	private EntityRenderState renderState;
 	private Vector2 tmp = new Vector2();
-	private float offX, offY, alpha, scale;
+	private float offX, offY, alpha, scale, carScale;
 
 	private boolean isBusy, isActive, hasCar;
 	private BoxedFloat bfScale, bfRot, bfAlpha, bfGreen, bfRed, bfBlue;
 
-	public CarHighlighter () {
+	// need tileMapZoomFactor since highlighter size depends from car *rendered* size
+	public CarHighlighter (float carScale) {
+		this.carScale = carScale;
 		sprite = new Sprite();
 		sprite.setRegion(Art.cars.findRegion("selector"));
 		isBusy = false;
@@ -44,7 +46,8 @@ public final class CarHighlighter {
 		followedCar = car;
 		renderState = followedCar.state();
 
-		sprite.setSize(car.getRenderer().getFacet().getWidth() * 1.4f, car.getRenderer().getFacet().getHeight() * 1.4f);
+		sprite.setSize(car.getRenderer().getFacet().getWidth() * carScale * 1.4f, car.getRenderer().getFacet().getHeight()
+			* carScale * 1.4f);
 		sprite.setOrigin(sprite.getWidth() / 2, sprite.getHeight() / 2);
 
 		offX = sprite.getOriginX();
@@ -76,10 +79,11 @@ public final class CarHighlighter {
 
 	public void render (SpriteBatch batch, float cameraZoom) {
 		if (isActive && hasCar) {
-			tmp.set(GameRenderer.ScreenUtils.worldPxToScreen(renderState.position));
+			tmp.set(GameRenderer.ScreenUtils.worldPxToRefScreen(renderState.position));
 
 			float timeFactor = URacer.Game.getTimeModFactor() * 0.3f;
 			float s = 1f + timeFactor;
+
 			sprite.setScale(bfScale.value * cameraZoom * scale * s);
 			sprite.setPosition(tmp.x - offX, tmp.y - offY);
 			sprite.setRotation(-renderState.orientation + bfRot.value);
