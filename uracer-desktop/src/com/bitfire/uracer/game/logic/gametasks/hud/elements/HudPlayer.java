@@ -38,6 +38,7 @@ public final class HudPlayer extends HudElement {
 
 	private CarHighlighter highlightError;
 	private CarHighlighter highlightNext;
+	private final float carScaling;
 
 	// rendering
 	private final GameRenderer renderer;
@@ -46,11 +47,9 @@ public final class HudPlayer extends HudElement {
 	private float carModelWidthPx, carModelLengthPx;
 	private Vector2 tmpg = new Vector2();
 
-	private float scale = 1f;
-
 	public HudPlayer (UserProfile userProfile, ScalingStrategy scalingStrategy, PlayerCar player, GameRenderer renderer) {
 		this.renderer = renderer;
-		this.scale = scalingStrategy.invTileMapZoomFactor;
+		this.carScaling = scalingStrategy.tileMapZoomFactor;
 		playerState = player.state();
 
 		this.carModelWidthPx = Convert.mt2px(player.getCarModel().width);
@@ -58,15 +57,15 @@ public final class HudPlayer extends HudElement {
 
 		// elements
 		wrongWay = new WrongWay();
-		driftBar = new DriftBar(scale, carModelLengthPx);
-		trackProgress = new TrackProgress(1);
+		driftBar = new DriftBar(carModelLengthPx);
+		trackProgress = new TrackProgress();
 		trackProgressData = new TrackProgressData();
 
-		highlightError = new CarHighlighter(scalingStrategy.tileMapZoomFactor);
-		highlightError.setCar(player);
+		highlightError = new CarHighlighter();
+		highlightError.setCar(player, carScaling);
 		highlightError.setScale(1.75f);
 
-		highlightNext = new CarHighlighter(scalingStrategy.tileMapZoomFactor);
+		highlightNext = new CarHighlighter();
 		highlightNext.setScale(1);
 	}
 
@@ -186,7 +185,7 @@ public final class HudPlayer extends HudElement {
 	}
 
 	public void highlightNextTarget (Car car) {
-		highlightNext.setCar(car);
+		highlightNext.setCar(car, carScaling);
 		highlightNext.track();
 	}
 

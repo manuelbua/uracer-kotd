@@ -18,7 +18,6 @@ import com.bitfire.uracer.utils.NumberString;
 
 public class HudLapInfo extends HudElement {
 
-	private float scale = 1f;
 	private HudLabel curr;
 	private LapInfo lapInfo;
 	private BoxedFloat r, g, b;
@@ -26,13 +25,9 @@ public class HudLapInfo extends HudElement {
 
 	public HudLapInfo (ScalingStrategy scalingStrategy, LapInfo lapInfo) {
 		this.lapInfo = lapInfo;
-		scale = scalingStrategy.invTileMapZoomFactor;
 
 		curr = new HudLabel(FontFace.LcdWhite, "99.99", true);
 		curr.setScale(1.5f);
-		// curr.setPosition(Gdx.graphics.getWidth() / 2, Gdx.graphics.getHeight() - curr.getHeight() / 2 - Convert.scaledPixels(10)
-		// * scale);
-		// curr.setPosition((Gdx.graphics.getWidth() / 2) / scale, Gdx.graphics.getHeight() / scale - curr.getHeight() / 2 - 10);
 		curr.setPosition((scalingStrategy.referenceResolution.x / 2), scalingStrategy.referenceResolution.y - curr.getHeight() / 2
 			- 10);
 

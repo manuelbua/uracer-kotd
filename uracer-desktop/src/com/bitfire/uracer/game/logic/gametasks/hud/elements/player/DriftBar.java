@@ -24,7 +24,6 @@ public class DriftBar extends Positionable {
 	public static final float MaxSeconds = 10f;
 	public static final int MaxTicks = (int)(MaxSeconds * Config.Physics.PhysicsTimestepHz);
 
-	private final float scale;
 	private float seconds;
 	private HudLabel labelSeconds;
 	private final WindowedMean driftStrength;
@@ -34,8 +33,7 @@ public class DriftBar extends Positionable {
 	private final Sprite sProgress, sDriftStrength;
 	private final float offX, offY, w, h;
 
-	public DriftBar (float scale, float width) {
-		this.scale = scale;
+	public DriftBar (float width) {
 		seconds = 0;
 
 		labelSeconds = new HudLabel(FontFace.CurseRedYellowNew, "s", false);

@@ -10,6 +10,10 @@ public abstract class Positionable implements Disposable {
 
 	protected float scale;
 
+	public Positionable () {
+		setScale(1);
+	}
+
 	@Override
 	public void dispose () {
 	}

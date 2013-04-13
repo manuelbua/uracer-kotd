@@ -82,9 +82,8 @@ public class TrackProgress extends Positionable {
 		private float prevpp, prevtp;
 	}
 
-	public TrackProgress (float scale) {
+	public TrackProgress () {
 
-		setScale(scale);
 		lblAdvantage = new HudLabel(FontFace.CurseWhiteBig, "", false);
 		advantageShown = false;
 		lblAdvantage.setAlpha(1);

@@ -16,7 +16,7 @@ import com.bitfire.uracer.utils.BoxedFloat;
 import com.bitfire.uracer.utils.BoxedFloatAccessor;
 
 public class WrongWay extends Positionable {
-	private float w, h, x, y, offX, offY;
+	private float w, h, offX, offY;
 	private Sprite sign;
 	private BoxedFloat bfAlpha;
 	private boolean isShown;
@@ -24,8 +24,8 @@ public class WrongWay extends Positionable {
 	public WrongWay () {
 		sign = new Sprite(Art.wrongWay);
 		float scale = 0.4f;
-		w = /* Convert.scaledPixels */(Art.wrongWay.getWidth()) * scale;
-		h = /* Convert.scaledPixels */(Art.wrongWay.getHeight()) * scale;
+		w = Art.wrongWay.getWidth() * scale;
+		h = Art.wrongWay.getHeight() * scale;
 		offX = w / 2;
 		offY = h / 2;
 
@@ -35,16 +35,6 @@ public class WrongWay extends Positionable {
 		bfAlpha = new BoxedFloat(0);
 		isShown = false;
 	}
-
-	// private TweenCallback fadeOutFinished = new TweenCallback() {
-	// @Override
-	// public void onEvent (int type, BaseTween<?> source) {
-	// switch (type) {
-	// case COMPLETE:
-	// isShown = false;
-	// }
-	// }
-	// };
 
 	@Override
 	public float getWidth () {
@@ -97,10 +87,6 @@ public class WrongWay extends Positionable {
 			float py = position.y - offY;
 
 			sign.setPosition(px, py);
-
-			// HACK ALERT!
-			// bounds.set(w * scl, h * scl);
-			// halfBounds.set(bounds.x, bounds.y);
 
 			sign.draw(batch, bfAlpha.value);
 		}

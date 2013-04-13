@@ -19,11 +19,10 @@ public class BasicInfo implements Disposable {
 	public BasicInfo (UserProfile profile) {
 		name = new HudLabel(FontFace.CurseRedYellowBig, profile.userName, true);
 		flag = Art.getFlag(profile.userCountryCode);
-		borderX = 15;// Convert.scaledPixels(15);
-		borderY = 5;// Convert.scaledPixels(5);
-		w = 80;// Convert.scaledPixels(80);
-		h = 80;// Convert.scaledPixels(80);
-		// name.setPosition(w + borderX * 2 + name.getWidth() / 2, Convert.scaledPixels(42));
+		borderX = 15;
+		borderY = 5;
+		w = 80;
+		h = 80;
 		name.setPosition(w + borderX * 2 + name.getWidth() / 2, 42);
 	}
 

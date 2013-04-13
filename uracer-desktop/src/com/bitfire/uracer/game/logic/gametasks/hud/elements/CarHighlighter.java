@@ -25,14 +25,13 @@ public final class CarHighlighter {
 	private Car followedCar;
 	private EntityRenderState renderState;
 	private Vector2 tmp = new Vector2();
-	private float offX, offY, alpha, scale, carScale;
+	private float offX, offY, alpha, scale;
 
 	private boolean isBusy, isActive, hasCar;
 	private BoxedFloat bfScale, bfRot, bfAlpha, bfGreen, bfRed, bfBlue;
 
 	// need tileMapZoomFactor since highlighter size depends from car *rendered* size
-	public CarHighlighter (float carScale) {
-		this.carScale = carScale;
+	public CarHighlighter () {
 		sprite = new Sprite();
 		sprite.setRegion(Art.cars.findRegion("selector"));
 		isBusy = false;
@@ -41,7 +40,7 @@ public final class CarHighlighter {
 		alpha = 1;
 	}
 
-	public void setCar (Car car) {
+	public void setCar (Car car, float carScale) {
 		hasCar = true;
 		followedCar = car;
 		renderState = followedCar.state();
