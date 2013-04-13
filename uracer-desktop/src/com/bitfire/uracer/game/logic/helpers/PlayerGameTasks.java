@@ -61,7 +61,7 @@ public final class PlayerGameTasks {
 
 		// hud, player's information
 		hudPlayer = new HudPlayer(userProfile, scalingStrategy, player, renderer);
-		hudPlayerStatic = new HudPlayerStatic(userProfile, scalingStrategy, player, renderer);
+		hudPlayerStatic = new HudPlayerStatic(userProfile, scalingStrategy, player);
 
 		// hud, player's lap info
 		hudLapInfo = new HudLapInfo(scalingStrategy, lapInfo);
