@@ -52,14 +52,14 @@ public final class Hud extends GameTask implements GameRendererEvent.Listener {
 			batch.setTransformMatrix(xform);
 		}
 
-		if (order == Order.DEFAULT && type == Type.BatchAfterMeshes) {
+		if (order == RenderOrderBeforePost && type == Type.BatchAfterMeshes) {
 
 			Array<HudElement> items = managerAfterMeshes.items;
 			for (int i = 0; i < items.size; i++) {
 				items.get(i).onRender(GameEvents.gameRenderer.batch);
 			}
 
-		} else if (order == Order.DEFAULT && type == Type.BatchAfterPostProcessing) {
+		} else if (order == RenderOrderAfterPost && type == Type.BatchAfterPostProcessing) {
 
 			Array<HudElement> items = managerAfterPost.items;
 			for (int i = 0; i < items.size; i++) {
