@@ -41,6 +41,7 @@ public final class GameRenderer {
 
 		int width = Gdx.graphics.getWidth();
 		int height = Gdx.graphics.getHeight();
+		gl.glViewport(ScaleUtils.CropX, ScaleUtils.CropY, ScaleUtils.PlayWidth, ScaleUtils.PlayHeight);
 
 		// world rendering
 		worldRenderer = new GameWorldRenderer(scalingStrategy, world);
@@ -112,7 +113,7 @@ public final class GameRenderer {
 		GameEvents.gameRenderer.timeAliasingFactor = timeAliasingFactor;
 		GameEvents.gameRenderer.trigger(this, GameRendererEvent.Type.OnSubframeInterpolate);
 
-		gl.glViewport(0, 0, Gdx.graphics.getWidth(), Gdx.graphics.getHeight());
+		gl.glViewport(ScaleUtils.CropX, ScaleUtils.CropY, ScaleUtils.PlayWidth, ScaleUtils.PlayHeight);
 	}
 
 	public void render (FrameBuffer dest) {
@@ -177,7 +178,7 @@ public final class GameRenderer {
 			gl.glEnable(GL20.GL_DEPTH_TEST);
 		}
 
-		worldRenderer.renderTrees(false);
+		// worldRenderer.renderTrees(false);
 
 		gl.glDisable(GL20.GL_DEPTH_TEST);
 
@@ -289,10 +290,10 @@ public final class GameRenderer {
 			tmp3.set(screenPositionPx.x, screenPositionPx.y, 1);
 
 			// normalize and scale to the real display size
-			tmp3.x = (tmp3.x / RefScreenWidth) * Gdx.graphics.getWidth();
-			tmp3.y = (tmp3.y / RefScreenHeight) * Gdx.graphics.getHeight();
+			tmp3.x = (tmp3.x / RefScreenWidth) * ScreenWidth;
+			tmp3.y = (tmp3.y / RefScreenHeight) * ScreenHeight;
 
-			worldRenderer.camOrtho.unproject(tmp3, 0, 0, Gdx.graphics.getWidth(), Gdx.graphics.getHeight());
+			worldRenderer.camOrtho.unproject(tmp3, 0, 0, ScreenWidth, ScreenHeight);
 
 			tmp2.set(Convert.px2mt(tmp3.x), Convert.px2mt(tmp3.y));
 			tmp3.set(tmp2.x, tmp2.y, 0);

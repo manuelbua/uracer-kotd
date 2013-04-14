@@ -5,6 +5,7 @@ import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.Pixmap.Format;
 import com.badlogic.gdx.graphics.glutils.FrameBuffer;
 import com.bitfire.uracer.game.screens.GameScreensFactory.ScreenType;
+import com.bitfire.uracer.utils.ScaleUtils;
 
 public final class TransitionManager {
 
@@ -107,6 +108,8 @@ public final class TransitionManager {
 		if (paused) {
 			return;
 		}
+
+		Gdx.gl20.glViewport(ScaleUtils.CropX, ScaleUtils.CropY, ScaleUtils.PlayWidth, ScaleUtils.PlayHeight);
 
 		if (transition != null) {
 			// enable depth writing if its the case

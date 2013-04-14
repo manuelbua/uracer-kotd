@@ -53,6 +53,7 @@ import com.bitfire.uracer.game.world.models.TreeStillModel;
 import com.bitfire.uracer.resources.Art;
 import com.bitfire.uracer.utils.AMath;
 import com.bitfire.uracer.utils.Convert;
+import com.bitfire.uracer.utils.ScaleUtils;
 
 /** Encapsulates the game's world. Yay!
  * 
@@ -186,7 +187,7 @@ public final class GameWorld {
 					o.getProperties().get("type", String.class),
 					o.getProperties().get("x", Integer.class), 
 					o.getProperties().get("y", Integer.class), 
-					scale*scalingStrategy.pixelsPerMeterFactor
+					scale*scalingStrategy.pixelsPerMeterFactor*ScaleUtils.Scale
 				);
 				// @on
 
@@ -423,7 +424,7 @@ public final class GameWorld {
 						o.getPolyline().getVertices());
 					//@on
 					if (points.size() >= 2) {
-						float wallSizeMt = 0.75f;
+						float wallTicknessMt = 0.75f;
 						float[] mags = new float[points.size() - 1];
 
 						offsetMt.set(o.getPolyline().getX(), o.getPolyline().getY());
@@ -437,7 +438,7 @@ public final class GameWorld {
 							toMt.y = worldSizeMt.y - toMt.y;
 
 							// create box2d wall
-							Box2DFactory.createWall(box2dWorld, fromMt, toMt, wallSizeMt, 0f);
+							Box2DFactory.createWall(box2dWorld, fromMt, toMt, wallTicknessMt, 0f);
 
 							// compute magnitude
 							mags[j - 1] = (float)Math.sqrt((toMt.x - fromMt.x) * (toMt.x - fromMt.x) + (toMt.y - fromMt.y)
@@ -454,7 +455,7 @@ public final class GameWorld {
 						OrthographicAlignedStillModel model = new OrthographicAlignedStillModel(new StillModel(subMeshes), mat,
 							scalingStrategy);
 
-						model.setPosition(o.getPolyline().getX(), o.getPolyline().getY());
+						model.setPosition(o.getPolyline().getX(), worldSizeScaledPx.y - o.getPolyline().getY());
 						model.setScale(1);
 
 						models.add(model);
@@ -492,7 +493,7 @@ public final class GameWorld {
 		MathUtils.random.setSeed(Long.MIN_VALUE);
 
 		// scaling factors
-		float factor = scalingStrategy.pixelsPerMeterFactor;// * scalingStrategy.invTileMapZoomFactor;
+		float factor = scalingStrategy.pixelsPerMeterFactor * ScaleUtils.Scale;
 		float oneOnWorld3DFactor = 1f / OrthographicAlignedStillModel.World3DScalingFactor;
 		float wallHeightMt = 5f * factor * oneOnWorld3DFactor;
 		float textureScalingU = 0.5f;
@@ -676,7 +677,7 @@ public final class GameWorld {
 							o.getProperties().get("type", String.class),
 							o.getRectangle().x, 
 							o.getRectangle().y, 
-							scale*scalingStrategy.pixelsPerMeterFactor);
+							scale);
 						//@on
 					} else {
 						Gdx.app.log("TrackTrees", "Load error, no type was given for the tree #" + (i + 1));

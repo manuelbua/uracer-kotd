@@ -9,6 +9,7 @@ public class ScaleUtils {
 	public static int RefScreenWidth, RefScreenHeight;
 	public static int ScreenWidth, ScreenHeight;
 	public static int PlayWidth, PlayHeight;
+	public static int CropX, CropY;
 	public static float /* ScaleX, ScaleY, */Scale;
 
 	// private static Vector2 ref2scr = new Vector2();
@@ -29,12 +30,23 @@ public class ScaleUtils {
 		float physicalHeight = ScreenHeight;
 		float aspect = physicalWidth / physicalHeight;
 
+		CropX = 0;
+		CropY = 0;
 		if (aspect > refAspect) {
+
 			// Letterbox left and right
 			Scale = physicalHeight / RefScreenHeight;
-		} else {
+			CropX = (int)((physicalWidth - RefScreenWidth * Scale) / 2f);
+
+		} else if (aspect < refAspect) {
+
 			// Letterbox above and below
-			Scale = physicalHeight / physicalWidth;
+			Scale = physicalWidth / RefScreenWidth;
+			CropX = 0;
+			CropY = (int)((physicalHeight - RefScreenHeight * Scale) / 2f);
+
+		} else {
+			Scale = 1;
 		}
 
 		PlayWidth = (int)(RefScreenWidth * Scale);
@@ -42,5 +54,6 @@ public class ScaleUtils {
 
 		Gdx.app.log("ScaleUtils", "Scale=" + Scale);
 		Gdx.app.log("ScaleUtils", "Play=" + PlayWidth + "x" + PlayHeight);
+		Gdx.app.log("ScaleUtils", "Crop=" + CropX + "x" + CropY);
 	}
 }

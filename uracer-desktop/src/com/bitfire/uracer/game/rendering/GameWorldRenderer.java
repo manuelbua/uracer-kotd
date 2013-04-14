@@ -244,17 +244,17 @@ public final class GameWorldRenderer {
 	}
 
 	private void createCams () {
-		camOrtho = new OrthographicCamera(ScaleUtils.ScreenWidth, ScaleUtils.ScreenHeight);
+		camOrtho = new OrthographicCamera(ScaleUtils.RefScreenWidth, ScaleUtils.RefScreenHeight);
 		halfViewport.set(camOrtho.viewportWidth / 2, camOrtho.viewportHeight / 2);
 
 		// creates and setup orthographic camera
-		camTilemap = new OrthographicCamera(ScaleUtils.ScreenWidth, ScaleUtils.ScreenHeight);
+		camTilemap = new OrthographicCamera(ScaleUtils.RefScreenWidth, ScaleUtils.RefScreenHeight);
 		camTilemap.zoom = 1;
 
 		// creates and setup perspective camera
 		// strategically choosen near/far planes, Blender models' 14.2 meters <=> one 256px tile
 		// with far plane @48
-		camPersp = new PerspectiveCamera(scalingStrategy.verticalFov, ScaleUtils.ScreenWidth, ScaleUtils.ScreenHeight);
+		camPersp = new PerspectiveCamera(scalingStrategy.verticalFov, ScaleUtils.RefScreenWidth, ScaleUtils.RefScreenHeight);
 		camPersp.near = CamPerspPlaneNear;
 		camPersp.far = CamPerspPlaneFar;
 		camPersp.lookAt(0, 0, -1);
@@ -416,8 +416,8 @@ public final class GameWorldRenderer {
 		float zoom = 1f / cameraZoom;
 
 		// remove subpixel accuracy (jagged behavior) by uncommenting the round
-		camOrtho.viewportWidth = ScaleUtils.PlayWidth;
-		camOrtho.viewportHeight = ScaleUtils.PlayHeight;
+		camOrtho.viewportWidth = ScaleUtils.RefScreenWidth;
+		camOrtho.viewportHeight = ScaleUtils.RefScreenHeight;
 
 		camOrtho.position.x = /* MathUtils.round */(cameraPos.x);
 		camOrtho.position.y = /* MathUtils.round */(cameraPos.y);
@@ -425,41 +425,41 @@ public final class GameWorldRenderer {
 		camOrtho.zoom = zoom;
 		camOrtho.update();
 
+		halfViewport.set(camOrtho.viewportWidth / 2, camOrtho.viewportHeight / 2);
+
 		// update the unscaled orthographic camera rectangle, for visibility queries
 		camOrthoRect.set(camOrtho.position.x - halfViewport.x, camOrtho.position.y - halfViewport.y, camOrtho.viewportWidth,
 			camOrtho.viewportHeight);
 
 		// update the model-view-projection matrix, in meters, from the unscaled orthographic camera
 		camOrthoMvpMt.set(camOrtho.combined);
-		camOrthoMvpMt.val[Matrix4.M00] *= scaledPpm * ScaleUtils.Scale;
-		camOrthoMvpMt.val[Matrix4.M01] *= scaledPpm * ScaleUtils.Scale;
-		camOrthoMvpMt.val[Matrix4.M10] *= scaledPpm * ScaleUtils.Scale;
-		camOrthoMvpMt.val[Matrix4.M11] *= scaledPpm * ScaleUtils.Scale;
+		camOrthoMvpMt.scl(Config.Physics.PixelsPerMeter);
+		// camOrthoMvpMt.val[Matrix4.M00] *= Config.Physics.PixelsPerMeter;
+		// camOrthoMvpMt.val[Matrix4.M01] *= Config.Physics.PixelsPerMeter;
+		// camOrthoMvpMt.val[Matrix4.M10] *= Config.Physics.PixelsPerMeter;
+		// camOrthoMvpMt.val[Matrix4.M11] *= Config.Physics.PixelsPerMeter;
 
 		// update the tilemap renderer orthographic camera
 		// y-down
 		camTilemap.up.set(0, -1, 0);
 		camTilemap.direction.set(0, 0, 1);
-		camTilemap.viewportWidth = ScaleUtils.PlayWidth;
-		camTilemap.viewportHeight = ScaleUtils.PlayHeight;
-		// camTilemap.viewportWidth = ScaleUtils.ScreenWidth;
-		// camTilemap.viewportHeight = ScaleUtils.ScreenHeight;
+		camTilemap.viewportWidth = ScaleUtils.RefScreenWidth;
+		camTilemap.viewportHeight = ScaleUtils.RefScreenHeight;
 
 		camTilemap.position.set(camOrtho.position);
 		camTilemap.position.y = world.worldSizeScaledPx.y - camTilemap.position.y;
 		// camTilemap.position.scl(ScaleUtils.Scale);
-		camTilemap.zoom = zoom / ScaleUtils.Scale;
+		// camTilemap.zoom = ScaleUtils.Scale * zoom;
+		camTilemap.zoom = zoom;
 		camTilemap.update();
 
 		// update previous proj view
 		camPerspPrevViewProj.set(camPersp.projection).mul(camPersp.view);
 
 		// sync perspective camera to the orthographic camera
-		// camPersp.fieldOfView = 43;
-		// camPersp.fieldOfView = 67;
-		camPersp.viewportWidth = ScaleUtils.PlayWidth;
-		camPersp.viewportHeight = ScaleUtils.PlayHeight;
-		camPersp.position.set(camTilemap.position.x, camTilemap.position.y, CamPerspElevation);
+		camPersp.viewportWidth = ScaleUtils.RefScreenWidth;
+		camPersp.viewportHeight = ScaleUtils.RefScreenHeight;
+		camPersp.position.set(cameraPos.x, cameraPos.y, CamPerspElevation);
 		camPersp.update(true);
 
 		// update inv proj view
@@ -757,16 +757,33 @@ public final class GameWorldRenderer {
 			submesh = m.model.subMeshes[0];
 
 			// compute position
+			float s = ScaleUtils.Scale;
 			pospx.set(m.positionPx);
-			pospx.set(world.positionFor(pospx));
 
-			tmpvec.x = (m.positionOffsetPx.x - camOrtho.position.x) + halfViewport.x + pospx.x;
-			tmpvec.y = (m.positionOffsetPx.y + camOrtho.position.y) + halfViewport.y - pospx.y;
+			// pospx.scl(s);
+			// pospx.y = world.worldSizeScaledPx.y * s - pospx.y;
+
+			// pospx.set(world.positionFor(pospx));
+			// pospx.scl(s);
+
+			tmpvec.x = (m.positionOffsetPx.x - camPersp.position.x) + (camPersp.viewportWidth / 2) + pospx.x;
+			tmpvec.y = (m.positionOffsetPx.y + camPersp.position.y) + (camPersp.viewportHeight / 2) - pospx.y;
 			tmpvec.z = 1;
 
+			// tmpvec.x = pospx.x - 50;
+			// tmpvec.y = pospx.y - 250;
+
+			// tmpvec.x = pospx.x - cameraPos.x + hvx;
+			// tmpvec.y = -(world.worldSizeScaledPx.y - pospx.y) + cameraPos.y + hvy;
+
+			tmpvec.x *= s;
+			tmpvec.y *= s;
+
 			// transform to world space
-			camPersp.unproject(tmpvec);
-			// camPersp.unproject(tmpvec, 0, 0, ScaleUtils.PlayWidth, ScaleUtils.PlayHeight);
+			// camPersp.unproject(tmpvec);
+			// camPersp.unproject(tmpvec, 0, 0, ScaleUtils.RefScreenWidth, ScaleUtils.RefScreenHeight);
+			// camPersp.unproject(tmpvec, 0, 0, ScaleUtils.ScreenWidth, ScaleUtils.ScreenHeight);
+			camPersp.unproject(tmpvec, ScaleUtils.CropX, ScaleUtils.CropY, ScaleUtils.PlayWidth, ScaleUtils.PlayHeight);
 
 			// build model matrix
 			Matrix4 model = mtx;
@@ -794,8 +811,8 @@ public final class GameWorldRenderer {
 			if (!depthOnly) {
 				// comb = (proj * view) * model (fast mul)
 				Matrix4 mvp = mtx2;
-				mvp.set(xform).mul(camPersp.combined).mul(model);
-				// mvp.set(camPersp.combined).mul(model);
+				// mvp.set(xform).mul(camPersp.combined).mul(model);
+				mvp.set(camPersp.combined).mul(model);
 
 				shader.setUniformMatrix("u_projTrans", mvp);
 			} else {

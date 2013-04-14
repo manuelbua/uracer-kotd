@@ -14,14 +14,10 @@ import com.bitfire.uracer.utils.ScaleUtils;
 public class TrackTrees {
 	public final List<TreeStillModel> models;
 	private final GameWorld world;
-	private final Matrix4 xform = new Matrix4();
 
 	public TrackTrees (GameWorld world, List<TreeStillModel> models) {
 		this.world = world;
 		this.models = models;
-
-		xform.idt();
-		xform.scale(ScaleUtils.Scale, ScaleUtils.Scale, 1);
 	}
 
 	public int count () {
@@ -57,7 +53,7 @@ public class TrackTrees {
 			tmpvec.z = 1;
 
 			// transform to world space
-			camPersp.unproject(tmpvec);
+			camPersp.unproject(tmpvec, 0, 0, ScaleUtils.RefScreenWidth, ScaleUtils.RefScreenHeight);
 
 			// build model matrix
 			Matrix4 model = m.mtxmodel;
