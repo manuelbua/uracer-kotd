@@ -4,6 +4,7 @@ package com.bitfire.uracer;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.math.MathUtils;
 import com.badlogic.gdx.math.Vector2;
+import com.bitfire.uracer.utils.ScaleUtils;
 
 public class ScalingStrategy {
 	public final Vector2 referenceResolution;
@@ -49,11 +50,16 @@ public class ScalingStrategy {
 			tileMapZoomFactor = 1f / ((thisH * tileMapZoomFactorAtRef) / referenceResolution.y);
 		}
 
-		verticalFov = 47.27123f;// verticalFov(thisW, thisH, desiredHorizontalFov);
-		targetScreenRatio = referenceResolution.x / thisW;
+		// verticalFov = verticalFov(thisW, thisH, desiredHorizontalFov);
+		verticalFov = verticalFov(ScaleUtils.PlayWidth, ScaleUtils.PlayHeight, desiredHorizontalFov);
+		// verticalFov = 47.27123f;
+		// targetScreenRatio = referenceResolution.x / thisW;
+		targetScreenRatio = referenceResolution.x / ScaleUtils.PlayWidth;
 		invTileMapZoomFactor = 1f / tileMapZoomFactor;
 
-		meshScaleFactor = 1;// (1f / (tileMapZoomFactor * tileMapZoomFactorAtRef)) * targetScreenRatio;
+		// meshScaleFactor = (1f / (tileMapZoomFactor * tileMapZoomFactorAtRef)) * targetScreenRatio;
+		// meshScaleFactor = 1;
+		meshScaleFactor = (1f / ((1 / ScaleUtils.Scale) * tileMapZoomFactorAtRef)) * targetScreenRatio;
 
 		// adjust to the actual hfov
 		hFovScalingFactor = hFovToScalingFactor();

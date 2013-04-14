@@ -779,6 +779,9 @@ public final class GameWorldRenderer {
 			tmpvec.x *= s;
 			tmpvec.y *= s;
 
+			tmpvec.x += ScaleUtils.CropX;
+			tmpvec.y += ScaleUtils.CropY;
+
 			// transform to world space
 			// camPersp.unproject(tmpvec);
 			// camPersp.unproject(tmpvec, 0, 0, ScaleUtils.RefScreenWidth, ScaleUtils.RefScreenHeight);
