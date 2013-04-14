@@ -4,7 +4,6 @@ package com.bitfire.uracer.game.logic.gametasks.hud.elements;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.math.MathUtils;
 import com.badlogic.gdx.math.Vector2;
-import com.bitfire.uracer.ScalingStrategy;
 import com.bitfire.uracer.configuration.Config;
 import com.bitfire.uracer.configuration.UserProfile;
 import com.bitfire.uracer.entities.EntityRenderState;
@@ -47,9 +46,9 @@ public final class HudPlayer extends HudElement {
 	private float carModelWidthPx, carModelLengthPx;
 	private Vector2 tmpg = new Vector2();
 
-	public HudPlayer (UserProfile userProfile, ScalingStrategy scalingStrategy, PlayerCar player, GameRenderer renderer) {
+	public HudPlayer (UserProfile userProfile, float carScaling, PlayerCar player, GameRenderer renderer) {
 		this.renderer = renderer;
-		this.carScaling = scalingStrategy.tileMapZoomFactor;
+		this.carScaling = carScaling;
 		playerState = player.state();
 
 		this.carModelWidthPx = Convert.mt2px(player.getCarModel().width);

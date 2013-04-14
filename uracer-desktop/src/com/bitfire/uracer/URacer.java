@@ -36,6 +36,7 @@ import com.bitfire.uracer.utils.AMath;
 import com.bitfire.uracer.utils.BoxedFloat;
 import com.bitfire.uracer.utils.BoxedFloatAccessor;
 import com.bitfire.uracer.utils.Convert;
+import com.bitfire.uracer.utils.ScaleUtils;
 import com.bitfire.uracer.utils.SpriteBatchUtils;
 import com.bitfire.utils.ShaderLoader;
 
@@ -126,7 +127,9 @@ public class URacer implements ApplicationListener {
 
 		// computed for a 256px tile size target (compute needed conversion
 		// factors)
-		scalingStrategy = new ScalingStrategy(new Vector2(1280, 800), 70f, 224, 1f);
+		Vector2 refScreen = new Vector2(1280, 800);
+		ScaleUtils.init(refScreen);
+		scalingStrategy = new ScalingStrategy(refScreen, 70f, 224, 1f);
 
 		// create input system
 		input = new Input(scalingStrategy);

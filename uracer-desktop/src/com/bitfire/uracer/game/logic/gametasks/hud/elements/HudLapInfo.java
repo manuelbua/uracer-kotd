@@ -6,7 +6,6 @@ import aurelienribon.tweenengine.Tween;
 import aurelienribon.tweenengine.equations.Linear;
 
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
-import com.bitfire.uracer.ScalingStrategy;
 import com.bitfire.uracer.game.logic.LapInfo;
 import com.bitfire.uracer.game.logic.gametasks.hud.HudElement;
 import com.bitfire.uracer.game.logic.gametasks.hud.HudLabel;
@@ -15,6 +14,7 @@ import com.bitfire.uracer.resources.BitmapFontFactory.FontFace;
 import com.bitfire.uracer.utils.BoxedFloat;
 import com.bitfire.uracer.utils.BoxedFloatAccessor;
 import com.bitfire.uracer.utils.NumberString;
+import com.bitfire.uracer.utils.ScaleUtils;
 
 public class HudLapInfo extends HudElement {
 
@@ -23,13 +23,12 @@ public class HudLapInfo extends HudElement {
 	private BoxedFloat r, g, b;
 	private boolean isValid;
 
-	public HudLapInfo (ScalingStrategy scalingStrategy, LapInfo lapInfo) {
+	public HudLapInfo (LapInfo lapInfo) {
 		this.lapInfo = lapInfo;
 
 		curr = new HudLabel(FontFace.LcdWhite, "99.99", true);
 		curr.setScale(1.5f);
-		curr.setPosition((scalingStrategy.referenceResolution.x / 2), scalingStrategy.referenceResolution.y - curr.getHeight() / 2
-			- 10);
+		curr.setPosition((ScaleUtils.RefScreenWidth / 2), ScaleUtils.RefScreenHeight - curr.getHeight() / 2 - 10);
 
 		r = new BoxedFloat(1);
 		g = new BoxedFloat(1);

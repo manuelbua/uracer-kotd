@@ -131,8 +131,6 @@ public class OrthographicAlignedStillModel {
 	 * @param posPxX
 	 * @param posPxY */
 	public final void setPosition (float posPxX, float posPxY) {
-		// positionPx.set( GameData.Environment.gameWorld.positionFor( posPxX,
-		// posPxY ) );
 		positionPx.set(posPxX, posPxY);
 	}
 

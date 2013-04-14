@@ -9,16 +9,19 @@ import com.badlogic.gdx.math.Matrix4;
 import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.math.Vector3;
 import com.bitfire.uracer.game.world.GameWorld;
+import com.bitfire.uracer.utils.ScaleUtils;
 
 public class TrackTrees {
 	public final List<TreeStillModel> models;
-	private final MapUtils mapUtils;
 	private final GameWorld world;
+	private final Matrix4 xform = new Matrix4();
 
-	public TrackTrees (GameWorld world, MapUtils mapUtils, List<TreeStillModel> models) {
+	public TrackTrees (GameWorld world, List<TreeStillModel> models) {
 		this.world = world;
-		this.mapUtils = mapUtils;
 		this.models = models;
+
+		xform.idt();
+		xform.scale(ScaleUtils.Scale, ScaleUtils.Scale, 1);
 	}
 
 	public int count () {
@@ -69,7 +72,8 @@ public class TrackTrees {
 			model.translate(tmpvec);
 
 			// comb = (proj * view) * model (fast mul)
-			Matrix4.mul(transf.set(camPersp.combined).val, m.mtxmodel.val);
+			// transf.set(xform).mul(camPersp.combined).mul(m.mtxmodel);
+			transf.set(camPersp.combined).mul(m.mtxmodel);
 
 			// transform the bounding box
 			m.boundingBox.inf().set(m.localBoundingBox);

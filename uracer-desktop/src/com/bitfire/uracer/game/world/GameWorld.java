@@ -125,7 +125,7 @@ public final class GameWorld {
 		worldSizeMt = new Vector2(Convert.upx2mt(mapWidth * tileWidth), Convert.upx2mt(mapHeight * tileHeight));
 
 		// initialize tilemap utils
-		mapUtils = new MapUtils(map, tileWidth, mapHeight, worldSizeScaledPx, scalingStrategy.invTileMapZoomFactor);
+		mapUtils = new MapUtils(map, tileWidth, mapHeight, worldSizeScaledPx, 1 /* scalingStrategy.invTileMapZoomFactor */);
 
 		createMeshes();
 		route = createRoute();
@@ -186,7 +186,7 @@ public final class GameWorld {
 					o.getProperties().get("type", String.class),
 					o.getProperties().get("x", Integer.class), 
 					o.getProperties().get("y", Integer.class), 
-					scale
+					scale*scalingStrategy.pixelsPerMeterFactor
 				);
 				// @on
 
@@ -202,7 +202,7 @@ public final class GameWorld {
 
 		// trees
 		List<TreeStillModel> trees = createTrees();
-		trackTrees = new TrackTrees(this, mapUtils, trees);
+		trackTrees = new TrackTrees(this, trees);
 
 		TotalMeshes = staticMeshes.size() + trackWalls.count() + trackTrees.count();
 	}
@@ -265,9 +265,9 @@ public final class GameWorld {
 			//@on
 
 			RectangleMapObject o = (RectangleMapObject)group.getObjects().get(i);
-			pos.set(o.getRectangle().x, o.getRectangle().y).scl(scalingStrategy.invTileMapZoomFactor);
+			pos.set(o.getRectangle().x, o.getRectangle().y);// .scl(scalingStrategy.invTileMapZoomFactor);
 			pos.y = worldSizeScaledPx.y - pos.y;
-			pos.set(Convert.upx2mt(pos)).scl(scalingStrategy.tileMapZoomFactor);
+			pos.set(Convert.upx2mt(pos));// .scl(scalingStrategy.tileMapZoomFactor);
 
 			PointLight l = new PointLight(rayHandler, maxRays, c, MathUtils.random(20f, 30f), pos.x, pos.y);
 			l.setSoft(true);
@@ -492,7 +492,7 @@ public final class GameWorld {
 		MathUtils.random.setSeed(Long.MIN_VALUE);
 
 		// scaling factors
-		float factor = scalingStrategy.pixelsPerMeterFactor * scalingStrategy.invTileMapZoomFactor;
+		float factor = scalingStrategy.pixelsPerMeterFactor;// * scalingStrategy.invTileMapZoomFactor;
 		float oneOnWorld3DFactor = 1f / OrthographicAlignedStillModel.World3DScalingFactor;
 		float wallHeightMt = 5f * factor * oneOnWorld3DFactor;
 		float textureScalingU = 0.5f;
@@ -676,7 +676,7 @@ public final class GameWorld {
 							o.getProperties().get("type", String.class),
 							o.getRectangle().x, 
 							o.getRectangle().y, 
-							scale);
+							scale*scalingStrategy.pixelsPerMeterFactor);
 						//@on
 					} else {
 						Gdx.app.log("TrackTrees", "Load error, no type was given for the tree #" + (i + 1));

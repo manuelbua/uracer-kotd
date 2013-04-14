@@ -98,8 +98,8 @@ public final class Config {
 			RenderTrackSectors = false;
 
 			TraverseWalls = true;
-			ApplyCarFrictionFromMap = true;
-			FrustumCulling = true;
+			ApplyCarFrictionFromMap = false;
+			FrustumCulling = false;
 			InfiniteDilationTime = true;
 
 			ShowAdvancedDebugInfo = true;

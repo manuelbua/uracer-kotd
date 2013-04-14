@@ -5,6 +5,7 @@ import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.GL20;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.graphics.glutils.FrameBuffer;
+import com.badlogic.gdx.math.Matrix4;
 import com.badlogic.gdx.math.Rectangle;
 import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.math.Vector3;
@@ -17,6 +18,7 @@ import com.bitfire.uracer.events.GameRendererEvent;
 import com.bitfire.uracer.game.GameEvents;
 import com.bitfire.uracer.game.world.GameWorld;
 import com.bitfire.uracer.utils.Convert;
+import com.bitfire.uracer.utils.ScaleUtils;
 
 /** Manages the high-level rendering of the whole world and triggers all the GameRendererEvent events associated with the rendering
  * timeline, realized with the event's renderqueue mechanism.
@@ -30,77 +32,8 @@ public final class GameRenderer {
 	private final GameWorldRenderer worldRenderer;
 	private boolean drawNormalDepthMap;
 
-	/** Manages to convert world positions expressed in meters or pixels to the corresponding position to screen pixels. To use this
-	 * class, the GameWorldRenderer MUST be already constructed and initialized. */
-	public static final class ScreenUtils {
-		public static int RefScreenWidth, RefScreenHeight;
-		public static int ScreenWidth, ScreenHeight;
-		public static boolean ready = false;
-		private static Vector2 tmp2 = new Vector2();
-		private static Vector3 tmp3 = new Vector3();
-		private static GameWorldRenderer worldRenderer;
-		private static Vector2 ref2scr, scr2ref;
-
-		public static void init (GameWorldRenderer worldRenderer, int width, int height) {
-			ScreenUtils.worldRenderer = worldRenderer;
-			ScreenUtils.ready = true;
-			ScreenUtils.RefScreenWidth = width;
-			ScreenUtils.RefScreenHeight = height;
-			ScreenUtils.ScreenWidth = Gdx.graphics.getWidth();
-			ScreenUtils.ScreenHeight = Gdx.graphics.getHeight();
-
-			// screen-type conversion ratios
-			ref2scr = new Vector2((float)ScreenWidth / (float)RefScreenWidth, (float)ScreenHeight / (float)RefScreenHeight);
-			scr2ref = new Vector2((float)RefScreenWidth / (float)ScreenWidth, (float)RefScreenHeight / (float)ScreenHeight);
-		}
-
-		/** Transforms Box2D world-mt coordinates to reference-screen pixels coordinates */
-		public static Vector2 worldMtToRefScreen (Vector2 worldPositionMt) {
-			return worldPxToRefScreen(Convert.mt2px(worldPositionMt));
-		}
-
-		/** Transforms world-px coordinates to reference-screen pixel coordinates */
-		public static Vector2 worldPxToRefScreen (Vector2 worldPositionPx) {
-			tmp3.set(worldPositionPx.x, worldPositionPx.y, 0);
-			worldRenderer.camOrtho.project(tmp3, 0, 0, RefScreenWidth, RefScreenHeight);
-			tmp2.set(tmp3.x, RefScreenHeight - tmp3.y);
-			return tmp2;
-		}
-
-		public static Vector2 worldPxToScreen (Vector2 worldPositionPx) {
-			Vector2 r = worldPxToRefScreen(worldPositionPx);
-			r.scl(ref2scr);
-			return r;
-		}
-
-		public static Vector2 worldMtToScreen (Vector2 worldPositionMt) {
-			Vector2 r = worldMtToRefScreen(worldPositionMt);
-			r.scl(ref2scr);
-			return r;
-		}
-
-		/** Transforms reference-screen pixel coordinates to world-mt coordinates */
-		public static Vector3 screenRefToWorldMt (Vector2 screenPositionPx) {
-			tmp3.set(screenPositionPx.x, screenPositionPx.y, 1);
-
-			// normalize and scale to the real display size
-			tmp3.x = (tmp3.x / RefScreenWidth) * Gdx.graphics.getWidth();
-			tmp3.y = (tmp3.y / RefScreenHeight) * Gdx.graphics.getHeight();
-
-			worldRenderer.camOrtho.unproject(tmp3, 0, 0, Gdx.graphics.getWidth(), Gdx.graphics.getHeight());
-
-			tmp2.set(Convert.px2mt(tmp3.x), Convert.px2mt(tmp3.y));
-			tmp3.set(tmp2.x, tmp2.y, 0);
-			return tmp3;
-		}
-
-		public static boolean isVisible (Rectangle rect) {
-			return worldRenderer.camOrthoRect.overlaps(rect);
-		}
-
-		private ScreenUtils () {
-		}
-	}
+	private final Matrix4 identity = new Matrix4();
+	private final Matrix4 xform = new Matrix4();
 
 	public GameRenderer (GameWorld gameWorld, ScalingStrategy scalingStrategy) {
 		world = gameWorld;
@@ -110,14 +43,15 @@ public final class GameRenderer {
 		int height = Gdx.graphics.getHeight();
 
 		// world rendering
-		worldRenderer = new GameWorldRenderer(scalingStrategy, world, width, height);
+		worldRenderer = new GameWorldRenderer(scalingStrategy, world);
+		// worldRenderer = new GameWorldRenderer(scalingStrategy, world, ScaleUtils.RefScreenWidth, ScaleUtils.RefScreenHeight);
 		batchRenderer = new GameBatchRenderer(gl);
 
 		// initialize utils
 		ScreenUtils.init(worldRenderer, (int)scalingStrategy.referenceResolution.x, (int)scalingStrategy.referenceResolution.y);
 
-		// ScreenUtils.init(worldRenderer, Gdx.graphics.getWidth(), Gdx.graphics.getHeight());
-		Gdx.app.debug("GameRenderer", "ScreenUtils " + (ScreenUtils.ready ? "initialized." : "NOT initialized!"));
+		xform.idt();
+		xform.scale(ScaleUtils.Scale, ScaleUtils.Scale, 1);
 
 		// post-processing
 		if (UserPreferences.bool(Preference.PostProcessing)) {
@@ -212,9 +146,11 @@ public final class GameRenderer {
 		// render base tilemap
 		worldRenderer.renderTilemap();
 
+		// ///////////////////////
 		// BatchBeforeMeshes
-		SpriteBatch batch = null;
-		batch = batchRenderer.begin(worldRenderer.getOrthographicCamera());
+		// ///////////////////////
+
+		SpriteBatch batch = batchRenderer.begin(worldRenderer.getOrthographicCamera());
 		batch.enableBlending();
 		{
 			GameEvents.gameRenderer.batch = batch;
@@ -245,8 +181,12 @@ public final class GameRenderer {
 
 		gl.glDisable(GL20.GL_DEPTH_TEST);
 
+		// ///////////////////////
 		// BatchAfterMeshes
+		// ///////////////////////
+
 		batch = batchRenderer.beginTopLeft();
+		batch.setTransformMatrix(xform);
 		{
 			GameEvents.gameRenderer.batch = batch;
 			GameEvents.gameRenderer.trigger(this, GameRendererEvent.Type.BatchAfterMeshes);
@@ -267,8 +207,11 @@ public final class GameRenderer {
 	}
 
 	private void batchAfterPostProcessing () {
+		SpriteBatch batch = batchRenderer.beginTopLeft();
+		batch.setTransformMatrix(xform);
+
 		// BatchAfterPostProcessing
-		GameEvents.gameRenderer.batch = batchRenderer.beginTopLeft();
+		GameEvents.gameRenderer.batch = batch;
 		GameEvents.gameRenderer.trigger(this, GameRendererEvent.Type.BatchAfterPostProcessing);
 		batchRenderer.end();
 	}
@@ -276,11 +219,13 @@ public final class GameRenderer {
 	// manages and triggers debug event
 	public void debugRender () {
 		SpriteBatch batch = batchRenderer.beginTopLeft();
+		batch.setTransformMatrix(xform);
 
 		// batch.disableBlending();
 		GameEvents.gameRenderer.batch = batch;
 		GameEvents.gameRenderer.trigger(this, GameRendererEvent.Type.BatchDebug);
 		batchRenderer.end();
+		batch.setTransformMatrix(identity);
 
 		GameEvents.gameRenderer.batch = null;
 		GameEvents.gameRenderer.trigger(this, GameRendererEvent.Type.Debug);
@@ -289,6 +234,76 @@ public final class GameRenderer {
 	public void rebind () {
 		if (postProcessor != null && postProcessor.isEnabled()) {
 			postProcessor.rebind();
+		}
+	}
+
+	/** Manages to convert world positions expressed in meters or pixels to the corresponding position to screen pixels. To use this
+	 * class, the GameWorldRenderer MUST be already constructed and initialized. */
+	public static final class ScreenUtils {
+		private static int RefScreenWidth, RefScreenHeight;
+		private static int ScreenWidth, ScreenHeight;
+		private static Vector2 tmp2 = new Vector2();
+		private static Vector3 tmp3 = new Vector3();
+		private static GameWorldRenderer worldRenderer;
+		private static Vector2 ref2scr, scr2ref;
+
+		public static void init (GameWorldRenderer worldRenderer, int width, int height) {
+			ScreenUtils.worldRenderer = worldRenderer;
+			ScreenUtils.RefScreenWidth = width;
+			ScreenUtils.RefScreenHeight = height;
+			ScreenUtils.ScreenWidth = Gdx.graphics.getWidth();
+			ScreenUtils.ScreenHeight = Gdx.graphics.getHeight();
+
+			// screen-type conversion ratios
+			ref2scr = new Vector2((float)ScreenWidth / (float)RefScreenWidth, (float)ScreenHeight / (float)RefScreenHeight);
+			scr2ref = new Vector2((float)RefScreenWidth / (float)ScreenWidth, (float)RefScreenHeight / (float)ScreenHeight);
+		}
+
+		/** Transforms Box2D world-mt coordinates to reference-screen pixels coordinates */
+		public static Vector2 worldMtToRefScreen (Vector2 worldPositionMt) {
+			return worldPxToRefScreen(Convert.mt2px(worldPositionMt));
+		}
+
+		/** Transforms world-px coordinates to reference-screen pixel coordinates */
+		public static Vector2 worldPxToRefScreen (Vector2 worldPositionPx) {
+			tmp3.set(worldPositionPx.x, worldPositionPx.y, 0);
+			worldRenderer.camOrtho.project(tmp3, 0, 0, RefScreenWidth, RefScreenHeight);
+			tmp2.set(tmp3.x, RefScreenHeight - tmp3.y);
+			return tmp2;
+		}
+
+		public static Vector2 worldPxToScreen (Vector2 worldPositionPx) {
+			Vector2 r = worldPxToRefScreen(worldPositionPx);
+			r.scl(ref2scr);
+			return r;
+		}
+
+		public static Vector2 worldMtToScreen (Vector2 worldPositionMt) {
+			Vector2 r = worldMtToRefScreen(worldPositionMt);
+			r.scl(ref2scr);
+			return r;
+		}
+
+		/** Transforms reference-screen pixel coordinates to world-mt coordinates */
+		public static Vector3 screenRefToWorldMt (Vector2 screenPositionPx) {
+			tmp3.set(screenPositionPx.x, screenPositionPx.y, 1);
+
+			// normalize and scale to the real display size
+			tmp3.x = (tmp3.x / RefScreenWidth) * Gdx.graphics.getWidth();
+			tmp3.y = (tmp3.y / RefScreenHeight) * Gdx.graphics.getHeight();
+
+			worldRenderer.camOrtho.unproject(tmp3, 0, 0, Gdx.graphics.getWidth(), Gdx.graphics.getHeight());
+
+			tmp2.set(Convert.px2mt(tmp3.x), Convert.px2mt(tmp3.y));
+			tmp3.set(tmp2.x, tmp2.y, 0);
+			return tmp3;
+		}
+
+		public static boolean isVisible (Rectangle rect) {
+			return worldRenderer.camOrthoRect.overlaps(rect);
+		}
+
+		private ScreenUtils () {
 		}
 	}
 }

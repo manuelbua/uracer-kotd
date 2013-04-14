@@ -1,11 +1,7 @@
 
 package com.bitfire.uracer.game.logic.gametasks.hud;
 
-import com.badlogic.gdx.Gdx;
-import com.badlogic.gdx.graphics.g2d.SpriteBatch;
-import com.badlogic.gdx.math.Matrix4;
 import com.badlogic.gdx.utils.Array;
-import com.bitfire.uracer.ScalingStrategy;
 import com.bitfire.uracer.events.GameRendererEvent;
 import com.bitfire.uracer.events.GameRendererEvent.Order;
 import com.bitfire.uracer.events.GameRendererEvent.Type;
@@ -18,40 +14,24 @@ public final class Hud extends GameTask implements GameRendererEvent.Listener {
 
 	private static final GameRendererEvent.Type RenderEventBeforePost = GameRendererEvent.Type.BatchAfterMeshes;
 	private static final GameRendererEvent.Type RenderEventAfterPost = GameRendererEvent.Type.BatchAfterPostProcessing;
+	private static final GameRendererEvent.Type RenderEventDebug = GameRendererEvent.Type.BatchDebug;
+
 	private static final GameRendererEvent.Order RenderOrderBeforePost = GameRendererEvent.Order.DEFAULT;
 	private static final GameRendererEvent.Order RenderOrderAfterPost = GameRendererEvent.Order.DEFAULT;
+	private static final GameRendererEvent.Order RenderOrderDebug = GameRendererEvent.Order.DEFAULT;
 
 	private final ItemsManager<HudElement> managerAfterMeshes = new ItemsManager<HudElement>();
 	private final ItemsManager<HudElement> managerAfterPost = new ItemsManager<HudElement>();
+	private final ItemsManager<HudElement> managerDebug = new ItemsManager<HudElement>();
 
-	private ScalingStrategy strategy = null;
-	private float scale = 1f;
-	private final Matrix4 identity = new Matrix4();
-	private final Matrix4 xform = new Matrix4();
-
-	public Hud (ScalingStrategy strategy) {
-		this.strategy = strategy;
+	public Hud () {
 		GameEvents.gameRenderer.addListener(this, RenderEventBeforePost, RenderOrderBeforePost);
 		GameEvents.gameRenderer.addListener(this, RenderEventAfterPost, RenderOrderAfterPost);
+		GameEvents.gameRenderer.addListener(this, RenderEventDebug, RenderOrderDebug);
 	}
 
 	@Override
 	public void gameRendererEvent (GameRendererEvent.Type type, Order order) {
-
-		SpriteBatch batch = GameEvents.gameRenderer.batch;
-
-		if (batch != null) {
-			float sx = Gdx.graphics.getWidth() / strategy.referenceResolution.x;
-			float sy = Gdx.graphics.getHeight() / strategy.referenceResolution.y;
-
-			xform.idt();
-			xform.scale(sx, sy, 1);
-
-			// xform.scale(1, 1, 1);
-
-			batch.setTransformMatrix(xform);
-		}
-
 		if (order == RenderOrderBeforePost && type == Type.BatchAfterMeshes) {
 
 			Array<HudElement> items = managerAfterMeshes.items;
@@ -65,10 +45,11 @@ public final class Hud extends GameTask implements GameRendererEvent.Listener {
 			for (int i = 0; i < items.size; i++) {
 				items.get(i).onRender(GameEvents.gameRenderer.batch);
 			}
-		}
-
-		if (batch != null) {
-			batch.setTransformMatrix(identity);
+		} else if (order == RenderOrderDebug && type == Type.BatchDebug) {
+			Array<HudElement> items = managerDebug.items;
+			for (int i = 0; i < items.size; i++) {
+				items.get(i).onRender(GameEvents.gameRenderer.batch);
+			}
 		}
 	}
 
@@ -80,9 +61,14 @@ public final class Hud extends GameTask implements GameRendererEvent.Listener {
 		managerAfterPost.add(element);
 	}
 
+	public void addDebug (HudElement element) {
+		managerDebug.add(element);
+	}
+
 	public void remove (HudElement element) {
 		managerAfterMeshes.remove(element);
 		managerAfterPost.remove(element);
+		managerDebug.remove(element);
 	}
 
 	@Override
@@ -90,6 +76,7 @@ public final class Hud extends GameTask implements GameRendererEvent.Listener {
 		super.dispose();
 		GameEvents.gameRenderer.removeListener(this, RenderEventBeforePost, RenderOrderBeforePost);
 		GameEvents.gameRenderer.removeListener(this, RenderEventAfterPost, RenderOrderAfterPost);
+		GameEvents.gameRenderer.removeListener(this, RenderEventDebug, RenderOrderDebug);
 		managerAfterMeshes.dispose();
 		managerAfterPost.dispose();
 	}

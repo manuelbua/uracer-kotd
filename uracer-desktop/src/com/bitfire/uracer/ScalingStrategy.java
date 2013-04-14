@@ -49,11 +49,11 @@ public class ScalingStrategy {
 			tileMapZoomFactor = 1f / ((thisH * tileMapZoomFactorAtRef) / referenceResolution.y);
 		}
 
-		verticalFov = verticalFov(thisW, thisH, desiredHorizontalFov);
+		verticalFov = 47.27123f;// verticalFov(thisW, thisH, desiredHorizontalFov);
 		targetScreenRatio = referenceResolution.x / thisW;
 		invTileMapZoomFactor = 1f / tileMapZoomFactor;
 
-		meshScaleFactor = (1f / (tileMapZoomFactor * tileMapZoomFactorAtRef)) * targetScreenRatio;
+		meshScaleFactor = 1;// (1f / (tileMapZoomFactor * tileMapZoomFactorAtRef)) * targetScreenRatio;
 
 		// adjust to the actual hfov
 		hFovScalingFactor = hFovToScalingFactor();

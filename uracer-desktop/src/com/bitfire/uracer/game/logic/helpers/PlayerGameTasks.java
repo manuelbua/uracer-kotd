@@ -60,17 +60,18 @@ public final class PlayerGameTasks {
 		playerSmokeTrails = new PlayerSmokeTrails(scalingStrategy, player);
 
 		// hud, player's information
-		hudPlayer = new HudPlayer(userProfile, scalingStrategy, player, renderer);
-		hudPlayerStatic = new HudPlayerStatic(userProfile, scalingStrategy, player);
+		hudPlayer = new HudPlayer(userProfile, scalingStrategy.tileMapZoomFactor, player, renderer);
+		hudPlayerStatic = new HudPlayerStatic(userProfile, player);
 
 		// hud, player's lap info
-		hudLapInfo = new HudLapInfo(scalingStrategy, lapInfo);
+		hudLapInfo = new HudLapInfo(lapInfo);
 
 		manager.sound.add(playerDriftSoundFx);
 		manager.sound.add(playerImpactSoundFx);
 		manager.sound.add(playerEngineSoundFx);
 		manager.effects.addBeforeEntities(playerSkidMarks);
 		manager.effects.addAfterEntities(playerSmokeTrails);
+
 		manager.hud.addBeforePostProcessing(hudPlayer);
 		manager.hud.addAfterPostProcessing(hudLapInfo);
 		manager.hud.addAfterPostProcessing(hudPlayerStatic);
@@ -79,7 +80,7 @@ public final class PlayerGameTasks {
 		// hud-style debug information for various data (player's drift state, number of skid marks particles, ..)
 		if (Config.Debug.RenderHudDebugInfo) {
 			hudDebug = new HudDebug(player, player.driftState, manager);
-			manager.hud.addAfterPostProcessing(hudDebug);
+			manager.hud.addDebug(hudDebug);
 		}
 	}
 

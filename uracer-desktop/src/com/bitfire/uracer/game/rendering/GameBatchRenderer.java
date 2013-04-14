@@ -6,6 +6,7 @@ import com.badlogic.gdx.graphics.Camera;
 import com.badlogic.gdx.graphics.GL20;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.math.Matrix4;
+import com.bitfire.uracer.utils.ScaleUtils;
 
 public class GameBatchRenderer {
 	private SpriteBatch batch = null;
@@ -49,6 +50,7 @@ public class GameBatchRenderer {
 	}
 
 	public SpriteBatch beginTopLeft () {
+		topLeftOrigin.setToOrtho(0, ScaleUtils.PlayWidth, ScaleUtils.PlayHeight, 0, 0, 10);
 		return begin(topLeftOrigin, identity);
 	}
 

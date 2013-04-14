@@ -30,6 +30,7 @@ public final class DebugHelper {
 	// rendering
 	private GameWorldRenderer worldRenderer;
 	private PostProcessor postProcessor;
+	private Matrix4 idt = new Matrix4();
 
 	// player
 	private static PlayerCar player;
@@ -100,6 +101,8 @@ public final class DebugHelper {
 	}
 
 	private void render (SpriteBatch batch) {
+		batch.setTransformMatrix(idt);
+
 		renderVersionInfo(batch, Art.DebugFontHeight * 2);
 
 		if (Config.Debug.RenderDebugInfoFpsStats) {

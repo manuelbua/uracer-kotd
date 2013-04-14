@@ -51,7 +51,7 @@ public final class GameTasksManager {
 		add(messager);
 
 		// hud manager
-		hud = new Hud(scalingStrategy);
+		hud = new Hud();
 		add(hud);
 
 		// effects manager
