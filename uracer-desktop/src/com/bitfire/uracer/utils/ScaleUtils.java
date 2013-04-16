@@ -10,7 +10,7 @@ public class ScaleUtils {
 	public static int ScreenWidth, ScreenHeight;
 	public static int PlayWidth, PlayHeight;
 	public static int CropX, CropY;
-	public static float /* ScaleX, ScaleY, */Scale;
+	public static float Scale;
 
 	// private static Vector2 ref2scr = new Vector2();
 
@@ -20,14 +20,10 @@ public class ScaleUtils {
 		RefScreenWidth = (int)refScreen.x;
 		RefScreenHeight = (int)refScreen.y;
 
-		// ref2scr = new Vector2((float)ScreenWidth / (float)RefScreenWidth, (float)ScreenHeight / (float)RefScreenHeight);
-		// ScaleX = ref2scr.x;
-		// ScaleY = ref2scr.y;
-
 		// Maintain the aspect ratio by letterboxing.
-		float refAspect = RefScreenWidth / RefScreenHeight;
-		float physicalWidth = ScreenWidth;
-		float physicalHeight = ScreenHeight;
+		float refAspect = (float)RefScreenWidth / (float)RefScreenHeight;
+		float physicalWidth = (float)ScreenWidth;
+		float physicalHeight = (float)ScreenHeight;
 		float aspect = physicalWidth / physicalHeight;
 
 		CropX = 0;
@@ -35,15 +31,15 @@ public class ScaleUtils {
 		if (aspect > refAspect) {
 
 			// Letterbox left and right
-			Scale = physicalHeight / RefScreenHeight;
-			CropX = (int)((physicalWidth - RefScreenWidth * Scale) / 2f);
+			Scale = physicalHeight / (float)RefScreenHeight;
+			CropX = (int)((physicalWidth - (float)RefScreenWidth * Scale) / 2f);
 
 		} else if (aspect < refAspect) {
 
 			// Letterbox above and below
-			Scale = physicalWidth / RefScreenWidth;
+			Scale = physicalWidth / (float)RefScreenWidth;
 			CropX = 0;
-			CropY = (int)((physicalHeight - RefScreenHeight * Scale) / 2f);
+			CropY = (int)((physicalHeight - (float)RefScreenHeight * Scale) / 2f);
 
 		} else {
 			Scale = 1;
