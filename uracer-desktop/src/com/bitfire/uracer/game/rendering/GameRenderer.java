@@ -39,13 +39,10 @@ public final class GameRenderer {
 		world = gameWorld;
 		gl = Gdx.graphics.getGL20();
 
-		int width = Gdx.graphics.getWidth();
-		int height = Gdx.graphics.getHeight();
 		gl.glViewport(ScaleUtils.CropX, ScaleUtils.CropY, ScaleUtils.PlayWidth, ScaleUtils.PlayHeight);
 
 		// world rendering
 		worldRenderer = new GameWorldRenderer(scalingStrategy, world);
-		// worldRenderer = new GameWorldRenderer(scalingStrategy, world, ScaleUtils.RefScreenWidth, ScaleUtils.RefScreenHeight);
 		batchRenderer = new GameBatchRenderer(gl);
 
 		// initialize utils
@@ -56,7 +53,8 @@ public final class GameRenderer {
 
 		// post-processing
 		if (UserPreferences.bool(Preference.PostProcessing)) {
-			postProcessor = new PostProcessor(width, height, true /* depth */, false /* alpha */, Config.isDesktop /* supports32Bpp */);
+			postProcessor = new PostProcessor(ScaleUtils.PlayWidth, ScaleUtils.PlayHeight, true /* depth */, false /* alpha */,
+				Config.isDesktop /* supports32Bpp */);
 			PostProcessor.EnableQueryStates = false;
 			postProcessor.setClearBits(GL20.GL_COLOR_BUFFER_BIT | GL20.GL_DEPTH_BUFFER_BIT);
 			postProcessor.setClearColor(0, 0, 0, 1);
@@ -178,7 +176,7 @@ public final class GameRenderer {
 			gl.glEnable(GL20.GL_DEPTH_TEST);
 		}
 
-		// worldRenderer.renderTrees(false);
+		worldRenderer.renderTrees(false);
 
 		gl.glDisable(GL20.GL_DEPTH_TEST);
 

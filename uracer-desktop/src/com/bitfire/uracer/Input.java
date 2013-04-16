@@ -4,6 +4,7 @@ package com.bitfire.uracer;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.utils.Disposable;
+import com.bitfire.uracer.utils.ScaleUtils;
 
 /** Encapsulates a buffered input state object that can be queried to know the individual key/button/pointer states.
  * 
@@ -12,7 +13,6 @@ public final class Input implements Disposable {
 	public static final int MaxPointers = 2;
 
 	// scaling
-	private float scale = 1;
 	private ScalingStrategy scalingStrategy;
 
 	// keys
@@ -37,10 +37,6 @@ public final class Input implements Disposable {
 
 		releaseAllKeys();
 		Gdx.input.setCatchBackKey(true);
-	}
-
-	public void setScale (float scale) {
-		this.scale = scale;
 	}
 
 	@Override
@@ -172,17 +168,23 @@ public final class Input implements Disposable {
 	private void updatePointerState () {
 		for (int p = 0; p < MaxPointers; p++) {
 			Pointer ptr = pointer[p];
-			ptr.setTouching(Gdx.input.isButtonPressed(p));
-			// ptr.touchX = Gdx.input.getX(p);
-			// ptr.touchY = Gdx.input.getY(p);
-			// ptr.touchX = (int)(Gdx.input.getX(p) * scale);
-			// ptr.touchY = (int)(Gdx.input.getY(p) * scale);
-			ptr.touchX = (int)(((float)Gdx.input.getX(p) / (float)Gdx.graphics.getWidth()) * scalingStrategy.referenceResolution.x);
-			ptr.touchY = (int)(((float)Gdx.input.getY(p) / (float)Gdx.graphics.getHeight()) * scalingStrategy.referenceResolution.y);
+
+			int px = Gdx.input.getX(p) - ScaleUtils.CropX;
+			int py = Gdx.input.getY(p) - ScaleUtils.CropY;
+			// boolean inBoundaries = (px >= 0 && py >= 0 && px < ScaleUtils.PlayWidth && py < ScaleUtils.PlayHeight);
+
+			float npx = (float)px / (float)ScaleUtils.PlayWidth;
+			float npy = (float)py / (float)ScaleUtils.PlayHeight;
+			// Gdx.app.log("Input", npx + "," + npy);
+
+			ptr.setTouching(/* inBoundaries && */Gdx.input.isButtonPressed(p));
+
+			// update coords even if not touched
+			ptr.touchX = (int)(npx * ScaleUtils.RefScreenWidth);
+			ptr.touchY = (int)(npy * ScaleUtils.RefScreenHeight);
 			ptr.touchCoords.set(ptr.touchX, ptr.touchY);
 		}
 
-		// Gdx.app.log("Input", pointer[0].touchCoords.toString());
 	}
 
 	// update key state and transform unbuffered to buffered

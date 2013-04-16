@@ -134,7 +134,6 @@ public class URacer implements ApplicationListener {
 		// create input system
 		input = new Input(scalingStrategy);
 		Gdx.app.log("URacer", "input system created.");
-		input.setScale(scalingStrategy.tileMapZoomFactor);
 
 		BitmapFontFactory.init(scalingStrategy);
 		ScreenFactory screenFactory = new GameScreensFactory(scalingStrategy);

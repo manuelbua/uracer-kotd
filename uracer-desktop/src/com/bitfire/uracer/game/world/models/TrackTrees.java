@@ -46,14 +46,18 @@ public class TrackTrees {
 			Matrix4 transf = m.transformed;
 
 			// compute position
-			pospx.set(m.positionPx);
-			pospx.set(world.positionFor(pospx));
-			tmpvec.x = (m.positionOffsetPx.x - camOrtho.position.x) + halfViewport.x + pospx.x;
-			tmpvec.y = (m.positionOffsetPx.y + camOrtho.position.y) + halfViewport.y - pospx.y;
+			tmpvec.x = (m.positionOffsetPx.x - camPersp.position.x) + (camPersp.viewportWidth / 2) + m.positionPx.x;
+			tmpvec.y = (m.positionOffsetPx.y + camPersp.position.y) + (camPersp.viewportHeight / 2) - m.positionPx.y;
 			tmpvec.z = 1;
 
+			tmpvec.x *= ScaleUtils.Scale;
+			tmpvec.y *= ScaleUtils.Scale;
+
+			tmpvec.x += ScaleUtils.CropX;
+			tmpvec.y += ScaleUtils.CropY;
+
 			// transform to world space
-			camPersp.unproject(tmpvec, 0, 0, ScaleUtils.RefScreenWidth, ScaleUtils.RefScreenHeight);
+			camPersp.unproject(tmpvec, ScaleUtils.CropX, ScaleUtils.CropY, ScaleUtils.PlayWidth, ScaleUtils.PlayHeight);
 
 			// build model matrix
 			Matrix4 model = m.mtxmodel;

@@ -675,8 +675,8 @@ public final class GameWorld {
 						//@off
 						model = ModelFactory.createTree(
 							o.getProperties().get("type", String.class),
-							o.getRectangle().x, 
-							o.getRectangle().y, 
+							o.getRectangle().x,
+							worldSizeScaledPx.y - o.getRectangle().y,
 							scale);
 						//@on
 					} else {

@@ -756,36 +756,18 @@ public final class GameWorldRenderer {
 			m = models.get(i);
 			submesh = m.model.subMeshes[0];
 
-			// compute position
-			float s = ScaleUtils.Scale;
-			pospx.set(m.positionPx);
-
-			// pospx.scl(s);
-			// pospx.y = world.worldSizeScaledPx.y * s - pospx.y;
-
-			// pospx.set(world.positionFor(pospx));
-			// pospx.scl(s);
-
-			tmpvec.x = (m.positionOffsetPx.x - camPersp.position.x) + (camPersp.viewportWidth / 2) + pospx.x;
-			tmpvec.y = (m.positionOffsetPx.y + camPersp.position.y) + (camPersp.viewportHeight / 2) - pospx.y;
+			// transform position
+			tmpvec.x = (m.positionOffsetPx.x - camPersp.position.x) + (camPersp.viewportWidth / 2) + m.positionPx.x;
+			tmpvec.y = (m.positionOffsetPx.y + camPersp.position.y) + (camPersp.viewportHeight / 2) - m.positionPx.y;
 			tmpvec.z = 1;
 
-			// tmpvec.x = pospx.x - 50;
-			// tmpvec.y = pospx.y - 250;
-
-			// tmpvec.x = pospx.x - cameraPos.x + hvx;
-			// tmpvec.y = -(world.worldSizeScaledPx.y - pospx.y) + cameraPos.y + hvy;
-
-			tmpvec.x *= s;
-			tmpvec.y *= s;
+			tmpvec.x *= ScaleUtils.Scale;
+			tmpvec.y *= ScaleUtils.Scale;
 
 			tmpvec.x += ScaleUtils.CropX;
 			tmpvec.y += ScaleUtils.CropY;
 
 			// transform to world space
-			// camPersp.unproject(tmpvec);
-			// camPersp.unproject(tmpvec, 0, 0, ScaleUtils.RefScreenWidth, ScaleUtils.RefScreenHeight);
-			// camPersp.unproject(tmpvec, 0, 0, ScaleUtils.ScreenWidth, ScaleUtils.ScreenHeight);
 			camPersp.unproject(tmpvec, ScaleUtils.CropX, ScaleUtils.CropY, ScaleUtils.PlayWidth, ScaleUtils.PlayHeight);
 
 			// build model matrix
@@ -814,7 +796,6 @@ public final class GameWorldRenderer {
 			if (!depthOnly) {
 				// comb = (proj * view) * model (fast mul)
 				Matrix4 mvp = mtx2;
-				// mvp.set(xform).mul(camPersp.combined).mul(model);
 				mvp.set(camPersp.combined).mul(model);
 
 				shader.setUniformMatrix("u_projTrans", mvp);
