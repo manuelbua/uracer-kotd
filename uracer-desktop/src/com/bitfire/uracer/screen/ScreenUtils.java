@@ -14,20 +14,9 @@ public final class ScreenUtils {
 
 	/** Render the specified screen to the specified buffer. */
 	public static void copyScreen (Screen screen, FrameBuffer buffer, Color clearColor, float clearDepth, boolean useDepth) {
-		Gdx.gl20.glClearColor(clearColor.r, clearColor.g, clearColor.b, clearColor.a);
-
-		buffer.begin();
-		{
-			if (useDepth) {
-				Gdx.gl20.glClearDepthf(clearDepth);
-				Gdx.gl20.glClear(GL20.GL_COLOR_BUFFER_BIT | GL20.GL_DEPTH_BUFFER_BIT);
-			} else {
-				Gdx.gl20.glClear(GL20.GL_COLOR_BUFFER_BIT);
-			}
-		}
-		buffer.end();
-
 		if (screen != null) {
+			// clear(buffer, clearColor, clearDepth, useDepth);
+
 			if (ScreenManager.currentScreen() != screen) {
 				screen.tick();
 				screen.tickCompleted();

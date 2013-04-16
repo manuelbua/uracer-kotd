@@ -2,6 +2,7 @@
 package com.bitfire.uracer.utils;
 
 import com.badlogic.gdx.Gdx;
+import com.badlogic.gdx.math.Rectangle;
 import com.badlogic.gdx.math.Vector2;
 
 public class ScaleUtils {
@@ -10,6 +11,7 @@ public class ScaleUtils {
 	public static int ScreenWidth, ScreenHeight;
 	public static int PlayWidth, PlayHeight;
 	public static int CropX, CropY;
+	public static Rectangle PlayViewport;
 	public static float Scale;
 
 	// private static Vector2 ref2scr = new Vector2();
@@ -47,6 +49,8 @@ public class ScaleUtils {
 
 		PlayWidth = (int)(RefScreenWidth * Scale);
 		PlayHeight = (int)(RefScreenHeight * Scale);
+
+		PlayViewport = new Rectangle(CropX, CropY, PlayWidth, PlayHeight);
 
 		Gdx.app.log("ScaleUtils", "Scale=" + Scale);
 		Gdx.app.log("ScaleUtils", "Play=" + PlayWidth + "x" + PlayHeight);
