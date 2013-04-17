@@ -135,7 +135,7 @@ public class PlayerCar extends Car {
 
 			// mouse/pointer input
 
-			carPos.set(GameRenderer.ScreenUtils.worldMtToRefScreen(body.getPosition()));
+			carPos.set(GameRenderer.ScreenUtils.worldMtToScreen(body.getPosition()));
 			touchPos.set(input.getXY());
 
 			carInput.updated = input.isTouching();

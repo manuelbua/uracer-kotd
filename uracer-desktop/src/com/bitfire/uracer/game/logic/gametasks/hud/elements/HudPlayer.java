@@ -116,7 +116,7 @@ public final class HudPlayer extends HudElement {
 	private void bottom (Positionable p, float distance) {
 		float zs = renderer.getWorldRenderer().getCameraZoom();
 
-		tmpg.set(GameRenderer.ScreenUtils.worldPxToRefScreen(playerState.position));
+		tmpg.set(GameRenderer.ScreenUtils.worldPxToScreen(playerState.position));
 		tmpg.y += distance * zs;
 		p.setPosition(tmpg);
 	}
@@ -126,7 +126,7 @@ public final class HudPlayer extends HudElement {
 	}
 
 	private void atPlayer (Positionable p) {
-		tmpg.set(GameRenderer.ScreenUtils.worldPxToRefScreen(playerState.position));
+		tmpg.set(GameRenderer.ScreenUtils.worldPxToScreen(playerState.position));
 		p.setPosition(tmpg);
 	}
 
@@ -136,7 +136,7 @@ public final class HudPlayer extends HudElement {
 		float zs = renderer.getWorldRenderer().getCameraZoom();
 		float border = distance;
 
-		Vector2 sp = GameRenderer.ScreenUtils.worldPxToRefScreen(playerState.position);
+		Vector2 sp = GameRenderer.ScreenUtils.worldPxToScreen(playerState.position);
 		Vector2 heading = VMath.fromDegrees(playerState.orientation + offsetDegs);
 
 		float horizontal = MathUtils.clamp(Math.abs(MathUtils.sinDeg(playerState.orientation)), 0.25f, 1);

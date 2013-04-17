@@ -14,6 +14,7 @@ import com.badlogic.gdx.graphics.VertexAttribute;
 import com.badlogic.gdx.graphics.VertexAttributes.Usage;
 import com.badlogic.gdx.graphics.glutils.FrameBuffer;
 import com.badlogic.gdx.graphics.glutils.ShaderProgram;
+import com.badlogic.gdx.math.Rectangle;
 
 class LightMap {
 	private ShaderProgram shadowShader;
@@ -27,15 +28,18 @@ class LightMap {
 	private ShaderProgram blurShader;
 	private ShaderProgram diffuseShader;
 
-	public void render( FrameBuffer dest ) {
+	public void render( Rectangle viewport, FrameBuffer dest ) {
 		boolean needed = rayHandler.lightRenderedLastFrame > 0;
 		// this way lot less binding
 		if( needed && rayHandler.blur )
 			gaussianBlur();
 
 		frameBuffer.getColorBufferTexture().bind( 0 );
-		if( dest != null )
+		if( dest != null ) {
 			dest.begin();
+		} else {
+			Gdx.gl.glViewport((int)viewport.x, (int)viewport.y, (int)viewport.width, (int)viewport.height);
+		}
 
 		Gdx.gl20.glEnable( GL20.GL_BLEND );
 

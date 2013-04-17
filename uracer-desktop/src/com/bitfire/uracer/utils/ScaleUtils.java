@@ -44,7 +44,7 @@ public class ScaleUtils {
 			CropY = (int)((physicalHeight - (float)RefScreenHeight * Scale) / 2f);
 
 		} else {
-			Scale = 1;
+			Scale = physicalWidth / (float)RefScreenWidth;
 		}
 
 		PlayWidth = (int)(RefScreenWidth * Scale);

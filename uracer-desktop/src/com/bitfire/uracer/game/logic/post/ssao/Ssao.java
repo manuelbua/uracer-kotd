@@ -26,6 +26,7 @@ import com.bitfire.uracer.events.GameRendererEvent;
 import com.bitfire.uracer.events.GameRendererEvent.Order;
 import com.bitfire.uracer.game.GameEvents;
 import com.bitfire.uracer.utils.Convert;
+import com.bitfire.uracer.utils.ScaleUtils;
 import com.bitfire.utils.ShaderLoader;
 
 public final class Ssao extends PostProcessorEffect {
@@ -58,16 +59,14 @@ public final class Ssao extends PostProcessorEffect {
 		}
 	};
 
-	public Ssao (Quality quality, boolean nightMode) {
+	public Ssao (int fboWidth, int fboHeight, Quality quality, boolean nightMode) {
 		this.nightMode = nightMode;
 
 		Gdx.app.log("SsaoProcessor", "Quality profile = " + quality.toString());
-		int w = Gdx.graphics.getWidth();
-		int h = Gdx.graphics.getHeight();
 		float oscale = quality.scale;
 
 		// maps
-		occlusionMap = new PingPongBuffer((int)(w * oscale), (int)(h * oscale), Format.RGBA8888, false);
+		occlusionMap = new PingPongBuffer((int)((float)fboWidth * oscale), (int)((float)fboHeight * oscale), Format.RGBA8888, false);
 
 		// shaders
 		shMix = ShaderLoader.fromFile("screenspace", "ssao/mix");
@@ -172,7 +171,7 @@ public final class Ssao extends PostProcessorEffect {
 
 		float w = (tex.getWidth() * scale);
 		float h = (tex.getHeight() * scale);
-		float x = Gdx.graphics.getWidth() - w - Convert.scaledPixels(10);
+		float x = ScaleUtils.PlayWidth - w - Convert.scaledPixels(10);
 		float y = index * Convert.scaledPixels(10);
 		batch.draw(tex, x, y, w, h);
 	}
@@ -180,9 +179,9 @@ public final class Ssao extends PostProcessorEffect {
 	private void dbgTextureW (SpriteBatch batch, float width, Texture tex, int index) {
 		if (tex == null) return;
 
-		float ratio = ((float)Gdx.graphics.getWidth() / (float)Gdx.graphics.getHeight());
+		float ratio = ((float)ScaleUtils.PlayWidth / (float)ScaleUtils.PlayHeight);
 		float h = width / ratio;
-		float x = Gdx.graphics.getWidth() - width - Convert.scaledPixels(10);
+		float x = ScaleUtils.PlayWidth - width - Convert.scaledPixels(10);
 		float y = index * Convert.scaledPixels(10);
 		batch.draw(tex, x, y, width, h);
 	}

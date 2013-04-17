@@ -115,7 +115,7 @@ public class SinglePlayerLogic extends CommonLogic {
 				if (l != null) {
 					CarState cs = playerCar.carState;
 					Input input = URacer.Game.getInputSystem();
-					Vector3 v3 = GameRenderer.ScreenUtils.screenRefToWorldMt(input.getXY());
+					Vector3 v3 = GameRenderer.ScreenUtils.screenToWorldMt(input.getXY());
 					l.setActive(true);
 					l.setPosition(v3.x, v3.y);
 					// playerImpulse.setPosition(car.getWorldPosMt().x, car.getWorldPosMt().y);

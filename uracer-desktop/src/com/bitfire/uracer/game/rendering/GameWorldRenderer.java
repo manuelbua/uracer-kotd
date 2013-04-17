@@ -114,7 +114,6 @@ public final class GameWorldRenderer {
 	public OrthogonalTiledMapRenderer tileMapRenderer = null;
 	private GameTrackDebugRenderer gameTrackDbgRenderer = null;
 	private ScalingStrategy scalingStrategy = null;
-	private float scaledPpm = 1f;
 
 	// deferred stuff
 	private Mesh plane;
@@ -141,7 +140,6 @@ public final class GameWorldRenderer {
 		scalingStrategy = strategy;
 		this.world = world;
 		gl = Gdx.gl20;
-		scaledPpm = Convert.scaledPixels(Config.Physics.PixelsPerMeter);
 		rayHandler = world.getRayHandler();
 		playerLightsA = world.getPlayerHeadLights(true);
 		playerLightsB = world.getPlayerHeadLights(false);
@@ -152,8 +150,6 @@ public final class GameWorldRenderer {
 
 		createCams();
 
-		// FileHandle baseDir = Gdx.files.internal(Storage.Levels);
-		// tileMapRenderer = new UTileMapRenderer(world.map, tileAtlas, 1, 1, world.map.tileWidth, world.map.tileHeight);
 		tileMapRenderer = new OrthogonalTiledMapRenderer(world.map);
 		gameTrackDbgRenderer = new GameTrackDebugRenderer(world.getGameTrack());
 
@@ -185,9 +181,8 @@ public final class GameWorldRenderer {
 
 		// deferred setup
 		float scale = Config.PostProcessing.NormalDepthMapScale;
-		normalDepthMap = new FrameBuffer(Format.RGBA8888, (int)(Gdx.graphics.getWidth() * scale),
-			(int)(Gdx.graphics.getHeight() * scale), true);
-		// normalDepthMap = new FloatFrameBuffer((int)(width * scale), (int)(height * scale), true);
+		normalDepthMap = new FrameBuffer(Format.RGBA8888, (int)((float)ScaleUtils.PlayWidth * scale),
+			(int)((float)ScaleUtils.PlayHeight * scale), true);
 
 		shNormalDepthAlpha = ShaderLoader.fromFile("normaldepth", "normaldepth", "#define ENABLE_DIFFUSE");
 		shNormalDepthAlpha.begin();
@@ -478,8 +473,12 @@ public final class GameWorldRenderer {
 			rayHandler.setAmbientLight(ambientColor);
 
 			// @off
-			rayHandler.setCombinedMatrix(camOrthoMvpMt, Convert.px2mt(camOrtho.position.x), Convert.px2mt(camOrtho.position.y),
-				Convert.px2mt(camOrtho.viewportWidth), Convert.px2mt(camOrtho.viewportHeight));
+			rayHandler.setCombinedMatrix(
+				camOrthoMvpMt, 
+				Convert.px2mt(camOrtho.position.x), 
+				Convert.px2mt(camOrtho.position.y),
+				Convert.px2mt(camOrtho.viewportWidth * camOrtho.zoom), 
+				Convert.px2mt(camOrtho.viewportHeight* camOrtho.zoom));
 			// @on
 
 			rayHandler.update();
@@ -561,7 +560,7 @@ public final class GameWorldRenderer {
 	}
 
 	public void renderLigthMap (FrameBuffer dest) {
-		rayHandler.renderLightMap(dest);
+		rayHandler.renderLightMap(ScaleUtils.PlayViewport, dest);
 	}
 
 	public void renderStaticMeshes () {
@@ -718,7 +717,6 @@ public final class GameWorldRenderer {
 	private Matrix4 mtx = new Matrix4();
 	private Matrix3 nmat = new Matrix3();
 	private Matrix4 mtx2 = new Matrix4();
-	private Vector2 pospx = new Vector2();
 
 	private int renderOrthographicAlignedModels (List<OrthographicAlignedStillModel> models, boolean depthOnly, boolean nightMode) {
 		int renderedCount = 0;

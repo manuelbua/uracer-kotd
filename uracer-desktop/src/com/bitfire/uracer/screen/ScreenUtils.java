@@ -15,7 +15,7 @@ public final class ScreenUtils {
 	/** Render the specified screen to the specified buffer. */
 	public static void copyScreen (Screen screen, FrameBuffer buffer, Color clearColor, float clearDepth, boolean useDepth) {
 		if (screen != null) {
-			// clear(buffer, clearColor, clearDepth, useDepth);
+			clear(buffer, clearColor, clearDepth, useDepth);
 
 			if (ScreenManager.currentScreen() != screen) {
 				screen.tick();

@@ -10,6 +10,7 @@ import com.badlogic.gdx.math.Rectangle;
 import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.math.Vector3;
 import com.bitfire.postprocessing.PostProcessor;
+import com.bitfire.postprocessing.PostProcessorListener;
 import com.bitfire.uracer.ScalingStrategy;
 import com.bitfire.uracer.configuration.Config;
 import com.bitfire.uracer.configuration.UserPreferences;
@@ -24,7 +25,7 @@ import com.bitfire.uracer.utils.ScaleUtils;
  * timeline, realized with the event's renderqueue mechanism.
  * 
  * @author bmanuel */
-public final class GameRenderer {
+public final class GameRenderer implements PostProcessorListener {
 	private final GL20 gl;
 	private final GameWorld world;
 	private final GameBatchRenderer batchRenderer;
@@ -39,8 +40,6 @@ public final class GameRenderer {
 		world = gameWorld;
 		gl = Gdx.graphics.getGL20();
 
-		gl.glViewport(ScaleUtils.CropX, ScaleUtils.CropY, ScaleUtils.PlayWidth, ScaleUtils.PlayHeight);
-
 		// world rendering
 		worldRenderer = new GameWorldRenderer(scalingStrategy, world);
 		batchRenderer = new GameBatchRenderer(gl);
@@ -48,13 +47,13 @@ public final class GameRenderer {
 		// initialize utils
 		ScreenUtils.init(worldRenderer, (int)scalingStrategy.referenceResolution.x, (int)scalingStrategy.referenceResolution.y);
 
+		// precompute sprite batch transform matrix
 		xform.idt();
 		xform.scale(ScaleUtils.Scale, ScaleUtils.Scale, 1);
 
 		// post-processing
 		if (UserPreferences.bool(Preference.PostProcessing)) {
-			postProcessor = new PostProcessor(ScaleUtils.PlayWidth, ScaleUtils.PlayHeight, true /* depth */, false /* alpha */,
-				Config.isDesktop /* supports32Bpp */);
+			postProcessor = new PostProcessor(ScaleUtils.PlayViewport, true /* depth */, false /* alpha */, Config.isDesktop /* supports32Bpp */);
 			PostProcessor.EnableQueryStates = false;
 			postProcessor.setClearBits(GL20.GL_COLOR_BUFFER_BIT | GL20.GL_DEPTH_BUFFER_BIT);
 			postProcessor.setClearColor(0, 0, 0, 1);
@@ -112,6 +111,11 @@ public final class GameRenderer {
 		GameEvents.gameRenderer.trigger(this, GameRendererEvent.Type.OnSubframeInterpolate);
 	}
 
+	@Override
+	public void beforeRenderToScreen () {
+		gl.glViewport(ScaleUtils.CropX, ScaleUtils.CropY, ScaleUtils.PlayWidth, ScaleUtils.PlayHeight);
+	}
+
 	public void render (FrameBuffer dest) {
 		worldRenderer.resetCounters();
 
@@ -130,8 +134,11 @@ public final class GameRenderer {
 		if (!postProcessorReady) {
 			if (hasDest) {
 				dest.begin();
+			} else {
+				gl.glViewport(ScaleUtils.CropX, ScaleUtils.CropY, ScaleUtils.PlayWidth, ScaleUtils.PlayHeight);
 			}
 
+			// gl.glViewport(ScaleUtils.CropX, ScaleUtils.CropY, ScaleUtils.PlayWidth, ScaleUtils.PlayHeight);
 			gl.glClearDepthf(1);
 			gl.glClearColor(0, 0, 0, 1);
 			gl.glClear(GL20.GL_COLOR_BUFFER_BIT | GL20.GL_DEPTH_BUFFER_BIT);
@@ -191,6 +198,8 @@ public final class GameRenderer {
 		batchRenderer.end();
 
 		if (postProcessorReady) {
+			// gl.glViewport(ScaleUtils.CropX, ScaleUtils.CropY, ScaleUtils.PlayWidth, ScaleUtils.PlayHeight);
+
 			postProcessor.render(dest);
 
 			if (hasDest) dest.begin();
@@ -216,7 +225,7 @@ public final class GameRenderer {
 	// manages and triggers debug event
 	public void debugRender () {
 		SpriteBatch batch = batchRenderer.beginTopLeft();
-		batch.setTransformMatrix(xform);
+		// batch.setTransformMatrix(xform);
 
 		// batch.disableBlending();
 		GameEvents.gameRenderer.batch = batch;
@@ -242,7 +251,8 @@ public final class GameRenderer {
 		private static Vector2 tmp2 = new Vector2();
 		private static Vector3 tmp3 = new Vector3();
 		private static GameWorldRenderer worldRenderer;
-		private static Vector2 ref2scr, scr2ref;
+
+		// private static Vector2 ref2scr, scr2ref;
 
 		public static void init (GameWorldRenderer worldRenderer, int width, int height) {
 			ScreenUtils.worldRenderer = worldRenderer;
@@ -252,37 +262,39 @@ public final class GameRenderer {
 			ScreenUtils.ScreenHeight = Gdx.graphics.getHeight();
 
 			// screen-type conversion ratios
-			ref2scr = new Vector2((float)ScreenWidth / (float)RefScreenWidth, (float)ScreenHeight / (float)RefScreenHeight);
-			scr2ref = new Vector2((float)RefScreenWidth / (float)ScreenWidth, (float)RefScreenHeight / (float)ScreenHeight);
+			// ref2scr = new Vector2((float)ScreenWidth / (float)RefScreenWidth, (float)ScreenHeight / (float)RefScreenHeight);
+			// scr2ref = new Vector2((float)RefScreenWidth / (float)ScreenWidth, (float)RefScreenHeight / (float)ScreenHeight);
 		}
 
 		/** Transforms Box2D world-mt coordinates to reference-screen pixels coordinates */
-		public static Vector2 worldMtToRefScreen (Vector2 worldPositionMt) {
-			return worldPxToRefScreen(Convert.mt2px(worldPositionMt));
+		public static Vector2 worldMtToScreen (Vector2 worldPositionMt) {
+			return worldPxToScreen(Convert.mt2px(worldPositionMt));
 		}
 
 		/** Transforms world-px coordinates to reference-screen pixel coordinates */
-		public static Vector2 worldPxToRefScreen (Vector2 worldPositionPx) {
+		public static Vector2 worldPxToScreen (Vector2 worldPositionPx) {
 			tmp3.set(worldPositionPx.x, worldPositionPx.y, 0);
 			worldRenderer.camOrtho.project(tmp3, 0, 0, RefScreenWidth, RefScreenHeight);
 			tmp2.set(tmp3.x, RefScreenHeight - tmp3.y);
 			return tmp2;
 		}
 
-		public static Vector2 worldPxToScreen (Vector2 worldPositionPx) {
-			Vector2 r = worldPxToRefScreen(worldPositionPx);
-			r.scl(ref2scr);
-			return r;
-		}
+		/** Transforms Box2D world-mt coordinates to real-screen pixels coordinates */
+		// public static Vector2 worldMtToScreen (Vector2 worldPositionMt) {
+		// Vector2 r = worldMtToRefScreen(worldPositionMt);
+		// r.scl(ref2scr);
+		// return r;
+		// }
 
-		public static Vector2 worldMtToScreen (Vector2 worldPositionMt) {
-			Vector2 r = worldMtToRefScreen(worldPositionMt);
-			r.scl(ref2scr);
-			return r;
-		}
+		/** Transforms world-px coordinates to real-screen pixel coordinates */
+		// public static Vector2 worldPxToScreen (Vector2 worldPositionPx) {
+		// Vector2 r = worldPxToRefScreen(worldPositionPx);
+		// r.scl(ref2scr);
+		// return r;
+		// }
 
 		/** Transforms reference-screen pixel coordinates to world-mt coordinates */
-		public static Vector3 screenRefToWorldMt (Vector2 screenPositionPx) {
+		public static Vector3 screenToWorldMt (Vector2 screenPositionPx) {
 			tmp3.set(screenPositionPx.x, screenPositionPx.y, 1);
 
 			// normalize and scale to the real display size

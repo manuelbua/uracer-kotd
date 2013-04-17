@@ -20,6 +20,7 @@ import com.bitfire.uracer.game.logic.post.ssao.Ssao;
 import com.bitfire.uracer.game.player.PlayerCar;
 import com.bitfire.uracer.game.rendering.GameRenderer;
 import com.bitfire.uracer.game.world.GameWorld;
+import com.bitfire.uracer.utils.ScaleUtils;
 import com.bitfire.utils.Hash;
 
 /** Encapsulates a post-processor animator that manages effects such as bloom and zoomblur to compose and enhance the gaming
@@ -70,7 +71,10 @@ public final class PostProcessing {
 		gameRenderer.disableNormalDepthMap();
 
 		if (UserPreferences.bool(Preference.Ssao)) {
-			addEffect(Effects.Ssao.name, new Ssao(Ssao.Quality.valueOf(UserPreferences.string(Preference.SsaoQuality)), isNightMode));
+			addEffect(
+				Effects.Ssao.name,
+				new Ssao(ScaleUtils.PlayWidth, ScaleUtils.PlayHeight, Ssao.Quality.valueOf(UserPreferences
+					.string(Preference.SsaoQuality)), isNightMode));
 			gameRenderer.enableNormalDepthMap();
 		}
 
@@ -78,7 +82,8 @@ public final class PostProcessing {
 
 		if (UserPreferences.bool(Preference.ZoomRadialBlur)) {
 			RadialBlur.Quality rbq = RadialBlur.Quality.valueOf(UserPreferences.string(Preference.ZoomRadialBlurQuality));
-			Zoomer z = (UserPreferences.bool(Preference.ZoomRadialBlur) ? new Zoomer(rbq) : new Zoomer());
+			Zoomer z = (UserPreferences.bool(Preference.ZoomRadialBlur) ? new Zoomer(ScaleUtils.RefScreenWidth,
+				ScaleUtils.RefScreenHeight, rbq) : new Zoomer(ScaleUtils.RefScreenWidth, ScaleUtils.RefScreenHeight));
 			z.setBlurStrength(0);
 			z.setZoom(1);
 			addEffect(Effects.Zoomer.name, z);
@@ -91,11 +96,13 @@ public final class PostProcessing {
 		if (UserPreferences.bool(Preference.Vignetting)) {
 			// if there is no bloom, let's control the final saturation via
 			// the vignette filter
-			addEffect(Effects.Vignette.name, new Vignette(!UserPreferences.bool(Preference.Bloom)));
+			addEffect(Effects.Vignette.name,
+				new Vignette(ScaleUtils.PlayWidth, ScaleUtils.PlayHeight, !UserPreferences.bool(Preference.Bloom)));
 		}
 
 		if (UserPreferences.bool(Preference.CrtScreen)) {
-			addEffect(Effects.Crt.name, new CrtMonitor(UserPreferences.bool(Preference.EarthCurvature), false));
+			addEffect(Effects.Crt.name,
+				new CrtMonitor(ScaleUtils.PlayWidth, ScaleUtils.PlayHeight, UserPreferences.bool(Preference.EarthCurvature), false));
 		} else if (UserPreferences.bool(Preference.EarthCurvature)) {
 			addEffect(Effects.Curvature.name, new Curvature());
 		}

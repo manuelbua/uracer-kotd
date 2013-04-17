@@ -78,7 +78,7 @@ public final class CarHighlighter {
 
 	public void render (SpriteBatch batch, float cameraZoom) {
 		if (isActive && hasCar) {
-			tmp.set(GameRenderer.ScreenUtils.worldPxToRefScreen(renderState.position));
+			tmp.set(GameRenderer.ScreenUtils.worldPxToScreen(renderState.position));
 
 			float timeFactor = URacer.Game.getTimeModFactor() * 0.3f;
 			float s = 1f + timeFactor;

@@ -224,8 +224,8 @@ public final class GameWorld {
 
 		RayHandler.setColorPrecisionMediump();
 
-		rayHandler = new RayHandler(box2dWorld, maxRays, (int)(Gdx.graphics.getWidth() * rttScale),
-			(int)(Gdx.graphics.getHeight() * rttScale), true);
+		rayHandler = new RayHandler(box2dWorld, maxRays, (int)(ScaleUtils.PlayWidth * rttScale),
+			(int)(ScaleUtils.PlayHeight * rttScale), true);
 		rayHandler.setShadows(true);
 		rayHandler.setCulling(true);
 		rayHandler.setBlur(true);

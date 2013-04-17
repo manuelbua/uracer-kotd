@@ -7,7 +7,6 @@ import aurelienribon.tweenengine.Tween;
 import aurelienribon.tweenengine.TweenCallback;
 import aurelienribon.tweenengine.equations.Quad;
 
-import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.math.MathUtils;
 import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.math.WindowedMean;
@@ -31,6 +30,7 @@ import com.bitfire.uracer.resources.Art;
 import com.bitfire.uracer.utils.AMath;
 import com.bitfire.uracer.utils.BoxedFloat;
 import com.bitfire.uracer.utils.BoxedFloatAccessor;
+import com.bitfire.uracer.utils.ScaleUtils;
 
 public final class AggressiveCold implements PostProcessingAnimator {
 	public static final String Name = "AggressiveCold";
@@ -177,7 +177,7 @@ public final class AggressiveCold implements PostProcessingAnimator {
 		if (vignette != null) {
 			vignette.setCoords(0.85f, 0.3f);
 			// vignette.setCoords( 1.5f, 0.1f );
-			vignette.setCenter(Gdx.graphics.getWidth() / 2, Gdx.graphics.getHeight() / 2);
+			vignette.setCenter(ScaleUtils.PlayWidth / 2, ScaleUtils.PlayHeight / 2);
 			vignette.setLutTexture(Art.postXpro);
 			vignette.setLutIndexVal(0, 16);
 			vignette.setLutIndexVal(1, 7);
@@ -290,7 +290,6 @@ public final class AggressiveCold implements PostProcessingAnimator {
 
 			autoEnableZoomBlur(blurStrength);
 
-			zoom.setEnabled(true);
 			if (zoom.isEnabled()) {
 				zoom.setOrigin(playerScreenPos);
 				zoom.setBlurStrength(blurStrength);
