@@ -40,13 +40,12 @@ public final class CarHighlighter {
 		alpha = 1;
 	}
 
-	public void setCar (Car car, float carScale) {
+	public void setCar (Car car) {
 		hasCar = true;
 		followedCar = car;
 		renderState = followedCar.state();
 
-		sprite.setSize(car.getRenderer().getFacet().getWidth() * carScale * 1.4f, car.getRenderer().getFacet().getHeight()
-			* carScale * 1.4f);
+		sprite.setSize(car.getRenderer().getFacet().getWidth() * 1.4f, car.getRenderer().getFacet().getHeight() * 1.4f);
 		sprite.setOrigin(sprite.getWidth() / 2, sprite.getHeight() / 2);
 
 		offX = sprite.getOriginX();

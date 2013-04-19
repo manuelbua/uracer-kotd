@@ -60,7 +60,7 @@ public final class PlayerGameTasks {
 		playerSmokeTrails = new PlayerSmokeTrails(scalingStrategy, player);
 
 		// hud, player's information
-		hudPlayer = new HudPlayer(userProfile, scalingStrategy.tileMapZoomFactor, player, renderer);
+		hudPlayer = new HudPlayer(userProfile, player, renderer);
 		hudPlayerStatic = new HudPlayerStatic(userProfile, player);
 
 		// hud, player's lap info
