@@ -3,6 +3,7 @@ package com.bitfire.uracer.game.screens;
 
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Input.Keys;
+import com.badlogic.gdx.graphics.Camera;
 import com.badlogic.gdx.graphics.GL20;
 import com.badlogic.gdx.graphics.glutils.FrameBuffer;
 import com.badlogic.gdx.scenes.scene2d.Actor;
@@ -24,6 +25,7 @@ import com.bitfire.uracer.game.screens.GameScreensFactory.ScreenType;
 import com.bitfire.uracer.resources.Art;
 import com.bitfire.uracer.screen.Screen;
 import com.bitfire.uracer.utils.ScaleUtils;
+import com.bitfire.uracer.utils.UICamera;
 import com.bitfire.uracer.utils.UIUtils;
 
 public final class MainScreen extends Screen {
@@ -47,9 +49,14 @@ public final class MainScreen extends Screen {
 	}
 
 	private void setupUI () {
-		ui = new Stage(ScaleUtils.RefScreenWidth, ScaleUtils.RefScreenHeight, false);
+		ui = new Stage(0, 0, false);
+		Camera uicam = new UICamera();
+		ui.setCamera(uicam);
+		ui.setViewport(ScaleUtils.RefScreenWidth, ScaleUtils.RefScreenHeight, false);
 		ui.getCamera().translate(-ui.getGutterWidth(), -ui.getGutterHeight(), 0);
+
 		root = new Table();
+		// root.setSize(ScaleUtils.RefScreenWidth, ScaleUtils.RefScreenHeight);
 		root.setSize(ui.getWidth(), ui.getHeight());
 		ui.addActor(root);
 

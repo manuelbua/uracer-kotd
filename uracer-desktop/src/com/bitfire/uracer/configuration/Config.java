@@ -7,6 +7,7 @@ import com.bitfire.postprocessing.filters.Blur;
 import com.bitfire.postprocessing.filters.Blur.BlurType;
 import com.bitfire.uracer.game.logic.helpers.CameraController.InterpolationMode;
 import com.bitfire.uracer.utils.NumberString;
+import com.bitfire.uracer.utils.ScaleUtils;
 
 public final class Config {
 	public static boolean isDesktop;
@@ -120,20 +121,22 @@ public final class Config {
 		// compute per-resolution constants
 		public static void asDefault () {
 
-			BloomFboWidth = (int)(Gdx.graphics.getWidth() * RttRatio);
-			BloomFboHeight = (int)(Gdx.graphics.getHeight() * RttRatio);
+			BloomFboWidth = (int)((float)ScaleUtils.PlayWidth * RttRatio);
+			BloomFboHeight = (int)((float)ScaleUtils.PlayHeight * RttRatio);
+			BlurType = Blur.BlurType.Gaussian5x5b;
+			BlurNumPasses = 2;
 
-			int w = Gdx.graphics.getWidth();
-			if (w >= 1400) {
-				BlurType = Blur.BlurType.Gaussian5x5b;
-				BlurNumPasses = 2;
-			} else if (w >= 1200) {
-				BlurType = Blur.BlurType.Gaussian5x5b;
-				BlurNumPasses = 2;
-			} else if (w >= 800) {
-				BlurType = Blur.BlurType.Gaussian3x3b;
-				BlurNumPasses = 2;
-			}
+			// int w = Gdx.graphics.getWidth();
+			// if (w >= 1400) {
+			// BlurType = Blur.BlurType.Gaussian5x5b;
+			// BlurNumPasses = 2;
+			// } else if (w >= 1200) {
+			// BlurType = Blur.BlurType.Gaussian5x5b;
+			// BlurNumPasses = 2;
+			// } else if (w >= 800) {
+			// BlurType = Blur.BlurType.Gaussian3x3b;
+			// BlurNumPasses = 2;
+			// }
 
 			Gdx.app.log("Config", "blurType=" + BlurType);
 		}
