@@ -28,7 +28,6 @@ import com.badlogic.gdx.math.Rectangle;
 import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.math.Vector3;
 import com.badlogic.gdx.math.collision.BoundingBox;
-import com.bitfire.uracer.ScalingStrategy;
 import com.bitfire.uracer.configuration.Config;
 import com.bitfire.uracer.configuration.UserPreferences;
 import com.bitfire.uracer.configuration.UserPreferences.Preference;
@@ -113,7 +112,6 @@ public final class GameWorldRenderer {
 
 	public OrthogonalTiledMapRenderer tileMapRenderer = null;
 	private GameTrackDebugRenderer gameTrackDbgRenderer = null;
-	private ScalingStrategy scalingStrategy = null;
 
 	// deferred stuff
 	private Mesh plane;
@@ -136,8 +134,7 @@ public final class GameWorldRenderer {
 	private TrackWalls trackWalls = null;
 	private ConeLight playerLightsA = null, playerLightsB = null;
 
-	public GameWorldRenderer (ScalingStrategy strategy, GameWorld world) {
-		scalingStrategy = strategy;
+	public GameWorldRenderer (GameWorld world) {
 		this.world = world;
 		gl = Gdx.gl20;
 		rayHandler = world.getRayHandler();
@@ -249,14 +246,14 @@ public final class GameWorldRenderer {
 		// creates and setup perspective camera
 		// strategically choosen near/far planes, Blender models' 14.2 meters <=> one 256px tile
 		// with far plane @48
-		camPersp = new PerspectiveCamera(scalingStrategy.verticalFov, ScaleUtils.RefScreenWidth, ScaleUtils.RefScreenHeight);
+		camPersp = new PerspectiveCamera(47.27123f, ScaleUtils.RefScreenWidth, ScaleUtils.RefScreenHeight);
 		camPersp.near = CamPerspPlaneNear;
 		camPersp.far = CamPerspPlaneFar;
 		camPersp.lookAt(0, 0, -1);
 		camPersp.position.set(camTilemap.position.x, camTilemap.position.y, CamPerspElevation);
 		camPersp.update();
 
-		camController = new CameraController(Config.Graphics.CameraInterpolationMode, halfViewport, world.worldSizeScaledPx,
+		camController = new CameraController(Config.Graphics.CameraInterpolationMode, halfViewport, world.worldSizePx,
 			world.worldSizeTiles);
 	}
 
@@ -442,7 +439,7 @@ public final class GameWorldRenderer {
 		camTilemap.viewportHeight = ScaleUtils.RefScreenHeight;
 
 		camTilemap.position.set(camOrtho.position);
-		camTilemap.position.y = world.worldSizeScaledPx.y - camTilemap.position.y;
+		camTilemap.position.y = world.worldSizePx.y - camTilemap.position.y;
 		// camTilemap.position.scl(ScaleUtils.Scale);
 		// camTilemap.zoom = ScaleUtils.Scale * zoom;
 		camTilemap.zoom = zoom;
@@ -534,7 +531,7 @@ public final class GameWorldRenderer {
 
 		ShaderProgram shader = shNormalDepth;
 		float meshZ = -(camPersp.far - camPersp.position.z) + (camPersp.far * (1 - (camOrtho.zoom)));
-		float k = scalingStrategy.meshScaleFactor * OrthographicAlignedStillModel.BlenderToURacer * scalingStrategy.to256;
+		float k = OrthographicAlignedStillModel.BlenderToURacer;
 		float scalex = 6, scalez = 4;
 
 		Matrix4 model = mtx;

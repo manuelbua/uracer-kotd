@@ -11,7 +11,6 @@ import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.math.Vector3;
 import com.bitfire.postprocessing.PostProcessor;
 import com.bitfire.postprocessing.PostProcessorListener;
-import com.bitfire.uracer.ScalingStrategy;
 import com.bitfire.uracer.configuration.Config;
 import com.bitfire.uracer.configuration.UserPreferences;
 import com.bitfire.uracer.configuration.UserPreferences.Preference;
@@ -36,16 +35,16 @@ public final class GameRenderer implements PostProcessorListener {
 	private final Matrix4 identity = new Matrix4();
 	private final Matrix4 xform = new Matrix4();
 
-	public GameRenderer (GameWorld gameWorld, ScalingStrategy scalingStrategy) {
+	public GameRenderer (GameWorld gameWorld) {
 		world = gameWorld;
 		gl = Gdx.graphics.getGL20();
 
 		// world rendering
-		worldRenderer = new GameWorldRenderer(scalingStrategy, world);
+		worldRenderer = new GameWorldRenderer(world);
 		batchRenderer = new GameBatchRenderer(gl);
 
 		// initialize utils
-		ScreenUtils.init(worldRenderer, (int)scalingStrategy.referenceResolution.x, (int)scalingStrategy.referenceResolution.y);
+		ScreenUtils.init(worldRenderer);
 
 		// precompute sprite batch transform matrix
 		xform.idt();
@@ -247,7 +246,6 @@ public final class GameRenderer implements PostProcessorListener {
 	/** Manages to convert world positions expressed in meters or pixels to the corresponding position to screen pixels. To use this
 	 * class, the GameWorldRenderer MUST be already constructed and initialized. */
 	public static final class ScreenUtils {
-		private static int RefScreenWidth, RefScreenHeight;
 		private static int ScreenWidth, ScreenHeight;
 		private static Vector2 tmp2 = new Vector2();
 		private static Vector3 tmp3 = new Vector3();
@@ -255,16 +253,10 @@ public final class GameRenderer implements PostProcessorListener {
 
 		// private static Vector2 ref2scr, scr2ref;
 
-		public static void init (GameWorldRenderer worldRenderer, int width, int height) {
+		public static void init (GameWorldRenderer worldRenderer) {
 			ScreenUtils.worldRenderer = worldRenderer;
-			ScreenUtils.RefScreenWidth = width;
-			ScreenUtils.RefScreenHeight = height;
 			ScreenUtils.ScreenWidth = Gdx.graphics.getWidth();
 			ScreenUtils.ScreenHeight = Gdx.graphics.getHeight();
-
-			// screen-type conversion ratios
-			// ref2scr = new Vector2((float)ScreenWidth / (float)RefScreenWidth, (float)ScreenHeight / (float)RefScreenHeight);
-			// scr2ref = new Vector2((float)RefScreenWidth / (float)ScreenWidth, (float)RefScreenHeight / (float)ScreenHeight);
 		}
 
 		/** Transforms Box2D world-mt coordinates to reference-screen pixels coordinates */
@@ -275,8 +267,8 @@ public final class GameRenderer implements PostProcessorListener {
 		/** Transforms world-px coordinates to reference-screen pixel coordinates */
 		public static Vector2 worldPxToScreen (Vector2 worldPositionPx) {
 			tmp3.set(worldPositionPx.x, worldPositionPx.y, 0);
-			worldRenderer.camOrtho.project(tmp3, 0, 0, RefScreenWidth, RefScreenHeight);
-			tmp2.set(tmp3.x, RefScreenHeight - tmp3.y);
+			worldRenderer.camOrtho.project(tmp3, 0, 0, ScaleUtils.RefScreenWidth, ScaleUtils.RefScreenHeight);
+			tmp2.set(tmp3.x, ScaleUtils.RefScreenHeight - tmp3.y);
 			return tmp2;
 		}
 
@@ -299,8 +291,8 @@ public final class GameRenderer implements PostProcessorListener {
 			tmp3.set(screenPositionPx.x, screenPositionPx.y, 1);
 
 			// normalize and scale to the real display size
-			tmp3.x = (tmp3.x / RefScreenWidth) * ScreenWidth;
-			tmp3.y = (tmp3.y / RefScreenHeight) * ScreenHeight;
+			tmp3.x = (tmp3.x / (float)ScaleUtils.RefScreenWidth) * ScreenWidth;
+			tmp3.y = (tmp3.y / (float)ScaleUtils.RefScreenHeight) * ScreenHeight;
 
 			worldRenderer.camOrtho.unproject(tmp3, 0, 0, ScreenWidth, ScreenHeight);
 

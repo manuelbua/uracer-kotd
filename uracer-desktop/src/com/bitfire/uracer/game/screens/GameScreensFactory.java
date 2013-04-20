@@ -1,7 +1,6 @@
 
 package com.bitfire.uracer.game.screens;
 
-import com.bitfire.uracer.ScalingStrategy;
 import com.bitfire.uracer.screen.Screen;
 import com.bitfire.uracer.screen.ScreenFactory;
 
@@ -40,16 +39,11 @@ public final class GameScreensFactory implements ScreenFactory {
 		}
 
 		if (screen != null) {
-			screen.init(strategy);
+			screen.init();
 		}
 
 		return screen;
 	}
 
-	private ScalingStrategy strategy;
 	private ScreenType[] types = ScreenType.values();
-
-	public GameScreensFactory (ScalingStrategy strategy) {
-		this.strategy = strategy;
-	}
 }

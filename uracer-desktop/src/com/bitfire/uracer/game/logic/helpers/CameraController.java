@@ -6,7 +6,6 @@ import com.badlogic.gdx.math.Rectangle;
 import com.badlogic.gdx.math.Vector2;
 import com.bitfire.uracer.game.rendering.GameWorldRenderer;
 import com.bitfire.uracer.utils.AMath;
-import com.bitfire.uracer.utils.Convert;
 import com.bitfire.uracer.utils.VMath;
 
 public class CameraController {
@@ -116,7 +115,7 @@ public class CameraController {
 
 				@Override
 				public void setInitialPositionOrientation (Vector2 position, float orient, float zoom) {
-					amount = Convert.scaledPixels(224);
+					amount = 224;
 					float x_ratio = position.x / (worldSizeScaledPx.x);
 					float y_ratio = position.y / (worldSizeScaledPx.y);
 					pheading.set(VMath.fromDegrees(orient));

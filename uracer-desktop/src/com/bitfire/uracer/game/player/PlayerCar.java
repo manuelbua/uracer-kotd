@@ -25,6 +25,7 @@ import com.bitfire.uracer.game.world.GameWorld;
 import com.bitfire.uracer.game.world.WorldDefs.Layer;
 import com.bitfire.uracer.utils.AMath;
 import com.bitfire.uracer.utils.Convert;
+import com.bitfire.uracer.utils.ScaleUtils;
 import com.bitfire.uracer.utils.Timer;
 import com.bitfire.uracer.utils.VMath;
 
@@ -59,8 +60,8 @@ public class PlayerCar extends Car {
 		carInput = new CarInput();
 		impacts = 0;
 
-		invWidth = 1 / gameWorld.scalingStrategy.referenceResolution.x;
-		invHeight = 1 / gameWorld.scalingStrategy.referenceResolution.y;
+		invWidth = 1f / (float)ScaleUtils.RefScreenWidth;
+		invHeight = 1f / (float)ScaleUtils.RefScreenHeight;
 
 		// strategy = gameWorld.scalingStrategy;
 		carDesc = new CarDescriptor(preset.model);
@@ -276,14 +277,14 @@ public class PlayerCar extends Car {
 
 		if (frictionMap != null && gameWorld.isValidTilePosition(tilePosition)) {
 			// compute realsize-based pixel offset car-tile (top-left origin)
-			float scaledTileSize = gameWorld.getTileSizeScaled();
+			float scaledTileSize = gameWorld.getTileSizePx();
 			float tsx = tilePosition.x * scaledTileSize;
 			float tsy = tilePosition.y * scaledTileSize;
 			offset.set(Convert.mt2px(getBody().getPosition()));
-			offset.y = gameWorld.worldSizeScaledPx.y - offset.y;
+			offset.y = gameWorld.worldSizePx.y - offset.y;
 			offset.x = offset.x - tsx;
 			offset.y = offset.y - tsy;
-			offset.scl(gameWorld.getTileSizeInvScaled()).scl(gameWorld.tileWidth);
+			offset.scl(gameWorld.getTileSizePxInv()).scl(gameWorld.tileWidth);
 
 			TiledMapTileLayer layerTrack = gameWorld.getLayer(Layer.Track);
 

@@ -12,9 +12,6 @@ import com.bitfire.uracer.utils.ScaleUtils;
 public final class Input implements Disposable {
 	public static final int MaxPointers = 2;
 
-	// scaling
-	private ScalingStrategy scalingStrategy;
-
 	// keys
 	private int[] buttons = new int[256];
 	private int anyKeyButton = 0;
@@ -28,9 +25,7 @@ public final class Input implements Disposable {
 	private static final int FLAG_CUR_ON = 4;
 	private static final int FLAG_LAST_ON = 8;
 
-	public Input (ScalingStrategy scalingStrategy) {
-		this.scalingStrategy = scalingStrategy;
-
+	public Input () {
 		for (int p = 0; p < MaxPointers; p++) {
 			pointer[p] = new Pointer( /* p */);
 		}

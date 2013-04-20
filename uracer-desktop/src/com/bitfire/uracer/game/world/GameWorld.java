@@ -35,7 +35,6 @@ import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.math.Vector3;
 import com.badlogic.gdx.physics.box2d.World;
 import com.badlogic.gdx.utils.GdxRuntimeException;
-import com.bitfire.uracer.ScalingStrategy;
 import com.bitfire.uracer.configuration.Config;
 import com.bitfire.uracer.game.GameTracks;
 import com.bitfire.uracer.game.collisions.CollisionFilters;
@@ -66,13 +65,14 @@ public final class GameWorld {
 	// public level data
 	public final TiledMap map;
 	public final int mapWidth, mapHeight, tileWidth, tileHeight;
-	public final Vector2 worldSizeScaledPx, worldSizeTiles, worldSizeMt;
-	public final ScalingStrategy scalingStrategy;
+	public final float invTileWidth;
+	public final Vector2 worldSizePx, worldSizeTiles, worldSizeMt;
 
-	// private level data
+	// private data
 	private World box2dWorld;
 	private final MapUtils mapUtils;
 	private final String trackId;
+	private final float pixelsPerMeterFactor;
 
 	// player data
 	public TrackPosition playerStart = null;
@@ -96,8 +96,10 @@ public final class GameWorld {
 	private List<Vector2> route = new ArrayList<Vector2>();
 	private List<Polygon> polys = new ArrayList<Polygon>();
 
-	public GameWorld (ScalingStrategy strategy, String trackId, boolean nightMode) {
-		scalingStrategy = strategy;
+	public GameWorld (String trackId, boolean nightMode) {
+		float widthRatio = (float)ScaleUtils.RefScreenWidth / (float)ScaleUtils.PlayWidth;
+		pixelsPerMeterFactor = ((widthRatio * 256f) / 224f) * ScaleUtils.Scale;
+
 		box2dWorld = new World(new Vector2(0, 0), false);
 		box2dWorld.setContactListener(new GameWorldContactListener());
 
@@ -118,15 +120,15 @@ public final class GameWorld {
 		mapHeight = map.getProperties().get("height", int.class);
 		tileWidth = map.getProperties().get("tilewidth", int.class);
 		tileHeight = map.getProperties().get("tileheight", int.class);
+		invTileWidth = 1f / (float)tileWidth;
 
 		// compute world size
 		worldSizeTiles = new Vector2(mapWidth, mapHeight);
-		worldSizeScaledPx = new Vector2(mapWidth * tileWidth, mapHeight * tileHeight);
-		worldSizeScaledPx.set(Convert.scaledPixels(worldSizeScaledPx));
-		worldSizeMt = new Vector2(Convert.upx2mt(mapWidth * tileWidth), Convert.upx2mt(mapHeight * tileHeight));
+		worldSizePx = new Vector2(mapWidth * tileWidth, mapHeight * tileHeight);
+		worldSizeMt = new Vector2(Convert.px2mt(mapWidth * tileWidth), Convert.px2mt(mapHeight * tileHeight));
 
 		// initialize tilemap utils
-		mapUtils = new MapUtils(map, tileWidth, mapHeight, worldSizeScaledPx, 1 /* scalingStrategy.invTileMapZoomFactor */);
+		mapUtils = new MapUtils(map, tileWidth, mapHeight, worldSizePx);
 
 		createMeshes();
 		route = createRoute();
@@ -187,7 +189,7 @@ public final class GameWorld {
 					o.getProperties().get("type", String.class),
 					o.getProperties().get("x", Integer.class), 
 					o.getProperties().get("y", Integer.class), 
-					scale*scalingStrategy.pixelsPerMeterFactor*ScaleUtils.Scale
+					scale * pixelsPerMeterFactor
 				);
 				// @on
 
@@ -267,8 +269,8 @@ public final class GameWorld {
 
 			RectangleMapObject o = (RectangleMapObject)group.getObjects().get(i);
 			pos.set(o.getRectangle().x, o.getRectangle().y);// .scl(scalingStrategy.invTileMapZoomFactor);
-			pos.y = worldSizeScaledPx.y - pos.y;
-			pos.set(Convert.upx2mt(pos));// .scl(scalingStrategy.tileMapZoomFactor);
+			pos.y = worldSizePx.y - pos.y;
+			pos.set(Convert.px2mt(pos));// .scl(scalingStrategy.tileMapZoomFactor);
 
 			PointLight l = new PointLight(rayHandler, maxRays, c, MathUtils.random(20f, 30f), pos.x, pos.y);
 			l.setSoft(true);
@@ -313,15 +315,15 @@ public final class GameWorld {
 				// points.get(points.size() - 1).set(points.get(0));
 
 				offsetMt.set(o.getPolyline().getX(), o.getPolyline().getY());
-				offsetMt.set(Convert.upx2mt(offsetMt));
+				offsetMt.set(Convert.px2mt(offsetMt));
 
-				fromMt.set(Convert.upx2mt(points.get(0))).add(offsetMt);
+				fromMt.set(Convert.px2mt(points.get(0))).add(offsetMt);
 				fromMt.y = worldSizeMt.y - fromMt.y;
 
 				r.add(new Vector2(fromMt));
 
 				for (int j = 1; j <= points.size() - 1; j++) {
-					toMt.set(Convert.upx2mt(points.get(j))).add(offsetMt);
+					toMt.set(Convert.px2mt(points.get(j))).add(offsetMt);
 					toMt.y = worldSizeMt.y - toMt.y;
 					r.add(new Vector2(toMt));
 				}
@@ -363,12 +365,12 @@ public final class GameWorld {
 					}
 
 					offsetMt.set(o.getPolygon().getX(), o.getPolygon().getY());
-					offsetMt.set(Convert.upx2mt(offsetMt));
+					offsetMt.set(Convert.px2mt(offsetMt));
 
 					float[] vertices = new float[8];
 					for (int j = 0; j < points.size(); j++) {
 						// convert to uracer convention
-						pt.set(Convert.upx2mt(points.get(j))).add(offsetMt);
+						pt.set(Convert.px2mt(points.get(j))).add(offsetMt);
 						pt.y = worldSizeMt.y - pt.y;
 
 						vertices[j * 2] = pt.x;
@@ -428,13 +430,13 @@ public final class GameWorld {
 						float[] mags = new float[points.size() - 1];
 
 						offsetMt.set(o.getPolyline().getX(), o.getPolyline().getY());
-						offsetMt.set(Convert.upx2mt(offsetMt));
+						offsetMt.set(Convert.px2mt(offsetMt));
 
-						fromMt.set(Convert.upx2mt(points.get(0))).add(offsetMt);
+						fromMt.set(Convert.px2mt(points.get(0))).add(offsetMt);
 						fromMt.y = worldSizeMt.y - fromMt.y;
 
 						for (int j = 1; j <= points.size() - 1; j++) {
-							toMt.set(Convert.upx2mt(points.get(j))).add(offsetMt);
+							toMt.set(Convert.px2mt(points.get(j))).add(offsetMt);
 							toMt.y = worldSizeMt.y - toMt.y;
 
 							// create box2d wall
@@ -452,10 +454,9 @@ public final class GameWorld {
 						StillSubMesh[] subMeshes = new StillSubMesh[1];
 						subMeshes[0] = new StillSubMesh("wall", mesh, GL10.GL_TRIANGLES);
 
-						OrthographicAlignedStillModel model = new OrthographicAlignedStillModel(new StillModel(subMeshes), mat,
-							scalingStrategy);
+						OrthographicAlignedStillModel model = new OrthographicAlignedStillModel(new StillModel(subMeshes), mat);
 
-						model.setPosition(o.getPolyline().getX(), worldSizeScaledPx.y - o.getPolyline().getY());
+						model.setPosition(o.getPolyline().getX(), worldSizePx.y - o.getPolyline().getY());
 						model.setScale(1);
 
 						models.add(model);
@@ -493,7 +494,7 @@ public final class GameWorld {
 		MathUtils.random.setSeed(Long.MIN_VALUE);
 
 		// scaling factors
-		float factor = scalingStrategy.pixelsPerMeterFactor * ScaleUtils.Scale;
+		float factor = pixelsPerMeterFactor;
 		float oneOnWorld3DFactor = 1f / OrthographicAlignedStillModel.World3DScalingFactor;
 		float wallHeightMt = 5f * factor * oneOnWorld3DFactor;
 		float textureScalingU = 0.5f;
@@ -528,7 +529,7 @@ public final class GameWorld {
 
 			coordU = mag * textureScalingU;
 
-			in.set(Convert.upx2mt(points.get(i)));
+			in.set(Convert.px2mt(points.get(i)));
 			in.y = -in.y;
 			in.scl(factor * oneOnWorld3DFactor);
 
@@ -676,7 +677,7 @@ public final class GameWorld {
 						model = ModelFactory.createTree(
 							o.getProperties().get("type", String.class),
 							o.getRectangle().x,
-							worldSizeScaledPx.y - o.getRectangle().y,
+							worldSizePx.y - o.getRectangle().y,
 							scale);
 						//@on
 					} else {
@@ -756,24 +757,16 @@ public final class GameWorld {
 
 	// helpers from maputils
 
-	public Vector2 positionFor (float x, float y) {
-		return mapUtils.positionFor(x, y);
-	}
-
-	public Vector2 positionFor (Vector2 position) {
-		return mapUtils.positionFor(position.x, position.y);
-	}
-
 	public Vector2 pxToTile (float x, float y) {
 		return mapUtils.pxToTile(x, y);
 	}
 
-	public float getTileSizeScaled () {
-		return mapUtils.scaledTilesize;
+	public float getTileSizePx () {
+		return tileWidth;
 	}
 
-	public float getTileSizeInvScaled () {
-		return mapUtils.invScaledTilesize;
+	public float getTileSizePxInv () {
+		return invTileWidth;
 	}
 
 	public TiledMapTileLayer getLayer (Layer layer) {

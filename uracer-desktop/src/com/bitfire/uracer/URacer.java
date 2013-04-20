@@ -48,7 +48,6 @@ public class URacer implements ApplicationListener {
 	private static boolean running = false;
 	private static final boolean useRealFrametime = true;// Config.isDesktop;
 
-	private static ScalingStrategy scalingStrategy;
 	private float temporalAliasing = 0;
 	private long timeAccuNs = 0;
 	private long timeStepHz = 0;
@@ -129,14 +128,12 @@ public class URacer implements ApplicationListener {
 		// factors)
 		Vector2 refScreen = new Vector2(1280, 800);
 		ScaleUtils.init(refScreen);
-		scalingStrategy = new ScalingStrategy(refScreen, 70f, 224, 1f);
 
 		// create input system
-		input = new Input(scalingStrategy);
+		input = new Input();
 		Gdx.app.log("URacer", "input system created.");
 
-		BitmapFontFactory.init(scalingStrategy);
-		ScreenFactory screenFactory = new GameScreensFactory(scalingStrategy);
+		ScreenFactory screenFactory = new GameScreensFactory();
 		TransitionFactory.init(screenFactory);
 
 		// load default private configuration
@@ -145,12 +142,10 @@ public class URacer implements ApplicationListener {
 		UserPreferences.load();
 		ScreensShared.loadFromUserPrefs();
 
-		Convert.init(scalingStrategy.tileMapZoomFactor, Config.Physics.PixelsPerMeter);
+		Convert.init(Config.Physics.PixelsPerMeter);
 		Art.init();
 		SpriteBatchUtils.init(Art.debugFont, Art.DebugFontWidth);
 		Sounds.init();
-
-		ModelFactory.init(scalingStrategy);
 
 		Gdx.graphics.setVSync(true);
 

@@ -13,6 +13,7 @@ public class ScaleUtils {
 	public static int CropX, CropY;
 	public static Rectangle PlayViewport;
 	public static float Scale;
+	public static float RefAspect;
 
 	// private static Vector2 ref2scr = new Vector2();
 
@@ -23,20 +24,20 @@ public class ScaleUtils {
 		RefScreenHeight = (int)refScreen.y;
 
 		// Maintain the aspect ratio by letterboxing.
-		float refAspect = (float)RefScreenWidth / (float)RefScreenHeight;
+		RefAspect = (float)RefScreenWidth / (float)RefScreenHeight;
 		float physicalWidth = (float)ScreenWidth;
 		float physicalHeight = (float)ScreenHeight;
 		float aspect = physicalWidth / physicalHeight;
 
 		CropX = 0;
 		CropY = 0;
-		if (aspect > refAspect) {
+		if (aspect > RefAspect) {
 
 			// Letterbox left and right
 			Scale = physicalHeight / (float)RefScreenHeight;
 			CropX = (int)((physicalWidth - (float)RefScreenWidth * Scale) / 2f);
 
-		} else if (aspect < refAspect) {
+		} else if (aspect < RefAspect) {
 
 			// Letterbox above and below
 			Scale = physicalWidth / (float)RefScreenWidth;

@@ -25,7 +25,6 @@ import com.bitfire.postprocessing.utils.PingPongBuffer;
 import com.bitfire.uracer.events.GameRendererEvent;
 import com.bitfire.uracer.events.GameRendererEvent.Order;
 import com.bitfire.uracer.game.GameEvents;
-import com.bitfire.uracer.utils.Convert;
 import com.bitfire.uracer.utils.ScaleUtils;
 import com.bitfire.utils.ShaderLoader;
 
@@ -107,7 +106,7 @@ public final class Ssao extends PostProcessorEffect {
 		bytes.flip();
 		randomField.draw(pixels, 0, 0);
 		pixels.dispose();
-		// enableDebug();
+		enableDebug();
 	}
 
 	@Override
@@ -171,18 +170,17 @@ public final class Ssao extends PostProcessorEffect {
 
 		float w = (tex.getWidth() * scale);
 		float h = (tex.getHeight() * scale);
-		float x = ScaleUtils.PlayWidth - w - Convert.scaledPixels(10);
-		float y = index * Convert.scaledPixels(10);
+		float x = ScaleUtils.RefScreenWidth - w - 10;
+		float y = index * 10;
 		batch.draw(tex, x, y, w, h);
 	}
 
 	private void dbgTextureW (SpriteBatch batch, float width, Texture tex, int index) {
 		if (tex == null) return;
 
-		float ratio = ((float)ScaleUtils.PlayWidth / (float)ScaleUtils.PlayHeight);
-		float h = width / ratio;
-		float x = ScaleUtils.PlayWidth - width - Convert.scaledPixels(10);
-		float y = index * Convert.scaledPixels(10);
+		float h = width / ScaleUtils.RefAspect;
+		float x = ScaleUtils.RefScreenWidth - width - 10;
+		float y = index * 10;
 		batch.draw(tex, x, y, width, h);
 	}
 

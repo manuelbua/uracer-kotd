@@ -17,7 +17,6 @@ import com.badlogic.gdx.scenes.scene2d.ui.TextButton;
 import com.badlogic.gdx.scenes.scene2d.utils.ChangeListener;
 import com.badlogic.gdx.scenes.scene2d.utils.ClickListener;
 import com.bitfire.uracer.Input;
-import com.bitfire.uracer.ScalingStrategy;
 import com.bitfire.uracer.URacer;
 import com.bitfire.uracer.configuration.Config;
 import com.bitfire.uracer.game.GameTracks;
@@ -38,7 +37,7 @@ public final class MainScreen extends Screen {
 	private Label versionLabel;
 
 	@Override
-	public void init (ScalingStrategy scalingStrategy) {
+	public void init () {
 		input = URacer.Game.getInputSystem();
 		setupUI();
 	}
