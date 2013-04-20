@@ -155,6 +155,7 @@ public final class GameRenderer implements PostProcessorListener {
 		// ///////////////////////
 
 		SpriteBatch batch = batchRenderer.begin(worldRenderer.getOrthographicCamera());
+
 		batch.enableBlending();
 		{
 			GameEvents.gameRenderer.batch = batch;
@@ -225,7 +226,7 @@ public final class GameRenderer implements PostProcessorListener {
 	// manages and triggers debug event
 	public void debugRender () {
 		SpriteBatch batch = batchRenderer.beginTopLeft();
-		// batch.setTransformMatrix(xform);
+		batch.setTransformMatrix(xform);
 
 		// batch.disableBlending();
 		GameEvents.gameRenderer.batch = batch;

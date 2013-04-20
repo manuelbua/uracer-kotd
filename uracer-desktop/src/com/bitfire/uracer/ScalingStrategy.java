@@ -44,11 +44,13 @@ public class ScalingStrategy {
 		float thisH = (float)Gdx.graphics.getHeight();
 
 		// compute tilemap zoom factor (ref:1=this:x)
-		if (thisW > thisH || thisW == thisH) {
-			tileMapZoomFactor = 1f / ((thisW * tileMapZoomFactorAtRef) / referenceResolution.x);
-		} else {
-			tileMapZoomFactor = 1f / ((thisH * tileMapZoomFactorAtRef) / referenceResolution.y);
-		}
+		// if (thisW > thisH || thisW == thisH) {
+		// tileMapZoomFactor = 1f / ((thisW * tileMapZoomFactorAtRef) / referenceResolution.x);
+		// } else {
+		// tileMapZoomFactor = 1f / ((thisH * tileMapZoomFactorAtRef) / referenceResolution.y);
+		// }
+
+		tileMapZoomFactor = ScaleUtils.Scale;
 
 		// verticalFov = verticalFov(thisW, thisH, desiredHorizontalFov);
 		verticalFov = verticalFov(ScaleUtils.PlayWidth, ScaleUtils.PlayHeight, desiredHorizontalFov);

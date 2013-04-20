@@ -36,7 +36,7 @@ public class PlayerSmokeTrails extends TrackEffect {
 		for (int i = 0; i < SmokeEffectsCount; i++) {
 			fx[i] = new SmokeEffect();
 			// fx[i].setLifeMul(3.5f);
-			fx[i].setScaleMul(1.5f);
+			// fx[i].setScaleMul(1.5f);
 			// fx[i].setEmissionMul(0.25f);
 		}
 
@@ -58,6 +58,10 @@ public class PlayerSmokeTrails extends TrackEffect {
 	@Override
 	public void tick () {
 		isDrifting = player.driftState.isDrifting && player.driftState.driftStrength > 0f;
+
+		// for (int i = 0; i < SmokeEffectsCount; i++) {
+		// fx[i].start();
+		// }
 
 		// if (player.driftState.driftStrength > 0) {
 		// for (int i = 0; i < SmokeEffectsCount; i++) {
@@ -91,6 +95,7 @@ public class PlayerSmokeTrails extends TrackEffect {
 
 		fx[0].setLifeMul(MathUtils.random(1f, 1f + 15f * dfactor));
 		fx[0].setScaleMul(MathUtils.random(0.1f, 0.1f + 15f * dfactor));
+		// fx[0].setScaleMul(5);
 
 		float t = 0.8f * dfactor;
 		fx[0].baseEmitter.getTransparency().setHighMin(t);
@@ -176,7 +181,7 @@ public class PlayerSmokeTrails extends TrackEffect {
 		}
 
 		public final void setScaleMul (float value) {
-			baseEmitter.getScale().setHigh(OriginalParticleScaling * value * scalingStrategy.invTileMapZoomFactor);
+			baseEmitter.getScale().setHigh(OriginalParticleScaling * value);
 		}
 
 		public void setEmissionMul (float value) {
