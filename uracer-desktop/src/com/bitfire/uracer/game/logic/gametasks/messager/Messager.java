@@ -37,7 +37,7 @@ public class Messager extends GameTask {
 	private static final int MaxMessagesInStore = 10;
 	private int idxMessageStore;
 
-	public Messager (float invZoomFactor) {
+	public Messager () {
 		GameEvents.gameRenderer.addListener(gameRendererEvent, RenderEvent, RenderOrder);
 
 		currents = new Array<Message>(3);
@@ -54,7 +54,7 @@ public class Messager extends GameTask {
 		idxMessageStore = 0;
 		messageStore = new Message[MaxMessagesInStore];
 		for (int i = 0; i < MaxMessagesInStore; i++) {
-			messageStore[i] = new Message(invZoomFactor);
+			messageStore[i] = new Message();
 		}
 	}
 

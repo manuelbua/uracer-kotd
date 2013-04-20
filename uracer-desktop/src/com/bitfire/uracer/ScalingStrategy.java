@@ -12,7 +12,7 @@ public class ScalingStrategy {
 	public float verticalFov;
 	public float tileMapZoomFactor;
 	public float tileMapZoomFactorAtRef;
-	public float invTileMapZoomFactor;
+	// public float invTileMapZoomFactor;
 	public float forTileSize;
 	public float targetScreenRatio;
 	public float meshScaleFactor;
@@ -40,8 +40,8 @@ public class ScalingStrategy {
 	}
 
 	private void update () {
-		float thisW = (float)Gdx.graphics.getWidth();
-		float thisH = (float)Gdx.graphics.getHeight();
+		// float thisW = (float)Gdx.graphics.getWidth();
+		// float thisH = (float)Gdx.graphics.getHeight();
 
 		// compute tilemap zoom factor (ref:1=this:x)
 		// if (thisW > thisH || thisW == thisH) {
@@ -57,7 +57,7 @@ public class ScalingStrategy {
 		// verticalFov = 47.27123f;
 		// targetScreenRatio = referenceResolution.x / thisW;
 		targetScreenRatio = referenceResolution.x / ScaleUtils.PlayWidth;
-		invTileMapZoomFactor = 1f / tileMapZoomFactor;
+		// invTileMapZoomFactor = 1f / tileMapZoomFactor;
 
 		// meshScaleFactor = (1f / (tileMapZoomFactor * tileMapZoomFactorAtRef)) * targetScreenRatio;
 		// meshScaleFactor = 1;

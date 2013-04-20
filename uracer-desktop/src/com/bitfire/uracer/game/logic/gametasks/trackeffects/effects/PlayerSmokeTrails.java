@@ -6,7 +6,6 @@ import com.badlogic.gdx.graphics.g2d.ParticleEffect;
 import com.badlogic.gdx.graphics.g2d.ParticleEmitter;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.math.MathUtils;
-import com.bitfire.uracer.ScalingStrategy;
 import com.bitfire.uracer.URacer;
 import com.bitfire.uracer.game.logic.gametasks.trackeffects.TrackEffect;
 import com.bitfire.uracer.game.logic.gametasks.trackeffects.TrackEffectType;
@@ -23,13 +22,11 @@ public class PlayerSmokeTrails extends TrackEffect {
 	private static final int SmokeEffectsCount = 1;
 	private PlayerCar player;
 	private boolean isDrifting, wasDrifting;
-	private ScalingStrategy scalingStrategy;
 	private float posX, posY;
 
-	public PlayerSmokeTrails (ScalingStrategy scalingStrategy, PlayerCar player) {
+	public PlayerSmokeTrails (PlayerCar player) {
 		super(TrackEffectType.CarSmokeTrails);
 		this.player = player;
-		this.scalingStrategy = scalingStrategy;
 
 		fx = new SmokeEffect[SmokeEffectsCount];
 

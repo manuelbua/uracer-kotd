@@ -53,7 +53,7 @@ public class SinglePlayerLogic extends CommonLogic {
 
 	public SinglePlayerLogic (UserProfile userProfile, GameWorld gameWorld, GameRenderer gameRenderer,
 		ScalingStrategy scalingStrategy) {
-		super(userProfile, gameWorld, gameRenderer, scalingStrategy);
+		super(userProfile, gameWorld, gameRenderer);
 		messager = gameTasksManager.messager;
 
 		accuDriftSeconds = new BoxedFloat(0);

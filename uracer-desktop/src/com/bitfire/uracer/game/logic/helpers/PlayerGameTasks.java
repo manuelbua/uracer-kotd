@@ -1,7 +1,6 @@
 
 package com.bitfire.uracer.game.logic.helpers;
 
-import com.bitfire.uracer.ScalingStrategy;
 import com.bitfire.uracer.configuration.Config;
 import com.bitfire.uracer.configuration.UserProfile;
 import com.bitfire.uracer.game.logic.LapInfo;
@@ -23,7 +22,6 @@ public final class PlayerGameTasks {
 
 	private final UserProfile userProfile;
 	private final GameTasksManager manager;
-	private final ScalingStrategy scalingStrategy;
 
 	/** keeps track of the concrete player tasks (note that they are all publicly accessible for performance reasons) */
 
@@ -37,10 +35,9 @@ public final class PlayerGameTasks {
 	public PlayerImpactSoundEffect playerImpactSoundFx = null;
 	public PlayerEngineSoundEffect playerEngineSoundFx = null;
 
-	public PlayerGameTasks (UserProfile userProfile, GameTasksManager gameTaskManager, ScalingStrategy strategy) {
+	public PlayerGameTasks (UserProfile userProfile, GameTasksManager gameTaskManager) {
 		this.userProfile = userProfile;
 		manager = gameTaskManager;
-		scalingStrategy = strategy;
 	}
 
 	public void dispose () {
@@ -57,7 +54,7 @@ public final class PlayerGameTasks {
 		int maxSkidMarks = Config.isDesktop ? 150 : 100;
 		float maxLife = Config.isDesktop ? 5 : 3;
 		playerSkidMarks = new PlayerSkidMarks(player, maxSkidMarks, maxLife);
-		playerSmokeTrails = new PlayerSmokeTrails(scalingStrategy, player);
+		playerSmokeTrails = new PlayerSmokeTrails(player);
 
 		// hud, player's information
 		hudPlayer = new HudPlayer(userProfile, player, renderer);
