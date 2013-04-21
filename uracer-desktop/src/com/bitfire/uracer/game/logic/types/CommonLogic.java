@@ -803,15 +803,16 @@ public abstract class CommonLogic implements GameLogic, CarEvent.Listener, Playe
 	public void onLapStarted () {
 		Gdx.app.log("CommonLogic", "onLapStarted");
 
-		if (!lapManager.isRecording()) {
-			// new race, only begin recording
+		// lap started, warmup ended
+		isWarmUpLap = false;
+		playerCar.resetDistanceAndSpeed(true, false);
+
+		// if (!lapManager.isRecording())
+		{
+			lapManager.stopRecording();
 			lapManager.startRecording(playerCar);
 		}
 
-		// lap is started, warmup has ended
-		isWarmUpLap = false;
-
-		playerCar.resetDistanceAndSpeed(true, false);
 		lapStarted();
 	}
 
