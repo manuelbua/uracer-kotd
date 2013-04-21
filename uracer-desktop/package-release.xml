@@ -46,6 +46,7 @@
 
 		<!-- updaters -->
 		<copy file="/home/manuel/dev/uracer-libgdx/uracer-desktop/data-src/update.bat" todir="./build"/>
+		<copy file="/home/manuel/dev/uracer-libgdx/uracer-desktop/data-src/update.sh" todir="./build"/>
 
 		<!-- permissions -->
 		<chmod file="./build/launcher.sh" perm="ugo+rx" />

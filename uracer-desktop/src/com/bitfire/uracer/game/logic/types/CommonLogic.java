@@ -608,6 +608,16 @@ public abstract class CommonLogic implements GameLogic, CarEvent.Listener, Playe
 			// Gdx.app.log( "GameLogic", "Player final pos=" +
 			// playerCar.getBody().getPosition() );
 
+		} else if (input.isPressed(Keys.L)) {
+			playerCar.resetPhysics();
+			playerCar.resetDistanceAndSpeed(true, true);
+			lapManager.stopRecording();
+			getGhost(0).setReplay(Replay.loadLocal("test-replay"));
+		} else if (input.isPressed(Keys.K)) {
+			playerCar.resetPhysics();
+			playerCar.resetDistanceAndSpeed(true, true);
+			lapManager.stopRecording();
+			getGhost(0).setReplay(Replay.loadLocal("test-replay-coll"));
 		} else if (input.isPressed(Keys.Q) || input.isPressed(Keys.ESCAPE) || input.isPressed(Keys.BACK)) {
 
 			lapManager.stopRecording();

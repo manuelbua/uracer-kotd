@@ -1,9 +1,9 @@
 
 package com.bitfire.uracer.game.logic.replaying;
 
+import java.io.DataInputStream;
 import java.io.DataOutputStream;
 import java.io.IOException;
-import java.io.ObjectInputStream;
 import java.util.zip.GZIPInputStream;
 import java.util.zip.GZIPOutputStream;
 
@@ -135,15 +135,14 @@ public class Replay implements Disposable {
 		return true;
 	}
 
-	public static Replay loadLocal (String trackname) {
-		String filename = Storage.LocalReplays + trackname;
-		FileHandle fh = Gdx.files.external(filename);
+	public static Replay loadLocal (String filename) {
+		FileHandle fh = Gdx.files.external(Storage.LocalReplays + filename);
 
 		if (fh.exists()) {
 			try {
 				// DataInputStream is = new DataInputStream( fh.read() );
 				GZIPInputStream gzis = new GZIPInputStream(fh.read());
-				ObjectInputStream is = new ObjectInputStream(gzis);
+				DataInputStream is = new DataInputStream(gzis);
 
 				// read header
 				Replay r = new Replay(is.readLong());
@@ -183,7 +182,7 @@ public class Replay implements Disposable {
 				Gdx.app.log("Replay", "Couldn't load local replay, reason: " + e.getMessage());
 			}
 		} else {
-			Gdx.app.log("Replay", "There is no replay available for this track (" + trackname + ")");
+			Gdx.app.log("Replay", "The specified replay doesn't exist (" + filename + ")");
 		}
 
 		return null;

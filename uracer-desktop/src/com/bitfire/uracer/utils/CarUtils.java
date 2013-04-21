@@ -20,8 +20,8 @@ public final class CarUtils {
 		float mts = dist / timeElapsed;
 // float kmh = mtSecToKmHour(mts);
 
-		Gdx.app.log(msg, "Car traveled " + dist + " m " + "(" + car.getAccuDistCount() + ") " + "in " + timeElapsed + " s " + "("
-			+ mts + " mt/s) " +
+		Gdx.app.log(msg, "Car traveled " + dist + "m " + "(" + car.getAccuDistCount() + ") " + "in " + timeElapsed + "s " + "("
+			+ mts + "mt/s) " +
 // "(" + kmh + " km/h) " +
 // "(" + car.getAccuSpeedCount() + ")" +
 // "[" + AMath.round( kmh, 2 ) + " km/h, " +
