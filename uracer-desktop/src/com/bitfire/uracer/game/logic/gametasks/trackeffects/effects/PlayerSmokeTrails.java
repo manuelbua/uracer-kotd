@@ -16,7 +16,7 @@ import com.bitfire.uracer.resources.Art;
  * 
  * @author bmanuel */
 public class PlayerSmokeTrails extends TrackEffect {
-	public static final int MaxParticles = 10000;
+	public static final int MaxParticles = 1000;
 
 	private SmokeEffect fx[];
 	private static final int SmokeEffectsCount = 1;
@@ -32,9 +32,7 @@ public class PlayerSmokeTrails extends TrackEffect {
 
 		for (int i = 0; i < SmokeEffectsCount; i++) {
 			fx[i] = new SmokeEffect();
-			// fx[i].setLifeMul(3.5f);
-			// fx[i].setScaleMul(1.5f);
-			// fx[i].setEmissionMul(0.25f);
+			fx[i].setMaxParticleCount(MaxParticles);
 		}
 
 		isDrifting = false;
@@ -88,18 +86,17 @@ public class PlayerSmokeTrails extends TrackEffect {
 	@Override
 	public void render (SpriteBatch batch) {
 		float dfactor = player.driftState.driftStrength;
-		// float sfactor = player.carState.currSpeedFactor;
+		float sfactor = player.carState.currSpeedFactor;
 
-		fx[0].setLifeMul(MathUtils.random(1f, 1f + 15f * dfactor));
-		fx[0].setScaleMul(MathUtils.random(0.1f, 0.1f + 15f * dfactor));
-		// fx[0].setScaleMul(5);
+		fx[0].setLifeMul(1f + 10f * dfactor);
+		fx[0].setScaleMul(1f + 3f * dfactor + 7f * sfactor);
 
 		float t = 0.8f * dfactor;
 		fx[0].baseEmitter.getTransparency().setHighMin(t);
 		fx[0].baseEmitter.getTransparency().setHighMax(t);
 
 		float[] colors = fx[0].baseEmitter.getTint().getColors();
-		float v = 0.15f;
+		float v = 0.3f;
 		colors[0] = v * dfactor;
 		colors[1] = v * dfactor;
 		colors[2] = v * dfactor;
@@ -111,7 +108,7 @@ public class PlayerSmokeTrails extends TrackEffect {
 			r = g = b = 0.7f;
 		}
 
-		float colorscale = 0.15f;
+		float colorscale = 0.15f + 0.3f * dfactor;
 		r *= colorscale;
 		g *= colorscale;
 		b *= colorscale;

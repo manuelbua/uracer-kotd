@@ -256,9 +256,9 @@ public final class GameWorld {
 		for (int i = 0; i < group.getObjects().getCount(); i++) {
 			//@off
 			c.set(
-//			 MathUtils.random(0.25f,1),
-//			 MathUtils.random(0.25f,1),
-//			 MathUtils.random(0.25f,1),
+//			 MathUtils.random(0,1),
+//			 MathUtils.random(0,1),
+//			 MathUtils.random(0,1),
 			//				1f, .85f, 0.6f, 0.55f
 				MathUtils.random(0.85f,1),
 				MathUtils.random(0.8f,0.85f),

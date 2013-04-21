@@ -100,5 +100,9 @@ public final class Hud extends GameTask implements GameRendererEvent.Listener {
 		for (int i = 0; i < managerAfterPost.items.size; i++) {
 			managerAfterPost.items.get(i).onTick();
 		}
+
+		for (int i = 0; i < managerDebug.items.size; i++) {
+			managerDebug.items.get(i).onTick();
+		}
 	}
 }

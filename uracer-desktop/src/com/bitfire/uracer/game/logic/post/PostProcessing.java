@@ -187,9 +187,9 @@ public final class PostProcessing {
 		}
 	}
 
-	public void alertCollision (float factor, int milliseconds) {
+	public void alertCollision (float collisionFactor, int milliseconds) {
 		if (hasPostProcessor && currentAnimator != null) {
-			currentAnimator.alertCollision(factor, milliseconds);
+			currentAnimator.alertCollision(collisionFactor, milliseconds);
 		}
 	}
 }

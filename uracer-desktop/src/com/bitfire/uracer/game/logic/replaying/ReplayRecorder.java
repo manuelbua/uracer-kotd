@@ -50,7 +50,7 @@ public final class ReplayRecorder {
 		}
 
 		if (!replay.add(f)) {
-			Gdx.app.log("Recorder", "Replay memory limit reached (" + Replay.MaxEvents + " events), restarting.");
+			// Gdx.app.log("Recorder", "Replay memory limit reached (" + Replay.MaxEvents + " events), restarting.");
 			return RecorderError.ReplayMemoryLimitReached;
 		}
 

@@ -247,29 +247,30 @@ public class SinglePlayerLogic extends CommonLogic {
 			} else {
 				if (isCurrentLapValid) {
 					playerTasks.hudPlayer.trackProgress.setMessage("");
+
+					// use the last one if the replay is finished
+					if (nextTarget != null && nextTarget.hasReplay()) {
+						lastDist = gameTrack.getTrackDistance(nextTarget, 0);
+						lastCompletion = gameTrack.getTrackCompletion(nextTarget);
+						// ghSpeed = nextTarget.getInstantSpeed();
+					}
+
+					data.setPlayerDistance(gameTrack.getTrackDistance(playerCar, 0));
+					data.setPlayerProgression(gameTrack.getTrackCompletion(playerCar));
+
+					// playerTasks.hudPlayer.trackProgress.setTargetSpeed(ghSpeed);
+					data.setTargetDistance(lastDist);
+					data.setTargetProgression(lastCompletion);
+
+					// target tracker
+					float distMt = gameTrack.getTrackDistance(playerCar, 0) - lastDist;
+					float alpha = MathUtils.clamp(Math.abs(distMt) / 50, 0.2f, 1);
+					playerTasks.hudPlayer.setNextTargetAlpha(alpha);
+
 				} else {
 					playerTasks.hudPlayer.trackProgress.setMessage("Press \"R\"\nto restart");
 					data.reset(true);
 				}
-
-				// use the last one if the replay is finished
-				if (nextTarget != null && nextTarget.hasReplay()) {
-					lastDist = gameTrack.getTrackDistance(nextTarget, 0);
-					lastCompletion = gameTrack.getTrackCompletion(nextTarget);
-					// ghSpeed = nextTarget.getInstantSpeed();
-				}
-
-				data.setPlayerDistance(gameTrack.getTrackDistance(playerCar, 0));
-				data.setPlayerProgression(gameTrack.getTrackCompletion(playerCar));
-
-				// playerTasks.hudPlayer.trackProgress.setTargetSpeed(ghSpeed);
-				data.setTargetDistance(lastDist);
-				data.setTargetProgression(lastCompletion);
-
-				// target tracker
-				float distMt = gameTrack.getTrackDistance(playerCar, 0) - lastDist;
-				float alpha = MathUtils.clamp(Math.abs(distMt) / 50, 0.2f, 1);
-				playerTasks.hudPlayer.setNextTargetAlpha(alpha);
 			}
 		}
 	}

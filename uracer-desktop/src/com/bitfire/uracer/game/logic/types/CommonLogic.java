@@ -74,6 +74,7 @@ public abstract class CommonLogic implements GameLogic, CarEvent.Listener, Playe
 	protected boolean isCurrentLapValid = true;
 	protected boolean isWarmUpLap = true;
 	protected boolean isWrongWayInWarmUp = false;
+	protected boolean isTooSlow = false;
 
 	// lap
 	protected LapManager lapManager = null;
@@ -399,6 +400,7 @@ public abstract class CommonLogic implements GameLogic, CarEvent.Listener, Playe
 		isCurrentLapValid = true;
 		isWarmUpLap = true;
 		isWrongWayInWarmUp = false;
+		isTooSlow = false;
 
 		postProcessing.resetAnimator();
 
@@ -421,6 +423,31 @@ public abstract class CommonLogic implements GameLogic, CarEvent.Listener, Playe
 		gameTasksManager.reset();
 
 		restartLogic();
+	}
+
+	private void checkValidLap () {
+		boolean wrongWay = wrongWayMonitor.isWrongWay();
+		isCurrentLapValid = !wrongWay && !isTooSlow;
+
+		if ((wrongWay && isWarmUpLap) || isWrongWayInWarmUp) {
+			isWrongWayInWarmUp = true;
+			isWarmUpLap = true;
+			lapMonitor.reset();
+		}
+
+		// blink on wrong way (keeps calling, returns earlier if busy)
+		if (wrongWay) {
+			playerTasks.hudPlayer.highlightWrongWay();
+		}
+
+		// blink on out of track (keeps calling, returns earlier if busy)
+		if (playerCar.isOutOfTrack()) {
+			playerTasks.hudPlayer.highlightOutOfTrack();
+		}
+
+		if (isTooSlow) {
+			playerTasks.hudPlayer.getTrackProgressData().reset(true);
+		}
 	}
 
 	//
@@ -454,24 +481,7 @@ public abstract class CommonLogic implements GameLogic, CarEvent.Listener, Playe
 
 		// determine player's isWrongWay
 		if (hasPlayer()) {
-			boolean wrongWay = wrongWayMonitor.isWrongWay();
-			isCurrentLapValid = !wrongWay;
-
-			if ((wrongWay && isWarmUpLap) || isWrongWayInWarmUp) {
-				isWrongWayInWarmUp = true;
-				isWarmUpLap = true;
-				lapMonitor.reset();
-			}
-
-			// blink on wrong way (keeps calling, returns earlier if busy)
-			if (wrongWay) {
-				playerTasks.hudPlayer.highlightWrongWay();
-			}
-
-			// blink on out of track (keeps calling, returns earlier if busy)
-			if (playerCar.isOutOfTrack()) {
-				playerTasks.hudPlayer.highlightOutOfTrack();
-			}
+			checkValidLap();
 		}
 	}
 
@@ -695,7 +705,13 @@ public abstract class CommonLogic implements GameLogic, CarEvent.Listener, Playe
 			break;
 		case onComputeForces:
 			if (lapManager.record(data.forces) == RecorderError.ReplayMemoryLimitReached) {
+				// lap will be invalidated
+				Gdx.app.log("CommonLogic", "Player too slow, recording aborted.");
 
+				isTooSlow = true;
+				lapManager.abortRecording();
+				playerTasks.hudLapInfo.setInvalid("Too slow!");
+				playerTasks.hudLapInfo.toColor(1, 0, 0);
 			}
 			break;
 		case onGhostFadingOut:
