@@ -4,6 +4,7 @@ package com.bitfire.uracer;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.utils.Disposable;
+import com.bitfire.uracer.utils.ScaleUtils;
 
 /** Encapsulates a buffered input state object that can be queried to know the individual key/button/pointer states.
  * 
@@ -162,11 +163,23 @@ public final class Input implements Disposable {
 	private void updatePointerState () {
 		for (int p = 0; p < MaxPointers; p++) {
 			Pointer ptr = pointer[p];
-			ptr.setTouching(Gdx.input.isButtonPressed(p));
-			ptr.touchX = Gdx.input.getX(p);
-			ptr.touchY = Gdx.input.getY(p);
+
+			int px = Gdx.input.getX(p) - ScaleUtils.CropX;
+			int py = Gdx.input.getY(p) - ScaleUtils.CropY;
+			// boolean inBoundaries = (px >= 0 && py >= 0 && px < ScaleUtils.PlayWidth && py < ScaleUtils.PlayHeight);
+
+			float npx = (float)px / (float)ScaleUtils.PlayWidth;
+			float npy = (float)py / (float)ScaleUtils.PlayHeight;
+			// Gdx.app.log("Input", npx + "," + npy);
+
+			ptr.setTouching(/* inBoundaries && */Gdx.input.isButtonPressed(p));
+
+			// update coords even if not touched
+			ptr.touchX = (int)(npx * ScaleUtils.RefScreenWidth);
+			ptr.touchY = (int)(npy * ScaleUtils.RefScreenHeight);
 			ptr.touchCoords.set(ptr.touchX, ptr.touchY);
 		}
+
 	}
 
 	// update key state and transform unbuffered to buffered

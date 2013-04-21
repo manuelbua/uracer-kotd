@@ -12,7 +12,6 @@ import com.badlogic.gdx.graphics.g3d.materials.Material;
 import com.badlogic.gdx.graphics.g3d.materials.TextureAttribute;
 import com.badlogic.gdx.graphics.g3d.model.still.StillModel;
 import com.badlogic.gdx.utils.LongMap;
-import com.bitfire.uracer.ScalingStrategy;
 import com.bitfire.uracer.resources.Art;
 import com.bitfire.utils.Hash;
 
@@ -21,13 +20,7 @@ public final class ModelFactory {
 		Missing, Palm, Tribune, Tree_1, Tree_2, Tree_3, Tree_4, Tree_5, Tree_6, Tree_7, Tree_8, Tree_9, Tree_10
 	}
 
-	private static ScalingStrategy scalingStrategy;
-
 	private ModelFactory () {
-	}
-
-	public static void init (ScalingStrategy strategy) {
-		ModelFactory.scalingStrategy = strategy;
 	}
 
 	public static void dispose () {
@@ -96,19 +89,19 @@ public final class ModelFactory {
 		switch (modelMesh) {
 		case Palm:
 			stillModel = new OrthographicAlignedStillModel(getStillModel("data/3d/models/palm.g3dt"), getMaterial(modelMesh,
-				Art.meshPalm), ModelFactory.scalingStrategy);
+				Art.meshPalm));
 			break;
 
 		case Tribune:
 			stillModel = new OrthographicAlignedStillModel(getStillModel("data/3d/models/tribune.g3dt"), getMaterial(modelMesh,
-				Art.meshTribune), ModelFactory.scalingStrategy);
+				Art.meshTribune));
 			break;
 
 		// missing mesh mesh
 		case Missing:
 		default:
 			stillModel = new OrthographicAlignedStillModel(getStillModel("data/3d/models/missing-mesh.g3dt"), getMaterial(modelMesh,
-				Art.meshMissing), ModelFactory.scalingStrategy);
+				Art.meshMissing));
 		}
 
 		if (stillModel != null) {
@@ -207,7 +200,7 @@ public final class ModelFactory {
 		}
 
 		stillModel = new TreeStillModel(getStillModel("data/3d/models/" + treeModelName), getMaterial(modelMesh, leavesTexture),
-			treeMeshName, ModelFactory.scalingStrategy);
+			treeMeshName);
 
 		if (stillModel != null) {
 			// createdTreeModels.add( stillModel );

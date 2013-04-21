@@ -4,11 +4,10 @@ package com.bitfire.uracer.screen;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.glutils.FrameBuffer;
 import com.badlogic.gdx.utils.Disposable;
-import com.bitfire.uracer.ScalingStrategy;
 
 public abstract class Screen implements Disposable {
 
-	public abstract void init (ScalingStrategy scalingStrategy);
+	public abstract void init ();
 
 	public void enable () {
 	}

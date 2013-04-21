@@ -3,6 +3,7 @@ package com.bitfire.uracer.screen;
 
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.GL20;
+import com.badlogic.gdx.math.Rectangle;
 import com.bitfire.uracer.configuration.Config;
 import com.bitfire.uracer.game.screens.GameScreensFactory.ScreenType;
 import com.bitfire.uracer.screen.ScreenFactory.ScreenId;
@@ -17,9 +18,9 @@ public final class ScreenManager {
 	private boolean quitPending, doSetScreenImmediate, justTransitioned;
 	private GL20 gl;
 
-	public ScreenManager (ScreenFactory factory) {
+	public ScreenManager (Rectangle viewport, ScreenFactory factory) {
 		screenFactory = factory;
-		transMgr = new TransitionManager(Config.isDesktop /* 32bits */, false, true);
+		transMgr = new TransitionManager(viewport, Config.isDesktop /* 32bits */, false, true);
 		current = null;
 		next = ScreenType.NoScreen;
 		quitPending = false;

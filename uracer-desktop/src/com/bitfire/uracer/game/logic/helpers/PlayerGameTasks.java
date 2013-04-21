@@ -1,7 +1,6 @@
 
 package com.bitfire.uracer.game.logic.helpers;
 
-import com.bitfire.uracer.ScalingStrategy;
 import com.bitfire.uracer.configuration.Config;
 import com.bitfire.uracer.configuration.UserProfile;
 import com.bitfire.uracer.game.logic.LapInfo;
@@ -23,7 +22,6 @@ public final class PlayerGameTasks {
 
 	private final UserProfile userProfile;
 	private final GameTasksManager manager;
-	private final ScalingStrategy scalingStrategy;
 
 	/** keeps track of the concrete player tasks (note that they are all publicly accessible for performance reasons) */
 
@@ -37,10 +35,9 @@ public final class PlayerGameTasks {
 	public PlayerImpactSoundEffect playerImpactSoundFx = null;
 	public PlayerEngineSoundEffect playerEngineSoundFx = null;
 
-	public PlayerGameTasks (UserProfile userProfile, GameTasksManager gameTaskManager, ScalingStrategy strategy) {
+	public PlayerGameTasks (UserProfile userProfile, GameTasksManager gameTaskManager) {
 		this.userProfile = userProfile;
 		manager = gameTaskManager;
-		scalingStrategy = strategy;
 	}
 
 	public void dispose () {
@@ -57,20 +54,21 @@ public final class PlayerGameTasks {
 		int maxSkidMarks = Config.isDesktop ? 150 : 100;
 		float maxLife = Config.isDesktop ? 5 : 3;
 		playerSkidMarks = new PlayerSkidMarks(player, maxSkidMarks, maxLife);
-		playerSmokeTrails = new PlayerSmokeTrails(scalingStrategy, player);
+		playerSmokeTrails = new PlayerSmokeTrails(player);
 
 		// hud, player's information
-		hudPlayer = new HudPlayer(userProfile, scalingStrategy, player, renderer);
-		hudPlayerStatic = new HudPlayerStatic(userProfile, scalingStrategy, player, renderer);
+		hudPlayer = new HudPlayer(userProfile, player, renderer);
+		hudPlayerStatic = new HudPlayerStatic(userProfile, player);
 
 		// hud, player's lap info
-		hudLapInfo = new HudLapInfo(scalingStrategy, lapInfo);
+		hudLapInfo = new HudLapInfo(lapInfo);
 
 		manager.sound.add(playerDriftSoundFx);
 		manager.sound.add(playerImpactSoundFx);
 		manager.sound.add(playerEngineSoundFx);
 		manager.effects.addBeforeEntities(playerSkidMarks);
 		manager.effects.addAfterEntities(playerSmokeTrails);
+
 		manager.hud.addBeforePostProcessing(hudPlayer);
 		manager.hud.addAfterPostProcessing(hudLapInfo);
 		manager.hud.addAfterPostProcessing(hudPlayerStatic);
@@ -79,7 +77,7 @@ public final class PlayerGameTasks {
 		// hud-style debug information for various data (player's drift state, number of skid marks particles, ..)
 		if (Config.Debug.RenderHudDebugInfo) {
 			hudDebug = new HudDebug(player, player.driftState, manager);
-			manager.hud.addAfterPostProcessing(hudDebug);
+			manager.hud.addDebug(hudDebug);
 		}
 	}
 

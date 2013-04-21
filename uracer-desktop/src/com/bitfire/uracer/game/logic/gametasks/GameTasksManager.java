@@ -2,7 +2,6 @@
 package com.bitfire.uracer.game.logic.gametasks;
 
 import com.badlogic.gdx.utils.Array;
-import com.bitfire.uracer.ScalingStrategy;
 import com.bitfire.uracer.game.logic.gametasks.hud.Hud;
 import com.bitfire.uracer.game.logic.gametasks.messager.Messager;
 import com.bitfire.uracer.game.logic.gametasks.sounds.SoundManager;
@@ -13,7 +12,6 @@ import com.bitfire.uracer.game.world.GameWorld;
 /** Manages the creation and destruction of the main game tasks. */
 public final class GameTasksManager {
 	private GameWorld gameWorld = null;
-	private ScalingStrategy scalingStrategy = null;
 	private Array<GameTask> tasks = new Array<GameTask>(10);
 
 	/** keeps track of the concrete game tasks (note that they are all publicly accessible for performance reasons) */
@@ -33,9 +31,8 @@ public final class GameTasksManager {
 	// special effects
 	public TrackEffects effects = null;
 
-	public GameTasksManager (GameWorld world, ScalingStrategy strategy) {
+	public GameTasksManager (GameWorld world) {
 		gameWorld = world;
-		scalingStrategy = strategy;
 	}
 
 	public void createTasks () {
@@ -47,7 +44,7 @@ public final class GameTasksManager {
 		add(sound);
 
 		// message manager
-		messager = new Messager(scalingStrategy.invTileMapZoomFactor);
+		messager = new Messager();
 		add(messager);
 
 		// hud manager

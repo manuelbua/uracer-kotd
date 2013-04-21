@@ -8,7 +8,6 @@ import com.badlogic.gdx.graphics.glutils.ShaderProgram;
 import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.math.Vector3;
 import com.badlogic.gdx.math.collision.BoundingBox;
-import com.bitfire.uracer.ScalingStrategy;
 import com.bitfire.utils.ShaderLoader;
 
 /** The model is expected to follow the z-up convention.
@@ -29,8 +28,10 @@ public class OrthographicAlignedStillModel {
 	// factor for this scaling: also, since the far plane is suboptimal at
 	// just 48, i want 5 times more space on the z-axis, so here's another
 	// scaling factor creeping up.
+	private static final float Adjustment = 0.94537085f;
+	private static final float To256 = 224f / 256f;
 	public static final float World3DScalingFactor = 1.42222f;
-	public static final float BlenderToURacer = 5f * World3DScalingFactor;
+	public static final float BlenderToURacer = Adjustment * World3DScalingFactor * To256 * 5f;
 
 	// scale
 	private float scale, scalingFactor;
@@ -64,7 +65,7 @@ public class OrthographicAlignedStillModel {
 			"void main()											\n"+
 			"{\n" +
 			"	vec4 texel = texture2D( u_texture, v_TexCoord );	\n" +
-			//"	if(texel.a < 0.5) discard;							\n" +
+			"	if(texel.a < 0.5) discard;							\n" +
 			"	gl_FragColor = texel;								\n" +
 			"}\n";
 
@@ -78,7 +79,7 @@ public class OrthographicAlignedStillModel {
 			"void main()											\n"+
 			"{\n" +
 			"	vec4 texel = texture2D( u_texture, v_TexCoord );	\n" +
-			//"	if(texel.a < 0.5) discard;							\n" +
+			"	if(texel.a < 0.5) discard;							\n" +
 			"	vec4 c = vec4((u_ambient.rgb + texel.rgb*texel.a)*u_ambient.a, texel.a);	\n" +
 			"	gl_FragColor = c;								\n" +
 			"}\n";
@@ -93,7 +94,7 @@ public class OrthographicAlignedStillModel {
 		}
 	}
 
-	public OrthographicAlignedStillModel (StillModel aModel, Material material, ScalingStrategy strategy) {
+	public OrthographicAlignedStillModel (StillModel aModel, Material material) {
 		loadShaders();
 
 		try {
@@ -105,7 +106,7 @@ public class OrthographicAlignedStillModel {
 			model.getBoundingBox(localBoundingBox);
 			boundingBox.set(localBoundingBox);
 
-			setScalingFactor(strategy.meshScaleFactor * BlenderToURacer * strategy.to256);
+			setScalingFactor(BlenderToURacer);
 			setPosition(0, 0);
 			setRotation(0, 0, 0, 0);
 		} catch (Exception e) {
@@ -131,8 +132,6 @@ public class OrthographicAlignedStillModel {
 	 * @param posPxX
 	 * @param posPxY */
 	public final void setPosition (float posPxX, float posPxY) {
-		// positionPx.set( GameData.Environment.gameWorld.positionFor( posPxX,
-		// posPxY ) );
 		positionPx.set(posPxX, posPxY);
 	}
 

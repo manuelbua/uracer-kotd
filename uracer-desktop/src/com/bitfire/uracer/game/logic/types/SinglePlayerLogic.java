@@ -14,7 +14,6 @@ import com.badlogic.gdx.math.Vector3;
 import com.badlogic.gdx.math.WindowedMean;
 import com.badlogic.gdx.utils.Array;
 import com.bitfire.uracer.Input;
-import com.bitfire.uracer.ScalingStrategy;
 import com.bitfire.uracer.URacer;
 import com.bitfire.uracer.configuration.Config;
 import com.bitfire.uracer.configuration.UserProfile;
@@ -25,6 +24,7 @@ import com.bitfire.uracer.game.actors.CarPreset;
 import com.bitfire.uracer.game.actors.CarState;
 import com.bitfire.uracer.game.actors.GhostCar;
 import com.bitfire.uracer.game.logic.gametasks.hud.elements.player.DriftBar;
+import com.bitfire.uracer.game.logic.gametasks.hud.elements.player.TrackProgress.TrackProgressData;
 import com.bitfire.uracer.game.logic.gametasks.messager.Messager;
 import com.bitfire.uracer.game.logic.replaying.Replay;
 import com.bitfire.uracer.game.rendering.GameRenderer;
@@ -50,9 +50,8 @@ public class SinglePlayerLogic extends CommonLogic {
 
 	private float lastDist, lastCompletion;
 
-	public SinglePlayerLogic (UserProfile userProfile, GameWorld gameWorld, GameRenderer gameRenderer,
-		ScalingStrategy scalingStrategy) {
-		super(userProfile, gameWorld, gameRenderer, scalingStrategy);
+	public SinglePlayerLogic (UserProfile userProfile, GameWorld gameWorld, GameRenderer gameRenderer) {
+		super(userProfile, gameWorld, gameRenderer);
 		messager = gameTasksManager.messager;
 
 		accuDriftSeconds = new BoxedFloat(0);
@@ -132,8 +131,8 @@ public class SinglePlayerLogic extends CommonLogic {
 					// l.setColor(p);
 
 					// dbg
-					// l.setDistance(5);
-					// l.setColor(1, 1, 1, 1);
+					l.setDistance(5);
+					l.setColor(1, 1, 1, 1);
 				}
 			}
 
@@ -230,13 +229,15 @@ public class SinglePlayerLogic extends CommonLogic {
 		}
 
 		if (hasPlayer()) {
+			TrackProgressData data = playerTasks.hudPlayer.getTrackProgressData();
+
 			// float ghSpeed = 0;
 
 			// playerTasks.hudPlayer.trackProgress.setPlayerSpeed(playerCar.getInstantSpeed());
 			playerTasks.hudPlayer.driftBar.setDriftStrength(playerCar.driftState.driftStrength);
 
 			if (isWarmUpLap) {
-				playerTasks.hudPlayer.trackProgress.resetCounters(true);
+				data.reset(true);
 				if (isCurrentLapValid) {
 					playerTasks.hudPlayer.trackProgress.setMessage("RACE in "
 						+ Math.round(gameTrack.getTotalLength() - gameTrack.getTrackDistance(playerCar, 0)) + " mt");
@@ -246,29 +247,30 @@ public class SinglePlayerLogic extends CommonLogic {
 			} else {
 				if (isCurrentLapValid) {
 					playerTasks.hudPlayer.trackProgress.setMessage("");
+
+					// use the last one if the replay is finished
+					if (nextTarget != null && nextTarget.hasReplay()) {
+						lastDist = gameTrack.getTrackDistance(nextTarget, 0);
+						lastCompletion = gameTrack.getTrackCompletion(nextTarget);
+						// ghSpeed = nextTarget.getInstantSpeed();
+					}
+
+					data.setPlayerDistance(gameTrack.getTrackDistance(playerCar, 0));
+					data.setPlayerProgression(gameTrack.getTrackCompletion(playerCar));
+
+					// playerTasks.hudPlayer.trackProgress.setTargetSpeed(ghSpeed);
+					data.setTargetDistance(lastDist);
+					data.setTargetProgression(lastCompletion);
+
+					// target tracker
+					float distMt = gameTrack.getTrackDistance(playerCar, 0) - lastDist;
+					float alpha = MathUtils.clamp(Math.abs(distMt) / 50, 0.2f, 1);
+					playerTasks.hudPlayer.setNextTargetAlpha(alpha);
+
 				} else {
 					playerTasks.hudPlayer.trackProgress.setMessage("Press \"R\"\nto restart");
-					playerTasks.hudPlayer.trackProgress.resetCounters(true);
+					data.reset(true);
 				}
-
-				// use the last one if the replay is finished
-				if (nextTarget != null && nextTarget.hasReplay()) {
-					lastDist = gameTrack.getTrackDistance(nextTarget, 0);
-					lastCompletion = gameTrack.getTrackCompletion(nextTarget);
-					// ghSpeed = nextTarget.getInstantSpeed();
-				}
-
-				playerTasks.hudPlayer.trackProgress.setPlayerDistance(gameTrack.getTrackDistance(playerCar, 0));
-				playerTasks.hudPlayer.trackProgress.setPlayerProgression(gameTrack.getTrackCompletion(playerCar));
-
-				// playerTasks.hudPlayer.trackProgress.setTargetSpeed(ghSpeed);
-				playerTasks.hudPlayer.trackProgress.setTargetDistance(lastDist);
-				playerTasks.hudPlayer.trackProgress.setTargetProgression(lastCompletion);
-
-				// target tracker
-				float distMt = gameTrack.getTrackDistance(playerCar, 0) - lastDist;
-				float alpha = MathUtils.clamp(Math.abs(distMt) / 50, 0.2f, 1);
-				playerTasks.hudPlayer.setNextTargetAlpha(alpha);
 			}
 		}
 	}
@@ -348,7 +350,7 @@ public class SinglePlayerLogic extends CommonLogic {
 	@Override
 	protected void lapStarted () {
 		restartAllReplays();
-		playerTasks.hudPlayer.trackProgress.resetCounters(false);
+		playerTasks.hudPlayer.getTrackProgressData().reset(false);
 	}
 
 	@Override

@@ -23,6 +23,7 @@ import com.bitfire.uracer.game.world.GameWorld;
 import com.bitfire.uracer.resources.Art;
 import com.bitfire.uracer.utils.Convert;
 import com.bitfire.uracer.utils.NumberString;
+import com.bitfire.uracer.utils.ScaleUtils;
 import com.bitfire.uracer.utils.SpriteBatchUtils;
 
 public final class DebugHelper {
@@ -30,6 +31,7 @@ public final class DebugHelper {
 	// rendering
 	private GameWorldRenderer worldRenderer;
 	private PostProcessor postProcessor;
+	private Matrix4 idt = new Matrix4();
 
 	// player
 	private static PlayerCar player;
@@ -100,10 +102,12 @@ public final class DebugHelper {
 	}
 
 	private void render (SpriteBatch batch) {
+		batch.setTransformMatrix(idt);
+
 		renderVersionInfo(batch, Art.DebugFontHeight * 2);
 
 		if (Config.Debug.RenderDebugInfoFpsStats) {
-			renderFpsStats(batch, Gdx.graphics.getHeight() - Art.DebugFontHeight);
+			renderFpsStats(batch, ScaleUtils.PlayHeight - Art.DebugFontHeight);
 		}
 
 		if (Config.Debug.ShowAdvancedDebugInfo) {
@@ -112,7 +116,7 @@ public final class DebugHelper {
 			}
 
 			if (Config.Debug.RenderDebugInfoMemoryStats) {
-				renderMemoryUsage(batch, Gdx.graphics.getHeight() - Art.DebugFontHeight * 4);
+				renderMemoryUsage(batch, ScaleUtils.PlayHeight - Art.DebugFontHeight * 4);
 			}
 
 			if (Config.Debug.RenderPlayerDebugInfo && player != null) {
@@ -120,16 +124,16 @@ public final class DebugHelper {
 			}
 
 			if (Config.Debug.RenderDebugInfoPostProcessor && postProcessor != null) {
-				renderPostProcessorInfo(batch, postProcessor, Gdx.graphics.getHeight() - Art.DebugFontHeight);
+				renderPostProcessorInfo(batch, postProcessor, ScaleUtils.PlayHeight - Art.DebugFontHeight);
 			}
 
 			if (Config.Debug.RenderDebugInfoMeshStats) {
-				SpriteBatchUtils.drawString(batch, "total meshes=" + GameWorld.TotalMeshes, 0, Gdx.graphics.getHeight()
+				SpriteBatchUtils.drawString(batch, "total meshes=" + GameWorld.TotalMeshes, 0, ScaleUtils.PlayHeight
 					- Art.DebugFontHeight * 3);
 				SpriteBatchUtils.drawString(batch, "rendered meshes="
 					+ (GameWorldRenderer.renderedTrees + GameWorldRenderer.renderedWalls) + ", trees="
 					+ GameWorldRenderer.renderedTrees + ", walls=" + GameWorldRenderer.renderedWalls + ", culled="
-					+ GameWorldRenderer.culledMeshes, 0, Gdx.graphics.getHeight() - Art.DebugFontHeight * 2);
+					+ GameWorldRenderer.culledMeshes, 0, ScaleUtils.PlayHeight - Art.DebugFontHeight * 2);
 			}
 		}
 	}
@@ -137,7 +141,7 @@ public final class DebugHelper {
 	private void renderGraphicalStats (SpriteBatch batch, int y) {
 		batch.enableBlending();
 		batch.setColor(1, 1, 1, 0.8f);
-		batch.draw(stats.getRegion(), Gdx.graphics.getWidth() - stats.getWidth(), y);
+		batch.draw(stats.getRegion(), ScaleUtils.PlayWidth - stats.getWidth(), y);
 		batch.setColor(1, 1, 1, 1f);
 		batch.disableBlending();
 	}
@@ -147,11 +151,11 @@ public final class DebugHelper {
 			+ NumberString.formatLong(stats.meanPhysics.getMean()) + ", gfx: " + NumberString.formatLong(stats.meanRender.getMean())
 			+ ", ticks: " + NumberString.formatLong(stats.meanTickCount.getMean());
 
-		SpriteBatchUtils.drawString(batch, text, Gdx.graphics.getWidth() - text.length() * Art.DebugFontWidth, y);
+		SpriteBatchUtils.drawString(batch, text, ScaleUtils.PlayWidth - text.length() * Art.DebugFontWidth, y);
 	}
 
 	private void renderVersionInfo (SpriteBatch batch, int y) {
-		SpriteBatchUtils.drawString(batch, uRacerInfo, Gdx.graphics.getWidth() - uRacerInfo.length() * Art.DebugFontWidth, 0,
+		SpriteBatchUtils.drawString(batch, uRacerInfo, ScaleUtils.PlayWidth - uRacerInfo.length() * Art.DebugFontWidth, 0,
 			Art.DebugFontWidth, y);
 	}
 

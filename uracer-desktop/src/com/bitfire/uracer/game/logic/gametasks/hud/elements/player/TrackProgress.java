@@ -9,7 +9,6 @@ import com.badlogic.gdx.graphics.g2d.Sprite;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.graphics.glutils.ShaderProgram;
 import com.badlogic.gdx.math.MathUtils;
-import com.badlogic.gdx.utils.Disposable;
 import com.bitfire.uracer.URacer;
 import com.bitfire.uracer.game.logic.gametasks.hud.HudLabel;
 import com.bitfire.uracer.game.logic.gametasks.hud.Positionable;
@@ -17,15 +16,10 @@ import com.bitfire.uracer.resources.Art;
 import com.bitfire.uracer.resources.BitmapFontFactory.FontFace;
 import com.bitfire.uracer.utils.AMath;
 import com.bitfire.uracer.utils.ColorUtils;
-import com.bitfire.uracer.utils.Convert;
 import com.bitfire.utils.ShaderLoader;
 
-public class TrackProgress extends Positionable implements Disposable {
+public class TrackProgress extends Positionable {
 	private HudLabel lblAdvantage;
-	private float progressval, prevVal;// , speed, ghspeed;
-	private float distPlayer, distGhost;
-	private float prevDistPlayer, prevDistGhost;
-	private float progressTargetVal, prevTargetVal;
 	private boolean advantageShown;
 
 	private final Texture texMask;
@@ -33,13 +27,64 @@ public class TrackProgress extends Positionable implements Disposable {
 	private final Sprite sAdvantage, sProgress;
 	private boolean flipped;
 
-	private final float scale;
 	private String customMessage = "";
+	private TrackProgressData data = null;
 
-	public TrackProgress (float scale) {
+	/** Data needed by this component */
+	public static class TrackProgressData {
+		public float playerDistance, targetDistance;
+		public float playerProgress, targetProgress;
 
-		this.scale = scale;
-		lblAdvantage = new HudLabel(scale, FontFace.CurseWhiteBig, "", false, 2f);
+		public void reset (boolean resetState) {
+			playerDistance = 0;
+			targetDistance = 0;
+			playerProgress = 0;
+			targetProgress = 0;
+
+			if (resetState) {
+				prevpd = 0;
+				prevpp = 0;
+				prevtd = 0;
+				prevtp = 0;
+			}
+		}
+
+		public void setPlayerDistance (float mt) {
+			playerDistance = AMath.fixup(AMath.lerp(prevpd, mt, Smoothing));
+			prevpd = playerDistance;
+		}
+
+		public void setTargetDistance (float mt) {
+			targetDistance = AMath.fixup(AMath.lerp(prevtd, mt, Smoothing));
+			prevtd = targetDistance;
+		}
+
+		/** Sets the player's progression in the range [0,1] inclusive, to indicate player's track progress. 0 means on starting
+		 * line, 1 means finished.
+		 * @param progress The progress so far */
+		public void setPlayerProgression (float progress) {
+			// smooth out high freq
+			playerProgress = AMath.fixup(AMath.lerp(prevpp, progress, Smoothing));
+			prevpp = playerProgress;
+		}
+
+		/** Sets the target's progression in the range [0,1] inclusive, to indicate target's track progress. 0 means on starting
+		 * line, 1 means finished.
+		 * @param progress The progress so far */
+		public void setTargetProgression (float progress) {
+			// smooth out high freq
+			targetProgress = AMath.fixup(AMath.lerp(prevtp, progress, Smoothing));
+			prevtp = targetProgress;
+		}
+
+		private static final float Smoothing = 0.25f;
+		private float prevpd, prevtd;
+		private float prevpp, prevtp;
+	}
+
+	public TrackProgress () {
+
+		lblAdvantage = new HudLabel(FontFace.CurseWhiteBig, "", false);
 		advantageShown = false;
 		lblAdvantage.setAlpha(1);
 
@@ -60,79 +105,44 @@ public class TrackProgress extends Positionable implements Disposable {
 		shProgress.dispose();
 	}
 
-	// public void setPlayerSpeed (float mts) {
-	// speed = mts;
-	// }
-	//
-	// public void setTargetSpeed (float mts) {
-	// ghspeed = mts;
-	// }
-
-	public void setPlayerDistance (float mt) {
-		distPlayer = AMath.fixup(AMath.lerp(prevDistPlayer, mt, 0.25f));
-		prevDistPlayer = distPlayer;
-	}
-
-	public void setTargetDistance (float mt) {
-		distGhost = AMath.fixup(AMath.lerp(prevDistGhost, mt, 0.25f));
-		prevDistGhost = distGhost;
-	}
-
-	/** Sets the player's progression in the range [0,1] inclusive, to indicate player's track progress. 0 means on starting line, 1
-	 * means finished.
-	 * @param progress The progress so far */
-	public void setPlayerProgression (float progress) {
-		// smooth out high freq
-		progressval = AMath.fixup(AMath.lerp(prevVal, progress, 0.25f));
-		prevVal = progressval;
-	}
-
-	/** Sets the target's progression in the range [0,1] inclusive, to indicate car's track progress. 0 means on starting line, 1
-	 * means finished.
-	 * @param progress The progress so far */
-	public void setTargetProgression (float progress) {
-		// smooth out high freq
-		progressTargetVal = AMath.fixup(AMath.lerp(prevTargetVal, progress, 0.25f));
-		prevTargetVal = progressTargetVal;
-	}
-
-	public void resetCounters (boolean resetState) {
-		progressval = 0;
-		progressTargetVal = 0;
-		distGhost = 0;
-		distPlayer = 0;
-
-		if (resetState) {
-			prevDistGhost = 0;
-			prevDistPlayer = 0;
-			prevVal = 0;
-			prevTargetVal = 0;
-		}
-	}
-
-	public void tick () {
+	public void tick (TrackProgressData data) {
 		lblAdvantage.tick();
+		this.data = data;
 	}
 
 	public void setMessage (String messageOrEmpty) {
 		customMessage = messageOrEmpty;
 	}
 
+	@Override
+	public float getWidth () {
+		return 0;
+	}
+
+	@Override
+	public float getHeight () {
+		return 0;
+	}
+
 	public void render (SpriteBatch batch, float cameraZoom) {
+
+		if (data == null) {
+			return;
+		}
 
 		float playerToTarget = 0;
 
 		// float a = 1f - 0.7f * URacer.Game.getTimeModFactor();
 		float a = 0.25f;
 
-		playerToTarget = AMath.fixup(progressval - progressTargetVal);
+		playerToTarget = AMath.fixup(data.playerProgress - data.targetProgress);
 		if (customMessage.length() == 0) {
-			lblAdvantage.setString(Math.round(distPlayer - distGhost) + " mt");
+			lblAdvantage.setString(Math.round(data.playerDistance - data.targetDistance) + " mt");
 		} else {
 			lblAdvantage.setString(customMessage);
 		}
 
-		if (distPlayer > 0) {
+		if (data.playerDistance > 0) {
 			if (!advantageShown) {
 				advantageShown = true;
 				lblAdvantage.queueShow(500);
@@ -155,8 +165,9 @@ public class TrackProgress extends Positionable implements Disposable {
 		lblAdvantage.setColor(advantageColor);
 		lblAdvantage.setAlpha(a * 2);
 		lblAdvantage.setScale(cameraZoom * (1f - 0.4f * (1 - ndist)));
-		lblAdvantage.setPosition(position.x, position.y - cameraZoom * Convert.scaledPixels(90) - Convert.scaledPixels(90)
-			* timeFactor * cameraZoom - Convert.scaledPixels(8) * cameraZoom);
+		// lblAdvantage.setPosition(position.x, position.y - cameraZoom * Convert.scaledPixels(90) - Convert.scaledPixels(90) *
+		// timeFactor * cameraZoom - Convert.scaledPixels(8) * cameraZoom);
+		lblAdvantage.setPosition(position.x, position.y - cameraZoom * 90 - 90 * timeFactor * cameraZoom - 8 * cameraZoom);
 		lblAdvantage.render(batch);
 
 		float s = 1f + timeFactor;
@@ -178,7 +189,7 @@ public class TrackProgress extends Positionable implements Disposable {
 		scl += .07f * URacer.Game.getTimeModFactor();
 
 		// player's progress
-		shProgress.setUniformf("progress", progressval);
+		shProgress.setUniformf("progress", data.playerProgress);
 		sProgress.setColor(Color.WHITE);
 		sProgress.setScale(scl);
 		sProgress.setPosition(position.x - sProgress.getWidth() / 2, position.y - sProgress.getHeight() / 2);

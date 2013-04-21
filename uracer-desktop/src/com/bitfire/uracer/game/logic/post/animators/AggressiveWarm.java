@@ -1,7 +1,6 @@
 
 package com.bitfire.uracer.game.logic.post.animators;
 
-import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.math.MathUtils;
 import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.utils.TimeUtils;
@@ -19,6 +18,7 @@ import com.bitfire.uracer.game.player.PlayerCar;
 import com.bitfire.uracer.game.rendering.GameRenderer;
 import com.bitfire.uracer.resources.Art;
 import com.bitfire.uracer.utils.AMath;
+import com.bitfire.uracer.utils.ScaleUtils;
 
 public final class AggressiveWarm implements PostProcessingAnimator {
 	public static final String Name = "AggressiveWarm";
@@ -74,7 +74,7 @@ public final class AggressiveWarm implements PostProcessingAnimator {
 
 		if (vignette != null) {
 			vignette.setCoords(0.8f, 0.25f);
-			vignette.setCenter(Gdx.graphics.getWidth() / 2, Gdx.graphics.getHeight() / 2);
+			vignette.setCenter(ScaleUtils.PlayWidth / 2, ScaleUtils.PlayHeight / 2);
 			vignette.setLutTexture(Art.postXpro);
 			vignette.setLutIndexVal(0, 7);
 			vignette.setLutIndexVal(1, 0);

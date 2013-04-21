@@ -30,6 +30,7 @@ public final class CarHighlighter {
 	private boolean isBusy, isActive, hasCar;
 	private BoxedFloat bfScale, bfRot, bfAlpha, bfGreen, bfRed, bfBlue;
 
+	// need tileMapZoomFactor since highlighter size depends from car *rendered* size
 	public CarHighlighter () {
 		sprite = new Sprite();
 		sprite.setRegion(Art.cars.findRegion("selector"));
@@ -80,6 +81,7 @@ public final class CarHighlighter {
 
 			float timeFactor = URacer.Game.getTimeModFactor() * 0.3f;
 			float s = 1f + timeFactor;
+
 			sprite.setScale(bfScale.value * cameraZoom * scale * s);
 			sprite.setPosition(tmp.x - offX, tmp.y - offY);
 			sprite.setRotation(-renderState.orientation + bfRot.value);

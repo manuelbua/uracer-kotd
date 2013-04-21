@@ -22,18 +22,17 @@ public final class MapUtils implements Disposable {
 	public final Map<String, TiledMapTileLayer> cachedLayers = new HashMap<String, TiledMapTileLayer>(10);
 
 	private TiledMap map;
-	private Vector2 worldSizeScaledPx = new Vector2();
-	public float scaledTilesize, invScaledTilesize;
+	private Vector2 worldSizePx = new Vector2();
+	public float invTileWidth;
 	private int mapHeight, tileWidth;
 
-	public MapUtils (TiledMap map, int tileWidth, int mapHeight, Vector2 worldSizeScaledPx, float invZoomFactor) {
+	public MapUtils (TiledMap map, int tileWidth, int mapHeight, Vector2 worldSizePx) {
 		this.map = map;
 		this.tileWidth = tileWidth;
 		this.mapHeight = mapHeight;
-		this.worldSizeScaledPx.set(worldSizeScaledPx);
+		this.worldSizePx.set(worldSizePx);
 
-		scaledTilesize = tileWidth * invZoomFactor;
-		invScaledTilesize = 1f / scaledTilesize;
+		invTileWidth = 1f / (float)tileWidth;
 	}
 
 	@Override
@@ -106,7 +105,7 @@ public final class MapUtils implements Disposable {
 
 	public Vector2 pxToTile (float x, float y) {
 		retTile.set(x, y);
-		retTile.scl(invScaledTilesize);
+		retTile.scl(invTileWidth);
 		retTile.y = mapHeight - retTile.y;
 		VMath.truncateToInt(retTile);
 		return retTile;
@@ -118,13 +117,5 @@ public final class MapUtils implements Disposable {
 		retPx.set(Convert.mt2px(x), Convert.mt2px(y));
 		retPx = pxToTile(retPx.x, retPx.y);
 		return retPx;
-	}
-
-	private Vector2 tmp = new Vector2();
-
-	public Vector2 positionFor (float x, float y) {
-		tmp = Convert.scaledPixels(tmp.set(x, y));
-		tmp.y = worldSizeScaledPx.y - tmp.y;
-		return tmp;
 	}
 }

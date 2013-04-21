@@ -8,7 +8,6 @@ import aurelienribon.tweenengine.TweenCallback;
 import aurelienribon.tweenengine.equations.Back;
 import aurelienribon.tweenengine.equations.Expo;
 
-import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.g2d.BitmapFont;
 import com.badlogic.gdx.graphics.g2d.BitmapFont.HAlignment;
 import com.badlogic.gdx.graphics.g2d.BitmapFont.TextBounds;
@@ -17,6 +16,7 @@ import com.bitfire.uracer.game.tween.GameTweener;
 import com.bitfire.uracer.resources.BitmapFontFactory;
 import com.bitfire.uracer.resources.BitmapFontFactory.FontFace;
 import com.bitfire.uracer.utils.AMath;
+import com.bitfire.uracer.utils.ScaleUtils;
 
 public class Message {
 	public enum Type {
@@ -47,22 +47,19 @@ public class Message {
 	private TextBounds bounds;
 	private float alpha;
 	private boolean hiding;
-	private float invZoomFactor;
 
-	public Message (float invZoomFactor) {
+	public Message () {
 		bounds = new TextBounds();
-		this.invZoomFactor = invZoomFactor;
 	}
 
-	public Message (String message, float durationSecs, Type type, Position position, Size size, float invZoomFactor) {
-		this(invZoomFactor);
+	public Message (String message, float durationSecs, Type type, Position position, Size size) {
 		set(message, durationSecs, type, position, size);
 	}
 
 	public final void set (String message, float durationSecs, Type type, Position position, Size size) {
 		startMs = 0;
 		started = false;
-		halfWidth = (int)(Gdx.graphics.getWidth() / 2);
+		halfWidth = (int)(ScaleUtils.RefScreenWidth / 2);
 
 		what = message;
 		this.position = position;
@@ -99,33 +96,32 @@ public class Message {
 	}
 
 	private void computeFinalPosition () {
-		int widthOnFour = Gdx.graphics.getWidth() / 4;
+		int widthOnFour = ScaleUtils.RefScreenWidth / 4;
 		whereX = widthOnFour;
 		finalY = 0;
 
-		float scale = invZoomFactor;
-		float distance = 180 * scale;
+		float distance = 180;
+		float h = ScaleUtils.RefScreenHeight;
 
 		switch (position) {
 		case Top:
-			finalY = 30 * scale;
-			whereY = Gdx.graphics.getHeight() / 2;
+			finalY = 30;
+			whereY = h / 2;
 			break;
 
 		case Middle:
-			font.setScale(1.5f * scale, 1.5f * scale);
 			bounds.set(font.getMultiLineBounds(what));
-			finalY = (Gdx.graphics.getHeight() - bounds.height) / 2 - bounds.height / 2;
-			whereY = Gdx.graphics.getHeight() + bounds.height;
+			finalY = (h - bounds.height) / 2 - bounds.height / 2;
+			whereY = h + bounds.height;
 			break;
 
 		case Bottom:
-			finalY = Gdx.graphics.getHeight() - distance;
-			whereY = Gdx.graphics.getHeight() + distance;
+			finalY = h - distance;
+			whereY = h + distance;
 			break;
 		}
 
-		font.setScale(scale, scale);
+		font.setScale(1f);
 	}
 
 	public boolean tick () {
@@ -133,7 +129,7 @@ public class Message {
 	}
 
 	public void render (SpriteBatch batch) {
-		font.setScale(scaleX * invZoomFactor, scaleY * invZoomFactor);
+		font.setScale(scaleX, scaleY);
 		font.setColor(1, 1, 1, alpha);
 		font.drawMultiLine(batch, what, whereX, whereY, halfWidth, HAlignment.CENTER);
 		font.setColor(1, 1, 1, 1);

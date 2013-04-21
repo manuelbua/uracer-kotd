@@ -1,1 +1,1 @@
-java -jar uracer-kotd.jar --resolution=1280x720
+java -jar uracer-kotd.jar --resolution=800x600

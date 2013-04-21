@@ -233,6 +233,7 @@ public final class Art {
 	private static void loadFonts () {
 		// debug font, no need to scale it
 		debugFont = split("data/base/debug-font.png", DebugFontWidth, DebugFontHeight, false);
+		debugFont[0][0].getTexture().setFilter(TextureFilter.Linear, TextureFilter.Linear);
 
 		// game fonts
 		fontAtlas = new TextureAtlas("data/font/pack.atlas");

@@ -4,7 +4,6 @@ package com.bitfire.uracer.resources;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.g2d.BitmapFont;
 import com.badlogic.gdx.utils.LongMap;
-import com.bitfire.uracer.ScalingStrategy;
 import com.bitfire.utils.Hash;
 
 /** Lazy factory for BitmapFont objects
@@ -42,14 +41,8 @@ public final class BitmapFontFactory {
 		}
 	}
 
-	private static ScalingStrategy scalingStrategy;
-
 	// storage
 	private static LongMap<BitmapFont> fontCache = new LongMap<BitmapFont>();
-
-	public static void init (ScalingStrategy strategy) {
-		scalingStrategy = strategy;
-	}
 
 	/** Returns an instance of a BitmapFont, performing a font reset to the initial state (when reused), if specified. */
 	public static BitmapFont get (FontFace face, boolean reset) {
@@ -79,7 +72,7 @@ public final class BitmapFontFactory {
 	}
 
 	private static void setupFont (FontFace face, BitmapFont font) {
-		font.setScale(scalingStrategy.invTileMapZoomFactor);
+		// font.setScale(scalingStrategy.invTileMapZoomFactor);
 		font.setUseIntegerPositions(false);
 	}
 

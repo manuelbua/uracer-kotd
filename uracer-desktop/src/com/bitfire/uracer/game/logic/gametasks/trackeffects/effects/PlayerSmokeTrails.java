@@ -6,7 +6,6 @@ import com.badlogic.gdx.graphics.g2d.ParticleEffect;
 import com.badlogic.gdx.graphics.g2d.ParticleEmitter;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.math.MathUtils;
-import com.bitfire.uracer.ScalingStrategy;
 import com.bitfire.uracer.URacer;
 import com.bitfire.uracer.game.logic.gametasks.trackeffects.TrackEffect;
 import com.bitfire.uracer.game.logic.gametasks.trackeffects.TrackEffectType;
@@ -17,27 +16,23 @@ import com.bitfire.uracer.resources.Art;
  * 
  * @author bmanuel */
 public class PlayerSmokeTrails extends TrackEffect {
-	public static final int MaxParticles = 10000;
+	public static final int MaxParticles = 1000;
 
 	private SmokeEffect fx[];
 	private static final int SmokeEffectsCount = 1;
 	private PlayerCar player;
 	private boolean isDrifting, wasDrifting;
-	private ScalingStrategy scalingStrategy;
 	private float posX, posY;
 
-	public PlayerSmokeTrails (ScalingStrategy scalingStrategy, PlayerCar player) {
+	public PlayerSmokeTrails (PlayerCar player) {
 		super(TrackEffectType.CarSmokeTrails);
 		this.player = player;
-		this.scalingStrategy = scalingStrategy;
 
 		fx = new SmokeEffect[SmokeEffectsCount];
 
 		for (int i = 0; i < SmokeEffectsCount; i++) {
 			fx[i] = new SmokeEffect();
-			// fx[i].setLifeMul(3.5f);
-			fx[i].setScaleMul(1.5f);
-			// fx[i].setEmissionMul(0.25f);
+			fx[i].setMaxParticleCount(MaxParticles);
 		}
 
 		isDrifting = false;
@@ -58,6 +53,10 @@ public class PlayerSmokeTrails extends TrackEffect {
 	@Override
 	public void tick () {
 		isDrifting = player.driftState.isDrifting && player.driftState.driftStrength > 0f;
+
+		// for (int i = 0; i < SmokeEffectsCount; i++) {
+		// fx[i].start();
+		// }
 
 		// if (player.driftState.driftStrength > 0) {
 		// for (int i = 0; i < SmokeEffectsCount; i++) {
@@ -87,17 +86,17 @@ public class PlayerSmokeTrails extends TrackEffect {
 	@Override
 	public void render (SpriteBatch batch) {
 		float dfactor = player.driftState.driftStrength;
-		// float sfactor = player.carState.currSpeedFactor;
+		float sfactor = player.carState.currSpeedFactor;
 
-		fx[0].setLifeMul(MathUtils.random(1f, 1f + 15f * dfactor));
-		fx[0].setScaleMul(MathUtils.random(0.1f, 0.1f + 15f * dfactor));
+		fx[0].setLifeMul(1f + 10f * dfactor);
+		fx[0].setScaleMul(1f + 3f * dfactor + 7f * sfactor);
 
 		float t = 0.8f * dfactor;
 		fx[0].baseEmitter.getTransparency().setHighMin(t);
 		fx[0].baseEmitter.getTransparency().setHighMax(t);
 
 		float[] colors = fx[0].baseEmitter.getTint().getColors();
-		float v = 0.15f;
+		float v = 0.3f;
 		colors[0] = v * dfactor;
 		colors[1] = v * dfactor;
 		colors[2] = v * dfactor;
@@ -109,7 +108,7 @@ public class PlayerSmokeTrails extends TrackEffect {
 			r = g = b = 0.7f;
 		}
 
-		float colorscale = 0.15f;
+		float colorscale = 0.15f + 0.3f * dfactor;
 		r *= colorscale;
 		g *= colorscale;
 		b *= colorscale;
@@ -176,7 +175,7 @@ public class PlayerSmokeTrails extends TrackEffect {
 		}
 
 		public final void setScaleMul (float value) {
-			baseEmitter.getScale().setHigh(OriginalParticleScaling * value * scalingStrategy.invTileMapZoomFactor);
+			baseEmitter.getScale().setHigh(OriginalParticleScaling * value);
 		}
 
 		public void setEmissionMul (float value) {

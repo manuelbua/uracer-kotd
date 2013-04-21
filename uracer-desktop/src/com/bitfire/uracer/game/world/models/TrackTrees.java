@@ -9,15 +9,14 @@ import com.badlogic.gdx.math.Matrix4;
 import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.math.Vector3;
 import com.bitfire.uracer.game.world.GameWorld;
+import com.bitfire.uracer.utils.ScaleUtils;
 
 public class TrackTrees {
 	public final List<TreeStillModel> models;
-	private final MapUtils mapUtils;
 	private final GameWorld world;
 
-	public TrackTrees (GameWorld world, MapUtils mapUtils, List<TreeStillModel> models) {
+	public TrackTrees (GameWorld world, List<TreeStillModel> models) {
 		this.world = world;
-		this.mapUtils = mapUtils;
 		this.models = models;
 	}
 
@@ -47,14 +46,18 @@ public class TrackTrees {
 			Matrix4 transf = m.transformed;
 
 			// compute position
-			pospx.set(m.positionPx);
-			pospx.set(world.positionFor(pospx));
-			tmpvec.x = (m.positionOffsetPx.x - camOrtho.position.x) + halfViewport.x + pospx.x;
-			tmpvec.y = (m.positionOffsetPx.y + camOrtho.position.y) + halfViewport.y - pospx.y;
+			tmpvec.x = (m.positionOffsetPx.x - camPersp.position.x) + (camPersp.viewportWidth / 2) + m.positionPx.x;
+			tmpvec.y = (m.positionOffsetPx.y + camPersp.position.y) + (camPersp.viewportHeight / 2) - m.positionPx.y;
 			tmpvec.z = 1;
 
+			tmpvec.x *= ScaleUtils.Scale;
+			tmpvec.y *= ScaleUtils.Scale;
+
+			tmpvec.x += ScaleUtils.CropX;
+			tmpvec.y += ScaleUtils.CropY;
+
 			// transform to world space
-			camPersp.unproject(tmpvec);
+			camPersp.unproject(tmpvec, ScaleUtils.CropX, ScaleUtils.CropY, ScaleUtils.PlayWidth, ScaleUtils.PlayHeight);
 
 			// build model matrix
 			Matrix4 model = m.mtxmodel;
@@ -69,7 +72,8 @@ public class TrackTrees {
 			model.translate(tmpvec);
 
 			// comb = (proj * view) * model (fast mul)
-			Matrix4.mul(transf.set(camPersp.combined).val, m.mtxmodel.val);
+			// transf.set(xform).mul(camPersp.combined).mul(m.mtxmodel);
+			transf.set(camPersp.combined).mul(m.mtxmodel);
 
 			// transform the bounding box
 			m.boundingBox.inf().set(m.localBoundingBox);

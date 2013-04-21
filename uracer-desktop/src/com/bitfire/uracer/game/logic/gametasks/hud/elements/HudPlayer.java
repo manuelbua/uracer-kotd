@@ -4,7 +4,6 @@ package com.bitfire.uracer.game.logic.gametasks.hud.elements;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.math.MathUtils;
 import com.badlogic.gdx.math.Vector2;
-import com.bitfire.uracer.ScalingStrategy;
 import com.bitfire.uracer.configuration.Config;
 import com.bitfire.uracer.configuration.UserProfile;
 import com.bitfire.uracer.entities.EntityRenderState;
@@ -13,6 +12,7 @@ import com.bitfire.uracer.game.logic.gametasks.hud.HudElement;
 import com.bitfire.uracer.game.logic.gametasks.hud.Positionable;
 import com.bitfire.uracer.game.logic.gametasks.hud.elements.player.DriftBar;
 import com.bitfire.uracer.game.logic.gametasks.hud.elements.player.TrackProgress;
+import com.bitfire.uracer.game.logic.gametasks.hud.elements.player.TrackProgress.TrackProgressData;
 import com.bitfire.uracer.game.logic.gametasks.hud.elements.player.WrongWay;
 import com.bitfire.uracer.game.player.PlayerCar;
 import com.bitfire.uracer.game.rendering.GameRenderer;
@@ -33,22 +33,20 @@ public final class HudPlayer extends HudElement {
 	public final WrongWay wrongWay;
 	public final DriftBar driftBar;
 	public final TrackProgress trackProgress;
+	private final TrackProgressData trackProgressData;
 
 	private CarHighlighter highlightError;
 	private CarHighlighter highlightNext;
 
-	//
+	// rendering
 	private final GameRenderer renderer;
 
 	// gravitation
 	private float carModelWidthPx, carModelLengthPx;
 	private Vector2 tmpg = new Vector2();
 
-	private float scale = 1f;
-
-	public HudPlayer (UserProfile userProfile, ScalingStrategy scalingStrategy, PlayerCar player, GameRenderer renderer) {
+	public HudPlayer (UserProfile userProfile, PlayerCar player, GameRenderer renderer) {
 		this.renderer = renderer;
-		this.scale = scalingStrategy.invTileMapZoomFactor;
 		playerState = player.state();
 
 		this.carModelWidthPx = Convert.mt2px(player.getCarModel().width);
@@ -56,8 +54,9 @@ public final class HudPlayer extends HudElement {
 
 		// elements
 		wrongWay = new WrongWay();
-		driftBar = new DriftBar(scale, carModelLengthPx);
-		trackProgress = new TrackProgress(scale);
+		driftBar = new DriftBar(carModelLengthPx);
+		trackProgress = new TrackProgress();
+		trackProgressData = new TrackProgressData();
 
 		highlightError = new CarHighlighter();
 		highlightError.setCar(player);
@@ -65,6 +64,10 @@ public final class HudPlayer extends HudElement {
 
 		highlightNext = new CarHighlighter();
 		highlightNext.setScale(1);
+	}
+
+	public TrackProgressData getTrackProgressData () {
+		return trackProgressData;
 	}
 
 	@Override
@@ -76,7 +79,7 @@ public final class HudPlayer extends HudElement {
 	@Override
 	public void onTick () {
 		driftBar.tick();
-		trackProgress.tick();
+		trackProgress.tick(trackProgressData);
 	}
 
 	@Override
@@ -89,19 +92,18 @@ public final class HudPlayer extends HudElement {
 
 	@Override
 	public void onRender (SpriteBatch batch) {
+		// FIXME find a more elegant way
+		// position *now* so that other positions have been already interpolated
+		atPlayer(driftBar);
+		atPlayer(trackProgress);
+		gravitate(wrongWay, -180, 100);
 
 		float cz = renderer.getWorldRenderer().getCameraZoom();
 
-		atPlayer(driftBar);
 		driftBar.render(batch, cz);
-
-		atPlayer(trackProgress);
 		trackProgress.render(batch, cz);
-
 		highlightError.render(batch, cz);
 		highlightNext.render(batch, cz);
-
-		gravitate(wrongWay, -180, 50);
 		wrongWay.render(batch, cz);
 	}
 
@@ -113,7 +115,7 @@ public final class HudPlayer extends HudElement {
 		float zs = renderer.getWorldRenderer().getCameraZoom();
 
 		tmpg.set(GameRenderer.ScreenUtils.worldPxToScreen(playerState.position));
-		tmpg.y += distance * scale * zs;
+		tmpg.y += distance * zs;
 		p.setPosition(tmpg);
 	}
 
@@ -130,7 +132,7 @@ public final class HudPlayer extends HudElement {
 	 * orientation offset, expressed in radians, if any. */
 	private Vector2 gravitate (float w, float h, float offsetDegs, float distance) {
 		float zs = renderer.getWorldRenderer().getCameraZoom();
-		float border = distance * scale;
+		float border = distance;
 
 		Vector2 sp = GameRenderer.ScreenUtils.worldPxToScreen(playerState.position);
 		Vector2 heading = VMath.fromDegrees(playerState.orientation + offsetDegs);

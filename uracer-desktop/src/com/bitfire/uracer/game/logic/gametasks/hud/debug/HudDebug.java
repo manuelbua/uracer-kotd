@@ -4,9 +4,6 @@ package com.bitfire.uracer.game.logic.gametasks.hud.debug;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.utils.Array;
-import com.bitfire.uracer.events.GameRendererEvent;
-import com.bitfire.uracer.events.GameRendererEvent.Order;
-import com.bitfire.uracer.game.GameEvents;
 import com.bitfire.uracer.game.logic.gametasks.GameTasksManager;
 import com.bitfire.uracer.game.logic.gametasks.hud.HudElement;
 import com.bitfire.uracer.game.logic.gametasks.trackeffects.TrackEffectType;
@@ -35,16 +32,7 @@ public class HudDebug extends HudElement {
 	private Array<HudDebugMeter> meters = new Array<HudDebugMeter>();
 	private Vector2 pos = new Vector2();
 
-	private GameRendererEvent.Listener gameRendererEvent = new GameRendererEvent.Listener() {
-		@Override
-		public void gameRendererEvent (GameRendererEvent.Type type, Order order) {
-			onDebug(GameEvents.gameRenderer.batch);
-		}
-	};
-
 	public HudDebug (PlayerCar player, PlayerDriftState driftState, GameTasksManager manager) {
-		GameEvents.gameRenderer.addListener(gameRendererEvent, GameRendererEvent.Type.BatchDebug, GameRendererEvent.Order.DEFAULT);
-
 		this.player = player;
 		this.driftState = driftState;
 		this.gameTaskManager = manager;
@@ -83,9 +71,6 @@ public class HudDebug extends HudElement {
 
 	@Override
 	public void dispose () {
-		GameEvents.gameRenderer.removeListener(gameRendererEvent, GameRendererEvent.Type.BatchDebug,
-			GameRendererEvent.Order.DEFAULT);
-
 		for (HudDebugMeter m : meters) {
 			m.dispose();
 		}
@@ -116,15 +101,15 @@ public class HudDebug extends HudElement {
 		meterSpeed.setValue(CarUtils.mtSecToKmHour(player.getInstantSpeed()));
 	}
 
-	public void onDebug (SpriteBatch batch) {
-
+	@Override
+	public void onRender (SpriteBatch batch) {
 		float prevHeight = 0;
 		int index = 0;
 		for (HudDebugMeter m : meters) {
 
 			pos.set(GameRenderer.ScreenUtils.worldPxToScreen(player.state().position));
-			pos.x += m.getWidth() * 0.5f;
-			pos.y += 100;
+			pos.x += -60;
+			pos.y += 140;
 
 			// offset by index
 			pos.y += index * (prevHeight + Art.DebugFontHeight);
@@ -135,11 +120,6 @@ public class HudDebug extends HudElement {
 			index++;
 			prevHeight = m.getHeight();
 		}
-	}
-
-	@Override
-	public void onRender (SpriteBatch batch) {
-		// nope, see onDebug instead
 	}
 
 	@Override

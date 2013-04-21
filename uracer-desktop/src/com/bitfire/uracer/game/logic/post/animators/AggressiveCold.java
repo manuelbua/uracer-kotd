@@ -7,7 +7,6 @@ import aurelienribon.tweenengine.Tween;
 import aurelienribon.tweenengine.TweenCallback;
 import aurelienribon.tweenengine.equations.Quad;
 
-import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.math.MathUtils;
 import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.math.WindowedMean;
@@ -31,6 +30,7 @@ import com.bitfire.uracer.resources.Art;
 import com.bitfire.uracer.utils.AMath;
 import com.bitfire.uracer.utils.BoxedFloat;
 import com.bitfire.uracer.utils.BoxedFloatAccessor;
+import com.bitfire.uracer.utils.ScaleUtils;
 
 public final class AggressiveCold implements PostProcessingAnimator {
 	public static final String Name = "AggressiveCold";
@@ -106,7 +106,7 @@ public final class AggressiveCold implements PostProcessingAnimator {
 	}
 
 	@Override
-	public void alertCollision (float factor, int milliseconds) {
+	public void alertCollision (float collisionFactor, int milliseconds) {
 		// if (wrongWayBegan || alertCollision) {
 		if (wrongWayBegan) {
 			lastCollisionFactor = 0;
@@ -115,20 +115,20 @@ public final class AggressiveCold implements PostProcessingAnimator {
 
 		// DO NOT accept subsequent collision alerts if the factor
 		// is LOWER than the alert currently being shown
-		if (factor < lastCollisionFactor && alertCollision) {
+		if (collisionFactor < lastCollisionFactor && alertCollision) {
 			return;
 		}
 
-		lastCollisionFactor = factor;
+		lastCollisionFactor = collisionFactor;
 		alertCollision = true;
 		GameTweener.stop(wrongWayAmount);
 		Timeline seq = Timeline.createSequence();
 
-		factor = MathUtils.clamp(factor, 0, 1);
+		collisionFactor = MathUtils.clamp(collisionFactor, 0, 1);
 
 		//@off
 		seq
-			.push(Tween.to(wrongWayAmount, BoxedFloatAccessor.VALUE, 75).target(factor).ease(Quad.IN))
+			.push(Tween.to(wrongWayAmount, BoxedFloatAccessor.VALUE, 75).target(collisionFactor).ease(Quad.IN))
 			.pushPause(50)
 			.push(Tween.to(wrongWayAmount, BoxedFloatAccessor.VALUE, milliseconds).target(0).ease(Quad.OUT))
 			.setCallback(new TweenCallback() {
@@ -177,7 +177,7 @@ public final class AggressiveCold implements PostProcessingAnimator {
 		if (vignette != null) {
 			vignette.setCoords(0.85f, 0.3f);
 			// vignette.setCoords( 1.5f, 0.1f );
-			vignette.setCenter(Gdx.graphics.getWidth() / 2, Gdx.graphics.getHeight() / 2);
+			vignette.setCenter(ScaleUtils.PlayWidth / 2, ScaleUtils.PlayHeight / 2);
 			vignette.setLutTexture(Art.postXpro);
 			vignette.setLutIndexVal(0, 16);
 			vignette.setLutIndexVal(1, 7);

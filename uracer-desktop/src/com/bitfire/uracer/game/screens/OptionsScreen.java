@@ -17,7 +17,6 @@ import com.badlogic.gdx.scenes.scene2d.utils.ChangeListener;
 import com.badlogic.gdx.scenes.scene2d.utils.ClickListener;
 import com.bitfire.postprocessing.filters.RadialBlur;
 import com.bitfire.uracer.Input;
-import com.bitfire.uracer.ScalingStrategy;
 import com.bitfire.uracer.URacer;
 import com.bitfire.uracer.configuration.Config;
 import com.bitfire.uracer.configuration.Gameplay;
@@ -28,18 +27,19 @@ import com.bitfire.uracer.game.logic.post.ssao.Ssao;
 import com.bitfire.uracer.game.screens.GameScreensFactory.ScreenType;
 import com.bitfire.uracer.resources.Art;
 import com.bitfire.uracer.screen.Screen;
+import com.bitfire.uracer.utils.ScaleUtils;
 import com.bitfire.uracer.utils.UIUtils;
 
 public class OptionsScreen extends Screen {
 
 	private Stage ui;
 	private Input input;
-	private Table container;
+	private Table root, container;
 	private CheckBox ppVignetting, ppBloom, ppRadialBlur, ppCrtScreen, ppCurvature, ppComplexTrees, ppWalls, ppSsao, ppNightMode;
 	private SelectBox timeInputModeSel, ppZoomBlurQ, ppSsaoQuality;
 
 	@Override
-	public void init (ScalingStrategy scalingStrategy) {
+	public void init () {
 		input = URacer.Game.getInputSystem();
 		setupUI();
 	}
@@ -50,18 +50,22 @@ public class OptionsScreen extends Screen {
 	}
 
 	private void setupUI () {
-		ui = new Stage();
+		ui = new Stage(ScaleUtils.RefScreenWidth, ScaleUtils.RefScreenHeight, false);
+		ui.getCamera().translate(-ui.getGutterWidth(), -ui.getGutterHeight(), 0);
+		root = new Table();
+		root.setSize(ui.getWidth(), ui.getHeight());
+		ui.addActor(root);
 
 		// background
 		Image bg = new Image(Art.scrBackground);
 		bg.setFillParent(true);
-		ui.addActor(bg);
+		root.addActor(bg);
 
 		container = new Table();
 		// container.debug();
 		container.setFillParent(true);
 		container.defaults().pad(2);
-		ui.addActor(container);
+		root.addActor(container);
 
 		// time dilation input mode
 		{
@@ -271,7 +275,6 @@ public class OptionsScreen extends Screen {
 
 		container.row().colspan(2);
 		container.add(ppNightMode);
-
 	}
 
 	@Override

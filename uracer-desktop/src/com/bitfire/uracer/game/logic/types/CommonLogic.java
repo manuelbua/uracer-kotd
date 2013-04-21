@@ -4,7 +4,6 @@ package com.bitfire.uracer.game.logic.types;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Input.Keys;
 import com.bitfire.uracer.Input;
-import com.bitfire.uracer.ScalingStrategy;
 import com.bitfire.uracer.URacer;
 import com.bitfire.uracer.configuration.Config;
 import com.bitfire.uracer.configuration.Gameplay;
@@ -21,6 +20,9 @@ import com.bitfire.uracer.game.actors.CarPreset;
 import com.bitfire.uracer.game.actors.GhostCar;
 import com.bitfire.uracer.game.logic.gametasks.GameTasksManager;
 import com.bitfire.uracer.game.logic.gametasks.hud.elements.HudPlayer.EndDriftType;
+import com.bitfire.uracer.game.logic.gametasks.messager.Message;
+import com.bitfire.uracer.game.logic.gametasks.messager.Message.Position;
+import com.bitfire.uracer.game.logic.gametasks.messager.Message.Size;
 import com.bitfire.uracer.game.logic.helpers.CarFactory;
 import com.bitfire.uracer.game.logic.helpers.GameTrack;
 import com.bitfire.uracer.game.logic.helpers.PlayerGameTasks;
@@ -72,6 +74,7 @@ public abstract class CommonLogic implements GameLogic, CarEvent.Listener, Playe
 	protected boolean isCurrentLapValid = true;
 	protected boolean isWarmUpLap = true;
 	protected boolean isWrongWayInWarmUp = false;
+	protected boolean isTooSlow = false;
 
 	// lap
 	protected LapManager lapManager = null;
@@ -88,7 +91,7 @@ public abstract class CommonLogic implements GameLogic, CarEvent.Listener, Playe
 
 	protected ReplayManager replayManager;
 
-	public CommonLogic (UserProfile userProfile, GameWorld gameWorld, GameRenderer gameRenderer, ScalingStrategy scalingStrategy) {
+	public CommonLogic (UserProfile userProfile, GameWorld gameWorld, GameRenderer gameRenderer) {
 		this.userProfile = userProfile;
 		this.gameWorld = gameWorld;
 		this.gameRenderer = gameRenderer;
@@ -110,11 +113,11 @@ public abstract class CommonLogic implements GameLogic, CarEvent.Listener, Playe
 		Gdx.app.log("GameLogic", "Post-processing animator created");
 
 		// main game tasks
-		gameTasksManager = new GameTasksManager(gameWorld, scalingStrategy);
+		gameTasksManager = new GameTasksManager(gameWorld);
 		gameTasksManager.createTasks();
 
 		// player tasks
-		playerTasks = new PlayerGameTasks(userProfile, gameTasksManager, scalingStrategy);
+		playerTasks = new PlayerGameTasks(userProfile, gameTasksManager);
 
 		lapManager = new LapManager(userProfile, gameWorld.getTrackId());
 		for (int i = 0; i < ReplayManager.MaxReplays; i++) {
@@ -128,9 +131,6 @@ public abstract class CommonLogic implements GameLogic, CarEvent.Listener, Playe
 
 		wrongWayMonitor = new WrongWayMonitor(this);
 		lapMonitor = new LapCompletionMonitor(this, gameTrack);
-
-		// messager.show( "THIS IS SOME FINE SHIT", 60, Message.Type.Information,
-		// MessagePosition.Bottom, MessageSize.Big );
 	}
 
 	@Override
@@ -400,6 +400,7 @@ public abstract class CommonLogic implements GameLogic, CarEvent.Listener, Playe
 		isCurrentLapValid = true;
 		isWarmUpLap = true;
 		isWrongWayInWarmUp = false;
+		isTooSlow = false;
 
 		postProcessing.resetAnimator();
 
@@ -407,7 +408,7 @@ public abstract class CommonLogic implements GameLogic, CarEvent.Listener, Playe
 		playerTasks.playerDriftSoundFx.start();
 		playerTasks.hudLapInfo.toDefaultColor();
 		playerTasks.hudLapInfo.setValid(true);
-		playerTasks.hudPlayer.trackProgress.resetCounters(false);
+		playerTasks.hudPlayer.getTrackProgressData().reset(false);
 
 		lapMonitor.reset();
 		gameTrack.setInitialCarSector(playerCar);
@@ -422,6 +423,31 @@ public abstract class CommonLogic implements GameLogic, CarEvent.Listener, Playe
 		gameTasksManager.reset();
 
 		restartLogic();
+	}
+
+	private void checkValidLap () {
+		boolean wrongWay = wrongWayMonitor.isWrongWay();
+		isCurrentLapValid = !wrongWay && !isTooSlow;
+
+		if ((wrongWay && isWarmUpLap) || isWrongWayInWarmUp) {
+			isWrongWayInWarmUp = true;
+			isWarmUpLap = true;
+			lapMonitor.reset();
+		}
+
+		// blink on wrong way (keeps calling, returns earlier if busy)
+		if (wrongWay) {
+			playerTasks.hudPlayer.highlightWrongWay();
+		}
+
+		// blink on out of track (keeps calling, returns earlier if busy)
+		if (playerCar.isOutOfTrack()) {
+			playerTasks.hudPlayer.highlightOutOfTrack();
+		}
+
+		if (isTooSlow) {
+			playerTasks.hudPlayer.getTrackProgressData().reset(true);
+		}
 	}
 
 	//
@@ -455,24 +481,7 @@ public abstract class CommonLogic implements GameLogic, CarEvent.Listener, Playe
 
 		// determine player's isWrongWay
 		if (hasPlayer()) {
-			boolean wrongWay = wrongWayMonitor.isWrongWay();
-			isCurrentLapValid = !wrongWay;
-
-			if ((wrongWay && isWarmUpLap) || isWrongWayInWarmUp) {
-				isWrongWayInWarmUp = true;
-				isWarmUpLap = true;
-				lapMonitor.reset();
-			}
-
-			// blink on wrong way (keeps calling, returns earlier if busy)
-			if (wrongWay) {
-				playerTasks.hudPlayer.highlightWrongWay();
-			}
-
-			// blink on out of track (keeps calling, returns earlier if busy)
-			if (playerCar.isOutOfTrack()) {
-				playerTasks.hudPlayer.highlightOutOfTrack();
-			}
+			checkValidLap();
 		}
 	}
 
@@ -562,11 +571,13 @@ public abstract class CommonLogic implements GameLogic, CarEvent.Listener, Playe
 
 			// restart
 			restartGame();
+			gameTasksManager.messager.show("Game restarted", 5, Message.Type.Information, Position.Bottom, Size.Big);
 
 		} else if (input.isPressed(Keys.T)) {
 
 			// reset
 			resetGame();
+			gameTasksManager.messager.show("Game reset", 5, Message.Type.Information, Position.Bottom, Size.Big);
 
 		} else if (input.isPressed(Keys.Z)) {
 
@@ -694,7 +705,13 @@ public abstract class CommonLogic implements GameLogic, CarEvent.Listener, Playe
 			break;
 		case onComputeForces:
 			if (lapManager.record(data.forces) == RecorderError.ReplayMemoryLimitReached) {
+				// lap will be invalidated
+				Gdx.app.log("CommonLogic", "Player too slow, recording aborted.");
 
+				isTooSlow = true;
+				lapManager.abortRecording();
+				playerTasks.hudLapInfo.setInvalid("Too slow!");
+				playerTasks.hudLapInfo.toColor(1, 0, 0);
 			}
 			break;
 		case onGhostFadingOut:

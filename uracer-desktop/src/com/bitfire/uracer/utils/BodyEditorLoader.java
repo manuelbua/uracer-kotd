@@ -189,8 +189,8 @@ public class BodyEditorLoader {
 		rbModel.imagePath = (String)bodyElem.get("imagePath");
 
 		OrderedMap<String, ?> originElem = (OrderedMap<String, ?>)bodyElem.get("origin");
-		rbModel.origin.x = (Float)originElem.get("x");
-		rbModel.origin.y = (Float)originElem.get("y");
+		rbModel.origin.x = (originElem.get("x") instanceof Float) ? (Float)originElem.get("x") : (Long)originElem.get("x");
+		rbModel.origin.y = (originElem.get("y") instanceof Float) ? (Float)originElem.get("y") : (Long)originElem.get("y");
 
 		// polygons
 
@@ -203,8 +203,8 @@ public class BodyEditorLoader {
 			Array<?> verticesElem = (Array<?>)polygonsElem.get(i);
 			for (int ii = 0; ii < verticesElem.size; ii++) {
 				OrderedMap<String, ?> vertexElem = (OrderedMap<String, ?>)verticesElem.get(ii);
-				float x = (Float)vertexElem.get("x");
-				float y = (Float)vertexElem.get("y");
+				float x = (vertexElem.get("x") instanceof Float) ? (Float)vertexElem.get("x") : (Long)vertexElem.get("x");
+				float y = (vertexElem.get("y") instanceof Float) ? (Float)vertexElem.get("y") : (Long)vertexElem.get("y");
 				polygon.vertices.add(new Vector2(x, y));
 			}
 
@@ -220,8 +220,8 @@ public class BodyEditorLoader {
 			rbModel.circles.add(circle);
 
 			OrderedMap<String, ?> circleElem = (OrderedMap<String, ?>)circlesElem.get(i);
-			circle.center.x = (Float)circleElem.get("cx");
-			circle.center.y = (Float)circleElem.get("cy");
+			circle.center.x = (circleElem.get("cx") instanceof Float) ? (Float)circleElem.get("cx") : (Long)circleElem.get("cx");
+			circle.center.y = (circleElem.get("cy") instanceof Float) ? (Float)circleElem.get("cy") : (Long)circleElem.get("cy");
 			circle.radius = (Float)circleElem.get("r");
 		}
 

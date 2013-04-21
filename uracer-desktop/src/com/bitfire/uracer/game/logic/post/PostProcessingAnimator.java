@@ -10,7 +10,7 @@ public interface PostProcessingAnimator {
 
 	void alertWrongWayEnds (int milliseconds);
 
-	public void alertCollision (float factor, int milliseconds);
+	public void alertCollision (float collisionFactor, int milliseconds);
 
 	void reset ();
 

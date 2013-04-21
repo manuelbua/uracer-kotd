@@ -4,6 +4,7 @@ package com.bitfire.uracer.screen;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.Pixmap.Format;
 import com.badlogic.gdx.graphics.glutils.FrameBuffer;
+import com.badlogic.gdx.math.Rectangle;
 import com.bitfire.uracer.game.screens.GameScreensFactory.ScreenType;
 
 public final class TransitionManager {
@@ -12,8 +13,10 @@ public final class TransitionManager {
 	Format fbFormat;
 	FrameBuffer fbFrom, fbTo;
 	ScreenTransition transition;
+	Rectangle viewport = new Rectangle();
 
-	public TransitionManager (boolean use32Bits, boolean useAlphaChannel, boolean useDepth) {
+	public TransitionManager (Rectangle viewport, boolean use32Bits, boolean useAlphaChannel, boolean useDepth) {
+		this.viewport.set(viewport);
 		transition = null;
 		paused = false;
 		fbFormat = Format.RGB565;
@@ -33,8 +36,8 @@ public final class TransitionManager {
 			}
 		}
 
-		fbFrom = new FrameBuffer(fbFormat, Gdx.graphics.getWidth(), Gdx.graphics.getHeight(), useDepth);
-		fbTo = new FrameBuffer(fbFormat, Gdx.graphics.getWidth(), Gdx.graphics.getHeight(), useDepth);
+		fbFrom = new FrameBuffer(fbFormat, (int)viewport.width, (int)viewport.height, useDepth);
+		fbTo = new FrameBuffer(fbFormat, (int)viewport.width, (int)viewport.height, useDepth);
 	}
 
 	public void dispose () {
@@ -99,6 +102,7 @@ public final class TransitionManager {
 		}
 
 		if (transition != null) {
+			// Gdx.gl20.glViewport((int)viewport.x, (int)viewport.y, (int)viewport.width, (int)viewport.height);
 			transition.update();
 		}
 	}
@@ -111,6 +115,7 @@ public final class TransitionManager {
 		if (transition != null) {
 			// enable depth writing if its the case
 			Gdx.gl20.glDepthMask(usedepth);
+			Gdx.gl20.glViewport((int)viewport.x, (int)viewport.y, (int)viewport.width, (int)viewport.height);
 			transition.render();
 		}
 	}

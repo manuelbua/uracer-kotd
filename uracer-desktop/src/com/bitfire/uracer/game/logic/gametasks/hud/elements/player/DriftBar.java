@@ -9,7 +9,6 @@ import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.graphics.glutils.ShaderProgram;
 import com.badlogic.gdx.math.MathUtils;
 import com.badlogic.gdx.math.WindowedMean;
-import com.badlogic.gdx.utils.Disposable;
 import com.bitfire.uracer.URacer;
 import com.bitfire.uracer.configuration.Config;
 import com.bitfire.uracer.game.logic.gametasks.hud.HudLabel;
@@ -18,15 +17,13 @@ import com.bitfire.uracer.resources.Art;
 import com.bitfire.uracer.resources.BitmapFontFactory.FontFace;
 import com.bitfire.uracer.utils.AMath;
 import com.bitfire.uracer.utils.ColorUtils;
-import com.bitfire.uracer.utils.Convert;
 import com.bitfire.uracer.utils.NumberString;
 import com.bitfire.utils.ShaderLoader;
 
-public class DriftBar extends Positionable implements Disposable {
+public class DriftBar extends Positionable {
 	public static final float MaxSeconds = 10f;
 	public static final int MaxTicks = (int)(MaxSeconds * Config.Physics.PhysicsTimestepHz);
 
-	private final float scale;
 	private float seconds;
 	private HudLabel labelSeconds;
 	private final WindowedMean driftStrength;
@@ -36,11 +33,10 @@ public class DriftBar extends Positionable implements Disposable {
 	private final Sprite sProgress, sDriftStrength;
 	private final float offX, offY, w, h;
 
-	public DriftBar (float scale, float width) {
-		this.scale = scale;
+	public DriftBar (float width) {
 		seconds = 0;
 
-		labelSeconds = new HudLabel(scale, FontFace.CurseRedYellowNew, "s", false, 0.5f);
+		labelSeconds = new HudLabel(FontFace.CurseRedYellowNew, "s", false);
 		labelSeconds.setAlpha(0);
 
 		//
@@ -62,6 +58,16 @@ public class DriftBar extends Positionable implements Disposable {
 		// drift strength
 		driftStrength = new WindowedMean((int)(1 / 0.25f));
 		sDriftStrength = new Sprite(texHalf);
+	}
+
+	@Override
+	public float getWidth () {
+		return 0;
+	}
+
+	@Override
+	public float getHeight () {
+		return 0;
 	}
 
 	public void setSeconds (float seconds) {
@@ -101,17 +107,16 @@ public class DriftBar extends Positionable implements Disposable {
 		float s = 0.55f + timeFactor * 0.5f;
 		float scl = cameraZoom * s;
 
-		labelSeconds.setScale(scl, false);
+		labelSeconds.setScale(scl);
 		labelSeconds.setString(NumberString.format(seconds) + "s", true);
-		labelSeconds.setPosition(position.x, position.y + Convert.scaledPixels(90) * cameraZoom + Convert.scaledPixels(105)
-			* timeFactor * cameraZoom);
+		labelSeconds.setPosition(position.x, position.y + (90) * cameraZoom + (105) * timeFactor * cameraZoom);
 		labelSeconds.render(batch);
 
-		// circle progress for remaining time
+		// circle progress for slow-mo accumulated time
 		s = 0.8f + timeFactor;
-		scl = cameraZoom * scale * s;
+		scl = cameraZoom * s;
 		float px = position.x - offX;
-		float py = position.y - offY + Convert.scaledPixels(32) * cameraZoom * s;
+		float py = position.y - offY + 32 * cameraZoom * s;
 
 		batch.setShader(shProgress);
 		texHalfMask.bind(1);
@@ -126,10 +131,10 @@ public class DriftBar extends Positionable implements Disposable {
 		sProgress.draw(batch, MathUtils.clamp(0.25f + 0.15f * ratio + 0.8f * URacer.Game.getTimeModFactor(), 0, 1));
 		batch.flush();
 
+		// drift strength
 		float amount = driftStrength.getMean();
 		if (!AMath.isZero(amount)) {
-			// drift strength
-			py = position.y - offY - Convert.scaledPixels(32) * cameraZoom * s;
+			py = position.y - offY - 32 * cameraZoom * s;
 			shProgress.setUniformf("progress", MathUtils.clamp(amount, 0, 1));
 
 			// float a = 1f - 0.7f * URacer.Game.getTimeModFactor(); // 0.5f + 0.5f * ratio

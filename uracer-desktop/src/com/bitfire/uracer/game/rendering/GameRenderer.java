@@ -5,11 +5,12 @@ import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.GL20;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.graphics.glutils.FrameBuffer;
+import com.badlogic.gdx.math.Matrix4;
 import com.badlogic.gdx.math.Rectangle;
 import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.math.Vector3;
 import com.bitfire.postprocessing.PostProcessor;
-import com.bitfire.uracer.ScalingStrategy;
+import com.bitfire.postprocessing.PostProcessorListener;
 import com.bitfire.uracer.configuration.Config;
 import com.bitfire.uracer.configuration.UserPreferences;
 import com.bitfire.uracer.configuration.UserPreferences.Preference;
@@ -17,12 +18,13 @@ import com.bitfire.uracer.events.GameRendererEvent;
 import com.bitfire.uracer.game.GameEvents;
 import com.bitfire.uracer.game.world.GameWorld;
 import com.bitfire.uracer.utils.Convert;
+import com.bitfire.uracer.utils.ScaleUtils;
 
 /** Manages the high-level rendering of the whole world and triggers all the GameRendererEvent events associated with the rendering
  * timeline, realized with the event's renderqueue mechanism.
  * 
  * @author bmanuel */
-public final class GameRenderer {
+public final class GameRenderer implements PostProcessorListener {
 	private final GL20 gl;
 	private final GameWorld world;
 	private final GameBatchRenderer batchRenderer;
@@ -30,67 +32,27 @@ public final class GameRenderer {
 	private final GameWorldRenderer worldRenderer;
 	private boolean drawNormalDepthMap;
 
-	/** Manages to convert world positions expressed in meters or pixels to the corresponding position to screen pixels. To use this
-	 * class, the GameWorldRenderer MUST be already constructed and initialized. */
-	public static final class ScreenUtils {
-		public static int ScreenWidth, ScreenHeight;
-		public static boolean ready = false;
-		private static Vector2 tmp2 = new Vector2();
-		private static Vector3 tmp3 = new Vector3();
-		private static GameWorldRenderer worldRenderer;
+	private final Matrix4 identity = new Matrix4();
+	private final Matrix4 xform = new Matrix4();
 
-		public static void init (GameWorldRenderer worldRenderer) {
-			ScreenUtils.worldRenderer = worldRenderer;
-			ScreenUtils.ready = true;
-			ScreenUtils.ScreenWidth = Gdx.graphics.getWidth();
-			ScreenUtils.ScreenHeight = Gdx.graphics.getHeight();
-		}
-
-		public static Vector2 worldMtToScreen (Vector2 worldPositionMt) {
-			return worldPxToScreen(Convert.mt2px(worldPositionMt));
-		}
-
-		public static Vector2 worldPxToScreen (Vector2 worldPositionPx) {
-			tmp3.set(worldPositionPx.x, worldPositionPx.y, 0);
-			worldRenderer.camOrtho.project(tmp3, 0, 0, ScreenWidth, ScreenHeight);
-			tmp2.set(tmp3.x, Gdx.graphics.getHeight() - tmp3.y);
-			return tmp2;
-		}
-
-		public static Vector3 screenToWorldMt (Vector2 screenPositionPx) {
-			tmp3.set(screenPositionPx.x, screenPositionPx.y, 1);
-			worldRenderer.camOrtho.unproject(tmp3, 0, 0, ScreenWidth, ScreenHeight);
-			tmp2.set(Convert.px2mt(tmp3.x), Convert.px2mt(tmp3.y));
-			tmp3.set(tmp2.x, tmp2.y, 0);
-			return tmp3;
-		}
-
-		public static boolean isVisible (Rectangle rect) {
-			return worldRenderer.camOrthoRect.overlaps(rect);
-		}
-
-		private ScreenUtils () {
-		}
-	}
-
-	public GameRenderer (GameWorld gameWorld, ScalingStrategy scalingStrategy) {
+	public GameRenderer (GameWorld gameWorld) {
 		world = gameWorld;
 		gl = Gdx.graphics.getGL20();
 
-		int width = Gdx.graphics.getWidth();
-		int height = Gdx.graphics.getHeight();
-
 		// world rendering
-		worldRenderer = new GameWorldRenderer(scalingStrategy, world, width, height);
+		worldRenderer = new GameWorldRenderer(world);
 		batchRenderer = new GameBatchRenderer(gl);
 
 		// initialize utils
 		ScreenUtils.init(worldRenderer);
-		Gdx.app.debug("GameRenderer", "ScreenUtils " + (ScreenUtils.ready ? "initialized." : "NOT initialized!"));
+
+		// precompute sprite batch transform matrix
+		xform.idt();
+		xform.scale(ScaleUtils.Scale, ScaleUtils.Scale, 1);
 
 		// post-processing
 		if (UserPreferences.bool(Preference.PostProcessing)) {
-			postProcessor = new PostProcessor(width, height, true /* depth */, false /* alpha */, Config.isDesktop /* supports32Bpp */);
+			postProcessor = new PostProcessor(ScaleUtils.PlayViewport, true /* depth */, false /* alpha */, Config.isDesktop /* supports32Bpp */);
 			PostProcessor.EnableQueryStates = false;
 			postProcessor.setClearBits(GL20.GL_COLOR_BUFFER_BIT | GL20.GL_DEPTH_BUFFER_BIT);
 			postProcessor.setClearColor(0, 0, 0, 1);
@@ -146,8 +108,11 @@ public final class GameRenderer {
 
 		GameEvents.gameRenderer.timeAliasingFactor = timeAliasingFactor;
 		GameEvents.gameRenderer.trigger(this, GameRendererEvent.Type.OnSubframeInterpolate);
+	}
 
-		gl.glViewport(0, 0, Gdx.graphics.getWidth(), Gdx.graphics.getHeight());
+	@Override
+	public void beforeRenderToScreen () {
+		gl.glViewport(ScaleUtils.CropX, ScaleUtils.CropY, ScaleUtils.PlayWidth, ScaleUtils.PlayHeight);
 	}
 
 	public void render (FrameBuffer dest) {
@@ -168,8 +133,11 @@ public final class GameRenderer {
 		if (!postProcessorReady) {
 			if (hasDest) {
 				dest.begin();
+			} else {
+				gl.glViewport(ScaleUtils.CropX, ScaleUtils.CropY, ScaleUtils.PlayWidth, ScaleUtils.PlayHeight);
 			}
 
+			// gl.glViewport(ScaleUtils.CropX, ScaleUtils.CropY, ScaleUtils.PlayWidth, ScaleUtils.PlayHeight);
 			gl.glClearDepthf(1);
 			gl.glClearColor(0, 0, 0, 1);
 			gl.glClear(GL20.GL_COLOR_BUFFER_BIT | GL20.GL_DEPTH_BUFFER_BIT);
@@ -181,9 +149,12 @@ public final class GameRenderer {
 		// render base tilemap
 		worldRenderer.renderTilemap();
 
+		// ///////////////////////
 		// BatchBeforeMeshes
-		SpriteBatch batch = null;
-		batch = batchRenderer.begin(worldRenderer.getOrthographicCamera());
+		// ///////////////////////
+
+		SpriteBatch batch = batchRenderer.begin(worldRenderer.getOrthographicCamera());
+
 		batch.enableBlending();
 		{
 			GameEvents.gameRenderer.batch = batch;
@@ -214,8 +185,12 @@ public final class GameRenderer {
 
 		gl.glDisable(GL20.GL_DEPTH_TEST);
 
+		// ///////////////////////
 		// BatchAfterMeshes
+		// ///////////////////////
+
 		batch = batchRenderer.beginTopLeft();
+		batch.setTransformMatrix(xform);
 		{
 			GameEvents.gameRenderer.batch = batch;
 			GameEvents.gameRenderer.trigger(this, GameRendererEvent.Type.BatchAfterMeshes);
@@ -223,6 +198,8 @@ public final class GameRenderer {
 		batchRenderer.end();
 
 		if (postProcessorReady) {
+			// gl.glViewport(ScaleUtils.CropX, ScaleUtils.CropY, ScaleUtils.PlayWidth, ScaleUtils.PlayHeight);
+
 			postProcessor.render(dest);
 
 			if (hasDest) dest.begin();
@@ -236,8 +213,11 @@ public final class GameRenderer {
 	}
 
 	private void batchAfterPostProcessing () {
+		SpriteBatch batch = batchRenderer.beginTopLeft();
+		batch.setTransformMatrix(xform);
+
 		// BatchAfterPostProcessing
-		GameEvents.gameRenderer.batch = batchRenderer.beginTopLeft();
+		GameEvents.gameRenderer.batch = batch;
 		GameEvents.gameRenderer.trigger(this, GameRendererEvent.Type.BatchAfterPostProcessing);
 		batchRenderer.end();
 	}
@@ -245,17 +225,87 @@ public final class GameRenderer {
 	// manages and triggers debug event
 	public void debugRender () {
 		SpriteBatch batch = batchRenderer.beginTopLeft();
+		batch.setTransformMatrix(xform);
 
 		// batch.disableBlending();
 		GameEvents.gameRenderer.batch = batch;
 		GameEvents.gameRenderer.trigger(this, GameRendererEvent.Type.BatchDebug);
 		batchRenderer.end();
+		batch.setTransformMatrix(identity);
 
 		GameEvents.gameRenderer.batch = null;
 		GameEvents.gameRenderer.trigger(this, GameRendererEvent.Type.Debug);
 	}
 
 	public void rebind () {
-		postProcessor.rebind();
+		if (postProcessor != null && postProcessor.isEnabled()) {
+			postProcessor.rebind();
+		}
+	}
+
+	/** Manages to convert world positions expressed in meters or pixels to the corresponding position to screen pixels. To use this
+	 * class, the GameWorldRenderer MUST be already constructed and initialized. */
+	public static final class ScreenUtils {
+		private static int ScreenWidth, ScreenHeight;
+		private static Vector2 tmp2 = new Vector2();
+		private static Vector3 tmp3 = new Vector3();
+		private static GameWorldRenderer worldRenderer;
+
+		// private static Vector2 ref2scr, scr2ref;
+
+		public static void init (GameWorldRenderer worldRenderer) {
+			ScreenUtils.worldRenderer = worldRenderer;
+			ScreenUtils.ScreenWidth = Gdx.graphics.getWidth();
+			ScreenUtils.ScreenHeight = Gdx.graphics.getHeight();
+		}
+
+		/** Transforms Box2D world-mt coordinates to reference-screen pixels coordinates */
+		public static Vector2 worldMtToScreen (Vector2 worldPositionMt) {
+			return worldPxToScreen(Convert.mt2px(worldPositionMt));
+		}
+
+		/** Transforms world-px coordinates to reference-screen pixel coordinates */
+		public static Vector2 worldPxToScreen (Vector2 worldPositionPx) {
+			tmp3.set(worldPositionPx.x, worldPositionPx.y, 0);
+			worldRenderer.camOrtho.project(tmp3, 0, 0, ScaleUtils.RefScreenWidth, ScaleUtils.RefScreenHeight);
+			tmp2.set(tmp3.x, ScaleUtils.RefScreenHeight - tmp3.y);
+			return tmp2;
+		}
+
+		/** Transforms Box2D world-mt coordinates to real-screen pixels coordinates */
+		// public static Vector2 worldMtToScreen (Vector2 worldPositionMt) {
+		// Vector2 r = worldMtToRefScreen(worldPositionMt);
+		// r.scl(ref2scr);
+		// return r;
+		// }
+
+		/** Transforms world-px coordinates to real-screen pixel coordinates */
+		// public static Vector2 worldPxToScreen (Vector2 worldPositionPx) {
+		// Vector2 r = worldPxToRefScreen(worldPositionPx);
+		// r.scl(ref2scr);
+		// return r;
+		// }
+
+		/** Transforms reference-screen pixel coordinates to world-mt coordinates */
+		public static Vector3 screenToWorldMt (Vector2 screenPositionPx) {
+			tmp3.set(screenPositionPx.x, screenPositionPx.y, 1);
+
+			// normalize and scale to the real display size
+			tmp3.x = (tmp3.x / (float)ScaleUtils.RefScreenWidth) * ScreenWidth;
+			tmp3.y = (tmp3.y / (float)ScaleUtils.RefScreenHeight) * ScreenHeight;
+
+			worldRenderer.camOrtho.unproject(tmp3, 0, 0, ScreenWidth, ScreenHeight);
+
+			tmp2.set(Convert.px2mt(tmp3.x), Convert.px2mt(tmp3.y));
+			tmp3.set(tmp2.x, tmp2.y, 0);
+			return tmp3;
+		}
+
+		public static boolean isVisible (Rectangle rect) {
+			return worldRenderer.camOrthoRect.overlaps(rect);
+		}
+
+		private ScreenUtils () {
+		}
 	}
 }

@@ -28,7 +28,6 @@ import com.badlogic.gdx.math.Rectangle;
 import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.math.Vector3;
 import com.badlogic.gdx.math.collision.BoundingBox;
-import com.bitfire.uracer.ScalingStrategy;
 import com.bitfire.uracer.configuration.Config;
 import com.bitfire.uracer.configuration.UserPreferences;
 import com.bitfire.uracer.configuration.UserPreferences.Preference;
@@ -41,6 +40,7 @@ import com.bitfire.uracer.game.world.models.TrackWalls;
 import com.bitfire.uracer.game.world.models.TreeStillModel;
 import com.bitfire.uracer.resources.Art;
 import com.bitfire.uracer.utils.Convert;
+import com.bitfire.uracer.utils.ScaleUtils;
 import com.bitfire.utils.ShaderLoader;
 
 public final class GameWorldRenderer {
@@ -102,17 +102,16 @@ public final class GameWorldRenderer {
 	private static final float CamPerspPlaneNear = 1;
 	public static final float CamPerspPlaneFar = 240;
 	public static final float MaxCameraZoom = 1.4f;
-	private static final float CamPerspElevation = 100f;
+	public static final float CamPerspElevation = 100f;
 
 	// rendering
 	private GL20 gl = null;
 	private ShaderProgram treeShader = null, treeShaderNight = null;
 	private boolean renderPlayerHeadlights = true;
+	private final Matrix4 xform = new Matrix4();
 
 	public OrthogonalTiledMapRenderer tileMapRenderer = null;
 	private GameTrackDebugRenderer gameTrackDbgRenderer = null;
-	private ScalingStrategy scalingStrategy = null;
-	private float scaledPpm = 1f;
 
 	// deferred stuff
 	private Mesh plane;
@@ -135,20 +134,19 @@ public final class GameWorldRenderer {
 	private TrackWalls trackWalls = null;
 	private ConeLight playerLightsA = null, playerLightsB = null;
 
-	public GameWorldRenderer (ScalingStrategy strategy, GameWorld world, int width, int height) {
-		scalingStrategy = strategy;
+	public GameWorldRenderer (GameWorld world) {
 		this.world = world;
 		gl = Gdx.gl20;
-		scaledPpm = Convert.scaledPixels(Config.Physics.PixelsPerMeter);
 		rayHandler = world.getRayHandler();
 		playerLightsA = world.getPlayerHeadLights(true);
 		playerLightsB = world.getPlayerHeadLights(false);
 		staticMeshes = world.getStaticMeshes();
 
-		createCams(width, height);
+		xform.idt();
+		xform.scale(ScaleUtils.Scale, ScaleUtils.Scale, 1);
 
-		// FileHandle baseDir = Gdx.files.internal(Storage.Levels);
-		// tileMapRenderer = new UTileMapRenderer(world.map, tileAtlas, 1, 1, world.map.tileWidth, world.map.tileHeight);
+		createCams();
+
 		tileMapRenderer = new OrthogonalTiledMapRenderer(world.map);
 		gameTrackDbgRenderer = new GameTrackDebugRenderer(world.getGameTrack());
 
@@ -180,8 +178,8 @@ public final class GameWorldRenderer {
 
 		// deferred setup
 		float scale = Config.PostProcessing.NormalDepthMapScale;
-		normalDepthMap = new FrameBuffer(Format.RGBA8888, (int)(width * scale), (int)(height * scale), true);
-		// normalDepthMap = new FloatFrameBuffer((int)(width * scale), (int)(height * scale), true);
+		normalDepthMap = new FrameBuffer(Format.RGBA8888, (int)((float)ScaleUtils.PlayWidth * scale),
+			(int)((float)ScaleUtils.PlayHeight * scale), true);
 
 		shNormalDepthAlpha = ShaderLoader.fromFile("normaldepth", "normaldepth", "#define ENABLE_DIFFUSE");
 		shNormalDepthAlpha.begin();
@@ -237,25 +235,25 @@ public final class GameWorldRenderer {
 
 	}
 
-	private void createCams (int width, int height) {
-		camOrtho = new OrthographicCamera(width, height);
+	private void createCams () {
+		camOrtho = new OrthographicCamera(ScaleUtils.RefScreenWidth, ScaleUtils.RefScreenHeight);
 		halfViewport.set(camOrtho.viewportWidth / 2, camOrtho.viewportHeight / 2);
 
 		// creates and setup orthographic camera
-		camTilemap = new OrthographicCamera(Gdx.graphics.getWidth(), Gdx.graphics.getHeight());
+		camTilemap = new OrthographicCamera(ScaleUtils.RefScreenWidth, ScaleUtils.RefScreenHeight);
 		camTilemap.zoom = 1;
 
 		// creates and setup perspective camera
 		// strategically choosen near/far planes, Blender models' 14.2 meters <=> one 256px tile
 		// with far plane @48
-		camPersp = new PerspectiveCamera(scalingStrategy.verticalFov, width, height);
+		camPersp = new PerspectiveCamera(47.27123f, ScaleUtils.RefScreenWidth, ScaleUtils.RefScreenHeight);
 		camPersp.near = CamPerspPlaneNear;
 		camPersp.far = CamPerspPlaneFar;
 		camPersp.lookAt(0, 0, -1);
 		camPersp.position.set(camTilemap.position.x, camTilemap.position.y, CamPerspElevation);
 		camPersp.update();
 
-		camController = new CameraController(Config.Graphics.CameraInterpolationMode, halfViewport, world.worldSizeScaledPx,
+		camController = new CameraController(Config.Graphics.CameraInterpolationMode, halfViewport, world.worldSizePx,
 			world.worldSizeTiles);
 	}
 
@@ -410,11 +408,16 @@ public final class GameWorldRenderer {
 		float zoom = 1f / cameraZoom;
 
 		// remove subpixel accuracy (jagged behavior) by uncommenting the round
+		camOrtho.viewportWidth = ScaleUtils.RefScreenWidth;
+		camOrtho.viewportHeight = ScaleUtils.RefScreenHeight;
+
 		camOrtho.position.x = /* MathUtils.round */(cameraPos.x);
 		camOrtho.position.y = /* MathUtils.round */(cameraPos.y);
 		camOrtho.position.z = 0;
 		camOrtho.zoom = zoom;
 		camOrtho.update();
+
+		halfViewport.set(camOrtho.viewportWidth / 2, camOrtho.viewportHeight / 2);
 
 		// update the unscaled orthographic camera rectangle, for visibility queries
 		camOrthoRect.set(camOrtho.position.x - halfViewport.x, camOrtho.position.y - halfViewport.y, camOrtho.viewportWidth,
@@ -422,29 +425,33 @@ public final class GameWorldRenderer {
 
 		// update the model-view-projection matrix, in meters, from the unscaled orthographic camera
 		camOrthoMvpMt.set(camOrtho.combined);
-		camOrthoMvpMt.val[Matrix4.M00] *= scaledPpm;
-		camOrthoMvpMt.val[Matrix4.M01] *= scaledPpm;
-		camOrthoMvpMt.val[Matrix4.M10] *= scaledPpm;
-		camOrthoMvpMt.val[Matrix4.M11] *= scaledPpm;
+		camOrthoMvpMt.scl(Config.Physics.PixelsPerMeter);
+		// camOrthoMvpMt.val[Matrix4.M00] *= Config.Physics.PixelsPerMeter;
+		// camOrthoMvpMt.val[Matrix4.M01] *= Config.Physics.PixelsPerMeter;
+		// camOrthoMvpMt.val[Matrix4.M10] *= Config.Physics.PixelsPerMeter;
+		// camOrthoMvpMt.val[Matrix4.M11] *= Config.Physics.PixelsPerMeter;
 
 		// update the tilemap renderer orthographic camera
 		// y-down
 		camTilemap.up.set(0, -1, 0);
 		camTilemap.direction.set(0, 0, 1);
+		camTilemap.viewportWidth = ScaleUtils.RefScreenWidth;
+		camTilemap.viewportHeight = ScaleUtils.RefScreenHeight;
 
 		camTilemap.position.set(camOrtho.position);
-		camTilemap.position.y = world.worldSizeScaledPx.y - camTilemap.position.y;
-		camTilemap.position.scl(scalingStrategy.tileMapZoomFactor);
-		camTilemap.zoom = scalingStrategy.tileMapZoomFactor * zoom;
+		camTilemap.position.y = world.worldSizePx.y - camTilemap.position.y;
+		// camTilemap.position.scl(ScaleUtils.Scale);
+		// camTilemap.zoom = ScaleUtils.Scale * zoom;
+		camTilemap.zoom = zoom;
 		camTilemap.update();
 
 		// update previous proj view
 		camPerspPrevViewProj.set(camPersp.projection).mul(camPersp.view);
 
 		// sync perspective camera to the orthographic camera
-		// camPersp.fieldOfView = 43;
-		// camPersp.fieldOfView = 67;
-		camPersp.position.set(camTilemap.position.x, camTilemap.position.y, CamPerspElevation);
+		camPersp.viewportWidth = ScaleUtils.RefScreenWidth;
+		camPersp.viewportHeight = ScaleUtils.RefScreenHeight;
+		camPersp.position.set(cameraPos.x, cameraPos.y, CamPerspElevation);
 		camPersp.update(true);
 
 		// update inv proj view
@@ -463,8 +470,12 @@ public final class GameWorldRenderer {
 			rayHandler.setAmbientLight(ambientColor);
 
 			// @off
-			rayHandler.setCombinedMatrix(camOrthoMvpMt, Convert.px2mt(camOrtho.position.x), Convert.px2mt(camOrtho.position.y),
-				Convert.px2mt(camOrtho.viewportWidth), Convert.px2mt(camOrtho.viewportHeight));
+			rayHandler.setCombinedMatrix(
+				camOrthoMvpMt, 
+				Convert.px2mt(camOrtho.position.x), 
+				Convert.px2mt(camOrtho.position.y),
+				Convert.px2mt(camOrtho.viewportWidth * camOrtho.zoom), 
+				Convert.px2mt(camOrtho.viewportHeight* camOrtho.zoom));
 			// @on
 
 			rayHandler.update();
@@ -520,7 +531,7 @@ public final class GameWorldRenderer {
 
 		ShaderProgram shader = shNormalDepth;
 		float meshZ = -(camPersp.far - camPersp.position.z) + (camPersp.far * (1 - (camOrtho.zoom)));
-		float k = scalingStrategy.meshScaleFactor * OrthographicAlignedStillModel.BlenderToURacer * scalingStrategy.to256;
+		float k = OrthographicAlignedStillModel.BlenderToURacer;
 		float scalex = 6, scalez = 4;
 
 		Matrix4 model = mtx;
@@ -546,7 +557,7 @@ public final class GameWorldRenderer {
 	}
 
 	public void renderLigthMap (FrameBuffer dest) {
-		rayHandler.renderLightMap(dest);
+		rayHandler.renderLightMap(ScaleUtils.PlayViewport, dest);
 	}
 
 	public void renderStaticMeshes () {
@@ -703,7 +714,6 @@ public final class GameWorldRenderer {
 	private Matrix4 mtx = new Matrix4();
 	private Matrix3 nmat = new Matrix3();
 	private Matrix4 mtx2 = new Matrix4();
-	private Vector2 pospx = new Vector2();
 
 	private int renderOrthographicAlignedModels (List<OrthographicAlignedStillModel> models, boolean depthOnly, boolean nightMode) {
 		int renderedCount = 0;
@@ -741,15 +751,19 @@ public final class GameWorldRenderer {
 			m = models.get(i);
 			submesh = m.model.subMeshes[0];
 
-			// compute position
-			pospx.set(m.positionPx);
-			pospx.set(world.positionFor(pospx));
-			tmpvec.x = (m.positionOffsetPx.x - camOrtho.position.x) + halfViewport.x + pospx.x;
-			tmpvec.y = (m.positionOffsetPx.y + camOrtho.position.y) + halfViewport.y - pospx.y;
+			// transform position
+			tmpvec.x = (m.positionOffsetPx.x - camPersp.position.x) + (camPersp.viewportWidth / 2) + m.positionPx.x;
+			tmpvec.y = (m.positionOffsetPx.y + camPersp.position.y) + (camPersp.viewportHeight / 2) - m.positionPx.y;
 			tmpvec.z = 1;
 
+			tmpvec.x *= ScaleUtils.Scale;
+			tmpvec.y *= ScaleUtils.Scale;
+
+			tmpvec.x += ScaleUtils.CropX;
+			tmpvec.y += ScaleUtils.CropY;
+
 			// transform to world space
-			camPersp.unproject(tmpvec);
+			camPersp.unproject(tmpvec, ScaleUtils.CropX, ScaleUtils.CropY, ScaleUtils.PlayWidth, ScaleUtils.PlayHeight);
 
 			// build model matrix
 			Matrix4 model = mtx;

@@ -3,7 +3,6 @@ package com.bitfire.uracer.game.screens;
 
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.glutils.FrameBuffer;
-import com.bitfire.uracer.ScalingStrategy;
 import com.bitfire.uracer.URacer;
 import com.bitfire.uracer.configuration.UserPreferences;
 import com.bitfire.uracer.configuration.UserPreferences.Preference;
@@ -18,8 +17,7 @@ public class GameScreen extends Screen {
 	private Game game = null;
 
 	@Override
-	public void init (ScalingStrategy scalingStrategy) {
-
+	public void init () {
 		// simulate slowness
 		// try { Thread.sleep( 1000 ); } catch( InterruptedException e ) {}
 
@@ -33,7 +31,7 @@ public class GameScreen extends Screen {
 			UserPreferences.string(Preference.LastPlayedTrack, ScreensShared.selectedTrackId);
 
 			UserProfile userProfile = new UserProfile();
-			game = new Game(userProfile, trackId, scalingStrategy);
+			game = new Game(userProfile, trackId);
 
 			// choose a car type
 			game.setPlayer(Type.L2_PinkBeast);

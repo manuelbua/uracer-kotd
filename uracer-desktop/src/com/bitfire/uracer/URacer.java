@@ -36,6 +36,7 @@ import com.bitfire.uracer.utils.AMath;
 import com.bitfire.uracer.utils.BoxedFloat;
 import com.bitfire.uracer.utils.BoxedFloatAccessor;
 import com.bitfire.uracer.utils.Convert;
+import com.bitfire.uracer.utils.ScaleUtils;
 import com.bitfire.uracer.utils.SpriteBatchUtils;
 import com.bitfire.utils.ShaderLoader;
 
@@ -47,7 +48,6 @@ public class URacer implements ApplicationListener {
 	private static boolean running = false;
 	private static final boolean useRealFrametime = true;// Config.isDesktop;
 
-	private static ScalingStrategy scalingStrategy;
 	private float temporalAliasing = 0;
 	private long timeAccuNs = 0;
 	private long timeStepHz = 0;
@@ -119,10 +119,6 @@ public class URacer implements ApplicationListener {
 
 		Gdx.app.log("URacer", "Using real frametime: " + (useRealFrametime ? "YES" : "NO"));
 
-		// create input system
-		input = new Input();
-		Gdx.app.log("URacer", "input system created.");
-
 		// enumerate available game tracks
 		if (!GameTracks.init()) {
 			System.exit(-1);
@@ -130,10 +126,14 @@ public class URacer implements ApplicationListener {
 
 		// computed for a 256px tile size target (compute needed conversion
 		// factors)
-		scalingStrategy = new ScalingStrategy(new Vector2(1280, 800), 70f, 224, 1f);
+		Vector2 refScreen = new Vector2(1280, 800);
+		ScaleUtils.init(refScreen);
 
-		BitmapFontFactory.init(scalingStrategy);
-		ScreenFactory screenFactory = new GameScreensFactory(scalingStrategy);
+		// create input system
+		input = new Input();
+		Gdx.app.log("URacer", "input system created.");
+
+		ScreenFactory screenFactory = new GameScreensFactory();
 		TransitionFactory.init(screenFactory);
 
 		// load default private configuration
@@ -142,12 +142,10 @@ public class URacer implements ApplicationListener {
 		UserPreferences.load();
 		ScreensShared.loadFromUserPrefs();
 
-		Convert.init(scalingStrategy.tileMapZoomFactor, Config.Physics.PixelsPerMeter);
+		Convert.init(Config.Physics.PixelsPerMeter);
 		Art.init();
 		SpriteBatchUtils.init(Art.debugFont, Art.DebugFontWidth);
 		Sounds.init();
-
-		ModelFactory.init(scalingStrategy);
 
 		Gdx.graphics.setVSync(true);
 
@@ -158,7 +156,7 @@ public class URacer implements ApplicationListener {
 		PhysicsDtNs = (long)((long)1000000000 / (long)Config.Physics.PhysicsTimestepHz);
 		timeStepHz = (long)Config.Physics.PhysicsTimestepHz;
 
-		screenMgr = new ScreenManager(screenFactory);
+		screenMgr = new ScreenManager(ScaleUtils.PlayViewport, screenFactory);
 
 		screenMgr.setScreen(ScreenType.GameScreen, TransitionType.Fader, 1000);
 		// screenMgr.setScreen(ScreenType.MainScreen, TransitionType.CrossFader, 500);
