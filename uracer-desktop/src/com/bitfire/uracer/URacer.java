@@ -12,6 +12,7 @@ import com.badlogic.gdx.graphics.GL10;
 import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.utils.TimeUtils;
 import com.bitfire.uracer.configuration.Config;
+import com.bitfire.uracer.configuration.Storage;
 import com.bitfire.uracer.configuration.UserPreferences;
 import com.bitfire.uracer.game.GameTracks;
 import com.bitfire.uracer.game.logic.gametasks.hud.HudLabel;
@@ -100,6 +101,7 @@ public class URacer implements ApplicationListener {
 
 	@Override
 	public void create () {
+		Storage.createDirs();
 		ShaderLoader.Pedantic = true;
 
 		// create tweening support
