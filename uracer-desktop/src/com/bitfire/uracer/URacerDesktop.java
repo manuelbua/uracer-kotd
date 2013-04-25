@@ -58,7 +58,7 @@ public final class URacerDesktop {
 			+ boot.getWindowY() + ")\n");
 		System.out.print("Vertical sync: " + (config.vSyncEnabled ? "Yes" : "No") + "\n");
 		System.out.print("Fullscreen: " + (config.fullscreen ? "Yes" : "No") + "\n");
-		System.out.print("Decorated window: " + (boot.getBoolean(BootConfigFlag.UNDECORATED) ? "No" : "Yes") + "\n");
+		System.out.print("Window decorations: " + (boot.getBoolean(BootConfigFlag.UNDECORATED) ? "No" : "Yes") + "\n");
 
 		URacer uracer = new URacer();
 		LwjglApplication app = new LwjglApplication(uracer, config);

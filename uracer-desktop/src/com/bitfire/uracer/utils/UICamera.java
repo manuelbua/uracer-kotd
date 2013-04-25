@@ -14,4 +14,9 @@ public class UICamera extends OrthographicCamera {
 	public void unproject (Vector3 vec) {
 		unproject(vec, ScaleUtils.CropX, ScaleUtils.CropY, ScaleUtils.PlayWidth, ScaleUtils.PlayHeight);
 	}
+
+	@Override
+	public void project (Vector3 vec) {
+		project(vec, ScaleUtils.CropX, ScaleUtils.CropY, ScaleUtils.PlayWidth, ScaleUtils.PlayHeight);
+	}
 }

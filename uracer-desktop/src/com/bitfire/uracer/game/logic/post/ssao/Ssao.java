@@ -45,7 +45,6 @@ public final class Ssao extends PostProcessorEffect {
 	private final FullscreenQuad quad = new FullscreenQuad();
 	private final Texture randomField;
 	private Blur blur;
-	private boolean nightMode;
 
 	private Matrix3 mtxRot = new Matrix3();
 	private Matrix3 invRot = new Matrix3();
@@ -58,9 +57,7 @@ public final class Ssao extends PostProcessorEffect {
 		}
 	};
 
-	public Ssao (int fboWidth, int fboHeight, Quality quality, boolean nightMode) {
-		this.nightMode = nightMode;
-
+	public Ssao (int fboWidth, int fboHeight, Quality quality) {
 		Gdx.app.log("SsaoProcessor", "Quality profile = " + quality.toString());
 		float oscale = quality.scale;
 
@@ -106,7 +103,7 @@ public final class Ssao extends PostProcessorEffect {
 		bytes.flip();
 		randomField.draw(pixels, 0, 0);
 		pixels.dispose();
-		enableDebug();
+		// enableDebug();
 	}
 
 	@Override

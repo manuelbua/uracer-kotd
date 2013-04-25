@@ -93,7 +93,7 @@ public class URacer implements ApplicationListener {
 				info = value;
 			}
 		} catch (Exception e) {
-			info = "(version not found)";
+			info = "(unversioned build)";
 		}
 
 		return info;
@@ -114,11 +114,10 @@ public class URacer implements ApplicationListener {
 		System.out.println();
 
 		Gdx.app.log("URacer", "Booting version " + URacer.versionInfo);
-		Gdx.app.log("URacer",
-			"Running on hardware from " + Gdx.gl.glGetString(GL10.GL_VENDOR) + " (" + Gdx.gl.glGetString(GL10.GL_VERSION) + ")");
-		Gdx.app.log("URacer",
-			"Java environment is " + System.getProperty("java.version") + " from " + System.getProperty("java.vendor"));
-
+		Gdx.app.log("URacer", "GL vendor is " + Gdx.gl.glGetString(GL10.GL_VENDOR));
+		Gdx.app.log("URacer", "GL version is " + Gdx.gl.glGetString(GL10.GL_VERSION));
+		Gdx.app.log("URacer", "Java vendor is " + System.getProperty("java.vendor"));
+		Gdx.app.log("URacer", "Java version is " + System.getProperty("java.version"));
 		Gdx.app.log("URacer", "Using real frametime: " + (useRealFrametime ? "YES" : "NO"));
 
 		// enumerate available game tracks
@@ -133,7 +132,7 @@ public class URacer implements ApplicationListener {
 
 		// create input system
 		input = new Input();
-		Gdx.app.log("URacer", "input system created.");
+		Gdx.app.log("URacer", "Input system created.");
 
 		ScreenFactory screenFactory = new GameScreensFactory();
 		TransitionFactory.init(screenFactory);
@@ -160,9 +159,9 @@ public class URacer implements ApplicationListener {
 
 		screenMgr = new ScreenManager(ScaleUtils.PlayViewport, screenFactory);
 
-		screenMgr.setScreen(ScreenType.GameScreen, TransitionType.Fader, 1000);
+		// screenMgr.setScreen(ScreenType.GameScreen, TransitionType.Fader, 1000);
 		// screenMgr.setScreen(ScreenType.MainScreen, TransitionType.CrossFader, 500);
-		// screenMgr.setScreen( ScreenType.OptionsScreen, TransitionType.CrossFader, 500 );
+		screenMgr.setScreen(ScreenType.OptionsScreen, TransitionType.CrossFader, 500);
 
 		// Initialize the timers after creating the game screen, so that there
 		// will be no huge discrepancies

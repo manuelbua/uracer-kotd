@@ -74,7 +74,7 @@ public final class PostProcessing {
 			addEffect(
 				Effects.Ssao.name,
 				new Ssao(ScaleUtils.PlayWidth, ScaleUtils.PlayHeight, Ssao.Quality.valueOf(UserPreferences
-					.string(Preference.SsaoQuality)), isNightMode));
+					.string(Preference.SsaoQuality))));
 			gameRenderer.enableNormalDepthMap();
 		}
 

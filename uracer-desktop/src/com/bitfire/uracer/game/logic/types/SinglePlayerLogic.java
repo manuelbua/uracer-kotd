@@ -83,7 +83,7 @@ public class SinglePlayerLogic extends CommonLogic {
 		float speedFactor = 0;
 
 		if (hasPlayer()) {
-			speedFactor = AMath.fixup(AMath.lerp(previousVal, playerCar.carState.currSpeedFactor, 0.012f));
+			speedFactor = AMath.fixup(AMath.lerp(previousVal, playerCar.carState.currSpeedFactor, 0.015f));
 		}
 
 		previousVal = speedFactor;
@@ -95,10 +95,9 @@ public class SinglePlayerLogic extends CommonLogic {
 		float zoomFromSpeed = AMath.fixup(maxZoom * meanVal.getMean());
 
 		float cameraZoom = (maxZoom - 0.1f) - (zoomRange) * zoomFromSpeed + (zoomRange + 0.1f) * timeModFactor * zoomFromSpeed;
-		cameraZoom = AMath.fixup(MathUtils.clamp(cameraZoom, 1, maxZoom));
+		cameraZoom = AMath.clamp(cameraZoom, 1, maxZoom);
 
-		// dbg
-		// cameraZoom = 1;
+		// cameraZoom = 1.2f;
 
 		gameWorldRenderer.setCameraZoom(cameraZoom);
 
@@ -116,7 +115,6 @@ public class SinglePlayerLogic extends CommonLogic {
 					Vector3 v3 = GameRenderer.ScreenUtils.screenToWorldMt(input.getXY());
 					l.setActive(true);
 					l.setPosition(v3.x, v3.y);
-					// playerImpulse.setPosition(car.getWorldPosMt().x, car.getWorldPosMt().y);
 
 					// float f = 1;// cs.currSpeedFactor;
 					float f = cs.currSpeedFactor * cs.currForceFactor;

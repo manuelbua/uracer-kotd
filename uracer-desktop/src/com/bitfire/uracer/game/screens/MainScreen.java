@@ -3,7 +3,6 @@ package com.bitfire.uracer.game.screens;
 
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Input.Keys;
-import com.badlogic.gdx.graphics.Camera;
 import com.badlogic.gdx.graphics.GL20;
 import com.badlogic.gdx.graphics.glutils.FrameBuffer;
 import com.badlogic.gdx.scenes.scene2d.Actor;
@@ -23,8 +22,6 @@ import com.bitfire.uracer.game.GameTracks;
 import com.bitfire.uracer.game.screens.GameScreensFactory.ScreenType;
 import com.bitfire.uracer.resources.Art;
 import com.bitfire.uracer.screen.Screen;
-import com.bitfire.uracer.utils.ScaleUtils;
-import com.bitfire.uracer.utils.UICamera;
 import com.bitfire.uracer.utils.UIUtils;
 
 public final class MainScreen extends Screen {
@@ -48,14 +45,8 @@ public final class MainScreen extends Screen {
 	}
 
 	private void setupUI () {
-		ui = new Stage(0, 0, false);
-		Camera uicam = new UICamera();
-		ui.setCamera(uicam);
-		ui.setViewport(ScaleUtils.RefScreenWidth, ScaleUtils.RefScreenHeight, false);
-		ui.getCamera().translate(-ui.getGutterWidth(), -ui.getGutterHeight(), 0);
-
+		ui = UIUtils.newScaledStage();
 		root = new Table();
-		// root.setSize(ScaleUtils.RefScreenWidth, ScaleUtils.RefScreenHeight);
 		root.setSize(ui.getWidth(), ui.getHeight());
 		ui.addActor(root);
 
@@ -86,7 +77,7 @@ public final class MainScreen extends Screen {
 			sbTracks.setSelection(ScreensShared.selectedTrackId);
 		}
 
-		startGameButton = UIUtils.newTextButton("Start game", new ClickListener() {
+		startGameButton = UIUtils.newTextButton("START GAME", new ClickListener() {
 			@Override
 			public void clicked (InputEvent event, float x, float y) {
 				ScreensShared.selectedTrackId = sbTracks.getSelection();
@@ -94,14 +85,14 @@ public final class MainScreen extends Screen {
 			}
 		});
 
-		optionsButton = UIUtils.newTextButton("Options", new ClickListener() {
+		optionsButton = UIUtils.newTextButton("OPTIONS", new ClickListener() {
 			@Override
 			public void clicked (InputEvent event, float x, float y) {
 				URacer.Game.show(ScreenType.OptionsScreen);
 			}
 		});
 
-		quitButton = UIUtils.newTextButton("Quit", new ClickListener() {
+		quitButton = UIUtils.newTextButton("EXIT", new ClickListener() {
 			@Override
 			public void clicked (InputEvent event, float x, float y) {
 				URacer.Game.quit();

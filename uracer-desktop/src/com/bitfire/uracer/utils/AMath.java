@@ -1,6 +1,7 @@
 
 package com.bitfire.uracer.utils;
 
+import com.badlogic.gdx.math.MathUtils;
 import com.bitfire.uracer.configuration.Config;
 
 /** Algebra math utils.
@@ -76,6 +77,34 @@ public final class AMath {
 		}
 
 		return v;
+	}
+
+	public static float fixup (float v, float epsilon) {
+		if (Math.abs(v) < epsilon) {
+			return 0;
+		}
+
+		return v;
+	}
+
+	public static float fixupTo (float v, float target) {
+		if (Math.abs(Math.abs(v) - Math.abs(target)) < CMP_EPSILON) {
+			return target;
+		}
+
+		return v;
+	}
+
+	public static float fixupTo (float v, float target, float epsilon) {
+		if (Math.abs(Math.abs(v) - Math.abs(target)) < epsilon) {
+			return target;
+		}
+
+		return v;
+	}
+
+	public static float clampf (float v, float min, float max) {
+		return AMath.fixupTo(AMath.fixupTo(MathUtils.clamp(v, min, max), min), max);
 	}
 
 	public static float sign (float v) {

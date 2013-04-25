@@ -382,7 +382,7 @@ public final class GameWorldRenderer {
 	}
 
 	public void setCameraZoom (float zoom) {
-		cameraZoom = MathUtils.clamp(zoom, 0f, MaxCameraZoom);
+		cameraZoom = zoom;
 	}
 
 	// do not use camOrtho.zoom directly since it will be bound later at updateCamera!
