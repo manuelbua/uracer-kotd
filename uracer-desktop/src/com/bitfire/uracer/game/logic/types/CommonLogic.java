@@ -28,7 +28,6 @@ import com.bitfire.uracer.game.logic.helpers.GameTrack;
 import com.bitfire.uracer.game.logic.helpers.PlayerGameTasks;
 import com.bitfire.uracer.game.logic.post.PostProcessing;
 import com.bitfire.uracer.game.logic.post.PostProcessing.Effects;
-import com.bitfire.uracer.game.logic.post.animators.AggressiveCold;
 import com.bitfire.uracer.game.logic.post.ssao.Ssao;
 import com.bitfire.uracer.game.logic.replaying.LapManager;
 import com.bitfire.uracer.game.logic.replaying.Replay;
@@ -100,17 +99,12 @@ public abstract class CommonLogic implements GameLogic, CarEvent.Listener, Playe
 		timeDilateMode = Gameplay.TimeDilateInputMode.valueOf(UserPreferences.string(Preference.TimeDilateInputMode));
 		timeMod = new TimeModulator();
 
-		Gdx.app.log("GameLogic", "Tweening helpers created");
+		Gdx.app.log("CommonLogic", "Tweening helpers created");
 
 		// post-processing
-		postProcessing = new PostProcessing(gameWorld, gameRenderer);
-
-		if (gameRenderer.hasPostProcessor()) {
-			postProcessing.addAnimator(AggressiveCold.Name, new AggressiveCold(this, postProcessing, gameWorld.isNightMode()));
-			postProcessing.enableAnimator(AggressiveCold.Name);
-		}
-
-		Gdx.app.log("GameLogic", "Post-processing animator created");
+		postProcessing = new PostProcessing(gameWorld);
+		gameRenderer.setEnableNormalDepthMap(postProcessing.requiresNormalDepthMap());
+		gameRenderer.setPostProcessor(postProcessing.getPostProcessor());
 
 		// main game tasks
 		gameTasksManager = new GameTasksManager(gameWorld);

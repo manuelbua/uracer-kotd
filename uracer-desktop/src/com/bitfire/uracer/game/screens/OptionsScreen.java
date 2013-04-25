@@ -87,31 +87,31 @@ public class OptionsScreen extends Screen {
 		//
 		// rendering
 		//
-		{
-			ppComplexTrees = UIUtils.newCheckBox("Complex trees", UserPreferences.bool(Preference.ComplexTrees));
-			ppComplexTrees.addListener(new ClickListener() {
-				@Override
-				public void clicked (InputEvent event, float x, float y) {
-					UserPreferences.bool(Preference.ComplexTrees, ppComplexTrees.isChecked());
-					UserPreferences.save();
-				}
-			});
-
-			container.row().colspan(2);
-			container.add(ppComplexTrees);
-
-			ppWalls = UIUtils.newCheckBox("Track walls", UserPreferences.bool(Preference.Walls));
-			ppWalls.addListener(new ClickListener() {
-				@Override
-				public void clicked (InputEvent event, float x, float y) {
-					UserPreferences.bool(Preference.Walls, ppWalls.isChecked());
-					UserPreferences.save();
-				}
-			});
-
-			container.row().colspan(2);
-			container.add(ppWalls);
-		}
+		// {
+		// ppComplexTrees = UIUtils.newCheckBox("Complex trees", UserPreferences.bool(Preference.ComplexTrees));
+		// ppComplexTrees.addListener(new ClickListener() {
+		// @Override
+		// public void clicked (InputEvent event, float x, float y) {
+		// UserPreferences.bool(Preference.ComplexTrees, ppComplexTrees.isChecked());
+		// UserPreferences.save();
+		// }
+		// });
+		//
+		// container.row().colspan(2);
+		// container.add(ppComplexTrees);
+		//
+		// ppWalls = UIUtils.newCheckBox("Track walls", UserPreferences.bool(Preference.Walls));
+		// ppWalls.addListener(new ClickListener() {
+		// @Override
+		// public void clicked (InputEvent event, float x, float y) {
+		// UserPreferences.bool(Preference.Walls, ppWalls.isChecked());
+		// UserPreferences.save();
+		// }
+		// });
+		//
+		// container.row().colspan(2);
+		// container.add(ppWalls);
+		// }
 
 		//
 		// gameplay
@@ -295,6 +295,10 @@ public class OptionsScreen extends Screen {
 			URacer.Game.show(ScreenType.MainScreen);
 			// URacer.Game.show( ScreenType.GameScreen );
 			// URacer.Game.quit();
+		}
+		if (input.isPressed(Keys.R)) {
+			ui.dispose();
+			setupUI();
 		} else {
 			ui.act(Config.Physics.PhysicsDt);
 		}

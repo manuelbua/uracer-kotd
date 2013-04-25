@@ -21,7 +21,6 @@ import com.bitfire.uracer.configuration.Config;
 import com.bitfire.uracer.game.logic.post.PostProcessing;
 import com.bitfire.uracer.game.logic.post.PostProcessingAnimator;
 import com.bitfire.uracer.game.logic.post.ssao.Ssao;
-import com.bitfire.uracer.game.logic.types.CommonLogic;
 import com.bitfire.uracer.game.player.PlayerCar;
 import com.bitfire.uracer.game.rendering.GameRenderer;
 import com.bitfire.uracer.game.rendering.GameWorldRenderer;
@@ -36,7 +35,6 @@ public final class AggressiveCold implements PostProcessingAnimator {
 	public static final String Name = "AggressiveCold";
 
 	private boolean nightMode = false;
-	private CommonLogic logic = null;
 	private Bloom bloom = null;
 	private Zoomer zoom = null;
 	private Vignette vignette = null;
@@ -51,8 +49,7 @@ public final class AggressiveCold implements PostProcessingAnimator {
 	private float lastCollisionFactor = 0;
 	private float bloomThreshold = 0.4f;
 
-	public AggressiveCold (CommonLogic logic, PostProcessing post, boolean nightMode) {
-		this.logic = logic;
+	public AggressiveCold (PostProcessing post, boolean nightMode) {
 		this.nightMode = nightMode;
 		bloom = (Bloom)post.getEffect(PostProcessing.Effects.Bloom.name);
 		zoom = (Zoomer)post.getEffect(PostProcessing.Effects.Zoomer.name);

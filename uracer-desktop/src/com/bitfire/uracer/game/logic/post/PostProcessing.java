@@ -16,9 +16,9 @@ import com.bitfire.postprocessing.filters.RadialBlur;
 import com.bitfire.uracer.configuration.Config;
 import com.bitfire.uracer.configuration.UserPreferences;
 import com.bitfire.uracer.configuration.UserPreferences.Preference;
+import com.bitfire.uracer.game.logic.post.animators.AggressiveCold;
 import com.bitfire.uracer.game.logic.post.ssao.Ssao;
 import com.bitfire.uracer.game.player.PlayerCar;
-import com.bitfire.uracer.game.rendering.GameRenderer;
 import com.bitfire.uracer.game.world.GameWorld;
 import com.bitfire.uracer.utils.ScaleUtils;
 import com.bitfire.utils.Hash;
@@ -37,45 +37,45 @@ public final class PostProcessing {
 		}
 	}
 
-	private boolean hasPostProcessor;
-	private final PostProcessor postProcessor;
+	private boolean hasPostProcessor = false;
+	private PostProcessor postProcessor = null;
+	private boolean needNormalDepthMap = false;
 	private boolean isNightMode;
 
 	// public access to stored effects
 	public LongMap<PostProcessorEffect> effects = new LongMap<PostProcessorEffect>();
 
 	// animators
-	public LongMap<PostProcessingAnimator> animators = new LongMap<PostProcessingAnimator>();
-	private PostProcessingAnimator currentAnimator;
-	private GameRenderer gameRenderer;
+	private PostProcessingAnimator animator = null;
+	private boolean hasAnimator = false;
 
-	public PostProcessing (GameWorld gameWorld, GameRenderer gameRenderer) {
-		this.gameRenderer = gameRenderer;
-		this.postProcessor = gameRenderer.getPostProcessor();
-		hasPostProcessor = (this.postProcessor != null);
+	public PostProcessing (GameWorld gameWorld) {
 		this.isNightMode = gameWorld.isNightMode();
 
-		if (hasPostProcessor) {
-			configurePostProcessor(postProcessor);
-			currentAnimator = null;
+		// post-processing
+		if (UserPreferences.bool(Preference.PostProcessing)) {
+			postProcessor = new PostProcessor(ScaleUtils.PlayViewport, true /* depth */, false /* alpha */, Config.isDesktop /* supports32Bpp */);
+			PostProcessor.EnableQueryStates = false;
+			postProcessor.setClearBits(GL20.GL_COLOR_BUFFER_BIT | GL20.GL_DEPTH_BUFFER_BIT);
+			postProcessor.setClearColor(0, 0, 0, 1);
+			postProcessor.setClearDepth(1);
+			postProcessor.setEnabled(true);
+			postProcessor.setBufferTextureWrap(TextureWrap.ClampToEdge, TextureWrap.ClampToEdge);
+			hasPostProcessor = true;
+			createEffects();
+			createAnimator();
 		}
 	}
 
 	/** Creates the effects that will be available to the animators/manipulators to use, remember that the ownership of the
 	 * instantiated objects is transfered to the PostProcessor when adding the effect to it. */
-	private void configurePostProcessor (PostProcessor postProcessor) {
-		postProcessor.setEnabled(true);
-		postProcessor.setClearBits(GL20.GL_COLOR_BUFFER_BIT | GL20.GL_DEPTH_BUFFER_BIT);
-		postProcessor.setClearDepth(1f);
-		postProcessor.setBufferTextureWrap(TextureWrap.ClampToEdge, TextureWrap.ClampToEdge);
-		gameRenderer.disableNormalDepthMap();
-
+	private void createEffects () {
 		if (UserPreferences.bool(Preference.Ssao)) {
 			addEffect(
 				Effects.Ssao.name,
 				new Ssao(ScaleUtils.PlayWidth, ScaleUtils.PlayHeight, Ssao.Quality.valueOf(UserPreferences
 					.string(Preference.SsaoQuality))));
-			gameRenderer.enableNormalDepthMap();
+			needNormalDepthMap = true;
 		}
 
 		// addEffect(Effects.MotionBlur.name, new CameraMotion());
@@ -110,6 +110,24 @@ public final class PostProcessing {
 		Gdx.app.log("PostProcessing", "Post-processing enabled and configured");
 	}
 
+	private void createAnimator () {
+		hasAnimator = true;
+		animator = new AggressiveCold(this, isNightMode);
+		animator.reset();
+	}
+
+	public boolean requiresNormalDepthMap () {
+		return needNormalDepthMap;
+	}
+
+	public boolean isEnabled () {
+		return hasPostProcessor;
+	}
+
+	public PostProcessor getPostProcessor () {
+		return postProcessor;
+	}
+
 	public void addEffect (String name, PostProcessorEffect effect) {
 		if (hasPostProcessor) {
 			postProcessor.addEffect(effect);
@@ -118,78 +136,55 @@ public final class PostProcessing {
 	}
 
 	public PostProcessorEffect getEffect (String name) {
-		return effects.get(Hash.APHash(name));
+		if (hasPostProcessor) {
+			return effects.get(Hash.APHash(name));
+		}
+
+		return null;
 	}
 
 	public boolean hasEffect (String name) {
-		return (effects.get(Hash.APHash(name)) != null);
-	}
-
-	public void addAnimator (String name, PostProcessingAnimator animator) {
-		animators.put(Hash.APHash(name), animator);
-	}
-
-	public boolean hasAnimator (String name) {
-		return (animators.get(Hash.APHash(name)) != null);
-	}
-
-	public PostProcessingAnimator getAnimator (String name) {
-		return animators.get(Hash.APHash(name));
-	}
-
-	public void enableAnimator (String name) {
-		if (!hasPostProcessor) {
-			return;
+		if (hasPostProcessor) {
+			return (effects.get(Hash.APHash(name)) != null);
 		}
 
-		PostProcessingAnimator next = animators.get(Hash.APHash(name));
-		if (next != null) {
-			currentAnimator = next;
-			currentAnimator.reset();
-		}
-	}
-
-	public void disableAnimator () {
-		if (hasPostProcessor && currentAnimator != null) {
-			currentAnimator.reset();
-			currentAnimator = null;
-		}
+		return false;
 	}
 
 	public void resetAnimator () {
-		if (hasPostProcessor && currentAnimator != null) {
-			currentAnimator.reset();
+		if (hasPostProcessor && hasAnimator) {
+			animator.reset();
 		}
 	}
 
 	public void onBeforeRender (float zoom, float warmUpCompletion) {
-		if (hasPostProcessor && currentAnimator != null) {
-			currentAnimator.update(zoom, warmUpCompletion);
+		if (hasPostProcessor && hasAnimator) {
+			animator.update(zoom, warmUpCompletion);
 		}
 	}
 
 	public void setPlayer (PlayerCar player) {
-		if (hasPostProcessor && currentAnimator != null) {
-			currentAnimator.setPlayer(player);
+		if (hasPostProcessor && hasAnimator) {
+			animator.setPlayer(player);
 		}
 	}
 
 	// features
 	public void alertWrongWayBegins (int milliseconds) {
-		if (hasPostProcessor && currentAnimator != null) {
-			currentAnimator.alertWrongWayBegins(milliseconds);
+		if (hasPostProcessor && hasAnimator) {
+			animator.alertWrongWayBegins(milliseconds);
 		}
 	}
 
 	public void alertWrongWayEnds (int milliseconds) {
-		if (hasPostProcessor && currentAnimator != null) {
-			currentAnimator.alertWrongWayEnds(milliseconds);
+		if (hasPostProcessor && hasAnimator) {
+			animator.alertWrongWayEnds(milliseconds);
 		}
 	}
 
 	public void alertCollision (float collisionFactor, int milliseconds) {
-		if (hasPostProcessor && currentAnimator != null) {
-			currentAnimator.alertCollision(collisionFactor, milliseconds);
+		if (hasPostProcessor && hasAnimator) {
+			animator.alertCollision(collisionFactor, milliseconds);
 		}
 	}
 }

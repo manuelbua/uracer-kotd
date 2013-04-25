@@ -11,7 +11,6 @@ import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.math.Vector3;
 import com.bitfire.postprocessing.PostProcessor;
 import com.bitfire.postprocessing.PostProcessorListener;
-import com.bitfire.uracer.configuration.Config;
 import com.bitfire.uracer.configuration.UserPreferences;
 import com.bitfire.uracer.configuration.UserPreferences.Preference;
 import com.bitfire.uracer.events.GameRendererEvent;
@@ -28,9 +27,11 @@ public final class GameRenderer implements PostProcessorListener {
 	private final GL20 gl;
 	private final GameWorld world;
 	private final GameBatchRenderer batchRenderer;
-	private final PostProcessor postProcessor;
 	private final GameWorldRenderer worldRenderer;
 	private boolean drawNormalDepthMap;
+
+	private PostProcessor postProcessor = null;
+	private boolean hasPostProcessor = false;
 
 	private final Matrix4 identity = new Matrix4();
 	private final Matrix4 xform = new Matrix4();
@@ -50,17 +51,6 @@ public final class GameRenderer implements PostProcessorListener {
 		xform.idt();
 		xform.scale(ScaleUtils.Scale, ScaleUtils.Scale, 1);
 
-		// post-processing
-		if (UserPreferences.bool(Preference.PostProcessing)) {
-			postProcessor = new PostProcessor(ScaleUtils.PlayViewport, true /* depth */, false /* alpha */, Config.isDesktop /* supports32Bpp */);
-			PostProcessor.EnableQueryStates = false;
-			postProcessor.setClearBits(GL20.GL_COLOR_BUFFER_BIT | GL20.GL_DEPTH_BUFFER_BIT);
-			postProcessor.setClearColor(0, 0, 0, 1);
-			postProcessor.setClearDepth(1);
-		} else {
-			postProcessor = null;
-		}
-
 		// needed deferred data
 		drawNormalDepthMap = false;
 	}
@@ -71,6 +61,10 @@ public final class GameRenderer implements PostProcessorListener {
 
 	public void disableNormalDepthMap () {
 		drawNormalDepthMap = false;
+	}
+
+	public void setEnableNormalDepthMap (boolean enabled) {
+		drawNormalDepthMap = enabled;
 	}
 
 	public void dispose () {
@@ -86,7 +80,12 @@ public final class GameRenderer implements PostProcessorListener {
 	}
 
 	public boolean hasPostProcessor () {
-		return postProcessor != null;
+		return hasPostProcessor;
+	}
+
+	public void setPostProcessor (PostProcessor postProcessor) {
+		hasPostProcessor = (postProcessor != null);
+		this.postProcessor = postProcessor;
 	}
 
 	public PostProcessor getPostProcessor () {
