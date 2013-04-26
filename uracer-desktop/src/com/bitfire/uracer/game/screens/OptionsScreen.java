@@ -187,7 +187,7 @@ public class OptionsScreen extends Screen {
 			ppVignetting.setDisabled(!UserPreferences.bool(Preference.PostProcessing));
 
 			// crt emulation
-			ppCrtScreen = UIUtils.newCheckBox("CRT screen emulation", UserPreferences.bool(Preference.Vignetting),
+			ppCrtScreen = UIUtils.newCheckBox("CRT screen emulation", UserPreferences.bool(Preference.CrtScreen),
 				new ChangeListener() {
 					@Override
 					public void changed (ChangeEvent event, Actor actor) {
@@ -198,13 +198,14 @@ public class OptionsScreen extends Screen {
 			ppCrtScreen.setDisabled(!UserPreferences.bool(Preference.PostProcessing));
 
 			// earth curvature
-			ppCurvature = UIUtils.newCheckBox("Earth curvature", UserPreferences.bool(Preference.Vignetting), new ChangeListener() {
-				@Override
-				public void changed (ChangeEvent event, Actor actor) {
-					UserPreferences.bool(Preference.EarthCurvature, ((CheckBox)actor).isChecked());
-					UserPreferences.save();
-				}
-			});
+			ppCurvature = UIUtils.newCheckBox("Earth curvature", UserPreferences.bool(Preference.EarthCurvature),
+				new ChangeListener() {
+					@Override
+					public void changed (ChangeEvent event, Actor actor) {
+						UserPreferences.bool(Preference.EarthCurvature, ((CheckBox)actor).isChecked());
+						UserPreferences.save();
+					}
+				});
 			ppCurvature.setDisabled(!UserPreferences.bool(Preference.PostProcessing));
 
 			// radial zoom blur

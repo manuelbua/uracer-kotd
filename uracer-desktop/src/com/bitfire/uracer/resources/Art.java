@@ -124,9 +124,9 @@ public final class Art {
 		// the skin will automatically search and load the same filename+".atlas" extension
 		skinAtlas = new TextureAtlas("data/ui/skin.atlas");
 
-		if (ScaleUtils.PlayWidth <= 1280) {
+		if (ScaleUtils.PlayWidth < 1280) {
 			scrSkin = new Skin(Gdx.files.internal(Storage.UI + "skin-small.json"), skinAtlas);
-		} else if (ScaleUtils.PlayWidth > 1280 && ScaleUtils.PlayWidth < 1440) {
+		} else if (ScaleUtils.PlayWidth >= 1280 && ScaleUtils.PlayWidth < 1440) {
 			scrSkin = new Skin(Gdx.files.internal(Storage.UI + "skin-mid.json"), skinAtlas);
 		} else if (ScaleUtils.PlayWidth >= 1440) {
 			scrSkin = new Skin(Gdx.files.internal(Storage.UI + "skin-big.json"), skinAtlas);
