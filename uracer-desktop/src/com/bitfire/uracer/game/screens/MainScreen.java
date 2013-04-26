@@ -55,6 +55,11 @@ public final class MainScreen extends Screen {
 		bg.setFillParent(true);
 		root.addActor(bg);
 
+		// version info
+		Table infoTable = UIUtils.newVersionInfoTable();
+		root.addActor(infoTable);
+		root.bottom().padBottom(25);
+
 		buttonsTable = new Table();
 		root.addActor(buttonsTable);
 		// buttonsTable.debug();
@@ -107,13 +112,6 @@ public final class MainScreen extends Screen {
 		buttonsTable.add(optionsButton).width(300).height(50).pad(5);
 		buttonsTable.row();
 		buttonsTable.add(quitButton).width(300).height(50).pad(5);
-
-		infoTable = new Table(Art.scrSkin);
-		root.addActor(infoTable);
-
-		versionLabel = new Label(URacer.versionInfo, Art.scrSkin);
-		infoTable.row();
-		infoTable.add(versionLabel).expand().bottom().left();
 	}
 
 	@Override

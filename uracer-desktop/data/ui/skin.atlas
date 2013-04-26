@@ -3,9 +3,16 @@ skin.png
 format: RGBA8888
 filter: Nearest,Nearest
 repeat: none
+sans12
+  rotate: false
+  xy: 4, 86
+  size: 512, 512
+  orig: 512, 512
+  offset: 0, 0
+  index: -1
 default-window
   rotate: false
-  xy: 4, 44
+  xy: 4, 53
   size: 27, 29
   split: 4, 3, 20, 3
   orig: 27, 29
@@ -13,7 +20,7 @@ default-window
   index: -1
 default-select
   rotate: false
-  xy: 4, 20
+  xy: 520, 578
   size: 27, 20
   split: 4, 14, 4, 4
   orig: 27, 20
@@ -21,7 +28,7 @@ default-select
   index: -1
 default-round-large
   rotate: false
-  xy: 35, 53
+  xy: 4, 29
   size: 20, 20
   split: 5, 5, 5, 4
   orig: 20, 20
@@ -29,7 +36,7 @@ default-round-large
   index: -1
 default-round-down
   rotate: false
-  xy: 35, 29
+  xy: 35, 62
   size: 12, 20
   split: 5, 5, 5, 4
   orig: 12, 20
@@ -37,7 +44,7 @@ default-round-down
   index: -1
 default-round
   rotate: false
-  xy: 59, 53
+  xy: 520, 554
   size: 12, 20
   split: 5, 5, 5, 4
   orig: 12, 20
@@ -45,35 +52,35 @@ default-round
   index: -1
 check-off
   rotate: false
-  xy: 51, 35
+  xy: 551, 584
   size: 14, 14
   orig: 14, 14
   offset: 0, 0
   index: -1
 textfield
   rotate: false
-  xy: 51, 35
+  xy: 551, 584
   size: 14, 14
   orig: 14, 14
   offset: 0, 0
   index: -1
 check-on
   rotate: false
-  xy: 35, 11
+  xy: 4, 11
   size: 14, 14
   orig: 14, 14
   offset: 0, 0
   index: -1
 default-slider-knob
   rotate: false
-  xy: 53, 13
+  xy: 51, 64
   size: 9, 18
   orig: 9, 18
   offset: 0, 0
   index: -1
 default-slider
   rotate: false
-  xy: 66, 23
+  xy: 520, 542
   size: 8, 8
   split: 2, 2, 2, 2
   orig: 8, 8
@@ -81,7 +88,7 @@ default-slider
   index: -1
 default-pane
   rotate: false
-  xy: 69, 46
+  xy: 35, 55
   size: 5, 3
   split: 1, 1, 1, 1
   orig: 5, 3
@@ -89,31 +96,31 @@ default-pane
   index: -1
 default-rect-pad
   rotate: false
-  xy: 69, 46
+  xy: 35, 55
   size: 5, 3
   split: 1, 1, 1, 1
   orig: 5, 3
   offset: 0, 0
   index: -1
-default-splitpane
-  rotate: false
-  xy: 69, 39
-  size: 5, 3
-  split: 0, 5, 0, 0
-  orig: 5, 3
-  offset: 0, 0
-  index: -1
 default-splitpane-vertical
   rotate: false
-  xy: 4, 11
+  xy: 28, 44
   size: 3, 5
   split: 0, 0, 0, 5
   orig: 3, 5
   offset: 0, 0
   index: -1
+default-splitpane
+  rotate: false
+  xy: 536, 571
+  size: 5, 3
+  split: 0, 5, 0, 0
+  orig: 5, 3
+  offset: 0, 0
+  index: -1
 cursor
   rotate: false
-  xy: 4, 4
+  xy: 569, 595
   size: 3, 3
   split: 1, 1, 1, 1
   orig: 3, 3
@@ -121,23 +128,15 @@ cursor
   index: -1
 default-rect-down
   rotate: false
-  xy: 66, 16
+  xy: 4, 4
   size: 3, 3
   split: 1, 1, 1, 1
   orig: 3, 3
   offset: 0, 0
   index: -1
-default-pane-noborder
-  rotate: false
-  xy: 73, 18
-  size: 1, 1
-  split: 0, 0, 0, 0
-  orig: 1, 1
-  offset: 0, 0
-  index: -1
 default-rect
   rotate: false
-  xy: 11, 13
+  xy: 64, 79
   size: 3, 3
   split: 1, 1, 1, 1
   orig: 3, 3
@@ -145,16 +144,60 @@ default-rect
   index: -1
 default-select-selection
   rotate: false
-  xy: 11, 6
+  xy: 520, 535
   size: 3, 3
   split: 1, 1, 1, 1
   orig: 3, 3
   offset: 0, 0
   index: -1
+default-pane-noborder
+  rotate: false
+  xy: 551, 579
+  size: 1, 1
+  split: 0, 0, 0, 0
+  orig: 1, 1
+  offset: 0, 0
+  index: -1
 selection
   rotate: false
-  xy: 73, 13
+  xy: 22, 24
   size: 1, 1
   orig: 1, 1
+  offset: 0, 0
+  index: -1
+
+skin2.png
+format: RGBA8888
+filter: Nearest,Nearest
+repeat: none
+sans13
+  rotate: false
+  xy: 4, 4
+  size: 512, 512
+  orig: 512, 512
+  offset: 0, 0
+  index: -1
+
+skin3.png
+format: RGBA8888
+filter: Nearest,Nearest
+repeat: none
+sans14
+  rotate: false
+  xy: 4, 4
+  size: 512, 512
+  orig: 512, 512
+  offset: 0, 0
+  index: -1
+
+skin4.png
+format: RGBA8888
+filter: Nearest,Nearest
+repeat: none
+sans15
+  rotate: false
+  xy: 4, 4
+  size: 512, 512
+  orig: 512, 512
   offset: 0, 0
   index: -1

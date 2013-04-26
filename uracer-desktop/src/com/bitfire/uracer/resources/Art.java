@@ -18,6 +18,7 @@ import com.badlogic.gdx.graphics.g2d.TextureRegion;
 import com.badlogic.gdx.scenes.scene2d.ui.Skin;
 import com.bitfire.uracer.configuration.Config;
 import com.bitfire.uracer.configuration.Storage;
+import com.bitfire.uracer.utils.ScaleUtils;
 import com.bitfire.utils.ShaderLoader;
 
 public final class Art {
@@ -52,6 +53,7 @@ public final class Art {
 	// screens
 	public static Texture scrBackground;
 	public static Skin scrSkin;
+	private static TextureAtlas skinAtlas;
 
 	// circle progress
 	public static Texture texCircleProgress;
@@ -120,12 +122,21 @@ public final class Art {
 	private static void loadScreensData () {
 		scrBackground = newTexture("data/base/titlescreen.png", true);
 		// the skin will automatically search and load the same filename+".atlas" extension
-		scrSkin = new Skin(Gdx.files.internal(Storage.UI + "skin.json"));
+		skinAtlas = new TextureAtlas("data/ui/skin.atlas");
+
+		if (ScaleUtils.PlayWidth <= 1280) {
+			scrSkin = new Skin(Gdx.files.internal(Storage.UI + "skin-small.json"), skinAtlas);
+		} else if (ScaleUtils.PlayWidth > 1280 && ScaleUtils.PlayWidth < 1440) {
+			scrSkin = new Skin(Gdx.files.internal(Storage.UI + "skin-mid.json"), skinAtlas);
+		} else if (ScaleUtils.PlayWidth >= 1440) {
+			scrSkin = new Skin(Gdx.files.internal(Storage.UI + "skin-big.json"), skinAtlas);
+		}
 	}
 
 	private static void disposeScreensData () {
 		scrSkin.dispose();
 		scrBackground.dispose();
+		skinAtlas.dispose();
 	}
 
 	//

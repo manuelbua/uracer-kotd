@@ -29,8 +29,6 @@ import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.math.Vector3;
 import com.badlogic.gdx.math.collision.BoundingBox;
 import com.bitfire.uracer.configuration.Config;
-import com.bitfire.uracer.configuration.UserPreferences;
-import com.bitfire.uracer.configuration.UserPreferences.Preference;
 import com.bitfire.uracer.game.actors.Car;
 import com.bitfire.uracer.game.logic.helpers.CameraController;
 import com.bitfire.uracer.game.world.GameWorld;
@@ -128,8 +126,6 @@ public final class GameWorldRenderer {
 	// world refs
 	private RayHandler rayHandler = null;
 	private List<OrthographicAlignedStillModel> staticMeshes = null;
-	private boolean showComplexTrees = false;
-	private boolean showWalls = false;
 	private TrackTrees trackTrees = null; // complex trees
 	private TrackWalls trackWalls = null;
 	private ConeLight playerLightsA = null, playerLightsB = null;
@@ -150,31 +146,18 @@ public final class GameWorldRenderer {
 		tileMapRenderer = new OrthogonalTiledMapRenderer(world.map);
 		gameTrackDbgRenderer = new GameTrackDebugRenderer(world.getGameTrack());
 
-		showComplexTrees = UserPreferences.bool(Preference.ComplexTrees);
-		showWalls = UserPreferences.bool(Preference.Walls);
-
-		if (showComplexTrees) {
-			trackTrees = world.getTrackTrees();
-			treeShader = ShaderLoader.fromString(treeVertexShader, treeFragmentShader, "tree-fragment", "tree-vertex");
-			if (treeShader == null || !treeShader.isCompiled()) {
-				throw new IllegalStateException(treeShader.getLog());
-			}
-
-			treeShaderNight = ShaderLoader.fromString(treeVertexShader, treeFragmentShaderNight, "tree-fragment-night",
-				"tree-vertex");
-			if (treeShaderNight == null || !treeShaderNight.isCompiled()) {
-				throw new IllegalStateException(treeShaderNight.getLog());
-			}
-
-		} else {
-			trackTrees = null;
-			treeShader = null;
-			treeShaderNight = null;
+		trackTrees = world.getTrackTrees();
+		treeShader = ShaderLoader.fromString(treeVertexShader, treeFragmentShader, "tree-fragment", "tree-vertex");
+		if (treeShader == null || !treeShader.isCompiled()) {
+			throw new IllegalStateException(treeShader.getLog());
 		}
 
-		if (showWalls) {
-			trackWalls = world.getTrackWalls();
+		treeShaderNight = ShaderLoader.fromString(treeVertexShader, treeFragmentShaderNight, "tree-fragment-night", "tree-vertex");
+		if (treeShaderNight == null || !treeShaderNight.isCompiled()) {
+			throw new IllegalStateException(treeShaderNight.getLog());
 		}
+
+		trackWalls = world.getTrackWalls();
 
 		// deferred setup
 		float scale = Config.PostProcessing.NormalDepthMapScale;
@@ -584,13 +567,13 @@ public final class GameWorldRenderer {
 	}
 
 	public void renderWalls (boolean depthOnly) {
-		if (showWalls && trackWalls.count() > 0) {
+		if (trackWalls.count() > 0) {
 			renderWalls(trackWalls, depthOnly);
 		}
 	}
 
 	public void renderTrees (boolean depthOnly) {
-		if (showComplexTrees && trackTrees.count() > 0) {
+		if (trackTrees.count() > 0) {
 			renderTrees(trackTrees, depthOnly);
 		}
 	}

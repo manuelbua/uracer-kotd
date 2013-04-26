@@ -31,8 +31,8 @@ public final class UserPreferences {
 		SsaoQuality,
 
 		// rendering
-		ComplexTrees,
-		Walls,
+//		ComplexTrees,
+//		Walls,
 
 		// gameplay
 		TimeDilateInputMode,
@@ -106,8 +106,8 @@ public final class UserPreferences {
 		// rendering
 		//
 
-		bool(Preference.ComplexTrees, true);
-		bool(Preference.Walls, true);
+		// bool(Preference.ComplexTrees, true);
+		// bool(Preference.Walls, true);
 
 		//
 		// gameplay

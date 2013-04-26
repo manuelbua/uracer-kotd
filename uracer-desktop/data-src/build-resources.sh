@@ -110,7 +110,10 @@ mkdir -p "${DEST}/ui/"
 ${TEX_PACKER} ui/skin ${DEST}/ui skin >/dev/null
 #${SKIN_PACKER} ui/skin
 #cp ui/skin/skin.png ${DEST}/ui >/dev/null
-cp ui/skin/skin.json ${DEST}/ui >/dev/null
-cp ui/font/default.fnt ${DEST}/ui >/dev/null
-cp ui/font/default.png ${DEST}/ui >/dev/null
+cp ui/skin/skin-small.json ${DEST}/ui >/dev/null
+cp ui/skin/skin-mid.json ${DEST}/ui >/dev/null
+cp ui/skin/skin-big.json ${DEST}/ui >/dev/null
+cp ui/skin/sans12.fnt ${DEST}/ui >/dev/null
+cp ui/skin/sans13.fnt ${DEST}/ui >/dev/null
+cp ui/skin/sans15.fnt ${DEST}/ui >/dev/null
 echo "done!"

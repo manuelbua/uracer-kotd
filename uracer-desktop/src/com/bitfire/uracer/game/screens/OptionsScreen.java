@@ -8,11 +8,13 @@ import com.badlogic.gdx.graphics.glutils.FrameBuffer;
 import com.badlogic.gdx.scenes.scene2d.Actor;
 import com.badlogic.gdx.scenes.scene2d.InputEvent;
 import com.badlogic.gdx.scenes.scene2d.Stage;
+import com.badlogic.gdx.scenes.scene2d.ui.Button;
 import com.badlogic.gdx.scenes.scene2d.ui.CheckBox;
 import com.badlogic.gdx.scenes.scene2d.ui.Image;
 import com.badlogic.gdx.scenes.scene2d.ui.Label;
 import com.badlogic.gdx.scenes.scene2d.ui.SelectBox;
 import com.badlogic.gdx.scenes.scene2d.ui.Table;
+import com.badlogic.gdx.scenes.scene2d.utils.Align;
 import com.badlogic.gdx.scenes.scene2d.utils.ChangeListener;
 import com.badlogic.gdx.scenes.scene2d.utils.ClickListener;
 import com.bitfire.postprocessing.filters.RadialBlur;
@@ -33,9 +35,9 @@ public class OptionsScreen extends Screen {
 
 	private Stage ui;
 	private Input input;
-	private Table root, container;
-	private CheckBox ppVignetting, ppBloom, ppRadialBlur, ppCrtScreen, ppCurvature, ppComplexTrees, ppWalls, ppSsao, ppNightMode;
-	private SelectBox timeInputModeSel, ppZoomBlurQ, ppSsaoQuality;
+	private Table root, ltable, rtable;
+	private CheckBox ppBloom, ppVignetting, ppZoomBlur, ppCrtScreen, ppCurvature, ppComplexTrees, ppWalls, ppSsao, ppNightMode;
+	private SelectBox ppZoomBlurQuality, ppSsaoQuality;
 
 	@Override
 	public void init () {
@@ -58,221 +60,224 @@ public class OptionsScreen extends Screen {
 		Image bg = new Image(Art.scrBackground);
 		bg.setFillParent(true);
 		root.addActor(bg);
+		root.debug();
 
-		container = new Table();
-		// container.debug();
-		container.setFillParent(true);
-		container.defaults().pad(2);
-		root.addActor(container);
+		int w = (int)(ui.getWidth() / 2) - 20;
+		int h = 290;
 
-		// time dilation input mode
+		// version info
+		Table infoTable = UIUtils.newVersionInfoTable();
+		root.addActor(infoTable);
+		root.bottom().padBottom(25);
+
+		// layout tables
+		ltable = new Table();
+		// ltable.debug();
+		ltable.defaults().padLeft(5);
+		ltable.align(Align.left | Align.top);
+		root.add(ltable).expandX().left().height(h);
+
+		rtable = new Table();
+		// rtable.debug();
+		rtable.defaults().padRight(5);
+		rtable.align(Align.right | Align.top);
+		root.add(rtable).expandX().right().height(h);
+
+		// /////////////////
+		// left table
+		// /////////////////
+
 		{
-			TimeDilateInputMode im = TimeDilateInputMode.valueOf(UserPreferences.string(Preference.TimeDilateInputMode));
-			Label timeInputModeLabel = new Label("Time dilation input mode", Art.scrSkin);
-			timeInputModeSel = new SelectBox(new String[] {"Touch to toggle", "Touch and release"}, Art.scrSkin);
-			timeInputModeSel.setSelection(im.ordinal());
-			timeInputModeSel.addListener(new ChangeListener() {
+			// time dilation input mode
+
+			SelectBox box = UIUtils.newSelectBox(new String[] {"Touch to toggle", "Touch and release"}, new ChangeListener() {
 				@Override
 				public void changed (ChangeEvent event, Actor actor) {
-					int index = timeInputModeSel.getSelectionIndex();
+					int index = ((SelectBox)actor).getSelectionIndex();
 					UserPreferences.string(Preference.TimeDilateInputMode, Gameplay.TimeDilateInputMode.values()[index].toString());
 					UserPreferences.save();
 				}
 			});
 
-			container.add(timeInputModeLabel).width(200).pad(5);
-			container.add(timeInputModeSel);
+			TimeDilateInputMode im = TimeDilateInputMode.valueOf(UserPreferences.string(Preference.TimeDilateInputMode));
+			box.setSelection(im.ordinal());
+
+			Label desc = UIUtils.newLabel("Choose your preferred input mode for activating/deactivating "
+				+ "the time dilation feature", true);
+
+			ltable.add(desc).width(w).row();
+			ltable.add(box).left().padLeft(40).padTop(5);
 		}
 
-		//
-		// rendering
-		//
-		// {
-		// ppComplexTrees = UIUtils.newCheckBox("Complex trees", UserPreferences.bool(Preference.ComplexTrees));
-		// ppComplexTrees.addListener(new ClickListener() {
-		// @Override
-		// public void clicked (InputEvent event, float x, float y) {
-		// UserPreferences.bool(Preference.ComplexTrees, ppComplexTrees.isChecked());
-		// UserPreferences.save();
-		// }
-		// });
-		//
-		// container.row().colspan(2);
-		// container.add(ppComplexTrees);
-		//
-		// ppWalls = UIUtils.newCheckBox("Track walls", UserPreferences.bool(Preference.Walls));
-		// ppWalls.addListener(new ClickListener() {
-		// @Override
-		// public void clicked (InputEvent event, float x, float y) {
-		// UserPreferences.bool(Preference.Walls, ppWalls.isChecked());
-		// UserPreferences.save();
-		// }
-		// });
-		//
-		// container.row().colspan(2);
-		// container.add(ppWalls);
-		// }
-
-		//
-		// gameplay
-		//
-		ppNightMode = UIUtils.newCheckBox("Night mode", UserPreferences.bool(Preference.NightMode));
-		ppNightMode.addListener(new ClickListener() {
-			@Override
-			public void clicked (InputEvent event, float x, float y) {
-				UserPreferences.bool(Preference.NightMode, ppNightMode.isChecked());
-				UserPreferences.save();
-			}
-		});
-
-		//
-		// post-processing
-		//
-		final CheckBox postProcessingCb = UIUtils.newCheckBox("Enable post-processing effects",
-			UserPreferences.bool(Preference.PostProcessing));
-		postProcessingCb.addListener(new ClickListener() {
-			@Override
-			public void clicked (InputEvent event, float x, float y) {
-				if (!postProcessingCb.isChecked()) {
-					// disable all post-processing
-					ppVignetting.setChecked(false);
-					ppBloom.setChecked(false);
-					ppRadialBlur.setChecked(false);
-					ppCrtScreen.setChecked(false);
-					ppCurvature.setChecked(false);
-					ppSsao.setChecked(false);
-				}
-
-				UserPreferences.bool(Preference.PostProcessing, postProcessingCb.isChecked());
-				UserPreferences.bool(Preference.Vignetting, ppVignetting.isChecked());
-				UserPreferences.bool(Preference.Bloom, ppBloom.isChecked());
-				UserPreferences.bool(Preference.ZoomRadialBlur, ppRadialBlur.isChecked());
-				UserPreferences.bool(Preference.CrtScreen, ppCrtScreen.isChecked());
-				UserPreferences.bool(Preference.EarthCurvature, ppCurvature.isChecked());
-				UserPreferences.bool(Preference.Ssao, ppCurvature.isChecked());
-
-				UserPreferences.save();
-			}
-		});
 		{
-
-			ppVignetting = UIUtils.newCheckBox("Vignetting and gradient mapping", UserPreferences.bool(Preference.Vignetting));
-			ppVignetting.addListener(new ClickListener() {
-				@Override
-				public void clicked (InputEvent event, float x, float y) {
-					UserPreferences.bool(Preference.Vignetting, ppVignetting.isChecked());
-					UserPreferences.save();
-				}
-			});
-
-			ppBloom = UIUtils.newCheckBox("Bloom", UserPreferences.bool(Preference.Bloom));
-			ppBloom.addListener(new ClickListener() {
-				@Override
-				public void clicked (InputEvent event, float x, float y) {
-					UserPreferences.bool(Preference.Bloom, ppBloom.isChecked());
-					UserPreferences.save();
-				}
-			});
-
-			ppRadialBlur = UIUtils.newCheckBox("Zoom blur", UserPreferences.bool(Preference.ZoomRadialBlur));
-			ppRadialBlur.addListener(new ClickListener() {
-				@Override
-				public void clicked (InputEvent event, float x, float y) {
-					UserPreferences.bool(Preference.ZoomRadialBlur, ppRadialBlur.isChecked());
-					UserPreferences.save();
-				}
-			});
-			{
-				RadialBlur.Quality rbq = RadialBlur.Quality.valueOf(UserPreferences.string(Preference.ZoomRadialBlurQuality));
-				ppZoomBlurQ = new SelectBox(new String[] {"Very high", "High", "Normal", "Medium", "Low"}, Art.scrSkin);
-				ppZoomBlurQ.setSelection(rbq.ordinal());
-				ppZoomBlurQ.addListener(new ChangeListener() {
+			// night mode
+			CheckBox box = UIUtils.newCheckBox("Enable night mode", UserPreferences.bool(Preference.NightMode),
+				new ChangeListener() {
 					@Override
 					public void changed (ChangeEvent event, Actor actor) {
-						int index = ppZoomBlurQ.getSelectionIndex();
-						UserPreferences.string(Preference.ZoomRadialBlurQuality, RadialBlur.Quality.values()[index].toString());
+						UserPreferences.bool(Preference.NightMode, ((CheckBox)actor).isChecked());
 						UserPreferences.save();
 					}
 				});
-			}
 
-			ppSsao = UIUtils.newCheckBox("Ambient occlusion", UserPreferences.bool(Preference.Ssao));
-			ppSsao.addListener(new ClickListener() {
+			Label desc = UIUtils.newLabel("Play the game at night: please note that this mode requires a bit more power "
+				+ "from your machine since lights and shadows are computed in real-time", true);
+
+			ltable.row().padTop(20);
+			ltable.add(desc).width(w).row();
+			ltable.add(box).left().padLeft(40).padTop(5);
+		}
+
+		{
+			// post-processing switch
+			CheckBox box = UIUtils.newCheckBox("Enable post-processing", UserPreferences.bool(Preference.PostProcessing),
+				new ChangeListener() {
+					@Override
+					public void changed (ChangeEvent event, Actor actor) {
+						boolean doPostprocess = ((CheckBox)actor).isChecked();
+						UserPreferences.bool(Preference.PostProcessing, doPostprocess);
+						UserPreferences.save();
+
+						ppBloom.setDisabled(!doPostprocess);
+						ppVignetting.setDisabled(!doPostprocess);
+						ppCrtScreen.setDisabled(!doPostprocess);
+						ppCurvature.setDisabled(!doPostprocess);
+						ppZoomBlur.setDisabled(!doPostprocess);
+						ppSsao.setDisabled(!doPostprocess);
+					}
+				});
+
+			Label desc = UIUtils.newLabel("Post-processing effects will enhance your gaming experience greatly, but this comes at "
+				+ "the expense of major performance penalties if your system isn't up to the task", true);
+
+			ltable.row().padTop(20);
+			ltable.add(desc).width(w).row();
+			ltable.add(box).left().padLeft(40).padTop(5);
+		}
+
+		// /////////////////
+		// right table
+		// /////////////////
+
+		{
+			// post-processing effects
+			Label desc = UIUtils.newLabel("Enable or disable post-processing effects to find the best match between performance "
+				+ "and visual quality on your machine:", true);
+			rtable.add(desc).width(w).row();
+
+			// bloom
+			ppBloom = UIUtils.newCheckBox("Full-scene bloom", UserPreferences.bool(Preference.Bloom), new ChangeListener() {
 				@Override
-				public void clicked (InputEvent event, float x, float y) {
-					UserPreferences.bool(Preference.Ssao, ppSsao.isChecked());
+				public void changed (ChangeEvent event, Actor actor) {
+					UserPreferences.bool(Preference.Bloom, ((CheckBox)actor).isChecked());
 					UserPreferences.save();
 				}
 			});
-			{
-				Ssao.Quality q = Ssao.Quality.valueOf(UserPreferences.string(Preference.SsaoQuality));
-				ppSsaoQuality = new SelectBox(Ssao.Quality.values(), Art.scrSkin);
-				ppSsaoQuality.setSelection(q.ordinal());
-				ppSsaoQuality.addListener(new ChangeListener() {
+			ppBloom.setDisabled(!UserPreferences.bool(Preference.PostProcessing));
+
+			// vignetting
+			ppVignetting = UIUtils.newCheckBox("Vignette and gradient mapping", UserPreferences.bool(Preference.Vignetting),
+				new ChangeListener() {
 					@Override
 					public void changed (ChangeEvent event, Actor actor) {
-						int index = ppSsaoQuality.getSelectionIndex();
+						UserPreferences.bool(Preference.Vignetting, ((CheckBox)actor).isChecked());
+						UserPreferences.save();
+					}
+				});
+			ppVignetting.setDisabled(!UserPreferences.bool(Preference.PostProcessing));
+
+			// crt emulation
+			ppCrtScreen = UIUtils.newCheckBox("CRT screen emulation", UserPreferences.bool(Preference.Vignetting),
+				new ChangeListener() {
+					@Override
+					public void changed (ChangeEvent event, Actor actor) {
+						UserPreferences.bool(Preference.CrtScreen, ((CheckBox)actor).isChecked());
+						UserPreferences.save();
+					}
+				});
+			ppCrtScreen.setDisabled(!UserPreferences.bool(Preference.PostProcessing));
+
+			// earth curvature
+			ppCurvature = UIUtils.newCheckBox("Earth curvature", UserPreferences.bool(Preference.Vignetting), new ChangeListener() {
+				@Override
+				public void changed (ChangeEvent event, Actor actor) {
+					UserPreferences.bool(Preference.EarthCurvature, ((CheckBox)actor).isChecked());
+					UserPreferences.save();
+				}
+			});
+			ppCurvature.setDisabled(!UserPreferences.bool(Preference.PostProcessing));
+
+			// radial zoom blur
+			{
+				ppZoomBlur = UIUtils.newCheckBox("Zoom blur", UserPreferences.bool(Preference.ZoomRadialBlur), new ChangeListener() {
+					@Override
+					public void changed (ChangeEvent event, Actor actor) {
+						UserPreferences.bool(Preference.ZoomRadialBlur, ((CheckBox)actor).isChecked());
+						UserPreferences.save();
+					}
+				});
+				ppZoomBlur.setDisabled(!UserPreferences.bool(Preference.PostProcessing));
+
+				ppZoomBlurQuality = UIUtils.newSelectBox(new String[] {"Very high", "High", "Normal", "Medium", "Low"},
+					new ChangeListener() {
+						@Override
+						public void changed (ChangeEvent event, Actor actor) {
+							int index = ((SelectBox)actor).getSelectionIndex();
+							UserPreferences.string(Preference.ZoomRadialBlurQuality, RadialBlur.Quality.values()[index].toString());
+							UserPreferences.save();
+						}
+					});
+				// ppZoomBlurQuality.setDisabled(!UserPreferences.bool(Preference.PostProcessing));
+
+				RadialBlur.Quality quality = RadialBlur.Quality.valueOf(UserPreferences.string(Preference.ZoomRadialBlurQuality));
+				ppZoomBlurQuality.setSelection(quality.ordinal());
+			}
+
+			// SSAO
+			{
+				ppSsao = UIUtils.newCheckBox("SSAO (ambient occlusion)", UserPreferences.bool(Preference.Ssao), new ChangeListener() {
+					@Override
+					public void changed (ChangeEvent event, Actor actor) {
+						UserPreferences.bool(Preference.Ssao, ((CheckBox)actor).isChecked());
+						UserPreferences.save();
+					}
+				});
+				ppSsao.setDisabled(!UserPreferences.bool(Preference.PostProcessing));
+
+				ppSsaoQuality = UIUtils.newSelectBox(Ssao.Quality.values(), new ChangeListener() {
+					@Override
+					public void changed (ChangeEvent event, Actor actor) {
+						int index = ((SelectBox)actor).getSelectionIndex();
 						UserPreferences.string(Preference.SsaoQuality, Ssao.Quality.values()[index].toString());
 						UserPreferences.save();
 					}
 				});
+				// ppSsaoQuality.setDisabled(!UserPreferences.bool(Preference.PostProcessing));
+
+				Ssao.Quality quality = Ssao.Quality.valueOf(UserPreferences.string(Preference.SsaoQuality));
+				ppSsaoQuality.setSelection(quality.ordinal());
 			}
 
-			ppCrtScreen = UIUtils.newCheckBox("CRT screen emulation", UserPreferences.bool(Preference.CrtScreen));
-			ppCrtScreen.addListener(new ClickListener() {
+			// back button
+			Button back = UIUtils.newTextButton("Back to main", new ClickListener() {
 				@Override
 				public void clicked (InputEvent event, float x, float y) {
-					UserPreferences.bool(Preference.CrtScreen, ppCrtScreen.isChecked());
-					UserPreferences.save();
+					URacer.Game.show(ScreenType.MainScreen);
 				}
 			});
 
-			ppCurvature = UIUtils.newCheckBox("Earth curvature", UserPreferences.bool(Preference.EarthCurvature));
-			ppCurvature.addListener(new ClickListener() {
-				@Override
-				public void clicked (InputEvent event, float x, float y) {
-					UserPreferences.bool(Preference.EarthCurvature, ppCurvature.isChecked());
-					UserPreferences.save();
-				}
-			});
+			rtable.add(ppBloom).left().padLeft(40).padTop(5).row();
+			rtable.add(ppVignetting).left().padLeft(40).row();
+			rtable.add(ppCrtScreen).left().padLeft(40).row();
+			rtable.add(ppCurvature).left().padLeft(40).row();
+
+			rtable.add(ppZoomBlur).left().padLeft(40).row();
+			rtable.add(ppZoomBlurQuality).left().padLeft(80).padTop(5).row();
+
+			rtable.add(ppSsao).left().padLeft(40).padTop(5).row();
+			rtable.add(ppSsaoQuality).left().padLeft(80).padTop(5).row();
+			rtable.add(back).expandY().bottom().right();
 		}
-
-		// lay out things
-		container.row().colspan(2);
-		container.add(postProcessingCb);
-
-		container.row().colspan(2);
-		container.add(ppVignetting);
-
-		container.row().colspan(2);
-		container.add(ppBloom);
-
-		container.row().colspan(2);
-		container.add(ppRadialBlur);
-		{
-
-			container.row();
-			container.add(new Label("Zoom blur quality", Art.scrSkin));
-			container.add(ppZoomBlurQ);
-		}
-
-		container.row().colspan(2);
-		container.add(ppSsao);
-		{
-
-			container.row();
-			container.add(new Label("Ambient occlusion quality", Art.scrSkin));
-			container.add(ppSsaoQuality);
-		}
-
-		container.row().colspan(2);
-		container.add(ppCrtScreen);
-
-		container.row().colspan(2);
-		container.add(ppCurvature);
-
-		container.row().colspan(2);
-		container.add(ppNightMode);
 	}
 
 	@Override
@@ -297,8 +302,10 @@ public class OptionsScreen extends Screen {
 			// URacer.Game.quit();
 		}
 		if (input.isPressed(Keys.R)) {
+			disable();
 			ui.dispose();
 			setupUI();
+			enable();
 		} else {
 			ui.act(Config.Physics.PhysicsDt);
 		}
@@ -319,7 +326,7 @@ public class OptionsScreen extends Screen {
 		Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT);
 		ui.draw();
 
-		// Table.drawDebug( ui );
+		// Table.drawDebug(ui);
 
 		if (hasDest) {
 			dest.end();
