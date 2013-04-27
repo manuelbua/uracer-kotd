@@ -113,14 +113,14 @@ public abstract class CommonLogic implements GameLogic, CarEvent.Listener, Playe
 		// player tasks
 		playerTasks = new PlayerGameTasks(userProfile, gameTasksManager);
 
-		lapManager = new LapManager(userProfile, gameWorld.getTrackId());
+		lapManager = new LapManager(userProfile, gameWorld.getLevelId());
 		for (int i = 0; i < ReplayManager.MaxReplays; i++) {
 			ghostCars[i] = CarFactory.createGhost(i, gameWorld, CarPreset.Type.L1_GoblinOrange);
 			ghostCars[i].event.addListener(this, CarEvent.Type.onGhostFadingOut);
 			// ghostCars[i].carState.event.addListener(this, CarStateEvent.Type.onTileChanged);
 		}
 
-		replayManager = new ReplayManager(userProfile, gameWorld.getTrackId());
+		replayManager = new ReplayManager(userProfile, gameWorld.getLevelId());
 		gameTrack = gameWorld.getGameTrack();
 
 		wrongWayMonitor = new WrongWayMonitor(this);

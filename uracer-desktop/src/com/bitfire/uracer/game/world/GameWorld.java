@@ -36,7 +36,7 @@ import com.badlogic.gdx.math.Vector3;
 import com.badlogic.gdx.physics.box2d.World;
 import com.badlogic.gdx.utils.GdxRuntimeException;
 import com.bitfire.uracer.configuration.Config;
-import com.bitfire.uracer.game.GameTracks;
+import com.bitfire.uracer.game.GameLevels;
 import com.bitfire.uracer.game.collisions.CollisionFilters;
 import com.bitfire.uracer.game.logic.helpers.GameTrack;
 import com.bitfire.uracer.game.logic.helpers.GameTrack.TrackPosition;
@@ -71,7 +71,7 @@ public final class GameWorld {
 	// private data
 	private World box2dWorld;
 	private final MapUtils mapUtils;
-	private final String trackId;
+	private final String levelId;
 	private final float pixelsPerMeterFactor;
 
 	// player data
@@ -96,7 +96,7 @@ public final class GameWorld {
 	private List<Vector2> route = new ArrayList<Vector2>();
 	private List<Polygon> polys = new ArrayList<Polygon>();
 
-	public GameWorld (String trackId, boolean nightMode) {
+	public GameWorld (String levelId, boolean nightMode) {
 		float widthRatio = (float)ScaleUtils.RefScreenWidth / (float)ScaleUtils.PlayWidth;
 		pixelsPerMeterFactor = ((widthRatio * 256f) / 224f) * ScaleUtils.Scale;
 
@@ -110,9 +110,9 @@ public final class GameWorld {
 
 		Gdx.app.log("GameWorld", "Box2D world created (CCD=" + continuousPhysics + ", auto clear forces=" + autoClearForces + ")");
 
-		map = GameTracks.load(trackId);
+		map = GameLevels.load(levelId);
 
-		this.trackId = trackId;
+		this.levelId = levelId;
 		this.nightMode = nightMode;
 
 		// get map properties
@@ -731,8 +731,8 @@ public final class GameWorld {
 		return gameTrack;
 	}
 
-	public String getTrackId () {
-		return trackId;
+	public String getLevelId () {
+		return levelId;
 	}
 
 	public List<OrthographicAlignedStillModel> getStaticMeshes () {

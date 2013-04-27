@@ -153,6 +153,7 @@ public final class AggressiveCold implements PostProcessingAnimator {
 			ssao.setOcclusionThresholds(0.3f, 0.1f);
 			ssao.setRadius(0.001f, nightMode ? 0.08f : 0.12f);
 			ssao.setPower(nightMode ? 2f : 2f, 1);
+
 			// if (Ssao.Quality.valueOf(UserPreferences.string(Preference.SsaoQuality)) == Ssao.Quality.High) {
 			// ssao.setSampleCount(16);
 			// ssao.setPatternSize(4);
@@ -250,8 +251,6 @@ public final class AggressiveCold implements PostProcessingAnimator {
 		float timeModFactor = URacer.Game.getTimeModFactor();
 		float currDriftStrength = 0;
 		float currSpeedFactor = 0;
-
-		// vignette.setLutIndexVal(0, 16);
 
 		if (hasPlayer) {
 			playerScreenPos.set(GameRenderer.ScreenUtils.worldPxToScreen(player.state().position));

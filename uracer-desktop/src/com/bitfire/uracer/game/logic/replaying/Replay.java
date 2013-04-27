@@ -38,7 +38,7 @@ public class Replay implements Disposable {
 
 	// replay data
 	public long userId;
-	public String trackId = "";
+	public String levelId = "";
 	public float trackTimeSeconds = 0;
 	public CarForces[] forces = null;
 	public boolean isValid = false;
@@ -70,7 +70,7 @@ public class Replay implements Disposable {
 	public void copyData (Replay replay) {
 		userId = replay.userId;
 		trackTimeSeconds = replay.trackTimeSeconds;
-		trackId = replay.trackId;
+		levelId = replay.levelId;
 		eventsCount = replay.eventsCount;
 		carPresetType = replay.carPresetType;
 		carWorldPositionMt.set(replay.carWorldPositionMt);
@@ -87,12 +87,12 @@ public class Replay implements Disposable {
 		}
 	}
 
-	public void begin (String trackId, Car car) {
+	public void begin (String levelId, Car car) {
 		reset();
 		carWorldPositionMt.set(car.getWorldPosMt());
 		carWorldOrientRads = car.getWorldOrientRads();
 		carPresetType = car.getPresetType();
-		this.trackId = trackId;
+		this.levelId = levelId;
 		time.start();
 
 		// Gdx.app.log( "Replay", "Begin at " + carWorldPositionMt + ", " + carWorldOrientRads );
@@ -148,7 +148,7 @@ public class Replay implements Disposable {
 				Replay r = new Replay(is.readLong());
 
 				// replay info data
-				r.trackId = is.readUTF();
+				r.levelId = is.readUTF();
 				// r.difficultyLevel = GameDifficulty.valueOf( is.readUTF() );
 				r.trackTimeSeconds = is.readFloat();
 				if (!Replay.isValidLength(r.trackTimeSeconds)) {
@@ -197,7 +197,7 @@ public class Replay implements Disposable {
 				return;
 			}
 
-			final String filename = Storage.LocalReplays + trackId;
+			final String filename = Storage.LocalReplays + levelId;
 			final FileHandle hf = Gdx.files.external(filename);
 
 			// this is an asynchronous operation, but it's safe since saving a replay
@@ -230,7 +230,7 @@ public class Replay implements Disposable {
 						os.writeLong(userId);
 
 						// replay info data
-						os.writeUTF(trackId);
+						os.writeUTF(levelId);
 						// os.writeUTF( difficultyLevel.toString() );
 						os.writeFloat(trackTimeSeconds);
 						os.writeInt(eventsCount);

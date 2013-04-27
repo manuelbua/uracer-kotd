@@ -36,11 +36,11 @@ public final class ReplayRecorder {
 		}
 	}
 
-	public void beginRecording (Car car, Replay replay, String trackId) {
+	public void beginRecording (Car car, Replay replay, String levelId) {
 		isRecording = true;
 		this.replay = replay;
 		Gdx.app.log("Recorder", "Beginning recording #" + System.identityHashCode(replay));
-		replay.begin(trackId, car);
+		replay.begin(levelId, car);
 	}
 
 	public RecorderError add (CarForces f) {

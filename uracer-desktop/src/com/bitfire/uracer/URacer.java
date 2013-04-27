@@ -14,7 +14,7 @@ import com.badlogic.gdx.utils.TimeUtils;
 import com.bitfire.uracer.configuration.Config;
 import com.bitfire.uracer.configuration.Storage;
 import com.bitfire.uracer.configuration.UserPreferences;
-import com.bitfire.uracer.game.GameTracks;
+import com.bitfire.uracer.game.GameLevels;
 import com.bitfire.uracer.game.logic.gametasks.hud.HudLabel;
 import com.bitfire.uracer.game.logic.gametasks.hud.HudLabelAccessor;
 import com.bitfire.uracer.game.logic.gametasks.messager.Message;
@@ -39,6 +39,7 @@ import com.bitfire.uracer.utils.BoxedFloatAccessor;
 import com.bitfire.uracer.utils.Convert;
 import com.bitfire.uracer.utils.ScaleUtils;
 import com.bitfire.uracer.utils.SpriteBatchUtils;
+import com.bitfire.uracer.utils.URacerRuntimeException;
 import com.bitfire.utils.ShaderLoader;
 
 public class URacer implements ApplicationListener {
@@ -121,7 +122,10 @@ public class URacer implements ApplicationListener {
 		Gdx.app.log("URacer", "Using real frametime: " + (useRealFrametime ? "YES" : "NO"));
 
 		// enumerate available game tracks
-		if (!GameTracks.init()) {
+		try {
+			GameLevels.init();
+		} catch (URacerRuntimeException e) {
+			Gdx.app.error("URacer", e.getMessage());
 			System.exit(-1);
 		}
 
@@ -160,8 +164,8 @@ public class URacer implements ApplicationListener {
 		screenMgr = new ScreenManager(ScaleUtils.PlayViewport, screenFactory);
 
 		// screenMgr.setScreen(ScreenType.GameScreen, TransitionType.Fader, 1000);
-		// screenMgr.setScreen(ScreenType.MainScreen, TransitionType.CrossFader, 500);
-		screenMgr.setScreen(ScreenType.OptionsScreen, TransitionType.CrossFader, 500);
+		screenMgr.setScreen(ScreenType.MainScreen, TransitionType.CrossFader, 500);
+		// screenMgr.setScreen(ScreenType.OptionsScreen, TransitionType.CrossFader, 500);
 
 		// Initialize the timers after creating the game screen, so that there
 		// will be no huge discrepancies

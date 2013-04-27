@@ -52,7 +52,7 @@ public final class ReplayManager implements Disposable {
 			return null;
 		}
 
-		if (!replay.trackId.equals(trackId)) {
+		if (!replay.levelId.equals(trackId)) {
 			Gdx.app.log("ReplayManager", "The specified replay belongs to another game track.");
 			return null;
 		}

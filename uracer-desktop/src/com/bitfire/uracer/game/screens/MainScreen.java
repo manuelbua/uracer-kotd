@@ -18,7 +18,10 @@ import com.badlogic.gdx.scenes.scene2d.utils.ClickListener;
 import com.bitfire.uracer.Input;
 import com.bitfire.uracer.URacer;
 import com.bitfire.uracer.configuration.Config;
-import com.bitfire.uracer.game.GameTracks;
+import com.bitfire.uracer.configuration.UserPreferences;
+import com.bitfire.uracer.configuration.UserPreferences.Preference;
+import com.bitfire.uracer.game.GameLevels;
+import com.bitfire.uracer.game.GameLevels.GameLevelDescriptor;
 import com.bitfire.uracer.game.screens.GameScreensFactory.ScreenType;
 import com.bitfire.uracer.resources.Art;
 import com.bitfire.uracer.screen.Screen;
@@ -65,27 +68,26 @@ public final class MainScreen extends Screen {
 		// buttonsTable.debug();
 		buttonsTable.setFillParent(true);
 
-		sbTracks = UIUtils.newSelectBox(GameTracks.getAvailableTracks(), new ChangeListener() {
+		sbTracks = UIUtils.newSelectBox(GameLevels.getLevels(), new ChangeListener() {
 			@Override
 			public void changed (ChangeEvent event, Actor actor) {
-				SelectBox source = (SelectBox)event.getListenerActor();
-
-				switch (source.getSelectionIndex()) {
-				case 0:
-					break;
-				}
+				SelectBox source = (SelectBox)actor;
+				int idx = source.getSelectionIndex();
+				GameLevelDescriptor desc = GameLevels.getLevels()[idx];
+				ScreensShared.selectedLevelId = desc.getId();
+				UserPreferences.string(Preference.LastPlayedTrack, ScreensShared.selectedLevelId);
+				UserPreferences.save();
 			}
 		});
 
 		// restore previous user selection, if any
-		if (ScreensShared.selectedTrackId.length() > 0) {
-			sbTracks.setSelection(ScreensShared.selectedTrackId);
+		if (ScreensShared.selectedLevelId.length() > 0) {
+			sbTracks.setSelection(ScreensShared.selectedLevelId);
 		}
 
 		startGameButton = UIUtils.newTextButton("START GAME", new ClickListener() {
 			@Override
 			public void clicked (InputEvent event, float x, float y) {
-				ScreensShared.selectedTrackId = sbTracks.getSelection();
 				URacer.Game.show(ScreenType.GameScreen);
 			}
 		});

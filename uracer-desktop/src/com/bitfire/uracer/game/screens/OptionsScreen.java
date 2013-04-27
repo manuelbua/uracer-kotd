@@ -63,22 +63,22 @@ public class OptionsScreen extends Screen {
 		root.debug();
 
 		int w = (int)(ui.getWidth() / 2) - 20;
-		int h = 290;
+		int h = (int)(ui.getHeight() / 2);
 
 		// version info
 		Table infoTable = UIUtils.newVersionInfoTable();
 		root.addActor(infoTable);
-		root.bottom().padBottom(25);
+		root.bottom().padBottom(50);
 
 		// layout tables
 		ltable = new Table();
-		// ltable.debug();
+		ltable.debug();
 		ltable.defaults().padLeft(5);
 		ltable.align(Align.left | Align.top);
 		root.add(ltable).expandX().left().height(h);
 
 		rtable = new Table();
-		// rtable.debug();
+		rtable.debug();
 		rtable.defaults().padRight(5);
 		rtable.align(Align.right | Align.top);
 		root.add(rtable).expandX().right().height(h);
@@ -327,7 +327,7 @@ public class OptionsScreen extends Screen {
 		Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT);
 		ui.draw();
 
-		// Table.drawDebug(ui);
+		Table.drawDebug(ui);
 
 		if (hasDest) {
 			dest.end();

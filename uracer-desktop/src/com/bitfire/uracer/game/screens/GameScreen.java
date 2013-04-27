@@ -8,7 +8,7 @@ import com.bitfire.uracer.configuration.UserPreferences;
 import com.bitfire.uracer.configuration.UserPreferences.Preference;
 import com.bitfire.uracer.configuration.UserProfile;
 import com.bitfire.uracer.game.Game;
-import com.bitfire.uracer.game.GameTracks;
+import com.bitfire.uracer.game.GameLevels;
 import com.bitfire.uracer.game.actors.CarPreset.Type;
 import com.bitfire.uracer.game.screens.GameScreensFactory.ScreenType;
 import com.bitfire.uracer.screen.Screen;
@@ -21,17 +21,15 @@ public class GameScreen extends Screen {
 		// simulate slowness
 		// try { Thread.sleep( 1000 ); } catch( InterruptedException e ) {}
 
-		String trackId = GameTracks.getTrackId(ScreensShared.selectedTrackId);
-
-		if (trackId == null) {
+		if (!GameLevels.levelIdExists(ScreensShared.selectedLevelId)) {
 			Gdx.app.error("GameScreen", "The specified track could not be found.");
 			URacer.Game.show(ScreenType.MainScreen);
 		} else {
 			// save as last played track
-			UserPreferences.string(Preference.LastPlayedTrack, ScreensShared.selectedTrackId);
+			UserPreferences.string(Preference.LastPlayedTrack, ScreensShared.selectedLevelId);
 
 			UserProfile userProfile = new UserProfile();
-			game = new Game(userProfile, trackId);
+			game = new Game(userProfile, ScreensShared.selectedLevelId);
 
 			// choose a car type
 			game.setPlayer(Type.L2_PinkBeast);
