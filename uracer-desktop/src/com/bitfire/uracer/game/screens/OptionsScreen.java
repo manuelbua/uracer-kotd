@@ -83,9 +83,7 @@ public class OptionsScreen extends Screen {
 		rtable.align(Align.right | Align.top);
 		root.add(rtable).expandX().right().height(h);
 
-		// /////////////////
-		// left table
-		// /////////////////
+		/** left table */
 
 		{
 			// time dilation input mode
@@ -155,9 +153,7 @@ public class OptionsScreen extends Screen {
 			ltable.add(box).left().padLeft(40).padTop(5);
 		}
 
-		// /////////////////
-		// right table
-		// /////////////////
+		/** right table */
 
 		{
 			// post-processing effects

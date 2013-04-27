@@ -9,10 +9,11 @@ import com.badlogic.gdx.scenes.scene2d.Actor;
 import com.badlogic.gdx.scenes.scene2d.InputEvent;
 import com.badlogic.gdx.scenes.scene2d.Stage;
 import com.badlogic.gdx.scenes.scene2d.ui.Image;
-import com.badlogic.gdx.scenes.scene2d.ui.Label;
-import com.badlogic.gdx.scenes.scene2d.ui.SelectBox;
+import com.badlogic.gdx.scenes.scene2d.ui.List;
+import com.badlogic.gdx.scenes.scene2d.ui.ScrollPane;
 import com.badlogic.gdx.scenes.scene2d.ui.Table;
 import com.badlogic.gdx.scenes.scene2d.ui.TextButton;
+import com.badlogic.gdx.scenes.scene2d.utils.Align;
 import com.badlogic.gdx.scenes.scene2d.utils.ChangeListener;
 import com.badlogic.gdx.scenes.scene2d.utils.ClickListener;
 import com.bitfire.uracer.Input;
@@ -31,10 +32,7 @@ public final class MainScreen extends Screen {
 
 	private Stage ui;
 	private Input input;
-	private Table root, buttonsTable, infoTable;
-	private TextButton quitButton, optionsButton, startGameButton;
-	private SelectBox sbTracks;
-	private Label versionLabel;
+	private Table root, ltable, rtable;
 
 	@Override
 	public void init () {
@@ -50,6 +48,7 @@ public final class MainScreen extends Screen {
 	private void setupUI () {
 		ui = UIUtils.newScaledStage();
 		root = new Table();
+		root.debug();
 		root.setSize(ui.getWidth(), ui.getHeight());
 		ui.addActor(root);
 
@@ -58,62 +57,88 @@ public final class MainScreen extends Screen {
 		bg.setFillParent(true);
 		root.addActor(bg);
 
+		int w = (int)(ui.getWidth() / 3);
+		int h = (int)(ui.getHeight() / 2);
+
 		// version info
 		Table infoTable = UIUtils.newVersionInfoTable();
 		root.addActor(infoTable);
 		root.bottom().padBottom(25);
 
-		buttonsTable = new Table();
-		root.addActor(buttonsTable);
+		// layout tables
+		ltable = new Table();
+		ltable.debug();
+		ltable.defaults();
+		ltable.align(Align.left | Align.top);
+		root.add(ltable).expandX().height(h);
+
+		// rtable = new Table();
+		// rtable.debug();
+		// rtable.defaults().padRight(5);
+		// rtable.align(Align.right | Align.top);
+		// root.add(rtable).expandX().height(h);
+
+		// buttonsTable = new Table();
+		// root.addActor(buttonsTable);
 		// buttonsTable.debug();
-		buttonsTable.setFillParent(true);
+		// buttonsTable.setFillParent(true);
 
-		sbTracks = UIUtils.newSelectBox(GameLevels.getLevels(), new ChangeListener() {
-			@Override
-			public void changed (ChangeEvent event, Actor actor) {
-				SelectBox source = (SelectBox)actor;
-				int idx = source.getSelectionIndex();
-				GameLevelDescriptor desc = GameLevels.getLevels()[idx];
-				ScreensShared.selectedLevelId = desc.getId();
-				UserPreferences.string(Preference.LastPlayedTrack, ScreensShared.selectedLevelId);
-				UserPreferences.save();
+		/** left table */
+
+		// track list
+		{
+			ScrollPane listPane = UIUtils.newScrollPane();
+			List trackList = UIUtils.newListBox(GameLevels.getLevels(), new ChangeListener() {
+				@Override
+				public void changed (ChangeEvent event, Actor actor) {
+					List source = (List)actor;
+					int idx = source.getSelectedIndex();
+					GameLevelDescriptor desc = GameLevels.getLevels()[idx];
+					ScreensShared.selectedLevelId = desc.getId();
+					UserPreferences.string(Preference.LastPlayedTrack, ScreensShared.selectedLevelId);
+					UserPreferences.save();
+				}
+			});
+			listPane.setWidget(trackList);
+			listPane.setOverscroll(false, false);
+			listPane.setScrollingDisabled(false, true);
+			listPane.setFlickScroll(false);
+
+			// restore previous user selection, if any
+			if (ScreensShared.selectedLevelId.length() > 0) {
+				trackList.setSelection(GameLevels.getLevel(ScreensShared.selectedLevelId).toString());
 			}
-		});
 
-		// restore previous user selection, if any
-		if (ScreensShared.selectedLevelId.length() > 0) {
-			sbTracks.setSelection(ScreensShared.selectedLevelId);
+			TextButton start = UIUtils.newTextButton("START", new ClickListener() {
+				@Override
+				public void clicked (InputEvent event, float x, float y) {
+					URacer.Game.show(ScreenType.GameScreen);
+				}
+			});
+
+			TextButton options = UIUtils.newTextButton("OPTIONS", new ClickListener() {
+				@Override
+				public void clicked (InputEvent event, float x, float y) {
+					URacer.Game.show(ScreenType.OptionsScreen);
+				}
+			});
+
+			TextButton quit = UIUtils.newTextButton("EXIT", new ClickListener() {
+				@Override
+				public void clicked (InputEvent event, float x, float y) {
+					URacer.Game.quit();
+				}
+			});
+
+			ltable.add(listPane).colspan(3).width(w).height(150).left().padBottom(10).row();
+			ltable.add(start).width(70).left();
+			ltable.add(options).width(70);
+			ltable.add(quit).width(70).right();
 		}
 
-		startGameButton = UIUtils.newTextButton("START GAME", new ClickListener() {
-			@Override
-			public void clicked (InputEvent event, float x, float y) {
-				URacer.Game.show(ScreenType.GameScreen);
-			}
-		});
-
-		optionsButton = UIUtils.newTextButton("OPTIONS", new ClickListener() {
-			@Override
-			public void clicked (InputEvent event, float x, float y) {
-				URacer.Game.show(ScreenType.OptionsScreen);
-			}
-		});
-
-		quitButton = UIUtils.newTextButton("EXIT", new ClickListener() {
-			@Override
-			public void clicked (InputEvent event, float x, float y) {
-				URacer.Game.quit();
-			}
-		});
-
-		buttonsTable.row();
-		buttonsTable.add(sbTracks).width(300).pad(5);
-		buttonsTable.row();
-		buttonsTable.add(startGameButton).width(300).height(50).pad(5);
-		buttonsTable.row();
-		buttonsTable.add(optionsButton).width(300).height(50).pad(5);
-		buttonsTable.row();
-		buttonsTable.add(quitButton).width(300).height(50).pad(5);
+		/** right table */
+		{
+		}
 	}
 
 	@Override
@@ -132,11 +157,19 @@ public final class MainScreen extends Screen {
 
 	@Override
 	public void tick () {
+
 		if (input.isPressed(Keys.Q) || input.isPressed(Keys.BACK) || input.isPressed(Keys.ESCAPE)) {
 			URacer.Game.quit();
+		}
+		if (input.isPressed(Keys.R)) {
+			disable();
+			ui.dispose();
+			setupUI();
+			enable();
 		} else {
 			ui.act(Config.Physics.PhysicsDt);
 		}
+
 	}
 
 	@Override
@@ -154,7 +187,7 @@ public final class MainScreen extends Screen {
 		Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT);
 
 		ui.draw();
-		// Table.drawDebug(ui);
+		Table.drawDebug(ui);
 
 		if (hasDest) {
 			dest.end();

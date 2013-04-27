@@ -126,11 +126,12 @@ public final class Art {
 
 		if (ScaleUtils.PlayWidth < 1280) {
 			scrSkin = new Skin(Gdx.files.internal(Storage.UI + "skin-small.json"), skinAtlas);
-		} else if (ScaleUtils.PlayWidth >= 1280 && ScaleUtils.PlayWidth < 1440) {
-			scrSkin = new Skin(Gdx.files.internal(Storage.UI + "skin-mid.json"), skinAtlas);
-		} else if (ScaleUtils.PlayWidth >= 1440) {
+		} else if (ScaleUtils.PlayWidth >= 1280) { // && ScaleUtils.PlayWidth < 1440) {
 			scrSkin = new Skin(Gdx.files.internal(Storage.UI + "skin-big.json"), skinAtlas);
 		}
+		// else if (ScaleUtils.PlayWidth >= 1440) {
+		// scrSkin = new Skin(Gdx.files.internal(Storage.UI + "skin-big.json"), skinAtlas);
+		// }
 	}
 
 	private static void disposeScreensData () {

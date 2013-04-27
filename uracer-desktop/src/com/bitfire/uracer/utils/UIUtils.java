@@ -5,6 +5,8 @@ import com.badlogic.gdx.graphics.Camera;
 import com.badlogic.gdx.scenes.scene2d.Stage;
 import com.badlogic.gdx.scenes.scene2d.ui.CheckBox;
 import com.badlogic.gdx.scenes.scene2d.ui.Label;
+import com.badlogic.gdx.scenes.scene2d.ui.List;
+import com.badlogic.gdx.scenes.scene2d.ui.ScrollPane;
 import com.badlogic.gdx.scenes.scene2d.ui.SelectBox;
 import com.badlogic.gdx.scenes.scene2d.ui.Table;
 import com.badlogic.gdx.scenes.scene2d.ui.TextButton;
@@ -57,10 +59,27 @@ public final class UIUtils {
 		return sb;
 	}
 
+	public static List newListBox (Object[] items) {
+		return newListBox(items, null);
+	}
+
+	public static List newListBox (Object[] items, ChangeListener listener) {
+		List list = new List(items, Art.scrSkin);
+		if (listener != null) {
+			list.addListener(listener);
+		}
+		return list;
+	}
+
 	public static Label newLabel (String text, boolean wrap) {
 		Label l = new Label(text, Art.scrSkin);
 		l.setWrap(wrap);
 		return l;
+	}
+
+	public static ScrollPane newScrollPane () {
+		ScrollPane pane = new ScrollPane(null, Art.scrSkin);
+		return pane;
 	}
 
 	public static Table newVersionInfoTable () {

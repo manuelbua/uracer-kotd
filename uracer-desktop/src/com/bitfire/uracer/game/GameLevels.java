@@ -123,7 +123,7 @@ public final class GameLevels {
 	}
 
 	public static TiledMap load (String levelId) {
-		GameLevelDescriptor desc = levelIdToDescriptor.get(levelId);
+		GameLevelDescriptor desc = getLevel(levelId);
 		if (desc != null) {
 			String filename = desc.getFileName();
 			if (filename != null) {
@@ -143,6 +143,10 @@ public final class GameLevels {
 		}
 
 		return levelsCache;
+	}
+
+	public static GameLevelDescriptor getLevel (String levelId) {
+		return levelIdToDescriptor.get(levelId);
 	}
 
 	public static boolean levelIdExists (String levelId) {
