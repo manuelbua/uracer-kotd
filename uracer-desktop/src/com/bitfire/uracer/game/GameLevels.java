@@ -2,7 +2,6 @@
 package com.bitfire.uracer.game;
 
 import java.io.IOException;
-import java.io.UnsupportedEncodingException;
 import java.math.BigInteger;
 import java.nio.ByteBuffer;
 import java.security.MessageDigest;
@@ -253,15 +252,11 @@ public final class GameLevels {
 		byte[] checksum;
 		byte[] bLevelName;
 
-		try {
-			bLevelName = levelName.getBytes("UTF-8");
-			digest.reset();
-			digest.update(bLevelName);
-			digest.update(out);
-			checksum = digest.digest();
-		} catch (UnsupportedEncodingException e) {
-			throw new URacerRuntimeException("Level \"" + filePath + "\" has an unsupported coding.");
-		}
+		bLevelName = levelName.getBytes();
+		digest.reset();
+		digest.update(bLevelName);
+		digest.update(out);
+		checksum = digest.digest();
 
 		temp = null;
 		out = null;
