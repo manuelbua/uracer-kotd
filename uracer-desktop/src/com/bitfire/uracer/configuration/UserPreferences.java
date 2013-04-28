@@ -85,22 +85,12 @@ public final class UserPreferences {
 		bool(Preference.Vignetting, Config.isDesktop);
 		bool(Preference.Bloom, true);
 		bool(Preference.ZoomRadialBlur, true);
-		{
-			// detect default radial blur quality inspecting
-			// the current game resolution
-			int w = Gdx.graphics.getWidth();
-			if (w >= 1680) {
-				string(Preference.ZoomRadialBlurQuality, RadialBlur.Quality.High.toString());
-			} else if (w >= 1200) {
-				string(Preference.ZoomRadialBlurQuality, RadialBlur.Quality.Medium.toString());
-			} else if (w >= 800) {
-				string(Preference.ZoomRadialBlurQuality, RadialBlur.Quality.Low.toString());
-			}
-		}
+		string(Preference.ZoomRadialBlurQuality, RadialBlur.Quality.Medium.toString());
+
 		bool(Preference.CrtScreen, false);
 		bool(Preference.EarthCurvature, true);
 		bool(Preference.Ssao, true);
-		string(Preference.SsaoQuality, Ssao.Quality.Low.toString());
+		string(Preference.SsaoQuality, Ssao.Quality.Medium.toString());
 
 		//
 		// rendering

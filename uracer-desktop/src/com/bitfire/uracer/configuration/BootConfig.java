@@ -73,8 +73,6 @@ public class BootConfig {
 		// auto-detect centered window position
 		setWindowX(AwtUtils.getCenteredXOnDisplay(BootConfigFlag.WIDTH.defaultInt));
 		setWindowY(AwtUtils.getCenteredYOnDisplay(BootConfigFlag.HEIGHT.defaultInt));
-
-		store();
 	}
 
 	/** Returns an hash key composed by the current display resolution's width/height values and the specified auxiliary key */

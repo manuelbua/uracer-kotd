@@ -11,6 +11,7 @@ import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.GL10;
 import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.utils.TimeUtils;
+import com.bitfire.uracer.configuration.BootConfig;
 import com.bitfire.uracer.configuration.Config;
 import com.bitfire.uracer.configuration.Storage;
 import com.bitfire.uracer.configuration.UserPreferences;
@@ -75,8 +76,15 @@ public class URacer implements ApplicationListener {
 	public static final String versionInfo = getVersionInformation();
 	private URacerFinalizer uRacerFinalizer;
 
+	// boot
+	private BootConfig boot;
+
 	public interface URacerFinalizer {
 		void dispose ();
+	}
+
+	public URacer (BootConfig boot) {
+		this.boot = boot;
 	}
 
 	public void setFinalizer (URacerFinalizer finalizer) {
@@ -102,7 +110,10 @@ public class URacer implements ApplicationListener {
 
 	@Override
 	public void create () {
-		Storage.createDirs();
+		// create directories as needed
+		Storage.init();
+		boot.store();
+
 		ShaderLoader.Pedantic = true;
 
 		// create tweening support

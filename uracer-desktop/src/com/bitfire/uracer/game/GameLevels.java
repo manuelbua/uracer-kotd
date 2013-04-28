@@ -112,7 +112,7 @@ public final class GameLevels {
 			// build lookup table
 			levelIdToDescriptor.put(desc.getId(), desc);
 
-			Gdx.app.log("GameLevels", "Found level \"" + desc.getName() + "\"");
+			Gdx.app.log("GameLevels", "Found level \"" + desc.getName() + "\" (" + desc.getId() + ")");
 		}
 
 		// sort tracks

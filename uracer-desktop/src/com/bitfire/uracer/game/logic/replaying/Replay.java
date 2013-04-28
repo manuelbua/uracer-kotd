@@ -136,7 +136,7 @@ public class Replay implements Disposable {
 	}
 
 	public static Replay loadLocal (String filename) {
-		FileHandle fh = Gdx.files.external(Storage.LocalReplays + filename);
+		FileHandle fh = Gdx.files.external(Storage.ReplaysRoot + filename);
 
 		if (fh.exists()) {
 			try {
@@ -197,7 +197,7 @@ public class Replay implements Disposable {
 				return;
 			}
 
-			final String filename = Storage.LocalReplays + levelId;
+			final String filename = Storage.ReplaysRoot + levelId;
 			final FileHandle hf = Gdx.files.external(filename);
 
 			// this is an asynchronous operation, but it's safe since saving a replay

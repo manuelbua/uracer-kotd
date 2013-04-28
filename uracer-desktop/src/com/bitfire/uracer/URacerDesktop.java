@@ -45,7 +45,6 @@ public final class URacerDesktop {
 			if (!CommandLine.applyLaunchFlags(argv, boot)) {
 				return;
 			}
-			boot.store();
 		} else {
 			System.out.println("Try --help for a list of valid command-line switches.\n");
 		}
@@ -60,7 +59,7 @@ public final class URacerDesktop {
 		System.out.print("Fullscreen: " + (config.fullscreen ? "Yes" : "No") + "\n");
 		System.out.print("Window decorations: " + (boot.getBoolean(BootConfigFlag.UNDECORATED) ? "No" : "Yes") + "\n");
 
-		URacer uracer = new URacer();
+		URacer uracer = new URacer(boot);
 		LwjglApplication app = new LwjglApplication(uracer, config);
 
 		URacerDesktopFinalizer finalizr = new URacerDesktopFinalizer(boot, (OpenALAudio)app.getAudio());

@@ -106,7 +106,15 @@ public final class MainScreen extends Screen {
 
 			// restore previous user selection, if any
 			if (ScreensShared.selectedLevelId.length() > 0) {
-				trackList.setSelection(GameLevels.getLevel(ScreensShared.selectedLevelId).toString());
+				if (GameLevels.levelIdExists(ScreensShared.selectedLevelId)) {
+					trackList.setSelection(GameLevels.getLevel(ScreensShared.selectedLevelId).toString());
+				} else {
+					// level not found?
+					chooseFirstLevelAndSave(trackList);
+				}
+			} else {
+				// first run?
+				chooseFirstLevelAndSave(trackList);
 			}
 
 			TextButton start = UIUtils.newTextButton("START", new ClickListener() {
@@ -145,6 +153,14 @@ public final class MainScreen extends Screen {
 	public void dispose () {
 		ui.dispose();
 		disable();
+	}
+
+	private void chooseFirstLevelAndSave (List trackList) {
+		trackList.setSelectedIndex(0);
+		GameLevelDescriptor desc = GameLevels.getLevels()[0];
+		ScreensShared.selectedLevelId = desc.getId();
+		UserPreferences.string(Preference.LastPlayedTrack, ScreensShared.selectedLevelId);
+		UserPreferences.save();
 	}
 
 	@Override

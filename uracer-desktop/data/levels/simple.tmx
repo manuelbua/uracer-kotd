@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8" standalone="no"?><map height="8" orientation="orthogonal" tileheight="224" tilewidth="224" version="1.0" width="10">
  <properties><property name="blended tiles" value=""/>
-  <property name="name" value="1 - Simple"/>
+  <property name="name" value="1. Simple"/>
  </properties>
  <tileset firstgid="1" name="desert" tileheight="224" tilewidth="224">
   <image height="2464" source="tilesets/desert/224.png" width="896"/>
