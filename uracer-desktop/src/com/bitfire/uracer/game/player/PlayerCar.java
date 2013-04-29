@@ -65,7 +65,7 @@ public class PlayerCar extends Car {
 		// strategy = gameWorld.scalingStrategy;
 		carDesc = new CarDescriptor(preset.model);
 		carSim = new CarSimulator(carDesc);
-		renderer.setAlpha(1);
+		stillModel.setAlpha(1);
 
 		// precompute relaxing factors for user input coordinates
 		// scaleInputX = invWidth * gameWorld.scalingStrategy.referenceResolution.x;

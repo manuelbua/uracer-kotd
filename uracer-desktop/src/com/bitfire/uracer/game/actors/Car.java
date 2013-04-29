@@ -14,6 +14,9 @@ import com.bitfire.uracer.configuration.Config;
 import com.bitfire.uracer.events.GameRendererEvent.Order;
 import com.bitfire.uracer.game.collisions.CollisionFilters;
 import com.bitfire.uracer.game.world.GameWorld;
+import com.bitfire.uracer.game.world.models.ModelFactory;
+import com.bitfire.uracer.game.world.models.ModelFactory.ModelMesh;
+import com.bitfire.uracer.game.world.models.OrthographicAlignedStillModel;
 import com.bitfire.uracer.utils.AMath;
 import com.bitfire.uracer.utils.BodyEditorLoader;
 
@@ -29,7 +32,8 @@ public abstract strictfp class Car extends Box2DEntity {
 
 	protected GameWorld gameWorld;
 	protected CarType carType;
-	protected CarRenderer renderer;
+	// protected CarRenderer renderer;
+	protected OrthographicAlignedStillModel stillModel;
 
 	protected int impacts = 0;
 
@@ -59,7 +63,8 @@ public abstract strictfp class Car extends Box2DEntity {
 
 		this.event = new CarEvent(this);
 		this.gameWorld = gameWorld;
-		this.renderer = new CarRenderer(preset.model, preset.type);
+		// this.renderer = new CarRenderer(preset.model, preset.type);
+		this.stillModel = ModelFactory.create(ModelMesh.Car, 0, 0, 1);
 		this.impacts = 0;
 		this.inputMode = inputMode;
 		this.carTraveledDistance = 0;
@@ -81,6 +86,10 @@ public abstract strictfp class Car extends Box2DEntity {
 		// GameEvents.gameRenderer.removeListener(this, GameRendererEvent.Type.BatchBeforeMeshes, ShadowsDrawingOrder);
 		event.removeAllListeners();
 		event = null;
+	}
+
+	public OrthographicAlignedStillModel getStillModel () {
+		return stillModel;
 	}
 
 	public CarTrackState getTrackState () {
@@ -159,15 +168,15 @@ public abstract strictfp class Car extends Box2DEntity {
 		return inputMode;
 	}
 
-	public CarRenderer getRenderer () {
-		return renderer;
-	}
+	// public CarRenderer getRenderer () {
+	// return renderer;
+	// }
 
 	public void setPreset (CarPreset.Type presetType) {
 		if (preset.type != presetType) {
 			preset.setTo(presetType);
 			applyCarPhysics(carType, preset.model);
-			renderer.setAspect(preset.model, preset.type);
+			// renderer.setAspect(preset.model, preset.type);
 			Gdx.app.log(this.getClass().getSimpleName(), "Switched to car model \"" + preset.model.presetType.toString() + "\"");
 		} else {
 			Gdx.app.log(this.getClass().getSimpleName(), "Preset unchanged, not switching to same type \"" + preset.type.toString()

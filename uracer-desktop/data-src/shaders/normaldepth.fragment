@@ -30,7 +30,7 @@ vec2 encode_depth(vec3 position){
 void main(void){
 #ifdef ENABLE_DIFFUSE
 	vec4 texel = texture2D( u_texture, v_texcoord );
-	if(texel.a < 0.5) discard;
+	if(texel.a < 0.25) discard;
 #endif
 
 	vec3 normal = normalize(v_normal);

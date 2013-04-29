@@ -40,6 +40,7 @@ public class OrthographicAlignedStillModel {
 	// position
 	public Vector2 positionOffsetPx = new Vector2(0, 0);
 	public Vector2 positionPx = new Vector2();
+	private float alpha = 1;
 
 	// explicitle initialize the static iShader member
 	// (Android: statics need to be re-initialized!)
@@ -48,9 +49,9 @@ public class OrthographicAlignedStillModel {
 		String vertexShader =
 			"uniform mat4 u_projTrans;							\n" +
 			"attribute vec4 a_position;						\n" +
-			"attribute vec2 a_texCoord0;					\n" +
+			"attribute vec2 a_texCoord0;						\n" +
 			"varying vec2 v_TexCoord;							\n" +
-			"void main()										\n" +
+			"void main()											\n" +
 			"{\n"+
 			"	gl_Position = u_projTrans * a_position;	\n" +
 			"	v_TexCoord = a_texCoord0;						\n" +
@@ -60,28 +61,30 @@ public class OrthographicAlignedStillModel {
 			"#ifdef GL_ES											\n" +
 			"	precision mediump float;						\n" +
 			"#endif													\n" +
+			"uniform float alpha;								\n" +
 			"uniform sampler2D u_texture;						\n" +
 			"varying vec2 v_TexCoord;							\n" +
 			"void main()											\n"+
 			"{\n" +
 			"	vec4 texel = texture2D( u_texture, v_TexCoord );	\n" +
-			"	if(texel.a < 0.5) discard;							\n" +
-			"	gl_FragColor = texel;								\n" +
+			"	if(texel.a < 0.25) discard;								\n" +
+			"	gl_FragColor = vec4(texel.rgb,texel.a*alpha);		\n" +
 			"}\n";
 
 		String fragmentShaderNight =
 			"#ifdef GL_ES											\n" +
 			"	precision mediump float;						\n" +
 			"#endif													\n" +
+			"uniform float alpha;								\n" +
 			"uniform sampler2D u_texture;						\n" +
-			"uniform vec4 u_ambient;						\n" +
+			"uniform vec4 u_ambient;							\n" +
 			"varying vec2 v_TexCoord;							\n" +
 			"void main()											\n"+
 			"{\n" +
 			"	vec4 texel = texture2D( u_texture, v_TexCoord );	\n" +
-			"	if(texel.a < 0.5) discard;							\n" +
+			"	if(texel.a < 0.25) discard;																\n" +
 			"	vec4 c = vec4((u_ambient.rgb + texel.rgb*texel.a)*u_ambient.a, texel.a);	\n" +
-			"	gl_FragColor = c;								\n" +
+			"	gl_FragColor = vec4(c.rgb,c.a*alpha);													\n" +
 			"}\n";
 		// @on
 
@@ -109,6 +112,7 @@ public class OrthographicAlignedStillModel {
 			setScalingFactor(BlenderToURacer);
 			setPosition(0, 0);
 			setRotation(0, 0, 0, 0);
+			setAlpha(1);
 		} catch (Exception e) {
 			Gdx.app.log("OrthographicAlignedStillModel", e.getMessage());
 			Gdx.app.exit();
@@ -120,6 +124,14 @@ public class OrthographicAlignedStillModel {
 			shader.dispose();
 			shader = null;
 		}
+	}
+
+	public void setAlpha (float alpha) {
+		this.alpha = alpha;
+	}
+
+	public float getAlpha () {
+		return alpha;
 	}
 
 	public final void setPositionOffsetPixels (int offsetPxX, int offsetPxY) {

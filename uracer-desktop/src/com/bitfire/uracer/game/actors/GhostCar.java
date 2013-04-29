@@ -26,7 +26,7 @@ public final class GhostCar extends Car {
 		indexPlay = 0;
 		hasReplay = false;
 		replay = null;
-		this.renderer.setAlpha(0.5f);
+		stillModel.setAlpha(0.5f);
 		this.carState = new CarState(gameWorld, this);
 
 		setActive(false);
@@ -45,7 +45,7 @@ public final class GhostCar extends Car {
 
 		if (hasReplay) {
 			setPreset(replay.carPresetType);
-			renderer.setAlpha(0);
+			stillModel.setAlpha(0);
 
 			// System.out.println( "Replaying " + replay.id );
 			restart(replay);
@@ -63,7 +63,7 @@ public final class GhostCar extends Car {
 
 	public void removeReplay () {
 		setReplay(null);
-		renderer.setAlpha(0);
+		stillModel.setAlpha(0);
 	}
 
 	@Override
@@ -88,7 +88,7 @@ public final class GhostCar extends Car {
 
 	@Override
 	public boolean isVisible () {
-		return hasReplay && isActive() && renderer.getAlpha() > 0;
+		return hasReplay && isActive() && stillModel.getAlpha() > 0;
 	}
 
 	@Override
@@ -119,10 +119,10 @@ public final class GhostCar extends Car {
 			// also change opacity, fade in/out based on
 			// events played, events remaining
 			if (indexPlay <= FadeEvents) {
-				renderer.setAlpha(((float)indexPlay / (float)FadeEvents) * 0.5f);
+				stillModel.setAlpha(((float)indexPlay / (float)FadeEvents) * 0.5f);
 			} else if (replay.getEventsCount() - indexPlay <= FadeEvents) {
 				float val = (float)(replay.getEventsCount() - indexPlay) / (float)FadeEvents;
-				renderer.setAlpha(val * 0.5f);
+				stillModel.setAlpha(val * 0.5f);
 
 				if (!fadeOutEventTriggered) {
 					fadeOutEventTriggered = true;

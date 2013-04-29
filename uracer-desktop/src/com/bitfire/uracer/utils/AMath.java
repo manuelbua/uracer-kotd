@@ -104,7 +104,7 @@ public final class AMath {
 	}
 
 	public static float clampf (float v, float min, float max) {
-		return AMath.fixupTo(AMath.fixupTo(MathUtils.clamp(v, min, max), min), max);
+		return AMath.clamp(AMath.fixupTo(AMath.fixupTo(MathUtils.clamp(v, min, max), min), max), min, max);
 	}
 
 	public static float sign (float v) {

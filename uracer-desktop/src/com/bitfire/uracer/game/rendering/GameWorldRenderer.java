@@ -40,6 +40,7 @@ import com.bitfire.uracer.game.world.models.TrackTrees;
 import com.bitfire.uracer.game.world.models.TrackWalls;
 import com.bitfire.uracer.game.world.models.TreeStillModel;
 import com.bitfire.uracer.resources.Art;
+import com.bitfire.uracer.utils.AMath;
 import com.bitfire.uracer.utils.Convert;
 import com.bitfire.uracer.utils.ScaleUtils;
 import com.bitfire.utils.ShaderLoader;
@@ -66,7 +67,7 @@ public final class GameWorldRenderer {
 			"void main()											\n" +
 			"{\n" +
 			"	vec4 texel = texture2D( u_texture, v_TexCoord );	\n" +
-			"	if(texel.a < 0.5) discard;							\n" +
+			"	if(texel.a < 0.25) discard;							\n" +
 			"	gl_FragColor = texel;								\n" +
 			"}\n";
 
@@ -80,7 +81,7 @@ public final class GameWorldRenderer {
 		"void main()											\n" +
 		"{\n" +
 		"	vec4 texel = texture2D( u_texture, v_TexCoord );	\n" +
-		"	if(texel.a < 0.5) discard;							\n" +
+		"	if(texel.a < 0.25) discard;							\n" +
 		"	vec4 c = vec4((u_ambient.rgb + texel.rgb*texel.a)*u_ambient.a, texel.a);	\n" +
 		"	gl_FragColor = c;								\n" +
 		"}\n";
@@ -106,6 +107,7 @@ public final class GameWorldRenderer {
 	public static final float CamPerspPlaneFar = 240;
 	public static final float MaxCameraZoom = 1.4f;
 	public static final float CamPerspElevation = 100f;
+	private static final float DefaultSsaoScale = 1f / 40f;
 
 	// rendering
 	private GL20 gl = null;
@@ -120,7 +122,7 @@ public final class GameWorldRenderer {
 	private Mesh plane;
 	// private final FloatFrameBuffer normalDepthMap;
 	private final FrameBuffer normalDepthMap;
-	private final ShaderProgram shNormalDepthAlpha, shNormalDepth;
+	private final ShaderProgram shNormalDepth;
 
 	// render stats
 	private ImmediateModeRenderer20 dbg = new ImmediateModeRenderer20(false, true, 0);
@@ -169,13 +171,7 @@ public final class GameWorldRenderer {
 		normalDepthMap = new FrameBuffer(Format.RGBA8888, (int)((float)ScaleUtils.PlayWidth * scale),
 			(int)((float)ScaleUtils.PlayHeight * scale), true);
 
-		shNormalDepthAlpha = ShaderLoader.fromFile("normaldepth", "normaldepth", "#define ENABLE_DIFFUSE");
-		shNormalDepthAlpha.begin();
-		shNormalDepthAlpha.setUniformf("near", camPersp.near);
-		shNormalDepthAlpha.setUniformf("far", camPersp.far);
-		shNormalDepthAlpha.end();
-
-		shNormalDepth = ShaderLoader.fromFile("normaldepth", "normaldepth");
+		shNormalDepth = ShaderLoader.fromFile("normaldepth", "normaldepth", "#define ENABLE_DIFFUSE");
 		shNormalDepth.begin();
 		shNormalDepth.setUniformf("near", camPersp.near);
 		shNormalDepth.setUniformf("far", camPersp.far);
@@ -185,7 +181,7 @@ public final class GameWorldRenderer {
 	}
 
 	public void dispose () {
-		shNormalDepthAlpha.dispose();
+		// shNormalDepthAlpha.dispose();
 		shNormalDepth.dispose();
 		normalDepthMap.dispose();
 
@@ -422,10 +418,6 @@ public final class GameWorldRenderer {
 		// update the model-view-projection matrix, in meters, from the unscaled orthographic camera
 		camOrthoMvpMt.set(camOrtho.combined);
 		camOrthoMvpMt.scl(Config.Physics.PixelsPerMeter);
-		// camOrthoMvpMt.val[Matrix4.M00] *= Config.Physics.PixelsPerMeter;
-		// camOrthoMvpMt.val[Matrix4.M01] *= Config.Physics.PixelsPerMeter;
-		// camOrthoMvpMt.val[Matrix4.M10] *= Config.Physics.PixelsPerMeter;
-		// camOrthoMvpMt.val[Matrix4.M11] *= Config.Physics.PixelsPerMeter;
 
 		// update the tilemap renderer orthographic camera
 		// y-down
@@ -436,8 +428,6 @@ public final class GameWorldRenderer {
 
 		camTilemap.position.set(camOrtho.position);
 		camTilemap.position.y = world.worldSizePx.y - camTilemap.position.y;
-		// camTilemap.position.scl(ScaleUtils.Scale);
-		// camTilemap.zoom = ScaleUtils.Scale * zoom;
 		camTilemap.zoom = zoom;
 		camTilemap.update();
 
@@ -471,7 +461,7 @@ public final class GameWorldRenderer {
 				Convert.px2mt(camOrtho.position.x), 
 				Convert.px2mt(camOrtho.position.y),
 				Convert.px2mt(camOrtho.viewportWidth * camOrtho.zoom), 
-				Convert.px2mt(camOrtho.viewportHeight* camOrtho.zoom));
+				Convert.px2mt(camOrtho.viewportHeight * camOrtho.zoom));
 			// @on
 
 			rayHandler.update();
@@ -479,6 +469,12 @@ public final class GameWorldRenderer {
 
 			rayHandler.updateLightMap();
 		}
+	}
+
+	private void setSsaoScale (float scale) {
+		shNormalDepth.begin();
+		shNormalDepth.setUniformf("inv_depth_scale", scale);
+		shNormalDepth.end();
 	}
 
 	public void updateNormalDepthMap () {
@@ -491,14 +487,7 @@ public final class GameWorldRenderer {
 		Gdx.gl.glDepthFunc(GL20.GL_LESS);
 		Gdx.gl.glDepthMask(true);
 
-		float zscale = 1f / 40f;
-		shNormalDepthAlpha.begin();
-		shNormalDepthAlpha.setUniformf("inv_depth_scale", zscale);
-		shNormalDepthAlpha.end();
-
-		shNormalDepth.begin();
-		shNormalDepth.setUniformf("inv_depth_scale", zscale);
-		shNormalDepth.end();
+		setSsaoScale(DefaultSsaoScale);
 
 		normalDepthMap.begin();
 		{
@@ -596,15 +585,34 @@ public final class GameWorldRenderer {
 		OrthographicAlignedStillModel car;
 		EntityRenderState state;
 
+		if (!depthOnly) {
+			gl.glEnable(GL20.GL_BLEND);
+			gl.glBlendFunc(GL20.GL_SRC_ALPHA, GL20.GL_ONE_MINUS_SRC_ALPHA);
+		}
+
 		// ghosts
 		if (ghostCars != null && ghostCars.length > 0) {
 			for (int i = 0; i < ghostCars.length; i++) {
-				car = ghostCars[i].getRenderer().getCarStillModel();
+				car = ghostCars[i].getStillModel();
+
+				if (car.getAlpha() <= 0) continue;
 				state = ghostCars[i].state();
 				car.setPosition(state.position.x, state.position.y);
 				car.setRotation(state.orientation, 0, 0, 1);
+				if (depthOnly) {
+					float ca = car.getAlpha();
+					float a = (ca - 0.5f) * 2;
+					float s = AMath.clampf(AMath.sigmoid(a * 3f + 4f - (1 - ca)), 0, 1);
+					setSsaoScale(DefaultSsaoScale * s);
+					// setSsaoScale(DefaultSsaoScale * ca);
+				}
+
 				renderOrthographicAlignedModel(car, depthOnly, false);
 			}
+		}
+
+		if (depthOnly) {
+			setSsaoScale(DefaultSsaoScale);
 		}
 
 		// player
@@ -613,12 +621,16 @@ public final class GameWorldRenderer {
 		}
 
 		if (playerCar != null) {
-			car = playerCar.getRenderer().getCarStillModel();
+			car = playerCar.getStillModel();
 			state = playerCar.state();
 
 			car.setPosition(state.position.x, state.position.y);
 			car.setRotation(state.orientation, 0, 0, 1);
 			renderOrthographicAlignedModel(car, depthOnly, false);
+		}
+
+		if (!depthOnly) {
+			gl.glDisable(GL20.GL_BLEND);
 		}
 	}
 
@@ -637,7 +649,7 @@ public final class GameWorldRenderer {
 
 		ShaderProgram shader = null;
 		if (depthOnly) {
-			shader = shNormalDepthAlpha;
+			shader = shNormalDepth;
 		} else {
 			if (world.isNightMode()) {
 				shader = treeShaderNight;
@@ -752,7 +764,7 @@ public final class GameWorldRenderer {
 		ShaderProgram shader = null;
 
 		if (depthOnly) {
-			shader = shNormalDepthAlpha;
+			shader = shNormalDepth;
 		} else {
 			if (nightMode) {
 				shader = OrthographicAlignedStillModel.shaderNight;
@@ -819,8 +831,8 @@ public final class GameWorldRenderer {
 				// comb = (proj * view) * model (fast mul)
 				Matrix4 mvp = mtx2;
 				mvp.set(camPersp.combined).mul(model);
-
 				shader.setUniformMatrix("u_projTrans", mvp);
+				shader.setUniformf("alpha", m.getAlpha());
 			} else {
 				mtx2.set(camPersp.view).mul(model);
 				nmat.set(mtx2).inv().transpose();
@@ -861,7 +873,7 @@ public final class GameWorldRenderer {
 		ShaderProgram shader = null;
 
 		if (depthOnly) {
-			shader = shNormalDepthAlpha;
+			shader = shNormalDepth;
 		} else {
 			if (nightMode) {
 				shader = OrthographicAlignedStillModel.shaderNight;
@@ -923,8 +935,8 @@ public final class GameWorldRenderer {
 					// comb = (proj * view) * model (fast mul)
 					Matrix4 mvp = mtx2;
 					mvp.set(camPersp.combined).mul(model);
-
 					shader.setUniformMatrix("u_projTrans", mvp);
+					shader.setUniformf("alpha", m.getAlpha());
 				} else {
 					mtx2.set(camPersp.view).mul(model);
 					nmat.set(mtx2).inv().transpose();
