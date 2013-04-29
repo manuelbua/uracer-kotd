@@ -4,7 +4,6 @@ package com.bitfire.uracer.game.actors;
 import java.util.ArrayList;
 
 import com.badlogic.gdx.Gdx;
-import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.physics.box2d.BodyDef;
 import com.badlogic.gdx.physics.box2d.BodyDef.BodyType;
@@ -12,9 +11,7 @@ import com.badlogic.gdx.physics.box2d.Fixture;
 import com.badlogic.gdx.physics.box2d.FixtureDef;
 import com.badlogic.gdx.physics.box2d.MassData;
 import com.bitfire.uracer.configuration.Config;
-import com.bitfire.uracer.events.GameRendererEvent;
 import com.bitfire.uracer.events.GameRendererEvent.Order;
-import com.bitfire.uracer.events.GameRendererEvent.Type;
 import com.bitfire.uracer.game.collisions.CollisionFilters;
 import com.bitfire.uracer.game.world.GameWorld;
 import com.bitfire.uracer.utils.AMath;
@@ -53,10 +50,9 @@ public abstract strictfp class Car extends Box2DEntity {
 	protected InputMode inputMode = InputMode.NoInput;
 	private CarTrackState trackState;
 
-	public Car (GameWorld gameWorld, CarType carType, InputMode inputMode, GameRendererEvent.Order drawingOrder,
-		CarPreset.Type presetType, boolean triggerEvents) {
+	public Car (GameWorld gameWorld, CarType carType, InputMode inputMode, CarPreset.Type presetType, boolean triggerEvents) {
 
-		super(gameWorld.getBox2DWorld(), drawingOrder);
+		super(gameWorld.getBox2DWorld());
 		this.preset = new CarPreset(presetType);
 		this.carType = carType;
 		this.triggerEvents = triggerEvents;
@@ -284,14 +280,5 @@ public abstract strictfp class Car extends Box2DEntity {
 
 		// compute instant speed
 		carInstantSpeedMtSec = AMath.fixup(dist * Config.Physics.PhysicsTimestepHz);
-	}
-
-	@Override
-	public void onRender (SpriteBatch batch, Type type, Order order) {
-		if (order == ShadowsDrawingOrder) {
-			renderer.renderShadows(batch, stateRender);
-		} else if (order == drawingOrder) {
-			renderer.render(batch, stateRender);
-		}
 	}
 }

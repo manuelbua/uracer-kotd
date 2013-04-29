@@ -1,12 +1,11 @@
 
 package com.bitfire.uracer.game.actors;
 
-import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.bitfire.uracer.entities.Entity;
 import com.bitfire.uracer.entities.EntityRenderState;
 import com.bitfire.uracer.events.GameRendererEvent;
-import com.bitfire.uracer.events.PhysicsStepEvent;
 import com.bitfire.uracer.events.GameRendererEvent.Order;
+import com.bitfire.uracer.events.PhysicsStepEvent;
 import com.bitfire.uracer.game.GameEvents;
 
 public abstract class SubframeInterpolableEntity extends Entity implements PhysicsStepEvent.Listener, GameRendererEvent.Listener {
@@ -27,8 +26,6 @@ public abstract class SubframeInterpolableEntity extends Entity implements Physi
 
 	public abstract boolean isVisible ();
 
-	public abstract void onRender (SpriteBatch batch, GameRendererEvent.Type type, Order order);
-
 	public abstract void saveStateTo (EntityRenderState state);
 
 	public abstract boolean isSubframeInterpolated ();
@@ -42,16 +39,8 @@ public abstract class SubframeInterpolableEntity extends Entity implements Physi
 
 	@Override
 	public void gameRendererEvent (GameRendererEvent.Type type, Order order) {
-		switch (type) {
-		case BatchBeforeMeshes:
-		case BatchAfterMeshes:
-			if (isVisible()) {
-				onRender(GameEvents.gameRenderer.batch, type, order);
-			}
-			break;
-		case OnSubframeInterpolate:
+		if (type == GameRendererEvent.Type.OnSubframeInterpolate) {
 			onSubframeInterpolate(GameEvents.gameRenderer.timeAliasingFactor);
-			break;
 		}
 	}
 
@@ -71,12 +60,10 @@ public abstract class SubframeInterpolableEntity extends Entity implements Physi
 	}
 
 	public void onBeforePhysicsSubstep () {
-		// Gdx.app.log( this.getClass().getSimpleName(), "beforePhysics" );
 		saveStateTo(statePrevious);
 	}
 
 	public void onAfterPhysicsSubstep () {
-		// Gdx.app.log( this.getClass().getSimpleName(), "afterPhysics" );
 		saveStateTo(stateCurrent);
 	}
 

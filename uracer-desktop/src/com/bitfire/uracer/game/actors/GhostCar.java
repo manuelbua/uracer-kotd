@@ -2,7 +2,6 @@
 package com.bitfire.uracer.game.actors;
 
 import com.badlogic.gdx.Gdx;
-import com.bitfire.uracer.events.GameRendererEvent;
 import com.bitfire.uracer.game.logic.replaying.Replay;
 import com.bitfire.uracer.game.world.GameWorld;
 import com.bitfire.uracer.utils.CarUtils;
@@ -22,7 +21,7 @@ public final class GhostCar extends Car {
 	public CarState carState;
 
 	public GhostCar (int id, GameWorld gameWorld, CarPreset.Type presetType) {
-		super(gameWorld, CarType.ReplayCar, InputMode.InputFromReplay, GameRendererEvent.Order.MINUS_1, presetType, false);
+		super(gameWorld, CarType.ReplayCar, InputMode.InputFromReplay, presetType, false);
 		this.id = id;
 		indexPlay = 0;
 		hasReplay = false;

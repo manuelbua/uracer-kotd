@@ -279,13 +279,13 @@ public final class GameWorld {
 			l.setMaskBits(CollisionFilters.CategoryPlayer | CollisionFilters.CategoryTrackWalls);
 		}
 
-		playerImpulse = new PointLight(rayHandler, maxRays);
-		playerImpulse.setMaskBits(CollisionFilters.CategoryPlayer | CollisionFilters.CategoryReplay);
-		playerImpulse.setSoft(true);
-		playerImpulse.setStaticLight(false);
-		playerImpulse.setActive(true);
-		playerImpulse.setColor(1, 1, 1, 1f);
-		playerImpulse.setDistance(5);
+		// playerImpulse = new PointLight(rayHandler, maxRays);
+		// playerImpulse.setMaskBits(CollisionFilters.CategoryPlayer | CollisionFilters.CategoryReplay);
+		// playerImpulse.setSoft(true);
+		// playerImpulse.setStaticLight(false);
+		// playerImpulse.setActive(true);
+		// playerImpulse.setColor(1, 1, 1, 1f);
+		// playerImpulse.setDistance(5);
 	}
 
 	//

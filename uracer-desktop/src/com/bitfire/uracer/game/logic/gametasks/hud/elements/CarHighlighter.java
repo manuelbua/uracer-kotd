@@ -14,11 +14,13 @@ import com.bitfire.uracer.URacer;
 import com.bitfire.uracer.configuration.Config;
 import com.bitfire.uracer.entities.EntityRenderState;
 import com.bitfire.uracer.game.actors.Car;
+import com.bitfire.uracer.game.actors.CarModel;
 import com.bitfire.uracer.game.rendering.GameRenderer;
 import com.bitfire.uracer.game.tween.GameTweener;
 import com.bitfire.uracer.resources.Art;
 import com.bitfire.uracer.utils.BoxedFloat;
 import com.bitfire.uracer.utils.BoxedFloatAccessor;
+import com.bitfire.uracer.utils.Convert;
 
 public final class CarHighlighter {
 	private Sprite sprite;
@@ -45,7 +47,8 @@ public final class CarHighlighter {
 		followedCar = car;
 		renderState = followedCar.state();
 
-		sprite.setSize(car.getRenderer().getFacet().getWidth() * 1.4f, car.getRenderer().getFacet().getHeight() * 1.4f);
+		CarModel model = car.getCarModel();
+		sprite.setSize(Convert.mt2px(model.width) * 1.4f, Convert.mt2px(model.length) * 1.4f);
 		sprite.setOrigin(sprite.getWidth() / 2, sprite.getHeight() / 2);
 
 		offX = sprite.getOriginX();
