@@ -240,6 +240,7 @@ public final class GameWorld {
 		c.set(0.1f, 0.2f, 0.9f, 0.7f);
 
 		// int headlightsMask = CollisionFilters.CategoryTrackWalls | CollisionFilters.CategoryReplay;
+		// int headlightsMask = CollisionFilters.CategoryReplay;
 		int headlightsMask = 0;
 
 		playerHeadlightsA = new ConeLight(rayHandler, maxRays, c, 25, 0, 0, 0, 9);

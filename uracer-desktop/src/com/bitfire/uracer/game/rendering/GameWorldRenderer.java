@@ -29,8 +29,11 @@ import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.math.Vector3;
 import com.badlogic.gdx.math.collision.BoundingBox;
 import com.bitfire.uracer.configuration.Config;
+import com.bitfire.uracer.entities.EntityRenderState;
 import com.bitfire.uracer.game.actors.Car;
+import com.bitfire.uracer.game.actors.GhostCar;
 import com.bitfire.uracer.game.logic.helpers.CameraController;
+import com.bitfire.uracer.game.player.PlayerCar;
 import com.bitfire.uracer.game.world.GameWorld;
 import com.bitfire.uracer.game.world.models.OrthographicAlignedStillModel;
 import com.bitfire.uracer.game.world.models.TrackTrees;
@@ -85,6 +88,8 @@ public final class GameWorldRenderer {
 
 	// the game world
 	private GameWorld world = null;
+	private GhostCar ghostCars[] = null;
+	private PlayerCar playerCar = null;
 
 	// camera view
 	protected PerspectiveCamera camPersp = null;
@@ -373,6 +378,14 @@ public final class GameWorldRenderer {
 		return cameraZoom;
 	}
 
+	public void setPlayerCar (PlayerCar player) {
+		this.playerCar = player;
+	}
+
+	public void setGhostCars (GhostCar[] ghosts) {
+		this.ghostCars = ghosts;
+	}
+
 	public void setGameTrackDebugCar (Car car) {
 		gameTrackDbgRenderer.setCar(car);
 	}
@@ -495,6 +508,7 @@ public final class GameWorldRenderer {
 			Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT | GL20.GL_DEPTH_BUFFER_BIT);
 			// renderAllMeshes(true);
 			renderTilemapPlane();
+			renderCars(true);
 			renderWalls(true);
 
 			// if (staticMeshes.size() > 0) {
@@ -575,6 +589,36 @@ public final class GameWorldRenderer {
 	public void renderTrees (boolean depthOnly) {
 		if (trackTrees.count() > 0) {
 			renderTrees(trackTrees, depthOnly);
+		}
+	}
+
+	public void renderCars (boolean depthOnly) {
+		OrthographicAlignedStillModel car;
+		EntityRenderState state;
+
+		// ghosts
+		if (ghostCars != null && ghostCars.length > 0) {
+			for (int i = 0; i < ghostCars.length; i++) {
+				car = ghostCars[i].getRenderer().getCarStillModel();
+				state = ghostCars[i].state();
+				car.setPosition(state.position.x, state.position.y);
+				car.setRotation(state.orientation, 0, 0, 1);
+				renderOrthographicAlignedModel(car, depthOnly, false);
+			}
+		}
+
+		// player
+		if (!depthOnly) {
+			gl.glClear(GL20.GL_DEPTH_BUFFER_BIT);
+		}
+
+		if (playerCar != null) {
+			car = playerCar.getRenderer().getCarStillModel();
+			state = playerCar.state();
+
+			car.setPosition(state.position.x, state.position.y);
+			car.setRotation(state.orientation, 0, 0, 1);
+			renderOrthographicAlignedModel(car, depthOnly, false);
 		}
 	}
 
@@ -802,6 +846,104 @@ public final class GameWorldRenderer {
 				m = models.get(i);
 				renderBoundingBox(m.boundingBox);
 			}
+		}
+
+		return renderedCount;
+	}
+
+	private int renderOrthographicAlignedModel (OrthographicAlignedStillModel aModel, boolean depthOnly, boolean nightMode) {
+		int renderedCount = 0;
+		OrthographicAlignedStillModel m = aModel;
+		StillSubMesh submesh;
+
+		float meshZ = -(camPersp.far - camPersp.position.z) + (camPersp.far * (1 - (camOrtho.zoom)));
+
+		ShaderProgram shader = null;
+
+		if (depthOnly) {
+			shader = shNormalDepthAlpha;
+		} else {
+			if (nightMode) {
+				shader = OrthographicAlignedStillModel.shaderNight;
+			} else {
+				shader = OrthographicAlignedStillModel.shader;
+			}
+		}
+
+		shader.begin();
+
+		if (depthOnly) {
+			shader.setUniformMatrix("proj", camPersp.projection);
+			shader.setUniformMatrix("view", camPersp.view);
+			shader.setUniformi("u_texture", 0);
+		} else {
+			if (nightMode) {
+				shader.setUniformf("u_ambient", ambientColor);
+			}
+		}
+
+		{
+			submesh = m.model.subMeshes[0];
+
+			// transform position
+			tmpvec.x = (m.positionOffsetPx.x - camPersp.position.x) + (camPersp.viewportWidth / 2) + m.positionPx.x;
+			tmpvec.y = (m.positionOffsetPx.y + camPersp.position.y) + (camPersp.viewportHeight / 2) - m.positionPx.y;
+			tmpvec.z = 1;
+
+			tmpvec.x *= ScaleUtils.Scale;
+			tmpvec.y *= ScaleUtils.Scale;
+
+			tmpvec.x += ScaleUtils.CropX;
+			tmpvec.y += ScaleUtils.CropY;
+
+			// transform to world space
+			camPersp.unproject(tmpvec, ScaleUtils.CropX, ScaleUtils.CropY, ScaleUtils.PlayWidth, ScaleUtils.PlayHeight);
+
+			// build model matrix
+			Matrix4 model = mtx;
+			tmpvec.z = meshZ;
+
+			// change of basis
+			model.idt();
+			model.translate(tmpvec);
+			model.rotate(m.iRotationAxis, m.iRotationAngle);
+			model.scale(m.scaleAxis.x, m.scaleAxis.y, m.scaleAxis.z);
+			model.translate(-tmpvec.x, -tmpvec.y, -tmpvec.z);
+			model.translate(tmpvec);
+
+			// ensure the bounding box is transformed
+			m.boundingBox.inf().set(m.localBoundingBox);
+			m.boundingBox.mul(model);
+
+			// perform culling
+			if (Config.Debug.FrustumCulling && !camPersp.frustum.boundsInFrustum(m.boundingBox)) {
+				if (!depthOnly) culledMeshes++;
+			} else {
+				if (!depthOnly) {
+					// comb = (proj * view) * model (fast mul)
+					Matrix4 mvp = mtx2;
+					mvp.set(camPersp.combined).mul(model);
+
+					shader.setUniformMatrix("u_projTrans", mvp);
+				} else {
+					mtx2.set(camPersp.view).mul(model);
+					nmat.set(mtx2).inv().transpose();
+					shader.setUniformMatrix("nmat", nmat);
+					shader.setUniformMatrix("model", model);
+				}
+
+				m.material.bind(shader);
+
+				submesh.mesh.render(shader, submesh.primitiveType);
+				renderedCount++;
+			}
+		}
+
+		shader.end();
+
+		if (!depthOnly && Config.Debug.Render3DBoundingBoxes) {
+			// debug (tested on a single mesh only!)
+			renderBoundingBox(m.boundingBox);
 		}
 
 		return renderedCount;

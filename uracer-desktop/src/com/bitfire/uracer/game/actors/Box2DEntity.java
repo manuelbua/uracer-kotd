@@ -8,7 +8,6 @@ import com.badlogic.gdx.physics.box2d.World;
 import com.bitfire.uracer.configuration.Config;
 import com.bitfire.uracer.entities.EntityRenderState;
 import com.bitfire.uracer.events.GameRendererEvent;
-import com.bitfire.uracer.game.GameEvents;
 import com.bitfire.uracer.utils.AMath;
 
 public abstract class Box2DEntity extends SubframeInterpolableEntity {
@@ -23,13 +22,13 @@ public abstract class Box2DEntity extends SubframeInterpolableEntity {
 		super();
 		this.box2dWorld = world;
 		this.drawingOrder = drawingOrder;
-		GameEvents.gameRenderer.addListener(this, GameRendererEvent.Type.BatchBeforeMeshes, drawingOrder);
+		// GameEvents.gameRenderer.addListener(this, GameRendererEvent.Type.BatchBeforeMeshes, drawingOrder);
 	}
 
 	@Override
 	public void dispose () {
 		super.dispose();
-		GameEvents.gameRenderer.removeListener(this, GameRendererEvent.Type.BatchBeforeMeshes, drawingOrder);
+		// GameEvents.gameRenderer.removeListener(this, GameRendererEvent.Type.BatchBeforeMeshes, drawingOrder);
 		box2dWorld.destroyBody(body);
 	}
 

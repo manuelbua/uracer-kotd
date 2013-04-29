@@ -115,6 +115,7 @@ public final class GameRenderer implements PostProcessorListener {
 	}
 
 	public void render (FrameBuffer dest) {
+		SpriteBatch batch;
 		worldRenderer.resetCounters();
 
 		if (drawNormalDepthMap) {
@@ -133,10 +134,10 @@ public final class GameRenderer implements PostProcessorListener {
 			if (hasDest) {
 				dest.begin();
 			} else {
+				// TODO: is this really needed?
 				gl.glViewport(ScaleUtils.CropX, ScaleUtils.CropY, ScaleUtils.PlayWidth, ScaleUtils.PlayHeight);
 			}
 
-			// gl.glViewport(ScaleUtils.CropX, ScaleUtils.CropY, ScaleUtils.PlayWidth, ScaleUtils.PlayHeight);
 			gl.glClearDepthf(1);
 			gl.glClearColor(0, 0, 0, 1);
 			gl.glClear(GL20.GL_COLOR_BUFFER_BIT | GL20.GL_DEPTH_BUFFER_BIT);
@@ -152,8 +153,7 @@ public final class GameRenderer implements PostProcessorListener {
 		// BatchBeforeMeshes
 		// ///////////////////////
 
-		SpriteBatch batch = batchRenderer.begin(worldRenderer.getOrthographicCamera());
-
+		batch = batchRenderer.begin(worldRenderer.getOrthographicCamera());
 		batch.enableBlending();
 		{
 			GameEvents.gameRenderer.batch = batch;
@@ -164,6 +164,7 @@ public final class GameRenderer implements PostProcessorListener {
 		gl.glEnable(GL20.GL_DEPTH_TEST);
 		gl.glDepthFunc(GL20.GL_LESS);
 
+		worldRenderer.renderCars(false);
 		worldRenderer.renderWalls(false);
 
 		if (world.isNightMode()) {

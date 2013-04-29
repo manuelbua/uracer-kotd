@@ -15,7 +15,6 @@ import com.bitfire.uracer.configuration.Config;
 import com.bitfire.uracer.events.GameRendererEvent;
 import com.bitfire.uracer.events.GameRendererEvent.Order;
 import com.bitfire.uracer.events.GameRendererEvent.Type;
-import com.bitfire.uracer.game.GameEvents;
 import com.bitfire.uracer.game.collisions.CollisionFilters;
 import com.bitfire.uracer.game.world.GameWorld;
 import com.bitfire.uracer.utils.AMath;
@@ -74,7 +73,7 @@ public abstract strictfp class Car extends Box2DEntity {
 		applyCarPhysics(carType, preset.model);
 
 		// subscribe to another renderqueue to render shadows/AO early
-		GameEvents.gameRenderer.addListener(this, GameRendererEvent.Type.BatchBeforeMeshes, ShadowsDrawingOrder);
+		// GameEvents.gameRenderer.addListener(this, GameRendererEvent.Type.BatchBeforeMeshes, ShadowsDrawingOrder);
 
 		Gdx.app.log(getClass().getSimpleName(), "Input mode is " + inputMode.toString());
 		Gdx.app.log(getClass().getSimpleName(), "CarModel is " + preset.model.presetType.toString());
@@ -83,7 +82,7 @@ public abstract strictfp class Car extends Box2DEntity {
 	@Override
 	public void dispose () {
 		super.dispose();
-		GameEvents.gameRenderer.removeListener(this, GameRendererEvent.Type.BatchBeforeMeshes, ShadowsDrawingOrder);
+		// GameEvents.gameRenderer.removeListener(this, GameRendererEvent.Type.BatchBeforeMeshes, ShadowsDrawingOrder);
 		event.removeAllListeners();
 		event = null;
 	}

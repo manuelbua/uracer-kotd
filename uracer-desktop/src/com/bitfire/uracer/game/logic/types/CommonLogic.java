@@ -120,6 +120,7 @@ public abstract class CommonLogic implements GameLogic, CarEvent.Listener, Playe
 			// ghostCars[i].carState.event.addListener(this, CarStateEvent.Type.onTileChanged);
 		}
 
+		gameWorldRenderer.setGhostCars(ghostCars);
 		replayManager = new ReplayManager(userProfile, gameWorld.getLevelId());
 		gameTrack = gameWorld.getGameTrack();
 
@@ -265,6 +266,7 @@ public abstract class CommonLogic implements GameLogic, CarEvent.Listener, Playe
 		gameWorldRenderer.updateCamera();
 
 		postProcessing.setPlayer(playerCar);
+		gameWorldRenderer.setPlayerCar(playerCar);
 		gameWorldRenderer.setRenderPlayerHeadlights(gameWorld.isNightMode());
 
 		gameWorldRenderer.showDebugGameTrack(Config.Debug.RenderTrackSectors);
