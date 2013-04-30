@@ -41,7 +41,6 @@ public class ScaleUtils {
 
 			// Letterbox above and below
 			Scale = physicalWidth / (float)RefScreenWidth;
-			CropX = 0;
 			CropY = (int)((physicalHeight - (float)RefScreenHeight * Scale) / 2f);
 
 		} else {
