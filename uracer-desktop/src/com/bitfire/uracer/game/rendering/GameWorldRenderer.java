@@ -103,8 +103,8 @@ public final class GameWorldRenderer {
 	private Matrix4 camPerspPrevViewProj = new Matrix4();
 	private Matrix4 camPerspInvProj = new Matrix4();
 	private CameraController camController;
-	private static final float CamPerspPlaneNear = 1;
-	public static final float CamPerspPlaneFar = 240;
+	private static final float CamPerspPlaneNear = 0.001f;
+	public static final float CamPerspPlaneFar = 240f;
 	public static final float MaxCameraZoom = 1.4f;
 	public static final float CamPerspElevation = 100f;
 	private static final float DefaultSsaoScale = 1f / 40f;
@@ -172,11 +172,6 @@ public final class GameWorldRenderer {
 			(int)((float)ScaleUtils.PlayHeight * scale), true);
 
 		shNormalDepth = ShaderLoader.fromFile("normaldepth", "normaldepth", "#define ENABLE_DIFFUSE");
-		shNormalDepth.begin();
-		shNormalDepth.setUniformf("near", camPersp.near);
-		shNormalDepth.setUniformf("far", camPersp.far);
-		shNormalDepth.end();
-
 		createBackPlane();
 	}
 
@@ -437,6 +432,7 @@ public final class GameWorldRenderer {
 		// sync perspective camera to the orthographic camera
 		camPersp.viewportWidth = ScaleUtils.RefScreenWidth;
 		camPersp.viewportHeight = ScaleUtils.RefScreenHeight;
+		camPersp.near = 1f;
 		camPersp.position.set(cameraPos.x, cameraPos.y, CamPerspElevation);
 		camPersp.update(true);
 
@@ -477,6 +473,13 @@ public final class GameWorldRenderer {
 		shNormalDepth.end();
 	}
 
+	private void updateSsaoPlanes () {
+		shNormalDepth.begin();
+		shNormalDepth.setUniformf("near", camPersp.near);
+		shNormalDepth.setUniformf("far", camPersp.far);
+		shNormalDepth.end();
+	}
+
 	public void updateNormalDepthMap () {
 
 		Gdx.gl.glEnable(GL20.GL_CULL_FACE);
@@ -488,6 +491,7 @@ public final class GameWorldRenderer {
 		Gdx.gl.glDepthMask(true);
 
 		setSsaoScale(DefaultSsaoScale);
+		updateSsaoPlanes();
 
 		normalDepthMap.begin();
 		{

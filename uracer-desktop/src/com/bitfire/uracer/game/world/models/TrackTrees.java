@@ -31,7 +31,6 @@ public class TrackTrees {
 	float rotation = 0;
 
 	public void transform (PerspectiveCamera camPersp, OrthographicCamera camOrtho, Vector2 halfViewport) {
-		// float meshZ = -(camPersp.far - camPersp.position.z);
 		float meshZ = -(camPersp.far - camPersp.position.z) + (camPersp.far * (1 - (camOrtho.zoom)));
 
 		for (int i = 0; i < models.size(); i++) {

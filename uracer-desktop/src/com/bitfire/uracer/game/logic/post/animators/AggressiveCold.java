@@ -252,6 +252,14 @@ public final class AggressiveCold implements PostProcessingAnimator {
 		float currDriftStrength = 0;
 		float currSpeedFactor = 0;
 
+		// dbg
+		// ssao.setSampleCount(16);
+		// ssao.setPatternSize(4);
+		// ssao.setPower(1, 2);
+		// ssao.setRadius(0.001f, 0.2f);
+		// ssao.setOcclusionThresholds(0.3f, 0.1f);
+		// dbg
+
 		if (hasPlayer) {
 			playerScreenPos.set(GameRenderer.ScreenUtils.worldPxToScreen(player.state().position));
 
