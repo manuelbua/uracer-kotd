@@ -66,8 +66,8 @@ public final class PlayerGameTasks {
 		manager.sound.add(playerDriftSoundFx);
 		manager.sound.add(playerImpactSoundFx);
 		manager.sound.add(playerEngineSoundFx);
-		manager.effects.addBeforeEntities(playerSkidMarks);
-		manager.effects.addAfterEntities(playerSmokeTrails);
+		manager.effects.addBeforeCars(playerSkidMarks);
+		manager.effects.addAfterCars(playerSmokeTrails);
 
 		manager.hud.addBeforePostProcessing(hudPlayer);
 		manager.hud.addAfterPostProcessing(hudLapInfo);
