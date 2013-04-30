@@ -29,12 +29,12 @@ import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.math.Vector3;
 import com.badlogic.gdx.math.collision.BoundingBox;
 import com.bitfire.uracer.configuration.Config;
-import com.bitfire.uracer.entities.EntityRenderState;
 import com.bitfire.uracer.game.actors.Car;
 import com.bitfire.uracer.game.actors.GhostCar;
 import com.bitfire.uracer.game.logic.helpers.CameraController;
 import com.bitfire.uracer.game.player.PlayerCar;
 import com.bitfire.uracer.game.world.GameWorld;
+import com.bitfire.uracer.game.world.models.CarStillModel;
 import com.bitfire.uracer.game.world.models.OrthographicAlignedStillModel;
 import com.bitfire.uracer.game.world.models.TrackTrees;
 import com.bitfire.uracer.game.world.models.TrackWalls;
@@ -585,59 +585,6 @@ public final class GameWorldRenderer {
 		}
 	}
 
-	public void renderCars (boolean depthOnly) {
-		OrthographicAlignedStillModel car;
-		EntityRenderState state;
-
-		if (!depthOnly) {
-			gl.glEnable(GL20.GL_BLEND);
-			gl.glBlendFunc(GL20.GL_SRC_ALPHA, GL20.GL_ONE_MINUS_SRC_ALPHA);
-		}
-
-		// ghosts
-		if (ghostCars != null && ghostCars.length > 0) {
-			for (int i = 0; i < ghostCars.length; i++) {
-				car = ghostCars[i].getStillModel();
-
-				if (car.getAlpha() <= 0) continue;
-				state = ghostCars[i].state();
-				car.setPosition(state.position.x, state.position.y);
-				car.setRotation(state.orientation, 0, 0, 1);
-				if (depthOnly) {
-					float ca = car.getAlpha();
-					float a = (ca - 0.5f) * 2;
-					float s = AMath.clampf(AMath.sigmoid(a * 3f + 4f - (1 - ca)), 0, 1);
-					setSsaoScale(DefaultSsaoScale * s);
-					// setSsaoScale(DefaultSsaoScale * ca);
-				}
-
-				renderOrthographicAlignedModel(car, depthOnly, false);
-			}
-		}
-
-		if (depthOnly) {
-			setSsaoScale(DefaultSsaoScale);
-		}
-
-		// player
-		if (!depthOnly) {
-			gl.glClear(GL20.GL_DEPTH_BUFFER_BIT);
-		}
-
-		if (playerCar != null) {
-			car = playerCar.getStillModel();
-			state = playerCar.state();
-
-			car.setPosition(state.position.x, state.position.y);
-			car.setRotation(state.orientation, 0, 0, 1);
-			renderOrthographicAlignedModel(car, depthOnly, false);
-		}
-
-		if (!depthOnly) {
-			gl.glDisable(GL20.GL_BLEND);
-		}
-	}
-
 	private void renderWalls (TrackWalls walls, boolean depthOnly) {
 		if (!depthOnly) {
 			gl.glEnable(GL20.GL_BLEND);
@@ -649,7 +596,7 @@ public final class GameWorldRenderer {
 	}
 
 	private void renderTrees (TrackTrees trees, boolean depthOnly) {
-		trees.transform(camPersp, camOrtho, halfViewport);
+		trees.transform(camPersp, camOrtho);
 
 		ShaderProgram shader = null;
 		if (depthOnly) {
@@ -687,7 +634,6 @@ public final class GameWorldRenderer {
 			} else {
 				mtx.set(camPersp.view).mul(m.mtxmodel);
 				nmat.set(mtx).inv().transpose();
-
 				shader.setUniformMatrix("nmat", nmat);
 				shader.setUniformMatrix("model", m.mtxmodel);
 			}
@@ -697,9 +643,7 @@ public final class GameWorldRenderer {
 
 		// all the transparent foliage
 
-		// do NOT cull face so that SSAO appear on back faces as well
-		// gl.glDisable(GL20.GL_CULL_FACE);
-
+		// do NOT cull faces so that SSAO appear on backfaces as well
 		if (!depthOnly) {
 			gl.glEnable(GL20.GL_BLEND);
 			gl.glBlendFunc(GL20.GL_SRC_ALPHA, GL20.GL_ONE_MINUS_SRC_ALPHA);
@@ -750,6 +694,131 @@ public final class GameWorldRenderer {
 				TreeStillModel m = trees.models.get(i);
 				renderBoundingBox(m.boundingBox);
 			}
+		}
+	}
+
+	private boolean renderCar (CarStillModel car, boolean depthOnly, boolean nightMode) {
+		if (Config.Debug.FrustumCulling && !camPersp.frustum.boundsInFrustum(car.boundingBox)) {
+			return false;
+		}
+
+		ShaderProgram shader = null;
+		if (depthOnly) {
+			shader = shNormalDepth;
+		} else {
+			if (nightMode) {
+				shader = OrthographicAlignedStillModel.shaderNight;
+			} else {
+				shader = OrthographicAlignedStillModel.shader;
+			}
+		}
+
+		gl.glEnable(GL20.GL_CULL_FACE);
+
+		shader.begin();
+
+		// common matrices
+		if (depthOnly) {
+			shader.setUniformMatrix("proj", camPersp.projection);
+			shader.setUniformMatrix("view", camPersp.view);
+			shader.setUniformi("u_texture", 0);
+		} else {
+			shader.setUniformf("alpha", car.getAlpha());
+			if (nightMode) {
+				shader.setUniformf("u_ambient", treesAmbientColor);
+			}
+		}
+
+		// car body
+		{
+			if (depthOnly) {
+				mtx.set(camPersp.view).mul(car.mtxbody);
+				nmat.set(mtx).inv().transpose();
+				shader.setUniformMatrix("nmat", nmat);
+				shader.setUniformMatrix("model", car.mtxbody);
+			} else {
+				shader.setUniformMatrix("u_projTrans", car.mtxbodytransformed);
+			}
+
+			car.body.render(shader, car.smBody.primitiveType);
+		}
+
+		// car left tire
+		{
+			if (depthOnly) {
+				mtx.set(camPersp.view).mul(car.mtxltire);
+				nmat.set(mtx).inv().transpose();
+				shader.setUniformMatrix("nmat", nmat);
+				shader.setUniformMatrix("model", car.mtxltire);
+			} else {
+				shader.setUniformMatrix("u_projTrans", car.mtxltiretransformed);
+			}
+
+			car.leftTire.render(shader, car.smLeftTire.primitiveType);
+		}
+
+		// car right tire
+		{
+			if (depthOnly) {
+				mtx.set(camPersp.view).mul(car.mtxrtire);
+				nmat.set(mtx).inv().transpose();
+				shader.setUniformMatrix("nmat", nmat);
+				shader.setUniformMatrix("model", car.mtxrtire);
+			} else {
+				shader.setUniformMatrix("u_projTrans", car.mtxrtiretransformed);
+			}
+
+			car.rightTire.render(shader, car.smRightTire.primitiveType);
+		}
+
+		return true;
+	}
+
+	public void renderCars (boolean depthOnly) {
+		CarStillModel car;
+
+		Art.meshCar.bind();
+
+		if (!depthOnly) {
+			gl.glEnable(GL20.GL_BLEND);
+			gl.glBlendFunc(GL20.GL_SRC_ALPHA, GL20.GL_ONE_MINUS_SRC_ALPHA);
+		}
+
+		// ghosts
+		if (ghostCars != null && ghostCars.length > 0) {
+			for (int i = 0; i < ghostCars.length; i++) {
+				car = ghostCars[i].getStillModel();
+				if (car.getAlpha() <= 0) continue;
+
+				car.transform(camPersp, camOrtho);
+				if (depthOnly) {
+					float ca = car.getAlpha();
+					float a = (ca - 0.5f) * 2;
+					float s = AMath.clampf(AMath.sigmoid(a * 3f + 4f - (1 - ca)), 0, 1);
+					setSsaoScale(DefaultSsaoScale * s);
+				}
+
+				renderCar(car, depthOnly, false);
+			}
+		}
+
+		if (depthOnly) {
+			setSsaoScale(DefaultSsaoScale);
+		}
+
+		// player
+		if (!depthOnly) {
+			gl.glClear(GL20.GL_DEPTH_BUFFER_BIT);
+		}
+
+		if (playerCar != null) {
+			car = playerCar.getStillModel();
+			car.transform(camPersp, camOrtho);
+			renderCar(car, depthOnly, false);
+		}
+
+		if (!depthOnly) {
+			gl.glDisable(GL20.GL_BLEND);
 		}
 	}
 

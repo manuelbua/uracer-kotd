@@ -99,11 +99,6 @@ public final class ModelFactory {
 				Art.meshTribune));
 			break;
 
-		case Car:
-			stillModel = new OrthographicAlignedStillModel(getStillModel("data/3d/models/car-low-01.g3dt"), getMaterial(modelMesh,
-				Art.meshCar));
-			break;
-
 		// missing mesh mesh
 		case Missing:
 		default:
@@ -124,10 +119,15 @@ public final class ModelFactory {
 		return stillModel;
 	}
 
+	public static CarStillModel createCar () {
+		CarStillModel stillModel = new CarStillModel(getStillModel("data/3d/models/car-low-01.g3dt"), getMaterial(ModelMesh.Car,
+			Art.meshCar));
+		return stillModel;
+	}
+
 	public static TreeStillModel createTree (String meshType, float posPxX, float posPxY, float scale) {
 		ModelMesh type = fromString(meshType);
 		TreeStillModel m = ModelFactory.createTree(type, posPxX, posPxY, scale);
-		// createdTreeModels.add( m );
 		return m;
 	}
 

@@ -14,9 +14,8 @@ import com.bitfire.uracer.configuration.Config;
 import com.bitfire.uracer.events.GameRendererEvent.Order;
 import com.bitfire.uracer.game.collisions.CollisionFilters;
 import com.bitfire.uracer.game.world.GameWorld;
+import com.bitfire.uracer.game.world.models.CarStillModel;
 import com.bitfire.uracer.game.world.models.ModelFactory;
-import com.bitfire.uracer.game.world.models.ModelFactory.ModelMesh;
-import com.bitfire.uracer.game.world.models.OrthographicAlignedStillModel;
 import com.bitfire.uracer.utils.AMath;
 import com.bitfire.uracer.utils.BodyEditorLoader;
 
@@ -32,8 +31,7 @@ public abstract strictfp class Car extends Box2DEntity {
 
 	protected GameWorld gameWorld;
 	protected CarType carType;
-	// protected CarRenderer renderer;
-	protected OrthographicAlignedStillModel stillModel;
+	protected CarStillModel stillModel;
 
 	protected int impacts = 0;
 
@@ -63,8 +61,8 @@ public abstract strictfp class Car extends Box2DEntity {
 
 		this.event = new CarEvent(this);
 		this.gameWorld = gameWorld;
-		// this.renderer = new CarRenderer(preset.model, preset.type);
-		this.stillModel = ModelFactory.create(ModelMesh.Car, 0, 0, 1);
+		this.stillModel = ModelFactory.createCar();
+		stillModel.setCar(this);
 		this.impacts = 0;
 		this.inputMode = inputMode;
 		this.carTraveledDistance = 0;
@@ -73,9 +71,6 @@ public abstract strictfp class Car extends Box2DEntity {
 
 		applyCarPhysics(carType, preset.model);
 
-		// subscribe to another renderqueue to render shadows/AO early
-		// GameEvents.gameRenderer.addListener(this, GameRendererEvent.Type.BatchBeforeMeshes, ShadowsDrawingOrder);
-
 		Gdx.app.log(getClass().getSimpleName(), "Input mode is " + inputMode.toString());
 		Gdx.app.log(getClass().getSimpleName(), "CarModel is " + preset.model.presetType.toString());
 	}
@@ -83,17 +78,20 @@ public abstract strictfp class Car extends Box2DEntity {
 	@Override
 	public void dispose () {
 		super.dispose();
-		// GameEvents.gameRenderer.removeListener(this, GameRendererEvent.Type.BatchBeforeMeshes, ShadowsDrawingOrder);
 		event.removeAllListeners();
 		event = null;
 	}
 
-	public OrthographicAlignedStillModel getStillModel () {
+	public CarStillModel getStillModel () {
 		return stillModel;
 	}
 
 	public CarTrackState getTrackState () {
 		return trackState;
+	}
+
+	public float getSteerAngleRads () {
+		return 0;
 	}
 
 	private void applyCarPhysics (CarType carType, CarModel carModel) {

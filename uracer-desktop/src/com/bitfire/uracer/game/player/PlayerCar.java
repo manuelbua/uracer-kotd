@@ -101,6 +101,11 @@ public class PlayerCar extends Car {
 	}
 
 	@Override
+	public float getSteerAngleRads () {
+		return carDesc.steerangle;
+	};
+
+	@Override
 	public void resetPhysics () {
 		super.resetPhysics();
 		carSim.resetPhysics();
