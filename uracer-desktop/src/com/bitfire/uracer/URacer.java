@@ -142,6 +142,7 @@ public class URacer implements ApplicationListener {
 
 		// computed for a 256px tile size target (compute needed conversion factors)
 		Vector2 refScreen = new Vector2(1280, 720);
+		// Vector2 refScreen = new Vector2(1280, 800);
 		ScaleUtils.init(refScreen);
 
 		// create input system

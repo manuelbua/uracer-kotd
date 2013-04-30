@@ -28,8 +28,8 @@ public class OrthographicAlignedStillModel {
 	// factor for this scaling: also, since the far plane is suboptimal at
 	// just 48, i want 5 times more space on the z-axis, so here's another
 	// scaling factor creeping up.
-	// private static final float Adjustment = 0.94537085f // 1280x800;
-	// private static final float Adjustment = 1.0514121f;
+	// private static final float Adjustment = 0.94537085f; // 1280x800;
+	// private static final float Adjustment = 1.0514121f; // 1280x720
 	private static final float Adjustment = 1.05f; // 1280x720
 	private static final float To256 = 224f / 256f;
 	public static final float World3DScalingFactor = 1.42222f;
