@@ -166,13 +166,13 @@ public final class Input implements Disposable {
 
 			int px = Gdx.input.getX(p) - ScaleUtils.CropX;
 			int py = Gdx.input.getY(p) - ScaleUtils.CropY;
-			// boolean inBoundaries = (px >= 0 && py >= 0 && px < ScaleUtils.PlayWidth && py < ScaleUtils.PlayHeight);
+			boolean inBoundaries = (px >= 0 && py >= 0 && px < ScaleUtils.PlayWidth && py < ScaleUtils.PlayHeight);
 
 			float npx = (float)px / (float)ScaleUtils.PlayWidth;
 			float npy = (float)py / (float)ScaleUtils.PlayHeight;
 			// Gdx.app.log("Input", npx + "," + npy);
 
-			ptr.setTouching(/* inBoundaries && */Gdx.input.isButtonPressed(p));
+			ptr.setTouching((inBoundaries && Gdx.input.isButtonPressed(p)) || (!inBoundaries && ptr.was_touching));
 
 			// update coords even if not touched
 			ptr.touchX = (int)(npx * ScaleUtils.RefScreenWidth);
