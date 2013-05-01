@@ -147,6 +147,9 @@ public final class GameWorld {
 	}
 
 	public void dispose () {
+		map.dispose();
+		polys.clear();
+		route.clear();
 		gameTrack.dispose();
 		mapUtils.dispose();
 
@@ -304,16 +307,12 @@ public final class GameWorld {
 			if (group.getObjects().getCount() == 1) {
 				PolylineMapObject o = (PolylineMapObject)group.getObjects().get(0);
 
-				// TESTME!
 				//@off
 				List<Vector2> points = MapUtils.extractPolyData(
 					o.getPolyline().getVertices());
 				//@on
 
 				r = new ArrayList<Vector2>(points.size());
-
-				// ensure first and last coincide
-				// points.get(points.size() - 1).set(points.get(0));
 
 				offsetMt.set(o.getPolyline().getX(), o.getPolyline().getY());
 				offsetMt.set(Convert.px2mt(offsetMt));

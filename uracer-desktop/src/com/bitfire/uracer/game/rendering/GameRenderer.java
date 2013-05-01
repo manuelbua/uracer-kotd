@@ -11,8 +11,6 @@ import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.math.Vector3;
 import com.bitfire.postprocessing.PostProcessor;
 import com.bitfire.postprocessing.PostProcessorListener;
-import com.bitfire.uracer.configuration.UserPreferences;
-import com.bitfire.uracer.configuration.UserPreferences.Preference;
 import com.bitfire.uracer.events.GameRendererEvent;
 import com.bitfire.uracer.game.GameEvents;
 import com.bitfire.uracer.game.world.GameWorld;
@@ -68,10 +66,6 @@ public final class GameRenderer implements PostProcessorListener {
 	}
 
 	public void dispose () {
-		if (UserPreferences.bool(Preference.PostProcessing)) {
-			postProcessor.dispose();
-		}
-
 		// depthMap.dispose();
 		batchRenderer.dispose();
 		worldRenderer.dispose();

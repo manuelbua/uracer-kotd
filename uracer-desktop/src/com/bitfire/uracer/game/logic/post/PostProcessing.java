@@ -67,6 +67,12 @@ public final class PostProcessing {
 		}
 	}
 
+	public void dispose () {
+		if (hasPostProcessor) {
+			postProcessor.dispose();
+		}
+	}
+
 	/** Creates the effects that will be available to the animators/manipulators to use, remember that the ownership of the
 	 * instantiated objects is transfered to the PostProcessor when adding the effect to it. */
 	private void createEffects () {

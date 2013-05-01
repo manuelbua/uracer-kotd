@@ -133,6 +133,7 @@ public abstract class CommonLogic implements GameLogic, CarEvent.Listener, Playe
 		removePlayer();
 		gameTrack.dispose();
 		gameTasksManager.dispose();
+		postProcessing.dispose();
 		playerTasks.dispose();
 
 		if (playerCar != null) {
@@ -147,6 +148,7 @@ public abstract class CommonLogic implements GameLogic, CarEvent.Listener, Playe
 			}
 		}
 
+		lapManager.dispose();
 		GameTweener.dispose();
 		replayManager.dispose();
 	}

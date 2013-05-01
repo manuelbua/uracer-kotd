@@ -43,6 +43,7 @@ import com.bitfire.uracer.resources.Art;
 import com.bitfire.uracer.utils.AMath;
 import com.bitfire.uracer.utils.Convert;
 import com.bitfire.uracer.utils.ScaleUtils;
+import com.bitfire.uracer.utils.URacerRuntimeException;
 import com.bitfire.utils.ShaderLoader;
 
 public final class GameWorldRenderer {
@@ -156,12 +157,12 @@ public final class GameWorldRenderer {
 		trackTrees = world.getTrackTrees();
 		treeShader = ShaderLoader.fromString(treeVertexShader, treeFragmentShader, "tree-fragment", "tree-vertex");
 		if (treeShader == null || !treeShader.isCompiled()) {
-			throw new IllegalStateException(treeShader.getLog());
+			throw new URacerRuntimeException("Couldn't load tree shader, log:" + treeShader.getLog());
 		}
 
 		treeShaderNight = ShaderLoader.fromString(treeVertexShader, treeFragmentShaderNight, "tree-fragment-night", "tree-vertex");
 		if (treeShaderNight == null || !treeShaderNight.isCompiled()) {
-			throw new IllegalStateException(treeShaderNight.getLog());
+			throw new URacerRuntimeException("Couldn't load night tree shader, log:" + treeShaderNight.getLog());
 		}
 
 		trackWalls = world.getTrackWalls();
@@ -176,12 +177,14 @@ public final class GameWorldRenderer {
 	}
 
 	public void dispose () {
-		// shNormalDepthAlpha.dispose();
+		plane.dispose();
 		shNormalDepth.dispose();
 		normalDepthMap.dispose();
+		treeShaderNight.dispose();
+		treeShader.dispose();
 
+		gameTrackDbgRenderer.dispose();
 		tileMapRenderer.dispose();
-		plane.dispose();
 	}
 
 	// permit to the tilemap to appear as a flat surface with the normal pointing upward, towards the camera
@@ -211,7 +214,6 @@ public final class GameWorldRenderer {
 
 		plane.setVertices(vertices);
 		plane.setIndices(new short[] {0, 1, 2, 3});
-
 	}
 
 	private void createCams () {

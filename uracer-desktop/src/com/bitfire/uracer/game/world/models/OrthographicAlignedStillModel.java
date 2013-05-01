@@ -90,11 +90,11 @@ public class OrthographicAlignedStillModel {
 			"}\n";
 		// @on
 
-		if (!(shader instanceof ShaderProgram)) {
+		if (shader == null) {
 			shader = ShaderLoader.fromString(vertexShader, fragmentShader, "OASM::vert", "OASM::frag");
 		}
 
-		if (!(shaderNight instanceof ShaderProgram)) {
+		if (shaderNight == null) {
 			shaderNight = ShaderLoader.fromString(vertexShader, fragmentShaderNight, "OASM::vertNight", "OASM::fragNight");
 		}
 	}
@@ -122,9 +122,14 @@ public class OrthographicAlignedStillModel {
 	}
 
 	public static void disposeShader () {
-		if (shader instanceof ShaderProgram) {
+		if (shader != null) {
 			shader.dispose();
 			shader = null;
+		}
+
+		if (shaderNight != null) {
+			shaderNight.dispose();
+			shaderNight = null;
 		}
 	}
 
