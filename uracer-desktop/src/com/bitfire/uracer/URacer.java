@@ -202,28 +202,34 @@ public class URacer implements ApplicationListener {
 		}
 	}
 
+	private long getDeltaTimeNs () {
+		if (useRealFrametime) {
+			// this is not good for Android since the value often hop around
+			return (long)(Gdx.graphics.getRawDeltaTime() * 1000000000f);
+		} else {
+			return (long)(Gdx.graphics.getDeltaTime() * 1000000000f);
+		}
+	}
+
 	@Override
 	public void render () {
 		if (screenMgr.begin()) {
 
-			// this is not good for Android since the value often hop around
-			if (useRealFrametime) {
-				lastDeltaTimeNs = (long)(Gdx.graphics.getRawDeltaTime() * 1000000000f);
-			} else {
-				lastDeltaTimeNs = (long)(Gdx.graphics.getDeltaTime() * 1000000000f);
-			}
-
 			// avoid spiral of death
-			lastDeltaTimeNs = AMath.clamp(lastDeltaTimeNs, 0, MaxDeltaTimeNs);
+			lastDeltaTimeNs = AMath.clamp(getDeltaTimeNs(), 0, MaxDeltaTimeNs);
 
 			// compute values in different units so that accessors will not
 			// recompute them again and again
 			lastDeltaTimeMs = (float)lastDeltaTimeNs / 1000000f;
 			lastDeltaTimeSec = (float)lastDeltaTimeNs * oneOnOneBillion;
 
-			lastTicksCount = 0;
-			long startTime = TimeUtils.nanoTime();
+			// measure timings
+			long startTime;
+
+			/** tick */
 			{
+				lastTicksCount = 0;
+				startTime = TimeUtils.nanoTime();
 				timeAccuNs += lastDeltaTimeNs * timeMultiplier;
 				while (timeAccuNs >= PhysicsDtNs) {
 					input.tick();
@@ -231,38 +237,39 @@ public class URacer implements ApplicationListener {
 					timeAccuNs -= PhysicsDtNs;
 					lastTicksCount++;
 				}
-
 				// simulateSlowness(48);
+				physicsTime = (TimeUtils.nanoTime() - startTime) * oneOnOneBillion;
 			}
+			/** tick */
 
-			physicsTime = (TimeUtils.nanoTime() - startTime) * oneOnOneBillion;
-
-			// if the system has ticked, then trigger tickCompleted
-			if (lastTicksCount > 0) {
-				screenMgr.tickCompleted();
-
-				if (screenMgr.quit()) {
-					return;
+			/** tick completed */
+			{
+				// if the system has ticked, then trigger tickCompleted
+				if (lastTicksCount > 0) {
+					screenMgr.tickCompleted();
+					if (screenMgr.quit()) {
+						return;
+					}
 				}
 			}
+			/** tick completed */
 
-			// compute the temporal aliasing factor, entities will render
-			// themselves accordingly to this to avoid flickering and jittering,
-			// permitting slow-motion effects without artifacts.
-			// (this imply accepting a max-one-frame-behind behavior)
+			// compute the temporal aliasing factor, entities will render themselves accordingly to this to avoid flickering and
+			// jittering, permitting slow-motion effects without artifacts (this imply accepting a one-frame-behind behavior)
 			temporalAliasing = (timeAccuNs * timeStepHz) * oneOnOneBillion;
 			aliasingTime = temporalAliasing;
 
-			startTime = TimeUtils.nanoTime();
+			/** render */
 			{
+				startTime = TimeUtils.nanoTime();
 				SysTweener.update();
 				screenMgr.render();
 				// simulateSlowness(30);
+				graphicsTime = (TimeUtils.nanoTime() - startTime) * oneOnOneBillion;
 			}
+			/** render */
 
-			graphicsTime = (TimeUtils.nanoTime() - startTime) * oneOnOneBillion;
 			frameCount++;
-
 			screenMgr.debugRender();
 			screenMgr.end();
 		}

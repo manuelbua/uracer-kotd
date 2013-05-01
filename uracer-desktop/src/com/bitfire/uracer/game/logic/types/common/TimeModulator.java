@@ -17,9 +17,6 @@ public final class TimeModulator {
 	public static final float MinTime = 0.25f;
 	public static final float MaxTime = 1.0f;
 
-	// private static final TweenEquation EqIn = Sine.INOUT;
-	// private static final TweenEquation EqOut = Quad.INOUT;
-
 	private BoxedFloat timeMultiplier;
 	private Timeline timeSeq;
 
