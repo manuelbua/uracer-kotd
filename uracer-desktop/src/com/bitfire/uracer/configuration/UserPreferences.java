@@ -4,6 +4,7 @@ package com.bitfire.uracer.configuration;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Preferences;
 import com.bitfire.postprocessing.filters.RadialBlur;
+import com.bitfire.uracer.URacer;
 import com.bitfire.uracer.game.logic.post.ssao.Ssao;
 
 /** Represents user-configurable properties.
@@ -82,7 +83,7 @@ public final class UserPreferences {
 		//
 
 		bool(Preference.PostProcessing, true);
-		bool(Preference.Vignetting, Config.isDesktop);
+		bool(Preference.Vignetting, URacer.Game.isDesktop());
 		bool(Preference.Bloom, true);
 		bool(Preference.ZoomRadialBlur, true);
 		string(Preference.ZoomRadialBlurQuality, RadialBlur.Quality.Medium.toString());

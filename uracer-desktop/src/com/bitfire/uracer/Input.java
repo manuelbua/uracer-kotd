@@ -3,9 +3,10 @@ package com.bitfire.uracer;
 
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Input.Buttons;
+import com.badlogic.gdx.math.Rectangle;
 import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.utils.Disposable;
-import com.bitfire.uracer.utils.ScaleUtils;
+import com.bitfire.uracer.configuration.Config;
 
 /** Encapsulates a buffered input state object that can be queried to know the individual key/button/pointer states.
  * 
@@ -36,7 +37,11 @@ public final class Input implements Disposable {
 	private static final int FLAG_CUR_ON = 4;
 	private static final int FLAG_LAST_ON = 8;
 
-	public Input () {
+	// coordinates transform
+	private final Rectangle viewport = new Rectangle();
+
+	public Input (Rectangle viewport) {
+		this.viewport.set(viewport);
 		releaseAllKeys();
 		Gdx.input.setCatchBackKey(true);
 	}
@@ -158,20 +163,20 @@ public final class Input implements Disposable {
 	private void updatePointerState () {
 		Pointer ptr = pointer;
 
-		int px = Gdx.input.getX() - ScaleUtils.CropX;
-		int py = Gdx.input.getY() - ScaleUtils.CropY;
-		boolean pointerInBounds = (px >= 0 && py >= 0 && px < ScaleUtils.PlayWidth && py < ScaleUtils.PlayHeight);
+		int px = Gdx.input.getX() - (int)viewport.x;
+		int py = Gdx.input.getY() - (int)viewport.y;
+		boolean pointerInBounds = (px >= 0 && py >= 0 && px < viewport.width && py < viewport.height);
 
-		float npx = (float)px / (float)ScaleUtils.PlayWidth;
-		float npy = (float)py / (float)ScaleUtils.PlayHeight;
+		float npx = (float)px / viewport.width;
+		float npy = (float)py / viewport.height;
 
 		for (MouseButton b : MouseButton.values()) {
 			ptr.setTouching(b, Gdx.input.isButtonPressed(b.ordinal), pointerInBounds);
 		}
 
 		// update coords even if not touched
-		int tx = (int)(npx * ScaleUtils.RefScreenWidth);
-		int ty = (int)(npy * ScaleUtils.RefScreenHeight);
+		int tx = (int)(npx * Config.Graphics.ReferenceScreenWidth);
+		int ty = (int)(npy * Config.Graphics.ReferenceScreenHeight);
 		ptr.touchCoords.set(tx, ty);
 
 	}

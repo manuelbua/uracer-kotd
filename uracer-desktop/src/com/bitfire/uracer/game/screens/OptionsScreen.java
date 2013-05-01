@@ -304,7 +304,7 @@ public class OptionsScreen extends Screen {
 			setupUI();
 			enable();
 		} else {
-			ui.act(Config.Physics.PhysicsDt);
+			ui.act(Config.Physics.Dt);
 		}
 	}
 

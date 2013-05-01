@@ -2,7 +2,7 @@
 package com.bitfire.uracer.game.logic.gametasks.sounds.effects;
 
 import com.badlogic.gdx.audio.Sound;
-import com.bitfire.uracer.configuration.Config;
+import com.bitfire.uracer.URacer;
 import com.bitfire.uracer.game.logic.gametasks.sounds.SoundEffect;
 import com.bitfire.uracer.game.player.PlayerCar;
 import com.bitfire.uracer.resources.Sounds;
@@ -42,7 +42,7 @@ public final class PlayerEngineSoundEffect extends SoundEffect {
 
 	@Override
 	public void start () {
-		if (Config.isDesktop) {
+		if (URacer.Game.isDesktop()) {
 			carEngineId = carEngine.loop(1f);
 		} else {
 			// UGLY HACK FOR ANDROID

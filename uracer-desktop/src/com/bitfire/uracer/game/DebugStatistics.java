@@ -68,8 +68,8 @@ public final class DebugStatistics {
 		dataTimeAliasing = new float[PanelWidth];
 
 		// precompute constants
-		ratio_rtime = ((float)PanelHeight / 2f) * Config.Physics.PhysicsTimestepHz;
-		ratio_ptime = ((float)PanelHeight / 2f) * Config.Physics.PhysicsTimestepHz;
+		ratio_rtime = ((float)PanelHeight / 2f) * Config.Physics.TimestepHz;
+		ratio_ptime = ((float)PanelHeight / 2f) * Config.Physics.TimestepHz;
 		ratio_fps = ((float)PanelHeight / 2f) * (1f / 60f);
 
 		reset();

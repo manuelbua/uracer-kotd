@@ -22,6 +22,7 @@ import com.bitfire.postprocessing.filters.Blur;
 import com.bitfire.postprocessing.filters.Blur.BlurType;
 import com.bitfire.postprocessing.utils.FullscreenQuad;
 import com.bitfire.postprocessing.utils.PingPongBuffer;
+import com.bitfire.uracer.configuration.Config;
 import com.bitfire.uracer.events.GameRendererEvent;
 import com.bitfire.uracer.events.GameRendererEvent.Order;
 import com.bitfire.uracer.game.GameEvents;
@@ -167,7 +168,7 @@ public final class Ssao extends PostProcessorEffect {
 
 		float w = (tex.getWidth() * scale);
 		float h = (tex.getHeight() * scale);
-		float x = ScaleUtils.RefScreenWidth - w - 10;
+		float x = Config.Graphics.ReferenceScreenWidth - w - 10;
 		float y = index * 10;
 		batch.draw(tex, x, y, w, h);
 	}
@@ -176,7 +177,7 @@ public final class Ssao extends PostProcessorEffect {
 		if (tex == null) return;
 
 		float h = width / ScaleUtils.RefAspect;
-		float x = ScaleUtils.RefScreenWidth - width - 10;
+		float x = Config.Graphics.ReferenceScreenWidth - width - 10;
 		float y = index * 10;
 		batch.draw(tex, x, y, width, h);
 	}

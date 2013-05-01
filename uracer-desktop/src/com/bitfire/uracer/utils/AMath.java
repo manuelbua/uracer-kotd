@@ -159,7 +159,7 @@ public final class AMath {
 	 * 
 	 * (see my post http://www.gamedev.net/topic/624172-framerate-independent-friction/page__st__20) */
 	public static float damping (float factor) {
-		return (float)Math.pow(factor, Config.Physics.PhysicsTimestepReferenceHz * Config.Physics.PhysicsDt);
+		return (float)Math.pow(factor, Config.Physics.PhysicsTimestepReferenceHz * Config.Physics.Dt);
 		// return (float)Math.exp( -factor * Config.Physics.PhysicsDt );
 	}
 }

@@ -392,7 +392,7 @@ public class SinglePlayerLogic extends CommonLogic {
 
 				// earn game seconds by drifting
 				if (playerCar.driftState.isDrifting) {
-					accuDriftSeconds.value += Config.Physics.PhysicsDt + Config.Physics.PhysicsDt * playerCar.driftState.driftStrength;
+					accuDriftSeconds.value += Config.Physics.Dt + Config.Physics.Dt * playerCar.driftState.driftStrength;
 				}
 
 				// lose wall-clock seconds while in time dilation

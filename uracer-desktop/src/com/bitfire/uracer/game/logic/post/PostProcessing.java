@@ -13,6 +13,7 @@ import com.bitfire.postprocessing.effects.Curvature;
 import com.bitfire.postprocessing.effects.Vignette;
 import com.bitfire.postprocessing.effects.Zoomer;
 import com.bitfire.postprocessing.filters.RadialBlur;
+import com.bitfire.uracer.URacer;
 import com.bitfire.uracer.configuration.Config;
 import com.bitfire.uracer.configuration.UserPreferences;
 import com.bitfire.uracer.configuration.UserPreferences.Preference;
@@ -54,7 +55,7 @@ public final class PostProcessing {
 
 		// post-processing
 		if (UserPreferences.bool(Preference.PostProcessing)) {
-			postProcessor = new PostProcessor(ScaleUtils.PlayViewport, true /* depth */, false /* alpha */, Config.isDesktop /* supports32Bpp */);
+			postProcessor = new PostProcessor(ScaleUtils.PlayViewport, true /* depth */, false /* alpha */, URacer.Game.isDesktop() /* supports32Bpp */);
 			PostProcessor.EnableQueryStates = false;
 			postProcessor.setClearBits(GL20.GL_COLOR_BUFFER_BIT | GL20.GL_DEPTH_BUFFER_BIT);
 			postProcessor.setClearColor(0, 0, 0, 1);
@@ -85,18 +86,21 @@ public final class PostProcessing {
 		}
 
 		// addEffect(Effects.MotionBlur.name, new CameraMotion());
+		int refW = Config.Graphics.ReferenceScreenWidth;
+		int refH = Config.Graphics.ReferenceScreenHeight;
 
 		if (UserPreferences.bool(Preference.ZoomRadialBlur)) {
 			RadialBlur.Quality rbq = RadialBlur.Quality.valueOf(UserPreferences.string(Preference.ZoomRadialBlurQuality));
-			Zoomer z = (UserPreferences.bool(Preference.ZoomRadialBlur) ? new Zoomer(ScaleUtils.RefScreenWidth,
-				ScaleUtils.RefScreenHeight, rbq) : new Zoomer(ScaleUtils.RefScreenWidth, ScaleUtils.RefScreenHeight));
+			Zoomer z = (UserPreferences.bool(Preference.ZoomRadialBlur) ? new Zoomer(refW, refH, rbq) : new Zoomer(refW, refH));
 			z.setBlurStrength(0);
 			z.setZoom(1);
 			addEffect(Effects.Zoomer.name, z);
 		}
 
 		if (UserPreferences.bool(Preference.Bloom)) {
-			addEffect(Effects.Bloom.name, new Bloom(Config.PostProcessing.BloomFboWidth, Config.PostProcessing.BloomFboHeight));
+			int fboW = (int)((float)ScaleUtils.PlayWidth * Config.PostProcessing.FboRatio);
+			int fboH = (int)((float)ScaleUtils.PlayHeight * Config.PostProcessing.FboRatio);
+			addEffect(Effects.Bloom.name, new Bloom(fboW, fboH));
 		}
 
 		if (UserPreferences.bool(Preference.Vignetting)) {

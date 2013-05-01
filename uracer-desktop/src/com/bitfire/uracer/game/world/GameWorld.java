@@ -35,6 +35,7 @@ import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.math.Vector3;
 import com.badlogic.gdx.physics.box2d.World;
 import com.badlogic.gdx.utils.GdxRuntimeException;
+import com.bitfire.uracer.URacer;
 import com.bitfire.uracer.configuration.Config;
 import com.bitfire.uracer.game.GameLevels;
 import com.bitfire.uracer.game.collisions.CollisionFilters;
@@ -97,7 +98,7 @@ public final class GameWorld {
 	private List<Polygon> polys = new ArrayList<Polygon>();
 
 	public GameWorld (String levelId, boolean nightMode) {
-		float widthRatio = (float)ScaleUtils.RefScreenWidth / (float)ScaleUtils.PlayWidth;
+		float widthRatio = (float)Config.Graphics.ReferenceScreenWidth / (float)ScaleUtils.PlayWidth;
 		pixelsPerMeterFactor = ((widthRatio * 256f) / 224f) * ScaleUtils.Scale;
 
 		box2dWorld = new World(new Vector2(0, 0), false);
@@ -222,7 +223,7 @@ public final class GameWorld {
 		float rttScale = 0.25f;
 		int maxRays = 360 * 1;
 
-		if (!Config.isDesktop) {
+		if (!URacer.Game.isDesktop()) {
 			rttScale = 0.2f;
 			maxRays = 360;
 		}

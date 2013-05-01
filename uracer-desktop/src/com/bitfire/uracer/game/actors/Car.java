@@ -286,6 +286,6 @@ public abstract strictfp class Car extends Box2DEntity {
 		}
 
 		// compute instant speed
-		carInstantSpeedMtSec = AMath.fixup(dist * Config.Physics.PhysicsTimestepHz);
+		carInstantSpeedMtSec = AMath.fixup(dist * Config.Physics.TimestepHz);
 	}
 }

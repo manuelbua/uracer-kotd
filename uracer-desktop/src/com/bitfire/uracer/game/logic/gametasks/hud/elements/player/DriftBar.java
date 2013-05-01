@@ -22,7 +22,7 @@ import com.bitfire.utils.ShaderLoader;
 
 public class DriftBar extends Positionable {
 	public static final float MaxSeconds = 10f;
-	public static final int MaxTicks = (int)(MaxSeconds * Config.Physics.PhysicsTimestepHz);
+	public static final int MaxTicks = (int)(MaxSeconds * Config.Physics.TimestepHz);
 
 	private float seconds;
 	private HudLabel labelSeconds;

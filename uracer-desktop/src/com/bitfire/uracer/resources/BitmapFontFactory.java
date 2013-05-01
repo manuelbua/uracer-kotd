@@ -76,7 +76,6 @@ public final class BitmapFontFactory {
 		font.setUseIntegerPositions(false);
 	}
 
-	// FIXME i don't like to not be able to inherit from Disposable.. ;-/
 	public static void dispose () {
 		for (BitmapFont f : fontCache.values()) {
 			f.dispose();

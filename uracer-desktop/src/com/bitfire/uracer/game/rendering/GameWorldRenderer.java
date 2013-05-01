@@ -168,7 +168,7 @@ public final class GameWorldRenderer {
 		trackWalls = world.getTrackWalls();
 
 		// deferred setup
-		float scale = Config.PostProcessing.NormalDepthMapScale;
+		float scale = Config.PostProcessing.NormalDepthMapRatio;
 		normalDepthMap = new FrameBuffer(Format.RGBA8888, (int)((float)ScaleUtils.PlayWidth * scale),
 			(int)((float)ScaleUtils.PlayHeight * scale), true);
 
@@ -217,17 +217,20 @@ public final class GameWorldRenderer {
 	}
 
 	private void createCams () {
-		camOrtho = new OrthographicCamera(ScaleUtils.RefScreenWidth, ScaleUtils.RefScreenHeight);
+		int refW = Config.Graphics.ReferenceScreenWidth;
+		int refH = Config.Graphics.ReferenceScreenHeight;
+
+		camOrtho = new OrthographicCamera(refW, refH);
 		halfViewport.set(camOrtho.viewportWidth / 2, camOrtho.viewportHeight / 2);
 
 		// creates and setup orthographic camera
-		camTilemap = new OrthographicCamera(ScaleUtils.RefScreenWidth, ScaleUtils.RefScreenHeight);
+		camTilemap = new OrthographicCamera(refW, refH);
 		camTilemap.zoom = 1;
 
 		// creates and setup perspective camera
 		// strategically choosen near/far planes, Blender models' 14.2 meters <=> one 256px tile
 		// with far plane @48
-		camPersp = new PerspectiveCamera(47.27123f, ScaleUtils.RefScreenWidth, ScaleUtils.RefScreenHeight);
+		camPersp = new PerspectiveCamera(47.27123f, refW, refH);
 		camPersp.near = CamPerspPlaneNear;
 		camPersp.far = CamPerspPlaneFar;
 		camPersp.lookAt(0, 0, -1);
@@ -395,11 +398,10 @@ public final class GameWorldRenderer {
 		// update orthographic camera
 
 		float zoom = 1f / cameraZoom;
+		int refW = Config.Graphics.ReferenceScreenWidth;
+		int refH = Config.Graphics.ReferenceScreenHeight;
 
 		// remove subpixel accuracy (jagged behavior) by uncommenting the round
-		camOrtho.viewportWidth = ScaleUtils.RefScreenWidth;
-		camOrtho.viewportHeight = ScaleUtils.RefScreenHeight;
-
 		camOrtho.position.x = /* MathUtils.round */(cameraPos.x);
 		camOrtho.position.y = /* MathUtils.round */(cameraPos.y);
 		camOrtho.position.z = 0;
@@ -420,9 +422,6 @@ public final class GameWorldRenderer {
 		// y-down
 		camTilemap.up.set(0, -1, 0);
 		camTilemap.direction.set(0, 0, 1);
-		camTilemap.viewportWidth = ScaleUtils.RefScreenWidth;
-		camTilemap.viewportHeight = ScaleUtils.RefScreenHeight;
-
 		camTilemap.position.set(camOrtho.position);
 		camTilemap.position.y = world.worldSizePx.y - camTilemap.position.y;
 		camTilemap.zoom = zoom;
@@ -432,8 +431,6 @@ public final class GameWorldRenderer {
 		camPerspPrevViewProj.set(camPersp.projection).mul(camPersp.view);
 
 		// sync perspective camera to the orthographic camera
-		camPersp.viewportWidth = ScaleUtils.RefScreenWidth;
-		camPersp.viewportHeight = ScaleUtils.RefScreenHeight;
 		camPersp.near = 1f;
 		camPersp.position.set(cameraPos.x, cameraPos.y, CamPerspElevation);
 		camPersp.update(true);
