@@ -9,6 +9,7 @@ import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.math.WindowedMean;
 import com.badlogic.gdx.utils.IntMap;
 import com.bitfire.uracer.Input;
+import com.bitfire.uracer.Input.MouseButton;
 import com.bitfire.uracer.URacer;
 import com.bitfire.uracer.configuration.Config;
 import com.bitfire.uracer.game.GameplaySettings;
@@ -143,7 +144,7 @@ public class PlayerCar extends Car {
 			carPos.set(GameRenderer.ScreenUtils.worldMtToScreen(body.getPosition()));
 			touchPos.set(input.getXY());
 
-			carInput.updated = input.isTouching();
+			carInput.updated = input.isTouching() && input.isTouchedInBounds(MouseButton.Left);
 			// Gdx.app.log("PlayerCar", "carpos=" + carPos.toString() + ", cursor=" + touchPos.toString());
 
 			if (carInput.updated) {

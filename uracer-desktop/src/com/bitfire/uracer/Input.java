@@ -2,6 +2,7 @@
 package com.bitfire.uracer;
 
 import com.badlogic.gdx.Gdx;
+import com.badlogic.gdx.Input.Buttons;
 import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.utils.Disposable;
 import com.bitfire.uracer.utils.ScaleUtils;
@@ -10,14 +11,24 @@ import com.bitfire.uracer.utils.ScaleUtils;
  * 
  * @author bmanuel */
 public final class Input implements Disposable {
-	public static final int MaxPointers = 2;
+
+	/** Encapsulates mouse buttons */
+	public enum MouseButton {
+		Left(Buttons.LEFT), Right(Buttons.RIGHT), Middle(Buttons.MIDDLE);
+
+		public int ordinal;
+
+		private MouseButton (int value) {
+			this.ordinal = value;
+		}
+	}
 
 	// keys
-	private int[] buttons = new int[256];
+	private final int[] buttons = new int[256];
 	private int anyKeyButton = 0;
 
-	// touches
-	private Pointer[] pointer = new Pointer[MaxPointers];
+	// mouse
+	private Pointer pointer = new Pointer();
 
 	// flags
 	private static final int FLAG_REAL_ON = 1;
@@ -26,19 +37,13 @@ public final class Input implements Disposable {
 	private static final int FLAG_LAST_ON = 8;
 
 	public Input () {
-		for (int p = 0; p < MaxPointers; p++) {
-			pointer[p] = new Pointer( /* p */);
-		}
-
 		releaseAllKeys();
 		Gdx.input.setCatchBackKey(true);
 	}
 
 	@Override
 	public void dispose () {
-		for (int p = 0; p < MaxPointers; p++) {
-			pointer[p] = null;
-		}
+		pointer = null;
 	}
 
 	public void releaseAllKeys () {
@@ -46,50 +51,40 @@ public final class Input implements Disposable {
 			buttons[i] = 0;
 		}
 
-		for (int p = 0; p < MaxPointers; p++) {
-			pointer[p].reset();
-		}
+		pointer.reset();
 	}
 
 	// pointers
-	public boolean isTouching (int ptr) {
-		return pointer[ptr].is_touching;
+	public boolean isTouching (MouseButton button) {
+		return pointer.isTouching(button);
 	}
 
-	public boolean isTouched (int ptr) {
-		return pointer[ptr].touched();
+	public boolean isTouched (MouseButton button) {
+		return pointer.isTouched(button);
 	}
 
-	public boolean isUntouched (int ptr) {
-		return pointer[ptr].untouched();
+	public boolean isTouchedInBounds (MouseButton button) {
+		return pointer.isTouchedInBounds(button);
 	}
 
-	public int getX (int ptr) {
-		return pointer[ptr].touchX;
-	}
-
-	public int getY (int ptr) {
-		return pointer[ptr].touchY;
-	}
-
-	public Vector2 getXY (int ptr) {
-		return pointer[ptr].touchCoords;
+	public boolean isUntouched (MouseButton button) {
+		return pointer.isUntouched(button);
 	}
 
 	public boolean isTouching () {
-		return pointer[0].is_touching;
+		return pointer.isTouching(MouseButton.Left);
 	}
 
 	public int getX () {
-		return pointer[0].touchX;
+		return (int)pointer.touchCoords.x;
 	}
 
 	public int getY () {
-		return pointer[0].touchY;
+		return (int)pointer.touchCoords.y;
 	}
 
 	public Vector2 getXY () {
-		return pointer[0].touchCoords;
+		return pointer.touchCoords;
 	}
 
 	// keyboard
@@ -161,24 +156,23 @@ public final class Input implements Disposable {
 	}
 
 	private void updatePointerState () {
-		for (int p = 0; p < MaxPointers; p++) {
-			Pointer ptr = pointer[p];
+		Pointer ptr = pointer;
 
-			int px = Gdx.input.getX(p) - ScaleUtils.CropX;
-			int py = Gdx.input.getY(p) - ScaleUtils.CropY;
-			boolean inBoundaries = (px >= 0 && py >= 0 && px < ScaleUtils.PlayWidth && py < ScaleUtils.PlayHeight);
+		int px = Gdx.input.getX() - ScaleUtils.CropX;
+		int py = Gdx.input.getY() - ScaleUtils.CropY;
+		boolean pointerInBounds = (px >= 0 && py >= 0 && px < ScaleUtils.PlayWidth && py < ScaleUtils.PlayHeight);
 
-			float npx = (float)px / (float)ScaleUtils.PlayWidth;
-			float npy = (float)py / (float)ScaleUtils.PlayHeight;
-			// Gdx.app.log("Input", npx + "," + npy);
+		float npx = (float)px / (float)ScaleUtils.PlayWidth;
+		float npy = (float)py / (float)ScaleUtils.PlayHeight;
 
-			ptr.setTouching((inBoundaries && Gdx.input.isButtonPressed(p)) || (!inBoundaries && ptr.was_touching));
-
-			// update coords even if not touched
-			ptr.touchX = (int)(npx * ScaleUtils.RefScreenWidth);
-			ptr.touchY = (int)(npy * ScaleUtils.RefScreenHeight);
-			ptr.touchCoords.set(ptr.touchX, ptr.touchY);
+		for (MouseButton b : MouseButton.values()) {
+			ptr.setTouching(b, Gdx.input.isButtonPressed(b.ordinal), pointerInBounds);
 		}
+
+		// update coords even if not touched
+		int tx = (int)(npx * ScaleUtils.RefScreenWidth);
+		int ty = (int)(npy * ScaleUtils.RefScreenHeight);
+		ptr.touchCoords.set(tx, ty);
 
 	}
 
@@ -190,32 +184,45 @@ public final class Input implements Disposable {
 
 	/** Encapsulates the touch state for a pointer. */
 	private class Pointer {
-		public final Vector2 touchCoords = new Vector2(0, 0);
-		public int touchX = 0;
-		public int touchY = 0;
-		public boolean is_touching = false;
-		private boolean was_touching = false;
+		private final Vector2 touchCoords = new Vector2(-1, -1);
+		private final boolean[] is_touching = new boolean[MouseButton.values().length];
+		private final boolean[] was_touching = new boolean[MouseButton.values().length];
+		private final boolean[] touched_in_bounds = new boolean[MouseButton.values().length];
 
 		public void reset () {
-			is_touching = false;
-			was_touching = false;
-			touchX = 0;
-			touchY = 0;
+			for (MouseButton b : MouseButton.values()) {
+				is_touching[b.ordinal] = false;
+				was_touching[b.ordinal] = false;
+				touched_in_bounds[b.ordinal] = false;
+			}
 		}
 
-		public void setTouching (boolean value) {
-			was_touching = is_touching;
-			is_touching = value;
+		public void setTouching (MouseButton button, boolean touching, boolean inBounds) {
+			int i = button.ordinal;
+			was_touching[i] = is_touching[i];
+			is_touching[i] = touching;
+
+			if (isTouched(button)) {
+				touched_in_bounds[i] = inBounds;
+			}
 		}
 
 		/** Returns whether or not this pointer wasn't touching AND now it is. */
-		public boolean touched () {
-			return !was_touching && is_touching;
+		public boolean isTouched (MouseButton button) {
+			return !was_touching[button.ordinal] && is_touching[button.ordinal];
+		}
+
+		public boolean isTouchedInBounds (MouseButton button) {
+			return touched_in_bounds[button.ordinal];
+		}
+
+		public boolean isTouching (MouseButton button) {
+			return is_touching[button.ordinal];
 		}
 
 		/** Returns whether or not this pointer was touching AND now it is not. */
-		public boolean untouched () {
-			return was_touching && !is_touching;
+		public boolean isUntouched (MouseButton button) {
+			return was_touching[button.ordinal] && !is_touching[button.ordinal];
 		}
 	}
 }
