@@ -12,9 +12,8 @@ import com.badlogic.gdx.physics.box2d.Body;
 import com.badlogic.gdx.physics.box2d.CircleShape;
 import com.badlogic.gdx.physics.box2d.FixtureDef;
 import com.badlogic.gdx.physics.box2d.PolygonShape;
-import com.badlogic.gdx.utils.Array;
 import com.badlogic.gdx.utils.JsonReader;
-import com.badlogic.gdx.utils.OrderedMap;
+import com.badlogic.gdx.utils.JsonValue;
 
 /** Loads the collision fixtures defined with the Physics Body Editor application. You only need to give it a body and the
  * corresponding fixture name, and it will attach these fixtures to your body.
@@ -77,14 +76,14 @@ public class BodyEditorLoader {
 			throw new RuntimeException("Name '" + name + "' was not found.");
 		}
 
-		Vector2 origin = vec.set(rbModel.origin).mul(scale);
+		Vector2 origin = vec.set(rbModel.origin).scl(scale);
 
 		for (int i = 0, n = rbModel.polygons.size(); i < n; i++) {
 			PolygonModel polygon = rbModel.polygons.get(i);
 			Vector2[] vertices = polygon.buffer;
 
 			for (int ii = 0, nn = vertices.length; ii < nn; ii++) {
-				vertices[ii] = newVec().set(polygon.vertices.get(ii)).mul(scale);
+				vertices[ii] = newVec().set(polygon.vertices.get(ii)).scl(scale);
 				vertices[ii].sub(origin);
 				vertices[ii].x *= scaleX;
 				vertices[ii].y *= scaleY;
@@ -101,7 +100,7 @@ public class BodyEditorLoader {
 
 		for (int i = 0, n = rbModel.circles.size(); i < n; i++) {
 			CircleModel circle = rbModel.circles.get(i);
-			Vector2 center = newVec().set(circle.center).mul(scale);
+			Vector2 center = newVec().set(circle.center).scl(scale);
 			float radius = circle.radius * scale;
 
 			circleShape.setPosition(center);
@@ -129,7 +128,7 @@ public class BodyEditorLoader {
 		RigidBodyModel rbModel = model.rigidBodies.get(name);
 		if (rbModel == null) throw new RuntimeException("Name '" + name + "' was not found.");
 
-		return vec.set(rbModel.origin).mul(scale);
+		return vec.set(rbModel.origin).scl(scale);
 	}
 
 	/** <b>For advanced users only.</b> Lets you access the internal model of this loader and modify it. Be aware that any
@@ -170,59 +169,51 @@ public class BodyEditorLoader {
 
 	private Model readJson (String str) {
 		Model m = new Model();
-		OrderedMap<String, ?> rootElem = (OrderedMap<String, ?>)new JsonReader().parse(str);
+		JsonValue root = new JsonReader().parse(str);
+		JsonValue bodies = root.get("rigidBodies");
 
-		Array<?> bodiesElems = (Array<?>)rootElem.get("rigidBodies");
-
-		for (int i = 0; i < bodiesElems.size; i++) {
-			OrderedMap<String, ?> bodyElem = (OrderedMap<String, ?>)bodiesElems.get(i);
-			RigidBodyModel rbModel = readRigidBody(bodyElem);
+		for (JsonValue body = bodies.child(); body != null; body = body.next()) {
+			RigidBodyModel rbModel = readRigidBody(body);
 			m.rigidBodies.put(rbModel.name, rbModel);
 		}
 
 		return m;
 	}
 
-	private RigidBodyModel readRigidBody (OrderedMap<String, ?> bodyElem) {
+	private RigidBodyModel readRigidBody (JsonValue bodyElem) {
 		RigidBodyModel rbModel = new RigidBodyModel();
-		rbModel.name = (String)bodyElem.get("name");
-		rbModel.imagePath = (String)bodyElem.get("imagePath");
+		rbModel.name = bodyElem.getString("name");
+		rbModel.imagePath = bodyElem.getString("imagePath");
 
-		OrderedMap<String, ?> originElem = (OrderedMap<String, ?>)bodyElem.get("origin");
-		rbModel.origin.x = (originElem.get("x") instanceof Float) ? (Float)originElem.get("x") : (Long)originElem.get("x");
-		rbModel.origin.y = (originElem.get("y") instanceof Float) ? (Float)originElem.get("y") : (Long)originElem.get("y");
+		JsonValue origin = bodyElem.get("origin");
+
+		rbModel.origin.x = origin.getFloat("x");
+		rbModel.origin.y = origin.getFloat("y");
 
 		// polygons
+		JsonValue polygons = bodyElem.get("polygons");
 
-		Array<?> polygonsElem = (Array<?>)bodyElem.get("polygons");
-
-		for (int i = 0; i < polygonsElem.size; i++) {
+		for (JsonValue vertices = polygons.child(); vertices != null; vertices = vertices.next()) {
 			PolygonModel polygon = new PolygonModel();
 			rbModel.polygons.add(polygon);
 
-			Array<?> verticesElem = (Array<?>)polygonsElem.get(i);
-			for (int ii = 0; ii < verticesElem.size; ii++) {
-				OrderedMap<String, ?> vertexElem = (OrderedMap<String, ?>)verticesElem.get(ii);
-				float x = (vertexElem.get("x") instanceof Float) ? (Float)vertexElem.get("x") : (Long)vertexElem.get("x");
-				float y = (vertexElem.get("y") instanceof Float) ? (Float)vertexElem.get("y") : (Long)vertexElem.get("y");
-				polygon.vertices.add(new Vector2(x, y));
+			for (JsonValue vertex = vertices.child(); vertex != null; vertex = vertex.next()) {
+				polygon.vertices.add(new Vector2(vertex.getFloat("x"), vertex.getFloat("y")));
 			}
 
 			polygon.buffer = new Vector2[polygon.vertices.size()];
 		}
 
 		// circles
+		JsonValue circles = bodyElem.get("circles");
 
-		Array<?> circlesElem = (Array<?>)bodyElem.get("circles");
+		for (JsonValue circle = circles.child(); circle != null; circle = circle.next()) {
+			CircleModel c = new CircleModel();
+			rbModel.circles.add(c);
 
-		for (int i = 0; i < circlesElem.size; i++) {
-			CircleModel circle = new CircleModel();
-			rbModel.circles.add(circle);
-
-			OrderedMap<String, ?> circleElem = (OrderedMap<String, ?>)circlesElem.get(i);
-			circle.center.x = (circleElem.get("cx") instanceof Float) ? (Float)circleElem.get("cx") : (Long)circleElem.get("cx");
-			circle.center.y = (circleElem.get("cy") instanceof Float) ? (Float)circleElem.get("cy") : (Long)circleElem.get("cy");
-			circle.radius = (Float)circleElem.get("r");
+			c.center.x = circle.getFloat("cx");
+			c.center.y = circle.getFloat("cy");
+			c.radius = circle.getFloat("r");
 		}
 
 		return rbModel;
