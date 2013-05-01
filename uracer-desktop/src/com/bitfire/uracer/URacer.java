@@ -110,9 +110,13 @@ public class URacer implements ApplicationListener {
 
 	@Override
 	public void create () {
-		// create directories as needed
 		Storage.init();
 		boot.store();
+
+		UserPreferences.load();
+		ScaleUtils.init(new Vector2(1280, 720));
+		Config.asDefault();
+		Convert.init(Config.Physics.PixelsPerMeter);
 
 		ShaderLoader.Pedantic = true;
 
@@ -124,7 +128,6 @@ public class URacer implements ApplicationListener {
 		Gdx.app.setLogLevel(Application.LOG_DEBUG);
 
 		System.out.println();
-
 		Gdx.app.log("URacer", "Booting version " + URacer.versionInfo);
 		Gdx.app.log("URacer", "GL vendor is " + Gdx.gl.glGetString(GL10.GL_VENDOR));
 		Gdx.app.log("URacer", "GL version is " + Gdx.gl.glGetString(GL10.GL_VERSION));
@@ -140,11 +143,6 @@ public class URacer implements ApplicationListener {
 			System.exit(-1);
 		}
 
-		// computed for a 256px tile size target (compute needed conversion factors)
-		Vector2 refScreen = new Vector2(1280, 720);
-		// Vector2 refScreen = new Vector2(1280, 800);
-		ScaleUtils.init(refScreen);
-
 		// create input system
 		input = new Input();
 		Gdx.app.log("URacer", "Input system created.");
@@ -152,13 +150,8 @@ public class URacer implements ApplicationListener {
 		ScreenFactory screenFactory = new GameScreensFactory();
 		TransitionFactory.init(screenFactory);
 
-		// load default private configuration
-		Config.asDefault();
-
-		UserPreferences.load();
 		ScreensShared.loadFromUserPrefs();
 
-		Convert.init(Config.Physics.PixelsPerMeter);
 		Art.init();
 		SpriteBatchUtils.init(Art.debugFont, Art.DebugFontWidth);
 		Sounds.init();

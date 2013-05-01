@@ -54,7 +54,7 @@ public final class UserPreferences {
 	}
 
 	public static void load () {
-		prefs = Gdx.app.getPreferences(Config.UserPreferences);
+		prefs = Gdx.app.getPreferences(Storage.Preferences);
 
 		boolean isDifferent = false;
 		for (Preference p : Preference.values()) {

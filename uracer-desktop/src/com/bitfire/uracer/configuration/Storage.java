@@ -6,10 +6,11 @@ import com.badlogic.gdx.Gdx;
 /** Represents storage path specifiers, such as levels and replays data store, */
 public final class Storage {
 
-	// root directories (externals)
+	// externals
 	private static final String ConfigRoot = "/.config/uracer/";
 	private static final String DataRoot = "/.local/share/uracer/";
 	public static final String ReplaysRoot = DataRoot + "local-replays/";
+	public static final String Preferences = "uracer-preferences.cfg";
 
 	// local to installation folder
 	public static final String BootConfigFile = "uracer-boot.cfg";

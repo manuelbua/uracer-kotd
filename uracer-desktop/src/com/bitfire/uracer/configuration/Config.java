@@ -11,7 +11,6 @@ import com.bitfire.uracer.utils.ScaleUtils;
 
 public final class Config {
 	public static boolean isDesktop;
-	public static String UserPreferences = "uracer-preferences";
 
 	public static final class Graphics {
 		public static final int DefaultFadeMilliseconds = 500;
@@ -118,25 +117,12 @@ public final class Config {
 		public static float NormalDepthMapScale = 1f;
 		private static float RttRatio = 0.5f;
 
-		// compute per-resolution constants
 		public static void asDefault () {
 
 			BloomFboWidth = (int)((float)ScaleUtils.PlayWidth * RttRatio);
 			BloomFboHeight = (int)((float)ScaleUtils.PlayHeight * RttRatio);
 			BlurType = Blur.BlurType.Gaussian5x5b;
 			BlurNumPasses = 2;
-
-			// int w = Gdx.graphics.getWidth();
-			// if (w >= 1400) {
-			// BlurType = Blur.BlurType.Gaussian5x5b;
-			// BlurNumPasses = 2;
-			// } else if (w >= 1200) {
-			// BlurType = Blur.BlurType.Gaussian5x5b;
-			// BlurNumPasses = 2;
-			// } else if (w >= 800) {
-			// BlurType = Blur.BlurType.Gaussian3x3b;
-			// BlurNumPasses = 2;
-			// }
 
 			Gdx.app.log("Config", "blurType=" + BlurType);
 		}
