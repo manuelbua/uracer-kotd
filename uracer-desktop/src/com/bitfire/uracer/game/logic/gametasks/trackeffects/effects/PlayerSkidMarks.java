@@ -91,10 +91,6 @@ public class PlayerSkidMarks extends TrackEffect {
 			&& player.carState.currSpeedFactor > 0.1f) {
 			ppos.x = Convert.mt2px(player.getBody().getPosition().x);
 			ppos.y = Convert.mt2px(player.getBody().getPosition().y);
-
-			// tryAddDriftMark( player.state().position, player.state().orientation, player.driftState );
-			// tryAddDriftMark( ppos, player.state().orientation, player.getCarDescriptor().steerangle *
-			// MathUtils.radiansToDegrees, player.driftState );
 			tryAddDriftMark(ppos, player.state().orientation);
 		}
 
@@ -152,27 +148,18 @@ public class PlayerSkidMarks extends TrackEffect {
 			pos.x = AMath.lerp(last.x, position.x, theta * i);
 			pos.y = AMath.lerp(last.y, position.y, theta * i);
 
-			// if (player.driftState.driftStrength > 0.3f && player.carState.currSpeedFactor > 0.1f)
-			{
-				// add front drift marks?
-				SkidMark drift = skidMarks[markIndex++];
-				if (markIndex == MaxSkidMarks) {
-					markIndex = 0;
-				}
-
-				// drift.alphaFront = driftState.driftStrength;
-				// drift.alphaRear = driftState.driftStrength;
-				drift.alphaFront = player.driftState.lateralForcesFront * player.driftState.driftStrength * theta;
-				drift.alphaRear = player.driftState.lateralForcesRear * player.driftState.driftStrength * theta;
-				drift.setPosition(pos);
-				drift.setOrientation(orientation);
-				// drift.front.setRotation( orientation - steerAngle );
-				// drift.rear.setRotation( orientation );
-
-				drift.front.setScale(AMath.clamp(drift.alphaFront, 0.75f, 1.0f));
-				drift.rear.setScale(AMath.clamp(drift.alphaRear, 0.75f, 1.0f));
-				drift.life = MaxParticleLifeSeconds;
+			// add front drift marks?
+			SkidMark drift = skidMarks[markIndex++];
+			if (markIndex == MaxSkidMarks) {
+				markIndex = 0;
 			}
+
+			drift.alphaFront = player.driftState.lateralForcesFront * player.driftState.driftStrength * theta;
+			drift.alphaRear = player.driftState.lateralForcesRear * player.driftState.driftStrength * theta;
+			drift.setPosition(pos);
+			drift.setOrientation(orientation);
+
+			drift.life = MaxParticleLifeSeconds;
 		}
 
 		last.set(position);
@@ -197,7 +184,7 @@ public class PlayerSkidMarks extends TrackEffect {
 
 			rear.setRegion(Art.skidMarksRear);
 			rear.setSize(carWidthPx, carLengthPx);
-			rear.setOrigin(rear.getWidth() / 2, rear.getHeight() / 2);
+			rear.setOrigin(rear.getWidth() / 2, rear.getHeight() / 2 + 7); // adjust for rear axis in 3d model (pretty distant)
 			rear.setColor(1, 1, 1, 1);
 
 			life = MaxParticleLifeSeconds;

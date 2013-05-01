@@ -129,7 +129,7 @@ public final class HudPlayer extends HudElement {
 	}
 
 	/** Returns a position by placing a point on an imaginary circumference gravitating around the player, applying the specified
-	 * orientation offset, expressed in radians, if any. */
+	 * orientation offset, expressed in degrees, if any. */
 	private Vector2 gravitate (float w, float h, float offsetDegs, float distance) {
 		float zs = renderer.getWorldRenderer().getCameraZoom();
 		float border = distance;

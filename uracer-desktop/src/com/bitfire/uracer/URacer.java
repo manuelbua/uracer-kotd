@@ -140,9 +140,9 @@ public class URacer implements ApplicationListener {
 			System.exit(-1);
 		}
 
-		// computed for a 256px tile size target (compute needed conversion
-		// factors)
-		Vector2 refScreen = new Vector2(1280, 800);
+		// computed for a 256px tile size target (compute needed conversion factors)
+		Vector2 refScreen = new Vector2(1280, 720);
+		// Vector2 refScreen = new Vector2(1280, 800);
 		ScaleUtils.init(refScreen);
 
 		// create input system
@@ -174,8 +174,8 @@ public class URacer implements ApplicationListener {
 
 		screenMgr = new ScreenManager(ScaleUtils.PlayViewport, screenFactory);
 
-		// screenMgr.setScreen(ScreenType.GameScreen, TransitionType.Fader, 1000);
-		screenMgr.setScreen(ScreenType.MainScreen, TransitionType.CrossFader, 500);
+		screenMgr.setScreen(ScreenType.GameScreen, TransitionType.Fader, 1000);
+		// screenMgr.setScreen(ScreenType.MainScreen, TransitionType.CrossFader, 500);
 		// screenMgr.setScreen(ScreenType.OptionsScreen, TransitionType.CrossFader, 500);
 
 		// Initialize the timers after creating the game screen, so that there

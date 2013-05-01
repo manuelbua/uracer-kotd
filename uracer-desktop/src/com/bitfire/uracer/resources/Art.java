@@ -32,6 +32,7 @@ public final class Art {
 	public static Texture meshPalm;
 	public static Texture meshTribune;
 	public static Texture meshTreeTrunk;
+	public static Texture meshCar;
 	public static Texture[] meshTreeLeavesSpring;
 	public static Texture meshTrackWall;
 
@@ -184,6 +185,8 @@ public final class Art {
 		meshPalm = newTexture("data/3d/textures/palm.png", mipmap);
 		meshTribune = newTexture("data/3d/textures/tribune.png", mipmap);
 
+		meshCar = newTexture("data/3d/textures/car_01.png", true);
+
 		// trees
 		meshTreeTrunk = newTexture("data/3d/textures/trunk_6_col.png", mipmap);
 		meshTreeLeavesSpring = new Texture[7];
@@ -197,6 +200,7 @@ public final class Art {
 		meshTrackWall.dispose();
 		meshPalm.dispose();
 		meshTribune.dispose();
+		meshCar.dispose();
 
 		// trees
 		for (int i = 0; i < 7; i++) {

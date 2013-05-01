@@ -10,7 +10,7 @@ import com.bitfire.uracer.game.rendering.GameRenderer;
 public class GameRendererEvent extends Event<GameRenderer> {
 	/** defines the type of render queue */
 	public enum Type {
-		OnSubframeInterpolate, BatchBeforeMeshes, BatchAfterMeshes, BatchAfterPostProcessing, BatchDebug, Debug;
+		OnSubframeInterpolate, BatchBeforeCars, BatchAfterCars, BatchAfterMeshes, BatchAfterPostProcessing, BatchDebug, Debug;
 	}
 
 	/** defines the position in the render queue specified by the Type parameter */

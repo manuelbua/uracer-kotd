@@ -163,7 +163,7 @@ public class TrackProgress extends Positionable {
 		float timeFactor = URacer.Game.getTimeModFactor() * 0.3f;
 
 		lblAdvantage.setColor(advantageColor);
-		lblAdvantage.setAlpha(a * 2);
+		lblAdvantage.setAlpha(1);
 		lblAdvantage.setScale(cameraZoom * (1f - 0.4f * (1 - ndist)));
 		// lblAdvantage.setPosition(position.x, position.y - cameraZoom * Convert.scaledPixels(90) - Convert.scaledPixels(90) *
 		// timeFactor * cameraZoom - Convert.scaledPixels(8) * cameraZoom);

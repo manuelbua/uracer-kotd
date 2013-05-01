@@ -2,7 +2,6 @@
 package com.bitfire.uracer.game.actors;
 
 import com.badlogic.gdx.Gdx;
-import com.bitfire.uracer.events.GameRendererEvent;
 import com.bitfire.uracer.game.logic.replaying.Replay;
 import com.bitfire.uracer.game.world.GameWorld;
 import com.bitfire.uracer.utils.CarUtils;
@@ -22,12 +21,12 @@ public final class GhostCar extends Car {
 	public CarState carState;
 
 	public GhostCar (int id, GameWorld gameWorld, CarPreset.Type presetType) {
-		super(gameWorld, CarType.ReplayCar, InputMode.InputFromReplay, GameRendererEvent.Order.MINUS_1, presetType, false);
+		super(gameWorld, CarType.ReplayCar, InputMode.InputFromReplay, presetType, false);
 		this.id = id;
 		indexPlay = 0;
 		hasReplay = false;
 		replay = null;
-		this.renderer.setAlpha(0.5f);
+		stillModel.setAlpha(0.5f);
 		this.carState = new CarState(gameWorld, this);
 
 		setActive(false);
@@ -46,7 +45,7 @@ public final class GhostCar extends Car {
 
 		if (hasReplay) {
 			setPreset(replay.carPresetType);
-			renderer.setAlpha(0);
+			stillModel.setAlpha(0);
 
 			// System.out.println( "Replaying " + replay.id );
 			restart(replay);
@@ -64,7 +63,7 @@ public final class GhostCar extends Car {
 
 	public void removeReplay () {
 		setReplay(null);
-		renderer.setAlpha(0);
+		stillModel.setAlpha(0);
 	}
 
 	@Override
@@ -89,7 +88,7 @@ public final class GhostCar extends Car {
 
 	@Override
 	public boolean isVisible () {
-		return hasReplay && isActive() && renderer.getAlpha() > 0;
+		return hasReplay && isActive() && stillModel.getAlpha() > 0;
 	}
 
 	@Override
@@ -120,10 +119,10 @@ public final class GhostCar extends Car {
 			// also change opacity, fade in/out based on
 			// events played, events remaining
 			if (indexPlay <= FadeEvents) {
-				renderer.setAlpha(((float)indexPlay / (float)FadeEvents) * 0.5f);
+				stillModel.setAlpha(((float)indexPlay / (float)FadeEvents) * 0.5f);
 			} else if (replay.getEventsCount() - indexPlay <= FadeEvents) {
 				float val = (float)(replay.getEventsCount() - indexPlay) / (float)FadeEvents;
-				renderer.setAlpha(val * 0.5f);
+				stillModel.setAlpha(val * 0.5f);
 
 				if (!fadeOutEventTriggered) {
 					fadeOutEventTriggered = true;

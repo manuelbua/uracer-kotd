@@ -205,7 +205,7 @@ public final class GameWorld {
 
 		// trees
 		List<TreeStillModel> trees = createTrees();
-		trackTrees = new TrackTrees(this, trees);
+		trackTrees = new TrackTrees(trees);
 
 		TotalMeshes = staticMeshes.size() + trackWalls.count() + trackTrees.count();
 	}
@@ -240,6 +240,7 @@ public final class GameWorld {
 		c.set(0.1f, 0.2f, 0.9f, 0.7f);
 
 		// int headlightsMask = CollisionFilters.CategoryTrackWalls | CollisionFilters.CategoryReplay;
+		// int headlightsMask = CollisionFilters.CategoryReplay;
 		int headlightsMask = 0;
 
 		playerHeadlightsA = new ConeLight(rayHandler, maxRays, c, 25, 0, 0, 0, 9);
@@ -278,13 +279,13 @@ public final class GameWorld {
 			l.setMaskBits(CollisionFilters.CategoryPlayer | CollisionFilters.CategoryTrackWalls);
 		}
 
-		playerImpulse = new PointLight(rayHandler, maxRays);
-		playerImpulse.setMaskBits(CollisionFilters.CategoryPlayer | CollisionFilters.CategoryReplay);
-		playerImpulse.setSoft(true);
-		playerImpulse.setStaticLight(false);
-		playerImpulse.setActive(true);
-		playerImpulse.setColor(1, 1, 1, 1f);
-		playerImpulse.setDistance(5);
+		// playerImpulse = new PointLight(rayHandler, maxRays);
+		// playerImpulse.setMaskBits(CollisionFilters.CategoryPlayer | CollisionFilters.CategoryReplay);
+		// playerImpulse.setSoft(true);
+		// playerImpulse.setStaticLight(false);
+		// playerImpulse.setActive(true);
+		// playerImpulse.setColor(1, 1, 1, 1f);
+		// playerImpulse.setDistance(5);
 	}
 
 	//

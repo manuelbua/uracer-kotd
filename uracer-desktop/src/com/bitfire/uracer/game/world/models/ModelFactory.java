@@ -17,7 +17,7 @@ import com.bitfire.utils.Hash;
 
 public final class ModelFactory {
 	public enum ModelMesh {
-		Missing, Palm, Tribune, Tree_1, Tree_2, Tree_3, Tree_4, Tree_5, Tree_6, Tree_7, Tree_8, Tree_9, Tree_10
+		Missing, Palm, Tribune, Tree_1, Tree_2, Tree_3, Tree_4, Tree_5, Tree_6, Tree_7, Tree_8, Tree_9, Tree_10, Car
 	}
 
 	private ModelFactory () {
@@ -66,6 +66,8 @@ public final class ModelFactory {
 			return ModelMesh.Tree_9;
 		} else if (mesh.equalsIgnoreCase("tree-10")) {
 			return ModelMesh.Tree_10;
+		} else if (mesh.equalsIgnoreCase("car")) {
+			return ModelMesh.Car;
 		}
 
 		return ModelMesh.Missing;
@@ -117,10 +119,15 @@ public final class ModelFactory {
 		return stillModel;
 	}
 
+	public static CarStillModel createCar () {
+		CarStillModel stillModel = new CarStillModel(getStillModel("data/3d/models/car-low-01.g3dt"), getMaterial(ModelMesh.Car,
+			Art.meshCar));
+		return stillModel;
+	}
+
 	public static TreeStillModel createTree (String meshType, float posPxX, float posPxY, float scale) {
 		ModelMesh type = fromString(meshType);
 		TreeStillModel m = ModelFactory.createTree(type, posPxX, posPxY, scale);
-		// createdTreeModels.add( m );
 		return m;
 	}
 

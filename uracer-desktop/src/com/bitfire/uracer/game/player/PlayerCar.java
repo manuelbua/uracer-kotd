@@ -11,7 +11,6 @@ import com.badlogic.gdx.utils.IntMap;
 import com.bitfire.uracer.Input;
 import com.bitfire.uracer.URacer;
 import com.bitfire.uracer.configuration.Config;
-import com.bitfire.uracer.events.GameRendererEvent;
 import com.bitfire.uracer.game.GameplaySettings;
 import com.bitfire.uracer.game.actors.Car;
 import com.bitfire.uracer.game.actors.CarDescriptor;
@@ -56,7 +55,7 @@ public class PlayerCar extends Car {
 	public PlayerDriftState driftState = null;
 
 	public PlayerCar (GameWorld gameWorld, CarPreset.Type presetType) {
-		super(gameWorld, CarType.PlayerCar, InputMode.InputFromPlayer, GameRendererEvent.Order.DEFAULT, presetType, true);
+		super(gameWorld, CarType.PlayerCar, InputMode.InputFromPlayer, presetType, true);
 		carInput = new CarInput();
 		impacts = 0;
 
@@ -66,7 +65,7 @@ public class PlayerCar extends Car {
 		// strategy = gameWorld.scalingStrategy;
 		carDesc = new CarDescriptor(preset.model);
 		carSim = new CarSimulator(carDesc);
-		renderer.setAlpha(1);
+		stillModel.setAlpha(1);
 
 		// precompute relaxing factors for user input coordinates
 		// scaleInputX = invWidth * gameWorld.scalingStrategy.referenceResolution.x;
@@ -100,6 +99,11 @@ public class PlayerCar extends Car {
 	public CarDescriptor getCarDescriptor () {
 		return carDesc;
 	}
+
+	@Override
+	public float getSteerAngleRads () {
+		return carDesc.steerangle;
+	};
 
 	@Override
 	public void resetPhysics () {
