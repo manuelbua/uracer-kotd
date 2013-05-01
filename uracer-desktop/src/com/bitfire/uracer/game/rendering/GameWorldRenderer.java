@@ -108,7 +108,7 @@ public final class GameWorldRenderer {
 	public static final float CamPerspPlaneFar = 240f;
 	public static final float MaxCameraZoom = 1.4f;
 	public static final float CamPerspElevation = 100f;
-	private static final float DefaultSsaoScale = 1f / 40f;
+	private final float DefaultSsaoScale = 1f / 48f;
 
 	// rendering
 	private GL20 gl = null;
