@@ -1,0 +1,62 @@
+* SOME ERRORS, BUT THEY OVERLOADS THE C++ '*' OPERATOR!! *
+
+
+Why the new Red Book (8th ed.) doesn't mention the fact they are overloading the * operator and inverting matrix muls behind the scenes?
+
+
+I can live with the fact that the accompanying *vmath* library overloads the * C++ operator for doing matrix multiplications in the inverse order, but this looks harder than it should be for newcomers, how is that?
+I bought this book on release day and only now i'm looking at the back chapter and reading about user transformations: it caught my eye when at page 233/234 it unfolds MVP matrices in the vertex shader for doing these steps:
+
+* 1. move the camera to the right view, translate and rotate
+* 2. move the model into view, translate, rotate and scale
+* 3. apply perspective projection
+
+Also did they got it wrong in the shaders? Look at this:
+
+    #version 330 core
+    uniform mat4 ViewT, ViewR, ModelT, ModelR, ModelS, Project;
+    in vec4 Vertex;
+
+    void main()
+    {
+        gl_Position = Project
+                    * ModelS * ModelR * ModelT
+                    * ViewR * ViewT
+                    * Vertex;
+    }
+
+Beside the initial statement, i'm sure you transform the vertex from its local-space to world-space via the *model* matrix, then to camera space via the *view* matrix and finally to homogeneus-space via the *projection* matrix. You can also transform from local-space to eye-space directly with a classic *ModelView* matrix.
+I think the book is misleading on this, since the matrix multiplication order IS important, but anyway, it then goes down to compute a single matrix to then post-multiply the vertex by it:
+
+    vmath::mat4 View = ViewR * ViewT
+    vmath::mat4 Model = ModelS * ModelR * ModelT
+    vmath::mat4 Project = frustum(...)
+    vmath::mat4 ModelViewProject = Project * Model * View;
+
+At this point i'm sure i'm really missing something because i'm sure an MVP matrix should be precomputed as this:
+
+    vmath::mat4 ModelViewProject = Project * View * Model;
+
+Anyway, it then unfolds the example again, doing so:
+
+    #version 330 core
+    uniform mat4 View, Model, Project;
+    in vec4 Vertex;
+
+    void main()
+    {
+        gl_Position = View * Model * Project * Vertex;
+    }
+
+Again, this looks wrong to me, same error as before and then the last vertex shader is shown:
+
+    #version 330 core
+    uniform mat4 ModelViewProject;
+    in vec4 Vertex;
+
+    void main()
+    {
+        gl_Position = ModelViewProject * Vertex;
+    }
+
+This one looks fine, however the previously computed MVP matrix doesn't look so.

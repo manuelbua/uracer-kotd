@@ -880,13 +880,10 @@ public final class GameWorldRenderer {
 			Matrix4 model = mtx;
 			tmpvec.z = meshZ;
 
-			// change of basis
 			model.idt();
 			model.translate(tmpvec);
 			model.rotate(m.iRotationAxis, m.iRotationAngle);
 			model.scale(m.scaleAxis.x, m.scaleAxis.y, m.scaleAxis.z);
-			model.translate(-tmpvec.x, -tmpvec.y, -tmpvec.z);
-			model.translate(tmpvec);
 
 			// ensure the bounding box is transformed
 			m.boundingBox.inf().set(m.localBoundingBox);
@@ -987,13 +984,10 @@ public final class GameWorldRenderer {
 			Matrix4 model = mtx;
 			tmpvec.z = meshZ;
 
-			// change of basis
 			model.idt();
 			model.translate(tmpvec);
 			model.rotate(m.iRotationAxis, m.iRotationAngle);
 			model.scale(m.scaleAxis.x, m.scaleAxis.y, m.scaleAxis.z);
-			model.translate(-tmpvec.x, -tmpvec.y, -tmpvec.z);
-			model.translate(tmpvec);
 
 			// ensure the bounding box is transformed
 			m.boundingBox.inf().set(m.localBoundingBox);
