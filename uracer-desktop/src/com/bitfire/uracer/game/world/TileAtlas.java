@@ -28,7 +28,7 @@ public class TileAtlas {
 	 * @param map The tiled map
 	 * @param inputDir The directory containing all the files created by TiledMapPacker */
 	public TileAtlas (TiledMap map, int firstgid, FileHandle inputDir, String imageName) {
-		FileHandle packfile = getRelativeFileHandle(inputDir, removeExtension(imageName) + " packfile");
+		FileHandle packfile = getRelativeFileHandle(inputDir, removeExtension(imageName) + ".atlas");
 		TextureAtlas textureAtlas = new TextureAtlas(packfile, packfile.parent(), false);
 		Array<AtlasRegion> atlasRegions = textureAtlas.findRegions(removeExtension(removePath(imageName)));
 		for (AtlasRegion reg : atlasRegions) {

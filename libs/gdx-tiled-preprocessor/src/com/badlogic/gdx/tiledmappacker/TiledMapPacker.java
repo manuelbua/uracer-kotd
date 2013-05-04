@@ -19,6 +19,7 @@ import java.io.File;
 import java.io.FilenameFilter;
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.Iterator;
 import java.util.StringTokenizer;
 
 import javax.xml.parsers.DocumentBuilder;
@@ -46,13 +47,15 @@ import com.badlogic.gdx.files.FileHandle;
 import com.badlogic.gdx.graphics.Pixmap.Format;
 import com.badlogic.gdx.graphics.g2d.PixmapPacker;
 import com.badlogic.gdx.maps.MapLayer;
+import com.badlogic.gdx.maps.MapLayers;
 import com.badlogic.gdx.maps.tiled.TiledMap;
 import com.badlogic.gdx.maps.tiled.TiledMapTileLayer;
 import com.badlogic.gdx.maps.tiled.TiledMapTileSet;
 import com.badlogic.gdx.maps.tiled.TmxMapLoader;
 import com.badlogic.gdx.math.Vector2;
-import com.badlogic.gdx.tools.imagepacker.TexturePacker;
-import com.badlogic.gdx.tools.imagepacker.TexturePacker.Settings;
+import com.badlogic.gdx.tools.imagepacker.TexturePacker2;
+import com.badlogic.gdx.tools.imagepacker.TexturePacker2.Settings;
+
 import com.badlogic.gdx.utils.GdxRuntimeException;
 import com.badlogic.gdx.utils.IntArray;
 
@@ -61,8 +64,7 @@ import com.badlogic.gdx.utils.IntArray;
  * @author David Fraska */
 public class TiledMapPacker {
 
-	private TexturePacker packer;
-//	private PixmapPacker packer;
+	private TexturePacker2 packer;
 	private TiledMap map;
 
 	// private File outputDir;
@@ -118,19 +120,23 @@ public class TiledMapPacker {
 				int numlayers = map.getLayers().getCount();
 				usedIds = new IntArray(numlayers * mapHeight * mapWidth);
 
-				for (MapLayer layer : map.getLayers()) {
-					TiledMapTileLayer tlayer = (TiledMapTileLayer)layer;
+				Iterator<MapLayer> it = map.getLayers().iterator();
+				while (it.hasNext()) {
+					MapLayer layer = it.next();
+					if (layer instanceof TiledMapTileLayer) {
+						TiledMapTileLayer tlayer = (TiledMapTileLayer)layer;
 
-					for (int y = 0; y < mapHeight; ++y) {
-						for (int x = 0; x < mapWidth; ++x) {
-							usedIds.add(tlayer.getCell(x, y).getTile().getId() & ~0xE0000000);
+						for (int y = 0; y < mapHeight; ++y) {
+							for (int x = 0; x < mapWidth; ++x) {
+								usedIds.add(tlayer.getCell(x, y).getTile().getId() & ~0xE0000000);
+							}
 						}
 					}
 				}
 			}
 
 			for (TiledMapTileSet set : map.getTileSets()) {
-				String imagesource = set.getProperties().get("imagesource",String.class);
+				String imagesource = set.getProperties().get("imagesource", String.class);
 				if (!processedTileSets.contains(imagesource)) {
 					processedTileSets.add(imagesource);
 					packTileSet(map, set, usedIds, inputDirHandle, outputDir, settings);
@@ -149,8 +155,7 @@ public class TiledMapPacker {
 		TileSetLayout packerTileSet;
 		Graphics g;
 
-		packer = new TexturePacker(settings);
-//		packer = new PixmapPacker(1024, 1024, Format.RGBA8888, 2, true);
+		packer = new TexturePacker2(settings);
 
 		int mapWidth = map.getProperties().get("width", Integer.class);
 		int mapHeight = map.getProperties().get("height", Integer.class);
@@ -162,7 +167,7 @@ public class TiledMapPacker {
 
 		for (int gid = layout.firstgid, i = 0; i < layout.numTiles; gid++, i++) {
 			if (usedIds != null && !usedIds.contains(gid)) {
-				System.out.println("Stripped Id: " + gid);
+				System.out.println("Stripped Id: " + gid + " (map \"" + map.getProperties().get("name") + "\")");
 				continue;
 			}
 
@@ -180,7 +185,7 @@ public class TiledMapPacker {
 
 		File outputFile = getRelativeFile(outputDir, removeExtension(imageName) + " packfile");
 		outputFile.getParentFile().mkdirs();
-		packer.process(outputFile.getParentFile(), outputFile, removeExtension(removePath(imageName)));
+		packer.pack(outputFile.getParentFile(), removeExtension(removePath(imageName)));
 	}
 
 	private static String removeExtension (String s) {
@@ -352,9 +357,11 @@ public class TiledMapPacker {
 	 *           --strip-unused (optional, include to let the TiledMapPacker remove tiles which are not used. */
 	static File inputDir;
 	static File outputDir;
+
 	public static void main (String[] args) {
 		final Settings texturePackerSettings = new Settings();
-		texturePackerSettings.padding = 2;
+		texturePackerSettings.paddingX = 2;
+		texturePackerSettings.paddingY = 2;
 		texturePackerSettings.duplicatePadding = true;
 
 		final TiledMapPackerSettings packerSettings = new TiledMapPackerSettings();
@@ -385,27 +392,27 @@ public class TiledMapPacker {
 		}
 
 		new LwjglApplication(new ApplicationListener() {
-			
+
 			@Override
 			public void resume () {
 			}
-			
+
 			@Override
 			public void resize (int width, int height) {
 			}
-			
+
 			@Override
 			public void render () {
 			}
-			
+
 			@Override
 			public void pause () {
 			}
-			
+
 			@Override
 			public void dispose () {
 			}
-			
+
 			@Override
 			public void create () {
 				TiledMapPacker packer = new TiledMapPacker(packerSettings);
@@ -422,7 +429,7 @@ public class TiledMapPacker {
 
 				Gdx.app.exit();
 			}
-		}, "TiledMapPacker", 640, 480, true);
+		}, "TiledMapPacker", 100, 50, true);
 	}
 
 	public static class TiledMapPackerSettings {

@@ -80,12 +80,14 @@ public class URacerTmxMapLoader extends TmxMapLoader {
 			for (int y = margin; y <= stopHeight; y += tileheight + spacing) {
 				for (int x = margin; x <= stopWidth; x += tilewidth + spacing) {
 					TextureRegion tileRegion = atlas.getRegion(id);
-					if (!yUp) {
-						tileRegion.flip(false, true);
+					if (tileRegion != null) {
+						if (!yUp) {
+							tileRegion.flip(false, true);
+						}
+						TiledMapTile tile = new StaticTiledMapTile(tileRegion);
+						tile.setId(id);
+						tileset.putTile(id++, tile);
 					}
-					TiledMapTile tile = new StaticTiledMapTile(tileRegion);
-					tile.setId(id);
-					tileset.putTile(id++, tile);
 				}
 			}
 
