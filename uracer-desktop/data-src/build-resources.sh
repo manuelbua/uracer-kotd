@@ -1,6 +1,5 @@
 #!/bin/bash
 
-
 CLASS_PATH="/home/manuel/dev/libgdx/dist"
 JARS="${CLASS_PATH}/gdx.jar:${CLASS_PATH}/gdx-natives.jar:${CLASS_PATH}/gdx-backend-lwjgl.jar:${CLASS_PATH}/gdx-backend-lwjgl-natives.jar"
 
@@ -18,6 +17,14 @@ TILED_PACKER="java -classpath ${JARS}:${GDX_TOOLS_PATH}/gdx-tools.jar:${GDX_TILE
 #SKIN_PACKER="java -classpath ${JARS}:${GDX_TOOLS_PATH}:/home/manuel/dev/uracer-skin-packer/bin com.bitfire.uracer.skinpacker.Packer"
 
 DEST="/home/manuel/dev/uracer-libgdx/uracer-desktop/data"
+
+# utilities
+if [ "$1" = "clean-levels" ]; then
+	rm -rf "$DEST/levels"
+	mkdir "$DEST/levels"
+	echo "Levels cleaned"
+	exit
+fi
 
 # base
 echo -n "Cooking base..."
