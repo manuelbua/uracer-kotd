@@ -23,7 +23,7 @@ import com.badlogic.gdx.utils.XmlReader;
 import com.badlogic.gdx.utils.XmlReader.Element;
 import com.bitfire.uracer.configuration.Storage;
 import com.bitfire.uracer.utils.URacerRuntimeException;
-import com.bitfire.uracer.utils.URacerTmxMapLoader;
+import com.bitfire.uracer.utils.tiled.URacerTmxMapLoader;
 
 /** Enumerates and maintains a list of available game tracks. FIXME add support for mini-screenshots
  * 

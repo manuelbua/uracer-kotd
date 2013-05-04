@@ -1,5 +1,5 @@
 
-package com.bitfire.uracer.utils;
+package com.bitfire.uracer.utils.tiled;
 
 import java.io.IOException;
 

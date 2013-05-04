@@ -1,5 +1,5 @@
 
-package com.bitfire.uracer.utils;
+package com.bitfire.uracer.utils.tiled;
 
 import java.util.HashSet;
 import java.util.StringTokenizer;
