@@ -7,6 +7,7 @@ import com.badlogic.gdx.files.FileHandle;
 import com.badlogic.gdx.graphics.Texture.TextureFilter;
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
 import com.badlogic.gdx.maps.ImageResolver;
+import com.badlogic.gdx.maps.MapProperties;
 import com.badlogic.gdx.maps.tiled.TiledMap;
 import com.badlogic.gdx.maps.tiled.TiledMapTile;
 import com.badlogic.gdx.maps.tiled.TiledMapTileSet;
@@ -70,7 +71,16 @@ public class URacerTmxMapLoader extends TmxMapLoader {
 			map.setOwnedTextures(atlas.getTextures());
 
 			TiledMapTileSet tileset = new TiledMapTileSet();
+			MapProperties props = tileset.getProperties();
 			tileset.setName(name);
+			props.put("firstgid", firstgid);
+			props.put("imagesource", imageSource);
+			props.put("imagewidth", imageWidth);
+			props.put("imageheight", imageHeight);
+			props.put("tilewidth", tilewidth);
+			props.put("tileheight", tileheight);
+			props.put("margin", margin);
+			props.put("spacing", spacing);
 
 			int stopWidth = imageWidth - tilewidth;
 			int stopHeight = imageHeight - tileheight;
@@ -80,6 +90,7 @@ public class URacerTmxMapLoader extends TmxMapLoader {
 			for (int y = margin; y <= stopHeight; y += tileheight + spacing) {
 				for (int x = margin; x <= stopWidth; x += tilewidth + spacing) {
 					TextureRegion tileRegion = atlas.getRegion(id);
+					// handle unused tile ids
 					if (tileRegion != null) {
 						if (!yUp) {
 							tileRegion.flip(false, true);
@@ -87,6 +98,8 @@ public class URacerTmxMapLoader extends TmxMapLoader {
 						TiledMapTile tile = new StaticTiledMapTile(tileRegion);
 						tile.setId(id);
 						tileset.putTile(id++, tile);
+					} else {
+						id++;
 					}
 				}
 			}
