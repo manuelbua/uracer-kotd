@@ -1,5 +1,5 @@
 
-package com.bitfire.uracer.game.world;
+package com.bitfire.uracer.utils;
 
 import java.io.IOException;
 
