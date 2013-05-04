@@ -41,7 +41,7 @@ rm -rf "${DEST}/levels/"
 
 # packer
 mkdir -p ${DEST}
-${TILED_PACKER} levels/ ${DEST}/levels #--strip-unused
+${TILED_PACKER} levels/ ${DEST}/levels --strip-unused
 
 # no packer
 #mkdir -p ${DEST}/levels/
