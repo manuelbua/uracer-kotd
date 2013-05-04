@@ -240,8 +240,8 @@ public final class GameLevels {
 						unsignedByteToInt(temp[3]) << 24;
 					//@on
 
-					// FIXME: should it be cleared?
-					// id = id & ~0xE0000000;
+					// clear it
+					id = id & ~0xE0000000;
 
 					out.putInt((outIdx++) << 2, id);
 				} catch (DataFormatException e) {
