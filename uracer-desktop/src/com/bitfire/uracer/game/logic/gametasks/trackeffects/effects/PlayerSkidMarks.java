@@ -98,7 +98,7 @@ public class PlayerSkidMarks extends TrackEffect {
 		for (int i = 0; i < MaxSkidMarks; i++) {
 			d = skidMarks[i];
 			if (d.life > 0) {
-				d.life -= Config.Physics.PhysicsDt;
+				d.life -= Config.Physics.Dt;
 			} else {
 				d.life = 0;
 			}
@@ -137,7 +137,7 @@ public class PlayerSkidMarks extends TrackEffect {
 		}
 
 		int driftMarkAddIterations = 1;
-		float target = Config.Physics.PhysicsDt;
+		float target = Config.Physics.Dt;
 		float curr = Gdx.graphics.getDeltaTime();// deltaMean.getMean();
 		driftMarkAddIterations = AMath.clamp(Math.round(curr / target), 1, 3);
 

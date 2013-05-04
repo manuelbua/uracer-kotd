@@ -1,31 +1,21 @@
 
 package com.bitfire.uracer.configuration;
 
-import com.badlogic.gdx.Application.ApplicationType;
-import com.badlogic.gdx.Gdx;
 import com.bitfire.postprocessing.filters.Blur;
 import com.bitfire.postprocessing.filters.Blur.BlurType;
 import com.bitfire.uracer.game.logic.helpers.CameraController.InterpolationMode;
-import com.bitfire.uracer.utils.NumberString;
-import com.bitfire.uracer.utils.ScaleUtils;
 
 public final class Config {
-	public static boolean isDesktop;
-	public static String UserPreferences = "uracer-preferences";
-
 	public static final class Graphics {
+		public static final int ReferenceScreenWidth = 1280;
+		public static final int ReferenceScreenHeight = 720;
+
 		public static final int DefaultFadeMilliseconds = 500;
 		public static final int DefaultResetFadeMilliseconds = 250;
 
-		public static boolean EnableMipMapping;
-		public static boolean SubframeInterpolation;
-		public static InterpolationMode CameraInterpolationMode;
-
-		public static void asDefault () {
-			EnableMipMapping = true;
-			SubframeInterpolation = true;
-			CameraInterpolationMode = InterpolationMode.Linear;
-		}
+		public static final boolean EnableMipMapping = true;
+		public static final boolean SubframeInterpolation = true;
+		public static final InterpolationMode CameraInterpolationMode = InterpolationMode.Linear;
 
 		private Graphics () {
 		}
@@ -34,77 +24,44 @@ public final class Config {
 	public static final class Physics {
 
 		/** defines how many pixels are 1 Box2d meter */
-		public static float PixelsPerMeter;
+		public static final float PixelsPerMeter = 18.0f;
 
 		/** defines physics dt duration, in hz */
-		public static float PhysicsTimestepHz;
+		public static final float TimestepHz = 60.0f;
 
 		/** defines the reference dt, in hz, to base damping and friction values on */
-		public static float PhysicsTimestepReferenceHz;
+		public static final float PhysicsTimestepReferenceHz = 60.0f;;
 
 		/** defines time modifier */
-		public static float PhysicsTimeMultiplier;
+		public static final float TimeMultiplier = 1f;
 
 		/** defines physics dt duration, in seconds */
-		public static float PhysicsDt;
-
-		public static void asDefault () {
-			PixelsPerMeter = 18.0f;
-			PhysicsTimestepHz = 60.0f;
-			PhysicsTimestepReferenceHz = 60.0f;
-			PhysicsDt = 1.0f / PhysicsTimestepHz;
-			PhysicsTimeMultiplier = 1f;
-
-			Gdx.app.log("Config", "Physics at " + PhysicsTimestepHz + "Hz (dt=" + NumberString.formatLong(PhysicsDt) + ")");
-		}
+		public static final float Dt = 1.0f / TimestepHz;
 
 		private Physics () {
 		}
 	}
 
 	public static final class Debug {
-		public static boolean UseDebugHelper;
-		public static boolean RenderBox2DWorldWireframe;
-		public static boolean RenderPlayerDebugInfo;
-		public static boolean RenderHudDebugInfo;
-		public static boolean Render3DBoundingBoxes;
-		public static boolean RenderDebugInfoGraphics;
-		public static boolean RenderDebugInfoFpsStats;
-		public static boolean RenderDebugInfoMeshStats;
-		public static boolean RenderDebugInfoMemoryStats;
-		public static boolean RenderDebugInfoPostProcessor;
-		public static boolean RenderDebugDrawsInTransitions;
-		public static boolean RenderTrackSectors;
+		public static final boolean UseDebugHelper = true;
+		public static boolean RenderBox2DWorldWireframe = false;
+		public static final boolean RenderPlayerDebugInfo = false;
+		public static final boolean RenderHudDebugInfo = true;
+		public static boolean Render3DBoundingBoxes = false;
+		public static final boolean RenderDebugInfoGraphics = true;
+		public static final boolean RenderDebugInfoFpsStats = true;
+		public static final boolean RenderDebugInfoMeshStats = true;
+		public static final boolean RenderDebugInfoMemoryStats = false;
+		public static final boolean RenderDebugInfoPostProcessor = true;
+		public static final boolean RenderDebugDrawsInTransitions = true;
+		public static boolean RenderTrackSectors = false;
 
-		public static boolean TraverseWalls;
-		public static boolean ApplyCarFrictionFromMap;
-		public static boolean FrustumCulling;
-		public static boolean InfiniteDilationTime;
+		public static final boolean TraverseWalls = false;
+		public static final boolean ApplyCarFrictionFromMap = true;
+		public static final boolean FrustumCulling = true;
+		public static final boolean InfiniteDilationTime = true;
 
-		public static boolean ShowAdvancedDebugInfo;
-
-		public static void asDefault () {
-
-			UseDebugHelper = true;
-			RenderBox2DWorldWireframe = false;
-			RenderPlayerDebugInfo = false;
-			RenderHudDebugInfo = true;
-			RenderDebugInfoFpsStats = true;
-			RenderDebugInfoGraphics = true;
-			RenderDebugInfoMemoryStats = false;
-			RenderDebugInfoMeshStats = true;
-			RenderDebugInfoPostProcessor = true;
-			Render3DBoundingBoxes = false;
-			RenderDebugDrawsInTransitions = true;
-			RenderTrackSectors = false;
-
-			TraverseWalls = false;
-			ApplyCarFrictionFromMap = true;
-			FrustumCulling = true;
-			InfiniteDilationTime = true;
-
-			ShowAdvancedDebugInfo = true;
-		}
+		public static final boolean ShowAdvancedDebugInfo = true;
 
 		private Debug () {
 		}
@@ -112,47 +69,13 @@ public final class Config {
 
 	public static final class PostProcessing {
 
-		public static BlurType BlurType;
-		public static int BlurNumPasses;
-		public static int BloomFboWidth, BloomFboHeight;
-		public static float NormalDepthMapScale = 1f;
-		private static float RttRatio = 0.5f;
-
-		// compute per-resolution constants
-		public static void asDefault () {
-
-			BloomFboWidth = (int)((float)ScaleUtils.PlayWidth * RttRatio);
-			BloomFboHeight = (int)((float)ScaleUtils.PlayHeight * RttRatio);
-			BlurType = Blur.BlurType.Gaussian5x5b;
-			BlurNumPasses = 2;
-
-			// int w = Gdx.graphics.getWidth();
-			// if (w >= 1400) {
-			// BlurType = Blur.BlurType.Gaussian5x5b;
-			// BlurNumPasses = 2;
-			// } else if (w >= 1200) {
-			// BlurType = Blur.BlurType.Gaussian5x5b;
-			// BlurNumPasses = 2;
-			// } else if (w >= 800) {
-			// BlurType = Blur.BlurType.Gaussian3x3b;
-			// BlurNumPasses = 2;
-			// }
-
-			Gdx.app.log("Config", "blurType=" + BlurType);
-		}
+		public static final BlurType BlurType = Blur.BlurType.Gaussian5x5b;
+		public static final int BlurNumPasses = 2;
+		public static final float NormalDepthMapRatio = 1f;
+		public static final float FboRatio = 0.5f;
 
 		private PostProcessing () {
 		}
-	}
-
-	// set default configuration values
-	public static void asDefault () {
-		isDesktop = (Gdx.app.getType() == ApplicationType.Desktop);
-
-		Debug.asDefault();
-		Graphics.asDefault();
-		Physics.asDefault();
-		PostProcessing.asDefault();
 	}
 
 	private Config () {

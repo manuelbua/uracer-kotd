@@ -12,11 +12,11 @@ import com.badlogic.gdx.graphics.g2d.BitmapFont;
 import com.badlogic.gdx.graphics.g2d.BitmapFont.HAlignment;
 import com.badlogic.gdx.graphics.g2d.BitmapFont.TextBounds;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
+import com.bitfire.uracer.configuration.Config;
 import com.bitfire.uracer.game.tween.GameTweener;
 import com.bitfire.uracer.resources.BitmapFontFactory;
 import com.bitfire.uracer.resources.BitmapFontFactory.FontFace;
 import com.bitfire.uracer.utils.AMath;
-import com.bitfire.uracer.utils.ScaleUtils;
 
 public class Message {
 	public enum Type {
@@ -59,7 +59,7 @@ public class Message {
 	public final void set (String message, float durationSecs, Type type, Position position, Size size) {
 		startMs = 0;
 		started = false;
-		halfWidth = (int)(ScaleUtils.RefScreenWidth / 2);
+		halfWidth = (int)(Config.Graphics.ReferenceScreenWidth / 2);
 
 		what = message;
 		this.position = position;
@@ -96,12 +96,12 @@ public class Message {
 	}
 
 	private void computeFinalPosition () {
-		int widthOnFour = ScaleUtils.RefScreenWidth / 4;
+		int widthOnFour = Config.Graphics.ReferenceScreenWidth / 4;
 		whereX = widthOnFour;
 		finalY = 0;
 
 		float distance = 180;
-		float h = ScaleUtils.RefScreenHeight;
+		float h = Config.Graphics.ReferenceScreenHeight;
 
 		switch (position) {
 		case Top:

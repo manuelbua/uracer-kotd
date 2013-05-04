@@ -77,7 +77,7 @@ public final class DebugHelper {
 
 		// compute graphics stats size
 		float updateHz = 60f;
-		if (!Config.isDesktop) {
+		if (!URacer.Game.isDesktop()) {
 			updateHz = 5f;
 		}
 

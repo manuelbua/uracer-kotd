@@ -11,8 +11,7 @@ import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.math.Vector3;
 import com.bitfire.postprocessing.PostProcessor;
 import com.bitfire.postprocessing.PostProcessorListener;
-import com.bitfire.uracer.configuration.UserPreferences;
-import com.bitfire.uracer.configuration.UserPreferences.Preference;
+import com.bitfire.uracer.configuration.Config;
 import com.bitfire.uracer.events.GameRendererEvent;
 import com.bitfire.uracer.game.GameEvents;
 import com.bitfire.uracer.game.world.GameWorld;
@@ -68,10 +67,6 @@ public final class GameRenderer implements PostProcessorListener {
 	}
 
 	public void dispose () {
-		if (UserPreferences.bool(Preference.PostProcessing)) {
-			postProcessor.dispose();
-		}
-
 		// depthMap.dispose();
 		batchRenderer.dispose();
 		worldRenderer.dispose();
@@ -283,8 +278,8 @@ public final class GameRenderer implements PostProcessorListener {
 		/** Transforms world-px coordinates to reference-screen pixel coordinates */
 		public static Vector2 worldPxToScreen (Vector2 worldPositionPx) {
 			tmp3.set(worldPositionPx.x, worldPositionPx.y, 0);
-			worldRenderer.camOrtho.project(tmp3, 0, 0, ScaleUtils.RefScreenWidth, ScaleUtils.RefScreenHeight);
-			tmp2.set(tmp3.x, ScaleUtils.RefScreenHeight - tmp3.y);
+			worldRenderer.camOrtho.project(tmp3, 0, 0, Config.Graphics.ReferenceScreenWidth, Config.Graphics.ReferenceScreenHeight);
+			tmp2.set(tmp3.x, Config.Graphics.ReferenceScreenHeight - tmp3.y);
 			return tmp2;
 		}
 
@@ -307,8 +302,8 @@ public final class GameRenderer implements PostProcessorListener {
 			tmp3.set(screenPositionPx.x, screenPositionPx.y, 1);
 
 			// normalize and scale to the real display size
-			tmp3.x = (tmp3.x / (float)ScaleUtils.RefScreenWidth) * ScreenWidth;
-			tmp3.y = (tmp3.y / (float)ScaleUtils.RefScreenHeight) * ScreenHeight;
+			tmp3.x = (tmp3.x / (float)Config.Graphics.ReferenceScreenWidth) * ScreenWidth;
+			tmp3.y = (tmp3.y / (float)Config.Graphics.ReferenceScreenHeight) * ScreenHeight;
 
 			worldRenderer.camOrtho.unproject(tmp3, 0, 0, ScreenWidth, ScreenHeight);
 

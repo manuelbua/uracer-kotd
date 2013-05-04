@@ -4,6 +4,7 @@ package com.bitfire.uracer.game.logic.types;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Input.Keys;
 import com.bitfire.uracer.Input;
+import com.bitfire.uracer.Input.MouseButton;
 import com.bitfire.uracer.URacer;
 import com.bitfire.uracer.configuration.Config;
 import com.bitfire.uracer.configuration.Gameplay;
@@ -133,6 +134,7 @@ public abstract class CommonLogic implements GameLogic, CarEvent.Listener, Playe
 		removePlayer();
 		gameTrack.dispose();
 		gameTasksManager.dispose();
+		postProcessing.dispose();
 		playerTasks.dispose();
 
 		if (playerCar != null) {
@@ -147,6 +149,7 @@ public abstract class CommonLogic implements GameLogic, CarEvent.Listener, Playe
 			}
 		}
 
+		lapManager.dispose();
 		GameTweener.dispose();
 		replayManager.dispose();
 	}
@@ -646,9 +649,11 @@ public abstract class CommonLogic implements GameLogic, CarEvent.Listener, Playe
 			gameWorldRenderer.setGameTrackDebugCar(playerCar);
 		}
 
+		boolean rightMouseButton = input.isTouched(MouseButton.Right) && input.isTouchedInBounds(MouseButton.Right);
+
 		switch (timeDilateMode) {
 		case Toggle:
-			if (input.isPressed(Keys.SPACE) || input.isTouched(1)) {
+			if (input.isPressed(Keys.SPACE) || rightMouseButton) {
 				timeDilation = !timeDilation;
 
 				if (timeDilation) {
@@ -665,12 +670,12 @@ public abstract class CommonLogic implements GameLogic, CarEvent.Listener, Playe
 
 		case TouchAndRelease:
 
-			if (input.isPressed(Keys.SPACE) || input.isTouched(1)) {
+			if (input.isPressed(Keys.SPACE) || rightMouseButton) {
 				if (!timeDilation && timeDilationAvailable()) {
 					timeDilation = true;
 					requestTimeDilationStart();
 				}
-			} else if (input.isReleased(Keys.SPACE) || input.isUntouched(1)) {
+			} else if (input.isReleased(Keys.SPACE) || input.isUntouched(MouseButton.Right)) {
 				if (timeDilation) {
 					timeDilation = false;
 					requestTimeDilationFinish();

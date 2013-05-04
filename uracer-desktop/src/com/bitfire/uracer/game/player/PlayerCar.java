@@ -9,6 +9,7 @@ import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.math.WindowedMean;
 import com.badlogic.gdx.utils.IntMap;
 import com.bitfire.uracer.Input;
+import com.bitfire.uracer.Input.MouseButton;
 import com.bitfire.uracer.URacer;
 import com.bitfire.uracer.configuration.Config;
 import com.bitfire.uracer.game.GameplaySettings;
@@ -24,7 +25,6 @@ import com.bitfire.uracer.game.world.GameWorld;
 import com.bitfire.uracer.game.world.WorldDefs.Layer;
 import com.bitfire.uracer.utils.AMath;
 import com.bitfire.uracer.utils.Convert;
-import com.bitfire.uracer.utils.ScaleUtils;
 import com.bitfire.uracer.utils.Timer;
 import com.bitfire.uracer.utils.VMath;
 
@@ -59,8 +59,8 @@ public class PlayerCar extends Car {
 		carInput = new CarInput();
 		impacts = 0;
 
-		invWidth = 1f / (float)ScaleUtils.RefScreenWidth;
-		invHeight = 1f / (float)ScaleUtils.RefScreenHeight;
+		invWidth = 1f / (float)Config.Graphics.ReferenceScreenWidth;
+		invHeight = 1f / (float)Config.Graphics.ReferenceScreenHeight;
 
 		// strategy = gameWorld.scalingStrategy;
 		carDesc = new CarDescriptor(preset.model);
@@ -143,7 +143,7 @@ public class PlayerCar extends Car {
 			carPos.set(GameRenderer.ScreenUtils.worldMtToScreen(body.getPosition()));
 			touchPos.set(input.getXY());
 
-			carInput.updated = input.isTouching();
+			carInput.updated = input.isTouching() && input.isTouchedInBounds(MouseButton.Left);
 			// Gdx.app.log("PlayerCar", "carpos=" + carPos.toString() + ", cursor=" + touchPos.toString());
 
 			if (carInput.updated) {
@@ -246,7 +246,7 @@ public class PlayerCar extends Car {
 		handleImpactFeedback();
 
 		carSim.applyInput(carInput);
-		carSim.step(Config.Physics.PhysicsDt, body.getAngle());
+		carSim.step(Config.Physics.Dt, body.getAngle());
 
 		// update computed forces
 		forces.velocity_x = carDesc.velocity_wc.x;

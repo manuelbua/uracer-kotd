@@ -23,7 +23,7 @@ public final class MapUtils implements Disposable {
 
 	private TiledMap map;
 	private Vector2 worldSizePx = new Vector2();
-	public float invTileWidth;
+	private float invTileWidth;
 	private int mapHeight, tileWidth;
 
 	public MapUtils (TiledMap map, int tileWidth, int mapHeight, Vector2 worldSizePx) {
@@ -38,6 +38,7 @@ public final class MapUtils implements Disposable {
 	@Override
 	public void dispose () {
 		cachedLayers.clear();
+		cachedGroups.clear();
 	}
 
 	public TiledMapTileLayer getLayer (Layer layer) {

@@ -47,13 +47,10 @@ public class TrackTrees {
 			Matrix4 model = m.mtxmodel;
 			tmpvec.z = meshZ;
 
-			// change of basis
 			model.idt();
 			model.translate(tmpvec);
 			model.rotate(m.iRotationAxis, m.iRotationAngle);
 			model.scale(m.scaleAxis.x, m.scaleAxis.y, m.scaleAxis.z);
-			model.translate(-tmpvec.x, -tmpvec.y, -tmpvec.z);
-			model.translate(tmpvec);
 
 			// comb = (proj * view) * model (fast mul)
 			transf.set(camPersp.combined).mul(m.mtxmodel);

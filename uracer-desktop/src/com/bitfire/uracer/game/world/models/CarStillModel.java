@@ -73,7 +73,6 @@ public class CarStillModel extends OrthographicAlignedStillModel {
 		{
 			Vector3 pos = transform(camPersp, camOrtho, state.position.x, state.position.y);
 
-			// change of basis
 			mtxbody.idt();
 			mtxbody.translate(pos);
 			mtxbody.rotate(0, 0, 1, state.orientation);

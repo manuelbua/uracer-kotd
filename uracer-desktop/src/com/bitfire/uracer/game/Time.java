@@ -69,7 +69,7 @@ public final class Time extends Task {
 	protected void onTick () {
 		if (!stopped) {
 			ticks++;
-			ticksInSeconds += Config.Physics.PhysicsDt;
+			ticksInSeconds += Config.Physics.Dt;
 		}
 	};
 

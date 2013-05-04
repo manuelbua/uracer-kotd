@@ -3,7 +3,6 @@ package com.bitfire.uracer.game.logic.gametasks.sounds.effects;
 
 import com.badlogic.gdx.audio.Sound;
 import com.bitfire.uracer.URacer;
-import com.bitfire.uracer.configuration.Config;
 import com.bitfire.uracer.game.logic.gametasks.sounds.SoundEffect;
 import com.bitfire.uracer.game.player.PlayerCar;
 import com.bitfire.uracer.game.player.PlayerDriftStateEvent;
@@ -78,7 +77,7 @@ public final class PlayerDriftSoundEffect extends SoundEffect {
 	@Override
 	public void start () {
 		// UGLY HACK FOR ANDROID
-		if (Config.isDesktop) {
+		if (URacer.Game.isDesktop()) {
 			driftId = drift.loop(0f);
 		} else {
 			driftId = checkedLoop(drift, 0f);

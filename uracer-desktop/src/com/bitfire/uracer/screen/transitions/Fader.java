@@ -100,7 +100,7 @@ public final class Fader extends ScreenTransition {
 	@Override
 	public void update () {
 		long delta = (long)URacer.Game.getLastDeltaMs();
-		delta = AMath.clamp(delta, 0, (long)(Config.Physics.PhysicsDt * 1000));
+		delta = AMath.clamp(delta, 0, (long)(Config.Physics.Dt * 1000));
 
 		elapsed += delta;
 

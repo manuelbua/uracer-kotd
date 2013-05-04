@@ -1,6 +1,7 @@
 
 package com.bitfire.uracer.game.logic.helpers;
 
+import com.bitfire.uracer.URacer;
 import com.bitfire.uracer.configuration.Config;
 import com.bitfire.uracer.configuration.UserProfile;
 import com.bitfire.uracer.game.logic.LapInfo;
@@ -51,8 +52,8 @@ public final class PlayerGameTasks {
 		playerEngineSoundFx = new PlayerEngineSoundEffect(player);
 
 		// track effects
-		int maxSkidMarks = Config.isDesktop ? 150 : 100;
-		float maxLife = Config.isDesktop ? 5 : 3;
+		int maxSkidMarks = URacer.Game.isDesktop() ? 150 : 100;
+		float maxLife = URacer.Game.isDesktop() ? 5 : 3;
 		playerSkidMarks = new PlayerSkidMarks(player, maxSkidMarks, maxLife);
 		playerSmokeTrails = new PlayerSmokeTrails(player);
 

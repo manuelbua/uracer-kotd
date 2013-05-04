@@ -6,10 +6,10 @@ import java.lang.reflect.Field;
 import aurelienribon.tweenengine.Tween;
 
 import com.badlogic.gdx.Application;
+import com.badlogic.gdx.Application.ApplicationType;
 import com.badlogic.gdx.ApplicationListener;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.GL10;
-import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.utils.TimeUtils;
 import com.bitfire.uracer.configuration.BootConfig;
 import com.bitfire.uracer.configuration.Config;
@@ -38,6 +38,7 @@ import com.bitfire.uracer.utils.AMath;
 import com.bitfire.uracer.utils.BoxedFloat;
 import com.bitfire.uracer.utils.BoxedFloatAccessor;
 import com.bitfire.uracer.utils.Convert;
+import com.bitfire.uracer.utils.NumberString;
 import com.bitfire.uracer.utils.ScaleUtils;
 import com.bitfire.uracer.utils.SpriteBatchUtils;
 import com.bitfire.uracer.utils.URacerRuntimeException;
@@ -46,10 +47,12 @@ import com.bitfire.utils.ShaderLoader;
 public class URacer implements ApplicationListener {
 	public static final String Name = "URacer: The King Of The Drift";
 
+	private final ScreenFactory screenFactory = new GameScreensFactory();
 	private static ScreenManager screenMgr = null;
 	private static Input input;
 	private static boolean running = false;
-	private static final boolean useRealFrametime = true;// Config.isDesktop;
+	private static boolean isDesktop = false;
+	private static final boolean useRealFrametime = true;
 
 	private float temporalAliasing = 0;
 	private long timeAccuNs = 0;
@@ -84,7 +87,25 @@ public class URacer implements ApplicationListener {
 	}
 
 	public URacer (BootConfig boot) {
+		running = true;
 		this.boot = boot;
+
+		Tween.registerAccessor(Message.class, new MessageAccessor());
+		Tween.registerAccessor(HudLabel.class, new HudLabelAccessor());
+		Tween.registerAccessor(BoxedFloat.class, new BoxedFloatAccessor());
+
+		Convert.init(Config.Physics.PixelsPerMeter);
+
+		// Initialize the timers after creating the game screen, so that there will be no huge discrepancies between the first
+		// lastDeltaTimeSec value and the followers. Note those initial values are carefully choosen to ensure that the first
+		// iteration ever is going to at least perform one single tick
+		PhysicsDtNs = (long)((long)1000000000 / (long)Config.Physics.TimestepHz);
+		timeStepHz = (long)Config.Physics.TimestepHz;
+		timeAccuNs = PhysicsDtNs;
+
+		temporalAliasing = 0;
+		timeMultiplier = Config.Physics.TimeMultiplier;
+		ShaderLoader.Pedantic = true;
 	}
 
 	public void setFinalizer (URacerFinalizer finalizer) {
@@ -110,27 +131,33 @@ public class URacer implements ApplicationListener {
 
 	@Override
 	public void create () {
-		// create directories as needed
-		Storage.init();
-		boot.store();
-
-		ShaderLoader.Pedantic = true;
-
-		// create tweening support
-		Tween.registerAccessor(Message.class, new MessageAccessor());
-		Tween.registerAccessor(HudLabel.class, new HudLabelAccessor());
-		Tween.registerAccessor(BoxedFloat.class, new BoxedFloatAccessor());
-
 		Gdx.app.setLogLevel(Application.LOG_DEBUG);
 
 		System.out.println();
-
 		Gdx.app.log("URacer", "Booting version " + URacer.versionInfo);
 		Gdx.app.log("URacer", "GL vendor is " + Gdx.gl.glGetString(GL10.GL_VENDOR));
 		Gdx.app.log("URacer", "GL version is " + Gdx.gl.glGetString(GL10.GL_VERSION));
 		Gdx.app.log("URacer", "Java vendor is " + System.getProperty("java.vendor"));
 		Gdx.app.log("URacer", "Java version is " + System.getProperty("java.version"));
 		Gdx.app.log("URacer", "Using real frametime: " + (useRealFrametime ? "YES" : "NO"));
+		Gdx.app.log("URacer", "Physics at " + timeStepHz + "Hz (dT=" + NumberString.formatLong(Config.Physics.Dt) + ")");
+
+		Storage.init();
+		boot.store();
+		UserPreferences.load();
+		ScreensShared.loadFromUserPrefs();
+
+		ScaleUtils.init(Gdx.graphics.getWidth(), Gdx.graphics.getHeight());
+
+		// create input system
+		input = new Input(ScaleUtils.PlayViewport);
+		Gdx.app.log("URacer", "Input system created.");
+
+		Art.init();
+		Sounds.init();
+		TransitionFactory.init(screenFactory);
+		SpriteBatchUtils.init(Art.debugFont, Art.DebugFontWidth);
+		screenMgr = new ScreenManager(ScaleUtils.PlayViewport, screenFactory);
 
 		// enumerate available game tracks
 		try {
@@ -140,52 +167,11 @@ public class URacer implements ApplicationListener {
 			System.exit(-1);
 		}
 
-		// computed for a 256px tile size target (compute needed conversion factors)
-		Vector2 refScreen = new Vector2(1280, 720);
-		// Vector2 refScreen = new Vector2(1280, 800);
-		ScaleUtils.init(refScreen);
+		isDesktop = (Gdx.app.getType() == ApplicationType.Desktop);
 
-		// create input system
-		input = new Input();
-		Gdx.app.log("URacer", "Input system created.");
-
-		ScreenFactory screenFactory = new GameScreensFactory();
-		TransitionFactory.init(screenFactory);
-
-		// load default private configuration
-		Config.asDefault();
-
-		UserPreferences.load();
-		ScreensShared.loadFromUserPrefs();
-
-		Convert.init(Config.Physics.PixelsPerMeter);
-		Art.init();
-		SpriteBatchUtils.init(Art.debugFont, Art.DebugFontWidth);
-		Sounds.init();
-
-		Gdx.graphics.setVSync(true);
-
-		running = true;
-		temporalAliasing = 0;
-		timeMultiplier = Config.Physics.PhysicsTimeMultiplier;
-
-		PhysicsDtNs = (long)((long)1000000000 / (long)Config.Physics.PhysicsTimestepHz);
-		timeStepHz = (long)Config.Physics.PhysicsTimestepHz;
-
-		screenMgr = new ScreenManager(ScaleUtils.PlayViewport, screenFactory);
-
-		screenMgr.setScreen(ScreenType.GameScreen, TransitionType.Fader, 1000);
-		// screenMgr.setScreen(ScreenType.MainScreen, TransitionType.CrossFader, 500);
-		// screenMgr.setScreen(ScreenType.OptionsScreen, TransitionType.CrossFader, 500);
-
-		// Initialize the timers after creating the game screen, so that there
-		// will be no huge discrepancies
-		// between the first lastDeltaTimeSec value and the followers.
-		// Note those initial values are carefully choosen to ensure that the
-		// first iteration ever is going to
-		// at least perform one single tick
-		timeAccuNs = PhysicsDtNs;
-		// try { Thread.sleep( 1000 ); } catch( InterruptedException e ) {}
+		// Screens.setScreen(ScreenType.MainScreen, TransitionType.CrossFader, 500);
+		Screens.setScreen(ScreenType.GameScreen, TransitionType.Fader, 1000);
+		// Screens.setScreen(ScreenType.OptionsScreen, TransitionType.CrossFader, 500);
 	}
 
 	@Override
@@ -209,28 +195,41 @@ public class URacer implements ApplicationListener {
 		System.exit(0);
 	}
 
+	private void simulateSlowness (int millis) {
+		try {
+			Thread.sleep(millis);
+		} catch (InterruptedException e) {
+		}
+	}
+
+	private long getDeltaTimeNs () {
+		if (useRealFrametime) {
+			// this is not good for Android since the value often hop around
+			return (long)(Gdx.graphics.getRawDeltaTime() * 1000000000f);
+		} else {
+			return (long)(Gdx.graphics.getDeltaTime() * 1000000000f);
+		}
+	}
+
 	@Override
 	public void render () {
 		if (screenMgr.begin()) {
 
-			// this is not good for Android since the value often hop around
-			if (useRealFrametime) {
-				lastDeltaTimeNs = (long)(Gdx.graphics.getRawDeltaTime() * 1000000000f);
-			} else {
-				lastDeltaTimeNs = (long)(Gdx.graphics.getDeltaTime() * 1000000000f);
-			}
-
 			// avoid spiral of death
-			lastDeltaTimeNs = AMath.clamp(lastDeltaTimeNs, 0, MaxDeltaTimeNs);
+			lastDeltaTimeNs = AMath.clamp(getDeltaTimeNs(), 0, MaxDeltaTimeNs);
 
 			// compute values in different units so that accessors will not
 			// recompute them again and again
 			lastDeltaTimeMs = (float)lastDeltaTimeNs / 1000000f;
 			lastDeltaTimeSec = (float)lastDeltaTimeNs * oneOnOneBillion;
 
-			lastTicksCount = 0;
-			long startTime = TimeUtils.nanoTime();
+			// measure timings
+			long startTime;
+
+			/** tick */
 			{
+				lastTicksCount = 0;
+				startTime = TimeUtils.nanoTime();
 				timeAccuNs += lastDeltaTimeNs * timeMultiplier;
 				while (timeAccuNs >= PhysicsDtNs) {
 					input.tick();
@@ -238,49 +237,39 @@ public class URacer implements ApplicationListener {
 					timeAccuNs -= PhysicsDtNs;
 					lastTicksCount++;
 				}
-
-				// // simulate slowness
-				// if( timeMultiplier < 1 ) {
-				// try {
-				// Thread.sleep( 48 );
-				// } catch( InterruptedException e ) {
-				// }
-				// }
+				// simulateSlowness(48);
+				physicsTime = (TimeUtils.nanoTime() - startTime) * oneOnOneBillion;
 			}
+			/** tick */
 
-			physicsTime = (TimeUtils.nanoTime() - startTime) * oneOnOneBillion;
-
-			// if the system has ticked, then trigger tickCompleted
-			if (lastTicksCount > 0) {
-				screenMgr.tickCompleted();
-
-				if (screenMgr.quit()) {
-					return;
+			/** tick completed */
+			{
+				// if the system has ticked, then trigger tickCompleted
+				if (lastTicksCount > 0) {
+					screenMgr.tickCompleted();
+					if (screenMgr.quit()) {
+						return;
+					}
 				}
 			}
+			/** tick completed */
 
-			// compute the temporal aliasing factor, entities will render
-			// themselves accordingly to this to avoid flickering and jittering,
-			// permitting slow-motion effects without artifacts.
-			// (this imply accepting a max-one-frame-behind behavior)
+			// compute the temporal aliasing factor, entities will render themselves accordingly to this to avoid flickering and
+			// jittering, permitting slow-motion effects without artifacts (this imply accepting a one-frame-behind behavior)
 			temporalAliasing = (timeAccuNs * timeStepHz) * oneOnOneBillion;
 			aliasingTime = temporalAliasing;
 
-			startTime = TimeUtils.nanoTime();
+			/** render */
 			{
+				startTime = TimeUtils.nanoTime();
 				SysTweener.update();
 				screenMgr.render();
-
-				// simulate slowness
-				// try {
-				// Thread.sleep(30);
-				// } catch (InterruptedException e) {
-				// }
+				// simulateSlowness(30);
+				graphicsTime = (TimeUtils.nanoTime() - startTime) * oneOnOneBillion;
 			}
+			/** render */
 
-			graphicsTime = (TimeUtils.nanoTime() - startTime) * oneOnOneBillion;
 			frameCount++;
-
 			screenMgr.debugRender();
 			screenMgr.end();
 		}
@@ -317,6 +306,10 @@ public class URacer implements ApplicationListener {
 	//
 
 	public static final class Game {
+		public static boolean isDesktop () {
+			return isDesktop;
+		}
+
 		public static boolean isRunning () {
 			return running;
 		}
