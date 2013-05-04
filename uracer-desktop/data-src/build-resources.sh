@@ -7,8 +7,13 @@ JARS="${CLASS_PATH}/gdx.jar:${CLASS_PATH}/gdx-natives.jar:${CLASS_PATH}/gdx-back
 GDX_TOOLS_PATH="/home/manuel/dev/libgdx/dist/extensions/gdx-tools/"
 TEX_PACKER="java -classpath ${JARS}:${GDX_TOOLS_PATH}/gdx-tools.jar com.badlogic.gdx.tools.imagepacker.TexturePacker2"
 
-GDX_TILED_PREP_PATH="/home/manuel/dev/uracer-libgdx/libs/gdx-tiled-preprocessor/bin"
-TILED_PACKER="java -classpath ${JARS}:${GDX_TOOLS_PATH}/gdx-tools.jar:${GDX_TILED_PREP_PATH} com.badlogic.gdx.tiledmappacker.TiledMapPacker"
+# in uracer/libs
+#GDX_TILED_PREP_PATH="/home/manuel/dev/uracer-libgdx/libs/gdx-tiled-preprocessor/bin"
+#TILED_PACKER="java -classpath ${JARS}:${GDX_TOOLS_PATH}/gdx-tools.jar:${GDX_TILED_PREP_PATH} com.badlogic.gdx.tiledmappacker.TiledMapPacker"
+
+# in libgdx/extensions
+GDX_TILED_PREP_PATH="/home/manuel/dev/libgdx/dist/extensions/gdx-tiled-preprocessor/"
+TILED_PACKER="java -classpath ${JARS}:${GDX_TOOLS_PATH}/gdx-tools.jar:${GDX_TILED_PREP_PATH}/gdx-tiled-preprocessor.jar com.badlogic.gdx.tiledmappacker.TiledMapPacker"
 
 #SKIN_PACKER="java -classpath ${JARS}:${GDX_TOOLS_PATH}:/home/manuel/dev/uracer-skin-packer/bin com.bitfire.uracer.skinpacker.Packer"
 
