@@ -59,6 +59,7 @@ public class URacer implements ApplicationListener {
 	private long timeStepHz = 0;
 	private long PhysicsDtNs = 0;
 	private static long lastDeltaTimeNs = 0;
+	private long lastDeltaTimeNsBeforePause = 0;
 	private static float lastDeltaTimeSec = 0;
 	private static float lastDeltaTimeMs = 0;
 
@@ -74,6 +75,7 @@ public class URacer implements ApplicationListener {
 	public static final long MaxDeltaTimeNs = (long)(MaxDeltaTimeSec * 1000000000f);
 	private static long frameCount = 0;
 	private static long lastTicksCount = 0;
+	private static boolean resumed = false;
 
 	// version
 	public static final String versionInfo = getVersionInformation();
@@ -203,20 +205,31 @@ public class URacer implements ApplicationListener {
 	}
 
 	private long getDeltaTimeNs () {
-		if (useRealFrametime) {
-			// this is not good for Android since the value often hop around
-			return (long)(Gdx.graphics.getRawDeltaTime() * 1000000000f);
+		long delta = 0;
+
+		if (!resumed) {
+			if (useRealFrametime) {
+				// this is not good for Android since the value often hop around
+				delta = (long)(Gdx.graphics.getRawDeltaTime() * 1000000000f);
+			} else {
+				delta = (long)(Gdx.graphics.getDeltaTime() * 1000000000f);
+			}
 		} else {
-			return (long)(Gdx.graphics.getDeltaTime() * 1000000000f);
+			// if just resumed, then pick up the last delta time before pause
+			delta = lastDeltaTimeNsBeforePause;
+			resumed = false;
 		}
+
+		// avoid spiral of death
+		return AMath.clamp(delta, 0, MaxDeltaTimeNs);
 	}
 
 	@Override
 	public void render () {
 		if (screenMgr.begin()) {
 
-			// avoid spiral of death
-			lastDeltaTimeNs = AMath.clamp(getDeltaTimeNs(), 0, MaxDeltaTimeNs);
+			lastDeltaTimeNs = getDeltaTimeNs();
+			// Gdx.app.log("URacer", "lastdelta=" + lastDeltaTimeNs);
 
 			// compute values in different units so that accessors will not
 			// recompute them again and again
@@ -285,19 +298,20 @@ public class URacer implements ApplicationListener {
 	@Override
 	public void pause () {
 		running = false;
+		resumed = false;
+		lastDeltaTimeNsBeforePause = lastDeltaTimeNs;
 		screenMgr.pause();
 	}
 
 	@Override
 	public void resume () {
-		running = true;
-		lastDeltaTimeNs = 0;
-		lastDeltaTimeMs = 0;
-		lastDeltaTimeSec = 0;
+		if (!running) {
+			resumed = true;
+		}
 
+		running = true;
 		physicsTime = 0;
 		graphicsTime = 0;
-
 		screenMgr.resume();
 	}
 

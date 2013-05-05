@@ -68,4 +68,10 @@ public abstract class SoundEffect implements Disposable {
 
 	public void tick () {
 	}
+
+	public void pause () {
+	}
+
+	public void resume () {
+	}
 }

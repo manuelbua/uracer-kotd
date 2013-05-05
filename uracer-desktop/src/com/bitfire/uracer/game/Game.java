@@ -13,6 +13,7 @@ import com.bitfire.uracer.game.actors.CarPreset;
 import com.bitfire.uracer.game.logic.types.SinglePlayerLogic;
 import com.bitfire.uracer.game.rendering.GameRenderer;
 import com.bitfire.uracer.game.task.TaskManager;
+import com.bitfire.uracer.game.task.TaskManagerEvent;
 import com.bitfire.uracer.game.world.GameWorld;
 
 public class Game implements Disposable {
@@ -67,7 +68,7 @@ public class Game implements Disposable {
 	// }
 
 	public void tick () {
-		TaskManager.dispatchTick();
+		TaskManager.dispatchEvent(TaskManagerEvent.Type.onTick);
 		gameLogic.tick();
 	}
 
@@ -94,10 +95,12 @@ public class Game implements Disposable {
 	}
 
 	public void pause () {
+		TaskManager.dispatchEvent(TaskManagerEvent.Type.onPause);
 	}
 
 	public void resume () {
 		gameRenderer.rebind();
+		TaskManager.dispatchEvent(TaskManagerEvent.Type.onResume);
 	}
 
 	//

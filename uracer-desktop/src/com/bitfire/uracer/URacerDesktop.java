@@ -24,6 +24,8 @@ public final class URacerDesktop {
 		config.useGL20 = true;
 		config.resizable = false;
 		config.samples = 0;
+		config.backgroundFPS = -1;
+		config.foregroundFPS = -1;
 
 		// apply boot config
 		config.width = boot.getInt(BootConfigFlag.WIDTH);
