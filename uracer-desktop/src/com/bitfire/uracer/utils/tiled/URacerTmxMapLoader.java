@@ -68,7 +68,7 @@ public class URacerTmxMapLoader extends TmxMapLoader {
 
 			TileAtlas atlas = new TileAtlas(map, firstgid, tmxFile.parent(), imageSource);
 			atlas.setTextureFilter(TextureFilter.Linear, TextureFilter.Linear);
-			map.setOwnedTextures(atlas.getTextures());
+			map.setOwnedResources(atlas.getTextures());
 
 			TiledMapTileSet tileset = new TiledMapTileSet();
 			MapProperties props = tileset.getProperties();
