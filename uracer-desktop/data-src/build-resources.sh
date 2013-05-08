@@ -53,8 +53,8 @@ echo "done!"
 
 # tileset friction maps
 echo -n "Cooking friction maps..."
-cp levels/tilesets/desert/224-friction-easy.png ${DEST}/levels/tilesets/desert/
-cp levels/tilesets/desert/224-friction-hard.png ${DEST}/levels/tilesets/desert/
+cp levels/tilesets/desert/desert-friction-easy.png ${DEST}/levels/tileset/
+cp levels/tilesets/desert/desert-friction-hard.png ${DEST}/levels/tileset/
 echo "done!"
 
 # fonts

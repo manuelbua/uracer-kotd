@@ -166,7 +166,7 @@ public final class Art {
 
 	private static void loadFrictionMaps () {
 		// friction maps
-		frictionMapDesert = new Pixmap(Gdx.files.internal("data/levels/tilesets/desert/224-friction-easy.png"));
+		frictionMapDesert = new Pixmap(Gdx.files.internal("data/levels/tileset/desert-friction-easy.png"));
 	}
 
 	private static void disposeFrictionMaps () {
