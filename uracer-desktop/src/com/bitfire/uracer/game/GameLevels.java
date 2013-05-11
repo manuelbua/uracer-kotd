@@ -17,9 +17,8 @@ import java.util.zip.Inflater;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.files.FileHandle;
 import com.badlogic.gdx.graphics.Texture.TextureFilter;
-import com.badlogic.gdx.maps.tiled.AtlasTiledMapLoader;
-import com.badlogic.gdx.maps.tiled.AtlasTiledMapLoader.AtlasTiledMapLoaderParameters;
 import com.badlogic.gdx.maps.tiled.TiledMap;
+import com.badlogic.gdx.maps.tiled.TmxAtlasMapLoader;
 import com.badlogic.gdx.utils.Base64Coder;
 import com.badlogic.gdx.utils.XmlReader;
 import com.badlogic.gdx.utils.XmlReader.Element;
@@ -33,8 +32,8 @@ public final class GameLevels {
 
 	private static MessageDigest digest;
 	private static final Map<String, GameLevelDescriptor> levelIdToDescriptor = new HashMap<String, GameLevelDescriptor>();
-	private static final AtlasTiledMapLoader mapLoader = new AtlasTiledMapLoader(); // new URacerTmxMapLoader();
-	private static final AtlasTiledMapLoaderParameters mapLoaderParams = new AtlasTiledMapLoaderParameters();
+	private static final TmxAtlasMapLoader mapLoader = new TmxAtlasMapLoader(); // new URacerTmxMapLoader();
+	private static final TmxAtlasMapLoader.Parameters mapLoaderParams = new TmxAtlasMapLoader.Parameters();
 	private static final XmlReader xml = new XmlReader();
 	private static final List<GameLevelDescriptor> levels = new ArrayList<GameLevels.GameLevelDescriptor>();
 
