@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8" standalone="no"?><map height="19" orientation="orthogonal" tileheight="224" tilewidth="224" version="1.0" width="15">
- <properties><property name="atlas" value="tileset/packed.atlas"/>
+ <properties><property name="atlas" value="tileset/packed.atlas"/><property name="blended tiles" value=""/>
   <property name="name" value="2. Overlap"/>
  </properties>
  <tileset firstgid="1" name="desert" tileheight="224" tilewidth="224">
