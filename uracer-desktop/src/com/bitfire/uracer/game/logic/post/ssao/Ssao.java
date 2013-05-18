@@ -239,6 +239,8 @@ public final class Ssao extends PostProcessorEffect {
 		}
 		occlusionMap.end();
 
+		restoreViewport(dest);
+
 		if (dest != null) dest.begin();
 		shMix.begin();
 		{
