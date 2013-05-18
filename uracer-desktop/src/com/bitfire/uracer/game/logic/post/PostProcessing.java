@@ -41,7 +41,6 @@ public final class PostProcessing {
 	private boolean hasPostProcessor = false;
 	private PostProcessor postProcessor = null;
 	private boolean needNormalDepthMap = false;
-	private boolean isNightMode;
 
 	// public access to stored effects
 	public LongMap<PostProcessorEffect> effects = new LongMap<PostProcessorEffect>();
@@ -51,7 +50,6 @@ public final class PostProcessing {
 	private boolean hasAnimator = false;
 
 	public PostProcessing (GameWorld gameWorld) {
-		this.isNightMode = gameWorld.isNightMode();
 
 		// post-processing
 		if (UserPreferences.bool(Preference.PostProcessing)) {
@@ -64,7 +62,7 @@ public final class PostProcessing {
 			postProcessor.setBufferTextureWrap(TextureWrap.ClampToEdge, TextureWrap.ClampToEdge);
 			hasPostProcessor = true;
 			createEffects();
-			createAnimator();
+			setAnimator(new AggressiveCold(this, gameWorld.isNightMode()));
 		}
 	}
 
@@ -120,9 +118,9 @@ public final class PostProcessing {
 		Gdx.app.log("PostProcessing", "Post-processing enabled and configured");
 	}
 
-	private void createAnimator () {
-		hasAnimator = true;
-		animator = new AggressiveCold(this, isNightMode);
+	private void setAnimator (PostProcessingAnimator animator) {
+		hasAnimator = (animator != null);
+		this.animator = animator;
 		animator.reset();
 	}
 
