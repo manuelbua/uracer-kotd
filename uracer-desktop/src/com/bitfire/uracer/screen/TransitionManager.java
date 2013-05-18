@@ -102,7 +102,6 @@ public final class TransitionManager {
 		}
 
 		if (transition != null) {
-			// Gdx.gl20.glViewport((int)viewport.x, (int)viewport.y, (int)viewport.width, (int)viewport.height);
 			transition.update();
 		}
 	}
@@ -112,6 +111,7 @@ public final class TransitionManager {
 			return;
 		}
 
+		// draw transition to screen
 		if (transition != null) {
 			// enable depth writing if its the case
 			Gdx.gl20.glDepthMask(usedepth);

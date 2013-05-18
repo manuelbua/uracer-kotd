@@ -221,6 +221,7 @@ public final class AggressiveCold implements PostProcessingAnimator {
 
 	private long startMs = 0;
 	Vector2 playerScreenPos = new Vector2();
+	private float prevSpeed = 0;
 	private WindowedMean meanSpeed = new WindowedMean(2);
 	private WindowedMean meanStrength = new WindowedMean(5);
 
@@ -268,6 +269,10 @@ public final class AggressiveCold implements PostProcessingAnimator {
 
 			currDriftStrength = AMath.fixup(AMath.clamp(meanStrength.getMean(), 0, 1));
 			currSpeedFactor = AMath.fixup(AMath.clamp(meanSpeed.getMean(), 0, 1));
+
+			currSpeedFactor = AMath.fixup(AMath.lerp(prevSpeed, player.carState.currSpeedFactor, 0.02f));
+			prevSpeed = currSpeedFactor;
+
 		} else {
 			playerScreenPos.set(0.5f, 0.5f);
 		}
@@ -289,8 +294,9 @@ public final class AggressiveCold implements PostProcessingAnimator {
 			// float blurStrength = (-0.035f - 0.09f * currSpeedFactor) * timeModFactor - 0.033f * currSpeedFactor - timeModFactor
 			// * 0.005f;
 
-			float v = (-0.05f * currSpeedFactor);
-			float blurStrength = v * (1 - timeModFactor) + v * 0.3f * timeModFactor;
+			float v = (-0.09f * currSpeedFactor);
+			// float blurStrength = v * (1 - timeModFactor) + v * 0.3f * timeModFactor;
+			float blurStrength = v + v * 0.3f * timeModFactor;
 
 			autoEnableZoomBlur(blurStrength);
 

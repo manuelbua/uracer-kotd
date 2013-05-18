@@ -10,7 +10,6 @@ import com.badlogic.gdx.math.Rectangle;
 import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.math.Vector3;
 import com.bitfire.postprocessing.PostProcessor;
-import com.bitfire.postprocessing.PostProcessorListener;
 import com.bitfire.uracer.configuration.Config;
 import com.bitfire.uracer.events.GameRendererEvent;
 import com.bitfire.uracer.game.GameEvents;
@@ -22,7 +21,7 @@ import com.bitfire.uracer.utils.ScaleUtils;
  * timeline, realized with the event's renderqueue mechanism.
  * 
  * @author bmanuel */
-public final class GameRenderer implements PostProcessorListener {
+public final class GameRenderer {
 	private final GL20 gl;
 	private final GameWorld world;
 	private final GameBatchRenderer batchRenderer;
@@ -104,14 +103,17 @@ public final class GameRenderer implements PostProcessorListener {
 		GameEvents.gameRenderer.trigger(this, GameRendererEvent.Type.OnSubframeInterpolate);
 	}
 
-	@Override
-	public void beforeRenderToScreen () {
-		gl.glViewport(ScaleUtils.CropX, ScaleUtils.CropY, ScaleUtils.PlayWidth, ScaleUtils.PlayHeight);
+	private void clear () {
+		gl.glClearDepthf(1);
+		gl.glClearColor(0, 0, 0, 1);
+		gl.glClear(GL20.GL_COLOR_BUFFER_BIT | GL20.GL_DEPTH_BUFFER_BIT);
 	}
 
 	public void render (FrameBuffer dest) {
 		SpriteBatch batch;
 		worldRenderer.resetCounters();
+
+		clear();
 
 		if (drawNormalDepthMap) {
 			worldRenderer.updateNormalDepthMap();
@@ -129,13 +131,10 @@ public final class GameRenderer implements PostProcessorListener {
 			if (hasDest) {
 				dest.begin();
 			} else {
-				// TODO: is this really needed?
 				gl.glViewport(ScaleUtils.CropX, ScaleUtils.CropY, ScaleUtils.PlayWidth, ScaleUtils.PlayHeight);
 			}
 
-			gl.glClearDepthf(1);
-			gl.glClearColor(0, 0, 0, 1);
-			gl.glClear(GL20.GL_COLOR_BUFFER_BIT | GL20.GL_DEPTH_BUFFER_BIT);
+			clear();
 		}
 		// postproc ends
 
@@ -209,8 +208,6 @@ public final class GameRenderer implements PostProcessorListener {
 		batchRenderer.end();
 
 		if (postProcessorReady) {
-			// gl.glViewport(ScaleUtils.CropX, ScaleUtils.CropY, ScaleUtils.PlayWidth, ScaleUtils.PlayHeight);
-
 			postProcessor.render(dest);
 
 			if (hasDest) dest.begin();
