@@ -140,7 +140,7 @@ public final class MainScreen extends Screen {
 				}
 			});
 
-			ltable.add(listPane).colspan(3).width(w).height(150).left().padBottom(10).row();
+			ltable.add(listPane).colspan(3).width(w).height(120).left().padBottom(10).row();
 			ltable.add(start).width(70).left();
 			ltable.add(options).width(70);
 			ltable.add(quit).width(70).right();
