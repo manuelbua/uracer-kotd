@@ -24,7 +24,7 @@ public final class ScreenManager {
 
 	public ScreenManager (Rectangle viewport, ScreenFactory factory) {
 		screenFactory = factory;
-		transMgr = new TransitionManager(viewport, URacer.Game.isDesktop() /* 32bits */, false, true);
+		transMgr = new TransitionManager(viewport, URacer.Game.isDesktop() /* 32bits */, true, true);
 		current = null;
 		next = ScreenType.NoScreen;
 		quitPending = false;
