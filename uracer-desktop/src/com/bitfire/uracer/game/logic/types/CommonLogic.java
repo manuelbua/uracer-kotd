@@ -493,14 +493,12 @@ public abstract class CommonLogic implements GameLogic, CarEvent.Listener, Playe
 		URacer.timeMultiplier = timeMod.getTime();
 		float zoom = updateCamera(URacer.Game.getTimeModFactor());
 
-		// CameraMotion mot = (CameraMotion)postProcessing.getEffect(Effects.MotionBlur.name);
-
 		//@off
 		ambient.set(
 			0.1f,
 			0.05f,
 			0.15f,
-			0.2f + 0.1f * URacer.Game.getTimeModFactor() + 0.3f * lapMonitor.getWarmUpCompletion()
+			0.5f + 0.1f * URacer.Game.getTimeModFactor()// + 0.3f * lapMonitor.getWarmUpCompletion()
 		);
 
 		treesAmbient.set(
@@ -519,19 +517,6 @@ public abstract class CommonLogic implements GameLogic, CarEvent.Listener, Playe
 
 		// camera/ray handler update
 		gameWorldRenderer.updateCamera();
-
-		// post-processing step / MOTION BLUR
-		// if (mot != null) {
-		// Camera cam = GameEvents.gameRenderer.camPersp;
-		// float blur_scale = MathUtils.clamp(((float)Gdx.graphics.getFramesPerSecond() / 60.0f), 0, 1);
-		// mot.setEnabled(true);
-		// mot.setNearFar(cam.near, cam.far);
-		// mot.setMatrices(gameWorldRenderer.getInvView(), gameWorldRenderer.getPrevViewProj(), gameWorldRenderer.getInvProj());
-		// mot.setNormalDepthMap(gameWorldRenderer.getNormalDepthMap().getColorBufferTexture());
-		// mot.setBlurScale(blur_scale);
-		// mot.setBlurPasses(4);
-		// mot.setDepthScale(40);
-		// }
 
 		// Gdx.app.log("CommonLogic", "wuc=" + lapMonitor.getWarmUpCompletion());
 		postProcessing.onBeforeRender(zoom, lapMonitor.getWarmUpCompletion());
