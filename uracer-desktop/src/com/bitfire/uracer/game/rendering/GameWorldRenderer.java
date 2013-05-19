@@ -123,7 +123,7 @@ public final class GameWorldRenderer {
 	private Mesh plane;
 	// private final FloatFrameBuffer normalDepthMap;
 	private final FrameBuffer normalDepthMap;
-	private final ShaderProgram shNormalDepth;
+	private final ShaderProgram shNormalDepth, shNormalDepthNoDiffuse;
 
 	// render stats
 	private ImmediateModeRenderer20 dbg = new ImmediateModeRenderer20(false, true, 0);
@@ -173,12 +173,14 @@ public final class GameWorldRenderer {
 			(int)((float)ScaleUtils.PlayHeight * scale), true);
 
 		shNormalDepth = ShaderLoader.fromFile("normaldepth", "normaldepth", "#define ENABLE_DIFFUSE");
+		shNormalDepthNoDiffuse = ShaderLoader.fromFile("normaldepth", "normaldepth");
 		createBackPlane();
 	}
 
 	public void dispose () {
 		plane.dispose();
 		shNormalDepth.dispose();
+		shNormalDepthNoDiffuse.dispose();
 		normalDepthMap.dispose();
 		treeShaderNight.dispose();
 		treeShader.dispose();
@@ -481,23 +483,23 @@ public final class GameWorldRenderer {
 
 	public void updateNormalDepthMap () {
 
-		Gdx.gl.glEnable(GL20.GL_CULL_FACE);
-		Gdx.gl.glCullFace(GL20.GL_BACK);
-		Gdx.gl.glDisable(GL20.GL_BLEND);
+		gl.glCullFace(GL20.GL_BACK);
+		gl.glFrontFace(GL20.GL_CCW);
+		gl.glEnable(GL20.GL_CULL_FACE);
+		gl.glDisable(GL20.GL_BLEND);
 
-		Gdx.gl.glEnable(GL20.GL_DEPTH_TEST);
-		Gdx.gl.glDepthFunc(GL20.GL_LESS);
-		Gdx.gl.glDepthMask(true);
+		gl.glEnable(GL20.GL_DEPTH_TEST);
+		gl.glDepthFunc(GL20.GL_LESS);
+		gl.glDepthMask(true);
 
 		setSsaoScale(DefaultSsaoScale);
 		updateSsaoPlanes();
 
 		normalDepthMap.begin();
 		{
-			Gdx.gl.glClearDepthf(1f);
-			Gdx.gl.glClearColor(0, 0, 0, 1);
-			// Gdx.gl.glClearColor(1, 1, 1, 1);
-			Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT | GL20.GL_DEPTH_BUFFER_BIT);
+			gl.glClearDepthf(1f);
+			gl.glClearColor(0, 0, 0, 1);
+			gl.glClear(GL20.GL_COLOR_BUFFER_BIT | GL20.GL_DEPTH_BUFFER_BIT);
 			// renderAllMeshes(true);
 			renderTilemapPlane();
 			renderCars(true);
@@ -516,9 +518,7 @@ public final class GameWorldRenderer {
 	}
 
 	private void renderTilemapPlane () {
-		gl.glDisable(GL20.GL_CULL_FACE);
-
-		ShaderProgram shader = shNormalDepth;
+		ShaderProgram shader = shNormalDepthNoDiffuse;
 		float meshZ = -(camPersp.far - camPersp.position.z) + (camPersp.far * (1 - (camOrtho.zoom)));
 		float k = OrthographicAlignedStillModel.BlenderToURacer;
 		float scalex = 6, scalez = 4;
@@ -530,13 +530,14 @@ public final class GameWorldRenderer {
 		model.translate(tmpvec);
 		model.rotate(1, 0, 0, 90);
 		model.scale(scalex * k, 1, scalez * k);
-		model.translate(-tmpvec.x, -tmpvec.y, -tmpvec.z);
-		model.translate(tmpvec);
 
 		mtx2.set(camPersp.view).mul(model);
 		nmat.set(mtx2).inv().transpose();
 
 		shader.begin();
+		shader.setUniformf("inv_depth_scale", DefaultSsaoScale);
+		shader.setUniformf("near", camPersp.near);
+		shader.setUniformf("far", camPersp.far);
 		shader.setUniformMatrix("proj", camPersp.projection);
 		shader.setUniformMatrix("view", camPersp.view);
 		shader.setUniformMatrix("nmat", nmat);
@@ -555,11 +556,7 @@ public final class GameWorldRenderer {
 			gl.glEnable(GL20.GL_CULL_FACE);
 			gl.glFrontFace(GL20.GL_CCW);
 			gl.glCullFace(GL20.GL_BACK);
-
 			renderOrthographicAlignedModels(staticMeshes, false, world.isNightMode());
-
-			gl.glDisable(GL20.GL_CULL_FACE);
-			// gl.glDisable(GL20.GL_DEPTH_TEST);
 		}
 	}
 
@@ -647,7 +644,6 @@ public final class GameWorldRenderer {
 			gl.glEnable(GL20.GL_BLEND);
 			gl.glBlendFunc(GL20.GL_SRC_ALPHA, GL20.GL_ONE_MINUS_SRC_ALPHA);
 		} else {
-			// testing!
 			gl.glDisable(GL20.GL_CULL_FACE);
 		}
 
