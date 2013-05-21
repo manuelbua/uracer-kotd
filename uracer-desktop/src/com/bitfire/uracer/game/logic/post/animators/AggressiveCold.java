@@ -289,8 +289,8 @@ public final class AggressiveCold implements PostProcessingAnimator {
 		}
 
 		if (zoom != null && hasPlayer) {
-			float v = (-0.07f * currSpeedFactor);
-			float blurStrength = v + v * 0.5f * timeModFactor;
+			float v = (-0.05f * currSpeedFactor);
+			float blurStrength = v + (-0.05f * timeModFactor * currSpeedFactor);
 			autoEnableZoomBlur(blurStrength);
 			if (zoom.isEnabled()) {
 				zoom.setOrigin(playerScreenPos);
@@ -327,7 +327,7 @@ public final class AggressiveCold implements PostProcessingAnimator {
 			vignette.setLutIntensity(lutIntensity);
 
 			if (crt == null) {
-				vignette.setIntensity(0.8f + 0.3f * timeModFactor);
+				vignette.setIntensity(1.1f + 0.3f * timeModFactor);
 			} else {
 				vignette.setIntensity(0.7f);
 			}

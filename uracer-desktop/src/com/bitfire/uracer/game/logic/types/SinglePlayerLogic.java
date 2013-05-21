@@ -9,7 +9,6 @@ import aurelienribon.tweenengine.equations.Quad;
 
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.math.MathUtils;
-import com.badlogic.gdx.math.WindowedMean;
 import com.badlogic.gdx.utils.Array;
 import com.bitfire.uracer.configuration.Config;
 import com.bitfire.uracer.configuration.UserProfile;
@@ -69,8 +68,10 @@ public class SinglePlayerLogic extends CommonLogic {
 	// event listeners / callbacks
 	//
 
-	WindowedMean meanVal = new WindowedMean(5);
-	private float previousVal = 0;
+	private float ZoomRange = GameWorldRenderer.MaxCameraZoom - GameWorldRenderer.MinCameraZoom;
+	private float ZoomWindow = 0.5f * ZoomRange;
+	private float prevZoom = GameWorldRenderer.MinCameraZoom + ZoomWindow;
+	private float previousSpeed = 0;
 
 	// the camera needs to be positioned
 	@Override
@@ -78,25 +79,27 @@ public class SinglePlayerLogic extends CommonLogic {
 		float speedFactor = 0;
 
 		if (hasPlayer()) {
-			speedFactor = AMath.fixup(AMath.lerp(previousVal, playerCar.carState.currSpeedFactor, 0.015f));
+			speedFactor = AMath.fixup(AMath.lerp(previousSpeed, playerCar.carState.currSpeedFactor * 1.25f, 0.02f));
+			previousSpeed = speedFactor;
 		}
 
-		previousVal = speedFactor;
-		meanVal.addValue(speedFactor);
-
-		float minZoom = 1;
+		float minZoom = GameWorldRenderer.MinCameraZoom;
 		float maxZoom = GameWorldRenderer.MaxCameraZoom;
-		float zoomRange = maxZoom - minZoom;
 
-		float zoomFromSpeed = AMath.fixup(meanVal.getMean());
-		float window = 0.5f * zoomRange;
-		float cameraZoom = (maxZoom - window) - (zoomRange) * zoomFromSpeed + (zoomRange + window) * timeModFactor * zoomFromSpeed;
-		cameraZoom = AMath.clamp(cameraZoom, minZoom, maxZoom);
+		// float cameraZoom = (maxZoom - window) - (zoomRange) * zoomFromSpeed + (zoomRange + window) * timeModFactor *
+		// zoomFromSpeed;
+		float cameraZoom = (minZoom + ZoomWindow);
+		cameraZoom -= (maxZoom - cameraZoom) * speedFactor; // zoom out if speedy
+		cameraZoom += (maxZoom - cameraZoom) * timeModFactor; // zoom in if slowing time down
 
 		// cameraZoom = 1.5f;
 
+		cameraZoom = AMath.lerp(prevZoom, cameraZoom, 0.1f);
+		cameraZoom = AMath.clampf(cameraZoom, minZoom, maxZoom);
 		gameWorldRenderer.setCameraZoom(cameraZoom);
+		prevZoom = cameraZoom;
 
+		// Gdx.app.log("", "zoom=" + cameraZoom);
 		// update player's headlights and move the world camera to follows it, if there is a player
 		if (hasPlayer()) {
 
