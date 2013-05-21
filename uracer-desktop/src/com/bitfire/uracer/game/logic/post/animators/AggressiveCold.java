@@ -166,7 +166,7 @@ public final class AggressiveCold implements PostProcessingAnimator {
 		}
 
 		if (bloom != null) {
-			bloomThreshold = (nightMode ? 0.27f : bloomThreshold);
+			bloomThreshold = (nightMode ? 0.27f : 0.4f);
 			Bloom.Settings bloomSettings = new Bloom.Settings("subtle", Config.PostProcessing.BlurType,
 				Config.PostProcessing.BlurNumPasses, 1.5f, bloomThreshold, 1f, 0.5f, 1f, 1.3f + (nightMode ? 0.2f : 0));
 			bloom.setSettings(bloomSettings);
@@ -312,6 +312,14 @@ public final class AggressiveCold implements PostProcessingAnimator {
 			// bloom.setBaseSaturation(bsat);
 			bloom.setBaseSaturation(AMath.lerp(sat, sat * 0.25f, timeModFactor));
 			bloom.setBloomSaturation(AMath.lerp(bsat, bsat * 1.5f, timeModFactor));
+
+			// bloom.setBlurPasses(2);
+			// bloom.setBlurType(BlurType.Gaussian5x5b);
+			// bloom.setThreshold(nightMode ? 0.2f : 0.45f);
+			// bloom.setBloomIntesity(nightMode ? 1f : 1f);
+			// bloom.setBloomSaturation(nightMode ? 2f : 2f);
+			// bloom.setBaseIntesity(nightMode ? 0.8f : 1f);
+			// bloom.setBaseSaturation(0.4f - 0.4f * timeModFactor);
 		}
 
 		if (vignette != null) {
@@ -321,7 +329,7 @@ public final class AggressiveCold implements PostProcessingAnimator {
 				vignette.setSaturationMul(1 + timeModFactor * 0.2f);
 			}
 
-			float lutIntensity = 0.3f + timeModFactor * 1f + wrongWayAmount.value * 1f;
+			float lutIntensity = 0.1f + timeModFactor * 1f + wrongWayAmount.value * 1f;
 			lutIntensity = MathUtils.clamp(lutIntensity, 0, 1);
 
 			vignette.setLutIntensity(lutIntensity);
@@ -363,6 +371,7 @@ public final class AggressiveCold implements PostProcessingAnimator {
 			crt.setZoom(1 - (dist / 2));
 
 			crt.setColorOffset(0.001f);
+			crt.setTint(0.92f, 0.8f, 0.8f);
 		}
 	}
 }
