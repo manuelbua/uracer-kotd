@@ -29,6 +29,7 @@ import com.bitfire.uracer.game.logic.post.ssao.Ssao;
 import com.bitfire.uracer.game.screens.GameScreensFactory.ScreenType;
 import com.bitfire.uracer.resources.Art;
 import com.bitfire.uracer.screen.Screen;
+import com.bitfire.uracer.utils.UICamera;
 import com.bitfire.uracer.utils.UIUtils;
 
 public class OptionsScreen extends Screen {
@@ -53,7 +54,9 @@ public class OptionsScreen extends Screen {
 	private void setupUI () {
 		ui = UIUtils.newScaledStage();
 		root = new Table();
-		root.setSize(ui.getWidth(), ui.getHeight());
+		root.debug();
+		root.setBounds(0, 0, ui.getWidth(), ui.getHeight());
+		root.invalidate();
 		ui.addActor(root);
 
 		// background
@@ -317,6 +320,9 @@ public class OptionsScreen extends Screen {
 		boolean hasDest = (dest != null);
 		if (hasDest) {
 			dest.begin();
+			((UICamera)ui.getCamera()).setProjectForFramebuffer(true);
+		} else {
+			((UICamera)ui.getCamera()).setProjectForFramebuffer(false);
 		}
 
 		Gdx.gl.glClearColor(0, 0, 0, 0);

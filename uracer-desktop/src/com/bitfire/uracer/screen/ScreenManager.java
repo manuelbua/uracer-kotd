@@ -11,6 +11,10 @@ import com.bitfire.uracer.screen.TransitionFactory.TransitionType;
 
 public final class ScreenManager {
 
+	// screens debug
+	// private SpriteBatch batch = new SpriteBatch();
+	// private OrthographicCamera cam = new OrthographicCamera();
+
 	private TransitionManager transMgr;
 	private static Screen current;
 	private ScreenId next;
@@ -20,13 +24,18 @@ public final class ScreenManager {
 
 	public ScreenManager (Rectangle viewport, ScreenFactory factory) {
 		screenFactory = factory;
-		transMgr = new TransitionManager(viewport, URacer.Game.isDesktop() /* 32bits */, false, true);
+		transMgr = new TransitionManager(viewport, URacer.Game.isDesktop() /* 32bits */, true, true);
 		current = null;
 		next = ScreenType.NoScreen;
 		quitPending = false;
 		doSetScreenImmediate = false;
 		justTransitioned = false;
 		gl = Gdx.gl20;
+
+		// debug
+		// cam.setToOrtho(true, ScaleUtils.PlayWidth, ScaleUtils.PlayHeight);
+		// batch.setProjectionMatrix(cam.projection);
+		// batch.setTransformMatrix(cam.view);
 	}
 
 	public void dispose () {
@@ -36,6 +45,7 @@ public final class ScreenManager {
 		}
 
 		transMgr.dispose();
+		// batch.dispose();
 	}
 
 	public boolean begin () {
@@ -184,6 +194,19 @@ public final class ScreenManager {
 				current.render(null);
 			}
 		}
+
+		// debug
+		// ScreenUtils.copyScreen(current, transMgr.fbTo);
+		// batch.begin();
+		// Gdx.gl20.glViewport((int)ScaleUtils.CropX, (int)ScaleUtils.CropY, (int)ScaleUtils.PlayWidth, (int)ScaleUtils.PlayHeight);
+		// float w = transMgr.fbFrom.getColorBufferTexture().getWidth() * 0.25f;
+		// float h = transMgr.fbFrom.getColorBufferTexture().getHeight() * 0.25f;
+		// // batch.draw(transMgr.fbFrom.getColorBufferTexture(), 0, 0, w, h);
+		//
+		// w = transMgr.fbTo.getColorBufferTexture().getWidth() * 0.25f;
+		// h = transMgr.fbTo.getColorBufferTexture().getHeight() * 0.25f;
+		// batch.draw(transMgr.fbTo.getColorBufferTexture(), 0, 0, w, h);
+		// batch.end();
 	}
 
 	public void debugRender () {

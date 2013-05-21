@@ -87,12 +87,13 @@ public class SinglePlayerLogic extends CommonLogic {
 		float minZoom = 1;
 		float maxZoom = GameWorldRenderer.MaxCameraZoom;
 		float zoomRange = maxZoom - minZoom;
-		float zoomFromSpeed = AMath.fixup(maxZoom * meanVal.getMean());
 
-		float cameraZoom = (maxZoom - 0.1f) - (zoomRange) * zoomFromSpeed + (zoomRange + 0.1f) * timeModFactor * zoomFromSpeed;
-		cameraZoom = AMath.clamp(cameraZoom, 1, maxZoom);
+		float zoomFromSpeed = AMath.fixup(meanVal.getMean());
+		float window = 0.5f * zoomRange;
+		float cameraZoom = (maxZoom - window) - (zoomRange) * zoomFromSpeed + (zoomRange + window) * timeModFactor * zoomFromSpeed;
+		cameraZoom = AMath.clamp(cameraZoom, minZoom, maxZoom);
 
-		// cameraZoom = 1.2f;
+		// cameraZoom = 1.5f;
 
 		gameWorldRenderer.setCameraZoom(cameraZoom);
 

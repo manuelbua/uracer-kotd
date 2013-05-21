@@ -221,6 +221,7 @@ public final class AggressiveCold implements PostProcessingAnimator {
 
 	private long startMs = 0;
 	Vector2 playerScreenPos = new Vector2();
+	private float prevSpeed = 0;
 	private WindowedMean meanSpeed = new WindowedMean(2);
 	private WindowedMean meanStrength = new WindowedMean(5);
 
@@ -268,6 +269,10 @@ public final class AggressiveCold implements PostProcessingAnimator {
 
 			currDriftStrength = AMath.fixup(AMath.clamp(meanStrength.getMean(), 0, 1));
 			currSpeedFactor = AMath.fixup(AMath.clamp(meanSpeed.getMean(), 0, 1));
+
+			currSpeedFactor = AMath.fixup(AMath.lerp(prevSpeed, player.carState.currSpeedFactor, 0.02f));
+			prevSpeed = currSpeedFactor;
+
 		} else {
 			playerScreenPos.set(0.5f, 0.5f);
 		}
@@ -284,51 +289,29 @@ public final class AggressiveCold implements PostProcessingAnimator {
 		}
 
 		if (zoom != null && hasPlayer) {
-			// auto-disable zoom
-			// float blurStrength = -0.1f * timeModFactor * currSpeedFactor;
-			// float blurStrength = (-0.035f - 0.09f * currSpeedFactor) * timeModFactor - 0.033f * currSpeedFactor - timeModFactor
-			// * 0.005f;
-
-			float v = (-0.05f * currSpeedFactor);
-			float blurStrength = v * (1 - timeModFactor) + v * 0.3f * timeModFactor;
-
+			float v = (-0.07f * currSpeedFactor);
+			float blurStrength = v + v * 0.5f * timeModFactor;
 			autoEnableZoomBlur(blurStrength);
-
 			if (zoom.isEnabled()) {
 				zoom.setOrigin(playerScreenPos);
 				zoom.setBlurStrength(blurStrength);
 			}
-
 		}
 
 		if (bloom != null) {
 
 			float sat = 0.8f;
 			if (nightMode) sat += 0.2f;
-			sat *= warmUpCompletion;
+			// sat *= warmUpCompletion;
 
 			float bsat = 1.3f;
 			if (nightMode) bsat += 0.2f;
-			bsat *= warmUpCompletion;
+			// bsat *= warmUpCompletion;
 
-			// bloom.setThreshold(0.27f);
-			bloom.setBaseSaturation(AMath.lerp(sat, 0.1f, timeModFactor));
-			bloom.setBloomSaturation(bsat);
-
-			// bloom.setBloomSaturation(1.5f - timeModFactor * 0.15f);
-			// if (!nightMode) {
-			// bloom.setThreshold(bloomThreshold - (bloomThreshold / 2) * timeModFactor);
-
-			// bloom.setBloomIntesity(1f + timeModFactor * 0.5f);
-			// }
-
-			// with RttRatio = 0.5f
-			// bloom.setBaseIntesity(0.9f);
-			// bloom.setBaseSaturation(1f);
-			// bloom.setBloomIntesity(1f);
-			// bloom.setBloomSaturation(1f);
-			// bloom.setThreshold(0.4f);
-			// bloom.setBlurPasses(2);
+			// bloom.setBaseSaturation(sat);
+			// bloom.setBaseSaturation(bsat);
+			bloom.setBaseSaturation(AMath.lerp(sat, sat * 0.25f, timeModFactor));
+			bloom.setBloomSaturation(AMath.lerp(bsat, bsat * 1.5f, timeModFactor));
 		}
 
 		if (vignette != null) {
@@ -338,12 +321,7 @@ public final class AggressiveCold implements PostProcessingAnimator {
 				vignette.setSaturationMul(1 + timeModFactor * 0.2f);
 			}
 
-			// if (player != null) {
-			// vignette.setCenter( playerScreenPos.x, playerScreenPos.y );
-			// vignette.setCenter( Gdx.graphics.getWidth() / 2, Gdx.graphics.getHeight() / 2 );
-			// }
-
-			float lutIntensity = 0.15f + timeModFactor * 0.85f + wrongWayAmount.value * 0.85f;
+			float lutIntensity = 0.3f + timeModFactor * 1f + wrongWayAmount.value * 1f;
 			lutIntensity = MathUtils.clamp(lutIntensity, 0, 1);
 
 			vignette.setLutIntensity(lutIntensity);

@@ -3,6 +3,7 @@ package com.bitfire.uracer.game.logic.types;
 
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Input.Keys;
+import com.badlogic.gdx.graphics.Color;
 import com.bitfire.uracer.Input;
 import com.bitfire.uracer.Input.MouseButton;
 import com.bitfire.uracer.URacer;
@@ -107,6 +108,11 @@ public abstract class CommonLogic implements GameLogic, CarEvent.Listener, Playe
 		gameRenderer.setEnableNormalDepthMap(postProcessing.requiresNormalDepthMap());
 		gameRenderer.setPostProcessor(postProcessing.getPostProcessor());
 
+		if (postProcessing.hasEffect(Effects.Ssao.name)) {
+			Ssao ssao = (Ssao)postProcessing.getEffect(Effects.Ssao.name);
+			ssao.setNormalDepthMap(gameWorldRenderer.getNormalDepthMap().getColorBufferTexture());
+		}
+
 		// main game tasks
 		gameTasksManager = new GameTasksManager(gameWorld);
 		gameTasksManager.createTasks();
@@ -207,9 +213,6 @@ public abstract class CommonLogic implements GameLogic, CarEvent.Listener, Playe
 	/** Restarts the current game */
 	protected void restartGame () {
 		restartLogic();
-		gameWorldRenderer.setInitialCameraPositionOrient(playerCar);
-		// updateCamera(0);
-		// gameWorldRenderer.updateCamera();
 
 		// 3..2..1.. playerLapComplete()!
 		// onLapComplete();
@@ -221,9 +224,6 @@ public abstract class CommonLogic implements GameLogic, CarEvent.Listener, Playe
 	/** Restart and completely resets the game, removing any playing replay so far */
 	protected void resetGame () {
 		resetLogic();
-		gameWorldRenderer.setInitialCameraPositionOrient(playerCar);
-		// updateCamera(0);
-		// gameWorldRenderer.updateCamera();
 
 		// 3..2..1.. playerLapComplete()!
 		// onLapComplete();
@@ -256,7 +256,7 @@ public abstract class CommonLogic implements GameLogic, CarEvent.Listener, Playe
 
 		playerCar = CarFactory.createPlayer(gameWorld, presetType);
 
-		configurePlayer(gameWorld, input /* gameTasksManager.input */, playerCar);
+		configurePlayer(gameWorld, input, playerCar);
 		Gdx.app.log("GameLogic", "Player configured");
 
 		playerTasks.createTasks(playerCar, lapManager.getLapInfo(), gameRenderer);
@@ -265,12 +265,13 @@ public abstract class CommonLogic implements GameLogic, CarEvent.Listener, Playe
 		registerPlayerEvents(playerCar);
 		Gdx.app.log("GameLogic", "Registered player-related events");
 
-		updateCamera(0);
-		gameWorldRenderer.updateCamera();
-
 		postProcessing.setPlayer(playerCar);
 		gameWorldRenderer.setPlayerCar(playerCar);
 		gameWorldRenderer.setRenderPlayerHeadlights(gameWorld.isNightMode());
+
+		gameWorldRenderer.setInitialCameraPositionOrient(playerCar);
+		updateCamera(0);
+		gameWorldRenderer.updateCamera();
 
 		gameWorldRenderer.showDebugGameTrack(Config.Debug.RenderTrackSectors);
 		gameWorldRenderer.setGameTrackDebugCar(playerCar);
@@ -484,61 +485,38 @@ public abstract class CommonLogic implements GameLogic, CarEvent.Listener, Playe
 		}
 	}
 
+	private Color ambient = new Color();
+	private Color treesAmbient = new Color();
+
 	@Override
 	public void beforeRender () {
 		URacer.timeMultiplier = timeMod.getTime();
 		float zoom = updateCamera(URacer.Game.getTimeModFactor());
 
-		// CameraMotion mot = (CameraMotion)postProcessing.getEffect(Effects.MotionBlur.name);
+		//@off
+		ambient.set(
+			0.1f,
+			0.05f,
+			0.15f,
+			0.5f + 0.1f * URacer.Game.getTimeModFactor()// + 0.3f * lapMonitor.getWarmUpCompletion()
+		);
 
-		if (gameWorld.isNightMode() && postProcessing.hasEffect(Effects.Crt.name)) {
-			gameWorldRenderer.setAmbientColor(0.1f, 0.05f, 0.1f, 0.6f + 0.2f * URacer.Game.getTimeModFactor());
-			gameWorldRenderer.setTreesAmbientColor(0.1f, 0.05f, 0.1f, 0.5f + 0.5f * URacer.Game.getTimeModFactor());
-		} else {
-			gameWorldRenderer.setAmbientColor(0.1f, 0.05f, 0.15f, 0.4f + 0.2f * URacer.Game.getTimeModFactor());
-			gameWorldRenderer.setTreesAmbientColor(0.1f, 0.1f, 0.15f, 0.4f + 0.5f * URacer.Game.getTimeModFactor());
-		}
+		treesAmbient.set(
+			ambient.r,
+			ambient.g,
+			ambient.b,
+			ambient.a*1.5f 
+		);
+		//@on
 
-		if (gameWorld.isNightMode()) {
-			float c = lapMonitor.getWarmUpCompletion();
+		ambient.clamp();
+		treesAmbient.clamp();
 
-			//@off
-			gameWorldRenderer.setAmbientColor(
-				0.1f,
-				0.05f,
-				0.15f,
-				0.1f + 0.3f * c + 0.2f * URacer.Game.getTimeModFactor()
-			);
+		gameWorldRenderer.setAmbientColor(ambient);
+		gameWorldRenderer.setTreesAmbientColor(treesAmbient);
 
-			gameWorldRenderer.setTreesAmbientColor(
-				0.1f,
-				0.1f,
-				0.15f,
-				0.25f + 0.3f * c + 0.2f * URacer.Game.getTimeModFactor()
-			);
-			//@on
-		}
 		// camera/ray handler update
 		gameWorldRenderer.updateCamera();
-
-		// post-processing step / SSAO
-		if (postProcessing.hasEffect(Effects.Ssao.name)) {
-			Ssao ssao = (Ssao)postProcessing.getEffect(Effects.Ssao.name);
-			ssao.setNormalDepthMap(gameWorldRenderer.getNormalDepthMap().getColorBufferTexture());
-		}
-
-		// post-processing step / MOTION BLUR
-		// if (mot != null) {
-		// Camera cam = GameEvents.gameRenderer.camPersp;
-		// float blur_scale = MathUtils.clamp(((float)Gdx.graphics.getFramesPerSecond() / 60.0f), 0, 1);
-		// mot.setEnabled(true);
-		// mot.setNearFar(cam.near, cam.far);
-		// mot.setMatrices(gameWorldRenderer.getInvView(), gameWorldRenderer.getPrevViewProj(), gameWorldRenderer.getInvProj());
-		// mot.setNormalDepthMap(gameWorldRenderer.getNormalDepthMap().getColorBufferTexture());
-		// mot.setBlurScale(blur_scale);
-		// mot.setBlurPasses(4);
-		// mot.setDepthScale(40);
-		// }
 
 		// Gdx.app.log("CommonLogic", "wuc=" + lapMonitor.getWarmUpCompletion());
 		postProcessing.onBeforeRender(zoom, lapMonitor.getWarmUpCompletion());

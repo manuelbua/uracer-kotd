@@ -104,7 +104,7 @@ public final class Ssao extends PostProcessorEffect {
 		bytes.flip();
 		randomField.draw(pixels, 0, 0);
 		pixels.dispose();
-		enableDebug();
+		// enableDebug();
 	}
 
 	@Override
@@ -238,6 +238,8 @@ public final class Ssao extends PostProcessorEffect {
 			blur.render(occlusionMap);
 		}
 		occlusionMap.end();
+
+		restoreViewport(dest);
 
 		if (dest != null) dest.begin();
 		shMix.begin();

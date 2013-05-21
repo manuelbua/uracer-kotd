@@ -41,7 +41,6 @@ public final class PostProcessing {
 	private boolean hasPostProcessor = false;
 	private PostProcessor postProcessor = null;
 	private boolean needNormalDepthMap = false;
-	private boolean isNightMode;
 
 	// public access to stored effects
 	public LongMap<PostProcessorEffect> effects = new LongMap<PostProcessorEffect>();
@@ -51,7 +50,6 @@ public final class PostProcessing {
 	private boolean hasAnimator = false;
 
 	public PostProcessing (GameWorld gameWorld) {
-		this.isNightMode = gameWorld.isNightMode();
 
 		// post-processing
 		if (UserPreferences.bool(Preference.PostProcessing)) {
@@ -64,7 +62,7 @@ public final class PostProcessing {
 			postProcessor.setBufferTextureWrap(TextureWrap.ClampToEdge, TextureWrap.ClampToEdge);
 			hasPostProcessor = true;
 			createEffects();
-			createAnimator();
+			setAnimator(new AggressiveCold(this, gameWorld.isNightMode()));
 		}
 	}
 
@@ -91,7 +89,7 @@ public final class PostProcessing {
 
 		if (UserPreferences.bool(Preference.ZoomRadialBlur)) {
 			RadialBlur.Quality rbq = RadialBlur.Quality.valueOf(UserPreferences.string(Preference.ZoomRadialBlurQuality));
-			Zoomer z = (UserPreferences.bool(Preference.ZoomRadialBlur) ? new Zoomer(refW, refH, rbq) : new Zoomer(refW, refH));
+			Zoomer z = new Zoomer(refW, refH, rbq);
 			z.setBlurStrength(0);
 			z.setZoom(1);
 			addEffect(Effects.Zoomer.name, z);
@@ -120,9 +118,9 @@ public final class PostProcessing {
 		Gdx.app.log("PostProcessing", "Post-processing enabled and configured");
 	}
 
-	private void createAnimator () {
-		hasAnimator = true;
-		animator = new AggressiveCold(this, isNightMode);
+	private void setAnimator (PostProcessingAnimator animator) {
+		hasAnimator = (animator != null);
+		this.animator = animator;
 		animator.reset();
 	}
 

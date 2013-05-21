@@ -26,6 +26,7 @@ import com.bitfire.uracer.game.GameLevels.GameLevelDescriptor;
 import com.bitfire.uracer.game.screens.GameScreensFactory.ScreenType;
 import com.bitfire.uracer.resources.Art;
 import com.bitfire.uracer.screen.Screen;
+import com.bitfire.uracer.utils.UICamera;
 import com.bitfire.uracer.utils.UIUtils;
 
 public final class MainScreen extends Screen {
@@ -49,7 +50,8 @@ public final class MainScreen extends Screen {
 		ui = UIUtils.newScaledStage();
 		root = new Table();
 		root.debug();
-		root.setSize(ui.getWidth(), ui.getHeight());
+		root.setBounds(0, 0, ui.getWidth(), ui.getHeight());
+		root.invalidate();
 		ui.addActor(root);
 
 		// background
@@ -93,16 +95,16 @@ public final class MainScreen extends Screen {
 				public void changed (ChangeEvent event, Actor actor) {
 					List source = (List)actor;
 					int idx = source.getSelectedIndex();
-					GameLevelDescriptor desc = GameLevels.getLevels()[idx];
-					ScreensShared.selectedLevelId = desc.getId();
-					UserPreferences.string(Preference.LastPlayedTrack, ScreensShared.selectedLevelId);
-					UserPreferences.save();
+					if (idx < GameLevels.getLevels().length) {
+						GameLevelDescriptor desc = GameLevels.getLevels()[idx];
+						ScreensShared.selectedLevelId = desc.getId();
+						UserPreferences.string(Preference.LastPlayedTrack, ScreensShared.selectedLevelId);
+						UserPreferences.save();
+					}
 				}
 			});
+
 			listPane.setWidget(trackList);
-			listPane.setOverscroll(false, false);
-			listPane.setScrollingDisabled(false, true);
-			listPane.setFlickScroll(false);
 
 			// restore previous user selection, if any
 			if (ScreensShared.selectedLevelId.length() > 0) {
@@ -138,15 +140,13 @@ public final class MainScreen extends Screen {
 				}
 			});
 
-			ltable.add(listPane).colspan(3).width(w).height(150).left().padBottom(10).row();
+			ltable.add(listPane).colspan(3).width(w).height(120).left().padBottom(10).row();
 			ltable.add(start).width(70).left();
 			ltable.add(options).width(70);
 			ltable.add(quit).width(70).right();
 		}
 
 		/** right table */
-		{
-		}
 	}
 
 	@Override
@@ -197,6 +197,9 @@ public final class MainScreen extends Screen {
 		boolean hasDest = (dest != null);
 		if (hasDest) {
 			dest.begin();
+			((UICamera)ui.getCamera()).setProjectForFramebuffer(true);
+		} else {
+			((UICamera)ui.getCamera()).setProjectForFramebuffer(false);
 		}
 
 		Gdx.gl.glClearColor(0, 0, 0, 0);

@@ -13,7 +13,7 @@ import com.bitfire.uracer.resources.BitmapFontFactory.FontFace;
 import com.bitfire.uracer.utils.CarUtils;
 
 public class HudPlayerStatic extends HudElement {
-	private final BasicInfo basicInfo;
+	private BasicInfo basicInfo;
 	private HudLabel labelSpeed, labelDistance;
 	private PlayerCar player;
 
@@ -28,7 +28,6 @@ public class HudPlayerStatic extends HudElement {
 		labelDistance = new HudLabel(FontFace.Roboto, "", true);
 		labelDistance.setScale(0.85f);
 		labelDistance.setPosition(Config.Graphics.ReferenceScreenWidth - 190, Config.Graphics.ReferenceScreenHeight - 50);
-
 	}
 
 	@Override

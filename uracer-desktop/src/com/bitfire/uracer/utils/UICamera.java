@@ -10,13 +10,23 @@ import com.badlogic.gdx.math.Vector3;
  * @author bmanuel */
 public class UICamera extends OrthographicCamera {
 
+	private boolean prjForRtt = false;
+
 	@Override
 	public void unproject (Vector3 vec) {
-		unproject(vec, ScaleUtils.CropX, ScaleUtils.CropY, ScaleUtils.PlayWidth, ScaleUtils.PlayHeight);
+		super.unproject(vec, ScaleUtils.CropX, ScaleUtils.CropY, ScaleUtils.PlayWidth, ScaleUtils.PlayHeight);
 	}
 
 	@Override
 	public void project (Vector3 vec) {
-		project(vec, ScaleUtils.CropX, ScaleUtils.CropY, ScaleUtils.PlayWidth, ScaleUtils.PlayHeight);
+		if (prjForRtt) {
+			super.project(vec, 0, 0, ScaleUtils.PlayWidth, ScaleUtils.PlayHeight);
+		} else {
+			super.project(vec, ScaleUtils.CropX, ScaleUtils.CropY, ScaleUtils.PlayWidth, ScaleUtils.PlayHeight);
+		}
+	}
+
+	public void setProjectForFramebuffer (boolean enabled) {
+		prjForRtt = enabled;
 	}
 }

@@ -42,7 +42,7 @@ public final class PlayerGameTasks {
 	}
 
 	public void dispose () {
-
+		destroyTasks();
 	}
 
 	public void createTasks (PlayerCar player, LapInfo lapInfo, GameRenderer renderer) {
@@ -50,25 +50,22 @@ public final class PlayerGameTasks {
 		playerDriftSoundFx = new PlayerDriftSoundEffect(player);
 		playerImpactSoundFx = new PlayerImpactSoundEffect(player);
 		playerEngineSoundFx = new PlayerEngineSoundEffect(player);
+		manager.sound.add(playerDriftSoundFx);
+		manager.sound.add(playerImpactSoundFx);
+		manager.sound.add(playerEngineSoundFx);
 
 		// track effects
 		int maxSkidMarks = URacer.Game.isDesktop() ? 150 : 100;
 		float maxLife = URacer.Game.isDesktop() ? 5 : 3;
 		playerSkidMarks = new PlayerSkidMarks(player, maxSkidMarks, maxLife);
 		playerSmokeTrails = new PlayerSmokeTrails(player);
+		manager.effects.addBeforeCars(playerSkidMarks);
+		manager.effects.addAfterCars(playerSmokeTrails);
 
 		// hud, player's information
 		hudPlayer = new HudPlayer(userProfile, player, renderer);
 		hudPlayerStatic = new HudPlayerStatic(userProfile, player);
-
-		// hud, player's lap info
 		hudLapInfo = new HudLapInfo(lapInfo);
-
-		manager.sound.add(playerDriftSoundFx);
-		manager.sound.add(playerImpactSoundFx);
-		manager.sound.add(playerEngineSoundFx);
-		manager.effects.addBeforeCars(playerSkidMarks);
-		manager.effects.addAfterCars(playerSmokeTrails);
 
 		manager.hud.addBeforePostProcessing(hudPlayer);
 		manager.hud.addAfterPostProcessing(hudLapInfo);

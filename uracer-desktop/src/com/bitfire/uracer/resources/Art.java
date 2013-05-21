@@ -264,7 +264,9 @@ public final class Art {
 	// flags
 	//
 
-	public static TextureRegion getFlag (String countryCode) {
+	// FIXME memory leaks
+
+	public static Texture getFlag (String countryCode) {
 		String filename = countryCode + ".png";
 		FileHandle zip = Gdx.files.internal("data/flags.zip");
 		ZipInputStream zin = new ZipInputStream(zip.read());
@@ -293,10 +295,7 @@ public final class Art {
 						t.setFilter(TextureFilter.Nearest, TextureFilter.Nearest);
 					}
 
-					TextureRegion r = new TextureRegion(t);
-					r.flip(false, true);
-
-					return r;
+					return t;
 				}
 			}
 		} catch (IOException e) {
@@ -339,7 +338,7 @@ public final class Art {
 		return t;
 	}
 
-	// hides constructor
+	// hide constructor
 	private Art () {
 	}
 
