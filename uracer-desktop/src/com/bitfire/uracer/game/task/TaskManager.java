@@ -11,7 +11,7 @@ public final class TaskManager {
 		event.removeAllListeners();
 	}
 
-	public static void dispatchTick () {
-		event.trigger(TaskManagerEvent.Type.onTick);
+	public static void dispatchEvent (TaskManagerEvent.Type eventType) {
+		event.trigger(eventType);
 	}
 }

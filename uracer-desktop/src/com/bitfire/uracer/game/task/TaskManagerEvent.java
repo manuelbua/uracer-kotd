@@ -8,7 +8,7 @@ import com.bitfire.uracer.events.EventNotifier;
 public class TaskManagerEvent extends Event<TaskManager> {
 
 	public enum Type {
-		onTick
+		onTick, onPause, onResume
 	}
 
 	public enum Order {

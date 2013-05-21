@@ -40,6 +40,22 @@ public class SoundManager extends GameTask {
 	}
 
 	@Override
+	public void onPause () {
+		Array<SoundEffect> items = manager.items;
+		for (int i = 0; i < items.size; i++) {
+			items.get(i).pause();
+		}
+	}
+
+	@Override
+	public void onResume () {
+		Array<SoundEffect> items = manager.items;
+		for (int i = 0; i < items.size; i++) {
+			items.get(i).resume();
+		}
+	}
+
+	@Override
 	protected void onTick () {
 		Array<SoundEffect> items = manager.items;
 		for (int i = 0; i < items.size; i++) {

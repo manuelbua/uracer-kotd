@@ -1,18 +1,30 @@
 #!/bin/bash
 
-
 CLASS_PATH="/home/manuel/dev/libgdx/dist"
 JARS="${CLASS_PATH}/gdx.jar:${CLASS_PATH}/gdx-natives.jar:${CLASS_PATH}/gdx-backend-lwjgl.jar:${CLASS_PATH}/gdx-backend-lwjgl-natives.jar"
 
 GDX_TOOLS_PATH="/home/manuel/dev/libgdx/dist/extensions/gdx-tools/"
 TEX_PACKER="java -classpath ${JARS}:${GDX_TOOLS_PATH}/gdx-tools.jar com.badlogic.gdx.tools.imagepacker.TexturePacker2"
 
-GDX_TILED_PREP_PATH="/home/manuel/dev/uracer-libgdx/libs/gdx-tiled-preprocessor/bin"
-TILED_PACKER="java -classpath ${JARS}:${GDX_TOOLS_PATH}/gdx-tools.jar:${GDX_TILED_PREP_PATH} com.badlogic.gdx.tiledmappacker.TiledMapPacker"
+# in uracer/libs
+#GDX_TILED_PREP_PATH="/home/manuel/dev/uracer-libgdx/libs/gdx-tiled-preprocessor/bin"
+#TILED_PACKER="java -classpath ${JARS}:${GDX_TOOLS_PATH}/gdx-tools.jar:${GDX_TILED_PREP_PATH} com.badlogic.gdx.tiledmappacker.TiledMapPacker"
+
+# in libgdx/extensions
+GDX_TILED_PREP_PATH="/home/manuel/dev/libgdx/dist/extensions/gdx-tiled-preprocessor/"
+TILED_PACKER="java -classpath ${JARS}:${GDX_TOOLS_PATH}/gdx-tools.jar:${GDX_TILED_PREP_PATH}/gdx-tiled-preprocessor.jar com.badlogic.gdx.tiledmappacker.TiledMapPacker"
 
 #SKIN_PACKER="java -classpath ${JARS}:${GDX_TOOLS_PATH}:/home/manuel/dev/uracer-skin-packer/bin com.bitfire.uracer.skinpacker.Packer"
 
 DEST="/home/manuel/dev/uracer-libgdx/uracer-desktop/data"
+
+# utilities
+if [ "$1" = "clean-levels" ]; then
+	rm -rf "$DEST/levels"
+	mkdir "$DEST/levels"
+	echo "Levels cleaned"
+	exit
+fi
 
 # base
 echo -n "Cooking base..."
@@ -29,7 +41,7 @@ rm -rf "${DEST}/levels/"
 
 # packer
 mkdir -p ${DEST}
-${TILED_PACKER} levels/ ${DEST}/levels #--strip-unused
+${TILED_PACKER} levels/ ${DEST}/levels --strip-unused
 
 # no packer
 #mkdir -p ${DEST}/levels/
@@ -41,8 +53,8 @@ echo "done!"
 
 # tileset friction maps
 echo -n "Cooking friction maps..."
-cp levels/tilesets/desert/224-friction-easy.png ${DEST}/levels/tilesets/desert/
-cp levels/tilesets/desert/224-friction-hard.png ${DEST}/levels/tilesets/desert/
+cp levels/tilesets/desert/desert-friction-easy.png ${DEST}/levels/tileset/
+cp levels/tilesets/desert/desert-friction-hard.png ${DEST}/levels/tileset/
 echo "done!"
 
 # fonts

@@ -16,13 +16,13 @@ import java.util.zip.Inflater;
 
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.files.FileHandle;
+import com.badlogic.gdx.graphics.Texture.TextureFilter;
 import com.badlogic.gdx.maps.tiled.TiledMap;
-import com.badlogic.gdx.maps.tiled.TmxMapLoader;
+import com.badlogic.gdx.maps.tiled.loaders.TmxAtlasMapLoader;
 import com.badlogic.gdx.utils.Base64Coder;
 import com.badlogic.gdx.utils.XmlReader;
 import com.badlogic.gdx.utils.XmlReader.Element;
 import com.bitfire.uracer.configuration.Storage;
-import com.bitfire.uracer.game.world.URacerTmxMapLoader;
 import com.bitfire.uracer.utils.URacerRuntimeException;
 
 /** Enumerates and maintains a list of available game tracks. FIXME add support for mini-screenshots
@@ -32,8 +32,8 @@ public final class GameLevels {
 
 	private static MessageDigest digest;
 	private static final Map<String, GameLevelDescriptor> levelIdToDescriptor = new HashMap<String, GameLevelDescriptor>();
-	private static final TmxMapLoader mapLoader = new URacerTmxMapLoader();
-	private static final TmxMapLoader.Parameters mapLoaderParams = new TmxMapLoader.Parameters();
+	private static final TmxAtlasMapLoader mapLoader = new TmxAtlasMapLoader(); // new URacerTmxMapLoader();
+	private static final TmxAtlasMapLoader.Parameters mapLoaderParams = new TmxAtlasMapLoader.Parameters();
 	private static final XmlReader xml = new XmlReader();
 	private static final List<GameLevelDescriptor> levels = new ArrayList<GameLevels.GameLevelDescriptor>();
 
@@ -81,7 +81,9 @@ public final class GameLevels {
 	public static final boolean init () {
 
 		// setup map loader
-		mapLoaderParams.generateMipMaps = true;
+		mapLoaderParams.forceTextureFilters = true;
+		mapLoaderParams.textureMinFilter = TextureFilter.Linear;
+		mapLoaderParams.textureMagFilter = TextureFilter.Linear;
 		mapLoaderParams.yUp = false;
 
 		// check for the digest algorithm
@@ -239,6 +241,9 @@ public final class GameLevels {
 						unsignedByteToInt(temp[2]) << 16 |
 						unsignedByteToInt(temp[3]) << 24;
 					//@on
+
+					// clear it
+					id = id & ~0xE0000000;
 
 					out.putInt((outIdx++) << 2, id);
 				} catch (DataFormatException e) {
