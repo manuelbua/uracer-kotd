@@ -18,7 +18,7 @@ import com.bitfire.uracer.resources.Art;
 public class PlayerSmokeTrails extends TrackEffect {
 	public static final int MaxParticles = 1000;
 
-	private SmokeEffect fx[];
+	private SmokeEffect fx;
 	private static final int SmokeEffectsCount = 1;
 	private PlayerCar player;
 	private boolean isDrifting, wasDrifting;
@@ -28,12 +28,9 @@ public class PlayerSmokeTrails extends TrackEffect {
 		super(TrackEffectType.CarSmokeTrails);
 		this.player = player;
 
-		fx = new SmokeEffect[SmokeEffectsCount];
-
-		for (int i = 0; i < SmokeEffectsCount; i++) {
-			fx[i] = new SmokeEffect();
-			fx[i].setMaxParticleCount(MaxParticles);
-		}
+		fx = new SmokeEffect();
+		fx.setMaxParticleCount(MaxParticles);
+		// fx.start();
 
 		isDrifting = false;
 		wasDrifting = false;
@@ -54,9 +51,9 @@ public class PlayerSmokeTrails extends TrackEffect {
 	public void tick () {
 		isDrifting = player.driftState.isDrifting && player.driftState.driftStrength > 0f;
 
-		// for (int i = 0; i < SmokeEffectsCount; i++) {
-		// fx[i].start();
-		// }
+		if (fx.effect.isComplete()) {
+			fx.start();
+		}
 
 		// if (player.driftState.driftStrength > 0) {
 		// for (int i = 0; i < SmokeEffectsCount; i++) {
@@ -65,19 +62,19 @@ public class PlayerSmokeTrails extends TrackEffect {
 		// }
 		// }
 
-		if (isDrifting && !wasDrifting) {
-			// started drifting
-			for (int i = 0; i < SmokeEffectsCount; i++) {
-				fx[i].start();
-				// Gdx.app.log("", "start smoke trails");
-			}
-		} else if ((!isDrifting && wasDrifting)) {
-			// ended drifting
-			for (int i = 0; i < SmokeEffectsCount; i++) {
-				fx[i].stop();
-				// Gdx.app.log("", "stop smoke trails");
-			}
-		}
+		// if (isDrifting && !wasDrifting) {
+		// // started drifting
+		// for (int i = 0; i < SmokeEffectsCount; i++) {
+		// fx[i].start();
+		// // Gdx.app.log("", "start smoke trails");
+		// }
+		// } else if ((!isDrifting && wasDrifting)) {
+		// // ended drifting
+		// for (int i = 0; i < SmokeEffectsCount; i++) {
+		// fx[i].stop();
+		// // Gdx.app.log("", "stop smoke trails");
+		// }
+		// }
 
 		wasDrifting = isDrifting;
 		setPosition(player.state().position.x, player.state().position.y);
@@ -88,24 +85,24 @@ public class PlayerSmokeTrails extends TrackEffect {
 		float dfactor = player.driftState.driftStrength;
 		float sfactor = player.carState.currSpeedFactor;
 
-		fx[0].setLifeMul(1f + 10f * dfactor);
-		fx[0].setScaleMul(1f + 3f * dfactor + 7f * sfactor);
+		fx.setLifeMul(2f);
+		fx.setScaleMul(1f + 20f * dfactor * sfactor);
 
-		float t = 0.8f * dfactor;
-		fx[0].baseEmitter.getTransparency().setHighMin(t);
-		fx[0].baseEmitter.getTransparency().setHighMax(t);
+		float t = 1f * dfactor;
+		fx.baseEmitter.getTransparency().setHighMin(t);
+		fx.baseEmitter.getTransparency().setHighMax(t);
 
-		float[] colors = fx[0].baseEmitter.getTint().getColors();
+		float[] colors = fx.baseEmitter.getTint().getColors();
 		float v = 0.3f;
 		colors[0] = v * dfactor;
 		colors[1] = v * dfactor;
 		colors[2] = v * dfactor;
 
-		float r = 0.5f;
-		float g = 0.7f;
-		float b = 1;
+		float r = 0.7f;
+		float g = 0.8f;
+		float b = 1f;
 		if (MathUtils.randomBoolean()) {
-			r = g = b = 0.7f;
+			r = 0.7f;
 		}
 
 		float colorscale = 0.15f + 0.3f * dfactor;
@@ -116,16 +113,14 @@ public class PlayerSmokeTrails extends TrackEffect {
 		colors[1] = g;
 		colors[2] = b;
 
-		fx[0].render(batch, posX, posY);
+		fx.render(batch, posX, posY);
 	}
 
 	@Override
 	public void reset () {
 		isDrifting = false;
 		wasDrifting = false;
-		for (int i = 0; i < SmokeEffectsCount; i++) {
-			fx[i].reset();
-		}
+		fx.reset();
 	}
 
 	@Override
@@ -135,16 +130,11 @@ public class PlayerSmokeTrails extends TrackEffect {
 
 	@Override
 	public int getParticleCount () {
-		int count = 0;
-		for (int i = 0; i < SmokeEffectsCount; i++) {
-			count += fx[i].getParticleCount();
-		}
-
-		return count;
+		return fx.getParticleCount();
 	}
 
 	private class SmokeEffect {
-		private ParticleEffect effect;
+		protected ParticleEffect effect;
 		private ParticleEmitter baseEmitter;
 
 		private final float MaxParticleLifeMinMs;
@@ -158,11 +148,12 @@ public class PlayerSmokeTrails extends TrackEffect {
 
 			baseEmitter = effect.getEmitters().get(0);
 
-			// baseEmitter.setMaxParticleCount(MaxParticles);
 			MaxParticleLifeMinMs = baseEmitter.getLife().getHighMin();
 			MaxParticleLifeMaxMs = baseEmitter.getLife().getHighMax();
 			OriginalParticleScaling = baseEmitter.getScale().getHighMax();
 			MaxParticlesPerEmitterPerSec = baseEmitter.getEmission().getHighMax();
+
+			effect.start();
 		}
 
 		public void setLifeMul (float value) {
@@ -184,6 +175,7 @@ public class PlayerSmokeTrails extends TrackEffect {
 
 		public void start () {
 			for (int i = 0; i < effect.getEmitters().size; i++) {
+				effect.getEmitters().get(i).setContinuous(true);
 				effect.getEmitters().get(i).start();
 			}
 		}

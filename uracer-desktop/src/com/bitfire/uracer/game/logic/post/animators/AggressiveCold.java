@@ -289,8 +289,10 @@ public final class AggressiveCold implements PostProcessingAnimator {
 		}
 
 		if (zoom != null && hasPlayer) {
-			float v = (-0.05f * currSpeedFactor);
-			float blurStrength = v + (-0.05f * timeModFactor * currSpeedFactor);
+
+			float sfactor = currSpeedFactor;
+			float v = (-0.07f * sfactor);
+			float blurStrength = v + (-0.05f * timeModFactor * sfactor);
 			autoEnableZoomBlur(blurStrength);
 			if (zoom.isEnabled()) {
 				zoom.setOrigin(playerScreenPos);
@@ -308,18 +310,16 @@ public final class AggressiveCold implements PostProcessingAnimator {
 			if (nightMode) bsat += 0.2f;
 			// bsat *= warmUpCompletion;
 
-			// bloom.setBaseSaturation(sat);
-			// bloom.setBaseSaturation(bsat);
-			bloom.setBaseSaturation(AMath.lerp(sat, sat * 0.25f, timeModFactor));
-			bloom.setBloomSaturation(AMath.lerp(bsat, bsat * 1.5f, timeModFactor));
+			// bloom.setBloomIntesity(1f);
+			// bloom.setBloomSaturation(nightMode ? 0.8f : 2f);
+			// bloom.setBaseIntesity(nightMode ? 0.7f : 1f);
+			// bloom.setBaseSaturation(1f);
 
-			// bloom.setBlurPasses(2);
-			// bloom.setBlurType(BlurType.Gaussian5x5b);
-			// bloom.setThreshold(nightMode ? 0.2f : 0.45f);
-			// bloom.setBloomIntesity(nightMode ? 1f : 1f);
-			// bloom.setBloomSaturation(nightMode ? 2f : 2f);
-			// bloom.setBaseIntesity(nightMode ? 0.8f : 1f);
-			// bloom.setBaseSaturation(0.4f - 0.4f * timeModFactor);
+			// bloom.setBaseSaturation(AMath.lerp(sat, sat * 0.25f, timeModFactor));
+			bloom.setBloomSaturation(AMath.lerp(bsat, bsat * 0.9f, timeModFactor));
+			bloom.setBloomIntesity(1.4f);
+			float t = 0.7f;
+			bloom.setBaseSaturation(t - t * timeModFactor);
 		}
 
 		if (vignette != null) {
@@ -371,7 +371,7 @@ public final class AggressiveCold implements PostProcessingAnimator {
 			crt.setZoom(1 - (dist / 2));
 
 			crt.setColorOffset(0.001f);
-			crt.setTint(0.92f, 0.8f, 0.8f);
+			crt.setTint(1f, 0.95f, 0.95f);
 		}
 	}
 }

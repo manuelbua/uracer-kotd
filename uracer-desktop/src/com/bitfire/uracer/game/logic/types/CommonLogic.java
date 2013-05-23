@@ -498,16 +498,21 @@ public abstract class CommonLogic implements GameLogic, CarEvent.Listener, Playe
 			0.1f,
 			0.05f,
 			0.15f,
-			0.5f + 0.1f * URacer.Game.getTimeModFactor()// + 0.3f * lapMonitor.getWarmUpCompletion()
+			0.4f + 0.2f * URacer.Game.getTimeModFactor()// + 0.3f * lapMonitor.getWarmUpCompletion()
 		);
 
 		treesAmbient.set(
-			ambient.r,
-			ambient.g,
-			ambient.b,
-			ambient.a*1.5f 
+			0.1f,
+			0.1f,
+			0.15f,
+			0.4f + 0.5f * URacer.Game.getTimeModFactor() 
 		);
 		//@on
+
+		if (gameWorld.isNightMode() && postProcessing.hasEffect(Effects.Crt.name)) {
+			gameWorldRenderer.setAmbientColor(0.1f, 0.05f, 0.1f, 0.6f + 0.2f * URacer.Game.getTimeModFactor());
+			gameWorldRenderer.setTreesAmbientColor(0.1f, 0.05f, 0.1f, 0.5f + 0.5f * URacer.Game.getTimeModFactor());
+		}
 
 		ambient.clamp();
 		treesAmbient.clamp();
