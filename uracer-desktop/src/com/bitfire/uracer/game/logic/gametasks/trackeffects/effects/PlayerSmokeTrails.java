@@ -88,7 +88,7 @@ public class PlayerSmokeTrails extends TrackEffect {
 		fx.setLifeMul(2f);
 		fx.setScaleMul(1f + 20f * dfactor * sfactor);
 
-		float t = 1f * dfactor;
+		float t = 0.5f * dfactor;
 		fx.baseEmitter.getTransparency().setHighMin(t);
 		fx.baseEmitter.getTransparency().setHighMax(t);
 
