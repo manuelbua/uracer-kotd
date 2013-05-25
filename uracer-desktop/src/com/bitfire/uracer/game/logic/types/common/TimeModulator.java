@@ -5,7 +5,6 @@ import aurelienribon.tweenengine.Timeline;
 import aurelienribon.tweenengine.Tween;
 import aurelienribon.tweenengine.TweenEquation;
 import aurelienribon.tweenengine.equations.Quad;
-import aurelienribon.tweenengine.equations.Sine;
 
 import com.bitfire.uracer.game.tween.SysTweener;
 import com.bitfire.uracer.utils.AMath;
@@ -39,7 +38,7 @@ public final class TimeModulator {
 	}
 
 	public void toNormalTime () {
-		modulateTo(Sine.INOUT, MaxTime, 1000);
+		modulateTo(Quad.OUT, MaxTime, 1000);
 	}
 
 	private void modulateTo (TweenEquation eq, float to, float durationMs) {

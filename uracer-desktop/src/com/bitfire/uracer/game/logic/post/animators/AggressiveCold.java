@@ -291,7 +291,10 @@ public final class AggressiveCold implements PostProcessingAnimator {
 		if (zoom != null && hasPlayer) {
 
 			float sfactor = currSpeedFactor;
-			float v = (-0.07f * sfactor);
+			float z = (zoomCamera - (GameWorldRenderer.MinCameraZoom + GameWorldRenderer.ZoomWindow));
+			float v = (-0.1f * sfactor) - 0.03f * z;
+			// Gdx.app.log("", "zoom=" + z);
+
 			float blurStrength = v + (-0.05f * timeModFactor * sfactor);
 			autoEnableZoomBlur(blurStrength);
 			if (zoom.isEnabled()) {
@@ -316,7 +319,7 @@ public final class AggressiveCold implements PostProcessingAnimator {
 			// bloom.setBaseSaturation(1f);
 
 			// bloom.setBaseSaturation(AMath.lerp(sat, sat * 0.25f, timeModFactor));
-			bloom.setBloomSaturation(AMath.lerp(bsat, bsat * 0.9f, timeModFactor));
+			bloom.setBloomSaturation(AMath.lerp(bsat, bsat * 1.1f, timeModFactor));
 			bloom.setBloomIntesity(1.4f);
 			float t = 0.7f;
 			bloom.setBaseSaturation(t - t * timeModFactor);

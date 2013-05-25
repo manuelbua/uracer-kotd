@@ -68,38 +68,40 @@ public class SinglePlayerLogic extends CommonLogic {
 	// event listeners / callbacks
 	//
 
-	private float ZoomRange = GameWorldRenderer.MaxCameraZoom - GameWorldRenderer.MinCameraZoom;
-	private float ZoomWindow = 0.5f * ZoomRange;
-	private float prevZoom = GameWorldRenderer.MinCameraZoom + ZoomWindow;
-	private float previousSpeed = 0;
+	private float prevZoom = GameWorldRenderer.MinCameraZoom + GameWorldRenderer.ZoomWindow;
+	private float previousSpeed = 0, previousDs = 0;
 
 	// the camera needs to be positioned
 	@Override
 	protected float updateCamera (float timeModFactor) {
-		float speedFactor = 0;
+		float speedFactor = 0, driftStrength = 0;
 
 		if (hasPlayer()) {
-			speedFactor = AMath.fixup(AMath.lerp(previousSpeed, playerCar.carState.currSpeedFactor * 1.25f, 0.02f));
+			speedFactor = AMath.fixup(AMath.lerp(previousSpeed, playerCar.carState.currSpeedFactor, 0.02f));
 			previousSpeed = speedFactor;
+
+			driftStrength = AMath.fixup(AMath.lerp(previousDs, playerCar.driftState.driftStrength, 0.02f));
+			previousDs = driftStrength;
 		}
 
 		float minZoom = GameWorldRenderer.MinCameraZoom;
 		float maxZoom = GameWorldRenderer.MaxCameraZoom;
 
-		// float cameraZoom = (maxZoom - window) - (zoomRange) * zoomFromSpeed + (zoomRange + window) * timeModFactor *
-		// zoomFromSpeed;
-		float cameraZoom = (minZoom + ZoomWindow);
-		cameraZoom -= (maxZoom - cameraZoom) * speedFactor; // zoom out if speedy
-		cameraZoom += (maxZoom - cameraZoom) * timeModFactor; // zoom in if slowing time down
+		float cameraZoom = (minZoom + GameWorldRenderer.ZoomWindow);
+		cameraZoom += (maxZoom - cameraZoom) * timeModFactor;
+		cameraZoom += 0.25f * GameWorldRenderer.ZoomWindow * driftStrength;
 
-		// cameraZoom = 1.5f;
+		// cameraZoom = minZoom;
 
 		cameraZoom = AMath.lerp(prevZoom, cameraZoom, 0.1f);
 		cameraZoom = AMath.clampf(cameraZoom, minZoom, maxZoom);
+
+		cameraZoom = AMath.fixupTo(cameraZoom, minZoom + GameWorldRenderer.ZoomWindow);
+		// Gdx.app.log("", "zoom=" + cameraZoom);
+
 		gameWorldRenderer.setCameraZoom(cameraZoom);
 		prevZoom = cameraZoom;
 
-		// Gdx.app.log("", "zoom=" + cameraZoom);
 		// update player's headlights and move the world camera to follows it, if there is a player
 		if (hasPlayer()) {
 
