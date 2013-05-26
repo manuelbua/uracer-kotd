@@ -79,7 +79,7 @@ public final class Hud extends GameTask implements GameRendererEvent.Listener {
 	}
 
 	@Override
-	public void onReset () {
+	public void reset () {
 		for (int i = 0; i < managerBeforePost.items.size; i++) {
 			managerBeforePost.items.get(i).onReset();
 		}

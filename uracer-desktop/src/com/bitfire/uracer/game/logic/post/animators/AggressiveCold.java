@@ -292,7 +292,7 @@ public final class AggressiveCold implements PostProcessingAnimator {
 
 			float sfactor = currSpeedFactor;
 			float z = (zoomCamera - (GameWorldRenderer.MinCameraZoom + GameWorldRenderer.ZoomWindow));
-			float v = (-0.1f * sfactor) - 0.03f * z;
+			float v = (-0.07f * sfactor) - 0.03f * z;
 			// Gdx.app.log("", "zoom=" + z);
 
 			float blurStrength = v + (-0.05f * timeModFactor * sfactor);

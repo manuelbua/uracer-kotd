@@ -62,7 +62,7 @@ public class Messager extends GameTask {
 	public void dispose () {
 		super.dispose();
 		GameEvents.gameRenderer.removeListener(gameRendererEvent, RenderEvent, RenderOrder);
-		onReset();
+		reset();
 	}
 
 	@Override
@@ -77,7 +77,7 @@ public class Messager extends GameTask {
 	}
 
 	@Override
-	public void onReset () {
+	public void reset () {
 		for (Position group : Position.values()) {
 			messages.get(group.ordinal()).clear();
 		}

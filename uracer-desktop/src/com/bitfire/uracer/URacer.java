@@ -20,7 +20,7 @@ import com.bitfire.uracer.game.logic.gametasks.hud.HudLabel;
 import com.bitfire.uracer.game.logic.gametasks.hud.HudLabelAccessor;
 import com.bitfire.uracer.game.logic.gametasks.messager.Message;
 import com.bitfire.uracer.game.logic.gametasks.messager.MessageAccessor;
-import com.bitfire.uracer.game.logic.types.common.TimeModulator;
+import com.bitfire.uracer.game.logic.types.helpers.TimeModulator;
 import com.bitfire.uracer.game.screens.GameScreensFactory;
 import com.bitfire.uracer.game.screens.GameScreensFactory.ScreenType;
 import com.bitfire.uracer.game.screens.ScreensShared;

@@ -1,5 +1,5 @@
 
-package com.bitfire.uracer.game.logic.types.common;
+package com.bitfire.uracer.game.logic.types.helpers;
 
 import aurelienribon.tweenengine.Timeline;
 import aurelienribon.tweenengine.Tween;

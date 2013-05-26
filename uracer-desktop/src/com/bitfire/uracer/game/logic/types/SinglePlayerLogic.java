@@ -1,33 +1,19 @@
 
 package com.bitfire.uracer.game.logic.types;
 
-import aurelienribon.tweenengine.BaseTween;
-import aurelienribon.tweenengine.Timeline;
-import aurelienribon.tweenengine.Tween;
-import aurelienribon.tweenengine.TweenCallback;
-import aurelienribon.tweenengine.equations.Quad;
-
 import com.badlogic.gdx.Gdx;
-import com.badlogic.gdx.math.MathUtils;
-import com.badlogic.gdx.utils.Array;
-import com.bitfire.uracer.configuration.Config;
 import com.bitfire.uracer.configuration.UserProfile;
-import com.bitfire.uracer.game.Time;
-import com.bitfire.uracer.game.Time.Reference;
-import com.bitfire.uracer.game.actors.Car;
 import com.bitfire.uracer.game.actors.CarPreset;
-import com.bitfire.uracer.game.actors.GhostCar;
 import com.bitfire.uracer.game.logic.gametasks.hud.elements.player.DriftBar;
-import com.bitfire.uracer.game.logic.gametasks.hud.elements.player.TrackProgress.TrackProgressData;
+import com.bitfire.uracer.game.logic.gametasks.messager.Message;
+import com.bitfire.uracer.game.logic.gametasks.messager.Message.Position;
+import com.bitfire.uracer.game.logic.gametasks.messager.Message.Size;
 import com.bitfire.uracer.game.logic.gametasks.messager.Messager;
 import com.bitfire.uracer.game.logic.replaying.Replay;
 import com.bitfire.uracer.game.rendering.GameRenderer;
 import com.bitfire.uracer.game.rendering.GameWorldRenderer;
-import com.bitfire.uracer.game.tween.GameTweener;
 import com.bitfire.uracer.game.world.GameWorld;
 import com.bitfire.uracer.utils.AMath;
-import com.bitfire.uracer.utils.BoxedFloat;
-import com.bitfire.uracer.utils.BoxedFloatAccessor;
 import com.bitfire.uracer.utils.CarUtils;
 import com.bitfire.uracer.utils.Convert;
 
@@ -35,22 +21,10 @@ public class SinglePlayerLogic extends CommonLogic {
 
 	private Messager messager;
 	private DriftBar driftBar;
-	private BoxedFloat accuDriftSeconds;
-
-	private Time dilationTime = new Time();
-	private Time outOfTrackTime = new Time();
-	private Timeline driftSecondsTimeline;
-	private boolean isPenalty;
-
-	private float lastDist, lastCompletion;
 
 	public SinglePlayerLogic (UserProfile userProfile, GameWorld gameWorld, GameRenderer gameRenderer) {
 		super(userProfile, gameWorld, gameRenderer);
 		messager = gameTasksManager.messager;
-
-		accuDriftSeconds = new BoxedFloat(0);
-		dilationTime.stop();
-		outOfTrackTime.stop();
 	}
 
 	@Override
@@ -146,28 +120,26 @@ public class SinglePlayerLogic extends CommonLogic {
 
 	// the game has been restarted
 	@Override
-	protected void gameRestart () {
-		Gdx.app.log("SinglePlayerLogic", "Starting/restarting game");
+	public void restartGame () {
+		super.restartGame();
 
-		// restart all replays
-		// restartAllReplays();
-		accuDriftSeconds.value = 0;
+		Gdx.app.log("SinglePlayerLogic", "Starting/restarting game");
+		gameTasksManager.messager.show("Game restarted", 3, Message.Type.Information, Position.Bottom, Size.Big);
+
 		isPenalty = false;
 
-		lastDist = 0;
-		lastCompletion = 0;
 	}
 
 	// the game has been reset
 	@Override
-	protected void gameReset () {
-		Gdx.app.log("SinglePlayerLogic", "Resetting game");
-		replayManager.reset();
-		accuDriftSeconds.value = 0;
-		isPenalty = false;
+	public void resetGame () {
+		super.resetGame();
 
-		lastDist = 0;
-		lastCompletion = 0;
+		Gdx.app.log("SinglePlayerLogic", "Resetting game");
+		gameTasksManager.messager.show("Game reset", 3, Message.Type.Information, Position.Bottom, Size.Big);
+
+		replayManager.reset();
+		isPenalty = false;
 	}
 
 	// a new Replay from the player is available: note that CommonLogic already perform
@@ -206,68 +178,6 @@ public class SinglePlayerLogic extends CommonLogic {
 	@Override
 	public void tick () {
 		super.tick();
-
-		updateDriftBar();
-
-		// Gdx.app.log("SPL", "drift=" + accuDriftSeconds);
-	}
-
-	@Override
-	public void tickCompleted () {
-		super.tickCompleted();
-
-		// FIXME this should go in CommonLogic!
-
-		if (accuDriftSeconds.value == 0 && timeDilation) {
-			requestTimeDilationFinish();
-			Gdx.app.log("SinglePlayerLogic", "Requesting time modulation to finish");
-		}
-
-		if (hasPlayer()) {
-			TrackProgressData data = playerTasks.hudPlayer.getTrackProgressData();
-
-			// float ghSpeed = 0;
-
-			// playerTasks.hudPlayer.trackProgress.setPlayerSpeed(playerCar.getInstantSpeed());
-			playerTasks.hudPlayer.driftBar.setDriftStrength(playerCar.driftState.driftStrength);
-
-			if (isWarmUpLap) {
-				data.reset(true);
-				if (isCurrentLapValid) {
-					playerTasks.hudPlayer.trackProgress.setMessage("RACE in "
-						+ Math.round(gameTrack.getTotalLength() - gameTrack.getTrackDistance(playerCar, 0)) + " mt");
-				} else {
-					playerTasks.hudPlayer.trackProgress.setMessage("Press \"R\"\nto restart");
-				}
-			} else {
-				if (isCurrentLapValid) {
-					playerTasks.hudPlayer.trackProgress.setMessage("");
-
-					// use the last one if the replay is finished
-					if (nextTarget != null && nextTarget.hasReplay()) {
-						lastDist = gameTrack.getTrackDistance(nextTarget, 0);
-						lastCompletion = gameTrack.getTrackCompletion(nextTarget);
-						// ghSpeed = nextTarget.getInstantSpeed();
-					}
-
-					data.setPlayerDistance(gameTrack.getTrackDistance(playerCar, 0));
-					data.setPlayerProgression(gameTrack.getTrackCompletion(playerCar));
-
-					// playerTasks.hudPlayer.trackProgress.setTargetSpeed(ghSpeed);
-					data.setTargetDistance(lastDist);
-					data.setTargetProgression(lastCompletion);
-
-					// target tracker
-					float distMt = gameTrack.getTrackDistance(playerCar, 0) - lastDist;
-					float alpha = MathUtils.clamp(Math.abs(distMt) / 50, 0.2f, 1);
-					playerTasks.hudPlayer.setNextTargetAlpha(alpha);
-
-				} else {
-					playerTasks.hudPlayer.trackProgress.setMessage("Press \"R\"\nto restart");
-					data.reset(true);
-				}
-			}
-		}
 	}
 
 	@Override
@@ -284,61 +194,27 @@ public class SinglePlayerLogic extends CommonLogic {
 	public void driftEnds () {
 	}
 
-	@Override
-	protected boolean timeDilationAvailable () {
-		return accuDriftSeconds.value > 0;
-	}
-
 	// the player begins slowing down time
 	@Override
-	public void timeDilationBegins () {
-		dilationTime.start();
+	public void startTimeDilation () {
+		super.startTimeDilation();
 		driftBar.showSecondsLabel();
 	}
 
 	// the player ends slowing down time
 	@Override
-	public void timeDilationEnds () {
-		updateDriftBar();
-		dilationTime.reset();
+	public void endTimeDilation () {
+		super.endTimeDilation();
 		driftBar.hideSecondsLabel();
-	}
-
-	private TweenCallback penaltyFinished = new TweenCallback() {
-		@Override
-		public void onEvent (int type, BaseTween<?> source) {
-			switch (type) {
-			case COMPLETE:
-				isPenalty = false;
-			}
-		}
-	};
-
-	@Override
-	protected void collision () {
-		if (isPenalty) return;
-
-		isPenalty = true;
-
-		GameTweener.stop(accuDriftSeconds);
-		driftSecondsTimeline = Timeline.createSequence();
-		driftSecondsTimeline.push(Tween.to(accuDriftSeconds, BoxedFloatAccessor.VALUE, 500).target(0).ease(Quad.INOUT))
-			.setCallback(penaltyFinished);
-		GameTweener.start(driftSecondsTimeline);
-
-		playerTasks.hudPlayer.highlightCollision();
 	}
 
 	@Override
 	protected void outOfTrack () {
-		outOfTrackTime.start();
 		driftBar.showSecondsLabel();
 	}
 
 	@Override
 	protected void backInTrack () {
-		updateDriftBar();
-		outOfTrackTime.reset();
 		driftBar.hideSecondsLabel();
 	}
 
@@ -352,69 +228,8 @@ public class SinglePlayerLogic extends CommonLogic {
 	protected void lapCompleted () {
 	}
 
-	@Override
-	protected void ghostFadingOut (Car ghost) {
-		if (hasPlayer() && ghost == nextTarget) {
-			playerTasks.hudPlayer.unHighlightNextTarget();
-		}
-	}
-
 	//
 	// utilities
 	//
 
-	private GhostCar nextTarget = null;
-
-	private void restartAllReplays () {
-		Array<Replay> replays = replayManager.getReplays();
-
-		nextTarget = null;
-		lastDist = 0;
-
-		for (int i = 0; i < replays.size; i++) {
-			Replay r = replays.get(i);
-			if (r.isValid) {
-				getGhost(i).setReplay(replays.get(i));
-
-				if (replayManager.getBestReplay() == replays.get(i)) {
-					nextTarget = getGhost(i);
-					playerTasks.hudPlayer.highlightNextTarget(nextTarget);
-				}
-			}
-		}
-	}
-
-	private void updateDriftBar () {
-		if (!hasPlayer()) {
-			return;
-		}
-
-		if (Config.Debug.InfiniteDilationTime) {
-			accuDriftSeconds.value = DriftBar.MaxSeconds;
-		} else {
-
-			// if a penalty is being applied, then no drift seconds will be counted
-			if (!isPenalty) {
-
-				// earn game seconds by drifting
-				if (playerCar.driftState.isDrifting) {
-					accuDriftSeconds.value += Config.Physics.Dt + Config.Physics.Dt * playerCar.driftState.driftStrength;
-				}
-
-				// lose wall-clock seconds while in time dilation
-				if (!dilationTime.isStopped()) {
-					accuDriftSeconds.value -= dilationTime.elapsed(Reference.LastAbsoluteSeconds) * 2;
-				}
-
-				// lose wall-clock seconds while out of track
-				if (!outOfTrackTime.isStopped()) {
-					accuDriftSeconds.value -= outOfTrackTime.elapsed(Reference.LastAbsoluteSeconds);
-				}
-
-				accuDriftSeconds.value = MathUtils.clamp(accuDriftSeconds.value, 0, DriftBar.MaxSeconds);
-			}
-		}
-
-		driftBar.setSeconds(accuDriftSeconds.value);
-	}
 }

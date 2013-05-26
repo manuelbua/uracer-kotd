@@ -1,5 +1,5 @@
 
-package com.bitfire.uracer.game.logic.types.common;
+package com.bitfire.uracer.game.logic.types.helpers;
 
 import com.badlogic.gdx.math.MathUtils;
 import com.bitfire.uracer.game.actors.Car;

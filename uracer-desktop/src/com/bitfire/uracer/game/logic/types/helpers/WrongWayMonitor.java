@@ -1,5 +1,5 @@
 
-package com.bitfire.uracer.game.logic.types.common;
+package com.bitfire.uracer.game.logic.types.helpers;
 
 import com.bitfire.uracer.game.GameplaySettings;
 import com.bitfire.uracer.game.Time;

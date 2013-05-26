@@ -9,9 +9,9 @@ public abstract class GameTask extends Task implements Disposable {
 	public GameTask () {
 	}
 
-	public abstract void onReset ();
+	public abstract void reset ();
 
-	public void onRestart () {
-		onReset();
+	public void restart () {
+		reset();
 	}
 }
