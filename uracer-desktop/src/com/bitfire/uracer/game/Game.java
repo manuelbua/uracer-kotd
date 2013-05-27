@@ -9,11 +9,11 @@ import com.bitfire.uracer.configuration.Config;
 import com.bitfire.uracer.configuration.UserPreferences;
 import com.bitfire.uracer.configuration.UserPreferences.Preference;
 import com.bitfire.uracer.configuration.UserProfile;
+import com.bitfire.uracer.events.TaskManagerEvent;
 import com.bitfire.uracer.game.actors.CarPreset;
 import com.bitfire.uracer.game.logic.types.SinglePlayerLogic;
 import com.bitfire.uracer.game.rendering.GameRenderer;
 import com.bitfire.uracer.game.task.TaskManager;
-import com.bitfire.uracer.game.task.TaskManagerEvent;
 import com.bitfire.uracer.game.world.GameWorld;
 
 public class Game implements Disposable {

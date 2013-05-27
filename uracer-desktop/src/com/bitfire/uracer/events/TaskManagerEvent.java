@@ -1,9 +1,7 @@
 
-package com.bitfire.uracer.game.task;
+package com.bitfire.uracer.events;
 
-import com.bitfire.uracer.events.Event;
-import com.bitfire.uracer.events.EventListener;
-import com.bitfire.uracer.events.EventNotifier;
+import com.bitfire.uracer.game.task.TaskManager;
 
 public class TaskManagerEvent extends Event<TaskManager> {
 
@@ -25,7 +23,7 @@ public class TaskManagerEvent extends Event<TaskManager> {
 		}
 	}
 
-	protected interface Listener extends EventListener {
+	public interface Listener extends EventListener {
 		void taskManagerEvent (Type type);
 	}
 

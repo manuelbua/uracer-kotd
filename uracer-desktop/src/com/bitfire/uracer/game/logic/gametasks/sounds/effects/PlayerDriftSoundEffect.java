@@ -3,10 +3,10 @@ package com.bitfire.uracer.game.logic.gametasks.sounds.effects;
 
 import com.badlogic.gdx.audio.Sound;
 import com.bitfire.uracer.URacer;
+import com.bitfire.uracer.events.PlayerDriftStateEvent;
+import com.bitfire.uracer.events.PlayerDriftStateEvent.Type;
 import com.bitfire.uracer.game.logic.gametasks.sounds.SoundEffect;
 import com.bitfire.uracer.game.player.PlayerCar;
-import com.bitfire.uracer.game.player.PlayerDriftStateEvent;
-import com.bitfire.uracer.game.player.PlayerDriftStateEvent.Type;
 import com.bitfire.uracer.resources.Sounds;
 import com.bitfire.uracer.utils.AMath;
 import com.bitfire.uracer.utils.AudioUtils;
