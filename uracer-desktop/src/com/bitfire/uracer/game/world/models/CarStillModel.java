@@ -71,7 +71,7 @@ public class CarStillModel extends OrthographicAlignedStillModel {
 
 		// body
 		{
-			Vector3 pos = worldPosition(camPersp, camOrtho, state.position.x, state.position.y);
+			Vector3 pos = world2Dto3D(camPersp, camOrtho, state.position.x, state.position.y);
 
 			mtxbody.idt();
 			mtxbody.translate(pos);
@@ -94,7 +94,7 @@ public class CarStillModel extends OrthographicAlignedStillModel {
 			float sin = MathUtils.sinDeg(90 + state.orientation);
 			float dx = offy * cos - offx * sin;
 			float dy = offy * sin + offx * cos;
-			Vector3 pos = worldPosition(camPersp, camOrtho, state.position.x + dx, state.position.y + dy);
+			Vector3 pos = world2Dto3D(camPersp, camOrtho, state.position.x + dx, state.position.y + dy);
 			mtxltire.set(camPersp.combined);
 			mtxltire.translate(pos);
 			mtxltire.rotate(0, 0, 1, state.orientation - itirerot);
@@ -110,7 +110,7 @@ public class CarStillModel extends OrthographicAlignedStillModel {
 			float sin = MathUtils.sinDeg(90 + state.orientation);
 			float dx = offy * cos - offx * sin;
 			float dy = offy * sin + offx * cos;
-			Vector3 pos = worldPosition(camPersp, camOrtho, state.position.x + dx, state.position.y + dy);
+			Vector3 pos = world2Dto3D(camPersp, camOrtho, state.position.x + dx, state.position.y + dy);
 			mtxrtire.set(camPersp.combined);
 			mtxrtire.translate(pos);
 			mtxrtire.rotate(0, 0, 1, state.orientation - itirerot);
@@ -123,7 +123,7 @@ public class CarStillModel extends OrthographicAlignedStillModel {
 		boundingBox.mul(mtxbody);
 	}
 
-	private Vector3 worldPosition (PerspectiveCamera camPersp, OrthographicCamera camOrtho, float posPxX, float posPxY) {
+	private Vector3 world2Dto3D (PerspectiveCamera camPersp, OrthographicCamera camOrtho, float posPxX, float posPxY) {
 		float meshZ = -(camPersp.far - camPersp.position.z) + (camPersp.far * (1 - (camOrtho.zoom)));
 
 		// compute position
