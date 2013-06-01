@@ -221,7 +221,7 @@ public final class GameWorld {
 		}
 
 		float rttScale = 0.25f;
-		int maxRays = 360 * 1;
+		int maxRays = 360;
 
 		if (!URacer.Game.isDesktop()) {
 			rttScale = 0.2f;

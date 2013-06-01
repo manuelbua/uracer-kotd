@@ -201,12 +201,12 @@ public final class AggressiveCold implements PostProcessingAnimator {
 			crt.setTime(0);
 
 			// note, a perfect color offset depends from screen size
-			crt.setColorOffset(0.0015f);
+			crt.setColorOffset(0.001f);
 			crt.setDistortion(0.125f);
 			crt.setZoom(0.94f);
 
 			// tv.setTint( 0.95f, 0.8f, 1.0f );
-			crt.setTint(0.9f, 0.8f, 0.85f);
+			crt.setTint(1, 1, 1);
 		}
 
 		if (curvature != null) {
@@ -372,9 +372,6 @@ public final class AggressiveCold implements PostProcessingAnimator {
 			dist = AMath.fixup(dist);
 			crt.setDistortion(dist);
 			crt.setZoom(1 - (dist / 2));
-
-			crt.setColorOffset(0.001f);
-			crt.setTint(1f, 0.95f, 0.95f);
 		}
 	}
 }

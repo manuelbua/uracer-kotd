@@ -38,7 +38,7 @@ class LightMap {
 		if( dest != null ) {
 			dest.begin();
 		} else {
-			Gdx.gl.glViewport((int)viewport.x, (int)viewport.y, (int)viewport.width, (int)viewport.height);
+			Gdx.gl.glViewport( (int)viewport.x, (int)viewport.y, (int)viewport.width, (int)viewport.height );
 		}
 
 		Gdx.gl20.glEnable( GL20.GL_BLEND );
@@ -58,14 +58,14 @@ class LightMap {
 				Gdx.gl20.glBlendFunc( GL20.GL_ONE, GL20.GL_ONE_MINUS_SRC_ALPHA );
 				shader.setUniformf( "ambient", c.r * c.a, c.g * c.a, c.b * c.a, 1f - c.a );
 			}
-			shader.setUniformi( "u_texture", 0 );
+			// shader.setUniformi( "u_texture", 0 );
 			lightMapMesh.render( shader, GL20.GL_TRIANGLE_FAN );
 			shader.end();
 		} else if( needed ) {
 
 			Gdx.gl.glBlendFunc( GL20.GL_SRC_ALPHA, GL20.GL_ONE );
 			withoutShadowShader.begin();
-			withoutShadowShader.setUniformi( "u_texture", 0 );
+			// withoutShadowShader.setUniformi( "u_texture", 0 );
 			lightMapMesh.render( withoutShadowShader, GL20.GL_TRIANGLE_FAN );
 			withoutShadowShader.end();
 		}
@@ -84,7 +84,7 @@ class LightMap {
 			pingPongBuffer.begin();
 			{
 				blurShader.begin();
-				blurShader.setUniformi( "u_texture", 0 );
+				// blurShader.setUniformi( "u_texture", 0 );
 				blurShader.setUniformf( "dir", 1f, 0f );
 				lightMapMesh.render( blurShader, GL20.GL_TRIANGLE_FAN, 0, 4 );
 				blurShader.end();
@@ -97,7 +97,7 @@ class LightMap {
 			frameBuffer.begin();
 			{
 				blurShader.begin();
-				blurShader.setUniformi( "u_texture", 0 );
+				// blurShader.setUniformi( "u_texture", 0 );
 				blurShader.setUniformf( "dir", 0f, 1f );
 				lightMapMesh.render( blurShader, GL20.GL_TRIANGLE_FAN, 0, 4 );
 				blurShader.end();

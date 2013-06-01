@@ -564,9 +564,9 @@ public abstract class CommonLogic implements GameLogic {
 		);
 
 		treesAmbient.set(
-			0.1f,
-			0.1f,
-			0.15f,
+			ambient.r,
+			ambient.g*2f,
+			ambient.b,
 			0.4f + 0.5f * URacer.Game.getTimeModFactor() 
 		);
 		//@on
