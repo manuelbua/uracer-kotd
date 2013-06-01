@@ -1,62 +1,22 @@
 
 package com.bitfire.uracer.events;
 
-import com.bitfire.uracer.game.task.TaskManager;
-
-public class TaskManagerEvent extends Event<TaskManager> {
+public class TaskManagerEvent extends Event<TaskManagerEvent.Type, TaskManagerEvent.Order, TaskManagerEvent.Listener> {
 
 	public enum Type {
-		onTick, onPause, onResume
+		onTick, onTickCompleted, onPause, onResume
 	}
 
 	public enum Order {
 		MINUS_4, MINUS_3, MINUS_2, MINUS_1, DEFAULT, PLUS_1, PLUS_2, PLUS_3, PLUS_4;
 	}
 
-	/* This constructor will permits late-binding of the "source" member via the "trigger" method */
-	public TaskManagerEvent () {
-		super(null);
-		for (Type t : Type.values()) {
-			for (Order o : Order.values()) {
-				notifiers[t.ordinal()][o.ordinal()] = new Notifier();
-			}
-		}
-	}
-
-	public interface Listener extends EventListener {
-		void taskManagerEvent (Type type);
-	}
-
-	public void addListener (Listener listener, Type type, Order order) {
-		notifiers[type.ordinal()][order.ordinal()].addListener(listener);
-	}
-
-	public void removeListener (Listener listener, Type type, Order order) {
-		notifiers[type.ordinal()][order.ordinal()].removeListener(listener);
-	}
-
-	public void removeAllListeners () {
-		for (Type t : Type.values()) {
-			for (Order o : Order.values()) {
-				notifiers[t.ordinal()][o.ordinal()].removeAllListeners();
-			}
-		}
-	}
-
-	public void trigger (Type type) {
-		for (Order order : Order.values()) {
-			notifiers[type.ordinal()][order.ordinal()].taskManagerEvent(type);
-		}
-	}
-
-	private Notifier[][] notifiers = new Notifier[Type.values().length][Order.values().length];
-
-	public class Notifier extends EventNotifier<Listener> implements Listener {
+	public interface Listener extends Event.Listener<Type, Order> {
 		@Override
-		public void taskManagerEvent (Type type) {
-			for (Listener listener : listeners) {
-				listener.taskManagerEvent(type);
-			}
-		}
-	};
+		public void handle (Object source, Type type, Order order);
+	}
+
+	public TaskManagerEvent () {
+		super(Type.class, Order.class);
+	}
 }

@@ -19,7 +19,7 @@ public class Messager extends GameTask {
 
 	private final GameRendererEvent.Listener gameRendererEvent = new GameRendererEvent.Listener() {
 		@Override
-		public void gameRendererEvent (Type type, Order order) {
+		public void handle (Object source, Type type, Order order) {
 			SpriteBatch batch = GameEvents.gameRenderer.batch;
 
 			for (Position group : Position.values()) {

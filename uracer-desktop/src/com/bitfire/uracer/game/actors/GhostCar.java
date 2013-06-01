@@ -2,6 +2,8 @@
 package com.bitfire.uracer.game.actors;
 
 import com.badlogic.gdx.Gdx;
+import com.bitfire.uracer.events.CarEvent;
+import com.bitfire.uracer.game.GameEvents;
 import com.bitfire.uracer.game.logic.replaying.Replay;
 import com.bitfire.uracer.game.world.GameWorld;
 import com.bitfire.uracer.utils.CarUtils;
@@ -126,7 +128,7 @@ public final class GhostCar extends Car {
 
 				if (!fadeOutEventTriggered) {
 					fadeOutEventTriggered = true;
-					this.event.trigger(this, CarEvent.Type.onGhostFadingOut);
+					GameEvents.ghostCars.trigger(this, CarEvent.Type.onGhostFadingOut);
 				}
 			}
 		}

@@ -4,7 +4,9 @@ package com.bitfire.uracer.game.logic.gametasks.sounds.effects;
 import com.badlogic.gdx.audio.Sound;
 import com.bitfire.uracer.URacer;
 import com.bitfire.uracer.events.PlayerDriftStateEvent;
+import com.bitfire.uracer.events.PlayerDriftStateEvent.Order;
 import com.bitfire.uracer.events.PlayerDriftStateEvent.Type;
+import com.bitfire.uracer.game.GameEvents;
 import com.bitfire.uracer.game.logic.gametasks.sounds.SoundEffect;
 import com.bitfire.uracer.game.player.PlayerCar;
 import com.bitfire.uracer.resources.Sounds;
@@ -30,7 +32,7 @@ public final class PlayerDriftSoundEffect extends SoundEffect {
 
 	private PlayerDriftStateEvent.Listener driftListener = new PlayerDriftStateEvent.Listener() {
 		@Override
-		public void playerDriftStateEvent (PlayerCar player, Type type) {
+		public void handle (Object source, Type type, Order order) {
 			switch (type) {
 			case onBeginDrift:
 				onBeginDrift();
@@ -44,17 +46,16 @@ public final class PlayerDriftSoundEffect extends SoundEffect {
 
 	public PlayerDriftSoundEffect (PlayerCar player) {
 		this.player = player;
-		player.driftState.event.addListener(driftListener, PlayerDriftStateEvent.Type.onBeginDrift);
-		player.driftState.event.addListener(driftListener, PlayerDriftStateEvent.Type.onEndDrift);
+		GameEvents.driftState.addListener(driftListener, PlayerDriftStateEvent.Type.onBeginDrift);
+		GameEvents.driftState.addListener(driftListener, PlayerDriftStateEvent.Type.onEndDrift);
 		drift = Sounds.carDrift;
 		// start();
 	}
 
 	@Override
 	public void dispose () {
-		player.driftState.event.removeListener(driftListener, PlayerDriftStateEvent.Type.onBeginDrift);
-		player.driftState.event.removeListener(driftListener, PlayerDriftStateEvent.Type.onEndDrift);
-
+		GameEvents.driftState.removeListener(driftListener, PlayerDriftStateEvent.Type.onBeginDrift);
+		GameEvents.driftState.removeListener(driftListener, PlayerDriftStateEvent.Type.onEndDrift);
 		drift.stop();
 	}
 

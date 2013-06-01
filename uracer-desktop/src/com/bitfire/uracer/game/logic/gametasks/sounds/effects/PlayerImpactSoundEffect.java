@@ -5,9 +5,10 @@ import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.audio.Sound;
 import com.badlogic.gdx.math.MathUtils;
 import com.bitfire.uracer.URacer;
-import com.bitfire.uracer.game.actors.CarEvent;
-import com.bitfire.uracer.game.actors.CarEvent.Data;
-import com.bitfire.uracer.game.actors.CarEvent.Type;
+import com.bitfire.uracer.events.CarEvent;
+import com.bitfire.uracer.events.CarEvent.Order;
+import com.bitfire.uracer.events.CarEvent.Type;
+import com.bitfire.uracer.game.GameEvents;
 import com.bitfire.uracer.game.logic.gametasks.sounds.SoundEffect;
 import com.bitfire.uracer.game.player.PlayerCar;
 import com.bitfire.uracer.resources.Sounds;
@@ -33,14 +34,14 @@ public final class PlayerImpactSoundEffect extends SoundEffect {
 
 	private CarEvent.Listener carEvent = new CarEvent.Listener() {
 		@Override
-		public void carEvent (Type type, Data data) {
-			impact(data.impulses.len(), player.carState.currSpeedFactor);
+		public void handle (Object source, Type type, Order order) {
+			impact(GameEvents.playerCar.data.impulses.len(), ((PlayerCar)source).carState.currSpeedFactor);
 		}
 	};
 
 	public PlayerImpactSoundEffect (PlayerCar player) {
 		this.player = player;
-		player.event.addListener(carEvent, CarEvent.Type.onCollision);
+		GameEvents.playerCar.addListener(carEvent, CarEvent.Type.onCollision);
 
 		soundLow1 = Sounds.carImpacts[0];
 		soundLow2 = Sounds.carImpacts[1];
@@ -51,7 +52,7 @@ public final class PlayerImpactSoundEffect extends SoundEffect {
 
 	@Override
 	public void dispose () {
-		player.event.removeListener(carEvent, CarEvent.Type.onCollision);
+		GameEvents.playerCar.removeListener(carEvent, CarEvent.Type.onCollision);
 
 		soundLow1.stop();
 		soundLow2.stop();

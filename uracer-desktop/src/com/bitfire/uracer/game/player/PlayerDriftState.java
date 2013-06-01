@@ -1,14 +1,14 @@
 
 package com.bitfire.uracer.game.player;
 
-import com.bitfire.uracer.events.PlayerDriftStateEvent;
 import com.bitfire.uracer.events.PlayerDriftStateEvent.Type;
+import com.bitfire.uracer.game.GameEvents;
 import com.bitfire.uracer.game.Time;
 import com.bitfire.uracer.utils.AMath;
 
 public final class PlayerDriftState {
 	/* event */
-	public PlayerDriftStateEvent event = null;
+	// public PlayerDriftStateEvent event = null;
 
 	private PlayerCar player;
 	public boolean isDrifting = false;
@@ -20,7 +20,6 @@ public final class PlayerDriftState {
 	private Time time, collisionTime;
 
 	public PlayerDriftState (PlayerCar player) {
-		this.event = new PlayerDriftStateEvent(this);
 		this.player = player;
 		this.time = new Time();
 		this.collisionTime = new Time();
@@ -32,14 +31,10 @@ public final class PlayerDriftState {
 	public void dispose () {
 		time.dispose();
 		collisionTime.dispose();
-		event.removeAllListeners();
-		event = null;
+		GameEvents.driftState.removeAllListeners();
 	}
 
-	// TODO, a State interface with a reset() method! this way it could be assumed the state can be bound to some other
-	// car
 	public void reset () {
-
 		time.reset();
 		collisionTime.reset();
 
@@ -62,7 +57,7 @@ public final class PlayerDriftState {
 		hasCollided = true;
 		collisionTime.start();
 		time.stop();
-		event.trigger(player, Type.onEndDrift);
+		GameEvents.driftState.trigger(player, Type.onEndDrift);
 	}
 
 	public void update (float latForceFrontY, float latForceRearY, float velocityLength) {
@@ -81,7 +76,6 @@ public final class PlayerDriftState {
 
 		if (hasCollided) {
 			// ignore drifts for a couple of seconds
-			// TODO use this in a penalty system
 			if (collisionTime.elapsed(Time.Reference.TickSeconds) >= 0.5f) {
 				collisionTime.stop();
 				hasCollided = false;
@@ -95,7 +89,7 @@ public final class PlayerDriftState {
 					hasCollided = false;
 					// driftStartTime = System.currentTimeMillis();
 					time.start();
-					event.trigger(player, Type.onBeginDrift);
+					GameEvents.driftState.trigger(player, Type.onBeginDrift);
 					// Gdx.app.log( "DriftState", car.getClass().getSimpleName() + " onBeginDrift()" );
 				}
 			} else {
@@ -109,7 +103,7 @@ public final class PlayerDriftState {
 					// Gdx.app.log( "PlayerDriftState", "playerDriftStateEvent::ds=" + NumberString.format( elapsed ) +
 					// " (" + elapsed + ")" );
 
-					event.trigger(player, Type.onEndDrift);
+					GameEvents.driftState.trigger(player, Type.onEndDrift);
 					// Gdx.app.log( "DriftState", car.getClass().getSimpleName() + " onEndDrift(), " + time.elapsed(
 					// Time.Reference.TickSeconds ) + "s" );
 				}

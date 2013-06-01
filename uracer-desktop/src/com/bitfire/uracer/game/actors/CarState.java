@@ -3,15 +3,13 @@ package com.bitfire.uracer.game.actors;
 
 import com.badlogic.gdx.math.Vector2;
 import com.bitfire.uracer.events.CarStateEvent;
+import com.bitfire.uracer.game.GameEvents;
 import com.bitfire.uracer.game.player.PlayerCar;
 import com.bitfire.uracer.game.world.GameWorld;
 import com.bitfire.uracer.utils.AMath;
 import com.bitfire.uracer.utils.Convert;
 
 public final class CarState {
-	/* event */
-	public CarStateEvent event = null;
-
 	/* observed car */
 	public final Car car;
 	public boolean isPlayer;
@@ -26,9 +24,6 @@ public final class CarState {
 	public float currSpeedFactor = 0;
 	public float currForceFactor = 0;
 
-	/* lateral forces */
-	// public Vector2 lateralForceFront = new Vector2(), lateralForceRear = new Vector2();
-
 	// temporaries
 	private float carMaxSpeedSquared = 0;
 	private float carMaxForce = 0;
@@ -37,7 +32,6 @@ public final class CarState {
 	private GameWorld world;
 
 	public CarState (GameWorld world, Car car) {
-		this.event = new CarStateEvent(this);
 		this.world = world;
 		this.car = car;
 		this.isPlayer = (car instanceof PlayerCar);
@@ -50,8 +44,7 @@ public final class CarState {
 	}
 
 	public void dispose () {
-		event.removeAllListeners();
-		event = null;
+		GameEvents.playerCarState.removeAllListeners();
 	}
 
 	public void reset () {
@@ -94,7 +87,7 @@ public final class CarState {
 		currTileY = (int)tilePosition.y;
 
 		if ((lastTileX != currTileX) || (lastTileY != currTileY)) {
-			event.trigger(this, CarStateEvent.Type.onTileChanged);
+			GameEvents.playerCarState.trigger(this, CarStateEvent.Type.onTileChanged);
 		}
 	}
 }

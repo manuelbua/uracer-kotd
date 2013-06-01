@@ -15,6 +15,7 @@ import com.bitfire.uracer.configuration.Config;
 import com.bitfire.uracer.entities.EntityRenderState;
 import com.bitfire.uracer.events.GameRendererEvent;
 import com.bitfire.uracer.events.GameRendererEvent.Order;
+import com.bitfire.uracer.events.GameRendererEvent.Type;
 import com.bitfire.uracer.game.actors.CarDescriptor;
 import com.bitfire.uracer.game.player.PlayerCar;
 import com.bitfire.uracer.game.rendering.GameRenderer;
@@ -44,9 +45,9 @@ public final class DebugHelper {
 	private Box2DDebugRenderer b2drenderer;
 	private World box2dWorld;
 
-	private final GameRendererEvent.Listener onRender = new GameRendererEvent.Listener() {
+	private final GameRendererEvent.Listener renderListener = new GameRendererEvent.Listener() {
 		@Override
-		public void gameRendererEvent (GameRendererEvent.Type type, Order order) {
+		public void handle (Object source, Type type, Order order) {
 			switch (type) {
 			case BatchDebug:
 				render(GameEvents.gameRenderer.batch);
@@ -66,8 +67,8 @@ public final class DebugHelper {
 		this.box2dWorld = box2dWorld;
 		this.postProcessor = postProcessor;
 
-		GameEvents.gameRenderer.addListener(onRender, GameRendererEvent.Type.BatchDebug, GameRendererEvent.Order.DEFAULT);
-		GameEvents.gameRenderer.addListener(onRender, GameRendererEvent.Type.Debug, GameRendererEvent.Order.DEFAULT);
+		GameEvents.gameRenderer.addListener(renderListener, GameRendererEvent.Type.BatchDebug, GameRendererEvent.Order.DEFAULT);
+		GameEvents.gameRenderer.addListener(renderListener, GameRendererEvent.Type.Debug, GameRendererEvent.Order.DEFAULT);
 
 		player = null;
 		b2drenderer = new Box2DDebugRenderer();
@@ -86,8 +87,8 @@ public final class DebugHelper {
 	}
 
 	public void dispose () {
-		GameEvents.gameRenderer.removeListener(onRender, GameRendererEvent.Type.BatchDebug, GameRendererEvent.Order.DEFAULT);
-		GameEvents.gameRenderer.removeListener(onRender, GameRendererEvent.Type.Debug, GameRendererEvent.Order.DEFAULT);
+		GameEvents.gameRenderer.removeListener(renderListener, GameRendererEvent.Type.BatchDebug, GameRendererEvent.Order.DEFAULT);
+		GameEvents.gameRenderer.removeListener(renderListener, GameRendererEvent.Type.Debug, GameRendererEvent.Order.DEFAULT);
 
 		b2drenderer.dispose();
 		stats.dispose();

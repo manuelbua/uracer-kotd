@@ -26,11 +26,14 @@ public class Game implements Disposable {
 
 	// logic
 	private GameLogic gameLogic = null;
+	private TaskManager taskManager = null;
 
 	// rendering
 	private GameRenderer gameRenderer = null;
 
 	public Game (UserProfile userProfile, String trackId) {
+
+		taskManager = new TaskManager();
 
 		gameWorld = new GameWorld(trackId, UserPreferences.bool(Preference.NightMode));
 		Gdx.app.debug("Game", "Game world ready");
@@ -60,7 +63,7 @@ public class Game implements Disposable {
 		gameRenderer.dispose();
 		gameWorld.dispose();
 
-		TaskManager.dispose();
+		taskManager.dispose();
 	}
 
 	// public void setLocalReplay (Replay replay) {
@@ -68,11 +71,12 @@ public class Game implements Disposable {
 	// }
 
 	public void tick () {
-		TaskManager.dispatchEvent(TaskManagerEvent.Type.onTick);
+		taskManager.dispatchEvent(TaskManagerEvent.Type.onTick);
 		gameLogic.tick();
 	}
 
 	public void tickCompleted () {
+		taskManager.dispatchEvent(TaskManagerEvent.Type.onTickCompleted);
 		gameLogic.tickCompleted();
 	}
 
@@ -95,12 +99,12 @@ public class Game implements Disposable {
 	}
 
 	public void pause () {
-		TaskManager.dispatchEvent(TaskManagerEvent.Type.onPause);
+		taskManager.dispatchEvent(TaskManagerEvent.Type.onPause);
 	}
 
 	public void resume () {
 		gameRenderer.rebind();
-		TaskManager.dispatchEvent(TaskManagerEvent.Type.onResume);
+		taskManager.dispatchEvent(TaskManagerEvent.Type.onResume);
 	}
 
 	//

@@ -1,50 +1,21 @@
 
 package com.bitfire.uracer.events;
 
-import com.bitfire.uracer.game.actors.CarState;
-
-public final class CarStateEvent extends Event<CarState> {
+public final class CarStateEvent extends Event<CarStateEvent.Type, CarStateEvent.Order, CarStateEvent.Listener> {
 	public enum Type {
 		onTileChanged
 	}
 
-	public interface Listener extends EventListener {
-		void carStateEvent (CarState source, Type type);
+	public enum Order {
+		Default
 	}
 
-	public CarStateEvent (CarState source) {
-		super(source);
-		for (Type t : Type.values()) {
-			notifiers[t.ordinal()] = new Notifier();
-		}
-	}
-
-	public void addListener (Listener listener, Type type) {
-		notifiers[type.ordinal()].addListener(listener);
-	}
-
-	public void removeListener (Listener listener, Type type) {
-		notifiers[type.ordinal()].removeListener(listener);
-	}
-
-	public void removeAllListeners () {
-		for (Type t : Type.values()) {
-			notifiers[t.ordinal()].removeAllListeners();
-		}
-	}
-
-	public void trigger (CarState source, Type type) {
-		notifiers[type.ordinal()].carStateEvent(source, type);
-	}
-
-	private Notifier[] notifiers = new Notifier[Type.values().length];
-
-	private class Notifier extends EventNotifier<Listener> implements Listener {
+	public interface Listener extends Event.Listener<Type, Order> {
 		@Override
-		public void carStateEvent (CarState source, Type type) {
-			for (Listener listener : listeners) {
-				listener.carStateEvent(source, type);
-			}
-		}
-	};
+		public void handle (Object source, Type type, Order order);
+	}
+
+	public CarStateEvent () {
+		super(Type.class, Order.class);
+	}
 }

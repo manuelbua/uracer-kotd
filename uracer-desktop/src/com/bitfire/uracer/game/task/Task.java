@@ -4,6 +4,7 @@ package com.bitfire.uracer.game.task;
 import com.bitfire.uracer.events.TaskManagerEvent;
 import com.bitfire.uracer.events.TaskManagerEvent.Order;
 import com.bitfire.uracer.events.TaskManagerEvent.Type;
+import com.bitfire.uracer.game.GameEvents;
 
 public abstract class Task implements TaskManagerEvent.Listener {
 
@@ -15,32 +16,38 @@ public abstract class Task implements TaskManagerEvent.Listener {
 
 	public Task (Order order) {
 		this.order = order;
-		TaskManager.event.addListener(this, TaskManagerEvent.Type.onTick, order);
-		TaskManager.event.addListener(this, TaskManagerEvent.Type.onPause, order);
-		TaskManager.event.addListener(this, TaskManagerEvent.Type.onResume, order);
+		GameEvents.taskManager.addListener(this, TaskManagerEvent.Type.onTick, order);
+		GameEvents.taskManager.addListener(this, TaskManagerEvent.Type.onTickCompleted, order);
+		GameEvents.taskManager.addListener(this, TaskManagerEvent.Type.onPause, order);
+		GameEvents.taskManager.addListener(this, TaskManagerEvent.Type.onResume, order);
 	}
 
 	public void dispose () {
-		TaskManager.event.removeListener(this, TaskManagerEvent.Type.onTick, order);
-		TaskManager.event.removeListener(this, TaskManagerEvent.Type.onPause, order);
-		TaskManager.event.removeListener(this, TaskManagerEvent.Type.onResume, order);
+		GameEvents.taskManager.removeListener(this, TaskManagerEvent.Type.onTick, order);
+		GameEvents.taskManager.removeListener(this, TaskManagerEvent.Type.onTickCompleted, order);
+		GameEvents.taskManager.removeListener(this, TaskManagerEvent.Type.onPause, order);
+		GameEvents.taskManager.removeListener(this, TaskManagerEvent.Type.onResume, order);
 	}
 
 	protected abstract void onTick ();
 
-	protected void onPause () {
+	protected void onTickCompleted () {
+	}
 
+	protected void onPause () {
 	}
 
 	protected void onResume () {
-
 	}
 
 	@Override
-	public void taskManagerEvent (Type type) {
+	public void handle (Object source, Type type, Order order) {
 		switch (type) {
 		case onTick:
 			onTick();
+			break;
+		case onTickCompleted:
+			onTickCompleted();
 			break;
 		case onPause:
 			onPause();

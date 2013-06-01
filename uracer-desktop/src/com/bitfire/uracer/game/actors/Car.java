@@ -11,7 +11,9 @@ import com.badlogic.gdx.physics.box2d.Fixture;
 import com.badlogic.gdx.physics.box2d.FixtureDef;
 import com.badlogic.gdx.physics.box2d.MassData;
 import com.bitfire.uracer.configuration.Config;
+import com.bitfire.uracer.events.CarEvent;
 import com.bitfire.uracer.events.GameRendererEvent.Order;
+import com.bitfire.uracer.game.GameEvents;
 import com.bitfire.uracer.game.collisions.CollisionFilters;
 import com.bitfire.uracer.game.world.GameWorld;
 import com.bitfire.uracer.game.world.models.CarStillModel;
@@ -25,7 +27,7 @@ public abstract strictfp class Car extends Box2DEntity {
 	}
 
 	/* event */
-	public CarEvent event = null;
+	// public CarEvent event = null;
 	private boolean triggerEvents = false;
 	protected static final Order ShadowsDrawingOrder = Order.MINUS_2;
 
@@ -59,7 +61,7 @@ public abstract strictfp class Car extends Box2DEntity {
 		this.carType = carType;
 		this.triggerEvents = triggerEvents;
 
-		this.event = new CarEvent(this);
+		// this.event = new CarEvent(this);
 		this.gameWorld = gameWorld;
 		this.stillModel = ModelFactory.createCar();
 		stillModel.setCar(this);
@@ -78,8 +80,9 @@ public abstract strictfp class Car extends Box2DEntity {
 	@Override
 	public void dispose () {
 		super.dispose();
-		event.removeAllListeners();
-		event = null;
+		GameEvents.playerCar.removeAllListeners();
+		// event.removeAllListeners();
+		// event = null;
 	}
 
 	public CarStillModel getStillModel () {
@@ -227,8 +230,8 @@ public abstract strictfp class Car extends Box2DEntity {
 		impacts++;
 
 		if (triggerEvents) {
-			event.data.setCollisionData(other, normalImpulses);
-			event.trigger(this, CarEvent.Type.onCollision);
+			GameEvents.playerCar.data.setCollisionData(other, normalImpulses);
+			GameEvents.playerCar.trigger(this, CarEvent.Type.onCollision);
 		}
 	}
 
@@ -253,8 +256,8 @@ public abstract strictfp class Car extends Box2DEntity {
 
 		// trigger event, new forces have been computed
 		if (triggerEvents) {
-			event.data.setForces(carForces);
-			event.trigger(this, CarEvent.Type.onComputeForces);
+			GameEvents.playerCar.data.setForces(carForces);
+			GameEvents.playerCar.trigger(this, CarEvent.Type.onComputeForces);
 		}
 
 		// put newly computed forces into the system

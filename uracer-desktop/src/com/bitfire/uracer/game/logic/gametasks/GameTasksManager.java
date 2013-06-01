@@ -38,6 +38,7 @@ public final class GameTasksManager {
 	public void createTasks () {
 		// physics step
 		physicsStep = new PhysicsStep(gameWorld.getBox2DWorld(), TaskManagerEvent.Order.MINUS_4);
+		add(physicsStep);
 
 		// sound manager
 		sound = new SoundManager();
