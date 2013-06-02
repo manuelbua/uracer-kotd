@@ -16,9 +16,7 @@
 
 package com.bitfire.uracer.u3d.loaders;
 
-import com.badlogic.gdx.graphics.g3d.loaders.ModelLoaderRegistry;
-
-/** Hints passed to a loader which might ignore them. See {@link ModelLoaderRegistry}.
+/** Hints passed to a loader which might ignore them.
  * @author mzechner */
 public class ModelLoaderHints {
 	/** whether to flip the v texture coordinate **/

@@ -24,29 +24,20 @@ import java.io.InputStreamReader;
 import com.badlogic.gdx.files.FileHandle;
 import com.badlogic.gdx.graphics.GL10;
 import com.badlogic.gdx.graphics.Mesh;
-import com.badlogic.gdx.graphics.Mesh.VertexDataType;
 import com.badlogic.gdx.graphics.VertexAttribute;
 import com.badlogic.gdx.graphics.VertexAttributes;
 import com.badlogic.gdx.graphics.VertexAttributes.Usage;
-import com.badlogic.gdx.graphics.g3d.model.keyframe.Keyframe;
-import com.badlogic.gdx.graphics.g3d.model.keyframe.KeyframedAnimation;
-import com.badlogic.gdx.graphics.g3d.model.keyframe.KeyframedModel;
-import com.badlogic.gdx.graphics.g3d.model.keyframe.KeyframedSubMesh;
 import com.badlogic.gdx.graphics.glutils.ShaderProgram;
 import com.badlogic.gdx.utils.Array;
 import com.badlogic.gdx.utils.FloatArray;
 import com.badlogic.gdx.utils.GdxRuntimeException;
 import com.badlogic.gdx.utils.IntArray;
-import com.badlogic.gdx.utils.ObjectMap;
 import com.bitfire.uracer.u3d.still.StillModel;
 import com.bitfire.uracer.u3d.still.StillSubMesh;
 
 /** Class to import the G3D text format.
  * @author mzechner */
 public class G3dtLoader {
-	public static KeyframedModel loadKeyframedModel (FileHandle handle, boolean flipV) {
-		return loadKeyframedModel(handle.read(), flipV);
-	}
 
 	public static StillModel loadStillModel (FileHandle handle, boolean flipV) {
 		return loadStillModel(handle.read(), flipV);
@@ -117,87 +108,6 @@ public class G3dtLoader {
 		mesh.setVertices(vertices);
 		mesh.setIndices(convertToShortArray(indices));
 		return new StillSubMesh(name, mesh, GL10.GL_TRIANGLES);
-	}
-
-	public static KeyframedModel loadKeyframedModel (InputStream stream, boolean flipV) {
-		BufferedReader in = new BufferedReader(new InputStreamReader(stream));
-
-		lineNum = 1;
-		try {
-			String version = readString(in);
-			if (!version.equals("g3dt-keyframed-1.0")) throw new GdxRuntimeException("incorrect version");
-			int numMeshes = readInt(in);
-			KeyframedSubMesh[] subMeshes = new KeyframedSubMesh[numMeshes];
-			for (int i = 0; i < numMeshes; i++) {
-				subMeshes[i] = readMesh(in, flipV);
-			}
-			KeyframedModel model = new KeyframedModel(subMeshes);
-			model.setAnimation(model.getAnimations()[0].name, 0, false);
-			return model;
-		} catch (Throwable e) {
-			throw new GdxRuntimeException("Couldn't read keyframed model, error in line " + lineNum + ", '" + line + "' : "
-				+ e.getMessage(), e);
-		}
-	}
-
-	private static KeyframedSubMesh readMesh (BufferedReader in, boolean flipV) throws IOException {
-		String name = readString(in);
-		IntArray indices = readFaces(in);
-		int numVertices = readInt(in);
-		int numAttributes = readInt(in);
-
-		if (!readString(in).equals("position")) throw new GdxRuntimeException("first attribute must be position.");
-		Array<FloatArray> uvSets = new Array<FloatArray>();
-		boolean hasNormals = false;
-		for (int i = 1; i < numAttributes; i++) {
-			String attributeType = readString(in);
-
-			if (!attributeType.equals("normal") && !attributeType.equals("uv"))
-				throw new GdxRuntimeException("attribute name must be normal or uv");
-
-			if (attributeType.equals("normal")) {
-				if (i != 1) throw new GdxRuntimeException("attribute normal must be second attribute");
-				hasNormals = true;
-			}
-			if (attributeType.equals("uv")) {
-				uvSets.add(readUVSet(in, numVertices, flipV));
-			}
-		}
-		int animatedComponents = hasNormals ? 6 : 3;
-
-		VertexAttribute[] vertexAttributes = createVertexAttributes(hasNormals, uvSets.size);
-
-		int numAnimations = readInt(in);
-		ObjectMap<String, KeyframedAnimation> animations = new ObjectMap<String, KeyframedAnimation>(numAnimations);
-		for (int i = 0; i < numAnimations; i++) {
-			String animationName = readString(in);
-			int numKeyframes = readInt(in);
-			float frameDuration = readFloat(in); // in seconds
-
-			Keyframe[] keyframes = new Keyframe[numKeyframes];
-			float time = 0;
-			FloatArray vertex = new FloatArray(animatedComponents);
-			for (int frame = 0; frame < numKeyframes; frame++) {
-				float[] vertices = new float[numVertices * (animatedComponents)];
-				int idx = 0;
-				for (int j = 0; j < numVertices; j++) {
-					idx = readFloatArray(in, vertices, idx);
-				}
-				Keyframe keyframe = new Keyframe(time, vertices);
-				keyframes[frame] = keyframe;
-				time += frameDuration;
-			}
-
-			KeyframedAnimation animation = new KeyframedAnimation(animationName, frameDuration, keyframes);
-			animations.put(animationName, animation);
-		}
-
-		KeyframedSubMesh mesh = new KeyframedSubMesh(name, new Mesh(VertexDataType.VertexArray, false, numVertices, indices.size,
-			createVertexAttributes(hasNormals, uvSets.size)), buildVertices(numVertices, hasNormals, uvSets), animations,
-			animatedComponents, GL10.GL_TRIANGLES);
-		mesh.mesh.setIndices(convertToShortArray(indices));
-		mesh.mesh.setVertices(mesh.blendedVertices);
-		return mesh;
 	}
 
 	private static float[] buildVertices (int numVertices, boolean hasNormals, Array<FloatArray> uvSets) {
