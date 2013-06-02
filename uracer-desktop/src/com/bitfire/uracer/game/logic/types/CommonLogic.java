@@ -363,7 +363,7 @@ public abstract class CommonLogic implements GameLogic {
 		playerTasks.playerDriftSoundFx.start();
 		playerTasks.hudLapInfo.toDefaultColor();
 		playerTasks.hudLapInfo.setValid(true);
-		playerTasks.hudPlayer.getTrackProgressData().reset(false);
+		playerTasks.hudPlayer.trackProgress.getProgressData().reset(false);
 
 		lapMonitor.reset();
 		gameTrack.setInitialCarSector(playerCar);
@@ -404,7 +404,7 @@ public abstract class CommonLogic implements GameLogic {
 		}
 
 		if (isTooSlow) {
-			playerTasks.hudPlayer.getTrackProgressData().reset(true);
+			playerTasks.hudPlayer.trackProgress.getProgressData().reset(true);
 		}
 	}
 
@@ -484,7 +484,7 @@ public abstract class CommonLogic implements GameLogic {
 		}
 
 		if (hasPlayer()) {
-			TrackProgressData data = playerTasks.hudPlayer.getTrackProgressData();
+			TrackProgressData data = playerTasks.hudPlayer.trackProgress.getProgressData();
 
 			// float ghSpeed = 0;
 

@@ -28,7 +28,7 @@ public class TrackProgress extends Positionable {
 	private boolean flipped;
 
 	private String customMessage = "";
-	private TrackProgressData data = null;
+	private TrackProgressData data = new TrackProgressData();
 
 	/** Data needed by this component */
 	public static class TrackProgressData {
@@ -105,13 +105,16 @@ public class TrackProgress extends Positionable {
 		shProgress.dispose();
 	}
 
-	public void tick (TrackProgressData data) {
+	public void tick () {
 		lblAdvantage.tick();
-		this.data = data;
 	}
 
 	public void setMessage (String messageOrEmpty) {
 		customMessage = messageOrEmpty;
+	}
+
+	public TrackProgressData getProgressData () {
+		return data;
 	}
 
 	@Override

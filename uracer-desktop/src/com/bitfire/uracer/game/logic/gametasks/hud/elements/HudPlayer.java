@@ -12,7 +12,6 @@ import com.bitfire.uracer.game.logic.gametasks.hud.HudElement;
 import com.bitfire.uracer.game.logic.gametasks.hud.Positionable;
 import com.bitfire.uracer.game.logic.gametasks.hud.elements.player.DriftBar;
 import com.bitfire.uracer.game.logic.gametasks.hud.elements.player.TrackProgress;
-import com.bitfire.uracer.game.logic.gametasks.hud.elements.player.TrackProgress.TrackProgressData;
 import com.bitfire.uracer.game.logic.gametasks.hud.elements.player.WrongWay;
 import com.bitfire.uracer.game.player.PlayerCar;
 import com.bitfire.uracer.game.rendering.GameRenderer;
@@ -33,7 +32,6 @@ public final class HudPlayer extends HudElement {
 	public final WrongWay wrongWay;
 	public final DriftBar driftBar;
 	public final TrackProgress trackProgress;
-	private final TrackProgressData trackProgressData;
 
 	private CarHighlighter highlightError;
 	private CarHighlighter highlightNext;
@@ -56,7 +54,6 @@ public final class HudPlayer extends HudElement {
 		wrongWay = new WrongWay();
 		driftBar = new DriftBar(carModelLengthPx);
 		trackProgress = new TrackProgress();
-		trackProgressData = new TrackProgressData();
 
 		highlightError = new CarHighlighter();
 		highlightError.setCar(player);
@@ -64,10 +61,6 @@ public final class HudPlayer extends HudElement {
 
 		highlightNext = new CarHighlighter();
 		highlightNext.setScale(1);
-	}
-
-	public TrackProgressData getTrackProgressData () {
-		return trackProgressData;
 	}
 
 	@Override
@@ -79,7 +72,7 @@ public final class HudPlayer extends HudElement {
 	@Override
 	public void onTick () {
 		driftBar.tick();
-		trackProgress.tick(trackProgressData);
+		trackProgress.tick();
 	}
 
 	@Override

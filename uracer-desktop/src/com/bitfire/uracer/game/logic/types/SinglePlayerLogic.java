@@ -221,7 +221,7 @@ public class SinglePlayerLogic extends CommonLogic {
 	@Override
 	protected void lapStarted () {
 		restartAllReplays();
-		playerTasks.hudPlayer.getTrackProgressData().reset(true);
+		playerTasks.hudPlayer.trackProgress.getProgressData().reset(true);
 	}
 
 	@Override
