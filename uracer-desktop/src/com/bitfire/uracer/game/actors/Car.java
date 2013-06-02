@@ -26,8 +26,6 @@ public abstract strictfp class Car extends Box2DEntity {
 		NoInput, InputFromPlayer, InputFromReplay
 	}
 
-	/* event */
-	// public CarEvent event = null;
 	private boolean triggerEvents = false;
 	protected static final Order ShadowsDrawingOrder = Order.MINUS_2;
 
@@ -61,7 +59,6 @@ public abstract strictfp class Car extends Box2DEntity {
 		this.carType = carType;
 		this.triggerEvents = triggerEvents;
 
-		// this.event = new CarEvent(this);
 		this.gameWorld = gameWorld;
 		this.stillModel = ModelFactory.createCar();
 		stillModel.setCar(this);
@@ -81,8 +78,6 @@ public abstract strictfp class Car extends Box2DEntity {
 	public void dispose () {
 		super.dispose();
 		GameEvents.playerCar.removeAllListeners();
-		// event.removeAllListeners();
-		// event = null;
 	}
 
 	public CarStillModel getStillModel () {
@@ -168,10 +163,6 @@ public abstract strictfp class Car extends Box2DEntity {
 	public InputMode getInputMode () {
 		return inputMode;
 	}
-
-	// public CarRenderer getRenderer () {
-	// return renderer;
-	// }
 
 	public void setPreset (CarPreset.Type presetType) {
 		if (preset.type != presetType) {

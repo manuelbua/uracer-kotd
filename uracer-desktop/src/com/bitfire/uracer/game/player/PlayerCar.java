@@ -7,6 +7,7 @@ import com.badlogic.gdx.graphics.Pixmap;
 import com.badlogic.gdx.maps.tiled.TiledMapTileLayer;
 import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.math.WindowedMean;
+import com.badlogic.gdx.physics.box2d.Fixture;
 import com.badlogic.gdx.utils.IntMap;
 import com.bitfire.uracer.Input;
 import com.bitfire.uracer.Input.MouseButton;
@@ -124,10 +125,13 @@ public class PlayerCar extends Car {
 		this.input = input;
 	}
 
-	/** When the player's car is off-track this damping will be applied to the car's linear velocity */
-	// public void setDampingFriction( float damping ) {
-	// dampFriction = damping;
-	// }
+	@Override
+	public strictfp void onCollide (Fixture other, Vector2 normalImpulses) {
+		super.onCollide(other, normalImpulses);
+		if (driftState.isDrifting) {
+			driftState.invalidateByCollision();
+		}
+	}
 
 	protected CarInput acquireInput () {
 		if (input == null) {

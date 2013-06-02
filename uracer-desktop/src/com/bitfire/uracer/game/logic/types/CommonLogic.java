@@ -839,11 +839,6 @@ public abstract class CommonLogic implements GameLogic {
 				switch (type) {
 				case onCollision:
 
-					// invalidate drifting
-					if (playerCar.driftState.isDrifting) {
-						playerCar.driftState.invalidateByCollision();
-					}
-
 					// invalidate time modulation
 					if (input.isTimeDilating()) {
 						endTimeDilation();
@@ -890,7 +885,6 @@ public abstract class CommonLogic implements GameLogic {
 		};
 
 		public void registerPlayerEvents () {
-			// player.carState.event.addListener(this, CarStateEvent.Type.onTileChanged);
 			GameEvents.driftState.addListener(driftStateListener, PlayerDriftStateEvent.Type.onBeginDrift);
 			GameEvents.driftState.addListener(driftStateListener, PlayerDriftStateEvent.Type.onEndDrift);
 
@@ -901,7 +895,6 @@ public abstract class CommonLogic implements GameLogic {
 		}
 
 		public void unregisterPlayerEvents () {
-			// player.carState.event.removeListener(this, CarStateEvent.Type.onTileChanged);
 			GameEvents.driftState.removeListener(driftStateListener, PlayerDriftStateEvent.Type.onBeginDrift);
 			GameEvents.driftState.removeListener(driftStateListener, PlayerDriftStateEvent.Type.onEndDrift);
 
