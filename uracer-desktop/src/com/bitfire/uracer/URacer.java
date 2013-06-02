@@ -197,12 +197,12 @@ public class URacer implements ApplicationListener {
 		System.exit(0);
 	}
 
-	private void simulateSlowness (int millis) {
-		try {
-			Thread.sleep(millis);
-		} catch (InterruptedException e) {
-		}
-	}
+	// private void simulateSlowness (int millis) {
+	// try {
+	// Thread.sleep(millis);
+	// } catch (InterruptedException e) {
+	// }
+	// }
 
 	private long getDeltaTimeNs () {
 		long delta = 0;

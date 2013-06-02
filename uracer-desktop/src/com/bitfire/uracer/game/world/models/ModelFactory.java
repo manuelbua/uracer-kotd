@@ -12,11 +12,12 @@ import com.bitfire.uracer.u3d.loaders.G3dtLoader;
 import com.bitfire.uracer.u3d.materials.Material;
 import com.bitfire.uracer.u3d.materials.TextureAttribute;
 import com.bitfire.uracer.u3d.still.StillModel;
+import com.bitfire.uracer.utils.URacerRuntimeException;
 import com.bitfire.utils.Hash;
 
 public final class ModelFactory {
 	public enum ModelMesh {
-		Missing, Palm, Tribune, Tree_1, Tree_2, Tree_3, Tree_4, Tree_5, Tree_6, Tree_7, Tree_8, Tree_9, Tree_10, Car
+		Missing, Tree_1, Tree_2, Tree_3, Tree_4, Tree_5, Tree_6, Tree_7, Tree_8, Tree_9, Tree_10, Car
 	}
 
 	private ModelFactory () {
@@ -41,10 +42,6 @@ public final class ModelFactory {
 	private static ModelMesh fromString (String mesh) {
 		if (mesh == null) {
 			return ModelMesh.Missing;
-		} else if (mesh.equalsIgnoreCase("palm")) {
-			return ModelMesh.Palm;
-		} else if (mesh.equalsIgnoreCase("tribune")) {
-			return ModelMesh.Tribune;
 		} else if (mesh.equalsIgnoreCase("tree-1")) {
 			return ModelMesh.Tree_1;
 		} else if (mesh.equalsIgnoreCase("tree-2")) {
@@ -88,15 +85,6 @@ public final class ModelFactory {
 		OrthographicAlignedStillModel stillModel = null;
 
 		switch (modelMesh) {
-		case Palm:
-			stillModel = new OrthographicAlignedStillModel(getStillModel("data/3d/models/palm.g3dt"), getMaterial(modelMesh,
-				Art.meshPalm));
-			break;
-
-		case Tribune:
-			stillModel = new OrthographicAlignedStillModel(getStillModel("data/3d/models/tribune.g3dt"), getMaterial(modelMesh,
-				Art.meshTribune));
-			break;
 
 		// missing mesh mesh
 		case Missing:
@@ -137,6 +125,9 @@ public final class ModelFactory {
 		Texture leavesTexture = null;
 
 		switch (modelMesh) {
+		case Car:
+		case Missing:
+			throw new URacerRuntimeException("The specified model is not a tree");
 		case Tree_1:
 			treeModelName = "tree-1.g3dt";
 			treeMeshName = "tree_1_";

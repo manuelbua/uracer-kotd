@@ -36,7 +36,7 @@ public class OptionsScreen extends Screen {
 	private Stage ui;
 	private Input input;
 	private Table root, ltable, rtable;
-	private CheckBox ppBloom, ppVignetting, ppZoomBlur, ppCrtScreen, ppCurvature, ppComplexTrees, ppWalls, ppSsao, ppNightMode;
+	private CheckBox ppBloom, ppVignetting, ppZoomBlur, ppCrtScreen, ppCurvature, ppSsao;
 	private SelectBox ppZoomBlurQuality, ppSsaoQuality;
 
 	@Override

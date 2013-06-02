@@ -164,15 +164,15 @@ public final class Ssao extends PostProcessorEffect {
 		shSsao.end();
 	}
 
-	private void dbgTexture (SpriteBatch batch, float scale, Texture tex, int index) {
-		if (tex == null) return;
-
-		float w = (tex.getWidth() * scale);
-		float h = (tex.getHeight() * scale);
-		float x = Config.Graphics.ReferenceScreenWidth - w - 10;
-		float y = index * 10;
-		batch.draw(tex, x, y, w, h);
-	}
+	// private void dbgTexture (SpriteBatch batch, float scale, Texture tex, int index) {
+	// if (tex == null) return;
+	//
+	// float w = (tex.getWidth() * scale);
+	// float h = (tex.getHeight() * scale);
+	// float x = Config.Graphics.ReferenceScreenWidth - w - 10;
+	// float y = index * 10;
+	// batch.draw(tex, x, y, w, h);
+	// }
 
 	private void dbgTextureW (SpriteBatch batch, float width, Texture tex, int index) {
 		if (tex == null) return;

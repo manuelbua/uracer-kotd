@@ -6,12 +6,12 @@ package com.bitfire.uracer.game.logic.replaying;
  * 
  * @author bmanuel */
 public final class ReplayBufferManager {
-	private final long userId;
+	// private final long userId;
 	private Replay[] replays;
 	private Replay best, worst;
 
 	public ReplayBufferManager (long userId) {
-		this.userId = userId;
+		// this.userId = userId;
 
 		// construct replay buffers
 		replays = new Replay[2];

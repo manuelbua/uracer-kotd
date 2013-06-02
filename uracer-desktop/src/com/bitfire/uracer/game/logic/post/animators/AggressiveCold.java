@@ -250,7 +250,7 @@ public final class AggressiveCold implements PostProcessingAnimator {
 	@Override
 	public void update (float zoomCamera, float warmUpCompletion) {
 		float timeModFactor = URacer.Game.getTimeModFactor();
-		float currDriftStrength = 0;
+		// float currDriftStrength = 0;
 		float currSpeedFactor = 0;
 
 		// dbg
@@ -267,7 +267,7 @@ public final class AggressiveCold implements PostProcessingAnimator {
 			meanStrength.addValue(player.driftState.driftStrength);
 			meanSpeed.addValue(player.carState.currSpeedFactor);
 
-			currDriftStrength = AMath.fixup(AMath.clamp(meanStrength.getMean(), 0, 1));
+			// currDriftStrength = AMath.fixup(AMath.clamp(meanStrength.getMean(), 0, 1));
 			currSpeedFactor = AMath.fixup(AMath.clamp(meanSpeed.getMean(), 0, 1));
 
 			currSpeedFactor = AMath.fixup(AMath.lerp(prevSpeed, player.carState.currSpeedFactor, 0.02f));
@@ -305,8 +305,8 @@ public final class AggressiveCold implements PostProcessingAnimator {
 
 		if (bloom != null) {
 
-			float sat = 0.8f;
-			if (nightMode) sat += 0.2f;
+			// float sat = 0.8f;
+			// if (nightMode) sat += 0.2f;
 			// sat *= warmUpCompletion;
 
 			float bsat = 1.3f;

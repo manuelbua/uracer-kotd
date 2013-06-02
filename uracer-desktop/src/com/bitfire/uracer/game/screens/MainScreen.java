@@ -32,7 +32,7 @@ public final class MainScreen extends Screen {
 
 	private Stage ui;
 	private Input input;
-	private Table root, ltable, rtable;
+	private Table root, ltable;
 
 	@Override
 	public void init () {

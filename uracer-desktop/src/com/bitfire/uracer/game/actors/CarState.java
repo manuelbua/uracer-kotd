@@ -2,8 +2,6 @@
 package com.bitfire.uracer.game.actors;
 
 import com.badlogic.gdx.math.Vector2;
-import com.bitfire.uracer.events.CarStateEvent;
-import com.bitfire.uracer.game.GameEvents;
 import com.bitfire.uracer.game.player.PlayerCar;
 import com.bitfire.uracer.game.world.GameWorld;
 import com.bitfire.uracer.utils.AMath;
@@ -27,7 +25,7 @@ public final class CarState {
 	// temporaries
 	private float carMaxSpeedSquared = 0;
 	private float carMaxForce = 0;
-	private int lastTileX = 0, lastTileY = 0;
+	// private int lastTileX = 0, lastTileY = 0;
 
 	private GameWorld world;
 
@@ -44,13 +42,13 @@ public final class CarState {
 	}
 
 	public void dispose () {
-		GameEvents.playerCarState.removeAllListeners();
+		// GameEvents.playerCarState.removeAllListeners();
 	}
 
 	public void reset () {
 		// causes an onTileChanged event to be raised the next update step
-		lastTileX = -1;
-		lastTileY = -1;
+		// lastTileX = -1;
+		// lastTileY = -1;
 		currTileX = -1;
 		currTileY = -1;
 	}
@@ -76,8 +74,8 @@ public final class CarState {
 	 * tile index that is different than the previous one
 	 */
 	private void updateTilePosition () {
-		lastTileX = currTileX;
-		lastTileY = currTileY;
+		// lastTileX = currTileX;
+		// lastTileY = currTileY;
 
 		// compute car's tile position
 		tilePosition
@@ -86,8 +84,8 @@ public final class CarState {
 		currTileX = (int)tilePosition.x;
 		currTileY = (int)tilePosition.y;
 
-		if ((lastTileX != currTileX) || (lastTileY != currTileY)) {
-			GameEvents.playerCarState.trigger(this, CarStateEvent.Type.onTileChanged);
-		}
+		// if ((lastTileX != currTileX) || (lastTileY != currTileY)) {
+		// GameEvents.playerCarState.trigger(this, CarStateEvent.Type.onTileChanged);
+		// }
 	}
 }

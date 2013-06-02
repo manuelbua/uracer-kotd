@@ -159,7 +159,7 @@ public class SinglePlayerLogic extends CommonLogic {
 
 			float bestTime = AMath.round(best.trackTimeSeconds, 2);
 			float worstTime = AMath.round(worst.trackTimeSeconds, 2);
-			float diffTime = AMath.round(worstTime - bestTime, 2);
+			// float diffTime = AMath.round(worstTime - bestTime, 2);
 
 			if (AMath.equals(worstTime, bestTime)) {
 				// draw!

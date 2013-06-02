@@ -21,7 +21,7 @@ public class PlayerSmokeTrails extends TrackEffect {
 	private SmokeEffect fx;
 	private static final int SmokeEffectsCount = 1;
 	private PlayerCar player;
-	private boolean isDrifting, wasDrifting;
+	// private boolean isDrifting, wasDrifting;
 	private float posX, posY;
 
 	public PlayerSmokeTrails (PlayerCar player) {
@@ -32,8 +32,8 @@ public class PlayerSmokeTrails extends TrackEffect {
 		fx.setMaxParticleCount(MaxParticles);
 		// fx.start();
 
-		isDrifting = false;
-		wasDrifting = false;
+		// isDrifting = false;
+		// wasDrifting = false;
 		posX = 0;
 		posY = 0;
 	}
@@ -49,7 +49,7 @@ public class PlayerSmokeTrails extends TrackEffect {
 
 	@Override
 	public void tick () {
-		isDrifting = player.driftState.isDrifting && player.driftState.driftStrength > 0f;
+		// isDrifting = player.driftState.isDrifting && player.driftState.driftStrength > 0f;
 
 		if (fx.effect.isComplete()) {
 			fx.start();
@@ -76,7 +76,7 @@ public class PlayerSmokeTrails extends TrackEffect {
 		// }
 		// }
 
-		wasDrifting = isDrifting;
+		// wasDrifting = isDrifting;
 		setPosition(player.state().position.x, player.state().position.y);
 	}
 
@@ -118,8 +118,8 @@ public class PlayerSmokeTrails extends TrackEffect {
 
 	@Override
 	public void reset () {
-		isDrifting = false;
-		wasDrifting = false;
+		// isDrifting = false;
+		// wasDrifting = false;
 		fx.reset();
 	}
 
@@ -140,7 +140,8 @@ public class PlayerSmokeTrails extends TrackEffect {
 		private final float MaxParticleLifeMinMs;
 		private final float MaxParticleLifeMaxMs;
 		private final float OriginalParticleScaling;
-		private final float MaxParticlesPerEmitterPerSec;
+
+		// private final float MaxParticlesPerEmitterPerSec;
 
 		public SmokeEffect () {
 			effect = new ParticleEffect();
@@ -151,7 +152,7 @@ public class PlayerSmokeTrails extends TrackEffect {
 			MaxParticleLifeMinMs = baseEmitter.getLife().getHighMin();
 			MaxParticleLifeMaxMs = baseEmitter.getLife().getHighMax();
 			OriginalParticleScaling = baseEmitter.getScale().getHighMax();
-			MaxParticlesPerEmitterPerSec = baseEmitter.getEmission().getHighMax();
+			// MaxParticlesPerEmitterPerSec = baseEmitter.getEmission().getHighMax();
 
 			effect.start();
 		}
@@ -169,9 +170,9 @@ public class PlayerSmokeTrails extends TrackEffect {
 			baseEmitter.getScale().setHigh(OriginalParticleScaling * value);
 		}
 
-		public void setEmissionMul (float value) {
-			baseEmitter.getEmission().setHigh(MaxParticlesPerEmitterPerSec * value);
-		}
+		// public void setEmissionMul (float value) {
+		// baseEmitter.getEmission().setHigh(MaxParticlesPerEmitterPerSec * value);
+		// }
 
 		public void start () {
 			for (int i = 0; i < effect.getEmitters().size; i++) {

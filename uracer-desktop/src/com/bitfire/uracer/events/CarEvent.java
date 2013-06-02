@@ -8,7 +8,7 @@ import com.bitfire.uracer.game.actors.CarForces;
 
 public final class CarEvent extends Event<CarEvent.Type, CarEvent.Order, CarEvent.Listener> {
 	public enum Type {
-		onComputeForces, onCollision, onOutOfTrack, onBackInTrack, onGhostFadingOut
+		onComputeForces, onCollision, onOutOfTrack, onBackInTrack
 	}
 
 	public enum Order {

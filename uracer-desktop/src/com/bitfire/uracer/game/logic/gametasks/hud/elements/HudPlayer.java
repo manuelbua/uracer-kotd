@@ -111,13 +111,13 @@ public final class HudPlayer extends HudElement {
 	// internal position helpers
 	//
 
-	private void bottom (Positionable p, float distance) {
-		float zs = renderer.getWorldRenderer().getCameraZoom();
-
-		tmpg.set(GameRenderer.ScreenUtils.worldPxToScreen(playerState.position));
-		tmpg.y += distance * zs;
-		p.setPosition(tmpg);
-	}
+	// private void bottom (Positionable p, float distance) {
+	// float zs = renderer.getWorldRenderer().getCameraZoom();
+	//
+	// tmpg.set(GameRenderer.ScreenUtils.worldPxToScreen(playerState.position));
+	// tmpg.y += distance * zs;
+	// p.setPosition(tmpg);
+	// }
 
 	private void gravitate (Positionable p, float offsetDegs, float distance) {
 		p.setPosition(gravitate(p.getWidth(), p.getHeight(), offsetDegs, distance));

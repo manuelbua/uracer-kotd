@@ -28,8 +28,6 @@ import com.badlogic.gdx.graphics.VertexAttribute;
 import com.badlogic.gdx.graphics.VertexAttributes;
 import com.badlogic.gdx.graphics.VertexAttributes.Usage;
 import com.badlogic.gdx.graphics.glutils.ShaderProgram;
-import com.badlogic.gdx.utils.Array;
-import com.badlogic.gdx.utils.FloatArray;
 import com.badlogic.gdx.utils.GdxRuntimeException;
 import com.badlogic.gdx.utils.IntArray;
 import com.bitfire.uracer.u3d.still.StillModel;
@@ -110,28 +108,28 @@ public class G3dtLoader {
 		return new StillSubMesh(name, mesh, GL10.GL_TRIANGLES);
 	}
 
-	private static float[] buildVertices (int numVertices, boolean hasNormals, Array<FloatArray> uvSets) {
-		float[] vertices = new float[numVertices * (3 + (hasNormals ? 3 : 0) + uvSets.size * 2)];
-
-		int idx = 0;
-		int idxUv = 0;
-		for (int i = 0; i < numVertices; i++) {
-			vertices[idx++] = 0;
-			vertices[idx++] = 0;
-			vertices[idx++] = 0;
-			if (hasNormals) {
-				vertices[idx++] = 0;
-				vertices[idx++] = 0;
-				vertices[idx++] = 0;
-			}
-			for (int j = 0; j < uvSets.size; j++) {
-				vertices[idx++] = uvSets.get(j).get(idxUv);
-				vertices[idx++] = uvSets.get(j).get(idxUv + 1);
-			}
-			idxUv += 2;
-		}
-		return vertices;
-	}
+	// private static float[] buildVertices (int numVertices, boolean hasNormals, Array<FloatArray> uvSets) {
+	// float[] vertices = new float[numVertices * (3 + (hasNormals ? 3 : 0) + uvSets.size * 2)];
+	//
+	// int idx = 0;
+	// int idxUv = 0;
+	// for (int i = 0; i < numVertices; i++) {
+	// vertices[idx++] = 0;
+	// vertices[idx++] = 0;
+	// vertices[idx++] = 0;
+	// if (hasNormals) {
+	// vertices[idx++] = 0;
+	// vertices[idx++] = 0;
+	// vertices[idx++] = 0;
+	// }
+	// for (int j = 0; j < uvSets.size; j++) {
+	// vertices[idx++] = uvSets.get(j).get(idxUv);
+	// vertices[idx++] = uvSets.get(j).get(idxUv + 1);
+	// }
+	// idxUv += 2;
+	// }
+	// return vertices;
+	// }
 
 	private static VertexAttribute[] createVertexAttributes (boolean hasNormals, int uvs) {
 		VertexAttribute[] attributes = new VertexAttribute[1 + (hasNormals ? 1 : 0) + uvs];
@@ -144,16 +142,16 @@ public class G3dtLoader {
 		return attributes;
 	}
 
-	private static FloatArray readUVSet (BufferedReader in, int numVertices, boolean flipV) throws IOException {
-		FloatArray uvSet = new FloatArray(numVertices * 2);
-		FloatArray uv = new FloatArray(2);
-		for (int i = 0; i < numVertices; i++) {
-			readFloatArray(in, uv);
-			uvSet.add(uv.items[0]);
-			uvSet.add(flipV ? 1 - uv.items[1] : uv.items[1]);
-		}
-		return uvSet;
-	}
+	// private static FloatArray readUVSet (BufferedReader in, int numVertices, boolean flipV) throws IOException {
+	// FloatArray uvSet = new FloatArray(numVertices * 2);
+	// FloatArray uv = new FloatArray(2);
+	// for (int i = 0; i < numVertices; i++) {
+	// readFloatArray(in, uv);
+	// uvSet.add(uv.items[0]);
+	// uvSet.add(flipV ? 1 - uv.items[1] : uv.items[1]);
+	// }
+	// return uvSet;
+	// }
 
 	private static IntArray readFaces (BufferedReader in) throws NumberFormatException, IOException {
 		int numFaces = readInt(in);
@@ -186,10 +184,10 @@ public class G3dtLoader {
 		return shortArray;
 	}
 
-	private static float readFloat (BufferedReader in) throws NumberFormatException, IOException {
-		lineNum++;
-		return Float.parseFloat(read(in).trim());
-	}
+	// private static float readFloat (BufferedReader in) throws NumberFormatException, IOException {
+	// lineNum++;
+	// return Float.parseFloat(read(in).trim());
+	// }
 
 	private static int readInt (BufferedReader in) throws NumberFormatException, IOException {
 		lineNum++;
@@ -201,15 +199,15 @@ public class G3dtLoader {
 		return read(in);
 	}
 
-	private static void readFloatArray (BufferedReader in, FloatArray array) throws IOException {
-		lineNum++;
-		String[] tokens = read(in).split(",");
-		int len = tokens.length;
-		array.clear();
-		for (int i = 0; i < len; i++) {
-			array.add(Float.parseFloat(tokens[i].trim()));
-		}
-	}
+	// private static void readFloatArray (BufferedReader in, FloatArray array) throws IOException {
+	// lineNum++;
+	// String[] tokens = read(in).split(",");
+	// int len = tokens.length;
+	// array.clear();
+	// for (int i = 0; i < len; i++) {
+	// array.add(Float.parseFloat(tokens[i].trim()));
+	// }
+	// }
 
 	private static int readFloatArray (BufferedReader in, float[] array, int idx) throws IOException {
 		lineNum++;

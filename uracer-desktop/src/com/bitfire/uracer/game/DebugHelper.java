@@ -5,24 +5,18 @@ import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.math.MathUtils;
 import com.badlogic.gdx.math.Matrix4;
-import com.badlogic.gdx.math.Vector2;
-import com.badlogic.gdx.physics.box2d.Body;
 import com.badlogic.gdx.physics.box2d.Box2DDebugRenderer;
 import com.badlogic.gdx.physics.box2d.World;
 import com.bitfire.postprocessing.PostProcessor;
 import com.bitfire.uracer.URacer;
 import com.bitfire.uracer.configuration.Config;
-import com.bitfire.uracer.entities.EntityRenderState;
 import com.bitfire.uracer.events.GameRendererEvent;
 import com.bitfire.uracer.events.GameRendererEvent.Order;
 import com.bitfire.uracer.events.GameRendererEvent.Type;
-import com.bitfire.uracer.game.actors.CarDescriptor;
 import com.bitfire.uracer.game.player.PlayerCar;
-import com.bitfire.uracer.game.rendering.GameRenderer;
 import com.bitfire.uracer.game.rendering.GameWorldRenderer;
 import com.bitfire.uracer.game.world.GameWorld;
 import com.bitfire.uracer.resources.Art;
-import com.bitfire.uracer.utils.Convert;
 import com.bitfire.uracer.utils.NumberString;
 import com.bitfire.uracer.utils.ScaleUtils;
 import com.bitfire.uracer.utils.SpriteBatchUtils;
@@ -35,7 +29,7 @@ public final class DebugHelper {
 	private Matrix4 idt = new Matrix4();
 
 	// player
-	private static PlayerCar player;
+	// private static PlayerCar player;
 
 	// frame stats
 	private DebugStatistics stats;
@@ -48,17 +42,14 @@ public final class DebugHelper {
 	private final GameRendererEvent.Listener renderListener = new GameRendererEvent.Listener() {
 		@Override
 		public void handle (Object source, Type type, Order order) {
-			switch (type) {
-			case BatchDebug:
+			if (type == Type.BatchDebug) {
 				render(GameEvents.gameRenderer.batch);
-				break;
-			case Debug:
+			} else if (type == Type.Debug) {
+
 				if (Config.Debug.RenderBox2DWorldWireframe) {
 					renderB2dWorld(box2dWorld, worldRenderer.getOrthographicMvpMt());
 				}
-				break;
 			}
-
 		}
 	};
 
@@ -70,7 +61,7 @@ public final class DebugHelper {
 		GameEvents.gameRenderer.addListener(renderListener, GameRendererEvent.Type.BatchDebug, GameRendererEvent.Order.DEFAULT);
 		GameEvents.gameRenderer.addListener(renderListener, GameRendererEvent.Type.Debug, GameRendererEvent.Order.DEFAULT);
 
-		player = null;
+		// player = null;
 		b2drenderer = new Box2DDebugRenderer();
 
 		// extrapolate version information
@@ -95,7 +86,7 @@ public final class DebugHelper {
 	}
 
 	public static void setPlayer (PlayerCar player) {
-		DebugHelper.player = player;
+		// DebugHelper.player = player;
 	}
 
 	public void update () {
@@ -120,9 +111,9 @@ public final class DebugHelper {
 				renderMemoryUsage(batch, ScaleUtils.PlayHeight - Art.DebugFontHeight * 4);
 			}
 
-			if (Config.Debug.RenderPlayerDebugInfo && player != null) {
-				renderPlayerInfo(batch, player, 0);
-			}
+			// if (Config.Debug.RenderPlayerDebugInfo && player != null) {
+			// renderPlayerInfo(batch, player, 0);
+			// }
 
 			if (Config.Debug.RenderDebugInfoPostProcessor && postProcessor != null) {
 				renderPostProcessorInfo(batch, postProcessor, ScaleUtils.PlayHeight - Art.DebugFontHeight);
@@ -180,30 +171,30 @@ public final class DebugHelper {
 		SpriteBatchUtils.drawString(batch, text, 0, y);
 	}
 
-	private void renderPlayerInfo (SpriteBatch batch, PlayerCar player, int y) {
-		CarDescriptor carDesc = player.getCarDescriptor();
-		Body body = player.getBody();
-		Vector2 pos = GameRenderer.ScreenUtils.worldMtToScreen(body.getPosition());
-		EntityRenderState state = player.state();
-
-		SpriteBatchUtils.drawString(batch, "vel_wc len =" + carDesc.velocity_wc.len(), 0, y);
-		SpriteBatchUtils.drawString(batch, "vel_wc [x=" + carDesc.velocity_wc.x + ", y=" + carDesc.velocity_wc.y + "]", 0, y
-			+ Art.DebugFontWidth);
-		SpriteBatchUtils.drawString(batch, "steerangle=" + carDesc.steerangle, 0, y + Art.DebugFontWidth * 2);
-		SpriteBatchUtils.drawString(batch, "throttle=" + carDesc.throttle, 0, y + Art.DebugFontWidth * 3);
-		SpriteBatchUtils.drawString(batch, "screen x=" + pos.x + ",y=" + pos.y, 0, y + Art.DebugFontWidth * 4);
-		SpriteBatchUtils.drawString(batch, "world-mt x=" + body.getPosition().x + ",y=" + body.getPosition().y, 0, y
-			+ Art.DebugFontWidth * 5);
-		SpriteBatchUtils.drawString(batch,
-			"world-px x=" + Convert.mt2px(body.getPosition().x) + ",y=" + Convert.mt2px(body.getPosition().y), 0, y
-				+ Art.DebugFontWidth * 6);
-		// Debug.drawString( "dir worldsize x=" + Director.worldSizeScaledPx.x + ",y=" +
-		// Director.worldSizeScaledPx.y, 0, 100 );
-		// Debug.drawString( "dir bounds x=" + Director.boundsPx.x + ",y=" + Director.boundsPx.width, 0, 107 );
-		SpriteBatchUtils.drawString(batch, "orient=" + body.getAngle(), 0, y + Art.DebugFontWidth * 7);
-		SpriteBatchUtils.drawString(batch, "render.interp=" + (state.position.x + "," + state.position.y), 0, y
-			+ Art.DebugFontWidth * 8);
-
-		// BatchUtils.drawString( batch, "on tile " + tilePosition, 0, 0 );
-	}
+	// private void renderPlayerInfo (SpriteBatch batch, PlayerCar player, int y) {
+	// CarDescriptor carDesc = player.getCarDescriptor();
+	// Body body = player.getBody();
+	// Vector2 pos = GameRenderer.ScreenUtils.worldMtToScreen(body.getPosition());
+	// EntityRenderState state = player.state();
+	//
+	// SpriteBatchUtils.drawString(batch, "vel_wc len =" + carDesc.velocity_wc.len(), 0, y);
+	// SpriteBatchUtils.drawString(batch, "vel_wc [x=" + carDesc.velocity_wc.x + ", y=" + carDesc.velocity_wc.y + "]", 0, y
+	// + Art.DebugFontWidth);
+	// SpriteBatchUtils.drawString(batch, "steerangle=" + carDesc.steerangle, 0, y + Art.DebugFontWidth * 2);
+	// SpriteBatchUtils.drawString(batch, "throttle=" + carDesc.throttle, 0, y + Art.DebugFontWidth * 3);
+	// SpriteBatchUtils.drawString(batch, "screen x=" + pos.x + ",y=" + pos.y, 0, y + Art.DebugFontWidth * 4);
+	// SpriteBatchUtils.drawString(batch, "world-mt x=" + body.getPosition().x + ",y=" + body.getPosition().y, 0, y
+	// + Art.DebugFontWidth * 5);
+	// SpriteBatchUtils.drawString(batch,
+	// "world-px x=" + Convert.mt2px(body.getPosition().x) + ",y=" + Convert.mt2px(body.getPosition().y), 0, y
+	// + Art.DebugFontWidth * 6);
+	// // Debug.drawString( "dir worldsize x=" + Director.worldSizeScaledPx.x + ",y=" +
+	// // Director.worldSizeScaledPx.y, 0, 100 );
+	// // Debug.drawString( "dir bounds x=" + Director.boundsPx.x + ",y=" + Director.boundsPx.width, 0, 107 );
+	// SpriteBatchUtils.drawString(batch, "orient=" + body.getAngle(), 0, y + Art.DebugFontWidth * 7);
+	// SpriteBatchUtils.drawString(batch, "render.interp=" + (state.position.x + "," + state.position.y), 0, y
+	// + Art.DebugFontWidth * 8);
+	//
+	// // BatchUtils.drawString( batch, "on tile " + tilePosition, 0, 0 );
+	// }
 }

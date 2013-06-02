@@ -14,14 +14,14 @@ public final class ReplayRecorder {
 	}
 	// @on
 
-	private final long userId;
+	// private final long userId;
 	private boolean isRecording;
 
 	// replay data
 	private Replay replay;
 
 	public ReplayRecorder (long userId) {
-		this.userId = userId;
+		// this.userId = userId;
 		isRecording = false;
 		replay = null;
 	}
