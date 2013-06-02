@@ -133,8 +133,6 @@ public abstract class CommonLogic implements GameLogic {
 		this.inputSystem = URacer.Game.getInputSystem();
 		timeMod = new TimeModulator();
 
-		Gdx.app.log("CommonLogic", "Tweening helpers created");
-
 		// post-processing
 		postProcessing = new PostProcessing(gameWorld);
 		gameRenderer.setEnableNormalDepthMap(postProcessing.requiresNormalDepthMap());
@@ -195,18 +193,6 @@ public abstract class CommonLogic implements GameLogic {
 		GameTweener.dispose();
 		replayManager.dispose();
 	}
-
-	protected void wrongWayBegins () {
-		postProcessing.alertWrongWayBegins(500);
-	}
-
-	protected void wrongWayEnds () {
-		postProcessing.alertWrongWayEnds(500);
-	}
-
-	//
-	// SHARED OPERATIONS (Subclass Sandbox pattern)
-	//
 
 	/** Restarts the current game */
 	@Override
@@ -743,7 +729,7 @@ public abstract class CommonLogic implements GameLogic {
 			playerTasks.hudLapInfo.toColor(1, 0, 0);
 			playerTasks.hudLapInfo.setInvalid("invalid lap");
 
-			wrongWayBegins();
+			postProcessing.alertWrongWayBegins(500);
 		}
 
 		@Override
@@ -752,7 +738,7 @@ public abstract class CommonLogic implements GameLogic {
 			// playerTasks.hudLapInfo.toColor(1, 1, 0);
 			// playerTasks.hudLapInfo.setInvalid("back to start");
 			//
-			// wrongWayEnds();
+			// postProcessing.alertWrongWayEnds(500);
 		}
 
 		@Override
