@@ -1,8 +1,8 @@
 
-package com.bitfire.uracer.game.logic.gametasks.sounds;
+package com.bitfire.uracer.game.logic.gametasks;
 
 import com.badlogic.gdx.utils.Array;
-import com.bitfire.uracer.game.logic.gametasks.GameTask;
+import com.bitfire.uracer.game.logic.gametasks.sounds.SoundEffect;
 import com.bitfire.utils.ItemsManager;
 
 public class SoundManager extends GameTask {

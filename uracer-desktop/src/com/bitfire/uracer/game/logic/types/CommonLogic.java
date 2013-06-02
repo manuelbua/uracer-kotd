@@ -28,7 +28,7 @@ import com.bitfire.uracer.game.Time.Reference;
 import com.bitfire.uracer.game.actors.Car;
 import com.bitfire.uracer.game.actors.CarPreset;
 import com.bitfire.uracer.game.actors.GhostCar;
-import com.bitfire.uracer.game.logic.gametasks.GameTasksManager;
+import com.bitfire.uracer.game.logic.GameTasksManager;
 import com.bitfire.uracer.game.logic.gametasks.hud.elements.HudPlayer.EndDriftType;
 import com.bitfire.uracer.game.logic.gametasks.hud.elements.player.DriftBar;
 import com.bitfire.uracer.game.logic.gametasks.hud.elements.player.TrackProgress.TrackProgressData;
@@ -63,6 +63,26 @@ import com.bitfire.uracer.utils.CarUtils;
 import com.bitfire.uracer.utils.NumberString;
 
 public abstract class CommonLogic implements GameLogic {
+
+	// implementers should returns the camera zoom amount
+	protected abstract float updateCamera (float timeModFactor);
+
+	protected abstract void newReplay (Replay replay);
+
+	protected abstract void discardedReplay (Replay replay);
+
+	protected abstract void lapStarted ();
+
+	protected abstract void lapCompleted ();
+
+	protected abstract void driftBegins ();
+
+	protected abstract void driftEnds ();
+
+	protected abstract void outOfTrack ();
+
+	protected abstract void backInTrack ();
+
 	// input
 	protected Input inputSystem = null;
 	protected GameInput input = null;
@@ -175,29 +195,6 @@ public abstract class CommonLogic implements GameLogic {
 		GameTweener.dispose();
 		replayManager.dispose();
 	}
-
-	//
-	// specific game logic shall also implement these
-	//
-
-	// implementers should returns the camera zoom amount
-	protected abstract float updateCamera (float timeModFactor);
-
-	protected abstract void newReplay (Replay replay);
-
-	protected abstract void discardedReplay (Replay replay);
-
-	protected abstract void lapStarted ();
-
-	protected abstract void lapCompleted ();
-
-	protected abstract void driftBegins ();
-
-	protected abstract void driftEnds ();
-
-	protected abstract void outOfTrack ();
-
-	protected abstract void backInTrack ();
 
 	protected void wrongWayBegins () {
 		postProcessing.alertWrongWayBegins(500);

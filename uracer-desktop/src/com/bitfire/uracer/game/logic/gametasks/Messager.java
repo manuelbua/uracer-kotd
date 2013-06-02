@@ -1,5 +1,5 @@
 
-package com.bitfire.uracer.game.logic.gametasks.messager;
+package com.bitfire.uracer.game.logic.gametasks;
 
 import java.util.LinkedList;
 
@@ -9,7 +9,7 @@ import com.bitfire.uracer.events.GameRendererEvent;
 import com.bitfire.uracer.events.GameRendererEvent.Order;
 import com.bitfire.uracer.events.GameRendererEvent.Type;
 import com.bitfire.uracer.game.GameEvents;
-import com.bitfire.uracer.game.logic.gametasks.GameTask;
+import com.bitfire.uracer.game.logic.gametasks.messager.Message;
 import com.bitfire.uracer.game.logic.gametasks.messager.Message.Position;
 import com.bitfire.uracer.game.logic.gametasks.messager.Message.Size;
 
