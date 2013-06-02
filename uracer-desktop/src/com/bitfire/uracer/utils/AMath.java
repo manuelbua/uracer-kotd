@@ -1,7 +1,6 @@
 
 package com.bitfire.uracer.utils;
 
-import com.badlogic.gdx.math.MathUtils;
 import com.bitfire.uracer.configuration.Config;
 
 /** Algebra math utils.
@@ -104,7 +103,11 @@ public final class AMath {
 	}
 
 	public static float clampf (float v, float min, float max) {
-		return AMath.clamp(AMath.fixupTo(AMath.fixupTo(MathUtils.clamp(v, min, max), min), max), min, max);
+		return AMath.clamp(AMath.fixupTo(AMath.fixupTo(v, min), max), min, max);
+	}
+
+	public static float clampf (float v, float min, float max, float epsilon) {
+		return AMath.clamp(AMath.fixupTo(AMath.fixupTo(v, min, epsilon), max, epsilon), min, max);
 	}
 
 	public static float sign (float v) {

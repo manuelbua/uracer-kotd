@@ -23,7 +23,6 @@ public class HudDebug extends HudElement {
 
 	private final PlayerCar player;
 	private final PlayerDriftState driftState;
-	private final GameTasksManager gameTaskManager;
 	private final PlayerSmokeTrails smokeTrails;
 	private final PlayerSkidMarks skidMarks;
 
@@ -35,10 +34,9 @@ public class HudDebug extends HudElement {
 	public HudDebug (PlayerCar player, PlayerDriftState driftState, GameTasksManager manager) {
 		this.player = player;
 		this.driftState = driftState;
-		this.gameTaskManager = manager;
 
-		skidMarks = (PlayerSkidMarks)gameTaskManager.effects.getEffect(TrackEffectType.CarSkidMarks);
-		smokeTrails = (PlayerSmokeTrails)gameTaskManager.effects.getEffect(TrackEffectType.CarSmokeTrails);
+		skidMarks = (PlayerSkidMarks)manager.effects.getEffect(TrackEffectType.CarSkidMarks);
+		smokeTrails = (PlayerSmokeTrails)manager.effects.getEffect(TrackEffectType.CarSmokeTrails);
 
 		// meter lateral forces
 		meterDriftStrength = new HudDebugMeter(100, 5);

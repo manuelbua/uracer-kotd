@@ -6,6 +6,7 @@ import com.badlogic.gdx.utils.Array;
 import com.badlogic.gdx.utils.IntMap;
 import com.bitfire.uracer.events.GameRendererEvent;
 import com.bitfire.uracer.events.GameRendererEvent.Order;
+import com.bitfire.uracer.events.GameRendererEvent.Type;
 import com.bitfire.uracer.game.GameEvents;
 import com.bitfire.uracer.game.logic.gametasks.GameTask;
 import com.bitfire.utils.ItemsManager;
@@ -17,7 +18,7 @@ public final class TrackEffects extends GameTask {
 
 	private final GameRendererEvent.Listener listener = new GameRendererEvent.Listener() {
 		@Override
-		public void gameRendererEvent (GameRendererEvent.Type type, Order order) {
+		public void handle (Object source, Type type, Order order) {
 			if (order != GameRendererEvent.Order.DEFAULT) {
 				return;
 			}
@@ -116,7 +117,7 @@ public final class TrackEffects extends GameTask {
 	}
 
 	@Override
-	public void onReset () {
+	public void reset () {
 		Array<TrackEffect> items = managerBeforeCars.items;
 		for (int i = 0; i < items.size; i++) {
 			TrackEffect effect = items.get(i);

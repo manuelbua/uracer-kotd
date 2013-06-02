@@ -25,6 +25,7 @@ import com.bitfire.postprocessing.utils.PingPongBuffer;
 import com.bitfire.uracer.configuration.Config;
 import com.bitfire.uracer.events.GameRendererEvent;
 import com.bitfire.uracer.events.GameRendererEvent.Order;
+import com.bitfire.uracer.events.GameRendererEvent.Type;
 import com.bitfire.uracer.game.GameEvents;
 import com.bitfire.uracer.utils.ScaleUtils;
 import com.bitfire.utils.ShaderLoader;
@@ -53,7 +54,7 @@ public final class Ssao extends PostProcessorEffect {
 
 	private GameRendererEvent.Listener gameRendererEvent = new GameRendererEvent.Listener() {
 		@Override
-		public void gameRendererEvent (GameRendererEvent.Type type, Order order) {
+		public void handle (Object source, Type type, Order order) {
 			debug(GameEvents.gameRenderer.batch);
 		}
 	};

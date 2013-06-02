@@ -64,7 +64,7 @@ public class SoundManager extends GameTask {
 	}
 
 	@Override
-	public void onReset () {
+	public void reset () {
 		Array<SoundEffect> items = manager.items;
 		for (int i = 0; i < items.size; i++) {
 			items.get(i).reset();

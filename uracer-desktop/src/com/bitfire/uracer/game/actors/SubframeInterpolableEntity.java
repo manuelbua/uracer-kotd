@@ -8,20 +8,53 @@ import com.bitfire.uracer.events.GameRendererEvent.Order;
 import com.bitfire.uracer.events.PhysicsStepEvent;
 import com.bitfire.uracer.game.GameEvents;
 
-public abstract class SubframeInterpolableEntity extends Entity implements PhysicsStepEvent.Listener, GameRendererEvent.Listener {
+public abstract class SubframeInterpolableEntity extends Entity {
 	// world-coords
 	protected EntityRenderState statePrevious = new EntityRenderState();
 	protected EntityRenderState stateCurrent = new EntityRenderState();
 
+	private final PhysicsStepEvent.Listener physicsListener = new PhysicsStepEvent.Listener() {
+
+		@Override
+		public void handle (Object source, PhysicsStepEvent.Type type, PhysicsStepEvent.Order order) {
+			switch (type) {
+			case onBeforeTimestep:
+				onBeforePhysicsSubstep();
+				break;
+			case onAfterTimestep:
+				onAfterPhysicsSubstep();
+				break;
+			case onSubstepCompleted:
+				onSubstepCompleted();
+				break;
+			}
+		}
+	};
+
+	private final GameRendererEvent.Listener renderListener = new GameRendererEvent.Listener() {
+		@Override
+		public void handle (Object source, com.bitfire.uracer.events.GameRendererEvent.Type type, Order order) {
+			if (type == GameRendererEvent.Type.OnSubframeInterpolate) {
+				onSubframeInterpolate(GameEvents.gameRenderer.timeAliasingFactor);
+			}
+		}
+	};
+
 	public SubframeInterpolableEntity () {
-		GameEvents.addPhysicsListener(this);
-		GameEvents.gameRenderer.addListener(this, GameRendererEvent.Type.OnSubframeInterpolate, GameRendererEvent.Order.DEFAULT);
+		GameEvents.physicsStep.addListener(physicsListener, PhysicsStepEvent.Type.onBeforeTimestep);
+		GameEvents.physicsStep.addListener(physicsListener, PhysicsStepEvent.Type.onAfterTimestep);
+		GameEvents.physicsStep.addListener(physicsListener, PhysicsStepEvent.Type.onSubstepCompleted);
+		GameEvents.gameRenderer.addListener(renderListener, GameRendererEvent.Type.OnSubframeInterpolate,
+			GameRendererEvent.Order.DEFAULT);
 	}
 
 	@Override
 	public void dispose () {
-		GameEvents.removePhysicsListener(this);
-		GameEvents.gameRenderer.removeListener(this, GameRendererEvent.Type.OnSubframeInterpolate, GameRendererEvent.Order.DEFAULT);
+		GameEvents.physicsStep.removeListener(physicsListener, PhysicsStepEvent.Type.onBeforeTimestep);
+		GameEvents.physicsStep.removeListener(physicsListener, PhysicsStepEvent.Type.onAfterTimestep);
+		GameEvents.physicsStep.removeListener(physicsListener, PhysicsStepEvent.Type.onSubstepCompleted);
+		GameEvents.gameRenderer.removeListener(renderListener, GameRendererEvent.Type.OnSubframeInterpolate,
+			GameRendererEvent.Order.DEFAULT);
 	}
 
 	public abstract boolean isVisible ();
@@ -35,28 +68,6 @@ public abstract class SubframeInterpolableEntity extends Entity implements Physi
 		statePrevious.set(stateCurrent);
 		stateRender.set(stateCurrent);
 		stateRender.toPixels();
-	}
-
-	@Override
-	public void gameRendererEvent (GameRendererEvent.Type type, Order order) {
-		if (type == GameRendererEvent.Type.OnSubframeInterpolate) {
-			onSubframeInterpolate(GameEvents.gameRenderer.timeAliasingFactor);
-		}
-	}
-
-	@Override
-	public void physicsEvent (PhysicsStepEvent.Type type) {
-		switch (type) {
-		case onBeforeTimestep:
-			onBeforePhysicsSubstep();
-			break;
-		case onAfterTimestep:
-			onAfterPhysicsSubstep();
-			break;
-		case onSubstepCompleted:
-			onSubstepCompleted();
-			break;
-		}
 	}
 
 	public void onBeforePhysicsSubstep () {

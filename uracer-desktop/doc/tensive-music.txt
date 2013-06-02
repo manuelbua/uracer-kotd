@@ -1,0 +1,12 @@
+tensive music
+-------------
+
+
+prologue, 19.348s @15s
+prologue 2, 34.348s @15s
+prologue 3, 49.357s @14.985s
+prologue 4, 1m 4.350s @14.985s
+
+1st inciso, 1m 19.352s @15.003s
+2nd inciso, 1m 34.346s @15.012s
+3rd inciso, 2m 4.370s @15.012s

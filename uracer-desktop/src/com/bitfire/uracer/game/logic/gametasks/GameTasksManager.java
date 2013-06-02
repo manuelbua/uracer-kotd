@@ -2,11 +2,11 @@
 package com.bitfire.uracer.game.logic.gametasks;
 
 import com.badlogic.gdx.utils.Array;
+import com.bitfire.uracer.events.TaskManagerEvent;
 import com.bitfire.uracer.game.logic.gametasks.hud.Hud;
 import com.bitfire.uracer.game.logic.gametasks.messager.Messager;
 import com.bitfire.uracer.game.logic.gametasks.sounds.SoundManager;
 import com.bitfire.uracer.game.logic.gametasks.trackeffects.TrackEffects;
-import com.bitfire.uracer.game.task.TaskManagerEvent;
 import com.bitfire.uracer.game.world.GameWorld;
 
 /** Manages the creation and destruction of the main game tasks. */
@@ -38,6 +38,7 @@ public final class GameTasksManager {
 	public void createTasks () {
 		// physics step
 		physicsStep = new PhysicsStep(gameWorld.getBox2DWorld(), TaskManagerEvent.Order.MINUS_4);
+		add(physicsStep);
 
 		// sound manager
 		sound = new SoundManager();
@@ -68,13 +69,13 @@ public final class GameTasksManager {
 
 	public void reset () {
 		for (GameTask task : tasks) {
-			task.onReset();
+			task.reset();
 		}
 	}
 
 	public void restart () {
 		for (GameTask task : tasks) {
-			task.onRestart();
+			task.restart();
 		}
 	}
 }

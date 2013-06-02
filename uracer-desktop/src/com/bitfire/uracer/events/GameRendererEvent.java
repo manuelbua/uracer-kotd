@@ -5,9 +5,8 @@ import com.badlogic.gdx.graphics.OrthographicCamera;
 import com.badlogic.gdx.graphics.PerspectiveCamera;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.math.Matrix4;
-import com.bitfire.uracer.game.rendering.GameRenderer;
 
-public class GameRendererEvent extends Event<GameRenderer> {
+public class GameRendererEvent extends Event<GameRendererEvent.Type, GameRendererEvent.Order, GameRendererEvent.Listener> {
 	/** defines the type of render queue */
 	public enum Type {
 		OnSubframeInterpolate, BatchBeforeCars, BatchAfterCars, BatchAfterMeshes, BatchAfterPostProcessing, BatchDebug, Debug;
@@ -24,58 +23,12 @@ public class GameRendererEvent extends Event<GameRenderer> {
 	public OrthographicCamera camOrtho;
 	public float timeAliasingFactor;
 
-	public interface Listener extends EventListener {
-		void gameRendererEvent (Type type, Order order);
-	}
-
-	private class Notifier extends EventNotifier<Listener> implements Listener {
+	public interface Listener extends Event.Listener<Type, Order> {
 		@Override
-		public void gameRendererEvent (Type type, Order order) {
-			for (Listener listener : listeners) {
-				listener.gameRendererEvent(type, order);
-			}
-		}
-	};
+		public void handle (Object source, Type type, Order order);
+	}
 
-	/* This constructor will permits late-binding of the "source" member via the "trigger" method */
 	public GameRendererEvent () {
-		super(null);
-		for (Type t : Type.values()) {
-			for (Order o : Order.values()) {
-				notifiers[t.ordinal()][o.ordinal()] = new Notifier();
-			}
-		}
+		super(Type.class, Order.class);
 	}
-
-	private Notifier[][] notifiers = new Notifier[Type.values().length][Order.values().length];
-
-	/** Adds the specified Listener to the rendering queue identified by Type and Order: only the specified event type will trigger
-	 * the event for the specified listener.
-	 * 
-	 * @param listener the listener to be notified of the event
-	 * @param type the event type
-	 * @param order the order in the rendering queue for the specified event type */
-	public void addListener (Listener listener, Type type, Order order) {
-		notifiers[type.ordinal()][order.ordinal()].addListener(listener);
-	}
-
-	public void removeListener (Listener listener, Type type, Order order) {
-		notifiers[type.ordinal()][order.ordinal()].removeListener(listener);
-	}
-
-	public void removeAllListeners () {
-		for (Type t : Type.values()) {
-			for (Order o : Order.values()) {
-				notifiers[t.ordinal()][o.ordinal()].removeAllListeners();
-			}
-		}
-	}
-
-	public void trigger (GameRenderer source, Type type) {
-		this.source = source;
-		for (Order order : Order.values()) {
-			notifiers[type.ordinal()][order.ordinal()].gameRendererEvent(type, order);
-		}
-	}
-
 }

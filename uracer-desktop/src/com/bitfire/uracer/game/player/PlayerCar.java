@@ -12,10 +12,11 @@ import com.bitfire.uracer.Input;
 import com.bitfire.uracer.Input.MouseButton;
 import com.bitfire.uracer.URacer;
 import com.bitfire.uracer.configuration.Config;
+import com.bitfire.uracer.events.CarEvent;
+import com.bitfire.uracer.game.GameEvents;
 import com.bitfire.uracer.game.GameplaySettings;
 import com.bitfire.uracer.game.actors.Car;
 import com.bitfire.uracer.game.actors.CarDescriptor;
-import com.bitfire.uracer.game.actors.CarEvent;
 import com.bitfire.uracer.game.actors.CarForces;
 import com.bitfire.uracer.game.actors.CarPreset;
 import com.bitfire.uracer.game.actors.CarState;
@@ -325,9 +326,9 @@ public class PlayerCar extends Car {
 
 		if (isOutOfTrack && !notifiedOutOfTrack) {
 			notifiedOutOfTrack = true;
-			event.trigger(this, CarEvent.Type.onOutOfTrack);
+			GameEvents.playerCar.trigger(this, CarEvent.Type.onOutOfTrack);
 		} else if (!isOutOfTrack && notifiedOutOfTrack) {
-			event.trigger(this, CarEvent.Type.onBackInTrack);
+			GameEvents.playerCar.trigger(this, CarEvent.Type.onBackInTrack);
 			notifiedOutOfTrack = false;
 		}
 

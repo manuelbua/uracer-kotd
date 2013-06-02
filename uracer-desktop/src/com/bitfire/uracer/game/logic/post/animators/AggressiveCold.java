@@ -166,7 +166,7 @@ public final class AggressiveCold implements PostProcessingAnimator {
 		}
 
 		if (bloom != null) {
-			bloomThreshold = (nightMode ? 0.27f : bloomThreshold);
+			bloomThreshold = (nightMode ? 0.27f : 0.4f);
 			Bloom.Settings bloomSettings = new Bloom.Settings("subtle", Config.PostProcessing.BlurType,
 				Config.PostProcessing.BlurNumPasses, 1.5f, bloomThreshold, 1f, 0.5f, 1f, 1.3f + (nightMode ? 0.2f : 0));
 			bloom.setSettings(bloomSettings);
@@ -201,12 +201,12 @@ public final class AggressiveCold implements PostProcessingAnimator {
 			crt.setTime(0);
 
 			// note, a perfect color offset depends from screen size
-			crt.setColorOffset(0.0015f);
+			crt.setColorOffset(0.001f);
 			crt.setDistortion(0.125f);
 			crt.setZoom(0.94f);
 
 			// tv.setTint( 0.95f, 0.8f, 1.0f );
-			crt.setTint(0.9f, 0.8f, 0.85f);
+			crt.setTint(1, 1, 1);
 		}
 
 		if (curvature != null) {
@@ -289,8 +289,13 @@ public final class AggressiveCold implements PostProcessingAnimator {
 		}
 
 		if (zoom != null && hasPlayer) {
-			float v = (-0.07f * currSpeedFactor);
-			float blurStrength = v + v * 0.5f * timeModFactor;
+
+			float sfactor = currSpeedFactor;
+			float z = (zoomCamera - (GameWorldRenderer.MinCameraZoom + GameWorldRenderer.ZoomWindow));
+			float v = (-0.07f * sfactor) - 0.03f * z;
+			// Gdx.app.log("", "zoom=" + z);
+
+			float blurStrength = v + (-0.05f * timeModFactor * sfactor);
 			autoEnableZoomBlur(blurStrength);
 			if (zoom.isEnabled()) {
 				zoom.setOrigin(playerScreenPos);
@@ -308,10 +313,16 @@ public final class AggressiveCold implements PostProcessingAnimator {
 			if (nightMode) bsat += 0.2f;
 			// bsat *= warmUpCompletion;
 
-			// bloom.setBaseSaturation(sat);
-			// bloom.setBaseSaturation(bsat);
-			bloom.setBaseSaturation(AMath.lerp(sat, sat * 0.25f, timeModFactor));
-			bloom.setBloomSaturation(AMath.lerp(bsat, bsat * 1.5f, timeModFactor));
+			// bloom.setBloomIntesity(1f);
+			// bloom.setBloomSaturation(nightMode ? 0.8f : 2f);
+			// bloom.setBaseIntesity(nightMode ? 0.7f : 1f);
+			// bloom.setBaseSaturation(1f);
+
+			// bloom.setBaseSaturation(AMath.lerp(sat, sat * 0.25f, timeModFactor));
+			bloom.setBloomSaturation(AMath.lerp(bsat, bsat * 1.1f, timeModFactor));
+			bloom.setBloomIntesity(1.4f);
+			float t = 0.7f;
+			bloom.setBaseSaturation(t - t * timeModFactor);
 		}
 
 		if (vignette != null) {
@@ -321,13 +332,13 @@ public final class AggressiveCold implements PostProcessingAnimator {
 				vignette.setSaturationMul(1 + timeModFactor * 0.2f);
 			}
 
-			float lutIntensity = 0.3f + timeModFactor * 1f + wrongWayAmount.value * 1f;
+			float lutIntensity = 0.1f + timeModFactor * 1f + wrongWayAmount.value * 1f;
 			lutIntensity = MathUtils.clamp(lutIntensity, 0, 1);
 
 			vignette.setLutIntensity(lutIntensity);
 
 			if (crt == null) {
-				vignette.setIntensity(0.8f + 0.3f * timeModFactor);
+				vignette.setIntensity(1.1f + 0.3f * timeModFactor);
 			} else {
 				vignette.setIntensity(0.7f);
 			}
@@ -361,8 +372,6 @@ public final class AggressiveCold implements PostProcessingAnimator {
 			dist = AMath.fixup(dist);
 			crt.setDistortion(dist);
 			crt.setZoom(1 - (dist / 2));
-
-			crt.setColorOffset(0.001f);
 		}
 	}
 }

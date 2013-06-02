@@ -143,7 +143,7 @@ public final class CarHighlighter {
 
 		bfScale.value = 4f;
 		bfAlpha.value = 0f;
-		bfRot.value = 90f;
+		bfRot.value = -90f;
 
 		bfRed.value = 1f;
 		bfGreen.value = 1f;
@@ -187,7 +187,7 @@ public final class CarHighlighter {
 		timeline
 			.push(Tween.to(bfScale, BoxedFloatAccessor.VALUE, ms).target(4).ease(Linear.INOUT))
 			.push(Tween.to(bfAlpha, BoxedFloatAccessor.VALUE, ms).target(0).ease(Linear.INOUT))
-			.push(Tween.to(bfRot, BoxedFloatAccessor.VALUE, ms).target(90).ease(Linear.INOUT))
+			.push(Tween.to(bfRot, BoxedFloatAccessor.VALUE, ms).target(-90).ease(Linear.INOUT))
 			.setCallback(busyCallback)
 			;
 		//@on
