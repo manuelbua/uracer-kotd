@@ -69,13 +69,13 @@ public final class GameTasksManager {
 		}
 	}
 
-	public void reset () {
+	public void raiseReset () {
 		for (GameTask task : tasks) {
 			task.reset();
 		}
 	}
 
-	public void restart () {
+	public void raiseRestart () {
 		for (GameTask task : tasks) {
 			task.restart();
 		}

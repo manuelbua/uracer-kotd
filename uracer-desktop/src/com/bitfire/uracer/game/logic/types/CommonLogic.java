@@ -349,7 +349,7 @@ public abstract class CommonLogic implements GameLogic {
 		SysTweener.clear();
 		GameTweener.clear();
 		lapManager.abortRecording();
-		gameTasksManager.restart();
+		gameTasksManager.raiseRestart();
 
 		wrongWayMonitor.reset();
 		isCurrentLapValid = true;
@@ -380,7 +380,7 @@ public abstract class CommonLogic implements GameLogic {
 		// clean everything
 		replayManager.reset();
 		lapManager.reset();
-		gameTasksManager.reset();
+		gameTasksManager.raiseReset();
 	}
 
 	private void checkValidLap () {
