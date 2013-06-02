@@ -13,18 +13,19 @@ public class SortedProperties extends Properties {
 
 	/** Overrides, called by the store method. */
 	@Override
-	@SuppressWarnings("unchecked")
-	public synchronized Enumeration keys () {
-		Enumeration keysEnum = super.keys();
-		List<String> keys = new ArrayList<String>();
+	public synchronized Enumeration<Object> keys () {
+		Enumeration<Object> keysEnum = super.keys();
+		List<Object> keys = new ArrayList<Object>();
 		while (keysEnum.hasMoreElements()) {
 			keys.add((String)keysEnum.nextElement());
 		}
-		Collections.sort(keys, new Comparator<String>() {
+		Collections.sort(keys, new Comparator<Object>() {
 
 			@Override
-			public int compare (String o1, String o2) {
-				return o1.compareToIgnoreCase(o2);
+			public int compare (Object o1, Object o2) {
+				String s1 = (String)o1;
+				String s2 = (String)o2;
+				return s1.compareToIgnoreCase(s2);
 			}
 
 		});

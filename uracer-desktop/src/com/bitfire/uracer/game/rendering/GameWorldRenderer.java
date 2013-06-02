@@ -16,7 +16,6 @@ import com.badlogic.gdx.graphics.PerspectiveCamera;
 import com.badlogic.gdx.graphics.Pixmap.Format;
 import com.badlogic.gdx.graphics.VertexAttribute;
 import com.badlogic.gdx.graphics.VertexAttributes.Usage;
-import com.badlogic.gdx.graphics.g3d.model.still.StillSubMesh;
 import com.badlogic.gdx.graphics.glutils.FrameBuffer;
 import com.badlogic.gdx.graphics.glutils.ImmediateModeRenderer20;
 import com.badlogic.gdx.graphics.glutils.ShaderProgram;
@@ -40,6 +39,7 @@ import com.bitfire.uracer.game.world.models.TrackTrees;
 import com.bitfire.uracer.game.world.models.TrackWalls;
 import com.bitfire.uracer.game.world.models.TreeStillModel;
 import com.bitfire.uracer.resources.Art;
+import com.bitfire.uracer.u3d.still.StillSubMesh;
 import com.bitfire.uracer.utils.AMath;
 import com.bitfire.uracer.utils.Convert;
 import com.bitfire.uracer.utils.ScaleUtils;
@@ -404,8 +404,6 @@ public final class GameWorldRenderer {
 		// update orthographic camera
 
 		float zoom = 1f / cameraZoom;
-		int refW = Config.Graphics.ReferenceScreenWidth;
-		int refH = Config.Graphics.ReferenceScreenHeight;
 
 		// remove subpixel accuracy (jagged behavior) by uncommenting the round
 		camOrtho.position.x = /* MathUtils.round */(cameraPos.x);
@@ -932,100 +930,100 @@ public final class GameWorldRenderer {
 		return renderedCount;
 	}
 
-	private int renderOrthographicAlignedModel (OrthographicAlignedStillModel aModel, boolean depthOnly, boolean nightMode) {
-		int renderedCount = 0;
-		OrthographicAlignedStillModel m = aModel;
-		StillSubMesh submesh;
-
-		float meshZ = -(camPersp.far - camPersp.position.z) + (camPersp.far * (1 - (camOrtho.zoom)));
-
-		ShaderProgram shader = null;
-
-		if (depthOnly) {
-			shader = shNormalDepth;
-		} else {
-			if (nightMode) {
-				shader = OrthographicAlignedStillModel.shaderNight;
-			} else {
-				shader = OrthographicAlignedStillModel.shader;
-			}
-		}
-
-		shader.begin();
-
-		if (depthOnly) {
-			shader.setUniformMatrix("proj", camPersp.projection);
-			shader.setUniformMatrix("view", camPersp.view);
-			shader.setUniformi("u_texture", 0);
-		} else {
-			if (nightMode) {
-				shader.setUniformf("u_ambient", ambientColor);
-			}
-		}
-
-		{
-			submesh = m.model.subMeshes[0];
-
-			// transform position
-			tmpvec.x = (m.positionOffsetPx.x - camPersp.position.x) + (camPersp.viewportWidth / 2) + m.positionPx.x;
-			tmpvec.y = (m.positionOffsetPx.y + camPersp.position.y) + (camPersp.viewportHeight / 2) - m.positionPx.y;
-			tmpvec.z = 1;
-
-			tmpvec.x *= ScaleUtils.Scale;
-			tmpvec.y *= ScaleUtils.Scale;
-
-			tmpvec.x += ScaleUtils.CropX;
-			tmpvec.y += ScaleUtils.CropY;
-
-			// transform to world space
-			camPersp.unproject(tmpvec, ScaleUtils.CropX, ScaleUtils.CropY, ScaleUtils.PlayWidth, ScaleUtils.PlayHeight);
-
-			// build model matrix
-			Matrix4 model = mtx;
-			tmpvec.z = meshZ;
-
-			model.idt();
-			model.translate(tmpvec);
-			model.rotate(m.iRotationAxis, m.iRotationAngle);
-			model.scale(m.scaleAxis.x, m.scaleAxis.y, m.scaleAxis.z);
-
-			// ensure the bounding box is transformed
-			m.boundingBox.inf().set(m.localBoundingBox);
-			m.boundingBox.mul(model);
-
-			// perform culling
-			if (Config.Debug.FrustumCulling && !camPersp.frustum.boundsInFrustum(m.boundingBox)) {
-				if (!depthOnly) culledMeshes++;
-			} else {
-				if (!depthOnly) {
-					// comb = (proj * view) * model (fast mul)
-					Matrix4 mvp = mtx2;
-					mvp.set(camPersp.combined).mul(model);
-					shader.setUniformMatrix("u_projTrans", mvp);
-					shader.setUniformf("alpha", m.getAlpha());
-				} else {
-					mtx2.set(camPersp.view).mul(model);
-					nmat.set(mtx2).inv().transpose();
-					shader.setUniformMatrix("nmat", nmat);
-					shader.setUniformMatrix("model", model);
-				}
-
-				m.material.bind(shader);
-
-				submesh.mesh.render(shader, submesh.primitiveType);
-				renderedCount++;
-			}
-		}
-
-		shader.end();
-
-		if (!depthOnly && Config.Debug.Render3DBoundingBoxes) {
-			// debug (tested on a single mesh only!)
-			renderBoundingBox(m.boundingBox);
-		}
-
-		return renderedCount;
-	}
+	// private int renderOrthographicAlignedModel (OrthographicAlignedStillModel aModel, boolean depthOnly, boolean nightMode) {
+	// int renderedCount = 0;
+	// OrthographicAlignedStillModel m = aModel;
+	// StillSubMesh submesh;
+	//
+	// float meshZ = -(camPersp.far - camPersp.position.z) + (camPersp.far * (1 - (camOrtho.zoom)));
+	//
+	// ShaderProgram shader = null;
+	//
+	// if (depthOnly) {
+	// shader = shNormalDepth;
+	// } else {
+	// if (nightMode) {
+	// shader = OrthographicAlignedStillModel.shaderNight;
+	// } else {
+	// shader = OrthographicAlignedStillModel.shader;
+	// }
+	// }
+	//
+	// shader.begin();
+	//
+	// if (depthOnly) {
+	// shader.setUniformMatrix("proj", camPersp.projection);
+	// shader.setUniformMatrix("view", camPersp.view);
+	// shader.setUniformi("u_texture", 0);
+	// } else {
+	// if (nightMode) {
+	// shader.setUniformf("u_ambient", ambientColor);
+	// }
+	// }
+	//
+	// {
+	// submesh = m.model.subMeshes[0];
+	//
+	// // transform position
+	// tmpvec.x = (m.positionOffsetPx.x - camPersp.position.x) + (camPersp.viewportWidth / 2) + m.positionPx.x;
+	// tmpvec.y = (m.positionOffsetPx.y + camPersp.position.y) + (camPersp.viewportHeight / 2) - m.positionPx.y;
+	// tmpvec.z = 1;
+	//
+	// tmpvec.x *= ScaleUtils.Scale;
+	// tmpvec.y *= ScaleUtils.Scale;
+	//
+	// tmpvec.x += ScaleUtils.CropX;
+	// tmpvec.y += ScaleUtils.CropY;
+	//
+	// // transform to world space
+	// camPersp.unproject(tmpvec, ScaleUtils.CropX, ScaleUtils.CropY, ScaleUtils.PlayWidth, ScaleUtils.PlayHeight);
+	//
+	// // build model matrix
+	// Matrix4 model = mtx;
+	// tmpvec.z = meshZ;
+	//
+	// model.idt();
+	// model.translate(tmpvec);
+	// model.rotate(m.iRotationAxis, m.iRotationAngle);
+	// model.scale(m.scaleAxis.x, m.scaleAxis.y, m.scaleAxis.z);
+	//
+	// // ensure the bounding box is transformed
+	// m.boundingBox.inf().set(m.localBoundingBox);
+	// m.boundingBox.mul(model);
+	//
+	// // perform culling
+	// if (Config.Debug.FrustumCulling && !camPersp.frustum.boundsInFrustum(m.boundingBox)) {
+	// if (!depthOnly) culledMeshes++;
+	// } else {
+	// if (!depthOnly) {
+	// // comb = (proj * view) * model (fast mul)
+	// Matrix4 mvp = mtx2;
+	// mvp.set(camPersp.combined).mul(model);
+	// shader.setUniformMatrix("u_projTrans", mvp);
+	// shader.setUniformf("alpha", m.getAlpha());
+	// } else {
+	// mtx2.set(camPersp.view).mul(model);
+	// nmat.set(mtx2).inv().transpose();
+	// shader.setUniformMatrix("nmat", nmat);
+	// shader.setUniformMatrix("model", model);
+	// }
+	//
+	// m.material.bind(shader);
+	//
+	// submesh.mesh.render(shader, submesh.primitiveType);
+	// renderedCount++;
+	// }
+	// }
+	//
+	// shader.end();
+	//
+	// if (!depthOnly && Config.Debug.Render3DBoundingBoxes) {
+	// // debug (tested on a single mesh only!)
+	// renderBoundingBox(m.boundingBox);
+	// }
+	//
+	// return renderedCount;
+	// }
 
 	/** This is intentionally SLOW. Read it again!
 	 * 

@@ -18,7 +18,6 @@ import com.bitfire.uracer.utils.AudioUtils;
 public final class PlayerImpactSoundEffect extends SoundEffect {
 	private Sound soundLow1, soundLow2, soundMid1, soundMid2, soundHigh;
 	private long lastSoundTimeMs = 0;
-	private PlayerCar player;
 
 	private static final long MinElapsedBetweenSoundsMs = 500;
 	private static final float MinImpactForce = 20;
@@ -39,8 +38,7 @@ public final class PlayerImpactSoundEffect extends SoundEffect {
 		}
 	};
 
-	public PlayerImpactSoundEffect (PlayerCar player) {
-		this.player = player;
+	public PlayerImpactSoundEffect () {
 		GameEvents.playerCar.addListener(carEvent, CarEvent.Type.onCollision);
 
 		soundLow1 = Sounds.carImpacts[0];

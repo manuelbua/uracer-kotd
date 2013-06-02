@@ -48,7 +48,7 @@ public final class PlayerGameTasks {
 	public void createTasks (PlayerCar player, LapInfo lapInfo, GameRenderer renderer) {
 		// sounds
 		playerDriftSoundFx = new PlayerDriftSoundEffect(player);
-		playerImpactSoundFx = new PlayerImpactSoundEffect(player);
+		playerImpactSoundFx = new PlayerImpactSoundEffect();
 		playerEngineSoundFx = new PlayerEngineSoundEffect(player);
 		manager.sound.add(playerDriftSoundFx);
 		manager.sound.add(playerImpactSoundFx);

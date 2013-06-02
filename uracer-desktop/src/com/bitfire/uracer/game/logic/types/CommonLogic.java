@@ -17,6 +17,7 @@ import com.bitfire.uracer.URacer;
 import com.bitfire.uracer.configuration.Config;
 import com.bitfire.uracer.configuration.UserProfile;
 import com.bitfire.uracer.events.CarEvent;
+import com.bitfire.uracer.events.GhostCarEvent;
 import com.bitfire.uracer.events.PlayerDriftStateEvent;
 import com.bitfire.uracer.game.DebugHelper;
 import com.bitfire.uracer.game.GameEvents;
@@ -891,9 +892,9 @@ public abstract class CommonLogic implements GameLogic {
 			}
 		};
 
-		CarEvent.Listener ghostListener = new CarEvent.Listener() {
+		GhostCarEvent.Listener ghostListener = new GhostCarEvent.Listener() {
 			@Override
-			public void handle (Object source, CarEvent.Type type, CarEvent.Order order) {
+			public void handle (Object source, GhostCarEvent.Type type, GhostCarEvent.Order order) {
 				switch (type) {
 				case onGhostFadingOut:
 					if (hasPlayer() && source == nextTarget) {
@@ -928,11 +929,11 @@ public abstract class CommonLogic implements GameLogic {
 		}
 
 		public void registerGhostEvents () {
-			GameEvents.ghostCars.addListener(ghostListener, CarEvent.Type.onGhostFadingOut);
+			GameEvents.ghostCars.addListener(ghostListener, GhostCarEvent.Type.onGhostFadingOut);
 		}
 
 		public void unregisterGhostEvents () {
-			GameEvents.ghostCars.removeListener(ghostListener, CarEvent.Type.onGhostFadingOut);
+			GameEvents.ghostCars.removeListener(ghostListener, GhostCarEvent.Type.onGhostFadingOut);
 		}
 
 	}

@@ -26,14 +26,13 @@ import com.bitfire.uracer.game.GameLevels.GameLevelDescriptor;
 import com.bitfire.uracer.game.screens.GameScreensFactory.ScreenType;
 import com.bitfire.uracer.resources.Art;
 import com.bitfire.uracer.screen.Screen;
-import com.bitfire.uracer.utils.UICamera;
 import com.bitfire.uracer.utils.UIUtils;
 
 public final class MainScreen extends Screen {
 
 	private Stage ui;
 	private Input input;
-	private Table root, ltable, rtable;
+	private Table root, ltable;
 
 	@Override
 	public void init () {
@@ -197,9 +196,6 @@ public final class MainScreen extends Screen {
 		boolean hasDest = (dest != null);
 		if (hasDest) {
 			dest.begin();
-			((UICamera)ui.getCamera()).setProjectForFramebuffer(true);
-		} else {
-			((UICamera)ui.getCamera()).setProjectForFramebuffer(false);
 		}
 
 		Gdx.gl.glClearColor(0, 0, 0, 0);

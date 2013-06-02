@@ -2,12 +2,13 @@
 package com.bitfire.uracer.game.world.models;
 
 import com.badlogic.gdx.Gdx;
-import com.badlogic.gdx.graphics.g3d.materials.Material;
-import com.badlogic.gdx.graphics.g3d.model.still.StillModel;
 import com.badlogic.gdx.graphics.glutils.ShaderProgram;
 import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.math.Vector3;
 import com.badlogic.gdx.math.collision.BoundingBox;
+import com.bitfire.uracer.u3d.materials.Material;
+import com.bitfire.uracer.u3d.model.UStillModel;
+import com.bitfire.uracer.u3d.still.StillModel;
 import com.bitfire.utils.ShaderLoader;
 
 /** The model is expected to follow the z-up convention.
