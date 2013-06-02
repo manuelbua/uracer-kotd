@@ -1,9 +1,9 @@
 
-package com.bitfire.uracer.game.world.models;
+package com.bitfire.uracer.u3d.model;
 
-import com.badlogic.gdx.graphics.g3d.model.still.StillModel;
-import com.badlogic.gdx.graphics.g3d.model.still.StillSubMesh;
 import com.badlogic.gdx.graphics.glutils.ShaderProgram;
+import com.bitfire.uracer.u3d.still.StillModel;
+import com.bitfire.uracer.u3d.still.StillSubMesh;
 
 public class UStillModel extends StillModel {
 

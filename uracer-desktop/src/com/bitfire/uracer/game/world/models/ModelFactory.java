@@ -6,13 +6,12 @@ import java.io.InputStream;
 
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.Texture;
-import com.badlogic.gdx.graphics.g3d.loaders.g3d.G3dtLoader;
-import com.badlogic.gdx.graphics.g3d.loaders.wavefront.ObjLoader;
-import com.badlogic.gdx.graphics.g3d.materials.Material;
-import com.badlogic.gdx.graphics.g3d.materials.TextureAttribute;
-import com.badlogic.gdx.graphics.g3d.model.still.StillModel;
 import com.badlogic.gdx.utils.LongMap;
 import com.bitfire.uracer.resources.Art;
+import com.bitfire.uracer.u3d.loaders.G3dtLoader;
+import com.bitfire.uracer.u3d.materials.Material;
+import com.bitfire.uracer.u3d.materials.TextureAttribute;
+import com.bitfire.uracer.u3d.still.StillModel;
 import com.bitfire.utils.Hash;
 
 public final class ModelFactory {
@@ -267,9 +266,9 @@ public final class ModelFactory {
 					in.close();
 				} else if (ext[1].equals("obj")) {
 					// y-forward, z-up
-					ObjLoader l = new ObjLoader();
-					m = l.loadObj(Gdx.files.internal(model), true);
-					Gdx.app.log("ModelFactory", "Attention, using deprecated model format!");
+					// ObjLoader l = new ObjLoader();
+					// m = l.loadObj(Gdx.files.internal(model), true);
+					// Gdx.app.log("ModelFactory", "Attention, using deprecated model format!");
 				}
 
 				cachedStillModels.put(modelHash, m);
