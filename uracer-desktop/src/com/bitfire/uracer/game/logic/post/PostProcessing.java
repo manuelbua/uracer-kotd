@@ -50,8 +50,6 @@ public final class PostProcessing {
 	private boolean hasAnimator = false;
 
 	public PostProcessing (GameWorld gameWorld) {
-
-		// post-processing
 		if (UserPreferences.bool(Preference.PostProcessing)) {
 			postProcessor = new PostProcessor(ScaleUtils.PlayViewport, true /* depth */, false /* alpha */, URacer.Game.isDesktop() /* supports32Bpp */);
 			PostProcessor.EnableQueryStates = false;

@@ -81,7 +81,22 @@ public final class Hud extends GameTask {
 	}
 
 	@Override
-	public void reset () {
+	public void onRestart () {
+		for (int i = 0; i < managerBeforePost.items.size; i++) {
+			managerBeforePost.items.get(i).onRestart();
+		}
+
+		for (int i = 0; i < managerAfterPost.items.size; i++) {
+			managerAfterPost.items.get(i).onRestart();
+		}
+
+		for (int i = 0; i < managerDebug.items.size; i++) {
+			managerDebug.items.get(i).onRestart();
+		}
+	}
+
+	@Override
+	public void onReset () {
 		for (int i = 0; i < managerBeforePost.items.size; i++) {
 			managerBeforePost.items.get(i).onReset();
 		}

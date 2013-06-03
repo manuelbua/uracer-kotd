@@ -86,4 +86,10 @@ public class HudLapInfo extends HudElement {
 		curr.setColor(r.value, g.value, b.value);
 		curr.render(batch);
 	}
+
+	@Override
+	public void onRestart () {
+		toDefaultColor();
+		setValid(true);
+	}
 }

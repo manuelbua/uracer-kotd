@@ -5,7 +5,6 @@ import com.badlogic.gdx.Gdx;
 import com.bitfire.uracer.configuration.UserProfile;
 import com.bitfire.uracer.game.actors.CarPreset;
 import com.bitfire.uracer.game.logic.gametasks.Messager;
-import com.bitfire.uracer.game.logic.gametasks.hud.elements.player.DriftBar;
 import com.bitfire.uracer.game.logic.gametasks.messager.Message;
 import com.bitfire.uracer.game.logic.gametasks.messager.Message.Position;
 import com.bitfire.uracer.game.logic.gametasks.messager.Message.Size;
@@ -20,7 +19,6 @@ import com.bitfire.uracer.utils.Convert;
 public class SinglePlayerLogic extends CommonLogic {
 
 	private Messager messager;
-	private DriftBar driftBar;
 
 	public SinglePlayerLogic (UserProfile userProfile, GameWorld gameWorld, GameRenderer gameRenderer) {
 		super(userProfile, gameWorld, gameRenderer);
@@ -30,17 +28,12 @@ public class SinglePlayerLogic extends CommonLogic {
 	@Override
 	public void setPlayer (CarPreset.Type presetType) {
 		super.setPlayer(presetType);
-		driftBar = playerTasks.hudPlayer.driftBar;
 	}
 
 	@Override
 	public void dispose () {
 		super.dispose();
 	}
-
-	//
-	// event listeners / callbacks
-	//
 
 	private float prevZoom = GameWorldRenderer.MinCameraZoom + GameWorldRenderer.ZoomWindow;
 	private float previousSpeed = 0, previousDs = 0;
@@ -81,28 +74,6 @@ public class SinglePlayerLogic extends CommonLogic {
 
 			if (gameWorld.isNightMode()) {
 				gameWorldRenderer.updatePlayerHeadlights(playerCar);
-
-				// update player's impulse light
-				// PointLight l = gameWorld.getPlayerImpulseLight();
-				// if (l != null) {
-				// CarState cs = playerCar.carState;
-				// Input input = URacer.Game.getInputSystem();
-				// Vector3 v3 = GameRenderer.ScreenUtils.screenToWorldMt(input.getXY());
-				// l.setActive(true);
-				// l.setPosition(v3.x, v3.y);
-				//
-				// // float f = 1;// cs.currSpeedFactor;
-				// float f = cs.currSpeedFactor * cs.currForceFactor;
-				// l.setDistance(10 - 8 * f);
-				// l.setSoftnessLenght(5);
-				//
-				// float v = MathUtils.clamp(1f * f, 0, 1);
-				// l.setColor(1, 1, 1, v);
-				//
-				// l.setColor(0.1f, 0.2f, 0.9f, v);
-				// Color p = ColorUtils.paletteRYG(v + 0.7f, v);
-				// l.setColor(p);
-				// }
 			}
 
 			gameWorldRenderer.setCameraPosition(playerCar.state().position, playerCar.state().orientation,
@@ -121,25 +92,17 @@ public class SinglePlayerLogic extends CommonLogic {
 	// the game has been restarted
 	@Override
 	public void restartGame () {
-		super.restartGame();
-
 		Gdx.app.log("SinglePlayerLogic", "Starting/restarting game");
+		super.restartGame();
 		gameTasksManager.messager.show("Game restarted", 3, Message.Type.Information, Position.Bottom, Size.Big);
-
-		isPenalty = false;
-
 	}
 
 	// the game has been reset
 	@Override
 	public void resetGame () {
-		super.resetGame();
-
 		Gdx.app.log("SinglePlayerLogic", "Resetting game");
+		super.resetGame();
 		gameTasksManager.messager.show("Game reset", 3, Message.Type.Information, Position.Bottom, Size.Big);
-
-		replayManager.reset();
-		isPenalty = false;
 	}
 
 	// a new Replay from the player is available: note that CommonLogic already perform
@@ -154,82 +117,24 @@ public class SinglePlayerLogic extends CommonLogic {
 			replay.saveLocal(messager);
 			// messager.show("GO!  GO!  GO!", 3f, Type.Information, Position.Bottom, Size.Big);
 		} else {
-			Replay best = replayManager.getBestReplay();
-			Replay worst = replayManager.getWorstReplay();
+			// Replay best = replayManager.getBestReplay();
+			// Replay worst = replayManager.getWorstReplay();
 
-			float bestTime = AMath.round(best.trackTimeSeconds, 2);
-			float worstTime = AMath.round(worst.trackTimeSeconds, 2);
+			// float bestTime = AMath.round(best.trackTimeSeconds, 2);
+			// float worstTime = AMath.round(worst.trackTimeSeconds, 2);
 			// float diffTime = AMath.round(worstTime - bestTime, 2);
 
-			if (AMath.equals(worstTime, bestTime)) {
-				// draw!
-				// messager.show("DRAW!", 3f, Type.Information, Position.Bottom, Size.Big);
-			} else {
-				// has the player managed to beat the best lap?
-				// if (lapManager.isLastBestLap()) {
-				// messager.show("-" + NumberString.format(diffTime) + " seconds!", 3f, Type.Good, Position.Bottom, Size.Big);
-				// } else {
-				// messager.show("+" + NumberString.format(diffTime) + " seconds", 3f, Type.Bad, Position.Bottom, Size.Big);
-				// }
-			}
+			// if (AMath.equals(worstTime, bestTime)) {
+			// // draw!
+			// // messager.show("DRAW!", 3f, Type.Information, Position.Bottom, Size.Big);
+			// } else {
+			// // has the player managed to beat the best lap?
+			// // if (lapManager.isLastBestLap()) {
+			// // messager.show("-" + NumberString.format(diffTime) + " seconds!", 3f, Type.Good, Position.Bottom, Size.Big);
+			// // } else {
+			// // messager.show("+" + NumberString.format(diffTime) + " seconds", 3f, Type.Bad, Position.Bottom, Size.Big);
+			// // }
+			// }
 		}
 	}
-
-	@Override
-	public void tick () {
-		super.tick();
-	}
-
-	@Override
-	protected void discardedReplay (Replay replay) {
-	}
-
-	// the player begins drifting
-	@Override
-	public void driftBegins () {
-	}
-
-	// the player's drift ended
-	@Override
-	public void driftEnds () {
-	}
-
-	// the player begins slowing down time
-	@Override
-	public void startTimeDilation () {
-		super.startTimeDilation();
-		driftBar.showSecondsLabel();
-	}
-
-	// the player ends slowing down time
-	@Override
-	public void endTimeDilation () {
-		super.endTimeDilation();
-		driftBar.hideSecondsLabel();
-	}
-
-	@Override
-	protected void outOfTrack () {
-		driftBar.showSecondsLabel();
-	}
-
-	@Override
-	protected void backInTrack () {
-		driftBar.hideSecondsLabel();
-	}
-
-	@Override
-	protected void lapStarted () {
-		restartAllReplays();
-		playerTasks.hudPlayer.trackProgress.getProgressData().reset(true);
-	}
-
-	@Override
-	protected void lapCompleted () {
-	}
-
-	//
-	// utilities
-	//
-
 }

@@ -15,10 +15,10 @@ public abstract class GameTask extends Task implements Disposable {
 		super(order);
 	}
 
-	public void reset () {
+	public void onReset () {
 	}
 
-	public void restart () {
-		reset();
+	public void onRestart () {
+		// onReset();
 	}
 }

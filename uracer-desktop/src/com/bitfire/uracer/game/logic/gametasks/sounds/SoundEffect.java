@@ -63,6 +63,9 @@ public abstract class SoundEffect implements Disposable {
 	public void stop () {
 	}
 
+	public void restart () {
+	}
+
 	public void reset () {
 	}
 

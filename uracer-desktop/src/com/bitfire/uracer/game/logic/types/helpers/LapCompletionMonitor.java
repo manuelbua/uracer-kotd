@@ -1,6 +1,7 @@
 
 package com.bitfire.uracer.game.logic.types.helpers;
 
+import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.math.MathUtils;
 import com.bitfire.uracer.game.actors.Car;
 import com.bitfire.uracer.game.logic.helpers.GameTrack;
@@ -12,7 +13,7 @@ public class LapCompletionMonitor {
 	private float previousCompletion, currentCompletion, wuStart, wuPrev, wuCurr, wuCompletion;
 
 	public static interface LapCompletionMonitorListener {
-		void onLapStarted ();
+		void onLapStarted (boolean firstLap);
 
 		void onLapComplete ();
 	}
@@ -52,28 +53,26 @@ public class LapCompletionMonitor {
 				float complet = gameTrack.getTrackCompletion(car);
 				wuCurr = (complet - wuStart) / (1 - wuStart);
 
-				if ((wuPrev > 0 && wuCurr < 0)) {
+				// if ((wuPrev > 0 && wuCurr <= 0)) {
+				if ((wuPrev > wuCurr)) {
 					// warmup will ends
 					wuCompletion = 1;
-					listener.onLapStarted();
+					listener.onLapStarted(true);
 				} else {
 					wuCompletion = MathUtils.clamp(wuCurr, 0, 1);
 				}
 
 				// Gdx.app.log("LapCompletionMonitor", "wucompletion=" + complet);
+				Gdx.app.log("LapCompletionMonitor", "wc=" + wuCurr + ", wp=" + wuPrev);
 
 			} else {
 				previousCompletion = currentCompletion;
 				currentCompletion = gameTrack.getTrackCompletion(car);
 				// Gdx.app.log("", "curr=" + currentCompletion + ", prev=" + previousCompletion);
 				if (previousCompletion > 0.9f && currentCompletion >= 0 && currentCompletion < 0.1f) {
-					// reset();
 					listener.onLapComplete();
-					listener.onLapStarted();
+					listener.onLapStarted(false);
 				}
-				// else {
-				// previousCompletion = currentCompletion;
-				// }
 			}
 		}
 	}

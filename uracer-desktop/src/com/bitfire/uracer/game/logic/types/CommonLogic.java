@@ -9,7 +9,6 @@ import aurelienribon.tweenengine.equations.Quad;
 
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Input.Keys;
-import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.math.MathUtils;
 import com.badlogic.gdx.utils.Array;
 import com.bitfire.uracer.Input;
@@ -21,6 +20,7 @@ import com.bitfire.uracer.events.GhostCarEvent;
 import com.bitfire.uracer.events.PlayerDriftStateEvent;
 import com.bitfire.uracer.game.DebugHelper;
 import com.bitfire.uracer.game.GameEvents;
+import com.bitfire.uracer.game.GameInput;
 import com.bitfire.uracer.game.GameLogic;
 import com.bitfire.uracer.game.GameplaySettings;
 import com.bitfire.uracer.game.Time;
@@ -36,13 +36,10 @@ import com.bitfire.uracer.game.logic.helpers.CarFactory;
 import com.bitfire.uracer.game.logic.helpers.GameTrack;
 import com.bitfire.uracer.game.logic.helpers.PlayerGameTasks;
 import com.bitfire.uracer.game.logic.post.PostProcessing;
-import com.bitfire.uracer.game.logic.post.PostProcessing.Effects;
-import com.bitfire.uracer.game.logic.post.ssao.Ssao;
 import com.bitfire.uracer.game.logic.replaying.LapManager;
 import com.bitfire.uracer.game.logic.replaying.Replay;
 import com.bitfire.uracer.game.logic.replaying.ReplayManager;
 import com.bitfire.uracer.game.logic.replaying.ReplayRecorder.RecorderError;
-import com.bitfire.uracer.game.logic.types.helpers.GameInput;
 import com.bitfire.uracer.game.logic.types.helpers.LapCompletionMonitor;
 import com.bitfire.uracer.game.logic.types.helpers.LapCompletionMonitor.LapCompletionMonitorListener;
 import com.bitfire.uracer.game.logic.types.helpers.TimeModulator;
@@ -64,24 +61,35 @@ import com.bitfire.uracer.utils.NumberString;
 
 public abstract class CommonLogic implements GameLogic {
 
-	// implementers should returns the camera zoom amount
 	protected abstract float updateCamera (float timeModFactor);
 
-	protected abstract void newReplay (Replay replay);
+	protected void newReplay (Replay replay) {
+	}
 
-	protected abstract void discardedReplay (Replay replay);
+	protected void discardedReplay (Replay replay) {
+	}
 
-	protected abstract void lapStarted ();
+	protected void lapStarted (boolean firstLap) {
+		restartAllReplays();
+		if (firstLap) {
+			playerTasks.hudPlayer.trackProgress.getProgressData().reset(true);
+		}
+	}
 
-	protected abstract void lapCompleted ();
+	protected void lapCompleted () {
+	}
 
-	protected abstract void driftBegins ();
+	protected void driftBegins () {
+	}
 
-	protected abstract void driftEnds ();
+	protected void driftEnds () {
+	}
 
-	protected abstract void outOfTrack ();
+	protected void outOfTrack () {
+	}
 
-	protected abstract void backInTrack ();
+	protected void backInTrack () {
+	}
 
 	// input
 	protected Input inputSystem = null;
@@ -134,20 +142,10 @@ public abstract class CommonLogic implements GameLogic {
 		timeMod = new TimeModulator();
 
 		// post-processing
-		postProcessing = new PostProcessing(gameWorld);
-		gameRenderer.setEnableNormalDepthMap(postProcessing.requiresNormalDepthMap());
-		gameRenderer.setPostProcessor(postProcessing.getPostProcessor());
+		postProcessing = gameRenderer.getPostProcessing();
 
-		if (postProcessing.hasEffect(Effects.Ssao.name)) {
-			Ssao ssao = (Ssao)postProcessing.getEffect(Effects.Ssao.name);
-			ssao.setNormalDepthMap(gameWorldRenderer.getNormalDepthMap().getColorBufferTexture());
-		}
-
-		// main game tasks
+		// create game and player tasks
 		gameTasksManager = new GameTasksManager(gameWorld);
-		gameTasksManager.createTasks();
-
-		// player tasks
 		playerTasks = new PlayerGameTasks(userProfile, gameTasksManager);
 
 		lapManager = new LapManager(userProfile, gameWorld.getLevelId());
@@ -172,9 +170,7 @@ public abstract class CommonLogic implements GameLogic {
 	@Override
 	public void dispose () {
 		removePlayer();
-		gameTrack.dispose();
 		gameTasksManager.dispose();
-		postProcessing.dispose();
 		playerTasks.dispose();
 
 		if (playerCar != null) {
@@ -192,33 +188,6 @@ public abstract class CommonLogic implements GameLogic {
 		lapManager.dispose();
 		GameTweener.dispose();
 		replayManager.dispose();
-	}
-
-	/** Restarts the current game */
-	@Override
-	public void restartGame () {
-		restartLogic();
-	}
-
-	/** Restart and completely resets the game, removing any playing replay so far */
-	@Override
-	public void resetGame () {
-		resetLogic();
-	}
-
-	/** Request time dilation to begin */
-	@Override
-	public void startTimeDilation () {
-		dilationTime.start();
-		timeMod.toDilatedTime();
-	}
-
-	/** Request time dilation to end */
-	@Override
-	public void endTimeDilation () {
-		updateDriftBar();
-		dilationTime.reset();
-		timeMod.toNormalTime();
 	}
 
 	/** Sets the player from the specified preset */
@@ -250,6 +219,8 @@ public abstract class CommonLogic implements GameLogic {
 
 		gameWorldRenderer.showDebugGameTrack(Config.Debug.RenderTrackSectors);
 		gameWorldRenderer.setGameTrackDebugCar(playerCar);
+
+		// gameTrack.setInitialCarSector(playerCar);
 
 		restartGame();
 
@@ -283,168 +254,52 @@ public abstract class CommonLogic implements GameLogic {
 		}
 	}
 
-	public GameWorld getGameWorld () {
-		return gameWorld;
+	/** Restarts the current game */
+	@Override
+	public void restartGame () {
+		restartLogic();
 	}
 
-	public boolean hasPlayer () {
-		return playerCar != null;
+	/** Restart and completely resets the game, removing any previous recording and playing replays */
+	@Override
+	public void resetGame () {
+		resetLogic();
 	}
 
-	public PlayerCar getPlayer () {
-		return playerCar;
-	}
-
-	//
-	// private implementation
-	//
-
-	private void configurePlayer (GameWorld world, Input inputSystem, PlayerCar player) {
-		// create player and setup player input system and initial position in
-		// the world
-		player.setInputSystem(inputSystem);
-
-		// FIXME this is for debug
-		player.setFrictionMap(Art.frictionMapDesert);
-
-		player.setWorldPosMt(world.playerStart.position, world.playerStart.orientation);
-		player.resetPhysics();
-	}
-
-	private void resetPlayer (GameWorld world, Car playerCar) {
-		if (playerCar != null) {
-			playerCar.resetPhysics();
-			playerCar.getTrackState().reset();
-			playerCar.resetDistanceAndSpeed(true, true);
-			playerCar.setWorldPosMt(world.playerStart.position, world.playerStart.orientation);
-		}
-	}
-
-	private void resetGhost (int handle) {
-		GhostCar ghost = ghostCars[handle];
-		if (ghost != null) {
-			ghost.getTrackState().reset();
-			ghost.resetPhysics();
-			ghost.resetDistanceAndSpeed(true, true);
-			ghost.removeReplay();
-		}
-	}
-
-	protected GhostCar getGhost (int handle) {
-		return ghostCars[handle];
-	}
-
-	private void resetAllGhosts () {
-		for (int i = 0; i < ReplayManager.MaxReplays; i++) {
-			resetGhost(i);
-		}
-	}
-
-	private void restartLogic () {
+	@Override
+	public void quitGame () {
+		lapManager.stopRecording();
 		gameTasksManager.sound.stop();
-		resetPlayer(gameWorld, playerCar);
-		resetAllGhosts();
+
+		URacer.Screens.setScreen(ScreenType.MainScreen, TransitionType.Fader, 500);
+		// URacer.Screens.setScreen( ScreenType.ExitScreen, TransitionType.Fader, 500 );
 
 		timeMod.reset();
-		SysTweener.clear();
-		GameTweener.clear();
-		lapManager.abortRecording();
-		gameTasksManager.raiseRestart();
-
-		wrongWayMonitor.reset();
-		isCurrentLapValid = true;
-		isWarmUpLap = true;
-		isWrongWayInWarmUp = false;
-		isTooSlow = false;
-
-		postProcessing.resetAnimator();
-
-		// playerTasks.playerEngineSoundFx.start();
-		playerTasks.playerDriftSoundFx.start();
-		playerTasks.hudLapInfo.toDefaultColor();
-		playerTasks.hudLapInfo.setValid(true);
-		playerTasks.hudPlayer.trackProgress.getProgressData().reset(false);
-
-		lapMonitor.reset();
-		gameTrack.setInitialCarSector(playerCar);
-		lapMonitor.setCar(playerCar);
-
-		accuDriftSeconds.value = 0;
-		lastDist = 0;
-		lastCompletion = 0;
+		URacer.Game.resetTimeModFactor();
 	}
 
-	private void resetLogic () {
-		restartLogic();
-
-		// clean everything
-		replayManager.reset();
-		lapManager.reset();
-		gameTasksManager.raiseReset();
+	/** Request time dilation to begin */
+	@Override
+	public void startTimeDilation () {
+		dilationTime.start();
+		timeMod.toDilatedTime();
+		playerTasks.hudPlayer.driftBar.showSecondsLabel();
+		updateDriftBar();
 	}
 
-	private void checkValidLap () {
-		boolean wrongWay = wrongWayMonitor.isWrongWay();
-		isCurrentLapValid = !wrongWay && !isTooSlow;
-
-		if ((wrongWay && isWarmUpLap) || isWrongWayInWarmUp) {
-			isWrongWayInWarmUp = true;
-			isWarmUpLap = true;
-			lapMonitor.reset();
-		}
-
-		// blink on wrong way (keeps calling, returns earlier if busy)
-		if (wrongWay) {
-			playerTasks.hudPlayer.highlightWrongWay();
-		}
-
-		// blink on out of track (keeps calling, returns earlier if busy)
-		if (playerCar.isOutOfTrack()) {
-			playerTasks.hudPlayer.highlightOutOfTrack();
-		}
-
-		if (isTooSlow) {
-			playerTasks.hudPlayer.trackProgress.getProgressData().reset(true);
-		}
+	/** Request time dilation to end */
+	@Override
+	public void endTimeDilation () {
+		dilationTime.reset();
+		timeMod.toNormalTime();
+		playerTasks.hudPlayer.driftBar.hideSecondsLabel();
+		updateDriftBar();
 	}
 
-	private void updateDriftBar () {
-		if (!hasPlayer()) {
-			return;
-		}
-
-		if (Config.Debug.InfiniteDilationTime) {
-			accuDriftSeconds.value = DriftBar.MaxSeconds;
-		} else {
-
-			// if a penalty is being applied, then no drift seconds will be counted
-			if (!isPenalty) {
-
-				// earn game seconds by drifting
-				if (playerCar.driftState.isDrifting) {
-					accuDriftSeconds.value += Config.Physics.Dt + Config.Physics.Dt * playerCar.driftState.driftStrength;
-				}
-
-				// lose wall-clock seconds while in time dilation
-				if (!dilationTime.isStopped()) {
-					accuDriftSeconds.value -= dilationTime.elapsed(Reference.LastAbsoluteSeconds) * 2;
-				}
-
-				// lose wall-clock seconds while out of track
-				if (!outOfTrackTime.isStopped()) {
-					accuDriftSeconds.value -= outOfTrackTime.elapsed(Reference.LastAbsoluteSeconds);
-				}
-
-				accuDriftSeconds.value = MathUtils.clamp(accuDriftSeconds.value, 0, DriftBar.MaxSeconds);
-			}
-		}
-
-		playerTasks.hudPlayer.driftBar.setSeconds(accuDriftSeconds.value);
+	@Override
+	public boolean isTimeDilationAvailable () {
+		return accuDriftSeconds.value > 0;
 	}
-
-	//
-	// implement interfaces and listeners callbacks
-	//
 
 	@Override
 	public void tick () {
@@ -531,63 +386,160 @@ public abstract class CommonLogic implements GameLogic {
 
 	}
 
-	private Color ambient = new Color();
-	private Color treesAmbient = new Color();
-
 	@Override
 	public void beforeRender () {
 		URacer.timeMultiplier = timeMod.getTime();
 		float zoom = updateCamera(URacer.Game.getTimeModFactor());
-
-		//@off
-		ambient.set(
-			0.1f,
-			0.05f,
-			0.15f,
-			0.4f + 0.2f * URacer.Game.getTimeModFactor()// + 0.3f * lapMonitor.getWarmUpCompletion()
-		);
-
-		treesAmbient.set(
-			ambient.r,
-			ambient.g*2f,
-			ambient.b,
-			0.4f + 0.5f * URacer.Game.getTimeModFactor() 
-		);
-		//@on
-
-		if (gameWorld.isNightMode() && postProcessing.hasEffect(Effects.Crt.name)) {
-			gameWorldRenderer.setAmbientColor(0.1f, 0.05f, 0.1f, 0.6f + 0.2f * URacer.Game.getTimeModFactor());
-			gameWorldRenderer.setTreesAmbientColor(0.1f, 0.05f, 0.1f, 0.5f + 0.5f * URacer.Game.getTimeModFactor());
-		}
-
-		ambient.clamp();
-		treesAmbient.clamp();
-
-		gameWorldRenderer.setAmbientColor(ambient);
-		gameWorldRenderer.setTreesAmbientColor(treesAmbient);
-
-		// camera/ray handler update
 		gameWorldRenderer.updateCamera();
-
-		// Gdx.app.log("CommonLogic", "wuc=" + lapMonitor.getWarmUpCompletion());
 		postProcessing.onBeforeRender(zoom, lapMonitor.getWarmUpCompletion());
 
 		// game tweener step
 		GameTweener.update();
 	}
 
-	@Override
-	public void quitGame () {
-		lapManager.stopRecording();
-		gameTasksManager.sound.stop();
+	public GameWorld getGameWorld () {
+		return gameWorld;
+	}
 
-		// quit
+	public boolean hasPlayer () {
+		return playerCar != null;
+	}
 
-		URacer.Screens.setScreen(ScreenType.MainScreen, TransitionType.Fader, 500);
-		// URacer.Screens.setScreen( ScreenType.ExitScreen, TransitionType.Fader, 500 );
+	//
+	// private implementation
+	//
+
+	private void configurePlayer (GameWorld world, Input inputSystem, PlayerCar player) {
+		// create and setup the player
+		player.setInputSystem(inputSystem);
+		player.setFrictionMap(Art.frictionMapDesert);
+		player.setWorldPosMt(world.playerStart.position, world.playerStart.orientation);
+		player.resetPhysics();
+	}
+
+	private void resetPlayer (GameWorld world, Car playerCar) {
+		if (playerCar != null) {
+			playerCar.resetPhysics();
+			// playerCar.getTrackState().reset();
+			playerCar.resetDistanceAndSpeed(true, true);
+			playerCar.setWorldPosMt(world.playerStart.position, world.playerStart.orientation);
+		}
+	}
+
+	private void resetGhost (int handle) {
+		GhostCar ghost = ghostCars[handle];
+		if (ghost != null) {
+			// ghost.getTrackState().reset();
+			ghost.resetPhysics();
+			ghost.resetDistanceAndSpeed(true, true);
+			ghost.removeReplay();
+		}
+	}
+
+	protected GhostCar getGhost (int handle) {
+		return ghostCars[handle];
+	}
+
+	private void resetAllGhosts () {
+		for (int i = 0; i < ReplayManager.MaxReplays; i++) {
+			resetGhost(i);
+		}
+	}
+
+	private void restartLogic () {
+		gameTrack.clearTrackStates();
+		resetPlayer(gameWorld, playerCar);
+		resetAllGhosts();
 
 		timeMod.reset();
-		URacer.Game.resetTimeModFactor();
+		SysTweener.clear();
+		GameTweener.clear();
+		lapManager.abortRecording();
+		gameTasksManager.raiseRestart();
+
+		wrongWayMonitor.reset();
+		isCurrentLapValid = true;
+		isWarmUpLap = true;
+		isWrongWayInWarmUp = false;
+		isTooSlow = false;
+		isPenalty = false;
+
+		postProcessing.resetAnimator();
+
+		lapMonitor.reset();
+		lapMonitor.setCar(playerCar);
+
+		accuDriftSeconds.value = 0;
+		lastDist = 0;
+		lastCompletion = 0;
+	}
+
+	private void resetLogic () {
+		restartLogic();
+
+		// clean everything
+		replayManager.reset();
+		lapManager.reset();
+		gameTasksManager.raiseReset();
+	}
+
+	private void checkValidLap () {
+		boolean wrongWay = wrongWayMonitor.isWrongWay();
+		isCurrentLapValid = !wrongWay && !isTooSlow;
+
+		if ((wrongWay && isWarmUpLap) || isWrongWayInWarmUp) {
+			isWrongWayInWarmUp = true;
+			isWarmUpLap = true;
+			lapMonitor.reset();
+		}
+
+		// blink on wrong way (keeps calling, returns earlier if busy)
+		if (wrongWay) {
+			playerTasks.hudPlayer.highlightWrongWay();
+		}
+
+		// blink on out of track (keeps calling, returns earlier if busy)
+		if (playerCar.isOutOfTrack()) {
+			playerTasks.hudPlayer.highlightOutOfTrack();
+		}
+
+		if (isTooSlow) {
+			playerTasks.hudPlayer.trackProgress.getProgressData().reset(true);
+		}
+	}
+
+	private void updateDriftBar () {
+		if (!hasPlayer()) {
+			return;
+		}
+
+		if (Config.Debug.InfiniteDilationTime) {
+			accuDriftSeconds.value = DriftBar.MaxSeconds;
+		} else {
+
+			// if a penalty is being applied, then drift seconds will not be updated
+			if (!isPenalty) {
+
+				// earn game seconds by drifting
+				if (playerCar.driftState.isDrifting) {
+					accuDriftSeconds.value += Config.Physics.Dt + Config.Physics.Dt * playerCar.driftState.driftStrength;
+				}
+
+				// lose wall-clock seconds while in time dilation
+				if (!dilationTime.isStopped()) {
+					accuDriftSeconds.value -= dilationTime.elapsed(Reference.LastAbsoluteSeconds) * 2;
+				}
+
+				// lose wall-clock seconds while out of track
+				if (!outOfTrackTime.isStopped()) {
+					accuDriftSeconds.value -= outOfTrackTime.elapsed(Reference.LastAbsoluteSeconds);
+				}
+
+				accuDriftSeconds.value = MathUtils.clamp(accuDriftSeconds.value, 0, DriftBar.MaxSeconds);
+			}
+		}
+
+		playerTasks.hudPlayer.driftBar.setSeconds(accuDriftSeconds.value);
 	}
 
 	private Replay userRec = null; // dbg on-demand rec/play via Z/X
@@ -661,6 +613,7 @@ public abstract class CommonLogic implements GameLogic {
 			Replay r = replays.get(i);
 			if (r.isValid) {
 				getGhost(i).setReplay(replays.get(i));
+				// TODO game track initialize track state for ghost
 
 				if (replayManager.getBestReplay() == replays.get(i)) {
 					nextTarget = getGhost(i);
@@ -679,29 +632,6 @@ public abstract class CommonLogic implements GameLogic {
 			}
 		}
 	};
-
-	protected void collision () {
-		if (isPenalty) return;
-
-		isPenalty = true;
-
-		GameTweener.stop(accuDriftSeconds);
-		Timeline driftSecondsTimeline = Timeline.createSequence();
-		driftSecondsTimeline.push(Tween.to(accuDriftSeconds, BoxedFloatAccessor.VALUE, 500).target(0).ease(Quad.INOUT))
-			.setCallback(penaltyFinished);
-		GameTweener.start(driftSecondsTimeline);
-
-		playerTasks.hudPlayer.highlightCollision();
-	}
-
-	//
-	// EVENT HANDLERS
-	//
-
-	@Override
-	public boolean timeDilationAvailable () {
-		return accuDriftSeconds.value > 0;
-	}
 
 	// @Override
 	// public void carStateEvent (CarState source, CarStateEvent.Type type) {
@@ -742,20 +672,17 @@ public abstract class CommonLogic implements GameLogic {
 		}
 
 		@Override
-		public void onLapStarted () {
+		public void onLapStarted (boolean firstLap) {
 			Gdx.app.log("CommonLogic", "onLapStarted");
 
 			// lap started, warmup ended
 			isWarmUpLap = false;
 			playerCar.resetDistanceAndSpeed(true, false);
 
-			// if (!lapManager.isRecording())
-			{
-				lapManager.stopRecording();
-				lapManager.startRecording(playerCar);
-			}
+			lapManager.stopRecording();
+			lapManager.startRecording(playerCar);
 
-			lapStarted();
+			lapStarted(firstLap);
 		}
 
 		@Override
@@ -846,15 +773,30 @@ public abstract class CommonLogic implements GameLogic {
 
 					postProcessing.alertCollision(0.75f, 4000);
 
-					collision();
+					if (!isPenalty) {
+						isPenalty = true;
+
+						GameTweener.stop(accuDriftSeconds);
+						Timeline driftSecondsTimeline = Timeline.createSequence();
+						driftSecondsTimeline.push(Tween.to(accuDriftSeconds, BoxedFloatAccessor.VALUE, 500).target(0).ease(Quad.INOUT))
+							.setCallback(penaltyFinished);
+						GameTweener.start(driftSecondsTimeline);
+
+						playerTasks.hudPlayer.highlightCollision();
+					}
+
 					break;
 				case onOutOfTrack:
 					outOfTrackTime.start();
+					playerTasks.hudPlayer.driftBar.showSecondsLabel();
+
 					outOfTrack();
 					break;
 				case onBackInTrack:
 					updateDriftBar();
 					outOfTrackTime.reset();
+					playerTasks.hudPlayer.driftBar.hideSecondsLabel();
+
 					backInTrack();
 					break;
 				case onComputeForces:

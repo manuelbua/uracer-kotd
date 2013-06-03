@@ -1,5 +1,5 @@
 
-package com.bitfire.uracer.game.logic.types.helpers;
+package com.bitfire.uracer.game;
 
 import com.badlogic.gdx.Input.Keys;
 import com.bitfire.uracer.Input;
@@ -8,7 +8,6 @@ import com.bitfire.uracer.configuration.Gameplay;
 import com.bitfire.uracer.configuration.Gameplay.TimeDilateInputMode;
 import com.bitfire.uracer.configuration.UserPreferences;
 import com.bitfire.uracer.configuration.UserPreferences.Preference;
-import com.bitfire.uracer.game.GameLogic;
 
 public class GameInput {
 
@@ -34,6 +33,7 @@ public class GameInput {
 
 	public void reset () {
 		timeDilation = false;
+		input.releaseAllKeys();
 	}
 
 	public void update () {
@@ -54,7 +54,7 @@ public class GameInput {
 				timeDilation = !timeDilation;
 
 				if (timeDilation) {
-					if (logic.timeDilationAvailable()) {
+					if (logic.isTimeDilationAvailable()) {
 						logic.startTimeDilation();
 					} else {
 						timeDilation = false;
@@ -67,7 +67,7 @@ public class GameInput {
 
 		case TouchAndRelease:
 			if (input.isPressed(Keys.SPACE) || rightMouseButton) {
-				if (!timeDilation && logic.timeDilationAvailable()) {
+				if (!timeDilation && logic.isTimeDilationAvailable()) {
 					timeDilation = true;
 					logic.startTimeDilation();
 				}

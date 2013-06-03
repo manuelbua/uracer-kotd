@@ -8,8 +8,10 @@ public abstract class HudElement implements Disposable {
 	public void onTick () {
 	}
 
+	public void onRestart () {
+	}
+
 	public void onReset () {
-		// no impl
 	}
 
 	public abstract void onRender (SpriteBatch batch);
