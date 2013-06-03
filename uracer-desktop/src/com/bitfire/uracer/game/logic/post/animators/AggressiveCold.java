@@ -201,7 +201,7 @@ public final class AggressiveCold implements PostProcessingAnimator {
 			crt.setTime(0);
 
 			// note, a perfect color offset depends from screen size
-			crt.setColorOffset(0.001f);
+			crt.setColorOffset(0.0005f);
 			crt.setDistortion(0.125f);
 			crt.setZoom(0.94f);
 
@@ -286,8 +286,6 @@ public final class AggressiveCold implements PostProcessingAnimator {
 			} else {
 				crt.setTime(secs);
 			}
-
-			crt.setColorOffset(0.0005f);
 		}
 
 		if (zoom != null && hasPlayer) {
