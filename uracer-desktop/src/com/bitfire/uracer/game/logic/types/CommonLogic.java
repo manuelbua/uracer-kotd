@@ -423,6 +423,10 @@ public abstract class CommonLogic implements GameLogic {
 		return ghostCars[handle];
 	}
 
+	protected boolean isGhostActive (int handle) {
+		return (ghostCars[handle] != null && ghostCars[handle].isActive());
+	}
+
 	protected void setGhostReplay (int ghost, Replay replay) {
 		GhostCar ghostcar = ghostCars[ghost];
 		ghostcar.setReplay(replay);
@@ -438,10 +442,6 @@ public abstract class CommonLogic implements GameLogic {
 			ghost.removeReplay();
 		}
 	}
-
-	// protected GhostCar getGhost (int handle) {
-	// return ghostCars[handle];
-	// }
 
 	protected void resetAllGhosts () {
 		for (int i = 0; i < ReplayManager.MaxReplays; i++) {

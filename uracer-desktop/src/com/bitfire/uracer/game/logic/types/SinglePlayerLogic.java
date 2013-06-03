@@ -79,7 +79,7 @@ public class SinglePlayerLogic extends CommonLogic {
 			gameWorldRenderer.setCameraPosition(playerCar.state().position, playerCar.state().orientation,
 				playerCar.carState.currSpeedFactor);
 
-		} else if (getGhost(0) != null && getGhost(0).hasReplay()) {
+		} else if (isGhostActive(0)) {
 			gameWorldRenderer.setCameraPosition(getGhost(0).state().position, getGhost(0).state().orientation, 0);
 		} else {
 			// no ghost, no player, WTF?

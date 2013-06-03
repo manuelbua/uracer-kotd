@@ -89,8 +89,13 @@ public final class GhostCar extends Car {
 	}
 
 	@Override
+	public strictfp boolean isActive () {
+		return super.isActive() && hasReplay;
+	}
+
+	@Override
 	public boolean isVisible () {
-		return hasReplay && isActive() && stillModel.getAlpha() > 0;
+		return isActive() && stillModel.getAlpha() > 0;
 	}
 
 	@Override
