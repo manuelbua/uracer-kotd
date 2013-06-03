@@ -54,7 +54,7 @@ public class GameInput {
 				timeDilation = !timeDilation;
 
 				if (timeDilation) {
-					if (logic.timeDilationAvailable()) {
+					if (logic.isTimeDilationAvailable()) {
 						logic.startTimeDilation();
 					} else {
 						timeDilation = false;
@@ -67,7 +67,7 @@ public class GameInput {
 
 		case TouchAndRelease:
 			if (input.isPressed(Keys.SPACE) || rightMouseButton) {
-				if (!timeDilation && logic.timeDilationAvailable()) {
+				if (!timeDilation && logic.isTimeDilationAvailable()) {
 					timeDilation = true;
 					logic.startTimeDilation();
 				}

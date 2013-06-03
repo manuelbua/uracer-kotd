@@ -191,36 +191,6 @@ public abstract class CommonLogic implements GameLogic {
 		replayManager.dispose();
 	}
 
-	/** Restarts the current game */
-	@Override
-	public void restartGame () {
-		restartLogic();
-	}
-
-	/** Restart and completely resets the game, removing any playing replay so far */
-	@Override
-	public void resetGame () {
-		resetLogic();
-	}
-
-	/** Request time dilation to begin */
-	@Override
-	public void startTimeDilation () {
-		dilationTime.start();
-		timeMod.toDilatedTime();
-		playerTasks.hudPlayer.driftBar.showSecondsLabel();
-		updateDriftBar();
-	}
-
-	/** Request time dilation to end */
-	@Override
-	public void endTimeDilation () {
-		dilationTime.reset();
-		timeMod.toNormalTime();
-		playerTasks.hudPlayer.driftBar.hideSecondsLabel();
-		updateDriftBar();
-	}
-
 	/** Sets the player from the specified preset */
 	@Override
 	public void setPlayer (CarPreset.Type presetType) {
@@ -283,6 +253,149 @@ public abstract class CommonLogic implements GameLogic {
 		}
 	}
 
+	/** Restarts the current game */
+	@Override
+	public void restartGame () {
+		restartLogic();
+	}
+
+	/** Restart and completely resets the game, removing any previous recording and playing replays */
+	@Override
+	public void resetGame () {
+		resetLogic();
+	}
+
+	@Override
+	public void quitGame () {
+		lapManager.stopRecording();
+		gameTasksManager.sound.stop();
+
+		URacer.Screens.setScreen(ScreenType.MainScreen, TransitionType.Fader, 500);
+		// URacer.Screens.setScreen( ScreenType.ExitScreen, TransitionType.Fader, 500 );
+
+		timeMod.reset();
+		URacer.Game.resetTimeModFactor();
+	}
+
+	/** Request time dilation to begin */
+	@Override
+	public void startTimeDilation () {
+		dilationTime.start();
+		timeMod.toDilatedTime();
+		playerTasks.hudPlayer.driftBar.showSecondsLabel();
+		updateDriftBar();
+	}
+
+	/** Request time dilation to end */
+	@Override
+	public void endTimeDilation () {
+		dilationTime.reset();
+		timeMod.toNormalTime();
+		playerTasks.hudPlayer.driftBar.hideSecondsLabel();
+		updateDriftBar();
+	}
+
+	@Override
+	public boolean isTimeDilationAvailable () {
+		return accuDriftSeconds.value > 0;
+	}
+
+	@Override
+	public void tick () {
+		input.update();
+		dbgInput();
+		updateDriftBar();
+	}
+
+	private float lastDist, lastCompletion;
+
+	@Override
+	public void tickCompleted () {
+		if (hasPlayer()) {
+			gameTrack.updateCarSector(playerCar);
+		}
+
+		for (int i = 0; i < ReplayManager.MaxReplays; i++) {
+			if (ghostCars[i] != null && ghostCars[i].hasReplay()) {
+				gameTrack.updateCarSector(ghostCars[i]);
+			}
+		}
+
+		if (hasPlayer()) {
+			wrongWayMonitor.update(gameTrack.getTrackRouteConfidence(playerCar));
+		}
+
+		lapMonitor.update(isWarmUpLap);
+
+		// determine player's isWrongWay
+		if (hasPlayer()) {
+			checkValidLap();
+		}
+
+		if (accuDriftSeconds.value == 0 && input.isTimeDilating()) {
+			endTimeDilation();
+			Gdx.app.log("SinglePlayerLogic", "Requesting time modulation to finish");
+		}
+
+		if (hasPlayer()) {
+			TrackProgressData data = playerTasks.hudPlayer.trackProgress.getProgressData();
+
+			// float ghSpeed = 0;
+
+			// playerTasks.hudPlayer.trackProgress.setPlayerSpeed(playerCar.getInstantSpeed());
+			playerTasks.hudPlayer.driftBar.setDriftStrength(playerCar.driftState.driftStrength);
+
+			if (isWarmUpLap) {
+				data.reset(true);
+				if (isCurrentLapValid) {
+					playerTasks.hudPlayer.trackProgress.setMessage("RACE in "
+						+ Math.round(gameTrack.getTotalLength() - gameTrack.getTrackDistance(playerCar, 0)) + " mt");
+				} else {
+					playerTasks.hudPlayer.trackProgress.setMessage("Press \"R\"\nto restart");
+				}
+			} else {
+				if (isCurrentLapValid) {
+					playerTasks.hudPlayer.trackProgress.setMessage("");
+
+					// use the last one if the replay is finished
+					if (nextTarget != null && nextTarget.hasReplay()) {
+						lastDist = gameTrack.getTrackDistance(nextTarget, 0);
+						lastCompletion = gameTrack.getTrackCompletion(nextTarget);
+						// ghSpeed = nextTarget.getInstantSpeed();
+					}
+
+					data.setPlayerDistance(gameTrack.getTrackDistance(playerCar, 0));
+					data.setPlayerProgression(gameTrack.getTrackCompletion(playerCar));
+
+					// playerTasks.hudPlayer.trackProgress.setTargetSpeed(ghSpeed);
+					data.setTargetDistance(lastDist);
+					data.setTargetProgression(lastCompletion);
+
+					// target tracker
+					float distMt = gameTrack.getTrackDistance(playerCar, 0) - lastDist;
+					float alpha = MathUtils.clamp(Math.abs(distMt) / 50, 0.2f, 1);
+					playerTasks.hudPlayer.setNextTargetAlpha(alpha);
+
+				} else {
+					playerTasks.hudPlayer.trackProgress.setMessage("Press \"R\"\nto restart");
+					data.reset(true);
+				}
+			}
+		}
+
+	}
+
+	@Override
+	public void beforeRender () {
+		URacer.timeMultiplier = timeMod.getTime();
+		float zoom = updateCamera(URacer.Game.getTimeModFactor());
+		gameWorldRenderer.updateCamera();
+		postProcessing.onBeforeRender(zoom, lapMonitor.getWarmUpCompletion());
+
+		// game tweener step
+		GameTweener.update();
+	}
+
 	public GameWorld getGameWorld () {
 		return gameWorld;
 	}
@@ -291,22 +404,14 @@ public abstract class CommonLogic implements GameLogic {
 		return playerCar != null;
 	}
 
-	public PlayerCar getPlayer () {
-		return playerCar;
-	}
-
 	//
 	// private implementation
 	//
 
 	private void configurePlayer (GameWorld world, Input inputSystem, PlayerCar player) {
-		// create player and setup player input system and initial position in
-		// the world
+		// create and setup the player
 		player.setInputSystem(inputSystem);
-
-		// FIXME this is for debug
 		player.setFrictionMap(Art.frictionMapDesert);
-
 		player.setWorldPosMt(world.playerStart.position, world.playerStart.orientation);
 		player.resetPhysics();
 	}
@@ -435,118 +540,6 @@ public abstract class CommonLogic implements GameLogic {
 		playerTasks.hudPlayer.driftBar.setSeconds(accuDriftSeconds.value);
 	}
 
-	//
-	// implement interfaces and listeners callbacks
-	//
-
-	@Override
-	public void tick () {
-		input.update();
-		dbgInput();
-		updateDriftBar();
-	}
-
-	private float lastDist, lastCompletion;
-
-	@Override
-	public void tickCompleted () {
-		if (hasPlayer()) {
-			gameTrack.updateCarSector(playerCar);
-		}
-
-		for (int i = 0; i < ReplayManager.MaxReplays; i++) {
-			if (ghostCars[i] != null && ghostCars[i].hasReplay()) {
-				gameTrack.updateCarSector(ghostCars[i]);
-			}
-		}
-
-		if (hasPlayer()) {
-			wrongWayMonitor.update(gameTrack.getTrackRouteConfidence(playerCar));
-		}
-
-		lapMonitor.update(isWarmUpLap);
-
-		// determine player's isWrongWay
-		if (hasPlayer()) {
-			checkValidLap();
-		}
-
-		if (accuDriftSeconds.value == 0 && input.isTimeDilating()) {
-			endTimeDilation();
-			Gdx.app.log("SinglePlayerLogic", "Requesting time modulation to finish");
-		}
-
-		if (hasPlayer()) {
-			TrackProgressData data = playerTasks.hudPlayer.trackProgress.getProgressData();
-
-			// float ghSpeed = 0;
-
-			// playerTasks.hudPlayer.trackProgress.setPlayerSpeed(playerCar.getInstantSpeed());
-			playerTasks.hudPlayer.driftBar.setDriftStrength(playerCar.driftState.driftStrength);
-
-			if (isWarmUpLap) {
-				data.reset(true);
-				if (isCurrentLapValid) {
-					playerTasks.hudPlayer.trackProgress.setMessage("RACE in "
-						+ Math.round(gameTrack.getTotalLength() - gameTrack.getTrackDistance(playerCar, 0)) + " mt");
-				} else {
-					playerTasks.hudPlayer.trackProgress.setMessage("Press \"R\"\nto restart");
-				}
-			} else {
-				if (isCurrentLapValid) {
-					playerTasks.hudPlayer.trackProgress.setMessage("");
-
-					// use the last one if the replay is finished
-					if (nextTarget != null && nextTarget.hasReplay()) {
-						lastDist = gameTrack.getTrackDistance(nextTarget, 0);
-						lastCompletion = gameTrack.getTrackCompletion(nextTarget);
-						// ghSpeed = nextTarget.getInstantSpeed();
-					}
-
-					data.setPlayerDistance(gameTrack.getTrackDistance(playerCar, 0));
-					data.setPlayerProgression(gameTrack.getTrackCompletion(playerCar));
-
-					// playerTasks.hudPlayer.trackProgress.setTargetSpeed(ghSpeed);
-					data.setTargetDistance(lastDist);
-					data.setTargetProgression(lastCompletion);
-
-					// target tracker
-					float distMt = gameTrack.getTrackDistance(playerCar, 0) - lastDist;
-					float alpha = MathUtils.clamp(Math.abs(distMt) / 50, 0.2f, 1);
-					playerTasks.hudPlayer.setNextTargetAlpha(alpha);
-
-				} else {
-					playerTasks.hudPlayer.trackProgress.setMessage("Press \"R\"\nto restart");
-					data.reset(true);
-				}
-			}
-		}
-
-	}
-
-	@Override
-	public void beforeRender () {
-		URacer.timeMultiplier = timeMod.getTime();
-		float zoom = updateCamera(URacer.Game.getTimeModFactor());
-		gameWorldRenderer.updateCamera();
-		postProcessing.onBeforeRender(zoom, lapMonitor.getWarmUpCompletion());
-
-		// game tweener step
-		GameTweener.update();
-	}
-
-	@Override
-	public void quitGame () {
-		lapManager.stopRecording();
-		gameTasksManager.sound.stop();
-
-		URacer.Screens.setScreen(ScreenType.MainScreen, TransitionType.Fader, 500);
-		// URacer.Screens.setScreen( ScreenType.ExitScreen, TransitionType.Fader, 500 );
-
-		timeMod.reset();
-		URacer.Game.resetTimeModFactor();
-	}
-
 	private Replay userRec = null; // dbg on-demand rec/play via Z/X
 
 	private void dbgInput () {
@@ -636,11 +629,6 @@ public abstract class CommonLogic implements GameLogic {
 			}
 		}
 	};
-
-	@Override
-	public boolean timeDilationAvailable () {
-		return accuDriftSeconds.value > 0;
-	}
 
 	// @Override
 	// public void carStateEvent (CarState source, CarStateEvent.Type type) {
