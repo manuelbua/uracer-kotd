@@ -38,10 +38,6 @@ public class SinglePlayerLogic extends CommonLogic {
 		super.dispose();
 	}
 
-	//
-	// event listeners / callbacks
-	//
-
 	private float prevZoom = GameWorldRenderer.MinCameraZoom + GameWorldRenderer.ZoomWindow;
 	private float previousSpeed = 0, previousDs = 0;
 
@@ -81,28 +77,6 @@ public class SinglePlayerLogic extends CommonLogic {
 
 			if (gameWorld.isNightMode()) {
 				gameWorldRenderer.updatePlayerHeadlights(playerCar);
-
-				// update player's impulse light
-				// PointLight l = gameWorld.getPlayerImpulseLight();
-				// if (l != null) {
-				// CarState cs = playerCar.carState;
-				// Input input = URacer.Game.getInputSystem();
-				// Vector3 v3 = GameRenderer.ScreenUtils.screenToWorldMt(input.getXY());
-				// l.setActive(true);
-				// l.setPosition(v3.x, v3.y);
-				//
-				// // float f = 1;// cs.currSpeedFactor;
-				// float f = cs.currSpeedFactor * cs.currForceFactor;
-				// l.setDistance(10 - 8 * f);
-				// l.setSoftnessLenght(5);
-				//
-				// float v = MathUtils.clamp(1f * f, 0, 1);
-				// l.setColor(1, 1, 1, v);
-				//
-				// l.setColor(0.1f, 0.2f, 0.9f, v);
-				// Color p = ColorUtils.paletteRYG(v + 0.7f, v);
-				// l.setColor(p);
-				// }
 			}
 
 			gameWorldRenderer.setCameraPosition(playerCar.state().position, playerCar.state().orientation,
@@ -219,9 +193,11 @@ public class SinglePlayerLogic extends CommonLogic {
 	}
 
 	@Override
-	protected void lapStarted () {
+	protected void lapStarted (boolean firstLap) {
 		restartAllReplays();
-		playerTasks.hudPlayer.trackProgress.getProgressData().reset(true);
+		if (firstLap) {
+			playerTasks.hudPlayer.trackProgress.getProgressData().reset(true);
+		}
 	}
 
 	@Override

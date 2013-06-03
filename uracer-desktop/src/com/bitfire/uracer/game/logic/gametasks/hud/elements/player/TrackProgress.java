@@ -83,7 +83,6 @@ public class TrackProgress extends Positionable {
 	}
 
 	public TrackProgress () {
-
 		lblAdvantage = new HudLabel(FontFace.CurseWhiteBig, "", false);
 		advantageShown = false;
 		lblAdvantage.setAlpha(1);

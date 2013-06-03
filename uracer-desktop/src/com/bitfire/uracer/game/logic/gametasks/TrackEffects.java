@@ -118,7 +118,7 @@ public final class TrackEffects extends GameTask {
 	}
 
 	@Override
-	public void reset () {
+	public void onReset () {
 		Array<TrackEffect> items = managerBeforeCars.items;
 		for (int i = 0; i < items.size; i++) {
 			TrackEffect effect = items.get(i);

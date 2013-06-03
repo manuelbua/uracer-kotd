@@ -119,6 +119,12 @@ public final class PlayerDriftSoundEffect extends SoundEffect {
 	}
 
 	@Override
+	public void restart () {
+		reset();
+		start();
+	}
+
+	@Override
 	public void tick () {
 		if (driftId > -1) {
 			boolean anotherDriftId = (driftId != lastDriftId);

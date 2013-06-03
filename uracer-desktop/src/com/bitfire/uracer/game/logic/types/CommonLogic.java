@@ -71,7 +71,7 @@ public abstract class CommonLogic implements GameLogic {
 
 	protected abstract void discardedReplay (Replay replay);
 
-	protected abstract void lapStarted ();
+	protected abstract void lapStarted (boolean firstLap);
 
 	protected abstract void lapCompleted ();
 
@@ -341,7 +341,6 @@ public abstract class CommonLogic implements GameLogic {
 	}
 
 	private void restartLogic () {
-		gameTasksManager.sound.stop();
 		resetPlayer(gameWorld, playerCar);
 		resetAllGhosts();
 
@@ -358,12 +357,6 @@ public abstract class CommonLogic implements GameLogic {
 		isTooSlow = false;
 
 		postProcessing.resetAnimator();
-
-		// playerTasks.playerEngineSoundFx.start();
-		playerTasks.playerDriftSoundFx.start();
-		playerTasks.hudLapInfo.toDefaultColor();
-		playerTasks.hudLapInfo.setValid(true);
-		playerTasks.hudPlayer.trackProgress.getProgressData().reset(false);
 
 		lapMonitor.reset();
 		gameTrack.setInitialCarSector(playerCar);
@@ -742,7 +735,7 @@ public abstract class CommonLogic implements GameLogic {
 		}
 
 		@Override
-		public void onLapStarted () {
+		public void onLapStarted (boolean firstLap) {
 			Gdx.app.log("CommonLogic", "onLapStarted");
 
 			// lap started, warmup ended
@@ -755,7 +748,7 @@ public abstract class CommonLogic implements GameLogic {
 				lapManager.startRecording(playerCar);
 			}
 
-			lapStarted();
+			lapStarted(firstLap);
 		}
 
 		@Override
