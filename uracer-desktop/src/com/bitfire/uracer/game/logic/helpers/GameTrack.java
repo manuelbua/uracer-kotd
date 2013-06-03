@@ -183,21 +183,24 @@ public final class GameTrack {
 
 	private TrackState buildTrackState (Car car) {
 		TrackState state = new TrackState();
+		trackStates.put(car, state);
+
 		Vector2 pos = car.getWorldPosMt();
 		state.curr = findSector(pos);
 		state.next = state.curr + 1;
 		if (state.next == sectors.length) state.next = 0;
 		state.onExpectedPath = true;
+		state.initialCompletion = getTrackCompletion(car);
 		return state;
 	}
 
-	public void updateCarSector (Car car) {
+	public void updateTrackState (Car car) {
 		TrackState state = null;
 
 		if (!trackStates.containsKey(car)) {
 			// generate initial track state
 			state = buildTrackState(car);
-			trackStates.put(car, state);
+			return;
 		} else {
 			state = trackStates.get(car);
 		}
@@ -272,7 +275,7 @@ public final class GameTrack {
 			TrackSector s = sectors[i];
 			Polygon p = s.poly;
 
-			// mitigate errors for small differences
+			// scale to mitigate for small differences
 			p.scale(0.1f);
 			if (p.contains(a.x, a.y)) {
 				p.scale(-0.1f); // restored
@@ -328,6 +331,7 @@ public final class GameTrack {
 	public static class TrackState {
 		public int curr, next; // sectors
 		public boolean onExpectedPath;
+		public float initialCompletion;
 
 		public void reset () {
 			curr = 0;

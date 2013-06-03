@@ -113,7 +113,7 @@ public class SinglePlayerLogic extends CommonLogic {
 		CarUtils.dumpSpeedInfo("Player", playerCar, replay.trackTimeSeconds);
 
 		if (!replayManager.canClassify()) {
-			getGhost(0).setReplay(replay);
+			setGhostReplay(0, replay);
 			replay.saveLocal(messager);
 			// messager.show("GO!  GO!  GO!", 3f, Type.Information, Position.Bottom, Size.Big);
 		} else {
