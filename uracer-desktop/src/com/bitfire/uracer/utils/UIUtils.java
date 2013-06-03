@@ -18,6 +18,8 @@ public final class UIUtils {
 
 	public static Stage newScaledStage () {
 		Stage stage = new Stage(0, 0, false);
+		UICamera cam = new UICamera();
+		stage.setCamera(cam);
 		stage.setViewport(ScaleUtils.PlayWidth, ScaleUtils.PlayHeight, false, ScaleUtils.CropX, ScaleUtils.CropY,
 			ScaleUtils.PlayWidth, ScaleUtils.PlayHeight);
 		return stage;
