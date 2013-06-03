@@ -5,7 +5,6 @@ import com.badlogic.gdx.Gdx;
 import com.bitfire.uracer.configuration.UserProfile;
 import com.bitfire.uracer.game.actors.CarPreset;
 import com.bitfire.uracer.game.logic.gametasks.Messager;
-import com.bitfire.uracer.game.logic.gametasks.hud.elements.player.DriftBar;
 import com.bitfire.uracer.game.logic.gametasks.messager.Message;
 import com.bitfire.uracer.game.logic.gametasks.messager.Message.Position;
 import com.bitfire.uracer.game.logic.gametasks.messager.Message.Size;
@@ -20,7 +19,6 @@ import com.bitfire.uracer.utils.Convert;
 public class SinglePlayerLogic extends CommonLogic {
 
 	private Messager messager;
-	private DriftBar driftBar;
 
 	public SinglePlayerLogic (UserProfile userProfile, GameWorld gameWorld, GameRenderer gameRenderer) {
 		super(userProfile, gameWorld, gameRenderer);
@@ -30,7 +28,6 @@ public class SinglePlayerLogic extends CommonLogic {
 	@Override
 	public void setPlayer (CarPreset.Type presetType) {
 		super.setPlayer(presetType);
-		driftBar = playerTasks.hudPlayer.driftBar;
 	}
 
 	@Override
@@ -148,64 +145,4 @@ public class SinglePlayerLogic extends CommonLogic {
 			}
 		}
 	}
-
-	@Override
-	public void tick () {
-		super.tick();
-	}
-
-	@Override
-	protected void discardedReplay (Replay replay) {
-	}
-
-	// the player begins drifting
-	@Override
-	public void driftBegins () {
-	}
-
-	// the player's drift ended
-	@Override
-	public void driftEnds () {
-	}
-
-	// the player begins slowing down time
-	@Override
-	public void startTimeDilation () {
-		super.startTimeDilation();
-		driftBar.showSecondsLabel();
-	}
-
-	// the player ends slowing down time
-	@Override
-	public void endTimeDilation () {
-		super.endTimeDilation();
-		driftBar.hideSecondsLabel();
-	}
-
-	@Override
-	protected void outOfTrack () {
-		driftBar.showSecondsLabel();
-	}
-
-	@Override
-	protected void backInTrack () {
-		driftBar.hideSecondsLabel();
-	}
-
-	@Override
-	protected void lapStarted (boolean firstLap) {
-		restartAllReplays();
-		if (firstLap) {
-			playerTasks.hudPlayer.trackProgress.getProgressData().reset(true);
-		}
-	}
-
-	@Override
-	protected void lapCompleted () {
-	}
-
-	//
-	// utilities
-	//
-
 }

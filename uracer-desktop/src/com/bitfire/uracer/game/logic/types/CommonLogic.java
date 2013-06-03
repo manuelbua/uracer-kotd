@@ -61,24 +61,35 @@ import com.bitfire.uracer.utils.NumberString;
 
 public abstract class CommonLogic implements GameLogic {
 
-	// implementers should returns the camera zoom amount
 	protected abstract float updateCamera (float timeModFactor);
 
-	protected abstract void newReplay (Replay replay);
+	protected void newReplay (Replay replay) {
+	}
 
-	protected abstract void discardedReplay (Replay replay);
+	protected void discardedReplay (Replay replay) {
+	}
 
-	protected abstract void lapStarted (boolean firstLap);
+	protected void lapStarted (boolean firstLap) {
+		restartAllReplays();
+		if (firstLap) {
+			playerTasks.hudPlayer.trackProgress.getProgressData().reset(true);
+		}
+	}
 
-	protected abstract void lapCompleted ();
+	protected void lapCompleted () {
+	}
 
-	protected abstract void driftBegins ();
+	protected void driftBegins () {
+	}
 
-	protected abstract void driftEnds ();
+	protected void driftEnds () {
+	}
 
-	protected abstract void outOfTrack ();
+	protected void outOfTrack () {
+	}
 
-	protected abstract void backInTrack ();
+	protected void backInTrack () {
+	}
 
 	// input
 	protected Input inputSystem = null;
@@ -200,14 +211,17 @@ public abstract class CommonLogic implements GameLogic {
 	public void startTimeDilation () {
 		dilationTime.start();
 		timeMod.toDilatedTime();
+		playerTasks.hudPlayer.driftBar.showSecondsLabel();
+		updateDriftBar();
 	}
 
 	/** Request time dilation to end */
 	@Override
 	public void endTimeDilation () {
-		updateDriftBar();
 		dilationTime.reset();
 		timeMod.toNormalTime();
+		playerTasks.hudPlayer.driftBar.hideSecondsLabel();
+		updateDriftBar();
 	}
 
 	/** Sets the player from the specified preset */
@@ -399,7 +413,7 @@ public abstract class CommonLogic implements GameLogic {
 			accuDriftSeconds.value = DriftBar.MaxSeconds;
 		} else {
 
-			// if a penalty is being applied, then no drift seconds will be counted
+			// if a penalty is being applied, then drift seconds will not be updated
 			if (!isPenalty) {
 
 				// earn game seconds by drifting
@@ -517,11 +531,7 @@ public abstract class CommonLogic implements GameLogic {
 	public void beforeRender () {
 		URacer.timeMultiplier = timeMod.getTime();
 		float zoom = updateCamera(URacer.Game.getTimeModFactor());
-
-		// camera/ray handler update
 		gameWorldRenderer.updateCamera();
-
-		// Gdx.app.log("CommonLogic", "wuc=" + lapMonitor.getWarmUpCompletion());
 		postProcessing.onBeforeRender(zoom, lapMonitor.getWarmUpCompletion());
 
 		// game tweener step
@@ -532,8 +542,6 @@ public abstract class CommonLogic implements GameLogic {
 	public void quitGame () {
 		lapManager.stopRecording();
 		gameTasksManager.sound.stop();
-
-		// quit
 
 		URacer.Screens.setScreen(ScreenType.MainScreen, TransitionType.Fader, 500);
 		// URacer.Screens.setScreen( ScreenType.ExitScreen, TransitionType.Fader, 500 );
@@ -631,24 +639,6 @@ public abstract class CommonLogic implements GameLogic {
 			}
 		}
 	};
-
-	protected void collision () {
-		if (isPenalty) return;
-
-		isPenalty = true;
-
-		GameTweener.stop(accuDriftSeconds);
-		Timeline driftSecondsTimeline = Timeline.createSequence();
-		driftSecondsTimeline.push(Tween.to(accuDriftSeconds, BoxedFloatAccessor.VALUE, 500).target(0).ease(Quad.INOUT))
-			.setCallback(penaltyFinished);
-		GameTweener.start(driftSecondsTimeline);
-
-		playerTasks.hudPlayer.highlightCollision();
-	}
-
-	//
-	// EVENT HANDLERS
-	//
 
 	@Override
 	public boolean timeDilationAvailable () {
@@ -798,15 +788,30 @@ public abstract class CommonLogic implements GameLogic {
 
 					postProcessing.alertCollision(0.75f, 4000);
 
-					collision();
+					if (!isPenalty) {
+						isPenalty = true;
+
+						GameTweener.stop(accuDriftSeconds);
+						Timeline driftSecondsTimeline = Timeline.createSequence();
+						driftSecondsTimeline.push(Tween.to(accuDriftSeconds, BoxedFloatAccessor.VALUE, 500).target(0).ease(Quad.INOUT))
+							.setCallback(penaltyFinished);
+						GameTweener.start(driftSecondsTimeline);
+
+						playerTasks.hudPlayer.highlightCollision();
+					}
+
 					break;
 				case onOutOfTrack:
 					outOfTrackTime.start();
+					playerTasks.hudPlayer.driftBar.showSecondsLabel();
+
 					outOfTrack();
 					break;
 				case onBackInTrack:
 					updateDriftBar();
 					outOfTrackTime.reset();
+					playerTasks.hudPlayer.driftBar.hideSecondsLabel();
+
 					backInTrack();
 					break;
 				case onComputeForces:
