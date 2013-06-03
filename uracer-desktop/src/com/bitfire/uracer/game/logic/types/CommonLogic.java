@@ -218,8 +218,6 @@ public abstract class CommonLogic implements GameLogic {
 		gameWorldRenderer.showDebugGameTrack(Config.Debug.RenderTrackSectors);
 		gameWorldRenderer.setGameTrackDebugCar(playerCar);
 
-		// gameTrack.setInitialCarSector(playerCar);
-
 		restartGame();
 
 		if (Config.Debug.UseDebugHelper) {
@@ -430,7 +428,7 @@ public abstract class CommonLogic implements GameLogic {
 	protected void setGhostReplay (int ghost, Replay replay) {
 		GhostCar ghostcar = ghostCars[ghost];
 		ghostcar.setReplay(replay);
-		gameTrack.updateTrackState(ghostcar);
+		gameTrack.resetTrackState(ghostcar);
 	}
 
 	private void resetGhost (int handle) {
