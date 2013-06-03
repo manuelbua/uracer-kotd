@@ -9,7 +9,6 @@ import aurelienribon.tweenengine.equations.Quad;
 
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Input.Keys;
-import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.math.MathUtils;
 import com.badlogic.gdx.utils.Array;
 import com.bitfire.uracer.Input;
@@ -36,8 +35,6 @@ import com.bitfire.uracer.game.logic.helpers.CarFactory;
 import com.bitfire.uracer.game.logic.helpers.GameTrack;
 import com.bitfire.uracer.game.logic.helpers.PlayerGameTasks;
 import com.bitfire.uracer.game.logic.post.PostProcessing;
-import com.bitfire.uracer.game.logic.post.PostProcessing.Effects;
-import com.bitfire.uracer.game.logic.post.ssao.Ssao;
 import com.bitfire.uracer.game.logic.replaying.LapManager;
 import com.bitfire.uracer.game.logic.replaying.Replay;
 import com.bitfire.uracer.game.logic.replaying.ReplayManager;
@@ -134,14 +131,7 @@ public abstract class CommonLogic implements GameLogic {
 		timeMod = new TimeModulator();
 
 		// post-processing
-		postProcessing = new PostProcessing(gameWorld);
-		gameRenderer.setEnableNormalDepthMap(postProcessing.requiresNormalDepthMap());
-		gameRenderer.setPostProcessor(postProcessing.getPostProcessor());
-
-		if (postProcessing.hasEffect(Effects.Ssao.name)) {
-			Ssao ssao = (Ssao)postProcessing.getEffect(Effects.Ssao.name);
-			ssao.setNormalDepthMap(gameWorldRenderer.getNormalDepthMap().getColorBufferTexture());
-		}
+		postProcessing = gameRenderer.getPostProcessing();
 
 		// main game tasks
 		gameTasksManager = new GameTasksManager(gameWorld);
@@ -174,7 +164,6 @@ public abstract class CommonLogic implements GameLogic {
 		removePlayer();
 		gameTrack.dispose();
 		gameTasksManager.dispose();
-		postProcessing.dispose();
 		playerTasks.dispose();
 
 		if (playerCar != null) {
@@ -524,40 +513,10 @@ public abstract class CommonLogic implements GameLogic {
 
 	}
 
-	private Color ambient = new Color();
-	private Color treesAmbient = new Color();
-
 	@Override
 	public void beforeRender () {
 		URacer.timeMultiplier = timeMod.getTime();
 		float zoom = updateCamera(URacer.Game.getTimeModFactor());
-
-		//@off
-		ambient.set(
-			0.1f,
-			0.05f,
-			0.15f,
-			0.4f + 0.2f * URacer.Game.getTimeModFactor()// + 0.3f * lapMonitor.getWarmUpCompletion()
-		);
-
-		treesAmbient.set(
-			ambient.r,
-			ambient.g*2f,
-			ambient.b,
-			0.4f + 0.5f * URacer.Game.getTimeModFactor() 
-		);
-		//@on
-
-		if (gameWorld.isNightMode() && postProcessing.hasEffect(Effects.Crt.name)) {
-			gameWorldRenderer.setAmbientColor(0.1f, 0.05f, 0.1f, 0.6f + 0.2f * URacer.Game.getTimeModFactor());
-			gameWorldRenderer.setTreesAmbientColor(0.1f, 0.05f, 0.1f, 0.5f + 0.5f * URacer.Game.getTimeModFactor());
-		}
-
-		ambient.clamp();
-		treesAmbient.clamp();
-
-		gameWorldRenderer.setAmbientColor(ambient);
-		gameWorldRenderer.setTreesAmbientColor(treesAmbient);
 
 		// camera/ray handler update
 		gameWorldRenderer.updateCamera();

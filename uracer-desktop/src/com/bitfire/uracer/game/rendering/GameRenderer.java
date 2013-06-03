@@ -2,6 +2,7 @@
 package com.bitfire.uracer.game.rendering;
 
 import com.badlogic.gdx.Gdx;
+import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.GL20;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.graphics.glutils.FrameBuffer;
@@ -10,9 +11,13 @@ import com.badlogic.gdx.math.Rectangle;
 import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.math.Vector3;
 import com.bitfire.postprocessing.PostProcessor;
+import com.bitfire.uracer.URacer;
 import com.bitfire.uracer.configuration.Config;
 import com.bitfire.uracer.events.GameRendererEvent;
 import com.bitfire.uracer.game.GameEvents;
+import com.bitfire.uracer.game.logic.post.PostProcessing;
+import com.bitfire.uracer.game.logic.post.PostProcessing.Effects;
+import com.bitfire.uracer.game.logic.post.ssao.Ssao;
 import com.bitfire.uracer.game.world.GameWorld;
 import com.bitfire.uracer.utils.Convert;
 import com.bitfire.uracer.utils.ScaleUtils;
@@ -26,10 +31,9 @@ public final class GameRenderer {
 	private final GameWorld world;
 	private final GameBatchRenderer batchRenderer;
 	private final GameWorldRenderer worldRenderer;
-	private boolean drawNormalDepthMap;
 
+	private PostProcessing postProcessing = null;
 	private PostProcessor postProcessor = null;
-	private boolean hasPostProcessor = false;
 
 	private final Matrix4 identity = new Matrix4();
 	private final Matrix4 xform = new Matrix4();
@@ -38,9 +42,16 @@ public final class GameRenderer {
 		world = gameWorld;
 		gl = Gdx.graphics.getGL20();
 
-		// world rendering
-		worldRenderer = new GameWorldRenderer(world);
+		postProcessing = new PostProcessing(gameWorld);
+		postProcessor = postProcessing.getPostProcessor();
+
+		worldRenderer = new GameWorldRenderer(world, postProcessing.isEnabled());
 		batchRenderer = new GameBatchRenderer(gl);
+
+		if (postProcessing.isEnabled() && postProcessing.hasEffect(Effects.Ssao.name)) {
+			Ssao ssao = (Ssao)postProcessing.getEffect(Effects.Ssao.name);
+			ssao.setNormalDepthMap(worldRenderer.getNormalDepthMap().getColorBufferTexture());
+		}
 
 		// initialize utils
 		ScreenUtils.init(worldRenderer);
@@ -48,42 +59,18 @@ public final class GameRenderer {
 		// precompute sprite batch transform matrix
 		xform.idt();
 		xform.scale(ScaleUtils.Scale, ScaleUtils.Scale, 1);
-
-		// needed deferred data
-		drawNormalDepthMap = false;
-	}
-
-	public void enableNormalDepthMap () {
-		drawNormalDepthMap = true;
-	}
-
-	public void disableNormalDepthMap () {
-		drawNormalDepthMap = false;
-	}
-
-	public void setEnableNormalDepthMap (boolean enabled) {
-		drawNormalDepthMap = enabled;
 	}
 
 	public void dispose () {
-		// depthMap.dispose();
+		postProcessing.dispose();
 		batchRenderer.dispose();
 		worldRenderer.dispose();
 
 		GameEvents.gameRenderer.removeAllListeners();
 	}
 
-	public boolean hasPostProcessor () {
-		return hasPostProcessor;
-	}
-
-	public void setPostProcessor (PostProcessor postProcessor) {
-		hasPostProcessor = (postProcessor != null);
-		this.postProcessor = postProcessor;
-	}
-
-	public PostProcessor getPostProcessor () {
-		return postProcessor;
+	public PostProcessing getPostProcessing () {
+		return postProcessing;
 	}
 
 	public GameWorldRenderer getWorldRenderer () {
@@ -95,6 +82,22 @@ public final class GameRenderer {
 	}
 
 	public void beforeRender (float timeAliasingFactor) {
+		Color ambient = worldRenderer.getAmbientColor();
+		Color treesAmbient = worldRenderer.getTreesAmbientColor();
+
+		// update lights
+		ambient.set(0.1f, 0.05f, 0.15f, 0.4f + 0.2f * URacer.Game.getTimeModFactor());
+		treesAmbient.set(ambient.r, ambient.g * 2f, ambient.b, 0.4f + 0.5f * URacer.Game.getTimeModFactor());
+
+		if (world.isNightMode() && postProcessing.hasEffect(Effects.Crt.name)) {
+			ambient.set(0.1f, 0.05f, 0.1f, 0.6f);
+			treesAmbient.set(0.1f, 0.05f, 0.1f, 0.7f + 0.3f * URacer.Game.getTimeModFactor());
+		}
+
+		ambient.clamp();
+		treesAmbient.clamp();
+
+		// update matrices and cameras
 		GameEvents.gameRenderer.mtxOrthographicMvpMt = worldRenderer.getOrthographicMvpMt();
 		GameEvents.gameRenderer.camOrtho = worldRenderer.getOrthographicCamera();
 		GameEvents.gameRenderer.camPersp = worldRenderer.getPerspectiveCamera();
@@ -115,7 +118,7 @@ public final class GameRenderer {
 
 		clear();
 
-		if (drawNormalDepthMap) {
+		if (postProcessing.requiresNormalDepthMap()) {
 			worldRenderer.updateNormalDepthMap();
 		}
 

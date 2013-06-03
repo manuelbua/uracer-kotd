@@ -125,9 +125,8 @@ public final class GameWorldRenderer {
 
 	// deferred stuff
 	private Mesh plane;
-	// private final FloatFrameBuffer normalDepthMap;
-	private final FrameBuffer normalDepthMap;
-	private final ShaderProgram shNormalDepth, shNormalDepthNoDiffuse;
+	private FrameBuffer normalDepthMap;
+	private ShaderProgram shNormalDepth, shNormalDepthNoDiffuse;
 
 	// render stats
 	private ImmediateModeRenderer20 dbg = new ImmediateModeRenderer20(false, true, 0);
@@ -138,11 +137,11 @@ public final class GameWorldRenderer {
 	// world refs
 	private RayHandler rayHandler = null;
 	private List<OrthographicAlignedStillModel> staticMeshes = null;
-	private TrackTrees trackTrees = null; // complex trees
+	private TrackTrees trackTrees = null;
 	private TrackWalls trackWalls = null;
 	private ConeLight playerLightsA = null, playerLightsB = null;
 
-	public GameWorldRenderer (GameWorld world) {
+	public GameWorldRenderer (GameWorld world, boolean useNormalDepthMap) {
 		this.world = world;
 		gl = Gdx.gl20;
 		rayHandler = world.getRayHandler();
@@ -172,13 +171,15 @@ public final class GameWorldRenderer {
 		trackWalls = world.getTrackWalls();
 
 		// deferred setup
-		float scale = Config.PostProcessing.NormalDepthMapRatio;
-		normalDepthMap = new FrameBuffer(Format.RGBA8888, (int)((float)ScaleUtils.PlayWidth * scale),
-			(int)((float)ScaleUtils.PlayHeight * scale), true);
+		if (useNormalDepthMap) {
+			float scale = Config.PostProcessing.NormalDepthMapRatio;
+			normalDepthMap = new FrameBuffer(Format.RGBA8888, (int)((float)ScaleUtils.PlayWidth * scale),
+				(int)((float)ScaleUtils.PlayHeight * scale), true);
 
-		shNormalDepth = ShaderLoader.fromFile("normaldepth", "normaldepth", "#define ENABLE_DIFFUSE");
-		shNormalDepthNoDiffuse = ShaderLoader.fromFile("normaldepth", "normaldepth");
-		createBackPlane();
+			shNormalDepth = ShaderLoader.fromFile("normaldepth", "normaldepth", "#define ENABLE_DIFFUSE");
+			shNormalDepthNoDiffuse = ShaderLoader.fromFile("normaldepth", "normaldepth");
+			createBackPlane();
+		}
 	}
 
 	public void dispose () {
@@ -326,10 +327,6 @@ public final class GameWorldRenderer {
 				playerLightsB.setPosition(v.x, v.y);
 			}
 		}
-
-		// if( Config.isDesktop && (URacer.getFrameCount() & 0x1f) == 0x1f ) {
-		// System.out.println( "lights rendered=" + rayHandler.lightRenderedLastFrame );
-		// }
 	}
 
 	private Color ambientColor = new Color(0.1f, 0.05f, 0.1f, 0.4f);

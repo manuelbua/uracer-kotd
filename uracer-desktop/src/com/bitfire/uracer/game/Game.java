@@ -48,7 +48,8 @@ public class Game implements Disposable {
 
 		// initialize the debug helper
 		if (Config.Debug.UseDebugHelper) {
-			debug = new DebugHelper(gameRenderer.getWorldRenderer(), gameWorld.getBox2DWorld(), gameRenderer.getPostProcessor());
+			debug = new DebugHelper(gameRenderer.getWorldRenderer(), gameWorld.getBox2DWorld(), gameRenderer.getPostProcessing()
+				.getPostProcessor());
 			Gdx.app.debug("Game", "Debug helper initialized");
 		}
 	}

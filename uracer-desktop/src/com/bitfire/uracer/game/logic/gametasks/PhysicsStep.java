@@ -33,4 +33,14 @@ public class PhysicsStep extends GameTask {
 		world.clearForces();
 		GameEvents.physicsStep.trigger(this, Type.onSubstepCompleted);
 	}
+
+	@Override
+	public void onReset () {
+		world.clearForces();
+	}
+
+	@Override
+	public void onRestart () {
+		onReset();
+	}
 }
