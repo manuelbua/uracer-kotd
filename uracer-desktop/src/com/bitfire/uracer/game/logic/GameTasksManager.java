@@ -35,9 +35,10 @@ public final class GameTasksManager {
 
 	public GameTasksManager (GameWorld world) {
 		gameWorld = world;
+		createTasks();
 	}
 
-	public void createTasks () {
+	private void createTasks () {
 		// physics step
 		physicsStep = new PhysicsStep(gameWorld.getBox2DWorld(), TaskManagerEvent.Order.MINUS_4);
 		add(physicsStep);

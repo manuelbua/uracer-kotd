@@ -20,6 +20,7 @@ import com.bitfire.uracer.events.GhostCarEvent;
 import com.bitfire.uracer.events.PlayerDriftStateEvent;
 import com.bitfire.uracer.game.DebugHelper;
 import com.bitfire.uracer.game.GameEvents;
+import com.bitfire.uracer.game.GameInput;
 import com.bitfire.uracer.game.GameLogic;
 import com.bitfire.uracer.game.GameplaySettings;
 import com.bitfire.uracer.game.Time;
@@ -39,7 +40,6 @@ import com.bitfire.uracer.game.logic.replaying.LapManager;
 import com.bitfire.uracer.game.logic.replaying.Replay;
 import com.bitfire.uracer.game.logic.replaying.ReplayManager;
 import com.bitfire.uracer.game.logic.replaying.ReplayRecorder.RecorderError;
-import com.bitfire.uracer.game.logic.types.helpers.GameInput;
 import com.bitfire.uracer.game.logic.types.helpers.LapCompletionMonitor;
 import com.bitfire.uracer.game.logic.types.helpers.LapCompletionMonitor.LapCompletionMonitorListener;
 import com.bitfire.uracer.game.logic.types.helpers.TimeModulator;
@@ -144,11 +144,8 @@ public abstract class CommonLogic implements GameLogic {
 		// post-processing
 		postProcessing = gameRenderer.getPostProcessing();
 
-		// main game tasks
+		// create game and player tasks
 		gameTasksManager = new GameTasksManager(gameWorld);
-		gameTasksManager.createTasks();
-
-		// player tasks
 		playerTasks = new PlayerGameTasks(userProfile, gameTasksManager);
 
 		lapManager = new LapManager(userProfile, gameWorld.getLevelId());
