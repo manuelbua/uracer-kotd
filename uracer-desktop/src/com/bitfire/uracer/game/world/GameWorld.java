@@ -151,7 +151,6 @@ public final class GameWorld {
 		map.dispose();
 		polys.clear();
 		route.clear();
-		gameTrack.dispose();
 		mapUtils.dispose();
 
 		if (rayHandler != null) {

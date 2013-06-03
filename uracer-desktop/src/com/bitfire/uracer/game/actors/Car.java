@@ -66,7 +66,7 @@ public abstract strictfp class Car extends Box2DEntity {
 		this.inputMode = inputMode;
 		this.carTraveledDistance = 0;
 		this.accuDistCount = 0;
-		this.trackState = new CarTrackState();
+		// this.trackState = new CarTrackState();
 
 		applyCarPhysics(carType, preset.model);
 
@@ -84,9 +84,9 @@ public abstract strictfp class Car extends Box2DEntity {
 		return stillModel;
 	}
 
-	public CarTrackState getTrackState () {
-		return trackState;
-	}
+	// public CarTrackState getTrackState () {
+	// return trackState;
+	// }
 
 	public float getSteerAngleRads () {
 		return 0;

@@ -92,25 +92,17 @@ public class SinglePlayerLogic extends CommonLogic {
 	// the game has been restarted
 	@Override
 	public void restartGame () {
-		super.restartGame();
-
 		Gdx.app.log("SinglePlayerLogic", "Starting/restarting game");
+		super.restartGame();
 		gameTasksManager.messager.show("Game restarted", 3, Message.Type.Information, Position.Bottom, Size.Big);
-
-		isPenalty = false;
-
 	}
 
 	// the game has been reset
 	@Override
 	public void resetGame () {
-		super.resetGame();
-
 		Gdx.app.log("SinglePlayerLogic", "Resetting game");
+		super.resetGame();
 		gameTasksManager.messager.show("Game reset", 3, Message.Type.Information, Position.Bottom, Size.Big);
-
-		replayManager.reset();
-		isPenalty = false;
 	}
 
 	// a new Replay from the player is available: note that CommonLogic already perform
@@ -125,24 +117,24 @@ public class SinglePlayerLogic extends CommonLogic {
 			replay.saveLocal(messager);
 			// messager.show("GO!  GO!  GO!", 3f, Type.Information, Position.Bottom, Size.Big);
 		} else {
-			Replay best = replayManager.getBestReplay();
-			Replay worst = replayManager.getWorstReplay();
+			// Replay best = replayManager.getBestReplay();
+			// Replay worst = replayManager.getWorstReplay();
 
-			float bestTime = AMath.round(best.trackTimeSeconds, 2);
-			float worstTime = AMath.round(worst.trackTimeSeconds, 2);
+			// float bestTime = AMath.round(best.trackTimeSeconds, 2);
+			// float worstTime = AMath.round(worst.trackTimeSeconds, 2);
 			// float diffTime = AMath.round(worstTime - bestTime, 2);
 
-			if (AMath.equals(worstTime, bestTime)) {
-				// draw!
-				// messager.show("DRAW!", 3f, Type.Information, Position.Bottom, Size.Big);
-			} else {
-				// has the player managed to beat the best lap?
-				// if (lapManager.isLastBestLap()) {
-				// messager.show("-" + NumberString.format(diffTime) + " seconds!", 3f, Type.Good, Position.Bottom, Size.Big);
-				// } else {
-				// messager.show("+" + NumberString.format(diffTime) + " seconds", 3f, Type.Bad, Position.Bottom, Size.Big);
-				// }
-			}
+			// if (AMath.equals(worstTime, bestTime)) {
+			// // draw!
+			// // messager.show("DRAW!", 3f, Type.Information, Position.Bottom, Size.Big);
+			// } else {
+			// // has the player managed to beat the best lap?
+			// // if (lapManager.isLastBestLap()) {
+			// // messager.show("-" + NumberString.format(diffTime) + " seconds!", 3f, Type.Good, Position.Bottom, Size.Big);
+			// // } else {
+			// // messager.show("+" + NumberString.format(diffTime) + " seconds", 3f, Type.Bad, Position.Bottom, Size.Big);
+			// // }
+			// }
 		}
 	}
 }

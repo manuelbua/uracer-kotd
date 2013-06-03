@@ -78,6 +78,7 @@ public final class HudPlayer extends HudElement {
 	@Override
 	public void onRestart () {
 		trackProgress.getProgressData().reset(false);
+		onReset();
 	}
 
 	@Override

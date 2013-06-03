@@ -170,7 +170,6 @@ public abstract class CommonLogic implements GameLogic {
 	@Override
 	public void dispose () {
 		removePlayer();
-		gameTrack.dispose();
 		gameTasksManager.dispose();
 		playerTasks.dispose();
 
@@ -220,6 +219,8 @@ public abstract class CommonLogic implements GameLogic {
 
 		gameWorldRenderer.showDebugGameTrack(Config.Debug.RenderTrackSectors);
 		gameWorldRenderer.setGameTrackDebugCar(playerCar);
+
+		// gameTrack.setInitialCarSector(playerCar);
 
 		restartGame();
 
@@ -419,7 +420,7 @@ public abstract class CommonLogic implements GameLogic {
 	private void resetPlayer (GameWorld world, Car playerCar) {
 		if (playerCar != null) {
 			playerCar.resetPhysics();
-			playerCar.getTrackState().reset();
+			// playerCar.getTrackState().reset();
 			playerCar.resetDistanceAndSpeed(true, true);
 			playerCar.setWorldPosMt(world.playerStart.position, world.playerStart.orientation);
 		}
@@ -428,7 +429,7 @@ public abstract class CommonLogic implements GameLogic {
 	private void resetGhost (int handle) {
 		GhostCar ghost = ghostCars[handle];
 		if (ghost != null) {
-			ghost.getTrackState().reset();
+			// ghost.getTrackState().reset();
 			ghost.resetPhysics();
 			ghost.resetDistanceAndSpeed(true, true);
 			ghost.removeReplay();
@@ -446,6 +447,7 @@ public abstract class CommonLogic implements GameLogic {
 	}
 
 	private void restartLogic () {
+		gameTrack.clearTrackStates();
 		resetPlayer(gameWorld, playerCar);
 		resetAllGhosts();
 
@@ -460,11 +462,11 @@ public abstract class CommonLogic implements GameLogic {
 		isWarmUpLap = true;
 		isWrongWayInWarmUp = false;
 		isTooSlow = false;
+		isPenalty = false;
 
 		postProcessing.resetAnimator();
 
 		lapMonitor.reset();
-		gameTrack.setInitialCarSector(playerCar);
 		lapMonitor.setCar(playerCar);
 
 		accuDriftSeconds.value = 0;
@@ -611,6 +613,7 @@ public abstract class CommonLogic implements GameLogic {
 			Replay r = replays.get(i);
 			if (r.isValid) {
 				getGhost(i).setReplay(replays.get(i));
+				// TODO game track initialize track state for ghost
 
 				if (replayManager.getBestReplay() == replays.get(i)) {
 					nextTarget = getGhost(i);
@@ -676,11 +679,8 @@ public abstract class CommonLogic implements GameLogic {
 			isWarmUpLap = false;
 			playerCar.resetDistanceAndSpeed(true, false);
 
-			// if (!lapManager.isRecording())
-			{
-				lapManager.stopRecording();
-				lapManager.startRecording(playerCar);
-			}
+			lapManager.stopRecording();
+			lapManager.startRecording(playerCar);
 
 			lapStarted(firstLap);
 		}

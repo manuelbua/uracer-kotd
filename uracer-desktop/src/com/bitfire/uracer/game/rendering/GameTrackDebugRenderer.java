@@ -48,7 +48,7 @@ public class GameTrackDebugRenderer extends DebugRenderer {
 		int carSector = -1;
 
 		if (hasCar) {
-			carSector = car.getTrackState().curr;
+			carSector = gameTrack.getTrackState(car).curr;
 
 			if (carSector > -1) {
 				float d = MathUtils.clamp(gameTrack.distanceInSector(carSector, car.getWorldPosMt()), 0, 1);
