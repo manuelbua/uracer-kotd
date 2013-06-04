@@ -299,6 +299,8 @@ public abstract class CommonLogic implements GameLogic {
 
 	@Override
 	public void tick () {
+		URacer.timeMultiplier = timeMod.getTime();
+
 		input.update();
 		dbgInput();
 		updateDriftBar();
@@ -306,8 +308,7 @@ public abstract class CommonLogic implements GameLogic {
 
 	private float lastDist, lastCompletion;
 
-	@Override
-	public void tickCompleted () {
+	private void updateLogic () {
 		if (hasPlayer()) {
 			gameTrack.updateTrackState(playerCar);
 		}
@@ -374,12 +375,15 @@ public abstract class CommonLogic implements GameLogic {
 				}
 			}
 		}
+	}
 
+	@Override
+	public void tickCompleted () {
+		updateLogic();
 	}
 
 	@Override
 	public void beforeRender () {
-		URacer.timeMultiplier = timeMod.getTime();
 		float zoom = updateCamera(URacer.Game.getTimeModFactor());
 		gameWorldRenderer.updateCamera();
 		postProcessing.onBeforeRender(zoom, lapMonitor.getWarmUpCompletion());
