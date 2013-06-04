@@ -240,11 +240,12 @@ public final class GameWorld {
 		final Color c = new Color();
 
 		// setup player headlights data
-		c.set(0.1f, 0.2f, 0.9f, 0.7f);
+		c.set(0.1f, 0.2f, 0.9f, 0.85f);
 
+		int headlightsMask = CollisionFilters.CategoryTrackWalls;
 		// int headlightsMask = CollisionFilters.CategoryTrackWalls | CollisionFilters.CategoryReplay;
 		// int headlightsMask = CollisionFilters.CategoryReplay;
-		int headlightsMask = 0;
+		// int headlightsMask = 0;
 
 		playerHeadlightsA = new ConeLight(rayHandler, maxRays, c, 25, 0, 0, 0, 9);
 		playerHeadlightsA.setSoft(true);
@@ -263,11 +264,11 @@ public final class GameWorld {
 //			 MathUtils.random(0,1),
 //			 MathUtils.random(0,1),
 //			 MathUtils.random(0,1),
-			//				1f, .85f, 0.6f, 0.55f
-				MathUtils.random(0.85f,1),
-				MathUtils.random(0.8f,0.85f),
-				MathUtils.random(0.6f,0.8f),
-				0.55f
+							1f, .85f, 0.6f, 0.55f
+//				MathUtils.random(0.85f,1),
+//				MathUtils.random(0.8f,0.85f),
+//				MathUtils.random(0.6f,0.8f),
+//				0.55f
 			);
 			//@on
 
@@ -276,7 +277,7 @@ public final class GameWorld {
 			pos.y = worldSizePx.y - pos.y;
 			pos.set(Convert.px2mt(pos));// .scl(scalingStrategy.tileMapZoomFactor);
 
-			PointLight l = new PointLight(rayHandler, maxRays, c, MathUtils.random(20f, 30f), pos.x, pos.y);
+			PointLight l = new PointLight(rayHandler, maxRays, c, MathUtils.random(10, 20), pos.x, pos.y);
 			l.setSoft(true);
 			l.setStaticLight(false);
 			l.setMaskBits(CollisionFilters.CategoryPlayer | CollisionFilters.CategoryTrackWalls);
