@@ -71,11 +71,13 @@ public class Game implements Disposable {
 	// gameLogic.setBestLocalReplay(replay);
 	// }
 
+	/** Can be NOT called */
 	public void tick () {
 		taskManager.dispatchEvent(TaskManagerEvent.Type.onTick);
 		gameLogic.tick();
 	}
 
+	/** Can be NOT called */
 	public void tickCompleted () {
 		taskManager.dispatchEvent(TaskManagerEvent.Type.onTickCompleted);
 		gameLogic.tickCompleted();
