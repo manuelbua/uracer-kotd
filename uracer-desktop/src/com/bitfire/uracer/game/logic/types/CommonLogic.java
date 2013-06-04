@@ -349,7 +349,7 @@ public abstract class CommonLogic implements GameLogic {
 
 		if (accuDriftSeconds.value == 0 && input.isTimeDilating()) {
 			endTimeDilation();
-			Gdx.app.log("SinglePlayerLogic", "Requesting time modulation to finish");
+			Gdx.app.log("CommonLogic", "Requesting time modulation to finish");
 		}
 
 		if (hasPlayer()) {
