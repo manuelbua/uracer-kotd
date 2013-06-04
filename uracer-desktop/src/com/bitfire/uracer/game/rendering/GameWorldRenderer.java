@@ -124,9 +124,10 @@ public final class GameWorldRenderer {
 	private GameTrackDebugRenderer gameTrackDbgRenderer = null;
 
 	// deferred stuff
-	private Mesh plane;
-	private FrameBuffer normalDepthMap;
-	private ShaderProgram shNormalDepth, shNormalDepthNoDiffuse;
+	private Mesh plane = null;
+	private FrameBuffer normalDepthMap = null;
+	private ShaderProgram shNormalDepth = null, shNormalDepthNoDiffuse = null;
+	private boolean useDeferredRendering = false;
 
 	// render stats
 	private ImmediateModeRenderer20 dbg = new ImmediateModeRenderer20(false, true, 0);
@@ -143,6 +144,7 @@ public final class GameWorldRenderer {
 
 	public GameWorldRenderer (GameWorld world, boolean useNormalDepthMap) {
 		this.world = world;
+		this.useDeferredRendering = useNormalDepthMap;
 		gl = Gdx.gl20;
 		rayHandler = world.getRayHandler();
 		playerLightsA = world.getPlayerHeadLights(true);
@@ -183,10 +185,13 @@ public final class GameWorldRenderer {
 	}
 
 	public void dispose () {
-		plane.dispose();
-		shNormalDepth.dispose();
-		shNormalDepthNoDiffuse.dispose();
-		normalDepthMap.dispose();
+		if (useDeferredRendering) {
+			plane.dispose();
+			shNormalDepth.dispose();
+			shNormalDepthNoDiffuse.dispose();
+			normalDepthMap.dispose();
+		}
+
 		treeShaderNight.dispose();
 		treeShader.dispose();
 
