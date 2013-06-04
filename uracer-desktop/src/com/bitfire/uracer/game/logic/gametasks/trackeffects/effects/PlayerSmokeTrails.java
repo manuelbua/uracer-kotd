@@ -12,9 +12,6 @@ import com.bitfire.uracer.game.logic.gametasks.trackeffects.TrackEffectType;
 import com.bitfire.uracer.game.player.PlayerCar;
 import com.bitfire.uracer.resources.Art;
 
-/** FIXME disabled for a long time, need testing again
- * 
- * @author bmanuel */
 public class PlayerSmokeTrails extends TrackEffect {
 	public static final int MaxParticles = 1000;
 
