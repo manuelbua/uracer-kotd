@@ -341,24 +341,8 @@ public final class GameWorldRenderer {
 		return ambientColor;
 	}
 
-	public void setAmbientColor (float r, float g, float b, float a) {
-		ambientColor.set(r, g, b, a);
-	}
-
-	public void setAmbientColor (Color color) {
-		ambientColor.set(color);
-	}
-
 	public Color getTreesAmbientColor () {
 		return treesAmbientColor;
-	}
-
-	public void setTreesAmbientColor (float r, float g, float b, float a) {
-		treesAmbientColor.set(r, g, b, a);
-	}
-
-	public void setTreesAmbientColor (Color color) {
-		treesAmbientColor.set(color);
 	}
 
 	private Vector2 cameraPos = new Vector2();
