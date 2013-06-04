@@ -299,11 +299,27 @@ public abstract class CommonLogic implements GameLogic {
 
 	@Override
 	public void tick () {
+		// compute the next-frame time multiplier
 		URacer.timeMultiplier = timeMod.getTime();
 
 		input.update();
 		dbgInput();
 		updateDriftBar();
+	}
+
+	@Override
+	public void tickCompleted () {
+		updateLogic();
+	}
+
+	@Override
+	public void beforeRender () {
+		float zoom = updateCamera(URacer.Game.getTimeModFactor());
+		gameWorldRenderer.updateCamera();
+		postProcessing.onBeforeRender(zoom, lapMonitor.getWarmUpCompletion());
+
+		// game tweener step
+		GameTweener.update();
 	}
 
 	private float lastDist, lastCompletion;
@@ -375,21 +391,6 @@ public abstract class CommonLogic implements GameLogic {
 				}
 			}
 		}
-	}
-
-	@Override
-	public void tickCompleted () {
-		updateLogic();
-	}
-
-	@Override
-	public void beforeRender () {
-		float zoom = updateCamera(URacer.Game.getTimeModFactor());
-		gameWorldRenderer.updateCamera();
-		postProcessing.onBeforeRender(zoom, lapMonitor.getWarmUpCompletion());
-
-		// game tweener step
-		GameTweener.update();
 	}
 
 	public GameWorld getGameWorld () {
