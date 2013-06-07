@@ -9,7 +9,6 @@ import com.bitfire.uracer.configuration.UserPreferences.Preference;
 import com.bitfire.uracer.configuration.UserProfile;
 import com.bitfire.uracer.game.Game;
 import com.bitfire.uracer.game.GameLevels;
-import com.bitfire.uracer.game.actors.CarPreset.Type;
 import com.bitfire.uracer.game.screens.GameScreensFactory.ScreenType;
 import com.bitfire.uracer.screen.Screen;
 
@@ -32,7 +31,7 @@ public class GameScreen extends Screen {
 			game = new Game(userProfile, ScreensShared.selectedLevelId);
 
 			// choose a car type
-			game.setPlayer(Type.L2_PinkBeast);
+			game.addPlayer();
 		}
 	}
 

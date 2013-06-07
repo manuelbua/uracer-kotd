@@ -31,10 +31,7 @@ import com.bitfire.uracer.utils.Timer;
 import com.bitfire.uracer.utils.VMath;
 
 public class PlayerCar extends Car {
-
-	// private ScalingStrategy strategy;
-
-	// car forces simulator
+	// car simulation
 	private CarSimulator carSim = null;
 	private CarDescriptor carDesc = null;
 
@@ -44,7 +41,6 @@ public class PlayerCar extends Car {
 	private Vector2 touchPos = new Vector2();
 	private Vector2 carPos = new Vector2();
 	private final float invWidth, invHeight;
-	// private float scaleInputX, scaleInputY;
 	private WindowedMean frictionMean = new WindowedMean(10);
 
 	private IntMap<Timer> keytimer = new IntMap<Timer>(3);
@@ -54,7 +50,7 @@ public class PlayerCar extends Car {
 
 	// states
 	public CarState carState = null;
-	public PlayerDriftState driftState = null;
+	public DriftState driftState = null;
 
 	public PlayerCar (GameWorld gameWorld, CarPreset.Type presetType) {
 		super(gameWorld, CarType.PlayerCar, InputMode.InputFromPlayer, presetType, true);
@@ -69,13 +65,9 @@ public class PlayerCar extends Car {
 		carSim = new CarSimulator(carDesc);
 		stillModel.setAlpha(1);
 
-		// precompute relaxing factors for user input coordinates
-		// scaleInputX = invWidth * gameWorld.scalingStrategy.referenceResolution.x;
-		// scaleInputY = invHeight * gameWorld.scalingStrategy.referenceResolution.y;
-
 		// states
 		this.carState = new CarState(gameWorld, this);
-		this.driftState = new PlayerDriftState(this);
+		this.driftState = new DriftState(this);
 
 		// set physical properties
 		dampFriction = GameplaySettings.DampingFriction;
@@ -246,8 +238,6 @@ public class PlayerCar extends Car {
 	protected void onComputeCarForces (CarForces forces) {
 		carInput = acquireInput();
 
-		// handle decrease scheduled from previous step
-		// handleDecrease( carInput );
 		handleImpactFeedback();
 
 		carSim.applyInput(carInput);
@@ -261,9 +251,6 @@ public class PlayerCar extends Car {
 
 	@Override
 	public void onSubstepCompleted () {
-		// inspect impact feedback, accumulate vel/ang velocities
-		// handleImpactFeedback();
-
 		carState.update(carDesc);
 		driftState.update(carSim.lateralForceFront.y, carSim.lateralForceRear.y, carDesc.velocity_wc.len());
 

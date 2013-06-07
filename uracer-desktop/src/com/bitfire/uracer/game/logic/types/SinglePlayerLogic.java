@@ -3,7 +3,6 @@ package com.bitfire.uracer.game.logic.types;
 
 import com.badlogic.gdx.Gdx;
 import com.bitfire.uracer.configuration.UserProfile;
-import com.bitfire.uracer.game.actors.CarPreset;
 import com.bitfire.uracer.game.logic.gametasks.Messager;
 import com.bitfire.uracer.game.logic.gametasks.messager.Message;
 import com.bitfire.uracer.game.logic.gametasks.messager.Message.Position;
@@ -24,11 +23,6 @@ public class SinglePlayerLogic extends CommonLogic {
 	public SinglePlayerLogic (UserProfile userProfile, GameWorld gameWorld, GameRenderer gameRenderer) {
 		super(userProfile, gameWorld, gameRenderer);
 		messager = gameTasksManager.messager;
-	}
-
-	@Override
-	public void setPlayer (CarPreset.Type presetType) {
-		super.setPlayer(presetType);
 	}
 
 	@Override

@@ -10,7 +10,6 @@ import com.bitfire.uracer.configuration.UserPreferences;
 import com.bitfire.uracer.configuration.UserPreferences.Preference;
 import com.bitfire.uracer.configuration.UserProfile;
 import com.bitfire.uracer.events.TaskManagerEvent;
-import com.bitfire.uracer.game.actors.CarPreset;
 import com.bitfire.uracer.game.logic.types.SinglePlayerLogic;
 import com.bitfire.uracer.game.rendering.GameRenderer;
 import com.bitfire.uracer.game.task.TaskManager;
@@ -111,8 +110,8 @@ public class Game implements Disposable {
 	// OPERATIONS
 	//
 
-	public void setPlayer (CarPreset.Type presetType) {
-		gameLogic.setPlayer(presetType);
+	public void addPlayer () {
+		gameLogic.addPlayer();
 	}
 
 }

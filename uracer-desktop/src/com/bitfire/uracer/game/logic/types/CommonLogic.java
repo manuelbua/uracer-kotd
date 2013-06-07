@@ -190,13 +190,13 @@ public abstract class CommonLogic implements GameLogic {
 
 	/** Sets the player from the specified preset */
 	@Override
-	public void setPlayer (CarPreset.Type presetType) {
+	public void addPlayer () {
 		if (hasPlayer()) {
 			Gdx.app.log("GameLogic", "A player already exists.");
 			return;
 		}
 
-		playerCar = CarFactory.createPlayer(gameWorld, presetType);
+		playerCar = CarFactory.createPlayer(gameWorld);
 
 		configurePlayer(gameWorld, inputSystem, playerCar);
 		Gdx.app.log("GameLogic", "Player configured");
@@ -574,7 +574,7 @@ public abstract class CommonLogic implements GameLogic {
 		if (inputSystem.isPressed(Keys.O)) {
 			removePlayer();
 		} else if (inputSystem.isPressed(Keys.P)) {
-			setPlayer(CarPreset.Type.L1_GoblinOrange);
+			addPlayer();
 		} else if (inputSystem.isPressed(Keys.W)) {
 			Config.Debug.RenderBox2DWorldWireframe = !Config.Debug.RenderBox2DWorldWireframe;
 		} else if (inputSystem.isPressed(Keys.B)) {
