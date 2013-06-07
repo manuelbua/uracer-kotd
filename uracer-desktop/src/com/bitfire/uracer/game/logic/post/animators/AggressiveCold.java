@@ -9,7 +9,6 @@ import aurelienribon.tweenengine.equations.Quad;
 
 import com.badlogic.gdx.math.MathUtils;
 import com.badlogic.gdx.math.Vector2;
-import com.badlogic.gdx.math.WindowedMean;
 import com.badlogic.gdx.utils.TimeUtils;
 import com.bitfire.postprocessing.effects.Bloom;
 import com.bitfire.postprocessing.effects.CrtMonitor;
@@ -29,6 +28,7 @@ import com.bitfire.uracer.resources.Art;
 import com.bitfire.uracer.utils.AMath;
 import com.bitfire.uracer.utils.BoxedFloat;
 import com.bitfire.uracer.utils.BoxedFloatAccessor;
+import com.bitfire.uracer.utils.InterpolatedFloat;
 import com.bitfire.uracer.utils.ScaleUtils;
 
 public final class AggressiveCold implements PostProcessingAnimator {
@@ -48,6 +48,10 @@ public final class AggressiveCold implements PostProcessingAnimator {
 	private boolean alertCollision = false;
 	private float lastCollisionFactor = 0;
 	private float bloomThreshold = 0.4f;
+
+	private long startMs = 0;
+	private Vector2 playerScreenPos = new Vector2();
+	private InterpolatedFloat speed = new InterpolatedFloat();
 
 	public AggressiveCold (PostProcessing post, boolean nightMode) {
 		this.nightMode = nightMode;
@@ -213,17 +217,8 @@ public final class AggressiveCold implements PostProcessingAnimator {
 			float dist = 0.25f;
 			curvature.setDistortion(dist);
 			curvature.setZoom(1 - (dist / 2));
-
-			// curvature.setDistortion( 0.125f );
-			// curvature.setZoom( 0.94f );
 		}
 	}
-
-	private long startMs = 0;
-	Vector2 playerScreenPos = new Vector2();
-	private float prevSpeed = 0;
-	private WindowedMean meanSpeed = new WindowedMean(2);
-	private WindowedMean meanStrength = new WindowedMean(5);
 
 	private void autoEnableZoomBlur (float blurStrength) {
 		boolean enabled = zoom.isEnabled();
@@ -250,8 +245,6 @@ public final class AggressiveCold implements PostProcessingAnimator {
 	@Override
 	public void update (float zoomCamera, float warmUpCompletion) {
 		float timeModFactor = URacer.Game.getTimeModFactor();
-		// float currDriftStrength = 0;
-		float currSpeedFactor = 0;
 
 		// dbg
 		// ssao.setSampleCount(16);
@@ -263,15 +256,7 @@ public final class AggressiveCold implements PostProcessingAnimator {
 
 		if (hasPlayer) {
 			playerScreenPos.set(GameRenderer.ScreenUtils.worldPxToScreen(player.state().position));
-
-			meanStrength.addValue(player.driftState.driftStrength);
-			meanSpeed.addValue(player.carState.currSpeedFactor);
-
-			// currDriftStrength = AMath.fixup(AMath.clamp(meanStrength.getMean(), 0, 1));
-			currSpeedFactor = AMath.fixup(AMath.clamp(meanSpeed.getMean(), 0, 1));
-
-			currSpeedFactor = AMath.fixup(AMath.lerp(prevSpeed, player.carState.currSpeedFactor, 0.02f));
-			prevSpeed = currSpeedFactor;
+			speed.set(player.carState.currSpeedFactor, 0.02f);
 
 		} else {
 			playerScreenPos.set(0.5f, 0.5f);
@@ -290,7 +275,7 @@ public final class AggressiveCold implements PostProcessingAnimator {
 
 		if (zoom != null && hasPlayer) {
 
-			float sfactor = currSpeedFactor;
+			float sfactor = speed.get();
 			float z = (zoomCamera - (GameWorldRenderer.MinCameraZoom + GameWorldRenderer.ZoomWindow));
 			float v = (-0.07f * sfactor) - 0.03f * z;
 			// Gdx.app.log("", "zoom=" + z);

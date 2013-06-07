@@ -190,13 +190,13 @@ public abstract class CommonLogic implements GameLogic {
 
 	/** Sets the player from the specified preset */
 	@Override
-	public void setPlayer (CarPreset.Type presetType) {
+	public void addPlayer () {
 		if (hasPlayer()) {
 			Gdx.app.log("GameLogic", "A player already exists.");
 			return;
 		}
 
-		playerCar = CarFactory.createPlayer(gameWorld, presetType);
+		playerCar = CarFactory.createPlayer(gameWorld);
 
 		configurePlayer(gameWorld, inputSystem, playerCar);
 		Gdx.app.log("GameLogic", "Player configured");
@@ -286,6 +286,7 @@ public abstract class CommonLogic implements GameLogic {
 	/** Request time dilation to end */
 	@Override
 	public void endTimeDilation () {
+		input.resetTimeDilating();
 		dilationTime.reset();
 		timeMod.toNormalTime();
 		playerTasks.hudPlayer.driftBar.hideSecondsLabel();
@@ -347,6 +348,7 @@ public abstract class CommonLogic implements GameLogic {
 			checkValidLap();
 		}
 
+		// ends time dilation if no more seconds available
 		if (accuDriftSeconds.value == 0 && input.isTimeDilating()) {
 			endTimeDilation();
 			Gdx.app.log("CommonLogic", "Requesting time modulation to finish");
@@ -559,11 +561,10 @@ public abstract class CommonLogic implements GameLogic {
 				if (!outOfTrackTime.isStopped()) {
 					accuDriftSeconds.value -= outOfTrackTime.elapsed(Reference.LastAbsoluteSeconds);
 				}
-
-				accuDriftSeconds.value = MathUtils.clamp(accuDriftSeconds.value, 0, DriftBar.MaxSeconds);
 			}
 		}
 
+		accuDriftSeconds.value = MathUtils.clamp(accuDriftSeconds.value, 0, DriftBar.MaxSeconds);
 		playerTasks.hudPlayer.driftBar.setSeconds(accuDriftSeconds.value);
 	}
 
@@ -573,7 +574,7 @@ public abstract class CommonLogic implements GameLogic {
 		if (inputSystem.isPressed(Keys.O)) {
 			removePlayer();
 		} else if (inputSystem.isPressed(Keys.P)) {
-			setPlayer(CarPreset.Type.L1_GoblinOrange);
+			addPlayer();
 		} else if (inputSystem.isPressed(Keys.W)) {
 			Config.Debug.RenderBox2DWorldWireframe = !Config.Debug.RenderBox2DWorldWireframe;
 		} else if (inputSystem.isPressed(Keys.B)) {
@@ -638,19 +639,6 @@ public abstract class CommonLogic implements GameLogic {
 		}
 	};
 
-	// @Override
-	// public void carStateEvent (CarState source, CarStateEvent.Type type) {
-	// switch (type) {
-	// case onTileChanged:
-	// if (source.isPlayer) {
-	// playerTileChanged(source);
-	// } else {
-	// ghostTileChanged(source);
-	// }
-	// break;
-	// }
-	// }
-
 	private final class EventHandlers implements WrongWayMonitorListener, LapCompletionMonitorListener {
 
 		@Override
@@ -668,10 +656,6 @@ public abstract class CommonLogic implements GameLogic {
 
 		@Override
 		public void onWrongWayEnds () {
-			// playerTasks.hudPlayer.wrongWay.fadeOut();
-			// playerTasks.hudLapInfo.toColor(1, 1, 0);
-			// playerTasks.hudLapInfo.setInvalid("back to start");
-			// postProcessing.alertWrongWayEnds(500);
 		}
 
 		@Override

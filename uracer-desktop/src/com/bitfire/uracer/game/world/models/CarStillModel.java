@@ -13,8 +13,8 @@ import com.bitfire.uracer.game.actors.Car;
 import com.bitfire.uracer.u3d.materials.Material;
 import com.bitfire.uracer.u3d.still.StillModel;
 import com.bitfire.uracer.u3d.still.StillSubMesh;
-import com.bitfire.uracer.utils.AMath;
 import com.bitfire.uracer.utils.Convert;
+import com.bitfire.uracer.utils.InterpolatedFloat;
 import com.bitfire.uracer.utils.ScaleUtils;
 
 public class CarStillModel extends OrthographicAlignedStillModel {
@@ -32,9 +32,10 @@ public class CarStillModel extends OrthographicAlignedStillModel {
 
 	public BoundingBox boundingBox = new BoundingBox();
 	public BoundingBox localBoundingBox = new BoundingBox();
+
+	private InterpolatedFloat tireAngle = new InterpolatedFloat();
 	private Vector3 tmpvec = new Vector3();
 	private Car car = null;
-	private float prevTireAngle = 0;
 
 	public CarStillModel (StillModel aModel, Material material) {
 		super(aModel, material);
@@ -82,9 +83,7 @@ public class CarStillModel extends OrthographicAlignedStillModel {
 			mtxbodytransformed.set(camPersp.combined).mul(mtxbody);
 		}
 
-		float tirerot = MathUtils.radDeg * car.getSteerAngleRads();
-		float itirerot = AMath.lerp(prevTireAngle, tirerot, 0.1f);
-		prevTireAngle = itirerot;
+		tireAngle.set(MathUtils.radDeg * car.getSteerAngleRads(), 0.1f);
 
 		// left tire
 		{
@@ -97,7 +96,7 @@ public class CarStillModel extends OrthographicAlignedStillModel {
 			Vector3 pos = world2Dto3D(camPersp, camOrtho, state.position.x + dx, state.position.y + dy);
 			mtxltire.set(camPersp.combined);
 			mtxltire.translate(pos);
-			mtxltire.rotate(0, 0, 1, state.orientation - itirerot);
+			mtxltire.rotate(0, 0, 1, state.orientation - tireAngle.get());
 			mtxltire.scale(this.scaleAxis.x * s, this.scaleAxis.y * s, this.scaleAxis.z * s);
 			mtxltiretransformed.set(mtxltire);
 		}
@@ -113,7 +112,7 @@ public class CarStillModel extends OrthographicAlignedStillModel {
 			Vector3 pos = world2Dto3D(camPersp, camOrtho, state.position.x + dx, state.position.y + dy);
 			mtxrtire.set(camPersp.combined);
 			mtxrtire.translate(pos);
-			mtxrtire.rotate(0, 0, 1, state.orientation - itirerot);
+			mtxrtire.rotate(0, 0, 1, state.orientation - tireAngle.get());
 			mtxrtire.scale(this.scaleAxis.x * s, this.scaleAxis.y * s, this.scaleAxis.z * s);
 			mtxrtiretransformed.set(mtxrtire);
 		}

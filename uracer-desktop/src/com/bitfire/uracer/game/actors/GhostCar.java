@@ -20,7 +20,6 @@ public final class GhostCar extends Car {
 	private boolean hasReplay;
 	public final int id;
 	private boolean fadeOutEventTriggered;
-	public CarState carState;
 
 	public GhostCar (int id, GameWorld gameWorld, CarPreset.Type presetType) {
 		super(gameWorld, CarType.ReplayCar, InputMode.InputFromReplay, presetType, false);
@@ -29,7 +28,6 @@ public final class GhostCar extends Car {
 		hasReplay = false;
 		replay = null;
 		stillModel.setAlpha(0.5f);
-		this.carState = new CarState(gameWorld, this);
 
 		setActive(false);
 		resetPhysics();
@@ -43,24 +41,14 @@ public final class GhostCar extends Car {
 
 		setActive(hasReplay);
 		resetPhysics();
-		// getTrackState().reset();
 
 		if (hasReplay) {
-			setPreset(replay.carPresetType);
 			stillModel.setAlpha(0);
 
 			// System.out.println( "Replaying " + replay.id );
 			restart(replay);
 			Gdx.app.log("GhostCar #" + id, "Replaying #" + System.identityHashCode(replay));
 		}
-
-		// else
-		// {
-		// if(replay==null)
-		// System.out.println("Replay disabled");
-		// else
-		// System.out.println("Replay has no recorded events, disabling replaying.");
-		// }
 	}
 
 	public void removeReplay () {
@@ -71,7 +59,6 @@ public final class GhostCar extends Car {
 	@Override
 	public strictfp void resetPhysics () {
 		super.resetPhysics();
-		carState.reset();
 	}
 
 	public boolean hasReplay () {
@@ -155,10 +142,5 @@ public final class GhostCar extends Car {
 				// restart(replay);
 			}
 		}
-	}
-
-	@Override
-	public void onSubstepCompleted () {
-		carState.update(null);
 	}
 }

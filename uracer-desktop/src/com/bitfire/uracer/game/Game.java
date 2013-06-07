@@ -10,7 +10,6 @@ import com.bitfire.uracer.configuration.UserPreferences;
 import com.bitfire.uracer.configuration.UserPreferences.Preference;
 import com.bitfire.uracer.configuration.UserProfile;
 import com.bitfire.uracer.events.TaskManagerEvent;
-import com.bitfire.uracer.game.actors.CarPreset;
 import com.bitfire.uracer.game.logic.types.SinglePlayerLogic;
 import com.bitfire.uracer.game.rendering.GameRenderer;
 import com.bitfire.uracer.game.task.TaskManager;
@@ -26,6 +25,8 @@ public class Game implements Disposable {
 
 	// logic
 	private GameLogic gameLogic = null;
+
+	// tasks
 	private TaskManager taskManager = null;
 
 	// rendering
@@ -67,10 +68,6 @@ public class Game implements Disposable {
 		taskManager.dispose();
 	}
 
-	// public void setLocalReplay (Replay replay) {
-	// gameLogic.setBestLocalReplay(replay);
-	// }
-
 	/** Can be NOT called */
 	public void tick () {
 		taskManager.dispatchEvent(TaskManagerEvent.Type.onTick);
@@ -89,7 +86,6 @@ public class Game implements Disposable {
 		// to the game logic
 		gameRenderer.beforeRender(URacer.Game.getTemporalAliasing());
 		gameLogic.beforeRender();
-
 		gameRenderer.render(dest);
 	}
 
@@ -114,8 +110,8 @@ public class Game implements Disposable {
 	// OPERATIONS
 	//
 
-	public void setPlayer (CarPreset.Type presetType) {
-		gameLogic.setPlayer(presetType);
+	public void addPlayer () {
+		gameLogic.addPlayer();
 	}
 
 }
