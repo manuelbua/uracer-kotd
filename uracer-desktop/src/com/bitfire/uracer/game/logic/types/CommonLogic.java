@@ -197,6 +197,7 @@ public abstract class CommonLogic implements GameLogic {
 		}
 
 		playerCar = CarFactory.createPlayer(gameWorld);
+		gameWorld.setPlayer(playerCar);
 
 		configurePlayer(gameWorld, inputSystem, playerCar);
 		Gdx.app.log("GameLogic", "Player configured");
@@ -241,6 +242,7 @@ public abstract class CommonLogic implements GameLogic {
 		}
 
 		playerCar = null;
+		gameWorld.setPlayer(null);
 		gameWorldRenderer.setRenderPlayerHeadlights(false);
 		wrongWayMonitor.reset();
 		lapMonitor.setCar(null);
@@ -326,6 +328,7 @@ public abstract class CommonLogic implements GameLogic {
 	private float lastDist, lastCompletion;
 
 	private void updateLogic () {
+		// FIXME add more description to WHY things are in this order
 		if (hasPlayer()) {
 			gameTrack.updateTrackState(playerCar);
 		}
@@ -361,7 +364,7 @@ public abstract class CommonLogic implements GameLogic {
 			if (isWarmUpLap) {
 				data.reset(true);
 				if (isCurrentLapValid) {
-					playerTasks.hudPlayer.trackProgress.setMessage("RACE in "
+					playerTasks.hudPlayer.trackProgress.setMessage("Start in "
 						+ Math.round(gameTrack.getTotalLength() - gameTrack.getTrackDistance(playerCar, 0)) + " mt");
 				} else {
 					playerTasks.hudPlayer.trackProgress.setMessage("Press \"R\"\nto restart");

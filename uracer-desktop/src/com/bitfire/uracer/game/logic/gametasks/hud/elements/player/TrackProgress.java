@@ -125,12 +125,9 @@ public class TrackProgress extends Positionable {
 			return;
 		}
 
-		float playerToTarget = 0;
-
 		// float a = 1f - 0.7f * URacer.Game.getTimeModFactor();
 		float a = 0.25f;
 
-		playerToTarget = AMath.fixup(data.playerProgress.get() - data.targetProgress.get());
 		if (customMessage.length() == 0) {
 			lblAdvantage.setString(Math.round(data.playerDistance.get() - data.targetDistance.get()) + " mt");
 		} else {
@@ -141,38 +138,35 @@ public class TrackProgress extends Positionable {
 			if (!advantageShown) {
 				advantageShown = true;
 				lblAdvantage.queueShow(500);
-				// Gdx.app.log("", "show");
 			}
 
 		} else if (advantageShown) {
 			advantageShown = false;
 			lblAdvantage.queueHide(1000);
-			// Gdx.app.log("", "hide");
 		}
 
 		// advantage/disadvantage
-		float dist = MathUtils.clamp(playerToTarget * 8, -1, 1);
-		float ndist = (dist + 1) * 0.5f;
-		Color advantageColor = ColorUtils.paletteRYG(ndist * 2, 1f);
-
 		float timeFactor = URacer.Game.getTimeModFactor() * 0.3f;
+
+		// advantage if > 0, disadvantage if < 0
+		float playerToTarget = AMath.fixup(data.playerProgress.get() - data.targetProgress.get());
+		float dist = MathUtils.clamp(playerToTarget, -1, 1);
+		Color advantageColor = ColorUtils.paletteRYG(dist + 1, 1f);
+
+		float adist = Math.abs(dist);
+		float s = cameraZoom;
+		if (dist < 0) {
+			s += 1f * adist;
+		}
 
 		lblAdvantage.setColor(advantageColor);
 		lblAdvantage.setAlpha(1);
-		lblAdvantage.setScale(cameraZoom * (1f - 0.4f * (1 - ndist)));
-		// lblAdvantage.setPosition(position.x, position.y - cameraZoom * Convert.scaledPixels(90) - Convert.scaledPixels(90) *
-		// timeFactor * cameraZoom - Convert.scaledPixels(8) * cameraZoom);
-		lblAdvantage.setPosition(position.x, position.y - cameraZoom * 90 - 90 * timeFactor * cameraZoom - 8 * cameraZoom);
+		lblAdvantage.setScale(s);
+		lblAdvantage.setPosition(position.x, position.y - cameraZoom * 100 - cameraZoom * 100 * timeFactor - cameraZoom * 20
+			* adist);
 		lblAdvantage.render(batch);
 
-		float s = 1f + timeFactor;
-		float scl = cameraZoom * scale * s;
-
-		// dbg
-		// dist = 0.35f;
-		// progressval = 0.5f;
-		// distGhost = 0.15f;
-		// distanceFromBest = 0.15f;
+		float scl = cameraZoom * scale * (1f + timeFactor);
 
 		batch.setShader(shProgress);
 

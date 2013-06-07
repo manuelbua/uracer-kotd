@@ -37,6 +37,7 @@ import com.bitfire.uracer.game.GameLevels;
 import com.bitfire.uracer.game.collisions.CollisionFilters;
 import com.bitfire.uracer.game.logic.helpers.GameTrack;
 import com.bitfire.uracer.game.logic.helpers.GameTrack.TrackPosition;
+import com.bitfire.uracer.game.player.PlayerCar;
 import com.bitfire.uracer.game.world.WorldDefs.Layer;
 import com.bitfire.uracer.game.world.WorldDefs.ObjectGroup;
 import com.bitfire.uracer.game.world.WorldDefs.ObjectProperties;
@@ -76,15 +77,17 @@ public final class GameWorld {
 	private final float pixelsPerMeterFactor;
 
 	// player data
+	public PlayerCar player = null;
 	public TrackPosition playerStart = null;
 	// public Vector2 playerStartPos = new Vector2();
 	// public float playerStartOrientRads;
 
-	// night system
+	// light/night system
 	private boolean nightMode;
 	protected RayHandler rayHandler = null;
 	protected ConeLight playerHeadlightsA, playerHeadlightsB = null;
 	protected PointLight playerImpulse = null;
+	protected PointLight[] lights = null;
 
 	// level meshes, package-level access for GameWorldRenderer (ugly but faster
 	// than accessors)
@@ -258,7 +261,11 @@ public final class GameWorld {
 		// setup level lights data, if any
 		Vector2 pos = new Vector2();
 		MapLayer group = mapUtils.getObjectGroup(ObjectGroup.Lights);
-		for (int i = 0; i < group.getObjects().getCount(); i++) {
+
+		int lights_count = group.getObjects().getCount();
+		lights = new PointLight[lights_count];
+
+		for (int i = 0; i < lights_count; i++) {
 			//@off
 			c.set(
 //			 MathUtils.random(0,1),
@@ -281,6 +288,8 @@ public final class GameWorld {
 			l.setSoft(true);
 			l.setStaticLight(false);
 			l.setMaskBits(CollisionFilters.CategoryPlayer | CollisionFilters.CategoryTrackWalls);
+
+			lights[i] = l;
 		}
 
 		// playerImpulse = new PointLight(rayHandler, maxRays);
@@ -712,6 +721,10 @@ public final class GameWorld {
 		return nightMode;
 	}
 
+	public PointLight[] getLights () {
+		return lights;
+	}
+
 	public TrackWalls getTrackWalls () {
 		return trackWalls;
 	}
@@ -754,6 +767,14 @@ public final class GameWorld {
 
 	public World getBox2DWorld () {
 		return box2dWorld;
+	}
+
+	public PlayerCar getPlayer () {
+		return player;
+	}
+
+	public void setPlayer (PlayerCar player) {
+		this.player = player;
 	}
 
 	// helpers from maputils

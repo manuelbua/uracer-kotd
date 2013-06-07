@@ -1,11 +1,14 @@
 
 package com.bitfire.uracer.game.rendering;
 
+import box2dLight.PointLight;
+
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.GL20;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.graphics.glutils.FrameBuffer;
+import com.badlogic.gdx.math.MathUtils;
 import com.badlogic.gdx.math.Matrix4;
 import com.badlogic.gdx.math.Rectangle;
 import com.badlogic.gdx.math.Vector2;
@@ -18,6 +21,7 @@ import com.bitfire.uracer.game.GameEvents;
 import com.bitfire.uracer.game.logic.post.PostProcessing;
 import com.bitfire.uracer.game.logic.post.PostProcessing.Effects;
 import com.bitfire.uracer.game.logic.post.ssao.Ssao;
+import com.bitfire.uracer.game.player.PlayerCar;
 import com.bitfire.uracer.game.world.GameWorld;
 import com.bitfire.uracer.utils.Convert;
 import com.bitfire.uracer.utils.ScaleUtils;
@@ -82,6 +86,7 @@ public final class GameRenderer {
 	}
 
 	public void beforeRender (float timeAliasingFactor) {
+		// update lights
 		Color ambient = worldRenderer.getAmbientColor();
 		Color treesAmbient = worldRenderer.getTreesAmbientColor();
 
@@ -96,6 +101,20 @@ public final class GameRenderer {
 
 		ambient.clamp();
 		treesAmbient.clamp();
+
+		// more intensity from lights near the player
+		PointLight[] lights = world.getLights();
+		if (lights != null && world.getPlayer() != null) {
+			PlayerCar player = world.getPlayer();
+
+			for (int l = 0; l < lights.length; l++) {
+				float dist = player.getWorldPosMt().dst2(lights[l].getPosition());
+				float maxdist = 30;
+				maxdist *= maxdist;
+				dist = 1 - MathUtils.clamp(dist, 0, maxdist) / maxdist;
+				lights[l].setColor(1, 1, 1, 0.3f + 0.3f * dist);
+			}
+		}
 
 		// update matrices and cameras
 		GameEvents.gameRenderer.mtxOrthographicMvpMt = worldRenderer.getOrthographicMvpMt();
