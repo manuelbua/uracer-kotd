@@ -26,6 +26,8 @@ public class Game implements Disposable {
 
 	// logic
 	private GameLogic gameLogic = null;
+
+	// tasks
 	private TaskManager taskManager = null;
 
 	// rendering
@@ -67,10 +69,6 @@ public class Game implements Disposable {
 		taskManager.dispose();
 	}
 
-	// public void setLocalReplay (Replay replay) {
-	// gameLogic.setBestLocalReplay(replay);
-	// }
-
 	/** Can be NOT called */
 	public void tick () {
 		taskManager.dispatchEvent(TaskManagerEvent.Type.onTick);
@@ -89,7 +87,6 @@ public class Game implements Disposable {
 		// to the game logic
 		gameRenderer.beforeRender(URacer.Game.getTemporalAliasing());
 		gameLogic.beforeRender();
-
 		gameRenderer.render(dest);
 	}
 

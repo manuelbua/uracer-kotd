@@ -639,19 +639,6 @@ public abstract class CommonLogic implements GameLogic {
 		}
 	};
 
-	// @Override
-	// public void carStateEvent (CarState source, CarStateEvent.Type type) {
-	// switch (type) {
-	// case onTileChanged:
-	// if (source.isPlayer) {
-	// playerTileChanged(source);
-	// } else {
-	// ghostTileChanged(source);
-	// }
-	// break;
-	// }
-	// }
-
 	private final class EventHandlers implements WrongWayMonitorListener, LapCompletionMonitorListener {
 
 		@Override
@@ -669,10 +656,6 @@ public abstract class CommonLogic implements GameLogic {
 
 		@Override
 		public void onWrongWayEnds () {
-			// playerTasks.hudPlayer.wrongWay.fadeOut();
-			// playerTasks.hudLapInfo.toColor(1, 1, 0);
-			// playerTasks.hudLapInfo.setInvalid("back to start");
-			// postProcessing.alertWrongWayEnds(500);
 		}
 
 		@Override
