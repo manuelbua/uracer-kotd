@@ -348,6 +348,7 @@ public abstract class CommonLogic implements GameLogic {
 			checkValidLap();
 		}
 
+		// ends time dilation if no more seconds available
 		if (accuDriftSeconds.value == 0 && input.isTimeDilating()) {
 			endTimeDilation();
 			Gdx.app.log("CommonLogic", "Requesting time modulation to finish");

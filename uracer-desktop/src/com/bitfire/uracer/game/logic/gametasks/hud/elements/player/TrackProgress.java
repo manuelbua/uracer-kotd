@@ -16,6 +16,7 @@ import com.bitfire.uracer.resources.Art;
 import com.bitfire.uracer.resources.BitmapFontFactory.FontFace;
 import com.bitfire.uracer.utils.AMath;
 import com.bitfire.uracer.utils.ColorUtils;
+import com.bitfire.uracer.utils.InterpolatedFloat;
 import com.bitfire.utils.ShaderLoader;
 
 public class TrackProgress extends Positionable {
@@ -32,54 +33,46 @@ public class TrackProgress extends Positionable {
 
 	/** Data needed by this component */
 	public static class TrackProgressData {
-		public float playerDistance, targetDistance;
-		public float playerProgress, targetProgress;
+
+		private static final float Smoothing = 0.25f;
+		private InterpolatedFloat playerDistance, targetDistance;
+		private InterpolatedFloat playerProgress, targetProgress;
+
+		public TrackProgressData () {
+			playerDistance = new InterpolatedFloat();
+			targetDistance = new InterpolatedFloat();
+			playerProgress = new InterpolatedFloat();
+			targetProgress = new InterpolatedFloat();
+		}
 
 		public void reset (boolean resetState) {
-			playerDistance = 0;
-			targetDistance = 0;
-			playerProgress = 0;
-			targetProgress = 0;
-
-			if (resetState) {
-				prevpd = 0;
-				prevpp = 0;
-				prevtd = 0;
-				prevtp = 0;
-			}
+			playerDistance.reset(0, resetState);
+			targetDistance.reset(0, resetState);
+			playerProgress.reset(0, resetState);
+			targetProgress.reset(0, resetState);
 		}
 
 		public void setPlayerDistance (float mt) {
-			playerDistance = AMath.fixup(AMath.lerp(prevpd, mt, Smoothing));
-			prevpd = playerDistance;
+			playerDistance.set(mt, Smoothing);
 		}
 
 		public void setTargetDistance (float mt) {
-			targetDistance = AMath.fixup(AMath.lerp(prevtd, mt, Smoothing));
-			prevtd = targetDistance;
+			targetDistance.set(mt, Smoothing);
 		}
 
 		/** Sets the player's progression in the range [0,1] inclusive, to indicate player's track progress. 0 means on starting
 		 * line, 1 means finished.
 		 * @param progress The progress so far */
 		public void setPlayerProgression (float progress) {
-			// smooth out high freq
-			playerProgress = AMath.fixup(AMath.lerp(prevpp, progress, Smoothing));
-			prevpp = playerProgress;
+			playerProgress.set(progress, Smoothing);
 		}
 
 		/** Sets the target's progression in the range [0,1] inclusive, to indicate target's track progress. 0 means on starting
 		 * line, 1 means finished.
 		 * @param progress The progress so far */
 		public void setTargetProgression (float progress) {
-			// smooth out high freq
-			targetProgress = AMath.fixup(AMath.lerp(prevtp, progress, Smoothing));
-			prevtp = targetProgress;
+			targetProgress.set(progress, Smoothing);
 		}
-
-		private static final float Smoothing = 0.25f;
-		private float prevpd, prevtd;
-		private float prevpp, prevtp;
 	}
 
 	public TrackProgress () {
@@ -137,14 +130,14 @@ public class TrackProgress extends Positionable {
 		// float a = 1f - 0.7f * URacer.Game.getTimeModFactor();
 		float a = 0.25f;
 
-		playerToTarget = AMath.fixup(data.playerProgress - data.targetProgress);
+		playerToTarget = AMath.fixup(data.playerProgress.get() - data.targetProgress.get());
 		if (customMessage.length() == 0) {
-			lblAdvantage.setString(Math.round(data.playerDistance - data.targetDistance) + " mt");
+			lblAdvantage.setString(Math.round(data.playerDistance.get() - data.targetDistance.get()) + " mt");
 		} else {
 			lblAdvantage.setString(customMessage);
 		}
 
-		if (data.playerDistance > 0) {
+		if (data.playerDistance.get() > 0) {
 			if (!advantageShown) {
 				advantageShown = true;
 				lblAdvantage.queueShow(500);
@@ -191,7 +184,7 @@ public class TrackProgress extends Positionable {
 		scl += .07f * URacer.Game.getTimeModFactor();
 
 		// player's progress
-		shProgress.setUniformf("progress", data.playerProgress);
+		shProgress.setUniformf("progress", data.playerProgress.get());
 		sProgress.setColor(Color.WHITE);
 		sProgress.setScale(scl);
 		sProgress.setPosition(position.x - sProgress.getWidth() / 2, position.y - sProgress.getHeight() / 2);

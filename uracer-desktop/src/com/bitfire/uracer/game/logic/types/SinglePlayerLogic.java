@@ -15,6 +15,7 @@ import com.bitfire.uracer.game.world.GameWorld;
 import com.bitfire.uracer.utils.AMath;
 import com.bitfire.uracer.utils.CarUtils;
 import com.bitfire.uracer.utils.Convert;
+import com.bitfire.uracer.utils.InterpolatedFloat;
 
 public class SinglePlayerLogic extends CommonLogic {
 
@@ -36,19 +37,14 @@ public class SinglePlayerLogic extends CommonLogic {
 	}
 
 	private float prevZoom = GameWorldRenderer.MinCameraZoom + GameWorldRenderer.ZoomWindow;
-	private float previousSpeed = 0, previousDs = 0;
+	private InterpolatedFloat speed = new InterpolatedFloat(), drift = new InterpolatedFloat();
 
 	// the camera needs to be positioned
 	@Override
 	protected float updateCamera (float timeModFactor) {
-		float speedFactor = 0, driftStrength = 0;
-
 		if (hasPlayer()) {
-			speedFactor = AMath.fixup(AMath.lerp(previousSpeed, playerCar.carState.currSpeedFactor, 0.02f));
-			previousSpeed = speedFactor;
-
-			driftStrength = AMath.fixup(AMath.lerp(previousDs, playerCar.driftState.driftStrength, 0.02f));
-			previousDs = driftStrength;
+			// speed.set(playerCar.carState.currSpeedFactor, 0.02f);
+			drift.set(playerCar.driftState.driftStrength, 0.02f);
 		}
 
 		float minZoom = GameWorldRenderer.MinCameraZoom;
@@ -56,13 +52,12 @@ public class SinglePlayerLogic extends CommonLogic {
 
 		float cameraZoom = (minZoom + GameWorldRenderer.ZoomWindow);
 		cameraZoom += (maxZoom - cameraZoom) * timeModFactor;
-		cameraZoom += 0.25f * GameWorldRenderer.ZoomWindow * driftStrength;
+		cameraZoom += 0.25f * GameWorldRenderer.ZoomWindow * drift.get();
 
 		// cameraZoom = minZoom;
 
 		cameraZoom = AMath.lerp(prevZoom, cameraZoom, 0.1f);
 		cameraZoom = AMath.clampf(cameraZoom, minZoom, maxZoom);
-
 		cameraZoom = AMath.fixupTo(cameraZoom, minZoom + GameWorldRenderer.ZoomWindow);
 		// Gdx.app.log("", "zoom=" + cameraZoom);
 
