@@ -23,6 +23,7 @@ import com.bitfire.uracer.game.logic.post.PostProcessing.Effects;
 import com.bitfire.uracer.game.logic.post.ssao.Ssao;
 import com.bitfire.uracer.game.player.PlayerCar;
 import com.bitfire.uracer.game.world.GameWorld;
+import com.bitfire.uracer.utils.AMath;
 import com.bitfire.uracer.utils.Convert;
 import com.bitfire.uracer.utils.ScaleUtils;
 
@@ -112,7 +113,7 @@ public final class GameRenderer {
 				float maxdist = 30;
 				maxdist *= maxdist;
 				dist = 1 - MathUtils.clamp(dist, 0, maxdist) / maxdist;
-				lights[l].setColor(1, 1, 1, 0.3f + 0.3f * dist);
+				lights[l].setColor(1, 1, 1, AMath.fixup(0.3f + 0.3f * dist));
 			}
 		}
 
