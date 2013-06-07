@@ -286,6 +286,7 @@ public abstract class CommonLogic implements GameLogic {
 	/** Request time dilation to end */
 	@Override
 	public void endTimeDilation () {
+		input.resetTimeDilating();
 		dilationTime.reset();
 		timeMod.toNormalTime();
 		playerTasks.hudPlayer.driftBar.hideSecondsLabel();
@@ -559,11 +560,10 @@ public abstract class CommonLogic implements GameLogic {
 				if (!outOfTrackTime.isStopped()) {
 					accuDriftSeconds.value -= outOfTrackTime.elapsed(Reference.LastAbsoluteSeconds);
 				}
-
-				accuDriftSeconds.value = MathUtils.clamp(accuDriftSeconds.value, 0, DriftBar.MaxSeconds);
 			}
 		}
 
+		accuDriftSeconds.value = MathUtils.clamp(accuDriftSeconds.value, 0, DriftBar.MaxSeconds);
 		playerTasks.hudPlayer.driftBar.setSeconds(accuDriftSeconds.value);
 	}
 
