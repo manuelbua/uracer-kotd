@@ -17,7 +17,6 @@ import com.bitfire.uracer.game.GameplaySettings;
 import com.bitfire.uracer.game.Time;
 import com.bitfire.uracer.game.actors.Car;
 import com.bitfire.uracer.game.actors.CarForces;
-import com.bitfire.uracer.game.actors.CarPreset;
 import com.bitfire.uracer.game.logic.gametasks.Messager;
 import com.bitfire.uracer.game.logic.gametasks.messager.Message;
 import com.bitfire.uracer.game.logic.gametasks.messager.Message.Position;
@@ -32,7 +31,7 @@ public class Replay implements Disposable {
 	private int eventsCount;
 
 	// car data
-	public CarPreset.Type carPresetType;
+	// public CarPreset.Type carPresetType;
 	public Vector2 carWorldPositionMt = new Vector2();
 	public float carWorldOrientRads;
 
@@ -72,7 +71,7 @@ public class Replay implements Disposable {
 		trackTimeSeconds = replay.trackTimeSeconds;
 		levelId = replay.levelId;
 		eventsCount = replay.eventsCount;
-		carPresetType = replay.carPresetType;
+		// carPresetType = replay.carPresetType;
 		carWorldPositionMt.set(replay.carWorldPositionMt);
 		carWorldOrientRads = replay.carWorldOrientRads;
 
@@ -91,7 +90,7 @@ public class Replay implements Disposable {
 		reset();
 		carWorldPositionMt.set(car.getWorldPosMt());
 		carWorldOrientRads = car.getWorldOrientRads();
-		carPresetType = car.getPresetType();
+		// carPresetType = car.getPresetType();
 		this.levelId = levelId;
 		time.start();
 
@@ -158,7 +157,7 @@ public class Replay implements Disposable {
 				r.eventsCount = is.readInt();
 
 				// car data
-				r.carPresetType = CarPreset.Type.valueOf(is.readUTF());
+				// r.carPresetType = CarPreset.Type.valueOf(is.readUTF());
 				r.carWorldPositionMt.x = is.readFloat();
 				r.carWorldPositionMt.y = is.readFloat();
 				r.carWorldOrientRads = is.readFloat();
@@ -236,7 +235,7 @@ public class Replay implements Disposable {
 						os.writeInt(eventsCount);
 
 						// car data
-						os.writeUTF(carPresetType.toString());
+						// os.writeUTF(carPresetType.toString());
 						os.writeFloat(carWorldPositionMt.x);
 						os.writeFloat(carWorldPositionMt.y);
 						os.writeFloat(carWorldOrientRads);

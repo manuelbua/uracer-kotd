@@ -43,24 +43,15 @@ public final class GhostCar extends Car {
 
 		setActive(hasReplay);
 		resetPhysics();
-		// getTrackState().reset();
 
 		if (hasReplay) {
-			setPreset(replay.carPresetType);
+			// setPreset(replay.carPresetType);
 			stillModel.setAlpha(0);
 
 			// System.out.println( "Replaying " + replay.id );
 			restart(replay);
 			Gdx.app.log("GhostCar #" + id, "Replaying #" + System.identityHashCode(replay));
 		}
-
-		// else
-		// {
-		// if(replay==null)
-		// System.out.println("Replay disabled");
-		// else
-		// System.out.println("Replay has no recorded events, disabling replaying.");
-		// }
 	}
 
 	public void removeReplay () {

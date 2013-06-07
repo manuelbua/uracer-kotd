@@ -37,7 +37,8 @@ public class SinglePlayerLogic extends CommonLogic {
 	}
 
 	private float prevZoom = GameWorldRenderer.MinCameraZoom + GameWorldRenderer.ZoomWindow;
-	private InterpolatedFloat speed = new InterpolatedFloat(), drift = new InterpolatedFloat();
+	// private InterpolatedFloat speed = new InterpolatedFloat()
+	private InterpolatedFloat drift = new InterpolatedFloat();
 
 	// the camera needs to be positioned
 	@Override

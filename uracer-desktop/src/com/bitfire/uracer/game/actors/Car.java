@@ -30,7 +30,7 @@ public abstract strictfp class Car extends Box2DEntity {
 	protected static final Order ShadowsDrawingOrder = Order.MINUS_2;
 
 	protected GameWorld gameWorld;
-	protected CarType carType;
+	// protected CarType carType;
 	protected CarStillModel stillModel;
 
 	protected int impacts = 0;
@@ -50,23 +50,21 @@ public abstract strictfp class Car extends Box2DEntity {
 
 	protected CarPreset preset;
 	protected InputMode inputMode = InputMode.NoInput;
-	private CarTrackState trackState;
 
 	public Car (GameWorld gameWorld, CarType carType, InputMode inputMode, CarPreset.Type presetType, boolean triggerEvents) {
 
 		super(gameWorld.getBox2DWorld());
 		this.preset = new CarPreset(presetType);
-		this.carType = carType;
+		// this.carType = carType;
 		this.triggerEvents = triggerEvents;
 
 		this.gameWorld = gameWorld;
-		this.stillModel = ModelFactory.createCar();
+		stillModel = ModelFactory.createCar();
 		stillModel.setCar(this);
-		this.impacts = 0;
+		impacts = 0;
 		this.inputMode = inputMode;
-		this.carTraveledDistance = 0;
-		this.accuDistCount = 0;
-		// this.trackState = new CarTrackState();
+		carTraveledDistance = 0;
+		accuDistCount = 0;
 
 		applyCarPhysics(carType, preset.model);
 
@@ -83,10 +81,6 @@ public abstract strictfp class Car extends Box2DEntity {
 	public CarStillModel getStillModel () {
 		return stillModel;
 	}
-
-	// public CarTrackState getTrackState () {
-	// return trackState;
-	// }
 
 	public float getSteerAngleRads () {
 		return 0;
@@ -148,13 +142,13 @@ public abstract strictfp class Car extends Box2DEntity {
 	 * @param forces computed forces shall be returned by filling the passed data structure. */
 	protected abstract void onComputeCarForces (CarForces forces);
 
-	public CarPreset.Type getPresetType () {
-		return preset.type;
-	}
+	// public CarPreset.Type getPresetType () {
+	// return preset.type;
+	// }
 
-	public CarPreset getCarPreset () {
-		return preset;
-	}
+	// public CarPreset getCarPreset () {
+	// return preset;
+	// }
 
 	public CarModel getCarModel () {
 		return preset.model;
@@ -164,17 +158,17 @@ public abstract strictfp class Car extends Box2DEntity {
 		return inputMode;
 	}
 
-	public void setPreset (CarPreset.Type presetType) {
-		if (preset.type != presetType) {
-			preset.setTo(presetType);
-			applyCarPhysics(carType, preset.model);
-			// renderer.setAspect(preset.model, preset.type);
-			Gdx.app.log(this.getClass().getSimpleName(), "Switched to car model \"" + preset.model.presetType.toString() + "\"");
-		} else {
-			Gdx.app.log(this.getClass().getSimpleName(), "Preset unchanged, not switching to same type \"" + preset.type.toString()
-				+ "\"");
-		}
-	}
+	// public void setPreset (CarPreset.Type presetType) {
+	// if (preset.type != presetType) {
+	// preset.setTo(presetType);
+	// applyCarPhysics(carType, preset.model);
+	// // renderer.setAspect(preset.model, preset.type);
+	// Gdx.app.log(this.getClass().getSimpleName(), "Switched to car model \"" + preset.model.presetType.toString() + "\"");
+	// } else {
+	// Gdx.app.log(this.getClass().getSimpleName(), "Preset unchanged, not switching to same type \"" + preset.type.toString()
+	// + "\"");
+	// }
+	// }
 
 	/** Returns the traveled distance, in meters, so far. Calling reset() will also reset the traveled distance. */
 	public float getTraveledDistance () {
