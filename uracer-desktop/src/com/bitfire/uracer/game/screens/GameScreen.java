@@ -26,11 +26,8 @@ public class GameScreen extends Screen {
 		} else {
 			// save as last played track
 			UserPreferences.string(Preference.LastPlayedTrack, ScreensShared.selectedLevelId);
-
 			UserProfile userProfile = new UserProfile();
 			game = new Game(userProfile, ScreensShared.selectedLevelId);
-
-			// choose a car type
 			game.addPlayer();
 		}
 	}
