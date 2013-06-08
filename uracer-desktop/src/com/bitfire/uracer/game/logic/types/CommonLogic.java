@@ -490,13 +490,11 @@ public abstract class CommonLogic implements GameLogic {
 		GameTweener.clear();
 		lapManager.abortRecording();
 		gameTasksManager.raiseRestart();
-
 		wrongWayMonitor.reset();
-
 		postProcessing.resetAnimator();
-
 		lapMonitor.reset();
 		lapMonitor.setCar(playerCar);
+		input.reset();
 
 		accuDriftSeconds.value = 0;
 		lastDist = 0;

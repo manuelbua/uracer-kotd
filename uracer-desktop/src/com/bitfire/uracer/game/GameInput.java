@@ -9,7 +9,7 @@ import com.bitfire.uracer.configuration.Gameplay.TimeDilateInputMode;
 import com.bitfire.uracer.configuration.UserPreferences;
 import com.bitfire.uracer.configuration.UserPreferences.Preference;
 
-public class GameInput {
+public final class GameInput {
 
 	private Input input;
 	private GameLogic logic;
