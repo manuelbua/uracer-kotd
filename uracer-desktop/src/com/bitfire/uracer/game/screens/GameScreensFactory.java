@@ -40,6 +40,11 @@ public final class GameScreensFactory implements ScreenFactory {
 
 		if (screen != null) {
 			screen.init();
+
+			if (screenId == ScreenType.GameScreen) {
+				screen.tick();
+				screen.tickCompleted();
+			}
 		}
 
 		return screen;
