@@ -801,13 +801,23 @@ public abstract class CommonLogic implements GameLogic {
 					backInTrack();
 					break;
 				case onComputeForces:
-					if (lapManager.record(eventData.forces) == RecorderError.ReplayMemoryLimitReached) {
+
+					RecorderError recerror = lapManager.record(eventData.forces);
+
+					switch (recerror) {
+					case RecordingNotEnabled:
+						Gdx.app.log("Recorder", "Cannot add event, recording not enabled!");
+						break;
+					case ReplayMemoryLimitReached:
 						Gdx.app.log("CommonLogic", "Player too slow, recording aborted.");
 						isTooSlow = true;
 						lapManager.abortRecording();
 						playerTasks.hudLapInfo.setInvalid("Too slow!");
 						playerTasks.hudLapInfo.toColor(1, 0, 0);
+						break;
+					case NoError:
 					}
+
 					break;
 				}
 			}

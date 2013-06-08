@@ -45,12 +45,10 @@ public final class ReplayRecorder {
 
 	public RecorderError add (CarForces f) {
 		if (!isRecording) {
-			Gdx.app.log("Recorder", "Cannot add event, recording not enabled!");
 			return RecorderError.RecordingNotEnabled;
 		}
 
 		if (!replay.add(f)) {
-			// Gdx.app.log("Recorder", "Replay memory limit reached (" + Replay.MaxEvents + " events), restarting.");
 			return RecorderError.ReplayMemoryLimitReached;
 		}
 
