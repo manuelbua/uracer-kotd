@@ -84,7 +84,6 @@ public class SinglePlayerLogic extends CommonLogic {
 	public void restartGame () {
 		Gdx.app.log("SinglePlayerLogic", "Starting/restarting game");
 		super.restartGame();
-		gameTasksManager.messager.show("Game restarted", 3, Message.Type.Information, Position.Bottom, Size.Big);
 	}
 
 	// the game has been reset
@@ -100,5 +99,15 @@ public class SinglePlayerLogic extends CommonLogic {
 	@Override
 	public void newReplay (Replay replay) {
 		CarUtils.dumpSpeedInfo("Player", playerCar, replay.trackTimeSeconds);
+	}
+
+	@Override
+	protected void warmUpStarted () {
+		messager.show("Warm up!", 15, Message.Type.Information, Position.Middle, Size.Big);
+	}
+
+	@Override
+	protected void warmUpCompleted () {
+		messager.show("RACE!", 2, Message.Type.Information, Position.Middle, Size.Big);
 	}
 }

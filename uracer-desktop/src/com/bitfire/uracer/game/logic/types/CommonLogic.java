@@ -643,12 +643,16 @@ public abstract class CommonLogic implements GameLogic {
 		public void onWarmUpStarted () {
 			isCurrentLapValid = true;
 			Gdx.app.log("CommonLogic", "Warmup Started");
+
+			warmUpStarted();
 		}
 
 		@Override
 		public void onWarmUpCompleted () {
 			playerTasks.hudPlayer.trackProgress.getProgressData().reset(true);
 			Gdx.app.log("CommonLogic", "Warmup Completed");
+
+			warmUpCompleted();
 		}
 
 		@Override
