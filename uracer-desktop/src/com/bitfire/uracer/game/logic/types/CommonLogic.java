@@ -10,7 +10,6 @@ import aurelienribon.tweenengine.equations.Quad;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Input.Keys;
 import com.badlogic.gdx.math.MathUtils;
-import com.badlogic.gdx.utils.Array;
 import com.bitfire.uracer.Input;
 import com.bitfire.uracer.URacer;
 import com.bitfire.uracer.configuration.Config;
@@ -463,20 +462,20 @@ public abstract class CommonLogic implements GameLogic {
 	}
 
 	protected void restartAllReplays () {
-		Array<Replay> replays = replayManager.getReplays();
-
 		nextTarget = null;
 		lastDist = 0;
 
-		for (int i = 0; i < replays.size; i++) {
-			Replay r = replays.get(i);
+		int ghostIndex = 0;
+		for (Replay r : replayManager.getReplays()) {
 			if (r.isValid) {
-				setGhostReplay(i, replays.get(i));
+				setGhostReplay(ghostIndex, r);
 
-				if (replayManager.getBestReplay() == replays.get(i)) {
-					nextTarget = ghostCars[i];
+				if (replayManager.getBestReplay() == r) {
+					nextTarget = ghostCars[ghostIndex];
 					playerTasks.hudPlayer.highlightNextTarget(nextTarget);
 				}
+
+				ghostIndex++;
 			}
 		}
 	}

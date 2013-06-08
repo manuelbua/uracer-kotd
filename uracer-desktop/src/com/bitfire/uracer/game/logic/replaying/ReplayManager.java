@@ -2,7 +2,6 @@
 package com.bitfire.uracer.game.logic.replaying;
 
 import com.badlogic.gdx.Gdx;
-import com.badlogic.gdx.utils.Array;
 import com.badlogic.gdx.utils.Disposable;
 import com.bitfire.uracer.configuration.UserProfile;
 import com.bitfire.uracer.game.GameplaySettings;
@@ -14,7 +13,6 @@ public final class ReplayManager implements Disposable {
 	public static final int MaxReplays = 2;
 	private final String trackId;
 	private final ItemsManager<Replay> replays = new ItemsManager<Replay>();
-	private final Array<Replay> replayItems = replays.items;
 
 	private Replay best, worst;
 	private int ridx;
@@ -61,7 +59,7 @@ public final class ReplayManager implements Disposable {
 
 		// empty?
 		if (ridx == 0) {
-			added = replays.items.get(ridx++);
+			added = replays.get(ridx++);
 			added.copyData(replay);
 
 			// update state
@@ -85,10 +83,10 @@ public final class ReplayManager implements Disposable {
 				added = worst;
 
 				// recompute best/worst
-				worst = replays.items.get(0);
-				best = replays.items.get(0);
+				worst = replays.get(0);
+				best = replays.get(0);
 				for (int i = 1; i < MaxReplays; i++) {
-					Replay r = replays.items.get(i);
+					Replay r = replays.get(i);
 
 					if (worst.trackTimeSeconds < r.trackTimeSeconds) {
 						worst = r;
@@ -100,7 +98,7 @@ public final class ReplayManager implements Disposable {
 				}
 			} else {
 				// add new
-				added = replays.items.get(ridx++);
+				added = replays.get(ridx++);
 				added.copyData(replay);
 
 				// compute best
@@ -127,12 +125,12 @@ public final class ReplayManager implements Disposable {
 	public void reset () {
 		ridx = 0;
 		for (int i = 0; i < MaxReplays; i++) {
-			replays.items.get(i).reset();
+			replays.get(i).reset();
 		}
 	}
 
 	public boolean hasReplays () {
-		return replays.items.size > 0;
+		return replays.count() > 0;
 	}
 
 	public boolean canClassify () {
@@ -147,7 +145,7 @@ public final class ReplayManager implements Disposable {
 		return worst;
 	}
 
-	public Array<Replay> getReplays () {
-		return replayItems;
+	public Iterable<Replay> getReplays () {
+		return replays;
 	}
 }

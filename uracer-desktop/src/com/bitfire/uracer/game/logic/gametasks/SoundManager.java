@@ -1,7 +1,6 @@
 
 package com.bitfire.uracer.game.logic.gametasks;
 
-import com.badlogic.gdx.utils.Array;
 import com.bitfire.uracer.game.logic.gametasks.sounds.SoundEffect;
 import com.bitfire.utils.ItemsManager;
 
@@ -14,12 +13,6 @@ public class SoundManager extends GameTask {
 	@Override
 	public void dispose () {
 		super.dispose();
-
-		Array<SoundEffect> items = manager.items;
-		for (int i = 0; i < items.size; i++) {
-			items.get(i).dispose();
-		}
-
 		manager.dispose();
 	}
 
@@ -33,49 +26,43 @@ public class SoundManager extends GameTask {
 	}
 
 	public void stop () {
-		Array<SoundEffect> items = manager.items;
-		for (int i = 0; i < items.size; i++) {
-			items.get(i).stop();
+		for (SoundEffect s : manager) {
+			s.stop();
 		}
 	}
 
 	@Override
 	public void onPause () {
-		Array<SoundEffect> items = manager.items;
-		for (int i = 0; i < items.size; i++) {
-			items.get(i).pause();
+		for (SoundEffect s : manager) {
+			s.pause();
 		}
 	}
 
 	@Override
 	public void onResume () {
-		Array<SoundEffect> items = manager.items;
-		for (int i = 0; i < items.size; i++) {
-			items.get(i).resume();
+		for (SoundEffect s : manager) {
+			s.resume();
 		}
 	}
 
 	@Override
 	protected void onTick () {
-		Array<SoundEffect> items = manager.items;
-		for (int i = 0; i < items.size; i++) {
-			items.get(i).tick();
+		for (SoundEffect s : manager) {
+			s.tick();
 		}
 	}
 
 	@Override
 	public void onRestart () {
-		Array<SoundEffect> items = manager.items;
-		for (int i = 0; i < items.size; i++) {
-			items.get(i).restart();
+		for (SoundEffect s : manager) {
+			s.restart();
 		}
 	}
 
 	@Override
 	public void onReset () {
-		Array<SoundEffect> items = manager.items;
-		for (int i = 0; i < items.size; i++) {
-			items.get(i).reset();
+		for (SoundEffect s : manager) {
+			s.reset();
 		}
 	}
 }

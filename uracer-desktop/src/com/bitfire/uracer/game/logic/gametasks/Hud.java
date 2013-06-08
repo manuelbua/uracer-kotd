@@ -1,7 +1,6 @@
 
 package com.bitfire.uracer.game.logic.gametasks;
 
-import com.badlogic.gdx.utils.Array;
 import com.bitfire.uracer.events.GameRendererEvent;
 import com.bitfire.uracer.events.GameRendererEvent.Order;
 import com.bitfire.uracer.events.GameRendererEvent.Type;
@@ -28,19 +27,16 @@ public final class Hud extends GameTask {
 			}
 
 			if (type == Type.BatchAfterMeshes) {
-				Array<HudElement> items = managerBeforePost.items;
-				for (int i = 0; i < items.size; i++) {
-					items.get(i).onRender(GameEvents.gameRenderer.batch);
+				for (HudElement e : managerBeforePost) {
+					e.onRender(GameEvents.gameRenderer.batch);
 				}
 			} else if (type == Type.BatchAfterPostProcessing) {
-				Array<HudElement> items = managerAfterPost.items;
-				for (int i = 0; i < items.size; i++) {
-					items.get(i).onRender(GameEvents.gameRenderer.batch);
+				for (HudElement e : managerAfterPost) {
+					e.onRender(GameEvents.gameRenderer.batch);
 				}
 			} else if (type == Type.BatchDebug) {
-				Array<HudElement> items = managerDebug.items;
-				for (int i = 0; i < items.size; i++) {
-					items.get(i).onRender(GameEvents.gameRenderer.batch);
+				for (HudElement e : managerDebug) {
+					e.onRender(GameEvents.gameRenderer.batch);
 				}
 			}
 		}
@@ -82,46 +78,46 @@ public final class Hud extends GameTask {
 
 	@Override
 	public void onRestart () {
-		for (int i = 0; i < managerBeforePost.items.size; i++) {
-			managerBeforePost.items.get(i).onRestart();
+		for (HudElement e : managerBeforePost) {
+			e.onRestart();
 		}
 
-		for (int i = 0; i < managerAfterPost.items.size; i++) {
-			managerAfterPost.items.get(i).onRestart();
+		for (HudElement e : managerAfterPost) {
+			e.onRestart();
 		}
 
-		for (int i = 0; i < managerDebug.items.size; i++) {
-			managerDebug.items.get(i).onRestart();
+		for (HudElement e : managerDebug) {
+			e.onRestart();
 		}
 	}
 
 	@Override
 	public void onReset () {
-		for (int i = 0; i < managerBeforePost.items.size; i++) {
-			managerBeforePost.items.get(i).onReset();
+		for (HudElement e : managerBeforePost) {
+			e.onReset();
 		}
 
-		for (int i = 0; i < managerAfterPost.items.size; i++) {
-			managerAfterPost.items.get(i).onReset();
+		for (HudElement e : managerAfterPost) {
+			e.onReset();
 		}
 
-		for (int i = 0; i < managerDebug.items.size; i++) {
-			managerDebug.items.get(i).onReset();
+		for (HudElement e : managerDebug) {
+			e.onReset();
 		}
 	}
 
 	@Override
 	protected void onTick () {
-		for (int i = 0; i < managerBeforePost.items.size; i++) {
-			managerBeforePost.items.get(i).onTick();
+		for (HudElement e : managerBeforePost) {
+			e.onTick();
 		}
 
-		for (int i = 0; i < managerAfterPost.items.size; i++) {
-			managerAfterPost.items.get(i).onTick();
+		for (HudElement e : managerAfterPost) {
+			e.onTick();
 		}
 
-		for (int i = 0; i < managerDebug.items.size; i++) {
-			managerDebug.items.get(i).onTick();
+		for (HudElement e : managerDebug) {
+			e.onTick();
 		}
 	}
 }

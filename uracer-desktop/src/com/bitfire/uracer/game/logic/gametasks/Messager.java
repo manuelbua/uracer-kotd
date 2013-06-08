@@ -62,7 +62,6 @@ public class Messager extends GameTask {
 	public void dispose () {
 		super.dispose();
 		GameEvents.gameRenderer.removeListener(gameRendererEvent, RenderEvent, RenderOrder);
-		onReset();
 	}
 
 	@Override

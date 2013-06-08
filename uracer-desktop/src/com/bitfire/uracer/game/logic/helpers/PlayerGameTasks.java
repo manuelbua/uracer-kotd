@@ -80,49 +80,8 @@ public final class PlayerGameTasks {
 	}
 
 	public void destroyTasks () {
-		if (playerDriftSoundFx != null) {
-			manager.sound.remove(playerDriftSoundFx);
-			playerDriftSoundFx = null;
-		}
-
-		if (playerImpactSoundFx != null) {
-			manager.sound.remove(playerImpactSoundFx);
-			playerImpactSoundFx = null;
-		}
-
-		if (playerEngineSoundFx != null) {
-			manager.sound.remove(playerEngineSoundFx);
-			playerEngineSoundFx = null;
-		}
-
-		if (playerSkidMarks != null) {
-			manager.effects.remove(playerSkidMarks);
-			playerSkidMarks = null;
-		}
-
-		if (playerSmokeTrails != null) {
-			manager.effects.remove(playerSmokeTrails);
-			playerSmokeTrails = null;
-		}
-
-		if (hudPlayer != null) {
-			manager.hud.remove(hudPlayer);
-			hudPlayer = null;
-		}
-
-		if (hudPlayerStatic != null) {
-			manager.hud.remove(hudPlayerStatic);
-			hudPlayerStatic = null;
-		}
-
-		if (hudLapInfo != null) {
-			manager.hud.remove(hudLapInfo);
-			hudLapInfo = null;
-		}
-
-		if (hudDebug != null) {
-			manager.hud.remove(hudDebug);
-			hudDebug = null;
-		}
+		manager.sound.dispose();
+		manager.effects.dispose();
+		manager.hud.dispose();
 	}
 }
