@@ -17,6 +17,7 @@ import com.bitfire.uracer.resources.BitmapFontFactory.FontFace;
 import com.bitfire.uracer.utils.AMath;
 import com.bitfire.uracer.utils.ColorUtils;
 import com.bitfire.uracer.utils.InterpolatedFloat;
+import com.bitfire.uracer.utils.NumberString;
 import com.bitfire.utils.ShaderLoader;
 
 public class TrackProgress extends Positionable {
@@ -129,7 +130,17 @@ public class TrackProgress extends Positionable {
 		float a = 0.25f;
 
 		if (customMessage.length() == 0) {
-			lblAdvantage.setString(Math.round(data.playerDistance.get() - data.targetDistance.get()) + " mt");
+			float v = data.playerDistance.get() - data.targetDistance.get();
+			lblAdvantage.setString(NumberString.format(v) + " m", false);
+
+			// if (v > 1 || v < -1) {
+			// // show meters
+			// lblAdvantage.setString(Math.round(v) + " m");
+			// } else {
+			// // show cm
+			// lblAdvantage.setString(Math.round(v * 100) + " cm");
+			// }
+
 		} else {
 			lblAdvantage.setString(customMessage);
 		}
@@ -156,7 +167,7 @@ public class TrackProgress extends Positionable {
 		float adist = Math.abs(dist);
 		float s = cameraZoom;
 		if (dist < 0) {
-			s += 1f * adist;
+			s += 0.5f * adist;
 		}
 
 		lblAdvantage.setColor(advantageColor);
