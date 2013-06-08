@@ -35,10 +35,10 @@ public final class GameInput {
 		timeDilation = false;
 	}
 
-	public void reset () {
-		timeDilation = false;
-		input.releaseAllKeys();
-	}
+	// public void reset () {
+	// resetTimeDilating();
+	// input.releaseAllKeys();
+	// }
 
 	public void update () {
 

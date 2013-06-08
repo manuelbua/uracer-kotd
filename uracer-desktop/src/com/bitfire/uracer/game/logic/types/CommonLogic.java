@@ -485,7 +485,7 @@ public abstract class CommonLogic implements GameLogic {
 		resetPlayer(gameWorld, playerCar);
 		resetAllGhosts();
 
-		input.reset();
+		input.resetTimeDilating();
 		timeMod.reset();
 		SysTweener.clear();
 		GameTweener.clear();
