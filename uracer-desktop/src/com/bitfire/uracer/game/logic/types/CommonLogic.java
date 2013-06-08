@@ -249,7 +249,7 @@ public abstract class CommonLogic implements GameLogic {
 		gameWorld.setPlayer(null);
 		gameWorldRenderer.setRenderPlayerHeadlights(false);
 		wrongWayMonitor.reset();
-		lapMonitor.setCar(null);
+		lapMonitor.reset(null);
 
 		if (Config.Debug.UseDebugHelper) {
 			DebugHelper.setPlayer(null);
@@ -485,6 +485,7 @@ public abstract class CommonLogic implements GameLogic {
 		resetPlayer(gameWorld, playerCar);
 		resetAllGhosts();
 
+		input.reset();
 		timeMod.reset();
 		SysTweener.clear();
 		GameTweener.clear();
@@ -492,9 +493,7 @@ public abstract class CommonLogic implements GameLogic {
 		gameTasksManager.raiseRestart();
 		wrongWayMonitor.reset();
 		postProcessing.resetAnimator();
-		lapMonitor.reset();
-		lapMonitor.setCar(playerCar);
-		input.reset();
+		lapMonitor.reset(playerCar);
 
 		accuDriftSeconds.value = 0;
 		lastDist = 0;

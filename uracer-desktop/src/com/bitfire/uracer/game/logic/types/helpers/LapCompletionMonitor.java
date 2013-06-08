@@ -29,21 +29,21 @@ public final class LapCompletionMonitor {
 		reset();
 	}
 
-	public void setCar (Car car) {
-		this.car = car;
-		reset();
-
-		if (car != null) {
-			wuStart = gameTrack.getTrackCompletion(car);
-		}
+	public void reset () {
+		reset(null);
 	}
 
-	public void reset () {
+	public void reset (Car car) {
+		this.car = car;
 		previousCompletion = 0;
 		currentCompletion = -1;
 		wuPrev = wuCurr = wuStart = wuCompletion = 0;
 		warmUpStartedCalled = false;
 		isWarmUp = true;
+
+		if (car != null) {
+			wuStart = gameTrack.getTrackCompletion(car);
+		}
 	}
 
 	public float getWarmUpCompletion () {
