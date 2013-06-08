@@ -9,7 +9,7 @@ import com.bitfire.uracer.game.actors.CarForces;
 import com.bitfire.uracer.game.logic.LapInfo;
 import com.bitfire.uracer.game.logic.replaying.ReplayRecorder.RecorderError;
 
-/** Records player laps and keeps updated information for the current lap. */
+/** Manager player performance recording and keeps basic lap information */
 public class LapManager implements Disposable {
 
 	private final String levelId;
@@ -31,8 +31,6 @@ public class LapManager implements Disposable {
 		recorder.reset();
 	}
 
-	// operations
-
 	/** Discard the performance currently being recorded so far */
 	public void abortRecording () {
 		recorder.reset();
@@ -51,8 +49,6 @@ public class LapManager implements Disposable {
 		bufferManager.setAsBestReplay(replay);
 		lapInfo.setBestTrackTimeSeconds(replay.trackTimeSeconds);
 	}
-
-	// getters
 
 	/** Returns the LapInfo information regarding the currently active lap */
 	public LapInfo getLapInfo () {
@@ -150,7 +146,6 @@ public class LapManager implements Disposable {
 			if (bufferManager.hasAllReplayData()) {
 				// lap finished, update lapinfo with the last recorded replay
 				lapInfo.setLastTrackTimeSeconds(lastRecordedReplay.trackTimeSeconds);
-
 			} else {
 				// lap finished, update lapinfo with whatever replay data is available
 				lapInfo.setLastTrackTimeSeconds(bufferManager.getAnyReplay().trackTimeSeconds);

@@ -69,12 +69,17 @@ public abstract class CommonLogic implements GameLogic {
 	protected void discardedReplay (Replay replay) {
 	}
 
-	protected void lapStarted (boolean firstLap) {
-		restartAllReplays();
-		playerTasks.hudPlayer.trackProgress.getProgressData().reset(firstLap);
+	protected void lapStarted () {
 	}
 
 	protected void lapCompleted () {
+	}
+
+	protected void warmUpStarted () {
+
+	}
+
+	protected void warmUpCompleted () {
 	}
 
 	protected void driftBegins () {
@@ -109,7 +114,7 @@ public abstract class CommonLogic implements GameLogic {
 	protected GhostCar[] ghostCars = new GhostCar[ReplayManager.MaxReplays];
 	private WrongWayMonitor wrongWayMonitor;
 	protected boolean isCurrentLapValid = true;
-	protected boolean isWarmUpLap = true;
+	// protected boolean isWarmUpLap = true;
 	protected boolean isWrongWayInWarmUp = false;
 	protected boolean isTooSlow = false;
 	protected boolean isPenalty;
@@ -344,7 +349,7 @@ public abstract class CommonLogic implements GameLogic {
 		}
 
 		// this will trigger lapComplete/lapStarted events!
-		lapMonitor.update(isWarmUpLap);
+		lapMonitor.update();
 
 		// determine player's isWrongWay
 		if (hasPlayer()) {
@@ -361,7 +366,7 @@ public abstract class CommonLogic implements GameLogic {
 			playerTasks.hudPlayer.driftBar.setDriftStrength(playerCar.driftState.driftStrength);
 			TrackProgressData data = playerTasks.hudPlayer.trackProgress.getProgressData();
 
-			if (isWarmUpLap) {
+			if (lapMonitor.isWarmUp()) {
 				data.reset(true);
 				if (isCurrentLapValid) {
 					playerTasks.hudPlayer.trackProgress.setMessage("Start in "
@@ -488,11 +493,6 @@ public abstract class CommonLogic implements GameLogic {
 		gameTasksManager.raiseRestart();
 
 		wrongWayMonitor.reset();
-		isCurrentLapValid = true;
-		isWarmUpLap = true;
-		isWrongWayInWarmUp = false;
-		isTooSlow = false;
-		isPenalty = false;
 
 		postProcessing.resetAnimator();
 
@@ -517,9 +517,8 @@ public abstract class CommonLogic implements GameLogic {
 		boolean wrongWay = wrongWayMonitor.isWrongWay();
 		isCurrentLapValid = !wrongWay && !isTooSlow;
 
-		if ((wrongWay && isWarmUpLap) || isWrongWayInWarmUp) {
+		if ((wrongWay && lapMonitor.isWarmUp()) || isWrongWayInWarmUp) {
 			isWrongWayInWarmUp = true;
-			isWarmUpLap = true;
 			lapMonitor.reset();
 		}
 
@@ -645,39 +644,40 @@ public abstract class CommonLogic implements GameLogic {
 	private final class EventHandlers implements WrongWayMonitorListener, LapCompletionMonitorListener {
 
 		@Override
-		public void onWrongWayBegins () {
-			if (lapManager.isRecording()) {
-				lapManager.abortRecording();
-				lapManager.reset();
-			}
-
-			playerTasks.hudPlayer.wrongWay.fadeIn();
-			playerTasks.hudLapInfo.toColor(1, 0, 0);
-			playerTasks.hudLapInfo.setInvalid("invalid lap");
-			postProcessing.alertWrongWayBegins(500);
+		public void onWarmUpStarted () {
+			isCurrentLapValid = true;
+			Gdx.app.log("CommonLogic", "Warmup Started");
 		}
 
 		@Override
-		public void onWrongWayEnds () {
+		public void onWarmUpCompleted () {
+			playerTasks.hudPlayer.trackProgress.getProgressData().reset(true);
+			Gdx.app.log("CommonLogic", "Warmup Completed");
 		}
 
 		@Override
-		public void onLapStarted (boolean firstLap) {
-			Gdx.app.log("CommonLogic", "onLapStarted");
+		public void onLapStarted () {
+			Gdx.app.log("CommonLogic", "Lap Started");
 
-			// lap started, warmup ended
-			isWarmUpLap = false;
-			playerCar.resetDistanceAndSpeed(true, false);
+			isCurrentLapValid = true;
+			isWrongWayInWarmUp = false;
+			isTooSlow = false;
+			isPenalty = false;
 
 			lapManager.stopRecording();
+			playerCar.resetDistanceAndSpeed(true, false);
 			lapManager.startRecording(playerCar);
 
-			lapStarted(firstLap);
+			restartAllReplays();
+			playerTasks.hudPlayer.trackProgress.getProgressData().reset(false);
+
+			lapStarted();
 		}
 
 		@Override
-		public void onLapComplete () {
-			Gdx.app.log("CommonLogic", "onLapComplete");
+		public void onLapCompleted () {
+			Gdx.app.log("CommonLogic", "Lap Completed");
+			lapManager.stopRecording();
 
 			if (!isCurrentLapValid) {
 				return;
@@ -695,8 +695,6 @@ public abstract class CommonLogic implements GameLogic {
 				return;
 			}
 
-			lapManager.stopRecording();
-
 			// always work on the ReplayManager copy!
 			Replay lastRecorded = lapManager.getLastRecordedReplay();
 			Replay replay = replayManager.addReplay(lastRecorded);
@@ -710,6 +708,23 @@ public abstract class CommonLogic implements GameLogic {
 
 			playerCar.resetDistanceAndSpeed(true, false);
 			lapCompleted();
+		}
+
+		@Override
+		public void onWrongWayBegins () {
+			if (lapManager.isRecording()) {
+				lapManager.abortRecording();
+				lapManager.reset();
+			}
+
+			playerTasks.hudPlayer.wrongWay.fadeIn();
+			playerTasks.hudLapInfo.toColor(1, 0, 0);
+			playerTasks.hudLapInfo.setInvalid("invalid lap");
+			postProcessing.alertWrongWayBegins(500);
+		}
+
+		@Override
+		public void onWrongWayEnds () {
 		}
 
 		PlayerDriftStateEvent.Listener driftStateListener = new PlayerDriftStateEvent.Listener() {

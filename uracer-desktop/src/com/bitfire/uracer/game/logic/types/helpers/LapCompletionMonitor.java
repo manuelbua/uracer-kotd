@@ -10,11 +10,16 @@ public final class LapCompletionMonitor {
 	private Car car;
 	private LapCompletionMonitorListener listener;
 	private float previousCompletion, currentCompletion, wuStart, wuPrev, wuCurr, wuCompletion;
+	private boolean warmUpStartedCalled, isWarmUp;
 
 	public static interface LapCompletionMonitorListener {
-		void onLapStarted (boolean firstLap);
+		void onWarmUpStarted ();
 
-		void onLapComplete ();
+		void onWarmUpCompleted ();
+
+		void onLapStarted ();
+
+		void onLapCompleted ();
 	}
 
 	public LapCompletionMonitor (LapCompletionMonitorListener listener, GameTrack gameTrack) {
@@ -37,15 +42,27 @@ public final class LapCompletionMonitor {
 		previousCompletion = 0;
 		currentCompletion = -1;
 		wuPrev = wuCurr = wuStart = wuCompletion = 0;
+		warmUpStartedCalled = false;
+		isWarmUp = true;
 	}
 
 	public float getWarmUpCompletion () {
 		return wuCompletion;
 	}
 
-	public void update (boolean isWarmUp) {
+	public boolean isWarmUp () {
+		return isWarmUp;
+	}
+
+	public void update () {
 		if (car != null) {
 			if (isWarmUp) {
+
+				if (!warmUpStartedCalled) {
+					warmUpStartedCalled = true;
+					listener.onWarmUpStarted();
+				}
+
 				// compute warmup quantity (0 at WU start pos, 0 at WU end pos)
 				wuPrev = MathUtils.clamp(wuCurr, 0, 1);
 				float complet = gameTrack.getTrackCompletion(car);
@@ -54,7 +71,10 @@ public final class LapCompletionMonitor {
 				if (wuPrev > 0.9f && wuCurr >= 0 && wuCurr < 0.1f) {
 					// warmup will ends
 					wuCompletion = 1;
-					listener.onLapStarted(true);
+					isWarmUp = false;
+
+					listener.onWarmUpCompleted();
+					listener.onLapStarted();
 				} else {
 					wuCompletion = MathUtils.clamp(wuCurr, 0, 1);
 				}
@@ -69,8 +89,8 @@ public final class LapCompletionMonitor {
 				currentCompletion = gameTrack.getTrackCompletion(car);
 				// Gdx.app.log("", "curr=" + currentCompletion + ", prev=" + previousCompletion);
 				if (previousCompletion > 0.9f && currentCompletion >= 0 && currentCompletion < 0.1f) {
-					listener.onLapComplete();
-					listener.onLapStarted(false);
+					listener.onLapCompleted();
+					listener.onLapStarted();
 				}
 			}
 		}
