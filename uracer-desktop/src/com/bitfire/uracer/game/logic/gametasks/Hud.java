@@ -11,7 +11,7 @@ import com.bitfire.utils.ItemsManager;
 /** Encapsulates an head-up manager that will callback HudElement events for their updating and drawing operations. */
 public final class Hud extends GameTask {
 
-	private static final GameRendererEvent.Type RenderEventBeforePost = GameRendererEvent.Type.BatchAfterMeshes;
+	private static final GameRendererEvent.Type RenderEventBeforePost = GameRendererEvent.Type.BatchBeforePostProcessing;
 	private static final GameRendererEvent.Type RenderEventAfterPost = GameRendererEvent.Type.BatchAfterPostProcessing;
 	private static final GameRendererEvent.Type RenderEventDebug = GameRendererEvent.Type.BatchDebug;
 
@@ -26,7 +26,7 @@ public final class Hud extends GameTask {
 				return;
 			}
 
-			if (type == Type.BatchAfterMeshes) {
+			if (type == Type.BatchBeforePostProcessing) {
 				for (HudElement e : managerBeforePost) {
 					e.onRender(GameEvents.gameRenderer.batch);
 				}

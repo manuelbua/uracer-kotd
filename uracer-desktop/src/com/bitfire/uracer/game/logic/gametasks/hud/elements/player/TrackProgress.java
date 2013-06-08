@@ -98,10 +98,6 @@ public class TrackProgress extends Positionable {
 		shProgress.dispose();
 	}
 
-	public void tick () {
-		lblAdvantage.tick();
-	}
-
 	public void setMessage (String messageOrEmpty) {
 		customMessage = messageOrEmpty;
 	}
@@ -132,15 +128,6 @@ public class TrackProgress extends Positionable {
 		if (customMessage.length() == 0) {
 			float v = data.playerDistance.get() - data.targetDistance.get();
 			lblAdvantage.setString(NumberString.format(v) + " m", false);
-
-			// if (v > 1 || v < -1) {
-			// // show meters
-			// lblAdvantage.setString(Math.round(v) + " m");
-			// } else {
-			// // show cm
-			// lblAdvantage.setString(Math.round(v * 100) + " cm");
-			// }
-
 		} else {
 			lblAdvantage.setString(customMessage);
 		}
@@ -148,12 +135,11 @@ public class TrackProgress extends Positionable {
 		if (data.playerDistance.get() > 0) {
 			if (!advantageShown) {
 				advantageShown = true;
-				lblAdvantage.queueShow(500);
+				lblAdvantage.fadeIn(500);
 			}
-
 		} else if (advantageShown) {
 			advantageShown = false;
-			lblAdvantage.queueHide(1000);
+			lblAdvantage.fadeOut(1000);
 		}
 
 		// advantage/disadvantage

@@ -87,19 +87,15 @@ public class DriftBar extends Positionable {
 	}
 
 	public void showSecondsLabel () {
-		labelSeconds.queueShow(300);
+		labelSeconds.fadeIn(300);
 	}
 
 	public void hideSecondsLabel () {
-		labelSeconds.queueHide(300);
+		labelSeconds.fadeOut(300);
 	}
 
 	@Override
 	public void dispose () {
-	}
-
-	public void tick () {
-		labelSeconds.tick();
 	}
 
 	public void render (SpriteBatch batch, float cameraZoom) {

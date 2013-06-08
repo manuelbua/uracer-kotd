@@ -226,7 +226,7 @@ public final class GameRenderer {
 		batch.setTransformMatrix(xform);
 		{
 			GameEvents.gameRenderer.batch = batch;
-			GameEvents.gameRenderer.trigger(this, GameRendererEvent.Type.BatchAfterMeshes);
+			GameEvents.gameRenderer.trigger(this, GameRendererEvent.Type.BatchBeforePostProcessing);
 		}
 		batchRenderer.end();
 

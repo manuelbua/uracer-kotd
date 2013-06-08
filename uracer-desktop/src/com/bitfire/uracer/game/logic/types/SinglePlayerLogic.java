@@ -103,11 +103,11 @@ public class SinglePlayerLogic extends CommonLogic {
 
 	@Override
 	protected void warmUpStarted () {
-		messager.show("Warm up!", 15, Message.Type.Information, Position.Middle, Size.Big);
+		messager.show("Warm up!", 1.5f, Message.Type.Information, Position.Top, Size.Big);
 	}
 
 	@Override
 	protected void warmUpCompleted () {
-		messager.show("RACE!", 2, Message.Type.Information, Position.Middle, Size.Big);
+		messager.show("GOOOO!!", 1.5f, Message.Type.Information, Position.Top, Size.Big);
 	}
 }

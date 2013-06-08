@@ -18,7 +18,7 @@ import com.bitfire.uracer.resources.BitmapFontFactory;
 import com.bitfire.uracer.resources.BitmapFontFactory.FontFace;
 import com.bitfire.uracer.utils.AMath;
 
-public class Message {
+public final class Message {
 	public enum Type {
 		Information, Bad, Good
 	}
@@ -43,10 +43,11 @@ public class Message {
 	private float scaleX, scaleY;
 	private BitmapFont font;
 	private int halfWidth;
-	private boolean finished;
+	private boolean completed;
 	private TextBounds bounds;
-	private float alpha;
+	private float alpha, scale;
 	private boolean hiding;
+	private boolean showCompleted;
 
 	public Message () {
 		bounds = new TextBounds();
@@ -66,8 +67,11 @@ public class Message {
 		alpha = 0f;
 		scaleX = 1f;
 		scaleY = 1f;
+		scale = 1.5f;
 		durationMs = (int)(durationSecs * 1000f);
 		hiding = false;
+		completed = false;
+		showCompleted = false;
 
 		switch (type) {
 		case Good:
@@ -93,6 +97,10 @@ public class Message {
 			}
 			break;
 		}
+
+		if (size == Size.Big) {
+			scale = 2.5f;
+		}
 	}
 
 	private void computeFinalPosition () {
@@ -112,7 +120,7 @@ public class Message {
 		case Middle:
 			bounds.set(font.getMultiLineBounds(what));
 			finalY = (h - bounds.height) / 2 - bounds.height / 2;
-			whereY = h + bounds.height;
+			whereY = h + bounds.height / 2;
 			break;
 
 		case Bottom:
@@ -124,27 +132,39 @@ public class Message {
 		font.setScale(1f);
 	}
 
-	public boolean tick () {
-		return !finished;
-	}
-
 	public void render (SpriteBatch batch) {
 		font.setScale(scaleX, scaleY);
 		font.setColor(1, 1, 1, alpha);
 		font.drawMultiLine(batch, what, whereX, whereY, halfWidth, HAlignment.CENTER);
-		font.setColor(1, 1, 1, 1);
+		// font.setColor(1, 1, 1, 1);
 	}
 
-	public void onShow () {
-		finished = false;
+	private TweenCallback showFinished = new TweenCallback() {
+		@Override
+		public void onEvent (int type, BaseTween<?> source) {
+			switch (type) {
+			case COMPLETE:
+				showCompleted = true;
+			}
+		}
+	};
+
+	public void show () {
+		completed = false;
 		hiding = false;
 
-		// scaleX = scaleY = 1f;
+		alpha = 0f;
+		scaleX = scaleY = 1f;
+		showCompleted = false;
+
 		computeFinalPosition();
 
-		GameTweener.start(Timeline.createParallel().push(Tween.to(this, MessageAccessor.OPACITY, 400).target(1f).ease(Expo.INOUT))
-			.push(Tween.to(this, MessageAccessor.POSITION_Y, 400).target(finalY).ease(Expo.INOUT))
-			.push(Tween.to(this, MessageAccessor.SCALE_XY, 500).target(1.5f, 1.5f).ease(Back.INOUT)));
+		//@off
+		GameTweener.start(Timeline.createParallel()
+			.push(Tween.to(this, MessageAccessor.OPACITY, 500).target(1f).ease(Expo.INOUT))
+			.push(Tween.to(this, MessageAccessor.POSITION_Y, 600).target(finalY).ease(Expo.INOUT))
+			.push(Tween.to(this, MessageAccessor.SCALE_XY, 800).target(scale, scale).ease(Back.INOUT)).setCallback(showFinished));
+		//@on
 	}
 
 	private TweenCallback hideFinished = new TweenCallback() {
@@ -152,17 +172,30 @@ public class Message {
 		public void onEvent (int type, BaseTween<?> source) {
 			switch (type) {
 			case COMPLETE:
-				finished = true;
+				completed = true;
 			}
 		}
 	};
 
-	public void onHide () {
-		hiding = true;
+	public void hide () {
+		if (!hiding) {
+			hiding = true;
 
-		GameTweener.start(Timeline.createParallel().push(Tween.to(this, MessageAccessor.OPACITY, 500).target(0f).ease(Expo.INOUT))
-			.push(Tween.to(this, MessageAccessor.POSITION_Y, 500).target(-50 * font.getScaleX()).ease(Expo.INOUT))
-			.push(Tween.to(this, MessageAccessor.SCALE_XY, 400).target(1f, 1f).ease(Back.INOUT)).setCallback(hideFinished));
+			//@off
+			GameTweener.start(Timeline.createParallel()
+				.push(Tween.to(this, MessageAccessor.OPACITY, 800).target(0f).ease(Expo.INOUT))
+				.push(Tween.to(this, MessageAccessor.POSITION_Y, 800).target(-50 * font.getScaleX()).ease(Expo.INOUT))
+				.push(Tween.to(this, MessageAccessor.SCALE_XY, 800).target(0, 0).ease(Back.INOUT)).setCallback(hideFinished));
+			//@on
+		}
+	}
+
+	public boolean isShowComplete () {
+		return showCompleted;
+	}
+
+	public boolean isCompleted () {
+		return completed;
 	}
 
 	public boolean isHiding () {

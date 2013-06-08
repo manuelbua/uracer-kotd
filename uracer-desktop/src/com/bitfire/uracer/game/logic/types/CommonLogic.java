@@ -285,7 +285,7 @@ public abstract class CommonLogic implements GameLogic {
 	public void startTimeDilation () {
 		dilationTime.start();
 		timeMod.toDilatedTime();
-		playerTasks.hudPlayer.driftBar.showSecondsLabel();
+		// playerTasks.hudPlayer.driftBar.showSecondsLabel();
 		updateDriftBar();
 	}
 
@@ -295,7 +295,7 @@ public abstract class CommonLogic implements GameLogic {
 		input.resetTimeDilating();
 		dilationTime.reset();
 		timeMod.toNormalTime();
-		playerTasks.hudPlayer.driftBar.hideSecondsLabel();
+		// playerTasks.hudPlayer.driftBar.hideSecondsLabel();
 		updateDriftBar();
 	}
 
@@ -481,14 +481,15 @@ public abstract class CommonLogic implements GameLogic {
 	}
 
 	private void restartLogic () {
+		SysTweener.clear();
+		GameTweener.clear();
+
 		gameTrack.clearTrackStates();
 		resetPlayer(gameWorld, playerCar);
 		resetAllGhosts();
 
 		input.resetTimeDilating();
 		timeMod.reset();
-		SysTweener.clear();
-		GameTweener.clear();
 		lapManager.abortRecording();
 		gameTasksManager.raiseRestart();
 		wrongWayMonitor.reset();
@@ -805,22 +806,16 @@ public abstract class CommonLogic implements GameLogic {
 					backInTrack();
 					break;
 				case onComputeForces:
-
 					RecorderError recerror = lapManager.record(eventData.forces);
-
-					switch (recerror) {
-					case RecordingNotEnabled:
-						Gdx.app.log("Recorder", "Cannot add event, recording not enabled!");
-						break;
-					case ReplayMemoryLimitReached:
+					if (recerror == RecorderError.ReplayMemoryLimitReached) {
 						Gdx.app.log("CommonLogic", "Player too slow, recording aborted.");
 						isTooSlow = true;
 						lapManager.abortRecording();
 						playerTasks.hudLapInfo.setInvalid("Too slow!");
 						playerTasks.hudLapInfo.toColor(1, 0, 0);
-						break;
-					case NoError:
 					}
+					// RecordingNotEnabled
+					// NoError
 
 					break;
 				}

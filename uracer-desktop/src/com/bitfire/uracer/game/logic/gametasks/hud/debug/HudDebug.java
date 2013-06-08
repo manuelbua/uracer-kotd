@@ -9,8 +9,8 @@ import com.bitfire.uracer.game.logic.gametasks.hud.HudElement;
 import com.bitfire.uracer.game.logic.gametasks.trackeffects.TrackEffectType;
 import com.bitfire.uracer.game.logic.gametasks.trackeffects.effects.PlayerSkidMarks;
 import com.bitfire.uracer.game.logic.gametasks.trackeffects.effects.PlayerSmokeTrails;
-import com.bitfire.uracer.game.player.PlayerCar;
 import com.bitfire.uracer.game.player.DriftState;
+import com.bitfire.uracer.game.player.PlayerCar;
 import com.bitfire.uracer.game.rendering.GameRenderer;
 import com.bitfire.uracer.resources.Art;
 import com.bitfire.uracer.utils.CarUtils;
@@ -106,8 +106,8 @@ public class HudDebug extends HudElement {
 		for (HudDebugMeter m : meters) {
 
 			pos.set(GameRenderer.ScreenUtils.worldPxToScreen(player.state().position));
-			pos.x += -60;
-			pos.y += 140;
+			pos.x += 100;
+			pos.y += 0;
 
 			// offset by index
 			pos.y += index * (prevHeight + Art.DebugFontHeight);

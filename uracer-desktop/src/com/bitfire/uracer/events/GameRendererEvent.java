@@ -9,7 +9,7 @@ import com.badlogic.gdx.math.Matrix4;
 public class GameRendererEvent extends Event<GameRendererEvent.Type, GameRendererEvent.Order, GameRendererEvent.Listener> {
 	/** defines the type of render queue */
 	public enum Type {
-		OnSubframeInterpolate, BatchBeforeCars, BatchAfterCars, BatchAfterMeshes, BatchAfterPostProcessing, BatchDebug, Debug;
+		OnSubframeInterpolate, BatchBeforeCars, BatchAfterCars, BatchBeforePostProcessing, BatchAfterPostProcessing, BatchDebug, Debug;
 	}
 
 	/** defines the position in the render queue specified by the Type parameter */
