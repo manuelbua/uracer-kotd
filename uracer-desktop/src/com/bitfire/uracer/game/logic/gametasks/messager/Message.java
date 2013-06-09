@@ -8,6 +8,7 @@ import aurelienribon.tweenengine.TweenCallback;
 import aurelienribon.tweenengine.equations.Back;
 import aurelienribon.tweenengine.equations.Expo;
 
+import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.g2d.BitmapFont;
 import com.badlogic.gdx.graphics.g2d.BitmapFont.HAlignment;
 import com.badlogic.gdx.graphics.g2d.BitmapFont.TextBounds;
@@ -110,15 +111,15 @@ public final class Message {
 
 		float distance = 180;
 		float h = Config.Graphics.ReferenceScreenHeight;
+		bounds.set(font.getMultiLineBounds(what));
 
 		switch (position) {
 		case Top:
 			finalY = 30;
-			whereY = h / 2;
+			whereY = -bounds.height;
 			break;
 
 		case Middle:
-			bounds.set(font.getMultiLineBounds(what));
 			finalY = (h - bounds.height) / 2 - bounds.height / 2;
 			whereY = h + bounds.height / 2;
 			break;
@@ -130,6 +131,7 @@ public final class Message {
 		}
 
 		font.setScale(1f);
+		Gdx.app.log("", "" + bounds.height);
 	}
 
 	public void render (SpriteBatch batch) {
@@ -161,9 +163,9 @@ public final class Message {
 
 		//@off
 		GameTweener.start(Timeline.createParallel()
-			.push(Tween.to(this, MessageAccessor.OPACITY, 500).target(1f).ease(Expo.INOUT))
+			.push(Tween.to(this, MessageAccessor.OPACITY, 600).target(1f).ease(Expo.INOUT))
 			.push(Tween.to(this, MessageAccessor.POSITION_Y, 600).target(finalY).ease(Expo.INOUT))
-			.push(Tween.to(this, MessageAccessor.SCALE_XY, 800).target(scale, scale).ease(Back.INOUT)).setCallback(showFinished));
+			.push(Tween.to(this, MessageAccessor.SCALE_XY, 600).target(scale, scale).ease(Back.INOUT)).setCallback(showFinished));
 		//@on
 	}
 
@@ -183,9 +185,9 @@ public final class Message {
 
 			//@off
 			GameTweener.start(Timeline.createParallel()
-				.push(Tween.to(this, MessageAccessor.OPACITY, 800).target(0f).ease(Expo.INOUT))
-				.push(Tween.to(this, MessageAccessor.POSITION_Y, 800).target(-50 * font.getScaleX()).ease(Expo.INOUT))
-				.push(Tween.to(this, MessageAccessor.SCALE_XY, 800).target(0, 0).ease(Back.INOUT)).setCallback(hideFinished));
+				.push(Tween.to(this, MessageAccessor.OPACITY, 600).target(0f).ease(Expo.INOUT))
+				.push(Tween.to(this, MessageAccessor.POSITION_Y, 600).target(-bounds.height * font.getScaleX()).ease(Expo.INOUT))
+				.push(Tween.to(this, MessageAccessor.SCALE_XY, 600).target(0, 0).ease(Back.INOUT)).setCallback(hideFinished));
 			//@on
 		}
 	}
