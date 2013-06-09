@@ -114,7 +114,6 @@ public abstract class CommonLogic implements GameLogic {
 	protected GhostCar[] ghostCars = new GhostCar[ReplayManager.MaxReplays];
 	private WrongWayMonitor wrongWayMonitor;
 	protected boolean isCurrentLapValid = true;
-	// protected boolean isWarmUpLap = true;
 	protected boolean isWrongWayInWarmUp = false;
 	protected boolean isTooSlow = false;
 	protected boolean isPenalty;
@@ -122,7 +121,8 @@ public abstract class CommonLogic implements GameLogic {
 	private Time dilationTime = new Time();
 	private Time outOfTrackTime = new Time();
 
-	// lap
+	// lap / replays
+	protected ReplayManager replayManager;
 	protected LapManager lapManager = null;
 	private LapCompletionMonitor lapMonitor = null;
 
@@ -133,7 +133,6 @@ public abstract class CommonLogic implements GameLogic {
 	// time modulation logic
 	private TimeModulator timeMod = null;
 
-	protected ReplayManager replayManager;
 	private BoxedFloat accuDriftSeconds = new BoxedFloat(0);;
 
 	public CommonLogic (UserProfile userProfile, GameWorld gameWorld, GameRenderer gameRenderer) {
@@ -706,10 +705,8 @@ public abstract class CommonLogic implements GameLogic {
 
 		@Override
 		public void onWrongWayBegins () {
-			if (lapManager.isRecording()) {
-				lapManager.abortRecording();
-				lapManager.reset();
-			}
+			lapManager.abortRecording();
+			lapManager.reset();
 
 			playerTasks.hudPlayer.wrongWay.fadeIn();
 			playerTasks.hudLapInfo.toColor(1, 0, 0);
