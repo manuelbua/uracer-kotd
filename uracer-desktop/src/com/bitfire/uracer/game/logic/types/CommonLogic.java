@@ -553,7 +553,6 @@ public abstract class CommonLogic implements GameLogic {
 
 			// if a penalty is being applied, then drift seconds will not be updated
 			if (!isPenalty) {
-
 				// earn game-time seconds by drifting
 				if (playerCar.driftState.isDrifting) {
 					accuDriftSeconds.value += Config.Physics.Dt + Config.Physics.Dt * playerCar.driftState.driftStrength;
@@ -635,16 +634,6 @@ public abstract class CommonLogic implements GameLogic {
 			gameWorldRenderer.setGameTrackDebugCar(playerCar);
 		}
 	}
-
-	private TweenCallback penaltyFinished = new TweenCallback() {
-		@Override
-		public void onEvent (int type, BaseTween<?> source) {
-			switch (type) {
-			case COMPLETE:
-				isPenalty = false;
-			}
-		}
-	};
 
 	private final class EventHandlers implements WrongWayMonitorListener, LapCompletionMonitorListener {
 
@@ -773,6 +762,16 @@ public abstract class CommonLogic implements GameLogic {
 		};
 
 		CarEvent.Listener playerCarListener = new CarEvent.Listener() {
+			private TweenCallback penaltyFinished = new TweenCallback() {
+				@Override
+				public void onEvent (int type, BaseTween<?> source) {
+					switch (type) {
+					case COMPLETE:
+						isPenalty = false;
+					}
+				}
+			};
+
 			@Override
 			public void handle (Object source, CarEvent.Type type, CarEvent.Order order) {
 				CarEvent.Data eventData = GameEvents.playerCar.data;
@@ -789,13 +788,11 @@ public abstract class CommonLogic implements GameLogic {
 
 					if (!isPenalty) {
 						isPenalty = true;
-
 						GameTweener.stop(accuDriftSeconds);
 						Timeline driftSecondsTimeline = Timeline.createSequence();
 						driftSecondsTimeline.push(Tween.to(accuDriftSeconds, BoxedFloatAccessor.VALUE, 500).target(0).ease(Quad.INOUT))
 							.setCallback(penaltyFinished);
 						GameTweener.start(driftSecondsTimeline);
-
 						playerTasks.hudPlayer.highlightCollision();
 					}
 
