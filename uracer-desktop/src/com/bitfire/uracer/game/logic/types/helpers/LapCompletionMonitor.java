@@ -68,7 +68,7 @@ public final class LapCompletionMonitor {
 				float complet = gameTrack.getTrackCompletion(car);
 				wuCurr = (complet - wuStart) / (1 - wuStart);
 
-				if (wuPrev > 0.9f && wuCurr >= 0 && wuCurr < 0.1f) {
+				if (hasFinished(wuPrev, wuCurr)) {
 					// warmup will ends
 					wuCompletion = 1;
 					isWarmUp = false;
@@ -88,11 +88,15 @@ public final class LapCompletionMonitor {
 				previousCompletion = currentCompletion;
 				currentCompletion = gameTrack.getTrackCompletion(car);
 				// Gdx.app.log("", "curr=" + currentCompletion + ", prev=" + previousCompletion);
-				if (previousCompletion > 0.9f && currentCompletion >= 0 && currentCompletion < 0.1f) {
+				if (hasFinished(previousCompletion, currentCompletion)) {
 					listener.onLapCompleted();
 					listener.onLapStarted();
 				}
 			}
 		}
+	}
+
+	private boolean hasFinished (float prev, float curr) {
+		return (prev > 0.9f && curr >= 0 && curr < 0.1f);
 	}
 }

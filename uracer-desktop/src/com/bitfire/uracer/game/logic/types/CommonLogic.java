@@ -631,6 +631,12 @@ public abstract class CommonLogic implements GameLogic {
 
 	private final class EventHandlers implements WrongWayMonitorListener, LapCompletionMonitorListener {
 
+		// LapCompletionMonitorListener events order redux
+		//
+		// 1. warmup started
+		// 2. warmup completed + 3. lap started
+		// 4. lap completed + 5. lap started
+
 		@Override
 		public void onWarmUpStarted () {
 			isCurrentLapValid = true;
