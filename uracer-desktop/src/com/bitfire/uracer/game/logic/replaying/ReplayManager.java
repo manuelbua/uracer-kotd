@@ -122,7 +122,7 @@ public final class ReplayManager implements Disposable {
 		return added;
 	}
 
-	public void reset () {
+	public void removeAll () {
 		ridx = 0;
 		for (int i = 0; i < MaxReplays; i++) {
 			replays.get(i).reset();

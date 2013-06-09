@@ -28,66 +28,15 @@ public class LapManager implements Disposable {
 		recorder.dispose();
 	}
 
-	/** Reset any recorded replay so far */
+	/** Stops recording and invalidates last recorded replay */
 	public void reset () {
+		abortRecording();
 		lastRecordedReplay = null;
-		recorder.reset();
-		bufferManager.reset();
-	}
-
-	// public void setAsBestReplay (Replay replay) {
-	// bufferManager.setAsBestReplay(replay);
-	// lapInfo.setBestTrackTimeSeconds(replay.trackTimeSeconds);
-	// }
-
-	/** Returns whether or not the Best or Worst replay is available */
-	public boolean hasAnyReplay () {
-		return bufferManager.hasAnyReplayData();
-	}
-
-	/** Returns the first available, and valid, replay */
-	public Replay getAnyReplay () {
-		return bufferManager.getAnyReplay();
-	}
-
-	/** Returns whether or not the Best and Worst replays are available */
-	public boolean hasAllReplays () {
-		return bufferManager.hasAllReplayData();
-	}
-
-	/** Returns the best replay available, so far */
-	public Replay getBestReplay () {
-		return bufferManager.getBestReplay();
-	}
-
-	/** Returns the worst replay available, so far */
-	public Replay getWorstReplay () {
-		return bufferManager.getWorstReplay();
 	}
 
 	/** Returns the Replay instance where the last recording took place */
 	public Replay getLastRecordedReplay () {
 		return lastRecordedReplay;
-	}
-
-	/** Returns whether or not the last recorded lap was the best one */
-	public boolean isLastBestLap () {
-		// return lastRecordedReplay.id == bufferManager.getBestReplay().id;
-		if (bufferManager.getBestReplay() != null) {
-			return (System.identityHashCode(lastRecordedReplay) == System.identityHashCode(bufferManager.getBestReplay()));
-		}
-
-		return false;
-	}
-
-	/** Returns whether or not a best lap is present */
-	public boolean hasBestLapReplay () {
-		return bufferManager.hasBestReplay();
-	}
-
-	/** Returns whether or not a worst lap is present */
-	public boolean hasWorstLapReplay () {
-		return bufferManager.hasWorstReplay();
 	}
 
 	/** Starts recording the player lap performance. Returns the Replay instance where the recording is being performed. */

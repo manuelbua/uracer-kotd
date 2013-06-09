@@ -507,7 +507,7 @@ public abstract class CommonLogic implements GameLogic {
 		restartLogic();
 
 		// clean everything
-		replayManager.reset();
+		replayManager.removeAll();
 		lapManager.reset();
 		gameTasksManager.raiseReset();
 	}
@@ -706,7 +706,6 @@ public abstract class CommonLogic implements GameLogic {
 		@Override
 		public void onWrongWayBegins () {
 			lapManager.abortRecording();
-			lapManager.reset();
 
 			playerTasks.hudPlayer.wrongWay.fadeIn();
 			playerTasks.hudLapInfo.toColor(1, 0, 0);
