@@ -139,14 +139,14 @@ public class LapManager implements Disposable {
 			// update lap info with last lap times
 			if (bufferManager.hasAllReplayData()) {
 				// lap finished, update lapinfo with the last recorded replay
-				lapInfo.setLastTrackTimeSeconds(lastRecordedReplay.trackTimeSeconds);
+				lapInfo.setLastTrackTimeSeconds(lastRecordedReplay.getTrackTime());
 			} else {
 				// lap finished, update lapinfo with whatever replay data is available
-				lapInfo.setLastTrackTimeSeconds(bufferManager.getAnyReplay().trackTimeSeconds);
+				lapInfo.setLastTrackTimeSeconds(bufferManager.getAnyReplay().getTrackTime());
 			}
 
 			// update lap info with best lap time
-			lapInfo.setBestTrackTimeSeconds(bufferManager.getBestReplay().trackTimeSeconds);
+			lapInfo.setBestTrackTimeSeconds(bufferManager.getBestReplay().getTrackTime());
 		}
 	}
 

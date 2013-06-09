@@ -93,7 +93,7 @@ public class SinglePlayerLogic extends CommonLogic {
 	// some basic filtering such as null checking, length validity, better-than-worst...
 	@Override
 	public void newReplay (Replay replay) {
-		CarUtils.dumpSpeedInfo("Player", playerCar, replay.trackTimeSeconds);
+		CarUtils.dumpSpeedInfo("Player", playerCar, replay.getTrackTime());
 	}
 
 	@Override

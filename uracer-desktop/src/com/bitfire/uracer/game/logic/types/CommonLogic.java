@@ -166,8 +166,6 @@ public abstract class CommonLogic implements GameLogic {
 		lapMonitor = new LapCompletionMonitor(eventHandlers, gameTrack);
 
 		input = new GameInput(this, inputSystem);
-		// dilationTime.stop();
-		// outOfTrackTime.stop();
 	}
 
 	@Override
@@ -470,7 +468,7 @@ public abstract class CommonLogic implements GameLogic {
 
 		int ghostIndex = 0;
 		for (Replay r : replayManager.getReplays()) {
-			if (r.isValid) {
+			if (r.isValid()) {
 				setGhostReplay(ghostIndex, r);
 
 				if (replayManager.getBestReplay() == r) {
@@ -601,7 +599,7 @@ public abstract class CommonLogic implements GameLogic {
 			playerCar.resetPhysics();
 			lapManager.stopRecording();
 
-			CarUtils.dumpSpeedInfo("Player", playerCar, lapManager.getLastRecordedReplay().trackTimeSeconds);
+			CarUtils.dumpSpeedInfo("Player", playerCar, lapManager.getLastRecordedReplay().getTrackTime());
 			playerCar.resetDistanceAndSpeed(true, true);
 			if (userRec != null) {
 				userRec.saveLocal(gameTasksManager.messager);
@@ -697,7 +695,7 @@ public abstract class CommonLogic implements GameLogic {
 			if (replay != null) {
 				newReplay(replay);
 			} else {
-				if (lastRecorded != null && lastRecorded.isValid) {
+				if (lastRecorded != null && lastRecorded.isValid()) {
 					discardedReplay(lastRecorded);
 				}
 			}

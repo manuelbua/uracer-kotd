@@ -36,11 +36,11 @@ public final class ReplayBufferManager {
 	}
 
 	public Replay getAnyReplay () {
-		if (replays[0].isValid) {
+		if (replays[0].isValid()) {
 			return replays[0];
 		}
 
-		if (replays[1].isValid) {
+		if (replays[1].isValid()) {
 			return replays[1];
 		}
 
@@ -48,15 +48,15 @@ public final class ReplayBufferManager {
 	}
 
 	public boolean hasAllReplayData () {
-		return (replays[0].isValid && replays[1].isValid);
+		return (replays[0].isValid() && replays[1].isValid());
 	}
 
 	public boolean hasAnyReplayData () {
-		return (replays[0].isValid || replays[1].isValid);
+		return (replays[0].isValid() || replays[1].isValid());
 	}
 
 	private Replay getFirstValid () {
-		if (replays[0].isValid) {
+		if (replays[0].isValid()) {
 			return replays[0];
 		} else {
 			return replays[1];
@@ -68,7 +68,7 @@ public final class ReplayBufferManager {
 			best = replays[1];
 			worst = replays[0];
 
-			if (replays[0].trackTimeSeconds < replays[1].trackTimeSeconds) {
+			if (replays[0].getTrackTime() < replays[1].getTrackTime()) {
 				best = replays[0];
 				worst = replays[1];
 			}
@@ -80,10 +80,10 @@ public final class ReplayBufferManager {
 
 	public Replay getNextBuffer () {
 		updateReplays();
-		if (!replays[0].isValid) {
+		if (!replays[0].isValid()) {
 			return replays[0];
 		}
-		if (!replays[1].isValid) {
+		if (!replays[1].isValid()) {
 			return replays[1];
 		}
 

@@ -7,6 +7,7 @@ import com.bitfire.uracer.game.GameEvents;
 import com.bitfire.uracer.game.logic.replaying.Replay;
 import com.bitfire.uracer.game.world.GameWorld;
 import com.bitfire.uracer.utils.CarUtils;
+import com.bitfire.uracer.utils.URacerRuntimeException;
 
 /** Implements an automated Car, playing previously recorded events. It will ignore car-to-car collisions, but will respect
  * in-track collisions and responses.
@@ -16,6 +17,8 @@ import com.bitfire.uracer.utils.CarUtils;
 public final class GhostCar extends Car {
 	private static final int FadeEvents = 30;
 	private Replay replay;
+	private CarForces[] replayForces;
+	private int replayForcesCount;
 	private int indexPlay;
 	private boolean hasReplay;
 	public final int id;
@@ -27,6 +30,8 @@ public final class GhostCar extends Car {
 		indexPlay = 0;
 		hasReplay = false;
 		replay = null;
+		replayForces = null;
+		replayForcesCount = 0;
 		stillModel.setAlpha(0.5f);
 
 		setActive(false);
@@ -37,16 +42,20 @@ public final class GhostCar extends Car {
 	// input data for this car cames from a Replay object
 	public void setReplay (Replay replay) {
 		this.replay = replay;
-		hasReplay = (replay != null && replay.getEventsCount() > 0);
+		replayForces = null;
+		replayForcesCount = 0;
+		hasReplay = (replay != null && replay.getEventsCount() > 0 && replay.isValid());
 
 		setActive(hasReplay);
 		resetPhysics();
 
 		if (hasReplay) {
-			stillModel.setAlpha(0);
+			replayForces = replay.getCarForces();
+			replayForcesCount = replay.getEventsCount();
 
-			// System.out.println( "Replaying " + replay.id );
+			stillModel.setAlpha(0);
 			restart(replay);
+
 			Gdx.app.log("GhostCar #" + id, "Replaying #" + System.identityHashCode(replay));
 		}
 	}
@@ -68,11 +77,9 @@ public final class GhostCar extends Car {
 	private void restart (Replay replay) {
 		resetPhysics();
 		resetDistanceAndSpeed(true, true);
-		setWorldPosMt(replay.carWorldPositionMt, replay.carWorldOrientRads);
+		setWorldPosMt(replay.getStartPosition(), replay.getStartOrientation());
 		indexPlay = 0;
 		fadeOutEventTriggered = false;
-
-		// Gdx.app.log( "GhostCar", "Set to " + body.getPosition() + ", " + body.getAngle() );
 	}
 
 	@Override
@@ -90,28 +97,14 @@ public final class GhostCar extends Car {
 		forces.reset();
 
 		if (hasReplay) {
-
-			// indexPlay is NOT updated here, we don't want
-			// to process a non-existent event when (indexPlay == replay.getEventsCount())
-
 			try {
-				// FIXME! arrayindexoutofbounds still happens, maxevents on replay could be the cause
-				forces.set(replay.forces[indexPlay]);
+				forces.set(replayForces[indexPlay]);
 			} catch (ArrayIndexOutOfBoundsException e) {
-				Gdx.app.log("GhostCar", "!!! MANGLED DATA IN REPLAY !!!");
+				throw new URacerRuntimeException("!!! MANGLED DATA IN REPLAY !!!");
 			}
 
-			// Gdx.app.log( "ghost", "index="+indexPlay + ", px=" + NumberString.formatVeryLong(body.getPosition().x) +
-			// ", py=" + NumberString.formatVeryLong(body.getPosition().y) );
-
-			// Gdx.app.log( "", "cf=" +
-			// NumberString.formatVeryLong(forces.velocity_x) + ", " +
-			// NumberString.formatVeryLong(forces.velocity_y) + ", " +
-			// NumberString.formatVeryLong(forces.angularVelocity)
-			// );
-
 			// also change opacity, fade in/out based on
-			// events played, events remaining
+			// events played / total events
 			if (indexPlay <= FadeEvents) {
 				stillModel.setAlpha(((float)indexPlay / (float)FadeEvents) * 0.5f);
 			} else if (replay.getEventsCount() - indexPlay <= FadeEvents) {
@@ -124,9 +117,6 @@ public final class GhostCar extends Car {
 				}
 			}
 		}
-		// else {
-		// Gdx.app.log( "GhostCar", "No replay, injecting null forces" );
-		// }
 	}
 
 	@Override
@@ -136,10 +126,9 @@ public final class GhostCar extends Car {
 		if (hasReplay) {
 			indexPlay++;
 
-			if (indexPlay == replay.getEventsCount()) {
-				CarUtils.dumpSpeedInfo("GhostCar #" + id, this, replay.trackTimeSeconds);
+			if (indexPlay == replayForcesCount) {
+				CarUtils.dumpSpeedInfo("GhostCar #" + id, this, replay.getTrackTime());
 				removeReplay();
-				// restart(replay);
 			}
 		}
 	}

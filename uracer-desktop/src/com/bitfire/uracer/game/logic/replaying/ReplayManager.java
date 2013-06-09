@@ -39,18 +39,18 @@ public final class ReplayManager implements Disposable {
 			return null;
 		}
 
-		if (replay.trackTimeSeconds < GameplaySettings.ReplayMinDurationSecs) {
-			Gdx.app.log("ReplayManager", "Invalid lap detected, (" + replay.trackTimeSeconds + "sec < "
+		if (replay.getTrackTime() < GameplaySettings.ReplayMinDurationSecs) {
+			Gdx.app.log("ReplayManager", "Invalid lap detected, (" + replay.getTrackTime() + "sec < "
 				+ GameplaySettings.ReplayMinDurationSecs + ")");
 			return null;
 		}
 
-		if (!replay.isValid) {
+		if (!replay.isValid()) {
 			Gdx.app.log("ReplayManager", "The specified replay is not valid.");
 			return null;
 		}
 
-		if (!replay.levelId.equals(trackId)) {
+		if (!replay.getTrackId().equals(trackId)) {
 			Gdx.app.log("ReplayManager", "The specified replay belongs to another game track.");
 			return null;
 		}
@@ -71,9 +71,9 @@ public final class ReplayManager implements Disposable {
 				Gdx.app.log("!!!!", "!!");
 			}
 
-			if (replay.trackTimeSeconds >= worst.trackTimeSeconds) {
-				Gdx.app.log("ReplayManager", "Discarded, worse than the worst! (" + replay.trackTimeSeconds + " >= "
-					+ worst.trackTimeSeconds + ")");
+			if (replay.getTrackTime() >= worst.getTrackTime()) {
+				Gdx.app.log("ReplayManager",
+					"Discarded, worse than the worst! (" + replay.getTrackTime() + " >= " + worst.getTrackTime() + ")");
 				return null;
 			}
 
@@ -88,11 +88,11 @@ public final class ReplayManager implements Disposable {
 				for (int i = 1; i < MaxReplays; i++) {
 					Replay r = replays.get(i);
 
-					if (worst.trackTimeSeconds < r.trackTimeSeconds) {
+					if (worst.getTrackTime() < r.getTrackTime()) {
 						worst = r;
 					}
 
-					if (best.trackTimeSeconds > r.trackTimeSeconds) {
+					if (best.getTrackTime() > r.getTrackTime()) {
 						best = r;
 					}
 				}
@@ -102,7 +102,7 @@ public final class ReplayManager implements Disposable {
 				added.copyData(replay);
 
 				// compute best
-				if (best.trackTimeSeconds > added.trackTimeSeconds) {
+				if (best.getTrackTime() > added.getTrackTime()) {
 					best = added;
 				}
 			}
@@ -134,7 +134,7 @@ public final class ReplayManager implements Disposable {
 	}
 
 	public boolean canClassify () {
-		return (best != worst && best != null && worst != null && best.isValid && worst.isValid);
+		return (best != worst && best != null && worst != null && best.isValid() && worst.isValid());
 	}
 
 	public Replay getBestReplay () {
