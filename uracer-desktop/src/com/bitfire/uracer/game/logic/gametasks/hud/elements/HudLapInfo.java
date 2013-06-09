@@ -7,9 +7,9 @@ import aurelienribon.tweenengine.equations.Linear;
 
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.bitfire.uracer.configuration.Config;
-import com.bitfire.uracer.game.logic.LapInfo;
 import com.bitfire.uracer.game.logic.gametasks.hud.HudElement;
 import com.bitfire.uracer.game.logic.gametasks.hud.HudLabel;
+import com.bitfire.uracer.game.logic.replaying.LapManager;
 import com.bitfire.uracer.game.tween.GameTweener;
 import com.bitfire.uracer.resources.BitmapFontFactory.FontFace;
 import com.bitfire.uracer.utils.BoxedFloat;
@@ -19,12 +19,12 @@ import com.bitfire.uracer.utils.NumberString;
 public class HudLapInfo extends HudElement {
 
 	private HudLabel curr;
-	private LapInfo lapInfo;
+	private LapManager lapManager;
 	private BoxedFloat r, g, b;
 	private boolean isValid;
 
-	public HudLapInfo (LapInfo lapInfo) {
-		this.lapInfo = lapInfo;
+	public HudLapInfo (LapManager lapManager) {
+		this.lapManager = lapManager;
 
 		curr = new HudLabel(FontFace.LcdWhite, "99.99", true);
 		curr.setScale(1.5f);
@@ -80,7 +80,7 @@ public class HudLapInfo extends HudElement {
 	public void onRender (SpriteBatch batch) {
 		// current time
 		if (isValid) {
-			curr.setString(NumberString.format(lapInfo.getElapsedSeconds()), true);
+			curr.setString(NumberString.format(lapManager.getCurrentReplaySeconds()), true);
 		}
 
 		curr.setColor(r.value, g.value, b.value);

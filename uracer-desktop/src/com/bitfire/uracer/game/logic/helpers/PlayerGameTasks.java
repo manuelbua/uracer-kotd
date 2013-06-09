@@ -5,7 +5,6 @@ import com.bitfire.uracer.URacer;
 import com.bitfire.uracer.configuration.Config;
 import com.bitfire.uracer.configuration.UserProfile;
 import com.bitfire.uracer.game.logic.GameTasksManager;
-import com.bitfire.uracer.game.logic.LapInfo;
 import com.bitfire.uracer.game.logic.gametasks.hud.debug.HudDebug;
 import com.bitfire.uracer.game.logic.gametasks.hud.elements.HudLapInfo;
 import com.bitfire.uracer.game.logic.gametasks.hud.elements.HudPlayer;
@@ -15,6 +14,7 @@ import com.bitfire.uracer.game.logic.gametasks.sounds.effects.PlayerEngineSoundE
 import com.bitfire.uracer.game.logic.gametasks.sounds.effects.PlayerImpactSoundEffect;
 import com.bitfire.uracer.game.logic.gametasks.trackeffects.effects.PlayerSkidMarks;
 import com.bitfire.uracer.game.logic.gametasks.trackeffects.effects.PlayerSmokeTrails;
+import com.bitfire.uracer.game.logic.replaying.LapManager;
 import com.bitfire.uracer.game.player.PlayerCar;
 import com.bitfire.uracer.game.rendering.GameRenderer;
 
@@ -45,7 +45,7 @@ public final class PlayerGameTasks {
 		destroyTasks();
 	}
 
-	public void createTasks (PlayerCar player, LapInfo lapInfo, GameRenderer renderer) {
+	public void createTasks (PlayerCar player, LapManager lapManager, GameRenderer renderer) {
 		// sounds
 		playerDriftSoundFx = new PlayerDriftSoundEffect(player);
 		playerImpactSoundFx = new PlayerImpactSoundEffect();
@@ -65,7 +65,7 @@ public final class PlayerGameTasks {
 		// hud, player's information
 		hudPlayer = new HudPlayer(userProfile, player, renderer);
 		hudPlayerStatic = new HudPlayerStatic(userProfile, player);
-		hudLapInfo = new HudLapInfo(lapInfo);
+		hudLapInfo = new HudLapInfo(lapManager);
 
 		manager.hud.addBeforePostProcessing(hudPlayer);
 		manager.hud.addAfterPostProcessing(hudLapInfo);

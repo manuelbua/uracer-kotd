@@ -204,7 +204,7 @@ public abstract class CommonLogic implements GameLogic {
 		configurePlayer(gameWorld, inputSystem, playerCar);
 		Gdx.app.log("GameLogic", "Player configured");
 
-		playerTasks.createTasks(playerCar, lapManager.getLapInfo(), gameRenderer);
+		playerTasks.createTasks(playerCar, lapManager, gameRenderer);
 		Gdx.app.log("GameLogic", "Game tasks created and configured");
 
 		eventHandlers.registerPlayerEvents();
@@ -682,9 +682,9 @@ public abstract class CommonLogic implements GameLogic {
 			}
 
 			// detect and ignore invalid laps
-			if (lapManager.isRecording() && lapManager.getLapInfo().getElapsedSeconds() < GameplaySettings.ReplayMinDurationSecs) {
-				Gdx.app.log("CommonLogic", "Invalid lap detected, too short (" + lapManager.getLapInfo().getElapsedSeconds()
-					+ "sec < " + GameplaySettings.ReplayMinDurationSecs + ")");
+			if (lapManager.isRecording() && lapManager.getCurrentReplaySeconds() < GameplaySettings.ReplayMinDurationSecs) {
+				Gdx.app.log("CommonLogic", "Invalid lap detected, too short (" + lapManager.getCurrentReplaySeconds() + "sec < "
+					+ GameplaySettings.ReplayMinDurationSecs + ")");
 				return;
 			}
 

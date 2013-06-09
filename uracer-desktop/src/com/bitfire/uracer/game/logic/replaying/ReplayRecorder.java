@@ -2,10 +2,12 @@
 package com.bitfire.uracer.game.logic.replaying;
 
 import com.badlogic.gdx.Gdx;
+import com.badlogic.gdx.utils.Disposable;
+import com.bitfire.uracer.game.Time;
 import com.bitfire.uracer.game.actors.Car;
 import com.bitfire.uracer.game.actors.CarForces;
 
-public final class ReplayRecorder {
+public final class ReplayRecorder implements Disposable {
 	// @off
 	public enum RecorderError {
 		NoError,
@@ -16,6 +18,7 @@ public final class ReplayRecorder {
 
 	// private final long userId;
 	private boolean isRecording;
+	private Time time;
 
 	// replay data
 	private Replay replay;
@@ -24,10 +27,18 @@ public final class ReplayRecorder {
 		// this.userId = userId;
 		isRecording = false;
 		replay = null;
+		time = new Time();
+	}
+
+	@Override
+	public void dispose () {
+		reset();
+		time.dispose();
 	}
 
 	public void reset () {
 		isRecording = false;
+		time.reset();
 
 		// ensure data is discarded
 		if (replay != null) {
@@ -37,10 +48,12 @@ public final class ReplayRecorder {
 	}
 
 	public void beginRecording (Car car, Replay replay, String levelId) {
+		Gdx.app.log("Recorder", "Beginning recording #" + System.identityHashCode(replay));
+
 		isRecording = true;
 		this.replay = replay;
-		Gdx.app.log("Recorder", "Beginning recording #" + System.identityHashCode(replay));
 		replay.begin(levelId, car);
+		time.start();
 	}
 
 	public RecorderError add (CarForces f) {
@@ -61,15 +74,23 @@ public final class ReplayRecorder {
 			return null;
 		}
 
-		Gdx.app.log("Recorder", "Finished recording #" + System.identityHashCode(replay));
-		Replay r = replay;
-		replay.end();
+		time.stop();
+		replay.end(time.elapsed(Time.Reference.TickSeconds));
 		isRecording = false;
-		replay = null;
-		return r;
+
+		Gdx.app.log("Recorder", "Finished recording #" + System.identityHashCode(replay));
+		return replay;
 	}
 
 	public boolean isRecording () {
 		return isRecording;
+	}
+
+	public float getElapsedSeconds () {
+		if (isRecording) {
+			return time.elapsed(Time.Reference.TickSeconds);
+		}
+
+		return 0;
 	}
 }

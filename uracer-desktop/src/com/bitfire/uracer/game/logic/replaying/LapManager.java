@@ -6,7 +6,6 @@ import com.badlogic.gdx.utils.Disposable;
 import com.bitfire.uracer.configuration.UserProfile;
 import com.bitfire.uracer.game.actors.Car;
 import com.bitfire.uracer.game.actors.CarForces;
-import com.bitfire.uracer.game.logic.LapInfo;
 import com.bitfire.uracer.game.logic.replaying.ReplayRecorder.RecorderError;
 
 /** Manage player's performance recordings and keeps basic lap information */
@@ -15,27 +14,24 @@ public class LapManager implements Disposable {
 	private final String levelId;
 	private final ReplayRecorder recorder;
 	private final ReplayBufferManager bufferManager;
-	private final LapInfo lapInfo;
 	private Replay lastRecordedReplay;
 
 	public LapManager (UserProfile userProfile, String levelId) {
 		this.levelId = levelId;
 		recorder = new ReplayRecorder(userProfile.userId);
-		lapInfo = new LapInfo();
 		bufferManager = new ReplayBufferManager(userProfile.userId);
 		lastRecordedReplay = null;
 	}
 
 	@Override
 	public void dispose () {
-		recorder.reset();
+		recorder.dispose();
 	}
 
 	/** Reset any recorded replay so far */
 	public void reset () {
 		lastRecordedReplay = null;
 		recorder.reset();
-		lapInfo.resetTime();
 		bufferManager.reset();
 	}
 
@@ -43,11 +39,6 @@ public class LapManager implements Disposable {
 	// bufferManager.setAsBestReplay(replay);
 	// lapInfo.setBestTrackTimeSeconds(replay.trackTimeSeconds);
 	// }
-
-	/** Returns the LapInfo information regarding the currently active lap */
-	public LapInfo getLapInfo () {
-		return lapInfo;
-	}
 
 	/** Returns whether or not the Best or Worst replay is available */
 	public boolean hasAnyReplay () {
@@ -107,7 +98,6 @@ public class LapManager implements Disposable {
 		}
 
 		Replay next = bufferManager.getNextBuffer();
-		lapInfo.start();
 		recorder.beginRecording(car, next, levelId);
 		return next;
 	}
@@ -129,30 +119,20 @@ public class LapManager implements Disposable {
 	/** Ends recording the previously started lap performance */
 	public void stopRecording () {
 		if (recorder.isRecording()) {
-			lapInfo.stop();
 
 			// ends recording and keeps track of the last recorded replay
 			lastRecordedReplay = recorder.endRecording();
 
 			bufferManager.updateReplays();
-
-			// update lap info with last lap times
-			if (bufferManager.hasAllReplayData()) {
-				// lap finished, update lapinfo with the last recorded replay
-				lapInfo.setLastTrackTimeSeconds(lastRecordedReplay.getTrackTime());
-			} else {
-				// lap finished, update lapinfo with whatever replay data is available
-				lapInfo.setLastTrackTimeSeconds(bufferManager.getAnyReplay().getTrackTime());
-			}
-
-			// update lap info with best lap time
-			lapInfo.setBestTrackTimeSeconds(bufferManager.getBestReplay().getTrackTime());
 		}
 	}
 
 	/** Discard the performance currently being recorded so far */
 	public void abortRecording () {
 		recorder.reset();
-		lapInfo.reset();
+	}
+
+	public float getCurrentReplaySeconds () {
+		return recorder.getElapsedSeconds();
 	}
 }

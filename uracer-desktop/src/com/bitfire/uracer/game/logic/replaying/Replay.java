@@ -14,7 +14,6 @@ import com.badlogic.gdx.utils.Disposable;
 import com.badlogic.gdx.utils.GdxRuntimeException;
 import com.bitfire.uracer.configuration.Storage;
 import com.bitfire.uracer.game.GameplaySettings;
-import com.bitfire.uracer.game.Time;
 import com.bitfire.uracer.game.actors.Car;
 import com.bitfire.uracer.game.actors.CarForces;
 import com.bitfire.uracer.game.logic.gametasks.Messager;
@@ -41,9 +40,6 @@ public class Replay implements Disposable {
 	private int eventsCount;
 	private boolean completed = false;
 
-	// time track
-	private Time time = new Time();
-
 	public Replay (long userId) {
 		this.userId = userId;
 		eventsCount = 0;
@@ -56,7 +52,6 @@ public class Replay implements Disposable {
 	@Override
 	public void dispose () {
 		reset();
-		time.dispose();
 
 		for (int i = 0; i < MaxEvents; i++) {
 			forces[i] = null;
@@ -69,7 +64,6 @@ public class Replay implements Disposable {
 		eventsCount = 0;
 		carPositionMt.set(0, 0);
 		carOrientationRads = 0;
-		time.reset();
 		for (int i = 0; i < MaxEvents; i++) {
 			forces[i].reset();
 		}
@@ -94,7 +88,6 @@ public class Replay implements Disposable {
 		carPositionMt.set(car.getWorldPosMt());
 		carOrientationRads = car.getWorldOrientRads();
 		this.trackId = trackId;
-		time.start();
 
 		// Gdx.app.log( "Replay", "Begin at " + carWorldPositionMt + ", " + carWorldOrientRads );
 	}
@@ -109,9 +102,9 @@ public class Replay implements Disposable {
 		return true;
 	}
 
-	public void end () {
-		time.stop();
-		trackTimeSeconds = time.elapsed(Time.Reference.TickSeconds);
+	public void end (float trackTime) {
+		// time.stop();
+		trackTimeSeconds = trackTime;// time.elapsed(Time.Reference.TickSeconds);
 		completed = eventsCount > 0 && eventsCount < MaxEvents;
 	}
 
