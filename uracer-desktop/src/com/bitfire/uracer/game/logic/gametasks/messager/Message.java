@@ -8,7 +8,6 @@ import aurelienribon.tweenengine.TweenCallback;
 import aurelienribon.tweenengine.equations.Back;
 import aurelienribon.tweenengine.equations.Expo;
 
-import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.g2d.BitmapFont;
 import com.badlogic.gdx.graphics.g2d.BitmapFont.HAlignment;
 import com.badlogic.gdx.graphics.g2d.BitmapFont.TextBounds;
@@ -129,9 +128,6 @@ public final class Message {
 			whereY = h + distance;
 			break;
 		}
-
-		font.setScale(1f);
-		Gdx.app.log("", "" + bounds.height);
 	}
 
 	public void render (SpriteBatch batch) {

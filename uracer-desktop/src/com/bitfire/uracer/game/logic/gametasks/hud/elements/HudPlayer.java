@@ -85,8 +85,7 @@ public final class HudPlayer extends HudElement {
 
 	@Override
 	public void onRender (SpriteBatch batch) {
-		// FIXME find a more elegant way
-		// position *now* so that other positions have been already interpolated
+		// position elements at render time, so that source positions have been interpolated
 		atPlayer(driftBar);
 		atPlayer(trackProgress);
 		gravitate(wrongWay, -180, 100);
