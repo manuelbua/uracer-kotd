@@ -19,6 +19,9 @@ import com.bitfire.uracer.utils.InterpolatedFloat;
 public class SinglePlayerLogic extends CommonLogic {
 
 	private Messager messager;
+	private float prevZoom = GameWorldRenderer.MinCameraZoom + GameWorldRenderer.ZoomWindow;
+	// private InterpolatedFloat speed = new InterpolatedFloat()
+	private InterpolatedFloat drift = new InterpolatedFloat();
 
 	public SinglePlayerLogic (UserProfile userProfile, GameWorld gameWorld, GameRenderer gameRenderer) {
 		super(userProfile, gameWorld, gameRenderer);
@@ -30,11 +33,6 @@ public class SinglePlayerLogic extends CommonLogic {
 		super.dispose();
 	}
 
-	private float prevZoom = GameWorldRenderer.MinCameraZoom + GameWorldRenderer.ZoomWindow;
-	// private InterpolatedFloat speed = new InterpolatedFloat()
-	private InterpolatedFloat drift = new InterpolatedFloat();
-
-	// the camera needs to be positioned
 	@Override
 	protected float updateCamera (float timeModFactor) {
 		if (hasPlayer()) {
@@ -49,12 +47,9 @@ public class SinglePlayerLogic extends CommonLogic {
 		cameraZoom += (maxZoom - cameraZoom) * timeModFactor;
 		cameraZoom += 0.25f * GameWorldRenderer.ZoomWindow * drift.get();
 
-		// cameraZoom = minZoom;
-
 		cameraZoom = AMath.lerp(prevZoom, cameraZoom, 0.1f);
 		cameraZoom = AMath.clampf(cameraZoom, minZoom, maxZoom);
 		cameraZoom = AMath.fixupTo(cameraZoom, minZoom + GameWorldRenderer.ZoomWindow);
-		// Gdx.app.log("", "zoom=" + cameraZoom);
 
 		gameWorldRenderer.setCameraZoom(cameraZoom);
 		prevZoom = cameraZoom;

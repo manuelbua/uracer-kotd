@@ -30,6 +30,7 @@ import com.bitfire.uracer.game.actors.GhostCar;
 import com.bitfire.uracer.game.logic.GameTasksManager;
 import com.bitfire.uracer.game.logic.gametasks.hud.elements.HudPlayer.EndDriftType;
 import com.bitfire.uracer.game.logic.gametasks.hud.elements.player.DriftBar;
+import com.bitfire.uracer.game.logic.gametasks.hud.elements.player.TrackProgress;
 import com.bitfire.uracer.game.logic.gametasks.hud.elements.player.TrackProgress.TrackProgressData;
 import com.bitfire.uracer.game.logic.helpers.CarFactory;
 import com.bitfire.uracer.game.logic.helpers.GameTrack;
@@ -165,8 +166,8 @@ public abstract class CommonLogic implements GameLogic {
 		lapMonitor = new LapCompletionMonitor(eventHandlers, gameTrack);
 
 		input = new GameInput(this, inputSystem);
-		dilationTime.stop();
-		outOfTrackTime.stop();
+		// dilationTime.stop();
+		// outOfTrackTime.stop();
 	}
 
 	@Override
@@ -285,8 +286,8 @@ public abstract class CommonLogic implements GameLogic {
 	public void startTimeDilation () {
 		dilationTime.start();
 		timeMod.toDilatedTime();
-		// playerTasks.hudPlayer.driftBar.showSecondsLabel();
-		updateDriftBar();
+		playerTasks.hudPlayer.driftBar.showSecondsLabel();
+		// updateDriftBar();
 	}
 
 	/** Request time dilation to end */
@@ -295,8 +296,8 @@ public abstract class CommonLogic implements GameLogic {
 		input.resetTimeDilating();
 		dilationTime.reset();
 		timeMod.toNormalTime();
-		// playerTasks.hudPlayer.driftBar.hideSecondsLabel();
-		updateDriftBar();
+		playerTasks.hudPlayer.driftBar.hideSecondsLabel();
+		// updateDriftBar();
 	}
 
 	@Override
@@ -311,7 +312,7 @@ public abstract class CommonLogic implements GameLogic {
 
 		input.update();
 		dbgInput();
-		updateDriftBar();
+		// updateDriftBar();
 	}
 
 	@Override
@@ -362,20 +363,22 @@ public abstract class CommonLogic implements GameLogic {
 		}
 
 		if (hasPlayer()) {
-			playerTasks.hudPlayer.driftBar.setDriftStrength(playerCar.driftState.driftStrength);
-			TrackProgressData data = playerTasks.hudPlayer.trackProgress.getProgressData();
+			updateDriftBar();
+
+			TrackProgress progress = playerTasks.hudPlayer.trackProgress;
+			TrackProgressData data = progress.getProgressData();
 
 			if (lapMonitor.isWarmUp()) {
 				data.reset(true);
 				if (isCurrentLapValid) {
-					playerTasks.hudPlayer.trackProgress.setMessage("Start in "
+					progress.setMessage("Start in "
 						+ Math.round(gameTrack.getTotalLength() - gameTrack.getTrackDistance(playerCar, 0)) + " mt");
 				} else {
-					playerTasks.hudPlayer.trackProgress.setMessage("Press \"R\"\nto restart");
+					progress.setMessage("Press \"R\"\nto restart");
 				}
 			} else {
 				if (isCurrentLapValid) {
-					playerTasks.hudPlayer.trackProgress.setMessage("");
+					progress.setMessage("");
 
 					// use the last one if the replay is finished
 					if (nextTarget != null && nextTarget.hasReplay()) {
@@ -395,7 +398,7 @@ public abstract class CommonLogic implements GameLogic {
 					playerTasks.hudPlayer.setNextTargetAlpha(alpha);
 
 				} else {
-					playerTasks.hudPlayer.trackProgress.setMessage("Press \"R\"\nto restart");
+					progress.setMessage("Press \"R\"\nto restart");
 					data.reset(true);
 				}
 			}
@@ -539,6 +542,9 @@ public abstract class CommonLogic implements GameLogic {
 			return;
 		}
 
+		DriftBar driftBar = playerTasks.hudPlayer.driftBar;
+		driftBar.setDriftStrength(playerCar.driftState.driftStrength);
+
 		if (Config.Debug.InfiniteDilationTime) {
 			accuDriftSeconds.value = DriftBar.MaxSeconds;
 		} else {
@@ -546,7 +552,7 @@ public abstract class CommonLogic implements GameLogic {
 			// if a penalty is being applied, then drift seconds will not be updated
 			if (!isPenalty) {
 
-				// earn game seconds by drifting
+				// earn game-time seconds by drifting
 				if (playerCar.driftState.isDrifting) {
 					accuDriftSeconds.value += Config.Physics.Dt + Config.Physics.Dt * playerCar.driftState.driftStrength;
 				}
@@ -564,7 +570,7 @@ public abstract class CommonLogic implements GameLogic {
 		}
 
 		accuDriftSeconds.value = MathUtils.clamp(accuDriftSeconds.value, 0, DriftBar.MaxSeconds);
-		playerTasks.hudPlayer.driftBar.setSeconds(accuDriftSeconds.value);
+		driftBar.setSeconds(accuDriftSeconds.value);
 	}
 
 	private Replay userRec = null; // dbg on-demand rec/play via Z/X
@@ -799,7 +805,7 @@ public abstract class CommonLogic implements GameLogic {
 					outOfTrack();
 					break;
 				case onBackInTrack:
-					updateDriftBar();
+					// updateDriftBar();
 					outOfTrackTime.reset();
 					playerTasks.hudPlayer.driftBar.hideSecondsLabel();
 
