@@ -551,22 +551,19 @@ public abstract class CommonLogic implements GameLogic {
 			accuDriftSeconds.value = DriftBar.MaxSeconds;
 		} else {
 
-			// if a penalty is being applied, then drift seconds will not be updated
-			if (!isPenalty) {
-				// earn game-time seconds by drifting
-				if (playerCar.driftState.isDrifting) {
-					accuDriftSeconds.value += Config.Physics.Dt + Config.Physics.Dt * playerCar.driftState.driftStrength;
-				}
+			// earn game-time seconds by drifting
+			if (playerCar.driftState.isDrifting) {
+				accuDriftSeconds.value += Config.Physics.Dt + Config.Physics.Dt * playerCar.driftState.driftStrength;
+			}
 
-				// lose wall-clock seconds while in time dilation
-				if (!dilationTime.isStopped()) {
-					accuDriftSeconds.value -= dilationTime.elapsed(Reference.LastAbsoluteSeconds) * 2;
-				}
+			// lose wall-clock seconds while in time dilation
+			if (!dilationTime.isStopped()) {
+				accuDriftSeconds.value -= dilationTime.elapsed(Reference.LastAbsoluteSeconds) * 2;
+			}
 
-				// lose wall-clock seconds while out of track
-				if (!outOfTrackTime.isStopped()) {
-					accuDriftSeconds.value -= outOfTrackTime.elapsed(Reference.LastAbsoluteSeconds);
-				}
+			// lose wall-clock seconds while out of track
+			if (!outOfTrackTime.isStopped()) {
+				accuDriftSeconds.value -= outOfTrackTime.elapsed(Reference.LastAbsoluteSeconds);
 			}
 		}
 
@@ -640,6 +637,8 @@ public abstract class CommonLogic implements GameLogic {
 		@Override
 		public void onWarmUpStarted () {
 			isCurrentLapValid = true;
+			isPenalty = false;
+
 			Gdx.app.log("CommonLogic", "Warmup Started");
 
 			warmUpStarted();
@@ -660,7 +659,6 @@ public abstract class CommonLogic implements GameLogic {
 			isCurrentLapValid = true;
 			isWrongWayInWarmUp = false;
 			isTooSlow = false;
-			isPenalty = false;
 
 			lapManager.stopRecording();
 			playerCar.resetDistanceAndSpeed(true, false);
@@ -789,10 +787,9 @@ public abstract class CommonLogic implements GameLogic {
 					if (!isPenalty) {
 						isPenalty = true;
 						GameTweener.stop(accuDriftSeconds);
-						Timeline driftSecondsTimeline = Timeline.createSequence();
-						driftSecondsTimeline.push(Tween.to(accuDriftSeconds, BoxedFloatAccessor.VALUE, 500).target(0).ease(Quad.INOUT))
-							.setCallback(penaltyFinished);
-						GameTweener.start(driftSecondsTimeline);
+						GameTweener.start(Timeline.createSequence()
+							.push(Tween.to(accuDriftSeconds, BoxedFloatAccessor.VALUE, 500).target(0).ease(Quad.INOUT))
+							.setCallback(penaltyFinished));
 						playerTasks.hudPlayer.highlightCollision();
 					}
 
