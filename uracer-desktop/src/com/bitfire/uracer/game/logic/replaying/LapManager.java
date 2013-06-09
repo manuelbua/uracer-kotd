@@ -31,12 +31,6 @@ public class LapManager implements Disposable {
 		recorder.reset();
 	}
 
-	/** Discard the performance currently being recorded so far */
-	public void abortRecording () {
-		recorder.reset();
-		lapInfo.reset();
-	}
-
 	/** Reset any recorded replay so far */
 	public void reset () {
 		lastRecordedReplay = null;
@@ -154,5 +148,11 @@ public class LapManager implements Disposable {
 			// update lap info with best lap time
 			lapInfo.setBestTrackTimeSeconds(bufferManager.getBestReplay().trackTimeSeconds);
 		}
+	}
+
+	/** Discard the performance currently being recorded so far */
+	public void abortRecording () {
+		recorder.reset();
+		lapInfo.reset();
 	}
 }
