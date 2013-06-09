@@ -271,7 +271,7 @@ public abstract class CommonLogic implements GameLogic {
 
 	@Override
 	public void quitGame () {
-		lapManager.stopRecording();
+		lapManager.abortRecording();
 		gameTasksManager.sound.stop();
 
 		URacer.Screens.setScreen(ScreenType.MainScreen, TransitionType.Fader, 500);
