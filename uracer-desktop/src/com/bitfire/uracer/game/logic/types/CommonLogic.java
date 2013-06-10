@@ -280,7 +280,6 @@ public abstract class CommonLogic implements GameLogic {
 		dilationTime.start();
 		timeMod.toDilatedTime();
 		playerTasks.hudPlayer.driftBar.showSecondsLabel();
-		// updateDriftBar();
 	}
 
 	/** Request time dilation to end */
@@ -290,7 +289,6 @@ public abstract class CommonLogic implements GameLogic {
 		dilationTime.reset();
 		timeMod.toNormalTime();
 		playerTasks.hudPlayer.driftBar.hideSecondsLabel();
-		// updateDriftBar();
 	}
 
 	@Override
@@ -304,7 +302,6 @@ public abstract class CommonLogic implements GameLogic {
 		URacer.timeMultiplier = timeMod.getTime();
 		input.update();
 		dbgInput();
-		// updateDriftBar();
 	}
 
 	@Override
