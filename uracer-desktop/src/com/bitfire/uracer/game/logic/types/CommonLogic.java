@@ -424,7 +424,6 @@ public abstract class CommonLogic implements GameLogic {
 	//
 
 	private void configurePlayer (GameWorld world, Input inputSystem, PlayerCar player) {
-		// create and setup the player
 		player.setInputSystem(inputSystem);
 		player.setFrictionMap(Art.frictionMapDesert);
 		player.setWorldPosMt(world.playerStart.position, world.playerStart.orientation);
@@ -434,9 +433,9 @@ public abstract class CommonLogic implements GameLogic {
 	private void resetPlayer (GameWorld world, Car playerCar) {
 		if (playerCar != null) {
 			playerCar.resetPhysics();
-			// playerCar.getTrackState().reset();
 			playerCar.resetDistanceAndSpeed(true, true);
 			playerCar.setWorldPosMt(world.playerStart.position, world.playerStart.orientation);
+			gameTrack.resetTrackState(playerCar);
 		}
 	}
 
@@ -457,7 +456,6 @@ public abstract class CommonLogic implements GameLogic {
 	private void resetGhost (int handle) {
 		GhostCar ghost = ghostCars[handle];
 		if (ghost != null) {
-			// ghost.getTrackState().reset();
 			ghost.resetPhysics();
 			ghost.resetDistanceAndSpeed(true, true);
 			ghost.removeReplay();
