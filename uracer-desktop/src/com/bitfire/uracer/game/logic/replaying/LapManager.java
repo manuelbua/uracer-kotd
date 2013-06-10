@@ -14,13 +14,13 @@ public class LapManager implements Disposable {
 	private final String levelId;
 	private final ReplayRecorder recorder;
 	private final ReplayBufferManager bufferManager;
-	private Replay lastRecordedReplay;
+	private Replay last;
 
 	public LapManager (UserProfile userProfile, String levelId) {
 		this.levelId = levelId;
 		recorder = new ReplayRecorder(userProfile.userId);
 		bufferManager = new ReplayBufferManager(userProfile.userId);
-		lastRecordedReplay = null;
+		last = null;
 	}
 
 	@Override
@@ -31,12 +31,12 @@ public class LapManager implements Disposable {
 	/** Stops recording and invalidates last recorded replay */
 	public void reset () {
 		abortRecording();
-		lastRecordedReplay = null;
+		last = null;
 	}
 
 	/** Returns the Replay instance where the last recording took place */
 	public Replay getLastRecordedReplay () {
-		return lastRecordedReplay;
+		return last;
 	}
 
 	/** Starts recording the player lap performance. Returns the Replay instance where the recording is being performed. */
@@ -70,7 +70,7 @@ public class LapManager implements Disposable {
 		if (recorder.isRecording()) {
 
 			// ends recording and keeps track of the last recorded replay
-			lastRecordedReplay = recorder.endRecording();
+			last = recorder.endRecording();
 
 			bufferManager.updateReplays();
 		}
