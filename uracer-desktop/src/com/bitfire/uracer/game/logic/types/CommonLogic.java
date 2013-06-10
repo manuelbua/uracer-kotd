@@ -510,6 +510,9 @@ public abstract class CommonLogic implements GameLogic {
 		accuDriftSeconds.value = 0;
 		lastDist = 0;
 		lastCompletion = 0;
+		isCurrentLapValid = true;
+		isTooSlow = false;
+		isPenalty = false;
 	}
 
 	private void resetLogic () {
@@ -624,11 +627,7 @@ public abstract class CommonLogic implements GameLogic {
 
 		@Override
 		public void onWarmUpStarted () {
-			isCurrentLapValid = true;
-			isPenalty = false;
-
 			Gdx.app.log("CommonLogic", "Warmup Started");
-
 			warmUpStarted();
 		}
 
@@ -643,9 +642,6 @@ public abstract class CommonLogic implements GameLogic {
 		@Override
 		public void onLapStarted () {
 			Gdx.app.log("CommonLogic", "Lap Started");
-
-			isCurrentLapValid = true;
-			isTooSlow = false;
 
 			lapManager.stopRecording();
 			playerCar.resetDistanceAndSpeed(true, false);
