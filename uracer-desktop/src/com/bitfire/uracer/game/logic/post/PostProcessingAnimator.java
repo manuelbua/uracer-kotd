@@ -6,11 +6,11 @@ import com.bitfire.uracer.game.player.PlayerCar;
 public interface PostProcessingAnimator {
 	void update (float zoom, float warmUpCompletion);
 
-	void alertWrongWayBegins (int milliseconds);
+	void alertBegins (int milliseconds);
 
-	void alertWrongWayEnds (int milliseconds);
+	void alertEnds (int milliseconds);
 
-	public void alertCollision (float collisionFactor, int milliseconds);
+	public void alert (float collisionFactor, int milliseconds);
 
 	void reset ();
 

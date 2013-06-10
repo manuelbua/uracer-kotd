@@ -175,22 +175,21 @@ public final class PostProcessing {
 		}
 	}
 
-	// features
-	public void alertWrongWayBegins (int milliseconds) {
+	public void alertBegins (int milliseconds) {
 		if (hasPostProcessor && hasAnimator) {
-			animator.alertWrongWayBegins(milliseconds);
+			animator.alertBegins(milliseconds);
 		}
 	}
 
-	public void alertWrongWayEnds (int milliseconds) {
+	public void alertEnds (int milliseconds) {
 		if (hasPostProcessor && hasAnimator) {
-			animator.alertWrongWayEnds(milliseconds);
+			animator.alertEnds(milliseconds);
 		}
 	}
 
-	public void alertCollision (float collisionFactor, int milliseconds) {
+	public void alert (float factor, int milliseconds) {
 		if (hasPostProcessor && hasAnimator) {
-			animator.alertCollision(collisionFactor, milliseconds);
+			animator.alert(factor, milliseconds);
 		}
 	}
 }

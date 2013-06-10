@@ -680,7 +680,7 @@ public abstract class CommonLogic implements GameLogic {
 			playerTasks.hudPlayer.wrongWay.fadeIn();
 			playerTasks.hudLapInfo.toColor(1, 0, 0);
 			playerTasks.hudLapInfo.setInvalid("invalid lap");
-			postProcessing.alertWrongWayBegins(500);
+			postProcessing.alertBegins(500);
 		}
 
 		@Override
@@ -746,7 +746,7 @@ public abstract class CommonLogic implements GameLogic {
 						endTimeDilation();
 					}
 
-					postProcessing.alertCollision(0.75f, 4000);
+					postProcessing.alert(0.75f, 4000);
 
 					if (!isPenalty) {
 						isPenalty = true;
@@ -779,7 +779,7 @@ public abstract class CommonLogic implements GameLogic {
 						lapManager.abortRecording();
 						playerTasks.hudLapInfo.setInvalid("Too slow!");
 						playerTasks.hudLapInfo.toColor(1, 0, 0);
-						postProcessing.alertWrongWayBegins(500);
+						postProcessing.alertBegins(500);
 					}
 					// RecordingNotEnabled
 					// NoError
