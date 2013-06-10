@@ -65,7 +65,7 @@ public abstract class CommonLogic implements GameLogic {
 	protected void newReplay (Replay replay) {
 	}
 
-	protected void discardedReplay (Replay replay) {
+	protected void discardedReplay () {
 	}
 
 	protected void lapStarted () {
@@ -122,6 +122,7 @@ public abstract class CommonLogic implements GameLogic {
 	// lap / replays
 	protected LapManager lapManager = null;
 	private LapCompletionMonitor lapMonitor = null;
+	private float lastDist, lastCompletion;
 
 	// tasks
 	protected GameTasksManager gameTasksManager = null;
@@ -317,8 +318,6 @@ public abstract class CommonLogic implements GameLogic {
 		// game tweener step
 		GameTweener.update();
 	}
-
-	private float lastDist, lastCompletion;
 
 	private void updateLogic () {
 		// FIXME add more description to WHY things are in this order
@@ -654,16 +653,13 @@ public abstract class CommonLogic implements GameLogic {
 		@Override
 		public void onLapCompleted () {
 			Gdx.app.log("CommonLogic", "Lap Completed");
-			lapManager.stopRecording();
-
-			// always work on the ReplayManager copy!
-			Replay lastRecorded = lapManager.getLastRecordedReplay();
-			Replay replay = lapManager.addReplay(lastRecorded);
-			if (replay != null) {
-				newReplay(replay);
-			} else {
-				if (lastRecorded != null && lastRecorded.isValid()) {
-					discardedReplay(lastRecorded);
+			if (lapManager.isRecording()) {
+				Replay last = lapManager.stopRecording();
+				if (last != null) {
+					newReplay(last);
+				} else {
+					// discarded if worse than the worst
+					discardedReplay();
 				}
 			}
 
@@ -674,7 +670,6 @@ public abstract class CommonLogic implements GameLogic {
 		@Override
 		public void onWrongWayBegins () {
 			lapManager.abortRecording();
-
 			playerTasks.hudPlayer.wrongWay.fadeIn();
 			playerTasks.hudLapInfo.toColor(1, 0, 0);
 			playerTasks.hudLapInfo.setInvalid("invalid lap");

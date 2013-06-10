@@ -60,14 +60,20 @@ public class LapManager implements Disposable {
 	}
 
 	/** Ends recording the previously started lap performance */
-	public void stopRecording () {
+	public Replay stopRecording () {
 		if (recorder.isRecording()) {
-
-			// ends recording and keeps track of the last recorded replay
 			last = recorder.endRecording();
-
 			bufferManager.updateReplays();
+
+			Replay replay = manager.addReplay(last);
+
+			// will not be added if worse than the worst
+			if (replay != null) {
+				return replay;
+			}
 		}
+
+		return null;
 	}
 
 	/** Discard the performance currently being recorded so far */
@@ -99,10 +105,5 @@ public class LapManager implements Disposable {
 
 	public void removeAllReplays () {
 		manager.removeAll();
-	}
-
-	// FIXME
-	public Replay addReplay (Replay replay) {
-		return manager.addReplay(replay);
 	}
 }

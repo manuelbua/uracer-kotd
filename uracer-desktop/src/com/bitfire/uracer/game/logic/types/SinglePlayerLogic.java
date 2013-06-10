@@ -89,11 +89,15 @@ public class SinglePlayerLogic extends CommonLogic {
 		gameTasksManager.messager.show("Game reset", 3, Message.Type.Information, Position.Bottom, Size.Big);
 	}
 
-	// a new Replay from the player is available: note that CommonLogic already perform
-	// some basic filtering such as null checking, length validity, better-than-worst...
 	@Override
 	public void newReplay (Replay replay) {
+		messager.show("New record!", 1.5f, Message.Type.Information, Position.Bottom, Size.Big);
 		CarUtils.dumpSpeedInfo("Player", playerCar, replay.getTrackTime());
+	}
+
+	@Override
+	protected void discardedReplay () {
+		messager.show("Try again...", 1.5f, Message.Type.Information, Position.Bottom, Size.Normal);
 	}
 
 	@Override
@@ -105,4 +109,5 @@ public class SinglePlayerLogic extends CommonLogic {
 	protected void warmUpCompleted () {
 		messager.show("GOOOO!!", 1.5f, Message.Type.Information, Position.Top, Size.Big);
 	}
+
 }
