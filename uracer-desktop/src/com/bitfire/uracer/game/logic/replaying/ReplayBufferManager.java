@@ -1,8 +1,7 @@
 
 package com.bitfire.uracer.game.logic.replaying;
 
-/** Provides a buffering scheme for Replay objects. This is an intelligent ring-buffer, in the sense it encapsulates Replay
- * classification and know whether a replay is better than another, easing management at higher level.
+/** TODO
  * 
  * @author bmanuel */
 public final class ReplayBufferManager {

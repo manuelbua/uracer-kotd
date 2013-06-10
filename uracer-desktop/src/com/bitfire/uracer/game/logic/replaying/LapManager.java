@@ -47,6 +47,7 @@ public class LapManager implements Disposable {
 		}
 
 		Replay next = bufferManager.getNextBuffer();
+		Gdx.app.log("Buffering", "using replay #" + System.identityHashCode(next));
 		recorder.beginRecording(car, next, levelId);
 		return next;
 	}

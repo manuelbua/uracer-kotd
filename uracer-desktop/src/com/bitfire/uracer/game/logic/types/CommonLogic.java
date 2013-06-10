@@ -21,7 +21,6 @@ import com.bitfire.uracer.game.DebugHelper;
 import com.bitfire.uracer.game.GameEvents;
 import com.bitfire.uracer.game.GameInput;
 import com.bitfire.uracer.game.GameLogic;
-import com.bitfire.uracer.game.GameplaySettings;
 import com.bitfire.uracer.game.Time;
 import com.bitfire.uracer.game.Time.Reference;
 import com.bitfire.uracer.game.actors.Car;
@@ -685,13 +684,6 @@ public abstract class CommonLogic implements GameLogic {
 			if (!playerTasks.hudLapInfo.isValid()) {
 				playerTasks.hudLapInfo.setValid(true);
 				playerTasks.hudLapInfo.toColor(1, 1, 1);
-			}
-
-			// detect and ignore invalid laps
-			if (lapManager.isRecording() && lapManager.getCurrentReplaySeconds() < GameplaySettings.ReplayMinDurationSecs) {
-				Gdx.app.log("CommonLogic", "Invalid lap detected, too short (" + lapManager.getCurrentReplaySeconds() + "sec < "
-					+ GameplaySettings.ReplayMinDurationSecs + ")");
-				return;
 			}
 
 			// always work on the ReplayManager copy!
