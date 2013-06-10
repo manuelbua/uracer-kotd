@@ -340,13 +340,16 @@ public abstract class CommonLogic implements GameLogic {
 			// triggers lap event callbacks
 			lapMonitor.update();
 
+			boolean wrongWay = wrongWayMonitor.isWrongWay();
+
 			// blink on wrong way (keeps calling, returns earlier if busy)
-			if (wrongWayMonitor.isWrongWay()) {
+			if (wrongWay) {
 				playerTasks.hudPlayer.highlightWrongWay();
-				if (lapMonitor.isWarmUp() || isWrongWayInWarmUp) {
-					isWrongWayInWarmUp = true;
-					lapMonitor.reset();
-				}
+			}
+
+			if ((wrongWay && lapMonitor.isWarmUp()) || isWrongWayInWarmUp) {
+				isWrongWayInWarmUp = true;
+				lapMonitor.reset();
 			}
 		}
 
@@ -667,11 +670,6 @@ public abstract class CommonLogic implements GameLogic {
 
 			if (!isCurrentLapValid) {
 				return;
-			}
-
-			if (!playerTasks.hudLapInfo.isValid()) {
-				playerTasks.hudLapInfo.setValid(true);
-				playerTasks.hudLapInfo.toColor(1, 1, 1);
 			}
 
 			// always work on the ReplayManager copy!
