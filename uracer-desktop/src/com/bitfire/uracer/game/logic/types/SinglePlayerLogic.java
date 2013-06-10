@@ -86,7 +86,7 @@ public class SinglePlayerLogic extends CommonLogic {
 	public void resetGame () {
 		Gdx.app.log("SinglePlayerLogic", "Resetting game");
 		super.resetGame();
-		gameTasksManager.messager.show("Game reset", 3, Message.Type.Information, Position.Bottom, Size.Big);
+		gameTasksManager.messager.show("Game reset", 1.5f, Message.Type.Information, Position.Bottom, Size.Big);
 	}
 
 	@Override

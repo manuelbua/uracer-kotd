@@ -38,7 +38,7 @@ public final class Message {
 
 	private String what;
 	private Position position;
-	private float whereX, whereY;
+	private float whereX, whereY, startX, startY;
 	private float finalY;
 	private float scaleX, scaleY;
 	private BitmapFont font;
@@ -94,6 +94,7 @@ public final class Message {
 				font = BitmapFontFactory.get(FontFace.CurseRedYellow);
 			} else {
 				font = BitmapFontFactory.get(FontFace.CurseRedYellowBig);
+				// font = BitmapFontFactory.get(FontFace.CurseRedYellowNew);
 			}
 			break;
 		}
@@ -105,29 +106,31 @@ public final class Message {
 
 	private void computeFinalPosition () {
 		int widthOnFour = Config.Graphics.ReferenceScreenWidth / 4;
-		whereX = widthOnFour;
-		finalY = 0;
+		startX = whereX = widthOnFour;
+		startY = finalY = 0;
 
-		float distance = 180;
 		float h = Config.Graphics.ReferenceScreenHeight;
+		font.setScale(scale);
 		bounds.set(font.getMultiLineBounds(what));
 
 		switch (position) {
 		case Top:
-			finalY = 30;
-			whereY = -bounds.height;
+			startY = whereY = -(font.getLineHeight() - bounds.height);
+			finalY = 10;
 			break;
 
 		case Middle:
-			finalY = (h - bounds.height) / 2 - bounds.height / 2;
-			whereY = h + bounds.height / 2;
+			startY = whereY = (h - bounds.height) / 2;
+			finalY = startY - bounds.height / 2;
 			break;
 
 		case Bottom:
-			finalY = h - distance;
-			whereY = h + distance;
+			startY = whereY = h;
+			finalY = h - font.getLineHeight() - 70;
 			break;
 		}
+
+		// Gdx.app.log(position.toString(), "s=" + startY + ", e=" + finalY);
 	}
 
 	public void render (SpriteBatch batch) {
@@ -151,17 +154,17 @@ public final class Message {
 		completed = false;
 		hiding = false;
 
-		alpha = 0f;
-		scaleX = scaleY = 1f;
+		setAlpha(0);
+		setScale(0, 0);
 		showCompleted = false;
 
 		computeFinalPosition();
 
 		//@off
 		GameTweener.start(Timeline.createParallel()
-			.push(Tween.to(this, MessageAccessor.OPACITY, 600).target(1f).ease(Expo.INOUT))
-			.push(Tween.to(this, MessageAccessor.POSITION_Y, 600).target(finalY).ease(Expo.INOUT))
-			.push(Tween.to(this, MessageAccessor.SCALE_XY, 600).target(scale, scale).ease(Back.INOUT)).setCallback(showFinished));
+			.push(Tween.to(this, MessageAccessor.OPACITY, 850).target(1f).ease(Expo.INOUT))
+			.push(Tween.to(this, MessageAccessor.POSITION_Y, 700).target(finalY).ease(Expo.INOUT))
+			.push(Tween.to(this, MessageAccessor.SCALE_XY, 800).target(scale, scale).ease(Back.INOUT)).setCallback(showFinished));
 		//@on
 	}
 
@@ -182,8 +185,8 @@ public final class Message {
 			//@off
 			GameTweener.start(Timeline.createParallel()
 				.push(Tween.to(this, MessageAccessor.OPACITY, 600).target(0f).ease(Expo.INOUT))
-				.push(Tween.to(this, MessageAccessor.POSITION_Y, 600).target(-bounds.height * font.getScaleX()).ease(Expo.INOUT))
-				.push(Tween.to(this, MessageAccessor.SCALE_XY, 600).target(0, 0).ease(Back.INOUT)).setCallback(hideFinished));
+				.push(Tween.to(this, MessageAccessor.POSITION_Y, 700).target(startY).ease(Expo.INOUT))
+				.push(Tween.to(this, MessageAccessor.SCALE_XY, 800).target(0, 0).ease(Back.INOUT)).setCallback(hideFinished));
 			//@on
 		}
 	}
