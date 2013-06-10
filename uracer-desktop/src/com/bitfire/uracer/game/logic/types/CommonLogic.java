@@ -656,6 +656,9 @@ public abstract class CommonLogic implements GameLogic {
 			if (lapManager.isRecording()) {
 				Replay last = lapManager.stopRecording();
 				if (last != null) {
+					// FIXME, change name?
+					// FIXME, should also pass more information? such as replay classification (was this replay better than all? than
+					// what?)
 					newReplay(last);
 				} else {
 					// discarded if worse than the worst
