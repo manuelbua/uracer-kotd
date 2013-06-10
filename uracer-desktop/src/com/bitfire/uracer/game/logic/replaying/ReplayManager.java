@@ -108,17 +108,10 @@ public final class ReplayManager implements Disposable {
 			}
 		}
 
-		// dump replays
-		// for (int i = 0; i < MaxReplays; i++) {
-		// Replay r = replays.items.get(i);
-		// if (r.isValid) {
-		// Gdx.app.log("ReplayManager", "#" + i + ", seconds=" + r.trackTimeSeconds);
-		// }
-		// }
-
 		if (added != null) {
 			Gdx.app.log("ReplayManager", "added!");
 		}
+
 		return added;
 	}
 

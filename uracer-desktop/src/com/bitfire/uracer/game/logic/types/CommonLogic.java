@@ -121,7 +121,6 @@ public abstract class CommonLogic implements GameLogic {
 	private Time outOfTrackTime = new Time();
 
 	// lap / replays
-	protected ReplayManager replayManager;
 	protected LapManager lapManager = null;
 	private LapCompletionMonitor lapMonitor = null;
 
@@ -157,7 +156,6 @@ public abstract class CommonLogic implements GameLogic {
 		eventHandlers.registerGhostEvents();
 
 		gameWorldRenderer.setGhostCars(ghostCars);
-		replayManager = new ReplayManager(userProfile, gameWorld.getLevelId());
 		gameTrack = gameWorld.getGameTrack();
 
 		wrongWayMonitor = new WrongWayMonitor(eventHandlers);
@@ -186,7 +184,6 @@ public abstract class CommonLogic implements GameLogic {
 
 		lapManager.dispose();
 		GameTweener.dispose();
-		replayManager.dispose();
 	}
 
 	/** Sets the player from the specified preset */
@@ -305,7 +302,6 @@ public abstract class CommonLogic implements GameLogic {
 	public void tick () {
 		// compute the next-frame time multiplier
 		URacer.timeMultiplier = timeMod.getTime();
-
 		input.update();
 		dbgInput();
 		// updateDriftBar();
@@ -465,11 +461,11 @@ public abstract class CommonLogic implements GameLogic {
 		lastDist = 0;
 
 		int ghostIndex = 0;
-		for (Replay r : replayManager.getReplays()) {
+		for (Replay r : lapManager.getReplays()) {
 			if (r.isValid()) {
 				setGhostReplay(ghostIndex, r);
 
-				if (replayManager.getBestReplay() == r) {
+				if (lapManager.getBestReplay() == r) {
 					nextTarget = ghostCars[ghostIndex];
 					playerTasks.hudPlayer.highlightNextTarget(nextTarget);
 				}
@@ -506,7 +502,7 @@ public abstract class CommonLogic implements GameLogic {
 		restartLogic();
 
 		// clean everything
-		replayManager.removeAll();
+		lapManager.removeAllReplays();
 		lapManager.reset();
 		gameTasksManager.raiseReset();
 	}
@@ -688,7 +684,7 @@ public abstract class CommonLogic implements GameLogic {
 
 			// always work on the ReplayManager copy!
 			Replay lastRecorded = lapManager.getLastRecordedReplay();
-			Replay replay = replayManager.addReplay(lastRecorded);
+			Replay replay = lapManager.addReplay(lastRecorded);
 			if (replay != null) {
 				newReplay(replay);
 			} else {

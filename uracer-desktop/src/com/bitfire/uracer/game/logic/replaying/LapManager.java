@@ -13,6 +13,7 @@ public class LapManager implements Disposable {
 
 	private final String levelId;
 	private final ReplayRecorder recorder;
+	private final ReplayManager manager;
 	private final ReplayBufferManager bufferManager;
 	private Replay last;
 
@@ -20,11 +21,13 @@ public class LapManager implements Disposable {
 		this.levelId = levelId;
 		recorder = new ReplayRecorder(userProfile.userId);
 		bufferManager = new ReplayBufferManager(userProfile.userId);
+		manager = new ReplayManager(userProfile, levelId);
 		last = null;
 	}
 
 	@Override
 	public void dispose () {
+		manager.dispose();
 		recorder.dispose();
 	}
 
@@ -32,11 +35,6 @@ public class LapManager implements Disposable {
 	public void reset () {
 		abortRecording();
 		last = null;
-	}
-
-	/** Returns the Replay instance where the last recording took place */
-	public Replay getLastRecordedReplay () {
-		return last;
 	}
 
 	/** Starts recording the player lap performance. Returns the Replay instance where the recording is being performed. */
@@ -61,11 +59,6 @@ public class LapManager implements Disposable {
 		return RecorderError.RecordingNotEnabled;
 	}
 
-	/** Returns whether or not the lap manager is recording the player's performance */
-	public boolean isRecording () {
-		return recorder.isRecording();
-	}
-
 	/** Ends recording the previously started lap performance */
 	public void stopRecording () {
 		if (recorder.isRecording()) {
@@ -82,7 +75,34 @@ public class LapManager implements Disposable {
 		recorder.reset();
 	}
 
+	/** Returns whether or not the lap manager is recording the player's performance */
+	public boolean isRecording () {
+		return recorder.isRecording();
+	}
+
 	public float getCurrentReplaySeconds () {
 		return recorder.getElapsedSeconds();
+	}
+
+	/** Returns the Replay instance where the last recording took place */
+	public Replay getLastRecordedReplay () {
+		return last;
+	}
+
+	public Iterable<Replay> getReplays () {
+		return manager.getReplays();
+	}
+
+	public Replay getBestReplay () {
+		return manager.getBestReplay();
+	}
+
+	public void removeAllReplays () {
+		manager.removeAll();
+	}
+
+	// FIXME
+	public Replay addReplay (Replay replay) {
+		return manager.addReplay(replay);
 	}
 }
