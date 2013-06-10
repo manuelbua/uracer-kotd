@@ -13,30 +13,28 @@ public class LapManager implements Disposable {
 
 	private final String levelId;
 	private final ReplayRecorder recorder;
+	private final ReplayManager manager;
 	private final ReplayBufferManager bufferManager;
-	private Replay lastRecordedReplay;
+	private Replay last;
 
 	public LapManager (UserProfile userProfile, String levelId) {
 		this.levelId = levelId;
 		recorder = new ReplayRecorder(userProfile.userId);
 		bufferManager = new ReplayBufferManager(userProfile.userId);
-		lastRecordedReplay = null;
+		manager = new ReplayManager(userProfile, levelId);
+		last = null;
 	}
 
 	@Override
 	public void dispose () {
+		manager.dispose();
 		recorder.dispose();
 	}
 
 	/** Stops recording and invalidates last recorded replay */
 	public void reset () {
 		abortRecording();
-		lastRecordedReplay = null;
-	}
-
-	/** Returns the Replay instance where the last recording took place */
-	public Replay getLastRecordedReplay () {
-		return lastRecordedReplay;
+		last = null;
 	}
 
 	/** Starts recording the player lap performance. Returns the Replay instance where the recording is being performed. */
@@ -47,6 +45,7 @@ public class LapManager implements Disposable {
 		}
 
 		Replay next = bufferManager.getNextBuffer();
+		Gdx.app.log("Buffering", "using replay #" + System.identityHashCode(next));
 		recorder.beginRecording(car, next, levelId);
 		return next;
 	}
@@ -60,17 +59,12 @@ public class LapManager implements Disposable {
 		return RecorderError.RecordingNotEnabled;
 	}
 
-	/** Returns whether or not the lap manager is recording the player's performance */
-	public boolean isRecording () {
-		return recorder.isRecording();
-	}
-
 	/** Ends recording the previously started lap performance */
 	public void stopRecording () {
 		if (recorder.isRecording()) {
 
 			// ends recording and keeps track of the last recorded replay
-			lastRecordedReplay = recorder.endRecording();
+			last = recorder.endRecording();
 
 			bufferManager.updateReplays();
 		}
@@ -81,7 +75,34 @@ public class LapManager implements Disposable {
 		recorder.reset();
 	}
 
+	/** Returns whether or not the lap manager is recording the player's performance */
+	public boolean isRecording () {
+		return recorder.isRecording();
+	}
+
 	public float getCurrentReplaySeconds () {
 		return recorder.getElapsedSeconds();
+	}
+
+	/** Returns the Replay instance where the last recording took place */
+	public Replay getLastRecordedReplay () {
+		return last;
+	}
+
+	public Iterable<Replay> getReplays () {
+		return manager.getReplays();
+	}
+
+	public Replay getBestReplay () {
+		return manager.getBestReplay();
+	}
+
+	public void removeAllReplays () {
+		manager.removeAll();
+	}
+
+	// FIXME
+	public Replay addReplay (Replay replay) {
+		return manager.addReplay(replay);
 	}
 }

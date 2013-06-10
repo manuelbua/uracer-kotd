@@ -21,7 +21,6 @@ import com.bitfire.uracer.game.DebugHelper;
 import com.bitfire.uracer.game.GameEvents;
 import com.bitfire.uracer.game.GameInput;
 import com.bitfire.uracer.game.GameLogic;
-import com.bitfire.uracer.game.GameplaySettings;
 import com.bitfire.uracer.game.Time;
 import com.bitfire.uracer.game.Time.Reference;
 import com.bitfire.uracer.game.actors.Car;
@@ -114,7 +113,6 @@ public abstract class CommonLogic implements GameLogic {
 	protected GhostCar[] ghostCars = new GhostCar[ReplayManager.MaxReplays];
 	private WrongWayMonitor wrongWayMonitor;
 	protected boolean isCurrentLapValid = true;
-	protected boolean isWrongWayInWarmUp = false;
 	protected boolean isTooSlow = false;
 	protected boolean isPenalty;
 	private GhostCar nextTarget = null;
@@ -122,7 +120,6 @@ public abstract class CommonLogic implements GameLogic {
 	private Time outOfTrackTime = new Time();
 
 	// lap / replays
-	protected ReplayManager replayManager;
 	protected LapManager lapManager = null;
 	private LapCompletionMonitor lapMonitor = null;
 
@@ -158,7 +155,6 @@ public abstract class CommonLogic implements GameLogic {
 		eventHandlers.registerGhostEvents();
 
 		gameWorldRenderer.setGhostCars(ghostCars);
-		replayManager = new ReplayManager(userProfile, gameWorld.getLevelId());
 		gameTrack = gameWorld.getGameTrack();
 
 		wrongWayMonitor = new WrongWayMonitor(eventHandlers);
@@ -187,7 +183,6 @@ public abstract class CommonLogic implements GameLogic {
 
 		lapManager.dispose();
 		GameTweener.dispose();
-		replayManager.dispose();
 	}
 
 	/** Sets the player from the specified preset */
@@ -284,7 +279,6 @@ public abstract class CommonLogic implements GameLogic {
 		dilationTime.start();
 		timeMod.toDilatedTime();
 		playerTasks.hudPlayer.driftBar.showSecondsLabel();
-		// updateDriftBar();
 	}
 
 	/** Request time dilation to end */
@@ -294,7 +288,6 @@ public abstract class CommonLogic implements GameLogic {
 		dilationTime.reset();
 		timeMod.toNormalTime();
 		playerTasks.hudPlayer.driftBar.hideSecondsLabel();
-		// updateDriftBar();
 	}
 
 	@Override
@@ -306,10 +299,8 @@ public abstract class CommonLogic implements GameLogic {
 	public void tick () {
 		// compute the next-frame time multiplier
 		URacer.timeMultiplier = timeMod.getTime();
-
 		input.update();
 		dbgInput();
-		// updateDriftBar();
 	}
 
 	@Override
@@ -342,15 +333,33 @@ public abstract class CommonLogic implements GameLogic {
 		}
 
 		if (hasPlayer()) {
+			// triggers wrong way event callbacks
 			wrongWayMonitor.update(gameTrack.getTrackRouteConfidence(playerCar));
+
+			isCurrentLapValid = !wrongWayMonitor.isWrongWay() && !isTooSlow;
+
+			if (wrongWayMonitor.isWrongWay() || isTooSlow) {
+				// blink CarHighlighter on wrong way or too slow (keeps calling, returns earlier if busy)
+				playerTasks.hudPlayer.highlightWrongWay();
+
+				// inhibits lap monitor to raise events
+				lapMonitor.reset();
+			} else {
+				// triggers lap event callbacks
+				lapMonitor.update();
+			}
 		}
 
-		// this will trigger lapComplete/lapStarted events!
-		lapMonitor.update();
+		{
+			// blink CarHighlighter on out of track (keeps calling, returns earlier if busy)
+			if (playerCar.isOutOfTrack()) {
+				playerTasks.hudPlayer.highlightOutOfTrack();
+			}
 
-		// determine player's isWrongWay
-		if (hasPlayer()) {
-			checkValidLap();
+			// reset progress if too slow
+			if (isTooSlow) {
+				playerTasks.hudPlayer.trackProgress.getProgressData().reset(true);
+			}
 		}
 
 		// ends time dilation if no more seconds available
@@ -466,11 +475,11 @@ public abstract class CommonLogic implements GameLogic {
 		lastDist = 0;
 
 		int ghostIndex = 0;
-		for (Replay r : replayManager.getReplays()) {
+		for (Replay r : lapManager.getReplays()) {
 			if (r.isValid()) {
 				setGhostReplay(ghostIndex, r);
 
-				if (replayManager.getBestReplay() == r) {
+				if (lapManager.getBestReplay() == r) {
 					nextTarget = ghostCars[ghostIndex];
 					playerTasks.hudPlayer.highlightNextTarget(nextTarget);
 				}
@@ -507,33 +516,9 @@ public abstract class CommonLogic implements GameLogic {
 		restartLogic();
 
 		// clean everything
-		replayManager.removeAll();
+		lapManager.removeAllReplays();
 		lapManager.reset();
 		gameTasksManager.raiseReset();
-	}
-
-	private void checkValidLap () {
-		boolean wrongWay = wrongWayMonitor.isWrongWay();
-		isCurrentLapValid = !wrongWay && !isTooSlow;
-
-		if ((wrongWay && lapMonitor.isWarmUp()) || isWrongWayInWarmUp) {
-			isWrongWayInWarmUp = true;
-			lapMonitor.reset();
-		}
-
-		// blink on wrong way (keeps calling, returns earlier if busy)
-		if (wrongWay) {
-			playerTasks.hudPlayer.highlightWrongWay();
-		}
-
-		// blink on out of track (keeps calling, returns earlier if busy)
-		if (playerCar.isOutOfTrack()) {
-			playerTasks.hudPlayer.highlightOutOfTrack();
-		}
-
-		if (isTooSlow) {
-			playerTasks.hudPlayer.trackProgress.getProgressData().reset(true);
-		}
 	}
 
 	private void updateDriftBar () {
@@ -660,7 +645,6 @@ public abstract class CommonLogic implements GameLogic {
 			Gdx.app.log("CommonLogic", "Lap Started");
 
 			isCurrentLapValid = true;
-			isWrongWayInWarmUp = false;
 			isTooSlow = false;
 
 			lapManager.stopRecording();
@@ -682,21 +666,9 @@ public abstract class CommonLogic implements GameLogic {
 				return;
 			}
 
-			if (!playerTasks.hudLapInfo.isValid()) {
-				playerTasks.hudLapInfo.setValid(true);
-				playerTasks.hudLapInfo.toColor(1, 1, 1);
-			}
-
-			// detect and ignore invalid laps
-			if (lapManager.isRecording() && lapManager.getCurrentReplaySeconds() < GameplaySettings.ReplayMinDurationSecs) {
-				Gdx.app.log("CommonLogic", "Invalid lap detected, too short (" + lapManager.getCurrentReplaySeconds() + "sec < "
-					+ GameplaySettings.ReplayMinDurationSecs + ")");
-				return;
-			}
-
 			// always work on the ReplayManager copy!
 			Replay lastRecorded = lapManager.getLastRecordedReplay();
-			Replay replay = replayManager.addReplay(lastRecorded);
+			Replay replay = lapManager.addReplay(lastRecorded);
 			if (replay != null) {
 				newReplay(replay);
 			} else {
@@ -865,6 +837,5 @@ public abstract class CommonLogic implements GameLogic {
 		public void unregisterGhostEvents () {
 			GameEvents.ghostCars.removeListener(ghostListener, GhostCarEvent.Type.onGhostFadingOut);
 		}
-
 	}
 }
