@@ -337,15 +337,34 @@ public abstract class CommonLogic implements GameLogic {
 		}
 
 		if (hasPlayer()) {
+			// triggers wrong way event callbacks
 			wrongWayMonitor.update(gameTrack.getTrackRouteConfidence(playerCar));
+
+			// triggers lap event callbacks
+			lapMonitor.update();
+
+			// blink on wrong way (keeps calling, returns earlier if busy)
+			if (wrongWayMonitor.isWrongWay()) {
+				playerTasks.hudPlayer.highlightWrongWay();
+				if (lapMonitor.isWarmUp() || isWrongWayInWarmUp) {
+					isWrongWayInWarmUp = true;
+					lapMonitor.reset();
+				}
+			}
 		}
 
-		// this will trigger lapComplete/lapStarted events!
-		lapMonitor.update();
+		isCurrentLapValid = !wrongWayMonitor.isWrongWay() && !isTooSlow;
 
-		// determine player's isWrongWay
-		if (hasPlayer()) {
-			checkValidLap();
+		{
+			// blink on out of track (keeps calling, returns earlier if busy)
+			if (playerCar.isOutOfTrack()) {
+				playerTasks.hudPlayer.highlightOutOfTrack();
+			}
+
+			// reset progress if too slow
+			if (isTooSlow) {
+				playerTasks.hudPlayer.trackProgress.getProgressData().reset(true);
+			}
 		}
 
 		// ends time dilation if no more seconds available
@@ -505,30 +524,6 @@ public abstract class CommonLogic implements GameLogic {
 		lapManager.removeAllReplays();
 		lapManager.reset();
 		gameTasksManager.raiseReset();
-	}
-
-	private void checkValidLap () {
-		boolean wrongWay = wrongWayMonitor.isWrongWay();
-		isCurrentLapValid = !wrongWay && !isTooSlow;
-
-		if ((wrongWay && lapMonitor.isWarmUp()) || isWrongWayInWarmUp) {
-			isWrongWayInWarmUp = true;
-			lapMonitor.reset();
-		}
-
-		// blink on wrong way (keeps calling, returns earlier if busy)
-		if (wrongWay) {
-			playerTasks.hudPlayer.highlightWrongWay();
-		}
-
-		// blink on out of track (keeps calling, returns earlier if busy)
-		if (playerCar.isOutOfTrack()) {
-			playerTasks.hudPlayer.highlightOutOfTrack();
-		}
-
-		if (isTooSlow) {
-			playerTasks.hudPlayer.trackProgress.getProgressData().reset(true);
-		}
 	}
 
 	private void updateDriftBar () {
