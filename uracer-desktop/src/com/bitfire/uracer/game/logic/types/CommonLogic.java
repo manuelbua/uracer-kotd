@@ -113,7 +113,6 @@ public abstract class CommonLogic implements GameLogic {
 	protected GhostCar[] ghostCars = new GhostCar[ReplayManager.MaxReplays];
 	private WrongWayMonitor wrongWayMonitor;
 	protected boolean isCurrentLapValid = true;
-	protected boolean isWrongWayInWarmUp = false;
 	protected boolean isTooSlow = false;
 	protected boolean isPenalty;
 	private GhostCar nextTarget = null;
@@ -337,26 +336,22 @@ public abstract class CommonLogic implements GameLogic {
 			// triggers wrong way event callbacks
 			wrongWayMonitor.update(gameTrack.getTrackRouteConfidence(playerCar));
 
-			// triggers lap event callbacks
-			lapMonitor.update();
+			isCurrentLapValid = !wrongWayMonitor.isWrongWay() && !isTooSlow;
 
-			boolean wrongWay = wrongWayMonitor.isWrongWay();
-
-			// blink on wrong way (keeps calling, returns earlier if busy)
-			if (wrongWay) {
+			if (wrongWayMonitor.isWrongWay() || isTooSlow) {
+				// blink CarHighlighter on wrong way or too slow (keeps calling, returns earlier if busy)
 				playerTasks.hudPlayer.highlightWrongWay();
-			}
 
-			if ((wrongWay && lapMonitor.isWarmUp()) || isWrongWayInWarmUp) {
-				isWrongWayInWarmUp = true;
+				// inhibits lap monitor to raise events
 				lapMonitor.reset();
+			} else {
+				// triggers lap event callbacks
+				lapMonitor.update();
 			}
 		}
 
-		isCurrentLapValid = !wrongWayMonitor.isWrongWay() && !isTooSlow;
-
 		{
-			// blink on out of track (keeps calling, returns earlier if busy)
+			// blink CarHighlighter on out of track (keeps calling, returns earlier if busy)
 			if (playerCar.isOutOfTrack()) {
 				playerTasks.hudPlayer.highlightOutOfTrack();
 			}
@@ -650,7 +645,6 @@ public abstract class CommonLogic implements GameLogic {
 			Gdx.app.log("CommonLogic", "Lap Started");
 
 			isCurrentLapValid = true;
-			isWrongWayInWarmUp = false;
 			isTooSlow = false;
 
 			lapManager.stopRecording();
@@ -843,6 +837,5 @@ public abstract class CommonLogic implements GameLogic {
 		public void unregisterGhostEvents () {
 			GameEvents.ghostCars.removeListener(ghostListener, GhostCarEvent.Type.onGhostFadingOut);
 		}
-
 	}
 }

@@ -26,7 +26,7 @@ import com.bitfire.uracer.game.logic.gametasks.messager.Message.Size;
  * @author manuel */
 
 public class Replay implements Disposable {
-	public static final int MaxEvents = 5000;
+	public static final int MaxEvents = 500;
 
 	// car data
 	private Vector2 carPositionMt = new Vector2();
