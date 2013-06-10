@@ -338,15 +338,15 @@ public abstract class CommonLogic implements GameLogic {
 
 			isCurrentLapValid = !wrongWayMonitor.isWrongWay() && !isTooSlow;
 
-			if (wrongWayMonitor.isWrongWay() || isTooSlow) {
+			if (isCurrentLapValid) {
+				// triggers lap event callbacks
+				lapMonitor.update();
+			} else {
 				// blink CarHighlighter on wrong way or too slow (keeps calling, returns earlier if busy)
 				playerTasks.hudPlayer.highlightWrongWay();
 
 				// inhibits lap monitor to raise events
 				lapMonitor.reset();
-			} else {
-				// triggers lap event callbacks
-				lapMonitor.update();
 			}
 		}
 
@@ -658,10 +658,6 @@ public abstract class CommonLogic implements GameLogic {
 			Gdx.app.log("CommonLogic", "Lap Completed");
 			lapManager.stopRecording();
 
-			if (!isCurrentLapValid) {
-				return;
-			}
-
 			// always work on the ReplayManager copy!
 			Replay lastRecorded = lapManager.getLastRecordedReplay();
 			Replay replay = lapManager.addReplay(lastRecorded);
@@ -783,6 +779,7 @@ public abstract class CommonLogic implements GameLogic {
 						lapManager.abortRecording();
 						playerTasks.hudLapInfo.setInvalid("Too slow!");
 						playerTasks.hudLapInfo.toColor(1, 0, 0);
+						postProcessing.alertWrongWayBegins(500);
 					}
 					// RecordingNotEnabled
 					// NoError
