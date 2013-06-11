@@ -14,13 +14,11 @@ public class LapManager implements Disposable {
 	private final String levelId;
 	private final ReplayRecorder recorder;
 	private final ReplayManager manager;
-	private final ReplayBufferManager bufferManager;
 	private Replay last;
 
 	public LapManager (UserProfile userProfile, String levelId) {
 		this.levelId = levelId;
 		recorder = new ReplayRecorder(userProfile.userId);
-		bufferManager = new ReplayBufferManager(userProfile.userId);
 		manager = new ReplayManager(userProfile, levelId);
 		last = null;
 	}
@@ -38,16 +36,13 @@ public class LapManager implements Disposable {
 	}
 
 	/** Starts recording the player lap performance. Returns the Replay instance where the recording is being performed. */
-	public Replay startRecording (Car car) {
+	public void startRecording (Car car) {
 		if (recorder.isRecording()) {
 			Gdx.app.log("TrackLapManager", "Couldn't start recording since it's already started.");
-			return null;
+			return;
 		}
 
-		Replay next = bufferManager.getNextBuffer();
-		Gdx.app.log("Buffering", "using replay #" + System.identityHashCode(next));
-		recorder.beginRecording(car, next, levelId);
-		return next;
+		recorder.beginRecording(car, levelId);
 	}
 
 	/** Add and record the specified CarForces */
@@ -63,14 +58,9 @@ public class LapManager implements Disposable {
 	public Replay stopRecording () {
 		if (recorder.isRecording()) {
 			last = recorder.endRecording();
-			bufferManager.updateReplays();
-
-			Replay replay = manager.addReplay(last);
 
 			// will not be added if worse than the worst
-			if (replay != null) {
-				return replay;
-			}
+			return manager.addReplay(last);
 		}
 
 		return null;

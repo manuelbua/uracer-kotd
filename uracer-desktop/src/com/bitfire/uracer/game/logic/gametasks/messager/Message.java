@@ -38,7 +38,7 @@ public final class Message {
 
 	private String what;
 	private Position position;
-	private float whereX, whereY, startX, startY;
+	private float whereX, whereY, startY;
 	private float finalY;
 	private float scaleX, scaleY;
 	private BitmapFont font;
@@ -106,7 +106,7 @@ public final class Message {
 
 	private void computeFinalPosition () {
 		int widthOnFour = Config.Graphics.ReferenceScreenWidth / 4;
-		startX = whereX = widthOnFour;
+		whereX = widthOnFour;
 		startY = finalY = 0;
 
 		float h = Config.Graphics.ReferenceScreenHeight;
@@ -137,7 +137,6 @@ public final class Message {
 		font.setScale(scaleX, scaleY);
 		font.setColor(1, 1, 1, alpha);
 		font.drawMultiLine(batch, what, whereX, whereY, halfWidth, HAlignment.CENTER);
-		// font.setColor(1, 1, 1, 1);
 	}
 
 	private TweenCallback showFinished = new TweenCallback() {

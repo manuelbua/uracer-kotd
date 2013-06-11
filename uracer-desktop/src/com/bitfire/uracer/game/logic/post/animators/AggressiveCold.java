@@ -186,6 +186,7 @@ public final class AggressiveCold implements PostProcessingAnimator {
 			lastAlertFactor = 0;
 			vignette.setEnabled(true);
 
+			// terminate pending, unfinished alert, if any
 			if (alertAmount.value > 0) {
 				alertBegan = true;
 				alertEnds(Config.Graphics.DefaultResetFadeMilliseconds);
