@@ -10,6 +10,7 @@ import aurelienribon.tweenengine.equations.Quad;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Input.Keys;
 import com.badlogic.gdx.math.MathUtils;
+import com.badlogic.gdx.math.Vector2;
 import com.bitfire.uracer.Input;
 import com.bitfire.uracer.URacer;
 import com.bitfire.uracer.configuration.Config;
@@ -60,7 +61,9 @@ import com.bitfire.uracer.utils.NumberString;
 
 public abstract class CommonLogic implements GameLogic {
 
-	protected abstract float updateCamera (float timeModFactor);
+	protected abstract float updateCameraZoom (float timeModFactor);
+
+	protected abstract void updateCameraPosition (Vector2 positionPx);
 
 	protected void newReplay (Replay replay) {
 	}
@@ -105,6 +108,7 @@ public abstract class CommonLogic implements GameLogic {
 	private GameRenderer gameRenderer = null;
 	protected GameWorldRenderer gameWorldRenderer = null;
 	protected PostProcessing postProcessing = null;
+	private Vector2 cameraPos = new Vector2();
 
 	// player
 	protected final EventHandlers eventHandlers = new EventHandlers();
@@ -214,12 +218,8 @@ public abstract class CommonLogic implements GameLogic {
 		Gdx.app.log("GameLogic", "Registered player-related events");
 
 		postProcessing.setPlayer(playerCar);
-		gameWorldRenderer.setPlayerCar(playerCar);
+		gameWorld.setPlayer(playerCar);
 		gameWorldRenderer.setRenderPlayerHeadlights(gameWorld.isNightMode());
-
-		gameWorldRenderer.setInitialCameraPositionOrient(playerCar);
-		updateCamera(0);
-		gameWorldRenderer.updateCamera();
 
 		gameWorldRenderer.showDebugGameTrack(Config.Debug.RenderTrackSectors);
 		gameWorldRenderer.setGameTrackDebugCar(playerCar);
@@ -318,8 +318,13 @@ public abstract class CommonLogic implements GameLogic {
 
 	@Override
 	public void beforeRender () {
-		float zoom = updateCamera(URacer.Game.getTimeModFactor());
+		float zoom = updateCameraZoom(URacer.Game.getTimeModFactor());
+		updateCameraPosition(cameraPos);
+
+		gameWorldRenderer.setCameraZoom(zoom);
+		gameWorldRenderer.setCameraPosition(cameraPos);
 		gameWorldRenderer.updateCamera();
+
 		postProcessing.onBeforeRender(zoom, lapMonitor.getWarmUpCompletion());
 
 		// game tweener step

@@ -86,12 +86,11 @@ public final class GameRenderer {
 		return worldRenderer.getNormalDepthMap();
 	}
 
-	public void beforeRender (float timeAliasingFactor) {
-		// update lights
+	private void updateLights () {
+		// update ambient lights
 		Color ambient = worldRenderer.getAmbientColor();
 		Color treesAmbient = worldRenderer.getTreesAmbientColor();
 
-		// update lights
 		ambient.set(0.1f, 0.05f, 0.15f, 0.4f + 0.2f * URacer.Game.getTimeModFactor());
 		treesAmbient.set(ambient.r, ambient.g * 2f, ambient.b, 0.4f + 0.5f * URacer.Game.getTimeModFactor());
 
@@ -103,7 +102,7 @@ public final class GameRenderer {
 		ambient.clamp();
 		treesAmbient.clamp();
 
-		// more intensity from lights near the player
+		// update point lights, more intensity from lights near the player
 		PointLight[] lights = world.getLights();
 		if (lights != null && world.getPlayer() != null) {
 			PlayerCar player = world.getPlayer();
@@ -116,6 +115,11 @@ public final class GameRenderer {
 				lights[l].setColor(1, 1, 1, AMath.fixup(0.3f + 0.3f * dist));
 			}
 		}
+	}
+
+	public void beforeRender (float timeAliasingFactor) {
+
+		updateLights();
 
 		// update matrices and cameras
 		GameEvents.gameRenderer.mtxOrthographicMvpMt = worldRenderer.getOrthographicMvpMt();

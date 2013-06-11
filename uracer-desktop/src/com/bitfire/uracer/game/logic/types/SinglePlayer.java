@@ -2,6 +2,7 @@
 package com.bitfire.uracer.game.logic.types;
 
 import com.badlogic.gdx.Gdx;
+import com.badlogic.gdx.math.Vector2;
 import com.bitfire.uracer.configuration.UserProfile;
 import com.bitfire.uracer.game.logic.gametasks.Messager;
 import com.bitfire.uracer.game.logic.gametasks.messager.Message;
@@ -16,14 +17,14 @@ import com.bitfire.uracer.utils.CarUtils;
 import com.bitfire.uracer.utils.Convert;
 import com.bitfire.uracer.utils.InterpolatedFloat;
 
-public class SinglePlayerLogic extends CommonLogic {
+public class SinglePlayer extends CommonLogic {
 
 	private Messager messager;
 	private float prevZoom = GameWorldRenderer.MinCameraZoom + GameWorldRenderer.ZoomWindow;
 	// private InterpolatedFloat speed = new InterpolatedFloat()
 	private InterpolatedFloat drift = new InterpolatedFloat();
 
-	public SinglePlayerLogic (UserProfile userProfile, GameWorld gameWorld, GameRenderer gameRenderer) {
+	public SinglePlayer (UserProfile userProfile, GameWorld gameWorld, GameRenderer gameRenderer) {
 		super(userProfile, gameWorld, gameRenderer);
 		messager = gameTasksManager.messager;
 	}
@@ -34,7 +35,7 @@ public class SinglePlayerLogic extends CommonLogic {
 	}
 
 	@Override
-	protected float updateCamera (float timeModFactor) {
+	protected float updateCameraZoom (float timeModFactor) {
 		if (hasPlayer()) {
 			// speed.set(playerCar.carState.currSpeedFactor, 0.02f);
 			drift.set(playerCar.driftState.driftStrength, 0.02f);
@@ -51,27 +52,28 @@ public class SinglePlayerLogic extends CommonLogic {
 		cameraZoom = AMath.clampf(cameraZoom, minZoom, maxZoom);
 		cameraZoom = AMath.fixupTo(cameraZoom, minZoom + GameWorldRenderer.ZoomWindow);
 
-		gameWorldRenderer.setCameraZoom(cameraZoom);
 		prevZoom = cameraZoom;
 
-		// update player's headlights and move the world camera to follows it, if there is a player
+		return cameraZoom;
+	}
+
+	@Override
+	protected void updateCameraPosition (Vector2 positionPx) {
 		if (hasPlayer()) {
 
+			// update player's headlights and move the world camera to follows it, if there is a player
 			if (gameWorld.isNightMode()) {
 				gameWorldRenderer.updatePlayerHeadlights(playerCar);
 			}
 
-			gameWorldRenderer.setCameraPosition(playerCar.state().position, playerCar.state().orientation,
-				playerCar.carState.currSpeedFactor);
+			positionPx.set(playerCar.state().position);
 
 		} else if (isGhostActive(0)) {
-			gameWorldRenderer.setCameraPosition(getGhost(0).state().position, getGhost(0).state().orientation, 0);
+			positionPx.set(getGhost(0).state().position);
 		} else {
 			// no ghost, no player, WTF?
-			gameWorldRenderer.setCameraPosition(Convert.mt2px(gameWorld.playerStart.position), gameWorld.playerStart.orientation, 0);
+			positionPx.set(Convert.mt2px(gameWorld.playerStart.position));
 		}
-
-		return cameraZoom;
 	}
 
 	// the game has been restarted

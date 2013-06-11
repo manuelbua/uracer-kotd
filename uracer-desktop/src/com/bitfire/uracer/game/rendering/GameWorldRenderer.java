@@ -91,7 +91,6 @@ public final class GameWorldRenderer {
 	// the game world
 	private GameWorld world = null;
 	private GhostCar ghostCars[] = null;
-	private PlayerCar playerCar = null;
 
 	// camera view
 	protected PerspectiveCamera camPersp = null;
@@ -348,26 +347,17 @@ public final class GameWorldRenderer {
 	private Vector2 cameraPos = new Vector2();
 	private float cameraZoom = 1;
 
-	public void setInitialCameraPositionOrient (Car car) {
-		cameraPos.set(Convert.mt2px(car.getWorldPosMt()));
-		camController.setInitialPositionOrient(cameraPos, car.getWorldOrientRads() * MathUtils.radiansToDegrees, cameraZoom);
-	}
-
-	public void setCameraPosition (Vector2 positionPx, float orient, float velocityFactor) {
-		cameraPos.set(camController.transform(positionPx, orient, velocityFactor, cameraZoom));
+	public void setCameraPosition (Vector2 positionPx) {
+		cameraPos.set(camController.transform(positionPx, cameraZoom));
 	}
 
 	public void setCameraZoom (float zoom) {
 		cameraZoom = zoom;
 	}
 
-	// do not use camOrtho.zoom directly since it will be bound later at updateCamera!
+	// NOTE: do not use camOrtho.zoom directly since it will be bound later at updateCamera!
 	public float getCameraZoom () {
 		return cameraZoom;
-	}
-
-	public void setPlayerCar (PlayerCar player) {
-		this.playerCar = player;
 	}
 
 	public void setGhostCars (GhostCar[] ghosts) {
@@ -794,8 +784,9 @@ public final class GameWorldRenderer {
 			gl.glClear(GL20.GL_DEPTH_BUFFER_BIT);
 		}
 
-		if (playerCar != null) {
-			car = playerCar.getStillModel();
+		PlayerCar player = world.getPlayer();
+		if (player != null) {
+			car = player.getStillModel();
 			car.transform(camPersp, camOrtho);
 			renderCar(car, depthOnly, false);
 		}
