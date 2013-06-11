@@ -4,7 +4,7 @@ package com.bitfire.uracer.game.logic.gametasks;
 import com.bitfire.uracer.game.logic.gametasks.sounds.SoundEffect;
 import com.bitfire.utils.ItemsManager;
 
-public class SoundManager extends GameTask {
+public class SoundManager extends GameTask implements DisposableTasks {
 	private final ItemsManager<SoundEffect> manager = new ItemsManager<SoundEffect>();
 
 	public SoundManager () {
@@ -13,6 +13,11 @@ public class SoundManager extends GameTask {
 	@Override
 	public void dispose () {
 		super.dispose();
+		disposeTasks();
+	}
+
+	@Override
+	public void disposeTasks () {
 		manager.dispose();
 	}
 

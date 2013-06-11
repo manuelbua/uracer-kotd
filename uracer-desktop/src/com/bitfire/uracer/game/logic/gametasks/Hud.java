@@ -9,7 +9,7 @@ import com.bitfire.uracer.game.logic.gametasks.hud.HudElement;
 import com.bitfire.utils.ItemsManager;
 
 /** Encapsulates an head-up manager that will callback HudElement events for their updating and drawing operations. */
-public final class Hud extends GameTask {
+public final class Hud extends GameTask implements DisposableTasks {
 
 	private static final GameRendererEvent.Type RenderEventBeforePost = GameRendererEvent.Type.BatchBeforePostProcessing;
 	private static final GameRendererEvent.Type RenderEventAfterPost = GameRendererEvent.Type.BatchAfterPostProcessing;
@@ -72,8 +72,14 @@ public final class Hud extends GameTask {
 		GameEvents.gameRenderer.removeListener(renderEvent, RenderEventBeforePost, GameRendererEvent.Order.DEFAULT);
 		GameEvents.gameRenderer.removeListener(renderEvent, RenderEventAfterPost, GameRendererEvent.Order.DEFAULT);
 		GameEvents.gameRenderer.removeListener(renderEvent, RenderEventDebug, GameRendererEvent.Order.DEFAULT);
+		disposeTasks();
+	}
+
+	@Override
+	public void disposeTasks () {
 		managerBeforePost.dispose();
 		managerAfterPost.dispose();
+		managerDebug.dispose();
 	}
 
 	@Override

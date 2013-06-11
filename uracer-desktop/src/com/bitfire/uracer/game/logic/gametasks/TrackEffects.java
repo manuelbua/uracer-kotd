@@ -11,7 +11,7 @@ import com.bitfire.uracer.game.logic.gametasks.trackeffects.TrackEffect;
 import com.bitfire.uracer.game.logic.gametasks.trackeffects.TrackEffectType;
 import com.bitfire.utils.ItemsManager;
 
-public final class TrackEffects extends GameTask {
+public final class TrackEffects extends GameTask implements DisposableTasks {
 	private final ItemsManager<TrackEffect> managerBeforeCars = new ItemsManager<TrackEffect>();
 	private final ItemsManager<TrackEffect> managerAfterCars = new ItemsManager<TrackEffect>();
 	private final IntMap<TrackEffect> effectsMap = new IntMap<TrackEffect>();
@@ -78,15 +78,11 @@ public final class TrackEffects extends GameTask {
 		super.dispose();
 		GameEvents.gameRenderer.removeListener(listener, GameRendererEvent.Type.BatchBeforeCars, GameRendererEvent.Order.DEFAULT);
 		GameEvents.gameRenderer.removeListener(listener, GameRendererEvent.Type.BatchAfterCars, GameRendererEvent.Order.DEFAULT);
+		disposeTasks();
+	}
 
-		for (TrackEffect e : managerBeforeCars) {
-			e.dispose();
-		}
-
-		for (TrackEffect e : managerAfterCars) {
-			e.dispose();
-		}
-
+	@Override
+	public void disposeTasks () {
 		managerBeforeCars.dispose();
 		managerAfterCars.dispose();
 	}

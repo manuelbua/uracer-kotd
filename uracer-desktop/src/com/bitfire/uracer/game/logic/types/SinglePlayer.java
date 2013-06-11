@@ -4,7 +4,6 @@ package com.bitfire.uracer.game.logic.types;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.math.Vector2;
 import com.bitfire.uracer.configuration.UserProfile;
-import com.bitfire.uracer.game.logic.gametasks.Messager;
 import com.bitfire.uracer.game.logic.gametasks.messager.Message;
 import com.bitfire.uracer.game.logic.gametasks.messager.Message.Position;
 import com.bitfire.uracer.game.logic.gametasks.messager.Message.Size;
@@ -19,14 +18,12 @@ import com.bitfire.uracer.utils.InterpolatedFloat;
 
 public class SinglePlayer extends CommonLogic {
 
-	private Messager messager;
 	private float prevZoom = GameWorldRenderer.MinCameraZoom + GameWorldRenderer.ZoomWindow;
 	// private InterpolatedFloat speed = new InterpolatedFloat()
 	private InterpolatedFloat drift = new InterpolatedFloat();
 
 	public SinglePlayer (UserProfile userProfile, GameWorld gameWorld, GameRenderer gameRenderer) {
 		super(userProfile, gameWorld, gameRenderer);
-		messager = gameTasksManager.messager;
 	}
 
 	@Override
@@ -79,16 +76,16 @@ public class SinglePlayer extends CommonLogic {
 	// the game has been restarted
 	@Override
 	public void restartGame () {
-		Gdx.app.log("SinglePlayerLogic", "Starting/restarting game");
+		Gdx.app.log("SinglePlayer", "Starting/restarting game");
 		super.restartGame();
 	}
 
 	// the game has been reset
 	@Override
 	public void resetGame () {
-		Gdx.app.log("SinglePlayerLogic", "Resetting game");
+		Gdx.app.log("SinglePlayer", "Resetting game");
 		super.resetGame();
-		gameTasksManager.messager.show("Game reset", 1.5f, Message.Type.Information, Position.Bottom, Size.Big);
+		messager.show("Game reset", 1.5f, Message.Type.Information, Position.Bottom, Size.Big);
 	}
 
 	@Override

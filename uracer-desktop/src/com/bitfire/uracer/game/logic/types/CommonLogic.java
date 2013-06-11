@@ -28,6 +28,7 @@ import com.bitfire.uracer.game.actors.Car;
 import com.bitfire.uracer.game.actors.CarPreset;
 import com.bitfire.uracer.game.actors.GhostCar;
 import com.bitfire.uracer.game.logic.GameTasksManager;
+import com.bitfire.uracer.game.logic.gametasks.Messager;
 import com.bitfire.uracer.game.logic.gametasks.hud.elements.HudPlayer.EndDriftType;
 import com.bitfire.uracer.game.logic.gametasks.hud.elements.player.DriftBar;
 import com.bitfire.uracer.game.logic.gametasks.hud.elements.player.TrackProgress;
@@ -130,6 +131,7 @@ public abstract class CommonLogic implements GameLogic {
 	// tasks
 	protected GameTasksManager gameTasksManager = null;
 	protected PlayerGameTasks playerTasks = null;
+	protected Messager messager = null;
 
 	// time modulation logic
 	private TimeModulator timeMod = null;
@@ -142,6 +144,7 @@ public abstract class CommonLogic implements GameLogic {
 		this.gameRenderer = gameRenderer;
 		this.gameWorldRenderer = gameRenderer.getWorldRenderer();
 		this.inputSystem = URacer.Game.getInputSystem();
+		this.messager = new Messager();
 		timeMod = new TimeModulator();
 
 		// post-processing
@@ -150,6 +153,7 @@ public abstract class CommonLogic implements GameLogic {
 		// create game and player tasks
 		gameTasksManager = new GameTasksManager(gameWorld);
 		playerTasks = new PlayerGameTasks(userProfile, gameTasksManager);
+		gameTasksManager.add(messager);
 
 		lapManager = new LapManager(userProfile, gameWorld.getLevelId());
 		for (int i = 0; i < ReplayManager.MaxReplays; i++) {
@@ -600,7 +604,7 @@ public abstract class CommonLogic implements GameLogic {
 			playerCar.resetDistanceAndSpeed(true, true);
 			if (userRec != null) {
 				CarUtils.dumpSpeedInfo("Player", playerCar, userRec.getTrackTime());
-				userRec.saveLocal(gameTasksManager.messager);
+				userRec.saveLocal(messager);
 				setGhostReplay(0, userRec);
 			}
 

@@ -80,8 +80,8 @@ public final class PlayerGameTasks {
 	}
 
 	public void destroyTasks () {
-		manager.sound.dispose();
-		manager.effects.dispose();
-		manager.hud.dispose();
+		manager.sound.disposeTasks();
+		manager.effects.disposeTasks();
+		manager.hud.disposeTasks();
 	}
 }
