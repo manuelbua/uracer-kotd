@@ -113,7 +113,6 @@ public abstract class CommonLogic implements GameLogic {
 	protected GhostCar[] ghostCars = new GhostCar[ReplayManager.MaxReplays];
 	private WrongWayMonitor wrongWayMonitor;
 	protected boolean isCurrentLapValid = true;
-	protected boolean isTooSlow = false;
 	protected boolean isPenalty;
 	private GhostCar nextTarget = null;
 	private Time dilationTime = new Time();
@@ -163,6 +162,14 @@ public abstract class CommonLogic implements GameLogic {
 
 		input = new GameInput(this, inputSystem);
 	}
+
+	public boolean hasPlayer () {
+		return playerCar != null;
+	}
+
+	//
+	// GameLogic impl
+	//
 
 	@Override
 	public void dispose () {
@@ -319,108 +326,135 @@ public abstract class CommonLogic implements GameLogic {
 		GameTweener.update();
 	}
 
+	//
+	// private impl
+	//
+
 	private void updateLogic () {
-		// FIXME add more description to WHY things are in this order
-		if (hasPlayer()) {
-			gameTrack.updateTrackState(playerCar);
-		}
 
-		for (int i = 0; i < ReplayManager.MaxReplays; i++) {
-			if (ghostCars[i] != null && ghostCars[i].hasReplay()) {
-				gameTrack.updateTrackState(ghostCars[i]);
-			}
-		}
+		updateTrackStates();
 
 		if (hasPlayer()) {
-			// triggers wrong way event callbacks
-			wrongWayMonitor.update(gameTrack.getTrackRouteConfidence(playerCar));
+			updatePlayerMonitors();
 
-			isCurrentLapValid = !wrongWayMonitor.isWrongWay() && !isTooSlow;
-
-			if (isCurrentLapValid) {
-				// triggers lap event callbacks
-				lapMonitor.update();
-			} else {
-				// blink CarHighlighter on wrong way or too slow (keeps calling, returns earlier if busy)
-				playerTasks.hudPlayer.highlightWrongWay();
-
-				// inhibits lap monitor to raise events
-				lapMonitor.reset();
-			}
-		}
-
-		{
 			// blink CarHighlighter on out of track (keeps calling, returns earlier if busy)
 			if (playerCar.isOutOfTrack()) {
 				playerTasks.hudPlayer.highlightOutOfTrack();
 			}
 
-			// reset progress if too slow
-			if (isTooSlow) {
-				playerTasks.hudPlayer.trackProgress.getProgressData().reset(true);
+			// ends time dilation if no more seconds available
+			if (accuDriftSeconds.value == 0 && input.isTimeDilating()) {
+				endTimeDilation();
+				Gdx.app.log("CommonLogic", "Requesting time modulation to finish");
 			}
-		}
 
-		// ends time dilation if no more seconds available
-		if (accuDriftSeconds.value == 0 && input.isTimeDilating()) {
-			endTimeDilation();
-			Gdx.app.log("CommonLogic", "Requesting time modulation to finish");
+			updatePlayerDriftBar();
+			updateTrackProgress();
 		}
+	}
 
+	/** Updates cars track states so that GameTrack can be queried */
+	private void updateTrackStates () {
 		if (hasPlayer()) {
-			updateDriftBar();
+			gameTrack.updateTrackState(playerCar);
+		}
 
-			TrackProgress progress = playerTasks.hudPlayer.trackProgress;
-			TrackProgressData data = progress.getProgressData();
-
-			if (lapMonitor.isWarmUp()) {
-				data.reset(true);
-				if (isCurrentLapValid) {
-					progress.setMessage("Start in "
-						+ Math.round(gameTrack.getTotalLength() - gameTrack.getTrackDistance(playerCar, 0)) + " mt");
-				} else {
-					progress.setMessage("Press \"R\"\nto restart");
-				}
-			} else {
-				if (isCurrentLapValid) {
-					progress.setMessage("");
-
-					// use the last one if the replay is finished
-					if (nextTarget != null && nextTarget.hasReplay()) {
-						lastDist = gameTrack.getTrackDistance(nextTarget, 0);
-						lastCompletion = gameTrack.getTrackCompletion(nextTarget);
-					}
-
-					data.setPlayerDistance(gameTrack.getTrackDistance(playerCar, 0));
-					data.setPlayerProgression(gameTrack.getTrackCompletion(playerCar));
-
-					data.setTargetDistance(lastDist);
-					data.setTargetProgression(lastCompletion);
-
-					// target tracker
-					float distMt = gameTrack.getTrackDistance(playerCar, 0) - lastDist;
-					float alpha = MathUtils.clamp(Math.abs(distMt) / 50, 0.2f, 1);
-					playerTasks.hudPlayer.setNextTargetAlpha(alpha);
-
-				} else {
-					progress.setMessage("Press \"R\"\nto restart");
-					data.reset(true);
-				}
+		for (int i = 0; i < ReplayManager.MaxReplays; i++) {
+			GhostCar ghost = ghostCars[i];
+			if (ghost != null && ghost.hasReplay()) {
+				gameTrack.updateTrackState(ghost);
 			}
 		}
 	}
 
-	public GameWorld getGameWorld () {
-		return gameWorld;
+	/** Updates player-monitoring components and raise events accordingly (LapMonitor, WrongWayMonitor) */
+	private void updatePlayerMonitors () {
+		// triggers wrong way event callback (only begins)
+		wrongWayMonitor.update(gameTrack.getTrackRouteConfidence(playerCar));
+
+		isCurrentLapValid = isCurrentLapValid && !wrongWayMonitor.isWrongWay();
+
+		if (isCurrentLapValid) {
+			// triggers lap event callbacks
+			lapMonitor.update();
+		} else {
+			// blink CarHighlighter on wrong way or too slow (keeps calling, returns earlier if busy)
+			playerTasks.hudPlayer.highlightWrongWay();
+
+			// inhibits lap monitor to raise events
+			lapMonitor.reset();
+		}
 	}
 
-	public boolean hasPlayer () {
-		return playerCar != null;
+	/** Updates player hud drift bar */
+	private void updatePlayerDriftBar () {
+		DriftBar driftBar = playerTasks.hudPlayer.driftBar;
+		driftBar.setDriftStrength(playerCar.driftState.driftStrength);
+
+		if (Config.Debug.InfiniteDilationTime) {
+			accuDriftSeconds.value = DriftBar.MaxSeconds;
+		} else {
+
+			// earn game-time seconds by drifting
+			if (playerCar.driftState.isDrifting) {
+				accuDriftSeconds.value += Config.Physics.Dt + Config.Physics.Dt * playerCar.driftState.driftStrength;
+			}
+
+			// lose wall-clock seconds while in time dilation
+			if (!dilationTime.isStopped()) {
+				accuDriftSeconds.value -= dilationTime.elapsed(Reference.LastAbsoluteSeconds) * 2;
+			}
+
+			// lose wall-clock seconds while out of track
+			if (!outOfTrackTime.isStopped()) {
+				accuDriftSeconds.value -= outOfTrackTime.elapsed(Reference.LastAbsoluteSeconds);
+			}
+		}
+
+		accuDriftSeconds.value = MathUtils.clamp(accuDriftSeconds.value, 0, DriftBar.MaxSeconds);
+		driftBar.setSeconds(accuDriftSeconds.value);
 	}
 
-	//
-	// private implementation
-	//
+	/** Updates player hud track progress */
+	private void updateTrackProgress () {
+		TrackProgress progress = playerTasks.hudPlayer.trackProgress;
+		TrackProgressData data = progress.getProgressData();
+
+		if (lapMonitor.isWarmUp()) {
+			data.reset(true);
+			if (isCurrentLapValid) {
+				int metersToRace = Math.round(gameTrack.getTotalLength() - gameTrack.getTrackDistance(playerCar, 0));
+				progress.setMessage("Start in " + metersToRace + " mt");
+			} else {
+				progress.setMessage("Press \"R\"\nto restart");
+			}
+		} else {
+			if (isCurrentLapValid) {
+				progress.setMessage("");
+
+				// use the last one if the replay is finished
+				if (nextTarget != null && nextTarget.hasReplay()) {
+					lastDist = gameTrack.getTrackDistance(nextTarget, 0);
+					lastCompletion = gameTrack.getTrackCompletion(nextTarget);
+				}
+
+				data.setPlayerDistance(gameTrack.getTrackDistance(playerCar, 0));
+				data.setPlayerProgression(gameTrack.getTrackCompletion(playerCar));
+
+				data.setTargetDistance(lastDist);
+				data.setTargetProgression(lastCompletion);
+
+				// target tracker
+				float distMt = gameTrack.getTrackDistance(playerCar, 0) - lastDist;
+				float alpha = MathUtils.clamp(Math.abs(distMt) / 50, 0.2f, 1);
+				playerTasks.hudPlayer.setNextTargetAlpha(alpha);
+
+			} else {
+				progress.setMessage("Press \"R\"\nto restart");
+				data.reset(true);
+			}
+		}
+	}
 
 	private void configurePlayer (GameWorld world, Input inputSystem, PlayerCar player) {
 		player.setInputSystem(inputSystem);
@@ -436,6 +470,15 @@ public abstract class CommonLogic implements GameLogic {
 			playerCar.setWorldPosMt(world.playerStart.position, world.playerStart.orientation);
 			gameTrack.resetTrackState(playerCar);
 		}
+	}
+
+	/** Invalidates the current lap and show an error */
+	private void playerError (String message) {
+		isCurrentLapValid = false;
+		lapManager.abortRecording();
+		playerTasks.hudLapInfo.setInvalid(message);
+		playerTasks.hudLapInfo.toColor(1, 0, 0);
+		postProcessing.alertBegins(500);
 	}
 
 	protected GhostCar getGhost (int handle) {
@@ -486,6 +529,7 @@ public abstract class CommonLogic implements GameLogic {
 		}
 	}
 
+	/** Restarts the game */
 	private void restartLogic () {
 		SysTweener.clear();
 		GameTweener.clear();
@@ -508,10 +552,10 @@ public abstract class CommonLogic implements GameLogic {
 		lastDist = 0;
 		lastCompletion = 0;
 		isCurrentLapValid = true;
-		isTooSlow = false;
 		isPenalty = false;
 	}
 
+	/** Resets the game, any in-memory recorded replay will be discarded */
 	private void resetLogic () {
 		restartLogic();
 
@@ -519,38 +563,6 @@ public abstract class CommonLogic implements GameLogic {
 		lapManager.removeAllReplays();
 		lapManager.reset();
 		gameTasksManager.raiseReset();
-	}
-
-	private void updateDriftBar () {
-		if (!hasPlayer()) {
-			return;
-		}
-
-		DriftBar driftBar = playerTasks.hudPlayer.driftBar;
-		driftBar.setDriftStrength(playerCar.driftState.driftStrength);
-
-		if (Config.Debug.InfiniteDilationTime) {
-			accuDriftSeconds.value = DriftBar.MaxSeconds;
-		} else {
-
-			// earn game-time seconds by drifting
-			if (playerCar.driftState.isDrifting) {
-				accuDriftSeconds.value += Config.Physics.Dt + Config.Physics.Dt * playerCar.driftState.driftStrength;
-			}
-
-			// lose wall-clock seconds while in time dilation
-			if (!dilationTime.isStopped()) {
-				accuDriftSeconds.value -= dilationTime.elapsed(Reference.LastAbsoluteSeconds) * 2;
-			}
-
-			// lose wall-clock seconds while out of track
-			if (!outOfTrackTime.isStopped()) {
-				accuDriftSeconds.value -= outOfTrackTime.elapsed(Reference.LastAbsoluteSeconds);
-			}
-		}
-
-		accuDriftSeconds.value = MathUtils.clamp(accuDriftSeconds.value, 0, DriftBar.MaxSeconds);
-		driftBar.setSeconds(accuDriftSeconds.value);
 	}
 
 	private Replay userRec = null; // dbg on-demand rec/play via Z/X
@@ -630,9 +642,8 @@ public abstract class CommonLogic implements GameLogic {
 
 		@Override
 		public void onWarmUpCompleted () {
-			playerTasks.hudPlayer.trackProgress.getProgressData().reset(true);
 			Gdx.app.log("CommonLogic", "Warmup Completed");
-
+			playerTasks.hudPlayer.trackProgress.getProgressData().reset(true);
 			warmUpCompleted();
 		}
 
@@ -672,18 +683,15 @@ public abstract class CommonLogic implements GameLogic {
 
 		@Override
 		public void onWrongWayBegins () {
-			lapManager.abortRecording();
 			playerTasks.hudPlayer.wrongWay.fadeIn();
-			playerTasks.hudLapInfo.toColor(1, 0, 0);
-			playerTasks.hudLapInfo.setInvalid("invalid lap");
-			postProcessing.alertBegins(500);
+			playerError("Invalid lap");
 		}
 
 		@Override
 		public void onWrongWayEnds () {
 		}
 
-		PlayerDriftStateEvent.Listener driftStateListener = new PlayerDriftStateEvent.Listener() {
+		private PlayerDriftStateEvent.Listener driftStateListener = new PlayerDriftStateEvent.Listener() {
 			@Override
 			public void handle (Object source, PlayerDriftStateEvent.Type type, PlayerDriftStateEvent.Order order) {
 				PlayerCar player = (PlayerCar)source;
@@ -719,7 +727,7 @@ public abstract class CommonLogic implements GameLogic {
 			}
 		};
 
-		CarEvent.Listener playerCarListener = new CarEvent.Listener() {
+		private CarEvent.Listener playerCarListener = new CarEvent.Listener() {
 			private TweenCallback penaltyFinished = new TweenCallback() {
 				@Override
 				public void onEvent (int type, BaseTween<?> source) {
@@ -771,11 +779,7 @@ public abstract class CommonLogic implements GameLogic {
 					RecorderError recerror = lapManager.record(eventData.forces);
 					if (recerror == RecorderError.ReplayMemoryLimitReached) {
 						Gdx.app.log("CommonLogic", "Player too slow, recording aborted.");
-						isTooSlow = true;
-						lapManager.abortRecording();
-						playerTasks.hudLapInfo.setInvalid("Too slow!");
-						playerTasks.hudLapInfo.toColor(1, 0, 0);
-						postProcessing.alertBegins(500);
+						playerError("Too slow!");
 					}
 					// RecordingNotEnabled
 					// NoError
@@ -785,7 +789,7 @@ public abstract class CommonLogic implements GameLogic {
 			}
 		};
 
-		GhostCarEvent.Listener ghostListener = new GhostCarEvent.Listener() {
+		private GhostCarEvent.Listener ghostListener = new GhostCarEvent.Listener() {
 			@Override
 			public void handle (Object source, GhostCarEvent.Type type, GhostCarEvent.Order order) {
 				switch (type) {
