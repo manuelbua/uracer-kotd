@@ -95,7 +95,7 @@ public abstract class CommonLogic implements GameLogic {
 
 	// input
 	protected Input inputSystem = null;
-	protected GameInput input = null;
+	protected GameInput gameInput = null;
 
 	// world
 	protected GameWorld gameWorld = null;
@@ -160,7 +160,7 @@ public abstract class CommonLogic implements GameLogic {
 		wrongWayMonitor = new WrongWayMonitor(eventHandlers);
 		lapMonitor = new LapCompletionMonitor(eventHandlers, gameTrack);
 
-		input = new GameInput(this, inputSystem);
+		gameInput = new GameInput(this, inputSystem);
 	}
 
 	public boolean hasPlayer () {
@@ -292,7 +292,7 @@ public abstract class CommonLogic implements GameLogic {
 	/** Request time dilation to end */
 	@Override
 	public void endTimeDilation () {
-		input.resetTimeDilating();
+		gameInput.resetTimeDilating();
 		dilationTime.reset();
 		timeMod.toNormalTime();
 		playerTasks.hudPlayer.driftBar.hideSecondsLabel();
@@ -307,7 +307,7 @@ public abstract class CommonLogic implements GameLogic {
 	public void tick () {
 		// compute the next-frame time multiplier
 		URacer.timeMultiplier = timeMod.getTime();
-		input.update();
+		gameInput.update();
 		dbgInput();
 	}
 
@@ -343,7 +343,7 @@ public abstract class CommonLogic implements GameLogic {
 			}
 
 			// ends time dilation if no more seconds available
-			if (accuDriftSeconds.value == 0 && input.isTimeDilating()) {
+			if (accuDriftSeconds.value == 0 && gameInput.isTimeDilating()) {
 				endTimeDilation();
 				Gdx.app.log("CommonLogic", "Requesting time modulation to finish");
 			}
@@ -540,7 +540,7 @@ public abstract class CommonLogic implements GameLogic {
 
 		dilationTime.reset();
 		outOfTrackTime.reset();
-		input.resetTimeDilating();
+		gameInput.resetTimeDilating();
 		timeMod.reset();
 		lapManager.abortRecording();
 		gameTasksManager.raiseRestart();
@@ -743,7 +743,7 @@ public abstract class CommonLogic implements GameLogic {
 				case onCollision:
 
 					// invalidate time modulation
-					if (input.isTimeDilating()) {
+					if (gameInput.isTimeDilating()) {
 						endTimeDilation();
 					}
 
