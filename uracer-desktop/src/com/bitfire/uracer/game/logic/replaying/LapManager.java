@@ -65,12 +65,8 @@ public class LapManager implements Disposable {
 			last = recorder.endRecording();
 			bufferManager.updateReplays();
 
-			Replay replay = manager.addReplay(last);
-
 			// will not be added if worse than the worst
-			if (replay != null) {
-				return replay;
-			}
+			return manager.addReplay(last);
 		}
 
 		return null;
