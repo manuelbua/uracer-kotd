@@ -62,7 +62,7 @@ public final class PlayerGameTasks {
 		manager.effects.addBeforeCars(playerSkidMarks);
 		manager.effects.addAfterCars(playerSmokeTrails);
 
-		// hud, player's information
+		// hud
 		hudPlayer = new HudPlayer(userProfile, player, renderer);
 		hudPlayerStatic = new HudPlayerStatic(userProfile, player);
 		hudLapInfo = new HudLapInfo(lapManager);
@@ -71,8 +71,6 @@ public final class PlayerGameTasks {
 		manager.hud.addAfterPostProcessing(hudLapInfo);
 		manager.hud.addAfterPostProcessing(hudPlayerStatic);
 
-		// at last, create debug helper since it will probably use most of the stuff just created above
-		// hud-style debug information for various data (player's drift state, number of skid marks particles, ..)
 		if (Config.Debug.RenderHudDebugInfo) {
 			hudDebug = new HudDebug(player, player.driftState, manager);
 			manager.hud.addDebug(hudDebug);
