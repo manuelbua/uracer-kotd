@@ -38,7 +38,7 @@ public final class ReplayRecorder implements Disposable {
 
 	public void reset () {
 		isRecording = false;
-		time.reset();
+		time.stop();
 
 		// ensure data is discarded
 		if (replay != null) {
@@ -87,10 +87,6 @@ public final class ReplayRecorder implements Disposable {
 	}
 
 	public float getElapsedSeconds () {
-		if (isRecording) {
-			return time.elapsed(Time.Reference.TickSeconds);
-		}
-
-		return 0;
+		return time.elapsed(Time.Reference.TickSeconds);
 	}
 }
