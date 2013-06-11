@@ -20,13 +20,13 @@ public final class ReplayRecorder implements Disposable {
 	private boolean isRecording;
 	private Time time;
 
-	// replay data
-	private Replay replay;
+	// freshly recorded data
+	private Replay recording;
 
 	public ReplayRecorder (long userId) {
 		// this.userId = userId;
 		isRecording = false;
-		replay = null;
+		recording = new Replay(userId);
 		time = new Time();
 	}
 
@@ -39,20 +39,14 @@ public final class ReplayRecorder implements Disposable {
 	public void reset () {
 		isRecording = false;
 		time.stop();
-
-		// ensure data is discarded
-		if (replay != null) {
-			replay.reset();
-			replay = null;
-		}
+		recording.reset();
 	}
 
-	public void beginRecording (Car car, Replay replay, String levelId) {
-		Gdx.app.log("Recorder", "Beginning recording #" + System.identityHashCode(replay));
+	public void beginRecording (Car car, String levelId) {
+		Gdx.app.log("Recorder", "Beginning recording");
 
 		isRecording = true;
-		this.replay = replay;
-		replay.begin(levelId, car);
+		recording.begin(levelId, car);
 		time.start();
 	}
 
@@ -61,7 +55,7 @@ public final class ReplayRecorder implements Disposable {
 			return RecorderError.RecordingNotEnabled;
 		}
 
-		if (!replay.add(f)) {
+		if (!recording.add(f)) {
 			return RecorderError.ReplayMemoryLimitReached;
 		}
 
@@ -75,11 +69,11 @@ public final class ReplayRecorder implements Disposable {
 		}
 
 		time.stop();
-		replay.end(time.elapsed(Time.Reference.TickSeconds));
+		recording.end(time.elapsed(Time.Reference.TickSeconds));
 		isRecording = false;
 
-		Gdx.app.log("Recorder", "Finished recording #" + System.identityHashCode(replay));
-		return replay;
+		Gdx.app.log("Recorder", "Finished recording");
+		return recording;
 	}
 
 	public boolean isRecording () {

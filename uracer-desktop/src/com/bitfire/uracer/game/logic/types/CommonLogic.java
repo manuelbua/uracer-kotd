@@ -565,8 +565,6 @@ public abstract class CommonLogic implements GameLogic {
 		gameTasksManager.raiseReset();
 	}
 
-	private Replay userRec = null; // dbg on-demand rec/play via Z/X
-
 	private void dbgInput () {
 		if (inputSystem.isPressed(Keys.O)) {
 			removePlayer();
@@ -586,18 +584,17 @@ public abstract class CommonLogic implements GameLogic {
 			playerCar.resetDistanceAndSpeed(true, true);
 			resetAllGhosts();
 			lapManager.abortRecording();
-			userRec = lapManager.startRecording(playerCar);
+			lapManager.startRecording(playerCar);
 			Gdx.app.log("GameLogic", "Recording...");
 
 		} else if (inputSystem.isPressed(Keys.X)) {
 
 			// stop recording and play
+			Replay userRec = lapManager.stopRecording();
 			playerCar.resetPhysics();
-			lapManager.stopRecording();
-
-			CarUtils.dumpSpeedInfo("Player", playerCar, lapManager.getLastRecordedReplay().getTrackTime());
 			playerCar.resetDistanceAndSpeed(true, true);
 			if (userRec != null) {
+				CarUtils.dumpSpeedInfo("Player", playerCar, userRec.getTrackTime());
 				userRec.saveLocal(gameTasksManager.messager);
 				setGhostReplay(0, userRec);
 			}
