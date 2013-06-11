@@ -52,6 +52,7 @@ public final class AggressiveCold implements PostProcessingAnimator {
 	private long startMs = 0;
 	private Vector2 playerScreenPos = new Vector2();
 	private InterpolatedFloat speed = new InterpolatedFloat();
+	private InterpolatedFloat blurStrength = new InterpolatedFloat();
 
 	public AggressiveCold (PostProcessing post, boolean nightMode) {
 		this.nightMode = nightMode;
@@ -63,6 +64,7 @@ public final class AggressiveCold implements PostProcessingAnimator {
 		ssao = (Ssao)post.getEffect(PostProcessing.Effects.Ssao.name);
 
 		alertAmount = new BoxedFloat(0);
+		blurStrength.setFixup(false);
 
 		reset();
 	}
@@ -151,6 +153,7 @@ public final class AggressiveCold implements PostProcessingAnimator {
 	@Override
 	public void reset () {
 		isSingleAlert = false;
+		speed.reset(0, true);
 
 		if (ssao != null) {
 			ssao.setOcclusionThresholds(0.3f, 0.1f);
@@ -198,6 +201,7 @@ public final class AggressiveCold implements PostProcessingAnimator {
 			zoom.setEnabled(true);
 			zoom.setOrigin(playerScreenPos);
 			zoom.setBlurStrength(0);
+			blurStrength.reset(0, true);
 		}
 
 		if (crt != null) {
@@ -257,7 +261,6 @@ public final class AggressiveCold implements PostProcessingAnimator {
 		if (hasPlayer) {
 			playerScreenPos.set(GameRenderer.ScreenUtils.worldPxToScreen(player.state().position));
 			speed.set(player.carState.currSpeedFactor, 0.02f);
-
 		} else {
 			playerScreenPos.set(0.5f, 0.5f);
 		}
@@ -273,18 +276,28 @@ public final class AggressiveCold implements PostProcessingAnimator {
 			}
 		}
 
-		if (zoom != null && hasPlayer) {
+		if (zoom != null) {
 
-			float sfactor = speed.get();
-			float z = (zoomCamera - (GameWorldRenderer.MinCameraZoom + GameWorldRenderer.ZoomWindow));
-			float v = (-0.09f * sfactor) - 0.09f * z;
-			// Gdx.app.log("", "zoom=" + z);
+			if (hasPlayer) {
+				float sfactor = speed.get();
+				float z = (zoomCamera - (GameWorldRenderer.MinCameraZoom + GameWorldRenderer.ZoomWindow));
+				float v = (-0.09f * sfactor) - 0.09f * z;
+				// Gdx.app.log("", "zoom=" + z);
 
-			float blurStrength = v + (-0.05f * timeModFactor * sfactor);
-			autoEnableZoomBlur(blurStrength);
+				float strength = v + (-0.05f * timeModFactor * sfactor);
+				blurStrength.set(strength, 1f);
+			} else {
+				blurStrength.set(0, 0.05f);
+			}
+
+			autoEnableZoomBlur(blurStrength.get());
 			if (zoom.isEnabled()) {
-				zoom.setOrigin(playerScreenPos);
-				zoom.setBlurStrength(blurStrength);
+
+				if (hasPlayer) {
+					zoom.setOrigin(playerScreenPos);
+				}
+
+				zoom.setBlurStrength(blurStrength.get());
 			}
 		}
 

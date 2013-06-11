@@ -29,10 +29,13 @@ public class LapManager implements Disposable {
 		recorder.dispose();
 	}
 
-	/** Stops recording and invalidates last recorded replay */
-	public void reset () {
+	/** Stops recording and invalidates last recorded replay, optionally resetting the record timer */
+	public void reset (boolean resetTimer) {
 		abortRecording();
 		last = null;
+		if (resetTimer) {
+			recorder.resetTimer();
+		}
 	}
 
 	/** Starts recording the player lap performance. Returns the Replay instance where the recording is being performed. */
@@ -66,7 +69,7 @@ public class LapManager implements Disposable {
 		return null;
 	}
 
-	/** Discard the performance currently being recorded so far */
+	/** Discard the performance currently being recorded */
 	public void abortRecording () {
 		recorder.reset();
 	}

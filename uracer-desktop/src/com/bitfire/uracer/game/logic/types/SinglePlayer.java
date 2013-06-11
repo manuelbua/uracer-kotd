@@ -32,6 +32,12 @@ public class SinglePlayer extends CommonLogic {
 	}
 
 	@Override
+	public void removePlayer () {
+		super.removePlayer();
+		drift.reset(0, true);
+	}
+
+	@Override
 	protected float updateCameraZoom (float timeModFactor) {
 		if (hasPlayer()) {
 			// speed.set(playerCar.carState.currSpeedFactor, 0.02f);

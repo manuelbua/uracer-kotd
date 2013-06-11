@@ -119,6 +119,8 @@ public final class CarHighlighter {
 		bfGreen.value = 0.1f;
 		bfBlue.value = 0f;
 
+		GameTweener.stop(bfAlpha);
+
 		Timeline seq = Timeline.createSequence();
 
 		//@off
@@ -152,6 +154,10 @@ public final class CarHighlighter {
 		Timeline timeline = Timeline.createParallel();
 		float ms = Config.Graphics.DefaultFadeMilliseconds;
 
+		GameTweener.stop(bfAlpha);
+		GameTweener.stop(bfScale);
+		GameTweener.stop(bfRot);
+
 		//@off
 		timeline
 			.push(Tween.to(bfScale, BoxedFloatAccessor.VALUE, ms).target(1f).ease(Linear.INOUT))
@@ -182,6 +188,10 @@ public final class CarHighlighter {
 
 		Timeline timeline = Timeline.createParallel();
 		float ms = Config.Graphics.DefaultFadeMilliseconds;
+
+		GameTweener.stop(bfAlpha);
+		GameTweener.stop(bfScale);
+		GameTweener.stop(bfRot);
 
 		//@off
 		timeline

@@ -121,10 +121,11 @@ public final class GameRenderer {
 
 		updateLights();
 
-		// update matrices and cameras
+		// update matrices, cameras useful values
 		GameEvents.gameRenderer.mtxOrthographicMvpMt = worldRenderer.getOrthographicMvpMt();
 		GameEvents.gameRenderer.camOrtho = worldRenderer.getOrthographicCamera();
 		GameEvents.gameRenderer.camPersp = worldRenderer.getPerspectiveCamera();
+		GameEvents.gameRenderer.camZoom = worldRenderer.getCameraZoom();
 
 		GameEvents.gameRenderer.timeAliasingFactor = timeAliasingFactor;
 		GameEvents.gameRenderer.trigger(this, GameRendererEvent.Type.OnSubframeInterpolate);

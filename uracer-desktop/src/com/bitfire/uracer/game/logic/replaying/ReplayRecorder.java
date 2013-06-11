@@ -42,6 +42,10 @@ public final class ReplayRecorder implements Disposable {
 		recording.reset();
 	}
 
+	public void resetTimer () {
+		time.reset();
+	}
+
 	public void beginRecording (Car car, String levelId) {
 		Gdx.app.log("Recorder", "Beginning recording");
 

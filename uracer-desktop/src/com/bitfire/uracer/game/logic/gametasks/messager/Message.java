@@ -159,6 +159,8 @@ public final class Message {
 
 		computeFinalPosition();
 
+		GameTweener.stop(this);
+
 		//@off
 		GameTweener.start(Timeline.createParallel()
 			.push(Tween.to(this, MessageAccessor.OPACITY, 850).target(1f).ease(Expo.INOUT))
@@ -180,6 +182,8 @@ public final class Message {
 	public void hide () {
 		if (!hiding) {
 			hiding = true;
+
+			GameTweener.stop(this);
 
 			//@off
 			GameTweener.start(Timeline.createParallel()

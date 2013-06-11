@@ -28,12 +28,12 @@ public class DriftBar extends Positionable {
 	private HudLabel labelSeconds;
 	private final WindowedMean driftStrength;
 
-	private final Texture texHalf, texHalfMask;// , texProgress, texProgressMask;
+	private final Texture texHalf, texHalfMask;
 	private final ShaderProgram shProgress;
 	private final Sprite sProgress, sDriftStrength;
 	private final float offX, offY, w, h;
 
-	public DriftBar (float width) {
+	public DriftBar () {
 		seconds = 0;
 
 		labelSeconds = new HudLabel(FontFace.CurseRedYellowNew, "s", false);
@@ -58,6 +58,10 @@ public class DriftBar extends Positionable {
 		// drift strength
 		driftStrength = new WindowedMean((int)(1 / 0.25f));
 		sDriftStrength = new Sprite(texHalf);
+	}
+
+	public void reset () {
+		driftStrength.clear();
 	}
 
 	@Override

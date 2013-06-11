@@ -52,6 +52,10 @@ public class HudLapInfo extends HudElement {
 	public void toColor (int millisecs, float red, float green, float blue) {
 		Timeline seq = Timeline.createParallel();
 
+		GameTweener.stop(r);
+		GameTweener.stop(g);
+		GameTweener.stop(b);
+
 		//@off
 		seq
 			.push(Tween.to(r, BoxedFloatAccessor.VALUE, millisecs).target(red).ease(Linear.INOUT))
@@ -77,7 +81,7 @@ public class HudLapInfo extends HudElement {
 	}
 
 	@Override
-	public void onRender (SpriteBatch batch) {
+	public void onRender (SpriteBatch batch, float cameraZoom) {
 		// current time
 		if (isValid) {
 			curr.setString(NumberString.format(lapManager.getCurrentReplaySeconds()), true);

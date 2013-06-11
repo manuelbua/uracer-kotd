@@ -3,8 +3,9 @@ package com.bitfire.uracer.game.logic.gametasks.sounds;
 
 import com.badlogic.gdx.audio.Sound;
 import com.badlogic.gdx.utils.Disposable;
+import com.bitfire.uracer.game.logic.gametasks.PlayerClient;
 
-public abstract class SoundEffect implements Disposable {
+public abstract class SoundEffect extends PlayerClient implements Disposable {
 	// implements a workaround for Android, need to async-wait
 	// for sound loaded but libgdx doesn't expose anything for this!
 

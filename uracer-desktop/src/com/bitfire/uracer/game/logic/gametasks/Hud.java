@@ -1,15 +1,17 @@
 
 package com.bitfire.uracer.game.logic.gametasks;
 
+import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.bitfire.uracer.events.GameRendererEvent;
 import com.bitfire.uracer.events.GameRendererEvent.Order;
 import com.bitfire.uracer.events.GameRendererEvent.Type;
 import com.bitfire.uracer.game.GameEvents;
 import com.bitfire.uracer.game.logic.gametasks.hud.HudElement;
+import com.bitfire.uracer.game.player.PlayerCar;
 import com.bitfire.utils.ItemsManager;
 
 /** Encapsulates an head-up manager that will callback HudElement events for their updating and drawing operations. */
-public final class Hud extends GameTask implements DisposableTasks {
+public final class Hud extends GameTask implements PlayerDispatcher, DisposableTasks {
 
 	private static final GameRendererEvent.Type RenderEventBeforePost = GameRendererEvent.Type.BatchBeforePostProcessing;
 	private static final GameRendererEvent.Type RenderEventAfterPost = GameRendererEvent.Type.BatchAfterPostProcessing;
@@ -26,17 +28,21 @@ public final class Hud extends GameTask implements DisposableTasks {
 				return;
 			}
 
+			SpriteBatch batch = GameEvents.gameRenderer.batch;
+			float camZoom = GameEvents.gameRenderer.camZoom;
+			ItemsManager<HudElement> items = null;
+
 			if (type == Type.BatchBeforePostProcessing) {
-				for (HudElement e : managerBeforePost) {
-					e.onRender(GameEvents.gameRenderer.batch);
-				}
+				items = managerBeforePost;
 			} else if (type == Type.BatchAfterPostProcessing) {
-				for (HudElement e : managerAfterPost) {
-					e.onRender(GameEvents.gameRenderer.batch);
-				}
+				items = managerAfterPost;
 			} else if (type == Type.BatchDebug) {
-				for (HudElement e : managerDebug) {
-					e.onRender(GameEvents.gameRenderer.batch);
+				items = managerDebug;
+			}
+
+			if (items != null) {
+				for (HudElement e : items) {
+					e.onRender(batch, camZoom);
 				}
 			}
 		}
@@ -124,6 +130,21 @@ public final class Hud extends GameTask implements DisposableTasks {
 
 		for (HudElement e : managerDebug) {
 			e.onTick();
+		}
+	}
+
+	@Override
+	public void onPlayerSet (PlayerCar player) {
+		for (HudElement e : managerBeforePost) {
+			e.player(player);
+		}
+
+		for (HudElement e : managerAfterPost) {
+			e.player(player);
+		}
+
+		for (HudElement e : managerDebug) {
+			e.player(player);
 		}
 	}
 }

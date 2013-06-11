@@ -9,9 +9,10 @@ import com.bitfire.uracer.events.GameRendererEvent.Type;
 import com.bitfire.uracer.game.GameEvents;
 import com.bitfire.uracer.game.logic.gametasks.trackeffects.TrackEffect;
 import com.bitfire.uracer.game.logic.gametasks.trackeffects.TrackEffectType;
+import com.bitfire.uracer.game.player.PlayerCar;
 import com.bitfire.utils.ItemsManager;
 
-public final class TrackEffects extends GameTask implements DisposableTasks {
+public final class TrackEffects extends GameTask implements PlayerDispatcher, DisposableTasks {
 	private final ItemsManager<TrackEffect> managerBeforeCars = new ItemsManager<TrackEffect>();
 	private final ItemsManager<TrackEffect> managerAfterCars = new ItemsManager<TrackEffect>();
 	private final IntMap<TrackEffect> effectsMap = new IntMap<TrackEffect>();
@@ -126,5 +127,16 @@ public final class TrackEffects extends GameTask implements DisposableTasks {
 		}
 
 		return total;
+	}
+
+	@Override
+	public void onPlayerSet (PlayerCar player) {
+		for (TrackEffect e : managerBeforeCars) {
+			e.player(player);
+		}
+
+		for (TrackEffect e : managerAfterCars) {
+			e.player(player);
+		}
 	}
 }

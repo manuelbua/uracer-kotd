@@ -39,8 +39,6 @@ public final class PlayerImpactSoundEffect extends SoundEffect {
 	};
 
 	public PlayerImpactSoundEffect () {
-		GameEvents.playerCar.addListener(carEvent, CarEvent.Type.onCollision);
-
 		soundLow1 = Sounds.carImpacts[0];
 		soundLow2 = Sounds.carImpacts[1];
 		soundMid1 = Sounds.carImpacts[2];
@@ -50,13 +48,29 @@ public final class PlayerImpactSoundEffect extends SoundEffect {
 
 	@Override
 	public void dispose () {
-		GameEvents.playerCar.removeListener(carEvent, CarEvent.Type.onCollision);
-
 		soundLow1.stop();
 		soundLow2.stop();
 		soundMid1.stop();
 		soundMid2.stop();
 		soundHigh.stop();
+	}
+
+	private void attach () {
+		GameEvents.playerCar.addListener(carEvent, CarEvent.Type.onCollision);
+	}
+
+	private void detach () {
+		GameEvents.playerCar.removeListener(carEvent, CarEvent.Type.onCollision);
+	}
+
+	@Override
+	public void player (PlayerCar player) {
+		super.player(player);
+		if (hasPlayer()) {
+			attach();
+		} else {
+			detach();
+		}
 	}
 
 	// TODO modulate pitch while playing as CarDriftSoundEffect to handle impact also on start/end time modulation

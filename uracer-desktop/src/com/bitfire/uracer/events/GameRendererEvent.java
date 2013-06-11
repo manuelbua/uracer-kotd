@@ -22,6 +22,7 @@ public class GameRendererEvent extends Event<GameRendererEvent.Type, GameRendere
 	public PerspectiveCamera camPersp;
 	public OrthographicCamera camOrtho;
 	public float timeAliasingFactor;
+	public float camZoom;
 
 	public interface Listener extends Event.Listener<Type, Order> {
 		@Override
