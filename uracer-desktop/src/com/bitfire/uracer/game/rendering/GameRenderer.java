@@ -86,12 +86,11 @@ public final class GameRenderer {
 		return worldRenderer.getNormalDepthMap();
 	}
 
-	public void beforeRender (float timeAliasingFactor) {
-		// update lights
+	private void updateLights () {
+		// update ambient lights
 		Color ambient = worldRenderer.getAmbientColor();
 		Color treesAmbient = worldRenderer.getTreesAmbientColor();
 
-		// update lights
 		ambient.set(0.1f, 0.05f, 0.15f, 0.4f + 0.2f * URacer.Game.getTimeModFactor());
 		treesAmbient.set(ambient.r, ambient.g * 2f, ambient.b, 0.4f + 0.5f * URacer.Game.getTimeModFactor());
 
@@ -103,11 +102,10 @@ public final class GameRenderer {
 		ambient.clamp();
 		treesAmbient.clamp();
 
-		// more intensity from lights near the player
+		// update point lights, more intensity from lights near the player
+		PlayerCar player = world.getPlayer();
 		PointLight[] lights = world.getLights();
-		if (lights != null && world.getPlayer() != null) {
-			PlayerCar player = world.getPlayer();
-
+		if (lights != null && player != null) {
 			for (int l = 0; l < lights.length; l++) {
 				float dist = player.getWorldPosMt().dst2(lights[l].getPosition());
 				float maxdist = 30;
@@ -116,14 +114,24 @@ public final class GameRenderer {
 				lights[l].setColor(1, 1, 1, AMath.fixup(0.3f + 0.3f * dist));
 			}
 		}
+	}
 
-		// update matrices and cameras
+	private void interpolate (float timeAliasingFactor) {
+		GameEvents.gameRenderer.timeAliasingFactor = timeAliasingFactor;
+		GameEvents.gameRenderer.trigger(this, GameRendererEvent.Type.SubframeInterpolate);
+	}
+
+	private void beforeRender () {
+		updateLights();
+
+		// request freshdata before any rendering
+		GameEvents.gameRenderer.trigger(this, GameRendererEvent.Type.BeforeRender);
+
+		// update matrices, cameras and other values
 		GameEvents.gameRenderer.mtxOrthographicMvpMt = worldRenderer.getOrthographicMvpMt();
 		GameEvents.gameRenderer.camOrtho = worldRenderer.getOrthographicCamera();
 		GameEvents.gameRenderer.camPersp = worldRenderer.getPerspectiveCamera();
-
-		GameEvents.gameRenderer.timeAliasingFactor = timeAliasingFactor;
-		GameEvents.gameRenderer.trigger(this, GameRendererEvent.Type.OnSubframeInterpolate);
+		GameEvents.gameRenderer.camZoom = worldRenderer.getCameraZoom();
 	}
 
 	private void clear () {
@@ -133,6 +141,12 @@ public final class GameRenderer {
 	}
 
 	public void render (FrameBuffer dest) {
+		// trigger interpolables to interpolate their position and orientation
+		interpolate(URacer.Game.getTemporalAliasing());
+
+		// raise before render
+		beforeRender();
+
 		SpriteBatch batch;
 		worldRenderer.resetCounters();
 

@@ -11,15 +11,13 @@ import com.bitfire.uracer.utils.AMath;
 public final class PlayerEngineSoundEffect extends SoundEffect {
 	private Sound carEngine = null;
 	private long carEngineId = -1;
-	private static float carEnginePitchStart = 0;
+	private float carEnginePitchStart = 0;
 	private float carEnginePitchLast = 0;
 	private static final float carEnginePitchMin = 0.8f;
-	private PlayerCar player;
+	private boolean started;
 
-	public PlayerEngineSoundEffect (PlayerCar player) {
-		this.player = player;
+	public PlayerEngineSoundEffect () {
 		carEngine = Sounds.carEngine;
-		// start();
 	}
 
 	@Override
@@ -42,6 +40,12 @@ public final class PlayerEngineSoundEffect extends SoundEffect {
 
 	@Override
 	public void start () {
+		if (started) {
+			return;
+		}
+
+		started = true;
+
 		if (URacer.Game.isDesktop()) {
 			carEngineId = carEngine.loop(1f);
 		} else {
@@ -52,7 +56,12 @@ public final class PlayerEngineSoundEffect extends SoundEffect {
 
 	@Override
 	public void stop () {
+		if (!started) {
+			return;
+		}
+
 		carEngine.stop();
+		started = false;
 	}
 
 	@Override
@@ -61,5 +70,17 @@ public final class PlayerEngineSoundEffect extends SoundEffect {
 		carEnginePitchStart = carEnginePitchMin;
 		carEnginePitchLast = carEnginePitchMin;
 		carEngine.setPitch(carEngineId, carEnginePitchStart);
+		started = false;
+	}
+
+	@Override
+	public void player (PlayerCar player) {
+		super.player(player);
+
+		if (hasPlayer()) {
+			start();
+		} else {
+			stop();
+		}
 	}
 }

@@ -31,6 +31,7 @@ public final class CarHighlighter {
 
 	private boolean isBusy, isActive, hasCar;
 	private BoxedFloat bfScale, bfRot, bfAlpha, bfGreen, bfRed, bfBlue;
+	private float lastAlpha;
 
 	// need tileMapZoomFactor since highlighter size depends from car *rendered* size
 	public CarHighlighter () {
@@ -88,8 +89,8 @@ public final class CarHighlighter {
 			sprite.setScale(bfScale.value * cameraZoom * scale * s);
 			sprite.setPosition(tmp.x - offX, tmp.y - offY);
 			sprite.setRotation(-renderState.orientation + bfRot.value);
-			sprite.setColor(bfRed.value, bfGreen.value, bfBlue.value, bfAlpha.value);
-			sprite.draw(batch, alpha);
+			sprite.setColor(bfRed.value, bfGreen.value, bfBlue.value, 1);
+			sprite.draw(batch, bfAlpha.value * alpha);
 		}
 	}
 
@@ -119,6 +120,8 @@ public final class CarHighlighter {
 		bfGreen.value = 0.1f;
 		bfBlue.value = 0f;
 
+		GameTweener.stop(bfAlpha);
+
 		Timeline seq = Timeline.createSequence();
 
 		//@off
@@ -133,13 +136,16 @@ public final class CarHighlighter {
 		GameTweener.start(seq);
 	}
 
-	public void track () {
+	public void track (float alpha) {
 		// if (isBusy) {
 		// return;
 		// }
 
 		isBusy = true;
 		isActive = true;
+
+		// this.alpha = 0;
+		lastAlpha = alpha;
 
 		bfScale.value = 4f;
 		bfAlpha.value = 0f;
@@ -152,16 +158,24 @@ public final class CarHighlighter {
 		Timeline timeline = Timeline.createParallel();
 		float ms = Config.Graphics.DefaultFadeMilliseconds;
 
+		GameTweener.stop(bfAlpha);
+		GameTweener.stop(bfScale);
+		GameTweener.stop(bfRot);
+
 		//@off
 		timeline
 			.push(Tween.to(bfScale, BoxedFloatAccessor.VALUE, ms).target(1f).ease(Linear.INOUT))
-			.push(Tween.to(bfAlpha, BoxedFloatAccessor.VALUE, ms).target(1f).ease(Linear.INOUT))
+			.push(Tween.to(bfAlpha, BoxedFloatAccessor.VALUE, ms).target(alpha).ease(Linear.INOUT))
 			.push(Tween.to(bfRot, BoxedFloatAccessor.VALUE, ms).target(0f).ease(Linear.INOUT))
 			.setCallback(busyCallback)
 		;
 		//@on
 
 		GameTweener.start(timeline);
+	}
+
+	public void track () {
+		track(1);
 	}
 
 	public void untrack () {
@@ -173,7 +187,7 @@ public final class CarHighlighter {
 		isActive = true;
 
 		bfScale.value = 1f;
-		bfAlpha.value = 1f;
+		bfAlpha.value = lastAlpha;
 		bfRot.value = 0f;
 
 		bfRed.value = 1f;
@@ -182,6 +196,10 @@ public final class CarHighlighter {
 
 		Timeline timeline = Timeline.createParallel();
 		float ms = Config.Graphics.DefaultFadeMilliseconds;
+
+		GameTweener.stop(bfAlpha);
+		GameTweener.stop(bfScale);
+		GameTweener.stop(bfRot);
 
 		//@off
 		timeline

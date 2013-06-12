@@ -21,8 +21,7 @@ import com.bitfire.uracer.utils.CarUtils;
  * @author bmanuel */
 public class HudDebug extends HudElement {
 
-	private final PlayerCar player;
-	private final DriftState driftState;
+	private DriftState driftState;
 	private final PlayerSmokeTrails smokeTrails;
 	private final PlayerSkidMarks skidMarks;
 
@@ -31,10 +30,7 @@ public class HudDebug extends HudElement {
 	private Array<HudDebugMeter> meters = new Array<HudDebugMeter>();
 	private Vector2 pos = new Vector2();
 
-	public HudDebug (PlayerCar player, DriftState driftState, GameTasksManager manager) {
-		this.player = player;
-		this.driftState = driftState;
-
+	public HudDebug (GameTasksManager manager) {
 		skidMarks = (PlayerSkidMarks)manager.effects.getEffect(TrackEffectType.CarSkidMarks);
 		smokeTrails = (PlayerSmokeTrails)manager.effects.getEffect(TrackEffectType.CarSmokeTrails);
 
@@ -62,7 +58,6 @@ public class HudDebug extends HudElement {
 
 		// player speed, km/h
 		meterSpeed = new HudDebugMeter(100, 5);
-		meterSpeed.setLimits(0, CarUtils.mtSecToKmHour(player.getCarModel().max_speed));
 		meterSpeed.setName("speed km/h");
 		meters.add(meterSpeed);
 	}
@@ -75,48 +70,63 @@ public class HudDebug extends HudElement {
 	}
 
 	@Override
-	public void onTick () {
-		// lateral forces
-		meterDriftStrength.setValue(driftState.driftStrength);
+	public void player (PlayerCar player) {
+		super.player(player);
 
-		if (driftState.isDrifting) {
-			meterDriftStrength.color.set(.3f, 1f, .3f, 1f);
-		} else {
-			meterDriftStrength.color.set(1f, 1f, 1f, 1f);
+		if (hasPlayer()) {
+			this.player = player;
+			driftState = player.driftState;
+			meterSpeed.setLimits(0, CarUtils.mtSecToKmHour(player.getCarModel().max_speed));
 		}
-
-		// skid marks count
-		if (skidMarks != null) {
-			meterSkidMarks.setValue(skidMarks.getParticleCount());
-		}
-
-		// smoke trails count
-		if (smokeTrails != null) {
-			meterSmokeTrails.setValue(smokeTrails.getParticleCount());
-		}
-
-		// player's speed
-		meterSpeed.setValue(CarUtils.mtSecToKmHour(player.getInstantSpeed()));
 	}
 
 	@Override
-	public void onRender (SpriteBatch batch) {
-		float prevHeight = 0;
-		int index = 0;
-		for (HudDebugMeter m : meters) {
+	public void onTick () {
+		if (hasPlayer()) {
+			// lateral forces
+			meterDriftStrength.setValue(driftState.driftStrength);
 
-			pos.set(GameRenderer.ScreenUtils.worldPxToScreen(player.state().position));
-			pos.x += 100;
-			pos.y += 0;
+			if (driftState.isDrifting) {
+				meterDriftStrength.color.set(.3f, 1f, .3f, 1f);
+			} else {
+				meterDriftStrength.color.set(1f, 1f, 1f, 1f);
+			}
 
-			// offset by index
-			pos.y += index * (prevHeight + Art.DebugFontHeight);
+			// skid marks count
+			if (skidMarks != null) {
+				meterSkidMarks.setValue(skidMarks.getParticleCount());
+			}
 
-			m.setPosition(pos);
-			m.render(batch);
+			// smoke trails count
+			if (smokeTrails != null) {
+				meterSmokeTrails.setValue(smokeTrails.getParticleCount());
+			}
 
-			index++;
-			prevHeight = m.getHeight();
+			// player's speed
+			meterSpeed.setValue(CarUtils.mtSecToKmHour(player.getInstantSpeed()));
+		}
+	}
+
+	@Override
+	public void onRender (SpriteBatch batch, float cameraZoom) {
+		if (hasPlayer()) {
+			float prevHeight = 0;
+			int index = 0;
+			for (HudDebugMeter m : meters) {
+
+				pos.set(GameRenderer.ScreenUtils.worldPxToScreen(player.state().position));
+				pos.x += 100;
+				pos.y += 0;
+
+				// offset by index
+				pos.y += index * (prevHeight + Art.DebugFontHeight);
+
+				m.setPosition(pos);
+				m.render(batch);
+
+				index++;
+				prevHeight = m.getHeight();
+			}
 		}
 	}
 

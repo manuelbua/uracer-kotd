@@ -1,16 +1,14 @@
 
 package com.bitfire.uracer.game.logic.helpers;
 
-import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.math.Rectangle;
 import com.badlogic.gdx.math.Vector2;
 import com.bitfire.uracer.game.rendering.GameWorldRenderer;
 import com.bitfire.uracer.utils.AMath;
-import com.bitfire.uracer.utils.VMath;
 
 public class CameraController {
 	public enum InterpolationMode {
-		OffNoBounds, Off, Linear, Sigmoid, Predictive
+		OffNoBounds, Off, Linear, Sigmoid
 	}
 
 	private float boundsWidth = 0, boundsHeight = 0;
@@ -40,7 +38,7 @@ public class CameraController {
 		case Linear:
 			interpolator = new PositionInterpolator() {
 				@Override
-				public Vector2 transform (Vector2 target, float orient, float velocityFactor, float zoom) {
+				public Vector2 transform (Vector2 target, float zoom) {
 
 					// [0,1]
 					float x_ratio = target.x / worldSizeScaledPx.x;
@@ -93,7 +91,7 @@ public class CameraController {
 		case Sigmoid:
 			interpolator = new PositionInterpolator() {
 				@Override
-				public Vector2 transform (Vector2 target, float orient, float velocityFactor, float zoom) {
+				public Vector2 transform (Vector2 target, float zoom) {
 					float tx = target.x;
 					float ty = target.y;
 
@@ -108,54 +106,11 @@ public class CameraController {
 				}
 			};
 			break;
-		case Predictive:
-			interpolator = new PositionInterpolator() {
-				private float amount = 0f;
-				private float speed = 0.5f;
 
-				@Override
-				public void setInitialPositionOrientation (Vector2 position, float orient, float zoom) {
-					amount = 224;
-					float x_ratio = position.x / (worldSizeScaledPx.x);
-					float y_ratio = position.y / (worldSizeScaledPx.y);
-					pheading.set(VMath.fromDegrees(orient));
-					tmp.x = cameraBounds.x + x_ratio * (boundsWidth);// + pheading.x * amount;
-					tmp.y = cameraBounds.height + y_ratio * (boundsHeight);// - pheading.y * amount;
-					prev.set(tmp);
-				}
-
-				@Override
-				public Vector2 transform (Vector2 target, float orient, float velocityFactor, float zoom) {
-					float dt = Gdx.graphics.getDeltaTime();
-
-					heading.set(VMath.fromDegrees(orient));
-					heading.x = AMath.lerp(pheading.x, heading.x, dt * speed);
-					heading.y = AMath.lerp(pheading.y, heading.y, dt * speed);
-					pheading.set(heading);
-
-					// [0,1]
-					float x_ratio = target.x / (worldSizeScaledPx.x);
-					float y_ratio = target.y / (worldSizeScaledPx.y);
-
-					float predictX = heading.x * amount * velocityFactor;
-					float predictY = heading.y * amount * velocityFactor;
-
-					tmp.x = cameraBounds.x + x_ratio * (boundsWidth) + predictX;
-					tmp.y = cameraBounds.height + y_ratio * (boundsHeight) - predictY;
-
-					tmp.x = AMath.lerp(prev.x, tmp.x, 0.1f);
-					tmp.y = AMath.lerp(prev.y, tmp.y, 0.1f);
-
-					prev.set(tmp);
-
-					return tmp;
-				}
-			};
-			break;
 		case Off:
 			interpolator = new PositionInterpolator() {
 				@Override
-				public Vector2 transform (Vector2 target, float orient, float velocityFactor, float zoom) {
+				public Vector2 transform (Vector2 target, float zoom) {
 					tmp.set(target);
 
 					if (tmp.x < cameraBounds.x) {
@@ -179,7 +134,7 @@ public class CameraController {
 		case OffNoBounds:
 			interpolator = new PositionInterpolator() {
 				@Override
-				public Vector2 transform (Vector2 targetPosition, float orient, float velocityFactor, float zoom) {
+				public Vector2 transform (Vector2 targetPosition, float zoom) {
 					return targetPosition;
 				}
 			};
@@ -187,12 +142,8 @@ public class CameraController {
 		}
 	}
 
-	public Vector2 transform (Vector2 position, float orient, float velocityFactor, float zoom) {
-		return interpolator.transform(position, orient, velocityFactor, zoom);
-	}
-
-	public void setInitialPositionOrient (Vector2 position, float orient, float zoom) {
-		interpolator.setInitialPositionOrientation(position, orient, zoom);
+	public Vector2 transform (Vector2 position, float zoom) {
+		return interpolator.transform(position, zoom);
 	}
 
 	private abstract class PositionInterpolator {
@@ -205,9 +156,6 @@ public class CameraController {
 		public PositionInterpolator () {
 		}
 
-		public void setInitialPositionOrientation (Vector2 position, float orient, float zoom) {
-		}
-
-		public abstract Vector2 transform (Vector2 targetPosition, float orient, float velocityFactor, float zoom);
+		public abstract Vector2 transform (Vector2 targetPosition, float zoom);
 	}
 }

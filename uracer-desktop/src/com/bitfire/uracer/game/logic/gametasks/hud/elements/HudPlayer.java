@@ -36,31 +36,37 @@ public final class HudPlayer extends HudElement {
 	private CarHighlighter highlightError;
 	private CarHighlighter highlightNext;
 
-	// rendering
-	private final GameRenderer renderer;
-
 	// gravitation
 	private float carModelWidthPx, carModelLengthPx;
 	private Vector2 tmpg = new Vector2();
 
-	public HudPlayer (UserProfile userProfile, PlayerCar player, GameRenderer renderer) {
-		this.renderer = renderer;
-		playerState = player.state();
-
-		this.carModelWidthPx = Convert.mt2px(player.getCarModel().width);
-		this.carModelLengthPx = Convert.mt2px(player.getCarModel().length);
-
+	public HudPlayer (UserProfile userProfile) {
 		// elements
 		wrongWay = new WrongWay();
-		driftBar = new DriftBar(carModelLengthPx);
+		driftBar = new DriftBar();
 		trackProgress = new TrackProgress();
 
 		highlightError = new CarHighlighter();
-		highlightError.setCar(player);
 		highlightError.setScale(1.75f);
 
 		highlightNext = new CarHighlighter();
 		highlightNext.setScale(1);
+	}
+
+	@Override
+	public void player (PlayerCar player) {
+		super.player(player);
+
+		if (hasPlayer()) {
+			playerState = player.state();
+			carModelWidthPx = Convert.mt2px(player.getCarModel().width);
+			carModelLengthPx = Convert.mt2px(player.getCarModel().length);
+			highlightError.setCar(player);
+		} else {
+			trackProgress.getProgressData().reset(true);
+			driftBar.reset();
+			onReset();
+		}
 	}
 
 	@Override
@@ -78,25 +84,27 @@ public final class HudPlayer extends HudElement {
 	@Override
 	public void onReset () {
 		driftBar.hideSecondsLabel();
+		driftBar.reset();
 		highlightError.stop();
 		highlightNext.stop();
 		wrongWay.fadeOut(Config.Graphics.DefaultResetFadeMilliseconds);
 	}
 
 	@Override
-	public void onRender (SpriteBatch batch) {
-		// position elements at render time, so that source positions have been interpolated
-		atPlayer(driftBar);
-		atPlayer(trackProgress);
-		gravitate(wrongWay, -180, 100);
+	public void onRender (SpriteBatch batch, float cameraZoom) {
+		if (hasPlayer()) {
+			// position elements at render time, so that source positions have been interpolated
+			atPlayer(driftBar);
+			atPlayer(trackProgress);
+			gravitate(wrongWay, -180, 100, cameraZoom);
 
-		float cz = renderer.getWorldRenderer().getCameraZoom();
+			trackProgress.render(batch, cameraZoom);
+			driftBar.render(batch, cameraZoom);
+		}
 
-		driftBar.render(batch, cz);
-		trackProgress.render(batch, cz);
-		highlightError.render(batch, cz);
-		highlightNext.render(batch, cz);
-		wrongWay.render(batch, cz);
+		highlightError.render(batch, cameraZoom);
+		highlightNext.render(batch, cameraZoom);
+		wrongWay.render(batch, cameraZoom);
 	}
 
 	//
@@ -111,8 +119,8 @@ public final class HudPlayer extends HudElement {
 	// p.setPosition(tmpg);
 	// }
 
-	private void gravitate (Positionable p, float offsetDegs, float distance) {
-		p.setPosition(gravitate(p.getWidth(), p.getHeight(), offsetDegs, distance));
+	private void gravitate (Positionable p, float offsetDegs, float distance, float cameraZoom) {
+		p.setPosition(gravitate(p.getWidth(), p.getHeight(), offsetDegs, distance, cameraZoom));
 	}
 
 	private void atPlayer (Positionable p) {
@@ -122,8 +130,7 @@ public final class HudPlayer extends HudElement {
 
 	/** Returns a position by placing a point on an imaginary circumference gravitating around the player, applying the specified
 	 * orientation offset, expressed in degrees, if any. */
-	private Vector2 gravitate (float w, float h, float offsetDegs, float distance) {
-		float zs = renderer.getWorldRenderer().getCameraZoom();
+	private Vector2 gravitate (float w, float h, float offsetDegs, float distance, float cameraZoom) {
 		float border = distance;
 
 		Vector2 sp = GameRenderer.ScreenUtils.worldPxToScreen(playerState.position);
@@ -135,8 +142,8 @@ public final class HudPlayer extends HudElement {
 
 		// compute displacement
 		tmpg.set(heading);
-		float displaceX = p * zs + w * 0.5f + border;
-		float displaceY = q * zs + h * 0.5f + border;
+		float displaceX = p * cameraZoom + w * 0.5f + border;
+		float displaceY = q * cameraZoom + h * 0.5f + border;
 		tmpg.scl(displaceX, displaceY);
 		displaceX = tmpg.x;
 		displaceY = tmpg.y;
@@ -175,14 +182,14 @@ public final class HudPlayer extends HudElement {
 
 	public void highlightNextTarget (Car car) {
 		highlightNext.setCar(car);
-		highlightNext.track();
+		highlightNext.track(0.75f);
 	}
 
 	public void unHighlightNextTarget () {
 		highlightNext.untrack();
 	}
 
-	public void setNextTargetAlpha (float alpha) {
-		highlightNext.setAlpha(alpha);
-	}
+	// public void setNextTargetAlpha (float alpha) {
+	// highlightNext.setAlpha(alpha);
+	// }
 }

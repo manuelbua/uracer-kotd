@@ -2,10 +2,12 @@
 package com.bitfire.uracer.game.logic.replaying;
 
 import com.badlogic.gdx.Gdx;
+import com.badlogic.gdx.utils.Disposable;
+import com.bitfire.uracer.game.Time;
 import com.bitfire.uracer.game.actors.Car;
 import com.bitfire.uracer.game.actors.CarForces;
 
-public final class ReplayRecorder {
+public final class ReplayRecorder implements Disposable {
 	// @off
 	public enum RecorderError {
 		NoError,
@@ -16,31 +18,40 @@ public final class ReplayRecorder {
 
 	// private final long userId;
 	private boolean isRecording;
+	private Time time;
 
-	// replay data
-	private Replay replay;
+	// freshly recorded data
+	private Replay recording;
 
 	public ReplayRecorder (long userId) {
 		// this.userId = userId;
 		isRecording = false;
-		replay = null;
+		recording = new Replay(userId);
+		time = new Time();
+	}
+
+	@Override
+	public void dispose () {
+		reset();
+		time.dispose();
 	}
 
 	public void reset () {
 		isRecording = false;
-
-		// ensure data is discarded
-		if (replay != null) {
-			replay.reset();
-			replay = null;
-		}
+		time.stop();
+		recording.reset();
 	}
 
-	public void beginRecording (Car car, Replay replay, String levelId) {
+	public void resetTimer () {
+		time.reset();
+	}
+
+	public void beginRecording (Car car, String levelId) {
+		Gdx.app.log("Recorder", "Beginning recording");
+
 		isRecording = true;
-		this.replay = replay;
-		Gdx.app.log("Recorder", "Beginning recording #" + System.identityHashCode(replay));
-		replay.begin(levelId, car);
+		recording.begin(levelId, car);
+		time.start();
 	}
 
 	public RecorderError add (CarForces f) {
@@ -48,7 +59,7 @@ public final class ReplayRecorder {
 			return RecorderError.RecordingNotEnabled;
 		}
 
-		if (!replay.add(f)) {
+		if (!recording.add(f)) {
 			return RecorderError.ReplayMemoryLimitReached;
 		}
 
@@ -61,15 +72,19 @@ public final class ReplayRecorder {
 			return null;
 		}
 
-		Gdx.app.log("Recorder", "Finished recording #" + System.identityHashCode(replay));
-		Replay r = replay;
-		replay.end();
+		time.stop();
+		recording.end(time.elapsed(Time.Reference.TickSeconds));
 		isRecording = false;
-		replay = null;
-		return r;
+
+		Gdx.app.log("Recorder", "Finished recording");
+		return recording;
 	}
 
 	public boolean isRecording () {
 		return isRecording;
+	}
+
+	public float getElapsedSeconds () {
+		return time.elapsed(Time.Reference.TickSeconds);
 	}
 }

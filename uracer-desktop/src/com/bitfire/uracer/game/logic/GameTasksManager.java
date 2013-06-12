@@ -5,7 +5,6 @@ import com.badlogic.gdx.utils.Array;
 import com.bitfire.uracer.events.TaskManagerEvent;
 import com.bitfire.uracer.game.logic.gametasks.GameTask;
 import com.bitfire.uracer.game.logic.gametasks.Hud;
-import com.bitfire.uracer.game.logic.gametasks.Messager;
 import com.bitfire.uracer.game.logic.gametasks.PhysicsStep;
 import com.bitfire.uracer.game.logic.gametasks.SoundManager;
 import com.bitfire.uracer.game.logic.gametasks.TrackEffects;
@@ -23,9 +22,6 @@ public final class GameTasksManager {
 
 	// sound
 	public SoundManager sound = null;
-
-	// alerts and infos
-	public Messager messager = null;
 
 	// hud
 	public Hud hud = null;
@@ -47,10 +43,6 @@ public final class GameTasksManager {
 		sound = new SoundManager();
 		add(sound);
 
-		// message manager
-		messager = new Messager();
-		add(messager);
-
 		// hud manager
 		hud = new Hud();
 		add(hud);
@@ -60,7 +52,7 @@ public final class GameTasksManager {
 		add(effects);
 	}
 
-	private void add (GameTask task) {
+	public void add (GameTask task) {
 		tasks.add(task);
 	}
 
