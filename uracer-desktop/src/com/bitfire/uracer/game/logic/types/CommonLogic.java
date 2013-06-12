@@ -57,14 +57,35 @@ import com.bitfire.uracer.game.tween.GameTweener;
 import com.bitfire.uracer.game.world.GameWorld;
 import com.bitfire.uracer.resources.Art;
 import com.bitfire.uracer.screen.TransitionFactory.TransitionType;
+import com.bitfire.uracer.utils.AMath;
 import com.bitfire.uracer.utils.BoxedFloat;
 import com.bitfire.uracer.utils.BoxedFloatAccessor;
 import com.bitfire.uracer.utils.CarUtils;
+import com.bitfire.uracer.utils.InterpolatedFloat;
 import com.bitfire.uracer.utils.NumberString;
 
 public abstract class CommonLogic implements GameLogic {
 
-	protected abstract float updateCameraZoom (float timeModFactor);
+	protected float updateCameraZoom (float timeModFactor) {
+		if (hasPlayer()) {
+			// speed.set(playerCar.carState.currSpeedFactor, 0.02f);
+			driftStrength.set(playerCar.driftState.driftStrength, 0.02f);
+		}
+
+		float minZoom = GameWorldRenderer.MinCameraZoom;
+		float maxZoom = GameWorldRenderer.MaxCameraZoom;
+
+		float cameraZoom = (minZoom + GameWorldRenderer.ZoomWindow);
+		cameraZoom += (maxZoom - cameraZoom) * timeModFactor;
+		cameraZoom += 0.25f * GameWorldRenderer.ZoomWindow * driftStrength.get();
+
+		cameraZoom = AMath.lerp(prevZoom, cameraZoom, 0.1f);
+		cameraZoom = AMath.clampf(cameraZoom, minZoom, maxZoom);
+		cameraZoom = AMath.fixupTo(cameraZoom, minZoom + GameWorldRenderer.ZoomWindow);
+
+		prevZoom = cameraZoom;
+		return cameraZoom;
+	}
 
 	protected abstract void updateCameraPosition (Vector2 positionPx);
 
@@ -111,6 +132,7 @@ public abstract class CommonLogic implements GameLogic {
 	protected GameWorldRenderer gameWorldRenderer = null;
 	protected PostProcessing postProcessing = null;
 	private Vector2 cameraPos = new Vector2();
+	private float prevZoom = GameWorldRenderer.MinCameraZoom + GameWorldRenderer.ZoomWindow;
 
 	// player
 	protected final EventHandlers eventHandlers = new EventHandlers();
@@ -123,6 +145,7 @@ public abstract class CommonLogic implements GameLogic {
 	private GhostCar nextTarget = null;
 	private Time dilationTime = new Time();
 	private Time outOfTrackTime = new Time();
+	private InterpolatedFloat driftStrength = new InterpolatedFloat();
 
 	// lap / replays
 	protected LapManager lapManager = null;
@@ -257,6 +280,8 @@ public abstract class CommonLogic implements GameLogic {
 		lapManager.reset(true);
 		lapMonitor.reset(null);
 		postProcessing.setPlayer(null);
+		driftStrength.reset(0, true);
+
 		restartLogic();
 
 		if (Config.Debug.UseDebugHelper) {
@@ -326,23 +351,6 @@ public abstract class CommonLogic implements GameLogic {
 	//
 	// private impl
 	//
-
-	private void beforeRender () {
-		// request camera updates from callbacks
-		float zoom = updateCameraZoom(URacer.Game.getTimeModFactor());
-		updateCameraPosition(cameraPos);
-
-		// apply camera updates
-		gameWorldRenderer.setCameraZoom(zoom);
-		gameWorldRenderer.setCameraPosition(cameraPos);
-		gameWorldRenderer.updateCamera();
-
-		// sync post-processing animators
-		postProcessing.onBeforeRender(zoom, lapMonitor.getWarmUpCompletion());
-
-		// game tweener step
-		GameTweener.update();
-	}
 
 	private void updateLogic () {
 
@@ -709,7 +717,20 @@ public abstract class CommonLogic implements GameLogic {
 			public void handle (Object source, Type type, Order order) {
 				switch (type) {
 				case BeforeRender:
-					beforeRender();
+					// request camera updates from callbacks
+					float zoom = updateCameraZoom(URacer.Game.getTimeModFactor());
+					updateCameraPosition(cameraPos);
+
+					// apply camera updates
+					gameWorldRenderer.setCameraZoom(zoom);
+					gameWorldRenderer.setCameraPosition(cameraPos);
+					gameWorldRenderer.updateCamera();
+
+					// sync post-processing animators
+					postProcessing.onBeforeRender(zoom, lapMonitor.getWarmUpCompletion());
+
+					// game tweener step
+					GameTweener.update();
 					break;
 				}
 			}
