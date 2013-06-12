@@ -26,7 +26,7 @@ public class TrackProgress extends Positionable {
 
 	private final Texture texMask;
 	private final ShaderProgram shProgress;
-	private final Sprite sAdvantage, sProgress;
+	private final Sprite sprAdvantage, sprProgress;
 	private boolean flipped;
 
 	private String customMessage = "";
@@ -85,12 +85,12 @@ public class TrackProgress extends Positionable {
 
 		shProgress = ShaderLoader.fromFile("progress", "progress");
 
-		sAdvantage = new Sprite(Art.texCircleProgress);
-		sAdvantage.flip(false, true);
+		sprAdvantage = new Sprite(Art.texCircleProgress);
+		sprAdvantage.flip(false, true);
 		flipped = false;
 
-		sProgress = new Sprite(Art.texRadLinesProgress);
-		sProgress.flip(false, true);
+		sprProgress = new Sprite(Art.texRadLinesProgress);
+		sprProgress.flip(false, true);
 	}
 
 	@Override
@@ -121,9 +121,6 @@ public class TrackProgress extends Positionable {
 		if (data == null) {
 			return;
 		}
-
-		// float a = 1f - 0.7f * URacer.Game.getTimeModFactor();
-		float a = 0.25f;
 
 		if (customMessage.length() == 0) {
 			float v = data.playerDistance.get() - data.targetDistance.get();
@@ -174,28 +171,29 @@ public class TrackProgress extends Positionable {
 
 		scl += .07f * URacer.Game.getTimeModFactor();
 
-		// player's progress
+		// player's track progress
 		shProgress.setUniformf("progress", data.playerProgress.get());
-		sProgress.setColor(Color.WHITE);
-		sProgress.setScale(scl);
-		sProgress.setPosition(position.x - sProgress.getWidth() / 2, position.y - sProgress.getHeight() / 2);
-		sProgress.draw(batch, a);
+		sprProgress.setColor(Color.WHITE);
+		sprProgress.setScale(scl);
+		sprProgress.setPosition(position.x - sprProgress.getWidth() / 2, position.y - sprProgress.getHeight() / 2);
+		sprProgress.draw(batch, 0.5f);
 		batch.flush();
 
 		boolean isBack = (dist < 0);
 		if (isBack && !flipped) {
 			flipped = true;
-			sAdvantage.flip(true, false);
+			sprAdvantage.flip(true, false);
 		} else if (!isBack && flipped) {
 			flipped = false;
-			sAdvantage.flip(true, false);
+			sprAdvantage.flip(true, false);
 		}
 
+		// player's advantage/disadvantage
 		shProgress.setUniformf("progress", Math.abs(playerToTarget));
-		sAdvantage.setColor(advantageColor);
-		sAdvantage.setScale(scl * 1.1f);
-		sAdvantage.setPosition(position.x - sAdvantage.getWidth() / 2, position.y - sAdvantage.getHeight() / 2);
-		sAdvantage.draw(batch, a);
+		sprAdvantage.setColor(advantageColor);
+		sprAdvantage.setScale(scl * 1.1f);
+		sprAdvantage.setPosition(position.x - sprAdvantage.getWidth() / 2, position.y - sprAdvantage.getHeight() / 2);
+		sprAdvantage.draw(batch, 1);
 		batch.flush();
 
 		batch.setShader(null);
