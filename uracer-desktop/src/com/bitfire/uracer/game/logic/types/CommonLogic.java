@@ -453,6 +453,7 @@ public abstract class CommonLogic implements GameLogic {
 		} else {
 			if (isCurrentLapValid) {
 				progress.setMessage("");
+				progress.setShowAdvantageLabel(nextTarget != null);
 
 				// use the last one if the replay is finished
 				if (nextTarget != null && nextTarget.hasReplay()) {
