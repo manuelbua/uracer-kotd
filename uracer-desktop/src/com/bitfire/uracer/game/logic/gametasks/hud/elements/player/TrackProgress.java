@@ -27,7 +27,7 @@ public class TrackProgress extends Positionable {
 	private final Texture texMask;
 	private final ShaderProgram shProgress;
 	private final Sprite sprAdvantage, sprProgress;
-	private boolean flipped, showAdvantageLabel;
+	private boolean flipped, hasTarget;
 
 	private String customMessage = "";
 	private TrackProgressData data = new TrackProgressData();
@@ -79,8 +79,8 @@ public class TrackProgress extends Positionable {
 	public TrackProgress () {
 		lblAdvantage = new HudLabel(FontFace.CurseWhiteBig, "", false);
 		lblAdvantageShown = false;
-		showAdvantageLabel = false;
-		lblAdvantage.setAlpha(1);
+		hasTarget = false;
+		lblAdvantage.setAlpha(0);
 
 		texMask = Art.texCircleProgressMask;
 
@@ -99,18 +99,25 @@ public class TrackProgress extends Positionable {
 		shProgress.dispose();
 	}
 
-	public void setMessage (String messageOrEmpty) {
-		customMessage = messageOrEmpty;
-		showAdvantageLabel = (customMessage != null) && (customMessage.length() > 0);
-	}
-
 	public TrackProgressData getProgressData () {
 		return data;
 	}
 
-	public void setShowAdvantageLabel (boolean show) {
-		showAdvantageLabel = show;
+	public void setMessage (String messageOrEmpty) {
+		customMessage = messageOrEmpty;
 	}
+
+	public void hideMessage () {
+		customMessage = "";
+	}
+
+	public void setHasTarget (boolean hasTarget) {
+		this.hasTarget = hasTarget;
+	}
+
+	// public void setShowAdvantageLabel (boolean show) {
+	// showAdvantageLabel = show;
+	// }
 
 	@Override
 	public float getWidth () {
@@ -127,23 +134,6 @@ public class TrackProgress extends Positionable {
 			return;
 		}
 
-		if (customMessage.length() == 0) {
-			float v = data.playerDistance.get() - data.targetDistance.get();
-			lblAdvantage.setString(NumberString.format(v) + " m", false);
-		} else {
-			lblAdvantage.setString(customMessage);
-		}
-
-		if (showAdvantageLabel) {
-			if (!lblAdvantageShown) {
-				lblAdvantageShown = true;
-				lblAdvantage.fadeIn(500);
-			}
-		} else if (lblAdvantageShown) {
-			lblAdvantageShown = false;
-			lblAdvantage.fadeOut(1000);
-		}
-
 		// advantage/disadvantage
 		float timeFactor = URacer.Game.getTimeModFactor() * 0.3f;
 
@@ -158,10 +148,30 @@ public class TrackProgress extends Positionable {
 			s += 0.5f * adist;
 		}
 
-		// if (showAdvantageLabel)
-		{
+		boolean showAdv = true;
+		if (customMessage.length() == 0) {
+			if (hasTarget) {
+				float v = data.playerDistance.get() - data.targetDistance.get();
+				lblAdvantage.setString(NumberString.format(v) + " m", false);
+			} else {
+				showAdv = false;
+			}
+		} else {
+			lblAdvantage.setString(customMessage);
+		}
+
+		if (showAdv) {
+			if (!lblAdvantageShown) {
+				lblAdvantageShown = true;
+				lblAdvantage.fadeIn(500);
+			}
+		} else if (lblAdvantageShown) {
+			lblAdvantageShown = false;
+			lblAdvantage.fadeOut(1000);
+		}
+
+		if (lblAdvantage.getAlpha() > 0) {
 			lblAdvantage.setColor(advantageColor);
-			// lblAdvantage.setAlpha(1);
 			lblAdvantage.setScale(s);
 			lblAdvantage.setPosition(position.x, position.y - cameraZoom * 100 - cameraZoom * 100 * timeFactor - cameraZoom * 20
 				* adist);
@@ -197,12 +207,14 @@ public class TrackProgress extends Positionable {
 		}
 
 		// player's advantage/disadvantage
-		shProgress.setUniformf("progress", Math.abs(playerToTarget));
-		sprAdvantage.setColor(advantageColor);
-		sprAdvantage.setScale(scl * 1.1f);
-		sprAdvantage.setPosition(position.x - sprAdvantage.getWidth() / 2, position.y - sprAdvantage.getHeight() / 2);
-		sprAdvantage.draw(batch, 1);
-		batch.flush();
+		if (hasTarget) {
+			shProgress.setUniformf("progress", Math.abs(playerToTarget));
+			sprAdvantage.setColor(advantageColor);
+			sprAdvantage.setScale(scl * 1.1f);
+			sprAdvantage.setPosition(position.x - sprAdvantage.getWidth() / 2, position.y - sprAdvantage.getHeight() / 2);
+			sprAdvantage.draw(batch, 1);
+			batch.flush();
+		}
 
 		batch.setShader(null);
 	}

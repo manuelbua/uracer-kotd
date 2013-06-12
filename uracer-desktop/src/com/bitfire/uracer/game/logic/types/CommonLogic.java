@@ -283,6 +283,7 @@ public abstract class CommonLogic implements GameLogic {
 		driftStrength.reset(0, true);
 
 		restartLogic();
+		restartAllReplays();
 
 		if (Config.Debug.UseDebugHelper) {
 			DebugHelper.setPlayer(null);
@@ -443,29 +444,36 @@ public abstract class CommonLogic implements GameLogic {
 		TrackProgressData data = progress.getProgressData();
 
 		if (lapMonitor.isWarmUp()) {
+			progress.setHasTarget(false);
 			data.reset(true);
 			if (isCurrentLapValid) {
 				int metersToRace = Math.round(gameTrack.getTotalLength() - gameTrack.getTrackDistance(playerCar, 0));
-				progress.setMessage("Start in " + metersToRace + " mt");
+				if (metersToRace > 0) {
+					progress.setMessage("Start in " + metersToRace + " mt");
+				} else {
+					progress.setMessage("Started!");
+				}
 			} else {
 				progress.setMessage("Press \"R\"\nto restart");
 			}
 		} else {
 			if (isCurrentLapValid) {
-				progress.setMessage("");
-				progress.setShowAdvantageLabel(nextTarget != null);
+				boolean hasTarget = (nextTarget != null);
+				progress.hideMessage();
+				progress.setHasTarget(hasTarget);
 
 				// use the last one if the replay is finished
-				if (nextTarget != null && nextTarget.hasReplay()) {
+				if (hasTarget) {
 					lastDist = gameTrack.getTrackDistance(nextTarget, 0);
 					lastCompletion = gameTrack.getTrackCompletion(nextTarget);
+					data.setTargetDistance(lastDist);
+					data.setTargetProgression(lastCompletion);
+					data.setPlayerProgression(gameTrack.getTrackCompletion(playerCar));
+				} else {
+					data.setPlayerProgression(0);
 				}
 
 				data.setPlayerDistance(gameTrack.getTrackDistance(playerCar, 0));
-				data.setPlayerProgression(gameTrack.getTrackCompletion(playerCar));
-
-				data.setTargetDistance(lastDist);
-				data.setTargetProgression(lastCompletion);
 
 				// target tracker
 				float distMt = gameTrack.getTrackDistance(playerCar, 0) - lastDist;
