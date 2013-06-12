@@ -9,7 +9,17 @@ import com.badlogic.gdx.math.Matrix4;
 public class GameRendererEvent extends Event<GameRendererEvent.Type, GameRendererEvent.Order, GameRendererEvent.Listener> {
 	/** defines the type of render queue */
 	public enum Type {
-		OnSubframeInterpolate, BatchBeforeCars, BatchAfterCars, BatchBeforePostProcessing, BatchAfterPostProcessing, BatchDebug, Debug;
+		//@off
+		SubframeInterpolate,				// interpolate positions and orientations
+		BeforeRender,						// update rendering data such as camera position and zoom
+		BatchBeforeCars,					// draw *before* cars are drawn 
+		BatchAfterCars, 					// draw *after* cars are drawn
+		BatchBeforePostProcessing, 	// draw before the post-processing passes
+		BatchAfterPostProcessing, 		// draw after all the post-processing passes
+		BatchDebug, 						// debug draw (via SpriteBatch) 
+		Debug									// debug draw (via default GL calls)
+		;
+		//@on
 	}
 
 	/** defines the position in the render queue specified by the Type parameter */

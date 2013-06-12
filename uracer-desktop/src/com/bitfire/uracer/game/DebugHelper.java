@@ -45,7 +45,6 @@ public final class DebugHelper {
 			if (type == Type.BatchDebug) {
 				render(GameEvents.gameRenderer.batch);
 			} else if (type == Type.Debug) {
-
 				if (Config.Debug.RenderBox2DWorldWireframe) {
 					renderB2dWorld(box2dWorld, worldRenderer.getOrthographicMvpMt());
 				}

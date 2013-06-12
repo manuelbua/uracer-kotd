@@ -116,15 +116,18 @@ public final class GameRenderer {
 		}
 	}
 
-	public void interpolate (float timeAliasingFactor) {
+	private void interpolate (float timeAliasingFactor) {
 		GameEvents.gameRenderer.timeAliasingFactor = timeAliasingFactor;
-		GameEvents.gameRenderer.trigger(this, GameRendererEvent.Type.OnSubframeInterpolate);
+		GameEvents.gameRenderer.trigger(this, GameRendererEvent.Type.SubframeInterpolate);
 	}
 
-	public void beforeRender () {
+	private void beforeRender () {
 		updateLights();
 
-		// update matrices, cameras useful values
+		// request freshdata before any rendering
+		GameEvents.gameRenderer.trigger(this, GameRendererEvent.Type.BeforeRender);
+
+		// update matrices, cameras and other values
 		GameEvents.gameRenderer.mtxOrthographicMvpMt = worldRenderer.getOrthographicMvpMt();
 		GameEvents.gameRenderer.camOrtho = worldRenderer.getOrthographicCamera();
 		GameEvents.gameRenderer.camPersp = worldRenderer.getPerspectiveCamera();
@@ -138,6 +141,12 @@ public final class GameRenderer {
 	}
 
 	public void render (FrameBuffer dest) {
+		// trigger interpolables to interpolate their position and orientation
+		interpolate(URacer.Game.getTemporalAliasing());
+
+		// raise before render
+		beforeRender();
+
 		SpriteBatch batch;
 		worldRenderer.resetCounters();
 

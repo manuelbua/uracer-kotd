@@ -1,7 +1,6 @@
 
 package com.bitfire.uracer.game;
 
-
 public interface GameLogic {
 	void dispose ();
 
@@ -24,6 +23,4 @@ public interface GameLogic {
 	void tick ();
 
 	void tickCompleted ();
-
-	void beforeRender ();
 }
