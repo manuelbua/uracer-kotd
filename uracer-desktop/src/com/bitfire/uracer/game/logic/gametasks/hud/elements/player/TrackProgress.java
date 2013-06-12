@@ -22,12 +22,12 @@ import com.bitfire.utils.ShaderLoader;
 
 public class TrackProgress extends Positionable {
 	private HudLabel lblAdvantage;
-	private boolean advantageShown;
+	private boolean lblAdvantageShown;
 
 	private final Texture texMask;
 	private final ShaderProgram shProgress;
-	private final Sprite sAdvantage, sProgress;
-	private boolean flipped;
+	private final Sprite sprAdvantage, sprProgress;
+	private boolean flipped, showAdvantageLabel;
 
 	private String customMessage = "";
 	private TrackProgressData data = new TrackProgressData();
@@ -78,19 +78,20 @@ public class TrackProgress extends Positionable {
 
 	public TrackProgress () {
 		lblAdvantage = new HudLabel(FontFace.CurseWhiteBig, "", false);
-		advantageShown = false;
+		lblAdvantageShown = false;
+		showAdvantageLabel = false;
 		lblAdvantage.setAlpha(1);
 
 		texMask = Art.texCircleProgressMask;
 
 		shProgress = ShaderLoader.fromFile("progress", "progress");
 
-		sAdvantage = new Sprite(Art.texCircleProgress);
-		sAdvantage.flip(false, true);
+		sprAdvantage = new Sprite(Art.texCircleProgress);
+		sprAdvantage.flip(false, true);
 		flipped = false;
 
-		sProgress = new Sprite(Art.texRadLinesProgress);
-		sProgress.flip(false, true);
+		sprProgress = new Sprite(Art.texRadLinesProgress);
+		sprProgress.flip(false, true);
 	}
 
 	@Override
@@ -100,10 +101,15 @@ public class TrackProgress extends Positionable {
 
 	public void setMessage (String messageOrEmpty) {
 		customMessage = messageOrEmpty;
+		showAdvantageLabel = (customMessage != null) && (customMessage.length() > 0);
 	}
 
 	public TrackProgressData getProgressData () {
 		return data;
+	}
+
+	public void setShowAdvantageLabel (boolean show) {
+		showAdvantageLabel = show;
 	}
 
 	@Override
@@ -117,13 +123,9 @@ public class TrackProgress extends Positionable {
 	}
 
 	public void render (SpriteBatch batch, float cameraZoom) {
-
 		if (data == null) {
 			return;
 		}
-
-		// float a = 1f - 0.7f * URacer.Game.getTimeModFactor();
-		float a = 0.25f;
 
 		if (customMessage.length() == 0) {
 			float v = data.playerDistance.get() - data.targetDistance.get();
@@ -132,13 +134,13 @@ public class TrackProgress extends Positionable {
 			lblAdvantage.setString(customMessage);
 		}
 
-		if (data.playerDistance.get() > 0) {
-			if (!advantageShown) {
-				advantageShown = true;
+		if (showAdvantageLabel) {
+			if (!lblAdvantageShown) {
+				lblAdvantageShown = true;
 				lblAdvantage.fadeIn(500);
 			}
-		} else if (advantageShown) {
-			advantageShown = false;
+		} else if (lblAdvantageShown) {
+			lblAdvantageShown = false;
 			lblAdvantage.fadeOut(1000);
 		}
 
@@ -156,12 +158,15 @@ public class TrackProgress extends Positionable {
 			s += 0.5f * adist;
 		}
 
-		lblAdvantage.setColor(advantageColor);
-		lblAdvantage.setAlpha(1);
-		lblAdvantage.setScale(s);
-		lblAdvantage.setPosition(position.x, position.y - cameraZoom * 100 - cameraZoom * 100 * timeFactor - cameraZoom * 20
-			* adist);
-		lblAdvantage.render(batch);
+		// if (showAdvantageLabel)
+		{
+			lblAdvantage.setColor(advantageColor);
+			// lblAdvantage.setAlpha(1);
+			lblAdvantage.setScale(s);
+			lblAdvantage.setPosition(position.x, position.y - cameraZoom * 100 - cameraZoom * 100 * timeFactor - cameraZoom * 20
+				* adist);
+			lblAdvantage.render(batch);
+		}
 
 		float scl = cameraZoom * scale * (1f + timeFactor);
 
@@ -174,28 +179,29 @@ public class TrackProgress extends Positionable {
 
 		scl += .07f * URacer.Game.getTimeModFactor();
 
-		// player's progress
+		// player's track progress
 		shProgress.setUniformf("progress", data.playerProgress.get());
-		sProgress.setColor(Color.WHITE);
-		sProgress.setScale(scl);
-		sProgress.setPosition(position.x - sProgress.getWidth() / 2, position.y - sProgress.getHeight() / 2);
-		sProgress.draw(batch, a);
+		sprProgress.setColor(Color.WHITE);
+		sprProgress.setScale(scl);
+		sprProgress.setPosition(position.x - sprProgress.getWidth() / 2, position.y - sprProgress.getHeight() / 2);
+		sprProgress.draw(batch, 0.5f);
 		batch.flush();
 
 		boolean isBack = (dist < 0);
 		if (isBack && !flipped) {
 			flipped = true;
-			sAdvantage.flip(true, false);
+			sprAdvantage.flip(true, false);
 		} else if (!isBack && flipped) {
 			flipped = false;
-			sAdvantage.flip(true, false);
+			sprAdvantage.flip(true, false);
 		}
 
+		// player's advantage/disadvantage
 		shProgress.setUniformf("progress", Math.abs(playerToTarget));
-		sAdvantage.setColor(advantageColor);
-		sAdvantage.setScale(scl * 1.1f);
-		sAdvantage.setPosition(position.x - sAdvantage.getWidth() / 2, position.y - sAdvantage.getHeight() / 2);
-		sAdvantage.draw(batch, a);
+		sprAdvantage.setColor(advantageColor);
+		sprAdvantage.setScale(scl * 1.1f);
+		sprAdvantage.setPosition(position.x - sprAdvantage.getWidth() / 2, position.y - sprAdvantage.getHeight() / 2);
+		sprAdvantage.draw(batch, 1);
 		batch.flush();
 
 		batch.setShader(null);

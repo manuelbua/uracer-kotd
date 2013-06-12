@@ -49,48 +49,47 @@ import com.bitfire.utils.ShaderLoader;
 public final class GameWorldRenderer {
 	// @off
 	private static final String treeVertexShader =
-		"uniform mat4 u_projTrans;					\n" +
-		"attribute vec4 a_position;				\n" +
-		"attribute vec2 a_texCoord0;				\n" +
-		"varying vec2 v_TexCoord;					\n" +
-		"void main()									\n" +
-		"{\n" +
-		"	gl_Position = u_projTrans * a_position;	\n" +
-		"	v_TexCoord = a_texCoord0;						\n" +
-		"}\n";
-	
-	private static final String treeFragmentShader =
-		"#ifdef GL_ES											\n" +
-			"precision mediump float;							\n" +
-			"#endif													\n" +
-			"uniform sampler2D u_texture;						\n" +
-			"varying vec2 v_TexCoord;							\n" +
-			"void main()											\n" +
-			"{\n" +
-			"	vec4 texel = texture2D( u_texture, v_TexCoord );	\n" +
-			"	if(texel.a < 0.25) discard;							\n" +
-			"	gl_FragColor = texel;								\n" +
-			"}\n";
-
-	private static final String treeFragmentShaderNight =
-		"#ifdef GL_ES											\n" +
-		"precision mediump float;							\n" +
-		"#endif													\n" +
-		"uniform sampler2D u_texture;						\n" +
-		"uniform vec4 u_ambient;						\n" +
+		"uniform mat4 u_projTrans;							\n" +
+		"attribute vec4 a_position;						\n" +
+		"attribute vec2 a_texCoord0;						\n" +
 		"varying vec2 v_TexCoord;							\n" +
 		"void main()											\n" +
-		"{\n" +
+		"{															\n" +
+		"	gl_Position = u_projTrans * a_position;	\n" +
+		"	v_TexCoord = a_texCoord0;						\n" +
+		"}															\n";
+	
+	private static final String treeFragmentShader =
+		"#ifdef GL_ES														\n" +
+		"precision mediump float;										\n" +
+		"#endif																\n" +
+		"uniform sampler2D u_texture;									\n" +
+		"varying vec2 v_TexCoord;										\n" +
+		"void main()														\n" +
+		"{																		\n" +
 		"	vec4 texel = texture2D( u_texture, v_TexCoord );	\n" +
-		"	if(texel.a < 0.25) discard;							\n" +
+		"	if(texel.a < 0.25) discard;								\n" +
+		"	gl_FragColor = texel;										\n" +
+		"}																		\n";
+
+	private static final String treeFragmentShaderNight =
+		"#ifdef GL_ES																						\n" +
+		"precision mediump float;																		\n" +
+		"#endif																								\n" +
+		"uniform sampler2D u_texture;																	\n" +
+		"uniform vec4 u_ambient;																		\n" +
+		"varying vec2 v_TexCoord;																		\n" +
+		"void main()																						\n" +
+		"{																										\n" +
+		"	vec4 texel = texture2D( u_texture, v_TexCoord );									\n" +
+		"	if(texel.a < 0.25) discard;																\n" +
 		"	vec4 c = vec4((u_ambient.rgb + texel.rgb*texel.a)*u_ambient.a, texel.a);	\n" +
-		"	gl_FragColor = c;								\n" +
-		"}\n";
+		"	gl_FragColor = c;																				\n" +
+		"}																										\n";
 	// @on
 
 	// the game world
 	private GameWorld world = null;
-	private GhostCar ghostCars[] = null;
 
 	// camera view
 	protected PerspectiveCamera camPersp = null;
@@ -358,10 +357,6 @@ public final class GameWorldRenderer {
 	// NOTE: do not use camOrtho.zoom directly since it will be bound later at updateCamera!
 	public float getCameraZoom () {
 		return cameraZoom;
-	}
-
-	public void setGhostCars (GhostCar[] ghosts) {
-		this.ghostCars = ghosts;
 	}
 
 	public void setGameTrackDebugCar (Car car) {
@@ -748,7 +743,7 @@ public final class GameWorldRenderer {
 	}
 
 	public void renderCars (boolean depthOnly) {
-		CarStillModel car;
+		CarStillModel model;
 
 		Art.meshCar.bind();
 
@@ -758,20 +753,23 @@ public final class GameWorldRenderer {
 		}
 
 		// ghosts
-		if (ghostCars != null && ghostCars.length > 0) {
-			for (int i = 0; i < ghostCars.length; i++) {
-				car = ghostCars[i].getStillModel();
-				if (car.getAlpha() <= 0) continue;
+		GhostCar[] ghosts = world.getGhostCars();
+		if (ghosts != null && ghosts.length > 0) {
+			for (int i = 0; i < ghosts.length; i++) {
+				GhostCar ghost = ghosts[i];
 
-				car.transform(camPersp, camOrtho);
+				model = ghost.getStillModel();
+				if (model.getAlpha() <= 0) continue;
+
+				model.transform(camPersp, camOrtho);
 				if (depthOnly) {
-					float ca = car.getAlpha();
+					float ca = model.getAlpha();
 					float a = (ca - 0.5f) * 2;
 					float s = AMath.clampf(AMath.sigmoid(a * 3f + 4f - (1 - ca)), 0, 1);
 					setSsaoScale(DefaultSsaoScale * s);
 				}
 
-				renderCar(car, depthOnly, false);
+				renderCar(model, depthOnly, false);
 			}
 		}
 
@@ -786,9 +784,9 @@ public final class GameWorldRenderer {
 
 		PlayerCar player = world.getPlayer();
 		if (player != null) {
-			car = player.getStillModel();
-			car.transform(camPersp, camOrtho);
-			renderCar(car, depthOnly, false);
+			model = player.getStillModel();
+			model.transform(camPersp, camOrtho);
+			renderCar(model, depthOnly, false);
 		}
 
 		if (!depthOnly) {

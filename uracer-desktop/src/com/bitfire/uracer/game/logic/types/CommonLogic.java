@@ -16,6 +16,9 @@ import com.bitfire.uracer.URacer;
 import com.bitfire.uracer.configuration.Config;
 import com.bitfire.uracer.configuration.UserProfile;
 import com.bitfire.uracer.events.CarEvent;
+import com.bitfire.uracer.events.GameRendererEvent;
+import com.bitfire.uracer.events.GameRendererEvent.Order;
+import com.bitfire.uracer.events.GameRendererEvent.Type;
 import com.bitfire.uracer.events.GhostCarEvent;
 import com.bitfire.uracer.events.PlayerDriftStateEvent;
 import com.bitfire.uracer.game.DebugHelper;
@@ -54,14 +57,35 @@ import com.bitfire.uracer.game.tween.GameTweener;
 import com.bitfire.uracer.game.world.GameWorld;
 import com.bitfire.uracer.resources.Art;
 import com.bitfire.uracer.screen.TransitionFactory.TransitionType;
+import com.bitfire.uracer.utils.AMath;
 import com.bitfire.uracer.utils.BoxedFloat;
 import com.bitfire.uracer.utils.BoxedFloatAccessor;
 import com.bitfire.uracer.utils.CarUtils;
+import com.bitfire.uracer.utils.InterpolatedFloat;
 import com.bitfire.uracer.utils.NumberString;
 
 public abstract class CommonLogic implements GameLogic {
 
-	protected abstract float updateCameraZoom (float timeModFactor);
+	protected float updateCameraZoom (float timeModFactor) {
+		if (hasPlayer()) {
+			// speed.set(playerCar.carState.currSpeedFactor, 0.02f);
+			driftStrength.set(playerCar.driftState.driftStrength, 0.02f);
+		}
+
+		float minZoom = GameWorldRenderer.MinCameraZoom;
+		float maxZoom = GameWorldRenderer.MaxCameraZoom;
+
+		float cameraZoom = (minZoom + GameWorldRenderer.ZoomWindow);
+		cameraZoom += (maxZoom - cameraZoom) * timeModFactor;
+		cameraZoom += 0.25f * GameWorldRenderer.ZoomWindow * driftStrength.get();
+
+		cameraZoom = AMath.lerp(prevZoom, cameraZoom, 0.1f);
+		cameraZoom = AMath.clampf(cameraZoom, minZoom, maxZoom);
+		cameraZoom = AMath.fixupTo(cameraZoom, minZoom + GameWorldRenderer.ZoomWindow);
+
+		prevZoom = cameraZoom;
+		return cameraZoom;
+	}
 
 	protected abstract void updateCameraPosition (Vector2 positionPx);
 
@@ -105,10 +129,10 @@ public abstract class CommonLogic implements GameLogic {
 	protected GameTrack gameTrack = null;
 
 	// rendering
-	// private GameRenderer gameRenderer = null;
 	protected GameWorldRenderer gameWorldRenderer = null;
 	protected PostProcessing postProcessing = null;
 	private Vector2 cameraPos = new Vector2();
+	private float prevZoom = GameWorldRenderer.MinCameraZoom + GameWorldRenderer.ZoomWindow;
 
 	// player
 	protected final EventHandlers eventHandlers = new EventHandlers();
@@ -121,6 +145,7 @@ public abstract class CommonLogic implements GameLogic {
 	private GhostCar nextTarget = null;
 	private Time dilationTime = new Time();
 	private Time outOfTrackTime = new Time();
+	private InterpolatedFloat driftStrength = new InterpolatedFloat();
 
 	// lap / replays
 	protected LapManager lapManager = null;
@@ -140,35 +165,32 @@ public abstract class CommonLogic implements GameLogic {
 	public CommonLogic (UserProfile userProfile, GameWorld gameWorld, GameRenderer gameRenderer) {
 		this.userProfile = userProfile;
 		this.gameWorld = gameWorld;
-		// this.gameRenderer = gameRenderer;
 		this.gameWorldRenderer = gameRenderer.getWorldRenderer();
 		this.inputSystem = URacer.Game.getInputSystem();
 		this.messager = new Messager();
+		this.gameTrack = gameWorld.getGameTrack();
+
 		timeMod = new TimeModulator();
+		lapManager = new LapManager(userProfile, gameWorld.getLevelId());
 
 		// post-processing
 		postProcessing = gameRenderer.getPostProcessing();
 
-		// create game and player tasks
+		// create both game and player tasks
 		gameTasksManager = new GameTasksManager(gameWorld);
-		playerTasks = new PlayerGameTasks(userProfile, gameTasksManager);
 		gameTasksManager.add(messager);
-
-		lapManager = new LapManager(userProfile, gameWorld.getLevelId());
+		playerTasks = new PlayerGameTasks(userProfile, gameTasksManager);
 		playerTasks.createTasks(lapManager);
 
 		for (int i = 0; i < ReplayManager.MaxReplays; i++) {
 			ghostCars[i] = CarFactory.createGhost(i, gameWorld, CarPreset.Type.L1_GoblinOrange);
 		}
-
+		gameWorld.setGhostCars(ghostCars);
 		eventHandlers.registerGhostEvents();
-
-		gameWorldRenderer.setGhostCars(ghostCars);
-		gameTrack = gameWorld.getGameTrack();
+		eventHandlers.registerRenderEvents();
 
 		wrongWayMonitor = new WrongWayMonitor(eventHandlers);
 		lapMonitor = new LapCompletionMonitor(eventHandlers, gameTrack);
-
 		gameInput = new GameInput(this, inputSystem);
 	}
 
@@ -197,6 +219,7 @@ public abstract class CommonLogic implements GameLogic {
 		}
 
 		eventHandlers.unregisterGhostEvents();
+		eventHandlers.unregisterRenderEvents();
 
 		lapManager.dispose();
 		GameTweener.dispose();
@@ -216,7 +239,6 @@ public abstract class CommonLogic implements GameLogic {
 		configurePlayer(gameWorld, inputSystem, playerCar);
 		Gdx.app.log("GameLogic", "Player configured");
 
-		// playerTasks.createTasks(playerCar, lapManager, gameRenderer);
 		playerTasks.playerAdded(playerCar);
 		Gdx.app.log("GameLogic", "Game tasks created and configured");
 
@@ -226,7 +248,6 @@ public abstract class CommonLogic implements GameLogic {
 		postProcessing.setPlayer(playerCar);
 		gameWorld.setPlayer(playerCar);
 		gameWorldRenderer.setRenderPlayerHeadlights(gameWorld.isNightMode());
-
 		gameWorldRenderer.showDebugGameTrack(Config.Debug.RenderTrackSectors);
 		gameWorldRenderer.setGameTrackDebugCar(playerCar);
 
@@ -248,7 +269,6 @@ public abstract class CommonLogic implements GameLogic {
 		// previously registered events, if there was a player
 		if (playerCar != null) {
 			eventHandlers.unregisterPlayerEvents();
-			// playerTasks.destroyTasks();
 			playerTasks.playerRemoved();
 			playerCar.dispose();
 		}
@@ -260,6 +280,8 @@ public abstract class CommonLogic implements GameLogic {
 		lapManager.reset(true);
 		lapMonitor.reset(null);
 		postProcessing.setPlayer(null);
+		driftStrength.reset(0, true);
+
 		restartLogic();
 
 		if (Config.Debug.UseDebugHelper) {
@@ -324,21 +346,6 @@ public abstract class CommonLogic implements GameLogic {
 	@Override
 	public void tickCompleted () {
 		updateLogic();
-	}
-
-	@Override
-	public void beforeRender () {
-		float zoom = updateCameraZoom(URacer.Game.getTimeModFactor());
-		updateCameraPosition(cameraPos);
-
-		gameWorldRenderer.setCameraZoom(zoom);
-		gameWorldRenderer.setCameraPosition(cameraPos);
-		gameWorldRenderer.updateCamera();
-
-		postProcessing.onBeforeRender(zoom, lapMonitor.getWarmUpCompletion());
-
-		// game tweener step
-		GameTweener.update();
 	}
 
 	//
@@ -446,6 +453,7 @@ public abstract class CommonLogic implements GameLogic {
 		} else {
 			if (isCurrentLapValid) {
 				progress.setMessage("");
+				progress.setShowAdvantageLabel(nextTarget != null);
 
 				// use the last one if the replay is finished
 				if (nextTarget != null && nextTarget.hasReplay()) {
@@ -552,7 +560,6 @@ public abstract class CommonLogic implements GameLogic {
 		gameTrack.clearTrackStates();
 		resetPlayer(gameWorld, playerCar);
 		resetAllGhosts();
-
 		endTimeDilation();
 
 		outOfTrackTime.reset();
@@ -702,6 +709,38 @@ public abstract class CommonLogic implements GameLogic {
 		public void onWrongWayEnds () {
 		}
 
+		//
+		// renderer listener
+		//
+		private GameRendererEvent.Listener rendererListener = new GameRendererEvent.Listener() {
+			@SuppressWarnings("incomplete-switch")
+			@Override
+			public void handle (Object source, Type type, Order order) {
+				switch (type) {
+				case BeforeRender:
+					// request camera updates from callbacks
+					float zoom = updateCameraZoom(URacer.Game.getTimeModFactor());
+					updateCameraPosition(cameraPos);
+
+					// apply camera updates
+					gameWorldRenderer.setCameraZoom(zoom);
+					gameWorldRenderer.setCameraPosition(cameraPos);
+					gameWorldRenderer.updateCamera();
+
+					// sync post-processing animators
+					postProcessing.onBeforeRender(zoom, lapMonitor.getWarmUpCompletion());
+
+					// game tweener step
+					GameTweener.update();
+					break;
+				}
+			}
+		};
+
+		//
+		// drift state listener
+		//
+
 		private PlayerDriftStateEvent.Listener driftStateListener = new PlayerDriftStateEvent.Listener() {
 			@Override
 			public void handle (Object source, PlayerDriftStateEvent.Type type, PlayerDriftStateEvent.Order order) {
@@ -737,6 +776,10 @@ public abstract class CommonLogic implements GameLogic {
 				}
 			}
 		};
+
+		//
+		// car listener
+		//
 
 		private CarEvent.Listener playerCarListener = new CarEvent.Listener() {
 			private TweenCallback penaltyFinished = new TweenCallback() {
@@ -800,6 +843,10 @@ public abstract class CommonLogic implements GameLogic {
 			}
 		};
 
+		//
+		// ghost car-specific listener
+		//
+
 		private GhostCarEvent.Listener ghostListener = new GhostCarEvent.Listener() {
 			@Override
 			public void handle (Object source, GhostCarEvent.Type type, GhostCarEvent.Order order) {
@@ -840,6 +887,16 @@ public abstract class CommonLogic implements GameLogic {
 
 		public void unregisterGhostEvents () {
 			GameEvents.ghostCars.removeListener(ghostListener, GhostCarEvent.Type.onGhostFadingOut);
+		}
+
+		public void registerRenderEvents () {
+			GameEvents.gameRenderer.addListener(rendererListener, GameRendererEvent.Type.BeforeRender,
+				GameRendererEvent.Order.MINUS_4);
+		}
+
+		public void unregisterRenderEvents () {
+			GameEvents.gameRenderer.removeListener(rendererListener, GameRendererEvent.Type.BeforeRender,
+				GameRendererEvent.Order.MINUS_4);
 		}
 	}
 }

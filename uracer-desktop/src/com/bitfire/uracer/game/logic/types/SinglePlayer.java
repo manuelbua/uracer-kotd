@@ -9,19 +9,11 @@ import com.bitfire.uracer.game.logic.gametasks.messager.Message.Position;
 import com.bitfire.uracer.game.logic.gametasks.messager.Message.Size;
 import com.bitfire.uracer.game.logic.replaying.Replay;
 import com.bitfire.uracer.game.rendering.GameRenderer;
-import com.bitfire.uracer.game.rendering.GameWorldRenderer;
 import com.bitfire.uracer.game.world.GameWorld;
-import com.bitfire.uracer.utils.AMath;
 import com.bitfire.uracer.utils.CarUtils;
 import com.bitfire.uracer.utils.Convert;
-import com.bitfire.uracer.utils.InterpolatedFloat;
 
 public class SinglePlayer extends CommonLogic {
-
-	private float prevZoom = GameWorldRenderer.MinCameraZoom + GameWorldRenderer.ZoomWindow;
-	// private InterpolatedFloat speed = new InterpolatedFloat()
-	private InterpolatedFloat drift = new InterpolatedFloat();
-
 	public SinglePlayer (UserProfile userProfile, GameWorld gameWorld, GameRenderer gameRenderer) {
 		super(userProfile, gameWorld, gameRenderer);
 	}
@@ -32,38 +24,8 @@ public class SinglePlayer extends CommonLogic {
 	}
 
 	@Override
-	public void removePlayer () {
-		super.removePlayer();
-		drift.reset(0, true);
-	}
-
-	@Override
-	protected float updateCameraZoom (float timeModFactor) {
-		if (hasPlayer()) {
-			// speed.set(playerCar.carState.currSpeedFactor, 0.02f);
-			drift.set(playerCar.driftState.driftStrength, 0.02f);
-		}
-
-		float minZoom = GameWorldRenderer.MinCameraZoom;
-		float maxZoom = GameWorldRenderer.MaxCameraZoom;
-
-		float cameraZoom = (minZoom + GameWorldRenderer.ZoomWindow);
-		cameraZoom += (maxZoom - cameraZoom) * timeModFactor;
-		cameraZoom += 0.25f * GameWorldRenderer.ZoomWindow * drift.get();
-
-		cameraZoom = AMath.lerp(prevZoom, cameraZoom, 0.1f);
-		cameraZoom = AMath.clampf(cameraZoom, minZoom, maxZoom);
-		cameraZoom = AMath.fixupTo(cameraZoom, minZoom + GameWorldRenderer.ZoomWindow);
-
-		prevZoom = cameraZoom;
-
-		return cameraZoom;
-	}
-
-	@Override
 	protected void updateCameraPosition (Vector2 positionPx) {
 		if (hasPlayer()) {
-
 			// update player's headlights and move the world camera to follows it, if there is a player
 			if (gameWorld.isNightMode()) {
 				gameWorldRenderer.updatePlayerHeadlights(playerCar);
@@ -72,6 +34,7 @@ public class SinglePlayer extends CommonLogic {
 			positionPx.set(playerCar.state().position);
 
 		} else if (isGhostActive(0)) {
+			// FIXME use best replay
 			positionPx.set(getGhost(0).state().position);
 		} else {
 			// no ghost, no player, WTF?

@@ -103,10 +103,9 @@ public final class GameRenderer {
 		treesAmbient.clamp();
 
 		// update point lights, more intensity from lights near the player
+		PlayerCar player = world.getPlayer();
 		PointLight[] lights = world.getLights();
-		if (lights != null && world.getPlayer() != null) {
-			PlayerCar player = world.getPlayer();
-
+		if (lights != null && player != null) {
 			for (int l = 0; l < lights.length; l++) {
 				float dist = player.getWorldPosMt().dst2(lights[l].getPosition());
 				float maxdist = 30;
@@ -117,18 +116,22 @@ public final class GameRenderer {
 		}
 	}
 
-	public void beforeRender (float timeAliasingFactor) {
+	private void interpolate (float timeAliasingFactor) {
+		GameEvents.gameRenderer.timeAliasingFactor = timeAliasingFactor;
+		GameEvents.gameRenderer.trigger(this, GameRendererEvent.Type.SubframeInterpolate);
+	}
 
+	private void beforeRender () {
 		updateLights();
 
-		// update matrices, cameras useful values
+		// request freshdata before any rendering
+		GameEvents.gameRenderer.trigger(this, GameRendererEvent.Type.BeforeRender);
+
+		// update matrices, cameras and other values
 		GameEvents.gameRenderer.mtxOrthographicMvpMt = worldRenderer.getOrthographicMvpMt();
 		GameEvents.gameRenderer.camOrtho = worldRenderer.getOrthographicCamera();
 		GameEvents.gameRenderer.camPersp = worldRenderer.getPerspectiveCamera();
 		GameEvents.gameRenderer.camZoom = worldRenderer.getCameraZoom();
-
-		GameEvents.gameRenderer.timeAliasingFactor = timeAliasingFactor;
-		GameEvents.gameRenderer.trigger(this, GameRendererEvent.Type.OnSubframeInterpolate);
 	}
 
 	private void clear () {
@@ -138,6 +141,12 @@ public final class GameRenderer {
 	}
 
 	public void render (FrameBuffer dest) {
+		// trigger interpolables to interpolate their position and orientation
+		interpolate(URacer.Game.getTemporalAliasing());
+
+		// raise before render
+		beforeRender();
+
 		SpriteBatch batch;
 		worldRenderer.resetCounters();
 
