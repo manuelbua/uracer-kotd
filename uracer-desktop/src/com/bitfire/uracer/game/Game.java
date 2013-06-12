@@ -81,11 +81,14 @@ public class Game implements Disposable {
 	}
 
 	public void render (FrameBuffer dest) {
-		// the order is important: first trigger interpolables to update their
-		// position and orientation, then give a chance to use this information
-		// to the game logic
+		// the order is important: first trigger interpolables to update their position and orientation, then give a
+		// chance to use this information to the game logic
 		gameRenderer.interpolate(URacer.Game.getTemporalAliasing());
+
+		// updates based on interpolables
 		gameLogic.beforeRender();
+
+		// consume updated data
 		gameRenderer.beforeRender();
 		gameRenderer.render(dest);
 	}

@@ -34,6 +34,7 @@ import com.badlogic.gdx.utils.GdxRuntimeException;
 import com.bitfire.uracer.URacer;
 import com.bitfire.uracer.configuration.Config;
 import com.bitfire.uracer.game.GameLevels;
+import com.bitfire.uracer.game.actors.GhostCar;
 import com.bitfire.uracer.game.collisions.CollisionFilters;
 import com.bitfire.uracer.game.logic.helpers.GameTrack;
 import com.bitfire.uracer.game.logic.helpers.GameTrack.TrackPosition;
@@ -79,8 +80,9 @@ public final class GameWorld {
 	// player data
 	public PlayerCar player = null;
 	public TrackPosition playerStart = null;
-	// public Vector2 playerStartPos = new Vector2();
-	// public float playerStartOrientRads;
+
+	// ghost data
+	public GhostCar[] ghosts = null;
 
 	// light/night system
 	private boolean nightMode;
@@ -89,8 +91,7 @@ public final class GameWorld {
 	protected PointLight playerImpulse = null;
 	protected PointLight[] lights = null;
 
-	// level meshes, package-level access for GameWorldRenderer (ugly but faster
-	// than accessors)
+	// level meshes, package-level access for GameWorldRenderer (ugly but faster than accessors)
 	protected TrackWalls trackWalls = null;
 	protected TrackTrees trackTrees = null;
 	protected List<OrthographicAlignedStillModel> staticMeshes = new ArrayList<OrthographicAlignedStillModel>();
@@ -775,6 +776,14 @@ public final class GameWorld {
 
 	public void setPlayer (PlayerCar player) {
 		this.player = player;
+	}
+
+	public void setGhostCars (GhostCar[] ghosts) {
+		this.ghosts = ghosts;
+	}
+
+	public GhostCar[] getGhostCars () {
+		return ghosts;
 	}
 
 	// helpers from maputils

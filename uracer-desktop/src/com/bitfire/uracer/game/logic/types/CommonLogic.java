@@ -105,7 +105,6 @@ public abstract class CommonLogic implements GameLogic {
 	protected GameTrack gameTrack = null;
 
 	// rendering
-	// private GameRenderer gameRenderer = null;
 	protected GameWorldRenderer gameWorldRenderer = null;
 	protected PostProcessing postProcessing = null;
 	private Vector2 cameraPos = new Vector2();
@@ -140,35 +139,31 @@ public abstract class CommonLogic implements GameLogic {
 	public CommonLogic (UserProfile userProfile, GameWorld gameWorld, GameRenderer gameRenderer) {
 		this.userProfile = userProfile;
 		this.gameWorld = gameWorld;
-		// this.gameRenderer = gameRenderer;
 		this.gameWorldRenderer = gameRenderer.getWorldRenderer();
 		this.inputSystem = URacer.Game.getInputSystem();
 		this.messager = new Messager();
+		this.gameTrack = gameWorld.getGameTrack();
+
 		timeMod = new TimeModulator();
+		lapManager = new LapManager(userProfile, gameWorld.getLevelId());
 
 		// post-processing
 		postProcessing = gameRenderer.getPostProcessing();
 
-		// create game and player tasks
+		// create both game and player tasks
 		gameTasksManager = new GameTasksManager(gameWorld);
-		playerTasks = new PlayerGameTasks(userProfile, gameTasksManager);
 		gameTasksManager.add(messager);
-
-		lapManager = new LapManager(userProfile, gameWorld.getLevelId());
+		playerTasks = new PlayerGameTasks(userProfile, gameTasksManager);
 		playerTasks.createTasks(lapManager);
 
 		for (int i = 0; i < ReplayManager.MaxReplays; i++) {
 			ghostCars[i] = CarFactory.createGhost(i, gameWorld, CarPreset.Type.L1_GoblinOrange);
 		}
-
+		gameWorld.setGhostCars(ghostCars);
 		eventHandlers.registerGhostEvents();
-
-		gameWorldRenderer.setGhostCars(ghostCars);
-		gameTrack = gameWorld.getGameTrack();
 
 		wrongWayMonitor = new WrongWayMonitor(eventHandlers);
 		lapMonitor = new LapCompletionMonitor(eventHandlers, gameTrack);
-
 		gameInput = new GameInput(this, inputSystem);
 	}
 
@@ -216,7 +211,6 @@ public abstract class CommonLogic implements GameLogic {
 		configurePlayer(gameWorld, inputSystem, playerCar);
 		Gdx.app.log("GameLogic", "Player configured");
 
-		// playerTasks.createTasks(playerCar, lapManager, gameRenderer);
 		playerTasks.playerAdded(playerCar);
 		Gdx.app.log("GameLogic", "Game tasks created and configured");
 
@@ -247,7 +241,6 @@ public abstract class CommonLogic implements GameLogic {
 		// previously registered events, if there was a player
 		if (playerCar != null) {
 			eventHandlers.unregisterPlayerEvents();
-			// playerTasks.destroyTasks();
 			playerTasks.playerRemoved();
 			playerCar.dispose();
 		}
@@ -553,7 +546,6 @@ public abstract class CommonLogic implements GameLogic {
 		gameTrack.clearTrackStates();
 		resetPlayer(gameWorld, playerCar);
 		resetAllGhosts();
-
 		endTimeDilation();
 
 		outOfTrackTime.reset();

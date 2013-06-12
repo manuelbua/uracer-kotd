@@ -103,10 +103,9 @@ public final class GameRenderer {
 		treesAmbient.clamp();
 
 		// update point lights, more intensity from lights near the player
+		PlayerCar player = world.getPlayer();
 		PointLight[] lights = world.getLights();
-		if (lights != null && world.getPlayer() != null) {
-			PlayerCar player = world.getPlayer();
-
+		if (lights != null && player != null) {
 			for (int l = 0; l < lights.length; l++) {
 				float dist = player.getWorldPosMt().dst2(lights[l].getPosition());
 				float maxdist = 30;
