@@ -226,7 +226,6 @@ public abstract class CommonLogic implements GameLogic {
 		postProcessing.setPlayer(playerCar);
 		gameWorld.setPlayer(playerCar);
 		gameWorldRenderer.setRenderPlayerHeadlights(gameWorld.isNightMode());
-
 		gameWorldRenderer.showDebugGameTrack(Config.Debug.RenderTrackSectors);
 		gameWorldRenderer.setGameTrackDebugCar(playerCar);
 
@@ -328,9 +327,11 @@ public abstract class CommonLogic implements GameLogic {
 
 	@Override
 	public void beforeRender () {
+		// request camera updates
 		float zoom = updateCameraZoom(URacer.Game.getTimeModFactor());
 		updateCameraPosition(cameraPos);
 
+		// apply camera updates
 		gameWorldRenderer.setCameraZoom(zoom);
 		gameWorldRenderer.setCameraPosition(cameraPos);
 		gameWorldRenderer.updateCamera();

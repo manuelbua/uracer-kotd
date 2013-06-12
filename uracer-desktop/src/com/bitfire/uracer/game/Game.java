@@ -84,8 +84,9 @@ public class Game implements Disposable {
 		// the order is important: first trigger interpolables to update their
 		// position and orientation, then give a chance to use this information
 		// to the game logic
-		gameRenderer.beforeRender(URacer.Game.getTemporalAliasing());
+		gameRenderer.interpolate(URacer.Game.getTemporalAliasing());
 		gameLogic.beforeRender();
+		gameRenderer.beforeRender();
 		gameRenderer.render(dest);
 	}
 

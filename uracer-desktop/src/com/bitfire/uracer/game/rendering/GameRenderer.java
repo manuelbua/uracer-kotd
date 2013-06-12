@@ -117,8 +117,12 @@ public final class GameRenderer {
 		}
 	}
 
-	public void beforeRender (float timeAliasingFactor) {
+	public void interpolate (float timeAliasingFactor) {
+		GameEvents.gameRenderer.timeAliasingFactor = timeAliasingFactor;
+		GameEvents.gameRenderer.trigger(this, GameRendererEvent.Type.OnSubframeInterpolate);
+	}
 
+	public void beforeRender () {
 		updateLights();
 
 		// update matrices, cameras useful values
@@ -126,9 +130,6 @@ public final class GameRenderer {
 		GameEvents.gameRenderer.camOrtho = worldRenderer.getOrthographicCamera();
 		GameEvents.gameRenderer.camPersp = worldRenderer.getPerspectiveCamera();
 		GameEvents.gameRenderer.camZoom = worldRenderer.getCameraZoom();
-
-		GameEvents.gameRenderer.timeAliasingFactor = timeAliasingFactor;
-		GameEvents.gameRenderer.trigger(this, GameRendererEvent.Type.OnSubframeInterpolate);
 	}
 
 	private void clear () {

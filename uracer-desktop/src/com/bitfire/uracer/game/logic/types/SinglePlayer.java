@@ -56,14 +56,12 @@ public class SinglePlayer extends CommonLogic {
 		cameraZoom = AMath.fixupTo(cameraZoom, minZoom + GameWorldRenderer.ZoomWindow);
 
 		prevZoom = cameraZoom;
-
 		return cameraZoom;
 	}
 
 	@Override
 	protected void updateCameraPosition (Vector2 positionPx) {
 		if (hasPlayer()) {
-
 			// update player's headlights and move the world camera to follows it, if there is a player
 			if (gameWorld.isNightMode()) {
 				gameWorldRenderer.updatePlayerHeadlights(playerCar);
