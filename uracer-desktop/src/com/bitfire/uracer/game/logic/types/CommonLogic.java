@@ -459,7 +459,7 @@ public abstract class CommonLogic implements GameLogic {
 		} else {
 			if (isCurrentLapValid) {
 				boolean hasTarget = (nextTarget != null);
-				progress.hideMessage();
+				progress.hideCurrentMessage();
 				progress.setHasTarget(hasTarget);
 
 				// use the last one if the replay is finished
@@ -475,11 +475,10 @@ public abstract class CommonLogic implements GameLogic {
 
 				data.setPlayerDistance(gameTrack.getTrackDistance(playerCar, 0));
 
-				// target tracker
-				float distMt = gameTrack.getTrackDistance(playerCar, 0) - lastDist;
-				float alpha = MathUtils.clamp(Math.abs(distMt) / 50, 0.2f, 1);
-				playerTasks.hudPlayer.setNextTargetAlpha(alpha);
-
+				// target tracker opacity modulation based on distance from player (brighter if more far away)
+				// float distMt = gameTrack.getTrackDistance(playerCar, 0) - lastDist;
+				// float alpha = MathUtils.clamp(Math.abs(distMt) / 50, 0.2f, 1);
+				// playerTasks.hudPlayer.setNextTargetAlpha(alpha);
 			} else {
 				progress.setMessage("Press \"R\"\nto restart");
 				data.reset(true);
@@ -864,6 +863,14 @@ public abstract class CommonLogic implements GameLogic {
 						playerTasks.hudPlayer.unHighlightNextTarget();
 					}
 					break;
+				case ReplayEnded:
+					GhostCar ghost = (GhostCar)source;
+					if (!hasPlayer()) {
+						ghost.restartReplay();
+					} else {
+						ghost.removeReplay();
+					}
+					break;
 				}
 			}
 
@@ -891,10 +898,12 @@ public abstract class CommonLogic implements GameLogic {
 
 		public void registerGhostEvents () {
 			GameEvents.ghostCars.addListener(ghostListener, GhostCarEvent.Type.onGhostFadingOut);
+			GameEvents.ghostCars.addListener(ghostListener, GhostCarEvent.Type.ReplayEnded);
 		}
 
 		public void unregisterGhostEvents () {
 			GameEvents.ghostCars.removeListener(ghostListener, GhostCarEvent.Type.onGhostFadingOut);
+			GameEvents.ghostCars.removeListener(ghostListener, GhostCarEvent.Type.ReplayEnded);
 		}
 
 		public void registerRenderEvents () {

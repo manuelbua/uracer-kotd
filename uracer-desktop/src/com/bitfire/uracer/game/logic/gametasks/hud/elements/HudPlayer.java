@@ -84,6 +84,7 @@ public final class HudPlayer extends HudElement {
 	@Override
 	public void onReset () {
 		driftBar.hideSecondsLabel();
+		driftBar.reset();
 		highlightError.stop();
 		highlightNext.stop();
 		wrongWay.fadeOut(Config.Graphics.DefaultResetFadeMilliseconds);
@@ -181,14 +182,14 @@ public final class HudPlayer extends HudElement {
 
 	public void highlightNextTarget (Car car) {
 		highlightNext.setCar(car);
-		highlightNext.track();
+		highlightNext.track(0.75f);
 	}
 
 	public void unHighlightNextTarget () {
 		highlightNext.untrack();
 	}
 
-	public void setNextTargetAlpha (float alpha) {
-		highlightNext.setAlpha(alpha);
-	}
+	// public void setNextTargetAlpha (float alpha) {
+	// highlightNext.setAlpha(alpha);
+	// }
 }
