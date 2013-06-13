@@ -103,11 +103,11 @@ public class TrackProgress extends Positionable {
 		return data;
 	}
 
-	public void setMessage (String messageOrEmpty) {
+	public void setCustomMessage (String messageOrEmpty) {
 		customMessage = messageOrEmpty;
 	}
 
-	public void hideCurrentMessage () {
+	public void hideCustomMessage () {
 		customMessage = "";
 	}
 

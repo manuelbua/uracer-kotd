@@ -26,10 +26,10 @@ import com.bitfire.uracer.game.actors.CarPreset;
 import com.bitfire.uracer.game.actors.GhostCar;
 import com.bitfire.uracer.game.events.CarEvent;
 import com.bitfire.uracer.game.events.GameRendererEvent;
-import com.bitfire.uracer.game.events.GhostCarEvent;
-import com.bitfire.uracer.game.events.PlayerDriftStateEvent;
 import com.bitfire.uracer.game.events.GameRendererEvent.Order;
 import com.bitfire.uracer.game.events.GameRendererEvent.Type;
+import com.bitfire.uracer.game.events.GhostCarEvent;
+import com.bitfire.uracer.game.events.PlayerDriftStateEvent;
 import com.bitfire.uracer.game.logic.GameTasksManager;
 import com.bitfire.uracer.game.logic.gametasks.Messager;
 import com.bitfire.uracer.game.logic.gametasks.hud.elements.HudPlayer.EndDriftType;
@@ -150,7 +150,6 @@ public abstract class CommonLogic implements GameLogic {
 	// lap / replays
 	protected LapManager lapManager = null;
 	private LapCompletionMonitor lapMonitor = null;
-	private float lastDist, lastCompletion;
 
 	// tasks
 	protected GameTasksManager gameTasksManager = null;
@@ -454,38 +453,30 @@ public abstract class CommonLogic implements GameLogic {
 			if (isCurrentLapValid) {
 				int metersToRace = Math.round(gameTrack.getTotalLength() - gameTrack.getTrackDistance(playerCar, 0));
 				if (metersToRace > 0) {
-					progress.setMessage("Start in " + metersToRace + " mt");
+					progress.setCustomMessage("Start in " + metersToRace + " mt");
 				} else {
-					progress.setMessage("Started!");
+					progress.setCustomMessage("Started!");
 				}
 			} else {
-				progress.setMessage("Press \"R\"\nto restart");
+				progress.setCustomMessage("Press \"R\"\nto restart");
 			}
 		} else {
 			if (isCurrentLapValid) {
 				boolean hasTarget = (nextTarget != null);
-				progress.hideCurrentMessage();
+				progress.hideCustomMessage();
 				progress.setHasTarget(hasTarget);
 
 				// use the last one if the replay is finished
 				if (hasTarget) {
-					lastDist = gameTrack.getTrackDistance(nextTarget, 0);
-					lastCompletion = gameTrack.getTrackCompletion(nextTarget);
-					data.setTargetDistance(lastDist);
-					data.setTargetProgression(lastCompletion);
-					data.setPlayerProgression(gameTrack.getTrackCompletion(playerCar));
-				} else {
-					data.setPlayerProgression(0);
+					data.setTargetDistance(gameTrack.getTrackDistance(nextTarget, 0));
+					data.setTargetProgression(gameTrack.getTrackCompletion(nextTarget));
+					data.setPlayerDistance(gameTrack.getTrackDistance(playerCar, 0));
 				}
 
-				data.setPlayerDistance(gameTrack.getTrackDistance(playerCar, 0));
-
-				// target tracker opacity modulation based on distance from player (brighter if more far away)
-				// float distMt = gameTrack.getTrackDistance(playerCar, 0) - lastDist;
-				// float alpha = MathUtils.clamp(Math.abs(distMt) / 50, 0.2f, 1);
-				// playerTasks.hudPlayer.setNextTargetAlpha(alpha);
+				// player track progress meter and advantage/disadvantage with respect to nextTarget, if any
+				data.setPlayerProgression(gameTrack.getTrackCompletion(playerCar));
 			} else {
-				progress.setMessage("Press \"R\"\nto restart");
+				progress.setCustomMessage("Press \"R\"\nto restart");
 				data.reset(true);
 			}
 		}
@@ -547,7 +538,6 @@ public abstract class CommonLogic implements GameLogic {
 
 	protected void restartAllReplays () {
 		nextTarget = null;
-		lastDist = 0;
 
 		int ghostIndex = 0;
 		for (Replay r : lapManager.getReplays()) {
@@ -566,9 +556,6 @@ public abstract class CommonLogic implements GameLogic {
 
 	/** Restarts the game */
 	private void restartLogic () {
-		// SysTweener.clear();
-		// GameTweener.clear();
-
 		gameTrack.clearTrackStates();
 		resetPlayer(gameWorld, playerCar);
 		resetAllGhosts();
@@ -582,8 +569,6 @@ public abstract class CommonLogic implements GameLogic {
 		lapMonitor.reset(playerCar);
 
 		accuDriftSeconds.value = 0;
-		lastDist = 0;
-		lastCompletion = 0;
 		isCurrentLapValid = true;
 		isPenalty = false;
 	}
@@ -685,8 +670,17 @@ public abstract class CommonLogic implements GameLogic {
 			playerCar.resetDistanceAndSpeed(true, false);
 			lapManager.startRecording(playerCar);
 
+			// determine next target
+			boolean hadTarget = (nextTarget != null);
 			restartAllReplays();
-			playerTasks.hudPlayer.trackProgress.getProgressData().reset(false);
+			boolean hasTarget = (nextTarget != null);
+
+			// In case the player didn't have a target but just got one now, the track progress
+			// meter shall be reset as well as its state since we don't want the advantage/disadvantage bar making its
+			// first-time appearance with an animation from full-progress towards start-line progress.
+			// In all other cases the state is preserved.
+			// This imply losing the track progress animation whenever this occurs.
+			playerTasks.hudPlayer.trackProgress.getProgressData().reset(!hadTarget && hasTarget);
 
 			lapStarted();
 		}
