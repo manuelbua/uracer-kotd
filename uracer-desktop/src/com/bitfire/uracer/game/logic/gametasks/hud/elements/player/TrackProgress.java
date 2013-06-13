@@ -115,10 +115,6 @@ public class TrackProgress extends Positionable {
 		this.hasTarget = hasTarget;
 	}
 
-	// public void setShowAdvantageLabel (boolean show) {
-	// showAdvantageLabel = show;
-	// }
-
 	@Override
 	public float getWidth () {
 		return 0;

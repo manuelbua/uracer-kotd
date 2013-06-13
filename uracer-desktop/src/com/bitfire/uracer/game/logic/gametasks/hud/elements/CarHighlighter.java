@@ -31,7 +31,7 @@ public final class CarHighlighter {
 
 	private boolean isBusy, isActive, hasCar;
 	private BoxedFloat bfScale, bfRot, bfAlpha, bfGreen, bfRed, bfBlue;
-	private float lastAlpha;
+	private float trackAlpha;
 
 	// need tileMapZoomFactor since highlighter size depends from car *rendered* size
 	public CarHighlighter () {
@@ -136,16 +136,16 @@ public final class CarHighlighter {
 		GameTweener.start(seq);
 	}
 
-	public void track (float alpha) {
-		// if (isBusy) {
-		// return;
-		// }
+	public void track (boolean force, float alpha) {
+		// do busy wait if not forcing
+		if (!force && isBusy) {
+			return;
+		}
 
 		isBusy = true;
 		isActive = true;
 
-		// this.alpha = 0;
-		lastAlpha = alpha;
+		trackAlpha = alpha;
 
 		bfScale.value = 4f;
 		bfAlpha.value = 0f;
@@ -174,20 +174,21 @@ public final class CarHighlighter {
 		GameTweener.start(timeline);
 	}
 
-	public void track () {
-		track(1);
+	public void track (boolean force) {
+		track(force, 1);
 	}
 
-	public void untrack () {
-		// if (isBusy) {
-		// return;
-		// }
+	public void untrack (boolean force) {
+		// do busy wait if not forcing
+		if (!force && isBusy) {
+			return;
+		}
 
 		isBusy = true;
 		isActive = true;
 
 		bfScale.value = 1f;
-		bfAlpha.value = lastAlpha;
+		bfAlpha.value = trackAlpha;
 		bfRot.value = 0f;
 
 		bfRed.value = 1f;
