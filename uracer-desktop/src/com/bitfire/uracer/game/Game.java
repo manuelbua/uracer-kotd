@@ -8,7 +8,7 @@ import com.bitfire.uracer.configuration.Config;
 import com.bitfire.uracer.configuration.UserPreferences;
 import com.bitfire.uracer.configuration.UserPreferences.Preference;
 import com.bitfire.uracer.configuration.UserProfile;
-import com.bitfire.uracer.events.TaskManagerEvent;
+import com.bitfire.uracer.game.events.TaskManagerEvent;
 import com.bitfire.uracer.game.logic.types.SinglePlayer;
 import com.bitfire.uracer.game.rendering.GameRenderer;
 import com.bitfire.uracer.game.task.TaskManager;

@@ -3,10 +3,10 @@ package com.bitfire.uracer.game.actors;
 
 import com.bitfire.uracer.entities.Entity;
 import com.bitfire.uracer.entities.EntityRenderState;
-import com.bitfire.uracer.events.GameRendererEvent;
-import com.bitfire.uracer.events.GameRendererEvent.Order;
-import com.bitfire.uracer.events.PhysicsStepEvent;
 import com.bitfire.uracer.game.GameEvents;
+import com.bitfire.uracer.game.events.GameRendererEvent;
+import com.bitfire.uracer.game.events.PhysicsStepEvent;
+import com.bitfire.uracer.game.events.GameRendererEvent.Order;
 
 public abstract class SubframeInterpolableEntity extends Entity {
 	// world-coords
@@ -33,7 +33,7 @@ public abstract class SubframeInterpolableEntity extends Entity {
 
 	private final GameRendererEvent.Listener renderListener = new GameRendererEvent.Listener() {
 		@Override
-		public void handle (Object source, com.bitfire.uracer.events.GameRendererEvent.Type type, Order order) {
+		public void handle (Object source, com.bitfire.uracer.game.events.GameRendererEvent.Type type, Order order) {
 			if (type == GameRendererEvent.Type.SubframeInterpolate) {
 				onSubframeInterpolate(GameEvents.gameRenderer.timeAliasingFactor);
 			}

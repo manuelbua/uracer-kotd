@@ -1,10 +1,10 @@
 
 package com.bitfire.uracer.game.task;
 
-import com.bitfire.uracer.events.TaskManagerEvent;
-import com.bitfire.uracer.events.TaskManagerEvent.Order;
-import com.bitfire.uracer.events.TaskManagerEvent.Type;
 import com.bitfire.uracer.game.GameEvents;
+import com.bitfire.uracer.game.events.TaskManagerEvent;
+import com.bitfire.uracer.game.events.TaskManagerEvent.Order;
+import com.bitfire.uracer.game.events.TaskManagerEvent.Type;
 
 public abstract class Task implements TaskManagerEvent.Listener {
 

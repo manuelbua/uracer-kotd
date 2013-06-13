@@ -1,10 +1,9 @@
 
-package com.bitfire.uracer.events;
+package com.bitfire.uracer.game.events;
 
-
-public class PhysicsStepEvent extends Event<PhysicsStepEvent.Type, PhysicsStepEvent.Order, PhysicsStepEvent.Listener> {
+public final class GhostCarEvent extends Event<GhostCarEvent.Type, GhostCarEvent.Order, GhostCarEvent.Listener> {
 	public enum Type {
-		onBeforeTimestep, onAfterTimestep, onSubstepCompleted
+		onGhostFadingOut, ReplayEnded
 	}
 
 	public enum Order {
@@ -16,7 +15,7 @@ public class PhysicsStepEvent extends Event<PhysicsStepEvent.Type, PhysicsStepEv
 		public void handle (Object source, Type type, Order order);
 	}
 
-	public PhysicsStepEvent () {
+	public GhostCarEvent () {
 		super(Type.class, Order.class);
 	}
 }
