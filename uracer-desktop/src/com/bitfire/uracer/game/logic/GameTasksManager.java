@@ -2,7 +2,7 @@
 package com.bitfire.uracer.game.logic;
 
 import com.badlogic.gdx.utils.Array;
-import com.bitfire.uracer.events.TaskManagerEvent;
+import com.bitfire.uracer.game.events.TaskManagerEvent;
 import com.bitfire.uracer.game.logic.gametasks.GameTask;
 import com.bitfire.uracer.game.logic.gametasks.Hud;
 import com.bitfire.uracer.game.logic.gametasks.PhysicsStep;

@@ -1,12 +1,12 @@
 
 package com.bitfire.uracer.game;
 
-import com.bitfire.uracer.events.CarEvent;
-import com.bitfire.uracer.events.GameRendererEvent;
-import com.bitfire.uracer.events.GhostCarEvent;
-import com.bitfire.uracer.events.PhysicsStepEvent;
-import com.bitfire.uracer.events.PlayerDriftStateEvent;
-import com.bitfire.uracer.events.TaskManagerEvent;
+import com.bitfire.uracer.game.events.CarEvent;
+import com.bitfire.uracer.game.events.GameRendererEvent;
+import com.bitfire.uracer.game.events.GhostCarEvent;
+import com.bitfire.uracer.game.events.PhysicsStepEvent;
+import com.bitfire.uracer.game.events.PlayerDriftStateEvent;
+import com.bitfire.uracer.game.events.TaskManagerEvent;
 
 public final class GameEvents {
 

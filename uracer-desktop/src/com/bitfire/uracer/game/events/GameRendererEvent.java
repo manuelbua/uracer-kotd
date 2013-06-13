@@ -1,5 +1,5 @@
 
-package com.bitfire.uracer.events;
+package com.bitfire.uracer.game.events;
 
 import com.badlogic.gdx.graphics.OrthographicCamera;
 import com.badlogic.gdx.graphics.PerspectiveCamera;

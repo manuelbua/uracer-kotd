@@ -34,7 +34,7 @@ public final class HudPlayer extends HudElement {
 	public final TrackProgress trackProgress;
 
 	private CarHighlighter highlightError;
-	private CarHighlighter highlightNext;
+	public CarHighlighter highlightNext;
 
 	// gravitation
 	private float carModelWidthPx, carModelLengthPx;
@@ -182,14 +182,14 @@ public final class HudPlayer extends HudElement {
 
 	public void highlightNextTarget (Car car) {
 		highlightNext.setCar(car);
-		highlightNext.track(0.75f);
+
+		// overwrite any possibly running untracking
+		highlightNext.track(true, 0.5f);
 	}
 
 	public void unHighlightNextTarget () {
-		highlightNext.untrack();
+		// overwrite any possibly running tracking
+		// i.e., ghost at finish line, player just behind it
+		highlightNext.untrack(true);
 	}
-
-	// public void setNextTargetAlpha (float alpha) {
-	// highlightNext.setAlpha(alpha);
-	// }
 }

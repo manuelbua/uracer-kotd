@@ -23,10 +23,10 @@ import com.bitfire.postprocessing.filters.Blur.BlurType;
 import com.bitfire.postprocessing.utils.FullscreenQuad;
 import com.bitfire.postprocessing.utils.PingPongBuffer;
 import com.bitfire.uracer.configuration.Config;
-import com.bitfire.uracer.events.GameRendererEvent;
-import com.bitfire.uracer.events.GameRendererEvent.Order;
-import com.bitfire.uracer.events.GameRendererEvent.Type;
 import com.bitfire.uracer.game.GameEvents;
+import com.bitfire.uracer.game.events.GameRendererEvent;
+import com.bitfire.uracer.game.events.GameRendererEvent.Order;
+import com.bitfire.uracer.game.events.GameRendererEvent.Type;
 import com.bitfire.uracer.utils.ScaleUtils;
 import com.bitfire.utils.ShaderLoader;
 

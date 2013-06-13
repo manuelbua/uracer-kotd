@@ -2,10 +2,10 @@
 package com.bitfire.uracer.game.rendering;
 
 import com.badlogic.gdx.utils.Disposable;
-import com.bitfire.uracer.events.GameRendererEvent;
-import com.bitfire.uracer.events.GameRendererEvent.Order;
-import com.bitfire.uracer.events.GameRendererEvent.Type;
 import com.bitfire.uracer.game.GameEvents;
+import com.bitfire.uracer.game.events.GameRendererEvent;
+import com.bitfire.uracer.game.events.GameRendererEvent.Order;
+import com.bitfire.uracer.game.events.GameRendererEvent.Type;
 
 public abstract class DebugRenderer implements Disposable {
 

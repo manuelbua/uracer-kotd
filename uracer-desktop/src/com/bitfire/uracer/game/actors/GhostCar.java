@@ -2,8 +2,8 @@
 package com.bitfire.uracer.game.actors;
 
 import com.badlogic.gdx.Gdx;
-import com.bitfire.uracer.events.GhostCarEvent;
 import com.bitfire.uracer.game.GameEvents;
+import com.bitfire.uracer.game.events.GhostCarEvent;
 import com.bitfire.uracer.game.logic.replaying.Replay;
 import com.bitfire.uracer.game.world.GameWorld;
 import com.bitfire.uracer.utils.CarUtils;

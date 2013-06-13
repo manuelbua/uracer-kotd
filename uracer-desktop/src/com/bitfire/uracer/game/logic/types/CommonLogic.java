@@ -15,12 +15,6 @@ import com.bitfire.uracer.Input;
 import com.bitfire.uracer.URacer;
 import com.bitfire.uracer.configuration.Config;
 import com.bitfire.uracer.configuration.UserProfile;
-import com.bitfire.uracer.events.CarEvent;
-import com.bitfire.uracer.events.GameRendererEvent;
-import com.bitfire.uracer.events.GameRendererEvent.Order;
-import com.bitfire.uracer.events.GameRendererEvent.Type;
-import com.bitfire.uracer.events.GhostCarEvent;
-import com.bitfire.uracer.events.PlayerDriftStateEvent;
 import com.bitfire.uracer.game.DebugHelper;
 import com.bitfire.uracer.game.GameEvents;
 import com.bitfire.uracer.game.GameInput;
@@ -30,6 +24,12 @@ import com.bitfire.uracer.game.Time.Reference;
 import com.bitfire.uracer.game.actors.Car;
 import com.bitfire.uracer.game.actors.CarPreset;
 import com.bitfire.uracer.game.actors.GhostCar;
+import com.bitfire.uracer.game.events.CarEvent;
+import com.bitfire.uracer.game.events.GameRendererEvent;
+import com.bitfire.uracer.game.events.GhostCarEvent;
+import com.bitfire.uracer.game.events.PlayerDriftStateEvent;
+import com.bitfire.uracer.game.events.GameRendererEvent.Order;
+import com.bitfire.uracer.game.events.GameRendererEvent.Type;
 import com.bitfire.uracer.game.logic.GameTasksManager;
 import com.bitfire.uracer.game.logic.gametasks.Messager;
 import com.bitfire.uracer.game.logic.gametasks.hud.elements.HudPlayer.EndDriftType;
@@ -167,8 +167,8 @@ public abstract class CommonLogic implements GameLogic {
 		this.gameWorld = gameWorld;
 		this.gameWorldRenderer = gameRenderer.getWorldRenderer();
 		this.inputSystem = URacer.Game.getInputSystem();
-		this.messager = new Messager();
 		this.gameTrack = gameWorld.getGameTrack();
+		this.messager = new Messager();
 
 		timeMod = new TimeModulator();
 		lapManager = new LapManager(userProfile, gameWorld.getLevelId());
@@ -186,11 +186,16 @@ public abstract class CommonLogic implements GameLogic {
 			ghostCars[i] = CarFactory.createGhost(i, gameWorld, CarPreset.Type.L1_GoblinOrange);
 		}
 		gameWorld.setGhostCars(ghostCars);
+
+		// register events
 		eventHandlers.registerGhostEvents();
 		eventHandlers.registerRenderEvents();
 
+		// create monitors and setup listeners
 		wrongWayMonitor = new WrongWayMonitor(eventHandlers);
 		lapMonitor = new LapCompletionMonitor(eventHandlers, gameTrack);
+
+		// create game input
 		gameInput = new GameInput(this, inputSystem);
 	}
 
