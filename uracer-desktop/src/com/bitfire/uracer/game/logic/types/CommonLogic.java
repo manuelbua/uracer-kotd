@@ -167,8 +167,8 @@ public abstract class CommonLogic implements GameLogic {
 		this.gameWorld = gameWorld;
 		this.gameWorldRenderer = gameRenderer.getWorldRenderer();
 		this.inputSystem = URacer.Game.getInputSystem();
-		this.messager = new Messager();
 		this.gameTrack = gameWorld.getGameTrack();
+		this.messager = new Messager();
 
 		timeMod = new TimeModulator();
 		lapManager = new LapManager(userProfile, gameWorld.getLevelId());
@@ -186,11 +186,16 @@ public abstract class CommonLogic implements GameLogic {
 			ghostCars[i] = CarFactory.createGhost(i, gameWorld, CarPreset.Type.L1_GoblinOrange);
 		}
 		gameWorld.setGhostCars(ghostCars);
+
+		// register events
 		eventHandlers.registerGhostEvents();
 		eventHandlers.registerRenderEvents();
 
+		// create monitors and setup listeners
 		wrongWayMonitor = new WrongWayMonitor(eventHandlers);
 		lapMonitor = new LapCompletionMonitor(eventHandlers, gameTrack);
+
+		// create game input
 		gameInput = new GameInput(this, inputSystem);
 	}
 
