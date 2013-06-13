@@ -643,8 +643,7 @@ public abstract class CommonLogic implements GameLogic {
 						if (last != null) {
 							// FIXME, change name?
 							// FIXME, should also pass more information? such as replay classification (was this replay better than all?
-							// than
-							// what?)
+							// than what?)
 							newReplay(last);
 						} else {
 							// discarded if worse than the worst
@@ -815,7 +814,6 @@ public abstract class CommonLogic implements GameLogic {
 					break;
 				}
 			}
-
 		};
 
 		//@off

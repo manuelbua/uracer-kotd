@@ -10,7 +10,9 @@ import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.graphics.glutils.ShaderProgram;
 import com.badlogic.gdx.math.MathUtils;
 import com.bitfire.uracer.URacer;
+import com.bitfire.uracer.game.GameEvents;
 import com.bitfire.uracer.game.actors.GhostCar;
+import com.bitfire.uracer.game.events.LapCompletionMonitorEvent;
 import com.bitfire.uracer.game.logic.gametasks.hud.HudLabel;
 import com.bitfire.uracer.game.logic.gametasks.hud.Positionable;
 import com.bitfire.uracer.game.logic.helpers.GameTrack;
@@ -30,7 +32,7 @@ public class TrackProgress extends Positionable {
 	private final Texture texMask;
 	private final ShaderProgram shProgress;
 	private final Sprite sprAdvantage, sprProgress;
-	private boolean flipped, hasTarget, isCurrentLapValid, isWarmUp;
+	private boolean flipped, hasTarget, isCurrentLapValid, isWarmUp, hasLapStarted;
 	private float playerToTarget;
 
 	private String customMessage = "";
@@ -99,16 +101,31 @@ public class TrackProgress extends Positionable {
 
 		sprProgress = new Sprite(Art.texRadLinesProgress);
 		sprProgress.flip(false, true);
+
+		GameEvents.lapCompletion.addListener(lapMonitor, LapCompletionMonitorEvent.Type.onLapStarted);
 	}
 
 	@Override
 	public void dispose () {
 		shProgress.dispose();
+		GameEvents.lapCompletion.removeListener(lapMonitor, LapCompletionMonitorEvent.Type.onLapStarted);
 	}
 
 	public void resetData (boolean resetState) {
 		data.reset(resetState);
 	}
+
+	private LapCompletionMonitorEvent.Listener lapMonitor = new LapCompletionMonitorEvent.Listener() {
+		@SuppressWarnings("incomplete-switch")
+		@Override
+		public void handle (Object source, LapCompletionMonitorEvent.Type type, LapCompletionMonitorEvent.Order order) {
+			switch (type) {
+			case onLapStarted:
+				hasLapStarted = true;
+				break;
+			}
+		};
+	};
 
 	public void update (boolean isWarmUp, boolean isCurrentLapValid, GameTrack gameTrack, PlayerCar player, GhostCar target) {
 		this.isCurrentLapValid = isCurrentLapValid;
@@ -145,7 +162,8 @@ public class TrackProgress extends Positionable {
 					// meter shall be reset as well as its state since we don't want the advantage/disadvantage bar making its
 					// first-time appearance with an animation from full-progress towards start-line progress.
 					// In all other cases the state is preserved.
-					if (!hadTarget && hasTarget) {
+					if (hasLapStarted && !hadTarget && hasTarget) {
+						hasLapStarted = false;
 						data.playerProgressAdv.reset(0, true);
 						data.targetProgress.reset(0, true);
 						data.playerDistance.reset(0, true);
