@@ -34,8 +34,6 @@ import com.bitfire.uracer.game.logic.GameTasksManager;
 import com.bitfire.uracer.game.logic.gametasks.Messager;
 import com.bitfire.uracer.game.logic.gametasks.hud.elements.HudPlayer.EndDriftType;
 import com.bitfire.uracer.game.logic.gametasks.hud.elements.player.DriftBar;
-import com.bitfire.uracer.game.logic.gametasks.hud.elements.player.TrackProgress;
-import com.bitfire.uracer.game.logic.gametasks.hud.elements.player.TrackProgress.TrackProgressData;
 import com.bitfire.uracer.game.logic.helpers.CarFactory;
 import com.bitfire.uracer.game.logic.helpers.GameTrack;
 import com.bitfire.uracer.game.logic.helpers.PlayerGameTasks;
@@ -444,42 +442,7 @@ public abstract class CommonLogic implements GameLogic {
 
 	/** Updates player hud track progress */
 	private void updateTrackProgress () {
-		TrackProgress progress = playerTasks.hudPlayer.trackProgress;
-		TrackProgressData data = progress.getProgressData();
-
-		if (lapMonitor.isWarmUp()) {
-			progress.setHasTarget(false);
-			data.reset(true);
-			if (isCurrentLapValid) {
-				int metersToRace = Math.round(gameTrack.getTotalLength() - gameTrack.getTrackDistance(playerCar, 0));
-				if (metersToRace > 0) {
-					progress.setCustomMessage("Start in " + metersToRace + " mt");
-				} else {
-					progress.setCustomMessage("Started!");
-				}
-			} else {
-				progress.setCustomMessage("Press \"R\"\nto restart");
-			}
-		} else {
-			if (isCurrentLapValid) {
-				boolean hasTarget = (nextTarget != null);
-				progress.hideCustomMessage();
-				progress.setHasTarget(hasTarget);
-
-				// use the last one if the replay is finished
-				if (hasTarget) {
-					data.setTargetDistance(gameTrack.getTrackDistance(nextTarget, 0));
-					data.setTargetProgression(gameTrack.getTrackCompletion(nextTarget));
-					data.setPlayerDistance(gameTrack.getTrackDistance(playerCar, 0));
-				}
-
-				// player track progress meter and advantage/disadvantage with respect to nextTarget, if any
-				data.setPlayerProgression(gameTrack.getTrackCompletion(playerCar));
-			} else {
-				progress.setCustomMessage("Press \"R\"\nto restart");
-				data.reset(true);
-			}
-		}
+		playerTasks.hudPlayer.trackProgress.update(lapMonitor.isWarmUp(), isCurrentLapValid, gameTrack, playerCar, nextTarget);
 	}
 
 	private void configurePlayer (GameWorld world, Input inputSystem, PlayerCar player) {
@@ -658,7 +621,6 @@ public abstract class CommonLogic implements GameLogic {
 		@Override
 		public void onWarmUpCompleted () {
 			Gdx.app.log("CommonLogic", "Warmup Completed");
-			playerTasks.hudPlayer.trackProgress.getProgressData().reset(true);
 			warmUpCompleted();
 		}
 
@@ -670,18 +632,7 @@ public abstract class CommonLogic implements GameLogic {
 			playerCar.resetDistanceAndSpeed(true, false);
 			lapManager.startRecording(playerCar);
 
-			// determine next target
-			boolean hadTarget = (nextTarget != null);
 			restartAllReplays();
-			boolean hasTarget = (nextTarget != null);
-
-			// In case the player didn't have a target but just got one now, the track progress
-			// meter shall be reset as well as its state since we don't want the advantage/disadvantage bar making its
-			// first-time appearance with an animation from full-progress towards start-line progress.
-			// In all other cases the state is preserved.
-			// This imply losing the track progress animation whenever this occurs.
-			playerTasks.hudPlayer.trackProgress.getProgressData().reset(!hadTarget && hasTarget);
-
 			lapStarted();
 		}
 

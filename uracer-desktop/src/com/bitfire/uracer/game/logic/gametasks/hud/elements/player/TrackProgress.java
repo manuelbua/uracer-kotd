@@ -10,8 +10,11 @@ import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.graphics.glutils.ShaderProgram;
 import com.badlogic.gdx.math.MathUtils;
 import com.bitfire.uracer.URacer;
+import com.bitfire.uracer.game.actors.GhostCar;
 import com.bitfire.uracer.game.logic.gametasks.hud.HudLabel;
 import com.bitfire.uracer.game.logic.gametasks.hud.Positionable;
+import com.bitfire.uracer.game.logic.helpers.GameTrack;
+import com.bitfire.uracer.game.player.PlayerCar;
 import com.bitfire.uracer.resources.Art;
 import com.bitfire.uracer.resources.BitmapFontFactory.FontFace;
 import com.bitfire.uracer.utils.AMath;
@@ -27,22 +30,24 @@ public class TrackProgress extends Positionable {
 	private final Texture texMask;
 	private final ShaderProgram shProgress;
 	private final Sprite sprAdvantage, sprProgress;
-	private boolean flipped, hasTarget;
+	private boolean flipped, hasTarget, isCurrentLapValid, isWarmUp;
+	private float playerToTarget;
 
 	private String customMessage = "";
 	private TrackProgressData data = new TrackProgressData();
 
 	/** Data needed by this component */
-	public static class TrackProgressData {
+	private class TrackProgressData {
 
-		private static final float Smoothing = 0.25f;
-		private InterpolatedFloat playerDistance, targetDistance;
-		private InterpolatedFloat playerProgress, targetProgress;
+		static final float Smoothing = 0.25f;
+		InterpolatedFloat playerDistance, targetDistance;
+		InterpolatedFloat playerProgress, playerProgressAdv, targetProgress;
 
 		public TrackProgressData () {
 			playerDistance = new InterpolatedFloat();
 			targetDistance = new InterpolatedFloat();
 			playerProgress = new InterpolatedFloat();
+			playerProgressAdv = new InterpolatedFloat();
 			targetProgress = new InterpolatedFloat();
 		}
 
@@ -50,6 +55,7 @@ public class TrackProgress extends Positionable {
 			playerDistance.reset(0, resetState);
 			targetDistance.reset(0, resetState);
 			playerProgress.reset(0, resetState);
+			playerProgressAdv.reset(0, resetState);
 			targetProgress.reset(0, resetState);
 		}
 
@@ -66,6 +72,7 @@ public class TrackProgress extends Positionable {
 		 * @param progress The progress so far */
 		public void setPlayerProgression (float progress) {
 			playerProgress.set(progress, Smoothing);
+			playerProgressAdv.set(progress, Smoothing);
 		}
 
 		/** Sets the target's progression in the range [0,1] inclusive, to indicate target's track progress. 0 means on starting
@@ -99,20 +106,60 @@ public class TrackProgress extends Positionable {
 		shProgress.dispose();
 	}
 
-	public TrackProgressData getProgressData () {
-		return data;
+	public void resetData (boolean resetState) {
+		data.reset(resetState);
 	}
 
-	public void setCustomMessage (String messageOrEmpty) {
-		customMessage = messageOrEmpty;
-	}
+	public void update (boolean isWarmUp, boolean isCurrentLapValid, GameTrack gameTrack, PlayerCar player, GhostCar target) {
+		this.isCurrentLapValid = isCurrentLapValid;
+		this.isWarmUp = isWarmUp;
 
-	public void hideCustomMessage () {
-		customMessage = "";
-	}
+		boolean hadTarget = hasTarget;
+		hasTarget = (target != null);
+		playerToTarget = 0;
 
-	public void setHasTarget (boolean hasTarget) {
-		this.hasTarget = hasTarget;
+		if (isWarmUp) {
+			data.reset(true);
+
+			if (isCurrentLapValid) {
+				int metersToRace = Math.round(gameTrack.getTotalLength() - gameTrack.getTrackDistance(player, 0));
+				if (metersToRace > 0) {
+					customMessage = "Start in " + metersToRace + " mt";
+				} else {
+					customMessage = "Started!";
+				}
+			} else {
+				customMessage = "Press \"R\"\nto restart";
+			}
+		} else {
+			if (isCurrentLapValid) {
+				customMessage = "";
+				data.setPlayerProgression(gameTrack.getTrackCompletion(player));
+
+				if (hasTarget) {
+					data.setTargetDistance(gameTrack.getTrackDistance(target, 0));
+					data.setTargetProgression(gameTrack.getTrackCompletion(target));
+					data.setPlayerDistance(gameTrack.getTrackDistance(player, 0));
+
+					// In case the player didn't have a target but just got one now, the track progress
+					// meter shall be reset as well as its state since we don't want the advantage/disadvantage bar making its
+					// first-time appearance with an animation from full-progress towards start-line progress.
+					// In all other cases the state is preserved.
+					if (!hadTarget && hasTarget) {
+						data.playerProgressAdv.reset(0, true);
+						data.targetProgress.reset(0, true);
+						data.playerDistance.reset(0, true);
+						data.targetDistance.reset(0, true);
+					}
+
+					playerToTarget = AMath.fixup(data.playerProgressAdv.get() - data.targetProgress.get());
+				}
+
+			} else {
+				customMessage = "Press \"R\"\nto restart";
+				data.reset(true);
+			}
+		}
 	}
 
 	@Override
@@ -126,15 +173,10 @@ public class TrackProgress extends Positionable {
 	}
 
 	public void render (SpriteBatch batch, float cameraZoom) {
-		if (data == null) {
-			return;
-		}
-
 		// advantage/disadvantage
 		float timeFactor = URacer.Game.getTimeModFactor() * 0.3f;
 
 		// advantage if > 0, disadvantage if < 0
-		float playerToTarget = AMath.fixup(data.playerProgress.get() - data.targetProgress.get());
 		float dist = MathUtils.clamp(playerToTarget, -1, 1);
 		Color advantageColor = ColorUtils.paletteRYG(dist + 1, 1f);
 
@@ -174,44 +216,45 @@ public class TrackProgress extends Positionable {
 			lblAdvantage.render(batch);
 		}
 
-		float scl = cameraZoom * scale * (1f + timeFactor);
+		if (isCurrentLapValid) {
+			float scl = cameraZoom * scale * (1f + timeFactor);
+			batch.setShader(shProgress);
 
-		batch.setShader(shProgress);
+			// set mask
+			texMask.bind(1);
+			Gdx.gl.glActiveTexture(GL10.GL_TEXTURE0);
+			shProgress.setUniformi("u_texture1", 1);
 
-		// set mask
-		texMask.bind(1);
-		Gdx.gl.glActiveTexture(GL10.GL_TEXTURE0);
-		shProgress.setUniformi("u_texture1", 1);
+			scl += .07f * URacer.Game.getTimeModFactor();
 
-		scl += .07f * URacer.Game.getTimeModFactor();
-
-		// player's track progress
-		shProgress.setUniformf("progress", data.playerProgress.get());
-		sprProgress.setColor(Color.WHITE);
-		sprProgress.setScale(scl);
-		sprProgress.setPosition(position.x - sprProgress.getWidth() / 2, position.y - sprProgress.getHeight() / 2);
-		sprProgress.draw(batch, 0.5f);
-		batch.flush();
-
-		boolean isBack = (dist < 0);
-		if (isBack && !flipped) {
-			flipped = true;
-			sprAdvantage.flip(true, false);
-		} else if (!isBack && flipped) {
-			flipped = false;
-			sprAdvantage.flip(true, false);
-		}
-
-		// player's advantage/disadvantage
-		if (hasTarget) {
-			shProgress.setUniformf("progress", Math.abs(playerToTarget));
-			sprAdvantage.setColor(advantageColor);
-			sprAdvantage.setScale(scl * 1.1f);
-			sprAdvantage.setPosition(position.x - sprAdvantage.getWidth() / 2, position.y - sprAdvantage.getHeight() / 2);
-			sprAdvantage.draw(batch, 1);
+			// player's track progress
+			shProgress.setUniformf("progress", data.playerProgress.get());
+			sprProgress.setColor(Color.WHITE);
+			sprProgress.setScale(scl);
+			sprProgress.setPosition(position.x - sprProgress.getWidth() / 2, position.y - sprProgress.getHeight() / 2);
+			sprProgress.draw(batch, 0.5f);
 			batch.flush();
-		}
 
-		batch.setShader(null);
+			boolean isBack = (dist < 0);
+			if (isBack && !flipped) {
+				flipped = true;
+				sprAdvantage.flip(true, false);
+			} else if (!isBack && flipped) {
+				flipped = false;
+				sprAdvantage.flip(true, false);
+			}
+
+			// player's advantage/disadvantage
+			if (hasTarget && !isWarmUp) {
+				shProgress.setUniformf("progress", Math.abs(playerToTarget));
+				sprAdvantage.setColor(advantageColor);
+				sprAdvantage.setScale(scl * 1.1f);
+				sprAdvantage.setPosition(position.x - sprAdvantage.getWidth() / 2, position.y - sprAdvantage.getHeight() / 2);
+				sprAdvantage.draw(batch, 1);
+				batch.flush();
+			}
+
+			batch.setShader(null);
+		}
 	}
 }

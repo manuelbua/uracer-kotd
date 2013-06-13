@@ -63,7 +63,7 @@ public final class HudPlayer extends HudElement {
 			carModelLengthPx = Convert.mt2px(player.getCarModel().length);
 			highlightError.setCar(player);
 		} else {
-			trackProgress.getProgressData().reset(true);
+			trackProgress.resetData(true);
 			driftBar.reset();
 			onReset();
 		}
@@ -77,7 +77,7 @@ public final class HudPlayer extends HudElement {
 
 	@Override
 	public void onRestart () {
-		trackProgress.getProgressData().reset(false);
+		trackProgress.resetData(false);
 		onReset();
 	}
 
