@@ -2,28 +2,18 @@
 package com.bitfire.uracer.game.logic.types.helpers;
 
 import com.badlogic.gdx.math.MathUtils;
+import com.bitfire.uracer.game.GameEvents;
 import com.bitfire.uracer.game.actors.Car;
+import com.bitfire.uracer.game.events.LapCompletionMonitorEvent;
 import com.bitfire.uracer.game.logic.helpers.GameTrack;
 
 public final class LapCompletionMonitor {
 	private GameTrack gameTrack;
 	private Car car;
-	private LapCompletionMonitorListener listener;
 	private float previousCompletion, currentCompletion, wuStart, wuPrev, wuCurr, wuCompletion;
 	private boolean warmUpStartedCalled, isWarmUp;
 
-	public static interface LapCompletionMonitorListener {
-		void onWarmUpStarted ();
-
-		void onWarmUpCompleted ();
-
-		void onLapStarted ();
-
-		void onLapCompleted ();
-	}
-
-	public LapCompletionMonitor (LapCompletionMonitorListener listener, GameTrack gameTrack) {
-		this.listener = listener;
+	public LapCompletionMonitor (GameTrack gameTrack) {
 		this.gameTrack = gameTrack;
 		this.car = null;
 		reset();
@@ -60,7 +50,7 @@ public final class LapCompletionMonitor {
 
 				if (!warmUpStartedCalled) {
 					warmUpStartedCalled = true;
-					listener.onWarmUpStarted();
+					GameEvents.lapCompletion.trigger(null, LapCompletionMonitorEvent.Type.onWarmUpStarted);
 				}
 
 				// compute warmup quantity (0 at WU start pos, 0 at WU end pos)
@@ -73,8 +63,8 @@ public final class LapCompletionMonitor {
 					wuCompletion = 1;
 					isWarmUp = false;
 
-					listener.onWarmUpCompleted();
-					listener.onLapStarted();
+					GameEvents.lapCompletion.trigger(null, LapCompletionMonitorEvent.Type.onWarmUpCompleted);
+					GameEvents.lapCompletion.trigger(null, LapCompletionMonitorEvent.Type.onLapStarted);
 				} else {
 					wuCompletion = MathUtils.clamp(wuCurr, 0, 1);
 				}
@@ -89,8 +79,8 @@ public final class LapCompletionMonitor {
 				currentCompletion = gameTrack.getTrackCompletion(car);
 				// Gdx.app.log("", "curr=" + currentCompletion + ", prev=" + previousCompletion);
 				if (hasFinished(previousCompletion, currentCompletion)) {
-					listener.onLapCompleted();
-					listener.onLapStarted();
+					GameEvents.lapCompletion.trigger(null, LapCompletionMonitorEvent.Type.onLapCompleted);
+					GameEvents.lapCompletion.trigger(null, LapCompletionMonitorEvent.Type.onLapStarted);
 				}
 			}
 		}

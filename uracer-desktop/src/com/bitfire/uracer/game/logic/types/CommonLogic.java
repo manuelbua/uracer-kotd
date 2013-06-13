@@ -29,7 +29,9 @@ import com.bitfire.uracer.game.events.GameRendererEvent;
 import com.bitfire.uracer.game.events.GameRendererEvent.Order;
 import com.bitfire.uracer.game.events.GameRendererEvent.Type;
 import com.bitfire.uracer.game.events.GhostCarEvent;
+import com.bitfire.uracer.game.events.LapCompletionMonitorEvent;
 import com.bitfire.uracer.game.events.PlayerDriftStateEvent;
+import com.bitfire.uracer.game.events.WrongWayMonitorEvent;
 import com.bitfire.uracer.game.logic.GameTasksManager;
 import com.bitfire.uracer.game.logic.gametasks.Messager;
 import com.bitfire.uracer.game.logic.gametasks.hud.elements.HudPlayer.EndDriftType;
@@ -43,10 +45,8 @@ import com.bitfire.uracer.game.logic.replaying.Replay;
 import com.bitfire.uracer.game.logic.replaying.ReplayManager;
 import com.bitfire.uracer.game.logic.replaying.ReplayRecorder.RecorderError;
 import com.bitfire.uracer.game.logic.types.helpers.LapCompletionMonitor;
-import com.bitfire.uracer.game.logic.types.helpers.LapCompletionMonitor.LapCompletionMonitorListener;
 import com.bitfire.uracer.game.logic.types.helpers.TimeModulator;
 import com.bitfire.uracer.game.logic.types.helpers.WrongWayMonitor;
-import com.bitfire.uracer.game.logic.types.helpers.WrongWayMonitor.WrongWayMonitorListener;
 import com.bitfire.uracer.game.player.PlayerCar;
 import com.bitfire.uracer.game.rendering.GameRenderer;
 import com.bitfire.uracer.game.rendering.GameWorldRenderer;
@@ -189,8 +189,8 @@ public abstract class CommonLogic implements GameLogic {
 		eventHandlers.registerRenderEvents();
 
 		// create monitors and setup listeners
-		wrongWayMonitor = new WrongWayMonitor(eventHandlers);
-		lapMonitor = new LapCompletionMonitor(eventHandlers, gameTrack);
+		wrongWayMonitor = new WrongWayMonitor();
+		lapMonitor = new LapCompletionMonitor(gameTrack);
 
 		// create game input
 		gameInput = new GameInput(this, inputSystem);
@@ -245,6 +245,7 @@ public abstract class CommonLogic implements GameLogic {
 		Gdx.app.log("GameLogic", "Game tasks created and configured");
 
 		eventHandlers.registerPlayerEvents();
+		eventHandlers.registerMonitorEvents();
 		Gdx.app.log("GameLogic", "Registered player-related events");
 
 		postProcessing.setPlayer(playerCar);
@@ -271,6 +272,7 @@ public abstract class CommonLogic implements GameLogic {
 		// previously registered events, if there was a player
 		if (playerCar != null) {
 			eventHandlers.unregisterPlayerEvents();
+			eventHandlers.unregisterMonitorEvents();
 			playerTasks.playerRemoved();
 			playerCar.dispose();
 		}
@@ -604,7 +606,7 @@ public abstract class CommonLogic implements GameLogic {
 		}
 	}
 
-	private final class EventHandlers implements WrongWayMonitorListener, LapCompletionMonitorListener {
+	private final class EventHandlers {
 
 		// LapCompletionMonitorListener events order redux
 		//
@@ -612,63 +614,65 @@ public abstract class CommonLogic implements GameLogic {
 		// 2. warmup completed + 3. lap started
 		// 4. lap completed + 5. lap started
 
-		@Override
-		public void onWarmUpStarted () {
-			Gdx.app.log("CommonLogic", "Warmup Started");
-			warmUpStarted();
-		}
+		private LapCompletionMonitorEvent.Listener lapCompletionMonitorListener = new LapCompletionMonitorEvent.Listener() {
+			@Override
+			public void handle (Object source, LapCompletionMonitorEvent.Type type, LapCompletionMonitorEvent.Order order) {
+				switch (type) {
+				case onWarmUpStarted:
+					Gdx.app.log("CommonLogic", "Warmup Started");
+					warmUpStarted();
+					break;
+				case onWarmUpCompleted:
+					Gdx.app.log("CommonLogic", "Warmup Completed");
+					warmUpCompleted();
+					break;
+				case onLapStarted:
+					Gdx.app.log("CommonLogic", "Lap Started");
 
-		@Override
-		public void onWarmUpCompleted () {
-			Gdx.app.log("CommonLogic", "Warmup Completed");
-			warmUpCompleted();
-		}
+					lapManager.stopRecording();
+					playerCar.resetDistanceAndSpeed(true, false);
+					lapManager.startRecording(playerCar);
 
-		@Override
-		public void onLapStarted () {
-			Gdx.app.log("CommonLogic", "Lap Started");
+					restartAllReplays();
+					lapStarted();
+					break;
+				case onLapCompleted:
+					Gdx.app.log("CommonLogic", "Lap Completed");
+					if (lapManager.isRecording()) {
+						Replay last = lapManager.stopRecording();
+						if (last != null) {
+							// FIXME, change name?
+							// FIXME, should also pass more information? such as replay classification (was this replay better than all?
+							// than
+							// what?)
+							newReplay(last);
+						} else {
+							// discarded if worse than the worst
+							discardedReplay();
+						}
+					}
 
-			lapManager.stopRecording();
-			playerCar.resetDistanceAndSpeed(true, false);
-			lapManager.startRecording(playerCar);
-
-			restartAllReplays();
-			lapStarted();
-		}
-
-		@Override
-		public void onLapCompleted () {
-			Gdx.app.log("CommonLogic", "Lap Completed");
-			if (lapManager.isRecording()) {
-				Replay last = lapManager.stopRecording();
-				if (last != null) {
-					// FIXME, change name?
-					// FIXME, should also pass more information? such as replay classification (was this replay better than all? than
-					// what?)
-					newReplay(last);
-				} else {
-					// discarded if worse than the worst
-					discardedReplay();
+					playerCar.resetDistanceAndSpeed(true, false);
+					lapCompleted();
+					break;
 				}
 			}
+		};
 
-			playerCar.resetDistanceAndSpeed(true, false);
-			lapCompleted();
-		}
+		private WrongWayMonitorEvent.Listener wrongWayMonitorListener = new WrongWayMonitorEvent.Listener() {
+			@Override
+			public void handle (Object source, WrongWayMonitorEvent.Type type, WrongWayMonitorEvent.Order order) {
+				switch (type) {
+				case onWrongWayBegins:
+					playerTasks.hudPlayer.wrongWay.fadeIn();
+					playerError("Invalid lap");
+					break;
+				case onWrongWayEnds:
+					break;
+				}
+			}
+		};
 
-		@Override
-		public void onWrongWayBegins () {
-			playerTasks.hudPlayer.wrongWay.fadeIn();
-			playerError("Invalid lap");
-		}
-
-		@Override
-		public void onWrongWayEnds () {
-		}
-
-		//
-		// renderer listener
-		//
 		private GameRendererEvent.Listener rendererListener = new GameRendererEvent.Listener() {
 			@SuppressWarnings("incomplete-switch")
 			@Override
@@ -693,10 +697,6 @@ public abstract class CommonLogic implements GameLogic {
 				}
 			}
 		};
-
-		//
-		// drift state listener
-		//
 
 		private PlayerDriftStateEvent.Listener driftStateListener = new PlayerDriftStateEvent.Listener() {
 			@Override
@@ -733,10 +733,6 @@ public abstract class CommonLogic implements GameLogic {
 				}
 			}
 		};
-
-		//
-		// car listener
-		//
 
 		private CarEvent.Listener playerCarListener = new CarEvent.Listener() {
 			private TweenCallback penaltyFinished = new TweenCallback() {
@@ -800,10 +796,6 @@ public abstract class CommonLogic implements GameLogic {
 			}
 		};
 
-		//
-		// ghost car-specific listener
-		//
-
 		private GhostCarEvent.Listener ghostListener = new GhostCarEvent.Listener() {
 			@Override
 			public void handle (Object source, GhostCarEvent.Type type, GhostCarEvent.Order order) {
@@ -826,6 +818,7 @@ public abstract class CommonLogic implements GameLogic {
 
 		};
 
+		//@off
 		public void registerPlayerEvents () {
 			GameEvents.driftState.addListener(driftStateListener, PlayerDriftStateEvent.Type.onBeginDrift);
 			GameEvents.driftState.addListener(driftStateListener, PlayerDriftStateEvent.Type.onEndDrift);
@@ -846,6 +839,26 @@ public abstract class CommonLogic implements GameLogic {
 			GameEvents.playerCar.removeListener(playerCarListener, CarEvent.Type.onBackInTrack);
 		}
 
+		public void registerMonitorEvents () {
+			GameEvents.lapCompletion.addListener(lapCompletionMonitorListener, LapCompletionMonitorEvent.Type.onWarmUpStarted, LapCompletionMonitorEvent.Order.MINUS_4);
+			GameEvents.lapCompletion.addListener(lapCompletionMonitorListener, LapCompletionMonitorEvent.Type.onWarmUpCompleted, LapCompletionMonitorEvent.Order.MINUS_4);
+			GameEvents.lapCompletion.addListener(lapCompletionMonitorListener, LapCompletionMonitorEvent.Type.onLapStarted, LapCompletionMonitorEvent.Order.MINUS_4);
+			GameEvents.lapCompletion.addListener(lapCompletionMonitorListener, LapCompletionMonitorEvent.Type.onLapCompleted, LapCompletionMonitorEvent.Order.MINUS_4);
+
+			GameEvents.wrongWay.addListener(wrongWayMonitorListener, WrongWayMonitorEvent.Type.onWrongWayBegins, WrongWayMonitorEvent.Order.MINUS_4);
+			GameEvents.wrongWay.addListener(wrongWayMonitorListener, WrongWayMonitorEvent.Type.onWrongWayEnds, WrongWayMonitorEvent.Order.MINUS_4);
+		}
+
+		public void unregisterMonitorEvents () {
+			GameEvents.lapCompletion.removeListener(lapCompletionMonitorListener, LapCompletionMonitorEvent.Type.onWarmUpStarted, LapCompletionMonitorEvent.Order.MINUS_4);
+			GameEvents.lapCompletion.removeListener(lapCompletionMonitorListener, LapCompletionMonitorEvent.Type.onWarmUpCompleted, LapCompletionMonitorEvent.Order.MINUS_4);
+			GameEvents.lapCompletion.removeListener(lapCompletionMonitorListener, LapCompletionMonitorEvent.Type.onLapStarted, LapCompletionMonitorEvent.Order.MINUS_4);
+			GameEvents.lapCompletion.removeListener(lapCompletionMonitorListener, LapCompletionMonitorEvent.Type.onLapCompleted, LapCompletionMonitorEvent.Order.MINUS_4);
+
+			GameEvents.wrongWay.removeListener(wrongWayMonitorListener, WrongWayMonitorEvent.Type.onWrongWayBegins, WrongWayMonitorEvent.Order.MINUS_4);
+			GameEvents.wrongWay.removeListener(wrongWayMonitorListener, WrongWayMonitorEvent.Type.onWrongWayEnds, WrongWayMonitorEvent.Order.MINUS_4);
+		}
+
 		public void registerGhostEvents () {
 			GameEvents.ghostCars.addListener(ghostListener, GhostCarEvent.Type.onGhostFadingOut);
 			GameEvents.ghostCars.addListener(ghostListener, GhostCarEvent.Type.ReplayEnded);
@@ -857,13 +870,12 @@ public abstract class CommonLogic implements GameLogic {
 		}
 
 		public void registerRenderEvents () {
-			GameEvents.gameRenderer.addListener(rendererListener, GameRendererEvent.Type.BeforeRender,
-				GameRendererEvent.Order.MINUS_4);
+			GameEvents.gameRenderer.addListener(rendererListener, GameRendererEvent.Type.BeforeRender, GameRendererEvent.Order.MINUS_4);
 		}
 
 		public void unregisterRenderEvents () {
-			GameEvents.gameRenderer.removeListener(rendererListener, GameRendererEvent.Type.BeforeRender,
-				GameRendererEvent.Order.MINUS_4);
+			GameEvents.gameRenderer.removeListener(rendererListener, GameRendererEvent.Type.BeforeRender, GameRendererEvent.Order.MINUS_4);
 		}
+		//@on
 	}
 }
