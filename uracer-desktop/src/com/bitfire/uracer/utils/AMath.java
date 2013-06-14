@@ -151,16 +151,27 @@ public final class AMath {
 		return (float)tmp / p;
 	}
 
-	/** Compute a timestep-independent damping factor from the specified arbitrary factor.
-	 * 
+	//@off
+	/**
+	 *  Compute a timestep-independent damping factor from the specified arbitrary factor.
+	 *
 	 * This isn't the only way to compute it:
+	 *
+	 * 		let 0.975 be the time-DEPENDENT factor
+	 * 			factor ^ (factor_good_at_timestep * dt)
+	 * 				or
+	 * 			pow( factor, factor_good_at_timestep * dt )
 	 * 
-	 * let 0.975 be the time-DEPENDENT factor factor ^ (factor_good_at_timestep * dt) or pow( factor, factor_good_at_timestep * dt
-	 * ) that is: pow( 0.975, 60 * dt ) thus, for a 60hz timestep: pow( 0.975, 60 * (1/60) ) = 0.975 | exp( -1.5 * (1/60) ) =
-	 * 0.975309 (w/ 1.5 found by trial and error) and for a 30hz timestep: pow( 0.975, 60 * (1/30) ) = 0.950625 | exp( -1.5 *
-	 * (1/30) ) = 0.951229
-	 * 
-	 * (see my post http://www.gamedev.net/topic/624172-framerate-independent-friction/page__st__20) */
+	 * 		that is:
+	 * 			pow( 0.975, 60 * dt )
+	 * 		thus, for a 60hz timestep:
+	 * 			pow( 0.975, 60 * (1/60) ) = 0.975			|	exp( -1.5 * (1/60) ) = 0.975309 (w/ 1.5 found by trial and error)
+	 * 		and for a 30hz timestep:
+	 * 			pow( 0.975, 60 * (1/30) ) = 0.950625		|	exp( -1.5 * (1/30) ) = 0.951229
+	 *
+	 * (see my post http://www.gamedev.net/topic/624172-framerate-independent-friction/page__st__20)
+	 */
+	//@on
 	public static float damping (float factor) {
 		return (float)Math.pow(factor, Config.Physics.PhysicsTimestepReferenceHz * Config.Physics.Dt);
 		// return (float)Math.exp( -factor * Config.Physics.PhysicsDt );

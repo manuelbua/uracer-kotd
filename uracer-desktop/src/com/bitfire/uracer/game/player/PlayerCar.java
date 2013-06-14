@@ -45,9 +45,6 @@ public class PlayerCar extends Car {
 
 	private IntMap<Timer> keytimer = new IntMap<Timer>(3);
 
-	// damping values
-	private float dampFriction = 0;
-
 	// states
 	public CarState carState = null;
 	public DriftState driftState = null;
@@ -68,9 +65,6 @@ public class PlayerCar extends Car {
 		// states
 		this.carState = new CarState(gameWorld, this);
 		this.driftState = new DriftState(this);
-
-		// set physical properties
-		dampFriction = GameplaySettings.DampingFriction;
 
 		keytimer.put(Keys.UP, new Timer());
 		keytimer.put(Keys.LEFT, new Timer());
@@ -169,7 +163,6 @@ public class PlayerCar extends Car {
 
 			carInput.updated = false;
 			final float KeyboardSensitivity = 0.8f;
-			float keysens = KeyboardSensitivity;
 
 			if (kUp) {
 				carInput.updated = true;
@@ -183,17 +176,18 @@ public class PlayerCar extends Car {
 				if (carInput.steerAngle > 0) {
 					carInput.steerAngle = 0;
 				}
-				carInput.steerAngle -= keysens * getDirTime(Keys.LEFT);
+				carInput.steerAngle -= KeyboardSensitivity * getDirTime(Keys.LEFT);
 			} else if (kRight) {
 				carInput.updated = true;
 				if (carInput.steerAngle < 0) {
 					carInput.steerAngle = 0;
 				}
-				carInput.steerAngle += keysens * getDirTime(Keys.RIGHT);
+				carInput.steerAngle += KeyboardSensitivity * getDirTime(Keys.RIGHT);
 			} else {
 				carInput.steerAngle = 0f;
 			}
 
+			carInput.steerAngle *= GameplaySettings.DampingKeyboardKeys;
 		}
 
 		// Gdx.app.log("PlayerCar", "up=" + getDirTime(Keys.UP) + ", left=" + getDirTime(Keys.LEFT) + ", right="
@@ -202,10 +196,10 @@ public class PlayerCar extends Car {
 	}
 
 	private float getDirTime (int uplr) {
-		boolean ison = input.isOn(uplr);
+		boolean isOn = input.isOn(uplr);
 		float ret = 0;
 		Timer t = keytimer.get(uplr);
-		if (ison) {
+		if (isOn) {
 			t.update();
 			ret = t.elapsed();
 		} else {
@@ -325,7 +319,7 @@ public class PlayerCar extends Car {
 
 		// FIXME, move these hard-coded values out of here
 		if (isOutOfTrack && carDesc.velocity_wc.len2() > 10) {
-			carDesc.velocity_wc.scl(dampFriction);
+			carDesc.velocity_wc.scl(GameplaySettings.DampingFriction);
 		}
 	}
 
