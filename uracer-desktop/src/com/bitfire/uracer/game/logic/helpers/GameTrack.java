@@ -148,7 +148,7 @@ public final class GameTrack {
 		// car is on the expected path, now check for the correct heading
 		if (state.onExpectedPath) {
 			TrackSector s = sectors[state.curr];
-			Vector2 heading = VMath.fromDegrees(car.state().orientation);
+			Vector2 heading = VMath.fromRadians(car.getWorldOrientRads());
 			Vector2 dir = tmp.set(s.nLeading);
 
 			// switch coordinate space and rotate it so that both the car and the track sector converge
