@@ -26,6 +26,7 @@ import com.bitfire.uracer.utils.NumberString;
 import com.bitfire.utils.ShaderLoader;
 
 public class TrackProgress extends Positionable {
+	static final float Smoothing = 0.25f;
 	private HudLabel lblAdvantage;
 	private boolean lblAdvantageShown;
 
@@ -41,7 +42,6 @@ public class TrackProgress extends Positionable {
 	/** Data needed by this component */
 	private class TrackProgressData {
 
-		static final float Smoothing = 0.25f;
 		InterpolatedFloat playerDistance, targetDistance;
 		InterpolatedFloat playerProgress, playerProgressAdv, targetProgress;
 
@@ -59,29 +59,6 @@ public class TrackProgress extends Positionable {
 			playerProgress.reset(0, resetState);
 			playerProgressAdv.reset(0, resetState);
 			targetProgress.reset(0, resetState);
-		}
-
-		public void setPlayerDistance (float mt) {
-			playerDistance.set(mt, Smoothing);
-		}
-
-		public void setTargetDistance (float mt) {
-			targetDistance.set(mt, Smoothing);
-		}
-
-		/** Sets the player's progression in the range [0,1] inclusive, to indicate player's track progress. 0 means on starting
-		 * line, 1 means finished.
-		 * @param progress The progress so far */
-		public void setPlayerProgression (float progress) {
-			playerProgress.set(progress, Smoothing);
-			playerProgressAdv.set(progress, Smoothing);
-		}
-
-		/** Sets the target's progression in the range [0,1] inclusive, to indicate target's track progress. 0 means on starting
-		 * line, 1 means finished.
-		 * @param progress The progress so far */
-		public void setTargetProgression (float progress) {
-			targetProgress.set(progress, Smoothing);
 		}
 	}
 
@@ -151,18 +128,19 @@ public class TrackProgress extends Positionable {
 		} else {
 			if (isCurrentLapValid) {
 				customMessage = "";
-				data.setPlayerProgression(gameTrack.getTrackCompletion(player));
+				data.playerProgress.set(gameTrack.getTrackCompletion(player), Smoothing);
+				data.playerProgressAdv.set(gameTrack.getTrackCompletion(player), Smoothing);
+				data.playerDistance.set(gameTrack.getTrackDistance(player, 0), Smoothing);
 
 				if (hasTarget) {
-					data.setTargetDistance(gameTrack.getTrackDistance(target, 0));
-					data.setTargetProgression(gameTrack.getTrackCompletion(target));
-					data.setPlayerDistance(gameTrack.getTrackDistance(player, 0));
+					data.targetDistance.set(gameTrack.getTrackDistance(target, 0), Smoothing);
+					data.targetProgress.set(gameTrack.getTrackCompletion(target), Smoothing);
 
 					// In case the player didn't have a target but just got one now, the track progress
 					// meter shall be reset as well as its state since we don't want the advantage/disadvantage bar making its
 					// first-time appearance with an animation from full-progress towards start-line progress.
 					// In all other cases the state is preserved.
-					if (hasLapStarted && !hadTarget && hasTarget) {
+					if (hasLapStarted && !hadTarget /* hasTarget is implicit! */) {
 						hasLapStarted = false;
 						data.playerProgressAdv.reset(0, true);
 						data.targetProgress.reset(0, true);
@@ -173,12 +151,13 @@ public class TrackProgress extends Positionable {
 					playerToTarget = AMath.fixup(data.playerProgressAdv.get() - data.targetProgress.get());
 					// Gdx.app.log("", "" + playerToTarget);
 				}
-
 			} else {
 				customMessage = "Press \"R\"\nto restart";
 				data.reset(true);
 			}
 		}
+
+		// playerToTarget = -1f;
 	}
 
 	@Override
