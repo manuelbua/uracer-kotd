@@ -97,6 +97,9 @@ public class SinglePlayer extends CommonLogic {
 
 	@Override
 	protected void ghostReplayEnded (GhostCar ghost) {
+		Replay replay = ghost.getReplay();
+		CarUtils.dumpSpeedInfo("GhostCar #" + ghost.getId(), ghost, replay.getTrackTime());
+
 		if (!hasPlayer()) {
 			ghost.restartReplay();
 		} else {
