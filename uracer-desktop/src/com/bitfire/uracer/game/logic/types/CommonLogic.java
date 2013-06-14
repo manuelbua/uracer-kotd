@@ -87,10 +87,8 @@ public abstract class CommonLogic implements GameLogic {
 
 	protected abstract void updateCameraPosition (Vector2 positionPx);
 
-	protected void newReplay (Replay replay) {
-	}
+	protected void ghostReplayEnded (GhostCar ghost) {
 
-	protected void discardedReplay () {
 	}
 
 	protected void lapStarted () {
@@ -308,7 +306,7 @@ public abstract class CommonLogic implements GameLogic {
 
 	@Override
 	public void quitGame () {
-		lapManager.abortRecording();
+		lapManager.abortRecording(false);
 		gameTasksManager.sound.stop();
 
 		URacer.Screens.setScreen(ScreenType.MainScreen, TransitionType.Fader, 500);
@@ -466,7 +464,7 @@ public abstract class CommonLogic implements GameLogic {
 	/** Invalidates the current lap and show an error */
 	private void playerError (String message) {
 		isCurrentLapValid = false;
-		lapManager.abortRecording();
+		lapManager.abortRecording(true);
 		playerTasks.hudLapInfo.setInvalid(message);
 		playerTasks.hudLapInfo.toColor(1, 0, 0);
 		postProcessing.alertBegins(500);
@@ -527,7 +525,7 @@ public abstract class CommonLogic implements GameLogic {
 		endTimeDilation();
 
 		outOfTrackTime.reset();
-		lapManager.abortRecording();
+		lapManager.abortRecording(true);
 		gameTasksManager.raiseRestart();
 		wrongWayMonitor.reset();
 		postProcessing.resetAnimator();
@@ -566,7 +564,7 @@ public abstract class CommonLogic implements GameLogic {
 			// start recording
 			playerCar.resetDistanceAndSpeed(true, true);
 			resetAllGhosts();
-			lapManager.abortRecording();
+			lapManager.abortRecording(true);
 			lapManager.startRecording(playerCar);
 			Gdx.app.log("GameLogic", "Recording...");
 
@@ -628,30 +626,10 @@ public abstract class CommonLogic implements GameLogic {
 					break;
 				case onLapStarted:
 					Gdx.app.log("CommonLogic", "Lap Started");
-
-					lapManager.stopRecording();
-					playerCar.resetDistanceAndSpeed(true, false);
-					lapManager.startRecording(playerCar);
-
-					restartAllReplays();
 					lapStarted();
 					break;
 				case onLapCompleted:
 					Gdx.app.log("CommonLogic", "Lap Completed");
-					if (lapManager.isRecording()) {
-						Replay last = lapManager.stopRecording();
-						if (last != null) {
-							// FIXME, change name?
-							// FIXME, should also pass more information? such as replay classification (was this replay better than all?
-							// than what?)
-							newReplay(last);
-						} else {
-							// discarded if worse than the worst
-							discardedReplay();
-						}
-					}
-
-					playerCar.resetDistanceAndSpeed(true, false);
 					lapCompleted();
 					break;
 				}
@@ -805,12 +783,7 @@ public abstract class CommonLogic implements GameLogic {
 					}
 					break;
 				case ReplayEnded:
-					GhostCar ghost = (GhostCar)source;
-					if (!hasPlayer()) {
-						ghost.restartReplay();
-					} else {
-						ghost.removeReplay();
-					}
+					ghostReplayEnded((GhostCar)source);
 					break;
 				}
 			}

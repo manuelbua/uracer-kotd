@@ -4,6 +4,7 @@ package com.bitfire.uracer.game.logic.types;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.math.Vector2;
 import com.bitfire.uracer.configuration.UserProfile;
+import com.bitfire.uracer.game.actors.GhostCar;
 import com.bitfire.uracer.game.logic.gametasks.messager.Message;
 import com.bitfire.uracer.game.logic.gametasks.messager.Message.Position;
 import com.bitfire.uracer.game.logic.gametasks.messager.Message.Size;
@@ -58,17 +59,6 @@ public class SinglePlayer extends CommonLogic {
 	}
 
 	@Override
-	public void newReplay (Replay replay) {
-		messager.show("New record!", 1.5f, Message.Type.Information, Position.Bottom, Size.Big);
-		CarUtils.dumpSpeedInfo("Player", playerCar, replay.getTrackTime());
-	}
-
-	@Override
-	protected void discardedReplay () {
-		messager.show("Try again...", 1.5f, Message.Type.Information, Position.Bottom, Size.Normal);
-	}
-
-	@Override
 	protected void warmUpStarted () {
 		messager.show("Warm up!", 1.5f, Message.Type.Information, Position.Top, Size.Big);
 	}
@@ -78,4 +68,42 @@ public class SinglePlayer extends CommonLogic {
 		messager.show("GOOOO!!", 1.5f, Message.Type.Information, Position.Top, Size.Big);
 	}
 
+	@Override
+	protected void lapStarted () {
+		lapManager.stopRecording();
+		playerCar.resetDistanceAndSpeed(true, false);
+		lapManager.startRecording(playerCar);
+		restartAllReplays();
+	}
+
+	@Override
+	protected void lapCompleted () {
+		if (lapManager.isRecording()) {
+			Replay last = lapManager.stopRecording();
+			if (last != null) {
+				// FIXME, change name?
+				// Should also pass more information? such as replay classification
+				// (was this replay better than all? than what?)
+				messager.show("New record!", 1.5f, Message.Type.Information, Position.Bottom, Size.Big);
+				CarUtils.dumpSpeedInfo("Player", playerCar, last.getTrackTime());
+			} else {
+				// discarded if worse than the worst
+				messager.show("Try again...", 1.5f, Message.Type.Information, Position.Bottom, Size.Normal);
+			}
+		}
+
+		playerCar.resetDistanceAndSpeed(true, false);
+	}
+
+	@Override
+	protected void ghostReplayEnded (GhostCar ghost) {
+		Replay replay = ghost.getReplay();
+		CarUtils.dumpSpeedInfo("GhostCar #" + ghost.getId(), ghost, replay.getTrackTime());
+
+		if (!hasPlayer()) {
+			ghost.restartReplay();
+		} else {
+			ghost.removeReplay();
+		}
+	}
 }

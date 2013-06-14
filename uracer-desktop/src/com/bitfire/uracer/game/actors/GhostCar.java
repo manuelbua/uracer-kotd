@@ -6,7 +6,6 @@ import com.bitfire.uracer.game.GameEvents;
 import com.bitfire.uracer.game.events.GhostCarEvent;
 import com.bitfire.uracer.game.logic.replaying.Replay;
 import com.bitfire.uracer.game.world.GameWorld;
-import com.bitfire.uracer.utils.CarUtils;
 import com.bitfire.uracer.utils.URacerRuntimeException;
 
 /** Implements an automated Car, playing previously recorded events. It will ignore car-to-car collisions, but will respect
@@ -21,7 +20,7 @@ public final class GhostCar extends Car {
 	private int replayForcesCount;
 	private int indexPlay;
 	private boolean hasReplay;
-	public final int id;
+	private final int id;
 	private boolean fadeOutEventTriggered;
 
 	public GhostCar (int id, GameWorld gameWorld, CarPreset.Type presetType) {
@@ -37,6 +36,14 @@ public final class GhostCar extends Car {
 		setActive(false);
 		resetPhysics();
 		resetDistanceAndSpeed(true, true);
+	}
+
+	public int getId () {
+		return id;
+	}
+
+	public Replay getReplay () {
+		return replay;
 	}
 
 	// input data for this car cames from a Replay object
@@ -134,7 +141,6 @@ public final class GhostCar extends Car {
 			indexPlay++;
 
 			if (indexPlay == replayForcesCount) {
-				CarUtils.dumpSpeedInfo("GhostCar #" + id, this, replay.getTrackTime());
 				GameEvents.ghostCars.trigger(this, GhostCarEvent.Type.ReplayEnded);
 			}
 		}
