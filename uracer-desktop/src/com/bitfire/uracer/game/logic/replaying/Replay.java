@@ -64,6 +64,7 @@ public class Replay implements Disposable {
 		eventsCount = 0;
 		carPositionMt.set(0, 0);
 		carOrientationRads = 0;
+		trackTimeSeconds = 0;
 		for (int i = 0; i < MaxEvents; i++) {
 			forces[i].reset();
 		}
