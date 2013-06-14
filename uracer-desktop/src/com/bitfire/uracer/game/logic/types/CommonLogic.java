@@ -306,7 +306,7 @@ public abstract class CommonLogic implements GameLogic {
 
 	@Override
 	public void quitGame () {
-		lapManager.abortRecording();
+		lapManager.abortRecording(false);
 		gameTasksManager.sound.stop();
 
 		URacer.Screens.setScreen(ScreenType.MainScreen, TransitionType.Fader, 500);
@@ -464,7 +464,7 @@ public abstract class CommonLogic implements GameLogic {
 	/** Invalidates the current lap and show an error */
 	private void playerError (String message) {
 		isCurrentLapValid = false;
-		lapManager.abortRecording();
+		lapManager.abortRecording(true);
 		playerTasks.hudLapInfo.setInvalid(message);
 		playerTasks.hudLapInfo.toColor(1, 0, 0);
 		postProcessing.alertBegins(500);
@@ -525,7 +525,7 @@ public abstract class CommonLogic implements GameLogic {
 		endTimeDilation();
 
 		outOfTrackTime.reset();
-		lapManager.abortRecording();
+		lapManager.abortRecording(true);
 		gameTasksManager.raiseRestart();
 		wrongWayMonitor.reset();
 		postProcessing.resetAnimator();
@@ -564,7 +564,7 @@ public abstract class CommonLogic implements GameLogic {
 			// start recording
 			playerCar.resetDistanceAndSpeed(true, true);
 			resetAllGhosts();
-			lapManager.abortRecording();
+			lapManager.abortRecording(true);
 			lapManager.startRecording(playerCar);
 			Gdx.app.log("GameLogic", "Recording...");
 

@@ -157,7 +157,7 @@ public class TrackProgress extends Positionable {
 			}
 		}
 
-		// playerToTarget = -1f;
+		// playerToTarget = 0f;
 	}
 
 	@Override

@@ -170,10 +170,6 @@ public final class GameTrack {
 	}
 
 	public TrackState getTrackState (Car car) {
-		// if (!hasTrackState(car)) {
-		// throw new URacerRuntimeException("Couldn't retrieve a track state for the specified car");
-		// }
-
 		return trackStates.get(car);
 	}
 
@@ -181,10 +177,23 @@ public final class GameTrack {
 		return trackStates.containsKey(car);
 	}
 
+	private TrackState buildTrackState (Car car) {
+		TrackState state = new TrackState();
+		trackStates.put(car, state);
+
+		Vector2 pos = car.getWorldPosMt();
+		state.curr = findSector(pos);
+		state.next = state.curr + 1;
+		if (state.next == sectors.length) state.next = 0;
+		state.onExpectedPath = true;
+		state.initialCompletion = getTrackCompletion(car);
+		return state;
+	}
+
 	public void resetTrackState (Car car) {
 		if (hasTrackState(car)) {
 			trackStates.remove(car);
-			updateTrackState(car);
+			// updateTrackState(car);
 		}
 	}
 
@@ -280,19 +289,6 @@ public final class GameTrack {
 		}
 
 		return -1;
-	}
-
-	private TrackState buildTrackState (Car car) {
-		TrackState state = new TrackState();
-		trackStates.put(car, state);
-
-		Vector2 pos = car.getWorldPosMt();
-		state.curr = findSector(pos);
-		state.next = state.curr + 1;
-		if (state.next == sectors.length) state.next = 0;
-		state.onExpectedPath = true;
-		state.initialCompletion = getTrackCompletion(car);
-		return state;
 	}
 
 	/** Represents a track sector, see Game Programming Gems 1, pag. 416 */
