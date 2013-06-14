@@ -87,10 +87,8 @@ public abstract class CommonLogic implements GameLogic {
 
 	protected abstract void updateCameraPosition (Vector2 positionPx);
 
-	protected void newReplay (Replay replay) {
-	}
+	protected void ghostReplayEnded (GhostCar ghost) {
 
-	protected void discardedReplay () {
 	}
 
 	protected void lapStarted () {
@@ -628,30 +626,10 @@ public abstract class CommonLogic implements GameLogic {
 					break;
 				case onLapStarted:
 					Gdx.app.log("CommonLogic", "Lap Started");
-
-					lapManager.stopRecording();
-					playerCar.resetDistanceAndSpeed(true, false);
-					lapManager.startRecording(playerCar);
-
-					restartAllReplays();
 					lapStarted();
 					break;
 				case onLapCompleted:
 					Gdx.app.log("CommonLogic", "Lap Completed");
-					if (lapManager.isRecording()) {
-						Replay last = lapManager.stopRecording();
-						if (last != null) {
-							// FIXME, change name?
-							// FIXME, should also pass more information? such as replay classification (was this replay better than all?
-							// than what?)
-							newReplay(last);
-						} else {
-							// discarded if worse than the worst
-							discardedReplay();
-						}
-					}
-
-					playerCar.resetDistanceAndSpeed(true, false);
 					lapCompleted();
 					break;
 				}
@@ -805,12 +783,7 @@ public abstract class CommonLogic implements GameLogic {
 					}
 					break;
 				case ReplayEnded:
-					GhostCar ghost = (GhostCar)source;
-					if (!hasPlayer()) {
-						ghost.restartReplay();
-					} else {
-						ghost.removeReplay();
-					}
+					ghostReplayEnded((GhostCar)source);
 					break;
 				}
 			}

@@ -171,6 +171,7 @@ public class TrackProgress extends Positionable {
 					}
 
 					playerToTarget = AMath.fixup(data.playerProgressAdv.get() - data.targetProgress.get());
+					// Gdx.app.log("", "" + playerToTarget);
 				}
 
 			} else {
