@@ -73,6 +73,8 @@ public final class Message {
 		completed = false;
 		showCompleted = false;
 
+		GameTweener.stop(this);
+
 		switch (type) {
 		case Good:
 			if (size == Size.Normal) {
