@@ -50,7 +50,7 @@ public final class GameInput {
 			logic.quitGame();
 		}
 
-		boolean rightMouseButton = input.isTouched(MouseButton.Right) && input.isTouchedInBounds(MouseButton.Right);
+		boolean rightMouseButton = input.isTouched(MouseButton.Right);// && input.isTouchedInBounds(MouseButton.Right);
 
 		switch (timeMode) {
 		case Toggle:

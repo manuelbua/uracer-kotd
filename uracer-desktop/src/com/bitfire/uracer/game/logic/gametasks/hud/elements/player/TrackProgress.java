@@ -92,7 +92,11 @@ public class TrackProgress extends Positionable {
 		this.isWarmUp = isWarmUp;
 
 		hasTarget = (target != null && target.getTrackState().ghostStarted);
-		playerToTarget = 0;
+		if (isCurrentLapValid) {
+			playerToTarget = 0;
+		} else {
+			playerToTarget = -1;
+		}
 
 		if (isWarmUp) {
 			data.reset(true);
