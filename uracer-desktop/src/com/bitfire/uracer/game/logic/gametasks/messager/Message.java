@@ -18,7 +18,7 @@ import com.bitfire.uracer.resources.BitmapFontFactory;
 import com.bitfire.uracer.resources.BitmapFontFactory.FontFace;
 import com.bitfire.uracer.utils.AMath;
 
-public class Message {
+public final class Message {
 	public enum Type {
 		Information, Bad, Good
 	}
@@ -38,15 +38,16 @@ public class Message {
 
 	private String what;
 	private Position position;
-	private float whereX, whereY;
+	private float whereX, whereY, startY;
 	private float finalY;
 	private float scaleX, scaleY;
 	private BitmapFont font;
 	private int halfWidth;
-	private boolean finished;
+	private boolean completed;
 	private TextBounds bounds;
-	private float alpha;
+	private float alpha, scale;
 	private boolean hiding;
+	private boolean showCompleted;
 
 	public Message () {
 		bounds = new TextBounds();
@@ -66,8 +67,13 @@ public class Message {
 		alpha = 0f;
 		scaleX = 1f;
 		scaleY = 1f;
+		scale = 1.5f;
 		durationMs = (int)(durationSecs * 1000f);
 		hiding = false;
+		completed = false;
+		showCompleted = false;
+
+		GameTweener.stop(this);
 
 		switch (type) {
 		case Good:
@@ -90,61 +96,79 @@ public class Message {
 				font = BitmapFontFactory.get(FontFace.CurseRedYellow);
 			} else {
 				font = BitmapFontFactory.get(FontFace.CurseRedYellowBig);
+				// font = BitmapFontFactory.get(FontFace.CurseRedYellowNew);
 			}
 			break;
+		}
+
+		if (size == Size.Big) {
+			scale = 2.5f;
 		}
 	}
 
 	private void computeFinalPosition () {
 		int widthOnFour = Config.Graphics.ReferenceScreenWidth / 4;
 		whereX = widthOnFour;
-		finalY = 0;
+		startY = finalY = 0;
 
-		float distance = 180;
 		float h = Config.Graphics.ReferenceScreenHeight;
+		font.setScale(scale);
+		bounds.set(font.getMultiLineBounds(what));
 
 		switch (position) {
 		case Top:
-			finalY = 30;
-			whereY = h / 2;
+			startY = whereY = -(font.getLineHeight() - bounds.height);
+			finalY = 10;
 			break;
 
 		case Middle:
-			bounds.set(font.getMultiLineBounds(what));
-			finalY = (h - bounds.height) / 2 - bounds.height / 2;
-			whereY = h + bounds.height;
+			startY = whereY = (h - bounds.height) / 2;
+			finalY = startY - bounds.height / 2;
 			break;
 
 		case Bottom:
-			finalY = h - distance;
-			whereY = h + distance;
+			startY = whereY = h;
+			finalY = h - font.getLineHeight() - 70;
 			break;
 		}
 
-		font.setScale(1f);
-	}
-
-	public boolean tick () {
-		return !finished;
+		// Gdx.app.log(position.toString(), "s=" + startY + ", e=" + finalY);
 	}
 
 	public void render (SpriteBatch batch) {
 		font.setScale(scaleX, scaleY);
 		font.setColor(1, 1, 1, alpha);
 		font.drawMultiLine(batch, what, whereX, whereY, halfWidth, HAlignment.CENTER);
-		font.setColor(1, 1, 1, 1);
 	}
 
-	public void onShow () {
-		finished = false;
+	private TweenCallback showFinished = new TweenCallback() {
+		@Override
+		public void onEvent (int type, BaseTween<?> source) {
+			switch (type) {
+			case COMPLETE:
+				showCompleted = true;
+			}
+		}
+	};
+
+	public void show () {
+		completed = false;
 		hiding = false;
 
-		// scaleX = scaleY = 1f;
+		setAlpha(0);
+		setScale(0, 0);
+		showCompleted = false;
+
 		computeFinalPosition();
 
-		GameTweener.start(Timeline.createParallel().push(Tween.to(this, MessageAccessor.OPACITY, 400).target(1f).ease(Expo.INOUT))
-			.push(Tween.to(this, MessageAccessor.POSITION_Y, 400).target(finalY).ease(Expo.INOUT))
-			.push(Tween.to(this, MessageAccessor.SCALE_XY, 500).target(1.5f, 1.5f).ease(Back.INOUT)));
+		GameTweener.stop(this);
+
+		//@off
+		GameTweener.start(Timeline.createParallel()
+			.push(Tween.to(this, MessageAccessor.OPACITY, 850).target(1f).ease(Expo.INOUT))
+			.push(Tween.to(this, MessageAccessor.POSITION_Y, 700).target(finalY).ease(Expo.INOUT))
+			.push(Tween.to(this, MessageAccessor.SCALE_XY, 800).target(scale, scale).ease(Back.INOUT)).setCallback(showFinished));
+		//@on
 	}
 
 	private TweenCallback hideFinished = new TweenCallback() {
@@ -152,17 +176,32 @@ public class Message {
 		public void onEvent (int type, BaseTween<?> source) {
 			switch (type) {
 			case COMPLETE:
-				finished = true;
+				completed = true;
 			}
 		}
 	};
 
-	public void onHide () {
-		hiding = true;
+	public void hide () {
+		if (!hiding) {
+			hiding = true;
 
-		GameTweener.start(Timeline.createParallel().push(Tween.to(this, MessageAccessor.OPACITY, 500).target(0f).ease(Expo.INOUT))
-			.push(Tween.to(this, MessageAccessor.POSITION_Y, 500).target(-50 * font.getScaleX()).ease(Expo.INOUT))
-			.push(Tween.to(this, MessageAccessor.SCALE_XY, 400).target(1f, 1f).ease(Back.INOUT)).setCallback(hideFinished));
+			GameTweener.stop(this);
+
+			//@off
+			GameTweener.start(Timeline.createParallel()
+				.push(Tween.to(this, MessageAccessor.OPACITY, 600).target(0f).ease(Expo.INOUT))
+				.push(Tween.to(this, MessageAccessor.POSITION_Y, 700).target(startY).ease(Expo.INOUT))
+				.push(Tween.to(this, MessageAccessor.SCALE_XY, 800).target(0, 0).ease(Back.INOUT)).setCallback(hideFinished));
+			//@on
+		}
+	}
+
+	public boolean isShowComplete () {
+		return showCompleted;
+	}
+
+	public boolean isCompleted () {
+		return completed;
 	}
 
 	public boolean isHiding () {

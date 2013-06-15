@@ -4,14 +4,12 @@ package com.bitfire.uracer.game;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.glutils.FrameBuffer;
 import com.badlogic.gdx.utils.Disposable;
-import com.bitfire.uracer.URacer;
 import com.bitfire.uracer.configuration.Config;
 import com.bitfire.uracer.configuration.UserPreferences;
 import com.bitfire.uracer.configuration.UserPreferences.Preference;
 import com.bitfire.uracer.configuration.UserProfile;
-import com.bitfire.uracer.events.TaskManagerEvent;
-import com.bitfire.uracer.game.actors.CarPreset;
-import com.bitfire.uracer.game.logic.types.SinglePlayerLogic;
+import com.bitfire.uracer.game.events.TaskManagerEvent;
+import com.bitfire.uracer.game.logic.types.SinglePlayer;
 import com.bitfire.uracer.game.rendering.GameRenderer;
 import com.bitfire.uracer.game.task.TaskManager;
 import com.bitfire.uracer.game.world.GameWorld;
@@ -26,6 +24,8 @@ public class Game implements Disposable {
 
 	// logic
 	private GameLogic gameLogic = null;
+
+	// tasks
 	private TaskManager taskManager = null;
 
 	// rendering
@@ -43,12 +43,13 @@ public class Game implements Disposable {
 		Gdx.app.debug("Game", "GameRenderer ready");
 
 		// handles game rules and mechanics, it's all about game data
-		gameLogic = new SinglePlayerLogic(userProfile, gameWorld, gameRenderer);
+		gameLogic = new SinglePlayer(userProfile, gameWorld, gameRenderer);
 		Gdx.app.debug("Game", "GameLogic created");
 
 		// initialize the debug helper
 		if (Config.Debug.UseDebugHelper) {
-			debug = new DebugHelper(gameRenderer.getWorldRenderer(), gameWorld.getBox2DWorld(), gameRenderer.getPostProcessor());
+			debug = new DebugHelper(gameRenderer.getWorldRenderer(), gameWorld.getBox2DWorld(), gameRenderer.getPostProcessing()
+				.getPostProcessor());
 			Gdx.app.debug("Game", "Debug helper initialized");
 		}
 	}
@@ -66,27 +67,19 @@ public class Game implements Disposable {
 		taskManager.dispose();
 	}
 
-	// public void setLocalReplay (Replay replay) {
-	// gameLogic.setBestLocalReplay(replay);
-	// }
-
+	/** Can be NOT called */
 	public void tick () {
 		taskManager.dispatchEvent(TaskManagerEvent.Type.onTick);
 		gameLogic.tick();
 	}
 
+	/** Can be NOT called */
 	public void tickCompleted () {
 		taskManager.dispatchEvent(TaskManagerEvent.Type.onTickCompleted);
 		gameLogic.tickCompleted();
 	}
 
 	public void render (FrameBuffer dest) {
-		// the order is important: first trigger interpolables to update their
-		// position and orientation, then give a chance to use this information
-		// to the game logic
-		gameRenderer.beforeRender(URacer.Game.getTemporalAliasing());
-		gameLogic.beforeRender();
-
 		gameRenderer.render(dest);
 	}
 
@@ -111,8 +104,9 @@ public class Game implements Disposable {
 	// OPERATIONS
 	//
 
-	public void setPlayer (CarPreset.Type presetType) {
-		gameLogic.setPlayer(presetType);
+	public void start () {
+		gameLogic.addPlayer();
+		gameLogic.restartGame();
 	}
 
 }

@@ -1,5 +1,5 @@
 
-package com.bitfire.uracer.events;
+package com.bitfire.uracer.game.events;
 
 public class TaskManagerEvent extends Event<TaskManagerEvent.Type, TaskManagerEvent.Order, TaskManagerEvent.Listener> {
 

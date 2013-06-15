@@ -3,8 +3,9 @@ package com.bitfire.uracer.game.logic.gametasks.trackeffects;
 
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.utils.Disposable;
+import com.bitfire.uracer.game.logic.gametasks.PlayerClient;
 
-public abstract class TrackEffect implements Disposable {
+public abstract class TrackEffect extends PlayerClient implements Disposable {
 	public final TrackEffectType type;
 
 	public TrackEffect (TrackEffectType what) {

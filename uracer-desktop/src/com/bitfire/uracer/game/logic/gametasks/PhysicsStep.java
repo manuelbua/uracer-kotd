@@ -3,9 +3,9 @@ package com.bitfire.uracer.game.logic.gametasks;
 
 import com.badlogic.gdx.physics.box2d.World;
 import com.bitfire.uracer.configuration.Config;
-import com.bitfire.uracer.events.PhysicsStepEvent.Type;
-import com.bitfire.uracer.events.TaskManagerEvent;
 import com.bitfire.uracer.game.GameEvents;
+import com.bitfire.uracer.game.events.TaskManagerEvent;
+import com.bitfire.uracer.game.events.PhysicsStepEvent.Type;
 
 public class PhysicsStep extends GameTask {
 	private World world;
@@ -32,5 +32,15 @@ public class PhysicsStep extends GameTask {
 	protected void onTickCompleted () {
 		world.clearForces();
 		GameEvents.physicsStep.trigger(this, Type.onSubstepCompleted);
+	}
+
+	@Override
+	public void onReset () {
+		world.clearForces();
+	}
+
+	@Override
+	public void onRestart () {
+		onReset();
 	}
 }

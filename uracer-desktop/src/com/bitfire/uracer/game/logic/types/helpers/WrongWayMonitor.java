@@ -1,24 +1,18 @@
 
 package com.bitfire.uracer.game.logic.types.helpers;
 
+import com.bitfire.uracer.game.GameEvents;
 import com.bitfire.uracer.game.GameplaySettings;
 import com.bitfire.uracer.game.Time;
 import com.bitfire.uracer.game.Time.Reference;
+import com.bitfire.uracer.game.events.WrongWayMonitorEvent;
 
 public class WrongWayMonitor {
 
 	private final Time wrongWayTimer = new Time();
 	private boolean isWrongWay = false;
-	private WrongWayMonitorListener listener;
 
-	public static interface WrongWayMonitorListener {
-		void onWrongWayBegins ();
-
-		void onWrongWayEnds ();
-	}
-
-	public WrongWayMonitor (WrongWayMonitorListener listener) {
-		this.listener = listener;
+	public WrongWayMonitor () {
 		reset();
 	}
 
@@ -43,7 +37,7 @@ public class WrongWayMonitor {
 				} else if (wrongWayTimer.elapsed(Reference.TickSeconds) > GameplaySettings.MaxSecondsWrongWayDetector) {
 					wrongWayTimer.reset();
 					isWrongWay = true;
-					listener.onWrongWayBegins();
+					GameEvents.wrongWay.trigger(null, WrongWayMonitorEvent.Type.onWrongWayBegins);
 					// Gdx.app.log("WrongWayMonitor", "--> wrong way detected, invalidating lap");
 				} else {
 					// Gdx.app.log("WrongWayMonitor", "--> " + wrongWayTimer.elapsed(Reference.TickSeconds));

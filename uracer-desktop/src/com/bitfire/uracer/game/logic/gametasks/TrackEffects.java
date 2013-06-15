@@ -1,17 +1,18 @@
 
-package com.bitfire.uracer.game.logic.gametasks.trackeffects;
+package com.bitfire.uracer.game.logic.gametasks;
 
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
-import com.badlogic.gdx.utils.Array;
 import com.badlogic.gdx.utils.IntMap;
-import com.bitfire.uracer.events.GameRendererEvent;
-import com.bitfire.uracer.events.GameRendererEvent.Order;
-import com.bitfire.uracer.events.GameRendererEvent.Type;
 import com.bitfire.uracer.game.GameEvents;
-import com.bitfire.uracer.game.logic.gametasks.GameTask;
+import com.bitfire.uracer.game.events.GameRendererEvent;
+import com.bitfire.uracer.game.events.GameRendererEvent.Order;
+import com.bitfire.uracer.game.events.GameRendererEvent.Type;
+import com.bitfire.uracer.game.logic.gametasks.trackeffects.TrackEffect;
+import com.bitfire.uracer.game.logic.gametasks.trackeffects.TrackEffectType;
+import com.bitfire.uracer.game.player.PlayerCar;
 import com.bitfire.utils.ItemsManager;
 
-public final class TrackEffects extends GameTask {
+public final class TrackEffects extends GameTask implements PlayerDispatcher, DisposableTasks {
 	private final ItemsManager<TrackEffect> managerBeforeCars = new ItemsManager<TrackEffect>();
 	private final ItemsManager<TrackEffect> managerAfterCars = new ItemsManager<TrackEffect>();
 	private final IntMap<TrackEffect> effectsMap = new IntMap<TrackEffect>();
@@ -25,21 +26,14 @@ public final class TrackEffects extends GameTask {
 
 			SpriteBatch batch = GameEvents.gameRenderer.batch;
 
-			Array<TrackEffect> items = null;
-
 			if (type == GameRendererEvent.Type.BatchBeforeCars) {
 				// after entities
-				items = managerBeforeCars.items;
+				for (TrackEffect e : managerBeforeCars) {
+					e.render(batch);
+				}
 			} else if (type == GameRendererEvent.Type.BatchAfterCars) {
-				items = managerAfterCars.items;
-			}
-
-			if (items != null) {
-				for (int i = 0; i < items.size; i++) {
-					TrackEffect effect = items.get(i);
-					if (effect != null) {
-						effect.render(batch);
-					}
+				for (TrackEffect e : managerAfterCars) {
+					e.render(batch);
 				}
 			}
 		}
@@ -85,68 +79,64 @@ public final class TrackEffects extends GameTask {
 		super.dispose();
 		GameEvents.gameRenderer.removeListener(listener, GameRendererEvent.Type.BatchBeforeCars, GameRendererEvent.Order.DEFAULT);
 		GameEvents.gameRenderer.removeListener(listener, GameRendererEvent.Type.BatchAfterCars, GameRendererEvent.Order.DEFAULT);
+		disposeTasks();
+	}
 
-		Array<TrackEffect> items = managerBeforeCars.items;
-		for (int i = 0; i < items.size; i++) {
-			items.get(i).dispose();
-		}
-
-		items = managerAfterCars.items;
-		for (int i = 0; i < items.size; i++) {
-			items.get(i).dispose();
-		}
-
+	@Override
+	public void disposeTasks () {
 		managerBeforeCars.dispose();
 		managerAfterCars.dispose();
 	}
 
 	@Override
 	public void onTick () {
-		Array<TrackEffect> items = managerBeforeCars.items;
-		for (int i = 0; i < items.size; i++) {
-			TrackEffect effect = items.get(i);
-			effect.tick();
+		for (TrackEffect e : managerBeforeCars) {
+			e.tick();
 		}
 
-		items = managerAfterCars.items;
-		for (int i = 0; i < items.size; i++) {
-			TrackEffect effect = items.get(i);
-			effect.tick();
+		for (TrackEffect e : managerAfterCars) {
+			e.tick();
 		}
-
 	}
 
 	@Override
-	public void reset () {
-		Array<TrackEffect> items = managerBeforeCars.items;
-		for (int i = 0; i < items.size; i++) {
-			TrackEffect effect = items.get(i);
-			effect.reset();
+	public void onRestart () {
+		onReset();
+	}
+
+	@Override
+	public void onReset () {
+		for (TrackEffect e : managerBeforeCars) {
+			e.reset();
 		}
 
-		items = managerAfterCars.items;
-		for (int i = 0; i < items.size; i++) {
-			TrackEffect effect = items.get(i);
-			effect.reset();
+		for (TrackEffect e : managerAfterCars) {
+			e.reset();
 		}
-
 	}
 
 	public int getParticleCount () {
 		int total = 0;
 
-		Array<TrackEffect> items = managerBeforeCars.items;
-		for (int i = 0; i < items.size; i++) {
-			TrackEffect effect = items.get(i);
-			total += effect.getParticleCount();
+		for (TrackEffect e : managerBeforeCars) {
+			total += e.getParticleCount();
 		}
 
-		items = managerAfterCars.items;
-		for (int i = 0; i < items.size; i++) {
-			TrackEffect effect = items.get(i);
-			total += effect.getParticleCount();
+		for (TrackEffect e : managerAfterCars) {
+			total += e.getParticleCount();
 		}
 
 		return total;
+	}
+
+	@Override
+	public void onPlayerSet (PlayerCar player) {
+		for (TrackEffect e : managerBeforeCars) {
+			e.player(player);
+		}
+
+		for (TrackEffect e : managerAfterCars) {
+			e.player(player);
+		}
 	}
 }

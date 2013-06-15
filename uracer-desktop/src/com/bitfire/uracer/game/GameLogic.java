@@ -1,10 +1,10 @@
 
 package com.bitfire.uracer.game;
 
-import com.bitfire.uracer.game.actors.CarPreset;
-
 public interface GameLogic {
-	void setPlayer (CarPreset.Type presetType);
+	void dispose ();
+
+	void addPlayer ();
 
 	void removePlayer ();
 
@@ -18,13 +18,9 @@ public interface GameLogic {
 
 	void endTimeDilation ();
 
-	boolean timeDilationAvailable ();
-
-	void dispose ();
+	boolean isTimeDilationAvailable ();
 
 	void tick ();
 
 	void tickCompleted ();
-
-	void beforeRender ();
 }

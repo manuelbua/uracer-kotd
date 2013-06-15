@@ -1,12 +1,13 @@
 
-package com.bitfire.uracer.game.logic.gametasks;
+package com.bitfire.uracer.game.logic;
 
 import com.badlogic.gdx.utils.Array;
-import com.bitfire.uracer.events.TaskManagerEvent;
-import com.bitfire.uracer.game.logic.gametasks.hud.Hud;
-import com.bitfire.uracer.game.logic.gametasks.messager.Messager;
-import com.bitfire.uracer.game.logic.gametasks.sounds.SoundManager;
-import com.bitfire.uracer.game.logic.gametasks.trackeffects.TrackEffects;
+import com.bitfire.uracer.game.events.TaskManagerEvent;
+import com.bitfire.uracer.game.logic.gametasks.GameTask;
+import com.bitfire.uracer.game.logic.gametasks.Hud;
+import com.bitfire.uracer.game.logic.gametasks.PhysicsStep;
+import com.bitfire.uracer.game.logic.gametasks.SoundManager;
+import com.bitfire.uracer.game.logic.gametasks.TrackEffects;
 import com.bitfire.uracer.game.world.GameWorld;
 
 /** Manages the creation and destruction of the main game tasks. */
@@ -22,9 +23,6 @@ public final class GameTasksManager {
 	// sound
 	public SoundManager sound = null;
 
-	// alerts and infos
-	public Messager messager = null;
-
 	// hud
 	public Hud hud = null;
 
@@ -33,9 +31,10 @@ public final class GameTasksManager {
 
 	public GameTasksManager (GameWorld world) {
 		gameWorld = world;
+		createTasks();
 	}
 
-	public void createTasks () {
+	private void createTasks () {
 		// physics step
 		physicsStep = new PhysicsStep(gameWorld.getBox2DWorld(), TaskManagerEvent.Order.MINUS_4);
 		add(physicsStep);
@@ -43,10 +42,6 @@ public final class GameTasksManager {
 		// sound manager
 		sound = new SoundManager();
 		add(sound);
-
-		// message manager
-		messager = new Messager();
-		add(messager);
 
 		// hud manager
 		hud = new Hud();
@@ -57,7 +52,7 @@ public final class GameTasksManager {
 		add(effects);
 	}
 
-	private void add (GameTask task) {
+	public void add (GameTask task) {
 		tasks.add(task);
 	}
 
@@ -67,15 +62,15 @@ public final class GameTasksManager {
 		}
 	}
 
-	public void reset () {
+	public void raiseReset () {
 		for (GameTask task : tasks) {
-			task.reset();
+			task.onReset();
 		}
 	}
 
-	public void restart () {
+	public void raiseRestart () {
 		for (GameTask task : tasks) {
-			task.restart();
+			task.onRestart();
 		}
 	}
 }

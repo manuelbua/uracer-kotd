@@ -9,7 +9,6 @@ import aurelienribon.tweenengine.equations.Quad;
 
 import com.badlogic.gdx.math.MathUtils;
 import com.badlogic.gdx.math.Vector2;
-import com.badlogic.gdx.math.WindowedMean;
 import com.badlogic.gdx.utils.TimeUtils;
 import com.bitfire.postprocessing.effects.Bloom;
 import com.bitfire.postprocessing.effects.CrtMonitor;
@@ -29,6 +28,7 @@ import com.bitfire.uracer.resources.Art;
 import com.bitfire.uracer.utils.AMath;
 import com.bitfire.uracer.utils.BoxedFloat;
 import com.bitfire.uracer.utils.BoxedFloatAccessor;
+import com.bitfire.uracer.utils.InterpolatedFloat;
 import com.bitfire.uracer.utils.ScaleUtils;
 
 public final class AggressiveCold implements PostProcessingAnimator {
@@ -43,11 +43,16 @@ public final class AggressiveCold implements PostProcessingAnimator {
 	private Ssao ssao = null;
 	private PlayerCar player = null;
 	private boolean hasPlayer = false;
-	private BoxedFloat wrongWayAmount;
-	private boolean wrongWayBegan = false;
-	private boolean alertCollision = false;
-	private float lastCollisionFactor = 0;
+	private BoxedFloat alertAmount;
+	private boolean alertBegan = false;
+	private boolean isSingleAlert = false;
+	private float lastAlertFactor = 0;
 	private float bloomThreshold = 0.4f;
+
+	private long startMs = 0;
+	private Vector2 playerScreenPos = new Vector2();
+	private InterpolatedFloat speed = new InterpolatedFloat();
+	private InterpolatedFloat blurStrength = new InterpolatedFloat();
 
 	public AggressiveCold (PostProcessing post, boolean nightMode) {
 		this.nightMode = nightMode;
@@ -58,7 +63,8 @@ public final class AggressiveCold implements PostProcessingAnimator {
 		curvature = (Curvature)post.getEffect(PostProcessing.Effects.Curvature.name);
 		ssao = (Ssao)post.getEffect(PostProcessing.Effects.Ssao.name);
 
-		wrongWayAmount = new BoxedFloat(0);
+		alertAmount = new BoxedFloat(0);
+		blurStrength.setFixup(false);
 
 		reset();
 	}
@@ -71,19 +77,19 @@ public final class AggressiveCold implements PostProcessingAnimator {
 	}
 
 	@Override
-	public void alertWrongWayBegins (int milliseconds) {
-		if (!wrongWayBegan) {
-			wrongWayBegan = true;
-			alertCollision = false;
-			lastCollisionFactor = 0;
-			GameTweener.stop(wrongWayAmount);
+	public void alertBegins (int milliseconds) {
+		if (!alertBegan) {
+			alertBegan = true;
+			isSingleAlert = false;
+			lastAlertFactor = 0;
+			GameTweener.stop(alertAmount);
 			Timeline seq = Timeline.createSequence();
 
 			//@off
 		seq
-			.push(Tween.to(wrongWayAmount, BoxedFloatAccessor.VALUE, milliseconds).target(1.5f).ease(Quad.IN))
+			.push(Tween.to(alertAmount, BoxedFloatAccessor.VALUE, milliseconds).target(1.5f).ease(Quad.IN))
 			.pushPause(50)
-			.push(Tween.to(wrongWayAmount, BoxedFloatAccessor.VALUE, milliseconds).target(0.75f).ease(Quad.OUT))
+			.push(Tween.to(alertAmount, BoxedFloatAccessor.VALUE, milliseconds).target(0.75f).ease(Quad.OUT))
 		;
 		//@on
 
@@ -92,50 +98,49 @@ public final class AggressiveCold implements PostProcessingAnimator {
 	}
 
 	@Override
-	public void alertWrongWayEnds (int milliseconds) {
-		if (wrongWayBegan) {
-			wrongWayBegan = false;
-			GameTweener.stop(wrongWayAmount);
+	public void alertEnds (int milliseconds) {
+		if (alertBegan) {
+			alertBegan = false;
+			GameTweener.stop(alertAmount);
 			Timeline seq = Timeline.createSequence();
-			seq.push(Tween.to(wrongWayAmount, BoxedFloatAccessor.VALUE, milliseconds).target(0).ease(Quad.INOUT));
+			seq.push(Tween.to(alertAmount, BoxedFloatAccessor.VALUE, milliseconds).target(0).ease(Quad.INOUT));
 			GameTweener.start(seq);
 		}
 	}
 
 	@Override
-	public void alertCollision (float collisionFactor, int milliseconds) {
-		// if (wrongWayBegan || alertCollision) {
-		if (wrongWayBegan) {
-			lastCollisionFactor = 0;
+	public void alert (float factor, int milliseconds) {
+		if (alertBegan) {
+			lastAlertFactor = 0;
 			return;
 		}
 
-		// DO NOT accept subsequent collision alerts if the factor
+		// DO NOT accept subsequent alerts if the factor
 		// is LOWER than the alert currently being shown
-		if (collisionFactor < lastCollisionFactor && alertCollision) {
+		if (factor < lastAlertFactor && isSingleAlert) {
 			return;
 		}
 
-		lastCollisionFactor = collisionFactor;
-		alertCollision = true;
-		GameTweener.stop(wrongWayAmount);
+		lastAlertFactor = factor;
+		isSingleAlert = true;
+		GameTweener.stop(alertAmount);
 		Timeline seq = Timeline.createSequence();
 
-		collisionFactor = MathUtils.clamp(collisionFactor, 0, 1);
+		factor = MathUtils.clamp(factor, 0, 1);
 
 		//@off
 		seq
-			.push(Tween.to(wrongWayAmount, BoxedFloatAccessor.VALUE, 75).target(collisionFactor).ease(Quad.IN))
+			.push(Tween.to(alertAmount, BoxedFloatAccessor.VALUE, 75).target(factor).ease(Quad.IN))
 			.pushPause(50)
-			.push(Tween.to(wrongWayAmount, BoxedFloatAccessor.VALUE, milliseconds).target(0).ease(Quad.OUT))
+			.push(Tween.to(alertAmount, BoxedFloatAccessor.VALUE, milliseconds).target(0).ease(Quad.OUT))
 			.setCallback(new TweenCallback() {
 				
 				@Override
 				public void onEvent (int type, BaseTween<?> source) {
 					switch (type) {
 					case COMPLETE:
-						alertCollision = false;
-						lastCollisionFactor = 0;
+						isSingleAlert = false;
+						lastAlertFactor = 0;
 					}
 				}
 			})
@@ -147,7 +152,8 @@ public final class AggressiveCold implements PostProcessingAnimator {
 
 	@Override
 	public void reset () {
-		alertCollision = false;
+		isSingleAlert = false;
+		speed.reset(0, true);
 
 		if (ssao != null) {
 			ssao.setOcclusionThresholds(0.3f, 0.1f);
@@ -166,7 +172,7 @@ public final class AggressiveCold implements PostProcessingAnimator {
 		}
 
 		if (bloom != null) {
-			bloomThreshold = (nightMode ? 0.27f : 0.4f);
+			bloomThreshold = (nightMode ? 0.22f : 0.4f);
 			Bloom.Settings bloomSettings = new Bloom.Settings("subtle", Config.PostProcessing.BlurType,
 				Config.PostProcessing.BlurNumPasses, 1.5f, bloomThreshold, 1f, 0.5f, 1f, 1.3f + (nightMode ? 0.2f : 0));
 			bloom.setSettings(bloomSettings);
@@ -180,12 +186,13 @@ public final class AggressiveCold implements PostProcessingAnimator {
 			vignette.setLutIndexVal(0, 16);
 			vignette.setLutIndexVal(1, 7);
 			vignette.setLutIndexOffset(0);
-			lastCollisionFactor = 0;
+			lastAlertFactor = 0;
 			vignette.setEnabled(true);
 
-			if (wrongWayAmount.value > 0) {
-				wrongWayBegan = true;
-				alertWrongWayEnds(Config.Graphics.DefaultResetFadeMilliseconds);
+			// terminate pending, unfinished alert, if any
+			if (alertAmount.value > 0) {
+				alertBegan = true;
+				alertEnds(Config.Graphics.DefaultResetFadeMilliseconds);
 			}
 		}
 
@@ -194,6 +201,7 @@ public final class AggressiveCold implements PostProcessingAnimator {
 			zoom.setEnabled(true);
 			zoom.setOrigin(playerScreenPos);
 			zoom.setBlurStrength(0);
+			blurStrength.reset(0, true);
 		}
 
 		if (crt != null) {
@@ -201,7 +209,7 @@ public final class AggressiveCold implements PostProcessingAnimator {
 			crt.setTime(0);
 
 			// note, a perfect color offset depends from screen size
-			crt.setColorOffset(0.001f);
+			crt.setColorOffset(0.0005f);
 			crt.setDistortion(0.125f);
 			crt.setZoom(0.94f);
 
@@ -213,17 +221,8 @@ public final class AggressiveCold implements PostProcessingAnimator {
 			float dist = 0.25f;
 			curvature.setDistortion(dist);
 			curvature.setZoom(1 - (dist / 2));
-
-			// curvature.setDistortion( 0.125f );
-			// curvature.setZoom( 0.94f );
 		}
 	}
-
-	private long startMs = 0;
-	Vector2 playerScreenPos = new Vector2();
-	private float prevSpeed = 0;
-	private WindowedMean meanSpeed = new WindowedMean(2);
-	private WindowedMean meanStrength = new WindowedMean(5);
 
 	private void autoEnableZoomBlur (float blurStrength) {
 		boolean enabled = zoom.isEnabled();
@@ -250,8 +249,6 @@ public final class AggressiveCold implements PostProcessingAnimator {
 	@Override
 	public void update (float zoomCamera, float warmUpCompletion) {
 		float timeModFactor = URacer.Game.getTimeModFactor();
-		// float currDriftStrength = 0;
-		float currSpeedFactor = 0;
 
 		// dbg
 		// ssao.setSampleCount(16);
@@ -263,16 +260,7 @@ public final class AggressiveCold implements PostProcessingAnimator {
 
 		if (hasPlayer) {
 			playerScreenPos.set(GameRenderer.ScreenUtils.worldPxToScreen(player.state().position));
-
-			meanStrength.addValue(player.driftState.driftStrength);
-			meanSpeed.addValue(player.carState.currSpeedFactor);
-
-			// currDriftStrength = AMath.fixup(AMath.clamp(meanStrength.getMean(), 0, 1));
-			currSpeedFactor = AMath.fixup(AMath.clamp(meanSpeed.getMean(), 0, 1));
-
-			currSpeedFactor = AMath.fixup(AMath.lerp(prevSpeed, player.carState.currSpeedFactor, 0.02f));
-			prevSpeed = currSpeedFactor;
-
+			speed.set(player.carState.currSpeedFactor, 0.02f);
 		} else {
 			playerScreenPos.set(0.5f, 0.5f);
 		}
@@ -288,18 +276,28 @@ public final class AggressiveCold implements PostProcessingAnimator {
 			}
 		}
 
-		if (zoom != null && hasPlayer) {
+		if (zoom != null) {
 
-			float sfactor = currSpeedFactor;
-			float z = (zoomCamera - (GameWorldRenderer.MinCameraZoom + GameWorldRenderer.ZoomWindow));
-			float v = (-0.07f * sfactor) - 0.03f * z;
-			// Gdx.app.log("", "zoom=" + z);
+			if (hasPlayer) {
+				float sfactor = speed.get();
+				float z = (zoomCamera - (GameWorldRenderer.MinCameraZoom + GameWorldRenderer.ZoomWindow));
+				float v = (-0.09f * sfactor) - 0.09f * z;
+				// Gdx.app.log("", "zoom=" + z);
 
-			float blurStrength = v + (-0.05f * timeModFactor * sfactor);
-			autoEnableZoomBlur(blurStrength);
+				float strength = v + (-0.05f * timeModFactor * sfactor);
+				blurStrength.set(strength, 1f);
+			} else {
+				blurStrength.set(0, 0.05f);
+			}
+
+			autoEnableZoomBlur(blurStrength.get());
 			if (zoom.isEnabled()) {
-				zoom.setOrigin(playerScreenPos);
-				zoom.setBlurStrength(blurStrength);
+
+				if (hasPlayer) {
+					zoom.setOrigin(playerScreenPos);
+				}
+
+				zoom.setBlurStrength(blurStrength.get());
 			}
 		}
 
@@ -332,7 +330,7 @@ public final class AggressiveCold implements PostProcessingAnimator {
 				vignette.setSaturationMul(1 + timeModFactor * 0.2f);
 			}
 
-			float lutIntensity = 0.1f + timeModFactor * 1f + wrongWayAmount.value * 1f;
+			float lutIntensity = 0.1f + timeModFactor * 1f + alertAmount.value * 1f;
 			lutIntensity = MathUtils.clamp(lutIntensity, 0, 1);
 
 			vignette.setLutIntensity(lutIntensity);
@@ -343,7 +341,7 @@ public final class AggressiveCold implements PostProcessingAnimator {
 				vignette.setIntensity(0.7f);
 			}
 
-			vignette.setLutIndexOffset(wrongWayAmount.value);
+			vignette.setLutIndexOffset(alertAmount.value);
 		}
 
 		//

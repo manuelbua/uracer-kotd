@@ -3,10 +3,10 @@ package com.bitfire.uracer.game.logic.gametasks.sounds.effects;
 
 import com.badlogic.gdx.audio.Sound;
 import com.bitfire.uracer.URacer;
-import com.bitfire.uracer.events.PlayerDriftStateEvent;
-import com.bitfire.uracer.events.PlayerDriftStateEvent.Order;
-import com.bitfire.uracer.events.PlayerDriftStateEvent.Type;
 import com.bitfire.uracer.game.GameEvents;
+import com.bitfire.uracer.game.events.PlayerDriftStateEvent;
+import com.bitfire.uracer.game.events.PlayerDriftStateEvent.Order;
+import com.bitfire.uracer.game.events.PlayerDriftStateEvent.Type;
 import com.bitfire.uracer.game.logic.gametasks.sounds.SoundEffect;
 import com.bitfire.uracer.game.player.PlayerCar;
 import com.bitfire.uracer.resources.Sounds;
@@ -25,10 +25,10 @@ public final class PlayerDriftSoundEffect extends SoundEffect {
 	private static final float pitchMin = 0.7f;
 	private static final float pitchMax = 1f;
 
+	private boolean started = false;
 	private boolean doFadeIn = false;
 	private boolean doFadeOut = false;
 	private float lastVolume = 0f;
-	private PlayerCar player;
 
 	private PlayerDriftStateEvent.Listener driftListener = new PlayerDriftStateEvent.Listener() {
 		@Override
@@ -44,19 +44,24 @@ public final class PlayerDriftSoundEffect extends SoundEffect {
 		}
 	};
 
-	public PlayerDriftSoundEffect (PlayerCar player) {
-		this.player = player;
-		GameEvents.driftState.addListener(driftListener, PlayerDriftStateEvent.Type.onBeginDrift);
-		GameEvents.driftState.addListener(driftListener, PlayerDriftStateEvent.Type.onEndDrift);
+	public PlayerDriftSoundEffect () {
 		drift = Sounds.carDrift;
 		// start();
 	}
 
 	@Override
 	public void dispose () {
+		drift.stop();
+	}
+
+	private void attach () {
+		GameEvents.driftState.addListener(driftListener, PlayerDriftStateEvent.Type.onBeginDrift);
+		GameEvents.driftState.addListener(driftListener, PlayerDriftStateEvent.Type.onEndDrift);
+	}
+
+	private void detach () {
 		GameEvents.driftState.removeListener(driftListener, PlayerDriftStateEvent.Type.onBeginDrift);
 		GameEvents.driftState.removeListener(driftListener, PlayerDriftStateEvent.Type.onEndDrift);
-		drift.stop();
 	}
 
 	private void onBeginDrift () {
@@ -77,6 +82,12 @@ public final class PlayerDriftSoundEffect extends SoundEffect {
 
 	@Override
 	public void start () {
+		if (started) {
+			return;
+		}
+
+		started = true;
+
 		// UGLY HACK FOR ANDROID
 		if (URacer.Game.isDesktop()) {
 			driftId = drift.loop(0f);
@@ -90,12 +101,17 @@ public final class PlayerDriftSoundEffect extends SoundEffect {
 
 	@Override
 	public void stop () {
+		if (!started) {
+			return;
+		}
+
 		if (driftId > -1) {
 			drift.stop(driftId);
 		}
 
 		doFadeIn = false;
 		doFadeOut = false;
+		started = false;
 	}
 
 	@Override
@@ -107,7 +123,7 @@ public final class PlayerDriftSoundEffect extends SoundEffect {
 
 	@Override
 	public void resume () {
-		if (driftId > -1) {
+		if (hasPlayer() && driftId > -1) {
 			drift.setVolume(driftId, player.driftState.driftStrength * lastVolume);
 		}
 	}
@@ -116,11 +132,18 @@ public final class PlayerDriftSoundEffect extends SoundEffect {
 	public void reset () {
 		stop();
 		lastVolume = 0;
+		started = false;
+	}
+
+	@Override
+	public void restart () {
+		reset();
+		start();
 	}
 
 	@Override
 	public void tick () {
-		if (driftId > -1) {
+		if (hasPlayer() && driftId > -1) {
 			boolean anotherDriftId = (driftId != lastDriftId);
 			float speedFactor = player.carState.currSpeedFactor;
 
@@ -155,6 +178,19 @@ public final class PlayerDriftSoundEffect extends SoundEffect {
 			lastDriftId = driftId;
 			lastVolume = AMath.clamp(lastVolume, 0, 1f);
 			drift.setVolume(driftId, player.driftState.driftStrength * lastVolume);
+		}
+	}
+
+	@Override
+	public void player (PlayerCar player) {
+		super.player(player);
+
+		if (hasPlayer()) {
+			attach();
+			start();
+		} else {
+			detach();
+			stop();
 		}
 	}
 }

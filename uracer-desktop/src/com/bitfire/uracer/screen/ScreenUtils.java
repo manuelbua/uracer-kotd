@@ -17,11 +17,6 @@ public final class ScreenUtils {
 		if (screen != null) {
 			clear(buffer, clearColor, clearDepth, useDepth);
 
-			if (ScreenManager.currentScreen() != screen) {
-				screen.tick();
-				screen.tickCompleted();
-			}
-
 			// ensures default active texture is active
 			Gdx.gl20.glActiveTexture(GL20.GL_TEXTURE0);
 

@@ -1,15 +1,14 @@
 
-package com.bitfire.uracer.game.logic.gametasks.messager;
-
-import java.util.LinkedList;
+package com.bitfire.uracer.game.logic.gametasks;
 
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.utils.Array;
-import com.bitfire.uracer.events.GameRendererEvent;
-import com.bitfire.uracer.events.GameRendererEvent.Order;
-import com.bitfire.uracer.events.GameRendererEvent.Type;
+import com.bitfire.uracer.URacer;
 import com.bitfire.uracer.game.GameEvents;
-import com.bitfire.uracer.game.logic.gametasks.GameTask;
+import com.bitfire.uracer.game.events.GameRendererEvent;
+import com.bitfire.uracer.game.events.GameRendererEvent.Order;
+import com.bitfire.uracer.game.events.GameRendererEvent.Type;
+import com.bitfire.uracer.game.logic.gametasks.messager.Message;
 import com.bitfire.uracer.game.logic.gametasks.messager.Message.Position;
 import com.bitfire.uracer.game.logic.gametasks.messager.Message.Size;
 
@@ -24,15 +23,18 @@ public class Messager extends GameTask {
 
 			for (Position group : Position.values()) {
 				if (isBusy(group)) {
-					currents.get(group.ordinal()).render(batch);
+					for (Message m : messages.get(group.ordinal())) {
+						if (!m.isCompleted()) {
+							m.render(batch);
+						}
+					}
 				}
 			}
 		}
 	};
 
 	// data
-	private Array<LinkedList<Message>> messages;
-	private Array<Message> currents;
+	private Array<Array<Message>> messages;
 	private Message[] messageStore;
 	private static final int MaxMessagesInStore = 10;
 	private int idxMessageStore;
@@ -40,14 +42,9 @@ public class Messager extends GameTask {
 	public Messager () {
 		GameEvents.gameRenderer.addListener(gameRendererEvent, RenderEvent, RenderOrder);
 
-		currents = new Array<Message>(3);
+		messages = new Array<Array<Message>>(3);
 		for (Position group : Position.values()) {
-			currents.insert(group.ordinal(), null);
-		}
-
-		messages = new Array<LinkedList<Message>>(3);
-		for (Position group : Position.values()) {
-			messages.insert(group.ordinal(), new LinkedList<Message>());
+			messages.insert(group.ordinal(), new Array<Message>());
 		}
 
 		// initialize message store
@@ -62,7 +59,6 @@ public class Messager extends GameTask {
 	public void dispose () {
 		super.dispose();
 		GameEvents.gameRenderer.removeListener(gameRendererEvent, RenderEvent, RenderOrder);
-		reset();
 	}
 
 	@Override
@@ -73,58 +69,57 @@ public class Messager extends GameTask {
 	}
 
 	public boolean isBusy (Position group) {
-		return (currents.get(group.ordinal()) != null);
+		Array<Message> msgs = messages.get(group.ordinal());
+		return (msgs.size > 0 && msgs.first() != null);
 	}
 
 	@Override
-	public void reset () {
+	public void onRestart () {
+		onReset();
+	}
+
+	@Override
+	public void onReset () {
 		for (Position group : Position.values()) {
 			messages.get(group.ordinal()).clear();
-		}
-
-		for (Position group : Position.values()) {
-			currents.set(group.ordinal(), null);
 		}
 
 		idxMessageStore = 0;
 	}
 
 	private void update (Position group) {
-		LinkedList<Message> msgs = messages.get(group.ordinal());
-		Message msg = currents.get(group.ordinal());
+		Array<Message> msgs = messages.get(group.ordinal());
 
-		// any message?
-		if (msg == null && (msgs.peek() != null)) {
-			// schedule next message to process
-			msg = msgs.remove();
-			currents.set(group.ordinal(), msg);
-		}
-
-		// busy or became busy?
-		if (msg != null) {
-			// start message if needed
-			if (!msg.started) {
-				msg.started = true;
-				msg.startMs = System.currentTimeMillis();
-				msg.onShow();
+		for (Message msg : msgs) {
+			// any message?
+			if (msg == null && (msgs.size > 0 && msgs.first() != null)) {
+				// schedule next message to process
+				msg = msgs.first();
+				msgs.removeValue(msg, true);
 			}
 
-			if (!msg.tick()) {
-				currents.set(group.ordinal(), null);
-				return;
-			}
+			// busy or became busy?
+			if (msg != null && !msg.isCompleted()) {
+				// start message if needed
+				if (!msg.started) {
+					msg.started = true;
+					msg.startMs = System.currentTimeMillis();
+					msg.show();
+				}
 
-			// check if finished
-			if ((System.currentTimeMillis() - msg.startMs) >= msg.durationMs && !msg.isHiding()) {
-				// message should end
-				msg.onHide();
+				// check if finished
+				long much = (long)((System.currentTimeMillis() - msg.startMs) * URacer.timeMultiplier);
+				if (msg.isShowComplete() && much >= msg.durationMs) {
+					// message should end
+					msg.hide();
+				}
 			}
 		}
 	}
 
 	public void show (String message, float durationSecs, Message.Type type, Position position, Size size) {
 		if (isBusy(position)) {
-			currents.get(position.ordinal()).onHide();
+			messages.get(position.ordinal()).first().hide();
 		}
 
 		enqueue(message, durationSecs, type, position, size);

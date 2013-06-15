@@ -5,10 +5,10 @@ import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.audio.Sound;
 import com.badlogic.gdx.math.MathUtils;
 import com.bitfire.uracer.URacer;
-import com.bitfire.uracer.events.CarEvent;
-import com.bitfire.uracer.events.CarEvent.Order;
-import com.bitfire.uracer.events.CarEvent.Type;
 import com.bitfire.uracer.game.GameEvents;
+import com.bitfire.uracer.game.events.CarEvent;
+import com.bitfire.uracer.game.events.CarEvent.Order;
+import com.bitfire.uracer.game.events.CarEvent.Type;
 import com.bitfire.uracer.game.logic.gametasks.sounds.SoundEffect;
 import com.bitfire.uracer.game.player.PlayerCar;
 import com.bitfire.uracer.resources.Sounds;
@@ -39,8 +39,6 @@ public final class PlayerImpactSoundEffect extends SoundEffect {
 	};
 
 	public PlayerImpactSoundEffect () {
-		GameEvents.playerCar.addListener(carEvent, CarEvent.Type.onCollision);
-
 		soundLow1 = Sounds.carImpacts[0];
 		soundLow2 = Sounds.carImpacts[1];
 		soundMid1 = Sounds.carImpacts[2];
@@ -50,13 +48,29 @@ public final class PlayerImpactSoundEffect extends SoundEffect {
 
 	@Override
 	public void dispose () {
-		GameEvents.playerCar.removeListener(carEvent, CarEvent.Type.onCollision);
-
 		soundLow1.stop();
 		soundLow2.stop();
 		soundMid1.stop();
 		soundMid2.stop();
 		soundHigh.stop();
+	}
+
+	private void attach () {
+		GameEvents.playerCar.addListener(carEvent, CarEvent.Type.onCollision);
+	}
+
+	private void detach () {
+		GameEvents.playerCar.removeListener(carEvent, CarEvent.Type.onCollision);
+	}
+
+	@Override
+	public void player (PlayerCar player) {
+		super.player(player);
+		if (hasPlayer()) {
+			attach();
+		} else {
+			detach();
+		}
 	}
 
 	// TODO modulate pitch while playing as CarDriftSoundEffect to handle impact also on start/end time modulation

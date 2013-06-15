@@ -3,10 +3,10 @@ package com.bitfire.uracer.game.actors;
 
 import com.bitfire.uracer.entities.Entity;
 import com.bitfire.uracer.entities.EntityRenderState;
-import com.bitfire.uracer.events.GameRendererEvent;
-import com.bitfire.uracer.events.GameRendererEvent.Order;
-import com.bitfire.uracer.events.PhysicsStepEvent;
 import com.bitfire.uracer.game.GameEvents;
+import com.bitfire.uracer.game.events.GameRendererEvent;
+import com.bitfire.uracer.game.events.PhysicsStepEvent;
+import com.bitfire.uracer.game.events.GameRendererEvent.Order;
 
 public abstract class SubframeInterpolableEntity extends Entity {
 	// world-coords
@@ -33,8 +33,8 @@ public abstract class SubframeInterpolableEntity extends Entity {
 
 	private final GameRendererEvent.Listener renderListener = new GameRendererEvent.Listener() {
 		@Override
-		public void handle (Object source, com.bitfire.uracer.events.GameRendererEvent.Type type, Order order) {
-			if (type == GameRendererEvent.Type.OnSubframeInterpolate) {
+		public void handle (Object source, com.bitfire.uracer.game.events.GameRendererEvent.Type type, Order order) {
+			if (type == GameRendererEvent.Type.SubframeInterpolate) {
 				onSubframeInterpolate(GameEvents.gameRenderer.timeAliasingFactor);
 			}
 		}
@@ -44,7 +44,7 @@ public abstract class SubframeInterpolableEntity extends Entity {
 		GameEvents.physicsStep.addListener(physicsListener, PhysicsStepEvent.Type.onBeforeTimestep);
 		GameEvents.physicsStep.addListener(physicsListener, PhysicsStepEvent.Type.onAfterTimestep);
 		GameEvents.physicsStep.addListener(physicsListener, PhysicsStepEvent.Type.onSubstepCompleted);
-		GameEvents.gameRenderer.addListener(renderListener, GameRendererEvent.Type.OnSubframeInterpolate,
+		GameEvents.gameRenderer.addListener(renderListener, GameRendererEvent.Type.SubframeInterpolate,
 			GameRendererEvent.Order.DEFAULT);
 	}
 
@@ -53,7 +53,7 @@ public abstract class SubframeInterpolableEntity extends Entity {
 		GameEvents.physicsStep.removeListener(physicsListener, PhysicsStepEvent.Type.onBeforeTimestep);
 		GameEvents.physicsStep.removeListener(physicsListener, PhysicsStepEvent.Type.onAfterTimestep);
 		GameEvents.physicsStep.removeListener(physicsListener, PhysicsStepEvent.Type.onSubstepCompleted);
-		GameEvents.gameRenderer.removeListener(renderListener, GameRendererEvent.Type.OnSubframeInterpolate,
+		GameEvents.gameRenderer.removeListener(renderListener, GameRendererEvent.Type.SubframeInterpolate,
 			GameRendererEvent.Order.DEFAULT);
 	}
 

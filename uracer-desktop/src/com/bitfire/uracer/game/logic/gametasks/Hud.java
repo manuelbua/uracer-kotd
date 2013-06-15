@@ -1,18 +1,19 @@
 
-package com.bitfire.uracer.game.logic.gametasks.hud;
+package com.bitfire.uracer.game.logic.gametasks;
 
-import com.badlogic.gdx.utils.Array;
-import com.bitfire.uracer.events.GameRendererEvent;
-import com.bitfire.uracer.events.GameRendererEvent.Order;
-import com.bitfire.uracer.events.GameRendererEvent.Type;
+import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.bitfire.uracer.game.GameEvents;
-import com.bitfire.uracer.game.logic.gametasks.GameTask;
+import com.bitfire.uracer.game.events.GameRendererEvent;
+import com.bitfire.uracer.game.events.GameRendererEvent.Order;
+import com.bitfire.uracer.game.events.GameRendererEvent.Type;
+import com.bitfire.uracer.game.logic.gametasks.hud.HudElement;
+import com.bitfire.uracer.game.player.PlayerCar;
 import com.bitfire.utils.ItemsManager;
 
 /** Encapsulates an head-up manager that will callback HudElement events for their updating and drawing operations. */
-public final class Hud extends GameTask {
+public final class Hud extends GameTask implements PlayerDispatcher, DisposableTasks {
 
-	private static final GameRendererEvent.Type RenderEventBeforePost = GameRendererEvent.Type.BatchAfterMeshes;
+	private static final GameRendererEvent.Type RenderEventBeforePost = GameRendererEvent.Type.BatchBeforePostProcessing;
 	private static final GameRendererEvent.Type RenderEventAfterPost = GameRendererEvent.Type.BatchAfterPostProcessing;
 	private static final GameRendererEvent.Type RenderEventDebug = GameRendererEvent.Type.BatchDebug;
 
@@ -27,20 +28,21 @@ public final class Hud extends GameTask {
 				return;
 			}
 
-			if (type == Type.BatchAfterMeshes) {
-				Array<HudElement> items = managerBeforePost.items;
-				for (int i = 0; i < items.size; i++) {
-					items.get(i).onRender(GameEvents.gameRenderer.batch);
-				}
+			SpriteBatch batch = GameEvents.gameRenderer.batch;
+			float camZoom = GameEvents.gameRenderer.camZoom;
+			ItemsManager<HudElement> items = null;
+
+			if (type == Type.BatchBeforePostProcessing) {
+				items = managerBeforePost;
 			} else if (type == Type.BatchAfterPostProcessing) {
-				Array<HudElement> items = managerAfterPost.items;
-				for (int i = 0; i < items.size; i++) {
-					items.get(i).onRender(GameEvents.gameRenderer.batch);
-				}
+				items = managerAfterPost;
 			} else if (type == Type.BatchDebug) {
-				Array<HudElement> items = managerDebug.items;
-				for (int i = 0; i < items.size; i++) {
-					items.get(i).onRender(GameEvents.gameRenderer.batch);
+				items = managerDebug;
+			}
+
+			if (items != null) {
+				for (HudElement e : items) {
+					e.onRender(batch, camZoom);
 				}
 			}
 		}
@@ -76,37 +78,73 @@ public final class Hud extends GameTask {
 		GameEvents.gameRenderer.removeListener(renderEvent, RenderEventBeforePost, GameRendererEvent.Order.DEFAULT);
 		GameEvents.gameRenderer.removeListener(renderEvent, RenderEventAfterPost, GameRendererEvent.Order.DEFAULT);
 		GameEvents.gameRenderer.removeListener(renderEvent, RenderEventDebug, GameRendererEvent.Order.DEFAULT);
-		managerBeforePost.dispose();
-		managerAfterPost.dispose();
+		disposeTasks();
 	}
 
 	@Override
-	public void reset () {
-		for (int i = 0; i < managerBeforePost.items.size; i++) {
-			managerBeforePost.items.get(i).onReset();
+	public void disposeTasks () {
+		managerBeforePost.dispose();
+		managerAfterPost.dispose();
+		managerDebug.dispose();
+	}
+
+	@Override
+	public void onRestart () {
+		for (HudElement e : managerBeforePost) {
+			e.onRestart();
 		}
 
-		for (int i = 0; i < managerAfterPost.items.size; i++) {
-			managerAfterPost.items.get(i).onReset();
+		for (HudElement e : managerAfterPost) {
+			e.onRestart();
 		}
 
-		for (int i = 0; i < managerDebug.items.size; i++) {
-			managerDebug.items.get(i).onReset();
+		for (HudElement e : managerDebug) {
+			e.onRestart();
+		}
+	}
+
+	@Override
+	public void onReset () {
+		for (HudElement e : managerBeforePost) {
+			e.onReset();
+		}
+
+		for (HudElement e : managerAfterPost) {
+			e.onReset();
+		}
+
+		for (HudElement e : managerDebug) {
+			e.onReset();
 		}
 	}
 
 	@Override
 	protected void onTick () {
-		for (int i = 0; i < managerBeforePost.items.size; i++) {
-			managerBeforePost.items.get(i).onTick();
+		for (HudElement e : managerBeforePost) {
+			e.onTick();
 		}
 
-		for (int i = 0; i < managerAfterPost.items.size; i++) {
-			managerAfterPost.items.get(i).onTick();
+		for (HudElement e : managerAfterPost) {
+			e.onTick();
 		}
 
-		for (int i = 0; i < managerDebug.items.size; i++) {
-			managerDebug.items.get(i).onTick();
+		for (HudElement e : managerDebug) {
+			e.onTick();
+		}
+	}
+
+	@Override
+	public void onPlayerSet (PlayerCar player) {
+		for (HudElement e : managerBeforePost) {
+			e.player(player);
+		}
+
+		for (HudElement e : managerAfterPost) {
+			e.player(player);
+		}
+
+		for (HudElement e : managerDebug) {
+			e.player(player);
 		}
 	}
 }

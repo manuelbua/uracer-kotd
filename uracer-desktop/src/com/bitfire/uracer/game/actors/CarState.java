@@ -2,7 +2,6 @@
 package com.bitfire.uracer.game.actors;
 
 import com.badlogic.gdx.math.Vector2;
-import com.bitfire.uracer.game.player.PlayerCar;
 import com.bitfire.uracer.game.world.GameWorld;
 import com.bitfire.uracer.utils.AMath;
 import com.bitfire.uracer.utils.Convert;
@@ -10,7 +9,6 @@ import com.bitfire.uracer.utils.Convert;
 public final class CarState {
 	/* observed car */
 	public final Car car;
-	public boolean isPlayer;
 
 	/* position */
 	public int currTileX = -1, currTileY = -1;
@@ -32,7 +30,6 @@ public final class CarState {
 	public CarState (GameWorld world, Car car) {
 		this.world = world;
 		this.car = car;
-		this.isPlayer = (car instanceof PlayerCar);
 
 		// precompute factors
 		if (car != null) {

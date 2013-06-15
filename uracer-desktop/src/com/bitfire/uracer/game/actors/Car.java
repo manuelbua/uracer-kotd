@@ -11,10 +11,11 @@ import com.badlogic.gdx.physics.box2d.Fixture;
 import com.badlogic.gdx.physics.box2d.FixtureDef;
 import com.badlogic.gdx.physics.box2d.MassData;
 import com.bitfire.uracer.configuration.Config;
-import com.bitfire.uracer.events.CarEvent;
-import com.bitfire.uracer.events.GameRendererEvent.Order;
 import com.bitfire.uracer.game.GameEvents;
 import com.bitfire.uracer.game.collisions.CollisionFilters;
+import com.bitfire.uracer.game.events.CarEvent;
+import com.bitfire.uracer.game.events.GameRendererEvent.Order;
+import com.bitfire.uracer.game.logic.helpers.GameTrack.TrackState;
 import com.bitfire.uracer.game.world.GameWorld;
 import com.bitfire.uracer.game.world.models.CarStillModel;
 import com.bitfire.uracer.game.world.models.ModelFactory;
@@ -26,14 +27,13 @@ public abstract strictfp class Car extends Box2DEntity {
 		NoInput, InputFromPlayer, InputFromReplay
 	}
 
-	/* event */
-	// public CarEvent event = null;
 	private boolean triggerEvents = false;
 	protected static final Order ShadowsDrawingOrder = Order.MINUS_2;
 
 	protected GameWorld gameWorld;
-	protected CarType carType;
+	// protected CarType carType;
 	protected CarStillModel stillModel;
+	private TrackState trackState;
 
 	protected int impacts = 0;
 
@@ -52,24 +52,22 @@ public abstract strictfp class Car extends Box2DEntity {
 
 	protected CarPreset preset;
 	protected InputMode inputMode = InputMode.NoInput;
-	private CarTrackState trackState;
 
 	public Car (GameWorld gameWorld, CarType carType, InputMode inputMode, CarPreset.Type presetType, boolean triggerEvents) {
 
 		super(gameWorld.getBox2DWorld());
 		this.preset = new CarPreset(presetType);
-		this.carType = carType;
+		// this.carType = carType;
 		this.triggerEvents = triggerEvents;
+		this.trackState = new TrackState();
 
-		// this.event = new CarEvent(this);
 		this.gameWorld = gameWorld;
-		this.stillModel = ModelFactory.createCar();
+		stillModel = ModelFactory.createCar();
 		stillModel.setCar(this);
-		this.impacts = 0;
+		impacts = 0;
 		this.inputMode = inputMode;
-		this.carTraveledDistance = 0;
-		this.accuDistCount = 0;
-		this.trackState = new CarTrackState();
+		carTraveledDistance = 0;
+		accuDistCount = 0;
 
 		applyCarPhysics(carType, preset.model);
 
@@ -81,16 +79,14 @@ public abstract strictfp class Car extends Box2DEntity {
 	public void dispose () {
 		super.dispose();
 		GameEvents.playerCar.removeAllListeners();
-		// event.removeAllListeners();
-		// event = null;
+	}
+
+	public TrackState getTrackState () {
+		return trackState;
 	}
 
 	public CarStillModel getStillModel () {
 		return stillModel;
-	}
-
-	public CarTrackState getTrackState () {
-		return trackState;
 	}
 
 	public float getSteerAngleRads () {
@@ -153,13 +149,13 @@ public abstract strictfp class Car extends Box2DEntity {
 	 * @param forces computed forces shall be returned by filling the passed data structure. */
 	protected abstract void onComputeCarForces (CarForces forces);
 
-	public CarPreset.Type getPresetType () {
-		return preset.type;
-	}
+	// public CarPreset.Type getPresetType () {
+	// return preset.type;
+	// }
 
-	public CarPreset getCarPreset () {
-		return preset;
-	}
+	// public CarPreset getCarPreset () {
+	// return preset;
+	// }
 
 	public CarModel getCarModel () {
 		return preset.model;
@@ -169,21 +165,17 @@ public abstract strictfp class Car extends Box2DEntity {
 		return inputMode;
 	}
 
-	// public CarRenderer getRenderer () {
-	// return renderer;
+	// public void setPreset (CarPreset.Type presetType) {
+	// if (preset.type != presetType) {
+	// preset.setTo(presetType);
+	// applyCarPhysics(carType, preset.model);
+	// // renderer.setAspect(preset.model, preset.type);
+	// Gdx.app.log(this.getClass().getSimpleName(), "Switched to car model \"" + preset.model.presetType.toString() + "\"");
+	// } else {
+	// Gdx.app.log(this.getClass().getSimpleName(), "Preset unchanged, not switching to same type \"" + preset.type.toString()
+	// + "\"");
 	// }
-
-	public void setPreset (CarPreset.Type presetType) {
-		if (preset.type != presetType) {
-			preset.setTo(presetType);
-			applyCarPhysics(carType, preset.model);
-			// renderer.setAspect(preset.model, preset.type);
-			Gdx.app.log(this.getClass().getSimpleName(), "Switched to car model \"" + preset.model.presetType.toString() + "\"");
-		} else {
-			Gdx.app.log(this.getClass().getSimpleName(), "Preset unchanged, not switching to same type \"" + preset.type.toString()
-				+ "\"");
-		}
-	}
+	// }
 
 	/** Returns the traveled distance, in meters, so far. Calling reset() will also reset the traveled distance. */
 	public float getTraveledDistance () {

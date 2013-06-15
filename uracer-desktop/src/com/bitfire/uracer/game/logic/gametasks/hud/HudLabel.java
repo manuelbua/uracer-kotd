@@ -23,20 +23,12 @@ public final class HudLabel extends Positionable {
 	private boolean isStatic;
 	private Color color = new Color(Color.WHITE);
 
-	// show queue logic
-	private int showSemaphore;
-	private boolean showing;
-	private int qInMs, qOutMs;
-
 	public HudLabel (FontFace fontFace, String text, boolean isStatic) {
 		this.text = text;
 		alpha = 1f;
 		this.isStatic = isStatic;
 		this.font = BitmapFontFactory.get(fontFace);
 		setScale(1);
-
-		showSemaphore = 0;
-		showing = false;
 	}
 
 	public boolean isVisible () {
@@ -96,17 +88,6 @@ public final class HudLabel extends Positionable {
 		alpha = value;
 	}
 
-	/** Performs show-queue logic */
-	public void tick () {
-		if (showSemaphore > 0 && !showing) {
-			showing = true;
-			fadeIn(qInMs);
-		} else if (showSemaphore == 0 && showing) {
-			showing = false;
-			fadeOut(qOutMs);
-		}
-	}
-
 	public void render (SpriteBatch batch) {
 		if (alpha > 0) {
 			font.setUseIntegerPositions(isStatic);
@@ -117,30 +98,20 @@ public final class HudLabel extends Positionable {
 		}
 	}
 
-	/** queue operations */
-	public void queueShow (int millis) {
-		showSemaphore++;
-		qInMs = millis;
-	}
-
-	public void queueHide (int millis) {
-		showSemaphore--;
-		qOutMs = millis;
-		if (showSemaphore < 0) {
-			showSemaphore = 0;
-		}
-	}
-
 	/** effects */
 
 	public void fadeIn (int milliseconds) {
+		GameTweener.stop(this);
 		GameTweener.start(Timeline.createSequence().push(
 			Tween.to(this, HudLabelAccessor.OPACITY, milliseconds).target(1f).ease(Expo.INOUT)));
+		// Gdx.app.log("", "fadein");
 	}
 
 	public void fadeOut (int milliseconds) {
+		GameTweener.stop(this);
 		GameTweener.start(Timeline.createSequence().push(
 			Tween.to(this, HudLabelAccessor.OPACITY, milliseconds).target(0f).ease(Expo.INOUT)));
+		// Gdx.app.log("", "fadeout");
 	}
 
 	public void slide (boolean slideUp) {

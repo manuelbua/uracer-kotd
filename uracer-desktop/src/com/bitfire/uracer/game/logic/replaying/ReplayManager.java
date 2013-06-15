@@ -2,7 +2,6 @@
 package com.bitfire.uracer.game.logic.replaying;
 
 import com.badlogic.gdx.Gdx;
-import com.badlogic.gdx.utils.Array;
 import com.badlogic.gdx.utils.Disposable;
 import com.bitfire.uracer.configuration.UserProfile;
 import com.bitfire.uracer.game.GameplaySettings;
@@ -14,7 +13,6 @@ public final class ReplayManager implements Disposable {
 	public static final int MaxReplays = 2;
 	private final String trackId;
 	private final ItemsManager<Replay> replays = new ItemsManager<Replay>();
-	private final Array<Replay> replayItems = replays.items;
 
 	private Replay best, worst;
 	private int ridx;
@@ -41,18 +39,18 @@ public final class ReplayManager implements Disposable {
 			return null;
 		}
 
-		if (replay.trackTimeSeconds < GameplaySettings.ReplayMinDurationSecs) {
-			Gdx.app.log("ReplayManager", "Invalid lap detected, (" + replay.trackTimeSeconds + "sec < "
+		if (replay.getTrackTime() < GameplaySettings.ReplayMinDurationSecs) {
+			Gdx.app.log("ReplayManager", "Invalid lap detected, (" + replay.getTrackTime() + "sec < "
 				+ GameplaySettings.ReplayMinDurationSecs + ")");
 			return null;
 		}
 
-		if (!replay.isValid) {
+		if (!replay.isValid()) {
 			Gdx.app.log("ReplayManager", "The specified replay is not valid.");
 			return null;
 		}
 
-		if (!replay.levelId.equals(trackId)) {
+		if (!replay.getTrackId().equals(trackId)) {
 			Gdx.app.log("ReplayManager", "The specified replay belongs to another game track.");
 			return null;
 		}
@@ -61,7 +59,7 @@ public final class ReplayManager implements Disposable {
 
 		// empty?
 		if (ridx == 0) {
-			added = replays.items.get(ridx++);
+			added = replays.get(ridx++);
 			added.copyData(replay);
 
 			// update state
@@ -73,9 +71,9 @@ public final class ReplayManager implements Disposable {
 				Gdx.app.log("!!!!", "!!");
 			}
 
-			if (replay.trackTimeSeconds >= worst.trackTimeSeconds) {
-				Gdx.app.log("ReplayManager", "Discarded, worse than the worst! (" + replay.trackTimeSeconds + " >= "
-					+ worst.trackTimeSeconds + ")");
+			if (replay.getTrackTime() >= worst.getTrackTime()) {
+				Gdx.app.log("ReplayManager",
+					"Discarded, worse than the worst! (" + replay.getTrackTime() + " >= " + worst.getTrackTime() + ")");
 				return null;
 			}
 
@@ -85,58 +83,51 @@ public final class ReplayManager implements Disposable {
 				added = worst;
 
 				// recompute best/worst
-				worst = replays.items.get(0);
-				best = replays.items.get(0);
+				worst = replays.get(0);
+				best = replays.get(0);
 				for (int i = 1; i < MaxReplays; i++) {
-					Replay r = replays.items.get(i);
+					Replay r = replays.get(i);
 
-					if (worst.trackTimeSeconds < r.trackTimeSeconds) {
+					if (worst.getTrackTime() < r.getTrackTime()) {
 						worst = r;
 					}
 
-					if (best.trackTimeSeconds > r.trackTimeSeconds) {
+					if (best.getTrackTime() > r.getTrackTime()) {
 						best = r;
 					}
 				}
 			} else {
 				// add new
-				added = replays.items.get(ridx++);
+				added = replays.get(ridx++);
 				added.copyData(replay);
 
 				// compute best
-				if (best.trackTimeSeconds > added.trackTimeSeconds) {
+				if (best.getTrackTime() > added.getTrackTime()) {
 					best = added;
 				}
 			}
 		}
 
-		// dump replays
-		// for (int i = 0; i < MaxReplays; i++) {
-		// Replay r = replays.items.get(i);
-		// if (r.isValid) {
-		// Gdx.app.log("ReplayManager", "#" + i + ", seconds=" + r.trackTimeSeconds);
-		// }
-		// }
-
 		if (added != null) {
 			Gdx.app.log("ReplayManager", "added!");
 		}
+
 		return added;
 	}
 
-	public void reset () {
+	public void removeAll () {
 		ridx = 0;
 		for (int i = 0; i < MaxReplays; i++) {
-			replays.items.get(i).reset();
+			replays.get(i).reset();
 		}
 	}
 
 	public boolean hasReplays () {
-		return replays.items.size > 0;
+		return replays.count() > 0;
 	}
 
 	public boolean canClassify () {
-		return (best != worst && best != null && worst != null && best.isValid && worst.isValid);
+		return (best != worst && best != null && worst != null && best.isValid() && worst.isValid());
 	}
 
 	public Replay getBestReplay () {
@@ -147,7 +138,7 @@ public final class ReplayManager implements Disposable {
 		return worst;
 	}
 
-	public Array<Replay> getReplays () {
-		return replayItems;
+	public Iterable<Replay> getReplays () {
+		return replays;
 	}
 }

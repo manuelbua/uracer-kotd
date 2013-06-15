@@ -14,14 +14,12 @@ import com.badlogic.gdx.utils.Disposable;
 import com.badlogic.gdx.utils.GdxRuntimeException;
 import com.bitfire.uracer.configuration.Storage;
 import com.bitfire.uracer.game.GameplaySettings;
-import com.bitfire.uracer.game.Time;
 import com.bitfire.uracer.game.actors.Car;
 import com.bitfire.uracer.game.actors.CarForces;
-import com.bitfire.uracer.game.actors.CarPreset;
+import com.bitfire.uracer.game.logic.gametasks.Messager;
 import com.bitfire.uracer.game.logic.gametasks.messager.Message;
 import com.bitfire.uracer.game.logic.gametasks.messager.Message.Position;
 import com.bitfire.uracer.game.logic.gametasks.messager.Message.Size;
-import com.bitfire.uracer.game.logic.gametasks.messager.Messager;
 
 /** Represents replay data to be feed to a GhostCar, the replay player.
  * 
@@ -29,24 +27,18 @@ import com.bitfire.uracer.game.logic.gametasks.messager.Messager;
 
 public class Replay implements Disposable {
 	public static final int MaxEvents = 5000;
-	private int eventsCount;
 
 	// car data
-	public CarPreset.Type carPresetType;
-	public Vector2 carWorldPositionMt = new Vector2();
-	public float carWorldOrientRads;
+	private Vector2 carPositionMt = new Vector2();
+	private float carOrientationRads;
 
 	// replay data
-	public long userId;
-	public String levelId = "";
-	public float trackTimeSeconds = 0;
-	public CarForces[] forces = null;
-	public boolean isValid = false;
-	private boolean isLoaded = false;
-	private boolean isSaved = false;
-
-	// time track
-	private Time time = new Time();
+	private long userId;
+	private String trackId = "";
+	private float trackTimeSeconds = 0;
+	private CarForces[] forces = null;
+	private int eventsCount;
+	private boolean completed = false;
 
 	public Replay (long userId) {
 		this.userId = userId;
@@ -60,79 +52,61 @@ public class Replay implements Disposable {
 	@Override
 	public void dispose () {
 		reset();
-		time.dispose();
 
 		for (int i = 0; i < MaxEvents; i++) {
 			forces[i] = null;
 		}
 	}
 
+	public void reset () {
+		trackId = "";
+		completed = false;
+		eventsCount = 0;
+		carPositionMt.set(0, 0);
+		carOrientationRads = 0;
+		trackTimeSeconds = 0;
+		for (int i = 0; i < MaxEvents; i++) {
+			forces[i].reset();
+		}
+	}
+
 	public void copyData (Replay replay) {
 		userId = replay.userId;
+		trackId = replay.trackId;
 		trackTimeSeconds = replay.trackTimeSeconds;
-		levelId = replay.levelId;
 		eventsCount = replay.eventsCount;
-		carPresetType = replay.carPresetType;
-		carWorldPositionMt.set(replay.carWorldPositionMt);
-		carWorldOrientRads = replay.carWorldOrientRads;
-
-		// inherits its data state, eg: if it was saved
-		// there is no need to save it again
-		isValid = replay.isValid;
-		isLoaded = replay.isLoaded;
-		isSaved = replay.isSaved;
+		carPositionMt.set(replay.carPositionMt);
+		carOrientationRads = replay.carOrientationRads;
+		completed = replay.completed;
 
 		for (int i = 0; i < MaxEvents; i++) {
 			forces[i].set(replay.forces[i]);
 		}
 	}
 
-	public void begin (String levelId, Car car) {
+	public void begin (String trackId, Car car) {
 		reset();
-		carWorldPositionMt.set(car.getWorldPosMt());
-		carWorldOrientRads = car.getWorldOrientRads();
-		carPresetType = car.getPresetType();
-		this.levelId = levelId;
-		time.start();
+		carPositionMt.set(car.getWorldPosMt());
+		carOrientationRads = car.getWorldOrientRads();
+		this.trackId = trackId;
 
 		// Gdx.app.log( "Replay", "Begin at " + carWorldPositionMt + ", " + carWorldOrientRads );
-	}
-
-	public void end () {
-		time.stop();
-		trackTimeSeconds = time.elapsed(Time.Reference.TickSeconds);
-		isValid = true;
-		isLoaded = false;
-		isSaved = false;
-	}
-
-	public void reset () {
-		eventsCount = 0;
-		for (int i = 0; i < MaxEvents; i++) {
-			forces[i].reset();
-		}
-
-		// if a previously loaded replay is being used, reset the loaded state
-		// since its invalid
-		isLoaded = false;
-
-		isSaved = false;
-		isValid = false;
-	}
-
-	// recording
-	public int getEventsCount () {
-		return eventsCount;
 	}
 
 	public boolean add (CarForces f) {
 		forces[eventsCount++].set(f);
 		if (eventsCount == MaxEvents) {
-			eventsCount = 0;
+			reset();
 			return false;
 		}
 
 		return true;
+	}
+
+	public void end (float trackTime) {
+		// time.stop();
+		trackTimeSeconds = trackTime;// time.elapsed(Time.Reference.TickSeconds);
+		completed = eventsCount > 0 && eventsCount < MaxEvents;
 	}
 
 	public static Replay loadLocal (String filename) {
@@ -145,23 +119,19 @@ public class Replay implements Disposable {
 				DataInputStream is = new DataInputStream(gzis);
 
 				// read header
-				Replay r = new Replay(is.readLong());
+				long userId = is.readLong();
+
+				Replay r = new Replay(userId);
 
 				// replay info data
-				r.levelId = is.readUTF();
-				// r.difficultyLevel = GameDifficulty.valueOf( is.readUTF() );
+				r.trackId = is.readUTF();
 				r.trackTimeSeconds = is.readFloat();
-				if (!Replay.isValidLength(r.trackTimeSeconds)) {
-					throw new Exception("invalid duration (" + r.trackTimeSeconds + "sec < " + GameplaySettings.ReplayMinDurationSecs
-						+ ")");
-				}
 				r.eventsCount = is.readInt();
 
 				// car data
-				r.carPresetType = CarPreset.Type.valueOf(is.readUTF());
-				r.carWorldPositionMt.x = is.readFloat();
-				r.carWorldPositionMt.y = is.readFloat();
-				r.carWorldOrientRads = is.readFloat();
+				r.carPositionMt.x = is.readFloat();
+				r.carPositionMt.y = is.readFloat();
+				r.carOrientationRads = is.readFloat();
 
 				for (int i = 0; i < r.eventsCount; i++) {
 					r.forces[i].velocity_x = is.readFloat();
@@ -170,10 +140,6 @@ public class Replay implements Disposable {
 				}
 
 				is.close();
-
-				r.isValid = true;
-				r.isSaved = true;
-				r.isLoaded = true;
 
 				// Gdx.app.log( "Replay", "Done loading local replay" );
 				return r;
@@ -189,15 +155,8 @@ public class Replay implements Disposable {
 	}
 
 	public void saveLocal (final Messager messager) {
-		if (isValid && !isLoaded && !isSaved) {
-
-			if (!Replay.isValidLength(trackTimeSeconds)) {
-				Gdx.app.log("Replay", "Couldn't save local replay, reason: invalid duration (" + trackTimeSeconds + "sec < "
-					+ GameplaySettings.ReplayMinDurationSecs + ")");
-				return;
-			}
-
-			final String filename = Storage.ReplaysRoot + levelId;
+		if (isValid()) {
+			final String filename = Storage.ReplaysRoot + trackId;
 			final FileHandle hf = Gdx.files.external(filename);
 
 			// this is an asynchronous operation, but it's safe since saving a replay
@@ -230,16 +189,14 @@ public class Replay implements Disposable {
 						os.writeLong(userId);
 
 						// replay info data
-						os.writeUTF(levelId);
-						// os.writeUTF( difficultyLevel.toString() );
+						os.writeUTF(trackId);
 						os.writeFloat(trackTimeSeconds);
 						os.writeInt(eventsCount);
 
 						// car data
-						os.writeUTF(carPresetType.toString());
-						os.writeFloat(carWorldPositionMt.x);
-						os.writeFloat(carWorldPositionMt.y);
-						os.writeFloat(carWorldOrientRads);
+						os.writeFloat(carPositionMt.x);
+						os.writeFloat(carPositionMt.y);
+						os.writeFloat(carOrientationRads);
 
 						// write the effective number of captured CarForces events
 						for (int i = 0; i < eventsCount; i++) {
@@ -251,8 +208,6 @@ public class Replay implements Disposable {
 
 						os.close();
 
-						isSaved = true;
-
 						messager.enqueue("Replay saved", 2f, Message.Type.Information, Position.Bottom, Size.Normal);
 						// Gdx.app.log( "Replay", "Done saving local replay (" + trackTimeSeconds + ")" );
 
@@ -261,10 +216,40 @@ public class Replay implements Disposable {
 					}
 				}
 			}).start();
+		} else {
+			Gdx.app.log("Replay", "Couldn't save invalid local replay.");
 		}
 	}
 
-	private static boolean isValidLength (float seconds) {
-		return (seconds > GameplaySettings.ReplayMinDurationSecs);
+	public boolean isValid () {
+		return completed && (trackTimeSeconds > GameplaySettings.ReplayMinDurationSecs);
+	}
+
+	public CarForces[] getCarForces () {
+		return forces;
+	}
+
+	public int getEventsCount () {
+		return eventsCount;
+	}
+
+	public final Vector2 getStartPosition () {
+		return carPositionMt;
+	}
+
+	public float getStartOrientation () {
+		return carOrientationRads;
+	}
+
+	public long getUserId () {
+		return userId;
+	}
+
+	public String getTrackId () {
+		return trackId;
+	}
+
+	public float getTrackTime () {
+		return trackTimeSeconds;
 	}
 }

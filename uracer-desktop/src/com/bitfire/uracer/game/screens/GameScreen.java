@@ -9,7 +9,6 @@ import com.bitfire.uracer.configuration.UserPreferences.Preference;
 import com.bitfire.uracer.configuration.UserProfile;
 import com.bitfire.uracer.game.Game;
 import com.bitfire.uracer.game.GameLevels;
-import com.bitfire.uracer.game.actors.CarPreset.Type;
 import com.bitfire.uracer.game.screens.GameScreensFactory.ScreenType;
 import com.bitfire.uracer.screen.Screen;
 
@@ -27,12 +26,9 @@ public class GameScreen extends Screen {
 		} else {
 			// save as last played track
 			UserPreferences.string(Preference.LastPlayedTrack, ScreensShared.selectedLevelId);
-
 			UserProfile userProfile = new UserProfile();
 			game = new Game(userProfile, ScreensShared.selectedLevelId);
-
-			// choose a car type
-			game.setPlayer(Type.L2_PinkBeast);
+			game.start();
 		}
 	}
 

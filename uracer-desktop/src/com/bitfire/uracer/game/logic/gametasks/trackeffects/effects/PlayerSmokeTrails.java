@@ -6,41 +6,24 @@ import com.badlogic.gdx.graphics.g2d.ParticleEffect;
 import com.badlogic.gdx.graphics.g2d.ParticleEmitter;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.math.MathUtils;
+import com.badlogic.gdx.math.Vector2;
 import com.bitfire.uracer.URacer;
 import com.bitfire.uracer.game.logic.gametasks.trackeffects.TrackEffect;
 import com.bitfire.uracer.game.logic.gametasks.trackeffects.TrackEffectType;
 import com.bitfire.uracer.game.player.PlayerCar;
 import com.bitfire.uracer.resources.Art;
 
-/** FIXME disabled for a long time, need testing again
- * 
- * @author bmanuel */
 public class PlayerSmokeTrails extends TrackEffect {
 	public static final int MaxParticles = 1000;
 
 	private SmokeEffect fx;
 	private static final int SmokeEffectsCount = 1;
-	private PlayerCar player;
-	// private boolean isDrifting, wasDrifting;
-	private float posX, posY;
+	private Vector2 position = new Vector2();
 
-	public PlayerSmokeTrails (PlayerCar player) {
+	public PlayerSmokeTrails () {
 		super(TrackEffectType.CarSmokeTrails);
-		this.player = player;
-
 		fx = new SmokeEffect();
 		fx.setMaxParticleCount(MaxParticles);
-		// fx.start();
-
-		// isDrifting = false;
-		// wasDrifting = false;
-		posX = 0;
-		posY = 0;
-	}
-
-	public void setPosition (float x, float y) {
-		posX = x;
-		posY = y;
 	}
 
 	@Override
@@ -48,79 +31,67 @@ public class PlayerSmokeTrails extends TrackEffect {
 	}
 
 	@Override
-	public void tick () {
-		// isDrifting = player.driftState.isDrifting && player.driftState.driftStrength > 0f;
-
-		if (fx.effect.isComplete()) {
-			fx.start();
+	public void player (PlayerCar player) {
+		super.player(player);
+		if (!hasPlayer()) {
+			fx.effect.allowCompletion();
+		} else {
+			fx.effect.reset();
 		}
+	}
 
-		// if (player.driftState.driftStrength > 0) {
-		// for (int i = 0; i < SmokeEffectsCount; i++) {
-		// // fx[i].setMaxParticleCount(MaxParticles);
-		// fx[i].start();
-		// }
-		// }
-
-		// if (isDrifting && !wasDrifting) {
-		// // started drifting
-		// for (int i = 0; i < SmokeEffectsCount; i++) {
-		// fx[i].start();
-		// // Gdx.app.log("", "start smoke trails");
-		// }
-		// } else if ((!isDrifting && wasDrifting)) {
-		// // ended drifting
-		// for (int i = 0; i < SmokeEffectsCount; i++) {
-		// fx[i].stop();
-		// // Gdx.app.log("", "stop smoke trails");
-		// }
-		// }
-
-		// wasDrifting = isDrifting;
-		setPosition(player.state().position.x, player.state().position.y);
+	@Override
+	public void tick () {
+		if (hasPlayer()) {
+			if (fx.effect.isComplete()) {
+				fx.start();
+			}
+		}
 	}
 
 	@Override
 	public void render (SpriteBatch batch) {
-		float dfactor = player.driftState.driftStrength;
-		float sfactor = player.carState.currSpeedFactor;
+		if (hasPlayer()) {
 
-		fx.setLifeMul(2f);
-		fx.setScaleMul(1f + 20f * dfactor * sfactor);
+			float dfactor = player.driftState.driftStrength;
+			float sfactor = player.carState.currSpeedFactor;
 
-		float t = 0.5f * dfactor;
-		fx.baseEmitter.getTransparency().setHighMin(t);
-		fx.baseEmitter.getTransparency().setHighMax(t);
+			fx.setLifeMul(2f);
+			fx.setScaleMul(1f + 20f * dfactor * sfactor);
 
-		float[] colors = fx.baseEmitter.getTint().getColors();
-		float v = 0.3f;
-		colors[0] = v * dfactor;
-		colors[1] = v * dfactor;
-		colors[2] = v * dfactor;
+			float t = 0.5f * dfactor;
+			fx.baseEmitter.getTransparency().setHighMin(t);
+			fx.baseEmitter.getTransparency().setHighMax(t);
 
-		float r = 0.7f;
-		float g = 0.8f;
-		float b = 1f;
-		if (MathUtils.randomBoolean()) {
-			r = 0.7f;
+			float[] colors = fx.baseEmitter.getTint().getColors();
+			float v = 0.3f;
+			colors[0] = v * dfactor;
+			colors[1] = v * dfactor;
+			colors[2] = v * dfactor;
+
+			float r = 0.7f;
+			float g = 0.8f;
+			float b = 1f;
+			if (MathUtils.randomBoolean()) {
+				r = 0.7f;
+			}
+
+			float colorscale = 0.15f + 0.3f * dfactor;
+			r *= colorscale;
+			g *= colorscale;
+			b *= colorscale;
+			colors[0] = r;
+			colors[1] = g;
+			colors[2] = b;
+			position.set(player.state().position);
 		}
 
-		float colorscale = 0.15f + 0.3f * dfactor;
-		r *= colorscale;
-		g *= colorscale;
-		b *= colorscale;
-		colors[0] = r;
-		colors[1] = g;
-		colors[2] = b;
-
-		fx.render(batch, posX, posY);
+		fx.render(batch, position.x, position.y);
 	}
 
 	@Override
 	public void reset () {
-		// isDrifting = false;
-		// wasDrifting = false;
-		fx.reset();
+		// fx.reset();
 	}
 
 	@Override
@@ -133,7 +104,7 @@ public class PlayerSmokeTrails extends TrackEffect {
 		return fx.getParticleCount();
 	}
 
-	private class SmokeEffect {
+	private static final class SmokeEffect {
 		protected ParticleEffect effect;
 		private ParticleEmitter baseEmitter;
 
@@ -181,15 +152,15 @@ public class PlayerSmokeTrails extends TrackEffect {
 			}
 		}
 
-		public void stop () {
-			for (int i = 0; i < effect.getEmitters().size; i++) {
-				effect.getEmitters().get(i).allowCompletion();
-			}
-		}
+		// public void stop () {
+		// for (int i = 0; i < effect.getEmitters().size; i++) {
+		// effect.getEmitters().get(i).allowCompletion();
+		// }
+		// }
 
-		public void reset () {
-			stop();
-		}
+		// public void reset () {
+		// stop();
+		// }
 
 		public void render (SpriteBatch batch, float x, float y) {
 			effect.setPosition(x, y);

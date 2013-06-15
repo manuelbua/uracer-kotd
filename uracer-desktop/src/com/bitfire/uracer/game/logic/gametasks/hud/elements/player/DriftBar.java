@@ -28,12 +28,12 @@ public class DriftBar extends Positionable {
 	private HudLabel labelSeconds;
 	private final WindowedMean driftStrength;
 
-	private final Texture texHalf, texHalfMask;// , texProgress, texProgressMask;
-	private final ShaderProgram shProgress;
-	private final Sprite sProgress, sDriftStrength;
+	private final Texture texHalf, texHalfMask;
+	private final ShaderProgram shDriftSecs;
+	private final Sprite sprDriftSecs, sprDriftStrength;
 	private final float offX, offY, w, h;
 
-	public DriftBar (float width) {
+	public DriftBar () {
 		seconds = 0;
 
 		labelSeconds = new HudLabel(FontFace.CurseRedYellowNew, "s", false);
@@ -42,22 +42,24 @@ public class DriftBar extends Positionable {
 		//
 		texHalf = Art.texCircleProgressHalf;
 		texHalfMask = Art.texCircleProgressHalfMask;
-		// texProgress = Art.texCircleProgress;
-		// texProgressMask = Art.texCircleProgressMask;
 
 		w = texHalf.getWidth();
 		h = texHalf.getHeight();
 		offX = w / 2;
 		offY = h / 2;
-		shProgress = ShaderLoader.fromFile("progress", "progress");
+		shDriftSecs = ShaderLoader.fromFile("progress", "progress");
 
-		// drift points
-		sProgress = new Sprite(texHalf);
-		sProgress.flip(false, true);
+		// drift seconds
+		sprDriftSecs = new Sprite(texHalf);
+		sprDriftSecs.flip(false, true);
 
 		// drift strength
 		driftStrength = new WindowedMean((int)(1 / 0.25f));
-		sDriftStrength = new Sprite(texHalf);
+		sprDriftStrength = new Sprite(texHalf);
+	}
+
+	public void reset () {
+		driftStrength.clear();
 	}
 
 	@Override
@@ -87,19 +89,15 @@ public class DriftBar extends Positionable {
 	}
 
 	public void showSecondsLabel () {
-		labelSeconds.queueShow(300);
+		labelSeconds.fadeIn(300);
 	}
 
 	public void hideSecondsLabel () {
-		labelSeconds.queueHide(300);
+		labelSeconds.fadeOut(300);
 	}
 
 	@Override
 	public void dispose () {
-	}
-
-	public void tick () {
-		labelSeconds.tick();
 	}
 
 	public void render (SpriteBatch batch, float cameraZoom) {
@@ -118,32 +116,35 @@ public class DriftBar extends Positionable {
 		float px = position.x - offX;
 		float py = position.y - offY + 32 * cameraZoom * s;
 
-		batch.setShader(shProgress);
+		batch.setShader(shDriftSecs);
 		texHalfMask.bind(1);
 		Gdx.gl.glActiveTexture(GL10.GL_TEXTURE0);
-		shProgress.setUniformi("u_texture1", 1);
+		shDriftSecs.setUniformi("u_texture1", 1);
 
+		float alpha = 1;// 0.5f + 0.5f * URacer.Game.getTimeModFactor();
+
+		// player's earned drift seconds for performing time dilation
 		float ratio = seconds / MaxSeconds;
-		shProgress.setUniformf("progress", ratio);
-		sProgress.setColor(ColorUtils.paletteRYG(ratio, 1));
-		sProgress.setScale(scl);
-		sProgress.setPosition(px, py);
-		sProgress.draw(batch, MathUtils.clamp(0.25f + 0.15f * ratio + 0.8f * URacer.Game.getTimeModFactor(), 0, 1));
+		shDriftSecs.setUniformf("progress", ratio);
+		sprDriftSecs.setColor(ColorUtils.paletteRYG(ratio, 1));
+		sprDriftSecs.setScale(scl);
+		sprDriftSecs.setPosition(px, py);
+		sprDriftSecs.draw(batch, alpha);
 		batch.flush();
 
-		// drift strength
+		// player's drift strength
 		float amount = driftStrength.getMean();
 		if (!AMath.isZero(amount)) {
 			py = position.y - offY - 32 * cameraZoom * s;
-			shProgress.setUniformf("progress", MathUtils.clamp(amount, 0, 1));
+			shDriftSecs.setUniformf("progress", MathUtils.clamp(amount, 0, 1));
 
 			// float a = 1f - 0.7f * URacer.Game.getTimeModFactor(); // 0.5f + 0.5f * ratio
-			float a = MathUtils.clamp(0.15f + amount * 0.7f, 0, 1);
+			// float a = MathUtils.clamp(0.15f + amount * 0.7f, 0, 1);
 
-			sDriftStrength.setColor(1, 1, 1, 1);
-			sDriftStrength.setScale(scl);
-			sDriftStrength.setPosition(px, py);
-			sDriftStrength.draw(batch, a);
+			sprDriftStrength.setColor(1, 1, 1, 1);
+			sprDriftStrength.setScale(scl);
+			sprDriftStrength.setPosition(px, py);
+			sprDriftStrength.draw(batch, alpha);
 			batch.flush();
 		}
 

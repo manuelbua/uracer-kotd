@@ -2,11 +2,10 @@
 package com.bitfire.uracer.game.actors;
 
 import com.badlogic.gdx.Gdx;
-import com.bitfire.uracer.events.GhostCarEvent;
 import com.bitfire.uracer.game.GameEvents;
+import com.bitfire.uracer.game.events.GhostCarEvent;
 import com.bitfire.uracer.game.logic.replaying.Replay;
 import com.bitfire.uracer.game.world.GameWorld;
-import com.bitfire.uracer.utils.CarUtils;
 
 /** Implements an automated Car, playing previously recorded events. It will ignore car-to-car collisions, but will respect
  * in-track collisions and responses.
@@ -16,81 +15,89 @@ import com.bitfire.uracer.utils.CarUtils;
 public final class GhostCar extends Car {
 	private static final int FadeEvents = 30;
 	private Replay replay;
+	private CarForces[] replayForces;
+	private int replayForcesCount;
 	private int indexPlay;
 	private boolean hasReplay;
-	public final int id;
+	private final int id;
 	private boolean fadeOutEventTriggered;
-	public CarState carState;
 
 	public GhostCar (int id, GameWorld gameWorld, CarPreset.Type presetType) {
 		super(gameWorld, CarType.ReplayCar, InputMode.InputFromReplay, presetType, false);
 		this.id = id;
-		indexPlay = 0;
-		hasReplay = false;
-		replay = null;
-		stillModel.setAlpha(0.5f);
-		this.carState = new CarState(gameWorld, this);
-
-		setActive(false);
-		resetPhysics();
+		replay = new Replay(-1);
 		resetDistanceAndSpeed(true, true);
+		removeReplay();
+		stillModel.setAlpha(0.5f);
+		getTrackState().ghostArrived = false;
+		getTrackState().ghostStarted = false;
+	}
+
+	public int getId () {
+		return id;
+	}
+
+	public Replay getReplay () {
+		return replay;
 	}
 
 	// input data for this car cames from a Replay object
 	public void setReplay (Replay replay) {
-		this.replay = replay;
-		hasReplay = (replay != null && replay.getEventsCount() > 0);
+		hasReplay = (replay != null && replay.getEventsCount() > 0 && replay.isValid());
+		replayForces = null;
+		replayForcesCount = 0;
+
+		if (hasReplay) {
+			this.replay.copyData(replay);
+		} else {
+			this.replay.reset();
+		}
 
 		setActive(hasReplay);
 		resetPhysics();
-		getTrackState().reset();
 
 		if (hasReplay) {
-			setPreset(replay.carPresetType);
-			stillModel.setAlpha(0);
+			replayForces = replay.getCarForces();
+			replayForcesCount = replay.getEventsCount();
 
-			// System.out.println( "Replaying " + replay.id );
-			restart(replay);
+			stillModel.setAlpha(0);
+			restartReplay();
+
 			Gdx.app.log("GhostCar #" + id, "Replaying #" + System.identityHashCode(replay));
 		}
+	}
 
-		// else
-		// {
-		// if(replay==null)
-		// System.out.println("Replay disabled");
-		// else
-		// System.out.println("Replay has no recorded events, disabling replaying.");
-		// }
+	public void restartReplay () {
+		if (hasReplay) {
+			resetPhysics();
+			resetDistanceAndSpeed(true, true);
+			setWorldPosMt(replay.getStartPosition(), replay.getStartOrientation());
+			indexPlay = 0;
+			fadeOutEventTriggered = false;
+
+			getTrackState().ghostArrived = false;
+			getTrackState().ghostStarted = true;
+		}
 	}
 
 	public void removeReplay () {
+		indexPlay = 0;
 		setReplay(null);
 		stillModel.setAlpha(0);
-	}
-
-	@Override
-	public strictfp void resetPhysics () {
-		super.resetPhysics();
-		carState.reset();
 	}
 
 	public boolean hasReplay () {
 		return hasReplay;
 	}
 
-	private void restart (Replay replay) {
-		resetPhysics();
-		resetDistanceAndSpeed(true, true);
-		setWorldPosMt(replay.carWorldPositionMt, replay.carWorldOrientRads);
-		indexPlay = 0;
-		fadeOutEventTriggered = false;
-
-		// Gdx.app.log( "GhostCar", "Set to " + body.getPosition() + ", " + body.getAngle() );
+	@Override
+	public boolean isActive () {
+		return super.isActive() && hasReplay;
 	}
 
 	@Override
 	public boolean isVisible () {
-		return hasReplay && isActive() && stillModel.getAlpha() > 0;
+		return isActive() && stillModel.getAlpha() > 0;
 	}
 
 	@Override
@@ -99,27 +106,12 @@ public final class GhostCar extends Car {
 
 		if (hasReplay) {
 
-			// indexPlay is NOT updated here, we don't want
-			// to process a non-existent event when (indexPlay == replay.getEventsCount())
-
-			try {
-				// FIXME! arrayindexoutofbounds still happens, maxevents on replay could be the cause
-				forces.set(replay.forces[indexPlay]);
-			} catch (ArrayIndexOutOfBoundsException e) {
-				Gdx.app.log("GhostCar", "!!! MANGLED DATA IN REPLAY !!!");
+			if (indexPlay < replayForcesCount) {
+				forces.set(replayForces[indexPlay]);
 			}
 
-			// Gdx.app.log( "ghost", "index="+indexPlay + ", px=" + NumberString.formatVeryLong(body.getPosition().x) +
-			// ", py=" + NumberString.formatVeryLong(body.getPosition().y) );
-
-			// Gdx.app.log( "", "cf=" +
-			// NumberString.formatVeryLong(forces.velocity_x) + ", " +
-			// NumberString.formatVeryLong(forces.velocity_y) + ", " +
-			// NumberString.formatVeryLong(forces.angularVelocity)
-			// );
-
 			// also change opacity, fade in/out based on
-			// events played, events remaining
+			// events played / total events
 			if (indexPlay <= FadeEvents) {
 				stillModel.setAlpha(((float)indexPlay / (float)FadeEvents) * 0.5f);
 			} else if (replay.getEventsCount() - indexPlay <= FadeEvents) {
@@ -132,9 +124,6 @@ public final class GhostCar extends Car {
 				}
 			}
 		}
-		// else {
-		// Gdx.app.log( "GhostCar", "No replay, injecting null forces" );
-		// }
 	}
 
 	@Override
@@ -144,16 +133,9 @@ public final class GhostCar extends Car {
 		if (hasReplay) {
 			indexPlay++;
 
-			if (indexPlay == replay.getEventsCount()) {
-				CarUtils.dumpSpeedInfo("GhostCar #" + id, this, replay.trackTimeSeconds);
-				removeReplay();
-				// restart(replay);
+			if (indexPlay == replayForcesCount) {
+				GameEvents.ghostCars.trigger(this, GhostCarEvent.Type.ReplayEnded);
 			}
 		}
-	}
-
-	@Override
-	public void onSubstepCompleted () {
-		carState.update(null);
 	}
 }

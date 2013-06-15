@@ -38,7 +38,6 @@ public final class CarPreset {
 	public void setTo (Type type) {
 		switch (type) {
 		case L1_MiniCooper:
-
 		case L1_GoblinOrange:
 			model.toModel2();
 			model.width = 2.5f;
@@ -47,7 +46,6 @@ public final class CarPreset {
 
 		case L2_MustangRed:
 		case L2_MustangWhite:
-
 		case L2_BlueBeast:
 		case L2_PinkBeast:
 		case L2_RedBeast:

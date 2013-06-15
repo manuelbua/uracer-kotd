@@ -27,22 +27,15 @@ public class PlayerSkidMarks extends TrackEffect {
 	private int markIndex;
 	private int visibleSkidMarksCount;
 	// private int driftMarkAddIterations = 1;
-
 	private Vector2 pos, last;
-	private PlayerCar player;
 
-	public PlayerSkidMarks (PlayerCar player) {
-		this(player, 150, 3f);
-	}
-
-	public PlayerSkidMarks (PlayerCar player, int maxSkidMarks, float maxParticleLifeSecs) {
+	public PlayerSkidMarks (int maxSkidMarks, float maxParticleLifeSecs) {
 		super(TrackEffectType.CarSkidMarks);
 
 		MaxSkidMarks = maxSkidMarks;
 		MaxParticleLifeSeconds = maxParticleLifeSecs;
 		InvMaxParticleLifeSeconds = 1f / MaxParticleLifeSeconds;
 
-		this.player = player;
 		markIndex = 0;
 		visibleSkidMarksCount = 0;
 
@@ -51,7 +44,7 @@ public class PlayerSkidMarks extends TrackEffect {
 
 		skidMarks = new SkidMark[MaxSkidMarks];
 		for (int i = 0; i < MaxSkidMarks; i++) {
-			skidMarks[i] = new SkidMark(Convert.mt2px(player.getCarModel().width), Convert.mt2px(player.getCarModel().length));
+			skidMarks[i] = new SkidMark();
 		}
 
 		// 1 iteration at 60Hz, 2 at 30Hz..
@@ -61,6 +54,17 @@ public class PlayerSkidMarks extends TrackEffect {
 		// } else {
 		// driftMarkAddIterations = (int)(60 / (int)Config.Physics.PhysicsTimestepHz);
 		// }
+	}
+
+	@Override
+	public void player (PlayerCar player) {
+		super.player(player);
+		if (hasPlayer()) {
+			for (int i = 0; i < MaxSkidMarks; i++) {
+				skidMarks[i].setup(Convert.mt2px(player.getCarModel().width), Convert.mt2px(player.getCarModel().length));
+				// skidMarks[i].life = 0;
+			}
+		}
 	}
 
 	@Override
@@ -87,20 +91,21 @@ public class PlayerSkidMarks extends TrackEffect {
 
 	@Override
 	public void tick () {
-		if (player.carState.currVelocityLenSquared >= 1 && player.driftState.driftStrength > 0.3f
-			&& player.carState.currSpeedFactor > 0.1f) {
-			ppos.x = Convert.mt2px(player.getBody().getPosition().x);
-			ppos.y = Convert.mt2px(player.getBody().getPosition().y);
-			tryAddDriftMark(ppos, player.state().orientation);
+		if (hasPlayer()) {
+			if (player.carState.currVelocityLenSquared >= 1 && player.driftState.driftStrength > 0.3f
+				&& player.carState.currSpeedFactor > 0.1f) {
+				ppos.x = Convert.mt2px(player.getBody().getPosition().x);
+				ppos.y = Convert.mt2px(player.getBody().getPosition().y);
+				tryAddDriftMark(ppos, player.state().orientation);
+			}
 		}
 
-		SkidMark d;
 		for (int i = 0; i < MaxSkidMarks; i++) {
-			d = skidMarks[i];
-			if (d.life > 0) {
-				d.life -= Config.Physics.Dt;
+			SkidMark sm = skidMarks[i];
+			if (sm.life > 0) {
+				sm.life -= Config.Physics.Dt;
 			} else {
-				d.life = 0;
+				sm.life = 0;
 			}
 		}
 	}
@@ -173,10 +178,13 @@ public class PlayerSkidMarks extends TrackEffect {
 		public float life;
 		public float alphaFront, alphaRear;
 
-		public SkidMark (float carWidthPx, float carLengthPx) {
+		public SkidMark () {
 			front = new Sprite();
 			rear = new Sprite();
+			life = MaxParticleLifeSeconds;
+		}
 
+		public void setup (float carWidthPx, float carLengthPx) {
 			front.setRegion(Art.skidMarksFront);
 			front.setSize(carWidthPx, carLengthPx);
 			front.setOrigin(front.getWidth() / 2, front.getHeight() / 2);
@@ -186,8 +194,6 @@ public class PlayerSkidMarks extends TrackEffect {
 			rear.setSize(carWidthPx, carLengthPx);
 			rear.setOrigin(rear.getWidth() / 2, rear.getHeight() / 2 + 7); // adjust for rear axis in 3d model (pretty distant)
 			rear.setColor(1, 1, 1, 1);
-
-			life = MaxParticleLifeSeconds;
 		}
 
 		public void setPosition (Vector2 pos) {

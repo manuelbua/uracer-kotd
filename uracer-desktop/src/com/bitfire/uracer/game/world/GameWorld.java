@@ -34,9 +34,11 @@ import com.badlogic.gdx.utils.GdxRuntimeException;
 import com.bitfire.uracer.URacer;
 import com.bitfire.uracer.configuration.Config;
 import com.bitfire.uracer.game.GameLevels;
+import com.bitfire.uracer.game.actors.GhostCar;
 import com.bitfire.uracer.game.collisions.CollisionFilters;
 import com.bitfire.uracer.game.logic.helpers.GameTrack;
 import com.bitfire.uracer.game.logic.helpers.GameTrack.TrackPosition;
+import com.bitfire.uracer.game.player.PlayerCar;
 import com.bitfire.uracer.game.world.WorldDefs.Layer;
 import com.bitfire.uracer.game.world.WorldDefs.ObjectGroup;
 import com.bitfire.uracer.game.world.WorldDefs.ObjectProperties;
@@ -76,18 +78,20 @@ public final class GameWorld {
 	private final float pixelsPerMeterFactor;
 
 	// player data
+	public PlayerCar player = null;
 	public TrackPosition playerStart = null;
-	// public Vector2 playerStartPos = new Vector2();
-	// public float playerStartOrientRads;
 
-	// night system
+	// ghost data
+	public GhostCar[] ghosts = null;
+
+	// light/night system
 	private boolean nightMode;
 	protected RayHandler rayHandler = null;
 	protected ConeLight playerHeadlightsA, playerHeadlightsB = null;
 	protected PointLight playerImpulse = null;
+	protected PointLight[] lights = null;
 
-	// level meshes, package-level access for GameWorldRenderer (ugly but faster
-	// than accessors)
+	// level meshes, package-level access for GameWorldRenderer (ugly but faster than accessors)
 	protected TrackWalls trackWalls = null;
 	protected TrackTrees trackTrees = null;
 	protected List<OrthographicAlignedStillModel> staticMeshes = new ArrayList<OrthographicAlignedStillModel>();
@@ -151,7 +155,6 @@ public final class GameWorld {
 		map.dispose();
 		polys.clear();
 		route.clear();
-		gameTrack.dispose();
 		mapUtils.dispose();
 
 		if (rayHandler != null) {
@@ -241,11 +244,12 @@ public final class GameWorld {
 		final Color c = new Color();
 
 		// setup player headlights data
-		c.set(0.1f, 0.2f, 0.9f, 0.7f);
+		c.set(0.1f, 0.2f, 0.9f, 0.85f);
 
+		int headlightsMask = CollisionFilters.CategoryTrackWalls;
 		// int headlightsMask = CollisionFilters.CategoryTrackWalls | CollisionFilters.CategoryReplay;
 		// int headlightsMask = CollisionFilters.CategoryReplay;
-		int headlightsMask = 0;
+		// int headlightsMask = 0;
 
 		playerHeadlightsA = new ConeLight(rayHandler, maxRays, c, 25, 0, 0, 0, 9);
 		playerHeadlightsA.setSoft(true);
@@ -258,17 +262,21 @@ public final class GameWorld {
 		// setup level lights data, if any
 		Vector2 pos = new Vector2();
 		MapLayer group = mapUtils.getObjectGroup(ObjectGroup.Lights);
-		for (int i = 0; i < group.getObjects().getCount(); i++) {
+
+		int lights_count = group.getObjects().getCount();
+		lights = new PointLight[lights_count];
+
+		for (int i = 0; i < lights_count; i++) {
 			//@off
 			c.set(
 //			 MathUtils.random(0,1),
 //			 MathUtils.random(0,1),
 //			 MathUtils.random(0,1),
-			//				1f, .85f, 0.6f, 0.55f
-				MathUtils.random(0.85f,1),
-				MathUtils.random(0.8f,0.85f),
-				MathUtils.random(0.6f,0.8f),
-				0.55f
+							1f, .85f, 0.6f, 0.55f
+//				MathUtils.random(0.85f,1),
+//				MathUtils.random(0.8f,0.85f),
+//				MathUtils.random(0.6f,0.8f),
+//				0.55f
 			);
 			//@on
 
@@ -277,10 +285,12 @@ public final class GameWorld {
 			pos.y = worldSizePx.y - pos.y;
 			pos.set(Convert.px2mt(pos));// .scl(scalingStrategy.tileMapZoomFactor);
 
-			PointLight l = new PointLight(rayHandler, maxRays, c, MathUtils.random(20f, 30f), pos.x, pos.y);
+			PointLight l = new PointLight(rayHandler, maxRays, c, MathUtils.random(10, 20), pos.x, pos.y);
 			l.setSoft(true);
 			l.setStaticLight(false);
 			l.setMaskBits(CollisionFilters.CategoryPlayer | CollisionFilters.CategoryTrackWalls);
+
+			lights[i] = l;
 		}
 
 		// playerImpulse = new PointLight(rayHandler, maxRays);
@@ -712,6 +722,10 @@ public final class GameWorld {
 		return nightMode;
 	}
 
+	public PointLight[] getLights () {
+		return lights;
+	}
+
 	public TrackWalls getTrackWalls () {
 		return trackWalls;
 	}
@@ -754,6 +768,22 @@ public final class GameWorld {
 
 	public World getBox2DWorld () {
 		return box2dWorld;
+	}
+
+	public PlayerCar getPlayer () {
+		return player;
+	}
+
+	public void setPlayer (PlayerCar player) {
+		this.player = player;
+	}
+
+	public void setGhostCars (GhostCar[] ghosts) {
+		this.ghosts = ghosts;
+	}
+
+	public GhostCar[] getGhostCars () {
+		return ghosts;
 	}
 
 	// helpers from maputils

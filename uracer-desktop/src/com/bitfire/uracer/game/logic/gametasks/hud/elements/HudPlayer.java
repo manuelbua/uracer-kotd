@@ -12,7 +12,6 @@ import com.bitfire.uracer.game.logic.gametasks.hud.HudElement;
 import com.bitfire.uracer.game.logic.gametasks.hud.Positionable;
 import com.bitfire.uracer.game.logic.gametasks.hud.elements.player.DriftBar;
 import com.bitfire.uracer.game.logic.gametasks.hud.elements.player.TrackProgress;
-import com.bitfire.uracer.game.logic.gametasks.hud.elements.player.TrackProgress.TrackProgressData;
 import com.bitfire.uracer.game.logic.gametasks.hud.elements.player.WrongWay;
 import com.bitfire.uracer.game.player.PlayerCar;
 import com.bitfire.uracer.game.rendering.GameRenderer;
@@ -33,41 +32,41 @@ public final class HudPlayer extends HudElement {
 	public final WrongWay wrongWay;
 	public final DriftBar driftBar;
 	public final TrackProgress trackProgress;
-	private final TrackProgressData trackProgressData;
 
 	private CarHighlighter highlightError;
-	private CarHighlighter highlightNext;
-
-	// rendering
-	private final GameRenderer renderer;
+	public CarHighlighter highlightNext;
 
 	// gravitation
 	private float carModelWidthPx, carModelLengthPx;
 	private Vector2 tmpg = new Vector2();
 
-	public HudPlayer (UserProfile userProfile, PlayerCar player, GameRenderer renderer) {
-		this.renderer = renderer;
-		playerState = player.state();
-
-		this.carModelWidthPx = Convert.mt2px(player.getCarModel().width);
-		this.carModelLengthPx = Convert.mt2px(player.getCarModel().length);
-
+	public HudPlayer (UserProfile userProfile) {
 		// elements
 		wrongWay = new WrongWay();
-		driftBar = new DriftBar(carModelLengthPx);
+		driftBar = new DriftBar();
 		trackProgress = new TrackProgress();
-		trackProgressData = new TrackProgressData();
 
 		highlightError = new CarHighlighter();
-		highlightError.setCar(player);
 		highlightError.setScale(1.75f);
 
 		highlightNext = new CarHighlighter();
 		highlightNext.setScale(1);
 	}
 
-	public TrackProgressData getTrackProgressData () {
-		return trackProgressData;
+	@Override
+	public void player (PlayerCar player) {
+		super.player(player);
+
+		if (hasPlayer()) {
+			playerState = player.state();
+			carModelWidthPx = Convert.mt2px(player.getCarModel().width);
+			carModelLengthPx = Convert.mt2px(player.getCarModel().length);
+			highlightError.setCar(player);
+		} else {
+			trackProgress.resetData(true);
+			driftBar.reset();
+			onReset();
+		}
 	}
 
 	@Override
@@ -77,34 +76,35 @@ public final class HudPlayer extends HudElement {
 	}
 
 	@Override
-	public void onTick () {
-		driftBar.tick();
-		trackProgress.tick(trackProgressData);
+	public void onRestart () {
+		trackProgress.resetData(false);
+		onReset();
 	}
 
 	@Override
 	public void onReset () {
 		driftBar.hideSecondsLabel();
+		driftBar.reset();
 		highlightError.stop();
 		highlightNext.stop();
 		wrongWay.fadeOut(Config.Graphics.DefaultResetFadeMilliseconds);
 	}
 
 	@Override
-	public void onRender (SpriteBatch batch) {
-		// FIXME find a more elegant way
-		// position *now* so that other positions have been already interpolated
-		atPlayer(driftBar);
-		atPlayer(trackProgress);
-		gravitate(wrongWay, -180, 100);
+	public void onRender (SpriteBatch batch, float cameraZoom) {
+		if (hasPlayer()) {
+			// position elements at render time, so that source positions have been interpolated
+			atPlayer(driftBar);
+			atPlayer(trackProgress);
+			gravitate(wrongWay, -180, 100, cameraZoom);
 
-		float cz = renderer.getWorldRenderer().getCameraZoom();
+			trackProgress.render(batch, cameraZoom);
+			driftBar.render(batch, cameraZoom);
+		}
 
-		driftBar.render(batch, cz);
-		trackProgress.render(batch, cz);
-		highlightError.render(batch, cz);
-		highlightNext.render(batch, cz);
-		wrongWay.render(batch, cz);
+		highlightError.render(batch, cameraZoom);
+		highlightNext.render(batch, cameraZoom);
+		wrongWay.render(batch, cameraZoom);
 	}
 
 	//
@@ -119,8 +119,8 @@ public final class HudPlayer extends HudElement {
 	// p.setPosition(tmpg);
 	// }
 
-	private void gravitate (Positionable p, float offsetDegs, float distance) {
-		p.setPosition(gravitate(p.getWidth(), p.getHeight(), offsetDegs, distance));
+	private void gravitate (Positionable p, float offsetDegs, float distance, float cameraZoom) {
+		p.setPosition(gravitate(p.getWidth(), p.getHeight(), offsetDegs, distance, cameraZoom));
 	}
 
 	private void atPlayer (Positionable p) {
@@ -130,8 +130,7 @@ public final class HudPlayer extends HudElement {
 
 	/** Returns a position by placing a point on an imaginary circumference gravitating around the player, applying the specified
 	 * orientation offset, expressed in degrees, if any. */
-	private Vector2 gravitate (float w, float h, float offsetDegs, float distance) {
-		float zs = renderer.getWorldRenderer().getCameraZoom();
+	private Vector2 gravitate (float w, float h, float offsetDegs, float distance, float cameraZoom) {
 		float border = distance;
 
 		Vector2 sp = GameRenderer.ScreenUtils.worldPxToScreen(playerState.position);
@@ -143,8 +142,8 @@ public final class HudPlayer extends HudElement {
 
 		// compute displacement
 		tmpg.set(heading);
-		float displaceX = p * zs + w * 0.5f + border;
-		float displaceY = q * zs + h * 0.5f + border;
+		float displaceX = p * cameraZoom + w * 0.5f + border;
+		float displaceY = q * cameraZoom + h * 0.5f + border;
 		tmpg.scl(displaceX, displaceY);
 		displaceX = tmpg.x;
 		displaceY = tmpg.y;
@@ -183,14 +182,14 @@ public final class HudPlayer extends HudElement {
 
 	public void highlightNextTarget (Car car) {
 		highlightNext.setCar(car);
-		highlightNext.track();
+
+		// overwrite any possibly running untracking
+		highlightNext.track(true, 0.5f);
 	}
 
 	public void unHighlightNextTarget () {
-		highlightNext.untrack();
-	}
-
-	public void setNextTargetAlpha (float alpha) {
-		highlightNext.setAlpha(alpha);
+		// overwrite any possibly running tracking
+		// i.e., ghost at finish line, player just behind it
+		highlightNext.untrack(true);
 	}
 }

@@ -7,12 +7,12 @@ import com.badlogic.gdx.graphics.Pixmap;
 import com.badlogic.gdx.maps.tiled.TiledMapTileLayer;
 import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.math.WindowedMean;
+import com.badlogic.gdx.physics.box2d.Fixture;
 import com.badlogic.gdx.utils.IntMap;
 import com.bitfire.uracer.Input;
 import com.bitfire.uracer.Input.MouseButton;
 import com.bitfire.uracer.URacer;
 import com.bitfire.uracer.configuration.Config;
-import com.bitfire.uracer.events.CarEvent;
 import com.bitfire.uracer.game.GameEvents;
 import com.bitfire.uracer.game.GameplaySettings;
 import com.bitfire.uracer.game.actors.Car;
@@ -21,6 +21,7 @@ import com.bitfire.uracer.game.actors.CarForces;
 import com.bitfire.uracer.game.actors.CarPreset;
 import com.bitfire.uracer.game.actors.CarState;
 import com.bitfire.uracer.game.actors.CarType;
+import com.bitfire.uracer.game.events.CarEvent;
 import com.bitfire.uracer.game.rendering.GameRenderer;
 import com.bitfire.uracer.game.world.GameWorld;
 import com.bitfire.uracer.game.world.WorldDefs.Layer;
@@ -30,10 +31,7 @@ import com.bitfire.uracer.utils.Timer;
 import com.bitfire.uracer.utils.VMath;
 
 public class PlayerCar extends Car {
-
-	// private ScalingStrategy strategy;
-
-	// car forces simulator
+	// car simulation
 	private CarSimulator carSim = null;
 	private CarDescriptor carDesc = null;
 
@@ -43,17 +41,13 @@ public class PlayerCar extends Car {
 	private Vector2 touchPos = new Vector2();
 	private Vector2 carPos = new Vector2();
 	private final float invWidth, invHeight;
-	// private float scaleInputX, scaleInputY;
 	private WindowedMean frictionMean = new WindowedMean(10);
 
 	private IntMap<Timer> keytimer = new IntMap<Timer>(3);
 
-	// damping values
-	private float dampFriction = 0;
-
 	// states
 	public CarState carState = null;
-	public PlayerDriftState driftState = null;
+	public DriftState driftState = null;
 
 	public PlayerCar (GameWorld gameWorld, CarPreset.Type presetType) {
 		super(gameWorld, CarType.PlayerCar, InputMode.InputFromPlayer, presetType, true);
@@ -68,16 +62,9 @@ public class PlayerCar extends Car {
 		carSim = new CarSimulator(carDesc);
 		stillModel.setAlpha(1);
 
-		// precompute relaxing factors for user input coordinates
-		// scaleInputX = invWidth * gameWorld.scalingStrategy.referenceResolution.x;
-		// scaleInputY = invHeight * gameWorld.scalingStrategy.referenceResolution.y;
-
 		// states
 		this.carState = new CarState(gameWorld, this);
-		this.driftState = new PlayerDriftState(this);
-
-		// set physical properties
-		dampFriction = GameplaySettings.DampingFriction;
+		this.driftState = new DriftState(this);
 
 		keytimer.put(Keys.UP, new Timer());
 		keytimer.put(Keys.LEFT, new Timer());
@@ -124,10 +111,13 @@ public class PlayerCar extends Car {
 		this.input = input;
 	}
 
-	/** When the player's car is off-track this damping will be applied to the car's linear velocity */
-	// public void setDampingFriction( float damping ) {
-	// dampFriction = damping;
-	// }
+	@Override
+	public strictfp void onCollide (Fixture other, Vector2 normalImpulses) {
+		super.onCollide(other, normalImpulses);
+		if (driftState.isDrifting) {
+			driftState.invalidateByCollision();
+		}
+	}
 
 	protected CarInput acquireInput () {
 		if (input == null) {
@@ -173,7 +163,6 @@ public class PlayerCar extends Car {
 
 			carInput.updated = false;
 			final float KeyboardSensitivity = 0.8f;
-			float keysens = KeyboardSensitivity;
 
 			if (kUp) {
 				carInput.updated = true;
@@ -187,17 +176,18 @@ public class PlayerCar extends Car {
 				if (carInput.steerAngle > 0) {
 					carInput.steerAngle = 0;
 				}
-				carInput.steerAngle -= keysens * getDirTime(Keys.LEFT);
+				carInput.steerAngle -= KeyboardSensitivity * getDirTime(Keys.LEFT);
 			} else if (kRight) {
 				carInput.updated = true;
 				if (carInput.steerAngle < 0) {
 					carInput.steerAngle = 0;
 				}
-				carInput.steerAngle += keysens * getDirTime(Keys.RIGHT);
+				carInput.steerAngle += KeyboardSensitivity * getDirTime(Keys.RIGHT);
 			} else {
 				carInput.steerAngle = 0f;
 			}
 
+			carInput.steerAngle *= GameplaySettings.DampingKeyboardKeys;
 		}
 
 		// Gdx.app.log("PlayerCar", "up=" + getDirTime(Keys.UP) + ", left=" + getDirTime(Keys.LEFT) + ", right="
@@ -206,10 +196,10 @@ public class PlayerCar extends Car {
 	}
 
 	private float getDirTime (int uplr) {
-		boolean ison = input.isOn(uplr);
+		boolean isOn = input.isOn(uplr);
 		float ret = 0;
 		Timer t = keytimer.get(uplr);
-		if (ison) {
+		if (isOn) {
 			t.update();
 			ret = t.elapsed();
 		} else {
@@ -242,8 +232,6 @@ public class PlayerCar extends Car {
 	protected void onComputeCarForces (CarForces forces) {
 		carInput = acquireInput();
 
-		// handle decrease scheduled from previous step
-		// handleDecrease( carInput );
 		handleImpactFeedback();
 
 		carSim.applyInput(carInput);
@@ -257,9 +245,6 @@ public class PlayerCar extends Car {
 
 	@Override
 	public void onSubstepCompleted () {
-		// inspect impact feedback, accumulate vel/ang velocities
-		// handleImpactFeedback();
-
 		carState.update(carDesc);
 		driftState.update(carSim.lateralForceFront.y, carSim.lateralForceRear.y, carDesc.velocity_wc.len());
 
@@ -334,7 +319,7 @@ public class PlayerCar extends Car {
 
 		// FIXME, move these hard-coded values out of here
 		if (isOutOfTrack && carDesc.velocity_wc.len2() > 10) {
-			carDesc.velocity_wc.scl(dampFriction);
+			carDesc.velocity_wc.scl(GameplaySettings.DampingFriction);
 		}
 	}
 

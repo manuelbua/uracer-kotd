@@ -255,5 +255,7 @@ public final class CarSimulator {
 		velocity.set(0, 0);
 		thisSign = 1f;
 		lastSign = 1f;
+		lateralForceFront.set(0, 0);
+		lateralForceRear.set(0, 0);
 	}
 }
