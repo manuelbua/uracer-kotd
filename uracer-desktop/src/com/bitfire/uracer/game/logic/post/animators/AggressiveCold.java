@@ -5,6 +5,7 @@ import aurelienribon.tweenengine.BaseTween;
 import aurelienribon.tweenengine.Timeline;
 import aurelienribon.tweenengine.Tween;
 import aurelienribon.tweenengine.TweenCallback;
+import aurelienribon.tweenengine.equations.Linear;
 import aurelienribon.tweenengine.equations.Quad;
 
 import com.badlogic.gdx.math.MathUtils;
@@ -43,7 +44,7 @@ public final class AggressiveCold implements PostProcessingAnimator {
 	private Ssao ssao = null;
 	private PlayerCar player = null;
 	private boolean hasPlayer = false;
-	private BoxedFloat alertAmount;
+	private BoxedFloat alertAmount, offsetAmount;
 	private boolean alertBegan = false;
 	private boolean isSingleAlert = false;
 	private float lastAlertFactor = 0;
@@ -64,6 +65,7 @@ public final class AggressiveCold implements PostProcessingAnimator {
 		ssao = (Ssao)post.getEffect(PostProcessing.Effects.Ssao.name);
 
 		alertAmount = new BoxedFloat(0);
+		offsetAmount = new BoxedFloat(0);
 		blurStrength.setFixup(false);
 
 		reset();
@@ -86,14 +88,22 @@ public final class AggressiveCold implements PostProcessingAnimator {
 			Timeline seq = Timeline.createSequence();
 
 			//@off
-		seq
-			.push(Tween.to(alertAmount, BoxedFloatAccessor.VALUE, milliseconds).target(1.5f).ease(Quad.IN))
-			.pushPause(50)
-			.push(Tween.to(alertAmount, BoxedFloatAccessor.VALUE, milliseconds).target(0.75f).ease(Quad.OUT))
-		;
-		//@on
+			seq
+				.push(Tween.to(alertAmount, BoxedFloatAccessor.VALUE, milliseconds).target(1.5f).ease(Quad.IN))
+				.pushPause(50)
+				.push(Tween.to(alertAmount, BoxedFloatAccessor.VALUE, milliseconds).target(0.75f).ease(Quad.OUT))
+			;
+			GameTweener.start(seq);
+
+			GameTweener.stop(offsetAmount);
+			seq = Timeline.createSequence();
+			seq
+				.push(Tween.to(offsetAmount, BoxedFloatAccessor.VALUE, milliseconds).target(1).ease(Linear.INOUT))
+				.pushPause(50)
+				.push(Tween.to(offsetAmount, BoxedFloatAccessor.VALUE, milliseconds).target(0.4f).ease(Quad.OUT));
 
 			GameTweener.start(seq);
+			//@on
 		}
 	}
 
@@ -101,12 +111,29 @@ public final class AggressiveCold implements PostProcessingAnimator {
 	public void alertEnds (int milliseconds) {
 		if (alertBegan) {
 			alertBegan = false;
+
 			GameTweener.stop(alertAmount);
 			Timeline seq = Timeline.createSequence();
 			seq.push(Tween.to(alertAmount, BoxedFloatAccessor.VALUE, milliseconds).target(0).ease(Quad.INOUT));
 			GameTweener.start(seq);
+
+			GameTweener.stop(offsetAmount);
+			seq = Timeline.createSequence();
+			seq.push(Tween.to(offsetAmount, BoxedFloatAccessor.VALUE, milliseconds).target(0).ease(Quad.INOUT));
+			GameTweener.start(seq);
 		}
 	}
+
+	private TweenCallback singleAlertCompleted = new TweenCallback() {
+		@Override
+		public void onEvent (int type, BaseTween<?> source) {
+			switch (type) {
+			case COMPLETE:
+				isSingleAlert = false;
+				lastAlertFactor = 0;
+			}
+		}
+	};
 
 	@Override
 	public void alert (float factor, int milliseconds) {
@@ -123,31 +150,31 @@ public final class AggressiveCold implements PostProcessingAnimator {
 
 		lastAlertFactor = factor;
 		isSingleAlert = true;
-		GameTweener.stop(alertAmount);
 		Timeline seq = Timeline.createSequence();
 
 		factor = MathUtils.clamp(factor, 0, 1);
 
 		//@off
+		GameTweener.stop(alertAmount);
 		seq
 			.push(Tween.to(alertAmount, BoxedFloatAccessor.VALUE, 75).target(factor).ease(Quad.IN))
 			.pushPause(50)
 			.push(Tween.to(alertAmount, BoxedFloatAccessor.VALUE, milliseconds).target(0).ease(Quad.OUT))
-			.setCallback(new TweenCallback() {
-				
-				@Override
-				public void onEvent (int type, BaseTween<?> source) {
-					switch (type) {
-					case COMPLETE:
-						isSingleAlert = false;
-						lastAlertFactor = 0;
-					}
-				}
-			})
-		;
+			.setCallback(singleAlertCompleted);
+		GameTweener.start(seq);
+		
+//		Gdx.app.log("", "factor=" + factor);
+
+		GameTweener.stop(offsetAmount);
+		seq = Timeline.createSequence();
+		seq
+			.push(Tween.to(offsetAmount, BoxedFloatAccessor.VALUE, 150).target(factor).ease(Linear.INOUT))
+			.pushPause(50)
+			.push(Tween.to(offsetAmount, BoxedFloatAccessor.VALUE, 750).target(0).ease(Quad.OUT));
+		
+		GameTweener.start(seq);
 		//@on
 
-		GameTweener.start(seq);
 	}
 
 	@Override
@@ -365,6 +392,10 @@ public final class AggressiveCold implements PostProcessingAnimator {
 		}
 
 		if (crt != null) {
+			// color offset
+			float amount = AMath.fixup(offsetAmount.value);
+			crt.setColorOffset(0.0005f + 0.01f * amount);
+
 			// zoom+earth curvature
 			float dist = kdist - kdist * factor;
 			dist = AMath.fixup(dist);
