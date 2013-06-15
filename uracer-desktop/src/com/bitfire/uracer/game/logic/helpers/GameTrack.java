@@ -7,7 +7,6 @@ import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.math.Polygon;
 import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.utils.GdxRuntimeException;
-import com.badlogic.gdx.utils.ObjectMap;
 import com.bitfire.uracer.game.actors.Car;
 import com.bitfire.uracer.utils.AMath;
 import com.bitfire.uracer.utils.VMath;
@@ -19,7 +18,6 @@ import com.bitfire.uracer.utils.VMath;
 public final class GameTrack {
 	private final List<Vector2> route;
 	private final List<Polygon> polys;
-	private final ObjectMap<Car, TrackState> trackStates;
 	private final TrackSector[] sectors;
 	private final float totalLength;
 	private final float oneOnTotalLength;
@@ -29,11 +27,26 @@ public final class GameTrack {
 		this.route = route;
 		this.polys = trackPoly;
 		this.sectors = new TrackSector[route.size()];
-		this.trackStates = new ObjectMap<Car, GameTrack.TrackState>();
 
 		totalLength = sectorize();
 		oneOnTotalLength = 1f / totalLength;
 		Gdx.app.log("GameTrack", "total length = " + totalLength);
+	}
+
+	private int findPolygon (Vector2 a, Vector2 b) {
+		for (int i = 0; i < polys.size(); i++) {
+			Polygon p = polys.get(i);
+			// mitigate errors for small differences
+			p.scale(0.1f);
+			if (p.contains(a.x, a.y) && p.contains(b.x, b.y)) {
+				p.scale(-0.1f); // restored
+				return i;
+			}
+
+			p.scale(-0.1f); // restored
+		}
+
+		return -1;
 	}
 
 	/** Load and follows the supplied route waypoints, identifying sectors containing the two leading/trailing waypoints. The
@@ -69,10 +82,6 @@ public final class GameTrack {
 		}
 
 		return accuLength;
-	}
-
-	public void clearTrackStates () {
-		trackStates.clear();
 	}
 
 	public float getTotalLength () {
@@ -113,14 +122,12 @@ public final class GameTrack {
 	 * on track then the value specified by the @param retDefault is returned. */
 	public float getTrackDistance (Car car, float retDefault) {
 		Vector2 pt = car.getWorldPosMt();
-		if (hasTrackState(car)) {
-			int carSector = getTrackState(car).curr;
-			if (carSector != -1) {
-				TrackSector s = sectors[carSector];
-				float dist = distanceInSector(s, pt);
-				float carlen = (s.relativeTotal + s.length * dist);
-				return AMath.fixup(carlen);
-			}
+		int carSector = car.getTrackState().curr;
+		if (carSector != -1) {
+			TrackSector s = sectors[carSector];
+			float dist = distanceInSector(s, pt);
+			float carlen = (s.relativeTotal + s.length * dist);
+			return AMath.fixup(carlen);
 		}
 
 		return AMath.fixup(retDefault);
@@ -143,7 +150,7 @@ public final class GameTrack {
 	 * @param car
 	 * @return The confidence value with which a car is following the current waypoint path. */
 	public float getTrackRouteConfidence (Car car) {
-		TrackState state = getTrackState(car);
+		TrackState state = car.getTrackState();
 
 		// car is on the expected path, now check for the correct heading
 		if (state.onExpectedPath) {
@@ -169,44 +176,19 @@ public final class GameTrack {
 		return -1;
 	}
 
-	public TrackState getTrackState (Car car) {
-		return trackStates.get(car);
-	}
-
-	public boolean hasTrackState (Car car) {
-		return trackStates.containsKey(car);
-	}
-
-	private TrackState buildTrackState (Car car) {
-		TrackState state = new TrackState();
-		trackStates.put(car, state);
-
+	public void resetTrackState (Car car) {
+		TrackState state = car.getTrackState();
 		Vector2 pos = car.getWorldPosMt();
 		state.curr = findSector(pos);
 		state.next = state.curr + 1;
 		if (state.next == sectors.length) state.next = 0;
 		state.onExpectedPath = true;
 		state.initialCompletion = getTrackCompletion(car);
-		return state;
-	}
-
-	public void resetTrackState (Car car) {
-		if (hasTrackState(car)) {
-			trackStates.remove(car);
-			// updateTrackState(car);
-		}
 	}
 
 	public void updateTrackState (Car car) {
-		TrackState state = null;
-
-		if (!trackStates.containsKey(car)) {
-			// generate initial track state
-			state = buildTrackState(car);
-			return;
-		} else {
-			state = trackStates.get(car);
-		}
+		TrackState state = car.getTrackState();
+		state.updates++;
 
 		Vector2 pos = car.getWorldPosMt();
 
@@ -222,7 +204,6 @@ public final class GameTrack {
 
 		if (inNext) {
 			// switched
-
 			state.onExpectedPath = true;
 			state.curr = state.next;
 			state.next = state.curr + 1;
@@ -257,35 +238,13 @@ public final class GameTrack {
 		return sectors[sector].poly.contains(point.x, point.y);
 	}
 
-	private int findPolygon (Vector2 a, Vector2 b) {
-		for (int i = 0; i < polys.size(); i++) {
-			Polygon p = polys.get(i);
-			// mitigate errors for small differences
-			p.scale(0.1f);
-			if (p.contains(a.x, a.y) && p.contains(b.x, b.y)) {
-				p.scale(-0.1f); // restored
-				return i;
-			}
-
-			p.scale(-0.1f); // restored
-		}
-
-		return -1;
-	}
-
 	private int findSector (Vector2 a) {
 		for (int i = 0; i < sectors.length; i++) {
 			TrackSector s = sectors[i];
 			Polygon p = s.poly;
-
-			// scale to mitigate for small differences
-			p.scale(0.1f);
 			if (p.contains(a.x, a.y)) {
-				p.scale(-0.1f); // restored
 				return i;
 			}
-
-			p.scale(-0.1f); // restored
 		}
 
 		return -1;
@@ -330,17 +289,15 @@ public final class GameTrack {
 		}
 	}
 
+	// FIXME move out of here
 	/** Represents the current track state of a car */
 	public static class TrackState {
 		public int curr, next; // sectors
 		public boolean onExpectedPath;
 		public float initialCompletion;
+		public int updates;
 
-		public void reset () {
-			curr = 0;
-			next = 1;
-			onExpectedPath = true;
-		}
+		// ghost only
+		public boolean ghostStarted, ghostArrived;
 	}
-
 }

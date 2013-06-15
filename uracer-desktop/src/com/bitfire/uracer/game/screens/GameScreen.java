@@ -28,7 +28,7 @@ public class GameScreen extends Screen {
 			UserPreferences.string(Preference.LastPlayedTrack, ScreensShared.selectedLevelId);
 			UserProfile userProfile = new UserProfile();
 			game = new Game(userProfile, ScreensShared.selectedLevelId);
-			game.addPlayer();
+			game.start();
 		}
 	}
 

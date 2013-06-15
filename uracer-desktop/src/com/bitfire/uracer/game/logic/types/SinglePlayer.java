@@ -33,9 +33,8 @@ public class SinglePlayer extends CommonLogic {
 			}
 
 			positionPx.set(playerCar.state().position);
-
 		} else if (isGhostActive(0)) {
-			// FIXME use best replay
+			// FIXME use available/choosen replay
 			positionPx.set(getGhost(0).state().position);
 		} else {
 			// no ghost, no player, WTF?
@@ -46,16 +45,16 @@ public class SinglePlayer extends CommonLogic {
 	// the game has been restarted
 	@Override
 	public void restartGame () {
-		Gdx.app.log("SinglePlayer", "Starting/restarting game");
 		super.restartGame();
+		Gdx.app.log("SinglePlayer", "Starting/restarting game");
 	}
 
 	// the game has been reset
 	@Override
 	public void resetGame () {
-		Gdx.app.log("SinglePlayer", "Resetting game");
 		super.resetGame();
 		messager.show("Game reset", 1.5f, Message.Type.Information, Position.Bottom, Size.Big);
+		Gdx.app.log("SinglePlayer", "Resetting game");
 	}
 
 	@Override
@@ -69,7 +68,7 @@ public class SinglePlayer extends CommonLogic {
 	}
 
 	@Override
-	protected void lapStarted () {
+	protected void playerLapStarted () {
 		lapManager.stopRecording();
 		playerCar.resetDistanceAndSpeed(true, false);
 		lapManager.startRecording(playerCar);
@@ -77,7 +76,7 @@ public class SinglePlayer extends CommonLogic {
 	}
 
 	@Override
-	protected void lapCompleted () {
+	protected void playerLapCompleted () {
 		if (lapManager.isRecording()) {
 			Replay last = lapManager.stopRecording();
 			if (last != null) {
@@ -85,10 +84,14 @@ public class SinglePlayer extends CommonLogic {
 				// Should also pass more information? such as replay classification
 				// (was this replay better than all? than what?)
 				messager.show("New record!", 1.5f, Message.Type.Information, Position.Bottom, Size.Big);
+
+				float v = gameTrack.getTrackCompletion(playerCar);
+				Gdx.app.log("SinglePlayer", "Stopped player at " + v);
 				CarUtils.dumpSpeedInfo("Player", playerCar, last.getTrackTime());
+
 			} else {
 				// discarded if worse than the worst
-				messager.show("Try again...", 1.5f, Message.Type.Information, Position.Bottom, Size.Normal);
+				messager.show("Try again...", 1.5f, Message.Type.Information, Position.Bottom, Size.Big);
 			}
 		}
 
@@ -96,14 +99,20 @@ public class SinglePlayer extends CommonLogic {
 	}
 
 	@Override
-	protected void ghostReplayEnded (GhostCar ghost) {
-		Replay replay = ghost.getReplay();
-		CarUtils.dumpSpeedInfo("GhostCar #" + ghost.getId(), ghost, replay.getTrackTime());
-
+	protected void ghostLapCompleted (GhostCar ghost) {
 		if (!hasPlayer()) {
 			ghost.restartReplay();
 		} else {
 			ghost.removeReplay();
 		}
+
+		float v = gameTrack.getTrackCompletion(ghost);
+		Gdx.app.log("SinglePlayer", "Stopped ghost #" + ghost.getId() + " at " + v);
+	}
+
+	@Override
+	protected void ghostReplayEnded (GhostCar ghost) {
+		Gdx.app.log("SinglePlayer", "Replay finished for ghost #" + ghost.getId() + ", waiting for lap monitor to act...");
+		CarUtils.dumpSpeedInfo("GhostCar #" + ghost.getId(), ghost, ghost.getReplay().getTrackTime());
 	}
 }

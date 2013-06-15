@@ -6,7 +6,6 @@ import com.bitfire.uracer.game.GameEvents;
 import com.bitfire.uracer.game.events.GhostCarEvent;
 import com.bitfire.uracer.game.logic.replaying.Replay;
 import com.bitfire.uracer.game.world.GameWorld;
-import com.bitfire.uracer.utils.URacerRuntimeException;
 
 /** Implements an automated Car, playing previously recorded events. It will ignore car-to-car collisions, but will respect
  * in-track collisions and responses.
@@ -26,16 +25,12 @@ public final class GhostCar extends Car {
 	public GhostCar (int id, GameWorld gameWorld, CarPreset.Type presetType) {
 		super(gameWorld, CarType.ReplayCar, InputMode.InputFromReplay, presetType, false);
 		this.id = id;
-		indexPlay = 0;
-		hasReplay = false;
 		replay = new Replay(-1);
-		replayForces = null;
-		replayForcesCount = 0;
-		stillModel.setAlpha(0.5f);
-
-		setActive(false);
-		resetPhysics();
 		resetDistanceAndSpeed(true, true);
+		removeReplay();
+		stillModel.setAlpha(0.5f);
+		getTrackState().ghostArrived = false;
+		getTrackState().ghostStarted = false;
 	}
 
 	public int getId () {
@@ -79,17 +74,16 @@ public final class GhostCar extends Car {
 			setWorldPosMt(replay.getStartPosition(), replay.getStartOrientation());
 			indexPlay = 0;
 			fadeOutEventTriggered = false;
+
+			getTrackState().ghostArrived = false;
+			getTrackState().ghostStarted = true;
 		}
 	}
 
 	public void removeReplay () {
+		indexPlay = 0;
 		setReplay(null);
 		stillModel.setAlpha(0);
-	}
-
-	@Override
-	public void resetPhysics () {
-		super.resetPhysics();
 	}
 
 	public boolean hasReplay () {
@@ -111,10 +105,9 @@ public final class GhostCar extends Car {
 		forces.reset();
 
 		if (hasReplay) {
-			try {
+
+			if (indexPlay < replayForcesCount) {
 				forces.set(replayForces[indexPlay]);
-			} catch (ArrayIndexOutOfBoundsException e) {
-				throw new URacerRuntimeException("!!! MANGLED DATA IN REPLAY !!!");
 			}
 
 			// also change opacity, fade in/out based on

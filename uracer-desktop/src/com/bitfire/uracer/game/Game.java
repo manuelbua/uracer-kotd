@@ -104,8 +104,9 @@ public class Game implements Disposable {
 	// OPERATIONS
 	//
 
-	public void addPlayer () {
+	public void start () {
 		gameLogic.addPlayer();
+		gameLogic.restartGame();
 	}
 
 }

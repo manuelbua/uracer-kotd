@@ -1,8 +1,8 @@
 
 package com.bitfire.uracer.game.events;
 
-public final class LapCompletionMonitorEvent extends
-	Event<LapCompletionMonitorEvent.Type, LapCompletionMonitorEvent.Order, LapCompletionMonitorEvent.Listener> {
+public final class PlayerLapCompletionMonitorEvent extends
+	Event<PlayerLapCompletionMonitorEvent.Type, PlayerLapCompletionMonitorEvent.Order, PlayerLapCompletionMonitorEvent.Listener> {
 	public enum Type {
 		onWarmUpStarted, onWarmUpCompleted, onLapStarted, onLapCompleted
 	}
@@ -16,7 +16,7 @@ public final class LapCompletionMonitorEvent extends
 		public void handle (Object source, Type type, Order order);
 	}
 
-	public LapCompletionMonitorEvent () {
+	public PlayerLapCompletionMonitorEvent () {
 		super(Type.class, Order.class);
 	}
 }
