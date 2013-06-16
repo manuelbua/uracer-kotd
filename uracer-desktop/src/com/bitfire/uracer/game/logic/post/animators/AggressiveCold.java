@@ -1,10 +1,8 @@
 
 package com.bitfire.uracer.game.logic.post.animators;
 
-import aurelienribon.tweenengine.BaseTween;
 import aurelienribon.tweenengine.Timeline;
 import aurelienribon.tweenengine.Tween;
-import aurelienribon.tweenengine.TweenCallback;
 import aurelienribon.tweenengine.equations.Linear;
 import aurelienribon.tweenengine.equations.Quad;
 
@@ -46,8 +44,6 @@ public final class AggressiveCold implements PostProcessingAnimator {
 	private boolean hasPlayer = false;
 	private BoxedFloat alertAmount, offsetAmount;
 	private boolean alertBegan = false;
-	private boolean isSingleAlert = false;
-	private float lastAlertFactor = 0;
 	private float bloomThreshold = 0.4f;
 
 	private long startMs = 0;
@@ -82,8 +78,6 @@ public final class AggressiveCold implements PostProcessingAnimator {
 	public void alertBegins (int milliseconds) {
 		if (!alertBegan) {
 			alertBegan = true;
-			isSingleAlert = false;
-			lastAlertFactor = 0;
 			GameTweener.stop(alertAmount);
 			Timeline seq = Timeline.createSequence();
 
@@ -95,14 +89,7 @@ public final class AggressiveCold implements PostProcessingAnimator {
 			;
 			GameTweener.start(seq);
 
-			GameTweener.stop(offsetAmount);
-			seq = Timeline.createSequence();
-			seq
-				.push(Tween.to(offsetAmount, BoxedFloatAccessor.VALUE, milliseconds).target(1).ease(Linear.INOUT))
-				.pushPause(50)
-				.push(Tween.to(offsetAmount, BoxedFloatAccessor.VALUE, milliseconds).target(0.4f).ease(Quad.OUT));
-
-			GameTweener.start(seq);
+			alertColorOffset(0.6f);
 			//@on
 		}
 	}
@@ -124,62 +111,39 @@ public final class AggressiveCold implements PostProcessingAnimator {
 		}
 	}
 
-	private TweenCallback singleAlertCompleted = new TweenCallback() {
-		@Override
-		public void onEvent (int type, BaseTween<?> source) {
-			switch (type) {
-			case COMPLETE:
-				isSingleAlert = false;
-				lastAlertFactor = 0;
-			}
-		}
-	};
-
 	@Override
-	public void alert (float factor, int milliseconds) {
+	public void alert (int milliseconds) {
 		if (alertBegan) {
-			lastAlertFactor = 0;
 			return;
 		}
 
-		// DO NOT accept subsequent alerts if the factor
-		// is LOWER than the alert currently being shown
-		if (factor < lastAlertFactor && isSingleAlert) {
-			return;
-		}
-
-		lastAlertFactor = factor;
-		isSingleAlert = true;
 		Timeline seq = Timeline.createSequence();
-
-		factor = MathUtils.clamp(factor, 0, 1);
 
 		//@off
 		GameTweener.stop(alertAmount);
 		seq
-			.push(Tween.to(alertAmount, BoxedFloatAccessor.VALUE, 75).target(factor).ease(Quad.IN))
+			.push(Tween.to(alertAmount, BoxedFloatAccessor.VALUE, 75).target(0.75f).ease(Quad.IN))
 			.pushPause(50)
-			.push(Tween.to(alertAmount, BoxedFloatAccessor.VALUE, milliseconds).target(0).ease(Quad.OUT))
-			.setCallback(singleAlertCompleted);
+			.push(Tween.to(alertAmount, BoxedFloatAccessor.VALUE, milliseconds).target(0).ease(Quad.OUT));
 		GameTweener.start(seq);
 		
 //		Gdx.app.log("", "factor=" + factor);
-
-		GameTweener.stop(offsetAmount);
-		seq = Timeline.createSequence();
-		seq
-			.push(Tween.to(offsetAmount, BoxedFloatAccessor.VALUE, 150).target(factor).ease(Linear.INOUT))
-			.pushPause(50)
-			.push(Tween.to(offsetAmount, BoxedFloatAccessor.VALUE, 750).target(0).ease(Quad.OUT));
-		
-		GameTweener.start(seq);
+		alertColorOffset(0);
 		//@on
 
 	}
 
+	private void alertColorOffset (float to) {
+		GameTweener.stop(offsetAmount);
+		Timeline seq = Timeline.createSequence();
+		seq.push(Tween.to(offsetAmount, BoxedFloatAccessor.VALUE, 150).target(0.75f).ease(Linear.INOUT)).pushPause(50)
+			.push(Tween.to(offsetAmount, BoxedFloatAccessor.VALUE, 750).target(to).ease(Quad.OUT));
+
+		GameTweener.start(seq);
+	}
+
 	@Override
 	public void reset () {
-		isSingleAlert = false;
 		speed.reset(0, true);
 
 		if (ssao != null) {
@@ -213,7 +177,6 @@ public final class AggressiveCold implements PostProcessingAnimator {
 			vignette.setLutIndexVal(0, 16);
 			vignette.setLutIndexVal(1, 7);
 			vignette.setLutIndexOffset(0);
-			lastAlertFactor = 0;
 			vignette.setEnabled(true);
 
 			// terminate pending, unfinished alert, if any

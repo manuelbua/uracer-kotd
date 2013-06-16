@@ -11,7 +11,7 @@ public final class Config {
 		public static final int ReferenceScreenHeight = 720;
 
 		public static final int DefaultFadeMilliseconds = 500;
-		public static final int DefaultResetFadeMilliseconds = 250;
+		public static final int DefaultResetFadeMilliseconds = 500;
 
 		public static final boolean EnableMipMapping = true;
 		public static final boolean SubframeInterpolation = true;

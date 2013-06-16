@@ -187,9 +187,9 @@ public final class PostProcessing {
 		}
 	}
 
-	public void alert (float factor, int milliseconds) {
+	public void alert (int milliseconds) {
 		if (hasPostProcessor && hasAnimator) {
-			animator.alert(factor, milliseconds);
+			animator.alert(milliseconds);
 		}
 	}
 }
