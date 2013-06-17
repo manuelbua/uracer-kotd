@@ -20,6 +20,8 @@ public interface GameLogic {
 
 	boolean isTimeDilationAvailable ();
 
+	boolean isQuitPending ();
+
 	void tick ();
 
 	void tickCompleted ();

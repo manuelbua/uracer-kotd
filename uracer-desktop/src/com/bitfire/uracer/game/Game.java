@@ -69,18 +69,24 @@ public class Game implements Disposable {
 
 	/** Can be NOT called */
 	public void tick () {
-		taskManager.dispatchEvent(TaskManagerEvent.Type.onTick);
+		if (!gameLogic.isQuitPending()) {
+			taskManager.dispatchEvent(TaskManagerEvent.Type.onTick);
+		}
+
 		gameLogic.tick();
 	}
 
 	/** Can be NOT called */
 	public void tickCompleted () {
-		taskManager.dispatchEvent(TaskManagerEvent.Type.onTickCompleted);
+		if (!gameLogic.isQuitPending()) {
+			taskManager.dispatchEvent(TaskManagerEvent.Type.onTickCompleted);
+		}
+
 		gameLogic.tickCompleted();
 	}
 
 	public void render (FrameBuffer dest) {
-		gameRenderer.render(dest);
+		gameRenderer.render(dest, gameLogic.isQuitPending());
 	}
 
 	public void debugUpdate () {

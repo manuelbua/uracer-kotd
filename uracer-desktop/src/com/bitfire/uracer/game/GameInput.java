@@ -21,6 +21,7 @@ public final class GameInput {
 		this.input = inputSystem;
 		this.timeMode = Gameplay.TimeDilateInputMode.valueOf(UserPreferences.string(Preference.TimeDilateInputMode));
 		this.timeDilation = false;
+		input.releaseAllKeys();
 	}
 
 	public void setInputMode (TimeDilateInputMode mode) {
@@ -48,6 +49,7 @@ public final class GameInput {
 			logic.resetGame();
 		} else if (input.isPressed(Keys.Q) || input.isPressed(Keys.ESCAPE) || input.isPressed(Keys.BACK)) {
 			logic.quitGame();
+			// return;
 		}
 
 		boolean rightMouseButton = input.isTouched(MouseButton.Right);// && input.isTouchedInBounds(MouseButton.Right);

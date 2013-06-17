@@ -50,9 +50,6 @@ public final class TransitionManager {
 		removeTransition();
 		this.transition = transition;
 
-		// build source textures
-		ScreenUtils.copyScreen(curr, fbFrom);
-
 		// enable depth writing if its the case
 		Gdx.gl20.glDepthMask(usedepth);
 		this.transition.frameBuffersReady(curr, fbFrom, next, fbTo);

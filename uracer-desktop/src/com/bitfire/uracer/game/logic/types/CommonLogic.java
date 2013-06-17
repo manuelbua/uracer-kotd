@@ -208,6 +208,7 @@ public abstract class CommonLogic implements GameLogic {
 	// input
 	protected Input inputSystem = null;
 	protected GameInput gameInput = null;
+	protected boolean quitPending = false, quitScheduled = false;
 
 	// world
 	protected GameWorld gameWorld = null;
@@ -415,14 +416,12 @@ public abstract class CommonLogic implements GameLogic {
 
 	@Override
 	public void quitGame () {
-		lapManager.abortRecording(false);
-		gameTasksManager.sound.stop();
+		quitPending = true;
+	}
 
-		URacer.Screens.setScreen(ScreenType.MainScreen, TransitionType.Fader, 500);
-		// URacer.Screens.setScreen( ScreenType.ExitScreen, TransitionType.Fader, 500 );
-
-		timeMod.reset();
-		URacer.Game.resetTimeModFactor();
+	@Override
+	public boolean isQuitPending () {
+		return quitPending;
 	}
 
 	/** Request time dilation to begin */
@@ -450,20 +449,43 @@ public abstract class CommonLogic implements GameLogic {
 
 	@Override
 	public void tick () {
-		// compute the next-frame time multiplier
-		URacer.timeMultiplier = timeMod.getTime();
-		gameInput.update();
-		dbgInput();
+		if (quitPending) {
+			doQuit();
+		} else {
+			// compute the next-frame time multiplier
+			URacer.timeMultiplier = timeMod.getTime();
+			gameInput.update();
+			dbgInput();
+		}
 	}
 
 	@Override
 	public void tickCompleted () {
-		updateLogic();
+		if (!quitPending) {
+			updateLogic();
+		}
 	}
 
 	//
 	// private impl
 	//
+
+	private void doQuit () {
+		if (quitPending && !quitScheduled) {
+			quitScheduled = true;
+
+			lapManager.abortRecording(false);
+			gameTasksManager.sound.stop();
+
+			// Gdx.app.log("", "Finish with=" + NumberString.format(lapManager.getCurrentReplaySeconds()));
+
+			URacer.Screens.setScreen(ScreenType.MainScreen, TransitionType.Fader, 5000);
+			// URacer.Screens.setScreen( ScreenType.ExitScreen, TransitionType.Fader, 500 );
+
+			timeMod.reset();
+			URacer.Game.resetTimeModFactor();
+		}
+	}
 
 	private void updateLogic () {
 		updateTrackStates();
@@ -658,16 +680,13 @@ public abstract class CommonLogic implements GameLogic {
 			gameWorldRenderer.showDebugGameTrack(Config.Debug.RenderTrackSectors);
 			gameWorldRenderer.setGameTrackDebugCar(playerCar);
 		} else if (inputSystem.isPressed(Keys.Z)) {
-
 			// start recording
 			playerCar.resetDistanceAndSpeed(true, true);
 			resetAllGhosts();
 			lapManager.abortRecording(true);
 			lapManager.startRecording(playerCar);
 			Gdx.app.log("GameLogic", "Recording...");
-
 		} else if (inputSystem.isPressed(Keys.X)) {
-
 			// stop recording and play
 			Replay userRec = lapManager.stopRecording();
 			playerCar.resetPhysics();
@@ -677,10 +696,6 @@ public abstract class CommonLogic implements GameLogic {
 				userRec.saveLocal(messager);
 				setGhostReplay(0, userRec);
 			}
-
-			// Gdx.app.log( "GameLogic", "Player final pos=" +
-			// playerCar.getBody().getPosition() );
-
 		} else if (inputSystem.isPressed(Keys.L)) {
 			playerCar.resetPhysics();
 			playerCar.resetDistanceAndSpeed(true, true);
