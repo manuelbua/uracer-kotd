@@ -144,7 +144,8 @@ public abstract strictfp class Car extends Box2DEntity {
 		body.setMassData(mdata);
 	}
 
-	/** Subclasses will feed forces to the simulator, such as Replay data stored elsewhere or from user input.
+	/** A subclass will be requested to compute physical forces and impulses to be sent via this data structure: a Player subclass
+	 * may compute them via its own car simulation, a Replay subclass, intead, may feed the forces directly without computing them.
 	 * 
 	 * @param forces computed forces shall be returned by filling the passed data structure. */
 	protected abstract void onComputeCarForces (CarForces forces);
@@ -249,7 +250,7 @@ public abstract strictfp class Car extends Box2DEntity {
 		// trigger event, new forces have been computed
 		if (triggerEvents) {
 			GameEvents.playerCar.data.setForces(carForces);
-			GameEvents.playerCar.trigger(this, CarEvent.Type.onComputeForces);
+			GameEvents.playerCar.trigger(this, CarEvent.Type.onPhysicsForcesReady);
 		}
 
 		// put newly computed forces into the system
