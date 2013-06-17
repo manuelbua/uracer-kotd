@@ -479,7 +479,7 @@ public abstract class CommonLogic implements GameLogic {
 
 			// Gdx.app.log("", "Finish with=" + NumberString.format(lapManager.getCurrentReplaySeconds()));
 
-			URacer.Screens.setScreen(ScreenType.MainScreen, TransitionType.Fader, 5000);
+			URacer.Screens.setScreen(ScreenType.MainScreen, TransitionType.Fader, 500);
 			// URacer.Screens.setScreen( ScreenType.ExitScreen, TransitionType.Fader, 500 );
 
 			timeMod.reset();

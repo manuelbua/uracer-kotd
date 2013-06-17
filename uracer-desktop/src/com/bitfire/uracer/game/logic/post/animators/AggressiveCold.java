@@ -343,7 +343,7 @@ public final class AggressiveCold implements PostProcessingAnimator {
 		float maxzoom = GameWorldRenderer.MaxCameraZoom - 0.1f;
 		float factor = MathUtils.clamp(((zoomCamera - 1) / (maxzoom - 1)), 0, 1);
 
-		float kdist = 0.18f;
+		float kdist = 0.20f;
 		if (curvature != null) {
 			float dist = kdist - kdist * factor;
 			dist = AMath.fixup(dist);
