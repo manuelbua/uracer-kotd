@@ -66,6 +66,23 @@ import com.bitfire.uracer.utils.NumberString;
 
 public abstract class CommonLogic implements GameLogic {
 
+	protected void beforeRender () {
+		// request camera updates from callbacks
+		float zoom = updateCameraZoom(URacer.Game.getTimeModFactor());
+		updateCameraPosition(cameraPos);
+
+		// apply camera updates
+		gameWorldRenderer.setCameraZoom(zoom);
+		gameWorldRenderer.setCameraPosition(cameraPos);
+		gameWorldRenderer.updateCamera();
+
+		// sync post-processing animators
+		postProcessing.onBeforeRender(zoom, playerLapMonitor.getWarmUpCompletion());
+
+		// game tweener step
+		GameTweener.update();
+	}
+
 	protected float updateCameraZoom (float timeModFactor) {
 		if (hasPlayer()) {
 			// speed.set(playerCar.carState.currSpeedFactor, 0.02f);
@@ -89,14 +106,45 @@ public abstract class CommonLogic implements GameLogic {
 
 	protected abstract void updateCameraPosition (Vector2 positionPx);
 
+	private TweenCallback penaltyFinished = new TweenCallback() {
+		@Override
+		public void onEvent (int type, BaseTween<?> source) {
+			switch (type) {
+			case COMPLETE:
+				isPenalty = false;
+			}
+		}
+	};
+
+	protected void collision (CarEvent.Data eventData) {
+		// invalidate time modulation
+		if (gameInput.isTimeDilating()) {
+			endTimeDilation();
+		}
+
+		postProcessing.alert(4000);
+
+		if (!isPenalty) {
+			isPenalty = true;
+			GameTweener.stop(accuDriftSeconds);
+			GameTweener.start(Timeline.createSequence()
+				.push(Tween.to(accuDriftSeconds, BoxedFloatAccessor.VALUE, 500).target(0).ease(Quad.INOUT))
+				.setCallback(penaltyFinished));
+			playerTasks.hudPlayer.highlightCollision();
+		}
+	}
+
+	protected void physicsForcesReady (CarEvent.Data eventData) {
+		RecorderError recerror = lapManager.record(eventData.forces);
+		if (recerror == RecorderError.ReplayMemoryLimitReached) {
+			Gdx.app.log("CommonLogic", "Player too slow, recording aborted.");
+			playerError("Too slow!");
+		}
+		// RecordingNotEnabled
+		// NoError
+	}
+
 	protected void ghostReplayEnded (GhostCar ghost) {
-
-	}
-
-	protected void playerLapStarted () {
-	}
-
-	protected void playerLapCompleted () {
 	}
 
 	protected void ghostLapStarted (GhostCar ghost) {
@@ -105,23 +153,66 @@ public abstract class CommonLogic implements GameLogic {
 	protected void ghostLapCompleted (GhostCar ghost) {
 	}
 
-	protected void warmUpStarted () {
+	protected void ghostFadingOut (GhostCar ghost) {
+		if (hasPlayer() && ghost != null && ghost == nextTarget) {
+			playerTasks.hudPlayer.unHighlightNextTarget();
+		}
+	}
 
+	protected void playerLapStarted () {
+	}
+
+	protected void playerLapCompleted () {
+	}
+
+	protected void warmUpStarted () {
 	}
 
 	protected void warmUpCompleted () {
 	}
 
-	protected void driftBegins () {
+	protected void driftBegins (PlayerCar player) {
+		playerTasks.hudPlayer.beginDrift();
 	}
 
-	protected void driftEnds () {
+	protected void driftEnds (PlayerCar player) {
+		float driftSeconds = player.driftState.driftSeconds();
+		// String msgSeconds = NumberString.format(playerCar.driftState.driftSeconds()) + "  seconds!";
+
+		if (player.driftState.hasCollided) {
+			playerTasks.hudPlayer.endDrift("-" + NumberString.format(driftSeconds), EndDriftType.BadDrift);
+		} else {
+
+			// if (driftSeconds >= 1 && driftSeconds < 3f) {
+			// gameTasksManager.messager.enqueue("NICE ONE!\n+" + msgSeconds, 1f, Type.Good, Position.Bottom, Size.Big);
+			// } else if (driftSeconds >= 3f && driftSeconds < 5f) {
+			// gameTasksManager.messager.enqueue("FANTASTIC!\n+" + msgSeconds, 1f, Type.Good, Position.Bottom, Size.Big);
+			// } else if (driftSeconds >= 5f) {
+			// gameTasksManager.messager.enqueue("UNREAL!\n+" + msgSeconds, 1f, Type.Good, Position.Bottom, Size.Big);
+			// }
+
+			playerTasks.hudPlayer.endDrift("+" + NumberString.format(driftSeconds), EndDriftType.GoodDrift);
+		}
+	}
+
+	protected void wrongWayBegins () {
+		playerTasks.hudPlayer.wrongWay.fadeIn();
+		playerError("Invalid lap");
+	}
+
+	protected void wrongWayEnds () {
+
 	}
 
 	protected void outOfTrack () {
+		outOfTrackTime.start();
+		playerTasks.hudPlayer.driftBar.showSecondsLabel();
 	}
 
 	protected void backInTrack () {
+		// updateDriftBar();
+		outOfTrackTime.reset();
+		playerTasks.hudPlayer.driftBar.hideSecondsLabel();
 	}
 
 	// input
@@ -346,22 +437,19 @@ public abstract class CommonLogic implements GameLogic {
 	/** Request time dilation to begin */
 	@Override
 	public void startTimeDilation () {
-		if (!gameInput.isTimeDilating()) {
-			dilationTime.start();
-			timeMod.toDilatedTime();
-			playerTasks.hudPlayer.driftBar.showSecondsLabel();
-		}
+		dilationTime.start();
+		timeMod.toDilatedTime();
+		playerTasks.hudPlayer.driftBar.showSecondsLabel();
 	}
 
 	/** Request time dilation to end */
 	@Override
 	public void endTimeDilation () {
-		if (gameInput.isTimeDilating()) {
-			gameInput.resetTimeDilating();
-			dilationTime.reset();
-			timeMod.toNormalTime();
-			playerTasks.hudPlayer.driftBar.hideSecondsLabel();
-		}
+		// reset it, endTimeDilation can be called out of GameInput as well
+		gameInput.resetTimeDilating();
+		dilationTime.reset();
+		timeMod.toNormalTime();
+		playerTasks.hudPlayer.driftBar.hideSecondsLabel();
 	}
 
 	@Override
@@ -673,10 +761,10 @@ public abstract class CommonLogic implements GameLogic {
 			public void handle (Object source, WrongWayMonitorEvent.Type type, WrongWayMonitorEvent.Order order) {
 				switch (type) {
 				case onWrongWayBegins:
-					playerTasks.hudPlayer.wrongWay.fadeIn();
-					playerError("Invalid lap");
+					wrongWayBegins();
 					break;
 				case onWrongWayEnds:
+					wrongWayEnds();
 					break;
 				}
 			}
@@ -688,20 +776,7 @@ public abstract class CommonLogic implements GameLogic {
 			public void handle (Object source, Type type, Order order) {
 				switch (type) {
 				case BeforeRender:
-					// request camera updates from callbacks
-					float zoom = updateCameraZoom(URacer.Game.getTimeModFactor());
-					updateCameraPosition(cameraPos);
-
-					// apply camera updates
-					gameWorldRenderer.setCameraZoom(zoom);
-					gameWorldRenderer.setCameraPosition(cameraPos);
-					gameWorldRenderer.updateCamera();
-
-					// sync post-processing animators
-					postProcessing.onBeforeRender(zoom, playerLapMonitor.getWarmUpCompletion());
-
-					// game tweener step
-					GameTweener.update();
+					beforeRender();
 					break;
 				}
 			}
@@ -714,89 +789,32 @@ public abstract class CommonLogic implements GameLogic {
 
 				switch (type) {
 				case onBeginDrift:
-					playerTasks.hudPlayer.beginDrift();
-					driftBegins();
+					driftBegins(player);
 					break;
 				case onEndDrift:
-					driftEnds();
-
-					float driftSeconds = player.driftState.driftSeconds();
-					// String msgSeconds = NumberString.format(playerCar.driftState.driftSeconds()) + "  seconds!";
-
-					if (player.driftState.hasCollided) {
-						playerTasks.hudPlayer.endDrift("-" + NumberString.format(driftSeconds), EndDriftType.BadDrift);
-					} else {
-
-						// if (driftSeconds >= 1 && driftSeconds < 3f) {
-						// gameTasksManager.messager.enqueue("NICE ONE!\n+" + msgSeconds, 1f, Type.Good, Position.Bottom, Size.Big);
-						// } else if (driftSeconds >= 3f && driftSeconds < 5f) {
-						// gameTasksManager.messager.enqueue("FANTASTIC!\n+" + msgSeconds, 1f, Type.Good, Position.Bottom, Size.Big);
-						// } else if (driftSeconds >= 5f) {
-						// gameTasksManager.messager.enqueue("UNREAL!\n+" + msgSeconds, 1f, Type.Good, Position.Bottom, Size.Big);
-						// }
-
-						playerTasks.hudPlayer.endDrift("+" + NumberString.format(driftSeconds), EndDriftType.GoodDrift);
-					}
-
+					driftEnds(player);
 					break;
 				}
 			}
 		};
 
 		private CarEvent.Listener playerCarListener = new CarEvent.Listener() {
-			private TweenCallback penaltyFinished = new TweenCallback() {
-				@Override
-				public void onEvent (int type, BaseTween<?> source) {
-					switch (type) {
-					case COMPLETE:
-						isPenalty = false;
-					}
-				}
-			};
-
 			@Override
 			public void handle (Object source, CarEvent.Type type, CarEvent.Order order) {
 				CarEvent.Data eventData = GameEvents.playerCar.data;
 
 				switch (type) {
 				case onCollision:
-
-					// invalidate time modulation
-					endTimeDilation();
-					postProcessing.alert(4000);
-
-					if (!isPenalty) {
-						isPenalty = true;
-						GameTweener.stop(accuDriftSeconds);
-						GameTweener.start(Timeline.createSequence()
-							.push(Tween.to(accuDriftSeconds, BoxedFloatAccessor.VALUE, 500).target(0).ease(Quad.INOUT))
-							.setCallback(penaltyFinished));
-						playerTasks.hudPlayer.highlightCollision();
-					}
-
+					collision(eventData);
 					break;
 				case onOutOfTrack:
-					outOfTrackTime.start();
-					playerTasks.hudPlayer.driftBar.showSecondsLabel();
-
 					outOfTrack();
 					break;
 				case onBackInTrack:
-					// updateDriftBar();
-					outOfTrackTime.reset();
-					playerTasks.hudPlayer.driftBar.hideSecondsLabel();
-
 					backInTrack();
 					break;
-				case onComputeForces:
-					RecorderError recerror = lapManager.record(eventData.forces);
-					if (recerror == RecorderError.ReplayMemoryLimitReached) {
-						Gdx.app.log("CommonLogic", "Player too slow, recording aborted.");
-						playerError("Too slow!");
-					}
-					// RecordingNotEnabled
-					// NoError
-
+				case onPhysicsForcesReady:
+					physicsForcesReady(eventData);
 					break;
 				}
 			}
@@ -807,9 +825,7 @@ public abstract class CommonLogic implements GameLogic {
 			public void handle (Object source, GhostCarEvent.Type type, GhostCarEvent.Order order) {
 				switch (type) {
 				case onGhostFadingOut:
-					if (hasPlayer() && source == nextTarget) {
-						playerTasks.hudPlayer.unHighlightNextTarget();
-					}
+					ghostFadingOut((GhostCar)source);
 					break;
 				case ReplayEnded:
 					ghostReplayEnded((GhostCar)source);
@@ -824,7 +840,7 @@ public abstract class CommonLogic implements GameLogic {
 			GameEvents.driftState.addListener(driftStateListener, PlayerDriftStateEvent.Type.onEndDrift);
 
 			GameEvents.playerCar.addListener(playerCarListener, CarEvent.Type.onCollision);
-			GameEvents.playerCar.addListener(playerCarListener, CarEvent.Type.onComputeForces);
+			GameEvents.playerCar.addListener(playerCarListener, CarEvent.Type.onPhysicsForcesReady);
 			GameEvents.playerCar.addListener(playerCarListener, CarEvent.Type.onOutOfTrack);
 			GameEvents.playerCar.addListener(playerCarListener, CarEvent.Type.onBackInTrack);
 		}
@@ -834,7 +850,7 @@ public abstract class CommonLogic implements GameLogic {
 			GameEvents.driftState.removeListener(driftStateListener, PlayerDriftStateEvent.Type.onEndDrift);
 
 			GameEvents.playerCar.removeListener(playerCarListener, CarEvent.Type.onCollision);
-			GameEvents.playerCar.removeListener(playerCarListener, CarEvent.Type.onComputeForces);
+			GameEvents.playerCar.removeListener(playerCarListener, CarEvent.Type.onPhysicsForcesReady);
 			GameEvents.playerCar.removeListener(playerCarListener, CarEvent.Type.onOutOfTrack);
 			GameEvents.playerCar.removeListener(playerCarListener, CarEvent.Type.onBackInTrack);
 		}

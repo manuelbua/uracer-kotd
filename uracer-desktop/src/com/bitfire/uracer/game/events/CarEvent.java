@@ -8,7 +8,7 @@ import com.bitfire.uracer.game.actors.CarForces;
 
 public final class CarEvent extends Event<CarEvent.Type, CarEvent.Order, CarEvent.Listener> {
 	public enum Type {
-		onComputeForces, onCollision, onOutOfTrack, onBackInTrack
+		onPhysicsForcesReady, onCollision, onOutOfTrack, onBackInTrack
 	}
 
 	public enum Order {
@@ -31,7 +31,7 @@ public final class CarEvent extends Event<CarEvent.Type, CarEvent.Order, CarEven
 		public Fixture other;
 		public Vector2 impulses;
 
-		/** compute forces data */
+		/** computed forces data */
 		public CarForces forces;
 
 		public void setCollisionData (Fixture other, Vector2 impulses) {
