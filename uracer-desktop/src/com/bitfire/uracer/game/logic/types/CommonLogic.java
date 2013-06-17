@@ -323,12 +323,12 @@ public abstract class CommonLogic implements GameLogic {
 	/** Restart and completely resets the game, removing any previous recording and playing replays */
 	@Override
 	public void resetGame () {
+		restartGame();
+
 		// clean everything
 		lapManager.removeAllReplays();
 		lapManager.reset(true);
 		gameTasksManager.raiseReset();
-
-		restartGame();
 	}
 
 	@Override
@@ -346,18 +346,22 @@ public abstract class CommonLogic implements GameLogic {
 	/** Request time dilation to begin */
 	@Override
 	public void startTimeDilation () {
-		dilationTime.start();
-		timeMod.toDilatedTime();
-		playerTasks.hudPlayer.driftBar.showSecondsLabel();
+		if (!gameInput.isTimeDilating()) {
+			dilationTime.start();
+			timeMod.toDilatedTime();
+			playerTasks.hudPlayer.driftBar.showSecondsLabel();
+		}
 	}
 
 	/** Request time dilation to end */
 	@Override
 	public void endTimeDilation () {
-		gameInput.resetTimeDilating();
-		dilationTime.reset();
-		timeMod.toNormalTime();
-		playerTasks.hudPlayer.driftBar.hideSecondsLabel();
+		if (gameInput.isTimeDilating()) {
+			gameInput.resetTimeDilating();
+			dilationTime.reset();
+			timeMod.toNormalTime();
+			playerTasks.hudPlayer.driftBar.hideSecondsLabel();
+		}
 	}
 
 	@Override
@@ -627,19 +631,6 @@ public abstract class CommonLogic implements GameLogic {
 		// 2. warmup completed + 3. lap started
 		// 4. lap completed + 5. lap started
 
-		private GhostLapCompletionMonitorEvent.Listener ghostLapCompletionMonitorListener = new GhostLapCompletionMonitorEvent.Listener() {
-			@Override
-			public void handle (Object source, GhostLapCompletionMonitorEvent.Type type, GhostLapCompletionMonitorEvent.Order order) {
-				switch (type) {
-				case onLapCompleted:
-					GhostCar ghost = (GhostCar)source;
-					Gdx.app.log("CommonLogic", "Ghost #" + ghost.getId() + " lap completed");
-					ghostLapCompleted(ghost);
-					break;
-				}
-			}
-		};
-
 		private PlayerLapCompletionMonitorEvent.Listener playerLapCompletionMonitorListener = new PlayerLapCompletionMonitorEvent.Listener() {
 			@Override
 			public void handle (Object source, PlayerLapCompletionMonitorEvent.Type type, PlayerLapCompletionMonitorEvent.Order order) {
@@ -659,6 +650,19 @@ public abstract class CommonLogic implements GameLogic {
 				case onLapCompleted:
 					Gdx.app.log("CommonLogic", "Player lap completed");
 					playerLapCompleted();
+					break;
+				}
+			}
+		};
+
+		private GhostLapCompletionMonitorEvent.Listener ghostLapCompletionMonitorListener = new GhostLapCompletionMonitorEvent.Listener() {
+			@Override
+			public void handle (Object source, GhostLapCompletionMonitorEvent.Type type, GhostLapCompletionMonitorEvent.Order order) {
+				switch (type) {
+				case onLapCompleted:
+					GhostCar ghost = (GhostCar)source;
+					Gdx.app.log("CommonLogic", "Ghost #" + ghost.getId() + " lap completed");
+					ghostLapCompleted(ghost);
 					break;
 				}
 			}
@@ -758,10 +762,7 @@ public abstract class CommonLogic implements GameLogic {
 				case onCollision:
 
 					// invalidate time modulation
-					if (gameInput.isTimeDilating()) {
-						endTimeDilation();
-					}
-
+					endTimeDilation();
 					postProcessing.alert(4000);
 
 					if (!isPenalty) {
