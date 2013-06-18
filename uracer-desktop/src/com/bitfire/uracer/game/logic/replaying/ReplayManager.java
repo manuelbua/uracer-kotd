@@ -2,143 +2,141 @@
 package com.bitfire.uracer.game.logic.replaying;
 
 import com.badlogic.gdx.Gdx;
+import com.badlogic.gdx.utils.Array;
 import com.badlogic.gdx.utils.Disposable;
-import com.bitfire.uracer.configuration.UserProfile;
 import com.bitfire.uracer.game.GameplaySettings;
-import com.bitfire.utils.ItemsManager;
 
 /** Maintains an updated list of the best <n> Replay objects for the specified track level */
 public final class ReplayManager implements Disposable {
 
 	public static final int MaxReplays = 2;
 	private final String trackId;
-	private final ItemsManager<Replay> replays = new ItemsManager<Replay>();
+	private final Array<Replay> nreplays = new Array<Replay>();
+	private final ReplayInfo replayInfo = new ReplayInfo();
 
-	private Replay best, worst;
-	private int ridx;
+	public enum DiscardReason {
+		Null, InvalidMinDuration, Invalid, WrongTrack, Slower, NotDiscarded
+	}
 
-	public ReplayManager (UserProfile userProfile, String trackId) {
-		this.trackId = trackId;
-		for (int i = 0; i < MaxReplays; i++) {
-			replays.add(new Replay(userProfile.userId));
+	/** Describes Replay position and state */
+	public static final class ReplayInfo {
+		public int position;
+		public boolean accepted;
+		public Replay replay;
+		public DiscardReason reason;
+
+		public void reset () {
+			position = -1;
+			accepted = false;
+			replay = null;
+			reason = DiscardReason.Null;
 		}
+	}
 
-		best = null;
-		worst = null;
-		ridx = 0;
+	public ReplayManager (String trackId) {
+		this.trackId = trackId;
 	}
 
 	@Override
 	public void dispose () {
-		replays.dispose();
+		for (Replay r : nreplays) {
+			r.dispose();
+		}
 	}
 
-	public Replay addReplay (Replay replay) {
+	private boolean isValidReplay (Replay replay, ReplayInfo info) {
+		// in case its invalid, returns the original Replay instance
+		info.accepted = false;
+		info.replay = replay;
+
 		if (replay == null) {
+			info.reason = DiscardReason.Null;
+
 			Gdx.app.log("ReplayManager", "Discarding null replay");
-			return null;
+			return false;
 		}
 
 		if (replay.getTrackTime() < GameplaySettings.ReplayMinDurationSecs) {
+			info.reason = DiscardReason.InvalidMinDuration;
+
 			Gdx.app.log("ReplayManager", "Invalid lap detected, (" + replay.getTrackTime() + "sec < "
 				+ GameplaySettings.ReplayMinDurationSecs + ")");
-			return null;
+			return false;
 		}
 
 		if (!replay.isValid()) {
+			info.reason = DiscardReason.Invalid;
+
 			Gdx.app.log("ReplayManager", "The specified replay is not valid.");
-			return null;
+			return false;
 		}
 
 		if (!replay.getTrackId().equals(trackId)) {
+			info.reason = DiscardReason.WrongTrack;
+
 			Gdx.app.log("ReplayManager", "The specified replay belongs to another game track.");
-			return null;
+			return false;
 		}
 
-		Replay added = null;
+		info.accepted = true;
+		info.replay = null;
+		return true;
+	}
 
-		// empty?
-		if (ridx == 0) {
-			added = replays.get(ridx++);
+	public ReplayInfo addReplay (Replay replay) {
+		replayInfo.reset();
+		if (isValidReplay(replay, replayInfo)) {
+			Replay added = new Replay();
 			added.copyData(replay);
+			nreplays.add(added);
+			nreplays.sort();
 
-			// update state
-			best = added;
-			worst = added;
-		} else {
+			// specified Replay has been copied to a new instance, use it instead
+			replayInfo.replay = added;
 
-			if (replay == worst) {
-				Gdx.app.log("!!!!", "!!");
+			if (nreplays.size > MaxReplays) {
+				nreplays.pop();
 			}
 
-			if (replay.getTrackTime() >= worst.getTrackTime()) {
-				Gdx.app.log("ReplayManager",
-					"Discarded, worse than the worst! (" + replay.getTrackTime() + " >= " + worst.getTrackTime() + ")");
-				return null;
-			}
+			int pos = nreplays.indexOf(added, true);
+			if (pos > -1) {
+				// replay accepted
+				replayInfo.accepted = true;
+				replayInfo.reason = DiscardReason.NotDiscarded;
+				replayInfo.position = pos + 1;
 
-			if (ridx == MaxReplays) {
-				// full, overwrite worst
-				worst.copyData(replay);
-				added = worst;
-
-				// recompute best/worst
-				worst = replays.get(0);
-				best = replays.get(0);
-				for (int i = 1; i < MaxReplays; i++) {
-					Replay r = replays.get(i);
-
-					if (worst.getTrackTime() < r.getTrackTime()) {
-						worst = r;
-					}
-
-					if (best.getTrackTime() > r.getTrackTime()) {
-						best = r;
-					}
-				}
+				Gdx.app.log("ReplayManager", "--> at position #" + replayInfo.position);
 			} else {
-				// add new
-				added = replays.get(ridx++);
-				added.copyData(replay);
+				// replay discarded
+				replayInfo.accepted = false;
+				replayInfo.reason = DiscardReason.Slower;
 
-				// compute best
-				if (best.getTrackTime() > added.getTrackTime()) {
-					best = added;
-				}
+				Gdx.app.log("ReplayManager", "--> discarded (slower)");
 			}
 		}
 
-		if (added != null) {
-			Gdx.app.log("ReplayManager", "added!");
-		}
-
-		return added;
+		return replayInfo;
 	}
 
 	public void removeAll () {
-		ridx = 0;
-		for (int i = 0; i < MaxReplays; i++) {
-			replays.get(i).reset();
+		for (Replay r : nreplays) {
+			r.reset();
 		}
 	}
 
 	public boolean hasReplays () {
-		return replays.count() > 0;
-	}
-
-	public boolean canClassify () {
-		return (best != worst && best != null && worst != null && best.isValid() && worst.isValid());
+		return nreplays.size > 0;
 	}
 
 	public Replay getBestReplay () {
-		return best;
+		return nreplays.first();
 	}
 
 	public Replay getWorstReplay () {
-		return worst;
+		return nreplays.peek();
 	}
 
 	public Iterable<Replay> getReplays () {
-		return replays;
+		return nreplays;
 	}
 }

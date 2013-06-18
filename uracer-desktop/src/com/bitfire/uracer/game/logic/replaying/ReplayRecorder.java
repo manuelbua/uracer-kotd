@@ -23,10 +23,9 @@ public final class ReplayRecorder implements Disposable {
 	// freshly recorded data
 	private Replay recording;
 
-	public ReplayRecorder (long userId) {
-		// this.userId = userId;
+	public ReplayRecorder () {
 		isRecording = false;
-		recording = new Replay(userId);
+		recording = new Replay();
 		time = new Time();
 	}
 
@@ -46,11 +45,11 @@ public final class ReplayRecorder implements Disposable {
 		time.reset();
 	}
 
-	public void beginRecording (Car car, String levelId) {
+	public void beginRecording (Car car, String trackId, long userId) {
 		Gdx.app.log("Recorder", "Beginning recording");
 
 		isRecording = true;
-		recording.begin(levelId, car);
+		recording.begin(trackId, userId, car);
 		time.start();
 	}
 

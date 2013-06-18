@@ -20,12 +20,13 @@ import com.bitfire.uracer.game.logic.gametasks.Messager;
 import com.bitfire.uracer.game.logic.gametasks.messager.Message;
 import com.bitfire.uracer.game.logic.gametasks.messager.Message.Position;
 import com.bitfire.uracer.game.logic.gametasks.messager.Message.Size;
+import com.bitfire.uracer.utils.AMath;
 
 /** Represents replay data to be feed to a GhostCar, the replay player.
  * 
  * @author manuel */
 
-public class Replay implements Disposable {
+public final class Replay implements Disposable, Comparable<Replay> {
 	public static final int MaxEvents = 5000;
 
 	// car data
@@ -40,13 +41,27 @@ public class Replay implements Disposable {
 	private int eventsCount;
 	private boolean completed = false;
 
-	public Replay (long userId) {
-		this.userId = userId;
+	public Replay () {
+		this.userId = -1;
 		eventsCount = 0;
 		forces = new CarForces[MaxEvents];
 		for (int i = 0; i < MaxEvents; i++) {
 			forces[i] = new CarForces();
 		}
+	}
+
+	public boolean canCompareTo (Replay o) {
+		// a Replay can be compared to another Replay only if it has been recorded on the same track
+		return trackId.equals(o.getTrackId());
+	}
+
+	@Override
+	public int compareTo (Replay o) {
+		// compare up to the 3rd decimal
+		float mul = 1f / AMath.CMP_EPSILON;
+		int thisSecs = (int)(getTrackTime() * mul);
+		int otherSecs = (int)(o.getTrackTime() * mul);
+		return thisSecs - otherSecs;
 	}
 
 	@Override
@@ -60,11 +75,12 @@ public class Replay implements Disposable {
 
 	public void reset () {
 		trackId = "";
-		completed = false;
+		trackTimeSeconds = 0;
 		eventsCount = 0;
 		carPositionMt.set(0, 0);
 		carOrientationRads = 0;
-		trackTimeSeconds = 0;
+		completed = false;
+
 		for (int i = 0; i < MaxEvents; i++) {
 			forces[i].reset();
 		}
@@ -84,11 +100,12 @@ public class Replay implements Disposable {
 		}
 	}
 
-	public void begin (String trackId, Car car) {
+	public void begin (String trackId, long userId, Car car) {
 		reset();
+		this.userId = userId;
+		this.trackId = trackId;
 		carPositionMt.set(car.getWorldPosMt());
 		carOrientationRads = car.getWorldOrientRads();
-		this.trackId = trackId;
 
 		// Gdx.app.log( "Replay", "Begin at " + carWorldPositionMt + ", " + carWorldOrientRads );
 	}
@@ -118,12 +135,10 @@ public class Replay implements Disposable {
 				GZIPInputStream gzis = new GZIPInputStream(fh.read());
 				DataInputStream is = new DataInputStream(gzis);
 
-				// read header
-				long userId = is.readLong();
-
-				Replay r = new Replay(userId);
+				Replay r = new Replay();
 
 				// replay info data
+				r.userId = is.readLong();
 				r.trackId = is.readUTF();
 				r.trackTimeSeconds = is.readFloat();
 				r.eventsCount = is.readInt();

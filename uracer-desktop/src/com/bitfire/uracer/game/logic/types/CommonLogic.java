@@ -51,7 +51,6 @@ import com.bitfire.uracer.screen.TransitionFactory.TransitionType;
 import com.bitfire.uracer.utils.AMath;
 import com.bitfire.uracer.utils.BoxedFloat;
 import com.bitfire.uracer.utils.BoxedFloatAccessor;
-import com.bitfire.uracer.utils.CarUtils;
 import com.bitfire.uracer.utils.InterpolatedFloat;
 import com.bitfire.uracer.utils.NumberString;
 
@@ -258,7 +257,7 @@ public abstract class CommonLogic implements GameLogic {
 		this.eventHandlers = new EventHandlers(this);
 
 		timeMod = new TimeModulator();
-		lapManager = new LapManager(userProfile, gameWorld.getLevelId());
+		lapManager = new LapManager(gameWorld.getLevelId());
 
 		// post-processing
 		postProcessing = gameRenderer.getPostProcessing();
@@ -477,8 +476,6 @@ public abstract class CommonLogic implements GameLogic {
 			lapManager.abortRecording(false);
 			gameTasksManager.sound.stop();
 
-			// Gdx.app.log("", "Finish with=" + NumberString.format(lapManager.getCurrentReplaySeconds()));
-
 			URacer.Screens.setScreen(ScreenType.MainScreen, TransitionType.Fader, 500);
 			// URacer.Screens.setScreen( ScreenType.ExitScreen, TransitionType.Fader, 500 );
 
@@ -679,24 +676,27 @@ public abstract class CommonLogic implements GameLogic {
 			Config.Debug.RenderTrackSectors = !Config.Debug.RenderTrackSectors;
 			gameWorldRenderer.showDebugGameTrack(Config.Debug.RenderTrackSectors);
 			gameWorldRenderer.setGameTrackDebugCar(playerCar);
-		} else if (inputSystem.isPressed(Keys.Z)) {
-			// start recording
-			playerCar.resetDistanceAndSpeed(true, true);
-			resetAllGhosts();
-			lapManager.abortRecording(true);
-			lapManager.startRecording(playerCar);
-			Gdx.app.log("GameLogic", "Recording...");
-		} else if (inputSystem.isPressed(Keys.X)) {
-			// stop recording and play
-			Replay userRec = lapManager.stopRecording();
-			playerCar.resetPhysics();
-			playerCar.resetDistanceAndSpeed(true, true);
-			if (userRec != null) {
-				CarUtils.dumpSpeedInfo("Player", playerCar, userRec.getTrackTime());
-				userRec.saveLocal(messager);
-				setGhostReplay(0, userRec);
-			}
-		} else if (inputSystem.isPressed(Keys.L)) {
+		}
+		// else if (inputSystem.isPressed(Keys.Z)) {
+		// // start recording
+		// playerCar.resetDistanceAndSpeed(true, true);
+		// resetAllGhosts();
+		// lapManager.abortRecording(true);
+		// lapManager.startRecording(playerCar, userProfile);
+		// Gdx.app.log("GameLogic", "Recording...");
+		// }
+		// else if (inputSystem.isPressed(Keys.X)) {
+		// // stop recording and play
+		// Replay userRec = lapManager.stopRecording();
+		// playerCar.resetPhysics();
+		// playerCar.resetDistanceAndSpeed(true, true);
+		// if (userRec != null) {
+		// CarUtils.dumpSpeedInfo("Player", playerCar, userRec.getTrackTime());
+		// userRec.saveLocal(messager);
+		// setGhostReplay(0, userRec);
+		// }
+		// }
+		else if (inputSystem.isPressed(Keys.L)) {
 			playerCar.resetPhysics();
 			playerCar.resetDistanceAndSpeed(true, true);
 			lapManager.stopRecording();
