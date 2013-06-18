@@ -151,6 +151,12 @@ public final class AMath {
 		return (float)tmp / p;
 	}
 
+	public static float normalizeImpactForce (float force) {
+		float v = AMath.clamp(force, 0, Config.Physics.MaxImpactForce);
+		v *= Config.Physics.OneOnMaxImpactForce;
+		return v;
+	}
+
 	//@off
 	/**
 	 *  Compute a timestep-independent damping factor from the specified arbitrary factor.

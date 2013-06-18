@@ -5,6 +5,7 @@ import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.audio.Sound;
 import com.badlogic.gdx.math.MathUtils;
 import com.bitfire.uracer.URacer;
+import com.bitfire.uracer.configuration.Config;
 import com.bitfire.uracer.game.GameEvents;
 import com.bitfire.uracer.game.events.CarEvent;
 import com.bitfire.uracer.game.events.CarEvent.Order;
@@ -20,9 +21,7 @@ public final class PlayerImpactSoundEffect extends SoundEffect {
 	private long lastSoundTimeMs = 0;
 
 	private static final long MinElapsedBetweenSoundsMs = 500;
-	private static final float MinImpactForce = 20;
-	private static final float MaxImpactForce = 200;
-	private static final float OneOnMaxImpactForce = 1f / MaxImpactForce;
+	private static final float MinImpactForce = 20f;
 	// private static final float MaxVolume = 1f;
 	private static final float MaxVolume = .8f;
 
@@ -94,8 +93,9 @@ public final class PlayerImpactSoundEffect extends SoundEffect {
 			lastSoundTimeMs = millis;
 
 			// avoid volumes==0, min-clamp at 20
-			float clampedImpactForce = AMath.clamp(impactForce, MinImpactForce, MaxImpactForce);
-			float impactFactor = clampedImpactForce * OneOnMaxImpactForce;
+			float clampedImpactForce = AMath.clamp(impactForce, MinImpactForce, Config.Physics.MaxImpactForce);
+			// FIXME clampedImpactForce should be (clampedImpactForce-MinImpactForce) before normalization
+			float impactFactor = clampedImpactForce * Config.Physics.OneOnMaxImpactForce;
 			// impactFactor = speedFactor;
 			float volumeFactor = 1f;
 

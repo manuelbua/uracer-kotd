@@ -5,17 +5,21 @@ import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.math.Vector2;
 import com.bitfire.uracer.configuration.UserProfile;
 import com.bitfire.uracer.game.actors.GhostCar;
+import com.bitfire.uracer.game.events.CarEvent.Data;
 import com.bitfire.uracer.game.logic.gametasks.messager.Message;
 import com.bitfire.uracer.game.logic.gametasks.messager.Message.Position;
 import com.bitfire.uracer.game.logic.gametasks.messager.Message.Size;
 import com.bitfire.uracer.game.logic.replaying.Replay;
 import com.bitfire.uracer.game.logic.replaying.ReplayManager.ReplayInfo;
+import com.bitfire.uracer.game.logic.types.helpers.CameraShaker;
 import com.bitfire.uracer.game.rendering.GameRenderer;
 import com.bitfire.uracer.game.world.GameWorld;
 import com.bitfire.uracer.utils.CarUtils;
 import com.bitfire.uracer.utils.Convert;
 
 public class SinglePlayer extends CommonLogic {
+	private CameraShaker camShaker = new CameraShaker();
+
 	public SinglePlayer (UserProfile userProfile, GameWorld gameWorld, GameRenderer gameRenderer) {
 		super(userProfile, gameWorld, gameRenderer);
 	}
@@ -26,14 +30,20 @@ public class SinglePlayer extends CommonLogic {
 	}
 
 	@Override
+	protected void collision (Data eventData) {
+		super.collision(eventData);
+		camShaker.onCollision(eventData);
+	}
+
+	@Override
 	protected void updateCameraPosition (Vector2 positionPx) {
 		if (hasPlayer()) {
 			// update player's headlights and move the world camera to follows it, if there is a player
 			if (gameWorld.isNightMode()) {
 				gameWorldRenderer.updatePlayerHeadlights(playerCar);
 			}
-
 			positionPx.set(playerCar.state().position);
+			positionPx.add(camShaker.compute());
 		} else if (isGhostActive(0)) {
 			// FIXME use available/choosen replay
 			positionPx.set(getGhost(0).state().position);

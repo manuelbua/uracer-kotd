@@ -117,20 +117,17 @@ public final class AggressiveCold implements PostProcessingAnimator {
 			return;
 		}
 
-		Timeline seq = Timeline.createSequence();
-
 		//@off
+		Timeline seq = Timeline.createSequence();
 		GameTweener.stop(alertAmount);
 		seq
 			.push(Tween.to(alertAmount, BoxedFloatAccessor.VALUE, 75).target(0.75f).ease(Quad.IN))
 			.pushPause(50)
 			.push(Tween.to(alertAmount, BoxedFloatAccessor.VALUE, milliseconds).target(0).ease(Quad.OUT));
 		GameTweener.start(seq);
-		
-//		Gdx.app.log("", "factor=" + factor);
-		alertColorOffset(0);
 		//@on
 
+		alertColorOffset(0);
 	}
 
 	private void alertColorOffset (float to) {

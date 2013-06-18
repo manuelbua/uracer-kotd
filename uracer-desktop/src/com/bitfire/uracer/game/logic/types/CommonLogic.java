@@ -101,7 +101,7 @@ public abstract class CommonLogic implements GameLogic {
 		public void onEvent (int type, BaseTween<?> source) {
 			switch (type) {
 			case COMPLETE:
-				isPenalty = false;
+				isCollisionPenalty = false;
 			}
 		}
 	};
@@ -112,10 +112,10 @@ public abstract class CommonLogic implements GameLogic {
 			endTimeDilation();
 		}
 
-		postProcessing.alert(4000);
+		postProcessing.alert(1000);
 
-		if (!isPenalty) {
-			isPenalty = true;
+		if (!isCollisionPenalty) {
+			isCollisionPenalty = true;
 			GameTweener.stop(accuDriftSeconds);
 			GameTweener.start(Timeline.createSequence()
 				.push(Tween.to(accuDriftSeconds, BoxedFloatAccessor.VALUE, 500).target(0).ease(Quad.INOUT))
@@ -226,7 +226,7 @@ public abstract class CommonLogic implements GameLogic {
 	protected GhostCar[] ghostCars = new GhostCar[ReplayManager.MaxReplays];
 	private WrongWayMonitor wrongWayMonitor;
 	protected boolean isCurrentLapValid = true;
-	protected boolean isPenalty;
+	protected boolean isCollisionPenalty;
 	private GhostCar nextTarget = null;
 	private Time dilationTime = new Time();
 	private Time outOfTrackTime = new Time();
@@ -399,7 +399,7 @@ public abstract class CommonLogic implements GameLogic {
 
 		accuDriftSeconds.value = 0;
 		isCurrentLapValid = true;
-		isPenalty = false;
+		isCollisionPenalty = false;
 	}
 
 	/** Restart and completely resets the game, removing any previous recording and playing replays */

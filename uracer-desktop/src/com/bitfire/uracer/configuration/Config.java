@@ -38,6 +38,10 @@ public final class Config {
 		/** defines physics dt duration, in seconds */
 		public static final float Dt = 1.0f / TimestepHz;
 
+		/** defines the minimum and maximum collision impact force to be considered */
+		public static final float MaxImpactForce = 200f;
+		public static final float OneOnMaxImpactForce = 1f / MaxImpactForce;
+
 		private Physics () {
 		}
 	}
@@ -59,7 +63,7 @@ public final class Config {
 		public static final boolean TraverseWalls = false;
 		public static final boolean ApplyCarFrictionFromMap = true;
 		public static final boolean FrustumCulling = true;
-		public static final boolean InfiniteDilationTime = false;
+		public static final boolean InfiniteDilationTime = true;
 
 		public static final boolean ShowAdvancedDebugInfo = true;
 
