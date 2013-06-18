@@ -25,7 +25,7 @@ public final class GhostCar extends Car {
 	public GhostCar (int id, GameWorld gameWorld, CarPreset.Type presetType) {
 		super(gameWorld, CarType.ReplayCar, InputMode.InputFromReplay, presetType, false);
 		this.id = id;
-		replay = new Replay(-1);
+		replay = new Replay();
 		resetDistanceAndSpeed(true, true);
 		removeReplay();
 		stillModel.setAlpha(0.5f);

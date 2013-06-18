@@ -9,6 +9,7 @@ import com.bitfire.uracer.game.logic.gametasks.messager.Message;
 import com.bitfire.uracer.game.logic.gametasks.messager.Message.Position;
 import com.bitfire.uracer.game.logic.gametasks.messager.Message.Size;
 import com.bitfire.uracer.game.logic.replaying.Replay;
+import com.bitfire.uracer.game.logic.replaying.ReplayManager.ReplayInfo;
 import com.bitfire.uracer.game.rendering.GameRenderer;
 import com.bitfire.uracer.game.world.GameWorld;
 import com.bitfire.uracer.utils.CarUtils;
@@ -71,19 +72,22 @@ public class SinglePlayer extends CommonLogic {
 	protected void playerLapStarted () {
 		lapManager.stopRecording();
 		playerCar.resetDistanceAndSpeed(true, false);
-		lapManager.startRecording(playerCar);
+		lapManager.startRecording(playerCar, userProfile);
 		restartAllReplays();
 	}
 
 	@Override
 	protected void playerLapCompleted () {
 		if (lapManager.isRecording()) {
-			Replay last = lapManager.stopRecording();
-			if (last != null) {
+			ReplayInfo ri = lapManager.stopRecording();
+
+			if (ri.accepted) {
+				Replay last = ri.replay;
+
 				// FIXME, change name?
 				// Should also pass more information? such as replay classification
 				// (was this replay better than all? than what?)
-				messager.show("New record!", 1.5f, Message.Type.Information, Position.Bottom, Size.Big);
+				messager.show("Got position #" + ri.position + "!", 1.5f, Message.Type.Information, Position.Bottom, Size.Big);
 
 				float v = gameTrack.getTrackCompletion(playerCar);
 				Gdx.app.log("SinglePlayer", "Stopped player at " + v);
