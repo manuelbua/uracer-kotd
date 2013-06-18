@@ -10,11 +10,6 @@ import com.bitfire.uracer.screen.ScreenFactory.ScreenId;
 import com.bitfire.uracer.screen.TransitionFactory.TransitionType;
 
 public final class ScreenManager {
-
-	// screens debug
-	// private SpriteBatch batch = new SpriteBatch();
-	// private OrthographicCamera cam = new OrthographicCamera();
-
 	private TransitionManager transMgr;
 	private static Screen current;
 	private ScreenId next;
@@ -31,11 +26,6 @@ public final class ScreenManager {
 		doSetScreenImmediate = false;
 		justTransitioned = false;
 		gl = Gdx.gl20;
-
-		// debug
-		// cam.setToOrtho(true, ScaleUtils.PlayWidth, ScaleUtils.PlayHeight);
-		// batch.setProjectionMatrix(cam.projection);
-		// batch.setTransformMatrix(cam.view);
 	}
 
 	public void dispose () {
@@ -45,7 +35,6 @@ public final class ScreenManager {
 		}
 
 		transMgr.dispose();
-		// batch.dispose();
 	}
 
 	public boolean begin () {
@@ -85,13 +74,7 @@ public final class ScreenManager {
 	/** Switch to the screen identified by the specified screen type, using the specified transition type in its default
 	 * configuration. The screen change is scheduled to happen at the start of the next frame. */
 	public void setScreen (ScreenType screen, TransitionType transitionType, long transitionDurationMs) {
-		// early exit
-		// if (transMgr.isActive()) {
-		// return;
-		// }
-
 		transMgr.removeTransition();
-
 		ScreenTransition transition = null;
 
 		// if no transition or no duration avoid everything and pass a null
@@ -107,13 +90,7 @@ public final class ScreenManager {
 	/** Switch to the screen identified by the specified screen type, using the specified transition. The screen change is scheduled
 	 * to happen at the start of the next frame. */
 	public void setScreen (ScreenType screen, ScreenTransition transition) {
-		// early exit
-		// if (transMgr.isActive()) {
-		// return;
-		// }
-
 		transMgr.removeTransition();
-
 		doSetScreenImmediate = false;
 		next = screen;
 
@@ -146,14 +123,6 @@ public final class ScreenManager {
 	}
 
 	public void resize (int width, int height) {
-		// if( transMgr.isActive()) {
-		// transMgr.getTransition().reset();
-		// transMgr.removeTransition();
-		// }
-		//
-		// if( current != null ) {
-		// current.resize( width, height );
-		// }
 	}
 
 	public void tick () {
@@ -167,7 +136,6 @@ public final class ScreenManager {
 	}
 
 	public void tickCompleted () {
-
 		if (transMgr.isActive()) {
 			return;
 		}
@@ -194,19 +162,6 @@ public final class ScreenManager {
 				current.render(null);
 			}
 		}
-
-		// debug
-		// ScreenUtils.copyScreen(current, transMgr.fbTo);
-		// batch.begin();
-		// Gdx.gl20.glViewport((int)ScaleUtils.CropX, (int)ScaleUtils.CropY, (int)ScaleUtils.PlayWidth, (int)ScaleUtils.PlayHeight);
-		// float w = transMgr.fbFrom.getColorBufferTexture().getWidth() * 0.25f;
-		// float h = transMgr.fbFrom.getColorBufferTexture().getHeight() * 0.25f;
-		// // batch.draw(transMgr.fbFrom.getColorBufferTexture(), 0, 0, w, h);
-		//
-		// w = transMgr.fbTo.getColorBufferTexture().getWidth() * 0.25f;
-		// h = transMgr.fbTo.getColorBufferTexture().getHeight() * 0.25f;
-		// batch.draw(transMgr.fbTo.getColorBufferTexture(), 0, 0, w, h);
-		// batch.end();
 	}
 
 	public void debugRender () {
