@@ -1,13 +1,13 @@
 <?xml version="1.0" standalone="no" ?>
 <!DOCTYPE project PUBLIC "-//audacityproject-1.3.0//DTD//EN" "http://audacity.sourceforge.net/xml/audacityproject-1.3.0.dtd" >
-<project xmlns="http://audacity.sourceforge.net/xml/" projname="tensive_data" version="1.3.0" audacityversion="2.0.3" sel0="90.0075510249" sel1="105.0324263083" vpos="384" h="89.6031682666" zoom="75.3879592728" rate="44100.0">
+<project xmlns="http://audacity.sourceforge.net/xml/" projname="tensive_data" version="1.3.0" audacityversion="2.0.3" sel0="74.9955555600" sel1="90.0075510249" vpos="0" h="0.0000000000" zoom="9.4234949091" rate="44100.0">
 	<tags>
 		<tag name="COMMENTS" value="Visit http://clearside.bandcamp.com"/>
 		<tag name="ARTIST" value="Clearside"/>
 		<tag name="TITLE" value="My Mind Is Going"/>
 		<tag name="YEAR" value="2012"/>
 	</tags>
-	<wavetrack name="prologue-1" channel="0" linked="1" mute="0" solo="0" height="84" minimized="0" isSelected="0" rate="44100" gain="1.0" pan="0.0">
+	<wavetrack name="prologue-1" channel="0" linked="1" mute="0" solo="0" height="84" minimized="1" isSelected="0" rate="44100" gain="1.0" pan="0.0">
 		<waveclip offset="0.00000000">
 			<sequence maxsamples="524288" sampleformat="131073" numsamples="661500">
 				<waveblock start="0">
@@ -20,7 +20,7 @@
 			<envelope numpoints="0"/>
 		</waveclip>
 	</wavetrack>
-	<wavetrack name="prologue-1" channel="1" linked="0" mute="0" solo="0" height="84" minimized="0" isSelected="0" rate="44100" gain="1.0" pan="0.0">
+	<wavetrack name="prologue-1" channel="1" linked="0" mute="0" solo="0" height="84" minimized="1" isSelected="0" rate="44100" gain="1.0" pan="0.0">
 		<waveclip offset="0.00000000">
 			<sequence maxsamples="524288" sampleformat="131073" numsamples="661500">
 				<waveblock start="0">
@@ -33,7 +33,7 @@
 			<envelope numpoints="0"/>
 		</waveclip>
 	</wavetrack>
-	<wavetrack name="prologue-2" channel="0" linked="1" mute="0" solo="0" height="83" minimized="0" isSelected="0" rate="44100" gain="1.0" pan="0.0">
+	<wavetrack name="prologue-2" channel="0" linked="1" mute="0" solo="0" height="83" minimized="1" isSelected="0" rate="44100" gain="1.0" pan="0.0">
 		<waveclip offset="15.00000000">
 			<sequence maxsamples="524288" sampleformat="131073" numsamples="661500">
 				<waveblock start="0">
@@ -46,7 +46,7 @@
 			<envelope numpoints="0"/>
 		</waveclip>
 	</wavetrack>
-	<wavetrack name="prologue-2" channel="1" linked="0" mute="0" solo="0" height="83" minimized="0" isSelected="0" rate="44100" gain="1.0" pan="0.0">
+	<wavetrack name="prologue-2" channel="1" linked="0" mute="0" solo="0" height="83" minimized="1" isSelected="0" rate="44100" gain="1.0" pan="0.0">
 		<waveclip offset="15.00000000">
 			<sequence maxsamples="524288" sampleformat="131073" numsamples="661500">
 				<waveblock start="0">
@@ -59,7 +59,7 @@
 			<envelope numpoints="0"/>
 		</waveclip>
 	</wavetrack>
-	<wavetrack name="prologue-3" channel="0" linked="1" mute="0" solo="0" height="86" minimized="0" isSelected="0" rate="44100" gain="1.0" pan="0.0">
+	<wavetrack name="prologue-3" channel="0" linked="1" mute="0" solo="0" height="86" minimized="1" isSelected="0" rate="44100" gain="1.0" pan="0.0">
 		<waveclip offset="30.00000000">
 			<sequence maxsamples="524288" sampleformat="131073" numsamples="661171">
 				<waveblock start="0">
@@ -72,7 +72,7 @@
 			<envelope numpoints="0"/>
 		</waveclip>
 	</wavetrack>
-	<wavetrack name="prologue-3" channel="1" linked="0" mute="0" solo="0" height="86" minimized="0" isSelected="0" rate="44100" gain="1.0" pan="0.0">
+	<wavetrack name="prologue-3" channel="1" linked="0" mute="0" solo="0" height="86" minimized="1" isSelected="0" rate="44100" gain="1.0" pan="0.0">
 		<waveclip offset="30.00000000">
 			<sequence maxsamples="524288" sampleformat="131073" numsamples="661171">
 				<waveblock start="0">
@@ -85,7 +85,7 @@
 			<envelope numpoints="0"/>
 		</waveclip>
 	</wavetrack>
-	<wavetrack name="prologue-4" channel="0" linked="1" mute="0" solo="0" height="80" minimized="0" isSelected="0" rate="44100" gain="1.0" pan="0.0">
+	<wavetrack name="prologue-4" channel="0" linked="1" mute="0" solo="0" height="80" minimized="1" isSelected="0" rate="44100" gain="1.0" pan="0.0">
 		<waveclip offset="44.99253968">
 			<sequence maxsamples="524288" sampleformat="131073" numsamples="661500">
 				<waveblock start="0">
@@ -98,7 +98,7 @@
 			<envelope numpoints="0"/>
 		</waveclip>
 	</wavetrack>
-	<wavetrack name="prologue-4" channel="1" linked="0" mute="0" solo="0" height="80" minimized="0" isSelected="0" rate="44100" gain="1.0" pan="0.0">
+	<wavetrack name="prologue-4" channel="1" linked="0" mute="0" solo="0" height="80" minimized="1" isSelected="0" rate="44100" gain="1.0" pan="0.0">
 		<waveclip offset="44.99253968">
 			<sequence maxsamples="524288" sampleformat="131073" numsamples="661500">
 				<waveblock start="0">
@@ -111,7 +111,7 @@
 			<envelope numpoints="0"/>
 		</waveclip>
 	</wavetrack>
-	<wavetrack name="inciso-1" channel="0" linked="1" mute="0" solo="0" height="87" minimized="0" isSelected="0" rate="44100" gain="1.0" pan="0.0">
+	<wavetrack name="inciso-1" channel="0" linked="1" mute="0" solo="0" height="87" minimized="1" isSelected="0" rate="44100" gain="1.0" pan="0.0">
 		<waveclip offset="59.99253968">
 			<sequence maxsamples="524288" sampleformat="131073" numsamples="661633">
 				<waveblock start="0">
@@ -124,7 +124,7 @@
 			<envelope numpoints="0"/>
 		</waveclip>
 	</wavetrack>
-	<wavetrack name="inciso-1" channel="1" linked="0" mute="0" solo="0" height="87" minimized="0" isSelected="0" rate="44100" gain="1.0" pan="0.0">
+	<wavetrack name="inciso-1" channel="1" linked="0" mute="0" solo="0" height="87" minimized="1" isSelected="0" rate="44100" gain="1.0" pan="0.0">
 		<waveclip offset="59.99253968">
 			<sequence maxsamples="524288" sampleformat="131073" numsamples="661633">
 				<waveblock start="0">
@@ -137,7 +137,7 @@
 			<envelope numpoints="0"/>
 		</waveclip>
 	</wavetrack>
-	<wavetrack name="inciso-2" channel="0" linked="1" mute="0" solo="0" height="84" minimized="0" isSelected="0" rate="44100" gain="1.0" pan="0.0">
+	<wavetrack name="inciso-2" channel="0" linked="1" mute="0" solo="0" height="84" minimized="1" isSelected="1" rate="44100" gain="1.0" pan="0.0">
 		<waveclip offset="74.99555556">
 			<sequence maxsamples="524288" sampleformat="131073" numsamples="662029">
 				<waveblock start="0">
@@ -150,7 +150,7 @@
 			<envelope numpoints="0"/>
 		</waveclip>
 	</wavetrack>
-	<wavetrack name="inciso-2" channel="1" linked="0" mute="0" solo="0" height="84" minimized="0" isSelected="0" rate="44100" gain="1.0" pan="0.0">
+	<wavetrack name="inciso-2" channel="1" linked="0" mute="0" solo="0" height="84" minimized="1" isSelected="1" rate="44100" gain="1.0" pan="0.0">
 		<waveclip offset="74.99555556">
 			<sequence maxsamples="524288" sampleformat="131073" numsamples="662029">
 				<waveblock start="0">
@@ -163,7 +163,7 @@
 			<envelope numpoints="0"/>
 		</waveclip>
 	</wavetrack>
-	<wavetrack name="inciso-3" channel="0" linked="1" mute="0" solo="0" height="82" minimized="0" isSelected="1" rate="44100" gain="1.0" pan="0.0">
+	<wavetrack name="inciso-3" channel="0" linked="1" mute="0" solo="0" height="82" minimized="1" isSelected="0" rate="44100" gain="1.0" pan="0.0">
 		<waveclip offset="90.00755102">
 			<sequence maxsamples="524288" sampleformat="131073" numsamples="611119">
 				<waveblock start="0">
@@ -184,7 +184,7 @@
 			<envelope numpoints="0"/>
 		</waveclip>
 	</wavetrack>
-	<wavetrack name="inciso-3" channel="1" linked="0" mute="0" solo="0" height="82" minimized="0" isSelected="1" rate="44100" gain="1.0" pan="0.0">
+	<wavetrack name="inciso-3" channel="1" linked="0" mute="0" solo="0" height="82" minimized="1" isSelected="0" rate="44100" gain="1.0" pan="0.0">
 		<waveclip offset="90.00755102">
 			<sequence maxsamples="524288" sampleformat="131073" numsamples="611119">
 				<waveblock start="0">
@@ -205,7 +205,7 @@
 			<envelope numpoints="0"/>
 		</waveclip>
 	</wavetrack>
-	<wavetrack name="Clearside -  Clearside - 05 My Mind Is Going" channel="0" linked="1" mute="1" solo="0" height="150" minimized="0" isSelected="0" rate="44100" gain="1.0" pan="0.0">
+	<wavetrack name="Clearside -  Clearside - 05 My Mind Is Going" channel="0" linked="1" mute="1" solo="0" height="150" minimized="1" isSelected="0" rate="44100" gain="1.0" pan="0.0">
 		<waveclip offset="0.00000000">
 			<sequence maxsamples="262144" sampleformat="262159" numsamples="7033728">
 				<waveblock start="0">
@@ -293,7 +293,7 @@
 			<envelope numpoints="0"/>
 		</waveclip>
 	</wavetrack>
-	<wavetrack name="Clearside -  Clearside - 05 My Mind Is Going" channel="1" linked="0" mute="1" solo="0" height="150" minimized="0" isSelected="0" rate="44100" gain="1.0" pan="0.0">
+	<wavetrack name="Clearside -  Clearside - 05 My Mind Is Going" channel="1" linked="0" mute="1" solo="0" height="150" minimized="1" isSelected="0" rate="44100" gain="1.0" pan="0.0">
 		<waveclip offset="0.00000000">
 			<sequence maxsamples="262144" sampleformat="262159" numsamples="7033728">
 				<waveblock start="0">

@@ -7,7 +7,6 @@ import aurelienribon.tweenengine.Tween;
 import aurelienribon.tweenengine.TweenCallback;
 import aurelienribon.tweenengine.equations.Linear;
 
-import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.math.MathUtils;
 import com.badlogic.gdx.math.Vector2;
 import com.bitfire.uracer.game.events.CarEvent;
@@ -16,7 +15,6 @@ import com.bitfire.uracer.utils.AMath;
 import com.bitfire.uracer.utils.BoxedFloat;
 import com.bitfire.uracer.utils.BoxedFloatAccessor;
 import com.bitfire.uracer.utils.InterpolatedFloat;
-import com.bitfire.uracer.utils.NumberString;
 
 public final class CameraShaker {
 	Vector2 result = new Vector2();
@@ -47,7 +45,7 @@ public final class CameraShaker {
 				.push(Tween.to(camshakeFactor, BoxedFloatAccessor.VALUE, 500).target(0).ease(Linear.INOUT))
 				.setCallback(camShakeFinished));
 
-			Gdx.app.log("", "target force=" + NumberString.formatLong(clampedImpactForce));
+			// Gdx.app.log("", "target force=" + NumberString.formatLong(clampedImpactForce));
 		}
 	}
 
