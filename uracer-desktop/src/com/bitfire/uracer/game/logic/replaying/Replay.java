@@ -58,9 +58,8 @@ public final class Replay implements Disposable, Comparable<Replay> {
 	@Override
 	public int compareTo (Replay o) {
 		// compare up to the 3rd decimal
-		float mul = 1f / AMath.CMP_EPSILON;
-		int thisSecs = (int)(getTrackTime() * mul);
-		int otherSecs = (int)(o.getTrackTime() * mul);
+		int thisSecs = (int)(getTrackTime() * AMath.ONE_ON_CMP_EPSILON);
+		int otherSecs = (int)(o.getTrackTime() * AMath.ONE_ON_CMP_EPSILON);
 		return thisSecs - otherSecs;
 	}
 

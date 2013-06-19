@@ -15,6 +15,7 @@ public final class AMath {
 	public static final float PI_8 = 0.392699081698724154807f;
 
 	public static final float CMP_EPSILON = 0.001f;
+	public static final float ONE_ON_CMP_EPSILON = 1f / CMP_EPSILON;
 
 	private AMath () {
 	}
