@@ -112,7 +112,7 @@ public abstract class CommonLogic implements GameLogic {
 			endTimeDilation();
 		}
 
-		postProcessing.alert(1000);
+		// postProcessing.alert(1000);
 
 		if (!isCollisionPenalty) {
 			isCollisionPenalty = true;

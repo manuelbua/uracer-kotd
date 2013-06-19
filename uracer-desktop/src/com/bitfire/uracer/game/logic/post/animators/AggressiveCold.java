@@ -3,7 +3,6 @@ package com.bitfire.uracer.game.logic.post.animators;
 
 import aurelienribon.tweenengine.Timeline;
 import aurelienribon.tweenengine.Tween;
-import aurelienribon.tweenengine.equations.Linear;
 import aurelienribon.tweenengine.equations.Quad;
 
 import com.badlogic.gdx.math.MathUtils;
@@ -19,6 +18,7 @@ import com.bitfire.uracer.configuration.Config;
 import com.bitfire.uracer.game.logic.post.PostProcessing;
 import com.bitfire.uracer.game.logic.post.PostProcessingAnimator;
 import com.bitfire.uracer.game.logic.post.ssao.Ssao;
+import com.bitfire.uracer.game.logic.types.helpers.CameraShaker;
 import com.bitfire.uracer.game.player.PlayerCar;
 import com.bitfire.uracer.game.rendering.GameRenderer;
 import com.bitfire.uracer.game.rendering.GameWorldRenderer;
@@ -42,7 +42,7 @@ public final class AggressiveCold implements PostProcessingAnimator {
 	private Ssao ssao = null;
 	private PlayerCar player = null;
 	private boolean hasPlayer = false;
-	private BoxedFloat alertAmount, offsetAmount;
+	private BoxedFloat alertAmount;
 	private boolean alertBegan = false;
 	private float bloomThreshold = 0.4f;
 
@@ -61,7 +61,6 @@ public final class AggressiveCold implements PostProcessingAnimator {
 		ssao = (Ssao)post.getEffect(PostProcessing.Effects.Ssao.name);
 
 		alertAmount = new BoxedFloat(0);
-		offsetAmount = new BoxedFloat(0);
 		blurStrength.setFixup(false);
 
 		reset();
@@ -89,7 +88,7 @@ public final class AggressiveCold implements PostProcessingAnimator {
 			;
 			GameTweener.start(seq);
 
-			alertColorOffset(0.6f);
+//			alertColorOffset(1.2f);
 			//@on
 		}
 	}
@@ -102,11 +101,6 @@ public final class AggressiveCold implements PostProcessingAnimator {
 			GameTweener.stop(alertAmount);
 			Timeline seq = Timeline.createSequence();
 			seq.push(Tween.to(alertAmount, BoxedFloatAccessor.VALUE, milliseconds).target(0).ease(Quad.INOUT));
-			GameTweener.start(seq);
-
-			GameTweener.stop(offsetAmount);
-			seq = Timeline.createSequence();
-			seq.push(Tween.to(offsetAmount, BoxedFloatAccessor.VALUE, milliseconds).target(0).ease(Quad.INOUT));
 			GameTweener.start(seq);
 		}
 	}
@@ -126,17 +120,6 @@ public final class AggressiveCold implements PostProcessingAnimator {
 			.push(Tween.to(alertAmount, BoxedFloatAccessor.VALUE, milliseconds).target(0).ease(Quad.OUT));
 		GameTweener.start(seq);
 		//@on
-
-		alertColorOffset(0);
-	}
-
-	private void alertColorOffset (float to) {
-		GameTweener.stop(offsetAmount);
-		Timeline seq = Timeline.createSequence();
-		seq.push(Tween.to(offsetAmount, BoxedFloatAccessor.VALUE, 150).target(0.75f).ease(Linear.INOUT)).pushPause(50)
-			.push(Tween.to(offsetAmount, BoxedFloatAccessor.VALUE, 750).target(to).ease(Quad.OUT));
-
-		GameTweener.start(seq);
 	}
 
 	@Override
@@ -264,7 +247,6 @@ public final class AggressiveCold implements PostProcessingAnimator {
 		}
 
 		if (zoom != null) {
-
 			if (hasPlayer) {
 				float sfactor = speed.get();
 				float z = (zoomCamera - (GameWorldRenderer.MinCameraZoom + GameWorldRenderer.ZoomWindow));
@@ -288,26 +270,24 @@ public final class AggressiveCold implements PostProcessingAnimator {
 			}
 		}
 
+		float shakeFactor = CameraShaker.camshakeFactor.value;
+
 		if (bloom != null) {
-
-			// float sat = 0.8f;
-			// if (nightMode) sat += 0.2f;
-			// sat *= warmUpCompletion;
-
 			float bsat = 1.3f;
 			if (nightMode) bsat += 0.2f;
-			// bsat *= warmUpCompletion;
 
-			// bloom.setBloomIntesity(1f);
-			// bloom.setBloomSaturation(nightMode ? 0.8f : 2f);
-			// bloom.setBaseIntesity(nightMode ? 0.7f : 1f);
-			// bloom.setBaseSaturation(1f);
+			float intensity = 1.4f + 4f * shakeFactor;
+			bloom.setBloomIntesity(intensity);
 
-			// bloom.setBaseSaturation(AMath.lerp(sat, sat * 0.25f, timeModFactor));
-			bloom.setBloomSaturation(AMath.lerp(bsat, bsat * 1.1f, timeModFactor));
-			bloom.setBloomIntesity(1.4f);
+			bsat = AMath.lerp(bsat, bsat * 1.4f, timeModFactor);
+			bsat -= bsat * shakeFactor * 2;
+			bsat = MathUtils.clamp(bsat, 0, bsat);
+			bloom.setBloomSaturation(bsat);
+
 			float t = 0.7f;
-			bloom.setBaseSaturation(t - t * timeModFactor);
+			t = t - t * timeModFactor - t * shakeFactor * 2;
+			t = MathUtils.clamp(t, 0, 1);
+			bloom.setBaseSaturation(t);
 		}
 
 		if (vignette != null) {
@@ -317,18 +297,19 @@ public final class AggressiveCold implements PostProcessingAnimator {
 				vignette.setSaturationMul(1 + timeModFactor * 0.2f);
 			}
 
-			float lutIntensity = 0.1f + timeModFactor * 1f + alertAmount.value * 1f;
-			lutIntensity = MathUtils.clamp(lutIntensity, 0, 1);
+			vignette.setIntensity(1f);
+			// float lutIntensity = 0.5f + timeModFactor * 1 + alertAmount.value * 1;
+			// lutIntensity = MathUtils.clamp(lutIntensity, 0, 1);
+			vignette.setLutIntensity(1);
+			// vignette.setLutIndexVal(1, 5);
 
-			vignette.setLutIntensity(lutIntensity);
-
-			if (crt == null) {
-				vignette.setIntensity(1.1f + 0.3f * timeModFactor);
-			} else {
-				vignette.setIntensity(0.7f);
+			float o = shakeFactor;// + alertAmount.value;
+			// if (alertBegan)
+			{
+				o += alertAmount.value;
 			}
-
-			vignette.setLutIndexOffset(alertAmount.value);
+			o = MathUtils.clamp(o, 0, 1);
+			vignette.setLutIndexOffset(o);
 		}
 
 		//
@@ -353,8 +334,8 @@ public final class AggressiveCold implements PostProcessingAnimator {
 
 		if (crt != null) {
 			// color offset
-			float amount = AMath.fixup(offsetAmount.value);
-			crt.setColorOffset(0.0005f + 0.01f * amount);
+			// float amount = AMath.fixup(offsetAmount.value);
+			crt.setColorOffset(0.0012f + 0.005f * shakeFactor);
 
 			// zoom+earth curvature
 			float dist = kdist - kdist * factor;

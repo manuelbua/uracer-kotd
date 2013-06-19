@@ -1,7 +1,6 @@
 
 package com.bitfire.uracer.game.logic.gametasks.sounds.effects;
 
-import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.audio.Sound;
 import com.badlogic.gdx.math.MathUtils;
 import com.bitfire.uracer.URacer;
@@ -85,7 +84,7 @@ public final class PlayerImpactSoundEffect extends SoundEffect {
 			return;
 		}
 
-		Gdx.app.log("PlayerImpactSoundEffect", "impactForce=" + impactForce);
+		// Gdx.app.log("PlayerImpactSoundEffect", "impactForce=" + impactForce);
 
 		// enough time passed from last impact sound?
 		long millis = System.currentTimeMillis();
@@ -99,7 +98,7 @@ public final class PlayerImpactSoundEffect extends SoundEffect {
 			// impactFactor = speedFactor;
 			float volumeFactor = 1f;
 
-			Gdx.app.log(this.getClass().getSimpleName(), impactForce + " (" + clampedImpactForce + ")");
+			// Gdx.app.log(this.getClass().getSimpleName(), impactForce + " (" + clampedImpactForce + ")");
 
 			Sound s = soundLow1;
 

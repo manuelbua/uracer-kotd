@@ -16,14 +16,15 @@ import com.bitfire.uracer.utils.AMath;
 import com.bitfire.uracer.utils.BoxedFloat;
 import com.bitfire.uracer.utils.BoxedFloatAccessor;
 import com.bitfire.uracer.utils.InterpolatedFloat;
-import com.bitfire.uracer.utils.NumberString;
 
 public final class CameraShaker {
+	private static final int Pixels = (int)(Gdx.graphics.getWidth() / 6.6f);
+
 	Vector2 result = new Vector2();
 	InterpolatedFloat noiseX = new InterpolatedFloat();
 	InterpolatedFloat noiseY = new InterpolatedFloat();
-	BoxedFloat camshakeFactor = new BoxedFloat(0);
-	float lastImpactForce = 0;
+	public static final BoxedFloat camshakeFactor = new BoxedFloat(0);
+	public static float lastImpactForce = 0;
 
 	private TweenCallback camShakeFinished = new TweenCallback() {
 		@Override
@@ -42,20 +43,29 @@ public final class CameraShaker {
 			lastImpactForce = clampedImpactForce;
 			GameTweener.stop(camshakeFactor);
 			camshakeFactor.value = 0;
-			GameTweener.start(Timeline.createSequence()
-				.push(Tween.to(camshakeFactor, BoxedFloatAccessor.VALUE, 200).target(clampedImpactForce).ease(Linear.INOUT))
-				.push(Tween.to(camshakeFactor, BoxedFloatAccessor.VALUE, 500).target(0).ease(Linear.INOUT))
+			GameTweener.start(Timeline
+				.createSequence()
+				.push(
+					Tween.to(camshakeFactor, BoxedFloatAccessor.VALUE, 200).target(clampedImpactForce)
+						.ease(aurelienribon.tweenengine.equations.Linear.INOUT))
+				.push(
+					Tween.to(camshakeFactor, BoxedFloatAccessor.VALUE, 500 + 1000 * clampedImpactForce).target(0).ease(Linear.INOUT))
 				.setCallback(camShakeFinished));
 
-			Gdx.app.log("", "target force=" + NumberString.formatLong(clampedImpactForce));
+			// Gdx.app.log("", "\ntarget force=" + NumberString.formatLong(clampedImpactForce));
 		}
 	}
 
 	public Vector2 compute () {
-		float alpha = AMath.fixup(0.2f * camshakeFactor.value);
-		float pixels = 50 + 50 * camshakeFactor.value;
-		float radiusX = MathUtils.random(-pixels, pixels);
-		float radiusY = MathUtils.random(-pixels, pixels);
+		float alpha = AMath.fixup(camshakeFactor.value) * 0.05f;
+		float px = Pixels;
+
+		// if (camshakeFactor.value > 0) {
+		// Gdx.app.log("", "camshakeFactor=" + NumberString.formatLong(camshakeFactor.value));
+		// }
+
+		float radiusX = MathUtils.random(-px, px);
+		float radiusY = MathUtils.random(-px, px);
 		noiseX.set(radiusX, alpha);
 		noiseY.set(radiusY, alpha);
 		result.set(noiseX.get(), noiseY.get());
