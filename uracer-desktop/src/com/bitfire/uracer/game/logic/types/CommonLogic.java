@@ -5,7 +5,7 @@ import aurelienribon.tweenengine.BaseTween;
 import aurelienribon.tweenengine.Timeline;
 import aurelienribon.tweenengine.Tween;
 import aurelienribon.tweenengine.TweenCallback;
-import aurelienribon.tweenengine.equations.Quad;
+import aurelienribon.tweenengine.equations.Linear;
 
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Input.Keys;
@@ -67,7 +67,7 @@ public abstract class CommonLogic implements GameLogic {
 		gameWorldRenderer.updateCamera();
 
 		// sync post-processing animators
-		postProcessing.onBeforeRender(zoom, playerLapMonitor.getWarmUpCompletion());
+		postProcessing.onBeforeRender(zoom, playerLapMonitor.getWarmUpCompletion(), collisionFactor.value);
 
 		// game tweener step
 		GameTweener.update();
@@ -96,32 +96,48 @@ public abstract class CommonLogic implements GameLogic {
 
 	protected abstract void updateCameraPosition (Vector2 positionPx);
 
-	private TweenCallback penaltyFinished = new TweenCallback() {
+	private final BoxedFloat collisionFactor = new BoxedFloat(0);
+	private float lastImpactForce = 0;
+
+	private TweenCallback collisionFinished = new TweenCallback() {
 		@Override
 		public void onEvent (int type, BaseTween<?> source) {
 			switch (type) {
 			case COMPLETE:
-				isCollisionPenalty = false;
+				lastImpactForce = 0;
+				playerTasks.hudPlayer.driftBar.hideSecondsLabel();
 			}
 		}
 	};
 
-	protected void collision (CarEvent.Data eventData) {
+	protected void collision (CarEvent.Data data) {
 		// invalidate time modulation
 		if (gameInput.isTimeDilating()) {
 			endTimeDilation();
 		}
 
-		// postProcessing.alert(1000);
+		float clampedImpactForce = AMath.normalizeImpactForce(data.impulses.len());
 
-		if (!isCollisionPenalty) {
-			isCollisionPenalty = true;
-			GameTweener.stop(accuDriftSeconds);
-			GameTweener.start(Timeline.createSequence()
-				.push(Tween.to(accuDriftSeconds, BoxedFloatAccessor.VALUE, 500).target(0).ease(Quad.INOUT))
-				.setCallback(penaltyFinished));
+		// while busy, a new collision factor will be accepted *only* if stronger
+		if (clampedImpactForce > 0 && clampedImpactForce > lastImpactForce) {
+			lastImpactForce = clampedImpactForce;
+
+			playerTasks.hudPlayer.driftBar.showSecondsLabel();
+
+			GameTweener.stop(collisionFactor);
+			collisionFactor.value = 0;
+			GameTweener.start(Timeline
+				.createSequence()
+				.push(Tween.to(collisionFactor, BoxedFloatAccessor.VALUE, 200).target(clampedImpactForce).ease(Linear.INOUT))
+				.push(
+					Tween.to(collisionFactor, BoxedFloatAccessor.VALUE, 500 + 1000 * clampedImpactForce).target(0).ease(Linear.INOUT))
+				.setCallback(collisionFinished));
+
 			playerTasks.hudPlayer.highlightCollision();
+			// Gdx.app.log("", "\ntarget force=" + NumberString.formatLong(clampedImpactForce));
 		}
+
+		// postProcessing.alert(1000);
 	}
 
 	protected void physicsForcesReady (CarEvent.Data eventData) {
@@ -423,6 +439,11 @@ public abstract class CommonLogic implements GameLogic {
 		return quitPending;
 	}
 
+	@Override
+	public float getCollisionFactor () {
+		return collisionFactor.value;
+	}
+
 	/** Request time dilation to begin */
 	@Override
 	public void startTimeDilation () {
@@ -575,6 +596,9 @@ public abstract class CommonLogic implements GameLogic {
 			if (!outOfTrackTime.isStopped()) {
 				accuDriftSeconds.value -= outOfTrackTime.elapsed(Reference.LastAbsoluteSeconds);
 			}
+
+			// lose wall-clock seconds on collision
+			accuDriftSeconds.value -= Config.Physics.Dt * collisionFactor.value * 2;
 		}
 
 		accuDriftSeconds.value = MathUtils.clamp(accuDriftSeconds.value, 0, DriftBar.MaxSeconds);
