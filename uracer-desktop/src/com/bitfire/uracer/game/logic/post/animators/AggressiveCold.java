@@ -269,25 +269,28 @@ public final class AggressiveCold implements PostProcessingAnimator {
 		}
 
 		float cf = collisionFactor;
-		// cf = 0.2f;
+		// cf = 1f;
 
 		if (bloom != null) {
-			float intensity = 1.4f + 4f * cf;
+			float intensity = 1.4f + 4f * cf + (nightMode ? 4 * cf : 0);
 			bloom.setBloomIntesity(intensity);
 
 			float bsat = 1.3f;
 			if (nightMode) bsat += 0.2f;
 			bsat = AMath.lerp(bsat, bsat * 1.4f, timeModFactor);
-			bsat -= (bsat * cf * 2) * cf;
+			// bsat -= (bsat * cf * 2) * cf;
+			bsat *= 1 - cf * 3;
 
 			float sat = 0.7f;
 			sat = sat - sat * timeModFactor;
-			sat -= (sat * cf * 2) * cf;
+			sat *= (1 - cf);
+			// sat -= (sat * cf * 2) * cf;
 
 			sat = MathUtils.clamp(sat, 0, 1);
 			bsat = MathUtils.clamp(bsat, 0, bsat);
 			bloom.setBaseSaturation(sat);
 			bloom.setBloomSaturation(bsat);
+
 		}
 
 		if (vignette != null) {
@@ -298,12 +301,13 @@ public final class AggressiveCold implements PostProcessingAnimator {
 			}
 
 			vignette.setIntensity(1f);
-			float lutIntensity = 0.5f + timeModFactor * 1 + alertAmount.value * 1;
+			float lutIntensity = 0.5f + timeModFactor * 1 + alertAmount.value * 1 + cf * 1;
 			lutIntensity = MathUtils.clamp(lutIntensity, 0, 1);
 			vignette.setLutIntensity(lutIntensity);
 
 			float offset = MathUtils.clamp(cf * 3 + alertAmount.value, 0, 1);
 			vignette.setLutIndexOffset(offset);
+			vignette.setLutIndexVal(1, 12);
 		}
 
 		//
@@ -329,7 +333,7 @@ public final class AggressiveCold implements PostProcessingAnimator {
 		if (crt != null) {
 			// color offset
 			// float amount = AMath.fixup(offsetAmount.value);
-			crt.setColorOffset(0.0012f + 0.005f * cf);
+			crt.setColorOffset(0.001f + 0.006f * cf);
 
 			// zoom+earth curvature
 			float dist = kdist - kdist * factor;

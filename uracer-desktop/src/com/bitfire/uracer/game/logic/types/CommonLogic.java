@@ -127,7 +127,7 @@ public abstract class CommonLogic implements GameLogic {
 				.createSequence()
 				.push(Tween.to(collisionFactor, BoxedFloatAccessor.VALUE, 100).target(clampedImpactForce).ease(Linear.INOUT))
 				.push(
-					Tween.to(collisionFactor, BoxedFloatAccessor.VALUE, 500 + 1000 * clampedImpactForce).target(0).ease(Linear.INOUT))
+					Tween.to(collisionFactor, BoxedFloatAccessor.VALUE, 500 + 2000 * clampedImpactForce).target(0).ease(Linear.INOUT))
 				.setCallback(collisionFinished));
 
 			playerTasks.hudPlayer.highlightCollision();
@@ -595,7 +595,7 @@ public abstract class CommonLogic implements GameLogic {
 			}
 
 			// lose wall-clock seconds on collision
-			accuDriftSeconds.value -= Config.Physics.Dt * 3 * collisionFactor.value;
+			accuDriftSeconds.value -= Config.Physics.Dt * 5 * collisionFactor.value;
 		}
 
 		accuDriftSeconds.value = MathUtils.clamp(accuDriftSeconds.value, 0, DriftBar.MaxSeconds);
