@@ -93,7 +93,7 @@ public class DriftBar extends Positionable {
 	}
 
 	public void hideSecondsLabel () {
-		labelSeconds.fadeOut(300);
+		labelSeconds.fadeOut(800);
 	}
 
 	@Override

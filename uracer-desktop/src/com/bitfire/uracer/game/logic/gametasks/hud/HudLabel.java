@@ -4,6 +4,7 @@ package com.bitfire.uracer.game.logic.gametasks.hud;
 import aurelienribon.tweenengine.Timeline;
 import aurelienribon.tweenengine.Tween;
 import aurelienribon.tweenengine.equations.Expo;
+import aurelienribon.tweenengine.equations.Linear;
 import aurelienribon.tweenengine.equations.Quint;
 
 import com.badlogic.gdx.graphics.Color;
@@ -103,14 +104,14 @@ public final class HudLabel extends Positionable {
 	public void fadeIn (int milliseconds) {
 		GameTweener.stop(this);
 		GameTweener.start(Timeline.createSequence().push(
-			Tween.to(this, HudLabelAccessor.OPACITY, milliseconds).target(1f).ease(Expo.INOUT)));
+			Tween.to(this, HudLabelAccessor.OPACITY, milliseconds).target(1f).ease(Linear.INOUT)));
 		// Gdx.app.log("", "fadein");
 	}
 
 	public void fadeOut (int milliseconds) {
 		GameTweener.stop(this);
 		GameTweener.start(Timeline.createSequence().push(
-			Tween.to(this, HudLabelAccessor.OPACITY, milliseconds).target(0f).ease(Expo.INOUT)));
+			Tween.to(this, HudLabelAccessor.OPACITY, milliseconds).target(0f).ease(Linear.INOUT)));
 		// Gdx.app.log("", "fadeout");
 	}
 

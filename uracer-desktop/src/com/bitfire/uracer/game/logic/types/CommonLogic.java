@@ -105,7 +105,6 @@ public abstract class CommonLogic implements GameLogic {
 			switch (type) {
 			case COMPLETE:
 				lastImpactForce = 0;
-				playerTasks.hudPlayer.driftBar.hideSecondsLabel();
 			}
 		}
 	};
@@ -121,8 +120,6 @@ public abstract class CommonLogic implements GameLogic {
 		// while busy, a new collision factor will be accepted *only* if stronger
 		if (clampedImpactForce > 0 && clampedImpactForce > lastImpactForce) {
 			lastImpactForce = clampedImpactForce;
-
-			playerTasks.hudPlayer.driftBar.showSecondsLabel();
 
 			GameTweener.stop(collisionFactor);
 			collisionFactor.value = 0;
@@ -211,13 +208,13 @@ public abstract class CommonLogic implements GameLogic {
 
 	protected void outOfTrack () {
 		outOfTrackTime.start();
-		playerTasks.hudPlayer.driftBar.showSecondsLabel();
+		// playerTasks.hudPlayer.driftBar.showSecondsLabel();
 	}
 
 	protected void backInTrack () {
 		// updateDriftBar();
 		outOfTrackTime.reset();
-		playerTasks.hudPlayer.driftBar.hideSecondsLabel();
+		// playerTasks.hudPlayer.driftBar.hideSecondsLabel();
 	}
 
 	// input
@@ -449,7 +446,7 @@ public abstract class CommonLogic implements GameLogic {
 	public void startTimeDilation () {
 		dilationTime.start();
 		timeMod.toDilatedTime();
-		playerTasks.hudPlayer.driftBar.showSecondsLabel();
+		// playerTasks.hudPlayer.driftBar.showSecondsLabel();
 	}
 
 	/** Request time dilation to end */
@@ -459,7 +456,7 @@ public abstract class CommonLogic implements GameLogic {
 		gameInput.resetTimeDilating();
 		dilationTime.reset();
 		timeMod.toNormalTime();
-		playerTasks.hudPlayer.driftBar.hideSecondsLabel();
+		// playerTasks.hudPlayer.driftBar.hideSecondsLabel();
 	}
 
 	@Override
@@ -598,7 +595,7 @@ public abstract class CommonLogic implements GameLogic {
 			}
 
 			// lose wall-clock seconds on collision
-			accuDriftSeconds.value -= Config.Physics.Dt * collisionFactor.value * 2;
+			accuDriftSeconds.value -= Config.Physics.Dt * 3 * collisionFactor.value;
 		}
 
 		accuDriftSeconds.value = MathUtils.clamp(accuDriftSeconds.value, 0, DriftBar.MaxSeconds);
