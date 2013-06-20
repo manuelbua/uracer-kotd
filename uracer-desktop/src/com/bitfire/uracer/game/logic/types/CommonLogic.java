@@ -125,7 +125,7 @@ public abstract class CommonLogic implements GameLogic {
 			collisionFactor.value = 0;
 			GameTweener.start(Timeline
 				.createSequence()
-				.push(Tween.to(collisionFactor, BoxedFloatAccessor.VALUE, 200).target(clampedImpactForce).ease(Linear.INOUT))
+				.push(Tween.to(collisionFactor, BoxedFloatAccessor.VALUE, 100).target(clampedImpactForce).ease(Linear.INOUT))
 				.push(
 					Tween.to(collisionFactor, BoxedFloatAccessor.VALUE, 500 + 1000 * clampedImpactForce).target(0).ease(Linear.INOUT))
 				.setCallback(collisionFinished));
