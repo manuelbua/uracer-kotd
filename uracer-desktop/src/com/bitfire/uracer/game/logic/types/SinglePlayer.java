@@ -5,7 +5,6 @@ import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.math.Vector2;
 import com.bitfire.uracer.configuration.UserProfile;
 import com.bitfire.uracer.game.actors.GhostCar;
-import com.bitfire.uracer.game.events.CarEvent.Data;
 import com.bitfire.uracer.game.logic.gametasks.messager.Message;
 import com.bitfire.uracer.game.logic.gametasks.messager.Message.Position;
 import com.bitfire.uracer.game.logic.gametasks.messager.Message.Size;
@@ -29,11 +28,11 @@ public class SinglePlayer extends CommonLogic {
 		super.dispose();
 	}
 
-	@Override
-	protected void collision (Data eventData) {
-		super.collision(eventData);
-		camShaker.onCollision(eventData);
-	}
+	// @Override
+	// protected void collision (Data eventData) {
+	// super.collision(eventData);
+	// camShaker.onCollision(eventData);
+	// }
 
 	@Override
 	protected void updateCameraPosition (Vector2 positionPx) {
@@ -43,7 +42,7 @@ public class SinglePlayer extends CommonLogic {
 				gameWorldRenderer.updatePlayerHeadlights(playerCar);
 			}
 			positionPx.set(playerCar.state().position);
-			positionPx.add(camShaker.compute());
+			positionPx.add(camShaker.compute(getCollisionFactor()));
 		} else if (isGhostActive(0)) {
 			// FIXME use available/choosen replay
 			positionPx.set(getGhost(0).state().position);

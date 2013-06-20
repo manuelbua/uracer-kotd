@@ -14,13 +14,15 @@ public interface GameLogic {
 
 	void quitGame ();
 
+	boolean isQuitPending ();
+
+	float getCollisionFactor ();
+
 	void startTimeDilation ();
 
 	void endTimeDilation ();
 
 	boolean isTimeDilationAvailable ();
-
-	boolean isQuitPending ();
 
 	void tick ();
 
