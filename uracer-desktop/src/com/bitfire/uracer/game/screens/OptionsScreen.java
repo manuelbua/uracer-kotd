@@ -21,10 +21,9 @@ import com.bitfire.postprocessing.filters.RadialBlur;
 import com.bitfire.uracer.Input;
 import com.bitfire.uracer.URacer;
 import com.bitfire.uracer.configuration.Config;
-import com.bitfire.uracer.configuration.Gameplay;
-import com.bitfire.uracer.configuration.Gameplay.TimeDilateInputMode;
 import com.bitfire.uracer.configuration.UserPreferences;
 import com.bitfire.uracer.configuration.UserPreferences.Preference;
+import com.bitfire.uracer.game.GameplaySettings.TimeDilateInputMode;
 import com.bitfire.uracer.game.logic.post.ssao.Ssao;
 import com.bitfire.uracer.game.screens.GameScreensFactory.ScreenType;
 import com.bitfire.uracer.resources.Art;
@@ -95,7 +94,7 @@ public class OptionsScreen extends Screen {
 				@Override
 				public void changed (ChangeEvent event, Actor actor) {
 					int index = ((SelectBox)actor).getSelectionIndex();
-					UserPreferences.string(Preference.TimeDilateInputMode, Gameplay.TimeDilateInputMode.values()[index].toString());
+					UserPreferences.string(Preference.TimeDilateInputMode, TimeDilateInputMode.values()[index].toString());
 					UserPreferences.save();
 				}
 			});
