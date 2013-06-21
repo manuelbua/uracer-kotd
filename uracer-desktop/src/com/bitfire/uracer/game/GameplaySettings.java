@@ -6,8 +6,8 @@ import com.bitfire.uracer.utils.AMath;
 public final class GameplaySettings {
 	public enum TimeDilateInputMode {
 		// @off
-		Toggle,				// (spacebar to act on desktop, touch to enable + touch to disable acting on device
-		TouchAndRelease,	// touch to act, release to stop acting
+		Toggle,				// touch to activate, touch again to deactivate
+		TouchAndRelease,	// touch to activate, release to deactivate
 		// @on
 	}
 
