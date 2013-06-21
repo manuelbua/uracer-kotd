@@ -5,6 +5,7 @@ import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Preferences;
 import com.bitfire.postprocessing.filters.RadialBlur;
 import com.bitfire.uracer.URacer;
+import com.bitfire.uracer.game.GameplaySettings.TimeDilateInputMode;
 import com.bitfire.uracer.game.logic.post.ssao.Ssao;
 
 /** Represents user-configurable properties.
@@ -104,7 +105,7 @@ public final class UserPreferences {
 		// gameplay
 		//
 
-		string(Preference.TimeDilateInputMode, Gameplay.TimeDilateInputMode.TouchAndRelease.toString());
+		string(Preference.TimeDilateInputMode, TimeDilateInputMode.TouchAndRelease.toString());
 		bool(Preference.NightMode, false);
 		string(Preference.LastPlayedTrack, "");
 

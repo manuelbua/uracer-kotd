@@ -18,6 +18,7 @@ import com.bitfire.uracer.configuration.UserProfile;
 import com.bitfire.uracer.game.DebugHelper;
 import com.bitfire.uracer.game.GameInput;
 import com.bitfire.uracer.game.GameLogic;
+import com.bitfire.uracer.game.GameplaySettings;
 import com.bitfire.uracer.game.Time;
 import com.bitfire.uracer.game.Time.Reference;
 import com.bitfire.uracer.game.actors.Car;
@@ -123,12 +124,17 @@ public abstract class CommonLogic implements GameLogic {
 
 			GameTweener.stop(collisionFactor);
 			collisionFactor.value = 0;
+
+			final float min = GameplaySettings.CollisionFactorMinDurationMs;
+			final float max = GameplaySettings.CollisionFactorMaxDurationMs;
+
+			//@off
 			GameTweener.start(Timeline
 				.createSequence()
-				.push(Tween.to(collisionFactor, BoxedFloatAccessor.VALUE, 100).target(clampedImpactForce).ease(Linear.INOUT))
-				.push(
-					Tween.to(collisionFactor, BoxedFloatAccessor.VALUE, 500 + 2000 * clampedImpactForce).target(0).ease(Linear.INOUT))
-				.setCallback(collisionFinished));
+				.push(Tween.to(collisionFactor, BoxedFloatAccessor.VALUE,100).target(clampedImpactForce).ease(Linear.INOUT))
+				.push(Tween.to(collisionFactor, BoxedFloatAccessor.VALUE,min + max * clampedImpactForce).target(0)
+					.ease(Linear.INOUT)).setCallback(collisionFinished));
+			//@on
 
 			playerTasks.hudPlayer.highlightCollision();
 			// Gdx.app.log("", "\ntarget force=" + NumberString.formatLong(clampedImpactForce));

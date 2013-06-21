@@ -4,10 +4,9 @@ package com.bitfire.uracer.game;
 import com.badlogic.gdx.Input.Keys;
 import com.bitfire.uracer.Input;
 import com.bitfire.uracer.Input.MouseButton;
-import com.bitfire.uracer.configuration.Gameplay;
-import com.bitfire.uracer.configuration.Gameplay.TimeDilateInputMode;
 import com.bitfire.uracer.configuration.UserPreferences;
 import com.bitfire.uracer.configuration.UserPreferences.Preference;
+import com.bitfire.uracer.game.GameplaySettings.TimeDilateInputMode;
 
 public final class GameInput {
 
@@ -19,7 +18,7 @@ public final class GameInput {
 	public GameInput (GameLogic logic, Input inputSystem) {
 		this.logic = logic;
 		this.input = inputSystem;
-		this.timeMode = Gameplay.TimeDilateInputMode.valueOf(UserPreferences.string(Preference.TimeDilateInputMode));
+		this.timeMode = TimeDilateInputMode.valueOf(UserPreferences.string(Preference.TimeDilateInputMode));
 		this.timeDilation = false;
 		input.releaseAllKeys();
 	}
