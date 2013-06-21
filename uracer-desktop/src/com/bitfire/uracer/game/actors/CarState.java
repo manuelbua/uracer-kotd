@@ -21,8 +21,8 @@ public final class CarState {
 	public float currForceFactor = 0;
 
 	// temporaries
-	private float carMaxSpeedSquared = 0;
-	private float carMaxForce = 0;
+	private final float CarMaxSpeedSquared;
+	private final float CarMaxForce;
 	// private int lastTileX = 0, lastTileY = 0;
 
 	private GameWorld world;
@@ -33,8 +33,11 @@ public final class CarState {
 
 		// precompute factors
 		if (car != null) {
-			carMaxSpeedSquared = car.getCarModel().max_speed * car.getCarModel().max_speed;
-			carMaxForce = car.getCarModel().max_force;
+			CarMaxSpeedSquared = car.getCarModel().max_speed * car.getCarModel().max_speed;
+			CarMaxForce = car.getCarModel().max_force;
+		} else {
+			CarMaxSpeedSquared = 1;
+			CarMaxForce = 1;
 		}
 	}
 
@@ -62,8 +65,8 @@ public final class CarState {
 		// speed/force normalized factors
 		currVelocityLenSquared = carDescriptor.velocity_wc.len2();
 		currThrottle = carDescriptor.throttle;
-		currSpeedFactor = AMath.clamp(currVelocityLenSquared / carMaxSpeedSquared, 0f, 1f);
-		currForceFactor = AMath.clamp(currThrottle / carMaxForce, 0f, 1f);
+		currSpeedFactor = AMath.clamp(currVelocityLenSquared / CarMaxSpeedSquared, 0f, 1f);
+		currForceFactor = AMath.clamp(currThrottle / CarMaxForce, 0f, 1f);
 	}
 
 	/*

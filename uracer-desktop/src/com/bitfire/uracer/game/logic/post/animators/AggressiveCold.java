@@ -228,7 +228,7 @@ public final class AggressiveCold implements PostProcessingAnimator {
 
 		if (hasPlayer) {
 			playerScreenPos.set(GameRenderer.ScreenUtils.worldPxToScreen(player.state().position));
-			speed.set(player.carState.currSpeedFactor, 0.02f);
+			speed.set(player.carState.currSpeedFactor, 0.25f);
 		} else {
 			playerScreenPos.set(0.5f, 0.5f);
 		}
@@ -244,11 +244,14 @@ public final class AggressiveCold implements PostProcessingAnimator {
 			}
 		}
 
+		float cf = collisionFactor;
+		// cf = 0.3f;
+
 		if (zoom != null) {
 			if (hasPlayer) {
 				float sfactor = speed.get();
 				float z = (zoomCamera - (GameWorldRenderer.MinCameraZoom + GameWorldRenderer.ZoomWindow));
-				float v = (-0.09f * sfactor) - 0.09f * z;
+				float v = (-0.09f * sfactor) - 0.09f * z - 0.3f * cf;
 				// Gdx.app.log("", "zoom=" + z);
 
 				float strength = v + (-0.05f * timeModFactor * sfactor);
@@ -268,22 +271,20 @@ public final class AggressiveCold implements PostProcessingAnimator {
 			}
 		}
 
-		float cf = collisionFactor;
-		// cf = 1f;
-
 		if (bloom != null) {
 			float intensity = 1.4f + 4f * cf + (nightMode ? 4 * cf : 0);
 			bloom.setBloomIntesity(intensity);
 
-			float bsat = 1.3f;
+			float bsat = 1.2f;
 			if (nightMode) bsat += 0.2f;
-			bsat = AMath.lerp(bsat, bsat * 1.4f, timeModFactor);
-			// bsat -= (bsat * cf * 2) * cf;
-			bsat *= 1 - cf * 3;
+			// bsat = AMath.lerp(bsat, bsat * 1.4f, timeModFactor);
+			bsat *= 1 - cf * 3f;
+			// bsat += 0.2f * speed.get() * 2;
 
-			float sat = 0.7f;
+			float sat = 0.7f;// * (1 - speed.get() * 2);
 			sat = sat - sat * timeModFactor;
 			sat *= (1 - cf);
+			// sat *= 1 - speed.get();
 			// sat -= (sat * cf * 2) * cf;
 
 			sat = MathUtils.clamp(sat, 0, 1);
