@@ -20,6 +20,9 @@ public final class GameplaySettings {
 	// a replay is discarded if its length is less than the specified seconds
 	public static final float ReplayMinDurationSecs = 4f;
 
+	public static final float CollisionFactorMinDurationMs = 500;
+	public static final float CollisionFactorMaxDurationMs = 2000;
+
 	private GameplaySettings () {
 	}
 }
