@@ -242,13 +242,13 @@ public final class AggressiveCold implements PostProcessingAnimator {
 		}
 
 		float cf = collisionFactor;
-		// cf = 0.4f;
+		// cf = 0.8f;
 
 		if (zoom != null) {
 			if (hasPlayer) {
 				float sfactor = speed.get();
 				float z = (zoomCamera - (GameWorldRenderer.MinCameraZoom + GameWorldRenderer.ZoomWindow));
-				float v = (-0.09f * sfactor) - 0.09f * z - 0.003f * cf;
+				float v = (-0.09f * sfactor) - 0.09f * z - 0.3f * cf;
 				// Gdx.app.log("", "zoom=" + z);
 
 				float strength = v + (-0.05f * timeModFactor * sfactor);
@@ -281,6 +281,7 @@ public final class AggressiveCold implements PostProcessingAnimator {
 			sat = sat - sat * timeModFactor;
 			sat = sat * (1 - cf);
 			sat = AMath.lerp(sat, -0.25f, MathUtils.clamp(alertAmount.value * 2, 0, 1));
+			sat = AMath.lerp(sat, -0.25f, cf);
 
 			sat = MathUtils.clamp(sat, -1, 1);
 			bsat = MathUtils.clamp(bsat, 0, bsat);
