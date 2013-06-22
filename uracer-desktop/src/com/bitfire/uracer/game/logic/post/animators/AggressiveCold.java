@@ -41,7 +41,7 @@ public final class AggressiveCold implements PostProcessingAnimator {
 	private Ssao ssao = null;
 	private PlayerCar player = null;
 	private boolean hasPlayer = false;
-	private BoxedFloat alertAmount;
+	private BoxedFloat alertAmount = new BoxedFloat(0);
 	private boolean alertBegan = false;
 	private float bloomThreshold = 0.4f;
 
@@ -58,10 +58,7 @@ public final class AggressiveCold implements PostProcessingAnimator {
 		crt = (CrtMonitor)post.getEffect(PostProcessing.Effects.Crt.name);
 		curvature = (Curvature)post.getEffect(PostProcessing.Effects.Curvature.name);
 		ssao = (Ssao)post.getEffect(PostProcessing.Effects.Ssao.name);
-
-		alertAmount = new BoxedFloat(0);
 		blurStrength.setFixup(false);
-
 		reset();
 	}
 
@@ -153,7 +150,7 @@ public final class AggressiveCold implements PostProcessingAnimator {
 			vignette.setCenter(ScaleUtils.PlayWidth / 2, ScaleUtils.PlayHeight / 2);
 			vignette.setLutTexture(Art.postXpro);
 			vignette.setLutIndexVal(0, 16);
-			vignette.setLutIndexVal(1, 7);
+			vignette.setLutIndexVal(1, 12);
 			vignette.setLutIndexOffset(0);
 			vignette.setEnabled(true);
 
@@ -245,13 +242,13 @@ public final class AggressiveCold implements PostProcessingAnimator {
 		}
 
 		float cf = collisionFactor;
-		// cf = 0.3f;
+		// cf = 0.4f;
 
 		if (zoom != null) {
 			if (hasPlayer) {
 				float sfactor = speed.get();
 				float z = (zoomCamera - (GameWorldRenderer.MinCameraZoom + GameWorldRenderer.ZoomWindow));
-				float v = (-0.09f * sfactor) - 0.09f * z - 0.3f * cf;
+				float v = (-0.09f * sfactor) - 0.09f * z - 0.003f * cf;
 				// Gdx.app.log("", "zoom=" + z);
 
 				float strength = v + (-0.05f * timeModFactor * sfactor);
@@ -271,23 +268,21 @@ public final class AggressiveCold implements PostProcessingAnimator {
 			}
 		}
 
+		float bsat = 0, sat = 0;
 		if (bloom != null) {
 			float intensity = 1.4f + 4f * cf + (nightMode ? 4 * cf : 0);
 			bloom.setBloomIntesity(intensity);
 
-			float bsat = 1.2f;
+			bsat = 1.2f;
 			if (nightMode) bsat += 0.2f;
-			// bsat = AMath.lerp(bsat, bsat * 1.4f, timeModFactor);
 			bsat *= 1 - cf * 3f;
-			// bsat += 0.2f * speed.get() * 2;
 
-			float sat = 0.7f;// * (1 - speed.get() * 2);
+			sat = 0.7f;
 			sat = sat - sat * timeModFactor;
-			sat *= (1 - cf);
-			// sat *= 1 - speed.get();
-			// sat -= (sat * cf * 2) * cf;
+			sat = sat * (1 - cf);
+			sat = AMath.lerp(sat, -0.25f, MathUtils.clamp(alertAmount.value * 2, 0, 1));
 
-			sat = MathUtils.clamp(sat, 0, 1);
+			sat = MathUtils.clamp(sat, -1, 1);
 			bsat = MathUtils.clamp(bsat, 0, bsat);
 			bloom.setBaseSaturation(sat);
 			bloom.setBloomSaturation(bsat);
@@ -308,7 +303,6 @@ public final class AggressiveCold implements PostProcessingAnimator {
 
 			float offset = MathUtils.clamp(cf * 3 + alertAmount.value, 0, 1);
 			vignette.setLutIndexOffset(offset);
-			vignette.setLutIndexVal(1, 12);
 		}
 
 		//
