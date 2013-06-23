@@ -163,7 +163,7 @@ public abstract class CommonLogic implements GameLogic {
 	}
 
 	protected void ghostFadingOut (GhostCar ghost) {
-		if (hasPlayer() && ghost != null && ghost == nextTarget) {
+		if (ghost != null && ghost == nextTarget) {
 			playerTasks.hudPlayer.unHighlightNextTarget();
 		}
 	}
@@ -683,6 +683,8 @@ public abstract class CommonLogic implements GameLogic {
 				}
 
 				ghostIndex++;
+			} else {
+				setGhostReplay(ghostIndex, null);
 			}
 		}
 	}

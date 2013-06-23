@@ -114,7 +114,7 @@ public class SinglePlayer extends CommonLogic {
 	@Override
 	protected void ghostLapCompleted (GhostCar ghost) {
 		if (!hasPlayer()) {
-			ghost.restartReplay();
+			restartAllReplays();
 		} else {
 			ghost.removeReplay();
 		}
