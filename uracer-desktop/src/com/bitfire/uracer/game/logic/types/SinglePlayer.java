@@ -9,12 +9,14 @@ import com.bitfire.uracer.game.logic.gametasks.messager.Message;
 import com.bitfire.uracer.game.logic.gametasks.messager.Message.Position;
 import com.bitfire.uracer.game.logic.gametasks.messager.Message.Size;
 import com.bitfire.uracer.game.logic.replaying.Replay;
+import com.bitfire.uracer.game.logic.replaying.ReplayManager;
 import com.bitfire.uracer.game.logic.replaying.ReplayManager.ReplayInfo;
 import com.bitfire.uracer.game.logic.types.helpers.CameraShaker;
 import com.bitfire.uracer.game.rendering.GameRenderer;
 import com.bitfire.uracer.game.world.GameWorld;
 import com.bitfire.uracer.utils.CarUtils;
 import com.bitfire.uracer.utils.Convert;
+import com.bitfire.uracer.utils.OrdinalUtils;
 
 public class SinglePlayer extends CommonLogic {
 	private CameraShaker camShaker = new CameraShaker();
@@ -90,22 +92,18 @@ public class SinglePlayer extends CommonLogic {
 		if (lapManager.isRecording()) {
 			ReplayInfo ri = lapManager.stopRecording();
 
+			int pos = ReplayManager.MaxReplays + 1;
 			if (ri.accepted) {
+				pos = ri.position;
 				Replay last = ri.replay;
-
-				// FIXME, change name?
-				// Should also pass more information? such as replay classification
-				// (was this replay better than all? than what?)
-				messager.show("Got position #" + ri.position + "!", 1.5f, Message.Type.Information, Position.Bottom, Size.Big);
 
 				float v = gameTrack.getTrackCompletion(playerCar);
 				Gdx.app.log("SinglePlayer", "Stopped player at " + v);
 				CarUtils.dumpSpeedInfo("Player", playerCar, last.getTrackTime());
-
-			} else {
-				// discarded if worse than the worst
-				messager.show("Try again...", 1.5f, Message.Type.Information, Position.Bottom, Size.Big);
 			}
+
+			messager.show("You finished\n" + pos + OrdinalUtils.getOrdinalFor(pos) + "!", 1.5f, Message.Type.Information,
+				Position.Middle, Size.Big);
 		}
 
 		playerCar.resetDistanceAndSpeed(true, false);
