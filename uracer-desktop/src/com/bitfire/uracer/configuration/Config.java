@@ -57,7 +57,6 @@ public final class Config {
 		public static final boolean RenderDebugInfoMeshStats = true;
 		public static final boolean RenderDebugInfoMemoryStats = false;
 		public static final boolean RenderDebugInfoPostProcessor = true;
-		public static final boolean RenderDebugDrawsInTransitions = true;
 		public static boolean RenderTrackSectors = false;
 
 		public static final boolean TraverseWalls = false;

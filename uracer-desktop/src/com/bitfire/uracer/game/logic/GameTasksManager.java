@@ -1,7 +1,11 @@
 
 package com.bitfire.uracer.game.logic;
 
+import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.utils.Array;
+import com.bitfire.postprocessing.PostProcessor;
+import com.bitfire.uracer.configuration.Config;
+import com.bitfire.uracer.game.debug.DebugHelper;
 import com.bitfire.uracer.game.events.TaskManagerEvent;
 import com.bitfire.uracer.game.logic.gametasks.GameTask;
 import com.bitfire.uracer.game.logic.gametasks.Hud;
@@ -29,12 +33,15 @@ public final class GameTasksManager {
 	// special effects
 	public TrackEffects effects = null;
 
-	public GameTasksManager (GameWorld world) {
+	// debug
+	public DebugHelper debug = null;
+
+	public GameTasksManager (GameWorld world, PostProcessor postProcessor) {
 		gameWorld = world;
-		createTasks();
+		createTasks(postProcessor);
 	}
 
-	private void createTasks () {
+	private void createTasks (PostProcessor postProcessor) {
 		// physics step
 		physicsStep = new PhysicsStep(gameWorld.getBox2DWorld(), TaskManagerEvent.Order.MINUS_4);
 		add(physicsStep);
@@ -50,6 +57,13 @@ public final class GameTasksManager {
 		// effects manager
 		effects = new TrackEffects();
 		add(effects);
+
+		// debug
+		if (Config.Debug.UseDebugHelper) {
+			debug = new DebugHelper(gameWorld, postProcessor);
+			add(debug);
+			Gdx.app.debug("Game", "Debug helper initialized");
+		}
 	}
 
 	public void add (GameTask task) {

@@ -1,5 +1,5 @@
 
-package com.bitfire.uracer.game.rendering;
+package com.bitfire.uracer.game.debug;
 
 import java.util.List;
 
@@ -10,12 +10,14 @@ import com.badlogic.gdx.graphics.glutils.ShapeRenderer.ShapeType;
 import com.badlogic.gdx.math.MathUtils;
 import com.badlogic.gdx.math.Polygon;
 import com.badlogic.gdx.math.Vector2;
+import com.bitfire.uracer.configuration.Config;
 import com.bitfire.uracer.game.GameEvents;
 import com.bitfire.uracer.game.actors.Car;
 import com.bitfire.uracer.game.logic.helpers.GameTrack;
 import com.bitfire.uracer.game.logic.helpers.GameTrack.TrackSector;
+import com.bitfire.uracer.game.player.PlayerCar;
 
-public class GameTrackDebugRenderer extends DebugRenderer {
+public class GameTrackDebugRenderer extends DebugRenderable {
 
 	private final ShapeRenderer shape;
 	private Car car;
@@ -35,12 +37,32 @@ public class GameTrackDebugRenderer extends DebugRenderer {
 
 	@Override
 	public void dispose () {
-		super.dispose();
 		shape.dispose();
 	}
 
 	@Override
+	public void tick () {
+	}
+
+	@Override
+	public void player (PlayerCar player) {
+		car = player;
+		hasCar = (car != null);
+	}
+
+	private void drawSector (TrackSector sector) {
+		Polygon p = sector.poly;
+		float[] vertices = p.getTransformedVertices();
+		shape.line(vertices[0], vertices[1], vertices[2], vertices[3]);
+		shape.line(vertices[2], vertices[3], vertices[4], vertices[5]);
+		shape.line(vertices[4], vertices[5], vertices[6], vertices[7]);
+		shape.line(vertices[6], vertices[7], vertices[0], vertices[1]);
+	}
+
+	@Override
 	public void render () {
+		if (!Config.Debug.RenderTrackSectors) return;
+
 		float alpha = 0.25f;
 		float carAlpha = alpha * 3;
 		float sectorCenterFactor = 0;
@@ -130,19 +152,5 @@ public class GameTrackDebugRenderer extends DebugRenderer {
 		}
 
 		Gdx.gl.glDisable(GL20.GL_BLEND);
-	}
-
-	private void drawSector (TrackSector sector) {
-		Polygon p = sector.poly;
-		float[] vertices = p.getTransformedVertices();
-		shape.line(vertices[0], vertices[1], vertices[2], vertices[3]);
-		shape.line(vertices[2], vertices[3], vertices[4], vertices[5]);
-		shape.line(vertices[4], vertices[5], vertices[6], vertices[7]);
-		shape.line(vertices[6], vertices[7], vertices[0], vertices[1]);
-	}
-
-	public void setCar (Car car) {
-		this.car = car;
-		hasCar = (this.car != null);
 	}
 }

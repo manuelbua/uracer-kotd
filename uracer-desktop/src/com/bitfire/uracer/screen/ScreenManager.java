@@ -164,16 +164,6 @@ public final class ScreenManager {
 		}
 	}
 
-	public void debugRender () {
-		if (transMgr.isActive()) {
-			return;
-		}
-
-		if (current != null) {
-			current.debugRender();
-		}
-	}
-
 	public void pause () {
 		if (quitPending) {
 			return;

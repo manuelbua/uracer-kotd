@@ -5,7 +5,6 @@ import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.GL20;
 import com.badlogic.gdx.graphics.glutils.FrameBuffer;
-import com.bitfire.uracer.configuration.Config;
 
 /** Implements useful Screen objects related utilities. */
 public final class ScreenUtils {
@@ -21,12 +20,6 @@ public final class ScreenUtils {
 			Gdx.gl20.glActiveTexture(GL20.GL_TEXTURE0);
 
 			screen.render(buffer);
-
-			if (Config.Debug.RenderDebugDrawsInTransitions) {
-				buffer.begin();
-				screen.debugRender();
-				buffer.end();
-			}
 		}
 	}
 

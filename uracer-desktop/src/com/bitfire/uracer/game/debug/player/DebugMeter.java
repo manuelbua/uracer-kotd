@@ -1,5 +1,5 @@
 
-package com.bitfire.uracer.game.logic.gametasks.hud.debug;
+package com.bitfire.uracer.game.debug.player;
 
 import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.Pixmap;
@@ -14,7 +14,7 @@ import com.bitfire.uracer.resources.Art;
 import com.bitfire.uracer.utils.AMath;
 import com.bitfire.uracer.utils.SpriteBatchUtils;
 
-public class HudDebugMeter implements Disposable {
+public class DebugMeter implements Disposable {
 	// graphics data
 	private Pixmap pixels;
 	private Texture texture;
@@ -28,7 +28,7 @@ public class HudDebugMeter implements Disposable {
 
 	public Color color = new Color(1, 1, 1, 1);
 
-	public HudDebugMeter (int width, int height) {
+	public DebugMeter (int width, int height) {
 		assert (width < 256 && height < 256);
 
 		this.name = "";

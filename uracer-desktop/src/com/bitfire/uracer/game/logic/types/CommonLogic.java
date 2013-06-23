@@ -15,7 +15,6 @@ import com.bitfire.uracer.Input;
 import com.bitfire.uracer.URacer;
 import com.bitfire.uracer.configuration.Config;
 import com.bitfire.uracer.configuration.UserProfile;
-import com.bitfire.uracer.game.DebugHelper;
 import com.bitfire.uracer.game.GameInput;
 import com.bitfire.uracer.game.GameLogic;
 import com.bitfire.uracer.game.GameplaySettings;
@@ -24,6 +23,9 @@ import com.bitfire.uracer.game.Time.Reference;
 import com.bitfire.uracer.game.actors.Car;
 import com.bitfire.uracer.game.actors.CarPreset;
 import com.bitfire.uracer.game.actors.GhostCar;
+import com.bitfire.uracer.game.debug.DebugHelper;
+import com.bitfire.uracer.game.debug.GameTrackDebugRenderer;
+import com.bitfire.uracer.game.debug.player.DebugPlayer;
 import com.bitfire.uracer.game.events.CarEvent;
 import com.bitfire.uracer.game.logic.GameTasksManager;
 import com.bitfire.uracer.game.logic.gametasks.Messager;
@@ -223,6 +225,9 @@ public abstract class CommonLogic implements GameLogic {
 		// playerTasks.hudPlayer.driftBar.hideSecondsLabel();
 	}
 
+	// debug
+	private DebugHelper debug = null;
+
 	// input
 	protected Input inputSystem = null;
 	protected GameInput gameInput = null;
@@ -282,11 +287,12 @@ public abstract class CommonLogic implements GameLogic {
 		postProcessing = gameRenderer.getPostProcessing();
 
 		// create both game and player tasks
-		gameTasksManager = new GameTasksManager(gameWorld);
+		gameTasksManager = new GameTasksManager(gameWorld, postProcessing.getPostProcessor());
 		gameTasksManager.add(messager);
 		playerTasks = new PlayerGameTasks(userProfile, gameTasksManager);
 		playerTasks.createTasks(lapManager);
 
+		// create ghost cars
 		for (int i = 0; i < ReplayManager.MaxReplays; i++) {
 			ghostCars[i] = CarFactory.createGhost(i, gameWorld, CarPreset.Type.L1_GoblinOrange);
 			ghostLapMonitor[i] = new GhostLapCompletionMonitor(gameTrack);
@@ -305,6 +311,15 @@ public abstract class CommonLogic implements GameLogic {
 
 		// create game input
 		gameInput = new GameInput(this, inputSystem);
+		setupDebug();
+	}
+
+	private void setupDebug () {
+		if (Config.Debug.UseDebugHelper) {
+			debug = gameTasksManager.debug;
+			debug.add(new GameTrackDebugRenderer(gameWorld.getGameTrack()));
+			debug.add(new DebugPlayer(gameTasksManager));
+		}
 	}
 
 	public boolean hasPlayer () {
@@ -364,12 +379,6 @@ public abstract class CommonLogic implements GameLogic {
 		postProcessing.setPlayer(playerCar);
 		gameWorld.setPlayer(playerCar);
 		gameWorldRenderer.setRenderPlayerHeadlights(gameWorld.isNightMode());
-		gameWorldRenderer.showDebugGameTrack(Config.Debug.RenderTrackSectors);
-		gameWorldRenderer.setGameTrackDebugCar(playerCar);
-
-		if (Config.Debug.UseDebugHelper) {
-			DebugHelper.setPlayer(playerCar);
-		}
 	}
 
 	@Override
@@ -396,10 +405,6 @@ public abstract class CommonLogic implements GameLogic {
 		playerLapMonitor.reset();
 		postProcessing.setPlayer(null);
 		driftStrength.reset(0, true);
-
-		if (Config.Debug.UseDebugHelper) {
-			DebugHelper.setPlayer(null);
-		}
 	}
 
 	/** Restarts the current game */
@@ -703,8 +708,6 @@ public abstract class CommonLogic implements GameLogic {
 			Config.Debug.Render3DBoundingBoxes = !Config.Debug.Render3DBoundingBoxes;
 		} else if (inputSystem.isPressed(Keys.TAB)) {
 			Config.Debug.RenderTrackSectors = !Config.Debug.RenderTrackSectors;
-			gameWorldRenderer.showDebugGameTrack(Config.Debug.RenderTrackSectors);
-			gameWorldRenderer.setGameTrackDebugCar(playerCar);
 		}
 		// else if (inputSystem.isPressed(Keys.Z)) {
 		// // start recording
@@ -735,14 +738,6 @@ public abstract class CommonLogic implements GameLogic {
 			playerCar.resetDistanceAndSpeed(true, true);
 			lapManager.stopRecording();
 			setGhostReplay(0, Replay.loadLocal("test-replay-coll"));
-		} else if (inputSystem.isPressed(Keys.W)) {
-			Config.Debug.RenderBox2DWorldWireframe = !Config.Debug.RenderBox2DWorldWireframe;
-		} else if (inputSystem.isPressed(Keys.B)) {
-			Config.Debug.Render3DBoundingBoxes = !Config.Debug.Render3DBoundingBoxes;
-		} else if (inputSystem.isPressed(Keys.TAB)) {
-			Config.Debug.RenderTrackSectors = !Config.Debug.RenderTrackSectors;
-			gameWorldRenderer.showDebugGameTrack(Config.Debug.RenderTrackSectors);
-			gameWorldRenderer.setGameTrackDebugCar(playerCar);
 		}
 	}
 }

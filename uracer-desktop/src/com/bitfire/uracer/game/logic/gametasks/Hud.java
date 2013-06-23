@@ -15,11 +15,9 @@ public final class Hud extends GameTask implements PlayerDispatcher, DisposableT
 
 	private static final GameRendererEvent.Type RenderEventBeforePost = GameRendererEvent.Type.BatchBeforePostProcessing;
 	private static final GameRendererEvent.Type RenderEventAfterPost = GameRendererEvent.Type.BatchAfterPostProcessing;
-	private static final GameRendererEvent.Type RenderEventDebug = GameRendererEvent.Type.BatchDebug;
 
 	private final ItemsManager<HudElement> managerBeforePost = new ItemsManager<HudElement>();
 	private final ItemsManager<HudElement> managerAfterPost = new ItemsManager<HudElement>();
-	private final ItemsManager<HudElement> managerDebug = new ItemsManager<HudElement>();
 
 	private final GameRendererEvent.Listener renderEvent = new GameRendererEvent.Listener() {
 		@Override
@@ -36,8 +34,6 @@ public final class Hud extends GameTask implements PlayerDispatcher, DisposableT
 				items = managerBeforePost;
 			} else if (type == Type.BatchAfterPostProcessing) {
 				items = managerAfterPost;
-			} else if (type == Type.BatchDebug) {
-				items = managerDebug;
 			}
 
 			if (items != null) {
@@ -51,7 +47,6 @@ public final class Hud extends GameTask implements PlayerDispatcher, DisposableT
 	public Hud () {
 		GameEvents.gameRenderer.addListener(renderEvent, RenderEventBeforePost, GameRendererEvent.Order.DEFAULT);
 		GameEvents.gameRenderer.addListener(renderEvent, RenderEventAfterPost, GameRendererEvent.Order.DEFAULT);
-		GameEvents.gameRenderer.addListener(renderEvent, RenderEventDebug, GameRendererEvent.Order.DEFAULT);
 	}
 
 	public void addBeforePostProcessing (HudElement element) {
@@ -62,14 +57,9 @@ public final class Hud extends GameTask implements PlayerDispatcher, DisposableT
 		managerAfterPost.add(element);
 	}
 
-	public void addDebug (HudElement element) {
-		managerDebug.add(element);
-	}
-
 	public void remove (HudElement element) {
 		managerBeforePost.remove(element);
 		managerAfterPost.remove(element);
-		managerDebug.remove(element);
 	}
 
 	@Override
@@ -77,7 +67,6 @@ public final class Hud extends GameTask implements PlayerDispatcher, DisposableT
 		super.dispose();
 		GameEvents.gameRenderer.removeListener(renderEvent, RenderEventBeforePost, GameRendererEvent.Order.DEFAULT);
 		GameEvents.gameRenderer.removeListener(renderEvent, RenderEventAfterPost, GameRendererEvent.Order.DEFAULT);
-		GameEvents.gameRenderer.removeListener(renderEvent, RenderEventDebug, GameRendererEvent.Order.DEFAULT);
 		disposeTasks();
 	}
 
@@ -85,7 +74,6 @@ public final class Hud extends GameTask implements PlayerDispatcher, DisposableT
 	public void disposeTasks () {
 		managerBeforePost.dispose();
 		managerAfterPost.dispose();
-		managerDebug.dispose();
 	}
 
 	@Override
@@ -95,10 +83,6 @@ public final class Hud extends GameTask implements PlayerDispatcher, DisposableT
 		}
 
 		for (HudElement e : managerAfterPost) {
-			e.onRestart();
-		}
-
-		for (HudElement e : managerDebug) {
 			e.onRestart();
 		}
 	}
@@ -112,10 +96,6 @@ public final class Hud extends GameTask implements PlayerDispatcher, DisposableT
 		for (HudElement e : managerAfterPost) {
 			e.onReset();
 		}
-
-		for (HudElement e : managerDebug) {
-			e.onReset();
-		}
 	}
 
 	@Override
@@ -127,10 +107,6 @@ public final class Hud extends GameTask implements PlayerDispatcher, DisposableT
 		for (HudElement e : managerAfterPost) {
 			e.onTick();
 		}
-
-		for (HudElement e : managerDebug) {
-			e.onTick();
-		}
 	}
 
 	@Override
@@ -140,10 +116,6 @@ public final class Hud extends GameTask implements PlayerDispatcher, DisposableT
 		}
 
 		for (HudElement e : managerAfterPost) {
-			e.player(player);
-		}
-
-		for (HudElement e : managerDebug) {
 			e.player(player);
 		}
 	}

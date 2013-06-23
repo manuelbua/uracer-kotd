@@ -1,48 +1,44 @@
 
-package com.bitfire.uracer.game.logic.gametasks.hud.debug;
+package com.bitfire.uracer.game.debug.player;
 
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.utils.Array;
+import com.bitfire.uracer.configuration.Config;
+import com.bitfire.uracer.game.debug.DebugRenderable;
 import com.bitfire.uracer.game.logic.GameTasksManager;
-import com.bitfire.uracer.game.logic.gametasks.hud.HudElement;
+import com.bitfire.uracer.game.logic.gametasks.trackeffects.TrackEffect;
 import com.bitfire.uracer.game.logic.gametasks.trackeffects.TrackEffectType;
-import com.bitfire.uracer.game.logic.gametasks.trackeffects.effects.PlayerSkidMarks;
-import com.bitfire.uracer.game.logic.gametasks.trackeffects.effects.PlayerSmokeTrails;
 import com.bitfire.uracer.game.player.DriftState;
 import com.bitfire.uracer.game.player.PlayerCar;
 import com.bitfire.uracer.game.rendering.GameRenderer;
 import com.bitfire.uracer.resources.Art;
 import com.bitfire.uracer.utils.CarUtils;
 
-/** Encapsulates a special hud element that won't render as usual, but it will schedule its drawing operations by registering to
- * the GameRenderer's BatchDebug event.
- * 
- * @author bmanuel */
-public class HudDebug extends HudElement {
+public class DebugPlayer extends DebugRenderable {
 
 	private DriftState driftState;
-	private final PlayerSmokeTrails smokeTrails;
-	private final PlayerSkidMarks skidMarks;
+	private final TrackEffect smokeTrails;
+	private final TrackEffect skidMarks;
 
-	private HudDebugMeter meterDriftStrength, meterSkidMarks, meterSpeed, meterSmokeTrails;
+	private DebugMeter meterDriftStrength, meterSkidMarks, meterSpeed, meterSmokeTrails;
 
-	private Array<HudDebugMeter> meters = new Array<HudDebugMeter>();
+	private Array<DebugMeter> meters = new Array<DebugMeter>();
 	private Vector2 pos = new Vector2();
 
-	public HudDebug (GameTasksManager manager) {
-		skidMarks = (PlayerSkidMarks)manager.effects.getEffect(TrackEffectType.CarSkidMarks);
-		smokeTrails = (PlayerSmokeTrails)manager.effects.getEffect(TrackEffectType.CarSmokeTrails);
+	public DebugPlayer (GameTasksManager manager) {
+		skidMarks = manager.effects.getEffect(TrackEffectType.CarSkidMarks);
+		smokeTrails = manager.effects.getEffect(TrackEffectType.CarSmokeTrails);
 
 		// meter lateral forces
-		meterDriftStrength = new HudDebugMeter(100, 5);
+		meterDriftStrength = new DebugMeter(100, 5);
 		meterDriftStrength.setLimits(0, 1);
 		meterDriftStrength.setName("drift strength");
 		meters.add(meterDriftStrength);
 
 		// meter skid marks count
 		if (skidMarks != null) {
-			meterSkidMarks = new HudDebugMeter(100, 5);
+			meterSkidMarks = new DebugMeter(100, 5);
 			meterSkidMarks.setLimits(0, skidMarks.getMaxParticleCount());
 			meterSkidMarks.setName("skid marks");
 			meters.add(meterSkidMarks);
@@ -50,21 +46,21 @@ public class HudDebug extends HudElement {
 
 		// meter smoke trails count
 		if (smokeTrails != null) {
-			meterSmokeTrails = new HudDebugMeter(100, 5);
+			meterSmokeTrails = new DebugMeter(100, 5);
 			meterSmokeTrails.setLimits(0, smokeTrails.getMaxParticleCount());
 			meterSmokeTrails.setName("smoke trails");
 			meters.add(meterSmokeTrails);
 		}
 
 		// player speed, km/h
-		meterSpeed = new HudDebugMeter(100, 5);
+		meterSpeed = new DebugMeter(100, 5);
 		meterSpeed.setName("speed km/h");
 		meters.add(meterSpeed);
 	}
 
 	@Override
 	public void dispose () {
-		for (HudDebugMeter m : meters) {
+		for (DebugMeter m : meters) {
 			m.dispose();
 		}
 	}
@@ -80,9 +76,13 @@ public class HudDebug extends HudElement {
 		}
 	}
 
+	private boolean isActive () {
+		return Config.Debug.RenderHudDebugInfo && hasPlayer();
+	}
+
 	@Override
-	public void onTick () {
-		if (hasPlayer()) {
+	public void tick () {
+		if (isActive()) {
 			// lateral forces
 			meterDriftStrength.setValue(driftState.driftStrength);
 
@@ -108,11 +108,11 @@ public class HudDebug extends HudElement {
 	}
 
 	@Override
-	public void onRender (SpriteBatch batch, float cameraZoom) {
-		if (hasPlayer()) {
+	public void renderBatch (SpriteBatch batch) {
+		if (isActive()) {
 			float prevHeight = 0;
 			int index = 0;
-			for (HudDebugMeter m : meters) {
+			for (DebugMeter m : meters) {
 
 				pos.set(GameRenderer.ScreenUtils.worldPxToScreen(player.state().position));
 				pos.x += 100;
@@ -131,6 +131,6 @@ public class HudDebug extends HudElement {
 	}
 
 	@Override
-	public void onReset () {
+	public void reset () {
 	}
 }

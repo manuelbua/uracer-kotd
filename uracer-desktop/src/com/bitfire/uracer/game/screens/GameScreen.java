@@ -62,9 +62,4 @@ public class GameScreen extends Screen {
 	public void resume () {
 		if (game != null) game.resume();
 	}
-
-	@Override
-	public void debugRender () {
-		if (game != null) game.debugUpdate();
-	}
 }

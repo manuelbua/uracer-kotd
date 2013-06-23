@@ -283,7 +283,6 @@ public class URacer implements ApplicationListener {
 			/** render */
 
 			frameCount++;
-			screenMgr.debugRender();
 			screenMgr.end();
 		}
 	}

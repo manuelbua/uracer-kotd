@@ -119,7 +119,6 @@ public final class GameWorldRenderer {
 	private final Matrix4 xform = new Matrix4();
 
 	public OrthogonalTiledMapRenderer tileMapRenderer = null;
-	private GameTrackDebugRenderer gameTrackDbgRenderer = null;
 
 	// deferred stuff
 	private Mesh plane = null;
@@ -155,7 +154,6 @@ public final class GameWorldRenderer {
 		createCams();
 
 		tileMapRenderer = new OrthogonalTiledMapRenderer(world.map);
-		gameTrackDbgRenderer = new GameTrackDebugRenderer(world.getGameTrack());
 
 		trackTrees = world.getTrackTrees();
 		treeShader = ShaderLoader.fromString(treeVertexShader, treeFragmentShader, "tree-fragment", "tree-vertex");
@@ -193,7 +191,6 @@ public final class GameWorldRenderer {
 		treeShaderNight.dispose();
 		treeShader.dispose();
 
-		gameTrackDbgRenderer.dispose();
 		tileMapRenderer.dispose();
 	}
 
@@ -357,18 +354,6 @@ public final class GameWorldRenderer {
 	// NOTE: do not use camOrtho.zoom directly since it will be bound later at updateCamera!
 	public float getCameraZoom () {
 		return cameraZoom;
-	}
-
-	public void setGameTrackDebugCar (Car car) {
-		gameTrackDbgRenderer.setCar(car);
-	}
-
-	public void showDebugGameTrack (boolean show) {
-		if (show) {
-			gameTrackDbgRenderer.attach();
-		} else {
-			gameTrackDbgRenderer.detach();
-		}
 	}
 
 	public void updateCamera () {

@@ -2,10 +2,8 @@
 package com.bitfire.uracer.game.logic.helpers;
 
 import com.bitfire.uracer.URacer;
-import com.bitfire.uracer.configuration.Config;
 import com.bitfire.uracer.configuration.UserProfile;
 import com.bitfire.uracer.game.logic.GameTasksManager;
-import com.bitfire.uracer.game.logic.gametasks.hud.debug.HudDebug;
 import com.bitfire.uracer.game.logic.gametasks.hud.elements.HudLapInfo;
 import com.bitfire.uracer.game.logic.gametasks.hud.elements.HudPlayer;
 import com.bitfire.uracer.game.logic.gametasks.hud.elements.HudPlayerStatic;
@@ -27,7 +25,6 @@ public final class PlayerGameTasks {
 	public HudPlayer hudPlayer = null;
 	public HudPlayerStatic hudPlayerStatic = null;
 	public HudLapInfo hudLapInfo = null;
-	public HudDebug hudDebug = null;
 	public PlayerSkidMarks playerSkidMarks = null;
 	public PlayerSmokeTrails playerSmokeTrails = null;
 	public PlayerDriftSoundEffect playerDriftSoundFx = null;
@@ -69,28 +66,26 @@ public final class PlayerGameTasks {
 		manager.hud.addBeforePostProcessing(hudPlayer);
 		manager.hud.addAfterPostProcessing(hudLapInfo);
 		manager.hud.addAfterPostProcessing(hudPlayerStatic);
-
-		if (Config.Debug.RenderHudDebugInfo) {
-			hudDebug = new HudDebug(manager);
-			manager.hud.addDebug(hudDebug);
-		}
 	}
 
 	public void destroyTasks () {
 		manager.sound.disposeTasks();
 		manager.effects.disposeTasks();
 		manager.hud.disposeTasks();
+		if (manager.debug != null) manager.debug.disposeTasks();
 	}
 
 	public void playerAdded (PlayerCar player) {
 		manager.sound.onPlayerSet(player);
 		manager.effects.onPlayerSet(player);
 		manager.hud.onPlayerSet(player);
+		if (manager.debug != null) manager.debug.onPlayerSet(player);
 	}
 
 	public void playerRemoved () {
 		manager.sound.onPlayerSet(null);
 		manager.effects.onPlayerSet(null);
 		manager.hud.onPlayerSet(null);
+		if (manager.debug != null) manager.debug.onPlayerSet(null);
 	}
 }

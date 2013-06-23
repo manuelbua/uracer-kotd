@@ -1,5 +1,5 @@
 
-package com.bitfire.uracer.game;
+package com.bitfire.uracer.game.debug;
 
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.Pixmap;

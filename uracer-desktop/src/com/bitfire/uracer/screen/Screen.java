@@ -28,9 +28,4 @@ public abstract class Screen implements Disposable {
 	public abstract void tickCompleted ();
 
 	public abstract void render (FrameBuffer dest);
-
-	/** This debug call will gets called *after* tick and render are raised for all the entities, but the computational time will
-	 * not be part of the cumulative time statistics */
-	public void debugRender () {
-	};
 }

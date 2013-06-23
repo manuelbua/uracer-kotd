@@ -5,6 +5,7 @@ import com.badlogic.gdx.graphics.OrthographicCamera;
 import com.badlogic.gdx.graphics.PerspectiveCamera;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.math.Matrix4;
+import com.bitfire.postprocessing.PostProcessor;
 
 public class GameRendererEvent extends Event<GameRendererEvent.Type, GameRendererEvent.Order, GameRendererEvent.Listener> {
 	/** defines the type of render queue */
@@ -33,6 +34,7 @@ public class GameRendererEvent extends Event<GameRendererEvent.Type, GameRendere
 	public OrthographicCamera camOrtho;
 	public float timeAliasingFactor;
 	public float camZoom;
+	public PostProcessor postProcessor;
 
 	public interface Listener extends Event.Listener<Type, Order> {
 		@Override

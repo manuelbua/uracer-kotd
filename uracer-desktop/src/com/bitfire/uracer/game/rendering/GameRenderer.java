@@ -132,6 +132,7 @@ public final class GameRenderer {
 		GameEvents.gameRenderer.camOrtho = worldRenderer.getOrthographicCamera();
 		GameEvents.gameRenderer.camPersp = worldRenderer.getPerspectiveCamera();
 		GameEvents.gameRenderer.camZoom = worldRenderer.getCameraZoom();
+		GameEvents.gameRenderer.postProcessor = postProcessing.getPostProcessor();
 	}
 
 	private void clear () {
@@ -251,10 +252,12 @@ public final class GameRenderer {
 
 			if (hasDest) dest.begin();
 			batchAfterPostProcessing();
+			debugRender();
 			if (hasDest) dest.end();
 
 		} else {
 			batchAfterPostProcessing();
+			debugRender();
 			if (hasDest) dest.end();
 		}
 	}
@@ -274,7 +277,7 @@ public final class GameRenderer {
 		SpriteBatch batch = batchRenderer.beginTopLeft();
 		batch.setTransformMatrix(xform);
 
-		// batch.disableBlending();
+		batch.disableBlending();
 		GameEvents.gameRenderer.batch = batch;
 		GameEvents.gameRenderer.trigger(this, GameRendererEvent.Type.BatchDebug);
 		batchRenderer.end();

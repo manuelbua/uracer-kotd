@@ -4,7 +4,6 @@ package com.bitfire.uracer.game;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.glutils.FrameBuffer;
 import com.badlogic.gdx.utils.Disposable;
-import com.bitfire.uracer.configuration.Config;
 import com.bitfire.uracer.configuration.UserPreferences;
 import com.bitfire.uracer.configuration.UserPreferences.Preference;
 import com.bitfire.uracer.configuration.UserProfile;
@@ -18,9 +17,6 @@ public class Game implements Disposable {
 
 	// world
 	public GameWorld gameWorld = null;
-
-	// debug
-	private DebugHelper debug = null;
 
 	// logic
 	private GameLogic gameLogic = null;
@@ -45,21 +41,10 @@ public class Game implements Disposable {
 		// handles game rules and mechanics, it's all about game data
 		gameLogic = new SinglePlayer(userProfile, gameWorld, gameRenderer);
 		Gdx.app.debug("Game", "GameLogic created");
-
-		// initialize the debug helper
-		if (Config.Debug.UseDebugHelper) {
-			debug = new DebugHelper(gameRenderer.getWorldRenderer(), gameWorld.getBox2DWorld(), gameRenderer.getPostProcessing()
-				.getPostProcessor());
-			Gdx.app.debug("Game", "Debug helper initialized");
-		}
 	}
 
 	@Override
 	public void dispose () {
-		if (Config.Debug.UseDebugHelper) {
-			debug.dispose();
-		}
-
 		gameLogic.dispose();
 		gameRenderer.dispose();
 		gameWorld.dispose();
@@ -87,14 +72,6 @@ public class Game implements Disposable {
 
 	public void render (FrameBuffer dest) {
 		gameRenderer.render(dest, gameLogic.isQuitPending());
-	}
-
-	public void debugUpdate () {
-		if (Config.Debug.UseDebugHelper) {
-			debug.update();
-		}
-
-		gameRenderer.debugRender();
 	}
 
 	public void pause () {
