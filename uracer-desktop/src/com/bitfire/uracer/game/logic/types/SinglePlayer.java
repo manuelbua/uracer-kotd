@@ -114,6 +114,7 @@ public class SinglePlayer extends CommonLogic {
 		if (!hasPlayer()) {
 			restartAllReplays();
 		} else {
+			// remove replay but do not reset its track state yet
 			ghost.removeReplay();
 		}
 
