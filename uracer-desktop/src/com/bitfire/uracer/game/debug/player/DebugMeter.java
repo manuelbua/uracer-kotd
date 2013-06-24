@@ -10,6 +10,7 @@ import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
 import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.utils.Disposable;
+import com.bitfire.uracer.resources.Art;
 import com.bitfire.uracer.utils.AMath;
 import com.bitfire.uracer.utils.SpriteBatchUtils;
 
@@ -79,9 +80,7 @@ public class DebugMeter implements Disposable {
 	public void render (SpriteBatch batch) {
 		drawMeter();
 		SpriteBatchUtils.drawString(batch, getMessage(), (int)pos.x, (int)pos.y);
-
-		// batch.draw(region, (int)pos.x, (int)pos.y + Art.DebugFontHeight);
-		batch.draw(region, 750, 10);
+		batch.draw(region, (int)pos.x, (int)pos.y + Art.DebugFontHeight);
 	}
 
 	private void drawMeter () {

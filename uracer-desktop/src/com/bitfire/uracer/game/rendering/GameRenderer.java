@@ -296,7 +296,7 @@ public final class GameRenderer {
 	/** Manages to convert world positions expressed in meters or pixels to the corresponding position to screen pixels. To use this
 	 * class, the GameWorldRenderer MUST be already constructed and initialized. */
 	public static final class ScreenUtils {
-		private static int ScreenWidth, ScreenHeight;
+		// private static int ScreenWidth, ScreenHeight;
 		private static Vector2 tmp2 = new Vector2();
 		private static Vector3 tmp3 = new Vector3();
 		private static GameWorldRenderer worldRenderer;
@@ -305,8 +305,8 @@ public final class GameRenderer {
 
 		public static void init (GameWorldRenderer worldRenderer) {
 			ScreenUtils.worldRenderer = worldRenderer;
-			ScreenUtils.ScreenWidth = Gdx.graphics.getWidth();
-			ScreenUtils.ScreenHeight = Gdx.graphics.getHeight();
+			// ScreenUtils.ScreenWidth = Gdx.graphics.getWidth();
+			// ScreenUtils.ScreenHeight = Gdx.graphics.getHeight();
 		}
 
 		/** Transforms Box2D world-mt coordinates to reference-screen pixels coordinates */
@@ -322,34 +322,20 @@ public final class GameRenderer {
 			return tmp2;
 		}
 
-		/** Transforms Box2D world-mt coordinates to real-screen pixels coordinates */
-		// public static Vector2 worldMtToScreen (Vector2 worldPositionMt) {
-		// Vector2 r = worldMtToRefScreen(worldPositionMt);
-		// r.scl(ref2scr);
-		// return r;
+		// /** Transforms reference-screen pixel coordinates to world-mt coordinates */
+		// public static Vector3 screenToWorldMt (Vector2 screenPositionPx) {
+		// tmp3.set(screenPositionPx.x, screenPositionPx.y, 1);
+		//
+		// // normalize and scale to the real display size
+		// tmp3.x = (tmp3.x / (float)Config.Graphics.ReferenceScreenWidth) * ScreenWidth;
+		// tmp3.y = (tmp3.y / (float)Config.Graphics.ReferenceScreenHeight) * ScreenHeight;
+		//
+		// worldRenderer.camOrtho.unproject(tmp3, 0, 0, ScreenWidth, ScreenHeight);
+		//
+		// tmp2.set(Convert.px2mt(tmp3.x), Convert.px2mt(tmp3.y));
+		// tmp3.set(tmp2.x, tmp2.y, 0);
+		// return tmp3;
 		// }
-
-		/** Transforms world-px coordinates to real-screen pixel coordinates */
-		// public static Vector2 worldPxToScreen (Vector2 worldPositionPx) {
-		// Vector2 r = worldPxToRefScreen(worldPositionPx);
-		// r.scl(ref2scr);
-		// return r;
-		// }
-
-		/** Transforms reference-screen pixel coordinates to world-mt coordinates */
-		public static Vector3 screenToWorldMt (Vector2 screenPositionPx) {
-			tmp3.set(screenPositionPx.x, screenPositionPx.y, 1);
-
-			// normalize and scale to the real display size
-			tmp3.x = (tmp3.x / (float)Config.Graphics.ReferenceScreenWidth) * ScreenWidth;
-			tmp3.y = (tmp3.y / (float)Config.Graphics.ReferenceScreenHeight) * ScreenHeight;
-
-			worldRenderer.camOrtho.unproject(tmp3, 0, 0, ScreenWidth, ScreenHeight);
-
-			tmp2.set(Convert.px2mt(tmp3.x), Convert.px2mt(tmp3.y));
-			tmp3.set(tmp2.x, tmp2.y, 0);
-			return tmp3;
-		}
 
 		public static boolean isVisible (Rectangle rect) {
 			return worldRenderer.camOrthoRect.overlaps(rect);

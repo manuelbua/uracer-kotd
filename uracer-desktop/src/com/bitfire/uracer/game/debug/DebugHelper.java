@@ -37,6 +37,7 @@ public final class DebugHelper extends GameTask implements DisposableTasks {
 
 	private PostProcessor postProcessor;
 	private final Matrix4 idt = new Matrix4();
+	private Matrix4 xform;
 
 	// frame stats
 	private DebugStatistics stats;
@@ -52,11 +53,21 @@ public final class DebugHelper extends GameTask implements DisposableTasks {
 			SpriteBatch batch = GameEvents.gameRenderer.batch;
 
 			if (type == GameRendererEvent.Type.BatchDebug) {
-				render(batch);
-
+				// render everything scaled
 				for (DebugRenderable r : renderables) {
 					r.renderBatch(batch);
 				}
+
+				// save original transform matrix
+				xform = batch.getTransformMatrix();
+				batch.setTransformMatrix(idt);
+
+				// render static debug information unscaled
+				render(batch);
+
+				// restore original matrix
+				batch.setTransformMatrix(xform);
+
 			} else if (type == GameRendererEvent.Type.Debug) {
 				if (Config.Debug.RenderBox2DWorldWireframe) {
 					b2drenderer.render(box2dWorld, GameEvents.gameRenderer.mtxOrthographicMvpMt);
@@ -136,7 +147,7 @@ public final class DebugHelper extends GameTask implements DisposableTasks {
 	}
 
 	private void render (SpriteBatch batch) {
-		batch.setTransformMatrix(idt);
+		// batch.setTransformMatrix(idt);
 
 		renderVersionInfo(batch, Art.DebugFontHeight * 2);
 
