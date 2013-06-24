@@ -149,8 +149,18 @@ public final class AggressiveCold implements PostProcessingAnimator {
 			// vignette.setCoords( 1.5f, 0.1f );
 			vignette.setCenter(ScaleUtils.PlayWidth / 2, ScaleUtils.PlayHeight / 2);
 			vignette.setLutTexture(Art.postXpro);
-			vignette.setLutIndexVal(0, 16);
+
+			// setup palettes
+
+			// default aspect to slot #0
+			// 6
+			// 13
+			// 16
+			vignette.setLutIndexVal(0, 6);
+
+			// special effects palette on slot #1
 			vignette.setLutIndexVal(1, 12);
+
 			vignette.setLutIndexOffset(0);
 			vignette.setEnabled(true);
 
@@ -242,7 +252,7 @@ public final class AggressiveCold implements PostProcessingAnimator {
 		}
 
 		float cf = collisionFactor;
-		// cf = 0.8f;
+		// cf = 1f;
 
 		if (zoom != null) {
 			if (hasPlayer) {
@@ -329,7 +339,7 @@ public final class AggressiveCold implements PostProcessingAnimator {
 		if (crt != null) {
 			// color offset
 			// float amount = AMath.fixup(offsetAmount.value);
-			crt.setColorOffset(0.001f + 0.006f * cf);
+			crt.setColorOffset(0f + MathUtils.clamp(0.005f * cf, 0, 0.005f));
 
 			// zoom+earth curvature
 			float dist = kdist - kdist * factor;
