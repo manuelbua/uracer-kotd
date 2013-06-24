@@ -12,7 +12,6 @@ import com.bitfire.uracer.game.logic.gametasks.sounds.effects.PlayerImpactSoundE
 import com.bitfire.uracer.game.logic.gametasks.trackeffects.effects.PlayerSkidMarks;
 import com.bitfire.uracer.game.logic.gametasks.trackeffects.effects.PlayerSmokeTrails;
 import com.bitfire.uracer.game.logic.replaying.LapManager;
-import com.bitfire.uracer.game.player.PlayerCar;
 
 /** Manages the creation and destruction of the player-bound game tasks. */
 public final class PlayerGameTasks {
@@ -72,20 +71,5 @@ public final class PlayerGameTasks {
 		manager.sound.disposeTasks();
 		manager.effects.disposeTasks();
 		manager.hud.disposeTasks();
-		if (manager.debug != null) manager.debug.disposeTasks();
-	}
-
-	public void playerAdded (PlayerCar player) {
-		manager.sound.onPlayerSet(player);
-		manager.effects.onPlayerSet(player);
-		manager.hud.onPlayerSet(player);
-		if (manager.debug != null) manager.debug.onPlayerSet(player);
-	}
-
-	public void playerRemoved () {
-		manager.sound.onPlayerSet(null);
-		manager.effects.onPlayerSet(null);
-		manager.hud.onPlayerSet(null);
-		if (manager.debug != null) manager.debug.onPlayerSet(null);
 	}
 }

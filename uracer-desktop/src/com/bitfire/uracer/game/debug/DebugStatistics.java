@@ -52,9 +52,11 @@ public final class DebugStatistics {
 	private void init (int width, int height, float updateHz) {
 		// assert (width < 256 && height < 256);
 
+		final float oneOnUpdHz = 1f / updateHz;
+
 		PanelWidth = width;
 		PanelHeight = height;
-		intervalNs = (long)(1000000000L * (1f / updateHz));
+		intervalNs = (long)(1000000000L * oneOnUpdHz);
 
 		pixels = new Pixmap(PanelWidth, PanelHeight, Format.RGBA8888);
 		texture = new Texture(width, height, Format.RGBA8888);
@@ -70,7 +72,7 @@ public final class DebugStatistics {
 		// precompute constants
 		ratio_rtime = ((float)PanelHeight / 2f) * Config.Physics.TimestepHz;
 		ratio_ptime = ((float)PanelHeight / 2f) * Config.Physics.TimestepHz;
-		ratio_fps = ((float)PanelHeight / 2f) * (1f / 60f);
+		ratio_fps = ((float)PanelHeight / 2f) * oneOnUpdHz;
 
 		reset();
 	}

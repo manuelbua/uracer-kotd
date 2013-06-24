@@ -2,6 +2,7 @@
 package com.bitfire.uracer.game;
 
 import com.bitfire.uracer.game.events.CarEvent;
+import com.bitfire.uracer.game.events.GameLogicEvent;
 import com.bitfire.uracer.game.events.GameRendererEvent;
 import com.bitfire.uracer.game.events.GhostCarEvent;
 import com.bitfire.uracer.game.events.GhostLapCompletionMonitorEvent;
@@ -22,6 +23,7 @@ public final class GameEvents {
 	public static final WrongWayMonitorEvent wrongWay = new WrongWayMonitorEvent();
 	public static final PlayerLapCompletionMonitorEvent lapCompletion = new PlayerLapCompletionMonitorEvent();
 	public static final GhostLapCompletionMonitorEvent ghostLapCompletion = new GhostLapCompletionMonitorEvent();
+	public static final GameLogicEvent logicEvent = new GameLogicEvent();
 
 	// public static final CarStateEvent playerCarState = new CarStateEvent();
 
