@@ -1,7 +1,6 @@
 
 package com.bitfire.uracer.game.logic.helpers;
 
-import com.bitfire.uracer.game.actors.CarPreset;
 import com.bitfire.uracer.game.actors.CarPreset.Type;
 import com.bitfire.uracer.game.actors.GhostCar;
 import com.bitfire.uracer.game.player.PlayerCar;
@@ -15,7 +14,7 @@ public final class CarFactory {
 		return new PlayerCar(gameWorld, Type.L2_PinkBeast);
 	}
 
-	public static GhostCar createGhost (int id, GameWorld gameWorld, CarPreset.Type presetType) {
+	public static GhostCar createGhost (int id, GameWorld gameWorld) {
 		return new GhostCar(id, gameWorld, Type.L2_PinkBeast);
 	}
 }

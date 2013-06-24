@@ -20,7 +20,6 @@ import com.bitfire.uracer.game.events.GameRendererEvent.Order;
 import com.bitfire.uracer.game.events.GameRendererEvent.Type;
 import com.bitfire.uracer.game.logic.gametasks.DisposableTasks;
 import com.bitfire.uracer.game.logic.gametasks.GameTask;
-import com.bitfire.uracer.game.logic.gametasks.PlayerDispatcher;
 import com.bitfire.uracer.game.player.PlayerCar;
 import com.bitfire.uracer.game.rendering.GameRenderer;
 import com.bitfire.uracer.game.rendering.GameWorldRenderer;
@@ -32,8 +31,7 @@ import com.bitfire.uracer.utils.ScaleUtils;
 import com.bitfire.uracer.utils.SpriteBatchUtils;
 import com.bitfire.utils.ItemsManager;
 
-public final class DebugHelper extends GameTask implements PlayerDispatcher, DisposableTasks {
-
+public final class DebugHelper extends GameTask implements DisposableTasks {
 	// rendering
 	private final ItemsManager<DebugRenderable> renderables = new ItemsManager<DebugRenderable>();
 
@@ -43,10 +41,6 @@ public final class DebugHelper extends GameTask implements PlayerDispatcher, Dis
 	// frame stats
 	private DebugStatistics stats;
 	private String uRacerInfo;
-
-	// player
-	private PlayerCar player;
-	private boolean hasPlayer = false;
 
 	// box2d
 	private Box2DDebugRenderer b2drenderer;
@@ -128,9 +122,8 @@ public final class DebugHelper extends GameTask implements PlayerDispatcher, Dis
 	}
 
 	@Override
-	public void onPlayerSet (PlayerCar player) {
-		this.player = player;
-		hasPlayer = (player != null);
+	public void onPlayer (PlayerCar player) {
+		super.onPlayer(player);
 
 		for (DebugRenderable r : renderables) {
 			r.player(player);

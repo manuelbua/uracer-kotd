@@ -11,7 +11,7 @@ import com.bitfire.uracer.game.player.PlayerCar;
 import com.bitfire.utils.ItemsManager;
 
 /** Encapsulates an head-up manager that will callback HudElement events for their updating and drawing operations. */
-public final class Hud extends GameTask implements PlayerDispatcher, DisposableTasks {
+public final class Hud extends GameTask implements DisposableTasks {
 
 	private static final GameRendererEvent.Type RenderEventBeforePost = GameRendererEvent.Type.BatchBeforePostProcessing;
 	private static final GameRendererEvent.Type RenderEventAfterPost = GameRendererEvent.Type.BatchAfterPostProcessing;
@@ -110,7 +110,9 @@ public final class Hud extends GameTask implements PlayerDispatcher, DisposableT
 	}
 
 	@Override
-	public void onPlayerSet (PlayerCar player) {
+	public void onPlayer (PlayerCar player) {
+		super.onPlayer(player);
+
 		for (HudElement e : managerBeforePost) {
 			e.player(player);
 		}

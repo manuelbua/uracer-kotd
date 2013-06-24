@@ -5,7 +5,7 @@ import com.bitfire.uracer.game.logic.gametasks.sounds.SoundEffect;
 import com.bitfire.uracer.game.player.PlayerCar;
 import com.bitfire.utils.ItemsManager;
 
-public class SoundManager extends GameTask implements PlayerDispatcher, DisposableTasks {
+public class SoundManager extends GameTask implements DisposableTasks {
 	private final ItemsManager<SoundEffect> manager = new ItemsManager<SoundEffect>();
 
 	public SoundManager () {
@@ -73,7 +73,9 @@ public class SoundManager extends GameTask implements PlayerDispatcher, Disposab
 	}
 
 	@Override
-	public void onPlayerSet (PlayerCar player) {
+	public void onPlayer (PlayerCar player) {
+		super.onPlayer(player);
+
 		for (SoundEffect s : manager) {
 			s.player(player);
 		}
