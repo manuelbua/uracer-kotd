@@ -45,7 +45,7 @@ public final class Ssao extends PostProcessorEffect {
 	private Texture normalDepthMap;
 	private final ShaderProgram shMix, shSsao;
 	private final FullscreenQuad quad = new FullscreenQuad();
-	private final Texture randomField;
+	private Texture randomField;
 	private Blur blur;
 
 	private Matrix3 mtxRot = new Matrix3();
@@ -72,11 +72,12 @@ public final class Ssao extends PostProcessorEffect {
 
 		// blur
 		blur = new Blur(occlusionMap.width, occlusionMap.height);
+		createRandomField(16, 16, Format.RGBA8888);
+		// enableDebug();
+	}
 
-		// compute random field for the ssao shader
-		int width = 16;
-		int height = 16;
-		Format format = Format.RGBA8888;
+	/** Computes random field for the ssao shader */
+	private void createRandomField (int width, int height, Format format) {
 		randomField = new Texture(width, height, format);
 		randomField.setFilter(TextureFilter.Nearest, TextureFilter.Nearest);
 		randomField.setWrap(TextureWrap.Repeat, TextureWrap.Repeat);
@@ -105,7 +106,6 @@ public final class Ssao extends PostProcessorEffect {
 		bytes.flip();
 		randomField.draw(pixels, 0, 0);
 		pixels.dispose();
-		// enableDebug();
 	}
 
 	@Override
