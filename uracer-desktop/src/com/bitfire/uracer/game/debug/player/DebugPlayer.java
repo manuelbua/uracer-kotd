@@ -4,7 +4,7 @@ package com.bitfire.uracer.game.debug.player;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.utils.Array;
-import com.bitfire.uracer.configuration.Config;
+import com.bitfire.uracer.game.debug.DebugHelper.RenderFlags;
 import com.bitfire.uracer.game.debug.DebugRenderable;
 import com.bitfire.uracer.game.logic.GameTasksManager;
 import com.bitfire.uracer.game.logic.gametasks.trackeffects.TrackEffect;
@@ -26,7 +26,8 @@ public class DebugPlayer extends DebugRenderable {
 	private Array<DebugMeter> meters = new Array<DebugMeter>();
 	private Vector2 pos = new Vector2();
 
-	public DebugPlayer (GameTasksManager manager) {
+	public DebugPlayer (RenderFlags flag, GameTasksManager manager) {
+		super(flag);
 		skidMarks = manager.effects.getEffect(TrackEffectType.CarSkidMarks);
 		smokeTrails = manager.effects.getEffect(TrackEffectType.CarSmokeTrails);
 
@@ -77,7 +78,7 @@ public class DebugPlayer extends DebugRenderable {
 	}
 
 	private boolean isActive () {
-		return Config.Debug.RenderHudDebugInfo && hasPlayer();
+		return hasPlayer();
 	}
 
 	@Override

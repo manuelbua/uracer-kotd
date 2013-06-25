@@ -48,23 +48,10 @@ public final class Config {
 
 	public static final class Debug {
 		public static final boolean UseDebugHelper = true;
-		public static boolean RenderBox2DWorldWireframe = false;
-		public static final boolean RenderPlayerDebugInfo = false;
-		public static final boolean RenderHudDebugInfo = true;
-		public static boolean Render3DBoundingBoxes = false;
-		public static final boolean RenderDebugInfoGraphics = true;
-		public static final boolean RenderDebugInfoFpsStats = true;
-		public static final boolean RenderDebugInfoMeshStats = true;
-		public static final boolean RenderDebugInfoMemoryStats = false;
-		public static final boolean RenderDebugInfoPostProcessor = true;
-		public static boolean RenderTrackSectors = false;
-
 		public static final boolean TraverseWalls = false;
 		public static final boolean ApplyCarFrictionFromMap = true;
 		public static final boolean FrustumCulling = true;
 		public static final boolean InfiniteDilationTime = false;
-
-		public static final boolean ShowAdvancedDebugInfo = true;
 
 		private Debug () {
 		}
