@@ -10,9 +10,9 @@ import com.badlogic.gdx.graphics.glutils.ShapeRenderer.ShapeType;
 import com.badlogic.gdx.math.MathUtils;
 import com.badlogic.gdx.math.Polygon;
 import com.badlogic.gdx.math.Vector2;
-import com.bitfire.uracer.configuration.Config;
 import com.bitfire.uracer.game.GameEvents;
 import com.bitfire.uracer.game.actors.Car;
+import com.bitfire.uracer.game.debug.DebugHelper.RenderFlags;
 import com.bitfire.uracer.game.logic.helpers.GameTrack;
 import com.bitfire.uracer.game.logic.helpers.GameTrack.TrackSector;
 import com.bitfire.uracer.game.player.PlayerCar;
@@ -26,7 +26,9 @@ public class GameTrackDebugRenderer extends DebugRenderable {
 	private final List<Vector2> route;
 	private final GameTrack gameTrack;
 
-	public GameTrackDebugRenderer (GameTrack gameTrack) {
+	public GameTrackDebugRenderer (RenderFlags flag, GameTrack gameTrack) {
+		super(flag);
+
 		this.gameTrack = gameTrack;
 		this.sectors = gameTrack.getSectors();
 		this.route = gameTrack.getRoute();
@@ -61,8 +63,6 @@ public class GameTrackDebugRenderer extends DebugRenderable {
 
 	@Override
 	public void render () {
-		if (!Config.Debug.RenderTrackSectors) return;
-
 		float alpha = 0.25f;
 		float carAlpha = alpha * 3;
 		float sectorCenterFactor = 0;

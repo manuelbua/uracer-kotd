@@ -25,6 +25,7 @@ import com.bitfire.uracer.game.Time.Reference;
 import com.bitfire.uracer.game.actors.Car;
 import com.bitfire.uracer.game.actors.GhostCar;
 import com.bitfire.uracer.game.debug.DebugHelper;
+import com.bitfire.uracer.game.debug.DebugHelper.RenderFlags;
 import com.bitfire.uracer.game.debug.GameTrackDebugRenderer;
 import com.bitfire.uracer.game.debug.player.DebugPlayer;
 import com.bitfire.uracer.game.events.CarEvent;
@@ -318,9 +319,16 @@ public abstract class CommonLogic implements GameLogic {
 	private void setupDebug (PostProcessor postProcessor) {
 		if (Config.Debug.UseDebugHelper) {
 			debug = new DebugHelper(gameWorld, postProcessor);
+			debug.add(new GameTrackDebugRenderer(RenderFlags.TrackSectors, gameWorld.getGameTrack()));
+			debug.add(new DebugPlayer(RenderFlags.PlayerCarInfo, gameTasksManager));
+
 			Gdx.app.debug("Game", "Debug helper initialized");
-			debug.add(new GameTrackDebugRenderer(gameWorld.getGameTrack()));
-			debug.add(new DebugPlayer(gameTasksManager));
+		}
+	}
+
+	private void destroyDebug () {
+		if (Config.Debug.UseDebugHelper) {
+			debug.dispose();
 		}
 	}
 
@@ -334,8 +342,7 @@ public abstract class CommonLogic implements GameLogic {
 
 	@Override
 	public void dispose () {
-		debug.dispose();
-
+		destroyDebug();
 		removePlayer();
 		gameTasksManager.dispose();
 		playerTasks.dispose();
@@ -718,42 +725,19 @@ public abstract class CommonLogic implements GameLogic {
 		} else if (inputSystem.isPressed(Keys.P)) {
 			addPlayer();
 			restartGame();
-		} else if (inputSystem.isPressed(Keys.W)) {
-			Config.Debug.RenderBox2DWorldWireframe = !Config.Debug.RenderBox2DWorldWireframe;
-		} else if (inputSystem.isPressed(Keys.B)) {
-			Config.Debug.Render3DBoundingBoxes = !Config.Debug.Render3DBoundingBoxes;
 		} else if (inputSystem.isPressed(Keys.TAB)) {
-			Config.Debug.RenderTrackSectors = !Config.Debug.RenderTrackSectors;
+			// toggle debug rendering
+			debug.toggleFlag(RenderFlags.NoRender);
 		}
-		// else if (inputSystem.isPressed(Keys.Z)) {
-		// // start recording
-		// playerCar.resetDistanceAndSpeed(true, true);
-		// resetAllGhosts();
-		// lapManager.abortRecording(true);
-		// lapManager.startRecording(playerCar, userProfile);
-		// Gdx.app.log("GameLogic", "Recording...");
-		// }
-		// else if (inputSystem.isPressed(Keys.X)) {
-		// // stop recording and play
-		// Replay userRec = lapManager.stopRecording();
-		// playerCar.resetPhysics();
-		// playerCar.resetDistanceAndSpeed(true, true);
-		// if (userRec != null) {
-		// CarUtils.dumpSpeedInfo("Player", playerCar, userRec.getTrackTime());
-		// userRec.saveLocal(messager);
-		// setGhostReplay(0, userRec);
-		// }
-		// }
-		else if (inputSystem.isPressed(Keys.L)) {
-			playerCar.resetPhysics();
-			playerCar.resetDistanceAndSpeed(true, true);
-			lapManager.stopRecording();
-			setGhostReplay(0, Replay.loadLocal("test-replay"));
-		} else if (inputSystem.isPressed(Keys.K)) {
-			playerCar.resetPhysics();
-			playerCar.resetDistanceAndSpeed(true, true);
-			lapManager.stopRecording();
-			setGhostReplay(0, Replay.loadLocal("test-replay-coll"));
+
+		if (debug.isEnabled()) {
+			if (inputSystem.isPressed(Keys.W)) {
+				debug.toggleFlag(RenderFlags.Box2DWireframe);
+			} else if (inputSystem.isPressed(Keys.B)) {
+				debug.toggleFlag(RenderFlags.BoundingBoxes3D);
+			} else if (inputSystem.isPressed(Keys.T)) {
+				debug.toggleFlag(RenderFlags.TrackSectors);
+			}
 		}
 	}
 }

@@ -1,17 +1,25 @@
 
 package com.bitfire.uracer.game.debug;
 
+import java.util.EnumSet;
+import java.util.Set;
+
 import com.badlogic.gdx.Gdx;
+import com.badlogic.gdx.graphics.GL10;
+import com.badlogic.gdx.graphics.GL20;
+import com.badlogic.gdx.graphics.PerspectiveCamera;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
+import com.badlogic.gdx.graphics.glutils.ImmediateModeRenderer20;
 import com.badlogic.gdx.math.MathUtils;
 import com.badlogic.gdx.math.Matrix4;
 import com.badlogic.gdx.math.Vector2;
+import com.badlogic.gdx.math.Vector3;
+import com.badlogic.gdx.math.collision.BoundingBox;
 import com.badlogic.gdx.physics.box2d.Body;
 import com.badlogic.gdx.physics.box2d.Box2DDebugRenderer;
 import com.badlogic.gdx.physics.box2d.World;
 import com.bitfire.postprocessing.PostProcessor;
 import com.bitfire.uracer.URacer;
-import com.bitfire.uracer.configuration.Config;
 import com.bitfire.uracer.entities.EntityRenderState;
 import com.bitfire.uracer.game.GameEvents;
 import com.bitfire.uracer.game.actors.CarDescriptor;
@@ -24,6 +32,10 @@ import com.bitfire.uracer.game.player.PlayerCar;
 import com.bitfire.uracer.game.rendering.GameRenderer;
 import com.bitfire.uracer.game.rendering.GameWorldRenderer;
 import com.bitfire.uracer.game.world.GameWorld;
+import com.bitfire.uracer.game.world.models.OrthographicAlignedStillModel;
+import com.bitfire.uracer.game.world.models.TrackTrees;
+import com.bitfire.uracer.game.world.models.TrackWalls;
+import com.bitfire.uracer.game.world.models.TreeStillModel;
 import com.bitfire.uracer.resources.Art;
 import com.bitfire.uracer.utils.Convert;
 import com.bitfire.uracer.utils.NumberString;
@@ -32,7 +44,27 @@ import com.bitfire.uracer.utils.SpriteBatchUtils;
 import com.bitfire.utils.ItemsManager;
 
 public final class DebugHelper extends GameTask implements DisposableTasks {
+	// render flags for basic debug info
+	public enum RenderFlags {
+		// @off
+		NoRender,
+		VersionInfo,
+		FpsStats,
+		MemoryStats,
+		MeshStats,
+		PlayerInfo,
+		PlayerCarInfo,
+		PostProcessorInfo,
+		PerformanceGraph,
+		Box2DWireframe,
+		BoundingBoxes3D,
+		TrackSectors
+		// @on
+	}
+
 	// rendering
+	private Set<RenderFlags> renderFlags = EnumSet.of(RenderFlags.VersionInfo, RenderFlags.FpsStats, RenderFlags.MeshStats,
+		RenderFlags.PostProcessorInfo, RenderFlags.PerformanceGraph, RenderFlags.PlayerCarInfo);
 	private final ItemsManager<DebugRenderable> renderables = new ItemsManager<DebugRenderable>();
 
 	private PostProcessor postProcessor;
@@ -43,19 +75,25 @@ public final class DebugHelper extends GameTask implements DisposableTasks {
 	private DebugStatistics stats;
 	private String uRacerInfo;
 
-	// box2d
-	private Box2DDebugRenderer b2drenderer;
+	// world
+	private GameWorld gameWorld;
 	private World box2dWorld;
+
+	// debug renderers
+	private Box2DDebugRenderer b2drenderer;
+	private ImmediateModeRenderer20 dbg = new ImmediateModeRenderer20(false, true, 0);
 
 	private final GameRendererEvent.Listener renderListener = new GameRendererEvent.Listener() {
 		@Override
 		public void handle (Object source, Type type, Order order) {
+			if (renderFlags.isEmpty() || renderFlags.contains(RenderFlags.NoRender)) return;
+
 			SpriteBatch batch = GameEvents.gameRenderer.batch;
 
 			if (type == GameRendererEvent.Type.BatchDebug) {
 				// render everything scaled
 				for (DebugRenderable r : renderables) {
-					r.renderBatch(batch);
+					if (renderFlags.contains(r.getFlag())) r.renderBatch(batch);
 				}
 
 				// save original transform matrix
@@ -69,20 +107,25 @@ public final class DebugHelper extends GameTask implements DisposableTasks {
 				batch.setTransformMatrix(xform);
 
 			} else if (type == GameRendererEvent.Type.Debug) {
-				if (Config.Debug.RenderBox2DWorldWireframe) {
+				if (renderFlags.contains(RenderFlags.BoundingBoxes3D)) {
+					renderBoundingBoxes(GameEvents.gameRenderer.camPersp);
+				}
+
+				if (renderFlags.contains(RenderFlags.Box2DWireframe)) {
 					b2drenderer.render(box2dWorld, GameEvents.gameRenderer.mtxOrthographicMvpMt);
 				}
 
 				for (DebugRenderable r : renderables) {
-					r.render();
+					if (renderFlags.contains(r.getFlag())) r.render();
 				}
 			}
 		}
 	};
 
 	public DebugHelper (GameWorld gameWorld, PostProcessor postProcessor) {
-		this.box2dWorld = gameWorld.getBox2DWorld();
+		this.gameWorld = gameWorld;
 		this.postProcessor = postProcessor;
+		this.box2dWorld = gameWorld.getBox2DWorld();
 
 		GameEvents.gameRenderer.addListener(renderListener, GameRendererEvent.Type.BatchDebug, GameRendererEvent.Order.PLUS_4);
 		GameEvents.gameRenderer.addListener(renderListener, GameRendererEvent.Type.Debug, GameRendererEvent.Order.PLUS_4);
@@ -107,11 +150,38 @@ public final class DebugHelper extends GameTask implements DisposableTasks {
 		renderables.add(renderable);
 	}
 
+	public void remove (DebugRenderable renderable) {
+		renderables.remove(renderable);
+	}
+
+	public void toggleFlag (RenderFlags flag) {
+		if (renderFlags.contains(flag)) {
+			renderFlags.remove(flag);
+		} else {
+			renderFlags.add(flag);
+		}
+	}
+
+	public void clearFlags () {
+		renderFlags.clear();
+	}
+
+	public void setFlags (EnumSet<RenderFlags> set) {
+		renderFlags = set;
+	}
+
+	public boolean isEnabled () {
+		return !renderFlags.isEmpty() && !renderFlags.contains(RenderFlags.NoRender);
+	}
+
 	@Override
 	public void dispose () {
+		super.dispose();
+
 		GameEvents.gameRenderer.removeListener(renderListener, GameRendererEvent.Type.BatchDebug, GameRendererEvent.Order.PLUS_4);
 		GameEvents.gameRenderer.removeListener(renderListener, GameRendererEvent.Type.Debug, GameRendererEvent.Order.PLUS_4);
 
+		dbg.dispose();
 		b2drenderer.dispose();
 		stats.dispose();
 		disposeTasks();
@@ -149,37 +219,37 @@ public final class DebugHelper extends GameTask implements DisposableTasks {
 	private void render (SpriteBatch batch) {
 		// batch.setTransformMatrix(idt);
 
-		renderVersionInfo(batch, Art.DebugFontHeight * 2);
+		if (renderFlags.contains(RenderFlags.VersionInfo)) {
+			renderVersionInfo(batch, Art.DebugFontHeight * 2);
+		}
 
-		if (Config.Debug.RenderDebugInfoFpsStats) {
+		if (renderFlags.contains(RenderFlags.FpsStats)) {
 			renderFpsStats(batch, ScaleUtils.PlayHeight - Art.DebugFontHeight);
 		}
 
-		if (Config.Debug.ShowAdvancedDebugInfo) {
-			if (Config.Debug.RenderDebugInfoGraphics) {
-				renderGraphicalStats(batch, Art.DebugFontHeight * 2);
-			}
+		if (renderFlags.contains(RenderFlags.PerformanceGraph)) {
+			renderGraphicalStats(batch, Art.DebugFontHeight * 2);
+		}
 
-			if (Config.Debug.RenderDebugInfoMemoryStats) {
-				renderMemoryUsage(batch, ScaleUtils.PlayHeight - Art.DebugFontHeight * 4);
-			}
+		if (renderFlags.contains(RenderFlags.MemoryStats)) {
+			renderMemoryUsage(batch, ScaleUtils.PlayHeight - Art.DebugFontHeight * 4);
+		}
 
-			if (Config.Debug.RenderPlayerDebugInfo) {
-				renderPlayerInfo(batch, 0);
-			}
+		if (renderFlags.contains(RenderFlags.PlayerInfo)) {
+			renderPlayerInfo(batch, 0);
+		}
 
-			if (Config.Debug.RenderDebugInfoPostProcessor) {
-				renderPostProcessorInfo(batch, ScaleUtils.PlayHeight - Art.DebugFontHeight);
-			}
+		if (renderFlags.contains(RenderFlags.PostProcessorInfo)) {
+			renderPostProcessorInfo(batch, ScaleUtils.PlayHeight - Art.DebugFontHeight);
+		}
 
-			if (Config.Debug.RenderDebugInfoMeshStats) {
-				SpriteBatchUtils.drawString(batch, "total meshes=" + GameWorld.TotalMeshes, 0, ScaleUtils.PlayHeight
-					- Art.DebugFontHeight * 3);
-				SpriteBatchUtils.drawString(batch, "rendered meshes="
-					+ (GameWorldRenderer.renderedTrees + GameWorldRenderer.renderedWalls) + ", trees="
-					+ GameWorldRenderer.renderedTrees + ", walls=" + GameWorldRenderer.renderedWalls + ", culled="
-					+ GameWorldRenderer.culledMeshes, 0, ScaleUtils.PlayHeight - Art.DebugFontHeight * 2);
-			}
+		if (renderFlags.contains(RenderFlags.MeshStats)) {
+			SpriteBatchUtils.drawString(batch, "total meshes=" + GameWorld.TotalMeshes, 0, ScaleUtils.PlayHeight
+				- Art.DebugFontHeight * 3);
+			SpriteBatchUtils.drawString(batch, "rendered meshes="
+				+ (GameWorldRenderer.renderedTrees + GameWorldRenderer.renderedWalls) + ", trees=" + GameWorldRenderer.renderedTrees
+				+ ", walls=" + GameWorldRenderer.renderedWalls + ", culled=" + GameWorldRenderer.culledMeshes, 0,
+				ScaleUtils.PlayHeight - Art.DebugFontHeight * 2);
 		}
 	}
 
@@ -254,5 +324,129 @@ public final class DebugHelper extends GameTask implements DisposableTasks {
 			+ Art.DebugFontWidth * 8);
 
 		// BatchUtils.drawString( batch, "on tile " + tilePosition, 0, 0 );
+	}
+
+	private void renderBoundingBoxes (PerspectiveCamera camPersp) {
+		// trees
+		TrackTrees trees = gameWorld.getTrackTrees();
+		TrackWalls walls = gameWorld.getTrackWalls();
+
+		for (int i = 0; i < trees.models.size(); i++) {
+			TreeStillModel m = trees.models.get(i);
+			renderBoundingBox(camPersp, m.boundingBox);
+		}
+
+		for (int i = 0; i < walls.count(); i++) {
+			OrthographicAlignedStillModel m = walls.models.get(i);
+			renderBoundingBox(camPersp, m.boundingBox);
+		}
+	}
+
+	/** This is intentionally SLOW. Read it again!
+	 * 
+	 * @param boundingBox */
+	private void renderBoundingBox (PerspectiveCamera camPersp, BoundingBox boundingBox) {
+		float alpha = .15f;
+		float r = 0f;
+		float g = 0f;
+		float b = 1f;
+		float offset = 0.5f; // offset for the base, due to pixel-perfect model placement
+
+		Vector3[] corners = boundingBox.getCorners();
+
+		Gdx.gl.glDisable(GL20.GL_CULL_FACE);
+		Gdx.gl.glEnable(GL20.GL_BLEND);
+		Gdx.gl.glBlendFunc(GL20.GL_SRC_ALPHA, GL20.GL_ONE_MINUS_SRC_ALPHA);
+
+		dbg.begin(camPersp.combined, GL10.GL_TRIANGLES);
+		{
+			dbg.color(r, g, b, alpha);
+			dbg.vertex(corners[0].x, corners[0].y, corners[0].z + offset);
+			dbg.color(r, g, b, alpha);
+			dbg.vertex(corners[1].x, corners[1].y, corners[1].z + offset);
+			dbg.color(r, g, b, alpha);
+			dbg.vertex(corners[4].x, corners[4].y, corners[4].z);
+
+			dbg.color(r, g, b, alpha);
+			dbg.vertex(corners[1].x, corners[1].y, corners[1].z + offset);
+			dbg.color(r, g, b, alpha);
+			dbg.vertex(corners[4].x, corners[4].y, corners[4].z);
+			dbg.color(r, g, b, alpha);
+			dbg.vertex(corners[5].x, corners[5].y, corners[5].z);
+
+			dbg.color(r, g, b, alpha);
+			dbg.vertex(corners[1].x, corners[1].y, corners[1].z + offset);
+			dbg.color(r, g, b, alpha);
+			dbg.vertex(corners[2].x, corners[2].y, corners[2].z + offset);
+			dbg.color(r, g, b, alpha);
+			dbg.vertex(corners[5].x, corners[5].y, corners[5].z);
+
+			dbg.color(r, g, b, alpha);
+			dbg.vertex(corners[2].x, corners[2].y, corners[2].z + offset);
+			dbg.color(r, g, b, alpha);
+			dbg.vertex(corners[5].x, corners[5].y, corners[5].z);
+			dbg.color(r, g, b, alpha);
+			dbg.vertex(corners[6].x, corners[6].y, corners[6].z);
+
+			dbg.color(r, g, b, alpha);
+			dbg.vertex(corners[2].x, corners[2].y, corners[2].z + offset);
+			dbg.color(r, g, b, alpha);
+			dbg.vertex(corners[6].x, corners[6].y, corners[6].z);
+			dbg.color(r, g, b, alpha);
+			dbg.vertex(corners[3].x, corners[3].y, corners[3].z + offset);
+
+			dbg.color(r, g, b, alpha);
+			dbg.vertex(corners[3].x, corners[3].y, corners[3].z);
+			dbg.color(r, g, b, alpha);
+			dbg.vertex(corners[6].x, corners[6].y, corners[6].z);
+			dbg.color(r, g, b, alpha);
+			dbg.vertex(corners[7].x, corners[7].y, corners[7].z);
+
+			dbg.color(r, g, b, alpha);
+			dbg.vertex(corners[3].x, corners[3].y, corners[3].z + offset);
+			dbg.color(r, g, b, alpha);
+			dbg.vertex(corners[0].x, corners[0].y, corners[0].z + offset);
+			dbg.color(r, g, b, alpha);
+			dbg.vertex(corners[7].x, corners[7].y, corners[7].z);
+
+			dbg.color(r, g, b, alpha);
+			dbg.vertex(corners[7].x, corners[7].y, corners[7].z);
+			dbg.color(r, g, b, alpha);
+			dbg.vertex(corners[0].x, corners[0].y, corners[0].z + offset);
+			dbg.color(r, g, b, alpha);
+			dbg.vertex(corners[4].x, corners[4].y, corners[4].z);
+
+			// top cap
+			dbg.color(r, g, b, alpha);
+			dbg.vertex(corners[4].x, corners[4].y, corners[4].z);
+			dbg.color(r, g, b, alpha);
+			dbg.vertex(corners[5].x, corners[5].y, corners[5].z);
+			dbg.color(r, g, b, alpha);
+			dbg.vertex(corners[7].x, corners[7].y, corners[7].z);
+
+			dbg.color(r, g, b, alpha);
+			dbg.vertex(corners[5].x, corners[5].y, corners[5].z);
+			dbg.color(r, g, b, alpha);
+			dbg.vertex(corners[7].x, corners[7].y, corners[7].z);
+			dbg.color(r, g, b, alpha);
+			dbg.vertex(corners[6].x, corners[6].y, corners[6].z);
+
+			dbg.color(r, g, b, alpha);
+			dbg.vertex(corners[0].x, corners[0].y, corners[0].z + offset);
+			dbg.color(r, g, b, alpha);
+			dbg.vertex(corners[3].x, corners[3].y, corners[3].z + offset);
+			dbg.color(r, g, b, alpha);
+			dbg.vertex(corners[1].x, corners[1].y, corners[1].z + offset);
+
+			dbg.color(r, g, b, alpha);
+			dbg.vertex(corners[3].x, corners[3].y, corners[3].z + offset);
+			dbg.color(r, g, b, alpha);
+			dbg.vertex(corners[1].x, corners[1].y, corners[1].z + offset);
+			dbg.color(r, g, b, alpha);
+			dbg.vertex(corners[2].x, corners[2].y, corners[2].z + offset);
+		}
+		dbg.end();
+
+		Gdx.gl.glDisable(GL20.GL_BLEND);
 	}
 }
