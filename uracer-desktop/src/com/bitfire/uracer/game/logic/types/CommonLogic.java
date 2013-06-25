@@ -32,7 +32,6 @@ import com.bitfire.uracer.game.events.CarEvent;
 import com.bitfire.uracer.game.events.GameLogicEvent;
 import com.bitfire.uracer.game.logic.GameTasksManager;
 import com.bitfire.uracer.game.logic.gametasks.Messager;
-import com.bitfire.uracer.game.logic.gametasks.hud.elements.HudPlayer.EndDriftType;
 import com.bitfire.uracer.game.logic.gametasks.hud.elements.player.DriftBar;
 import com.bitfire.uracer.game.logic.helpers.CarFactory;
 import com.bitfire.uracer.game.logic.helpers.GameTrack;
@@ -58,7 +57,6 @@ import com.bitfire.uracer.utils.AMath;
 import com.bitfire.uracer.utils.BoxedFloat;
 import com.bitfire.uracer.utils.BoxedFloatAccessor;
 import com.bitfire.uracer.utils.InterpolatedFloat;
-import com.bitfire.uracer.utils.NumberString;
 
 public abstract class CommonLogic implements GameLogic {
 
@@ -116,7 +114,6 @@ public abstract class CommonLogic implements GameLogic {
 	};
 
 	protected void collision (CarEvent.Data data) {
-		// invalidate time modulation
 		if (gameInput.isTimeDilating()) {
 			endTimeDilation();
 		}
@@ -142,10 +139,7 @@ public abstract class CommonLogic implements GameLogic {
 			//@on
 
 			playerTasks.hudPlayer.highlightCollision();
-			// Gdx.app.log("", "\ntarget force=" + NumberString.formatLong(clampedImpactForce));
 		}
-
-		// postProcessing.alert(1000);
 	}
 
 	protected void physicsForcesReady (CarEvent.Data eventData) {
@@ -154,8 +148,6 @@ public abstract class CommonLogic implements GameLogic {
 			Gdx.app.log("CommonLogic", "Player too slow, recording aborted.");
 			playerError("Too slow!");
 		}
-		// RecordingNotEnabled
-		// NoError
 	}
 
 	protected void ghostReplayEnded (GhostCar ghost) {
@@ -190,23 +182,7 @@ public abstract class CommonLogic implements GameLogic {
 	}
 
 	protected void driftEnds (PlayerCar player) {
-		float driftSeconds = player.driftState.driftSeconds();
-		// String msgSeconds = NumberString.format(playerCar.driftState.driftSeconds()) + "  seconds!";
-
-		if (player.driftState.hasCollided) {
-			playerTasks.hudPlayer.endDrift("-" + NumberString.format(driftSeconds), EndDriftType.BadDrift);
-		} else {
-
-			// if (driftSeconds >= 1 && driftSeconds < 3f) {
-			// gameTasksManager.messager.enqueue("NICE ONE!\n+" + msgSeconds, 1f, Type.Good, Position.Bottom, Size.Big);
-			// } else if (driftSeconds >= 3f && driftSeconds < 5f) {
-			// gameTasksManager.messager.enqueue("FANTASTIC!\n+" + msgSeconds, 1f, Type.Good, Position.Bottom, Size.Big);
-			// } else if (driftSeconds >= 5f) {
-			// gameTasksManager.messager.enqueue("UNREAL!\n+" + msgSeconds, 1f, Type.Good, Position.Bottom, Size.Big);
-			// }
-
-			playerTasks.hudPlayer.endDrift("+" + NumberString.format(driftSeconds), EndDriftType.GoodDrift);
-		}
+		playerTasks.hudPlayer.endDrift();
 	}
 
 	protected void wrongWayBegins () {

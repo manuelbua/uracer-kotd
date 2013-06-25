@@ -10,10 +10,10 @@ import com.bitfire.uracer.utils.AMath;
 public final class DriftState {
 	private Car car;
 	public boolean isDrifting = false;
-	public boolean hasCollided = false;
 	public float lateralForcesFront = 0, lateralForcesRear = 0;
 	public float driftStrength;
 
+	private boolean hasCollided = false;
 	private float lastRear = 0, lastFront = 0, invMaxGrip = 0;
 	private Time time, collisionTime;
 
@@ -22,7 +22,6 @@ public final class DriftState {
 		this.time = new Time();
 		this.collisionTime = new Time();
 		this.invMaxGrip = 1f / car.getCarModel().max_grip;
-
 		reset();
 	}
 

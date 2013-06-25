@@ -21,10 +21,6 @@ import com.bitfire.uracer.utils.VMath;
 
 /** Encapsulates player's information shown on screen moving along the player position */
 public final class HudPlayer extends HudElement {
-	public enum EndDriftType {
-		GoodDrift, BadDrift
-	}
-
 	// player info
 	private EntityRenderState playerState = null;
 
@@ -164,7 +160,7 @@ public final class HudPlayer extends HudElement {
 	}
 
 	/** Signals the hud element that the player has finished drifting */
-	public void endDrift (String message, EndDriftType type) {
+	public void endDrift () {
 		driftBar.hideSecondsLabel();
 	}
 

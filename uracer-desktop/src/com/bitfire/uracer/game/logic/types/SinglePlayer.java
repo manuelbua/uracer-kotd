@@ -30,12 +30,6 @@ public class SinglePlayer extends CommonLogic {
 		super.dispose();
 	}
 
-	// @Override
-	// protected void collision (Data eventData) {
-	// super.collision(eventData);
-	// camShaker.onCollision(eventData);
-	// }
-
 	@Override
 	protected void updateCameraPosition (Vector2 positionPx) {
 		if (hasPlayer()) {
@@ -54,14 +48,12 @@ public class SinglePlayer extends CommonLogic {
 		}
 	}
 
-	// the game has been restarted
 	@Override
 	public void restartGame () {
 		super.restartGame();
 		Gdx.app.log("SinglePlayer", "Starting/restarting game");
 	}
 
-	// the game has been reset
 	@Override
 	public void resetGame () {
 		super.resetGame();
