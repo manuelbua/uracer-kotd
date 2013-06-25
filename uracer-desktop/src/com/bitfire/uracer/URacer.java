@@ -66,7 +66,6 @@ public class URacer implements ApplicationListener {
 	private static final float oneOnOneBillion = 1.0f / 1000000000.0f;
 	public static float timeMultiplier = 0f;
 
-	// stats
 	private static float graphicsTime = 0;
 	private static float physicsTime = 0;
 	private static float aliasingTime = 0;

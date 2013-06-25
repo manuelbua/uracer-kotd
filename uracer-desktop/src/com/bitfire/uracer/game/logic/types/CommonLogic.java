@@ -427,7 +427,6 @@ public abstract class CommonLogic implements GameLogic {
 
 		outOfTrackTime.reset();
 		lapManager.abortRecording(true);
-		// gameTasksManager.raiseRestart();
 		wrongWayMonitor.reset();
 		postProcessing.resetAnimator();
 		playerLapMonitor.reset();
@@ -455,7 +454,6 @@ public abstract class CommonLogic implements GameLogic {
 		// clean everything
 		lapManager.removeAllReplays();
 		lapManager.reset(true);
-		// gameTasksManager.raiseReset();
 
 		GameEvents.logicEvent.trigger(this, GameLogicEvent.Type.GameReset);
 	}
@@ -480,7 +478,6 @@ public abstract class CommonLogic implements GameLogic {
 	public void startTimeDilation () {
 		dilationTime.start();
 		timeMod.toDilatedTime();
-		// playerTasks.hudPlayer.driftBar.showSecondsLabel();
 	}
 
 	/** Request time dilation to end */
@@ -490,7 +487,6 @@ public abstract class CommonLogic implements GameLogic {
 		gameInput.resetTimeDilating();
 		dilationTime.reset();
 		timeMod.toNormalTime();
-		// playerTasks.hudPlayer.driftBar.hideSecondsLabel();
 	}
 
 	@Override
@@ -704,7 +700,6 @@ public abstract class CommonLogic implements GameLogic {
 		for (Replay r : lapManager.getReplays()) {
 			if (r.isValid()) {
 				setGhostReplay(ghostIndex, r);
-
 				if (lapManager.getBestReplay() == r) {
 					nextTarget = ghostCars[ghostIndex];
 					playerTasks.hudPlayer.highlightNextTarget(nextTarget);
@@ -726,7 +721,6 @@ public abstract class CommonLogic implements GameLogic {
 			addPlayer();
 			restartGame();
 		} else if (inputSystem.isPressed(Keys.TAB)) {
-			// toggle debug rendering
 			debug.toggleFlag(RenderFlags.NoRender);
 		}
 
