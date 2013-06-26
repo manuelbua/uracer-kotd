@@ -424,15 +424,6 @@ public abstract class CommonLogic implements GameLogic, GameLogicObserver {
 		}
 	}
 
-	/** Invalidates the current lap and show an error */
-	protected void playerError (String message) {
-		isCurrentLapValid = false;
-		lapManager.abortRecording(true);
-		playerTasks.hudLapInfo.setInvalid(message);
-		playerTasks.hudLapInfo.toColor(1, 0, 0);
-		postProcessing.alertBegins(500);
-	}
-
 	protected GhostCar getGhost (int handle) {
 		return ghostCars[handle];
 	}

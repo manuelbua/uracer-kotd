@@ -269,4 +269,18 @@ public abstract class BaseLogic extends CommonLogic {
 	public void backInTrack () {
 		outOfTrackTime.reset();
 	}
+
+	//
+	// utilities
+	//
+
+	/** Invalidates the current lap and shows an error */
+	protected void playerError (String message) {
+		isCurrentLapValid = false;
+		lapManager.abortRecording(true);
+		playerTasks.hudLapInfo.setInvalid(message);
+		playerTasks.hudLapInfo.toColor(1, 0, 0);
+		postProcessing.alertBegins(500);
+	}
+
 }
