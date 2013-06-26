@@ -2,9 +2,7 @@
 package com.bitfire.uracer.game.logic.types;
 
 import com.badlogic.gdx.Gdx;
-import com.badlogic.gdx.Input.Keys;
 import com.badlogic.gdx.math.MathUtils;
-import com.bitfire.postprocessing.PostProcessor;
 import com.bitfire.uracer.Input;
 import com.bitfire.uracer.URacer;
 import com.bitfire.uracer.configuration.Config;
@@ -17,12 +15,8 @@ import com.bitfire.uracer.game.Time;
 import com.bitfire.uracer.game.Time.Reference;
 import com.bitfire.uracer.game.actors.Car;
 import com.bitfire.uracer.game.actors.GhostCar;
-import com.bitfire.uracer.game.debug.DebugHelper;
-import com.bitfire.uracer.game.debug.DebugHelper.RenderFlags;
-import com.bitfire.uracer.game.debug.GameTrackDebugRenderer;
-import com.bitfire.uracer.game.debug.player.DebugPlayer;
 import com.bitfire.uracer.game.events.GameLogicEvent;
-import com.bitfire.uracer.game.logic.GameTasksManager;
+import com.bitfire.uracer.game.logic.gametasks.GameTasksManager;
 import com.bitfire.uracer.game.logic.gametasks.Messager;
 import com.bitfire.uracer.game.logic.gametasks.hud.elements.player.DriftBar;
 import com.bitfire.uracer.game.logic.helpers.CarFactory;
@@ -46,10 +40,6 @@ import com.bitfire.uracer.screen.TransitionFactory.TransitionType;
 import com.bitfire.uracer.utils.BoxedFloat;
 
 public abstract class CommonLogic implements GameLogic, GameLogicObserver {
-
-	// debug
-	private DebugHelper debug = null;
-
 	// input
 	protected Input inputSystem = null;
 	protected GameInput gameInput = null;
@@ -125,22 +115,6 @@ public abstract class CommonLogic implements GameLogic, GameLogicObserver {
 
 		// create game input
 		gameInput = new GameInput(this, inputSystem);
-		setupDebug(gameRenderer.getPostProcessing().getPostProcessor());
-	}
-
-	private void setupDebug (PostProcessor postProcessor) {
-		if (Config.Debug.UseDebugHelper) {
-			debug = new DebugHelper(gameWorld, postProcessor);
-			debug.add(new GameTrackDebugRenderer(RenderFlags.TrackSectors, gameWorld.getGameTrack()));
-			debug.add(new DebugPlayer(RenderFlags.PlayerCarInfo, gameTasksManager));
-			Gdx.app.debug("Game", "Debug helper initialized");
-		}
-	}
-
-	private void destroyDebug () {
-		if (Config.Debug.UseDebugHelper) {
-			debug.dispose();
-		}
 	}
 
 	public boolean hasPlayer () {
@@ -153,7 +127,6 @@ public abstract class CommonLogic implements GameLogic, GameLogicObserver {
 
 	@Override
 	public void dispose () {
-		destroyDebug();
 		removePlayer();
 		gameTasksManager.dispose();
 		playerTasks.dispose();
@@ -296,7 +269,7 @@ public abstract class CommonLogic implements GameLogic, GameLogicObserver {
 			// compute the next-frame time multiplier
 			URacer.timeMultiplier = getTimeModulator().getTime();
 			gameInput.update();
-			dbgInput();
+			handleExtraInput();
 		}
 	}
 
@@ -505,29 +478,6 @@ public abstract class CommonLogic implements GameLogic, GameLogicObserver {
 				ghostIndex++;
 			} else {
 				setGhostReplay(ghostIndex, null);
-			}
-		}
-	}
-
-	private void dbgInput () {
-		if (inputSystem.isPressed(Keys.O)) {
-			removePlayer();
-			restartGame();
-			restartAllReplays();
-		} else if (inputSystem.isPressed(Keys.P)) {
-			addPlayer();
-			restartGame();
-		} else if (inputSystem.isPressed(Keys.TAB)) {
-			gameRenderer.setDebug(!gameRenderer.isDebugEnabled());
-		}
-
-		if (debug.isEnabled()) {
-			if (inputSystem.isPressed(Keys.W)) {
-				debug.toggleFlag(RenderFlags.Box2DWireframe);
-			} else if (inputSystem.isPressed(Keys.B)) {
-				debug.toggleFlag(RenderFlags.BoundingBoxes3D);
-			} else if (inputSystem.isPressed(Keys.S)) {
-				debug.toggleFlag(RenderFlags.TrackSectors);
 			}
 		}
 	}

@@ -6,7 +6,7 @@ import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.utils.Array;
 import com.bitfire.uracer.game.debug.DebugHelper.RenderFlags;
 import com.bitfire.uracer.game.debug.DebugRenderable;
-import com.bitfire.uracer.game.logic.GameTasksManager;
+import com.bitfire.uracer.game.logic.gametasks.GameTasksManager;
 import com.bitfire.uracer.game.logic.gametasks.trackeffects.TrackEffect;
 import com.bitfire.uracer.game.logic.gametasks.trackeffects.TrackEffectType;
 import com.bitfire.uracer.game.player.DriftState;

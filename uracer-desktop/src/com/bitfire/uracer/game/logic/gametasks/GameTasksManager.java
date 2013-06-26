@@ -1,14 +1,9 @@
 
-package com.bitfire.uracer.game.logic;
+package com.bitfire.uracer.game.logic.gametasks;
 
 import com.badlogic.gdx.utils.Array;
 import com.bitfire.postprocessing.PostProcessor;
 import com.bitfire.uracer.game.events.TaskManagerEvent;
-import com.bitfire.uracer.game.logic.gametasks.GameTask;
-import com.bitfire.uracer.game.logic.gametasks.Hud;
-import com.bitfire.uracer.game.logic.gametasks.PhysicsStep;
-import com.bitfire.uracer.game.logic.gametasks.SoundManager;
-import com.bitfire.uracer.game.logic.gametasks.TrackEffects;
 import com.bitfire.uracer.game.world.GameWorld;
 
 /** Manages the creation and destruction of the main game tasks. */

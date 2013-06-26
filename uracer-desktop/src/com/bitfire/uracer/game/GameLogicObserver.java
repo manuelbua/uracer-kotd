@@ -7,6 +7,8 @@ import com.bitfire.uracer.game.events.CarEvent;
 import com.bitfire.uracer.game.player.PlayerCar;
 
 public interface GameLogicObserver {
+	void handleExtraInput ();
+
 	void beforeRender ();
 
 	float updateCameraZoom (float timeModFactor);

@@ -3,7 +3,7 @@ package com.bitfire.uracer.game.logic.helpers;
 
 import com.bitfire.uracer.URacer;
 import com.bitfire.uracer.configuration.UserProfile;
-import com.bitfire.uracer.game.logic.GameTasksManager;
+import com.bitfire.uracer.game.logic.gametasks.GameTasksManager;
 import com.bitfire.uracer.game.logic.gametasks.hud.elements.HudLapInfo;
 import com.bitfire.uracer.game.logic.gametasks.hud.elements.HudPlayer;
 import com.bitfire.uracer.game.logic.gametasks.hud.elements.HudPlayerStatic;

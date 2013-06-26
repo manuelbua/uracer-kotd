@@ -1,11 +1,10 @@
 
-package com.bitfire.uracer.game.logic.types;
+package com.bitfire.uracer.game.logic;
 
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.math.Vector2;
 import com.bitfire.uracer.configuration.UserProfile;
 import com.bitfire.uracer.game.actors.GhostCar;
-import com.bitfire.uracer.game.logic.BaseLogic;
 import com.bitfire.uracer.game.logic.gametasks.messager.Message;
 import com.bitfire.uracer.game.logic.gametasks.messager.Message.Position;
 import com.bitfire.uracer.game.logic.gametasks.messager.Message.Size;
