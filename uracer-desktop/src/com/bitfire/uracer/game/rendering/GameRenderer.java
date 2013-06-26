@@ -43,6 +43,8 @@ public final class GameRenderer {
 	private final Matrix4 identity = new Matrix4();
 	private final Matrix4 xform = new Matrix4();
 
+	private boolean debug = Config.Debug.UseDebugHelper;
+
 	public GameRenderer (GameWorld gameWorld) {
 		world = gameWorld;
 		gl = Gdx.graphics.getGL20();
@@ -72,6 +74,14 @@ public final class GameRenderer {
 		worldRenderer.dispose();
 
 		GameEvents.gameRenderer.removeAllListeners();
+	}
+
+	public void setDebug (boolean enabled) {
+		debug = enabled;
+	}
+
+	public boolean isDebugEnabled () {
+		return debug;
 	}
 
 	public PostProcessing getPostProcessing () {
@@ -274,17 +284,19 @@ public final class GameRenderer {
 
 	// manages and triggers debug event
 	public void debugRender () {
-		SpriteBatch batch = batchRenderer.beginTopLeft();
-		batch.setTransformMatrix(xform);
+		if (debug) {
+			SpriteBatch batch = batchRenderer.beginTopLeft();
+			batch.setTransformMatrix(xform);
 
-		batch.disableBlending();
-		GameEvents.gameRenderer.batch = batch;
-		GameEvents.gameRenderer.trigger(this, GameRendererEvent.Type.BatchDebug);
-		batchRenderer.end();
-		batch.setTransformMatrix(identity);
+			batch.disableBlending();
+			GameEvents.gameRenderer.batch = batch;
+			GameEvents.gameRenderer.trigger(this, GameRendererEvent.Type.BatchDebug);
+			batchRenderer.end();
+			batch.setTransformMatrix(identity);
 
-		GameEvents.gameRenderer.batch = null;
-		GameEvents.gameRenderer.trigger(this, GameRendererEvent.Type.Debug);
+			GameEvents.gameRenderer.batch = null;
+			GameEvents.gameRenderer.trigger(this, GameRendererEvent.Type.Debug);
+		}
 	}
 
 	public void rebind () {

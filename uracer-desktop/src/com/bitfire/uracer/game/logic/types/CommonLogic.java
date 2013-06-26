@@ -57,6 +57,7 @@ public abstract class CommonLogic implements GameLogic, GameLogicObserver {
 
 	// world
 	protected GameWorld gameWorld = null;
+	protected GameRenderer gameRenderer = null;
 	protected GameTrack gameTrack = null;
 
 	// rendering
@@ -83,13 +84,12 @@ public abstract class CommonLogic implements GameLogic, GameLogicObserver {
 	protected PlayerGameTasks playerTasks = null;
 	protected Messager messager = null;
 
-	// time modulation logic
-
-	private BoxedFloat accuDriftSeconds = new BoxedFloat(0);;
+	private BoxedFloat accuDriftSeconds = new BoxedFloat(0);
 
 	public CommonLogic (UserProfile userProfile, GameWorld gameWorld, GameRenderer gameRenderer) {
 		this.userProfile = userProfile;
 		this.gameWorld = gameWorld;
+		this.gameRenderer = gameRenderer;
 		this.gameWorldRenderer = gameRenderer.getWorldRenderer();
 		this.inputSystem = URacer.Game.getInputSystem();
 		this.gameTrack = gameWorld.getGameTrack();
@@ -133,7 +133,6 @@ public abstract class CommonLogic implements GameLogic, GameLogicObserver {
 			debug = new DebugHelper(gameWorld, postProcessor);
 			debug.add(new GameTrackDebugRenderer(RenderFlags.TrackSectors, gameWorld.getGameTrack()));
 			debug.add(new DebugPlayer(RenderFlags.PlayerCarInfo, gameTasksManager));
-
 			Gdx.app.debug("Game", "Debug helper initialized");
 		}
 	}
@@ -519,7 +518,7 @@ public abstract class CommonLogic implements GameLogic, GameLogicObserver {
 			addPlayer();
 			restartGame();
 		} else if (inputSystem.isPressed(Keys.TAB)) {
-			debug.toggleFlag(RenderFlags.NoRender);
+			gameRenderer.setDebug(!gameRenderer.isDebugEnabled());
 		}
 
 		if (debug.isEnabled()) {

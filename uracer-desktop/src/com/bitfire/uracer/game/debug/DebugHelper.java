@@ -47,7 +47,6 @@ public final class DebugHelper extends GameTask implements DisposableTasks {
 	// render flags for basic debug info
 	public enum RenderFlags {
 		// @off
-		NoRender,
 		VersionInfo,
 		FpsStats,
 		MemoryStats,
@@ -86,7 +85,7 @@ public final class DebugHelper extends GameTask implements DisposableTasks {
 	private final GameRendererEvent.Listener renderListener = new GameRendererEvent.Listener() {
 		@Override
 		public void handle (Object source, Type type, Order order) {
-			if (renderFlags.isEmpty() || renderFlags.contains(RenderFlags.NoRender)) return;
+			if (renderFlags.isEmpty()) return;
 
 			SpriteBatch batch = GameEvents.gameRenderer.batch;
 
@@ -171,7 +170,7 @@ public final class DebugHelper extends GameTask implements DisposableTasks {
 	}
 
 	public boolean isEnabled () {
-		return !renderFlags.isEmpty() && !renderFlags.contains(RenderFlags.NoRender);
+		return !renderFlags.isEmpty();
 	}
 
 	@Override
