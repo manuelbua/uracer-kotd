@@ -1,5 +1,5 @@
 
-package com.bitfire.uracer.game.logic.types;
+package com.bitfire.uracer.game.logic;
 
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.math.Vector2;
@@ -18,7 +18,7 @@ import com.bitfire.uracer.utils.CarUtils;
 import com.bitfire.uracer.utils.Convert;
 import com.bitfire.uracer.utils.OrdinalUtils;
 
-public class SinglePlayer extends CommonLogic {
+public class SinglePlayer extends BaseLogic {
 	private CameraShaker camShaker = new CameraShaker();
 
 	public SinglePlayer (UserProfile userProfile, GameWorld gameWorld, GameRenderer gameRenderer) {
@@ -31,7 +31,7 @@ public class SinglePlayer extends CommonLogic {
 	}
 
 	@Override
-	protected void updateCameraPosition (Vector2 positionPx) {
+	public void updateCameraPosition (Vector2 positionPx) {
 		if (hasPlayer()) {
 			// update player's headlights and move the world camera to follows it, if there is a player
 			if (gameWorld.isNightMode()) {
@@ -62,17 +62,17 @@ public class SinglePlayer extends CommonLogic {
 	}
 
 	@Override
-	protected void warmUpStarted () {
+	public void warmUpStarted () {
 		messager.show("Warm up!", 1.5f, Message.Type.Information, Position.Top, Size.Big);
 	}
 
 	@Override
-	protected void warmUpCompleted () {
+	public void warmUpCompleted () {
 		messager.show("GOOOO!!", 1.5f, Message.Type.Information, Position.Top, Size.Big);
 	}
 
 	@Override
-	protected void playerLapStarted () {
+	public void playerLapStarted () {
 		lapManager.stopRecording();
 		playerCar.resetDistanceAndSpeed(true, false);
 		lapManager.startRecording(playerCar, userProfile);
@@ -80,7 +80,7 @@ public class SinglePlayer extends CommonLogic {
 	}
 
 	@Override
-	protected void playerLapCompleted () {
+	public void playerLapCompleted () {
 		if (lapManager.isRecording()) {
 			ReplayInfo ri = lapManager.stopRecording();
 
@@ -102,7 +102,7 @@ public class SinglePlayer extends CommonLogic {
 	}
 
 	@Override
-	protected void ghostLapCompleted (GhostCar ghost) {
+	public void ghostLapCompleted (GhostCar ghost) {
 		if (!hasPlayer()) {
 			restartAllReplays();
 		} else {
@@ -115,7 +115,7 @@ public class SinglePlayer extends CommonLogic {
 	}
 
 	@Override
-	protected void ghostReplayEnded (GhostCar ghost) {
+	public void ghostReplayEnded (GhostCar ghost) {
 		Gdx.app.log("SinglePlayer", "Replay finished for ghost #" + ghost.getId() + ", waiting for lap monitor to act...");
 		CarUtils.dumpSpeedInfo("GhostCar #" + ghost.getId(), ghost, ghost.getReplay().getTrackTime());
 	}

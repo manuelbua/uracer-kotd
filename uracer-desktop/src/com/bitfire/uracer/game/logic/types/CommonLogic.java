@@ -1,17 +1,8 @@
 
 package com.bitfire.uracer.game.logic.types;
 
-import aurelienribon.tweenengine.BaseTween;
-import aurelienribon.tweenengine.Timeline;
-import aurelienribon.tweenengine.Tween;
-import aurelienribon.tweenengine.TweenCallback;
-import aurelienribon.tweenengine.equations.Linear;
-
 import com.badlogic.gdx.Gdx;
-import com.badlogic.gdx.Input.Keys;
 import com.badlogic.gdx.math.MathUtils;
-import com.badlogic.gdx.math.Vector2;
-import com.bitfire.postprocessing.PostProcessor;
 import com.bitfire.uracer.Input;
 import com.bitfire.uracer.URacer;
 import com.bitfire.uracer.configuration.Config;
@@ -19,18 +10,13 @@ import com.bitfire.uracer.configuration.UserProfile;
 import com.bitfire.uracer.game.GameEvents;
 import com.bitfire.uracer.game.GameInput;
 import com.bitfire.uracer.game.GameLogic;
-import com.bitfire.uracer.game.GameplaySettings;
+import com.bitfire.uracer.game.GameLogicObserver;
 import com.bitfire.uracer.game.Time;
 import com.bitfire.uracer.game.Time.Reference;
 import com.bitfire.uracer.game.actors.Car;
 import com.bitfire.uracer.game.actors.GhostCar;
-import com.bitfire.uracer.game.debug.DebugHelper;
-import com.bitfire.uracer.game.debug.DebugHelper.RenderFlags;
-import com.bitfire.uracer.game.debug.GameTrackDebugRenderer;
-import com.bitfire.uracer.game.debug.player.DebugPlayer;
-import com.bitfire.uracer.game.events.CarEvent;
 import com.bitfire.uracer.game.events.GameLogicEvent;
-import com.bitfire.uracer.game.logic.GameTasksManager;
+import com.bitfire.uracer.game.logic.gametasks.GameTasksManager;
 import com.bitfire.uracer.game.logic.gametasks.Messager;
 import com.bitfire.uracer.game.logic.gametasks.hud.elements.player.DriftBar;
 import com.bitfire.uracer.game.logic.helpers.CarFactory;
@@ -40,10 +26,8 @@ import com.bitfire.uracer.game.logic.post.PostProcessing;
 import com.bitfire.uracer.game.logic.replaying.LapManager;
 import com.bitfire.uracer.game.logic.replaying.Replay;
 import com.bitfire.uracer.game.logic.replaying.ReplayManager;
-import com.bitfire.uracer.game.logic.replaying.ReplayRecorder.RecorderError;
 import com.bitfire.uracer.game.logic.types.helpers.GhostLapCompletionMonitor;
 import com.bitfire.uracer.game.logic.types.helpers.PlayerLapCompletionMonitor;
-import com.bitfire.uracer.game.logic.types.helpers.TimeModulator;
 import com.bitfire.uracer.game.logic.types.helpers.WrongWayMonitor;
 import com.bitfire.uracer.game.player.PlayerCar;
 import com.bitfire.uracer.game.rendering.GameRenderer;
@@ -53,160 +37,9 @@ import com.bitfire.uracer.game.tween.GameTweener;
 import com.bitfire.uracer.game.world.GameWorld;
 import com.bitfire.uracer.resources.Art;
 import com.bitfire.uracer.screen.TransitionFactory.TransitionType;
-import com.bitfire.uracer.utils.AMath;
 import com.bitfire.uracer.utils.BoxedFloat;
-import com.bitfire.uracer.utils.BoxedFloatAccessor;
-import com.bitfire.uracer.utils.InterpolatedFloat;
 
-public abstract class CommonLogic implements GameLogic {
-
-	protected void beforeRender () {
-		// request camera updates from callbacks
-		float zoom = updateCameraZoom(URacer.Game.getTimeModFactor());
-		updateCameraPosition(cameraPos);
-
-		// apply camera updates
-		gameWorldRenderer.setCameraZoom(zoom);
-		gameWorldRenderer.setCameraPosition(cameraPos);
-		gameWorldRenderer.updateCamera();
-
-		// sync post-processing animators
-		postProcessing.onBeforeRender(zoom, playerLapMonitor.getWarmUpCompletion(), collisionFactor.value);
-
-		// game tweener step
-		GameTweener.update();
-	}
-
-	protected float updateCameraZoom (float timeModFactor) {
-		if (hasPlayer()) {
-			// speed.set(playerCar.carState.currSpeedFactor, 0.02f);
-			driftStrength.set(playerCar.driftState.driftStrength, 0.02f);
-		}
-
-		float minZoom = GameWorldRenderer.MinCameraZoom;
-		float maxZoom = GameWorldRenderer.MaxCameraZoom;
-
-		float cameraZoom = (minZoom + GameWorldRenderer.ZoomWindow);
-		cameraZoom += (maxZoom - cameraZoom) * timeModFactor;
-		cameraZoom += 0.25f * GameWorldRenderer.ZoomWindow * driftStrength.get();
-
-		cameraZoom = AMath.lerp(prevZoom, cameraZoom, 0.1f);
-		cameraZoom = AMath.clampf(cameraZoom, minZoom, maxZoom);
-		cameraZoom = AMath.fixupTo(cameraZoom, minZoom + GameWorldRenderer.ZoomWindow);
-
-		prevZoom = cameraZoom;
-		return cameraZoom;
-	}
-
-	protected abstract void updateCameraPosition (Vector2 positionPx);
-
-	private final BoxedFloat collisionFactor = new BoxedFloat(0);
-	private float lastImpactForce = 0;
-
-	private TweenCallback collisionFinished = new TweenCallback() {
-		@Override
-		public void onEvent (int type, BaseTween<?> source) {
-			switch (type) {
-			case COMPLETE:
-				lastImpactForce = 0;
-			}
-		}
-	};
-
-	protected void collision (CarEvent.Data data) {
-		if (gameInput.isTimeDilating()) {
-			endTimeDilation();
-		}
-
-		float clampedImpactForce = AMath.normalizeImpactForce(data.impulses.len());
-
-		// while busy, a new collision factor will be accepted *only* if stronger
-		if (clampedImpactForce > 0 && clampedImpactForce > lastImpactForce) {
-			lastImpactForce = clampedImpactForce;
-
-			GameTweener.stop(collisionFactor);
-			collisionFactor.value = 0;
-
-			final float min = GameplaySettings.CollisionFactorMinDurationMs;
-			final float max = GameplaySettings.CollisionFactorMaxDurationMs;
-
-			//@off
-			GameTweener.start(Timeline
-				.createSequence()
-				.push(Tween.to(collisionFactor, BoxedFloatAccessor.VALUE,100).target(clampedImpactForce).ease(Linear.INOUT))
-				.push(Tween.to(collisionFactor, BoxedFloatAccessor.VALUE,min + max * clampedImpactForce).target(0)
-					.ease(Linear.INOUT)).setCallback(collisionFinished));
-			//@on
-
-			playerTasks.hudPlayer.highlightCollision();
-		}
-	}
-
-	protected void physicsForcesReady (CarEvent.Data eventData) {
-		RecorderError recerror = lapManager.record(eventData.forces);
-		if (recerror == RecorderError.ReplayMemoryLimitReached) {
-			Gdx.app.log("CommonLogic", "Player too slow, recording aborted.");
-			playerError("Too slow!");
-		}
-	}
-
-	protected void ghostReplayEnded (GhostCar ghost) {
-	}
-
-	protected void ghostLapStarted (GhostCar ghost) {
-	}
-
-	protected void ghostLapCompleted (GhostCar ghost) {
-	}
-
-	protected void ghostFadingOut (GhostCar ghost) {
-		if (ghost != null && ghost == nextTarget) {
-			playerTasks.hudPlayer.unHighlightNextTarget();
-		}
-	}
-
-	protected void playerLapStarted () {
-	}
-
-	protected void playerLapCompleted () {
-	}
-
-	protected void warmUpStarted () {
-	}
-
-	protected void warmUpCompleted () {
-	}
-
-	protected void driftBegins (PlayerCar player) {
-		playerTasks.hudPlayer.beginDrift();
-	}
-
-	protected void driftEnds (PlayerCar player) {
-		playerTasks.hudPlayer.endDrift();
-	}
-
-	protected void wrongWayBegins () {
-		playerTasks.hudPlayer.wrongWay.fadeIn();
-		playerError("Invalid lap");
-	}
-
-	protected void wrongWayEnds () {
-	}
-
-	protected void outOfTrack () {
-		outOfTrackTime.start();
-		// playerTasks.hudPlayer.driftBar.showSecondsLabel();
-	}
-
-	protected void backInTrack () {
-		// updateDriftBar();
-		outOfTrackTime.reset();
-		// playerTasks.hudPlayer.driftBar.hideSecondsLabel();
-	}
-
-	// debug
-	private DebugHelper debug = null;
-
+public abstract class CommonLogic implements GameLogic, GameLogicObserver {
 	// input
 	protected Input inputSystem = null;
 	protected GameInput gameInput = null;
@@ -214,13 +47,12 @@ public abstract class CommonLogic implements GameLogic {
 
 	// world
 	protected GameWorld gameWorld = null;
+	protected GameRenderer gameRenderer = null;
 	protected GameTrack gameTrack = null;
 
 	// rendering
 	protected GameWorldRenderer gameWorldRenderer = null;
 	protected PostProcessing postProcessing = null;
-	private Vector2 cameraPos = new Vector2();
-	private float prevZoom = GameWorldRenderer.MinCameraZoom + GameWorldRenderer.ZoomWindow;
 
 	// player
 	protected final EventHandlers eventHandlers;
@@ -231,13 +63,10 @@ public abstract class CommonLogic implements GameLogic {
 	protected boolean isCurrentLapValid = true;
 	protected boolean isCollisionPenalty;
 	private GhostCar nextTarget = null;
-	private Time dilationTime = new Time();
-	private Time outOfTrackTime = new Time();
-	private InterpolatedFloat driftStrength = new InterpolatedFloat();
 
 	// lap / replays
 	protected LapManager lapManager = null;
-	private PlayerLapCompletionMonitor playerLapMonitor = null;
+	protected PlayerLapCompletionMonitor playerLapMonitor = null;
 	private PlayerLapCompletionMonitor[] ghostLapMonitor = new GhostLapCompletionMonitor[ReplayManager.MaxReplays];
 
 	// tasks
@@ -245,21 +74,18 @@ public abstract class CommonLogic implements GameLogic {
 	protected PlayerGameTasks playerTasks = null;
 	protected Messager messager = null;
 
-	// time modulation logic
-	private TimeModulator timeMod = null;
-
-	private BoxedFloat accuDriftSeconds = new BoxedFloat(0);;
+	private BoxedFloat accuDriftSeconds = new BoxedFloat(0);
 
 	public CommonLogic (UserProfile userProfile, GameWorld gameWorld, GameRenderer gameRenderer) {
 		this.userProfile = userProfile;
 		this.gameWorld = gameWorld;
+		this.gameRenderer = gameRenderer;
 		this.gameWorldRenderer = gameRenderer.getWorldRenderer();
 		this.inputSystem = URacer.Game.getInputSystem();
 		this.gameTrack = gameWorld.getGameTrack();
 		this.messager = new Messager();
 		this.eventHandlers = new EventHandlers(this);
 
-		timeMod = new TimeModulator();
 		lapManager = new LapManager(gameWorld.getLevelId());
 
 		// post-processing
@@ -289,23 +115,6 @@ public abstract class CommonLogic implements GameLogic {
 
 		// create game input
 		gameInput = new GameInput(this, inputSystem);
-		setupDebug(gameRenderer.getPostProcessing().getPostProcessor());
-	}
-
-	private void setupDebug (PostProcessor postProcessor) {
-		if (Config.Debug.UseDebugHelper) {
-			debug = new DebugHelper(gameWorld, postProcessor);
-			debug.add(new GameTrackDebugRenderer(RenderFlags.TrackSectors, gameWorld.getGameTrack()));
-			debug.add(new DebugPlayer(RenderFlags.PlayerCarInfo, gameTasksManager));
-
-			Gdx.app.debug("Game", "Debug helper initialized");
-		}
-	}
-
-	private void destroyDebug () {
-		if (Config.Debug.UseDebugHelper) {
-			debug.dispose();
-		}
 	}
 
 	public boolean hasPlayer () {
@@ -318,7 +127,6 @@ public abstract class CommonLogic implements GameLogic {
 
 	@Override
 	public void dispose () {
-		destroyDebug();
 		removePlayer();
 		gameTasksManager.dispose();
 		playerTasks.dispose();
@@ -393,7 +201,6 @@ public abstract class CommonLogic implements GameLogic {
 		lapManager.reset(true);
 		playerLapMonitor.reset();
 		postProcessing.setPlayer(null);
-		driftStrength.reset(0, true);
 	}
 
 	private void realRestart (boolean raiseEvent) {
@@ -401,7 +208,7 @@ public abstract class CommonLogic implements GameLogic {
 		resetAllGhosts();
 		endTimeDilation();
 
-		outOfTrackTime.reset();
+		getOutOfTrackTimer().reset();
 		lapManager.abortRecording(true);
 		wrongWayMonitor.reset();
 		postProcessing.resetAnimator();
@@ -445,29 +252,13 @@ public abstract class CommonLogic implements GameLogic {
 	}
 
 	@Override
-	public float getCollisionFactor () {
-		return collisionFactor.value;
-	}
-
-	/** Request time dilation to begin */
-	@Override
-	public void startTimeDilation () {
-		dilationTime.start();
-		timeMod.toDilatedTime();
-	}
-
-	/** Request time dilation to end */
-	@Override
-	public void endTimeDilation () {
-		// reset it, endTimeDilation can be called out of GameInput as well
-		gameInput.resetTimeDilating();
-		dilationTime.reset();
-		timeMod.toNormalTime();
-	}
-
-	@Override
 	public boolean isTimeDilationAvailable () {
 		return accuDriftSeconds.value > 0;
+	}
+
+	@Override
+	public GhostCar getNextTarget () {
+		return nextTarget;
 	}
 
 	@Override
@@ -476,9 +267,9 @@ public abstract class CommonLogic implements GameLogic {
 			doQuit();
 		} else {
 			// compute the next-frame time multiplier
-			URacer.timeMultiplier = timeMod.getTime();
+			URacer.timeMultiplier = getTimeModulator().getTime();
 			gameInput.update();
-			dbgInput();
+			handleExtraInput();
 		}
 	}
 
@@ -503,7 +294,7 @@ public abstract class CommonLogic implements GameLogic {
 			URacer.Screens.setScreen(ScreenType.MainScreen, TransitionType.Fader, 500);
 			// URacer.Screens.setScreen( ScreenType.ExitScreen, TransitionType.Fader, 500 );
 
-			timeMod.reset();
+			getTimeModulator().reset();
 			URacer.Game.resetTimeModFactor();
 		}
 	}
@@ -590,6 +381,9 @@ public abstract class CommonLogic implements GameLogic {
 				accuDriftSeconds.value += Config.Physics.Dt + Config.Physics.Dt * playerCar.driftState.driftStrength;
 			}
 
+			Time dilationTime = getTimeDilationTimer();
+			Time outOfTrackTime = getOutOfTrackTimer();
+
 			// lose wall-clock seconds while in time dilation
 			if (!dilationTime.isStopped()) {
 				accuDriftSeconds.value -= dilationTime.elapsed(Reference.LastAbsoluteSeconds) * 2;
@@ -601,7 +395,7 @@ public abstract class CommonLogic implements GameLogic {
 			}
 
 			// lose wall-clock seconds on collision
-			accuDriftSeconds.value -= Config.Physics.Dt * 5 * collisionFactor.value;
+			accuDriftSeconds.value -= Config.Physics.Dt * 5 * getCollisionFactor();
 		}
 
 		accuDriftSeconds.value = MathUtils.clamp(accuDriftSeconds.value, 0, DriftBar.MaxSeconds);
@@ -631,7 +425,7 @@ public abstract class CommonLogic implements GameLogic {
 	}
 
 	/** Invalidates the current lap and show an error */
-	private void playerError (String message) {
+	protected void playerError (String message) {
 		isCurrentLapValid = false;
 		lapManager.abortRecording(true);
 		playerTasks.hudLapInfo.setInvalid(message);
@@ -684,29 +478,6 @@ public abstract class CommonLogic implements GameLogic {
 				ghostIndex++;
 			} else {
 				setGhostReplay(ghostIndex, null);
-			}
-		}
-	}
-
-	private void dbgInput () {
-		if (inputSystem.isPressed(Keys.O)) {
-			removePlayer();
-			restartGame();
-			restartAllReplays();
-		} else if (inputSystem.isPressed(Keys.P)) {
-			addPlayer();
-			restartGame();
-		} else if (inputSystem.isPressed(Keys.TAB)) {
-			debug.toggleFlag(RenderFlags.NoRender);
-		}
-
-		if (debug.isEnabled()) {
-			if (inputSystem.isPressed(Keys.W)) {
-				debug.toggleFlag(RenderFlags.Box2DWireframe);
-			} else if (inputSystem.isPressed(Keys.B)) {
-				debug.toggleFlag(RenderFlags.BoundingBoxes3D);
-			} else if (inputSystem.isPressed(Keys.T)) {
-				debug.toggleFlag(RenderFlags.TrackSectors);
 			}
 		}
 	}
