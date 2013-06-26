@@ -163,8 +163,14 @@ public class PlayerCar extends Car {
 			boolean kLeft = input.isOn(Keys.LEFT);
 			boolean kRight = input.isOn(Keys.RIGHT);
 
+			float maxsecs = 1f;
+			float dirtimeLeft = updateDirTime(Keys.LEFT, maxsecs);
+			float dirtimeRight = updateDirTime(Keys.RIGHT, maxsecs);
+			float dirtimeUp = updateDirTime(Keys.UP, maxsecs);
+
 			carInput.updated = false;
-			final float KeyboardSensitivity = MathUtils.clamp(speed * 2f, 0.25f, 1);
+
+			float KeyboardSensitivity = 0.2f + 10 * speed; // MathUtils.clamp(KeyboardSensitivity, speed, KeyboardSensitivity);
 
 			if (kUp) {
 				carInput.updated = true;
@@ -181,7 +187,7 @@ public class PlayerCar extends Car {
 					carInput.steerAngle = 0;
 				}
 
-				inertialThrust = KeyboardSensitivity * getDirTime(Keys.LEFT);
+				inertialThrust = KeyboardSensitivity * dirtimeLeft;
 				carInput.steerAngle -= inertialThrust;
 			} else if (kRight) {
 				carInput.updated = true;
@@ -189,21 +195,21 @@ public class PlayerCar extends Car {
 					carInput.steerAngle = 0;
 				}
 
-				inertialThrust = KeyboardSensitivity * getDirTime(Keys.RIGHT);
+				inertialThrust = KeyboardSensitivity * dirtimeRight;
 				carInput.steerAngle += inertialThrust;
 			} else {
 				carInput.steerAngle = 0f;
 			}
 
-			carInput.steerAngle *= AMath.damping(1 - 0.1f * speed); // GameplaySettings.DampingKeyboardKeys;
-			// Gdx.app.log("PlayerCar", "up=" + getDirTime(Keys.UP) + ", left=" + getDirTime(Keys.LEFT) + ", right="
-			// + getDirTime(Keys.RIGHT) + ", it=" + inertialThrust + ", speed=" + speed);
+			carInput.steerAngle *= MathUtils.clamp(AMath.damping(2f * speed), 0, 1); // GameplaySettings.DampingKeyboardKeys;
+			Gdx.app.log("PlayerCar", "up=" + dirtimeUp + ", left=" + dirtimeLeft + ", right=" + dirtimeRight + ", it="
+				+ inertialThrust + ", speed=" + speed);
 		}
 
 		return carInput;
 	}
 
-	private float getDirTime (int uplr) {
+	private float updateDirTime (int uplr, float maxSeconds) {
 		boolean isOn = input.isOn(uplr);
 		float ret = 0;
 		Timer t = keytimer.get(uplr);
@@ -213,6 +219,9 @@ public class PlayerCar extends Car {
 		} else {
 			t.reset();
 		}
+
+		ret /= maxSeconds;
+		ret = MathUtils.clamp(ret, 0, 1);
 
 		return ret;
 	}
