@@ -11,13 +11,17 @@ import com.bitfire.uracer.game.task.Task;
  * @author bmanuel */
 public final class Time extends Task {
 	public enum Reference {
-		AbsoluteSeconds, LastAbsoluteSeconds, TickSeconds, NumberOfTicks
+		//@off
+		AbsoluteSeconds,
+		LastAbsoluteSeconds,
+		TickSeconds,				// returns seconds expressed as Config.Physics.Dt increments 
+		NumberOfTicks
+		//@on
 	}
 
 	private static final float oneOnOneBillion = 1.0f / 1000000000.0f;
 	private long nsStartTime;
 	private long ticks;
-	private float ticksInSeconds;
 	private boolean stopped;
 	private long nsStopTime;
 	private long lastStartTime;
@@ -61,7 +65,6 @@ public final class Time extends Task {
 
 		// ticks
 		ticks = 0;
-		ticksInSeconds = 0;
 	}
 
 	/** Counts this tick */
@@ -69,7 +72,6 @@ public final class Time extends Task {
 	protected void onTick () {
 		if (!stopped) {
 			ticks++;
-			ticksInSeconds += Config.Physics.Dt;
 		}
 	};
 
@@ -78,8 +80,8 @@ public final class Time extends Task {
 		long now = (stopped ? nsStopTime : TimeUtils.nanoTime());
 
 		switch (timeReference) {
-		case TickSeconds: // returns seconds
-			return ticksInSeconds;
+		case TickSeconds:
+			return Config.Physics.Dt * ticks;
 		case NumberOfTicks:
 			return ticks;
 		case LastAbsoluteSeconds:

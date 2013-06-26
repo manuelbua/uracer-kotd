@@ -5,6 +5,7 @@ import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Input.Keys;
 import com.badlogic.gdx.graphics.Pixmap;
 import com.badlogic.gdx.maps.tiled.TiledMapTileLayer;
+import com.badlogic.gdx.math.MathUtils;
 import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.math.WindowedMean;
 import com.badlogic.gdx.physics.box2d.Fixture;
@@ -126,6 +127,7 @@ public class PlayerCar extends Car {
 		}
 
 		boolean inputFromKeyboard = !URacer.Game.getInputSystem().isTouching();
+		final float speed = carState.currSpeedFactor;
 
 		if (!inputFromKeyboard) {
 
@@ -162,7 +164,7 @@ public class PlayerCar extends Car {
 			boolean kRight = input.isOn(Keys.RIGHT);
 
 			carInput.updated = false;
-			final float KeyboardSensitivity = 0.8f;
+			final float KeyboardSensitivity = MathUtils.clamp(speed * 2f, 0.25f, 1);
 
 			if (kUp) {
 				carInput.updated = true;
@@ -171,27 +173,33 @@ public class PlayerCar extends Car {
 				carInput.throttle = 0;
 			}
 
+			float inertialThrust = 0;
+
 			if (kLeft) {
 				carInput.updated = true;
 				if (carInput.steerAngle > 0) {
 					carInput.steerAngle = 0;
 				}
-				carInput.steerAngle -= KeyboardSensitivity * getDirTime(Keys.LEFT);
+
+				inertialThrust = KeyboardSensitivity * getDirTime(Keys.LEFT);
+				carInput.steerAngle -= inertialThrust;
 			} else if (kRight) {
 				carInput.updated = true;
 				if (carInput.steerAngle < 0) {
 					carInput.steerAngle = 0;
 				}
-				carInput.steerAngle += KeyboardSensitivity * getDirTime(Keys.RIGHT);
+
+				inertialThrust = KeyboardSensitivity * getDirTime(Keys.RIGHT);
+				carInput.steerAngle += inertialThrust;
 			} else {
 				carInput.steerAngle = 0f;
 			}
 
-			carInput.steerAngle *= GameplaySettings.DampingKeyboardKeys;
+			carInput.steerAngle *= AMath.damping(1 - 0.1f * speed); // GameplaySettings.DampingKeyboardKeys;
+			// Gdx.app.log("PlayerCar", "up=" + getDirTime(Keys.UP) + ", left=" + getDirTime(Keys.LEFT) + ", right="
+			// + getDirTime(Keys.RIGHT) + ", it=" + inertialThrust + ", speed=" + speed);
 		}
 
-		// Gdx.app.log("PlayerCar", "up=" + getDirTime(Keys.UP) + ", left=" + getDirTime(Keys.LEFT) + ", right="
-		// + getDirTime(Keys.RIGHT));
 		return carInput;
 	}
 
