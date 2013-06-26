@@ -101,7 +101,7 @@ public abstract class BaseLogic extends CommonLogic {
 			gameRenderer.setDebug(!gameRenderer.isDebugEnabled());
 		}
 
-		if (debug.isEnabled()) {
+		if (gameRenderer.isDebugEnabled() && debug.isEnabled()) {
 			if (inputSystem.isPressed(Keys.W)) {
 				debug.toggleFlag(RenderFlags.Box2DWireframe);
 			} else if (inputSystem.isPressed(Keys.B)) {
