@@ -1,6 +1,9 @@
 
 package com.bitfire.uracer.game;
 
+import com.bitfire.uracer.game.actors.GhostCar;
+import com.bitfire.uracer.game.logic.types.helpers.TimeModulator;
+
 public interface GameLogic {
 	void dispose ();
 
@@ -18,6 +21,8 @@ public interface GameLogic {
 
 	float getCollisionFactor ();
 
+	GhostCar getNextTarget ();
+
 	void startTimeDilation ();
 
 	void endTimeDilation ();
@@ -27,4 +32,10 @@ public interface GameLogic {
 	void tick ();
 
 	void tickCompleted ();
+
+	Time getOutOfTrackTimer ();
+
+	Time getTimeDilationTimer ();
+
+	TimeModulator getTimeModulator ();
 }
