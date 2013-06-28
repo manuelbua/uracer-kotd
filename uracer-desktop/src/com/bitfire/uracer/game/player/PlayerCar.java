@@ -163,14 +163,14 @@ public class PlayerCar extends Car {
 			boolean kLeft = input.isOn(Keys.LEFT);
 			boolean kRight = input.isOn(Keys.RIGHT);
 
-			float maxsecs = 1f;
+			float maxsecs = 0.1f + AMath.fixup(1 * speed);
 			float dirtimeLeft = updateDirTime(Keys.LEFT, maxsecs);
 			float dirtimeRight = updateDirTime(Keys.RIGHT, maxsecs);
-			float dirtimeUp = updateDirTime(Keys.UP, maxsecs);
+			// float dirtimeUp = updateDirTime(Keys.UP, maxsecs);
 
 			carInput.updated = false;
 
-			float KeyboardSensitivity = 0.2f + 10 * speed; // MathUtils.clamp(KeyboardSensitivity, speed, KeyboardSensitivity);
+			float KeyboardSensitivity = 2f + 5 * speed;
 
 			if (kUp) {
 				carInput.updated = true;
@@ -202,8 +202,8 @@ public class PlayerCar extends Car {
 			}
 
 			carInput.steerAngle *= MathUtils.clamp(AMath.damping(2f * speed), 0, 1); // GameplaySettings.DampingKeyboardKeys;
-			Gdx.app.log("PlayerCar", "up=" + dirtimeUp + ", left=" + dirtimeLeft + ", right=" + dirtimeRight + ", it="
-				+ inertialThrust + ", speed=" + speed);
+			// Gdx.app.log("PlayerCar", "up=" + dirtimeUp + ", left=" + dirtimeLeft + ", right=" + dirtimeRight + ", ms=" + maxsecs);
+			// ", it=" + inertialThrust + ", speed=" + speed
 		}
 
 		return carInput;
@@ -220,7 +220,12 @@ public class PlayerCar extends Car {
 			t.reset();
 		}
 
-		ret /= maxSeconds;
+		if (maxSeconds > 0) {
+			ret /= maxSeconds;
+		} else {
+			return 0;
+		}
+
 		ret = MathUtils.clamp(ret, 0, 1);
 
 		return ret;
