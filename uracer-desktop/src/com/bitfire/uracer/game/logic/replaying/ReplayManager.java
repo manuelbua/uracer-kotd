@@ -24,17 +24,19 @@ public final class ReplayManager implements Disposable {
 		public boolean accepted;
 		public Replay replay;
 		public DiscardReason reason;
+		public Replay removed;
 
 		public void reset () {
 			position = -1;
 			accepted = false;
 			replay = null;
+			removed = null;
 			reason = DiscardReason.Null;
 		}
 	}
 
-	public ReplayManager (String trackId) {
-		this.trackId = trackId;
+	public ReplayManager (String currentTrackId) {
+		trackId = currentTrackId;
 	}
 
 	@Override
@@ -44,20 +46,20 @@ public final class ReplayManager implements Disposable {
 		}
 	}
 
-	private boolean isValidReplay (Replay replay, ReplayInfo info) {
+	private boolean isValidReplay (Replay replay, ReplayInfo outInfo) {
 		// in case its invalid, returns the original Replay instance
-		info.accepted = false;
-		info.replay = replay;
+		outInfo.accepted = false;
+		outInfo.replay = replay;
 
 		if (replay == null) {
-			info.reason = DiscardReason.Null;
+			outInfo.reason = DiscardReason.Null;
 
 			Gdx.app.log("ReplayManager", "Discarding null replay");
 			return false;
 		}
 
 		if (replay.getTrackTime() < GameplaySettings.ReplayMinDurationSecs) {
-			info.reason = DiscardReason.InvalidMinDuration;
+			outInfo.reason = DiscardReason.InvalidMinDuration;
 
 			Gdx.app.log("ReplayManager", "Invalid lap detected, (" + replay.getTrackTime() + "sec < "
 				+ GameplaySettings.ReplayMinDurationSecs + ")");
@@ -65,21 +67,21 @@ public final class ReplayManager implements Disposable {
 		}
 
 		if (!replay.isValid()) {
-			info.reason = DiscardReason.Invalid;
+			outInfo.reason = DiscardReason.Invalid;
 
 			Gdx.app.log("ReplayManager", "The specified replay is not valid.");
 			return false;
 		}
 
 		if (!replay.getTrackId().equals(trackId)) {
-			info.reason = DiscardReason.WrongTrack;
+			outInfo.reason = DiscardReason.WrongTrack;
 
 			Gdx.app.log("ReplayManager", "The specified replay belongs to another game track.");
 			return false;
 		}
 
-		info.accepted = true;
-		info.replay = null;
+		outInfo.accepted = true;
+		outInfo.replay = null;
 		return true;
 	}
 
@@ -95,7 +97,7 @@ public final class ReplayManager implements Disposable {
 			replayInfo.replay = added;
 
 			if (nreplays.size > MaxReplays) {
-				nreplays.pop();
+				replayInfo.removed = nreplays.pop();
 			}
 
 			int pos = nreplays.indexOf(added, true);
@@ -122,6 +124,8 @@ public final class ReplayManager implements Disposable {
 		for (Replay r : nreplays) {
 			r.reset();
 		}
+
+		nreplays.clear();
 	}
 
 	public boolean hasReplays () {

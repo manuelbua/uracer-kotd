@@ -3,7 +3,6 @@ package com.bitfire.uracer.game.logic.replaying;
 
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.utils.Disposable;
-import com.bitfire.uracer.configuration.UserProfile;
 import com.bitfire.uracer.game.actors.Car;
 import com.bitfire.uracer.game.actors.CarForces;
 import com.bitfire.uracer.game.logic.replaying.ReplayManager.ReplayInfo;
@@ -12,15 +11,13 @@ import com.bitfire.uracer.game.logic.replaying.ReplayRecorder.RecorderError;
 /** Manage player's performance recordings and keeps basic lap information */
 public class LapManager implements Disposable {
 
-	private final String trackId;
 	private final ReplayRecorder recorder;
 	private final ReplayManager manager;
 	private Replay last;
 
-	public LapManager (String trackId) {
-		this.trackId = trackId;
+	public LapManager (String currentTrackId) {
 		recorder = new ReplayRecorder();
-		manager = new ReplayManager(trackId);
+		manager = new ReplayManager(currentTrackId);
 		last = null;
 	}
 
@@ -41,13 +38,13 @@ public class LapManager implements Disposable {
 	}
 
 	/** Starts recording the player lap performance. Returns the Replay instance where the recording is being performed. */
-	public void startRecording (Car car, UserProfile profile) {
+	public void startRecording (Car car, String trackId, String userId) {
 		if (recorder.isRecording()) {
 			Gdx.app.log("TrackLapManager", "Couldn't start recording since it's already started.");
 			return;
 		}
 
-		recorder.beginRecording(car, trackId, profile.userId);
+		recorder.beginRecording(car, trackId, userId);
 	}
 
 	/** Add and record the specified CarForces */

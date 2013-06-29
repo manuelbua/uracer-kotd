@@ -19,6 +19,7 @@ import com.bitfire.uracer.utils.Convert;
 import com.bitfire.uracer.utils.OrdinalUtils;
 
 public class SinglePlayer extends BaseLogic {
+	private boolean saving = false;
 	private CameraShaker camShaker = new CameraShaker();
 
 	public SinglePlayer (UserProfile userProfile, GameWorld gameWorld, GameRenderer gameRenderer) {
@@ -28,6 +29,26 @@ public class SinglePlayer extends BaseLogic {
 	@Override
 	public void dispose () {
 		super.dispose();
+	}
+
+	private void saveReplay (final Replay replay) {
+		if (saving) {
+			Gdx.app.log("SinglePlayer", "(already saving, request ignored...");
+			return;
+		}
+
+		if (replay != null && replay.isValid()) {
+			saving = true;
+			Thread savingThread = new Thread(new Runnable() {
+				@Override
+				public void run () {
+					replay.save(replay.getReplayId());
+				}
+			});
+
+			savingThread.start();
+			saving = false;
+		}
 	}
 
 	@Override
@@ -75,7 +96,7 @@ public class SinglePlayer extends BaseLogic {
 	public void playerLapStarted () {
 		lapManager.stopRecording();
 		playerCar.resetDistanceAndSpeed(true, false);
-		lapManager.startRecording(playerCar, userProfile);
+		lapManager.startRecording(playerCar, gameWorld.getLevelId(), userProfile.userId);
 		restartAllReplays();
 	}
 
@@ -86,12 +107,21 @@ public class SinglePlayer extends BaseLogic {
 
 			int pos = ReplayManager.MaxReplays + 1;
 			if (ri.accepted) {
-				pos = ri.position;
-				Replay last = ri.replay;
+				Replay r = ri.replay;
+				CarUtils.dumpSpeedInfo("Player", playerCar, r.getTrackTime());
 
+				saveReplay(r);
+
+				// prune old, if any
+				if (ri.removed != null) {
+					ri.removed.delete();
+					Gdx.app.log("SinglePlayer", "Pruned " + ri.removed.getReplayId());
+				}
+
+				// show message
+				pos = ri.position;
 				float v = gameTrack.getTrackCompletion(playerCar);
 				Gdx.app.log("SinglePlayer", "Stopped player at " + v);
-				CarUtils.dumpSpeedInfo("Player", playerCar, last.getTrackTime());
 			}
 
 			messager.show("You finished\n" + pos + OrdinalUtils.getOrdinalFor(pos) + "!", 1.5f, Message.Type.Information,

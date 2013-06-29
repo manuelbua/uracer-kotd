@@ -85,5 +85,4 @@ public final class GameInput {
 			break;
 		}
 	}
-
 }

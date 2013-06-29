@@ -7,12 +7,12 @@ public final class UserProfile {
 		None
 	}
 
-	public final long userId;
+	public final String userId;
 	public final String userName;
 	public final String userCountryCode;
 
 	public UserProfile () {
-		userId = -1;
+		userId = "uid1";
 		userName = "Manuel";
 		userCountryCode = "it";
 	}

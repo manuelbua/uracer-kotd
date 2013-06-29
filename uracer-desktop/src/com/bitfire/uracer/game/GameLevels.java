@@ -90,7 +90,6 @@ public final class GameLevels {
 		try {
 			digest = MessageDigest.getInstance("SHA-256");
 		} catch (NoSuchAlgorithmException e) {
-			Gdx.app.log("GameLevels", "");
 			throw new URacerRuntimeException("No support for SHA-256 crypto has been found.");
 		}
 
