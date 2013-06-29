@@ -37,6 +37,10 @@ public class LapManager implements Disposable {
 		recorder.resetTimer();
 	}
 
+	public ReplayInfo addReplay (Replay replay) {
+		return manager.addReplay(replay);
+	}
+
 	/** Starts recording the player lap performance. Returns the Replay instance where the recording is being performed. */
 	public void startRecording (Car car, String trackId, String userId) {
 		if (recorder.isRecording()) {
@@ -83,11 +87,6 @@ public class LapManager implements Disposable {
 
 	public float getCurrentReplaySeconds () {
 		return recorder.getElapsedSeconds();
-	}
-
-	/** Returns the Replay instance where the last recording took place */
-	public Replay getLastRecordedReplay () {
-		return last;
 	}
 
 	public Iterable<Replay> getReplays () {

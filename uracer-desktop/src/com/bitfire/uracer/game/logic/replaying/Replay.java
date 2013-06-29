@@ -158,7 +158,6 @@ public final class Replay implements Disposable, Comparable<Replay> {
 			}
 
 			try {
-
 				// DataOutputStream os = new DataOutputStream(hf.write(false));
 				GZIPOutputStream gzos = null;
 
@@ -203,9 +202,8 @@ public final class Replay implements Disposable, Comparable<Replay> {
 		}
 	}
 
-	public static Replay loadLocal (String filename) {
-		FileHandle fh = Gdx.files.external(Storage.ReplaysRoot + filename);
-
+	public static Replay load (String fullpathFilename) {
+		FileHandle fh = Gdx.files.external(fullpathFilename);
 		if (fh.exists()) {
 			try {
 				// DataInputStream is = new DataInputStream( fh.read() );
@@ -213,8 +211,10 @@ public final class Replay implements Disposable, Comparable<Replay> {
 				DataInputStream is = new DataInputStream(gzis);
 
 				Replay r = new Replay();
+				r.completed = true;
 
 				// replay info data
+				r.replayId = is.readUTF();
 				r.userId = is.readUTF();
 				r.trackId = is.readUTF();
 				r.trackTimeSeconds = is.readFloat();
@@ -237,10 +237,10 @@ public final class Replay implements Disposable, Comparable<Replay> {
 				return r;
 
 			} catch (Exception e) {
-				Gdx.app.log("Replay", "Couldn't load local replay, reason: " + e.getMessage());
+				Gdx.app.log("Replay", "Couldn't load replay, reason: " + e.getMessage());
 			}
 		} else {
-			Gdx.app.log("Replay", "The specified replay doesn't exist (" + filename + ")");
+			Gdx.app.log("Replay", "The specified replay doesn't exist (" + fullpathFilename + ")");
 		}
 
 		return null;

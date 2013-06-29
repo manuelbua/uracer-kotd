@@ -9,7 +9,7 @@ import com.bitfire.uracer.game.GameplaySettings;
 /** Maintains an updated list of the best <n> Replay objects for the specified track level */
 public final class ReplayManager implements Disposable {
 
-	public static final int MaxReplays = 2;
+	public static final int MaxReplays = 10;
 	private final String trackId;
 	private final Array<Replay> nreplays = new Array<Replay>();
 	private final ReplayInfo replayInfo = new ReplayInfo();

@@ -2,14 +2,15 @@
 package com.bitfire.uracer.game.logic;
 
 import com.badlogic.gdx.Gdx;
+import com.badlogic.gdx.files.FileHandle;
 import com.badlogic.gdx.math.Vector2;
+import com.bitfire.uracer.configuration.Storage;
 import com.bitfire.uracer.configuration.UserProfile;
 import com.bitfire.uracer.game.actors.GhostCar;
 import com.bitfire.uracer.game.logic.gametasks.messager.Message;
 import com.bitfire.uracer.game.logic.gametasks.messager.Message.Position;
 import com.bitfire.uracer.game.logic.gametasks.messager.Message.Size;
 import com.bitfire.uracer.game.logic.replaying.Replay;
-import com.bitfire.uracer.game.logic.replaying.ReplayManager;
 import com.bitfire.uracer.game.logic.replaying.ReplayManager.ReplayInfo;
 import com.bitfire.uracer.game.logic.types.helpers.CameraShaker;
 import com.bitfire.uracer.game.rendering.GameRenderer;
@@ -69,17 +70,51 @@ public class SinglePlayer extends BaseLogic {
 		}
 	}
 
+	private void pruneReplay (Replay replay) {
+		if (replay != null) {
+			replay.delete();
+			Gdx.app.log("SinglePlayer", "Pruned " + replay.getReplayId());
+		}
+	}
+
+	/** Load and add to the LapManager all the replies for the specified trackId */
+	private int refreshAllReplaysFor (String trackId) {
+		lapManager.removeAllReplays();
+
+		int reloaded = 0;
+		for (FileHandle userdir : Gdx.files.external(Storage.ReplaysRoot + gameWorld.getLevelId()).list()) {
+			if (userdir.isDirectory()) {
+				for (FileHandle userreplay : userdir.list()) {
+					Replay replay = Replay.load(userreplay.path());
+					if (replay != null && replay.isValid()) {
+						ReplayInfo ri = lapManager.addReplay(replay);
+						pruneReplay(ri.removed);
+						reloaded++;
+					}
+				}
+			}
+		}
+
+		return reloaded;
+	}
+
 	@Override
 	public void restartGame () {
-		super.restartGame();
 		Gdx.app.log("SinglePlayer", "Starting/restarting game");
+		super.restartGame();
+
+		int reloaded = refreshAllReplaysFor(gameWorld.getLevelId());
+		Gdx.app.log("SinglePlayer", "Reloaded " + reloaded + " opponents.");
 	}
 
 	@Override
 	public void resetGame () {
+		Gdx.app.log("SinglePlayer", "Resetting game");
 		super.resetGame();
 		messager.show("Game reset", 1.5f, Message.Type.Information, Position.Bottom, Size.Big);
-		Gdx.app.log("SinglePlayer", "Resetting game");
+
+		int reloaded = refreshAllReplaysFor(gameWorld.getLevelId());
+		Gdx.app.log("SinglePlayer", "Reloaded " + reloaded + " opponents.");
 	}
 
 	@Override
@@ -105,27 +140,21 @@ public class SinglePlayer extends BaseLogic {
 		if (lapManager.isRecording()) {
 			ReplayInfo ri = lapManager.stopRecording();
 
-			int pos = ReplayManager.MaxReplays + 1;
 			if (ri.accepted) {
 				Replay r = ri.replay;
 				CarUtils.dumpSpeedInfo("Player", playerCar, r.getTrackTime());
 
 				saveReplay(r);
-
-				// prune old, if any
-				if (ri.removed != null) {
-					ri.removed.delete();
-					Gdx.app.log("SinglePlayer", "Pruned " + ri.removed.getReplayId());
-				}
+				pruneReplay(ri.removed);
 
 				// show message
-				pos = ri.position;
-				float v = gameTrack.getTrackCompletion(playerCar);
-				Gdx.app.log("SinglePlayer", "Stopped player at " + v);
+				int pos = ri.position;
+				messager.show("You finished\n" + pos + OrdinalUtils.getOrdinalFor(pos) + "!", 1.5f, Message.Type.Information,
+					Position.Middle, Size.Big);
+			} else {
+				messager.show("Too slow!", 1.5f, Message.Type.Information, Position.Middle, Size.Big);
 			}
 
-			messager.show("You finished\n" + pos + OrdinalUtils.getOrdinalFor(pos) + "!", 1.5f, Message.Type.Information,
-				Position.Middle, Size.Big);
 		}
 
 		playerCar.resetDistanceAndSpeed(true, false);
