@@ -30,6 +30,9 @@ public abstract class GameTask extends Task implements Disposable {
 			case GameReset:
 				onReset();
 				break;
+			case GameQuit:
+				onQuitGame();
+				break;
 			}
 		}
 	};
@@ -42,6 +45,7 @@ public abstract class GameTask extends Task implements Disposable {
 		super(order);
 		GameEvents.logicEvent.addListener(logicListener, GameLogicEvent.Type.GameRestart);
 		GameEvents.logicEvent.addListener(logicListener, GameLogicEvent.Type.GameReset);
+		GameEvents.logicEvent.addListener(logicListener, GameLogicEvent.Type.GameQuit);
 		GameEvents.logicEvent.addListener(logicListener, GameLogicEvent.Type.PlayerAdded);
 		GameEvents.logicEvent.addListener(logicListener, GameLogicEvent.Type.PlayerRemoved);
 	}
@@ -51,6 +55,7 @@ public abstract class GameTask extends Task implements Disposable {
 		super.dispose();
 		GameEvents.logicEvent.removeListener(logicListener, GameLogicEvent.Type.GameRestart);
 		GameEvents.logicEvent.removeListener(logicListener, GameLogicEvent.Type.GameReset);
+		GameEvents.logicEvent.removeListener(logicListener, GameLogicEvent.Type.GameQuit);
 		GameEvents.logicEvent.removeListener(logicListener, GameLogicEvent.Type.PlayerAdded);
 		GameEvents.logicEvent.removeListener(logicListener, GameLogicEvent.Type.PlayerRemoved);
 	}
@@ -64,5 +69,8 @@ public abstract class GameTask extends Task implements Disposable {
 	}
 
 	public void onRestart () {
+	}
+
+	public void onQuitGame () {
 	}
 }

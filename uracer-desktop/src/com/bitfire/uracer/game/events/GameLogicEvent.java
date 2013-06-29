@@ -10,7 +10,8 @@ public class GameLogicEvent extends Event<GameLogicEvent.Type, GameLogicEvent.Or
 		PlayerAdded,
 		PlayerRemoved,
 		GameRestart,
-		GameReset
+		GameReset,
+		GameQuit
 		;
 		//@on
 	}

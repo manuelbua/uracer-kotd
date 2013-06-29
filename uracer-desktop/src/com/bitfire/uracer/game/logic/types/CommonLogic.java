@@ -288,8 +288,9 @@ public abstract class CommonLogic implements GameLogic, GameLogicObserver {
 		if (quitPending && !quitScheduled) {
 			quitScheduled = true;
 
+			GameEvents.logicEvent.trigger(this, GameLogicEvent.Type.GameQuit);
+
 			lapManager.abortRecording(false);
-			gameTasksManager.sound.stop();
 
 			URacer.Screens.setScreen(ScreenType.MainScreen, TransitionType.Fader, 500);
 			// URacer.Screens.setScreen( ScreenType.ExitScreen, TransitionType.Fader, 500 );

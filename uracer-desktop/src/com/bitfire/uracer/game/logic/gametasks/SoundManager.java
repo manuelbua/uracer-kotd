@@ -1,6 +1,7 @@
 
 package com.bitfire.uracer.game.logic.gametasks;
 
+import com.badlogic.gdx.Gdx;
 import com.bitfire.uracer.game.logic.gametasks.sounds.SoundEffect;
 import com.bitfire.uracer.game.player.PlayerCar;
 import com.bitfire.utils.ItemsManager;
@@ -79,5 +80,11 @@ public class SoundManager extends GameTask implements DisposableTasks {
 		for (SoundEffect s : manager) {
 			s.player(player);
 		}
+	}
+
+	@Override
+	public void onQuitGame () {
+		Gdx.app.log("SoundManager", "Stopping sound manager..");
+		stop();
 	}
 }
