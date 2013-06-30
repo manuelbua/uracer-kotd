@@ -6,6 +6,7 @@ import com.badlogic.gdx.files.FileHandle;
 import com.badlogic.gdx.math.Vector2;
 import com.bitfire.uracer.configuration.Storage;
 import com.bitfire.uracer.configuration.UserProfile;
+import com.bitfire.uracer.game.GameplaySettings;
 import com.bitfire.uracer.game.actors.GhostCar;
 import com.bitfire.uracer.game.logic.gametasks.messager.Message;
 import com.bitfire.uracer.game.logic.gametasks.messager.Message.Position;
@@ -148,9 +149,9 @@ public class SinglePlayer extends BaseLogic {
 	public void playerLapCompleted () {
 		if (lapManager.isRecording()) {
 			ReplayInfo ri = lapManager.stopRecording();
+			Replay r = ri.replay;
 
 			if (ri.accepted) {
-				Replay r = ri.replay;
 
 				CarUtils.dumpSpeedInfo("SinglePlayer", "Replay #" + r.getShortReplayId() + " accepted, player", playerCar,
 					r.getTrackTime());
@@ -163,8 +164,37 @@ public class SinglePlayer extends BaseLogic {
 				messager.show("You finished\n" + pos + OrdinalUtils.getOrdinalFor(pos) + "!", 1.5f, Message.Type.Information,
 					Position.Middle, Size.Big);
 			} else {
-				Gdx.app.log("SinglePlayer", "Replay discarded");
-				messager.show("Too slow!", 1.5f, Message.Type.Information, Position.Middle, Size.Big);
+				String msg = "";
+				String id = "(#" + r.getShortReplayId() + ")";
+				float duration = 1.5f;
+
+				switch (ri.reason) {
+				case Null:
+					msg = "Discarding null replay " + id;
+					duration = 3;
+					break;
+				case InvalidMinDuration:
+					msg = "Invalid lap (" + r.getTrackTime() + "s < " + GameplaySettings.ReplayMinDurationSecs + "s) " + id;
+					duration = 10;
+					break;
+				case Invalid:
+					msg = "The specified replay is not valid. (#" + r.getShortReplayId() + ") " + id;
+					duration = 10;
+					break;
+				case WrongTrack:
+					msg = "The specified replay belongs to another game track " + id;
+					duration = 10;
+					break;
+				case Slower:
+					msg = "Too slow!";
+					duration = 1.5f;
+					break;
+				case NotDiscarded:
+					break;
+				}
+
+				Gdx.app.log("SinglePlayer", msg);
+				messager.show(msg, duration, Message.Type.Information, Position.Middle, Size.Big);
 			}
 		}
 

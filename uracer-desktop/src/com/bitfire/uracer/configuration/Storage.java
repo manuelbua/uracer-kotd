@@ -9,7 +9,7 @@ public final class Storage {
 	// externals
 	private static final String ConfigRoot = "/.config/uracer/";
 	private static final String DataRoot = "/.local/share/uracer/";
-	public static final String ReplaysRoot = DataRoot + "local-replays/";
+	public static final String ReplaysRoot = DataRoot + "replays/";
 	public static final String Preferences = "uracer-preferences.cfg";
 
 	// local to installation folder

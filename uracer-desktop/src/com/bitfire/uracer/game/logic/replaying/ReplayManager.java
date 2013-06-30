@@ -1,7 +1,6 @@
 
 package com.bitfire.uracer.game.logic.replaying;
 
-import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.utils.Array;
 import com.badlogic.gdx.utils.Disposable;
 import com.bitfire.uracer.game.GameplaySettings;
@@ -53,30 +52,21 @@ public final class ReplayManager implements Disposable {
 
 		if (replay == null) {
 			outInfo.reason = DiscardReason.Null;
-
-			Gdx.app.log("ReplayManager", "Discarding null replay");
 			return false;
 		}
 
 		if (replay.getTrackTime() < GameplaySettings.ReplayMinDurationSecs) {
 			outInfo.reason = DiscardReason.InvalidMinDuration;
-
-			Gdx.app.log("ReplayManager", "Invalid lap detected, (" + replay.getTrackTime() + "sec < "
-				+ GameplaySettings.ReplayMinDurationSecs + ")");
 			return false;
 		}
 
 		if (!replay.isValid()) {
 			outInfo.reason = DiscardReason.Invalid;
-
-			Gdx.app.log("ReplayManager", "The specified replay is not valid. (#" + replay.getShortReplayId() + ")");
 			return false;
 		}
 
 		if (!replay.getTrackId().equals(trackId)) {
 			outInfo.reason = DiscardReason.WrongTrack;
-
-			Gdx.app.log("ReplayManager", "The specified replay belongs to another game track.");
 			return false;
 		}
 
