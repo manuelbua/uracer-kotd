@@ -1,18 +1,11 @@
 
 package com.bitfire.uracer.game.logic.replaying;
 
-import java.math.BigInteger;
-import java.security.MessageDigest;
-import java.security.NoSuchAlgorithmException;
-import java.util.Date;
-
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.utils.Disposable;
 import com.bitfire.uracer.game.Time;
 import com.bitfire.uracer.game.actors.Car;
 import com.bitfire.uracer.game.actors.CarForces;
-import com.bitfire.uracer.utils.AMath;
-import com.bitfire.uracer.utils.URacerRuntimeException;
 
 public final class ReplayRecorder implements Disposable {
 	// @off
@@ -23,7 +16,6 @@ public final class ReplayRecorder implements Disposable {
 	}
 	// @on
 
-	private MessageDigest replayDigest;
 	private boolean isRecording;
 	private Time time;
 
@@ -34,12 +26,6 @@ public final class ReplayRecorder implements Disposable {
 		isRecording = false;
 		recording = new Replay();
 		time = new Time();
-
-		try {
-			replayDigest = MessageDigest.getInstance("SHA-256");
-		} catch (NoSuchAlgorithmException e) {
-			throw new URacerRuntimeException("No support for SHA-256 crypto has been found.");
-		}
 	}
 
 	@Override
@@ -59,8 +45,6 @@ public final class ReplayRecorder implements Disposable {
 	}
 
 	public void beginRecording (Car car, String trackId, String userId) {
-		Gdx.app.log("Recorder", "Beginning recording");
-
 		isRecording = true;
 		recording.begin(trackId, userId, car);
 		time.start();
@@ -78,32 +62,14 @@ public final class ReplayRecorder implements Disposable {
 		return RecorderError.NoError;
 	}
 
-	private String computeId (Replay replay, float elapsed) {
-		String trackTime = "" + ((int)(elapsed * AMath.ONE_ON_CMP_EPSILON));
-		String utcTime = "" + (new Date()).getTime();
-
-		replayDigest.reset();
-		replayDigest.update(utcTime.getBytes());
-		replayDigest.update(recording.getUserId().getBytes());
-		replayDigest.update(recording.getTrackId().getBytes());
-		replayDigest.update(trackTime.getBytes());
-
-		String replayId = new BigInteger(1, replayDigest.digest()).toString(16);
-		return replayId;
-	}
-
 	public Replay endRecording () {
 		if (!isRecording) {
 			Gdx.app.log("Recorder", "Cannot end a recording that never began.");
 			return null;
 		}
-
 		time.stop();
-		float elapsed = time.elapsed(Time.Reference.TickSeconds);
-		recording.end(computeId(recording, elapsed), elapsed);
+		recording.end(time.elapsed(Time.Reference.TickSeconds));
 		isRecording = false;
-
-		Gdx.app.log("Recorder", "Finished recording");
 		return recording;
 	}
 

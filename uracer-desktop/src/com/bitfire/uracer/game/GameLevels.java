@@ -4,8 +4,6 @@ package com.bitfire.uracer.game;
 import java.io.IOException;
 import java.math.BigInteger;
 import java.nio.ByteBuffer;
-import java.security.MessageDigest;
-import java.security.NoSuchAlgorithmException;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashMap;
@@ -23,6 +21,7 @@ import com.badlogic.gdx.utils.Base64Coder;
 import com.badlogic.gdx.utils.XmlReader;
 import com.badlogic.gdx.utils.XmlReader.Element;
 import com.bitfire.uracer.configuration.Storage;
+import com.bitfire.uracer.utils.DigestUtils;
 import com.bitfire.uracer.utils.URacerRuntimeException;
 
 /** Enumerates and maintains a list of available game tracks. FIXME add support for mini-screenshots
@@ -30,7 +29,6 @@ import com.bitfire.uracer.utils.URacerRuntimeException;
  * uRacer map levels are assumed to be encoded as base64+zlib compression. The checksummed layer shall be named "track". */
 public final class GameLevels {
 
-	private static MessageDigest digest;
 	private static final Map<String, GameLevelDescriptor> levelIdToDescriptor = new HashMap<String, GameLevelDescriptor>();
 	private static final AtlasTmxMapLoader mapLoader = new AtlasTmxMapLoader(); // new URacerTmxMapLoader();
 	private static final AtlasTmxMapLoader.AtlasTiledMapLoaderParameters mapLoaderParams = new AtlasTmxMapLoader.AtlasTiledMapLoaderParameters();
@@ -85,13 +83,6 @@ public final class GameLevels {
 		mapLoaderParams.textureMinFilter = TextureFilter.Linear;
 		mapLoaderParams.textureMagFilter = TextureFilter.Linear;
 		mapLoaderParams.yUp = false;
-
-		// check for the digest algorithm
-		try {
-			digest = MessageDigest.getInstance("SHA-256");
-		} catch (NoSuchAlgorithmException e) {
-			throw new URacerRuntimeException("No support for SHA-256 crypto has been found.");
-		}
 
 		// check invalid
 		FileHandle dirLevels = Gdx.files.internal(Storage.Levels);
@@ -257,10 +248,10 @@ public final class GameLevels {
 		byte[] bLevelName;
 
 		bLevelName = levelName.getBytes();
-		digest.reset();
-		digest.update(bLevelName);
-		digest.update(out);
-		checksum = digest.digest();
+		DigestUtils.sha256.reset();
+		DigestUtils.sha256.update(bLevelName);
+		DigestUtils.sha256.update(out);
+		checksum = DigestUtils.sha256.digest();
 
 		temp = null;
 		out = null;

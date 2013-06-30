@@ -71,8 +71,8 @@ public abstract strictfp class Car extends Box2DEntity {
 
 		applyCarPhysics(carType, preset.model);
 
-		Gdx.app.log(getClass().getSimpleName(), "Input mode is " + inputMode.toString());
-		Gdx.app.log(getClass().getSimpleName(), "CarModel is " + preset.model.presetType.toString());
+		// Gdx.app.log(getClass().getSimpleName(), "Input mode is " + inputMode.toString());
+		// Gdx.app.log(getClass().getSimpleName(), "CarModel is " + preset.model.presetType.toString());
 	}
 
 	@Override

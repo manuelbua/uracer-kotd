@@ -13,12 +13,10 @@ public class LapManager implements Disposable {
 
 	private final ReplayRecorder recorder;
 	private final ReplayManager manager;
-	private Replay last;
 
 	public LapManager (String currentTrackId) {
 		recorder = new ReplayRecorder();
 		manager = new ReplayManager(currentTrackId);
-		last = null;
 	}
 
 	@Override
@@ -30,7 +28,6 @@ public class LapManager implements Disposable {
 	/** Stops recording and invalidates last recorded replay, optionally resetting the record timer */
 	public void reset (boolean resetTimer) {
 		abortRecording(resetTimer);
-		last = null;
 	}
 
 	public void resetTimer () {
@@ -63,10 +60,7 @@ public class LapManager implements Disposable {
 	/** Ends recording the previously started lap performance */
 	public ReplayInfo stopRecording () {
 		if (recorder.isRecording()) {
-			last = recorder.endRecording();
-
-			// will not be added if worse than the worst
-			return manager.addReplay(last);
+			return manager.addReplay(recorder.endRecording());
 		}
 
 		return null;

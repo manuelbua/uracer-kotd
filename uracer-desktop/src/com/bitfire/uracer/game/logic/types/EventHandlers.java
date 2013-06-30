@@ -1,7 +1,6 @@
 
 package com.bitfire.uracer.game.logic.types;
 
-import com.badlogic.gdx.Gdx;
 import com.bitfire.uracer.game.GameEvents;
 import com.bitfire.uracer.game.actors.GhostCar;
 import com.bitfire.uracer.game.events.CarEvent;
@@ -33,19 +32,15 @@ public final class EventHandlers {
 		public void handle (Object source, PlayerLapCompletionMonitorEvent.Type type, PlayerLapCompletionMonitorEvent.Order order) {
 			switch (type) {
 			case onWarmUpStarted:
-				Gdx.app.log("CommonLogic", "Warmup started");
 				logic.warmUpStarted();
 				break;
 			case onWarmUpCompleted:
-				Gdx.app.log("CommonLogic", "Warmup completed");
 				logic.warmUpCompleted();
 				break;
 			case onLapStarted:
-				Gdx.app.log("CommonLogic", "Player lap started");
 				logic.playerLapStarted();
 				break;
 			case onLapCompleted:
-				Gdx.app.log("CommonLogic", "Player lap completed");
 				logic.playerLapCompleted();
 				break;
 			}
@@ -58,7 +53,6 @@ public final class EventHandlers {
 			switch (type) {
 			case onLapCompleted:
 				GhostCar ghost = (GhostCar)source;
-				Gdx.app.log("CommonLogic", "Ghost #" + ghost.getId() + " lap completed");
 				logic.ghostLapCompleted(ghost);
 				break;
 			}

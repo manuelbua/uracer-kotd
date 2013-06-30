@@ -438,6 +438,7 @@ public abstract class CommonLogic implements GameLogic, GameLogicObserver {
 		ghostcar.setReplay(replay);
 		gameTrack.resetTrackState(ghostcar);
 		ghostLapMonitor[ghost].reset();
+		Gdx.app.log("CommonLogic", "GhostCar #" + ghost + " replaying #" + replay.getShortReplayId());
 	}
 
 	private void resetGhost (int handle) {
@@ -460,17 +461,13 @@ public abstract class CommonLogic implements GameLogic, GameLogicObserver {
 
 		int ghostIndex = 0;
 		for (Replay r : lapManager.getReplays()) {
-			if (r.isValid()) {
-				setGhostReplay(ghostIndex, r);
-				if (lapManager.getBestReplay() == r) {
-					nextTarget = ghostCars[ghostIndex];
-					playerTasks.hudPlayer.highlightNextTarget(nextTarget);
-				}
-
-				ghostIndex++;
-			} else {
-				setGhostReplay(ghostIndex, null);
+			setGhostReplay(ghostIndex, r);
+			if (lapManager.getBestReplay() == r) {
+				nextTarget = ghostCars[ghostIndex];
+				playerTasks.hudPlayer.highlightNextTarget(nextTarget);
 			}
+
+			ghostIndex++;
 		}
 	}
 }

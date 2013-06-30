@@ -69,7 +69,7 @@ public final class ReplayManager implements Disposable {
 		if (!replay.isValid()) {
 			outInfo.reason = DiscardReason.Invalid;
 
-			Gdx.app.log("ReplayManager", "The specified replay is not valid.");
+			Gdx.app.log("ReplayManager", "The specified replay is not valid. (#" + replay.getShortReplayId() + ")");
 			return false;
 		}
 
@@ -85,15 +85,22 @@ public final class ReplayManager implements Disposable {
 		return true;
 	}
 
+	/** Add a Replay to the list: it will get checked against some rules before adding it, so it's safe to assume that any Replay
+	 * returned later will be valid.
+	 * 
+	 * @param replay The Replay to add
+	 * @param computeId Whether to compute an ID for the specified Replay if added successfully
+	 * @return A ReplayInfo structure describing the inserting position or failure explanation */
 	public ReplayInfo addReplay (Replay replay) {
 		replayInfo.reset();
+
 		if (isValidReplay(replay, replayInfo)) {
 			Replay added = new Replay();
 			added.copyData(replay);
 			nreplays.add(added);
 			nreplays.sort();
 
-			// specified Replay has been copied to a new instance, use it instead
+			// specified Replay has been copied to a new instance, use this instead
 			replayInfo.replay = added;
 
 			if (nreplays.size > MaxReplays) {
@@ -106,14 +113,10 @@ public final class ReplayManager implements Disposable {
 				replayInfo.accepted = true;
 				replayInfo.reason = DiscardReason.NotDiscarded;
 				replayInfo.position = pos + 1;
-
-				Gdx.app.log("ReplayManager", "--> at position #" + replayInfo.position);
 			} else {
 				// replay discarded
 				replayInfo.accepted = false;
 				replayInfo.reason = DiscardReason.Slower;
-
-				Gdx.app.log("ReplayManager", "--> discarded (slower)");
 			}
 		}
 

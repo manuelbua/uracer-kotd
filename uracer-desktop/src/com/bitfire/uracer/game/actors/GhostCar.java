@@ -1,7 +1,6 @@
 
 package com.bitfire.uracer.game.actors;
 
-import com.badlogic.gdx.Gdx;
 import com.bitfire.uracer.game.GameEvents;
 import com.bitfire.uracer.game.events.GhostCarEvent;
 import com.bitfire.uracer.game.logic.replaying.Replay;
@@ -62,8 +61,6 @@ public final class GhostCar extends Car {
 
 			stillModel.setAlpha(0);
 			restartReplay();
-
-			Gdx.app.log("GhostCar #" + id, "Replaying #" + System.identityHashCode(replay));
 		}
 	}
 

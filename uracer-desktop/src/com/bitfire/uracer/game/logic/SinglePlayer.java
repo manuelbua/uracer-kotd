@@ -38,12 +38,14 @@ public class SinglePlayer extends BaseLogic {
 			return;
 		}
 
-		if (replay != null && replay.isValid()) {
+		if (replay != null) {
 			saving = true;
 			Thread savingThread = new Thread(new Runnable() {
 				@Override
 				public void run () {
-					replay.save(replay.getReplayId());
+					if (replay.save()) {
+						Gdx.app.log("SinglePlayer", "Replay #" + replay.getShortReplayId() + " saved to \"" + replay.filename() + "\"");
+					}
 				}
 			});
 
@@ -70,11 +72,15 @@ public class SinglePlayer extends BaseLogic {
 		}
 	}
 
-	private void pruneReplay (Replay replay) {
+	private boolean pruneReplay (Replay replay) {
 		if (replay != null) {
-			replay.delete();
-			Gdx.app.log("SinglePlayer", "Pruned " + replay.getReplayId());
+			if (replay.delete()) {
+				Gdx.app.log("SinglePlayer", "Pruned #" + replay.getShortReplayId());
+				return true;
+			}
 		}
+
+		return false;
 	}
 
 	/** Load and add to the LapManager all the replies for the specified trackId */
@@ -86,10 +92,13 @@ public class SinglePlayer extends BaseLogic {
 			if (userdir.isDirectory()) {
 				for (FileHandle userreplay : userdir.list()) {
 					Replay replay = Replay.load(userreplay.path());
-					if (replay != null && replay.isValid()) {
+					if (replay != null) {
 						ReplayInfo ri = lapManager.addReplay(replay);
-						pruneReplay(ri.removed);
-						reloaded++;
+						if (ri.accepted) {
+							pruneReplay(ri.removed);
+							reloaded++;
+							Gdx.app.log("SinglePlayer", "Loaded replay #" + ri.replay.getShortReplayId());
+						}
 					}
 				}
 			}
@@ -142,7 +151,9 @@ public class SinglePlayer extends BaseLogic {
 
 			if (ri.accepted) {
 				Replay r = ri.replay;
-				CarUtils.dumpSpeedInfo("Player", playerCar, r.getTrackTime());
+
+				CarUtils.dumpSpeedInfo("SinglePlayer", "Replay #" + r.getShortReplayId() + " accepted, player", playerCar,
+					r.getTrackTime());
 
 				saveReplay(r);
 				pruneReplay(ri.removed);
@@ -152,9 +163,9 @@ public class SinglePlayer extends BaseLogic {
 				messager.show("You finished\n" + pos + OrdinalUtils.getOrdinalFor(pos) + "!", 1.5f, Message.Type.Information,
 					Position.Middle, Size.Big);
 			} else {
+				Gdx.app.log("SinglePlayer", "Replay discarded");
 				messager.show("Too slow!", 1.5f, Message.Type.Information, Position.Middle, Size.Big);
 			}
-
 		}
 
 		playerCar.resetDistanceAndSpeed(true, false);
@@ -168,14 +179,10 @@ public class SinglePlayer extends BaseLogic {
 			// remove replay but do not reset its track state yet
 			ghost.removeReplay();
 		}
-
-		float v = gameTrack.getTrackCompletion(ghost);
-		Gdx.app.log("SinglePlayer", "Stopped ghost #" + ghost.getId() + " at " + v);
 	}
 
 	@Override
 	public void ghostReplayEnded (GhostCar ghost) {
-		Gdx.app.log("SinglePlayer", "Replay finished for ghost #" + ghost.getId() + ", waiting for lap monitor to act...");
-		CarUtils.dumpSpeedInfo("GhostCar #" + ghost.getId(), ghost, ghost.getReplay().getTrackTime());
+		CarUtils.dumpSpeedInfo("SinglePlayer", "GhostCar #" + ghost.getId(), ghost, ghost.getReplay().getTrackTime());
 	}
 }

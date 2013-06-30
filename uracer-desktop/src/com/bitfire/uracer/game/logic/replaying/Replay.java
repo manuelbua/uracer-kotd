@@ -12,10 +12,11 @@ import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.utils.Disposable;
 import com.badlogic.gdx.utils.TimeUtils;
 import com.bitfire.uracer.configuration.Storage;
-import com.bitfire.uracer.game.GameplaySettings;
 import com.bitfire.uracer.game.actors.Car;
 import com.bitfire.uracer.game.actors.CarForces;
 import com.bitfire.uracer.utils.AMath;
+import com.bitfire.uracer.utils.DigestUtils;
+import com.bitfire.uracer.utils.URacerRuntimeException;
 
 /** Represents replay data to be feed to a GhostCar, the replay player.
  * 
@@ -36,21 +37,15 @@ public final class Replay implements Disposable, Comparable<Replay> {
 	private CarForces[] forces = null;
 	private int eventsCount;
 	private boolean completed = false;
-	private long millis;
+	private long created;
 
 	public Replay () {
 		forces = new CarForces[MaxEvents];
 		for (int i = 0; i < MaxEvents; i++) {
 			forces[i] = new CarForces();
 		}
-
 		reset();
 	}
-
-	// public boolean canCompareTo (Replay o) {
-	// // a Replay can be compared to another Replay only if it has been recorded on the same track
-	// return trackId.equals(o.getTrackId());
-	// }
 
 	@Override
 	public int compareTo (Replay o) {
@@ -64,8 +59,8 @@ public final class Replay implements Disposable, Comparable<Replay> {
 		} else {
 			// equal time, draw
 			// the oldest wins
-			if (millis < o.millis) return -1;
-			if (millis > o.millis) return 1;
+			if (created < o.created) return -1;
+			if (created > o.created) return 1;
 			return 0;
 		}
 	}
@@ -79,6 +74,10 @@ public final class Replay implements Disposable, Comparable<Replay> {
 		}
 	}
 
+	public void setId (String id) {
+		replayId = id;
+	}
+
 	public void reset () {
 		replayId = "";
 		userId = "";
@@ -88,7 +87,7 @@ public final class Replay implements Disposable, Comparable<Replay> {
 		carPositionMt.set(0, 0);
 		carOrientationRads = 0;
 		completed = false;
-		millis = 0;
+		created = 0;
 
 		for (int i = 0; i < MaxEvents; i++) {
 			forces[i].reset();
@@ -104,7 +103,7 @@ public final class Replay implements Disposable, Comparable<Replay> {
 		carPositionMt.set(replay.carPositionMt);
 		carOrientationRads = replay.carOrientationRads;
 		completed = replay.completed;
-		millis = replay.millis;
+		created = replay.created;
 
 		for (int i = 0; i < MaxEvents; i++) {
 			forces[i].set(replay.forces[i]);
@@ -113,11 +112,11 @@ public final class Replay implements Disposable, Comparable<Replay> {
 
 	public void begin (String trackId, String userId, Car car) {
 		reset();
-		millis = TimeUtils.millis();
-		this.userId = userId;
 		this.trackId = trackId;
+		this.userId = userId;
 		carPositionMt.set(car.getWorldPosMt());
 		carOrientationRads = car.getWorldOrientRads();
+		created = TimeUtils.millis();
 	}
 
 	public boolean add (CarForces f) {
@@ -130,43 +129,59 @@ public final class Replay implements Disposable, Comparable<Replay> {
 		return true;
 	}
 
-	public void end (String replayId, float trackTime) {
-		this.replayId = replayId;
+	public void end (float trackTime) {
 		trackTimeSeconds = trackTime;
 		completed = eventsCount > 0 && eventsCount < MaxEvents;
+
+		replayId = DigestUtils.computeDigest(this);
+		if (!DigestUtils.isValidDigest(replayId)) {
+			throw new URacerRuntimeException("The generated Replay ID is invalid (#" + replayId + ")");
+		}
 	}
 
 	private String getDestDir () {
+		// FIXME move this out of here!!!!
 		return Storage.ReplaysRoot + trackId + "/" + userId + "/";
 	}
 
-	public void delete () {
-		FileHandle hf = Gdx.files.external(getDestDir() + replayId);
-		if (hf.exists()) hf.delete();
+	public boolean delete () {
+		if (isValid()) {
+			FileHandle hf = Gdx.files.external(getDestDir() + replayId);
+			if (hf.exists()) {
+				hf.delete();
+				return true;
+			}
+		} else {
+			Gdx.app.log("Replay", "Can't delete an invalid replay");
+		}
+		return false;
 	}
 
-	public boolean save (String filename) {
+	public String filename () {
 		if (isValid()) {
+			return getDestDir() + replayId;
+		}
+
+		return "";
+	}
+
+	/** Saves its data to a filename named as its replay ID in the replays output directory for this data's trackId and userId */
+	public boolean save () {
+		if (isValid()) { // sanity check
 			String dest = getDestDir();
+
+			// ensure destination directory exists
 			Gdx.files.external(dest).mkdirs();
 
-			FileHandle hf = Gdx.files.external(dest + filename);
-
+			FileHandle hf = Gdx.files.external(filename());
 			if (hf.exists()) {
 				Gdx.app.log("Replay", "=====> NOT OVERWRITING REPLAY (" + replayId + ") <=====");
 				return false;
 			}
 
 			try {
-				// DataOutputStream os = new DataOutputStream(hf.write(false));
-				GZIPOutputStream gzos = null;
-
-				gzos = new GZIPOutputStream(hf.write(false));/*
-																			 * { { def.setLevel(Deflater.BEST_COMPRESSION); } };
-																			 */
-
+				GZIPOutputStream gzos = new GZIPOutputStream(hf.write(false));
 				DataOutputStream os = new DataOutputStream(gzos);
-				// ObjectOutputStream os = new ObjectOutputStream(gzos);
 
 				// replay info data
 				os.writeUTF(replayId);
@@ -174,6 +189,7 @@ public final class Replay implements Disposable, Comparable<Replay> {
 				os.writeUTF(trackId);
 				os.writeFloat(trackTimeSeconds);
 				os.writeInt(eventsCount);
+				os.writeLong(created);
 
 				// car data
 				os.writeFloat(carPositionMt.x);
@@ -190,7 +206,6 @@ public final class Replay implements Disposable, Comparable<Replay> {
 
 				os.close();
 
-				Gdx.app.log("Replay", "Replay \"" + replayId + "\" saved to \"" + filename + "\"");
 				return true;
 			} catch (Exception e) {
 				Gdx.app.log("Replay", "Couldn't save replay, reason: " + e.getMessage());
@@ -206,7 +221,6 @@ public final class Replay implements Disposable, Comparable<Replay> {
 		FileHandle fh = Gdx.files.external(fullpathFilename);
 		if (fh.exists()) {
 			try {
-				// DataInputStream is = new DataInputStream( fh.read() );
 				GZIPInputStream gzis = new GZIPInputStream(fh.read());
 				DataInputStream is = new DataInputStream(gzis);
 
@@ -219,6 +233,7 @@ public final class Replay implements Disposable, Comparable<Replay> {
 				r.trackId = is.readUTF();
 				r.trackTimeSeconds = is.readFloat();
 				r.eventsCount = is.readInt();
+				r.created = is.readLong();
 
 				// car data
 				r.carPositionMt.x = is.readFloat();
@@ -233,11 +248,10 @@ public final class Replay implements Disposable, Comparable<Replay> {
 
 				is.close();
 
-				// Gdx.app.log( "Replay", "Done loading local replay" );
 				return r;
-
 			} catch (Exception e) {
-				Gdx.app.log("Replay", "Couldn't load replay, reason: " + e.getMessage());
+				Gdx.app.log("Replay",
+					"Couldn't load replay (" + fullpathFilename + "), reason: " + e.getMessage() + " (" + e.toString() + ")");
 			}
 		} else {
 			Gdx.app.log("Replay", "The specified replay doesn't exist (" + fullpathFilename + ")");
@@ -246,12 +260,12 @@ public final class Replay implements Disposable, Comparable<Replay> {
 		return null;
 	}
 
-	public boolean isTrackTimeValid () {
-		return (trackTimeSeconds > GameplaySettings.ReplayMinDurationSecs);
+	public boolean isValidData () {
+		return completed && created > 0 && userId.length() > 0 && trackId.length() > 0;
 	}
 
 	public boolean isValid () {
-		return completed && isTrackTimeValid() && replayId.length() > 0 && userId.length() > 0 && trackId.length() > 0;
+		return isValidData() && DigestUtils.isValidDigest(replayId);
 	}
 
 	public CarForces[] getCarForces () {
@@ -274,6 +288,10 @@ public final class Replay implements Disposable, Comparable<Replay> {
 		return replayId;
 	}
 
+	public String getShortReplayId () {
+		return replayId.substring(0, 6);
+	}
+
 	public String getUserId () {
 		return userId;
 	}
@@ -284,5 +302,9 @@ public final class Replay implements Disposable, Comparable<Replay> {
 
 	public float getTrackTime () {
 		return trackTimeSeconds;
+	}
+
+	public long getCreationTimestamp () {
+		return created;
 	}
 }
