@@ -80,8 +80,6 @@ public final class ReplayManager implements Disposable {
 			return false;
 		}
 
-		outInfo.accepted = true;
-		outInfo.replay = null;
 		return true;
 	}
 
