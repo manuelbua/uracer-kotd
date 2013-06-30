@@ -304,6 +304,10 @@ public final class Replay implements Disposable, Comparable<Replay> {
 		return trackTimeSeconds;
 	}
 
+	public int getTrackTimeInt () {
+		return (int)(trackTimeSeconds * AMath.ONE_ON_CMP_EPSILON);
+	}
+
 	public long getCreationTimestamp () {
 		return created;
 	}

@@ -105,6 +105,14 @@ public class SinglePlayer extends BaseLogic {
 			}
 		}
 
+		Gdx.app.log("SinglePlayer", "Opponents list:");
+		int pos = 1;
+		for (Replay r : lapManager.getReplays()) {
+			Gdx.app.log("SinglePlayer",
+				"#" + pos + ", #" + r.getShortReplayId() + ", tt=" + r.getTrackTimeInt() + ", ct=" + r.getCreationTimestamp());
+			pos++;
+
+		}
 		return reloaded;
 	}
 
