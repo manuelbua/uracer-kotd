@@ -51,7 +51,7 @@ public final class Config {
 		public static final boolean TraverseWalls = false;
 		public static final boolean ApplyCarFrictionFromMap = true;
 		public static final boolean FrustumCulling = true;
-		public static final boolean InfiniteDilationTime = false;
+		public static final boolean InfiniteDilationTime = true;
 
 		private Debug () {
 		}

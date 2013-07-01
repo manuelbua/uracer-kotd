@@ -20,14 +20,16 @@ public final class GhostCar extends Car {
 	private boolean hasReplay;
 	private final int id;
 	private boolean fadeOutEventTriggered;
+	private boolean started;
 
 	public GhostCar (int id, GameWorld gameWorld, CarPreset.Type presetType) {
 		super(gameWorld, CarType.ReplayCar, InputMode.InputFromReplay, presetType, false);
 		this.id = id;
+		started = false;
 		replay = new Replay();
 		resetDistanceAndSpeed(true, true);
 		removeReplay();
-		stillModel.setAlpha(0.5f);
+		stillModel.setAlpha(0);
 		getTrackState().ghostArrived = false;
 		getTrackState().ghostStarted = false;
 	}
@@ -40,8 +42,33 @@ public final class GhostCar extends Car {
 		return replay;
 	}
 
+	/** starts playing the available Replay, if any */
+	public void start () {
+		if (!started) {
+			stillModel.setAlpha(0);
+			resetWithTrackState();
+			setActive(true);
+			getTrackState().ghostArrived = false;
+			getTrackState().ghostStarted = true;
+			started = true;
+		}
+	}
+
+	/** stops playing the replay and returns to being idle */
+	public void stop () {
+		if (started) {
+			started = false;
+			// getTrackState().ghostStarted = false;
+			stillModel.setAlpha(0);
+			setActive(false);
+			resetPhysics();
+		}
+	}
+
 	// input data for this car cames from a Replay object
 	public void setReplay (Replay replay) {
+		stop();
+
 		hasReplay = (replay != null && replay.getEventsCount() > 0 && replay.isValid());
 		replayForces = null;
 		replayForcesCount = 0;
@@ -52,35 +79,58 @@ public final class GhostCar extends Car {
 			this.replay.reset();
 		}
 
-		setActive(hasReplay);
-		resetPhysics();
-
 		if (hasReplay) {
 			replayForces = replay.getCarForces();
 			replayForcesCount = replay.getEventsCount();
-
-			stillModel.setAlpha(0);
-			restartReplay();
-		}
-	}
-
-	public void restartReplay () {
-		if (hasReplay) {
-			resetPhysics();
-			resetDistanceAndSpeed(true, true);
-			setWorldPosMt(replay.getStartPosition(), replay.getStartOrientation());
+			resetWithTrackState();
 			indexPlay = 0;
 			fadeOutEventTriggered = false;
+			stillModel.setAlpha(0);
+		}
 
-			getTrackState().ghostArrived = false;
-			getTrackState().ghostStarted = true;
+		// setActive(hasReplay);
+		// resetPhysics();
+
+		// if (hasReplay) {
+		// gameTrack.resetTrackState(this);
+		//
+		// replayForces = replay.getCarForces();
+		// replayForcesCount = replay.getEventsCount();
+		//
+		// stillModel.setAlpha(0);
+		// restartReplay();
+		// }
+	}
+
+	private void resetWithTrackState () {
+		getTrackState().ghostArrived = false;
+		getTrackState().ghostStarted = false;
+
+		resetPhysics();
+		resetDistanceAndSpeed(true, true);
+
+		if (hasReplay) {
+			setWorldPosMt(replay.getStartPosition(), replay.getStartOrientation());
+			gameTrack.resetTrackState(this);
 		}
 	}
 
+	// private void restartReplay () {
+	// if (hasReplay) {
+	// resetPhysics();
+	// resetDistanceAndSpeed(true, true);
+	// setWorldPosMt(replay.getStartPosition(), replay.getStartOrientation());
+	// indexPlay = 0;
+	// fadeOutEventTriggered = false;
+	//
+	// getTrackState().ghostArrived = false;
+	// getTrackState().ghostStarted = true;
+	// }
+	// }
+
 	public void removeReplay () {
-		indexPlay = 0;
+		stop();
 		setReplay(null);
-		stillModel.setAlpha(0);
 	}
 
 	public boolean hasReplay () {
@@ -99,9 +149,10 @@ public final class GhostCar extends Car {
 
 	@Override
 	protected void onComputeCarForces (CarForces forces) {
+		// returns empty forces in case its not started nor ready
 		forces.reset();
 
-		if (hasReplay) {
+		if (started && hasReplay) {
 
 			if (indexPlay < replayForcesCount) {
 				forces.set(replayForces[indexPlay]);
@@ -126,6 +177,7 @@ public final class GhostCar extends Car {
 	@Override
 	public void onAfterPhysicsSubstep () {
 		super.onAfterPhysicsSubstep();
+		if (!started) return;
 
 		if (hasReplay) {
 			indexPlay++;

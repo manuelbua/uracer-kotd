@@ -44,4 +44,6 @@ public interface GameLogic {
 	GhostCar getGhost (int handle);
 
 	boolean isGhostActive (int handle);
+
+	boolean isWarmUp ();
 }

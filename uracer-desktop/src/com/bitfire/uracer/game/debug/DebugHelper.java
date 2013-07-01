@@ -31,6 +31,7 @@ import com.bitfire.uracer.game.events.GameRendererEvent.Order;
 import com.bitfire.uracer.game.events.GameRendererEvent.Type;
 import com.bitfire.uracer.game.logic.gametasks.DisposableTasks;
 import com.bitfire.uracer.game.logic.gametasks.GameTask;
+import com.bitfire.uracer.game.logic.helpers.GameTrack.TrackState;
 import com.bitfire.uracer.game.logic.replaying.LapManager;
 import com.bitfire.uracer.game.logic.replaying.Replay;
 import com.bitfire.uracer.game.logic.replaying.ReplayManager;
@@ -311,6 +312,10 @@ public final class DebugHelper extends GameTask implements DisposableTasks {
 		batch.begin();
 	}
 
+	private String timeString (float seconds) {
+		return String.format("%02.03f", seconds);
+	}
+
 	private void renderRankings (SpriteBatch batch, int y) {
 		if (!hasPlayer) return;
 
@@ -337,8 +342,8 @@ public final class DebugHelper extends GameTask implements DisposableTasks {
 					batchColorStart(batch, 1, 1, 0);
 			}
 
-			SpriteBatchUtils.drawString(batch, "#" + rankString(rank) + " " + replay.getUserId() + " " + replay.getTrackTimeInt()
-				/ 1000f, 0, coord);
+			SpriteBatchUtils.drawString(batch,
+				"#" + rankString(rank) + " " + replay.getUserId() + " " + timeString(replay.getTrackTimeInt() / 1000f), 0, coord);
 
 			if (lastAccepted) {
 				batchColorEnd(batch);
@@ -353,48 +358,72 @@ public final class DebugHelper extends GameTask implements DisposableTasks {
 			Replay replay = last.removed;
 			batchColorStart(batch, 1, 0, 0);
 			SpriteBatchUtils.drawString(batch, "#" + rankString(lapManager.getReplays().size + 1) + " " + replay.getUserId() + " "
-				+ replay.getTrackTimeInt() / 1000f, 0, coord);
+				+ timeString(replay.getTrackTimeInt() / 1000f), 0, coord);
 			batchColorEnd(batch);
 		}
 	}
 
 	private void renderCompletion (SpriteBatch batch, int y) {
 		int coord = y;
-		int valids = 0;
-		for (int i = 0; i < ReplayManager.MaxReplays + 1; i++)
+		for (int i = 0; i < ReplayManager.MaxReplays + 1; i++) {
 			ranks.get(i).valid = false;
+			ranks.get(i).player = false;
+		}
 
+		int playerIndex = 0;
 		for (int i = 0; i < ReplayManager.MaxReplays; i++) {
 			GhostCar ghost = logic.getGhost(i);
 			if (ghost != null && ghost.hasReplay()) {
 				RankInfo rank = ranks.get(i);
 				rank.valid = true;
 				rank.uid = ghost.getReplay().getUserId();
-				rank.time = "" + (ghost.getReplay().getTrackTimeInt() / 1000f);
-				rank.completion = gameWorld.getGameTrack().getTrackCompletion(ghost);
-				valids++;
+				rank.secs = ghost.getReplay().getTrackTimeInt() / 1000f;
+
+				TrackState ts = ghost.getTrackState();
+				float c = gameWorld.getGameTrack().getTrackCompletion(ghost);
+
+				rank.completion = 0;
+				if (ts.ghostArrived && !ts.ghostStarted) {
+					rank.completion = 1;
+				} else if (ts.ghostStarted || ts.ghostArrived) {
+					rank.completion = ts.ghostArrived ? 1 : ts.ghostStarted ? c : 0;
+				}
+
+				// Gdx.app.log("", "st=" + ts.ghostStarted + ", arr=" + ts.ghostArrived);
+				// rank.completion = c;
+				playerIndex++;
 			}
 		}
 
 		if (hasPlayer) {
-			RankInfo rank = ranks.get(ReplayManager.MaxReplays);
+			RankInfo rank = ranks.get(playerIndex);
 			rank.valid = true;
 			rank.uid = "plyr";
-			rank.time = "" + ((int)(lapManager.getCurrentReplaySeconds() * AMath.ONE_ON_CMP_EPSILON) / 1000f);
-			rank.completion = gameWorld.getGameTrack().getTrackCompletion(player);
+			rank.player = true;
+
+			// FIXME check fir time incongruency!
+			// getTrackTimeInt is computed as an int cast (int)(trackTimeSeconds * AMath.ONE_ON_CMP_EPSILON)
+			rank.secs = ((int)(lapManager.getCurrentReplaySeconds() * AMath.ONE_ON_CMP_EPSILON)) / 1000f;
+			rank.completion = logic.isWarmUp() ? 0 : gameWorld.getGameTrack().getTrackCompletion(player);
 		}
 
 		ranks.sort();
 
 		SpriteBatchUtils.drawString(batch, "CURRENT COMPLETION", 150, coord);
-		SpriteBatchUtils.drawString(batch, "==================", 0, coord + Art.DebugFontHeight);
+		SpriteBatchUtils.drawString(batch, "==================", 150, coord + Art.DebugFontHeight);
 		coord += 2 * Art.DebugFontHeight;
 
 		for (int i = 0; i < ranks.size; i++) {
 			RankInfo r = ranks.get(i);
 			if (r.valid) {
 				float c = AMath.fixupTo(AMath.fixup(r.completion), 1);
-				SpriteBatchUtils.drawString(batch, "#" + rankString(i) + " " + r.uid + " " + c, 150, coord);
+				if (r.player) batchColorStart(batch, 0, 0.6f, 1);
+				{
+					SpriteBatchUtils.drawString(batch, "#" + rankString(i + 1) + " " + r.uid + " " + timeString(c) + " "
+						+ timeString(r.secs), 150, coord);
+				}
+				if (r.player) batchColorEnd(batch);
+
 				coord += Art.DebugFontHeight;
 			}
 		}
@@ -598,13 +627,25 @@ public final class DebugHelper extends GameTask implements DisposableTasks {
 	private static class RankInfo implements Comparable<RankInfo> {
 		public float completion;
 		public String uid;
-		public String time;
-		public boolean valid;
+		public float secs;
+		public boolean valid, player;
 
 		@Override
 		public int compareTo (RankInfo o) {
 			if (!valid) return 1;
-			return (int)((o.completion - completion) * 10);
+
+			if (completion == 0) {
+				if (player) return 1; // player stay at bottom
+
+				// order by time
+				if (secs < o.secs) return -1;
+				if (secs > o.secs) return 1;
+				return 0;
+			}
+
+			if (completion > o.completion) return -1;
+			if (completion < o.completion) return 1;
+			return 0;
 		}
 	}
 }

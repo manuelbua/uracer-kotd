@@ -13,7 +13,6 @@ import com.bitfire.uracer.game.GameLogic;
 import com.bitfire.uracer.game.GameLogicObserver;
 import com.bitfire.uracer.game.Time;
 import com.bitfire.uracer.game.Time.Reference;
-import com.bitfire.uracer.game.actors.Car;
 import com.bitfire.uracer.game.actors.GhostCar;
 import com.bitfire.uracer.game.events.GameLogicEvent;
 import com.bitfire.uracer.game.logic.gametasks.GameTasksManager;
@@ -24,7 +23,6 @@ import com.bitfire.uracer.game.logic.helpers.GameTrack;
 import com.bitfire.uracer.game.logic.helpers.PlayerGameTasks;
 import com.bitfire.uracer.game.logic.post.PostProcessing;
 import com.bitfire.uracer.game.logic.replaying.LapManager;
-import com.bitfire.uracer.game.logic.replaying.Replay;
 import com.bitfire.uracer.game.logic.replaying.ReplayManager;
 import com.bitfire.uracer.game.logic.types.helpers.GhostLapCompletionMonitor;
 import com.bitfire.uracer.game.logic.types.helpers.PlayerLapCompletionMonitor;
@@ -62,12 +60,11 @@ public abstract class CommonLogic implements GameLogic, GameLogicObserver {
 	private WrongWayMonitor wrongWayMonitor;
 	protected boolean isCurrentLapValid = true;
 	protected boolean isCollisionPenalty;
-	private GhostCar nextTarget = null;
 
 	// lap / replays
 	protected LapManager lapManager = null;
 	protected PlayerLapCompletionMonitor playerLapMonitor = null;
-	private PlayerLapCompletionMonitor[] ghostLapMonitor = new GhostLapCompletionMonitor[ReplayManager.MaxReplays];
+	protected GhostLapCompletionMonitor[] ghostLapMonitor = new GhostLapCompletionMonitor[ReplayManager.MaxReplays];
 
 	// tasks
 	protected GameTasksManager gameTasksManager = null;
@@ -96,8 +93,8 @@ public abstract class CommonLogic implements GameLogic, GameLogicObserver {
 		playerTasks = new PlayerGameTasks(userProfile, gameTasksManager);
 		playerTasks.createTasks(lapManager);
 
-		// create ghost cars
-		for (int i = 0; i < ReplayManager.MaxReplays; i++) {
+		// create ghost cars and provides them via interface @Overrides
+		for (int i = 0; i < ghostCars.length; i++) {
 			ghostCars[i] = CarFactory.createGhost(i, gameWorld);
 			ghostLapMonitor[i] = new GhostLapCompletionMonitor(gameTrack);
 			ghostLapMonitor[i].reset();
@@ -135,7 +132,7 @@ public abstract class CommonLogic implements GameLogic, GameLogicObserver {
 			playerCar.dispose();
 		}
 
-		for (int i = 0; i < ReplayManager.MaxReplays; i++) {
+		for (int i = 0; i < ghostCars.length; i++) {
 			if (ghostCars[i] != null) {
 				ghostCars[i].dispose();
 			}
@@ -157,12 +154,10 @@ public abstract class CommonLogic implements GameLogic, GameLogicObserver {
 		}
 
 		playerCar = CarFactory.createPlayer(gameWorld);
-		gameWorld.setPlayer(playerCar);
-
-		configurePlayer(gameWorld, inputSystem, playerCar);
+		playerCar.setInputSystem(inputSystem);
+		playerCar.setFrictionMap(Art.frictionMapDesert);
+		playerCar.reset();
 		Gdx.app.log("GameLogic", "Player configured");
-
-		gameTrack.resetTrackState(playerCar);
 
 		GameEvents.logicEvent.player = playerCar;
 		GameEvents.logicEvent.trigger(this, GameLogicEvent.Type.PlayerAdded);
@@ -174,6 +169,7 @@ public abstract class CommonLogic implements GameLogic, GameLogicObserver {
 		Gdx.app.log("GameLogic", "Registered player-related events");
 
 		postProcessing.setPlayer(playerCar);
+		playerLapMonitor.reset();
 		gameWorld.setPlayer(playerCar);
 		gameWorldRenderer.setRenderPlayerHeadlights(gameWorld.isNightMode());
 	}
@@ -204,8 +200,7 @@ public abstract class CommonLogic implements GameLogic, GameLogicObserver {
 	}
 
 	private void realRestart (boolean raiseEvent) {
-		resetPlayer(gameWorld, playerCar);
-		resetAllGhosts();
+		if (hasPlayer()) playerCar.reset();
 		endTimeDilation();
 
 		getOutOfTrackTimer().reset();
@@ -254,11 +249,6 @@ public abstract class CommonLogic implements GameLogic, GameLogicObserver {
 	@Override
 	public boolean isTimeDilationAvailable () {
 		return accuDriftSeconds.value > 0;
-	}
-
-	@Override
-	public GhostCar getNextTarget () {
-		return nextTarget;
 	}
 
 	@Override
@@ -329,7 +319,7 @@ public abstract class CommonLogic implements GameLogic, GameLogicObserver {
 			gameTrack.updateTrackState(playerCar);
 		}
 
-		for (int i = 0; i < ReplayManager.MaxReplays; i++) {
+		for (int i = 0; i < ghostCars.length; i++) {
 			GhostCar ghost = ghostCars[i];
 			if (ghost != null && ghost.hasReplay()) {
 				gameTrack.updateTrackState(ghost);
@@ -360,7 +350,7 @@ public abstract class CommonLogic implements GameLogic, GameLogicObserver {
 
 	/** Updates ghost lap monitors */
 	private void updateGhostMonitors () {
-		for (int i = 0; i < ReplayManager.MaxReplays; i++) {
+		for (int i = 0; i < ghostCars.length; i++) {
 			GhostCar ghost = ghostCars[i];
 			if (ghost.hasReplay()) {
 				ghostLapMonitor[i].update(ghost);
@@ -405,24 +395,8 @@ public abstract class CommonLogic implements GameLogic, GameLogicObserver {
 
 	/** Updates player hud track progress */
 	private void updateTrackProgress () {
-		playerTasks.hudPlayer.trackProgress
-			.update(playerLapMonitor.isWarmUp(), isCurrentLapValid, gameTrack, playerCar, nextTarget);
-	}
-
-	private void configurePlayer (GameWorld world, Input inputSystem, PlayerCar player) {
-		player.setInputSystem(inputSystem);
-		player.setFrictionMap(Art.frictionMapDesert);
-		player.setWorldPosMt(world.playerStart.position, world.playerStart.orientation);
-		player.resetPhysics();
-	}
-
-	private void resetPlayer (GameWorld world, Car playerCar) {
-		if (playerCar != null) {
-			playerCar.resetPhysics();
-			playerCar.resetDistanceAndSpeed(true, true);
-			playerCar.setWorldPosMt(world.playerStart.position, world.playerStart.orientation);
-			gameTrack.resetTrackState(playerCar);
-		}
+		playerTasks.hudPlayer.trackProgress.update(playerLapMonitor.isWarmUp(), isCurrentLapValid, gameTrack, playerCar,
+			getNextTarget());
 	}
 
 	@Override
@@ -440,41 +414,8 @@ public abstract class CommonLogic implements GameLogic, GameLogicObserver {
 		return (ghostCars[handle] != null && ghostCars[handle].isActive());
 	}
 
-	protected void setGhostReplay (int ghost, Replay replay) {
-		GhostCar ghostcar = ghostCars[ghost];
-		ghostcar.setReplay(replay);
-		gameTrack.resetTrackState(ghostcar);
-		ghostLapMonitor[ghost].reset();
-		Gdx.app.log("CommonLogic", "GhostCar #" + ghost + " replaying #" + replay.getShortReplayId());
-	}
-
-	private void resetGhost (int handle) {
-		GhostCar ghost = ghostCars[handle];
-		if (ghost != null) {
-			ghost.resetPhysics();
-			ghost.resetDistanceAndSpeed(true, true);
-			ghost.removeReplay();
-		}
-	}
-
-	protected void resetAllGhosts () {
-		for (int i = 0; i < ReplayManager.MaxReplays; i++) {
-			resetGhost(i);
-		}
-	}
-
-	protected void restartAllReplays () {
-		nextTarget = null;
-
-		int ghostIndex = 0;
-		for (Replay r : lapManager.getReplays()) {
-			setGhostReplay(ghostIndex, r);
-			if (lapManager.getBestReplay() == r) {
-				nextTarget = ghostCars[ghostIndex];
-				playerTasks.hudPlayer.highlightNextTarget(nextTarget);
-			}
-
-			ghostIndex++;
-		}
+	@Override
+	public boolean isWarmUp () {
+		return hasPlayer() && playerLapMonitor.isWarmUp();
 	}
 }

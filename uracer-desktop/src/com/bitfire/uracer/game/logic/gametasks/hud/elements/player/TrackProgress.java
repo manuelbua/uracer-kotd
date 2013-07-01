@@ -91,7 +91,7 @@ public class TrackProgress extends Positionable {
 		this.isCurrentLapValid = isCurrentLapValid;
 		this.isWarmUp = isWarmUp;
 
-		hasTarget = (target != null && target.getTrackState().ghostStarted);
+		hasTarget = (target != null /* && target.getTrackState().ghostStarted */);
 		if (isCurrentLapValid) {
 			playerToTarget = 0;
 		} else {

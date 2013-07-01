@@ -103,6 +103,13 @@ public class PlayerCar extends Car {
 		driftState.reset();
 	}
 
+	public void reset () {
+		resetPhysics();
+		resetDistanceAndSpeed(true, true);
+		setWorldPosMt(gameWorld.playerStart.position, gameWorld.playerStart.orientation);
+		gameTrack.resetTrackState(this);
+	}
+
 	public boolean isOutOfTrack () {
 		return isOutOfTrack;
 	}

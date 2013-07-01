@@ -15,6 +15,7 @@ import com.bitfire.uracer.game.GameEvents;
 import com.bitfire.uracer.game.collisions.CollisionFilters;
 import com.bitfire.uracer.game.events.CarEvent;
 import com.bitfire.uracer.game.events.GameRendererEvent.Order;
+import com.bitfire.uracer.game.logic.helpers.GameTrack;
 import com.bitfire.uracer.game.logic.helpers.GameTrack.TrackState;
 import com.bitfire.uracer.game.world.GameWorld;
 import com.bitfire.uracer.game.world.models.CarStillModel;
@@ -31,6 +32,7 @@ public abstract strictfp class Car extends Box2DEntity {
 	protected static final Order ShadowsDrawingOrder = Order.MINUS_2;
 
 	protected GameWorld gameWorld;
+	protected GameTrack gameTrack;
 	// protected CarType carType;
 	protected CarStillModel stillModel;
 	private TrackState trackState;
@@ -54,7 +56,6 @@ public abstract strictfp class Car extends Box2DEntity {
 	protected InputMode inputMode = InputMode.NoInput;
 
 	public Car (GameWorld gameWorld, CarType carType, InputMode inputMode, CarPreset.Type presetType, boolean triggerEvents) {
-
 		super(gameWorld.getBox2DWorld());
 		this.preset = new CarPreset(presetType);
 		// this.carType = carType;
@@ -62,6 +63,8 @@ public abstract strictfp class Car extends Box2DEntity {
 		this.trackState = new TrackState();
 
 		this.gameWorld = gameWorld;
+		this.gameTrack = gameWorld.getGameTrack();
+
 		stillModel = ModelFactory.createCar();
 		stillModel.setCar(this);
 		impacts = 0;

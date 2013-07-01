@@ -8,7 +8,6 @@ import aurelienribon.tweenengine.TweenCallback;
 import aurelienribon.tweenengine.equations.Linear;
 
 import com.badlogic.gdx.Gdx;
-import com.badlogic.gdx.Input.Keys;
 import com.badlogic.gdx.math.Vector2;
 import com.bitfire.postprocessing.PostProcessor;
 import com.bitfire.uracer.URacer;
@@ -36,7 +35,7 @@ import com.bitfire.uracer.utils.BoxedFloatAccessor;
 import com.bitfire.uracer.utils.InterpolatedFloat;
 
 public abstract class BaseLogic extends CommonLogic {
-	private DebugHelper debug = null;
+	protected DebugHelper debug = null;
 	private Vector2 cameraPos = new Vector2();
 	private float prevZoom = GameWorldRenderer.MinCameraZoom + GameWorldRenderer.ZoomWindow;
 	private InterpolatedFloat driftStrength = new InterpolatedFloat();
@@ -86,30 +85,6 @@ public abstract class BaseLogic extends CommonLogic {
 	@Override
 	public TimeModulator getTimeModulator () {
 		return timeMod;
-	}
-
-	@Override
-	public void handleExtraInput () {
-		if (inputSystem.isPressed(Keys.O)) {
-			removePlayer();
-			restartGame();
-			restartAllReplays();
-		} else if (inputSystem.isPressed(Keys.P)) {
-			addPlayer();
-			restartGame();
-		} else if (inputSystem.isPressed(Keys.TAB)) {
-			gameRenderer.setDebug(!gameRenderer.isDebugEnabled());
-		}
-
-		if (gameRenderer.isDebugEnabled() && debug.isEnabled()) {
-			if (inputSystem.isPressed(Keys.W)) {
-				debug.toggleFlag(RenderFlags.Box2DWireframe);
-			} else if (inputSystem.isPressed(Keys.B)) {
-				debug.toggleFlag(RenderFlags.BoundingBoxes3D);
-			} else if (inputSystem.isPressed(Keys.S)) {
-				debug.toggleFlag(RenderFlags.TrackSectors);
-			}
-		}
 	}
 
 	@Override

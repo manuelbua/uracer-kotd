@@ -2,12 +2,14 @@
 package com.bitfire.uracer.game.logic;
 
 import com.badlogic.gdx.Gdx;
+import com.badlogic.gdx.Input.Keys;
 import com.badlogic.gdx.files.FileHandle;
 import com.badlogic.gdx.math.Vector2;
 import com.bitfire.uracer.configuration.Storage;
 import com.bitfire.uracer.configuration.UserProfile;
 import com.bitfire.uracer.game.GameplaySettings;
 import com.bitfire.uracer.game.actors.GhostCar;
+import com.bitfire.uracer.game.debug.DebugHelper.RenderFlags;
 import com.bitfire.uracer.game.logic.gametasks.messager.Message;
 import com.bitfire.uracer.game.logic.gametasks.messager.Message.Position;
 import com.bitfire.uracer.game.logic.gametasks.messager.Message.Size;
@@ -19,10 +21,12 @@ import com.bitfire.uracer.game.world.GameWorld;
 import com.bitfire.uracer.utils.CarUtils;
 import com.bitfire.uracer.utils.Convert;
 import com.bitfire.uracer.utils.OrdinalUtils;
+import com.bitfire.uracer.utils.URacerRuntimeException;
 
 public class SinglePlayer extends BaseLogic {
 	private boolean saving = false;
 	private CameraShaker camShaker = new CameraShaker();
+	private GhostCar nextTarget = null;
 
 	public SinglePlayer (UserProfile userProfile, GameWorld gameWorld, GameRenderer gameRenderer) {
 		super(userProfile, gameWorld, gameRenderer);
@@ -31,6 +35,35 @@ public class SinglePlayer extends BaseLogic {
 	@Override
 	public void dispose () {
 		super.dispose();
+	}
+
+	@Override
+	public void handleExtraInput () {
+		if (inputSystem.isPressed(Keys.O)) {
+			removePlayer();
+			restartGame();
+			restartAllReplays();
+		} else if (inputSystem.isPressed(Keys.P)) {
+			addPlayer();
+			restartGame();
+		} else if (inputSystem.isPressed(Keys.TAB)) {
+			gameRenderer.setDebug(!gameRenderer.isDebugEnabled());
+		}
+
+		if (gameRenderer.isDebugEnabled() && debug.isEnabled()) {
+			if (inputSystem.isPressed(Keys.W)) {
+				debug.toggleFlag(RenderFlags.Box2DWireframe);
+			} else if (inputSystem.isPressed(Keys.B)) {
+				debug.toggleFlag(RenderFlags.BoundingBoxes3D);
+			} else if (inputSystem.isPressed(Keys.S)) {
+				debug.toggleFlag(RenderFlags.TrackSectors);
+			}
+		}
+	}
+
+	@Override
+	public GhostCar getNextTarget () {
+		return nextTarget;
 	}
 
 	private void saveReplay (final Replay replay) {
@@ -84,8 +117,9 @@ public class SinglePlayer extends BaseLogic {
 		return false;
 	}
 
-	/** Load and add to the LapManager all the replies for the specified trackId */
-	private int refreshAllReplaysFor (String trackId) {
+	/** Load from disk all the replays for the specified trackId, pruning while loading respecting the ReplayManager.MaxReplays
+	 * constant. Any previous Replay will be cleared from the lapManager instance. */
+	private int loadReplaysFromDiskFor (String trackId) {
 		lapManager.removeAllReplays();
 
 		int reloaded = 0;
@@ -106,13 +140,23 @@ public class SinglePlayer extends BaseLogic {
 		}
 
 		Gdx.app.log("SinglePlayer", "Opponents list:");
+
+		for (int g = 0; g < ghostCars.length; g++) {
+			ghostCars[g].removeReplay();
+		}
+
 		int pos = 1;
+		int ghostIndex = 0;
 		for (Replay r : lapManager.getReplays()) {
+			ghostCars[ghostIndex].setReplay(r);
+			ghostLapMonitor[ghostIndex].reset();
+
 			Gdx.app.log("SinglePlayer",
 				"#" + pos + ", #" + r.getShortReplayId() + ", tt=" + r.getTrackTimeInt() + ", ct=" + r.getCreationTimestamp());
 			pos++;
-
+			ghostIndex++;
 		}
+
 		return reloaded;
 	}
 
@@ -121,7 +165,8 @@ public class SinglePlayer extends BaseLogic {
 		Gdx.app.log("SinglePlayer", "Starting/restarting game");
 		super.restartGame();
 
-		int reloaded = refreshAllReplaysFor(gameWorld.getLevelId());
+		int reloaded = loadReplaysFromDiskFor(gameWorld.getLevelId());
+
 		Gdx.app.log("SinglePlayer", "Reloaded " + reloaded + " opponents.");
 	}
 
@@ -131,7 +176,8 @@ public class SinglePlayer extends BaseLogic {
 		super.resetGame();
 		messager.show("Game reset", 1.5f, Message.Type.Information, Position.Bottom, Size.Big);
 
-		int reloaded = refreshAllReplaysFor(gameWorld.getLevelId());
+		int reloaded = loadReplaysFromDiskFor(gameWorld.getLevelId());
+
 		Gdx.app.log("SinglePlayer", "Reloaded " + reloaded + " opponents.");
 	}
 
@@ -215,12 +261,47 @@ public class SinglePlayer extends BaseLogic {
 			restartAllReplays();
 		} else {
 			// remove replay but do not reset its track state yet
-			ghost.removeReplay();
+			// ghost.removeReplay();
+			ghost.stop();
 		}
 	}
 
 	@Override
 	public void ghostReplayEnded (GhostCar ghost) {
-		CarUtils.dumpSpeedInfo("SinglePlayer", "GhostCar #" + ghost.getId(), ghost, ghost.getReplay().getTrackTime());
+		// can't stop the ghostcar here since it would stop the physics simulation for the GhostCar! Use the ghost lap completion
+		// monitor instead!
+		// ghost.stop();
+
+		// CarUtils.dumpSpeedInfo("SinglePlayer", "GhostCar #" + ghost.getId(), ghost, ghost.getReplay().getTrackTime());
+	}
+
+	//
+
+	/** Restart all replays in the lap manager, also updates the next target */
+	private void restartAllReplays () {
+		nextTarget = null;
+
+		if (!(lapManager.getReplays().size <= ghostCars.length)) {
+			throw new URacerRuntimeException("Replays count mismatch");
+		}
+
+		int g = 0;
+		for (Replay r : lapManager.getReplays()) {
+			GhostCar ghost = ghostCars[g];
+			if (ghost == null) {
+				throw new URacerRuntimeException("Ghost not ready (#" + g + ")");
+			}
+
+			ghost.setReplay(r);
+			ghost.start();
+			ghostLapMonitor[g].reset();
+
+			if (lapManager.getBestReplay().getReplayId().equals(ghost.getReplay().getReplayId())) {
+				nextTarget = ghost;
+				playerTasks.hudPlayer.highlightNextTarget(nextTarget);
+			}
+
+			g++;
+		}
 	}
 }
