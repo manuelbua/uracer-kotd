@@ -2,6 +2,7 @@
 package com.bitfire.uracer.game.logic.replaying;
 
 import com.badlogic.gdx.Gdx;
+import com.badlogic.gdx.utils.Array;
 import com.badlogic.gdx.utils.Disposable;
 import com.bitfire.uracer.game.actors.Car;
 import com.bitfire.uracer.game.actors.CarForces;
@@ -13,10 +14,12 @@ public class LapManager implements Disposable {
 
 	private final ReplayRecorder recorder;
 	private final ReplayManager manager;
+	private ReplayInfo lastRecorded;
 
 	public LapManager (String currentTrackId) {
 		recorder = new ReplayRecorder();
 		manager = new ReplayManager(currentTrackId);
+		lastRecorded = null;
 	}
 
 	@Override
@@ -60,7 +63,8 @@ public class LapManager implements Disposable {
 	/** Ends recording the previously started lap performance */
 	public ReplayInfo stopRecording () {
 		if (recorder.isRecording()) {
-			return manager.addReplay(recorder.endRecording());
+			lastRecorded = manager.addReplay(recorder.endRecording());
+			return lastRecorded;
 		}
 
 		return null;
@@ -79,11 +83,15 @@ public class LapManager implements Disposable {
 		return recorder.isRecording();
 	}
 
+	public ReplayInfo getLastRecording () {
+		return lastRecorded;
+	}
+
 	public float getCurrentReplaySeconds () {
 		return recorder.getElapsedSeconds();
 	}
 
-	public Iterable<Replay> getReplays () {
+	public Array<Replay> getReplays () {
 		return manager.getReplays();
 	}
 

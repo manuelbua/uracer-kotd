@@ -38,4 +38,10 @@ public interface GameLogic {
 	Time getTimeDilationTimer ();
 
 	TimeModulator getTimeModulator ();
+
+	GhostCar[] getGhosts ();
+
+	GhostCar getGhost (int handle);
+
+	boolean isGhostActive (int handle);
 }

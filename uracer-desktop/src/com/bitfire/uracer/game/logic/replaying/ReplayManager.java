@@ -131,7 +131,7 @@ public final class ReplayManager implements Disposable {
 		return nreplays.peek();
 	}
 
-	public Iterable<Replay> getReplays () {
+	public Array<Replay> getReplays () {
 		return nreplays;
 	}
 }
