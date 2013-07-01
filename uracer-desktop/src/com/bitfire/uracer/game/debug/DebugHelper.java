@@ -18,11 +18,14 @@ import com.badlogic.gdx.math.collision.BoundingBox;
 import com.badlogic.gdx.physics.box2d.Body;
 import com.badlogic.gdx.physics.box2d.Box2DDebugRenderer;
 import com.badlogic.gdx.physics.box2d.World;
+import com.badlogic.gdx.utils.Array;
 import com.bitfire.postprocessing.PostProcessor;
 import com.bitfire.uracer.URacer;
 import com.bitfire.uracer.entities.EntityRenderState;
 import com.bitfire.uracer.game.GameEvents;
+import com.bitfire.uracer.game.GameLogic;
 import com.bitfire.uracer.game.actors.CarDescriptor;
+import com.bitfire.uracer.game.actors.GhostCar;
 import com.bitfire.uracer.game.events.GameRendererEvent;
 import com.bitfire.uracer.game.events.GameRendererEvent.Order;
 import com.bitfire.uracer.game.events.GameRendererEvent.Type;
@@ -30,6 +33,7 @@ import com.bitfire.uracer.game.logic.gametasks.DisposableTasks;
 import com.bitfire.uracer.game.logic.gametasks.GameTask;
 import com.bitfire.uracer.game.logic.replaying.LapManager;
 import com.bitfire.uracer.game.logic.replaying.Replay;
+import com.bitfire.uracer.game.logic.replaying.ReplayManager;
 import com.bitfire.uracer.game.logic.replaying.ReplayManager.ReplayInfo;
 import com.bitfire.uracer.game.player.PlayerCar;
 import com.bitfire.uracer.game.rendering.GameRenderer;
@@ -40,6 +44,7 @@ import com.bitfire.uracer.game.world.models.TrackTrees;
 import com.bitfire.uracer.game.world.models.TrackWalls;
 import com.bitfire.uracer.game.world.models.TreeStillModel;
 import com.bitfire.uracer.resources.Art;
+import com.bitfire.uracer.utils.AMath;
 import com.bitfire.uracer.utils.Convert;
 import com.bitfire.uracer.utils.NumberString;
 import com.bitfire.uracer.utils.ScaleUtils;
@@ -61,7 +66,8 @@ public final class DebugHelper extends GameTask implements DisposableTasks {
 		Box2DWireframe,
 		BoundingBoxes3D,
 		TrackSectors,
-		Rankings
+		Rankings,
+		Completion
 		// @on
 	}
 
@@ -74,7 +80,8 @@ public final class DebugHelper extends GameTask implements DisposableTasks {
 		RenderFlags.PostProcessorInfo,
 		RenderFlags.PerformanceGraph,
 		RenderFlags.PlayerCarInfo,
-		RenderFlags.Rankings
+		RenderFlags.Rankings,
+		RenderFlags.Completion
 	);
 	//@on
 
@@ -91,6 +98,8 @@ public final class DebugHelper extends GameTask implements DisposableTasks {
 	// world
 	private GameWorld gameWorld;
 	private World box2dWorld;
+	private GameLogic logic;
+	private Array<RankInfo> ranks = new Array<RankInfo>();
 
 	// ranking
 	private LapManager lapManager;
@@ -99,10 +108,12 @@ public final class DebugHelper extends GameTask implements DisposableTasks {
 	private Box2DDebugRenderer b2drenderer;
 	private ImmediateModeRenderer20 dbg = new ImmediateModeRenderer20(false, true, 0);
 
-	public DebugHelper (GameWorld gameWorld, PostProcessor postProcessor, LapManager lapManager) {
+	public DebugHelper (GameWorld gameWorld, PostProcessor postProcessor, LapManager lapManager, GameLogic logic) {
 		this.gameWorld = gameWorld;
 		this.postProcessor = postProcessor;
 		this.lapManager = lapManager;
+		this.logic = logic;
+
 		this.box2dWorld = gameWorld.getBox2DWorld();
 
 		GameEvents.gameRenderer.addListener(renderListener, GameRendererEvent.Type.BatchDebug, GameRendererEvent.Order.PLUS_4);
@@ -122,6 +133,10 @@ public final class DebugHelper extends GameTask implements DisposableTasks {
 
 		int sw = MathUtils.clamp(uRacerInfo.length() * Art.DebugFontWidth, 100, 500);
 		stats = new DebugStatistics(sw, 100, updateHz);
+
+		for (int i = 0; i < ReplayManager.MaxReplays + 1; i++) {
+			ranks.add(new RankInfo());
+		}
 	}
 
 	public void add (DebugRenderable renderable) {
@@ -264,6 +279,10 @@ public final class DebugHelper extends GameTask implements DisposableTasks {
 			renderRankings(batch, renderFlags.contains(RenderFlags.PlayerInfo) ? Art.DebugFontHeight * 10 : 0);
 		}
 
+		if (renderFlags.contains(RenderFlags.Completion)) {
+			renderCompletion(batch, renderFlags.contains(RenderFlags.PlayerInfo) ? Art.DebugFontHeight * 10 : 0);
+		}
+
 		if (renderFlags.contains(RenderFlags.MeshStats)) {
 			SpriteBatchUtils.drawString(batch, "total meshes=" + GameWorld.TotalMeshes, 0, ScaleUtils.PlayHeight
 				- Art.DebugFontHeight * 3);
@@ -274,6 +293,24 @@ public final class DebugHelper extends GameTask implements DisposableTasks {
 		}
 	}
 
+	private String rankString (int rank) {
+		return (rank <= 9 ? "0" : "") + rank;
+	}
+
+	private void batchColorStart (SpriteBatch batch, float r, float g, float b) {
+		batch.end();
+		batch.flush();
+		batch.setColor(r, g, b, 1);
+		batch.begin();
+	}
+
+	private void batchColorEnd (SpriteBatch batch) {
+		batch.end();
+		batch.flush();
+		batch.setColor(1, 1, 1, 1);
+		batch.begin();
+	}
+
 	private void renderRankings (SpriteBatch batch, int y) {
 		if (!hasPlayer) return;
 
@@ -281,11 +318,10 @@ public final class DebugHelper extends GameTask implements DisposableTasks {
 		boolean discarded = last != null && !last.accepted;
 
 		int coord = y;
-
 		SpriteBatchUtils.drawString(batch, "CURRENT RANKINGS", 0, coord);
 		SpriteBatchUtils.drawString(batch, "================", 0, coord + Art.DebugFontHeight);
-
 		coord += 2 * Art.DebugFontHeight;
+
 		int rank = 1;
 		for (Replay replay : lapManager.getReplays()) {
 			boolean lastAccepted = false;
@@ -295,23 +331,17 @@ public final class DebugHelper extends GameTask implements DisposableTasks {
 			}
 
 			if (lastAccepted) {
-				batch.end();
-				batch.flush();
 				if (last.position == 1)
-					batch.setColor(0, 1, 0, 1);
+					batchColorStart(batch, 0, 1, 0);
 				else
-					batch.setColor(1, 1, 0, 1);
-				batch.begin();
+					batchColorStart(batch, 1, 1, 0);
 			}
 
-			SpriteBatchUtils.drawString(batch,
-				"#" + (rank <= 9 ? "0" : "") + rank + " " + replay.getUserId() + " " + replay.getTrackTimeInt() / 1000f, 0, coord);
+			SpriteBatchUtils.drawString(batch, "#" + rankString(rank) + " " + replay.getUserId() + " " + replay.getTrackTimeInt()
+				/ 1000f, 0, coord);
 
 			if (lastAccepted) {
-				batch.end();
-				batch.flush();
-				batch.setColor(1, 1, 1, 1);
-				batch.begin();
+				batchColorEnd(batch);
 			}
 
 			coord += Art.DebugFontHeight;
@@ -321,21 +351,52 @@ public final class DebugHelper extends GameTask implements DisposableTasks {
 		// show discarded lap
 		if (discarded) {
 			Replay replay = last.removed;
+			batchColorStart(batch, 1, 0, 0);
+			SpriteBatchUtils.drawString(batch, "#" + rankString(lapManager.getReplays().size + 1) + " " + replay.getUserId() + " "
+				+ replay.getTrackTimeInt() / 1000f, 0, coord);
+			batchColorEnd(batch);
+		}
+	}
 
-			batch.end();
-			batch.flush();
-			batch.setColor(1, 0, 0, 1);
-			batch.begin();
+	private void renderCompletion (SpriteBatch batch, int y) {
+		int coord = y;
+		int valids = 0;
+		for (int i = 0; i < ReplayManager.MaxReplays + 1; i++)
+			ranks.get(i).valid = false;
 
-			SpriteBatchUtils.drawString(
-				batch,
-				"#" + (rank <= 9 ? "0" : "") + (lapManager.getReplays().size + 1) + " " + replay.getUserId() + " "
-					+ replay.getTrackTimeInt() / 1000f, 0, coord);
+		for (int i = 0; i < ReplayManager.MaxReplays; i++) {
+			GhostCar ghost = logic.getGhost(i);
+			if (ghost != null && ghost.hasReplay()) {
+				RankInfo rank = ranks.get(i);
+				rank.valid = true;
+				rank.uid = ghost.getReplay().getUserId();
+				rank.time = "" + (ghost.getReplay().getTrackTimeInt() / 1000f);
+				rank.completion = gameWorld.getGameTrack().getTrackCompletion(ghost);
+				valids++;
+			}
+		}
 
-			batch.end();
-			batch.flush();
-			batch.setColor(1, 1, 1, 1);
-			batch.begin();
+		if (hasPlayer) {
+			RankInfo rank = ranks.get(ReplayManager.MaxReplays);
+			rank.valid = true;
+			rank.uid = "player";
+			rank.time = "" + ((int)(lapManager.getCurrentReplaySeconds() * AMath.ONE_ON_CMP_EPSILON) / 1000f);
+			rank.completion = gameWorld.getGameTrack().getTrackCompletion(player);
+		}
+
+		ranks.sort();
+
+		SpriteBatchUtils.drawString(batch, "CURRENT COMPLETION", 150, coord);
+		SpriteBatchUtils.drawString(batch, "==================", 0, coord + Art.DebugFontHeight);
+		coord += 2 * Art.DebugFontHeight;
+
+		for (int i = 0; i < ranks.size; i++) {
+			RankInfo r = ranks.get(i);
+			if (r.valid) {
+				float c = AMath.fixupTo(AMath.fixup(r.completion), 1);
+				SpriteBatchUtils.drawString(batch, "#" + rankString(i) + " " + r.uid + " " + c, 150, coord);
+				coord += Art.DebugFontHeight;
+			}
 		}
 	}
 
@@ -532,5 +593,18 @@ public final class DebugHelper extends GameTask implements DisposableTasks {
 		dbg.end();
 
 		Gdx.gl.glDisable(GL20.GL_BLEND);
+	}
+
+	private static class RankInfo implements Comparable<RankInfo> {
+		public float completion;
+		public String uid;
+		public String time;
+		public boolean valid;
+
+		@Override
+		public int compareTo (RankInfo o) {
+			if (!valid) return 1;
+			return (int)((o.completion - completion) * 10);
+		}
 	}
 }

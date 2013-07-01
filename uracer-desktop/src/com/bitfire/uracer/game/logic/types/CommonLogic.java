@@ -425,11 +425,18 @@ public abstract class CommonLogic implements GameLogic, GameLogicObserver {
 		}
 	}
 
-	protected GhostCar getGhost (int handle) {
+	@Override
+	public GhostCar[] getGhosts () {
+		return ghostCars;
+	}
+
+	@Override
+	public GhostCar getGhost (int handle) {
 		return ghostCars[handle];
 	}
 
-	protected boolean isGhostActive (int handle) {
+	@Override
+	public boolean isGhostActive (int handle) {
 		return (ghostCars[handle] != null && ghostCars[handle].isActive());
 	}
 

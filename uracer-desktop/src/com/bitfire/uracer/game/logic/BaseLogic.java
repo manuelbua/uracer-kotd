@@ -60,7 +60,7 @@ public abstract class BaseLogic extends CommonLogic {
 
 	private void setupDebug (PostProcessor postProcessor) {
 		if (Config.Debug.UseDebugHelper) {
-			debug = new DebugHelper(gameWorld, postProcessor, lapManager);
+			debug = new DebugHelper(gameWorld, postProcessor, lapManager, this);
 			debug.add(new GameTrackDebugRenderer(RenderFlags.TrackSectors, gameWorld.getGameTrack()));
 			debug.add(new DebugPlayer(RenderFlags.PlayerCarInfo, gameTasksManager));
 			Gdx.app.debug("Game", "Debug helper initialized");
