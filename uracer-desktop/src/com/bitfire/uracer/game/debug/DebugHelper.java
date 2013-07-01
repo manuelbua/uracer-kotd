@@ -379,7 +379,7 @@ public final class DebugHelper extends GameTask implements DisposableTasks {
 		if (hasPlayer) {
 			RankInfo rank = ranks.get(ReplayManager.MaxReplays);
 			rank.valid = true;
-			rank.uid = "player";
+			rank.uid = "plyr";
 			rank.time = "" + ((int)(lapManager.getCurrentReplaySeconds() * AMath.ONE_ON_CMP_EPSILON) / 1000f);
 			rank.completion = gameWorld.getGameTrack().getTrackCompletion(player);
 		}
