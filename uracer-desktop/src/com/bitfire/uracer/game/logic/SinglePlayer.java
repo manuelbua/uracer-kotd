@@ -5,6 +5,7 @@ import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Input.Keys;
 import com.badlogic.gdx.files.FileHandle;
 import com.badlogic.gdx.math.Vector2;
+import com.bitfire.uracer.URacer;
 import com.bitfire.uracer.configuration.Storage;
 import com.bitfire.uracer.configuration.UserProfile;
 import com.bitfire.uracer.game.GameplaySettings;
@@ -17,7 +18,9 @@ import com.bitfire.uracer.game.logic.replaying.Replay;
 import com.bitfire.uracer.game.logic.replaying.ReplayManager.ReplayInfo;
 import com.bitfire.uracer.game.logic.types.helpers.CameraShaker;
 import com.bitfire.uracer.game.rendering.GameRenderer;
+import com.bitfire.uracer.game.screens.GameScreensFactory.ScreenType;
 import com.bitfire.uracer.game.world.GameWorld;
+import com.bitfire.uracer.screen.TransitionFactory.TransitionType;
 import com.bitfire.uracer.utils.CarUtils;
 import com.bitfire.uracer.utils.Convert;
 import com.bitfire.uracer.utils.OrdinalUtils;
@@ -273,6 +276,17 @@ public class SinglePlayer extends BaseLogic {
 		// ghost.stop();
 
 		// CarUtils.dumpSpeedInfo("SinglePlayer", "GhostCar #" + ghost.getId(), ghost, ghost.getReplay().getTrackTime());
+	}
+
+	@Override
+	public void doQuit () {
+		lapManager.abortRecording(false);
+
+		URacer.Screens.setScreen(ScreenType.MainScreen, TransitionType.Fader, 300);
+		// URacer.Screens.setScreen(ScreenType.ExitScreen, TransitionType.Fader, 300);
+
+		getTimeModulator().reset();
+		URacer.Game.resetTimeModFactor();
 	}
 
 	//

@@ -46,4 +46,6 @@ public interface GameLogicObserver {
 	void outOfTrack ();
 
 	void backInTrack ();
+
+	void doQuit ();
 }

@@ -30,11 +30,9 @@ import com.bitfire.uracer.game.logic.types.helpers.WrongWayMonitor;
 import com.bitfire.uracer.game.player.PlayerCar;
 import com.bitfire.uracer.game.rendering.GameRenderer;
 import com.bitfire.uracer.game.rendering.GameWorldRenderer;
-import com.bitfire.uracer.game.screens.GameScreensFactory.ScreenType;
 import com.bitfire.uracer.game.tween.GameTweener;
 import com.bitfire.uracer.game.world.GameWorld;
 import com.bitfire.uracer.resources.Art;
-import com.bitfire.uracer.screen.TransitionFactory.TransitionType;
 import com.bitfire.uracer.utils.BoxedFloat;
 
 public abstract class CommonLogic implements GameLogic, GameLogicObserver {
@@ -259,7 +257,7 @@ public abstract class CommonLogic implements GameLogic, GameLogicObserver {
 	@Override
 	public void tick () {
 		if (quitPending) {
-			doQuit();
+			_doQuit();
 		} else {
 			// compute the next-frame time multiplier
 			URacer.timeMultiplier = getTimeModulator().getTime();
@@ -279,19 +277,11 @@ public abstract class CommonLogic implements GameLogic, GameLogicObserver {
 	// private impl
 	//
 
-	private void doQuit () {
+	private void _doQuit () {
 		if (quitPending && !quitScheduled) {
 			quitScheduled = true;
-
+			doQuit();
 			GameEvents.logicEvent.trigger(this, GameLogicEvent.Type.GameQuit);
-
-			lapManager.abortRecording(false);
-
-			// URacer.Screens.setScreen(ScreenType.MainScreen, TransitionType.Fader, 500);
-			URacer.Screens.setScreen(ScreenType.ExitScreen, TransitionType.Fader, 500);
-
-			getTimeModulator().reset();
-			URacer.Game.resetTimeModFactor();
 		}
 	}
 
