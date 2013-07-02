@@ -21,7 +21,7 @@ public final class GameplaySettings {
 	public static final float ReplayMinDurationSecs = 4f;
 
 	public static final float CollisionFactorMinDurationMs = 500;
-	public static final float CollisionFactorMaxDurationMs = 2000;
+	public static final float CollisionFactorMaxDurationMs = 3000;
 
 	private GameplaySettings () {
 	}

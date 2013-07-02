@@ -8,14 +8,14 @@ import com.bitfire.uracer.utils.AMath;
 import com.bitfire.uracer.utils.InterpolatedFloat;
 
 public final class CameraShaker {
-	private static final int Pixels = (int)(Gdx.graphics.getWidth() / 6.6f);
+	private static final int Pixels = (int)(Gdx.graphics.getWidth() / 3f);
 
 	Vector2 result = new Vector2();
 	InterpolatedFloat noiseX = new InterpolatedFloat();
 	InterpolatedFloat noiseY = new InterpolatedFloat();
 
 	public Vector2 compute (float collisionFactor) {
-		float alpha = AMath.fixup(collisionFactor) * 0.05f;
+		float alpha = AMath.fixup(collisionFactor) * 0.03f;
 		float px = Pixels;
 
 		// if (camshakeFactor.value > 0) {
