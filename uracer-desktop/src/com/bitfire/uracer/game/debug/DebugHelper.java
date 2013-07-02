@@ -319,14 +319,16 @@ public final class DebugHelper extends GameTask implements DisposableTasks {
 	private void renderRankings (SpriteBatch batch, int y) {
 		if (!hasPlayer) return;
 
+		float scale = 2;
 		ReplayInfo last = lapManager.getLastRecording();
 		boolean discarded = last != null && !last.accepted;
 
 		int coord = y;
-		SpriteBatchUtils.drawString(batch, "CURRENT RANKINGS", 0, coord);
-		SpriteBatchUtils.drawString(batch, "================", 0, coord + Art.DebugFontHeight);
-		coord += 2 * Art.DebugFontHeight;
+		drawString2X(batch, "CURRENT RANKINGS", 0, coord, scale);
+		drawString2X(batch, "================", 0, coord + Art.DebugFontHeight * scale, scale);
+		coord += 2 * Art.DebugFontHeight * scale;
 
+		String text;
 		int rank = 1;
 		for (Replay replay : lapManager.getReplays()) {
 			boolean lastAccepted = false;
@@ -342,14 +344,14 @@ public final class DebugHelper extends GameTask implements DisposableTasks {
 					batchColorStart(batch, 1, 1, 0);
 			}
 
-			SpriteBatchUtils.drawString(batch,
-				"#" + rankString(rank) + " " + replay.getUserId() + " " + timeString(replay.getTrackTimeInt() / 1000f), 0, coord);
+			text = rankString(rank) + "< " + replay.getUserId() + " " + timeString(replay.getTrackTimeInt() / 1000f);
+			drawString2X(batch, text, 0, coord, scale);
 
 			if (lastAccepted) {
 				batchColorEnd(batch);
 			}
 
-			coord += Art.DebugFontHeight;
+			coord += Art.DebugFontHeight * scale;
 			rank++;
 		}
 
@@ -357,13 +359,21 @@ public final class DebugHelper extends GameTask implements DisposableTasks {
 		if (discarded) {
 			Replay replay = last.removed;
 			batchColorStart(batch, 1, 0, 0);
-			SpriteBatchUtils.drawString(batch, "#" + rankString(lapManager.getReplays().size + 1) + " " + replay.getUserId() + " "
-				+ timeString(replay.getTrackTimeInt() / 1000f), 0, coord);
+
+			text = "#" + rankString(lapManager.getReplays().size + 1) + " " + replay.getUserId() + " "
+				+ timeString(replay.getTrackTimeInt() / 1000f);
+			drawString2X(batch, text, 0, coord, scale);
 			batchColorEnd(batch);
 		}
 	}
 
+	private void drawString2X (SpriteBatch batch, String text, float x, float y, float scale) {
+		SpriteBatchUtils.drawString(batch, text, x, y, Art.DebugFontWidth * scale, Art.DebugFontHeight * scale);
+	}
+
 	private void renderCompletion (SpriteBatch batch, int y) {
+		float scale = 2;
+		float xoffset = 150 * scale;
 		int coord = y;
 		for (int i = 0; i < ReplayManager.MaxReplays + 1; i++) {
 			ranks.get(i).valid = false;
@@ -407,22 +417,23 @@ public final class DebugHelper extends GameTask implements DisposableTasks {
 
 		ranks.sort();
 
-		SpriteBatchUtils.drawString(batch, "CURRENT COMPLETION", 150, coord);
-		SpriteBatchUtils.drawString(batch, "==================", 150, coord + Art.DebugFontHeight);
-		coord += 2 * Art.DebugFontHeight;
+		drawString2X(batch, "CURRENT COMPLETION", xoffset, coord, scale);
+		drawString2X(batch, "==================", xoffset, coord + Art.DebugFontHeight * scale, scale);
+		coord += 2 * Art.DebugFontHeight * scale;
 
+		String text;
 		for (int i = 0; i < ranks.size; i++) {
 			RankInfo r = ranks.get(i);
 			if (r.valid) {
 				float c = AMath.fixupTo(AMath.fixup(r.completion), 1);
 				if (r.player) batchColorStart(batch, 0, 0.6f, 1);
 				{
-					SpriteBatchUtils.drawString(batch, "#" + rankString(i + 1) + " " + r.uid + " " + timeString(c) + " "
-						+ timeString(r.secs), 150, coord);
+					text = rankString(i + 1) + "< " + r.uid + " " + timeString(c) + " " + timeString(r.secs);
+					drawString2X(batch, text, xoffset, coord, scale);
 				}
 				if (r.player) batchColorEnd(batch);
 
-				coord += Art.DebugFontHeight;
+				coord += Art.DebugFontHeight * scale;
 			}
 		}
 	}
