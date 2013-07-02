@@ -15,7 +15,7 @@ public final class CameraShaker {
 	InterpolatedFloat noiseY = new InterpolatedFloat();
 
 	public Vector2 compute (float collisionFactor) {
-		float alpha = AMath.fixup(collisionFactor) * 0.03f;
+		float alpha = AMath.fixup(collisionFactor) * 0.05f;
 		float px = Pixels;
 
 		// if (camshakeFactor.value > 0) {
