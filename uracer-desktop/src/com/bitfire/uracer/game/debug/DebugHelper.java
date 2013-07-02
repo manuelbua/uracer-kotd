@@ -380,16 +380,15 @@ public final class DebugHelper extends GameTask implements DisposableTasks {
 				rank.secs = ghost.getReplay().getTrackTimeInt() / 1000f;
 
 				TrackState ts = ghost.getTrackState();
-				float c = gameWorld.getGameTrack().getTrackCompletion(ghost);
 
 				rank.completion = 0;
-				if (ts.ghostArrived && !ts.ghostStarted) {
+				if (ts.ghostArrived) {
 					rank.completion = 1;
-				} else if (ts.ghostStarted || ts.ghostArrived) {
-					rank.completion = ts.ghostArrived ? 1 : ts.ghostStarted ? c : 0;
+				} else if (ghost.isPlaying()) {
+					rank.completion = gameWorld.getGameTrack().getTrackCompletion(ghost);
 				}
 
-				// Gdx.app.log("", "st=" + ts.ghostStarted + ", arr=" + ts.ghostArrived);
+				// Gdx.app.log("", "arrived=" + ts.ghostArrived);
 				// rank.completion = c;
 				playerIndex++;
 			}
@@ -398,10 +397,9 @@ public final class DebugHelper extends GameTask implements DisposableTasks {
 		if (hasPlayer) {
 			RankInfo rank = ranks.get(playerIndex);
 			rank.valid = true;
-			rank.uid = "plyr";
+			rank.uid = logic.getUserProfile().userId;
 			rank.player = true;
 
-			// FIXME check fir time incongruency!
 			// getTrackTimeInt is computed as an int cast (int)(trackTimeSeconds * AMath.ONE_ON_CMP_EPSILON)
 			rank.secs = ((int)(lapManager.getCurrentReplaySeconds() * AMath.ONE_ON_CMP_EPSILON)) / 1000f;
 			rank.completion = logic.isWarmUp() ? 0 : gameWorld.getGameTrack().getTrackCompletion(player);

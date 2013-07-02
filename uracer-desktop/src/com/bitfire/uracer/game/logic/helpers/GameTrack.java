@@ -298,6 +298,6 @@ public final class GameTrack {
 		public int updates;
 
 		// ghost only
-		public boolean ghostStarted, ghostArrived;
+		public boolean ghostArrived;
 	}
 }

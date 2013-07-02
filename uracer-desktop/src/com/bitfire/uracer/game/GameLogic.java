@@ -1,6 +1,7 @@
 
 package com.bitfire.uracer.game;
 
+import com.bitfire.uracer.configuration.UserProfile;
 import com.bitfire.uracer.game.actors.GhostCar;
 import com.bitfire.uracer.game.logic.types.helpers.TimeModulator;
 
@@ -46,4 +47,6 @@ public interface GameLogic {
 	boolean isGhostActive (int handle);
 
 	boolean isWarmUp ();
+
+	UserProfile getUserProfile ();
 }
