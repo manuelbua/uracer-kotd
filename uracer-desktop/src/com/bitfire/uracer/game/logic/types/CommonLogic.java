@@ -118,6 +118,11 @@ public abstract class CommonLogic implements GameLogic, GameLogicObserver {
 		return playerCar != null;
 	}
 
+	@Override
+	public UserProfile getUserProfile () {
+		return userProfile;
+	}
+
 	//
 	// GameLogic impl
 	//
@@ -282,8 +287,8 @@ public abstract class CommonLogic implements GameLogic, GameLogicObserver {
 
 			lapManager.abortRecording(false);
 
-			URacer.Screens.setScreen(ScreenType.MainScreen, TransitionType.Fader, 500);
-			// URacer.Screens.setScreen( ScreenType.ExitScreen, TransitionType.Fader, 500 );
+			// URacer.Screens.setScreen(ScreenType.MainScreen, TransitionType.Fader, 500);
+			URacer.Screens.setScreen(ScreenType.ExitScreen, TransitionType.Fader, 200);
 
 			getTimeModulator().reset();
 			URacer.Game.resetTimeModFactor();

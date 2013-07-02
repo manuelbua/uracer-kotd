@@ -31,7 +31,6 @@ public final class GhostCar extends Car {
 		removeReplay();
 		stillModel.setAlpha(0);
 		getTrackState().ghostArrived = false;
-		getTrackState().ghostStarted = false;
 	}
 
 	public int getId () {
@@ -49,7 +48,6 @@ public final class GhostCar extends Car {
 			resetWithTrackState();
 			setActive(true);
 			getTrackState().ghostArrived = false;
-			getTrackState().ghostStarted = true;
 			started = true;
 		}
 	}
@@ -58,11 +56,14 @@ public final class GhostCar extends Car {
 	public void stop () {
 		if (started) {
 			started = false;
-			// getTrackState().ghostStarted = false;
 			stillModel.setAlpha(0);
 			setActive(false);
 			resetPhysics();
 		}
+	}
+
+	public boolean isPlaying () {
+		return started;
 	}
 
 	// input data for this car cames from a Replay object
@@ -87,24 +88,10 @@ public final class GhostCar extends Car {
 			fadeOutEventTriggered = false;
 			stillModel.setAlpha(0);
 		}
-
-		// setActive(hasReplay);
-		// resetPhysics();
-
-		// if (hasReplay) {
-		// gameTrack.resetTrackState(this);
-		//
-		// replayForces = replay.getCarForces();
-		// replayForcesCount = replay.getEventsCount();
-		//
-		// stillModel.setAlpha(0);
-		// restartReplay();
-		// }
 	}
 
 	private void resetWithTrackState () {
 		getTrackState().ghostArrived = false;
-		getTrackState().ghostStarted = false;
 
 		resetPhysics();
 		resetDistanceAndSpeed(true, true);
@@ -114,19 +101,6 @@ public final class GhostCar extends Car {
 			gameTrack.resetTrackState(this);
 		}
 	}
-
-	// private void restartReplay () {
-	// if (hasReplay) {
-	// resetPhysics();
-	// resetDistanceAndSpeed(true, true);
-	// setWorldPosMt(replay.getStartPosition(), replay.getStartOrientation());
-	// indexPlay = 0;
-	// fadeOutEventTriggered = false;
-	//
-	// getTrackState().ghostArrived = false;
-	// getTrackState().ghostStarted = true;
-	// }
-	// }
 
 	public void removeReplay () {
 		stop();
