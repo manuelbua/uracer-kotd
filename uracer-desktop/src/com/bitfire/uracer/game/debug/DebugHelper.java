@@ -360,7 +360,7 @@ public final class DebugHelper extends GameTask implements DisposableTasks {
 			Replay replay = last.removed;
 			batchColorStart(batch, 1, 0, 0);
 
-			text = "#" + rankString(lapManager.getReplays().size + 1) + " " + replay.getUserId() + " "
+			text = rankString(lapManager.getReplays().size + 1) + "< " + replay.getUserId() + " "
 				+ timeString(replay.getTrackTimeInt() / 1000f);
 			drawString2X(batch, text, 0, coord, scale);
 			batchColorEnd(batch);
