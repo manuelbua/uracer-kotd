@@ -5,12 +5,17 @@ import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Input.Keys;
 import com.badlogic.gdx.files.FileHandle;
 import com.badlogic.gdx.math.Vector2;
+import com.bitfire.postprocessing.PostProcessor;
 import com.bitfire.uracer.URacer;
+import com.bitfire.uracer.configuration.Config;
 import com.bitfire.uracer.configuration.Storage;
 import com.bitfire.uracer.configuration.UserProfile;
 import com.bitfire.uracer.game.GameplaySettings;
 import com.bitfire.uracer.game.actors.GhostCar;
+import com.bitfire.uracer.game.debug.DebugHelper;
 import com.bitfire.uracer.game.debug.DebugHelper.RenderFlags;
+import com.bitfire.uracer.game.debug.GameTrackDebugRenderer;
+import com.bitfire.uracer.game.debug.player.DebugPlayer;
 import com.bitfire.uracer.game.logic.gametasks.messager.Message;
 import com.bitfire.uracer.game.logic.gametasks.messager.Message.Position;
 import com.bitfire.uracer.game.logic.gametasks.messager.Message.Size;
@@ -27,17 +32,35 @@ import com.bitfire.uracer.utils.OrdinalUtils;
 import com.bitfire.uracer.utils.URacerRuntimeException;
 
 public class SinglePlayer extends BaseLogic {
+	protected DebugHelper debug = null;
 	private boolean saving = false;
 	private CameraShaker camShaker = new CameraShaker();
 	private GhostCar nextTarget = null;
 
 	public SinglePlayer (UserProfile userProfile, GameWorld gameWorld, GameRenderer gameRenderer) {
 		super(userProfile, gameWorld, gameRenderer);
+		setupDebug(gameRenderer.getPostProcessing().getPostProcessor());
 	}
 
 	@Override
 	public void dispose () {
+		destroyDebug();
 		super.dispose();
+	}
+
+	private void setupDebug (PostProcessor postProcessor) {
+		if (Config.Debug.UseDebugHelper) {
+			debug = new DebugHelper(gameWorld, postProcessor, lapManager, this, inputSystem);
+			debug.add(new GameTrackDebugRenderer(RenderFlags.TrackSectors, gameWorld.getGameTrack()));
+			debug.add(new DebugPlayer(RenderFlags.PlayerCarInfo, gameTasksManager));
+			Gdx.app.debug("Game", "Debug helper initialized");
+		}
+	}
+
+	private void destroyDebug () {
+		if (Config.Debug.UseDebugHelper) {
+			debug.dispose();
+		}
 	}
 
 	@Override
@@ -50,17 +73,9 @@ public class SinglePlayer extends BaseLogic {
 			addPlayer();
 			restartGame();
 		} else if (inputSystem.isPressed(Keys.TAB)) {
-			gameRenderer.setDebug(!gameRenderer.isDebugEnabled());
-		}
-
-		if (gameRenderer.isDebugEnabled() && debug.isEnabled()) {
-			if (inputSystem.isPressed(Keys.W)) {
-				debug.toggleFlag(RenderFlags.Box2DWireframe);
-			} else if (inputSystem.isPressed(Keys.B)) {
-				debug.toggleFlag(RenderFlags.BoundingBoxes3D);
-			} else if (inputSystem.isPressed(Keys.S)) {
-				debug.toggleFlag(RenderFlags.TrackSectors);
-			}
+			boolean newstate = !gameRenderer.isDebugEnabled();
+			gameRenderer.setDebug(newstate);
+			debug.setEnabled(newstate);
 		}
 	}
 

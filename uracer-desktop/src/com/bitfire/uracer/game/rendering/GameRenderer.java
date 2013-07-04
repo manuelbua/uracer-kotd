@@ -76,6 +76,7 @@ public final class GameRenderer {
 		GameEvents.gameRenderer.removeAllListeners();
 	}
 
+	/** Enables or disables the debug render events */
 	public void setDebug (boolean enabled) {
 		debug = enabled;
 	}
@@ -276,7 +277,6 @@ public final class GameRenderer {
 		SpriteBatch batch = batchRenderer.beginTopLeft();
 		batch.setTransformMatrix(xform);
 
-		// BatchAfterPostProcessing
 		GameEvents.gameRenderer.batch = batch;
 		GameEvents.gameRenderer.trigger(this, GameRendererEvent.Type.BatchAfterPostProcessing);
 		batchRenderer.end();
@@ -286,14 +286,14 @@ public final class GameRenderer {
 	public void debugRender () {
 		if (debug) {
 			SpriteBatch batch = batchRenderer.beginTopLeft();
-			batch.setTransformMatrix(xform);
 
+			batch.setTransformMatrix(xform);
 			batch.disableBlending();
 			GameEvents.gameRenderer.batch = batch;
 			GameEvents.gameRenderer.trigger(this, GameRendererEvent.Type.BatchDebug);
 			batchRenderer.end();
-			batch.setTransformMatrix(identity);
 
+			batch.setTransformMatrix(identity);
 			GameEvents.gameRenderer.batch = null;
 			GameEvents.gameRenderer.trigger(this, GameRendererEvent.Type.Debug);
 		}
