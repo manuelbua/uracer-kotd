@@ -9,17 +9,11 @@ import aurelienribon.tweenengine.equations.Linear;
 
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.math.Vector2;
-import com.bitfire.postprocessing.PostProcessor;
 import com.bitfire.uracer.URacer;
-import com.bitfire.uracer.configuration.Config;
 import com.bitfire.uracer.configuration.UserProfile;
 import com.bitfire.uracer.game.GameplaySettings;
 import com.bitfire.uracer.game.Time;
 import com.bitfire.uracer.game.actors.GhostCar;
-import com.bitfire.uracer.game.debug.DebugHelper;
-import com.bitfire.uracer.game.debug.DebugHelper.RenderFlags;
-import com.bitfire.uracer.game.debug.GameTrackDebugRenderer;
-import com.bitfire.uracer.game.debug.player.DebugPlayer;
 import com.bitfire.uracer.game.events.CarEvent;
 import com.bitfire.uracer.game.logic.replaying.ReplayRecorder.RecorderError;
 import com.bitfire.uracer.game.logic.types.CommonLogic;
@@ -35,7 +29,6 @@ import com.bitfire.uracer.utils.BoxedFloatAccessor;
 import com.bitfire.uracer.utils.InterpolatedFloat;
 
 public abstract class BaseLogic extends CommonLogic {
-	protected DebugHelper debug = null;
 	private Vector2 cameraPos = new Vector2();
 	private float prevZoom = GameWorldRenderer.MinCameraZoom + GameWorldRenderer.ZoomWindow;
 	private InterpolatedFloat driftStrength = new InterpolatedFloat();
@@ -48,28 +41,11 @@ public abstract class BaseLogic extends CommonLogic {
 		timeMod = new TimeModulator();
 		dilationTime = new Time();
 		outOfTrackTime = new Time();
-		setupDebug(gameRenderer.getPostProcessing().getPostProcessor());
 	}
 
 	@Override
 	public void dispose () {
-		destroyDebug();
 		super.dispose();
-	}
-
-	private void setupDebug (PostProcessor postProcessor) {
-		if (Config.Debug.UseDebugHelper) {
-			debug = new DebugHelper(gameWorld, postProcessor, lapManager, this);
-			debug.add(new GameTrackDebugRenderer(RenderFlags.TrackSectors, gameWorld.getGameTrack()));
-			debug.add(new DebugPlayer(RenderFlags.PlayerCarInfo, gameTasksManager));
-			Gdx.app.debug("Game", "Debug helper initialized");
-		}
-	}
-
-	private void destroyDebug () {
-		if (Config.Debug.UseDebugHelper) {
-			debug.dispose();
-		}
 	}
 
 	@Override
