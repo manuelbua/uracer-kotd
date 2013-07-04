@@ -68,7 +68,7 @@ public final class Message {
 		scaleX = 1f;
 		scaleY = 1f;
 		scale = 1.5f;
-		durationMs = (int)(durationSecs * 1000f);
+		durationMs = (long)(durationSecs * 1000f);
 		hiding = false;
 		completed = false;
 		showCompleted = false;
@@ -101,9 +101,9 @@ public final class Message {
 			break;
 		}
 
-		if (size == Size.Big) {
-			scale = 2.5f;
-		}
+		// if (size == Size.Big) {
+		// scale = 2.5f;
+		// }
 	}
 
 	private void computeFinalPosition () {
