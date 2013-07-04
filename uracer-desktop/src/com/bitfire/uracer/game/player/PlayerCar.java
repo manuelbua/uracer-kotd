@@ -208,9 +208,10 @@ public class PlayerCar extends Car {
 				carInput.steerAngle = 0f;
 			}
 
-			carInput.steerAngle *= MathUtils.clamp(AMath.damping(2f * speed), 0, 1); // GameplaySettings.DampingKeyboardKeys;
-			// Gdx.app.log("PlayerCar", "up=" + dirtimeUp + ", left=" + dirtimeLeft + ", right=" + dirtimeRight + ", ms=" + maxsecs);
-			// ", it=" + inertialThrust + ", speed=" + speed
+			// carInput.steerAngle *= MathUtils.clamp(AMath.damping(0.7f * speed), 0, 1); // GameplaySettings.DampingKeyboardKeys;
+			carInput.steerAngle *= MathUtils.clamp(AMath.damping(0.1f + 0.3f * speed), 0, 1);
+			carInput.steerAngle = AMath.fixup(carInput.steerAngle);
+			// Gdx.app.log("PlayerCar", "speed=" + speed);
 		}
 
 		return carInput;
