@@ -242,6 +242,7 @@ public abstract class CommonLogic implements GameLogic, GameLogicObserver {
 	@Override
 	public void quitGame () {
 		quitPending = true;
+		Gdx.app.log("CommonLogic", "QUIT request scheduled");
 	}
 
 	@Override
@@ -279,6 +280,7 @@ public abstract class CommonLogic implements GameLogic, GameLogicObserver {
 
 	private void _doQuit () {
 		if (quitPending && !quitScheduled) {
+			Gdx.app.log("CommonLogic", "Processing QUIT request");
 			quitScheduled = true;
 			doQuit();
 			GameEvents.logicEvent.trigger(this, GameLogicEvent.Type.GameQuit);

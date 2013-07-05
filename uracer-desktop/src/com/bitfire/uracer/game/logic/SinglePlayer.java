@@ -157,7 +157,7 @@ public class SinglePlayer extends BaseLogic {
 			}
 		}
 
-		Gdx.app.log("SinglePlayer", "Opponents list:");
+		Gdx.app.log("SinglePlayer", "Building opponents list:");
 
 		for (int g = 0; g < ghostCars.length; g++) {
 			ghostCars[g].removeReplay();
@@ -175,6 +175,7 @@ public class SinglePlayer extends BaseLogic {
 			ghostIndex++;
 		}
 
+		Gdx.app.log("SinglePlayer", "Reloaded " + reloaded + " opponents.");
 		return reloaded;
 	}
 
@@ -182,10 +183,7 @@ public class SinglePlayer extends BaseLogic {
 	public void restartGame () {
 		Gdx.app.log("SinglePlayer", "Starting/restarting game");
 		super.restartGame();
-
-		int reloaded = loadReplaysFromDiskFor(gameWorld.getLevelId());
-
-		Gdx.app.log("SinglePlayer", "Reloaded " + reloaded + " opponents.");
+		loadReplaysFromDiskFor(gameWorld.getLevelId());
 	}
 
 	@Override
@@ -193,10 +191,7 @@ public class SinglePlayer extends BaseLogic {
 		Gdx.app.log("SinglePlayer", "Resetting game");
 		super.resetGame();
 		messager.show("Game reset", 1.5f, Message.Type.Information, Position.Bottom, Size.Big);
-
-		int reloaded = loadReplaysFromDiskFor(gameWorld.getLevelId());
-
-		Gdx.app.log("SinglePlayer", "Reloaded " + reloaded + " opponents.");
+		loadReplaysFromDiskFor(gameWorld.getLevelId());
 	}
 
 	@Override
