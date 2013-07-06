@@ -3,7 +3,6 @@ package com.bitfire.uracer.game.logic.gametasks;
 
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.utils.Array;
-import com.bitfire.uracer.URacer;
 import com.bitfire.uracer.game.GameEvents;
 import com.bitfire.uracer.game.events.GameRendererEvent;
 import com.bitfire.uracer.game.events.GameRendererEvent.Order;
@@ -108,7 +107,7 @@ public class Messager extends GameTask {
 				}
 
 				// check if finished
-				long much = (long)((System.currentTimeMillis() - msg.startMs) * URacer.timeMultiplier);
+				long much = (long)((System.currentTimeMillis() - msg.startMs) /* URacer.timeMultiplier */);
 				if (msg.isShowComplete() && much >= msg.durationMs) {
 					// message should end
 					msg.hide();

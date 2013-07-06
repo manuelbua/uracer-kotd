@@ -13,7 +13,7 @@ import com.badlogic.gdx.graphics.g2d.BitmapFont.HAlignment;
 import com.badlogic.gdx.graphics.g2d.BitmapFont.TextBounds;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.bitfire.uracer.configuration.Config;
-import com.bitfire.uracer.game.tween.GameTweener;
+import com.bitfire.uracer.game.tween.SysTweener;
 import com.bitfire.uracer.resources.BitmapFontFactory;
 import com.bitfire.uracer.resources.BitmapFontFactory.FontFace;
 import com.bitfire.uracer.utils.AMath;
@@ -73,7 +73,7 @@ public final class Message {
 		completed = false;
 		showCompleted = false;
 
-		GameTweener.stop(this);
+		SysTweener.stop(this);
 
 		switch (type) {
 		case Good:
@@ -161,10 +161,10 @@ public final class Message {
 
 		computeFinalPosition();
 
-		GameTweener.stop(this);
+		SysTweener.stop(this);
 
 		//@off
-		GameTweener.start(Timeline.createParallel()
+		SysTweener.start(Timeline.createParallel()
 			.push(Tween.to(this, MessageAccessor.OPACITY, 850).target(1f).ease(Expo.INOUT))
 			.push(Tween.to(this, MessageAccessor.POSITION_Y, 700).target(finalY).ease(Expo.INOUT))
 			.push(Tween.to(this, MessageAccessor.SCALE_XY, 800).target(scale, scale).ease(Back.INOUT)).setCallback(showFinished));
@@ -185,10 +185,10 @@ public final class Message {
 		if (!hiding) {
 			hiding = true;
 
-			GameTweener.stop(this);
+			SysTweener.stop(this);
 
 			//@off
-			GameTweener.start(Timeline.createParallel()
+			SysTweener.start(Timeline.createParallel()
 				.push(Tween.to(this, MessageAccessor.OPACITY, 600).target(0f).ease(Expo.INOUT))
 				.push(Tween.to(this, MessageAccessor.POSITION_Y, 700).target(startY).ease(Expo.INOUT))
 				.push(Tween.to(this, MessageAccessor.SCALE_XY, 800).target(0, 0).ease(Back.INOUT)).setCallback(hideFinished));
