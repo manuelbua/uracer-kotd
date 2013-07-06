@@ -115,12 +115,19 @@ public final class CarHighlighter {
 
 	public void render (SpriteBatch batch, float cameraZoom) {
 		if (isActive && hasCar) {
+			float orient = renderState.orientation;
 			tmp.set(GameRenderer.ScreenUtils.worldPxToScreen(renderState.position));
 			if (prevState != null) {
+
+				// modulate position
 				tmp2.set(GameRenderer.ScreenUtils.worldPxToScreen(prevState.position));
 				tmp.x = AMath.lerp(tmp2.x, tmp.x, bfRenderState.value);
 				tmp.y = AMath.lerp(tmp2.y, tmp.y, bfRenderState.value);
 
+				// modulate orientation
+				orient = AMath.lerp(prevState.orientation, orient, bfRenderState.value);
+
+				// update both alphas
 				prevCar.setAlpha(Config.Graphics.DefaultGhostCarOpacity + Config.Graphics.GhostToTargetOpacityStep
 					* (1 - bfRenderState.value));
 				if (followedCar instanceof GhostCar) {
@@ -134,7 +141,7 @@ public final class CarHighlighter {
 
 			sprite.setScale(bfScale.value * cameraZoom * scale * s);
 			sprite.setPosition(tmp.x - offX, tmp.y - offY);
-			sprite.setRotation(-renderState.orientation + bfRot.value);
+			sprite.setRotation(bfRot.value - orient);
 			sprite.setColor(bfRed.value, bfGreen.value, bfBlue.value, 1);
 			sprite.draw(batch, bfAlpha.value * alpha);
 		}
