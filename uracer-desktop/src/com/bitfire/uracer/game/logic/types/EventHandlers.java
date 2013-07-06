@@ -130,6 +130,9 @@ public final class EventHandlers {
 			case onGhostFadingOut:
 				logic.ghostFadingOut((GhostCar)source);
 				break;
+			case ReplayStarted:
+				logic.ghostReplayStarted((GhostCar)source);
+				break;
 			case ReplayEnded:
 				logic.ghostReplayEnded((GhostCar)source);
 				break;
@@ -180,12 +183,14 @@ public final class EventHandlers {
 
 	public void registerGhostEvents () {
 		GameEvents.ghostCars.addListener(ghostListener, GhostCarEvent.Type.onGhostFadingOut);
+		GameEvents.ghostCars.addListener(ghostListener, GhostCarEvent.Type.ReplayStarted);
 		GameEvents.ghostCars.addListener(ghostListener, GhostCarEvent.Type.ReplayEnded);
 		GameEvents.ghostLapCompletion.addListener(ghostLapCompletionMonitorListener, GhostLapCompletionMonitorEvent.Type.onLapCompleted, GhostLapCompletionMonitorEvent.Order.MINUS_4);
 	}
 
 	public void unregisterGhostEvents () {
 		GameEvents.ghostCars.removeListener(ghostListener, GhostCarEvent.Type.onGhostFadingOut);
+		GameEvents.ghostCars.removeListener(ghostListener, GhostCarEvent.Type.ReplayStarted);
 		GameEvents.ghostCars.removeListener(ghostListener, GhostCarEvent.Type.ReplayEnded);
 		GameEvents.ghostLapCompletion.removeListener(ghostLapCompletionMonitorListener, GhostLapCompletionMonitorEvent.Type.onLapCompleted, GhostLapCompletionMonitorEvent.Order.MINUS_4);
 	}

@@ -3,7 +3,7 @@ package com.bitfire.uracer.game.events;
 
 public final class GhostCarEvent extends Event<GhostCarEvent.Type, GhostCarEvent.Order, GhostCarEvent.Listener> {
 	public enum Type {
-		onGhostFadingOut, ReplayEnded
+		onGhostFadingOut, ReplayStarted, ReplayEnded
 	}
 
 	public enum Order {

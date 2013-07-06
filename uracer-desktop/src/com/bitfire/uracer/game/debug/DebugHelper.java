@@ -343,7 +343,7 @@ public final class DebugHelper extends GameTask implements DisposableTasks {
 	private boolean isNextTarget (Replay replay) {
 		GhostCar target = logic.getNextTarget();
 		if (target != null) {
-			if (replay != null && target.getReplay() == replay) {
+			if (replay != null && target.getReplay().getReplayId().equals(replay.getReplayId())) {
 				return true;
 			}
 		}
@@ -381,15 +381,17 @@ public final class DebugHelper extends GameTask implements DisposableTasks {
 					batchColorStart(batch, 0, 1, 0);
 				else
 					batchColorStart(batch, 1, 1, 0);
+			} else {
+				if (isNextTarget(replay)) {
+					batchColorStart(batch, 0.5f, 0.9f, 1);
+				}
 			}
 
 			text = rankString(rank) + (isNextTarget(replay) ? "<" : " ") + " " + replay.getUserId() + " "
 				+ timeString(replay.getTrackTimeInt() / 1000f);
 			drawString2X(batch, text, 0, coord, scale);
 
-			if (lastAccepted) {
-				batchColorEnd(batch);
-			}
+			batchColorEnd(batch);
 
 			coord += Art.DebugFontHeight * scale;
 			rank++;
@@ -428,7 +430,7 @@ public final class DebugHelper extends GameTask implements DisposableTasks {
 				rank.valid = true;
 				rank.uid = ghost.getReplay().getUserId();
 				rank.secs = ghost.getReplay().getTrackTimeInt() / 1000f;
-				rank.isNextTarget = (logic.getNextTarget() == ghost);
+				rank.isNextTarget = isNextTarget(ghost.getReplay());
 
 				TrackState ts = ghost.getTrackState();
 
@@ -472,13 +474,19 @@ public final class DebugHelper extends GameTask implements DisposableTasks {
 			RankInfo r = ranks.get(i);
 			if (r.valid) {
 				float c = AMath.fixupTo(AMath.fixup(r.completion), 1);
-				if (r.player) batchColorStart(batch, 0, 0.6f, 1);
-				{
-					text = rankString(i + 1) + (r.isNextTarget ? "<" : " ") + " " + r.uid + " " + timeString(c) + " "
-						+ timeString(r.secs);
-					drawString2X(batch, text, xoffset, coord, scale);
+				if (r.player) {
+					batchColorStart(batch, 0, 0.6f, 1);
+				} else {
+					if (r.isNextTarget) {
+						batchColorStart(batch, 0.5f, 0.9f, 1);
+					}
 				}
-				if (r.player) batchColorEnd(batch);
+
+				text = rankString(i + 1) + (r.isNextTarget ? "<" : " ") + " " + r.uid + " " + timeString(c) + " "
+					+ timeString(r.secs);
+				drawString2X(batch, text, xoffset, coord, scale);
+
+				batchColorEnd(batch);
 
 				coord += Art.DebugFontHeight * scale;
 			}

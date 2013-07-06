@@ -20,7 +20,7 @@ public final class GhostCar extends Car {
 	private int indexPlay;
 	private boolean hasReplay;
 	private final int id;
-	private boolean fadeOutEventTriggered;
+	private boolean fadeOutEventTriggered, startedEventTriggered;
 	private boolean started;
 	private float alpha;
 
@@ -93,6 +93,7 @@ public final class GhostCar extends Car {
 			resetWithTrackState();
 			indexPlay = 0;
 			fadeOutEventTriggered = false;
+			startedEventTriggered = false;
 			stillModel.setAlpha(0);
 		}
 	}
@@ -134,6 +135,11 @@ public final class GhostCar extends Car {
 		forces.reset();
 
 		if (started && hasReplay) {
+
+			if (!startedEventTriggered) {
+				startedEventTriggered = true;
+				GameEvents.ghostCars.trigger(this, GhostCarEvent.Type.ReplayStarted);
+			}
 
 			if (indexPlay < replayForcesCount) {
 				forces.set(replayForces[indexPlay]);

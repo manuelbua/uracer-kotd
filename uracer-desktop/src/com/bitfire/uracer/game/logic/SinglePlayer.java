@@ -99,7 +99,8 @@ public class SinglePlayer extends BaseLogic {
 			boolean backward = i.isOn(Keys.SHIFT_LEFT) || i.isOn(Keys.SHIFT_RIGHT);
 
 			// retrieve the ghostcar index whose replay is the next/prev best as this one
-			if (!isWarmUp() && isCurrentLapValid) {
+			// if (!isWarmUp() && isCurrentLapValid)
+			{
 
 				GhostCar prevTarget = getNextTarget();
 				int maxreplays = lapManager.getReplays().size;
@@ -119,10 +120,10 @@ public class SinglePlayer extends BaseLogic {
 					if (selectedBestReplayIdx == maxreplays) selectedBestReplayIdx = 0;
 
 					next = getNextTarget();
-					found = next != null && next.isPlaying() && !next.getTrackState().ghostArrived;
+					found = true;// next != null && next.hasReplay() && !next.getTrackState().ghostArrived;
 				} while (maxtries-- >= 0 && !found);
 
-				if (found) {
+				if (!isWarmUp() && found) {
 					if (prevTarget != next) {
 						playerTasks.hudPlayer.highlightNextTarget(next);
 						Gdx.app.log("SinglePlayer", "Next target index is #" + selectedBestReplayIdx);
@@ -339,6 +340,14 @@ public class SinglePlayer extends BaseLogic {
 	}
 
 	@Override
+	public void ghostReplayStarted (GhostCar ghost) {
+		if (ghost == findGhostFor(lapManager.getReplays().get(selectedBestReplayIdx))) {
+			// ghost.setAlpha(Config.Graphics.DefaultTargetCarOpacity);
+			playerTasks.hudPlayer.highlightNextTarget(ghost);
+		}
+	}
+
+	@Override
 	public void ghostReplayEnded (GhostCar ghost) {
 		// can't stop the ghostcar here since it would stop the physics simulation for the GhostCar! Use the ghost lap completion
 		// monitor instead!
@@ -384,12 +393,6 @@ public class SinglePlayer extends BaseLogic {
 			}
 
 			g++;
-		}
-
-		GhostCar next = getNextTarget();
-		if (next != null) {
-			next.setAlpha(Config.Graphics.DefaultTargetCarOpacity);
-			playerTasks.hudPlayer.highlightNextTarget(next);
 		}
 	}
 }

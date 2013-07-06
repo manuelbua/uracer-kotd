@@ -19,6 +19,8 @@ public interface GameLogicObserver {
 
 	void physicsForcesReady (CarEvent.Data eventData);
 
+	void ghostReplayStarted (GhostCar ghost);
+
 	void ghostReplayEnded (GhostCar ghost);
 
 	void ghostLapStarted (GhostCar ghost);
