@@ -53,7 +53,7 @@ public final class HudPlayer extends HudElement {
 	public void player (PlayerCar player) {
 		super.player(player);
 
-		if (hasPlayer()) {
+		if (hasPlayer) {
 			playerState = player.state();
 			carModelWidthPx = Convert.mt2px(player.getCarModel().width);
 			carModelLengthPx = Convert.mt2px(player.getCarModel().length);
@@ -88,7 +88,7 @@ public final class HudPlayer extends HudElement {
 
 	@Override
 	public void onRender (SpriteBatch batch, float cameraZoom) {
-		if (hasPlayer()) {
+		if (hasPlayer) {
 			// position elements at render time, so that source positions have been interpolated
 			atPlayer(driftBar);
 			atPlayer(trackProgress);

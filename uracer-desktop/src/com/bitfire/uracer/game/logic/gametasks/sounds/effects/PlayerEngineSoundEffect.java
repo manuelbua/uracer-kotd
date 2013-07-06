@@ -77,7 +77,7 @@ public final class PlayerEngineSoundEffect extends SoundEffect {
 	public void player (PlayerCar player) {
 		super.player(player);
 
-		if (hasPlayer()) {
+		if (hasPlayer) {
 			start();
 		} else {
 			stop();

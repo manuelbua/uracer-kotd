@@ -33,7 +33,7 @@ public class PlayerSmokeTrails extends TrackEffect {
 	@Override
 	public void player (PlayerCar player) {
 		super.player(player);
-		if (!hasPlayer()) {
+		if (!hasPlayer) {
 			fx.effect.allowCompletion();
 		} else {
 			fx.effect.reset();
@@ -42,7 +42,7 @@ public class PlayerSmokeTrails extends TrackEffect {
 
 	@Override
 	public void tick () {
-		if (hasPlayer()) {
+		if (hasPlayer) {
 			if (fx.effect.isComplete()) {
 				fx.start();
 			}
@@ -51,7 +51,7 @@ public class PlayerSmokeTrails extends TrackEffect {
 
 	@Override
 	public void render (SpriteBatch batch) {
-		if (hasPlayer()) {
+		if (hasPlayer) {
 
 			float dfactor = player.driftState.driftStrength;
 			float sfactor = player.carState.currSpeedFactor;

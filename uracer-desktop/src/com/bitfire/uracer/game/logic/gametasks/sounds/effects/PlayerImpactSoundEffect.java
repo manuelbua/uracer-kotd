@@ -64,7 +64,7 @@ public final class PlayerImpactSoundEffect extends SoundEffect {
 	@Override
 	public void player (PlayerCar player) {
 		super.player(player);
-		if (hasPlayer()) {
+		if (hasPlayer) {
 			attach();
 		} else {
 			detach();

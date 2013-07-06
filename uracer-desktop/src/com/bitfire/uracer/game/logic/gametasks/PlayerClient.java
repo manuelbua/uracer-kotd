@@ -5,12 +5,10 @@ import com.bitfire.uracer.game.player.PlayerCar;
 
 public class PlayerClient {
 	protected PlayerCar player;
+	protected boolean hasPlayer;
 
 	public void player (PlayerCar player) {
 		this.player = player;
-	}
-
-	protected boolean hasPlayer () {
-		return player != null;
+		this.hasPlayer = (player != null);
 	}
 }

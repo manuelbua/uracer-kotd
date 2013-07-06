@@ -31,7 +31,7 @@ public class HudPlayerStatic extends HudElement {
 
 	@Override
 	public void onRender (SpriteBatch batch, float cameraZoom) {
-		if (hasPlayer()) {
+		if (hasPlayer) {
 			basicInfo.render(batch);
 
 			labelSpeed.setString(MathUtils.round(CarUtils.mtSecToKmHour(player.getInstantSpeed())) + " kmh");

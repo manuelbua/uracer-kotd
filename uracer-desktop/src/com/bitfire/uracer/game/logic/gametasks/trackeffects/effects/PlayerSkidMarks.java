@@ -59,7 +59,7 @@ public class PlayerSkidMarks extends TrackEffect {
 	@Override
 	public void player (PlayerCar player) {
 		super.player(player);
-		if (hasPlayer()) {
+		if (hasPlayer) {
 			for (int i = 0; i < MaxSkidMarks; i++) {
 				skidMarks[i].setup(Convert.mt2px(player.getCarModel().width), Convert.mt2px(player.getCarModel().length));
 				// skidMarks[i].life = 0;
@@ -91,7 +91,7 @@ public class PlayerSkidMarks extends TrackEffect {
 
 	@Override
 	public void tick () {
-		if (hasPlayer()) {
+		if (hasPlayer) {
 			if (player.carState.currVelocityLenSquared >= 1 && player.driftState.driftStrength > 0.3f
 				&& player.carState.currSpeedFactor > 0.1f) {
 				ppos.x = Convert.mt2px(player.getBody().getPosition().x);
