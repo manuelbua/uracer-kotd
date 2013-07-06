@@ -36,8 +36,7 @@ public class SinglePlayer extends BaseLogic {
 	protected DebugHelper debug = null;
 	private boolean saving = false;
 	private CameraShaker camShaker = new CameraShaker();
-	private GhostCar nextTarget = null;
-	private int nextTargetIdx = 0;
+	private int selectedBestReplayIdx = 0;
 
 	public SinglePlayer (UserProfile userProfile, GameWorld gameWorld, GameRenderer gameRenderer) {
 		super(userProfile, gameWorld, gameRenderer);
@@ -65,6 +64,21 @@ public class SinglePlayer extends BaseLogic {
 		}
 	}
 
+	private GhostCar findGhostFor (Replay replay) {
+		for (int g = 0; g < ghostCars.length; g++) {
+			GhostCar ghost = ghostCars[g];
+			if (ghost != null && replay != null && ghost.getReplay().getReplayId().equals(replay.getReplayId())) {
+				return ghost;
+			}
+		}
+
+		return null;
+	}
+
+	private boolean hasGhostFor (Replay replay) {
+		return (findGhostFor(replay) != null);
+	}
+
 	@Override
 	public void handleExtraInput () {
 		Input i = inputSystem;
@@ -81,34 +95,51 @@ public class SinglePlayer extends BaseLogic {
 			gameRenderer.setDebug(newstate);
 			debug.setEnabled(newstate);
 		} else if (i.isPressed(Keys.TAB)) {
-			// choose next/previ best target
+			// choose next/prev best target
+			boolean backward = i.isOn(Keys.SHIFT_LEFT) || i.isOn(Keys.SHIFT_RIGHT);
+
+			// retrieve the ghostcar index whose replay is the next/prev best as this one
 			if (!isWarmUp() && isCurrentLapValid) {
 
+				GhostCar prevTarget = getNextTarget();
 				int maxreplays = lapManager.getReplays().size;
-				if (i.isPressed(Keys.SHIFT_LEFT) || i.isPressed(Keys.SHIFT_RIGHT)) {
-					nextTargetIdx--;
-					if (nextTargetIdx < 0) nextTargetIdx = maxreplays - 1;
-				} else {
-					nextTargetIdx++;
-					if (nextTargetIdx == maxreplays) nextTargetIdx = 0;
-				}
+				int maxtries = maxreplays;
 
-				GhostCar ghost = ghostCars[nextTargetIdx];
-				if (ghost != null && !ghost.getTrackState().ghostArrived && ghost.isPlaying()) {
-					GhostCar prevTarget = nextTarget;
-					nextTarget = ghost;
-					if (prevTarget != nextTarget) {
-						playerTasks.hudPlayer.highlightNextTarget(nextTarget);
-						Gdx.app.log("SinglePlayer", "Next target selected is " + nextTarget.getId());
+				GhostCar next = null;
+				boolean found = false;
+
+				do {
+					if (backward) {
+						selectedBestReplayIdx--;
+					} else {
+						selectedBestReplayIdx++;
+					}
+
+					if (selectedBestReplayIdx < 0) selectedBestReplayIdx = maxreplays - 1;
+					if (selectedBestReplayIdx == maxreplays) selectedBestReplayIdx = 0;
+
+					next = getNextTarget();
+					found = next != null && next.isPlaying() && !next.getTrackState().ghostArrived;
+				} while (maxtries-- >= 0 && !found);
+
+				if (found) {
+					if (prevTarget != next) {
+						playerTasks.hudPlayer.highlightNextTarget(next);
+						Gdx.app.log("SinglePlayer", "Next target index is #" + selectedBestReplayIdx);
 					}
 				}
 			}
 		}
+
 	}
 
 	@Override
 	public GhostCar getNextTarget () {
-		return nextTarget;
+		if (lapManager.getReplays().size > 0) {
+			return findGhostFor(lapManager.getReplays().get(selectedBestReplayIdx));
+		}
+
+		return null;
 	}
 
 	private void saveReplay (final Replay replay) {
@@ -329,7 +360,7 @@ public class SinglePlayer extends BaseLogic {
 
 	//
 
-	/** Restart all replays in the lap manager, also updates the next target */
+	/** Restart all replays in the lap manager, if no next target set the best replay's car to it */
 	private void restartAllReplays () {
 		if (!(lapManager.getReplays().size <= ghostCars.length)) {
 			throw new URacerRuntimeException("Replays count mismatch");
@@ -347,18 +378,18 @@ public class SinglePlayer extends BaseLogic {
 			ghost.setAlpha(Config.Graphics.DefaultGhostCarOpacity);
 			ghostLapMonitor[g].reset();
 
-			// if no nextTarget then take the best
-			if (nextTarget == null && g == 0) {
-				nextTargetIdx = 0;
-				nextTarget = ghost;
+			// if no nextTarget then take the best (first)
+			if (getNextTarget() == null && g == 0) {
+				selectedBestReplayIdx = 0;
 			}
 
 			g++;
 		}
 
-		if (nextTarget != null) {
-			nextTarget.setAlpha(Config.Graphics.DefaultTargetCarOpacity);
-			playerTasks.hudPlayer.highlightNextTarget(nextTarget);
+		GhostCar next = getNextTarget();
+		if (next != null) {
+			next.setAlpha(Config.Graphics.DefaultTargetCarOpacity);
+			playerTasks.hudPlayer.highlightNextTarget(next);
 		}
 	}
 }
