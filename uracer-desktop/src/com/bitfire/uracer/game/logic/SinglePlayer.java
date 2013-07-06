@@ -6,6 +6,7 @@ import com.badlogic.gdx.Input.Keys;
 import com.badlogic.gdx.files.FileHandle;
 import com.badlogic.gdx.math.Vector2;
 import com.bitfire.postprocessing.PostProcessor;
+import com.bitfire.uracer.Input;
 import com.bitfire.uracer.URacer;
 import com.bitfire.uracer.configuration.Config;
 import com.bitfire.uracer.configuration.Storage;
@@ -36,6 +37,7 @@ public class SinglePlayer extends BaseLogic {
 	private boolean saving = false;
 	private CameraShaker camShaker = new CameraShaker();
 	private GhostCar nextTarget = null;
+	private int nextTargetIdx = 0;
 
 	public SinglePlayer (UserProfile userProfile, GameWorld gameWorld, GameRenderer gameRenderer) {
 		super(userProfile, gameWorld, gameRenderer);
@@ -65,17 +67,42 @@ public class SinglePlayer extends BaseLogic {
 
 	@Override
 	public void handleExtraInput () {
-		if (inputSystem.isPressed(Keys.O)) {
+		Input i = inputSystem;
+
+		if (i.isPressed(Keys.O)) {
 			removePlayer();
 			restartGame();
 			restartAllReplays();
-		} else if (inputSystem.isPressed(Keys.P)) {
+		} else if (i.isPressed(Keys.P)) {
 			addPlayer();
 			restartGame();
-		} else if (inputSystem.isPressed(Keys.TAB)) {
+		} else if (i.isPressed(Keys.D)) {
 			boolean newstate = !gameRenderer.isDebugEnabled();
 			gameRenderer.setDebug(newstate);
 			debug.setEnabled(newstate);
+		} else if (i.isPressed(Keys.TAB)) {
+			// choose next/previ best target
+			if (!isWarmUp() && isCurrentLapValid) {
+
+				int maxreplays = lapManager.getReplays().size;
+				if (i.isPressed(Keys.SHIFT_LEFT) || i.isPressed(Keys.SHIFT_RIGHT)) {
+					nextTargetIdx--;
+					if (nextTargetIdx < 0) nextTargetIdx = maxreplays - 1;
+				} else {
+					nextTargetIdx++;
+					if (nextTargetIdx == maxreplays) nextTargetIdx = 0;
+				}
+
+				GhostCar ghost = ghostCars[nextTargetIdx];
+				if (ghost != null && !ghost.getTrackState().ghostArrived && ghost.isPlaying()) {
+					GhostCar prevTarget = nextTarget;
+					nextTarget = ghost;
+					if (prevTarget != nextTarget) {
+						playerTasks.hudPlayer.highlightNextTarget(nextTarget);
+						Gdx.app.log("SinglePlayer", "Next target selected is " + nextTarget.getId());
+					}
+				}
+			}
 		}
 	}
 
@@ -170,7 +197,8 @@ public class SinglePlayer extends BaseLogic {
 			ghostLapMonitor[ghostIndex].reset();
 
 			Gdx.app.log("SinglePlayer",
-				"#" + pos + ", #" + r.getShortReplayId() + ", tt=" + r.getTrackTimeInt() + ", ct=" + r.getCreationTimestamp());
+				"#" + pos + ", #" + r.getShortReplayId() + ", secs=" + String.format("%02.03f", r.getTrackTimeInt() / 1000f)
+					+ ", ct=" + r.getCreationTimestamp());
 			pos++;
 			ghostIndex++;
 		}
@@ -261,7 +289,7 @@ public class SinglePlayer extends BaseLogic {
 				}
 
 				Gdx.app.log("SinglePlayer", msg);
-				messager.show(msg, duration, Message.Type.Information, Position.Middle, Size.Big);
+				messager.show(msg, duration, Message.Type.Information, Position.Top, Size.Big);
 			}
 		}
 
@@ -303,8 +331,6 @@ public class SinglePlayer extends BaseLogic {
 
 	/** Restart all replays in the lap manager, also updates the next target */
 	private void restartAllReplays () {
-		nextTarget = null;
-
 		if (!(lapManager.getReplays().size <= ghostCars.length)) {
 			throw new URacerRuntimeException("Replays count mismatch");
 		}
@@ -318,14 +344,21 @@ public class SinglePlayer extends BaseLogic {
 
 			ghost.setReplay(r);
 			ghost.start();
+			ghost.setAlpha(Config.Graphics.DefaultGhostCarOpacity);
 			ghostLapMonitor[g].reset();
 
-			if (lapManager.getBestReplay().getReplayId().equals(ghost.getReplay().getReplayId())) {
+			// if no nextTarget then take the best
+			if (nextTarget == null && g == 0) {
+				nextTargetIdx = 0;
 				nextTarget = ghost;
-				playerTasks.hudPlayer.highlightNextTarget(nextTarget);
 			}
 
 			g++;
+		}
+
+		if (nextTarget != null) {
+			nextTarget.setAlpha(Config.Graphics.DefaultTargetCarOpacity);
+			playerTasks.hudPlayer.highlightNextTarget(nextTarget);
 		}
 	}
 }

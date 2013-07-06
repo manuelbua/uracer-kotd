@@ -70,7 +70,7 @@ public class DebugPlayer extends DebugRenderable {
 	public void player (PlayerCar player) {
 		super.player(player);
 
-		if (hasPlayer()) {
+		if (hasPlayer) {
 			this.player = player;
 			driftState = player.driftState;
 			meterSpeed.setLimits(0, CarUtils.mtSecToKmHour(player.getCarModel().max_speed));
@@ -78,7 +78,7 @@ public class DebugPlayer extends DebugRenderable {
 	}
 
 	private boolean isActive () {
-		return hasPlayer();
+		return hasPlayer;
 	}
 
 	@Override

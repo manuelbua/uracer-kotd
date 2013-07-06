@@ -1,6 +1,7 @@
 
 package com.bitfire.uracer.game.actors;
 
+import com.bitfire.uracer.configuration.Config;
 import com.bitfire.uracer.game.GameEvents;
 import com.bitfire.uracer.game.events.GhostCarEvent;
 import com.bitfire.uracer.game.logic.replaying.Replay;
@@ -21,6 +22,7 @@ public final class GhostCar extends Car {
 	private final int id;
 	private boolean fadeOutEventTriggered;
 	private boolean started;
+	private float alpha;
 
 	public GhostCar (int id, GameWorld gameWorld, CarPreset.Type presetType) {
 		super(gameWorld, CarType.ReplayCar, InputMode.InputFromReplay, presetType, false);
@@ -29,6 +31,7 @@ public final class GhostCar extends Car {
 		replay = new Replay();
 		resetDistanceAndSpeed(true, true);
 		removeReplay();
+		alpha = Config.Graphics.DefaultGhostCarOpacity;
 		stillModel.setAlpha(0);
 		getTrackState().ghostArrived = false;
 	}
@@ -64,6 +67,10 @@ public final class GhostCar extends Car {
 
 	public boolean isPlaying () {
 		return started;
+	}
+
+	public void setAlpha (float alpha) {
+		this.alpha = alpha;
 	}
 
 	// input data for this car cames from a Replay object
@@ -132,13 +139,14 @@ public final class GhostCar extends Car {
 				forces.set(replayForces[indexPlay]);
 			}
 
-			// also change opacity, fade in/out based on
-			// events played / total events
+			stillModel.setAlpha(alpha);
+
+			// also change opacity, fade in/out based on events played / total events
 			if (indexPlay <= FadeEvents) {
-				stillModel.setAlpha(((float)indexPlay / (float)FadeEvents) * 0.5f);
+				stillModel.setAlpha(((float)indexPlay / (float)FadeEvents) * alpha);
 			} else if (replay.getEventsCount() - indexPlay <= FadeEvents) {
 				float val = (float)(replay.getEventsCount() - indexPlay) / (float)FadeEvents;
-				stillModel.setAlpha(val * 0.5f);
+				stillModel.setAlpha(val * alpha);
 
 				if (!fadeOutEventTriggered) {
 					fadeOutEventTriggered = true;

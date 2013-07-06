@@ -318,10 +318,6 @@ public final class DebugHelper extends GameTask implements DisposableTasks {
 		}
 	}
 
-	private String rankString (int rank) {
-		return (rank <= 9 ? "0" : "") + rank;
-	}
-
 	private void batchColorStart (SpriteBatch batch, float r, float g, float b) {
 		batch.end();
 		batch.flush();
@@ -338,6 +334,21 @@ public final class DebugHelper extends GameTask implements DisposableTasks {
 
 	private String timeString (float seconds) {
 		return String.format("%02.03f", seconds);
+	}
+
+	private String rankString (int rank) {
+		return (rank <= 9 ? "0" : "") + rank;
+	}
+
+	private boolean isNextTarget (Replay replay) {
+		GhostCar target = logic.getNextTarget();
+		if (target != null) {
+			if (replay != null && target.getReplay() == replay) {
+				return true;
+			}
+		}
+
+		return false;
 	}
 
 	private void drawString2X (SpriteBatch batch, String text, float x, float y, float scale) {
@@ -372,7 +383,8 @@ public final class DebugHelper extends GameTask implements DisposableTasks {
 					batchColorStart(batch, 1, 1, 0);
 			}
 
-			text = rankString(rank) + "< " + replay.getUserId() + " " + timeString(replay.getTrackTimeInt() / 1000f);
+			text = rankString(rank) + (isNextTarget(replay) ? "<" : " ") + " " + replay.getUserId() + " "
+				+ timeString(replay.getTrackTimeInt() / 1000f);
 			drawString2X(batch, text, 0, coord, scale);
 
 			if (lastAccepted) {
@@ -388,7 +400,7 @@ public final class DebugHelper extends GameTask implements DisposableTasks {
 			Replay replay = last.removed;
 			batchColorStart(batch, 1, 0, 0);
 
-			text = rankString(lapManager.getReplays().size + 1) + "< " + replay.getUserId() + " "
+			text = rankString(lapManager.getReplays().size + 1) + "  " + replay.getUserId() + " "
 				+ timeString(replay.getTrackTimeInt() / 1000f);
 			drawString2X(batch, text, 0, coord, scale);
 			batchColorEnd(batch);
@@ -396,6 +408,10 @@ public final class DebugHelper extends GameTask implements DisposableTasks {
 	}
 
 	private void renderCompletion (SpriteBatch batch, int y) {
+
+		//
+		// update
+		//
 		float scale = 1;
 		float xoffset = 150 * scale;
 		int coord = y;
@@ -412,6 +428,7 @@ public final class DebugHelper extends GameTask implements DisposableTasks {
 				rank.valid = true;
 				rank.uid = ghost.getReplay().getUserId();
 				rank.secs = ghost.getReplay().getTrackTimeInt() / 1000f;
+				rank.isNextTarget = (logic.getNextTarget() == ghost);
 
 				TrackState ts = ghost.getTrackState();
 
@@ -433,6 +450,7 @@ public final class DebugHelper extends GameTask implements DisposableTasks {
 			rank.valid = true;
 			rank.uid = logic.getUserProfile().userId;
 			rank.player = true;
+			rank.isNextTarget = false;
 
 			// getTrackTimeInt is computed as an int cast (int)(trackTimeSeconds * AMath.ONE_ON_CMP_EPSILON)
 			rank.secs = ((int)(lapManager.getCurrentReplaySeconds() * AMath.ONE_ON_CMP_EPSILON)) / 1000f;
@@ -440,6 +458,10 @@ public final class DebugHelper extends GameTask implements DisposableTasks {
 		}
 
 		ranks.sort();
+
+		//
+		// render
+		//
 
 		drawString2X(batch, "CURRENT COMPLETION", xoffset, coord, scale);
 		drawString2X(batch, "==================", xoffset, coord + Art.DebugFontHeight * scale, scale);
@@ -452,7 +474,8 @@ public final class DebugHelper extends GameTask implements DisposableTasks {
 				float c = AMath.fixupTo(AMath.fixup(r.completion), 1);
 				if (r.player) batchColorStart(batch, 0, 0.6f, 1);
 				{
-					text = rankString(i + 1) + "< " + r.uid + " " + timeString(c) + " " + timeString(r.secs);
+					text = rankString(i + 1) + (r.isNextTarget ? "<" : " ") + " " + r.uid + " " + timeString(c) + " "
+						+ timeString(r.secs);
 					drawString2X(batch, text, xoffset, coord, scale);
 				}
 				if (r.player) batchColorEnd(batch);

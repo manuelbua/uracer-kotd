@@ -13,6 +13,11 @@ public final class Config {
 		public static final int DefaultFadeMilliseconds = 500;
 		public static final int DefaultResetFadeMilliseconds = 500;
 
+		public static final float DefaultGhostCarOpacity = 0.25f;
+		public static final float DefaultTargetCarOpacity = 0.75f;
+		// target > ghost for this to work
+		public static final float GhostToTargetOpacityStep = (DefaultTargetCarOpacity - DefaultGhostCarOpacity);
+
 		public static final boolean EnableMipMapping = true;
 		public static final boolean SubframeInterpolation = true;
 		public static final InterpolationMode CameraInterpolationMode = InterpolationMode.Linear;

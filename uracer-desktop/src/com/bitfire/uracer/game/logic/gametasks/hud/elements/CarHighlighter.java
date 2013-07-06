@@ -5,8 +5,10 @@ import aurelienribon.tweenengine.BaseTween;
 import aurelienribon.tweenengine.Timeline;
 import aurelienribon.tweenengine.Tween;
 import aurelienribon.tweenengine.TweenCallback;
+import aurelienribon.tweenengine.equations.Expo;
 import aurelienribon.tweenengine.equations.Linear;
 
+import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.g2d.Sprite;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.math.Vector2;
@@ -15,9 +17,11 @@ import com.bitfire.uracer.configuration.Config;
 import com.bitfire.uracer.entities.EntityRenderState;
 import com.bitfire.uracer.game.actors.Car;
 import com.bitfire.uracer.game.actors.CarModel;
+import com.bitfire.uracer.game.actors.GhostCar;
 import com.bitfire.uracer.game.rendering.GameRenderer;
 import com.bitfire.uracer.game.tween.GameTweener;
 import com.bitfire.uracer.resources.Art;
+import com.bitfire.uracer.utils.AMath;
 import com.bitfire.uracer.utils.BoxedFloat;
 import com.bitfire.uracer.utils.BoxedFloatAccessor;
 import com.bitfire.uracer.utils.Convert;
@@ -25,13 +29,14 @@ import com.bitfire.uracer.utils.Convert;
 public final class CarHighlighter {
 	private Sprite sprite;
 	private Car followedCar;
-	private EntityRenderState renderState;
-	private Vector2 tmp = new Vector2();
+	private EntityRenderState renderState, prevState;
+	private Vector2 tmp = new Vector2(), tmp2 = new Vector2();
 	private float offX, offY, alpha, scale;
 
-	private boolean isBusy, isActive, hasCar;
-	private BoxedFloat bfScale, bfRot, bfAlpha, bfGreen, bfRed, bfBlue;
+	private boolean isBusy, isActive, hasCar, isTracking;
+	private BoxedFloat bfScale, bfRot, bfAlpha, bfGreen, bfRed, bfBlue, bfRenderState;
 	private float trackAlpha;
+	private GhostCar prevCar;
 
 	// need tileMapZoomFactor since highlighter size depends from car *rendered* size
 	public CarHighlighter () {
@@ -41,11 +46,29 @@ public final class CarHighlighter {
 		isActive = false;
 		followedCar = null;
 		alpha = 1;
+
+		bfScale = new BoxedFloat(1);
+		bfRot = new BoxedFloat(0);
+		bfAlpha = new BoxedFloat(0);
+		bfGreen = new BoxedFloat(1);
+		bfRed = new BoxedFloat(1);
+		bfBlue = new BoxedFloat(1);
+		bfRenderState = new BoxedFloat(0);
+		prevState = null;
+		renderState = null;
 	}
 
 	public void setCar (Car car) {
-		hasCar = true;
+		prevState = null;
+		prevCar = null;
+
+		if (followedCar != null && followedCar instanceof GhostCar) {
+			prevCar = (GhostCar)followedCar;
+			prevState = renderState;
+		}
+
 		followedCar = car;
+		hasCar = followedCar != null;
 		renderState = followedCar.state();
 
 		CarModel model = car.getCarModel();
@@ -54,12 +77,22 @@ public final class CarHighlighter {
 
 		offX = sprite.getOriginX();
 		offY = sprite.getOriginY();
-		bfScale = new BoxedFloat(1);
-		bfRot = new BoxedFloat(0);
-		bfAlpha = new BoxedFloat(0);
-		bfGreen = new BoxedFloat(1);
-		bfRed = new BoxedFloat(1);
-		bfBlue = new BoxedFloat(1);
+
+		if (prevState != null && isTracking) {
+			// compute a position factor to later (at render time) interpolate the final position between the two render states
+			GameTweener.stop(bfRenderState);
+
+			bfRenderState.value = 0;
+			Timeline timeline = Timeline.createSequence();
+			//@off
+			timeline
+				.push(Tween.to(bfRenderState, BoxedFloatAccessor.VALUE, 500).target(1).ease(Expo.INOUT))
+			;
+			//@on
+
+			Gdx.app.log("CarHl", "Starting...");
+			GameTweener.start(timeline);
+		}
 	}
 
 	public void setAlpha (float alpha) {
@@ -77,11 +110,24 @@ public final class CarHighlighter {
 	public void stop () {
 		isActive = false;
 		isBusy = false;
+		isTracking = false;
 	}
 
 	public void render (SpriteBatch batch, float cameraZoom) {
 		if (isActive && hasCar) {
 			tmp.set(GameRenderer.ScreenUtils.worldPxToScreen(renderState.position));
+			if (prevState != null) {
+				tmp2.set(GameRenderer.ScreenUtils.worldPxToScreen(prevState.position));
+				tmp.x = AMath.lerp(tmp2.x, tmp.x, bfRenderState.value);
+				tmp.y = AMath.lerp(tmp2.y, tmp.y, bfRenderState.value);
+
+				prevCar.setAlpha(Config.Graphics.DefaultGhostCarOpacity + Config.Graphics.GhostToTargetOpacityStep
+					* (1 - bfRenderState.value));
+				if (followedCar instanceof GhostCar) {
+					GhostCar g = (GhostCar)followedCar;
+					g.setAlpha(Config.Graphics.DefaultGhostCarOpacity + Config.Graphics.GhostToTargetOpacityStep * bfRenderState.value);
+				}
+			}
 
 			float timeFactor = URacer.Game.getTimeModFactor() * 0.3f;
 			float s = 1f + timeFactor;
@@ -137,13 +183,14 @@ public final class CarHighlighter {
 	}
 
 	public void track (boolean force, float alpha) {
+		if (isTracking) return;
+
 		// do busy wait if not forcing
-		if (!force && isBusy) {
-			return;
-		}
+		if (!force && isBusy) return;
 
 		isBusy = true;
 		isActive = true;
+		isTracking = true;
 
 		trackAlpha = alpha;
 
@@ -179,13 +226,14 @@ public final class CarHighlighter {
 	}
 
 	public void untrack (boolean force) {
+		if (!isTracking) return;
+
 		// do busy wait if not forcing
-		if (!force && isBusy) {
-			return;
-		}
+		if (!force && isBusy) return;
 
 		isBusy = true;
 		isActive = true;
+		isTracking = false;
 
 		bfScale.value = 1f;
 		bfAlpha.value = trackAlpha;

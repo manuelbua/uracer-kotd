@@ -1,12 +1,11 @@
 
 package com.bitfire.uracer.game.debug;
 
-
 public final class RankInfo implements Comparable<RankInfo> {
 	public float completion;
 	public String uid;
 	public float secs;
-	public boolean valid, player;
+	public boolean valid, player, isNextTarget;
 
 	@Override
 	public int compareTo (RankInfo o) {
