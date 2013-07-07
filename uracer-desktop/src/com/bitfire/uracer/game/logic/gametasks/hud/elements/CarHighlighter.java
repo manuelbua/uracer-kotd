@@ -44,6 +44,7 @@ public final class CarHighlighter {
 		isBusy = false;
 		isActive = false;
 		followedCar = null;
+		isTracking = false;
 		alpha = 1;
 
 		bfScale = new BoxedFloat(1);
@@ -59,16 +60,13 @@ public final class CarHighlighter {
 	}
 
 	public void setCar (Car car) {
-		if (prevCar != null) {
-			prevCar.tweenAlphaTo(Config.Graphics.DefaultGhostCarOpacity, 150);
-		}
-
 		prevState = null;
 		prevCar = null;
 
 		if (followedCar != null && followedCar instanceof GhostCar) {
 			prevCar = (GhostCar)followedCar;
 			prevState = renderState;
+			prevCar.tweenAlphaTo(Config.Graphics.DefaultGhostCarOpacity, 200, Expo.INOUT);
 		}
 
 		followedCar = car;
@@ -88,8 +86,12 @@ public final class CarHighlighter {
 
 			bfRenderState.value = 0;
 			Timeline timeline = Timeline.createSequence();
-			timeline.push(Tween.to(bfRenderState, BoxedFloatAccessor.VALUE, 150).target(1).ease(Expo.INOUT));
+			timeline.push(Tween.to(bfRenderState, BoxedFloatAccessor.VALUE, 200).target(1).ease(Expo.INOUT));
 			GameTweener.start(timeline);
+		}
+
+		if (followedCar != null && followedCar instanceof GhostCar) {
+			((GhostCar)followedCar).tweenAlphaTo(Config.Graphics.DefaultTargetCarOpacity, 200, Expo.INOUT);
 		}
 	}
 
@@ -116,6 +118,7 @@ public final class CarHighlighter {
 			float orient = renderState.orientation;
 			tmp.set(GameRenderer.ScreenUtils.worldPxToScreen(renderState.position));
 			if (prevState != null) {
+				// GhostCar followed = (GhostCar)followedCar;
 
 				// modulate values
 				// expecting bfRenderState.valuein range [0,1]
@@ -127,12 +130,6 @@ public final class CarHighlighter {
 
 				// modulate orientation
 				orient = AMath.lerp(prevState.orientation, orient, bfRenderState.value);
-
-				// update both alphas
-				prevCar.setAlpha(Config.Graphics.DefaultGhostCarOpacity + Config.Graphics.GhostToTargetOpacityStep
-					* (1 - bfRenderState.value));
-				((GhostCar)followedCar).setAlpha(Config.Graphics.DefaultGhostCarOpacity + Config.Graphics.GhostToTargetOpacityStep
-					* bfRenderState.value);
 			}
 
 			float timeFactor = URacer.Game.getTimeModFactor() * 0.3f;

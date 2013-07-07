@@ -126,6 +126,7 @@ public class SinglePlayer extends BaseLogic {
 				if (!isWarmUp() && found) {
 					if (prevTarget != next && next.isPlaying()) {
 						playerTasks.hudPlayer.highlightNextTarget(next);
+						gameWorldRenderer.setTopMostGhostCar(next);
 						Gdx.app.log("SinglePlayer", "Next target index is #" + selectedBestReplayIdx);
 					}
 				}
@@ -222,17 +223,14 @@ public class SinglePlayer extends BaseLogic {
 			ghostCars[g].removeReplay();
 		}
 
-		int pos = 1;
-		int ghostIndex = 0;
-		for (Replay r : lapManager.getReplays()) {
-			ghostCars[ghostIndex].setReplay(r);
-			ghostLapMonitor[ghostIndex].reset();
+		rebindAllReplays();
 
+		int pos = 1;
+		for (Replay r : lapManager.getReplays()) {
 			Gdx.app.log("SinglePlayer",
 				"#" + pos + ", #" + r.getShortReplayId() + ", secs=" + String.format("%02.03f", r.getTrackTimeInt() / 1000f)
 					+ ", ct=" + r.getCreationTimestamp());
 			pos++;
-			ghostIndex++;
 		}
 
 		Gdx.app.log("SinglePlayer", "Reloaded " + reloaded + " opponents.");
@@ -269,6 +267,8 @@ public class SinglePlayer extends BaseLogic {
 		lapManager.stopRecording();
 		playerCar.resetDistanceAndSpeed(true, false);
 		lapManager.startRecording(playerCar, gameWorld.getLevelId(), userProfile.userId);
+
+		rebindAllReplays();
 		restartAllReplays();
 	}
 
@@ -376,6 +376,23 @@ public class SinglePlayer extends BaseLogic {
 
 	/** Restart all replays in the lap manager, if no next target set the best replay's car to it */
 	private void restartAllReplays () {
+		for (Replay r : lapManager.getReplays()) {
+			if (hasGhostFor(r)) {
+				GhostCar ghost = findGhostFor(r);
+				boolean isnexttarget = (getNextTarget() == ghost);
+				ghost.setAlpha(isnexttarget ? Config.Graphics.DefaultTargetCarOpacity : Config.Graphics.DefaultGhostCarOpacity);
+
+				if (isnexttarget) {
+					gameWorldRenderer.setTopMostGhostCar(ghost);
+				}
+
+				ghost.stop();
+				ghost.start();
+			}
+		}
+	}
+
+	private void rebindAllReplays () {
 		if (!(lapManager.getReplays().size <= ghostCars.length)) {
 			throw new URacerRuntimeException("Replays count mismatch");
 		}
@@ -383,21 +400,18 @@ public class SinglePlayer extends BaseLogic {
 		int g = 0;
 		for (Replay r : lapManager.getReplays()) {
 			GhostCar ghost = ghostCars[g];
+
 			if (ghost == null) {
 				throw new URacerRuntimeException("Ghost not ready (#" + g + ")");
 			}
 
 			ghost.setReplay(r);
-			ghost.start();
 			ghostLapMonitor[g].reset();
 
 			// if no nextTarget then take the best (first)
 			if (getNextTarget() == null && g == 0) {
 				selectedBestReplayIdx = 0;
 			}
-
-			ghost.setAlpha(getNextTarget() == ghost ? Config.Graphics.DefaultTargetCarOpacity
-				: Config.Graphics.DefaultGhostCarOpacity);
 
 			g++;
 		}

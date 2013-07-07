@@ -3,7 +3,7 @@ package com.bitfire.uracer.game.actors;
 
 import aurelienribon.tweenengine.Timeline;
 import aurelienribon.tweenengine.Tween;
-import aurelienribon.tweenengine.equations.Expo;
+import aurelienribon.tweenengine.TweenEquation;
 
 import com.bitfire.uracer.configuration.Config;
 import com.bitfire.uracer.game.GameEvents;
@@ -80,10 +80,14 @@ public final class GhostCar extends Car {
 		bfAlpha.value = alpha;
 	}
 
-	public void tweenAlphaTo (float value, float ms) {
+	public float getAlpha () {
+		return bfAlpha.value;
+	}
+
+	public void tweenAlphaTo (float value, float ms, TweenEquation eq) {
 		GameTweener.stop(bfAlpha);
 		Timeline timeline = Timeline.createSequence();
-		timeline.push(Tween.to(bfAlpha, BoxedFloatAccessor.VALUE, ms).target(value).ease(Expo.INOUT));
+		timeline.push(Tween.to(bfAlpha, BoxedFloatAccessor.VALUE, ms).target(value).ease(eq));
 		GameTweener.start(timeline);
 	}
 
