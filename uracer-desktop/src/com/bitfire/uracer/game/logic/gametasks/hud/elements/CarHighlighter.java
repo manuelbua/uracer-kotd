@@ -5,7 +5,6 @@ import aurelienribon.tweenengine.BaseTween;
 import aurelienribon.tweenengine.Timeline;
 import aurelienribon.tweenengine.Tween;
 import aurelienribon.tweenengine.TweenCallback;
-import aurelienribon.tweenengine.equations.Expo;
 import aurelienribon.tweenengine.equations.Linear;
 
 import com.badlogic.gdx.graphics.g2d.Sprite;
@@ -66,7 +65,7 @@ public final class CarHighlighter {
 		if (followedCar != null && followedCar instanceof GhostCar) {
 			prevCar = (GhostCar)followedCar;
 			prevState = renderState;
-			prevCar.tweenAlphaTo(Config.Graphics.DefaultGhostCarOpacity, 200, Expo.INOUT);
+			prevCar.tweenAlphaTo(Config.Graphics.DefaultGhostCarOpacity);
 		}
 
 		followedCar = car;
@@ -86,12 +85,13 @@ public final class CarHighlighter {
 
 			bfRenderState.value = 0;
 			Timeline timeline = Timeline.createSequence();
-			timeline.push(Tween.to(bfRenderState, BoxedFloatAccessor.VALUE, 200).target(1).ease(Expo.INOUT));
+			timeline.push(Tween.to(bfRenderState, BoxedFloatAccessor.VALUE, Config.Graphics.DefaultGhostOpacityChangeMs).target(1)
+				.ease(Config.Graphics.DefaultGhostOpacityChangeEq));
 			GameTweener.start(timeline);
 		}
 
 		if (followedCar != null && followedCar instanceof GhostCar) {
-			((GhostCar)followedCar).tweenAlphaTo(Config.Graphics.DefaultTargetCarOpacity, 200, Expo.INOUT);
+			((GhostCar)followedCar).tweenAlphaTo(Config.Graphics.DefaultTargetCarOpacity);
 		}
 	}
 
@@ -118,10 +118,7 @@ public final class CarHighlighter {
 			float orient = renderState.orientation;
 			tmp.set(GameRenderer.ScreenUtils.worldPxToScreen(renderState.position));
 			if (prevState != null) {
-				// GhostCar followed = (GhostCar)followedCar;
-
-				// modulate values
-				// expecting bfRenderState.valuein range [0,1]
+				// modulate values, expects bfRenderState.valuein range [0,1]
 
 				// modulate position
 				tmp2.set(GameRenderer.ScreenUtils.worldPxToScreen(prevState.position));

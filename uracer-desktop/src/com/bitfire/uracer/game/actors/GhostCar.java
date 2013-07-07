@@ -84,6 +84,10 @@ public final class GhostCar extends Car {
 		return bfAlpha.value;
 	}
 
+	public void tweenAlphaTo (float value) {
+		tweenAlphaTo(value, Config.Graphics.DefaultGhostOpacityChangeMs, Config.Graphics.DefaultGhostOpacityChangeEq);
+	}
+
 	public void tweenAlphaTo (float value, float ms, TweenEquation eq) {
 		GameTweener.stop(bfAlpha);
 		Timeline timeline = Timeline.createSequence();

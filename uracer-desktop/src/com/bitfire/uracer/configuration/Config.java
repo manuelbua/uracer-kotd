@@ -1,6 +1,9 @@
 
 package com.bitfire.uracer.configuration;
 
+import aurelienribon.tweenengine.TweenEquation;
+import aurelienribon.tweenengine.equations.Expo;
+
 import com.bitfire.postprocessing.filters.Blur;
 import com.bitfire.postprocessing.filters.Blur.BlurType;
 import com.bitfire.uracer.game.logic.helpers.CameraController.InterpolationMode;
@@ -15,8 +18,8 @@ public final class Config {
 
 		public static final float DefaultGhostCarOpacity = 0.25f;
 		public static final float DefaultTargetCarOpacity = 0.75f;
-		// target > ghost for this to work
-		public static final float GhostToTargetOpacityStep = (DefaultTargetCarOpacity - DefaultGhostCarOpacity);
+		public static final float DefaultGhostOpacityChangeMs = 200;
+		public static final TweenEquation DefaultGhostOpacityChangeEq = Expo.INOUT;
 
 		public static final boolean EnableMipMapping = true;
 		public static final boolean SubframeInterpolation = true;
