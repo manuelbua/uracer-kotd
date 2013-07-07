@@ -134,4 +134,8 @@ public final class ReplayManager implements Disposable {
 	public Array<Replay> getReplays () {
 		return nreplays;
 	}
+
+	public int getReplaysCount () {
+		return nreplays.size;
+	}
 }

@@ -113,6 +113,18 @@ public final class CarHighlighter {
 		isTracking = false;
 	}
 
+	private float lerpOrient (float prev, float curr, float alpha) {
+		float diff = curr - prev;
+
+		if (diff > 180) {
+			diff = -(360 - diff);
+		} else if (diff < -180) {
+			diff = 360 + diff;
+		}
+
+		return prev + alpha * diff;
+	}
+
 	public void render (SpriteBatch batch, float cameraZoom) {
 		if (isActive && hasCar) {
 			float orient = renderState.orientation;
@@ -126,16 +138,17 @@ public final class CarHighlighter {
 				tmp.y = AMath.lerp(tmp2.y, tmp.y, bfRenderState.value);
 
 				// modulate orientation
-				// orient = AMath.lerp(prevState.orientation, orient, bfRenderState.value);
-				orient = AMath.lerpDegrees(prevState.orientation, renderState.orientation, bfRenderState.value);
+				orient = lerpOrient(prevState.orientation, renderState.orientation, bfRenderState.value);
 			}
 
 			float timeFactor = URacer.Game.getTimeModFactor() * 0.3f;
 			float s = 1f + timeFactor;
 
+			float rot = bfRot.value - orient;
+
 			sprite.setScale(bfScale.value * cameraZoom * scale * s);
 			sprite.setPosition(tmp.x - offX, tmp.y - offY);
-			sprite.setRotation(bfRot.value - orient);
+			sprite.setRotation(rot);
 			sprite.setColor(bfRed.value, bfGreen.value, bfBlue.value, 1);
 			sprite.draw(batch, bfAlpha.value * alpha);
 		}

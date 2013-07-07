@@ -36,7 +36,7 @@ public class SinglePlayer extends BaseLogic {
 	protected DebugHelper debug = null;
 	private boolean saving = false;
 	private CameraShaker camShaker = new CameraShaker();
-	private int selectedBestReplayIdx = 0;
+	private int selectedBestReplayIdx = -1;
 
 	public SinglePlayer (UserProfile userProfile, GameWorld gameWorld, GameRenderer gameRenderer) {
 		super(userProfile, gameWorld, gameRenderer);
@@ -103,13 +103,17 @@ public class SinglePlayer extends BaseLogic {
 			{
 
 				GhostCar prevTarget = getNextTarget();
-				int maxreplays = lapManager.getReplays().size;
+				int maxreplays = lapManager.getReplaysCount();
 				int maxtries = maxreplays;
 
 				GhostCar next = null;
 				boolean found = false;
 
 				do {
+					if (selectedBestReplayIdx == -1) {
+						selectedBestReplayIdx = 0;
+					}
+
 					if (backward) {
 						selectedBestReplayIdx--;
 					} else {
@@ -129,7 +133,6 @@ public class SinglePlayer extends BaseLogic {
 					if (prevTarget != next && next.isPlaying()) {
 						playerTasks.hudPlayer.highlightNextTarget(next);
 						gameWorldRenderer.setTopMostGhostCar(next);
-
 					}
 				}
 			}
@@ -140,7 +143,7 @@ public class SinglePlayer extends BaseLogic {
 	@Override
 	public GhostCar getNextTarget () {
 		int maxreplays = lapManager.getReplays().size;
-		if (maxreplays > 0 && selectedBestReplayIdx < maxreplays) {
+		if (maxreplays > 0 && selectedBestReplayIdx >= 0 && selectedBestReplayIdx < maxreplays) {
 			return findGhostFor(lapManager.getReplays().get(selectedBestReplayIdx));
 		}
 
@@ -416,8 +419,14 @@ public class SinglePlayer extends BaseLogic {
 
 		// if no nextTarget then take the best (first)
 		if (getNextTarget() == null) {
-			selectedBestReplayIdx = 0;
-			Gdx.app.log("SinglePlayer", "Automatically selecting best replay");
+			Gdx.app.log("SinglePlayer", "Automatically selecting best replay...");
+			if (lapManager.getReplaysCount() > 0) {
+				selectedBestReplayIdx = 0;
+				Gdx.app.log("SinglePlayer", "Done selecting best replay!");
+			} else {
+				selectedBestReplayIdx = -1;
+				Gdx.app.log("SinglePlayer", "Couldn't find any replay for this track.");
+			}
 		}
 
 	}
