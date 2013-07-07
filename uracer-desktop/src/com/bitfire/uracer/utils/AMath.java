@@ -37,6 +37,17 @@ public final class AMath {
 		return curr * alpha + prev * (1f - alpha);
 	}
 
+	public static float lerpDegrees (float prev, float curr, float alpha) {
+		float diff = curr - prev;
+		if (diff > 180) {
+			diff = 360 - diff;
+		} else if (diff < -180) {
+			diff = 360 + diff;
+		}
+
+		return prev + alpha * diff;
+	}
+
 	public static float lowpass (float prev, float curr, float alpha) {
 		return lerp(prev, curr, alpha);
 	}

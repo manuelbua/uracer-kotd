@@ -39,7 +39,6 @@ public final class EntityRenderState {
 	public static EntityRenderState interpolate (EntityRenderState previous, EntityRenderState current, float alpha) {
 		result.position.set(previous.position);
 		result.position.set(result.position.lerp(current.position, alpha));
-		// result.orientation = current.orientation * alpha + previous.orientation * (1 - alpha);
 
 		float curr = current.orientation;
 		float prev = previous.orientation;

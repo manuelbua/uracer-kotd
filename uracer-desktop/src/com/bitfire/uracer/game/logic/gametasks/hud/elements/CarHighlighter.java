@@ -126,7 +126,8 @@ public final class CarHighlighter {
 				tmp.y = AMath.lerp(tmp2.y, tmp.y, bfRenderState.value);
 
 				// modulate orientation
-				orient = AMath.lerp(prevState.orientation, orient, bfRenderState.value);
+				// orient = AMath.lerp(prevState.orientation, orient, bfRenderState.value);
+				orient = AMath.lerpDegrees(prevState.orientation, renderState.orientation, bfRenderState.value);
 			}
 
 			float timeFactor = URacer.Game.getTimeModFactor() * 0.3f;

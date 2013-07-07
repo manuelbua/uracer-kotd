@@ -123,7 +123,7 @@ public class SinglePlayer extends BaseLogic {
 					found = true;// next != null && next.hasReplay() && !next.getTrackState().ghostArrived;
 				} while (maxtries-- >= 0 && !found);
 
-				Gdx.app.log("SinglePlayer", "Next target index is #" + selectedBestReplayIdx);
+				// Gdx.app.log("SinglePlayer", "Next target index is #" + selectedBestReplayIdx);
 
 				if (!isWarmUp() && found) {
 					if (prevTarget != next && next.isPlaying()) {
@@ -411,12 +411,14 @@ public class SinglePlayer extends BaseLogic {
 			ghost.setReplay(r);
 			ghostLapMonitor[g].reset();
 
-			// if no nextTarget then take the best (first)
-			if (getNextTarget() == null && g == 0) {
-				selectedBestReplayIdx = 0;
-			}
-
 			g++;
 		}
+
+		// if no nextTarget then take the best (first)
+		if (getNextTarget() == null) {
+			selectedBestReplayIdx = 0;
+			Gdx.app.log("SinglePlayer", "Automatically selecting best replay");
+		}
+
 	}
 }
