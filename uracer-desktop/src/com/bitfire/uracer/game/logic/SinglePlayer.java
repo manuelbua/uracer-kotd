@@ -117,17 +117,19 @@ public class SinglePlayer extends BaseLogic {
 					}
 
 					if (selectedBestReplayIdx < 0) selectedBestReplayIdx = maxreplays - 1;
-					if (selectedBestReplayIdx == maxreplays) selectedBestReplayIdx = 0;
+					if (selectedBestReplayIdx >= maxreplays) selectedBestReplayIdx = 0;
 
 					next = getNextTarget();
 					found = true;// next != null && next.hasReplay() && !next.getTrackState().ghostArrived;
 				} while (maxtries-- >= 0 && !found);
 
+				Gdx.app.log("SinglePlayer", "Next target index is #" + selectedBestReplayIdx);
+
 				if (!isWarmUp() && found) {
 					if (prevTarget != next && next.isPlaying()) {
 						playerTasks.hudPlayer.highlightNextTarget(next);
 						gameWorldRenderer.setTopMostGhostCar(next);
-						Gdx.app.log("SinglePlayer", "Next target index is #" + selectedBestReplayIdx);
+
 					}
 				}
 			}
@@ -137,7 +139,8 @@ public class SinglePlayer extends BaseLogic {
 
 	@Override
 	public GhostCar getNextTarget () {
-		if (lapManager.getReplays().size > 0) {
+		int maxreplays = lapManager.getReplays().size;
+		if (maxreplays > 0 && selectedBestReplayIdx < maxreplays) {
 			return findGhostFor(lapManager.getReplays().get(selectedBestReplayIdx));
 		}
 
