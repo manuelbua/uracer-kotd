@@ -135,6 +135,7 @@ public final class GameWorldRenderer {
 	private TrackTrees trackTrees = null;
 	private TrackWalls trackWalls = null;
 	private ConeLight playerLightsA = null, playerLightsB = null;
+	private GhostCar topmostGhost = null;
 
 	public GameWorldRenderer (GameWorld world, boolean useNormalDepthMap) {
 		this.world = world;
@@ -581,7 +582,7 @@ public final class GameWorldRenderer {
 			TreeStillModel m = trees.models.get(i);
 
 			if (!depthOnly) {
-				shader.setUniformMatrix("u_projTrans", m.transformed /* combined = cam (proj * view) * model) */);
+				shader.setUniformMatrix("u_projTrans", m.transformed);
 			} else {
 				mtx.set(camPersp.view).mul(m.mtxmodel);
 				nmat.set(mtx).inv().transpose();
@@ -637,14 +638,6 @@ public final class GameWorldRenderer {
 		}
 
 		shader.end();
-
-		// if (!depthOnly && Config.Debug.Render3DBoundingBoxes) {
-		// // debug
-		// for (int i = 0; i < trees.models.size(); i++) {
-		// TreeStillModel m = trees.models.get(i);
-		// renderBoundingBox(m.boundingBox);
-		// }
-		// }
 	}
 
 	private boolean renderCar (CarStillModel car, boolean depthOnly, boolean nightMode) {
@@ -724,6 +717,10 @@ public final class GameWorldRenderer {
 		return true;
 	}
 
+	public void setTopMostGhostCar (GhostCar ghost) {
+		topmostGhost = ghost;
+	}
+
 	public void renderCars (boolean depthOnly) {
 		CarStillModel model;
 
@@ -737,6 +734,8 @@ public final class GameWorldRenderer {
 		// ghosts
 		GhostCar[] ghosts = world.getGhostCars();
 		if (ghosts != null && ghosts.length > 0) {
+			GhostCar topmost = null;
+
 			for (int i = 0; i < ghosts.length; i++) {
 				GhostCar ghost = ghosts[i];
 				if (depthOnly && !ghost.isSsaoReady()) continue;
@@ -745,6 +744,24 @@ public final class GameWorldRenderer {
 				if (model.getAlpha() <= 0) continue;
 
 				model.transform(camPersp, camOrtho);
+				if (depthOnly) {
+					float ca = model.getAlpha();
+					float a = (ca - 0.5f) * 2;
+					float s = AMath.clampf(AMath.sigmoid(a * 3f + 4f - (1 - ca)), 0, 1);
+					setSsaoScale(DefaultSsaoScale * s);
+				}
+
+				// found a topmost ghost, render last
+				if (ghost == topmostGhost) {
+					topmost = ghost;
+				} else {
+					renderCar(model, depthOnly, false);
+				}
+			}
+
+			if (topmost != null) {
+				// already transformed
+				model = topmost.getStillModel();
 				if (depthOnly) {
 					float ca = model.getAlpha();
 					float a = (ca - 0.5f) * 2;
@@ -876,15 +893,6 @@ public final class GameWorldRenderer {
 		}
 
 		shader.end();
-
-		// if (!depthOnly && Config.Debug.Render3DBoundingBoxes) {
-		// // debug (tested on a single mesh only!)
-		// for (int i = 0; i < models.size(); i++) {
-		// m = models.get(i);
-		// renderBoundingBox(m.boundingBox);
-		// }
-		// }
-
 		return renderedCount;
 	}
 
