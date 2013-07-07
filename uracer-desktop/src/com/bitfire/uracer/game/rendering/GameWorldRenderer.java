@@ -734,7 +734,21 @@ public final class GameWorldRenderer {
 		// ghosts
 		GhostCar[] ghosts = world.getGhostCars();
 		if (ghosts != null && ghosts.length > 0) {
-			GhostCar topmost = null;
+			if (topmostGhost != null) {
+				// already transformed
+				model = topmostGhost.getStillModel();
+				if (model.getAlpha() > 0) {
+					model.transform(camPersp, camOrtho);
+					if (depthOnly) {
+						float ca = model.getAlpha();
+						float a = (ca - 0.5f) * 2;
+						float s = AMath.clampf(AMath.sigmoid(a * 3f + 4f - (1 - ca)), 0, 1);
+						setSsaoScale(DefaultSsaoScale * s);
+					}
+
+					renderCar(model, depthOnly, false);
+				}
+			}
 
 			for (int i = 0; i < ghosts.length; i++) {
 				GhostCar ghost = ghosts[i];
@@ -752,24 +766,9 @@ public final class GameWorldRenderer {
 				}
 
 				// found a topmost ghost, render last
-				if (ghost == topmostGhost) {
-					topmost = ghost;
-				} else {
+				if (ghost != topmostGhost) {
 					renderCar(model, depthOnly, false);
 				}
-			}
-
-			if (topmost != null) {
-				// already transformed
-				model = topmost.getStillModel();
-				if (depthOnly) {
-					float ca = model.getAlpha();
-					float a = (ca - 0.5f) * 2;
-					float s = AMath.clampf(AMath.sigmoid(a * 3f + 4f - (1 - ca)), 0, 1);
-					setSsaoScale(DefaultSsaoScale * s);
-				}
-
-				renderCar(model, depthOnly, false);
 			}
 		}
 

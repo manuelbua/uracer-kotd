@@ -31,10 +31,9 @@ public final class CarHighlighter {
 	private Vector2 tmp = new Vector2(), tmp2 = new Vector2();
 	private float offX, offY, alpha, scale;
 
-	private boolean isBusy, isActive, hasCar, isTracking;
+	private boolean isBusy, isActive, hasCar, isTracking, interpolateState;
 	private BoxedFloat bfScale, bfRot, bfAlpha, bfGreen, bfRed, bfBlue, bfRenderState;
 	private float trackAlpha;
-	private GhostCar prevCar;
 
 	// need tileMapZoomFactor since highlighter size depends from car *rendered* size
 	public CarHighlighter () {
@@ -53,19 +52,27 @@ public final class CarHighlighter {
 		bfRed = new BoxedFloat(1);
 		bfBlue = new BoxedFloat(1);
 		bfRenderState = new BoxedFloat(0);
-		prevCar = null;
 		prevState = null;
 		renderState = null;
+		interpolateState = false;
 	}
+
+	private TweenCallback renderStateCallback = new TweenCallback() {
+		@Override
+		public void onEvent (int type, BaseTween<?> source) {
+			switch (type) {
+			case COMPLETE:
+				interpolateState = false;
+			}
+		}
+	};
 
 	public void setCar (Car car) {
 		prevState = null;
-		prevCar = null;
 
 		if (followedCar != null && followedCar instanceof GhostCar) {
-			prevCar = (GhostCar)followedCar;
 			prevState = renderState;
-			prevCar.tweenAlphaTo(Config.Graphics.DefaultGhostCarOpacity);
+			((GhostCar)followedCar).tweenAlphaTo(Config.Graphics.DefaultGhostCarOpacity);
 		}
 
 		followedCar = car;
@@ -83,10 +90,12 @@ public final class CarHighlighter {
 			// compute a position factor to later (at render time) interpolate the final position between the two render states
 			GameTweener.stop(bfRenderState);
 
+			interpolateState = true;
 			bfRenderState.value = 0;
 			Timeline timeline = Timeline.createSequence();
 			//@off
 			timeline.push(Tween.to(bfRenderState, BoxedFloatAccessor.VALUE, Config.Graphics.DefaultGhostOpacityChangeMs).target(1).ease(Config.Graphics.DefaultGhostOpacityChangeEq));
+			timeline.setCallback(renderStateCallback);
 			//@on
 
 			GameTweener.start(timeline);
@@ -131,7 +140,7 @@ public final class CarHighlighter {
 		if (isActive && hasCar) {
 			float orient = renderState.orientation;
 			tmp.set(GameRenderer.ScreenUtils.worldPxToScreen(renderState.position));
-			if (prevState != null) {
+			if (prevState != null && interpolateState) {
 				// modulate values, expects bfRenderState.valuein range [0,1]
 
 				// modulate position
