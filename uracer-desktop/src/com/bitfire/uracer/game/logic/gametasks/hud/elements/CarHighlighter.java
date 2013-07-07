@@ -85,8 +85,10 @@ public final class CarHighlighter {
 
 			bfRenderState.value = 0;
 			Timeline timeline = Timeline.createSequence();
-			timeline.push(Tween.to(bfRenderState, BoxedFloatAccessor.VALUE, Config.Graphics.DefaultGhostOpacityChangeMs).target(1)
-				.ease(Config.Graphics.DefaultGhostOpacityChangeEq));
+			//@off
+			timeline.push(Tween.to(bfRenderState, BoxedFloatAccessor.VALUE, Config.Graphics.DefaultGhostOpacityChangeMs).target(1).ease(Config.Graphics.DefaultGhostOpacityChangeEq));
+			//@on
+
 			GameTweener.start(timeline);
 		}
 
