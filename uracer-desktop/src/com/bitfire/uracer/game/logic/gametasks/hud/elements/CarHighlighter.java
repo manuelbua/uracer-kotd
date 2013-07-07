@@ -8,7 +8,6 @@ import aurelienribon.tweenengine.TweenCallback;
 import aurelienribon.tweenengine.equations.Expo;
 import aurelienribon.tweenengine.equations.Linear;
 
-import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.g2d.Sprite;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.math.Vector2;
@@ -54,11 +53,16 @@ public final class CarHighlighter {
 		bfRed = new BoxedFloat(1);
 		bfBlue = new BoxedFloat(1);
 		bfRenderState = new BoxedFloat(0);
+		prevCar = null;
 		prevState = null;
 		renderState = null;
 	}
 
 	public void setCar (Car car) {
+		if (prevCar != null) {
+			prevCar.tweenAlphaTo(Config.Graphics.DefaultGhostCarOpacity, 150);
+		}
+
 		prevState = null;
 		prevCar = null;
 
@@ -84,13 +88,7 @@ public final class CarHighlighter {
 
 			bfRenderState.value = 0;
 			Timeline timeline = Timeline.createSequence();
-			//@off
-			timeline
-				.push(Tween.to(bfRenderState, BoxedFloatAccessor.VALUE, 500).target(1).ease(Expo.INOUT))
-			;
-			//@on
-
-			Gdx.app.log("CarHl", "Starting...");
+			timeline.push(Tween.to(bfRenderState, BoxedFloatAccessor.VALUE, 150).target(1).ease(Expo.INOUT));
 			GameTweener.start(timeline);
 		}
 	}
@@ -119,6 +117,9 @@ public final class CarHighlighter {
 			tmp.set(GameRenderer.ScreenUtils.worldPxToScreen(renderState.position));
 			if (prevState != null) {
 
+				// modulate values
+				// expecting bfRenderState.valuein range [0,1]
+
 				// modulate position
 				tmp2.set(GameRenderer.ScreenUtils.worldPxToScreen(prevState.position));
 				tmp.x = AMath.lerp(tmp2.x, tmp.x, bfRenderState.value);
@@ -130,10 +131,8 @@ public final class CarHighlighter {
 				// update both alphas
 				prevCar.setAlpha(Config.Graphics.DefaultGhostCarOpacity + Config.Graphics.GhostToTargetOpacityStep
 					* (1 - bfRenderState.value));
-				if (followedCar instanceof GhostCar) {
-					GhostCar g = (GhostCar)followedCar;
-					g.setAlpha(Config.Graphics.DefaultGhostCarOpacity + Config.Graphics.GhostToTargetOpacityStep * bfRenderState.value);
-				}
+				((GhostCar)followedCar).setAlpha(Config.Graphics.DefaultGhostCarOpacity + Config.Graphics.GhostToTargetOpacityStep
+					* bfRenderState.value);
 			}
 
 			float timeFactor = URacer.Game.getTimeModFactor() * 0.3f;

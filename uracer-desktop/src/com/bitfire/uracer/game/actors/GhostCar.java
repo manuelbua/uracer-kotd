@@ -1,11 +1,18 @@
 
 package com.bitfire.uracer.game.actors;
 
+import aurelienribon.tweenengine.Timeline;
+import aurelienribon.tweenengine.Tween;
+import aurelienribon.tweenengine.equations.Expo;
+
 import com.bitfire.uracer.configuration.Config;
 import com.bitfire.uracer.game.GameEvents;
 import com.bitfire.uracer.game.events.GhostCarEvent;
 import com.bitfire.uracer.game.logic.replaying.Replay;
+import com.bitfire.uracer.game.tween.GameTweener;
 import com.bitfire.uracer.game.world.GameWorld;
+import com.bitfire.uracer.utils.BoxedFloat;
+import com.bitfire.uracer.utils.BoxedFloatAccessor;
 
 /** Implements an automated Car, playing previously recorded events. It will ignore car-to-car collisions, but will respect
  * in-track collisions and responses.
@@ -22,7 +29,7 @@ public final class GhostCar extends Car {
 	private final int id;
 	private boolean fadeOutEventTriggered, startedEventTriggered;
 	private boolean started;
-	private float alpha;
+	private BoxedFloat bfAlpha;
 
 	public GhostCar (int id, GameWorld gameWorld, CarPreset.Type presetType) {
 		super(gameWorld, CarType.ReplayCar, InputMode.InputFromReplay, presetType, false);
@@ -31,7 +38,7 @@ public final class GhostCar extends Car {
 		replay = new Replay();
 		resetDistanceAndSpeed(true, true);
 		removeReplay();
-		alpha = Config.Graphics.DefaultGhostCarOpacity;
+		bfAlpha = new BoxedFloat(Config.Graphics.DefaultGhostCarOpacity);
 		stillModel.setAlpha(0);
 		getTrackState().ghostArrived = false;
 	}
@@ -70,10 +77,21 @@ public final class GhostCar extends Car {
 	}
 
 	public void setAlpha (float alpha) {
-		this.alpha = alpha;
+		bfAlpha.value = alpha;
 	}
 
-	// input data for this car cames from a Replay object
+	public void tweenAlphaTo (float value, float ms) {
+		GameTweener.stop(bfAlpha);
+		Timeline timeline = Timeline.createSequence();
+		timeline.push(Tween.to(bfAlpha, BoxedFloatAccessor.VALUE, ms).target(value).ease(Expo.INOUT));
+		GameTweener.start(timeline);
+	}
+
+	public boolean isSsaoReady () {
+		return bfAlpha.value > 0.5f;
+	}
+
+	// input data for this car comes from a Replay object
 	public void setReplay (Replay replay) {
 		stop();
 
@@ -145,14 +163,14 @@ public final class GhostCar extends Car {
 				forces.set(replayForces[indexPlay]);
 			}
 
-			stillModel.setAlpha(alpha);
+			stillModel.setAlpha(bfAlpha.value);
 
 			// also change opacity, fade in/out based on events played / total events
 			if (indexPlay <= FadeEvents) {
-				stillModel.setAlpha(((float)indexPlay / (float)FadeEvents) * alpha);
+				stillModel.setAlpha(((float)indexPlay / (float)FadeEvents) * bfAlpha.value);
 			} else if (replay.getEventsCount() - indexPlay <= FadeEvents) {
 				float val = (float)(replay.getEventsCount() - indexPlay) / (float)FadeEvents;
-				stillModel.setAlpha(val * alpha);
+				stillModel.setAlpha(val * bfAlpha.value);
 
 				if (!fadeOutEventTriggered) {
 					fadeOutEventTriggered = true;

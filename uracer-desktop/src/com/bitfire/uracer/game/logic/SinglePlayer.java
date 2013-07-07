@@ -124,7 +124,7 @@ public class SinglePlayer extends BaseLogic {
 				} while (maxtries-- >= 0 && !found);
 
 				if (!isWarmUp() && found) {
-					if (prevTarget != next) {
+					if (prevTarget != next && next.isPlaying()) {
 						playerTasks.hudPlayer.highlightNextTarget(next);
 						Gdx.app.log("SinglePlayer", "Next target index is #" + selectedBestReplayIdx);
 					}
@@ -354,6 +354,11 @@ public class SinglePlayer extends BaseLogic {
 		// ghost.stop();
 
 		// CarUtils.dumpSpeedInfo("SinglePlayer", "GhostCar #" + ghost.getId(), ghost, ghost.getReplay().getTrackTime());
+
+		// do the same as ghostfadingout
+		if (ghost != null && ghost == getNextTarget()) {
+			playerTasks.hudPlayer.unHighlightNextTarget();
+		}
 	}
 
 	@Override
@@ -384,13 +389,15 @@ public class SinglePlayer extends BaseLogic {
 
 			ghost.setReplay(r);
 			ghost.start();
-			ghost.setAlpha(Config.Graphics.DefaultGhostCarOpacity);
 			ghostLapMonitor[g].reset();
 
 			// if no nextTarget then take the best (first)
 			if (getNextTarget() == null && g == 0) {
 				selectedBestReplayIdx = 0;
 			}
+
+			ghost.setAlpha(getNextTarget() == ghost ? Config.Graphics.DefaultTargetCarOpacity
+				: Config.Graphics.DefaultGhostCarOpacity);
 
 			g++;
 		}

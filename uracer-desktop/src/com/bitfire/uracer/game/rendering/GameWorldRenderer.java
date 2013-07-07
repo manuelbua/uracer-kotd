@@ -739,6 +739,7 @@ public final class GameWorldRenderer {
 		if (ghosts != null && ghosts.length > 0) {
 			for (int i = 0; i < ghosts.length; i++) {
 				GhostCar ghost = ghosts[i];
+				if (depthOnly && !ghost.isSsaoReady()) continue;
 
 				model = ghost.getStillModel();
 				if (model.getAlpha() <= 0) continue;
