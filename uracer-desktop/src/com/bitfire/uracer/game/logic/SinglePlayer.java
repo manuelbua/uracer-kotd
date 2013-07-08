@@ -294,8 +294,8 @@ public class SinglePlayer extends BaseLogic {
 
 				// show message
 				int pos = ri.position;
-				messager.show("You finished\n" + pos + OrdinalUtils.getOrdinalFor(pos) + "!", 1.5f, Message.Type.Information,
-					Position.Middle, Size.Big);
+				messager.show(pos + OrdinalUtils.getOrdinalFor(pos) + " place!", 1.5f, Message.Type.Information, Position.Top,
+					Size.Big);
 			} else {
 				String msg = "";
 				String id = "(#" + r.getShortReplayId() + ")";
