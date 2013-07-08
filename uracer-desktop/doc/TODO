@@ -28,7 +28,7 @@
 		x LATENCY?
 
 	o sound track
- 		o (i don't give a shit about latency in this case)
+ 		o (i don't give a shit about latency in this case) 
 
 
 
@@ -88,13 +88,13 @@
 
 [ ] GAME DATA
 
-	- shared between Game and GameLogic
-	- can only be modified by GameLogic
-	- can be read by whoever need
-		? contains DriftInfo
-		? contains LapInfo
-		? contains Player
-		? no more getHud/getLevel in Game
+	x shared between Game and GameLogic
+	x can only be modified by GameLogic
+	x can be read by whoever need
+		x contains DriftInfo
+		x contains LapInfo
+		x contains Player
+		X no more getHud/getLevel in Game
 
 [ ] car
 
@@ -102,19 +102,19 @@
 	- get graphics' real size in pixels to permit artist to work on it, get pixel size at target resolution (1280x800)
 
 
-[ ] investigate night-more + bloom + zoom performance drop?
+[x] investigate night-more + bloom + zoom performance drop?
 [ ] document map definition, objects, tile types, lights, tileset settings, tile settings
 [ ] think, menu as a game level?
-[ ] think, cars for drift (max_grip = 3/4/5f), other cars (max_grip = 6/7/8f)
+[x] think, cars for drift (max_grip = 3/4/5f), other cars (max_grip = 6/7/8f)
 [ ] think, in car::compute_throttle, could be modulated by user's game settings?
-[ ] task-based component system, when update() will use GameData shared data internally, thus no params, thus a task-based component system can be created, components'
+[x] task-based component system, when update() will use GameData shared data internally, thus no params, thus a task-based component system can be created, components'
 data in GameData? GameData::<Component>?
 [ ] look at, in night-mode, shadows don't take into account time aliasing, producing stuttering in a subframe-interpolated context.
-[ ] event listeners as3-style
-[ ] think, player drifts will raise a SuPeRpOwA-bAr, in seconds: these seconds can be consumed by using the time dilation super-power for the accumulated drift seconds!
-[ ] remember, i'm writing an engine AND a game thus split meanings wisely
+[x] event listeners as3-style
+[x] think, player drifts will raise a SuPeRpOwA-bAr, in seconds: these seconds can be consumed by using the time dilation super-power for the accumulated drift seconds!
+[X] remember, i'm writing an engine AND a game thus split meanings wisely
 
-[ ] general redesign
+[x] general redesign
 	- Hud and DebugHud are completely different things, separate now!!!!
 	- car skid marks and car sound effects, it should be simple to allow/disallow enabling them for player or replays, just a matter of attaching things..
 
@@ -146,11 +146,18 @@ GAME
 
 		- automatic opponent selection? always tournament, always start new account from the bottom..
 
-	- think about gameplay subdivision: single player, multi-player (local/online)
+	--------------------
+	(lot of time later)
+	--------------------
+	
+	x ranking via trueskill-like algorithm, replays are battle's atom
+	x one car, one physics, simple
+	x think about gameplay subdivision: single player, multi-player (local/online)
+	
 
 
 
-ReplayManager
+[x] ReplayManager
 
 	RESPONSIBILITIES
 		- maintains the best <n> records
@@ -169,6 +176,13 @@ REDDIT (2012/12/07, 2nd WIP, the "switch to the desktop" announcement sort-of)
 
 
 
+
+[+] new (only appear once per item)
+[?] ideas, think-abouts
+[-] todo
+[x] done (later removed)
+[o] <50% done (usually seen on stuff being worked on for much longer than usual)
+[O] >50% done (idem)
 
 
 
@@ -277,11 +291,10 @@ REDDIT (2012/12/07, 2nd WIP, the "switch to the desktop" announcement sort-of)
 	O review userId, trackId passing
 	O singleplayer/multiplayer logic recap
 	x [dbg] show player position and replay state
-	+ show *proper* hud for both live rankings
+	- show *proper* hud for both live rankings
 	+ engine sound
 	+ better drift sound
 	+ volumes config
-	x load and save Replay correctly
 	- music, test multitrack volume changes for smooth transitions
 	- make boot options configurable, set some sensible defaults (1280x800, vsync, no fullscreen..)
 	- add multisampling option to bootconfig
@@ -291,12 +304,10 @@ REDDIT (2012/12/07, 2nd WIP, the "switch to the desktop" announcement sort-of)
 	(opt) LogicState for a centralized place to share between components for stuff such as updated driftStrength, speed.. ??
 	O review userId, trackId passing
 	O singleplayer/multiplayer logic recap
-	x [dbg] show player position and replay state
-	+ show *proper* hud for both live rankings
-	+ engine sound
-	+ better drift sound
-	+ volumes config
-	x load and save Replay correctly
+	- show *proper* hud for both live rankings
+	- engine sound
+	- better drift sound
+	- volumes config
 	- music, test multitrack volume changes for smooth transitions
 	- make boot options configurable, set some sensible defaults (1280x800, vsync, no fullscreen..)
 	- add multisampling option to bootconfig
@@ -307,36 +318,31 @@ REDDIT (2012/12/07, 2nd WIP, the "switch to the desktop" announcement sort-of)
 	(opt) LogicState for a centralized place to share between components for stuff such as updated driftStrength, speed.. ??
 	O review userId, trackId passing
 	O singleplayer/multiplayer logic recap
-	x [dbg] show player position and replay state
-	+ show *proper* hud for both live rankings
-	+ engine sound
-	+ better drift sound
-	+ volumes config
-	x load and save Replay correctly
+	- show *proper* hud for both live rankings
+	- engine sound
+	- better drift sound
+	- volumes config
 	- music, test multitrack volume changes for smooth transitions
 	- make boot options configurable, set some sensible defaults (1280x800, vsync, no fullscreen..)
 	- add multisampling option to bootconfig
 	- non-in-game music, find best tracks
-	- global soft shadows
+	[no] global soft shadows
 	+ highlight next/prev best opponent via TAB key
-		- fix orientation not interpolated
-		- fix, add setshadowsenabled to ghostcars to avoid ssao on them
+		+ fix orientation not interpolated
+		+ fix, add setshadowsenabled to ghostcars to avoid ssao on them
 
 20130707
 	(opt) LogicState for a centralized place to share between components for stuff such as updated driftStrength, speed.. ??
 	O review userId, trackId passing
 	O singleplayer/multiplayer logic recap
-	x [dbg] show player position and replay state
-	+ show *proper* hud for both live rankings
-	+ engine sound
-	+ better drift sound
-	+ volumes config
-	x load and save Replay correctly
+	- show *proper* hud for both live rankings
+	- engine sound
+	- better drift sound
+	- volumes config
 	- music, test multitrack volume changes for smooth transitions
 	- make boot options configurable, set some sensible defaults (1280x800, vsync, no fullscreen..)
 	- add multisampling option to bootconfig
 	- non-in-game music, find best tracks
-	- global soft shadows
 	- highlight next/prev best opponent via TAB key
 		- fix orientation not interpolated
 		- fix, add setshadowsenabled to ghostcars to avoid ssao on them
@@ -346,3 +352,28 @@ REDDIT (2012/12/07, 2nd WIP, the "switch to the desktop" announcement sort-of)
 	+ Blog?
 	+ Forum?
 	+ ability to show ranking position gradient on the track
+	x highlight next/prev best opponent via TAB key
+		x fix orientation not interpolated
+		x fix, add setshadowsenabled to ghostcars to avoid ssao on them
+
+
+20130708
+	(opt) LogicState for a centralized place to share between components for stuff such as updated driftStrength, speed.. ??
+	O review userId, trackId passing
+	O singleplayer/multiplayer logic recap
+	- show *proper* hud for both live rankings
+	- engine sound
+	- better drift sound
+	- volumes config
+	- music, test multitrack volume changes for smooth transitions
+	- make boot options configurable, set some sensible defaults (1280x800, vsync, no fullscreen..)
+	- add multisampling option to bootconfig
+	- non-in-game music, find best tracks
+	- add pause!
+	- ability to show ranking position gradient on the track
+	- in-game config?
+
+	x Twitter (http://twitter.com/ManuelBua)
+	- Facebook (uff)
+	- Blog
+	- Forum
