@@ -32,7 +32,7 @@ public class SoundManager extends GameTask implements DisposableTasks {
 		manager.remove(effect);
 	}
 
-	public void stop () {
+	private void stop () {
 		for (SoundEffect s : manager) {
 			s.stop();
 		}
