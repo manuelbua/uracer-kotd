@@ -183,7 +183,7 @@ public final class Ssao extends PostProcessorEffect {
 		batch.draw(tex, x, y, width, h);
 	}
 
-	public void debug (SpriteBatch batch) {
+	private void debug (SpriteBatch batch) {
 		Gdx.gl.glDisable(GL20.GL_BLEND);
 		Gdx.gl.glDisable(GL20.GL_CULL_FACE);
 		Gdx.gl.glDisable(GL20.GL_DEPTH_TEST);
