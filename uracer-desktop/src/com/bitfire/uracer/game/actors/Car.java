@@ -92,6 +92,10 @@ public abstract strictfp class Car extends Box2DEntity {
 		return stillModel;
 	}
 
+	public GameTrack getGameTrack () {
+		return gameTrack;
+	}
+
 	public float getSteerAngleRads () {
 		return 0;
 	}

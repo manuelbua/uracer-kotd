@@ -35,11 +35,11 @@ public final class PlayerGameTasks {
 		destroyTasks();
 	}
 
-	public void createTasks (LapManager lapManager) {
+	public void createTasks (LapManager lapManager, TrackProgressData progressData) {
 		// sounds
 		manager.sound.add(new PlayerDriftSoundEffect());
 		manager.sound.add(new PlayerImpactSoundEffect());
-		manager.sound.add(new PlayerTensiveMusic());
+		manager.sound.add(new PlayerTensiveMusic(progressData));
 
 		// track effects
 		int maxSkidMarks = URacer.Game.isDesktop() ? 150 : 100;

@@ -10,7 +10,7 @@ public class TrackProgressData {
 	private static final float Smoothing = 0.25f;
 
 	public float playerToTarget;
-	public boolean isCurrentLapValid, isWarmUp;
+	public boolean isCurrentLapValid, isWarmUp, hasTarget, targetArrived;
 	public InterpolatedFloat playerDistance, targetDistance;
 	public InterpolatedFloat playerProgress, playerProgressAdv, targetProgress;
 
@@ -26,6 +26,7 @@ public class TrackProgressData {
 	public void reset (boolean resetState) {
 		isCurrentLapValid = true;
 		isWarmUp = true;
+		targetArrived = false;
 		playerToTarget = 0;
 
 		playerDistance.reset(0, resetState);
@@ -38,7 +39,8 @@ public class TrackProgressData {
 	public void update (boolean isWarmUp, boolean isCurrentLapValid, GameTrack gameTrack, PlayerCar player, GhostCar target) {
 		this.isCurrentLapValid = isCurrentLapValid;
 		this.isWarmUp = isWarmUp;
-		boolean hasTarget = (target != null /* && target.getTrackState().ghostStarted */);
+		hasTarget = (target != null /* && target.getTrackState().ghostStarted */);
+		targetArrived = (hasTarget && target.getTrackState().ghostArrived);
 
 		if (isCurrentLapValid) {
 			playerToTarget = 0;

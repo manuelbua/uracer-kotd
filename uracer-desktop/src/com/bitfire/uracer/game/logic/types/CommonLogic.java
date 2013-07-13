@@ -91,7 +91,7 @@ public abstract class CommonLogic implements GameLogic, GameLogicObserver {
 		// create both game and player tasks
 		gameTasksManager = new GameTasksManager(gameWorld, postProcessing.getPostProcessor());
 		playerTasks = new PlayerGameTasks(userProfile, gameTasksManager);
-		playerTasks.createTasks(lapManager);
+		playerTasks.createTasks(lapManager, progressData);
 
 		// create ghost cars and provides them via interface @Overrides
 		for (int i = 0; i < ghostCars.length; i++) {
