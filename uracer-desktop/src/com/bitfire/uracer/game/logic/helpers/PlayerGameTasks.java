@@ -9,6 +9,7 @@ import com.bitfire.uracer.game.logic.gametasks.hud.elements.HudPlayer;
 import com.bitfire.uracer.game.logic.gametasks.hud.elements.HudPlayerStatic;
 import com.bitfire.uracer.game.logic.gametasks.sounds.effects.PlayerDriftSoundEffect;
 import com.bitfire.uracer.game.logic.gametasks.sounds.effects.PlayerImpactSoundEffect;
+import com.bitfire.uracer.game.logic.gametasks.sounds.effects.PlayerTensiveMusic;
 import com.bitfire.uracer.game.logic.gametasks.trackeffects.effects.PlayerSkidMarks;
 import com.bitfire.uracer.game.logic.gametasks.trackeffects.effects.PlayerSmokeTrails;
 import com.bitfire.uracer.game.logic.replaying.LapManager;
@@ -24,12 +25,6 @@ public final class PlayerGameTasks {
 	public HudPlayer hudPlayer = null;
 	public HudPlayerStatic hudPlayerStatic = null;
 	public HudLapInfo hudLapInfo = null;
-	public PlayerSkidMarks playerSkidMarks = null;
-	public PlayerSmokeTrails playerSmokeTrails = null;
-	public PlayerDriftSoundEffect playerDriftSoundFx = null;
-	public PlayerImpactSoundEffect playerImpactSoundFx = null;
-
-	// public PlayerEngineSoundEffect playerEngineSoundFx = null;
 
 	public PlayerGameTasks (UserProfile userProfile, GameTasksManager gameTaskManager) {
 		this.userProfile = userProfile;
@@ -42,20 +37,15 @@ public final class PlayerGameTasks {
 
 	public void createTasks (LapManager lapManager) {
 		// sounds
-		playerDriftSoundFx = new PlayerDriftSoundEffect();
-		playerImpactSoundFx = new PlayerImpactSoundEffect();
-		manager.sound.add(playerDriftSoundFx);
-		manager.sound.add(playerImpactSoundFx);
-		// playerEngineSoundFx = new PlayerEngineSoundEffect(player);
-		// manager.sound.add(playerEngineSoundFx);
+		manager.sound.add(new PlayerDriftSoundEffect());
+		manager.sound.add(new PlayerImpactSoundEffect());
+		manager.sound.add(new PlayerTensiveMusic());
 
 		// track effects
 		int maxSkidMarks = URacer.Game.isDesktop() ? 150 : 100;
 		float maxLife = URacer.Game.isDesktop() ? 5 : 3;
-		playerSkidMarks = new PlayerSkidMarks(maxSkidMarks, maxLife);
-		playerSmokeTrails = new PlayerSmokeTrails();
-		manager.effects.addBeforeCars(playerSkidMarks);
-		manager.effects.addAfterCars(playerSmokeTrails);
+		manager.effects.addBeforeCars(new PlayerSkidMarks(maxSkidMarks, maxLife));
+		manager.effects.addAfterCars(new PlayerSmokeTrails());
 
 		// hud
 		hudPlayer = new HudPlayer(userProfile);
