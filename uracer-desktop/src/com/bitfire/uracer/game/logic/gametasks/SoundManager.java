@@ -60,14 +60,14 @@ public class SoundManager extends GameTask implements DisposableTasks {
 	}
 
 	@Override
-	public void onRestart () {
+	public void onGameRestart () {
 		for (SoundEffect s : manager) {
 			s.restart();
 		}
 	}
 
 	@Override
-	public void onReset () {
+	public void onGameReset () {
 		for (SoundEffect s : manager) {
 			s.reset();
 		}
@@ -83,7 +83,7 @@ public class SoundManager extends GameTask implements DisposableTasks {
 	}
 
 	@Override
-	public void onQuitGame () {
+	public void onGameQuit () {
 		Gdx.app.log("SoundManager", "Stopping sound manager.");
 		stop();
 	}

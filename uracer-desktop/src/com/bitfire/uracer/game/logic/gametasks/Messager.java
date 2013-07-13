@@ -73,12 +73,12 @@ public class Messager extends GameTask {
 	}
 
 	@Override
-	public void onRestart () {
-		onReset();
+	public void onGameRestart () {
+		onGameReset();
 	}
 
 	@Override
-	public void onReset () {
+	public void onGameReset () {
 		for (Position group : Position.values()) {
 			messages.get(group.ordinal()).clear();
 		}

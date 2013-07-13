@@ -105,10 +105,10 @@ public final class DebugHelper extends GameTask implements DisposableTasks {
 	private GameWorld gameWorld;
 	private World box2dWorld;
 	private GameLogic logic;
-	private Array<RankInfo> ranks = new Array<RankInfo>();
 
 	// ranking
 	private LapManager lapManager;
+	private Array<RankInfo> ranks = new Array<RankInfo>();
 
 	// debug renderers
 	private Box2DDebugRenderer b2drenderer;
@@ -255,7 +255,7 @@ public final class DebugHelper extends GameTask implements DisposableTasks {
 	}
 
 	@Override
-	public void onReset () {
+	public void onGameReset () {
 		for (DebugRenderable r : renderables) {
 			r.reset();
 		}
@@ -414,6 +414,7 @@ public final class DebugHelper extends GameTask implements DisposableTasks {
 		//
 		// update
 		//
+
 		float scale = 1;
 		float xoffset = 150 * scale;
 		int coord = y;

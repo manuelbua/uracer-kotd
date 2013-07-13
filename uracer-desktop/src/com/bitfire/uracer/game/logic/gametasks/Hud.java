@@ -77,7 +77,7 @@ public final class Hud extends GameTask implements DisposableTasks {
 	}
 
 	@Override
-	public void onRestart () {
+	public void onGameRestart () {
 		for (HudElement e : managerBeforePost) {
 			e.onRestart();
 		}
@@ -88,7 +88,7 @@ public final class Hud extends GameTask implements DisposableTasks {
 	}
 
 	@Override
-	public void onReset () {
+	public void onGameReset () {
 		for (HudElement e : managerBeforePost) {
 			e.onReset();
 		}

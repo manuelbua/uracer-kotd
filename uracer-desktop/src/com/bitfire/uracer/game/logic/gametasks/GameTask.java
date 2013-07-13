@@ -25,13 +25,13 @@ public abstract class GameTask extends Task implements Disposable {
 				onPlayer(GameEvents.logicEvent.player);
 				break;
 			case GameRestart:
-				onRestart();
+				onGameRestart();
 				break;
 			case GameReset:
-				onReset();
+				onGameReset();
 				break;
 			case GameQuit:
-				onQuitGame();
+				onGameQuit();
 				break;
 			}
 		}
@@ -65,12 +65,12 @@ public abstract class GameTask extends Task implements Disposable {
 		this.hasPlayer = (player != null);
 	}
 
-	public void onReset () {
+	public void onGameReset () {
 	}
 
-	public void onRestart () {
+	public void onGameRestart () {
 	}
 
-	public void onQuitGame () {
+	public void onGameQuit () {
 	}
 }

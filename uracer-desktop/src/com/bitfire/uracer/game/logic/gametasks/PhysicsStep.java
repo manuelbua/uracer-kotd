@@ -35,12 +35,12 @@ public class PhysicsStep extends GameTask {
 	}
 
 	@Override
-	public void onReset () {
+	public void onGameReset () {
 		world.clearForces();
 	}
 
 	@Override
-	public void onRestart () {
-		onReset();
+	public void onGameRestart () {
+		onGameReset();
 	}
 }

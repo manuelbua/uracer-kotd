@@ -100,12 +100,12 @@ public final class TrackEffects extends GameTask implements DisposableTasks {
 	}
 
 	@Override
-	public void onRestart () {
-		onReset();
+	public void onGameRestart () {
+		onGameReset();
 	}
 
 	@Override
-	public void onReset () {
+	public void onGameReset () {
 		for (TrackEffect e : managerBeforeCars) {
 			e.reset();
 		}
