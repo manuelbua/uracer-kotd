@@ -116,7 +116,7 @@ public final class PlayerImpactSoundEffect extends SoundEffect {
 
 			// Gdx.app.log( this.getClass().getSimpleName(), volumeFactor+"" );
 
-			long id = s.play(MaxVolume * volumeFactor);
+			long id = play(s, MaxVolume * volumeFactor);
 			float pitch = speedFactor * pitchFactor + pitchMin;
 			pitch = AMath.clamp(pitch, pitchMin, pitchMax);
 			pitch = AudioUtils.timeDilationToAudioPitch(pitch, URacer.timeMultiplier);

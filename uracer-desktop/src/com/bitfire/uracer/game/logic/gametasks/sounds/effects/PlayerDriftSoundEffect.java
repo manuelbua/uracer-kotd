@@ -85,14 +85,7 @@ public final class PlayerDriftSoundEffect extends SoundEffect {
 		}
 
 		started = true;
-
-		// UGLY HACK FOR ANDROID
-		if (URacer.Game.isDesktop()) {
-			driftId = drift.loop(0f);
-		} else {
-			driftId = checkedLoop(drift, 0f);
-		}
-
+		driftId = loop(drift, 0f);
 		drift.setPitch(driftId, pitchMin);
 		drift.setVolume(driftId, 0f);
 	}
