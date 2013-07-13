@@ -22,6 +22,7 @@ public final class PlayerEngineSoundEffect extends SoundEffect {
 
 	@Override
 	public void dispose () {
+		stop();
 	}
 
 	@Override
@@ -38,8 +39,7 @@ public final class PlayerEngineSoundEffect extends SoundEffect {
 		}
 	}
 
-	@Override
-	public void start () {
+	private void start () {
 		if (started) {
 			return;
 		}

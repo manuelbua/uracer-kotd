@@ -58,9 +58,6 @@ public abstract class SoundEffect extends PlayerClient implements Disposable {
 		return soundId;
 	}
 
-	public void start () {
-	}
-
 	public void stop () {
 	}
 

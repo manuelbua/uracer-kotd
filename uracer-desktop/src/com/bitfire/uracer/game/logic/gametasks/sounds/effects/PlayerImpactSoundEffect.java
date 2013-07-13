@@ -46,11 +46,7 @@ public final class PlayerImpactSoundEffect extends SoundEffect {
 
 	@Override
 	public void dispose () {
-		soundLow1.stop();
-		soundLow2.stop();
-		soundMid1.stop();
-		soundMid2.stop();
-		soundHigh.stop();
+		stop();
 	}
 
 	private void attach () {
@@ -129,17 +125,21 @@ public final class PlayerImpactSoundEffect extends SoundEffect {
 	}
 
 	@Override
-	public void start () {
-		// unused
-	}
-
-	@Override
 	public void stop () {
-		// unused
+		soundLow1.stop();
+		soundLow2.stop();
+		soundMid1.stop();
+		soundMid2.stop();
+		soundHigh.stop();
 	}
 
 	@Override
 	public void gameReset () {
-		// unused
+		stop();
+	}
+
+	@Override
+	public void gameRestart () {
+		stop();
 	}
 }

@@ -46,7 +46,6 @@ public final class PlayerDriftSoundEffect extends SoundEffect {
 
 	public PlayerDriftSoundEffect () {
 		drift = Sounds.carDrift;
-		// start();
 	}
 
 	@Override
@@ -80,8 +79,7 @@ public final class PlayerDriftSoundEffect extends SoundEffect {
 		doFadeOut = true;
 	}
 
-	@Override
-	public void start () {
+	private void start () {
 		if (started) {
 			return;
 		}
