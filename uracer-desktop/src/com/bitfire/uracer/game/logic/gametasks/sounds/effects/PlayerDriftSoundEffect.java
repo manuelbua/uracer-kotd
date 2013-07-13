@@ -30,6 +30,15 @@ public final class PlayerDriftSoundEffect extends SoundEffect {
 	private boolean doFadeOut = false;
 	private float lastVolume = 0f;
 
+	public PlayerDriftSoundEffect () {
+		drift = Sounds.carDrift;
+	}
+
+	@Override
+	public void dispose () {
+		drift.stop();
+	}
+
 	private PlayerDriftStateEvent.Listener driftListener = new PlayerDriftStateEvent.Listener() {
 		@Override
 		public void handle (Object source, Type type, Order order) {
@@ -44,15 +53,6 @@ public final class PlayerDriftSoundEffect extends SoundEffect {
 		}
 	};
 
-	public PlayerDriftSoundEffect () {
-		drift = Sounds.carDrift;
-	}
-
-	@Override
-	public void dispose () {
-		drift.stop();
-	}
-
 	private void attach () {
 		GameEvents.driftState.addListener(driftListener, PlayerDriftStateEvent.Type.onBeginDrift);
 		GameEvents.driftState.addListener(driftListener, PlayerDriftStateEvent.Type.onEndDrift);
@@ -61,6 +61,19 @@ public final class PlayerDriftSoundEffect extends SoundEffect {
 	private void detach () {
 		GameEvents.driftState.removeListener(driftListener, PlayerDriftStateEvent.Type.onBeginDrift);
 		GameEvents.driftState.removeListener(driftListener, PlayerDriftStateEvent.Type.onEndDrift);
+	}
+
+	@Override
+	public void player (PlayerCar player) {
+		super.player(player);
+
+		if (hasPlayer) {
+			attach();
+			start();
+		} else {
+			detach();
+			stop();
+		}
 	}
 
 	private void onBeginDrift () {
@@ -169,19 +182,6 @@ public final class PlayerDriftSoundEffect extends SoundEffect {
 			lastDriftId = driftId;
 			lastVolume = AMath.clamp(lastVolume, 0, 1f);
 			drift.setVolume(driftId, player.driftState.driftStrength * lastVolume);
-		}
-	}
-
-	@Override
-	public void player (PlayerCar player) {
-		super.player(player);
-
-		if (hasPlayer) {
-			attach();
-			start();
-		} else {
-			detach();
-			stop();
 		}
 	}
 }
