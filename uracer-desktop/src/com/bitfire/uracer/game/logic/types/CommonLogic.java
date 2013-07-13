@@ -282,8 +282,8 @@ public abstract class CommonLogic implements GameLogic, GameLogicObserver {
 		if (quitPending && !quitScheduled) {
 			Gdx.app.log("CommonLogic", "Processing QUIT request");
 			quitScheduled = true;
-			doQuit();
 			GameEvents.logicEvent.trigger(this, GameLogicEvent.Type.GameQuit);
+			doQuit();
 		}
 	}
 

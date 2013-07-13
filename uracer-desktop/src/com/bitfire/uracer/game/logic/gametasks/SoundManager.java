@@ -84,7 +84,7 @@ public class SoundManager extends GameTask implements DisposableTasks {
 
 	@Override
 	public void onQuitGame () {
-		Gdx.app.log("SoundManager", "Stopping sound manager..");
+		Gdx.app.log("SoundManager", "Stopping sound manager.");
 		stop();
 	}
 }
