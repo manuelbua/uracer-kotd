@@ -64,18 +64,18 @@ public abstract class SoundEffect extends PlayerClient implements Disposable {
 	public void stop () {
 	}
 
-	public void restart () {
+	public void gameRestart () {
 	}
 
-	public void reset () {
+	public void gameReset () {
 	}
 
 	public void tick () {
 	}
 
-	public void pause () {
+	public void gamePause () {
 	}
 
-	public void resume () {
+	public void gameResume () {
 	}
 }

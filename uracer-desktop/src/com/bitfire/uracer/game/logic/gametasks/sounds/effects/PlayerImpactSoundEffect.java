@@ -139,7 +139,7 @@ public final class PlayerImpactSoundEffect extends SoundEffect {
 	}
 
 	@Override
-	public void reset () {
+	public void gameReset () {
 		// unused
 	}
 }

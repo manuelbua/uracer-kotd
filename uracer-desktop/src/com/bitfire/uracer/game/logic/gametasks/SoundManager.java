@@ -39,16 +39,16 @@ public class SoundManager extends GameTask implements DisposableTasks {
 	}
 
 	@Override
-	public void onPause () {
+	public void onGamePause () {
 		for (SoundEffect s : manager) {
-			s.pause();
+			s.gamePause();
 		}
 	}
 
 	@Override
-	public void onResume () {
+	public void onGameResume () {
 		for (SoundEffect s : manager) {
-			s.resume();
+			s.gameResume();
 		}
 	}
 
@@ -62,21 +62,20 @@ public class SoundManager extends GameTask implements DisposableTasks {
 	@Override
 	public void onGameRestart () {
 		for (SoundEffect s : manager) {
-			s.restart();
+			s.gameRestart();
 		}
 	}
 
 	@Override
 	public void onGameReset () {
 		for (SoundEffect s : manager) {
-			s.reset();
+			s.gameReset();
 		}
 	}
 
 	@Override
 	public void onPlayer (PlayerCar player) {
 		super.onPlayer(player);
-
 		for (SoundEffect s : manager) {
 			s.player(player);
 		}

@@ -65,7 +65,7 @@ public final class PlayerEngineSoundEffect extends SoundEffect {
 	}
 
 	@Override
-	public void reset () {
+	public void gameReset () {
 		stop();
 		carEnginePitchStart = carEnginePitchMin;
 		carEnginePitchLast = carEnginePitchMin;

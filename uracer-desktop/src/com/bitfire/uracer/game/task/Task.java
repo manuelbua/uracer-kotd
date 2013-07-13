@@ -34,10 +34,10 @@ public abstract class Task implements TaskManagerEvent.Listener {
 	protected void onTickCompleted () {
 	}
 
-	protected void onPause () {
+	protected void onGamePause () {
 	}
 
-	protected void onResume () {
+	protected void onGameResume () {
 	}
 
 	@Override
@@ -50,10 +50,10 @@ public abstract class Task implements TaskManagerEvent.Listener {
 			onTickCompleted();
 			break;
 		case onPause:
-			onPause();
+			onGamePause();
 			break;
 		case onResume:
-			onResume();
+			onGameResume();
 			break;
 		}
 	}

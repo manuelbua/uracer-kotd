@@ -115,29 +115,29 @@ public final class PlayerDriftSoundEffect extends SoundEffect {
 	}
 
 	@Override
-	public void pause () {
+	public void gamePause () {
 		if (driftId > -1) {
 			drift.setVolume(driftId, 0f);
 		}
 	}
 
 	@Override
-	public void resume () {
+	public void gameResume () {
 		if (hasPlayer && driftId > -1) {
 			drift.setVolume(driftId, player.driftState.driftStrength * lastVolume);
 		}
 	}
 
 	@Override
-	public void reset () {
+	public void gameReset () {
 		stop();
 		lastVolume = 0;
 		started = false;
 	}
 
 	@Override
-	public void restart () {
-		reset();
+	public void gameRestart () {
+		gameReset();
 		start();
 	}
 
