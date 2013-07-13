@@ -36,7 +36,8 @@ public final class PlayerDriftSoundEffect extends SoundEffect {
 
 	@Override
 	public void dispose () {
-		drift.stop();
+		detach();
+		stop();
 	}
 
 	private PlayerDriftStateEvent.Listener driftListener = new PlayerDriftStateEvent.Listener() {
@@ -136,7 +137,6 @@ public final class PlayerDriftSoundEffect extends SoundEffect {
 	public void gameReset () {
 		stop();
 		lastVolume = 0;
-		started = false;
 	}
 
 	@Override

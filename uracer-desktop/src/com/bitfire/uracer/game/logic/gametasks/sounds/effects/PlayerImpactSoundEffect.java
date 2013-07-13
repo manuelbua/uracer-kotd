@@ -46,6 +46,7 @@ public final class PlayerImpactSoundEffect extends SoundEffect {
 
 	@Override
 	public void dispose () {
+		detach();
 		stop();
 	}
 

@@ -14,56 +14,31 @@ import com.bitfire.uracer.game.actors.GhostCar;
 import com.bitfire.uracer.game.logic.gametasks.hud.HudLabel;
 import com.bitfire.uracer.game.logic.gametasks.hud.Positionable;
 import com.bitfire.uracer.game.logic.helpers.GameTrack;
+import com.bitfire.uracer.game.logic.helpers.TrackProgressData;
 import com.bitfire.uracer.game.player.PlayerCar;
 import com.bitfire.uracer.resources.Art;
 import com.bitfire.uracer.resources.BitmapFontFactory.FontFace;
 import com.bitfire.uracer.utils.AMath;
 import com.bitfire.uracer.utils.ColorUtils;
-import com.bitfire.uracer.utils.InterpolatedFloat;
 import com.bitfire.uracer.utils.NumberString;
 import com.bitfire.utils.ShaderLoader;
 
 public class TrackProgress extends Positionable {
-	static final float Smoothing = 0.25f;
 	private HudLabel lblAdvantage;
 	private boolean lblAdvantageShown;
 
 	private final Texture texMask;
 	private final ShaderProgram shProgress;
 	private final Sprite sprAdvantage, sprProgress;
-	private boolean flipped, hasTarget, isCurrentLapValid, isWarmUp;
-	private float playerToTarget;
+	private boolean flipped;
 
 	private String customMessage = "";
-	private TrackProgressData data = new TrackProgressData();
-
-	/** Data needed by this component */
-	private class TrackProgressData {
-
-		InterpolatedFloat playerDistance, targetDistance;
-		InterpolatedFloat playerProgress, playerProgressAdv, targetProgress;
-
-		public TrackProgressData () {
-			playerDistance = new InterpolatedFloat();
-			targetDistance = new InterpolatedFloat();
-			playerProgress = new InterpolatedFloat();
-			playerProgressAdv = new InterpolatedFloat();
-			targetProgress = new InterpolatedFloat();
-		}
-
-		public void reset (boolean resetState) {
-			playerDistance.reset(0, resetState);
-			targetDistance.reset(0, resetState);
-			playerProgress.reset(0, resetState);
-			playerProgressAdv.reset(0, resetState);
-			targetProgress.reset(0, resetState);
-		}
-	}
+	private TrackProgressData data = null;
+	private boolean hasTarget;
 
 	public TrackProgress () {
 		lblAdvantage = new HudLabel(FontFace.CurseWhiteBig, "", false);
 		lblAdvantageShown = false;
-		hasTarget = false;
 		lblAdvantage.setAlpha(0);
 
 		texMask = Art.texCircleProgressMask;
@@ -78,29 +53,20 @@ public class TrackProgress extends Positionable {
 		sprProgress.flip(false, true);
 	}
 
+	public void setTrackProgressData (TrackProgressData data) {
+		this.data = data;
+	}
+
 	@Override
 	public void dispose () {
 		shProgress.dispose();
 	}
 
-	public void resetData (boolean resetState) {
-		data.reset(resetState);
-	}
+	public void update (GameTrack gameTrack, PlayerCar player, GhostCar target) {
+		hasTarget = (target != null);
 
-	public void update (boolean isWarmUp, boolean isCurrentLapValid, GameTrack gameTrack, PlayerCar player, GhostCar target) {
-		this.isCurrentLapValid = isCurrentLapValid;
-		this.isWarmUp = isWarmUp;
-
-		hasTarget = (target != null /* && target.getTrackState().ghostStarted */);
-		if (isCurrentLapValid) {
-			playerToTarget = 0;
-		} else {
-			playerToTarget = -1;
-		}
-
-		if (isWarmUp) {
-			data.reset(true);
-			if (isCurrentLapValid) {
+		if (data.isWarmUp) {
+			if (data.isCurrentLapValid) {
 				int metersToRace = Math.round(gameTrack.getTotalLength() - gameTrack.getTrackDistance(player, 0));
 				if (metersToRace > 0) {
 					customMessage = "Start in " + metersToRace + " mt";
@@ -111,24 +77,17 @@ public class TrackProgress extends Positionable {
 				customMessage = "Press \"R\"\nto restart";
 			}
 		} else {
-			if (isCurrentLapValid) {
+			if (data.isCurrentLapValid) {
 				customMessage = "";
-				data.playerProgress.set(gameTrack.getTrackCompletion(player), Smoothing);
-				data.playerDistance.set(gameTrack.getTrackDistance(player, 0), Smoothing);
-
 				if (hasTarget) {
-					data.playerProgressAdv.set(gameTrack.getTrackCompletion(player), Smoothing);
 					if (target.getTrackState().ghostArrived) {
-						playerToTarget = AMath.fixup(data.playerProgressAdv.get() - 1);
+						data.playerToTarget = AMath.fixup(data.playerProgressAdv.get() - 1);
 					} else {
-						data.targetDistance.set(gameTrack.getTrackDistance(target, 0), Smoothing);
-						data.targetProgress.set(gameTrack.getTrackCompletion(target), Smoothing);
-						playerToTarget = AMath.fixup(data.playerProgressAdv.get() - data.targetProgress.get());
+						data.playerToTarget = AMath.fixup(data.playerProgressAdv.get() - data.targetProgress.get());
 					}
 				}
 			} else {
 				customMessage = "Press \"R\"\nto restart";
-				data.reset(true);
 			}
 		}
 	}
@@ -148,7 +107,7 @@ public class TrackProgress extends Positionable {
 		float timeFactor = URacer.Game.getTimeModFactor() * 0.3f;
 
 		// advantage if > 0, disadvantage if < 0
-		float dist = MathUtils.clamp(playerToTarget, -1, 1);
+		float dist = MathUtils.clamp(data.playerToTarget, -1, 1);
 		Color advantageColor = ColorUtils.paletteRYG(dist + 1, 1f);
 
 		float adist = Math.abs(dist);
@@ -187,7 +146,7 @@ public class TrackProgress extends Positionable {
 			lblAdvantage.render(batch);
 		}
 
-		if (isCurrentLapValid) {
+		if (data.isCurrentLapValid) {
 			float scl = cameraZoom * scale * (1f + timeFactor);
 			batch.setShader(shProgress);
 
@@ -216,8 +175,8 @@ public class TrackProgress extends Positionable {
 			}
 
 			// player's advantage/disadvantage
-			if (hasTarget && !isWarmUp) {
-				shProgress.setUniformf("progress", Math.abs(playerToTarget));
+			if (hasTarget && !data.isWarmUp) {
+				shProgress.setUniformf("progress", Math.abs(data.playerToTarget));
 				sprAdvantage.setColor(advantageColor);
 				sprAdvantage.setScale(scl * 1.1f);
 				sprAdvantage.setPosition(position.x - sprAdvantage.getWidth() / 2, position.y - sprAdvantage.getHeight() / 2);

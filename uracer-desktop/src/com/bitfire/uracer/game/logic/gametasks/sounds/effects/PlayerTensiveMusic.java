@@ -1,6 +1,7 @@
 
 package com.bitfire.uracer.game.logic.gametasks.sounds.effects;
 
+import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.audio.Sound;
 import com.bitfire.uracer.game.GameEvents;
 import com.bitfire.uracer.game.events.PlayerLapCompletionMonitorEvent;
@@ -13,7 +14,7 @@ import com.bitfire.uracer.resources.Sounds;
 public final class PlayerTensiveMusic extends SoundEffect {
 	private Sound music;
 	private long mid;
-	private boolean started;
+	private boolean started, paused;
 	private float lastVolume = 0f;
 	private final float MinVolume = 0.5f;
 	private final float VolumeRange = 1 - MinVolume;
@@ -21,11 +22,13 @@ public final class PlayerTensiveMusic extends SoundEffect {
 	public PlayerTensiveMusic () {
 		music = Sounds.musTensive[0];
 		started = false;
+		paused = false;
 	}
 
 	@Override
 	public void dispose () {
-		music.stop();
+		detach();
+		stop();
 	}
 
 	private PlayerLapCompletionMonitorEvent.Listener playerCompletionListener = new PlayerLapCompletionMonitorEvent.Listener() {
@@ -71,43 +74,42 @@ public final class PlayerTensiveMusic extends SoundEffect {
 			return;
 		}
 
+		started = false;
 		if (mid > -1) {
 			music.stop(mid);
 		}
-
-		started = false;
 	}
 
 	@Override
 	public void gamePause () {
-		if (mid > -1) {
-			music.setVolume(mid, 0f);
-		}
+		// paused = true;
 	}
 
 	@Override
 	public void gameResume () {
-		if (hasPlayer && mid > -1) {
-			music.setVolume(mid, player.driftState.driftStrength * lastVolume);
-		}
+		// paused = false;
 	}
 
 	@Override
 	public void gameReset () {
 		stop();
-		started = false;
 	}
 
 	@Override
 	public void gameRestart () {
-		gameReset();
+		stop();
 	}
 
 	@Override
 	public void tick () {
-		if (hasPlayer && mid > -1) {
-			lastVolume = MinVolume + VolumeRange * player.carState.currSpeedFactor;
-			music.setVolume(mid, lastVolume);
+		if (hasPlayer && mid > -1 && started) {
+			if (!paused) {
+				lastVolume = MinVolume + VolumeRange * player.carState.currSpeedFactor;
+				Gdx.app.log("", "vol=" + lastVolume);
+				music.setVolume(mid, lastVolume);
+			} else {
+				music.setVolume(mid, 0f);
+			}
 		}
 	}
 

@@ -21,6 +21,7 @@ import com.bitfire.uracer.game.logic.gametasks.hud.elements.player.DriftBar;
 import com.bitfire.uracer.game.logic.helpers.CarFactory;
 import com.bitfire.uracer.game.logic.helpers.GameTrack;
 import com.bitfire.uracer.game.logic.helpers.PlayerGameTasks;
+import com.bitfire.uracer.game.logic.helpers.TrackProgressData;
 import com.bitfire.uracer.game.logic.post.PostProcessing;
 import com.bitfire.uracer.game.logic.replaying.LapManager;
 import com.bitfire.uracer.game.logic.replaying.ReplayManager;
@@ -63,6 +64,7 @@ public abstract class CommonLogic implements GameLogic, GameLogicObserver {
 	protected LapManager lapManager = null;
 	protected PlayerLapCompletionMonitor playerLapMonitor = null;
 	protected GhostLapCompletionMonitor[] ghostLapMonitor = new GhostLapCompletionMonitor[ReplayManager.MaxReplays];
+	protected TrackProgressData progressData = new TrackProgressData();
 
 	// tasks
 	protected GameTasksManager gameTasksManager = null;
@@ -107,6 +109,9 @@ public abstract class CommonLogic implements GameLogic, GameLogicObserver {
 		// create player monitors and setup listeners
 		wrongWayMonitor = new WrongWayMonitor();
 		playerLapMonitor = new PlayerLapCompletionMonitor(gameTrack);
+
+		// set progress data
+		playerTasks.hudPlayer.trackProgress.setTrackProgressData(progressData);
 
 		// create game input
 		gameInput = new GameInput(this, inputSystem);
@@ -199,6 +204,7 @@ public abstract class CommonLogic implements GameLogic, GameLogicObserver {
 		wrongWayMonitor.reset();
 		lapManager.reset(true);
 		playerLapMonitor.reset();
+		progressData.reset(true);
 		postProcessing.setPlayer(null);
 	}
 
@@ -211,6 +217,7 @@ public abstract class CommonLogic implements GameLogic, GameLogicObserver {
 		wrongWayMonitor.reset();
 		postProcessing.resetAnimator();
 		playerLapMonitor.reset();
+		progressData.reset(false);
 
 		accuDriftSeconds.value = 0;
 		isCurrentLapValid = true;
@@ -392,8 +399,13 @@ public abstract class CommonLogic implements GameLogic, GameLogicObserver {
 
 	/** Updates player hud track progress */
 	private void updateTrackProgress () {
-		playerTasks.hudPlayer.trackProgress.update(playerLapMonitor.isWarmUp(), isCurrentLapValid, gameTrack, playerCar,
-			getNextTarget());
+		GhostCar nextTarget = getNextTarget();
+
+		// update progress data
+		progressData.update(playerLapMonitor.isWarmUp(), isCurrentLapValid, gameTrack, playerCar, nextTarget);
+
+		// update progress visuals, messages
+		playerTasks.hudPlayer.trackProgress.update(gameTrack, playerCar, nextTarget);
 	}
 
 	@Override
