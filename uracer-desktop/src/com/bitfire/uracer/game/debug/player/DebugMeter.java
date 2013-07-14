@@ -99,7 +99,7 @@ public class DebugMeter implements Disposable {
 	}
 
 	private void drawMeter () {
-		pixels.setColor(0.25f, 0.25f, 0.25f, 1);
+		pixels.setColor(0.25f, 0.25f, 0.25f, color.a);
 		pixels.fill();
 
 		float range = maxValue - minValue;
@@ -108,7 +108,6 @@ public class DebugMeter implements Disposable {
 
 		pixels.setColor(color);
 		pixels.fillRectangle(1, 1, (int)(width * ratio) - 2, height - 2);
-
 		texture.draw(pixels, 0, 0);
 	}
 }

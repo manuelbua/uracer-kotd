@@ -10,6 +10,7 @@ import com.bitfire.uracer.game.events.PlayerLapCompletionMonitorEvent.Type;
 import com.bitfire.uracer.game.logic.gametasks.SoundManager;
 import com.bitfire.uracer.game.logic.gametasks.sounds.SoundEffect;
 import com.bitfire.uracer.game.logic.helpers.TrackProgressData;
+import com.bitfire.uracer.game.logic.replaying.LapManager;
 import com.bitfire.uracer.game.player.PlayerCar;
 import com.bitfire.uracer.resources.Sounds;
 import com.bitfire.uracer.utils.AMath;
@@ -26,12 +27,15 @@ public final class PlayerTensiveMusic extends SoundEffect {
 	private boolean paused;
 	private float[] lastVolume = new float[NumTracks];
 	private TrackProgressData progressData;
+	private LapManager lapManager;
 	private InterpolatedFloat[] volTrack = new InterpolatedFloat[NumTracks];
 	private float[] volOut = new float[NumTracks];
-	private int musicIndex;
+	private int musicIndex, musicIndexLimit;
 
-	public PlayerTensiveMusic (TrackProgressData progressData) {
+	public PlayerTensiveMusic (TrackProgressData progressData, LapManager lapManager) {
 		this.progressData = progressData;
+		this.lapManager = lapManager;
+
 		paused = false;
 		musicIndex = 0;
 		for (int i = 0; i < 7; i++) {
@@ -127,9 +131,9 @@ public final class PlayerTensiveMusic extends SoundEffect {
 
 	@Override
 	public void gameRestart () {
-		stop();
+		// stop();
 		for (int i = 0; i < NumTracks; i++) {
-			volTrack[i].reset(true);
+			volTrack[i].reset(false);
 		}
 	}
 
@@ -147,27 +151,41 @@ public final class PlayerTensiveMusic extends SoundEffect {
 		return musicIndex;
 	}
 
+	public int getCurrentMusicIndexLimit () {
+		return musicIndexLimit;
+	}
+
 	@Override
 	public void tick () {
 		float scalemt = 40;
-		float rangeVol = 1 - MinVolume;
+		// float rangeVol = 1 - MinVolume;
 		float tgt_vol = 0;
+
+		// limit to number of actual replays
+		musicIndexLimit = MathUtils.clamp(lapManager.getReplaysCount(), 1, NumTracks - 1);
 
 		if (hasPlayer) {
 
 			// assumes index 0 (player in disadvantage)
 			musicIndex = 0;
 
+			// default interpolation
+			float alpha = 0.05f;
+
 			if (!progressData.isWarmUp && progressData.hasTarget && !progressData.targetArrived) {
+
+				// slow down interpolation
+				alpha = 0.01f;
+
 				float v = progressData.playerDistance.get() - progressData.targetDistance.get();
 				float to_target = AMath.fixup(MathUtils.clamp(v / scalemt, -1, 1));
 				tgt_vol = 1 - MathUtils.clamp(-to_target, 0, 1);
 
 				if (to_target > 0) {
 					// player is heading the race
-					musicIndex = NumTracks - 1;
+					musicIndex = musicIndexLimit;
 				} else {
-					float fidx = tgt_vol * (NumTracks - 1);
+					float fidx = tgt_vol * musicIndexLimit;
 					musicIndex = progressData.isWarmUp ? 0 : (int)fidx;
 				}
 
@@ -175,8 +193,8 @@ public final class PlayerTensiveMusic extends SoundEffect {
 			}
 
 			// update all volume accumulators
-			float alpha = 0.01f;
-			for (int i = 0; i < NumTracks; i++) {
+
+			for (int i = 0; i <= musicIndexLimit; i++) {
 				if (musicIndex == i) {
 					float v = MinVolume + MinVolume * tgt_vol;
 					v *= SoundManager.MusicVolumeMul;
@@ -185,7 +203,9 @@ public final class PlayerTensiveMusic extends SoundEffect {
 					volTrack[i].set(0, alpha);
 				}
 
+				// interpolate and get
 				volOut[i] = volTrack[i].get();
+
 				setVolume(i, volOut[i]);
 			}
 		}

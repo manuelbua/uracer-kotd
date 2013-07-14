@@ -51,11 +51,11 @@ public class MusicVolumes extends DebugRenderable {
 	public void tick () {
 		if (isActive()) {
 
-			// String dbg = "";
+			String dbg = "";
 			for (int i = 0; i < tensiveMusic.getVolumes().length; i++) {
 				float v = tensiveMusic.getVolumes()[i];
 				meters.get(i).setValue(v);
-				// dbg += "[" + ((i == tensiveMusic.getMusicIndex()) ? "*" : " ") + String.format("%02.1f", v) + "] ";
+				dbg += "[" + ((i == tensiveMusic.getMusicIndex()) ? "*" : " ") + String.format("%02.1f", v) + "] ";
 			}
 
 			// Gdx.app.log("MusicVolumes", dbg);
@@ -70,18 +70,25 @@ public class MusicVolumes extends DebugRenderable {
 			int drawx = 300;
 			int drawy = 0;
 
-			SpriteBatchUtils.drawString(batch, "music tracks", drawx, drawy);
-			SpriteBatchUtils.drawString(batch, "============", drawx, drawy + Art.DebugFontHeight);
+			int maxMusicIndex = tensiveMusic.getCurrentMusicIndexLimit();
+			SpriteBatchUtils.drawString(batch, "music tracks max=" + maxMusicIndex, drawx, drawy);
+			SpriteBatchUtils.drawString(batch, "====================", drawx, drawy + Art.DebugFontHeight);
 
+			batch.enableBlending();
 			for (DebugMeter m : meters) {
 				int x = drawx, y = drawy + Art.DebugFontHeight * 2;
+
+				// if (index > maxMusicIndex) continue;
 
 				// offset by index
 				y += index * (prevHeight + 1);
 
-				Color c = ColorUtils.paletteRYG(1.5f - m.getValue() * 1.5f, 1f);
+				float alpha = index > maxMusicIndex ? 0.5f : 1;
+				Color c = ColorUtils.paletteRYG(1.5f - m.getValue() * 1.5f, alpha);
 
+				batch.setColor(1, 1, 1, alpha);
 				SpriteBatchUtils.drawString(batch, (index + 1) + "", x, y);
+				batch.setColor(1, 1, 1, 1);
 
 				m.color.set(c);
 				m.setPosition(x + Art.DebugFontWidth, y);
@@ -90,6 +97,8 @@ public class MusicVolumes extends DebugRenderable {
 				index++;
 				prevHeight = m.getHeight();
 			}
+
+			// batch.disableBlending();
 		}
 	}
 
