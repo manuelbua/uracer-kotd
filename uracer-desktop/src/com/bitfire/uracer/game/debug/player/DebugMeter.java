@@ -23,14 +23,15 @@ public class DebugMeter implements Disposable {
 	private int width, height;
 	private float value, minValue, maxValue;
 	private String name;
-
 	private Vector2 pos;
+	private boolean showLabel;
 
 	public Color color = new Color(1, 1, 1, 1);
 
 	public DebugMeter (int width, int height) {
 		assert (width < 256 && height < 256);
 
+		this.showLabel = true;
 		this.name = "";
 		this.width = width;
 		this.height = height;
@@ -48,6 +49,10 @@ public class DebugMeter implements Disposable {
 		pixels.dispose();
 	}
 
+	public float getValue () {
+		return value;
+	}
+
 	public void setValue (float value) {
 		this.value = value;
 	}
@@ -59,6 +64,10 @@ public class DebugMeter implements Disposable {
 	public void setLimits (float min, float max) {
 		minValue = min;
 		maxValue = max;
+	}
+
+	public void setShowLabel (boolean show) {
+		this.showLabel = show;
 	}
 
 	public int getWidth () {
@@ -83,12 +92,14 @@ public class DebugMeter implements Disposable {
 
 	public void render (SpriteBatch batch) {
 		drawMeter();
-		SpriteBatchUtils.drawString(batch, getMessage(), (int)pos.x, (int)pos.y);
-		batch.draw(region, (int)pos.x, (int)pos.y + Art.DebugFontHeight);
+		if (showLabel) {
+			SpriteBatchUtils.drawString(batch, getMessage(), (int)pos.x, (int)pos.y);
+		}
+		batch.draw(region, (int)pos.x, (int)pos.y + (showLabel ? Art.DebugFontHeight : 0));
 	}
 
 	private void drawMeter () {
-		pixels.setColor(0, 0, 0, 1);
+		pixels.setColor(0.25f, 0.25f, 0.25f, 1);
 		pixels.fill();
 
 		float range = maxValue - minValue;

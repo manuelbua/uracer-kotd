@@ -41,6 +41,9 @@ public final class UserPreferences {
 		NightMode,
 		LastPlayedTrack,
 		
+		// audio
+		SfxVolume,
+		MusicVolume,
 		;
 		// @on
 
@@ -88,7 +91,6 @@ public final class UserPreferences {
 		bool(Preference.Bloom, true);
 		bool(Preference.ZoomRadialBlur, true);
 		string(Preference.ZoomRadialBlurQuality, RadialBlur.Quality.Medium.toString());
-
 		bool(Preference.CrtScreen, false);
 		bool(Preference.EarthCurvature, true);
 		bool(Preference.Ssao, true);
@@ -108,6 +110,12 @@ public final class UserPreferences {
 		string(Preference.TimeDilateInputMode, TimeDilateInputMode.TouchAndRelease.toString());
 		bool(Preference.NightMode, false);
 		string(Preference.LastPlayedTrack, "");
+
+		//
+		// audio
+		//
+		real(Preference.SfxVolume, 0.5f);
+		real(Preference.MusicVolume, 0.75f);
 
 		// ensure the new configuration gets saved
 		prefs.flush();

@@ -2,6 +2,7 @@
 package com.bitfire.uracer.game.logic.gametasks.sounds.effects;
 
 import com.badlogic.gdx.audio.Sound;
+import com.bitfire.uracer.game.logic.gametasks.SoundManager;
 import com.bitfire.uracer.game.logic.gametasks.sounds.SoundEffect;
 import com.bitfire.uracer.game.player.PlayerCar;
 import com.bitfire.uracer.resources.Sounds;
@@ -45,7 +46,7 @@ public final class PlayerEngineSoundEffect extends SoundEffect {
 		}
 
 		started = true;
-		carEngineId = loop(carEngine, 1f);
+		carEngineId = loop(carEngine, SoundManager.SfxVolumeMul);
 		carEngine.setPitch(carEngineId, carEnginePitchStart);
 	}
 

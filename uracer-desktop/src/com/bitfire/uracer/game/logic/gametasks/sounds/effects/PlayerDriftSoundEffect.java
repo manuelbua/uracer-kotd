@@ -7,6 +7,7 @@ import com.bitfire.uracer.game.GameEvents;
 import com.bitfire.uracer.game.events.PlayerDriftStateEvent;
 import com.bitfire.uracer.game.events.PlayerDriftStateEvent.Order;
 import com.bitfire.uracer.game.events.PlayerDriftStateEvent.Type;
+import com.bitfire.uracer.game.logic.gametasks.SoundManager;
 import com.bitfire.uracer.game.logic.gametasks.sounds.SoundEffect;
 import com.bitfire.uracer.game.player.PlayerCar;
 import com.bitfire.uracer.resources.Sounds;
@@ -181,7 +182,7 @@ public final class PlayerDriftSoundEffect extends SoundEffect {
 
 			lastDriftId = driftId;
 			lastVolume = AMath.clamp(lastVolume, 0, 1f);
-			drift.setVolume(driftId, player.driftState.driftStrength * lastVolume);
+			drift.setVolume(driftId, player.driftState.driftStrength * lastVolume * SoundManager.SfxVolumeMul);
 		}
 	}
 }

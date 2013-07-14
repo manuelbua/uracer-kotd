@@ -9,6 +9,7 @@ import com.bitfire.uracer.game.GameEvents;
 import com.bitfire.uracer.game.events.CarEvent;
 import com.bitfire.uracer.game.events.CarEvent.Order;
 import com.bitfire.uracer.game.events.CarEvent.Type;
+import com.bitfire.uracer.game.logic.gametasks.SoundManager;
 import com.bitfire.uracer.game.logic.gametasks.sounds.SoundEffect;
 import com.bitfire.uracer.game.player.PlayerCar;
 import com.bitfire.uracer.resources.Sounds;
@@ -21,8 +22,6 @@ public final class PlayerImpactSoundEffect extends SoundEffect {
 
 	private static final long MinElapsedBetweenSoundsMs = 500;
 	private static final float MinImpactForce = 20f;
-	// private static final float MaxVolume = 1f;
-	private static final float MaxVolume = .8f;
 
 	// pitch modulation
 	private static final float pitchFactor = 1f;
@@ -117,7 +116,7 @@ public final class PlayerImpactSoundEffect extends SoundEffect {
 
 			// Gdx.app.log( this.getClass().getSimpleName(), volumeFactor+"" );
 
-			long id = play(s, MaxVolume * volumeFactor);
+			long id = play(s, volumeFactor * SoundManager.SfxVolumeMul);
 			float pitch = speedFactor * pitchFactor + pitchMin;
 			pitch = AMath.clamp(pitch, pitchMin, pitchMax);
 			pitch = AudioUtils.timeDilationToAudioPitch(pitch, URacer.timeMultiplier);

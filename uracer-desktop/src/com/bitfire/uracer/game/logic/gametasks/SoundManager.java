@@ -2,11 +2,15 @@
 package com.bitfire.uracer.game.logic.gametasks;
 
 import com.badlogic.gdx.Gdx;
+import com.bitfire.uracer.configuration.UserPreferences;
+import com.bitfire.uracer.configuration.UserPreferences.Preference;
 import com.bitfire.uracer.game.logic.gametasks.sounds.SoundEffect;
 import com.bitfire.uracer.game.player.PlayerCar;
 import com.bitfire.utils.ItemsManager;
 
 public class SoundManager extends GameTask implements DisposableTasks {
+	public static final float SfxVolumeMul = UserPreferences.real(Preference.SfxVolume);
+	public static final float MusicVolumeMul = UserPreferences.real(Preference.MusicVolume);
 	private final ItemsManager<SoundEffect> manager = new ItemsManager<SoundEffect>();
 
 	public SoundManager () {

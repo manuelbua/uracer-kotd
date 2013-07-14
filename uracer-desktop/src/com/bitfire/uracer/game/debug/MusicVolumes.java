@@ -1,7 +1,7 @@
 
 package com.bitfire.uracer.game.debug;
 
-import com.badlogic.gdx.Gdx;
+import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.utils.Array;
 import com.bitfire.uracer.game.debug.DebugHelper.RenderFlags;
@@ -9,6 +9,8 @@ import com.bitfire.uracer.game.debug.player.DebugMeter;
 import com.bitfire.uracer.game.logic.gametasks.sounds.effects.PlayerTensiveMusic;
 import com.bitfire.uracer.game.player.PlayerCar;
 import com.bitfire.uracer.resources.Art;
+import com.bitfire.uracer.utils.ColorUtils;
+import com.bitfire.uracer.utils.SpriteBatchUtils;
 
 public class MusicVolumes extends DebugRenderable {
 	private Array<DebugMeter> meters = new Array<DebugMeter>();
@@ -19,9 +21,9 @@ public class MusicVolumes extends DebugRenderable {
 		this.tensiveMusic = tensiveMusic;
 
 		for (int i = 0; i < PlayerTensiveMusic.NumTracks; i++) {
-			DebugMeter m = new DebugMeter(100, 5);
+			DebugMeter m = new DebugMeter(64, Art.DebugFontHeight);
 			m.setLimits(0, 1);
-			m.setName("music track " + i);
+			m.setShowLabel(false);
 			meters.add(m);
 		}
 	}
@@ -49,15 +51,14 @@ public class MusicVolumes extends DebugRenderable {
 	public void tick () {
 		if (isActive()) {
 
-			String dbg = "";
+			// String dbg = "";
 			for (int i = 0; i < tensiveMusic.getVolumes().length; i++) {
 				float v = tensiveMusic.getVolumes()[i];
 				meters.get(i).setValue(v);
-
-				dbg += "[" + ((i == tensiveMusic.getMusicIndex()) ? "*" : " ") + String.format("%02.1f", v) + "] ";
+				// dbg += "[" + ((i == tensiveMusic.getMusicIndex()) ? "*" : " ") + String.format("%02.1f", v) + "] ";
 			}
 
-			Gdx.app.log("MusicVolumes", dbg);
+			// Gdx.app.log("MusicVolumes", dbg);
 		}
 	}
 
@@ -66,13 +67,24 @@ public class MusicVolumes extends DebugRenderable {
 		if (isActive()) {
 			float prevHeight = 0;
 			int index = 0;
+			int drawx = 300;
+			int drawy = 0;
+
+			SpriteBatchUtils.drawString(batch, "music tracks", drawx, drawy);
+			SpriteBatchUtils.drawString(batch, "============", drawx, drawy + Art.DebugFontHeight);
+
 			for (DebugMeter m : meters) {
-				int x = 0, y = 100;
+				int x = drawx, y = drawy + Art.DebugFontHeight * 2;
 
 				// offset by index
-				y += index * (prevHeight + Art.DebugFontHeight);
+				y += index * (prevHeight + 1);
 
-				m.setPosition(x, y);
+				Color c = ColorUtils.paletteRYG(1.5f - m.getValue() * 1.5f, 1f);
+
+				SpriteBatchUtils.drawString(batch, (index + 1) + "", x, y);
+
+				m.color.set(c);
+				m.setPosition(x + Art.DebugFontWidth, y);
 				m.render(batch);
 
 				index++;

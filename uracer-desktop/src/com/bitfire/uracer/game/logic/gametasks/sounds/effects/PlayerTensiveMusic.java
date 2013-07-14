@@ -7,6 +7,7 @@ import com.bitfire.uracer.game.GameEvents;
 import com.bitfire.uracer.game.events.PlayerLapCompletionMonitorEvent;
 import com.bitfire.uracer.game.events.PlayerLapCompletionMonitorEvent.Order;
 import com.bitfire.uracer.game.events.PlayerLapCompletionMonitorEvent.Type;
+import com.bitfire.uracer.game.logic.gametasks.SoundManager;
 import com.bitfire.uracer.game.logic.gametasks.sounds.SoundEffect;
 import com.bitfire.uracer.game.logic.helpers.TrackProgressData;
 import com.bitfire.uracer.game.player.PlayerCar;
@@ -16,13 +17,14 @@ import com.bitfire.uracer.utils.InterpolatedFloat;
 
 public final class PlayerTensiveMusic extends SoundEffect {
 	public static final int NumTracks = 7;
+	private static final float MinVolume = 0.4f;
+
 	private Sound[] music = new Sound[NumTracks]; // prologue [0,3], inciso [4,6]
 	private long[] mid = new long[NumTracks];
 	private boolean[] started = new boolean[NumTracks];
 
 	private boolean paused;
 	private float[] lastVolume = new float[NumTracks];
-	private static final float MinVolume = 0.4f;
 	private TrackProgressData progressData;
 	private InterpolatedFloat[] volTrack = new InterpolatedFloat[NumTracks];
 	private float[] volOut = new float[NumTracks];
@@ -173,26 +175,19 @@ public final class PlayerTensiveMusic extends SoundEffect {
 			}
 
 			// update all volume accumulators
-			float alpha = 0.025f;
+			float alpha = 0.01f;
 			for (int i = 0; i < NumTracks; i++) {
 				if (musicIndex == i) {
-					float v = MinVolume + rangeVol * tgt_vol;
+					float v = MinVolume + MinVolume * tgt_vol;
+					v *= SoundManager.MusicVolumeMul;
 					volTrack[i].set(v, alpha);
 				} else {
 					volTrack[i].set(0, alpha);
 				}
 
 				volOut[i] = volTrack[i].get();
-
 				setVolume(i, volOut[i]);
 			}
-
-			// String dbg = "";
-			// for (int i = 0; i < NumTracks; i++) {
-			// dbg += "[" + ((i == mus_idx) ? "*" : " ") + String.format("%02.1f", volOut[i]) + "] ";
-			// }
-			//
-			// Gdx.app.log("PlayerTensiveMusic", dbg);
 		}
 	}
 }
