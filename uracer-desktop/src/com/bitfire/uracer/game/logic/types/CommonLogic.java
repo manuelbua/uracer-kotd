@@ -196,6 +196,7 @@ public abstract class CommonLogic implements GameLogic, GameLogicObserver {
 			eventHandlers.unregisterPlayerMonitorEvents();
 			playerCar.dispose();
 			playerCar = null;
+			GameEvents.logicEvent.player = null;
 			GameEvents.logicEvent.trigger(this, GameLogicEvent.Type.PlayerRemoved);
 		}
 

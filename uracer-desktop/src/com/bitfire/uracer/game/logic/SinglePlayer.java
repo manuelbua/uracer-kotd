@@ -341,7 +341,9 @@ public class SinglePlayer extends BaseLogic {
 	@Override
 	public void ghostLapCompleted (GhostCar ghost) {
 		if (!hasPlayer()) {
-			restartAllReplays();
+			if (lapManager.getReplays().peek().getReplayId().equals(ghost.getReplay().getReplayId())) {
+				restartAllReplays();
+			}
 		} else {
 			// remove replay but do not reset its track state yet
 			// ghost.removeReplay();

@@ -52,7 +52,6 @@ public final class HudPlayer extends HudElement {
 	@Override
 	public void player (PlayerCar player) {
 		super.player(player);
-
 		if (hasPlayer) {
 			playerState = player.state();
 			carModelWidthPx = Convert.mt2px(player.getCarModel().width);

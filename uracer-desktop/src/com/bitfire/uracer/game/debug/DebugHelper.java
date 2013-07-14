@@ -358,7 +358,7 @@ public final class DebugHelper extends GameTask implements DisposableTasks {
 	}
 
 	private void renderRankings (SpriteBatch batch, int y) {
-		if (!hasPlayer) return;
+		// if (!hasPlayer) return;
 
 		float scale = 1;
 		ReplayInfo last = lapManager.getLastRecording();

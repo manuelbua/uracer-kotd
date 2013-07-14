@@ -54,6 +54,9 @@ public final class GhostCar extends Car {
 	/** starts playing the available Replay, if any */
 	public void start () {
 		if (!started) {
+			indexPlay = 0;
+			startedEventTriggered = false;
+			fadeOutEventTriggered = false;
 			stillModel.setAlpha(0);
 			resetWithTrackState();
 			setActive(true);

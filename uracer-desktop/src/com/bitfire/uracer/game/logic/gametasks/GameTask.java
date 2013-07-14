@@ -9,6 +9,7 @@ import com.bitfire.uracer.game.events.GameLogicEvent.Type;
 import com.bitfire.uracer.game.events.TaskManagerEvent;
 import com.bitfire.uracer.game.player.PlayerCar;
 import com.bitfire.uracer.game.task.Task;
+import com.bitfire.uracer.utils.URacerRuntimeException;
 
 public abstract class GameTask extends Task implements Disposable {
 	protected PlayerCar player;
@@ -22,7 +23,11 @@ public abstract class GameTask extends Task implements Disposable {
 				onPlayer(GameEvents.logicEvent.player);
 				break;
 			case PlayerRemoved:
-				onPlayer(GameEvents.logicEvent.player);
+				if (GameEvents.logicEvent.player != null) {
+					throw new URacerRuntimeException("Player zombieing");
+				}
+
+				onPlayer(null);
 				break;
 			case GameRestart:
 				onGameRestart();
