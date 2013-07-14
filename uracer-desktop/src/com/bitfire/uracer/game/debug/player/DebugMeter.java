@@ -77,6 +77,10 @@ public class DebugMeter implements Disposable {
 		pos.set(position);
 	}
 
+	public void setPosition (float x, float y) {
+		pos.set(x, y);
+	}
+
 	public void render (SpriteBatch batch) {
 		drawMeter();
 		SpriteBatchUtils.drawString(batch, getMessage(), (int)pos.x, (int)pos.y);

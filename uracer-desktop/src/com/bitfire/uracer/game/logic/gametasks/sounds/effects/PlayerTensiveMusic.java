@@ -1,7 +1,6 @@
 
 package com.bitfire.uracer.game.logic.gametasks.sounds.effects;
 
-import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.audio.Sound;
 import com.badlogic.gdx.math.MathUtils;
 import com.bitfire.uracer.game.GameEvents;
@@ -16,7 +15,7 @@ import com.bitfire.uracer.utils.AMath;
 import com.bitfire.uracer.utils.InterpolatedFloat;
 
 public final class PlayerTensiveMusic extends SoundEffect {
-	private static final int NumTracks = 7;
+	public static final int NumTracks = 7;
 	private Sound[] music = new Sound[NumTracks]; // prologue [0,3], inciso [4,6]
 	private long[] mid = new long[NumTracks];
 	private boolean[] started = new boolean[NumTracks];
@@ -26,11 +25,13 @@ public final class PlayerTensiveMusic extends SoundEffect {
 	private static final float MinVolume = 0.4f;
 	private TrackProgressData progressData;
 	private InterpolatedFloat[] volTrack = new InterpolatedFloat[NumTracks];
+	private float[] volOut = new float[NumTracks];
+	private int musicIndex;
 
 	public PlayerTensiveMusic (TrackProgressData progressData) {
 		this.progressData = progressData;
 		paused = false;
-
+		musicIndex = 0;
 		for (int i = 0; i < 7; i++) {
 			started[i] = false;
 			lastVolume[i] = 0;
@@ -114,17 +115,20 @@ public final class PlayerTensiveMusic extends SoundEffect {
 
 	@Override
 	public void gameResume () {
-		// paused = false;
+		paused = false;
 	}
 
 	@Override
 	public void gameReset () {
-		stop();
+		gameRestart();
 	}
 
 	@Override
 	public void gameRestart () {
 		stop();
+		for (int i = 0; i < NumTracks; i++) {
+			volTrack[i].reset(true);
+		}
 	}
 
 	private void setVolume (int track, float volume) {
@@ -133,7 +137,13 @@ public final class PlayerTensiveMusic extends SoundEffect {
 		music[track].setVolume(mid[track], v);
 	}
 
-	private float[] volOut = new float[NumTracks];
+	public float[] getVolumes () {
+		return volOut;
+	}
+
+	public int getMusicIndex () {
+		return musicIndex;
+	}
 
 	@Override
 	public void tick () {
@@ -144,7 +154,7 @@ public final class PlayerTensiveMusic extends SoundEffect {
 		if (hasPlayer) {
 
 			// assumes index 0 (player in disadvantage)
-			int mus_idx = 0;
+			musicIndex = 0;
 
 			if (!progressData.isWarmUp && progressData.hasTarget && !progressData.targetArrived) {
 				float v = progressData.playerDistance.get() - progressData.targetDistance.get();
@@ -153,10 +163,10 @@ public final class PlayerTensiveMusic extends SoundEffect {
 
 				if (to_target > 0) {
 					// player is heading the race
-					mus_idx = NumTracks - 1;
+					musicIndex = NumTracks - 1;
 				} else {
 					float fidx = tgt_vol * (NumTracks - 1);
-					mus_idx = progressData.isWarmUp ? 0 : (int)fidx;
+					musicIndex = progressData.isWarmUp ? 0 : (int)fidx;
 				}
 
 				// Gdx.app.log("PlayerTensiveMusic", "to_target=" + to_target + ", mus_idx=" + (int)mus_idx + ", tgt=" + tgt);
@@ -165,7 +175,7 @@ public final class PlayerTensiveMusic extends SoundEffect {
 			// update all volume accumulators
 			float alpha = 0.025f;
 			for (int i = 0; i < NumTracks; i++) {
-				if (mus_idx == i) {
+				if (musicIndex == i) {
 					float v = MinVolume + rangeVol * tgt_vol;
 					volTrack[i].set(v, alpha);
 				} else {
@@ -177,12 +187,12 @@ public final class PlayerTensiveMusic extends SoundEffect {
 				setVolume(i, volOut[i]);
 			}
 
-			String dbg = "";
-			for (int i = 0; i < NumTracks; i++) {
-				dbg += "[" + ((i == mus_idx) ? "*" : " ") + String.format("%02.1f", volOut[i]) + "] ";
-			}
-
-			Gdx.app.log("PlayerTensiveMusic", dbg);
+			// String dbg = "";
+			// for (int i = 0; i < NumTracks; i++) {
+			// dbg += "[" + ((i == mus_idx) ? "*" : " ") + String.format("%02.1f", volOut[i]) + "] ";
+			// }
+			//
+			// Gdx.app.log("PlayerTensiveMusic", dbg);
 		}
 	}
 }

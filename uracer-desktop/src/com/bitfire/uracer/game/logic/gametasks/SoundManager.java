@@ -32,6 +32,16 @@ public class SoundManager extends GameTask implements DisposableTasks {
 		manager.remove(effect);
 	}
 
+	public SoundEffect get (Class<?> itemType) {
+		for (SoundEffect s : manager) {
+			if (itemType.isInstance(s)) {
+				return s;
+			}
+		}
+
+		return null;
+	}
+
 	@Override
 	public void onGamePause () {
 		for (SoundEffect s : manager) {

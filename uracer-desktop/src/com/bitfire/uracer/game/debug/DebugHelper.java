@@ -70,6 +70,7 @@ public final class DebugHelper extends GameTask implements DisposableTasks {
 		Box2DWireframe,
 		BoundingBoxes3D,
 		TrackSectors,
+		MusicVolumes,
 		Rankings,
 		Completion
 		// @on
@@ -84,6 +85,7 @@ public final class DebugHelper extends GameTask implements DisposableTasks {
 		RenderFlags.PostProcessorInfo,
 		RenderFlags.PerformanceGraph,
 		RenderFlags.PlayerCarInfo,
+		RenderFlags.MusicVolumes,
 		RenderFlags.Rankings,
 		RenderFlags.Completion
 	);

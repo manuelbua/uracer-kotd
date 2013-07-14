@@ -16,10 +16,12 @@ import com.bitfire.uracer.game.actors.GhostCar;
 import com.bitfire.uracer.game.debug.DebugHelper;
 import com.bitfire.uracer.game.debug.DebugHelper.RenderFlags;
 import com.bitfire.uracer.game.debug.GameTrackDebugRenderer;
+import com.bitfire.uracer.game.debug.MusicVolumes;
 import com.bitfire.uracer.game.debug.player.DebugPlayer;
 import com.bitfire.uracer.game.logic.gametasks.messager.Message;
 import com.bitfire.uracer.game.logic.gametasks.messager.Message.Position;
 import com.bitfire.uracer.game.logic.gametasks.messager.Message.Size;
+import com.bitfire.uracer.game.logic.gametasks.sounds.effects.PlayerTensiveMusic;
 import com.bitfire.uracer.game.logic.replaying.Replay;
 import com.bitfire.uracer.game.logic.replaying.ReplayManager.ReplayInfo;
 import com.bitfire.uracer.game.logic.types.helpers.CameraShaker;
@@ -54,6 +56,8 @@ public class SinglePlayer extends BaseLogic {
 			debug = new DebugHelper(gameWorld, postProcessor, lapManager, this, inputSystem);
 			debug.add(new GameTrackDebugRenderer(RenderFlags.TrackSectors, gameWorld.getGameTrack()));
 			debug.add(new DebugPlayer(RenderFlags.PlayerCarInfo, gameTasksManager));
+			debug.add(new MusicVolumes(RenderFlags.MusicVolumes, (PlayerTensiveMusic)gameTasksManager.sound
+				.get(PlayerTensiveMusic.class)));
 			Gdx.app.debug("Game", "Debug helper initialized");
 		}
 	}

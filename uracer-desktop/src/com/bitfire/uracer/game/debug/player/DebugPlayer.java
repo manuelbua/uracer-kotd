@@ -16,7 +16,6 @@ import com.bitfire.uracer.resources.Art;
 import com.bitfire.uracer.utils.CarUtils;
 
 public class DebugPlayer extends DebugRenderable {
-
 	private DriftState driftState;
 	private final TrackEffect smokeTrails;
 	private final TrackEffect skidMarks;
@@ -69,7 +68,6 @@ public class DebugPlayer extends DebugRenderable {
 	@Override
 	public void player (PlayerCar player) {
 		super.player(player);
-
 		if (hasPlayer) {
 			this.player = player;
 			driftState = player.driftState;
@@ -114,7 +112,6 @@ public class DebugPlayer extends DebugRenderable {
 			float prevHeight = 0;
 			int index = 0;
 			for (DebugMeter m : meters) {
-
 				pos.set(GameRenderer.ScreenUtils.worldPxToScreen(player.state().position));
 				pos.x += 100;
 				pos.y += 0;
