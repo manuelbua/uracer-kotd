@@ -18,7 +18,7 @@ import com.bitfire.uracer.utils.InterpolatedFloat;
 
 public final class PlayerTensiveMusic extends SoundEffect {
 	public static final int NumTracks = 7;
-	private static final float MinVolume = 0.4f;
+	private static final float MinVolume = 0.6f;
 
 	private Sound[] music = new Sound[NumTracks]; // prologue [0,3], inciso [4,6]
 	private long[] mid = new long[NumTracks];
@@ -175,7 +175,7 @@ public final class PlayerTensiveMusic extends SoundEffect {
 			if (!progressData.isWarmUp && progressData.hasTarget && !progressData.targetArrived) {
 
 				// slow down interpolation speed
-				alpha = 0.01f;
+				alpha = 0.02f;
 
 				float v = progressData.playerDistance.get() - progressData.targetDistance.get();
 				float to_target = AMath.fixup(MathUtils.clamp(v / scalemt, -1, 1));
@@ -196,7 +196,7 @@ public final class PlayerTensiveMusic extends SoundEffect {
 
 			for (int i = 0; i <= musicIndexLimit; i++) {
 				if (musicIndex == i) {
-					float v = MinVolume + MinVolume * tgt_vol;
+					float v = MathUtils.clamp(MinVolume * tgt_vol, MinVolume, 1);
 					v *= SoundManager.MusicVolumeMul;
 					volTrack[i].set(v, alpha);
 				} else {
