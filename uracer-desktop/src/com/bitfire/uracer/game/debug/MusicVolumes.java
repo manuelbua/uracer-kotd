@@ -66,9 +66,10 @@ public class MusicVolumes extends DebugRenderable {
 
 	@Override
 	public void renderBatch (SpriteBatch batch) {
-		if (isActive()) {
+		if (isActive() && meters.size > 0) {
 			Matrix4 prev = batch.getTransformMatrix();
 			batch.setTransformMatrix(idt);
+			batch.enableBlending();
 
 			float prevHeight = 0;
 			int index = 0;
@@ -79,7 +80,6 @@ public class MusicVolumes extends DebugRenderable {
 			SpriteBatchUtils.drawString(batch, "music tracks max=" + maxMusicIndex, drawx, drawy);
 			SpriteBatchUtils.drawString(batch, "====================", drawx, drawy + Art.DebugFontHeight);
 
-			batch.enableBlending();
 			for (DebugMeter m : meters) {
 				int x = drawx, y = drawy + Art.DebugFontHeight * 2;
 
@@ -104,7 +104,7 @@ public class MusicVolumes extends DebugRenderable {
 			}
 
 			batch.setTransformMatrix(prev);
-			// batch.disableBlending();
+			batch.disableBlending();
 		}
 	}
 
