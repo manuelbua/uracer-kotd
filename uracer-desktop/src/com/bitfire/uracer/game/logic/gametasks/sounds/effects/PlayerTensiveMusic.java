@@ -162,19 +162,19 @@ public final class PlayerTensiveMusic extends SoundEffect {
 		float tgt_vol = 0;
 
 		// limit to number of actual replays
-		musicIndexLimit = MathUtils.clamp(lapManager.getReplaysCount(), 1, NumTracks - 1);
+		musicIndexLimit = MathUtils.clamp(lapManager.getReplaysCount(), 0, NumTracks - 1);
 
 		if (hasPlayer) {
 
 			// assumes index 0 (player in disadvantage)
 			musicIndex = 0;
 
-			// default interpolation
+			// default interpolation speed
 			float alpha = 0.05f;
 
 			if (!progressData.isWarmUp && progressData.hasTarget && !progressData.targetArrived) {
 
-				// slow down interpolation
+				// slow down interpolation speed
 				alpha = 0.01f;
 
 				float v = progressData.playerDistance.get() - progressData.targetDistance.get();

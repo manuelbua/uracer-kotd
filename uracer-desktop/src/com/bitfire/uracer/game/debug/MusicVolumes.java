@@ -3,6 +3,7 @@ package com.bitfire.uracer.game.debug;
 
 import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
+import com.badlogic.gdx.math.Matrix4;
 import com.badlogic.gdx.utils.Array;
 import com.bitfire.uracer.game.debug.DebugHelper.RenderFlags;
 import com.bitfire.uracer.game.debug.player.DebugMeter;
@@ -15,6 +16,7 @@ import com.bitfire.uracer.utils.SpriteBatchUtils;
 public class MusicVolumes extends DebugRenderable {
 	private Array<DebugMeter> meters = new Array<DebugMeter>();
 	private PlayerTensiveMusic tensiveMusic;
+	private Matrix4 idt = new Matrix4();
 
 	public MusicVolumes (RenderFlags flag, PlayerTensiveMusic tensiveMusic) {
 		super(flag);
@@ -64,7 +66,11 @@ public class MusicVolumes extends DebugRenderable {
 
 	@Override
 	public void renderBatch (SpriteBatch batch) {
-		if (isActive()) {
+		if (isActive() && meters.size > 0) {
+			Matrix4 prev = batch.getTransformMatrix();
+			batch.setTransformMatrix(idt);
+			batch.enableBlending();
+
 			float prevHeight = 0;
 			int index = 0;
 			int drawx = 300;
@@ -74,7 +80,6 @@ public class MusicVolumes extends DebugRenderable {
 			SpriteBatchUtils.drawString(batch, "music tracks max=" + maxMusicIndex, drawx, drawy);
 			SpriteBatchUtils.drawString(batch, "====================", drawx, drawy + Art.DebugFontHeight);
 
-			batch.enableBlending();
 			for (DebugMeter m : meters) {
 				int x = drawx, y = drawy + Art.DebugFontHeight * 2;
 
@@ -98,7 +103,8 @@ public class MusicVolumes extends DebugRenderable {
 				prevHeight = m.getHeight();
 			}
 
-			// batch.disableBlending();
+			batch.setTransformMatrix(prev);
+			batch.disableBlending();
 		}
 	}
 
