@@ -196,7 +196,7 @@ public final class PlayerTensiveMusic extends SoundEffect {
 
 			// tgt_vol = 1;
 			// musicIndex = 0;
-			float step = 1f / (float)NumTracks;
+			float step = 1f / (float)(NumTracks - 1);
 
 			for (int i = 0; i <= musicIndexLimit; i++) {
 				if (musicIndex == i) {
