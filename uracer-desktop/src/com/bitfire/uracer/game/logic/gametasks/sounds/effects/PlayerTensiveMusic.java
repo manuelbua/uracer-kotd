@@ -18,7 +18,7 @@ import com.bitfire.uracer.utils.InterpolatedFloat;
 
 public final class PlayerTensiveMusic extends SoundEffect {
 	public static final int NumTracks = 7;
-	private static final float MinVolume = 0.6f;
+	private static final float MinVolume = 0.3f;
 
 	private Sound[] music = new Sound[NumTracks]; // prologue [0,3], inciso [4,6]
 	private long[] mid = new long[NumTracks];
@@ -158,7 +158,7 @@ public final class PlayerTensiveMusic extends SoundEffect {
 	@Override
 	public void tick () {
 		float scalemt = 40;
-		// float rangeVol = 1 - MinVolume;
+		float rangeVol = 1 - MinVolume;
 		float tgt_vol = 0;
 
 		// limit to number of actual replays
@@ -194,9 +194,13 @@ public final class PlayerTensiveMusic extends SoundEffect {
 
 			// update all volume accumulators
 
+			// tgt_vol = 1;
+			// musicIndex = 0;
+			float step = 1f / (float)NumTracks;
+
 			for (int i = 0; i <= musicIndexLimit; i++) {
 				if (musicIndex == i) {
-					float v = MathUtils.clamp(MinVolume * tgt_vol, MinVolume, 1);
+					float v = MathUtils.clamp(step * musicIndex, MinVolume, 1);
 					v *= SoundManager.MusicVolumeMul;
 					volTrack[i].set(v, alpha);
 				} else {

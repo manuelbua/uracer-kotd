@@ -114,8 +114,8 @@ public final class UserPreferences {
 		//
 		// audio
 		//
-		real(Preference.SfxVolume, 0.5f);
-		real(Preference.MusicVolume, 0.75f);
+		real(Preference.SfxVolume, 0.6f);
+		real(Preference.MusicVolume, 0.85f);
 
 		// ensure the new configuration gets saved
 		prefs.flush();
