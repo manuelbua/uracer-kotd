@@ -3,6 +3,7 @@ package com.bitfire.uracer.game.logic.gametasks.sounds.effects;
 
 import com.badlogic.gdx.audio.Sound;
 import com.badlogic.gdx.math.MathUtils;
+import com.bitfire.uracer.URacer;
 import com.bitfire.uracer.game.GameEvents;
 import com.bitfire.uracer.game.events.PlayerLapCompletionMonitorEvent;
 import com.bitfire.uracer.game.events.PlayerLapCompletionMonitorEvent.Order;
@@ -18,7 +19,7 @@ import com.bitfire.uracer.utils.InterpolatedFloat;
 
 public final class PlayerTensiveMusic extends SoundEffect {
 	public static final int NumTracks = 7;
-	private static final float MinVolume = 0.3f;
+	private static final float MinVolume = 0.4f;
 
 	private Sound[] music = new Sound[NumTracks]; // prologue [0,3], inciso [4,6]
 	private long[] mid = new long[NumTracks];
@@ -38,7 +39,7 @@ public final class PlayerTensiveMusic extends SoundEffect {
 
 		paused = false;
 		musicIndex = 0;
-		for (int i = 0; i < 7; i++) {
+		for (int i = 0; i < NumTracks; i++) {
 			started[i] = false;
 			lastVolume[i] = 0;
 			mid[i] = -1;
@@ -162,7 +163,7 @@ public final class PlayerTensiveMusic extends SoundEffect {
 		float tgt_vol = 0;
 
 		// limit to number of actual replays
-		musicIndexLimit = MathUtils.clamp(lapManager.getReplaysCount(), 0, NumTracks - 1);
+		musicIndexLimit = MathUtils.clamp(lapManager.getReplaysCount(), 0, NumTracks - 2);
 
 		if (hasPlayer) {
 
@@ -174,14 +175,18 @@ public final class PlayerTensiveMusic extends SoundEffect {
 
 			if (!progressData.isWarmUp && progressData.hasTarget && !progressData.targetArrived) {
 
-				// slow down interpolation speed
-				alpha = 0.02f;
+				// slow down interpolation speed, but keep it up anyway when slowing down time
+				alpha = 0.02f / URacer.timeMultiplier;
 
 				float v = progressData.playerDistance.get() - progressData.targetDistance.get();
 				float to_target = AMath.fixup(MathUtils.clamp(v / scalemt, -1, 1));
 				tgt_vol = 1 - MathUtils.clamp(-to_target, 0, 1);
 
-				if (to_target > 0) {
+				if (to_target > 0.5f && lapManager.getReplaysCount() >= NumTracks) {
+					// player ahead by 20mt
+					musicIndex = NumTracks - 1;
+					musicIndexLimit = NumTracks - 1;
+				} else if (to_target > 0) {
 					// player is heading the race
 					musicIndex = musicIndexLimit;
 				} else {
@@ -189,17 +194,17 @@ public final class PlayerTensiveMusic extends SoundEffect {
 					musicIndex = progressData.isWarmUp ? 0 : (int)fidx;
 				}
 
-				// Gdx.app.log("PlayerTensiveMusic", "to_target=" + to_target + ", mus_idx=" + (int)mus_idx + ", tgt=" + tgt);
+				// Gdx.app.log("PlayerTensiveMusic", "to_target=" + to_target);
 			}
 
 			// update all volume accumulators
 
 			// tgt_vol = 1;
-			// musicIndex = 0;
+			// musicIndex = 5;
 			float step = 1f / (float)(NumTracks - 1);
 
-			for (int i = 0; i <= musicIndexLimit; i++) {
-				if (musicIndex == i) {
+			for (int i = 0; i <= NumTracks - 1; i++) {
+				if (i == musicIndex && i <= musicIndexLimit) {
 					float v = MathUtils.clamp(step * musicIndex, MinVolume, 1);
 					v *= SoundManager.MusicVolumeMul;
 					volTrack[i].set(v, alpha);
