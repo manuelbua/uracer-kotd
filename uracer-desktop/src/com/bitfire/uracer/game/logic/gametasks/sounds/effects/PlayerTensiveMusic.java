@@ -204,9 +204,9 @@ public final class PlayerTensiveMusic extends SoundEffect {
 			float step = 1f / (float)(NumTracks - 1);
 
 			for (int i = 0; i <= NumTracks - 1; i++) {
+
 				if (i == musicIndex && i <= musicIndexLimit) {
-					float v = MathUtils.clamp(step * musicIndex, MinVolume, 1);
-					v *= SoundManager.MusicVolumeMul;
+					float v = MathUtils.clamp(step * musicIndex, MinVolume, 1) * SoundManager.MusicVolumeMul;
 					volTrack[i].set(v, alpha);
 				} else {
 					volTrack[i].set(0, alpha);
