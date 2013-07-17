@@ -106,7 +106,7 @@ public class MusicVolumes extends DebugRenderable {
 					m.setPosition(meter_x, y);
 					m.render(batch);
 
-					// render numerical value
+					// render volume numerical value
 					text = String.format("%.02f", m.getValue());
 					batch.setColor(1, 1, 1, alpha);
 					SpriteBatchUtils.drawString(batch, text, meter_x + m.getWidth() + 2, y);
