@@ -47,8 +47,18 @@ public final class Replay implements Disposable, Comparable<Replay> {
 		reset();
 	}
 
+	// @Override
+	// public boolean equals (Object obj) {
+	// return this.compareTo((Replay)obj) == 0;
+	// Replay r = (Replay)obj;
+	// }
+
 	@Override
 	public int compareTo (Replay o) {
+		if (o == null) {
+			throw new NullPointerException();
+		}
+
 		// compare up to the 3rd decimal
 		int thisSecs = (int)(getTrackTime() * AMath.ONE_ON_CMP_EPSILON);
 		int otherSecs = (int)(o.getTrackTime() * AMath.ONE_ON_CMP_EPSILON);

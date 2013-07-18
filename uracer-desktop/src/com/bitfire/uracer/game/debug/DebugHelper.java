@@ -421,21 +421,20 @@ public final class DebugHelper extends GameTask implements DisposableTasks {
 		float xoffset = 150 * scale;
 		int coord = y;
 		for (int i = 0; i < ReplayManager.MaxReplays + 1; i++) {
-			ranks.get(i).valid = false;
-			ranks.get(i).player = false;
+			ranks.get(i).reset();
 		}
 
 		int playerIndex = 0;
 		for (int i = 0; i < ReplayManager.MaxReplays; i++) {
 			GhostCar ghost = logic.getGhost(i);
+			TrackState ts = ghost.getTrackState();
 			if (ghost != null && ghost.hasReplay()) {
 				RankInfo rank = ranks.get(i);
 				rank.valid = true;
 				rank.uid = ghost.getReplay().getUserId();
 				rank.secs = ghost.getReplay().getTrackTimeInt() / 1000f;
 				rank.isNextTarget = isNextTarget(ghost.getReplay());
-
-				TrackState ts = ghost.getTrackState();
+				rank.player = false;
 
 				rank.completion = 0;
 				if (ts.ghostArrived) {
