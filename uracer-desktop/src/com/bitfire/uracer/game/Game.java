@@ -76,11 +76,13 @@ public class Game implements Disposable {
 
 	public void pause () {
 		taskManager.dispatchEvent(TaskManagerEvent.Type.onPause);
+		Gdx.app.log("Game", "Paused");
 	}
 
 	public void resume () {
 		gameRenderer.rebind();
 		taskManager.dispatchEvent(TaskManagerEvent.Type.onResume);
+		Gdx.app.log("Game", "Resumed");
 	}
 
 	//

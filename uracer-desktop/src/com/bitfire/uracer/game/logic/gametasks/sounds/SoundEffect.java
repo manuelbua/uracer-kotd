@@ -7,6 +7,7 @@ import com.bitfire.uracer.URacer;
 import com.bitfire.uracer.game.logic.gametasks.PlayerClient;
 
 public abstract class SoundEffect extends PlayerClient implements Disposable {
+	protected boolean isPaused = false;
 	// implements a workaround for Android, need to async-wait
 	// for sound loaded but libgdx doesn't expose anything for this!
 
@@ -59,6 +60,14 @@ public abstract class SoundEffect extends PlayerClient implements Disposable {
 		}
 	}
 
+	public void pause (Sound sound, long id) {
+		//
+	}
+
+	public void resume (Sound sound, float volume) {
+		//
+	}
+
 	public void stop () {
 	}
 
@@ -72,8 +81,10 @@ public abstract class SoundEffect extends PlayerClient implements Disposable {
 	}
 
 	public void gamePause () {
+		isPaused = true;
 	}
 
 	public void gameResume () {
+		isPaused = false;
 	}
 }

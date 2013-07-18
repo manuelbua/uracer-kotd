@@ -122,6 +122,7 @@ public final class PlayerDriftSoundEffect extends SoundEffect {
 
 	@Override
 	public void gamePause () {
+		super.gamePause();
 		if (driftId > -1) {
 			drift.setVolume(driftId, 0f);
 		}
@@ -129,6 +130,7 @@ public final class PlayerDriftSoundEffect extends SoundEffect {
 
 	@Override
 	public void gameResume () {
+		super.gameResume();
 		if (hasPlayer && driftId > -1) {
 			drift.setVolume(driftId, player.driftState.driftStrength * lastVolume);
 		}
@@ -148,7 +150,7 @@ public final class PlayerDriftSoundEffect extends SoundEffect {
 
 	@Override
 	public void tick () {
-		if (hasPlayer && driftId > -1) {
+		if (!isPaused && hasPlayer && driftId > -1) {
 			boolean anotherDriftId = (driftId != lastDriftId);
 			float speedFactor = player.carState.currSpeedFactor;
 

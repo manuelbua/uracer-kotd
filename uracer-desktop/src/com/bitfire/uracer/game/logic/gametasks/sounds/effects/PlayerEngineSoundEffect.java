@@ -27,7 +27,7 @@ public final class PlayerEngineSoundEffect extends SoundEffect {
 
 	@Override
 	public void tick () {
-		if (hasPlayer && carEngineId > -1) {
+		if (!isPaused && hasPlayer && carEngineId > -1) {
 			float speedFactor = player.carState.currSpeedFactor;
 
 			float pitch = CarEnginePitchMin + speedFactor * 1.25f;

@@ -9,6 +9,7 @@ import com.badlogic.gdx.backends.lwjgl.LwjglApplicationConfiguration;
 import com.badlogic.gdx.backends.openal.OpenALAudio;
 import com.bitfire.uracer.configuration.BootConfig;
 import com.bitfire.uracer.configuration.BootConfig.BootConfigFlag;
+import com.bitfire.uracer.configuration.Config;
 import com.bitfire.uracer.utils.CommandLine;
 
 public final class URacerDesktop {
@@ -24,8 +25,11 @@ public final class URacerDesktop {
 		config.useGL20 = true;
 		config.resizable = false;
 		config.samples = 0;
-		// config.backgroundFPS = -1;
-		// config.foregroundFPS = -1;
+
+		if (!Config.Debug.PauseDisabled) {
+			config.backgroundFPS = -1;
+			config.foregroundFPS = -1;
+		}
 
 		// apply boot config
 		config.width = boot.getInt(BootConfigFlag.WIDTH);

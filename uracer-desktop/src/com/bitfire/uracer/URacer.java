@@ -51,6 +51,7 @@ public class URacer implements ApplicationListener {
 	private static ScreenManager screenMgr = null;
 	private static Input input;
 	private static boolean running = false;
+	private static boolean resumed = false;
 	private static boolean isDesktop = false;
 	private static final boolean useRealFrametime = true;
 
@@ -74,7 +75,6 @@ public class URacer implements ApplicationListener {
 	public static final long MaxDeltaTimeNs = (long)(MaxDeltaTimeSec * 1000000000f);
 	private static long frameCount = 0;
 	private static long lastTicksCount = 0;
-	private static boolean resumed = false;
 
 	// version
 	public static final String versionInfo = getVersionInformation();
@@ -295,6 +295,8 @@ public class URacer implements ApplicationListener {
 
 	@Override
 	public void pause () {
+		if (Config.Debug.PauseDisabled) return;
+
 		running = false;
 		resumed = false;
 		lastDeltaTimeNsBeforePause = lastDeltaTimeNs;
@@ -303,6 +305,8 @@ public class URacer implements ApplicationListener {
 
 	@Override
 	public void resume () {
+		if (Config.Debug.PauseDisabled) return;
+
 		if (!running) {
 			resumed = true;
 		}

@@ -48,6 +48,7 @@ public class SoundManager extends GameTask implements DisposableTasks {
 
 	@Override
 	public void onGamePause () {
+		super.onGamePause();
 		for (SoundEffect s : manager) {
 			s.gamePause();
 		}
@@ -55,6 +56,7 @@ public class SoundManager extends GameTask implements DisposableTasks {
 
 	@Override
 	public void onGameResume () {
+		super.onGameResume();
 		for (SoundEffect s : manager) {
 			s.gameResume();
 		}
