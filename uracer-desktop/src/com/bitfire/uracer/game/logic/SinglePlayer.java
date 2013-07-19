@@ -218,7 +218,7 @@ public class SinglePlayer extends BaseLogic {
 					if (replay != null) {
 						ReplayInfo ri = lapManager.addReplay(replay);
 						if (ri.accepted) {
-							pruneReplay(ri.removed);
+							pruneReplay(ri.discarded); // remove any discarded replay *if any*
 							reloaded++;
 							Gdx.app.log("SinglePlayer", "Loaded replay #" + ri.replay.getShortReplayId());
 						}
@@ -295,7 +295,7 @@ public class SinglePlayer extends BaseLogic {
 					r.getTrackTime());
 
 				saveReplay(r);
-				pruneReplay(ri.removed);
+				pruneReplay(ri.discarded); // remove any discarded replay *if any*
 
 				// show message
 				int pos = ri.position;

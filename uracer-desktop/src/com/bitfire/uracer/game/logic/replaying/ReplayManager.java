@@ -23,13 +23,13 @@ public final class ReplayManager implements Disposable {
 		public boolean accepted;
 		public Replay replay;
 		public DiscardReason reason;
-		public Replay removed;
+		public Replay discarded;
 
 		public void reset () {
 			position = -1;
 			accepted = false;
 			replay = null;
-			removed = null;
+			discarded = null;
 			reason = DiscardReason.Null;
 		}
 	}
@@ -83,26 +83,35 @@ public final class ReplayManager implements Disposable {
 		replayInfo.reset();
 
 		if (isValidReplay(replay, replayInfo)) {
-			Replay added = new Replay();
-			added.copyData(replay);
-			nreplays.add(added);
-			nreplays.sort();
+			Replay new_replay = new Replay();
+			replayInfo.replay = new_replay;
+			new_replay.copyData(replay);
 
-			// specified Replay has been copied to a new instance, use this instead
-			replayInfo.replay = added;
-
-			if (nreplays.size > MaxReplays) {
-				replayInfo.removed = nreplays.pop();
+			// a new replay is added only if it's the first or better than current best
+			if (nreplays.size > 0 && replay.compareTo(nreplays.first()) > -1) {
+				// replay discarded, slower
+				replayInfo.accepted = false;
+				replayInfo.discarded = new_replay;
+				replayInfo.reason = DiscardReason.Slower;
+				return replayInfo;
 			}
 
-			int pos = nreplays.indexOf(added, true);
+			nreplays.add(new_replay);
+			nreplays.sort();
+
+			if (nreplays.size > MaxReplays) {
+				// a replay has been removed
+				replayInfo.discarded = nreplays.pop();
+			}
+
+			int pos = nreplays.indexOf(new_replay, true);
 			if (pos > -1) {
 				// replay accepted
 				replayInfo.accepted = true;
 				replayInfo.reason = DiscardReason.NotDiscarded;
 				replayInfo.position = pos + 1;
 			} else {
-				// replay discarded
+				// // replay discarded, slower
 				replayInfo.accepted = false;
 				replayInfo.reason = DiscardReason.Slower;
 			}

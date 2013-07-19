@@ -400,8 +400,8 @@ public final class DebugHelper extends GameTask implements DisposableTasks {
 		}
 
 		// show discarded lap
-		if (discarded) {
-			Replay replay = last.removed;
+		if (discarded && last != null) {
+			Replay replay = last.discarded;
 			batchColorStart(batch, 1, 0, 0);
 
 			text = rankString(lapManager.getReplays().size + 1) + "  " + replay.getUserId() + " "
