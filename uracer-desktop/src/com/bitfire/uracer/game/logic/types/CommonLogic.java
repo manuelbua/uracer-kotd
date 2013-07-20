@@ -206,6 +206,7 @@ public abstract class CommonLogic implements GameLogic, GameLogicObserver {
 		lapManager.reset(true);
 		playerLapMonitor.reset();
 		progressData.reset(true);
+		progressData.resetLogicStates();
 		postProcessing.setPlayer(null);
 	}
 
@@ -219,6 +220,7 @@ public abstract class CommonLogic implements GameLogic, GameLogicObserver {
 		postProcessing.resetAnimator();
 		playerLapMonitor.reset();
 		progressData.reset(false);
+		progressData.resetLogicStates();
 
 		accuDriftSeconds.value = 0;
 		isCurrentLapValid = true;

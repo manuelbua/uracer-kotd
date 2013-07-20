@@ -21,19 +21,22 @@ public class TrackProgressData {
 		playerProgressAdv = new InterpolatedFloat();
 		targetProgress = new InterpolatedFloat();
 		reset(true);
+		resetLogicStates();
 	}
 
 	public void reset (boolean resetState) {
-		isCurrentLapValid = true;
-		isWarmUp = true;
-		targetArrived = false;
-		playerToTarget = 0;
-
 		playerDistance.reset(0, resetState);
 		targetDistance.reset(0, resetState);
 		playerProgress.reset(0, resetState);
 		playerProgressAdv.reset(0, resetState);
 		targetProgress.reset(0, resetState);
+	}
+
+	public void resetLogicStates () {
+		isCurrentLapValid = true;
+		isWarmUp = true;
+		targetArrived = false;
+		playerToTarget = 0;
 	}
 
 	public void update (boolean isWarmUp, boolean isCurrentLapValid, GameTrack gameTrack, PlayerCar player, GhostCar target) {

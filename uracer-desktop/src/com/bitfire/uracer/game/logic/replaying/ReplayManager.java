@@ -87,7 +87,7 @@ public final class ReplayManager implements Disposable {
 			replayInfo.replay = new_replay;
 			new_replay.copyData(replay);
 
-			// a new replay is added only if it's the first or better than current best
+			// a new replay is added only if it's the first one or better than the actual best
 			if (nreplays.size > 0 && replay.compareTo(nreplays.first()) > -1) {
 				// replay discarded, slower
 				replayInfo.accepted = false;
