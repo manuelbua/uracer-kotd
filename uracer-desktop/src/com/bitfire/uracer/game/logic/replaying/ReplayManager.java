@@ -76,10 +76,13 @@ public final class ReplayManager implements Disposable {
 	/** Add a Replay to the list: it will get checked against some rules before adding it, so it's safe to assume that any Replay
 	 * returned later will be valid.
 	 * 
+	 * The policy is to permit slower replays at loading time, but not at gameplay time, so that a player will not be able to save
+	 * a slower replay, but if it could, it would be loaded fine from disk.
+	 * 
 	 * @param replay The Replay to add
 	 * @param computeId Whether to compute an ID for the specified Replay if added successfully
 	 * @return A ReplayInfo structure describing the inserting position or failure explanation */
-	public ReplayInfo addReplay (Replay replay) {
+	public ReplayInfo addReplay (Replay replay, boolean evenIfSlower) {
 		replayInfo.reset();
 
 		if (isValidReplay(replay, replayInfo)) {
@@ -87,13 +90,16 @@ public final class ReplayManager implements Disposable {
 			replayInfo.replay = new_replay;
 			new_replay.copyData(replay);
 
-			// a new replay is added only if it's the first one or better than the actual best
-			if (nreplays.size > 0 && replay.compareTo(nreplays.first()) > -1) {
-				// replay discarded, slower
-				replayInfo.accepted = false;
-				replayInfo.discarded = new_replay;
-				replayInfo.reason = DiscardReason.Slower;
-				return replayInfo;
+			// filter slowers out only if asked to
+			if (!evenIfSlower) {
+				// a new replay is added only if it's the first one or better than the actual best
+				if (nreplays.size > 0 && replay.compareTo(nreplays.first()) > -1) {
+					// replay discarded, slower
+					replayInfo.accepted = false;
+					replayInfo.discarded = new_replay;
+					replayInfo.reason = DiscardReason.Slower;
+					return replayInfo;
+				}
 			}
 
 			nreplays.add(new_replay);

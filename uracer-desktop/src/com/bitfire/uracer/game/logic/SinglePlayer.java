@@ -216,11 +216,14 @@ public class SinglePlayer extends BaseLogic {
 				for (FileHandle userreplay : userdir.list()) {
 					Replay replay = Replay.load(userreplay.path());
 					if (replay != null) {
-						ReplayInfo ri = lapManager.addReplay(replay);
+						ReplayInfo ri = lapManager.addSlowerReplay(replay);
 						if (ri.accepted) {
 							pruneReplay(ri.discarded); // remove any discarded replay *if any*
 							reloaded++;
 							Gdx.app.log("SinglePlayer", "Loaded replay #" + ri.replay.getShortReplayId());
+						} else {
+							Gdx.app.log("SinglePlayer", "Replay not loaded #"
+								+ (ri.discarded != null ? ri.discarded.getShortReplayId() : '?'));
 						}
 					}
 				}

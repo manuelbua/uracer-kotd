@@ -37,8 +37,8 @@ public class LapManager implements Disposable {
 		recorder.resetTimer();
 	}
 
-	public ReplayInfo addReplay (Replay replay) {
-		return manager.addReplay(replay);
+	public ReplayInfo addSlowerReplay (Replay replay) {
+		return manager.addReplay(replay, true);
 	}
 
 	/** Starts recording the player lap performance. Returns the Replay instance where the recording is being performed. */
@@ -63,7 +63,7 @@ public class LapManager implements Disposable {
 	/** Ends recording the previously started lap performance */
 	public ReplayInfo stopRecording () {
 		if (recorder.isRecording()) {
-			lastRecorded = manager.addReplay(recorder.endRecording());
+			lastRecorded = manager.addReplay(recorder.endRecording(), false);
 			return lastRecorded;
 		}
 

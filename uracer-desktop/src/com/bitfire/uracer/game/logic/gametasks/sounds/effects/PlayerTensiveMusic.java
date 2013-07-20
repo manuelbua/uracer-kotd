@@ -1,7 +1,6 @@
 
 package com.bitfire.uracer.game.logic.gametasks.sounds.effects;
 
-import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.audio.Sound;
 import com.badlogic.gdx.math.MathUtils;
 import com.bitfire.uracer.URacer;
@@ -20,7 +19,7 @@ import com.bitfire.uracer.utils.InterpolatedFloat;
 
 public final class PlayerTensiveMusic extends SoundEffect {
 	public static final int NumTracks = 7;
-	private static final float MinVolume = 0.2f;
+	private static final float MinVolume = 0.25f;
 
 	private Sound[] music = new Sound[NumTracks]; // prologue [0,3], inciso [4,6]
 	private long[] mid = new long[NumTracks];
@@ -32,18 +31,30 @@ public final class PlayerTensiveMusic extends SoundEffect {
 	private InterpolatedFloat[] volTrack = new InterpolatedFloat[NumTracks];
 	private float[] volOut = new float[NumTracks];
 	private int musicIndex, musicIndexLimit;
+	private float fMusicIndex;
+	private float[] trackVolumes = new float[NumTracks];
 
 	public PlayerTensiveMusic (TrackProgressData progressData, LapManager lapManager) {
 		this.progressData = progressData;
 		this.lapManager = lapManager;
 
 		musicIndex = 0;
+		fMusicIndex = 0;
 		for (int i = 0; i < NumTracks; i++) {
 			started[i] = false;
 			lastVolume[i] = 0;
 			mid[i] = -1;
 			music[i] = Sounds.musTensive[i];
 			volTrack[i] = new InterpolatedFloat();
+			computeTrackVolumes();
+		}
+	}
+
+	private void computeTrackVolumes () {
+		float step = (1f - MinVolume) / (float)(NumTracks - 1);
+		for (int i = 0; i < NumTracks; i++) {
+			float this_step = (step * i) + MinVolume;
+			trackVolumes[i] = this_step;
 		}
 	}
 
@@ -155,23 +166,26 @@ public final class PlayerTensiveMusic extends SoundEffect {
 
 	@Override
 	public void tick () {
-		final float ScaleMt = 40f;
+		final float ScaleMt = 6f * (NumTracks);
 		final float AheadByMt = 10f;
 		final float InvScaleMt = 1f / ScaleMt;
 
 		float tgt_vol = 0;
+		// boolean isAheadByMeters = false;
 
 		// limit to number of actual replays
 		musicIndexLimit = MathUtils.clamp(lapManager.getReplaysCount(), 0, NumTracks - 2);
+		// musicIndexLimit = NumTracks - 2;
 
 		if (hasPlayer) {
 
 			// assumes index 0 (player in disadvantage)
 			musicIndex = 0;
+			fMusicIndex = 0;
 
 			// default interpolation speed
 			float alpha_inc = 0.05f;
-			float alpha_dec = 0.01f;
+			float alpha_dec = 0.02f;
 
 			if (!progressData.isWarmUp && progressData.hasTarget && !progressData.targetArrived) {
 
@@ -182,44 +196,52 @@ public final class PlayerTensiveMusic extends SoundEffect {
 				v = MathUtils.clamp(v, -ScaleMt, ScaleMt);
 				v *= InvScaleMt; // normalized range
 				float to_target = AMath.fixup(v);
-				// to_target = (to_target + 1);
 
 				// Gdx.app.log("PlayerTensiveMusic", "to_target=" + to_target + ", tgt_vol=" + tgt_vol + ", midx=" + musicIndex);
 
-				if (to_target >= (AheadByMt * InvScaleMt) && lapManager.getReplaysCount() >= NumTracks) {
-					// player ahead by 20mt
+				if (to_target >= (AheadByMt * InvScaleMt) && musicIndexLimit == NumTracks - 2) {
+					// player ahead by 20mt, can play very latest track
 					musicIndex = NumTracks - 1;
+					fMusicIndex = musicIndex;
 					musicIndexLimit = musicIndex;
 				} else if (to_target > 0) {
 					// player is heading the race
 					musicIndex = musicIndexLimit;
+					fMusicIndex = musicIndex;
 				} else {
 					tgt_vol = 1 - MathUtils.clamp(-to_target, 0, 1);
-					float fidx = tgt_vol * musicIndexLimit;
-					musicIndex = progressData.isWarmUp ? 0 : (int)fidx;
-					Gdx.app.log("PlayerTensiveMusic", "to_target=" + to_target + ", tgt_vol=" + tgt_vol + ", fidx=" + fidx + " ("
-						+ musicIndex + ")");
+					fMusicIndex = tgt_vol * musicIndexLimit;
+					musicIndex = (int)fMusicIndex;
 				}
 			}
 
+			// Gdx.app.log("PlayerTensiveMusic", "fmusidx=" + fMusicIndex);
+			// computeTrackVolumes();
+
 			// update all volume accumulators
-
-			// tgt_vol = 1;
-			// musicIndex = 5;
-			float step = 1f / (float)(NumTracks - 1);
-
+			// float step = (1f - MinVolume) / (float)(NumTracks - 1);
 			for (int i = 0; i <= NumTracks - 1; i++) {
-
 				if (i == musicIndex && i <= musicIndexLimit) {
-					float v = MathUtils.clamp(step * musicIndex, MinVolume, 1) * SoundManager.MusicVolumeMul;
-					volTrack[i].set(v, alpha_inc);
+					float decimal = AMath.fixup(fMusicIndex - musicIndex);
+
+					float vol_this = (1 - decimal);
+					vol_this = MathUtils.clamp(vol_this * trackVolumes[i], MinVolume, 1);
+					volTrack[i].set(vol_this, alpha_inc);
+
+					int next = i + 1;
+					if (next <= musicIndexLimit) {
+						float vol_next = decimal;
+						vol_next = MathUtils.clamp(volOut[next] + vol_next * trackVolumes[next], 0, 1);
+						// Gdx.app.log("PlayerTensiveMusic", "vol_next=" + vol_next);
+
+						volTrack[next].set(vol_next, alpha_inc);
+					}
 				} else {
 					volTrack[i].set(0, alpha_dec);
 				}
 
-				// interpolate and get
-				volOut[i] = volTrack[i].get();
-
+				// interpolate and set
+				volOut[i] = volTrack[i].get() * SoundManager.MusicVolumeMul;
 				setVolume(i, volOut[i]);
 			}
 		}
