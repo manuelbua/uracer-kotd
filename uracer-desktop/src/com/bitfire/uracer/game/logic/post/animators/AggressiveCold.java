@@ -320,14 +320,12 @@ public final class AggressiveCold implements PostProcessingAnimator {
 		// earth curvature (+ crt, optionally)
 		//
 
-		// maxzoom needs to be lowered of the same amount that the time dilation zoom feature will add to the zoom (0.1)
-		// (see SinglePlayerLogic::updateCamera)
-		float maxzoom = GameWorldRenderer.MaxCameraZoom - 0.1f;
-		float factor = MathUtils.clamp(((zoomCamera - 1) / (maxzoom - 1)), 0, 1);
-
+		float factor = 0;// MathUtils.clamp(((zoomCamera - 1) / GameWorldRenderer.ZoomRange), 0, 1);
 		float kdist = 0.20f;
+		float dist = kdist - kdist * factor;
+
 		if (curvature != null) {
-			float dist = kdist - kdist * factor;
+
 			dist = AMath.fixup(dist);
 			autoEnableEarthCurvature(dist);
 			if (curvature.isEnabled()) {
@@ -337,12 +335,10 @@ public final class AggressiveCold implements PostProcessingAnimator {
 		}
 
 		if (crt != null) {
-			// color offset
-			// float amount = AMath.fixup(offsetAmount.value);
+			// modulates color offset by collision factor)
 			crt.setColorOffset(0f + MathUtils.clamp(0.005f * cf, 0, 0.005f));
 
 			// zoom+earth curvature
-			float dist = kdist - kdist * factor;
 			dist = AMath.fixup(dist);
 			crt.setDistortion(dist);
 			crt.setZoom(1 - (dist / 2));
