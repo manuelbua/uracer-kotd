@@ -185,6 +185,7 @@ public final class PlayerTensiveMusic extends SoundEffect {
 
 			// default interpolation speed
 			float alpha_inc = 0.05f;
+			float alpha_inc_next = 0.025f;
 			float alpha_dec = 0.02f;
 
 			if (!progressData.isWarmUp && progressData.hasTarget && !progressData.targetArrived) {
@@ -224,17 +225,15 @@ public final class PlayerTensiveMusic extends SoundEffect {
 				if (i == musicIndex && i <= musicIndexLimit) {
 					float decimal = AMath.fixup(fMusicIndex - musicIndex);
 
-					float vol_this = (1 - decimal);
-					vol_this = MathUtils.clamp(vol_this * trackVolumes[i], MinVolume, 1);
+					float vol_this = MathUtils.clamp((1 - decimal) * trackVolumes[i], MinVolume, 1);
 					volTrack[i].set(vol_this, alpha_inc);
 
 					int next = i + 1;
 					if (next <= musicIndexLimit) {
-						float vol_next = decimal;
-						vol_next = MathUtils.clamp(volOut[next] + vol_next * trackVolumes[next], 0, 1);
+						float vol_next = MathUtils.clamp(volOut[next] + decimal * trackVolumes[next], 0, 1);
 						// Gdx.app.log("PlayerTensiveMusic", "vol_next=" + vol_next);
 
-						volTrack[next].set(vol_next, alpha_inc);
+						volTrack[next].set(vol_next, alpha_inc_next);
 					}
 				} else {
 					volTrack[i].set(0, alpha_dec);

@@ -17,10 +17,12 @@ public class DebugMusicVolumes extends DebugRenderable {
 	private Array<DebugMeter> meters = new Array<DebugMeter>();
 	private PlayerTensiveMusic tensiveMusic;
 	private Matrix4 idt = new Matrix4();
+	private float totalVolume;
 
 	public DebugMusicVolumes (RenderFlags flag, PlayerTensiveMusic tensiveMusic) {
 		super(flag);
 		this.tensiveMusic = tensiveMusic;
+		totalVolume = 0;
 
 		for (int i = 0; i < PlayerTensiveMusic.NumTracks; i++) {
 			DebugMeter m = new DebugMeter(64, Art.DebugFontHeight);
@@ -54,9 +56,13 @@ public class DebugMusicVolumes extends DebugRenderable {
 		if (isActive()) {
 
 			// String dbg = "";
+			totalVolume = 0;
+			float[] volumes = tensiveMusic.getVolumes();
 			for (int i = 0; i < tensiveMusic.getVolumes().length; i++) {
-				float v = tensiveMusic.getVolumes()[i];
+				float v = volumes[i];
 				meters.get(i).setValue(v);
+				totalVolume += v;
+
 				// dbg += "[" + ((i == tensiveMusic.getMusicIndex()) ? "*" : " ") + String.format("%02.1f", v) + "] ";
 			}
 
@@ -83,8 +89,6 @@ public class DebugMusicVolumes extends DebugRenderable {
 			String text;
 			for (DebugMeter m : meters) {
 				int x = drawx, y = drawy + Art.DebugFontHeight * 2;
-
-				// if (index > maxMusicIndex) continue;
 
 				// offset by index
 				y += index * (prevHeight + 1);
@@ -117,6 +121,9 @@ public class DebugMusicVolumes extends DebugRenderable {
 				prevHeight = m.getHeight();
 			}
 
+			SpriteBatchUtils.drawString(batch, "total volume = " + String.format("%.02f", totalVolume), drawx, Art.DebugFontHeight
+				* (meters.size + 3));
+
 			batch.setTransformMatrix(prev);
 			batch.disableBlending();
 		}
@@ -125,5 +132,4 @@ public class DebugMusicVolumes extends DebugRenderable {
 	@Override
 	public void reset () {
 	}
-
 }
