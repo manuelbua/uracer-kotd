@@ -15,15 +15,17 @@ import com.bitfire.uracer.game.GameplaySettings;
 import com.bitfire.uracer.game.actors.GhostCar;
 import com.bitfire.uracer.game.debug.DebugHelper;
 import com.bitfire.uracer.game.debug.DebugHelper.RenderFlags;
-import com.bitfire.uracer.game.debug.GameTrackDebugRenderer;
 import com.bitfire.uracer.game.debug.DebugMusicVolumes;
+import com.bitfire.uracer.game.debug.GameTrackDebugRenderer;
 import com.bitfire.uracer.game.debug.player.DebugPlayer;
 import com.bitfire.uracer.game.logic.gametasks.messager.Message;
 import com.bitfire.uracer.game.logic.gametasks.messager.Message.Position;
 import com.bitfire.uracer.game.logic.gametasks.messager.Message.Size;
 import com.bitfire.uracer.game.logic.gametasks.sounds.effects.PlayerTensiveMusic;
 import com.bitfire.uracer.game.logic.replaying.Replay;
-import com.bitfire.uracer.game.logic.replaying.ReplayManager.ReplayInfo;
+import com.bitfire.uracer.game.logic.replaying.ReplayInfo;
+import com.bitfire.uracer.game.logic.replaying.ReplayManager.DiscardReason;
+import com.bitfire.uracer.game.logic.replaying.ReplayManager.ReplayResult;
 import com.bitfire.uracer.game.logic.types.helpers.CameraShaker;
 import com.bitfire.uracer.game.rendering.GameRenderer;
 import com.bitfire.uracer.game.screens.GameScreensFactory.ScreenType;
@@ -31,6 +33,7 @@ import com.bitfire.uracer.game.world.GameWorld;
 import com.bitfire.uracer.screen.TransitionFactory.TransitionType;
 import com.bitfire.uracer.utils.CarUtils;
 import com.bitfire.uracer.utils.Convert;
+import com.bitfire.uracer.utils.DigestUtils;
 import com.bitfire.uracer.utils.OrdinalUtils;
 import com.bitfire.uracer.utils.URacerRuntimeException;
 
@@ -39,6 +42,7 @@ public class SinglePlayer extends BaseLogic {
 	private boolean saving = false;
 	private CameraShaker camShaker = new CameraShaker();
 	private int selectedBestReplayIdx = -1;
+	private ReplayResult lastRecorded = new ReplayResult();
 
 	public SinglePlayer (UserProfile userProfile, GameWorld gameWorld, GameRenderer gameRenderer) {
 		super(userProfile, gameWorld, gameRenderer);
@@ -71,7 +75,7 @@ public class SinglePlayer extends BaseLogic {
 	private GhostCar findGhostFor (Replay replay) {
 		for (int g = 0; g < ghostCars.length; g++) {
 			GhostCar ghost = ghostCars[g];
-			if (ghost != null && replay != null && ghost.getReplay().getReplayId().equals(replay.getReplayId())) {
+			if (ghost != null && replay != null && ghost.getReplay().getId().equals(replay.getId())) {
 				return ghost;
 			}
 		}
@@ -145,6 +149,11 @@ public class SinglePlayer extends BaseLogic {
 	}
 
 	@Override
+	public ReplayResult getLastRecordedInfo () {
+		return lastRecorded;
+	}
+
+	@Override
 	public GhostCar getNextTarget () {
 		int maxreplays = lapManager.getReplays().size;
 		if (maxreplays > 0 && selectedBestReplayIdx >= 0 && selectedBestReplayIdx < maxreplays) {
@@ -166,7 +175,7 @@ public class SinglePlayer extends BaseLogic {
 				@Override
 				public void run () {
 					if (replay.save()) {
-						Gdx.app.log("SinglePlayer", "Replay #" + replay.getShortReplayId() + " saved to \"" + replay.filename() + "\"");
+						Gdx.app.log("SinglePlayer", "Replay #" + replay.getShortId() + " saved to \"" + replay.filename() + "\"");
 					}
 				}
 			});
@@ -194,11 +203,19 @@ public class SinglePlayer extends BaseLogic {
 		}
 	}
 
-	private boolean pruneReplay (Replay replay) {
-		if (replay != null) {
-			if (replay.delete()) {
-				Gdx.app.log("SinglePlayer", "Pruned #" + replay.getShortReplayId());
-				return true;
+	private boolean pruneReplay (ReplayInfo info) {
+		if (info != null && DigestUtils.isValidDigest(info.getId())) {
+			String rid = info.getId();
+			if (rid.length() > 0) {
+				String path = Storage.ReplaysRoot + info.getTrackId() + "/" + info.getUserId() + "/" + info.getId();
+				FileHandle hf = Gdx.files.external(path);
+				if (hf.exists()) {
+					hf.delete();
+					Gdx.app.log("SinglePlayer", "Pruned #" + rid);
+					return true;
+				} else {
+					Gdx.app.log("SinglePlayer", "Couldn't prune #" + rid);
+				}
 			}
 		}
 
@@ -216,14 +233,38 @@ public class SinglePlayer extends BaseLogic {
 				for (FileHandle userreplay : userdir.list()) {
 					Replay replay = Replay.load(userreplay.path());
 					if (replay != null) {
-						ReplayInfo ri = lapManager.addSlowerReplay(replay);
-						if (ri.accepted) {
-							pruneReplay(ri.discarded); // remove any discarded replay *if any*
+						// add replays even if slower
+						ReplayResult ri = lapManager.addReplay(replay);
+						if (ri.is_accepted) {
+							pruneReplay(ri.pruned); // prune if needed
 							reloaded++;
-							Gdx.app.log("SinglePlayer", "Loaded replay #" + ri.replay.getShortReplayId());
+							Gdx.app.log("SinglePlayer", "Loaded replay #" + ri.accepted.getShortId());
 						} else {
-							Gdx.app.log("SinglePlayer", "Replay not loaded #"
-								+ (ri.discarded != null ? ri.discarded.getShortReplayId() : '?'));
+
+							String msg = "";
+							switch (ri.reason) {
+							case Null:
+								msg = "null replay (" + userreplay.path() + ")";
+								break;
+							case InvalidMinDuration:
+								msg = "invalid lap (" + ri.discarded.getTrackTime() + "s < " + GameplaySettings.ReplayMinDurationSecs
+									+ "s) (#" + ri.discarded.getShortId() + ")";
+								break;
+							case Invalid:
+								msg = "the specified replay is not valid. (" + userreplay.path() + ")";
+								break;
+							case WrongTrack:
+								msg = "the specified replay belongs to another game track (#" + ri.discarded.getShortId() + ")";
+								break;
+							case Slower:
+								msg = "too slow! (#" + ri.discarded.getShortId() + ")";
+								pruneReplay(ri.discarded);
+								break;
+							case NotDiscarded:
+								break;
+							}
+
+							Gdx.app.log("SinglePlayer", "Discarded at loading time, " + msg);
 						}
 					}
 				}
@@ -241,7 +282,7 @@ public class SinglePlayer extends BaseLogic {
 		int pos = 1;
 		for (Replay r : lapManager.getReplays()) {
 			Gdx.app.log("SinglePlayer",
-				"#" + pos + ", #" + r.getShortReplayId() + ", secs=" + String.format("%02.03f", r.getTrackTimeInt() / 1000f)
+				"#" + pos + ", #" + r.getShortId() + ", secs=" + String.format("%02.03f", r.getTrackTimeInt() / 1000f)
 					+ ", ct=" + r.getCreationTimestamp());
 			pos++;
 		}
@@ -278,7 +319,7 @@ public class SinglePlayer extends BaseLogic {
 
 	@Override
 	public void playerLapStarted () {
-		lapManager.stopRecording();
+		// lapManager.stopRecording();
 		playerCar.resetDistanceAndSpeed(true, false);
 		lapManager.startRecording(playerCar, gameWorld.getLevelId(), userProfile.userId);
 
@@ -288,38 +329,63 @@ public class SinglePlayer extends BaseLogic {
 
 	@Override
 	public void playerLapCompleted () {
+		// The policy is to permit slower replays at loading time, but not at gameplay time, so that a player will not be able to
+		// save a slower replay, but if it could, it would be loaded fine from disk.
 		if (lapManager.isRecording()) {
-			ReplayInfo ri = lapManager.stopRecording();
-			Replay r = ri.replay;
+			lastRecorded.reset();
 
-			if (ri.accepted) {
+			Replay replay = lapManager.stopRecording();
 
-				CarUtils.dumpSpeedInfo("SinglePlayer", "Replay #" + r.getShortReplayId() + " accepted, player", playerCar,
-					r.getTrackTime());
+			// check if better than current target
+			GhostCar target = getNextTarget();
+			boolean slowerThanTarget = (target != null) && (replay.compareTo(target.getReplay()) > -1);
+			if (slowerThanTarget) {
+				Replay treplay = target.getReplay();
+				ReplayInfo ri = replay.getInfo();
 
-				saveReplay(r);
-				pruneReplay(ri.discarded); // remove any discarded replay *if any*
+				// early discard, slower than target
+				lastRecorded.is_accepted = false;
+				lastRecorded.discarded.copy(ri);
+				lastRecorded.reason = DiscardReason.Slower;
+
+				String diff = String.format("%.03f", (float)(ri.getTrackTimeInt() - treplay.getTrackTimeInt()) / 1000f);
+				Gdx.app.log("ReplayManager", "Discarded replay #" + ri.getShortId() + " for " + diff + "secs");
+			} else {
+				// once added lastRecorded.new_replay should be used
+				lastRecorded.copy(lapManager.addReplay(replay));
+			}
+
+			if (lastRecorded.is_accepted) {
+				ReplayInfo ri = lastRecorded.accepted;
+
+				CarUtils.dumpSpeedInfo("SinglePlayer", "Replay #" + ri.getShortId() + " accepted, player", playerCar,
+					ri.getTrackTime());
+
+				saveReplay(lastRecorded.new_replay);
+				pruneReplay(lastRecorded.pruned); // prune if needed
 
 				// show message
-				int pos = ri.position;
+				int pos = lastRecorded.position;
 				messager.show(pos + OrdinalUtils.getOrdinalFor(pos) + " place!", 1.5f, Message.Type.Information, Position.Top,
 					Size.Big);
 			} else {
+				ReplayInfo ri = lastRecorded.discarded;
+
 				String msg = "";
-				String id = "(#" + r.getShortReplayId() + ")";
+				String id = "(#" + ri.getShortId() + ")";
 				float duration = 1.5f;
 
-				switch (ri.reason) {
+				switch (lastRecorded.reason) {
 				case Null:
 					msg = "Discarding null replay " + id;
 					duration = 3;
 					break;
 				case InvalidMinDuration:
-					msg = "Invalid lap (" + r.getTrackTime() + "s < " + GameplaySettings.ReplayMinDurationSecs + "s) " + id;
+					msg = "Invalid lap (" + ri.getTrackTime() + "s < " + GameplaySettings.ReplayMinDurationSecs + "s) " + id;
 					duration = 10;
 					break;
 				case Invalid:
-					msg = "The specified replay is not valid. (#" + r.getShortReplayId() + ") " + id;
+					msg = "The specified replay is not valid. (#" + ri.getShortId() + ") " + id;
 					duration = 10;
 					break;
 				case WrongTrack:
@@ -337,6 +403,7 @@ public class SinglePlayer extends BaseLogic {
 				Gdx.app.log("SinglePlayer", msg);
 				messager.show(msg, duration, Message.Type.Information, Position.Top, Size.Big);
 			}
+
 		}
 
 		playerCar.resetDistanceAndSpeed(true, false);
@@ -345,7 +412,10 @@ public class SinglePlayer extends BaseLogic {
 	@Override
 	public void ghostLapCompleted (GhostCar ghost) {
 		if (!hasPlayer()) {
-			if (lapManager.getReplays().peek().getReplayId().equals(ghost.getReplay().getReplayId())) {
+			Replay last = lapManager.getReplays().peek();
+			Replay ghostReplay = ghost.getReplay();
+
+			if (last != null && last.getId().equals(ghostReplay.getId())) {
 				restartAllReplays();
 			}
 		} else {

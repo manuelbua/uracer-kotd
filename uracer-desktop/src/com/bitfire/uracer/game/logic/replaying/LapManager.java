@@ -6,7 +6,7 @@ import com.badlogic.gdx.utils.Array;
 import com.badlogic.gdx.utils.Disposable;
 import com.bitfire.uracer.game.actors.Car;
 import com.bitfire.uracer.game.actors.CarForces;
-import com.bitfire.uracer.game.logic.replaying.ReplayManager.ReplayInfo;
+import com.bitfire.uracer.game.logic.replaying.ReplayManager.ReplayResult;
 import com.bitfire.uracer.game.logic.replaying.ReplayRecorder.RecorderError;
 
 /** Manage player's performance recordings and keeps basic lap information */
@@ -14,12 +14,10 @@ public class LapManager implements Disposable {
 
 	private final ReplayRecorder recorder;
 	private final ReplayManager manager;
-	private ReplayInfo lastRecorded;
 
 	public LapManager (String currentTrackId) {
 		recorder = new ReplayRecorder();
 		manager = new ReplayManager(currentTrackId);
-		lastRecorded = null;
 	}
 
 	@Override
@@ -37,8 +35,8 @@ public class LapManager implements Disposable {
 		recorder.resetTimer();
 	}
 
-	public ReplayInfo addSlowerReplay (Replay replay) {
-		return manager.addReplay(replay, true);
+	public ReplayResult addReplay (Replay replay) {
+		return manager.addReplay(replay);
 	}
 
 	/** Starts recording the player lap performance. Returns the Replay instance where the recording is being performed. */
@@ -60,11 +58,10 @@ public class LapManager implements Disposable {
 		return RecorderError.RecordingNotEnabled;
 	}
 
-	/** Ends recording the previously started lap performance */
-	public ReplayInfo stopRecording () {
+	/** Ends the previously started recording and returns its Replay, if any */
+	public Replay stopRecording () {
 		if (recorder.isRecording()) {
-			lastRecorded = manager.addReplay(recorder.endRecording(), false);
-			return lastRecorded;
+			return recorder.endRecording();
 		}
 
 		return null;
@@ -83,16 +80,16 @@ public class LapManager implements Disposable {
 		return recorder.isRecording();
 	}
 
-	public ReplayInfo getLastRecording () {
-		return lastRecorded;
-	}
-
 	public float getCurrentReplaySeconds () {
 		return recorder.getElapsedSeconds();
 	}
 
 	public Array<Replay> getReplays () {
 		return manager.getReplays();
+	}
+
+	public Replay getReplay (String replayId) {
+		return manager.getById(replayId);
 	}
 
 	public int getReplaysCount () {

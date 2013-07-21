@@ -20,7 +20,7 @@ public class DigestUtils {
 
 	public static final String computeDigest (Replay replay) {
 		if (replay.isValidData()) {
-			String trackTime = "" + ((int)(replay.getTrackTime() * AMath.ONE_ON_CMP_EPSILON));
+			String trackTime = "" + replay.getTrackTimeInt();
 			String created = "" + replay.getCreationTimestamp();
 
 			sha256.reset();

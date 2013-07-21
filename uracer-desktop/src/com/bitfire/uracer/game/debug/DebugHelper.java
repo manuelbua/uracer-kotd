@@ -37,8 +37,9 @@ import com.bitfire.uracer.game.logic.gametasks.GameTask;
 import com.bitfire.uracer.game.logic.helpers.GameTrack.TrackState;
 import com.bitfire.uracer.game.logic.replaying.LapManager;
 import com.bitfire.uracer.game.logic.replaying.Replay;
+import com.bitfire.uracer.game.logic.replaying.ReplayInfo;
 import com.bitfire.uracer.game.logic.replaying.ReplayManager;
-import com.bitfire.uracer.game.logic.replaying.ReplayManager.ReplayInfo;
+import com.bitfire.uracer.game.logic.replaying.ReplayManager.ReplayResult;
 import com.bitfire.uracer.game.player.PlayerCar;
 import com.bitfire.uracer.game.rendering.GameRenderer;
 import com.bitfire.uracer.game.rendering.GameWorldRenderer;
@@ -345,7 +346,7 @@ public final class DebugHelper extends GameTask implements DisposableTasks {
 	private boolean isNextTarget (Replay replay) {
 		GhostCar target = logic.getNextTarget();
 		if (target != null) {
-			if (replay != null && target.getReplay().getReplayId().equals(replay.getReplayId())) {
+			if (replay != null && target.getReplay().getId().equals(replay.getId())) {
 				return true;
 			}
 		}
@@ -361,8 +362,8 @@ public final class DebugHelper extends GameTask implements DisposableTasks {
 		// if (!hasPlayer) return;
 
 		float scale = 1;
-		ReplayInfo last = lapManager.getLastRecording();
-		boolean discarded = last != null && !last.accepted;
+		ReplayResult last = logic.getLastRecordedInfo();
+		boolean discarded = last != null && !last.is_accepted;
 
 		int coord = y;
 		drawString2X(batch, "CURRENT RANKINGS", 0, coord, scale);
@@ -374,8 +375,8 @@ public final class DebugHelper extends GameTask implements DisposableTasks {
 		for (Replay replay : lapManager.getReplays()) {
 			boolean lastAccepted = false;
 
-			if (last != null && last.accepted) {
-				lastAccepted = last.replay.getReplayId().equals(replay.getReplayId());
+			if (last != null && last.is_accepted) {
+				lastAccepted = last.accepted.getId().equals(replay.getId());
 			}
 
 			if (lastAccepted) {
@@ -400,12 +401,12 @@ public final class DebugHelper extends GameTask implements DisposableTasks {
 		}
 
 		// show discarded lap
-		if (discarded && last != null) {
-			Replay replay = last.discarded;
+		if (discarded && last != null && last.discarded.isValid()) {
+			ReplayInfo info = last.discarded;
 			batchColorStart(batch, 1, 0, 0);
 
-			text = rankString(lapManager.getReplays().size + 1) + "  " + replay.getUserId() + " "
-				+ timeString(replay.getTrackTimeInt() / 1000f);
+			text = rankString(lapManager.getReplays().size + 1) + "  " + info.getUserId() + " "
+				+ timeString(info.getTrackTimeInt() / 1000f);
 			drawString2X(batch, text, 0, coord, scale);
 			batchColorEnd(batch);
 		}

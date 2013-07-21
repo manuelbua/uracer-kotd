@@ -14,7 +14,6 @@ import com.badlogic.gdx.utils.TimeUtils;
 import com.bitfire.uracer.configuration.Storage;
 import com.bitfire.uracer.game.actors.Car;
 import com.bitfire.uracer.game.actors.CarForces;
-import com.bitfire.uracer.utils.AMath;
 import com.bitfire.uracer.utils.DigestUtils;
 import com.bitfire.uracer.utils.URacerRuntimeException;
 
@@ -25,19 +24,13 @@ import com.bitfire.uracer.utils.URacerRuntimeException;
 public final class Replay implements Disposable, Comparable<Replay> {
 	public static final int MaxEvents = 5000;
 
-	// car data
+	// replay data
 	private Vector2 carPositionMt = new Vector2();
 	private float carOrientationRads;
-
-	// replay data
-	private String replayId;
-	private String userId;
-	private String trackId;
-	private float trackTimeSeconds = 0;
 	private CarForces[] forces = null;
-	private int eventsCount;
-	private boolean completed = false;
-	private long created;
+
+	// replay info data
+	protected ReplayInfo info = new ReplayInfo();
 
 	public Replay () {
 		forces = new CarForces[MaxEvents];
@@ -47,12 +40,6 @@ public final class Replay implements Disposable, Comparable<Replay> {
 		reset();
 	}
 
-	// @Override
-	// public boolean equals (Object obj) {
-	// return this.compareTo((Replay)obj) == 0;
-	// Replay r = (Replay)obj;
-	// }
-
 	@Override
 	public int compareTo (Replay o) {
 		if (o == null) {
@@ -60,8 +47,8 @@ public final class Replay implements Disposable, Comparable<Replay> {
 		}
 
 		// compare up to the 3rd decimal
-		int thisSecs = (int)(getTrackTime() * AMath.ONE_ON_CMP_EPSILON);
-		int otherSecs = (int)(o.getTrackTime() * AMath.ONE_ON_CMP_EPSILON);
+		int thisSecs = info.getTrackTimeInt();
+		int otherSecs = o.info.getTrackTimeInt();
 
 		// if different time, then compare
 		if (thisSecs != otherSecs) {
@@ -69,8 +56,8 @@ public final class Replay implements Disposable, Comparable<Replay> {
 		} else {
 			// equal time, draw
 			// the oldest wins
-			if (created < o.created) return -1;
-			if (created > o.created) return 1;
+			if (info.created < o.info.created) return -1;
+			if (info.created > o.info.created) return 1;
 			return 0;
 		}
 	}
@@ -84,37 +71,23 @@ public final class Replay implements Disposable, Comparable<Replay> {
 		}
 	}
 
-	public void setId (String id) {
-		replayId = id;
-	}
+	// public void setId (String id) {
+	// info.replayId = id;
+	// }
 
 	public void reset () {
-		replayId = "";
-		userId = "";
-		trackId = "";
-		trackTimeSeconds = 0;
-		eventsCount = 0;
+		info.reset();
 		carPositionMt.set(0, 0);
 		carOrientationRads = 0;
-		completed = false;
-		created = 0;
-
 		for (int i = 0; i < MaxEvents; i++) {
 			forces[i].reset();
 		}
 	}
 
-	public void copyData (Replay replay) {
-		replayId = replay.replayId;
-		userId = replay.userId;
-		trackId = replay.trackId;
-		trackTimeSeconds = replay.trackTimeSeconds;
-		eventsCount = replay.eventsCount;
+	public void copy (Replay replay) {
+		info.copy(replay.info);
 		carPositionMt.set(replay.carPositionMt);
 		carOrientationRads = replay.carOrientationRads;
-		completed = replay.completed;
-		created = replay.created;
-
 		for (int i = 0; i < MaxEvents; i++) {
 			forces[i].set(replay.forces[i]);
 		}
@@ -122,16 +95,16 @@ public final class Replay implements Disposable, Comparable<Replay> {
 
 	public void begin (String trackId, String userId, Car car) {
 		reset();
-		this.trackId = trackId;
-		this.userId = userId;
+		info.trackId = trackId;
+		info.userId = userId;
 		carPositionMt.set(car.getWorldPosMt());
 		carOrientationRads = car.getWorldOrientRads();
-		created = TimeUtils.millis();
+		info.created = TimeUtils.millis();
 	}
 
 	public boolean add (CarForces f) {
-		forces[eventsCount++].set(f);
-		if (eventsCount == MaxEvents) {
+		forces[info.eventsCount++].set(f);
+		if (info.eventsCount == MaxEvents) {
 			reset();
 			return false;
 		}
@@ -140,23 +113,23 @@ public final class Replay implements Disposable, Comparable<Replay> {
 	}
 
 	public void end (float trackTime) {
-		trackTimeSeconds = trackTime;
-		completed = eventsCount > 0 && eventsCount < MaxEvents;
+		info.trackTimeSeconds = trackTime;
+		info.completed = info.eventsCount > 0 && info.eventsCount < MaxEvents;
 
-		replayId = DigestUtils.computeDigest(this);
-		if (!DigestUtils.isValidDigest(replayId)) {
-			throw new URacerRuntimeException("The generated Replay ID is invalid (#" + replayId + ")");
+		info.replayId = DigestUtils.computeDigest(this);
+		if (!DigestUtils.isValidDigest(info.replayId)) {
+			throw new URacerRuntimeException("The generated Replay ID is invalid (#" + info.replayId + ")");
 		}
 	}
 
 	private String getDestDir () {
 		// FIXME move this out of here!!!!
-		return Storage.ReplaysRoot + trackId + "/" + userId + "/";
+		return Storage.ReplaysRoot + info.trackId + "/" + info.userId + "/";
 	}
 
 	public boolean delete () {
 		if (isValid()) {
-			FileHandle hf = Gdx.files.external(getDestDir() + replayId);
+			FileHandle hf = Gdx.files.external(getDestDir() + info.replayId);
 			if (hf.exists()) {
 				hf.delete();
 				return true;
@@ -169,7 +142,7 @@ public final class Replay implements Disposable, Comparable<Replay> {
 
 	public String filename () {
 		if (isValid()) {
-			return getDestDir() + replayId;
+			return getDestDir() + info.replayId;
 		}
 
 		return "";
@@ -185,7 +158,7 @@ public final class Replay implements Disposable, Comparable<Replay> {
 
 			FileHandle hf = Gdx.files.external(filename());
 			if (hf.exists()) {
-				Gdx.app.log("Replay", "=====> NOT OVERWRITING REPLAY (" + replayId + ") <=====");
+				Gdx.app.log("Replay", "=====> NOT OVERWRITING REPLAY (" + info.replayId + ") <=====");
 				return false;
 			}
 
@@ -194,12 +167,12 @@ public final class Replay implements Disposable, Comparable<Replay> {
 				DataOutputStream os = new DataOutputStream(gzos);
 
 				// replay info data
-				os.writeUTF(replayId);
-				os.writeUTF(userId);
-				os.writeUTF(trackId);
-				os.writeFloat(trackTimeSeconds);
-				os.writeInt(eventsCount);
-				os.writeLong(created);
+				os.writeUTF(info.replayId);
+				os.writeUTF(info.userId);
+				os.writeUTF(info.trackId);
+				os.writeFloat(info.trackTimeSeconds);
+				os.writeInt(info.eventsCount);
+				os.writeLong(info.created);
 
 				// car data
 				os.writeFloat(carPositionMt.x);
@@ -207,7 +180,7 @@ public final class Replay implements Disposable, Comparable<Replay> {
 				os.writeFloat(carOrientationRads);
 
 				// write the effective number of captured CarForces events
-				for (int i = 0; i < eventsCount; i++) {
+				for (int i = 0; i < info.eventsCount; i++) {
 					CarForces f = forces[i];
 					os.writeFloat(f.velocity_x);
 					os.writeFloat(f.velocity_y);
@@ -235,22 +208,22 @@ public final class Replay implements Disposable, Comparable<Replay> {
 				DataInputStream is = new DataInputStream(gzis);
 
 				Replay r = new Replay();
-				r.completed = true;
+				r.info.completed = true;
 
 				// replay info data
-				r.replayId = is.readUTF();
-				r.userId = is.readUTF();
-				r.trackId = is.readUTF();
-				r.trackTimeSeconds = is.readFloat();
-				r.eventsCount = is.readInt();
-				r.created = is.readLong();
+				r.info.replayId = is.readUTF();
+				r.info.userId = is.readUTF();
+				r.info.trackId = is.readUTF();
+				r.info.trackTimeSeconds = is.readFloat();
+				r.info.eventsCount = is.readInt();
+				r.info.created = is.readLong();
 
 				// car data
 				r.carPositionMt.x = is.readFloat();
 				r.carPositionMt.y = is.readFloat();
 				r.carOrientationRads = is.readFloat();
 
-				for (int i = 0; i < r.eventsCount; i++) {
+				for (int i = 0; i < r.info.eventsCount; i++) {
 					r.forces[i].velocity_x = is.readFloat();
 					r.forces[i].velocity_y = is.readFloat();
 					r.forces[i].angularVelocity = is.readFloat();
@@ -271,19 +244,15 @@ public final class Replay implements Disposable, Comparable<Replay> {
 	}
 
 	public boolean isValidData () {
-		return completed && created > 0 && userId.length() > 0 && trackId.length() > 0;
+		return info.isValidData();
 	}
 
 	public boolean isValid () {
-		return isValidData() && DigestUtils.isValidDigest(replayId);
+		return info.isValid();
 	}
 
 	public CarForces[] getCarForces () {
 		return forces;
-	}
-
-	public int getEventsCount () {
-		return eventsCount;
 	}
 
 	public final Vector2 getStartPosition () {
@@ -294,31 +263,41 @@ public final class Replay implements Disposable, Comparable<Replay> {
 		return carOrientationRads;
 	}
 
-	public String getReplayId () {
-		return replayId;
+	public ReplayInfo getInfo () {
+		return info;
 	}
 
-	public String getShortReplayId () {
-		return replayId.substring(0, 6);
+	// commodity proxy functions
+
+	public String getId () {
+		return info.getId();
+	}
+
+	public String getShortId () {
+		return info.getShortId();
 	}
 
 	public String getUserId () {
-		return userId;
+		return info.getUserId();
 	}
 
 	public String getTrackId () {
-		return trackId;
+		return info.getTrackId();
 	}
 
 	public float getTrackTime () {
-		return trackTimeSeconds;
+		return info.getTrackTime();
 	}
 
 	public int getTrackTimeInt () {
-		return (int)(trackTimeSeconds * AMath.ONE_ON_CMP_EPSILON);
+		return info.getTrackTimeInt();
 	}
 
 	public long getCreationTimestamp () {
-		return created;
+		return info.getCreationTimestamp();
+	}
+
+	public int getEventsCount () {
+		return info.getEventsCount();
 	}
 }

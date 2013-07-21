@@ -111,7 +111,7 @@ public final class GhostCar extends Car {
 		replayForcesCount = 0;
 
 		if (hasReplay) {
-			this.replay.copyData(replay);
+			this.replay.copy(replay);
 		} else {
 			this.replay.reset();
 		}

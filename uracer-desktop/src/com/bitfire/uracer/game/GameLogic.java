@@ -3,6 +3,7 @@ package com.bitfire.uracer.game;
 
 import com.bitfire.uracer.configuration.UserProfile;
 import com.bitfire.uracer.game.actors.GhostCar;
+import com.bitfire.uracer.game.logic.replaying.ReplayManager.ReplayResult;
 import com.bitfire.uracer.game.logic.types.helpers.TimeModulator;
 
 public interface GameLogic {
@@ -49,4 +50,6 @@ public interface GameLogic {
 	boolean isWarmUp ();
 
 	UserProfile getUserProfile ();
+
+	ReplayResult getLastRecordedInfo ();
 }
