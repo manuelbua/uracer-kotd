@@ -32,6 +32,7 @@ public abstract class BaseLogic extends CommonLogic {
 	private Vector2 cameraPos = new Vector2();
 	private float prevZoom = GameWorldRenderer.MinCameraZoom + GameWorldRenderer.ZoomWindow;
 	private InterpolatedFloat driftStrength = new InterpolatedFloat();
+	private InterpolatedFloat speed = new InterpolatedFloat();
 	private TimeModulator timeMod = null;
 	private Time dilationTime;
 	private Time outOfTrackTime;
@@ -81,6 +82,7 @@ public abstract class BaseLogic extends CommonLogic {
 	public void removePlayer () {
 		super.removePlayer();
 		driftStrength.reset(0, true);
+		speed.reset(0, true);
 	}
 
 	@Override
@@ -109,7 +111,7 @@ public abstract class BaseLogic extends CommonLogic {
 	@Override
 	public float updateCameraZoom (float timeModFactor) {
 		if (hasPlayer()) {
-			// speed.set(playerCar.carState.currSpeedFactor, 0.02f);
+			speed.set(playerCar.carState.currSpeedFactor, 0.02f);
 			driftStrength.set(playerCar.driftState.driftStrength, 0.02f);
 		}
 
@@ -117,12 +119,16 @@ public abstract class BaseLogic extends CommonLogic {
 		float maxZoom = GameWorldRenderer.MaxCameraZoom;
 
 		float cameraZoom = (minZoom + GameWorldRenderer.ZoomWindow);
-		cameraZoom += (maxZoom - cameraZoom) * timeModFactor;
+		// cameraZoom += GameWorldRenderer.ZoomRange * timeModFactor;
 		cameraZoom += 0.25f * GameWorldRenderer.ZoomWindow * driftStrength.get();
+		cameraZoom += (maxZoom - cameraZoom) * timeModFactor; // zoom in if slowing time down
+		cameraZoom -= (maxZoom - cameraZoom) * speed.get(); // zoom out if speedy
 
 		cameraZoom = AMath.lerp(prevZoom, cameraZoom, 0.1f);
 		cameraZoom = AMath.clampf(cameraZoom, minZoom, maxZoom);
 		cameraZoom = AMath.fixupTo(cameraZoom, minZoom + GameWorldRenderer.ZoomWindow);
+
+		// Gdx.app.log("BaseLogic", "camz=" + cameraZoom);
 
 		prevZoom = cameraZoom;
 		return cameraZoom;

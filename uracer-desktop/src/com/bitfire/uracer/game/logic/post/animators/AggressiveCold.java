@@ -320,7 +320,7 @@ public final class AggressiveCold implements PostProcessingAnimator {
 		// earth curvature (+ crt, optionally)
 		//
 
-		float factor = 0;// MathUtils.clamp(((zoomCamera - 1) / GameWorldRenderer.ZoomRange), 0, 1);
+		float factor = MathUtils.clamp(((zoomCamera - 1) / GameWorldRenderer.ZoomRange), 0, 1);
 		float kdist = 0.20f;
 		float dist = kdist - kdist * factor;
 
