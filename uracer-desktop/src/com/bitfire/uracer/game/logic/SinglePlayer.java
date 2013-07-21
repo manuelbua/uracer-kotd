@@ -33,8 +33,8 @@ import com.bitfire.uracer.game.world.GameWorld;
 import com.bitfire.uracer.screen.TransitionFactory.TransitionType;
 import com.bitfire.uracer.utils.CarUtils;
 import com.bitfire.uracer.utils.Convert;
-import com.bitfire.uracer.utils.DigestUtils;
 import com.bitfire.uracer.utils.OrdinalUtils;
+import com.bitfire.uracer.utils.ReplayUtils;
 import com.bitfire.uracer.utils.URacerRuntimeException;
 
 public class SinglePlayer extends BaseLogic {
@@ -175,7 +175,8 @@ public class SinglePlayer extends BaseLogic {
 				@Override
 				public void run () {
 					if (replay.save()) {
-						Gdx.app.log("SinglePlayer", "Replay #" + replay.getShortId() + " saved to \"" + replay.filename() + "\"");
+						Gdx.app.log("SinglePlayer",
+							"Replay #" + replay.getShortId() + " saved to \"" + ReplayUtils.getFullPath(replay.getInfo()) + "\"");
 					}
 				}
 			});
@@ -203,25 +204,6 @@ public class SinglePlayer extends BaseLogic {
 		}
 	}
 
-	private boolean pruneReplay (ReplayInfo info) {
-		if (info != null && DigestUtils.isValidDigest(info.getId())) {
-			String rid = info.getId();
-			if (rid.length() > 0) {
-				String path = Storage.ReplaysRoot + info.getTrackId() + "/" + info.getUserId() + "/" + info.getId();
-				FileHandle hf = Gdx.files.external(path);
-				if (hf.exists()) {
-					hf.delete();
-					Gdx.app.log("SinglePlayer", "Pruned #" + rid);
-					return true;
-				} else {
-					Gdx.app.log("SinglePlayer", "Couldn't prune #" + rid);
-				}
-			}
-		}
-
-		return false;
-	}
-
 	/** Load from disk all the replays for the specified trackId, pruning while loading respecting the ReplayManager.MaxReplays
 	 * constant. Any previous Replay will be cleared from the lapManager instance. */
 	private int loadReplaysFromDiskFor (String trackId) {
@@ -236,7 +218,7 @@ public class SinglePlayer extends BaseLogic {
 						// add replays even if slower
 						ReplayResult ri = lapManager.addReplay(replay);
 						if (ri.is_accepted) {
-							pruneReplay(ri.pruned); // prune if needed
+							ReplayUtils.pruneReplay(ri.pruned); // prune if needed
 							reloaded++;
 							Gdx.app.log("SinglePlayer", "Loaded replay #" + ri.accepted.getShortId());
 						} else {
@@ -258,7 +240,7 @@ public class SinglePlayer extends BaseLogic {
 								break;
 							case Slower:
 								msg = "too slow! (#" + ri.discarded.getShortId() + ")";
-								pruneReplay(ri.discarded);
+								ReplayUtils.pruneReplay(ri.discarded);
 								break;
 							case NotDiscarded:
 								break;
@@ -281,9 +263,10 @@ public class SinglePlayer extends BaseLogic {
 
 		int pos = 1;
 		for (Replay r : lapManager.getReplays()) {
-			Gdx.app.log("SinglePlayer",
-				"#" + pos + ", #" + r.getShortId() + ", secs=" + String.format("%02.03f", r.getTrackTimeInt() / 1000f)
-					+ ", ct=" + r.getCreationTimestamp());
+			Gdx.app.log(
+				"SinglePlayer",
+				"#" + pos + ", #" + r.getShortId() + ", secs=" + String.format("%02.03f", r.getTrackTimeInt() / 1000f) + ", ct="
+					+ r.getCreationTimestamp());
 			pos++;
 		}
 
@@ -362,7 +345,7 @@ public class SinglePlayer extends BaseLogic {
 					ri.getTrackTime());
 
 				saveReplay(lastRecorded.new_replay);
-				pruneReplay(lastRecorded.pruned); // prune if needed
+				ReplayUtils.pruneReplay(lastRecorded.pruned); // prune if needed
 
 				// show message
 				int pos = lastRecorded.position;

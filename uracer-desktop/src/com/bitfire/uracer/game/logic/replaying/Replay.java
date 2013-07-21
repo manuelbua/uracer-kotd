@@ -11,10 +11,10 @@ import com.badlogic.gdx.files.FileHandle;
 import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.utils.Disposable;
 import com.badlogic.gdx.utils.TimeUtils;
-import com.bitfire.uracer.configuration.Storage;
 import com.bitfire.uracer.game.actors.Car;
 import com.bitfire.uracer.game.actors.CarForces;
 import com.bitfire.uracer.utils.DigestUtils;
+import com.bitfire.uracer.utils.ReplayUtils;
 import com.bitfire.uracer.utils.URacerRuntimeException;
 
 /** Represents replay data to be feed to a GhostCar, the replay player.
@@ -122,41 +122,15 @@ public final class Replay implements Disposable, Comparable<Replay> {
 		}
 	}
 
-	private String getDestDir () {
-		// FIXME move this out of here!!!!
-		return Storage.ReplaysRoot + info.trackId + "/" + info.userId + "/";
-	}
-
-	public boolean delete () {
-		if (isValid()) {
-			FileHandle hf = Gdx.files.external(getDestDir() + info.replayId);
-			if (hf.exists()) {
-				hf.delete();
-				return true;
-			}
-		} else {
-			Gdx.app.log("Replay", "Can't delete an invalid replay");
-		}
-		return false;
-	}
-
-	public String filename () {
-		if (isValid()) {
-			return getDestDir() + info.replayId;
-		}
-
-		return "";
-	}
-
 	/** Saves its data to a filename named as its replay ID in the replays output directory for this data's trackId and userId */
 	public boolean save () {
 		if (isValid()) { // sanity check
-			String dest = getDestDir();
+			String dest = ReplayUtils.getDestinationDir(info);
 
 			// ensure destination directory exists
 			Gdx.files.external(dest).mkdirs();
 
-			FileHandle hf = Gdx.files.external(filename());
+			FileHandle hf = Gdx.files.external(ReplayUtils.getFullPath(info));
 			if (hf.exists()) {
 				Gdx.app.log("Replay", "=====> NOT OVERWRITING REPLAY (" + info.replayId + ") <=====");
 				return false;
