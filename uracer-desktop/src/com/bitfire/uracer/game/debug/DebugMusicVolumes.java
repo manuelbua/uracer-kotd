@@ -13,12 +13,12 @@ import com.bitfire.uracer.resources.Art;
 import com.bitfire.uracer.utils.ColorUtils;
 import com.bitfire.uracer.utils.SpriteBatchUtils;
 
-public class MusicVolumes extends DebugRenderable {
+public class DebugMusicVolumes extends DebugRenderable {
 	private Array<DebugMeter> meters = new Array<DebugMeter>();
 	private PlayerTensiveMusic tensiveMusic;
 	private Matrix4 idt = new Matrix4();
 
-	public MusicVolumes (RenderFlags flag, PlayerTensiveMusic tensiveMusic) {
+	public DebugMusicVolumes (RenderFlags flag, PlayerTensiveMusic tensiveMusic) {
 		super(flag);
 		this.tensiveMusic = tensiveMusic;
 
