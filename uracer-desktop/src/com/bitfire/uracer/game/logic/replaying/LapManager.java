@@ -80,8 +80,8 @@ public class LapManager implements Disposable {
 		return recorder.isRecording();
 	}
 
-	public float getCurrentReplaySeconds () {
-		return recorder.getElapsedSeconds();
+	public int getCurrentReplayTicks () {
+		return recorder.getElapsedTicks();
 	}
 
 	public Array<Replay> getReplays () {

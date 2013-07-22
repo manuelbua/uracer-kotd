@@ -3,6 +3,7 @@ package com.bitfire.uracer.utils;
 
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.files.FileHandle;
+import com.bitfire.uracer.configuration.Config;
 import com.bitfire.uracer.configuration.Storage;
 import com.bitfire.uracer.game.logic.replaying.ReplayInfo;
 
@@ -47,5 +48,13 @@ public final class ReplayUtils {
 		}
 
 		return false;
+	}
+
+	public static int ticksToMilliseconds (int ticks) {
+		return (int)(ticks * Config.Physics.Dt * AMath.ONE_ON_CMP_EPSILON);
+	}
+
+	public static float ticksToSeconds (int ticks) {
+		return (float)ticksToMilliseconds(ticks) / 1000f;
 	}
 }

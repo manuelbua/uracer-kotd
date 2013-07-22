@@ -1,15 +1,15 @@
 
 package com.bitfire.uracer.game.logic.replaying;
 
-import com.bitfire.uracer.utils.AMath;
 import com.bitfire.uracer.utils.DigestUtils;
+import com.bitfire.uracer.utils.ReplayUtils;
 
 /** This represents replay information */
 public final class ReplayInfo {
 	protected String replayId;
 	protected String userId;
 	protected String trackId;
-	protected float trackTimeSeconds = 0;
+	protected int trackTimeTicks = 0; // express track length 1/dt steps
 	protected int eventsCount;
 	protected boolean completed = false;
 	protected long created;
@@ -19,7 +19,7 @@ public final class ReplayInfo {
 			replayId = replay.replayId;
 			userId = replay.userId;
 			trackId = replay.trackId;
-			trackTimeSeconds = replay.trackTimeSeconds;
+			trackTimeTicks = replay.trackTimeTicks;
 			eventsCount = replay.eventsCount;
 			completed = replay.completed;
 			created = replay.created;
@@ -30,7 +30,7 @@ public final class ReplayInfo {
 		replayId = "";
 		userId = "";
 		trackId = "";
-		trackTimeSeconds = 0;
+		trackTimeTicks = 0;
 		eventsCount = 0;
 		completed = false;
 		created = 0;
@@ -64,15 +64,25 @@ public final class ReplayInfo {
 		return trackId;
 	}
 
-	public float getTrackTime () {
-		return trackTimeSeconds;
+	public int getTicks () {
+		return trackTimeTicks;
 	}
 
-	public int getTrackTimeInt () {
-		return (int)(trackTimeSeconds * AMath.ONE_ON_CMP_EPSILON);
+	// return milliseconds, i.e. 14035
+	public int getMilliseconds () {
+		return ReplayUtils.ticksToMilliseconds(trackTimeTicks);
+	}
+
+	// return seconds (from computed milliseconds, minimize error), i.e. 14.035
+	public float getSeconds () {
+		return ReplayUtils.ticksToSeconds(trackTimeTicks);
 	}
 
 	public long getCreationTimestamp () {
 		return created;
+	}
+
+	public String getSecondsStr () {
+		return String.format("%.03f", getSeconds());
 	}
 }

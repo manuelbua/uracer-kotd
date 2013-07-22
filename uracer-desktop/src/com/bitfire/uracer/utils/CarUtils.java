@@ -13,14 +13,15 @@ public final class CarUtils {
 		return mtsec * 3.6f;
 	}
 
-	public static void dumpSpeedInfo (String msg, String subject, Car car, float timeElapsed) {
+	public static void dumpSpeedInfo (String msg, String subject, Car car, int ticks) {
 
+		float elapsed = ReplayUtils.ticksToSeconds(ticks);
 		float dist = car.getTraveledDistance();
-		float mts = dist / timeElapsed;
+		float mts = dist / elapsed;
 		// float kmh = mtSecToKmHour(mts);
 
 		// @off
-		Gdx.app.log(msg, subject + " traveled " + dist + "m " + "(" + car.getAccuDistCount() + ") " + "in " + timeElapsed + "s " + "("
+		Gdx.app.log(msg, subject + " traveled " + dist + "m " + "(" + car.getAccuDistCount() + ") " + "in " + String.format("%.03f", elapsed) + "s " + "("
 			+ mts + "mt/s) " +
 			// "(" + kmh + " km/h) " +
 			// "(" + car.getAccuSpeedCount() + ")" +

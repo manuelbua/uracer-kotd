@@ -1,6 +1,7 @@
 
 package com.bitfire.uracer.game;
 
+import com.bitfire.uracer.configuration.Config;
 import com.bitfire.uracer.utils.AMath;
 
 public final class GameplaySettings {
@@ -19,6 +20,7 @@ public final class GameplaySettings {
 
 	// a replay is discarded if its length is less than the specified seconds
 	public static final float ReplayMinDurationSecs = 4f;
+	public static final int ReplayMinDurationTicks = (int)(ReplayMinDurationSecs * Config.Physics.TimestepHz);
 
 	public static final float CollisionFactorMinDurationMs = 500;
 	public static final float CollisionFactorMaxDurationMs = 2500;

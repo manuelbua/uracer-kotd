@@ -14,7 +14,7 @@ import com.bitfire.uracer.game.tween.GameTweener;
 import com.bitfire.uracer.resources.BitmapFontFactory.FontFace;
 import com.bitfire.uracer.utils.BoxedFloat;
 import com.bitfire.uracer.utils.BoxedFloatAccessor;
-import com.bitfire.uracer.utils.NumberString;
+import com.bitfire.uracer.utils.ReplayUtils;
 
 public class HudLapInfo extends HudElement {
 
@@ -84,7 +84,8 @@ public class HudLapInfo extends HudElement {
 	public void onRender (SpriteBatch batch, float cameraZoom) {
 		// current time
 		if (isValid) {
-			curr.setString(NumberString.format(lapManager.getCurrentReplaySeconds()), true);
+			String elapsed = String.format("%.03f", ReplayUtils.ticksToSeconds(lapManager.getCurrentReplayTicks()));
+			curr.setString(elapsed, true);
 		}
 
 		curr.setColor(r.value, g.value, b.value);

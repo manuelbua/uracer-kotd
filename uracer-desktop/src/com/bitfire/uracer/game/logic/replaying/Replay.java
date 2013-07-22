@@ -47,12 +47,12 @@ public final class Replay implements Disposable, Comparable<Replay> {
 		}
 
 		// compare up to the 3rd decimal
-		int thisSecs = info.getTrackTimeInt();
-		int otherSecs = o.info.getTrackTimeInt();
+		int thisTicks = info.getTicks();
+		int otherTicks = o.info.getTicks();
 
 		// if different time, then compare
-		if (thisSecs != otherSecs) {
-			return thisSecs - otherSecs;
+		if (thisTicks != otherTicks) {
+			return thisTicks - otherTicks;
 		} else {
 			// equal time, draw
 			// the oldest wins
@@ -112,8 +112,8 @@ public final class Replay implements Disposable, Comparable<Replay> {
 		return true;
 	}
 
-	public void end (float trackTime) {
-		info.trackTimeSeconds = trackTime;
+	public void end (int ticks) {
+		info.trackTimeTicks = ticks;
 		info.completed = info.eventsCount > 0 && info.eventsCount < MaxEvents;
 
 		info.replayId = DigestUtils.computeDigest(this);
@@ -144,7 +144,7 @@ public final class Replay implements Disposable, Comparable<Replay> {
 				os.writeUTF(info.replayId);
 				os.writeUTF(info.userId);
 				os.writeUTF(info.trackId);
-				os.writeFloat(info.trackTimeSeconds);
+				os.writeInt(info.trackTimeTicks);
 				os.writeInt(info.eventsCount);
 				os.writeLong(info.created);
 
@@ -188,7 +188,7 @@ public final class Replay implements Disposable, Comparable<Replay> {
 				r.info.replayId = is.readUTF();
 				r.info.userId = is.readUTF();
 				r.info.trackId = is.readUTF();
-				r.info.trackTimeSeconds = is.readFloat();
+				r.info.trackTimeTicks = is.readInt();
 				r.info.eventsCount = is.readInt();
 				r.info.created = is.readLong();
 
@@ -259,12 +259,12 @@ public final class Replay implements Disposable, Comparable<Replay> {
 		return info.getTrackId();
 	}
 
-	public float getTrackTime () {
-		return info.getTrackTime();
+	public float getSeconds () {
+		return info.getSeconds();
 	}
 
-	public int getTrackTimeInt () {
-		return info.getTrackTimeInt();
+	public int getMilliseconds () {
+		return info.getMilliseconds();
 	}
 
 	public long getCreationTimestamp () {
@@ -274,4 +274,13 @@ public final class Replay implements Disposable, Comparable<Replay> {
 	public int getEventsCount () {
 		return info.getEventsCount();
 	}
+
+	public int getTicks () {
+		return info.getTicks();
+	}
+
+	public String getSecondsStr () {
+		return info.getSecondsStr();
+	}
+
 }

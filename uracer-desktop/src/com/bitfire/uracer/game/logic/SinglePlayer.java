@@ -229,7 +229,7 @@ public class SinglePlayer extends BaseLogic {
 								msg = "null replay (" + userreplay.path() + ")";
 								break;
 							case InvalidMinDuration:
-								msg = "invalid lap (" + ri.discarded.getTrackTime() + "s < " + GameplaySettings.ReplayMinDurationSecs
+								msg = "invalid lap (" + ri.discarded.getSecondsStr() + "s < " + GameplaySettings.ReplayMinDurationSecs
 									+ "s) (#" + ri.discarded.getShortId() + ")";
 								break;
 							case Invalid:
@@ -263,10 +263,8 @@ public class SinglePlayer extends BaseLogic {
 
 		int pos = 1;
 		for (Replay r : lapManager.getReplays()) {
-			Gdx.app.log(
-				"SinglePlayer",
-				"#" + pos + ", #" + r.getShortId() + ", secs=" + String.format("%02.03f", r.getTrackTimeInt() / 1000f) + ", ct="
-					+ r.getCreationTimestamp());
+			Gdx.app.log("SinglePlayer",
+				"#" + pos + ", #" + r.getShortId() + ", secs=" + r.getSecondsStr() + ", ct=" + r.getCreationTimestamp());
 			pos++;
 		}
 
@@ -331,7 +329,7 @@ public class SinglePlayer extends BaseLogic {
 				lastRecorded.discarded.copy(ri);
 				lastRecorded.reason = DiscardReason.Slower;
 
-				String diff = String.format("%.03f", (float)(ri.getTrackTimeInt() - treplay.getTrackTimeInt()) / 1000f);
+				String diff = String.format("%.03f", (float)(ri.getMilliseconds() - treplay.getMilliseconds()) / 1000f);
 				Gdx.app.log("ReplayManager", "Discarded replay #" + ri.getShortId() + " for " + diff + "secs");
 			} else {
 				// once added lastRecorded.new_replay should be used
@@ -341,8 +339,7 @@ public class SinglePlayer extends BaseLogic {
 			if (lastRecorded.is_accepted) {
 				ReplayInfo ri = lastRecorded.accepted;
 
-				CarUtils.dumpSpeedInfo("SinglePlayer", "Replay #" + ri.getShortId() + " accepted, player", playerCar,
-					ri.getTrackTime());
+				CarUtils.dumpSpeedInfo("SinglePlayer", "Replay #" + ri.getShortId() + " accepted, player", playerCar, ri.getTicks());
 
 				saveReplay(lastRecorded.new_replay);
 				ReplayUtils.pruneReplay(lastRecorded.pruned); // prune if needed
@@ -364,7 +361,7 @@ public class SinglePlayer extends BaseLogic {
 					duration = 3;
 					break;
 				case InvalidMinDuration:
-					msg = "Invalid lap (" + ri.getTrackTime() + "s < " + GameplaySettings.ReplayMinDurationSecs + "s) " + id;
+					msg = "Invalid lap (" + ri.getSecondsStr() + "s < " + GameplaySettings.ReplayMinDurationSecs + "s) " + id;
 					duration = 10;
 					break;
 				case Invalid:
@@ -394,6 +391,8 @@ public class SinglePlayer extends BaseLogic {
 
 	@Override
 	public void ghostLapCompleted (GhostCar ghost) {
+		CarUtils.dumpSpeedInfo("SinglePlayer", "GhostCar #" + ghost.getId(), ghost, ghost.getReplay().getTicks());
+
 		if (!hasPlayer()) {
 			Replay last = lapManager.getReplays().peek();
 			Replay ghostReplay = ghost.getReplay();

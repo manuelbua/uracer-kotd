@@ -20,7 +20,7 @@ public class DigestUtils {
 
 	public static final String computeDigest (Replay replay) {
 		if (replay.isValidData()) {
-			String trackTime = "" + replay.getTrackTimeInt();
+			String trackTime = "" + replay.getMilliseconds();
 			String created = "" + replay.getCreationTimestamp();
 
 			sha256.reset();

@@ -84,7 +84,7 @@ public final class ReplayManager implements Disposable {
 			return false;
 		}
 
-		if (replay.info.getTrackTime() < GameplaySettings.ReplayMinDurationSecs) {
+		if (replay.info.getTicks() < GameplaySettings.ReplayMinDurationTicks) {
 			outInfo.reason = DiscardReason.InvalidMinDuration;
 			return false;
 		}

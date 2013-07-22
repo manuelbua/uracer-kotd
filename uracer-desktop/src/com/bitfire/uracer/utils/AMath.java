@@ -15,13 +15,12 @@ public final class AMath {
 	public static final float PI_8 = 0.392699081698724154807f;
 
 	public static final float CMP_EPSILON = 0.001f;
-	public static final float ONE_ON_CMP_EPSILON = 1f / CMP_EPSILON;
+	public static final float ONE_ON_CMP_EPSILON = 1000f;
 
 	private AMath () {
 	}
 
 	public static boolean equals (float a, float b) {
-
 		return Math.abs(Math.abs(a) - Math.abs(b)) < CMP_EPSILON;
 	}
 

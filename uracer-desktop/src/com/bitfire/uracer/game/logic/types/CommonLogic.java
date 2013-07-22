@@ -12,7 +12,6 @@ import com.bitfire.uracer.game.GameInput;
 import com.bitfire.uracer.game.GameLogic;
 import com.bitfire.uracer.game.GameLogicObserver;
 import com.bitfire.uracer.game.Time;
-import com.bitfire.uracer.game.Time.Reference;
 import com.bitfire.uracer.game.actors.GhostCar;
 import com.bitfire.uracer.game.events.GameLogicEvent;
 import com.bitfire.uracer.game.logic.gametasks.GameTasksManager;
@@ -384,12 +383,12 @@ public abstract class CommonLogic implements GameLogic, GameLogicObserver {
 
 			// lose wall-clock seconds while in time dilation
 			if (!dilationTime.isStopped()) {
-				accuDriftSeconds.value -= dilationTime.elapsed(Reference.LastAbsoluteSeconds) * 2;
+				accuDriftSeconds.value -= dilationTime.elapsed().lastAbsSeconds * 2;
 			}
 
 			// lose wall-clock seconds while out of track
 			if (!outOfTrackTime.isStopped()) {
-				accuDriftSeconds.value -= outOfTrackTime.elapsed(Reference.LastAbsoluteSeconds);
+				accuDriftSeconds.value -= outOfTrackTime.elapsed().lastAbsSeconds;
 			}
 
 			// lose wall-clock seconds on collision

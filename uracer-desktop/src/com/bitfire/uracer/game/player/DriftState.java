@@ -73,7 +73,7 @@ public final class DriftState {
 
 		if (hasCollided) {
 			// ignore drifts for a couple of seconds
-			if (collisionTime.elapsed(Time.Reference.TickSeconds) >= 0.5f) {
+			if (collisionTime.elapsed().tickSeconds >= 0.5f) {
 				collisionTime.stop();
 				hasCollided = false;
 			}
@@ -109,6 +109,6 @@ public final class DriftState {
 	}
 
 	public float driftSeconds () {
-		return time.elapsed(Time.Reference.TickSeconds);
+		return time.elapsed().tickSeconds;
 	}
 }

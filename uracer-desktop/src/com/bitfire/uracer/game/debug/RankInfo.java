@@ -4,7 +4,7 @@ package com.bitfire.uracer.game.debug;
 public final class RankInfo implements Comparable<RankInfo> {
 	public float completion;
 	public String uid;
-	public float secs;
+	public int ticks;
 	public boolean valid, player, isNextTarget;
 
 	public RankInfo () {
@@ -14,7 +14,7 @@ public final class RankInfo implements Comparable<RankInfo> {
 	public void reset () {
 		completion = 0;
 		uid = "";
-		secs = 0;
+		ticks = 0;
 		valid = false;
 		player = false;
 		isNextTarget = false;
@@ -38,10 +38,9 @@ public final class RankInfo implements Comparable<RankInfo> {
 		if (o.completion == 0 && o.player) return -1; // player at bottom if in warmup
 
 		if (completion == 0 || o.completion == 0) {
-
 			// order by time
-			if (secs < o.secs) return -1;
-			if (secs > o.secs) return 1;
+			if (ticks < o.ticks) return -1;
+			if (ticks > o.ticks) return 1;
 		} else {
 
 			if (completion > o.completion) return -1;

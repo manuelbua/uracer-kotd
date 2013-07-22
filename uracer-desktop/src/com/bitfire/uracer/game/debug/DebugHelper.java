@@ -52,6 +52,7 @@ import com.bitfire.uracer.resources.Art;
 import com.bitfire.uracer.utils.AMath;
 import com.bitfire.uracer.utils.Convert;
 import com.bitfire.uracer.utils.NumberString;
+import com.bitfire.uracer.utils.ReplayUtils;
 import com.bitfire.uracer.utils.ScaleUtils;
 import com.bitfire.uracer.utils.SpriteBatchUtils;
 import com.bitfire.utils.ItemsManager;
@@ -390,8 +391,7 @@ public final class DebugHelper extends GameTask implements DisposableTasks {
 				}
 			}
 
-			text = rankString(rank) + (isNextTarget(replay) ? "<" : " ") + " " + replay.getUserId() + " "
-				+ timeString(replay.getTrackTimeInt() / 1000f);
+			text = rankString(rank) + (isNextTarget(replay) ? "<" : " ") + " " + replay.getUserId() + " " + replay.getSecondsStr();
 			drawString2X(batch, text, 0, coord, scale);
 
 			batchColorEnd(batch);
@@ -405,8 +405,7 @@ public final class DebugHelper extends GameTask implements DisposableTasks {
 			ReplayInfo info = last.discarded;
 			batchColorStart(batch, 1, 0, 0);
 
-			text = rankString(lapManager.getReplays().size + 1) + "  " + info.getUserId() + " "
-				+ timeString(info.getTrackTimeInt() / 1000f);
+			text = rankString(lapManager.getReplays().size + 1) + "  " + info.getUserId() + " " + info.getSecondsStr();
 			drawString2X(batch, text, 0, coord, scale);
 			batchColorEnd(batch);
 		}
@@ -433,7 +432,7 @@ public final class DebugHelper extends GameTask implements DisposableTasks {
 				RankInfo rank = ranks.get(i);
 				rank.valid = true;
 				rank.uid = ghost.getReplay().getUserId();
-				rank.secs = ghost.getReplay().getTrackTimeInt() / 1000f;
+				rank.ticks = ghost.getReplay().getTicks();
 				rank.isNextTarget = isNextTarget(ghost.getReplay());
 				rank.player = false;
 
@@ -458,7 +457,7 @@ public final class DebugHelper extends GameTask implements DisposableTasks {
 			rank.isNextTarget = false;
 
 			// getTrackTimeInt is computed as an int cast (int)(trackTimeSeconds * AMath.ONE_ON_CMP_EPSILON)
-			rank.secs = ((int)(lapManager.getCurrentReplaySeconds() * AMath.ONE_ON_CMP_EPSILON)) / 1000f;
+			rank.ticks = lapManager.getCurrentReplayTicks();
 			rank.completion = logic.isWarmUp() ? 0 : gameWorld.getGameTrack().getTrackCompletion(player);
 		}
 
@@ -486,7 +485,7 @@ public final class DebugHelper extends GameTask implements DisposableTasks {
 				}
 
 				text = rankString(i + 1) + (r.isNextTarget ? "<" : " ") + " " + r.uid + " " + timeString(c) + " "
-					+ timeString(r.secs);
+					+ String.format("%.03f", ReplayUtils.ticksToSeconds(r.ticks));
 				drawString2X(batch, text, xoffset, coord, scale);
 
 				batchColorEnd(batch);

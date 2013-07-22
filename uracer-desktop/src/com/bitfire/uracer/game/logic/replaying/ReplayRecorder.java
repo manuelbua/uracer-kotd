@@ -68,7 +68,7 @@ public final class ReplayRecorder implements Disposable {
 			return null;
 		}
 		time.stop();
-		recording.end(time.elapsed(Time.Reference.TickSeconds));
+		recording.end((int)(time.elapsed().ticks));
 		isRecording = false;
 		return recording;
 	}
@@ -77,7 +77,7 @@ public final class ReplayRecorder implements Disposable {
 		return isRecording;
 	}
 
-	public float getElapsedSeconds () {
-		return time.elapsed(Time.Reference.TickSeconds);
+	public int getElapsedTicks () {
+		return (int)(time.elapsed().ticks);
 	}
 }

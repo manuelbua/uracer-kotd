@@ -10,13 +10,18 @@ import com.bitfire.uracer.game.task.Task;
  * 
  * @author bmanuel */
 public final class Time extends Task {
-	public enum Reference {
-		//@off
-		AbsoluteSeconds,
-		LastAbsoluteSeconds,
-		TickSeconds,				// returns seconds expressed as Config.Physics.Dt increments 
-		NumberOfTicks
-		//@on
+	public static final class TimeValue {
+		public long ticks;
+		public float tickSeconds;
+		public float absSeconds;
+		public float lastAbsSeconds;
+
+		public TimeValue () {
+			ticks = 0;
+			tickSeconds = 0;
+			absSeconds = 0;
+			lastAbsSeconds = 0;
+		}
 	}
 
 	private static final float oneOnOneBillion = 1.0f / 1000000000.0f;
@@ -25,6 +30,7 @@ public final class Time extends Task {
 	private boolean stopped;
 	private long nsStopTime;
 	private long lastStartTime;
+	private TimeValue result = new TimeValue();
 
 	/** Constructs a new Time object */
 	public Time () {
@@ -75,24 +81,23 @@ public final class Time extends Task {
 		}
 	};
 
-	/** Returns the elapsed time expressed as the specified measuring unit */
-	public float elapsed (Reference timeReference) {
+	/** Returns the elapsed time expressed in a number of useful units */
+	public TimeValue elapsed () {
 		long now = (stopped ? nsStopTime : TimeUtils.nanoTime());
 
-		switch (timeReference) {
-		case TickSeconds:
-			return Config.Physics.Dt * ticks;
-		case NumberOfTicks:
-			return ticks;
-		case LastAbsoluteSeconds:
-			float r = (now - lastStartTime) * oneOnOneBillion;
-			if (!stopped) {
-				lastStartTime = TimeUtils.nanoTime();
-			}
-			return r;
-		case AbsoluteSeconds: // returns seconds
-		default:
-			return (now - nsStartTime) * oneOnOneBillion;
-		}
+		// plain number of ticks
+		result.ticks = ticks;
+
+		// number of ticks to seconds (in 1/dt increments)
+		result.tickSeconds = ticks * Config.Physics.Dt;
+
+		// last frame delta
+		result.lastAbsSeconds = (now - lastStartTime) * oneOnOneBillion;
+		if (!stopped) lastStartTime = TimeUtils.nanoTime();
+
+		// absolute seconds
+		result.absSeconds = (now - nsStartTime) * oneOnOneBillion;
+
+		return result;
 	}
 }

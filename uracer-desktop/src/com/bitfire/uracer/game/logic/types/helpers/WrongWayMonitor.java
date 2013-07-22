@@ -4,7 +4,6 @@ package com.bitfire.uracer.game.logic.types.helpers;
 import com.bitfire.uracer.game.GameEvents;
 import com.bitfire.uracer.game.GameplaySettings;
 import com.bitfire.uracer.game.Time;
-import com.bitfire.uracer.game.Time.Reference;
 import com.bitfire.uracer.game.events.WrongWayMonitorEvent;
 
 public class WrongWayMonitor {
@@ -34,7 +33,7 @@ public class WrongWayMonitor {
 				if (wrongWayTimer.isStopped()) {
 					// Gdx.app.log("WrongWayMonitor", "--> detect wrong way begins");
 					wrongWayTimer.start();
-				} else if (wrongWayTimer.elapsed(Reference.TickSeconds) > GameplaySettings.MaxSecondsWrongWayDetector) {
+				} else if (wrongWayTimer.elapsed().tickSeconds > GameplaySettings.MaxSecondsWrongWayDetector) {
 					wrongWayTimer.reset();
 					isWrongWay = true;
 					GameEvents.wrongWay.trigger(null, WrongWayMonitorEvent.Type.onWrongWayBegins);
