@@ -57,7 +57,6 @@ public abstract class CommonLogic implements GameLogic, GameLogicObserver {
 	protected GhostCar[] ghostCars = new GhostCar[ReplayManager.MaxReplays];
 	private WrongWayMonitor wrongWayMonitor;
 	protected boolean isCurrentLapValid = true;
-	protected boolean isCollisionPenalty;
 
 	// lap / replays
 	protected LapManager lapManager = null;
@@ -223,7 +222,6 @@ public abstract class CommonLogic implements GameLogic, GameLogicObserver {
 
 		accuDriftSeconds.value = 0;
 		isCurrentLapValid = true;
-		isCollisionPenalty = false;
 
 		if (raiseEvent) {
 			GameEvents.logicEvent.trigger(this, GameLogicEvent.Type.GameRestart);
@@ -236,7 +234,8 @@ public abstract class CommonLogic implements GameLogic, GameLogicObserver {
 		realRestart(true);
 	}
 
-	/** Restart and completely resets the game, removing any previous recording and playing replays */
+	/** Restart and completely resets the game, removing any previous recording and playing replays FIXME not sure this is still
+	 * useful, maybe for debugging purposes.. */
 	@Override
 	public void resetGame () {
 		realRestart(false);

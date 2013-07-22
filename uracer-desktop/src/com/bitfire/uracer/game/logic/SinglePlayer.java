@@ -4,6 +4,7 @@ package com.bitfire.uracer.game.logic;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Input.Keys;
 import com.badlogic.gdx.files.FileHandle;
+import com.badlogic.gdx.math.MathUtils;
 import com.badlogic.gdx.math.Vector2;
 import com.bitfire.postprocessing.PostProcessor;
 import com.bitfire.uracer.Input;
@@ -186,6 +187,13 @@ public class SinglePlayer extends BaseLogic {
 		}
 	}
 
+	private float getOutOfTrackFactor () {
+		float oot = MathUtils.clamp(getOutOfTrackTimer().elapsed().absSeconds, 0, 1);
+		float s = MathUtils.clamp(playerCar.carState.currSpeedFactor * 100f, 0, 1);
+		// Gdx.app.log("", "oot=" + oot + ", s=" + s);
+		return 0.075f * oot * s;
+	}
+
 	@Override
 	public void updateCameraPosition (Vector2 positionPx) {
 		if (hasPlayer()) {
@@ -195,6 +203,7 @@ public class SinglePlayer extends BaseLogic {
 			}
 			positionPx.set(playerCar.state().position);
 			positionPx.add(camShaker.compute(getCollisionFactor()));
+			positionPx.add(camShaker.compute(getOutOfTrackFactor()));
 		} else if (isGhostActive(0)) {
 			// FIXME use available/choosen replay
 			positionPx.set(getGhost(0).state().position);
