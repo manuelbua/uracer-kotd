@@ -72,8 +72,7 @@ public abstract class BaseLogic extends CommonLogic {
 
 	@Override
 	public void endTimeDilation () {
-		// reset it, endTimeDilation can be called out of GameInput as well
-		gameInput.resetTimeDilating();
+		gameInput.resetTimeDilating(); // reset it since endTimeDilation can be called out of GameInput as well
 		dilationTime.reset();
 		timeMod.toNormalTime();
 	}
