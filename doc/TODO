@@ -28,7 +28,7 @@
 		x LATENCY?
 
 	o sound track
- 		o (i don't give a shit about latency in this case) 
+ 		o (i don't give a shit about latency in this case)
 
 
 
@@ -149,11 +149,11 @@ GAME
 	--------------------
 	(lot of time later)
 	--------------------
-	
+
 	x ranking via trueskill-like algorithm, replays are battle's atom
 	x one car, one physics, simple
 	x think about gameplay subdivision: single player, multi-player (local/online)
-	
+
 
 
 
@@ -188,7 +188,7 @@ REDDIT (2012/12/07, 2nd WIP, the "switch to the desktop" announcement sort-of)
 
 20130407
 	+ test multisampling (performance vs quality)
-	 
+
 20130612
 	+ add multisampling option to bootconfig
 	x completely overhaul ReplayManager, make Replay implements the Comparable interface
@@ -438,10 +438,11 @@ REDDIT (2012/12/07, 2nd WIP, the "switch to the desktop" announcement sort-of)
 		http://gamedev.stackexchange.com/questions/3147/are-there-any-open-source-projects-for-car-engine-sound-simulation
 		http://www.youtube.com/watch?v=MaJlUyA8Kr0
 		http://sourceforge.net/projects/fuzzyyengine/
-		
+		http://www.sonory.org/
+		http://www.sonory.org/forum/index.html
+
 
 	? in-game config?
 	- Facebook (uff)
 	- Blog
 	- Forum
-	
