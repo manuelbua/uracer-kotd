@@ -17,7 +17,6 @@ import com.bitfire.uracer.resources.Art;
 import com.bitfire.uracer.resources.BitmapFontFactory.FontFace;
 import com.bitfire.uracer.utils.AMath;
 import com.bitfire.uracer.utils.ColorUtils;
-import com.bitfire.uracer.utils.NumberString;
 import com.bitfire.utils.ShaderLoader;
 
 public class DriftBar extends Positionable {
@@ -106,7 +105,7 @@ public class DriftBar extends Positionable {
 		float scl = cameraZoom * s;
 
 		labelSeconds.setScale(scl);
-		labelSeconds.setString(NumberString.format(seconds) + "s", true);
+		labelSeconds.setString(String.format("%.02f", seconds) + "s", true);
 		labelSeconds.setPosition(position.x, position.y + (90) * cameraZoom + (105) * timeFactor * cameraZoom);
 		labelSeconds.render(batch);
 

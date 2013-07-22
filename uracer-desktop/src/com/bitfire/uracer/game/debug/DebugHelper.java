@@ -51,7 +51,6 @@ import com.bitfire.uracer.game.world.models.TreeStillModel;
 import com.bitfire.uracer.resources.Art;
 import com.bitfire.uracer.utils.AMath;
 import com.bitfire.uracer.utils.Convert;
-import com.bitfire.uracer.utils.NumberString;
 import com.bitfire.uracer.utils.ReplayUtils;
 import com.bitfire.uracer.utils.ScaleUtils;
 import com.bitfire.uracer.utils.SpriteBatchUtils;
@@ -504,10 +503,10 @@ public final class DebugHelper extends GameTask implements DisposableTasks {
 	}
 
 	private void renderFpsStats (SpriteBatch batch, int y) {
-		String fps = NumberString.formatLong(Gdx.graphics.getFramesPerSecond());
-		String phy = NumberString.formatLong(stats.meanPhysics.getMean());
-		String gfx = NumberString.formatLong(stats.meanRender.getMean());
-		String ticks = NumberString.formatLong(stats.meanTickCount.getMean());
+		String fps = String.format("%d", Gdx.graphics.getFramesPerSecond());
+		String phy = String.format("%.02f", stats.meanPhysics.getMean());
+		String gfx = String.format("%.02f", stats.meanRender.getMean());
+		String ticks = String.format("%.02f", stats.meanTickCount.getMean());
 		String text = "fps: " + fps + ", phy: " + phy + ", gfx: " + gfx + ", ticks: " + ticks;
 		SpriteBatchUtils.drawString(batch, text, ScaleUtils.PlayWidth - text.length() * Art.DebugFontWidth, y);
 	}
@@ -522,8 +521,8 @@ public final class DebugHelper extends GameTask implements DisposableTasks {
 		float javaHeapMb = (float)Gdx.app.getJavaHeap() * oneOnMb;
 		float nativeHeapMb = (float)Gdx.app.getNativeHeap() * oneOnMb;
 
-		String text = "java heap = " + NumberString.format(javaHeapMb) + "MB" + " - native heap = "
-			+ NumberString.format(nativeHeapMb) + "MB";
+		String text = "java heap = " + String.format("%.02f", javaHeapMb) + "MB" + " - native heap = "
+			+ String.format("%.02f", nativeHeapMb) + "MB";
 
 		SpriteBatchUtils.drawString(batch, text, 0, y);
 	}

@@ -174,7 +174,6 @@ public final class DebugStatistics {
 			dataTimeAliasing[0] = URacer.Game.getTemporalAliasing();
 
 			startTime = time;
-
 			return true;
 		}
 

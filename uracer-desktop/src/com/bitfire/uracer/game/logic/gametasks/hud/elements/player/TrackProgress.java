@@ -20,7 +20,6 @@ import com.bitfire.uracer.resources.Art;
 import com.bitfire.uracer.resources.BitmapFontFactory.FontFace;
 import com.bitfire.uracer.utils.AMath;
 import com.bitfire.uracer.utils.ColorUtils;
-import com.bitfire.uracer.utils.NumberString;
 import com.bitfire.utils.ShaderLoader;
 
 public class TrackProgress extends Positionable {
@@ -120,7 +119,7 @@ public class TrackProgress extends Positionable {
 		if (customMessage.length() == 0) {
 			if (hasTarget) {
 				float v = data.playerDistance.get() - data.targetDistance.get();
-				lblAdvantage.setString(NumberString.format(v) + " m", false);
+				lblAdvantage.setString(String.format("%.02f", v) + " m", false);
 			} else {
 				showAdv = false;
 			}

@@ -38,7 +38,6 @@ import com.bitfire.uracer.utils.AMath;
 import com.bitfire.uracer.utils.BoxedFloat;
 import com.bitfire.uracer.utils.BoxedFloatAccessor;
 import com.bitfire.uracer.utils.Convert;
-import com.bitfire.uracer.utils.NumberString;
 import com.bitfire.uracer.utils.ScaleUtils;
 import com.bitfire.uracer.utils.SpriteBatchUtils;
 import com.bitfire.uracer.utils.URacerRuntimeException;
@@ -141,7 +140,7 @@ public class URacer implements ApplicationListener {
 		Gdx.app.log("URacer", "Java vendor is " + System.getProperty("java.vendor"));
 		Gdx.app.log("URacer", "Java version is " + System.getProperty("java.version"));
 		Gdx.app.log("URacer", "Using real frametime: " + (useRealFrametime ? "YES" : "NO"));
-		Gdx.app.log("URacer", "Physics at " + timeStepHz + "Hz (dT=" + NumberString.formatLong(Config.Physics.Dt) + ")");
+		Gdx.app.log("URacer", "Physics at " + timeStepHz + "Hz (dT=" + String.format("%.02f", Config.Physics.Dt) + ")");
 
 		Storage.init();
 		boot.store();
@@ -244,10 +243,11 @@ public class URacer implements ApplicationListener {
 				startTime = TimeUtils.nanoTime();
 				timeAccuNs += lastDeltaTimeNs * timeMultiplier;
 				while (timeAccuNs >= PhysicsDtNs) {
+					lastTicksCount++;
+
 					input.tick();
 					screenMgr.tick();
 					timeAccuNs -= PhysicsDtNs;
-					lastTicksCount++;
 				}
 				// simulateSlowness(48);
 				physicsTime = (TimeUtils.nanoTime() - startTime) * oneOnOneBillion;
