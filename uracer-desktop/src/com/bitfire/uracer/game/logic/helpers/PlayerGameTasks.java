@@ -8,6 +8,7 @@ import com.bitfire.uracer.game.logic.gametasks.hud.elements.HudLapInfo;
 import com.bitfire.uracer.game.logic.gametasks.hud.elements.HudPlayer;
 import com.bitfire.uracer.game.logic.gametasks.hud.elements.HudPlayerStatic;
 import com.bitfire.uracer.game.logic.gametasks.sounds.effects.PlayerDriftSoundEffect;
+import com.bitfire.uracer.game.logic.gametasks.sounds.effects.PlayerEngineSoundEffect;
 import com.bitfire.uracer.game.logic.gametasks.sounds.effects.PlayerImpactSoundEffect;
 import com.bitfire.uracer.game.logic.gametasks.sounds.effects.PlayerTensiveMusic;
 import com.bitfire.uracer.game.logic.gametasks.trackeffects.effects.PlayerSkidMarks;
@@ -39,6 +40,7 @@ public final class PlayerGameTasks {
 		// sounds
 		manager.sound.add(new PlayerDriftSoundEffect());
 		manager.sound.add(new PlayerImpactSoundEffect());
+		manager.sound.add(new PlayerEngineSoundEffect());
 		manager.sound.add(new PlayerTensiveMusic(progressData, lapManager));
 
 		// track effects
