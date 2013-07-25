@@ -49,6 +49,7 @@ public class PlayerCar extends Car {
 	// states
 	public CarState carState = null;
 	public DriftState driftState = null;
+	public boolean isThrottling = false;
 
 	public PlayerCar (GameWorld gameWorld, CarPreset.Type presetType) {
 		super(gameWorld, CarType.PlayerCar, InputMode.InputFromPlayer, presetType, true);
@@ -135,6 +136,7 @@ public class PlayerCar extends Car {
 
 		boolean inputFromKeyboard = !URacer.Game.getInputSystem().isTouching();
 		final float speed = carState.currSpeedFactor;
+		isThrottling = false;
 
 		if (!inputFromKeyboard) {
 
@@ -147,6 +149,8 @@ public class PlayerCar extends Car {
 			// Gdx.app.log("PlayerCar", "carpos=" + carPos.toString() + ", cursor=" + touchPos.toString());
 
 			if (carInput.updated) {
+
+				isThrottling = true;
 
 				// compute steer angle first
 				carInput.steerAngle = transformSteerAngle((float)Math.atan2(touchPos.x - carPos.x, touchPos.y - carPos.y));
@@ -180,6 +184,7 @@ public class PlayerCar extends Car {
 			float KeyboardSensitivity = 2f + 5 * speed;
 
 			if (kUp) {
+				isThrottling = true;
 				carInput.updated = true;
 				carInput.throttle = preset.model.max_force;
 			} else {

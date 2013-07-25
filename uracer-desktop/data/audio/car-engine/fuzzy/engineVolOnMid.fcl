@@ -1,4 +1,4 @@
-FUNCTION_BLOCK engineVolIdle
+FUNCTION_BLOCK engineVolOnMid
 
 VAR_INPUT
 	load : REAL;

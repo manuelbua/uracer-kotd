@@ -9,5 +9,6 @@
 	<classpathentry combineaccessrules="false" kind="src" path="/libgdx-contribs-postprocessing"/>
 	<classpathentry combineaccessrules="false" kind="src" path="/libgdx-contribs-utils"/>
 	<classpathentry kind="con" path="org.eclipse.jdt.launching.JRE_CONTAINER"/>
+	<classpathentry kind="lib" path="/home/manuel/dev/uracer-libgdx/libs/jFuzzyLogic_v3.0.jar"/>
 	<classpathentry kind="output" path="bin"/>
 </classpath>
