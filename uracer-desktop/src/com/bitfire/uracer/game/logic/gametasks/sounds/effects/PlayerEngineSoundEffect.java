@@ -6,7 +6,6 @@ import net.sourceforge.jFuzzyLogic.FIS;
 import com.badlogic.gdx.Files.FileType;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.audio.Sound;
-import com.badlogic.gdx.math.MathUtils;
 import com.bitfire.uracer.game.logic.gametasks.sounds.SoundEffect;
 import com.bitfire.uracer.game.player.PlayerCar;
 import com.bitfire.uracer.resources.Sounds;
@@ -91,7 +90,8 @@ public final class PlayerEngineSoundEffect extends SoundEffect {
 	}
 
 	private float xnaToAl (float pitch) {
-		return (float)Math.pow(2, 0.69314718 * pitch);
+		// return (float)Math.pow(2, 0.69314718 * pitch);
+		return (float)Math.pow(2, pitch);
 	}
 
 	private void setXnaPitch (int track, float pitch) {
@@ -112,59 +112,87 @@ public final class PlayerEngineSoundEffect extends SoundEffect {
 		setXnaPitch(6, rpm / 10000 - 0.8f);
 	}
 
+	private void shiftUp () {
+		if (gear > 0 && gear < 6) {
+			gear++;
+			if (rpm >= 4000) {
+				rpm = rpm - 3000;
+			} else {
+				rpm = 1000;
+			}
+		}
+
+		if (gear == 0) {
+			gear++;
+			rpm = 1000;
+		}
+	}
+
+	private void shiftDown () {
+		if (gear == 1) {
+			gear--;
+		}
+
+		if (gear > 1 && gear <= 6) {
+			gear--;
+			if (rpm != 1000) {
+				rpm = rpm + 3000;
+			}
+		}
+	}
+
 	private void updateGear () {
 		if (player.isThrottling) {
 			switch (gear) {
 			case 0:
-				if (rpm > 2000) gear++;
+				if (rpm > 2000) shiftUp();
 				break;
 			case 1:
-				if (rpm > 3500) gear++;
+				if (rpm > 3500) shiftUp();
 				break;
 			case 2:
-				if (rpm > 4500) gear++;
+				if (rpm > 4500) shiftUp();
 				break;
 			case 3:
-				if (rpm > 6000) gear++;
+				if (rpm > 6000) shiftUp();
 				break;
 			case 4:
-				if (rpm > 7500) gear++;
+				if (rpm > 7500) shiftUp();
 				break;
 			case 5:
-				if (rpm > 9000) gear++;
+				if (rpm > 9000) shiftUp();
 				break;
 			}
 
 		} else {
 			switch (gear) {
 			case 6:
-				if (rpm < 9000) gear--;
+				if (rpm < 9000) shiftDown();
 				break;
 			case 5:
-				if (rpm < 7500) gear--;
+				if (rpm < 7500) shiftDown();
 				break;
 			case 4:
-				if (rpm < 6000) gear--;
+				if (rpm < 6000) shiftDown();
 				break;
 			case 3:
-				if (rpm < 4500) gear--;
+				if (rpm < 4500) shiftDown();
 				break;
 			case 2:
-				if (rpm < 3500) gear--;
+				if (rpm < 3500) shiftDown();
 				break;
 			case 1:
-				if (rpm < 2000) gear--;
+				if (rpm < 2000) shiftDown();
 				break;
 			}
 
 		}
 
-		gear = MathUtils.clamp(gear, 1, 6);
+		// gear = MathUtils.clamp(gear, 1, 6);
 	}
 
 	@Override
 	public void tick () {
-		updateGear();
 		double load = fuzzyLoadCompute();
 
 		// update throttle and rpms, set them as input for the next-frame load computation
@@ -177,6 +205,7 @@ public final class PlayerEngineSoundEffect extends SoundEffect {
 		// compute volumes
 		updateVolumes(load, rpm);
 		updatePitches(rpm);
+		updateGear();
 	}
 
 	@Override
@@ -188,7 +217,15 @@ public final class PlayerEngineSoundEffect extends SoundEffect {
 
 	@Override
 	public void gameReset () {
+		gameRestart();
+	}
+
+	@Override
+	public void gameRestart () {
+		rpm = 1000;
+		gear = 0;
 		stop();
+		start();
 	}
 
 	@Override
@@ -232,7 +269,7 @@ public final class PlayerEngineSoundEffect extends SoundEffect {
 	//
 
 	private void setVolume (int track, float vol) {
-		engine[track].setVolume(mid[track], vol);
+		engine[track].setVolume(mid[track], vol * 0.1f);
 	}
 
 	private void setPitch (int track, float pitch) {
