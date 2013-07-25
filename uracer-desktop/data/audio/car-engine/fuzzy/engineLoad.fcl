@@ -1,0 +1,69 @@
+FUNCTION_BLOCK engineLoad
+
+VAR_INPUT
+	throttle : REAL;
+	rpm : REAL;
+END_VAR
+
+VAR_OUTPUT
+	load : REAL;
+END_VAR
+
+FUZZIFY throttle
+	TERM verylow		:= trape 0 0 0 25;
+	TERM low			:= trape 0 25 25 50;
+	TERM mid			:= trape 25 50 50 75;
+	TERM high			:= trape 50 75 75 100;
+	TERM veryhigh		:= trape 75 100 100 100;
+END_FUZZIFY
+
+FUZZIFY rpm
+	TERM low			:= trape 900 1500 1500 5000;
+	TERM mid 			:= trape 999 5000 5000 10000;
+	TERM high 			:= trape 5000 10000 10000 10000;
+	TERM idle 			:= trape 700 900 900 1100;
+	TERM idletoolow		:= trape -100 400 400 900;
+	TERM idletoohigh	:= trape 900 1100 1100 1250;
+END_FUZZIFY
+
+DEFUZZIFY load
+	TERM fastdecreasing		:= trape -100 -90 -90 -50;
+	TERM between			:= trape -10 30 30 80;
+	TERM fastincreasing		:= trape 70 90 90 140;
+	TERM decreasing			:= trape -70 -30 -30 10;
+	TERM increasing			:= trape 30 70 70 100;
+	TERM turbo				:= trape 90 140 140 150;
+	TERM zero				:= trape -10 0 0 10;
+	TERM slightincreasing	:= trape 0 5 5 10;
+	TERM slightdecreasing	:= trape -10 -5 -5 0;
+	METHOD : COG;
+END_DEFUZZIFY
+
+RULEBLOCK rules
+	AND : MIN;
+	OR : MAX;
+	 RULE 1		: IF (throttle IS verylow) AND (rpm IS low) THEN load IS decreasing;
+	 RULE 2		: IF (throttle IS low) AND (rpm IS low) THEN load IS between;
+	 RULE 3		: IF (throttle IS mid) AND (rpm IS low) THEN load IS increasing;
+	 RULE 4		: IF (throttle IS high) AND (rpm IS low) THEN load IS increasing;
+	 RULE 5		: IF (throttle IS veryhigh) AND (rpm IS low) THEN load IS increasing;
+	 RULE 6		: IF (throttle IS verylow) AND (rpm IS mid) THEN load IS fastdecreasing;
+	 RULE 7		: IF (throttle IS low) AND (rpm IS mid) THEN load IS decreasing;
+	 RULE 8		: IF (throttle IS mid) AND (rpm IS mid) THEN load IS increasing;
+	 RULE 9		: IF (throttle IS high) AND (rpm IS mid) THEN load IS increasing;
+	 RULE 10	: IF (throttle IS veryhigh) AND (rpm IS mid) THEN load IS fastincreasing;
+	 RULE 11	: IF (throttle IS verylow) AND (rpm IS high) THEN load IS fastdecreasing;
+	 RULE 12	: IF (throttle IS mid) AND (rpm IS high) THEN load IS between;
+	 RULE 13	: IF (throttle IS high) AND (rpm IS high) THEN load IS increasing;
+	 RULE 14	: IF (throttle IS veryhigh) AND (rpm IS high) THEN load IS turbo;
+	 RULE 15	: IF (throttle IS mid) AND (rpm IS mid) THEN load IS between;
+	 RULE 16	: IF (throttle IS low) AND (rpm IS high) THEN load IS decreasing;
+	 RULE 17	: IF (throttle IS veryhigh) AND (rpm IS high) THEN load IS turbo;
+	 RULE 18	: IF (throttle IS verylow) AND (rpm IS idle) THEN load IS slightincreasing;
+	 RULE 19	: IF (throttle IS verylow) AND (rpm IS idletoolow) THEN load IS slightincreasing;
+	 RULE 20	: IF (throttle IS verylow) AND (rpm IS idletoohigh) THEN load IS slightdecreasing;
+	 RULE 21	: IF (throttle IS low) AND (rpm IS idle) THEN load IS between;
+	 RULE 22	: IF (throttle IS veryhigh) AND (rpm IS idle) THEN load IS increasing;
+END_RULEBLOCK
+
+END_FUNCTION_BLOCK
