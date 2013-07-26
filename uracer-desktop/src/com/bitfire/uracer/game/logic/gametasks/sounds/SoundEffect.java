@@ -14,7 +14,7 @@ public abstract class SoundEffect extends PlayerClient implements Disposable {
 	private static final int WaitLimit = 1000;
 	private static final int ThrottleMs = 100;
 
-	protected long play (Sound sound, float volume) {
+	public static long play (Sound sound, float volume) {
 		if (URacer.Game.isDesktop()) {
 			return sound.play(volume);
 		} else {
@@ -37,7 +37,7 @@ public abstract class SoundEffect extends PlayerClient implements Disposable {
 		}
 	}
 
-	protected long loop (Sound sound, float volume) {
+	public static long loop (Sound sound, float volume) {
 		if (URacer.Game.isDesktop()) {
 			return sound.loop(volume);
 		} else {

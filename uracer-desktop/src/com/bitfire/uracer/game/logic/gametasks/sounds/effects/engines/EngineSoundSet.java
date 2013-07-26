@@ -1,0 +1,233 @@
+
+package com.bitfire.uracer.game.logic.gametasks.sounds.effects.engines;
+
+import net.sourceforge.jFuzzyLogic.FIS;
+
+import com.badlogic.gdx.Files.FileType;
+import com.badlogic.gdx.Gdx;
+import com.badlogic.gdx.audio.Sound;
+import com.bitfire.uracer.game.logic.gametasks.sounds.SoundEffect;
+import com.bitfire.uracer.game.player.PlayerCar;
+
+public abstract class EngineSoundSet {
+	protected int NumTracks = 7;
+	protected Sound[] engine = null;
+	protected long[] mid = new long[NumTracks];
+	protected boolean[] started = new boolean[NumTracks];
+	protected FIS feIdle, feOnLow, feOnMid, feOnHigh, feOffLow, feOffMid, feOffHigh;
+	protected int gear;
+	protected float rpm;
+	protected boolean hasPlayer;
+	protected PlayerCar player;
+
+	public EngineSoundSet () {
+		rpm = 0;
+		gear = 0;
+
+		//@off
+		feIdle = FIS.load(Gdx.files.getFileHandle("data/audio/car-engine/fuzzy/engineVolIdle.fcl", FileType.Internal).read(), true);
+		feOnLow = FIS.load(Gdx.files.getFileHandle("data/audio/car-engine/fuzzy/engineVolOnLow.fcl", FileType.Internal).read(), true);
+		feOnMid= FIS.load(Gdx.files.getFileHandle("data/audio/car-engine/fuzzy/engineVolOnMid.fcl", FileType.Internal).read(), true);
+		feOnHigh = FIS.load(Gdx.files.getFileHandle("data/audio/car-engine/fuzzy/engineVolOnHigh.fcl", FileType.Internal).read(), true);
+		feOffLow = FIS.load(Gdx.files.getFileHandle("data/audio/car-engine/fuzzy/engineVolOffLow.fcl", FileType.Internal).read(), true);
+		feOffMid= FIS.load(Gdx.files.getFileHandle("data/audio/car-engine/fuzzy/engineVolOffMid.fcl", FileType.Internal).read(), true);
+		feOffHigh = FIS.load(Gdx.files.getFileHandle("data/audio/car-engine/fuzzy/engineVolOffHigh.fcl", FileType.Internal).read(), true);
+		//@on
+	}
+
+	public abstract void updatePitches ();
+
+	public abstract float getGearRatio ();
+
+	public void setPlayer (PlayerCar player) {
+		this.player = player;
+		this.hasPlayer = (player != null);
+	}
+
+	public void start () {
+		for (int i = 0; i < NumTracks; i++) {
+			start(i);
+		}
+	}
+
+	public void stop () {
+		for (int i = 0; i < NumTracks; i++) {
+			stop(i);
+		}
+	}
+
+	public void reset () {
+		rpm = 1000;
+		gear = 0;
+	}
+
+	public void updateVolumes (float load) {
+		updateVolume(0, feIdle, load, rpm);
+		updateVolume(1, feOnLow, load, rpm);
+		updateVolume(2, feOnMid, load, rpm);
+		updateVolume(3, feOnHigh, load, rpm);
+		updateVolume(4, feOffLow, load, rpm);
+		updateVolume(5, feOffMid, load, rpm);
+		updateVolume(6, feOffHigh, load, rpm);
+	}
+
+	public int getGear () {
+		return gear;
+	}
+
+	public float getRpm () {
+		return rpm;
+	}
+
+	public float getGlobalVolume () {
+		return 0.1f;
+	}
+
+	//
+
+	private void start (int track) {
+		if (started[track]) {
+			return;
+		}
+
+		started[track] = true;
+		mid[track] = SoundEffect.loop(engine[track], 0);
+		setVolume(track, 0);
+	}
+
+	private void stop (int track) {
+		if (!started[track]) {
+			return;
+		}
+
+		started[track] = false;
+		if (mid[track] > -1) {
+			engine[track].stop(mid[track]);
+		}
+	}
+
+	private float xnaToAl (float pitch) {
+		return (float)Math.pow(2, pitch);
+	}
+
+	protected void setXnaPitch (int track, float pitch) {
+		setPitch(track, xnaToAl(pitch));
+	}
+
+	protected void setVolume (int track, float vol) {
+		engine[track].setVolume(mid[track], vol * getGlobalVolume());
+	}
+
+	protected void setPitch (int track, float pitch) {
+		engine[track].setPitch(mid[track], pitch);
+	}
+
+	private void updateVolume (int track, FIS fuzzyEngine, float load, float rpm) {
+		fuzzyEngine.setVariable("load", load);
+		fuzzyEngine.setVariable("rpm", rpm);
+		fuzzyEngine.evaluate();
+		double volume = fuzzyEngine.getVariable("volume").getValue() / 100;
+		if (volume >= 0 && volume <= 1) {
+			setVolume(track, (float)volume);
+		}
+	}
+
+	public float updateRpm (float load) {
+		if (rpm < 10000) {
+			rpm += (load * getGearRatio());
+			if (hasPlayer && rpm > 3000) {
+				rpm -= load * 0.5f * player.driftState.driftStrength;
+				if (rpm < 1000) rpm = 1000;
+			}
+		} else {
+			if (load < 0) {
+				rpm += load;
+			} else {
+				rpm = 10000;
+			}
+		}
+
+		return rpm;
+	}
+
+	protected void shiftUp () {
+		if (gear > 0 && gear < 6) {
+			gear++;
+			if (rpm >= 4000) {
+				rpm = rpm - 3000;
+			} else {
+				rpm = 1000;
+			}
+		}
+
+		if (gear == 0) {
+			gear++;
+			rpm = 1000;
+		}
+	}
+
+	protected void shiftDown () {
+		if (gear == 1) {
+			gear--;
+		}
+
+		if (gear > 1 && gear <= 6) {
+			gear--;
+			if (rpm != 1000) {
+				rpm = rpm + 3000;
+			}
+		}
+	}
+
+	public void updateGear (boolean playerIsThrottling) {
+		if (playerIsThrottling) {
+			switch (gear) {
+			case 0:
+				if (rpm > 1000) shiftUp();
+				break;
+			case 1:
+				if (rpm > 2000) shiftUp();
+				break;
+			case 2:
+				if (rpm > 3000) shiftUp();
+				break;
+			case 3:
+				if (rpm > 4000) shiftUp();
+				break;
+			case 4:
+				if (rpm > 5000) shiftUp();
+				break;
+			case 5:
+				if (rpm > 6000) shiftUp();
+				break;
+			}
+		} else {
+
+			float fgear = gear;
+			fgear *= 0.5f;
+			gear = (int)(fgear + 0.5f);
+
+			// switch (gear) {
+			// case 6:
+			// if (rpm < 6000) shiftDown();
+			// break;
+			// case 5:
+			// if (rpm < 5000) shiftDown();
+			// break;
+			// case 4:
+			// if (rpm < 4000) shiftDown();
+			// break;
+			// case 3:
+			// if (rpm < 3000) shiftDown();
+			// break;
+			// case 2:
+			// if (rpm < 2000) shiftDown();
+			// break;
+			// case 1:
+			// if (rpm < 1000) shiftDown();
+			// break;
+			// }
+
+		}
+	}
+}

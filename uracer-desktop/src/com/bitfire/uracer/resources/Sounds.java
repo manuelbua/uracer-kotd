@@ -8,7 +8,11 @@ import com.badlogic.gdx.audio.Sound;
 public final class Sounds {
 
 	public static Sound carDrift;
-	public static Sound[] carEngine = new Sound[7];
+	public static Sound[] carEngine_f40 = new Sound[7];
+	public static Sound[] carEngine_a1 = new Sound[7];
+	public static Sound[] carEngine_f1 = new Sound[7];
+	public static Sound[] carEngine_msc = new Sound[7];
+
 	public static Sound[] carImpacts = new Sound[5];
 	public static Sound[] musTensive = new Sound[7];
 
@@ -29,13 +33,45 @@ public final class Sounds {
 		musTensive[5] = Gdx.audio.newSound(Gdx.files.getFileHandle("data/audio/tensive/inciso-2.ogg", FileType.Internal));
 		musTensive[6] = Gdx.audio.newSound(Gdx.files.getFileHandle("data/audio/tensive/inciso-3.ogg", FileType.Internal));
 
-		carEngine[0] = Gdx.audio.newSound(Gdx.files.getFileHandle("data/audio/car-engine/F40ex_idle.wav", FileType.Internal));
-		carEngine[1] = Gdx.audio.newSound(Gdx.files.getFileHandle("data/audio/car-engine/F40ex_onlow.wav", FileType.Internal));
-		carEngine[2] = Gdx.audio.newSound(Gdx.files.getFileHandle("data/audio/car-engine/F40ex_onmid.wav", FileType.Internal));
-		carEngine[3] = Gdx.audio.newSound(Gdx.files.getFileHandle("data/audio/car-engine/F40ex_onhigh.wav", FileType.Internal));
-		carEngine[4] = Gdx.audio.newSound(Gdx.files.getFileHandle("data/audio/car-engine/F40ex_offlow.wav", FileType.Internal));
-		carEngine[5] = Gdx.audio.newSound(Gdx.files.getFileHandle("data/audio/car-engine/F40ex_offmid.wav", FileType.Internal));
-		carEngine[6] = Gdx.audio.newSound(Gdx.files.getFileHandle("data/audio/car-engine/F40ex_offhigh.wav", FileType.Internal));
+		//@off
+		
+		// f40
+		carEngine_f40[0] = Gdx.audio.newSound(Gdx.files.getFileHandle("data/audio/car-engine/f40/idle.wav", FileType.Internal));
+		carEngine_f40[1] = Gdx.audio.newSound(Gdx.files.getFileHandle("data/audio/car-engine/f40/onlow.wav", FileType.Internal));
+		carEngine_f40[2] = Gdx.audio.newSound(Gdx.files.getFileHandle("data/audio/car-engine/f40/onmid.wav", FileType.Internal));
+		carEngine_f40[3] = Gdx.audio.newSound(Gdx.files.getFileHandle("data/audio/car-engine/f40/onhigh.wav", FileType.Internal));
+		carEngine_f40[4] = Gdx.audio.newSound(Gdx.files.getFileHandle("data/audio/car-engine/f40/offlow.wav", FileType.Internal));
+		carEngine_f40[5] = Gdx.audio.newSound(Gdx.files.getFileHandle("data/audio/car-engine/f40/offmid.wav", FileType.Internal));
+		carEngine_f40[6] = Gdx.audio.newSound(Gdx.files.getFileHandle("data/audio/car-engine/f40/offhigh.wav", FileType.Internal));
+
+		// a1
+		carEngine_a1[0] = Gdx.audio.newSound(Gdx.files.getFileHandle("data/audio/car-engine/a1/idle_ext.wav", FileType.Internal));
+		carEngine_a1[1] = Gdx.audio.newSound(Gdx.files.getFileHandle("data/audio/car-engine/a1/on_2000_ext.wav", FileType.Internal));
+		carEngine_a1[2] = Gdx.audio.newSound(Gdx.files.getFileHandle("data/audio/car-engine/a1/on_3000_ext.wav", FileType.Internal));
+		carEngine_a1[3] = Gdx.audio.newSound(Gdx.files.getFileHandle("data/audio/car-engine/a1/on_6000_ext.wav", FileType.Internal));
+		carEngine_a1[4] = Gdx.audio.newSound(Gdx.files.getFileHandle("data/audio/car-engine/a1/off_2000_ext.wav", FileType.Internal));
+		carEngine_a1[5] = Gdx.audio.newSound(Gdx.files.getFileHandle("data/audio/car-engine/a1/off_3000_ext.wav", FileType.Internal));
+		carEngine_a1[6] = Gdx.audio.newSound(Gdx.files.getFileHandle("data/audio/car-engine/a1/off_6000_ext.wav", FileType.Internal));
+		
+		// f1 RF1V8
+		carEngine_f1[0] = Gdx.audio.newSound(Gdx.files.getFileHandle("data/audio/car-engine/f1/idle.wav", FileType.Internal));
+		carEngine_f1[1] = Gdx.audio.newSound(Gdx.files.getFileHandle("data/audio/car-engine/f1/onlow.wav", FileType.Internal));
+		carEngine_f1[2] = Gdx.audio.newSound(Gdx.files.getFileHandle("data/audio/car-engine/f1/onmid.wav", FileType.Internal));
+		carEngine_f1[3] = Gdx.audio.newSound(Gdx.files.getFileHandle("data/audio/car-engine/f1/onhigh.wav", FileType.Internal));
+		carEngine_f1[4] = Gdx.audio.newSound(Gdx.files.getFileHandle("data/audio/car-engine/f1/offlow.wav", FileType.Internal));
+		carEngine_f1[5] = Gdx.audio.newSound(Gdx.files.getFileHandle("data/audio/car-engine/f1/offmid.wav", FileType.Internal));
+		carEngine_f1[6] = Gdx.audio.newSound(Gdx.files.getFileHandle("data/audio/car-engine/f1/offhigh.wav", FileType.Internal));
+		
+		// muscle
+		carEngine_msc[0] = Gdx.audio.newSound(Gdx.files.getFileHandle("data/audio/car-engine/muscle/idle.wav", FileType.Internal));
+		carEngine_msc[1] = Gdx.audio.newSound(Gdx.files.getFileHandle("data/audio/car-engine/muscle/onlow.wav", FileType.Internal));
+		carEngine_msc[2] = Gdx.audio.newSound(Gdx.files.getFileHandle("data/audio/car-engine/muscle/onmid.wav", FileType.Internal));
+		carEngine_msc[3] = Gdx.audio.newSound(Gdx.files.getFileHandle("data/audio/car-engine/muscle/onhigh.wav", FileType.Internal));
+		carEngine_msc[4] = Gdx.audio.newSound(Gdx.files.getFileHandle("data/audio/car-engine/muscle/offlow.wav", FileType.Internal));
+		carEngine_msc[5] = Gdx.audio.newSound(Gdx.files.getFileHandle("data/audio/car-engine/muscle/offmid.wav", FileType.Internal));
+		carEngine_msc[6] = Gdx.audio.newSound(Gdx.files.getFileHandle("data/audio/car-engine/muscle/offhigh.wav", FileType.Internal));
+		
+		//@on
 	}
 
 	public static void dispose () {
@@ -49,8 +85,11 @@ public final class Sounds {
 			musTensive[i].dispose();
 		}
 
-		for (int i = 0; i < carEngine.length; i++) {
-			carEngine[i].dispose();
+		for (int i = 0; i < 7; i++) {
+			carEngine_f40[i].dispose();
+			carEngine_a1[i].dispose();
+			carEngine_f1[i].dispose();
+			carEngine_msc[i].dispose();
 		}
 	}
 
