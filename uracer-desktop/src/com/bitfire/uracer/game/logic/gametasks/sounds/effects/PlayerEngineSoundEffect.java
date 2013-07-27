@@ -5,6 +5,12 @@ import net.sourceforge.jFuzzyLogic.FIS;
 
 import com.badlogic.gdx.Files.FileType;
 import com.badlogic.gdx.Gdx;
+import com.badlogic.gdx.math.MathUtils;
+import com.bitfire.uracer.game.GameEvents;
+import com.bitfire.uracer.game.Time;
+import com.bitfire.uracer.game.events.PlayerDriftStateEvent;
+import com.bitfire.uracer.game.events.PlayerDriftStateEvent.Order;
+import com.bitfire.uracer.game.events.PlayerDriftStateEvent.Type;
 import com.bitfire.uracer.game.logic.gametasks.sounds.SoundEffect;
 import com.bitfire.uracer.game.logic.gametasks.sounds.effects.engines.EngineF40;
 import com.bitfire.uracer.game.logic.gametasks.sounds.effects.engines.EngineSoundSet;
@@ -18,6 +24,13 @@ public final class PlayerEngineSoundEffect extends SoundEffect {
 	private float load;
 	private float throttle;
 
+	// throttle autosoftener
+	private static final boolean ThrottleAutoSoftener = true;
+	private Time driftTimer = new Time();
+	private static final int MinSoftnessTicks = 5;
+	private static final int MaxSoftnessTicks = 40;
+	private int softnessTicks = 0;
+
 	private EngineSoundSet soundset = new EngineF40();
 
 	public PlayerEngineSoundEffect () {
@@ -26,8 +39,40 @@ public final class PlayerEngineSoundEffect extends SoundEffect {
 		throttle = 0;
 	}
 
+	private PlayerDriftStateEvent.Listener playerListener = new PlayerDriftStateEvent.Listener() {
+		@Override
+		public void handle (Object source, Type type, Order order) {
+			if (!hasPlayer) return;
+			switch (type) {
+			case onBeginDrift:
+				if (player.isThrottling) {
+					driftTimer.start();
+					float ratio = player.carState.currSpeedFactor;
+					softnessTicks = (int)(ratio * (float)MaxSoftnessTicks);
+					softnessTicks = MathUtils.clamp(softnessTicks, MinSoftnessTicks, MaxSoftnessTicks);
+					// Gdx.app.log("", "st=" + softnessTicks);
+				}
+				break;
+			case onEndDrift:
+				driftTimer.stop();
+				break;
+			}
+		}
+	};
+
+	private void attach () {
+		GameEvents.driftState.addListener(playerListener, PlayerDriftStateEvent.Type.onBeginDrift);
+		GameEvents.driftState.addListener(playerListener, PlayerDriftStateEvent.Type.onEndDrift);
+	}
+
+	private void detach () {
+		GameEvents.driftState.removeListener(playerListener, PlayerDriftStateEvent.Type.onBeginDrift);
+		GameEvents.driftState.removeListener(playerListener, PlayerDriftStateEvent.Type.onEndDrift);
+	}
+
 	@Override
 	public void dispose () {
+		detach();
 		stop();
 	}
 
@@ -40,23 +85,33 @@ public final class PlayerEngineSoundEffect extends SoundEffect {
 
 	@Override
 	public void tick () {
-		// update throttle and rpms, set them as input for the next-frame load computation
-		// float throttle = player.carState.currSpeedFactor * 100;
+		if (!hasPlayer) return;
+
 		if (player.isThrottling) {
-			// throttle = player.getSimulator().carDesc.throttle / 300 * 100;
-			throttle = player.carState.currSpeedFactor * 100;
+			throttle += 10;
+			if (ThrottleAutoSoftener && !driftTimer.isStopped() && driftTimer.elapsed().ticks < softnessTicks) {
+				throttle *= AMath.damping(0.8f);
+				// Gdx.app.log("", "ticks=" + driftTimer.elapsed().ticks);
+			}
 		} else {
-			throttle *= AMath.damping(0.55f);
+			throttle *= AMath.damping(0.8f);
 		}
+
+		throttle = AMath.fixup(throttle);
+		throttle = MathUtils.clamp(throttle, 0, 100);
 
 		float rpm = soundset.updateRpm(load);
 		load = AMath.fixup(fuzzyLoadCompute(throttle, rpm));
-		Gdx.app.log("", "engine load=" + load + ", rpm=" + rpm + ", th=" + throttle + ", g=" + soundset.getGear());
+
+		// Gdx.app.log("", "engine load=" + load + ", rpm=" + rpm + ", th=" + throttle + ", g=" + soundset.getGear() + ", sf="
+		// + player.carState.currSpeedFactor);
+		// Gdx.app.log("", "engine load=" + load + ", rpm=" + rpm + ", th=" + throttle + ", g=" + soundset.getGear());
+		// Gdx.app.log("", "engine load=" + load + ", rpm=" + rpm + ", th=" + throttle + ", sf=" + player.carState.currSpeedFactor);
 
 		// compute volumes
 		soundset.updateVolumes(load);
 		soundset.updatePitches();
-		soundset.updateGear(player.isThrottling);
+		// soundset.updateGear(player.isThrottling);
 	}
 
 	@Override
@@ -83,9 +138,11 @@ public final class PlayerEngineSoundEffect extends SoundEffect {
 		soundset.setPlayer(player);
 
 		if (hasPlayer) {
+			attach();
 			soundset.start();
 		} else {
 			soundset.stop();
+			detach();
 		}
 	}
 }

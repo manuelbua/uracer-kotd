@@ -15,7 +15,7 @@ public class EngineMuscle extends EngineSoundSet {
 
 	@Override
 	public float getGlobalVolume () {
-		return 0.3f;
+		return 0.1f;
 	}
 
 	@Override
