@@ -136,15 +136,14 @@ public abstract class EngineSoundSet {
 	public float updateRpm (float load) {
 		if (!hasPlayer) return 1000;
 
+		// float ratio = getGearRatio();
 		float sf = player.carState.currSpeedFactor;
 		// float ds = player.driftState.driftStrength;
-		// float ratio = getGearRatio();
 
 		// if (load < 0) {
-		// rpm += (load * ratio * (1 - sf));
+		// rpm += load;
 		// } else {
-		// rpm += load * ratio * sf;
-		// rpm -= (rpm * 0.015f) * ds;
+		// rpm += load * ratio;
 		// }
 
 		rpm = 1000 + 9000 * sf;
@@ -152,7 +151,7 @@ public abstract class EngineSoundSet {
 		return rpm;
 	}
 
-	protected void shiftUp () {
+	public void shiftUp () {
 		if (gear > 0 && gear < 6) {
 			gear++;
 
@@ -169,7 +168,7 @@ public abstract class EngineSoundSet {
 		}
 	}
 
-	protected void shiftDown () {
+	public void shiftDown () {
 		if (gear == 1) {
 			gear--;
 		}
@@ -177,7 +176,7 @@ public abstract class EngineSoundSet {
 		if (gear > 1 && gear <= 6) {
 			gear--;
 			if (rpm != 1000) {
-				rpm = rpm + 1000;
+				rpm = rpm + 3000;
 			}
 		}
 
