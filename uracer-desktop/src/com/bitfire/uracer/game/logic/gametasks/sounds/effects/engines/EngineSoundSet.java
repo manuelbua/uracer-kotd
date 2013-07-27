@@ -6,6 +6,7 @@ import net.sourceforge.jFuzzyLogic.FIS;
 import com.badlogic.gdx.Files.FileType;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.audio.Sound;
+import com.badlogic.gdx.math.MathUtils;
 import com.bitfire.uracer.game.logic.gametasks.sounds.SoundEffect;
 import com.bitfire.uracer.game.player.PlayerCar;
 
@@ -16,7 +17,7 @@ public abstract class EngineSoundSet {
 	protected boolean[] started = new boolean[NumTracks];
 	protected FIS feIdle, feOnLow, feOnMid, feOnHigh, feOffLow, feOffMid, feOffHigh;
 	protected int gear;
-	protected float rpm;
+	protected float rpm, trpm;
 	protected boolean hasPlayer;
 	protected PlayerCar player;
 
@@ -133,26 +134,28 @@ public abstract class EngineSoundSet {
 	}
 
 	public float updateRpm (float load) {
-		if (rpm < 10000) {
-			rpm += (load * getGearRatio());
-			if (hasPlayer && rpm > 3000) {
-				rpm -= load * 0.5f * player.driftState.driftStrength;
-				if (rpm < 1000) rpm = 1000;
-			}
-		} else {
-			if (load < 0) {
-				rpm += load;
-			} else {
-				rpm = 10000;
-			}
-		}
+		if (!hasPlayer) return 1000;
 
+		float sf = player.carState.currSpeedFactor;
+		// float ds = player.driftState.driftStrength;
+		// float ratio = getGearRatio();
+
+		// if (load < 0) {
+		// rpm += (load * ratio * (1 - sf));
+		// } else {
+		// rpm += load * ratio * sf;
+		// rpm -= (rpm * 0.015f) * ds;
+		// }
+
+		rpm = 1000 + 9000 * sf;
+		rpm = MathUtils.clamp(rpm, 1000, 10000);
 		return rpm;
 	}
 
 	protected void shiftUp () {
 		if (gear > 0 && gear < 6) {
 			gear++;
+
 			if (rpm >= 4000) {
 				rpm = rpm - 3000;
 			} else {
@@ -174,9 +177,11 @@ public abstract class EngineSoundSet {
 		if (gear > 1 && gear <= 6) {
 			gear--;
 			if (rpm != 1000) {
-				rpm = rpm + 3000;
+				rpm = rpm + 1000;
 			}
 		}
+
+		// Gdx.app.log("", "shifted down");
 	}
 
 	public void updateGear (boolean playerIsThrottling) {
@@ -203,9 +208,7 @@ public abstract class EngineSoundSet {
 			}
 		} else {
 
-			float fgear = gear;
-			fgear *= 0.5f;
-			gear = (int)(fgear + 0.5f);
+			gear = 0;
 
 			// switch (gear) {
 			// case 6:

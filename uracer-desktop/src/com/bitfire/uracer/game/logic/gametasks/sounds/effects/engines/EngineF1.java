@@ -28,6 +28,11 @@ public class EngineF1 extends EngineSoundSet {
 	}
 
 	@Override
+	public float getGlobalVolume () {
+		return 0.05f;
+	}
+
+	@Override
 	public float getGearRatio () {
 		return gears[gear];
 	}

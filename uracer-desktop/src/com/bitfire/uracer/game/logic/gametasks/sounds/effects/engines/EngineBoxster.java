@@ -30,11 +30,11 @@ public class EngineBoxster extends EngineSoundSet {
 			setXnaPitch(0, rpm / 5000);
 		}
 
-		setXnaPitch(1, rpm / 10000);
-		setXnaPitch(2, rpm / 10000 - 0.4f);
-		setXnaPitch(3, rpm / 10000 - 1f);
-		setXnaPitch(4, rpm / 10000);
-		setXnaPitch(5, rpm / 10000);
-		setXnaPitch(6, rpm / 10000 - 1f);
+		setXnaPitch(1, rpm / 10000 - 1);
+		setXnaPitch(2, rpm / 10000 - 1);
+		setXnaPitch(3, rpm / 10000 - 1);
+		setXnaPitch(4, rpm / 10000 - 1);
+		setXnaPitch(5, rpm / 10000 - 1);
+		setXnaPitch(6, rpm / 10000 - 1);
 	}
 }

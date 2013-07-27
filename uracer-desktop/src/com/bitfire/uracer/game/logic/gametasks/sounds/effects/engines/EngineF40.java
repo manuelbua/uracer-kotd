@@ -28,22 +28,33 @@ public class EngineF40 extends EngineSoundSet {
 	}
 
 	@Override
+	public float getGlobalVolume () {
+		return 0.08f;
+	}
+
+	@Override
 	public float getGearRatio () {
 		return gears[gear];
 	}
 
 	@Override
 	public void updatePitches () {
+		float lowLimit = 6000f;
+		float hiLimit = 10000f;
+
+		float rpmLow = rpm / lowLimit;
+		float rpmDef = rpm / hiLimit;
+
 		// sample specific
-		if (rpm < 6000) {
-			setXnaPitch(0, rpm / 6000);
-			setXnaPitch(1, rpm / 10000 + 0.2f);
+		if (rpm < lowLimit) {
+			setXnaPitch(0, rpmLow);
+			setXnaPitch(1, rpmDef + 0.2f);
 		}
 
-		setXnaPitch(2, rpm / 10000 - 0.4f);
-		setXnaPitch(3, rpm / 10000 - 0.8f);
-		setXnaPitch(4, rpm / 10000);
-		setXnaPitch(5, rpm / 10000 - 0.8f);
-		setXnaPitch(6, rpm / 10000 - 0.8f);
+		setXnaPitch(2, rpmDef - 0.4f);
+		setXnaPitch(3, rpmDef - 0.8f);
+		setXnaPitch(4, rpmDef);
+		setXnaPitch(5, rpmDef - 0.8f);
+		setXnaPitch(6, rpmDef - 0.8f);
 	}
 }
