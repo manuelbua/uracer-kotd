@@ -3,8 +3,6 @@ package com.bitfire.uracer.game.logic.gametasks.sounds.effects;
 
 import com.badlogic.gdx.audio.Sound;
 import com.badlogic.gdx.math.MathUtils;
-import com.bitfire.uracer.URacer;
-import com.bitfire.uracer.configuration.Config;
 import com.bitfire.uracer.game.GameEvents;
 import com.bitfire.uracer.game.events.CarEvent;
 import com.bitfire.uracer.game.events.CarEvent.Order;
@@ -14,19 +12,14 @@ import com.bitfire.uracer.game.logic.gametasks.sounds.SoundEffect;
 import com.bitfire.uracer.game.player.PlayerCar;
 import com.bitfire.uracer.resources.Sounds;
 import com.bitfire.uracer.utils.AMath;
-import com.bitfire.uracer.utils.AudioUtils;
 
 public final class PlayerImpactSoundEffect extends SoundEffect {
-	private Sound soundLow1, soundLow2, soundMid1, soundMid2, soundHigh;
-	private long lastSoundTimeMs = 0;
+	private Sound[] impacts;
+	// private long lastSoundTimeMs = 0;
+	private float prevFactor = 0;
 
-	private static final long MinElapsedBetweenSoundsMs = 500;
-	private static final float MinImpactForce = 20f;
-
-	// pitch modulation
-	private static final float pitchFactor = 1f;
-	private static final float pitchMin = 0.75f;
-	private static final float pitchMax = 1f;
+	// private static final long MinElapsedBetweenSoundsMs = 500;
+	// private static final float MinImpactForce = 10f;
 
 	private CarEvent.Listener carEvent = new CarEvent.Listener() {
 		@Override
@@ -36,11 +29,7 @@ public final class PlayerImpactSoundEffect extends SoundEffect {
 	};
 
 	public PlayerImpactSoundEffect () {
-		soundLow1 = Sounds.carImpacts[0];
-		soundLow2 = Sounds.carImpacts[1];
-		soundMid1 = Sounds.carImpacts[2];
-		soundMid2 = Sounds.carImpacts[3];
-		soundHigh = Sounds.carImpacts[4];
+		impacts = Sounds.carImpacts;
 	}
 
 	@Override
@@ -67,79 +56,65 @@ public final class PlayerImpactSoundEffect extends SoundEffect {
 		}
 	}
 
-	// TODO modulate pitch while playing as CarDriftSoundEffect to handle impact also on start/end time modulation
 	private void impact (float impactForce, float speedFactor) {
+		float factor = AMath.fixup(AMath.normalizeImpactForce(impactForce));
+
 		// early exit
-		// if( speedFactor < 0.1f ) {
-		if (impactForce < MinImpactForce) {
+		if (factor < 0.05f) {
 			// FIXME
-			// windows + jre 1.7 keeps returning wrong values for multiple micro collisions! (something like this happens even on
-			// some chinese android platforms)
-			// windows + jre 1.6 is fine instead
-			// Gdx.app.log("PlayerImpactSoundEffect", "(low) impactForce=" + impactForce);
+			// see the bug report at https://code.google.com/p/libgdx/issues/detail?id=1398
+			// if (factor > 0) {
+			// Gdx.app.log("impact", "Skipping f=" + factor);
+			// }
 			return;
 		}
 
-		// Gdx.app.log("PlayerImpactSoundEffect", "impactForce=" + impactForce);
+		// Gdx.app.log("impact", "factor=" + factor + " (prev=" + prevFactor + ")");
 
 		// enough time passed from last impact sound?
-		long millis = System.currentTimeMillis();
-		if (millis - lastSoundTimeMs >= MinElapsedBetweenSoundsMs) {
-			lastSoundTimeMs = millis;
+		// long millis = System.currentTimeMillis();
+		if (/* millis - lastSoundTimeMs >= MinElapsedBetweenSoundsMs || */factor > prevFactor) {
+			// lastSoundTimeMs = millis;
 
-			// avoid volumes==0, min-clamp at 20
-			float clampedImpactForce = AMath.clamp(impactForce, MinImpactForce, Config.Physics.MaxImpactForce);
-			// FIXME clampedImpactForce should be (clampedImpactForce-MinImpactForce) before normalization
-			float impactFactor = clampedImpactForce * Config.Physics.OneOnMaxImpactForce;
-			// impactFactor = speedFactor;
 			float volumeFactor = 1f;
+			int idx = 0;
+			prevFactor = factor;
 
-			// Gdx.app.log(this.getClass().getSimpleName(), impactForce + " (" + clampedImpactForce + ")");
-
-			Sound s = soundLow1;
-
-			// decides sound
-			if (impactFactor <= 0.25f) {
-				// low, vol=[0.25,0.5]
-				s = (MathUtils.random(0, 100) < 50 ? soundLow1 : soundLow2);
-				volumeFactor = 0.25f + impactFactor;
-			} else if (impactFactor > 0.25f && impactFactor < 0.75f) {
-				// mid, vol=[0.5,0.75]
-				s = (MathUtils.random(0, 100) < 50 ? soundMid1 : soundMid2);
-				volumeFactor = 0.5f + (impactFactor - 0.25f) * 0.5f;
-			} else // impactFactor >= 0.75f
-			{
-				// high, vol=[0.75,1]
-				s = soundHigh;
-				volumeFactor = 0.75f + (impactFactor - 0.75f);
+			if (factor > 0.8f) {
+				idx = 7;
+				volumeFactor = 0.8f + 0.2f * ((factor - 0.8f) / 0.2f);
+			} else {
+				float range = factor / 0.8f;
+				volumeFactor = 0.3f + 0.5f * range;
+				idx = (int)(6 * range);
+				if (idx > 0 && idx < 6) {
+					idx += MathUtils.random(-1, 1);
+				}
 			}
 
-			// Gdx.app.log( this.getClass().getSimpleName(), volumeFactor+"" );
-
-			long id = play(s, volumeFactor * SoundManager.SfxVolumeMul);
-			float pitch = speedFactor * pitchFactor + pitchMin;
-			pitch = AMath.clamp(pitch, pitchMin, pitchMax);
-			pitch = AudioUtils.timeDilationToAudioPitch(pitch, URacer.timeMultiplier);
-			s.setPitch(id, pitch);
+			play(impacts[idx], volumeFactor * SoundManager.SfxVolumeMul);
+			// Gdx.app.log("impact", "playing #" + idx + ", v=" + volumeFactor);
+		} else {
+			prevFactor = 0;
 		}
 	}
 
 	@Override
 	public void stop () {
-		soundLow1.stop();
-		soundLow2.stop();
-		soundMid1.stop();
-		soundMid2.stop();
-		soundHigh.stop();
+		for (int i = 0; i < impacts.length; i++) {
+			impacts[i].stop();
+		}
 	}
 
 	@Override
 	public void gameReset () {
-		stop();
+		gameRestart();
 	}
 
 	@Override
 	public void gameRestart () {
+		prevFactor = 0;
+		// lastSoundTimeMs = 0;
 		stop();
 	}
 }
