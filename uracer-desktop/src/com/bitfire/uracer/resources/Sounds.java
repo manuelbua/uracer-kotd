@@ -13,17 +13,20 @@ public final class Sounds {
 	public static Sound[] carEngine_f1 = new Sound[7];
 	public static Sound[] carEngine_msc = new Sound[7];
 
-	public static Sound[] carImpacts = new Sound[5];
+	public static Sound[] carImpacts = new Sound[8];
 	public static Sound[] musTensive = new Sound[7];
 
 	public static void init () {
-		carDrift = Gdx.audio.newSound(Gdx.files.getFileHandle("data/audio/drift-loop.ogg", FileType.Internal));
+		carDrift = Gdx.audio.newSound(Gdx.files.getFileHandle("data/audio/car-tires/drift-loop.ogg", FileType.Internal));
 
-		carImpacts[0] = Gdx.audio.newSound(Gdx.files.getFileHandle("data/audio/impact-2.ogg", FileType.Internal)); // low1
-		carImpacts[1] = Gdx.audio.newSound(Gdx.files.getFileHandle("data/audio/impact-3.ogg", FileType.Internal)); // low2
-		carImpacts[2] = Gdx.audio.newSound(Gdx.files.getFileHandle("data/audio/impact-1.ogg", FileType.Internal)); // mid1
-		carImpacts[3] = Gdx.audio.newSound(Gdx.files.getFileHandle("data/audio/impact-4.ogg", FileType.Internal)); // mid2
-		carImpacts[4] = Gdx.audio.newSound(Gdx.files.getFileHandle("data/audio/impact-5.ogg", FileType.Internal)); // high
+		carImpacts[0] = Gdx.audio.newSound(Gdx.files.getFileHandle("data/audio/car-crashes/impact-2.ogg", FileType.Internal)); // low1
+		carImpacts[1] = Gdx.audio.newSound(Gdx.files.getFileHandle("data/audio/car-crashes/impact-3.ogg", FileType.Internal)); // low2
+		carImpacts[2] = Gdx.audio.newSound(Gdx.files.getFileHandle("data/audio/car-crashes/impact-7.ogg", FileType.Internal)); // low3
+		carImpacts[3] = Gdx.audio.newSound(Gdx.files.getFileHandle("data/audio/car-crashes/impact-8.ogg", FileType.Internal)); // low4
+		carImpacts[4] = Gdx.audio.newSound(Gdx.files.getFileHandle("data/audio/car-crashes/impact-1.ogg", FileType.Internal)); // mid1
+		carImpacts[5] = Gdx.audio.newSound(Gdx.files.getFileHandle("data/audio/car-crashes/impact-4.ogg", FileType.Internal)); // mid2
+		carImpacts[6] = Gdx.audio.newSound(Gdx.files.getFileHandle("data/audio/car-crashes/impact-6.ogg", FileType.Internal)); // mid3
+		carImpacts[7] = Gdx.audio.newSound(Gdx.files.getFileHandle("data/audio/car-crashes/impact-5.ogg", FileType.Internal)); // high
 
 		musTensive[0] = Gdx.audio.newSound(Gdx.files.getFileHandle("data/audio/tensive/prologue-1.ogg", FileType.Internal));
 		musTensive[1] = Gdx.audio.newSound(Gdx.files.getFileHandle("data/audio/tensive/prologue-2.ogg", FileType.Internal));
