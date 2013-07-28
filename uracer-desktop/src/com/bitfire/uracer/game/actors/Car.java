@@ -229,6 +229,8 @@ public abstract strictfp class Car extends Box2DEntity {
 	public void onCollide (Fixture other, Vector2 normalImpulses) {
 		impacts++;
 
+		// FIXME
+		// see the bug report at https://code.google.com/p/libgdx/issues/detail?id=1398
 		if (triggerEvents) {
 			GameEvents.playerCar.data.setCollisionData(other, normalImpulses);
 			GameEvents.playerCar.trigger(this, CarEvent.Type.onCollision);
