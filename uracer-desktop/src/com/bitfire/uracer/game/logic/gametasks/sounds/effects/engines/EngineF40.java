@@ -1,10 +1,6 @@
 
 package com.bitfire.uracer.game.logic.gametasks.sounds.effects.engines;
 
-import net.sourceforge.jFuzzyLogic.FIS;
-
-import com.badlogic.gdx.Files.FileType;
-import com.badlogic.gdx.Gdx;
 import com.bitfire.uracer.resources.Sounds;
 
 public class EngineF40 extends EngineSoundSet {
@@ -15,16 +11,6 @@ public class EngineF40 extends EngineSoundSet {
 		engine = Sounds.carEngine_f40;
 		rpm = 1000;
 		gear = 0;
-
-		//@off
-		feIdle = FIS.load(Gdx.files.getFileHandle("data/audio/car-engine/fuzzy/engineVolIdle.fcl", FileType.Internal).read(), true);
-		feOnLow = FIS.load(Gdx.files.getFileHandle("data/audio/car-engine/fuzzy/engineVolOnLow.fcl", FileType.Internal).read(), true);
-		feOnMid= FIS.load(Gdx.files.getFileHandle("data/audio/car-engine/fuzzy/engineVolOnMid.fcl", FileType.Internal).read(), true);
-		feOnHigh = FIS.load(Gdx.files.getFileHandle("data/audio/car-engine/fuzzy/engineVolOnHigh.fcl", FileType.Internal).read(), true);
-		feOffLow = FIS.load(Gdx.files.getFileHandle("data/audio/car-engine/fuzzy/engineVolOffLow.fcl", FileType.Internal).read(), true);
-		feOffMid= FIS.load(Gdx.files.getFileHandle("data/audio/car-engine/fuzzy/engineVolOffMid.fcl", FileType.Internal).read(), true);
-		feOffHigh = FIS.load(Gdx.files.getFileHandle("data/audio/car-engine/fuzzy/engineVolOffHigh.fcl", FileType.Internal).read(), true);
-		//@on
 	}
 
 	@Override
