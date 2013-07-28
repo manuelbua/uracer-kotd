@@ -7,6 +7,7 @@ import com.badlogic.gdx.Files.FileType;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.audio.Sound;
 import com.badlogic.gdx.math.MathUtils;
+import com.bitfire.uracer.game.logic.gametasks.SoundManager;
 import com.bitfire.uracer.game.logic.gametasks.sounds.SoundEffect;
 import com.bitfire.uracer.game.player.PlayerCar;
 
@@ -129,7 +130,7 @@ public abstract class EngineSoundSet {
 		fuzzyEngine.evaluate();
 		double volume = fuzzyEngine.getVariable("volume").getValue() / 100;
 		if (volume >= 0 && volume <= 1) {
-			setVolume(track, (float)volume);
+			setVolume(track, (float)volume * SoundManager.SfxVolumeMul);
 		}
 	}
 

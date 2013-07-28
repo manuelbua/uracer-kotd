@@ -15,7 +15,7 @@ public class EngineF40 extends EngineSoundSet {
 
 	@Override
 	public float getGlobalVolume () {
-		return 0.1f;
+		return 0.2f;
 	}
 
 	@Override
