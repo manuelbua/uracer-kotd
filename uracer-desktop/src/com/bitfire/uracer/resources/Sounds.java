@@ -37,7 +37,7 @@ public final class Sounds {
 		musTensive[6] = Gdx.audio.newSound(Gdx.files.getFileHandle("data/audio/tensive/inciso-3.ogg", FileType.Internal));
 
 		//@off
-		
+
 		// f40
 		carEngine_f40[0] = Gdx.audio.newSound(Gdx.files.getFileHandle("data/audio/car-engine/f40/idle.wav", FileType.Internal));
 		carEngine_f40[1] = Gdx.audio.newSound(Gdx.files.getFileHandle("data/audio/car-engine/f40/onlow.wav", FileType.Internal));
@@ -55,7 +55,7 @@ public final class Sounds {
 		carEngine_a1[4] = Gdx.audio.newSound(Gdx.files.getFileHandle("data/audio/car-engine/a1/off_2000_ext.wav", FileType.Internal));
 		carEngine_a1[5] = Gdx.audio.newSound(Gdx.files.getFileHandle("data/audio/car-engine/a1/off_3000_ext.wav", FileType.Internal));
 		carEngine_a1[6] = Gdx.audio.newSound(Gdx.files.getFileHandle("data/audio/car-engine/a1/off_6000_ext.wav", FileType.Internal));
-		
+
 		// f1 RF1V8
 		carEngine_f1[0] = Gdx.audio.newSound(Gdx.files.getFileHandle("data/audio/car-engine/f1/idle.wav", FileType.Internal));
 		carEngine_f1[1] = Gdx.audio.newSound(Gdx.files.getFileHandle("data/audio/car-engine/f1/onlow.wav", FileType.Internal));
@@ -64,7 +64,7 @@ public final class Sounds {
 		carEngine_f1[4] = Gdx.audio.newSound(Gdx.files.getFileHandle("data/audio/car-engine/f1/offlow.wav", FileType.Internal));
 		carEngine_f1[5] = Gdx.audio.newSound(Gdx.files.getFileHandle("data/audio/car-engine/f1/offmid.wav", FileType.Internal));
 		carEngine_f1[6] = Gdx.audio.newSound(Gdx.files.getFileHandle("data/audio/car-engine/f1/offhigh.wav", FileType.Internal));
-		
+
 		// muscle
 		carEngine_msc[0] = Gdx.audio.newSound(Gdx.files.getFileHandle("data/audio/car-engine/muscle/idle.wav", FileType.Internal));
 		carEngine_msc[1] = Gdx.audio.newSound(Gdx.files.getFileHandle("data/audio/car-engine/muscle/onlow.wav", FileType.Internal));
@@ -73,7 +73,7 @@ public final class Sounds {
 		carEngine_msc[4] = Gdx.audio.newSound(Gdx.files.getFileHandle("data/audio/car-engine/muscle/offlow.wav", FileType.Internal));
 		carEngine_msc[5] = Gdx.audio.newSound(Gdx.files.getFileHandle("data/audio/car-engine/muscle/offmid.wav", FileType.Internal));
 		carEngine_msc[6] = Gdx.audio.newSound(Gdx.files.getFileHandle("data/audio/car-engine/muscle/offhigh.wav", FileType.Internal));
-		
+
 		//@on
 	}
 

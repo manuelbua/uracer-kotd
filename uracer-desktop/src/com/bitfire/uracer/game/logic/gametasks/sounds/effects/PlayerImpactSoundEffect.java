@@ -1,8 +1,10 @@
 
 package com.bitfire.uracer.game.logic.gametasks.sounds.effects;
 
+import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.audio.Sound;
 import com.badlogic.gdx.math.MathUtils;
+import com.badlogic.gdx.utils.TimeUtils;
 import com.bitfire.uracer.game.GameEvents;
 import com.bitfire.uracer.game.events.CarEvent;
 import com.bitfire.uracer.game.events.CarEvent.Order;
@@ -14,12 +16,11 @@ import com.bitfire.uracer.resources.Sounds;
 import com.bitfire.uracer.utils.AMath;
 
 public final class PlayerImpactSoundEffect extends SoundEffect {
+	private static final float MinImpactForce = 0.05f;
+	private static final long MinMillisBeforePlay = 500;
 	private Sound[] impacts;
-	// private long lastSoundTimeMs = 0;
-	private float prevFactor = 0;
-
-	// private static final long MinElapsedBetweenSoundsMs = 500;
-	// private static final float MinImpactForce = 10f;
+	private long lastMillis = 0;
+	private float lastFactor = 0;
 
 	private CarEvent.Listener carEvent = new CarEvent.Listener() {
 		@Override
@@ -60,9 +61,7 @@ public final class PlayerImpactSoundEffect extends SoundEffect {
 		float factor = AMath.fixup(AMath.normalizeImpactForce(impactForce));
 
 		// early exit
-		if (factor < 0.05f) {
-			// FIXME
-			// see the bug report at https://code.google.com/p/libgdx/issues/detail?id=1398
+		if (factor < MinImpactForce) {
 			// if (factor > 0) {
 			// Gdx.app.log("impact", "Skipping f=" + factor);
 			// }
@@ -71,31 +70,36 @@ public final class PlayerImpactSoundEffect extends SoundEffect {
 
 		// Gdx.app.log("impact", "factor=" + factor + " (prev=" + prevFactor + ")");
 
-		// enough time passed from last impact sound?
-		// long millis = System.currentTimeMillis();
-		if (/* millis - lastSoundTimeMs >= MinElapsedBetweenSoundsMs || */factor > prevFactor) {
-			// lastSoundTimeMs = millis;
+		long millis = TimeUtils.millis();
+		if (millis - lastMillis > MinMillisBeforePlay || factor > lastFactor) {
+			lastMillis = millis;
+			lastFactor = factor;
 
 			float volumeFactor = 1f;
 			int idx = 0;
-			prevFactor = factor;
 
-			if (factor > 0.8f) {
+			if (factor > 0.9f) {
+				// high
 				idx = 7;
-				volumeFactor = 0.8f + 0.2f * ((factor - 0.8f) / 0.2f);
+				volumeFactor = factor;
 			} else {
-				float range = factor / 0.8f;
-				volumeFactor = 0.3f + 0.5f * range;
-				idx = (int)(6 * range);
-				if (idx > 0 && idx < 6) {
-					idx += MathUtils.random(-1, 1);
+				float range = factor / 0.9f;
+				if (range < 0.5) {
+					// low
+					idx = MathUtils.random(0, 3);
+				} else {
+					idx = MathUtils.random(4, 6);
 				}
+
+				volumeFactor = 0.1f + 0.9f * range;
 			}
 
 			play(impacts[idx], volumeFactor * SoundManager.SfxVolumeMul);
-			// Gdx.app.log("impact", "playing #" + idx + ", v=" + volumeFactor);
+			Gdx.app.log("impact", "playing #" + idx + ", v=" + volumeFactor);
 		} else {
-			prevFactor = 0;
+			if (factor < lastFactor) {
+				lastFactor = 0;
+			}
 		}
 	}
 
@@ -107,14 +111,14 @@ public final class PlayerImpactSoundEffect extends SoundEffect {
 	}
 
 	@Override
-	public void gameReset () {
-		gameRestart();
+	public void gameRestart () {
+		lastMillis = 0;
+		lastFactor = 0;
+		stop();
 	}
 
 	@Override
-	public void gameRestart () {
-		prevFactor = 0;
-		// lastSoundTimeMs = 0;
-		stop();
+	public void gameReset () {
+		gameRestart();
 	}
 }
