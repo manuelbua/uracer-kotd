@@ -21,6 +21,7 @@ public final class PlayerImpactSoundEffect extends SoundEffect {
 	private Sound[] impacts;
 	private long lastMillis = 0;
 	private float lastFactor = 0;
+	private int lastIdx = 0;
 
 	private CarEvent.Listener carEvent = new CarEvent.Listener() {
 		@Override
@@ -75,27 +76,41 @@ public final class PlayerImpactSoundEffect extends SoundEffect {
 			lastMillis = millis;
 			lastFactor = factor;
 
+			float vol = 0;
 			float volumeFactor = 1f;
 			int idx = 0;
 
 			if (factor > 0.9f) {
-				// high
+				// high (1)
 				idx = 7;
 				volumeFactor = factor;
 			} else {
 				float range = factor / 0.9f;
 				if (range < 0.5) {
-					// low
-					idx = MathUtils.random(0, 3);
+					// low (4)
+					do {
+						idx = MathUtils.random(0, 3);
+					} while (idx == lastIdx);
 				} else {
-					idx = MathUtils.random(4, 6);
+					// mid (3)
+					do {
+						idx = MathUtils.random(4, 6);
+					} while (idx == lastIdx);
 				}
 
-				volumeFactor = 0.1f + 0.9f * range;
+				volumeFactor = 0.2f + 0.7f * range;
 			}
 
-			play(impacts[idx], volumeFactor * SoundManager.SfxVolumeMul);
-			Gdx.app.log("impact", "playing #" + idx + ", v=" + volumeFactor);
+			lastIdx = idx;
+			vol = volumeFactor * SoundManager.SfxVolumeMul;
+			long result = play(impacts[idx], vol);
+
+			if (result == -1) {
+				Gdx.app.log("PlayerImpactSoundEffect", "Couldn't play impact sound sample #" + idx + "(v=" + vol
+					+ "), no free sources available for concurrent playing");
+			} else {
+				Gdx.app.log("PlayerImpactSoundEffect", "playing #" + idx + ", v=" + vol);
+			}
 		} else {
 			if (factor < lastFactor) {
 				lastFactor = 0;
@@ -114,6 +129,7 @@ public final class PlayerImpactSoundEffect extends SoundEffect {
 	public void gameRestart () {
 		lastMillis = 0;
 		lastFactor = 0;
+		lastIdx = 0;
 		stop();
 	}
 
