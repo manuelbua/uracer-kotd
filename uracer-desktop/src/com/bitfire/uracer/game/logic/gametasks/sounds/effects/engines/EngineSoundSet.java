@@ -6,7 +6,6 @@ import net.sourceforge.jFuzzyLogic.FIS;
 import com.badlogic.gdx.Files.FileType;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.audio.Sound;
-import com.badlogic.gdx.math.MathUtils;
 import com.bitfire.uracer.game.logic.gametasks.SoundManager;
 import com.bitfire.uracer.game.logic.gametasks.sounds.SoundEffect;
 import com.bitfire.uracer.game.player.PlayerCar;
@@ -18,13 +17,13 @@ public abstract class EngineSoundSet {
 	protected boolean[] started = new boolean[NumTracks];
 	protected FIS feIdle, feOnLow, feOnMid, feOnHigh, feOffLow, feOffMid, feOffHigh;
 	protected int gear;
-	protected float rpm, trpm;
+	protected float rpm;
 	protected boolean hasPlayer;
 	protected PlayerCar player;
 
 	public EngineSoundSet () {
 		rpm = 0;
-		gear = 0;
+		gear = 1;
 
 		//@off
 		feIdle = FIS.load(Gdx.files.getFileHandle("data/audio/car-engine/fuzzy/engineVolIdle.fcl", FileType.Internal).read(), true);
@@ -40,6 +39,12 @@ public abstract class EngineSoundSet {
 	public abstract void updatePitches ();
 
 	public abstract float getGearRatio ();
+
+	public void shiftUp () {
+	}
+
+	public void shiftDown () {
+	}
 
 	public void setPlayer (PlayerCar player) {
 		this.player = player;
@@ -60,7 +65,7 @@ public abstract class EngineSoundSet {
 
 	public void reset () {
 		rpm = 1000;
-		gear = 0;
+		gear = 1;
 	}
 
 	public void updateVolumes (float load) {
@@ -131,106 +136,26 @@ public abstract class EngineSoundSet {
 		double volume = fuzzyEngine.getVariable("volume").getValue() / 100;
 		if (volume >= 0 && volume <= 1) {
 			setVolume(track, (float)volume * SoundManager.SfxVolumeMul);
+
+			// dbg
+			// if (track == 1 || track == 4) {
+			// setVolume(track, (float)volume * SoundManager.SfxVolumeMul);
+			// } else {
+			// setVolume(track, 0);
+			// }
+			// dbg
 		}
 	}
 
 	public float updateRpm (float load) {
-		if (!hasPlayer) return 1000;
-
-		// float ratio = getGearRatio();
-		float sf = player.carState.currSpeedFactor;
-		// float ds = player.driftState.driftStrength;
-
-		// if (load < 0) {
-		// rpm += load;
-		// } else {
-		// rpm += load * ratio;
-		// }
-
-		rpm = 1000 + 9000 * sf;
-		rpm = MathUtils.clamp(rpm, 1000, 10000);
-		return rpm;
-	}
-
-	public void shiftUp () {
-		if (gear > 0 && gear < 6) {
-			gear++;
-
-			if (rpm >= 4000) {
-				rpm = rpm - 3000;
-			} else {
-				rpm = 1000;
-			}
-		}
-
-		if (gear == 0) {
-			gear++;
+		if (!hasPlayer) {
 			rpm = 1000;
-		}
-	}
-
-	public void shiftDown () {
-		if (gear == 1) {
-			gear--;
-		}
-
-		if (gear > 1 && gear <= 6) {
-			gear--;
-			if (rpm != 1000) {
-				rpm = rpm + 3000;
-			}
-		}
-
-		// Gdx.app.log("", "shifted down");
-	}
-
-	public void updateGear (boolean playerIsThrottling) {
-		if (playerIsThrottling) {
-			switch (gear) {
-			case 0:
-				if (rpm > 1000) shiftUp();
-				break;
-			case 1:
-				if (rpm > 2000) shiftUp();
-				break;
-			case 2:
-				if (rpm > 3000) shiftUp();
-				break;
-			case 3:
-				if (rpm > 4000) shiftUp();
-				break;
-			case 4:
-				if (rpm > 5000) shiftUp();
-				break;
-			case 5:
-				if (rpm > 6000) shiftUp();
-				break;
-			}
+			return 1000;
 		} else {
-
-			gear = 0;
-
-			// switch (gear) {
-			// case 6:
-			// if (rpm < 6000) shiftDown();
-			// break;
-			// case 5:
-			// if (rpm < 5000) shiftDown();
-			// break;
-			// case 4:
-			// if (rpm < 4000) shiftDown();
-			// break;
-			// case 3:
-			// if (rpm < 3000) shiftDown();
-			// break;
-			// case 2:
-			// if (rpm < 2000) shiftDown();
-			// break;
-			// case 1:
-			// if (rpm < 1000) shiftDown();
-			// break;
-			// }
-
+			// very simplicistic, arcade implementation
+			rpm = (1000 + 9000 * player.carState.currSpeedFactor);
 		}
+
+		return rpm;
 	}
 }
