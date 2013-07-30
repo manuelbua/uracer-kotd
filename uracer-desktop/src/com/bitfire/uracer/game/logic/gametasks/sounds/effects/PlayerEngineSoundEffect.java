@@ -46,11 +46,13 @@ public final class PlayerEngineSoundEffect extends SoundEffect {
 			switch (type) {
 			case onBeginDrift:
 				if (player.isThrottling) {
+					// soundset.shiftDown();
 					driftTimer.start();
 					float ratio = player.carState.currSpeedFactor;
 					softnessTicks = (int)(ratio * (float)MaxSoftnessTicks);
 					softnessTicks = MathUtils.clamp(softnessTicks, MinSoftnessTicks, MaxSoftnessTicks);
 					// Gdx.app.log("", "st=" + softnessTicks);
+					// Gdx.app.log("", "BEGIN DRIFT");
 				}
 				break;
 			case onEndDrift:
@@ -111,7 +113,6 @@ public final class PlayerEngineSoundEffect extends SoundEffect {
 		// compute volumes
 		soundset.updateVolumes(load);
 		soundset.updatePitches();
-		// soundset.updateGear(player.isThrottling);
 	}
 
 	@Override
