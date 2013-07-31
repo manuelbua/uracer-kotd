@@ -8,6 +8,7 @@ import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.math.MathUtils;
 import com.bitfire.uracer.game.GameEvents;
 import com.bitfire.uracer.game.Time;
+import com.bitfire.uracer.game.events.CarEvent;
 import com.bitfire.uracer.game.events.PlayerDriftStateEvent;
 import com.bitfire.uracer.game.events.PlayerDriftStateEvent.Order;
 import com.bitfire.uracer.game.events.PlayerDriftStateEvent.Type;
@@ -28,8 +29,9 @@ public final class PlayerEngineSoundEffect extends SoundEffect {
 	private static final boolean ThrottleAutoSoftener = true;
 	private Time driftTimer = new Time();
 	private static final int MinSoftnessTicks = 5;
-	private static final int MaxSoftnessTicks = 40;
+	private static final int MaxSoftnessTicks = 20;
 	private int softnessTicks = 0;
+	private boolean outOfTrack = false;
 
 	private EngineSoundSet soundset = new EngineF40();
 
@@ -37,6 +39,7 @@ public final class PlayerEngineSoundEffect extends SoundEffect {
 		feLoad = FIS.load(Gdx.files.getFileHandle("data/audio/car-engine/fuzzy/engineLoad.fcl", FileType.Internal).read(), true);
 		load = 0;
 		throttle = 0;
+		outOfTrack = false;
 	}
 
 	private PlayerDriftStateEvent.Listener playerListener = new PlayerDriftStateEvent.Listener() {
@@ -46,7 +49,10 @@ public final class PlayerEngineSoundEffect extends SoundEffect {
 			switch (type) {
 			case onBeginDrift:
 				if (player.isThrottling) {
-					// soundset.shiftDown();
+					while (soundset.hasGears() && soundset.getGear() > 2) {
+						soundset.shiftDown();
+					}
+
 					driftTimer.start();
 					float ratio = player.carState.currSpeedFactor;
 					softnessTicks = (int)(ratio * (float)MaxSoftnessTicks);
@@ -65,11 +71,35 @@ public final class PlayerEngineSoundEffect extends SoundEffect {
 	private void attach () {
 		GameEvents.driftState.addListener(playerListener, PlayerDriftStateEvent.Type.onBeginDrift);
 		GameEvents.driftState.addListener(playerListener, PlayerDriftStateEvent.Type.onEndDrift);
+		GameEvents.playerCar.addListener(carListener, CarEvent.Type.onCollision);
+		GameEvents.playerCar.addListener(carListener, CarEvent.Type.onOutOfTrack);
+		GameEvents.playerCar.addListener(carListener, CarEvent.Type.onBackInTrack);
 	}
+
+	private CarEvent.Listener carListener = new CarEvent.Listener() {
+		@Override
+		public void handle (Object source, CarEvent.Type type, CarEvent.Order order) {
+			switch (type) {
+			case onCollision:
+				soundset.shiftDown();
+				break;
+			case onOutOfTrack:
+				soundset.shiftDown();
+				outOfTrack = true;
+				break;
+			case onBackInTrack:
+				outOfTrack = false;
+				break;
+			}
+		}
+	};
 
 	private void detach () {
 		GameEvents.driftState.removeListener(playerListener, PlayerDriftStateEvent.Type.onBeginDrift);
 		GameEvents.driftState.removeListener(playerListener, PlayerDriftStateEvent.Type.onEndDrift);
+		GameEvents.playerCar.removeListener(carListener, CarEvent.Type.onCollision);
+		GameEvents.playerCar.removeListener(carListener, CarEvent.Type.onOutOfTrack);
+		GameEvents.playerCar.removeListener(carListener, CarEvent.Type.onBackInTrack);
 	}
 
 	@Override
@@ -89,14 +119,28 @@ public final class PlayerEngineSoundEffect extends SoundEffect {
 	public void tick () {
 		if (!hasPlayer) return;
 
+		if (outOfTrack) {
+			soundset.shiftDown();
+		}
+
 		if (player.isThrottling) {
-			throttle += 10;
+			if (soundset.hasGears()) {
+				throttle += 8f;
+			} else {
+				throttle += 10;
+			}
+
 			if (ThrottleAutoSoftener && !driftTimer.isStopped() && driftTimer.elapsed().ticks < softnessTicks) {
 				throttle *= AMath.damping(0.8f);
-				// Gdx.app.log("", "ticks=" + driftTimer.elapsed().ticks);
+				Gdx.app.log("", "ticks=" + driftTimer.elapsed().ticks);
 			}
 		} else {
-			throttle *= AMath.damping(0.8f);
+			if (soundset.hasGears()) {
+				// avoid sound fading slipping over the off-engine samples
+				throttle = 0;
+			} else {
+				throttle *= AMath.damping(0.8f);
+			}
 		}
 
 		throttle = AMath.fixup(throttle);
@@ -130,6 +174,7 @@ public final class PlayerEngineSoundEffect extends SoundEffect {
 		soundset.reset();
 		soundset.stop();
 		soundset.start();
+		outOfTrack = false;
 	}
 
 	@Override
