@@ -3,24 +3,32 @@ package com.bitfire.uracer.game.logic.gametasks.sounds.effects.engines;
 
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.math.MathUtils;
+import com.badlogic.gdx.math.WindowedMean;
 import com.bitfire.uracer.resources.Sounds;
+import com.bitfire.uracer.utils.AMath;
 
 public class EngineF40 extends EngineSoundSet {
 	private static final boolean UseGears = false;
+	private static final int MinGear = 1;
 	private static final int MaxGear = 6;
+	private WindowedMean currRpm, prevRpm;
 
 	// private float[] gears = {3, 1, 0.7f, 0.5f, 0.3f, 0.2f, 0.1f};
 
 	public EngineF40 () {
 		super();
+		int meanSize = 4;
+		currRpm = new WindowedMean(meanSize);
+		prevRpm = new WindowedMean(meanSize);
+
 		engine = Sounds.carEngine_f40;
 		rpm = 1000;
-		gear = 1;
+		gear = MinGear;
 	}
 
 	@Override
 	public float getGlobalVolume () {
-		return 0.2f;
+		return 0.1f;
 	}
 
 	@Override
@@ -41,7 +49,7 @@ public class EngineF40 extends EngineSoundSet {
 		case 0: res =  1f;
 		//
 		case 1: res = 3f; 	break;
-		case 2: res = 1f;		break;
+		case 2: res = 1f;	break;
 		case 3: res = 0.7f;	break;
 		case 4: res = 0.5f;	break;
 		case 5: res = 0.3f;	break;
@@ -49,7 +57,7 @@ public class EngineF40 extends EngineSoundSet {
 		}
 		//@on
 
-		return res;
+		return res * 1f;
 	}
 
 	@Override
@@ -84,34 +92,96 @@ public class EngineF40 extends EngineSoundSet {
 			float sf = player.carState.currSpeedFactor;
 
 			// more accurate representation
-			if (load < 0) {
-				rpm += load;
-			} else {
-				rpm += load * getGearRatio();
-			}
+			// if (load < 0) {
+			// rpm += load;
+			// } else {
+			// rpm += load * getGearRatio();
+			// }
 
-			// rpm *= AMath.damping(0.992f);
-			rpm = MathUtils.clamp(rpm, 1000, 10000);
+			float newrpm = (1000 + 9000 * sf * getGearRatio());
+			rpm = AMath.lerp(rpm, newrpm, 1);
 
-			Gdx.app.log("EngineSoundSet", "gear=" + gear + ", rpm=" + rpm);// + ", speed=" + sf);
+			// rpm *= AMath.damping(0.8f);
+
+			prevRpm.addValue(currRpm.getMean());
+			currRpm.addValue(rpm);
+
+			// determine direction
+			int dir = 0;
+			if (prevRpm.getMean() < currRpm.getMean()) dir = 1;
+			if (prevRpm.getMean() > currRpm.getMean()) dir = -1;
 
 			// count number of full engine loads til now
-			if (player.isThrottling /* && !player.driftState.isDrifting */) {
+			if (dir > 0 && player.isThrottling) {
+				// player.isThrottling /* && !player.driftState.isDrifting */
 				if (rpm > 9500) {
-					shiftUp();
+					onFullLoad();
 				}
-			} else {
-				if (!player.driftState.isDrifting && rpm < 9000) {
-					gear = 1;
-					// shiftDown();
-
+			} else if (dir < 0) {
+				if (rpm < 9500) {
+					onDischarge();
 				}
 			}
+
+			rpm = MathUtils.clamp(rpm, 1000, 10000);
+
+			Gdx.app.log("EngineSoundSet", "gear=" + gear + ", rpm=" + rpm + ", dir=" + dir);// + ", speed=" + sf);
 
 			return rpm;
 		}
 
 		return super.updateRpm(load);
+	}
+
+	private int lastGear = 0;
+
+	private void onFullLoad () {
+
+		// if (gear != lastGear) {
+		// lastGear = gear;
+		//
+		// switch (gear) {
+		// case 1:
+		// rpm -= 3000;
+		// break;
+		// case 2:
+		// rpm -= 3000;
+		// break;
+		// case 3:
+		// rpm -= 3000;
+		// break;
+		// }
+		// }
+
+		shiftUp();
+
+		currRpm.clear();
+		prevRpm.clear();
+	}
+
+	private int lastDisc = 0;
+
+	private void onDischarge () {
+		// if (gear != lastDisc) {
+		// lastDisc = gear;
+		//
+		// switch (gear) {
+		// case 3:
+		// rpm += 2000;
+		// break;
+		// case 2:
+		// rpm += 1000;
+		// break;
+		// }
+		// }
+
+		shiftDown();
+
+		currRpm.clear();
+		prevRpm.clear();
+
+		gear--;
+		gear = MathUtils.clamp(gear, MinGear, MaxGear);
 	}
 
 	@Override
@@ -136,6 +206,8 @@ public class EngineF40 extends EngineSoundSet {
 
 			rpm = MathUtils.clamp(rpm, 1000, 10000);
 		}
+
+		gear = MathUtils.clamp(gear, MinGear, MaxGear);
 	}
 
 	@Override
@@ -147,15 +219,28 @@ public class EngineF40 extends EngineSoundSet {
 			// gear--;
 			// }
 
-			if (gear > 1 && gear <= 6) {
+			if (gear > MinGear && gear <= MaxGear) {
 				gear--;
 				if (rpm != 1000) {
-					rpm += MathUtils.random(-500, 1100);
+					// rpm += MathUtils.random(-500, 1100);
+					rpm += 3000;
 				}
 
 				rpm = MathUtils.clamp(rpm, 1000, 10000);
-				Gdx.app.log("EngineF40", "shift down");
+				// Gdx.app.log("EngineF40", "shift down");
 			}
 		}
+
+		gear = MathUtils.clamp(gear, MinGear, MaxGear);
+	}
+
+	@Override
+	public void reset () {
+		super.reset();
+
+		rpm = 1000;
+		gear = 1;
+		currRpm.clear();
+		prevRpm.clear();
 	}
 }

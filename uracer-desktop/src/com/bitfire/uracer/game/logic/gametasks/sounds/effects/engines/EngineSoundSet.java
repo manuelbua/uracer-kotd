@@ -6,6 +6,7 @@ import net.sourceforge.jFuzzyLogic.FIS;
 import com.badlogic.gdx.Files.FileType;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.audio.Sound;
+import com.badlogic.gdx.math.MathUtils;
 import com.bitfire.uracer.game.logic.gametasks.SoundManager;
 import com.bitfire.uracer.game.logic.gametasks.sounds.SoundEffect;
 import com.bitfire.uracer.game.player.PlayerCar;
@@ -157,9 +158,10 @@ public abstract class EngineSoundSet {
 			return 1000;
 		} else {
 			// very simplicistic, arcade implementation
-			rpm = (1000 + 9000 * player.carState.currSpeedFactor);
+			rpm = (1000 + 10000 * player.carState.currSpeedFactor);
 		}
 
+		rpm = MathUtils.clamp(rpm, 1000, 10000);
 		return rpm;
 	}
 }
