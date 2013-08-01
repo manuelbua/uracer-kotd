@@ -49,9 +49,9 @@ public final class PlayerEngineSoundEffect extends SoundEffect {
 			switch (type) {
 			case onBeginDrift:
 				if (player.isThrottling) {
-					while (soundset.hasGears() && soundset.getGear() > 2) {
-						soundset.shiftDown();
-					}
+					// while (soundset.hasGears() && soundset.getGear() > 2) {
+					// soundset.shiftDown();
+					// }
 
 					driftTimer.start();
 					float ratio = player.carState.currSpeedFactor;
@@ -77,14 +77,16 @@ public final class PlayerEngineSoundEffect extends SoundEffect {
 	}
 
 	private CarEvent.Listener carListener = new CarEvent.Listener() {
+		@SuppressWarnings("incomplete-switch")
 		@Override
 		public void handle (Object source, CarEvent.Type type, CarEvent.Order order) {
 			switch (type) {
 			case onCollision:
-				soundset.shiftDown();
+				soundset.reset();
+				throttle = 0;
 				break;
 			case onOutOfTrack:
-				soundset.shiftDown();
+				// soundset.shiftDown();
 				outOfTrack = true;
 				break;
 			case onBackInTrack:
@@ -119,9 +121,9 @@ public final class PlayerEngineSoundEffect extends SoundEffect {
 	public void tick () {
 		if (!hasPlayer) return;
 
-		if (outOfTrack) {
-			soundset.shiftDown();
-		}
+		// if (outOfTrack) {
+		// soundset.shiftDown();
+		// }
 
 		if (player.isThrottling) {
 			if (soundset.hasGears()) {
@@ -130,9 +132,10 @@ public final class PlayerEngineSoundEffect extends SoundEffect {
 				throttle += 10;
 			}
 
-			if (ThrottleAutoSoftener && !driftTimer.isStopped() && driftTimer.elapsed().ticks < softnessTicks) {
+			if (!soundset.hasGears() && ThrottleAutoSoftener && !driftTimer.isStopped()
+				&& driftTimer.elapsed().ticks < softnessTicks) {
 				throttle *= AMath.damping(0.8f);
-				Gdx.app.log("", "ticks=" + driftTimer.elapsed().ticks);
+				// Gdx.app.log("", "ticks=" + driftTimer.elapsed().ticks);
 			}
 		} else {
 			if (soundset.hasGears()) {
