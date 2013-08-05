@@ -1,12 +1,12 @@
 FUNCTION_BLOCK engineLoad
 
 VAR_INPUT
-	throttle : REAL;
-	rpm : REAL;
+	throttle : REAL;	// [0, 100]
+	rpm : REAL;			// [-100, 10000]
 END_VAR
 
 VAR_OUTPUT
-	load : REAL;
+	load : REAL;		// [-100, 150]
 END_VAR
 
 FUZZIFY throttle

@@ -17,6 +17,7 @@ public final class CarSimulator {
 	private Vector2 resistance = new Vector2();
 	private Vector2 force = new Vector2();
 	private Vector2 acceleration = new Vector2();
+	private float rpmWheel = 0;
 	private float thisSign, lastSign;
 	private static final float DampingThrottle = AMath.damping(0.98f);
 
@@ -227,22 +228,26 @@ public final class CarSimulator {
 		// make sure vehicle doesn't exceed maximum velocity
 		VMath.truncate(carDesc.velocity_wc, carDesc.carModel.max_speed);
 
-		//
 		// Angular acceleration, angular velocity and heading
-		//
 
-		// angular_acceleration = torque / carDesc.carModel.inertia;
 		float angular_acceleration = torque * carDesc.carModel.invinertia;
 
 		// integrate angular acceleration to get angular velocity
 		carDesc.angularvelocity += dt * angular_acceleration;
 		carDesc.angularvelocity = AMath.fixup(carDesc.angularvelocity);
 
-		// integrate angular velocity to get angular orientation
-		// carDesc.angularOrientation = dt * carDesc.angularvelocity;
-		// AMath.fixup( carDesc.angularOrientation );
+		//
+		float degreeOfRotationPerFrame = ((velocity.len() * dt) / carDesc.carModel.wheellength) * 360f;
+		float degreeOfRotationPerSecond = degreeOfRotationPerFrame * 30f;
+		float rpsWheel = degreeOfRotationPerSecond / 360f;
+		// float kmh = ((rpsWheel * carDesc.carModel.wheellength) * 3600f) / 1000f;
+		rpmWheel = rpsWheel * 60;
 
-		// updateHeading( bodyAngle );
+		// Gdx.app.log("CarSimulator", "rpmWheel=" + rpmWheel );
+	}
+
+	public float getRpmWheel () {
+		return rpmWheel;
 	}
 
 	public void resetPhysics () {

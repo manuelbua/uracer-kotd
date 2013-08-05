@@ -3,32 +3,33 @@ package com.bitfire.uracer.game.logic.gametasks.sounds.effects.engines;
 
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.math.MathUtils;
-import com.badlogic.gdx.math.WindowedMean;
 import com.bitfire.uracer.resources.Sounds;
-import com.bitfire.uracer.utils.AMath;
 
 public class EngineF40 extends EngineSoundSet {
-	private static final boolean UseGears = false;
+	private static final boolean UseGears = true;
 	private static final int MinGear = 1;
-	private static final int MaxGear = 6;
-	private WindowedMean currRpm, prevRpm;
+	private static final int MaxGear = 3;
 
-	// private float[] gears = {3, 1, 0.7f, 0.5f, 0.3f, 0.2f, 0.1f};
+	// private FIS autoGears;
 
 	public EngineF40 () {
 		super();
-		int meanSize = 4;
-		currRpm = new WindowedMean(meanSize);
-		prevRpm = new WindowedMean(meanSize);
-
 		engine = Sounds.carEngine_f40;
 		rpm = 1000;
 		gear = MinGear;
+
+		// autoGears = FIS.load(Gdx.files.getFileHandle("data/audio/car-engine/fuzzy/autoGears.fcl", FileType.Internal).read(),
+		// true);
 	}
 
 	@Override
 	public float getGlobalVolume () {
-		return 0.1f;
+		float vol = 0.1f;
+		if (hasPlayer) {
+			vol += 0.2f * player.carState.currSpeedFactor;
+		}
+
+		return vol;
 	}
 
 	@Override
@@ -42,22 +43,48 @@ public class EngineF40 extends EngineSoundSet {
 			return 3;
 		}
 
+		// {3, 1, 0.7f, 0.5f, 0.3f, 0.2f, 0.1f}
+
 		float res = 1;
 
 		//@off
 		switch(gear) {
 		case 0: res =  1f;
 		//
-		case 1: res = 3f; 	break;
+		case 1: res = 1.6f; 	break;
 		case 2: res = 1f;	break;
 		case 3: res = 0.7f;	break;
-		case 4: res = 0.5f;	break;
+		case 4: res = 0.2f;	break;
 		case 5: res = 0.3f;	break;
 		case 6: res = 0.2f;	break;
 		}
 		//@on
 
-		return res * 1f;
+		return res;// * 0.15f;
+	}
+
+	@Override
+	public float getGearRatioOff () {
+		if (!UseGears) {
+			return 3;
+		}
+
+		float res = 1;
+
+		//@off
+		switch(gear) {
+		case 0: res =  1f;
+		//
+		case 1: res = 1f; 	break;
+		case 2: res = 0.8f;	break;
+		case 3: res = 0.7f;	break;
+		case 4: res = 0f;	break;
+		case 5: res = 0f;	break;
+		case 6: res = 0f;	break;
+		}
+		//@on
+
+		return res;// * 0.15f;
 	}
 
 	@Override
@@ -81,6 +108,8 @@ public class EngineF40 extends EngineSoundSet {
 		setXnaPitch(6, rpmDef - 0.8f);
 	}
 
+	private float prevSpeed = 0;
+
 	@Override
 	public float updateRpm (float load) {
 		if (UseGears) {
@@ -89,99 +118,111 @@ public class EngineF40 extends EngineSoundSet {
 				return 1000;
 			}
 
+			updateGear();
 			float sf = player.carState.currSpeedFactor;
+			float q = 13000;// 12858;
+			float factor = q * sf * getGearRatio();
+
+			// updateGearFIS();
+			if (sf < prevSpeed) {
+				factor = q * sf * getGearRatioOff();
+			}
+
+			Gdx.app.log("EngineSoundSet", "gear=" + gear + ", rpm=" + rpm + ", throttle=" + player.getCarDescriptor().throttle
+				+ ", throttling=" + player.isThrottling);// + ", speed="+ sf);
 
 			// more accurate representation
+			// float inc = 0;
 			// if (load < 0) {
-			// rpm += load;
+			// inc = load;
 			// } else {
-			// rpm += load * getGearRatio();
+			// inc = load * getGearRatio() * sf;
 			// }
+			// float newrpm = rpm + inc;
 
-			float newrpm = (1000 + 9000 * sf * getGearRatio());
-			rpm = AMath.lerp(rpm, newrpm, 1);
+			float newrpm = 1000 + factor + (load < 0 ? load * 1f : load * 00);
 
-			// rpm *= AMath.damping(0.8f);
+			// rpm = AMath.lerp(rpm, newrpm, 1);
+			// float newrpm = rpm + (load < 0 ? load : load * getGearRatio());
 
-			prevRpm.addValue(currRpm.getMean());
-			currRpm.addValue(rpm);
+			// float rpmw = player.getSimulator().getRpmWheel();
+			// float newrpm = rpm + rpmw * getGearRatio() * 100f + (load < 0 ? load * 4 : load * sf * 0.001f);
+			// float newrpm = rpmw * getGearRatio() * 3f;
 
-			// determine direction
-			int dir = 0;
-			if (prevRpm.getMean() < currRpm.getMean()) dir = 1;
-			if (prevRpm.getMean() > currRpm.getMean()) dir = -1;
+			newrpm = MathUtils.clamp(newrpm, 1000, 10000);
 
-			// count number of full engine loads til now
-			if (dir > 0 && player.isThrottling) {
-				// player.isThrottling /* && !player.driftState.isDrifting */
-				if (rpm > 9500) {
-					onFullLoad();
-				}
-			} else if (dir < 0) {
-				if (rpm < 9500) {
-					onDischarge();
-				}
-			}
+			rpm = newrpm;
+
+			// Gdx.app.log("EngineSoundSet", "gear=" + gear + ", rpm=" + rpm + ", throttle=" + player.getCarDescriptor().throttle
+			// + ", throttling=" + player.isThrottling);// + ", speed="+ sf);
 
 			rpm = MathUtils.clamp(rpm, 1000, 10000);
 
-			Gdx.app.log("EngineSoundSet", "gear=" + gear + ", rpm=" + rpm + ", dir=" + dir);// + ", speed=" + sf);
-
+			prevSpeed = sf;
 			return rpm;
 		}
 
 		return super.updateRpm(load);
 	}
 
-	private int lastGear = 0;
+	// private void updateGearFIS () {
+	// autoGears.setVariable("SPEED", player.carState.currSpeedFactor * 126);
+	// autoGears.setVariable("CS", 0);
+	// autoGears.evaluate();
+	// int newgear = (int)(autoGears.getVariable("GEAR").getValue() + 0.5);
+	//
+	// if (newgear > gear) {
+	// shiftUp();
+	// } else if (newgear < gear) {
+	// shiftDown();
+	// }
+	//
+	// }
 
-	private void onFullLoad () {
+	private int updateGear () {
+		float sf = player.carState.currSpeedFactor;
 
-		// if (gear != lastGear) {
-		// lastGear = gear;
-		//
-		// switch (gear) {
-		// case 1:
-		// rpm -= 3000;
-		// break;
-		// case 2:
-		// rpm -= 3000;
-		// break;
-		// case 3:
-		// rpm -= 3000;
-		// break;
-		// }
-		// }
+		if (sf > prevSpeed) {
+			switch (gear) {
+			case 1:
+				if (rpm > 9500) {
+					shiftUp();
+					return 1;
+				}
+				break;
+			case 2:
+				if (rpm > 9000) {
+					shiftUp();
+					return 1;
+				}
+				break;
+			// case 3:
+			// if (rpm > 9000) {shiftUp();return 1;}
+			// break;
+			}
 
-		shiftUp();
+		} else if (sf < prevSpeed) {
 
-		currRpm.clear();
-		prevRpm.clear();
-	}
+			switch (gear) {
+			// case 4:
+			// if (rpm < 8000) {shiftDown();return -1;}
+			// break;
+			case 3:
+				if (rpm < 8000) {
+					shiftDown();
+					return -1;
+				}
+				break;
+			// case 2:
+			// if (rpm < 2000) {
+			// shiftDown();
+			// return -1;
+			// }
+			// break;
+			}
+		}
 
-	private int lastDisc = 0;
-
-	private void onDischarge () {
-		// if (gear != lastDisc) {
-		// lastDisc = gear;
-		//
-		// switch (gear) {
-		// case 3:
-		// rpm += 2000;
-		// break;
-		// case 2:
-		// rpm += 1000;
-		// break;
-		// }
-		// }
-
-		shiftDown();
-
-		currRpm.clear();
-		prevRpm.clear();
-
-		gear--;
-		gear = MathUtils.clamp(gear, MinGear, MaxGear);
+		return 0;
 	}
 
 	@Override
@@ -190,18 +231,17 @@ public class EngineF40 extends EngineSoundSet {
 			if (gear > 0 && gear < MaxGear) {
 				gear++;
 
-				float dist = 3000;
+				float dist = 2000;
 				if (rpm >= dist + 1000) {
-					rpm -= dist;
-					// rpm -= rpm * 0.75f;
+					// rpm -= dist;
 				} else {
-					rpm = 1000;
+					// rpm = 1000;
 				}
 			}
 
 			if (gear == 0) {
 				gear++;
-				rpm = 1000;
+				// rpm = 1000;
 			}
 
 			rpm = MathUtils.clamp(rpm, 1000, 10000);
@@ -223,7 +263,7 @@ public class EngineF40 extends EngineSoundSet {
 				gear--;
 				if (rpm != 1000) {
 					// rpm += MathUtils.random(-500, 1100);
-					rpm += 3000;
+					// rpm += 3000;
 				}
 
 				rpm = MathUtils.clamp(rpm, 1000, 10000);
@@ -240,7 +280,5 @@ public class EngineF40 extends EngineSoundSet {
 
 		rpm = 1000;
 		gear = 1;
-		currRpm.clear();
-		prevRpm.clear();
 	}
 }

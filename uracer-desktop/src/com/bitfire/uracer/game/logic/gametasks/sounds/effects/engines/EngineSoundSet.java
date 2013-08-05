@@ -41,6 +41,10 @@ public abstract class EngineSoundSet {
 
 	public abstract float getGearRatio ();
 
+	public float getGearRatioOff () {
+		return getGearRatio();
+	}
+
 	public boolean hasGears () {
 		return false;
 	}

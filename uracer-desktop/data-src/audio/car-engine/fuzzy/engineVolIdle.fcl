@@ -1,12 +1,12 @@
 FUNCTION_BLOCK engineVolIdle
 
 VAR_INPUT
-	load : REAL;
-	rpm : REAL;
+	load : REAL;		// [-100, 150]
+	rpm : REAL;			// [-100, 10000]
 END_VAR
 
 VAR_OUTPUT
-	volume : REAL;
+	volume : REAL;		// [-25, 125]
 END_VAR
 
 FUZZIFY load
@@ -20,6 +20,7 @@ FUZZIFY rpm
     TERM mid	:= trape 1000 2000 2000 4000;
     TERM high	:= trape 1500 7500 7500 11000;
 END_FUZZIFY
+
 
 DEFUZZIFY volume
     TERM verylow	:= trape -25 0 0 25;
