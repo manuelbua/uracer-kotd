@@ -1,12 +1,12 @@
 FUNCTION_BLOCK engineVolOnLow
 
 VAR_INPUT
-	load : REAL;
-	rpm : REAL;
+	load : REAL;		// [-100, 150]
+	rpm : REAL;			// [-100, 10000]
 END_VAR
 
 VAR_OUTPUT
-	volume : REAL;
+	volume : REAL;		// [-25, 125]
 END_VAR
 
 FUZZIFY load

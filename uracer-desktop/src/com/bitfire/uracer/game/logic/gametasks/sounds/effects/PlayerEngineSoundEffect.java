@@ -135,12 +135,13 @@ public final class PlayerEngineSoundEffect extends SoundEffect {
 			if (!soundset.hasGears() && ThrottleAutoSoftener && !driftTimer.isStopped()
 				&& driftTimer.elapsed().ticks < softnessTicks) {
 				throttle *= AMath.damping(0.8f);
-				// Gdx.app.log("", "ticks=" + driftTimer.elapsed().ticks);
+				Gdx.app.log("", "ticks=" + driftTimer.elapsed().ticks);
 			}
 		} else {
 			if (soundset.hasGears()) {
 				// avoid sound fading slipping over the off-engine samples
 				throttle = 0;
+				// throttle *= AMath.damping(0.85f);
 			} else {
 				throttle *= AMath.damping(0.8f);
 			}

@@ -1,0 +1,56 @@
+[System]
+Name='autoGears4'
+Type='mamdani'
+Version=2.0
+NumInputs=2
+NumOutputs=1
+NumRules=15
+AndMethod='min'
+OrMethod='max'
+ImpMethod='min'
+AggMethod='max'
+DefuzzMethod='centroid'
+
+[Input1]
+Name='SPEED'
+Range=[0 126]
+NumMFs=5
+MF1='Z':'trimf',[0 0 25.2]
+MF2='L':'trimf',[0 25.2 50.4]
+MF3='M':'trimf',[25.2 50.4 75.6]
+MF4='H':'trimf',[50.4 75.6 100.8]
+MF5='VH':'trapmf',[75.6 100.8 126 126]
+
+[Input2]
+Name='CS'
+Range=[-1 1]
+NumMFs=3
+MF1='B':'trimf',[-1 -1 0]
+MF2='Z':'trimf',[-1 0 1]
+MF3='A':'trimf',[0 1 1]
+
+[Output1]
+Name='GEAR'
+Range=[1 4]
+NumMFs=4
+MF1='I':'trimf',[1 1 2]
+MF2='II':'trimf',[1 2 3]
+MF3='III':'trimf',[2 3 4]
+MF4='IV':'trimf',[3 4 4]
+
+[Rules]
+1 1, 1 (1) : 1
+1 2, 1 (1) : 1
+2 1, 1 (1) : 1
+1 3, 2 (1) : 1
+2 2, 2 (1) : 1
+3 1, 2 (1) : 1
+2 3, 3 (1) : 1
+3 2, 3 (1) : 1
+4 1, 3 (1) : 1
+3 3, 4 (1) : 1
+4 2, 4 (1) : 1
+5 1, 4 (1) : 1
+4 3, 4 (1) : 1
+5 2, 4 (1) : 1
+5 3, 4 (1) : 1
