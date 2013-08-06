@@ -4,11 +4,13 @@ package com.bitfire.uracer.game.logic.gametasks.sounds.effects.engines;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.math.MathUtils;
 import com.bitfire.uracer.resources.Sounds;
+import com.bitfire.uracer.utils.InterpolatedFloat;
 
 public class EngineF40 extends EngineSoundSet {
 	private static final boolean UseGears = true;
 	private static final int MinGear = 1;
 	private static final int MaxGear = 3;
+	private InterpolatedFloat irpm = new InterpolatedFloat();
 
 	// private FIS autoGears;
 
@@ -25,9 +27,9 @@ public class EngineF40 extends EngineSoundSet {
 	@Override
 	public float getGlobalVolume () {
 		float vol = 0.1f;
-		if (hasPlayer) {
-			vol += 0.2f * player.carState.currSpeedFactor;
-		}
+		// if (hasPlayer) {
+		// vol += 0.2f * player.carState.currSpeedFactor;
+		// }
 
 		return vol;
 	}
@@ -140,7 +142,9 @@ public class EngineF40 extends EngineSoundSet {
 			// }
 			// float newrpm = rpm + inc;
 
-			float newrpm = 1000 + factor + (load < 0 ? load * 1f : load * 00);
+			float newrpm = 1000 + factor + (load < 0 ? load * 10f : load * 00);
+			irpm.set(newrpm, 0.6f);
+			newrpm = irpm.get();
 
 			// rpm = AMath.lerp(rpm, newrpm, 1);
 			// float newrpm = rpm + (load < 0 ? load : load * getGearRatio());
@@ -191,7 +195,7 @@ public class EngineF40 extends EngineSoundSet {
 				}
 				break;
 			case 2:
-				if (rpm > 9000) {
+				if (rpm > 9500) {
 					shiftUp();
 					return 1;
 				}
@@ -280,5 +284,6 @@ public class EngineF40 extends EngineSoundSet {
 
 		rpm = 1000;
 		gear = 1;
+		irpm.reset(true);
 	}
 }
