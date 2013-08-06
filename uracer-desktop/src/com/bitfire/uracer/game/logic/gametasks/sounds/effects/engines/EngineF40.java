@@ -10,7 +10,7 @@ public class EngineF40 extends EngineSoundSet {
 	private static final boolean UseGears = true;
 	private static final int MinGear = 1;
 	private static final int MaxGear = 3;
-	private InterpolatedFloat irpm = new InterpolatedFloat();
+	private InterpolatedFloat irpm = new InterpolatedFloat(), speed = new InterpolatedFloat();
 
 	// private FIS autoGears;
 
@@ -53,9 +53,9 @@ public class EngineF40 extends EngineSoundSet {
 		switch(gear) {
 		case 0: res =  1f;
 		//
-		case 1: res = 1.6f; 	break;
-		case 2: res = 0.9f;	break;
-		case 3: res = 0.7f;	break;
+		case 1: res = 1.2f; 	break;
+		case 2: res = 0.7f;	break;
+		case 3: res = 0.55f;	break;
 		case 4: res = 0.2f;	break;
 		case 5: res = 0.3f;	break;
 		case 6: res = 0.2f;	break;
@@ -134,8 +134,10 @@ public class EngineF40 extends EngineSoundSet {
 			}
 
 			updateGear();
-			float sf = player.carState.currSpeedFactor;
-			float q = 13000;// 12858;
+			speed.set(player.carState.currSpeedFactor, 0.85f);
+			float sf = speed.get();
+
+			float q = 15000;// 12858;
 			float factor = q * sf * getGearRatio();
 
 			// updateGearFIS();
@@ -155,8 +157,8 @@ public class EngineF40 extends EngineSoundSet {
 			// }
 			// float newrpm = rpm + inc;
 
-			float newrpm = 1000 + factor + (load < 0 ? load * 10f : load * 00);
-			irpm.set(newrpm, 0.8f);
+			float newrpm = 1000 + factor + (load < 0 ? load * 10f : load * 10);
+			irpm.set(newrpm, 0.7f);
 			newrpm = irpm.get();
 
 			// rpm = AMath.lerp(rpm, newrpm, 1);
@@ -230,12 +232,12 @@ public class EngineF40 extends EngineSoundSet {
 					return -1;
 				}
 				break;
-			// case 2:
-			// if (rpm < 2000) {
-			// shiftDown();
-			// return -1;
-			// }
-			// break;
+			case 2:
+				if (rpm < 2000) {
+					shiftDown();
+					return -1;
+				}
+				break;
 			}
 		}
 
@@ -298,5 +300,6 @@ public class EngineF40 extends EngineSoundSet {
 		rpm = 1000;
 		gear = 1;
 		irpm.reset(true);
+		speed.reset(true);
 	}
 }
