@@ -9,8 +9,8 @@ import com.bitfire.uracer.utils.InterpolatedFloat;
 public class EngineF40 extends EngineSoundSet {
 	private static final boolean UseGears = true;
 	private static final int MinGear = 1;
-	private static final int MaxGear = 3;
-	private InterpolatedFloat irpm = new InterpolatedFloat(), speed = new InterpolatedFloat();
+	private static final int MaxGear = 4;
+	private InterpolatedFloat ifactor = new InterpolatedFloat(), speed = new InterpolatedFloat();
 
 	// private FIS autoGears;
 
@@ -53,41 +53,39 @@ public class EngineF40 extends EngineSoundSet {
 		switch(gear) {
 		case 0: res =  1f;
 		//
-		case 1: res = 1.2f; 	break;
-		case 2: res = 0.7f;	break;
-		case 3: res = 0.55f;	break;
-		case 4: res = 0.2f;	break;
-		case 5: res = 0.3f;	break;
-		case 6: res = 0.2f;	break;
-		}
-		//@on
-
-		return res;// * 0.15f;
-	}
-
-	@Override
-	public float getGearRatioOff () {
-		if (!UseGears) {
-			return 3;
-		}
-
-		float res = 1;
-
-		//@off
-		switch(gear) {
-		case 0: res =  1f;
-		//
-		case 1: res = 1f; 	break;
-		case 2: res = 0.8f;	break;
+		case 1: res = 3f; 	break;
+		case 2: res = 1f;	break;
 		case 3: res = 0.7f;	break;
-		case 4: res = 0f;	break;
-		case 5: res = 0f;	break;
-		case 6: res = 0f;	break;
+		case 4: res = 0.5f;	break;
 		}
 		//@on
 
 		return res;// * 0.15f;
 	}
+
+	// @Override
+	// public float getGearRatioOff () {
+	// if (!UseGears) {
+	// return 3;
+	// }
+	//
+	// float res = 1;
+	//
+//		//@off
+//		switch(gear) {
+//		case 0: res =  1f;
+//		//
+//		case 1: res = 2f; 	break;
+//		case 2: res = 1f;	break;
+//		case 3: res = 0.7f;	break;
+//		case 4: res = 0.55f;	break;
+//		case 5: res = 0f;	break;
+//		case 6: res = 0f;	break;
+//		}
+//		//@on
+	//
+	// return res;// * 0.15f;
+	// }
 
 	@Override
 	public void updatePitches () {
@@ -109,18 +107,11 @@ public class EngineF40 extends EngineSoundSet {
 			setXnaPitch(1, rpmDef + 0.2f);
 		}
 
-		// setXnaPitch(2, rpmDef - 0.4f);
-		// setXnaPitch(3, rpmDef - 0.8f);
-		// setXnaPitch(4, rpmDef);
-		// setXnaPitch(5, rpmDef - 0.8f);
-		// setXnaPitch(6, rpmDef - 0.8f);
-
 		setXnaPitch(2, rpmDef - 0.4f);
 		setXnaPitch(3, rpmDef - 0.8f);
-		setXnaPitch(4, rpmDef + 0.2f);
+		setXnaPitch(4, rpmDef);
 		setXnaPitch(5, rpmDef - 0.8f);
 		setXnaPitch(6, rpmDef - 0.8f);
-
 	}
 
 	private float prevSpeed = 0;
@@ -157,18 +148,13 @@ public class EngineF40 extends EngineSoundSet {
 			// }
 			// float newrpm = rpm + inc;
 
-			float newrpm = 1000 + factor + (load < 0 ? load * 10f : load * 10);
-			irpm.set(newrpm, 0.7f);
-			newrpm = irpm.get();
+			if (sf < prevSpeed) {
+				ifactor.set(factor, 0.6f);
+			} else {
+				ifactor.set(factor, 0.85f);
+			}
 
-			// rpm = AMath.lerp(rpm, newrpm, 1);
-			// float newrpm = rpm + (load < 0 ? load : load * getGearRatio());
-
-			// float rpmw = player.getSimulator().getRpmWheel();
-			// float newrpm = rpm + rpmw * getGearRatio() * 100f + (load < 0 ? load * 4 : load * sf * 0.001f);
-			// float newrpm = rpmw * getGearRatio() * 3f;
-
-			newrpm = MathUtils.clamp(newrpm, 1000, 10000);
+			float newrpm = 1000 + ifactor.get() + (load < 0 ? load * 1f : load * 15);
 
 			rpm = newrpm;
 
@@ -184,49 +170,23 @@ public class EngineF40 extends EngineSoundSet {
 		return super.updateRpm(load);
 	}
 
-	// private void updateGearFIS () {
-	// autoGears.setVariable("SPEED", player.carState.currSpeedFactor * 126);
-	// autoGears.setVariable("CS", 0);
-	// autoGears.evaluate();
-	// int newgear = (int)(autoGears.getVariable("GEAR").getValue() + 0.5);
-	//
-	// if (newgear > gear) {
-	// shiftUp();
-	// } else if (newgear < gear) {
-	// shiftDown();
-	// }
-	//
-	// }
-
 	private int updateGear () {
 		float sf = player.carState.currSpeedFactor;
 
-		if (sf > prevSpeed) {
+		if (sf > prevSpeed && gear < MaxGear) {
 			switch (gear) {
-			case 1:
+			default:
 				if (rpm > 9500) {
 					shiftUp();
 					return 1;
 				}
 				break;
-			case 2:
-				if (rpm > 9500) {
-					shiftUp();
-					return 1;
-				}
-				break;
-			// case 3:
-			// if (rpm > 9000) {shiftUp();return 1;}
-			// break;
 			}
 
-		} else if (sf < prevSpeed) {
+		} else if (sf < prevSpeed && gear > MinGear) {
 
 			switch (gear) {
-			// case 4:
-			// if (rpm < 8000) {shiftDown();return -1;}
-			// break;
-			case 3:
+			default:
 				if (rpm < 8000) {
 					shiftDown();
 					return -1;
@@ -299,7 +259,7 @@ public class EngineF40 extends EngineSoundSet {
 
 		rpm = 1000;
 		gear = 1;
-		irpm.reset(true);
+		ifactor.reset(true);
 		speed.reset(true);
 	}
 }
