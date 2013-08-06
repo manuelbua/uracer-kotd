@@ -140,8 +140,8 @@ public final class PlayerEngineSoundEffect extends SoundEffect {
 		} else {
 			if (soundset.hasGears()) {
 				// avoid sound fading slipping over the off-engine samples
-				throttle = 0;
-				// throttle *= AMath.damping(0.85f);
+				// throttle = 0;
+				throttle *= AMath.damping(0.8f);
 			} else {
 				throttle *= AMath.damping(0.8f);
 			}
