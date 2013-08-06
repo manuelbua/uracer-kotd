@@ -15,6 +15,7 @@ import com.bitfire.uracer.game.events.PlayerDriftStateEvent.Type;
 import com.bitfire.uracer.game.logic.gametasks.sounds.SoundEffect;
 import com.bitfire.uracer.game.logic.gametasks.sounds.effects.engines.EngineF40;
 import com.bitfire.uracer.game.logic.gametasks.sounds.effects.engines.EngineSoundSet;
+import com.bitfire.uracer.game.logic.helpers.TrackProgressData;
 import com.bitfire.uracer.game.player.PlayerCar;
 import com.bitfire.uracer.utils.AMath;
 
@@ -33,13 +34,14 @@ public final class PlayerEngineSoundEffect extends SoundEffect {
 	private int softnessTicks = 0;
 	private boolean outOfTrack = false;
 
-	private EngineSoundSet soundset = new EngineF40();
+	private EngineSoundSet soundset;
 
-	public PlayerEngineSoundEffect () {
+	public PlayerEngineSoundEffect (TrackProgressData progressData) {
 		feLoad = FIS.load(Gdx.files.getFileHandle("data/audio/car-engine/fuzzy/engineLoad.fcl", FileType.Internal).read(), true);
 		load = 0;
 		throttle = 0;
 		outOfTrack = false;
+		soundset = new EngineF40(progressData);
 	}
 
 	private PlayerDriftStateEvent.Listener playerListener = new PlayerDriftStateEvent.Listener() {

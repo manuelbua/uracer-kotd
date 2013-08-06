@@ -40,7 +40,7 @@ public final class PlayerGameTasks {
 		// sounds
 		manager.sound.add(new PlayerDriftSoundEffect());
 		manager.sound.add(new PlayerImpactSoundEffect());
-		manager.sound.add(new PlayerEngineSoundEffect());
+		manager.sound.add(new PlayerEngineSoundEffect(progressData));
 		manager.sound.add(new PlayerTensiveMusic(progressData, lapManager));
 
 		// track effects
