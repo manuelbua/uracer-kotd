@@ -19,7 +19,11 @@ import com.bitfire.uracer.utils.InterpolatedFloat;
 
 public final class PlayerTensiveMusic extends SoundEffect {
 	public static final int NumTracks = 7;
-	private static final float MinVolume = 0.25f;
+	public static final float MinVolume = 0.25f;
+
+	public static final float ScaleMt = 6f * (NumTracks);
+	public static final float AheadByMt = 10f;
+	public static final float InvScaleMt = 1f / ScaleMt;
 
 	private Sound[] music = new Sound[NumTracks]; // prologue [0,3], inciso [4,6]
 	private long[] mid = new long[NumTracks];
@@ -166,10 +170,6 @@ public final class PlayerTensiveMusic extends SoundEffect {
 
 	@Override
 	public void tick () {
-		final float ScaleMt = 6f * (NumTracks);
-		final float AheadByMt = 10f;
-		final float InvScaleMt = 1f / ScaleMt;
-
 		float tgt_vol = 0;
 		// boolean isAheadByMeters = false;
 

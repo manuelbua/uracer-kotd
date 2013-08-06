@@ -2,19 +2,25 @@
 package com.bitfire.uracer.game.logic.gametasks.sounds.effects.engines;
 
 import com.badlogic.gdx.math.MathUtils;
+import com.bitfire.uracer.game.logic.gametasks.sounds.effects.PlayerTensiveMusic;
+import com.bitfire.uracer.game.logic.helpers.TrackProgressData;
 import com.bitfire.uracer.resources.Sounds;
+import com.bitfire.uracer.utils.AMath;
 import com.bitfire.uracer.utils.InterpolatedFloat;
 
 public class EngineF40 extends EngineSoundSet {
 	private static final boolean UseGears = true;
 	private static final int MinGear = 1;
 	private static final int MaxGear = 4;
-	private InterpolatedFloat ifactor = new InterpolatedFloat(), speed = new InterpolatedFloat();
+	private InterpolatedFloat ifactor = new InterpolatedFloat(), ispeed = new InterpolatedFloat(),
+		ivolume = new InterpolatedFloat();
+	private TrackProgressData progressData;
 
 	// private FIS autoGears;
 
-	public EngineF40 () {
+	public EngineF40 (TrackProgressData progressData) {
 		super();
+		this.progressData = progressData;
 		engine = Sounds.carEngine_f40;
 		rpm = 1000;
 		gear = MinGear;
@@ -25,12 +31,27 @@ public class EngineF40 extends EngineSoundSet {
 
 	@Override
 	public float getGlobalVolume () {
-		float vol = 0.05f;
+		float volmul = 1;
 		if (hasPlayer) {
-			vol += 0.1f * player.carState.currSpeedFactor;
+			float d = progressData.playerDistance.get() - progressData.targetDistance.get();
+			d = MathUtils.clamp(d, -PlayerTensiveMusic.ScaleMt, PlayerTensiveMusic.ScaleMt);
+			d *= PlayerTensiveMusic.InvScaleMt; // normalized range
+			float to_target = AMath.fixup(d);
+
+			if (progressData.isWarmUp) {
+				volmul = 0;
+			} else if (to_target < 0) {
+				float v = MathUtils.clamp(to_target + 1, 0, 1);
+				volmul = v;
+			}
+			// Gdx.app.log("", "vm=" + volmul);
 		}
 
-		return vol;
+		// fade out if distant from target, max vol >= target track ranking
+
+		// return .025f + 0.025f * volmul;
+		ivolume.set(0.025f + 0.1f * volmul + 0.1f * player.carState.currSpeedFactor, 0.07f);
+		return ivolume.get();
 	}
 
 	@Override
@@ -100,8 +121,8 @@ public class EngineF40 extends EngineSoundSet {
 			}
 
 			updateGear();
-			speed.set(player.carState.currSpeedFactor, 0.85f);
-			float sf = speed.get();
+			ispeed.set(player.carState.currSpeedFactor, 0.85f);
+			float sf = ispeed.get();
 
 			float q = 15000;// 12858;
 			float factor = q * sf * getGearRatio();
@@ -232,6 +253,7 @@ public class EngineF40 extends EngineSoundSet {
 		rpm = 1000;
 		gear = 1;
 		ifactor.reset(true);
-		speed.reset(true);
+		ispeed.reset(true);
+		ivolume.reset(true);
 	}
 }
