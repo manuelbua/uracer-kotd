@@ -54,7 +54,7 @@ public class EngineF40 extends EngineSoundSet {
 		case 0: res =  1f;
 		//
 		case 1: res = 1.6f; 	break;
-		case 2: res = 1f;	break;
+		case 2: res = 0.9f;	break;
 		case 3: res = 0.7f;	break;
 		case 4: res = 0.2f;	break;
 		case 5: res = 0.3f;	break;
@@ -94,8 +94,14 @@ public class EngineF40 extends EngineSoundSet {
 		float lowLimit = 6000f;
 		float hiLimit = 10000f;
 
+		// rpm = 1000;
 		float rpmLow = rpm / lowLimit;
 		float rpmDef = rpm / hiLimit;
+
+		// dbg
+		// setVolume(1, 1 * SoundManager.SfxVolumeMul);
+		// setVolume(4, 1 * SoundManager.SfxVolumeMul);
+		// dbg
 
 		// sample specific
 		if (rpm < lowLimit) {
@@ -103,11 +109,18 @@ public class EngineF40 extends EngineSoundSet {
 			setXnaPitch(1, rpmDef + 0.2f);
 		}
 
+		// setXnaPitch(2, rpmDef - 0.4f);
+		// setXnaPitch(3, rpmDef - 0.8f);
+		// setXnaPitch(4, rpmDef);
+		// setXnaPitch(5, rpmDef - 0.8f);
+		// setXnaPitch(6, rpmDef - 0.8f);
+
 		setXnaPitch(2, rpmDef - 0.4f);
 		setXnaPitch(3, rpmDef - 0.8f);
-		setXnaPitch(4, rpmDef);
+		setXnaPitch(4, rpmDef + 0.2f);
 		setXnaPitch(5, rpmDef - 0.8f);
 		setXnaPitch(6, rpmDef - 0.8f);
+
 	}
 
 	private float prevSpeed = 0;
@@ -143,7 +156,7 @@ public class EngineF40 extends EngineSoundSet {
 			// float newrpm = rpm + inc;
 
 			float newrpm = 1000 + factor + (load < 0 ? load * 10f : load * 00);
-			irpm.set(newrpm, 0.6f);
+			irpm.set(newrpm, 0.8f);
 			newrpm = irpm.get();
 
 			// rpm = AMath.lerp(rpm, newrpm, 1);
