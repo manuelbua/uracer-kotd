@@ -1,7 +1,6 @@
 
 package com.bitfire.uracer.game.logic.gametasks.sounds.effects.engines;
 
-import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.math.MathUtils;
 import com.bitfire.uracer.resources.Sounds;
 import com.bitfire.uracer.utils.InterpolatedFloat;
@@ -26,10 +25,10 @@ public class EngineF40 extends EngineSoundSet {
 
 	@Override
 	public float getGlobalVolume () {
-		float vol = 0.1f;
-		// if (hasPlayer) {
-		// vol += 0.2f * player.carState.currSpeedFactor;
-		// }
+		float vol = 0.05f;
+		if (hasPlayer) {
+			vol += 0.1f * player.carState.currSpeedFactor;
+		}
 
 		return vol;
 	}
@@ -53,7 +52,7 @@ public class EngineF40 extends EngineSoundSet {
 		switch(gear) {
 		case 0: res =  1f;
 		//
-		case 1: res = 3f; 	break;
+		case 1: res = 2f; 	break;
 		case 2: res = 1f;	break;
 		case 3: res = 0.7f;	break;
 		case 4: res = 0.5f;	break;
@@ -62,30 +61,6 @@ public class EngineF40 extends EngineSoundSet {
 
 		return res;// * 0.15f;
 	}
-
-	// @Override
-	// public float getGearRatioOff () {
-	// if (!UseGears) {
-	// return 3;
-	// }
-	//
-	// float res = 1;
-	//
-//		//@off
-//		switch(gear) {
-//		case 0: res =  1f;
-//		//
-//		case 1: res = 2f; 	break;
-//		case 2: res = 1f;	break;
-//		case 3: res = 0.7f;	break;
-//		case 4: res = 0.55f;	break;
-//		case 5: res = 0f;	break;
-//		case 6: res = 0f;	break;
-//		}
-//		//@on
-	//
-	// return res;// * 0.15f;
-	// }
 
 	@Override
 	public void updatePitches () {
@@ -109,7 +84,7 @@ public class EngineF40 extends EngineSoundSet {
 
 		setXnaPitch(2, rpmDef - 0.4f);
 		setXnaPitch(3, rpmDef - 0.8f);
-		setXnaPitch(4, rpmDef);
+		setXnaPitch(4, rpmDef - 0.2f);
 		setXnaPitch(5, rpmDef - 0.8f);
 		setXnaPitch(6, rpmDef - 0.8f);
 	}
@@ -136,8 +111,8 @@ public class EngineF40 extends EngineSoundSet {
 				factor = q * sf * getGearRatioOff();
 			}
 
-			Gdx.app.log("EngineSoundSet", "gear=" + gear + ", rpm=" + rpm + ", throttle=" + player.getCarDescriptor().throttle
-				+ ", throttling=" + player.isThrottling);// + ", speed="+ sf);
+			// Gdx.app.log("EngineSoundSet", "gear=" + gear + ", rpm=" + rpm + ", throttle=" + player.getCarDescriptor().throttle
+			// + ", throttling=" + player.isThrottling);// + ", speed="+ sf);
 
 			// more accurate representation
 			// float inc = 0;
@@ -146,7 +121,6 @@ public class EngineF40 extends EngineSoundSet {
 			// } else {
 			// inc = load * getGearRatio() * sf;
 			// }
-			// float newrpm = rpm + inc;
 
 			if (sf < prevSpeed) {
 				ifactor.set(factor, 0.6f);
@@ -154,9 +128,7 @@ public class EngineF40 extends EngineSoundSet {
 				ifactor.set(factor, 0.85f);
 			}
 
-			float newrpm = 1000 + ifactor.get() + (load < 0 ? load * 1f : load * 15);
-
-			rpm = newrpm;
+			rpm = 1000 + ifactor.get() + (load < 0 ? load * 1f : load * 15);
 
 			// Gdx.app.log("EngineSoundSet", "gear=" + gear + ", rpm=" + rpm + ", throttle=" + player.getCarDescriptor().throttle
 			// + ", throttling=" + player.isThrottling);// + ", speed="+ sf);
