@@ -31,7 +31,7 @@ public class EngineF40 extends EngineSoundSet {
 
 	@Override
 	public float getGlobalVolume () {
-		float volmul = 1;
+		float target_vol = 1;
 		if (hasPlayer) {
 			float d = progressData.playerDistance.get() - progressData.targetDistance.get();
 			d = MathUtils.clamp(d, -PlayerTensiveMusic.ScaleMt, PlayerTensiveMusic.ScaleMt);
@@ -39,10 +39,10 @@ public class EngineF40 extends EngineSoundSet {
 			float to_target = AMath.fixup(d);
 
 			if (progressData.isWarmUp || !progressData.hasTarget) {
-				volmul = 0;
+				target_vol = 0;
 			} else if (to_target < 0) {
 				float v = MathUtils.clamp(to_target + 1, 0, 1);
-				volmul = v;
+				target_vol = v;
 			}
 			// Gdx.app.log("", "vm=" + volmul);
 		}
@@ -50,7 +50,7 @@ public class EngineF40 extends EngineSoundSet {
 		// fade out if distant from target, max vol >= target track ranking
 
 		// return .025f + 0.025f * volmul;
-		ivolume.set(0.025f + 0.025f * volmul + 0.025f * player.carState.currSpeedFactor, 0.07f);
+		ivolume.set(0.05f + 0.05f * target_vol + 0.025f * player.carState.currSpeedFactor, 0.07f);
 		return ivolume.get();
 	}
 
@@ -74,7 +74,7 @@ public class EngineF40 extends EngineSoundSet {
 		case 0: res =  1f;
 		//
 		case 1: res = 2f; 	break;
-		case 2: res = 1f;	break;
+		case 2: res = 1f;		break;
 		case 3: res = 0.7f;	break;
 		case 4: res = 0.5f;	break;
 		}
