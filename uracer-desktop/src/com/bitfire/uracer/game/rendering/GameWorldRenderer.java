@@ -522,6 +522,7 @@ public final class GameWorldRenderer {
 		gl.glDisable(GL20.GL_BLEND);
 		gl.glActiveTexture(GL10.GL_TEXTURE0);
 		tileMapRenderer.setView(camTilemap);
+		tileMapRenderer.getSpriteBatch().disableBlending();
 		tileMapRenderer.render();
 	}
 

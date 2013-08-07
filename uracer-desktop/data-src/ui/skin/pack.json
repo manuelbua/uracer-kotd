@@ -2,7 +2,7 @@
 	pot: false,
 	paddingX: 4,
 	paddingY: 4,
-	duplicatePadding: false,
+	bleed: false,
 	edgePadding: true,
 	rotation: false,
 	minWidth: 16,
