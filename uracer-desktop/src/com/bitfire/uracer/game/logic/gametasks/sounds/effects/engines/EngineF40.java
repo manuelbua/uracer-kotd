@@ -38,7 +38,7 @@ public class EngineF40 extends EngineSoundSet {
 			d *= PlayerTensiveMusic.InvScaleMt; // normalized range
 			float to_target = AMath.fixup(d);
 
-			if (progressData.isWarmUp) {
+			if (progressData.isWarmUp || !progressData.hasTarget) {
 				volmul = 0;
 			} else if (to_target < 0) {
 				float v = MathUtils.clamp(to_target + 1, 0, 1);
@@ -50,7 +50,7 @@ public class EngineF40 extends EngineSoundSet {
 		// fade out if distant from target, max vol >= target track ranking
 
 		// return .025f + 0.025f * volmul;
-		ivolume.set(0.025f + 0.1f * volmul + 0.1f * player.carState.currSpeedFactor, 0.07f);
+		ivolume.set(0.025f + 0.025f * volmul + 0.025f * player.carState.currSpeedFactor, 0.07f);
 		return ivolume.get();
 	}
 
