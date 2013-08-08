@@ -1,6 +1,7 @@
 
 package com.bitfire.uracer.game.logic.gametasks.sounds.effects.engines;
 
+import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.math.MathUtils;
 import com.bitfire.uracer.game.logic.gametasks.sounds.effects.PlayerTensiveMusic;
 import com.bitfire.uracer.game.logic.helpers.TrackProgressData;
@@ -16,41 +17,39 @@ public class EngineF40 extends EngineSoundSet {
 		ivolume = new InterpolatedFloat();
 	private TrackProgressData progressData;
 
-	// private FIS autoGears;
-
 	public EngineF40 (TrackProgressData progressData) {
 		super();
 		this.progressData = progressData;
 		engine = Sounds.carEngine_f40;
 		rpm = 1000;
 		gear = MinGear;
-
-		// autoGears = FIS.load(Gdx.files.getFileHandle("data/audio/car-engine/fuzzy/autoGears.fcl", FileType.Internal).read(),
-		// true);
 	}
 
 	@Override
 	public float getGlobalVolume () {
-		float target_vol = 1;
-		if (hasPlayer) {
+		float target_vol = 0;
+		if (hasPlayer && progressData.hasTarget && !progressData.isWarmUp) {
 			float d = progressData.playerDistance.get() - progressData.targetDistance.get();
 			d = MathUtils.clamp(d, -PlayerTensiveMusic.ScaleMt, PlayerTensiveMusic.ScaleMt);
 			d *= PlayerTensiveMusic.InvScaleMt; // normalized range
 			float to_target = AMath.fixup(d);
 
-			if (progressData.isWarmUp || !progressData.hasTarget) {
-				target_vol = 0;
-			} else if (to_target < 0) {
+			if (to_target < 0) {
+				// player behind
+				// fade out on distance from target (use tensive music meters scaling)
 				float v = MathUtils.clamp(to_target + 1, 0, 1);
 				target_vol = v;
+			} else {
+				// player heading the race
+				target_vol = 1;
 			}
-			// Gdx.app.log("", "vm=" + volmul);
 		}
 
-		// fade out if distant from target, max vol >= target track ranking
-
 		// return .025f + 0.025f * volmul;
-		ivolume.set(0.05f + 0.05f * target_vol + 0.025f * player.carState.currSpeedFactor, 0.07f);
+		ivolume.set(0.05f + 0.1f * target_vol * player.carState.currSpeedFactor, 0.05f);
+
+		Gdx.app.log("", "tv=" + target_vol);
+
 		return ivolume.get();
 	}
 
@@ -180,7 +179,7 @@ public class EngineF40 extends EngineSoundSet {
 
 			switch (gear) {
 			default:
-				if (rpm < 8000) {
+				if (rpm < 7000) {
 					shiftDown();
 					return -1;
 				}
