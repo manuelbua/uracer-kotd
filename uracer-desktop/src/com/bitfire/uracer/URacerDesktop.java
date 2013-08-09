@@ -25,8 +25,12 @@ public final class URacerDesktop {
 		config.useGL20 = true;
 		config.resizable = false;
 		config.samples = 0;
+		config.audioDeviceSimultaneousSources = 32;
 
-		if (!Config.Debug.PauseDisabled) {
+		if (Config.Debug.PauseDisabled) {
+			config.backgroundFPS = 0;
+			config.foregroundFPS = 0;
+		} else {
 			config.backgroundFPS = -1;
 			config.foregroundFPS = -1;
 		}
@@ -41,7 +45,7 @@ public final class URacerDesktop {
 	}
 
 	public static void main (String[] argv) {
-		System.out.print(URacer.Name + " (" + URacer.versionInfo + ")\nCopyright (c) 2012-2013 Manuel Bua.\n\n");
+		System.out.print(URacer.Name + " (" + URacer.versionInfo + ")\nCopyright (c) 2011-2013 Manuel Bua.\n\n");
 
 		// load boot configuration, either from file or from defaults
 		BootConfig boot = new BootConfig();

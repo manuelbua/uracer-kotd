@@ -295,7 +295,10 @@ public class URacer implements ApplicationListener {
 
 	@Override
 	public void pause () {
-		if (Config.Debug.PauseDisabled) return;
+		if (Config.Debug.PauseDisabled) {
+			Gdx.app.log("URacer", "Ignoring pause request");
+			return;
+		}
 
 		running = false;
 		resumed = false;
@@ -305,7 +308,10 @@ public class URacer implements ApplicationListener {
 
 	@Override
 	public void resume () {
-		if (Config.Debug.PauseDisabled) return;
+		if (Config.Debug.PauseDisabled) {
+			Gdx.app.log("URacer", "Ignoring resume request");
+			return;
+		}
 
 		if (!running) {
 			resumed = true;
