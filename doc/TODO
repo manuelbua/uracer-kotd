@@ -505,3 +505,58 @@ REDDIT (2012/12/07, 2nd WIP, the "switch to the desktop" announcement sort-of)
 	- Facebook (uff)
 	- Blog
 	- Forum
+
+
+20130810
+	(opt) LogicState for a centralized place to share between components for stuff such as updated driftStrength, speed.. ??
+	O review userId, trackId passing
+	O singleplayer/multiplayer logic recap
+	- show *proper* hud for both live rankings
+	? better drift sound
+	- volumes config
+	- make boot options configurable, set some sensible defaults (1280x800, vsync, no fullscreen..)
+	- add multisampling option to bootconfig
+	- non-in-game music, find best tracks
+	- add pause!
+	- ability to show ranking position gradient on the track
+	- ability to show if player performed better than best replay and where on the track
+	- press "T" to *delete* all current replays
+	x determine jFuzzyLogic license, what to include, what not to (Pablo said: "DO WHAT YOU WANT, I REALLY DON'T CARE")
+	x fix max number of concurrent audio sources (libgdx should make this configurable)
+	- lookup car engine audio samples license
+	x contact the guy who did the initial fuzzy thing, ask about licenses?
+		no response so far, should try search for real mail address
+
+	+ server  infrastructure
+		- docker?
+		- python+twisted?
+			- http://www.raywenderlich.com/3932/how-to-create-a-socket-based-iphone-app-and-server
+			- http://www.raywenderlich.com/4456/how-to-make-a-multiplayer-iphone-game-hosted-on-your-own-server
+			- twisted tuts:
+				- http://krondo.com/wp-content/uploads/2009/08/twisted-intro.html
+				- git@github.com:jdavisp3/twisted-intro.git
+
+
+			- msgpack?
+			- netty or libgdx socket?
+
+				[libgdx socket]
+
+				-  Socket socket = Gdx.net.newClientSocket(
+					Protocol.TCP, hostname, port, hint)
+
+				The socket has a getInputStream() and
+				getOutputStream() methods which give you a
+				java.io.InputStream and java.io.OutputStream
+
+				MessagePack -> create unpacker with input stream
+
+				[netty]
+
+				- supports SSL, simpler?
+
+
+	? in-game config?
+	- Facebook (uff)
+	- Blog
+	- Forum
