@@ -142,7 +142,8 @@ public abstract class EngineSoundSet {
 		fuzzyEngine.setVariable("load", load);
 		fuzzyEngine.setVariable("rpm", rpm);
 		fuzzyEngine.evaluate();
-		double volume = fuzzyEngine.getVariable("volume").getValue() / 100;
+		float volume = (float)fuzzyEngine.getVariable("volume").getValue() / 100f;
+
 		if (volume >= 0 && volume <= 1) {
 			setVolume(track, (float)volume * SoundManager.SfxVolumeMul);
 
