@@ -252,7 +252,7 @@ public final class AggressiveCold implements PostProcessingAnimator {
 		}
 
 		float cf = collisionFactor;
-		// cf = 1f;
+		// cf = 0.2f;
 
 		if (zoom != null) {
 			if (hasPlayer) {
@@ -336,7 +336,7 @@ public final class AggressiveCold implements PostProcessingAnimator {
 
 		if (crt != null) {
 			// modulates color offset by collision factor)
-			crt.setColorOffset(0f + MathUtils.clamp(0.005f * cf, 0, 0.005f));
+			crt.setColorOffset(MathUtils.clamp(0.025f * cf, 0, 0.1f));
 
 			// zoom+earth curvature
 			dist = AMath.fixup(dist);

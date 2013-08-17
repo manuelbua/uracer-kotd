@@ -12,6 +12,7 @@ import com.bitfire.uracer.game.GameInput;
 import com.bitfire.uracer.game.GameLogic;
 import com.bitfire.uracer.game.GameLogicObserver;
 import com.bitfire.uracer.game.Time;
+import com.bitfire.uracer.game.actors.CarPreset.Type;
 import com.bitfire.uracer.game.actors.GhostCar;
 import com.bitfire.uracer.game.events.GameLogicEvent;
 import com.bitfire.uracer.game.logic.gametasks.GameTasksManager;
@@ -93,7 +94,7 @@ public abstract class CommonLogic implements GameLogic, GameLogicObserver {
 
 		// create ghost cars and provides them via interface @Overrides
 		for (int i = 0; i < ghostCars.length; i++) {
-			ghostCars[i] = CarFactory.createGhost(i, gameWorld);
+			ghostCars[i] = CarFactory.createGhost(i, gameWorld, Type.Default);
 			ghostLapMonitor[i] = new GhostLapCompletionMonitor(gameTrack);
 			ghostLapMonitor[i].reset();
 		}
@@ -113,15 +114,6 @@ public abstract class CommonLogic implements GameLogic, GameLogicObserver {
 
 		// create game input
 		gameInput = new GameInput(this, inputSystem);
-	}
-
-	public boolean hasPlayer () {
-		return playerCar != null;
-	}
-
-	@Override
-	public UserProfile getUserProfile () {
-		return userProfile;
 	}
 
 	//
@@ -151,7 +143,36 @@ public abstract class CommonLogic implements GameLogic, GameLogicObserver {
 		GameTweener.dispose();
 	}
 
-	/** Sets the player from the specified preset */
+	@Override
+	public boolean hasPlayer () {
+		return playerCar != null;
+	}
+
+	@Override
+	public UserProfile getUserProfile () {
+		return userProfile;
+	}
+
+	@Override
+	public GhostCar[] getGhosts () {
+		return ghostCars;
+	}
+
+	@Override
+	public GhostCar getGhost (int handle) {
+		return ghostCars[handle];
+	}
+
+	@Override
+	public boolean isGhostActive (int handle) {
+		return (ghostCars[handle] != null && ghostCars[handle].isActive());
+	}
+
+	@Override
+	public boolean isWarmUp () {
+		return hasPlayer() && playerLapMonitor.isWarmUp();
+	}
+
 	@Override
 	public void addPlayer () {
 		if (hasPlayer()) {
@@ -159,7 +180,7 @@ public abstract class CommonLogic implements GameLogic, GameLogicObserver {
 			return;
 		}
 
-		playerCar = CarFactory.createPlayer(gameWorld);
+		playerCar = CarFactory.createPlayer(gameWorld, Type.Car_Yellow);
 		playerCar.setInputSystem(inputSystem);
 		playerCar.setFrictionMap(Art.frictionMapDesert);
 		playerCar.reset();
@@ -407,25 +428,5 @@ public abstract class CommonLogic implements GameLogic, GameLogicObserver {
 
 		// update progress visuals, messages
 		playerTasks.hudPlayer.trackProgress.update(gameTrack, playerCar, nextTarget);
-	}
-
-	@Override
-	public GhostCar[] getGhosts () {
-		return ghostCars;
-	}
-
-	@Override
-	public GhostCar getGhost (int handle) {
-		return ghostCars[handle];
-	}
-
-	@Override
-	public boolean isGhostActive (int handle) {
-		return (ghostCars[handle] != null && ghostCars[handle].isActive());
-	}
-
-	@Override
-	public boolean isWarmUp () {
-		return hasPlayer() && playerLapMonitor.isWarmUp();
 	}
 }
