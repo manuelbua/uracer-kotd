@@ -49,6 +49,8 @@ public interface GameLogic {
 
 	boolean isWarmUp ();
 
+	boolean hasPlayer ();
+
 	UserProfile getUserProfile ();
 
 	ReplayResult getLastRecordedInfo ();

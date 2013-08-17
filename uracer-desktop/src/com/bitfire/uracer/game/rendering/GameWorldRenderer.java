@@ -641,8 +641,10 @@ public final class GameWorldRenderer {
 		shader.end();
 	}
 
-	private boolean renderCar (CarStillModel car, boolean depthOnly, boolean nightMode) {
-		if (Config.Debug.FrustumCulling && !camPersp.frustum.boundsInFrustum(car.boundingBox)) {
+	private boolean renderCar (Car car, boolean depthOnly, boolean nightMode) {
+		CarStillModel model = car.getStillModel();
+
+		if (Config.Debug.FrustumCulling && !camPersp.frustum.boundsInFrustum(model.boundingBox)) {
 			return false;
 		}
 
@@ -660,6 +662,7 @@ public final class GameWorldRenderer {
 		gl.glEnable(GL20.GL_CULL_FACE);
 
 		shader.begin();
+		Art.meshCar.get(car.getCarPreset().type.regionName).bind();
 
 		// common matrices
 		if (depthOnly) {
@@ -667,7 +670,7 @@ public final class GameWorldRenderer {
 			shader.setUniformMatrix("view", camPersp.view);
 			shader.setUniformi("u_texture", 0);
 		} else {
-			shader.setUniformf("alpha", car.getAlpha());
+			shader.setUniformf("alpha", model.getAlpha());
 			if (nightMode) {
 				shader.setUniformf("u_ambient", treesAmbientColor);
 			}
@@ -676,43 +679,43 @@ public final class GameWorldRenderer {
 		// car body
 		{
 			if (depthOnly) {
-				mtx.set(camPersp.view).mul(car.mtxbody);
+				mtx.set(camPersp.view).mul(model.mtxbody);
 				nmat.set(mtx).inv().transpose();
 				shader.setUniformMatrix("nmat", nmat);
-				shader.setUniformMatrix("model", car.mtxbody);
+				shader.setUniformMatrix("model", model.mtxbody);
 			} else {
-				shader.setUniformMatrix("u_projTrans", car.mtxbodytransformed);
+				shader.setUniformMatrix("u_projTrans", model.mtxbodytransformed);
 			}
 
-			car.body.render(shader, car.smBody.primitiveType);
+			model.body.render(shader, model.smBody.primitiveType);
 		}
 
 		// car left tire
 		{
 			if (depthOnly) {
-				mtx.set(camPersp.view).mul(car.mtxltire);
+				mtx.set(camPersp.view).mul(model.mtxltire);
 				nmat.set(mtx).inv().transpose();
 				shader.setUniformMatrix("nmat", nmat);
-				shader.setUniformMatrix("model", car.mtxltire);
+				shader.setUniformMatrix("model", model.mtxltire);
 			} else {
-				shader.setUniformMatrix("u_projTrans", car.mtxltiretransformed);
+				shader.setUniformMatrix("u_projTrans", model.mtxltiretransformed);
 			}
 
-			car.leftTire.render(shader, car.smLeftTire.primitiveType);
+			model.leftTire.render(shader, model.smLeftTire.primitiveType);
 		}
 
 		// car right tire
 		{
 			if (depthOnly) {
-				mtx.set(camPersp.view).mul(car.mtxrtire);
+				mtx.set(camPersp.view).mul(model.mtxrtire);
 				nmat.set(mtx).inv().transpose();
 				shader.setUniformMatrix("nmat", nmat);
-				shader.setUniformMatrix("model", car.mtxrtire);
+				shader.setUniformMatrix("model", model.mtxrtire);
 			} else {
-				shader.setUniformMatrix("u_projTrans", car.mtxrtiretransformed);
+				shader.setUniformMatrix("u_projTrans", model.mtxrtiretransformed);
 			}
 
-			car.rightTire.render(shader, car.smRightTire.primitiveType);
+			model.rightTire.render(shader, model.smRightTire.primitiveType);
 		}
 
 		return true;
@@ -725,7 +728,7 @@ public final class GameWorldRenderer {
 	public void renderCars (boolean depthOnly) {
 		CarStillModel model;
 
-		Art.meshCar.bind();
+		// Art.meshCar.bind();
 
 		if (!depthOnly) {
 			gl.glEnable(GL20.GL_BLEND);
@@ -747,7 +750,7 @@ public final class GameWorldRenderer {
 						setSsaoScale(DefaultSsaoScale * s);
 					}
 
-					renderCar(model, depthOnly, false);
+					renderCar(topmostGhost, depthOnly, false);
 				}
 			}
 
@@ -768,7 +771,7 @@ public final class GameWorldRenderer {
 
 				// found a topmost ghost, render last
 				if (ghost != topmostGhost) {
-					renderCar(model, depthOnly, false);
+					renderCar(ghost, depthOnly, false);
 				}
 			}
 		}
@@ -786,7 +789,7 @@ public final class GameWorldRenderer {
 		if (player != null) {
 			model = player.getStillModel();
 			model.transform(camPersp, camOrtho);
-			renderCar(model, depthOnly, false);
+			renderCar(player, depthOnly, false);
 		}
 
 		if (!depthOnly) {

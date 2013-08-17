@@ -65,7 +65,7 @@ public abstract strictfp class Car extends Box2DEntity {
 		this.gameWorld = gameWorld;
 		this.gameTrack = gameWorld.getGameTrack();
 
-		stillModel = ModelFactory.createCar();
+		stillModel = ModelFactory.createCar(presetType);
 		stillModel.setCar(this);
 		impacts = 0;
 		this.inputMode = inputMode;
@@ -140,7 +140,7 @@ public abstract strictfp class Car extends Box2DEntity {
 
 		// the scaling factor should be 2, but in night mode is cool to see light bleeding across the edges of
 		// the car, fading away as soon as the physical body is reached
-		loader.attachFixture(body, "electron.png", fd, 1.85f, scaleX, scaleY);
+		loader.attachFixture(body, "uracer-car", fd, 1.85f, scaleX, scaleY);
 		ArrayList<Fixture> fs = body.getFixtureList();
 		for (Fixture f : fs) {
 			f.setUserData(carType);
@@ -164,6 +164,10 @@ public abstract strictfp class Car extends Box2DEntity {
 	// public CarPreset getCarPreset () {
 	// return preset;
 	// }
+
+	public CarPreset getCarPreset () {
+		return preset;
+	}
 
 	public CarModel getCarModel () {
 		return preset.model;

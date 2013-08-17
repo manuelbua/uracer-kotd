@@ -31,7 +31,6 @@ echo -n "Cooking base..."
 rm -rf "${DEST}/base/"
 mkdir -p "${DEST}/base"
 cp base/*.png ${DEST}/base
-cp base/*.shape ${DEST}/base
 cp -r base/progress ${DEST}/base
 echo "done!"
 
@@ -69,21 +68,17 @@ echo "done!"
 echo -n "Cooking track meshes..."
 rm -rf "${DEST}/track/"
 mkdir -p "${DEST}/track/"
-#cp track/wall.png track/*.g3dt ${DEST}/track >/dev/null
 cp track/wall.png ${DEST}/track >/dev/null
 echo "done!"
 
 # cars graphics
-echo -n "Cooking car graphics..."
+echo "Cooking cars..."
 rm -rf "${DEST}/cars/"
 mkdir -p "${DEST}/cars/"
-${TEX_PACKER} cars ${DEST}/cars >/dev/null
-echo "done!"
+${TEX_PACKER} cars/out ${DEST}/cars
+cp cars/out/car-shapes ${DEST}/cars/ >/dev/null
+cp 3d/car/out/* ${DEST}/3d/textures >/dev/null
 
-# cars physical shapes
-echo -n "Cooking car physical shapes..."
-cp cars/car-shapes ${DEST}/cars >/dev/null
-echo "done!"
 
 # particle effects defs
 echo "Cooking particle effects definitions..."

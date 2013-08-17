@@ -7,6 +7,7 @@ import java.io.InputStream;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.utils.LongMap;
+import com.bitfire.uracer.game.actors.CarPreset;
 import com.bitfire.uracer.resources.Art;
 import com.bitfire.uracer.u3d.loaders.G3dtLoader;
 import com.bitfire.uracer.u3d.materials.Material;
@@ -90,7 +91,7 @@ public final class ModelFactory {
 		case Missing:
 		default:
 			stillModel = new OrthographicAlignedStillModel(getStillModel("data/3d/models/missing-mesh.g3dt"), getMaterial(modelMesh,
-				Art.meshMissing));
+				Art.meshMissing, ""));
 		}
 
 		if (stillModel != null) {
@@ -106,9 +107,9 @@ public final class ModelFactory {
 		return stillModel;
 	}
 
-	public static CarStillModel createCar () {
+	public static CarStillModel createCar (CarPreset.Type presetType) {
 		CarStillModel stillModel = new CarStillModel(getStillModel("data/3d/models/car-low-01.g3dt"), getMaterial(ModelMesh.Car,
-			Art.meshCar));
+			Art.meshCar.get(presetType.regionName), presetType.regionName));
 		return stillModel;
 	}
 
@@ -127,6 +128,7 @@ public final class ModelFactory {
 		switch (modelMesh) {
 		case Car:
 		case Missing:
+		default:
 			throw new URacerRuntimeException("The specified model is not a tree");
 		case Tree_1:
 			treeModelName = "tree-1.g3dt";
@@ -196,8 +198,8 @@ public final class ModelFactory {
 
 		}
 
-		stillModel = new TreeStillModel(getStillModel("data/3d/models/" + treeModelName), getMaterial(modelMesh, leavesTexture),
-			treeMeshName);
+		stillModel = new TreeStillModel(getStillModel("data/3d/models/" + treeModelName),
+			getMaterial(modelMesh, leavesTexture, ""), treeMeshName);
 
 		if (stillModel != null) {
 			// createdTreeModels.add( stillModel );
@@ -214,10 +216,10 @@ public final class ModelFactory {
 
 	private static LongMap<Material> cachedMaterials = null;
 
-	private static Material getMaterial (ModelMesh modelMesh, Texture texture) {
+	private static Material getMaterial (ModelMesh modelMesh, Texture texture, String textureName) {
 		Material m = null;
 
-		long materialHash = Hash.RSHash(modelMesh.toString());
+		long materialHash = Hash.RSHash(modelMesh.toString() + textureName);
 		if (cachedMaterials == null) {
 			cachedMaterials = new LongMap<Material>();
 		}

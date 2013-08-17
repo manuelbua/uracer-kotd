@@ -16,6 +16,7 @@ import com.badlogic.gdx.graphics.Texture.TextureWrap;
 import com.badlogic.gdx.graphics.g2d.TextureAtlas;
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
 import com.badlogic.gdx.scenes.scene2d.ui.Skin;
+import com.badlogic.gdx.utils.ObjectMap;
 import com.bitfire.uracer.configuration.Config;
 import com.bitfire.uracer.configuration.Storage;
 import com.bitfire.uracer.utils.ScaleUtils;
@@ -32,13 +33,12 @@ public final class Art {
 	public static Texture meshPalm;
 	public static Texture meshTribune;
 	public static Texture meshTreeTrunk;
-	public static Texture meshCar;
+	public static ObjectMap<String, Texture> meshCar;
 	public static Texture[] meshTreeLeavesSpring;
 	public static Texture meshTrackWall;
 
 	// cars
 	public static TextureAtlas cars;
-	public static TextureRegion carAmbientOcclusion;
 	public static TextureRegion skidMarksFront, skidMarksRear;
 	public static Texture wrongWay;
 
@@ -185,7 +185,10 @@ public final class Art {
 		meshPalm = newTexture("data/3d/textures/palm.png", mipmap);
 		meshTribune = newTexture("data/3d/textures/tribune.png", mipmap);
 
-		meshCar = newTexture("data/3d/textures/car_01.png", true);
+		// car textures
+		meshCar = new ObjectMap<String, Texture>();
+		meshCar.put("car", newTexture("data/3d/textures/car.png", true));
+		meshCar.put("car_yellow", newTexture("data/3d/textures/car_yellow.png", true));
 
 		// trees
 		meshTreeTrunk = newTexture("data/3d/textures/trunk_6_col.png", mipmap);
@@ -200,7 +203,12 @@ public final class Art {
 		meshTrackWall.dispose();
 		meshPalm.dispose();
 		meshTribune.dispose();
-		meshCar.dispose();
+
+		// car textures
+		for (Texture t : meshCar.values()) {
+			t.dispose();
+		}
+		meshCar.clear();
 
 		// trees
 		for (int i = 0; i < 7; i++) {
@@ -219,7 +227,6 @@ public final class Art {
 
 		skidMarksFront = cars.findRegion("skid-marks-front");
 		skidMarksRear = cars.findRegion("skid-marks-rear");
-		carAmbientOcclusion = cars.findRegion("car-ao-new");
 
 		wrongWay = newTexture("data/base/wrong-way.png", false);
 		wrongWay.setFilter(TextureFilter.Linear, TextureFilter.Linear);
