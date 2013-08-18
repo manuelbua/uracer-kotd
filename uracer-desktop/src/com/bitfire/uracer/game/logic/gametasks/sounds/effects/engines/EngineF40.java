@@ -95,17 +95,22 @@ public class EngineF40 extends EngineSoundSet {
 		// setVolume(4, 1 * SoundManager.SfxVolumeMul);
 		// dbg
 
+		float from = 0.1f;
+		float to = 0.0f;
+		float amount = from - (from - to) * player.carState.currSpeedFactor;
+		// Gdx.app.log("", amount + "");
+
 		// sample specific
 		if (rpm < lowLimit) {
-			setXnaPitch(0, rpmLow);
-			setXnaPitch(1, rpmDef + 0.2f);
+			setXnaPitch(0, rpmLow - amount);
+			setXnaPitch(1, rpmDef + 0.2f - amount);
 		}
 
-		setXnaPitch(2, rpmDef - 0.4f);
-		setXnaPitch(3, rpmDef - 0.8f);
-		setXnaPitch(4, rpmDef - 0.2f);
-		setXnaPitch(5, rpmDef - 0.8f);
-		setXnaPitch(6, rpmDef - 0.8f);
+		setXnaPitch(2, rpmDef - 0.4f - amount);
+		setXnaPitch(3, rpmDef - 0.8f - amount);
+		setXnaPitch(4, rpmDef - 0.2f - amount);
+		setXnaPitch(5, rpmDef - 0.8f - amount);
+		setXnaPitch(6, rpmDef - 0.8f - amount);
 	}
 
 	private float prevSpeed = 0;
@@ -122,7 +127,7 @@ public class EngineF40 extends EngineSoundSet {
 			ispeed.set(player.carState.currSpeedFactor, 0.85f);
 			float sf = ispeed.get();
 
-			float q = 15000;// 12858;
+			float q = 15000;
 			float factor = q * sf * getGearRatio();
 
 			// updateGearFIS();
@@ -167,7 +172,10 @@ public class EngineF40 extends EngineSoundSet {
 		if (sf > prevSpeed && gear < MaxGear) {
 			switch (gear) {
 			default:
-				if (rpm > 9500) {
+				// float base = 8500;
+				// float threshold = (1000 / MaxGear) * gear;
+				// if (rpm > base + threshold) {
+				if (rpm > 9800) {
 					shiftUp();
 					return 1;
 				}

@@ -334,9 +334,10 @@ public final class AggressiveCold implements PostProcessingAnimator {
 			}
 		}
 
+		// cf = 1;
 		if (crt != null) {
 			// modulates color offset by collision factor)
-			crt.setColorOffset(MathUtils.clamp(0.025f * cf, 0, 0.1f));
+			crt.setColorOffset(MathUtils.clamp(0.025f * cf, 0, 0.008f));
 
 			// zoom+earth curvature
 			dist = AMath.fixup(dist);
