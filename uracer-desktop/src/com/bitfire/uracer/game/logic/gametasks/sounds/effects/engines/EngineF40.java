@@ -2,7 +2,6 @@
 package com.bitfire.uracer.game.logic.gametasks.sounds.effects.engines;
 
 import com.badlogic.gdx.math.MathUtils;
-import com.bitfire.uracer.game.logic.gametasks.sounds.effects.PlayerTensiveMusic;
 import com.bitfire.uracer.game.logic.helpers.TrackProgressData;
 import com.bitfire.uracer.resources.Sounds;
 import com.bitfire.uracer.utils.AMath;
@@ -27,10 +26,11 @@ public class EngineF40 extends EngineSoundSet {
 	@Override
 	public float getGlobalVolume () {
 		float target_vol = 0;
+		float scale_mt = 50;
 		if (hasPlayer && progressData.hasTarget && !progressData.isWarmUp) {
 			float d = progressData.playerDistance.get() - progressData.targetDistance.get();
-			d = MathUtils.clamp(d, -PlayerTensiveMusic.ScaleMt, PlayerTensiveMusic.ScaleMt);
-			d *= PlayerTensiveMusic.InvScaleMt; // normalized range
+			d = MathUtils.clamp(d, -scale_mt, scale_mt);
+			d /= scale_mt; // normalized range
 			float to_target = AMath.fixup(d);
 
 			if (to_target < 0) {
@@ -45,7 +45,7 @@ public class EngineF40 extends EngineSoundSet {
 		}
 
 		// return .025f + 0.025f * volmul;
-		ivolume.set(0.05f + 0.1f * target_vol * player.carState.currSpeedFactor, 0.05f);
+		ivolume.set(0.1f + 0.05f * target_vol * player.carState.currSpeedFactor, 0.05f);
 
 		// Gdx.app.log("", "tv=" + target_vol);
 
@@ -74,7 +74,7 @@ public class EngineF40 extends EngineSoundSet {
 		case 1: res = 2f; 	break;
 		case 2: res = 1f;		break;
 		case 3: res = 0.7f;	break;
-		case 4: res = 0.5f;	break;
+		case 4: res = 0.44f;	break;
 		}
 		//@on
 
