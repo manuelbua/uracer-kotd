@@ -1,6 +1,7 @@
 
 package com.bitfire.uracer.game.logic.gametasks.sounds.effects;
 
+import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.audio.Sound;
 import com.badlogic.gdx.math.MathUtils;
 import com.bitfire.uracer.URacer;
@@ -21,7 +22,7 @@ public final class PlayerTensiveMusic extends SoundEffect {
 	public static final int NumTracks = 7;
 	public static final float MinVolume = 0.25f;
 
-	public static final float ScaleMt = 6f * (NumTracks);
+	public static final float ScaleMt = 20f * (NumTracks - 2);
 	public static final float AheadByMt = 10f;
 	public static final float InvScaleMt = 1f / ScaleMt;
 
@@ -174,7 +175,7 @@ public final class PlayerTensiveMusic extends SoundEffect {
 		// boolean isAheadByMeters = false;
 
 		// limit to number of actual replays
-		musicIndexLimit = MathUtils.clamp(lapManager.getReplaysCount(), 0, NumTracks - 2);
+		musicIndexLimit = NumTracks - 2;// MathUtils.clamp(lapManager.getReplaysCount(), 0, NumTracks - 2);
 		// musicIndexLimit = NumTracks - 2;
 
 		if (hasPlayer) {
@@ -198,10 +199,8 @@ public final class PlayerTensiveMusic extends SoundEffect {
 				v *= InvScaleMt; // normalized range
 				float to_target = AMath.fixup(v);
 
-				// Gdx.app.log("PlayerTensiveMusic", "to_target=" + to_target + ", tgt_vol=" + tgt_vol + ", midx=" + musicIndex);
-
 				if (to_target >= (AheadByMt * InvScaleMt) && musicIndexLimit == NumTracks - 2) {
-					// player ahead by 20mt, can play very latest track
+					// player ahead by AheadByMt meters, can play very latest track
 					musicIndex = NumTracks - 1;
 					fMusicIndex = musicIndex;
 					musicIndexLimit = musicIndex;
@@ -213,10 +212,11 @@ public final class PlayerTensiveMusic extends SoundEffect {
 					tgt_vol = 1 - MathUtils.clamp(-to_target, 0, 1);
 					fMusicIndex = tgt_vol * musicIndexLimit;
 					musicIndex = (int)fMusicIndex;
+					// Gdx.app.log("PlayerTensiveMusic", "to_target=" + to_target + ", tgt_vol=" + tgt_vol + ", midx=" + musicIndex);
+					Gdx.app.log("PlayerTensiveMusic", "fmusidx=" + fMusicIndex + ", limit=" + musicIndexLimit);
 				}
 			}
 
-			// Gdx.app.log("PlayerTensiveMusic", "fmusidx=" + fMusicIndex);
 			// computeTrackVolumes();
 
 			// update all volume accumulators
