@@ -1,7 +1,6 @@
 
 package com.bitfire.uracer.game.logic.gametasks.sounds.effects;
 
-import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.audio.Sound;
 import com.badlogic.gdx.math.MathUtils;
 import com.bitfire.uracer.URacer;
@@ -213,7 +212,7 @@ public final class PlayerTensiveMusic extends SoundEffect {
 					fMusicIndex = tgt_vol * musicIndexLimit;
 					musicIndex = (int)fMusicIndex;
 					// Gdx.app.log("PlayerTensiveMusic", "to_target=" + to_target + ", tgt_vol=" + tgt_vol + ", midx=" + musicIndex);
-					Gdx.app.log("PlayerTensiveMusic", "fmusidx=" + fMusicIndex + ", limit=" + musicIndexLimit);
+					// Gdx.app.log("PlayerTensiveMusic", "fmusidx=" + fMusicIndex + ", limit=" + musicIndexLimit);
 				}
 			}
 
