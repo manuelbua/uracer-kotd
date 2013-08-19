@@ -1,6 +1,7 @@
 
 package com.bitfire.uracer.game.logic.gametasks.sounds.effects.engines;
 
+import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.math.MathUtils;
 import com.bitfire.uracer.game.logic.helpers.TrackProgressData;
 import com.bitfire.uracer.resources.Sounds;
@@ -73,8 +74,8 @@ public class EngineF40 extends EngineSoundSet {
 		//
 		case 1: res = 2f; 	break;
 		case 2: res = 1f;		break;
-		case 3: res = 0.7f;	break;
-		case 4: res = 0.44f;	break;
+		case 3: res = 0.66f;	break;
+		case 4: res = 0.5f;	break;
 		}
 		//@on
 
@@ -95,8 +96,8 @@ public class EngineF40 extends EngineSoundSet {
 		// setVolume(4, 1 * SoundManager.SfxVolumeMul);
 		// dbg
 
-		float from = 0.1f;
-		float to = 0.0f;
+		float from = 0.31f;
+		float to = 0.175f;
 		float amount = from - (from - to) * player.carState.currSpeedFactor;
 		// Gdx.app.log("", amount + "");
 
@@ -152,10 +153,10 @@ public class EngineF40 extends EngineSoundSet {
 				ifactor.set(factor, 0.85f);
 			}
 
-			rpm = 1000 + ifactor.get() + (load < 0 ? load * 1f : load * 15);
+			rpm = 1000 + ifactor.get() + (load < 0 ? load * 1f : load * (22 - 10 * player.carState.currSpeedFactor));
 
-			// Gdx.app.log("EngineSoundSet", "gear=" + gear + ", rpm=" + rpm + ", throttle=" + player.getCarDescriptor().throttle
-			// + ", throttling=" + player.isThrottling);// + ", speed="+ sf);
+			Gdx.app.log("EngineSoundSet", "gear=" + gear + ", rpm=" + rpm + ", throttle=" + player.getCarDescriptor().throttle
+				+ ", throttling=" + player.isThrottling);// + ", speed="+ sf);
 
 			rpm = MathUtils.clamp(rpm, 1000, 10000);
 

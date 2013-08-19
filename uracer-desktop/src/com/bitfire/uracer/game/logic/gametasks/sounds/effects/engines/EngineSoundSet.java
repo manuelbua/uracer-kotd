@@ -12,10 +12,11 @@ import com.bitfire.uracer.game.logic.gametasks.sounds.SoundEffect;
 import com.bitfire.uracer.game.player.PlayerCar;
 
 public abstract class EngineSoundSet {
-	protected int NumTracks = 7;
+	protected static final int NumTracks = 7;
 	protected Sound[] engine = null;
 	protected long[] mid = new long[NumTracks];
 	protected boolean[] started = new boolean[NumTracks];
+	protected float[] volumes = new float[NumTracks];
 	protected FIS feIdle, feOnLow, feOnMid, feOnHigh, feOffLow, feOffMid, feOffHigh;
 	protected int gear;
 	protected float rpm;
@@ -85,6 +86,13 @@ public abstract class EngineSoundSet {
 		updateVolume(4, feOffLow, load, rpm);
 		updateVolume(5, feOffMid, load, rpm);
 		updateVolume(6, feOffHigh, load, rpm);
+
+		// String dbg = "";
+		// for (int i = 0; i < NumTracks; i++) {
+		// dbg += "#" + i + "=" + String.format("%.02f", volumes[i]) + " ";
+		// }
+		//
+		// Gdx.app.log("EngineSoundSet", dbg);
 	}
 
 	public int getGear () {
@@ -132,6 +140,7 @@ public abstract class EngineSoundSet {
 
 	protected void setVolume (int track, float vol) {
 		engine[track].setVolume(mid[track], vol * getGlobalVolume());
+		volumes[track] = vol * getGlobalVolume();
 	}
 
 	protected void setPitch (int track, float pitch) {
@@ -142,10 +151,10 @@ public abstract class EngineSoundSet {
 		fuzzyEngine.setVariable("load", load);
 		fuzzyEngine.setVariable("rpm", rpm);
 		fuzzyEngine.evaluate();
-		float volume = (float)fuzzyEngine.getVariable("volume").getValue() / 100f;
+		float volume = ((float)fuzzyEngine.getVariable("volume").getValue() / 100f) * SoundManager.SfxVolumeMul;
 
 		if (volume >= 0 && volume <= 1) {
-			setVolume(track, (float)volume * SoundManager.SfxVolumeMul);
+			setVolume(track, volume);
 
 			// dbg
 			// if (track == 1 || track == 4) {
