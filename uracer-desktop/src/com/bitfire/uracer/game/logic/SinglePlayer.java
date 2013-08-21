@@ -320,7 +320,7 @@ public class SinglePlayer extends BaseLogic {
 	@Override
 	public void playerLapCompleted () {
 		// The policy is to permit slower replays at loading time, but not at gameplay time, so that a player will not be able to
-		// save a slower replay, but if it could, it would be loaded fine from disk.
+		// save a slower replay. Slower replays may be loaded off disk just fine.
 		if (lapManager.isRecording()) {
 			lastRecorded.reset();
 
