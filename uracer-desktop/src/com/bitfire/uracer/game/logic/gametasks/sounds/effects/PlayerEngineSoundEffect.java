@@ -32,7 +32,6 @@ public final class PlayerEngineSoundEffect extends SoundEffect {
 	private static final int MinSoftnessTicks = 5;
 	private static final int MaxSoftnessTicks = 20;
 	private int softnessTicks = 0;
-	private boolean outOfTrack = false;
 
 	private EngineSoundSet soundset;
 
@@ -40,7 +39,6 @@ public final class PlayerEngineSoundEffect extends SoundEffect {
 		feLoad = FIS.load(Gdx.files.getFileHandle("data/audio/car-engine/fuzzy/engineLoad.fcl", FileType.Internal).read(), true);
 		load = 0;
 		throttle = 0;
-		outOfTrack = false;
 		soundset = new EngineF40(progressData);
 	}
 
@@ -84,15 +82,13 @@ public final class PlayerEngineSoundEffect extends SoundEffect {
 		public void handle (Object source, CarEvent.Type type, CarEvent.Order order) {
 			switch (type) {
 			case onCollision:
-				soundset.reset();
+				// soundset.reset();
 				throttle = 0;
 				break;
 			case onOutOfTrack:
 				// soundset.shiftDown();
-				outOfTrack = true;
 				break;
 			case onBackInTrack:
-				outOfTrack = false;
 				break;
 			}
 		}
@@ -143,6 +139,7 @@ public final class PlayerEngineSoundEffect extends SoundEffect {
 			if (soundset.hasGears()) {
 				// avoid sound fading slipping over the off-engine samples
 				// throttle = 0;
+				// throttle *= AMath.damping(0.94f);
 				throttle *= AMath.damping(0.8f);
 			} else {
 				throttle *= AMath.damping(0.8f);
@@ -180,7 +177,6 @@ public final class PlayerEngineSoundEffect extends SoundEffect {
 		soundset.reset();
 		soundset.stop();
 		soundset.start();
-		outOfTrack = false;
 	}
 
 	@Override
