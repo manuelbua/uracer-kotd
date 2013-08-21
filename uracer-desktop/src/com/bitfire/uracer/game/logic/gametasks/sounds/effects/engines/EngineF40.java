@@ -1,7 +1,6 @@
 
 package com.bitfire.uracer.game.logic.gametasks.sounds.effects.engines;
 
-import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.math.MathUtils;
 import com.bitfire.uracer.game.logic.helpers.TrackProgressData;
 import com.bitfire.uracer.resources.Sounds;
@@ -72,7 +71,7 @@ public class EngineF40 extends EngineSoundSet {
 		switch(gear) {
 		case 0: res =  1f;
 		//
-		case 1: res = 2f; 	break;
+		case 1: res = 1.4f; 	break;
 		case 2: res = 1f;		break;
 		case 3: res = 0.66f;	break;
 		case 4: res = 0.5f;	break;
@@ -96,10 +95,11 @@ public class EngineF40 extends EngineSoundSet {
 		// setVolume(4, 1 * SoundManager.SfxVolumeMul);
 		// dbg
 
-		float from = 0.31f;
-		float to = 0.175f;
-		float amount = from - (from - to) * player.carState.currSpeedFactor;
+		// float from = 0.35f;
+		// float to = 0.25f;
+		// float amount = from - (from - to) * player.carState.currSpeedFactor;
 		// Gdx.app.log("", amount + "");
+		float amount = 0.15f;
 
 		// sample specific
 		if (rpm < lowLimit) {
@@ -139,14 +139,6 @@ public class EngineF40 extends EngineSoundSet {
 			// Gdx.app.log("EngineSoundSet", "gear=" + gear + ", rpm=" + rpm + ", throttle=" + player.getCarDescriptor().throttle
 			// + ", throttling=" + player.isThrottling);// + ", speed="+ sf);
 
-			// more accurate representation
-			// float inc = 0;
-			// if (load < 0) {
-			// inc = load;
-			// } else {
-			// inc = load * getGearRatio() * sf;
-			// }
-
 			if (sf < prevSpeed) {
 				ifactor.set(factor, 0.6f);
 			} else {
@@ -155,8 +147,8 @@ public class EngineF40 extends EngineSoundSet {
 
 			rpm = 1000 + ifactor.get() + (load < 0 ? load * 1f : load * (22 - 10 * player.carState.currSpeedFactor));
 
-			Gdx.app.log("EngineSoundSet", "gear=" + gear + ", rpm=" + rpm + ", throttle=" + player.getCarDescriptor().throttle
-				+ ", throttling=" + player.isThrottling);// + ", speed="+ sf);
+			// Gdx.app.log("EngineSoundSet", "gear=" + gear + ", rpm=" + rpm + ", throttle=" + player.getCarDescriptor().throttle
+			// + ", throttling=" + player.isThrottling); // + ", speed="+ sf);
 
 			rpm = MathUtils.clamp(rpm, 1000, 10000);
 
@@ -180,6 +172,7 @@ public class EngineF40 extends EngineSoundSet {
 					shiftUp();
 					return 1;
 				}
+
 				break;
 			}
 
