@@ -7,7 +7,7 @@ import com.bitfire.uracer.utils.AMath;
 import com.bitfire.uracer.utils.InterpolatedFloat;
 
 public class TrackProgressData {
-	private static final float Smoothing = 0.25f;
+	private static final float Smoothing = 0.5f;
 
 	public float playerToTarget;
 	public boolean isCurrentLapValid, isWarmUp, hasTarget, targetArrived;
