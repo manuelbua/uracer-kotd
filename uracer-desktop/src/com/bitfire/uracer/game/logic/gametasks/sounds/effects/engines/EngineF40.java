@@ -95,11 +95,11 @@ public class EngineF40 extends EngineSoundSet {
 		// setVolume(4, 1 * SoundManager.SfxVolumeMul);
 		// dbg
 
-		// float from = 0.35f;
-		// float to = 0.25f;
-		// float amount = from - (from - to) * player.carState.currSpeedFactor;
+		float from = 0.55f;
+		float to = 0.05f;
+		float amount = from - (from - to) * player.carState.currSpeedFactor;
 		// Gdx.app.log("", amount + "");
-		float amount = 0.15f;
+		// float amount = 0f;
 
 		// sample specific
 		if (rpm < lowLimit) {
