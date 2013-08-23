@@ -12,11 +12,11 @@ import com.bitfire.uracer.game.logic.gametasks.sounds.SoundEffect;
 import com.bitfire.uracer.game.player.PlayerCar;
 
 public abstract class EngineSoundSet {
-	protected static final int NumTracks = 7;
+	public static final int NumSamples = 7;
 	protected Sound[] engine = null;
-	protected long[] mid = new long[NumTracks];
-	protected boolean[] started = new boolean[NumTracks];
-	protected float[] volumes = new float[NumTracks];
+	protected long[] mid = new long[NumSamples];
+	protected boolean[] started = new boolean[NumSamples];
+	protected float[] volumes = new float[NumSamples];
 	protected FIS feIdle, feOnLow, feOnMid, feOnHigh, feOffLow, feOffMid, feOffHigh;
 	protected int gear;
 	protected float rpm;
@@ -62,13 +62,13 @@ public abstract class EngineSoundSet {
 	}
 
 	public void start () {
-		for (int i = 0; i < NumTracks; i++) {
+		for (int i = 0; i < NumSamples; i++) {
 			start(i);
 		}
 	}
 
 	public void stop () {
-		for (int i = 0; i < NumTracks; i++) {
+		for (int i = 0; i < NumSamples; i++) {
 			stop(i);
 		}
 	}
@@ -76,6 +76,19 @@ public abstract class EngineSoundSet {
 	public void reset () {
 		rpm = 1000;
 		gear = 1;
+	}
+
+	public float updateRpm (float load) {
+		if (!hasPlayer) {
+			rpm = 1000;
+			return 1000;
+		} else {
+			// very simplicistic, arcade implementation
+			rpm = (1000 + 10000 * player.carState.currSpeedFactor);
+		}
+
+		rpm = MathUtils.clamp(rpm, 1000, 10000);
+		return rpm;
 	}
 
 	public void updateVolumes (float load) {
@@ -105,6 +118,10 @@ public abstract class EngineSoundSet {
 
 	public float getGlobalVolume () {
 		return 0.1f;
+	}
+
+	public float[] getVolumes () {
+		return volumes;
 	}
 
 	//
@@ -139,8 +156,8 @@ public abstract class EngineSoundSet {
 	}
 
 	protected void setVolume (int track, float vol) {
-		engine[track].setVolume(mid[track], vol * getGlobalVolume());
-		volumes[track] = vol * getGlobalVolume();
+		engine[track].setVolume(mid[track], vol * getGlobalVolume() * SoundManager.SfxVolumeMul);
+		volumes[track] = vol;
 	}
 
 	protected void setPitch (int track, float pitch) {
@@ -151,7 +168,7 @@ public abstract class EngineSoundSet {
 		fuzzyEngine.setVariable("load", load);
 		fuzzyEngine.setVariable("rpm", rpm);
 		fuzzyEngine.evaluate();
-		float volume = ((float)fuzzyEngine.getVariable("volume").getValue() / 100f) * SoundManager.SfxVolumeMul;
+		float volume = ((float)fuzzyEngine.getVariable("volume").getValue() / 100f);
 
 		if (volume >= 0 && volume <= 1) {
 			setVolume(track, volume);
@@ -164,18 +181,5 @@ public abstract class EngineSoundSet {
 			// }
 			// dbg
 		}
-	}
-
-	public float updateRpm (float load) {
-		if (!hasPlayer) {
-			rpm = 1000;
-			return 1000;
-		} else {
-			// very simplicistic, arcade implementation
-			rpm = (1000 + 10000 * player.carState.currSpeedFactor);
-		}
-
-		rpm = MathUtils.clamp(rpm, 1000, 10000);
-		return rpm;
 	}
 }

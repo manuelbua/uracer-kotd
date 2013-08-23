@@ -77,6 +77,8 @@ public class CarStillModel extends OrthographicAlignedStillModel {
 			mtxbody.idt();
 			mtxbody.translate(pos);
 			mtxbody.rotate(0, 0, 1, state.orientation);
+			// mtxbody.rotate(1, 0, 0, 50);
+			// mtxbody.rotate(0, 1, 0, -10);
 			mtxbody.scale(this.scaleAxis.x * s, this.scaleAxis.y * s, this.scaleAxis.z * s);
 
 			// comb = (proj * view) * model (fast mul)
