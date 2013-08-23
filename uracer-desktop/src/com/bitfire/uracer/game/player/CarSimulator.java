@@ -22,7 +22,7 @@ public final class CarSimulator {
 	private static final float DampingThrottle = AMath.damping(0.98f);
 
 	// exports
-	protected Vector2 lateralForceFront, lateralForceRear;
+	public Vector2 lateralForceFront, lateralForceRear;
 
 	public CarSimulator (CarDescriptor carDesc) {
 		this.carDesc = carDesc;
@@ -162,8 +162,7 @@ public final class CarSimulator {
 		// (precomputed during initialization)
 		// weight = car->cartype->mass * 9.8f * 0.5f;
 
-		// lateral force on front wheels = (Ca * slip angle) capped to friction
-		// circle * load
+		// lateral force on front wheels = (Ca * slip angle) capped to friction circle * load
 		flatf.x = 0;
 		flatf.y = carDesc.carModel.stiffness_front * slipanglefront;
 		flatf.y = Math.min(carDesc.carModel.max_grip, flatf.y);

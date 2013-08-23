@@ -21,7 +21,7 @@ public final class DriftState {
 		this.car = car;
 		this.time = new Time();
 		this.collisionTime = new Time();
-		this.invMaxGrip = 1f / car.getCarModel().max_grip;
+		this.invMaxGrip = car.getCarModel().inv_max_grip;
 		reset();
 	}
 

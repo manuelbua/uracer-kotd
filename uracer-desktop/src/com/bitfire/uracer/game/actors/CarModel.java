@@ -29,7 +29,7 @@ public final class CarModel {
 		resistance, // factor for rolling resistance
 		stiffness_front, // front cornering stiffness
 		stiffness_rear, // rear cornering stiffness
-		max_grip, // maximum (normalised) friction force, =diameter of friction circle
+		max_grip, inv_max_grip, // maximum (normalised) friction force, =diameter of friction circle
 		max_speed, max_force;
 
 	// physically computed
@@ -94,6 +94,7 @@ public final class CarModel {
 		stiffness_rear = -4.2f; // front cornering stiffness
 		stiffness_front = -4.4f; // rear cornering stiffness
 		max_grip = 8.f; // maximum (normalised) friction force, =diameter of
+		inv_max_grip = 1f / max_grip;
 		// friction circle
 
 		max_speed = 35.f;
@@ -149,6 +150,7 @@ public final class CarModel {
 		stiffness_rear = -4.4f; // rear cornering stiffness
 		stiffness_front = -4.2f; // front cornering stiffness
 		max_grip = 6f; // maximum (normalised) friction force, =diameter of friction circle
+		inv_max_grip = 1f / max_grip;
 
 		max_speed = 35.f;
 		max_force = 300.f;

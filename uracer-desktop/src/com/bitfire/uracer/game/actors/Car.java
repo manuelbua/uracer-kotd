@@ -65,8 +65,7 @@ public abstract strictfp class Car extends Box2DEntity {
 		this.gameWorld = gameWorld;
 		this.gameTrack = gameWorld.getGameTrack();
 
-		stillModel = ModelFactory.createCar(presetType);
-		stillModel.setCar(this);
+		stillModel = ModelFactory.createCarStillModel(this, presetType);
 		impacts = 0;
 		this.inputMode = inputMode;
 		carTraveledDistance = 0;
