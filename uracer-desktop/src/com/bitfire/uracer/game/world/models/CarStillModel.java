@@ -40,7 +40,6 @@ public class CarStillModel extends OrthographicAlignedStillModel {
 	private Car car = null;
 
 	private InterpolatedFloat sideAngle = new InterpolatedFloat();
-	private InterpolatedFloat pitchAngle = new InterpolatedFloat();
 
 	public CarStillModel (StillModel aModel, Material material, Car car) {
 		super(aModel, material);
@@ -87,32 +86,23 @@ public class CarStillModel extends OrthographicAlignedStillModel {
 			// dbg
 			if (car instanceof PlayerCar) {
 				float sideangle_amount = 0;
-				float pitchangle_amount = 0;
 
 				PlayerCar player = (PlayerCar)car;
-				// if (player.driftState.isDrifting)
 				{
+					float sign = Math.signum(player.getSimulator().lateralForceFront.y);
 					float sf = player.carState.currSpeedFactor;
 					// Gdx.app.log("", "" + sf);
 
-					sideangle_amount = 80 * (player.getSimulator().lateralForceFront.y * player.getCarModel().inv_max_grip);
-					pitchangle_amount = 10 * Math.abs(player.getSimulator().lateralForceFront.y * player.getCarModel().inv_max_grip);
+					sideangle_amount = 80 * player.driftState.driftStrength * sign;
 
 					sideangle_amount *= sf;
-					pitchangle_amount *= sf;
 					sideangle_amount = MathUtils.clamp(sideangle_amount, -20, 20);
 
 					float alpha = sf > 0.3f ? 0.02f : 0.1f;
 					sideAngle.set(sideangle_amount, alpha);
-					// pitchAngle.set(pitchangle_amount, alpha);
 				}
-				// else {
-				// sideAngle.set(sideangle_amount, 0.05f);
-				// pitchAngle.set(pitchangle_amount, 0.05f);
-				// }
 
 				mtxbody.rotate(0, 1, 0, -sideAngle.get());
-				mtxbody.rotate(1, 0, 0, -pitchAngle.get());
 			}
 			// dbg
 
