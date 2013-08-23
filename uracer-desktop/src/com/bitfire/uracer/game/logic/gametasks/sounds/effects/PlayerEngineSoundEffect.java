@@ -42,6 +42,10 @@ public final class PlayerEngineSoundEffect extends SoundEffect {
 		soundset = new EngineF40(progressData);
 	}
 
+	public EngineSoundSet getSoundSet () {
+		return soundset;
+	}
+
 	private PlayerDriftStateEvent.Listener playerListener = new PlayerDriftStateEvent.Listener() {
 		@Override
 		public void handle (Object source, Type type, Order order) {
@@ -152,8 +156,8 @@ public final class PlayerEngineSoundEffect extends SoundEffect {
 		float rpm = soundset.updateRpm(load);
 		load = AMath.fixup(fuzzyLoadCompute(throttle, rpm));
 
-		// Gdx.app.log("", "engine load=" + load + ", rpm=" + rpm + ", th=" + throttle + ", g=" + soundset.getGear() + ", sf="
-		// + player.carState.currSpeedFactor);
+		// Gdx.app.log("", "engine load=" + load + ", rpm=" + rpm + ", th=" + throttle + ", g=" + soundset.getGear() + ", sf="+
+		// player.carState.currSpeedFactor);
 		// Gdx.app.log("", "engine load=" + load + ", rpm=" + rpm + ", th=" + throttle + ", g=" + soundset.getGear());
 		// Gdx.app.log("", "engine load=" + load + ", rpm=" + rpm + ", th=" + throttle + ", sf=" + player.carState.currSpeedFactor);
 

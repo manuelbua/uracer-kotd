@@ -72,6 +72,7 @@ public final class DebugHelper extends GameTask implements DisposableTasks {
 		BoundingBoxes3D,
 		TrackSectors,
 		MusicVolumes,
+		CarEngineVolumes,
 		Rankings,
 		Completion
 		// @on
@@ -87,6 +88,7 @@ public final class DebugHelper extends GameTask implements DisposableTasks {
 		RenderFlags.PerformanceGraph,
 		RenderFlags.PlayerCarInfo,
 		RenderFlags.MusicVolumes,
+		RenderFlags.CarEngineVolumes,
 		RenderFlags.Rankings,
 		RenderFlags.Completion
 	);
@@ -369,9 +371,10 @@ public final class DebugHelper extends GameTask implements DisposableTasks {
 		ReplayResult last = logic.getLastRecordedInfo();
 		boolean discarded = last != null && !last.is_accepted;
 
+		float xoffset = 5;
 		int coord = y;
-		drawString2X(batch, "CURRENT RANKINGS", 0, coord, scale);
-		drawString2X(batch, "================", 0, coord + Art.DebugFontHeight * scale, scale);
+		drawString2X(batch, "CURRENT RANKINGS", xoffset, coord, scale);
+		drawString2X(batch, "================", xoffset, coord + Art.DebugFontHeight * scale, scale);
 		coord += 2 * Art.DebugFontHeight * scale;
 
 		String text;
@@ -395,7 +398,7 @@ public final class DebugHelper extends GameTask implements DisposableTasks {
 			}
 
 			text = rankString(rank) + (isNextTarget(replay) ? "<" : " ") + " " + replay.getUserId() + " " + replay.getSecondsStr();
-			drawString2X(batch, text, 0, coord, scale);
+			drawString2X(batch, text, xoffset, coord, scale);
 
 			batchColorEnd(batch);
 
@@ -409,7 +412,7 @@ public final class DebugHelper extends GameTask implements DisposableTasks {
 			batchColorStart(batch, 1, 0, 0);
 
 			text = rankString(lapManager.getReplays().size + 1) + "  " + info.getUserId() + " " + info.getSecondsStr();
-			drawString2X(batch, text, 0, coord, scale);
+			drawString2X(batch, text, xoffset, coord, scale);
 			batchColorEnd(batch);
 		}
 	}
@@ -421,7 +424,7 @@ public final class DebugHelper extends GameTask implements DisposableTasks {
 		//
 
 		float scale = 1;
-		float xoffset = 150 * scale;
+		float xoffset = 130 * scale;
 		int coord = y;
 		for (int i = 0; i < ReplayManager.MaxReplays + 1; i++) {
 			ranks.get(i).reset();
