@@ -250,10 +250,14 @@ public final class DebugHelper extends GameTask implements DisposableTasks {
 	protected void onTick () {
 		if (isEnabled()) {
 			handleInput();
-			stats.update();
-			for (DebugRenderable r : renderables) {
-				r.tick();
-			}
+		}
+	}
+
+	@Override
+	protected void onTickCompleted () {
+		stats.update();
+		for (DebugRenderable r : renderables) {
+			r.tick();
 		}
 	}
 
@@ -504,8 +508,8 @@ public final class DebugHelper extends GameTask implements DisposableTasks {
 
 	private void renderFpsStats (SpriteBatch batch, int y) {
 		String fps = String.format("%d", Gdx.graphics.getFramesPerSecond());
-		String phy = String.format("%.02f", stats.meanPhysics.getMean());
-		String gfx = String.format("%.02f", stats.meanRender.getMean());
+		String phy = String.format("%.04f", stats.meanPhysics.getMean());
+		String gfx = String.format("%.04f", stats.meanRender.getMean());
 		String ticks = String.format("%.02f", stats.meanTickCount.getMean());
 		String text = "fps: " + fps + ", phy: " + phy + ", gfx: " + gfx + ", ticks: " + ticks;
 		SpriteBatchUtils.drawString(batch, text, ScaleUtils.PlayWidth - text.length() * Art.DebugFontWidth, y);
