@@ -27,6 +27,10 @@ public final class Storage {
 		Gdx.files.external(Storage.ConfigRoot).mkdirs();
 		Gdx.files.external(Storage.DataRoot).mkdirs();
 		Gdx.files.external(Storage.ReplaysRoot).mkdirs();
+
+		Gdx.app.log("Storage", "Config root at " + Gdx.files.external(Storage.ConfigRoot));
+		Gdx.app.log("Storage", "Data root at " + Gdx.files.external(Storage.DataRoot));
+		Gdx.app.log("Storage", "Replays root at " + Gdx.files.external(Storage.ReplaysRoot));
 	}
 
 	private Storage () {
