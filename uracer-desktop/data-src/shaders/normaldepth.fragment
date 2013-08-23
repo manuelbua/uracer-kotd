@@ -18,7 +18,7 @@ vec2 encode_depth(vec3 position){
 	float depth = (length(position)-near)/far;
 
 	depth *= inv_depth_scale;
-	depth = clamp(depth, 0, 1);
+	depth = clamp(depth, 0.0, 1.0);
 
 	depth = depth*255.0*255.0;
 	return vec2(
@@ -36,7 +36,7 @@ void main(void){
 	vec3 normal = normalize(v_normal);
 
 	if(!gl_FrontFacing) {
-		normal *= -1;
+		normal *= -1.0;
 	}
 
 	vec3 position = (view * vec4(v_position, 1.0)).xyz;
