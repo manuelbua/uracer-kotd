@@ -71,7 +71,7 @@ public final class PlayerTensiveMusic extends SoundEffect {
 	private PlayerLapCompletionMonitorEvent.Listener playerCompletionListener = new PlayerLapCompletionMonitorEvent.Listener() {
 		@Override
 		public void handle (Object source, Type type, Order order) {
-			// start();
+			start();
 		}
 	};
 
@@ -188,6 +188,11 @@ public final class PlayerTensiveMusic extends SoundEffect {
 			float alpha_inc_next = 0.025f;
 			float alpha_dec = 0.02f;
 
+			// if (progressData.hasTarget) {
+			// Gdx.app.log("PlayerTensiveMusic",
+			// "pd=" + progressData.playerDistance.get() + ", td=" + progressData.targetDistance.get());
+			// }
+
 			if (!progressData.isWarmUp && progressData.hasTarget && !progressData.targetArrived) {
 
 				// slow down interpolation speed, but bring it up when slowing down time
@@ -211,6 +216,7 @@ public final class PlayerTensiveMusic extends SoundEffect {
 					tgt_vol = 1 - MathUtils.clamp(-to_target, 0, 1);
 					fMusicIndex = tgt_vol * musicIndexLimit;
 					musicIndex = (int)fMusicIndex;
+					// Gdx.app.log("PlayerTensiveMusic", "to_target=" + to_target + ", tgt_vol=" + tgt_vol + ", midx=" + musicIndex);
 					// Gdx.app.log("PlayerTensiveMusic", "to_target=" + to_target + ", tgt_vol=" + tgt_vol + ", midx=" + musicIndex);
 					// Gdx.app.log("PlayerTensiveMusic", "fmusidx=" + fMusicIndex + ", limit=" + musicIndexLimit);
 				}
