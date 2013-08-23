@@ -68,7 +68,7 @@ public final class PlayerTensiveMusic extends SoundEffect {
 	private PlayerLapCompletionMonitorEvent.Listener playerCompletionListener = new PlayerLapCompletionMonitorEvent.Listener() {
 		@Override
 		public void handle (Object source, Type type, Order order) {
-			start();
+			// start();
 		}
 	};
 

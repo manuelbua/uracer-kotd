@@ -10,12 +10,14 @@ import com.badlogic.gdx.math.Vector3;
 import com.badlogic.gdx.math.collision.BoundingBox;
 import com.bitfire.uracer.entities.EntityRenderState;
 import com.bitfire.uracer.game.actors.Car;
+import com.bitfire.uracer.game.player.PlayerCar;
 import com.bitfire.uracer.u3d.materials.Material;
 import com.bitfire.uracer.u3d.still.StillModel;
 import com.bitfire.uracer.u3d.still.StillSubMesh;
 import com.bitfire.uracer.utils.Convert;
 import com.bitfire.uracer.utils.InterpolatedFloat;
 import com.bitfire.uracer.utils.ScaleUtils;
+import com.bitfire.uracer.utils.URacerRuntimeException;
 
 public class CarStillModel extends OrthographicAlignedStillModel {
 	public Mesh body, leftTire, rightTire;
@@ -37,8 +39,16 @@ public class CarStillModel extends OrthographicAlignedStillModel {
 	private Vector3 tmpvec = new Vector3();
 	private Car car = null;
 
-	public CarStillModel (StillModel aModel, Material material) {
+	private InterpolatedFloat sideAngle = new InterpolatedFloat();
+	private InterpolatedFloat pitchAngle = new InterpolatedFloat();
+
+	public CarStillModel (StillModel aModel, Material material, Car car) {
 		super(aModel, material);
+		this.car = car;
+		if (car == null) {
+			throw new URacerRuntimeException("The specified Car doesn't exists!");
+		}
+
 		setScale(1);
 
 		smBody = model.getSubMesh("car_01");
@@ -61,10 +71,6 @@ public class CarStillModel extends OrthographicAlignedStillModel {
 		boundingBox.set(localBoundingBox);
 	}
 
-	public void setCar (Car car) {
-		this.car = car;
-	}
-
 	public void transform (PerspectiveCamera camPersp, OrthographicCamera camOrtho) {
 		// set position to car position
 		EntityRenderState state = car.state();
@@ -77,8 +83,39 @@ public class CarStillModel extends OrthographicAlignedStillModel {
 			mtxbody.idt();
 			mtxbody.translate(pos);
 			mtxbody.rotate(0, 0, 1, state.orientation);
-			// mtxbody.rotate(1, 0, 0, 50);
-			// mtxbody.rotate(0, 1, 0, -10);
+
+			// dbg
+			if (car instanceof PlayerCar) {
+				float sideangle_amount = 0;
+				float pitchangle_amount = 0;
+
+				PlayerCar player = (PlayerCar)car;
+				// if (player.driftState.isDrifting)
+				{
+					float sf = player.carState.currSpeedFactor;
+					// Gdx.app.log("", "" + sf);
+
+					sideangle_amount = 80 * (player.getSimulator().lateralForceFront.y * player.getCarModel().inv_max_grip);
+					pitchangle_amount = 10 * Math.abs(player.getSimulator().lateralForceFront.y * player.getCarModel().inv_max_grip);
+
+					sideangle_amount *= sf;
+					pitchangle_amount *= sf;
+					sideangle_amount = MathUtils.clamp(sideangle_amount, -20, 20);
+
+					float alpha = sf > 0.3f ? 0.02f : 0.1f;
+					sideAngle.set(sideangle_amount, alpha);
+					// pitchAngle.set(pitchangle_amount, alpha);
+				}
+				// else {
+				// sideAngle.set(sideangle_amount, 0.05f);
+				// pitchAngle.set(pitchangle_amount, 0.05f);
+				// }
+
+				mtxbody.rotate(0, 1, 0, -sideAngle.get());
+				mtxbody.rotate(1, 0, 0, -pitchAngle.get());
+			}
+			// dbg
+
 			mtxbody.scale(this.scaleAxis.x * s, this.scaleAxis.y * s, this.scaleAxis.z * s);
 
 			// comb = (proj * view) * model (fast mul)
