@@ -14,6 +14,7 @@ import com.bitfire.uracer.configuration.Storage;
 import com.bitfire.uracer.configuration.UserProfile;
 import com.bitfire.uracer.game.GameplaySettings;
 import com.bitfire.uracer.game.actors.GhostCar;
+import com.bitfire.uracer.game.debug.DebugCarEngineVolumes;
 import com.bitfire.uracer.game.debug.DebugHelper;
 import com.bitfire.uracer.game.debug.DebugHelper.RenderFlags;
 import com.bitfire.uracer.game.debug.DebugMusicVolumes;
@@ -22,6 +23,7 @@ import com.bitfire.uracer.game.debug.player.DebugPlayer;
 import com.bitfire.uracer.game.logic.gametasks.messager.Message;
 import com.bitfire.uracer.game.logic.gametasks.messager.Message.Position;
 import com.bitfire.uracer.game.logic.gametasks.messager.Message.Size;
+import com.bitfire.uracer.game.logic.gametasks.sounds.effects.PlayerEngineSoundEffect;
 import com.bitfire.uracer.game.logic.gametasks.sounds.effects.PlayerTensiveMusic;
 import com.bitfire.uracer.game.logic.replaying.Replay;
 import com.bitfire.uracer.game.logic.replaying.ReplayInfo;
@@ -63,6 +65,8 @@ public class SinglePlayer extends BaseLogic {
 			debug.add(new DebugPlayer(RenderFlags.PlayerCarInfo, gameTasksManager));
 			debug.add(new DebugMusicVolumes(RenderFlags.MusicVolumes, (PlayerTensiveMusic)gameTasksManager.sound
 				.get(PlayerTensiveMusic.class)));
+			debug.add(new DebugCarEngineVolumes(RenderFlags.CarEngineVolumes, ((PlayerEngineSoundEffect)gameTasksManager.sound
+				.get(PlayerEngineSoundEffect.class)).getSoundSet()));
 			Gdx.app.debug("Game", "Debug helper initialized");
 		}
 	}

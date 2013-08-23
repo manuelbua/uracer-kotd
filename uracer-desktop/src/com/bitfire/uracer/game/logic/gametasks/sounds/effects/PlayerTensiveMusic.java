@@ -11,7 +11,6 @@ import com.bitfire.uracer.game.events.PlayerLapCompletionMonitorEvent.Type;
 import com.bitfire.uracer.game.logic.gametasks.SoundManager;
 import com.bitfire.uracer.game.logic.gametasks.sounds.SoundEffect;
 import com.bitfire.uracer.game.logic.helpers.TrackProgressData;
-import com.bitfire.uracer.game.logic.replaying.LapManager;
 import com.bitfire.uracer.game.player.PlayerCar;
 import com.bitfire.uracer.resources.Sounds;
 import com.bitfire.uracer.utils.AMath;
@@ -31,16 +30,14 @@ public final class PlayerTensiveMusic extends SoundEffect {
 
 	private float[] lastVolume = new float[NumTracks];
 	private TrackProgressData progressData;
-	private LapManager lapManager;
 	private InterpolatedFloat[] volTrack = new InterpolatedFloat[NumTracks];
 	private float[] volOut = new float[NumTracks];
 	private int musicIndex, musicIndexLimit;
 	private float fMusicIndex;
 	private float[] trackVolumes = new float[NumTracks];
 
-	public PlayerTensiveMusic (TrackProgressData progressData, LapManager lapManager) {
+	public PlayerTensiveMusic (TrackProgressData progressData) {
 		this.progressData = progressData;
-		this.lapManager = lapManager;
 
 		musicIndex = 0;
 		fMusicIndex = 0;
