@@ -1,6 +1,7 @@
 
 package com.bitfire.uracer.game.world.models;
 
+import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.Mesh;
 import com.badlogic.gdx.graphics.OrthographicCamera;
 import com.badlogic.gdx.graphics.PerspectiveCamera;
@@ -88,7 +89,7 @@ public class CarStillModel extends OrthographicAlignedStillModel {
 				float ds = MathUtils.clamp(player.driftState.driftStrength - 0.25f, 0, 1) * 2;
 				// float ds = player.getSimulator().lateralForceFront.y * player.getCarModel().inv_max_grip;
 
-				sideangle_amount = (100 * sf) * ds * sign;
+				sideangle_amount = (50 * sf) * ds * sign;
 				// sideangle_amount *= sf;
 				sideangle_amount = MathUtils.clamp(sideangle_amount, -15, 15);
 
@@ -98,7 +99,7 @@ public class CarStillModel extends OrthographicAlignedStillModel {
 				bodyAngle.set(sideAngle.get(), 1 - sf);
 			}
 
-			// Gdx.app.log("", "" + bodyAngle.get());
+			Gdx.app.log("", "" + bodyAngle.get());
 			wt_body_angle = -bodyAngle.get();
 		}
 		// dbg
