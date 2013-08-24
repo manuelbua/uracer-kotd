@@ -69,6 +69,8 @@ echo -n "Cooking track meshes..."
 rm -rf "${DEST}/track/"
 mkdir -p "${DEST}/track/"
 cp track/wall.png ${DEST}/track >/dev/null
+cp track/wall_2.png ${DEST}/track >/dev/null
+cp track/wall_3.png ${DEST}/track >/dev/null
 echo "done!"
 
 # cars graphics
