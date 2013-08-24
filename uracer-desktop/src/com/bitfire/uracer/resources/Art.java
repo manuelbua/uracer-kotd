@@ -178,7 +178,7 @@ public final class Art {
 	//
 
 	private static void loadMeshesGraphics (boolean mipmap) {
-		meshTrackWall = newTexture("data/track/wall.png", true);
+		meshTrackWall = newTexture("data/track/wall.png", mipmap);
 		meshTrackWall.setWrap(TextureWrap.ClampToEdge, TextureWrap.ClampToEdge);
 
 		meshMissing = newTexture("data/3d/textures/missing-mesh.png", mipmap);
@@ -187,8 +187,10 @@ public final class Art {
 
 		// car textures
 		meshCar = new ObjectMap<String, Texture>();
-		meshCar.put("car", newTexture("data/3d/textures/car.png", true));
-		meshCar.put("car_yellow", newTexture("data/3d/textures/car_yellow.png", true));
+		meshCar.put("car", newTexture("data/3d/textures/car.png", mipmap));
+		meshCar.put("car_yellow", newTexture("data/3d/textures/car_yellow.png", mipmap));
+		meshCar.get("car").setFilter(TextureFilter.Linear, TextureFilter.Linear);
+		meshCar.get("car_yellow").setFilter(TextureFilter.Linear, TextureFilter.Linear);
 
 		// trees
 		meshTreeTrunk = newTexture("data/3d/textures/trunk_6_col.png", mipmap);
