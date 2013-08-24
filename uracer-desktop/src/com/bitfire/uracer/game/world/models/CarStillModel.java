@@ -40,6 +40,7 @@ public class CarStillModel extends OrthographicAlignedStillModel {
 	private Car car = null;
 
 	private InterpolatedFloat sideAngle = new InterpolatedFloat();
+	private InterpolatedFloat bodyAngle = new InterpolatedFloat();
 
 	public CarStillModel (StillModel aModel, Material material, Car car) {
 		super(aModel, material);
@@ -75,6 +76,34 @@ public class CarStillModel extends OrthographicAlignedStillModel {
 		EntityRenderState state = car.state();
 		float s = 1;
 
+		// dbg - weight transfer *simulation*
+		float wt_body_angle = 0;
+		if (car instanceof PlayerCar) {
+			float sideangle_amount = 0;
+
+			PlayerCar player = (PlayerCar)car;
+			{
+				float sign = Math.signum(player.getSimulator().lateralForceFront.y);
+				float sf = player.carState.currSpeedFactor;
+				float ds = MathUtils.clamp(player.driftState.driftStrength - 0.25f, 0, 1) * 2;
+				// float ds = player.getSimulator().lateralForceFront.y * player.getCarModel().inv_max_grip;
+
+				sideangle_amount = (100 * sf) * ds * sign;
+				// sideangle_amount *= sf;
+				sideangle_amount = MathUtils.clamp(sideangle_amount, -15, 15);
+
+				// float alpha = sf > 0.3f ? 0.05f : 0.1f;
+				float alpha = 0.05f;
+				sideAngle.set(sideangle_amount, alpha);
+				bodyAngle.set(sideAngle.get(), 1 - sf);
+			}
+
+			// Gdx.app.log("", "" + bodyAngle.get());
+			wt_body_angle = -bodyAngle.get();
+		}
+		// dbg
+
+		// wt_body_angle = 10;
 		// body
 		{
 			Vector3 pos = world2Dto3D(camPersp, camOrtho, state.position.x, state.position.y);
@@ -82,30 +111,7 @@ public class CarStillModel extends OrthographicAlignedStillModel {
 			mtxbody.idt();
 			mtxbody.translate(pos);
 			mtxbody.rotate(0, 0, 1, state.orientation);
-
-			// dbg
-			if (car instanceof PlayerCar) {
-				float sideangle_amount = 0;
-
-				PlayerCar player = (PlayerCar)car;
-				{
-					float sign = Math.signum(player.getSimulator().lateralForceFront.y);
-					float sf = player.carState.currSpeedFactor;
-					// Gdx.app.log("", "" + sf);
-
-					sideangle_amount = 80 * player.driftState.driftStrength * sign;
-
-					sideangle_amount *= sf;
-					sideangle_amount = MathUtils.clamp(sideangle_amount, -20, 20);
-
-					float alpha = sf > 0.3f ? 0.02f : 0.1f;
-					sideAngle.set(sideangle_amount, alpha);
-				}
-
-				mtxbody.rotate(0, 1, 0, -sideAngle.get());
-			}
-			// dbg
-
+			mtxbody.rotate(0, 1, 0, wt_body_angle);
 			mtxbody.scale(this.scaleAxis.x * s, this.scaleAxis.y * s, this.scaleAxis.z * s);
 
 			// comb = (proj * view) * model (fast mul)
@@ -114,34 +120,35 @@ public class CarStillModel extends OrthographicAlignedStillModel {
 
 		tireAngle.set(MathUtils.radDeg * car.getSteerAngleRads(), 0.1f);
 
+		float offx = Convert.mt2px(0.97f) * s;
+		float offy = Convert.mt2px(1.23f) * s;
+		float cos = MathUtils.cosDeg(90 + state.orientation);
+		float sin = MathUtils.sinDeg(90 + state.orientation);
+
 		// left tire
 		{
-			float offx = Convert.mt2px(0.97f) * s;
-			float offy = Convert.mt2px(1.23f) * s;
-			float cos = MathUtils.cosDeg(90 + state.orientation);
-			float sin = MathUtils.sinDeg(90 + state.orientation);
 			float dx = offy * cos - offx * sin;
 			float dy = offy * sin + offx * cos;
 			Vector3 pos = world2Dto3D(camPersp, camOrtho, state.position.x + dx, state.position.y + dy);
 			mtxltire.set(camPersp.combined);
 			mtxltire.translate(pos);
-			mtxltire.rotate(0, 0, 1, state.orientation - tireAngle.get());
+			mtxltire.rotate(0, 0, 1, state.orientation);
+			mtxltire.rotate(0, 1, 0, wt_body_angle);
+			mtxltire.rotate(0, 0, 1, -tireAngle.get());
 			mtxltire.scale(this.scaleAxis.x * s, this.scaleAxis.y * s, this.scaleAxis.z * s);
 			mtxltiretransformed.set(mtxltire);
 		}
 
 		// right tire
 		{
-			float offx = -Convert.mt2px(0.97f) * s;
-			float offy = Convert.mt2px(1.23f) * s;
-			float cos = MathUtils.cosDeg(90 + state.orientation);
-			float sin = MathUtils.sinDeg(90 + state.orientation);
-			float dx = offy * cos - offx * sin;
-			float dy = offy * sin + offx * cos;
+			float dx = offy * cos + offx * sin;
+			float dy = offy * sin - offx * cos;
 			Vector3 pos = world2Dto3D(camPersp, camOrtho, state.position.x + dx, state.position.y + dy);
 			mtxrtire.set(camPersp.combined);
 			mtxrtire.translate(pos);
-			mtxrtire.rotate(0, 0, 1, state.orientation - tireAngle.get());
+			mtxrtire.rotate(0, 0, 1, state.orientation);
+			mtxrtire.rotate(0, 1, 0, wt_body_angle);
+			mtxrtire.rotate(0, 0, 1, -tireAngle.get());
 			mtxrtire.scale(this.scaleAxis.x * s, this.scaleAxis.y * s, this.scaleAxis.z * s);
 			mtxrtiretransformed.set(mtxrtire);
 		}
