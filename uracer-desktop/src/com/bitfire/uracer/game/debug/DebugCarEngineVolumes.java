@@ -47,7 +47,7 @@ public class DebugCarEngineVolumes extends DebugRenderable {
 	}
 
 	private boolean isActive () {
-		return hasPlayer;
+		return hasPlayer && soundset != null;
 	}
 
 	@Override

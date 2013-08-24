@@ -48,7 +48,7 @@ public class DebugMusicVolumes extends DebugRenderable {
 	}
 
 	private boolean isActive () {
-		return hasPlayer;
+		return hasPlayer && tensiveMusic != null;
 	}
 
 	@Override
