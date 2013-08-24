@@ -65,8 +65,9 @@ public class SinglePlayer extends BaseLogic {
 			debug.add(new DebugPlayer(RenderFlags.PlayerCarInfo, gameTasksManager));
 			debug.add(new DebugMusicVolumes(RenderFlags.MusicVolumes, (PlayerTensiveMusic)gameTasksManager.sound
 				.get(PlayerTensiveMusic.class)));
-			debug.add(new DebugCarEngineVolumes(RenderFlags.CarEngineVolumes, ((PlayerEngineSoundEffect)gameTasksManager.sound
-				.get(PlayerEngineSoundEffect.class)).getSoundSet()));
+
+			PlayerEngineSoundEffect se = ((PlayerEngineSoundEffect)gameTasksManager.sound.get(PlayerEngineSoundEffect.class));
+			if (se != null) debug.add(new DebugCarEngineVolumes(RenderFlags.CarEngineVolumes, se.getSoundSet()));
 			Gdx.app.debug("Game", "Debug helper initialized");
 		}
 	}
