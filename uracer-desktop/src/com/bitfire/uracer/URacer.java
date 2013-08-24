@@ -140,7 +140,7 @@ public class URacer implements ApplicationListener {
 		Gdx.app.log("URacer", "Java vendor is " + System.getProperty("java.vendor"));
 		Gdx.app.log("URacer", "Java version is " + System.getProperty("java.version"));
 		Gdx.app.log("URacer", "Using real frametime: " + (useRealFrametime ? "YES" : "NO"));
-		Gdx.app.log("URacer", "Physics at " + timeStepHz + "Hz (dT=" + String.format("%.02f", Config.Physics.Dt) + ")");
+		Gdx.app.log("URacer", "Physics at " + timeStepHz + "Hz (dT=" + String.format("%.05f", Config.Physics.Dt) + ")");
 
 		Storage.init();
 		boot.store();
