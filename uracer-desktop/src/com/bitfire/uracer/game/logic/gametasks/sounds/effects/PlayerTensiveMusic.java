@@ -185,11 +185,6 @@ public final class PlayerTensiveMusic extends SoundEffect {
 			float alpha_inc_next = 0.025f;
 			float alpha_dec = 0.02f;
 
-			// if (progressData.hasTarget) {
-			// Gdx.app.log("PlayerTensiveMusic",
-			// "pd=" + progressData.playerDistance.get() + ", td=" + progressData.targetDistance.get());
-			// }
-
 			if (!progressData.isWarmUp && progressData.hasTarget && !progressData.targetArrived) {
 
 				// slow down interpolation speed, but bring it up when slowing down time
@@ -219,7 +214,13 @@ public final class PlayerTensiveMusic extends SoundEffect {
 				}
 			}
 
-			// computeTrackVolumes();
+			// String targetString = "";
+			// if (progressData.hasTarget) {
+			// targetString = ", td=" + progressData.targetDistance.get();
+			// }
+			//
+			// Gdx.app.log("PlayerTensiveMusic", "mi=" + musicIndex + ", limit=" + musicIndexLimit + ", pd="
+			// + progressData.playerDistance.get() + targetString);
 
 			// update all volume accumulators
 			// float step = (1f - MinVolume) / (float)(NumTracks - 1);

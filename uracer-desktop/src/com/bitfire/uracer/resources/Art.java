@@ -189,8 +189,8 @@ public final class Art {
 		meshCar = new ObjectMap<String, Texture>();
 		meshCar.put("car", newTexture("data/3d/textures/car.png", mipmap));
 		meshCar.put("car_yellow", newTexture("data/3d/textures/car_yellow.png", mipmap));
-		meshCar.get("car").setFilter(TextureFilter.Linear, TextureFilter.Linear);
-		meshCar.get("car_yellow").setFilter(TextureFilter.Linear, TextureFilter.Linear);
+		// meshCar.get("car").setFilter(TextureFilter.Linear, TextureFilter.Linear);
+		// meshCar.get("car_yellow").setFilter(TextureFilter.Linear, TextureFilter.Linear);
 
 		// trees
 		meshTreeTrunk = newTexture("data/3d/textures/trunk_6_col.png", mipmap);

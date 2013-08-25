@@ -18,8 +18,8 @@ import com.bitfire.uracer.game.logic.helpers.TrackProgressData;
 import com.bitfire.uracer.game.player.PlayerCar;
 import com.bitfire.uracer.resources.Art;
 import com.bitfire.uracer.resources.BitmapFontFactory.FontFace;
-import com.bitfire.uracer.utils.AMath;
 import com.bitfire.uracer.utils.ColorUtils;
+import com.bitfire.uracer.utils.InterpolatedFloat;
 import com.bitfire.utils.ShaderLoader;
 
 public class TrackProgress extends Positionable {
@@ -34,6 +34,10 @@ public class TrackProgress extends Positionable {
 	private String customMessage = "";
 	private TrackProgressData data = null;
 	private boolean hasTarget;
+
+	// smooth animation between end-of-track (n meters) and start-of-track (0 meters)
+	private InterpolatedFloat playerProgress = new InterpolatedFloat();
+	private InterpolatedFloat playerToTarget = new InterpolatedFloat();
 
 	public TrackProgress () {
 		lblAdvantage = new HudLabel(FontFace.CurseWhiteBig, "", false);
@@ -78,13 +82,6 @@ public class TrackProgress extends Positionable {
 		} else {
 			if (data.isCurrentLapValid) {
 				customMessage = "";
-				if (hasTarget) {
-					if (target.getTrackState().ghostArrived) {
-						data.playerToTarget = AMath.fixup(data.playerProgressAdv.get() - 1);
-					} else {
-						data.playerToTarget = AMath.fixup(data.playerProgressAdv.get() - data.targetProgress.get());
-					}
-				}
 			} else {
 				customMessage = "Press \"R\"\nto restart";
 			}
@@ -157,7 +154,9 @@ public class TrackProgress extends Positionable {
 			scl += .07f * URacer.Game.getTimeModFactor();
 
 			// player's track progress
-			shProgress.setUniformf("progress", data.playerProgress.get());
+			playerProgress.set(data.playerProgress.get(), 0.125f);
+
+			shProgress.setUniformf("progress", playerProgress.get());
 			sprProgress.setColor(Color.WHITE);
 			sprProgress.setScale(scl);
 			sprProgress.setPosition(position.x - sprProgress.getWidth() / 2, position.y - sprProgress.getHeight() / 2);
@@ -175,7 +174,9 @@ public class TrackProgress extends Positionable {
 
 			// player's advantage/disadvantage
 			if (hasTarget && !data.isWarmUp) {
-				shProgress.setUniformf("progress", Math.abs(data.playerToTarget));
+				playerToTarget.set(Math.abs(data.playerToTarget), 0.125f);
+
+				shProgress.setUniformf("progress", playerToTarget.get());
 				sprAdvantage.setColor(advantageColor);
 				sprAdvantage.setScale(scl * 1.1f);
 				sprAdvantage.setPosition(position.x - sprAdvantage.getWidth() / 2, position.y - sprAdvantage.getHeight() / 2);
