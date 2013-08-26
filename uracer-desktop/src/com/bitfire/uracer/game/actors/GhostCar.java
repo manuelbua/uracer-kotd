@@ -32,7 +32,7 @@ public final class GhostCar extends Car {
 	private BoxedFloat bfAlpha;
 
 	public GhostCar (int id, GameWorld gameWorld, CarPreset.Type presetType) {
-		super(gameWorld, CarType.ReplayCar, InputMode.InputFromReplay, presetType, false);
+		super(gameWorld, null, CarType.ReplayCar, InputMode.InputFromReplay, presetType, false);
 		this.id = id;
 		started = false;
 		replay = new Replay();

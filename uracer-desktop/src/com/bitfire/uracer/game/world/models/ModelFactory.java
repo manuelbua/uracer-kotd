@@ -7,6 +7,7 @@ import java.io.InputStream;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.utils.LongMap;
+import com.bitfire.uracer.game.GameLogic;
 import com.bitfire.uracer.game.actors.Car;
 import com.bitfire.uracer.game.actors.CarPreset;
 import com.bitfire.uracer.resources.Art;
@@ -108,9 +109,9 @@ public final class ModelFactory {
 		return stillModel;
 	}
 
-	public static CarStillModel createCarStillModel (Car car, CarPreset.Type presetType) {
-		CarStillModel stillModel = new CarStillModel(getStillModel("data/3d/models/car-low-01.g3dt"), getMaterial(ModelMesh.Car,
-			Art.meshCar.get(presetType.regionName), presetType.regionName), car);
+	public static CarStillModel createCarStillModel (GameLogic gameLogic, Car car, CarPreset.Type presetType) {
+		CarStillModel stillModel = new CarStillModel(gameLogic, getStillModel("data/3d/models/car-low-01.g3dt"), getMaterial(
+			ModelMesh.Car, Art.meshCar.get(presetType.regionName), presetType.regionName), car);
 		return stillModel;
 	}
 

@@ -30,13 +30,15 @@ public final class CarEvent extends Event<CarEvent.Type, CarEvent.Order, CarEven
 		/** collision data */
 		public Fixture other;
 		public Vector2 impulses;
+		public float frontRatio;
 
 		/** computed forces data */
 		public CarForces forces;
 
-		public void setCollisionData (Fixture other, Vector2 impulses) {
+		public void setCollisionData (Fixture other, Vector2 impulses, float frontRatio) {
 			this.other = other;
 			this.impulses = impulses;
+			this.frontRatio = frontRatio;
 		}
 
 		public void setForces (CarForces forces) {
