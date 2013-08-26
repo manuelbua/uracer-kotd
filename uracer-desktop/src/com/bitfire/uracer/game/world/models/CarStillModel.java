@@ -1,7 +1,6 @@
 
 package com.bitfire.uracer.game.world.models;
 
-import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.Mesh;
 import com.badlogic.gdx.graphics.OrthographicCamera;
 import com.badlogic.gdx.graphics.PerspectiveCamera;
@@ -77,7 +76,7 @@ public class CarStillModel extends OrthographicAlignedStillModel {
 		EntityRenderState state = car.state();
 		float s = 1;
 
-		// dbg - weight transfer *simulation*
+		// weight transfer *simulation*
 		float wt_body_angle = 0;
 		if (car instanceof PlayerCar) {
 			float sideangle_amount = 0;
@@ -97,10 +96,9 @@ public class CarStillModel extends OrthographicAlignedStillModel {
 				bodyAngle.set(sideAngle.get(), 1 - sf);
 			}
 
-			Gdx.app.log("", "" + bodyAngle.get());
+			// Gdx.app.log("", "" + bodyAngle.get());
 			wt_body_angle = -bodyAngle.get();
 		}
-		// dbg
 
 		// wt_body_angle = 10;
 		// body
