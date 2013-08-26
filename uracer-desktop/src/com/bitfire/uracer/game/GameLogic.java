@@ -23,6 +23,8 @@ public interface GameLogic {
 
 	float getCollisionFactor ();
 
+	float getCollisionFrontRatio ();
+
 	GhostCar getNextTarget ();
 
 	void startTimeDilation ();

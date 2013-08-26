@@ -15,6 +15,7 @@ import com.bitfire.uracer.Input.MouseButton;
 import com.bitfire.uracer.URacer;
 import com.bitfire.uracer.configuration.Config;
 import com.bitfire.uracer.game.GameEvents;
+import com.bitfire.uracer.game.GameLogic;
 import com.bitfire.uracer.game.GameplaySettings;
 import com.bitfire.uracer.game.actors.Car;
 import com.bitfire.uracer.game.actors.CarDescriptor;
@@ -51,8 +52,8 @@ public class PlayerCar extends Car {
 	public DriftState driftState = null;
 	public boolean isThrottling = false;
 
-	public PlayerCar (GameWorld gameWorld, CarPreset.Type presetType) {
-		super(gameWorld, CarType.PlayerCar, InputMode.InputFromPlayer, presetType, true);
+	public PlayerCar (GameWorld gameWorld, GameLogic gameLogic, CarPreset.Type presetType) {
+		super(gameWorld, gameLogic, CarType.PlayerCar, InputMode.InputFromPlayer, presetType, true);
 		carInput = new CarInput();
 		impacts = 0;
 
@@ -125,8 +126,8 @@ public class PlayerCar extends Car {
 	}
 
 	@Override
-	public strictfp void onCollide (Fixture other, Vector2 normalImpulses) {
-		super.onCollide(other, normalImpulses);
+	public strictfp void onCollide (Fixture other, Vector2 normalImpulses, float frontRatio) {
+		super.onCollide(other, normalImpulses, frontRatio);
 		if (driftState.isDrifting) {
 			driftState.invalidateByCollision();
 		}

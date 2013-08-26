@@ -1,6 +1,7 @@
 
 package com.bitfire.uracer.game.world.models;
 
+import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.Mesh;
 import com.badlogic.gdx.graphics.OrthographicCamera;
 import com.badlogic.gdx.graphics.PerspectiveCamera;
@@ -9,6 +10,7 @@ import com.badlogic.gdx.math.Matrix4;
 import com.badlogic.gdx.math.Vector3;
 import com.badlogic.gdx.math.collision.BoundingBox;
 import com.bitfire.uracer.entities.EntityRenderState;
+import com.bitfire.uracer.game.GameLogic;
 import com.bitfire.uracer.game.actors.Car;
 import com.bitfire.uracer.game.player.PlayerCar;
 import com.bitfire.uracer.u3d.materials.Material;
@@ -42,8 +44,11 @@ public class CarStillModel extends OrthographicAlignedStillModel {
 	private InterpolatedFloat sideAngle = new InterpolatedFloat();
 	private InterpolatedFloat bodyAngle = new InterpolatedFloat();
 
-	public CarStillModel (StillModel aModel, Material material, Car car) {
+	private GameLogic gameLogic = null;
+
+	public CarStillModel (GameLogic gameLogic, StillModel aModel, Material material, Car car) {
 		super(aModel, material);
+		this.gameLogic = gameLogic;
 		this.car = car;
 		if (car == null) {
 			throw new URacerRuntimeException("The specified Car doesn't exists!");
@@ -83,13 +88,43 @@ public class CarStillModel extends OrthographicAlignedStillModel {
 
 			PlayerCar player = (PlayerCar)car;
 			{
-				float sign = Math.signum(player.getSimulator().lateralForceFront.y);
+
 				float sf = player.carState.currSpeedFactor;
 				float ds = MathUtils.clamp(player.driftState.driftStrength - 0.25f, 0, 1) * 2;
-				// float ds = player.getSimulator().lateralForceFront.y * player.getCarModel().inv_max_grip;
 
+				float sign = Math.signum(player.getSimulator().lateralForceFront.y);
 				sideangle_amount = 80 * sf * ds * sign;
-				sideangle_amount = MathUtils.clamp(sideangle_amount, -20, 20);
+
+				float collisionFactor = 0;
+				if (gameLogic != null) collisionFactor = gameLogic.getCollisionFactor();
+
+				if (collisionFactor > 0) {
+					float front_ratio = gameLogic.getCollisionFrontRatio();
+
+					// if (front_ratio > 0.5f) {
+					// float front = player.getSimulator().lateralForceFront.y * player.getCarModel().inv_max_grip;
+					// sideangle_amount = front_ratio * (200 * front);
+					// } else {
+					// float rear = player.getSimulator().lateralForceRear.y * player.getCarModel().inv_max_grip;
+					// sideangle_amount = -(1 - front_ratio) * (200 * rear);
+					// }
+
+					float front = player.getSimulator().lateralForceFront.y * player.getCarModel().inv_max_grip;
+					float rear = player.getSimulator().lateralForceRear.y * player.getCarModel().inv_max_grip;
+
+					sideangle_amount += front_ratio * (200 * front) + (1 - front_ratio) * (200 * rear);
+
+					Gdx.app.log("", "front_ratio=" + front_ratio);
+
+				} else {
+					// float sign = Math.signum(player.getSimulator().lateralForceFront.y);
+					// sideangle_amount = 80 * sf * ds * sign;
+					// sideangle_amount = MathUtils.clamp(sideangle_amount, -20, 20);
+				}
+
+				float max = 20 + 20 * collisionFactor;
+				sideangle_amount = MathUtils.clamp(sideangle_amount, -max, max);
+				// sideangle_amount = MathUtils.clamp(sideangle_amount, -100, 100);
 
 				float alpha = 0.05f;
 				sideAngle.set(sideangle_amount, alpha);

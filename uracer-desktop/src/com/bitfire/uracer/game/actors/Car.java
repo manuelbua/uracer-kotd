@@ -12,6 +12,7 @@ import com.badlogic.gdx.physics.box2d.FixtureDef;
 import com.badlogic.gdx.physics.box2d.MassData;
 import com.bitfire.uracer.configuration.Config;
 import com.bitfire.uracer.game.GameEvents;
+import com.bitfire.uracer.game.GameLogic;
 import com.bitfire.uracer.game.collisions.CollisionFilters;
 import com.bitfire.uracer.game.events.CarEvent;
 import com.bitfire.uracer.game.events.GameRendererEvent.Order;
@@ -55,7 +56,8 @@ public abstract strictfp class Car extends Box2DEntity {
 	protected CarPreset preset;
 	protected InputMode inputMode = InputMode.NoInput;
 
-	public Car (GameWorld gameWorld, CarType carType, InputMode inputMode, CarPreset.Type presetType, boolean triggerEvents) {
+	public Car (GameWorld gameWorld, GameLogic gameLogic, CarType carType, InputMode inputMode, CarPreset.Type presetType,
+		boolean triggerEvents) {
 		super(gameWorld.getBox2DWorld());
 		this.preset = new CarPreset(presetType);
 		// this.carType = carType;
@@ -65,7 +67,7 @@ public abstract strictfp class Car extends Box2DEntity {
 		this.gameWorld = gameWorld;
 		this.gameTrack = gameWorld.getGameTrack();
 
-		stillModel = ModelFactory.createCarStillModel(this, presetType);
+		stillModel = ModelFactory.createCarStillModel(gameLogic, this, presetType);
 		impacts = 0;
 		this.inputMode = inputMode;
 		carTraveledDistance = 0;
@@ -229,13 +231,13 @@ public abstract strictfp class Car extends Box2DEntity {
 		impacts = 0;
 	}
 
-	public void onCollide (Fixture other, Vector2 normalImpulses) {
+	public void onCollide (Fixture other, Vector2 normalImpulses, float frontRatio) {
 		impacts++;
 
 		// FIXME
 		// see the bug report at https://code.google.com/p/libgdx/issues/detail?id=1398
 		if (triggerEvents) {
-			GameEvents.playerCar.data.setCollisionData(other, normalImpulses);
+			GameEvents.playerCar.data.setCollisionData(other, normalImpulses, frontRatio);
 			GameEvents.playerCar.trigger(this, CarEvent.Type.onCollision);
 		}
 	}

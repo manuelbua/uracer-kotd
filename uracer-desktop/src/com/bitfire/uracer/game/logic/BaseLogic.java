@@ -36,6 +36,9 @@ public abstract class BaseLogic extends CommonLogic {
 	private TimeModulator timeMod = null;
 	private Time dilationTime;
 	private Time outOfTrackTime;
+	private final BoxedFloat collisionFactor = new BoxedFloat(0);
+	private float collisionFrontRatio = 0.5f;
+	private float lastImpactForce = 0;
 
 	public BaseLogic (UserProfile userProfile, GameWorld gameWorld, GameRenderer gameRenderer) {
 		super(userProfile, gameWorld, gameRenderer);
@@ -90,6 +93,11 @@ public abstract class BaseLogic extends CommonLogic {
 	}
 
 	@Override
+	public float getCollisionFrontRatio () {
+		return collisionFrontRatio;
+	}
+
+	@Override
 	public void beforeRender () {
 		// request camera updates from callbacks
 		float zoom = updateCameraZoom(URacer.Game.getTimeModFactor());
@@ -133,9 +141,6 @@ public abstract class BaseLogic extends CommonLogic {
 		return cameraZoom;
 	}
 
-	private final BoxedFloat collisionFactor = new BoxedFloat(0);
-	private float lastImpactForce = 0;
-
 	private TweenCallback collisionFinished = new TweenCallback() {
 		@Override
 		public void onEvent (int type, BaseTween<?> source) {
@@ -159,6 +164,7 @@ public abstract class BaseLogic extends CommonLogic {
 			lastImpactForce = clampedImpactForce;
 
 			GameTweener.stop(collisionFactor);
+			collisionFrontRatio = data.frontRatio;
 			collisionFactor.value = 0;
 
 			final float min = GameplaySettings.CollisionFactorMinDurationMs;
