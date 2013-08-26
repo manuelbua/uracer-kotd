@@ -76,7 +76,7 @@ public class CarStillModel extends OrthographicAlignedStillModel {
 		EntityRenderState state = car.state();
 		float s = 1;
 
-		// dbg - weight transfer *simulation*
+		// weight transfer *simulation*
 		float wt_body_angle = 0;
 		if (car instanceof PlayerCar) {
 			float sideangle_amount = 0;
@@ -88,11 +88,9 @@ public class CarStillModel extends OrthographicAlignedStillModel {
 				float ds = MathUtils.clamp(player.driftState.driftStrength - 0.25f, 0, 1) * 2;
 				// float ds = player.getSimulator().lateralForceFront.y * player.getCarModel().inv_max_grip;
 
-				sideangle_amount = (50 * sf) * ds * sign;
-				// sideangle_amount *= sf;
-				sideangle_amount = MathUtils.clamp(sideangle_amount, -15, 15);
+				sideangle_amount = 80 * sf * ds * sign;
+				sideangle_amount = MathUtils.clamp(sideangle_amount, -20, 20);
 
-				// float alpha = sf > 0.3f ? 0.05f : 0.1f;
 				float alpha = 0.05f;
 				sideAngle.set(sideangle_amount, alpha);
 				bodyAngle.set(sideAngle.get(), 1 - sf);
@@ -101,7 +99,6 @@ public class CarStillModel extends OrthographicAlignedStillModel {
 			// Gdx.app.log("", "" + bodyAngle.get());
 			wt_body_angle = -bodyAngle.get();
 		}
-		// dbg
 
 		// wt_body_angle = 10;
 		// body
