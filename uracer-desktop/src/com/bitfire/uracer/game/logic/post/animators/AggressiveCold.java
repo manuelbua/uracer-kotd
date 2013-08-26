@@ -120,6 +120,10 @@ public final class AggressiveCold implements PostProcessingAnimator {
 	public void reset () {
 		speed.reset(0, true);
 
+		//
+		// reset plain effects
+		//
+
 		if (ssao != null) {
 			ssao.setOcclusionThresholds(0.3f, 0.1f);
 			ssao.setRadius(0.001f, nightMode ? 0.08f : 0.12f);
@@ -163,12 +167,6 @@ public final class AggressiveCold implements PostProcessingAnimator {
 
 			vignette.setLutIndexOffset(0);
 			vignette.setEnabled(true);
-
-			// terminate pending, unfinished alert, if any
-			if (alertAmount.value > 0) {
-				alertBegan = true;
-				alertEnds(Config.Graphics.DefaultResetFadeMilliseconds);
-			}
 		}
 
 		if (zoom != null && hasPlayer) {
@@ -196,6 +194,16 @@ public final class AggressiveCold implements PostProcessingAnimator {
 			float dist = 0.25f;
 			curvature.setDistortion(dist);
 			curvature.setZoom(1 - (dist / 2));
+		}
+
+		//
+		// reset composed effects
+		//
+
+		// terminate pending, unfinished alert, if any
+		if (alertAmount.value > 0) {
+			alertBegan = true;
+			alertEnds(Config.Graphics.DefaultResetFadeMilliseconds);
 		}
 	}
 
