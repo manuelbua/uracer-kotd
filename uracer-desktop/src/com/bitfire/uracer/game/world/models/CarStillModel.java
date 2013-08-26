@@ -88,9 +88,9 @@ public class CarStillModel extends OrthographicAlignedStillModel {
 				float ds = MathUtils.clamp(player.driftState.driftStrength - 0.25f, 0, 1) * 2;
 				// float ds = player.getSimulator().lateralForceFront.y * player.getCarModel().inv_max_grip;
 
-				sideangle_amount = (50 * sf) * ds * sign;
+				sideangle_amount = (80 * sf) * ds * sign;
 				// sideangle_amount *= sf;
-				sideangle_amount = MathUtils.clamp(sideangle_amount, -15, 15);
+				sideangle_amount = MathUtils.clamp(sideangle_amount, -50, 50);
 
 				// float alpha = sf > 0.3f ? 0.05f : 0.1f;
 				float alpha = 0.05f;
