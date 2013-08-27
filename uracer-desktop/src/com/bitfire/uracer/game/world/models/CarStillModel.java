@@ -109,11 +109,8 @@ public class CarStillModel extends OrthographicAlignedStillModel {
 					sideangle_amount += front_ratio * (200 * front) + (1 - front_ratio) * (200 * rear);
 				}
 
-				// sideangle_amount = 2000 * ds * sign ;
-
 				float max = 20;
 				sideangle_amount = MathUtils.clamp(sideangle_amount, -max, max);
-				// sideangle_amount = MathUtils.clamp(sideangle_amount, -100, 100);
 
 				float alpha = 0.05f;
 				sideAngle.set(sideangle_amount, alpha);
@@ -124,7 +121,6 @@ public class CarStillModel extends OrthographicAlignedStillModel {
 			wt_body_angle = bodyAngle.get();
 		}
 
-		// wt_body_angle = 10;
 		// body
 		{
 			Vector3 pos = world2Dto3D(camPersp, camOrtho, state.position.x, state.position.y);
