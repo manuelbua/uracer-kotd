@@ -88,41 +88,30 @@ public class CarStillModel extends OrthographicAlignedStillModel {
 
 			PlayerCar player = (PlayerCar)car;
 			{
-
-				float sf = player.carState.currSpeedFactor;
-				float ds = MathUtils.clamp(player.driftState.driftStrength - 0.25f, 0, 1) * 2;
-
-				float sign = Math.signum(player.getSimulator().lateralForceFront.y);
-				sideangle_amount = 80 * sf * ds * sign;
-
+				float max_strength = 0.75f;
+				float cut_off = 0.20f;
 				float collisionFactor = 0;
+				float sf = player.carState.currSpeedFactor;
+				float ds = MathUtils.clamp(player.driftState.driftStrength - cut_off, 0, 1) / -(max_strength - cut_off);
+				float sign = Math.signum(player.getSimulator().lateralForceFront.y);
+
+				float front = -player.getSimulator().lateralForceFront.y * player.getCarModel().inv_max_grip;
+				float rear = -player.getSimulator().lateralForceRear.y * player.getCarModel().inv_max_grip;
+
+				// sideangle_amount = 80 * sf * ds * sign;
+				float amount = MathUtils.clamp((front + rear) * 0.5f, -1, 1) / 0.75f;
+				sideangle_amount = (80 * Math.abs(amount)) * sf * amount;
+				// Gdx.app.log("", "" + amount);
+
 				if (gameLogic != null) collisionFactor = gameLogic.getCollisionFactor();
-
-				if (collisionFactor > 0) {
+				if (collisionFactor * 0.5f > 0) {
 					float front_ratio = gameLogic.getCollisionFrontRatio();
-
-					// if (front_ratio > 0.5f) {
-					// float front = player.getSimulator().lateralForceFront.y * player.getCarModel().inv_max_grip;
-					// sideangle_amount = front_ratio * (200 * front);
-					// } else {
-					// float rear = player.getSimulator().lateralForceRear.y * player.getCarModel().inv_max_grip;
-					// sideangle_amount = -(1 - front_ratio) * (200 * rear);
-					// }
-
-					float front = player.getSimulator().lateralForceFront.y * player.getCarModel().inv_max_grip;
-					float rear = player.getSimulator().lateralForceRear.y * player.getCarModel().inv_max_grip;
-
 					sideangle_amount += front_ratio * (200 * front) + (1 - front_ratio) * (200 * rear);
-
-					Gdx.app.log("", "front_ratio=" + front_ratio);
-
-				} else {
-					// float sign = Math.signum(player.getSimulator().lateralForceFront.y);
-					// sideangle_amount = 80 * sf * ds * sign;
-					// sideangle_amount = MathUtils.clamp(sideangle_amount, -20, 20);
 				}
 
-				float max = 20 + 20 * collisionFactor;
+				// sideangle_amount = 2000 * ds * sign ;
+
+				float max = 20;
 				sideangle_amount = MathUtils.clamp(sideangle_amount, -max, max);
 				// sideangle_amount = MathUtils.clamp(sideangle_amount, -100, 100);
 
@@ -131,8 +120,8 @@ public class CarStillModel extends OrthographicAlignedStillModel {
 				bodyAngle.set(sideAngle.get(), 1 - sf);
 			}
 
-			// Gdx.app.log("", "" + bodyAngle.get());
-			wt_body_angle = -bodyAngle.get();
+			Gdx.app.log("", "" + bodyAngle.get());
+			wt_body_angle = bodyAngle.get();
 		}
 
 		// wt_body_angle = 10;
