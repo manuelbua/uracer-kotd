@@ -87,17 +87,10 @@ public class CarStillModel extends OrthographicAlignedStillModel {
 
 			PlayerCar player = (PlayerCar)car;
 			{
-				float max_strength = 0.75f;
-				float cut_off = 0.20f;
 				float collisionFactor = 0;
 				float sf = player.carState.currSpeedFactor;
-				float ds = MathUtils.clamp(player.driftState.driftStrength - cut_off, 0, 1) / -(max_strength - cut_off);
-				float sign = Math.signum(player.getSimulator().lateralForceFront.y);
-
 				float front = -player.getSimulator().lateralForceFront.y * player.getCarModel().inv_max_grip;
 				float rear = -player.getSimulator().lateralForceRear.y * player.getCarModel().inv_max_grip;
-
-				// sideangle_amount = 80 * sf * ds * sign;
 				float amount = MathUtils.clamp((front + rear) * 0.5f, -1, 1) / 0.75f;
 				sideangle_amount = (80 * Math.abs(amount)) * sf * amount;
 				// Gdx.app.log("", "" + amount);
