@@ -46,7 +46,6 @@ public final class Replay implements Disposable, Comparable<Replay> {
 			throw new NullPointerException();
 		}
 
-		// compare up to the 3rd decimal
 		int thisTicks = info.getTicks();
 		int otherTicks = o.info.getTicks();
 
