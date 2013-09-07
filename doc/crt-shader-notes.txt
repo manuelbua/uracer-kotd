@@ -1,0 +1,119 @@
+// shadertoy prototype
+
+vec3 scanline(vec2 coord, vec3 screen)
+{
+	screen.rgb -= sin((coord.y + (iGlobalTime * 29.0))) * 0.02;
+	return screen;
+}
+
+vec2 crt(vec2 coord, float bend)
+{
+	// put in symmetrical coords
+	coord = (coord - 0.5) * 2.0;
+
+	coord *= 1.1;
+
+	// deform coords
+	coord.x *= 1.0 + pow((abs(coord.y) / bend), 2.0);
+	coord.y *= 1.0 + pow((abs(coord.x) / bend), 2.0);
+
+	// transform back to 0.0 - 1.0 space
+	coord  = (coord / 2.0) + 0.5;
+
+	return coord;
+}
+
+vec3 sampleSplit(sampler2D tex, vec2 coord)
+{
+	vec3 frag;
+	frag.r = texture2D(tex, vec2(coord.x - 0.01 * sin(iGlobalTime), coord.y)).r;
+	frag.g = texture2D(tex, vec2(coord.x                          , coord.y)).g;
+	frag.b = texture2D(tex, vec2(coord.x + 0.01 * sin(iGlobalTime), coord.y)).b;
+	return frag;
+}
+
+vec3 sampleSplitLens(sampler2D tex, vec2 coord)
+{
+	float k = 0.0;
+	float kcube = 0.0;
+	float aspect = iResolution.x / iResolution.y;
+	float r2 = aspect*aspect * (coord.x-0.5) * (coord.x-0.5) + (coord.y-0.5) * (coord.y-0.5);
+	float f = 0.0;
+
+	float scale = 1.05;
+	float scaleFactor = 1.0/scale;
+
+	// Chromatic Dispersion Red/Cyan [0,1]
+	float  chromaticDispersionRC = 0.3;
+
+	// Chromatic Dispersion Blue/Yellow [0,1]
+	float  chromaticDispersionBY = 0.2;
+
+    //index of refraction of each color channel, causing chromatic dispersion
+    vec3 eta = vec3(1.0+chromaticDispersionRC*0.09,
+                    1.0+chromaticDispersionRC*0.06,
+                    1.0+chromaticDispersionRC*0.03);
+
+    vec3 eta2 = vec3(1.0+chromaticDispersionBY*0.06,
+                     1.0+chromaticDispersionBY*0.06,
+                     1.0+chromaticDispersionBY*0.03);
+
+	//only compute the cubic distortion if necessary
+	if( kcube == 0.0){
+		f = 1.0 + r2 * k;
+	}else{
+		f = 1.0 + r2 * (k + kcube * sqrt(r2));
+	};
+
+	// get the right pixel for the current position
+#if 0
+	float x = f*(coord.x-0.5)+0.5;
+	float y = f*(coord.y-0.5)+0.5;
+	vec3 dist = texture2D(tex,vec2(x,y)).rgb;
+	vec3 frag = texture2D(tex,coord).rgb;
+	frag = dist;
+#else
+	vec4 frag;
+
+    // apply CA if necessary
+    if (chromaticDispersionRC == 0.0 && chromaticDispersionBY == 0.0){
+        float x = f*scaleFactor*(coord.x-0.5)+0.5;
+        float y = f*scaleFactor*(coord.y-0.5)+0.5;
+        frag = texture2D(tex,vec2(x,y)).rgba;
+    }else{
+        vec2 rCoords = (f*eta.r*eta2.r)*scaleFactor*(coord.xy-0.5)+0.5;
+        vec2 gCoords = (f*eta.g*eta2.g)*scaleFactor*(coord.xy-0.5)+0.5;
+        vec2 bCoords = (f*eta.b*eta2.b)*scaleFactor*(coord.xy-0.5)+0.5;
+        float x = f*scaleFactor*(coord.x-0.5)+0.5;
+        float y = f*scaleFactor*(coord.y-0.5)+0.5;
+        frag = vec4(
+			texture2D(tex,rCoords).r,
+			texture2D(tex,gCoords).g,
+			texture2D(tex,bCoords).b,
+			texture2D(tex,vec2(x,y)).a
+		);
+   }
+#endif
+
+	return frag.rgb;
+}
+
+void main(void)
+{
+	vec2 uv = gl_FragCoord.xy / iResolution.xy;
+	//uv.y = 1.0 - uv.y; // flip tex
+	vec2 crtCoords = crt(uv, 3.2);
+
+	// shadertoy has tiling textures. wouldn't be needed
+	// if you set up your tex params properly
+	if (crtCoords.x < 0.0 || crtCoords.x > 1.0 || crtCoords.y < 0.0 || crtCoords.y > 1.0)
+		discard;
+
+	// Split the color channels
+	gl_FragColor.rgb = sampleSplitLens(iChannel0, crtCoords);
+
+	// HACK: this bend produces a shitty moire pattern.
+	// Up the bend for the scanline
+	//vec2 screenSpace = crtCoords * iResolution.xy;
+	//gl_FragColor.rgb = scanline(screenSpace, gl_FragColor.rgb);
+}

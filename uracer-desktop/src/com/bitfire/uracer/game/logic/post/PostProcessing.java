@@ -12,6 +12,7 @@ import com.bitfire.postprocessing.effects.CrtMonitor;
 import com.bitfire.postprocessing.effects.Curvature;
 import com.bitfire.postprocessing.effects.Vignette;
 import com.bitfire.postprocessing.effects.Zoomer;
+import com.bitfire.postprocessing.filters.CrtScreen.RgbMode;
 import com.bitfire.postprocessing.filters.RadialBlur;
 import com.bitfire.uracer.URacer;
 import com.bitfire.uracer.configuration.Config;
@@ -108,7 +109,8 @@ public final class PostProcessing {
 
 		if (UserPreferences.bool(Preference.CrtScreen)) {
 			addEffect(Effects.Crt.name,
-				new CrtMonitor(ScaleUtils.PlayWidth, ScaleUtils.PlayHeight, UserPreferences.bool(Preference.EarthCurvature), false));
+				new CrtMonitor(ScaleUtils.PlayWidth, ScaleUtils.PlayHeight, UserPreferences.bool(Preference.EarthCurvature), false,
+					RgbMode.ChromaticAberrations));
 		} else if (UserPreferences.bool(Preference.EarthCurvature)) {
 			addEffect(Effects.Curvature.name, new Curvature());
 		}

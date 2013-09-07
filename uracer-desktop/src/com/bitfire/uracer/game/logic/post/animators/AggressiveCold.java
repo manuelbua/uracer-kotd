@@ -181,7 +181,7 @@ public final class AggressiveCold implements PostProcessingAnimator {
 			startMs = TimeUtils.millis();
 			crt.setTime(0);
 
-			// note, a perfect color offset depends from screen size
+			// note, a perfect color offset depends on screen size
 			crt.setColorOffset(0.0005f);
 			crt.setDistortion(0.125f);
 			crt.setZoom(0.94f);
@@ -260,7 +260,7 @@ public final class AggressiveCold implements PostProcessingAnimator {
 		}
 
 		float cf = collisionFactor;
-		// cf = 0.2f;
+		// cf = 0.8f;
 
 		if (zoom != null) {
 			if (hasPlayer) {
@@ -305,7 +305,6 @@ public final class AggressiveCold implements PostProcessingAnimator {
 			bsat = MathUtils.clamp(bsat, 0, bsat);
 			bloom.setBaseSaturation(sat);
 			bloom.setBloomSaturation(bsat);
-
 		}
 
 		if (vignette != null) {
@@ -345,7 +344,10 @@ public final class AggressiveCold implements PostProcessingAnimator {
 		// cf = 1;
 		if (crt != null) {
 			// modulates color offset by collision factor)
-			crt.setColorOffset(MathUtils.clamp(0.025f * cf, 0, 0.008f));
+			// crt.setColorOffset(MathUtils.clamp(0.025f * cf, 0, 0.008f));
+
+			crt.setChromaticDispersion(-1.4f * cf, -1.4f * cf);
+			// crt.setChromaticDispersion(0f, 0f);
 
 			// zoom+earth curvature
 			dist = AMath.fixup(dist);

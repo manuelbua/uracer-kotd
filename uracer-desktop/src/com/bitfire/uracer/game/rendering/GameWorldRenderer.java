@@ -103,7 +103,7 @@ public final class GameWorldRenderer {
 	private static final float CamPerspPlaneNear = 0.001f;
 	public static final float CamPerspPlaneFar = 240f;
 	public static final float MinCameraZoom = 1f;
-	public static final float MaxCameraZoom = 1.3f;
+	public static final float MaxCameraZoom = 1.5f;
 	public static final float ZoomRange = GameWorldRenderer.MaxCameraZoom - GameWorldRenderer.MinCameraZoom;
 	public static final float ZoomWindow = 0.2f * ZoomRange;
 
