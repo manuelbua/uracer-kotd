@@ -183,8 +183,8 @@ public final class PlayerDriftSoundEffect extends SoundEffect {
 			}
 
 			lastDriftId = driftId;
-			lastVolume = AMath.clamp(lastVolume, 0, 1f);
-			drift.setVolume(driftId, player.driftState.driftStrength * lastVolume * SoundManager.SfxVolumeMul);
+			lastVolume = AMath.clamp(lastVolume, 0, 2f);
+			drift.setVolume(driftId, player.driftState.driftStrength * lastVolume * 1.5f * SoundManager.SfxVolumeMul);
 		}
 	}
 }
