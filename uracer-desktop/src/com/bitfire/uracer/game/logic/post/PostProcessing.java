@@ -108,9 +108,10 @@ public final class PostProcessing {
 		}
 
 		if (UserPreferences.bool(Preference.CrtScreen)) {
-			addEffect(Effects.Crt.name,
-				new CrtMonitor(ScaleUtils.PlayWidth, ScaleUtils.PlayHeight, UserPreferences.bool(Preference.EarthCurvature), false,
-					RgbMode.ChromaticAberrations));
+			CrtMonitor crt = new CrtMonitor(ScaleUtils.PlayWidth, ScaleUtils.PlayHeight,
+				UserPreferences.bool(Preference.EarthCurvature), false, RgbMode.ChromaticAberrations);
+			addEffect(Effects.Crt.name, crt);
+			crt.getCombinePass().setSource2Intensity(1f);
 		} else if (UserPreferences.bool(Preference.EarthCurvature)) {
 			addEffect(Effects.Curvature.name, new Curvature());
 		}
