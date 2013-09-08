@@ -183,6 +183,7 @@ public final class AggressiveCold implements PostProcessingAnimator {
 
 			// note, a perfect color offset depends on screen size
 			crt.setColorOffset(0.0005f);
+			crt.setChromaticDispersion(0.112f, 0.112f);
 			crt.setDistortion(0.125f);
 			crt.setZoom(0.94f);
 
@@ -291,7 +292,13 @@ public final class AggressiveCold implements PostProcessingAnimator {
 			float intensity = 1.4f + 4f * cf + (nightMode ? 4 * cf : 0);
 			bloom.setBloomIntesity(intensity);
 
-			bsat = 1.2f;
+			bsat = 1f;
+			if (vignette != null) {
+				bsat += 0.2f * timeModFactor;
+			} else {
+				bsat += 0.2f;
+			}
+
 			if (nightMode) bsat += 0.2f;
 			bsat *= 1 - cf * 3f;
 
@@ -332,12 +339,12 @@ public final class AggressiveCold implements PostProcessingAnimator {
 		float dist = kdist - kdist * factor;
 
 		if (curvature != null) {
-
 			dist = AMath.fixup(dist);
 			autoEnableEarthCurvature(dist);
 			if (curvature.isEnabled()) {
 				curvature.setDistortion(dist);
-				curvature.setZoom(1 - (dist / 2));
+				float z = 1 - (dist / 2);
+				curvature.setZoom(z);
 			}
 		}
 
@@ -346,7 +353,11 @@ public final class AggressiveCold implements PostProcessingAnimator {
 			// modulates color offset by collision factor)
 			// crt.setColorOffset(MathUtils.clamp(0.025f * cf, 0, 0.008f));
 
-			crt.setChromaticDispersion(-1.4f * cf, -1.4f * cf);
+			float amount = MathUtils.clamp(cf + 0.14f, 0, 1) * -0.8f;
+			amount -= 0.15f * AMath.fixup(factor - kdist);
+
+			// Gdx.app.log("", "" + amount);
+			crt.setChromaticDispersion(amount, amount);
 			// crt.setChromaticDispersion(0f, 0f);
 
 			// zoom+earth curvature
