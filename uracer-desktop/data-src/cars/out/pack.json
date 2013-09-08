@@ -3,6 +3,7 @@
 	paddingX: 0,
 	paddingY: 0,
 	bleed: false,
+	duplicatePadding: false,
 	edgePadding: true,
 	rotation: false,
 	minWidth: 16,
