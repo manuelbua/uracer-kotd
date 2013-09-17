@@ -1,8 +1,6 @@
 
 package com.bitfire.uracer.game.actors;
 
-import java.util.ArrayList;
-
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.physics.box2d.BodyDef;
@@ -10,6 +8,7 @@ import com.badlogic.gdx.physics.box2d.BodyDef.BodyType;
 import com.badlogic.gdx.physics.box2d.Fixture;
 import com.badlogic.gdx.physics.box2d.FixtureDef;
 import com.badlogic.gdx.physics.box2d.MassData;
+import com.badlogic.gdx.utils.Array;
 import com.bitfire.uracer.configuration.Config;
 import com.bitfire.uracer.game.GameEvents;
 import com.bitfire.uracer.game.GameLogic;
@@ -142,7 +141,7 @@ public abstract strictfp class Car extends Box2DEntity {
 		// the scaling factor should be 2, but in night mode is cool to see light bleeding across the edges of
 		// the car, fading away as soon as the physical body is reached
 		loader.attachFixture(body, "uracer-car", fd, 1.85f, scaleX, scaleY);
-		ArrayList<Fixture> fs = body.getFixtureList();
+		Array<Fixture> fs = body.getFixtureList();
 		for (Fixture f : fs) {
 			f.setUserData(carType);
 		}
