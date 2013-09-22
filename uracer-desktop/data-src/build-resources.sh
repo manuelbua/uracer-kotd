@@ -100,7 +100,7 @@ echo "done!"
 
 # shaders
 echo -n "Merging GLSL shaders from libgdx-contribs/postprocessing to data-src..."
-cp -r /home/manuel/dev/libgdx-contribs/postprocessing/shaders/ ./
+cp -r /home/manuel/dev/libgdx-contribs/postprocessing/src/main/resources/shaders/ ./
 echo "done!"
 
 # shaders
