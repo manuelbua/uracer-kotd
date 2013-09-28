@@ -131,8 +131,8 @@ public final class Replay implements Disposable, Comparable<Replay> {
 
 			FileHandle hf = Gdx.files.external(ReplayUtils.getFullPath(info));
 			if (hf.exists()) {
-				Gdx.app.log("Replay", "=====> NOT OVERWRITING REPLAY (" + info.replayId + ") <=====");
-				return false;
+				throw new URacerRuntimeException("Replay " + info.getShortId() + " exists, this should never happens! ("
+					+ info.replayId + ")");
 			}
 
 			try {
