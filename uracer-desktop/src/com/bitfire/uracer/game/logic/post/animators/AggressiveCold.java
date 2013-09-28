@@ -353,7 +353,8 @@ public final class AggressiveCold implements PostProcessingAnimator {
 			// modulates color offset by collision factor)
 			// crt.setColorOffset(MathUtils.clamp(0.025f * cf, 0, 0.008f));
 
-			float amount = MathUtils.clamp(cf + 0.14f, 0, 1) * -0.8f;
+			// float amount = MathUtils.clamp(cf + 0.14f, 0, 1) * -0.8f;
+			float amount = MathUtils.clamp(cf + 0.1f, 0, 1) * -1.6f;
 			amount -= 0.15f * AMath.fixup(factor - kdist);
 
 			// Gdx.app.log("", "" + amount);
