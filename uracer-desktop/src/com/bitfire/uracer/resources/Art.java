@@ -19,7 +19,6 @@ import com.badlogic.gdx.scenes.scene2d.ui.Skin;
 import com.badlogic.gdx.utils.ObjectMap;
 import com.bitfire.uracer.configuration.Config;
 import com.bitfire.uracer.configuration.Storage;
-import com.bitfire.uracer.utils.ScaleUtils;
 import com.bitfire.utils.ShaderLoader;
 
 public final class Art {
@@ -122,17 +121,26 @@ public final class Art {
 	//
 	private static void loadScreensData () {
 		scrBackground = newTexture("data/base/titlescreen.png", true);
-		// the skin will automatically search and load the same filename+".atlas" extension
-		skinAtlas = new TextureAtlas("data/ui/skin.atlas");
 
-		if (ScaleUtils.PlayWidth < 1280) {
-			scrSkin = new Skin(Gdx.files.internal(Storage.UI + "skin-small.json"), skinAtlas);
-		} else if (ScaleUtils.PlayWidth >= 1280) { // && ScaleUtils.PlayWidth < 1440) {
-			scrSkin = new Skin(Gdx.files.internal(Storage.UI + "skin-big.json"), skinAtlas);
-		}
+		// the skin will automatically search and load the same filename+".atlas" extension
+
+		// skinAtlas = new TextureAtlas("data/ui/skin/skin.atlas");
+		// if (ScaleUtils.PlayWidth < 1280) {
+		// scrSkin = new Skin(Gdx.files.internal(Storage.UI + "skin/skin-small.json"), skinAtlas);
+		// } else if (ScaleUtils.PlayWidth >= 1280) { // && ScaleUtils.PlayWidth < 1440) {
+		// scrSkin = new Skin(Gdx.files.internal(Storage.UI + "skin/skin-big.json"), skinAtlas);
+		// }
+		// old
 		// else if (ScaleUtils.PlayWidth >= 1440) {
 		// scrSkin = new Skin(Gdx.files.internal(Storage.UI + "skin-big.json"), skinAtlas);
 		// }
+
+		// holo
+		String skinName = "Holo-dark-ldpi";
+		String skinPath = Storage.UI + "holo/" + skinName;
+		skinAtlas = new TextureAtlas(Gdx.files.internal(skinPath + ".atlas"));
+		scrSkin = new Skin(Gdx.files.internal(skinPath + ".json"), skinAtlas);
+
 	}
 
 	private static void disposeScreensData () {

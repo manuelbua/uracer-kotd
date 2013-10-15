@@ -297,8 +297,6 @@ public class OptionsScreen extends Screen {
 	public void tick () {
 		if (input.isPressed(Keys.Q) || input.isPressed(Keys.BACK) || input.isPressed(Keys.ESCAPE)) {
 			URacer.Game.show(ScreenType.MainScreen);
-			// URacer.Game.show( ScreenType.GameScreen );
-			// URacer.Game.quit();
 		}
 		if (input.isPressed(Keys.R)) {
 			disable();
@@ -324,11 +322,10 @@ public class OptionsScreen extends Screen {
 			((UICamera)ui.getCamera()).setProjectForFramebuffer(false);
 		}
 
-		Gdx.gl.glClearColor(0, 0, 0, 0);
+		Gdx.gl.glClearColor(0, 0, 0, 1);
 		Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT);
 		ui.draw();
-
-		Table.drawDebug(ui);
+		// Table.drawDebug(ui);
 
 		if (hasDest) {
 			dest.end();
