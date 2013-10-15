@@ -241,7 +241,8 @@ public abstract class CommonLogic implements GameLogic, GameLogicObserver {
 		progressData.reset(false);
 		progressData.resetLogicStates();
 
-		accuDriftSeconds.value = 0;
+		// accuDriftSeconds.value = 0;
+		accuDriftSeconds.value = DriftBar.MaxSeconds;
 		isCurrentLapValid = true;
 
 		if (raiseEvent) {
