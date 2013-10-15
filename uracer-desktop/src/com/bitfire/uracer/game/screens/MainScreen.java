@@ -59,8 +59,8 @@ public final class MainScreen extends Screen {
 		bg.setFillParent(true);
 		root.addActor(bg);
 
-		int w = (int)(ui.getWidth() / 3);
-		int h = (int)(ui.getHeight() / 2);
+		// int w = (int)(ui.getWidth() / 3);
+		// int h = (int)(ui.getHeight() / 2);
 
 		// version info
 		Table infoTable = UIUtils.newVersionInfoTable();
@@ -72,7 +72,7 @@ public final class MainScreen extends Screen {
 		ltable.debug();
 		ltable.defaults();
 		ltable.align(Align.left | Align.top);
-		root.add(ltable).expandX().height(h);
+		root.add(ltable).expandX();// .height(h);
 
 		// rtable = new Table();
 		// rtable.debug();
@@ -105,6 +105,7 @@ public final class MainScreen extends Screen {
 			});
 
 			listPane.setWidget(trackList);
+			// listPane.setFadeScrollBars(false);
 
 			// restore previous user selection, if any
 			if (ScreensShared.selectedLevelId.length() > 0) {
@@ -140,10 +141,10 @@ public final class MainScreen extends Screen {
 				}
 			});
 
-			ltable.add(listPane).colspan(3).width(w).height(200).left().padBottom(10).row();
-			ltable.add(start).width(70).left();
-			ltable.add(options).width(70);
-			ltable.add(quit).width(70).right();
+			ltable.add(listPane).colspan(3).width(400).height(200).left().padBottom(10).row();
+			ltable.add(start).width(150).height(40).row().expandX();
+			ltable.add(options).width(150).height(40).row();
+			ltable.add(quit).width(150).height(40).row();
 		}
 
 		/** right table */
@@ -173,7 +174,6 @@ public final class MainScreen extends Screen {
 
 	@Override
 	public void tick () {
-
 		if (input.isPressed(Keys.Q) || input.isPressed(Keys.BACK) || input.isPressed(Keys.ESCAPE)) {
 			URacer.Game.quit();
 		}
@@ -185,7 +185,6 @@ public final class MainScreen extends Screen {
 		} else {
 			ui.act(Config.Physics.Dt);
 		}
-
 	}
 
 	@Override
@@ -202,15 +201,14 @@ public final class MainScreen extends Screen {
 			((UICamera)ui.getCamera()).setProjectForFramebuffer(false);
 		}
 
-		Gdx.gl.glClearColor(0, 0, 0, 0);
+		Gdx.gl.glClearColor(0, 0, 0, 1);
 		Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT);
-
 		ui.draw();
+
 		Table.drawDebug(ui);
 
 		if (hasDest) {
 			dest.end();
 		}
 	}
-
 }

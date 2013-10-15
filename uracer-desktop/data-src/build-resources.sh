@@ -28,10 +28,10 @@ fi
 
 # base
 echo -n "Cooking base..."
-rm -rf "${DEST}/base/"
-mkdir -p "${DEST}/base"
-cp base/*.png ${DEST}/base
-cp -r base/progress ${DEST}/base
+	rm -rf "${DEST}/base/"
+	mkdir -p "${DEST}/base"
+	cp base/*.png ${DEST}/base
+	cp -r base/progress ${DEST}/base
 echo "done!"
 
 # tileset graphics and tmx levels
@@ -52,32 +52,33 @@ echo "done!"
 
 # tileset friction maps
 echo -n "Cooking friction maps..."
-cp levels/tilesets/desert/desert-friction-easy.png ${DEST}/levels/tileset/
-cp levels/tilesets/desert/desert-friction-hard.png ${DEST}/levels/tileset/
+	cp levels/tilesets/desert/desert-friction-easy.png ${DEST}/levels/tileset/
+	cp levels/tilesets/desert/desert-friction-hard.png ${DEST}/levels/tileset/
 echo "done!"
 
 # fonts
 echo -n "Cooking fonts..."
-rm -rf "${DEST}/font/"
-mkdir -p "${DEST}/font/"
-${TEX_PACKER} font ${DEST}/font >/dev/null
-cp -f font/*.fnt ${DEST}/font
+	rm -rf "${DEST}/font/"
+	mkdir -p "${DEST}/font/"
+	${TEX_PACKER} font ${DEST}/font >/dev/null
+	cp -f font/*.fnt ${DEST}/font
 echo "done!"
 
 # track
 echo -n "Cooking track meshes..."
-rm -rf "${DEST}/track/"
-mkdir -p "${DEST}/track/"
-cp track/wall*.png ${DEST}/track >/dev/null
+	rm -rf "${DEST}/track/"
+	mkdir -p "${DEST}/track/"
+	cp track/wall*.png ${DEST}/track >/dev/null
 echo "done!"
 
 # cars graphics
-echo "Cooking cars..."
-rm -rf "${DEST}/cars/"
-mkdir -p "${DEST}/cars/"
-${TEX_PACKER} cars/out ${DEST}/cars
-cp cars/out/car-shapes ${DEST}/cars/ >/dev/null
-cp 3d/car/out/* ${DEST}/3d/textures >/dev/null
+echo -n "Cooking cars..."
+	rm -rf "${DEST}/cars/"
+	mkdir -p "${DEST}/cars/"
+	${TEX_PACKER} cars/out ${DEST}/cars
+	cp cars/out/car-shapes ${DEST}/cars/ >/dev/null
+	cp 3d/car/out/* ${DEST}/3d/textures >/dev/null
+echo "done!"
 
 
 # particle effects defs
@@ -95,32 +96,45 @@ mkdir -p "${DEST}/partfx/textures"
 
 # particle effects defs
 echo -n "Cooking particle effects graphics..."
-${TEX_PACKER} partfx/textures ${DEST}/partfx/textures >/dev/null
+	${TEX_PACKER} partfx/textures ${DEST}/partfx/textures >/dev/null
 echo "done!"
 
 # shaders
 echo -n "Merging GLSL shaders from libgdx-contribs/postprocessing to data-src..."
-cp -r /home/manuel/dev/libgdx-contribs/postprocessing/src/main/resources/shaders/ ./
+	cp -r /home/manuel/dev/libgdx-contribs/postprocessing/src/main/resources/shaders/ ./
 echo "done!"
 
 # shaders
 echo -n "Cooking GLSL shaders..."
-rm -rf "${DEST}/shaders/"
-mkdir -p "${DEST}/shaders/"
-cp -r shaders/* ${DEST}/shaders > /dev/null
+	rm -rf "${DEST}/shaders/"
+	mkdir -p "${DEST}/shaders/"
+	cp -r shaders/* ${DEST}/shaders > /dev/null
 echo "done!"
 
 # ui skin
-echo -n "Cooking UI skin..."
+echo -n "Cooking UI skins..."
 rm -rf "${DEST}/ui/"
 mkdir -p "${DEST}/ui/"
-${TEX_PACKER} ui/skin ${DEST}/ui skin >/dev/null
-#${SKIN_PACKER} ui/skin
-#cp ui/skin/skin.png ${DEST}/ui >/dev/null
-cp ui/skin/skin-small.json ${DEST}/ui >/dev/null
-cp ui/skin/skin-mid.json ${DEST}/ui >/dev/null
-cp ui/skin/skin-big.json ${DEST}/ui >/dev/null
-cp ui/skin/sans12.fnt ${DEST}/ui >/dev/null
-cp ui/skin/sans13.fnt ${DEST}/ui >/dev/null
-cp ui/skin/sans15.fnt ${DEST}/ui >/dev/null
+echo -n "Baking default skin..."
+	mkdir -p "${DEST}/ui/skin"
+	#${SKIN_PACKER} ui/skin
+	#cp ui/skin/skin.png ${DEST}/ui >/dev/null
+	${TEX_PACKER} ui/skin ${DEST}/ui/skin skin >/dev/null
+
+	# default skin
+	cp ui/skin/skin-small.json ${DEST}/ui/skin >/dev/null
+	cp ui/skin/skin-mid.json ${DEST}/ui/skin >/dev/null
+	cp ui/skin/skin-big.json ${DEST}/ui/skin >/dev/null
+	cp ui/skin/sans12.fnt ${DEST}/ui/skin >/dev/null
+	cp ui/skin/sans13.fnt ${DEST}/ui/skin >/dev/null
+	cp ui/skin/sans15.fnt ${DEST}/ui/skin >/dev/null
+
+echo "done!"
+echo -n "Copying holo skin..."
+
+	mkdir -p "${DEST}/ui/holo"
+
+	# holo skin
+	cp ui/holo/* ${DEST}/ui/holo >/dev/null
+
 echo "done!"
