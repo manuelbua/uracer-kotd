@@ -98,6 +98,21 @@ public abstract class BaseLogic extends CommonLogic {
 	}
 
 	@Override
+	public void endCollisionTime () {
+		GameTweener.stop(collisionFactor);
+		collisionFrontRatio = 0.5f;
+		lastImpactForce = 0;
+
+		if (!AMath.isZero(collisionFactor.value)) {
+			//@off
+			GameTweener.start(Timeline
+				.createSequence()
+				.push(Tween.to(collisionFactor, BoxedFloatAccessor.VALUE, 500).target(0).ease(Linear.INOUT)));
+			//@on
+		}
+	}
+
+	@Override
 	public void beforeRender () {
 		// request camera updates from callbacks
 		float zoom = updateCameraZoom(URacer.Game.getTimeModFactor());
