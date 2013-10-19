@@ -52,7 +52,7 @@ public final class PostProcessing {
 
 	public PostProcessing (GameWorld gameWorld) {
 		if (UserPreferences.bool(Preference.PostProcessing)) {
-			postProcessor = new PostProcessor(ScaleUtils.PlayViewport, true /* depth */, false /* alpha */, URacer.Game.isDesktop() /* supports32Bpp */);
+			postProcessor = new PostProcessor(ScaleUtils.PlayViewport, true /* depth */, true /* alpha */, URacer.Game.isDesktop() /* supports32Bpp */);
 			PostProcessor.EnableQueryStates = false;
 			postProcessor.setClearBits(GL20.GL_COLOR_BUFFER_BIT | GL20.GL_DEPTH_BUFFER_BIT);
 			postProcessor.setClearColor(0, 0, 0, 1);
