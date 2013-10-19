@@ -5,6 +5,7 @@ import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Input.Keys;
 import com.badlogic.gdx.graphics.GL20;
 import com.badlogic.gdx.graphics.glutils.FrameBuffer;
+import com.badlogic.gdx.math.MathUtils;
 import com.badlogic.gdx.scenes.scene2d.Actor;
 import com.badlogic.gdx.scenes.scene2d.InputEvent;
 import com.badlogic.gdx.scenes.scene2d.Stage;
@@ -34,6 +35,7 @@ public final class MainScreen extends Screen {
 	private Stage ui;
 	private Input input;
 	private Table root, ltable;
+	private List trackList;
 
 	@Override
 	public void init () {
@@ -90,17 +92,11 @@ public final class MainScreen extends Screen {
 		// track list
 		{
 			ScrollPane listPane = UIUtils.newScrollPane();
-			List trackList = UIUtils.newListBox(GameLevels.getLevels(), new ChangeListener() {
+			trackList = UIUtils.newListBox(GameLevels.getLevels(), new ChangeListener() {
 				@Override
 				public void changed (ChangeEvent event, Actor actor) {
 					List source = (List)actor;
-					int idx = source.getSelectedIndex();
-					if (idx < GameLevels.getLevels().length) {
-						GameLevelDescriptor desc = GameLevels.getLevels()[idx];
-						ScreensShared.selectedLevelId = desc.getId();
-						UserPreferences.string(Preference.LastPlayedTrack, ScreensShared.selectedLevelId);
-						UserPreferences.save();
-					}
+					chooseLevel(source.getSelectedIndex());
 				}
 			});
 
@@ -156,6 +152,15 @@ public final class MainScreen extends Screen {
 		disable();
 	}
 
+	private void chooseLevel (int levelIndex) {
+		if (levelIndex >= 0 && levelIndex < GameLevels.getLevels().length) {
+			GameLevelDescriptor desc = GameLevels.getLevels()[levelIndex];
+			ScreensShared.selectedLevelId = desc.getId();
+			UserPreferences.string(Preference.LastPlayedTrack, ScreensShared.selectedLevelId);
+			UserPreferences.save();
+		}
+	}
+
 	private void chooseFirstLevelAndSave (List trackList) {
 		trackList.setSelectedIndex(0);
 		GameLevelDescriptor desc = GameLevels.getLevels()[0];
@@ -181,8 +186,20 @@ public final class MainScreen extends Screen {
 			ui.dispose();
 			setupUI();
 			enable();
+		} else if (input.isPressed(Keys.S)) {
+			URacer.Game.show(ScreenType.GameScreen, 1000);
 		} else if (input.isPressed(Keys.O)) {
 			URacer.Game.show(ScreenType.OptionsScreen, 1000);
+		} else if (input.isPressed(Keys.UP)) {
+			int count = trackList.getItems().length;
+			int newidx = MathUtils.clamp(trackList.getSelectedIndex() - 1, 0, count - 1);
+			trackList.setSelectedIndex(newidx);
+			chooseLevel(newidx);
+		} else if (input.isPressed(Keys.DOWN)) {
+			int count = trackList.getItems().length;
+			int newidx = MathUtils.clamp(trackList.getSelectedIndex() + 1, 0, count - 1);
+			trackList.setSelectedIndex(newidx);
+			chooseLevel(newidx);
 		} else {
 			ui.act(Config.Physics.Dt);
 		}
