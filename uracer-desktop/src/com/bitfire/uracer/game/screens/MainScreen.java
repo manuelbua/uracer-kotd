@@ -182,7 +182,7 @@ public final class MainScreen extends Screen {
 			setupUI();
 			enable();
 		} else if (input.isPressed(Keys.O)) {
-			URacer.Game.show(ScreenType.OptionsScreen, 2000);
+			URacer.Game.show(ScreenType.OptionsScreen, 1000);
 		} else {
 			ui.act(Config.Physics.Dt);
 		}
@@ -197,9 +197,10 @@ public final class MainScreen extends Screen {
 		boolean hasDest = (dest != null);
 		if (hasDest) {
 			dest.begin();
-			((UICamera)ui.getCamera()).setProjectForFramebuffer(true);
+			ui.setViewport(ScaleUtils.PlayWidth, ScaleUtils.PlayHeight, false, 0, 0, ScaleUtils.PlayWidth, ScaleUtils.PlayHeight);
 		} else {
-			((UICamera)ui.getCamera()).setProjectForFramebuffer(false);
+			ui.setViewport(ScaleUtils.PlayWidth, ScaleUtils.PlayHeight, false, ScaleUtils.CropX, ScaleUtils.CropY,
+				ScaleUtils.PlayWidth, ScaleUtils.PlayHeight);
 		}
 
 		Gdx.gl.glClearColor(0, 0, 0, 1);
