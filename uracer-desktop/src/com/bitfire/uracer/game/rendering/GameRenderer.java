@@ -159,6 +159,9 @@ public final class GameRenderer {
 
 			// raise before render
 			beforeRender();
+		} else {
+			updateLights();
+			GameEvents.gameRenderer.trigger(this, GameRendererEvent.Type.BeforeRender);
 		}
 
 		SpriteBatch batch;
