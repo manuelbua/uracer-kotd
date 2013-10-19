@@ -7,6 +7,9 @@ import com.bitfire.uracer.Input.MouseButton;
 import com.bitfire.uracer.configuration.UserPreferences;
 import com.bitfire.uracer.configuration.UserPreferences.Preference;
 import com.bitfire.uracer.game.GameplaySettings.TimeDilateInputMode;
+import com.bitfire.uracer.game.logic.gametasks.messager.Message;
+import com.bitfire.uracer.game.logic.gametasks.messager.Message.Position;
+import com.bitfire.uracer.game.logic.gametasks.messager.Message.Size;
 
 public final class GameInput {
 
@@ -44,8 +47,10 @@ public final class GameInput {
 
 		if (input.isPressed(Keys.R)) {
 			logic.restartGame();
+			logic.showMessage("Restarted", 1.5f, Message.Type.Information, Position.Bottom, Size.Big);
 		} else if (input.isPressed(Keys.T)) {
 			logic.resetGame();
+			logic.showMessage("Reset", 1.5f, Message.Type.Information, Position.Bottom, Size.Big);
 		} else if (input.isPressed(Keys.Q) || input.isPressed(Keys.ESCAPE) || input.isPressed(Keys.BACK)) {
 			logic.quitGame();
 			// return;

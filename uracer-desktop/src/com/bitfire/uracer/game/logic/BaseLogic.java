@@ -196,6 +196,8 @@ public abstract class BaseLogic extends CommonLogic {
 				Gdx.app.log("CommonLogic", "Recording not enabled");
 				playerError("Recording not enabled");
 				break;
+			case NoError:
+				break;
 			}
 		}
 	}

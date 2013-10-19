@@ -18,6 +18,9 @@ import com.bitfire.uracer.game.events.GameLogicEvent;
 import com.bitfire.uracer.game.logic.gametasks.GameTasksManager;
 import com.bitfire.uracer.game.logic.gametasks.Messager;
 import com.bitfire.uracer.game.logic.gametasks.hud.elements.player.DriftBar;
+import com.bitfire.uracer.game.logic.gametasks.messager.Message;
+import com.bitfire.uracer.game.logic.gametasks.messager.Message.Position;
+import com.bitfire.uracer.game.logic.gametasks.messager.Message.Size;
 import com.bitfire.uracer.game.logic.helpers.CarFactory;
 import com.bitfire.uracer.game.logic.helpers.GameTrack;
 import com.bitfire.uracer.game.logic.helpers.PlayerGameTasks;
@@ -70,7 +73,7 @@ public abstract class CommonLogic implements GameLogic, GameLogicObserver {
 	protected PlayerGameTasks playerTasks = null;
 	protected Messager messager = null;
 
-	private BoxedFloat accuDriftSeconds = new BoxedFloat(0);
+	private BoxedFloat accuDriftSeconds = new BoxedFloat(DriftBar.MaxSeconds);
 
 	public CommonLogic (UserProfile userProfile, GameWorld gameWorld, GameRenderer gameRenderer) {
 		this.userProfile = userProfile;
@@ -229,7 +232,7 @@ public abstract class CommonLogic implements GameLogic, GameLogicObserver {
 		postProcessing.setPlayer(null);
 	}
 
-	private void realRestart (boolean raiseEvent) {
+	private void realRestart () {
 		if (hasPlayer()) playerCar.reset();
 		endTimeDilation();
 
@@ -244,27 +247,23 @@ public abstract class CommonLogic implements GameLogic, GameLogicObserver {
 		// accuDriftSeconds.value = 0;
 		accuDriftSeconds.value = DriftBar.MaxSeconds;
 		isCurrentLapValid = true;
-
-		if (raiseEvent) {
-			GameEvents.logicEvent.trigger(this, GameLogicEvent.Type.GameRestart);
-		}
 	}
 
 	/** Restarts the current game */
 	@Override
 	public void restartGame () {
-		realRestart(true);
+		realRestart();
+		GameEvents.logicEvent.trigger(this, GameLogicEvent.Type.GameRestart);
 	}
 
 	/** Restart and completely resets the game, removing any previous recording and playing replays FIXME not sure this is still
 	 * useful, maybe for debugging purposes.. */
 	@Override
 	public void resetGame () {
-		realRestart(false);
+		realRestart();
 
-		// clean everything
+		// also remove all replays so far
 		lapManager.removeAllReplays();
-		lapManager.reset(true);
 
 		GameEvents.logicEvent.trigger(this, GameLogicEvent.Type.GameReset);
 	}
@@ -284,6 +283,11 @@ public abstract class CommonLogic implements GameLogic, GameLogicObserver {
 	public boolean isTimeDilationAvailable () {
 		return accuDriftSeconds.value > 0;
 	}
+
+	@Override
+	public void showMessage (String message, float durationSecs, Message.Type type, Position position, Size size) {
+		messager.show(message, durationSecs, type, position, size);
+	};
 
 	@Override
 	public void tick () {

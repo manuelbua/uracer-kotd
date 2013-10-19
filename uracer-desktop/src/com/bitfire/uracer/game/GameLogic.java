@@ -3,6 +3,9 @@ package com.bitfire.uracer.game;
 
 import com.bitfire.uracer.configuration.UserProfile;
 import com.bitfire.uracer.game.actors.GhostCar;
+import com.bitfire.uracer.game.logic.gametasks.messager.Message;
+import com.bitfire.uracer.game.logic.gametasks.messager.Message.Position;
+import com.bitfire.uracer.game.logic.gametasks.messager.Message.Size;
 import com.bitfire.uracer.game.logic.replaying.ReplayManager.ReplayResult;
 import com.bitfire.uracer.game.logic.types.helpers.TimeModulator;
 
@@ -56,4 +59,6 @@ public interface GameLogic {
 	UserProfile getUserProfile ();
 
 	ReplayResult getLastRecordedInfo ();
+
+	void showMessage (String message, float durationSecs, Message.Type type, Position position, Size size);
 }

@@ -288,17 +288,15 @@ public class SinglePlayer extends BaseLogic {
 
 	@Override
 	public void restartGame () {
-		Gdx.app.log("SinglePlayer", "Starting/restarting game");
 		super.restartGame();
-		messager.show("Restarted", 1.5f, Message.Type.Information, Position.Bottom, Size.Big);
+		Gdx.app.log("SinglePlayer", "Starting/restarting game");
 		loadReplaysFromDiskFor(gameWorld.getLevelId());
 	}
 
 	@Override
 	public void resetGame () {
-		Gdx.app.log("SinglePlayer", "Resetting game");
 		super.resetGame();
-		messager.show("Reset", 1.5f, Message.Type.Information, Position.Bottom, Size.Big);
+		Gdx.app.log("SinglePlayer", "Resetting game");
 		loadReplaysFromDiskFor(gameWorld.getLevelId());
 	}
 
