@@ -26,7 +26,7 @@ import com.bitfire.uracer.game.GameLevels.GameLevelDescriptor;
 import com.bitfire.uracer.game.screens.GameScreensFactory.ScreenType;
 import com.bitfire.uracer.resources.Art;
 import com.bitfire.uracer.screen.Screen;
-import com.bitfire.uracer.utils.UICamera;
+import com.bitfire.uracer.utils.ScaleUtils;
 import com.bitfire.uracer.utils.UIUtils;
 
 public final class MainScreen extends Screen {
@@ -123,14 +123,14 @@ public final class MainScreen extends Screen {
 			TextButton start = UIUtils.newTextButton("START", new ClickListener() {
 				@Override
 				public void clicked (InputEvent event, float x, float y) {
-					URacer.Game.show(ScreenType.GameScreen);
+					URacer.Game.show(ScreenType.GameScreen, 1000);
 				}
 			});
 
 			TextButton options = UIUtils.newTextButton("OPTIONS", new ClickListener() {
 				@Override
 				public void clicked (InputEvent event, float x, float y) {
-					URacer.Game.show(ScreenType.OptionsScreen);
+					URacer.Game.show(ScreenType.OptionsScreen, 1000);
 				}
 			});
 
@@ -176,12 +176,13 @@ public final class MainScreen extends Screen {
 	public void tick () {
 		if (input.isPressed(Keys.Q) || input.isPressed(Keys.BACK) || input.isPressed(Keys.ESCAPE)) {
 			URacer.Game.quit();
-		}
-		if (input.isPressed(Keys.R)) {
+		} else if (input.isPressed(Keys.R)) {
 			disable();
 			ui.dispose();
 			setupUI();
 			enable();
+		} else if (input.isPressed(Keys.O)) {
+			URacer.Game.show(ScreenType.OptionsScreen, 2000);
 		} else {
 			ui.act(Config.Physics.Dt);
 		}

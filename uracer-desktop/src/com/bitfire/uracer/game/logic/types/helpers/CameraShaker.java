@@ -7,6 +7,7 @@ import com.bitfire.uracer.utils.AMath;
 import com.bitfire.uracer.utils.InterpolatedFloat;
 
 public final class CameraShaker {
+	// FIXME, it should be modulated by the virtualscreen-to-physicalscreen ratio
 	private static final int Pixels = 250;
 
 	Vector2 result = new Vector2();
