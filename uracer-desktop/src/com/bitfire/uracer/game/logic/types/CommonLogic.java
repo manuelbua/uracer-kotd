@@ -237,6 +237,7 @@ public abstract class CommonLogic implements GameLogic, GameLogicObserver {
 		endTimeDilation();
 
 		getOutOfTrackTimer().reset();
+		endCollisionTime();
 		lapManager.abortRecording(true);
 		wrongWayMonitor.reset();
 		postProcessing.resetAnimator();
@@ -339,6 +340,10 @@ public abstract class CommonLogic implements GameLogic, GameLogicObserver {
 				Gdx.app.log("CommonLogic", "Requesting time modulation to finish");
 			}
 
+			if (!playerLapMonitor.isWarmUp()) {
+				updateDriftSeconds();
+			}
+
 			updatePlayerDriftBar();
 			updateTrackProgress();
 		}
@@ -393,11 +398,13 @@ public abstract class CommonLogic implements GameLogic, GameLogicObserver {
 	private void updatePlayerDriftBar () {
 		DriftBar driftBar = playerTasks.hudPlayer.driftBar;
 		driftBar.setDriftStrength(playerCar.driftState.driftStrength);
+		driftBar.setSeconds(accuDriftSeconds.value);
+	}
 
+	private void updateDriftSeconds () {
 		if (Config.Debug.InfiniteDilationTime) {
 			accuDriftSeconds.value = DriftBar.MaxSeconds;
 		} else {
-
 			// earn game-time seconds by drifting
 			if (playerCar.driftState.isDrifting) {
 				accuDriftSeconds.value += Config.Physics.Dt + Config.Physics.Dt * playerCar.driftState.driftStrength;
@@ -418,10 +425,9 @@ public abstract class CommonLogic implements GameLogic, GameLogicObserver {
 
 			// lose wall-clock seconds on collision
 			accuDriftSeconds.value -= Config.Physics.Dt * 5 * getCollisionFactor();
-		}
 
-		accuDriftSeconds.value = MathUtils.clamp(accuDriftSeconds.value, 0, DriftBar.MaxSeconds);
-		driftBar.setSeconds(accuDriftSeconds.value);
+			accuDriftSeconds.value = MathUtils.clamp(accuDriftSeconds.value, 0, DriftBar.MaxSeconds);
+		}
 	}
 
 	/** Updates player hud track progress */
