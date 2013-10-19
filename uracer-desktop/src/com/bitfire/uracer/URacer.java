@@ -380,6 +380,10 @@ public class URacer implements ApplicationListener {
 			Screens.setScreen(screenType, TransitionType.Fader, 300);
 		}
 
+		public static void show (ScreenType screenType, int durationMs) {
+			Screens.setScreen(screenType, TransitionType.Fader, durationMs);
+		}
+
 		public static void quit () {
 			Screens.setScreen(ScreenType.ExitScreen, TransitionType.Fader, 300);
 		}

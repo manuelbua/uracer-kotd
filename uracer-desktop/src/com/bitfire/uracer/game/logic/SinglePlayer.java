@@ -448,7 +448,7 @@ public class SinglePlayer extends BaseLogic {
 	public void doQuit () {
 		lapManager.abortRecording(false);
 
-		URacer.Screens.setScreen(ScreenType.MainScreen, TransitionType.Fader, 300);
+		URacer.Screens.setScreen(ScreenType.MainScreen, TransitionType.Fader, 1000);
 		// URacer.Screens.setScreen(ScreenType.ExitScreen, TransitionType.Fader, 300);
 
 		getTimeModulator().reset();

@@ -184,10 +184,19 @@ public abstract class BaseLogic extends CommonLogic {
 
 	@Override
 	public void physicsForcesReady (CarEvent.Data eventData) {
-		RecorderError recerror = lapManager.record(eventData.forces);
-		if (recerror == RecorderError.ReplayMemoryLimitReached) {
-			Gdx.app.log("CommonLogic", "Player too slow, recording aborted.");
-			playerError("Too slow!");
+		if (lapManager.isRecording()) {
+			RecorderError recerror = lapManager.record(eventData.forces);
+
+			switch (recerror) {
+			case ReplayMemoryLimitReached:
+				Gdx.app.log("CommonLogic", "Player too slow, recording aborted.");
+				playerError("Too slow!");
+				break;
+			case RecordingNotEnabled:
+				Gdx.app.log("CommonLogic", "Recording not enabled");
+				playerError("Recording not enabled");
+				break;
+			}
 		}
 	}
 
