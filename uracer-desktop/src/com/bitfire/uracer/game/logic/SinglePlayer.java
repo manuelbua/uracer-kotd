@@ -1,6 +1,8 @@
 
 package com.bitfire.uracer.game.logic;
 
+import aurelienribon.tweenengine.equations.Quad;
+
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Input.Keys;
 import com.badlogic.gdx.files.FileHandle;
@@ -128,6 +130,13 @@ public class SinglePlayer extends BaseLogic {
 		return null;
 	}
 
+	private void setGhostAlphasFor (boolean isTargetMode) {
+		for (int g = 0; g < ghostCars.length; g++) {
+			ghostCars[g].tweenAlphaTo(isTargetMode ? Config.Graphics.DefaultGhostCarOpacity
+				: Config.Graphics.DefaultTargetCarOpacity, Config.Graphics.DefaultGhostOpacityChangeMs * 1.5f, Quad.OUT);
+		}
+	}
+
 	@Override
 	public void chooseNextTarget (boolean backward) {
 		GhostCar prevTarget = getNextTarget();
@@ -147,12 +156,14 @@ public class SinglePlayer extends BaseLogic {
 				targetMode = false;
 				gameWorldRenderer.setTopMostGhostCar(null);
 				playerTasks.hudPlayer.unHighlightNextTarget();
+				setGhostAlphasFor(targetMode);
 				messager.show("Target mode disabled", 2, Type.Information, Position.Top, Size.Big);
 				Gdx.app.log("SinglePlayer", "Target mode disabled");
 			}
 		} else {
 			if (!targetMode) {
 				targetMode = true;
+				setGhostAlphasFor(targetMode);
 				messager.show("Target mode enabled", 3, Type.Information, Position.Top, Size.Big);
 				Gdx.app.log("SinglePlayer", "Target mode enabled");
 			}
@@ -270,10 +281,6 @@ public class SinglePlayer extends BaseLogic {
 		}
 
 		Gdx.app.log("SinglePlayer", "Building opponents list:");
-
-		for (int g = 0; g < ghostCars.length; g++) {
-			ghostCars[g].removeReplay();
-		}
 
 		rebindAllReplays();
 
@@ -466,10 +473,9 @@ public class SinglePlayer extends BaseLogic {
 		for (Replay r : lapManager.getReplays()) {
 			if (hasGhostFor(r)) {
 				GhostCar ghost = findGhostFor(r);
-				boolean isnexttarget = (getNextTarget() == ghost);
-				ghost.setAlpha(isnexttarget ? Config.Graphics.DefaultTargetCarOpacity : Config.Graphics.DefaultGhostCarOpacity);
-
-				if (isnexttarget) {
+				ghost.setAlpha(targetMode ? Config.Graphics.DefaultGhostCarOpacity : Config.Graphics.DefaultTargetCarOpacity);
+				if (targetMode && getNextTarget() == ghost) {
+					ghost.setAlpha(Config.Graphics.DefaultTargetCarOpacity);
 					gameWorldRenderer.setTopMostGhostCar(ghost);
 				}
 
@@ -493,6 +499,7 @@ public class SinglePlayer extends BaseLogic {
 			}
 
 			ghost.setReplay(r);
+
 			ghostLapMonitor[g].reset();
 
 			g++;
