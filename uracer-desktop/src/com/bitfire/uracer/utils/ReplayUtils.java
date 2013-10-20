@@ -38,10 +38,10 @@ public final class ReplayUtils {
 					FileHandle hf = Gdx.files.external(path);
 					if (hf.exists()) {
 						hf.delete();
-						Gdx.app.log("SinglePlayer", "Pruned #" + rid);
+						Gdx.app.log("ReplayUtils", "Pruned #" + rid);
 						return true;
 					} else {
-						Gdx.app.log("SinglePlayer", "Couldn't prune #" + rid);
+						Gdx.app.error("ReplayUtils", "Couldn't prune #" + rid);
 					}
 				}
 			}
