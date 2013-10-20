@@ -119,14 +119,14 @@ public final class MainScreen extends Screen {
 			TextButton start = UIUtils.newTextButton("START", new ClickListener() {
 				@Override
 				public void clicked (InputEvent event, float x, float y) {
-					URacer.Game.show(ScreenType.GameScreen, 1000);
+					URacer.Game.show(ScreenType.GameScreen);
 				}
 			});
 
 			TextButton options = UIUtils.newTextButton("OPTIONS", new ClickListener() {
 				@Override
 				public void clicked (InputEvent event, float x, float y) {
-					URacer.Game.show(ScreenType.OptionsScreen, 1000);
+					URacer.Game.show(ScreenType.OptionsScreen);
 				}
 			});
 
@@ -187,9 +187,9 @@ public final class MainScreen extends Screen {
 			setupUI();
 			enable();
 		} else if (input.isPressed(Keys.S)) {
-			URacer.Game.show(ScreenType.GameScreen, 1000);
+			URacer.Game.show(ScreenType.GameScreen);
 		} else if (input.isPressed(Keys.O)) {
-			URacer.Game.show(ScreenType.OptionsScreen, 1000);
+			URacer.Game.show(ScreenType.OptionsScreen);
 		} else if (input.isPressed(Keys.UP)) {
 			int count = trackList.getItems().length;
 			int newidx = MathUtils.clamp(trackList.getSelectedIndex() - 1, 0, count - 1);
