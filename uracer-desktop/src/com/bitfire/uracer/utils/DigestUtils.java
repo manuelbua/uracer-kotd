@@ -46,12 +46,12 @@ public class DigestUtils {
 		}
 
 		HardwareId = mac;
-		Gdx.app.log("DigestUtils", "Hardware ID set to 0x" + HardwareId);
+		Gdx.app.log("DigestUtils", "HardwareID set to 0x" + HardwareId);
 	}
 
 	public static final String computeDigest (Replay replay) {
 		if (replay.isValidData()) {
-			String trackTime = "" + replay.getMilliseconds();
+			String trackTimeTicks = "" + replay.getTicks();
 			String created = "" + replay.getCreationTimestamp();
 
 			sha256.reset();
@@ -59,7 +59,7 @@ public class DigestUtils {
 			sha256.update(created.getBytes());
 			sha256.update(replay.getUserId().getBytes());
 			sha256.update(replay.getTrackId().getBytes());
-			sha256.update(trackTime.getBytes());
+			sha256.update(trackTimeTicks.getBytes());
 
 			byte[] digest = sha256.digest();
 			String replayId = "";
