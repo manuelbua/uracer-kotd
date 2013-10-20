@@ -14,6 +14,7 @@ import com.badlogic.gdx.graphics.VertexAttribute;
 import com.badlogic.gdx.graphics.VertexAttributes.Usage;
 import com.badlogic.gdx.graphics.glutils.FrameBuffer;
 import com.badlogic.gdx.graphics.glutils.ShaderProgram;
+import com.badlogic.gdx.math.Rectangle;
 
 class LightMap {
 	private ShaderProgram shadowShader;
@@ -27,15 +28,20 @@ class LightMap {
 	private ShaderProgram blurShader;
 	private ShaderProgram diffuseShader;
 
-	public void render( FrameBuffer dest ) {
+	public void render( Rectangle viewport, FrameBuffer dest ) {
 		boolean needed = rayHandler.lightRenderedLastFrame > 0;
 		// this way lot less binding
 		if( needed && rayHandler.blur )
 			gaussianBlur();
 
 		frameBuffer.getColorBufferTexture().bind( 0 );
-		if( dest != null )
+		if( dest != null ) {
 			dest.begin();
+		} else {
+			Gdx.gl.glViewport( (int)viewport.x, (int)viewport.y, (int)viewport.width, (int)viewport.height );
+		}
+
+		Gdx.gl20.glEnable( GL20.GL_BLEND );
 
 		// at last lights are rendered over scene
 		if( rayHandler.shadows ) {
@@ -52,21 +58,20 @@ class LightMap {
 				Gdx.gl20.glBlendFunc( GL20.GL_ONE, GL20.GL_ONE_MINUS_SRC_ALPHA );
 				shader.setUniformf( "ambient", c.r * c.a, c.g * c.a, c.b * c.a, 1f - c.a );
 			}
-			shader.setUniformi( "u_texture", 0 );
+			// shader.setUniformi( "u_texture", 0 );
 			lightMapMesh.render( shader, GL20.GL_TRIANGLE_FAN );
 			shader.end();
 		} else if( needed ) {
 
 			Gdx.gl.glBlendFunc( GL20.GL_SRC_ALPHA, GL20.GL_ONE );
 			withoutShadowShader.begin();
-			withoutShadowShader.setUniformi( "u_texture", 0 );
+			// withoutShadowShader.setUniformi( "u_texture", 0 );
 			lightMapMesh.render( withoutShadowShader, GL20.GL_TRIANGLE_FAN );
 			withoutShadowShader.end();
 		}
 
 		if( dest != null )
 			dest.end();
-		Gdx.gl20.glDisable( GL20.GL_BLEND );
 	}
 
 	public void gaussianBlur() {
@@ -74,11 +79,12 @@ class LightMap {
 		Gdx.gl20.glDisable( GL20.GL_BLEND );
 		for( int i = 0; i < rayHandler.blurNum; i++ ) {
 			frameBuffer.getColorBufferTexture().bind( 0 );
+
 			// horizontal
 			pingPongBuffer.begin();
 			{
 				blurShader.begin();
-				blurShader.setUniformi( "u_texture", 0 );
+				// blurShader.setUniformi( "u_texture", 0 );
 				blurShader.setUniformf( "dir", 1f, 0f );
 				lightMapMesh.render( blurShader, GL20.GL_TRIANGLE_FAN, 0, 4 );
 				blurShader.end();
@@ -86,11 +92,12 @@ class LightMap {
 			pingPongBuffer.end();
 
 			pingPongBuffer.getColorBufferTexture().bind( 0 );
+
 			// vertical
 			frameBuffer.begin();
 			{
 				blurShader.begin();
-				blurShader.setUniformi( "u_texture", 0 );
+				// blurShader.setUniformi( "u_texture", 0 );
 				blurShader.setUniformf( "dir", 0f, 1f );
 				lightMapMesh.render( blurShader, GL20.GL_TRIANGLE_FAN, 0, 4 );
 				blurShader.end();
@@ -98,9 +105,6 @@ class LightMap {
 			}
 			frameBuffer.end();
 		}
-
-		Gdx.gl20.glEnable( GL20.GL_BLEND );
-
 	}
 
 	public LightMap( RayHandler rayHandler, int fboWidth, int fboHeight, boolean depthMasking ) {
@@ -161,7 +165,8 @@ class LightMap {
 		verts[U4] = 0f;
 		verts[V4] = 1f;
 
-		Mesh tmpMesh = new Mesh( true, 4, 0, new VertexAttribute( Usage.Position, 2, "a_position" ), new VertexAttribute( Usage.TextureCoordinates, 2, "a_texCoord" ) );
+		Mesh tmpMesh = new Mesh( true, 4, 0, new VertexAttribute( Usage.Position, 2, "a_position" ), new VertexAttribute(
+				Usage.TextureCoordinates, 2, "a_texCoord" ) );
 
 		tmpMesh.setVertices( verts );
 		return tmpMesh;

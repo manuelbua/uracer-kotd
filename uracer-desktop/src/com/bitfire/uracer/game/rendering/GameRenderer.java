@@ -1,21 +1,31 @@
 
 package com.bitfire.uracer.game.rendering;
 
+import box2dLight.PointLight;
+
 import com.badlogic.gdx.Gdx;
+import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.GL20;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.graphics.glutils.FrameBuffer;
+import com.badlogic.gdx.math.MathUtils;
+import com.badlogic.gdx.math.Matrix4;
 import com.badlogic.gdx.math.Rectangle;
 import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.math.Vector3;
 import com.bitfire.postprocessing.PostProcessor;
-import com.bitfire.uracer.ScalingStrategy;
+import com.bitfire.uracer.URacer;
 import com.bitfire.uracer.configuration.Config;
-import com.bitfire.uracer.configuration.UserPreferences;
-import com.bitfire.uracer.configuration.UserPreferences.Preference;
 import com.bitfire.uracer.game.GameEvents;
+import com.bitfire.uracer.game.events.GameRendererEvent;
+import com.bitfire.uracer.game.logic.post.PostProcessing;
+import com.bitfire.uracer.game.logic.post.PostProcessing.Effects;
+import com.bitfire.uracer.game.logic.post.ssao.Ssao;
+import com.bitfire.uracer.game.player.PlayerCar;
 import com.bitfire.uracer.game.world.GameWorld;
+import com.bitfire.uracer.utils.AMath;
 import com.bitfire.uracer.utils.Convert;
+import com.bitfire.uracer.utils.ScaleUtils;
 
 /** Manages the high-level rendering of the whole world and triggers all the GameRendererEvent events associated with the rendering
  * timeline, realized with the event's renderqueue mechanism.
@@ -25,99 +35,144 @@ public final class GameRenderer {
 	private final GL20 gl;
 	private final GameWorld world;
 	private final GameBatchRenderer batchRenderer;
-	private final PostProcessor postProcessor;
 	private final GameWorldRenderer worldRenderer;
 
-	/** Manages to convert world positions expressed in meters or pixels to the corresponding position to screen pixels. To use this
-	 * class, the GameWorldRenderer MUST be already constructed and initialized. */
-	public static final class ScreenUtils {
-		public static int ScreenWidth, ScreenHeight;
-		public static boolean ready = false;
-		private static Vector2 screenPosFor = new Vector2();
-		private static GameWorldRenderer worldRenderer;
+	private PostProcessing postProcessing = null;
+	private PostProcessor postProcessor = null;
 
-		public static void init (GameWorldRenderer worldRenderer) {
-			ScreenUtils.worldRenderer = worldRenderer;
-			ScreenUtils.ready = true;
-			ScreenUtils.ScreenWidth = Gdx.graphics.getWidth();
-			ScreenUtils.ScreenHeight = Gdx.graphics.getHeight();
-		}
+	private final Matrix4 identity = new Matrix4();
+	private final Matrix4 xform = new Matrix4();
 
-		private static Vector3 vtmp = new Vector3();
+	private boolean debug = Config.Debug.UseDebugHelper;
 
-		public static Vector2 worldMtToScreen (Vector2 worldPositionMt) {
-			return worldPxToScreen(Convert.mt2px(worldPositionMt));
-		}
-
-		public static Vector2 worldPxToScreen (Vector2 worldPositionPx) {
-			vtmp.set(worldPositionPx.x, worldPositionPx.y, 0);
-			worldRenderer.camOrtho.project(vtmp, 0, 0, ScreenWidth, ScreenHeight);
-			screenPosFor.set(vtmp.x, Gdx.graphics.getHeight() - vtmp.y);
-			return screenPosFor;
-		}
-
-		public static boolean isVisible (Rectangle rect) {
-			return worldRenderer.camOrthoRect.overlaps(rect);
-		}
-
-		private ScreenUtils () {
-		}
-	}
-
-	public GameRenderer (GameWorld gameWorld, ScalingStrategy scalingStrategy) {
+	public GameRenderer (GameWorld gameWorld) {
 		world = gameWorld;
 		gl = Gdx.graphics.getGL20();
 
-		int width = Gdx.graphics.getWidth();
-		int height = Gdx.graphics.getHeight();
+		postProcessing = new PostProcessing(gameWorld);
+		postProcessor = postProcessing.getPostProcessor();
 
-		// world rendering
-		worldRenderer = new GameWorldRenderer(scalingStrategy, world, width, height);
+		worldRenderer = new GameWorldRenderer(world, postProcessing.isEnabled());
 		batchRenderer = new GameBatchRenderer(gl);
+
+		if (postProcessing.isEnabled() && postProcessing.hasEffect(Effects.Ssao.name)) {
+			Ssao ssao = (Ssao)postProcessing.getEffect(Effects.Ssao.name);
+			ssao.setNormalDepthMap(worldRenderer.getNormalDepthMap().getColorBufferTexture());
+		}
 
 		// initialize utils
 		ScreenUtils.init(worldRenderer);
-		Gdx.app.debug("GameRenderer", "ScreenUtils " + (ScreenUtils.ready ? "initialized." : "NOT initialized!"));
 
-		// post-processing
-		if (UserPreferences.bool(Preference.PostProcessing)) {
-			postProcessor = new PostProcessor(width, height, true /* depth */, false /* alpha */, Config.isDesktop /* supports32Bpp */);
-			PostProcessor.EnableQueryStates = false;
-		} else {
-			postProcessor = null;
-		}
+		// precompute sprite batch transform matrix
+		xform.idt();
+		xform.scale(ScaleUtils.Scale, ScaleUtils.Scale, 1);
 	}
 
 	public void dispose () {
-		if (UserPreferences.bool(Preference.PostProcessing)) {
-			postProcessor.dispose();
-		}
-
-		// depthMap.dispose();
+		postProcessing.dispose();
 		batchRenderer.dispose();
 		worldRenderer.dispose();
 
 		GameEvents.gameRenderer.removeAllListeners();
 	}
 
-	public boolean hasPostProcessor () {
-		return postProcessor != null;
+	/** Enables or disables the debug render events */
+	public void setDebug (boolean enabled) {
+		debug = enabled;
 	}
 
-	public PostProcessor getPostProcessor () {
-		return postProcessor;
+	public boolean isDebugEnabled () {
+		return debug;
+	}
+
+	public PostProcessing getPostProcessing () {
+		return postProcessing;
 	}
 
 	public GameWorldRenderer getWorldRenderer () {
 		return worldRenderer;
 	}
 
-	public void beforeRender (float timeAliasingFactor) {
-		GameEvents.gameRenderer.timeAliasingFactor = timeAliasingFactor;
-		GameEvents.gameRenderer.trigger(this, GameRendererEvent.Type.OnSubframeInterpolate);
+	public FrameBuffer getNormalDepthMap () {
+		return worldRenderer.getNormalDepthMap();
 	}
 
-	public void render (FrameBuffer dest) {
+	private void updateLights () {
+		// update ambient lights
+		Color ambient = worldRenderer.getAmbientColor();
+		Color treesAmbient = worldRenderer.getTreesAmbientColor();
+
+		ambient.set(0.1f, 0.05f, 0.15f, 0.4f + 0.2f * URacer.Game.getTimeModFactor());
+		treesAmbient.set(ambient.r, ambient.g * 2f, ambient.b, 0.4f + 0.5f * URacer.Game.getTimeModFactor());
+
+		if (world.isNightMode() && postProcessing.hasEffect(Effects.Crt.name)) {
+			ambient.set(0.1f, 0.05f, 0.1f, 0.6f);
+			treesAmbient.set(0.1f, 0.05f, 0.1f, 0.6f + 0.2f * URacer.Game.getTimeModFactor());
+		}
+
+		ambient.clamp();
+		treesAmbient.clamp();
+
+		// update point lights, more intensity from lights near the player
+		PlayerCar player = world.getPlayer();
+		PointLight[] lights = world.getLights();
+		if (lights != null && player != null) {
+			for (int l = 0; l < lights.length; l++) {
+				float dist = player.getWorldPosMt().dst2(lights[l].getPosition());
+				float maxdist = 30;
+				maxdist *= maxdist;
+				dist = 1 - MathUtils.clamp(dist, 0, maxdist) / maxdist;
+				lights[l].setColor(1, 1, 1, AMath.fixup(0.3f + 0.3f * dist));
+			}
+		}
+	}
+
+	private void interpolate (float timeAliasingFactor) {
+		GameEvents.gameRenderer.timeAliasingFactor = timeAliasingFactor;
+		GameEvents.gameRenderer.trigger(this, GameRendererEvent.Type.SubframeInterpolate);
+	}
+
+	private void beforeRender () {
+		updateLights();
+
+		// request freshdata before any rendering
+		GameEvents.gameRenderer.trigger(this, GameRendererEvent.Type.BeforeRender);
+
+		// update matrices, cameras and other values
+		GameEvents.gameRenderer.mtxOrthographicMvpMt = worldRenderer.getOrthographicMvpMt();
+		GameEvents.gameRenderer.camOrtho = worldRenderer.getOrthographicCamera();
+		GameEvents.gameRenderer.camPersp = worldRenderer.getPerspectiveCamera();
+		GameEvents.gameRenderer.camZoom = worldRenderer.getCameraZoom();
+		GameEvents.gameRenderer.postProcessor = postProcessing.getPostProcessor();
+	}
+
+	private void clear () {
+		gl.glClearDepthf(1);
+		gl.glClearColor(0, 0, 0, 1);
+		gl.glClear(GL20.GL_COLOR_BUFFER_BIT | GL20.GL_DEPTH_BUFFER_BIT);
+	}
+
+	public void render (FrameBuffer dest, boolean quitPending) {
+		if (!quitPending) {
+			// trigger interpolables to interpolate their position and orientation
+			interpolate(URacer.Game.getTemporalAliasing());
+
+			// raise before render
+			beforeRender();
+		} else {
+			updateLights();
+			GameEvents.gameRenderer.trigger(this, GameRendererEvent.Type.BeforeRender);
+		}
+
+		SpriteBatch batch;
+		worldRenderer.resetCounters();
+
+		clear();
+
+		if (postProcessing.requiresNormalDepthMap()) {
+			worldRenderer.updateNormalDepthMap();
+		}
+
 		// postproc begins
 		boolean postProcessorReady = false;
 		boolean hasDest = (dest != null);
@@ -130,12 +185,10 @@ public final class GameRenderer {
 			if (hasDest) {
 				dest.begin();
 			} else {
-				gl.glViewport(0, 0, Gdx.graphics.getWidth(), Gdx.graphics.getHeight());
+				gl.glViewport(ScaleUtils.CropX, ScaleUtils.CropY, ScaleUtils.PlayWidth, ScaleUtils.PlayHeight);
 			}
 
-			gl.glClearDepthf(1);
-			gl.glClearColor(0, 0, 0, 0);
-			gl.glClear(GL20.GL_COLOR_BUFFER_BIT | GL20.GL_DEPTH_BUFFER_BIT);
+			clear();
 		}
 		// postproc ends
 
@@ -144,79 +197,166 @@ public final class GameRenderer {
 		// render base tilemap
 		worldRenderer.renderTilemap();
 
+		// ///////////////////////
 		// BatchBeforeMeshes
-		SpriteBatch batch = null;
-		batch = batchRenderer.begin(worldRenderer.getOrthographicCamera());
-		batch.enableBlending();
+		// ///////////////////////
+
 		{
+			batch = batchRenderer.begin(worldRenderer.getOrthographicCamera());
+			batch.enableBlending();
 			GameEvents.gameRenderer.batch = batch;
-			GameEvents.gameRenderer.trigger(this, GameRendererEvent.Type.BatchBeforeMeshes);
+			GameEvents.gameRenderer.trigger(this, GameRendererEvent.Type.BatchBeforeCars);
+			batchRenderer.end();
 		}
-		batchRenderer.end();
 
-		// render world's meshes
-		worldRenderer.renderAllMeshes(false);
-
-		// BatchAfterMeshes
-		batch = batchRenderer.beginTopLeft();
 		{
-			GameEvents.gameRenderer.batch = batch;
-			GameEvents.gameRenderer.trigger(this, GameRendererEvent.Type.BatchAfterMeshes);
+			gl.glEnable(GL20.GL_DEPTH_TEST);
+			gl.glDepthFunc(GL20.GL_LESS);
+			worldRenderer.renderCars(false);
 		}
-		batchRenderer.end();
 
-		// postproc begins
-		if (postProcessorReady) {
+		{
+			gl.glDisable(GL20.GL_DEPTH_TEST);
 			gl.glDisable(GL20.GL_CULL_FACE);
-			if (world.isNightMode()) {
+			batch = batchRenderer.begin(worldRenderer.getOrthographicCamera());
+			batch.enableBlending();
+			{
+				GameEvents.gameRenderer.batch = batch;
+				GameEvents.gameRenderer.trigger(this, GameRendererEvent.Type.BatchAfterCars);
+			}
+			batchRenderer.end();
+		}
+
+		gl.glEnable(GL20.GL_DEPTH_TEST);
+		gl.glDepthFunc(GL20.GL_LESS);
+		worldRenderer.renderWalls(false);
+
+		if (world.isNightMode()) {
+			gl.glDisable(GL20.GL_DEPTH_TEST);
+			if (postProcessorReady) {
 				FrameBuffer result = postProcessor.captureEnd();
 				worldRenderer.renderLigthMap(result);
+				postProcessor.captureNoClear();
+			} else {
+				if (hasDest) dest.end();
+				worldRenderer.renderLigthMap(dest);
+				if (hasDest) dest.begin();
 			}
+			gl.glEnable(GL20.GL_DEPTH_TEST);
+		}
 
+		worldRenderer.renderTrees(false);
+
+		gl.glDisable(GL20.GL_DEPTH_TEST);
+
+		// ///////////////////////
+		// BatchAfterMeshes
+		// ///////////////////////
+
+		batch = batchRenderer.beginTopLeft();
+		batch.setTransformMatrix(xform);
+		{
+			GameEvents.gameRenderer.batch = batch;
+			GameEvents.gameRenderer.trigger(this, GameRendererEvent.Type.BatchBeforePostProcessing);
+		}
+		batchRenderer.end();
+
+		if (postProcessorReady) {
 			postProcessor.render(dest);
 
-			if (hasDest) {
-				dest.begin();
-			}
-
+			if (hasDest) dest.begin();
 			batchAfterPostProcessing();
+			debugRender();
+			if (hasDest) dest.end();
 
-			if (hasDest) {
-				dest.end();
-			}
 		} else {
 			batchAfterPostProcessing();
-			if (hasDest) {
-				dest.end();
-			}
-
-			if (world.isNightMode()) {
-				worldRenderer.renderLigthMap(dest);
-			}
+			debugRender();
+			if (hasDest) dest.end();
 		}
-		// postproc ends
 	}
 
 	private void batchAfterPostProcessing () {
-		// BatchAfterPostProcessing
-		GameEvents.gameRenderer.batch = batchRenderer.beginTopLeft();
+		SpriteBatch batch = batchRenderer.beginTopLeft();
+		batch.setTransformMatrix(xform);
+
+		GameEvents.gameRenderer.batch = batch;
 		GameEvents.gameRenderer.trigger(this, GameRendererEvent.Type.BatchAfterPostProcessing);
 		batchRenderer.end();
 	}
 
 	// manages and triggers debug event
 	public void debugRender () {
-		SpriteBatch batch = batchRenderer.beginTopLeft();
-		batch.disableBlending();
-		GameEvents.gameRenderer.batch = batch;
-		GameEvents.gameRenderer.trigger(this, GameRendererEvent.Type.BatchDebug);
-		batchRenderer.end();
+		if (debug) {
+			SpriteBatch batch = batchRenderer.beginTopLeft();
 
-		GameEvents.gameRenderer.batch = null;
-		GameEvents.gameRenderer.trigger(this, GameRendererEvent.Type.Debug);
+			batch.setTransformMatrix(xform);
+			batch.disableBlending();
+			GameEvents.gameRenderer.batch = batch;
+			GameEvents.gameRenderer.trigger(this, GameRendererEvent.Type.BatchDebug);
+			batchRenderer.end();
+
+			batch.setTransformMatrix(identity);
+			GameEvents.gameRenderer.batch = null;
+			GameEvents.gameRenderer.trigger(this, GameRendererEvent.Type.Debug);
+		}
 	}
 
 	public void rebind () {
-		postProcessor.rebind();
+		if (postProcessor != null && postProcessor.isEnabled()) {
+			postProcessor.rebind();
+		}
+	}
+
+	/** Manages to convert world positions expressed in meters or pixels to the corresponding position to screen pixels. To use this
+	 * class, the GameWorldRenderer MUST be already constructed and initialized. */
+	public static final class ScreenUtils {
+		// private static int ScreenWidth, ScreenHeight;
+		private static Vector2 tmp2 = new Vector2();
+		private static Vector3 tmp3 = new Vector3();
+		private static GameWorldRenderer worldRenderer;
+
+		// private static Vector2 ref2scr, scr2ref;
+
+		public static void init (GameWorldRenderer worldRenderer) {
+			ScreenUtils.worldRenderer = worldRenderer;
+			// ScreenUtils.ScreenWidth = Gdx.graphics.getWidth();
+			// ScreenUtils.ScreenHeight = Gdx.graphics.getHeight();
+		}
+
+		/** Transforms Box2D world-mt coordinates to reference-screen pixels coordinates */
+		public static Vector2 worldMtToScreen (Vector2 worldPositionMt) {
+			return worldPxToScreen(Convert.mt2px(worldPositionMt));
+		}
+
+		/** Transforms world-px coordinates to reference-screen pixel coordinates */
+		public static Vector2 worldPxToScreen (Vector2 worldPositionPx) {
+			tmp3.set(worldPositionPx.x, worldPositionPx.y, 0);
+			worldRenderer.camOrtho.project(tmp3, 0, 0, Config.Graphics.ReferenceScreenWidth, Config.Graphics.ReferenceScreenHeight);
+			tmp2.set(tmp3.x, Config.Graphics.ReferenceScreenHeight - tmp3.y);
+			return tmp2;
+		}
+
+		// /** Transforms reference-screen pixel coordinates to world-mt coordinates */
+		// public static Vector3 screenToWorldMt (Vector2 screenPositionPx) {
+		// tmp3.set(screenPositionPx.x, screenPositionPx.y, 1);
+		//
+		// // normalize and scale to the real display size
+		// tmp3.x = (tmp3.x / (float)Config.Graphics.ReferenceScreenWidth) * ScreenWidth;
+		// tmp3.y = (tmp3.y / (float)Config.Graphics.ReferenceScreenHeight) * ScreenHeight;
+		//
+		// worldRenderer.camOrtho.unproject(tmp3, 0, 0, ScreenWidth, ScreenHeight);
+		//
+		// tmp2.set(Convert.px2mt(tmp3.x), Convert.px2mt(tmp3.y));
+		// tmp3.set(tmp2.x, tmp2.y, 0);
+		// return tmp3;
+		// }
+
+		public static boolean isVisible (Rectangle rect) {
+			return worldRenderer.camOrthoRect.overlaps(rect);
+		}
+
+		private ScreenUtils () {
+		}
 	}
 }

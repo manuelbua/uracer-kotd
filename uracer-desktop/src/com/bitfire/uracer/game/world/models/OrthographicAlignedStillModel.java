@@ -2,13 +2,13 @@
 package com.bitfire.uracer.game.world.models;
 
 import com.badlogic.gdx.Gdx;
-import com.badlogic.gdx.graphics.g3d.materials.Material;
-import com.badlogic.gdx.graphics.g3d.model.still.StillModel;
 import com.badlogic.gdx.graphics.glutils.ShaderProgram;
 import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.math.Vector3;
 import com.badlogic.gdx.math.collision.BoundingBox;
-import com.bitfire.uracer.ScalingStrategy;
+import com.bitfire.uracer.u3d.materials.Material;
+import com.bitfire.uracer.u3d.model.UStillModel;
+import com.bitfire.uracer.u3d.still.StillModel;
 import com.bitfire.utils.ShaderLoader;
 
 /** The model is expected to follow the z-up convention.
@@ -21,6 +21,7 @@ public class OrthographicAlignedStillModel {
 	public BoundingBox boundingBox = new BoundingBox();
 
 	public static ShaderProgram shader = null;
+	public static ShaderProgram shaderNight = null;
 
 	// Blender => cube 14.2x14.2 meters = one tile (256px) w/ far plane @48
 	// (256px are 14.2mt w/ 18px/mt)
@@ -28,8 +29,12 @@ public class OrthographicAlignedStillModel {
 	// factor for this scaling: also, since the far plane is suboptimal at
 	// just 48, i want 5 times more space on the z-axis, so here's another
 	// scaling factor creeping up.
-	public static float World3DScalingFactor = 1.42222f;
-	protected static float BlenderToURacer = 5f * World3DScalingFactor;
+	// private static final float Adjustment = 0.94537085f; // 1280x800;
+	// private static final float Adjustment = 1.0514121f; // 1280x720
+	private static final float Adjustment = 1.05f; // 1280x720
+	private static final float To256 = 224f / 256f;
+	public static final float World3DScalingFactor = 1.42222f;
+	public static final float BlenderToURacer = Adjustment * World3DScalingFactor * To256 * 5f;
 
 	// scale
 	private float scale, scalingFactor;
@@ -38,26 +43,64 @@ public class OrthographicAlignedStillModel {
 	// position
 	public Vector2 positionOffsetPx = new Vector2(0, 0);
 	public Vector2 positionPx = new Vector2();
+	private float alpha = 1;
 
 	// explicitle initialize the static iShader member
 	// (Android: statics need to be re-initialized!)
 	private void loadShaders () {
-		// @formatter:off
-		String vertexShader = "uniform mat4 u_projTrans;					\n" + "attribute vec4 a_position;					\n"
-			+ "attribute vec2 a_texCoord0;				\n" + "varying vec2 v_TexCoord;					\n" + "void main()								\n" + "{											\n"
-			+ "	gl_Position = u_projTrans * a_position;	\n" + "	v_TexCoord = a_texCoord0;				\n" + "}											\n";
+		// @off
+		String vertexShader =
+			"uniform mat4 u_projTrans;							\n" +
+			"attribute vec4 a_position;						\n" +
+			"attribute vec2 a_texCoord0;						\n" +
+			"varying vec2 v_TexCoord;							\n" +
+			"void main()											\n" +
+			"{\n"+
+			"	gl_Position = u_projTrans * a_position;	\n" +
+			"	v_TexCoord = a_texCoord0;						\n" +
+			"}\n";
 
-		String fragmentShader = "#ifdef GL_ES											\n" + "precision mediump float;								\n" + "#endif													\n"
-			+ "uniform sampler2D u_texture;							\n" + "varying vec2 v_TexCoord;								\n" + "void main()											\n"
-			+ "{														\n" + "	gl_FragColor = texture2D( u_texture, v_TexCoord );	\n" + "}														\n";
-		// @formatter:on
+		String fragmentShader =
+			"#ifdef GL_ES											\n" +
+			"	precision mediump float;						\n" +
+			"#endif													\n" +
+			"uniform float alpha;								\n" +
+			"uniform sampler2D u_texture;						\n" +
+			"varying vec2 v_TexCoord;							\n" +
+			"void main()											\n"+
+			"{\n" +
+			"	vec4 texel = texture2D( u_texture, v_TexCoord );	\n" +
+			"	if(texel.a < 0.25) discard;								\n" +
+			"	gl_FragColor = vec4(texel.rgb,texel.a*alpha);		\n" +
+			"}\n";
 
-		if (!(shader instanceof ShaderProgram)) {
+		String fragmentShaderNight =
+			"#ifdef GL_ES											\n" +
+			"	precision mediump float;						\n" +
+			"#endif													\n" +
+			"uniform float alpha;								\n" +
+			"uniform sampler2D u_texture;						\n" +
+			"uniform vec4 u_ambient;							\n" +
+			"varying vec2 v_TexCoord;							\n" +
+			"void main()											\n"+
+			"{\n" +
+			"	vec4 texel = texture2D( u_texture, v_TexCoord );	\n" +
+			"	if(texel.a < 0.25) discard;																\n" +
+			"	vec4 c = vec4((u_ambient.rgb + texel.rgb*texel.a)*u_ambient.a, texel.a);	\n" +
+			"	gl_FragColor = vec4(c.rgb,c.a*alpha);													\n" +
+			"}\n";
+		// @on
+
+		if (shader == null) {
 			shader = ShaderLoader.fromString(vertexShader, fragmentShader, "OASM::vert", "OASM::frag");
+		}
+
+		if (shaderNight == null) {
+			shaderNight = ShaderLoader.fromString(vertexShader, fragmentShaderNight, "OASM::vertNight", "OASM::fragNight");
 		}
 	}
 
-	public OrthographicAlignedStillModel (StillModel aModel, Material material, ScalingStrategy strategy) {
+	public OrthographicAlignedStillModel (StillModel aModel, Material material) {
 		loadShaders();
 
 		try {
@@ -69,9 +112,10 @@ public class OrthographicAlignedStillModel {
 			model.getBoundingBox(localBoundingBox);
 			boundingBox.set(localBoundingBox);
 
-			setScalingFactor(strategy.meshScaleFactor * BlenderToURacer * strategy.to256);
+			setScalingFactor(BlenderToURacer);
 			setPosition(0, 0);
 			setRotation(0, 0, 0, 0);
+			setAlpha(1);
 		} catch (Exception e) {
 			Gdx.app.log("OrthographicAlignedStillModel", e.getMessage());
 			Gdx.app.exit();
@@ -79,10 +123,23 @@ public class OrthographicAlignedStillModel {
 	}
 
 	public static void disposeShader () {
-		if (shader instanceof ShaderProgram) {
+		if (shader != null) {
 			shader.dispose();
 			shader = null;
 		}
+
+		if (shaderNight != null) {
+			shaderNight.dispose();
+			shaderNight = null;
+		}
+	}
+
+	public void setAlpha (float alpha) {
+		this.alpha = alpha;
+	}
+
+	public float getAlpha () {
+		return alpha;
 	}
 
 	public final void setPositionOffsetPixels (int offsetPxX, int offsetPxY) {
@@ -95,8 +152,6 @@ public class OrthographicAlignedStillModel {
 	 * @param posPxX
 	 * @param posPxY */
 	public final void setPosition (float posPxX, float posPxY) {
-		// positionPx.set( GameData.Environment.gameWorld.positionFor( posPxX,
-		// posPxY ) );
 		positionPx.set(posPxX, posPxY);
 	}
 

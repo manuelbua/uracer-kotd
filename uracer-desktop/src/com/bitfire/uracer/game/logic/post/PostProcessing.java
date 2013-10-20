@@ -2,7 +2,7 @@
 package com.bitfire.uracer.game.logic.post;
 
 import com.badlogic.gdx.Gdx;
-import com.badlogic.gdx.graphics.GL10;
+import com.badlogic.gdx.graphics.GL20;
 import com.badlogic.gdx.graphics.Texture.TextureWrap;
 import com.badlogic.gdx.utils.LongMap;
 import com.bitfire.postprocessing.PostProcessor;
@@ -12,10 +12,17 @@ import com.bitfire.postprocessing.effects.CrtMonitor;
 import com.bitfire.postprocessing.effects.Curvature;
 import com.bitfire.postprocessing.effects.Vignette;
 import com.bitfire.postprocessing.effects.Zoomer;
+import com.bitfire.postprocessing.filters.CrtScreen.RgbMode;
 import com.bitfire.postprocessing.filters.RadialBlur;
+import com.bitfire.uracer.URacer;
 import com.bitfire.uracer.configuration.Config;
 import com.bitfire.uracer.configuration.UserPreferences;
 import com.bitfire.uracer.configuration.UserPreferences.Preference;
+import com.bitfire.uracer.game.logic.post.animators.AggressiveCold;
+import com.bitfire.uracer.game.logic.post.ssao.Ssao;
+import com.bitfire.uracer.game.player.PlayerCar;
+import com.bitfire.uracer.game.world.GameWorld;
+import com.bitfire.uracer.utils.ScaleUtils;
 import com.bitfire.utils.Hash;
 
 /** Encapsulates a post-processor animator that manages effects such as bloom and zoomblur to compose and enhance the gaming
@@ -23,7 +30,7 @@ import com.bitfire.utils.Hash;
 public final class PostProcessing {
 
 	public enum Effects {
-		Zoomer, Bloom, Vignette, Crt, Curvature;
+		Zoomer, Bloom, Vignette, Crt, Curvature, Ssao, MotionBlur;
 
 		public String name;
 
@@ -32,58 +39,102 @@ public final class PostProcessing {
 		}
 	}
 
-	private boolean hasPostProcessor;
-	private final PostProcessor postProcessor;
+	private boolean hasPostProcessor = false;
+	private PostProcessor postProcessor = null;
+	private boolean needNormalDepthMap = false;
 
 	// public access to stored effects
 	public LongMap<PostProcessorEffect> effects = new LongMap<PostProcessorEffect>();
 
 	// animators
-	public LongMap<PostProcessingAnimator> animators = new LongMap<PostProcessingAnimator>();
-	private PostProcessingAnimator currentAnimator;
+	private PostProcessingAnimator animator = null;
+	private boolean hasAnimator = false;
 
-	public PostProcessing (PostProcessor postProcessor) {
-		this.postProcessor = postProcessor;
-		hasPostProcessor = (this.postProcessor != null);
+	public PostProcessing (GameWorld gameWorld) {
+		if (UserPreferences.bool(Preference.PostProcessing)) {
+			postProcessor = new PostProcessor(ScaleUtils.PlayViewport, true /* depth */, true /* alpha */, URacer.Game.isDesktop() /* supports32Bpp */);
+			PostProcessor.EnableQueryStates = false;
+			postProcessor.setClearBits(GL20.GL_COLOR_BUFFER_BIT | GL20.GL_DEPTH_BUFFER_BIT);
+			postProcessor.setClearColor(0, 0, 0, 1);
+			postProcessor.setClearDepth(1);
+			postProcessor.setEnabled(true);
+			postProcessor.setBufferTextureWrap(TextureWrap.ClampToEdge, TextureWrap.ClampToEdge);
+			hasPostProcessor = true;
+			createEffects();
+			setAnimator(new AggressiveCold(this, gameWorld.isNightMode()));
+		}
+	}
 
+	public void dispose () {
 		if (hasPostProcessor) {
-			configurePostProcessor(postProcessor);
-			currentAnimator = null;
+			postProcessor.dispose();
 		}
 	}
 
 	/** Creates the effects that will be available to the animators/manipulators to use, remember that the ownership of the
 	 * instantiated objects is transfered to the PostProcessor when adding the effect to it. */
-	private void configurePostProcessor (PostProcessor postProcessor) {
-		postProcessor.setEnabled(true);
-		postProcessor.setClearBits(GL10.GL_COLOR_BUFFER_BIT | GL10.GL_DEPTH_BUFFER_BIT);
-		postProcessor.setClearDepth(1f);
-		postProcessor.setBufferTextureWrap(TextureWrap.ClampToEdge, TextureWrap.ClampToEdge);
+	private void createEffects () {
+		if (UserPreferences.bool(Preference.Ssao)) {
+			addEffect(
+				Effects.Ssao.name,
+				new Ssao(ScaleUtils.PlayWidth, ScaleUtils.PlayHeight, Ssao.Quality.valueOf(UserPreferences
+					.string(Preference.SsaoQuality))));
+			needNormalDepthMap = true;
+		}
 
-		if (UserPreferences.bool(Preference.Zoom)) {
+		// addEffect(Effects.MotionBlur.name, new CameraMotion());
+		int refW = Config.Graphics.ReferenceScreenWidth;
+		int refH = Config.Graphics.ReferenceScreenHeight;
+
+		if (UserPreferences.bool(Preference.ZoomRadialBlur)) {
 			RadialBlur.Quality rbq = RadialBlur.Quality.valueOf(UserPreferences.string(Preference.ZoomRadialBlurQuality));
-			Zoomer z = (UserPreferences.bool(Preference.ZoomRadialBlur) ? new Zoomer(rbq) : new Zoomer());
+			Zoomer z = new Zoomer(refW, refH, rbq);
 			z.setBlurStrength(0);
+			z.setZoom(1);
 			addEffect(Effects.Zoomer.name, z);
 		}
 
 		if (UserPreferences.bool(Preference.Bloom)) {
-			addEffect(Effects.Bloom.name, new Bloom(Config.PostProcessing.ScaledFboWidth, Config.PostProcessing.ScaledFboHeight));
+			int fboW = (int)((float)ScaleUtils.PlayWidth * Config.PostProcessing.FboRatio);
+			int fboH = (int)((float)ScaleUtils.PlayHeight * Config.PostProcessing.FboRatio);
+			addEffect(Effects.Bloom.name, new Bloom(fboW, fboH));
 		}
 
 		if (UserPreferences.bool(Preference.Vignetting)) {
 			// if there is no bloom, let's control the final saturation via
 			// the vignette filter
-			addEffect(Effects.Vignette.name, new Vignette(!UserPreferences.bool(Preference.Bloom)));
+			addEffect(Effects.Vignette.name,
+				new Vignette(ScaleUtils.PlayWidth, ScaleUtils.PlayHeight, !UserPreferences.bool(Preference.Bloom)));
 		}
 
 		if (UserPreferences.bool(Preference.CrtScreen)) {
-			addEffect(Effects.Crt.name, new CrtMonitor(UserPreferences.bool(Preference.Curvature), false));
-		} else if (UserPreferences.bool(Preference.Curvature)) {
+			CrtMonitor crt = new CrtMonitor(ScaleUtils.PlayWidth, ScaleUtils.PlayHeight,
+				UserPreferences.bool(Preference.EarthCurvature), false, RgbMode.ChromaticAberrations);
+			addEffect(Effects.Crt.name, crt);
+			crt.getCombinePass().setSource2Intensity(1f);
+		} else if (UserPreferences.bool(Preference.EarthCurvature)) {
 			addEffect(Effects.Curvature.name, new Curvature());
 		}
 
 		Gdx.app.log("PostProcessing", "Post-processing enabled and configured");
+	}
+
+	private void setAnimator (PostProcessingAnimator animator) {
+		hasAnimator = (animator != null);
+		this.animator = animator;
+		animator.reset();
+	}
+
+	public boolean requiresNormalDepthMap () {
+		return needNormalDepthMap;
+	}
+
+	public boolean isEnabled () {
+		return hasPostProcessor;
+	}
+
+	public PostProcessor getPostProcessor () {
+		return postProcessor;
 	}
 
 	public void addEffect (String name, PostProcessorEffect effect) {
@@ -94,39 +145,54 @@ public final class PostProcessing {
 	}
 
 	public PostProcessorEffect getEffect (String name) {
-		return effects.get(Hash.APHash(name));
-	}
-
-	public void addAnimator (String name, PostProcessingAnimator animator) {
-		animators.put(Hash.APHash(name), animator);
-	}
-
-	public PostProcessingAnimator getAnimator (String name) {
-		return animators.get(Hash.APHash(name));
-	}
-
-	public void enableAnimator (String name) {
-		if (!hasPostProcessor) {
-			return;
+		if (hasPostProcessor) {
+			return effects.get(Hash.APHash(name));
 		}
 
-		PostProcessingAnimator next = animators.get(Hash.APHash(name));
-		if (next != null) {
-			currentAnimator = next;
-			currentAnimator.reset();
+		return null;
+	}
+
+	public boolean hasEffect (String name) {
+		if (hasPostProcessor) {
+			return (effects.get(Hash.APHash(name)) != null);
+		}
+
+		return false;
+	}
+
+	public void resetAnimator () {
+		if (hasPostProcessor && hasAnimator) {
+			animator.reset();
 		}
 	}
 
-	public void disableAnimator () {
-		if (hasPostProcessor && currentAnimator != null) {
-			currentAnimator.reset();
-			currentAnimator = null;
+	public void onBeforeRender (float zoom, float warmUpCompletion, float collisionFactor) {
+		if (hasPostProcessor && hasAnimator) {
+			animator.update(zoom, warmUpCompletion, collisionFactor);
 		}
 	}
 
-	public void onBeforeRender (float timeModFactor) {
-		if (hasPostProcessor && currentAnimator != null) {
-			currentAnimator.update(timeModFactor);
+	public void setPlayer (PlayerCar player) {
+		if (hasPostProcessor && hasAnimator) {
+			animator.setPlayer(player);
+		}
+	}
+
+	public void alertBegins (int milliseconds) {
+		if (hasPostProcessor && hasAnimator) {
+			animator.alertBegins(milliseconds);
+		}
+	}
+
+	public void alertEnds (int milliseconds) {
+		if (hasPostProcessor && hasAnimator) {
+			animator.alertEnds(milliseconds);
+		}
+	}
+
+	public void alert (int milliseconds) {
+		if (hasPostProcessor && hasAnimator) {
+			animator.alert(milliseconds);
 		}
 	}
 }

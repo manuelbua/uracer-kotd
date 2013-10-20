@@ -3,22 +3,23 @@ package com.bitfire.uracer.screen;
 
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.GL20;
-import com.badlogic.gdx.graphics.glutils.FrameBuffer;
-import com.bitfire.uracer.configuration.Config;
-import com.bitfire.uracer.screen.ScreenFactory.ScreenType;
+import com.badlogic.gdx.math.Rectangle;
+import com.bitfire.uracer.URacer;
+import com.bitfire.uracer.game.screens.GameScreensFactory.ScreenType;
+import com.bitfire.uracer.screen.ScreenFactory.ScreenId;
 import com.bitfire.uracer.screen.TransitionFactory.TransitionType;
-import com.bitfire.uracer.screen.transitions.ScreenTransition;
 
 public final class ScreenManager {
-
 	private TransitionManager transMgr;
 	private static Screen current;
-	private ScreenType next;
+	private ScreenId next;
+	private ScreenFactory screenFactory;
 	private boolean quitPending, doSetScreenImmediate, justTransitioned;
 	private GL20 gl;
 
-	public ScreenManager () {
-		transMgr = new TransitionManager(Config.isDesktop /* 32bits */, false, true);
+	public ScreenManager (Rectangle viewport, ScreenFactory factory) {
+		screenFactory = factory;
+		transMgr = new TransitionManager(viewport, URacer.Game.isDesktop() /* 32bits */, true, true);
 		current = null;
 		next = ScreenType.NoScreen;
 		quitPending = false;
@@ -53,14 +54,14 @@ public final class ScreenManager {
 			switchedScreen = true;
 		} else if (doSetScreenImmediate) {
 			doSetScreenImmediate = false;
-			current = ScreenFactory.createScreen(next);
+			current = screenFactory.createScreen(next);
 			switchedScreen = true;
 		}
 
 		// switched to a null screen?
 		if (switchedScreen && current == null) {
 			quitPending = true;
-			Gdx.app.log("ScreenManager", "No screens available, bye!");
+			// Gdx.app.log("ScreenManager", "No screens available, bye!");
 			Gdx.app.exit(); // async exit
 		}
 
@@ -73,11 +74,7 @@ public final class ScreenManager {
 	/** Switch to the screen identified by the specified screen type, using the specified transition type in its default
 	 * configuration. The screen change is scheduled to happen at the start of the next frame. */
 	public void setScreen (ScreenType screen, TransitionType transitionType, long transitionDurationMs) {
-		// early exit
-		if (transMgr.isActive()) {
-			return;
-		}
-
+		transMgr.removeTransition();
 		ScreenTransition transition = null;
 
 		// if no transition or no duration avoid everything and pass a null
@@ -93,11 +90,7 @@ public final class ScreenManager {
 	/** Switch to the screen identified by the specified screen type, using the specified transition. The screen change is scheduled
 	 * to happen at the start of the next frame. */
 	public void setScreen (ScreenType screen, ScreenTransition transition) {
-		// early exit
-		if (transMgr.isActive()) {
-			return;
-		}
-
+		transMgr.removeTransition();
 		doSetScreenImmediate = false;
 		next = screen;
 
@@ -114,7 +107,7 @@ public final class ScreenManager {
 
 		// dispose the current screen
 		if (current != null) {
-			Gdx.app.debug("ScreenManager", "Destroying " + current.getClass().getSimpleName());
+			// Gdx.app.debug("ScreenManager", "Destroying " + current.getClass().getSimpleName());
 			current.dispose();
 			current = null;
 			System.gc();
@@ -130,14 +123,6 @@ public final class ScreenManager {
 	}
 
 	public void resize (int width, int height) {
-// if( transMgr.isActive()) {
-// transMgr.getTransition().reset();
-// transMgr.removeTransition();
-// }
-//
-// if( current != null ) {
-// current.resize( width, height );
-// }
 	}
 
 	public void tick () {
@@ -151,7 +136,6 @@ public final class ScreenManager {
 	}
 
 	public void tickCompleted () {
-
 		if (transMgr.isActive()) {
 			return;
 		}
@@ -161,7 +145,7 @@ public final class ScreenManager {
 		}
 	}
 
-	public void render (FrameBuffer dest) {
+	public void render () {
 		if (transMgr.isActive()) {
 			transMgr.update();
 			transMgr.render();
@@ -175,18 +159,8 @@ public final class ScreenManager {
 					gl.glActiveTexture(GL20.GL_TEXTURE0);
 				}
 
-				current.render(dest);
+				current.render(null);
 			}
-		}
-	}
-
-	public void debugRender () {
-		if (transMgr.isActive()) {
-			return;
-		}
-
-		if (current != null) {
-			current.debugRender();
 		}
 	}
 

@@ -2,151 +2,105 @@
 package com.bitfire.uracer.game.logic.replaying;
 
 import com.badlogic.gdx.Gdx;
+import com.badlogic.gdx.utils.Array;
 import com.badlogic.gdx.utils.Disposable;
 import com.bitfire.uracer.game.actors.Car;
 import com.bitfire.uracer.game.actors.CarForces;
-import com.bitfire.uracer.game.logic.LapInfo;
-import com.bitfire.uracer.game.logic.helpers.ReplayRecorder;
-import com.bitfire.uracer.game.world.GameWorld;
+import com.bitfire.uracer.game.logic.replaying.ReplayManager.ReplayResult;
+import com.bitfire.uracer.game.logic.replaying.ReplayRecorder.RecorderError;
 
-/** Manages to record player lap to Replay objects and keep tracks of lap information. */
+/** Manage player's performance recordings and keeps basic lap information */
 public class LapManager implements Disposable {
 
-	private GameWorld gameWorld;
-	private ReplayRecorder recorder;
-	private ReplayBufferManager bufferManager;
-	private LapInfo lapInfo;
-	private Replay lastRecordedReplay;
+	private final ReplayRecorder recorder;
+	private final ReplayManager manager;
 
-	public LapManager (GameWorld gameWorld) {
-		this.gameWorld = gameWorld;
-
+	public LapManager (String currentTrackId) {
 		recorder = new ReplayRecorder();
-		lapInfo = new LapInfo();
-		bufferManager = new ReplayBufferManager();
-		lastRecordedReplay = null;
+		manager = new ReplayManager(currentTrackId);
 	}
 
 	@Override
 	public void dispose () {
-		recorder.reset();
-		recorder = null;
-		lapInfo = null;
-		bufferManager = null;
+		manager.dispose();
+		recorder.dispose();
 	}
 
-	// operations
-
-	/** Discard the performance currently being recorded so far */
-	public void abortRecording () {
-		recorder.reset();
+	/** Stops recording and invalidates last recorded replay, optionally resetting the record timer */
+	public void reset (boolean resetTimer) {
+		abortRecording(resetTimer);
 	}
 
-	/** Reset any recorded replay so far */
-	public void reset () {
-		lastRecordedReplay = null;
-		lapInfo.resetTime();
-		bufferManager.reset();
+	public void resetTimer () {
+		recorder.resetTimer();
 	}
 
-	public void setBestReplay (Replay replay) {
-		bufferManager.setBestReplay(replay);
-		lapInfo.setBestTrackTimeSeconds(replay.trackTimeSeconds);
-	}
-
-	// getters
-
-	/** Returns the LapInfo information regarding the currently active lap */
-	public LapInfo getLapInfo () {
-		return lapInfo;
-	}
-
-	/** Returns whether or not the Best or Worst replay is available */
-	public boolean hasAnyReplay () {
-		return bufferManager.hasAnyReplayData();
-	}
-
-	/** Returns the first available, and valid, replay */
-	public Replay getAnyReplay () {
-		return bufferManager.getAnyReplay();
-	}
-
-	/** Returns whether or not the Best and Worst replays are available */
-	public boolean hasAllReplays () {
-		return bufferManager.hasAllReplayData();
-	}
-
-	/** Returns the best replay available, so far */
-	public Replay getBestReplay () {
-		return bufferManager.getBestReplay();
-	}
-
-	/** Returns the worst replay available, so far */
-	public Replay getWorstReplay () {
-		return bufferManager.getWorstReplay();
-	}
-
-	/** Returns the Replay instance where the last recording took place */
-	public Replay getLastRecordedReplay () {
-		return lastRecordedReplay;
-	}
-
-	/** Returns whether or not the last recorded lap was the best one */
-	public boolean isLastBestLap () {
-		return (lastRecordedReplay.id == bufferManager.getBestReplay().id);
-	}
-
-	/** Returns whether or not a best lap is present */
-	public boolean hasBestLapReplay () {
-		return bufferManager.hasBestReplay();
-	}
-
-	/** Returns whether or not a worst lap is present */
-	public boolean hasWorstLapReplay () {
-		return bufferManager.hasWorstReplay();
+	public ReplayResult addReplay (Replay replay) {
+		return manager.addReplay(replay);
 	}
 
 	/** Starts recording the player lap performance. Returns the Replay instance where the recording is being performed. */
-	public Replay startRecording (Car car) {
+	public void startRecording (Car car, String trackId, String userId) {
 		if (recorder.isRecording()) {
 			Gdx.app.log("TrackLapManager", "Couldn't start recording since it's already started.");
-			return null;
+			return;
 		}
 
-		Replay next = bufferManager.getNextBuffer();
-		lapInfo.restartTime();
-		recorder.beginRecording(car, next, gameWorld.levelName);
-		return next;
+		recorder.beginRecording(car, trackId, userId);
 	}
 
 	/** Add and record the specified CarForces */
-	public void record (CarForces forces) {
+	public RecorderError record (CarForces forces) {
 		if (recorder.isRecording()) {
-			recorder.add(forces);
+			return recorder.add(forces);
+		}
+
+		return RecorderError.RecordingNotEnabled;
+	}
+
+	/** Ends the previously started recording and returns its Replay, if any */
+	public Replay stopRecording () {
+		if (recorder.isRecording()) {
+			return recorder.endRecording();
+		}
+
+		return null;
+	}
+
+	/** Discard the performance currently being recorded */
+	public void abortRecording (boolean resetTimer) {
+		recorder.reset();
+		if (resetTimer) {
+			resetTimer();
 		}
 	}
 
-	/** Ends recording the previously started lap performance */
-	public void stopRecording () {
-		if (recorder.isRecording()) {
+	/** Returns whether or not the lap manager is recording the player's performance */
+	public boolean isRecording () {
+		return recorder.isRecording();
+	}
 
-			// ends recording and keeps track of the last recorded replay
-			lastRecordedReplay = recorder.endRecording();
+	public int getCurrentReplayTicks () {
+		return recorder.getElapsedTicks();
+	}
 
-			bufferManager.updateReplays();
+	public Array<Replay> getReplays () {
+		return manager.getReplays();
+	}
 
-			// update lap info with last lap times
-			if (bufferManager.hasAllReplayData()) {
-				// lap finished, update lapinfo with the last recorded replay
-				lapInfo.setLastTrackTimeSeconds(lastRecordedReplay.trackTimeSeconds);
+	public Replay getReplay (String replayId) {
+		return manager.getById(replayId);
+	}
 
-			} else {
-				// lap finished, update lapinfo with whatever replay data is available
-				lapInfo.setLastTrackTimeSeconds(bufferManager.getAnyReplay().trackTimeSeconds);
-			}
+	public int getReplaysCount () {
+		return manager.getReplaysCount();
+	}
 
-			// update lap info with best lap time
-			lapInfo.setBestTrackTimeSeconds(bufferManager.getBestReplay().trackTimeSeconds);
-		}
+	public Replay getBestReplay () {
+		return manager.getBestReplay();
+	}
+
+	public void removeAllReplays () {
+		manager.removeAll();
 	}
 }

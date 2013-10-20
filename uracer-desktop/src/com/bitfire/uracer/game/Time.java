@@ -3,23 +3,34 @@ package com.bitfire.uracer.game;
 
 import com.badlogic.gdx.utils.TimeUtils;
 import com.bitfire.uracer.configuration.Config;
+import com.bitfire.uracer.game.events.TaskManagerEvent.Order;
 import com.bitfire.uracer.game.task.Task;
-import com.bitfire.uracer.game.task.TaskManagerEvent.Order;
 
 /** Tracks elapsed time both in absolute terms (wall clock time) or relative to the tick-based system.
  * 
  * @author bmanuel */
 public final class Time extends Task {
-	public enum Reference {
-		AbsoluteSeconds, TickSeconds, NumberOfTicks
+	public static final class TimeValue {
+		public long ticks;
+		public float tickSeconds;
+		public float absSeconds;
+		public float lastAbsSeconds;
+
+		public TimeValue () {
+			ticks = 0;
+			tickSeconds = 0;
+			absSeconds = 0;
+			lastAbsSeconds = 0;
+		}
 	}
 
 	private static final float oneOnOneBillion = 1.0f / 1000000000.0f;
 	private long nsStartTime;
 	private long ticks;
-	private float ticksInSeconds;
 	private boolean stopped;
 	private long nsStopTime;
+	private long lastStartTime;
+	private TimeValue result = new TimeValue();
 
 	/** Constructs a new Time object */
 	public Time () {
@@ -27,15 +38,21 @@ public final class Time extends Task {
 		reset();
 	}
 
+	/** Returns whether or not this timer is stopped */
+	public boolean isStopped () {
+		return stopped;
+	}
+
 	/** Starts tracking */
 	public void start () {
 		reset();
+		stopped = false;
 	}
 
 	/** Stops tracking */
 	public void stop () {
-		stopped = true;
 		nsStopTime = TimeUtils.nanoTime();
+		stopped = true;
 	}
 
 	/** Resumes/continues tracking, without resetting the accumulated state (should be called "continue" but can't */
@@ -45,15 +62,15 @@ public final class Time extends Task {
 
 	/** Resets the internal state */
 	public void reset () {
-		stopped = false;
+		stopped = true;
 
 		// abs
 		nsStartTime = TimeUtils.nanoTime();
 		nsStopTime = 0;
+		lastStartTime = nsStartTime;
 
 		// ticks
 		ticks = 0;
-		ticksInSeconds = 0;
 	}
 
 	/** Counts this tick */
@@ -61,22 +78,26 @@ public final class Time extends Task {
 	protected void onTick () {
 		if (!stopped) {
 			ticks++;
-			ticksInSeconds += Config.Physics.PhysicsDt;
 		}
 	};
 
-	/** Returns the elapsed time expressed as the specified measuring unit */
-	public float elapsed (Reference timeReference) {
+	/** Returns the elapsed time expressed in a number of useful units */
+	public TimeValue elapsed () {
 		long now = (stopped ? nsStopTime : TimeUtils.nanoTime());
 
-		switch (timeReference) {
-		case TickSeconds: // returns seconds
-			return ticksInSeconds;
-		case NumberOfTicks: // returns the tick count so far
-			return ticks;
-		case AbsoluteSeconds: // returns seconds
-		default:
-			return (now - nsStartTime) * oneOnOneBillion;
-		}
+		// plain number of ticks
+		result.ticks = ticks;
+
+		// number of ticks to seconds (in 1/dt increments)
+		result.tickSeconds = ticks * Config.Physics.Dt;
+
+		// last frame delta
+		result.lastAbsSeconds = (now - lastStartTime) * oneOnOneBillion;
+		if (!stopped) lastStartTime = TimeUtils.nanoTime();
+
+		// absolute seconds
+		result.absSeconds = (now - nsStartTime) * oneOnOneBillion;
+
+		return result;
 	}
 }

@@ -1,0 +1,31 @@
+font.size=50
+font.bold=false
+font.italic=false
+
+pad.top=0
+pad.right=1
+pad.bottom=2
+pad.left=0
+pad.advance.x=-7
+pad.advance.y=5
+
+glyph.native.rendering=false
+glyph.page.width=512
+glyph.page.height=512
+glyph.text=ABCDEFGHIJKLMNOPQRSTUVWXYZ\nabcdefghijklmnopqrstuvwxyz\n1234567890\n"!?'.,;:()[]<>|/\$+
+
+effect.class=com.badlogic.gdx.tools.hiero.unicodefont.effects.ShadowEffect
+effect.Color=000000
+effect.Opacity=0.6
+effect.X distance=1.0
+effect.Y distance=1.0
+effect.Blur kernel size=2
+effect.Blur passes=2
+
+effect.class=com.badlogic.gdx.tools.hiero.unicodefont.effects.GradientEffect
+effect.Top color=ffff00
+effect.Bottom color=ff3300
+effect.Offset=-7
+effect.Scale=1.2
+effect.Cyclic=false
+

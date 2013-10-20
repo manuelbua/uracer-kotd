@@ -1,0 +1,55 @@
+FUNCTION_BLOCK autoGears
+
+VAR_INPUT
+	SPEED: REAL;	// (0.000 .. 126.000)
+	CS: REAL;		// (-1.000 .. 1.000)
+END_VAR
+
+VAR_OUTPUT
+	GEAR: REAL;		// (1.000 .. 5.000)
+END_VAR
+
+FUZZIFY SPEED
+	TERM Z := trian 0 0 25.2;
+	TERM L := trian 0 25.2 50.4;
+	TERM M := trian 25.2 50.4 75.6;
+	TERM H := trian 50.4 75.6 100.8;
+	TERM VH := trape 75.6 100.8 126 126;
+END_FUZZIFY
+
+FUZZIFY CS
+	TERM B := trian -1 -1 0;
+	TERM Z := trian -1 0 1;
+	TERM A := trian 0 1 1;
+END_FUZZIFY
+
+DEFUZZIFY GEAR
+	TERM I := trian 1 1 2;
+	TERM II := trian 1 2 3;
+	TERM III := trian 2 3 4;
+	TERM IV := trian 3 4 5;
+END_DEFUZZIFY
+
+RULEBLOCK rules
+	AND : MIN;
+	OR : MAX;
+	ACT : MIN;
+
+	RULE 1 : if SPEED is Z and CS is B then GEAR is I;
+	RULE 2 : if SPEED is Z and CS is Z then GEAR is I;
+	RULE 3 : if SPEED is L and CS is B then GEAR is I;
+	RULE 4 : if SPEED is Z and CS is A then GEAR is II;
+	RULE 5 : if SPEED is L and CS is Z then GEAR is II;
+	RULE 6 : if SPEED is M and CS is B then GEAR is II;
+	RULE 7 : if SPEED is L and CS is A then GEAR is III;
+	RULE 8 : if SPEED is M and CS is Z then GEAR is III;
+	RULE 9 : if SPEED is H and CS is B then GEAR is III;
+	RULE 10 : if SPEED is M and CS is A then GEAR is IV;
+	RULE 11 : if SPEED is H and CS is Z then GEAR is IV;
+	RULE 12 : if SPEED is VH and CS is B then GEAR is IV;
+	RULE 13 : if SPEED is H and CS is A then GEAR is IV;
+	RULE 14 : if SPEED is VH and CS is Z then GEAR is IV;
+	RULE 15 : if SPEED is VH and CS is A then GEAR is IV;
+END_RULEBLOCK
+
+END_FUNCTION_BLOCK

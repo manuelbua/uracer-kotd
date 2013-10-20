@@ -13,16 +13,23 @@ public final class CarPreset {
 	public CarModel model = new CarModel();
 
 	public enum Type {
-		// @formatter:off
-		L1_MiniCooper("l1_minicooper"), L1_GoblinOrange("l1_orange_goblin"),
+		// @off
+		Default("car"),
+		Car("car"),
+		Car_Yellow("car_yellow"),
 
-		L2_MustangRed("l2_mustang_red"), L2_MustangWhite("l2_mustang_white"), L2_BlueBeast("l2_blue_beast"), L2_PinkBeast(
-			"l2_pink_beast"), L2_RedBeast("l2_red_beast"), L2_YellowBeast("l2_yellow_beast"),
-
-		L3_Gallardo("l3_gallardo"),
-
-		Default("l1_minicooper"), ;
-		// @formatter:on
+//		L2_MustangRed("l2_mustang_red"), 
+//		L2_MustangWhite("l2_mustang_white"), 
+//		L2_BlueBeast("l2_blue_beast"), 
+//		L2_PinkBeast("l2_pink_beast"), 
+//		L2_RedBeast("l2_red_beast"), 
+//		L2_YellowBeast("l2_yellow_beast"),
+//
+//		L3_Gallardo("l3_gallardo"),
+//
+//		Default("l1_minicooper"),
+		;
+		// @on
 
 		public String regionName;
 
@@ -37,21 +44,21 @@ public final class CarPreset {
 
 	public void setTo (Type type) {
 		switch (type) {
-		case L1_MiniCooper:
-
-		case L1_GoblinOrange:
-			model.toModel2();
-			model.width = 2.5f;
-			model.length = model.width * 1.6f;
-			break;
-
-		case L2_MustangRed:
-		case L2_MustangWhite:
-
-		case L2_BlueBeast:
-		case L2_PinkBeast:
-		case L2_RedBeast:
-		case L2_YellowBeast:
+		// case L1_MiniCooper:
+		// case L1_GoblinOrange:
+		// model.toModel2();
+		// model.width = 2.5f;
+		// model.length = model.width * 1.6f;
+		// break;
+		//
+		// case L2_MustangRed:
+		// case L2_MustangWhite:
+		// case L2_BlueBeast:
+		// case L2_PinkBeast:
+		// case L2_RedBeast:
+		// case L2_YellowBeast:
+		case Default:
+		case Car_Yellow:
 			model.toModel2();
 			model.width = 2.4f;
 			model.length = model.width * 1.72f;
@@ -63,14 +70,14 @@ public final class CarPreset {
 			model.stiffness_front = -3.5f; // front cornering stiffness
 			break;
 
-		case L3_Gallardo:
-			model.toModel2();
-			model.width = 2.5f;
-			model.length = 4.3f;
-			model.max_force = 400f;
-			model.max_grip = 5f;
-			model.friction = 8f;
-			break;
+		// case L3_Gallardo:
+		// model.toModel2();
+		// model.width = 2.5f;
+		// model.length = 4.3f;
+		// model.max_force = 400f;
+		// model.max_grip = 5f;
+		// model.friction = 8f;
+		// break;
 
 		default:
 			Gdx.app.log("CarPreset", "No type definition available for \"" + type.toString() + "\"");

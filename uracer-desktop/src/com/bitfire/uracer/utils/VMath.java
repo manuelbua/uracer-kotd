@@ -17,9 +17,10 @@ public final class VMath {
 	 * up=[0,-1], left=[-1,0], right=[1,0], down=[0,1] */
 
 	private static Vector2 retRad = new Vector2();
+	private static Vector2 tmprj = new Vector2();
 
 	public static Vector2 fromRadians (float radians) {
-		retRad.set(-MathUtils.sin(radians), -MathUtils.cos(radians));
+		retRad.set(AMath.fixup(-MathUtils.sin(radians)), AMath.fixup(-MathUtils.cos(radians)));
 		return retRad;
 	}
 
@@ -31,8 +32,12 @@ public final class VMath {
 		return retDeg;
 	}
 
-	public static float toAngle (Vector2 v) {
-		return MathUtils.atan2(v.x, -v.y);
+	public static float toRadians (Vector2 v) {
+		return (float)Math.atan2(v.x, -v.y);
+	}
+
+	public static float toDegs (Vector2 v) {
+		return VMath.toRadians(v) * MathUtils.radDeg;
 	}
 
 	public static Vector2 perp (Vector2 result, Vector2 perpAt) {
@@ -70,7 +75,7 @@ public final class VMath {
 
 	public static Vector2 truncate (Vector2 v, float maxLength) {
 		if (v.len() > maxLength) {
-			v.nor().mul(maxLength);
+			v.nor().scl(maxLength);
 		}
 
 		return v;
@@ -81,4 +86,30 @@ public final class VMath {
 		v.y = (int)v.y;
 		return v;
 	}
+
+	public static Vector2 project (Vector2 line1, Vector2 line2, Vector2 toProject) {
+		float m = (line2.y - line1.y) / (line2.x - line1.x);
+		float b = line1.y - (m * line1.x);
+
+		float x = (m * toProject.y + toProject.x - m * b) / (m * m + 1);
+		float y = (m * m * toProject.y + m * toProject.x + b) / (m * m + 1);
+
+		tmprj.set(x, y);
+		return tmprj;
+	}
+
+	public static boolean isBetween (Vector2 a, Vector2 b, Vector2 c) {
+		float dotproduct = (c.x - a.x) * (b.x - a.x) + (c.y - a.y) * (b.y - a.y);
+		if (dotproduct < 0) {
+			return false;
+		}
+
+		float squaredlengthba = a.dst2(b);
+		if (dotproduct > squaredlengthba) {
+			return false;
+		}
+
+		return true;
+	}
+
 }

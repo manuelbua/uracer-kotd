@@ -7,9 +7,6 @@ import com.bitfire.uracer.utils.AMath;
 import com.bitfire.uracer.utils.Convert;
 
 public final class CarState {
-	/* event */
-	public CarStateEvent event = null;
-
 	/* observed car */
 	public final Car car;
 
@@ -23,43 +20,44 @@ public final class CarState {
 	public float currSpeedFactor = 0;
 	public float currForceFactor = 0;
 
-	/* lateral forces */
-	public Vector2 lateralForceFront = new Vector2(), lateralForceRear = new Vector2();
-
 	// temporaries
-	private float carMaxSpeedSquared = 0;
-	private float carMaxForce = 0;
-	private int lastTileX = 0, lastTileY = 0;
+	private final float CarMaxSpeedSquared;
+	private final float CarMaxForce;
+	// private int lastTileX = 0, lastTileY = 0;
 
 	private GameWorld world;
 
 	public CarState (GameWorld world, Car car) {
-		this.event = new CarStateEvent(this);
 		this.world = world;
 		this.car = car;
 
 		// precompute factors
 		if (car != null) {
-			carMaxSpeedSquared = car.getCarModel().max_speed * car.getCarModel().max_speed;
-			carMaxForce = car.getCarModel().max_force;
+			CarMaxSpeedSquared = car.getCarModel().max_speed * car.getCarModel().max_speed;
+			CarMaxForce = car.getCarModel().max_force;
+		} else {
+			CarMaxSpeedSquared = 1;
+			CarMaxForce = 1;
 		}
 	}
 
 	public void dispose () {
-		event.removeAllListeners();
-		event = null;
+		// GameEvents.playerCarState.removeAllListeners();
 	}
 
 	public void reset () {
 		// causes an onTileChanged event to be raised the next update step
-		lastTileX = -1;
-		lastTileY = -1;
+		// lastTileX = -1;
+		// lastTileY = -1;
 		currTileX = -1;
 		currTileY = -1;
 	}
 
 	public void update (CarDescriptor carDescriptor) {
-		updateFactors(carDescriptor);
+		if (carDescriptor != null) {
+			updateFactors(carDescriptor);
+		}
+
 		updateTilePosition();
 	}
 
@@ -67,8 +65,8 @@ public final class CarState {
 		// speed/force normalized factors
 		currVelocityLenSquared = carDescriptor.velocity_wc.len2();
 		currThrottle = carDescriptor.throttle;
-		currSpeedFactor = AMath.clamp(currVelocityLenSquared / carMaxSpeedSquared, 0f, 1f);
-		currForceFactor = AMath.clamp(currThrottle / carMaxForce, 0f, 1f);
+		currSpeedFactor = AMath.fixup(AMath.clamp(currVelocityLenSquared / CarMaxSpeedSquared, 0f, 1f));
+		currForceFactor = AMath.fixup(AMath.clamp(currThrottle / CarMaxForce, 0f, 1f));
 	}
 
 	/*
@@ -76,19 +74,18 @@ public final class CarState {
 	 * tile index that is different than the previous one
 	 */
 	private void updateTilePosition () {
-		lastTileX = currTileX;
-		lastTileY = currTileY;
+		// lastTileX = currTileX;
+		// lastTileY = currTileY;
 
 		// compute car's tile position
-// tilePosition.set( world.pxToTile( car.state().position.x, car.state().position.y ) );
 		tilePosition
 			.set(world.pxToTile(Convert.mt2px(car.getBody().getPosition().x), Convert.mt2px(car.getBody().getPosition().y)));
 
 		currTileX = (int)tilePosition.x;
 		currTileY = (int)tilePosition.y;
 
-		if ((lastTileX != currTileX) || (lastTileY != currTileY)) {
-			event.trigger(this, CarStateEvent.Type.onTileChanged);
-		}
+		// if ((lastTileX != currTileX) || (lastTileY != currTileY)) {
+		// GameEvents.playerCarState.trigger(this, CarStateEvent.Type.onTileChanged);
+		// }
 	}
 }
