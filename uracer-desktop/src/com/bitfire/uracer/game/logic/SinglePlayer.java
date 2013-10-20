@@ -23,10 +23,12 @@ import com.bitfire.uracer.game.debug.player.DebugPlayer;
 import com.bitfire.uracer.game.logic.gametasks.messager.Message;
 import com.bitfire.uracer.game.logic.gametasks.messager.Message.Position;
 import com.bitfire.uracer.game.logic.gametasks.messager.Message.Size;
+import com.bitfire.uracer.game.logic.gametasks.messager.Message.Type;
 import com.bitfire.uracer.game.logic.gametasks.sounds.effects.PlayerEngineSoundEffect;
 import com.bitfire.uracer.game.logic.gametasks.sounds.effects.PlayerTensiveMusic;
 import com.bitfire.uracer.game.logic.replaying.Replay;
 import com.bitfire.uracer.game.logic.replaying.ReplayInfo;
+import com.bitfire.uracer.game.logic.replaying.ReplayManager.DiscardReason;
 import com.bitfire.uracer.game.logic.replaying.ReplayManager.ReplayResult;
 import com.bitfire.uracer.game.logic.types.helpers.CameraShaker;
 import com.bitfire.uracer.game.rendering.GameRenderer;
@@ -45,6 +47,7 @@ public class SinglePlayer extends BaseLogic {
 	private CameraShaker camShaker = new CameraShaker();
 	private int selectedBestReplayIdx = -1;
 	private ReplayResult lastRecorded = new ReplayResult();
+	private boolean targetMode = false;
 
 	public SinglePlayer (UserProfile userProfile, GameWorld gameWorld, GameRenderer gameRenderer) {
 		super(userProfile, gameWorld, gameRenderer);
@@ -107,50 +110,7 @@ public class SinglePlayer extends BaseLogic {
 			boolean newstate = !gameRenderer.isDebugEnabled();
 			gameRenderer.setDebug(newstate);
 			debug.setEnabled(newstate);
-		} else if (i.isPressed(Keys.TAB)) {
-			// choose next/prev best target
-			boolean backward = i.isOn(Keys.SHIFT_LEFT) || i.isOn(Keys.SHIFT_RIGHT);
-
-			// retrieve the ghostcar index whose replay is the next/prev best as this one
-			// if (!isWarmUp() && isCurrentLapValid)
-			{
-
-				GhostCar prevTarget = getNextTarget();
-				int maxreplays = lapManager.getReplaysCount();
-				int maxtries = maxreplays;
-
-				GhostCar next = null;
-				boolean found = false;
-
-				do {
-					if (selectedBestReplayIdx == -1) {
-						selectedBestReplayIdx = 0;
-					}
-
-					if (backward) {
-						selectedBestReplayIdx--;
-					} else {
-						selectedBestReplayIdx++;
-					}
-
-					if (selectedBestReplayIdx < 0) selectedBestReplayIdx = maxreplays - 1;
-					if (selectedBestReplayIdx >= maxreplays) selectedBestReplayIdx = 0;
-
-					next = getNextTarget();
-					found = true;// next != null && next.hasReplay() && !next.getTrackState().ghostArrived;
-				} while (maxtries-- >= 0 && !found);
-
-				// Gdx.app.log("SinglePlayer", "Next target index is #" + selectedBestReplayIdx);
-
-				if (!isWarmUp() && found) {
-					if (prevTarget != next && next.isPlaying()) {
-						playerTasks.hudPlayer.highlightNextTarget(next);
-						gameWorldRenderer.setTopMostGhostCar(next);
-					}
-				}
-			}
 		}
-
 	}
 
 	@Override
@@ -166,6 +126,49 @@ public class SinglePlayer extends BaseLogic {
 		}
 
 		return null;
+	}
+
+	@Override
+	public void chooseNextTarget (boolean backward) {
+		GhostCar prevTarget = getNextTarget();
+		int maxreplays = lapManager.getReplaysCount();
+
+		if (backward) {
+			selectedBestReplayIdx--;
+		} else {
+			selectedBestReplayIdx++;
+		}
+
+		if (selectedBestReplayIdx < -1) selectedBestReplayIdx = maxreplays - 1;
+		if (selectedBestReplayIdx >= maxreplays) selectedBestReplayIdx = -1;
+
+		if (selectedBestReplayIdx == -1) {
+			if (targetMode) {
+				targetMode = false;
+				gameWorldRenderer.setTopMostGhostCar(null);
+				playerTasks.hudPlayer.unHighlightNextTarget();
+				messager.show("Target mode disabled", 1, Type.Information, Position.Bottom, Size.Big);
+				Gdx.app.log("SinglePlayer", "Target mode disabled");
+			}
+		} else {
+			if (!targetMode) {
+				targetMode = true;
+				messager.show("Target mode enabled", 1, Type.Information, Position.Bottom, Size.Big);
+				Gdx.app.log("SinglePlayer", "Target mode enabled");
+			}
+
+			Gdx.app.log("SinglePlayer", "Next target #" + selectedBestReplayIdx);
+
+			if (!isWarmUp()) {
+				GhostCar next = getNextTarget();
+				if (prevTarget != next && next != null && next.isPlaying()) {
+					playerTasks.hudPlayer.highlightNextTarget(next);
+					gameWorldRenderer.setTopMostGhostCar(next);
+				}
+			}
+		}
+
+		Gdx.app.log("SinglePlayer", "#" + selectedBestReplayIdx + " - " + targetMode);
 	}
 
 	private void saveReplay (final Replay replay) {
@@ -330,25 +333,28 @@ public class SinglePlayer extends BaseLogic {
 			Replay replay = lapManager.stopRecording();
 
 			// check if better than current target
-			// GhostCar target = getNextTarget();
-			// boolean slowerThanTarget = (target != null) && (replay.compareTo(target.getReplay()) > -1);
-			// if (slowerThanTarget) {
-			// Replay treplay = target.getReplay();
-			// ReplayInfo ri = replay.getInfo();
-			//
-			// // early discard, slower than target
-			// lastRecorded.is_accepted = false;
-			// lastRecorded.discarded.copy(ri);
-			// lastRecorded.reason = DiscardReason.Slower;
-			//
-			// String diff = String.format("%.03f", (float)(ri.getMilliseconds() - treplay.getMilliseconds()) / 1000f);
-			// Gdx.app.log("ReplayManager", "Discarded replay #" + ri.getShortId() + " for " + diff + "secs");
-			// } else {
-			// // once added lastRecorded.new_replay should be used
-			// lastRecorded.copy(lapManager.addReplay(replay));
-			// }
+			if (targetMode) {
+				GhostCar target = getNextTarget();
+				boolean slowerThanTarget = (target != null) && (replay.compareTo(target.getReplay()) > -1);
+				if (slowerThanTarget) {
+					Replay treplay = target.getReplay();
+					ReplayInfo ri = replay.getInfo();
 
-			lastRecorded.copy(lapManager.addReplay(replay));
+					// early discard, slower than target
+					lastRecorded.is_accepted = false;
+					lastRecorded.discarded.copy(ri);
+					lastRecorded.reason = DiscardReason.Slower;
+
+					String diff = String.format("%.03f", (float)(ri.getMilliseconds() - treplay.getMilliseconds()) / 1000f);
+					Gdx.app.log("ReplayManager", "Discarded replay #" + ri.getShortId() + " for " + diff + "secs");
+				} else {
+					// once added lastRecorded.new_replay should be used
+					lastRecorded.copy(lapManager.addReplay(replay));
+				}
+			} else {
+				lastRecorded.copy(lapManager.addReplay(replay));
+			}
+
 			if (lastRecorded.is_accepted) {
 				ReplayInfo ri = lastRecorded.accepted;
 
@@ -422,7 +428,7 @@ public class SinglePlayer extends BaseLogic {
 
 	@Override
 	public void ghostReplayStarted (GhostCar ghost) {
-		if (ghost == findGhostFor(lapManager.getReplays().get(selectedBestReplayIdx))) {
+		if (selectedBestReplayIdx > -1 && ghost == findGhostFor(lapManager.getReplays().get(selectedBestReplayIdx))) {
 			// ghost.setAlpha(Config.Graphics.DefaultTargetCarOpacity);
 			playerTasks.hudPlayer.highlightNextTarget(ghost);
 		}
@@ -493,16 +499,15 @@ public class SinglePlayer extends BaseLogic {
 		}
 
 		// if no nextTarget then take the best (first)
-		if (getNextTarget() == null) {
-			Gdx.app.log("SinglePlayer", "Automatically selecting best replay...");
-			if (lapManager.getReplaysCount() > 0) {
-				selectedBestReplayIdx = 0;
-				Gdx.app.log("SinglePlayer", "Done selecting best replay!");
-			} else {
-				selectedBestReplayIdx = -1;
-				Gdx.app.log("SinglePlayer", "Couldn't find any replay for this track.");
-			}
-		}
-
+		// if (getNextTarget() == null) {
+		// Gdx.app.log("SinglePlayer", "Automatically selecting best replay...");
+		// if (lapManager.getReplaysCount() > 0) {
+		// selectedBestReplayIdx = 0;
+		// Gdx.app.log("SinglePlayer", "Done selecting best replay!");
+		// } else {
+		// selectedBestReplayIdx = -1;
+		// Gdx.app.log("SinglePlayer", "Couldn't find any replay for this track.");
+		// }
+		// }
 	}
 }

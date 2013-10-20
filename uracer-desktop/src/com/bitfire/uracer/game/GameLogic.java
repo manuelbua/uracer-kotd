@@ -63,4 +63,6 @@ public interface GameLogic {
 	ReplayResult getLastRecordedInfo ();
 
 	void showMessage (String message, float durationSecs, Message.Type type, Position position, Size size);
+
+	void chooseNextTarget (boolean backward);
 }

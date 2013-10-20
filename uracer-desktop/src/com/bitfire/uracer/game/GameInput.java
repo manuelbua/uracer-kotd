@@ -54,6 +54,10 @@ public final class GameInput {
 		} else if (input.isPressed(Keys.Q) || input.isPressed(Keys.ESCAPE) || input.isPressed(Keys.BACK)) {
 			logic.quitGame();
 			// return;
+		} else if (input.isPressed(Keys.TAB)) {
+			// choose next/prev best target
+			boolean backward = input.isOn(Keys.SHIFT_LEFT) || input.isOn(Keys.SHIFT_RIGHT);
+			logic.chooseNextTarget(backward);
 		}
 
 		boolean rightMouseButton = input.isTouched(MouseButton.Right);// && input.isTouchedInBounds(MouseButton.Right);
