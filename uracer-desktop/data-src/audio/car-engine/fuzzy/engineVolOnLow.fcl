@@ -1,0 +1,51 @@
+FUNCTION_BLOCK engineVolOnLow
+
+VAR_INPUT
+	load : REAL;		// [-100, 150]
+	rpm : REAL;			// [-100, 10000]
+END_VAR
+
+VAR_OUTPUT
+	volume : REAL;		// [-25, 125]
+END_VAR
+
+FUZZIFY load
+    TERM low	:= trape -100 -50 -50 10;
+    TERM mid	:= trape -10 25 25 60;
+    TERM high	:= trape 40 75 75 151;
+END_FUZZIFY
+
+FUZZIFY rpm
+    TERM verylow	:= trape -1 900 900 1100;
+    TERM low		:= trape 950 3000 3000 4800;
+    TERM mid		:= trape 4500 5500 5500 7000;
+    TERM high		:= trape 6500 8000 8000 11000;
+END_FUZZIFY
+
+DEFUZZIFY volume
+    TERM verylow	:= trape -25 0 0 25;
+    TERM low		:= trape 0 25 25 50;
+    TERM mid		:= trape 25 50 50 75;
+    TERM high		:= trape 50 75 75 100;
+    TERM veryhigh	:= trape 75 100 100 125;
+	METHOD : COG;
+END_DEFUZZIFY
+
+RULEBLOCK rules
+	AND : MIN;
+	OR : MAX;
+    RULE 1 : IF (load IS low) AND (rpm IS low) THEN volume IS verylow;
+    RULE 2 : IF (load IS low) AND (rpm IS mid) THEN volume IS verylow;
+    RULE 3 : IF (load IS low) AND (rpm IS high) THEN volume IS verylow;
+    RULE 4 : IF (load IS mid) AND (rpm IS low) THEN volume IS mid;
+    RULE 5 : IF (load IS mid) AND (rpm IS mid) THEN volume IS low;
+    RULE 6 : IF (load IS mid) AND (rpm IS high) THEN volume IS verylow;
+    RULE 7 : IF (load IS high) AND (rpm IS low) THEN volume IS veryhigh;
+    RULE 8 : IF (load IS high) AND (rpm IS mid) THEN volume IS high;
+    RULE 9 : IF (load IS high) AND (rpm IS high) THEN volume IS verylow;
+    RULE 10	: IF (load IS low) AND (rpm IS verylow) THEN volume IS verylow;
+    RULE 11	: IF (load IS mid) AND (rpm IS verylow) THEN volume IS verylow;
+    RULE 12 : IF (load IS high) AND (rpm IS verylow) THEN volume IS verylow;
+END_RULEBLOCK
+
+END_FUNCTION_BLOCK

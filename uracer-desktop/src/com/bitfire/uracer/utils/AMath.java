@@ -15,12 +15,12 @@ public final class AMath {
 	public static final float PI_8 = 0.392699081698724154807f;
 
 	public static final float CMP_EPSILON = 0.001f;
+	public static final float ONE_ON_CMP_EPSILON = 1000f;
 
 	private AMath () {
 	}
 
 	public static boolean equals (float a, float b) {
-
 		return Math.abs(Math.abs(a) - Math.abs(b)) < CMP_EPSILON;
 	}
 
@@ -78,6 +78,38 @@ public final class AMath {
 		return v;
 	}
 
+	public static float fixup (float v, float epsilon) {
+		if (Math.abs(v) < epsilon) {
+			return 0;
+		}
+
+		return v;
+	}
+
+	public static float fixupTo (float v, float target) {
+		if (Math.abs(Math.abs(v) - Math.abs(target)) < CMP_EPSILON) {
+			return target;
+		}
+
+		return v;
+	}
+
+	public static float fixupTo (float v, float target, float epsilon) {
+		if (Math.abs(Math.abs(v) - Math.abs(target)) < epsilon) {
+			return target;
+		}
+
+		return v;
+	}
+
+	public static float clampf (float v, float min, float max) {
+		return AMath.clamp(AMath.fixupTo(AMath.fixupTo(v, min), max), min, max);
+	}
+
+	public static float clampf (float v, float min, float max, float epsilon) {
+		return AMath.clamp(AMath.fixupTo(AMath.fixupTo(v, min, epsilon), max, epsilon), min, max);
+	}
+
 	public static float sign (float v) {
 		if (v < 0) {
 			return -1f;
@@ -119,18 +151,35 @@ public final class AMath {
 		return (float)tmp / p;
 	}
 
-	/** Compute a timestep-independent damping factor from the specified arbitrary factor.
-	 * 
+	public static float normalizeImpactForce (float force) {
+		float v = AMath.clamp(force, 0, Config.Physics.MaxImpactForce);
+		v *= Config.Physics.OneOnMaxImpactForce;
+		return v;
+	}
+
+	//@off
+	/**
+	 *  Compute a timestep-independent damping factor from the specified arbitrary factor.
+	 *
 	 * This isn't the only way to compute it:
+	 *
+	 * 		let 0.975 be the time-DEPENDENT factor
+	 * 			factor ^ (factor_good_at_timestep * dt)
+	 * 				or
+	 * 			pow( factor, factor_good_at_timestep * dt )
 	 * 
-	 * let 0.975 be the time-DEPENDENT factor factor ^ (factor_good_at_timestep * dt) or pow( factor, factor_good_at_timestep * dt
-	 * ) that is: pow( 0.975, 60 * dt ) thus, for a 60hz timestep: pow( 0.975, 60 * (1/60) ) = 0.975 | exp( -1.5 * (1/60) ) =
-	 * 0.975309 (w/ 1.5 found by trial and error) and for a 30hz timestep: pow( 0.975, 60 * (1/30) ) = 0.950625 | exp( -1.5 *
-	 * (1/30) ) = 0.951229
-	 * 
-	 * (see my post http://www.gamedev.net/topic/624172-framerate-independent-friction/page__st__20) */
+	 * 		that is:
+	 * 			pow( 0.975, 60 * dt )
+	 * 		thus, for a 60hz timestep:
+	 * 			pow( 0.975, 60 * (1/60) ) = 0.975			|	exp( -1.5 * (1/60) ) = 0.975309 (w/ 1.5 found by trial and error)
+	 * 		and for a 30hz timestep:
+	 * 			pow( 0.975, 60 * (1/30) ) = 0.950625		|	exp( -1.5 * (1/30) ) = 0.951229
+	 *
+	 * (see my post http://www.gamedev.net/topic/624172-framerate-independent-friction/page__st__20)
+	 */
+	//@on
 	public static float damping (float factor) {
-		return (float)Math.pow(factor, Config.Physics.PhysicsTimestepReferenceHz * Config.Physics.PhysicsDt);
-// return (float)Math.exp( -factor * Config.Physics.PhysicsDt );
+		return (float)Math.pow(factor, Config.Physics.PhysicsTimestepReferenceHz * Config.Physics.Dt);
+		// return (float)Math.exp( -factor * Config.Physics.PhysicsDt );
 	}
 }

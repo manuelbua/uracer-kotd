@@ -1,0 +1,17 @@
+uRacer network protocol ideas
+=============================
+
+
+# tech and idea based on the twisted-binary demo
+- a simple text-based protocol, switching between raw/line modes to handle
+binary transfers
+
+# references
+#
+# https://github.com/Kami/python-twisted-binary-file-transfer-demo
+
+- python (twisted) fileserver prototype
+	dev/python/python-twisted-binary-file-transfer-demo ("manuel" branch)
+
+- java "fileclient" project
+- demoed multiple binary transfers at once

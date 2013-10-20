@@ -8,9 +8,11 @@ import com.badlogic.gdx.utils.GdxRuntimeException;
 import com.bitfire.postprocessing.utils.FullscreenQuad;
 import com.bitfire.uracer.URacer;
 import com.bitfire.uracer.configuration.Config;
+import com.bitfire.uracer.game.screens.GameScreensFactory.ScreenType;
 import com.bitfire.uracer.screen.Screen;
 import com.bitfire.uracer.screen.ScreenFactory;
-import com.bitfire.uracer.screen.ScreenFactory.ScreenType;
+import com.bitfire.uracer.screen.ScreenFactory.ScreenId;
+import com.bitfire.uracer.screen.ScreenTransition;
 import com.bitfire.uracer.screen.ScreenUtils;
 import com.bitfire.uracer.utils.AMath;
 import com.bitfire.utils.ShaderLoader;
@@ -24,13 +26,15 @@ public final class Fader extends ScreenTransition {
 	FullscreenQuad quad;
 	ShaderProgram fade;
 	Screen next;
-	ScreenType nextType;
+	ScreenId nextType;
 	Color color = Color.BLACK;
 	boolean nextPrepared, delayNextHalf;
 
-	public Fader () {
+	public Fader (ScreenFactory factory) {
+		super(factory);
 		quad = new FullscreenQuad();
 		fade = ShaderLoader.fromFile("fade", "fade");
+		duration = 1000;
 		reset();
 	}
 
@@ -52,7 +56,7 @@ public final class Fader extends ScreenTransition {
 		next = null;
 		factor = 0;
 		elapsed = 0;
-		setDuration(1000);
+		setDuration(duration);
 		nextPrepared = false;
 		nextType = ScreenType.NoScreen;
 	}
@@ -64,7 +68,7 @@ public final class Fader extends ScreenTransition {
 	}
 
 	@Override
-	public void frameBuffersReady (Screen current, FrameBuffer from, ScreenType nextScreen, FrameBuffer to) {
+	public void frameBuffersReady (Screen current, FrameBuffer from, ScreenId nextScreen, FrameBuffer to) {
 		this.from = from;
 		this.to = to;
 		this.nextType = nextScreen;
@@ -96,7 +100,7 @@ public final class Fader extends ScreenTransition {
 	@Override
 	public void update () {
 		long delta = (long)URacer.Game.getLastDeltaMs();
-		delta = AMath.clamp(delta, 0, (long)(Config.Physics.PhysicsDt * 1000));
+		delta = AMath.clamp(delta, 0, (long)(Config.Physics.Dt * 1000));
 
 		elapsed += delta;
 
@@ -117,7 +121,7 @@ public final class Fader extends ScreenTransition {
 
 				if (!nextPrepared) {
 					nextPrepared = true;
-					next = ScreenFactory.createScreen(nextType);
+					next = createScreen(nextType);
 					ScreenUtils.clear(from, Color.BLACK);
 					ScreenUtils.copyScreen(next, to);
 				}

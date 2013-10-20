@@ -13,7 +13,6 @@ public class DesktopLauncher {
 		config.samples = 4;
 		config.depth = 0;
 		config.vSyncEnabled = true;
-		config.useCPUSynch = false;
 		config.useGL20 = true;
 
 		config.fullscreen = false;

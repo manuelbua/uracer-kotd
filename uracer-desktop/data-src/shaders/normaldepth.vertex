@@ -1,0 +1,19 @@
+attribute vec3 a_position,a_normal;
+varying vec3 v_normal, v_position;
+uniform mat4 proj, view, model;
+uniform mat3 nmat;
+
+#ifdef ENABLE_DIFFUSE
+	attribute vec2 a_texCoord0;
+	varying vec2 v_texcoord;
+#endif
+
+void main(void) {
+	gl_Position = proj * view * model * vec4(a_position, 1.0);
+
+	v_normal = nmat*a_normal;
+	v_position = vec3(model*vec4(a_position,1.0)).xyz;
+#ifdef ENABLE_DIFFUSE
+	v_texcoord = a_texCoord0;
+#endif
+}

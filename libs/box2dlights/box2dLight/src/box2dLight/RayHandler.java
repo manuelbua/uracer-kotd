@@ -16,6 +16,7 @@ import com.badlogic.gdx.graphics.VertexAttributes.Usage;
 import com.badlogic.gdx.graphics.glutils.FrameBuffer;
 import com.badlogic.gdx.graphics.glutils.ShaderProgram;
 import com.badlogic.gdx.math.Matrix4;
+import com.badlogic.gdx.math.Rectangle;
 import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.physics.box2d.Filter;
 import com.badlogic.gdx.physics.box2d.Fixture;
@@ -301,8 +302,8 @@ public class RayHandler implements Disposable {
 		}
 	}
 
-	public void renderLightMap( FrameBuffer dest ) {
-		lightMap.render( dest );
+	public void renderLightMap( Rectangle viewport, FrameBuffer dest ) {
+		lightMap.render( viewport, dest );
 	}
 
 	public FrameBuffer getLightMap() {

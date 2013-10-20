@@ -6,28 +6,24 @@ import java.io.InputStream;
 
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.Texture;
-import com.badlogic.gdx.graphics.g3d.loaders.wavefront.ObjLoader;
-import com.badlogic.gdx.graphics.g3d.materials.Material;
-import com.badlogic.gdx.graphics.g3d.materials.TextureAttribute;
-import com.badlogic.gdx.graphics.g3d.model.still.StillModel;
 import com.badlogic.gdx.utils.LongMap;
-import com.bitfire.uracer.ScalingStrategy;
-import com.bitfire.uracer.game.world.models.loaders.UG3dtLoader;
+import com.bitfire.uracer.game.GameLogic;
+import com.bitfire.uracer.game.actors.Car;
+import com.bitfire.uracer.game.actors.CarPreset;
 import com.bitfire.uracer.resources.Art;
+import com.bitfire.uracer.u3d.loaders.G3dtLoader;
+import com.bitfire.uracer.u3d.materials.Material;
+import com.bitfire.uracer.u3d.materials.TextureAttribute;
+import com.bitfire.uracer.u3d.still.StillModel;
+import com.bitfire.uracer.utils.URacerRuntimeException;
 import com.bitfire.utils.Hash;
 
 public final class ModelFactory {
 	public enum ModelMesh {
-		Missing, Palm, Tribune, Tree_1, Tree_2, Tree_3, Tree_4, Tree_5, Tree_6, Tree_7, Tree_8, Tree_9
+		Missing, Tree_1, Tree_2, Tree_3, Tree_4, Tree_5, Tree_6, Tree_7, Tree_8, Tree_9, Tree_10, Car
 	}
-
-	private static ScalingStrategy scalingStrategy;
 
 	private ModelFactory () {
-	}
-
-	public static void init (ScalingStrategy strategy) {
-		ModelFactory.scalingStrategy = strategy;
 	}
 
 	public static void dispose () {
@@ -49,10 +45,6 @@ public final class ModelFactory {
 	private static ModelMesh fromString (String mesh) {
 		if (mesh == null) {
 			return ModelMesh.Missing;
-		} else if (mesh.equalsIgnoreCase("palm")) {
-			return ModelMesh.Palm;
-		} else if (mesh.equalsIgnoreCase("tribune")) {
-			return ModelMesh.Tribune;
 		} else if (mesh.equalsIgnoreCase("tree-1")) {
 			return ModelMesh.Tree_1;
 		} else if (mesh.equalsIgnoreCase("tree-2")) {
@@ -71,6 +63,10 @@ public final class ModelFactory {
 			return ModelMesh.Tree_8;
 		} else if (mesh.equalsIgnoreCase("tree-9")) {
 			return ModelMesh.Tree_9;
+		} else if (mesh.equalsIgnoreCase("tree-10")) {
+			return ModelMesh.Tree_10;
+		} else if (mesh.equalsIgnoreCase("car")) {
+			return ModelMesh.Car;
 		}
 
 		return ModelMesh.Missing;
@@ -92,21 +88,12 @@ public final class ModelFactory {
 		OrthographicAlignedStillModel stillModel = null;
 
 		switch (modelMesh) {
-		case Palm:
-			stillModel = new OrthographicAlignedStillModel(getStillModel("data/3d/models/palm.g3dt"), getMaterial(modelMesh,
-				Art.meshPalm), ModelFactory.scalingStrategy);
-			break;
-
-		case Tribune:
-			stillModel = new OrthographicAlignedStillModel(getStillModel("data/3d/models/tribune.g3dt"), getMaterial(modelMesh,
-				Art.meshTribune), ModelFactory.scalingStrategy);
-			break;
 
 		// missing mesh mesh
 		case Missing:
 		default:
 			stillModel = new OrthographicAlignedStillModel(getStillModel("data/3d/models/missing-mesh.g3dt"), getMaterial(modelMesh,
-				Art.meshMissing), ModelFactory.scalingStrategy);
+				Art.meshMissing, ""));
 		}
 
 		if (stillModel != null) {
@@ -122,10 +109,15 @@ public final class ModelFactory {
 		return stillModel;
 	}
 
+	public static CarStillModel createCarStillModel (GameLogic gameLogic, Car car, CarPreset.Type presetType) {
+		CarStillModel stillModel = new CarStillModel(gameLogic, getStillModel("data/3d/models/car-low-01.g3dt"), getMaterial(
+			ModelMesh.Car, Art.meshCar.get(presetType.regionName), presetType.regionName), car);
+		return stillModel;
+	}
+
 	public static TreeStillModel createTree (String meshType, float posPxX, float posPxY, float scale) {
 		ModelMesh type = fromString(meshType);
 		TreeStillModel m = ModelFactory.createTree(type, posPxX, posPxY, scale);
-		// createdTreeModels.add( m );
 		return m;
 	}
 
@@ -136,6 +128,10 @@ public final class ModelFactory {
 		Texture leavesTexture = null;
 
 		switch (modelMesh) {
+		case Car:
+		case Missing:
+		default:
+			throw new URacerRuntimeException("The specified model is not a tree");
 		case Tree_1:
 			treeModelName = "tree-1.g3dt";
 			treeMeshName = "tree_1_";
@@ -189,6 +185,12 @@ public final class ModelFactory {
 			treeMeshName = "tree_9_";
 			leavesTexture = Art.meshTreeLeavesSpring[6];
 			break;
+
+		case Tree_10:
+			treeModelName = "test-wall.g3dt";
+			treeMeshName = "plane_";
+			leavesTexture = Art.meshTreeLeavesSpring[6];
+			break;
 		// missing mesh mesh
 		// case Missing:
 		// default:
@@ -198,8 +200,8 @@ public final class ModelFactory {
 
 		}
 
-		stillModel = new TreeStillModel(getStillModel("data/3d/models/" + treeModelName), getMaterial(modelMesh, leavesTexture),
-			treeMeshName, ModelFactory.scalingStrategy);
+		stillModel = new TreeStillModel(getStillModel("data/3d/models/" + treeModelName),
+			getMaterial(modelMesh, leavesTexture, ""), treeMeshName);
 
 		if (stillModel != null) {
 			// createdTreeModels.add( stillModel );
@@ -216,10 +218,10 @@ public final class ModelFactory {
 
 	private static LongMap<Material> cachedMaterials = null;
 
-	private static Material getMaterial (ModelMesh modelMesh, Texture texture) {
+	private static Material getMaterial (ModelMesh modelMesh, Texture texture, String textureName) {
 		Material m = null;
 
-		long materialHash = Hash.RSHash(modelMesh.toString());
+		long materialHash = Hash.RSHash(modelMesh.toString() + textureName);
 		if (cachedMaterials == null) {
 			cachedMaterials = new LongMap<Material>();
 		}
@@ -255,13 +257,13 @@ public final class ModelFactory {
 				if (ext[1].equals("g3dt")) {
 					// NO opengl coords, NO invert v
 					InputStream in = Gdx.files.internal(model).read();
-					m = UG3dtLoader.loadStillModel(in, true);
+					m = G3dtLoader.loadStillModel(in, true);
 					in.close();
 				} else if (ext[1].equals("obj")) {
 					// y-forward, z-up
-					ObjLoader l = new ObjLoader();
-					m = l.loadObj(Gdx.files.internal(model), true);
-					Gdx.app.log("ModelFactory", "Attention, using deprecated model format!");
+					// ObjLoader l = new ObjLoader();
+					// m = l.loadObj(Gdx.files.internal(model), true);
+					// Gdx.app.log("ModelFactory", "Attention, using deprecated model format!");
 				}
 
 				cachedStillModels.put(modelHash, m);

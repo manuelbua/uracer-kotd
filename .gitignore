@@ -9,3 +9,5 @@ VersionInfo.java
 *.log
 *.class
 pom.xml
+*.*~
+uracer-boot.cfg

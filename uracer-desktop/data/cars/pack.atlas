@@ -1,102 +1,25 @@
 
 pack.png
 format: RGBA8888
-filter: Nearest,Nearest
+filter: Linear,Linear
 repeat: none
-skid-smoke
+selector
   rotate: false
-  xy: 1, 649
-  size: 256, 256
-  orig: 256, 256
-  offset: 0, 0
-  index: -1
-l3_gallardo
-  rotate: false
-  xy: 1, 354
-  size: 155, 293
-  orig: 155, 293
-  offset: 0, 0
-  index: -1
-l1_minicooper
-  rotate: false
-  xy: 1, 65
-  size: 158, 287
-  orig: 158, 287
-  offset: 0, 0
-  index: -1
-l1_orange_goblin
-  rotate: false
-  xy: 259, 618
-  size: 158, 287
-  orig: 158, 287
-  offset: 0, 0
-  index: -1
-l2_mustang_red
-  rotate: false
-  xy: 419, 610
-  size: 129, 295
-  orig: 129, 295
-  offset: 0, 0
-  index: -1
-l2_yellow_beast
-  rotate: false
-  xy: 550, 610
-  size: 129, 295
-  orig: 129, 295
-  offset: 0, 0
-  index: -1
-l2_blue_beast
-  rotate: false
-  xy: 681, 610
-  size: 129, 295
-  orig: 129, 295
-  offset: 0, 0
-  index: -1
-l2_mustang_white
-  rotate: false
-  xy: 812, 609
-  size: 129, 296
-  orig: 129, 296
-  offset: 0, 0
-  index: -1
-car-ao
-  rotate: false
-  xy: 1, 1
-  size: 34, 62
-  orig: 34, 62
-  offset: 0, 0
-  index: -1
-skid-smoke-small
-  rotate: false
-  xy: 158, 615
-  size: 32, 32
-  orig: 32, 32
-  offset: 0, 0
-  index: -1
-skid-marks-rear
-  rotate: false
-  xy: 161, 318
-  size: 129, 295
-  orig: 129, 295
+  xy: 258, 204
+  size: 78, 91
+  orig: 78, 91
   offset: 0, 0
   index: -1
 skid-marks-front
   rotate: false
-  xy: 161, 21
+  xy: 0, 0
   size: 129, 295
   orig: 129, 295
   offset: 0, 0
   index: -1
-l2_pink_beast
+skid-marks-rear
   rotate: false
-  xy: 292, 313
-  size: 129, 295
-  orig: 129, 295
-  offset: 0, 0
-  index: -1
-l2_red_beast
-  rotate: false
-  xy: 423, 313
+  xy: 129, 0
   size: 129, 295
   orig: 129, 295
   offset: 0, 0

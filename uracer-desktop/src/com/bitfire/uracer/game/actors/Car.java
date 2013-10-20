@@ -1,23 +1,25 @@
 
 package com.bitfire.uracer.game.actors;
 
-import java.util.ArrayList;
-
 import com.badlogic.gdx.Gdx;
-import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.physics.box2d.BodyDef;
 import com.badlogic.gdx.physics.box2d.BodyDef.BodyType;
 import com.badlogic.gdx.physics.box2d.Fixture;
 import com.badlogic.gdx.physics.box2d.FixtureDef;
 import com.badlogic.gdx.physics.box2d.MassData;
+import com.badlogic.gdx.utils.Array;
 import com.bitfire.uracer.configuration.Config;
 import com.bitfire.uracer.game.GameEvents;
+import com.bitfire.uracer.game.GameLogic;
 import com.bitfire.uracer.game.collisions.CollisionFilters;
-import com.bitfire.uracer.game.rendering.GameRendererEvent;
-import com.bitfire.uracer.game.rendering.GameRendererEvent.Order;
-import com.bitfire.uracer.game.rendering.GameRendererEvent.Type;
+import com.bitfire.uracer.game.events.CarEvent;
+import com.bitfire.uracer.game.events.GameRendererEvent.Order;
+import com.bitfire.uracer.game.logic.helpers.GameTrack;
+import com.bitfire.uracer.game.logic.helpers.GameTrack.TrackState;
 import com.bitfire.uracer.game.world.GameWorld;
+import com.bitfire.uracer.game.world.models.CarStillModel;
+import com.bitfire.uracer.game.world.models.ModelFactory;
 import com.bitfire.uracer.utils.AMath;
 import com.bitfire.uracer.utils.BodyEditorLoader;
 
@@ -26,14 +28,14 @@ public abstract strictfp class Car extends Box2DEntity {
 		NoInput, InputFromPlayer, InputFromReplay
 	}
 
-	/* event */
-	public CarEvent event = null;
 	private boolean triggerEvents = false;
 	protected static final Order ShadowsDrawingOrder = Order.MINUS_2;
 
 	protected GameWorld gameWorld;
-	protected CarType carType;
-	protected CarRenderer renderer;
+	protected GameTrack gameTrack;
+	// protected CarType carType;
+	protected CarStillModel stillModel;
+	private TrackState trackState;
 
 	protected int impacts = 0;
 
@@ -53,36 +55,49 @@ public abstract strictfp class Car extends Box2DEntity {
 	protected CarPreset preset;
 	protected InputMode inputMode = InputMode.NoInput;
 
-	public Car (GameWorld gameWorld, CarType carType, InputMode inputMode, GameRendererEvent.Order drawingOrder,
-		CarPreset.Type presetType, boolean triggerEvents) {
-		super(gameWorld.getBox2DWorld(), drawingOrder);
+	public Car (GameWorld gameWorld, GameLogic gameLogic, CarType carType, InputMode inputMode, CarPreset.Type presetType,
+		boolean triggerEvents) {
+		super(gameWorld.getBox2DWorld());
 		this.preset = new CarPreset(presetType);
-		this.carType = carType;
+		// this.carType = carType;
 		this.triggerEvents = triggerEvents;
+		this.trackState = new TrackState();
 
-		this.event = new CarEvent(this);
 		this.gameWorld = gameWorld;
-		this.renderer = new CarRenderer(preset.model, preset.type);
-		this.impacts = 0;
+		this.gameTrack = gameWorld.getGameTrack();
+
+		stillModel = ModelFactory.createCarStillModel(gameLogic, this, presetType);
+		impacts = 0;
 		this.inputMode = inputMode;
-		this.carTraveledDistance = 0;
-		this.accuDistCount = 0;
+		carTraveledDistance = 0;
+		accuDistCount = 0;
 
 		applyCarPhysics(carType, preset.model);
 
-		// subscribe to another renderqueue to render shadows/AO early
-		GameEvents.gameRenderer.addListener(this, GameRendererEvent.Type.BatchBeforeMeshes, ShadowsDrawingOrder);
-
-		Gdx.app.log(getClass().getSimpleName(), "Input mode is " + inputMode.toString());
-		Gdx.app.log(getClass().getSimpleName(), "CarModel is " + preset.model.presetType.toString());
+		// Gdx.app.log(getClass().getSimpleName(), "Input mode is " + inputMode.toString());
+		// Gdx.app.log(getClass().getSimpleName(), "CarModel is " + preset.model.presetType.toString());
 	}
 
 	@Override
 	public void dispose () {
 		super.dispose();
-		GameEvents.gameRenderer.removeListener(this, GameRendererEvent.Type.BatchBeforeMeshes, ShadowsDrawingOrder);
-		event.removeAllListeners();
-		event = null;
+		GameEvents.playerCar.removeAllListeners();
+	}
+
+	public TrackState getTrackState () {
+		return trackState;
+	}
+
+	public CarStillModel getStillModel () {
+		return stillModel;
+	}
+
+	public GameTrack getGameTrack () {
+		return gameTrack;
+	}
+
+	public float getSteerAngleRads () {
+		return 0;
 	}
 
 	private void applyCarPhysics (CarType carType, CarModel carModel) {
@@ -125,8 +140,8 @@ public abstract strictfp class Car extends Box2DEntity {
 
 		// the scaling factor should be 2, but in night mode is cool to see light bleeding across the edges of
 		// the car, fading away as soon as the physical body is reached
-		loader.attachFixture(body, "electron.png", fd, 1.85f, scaleX, scaleY);
-		ArrayList<Fixture> fs = body.getFixtureList();
+		loader.attachFixture(body, "uracer-car", fd, 1.85f, scaleX, scaleY);
+		Array<Fixture> fs = body.getFixtureList();
 		for (Fixture f : fs) {
 			f.setUserData(carType);
 		}
@@ -136,14 +151,19 @@ public abstract strictfp class Car extends Box2DEntity {
 		body.setMassData(mdata);
 	}
 
-	/** Subclasses will feed forces to the simulator, such as Replay data stored elsewhere or from user input.
+	/** A subclass will be requested to compute physical forces and impulses to be sent via this data structure: a Player subclass
+	 * may compute them via its own car simulation, a Replay subclass, intead, may feed the forces directly without computing them.
 	 * 
 	 * @param forces computed forces shall be returned by filling the passed data structure. */
 	protected abstract void onComputeCarForces (CarForces forces);
 
-	public CarPreset.Type getPresetType () {
-		return preset.type;
-	}
+	// public CarPreset.Type getPresetType () {
+	// return preset.type;
+	// }
+
+	// public CarPreset getCarPreset () {
+	// return preset;
+	// }
 
 	public CarPreset getCarPreset () {
 		return preset;
@@ -157,54 +177,17 @@ public abstract strictfp class Car extends Box2DEntity {
 		return inputMode;
 	}
 
-	public CarRenderer getRenderer () {
-		return renderer;
-	}
-
-	// public void setAspect( Aspect aspect ) {
-	// if( this.aspect != aspect ) {
-	// this.aspect = aspect;
-	// renderer.setAspect( aspect, model );
-	// Gdx.app.log( this.getClass().getSimpleName(), "Switched to car aspect \"" + aspect.toString() + "\"" );
+	// public void setPreset (CarPreset.Type presetType) {
+	// if (preset.type != presetType) {
+	// preset.setTo(presetType);
+	// applyCarPhysics(carType, preset.model);
+	// // renderer.setAspect(preset.model, preset.type);
+	// Gdx.app.log(this.getClass().getSimpleName(), "Switched to car model \"" + preset.model.presetType.toString() + "\"");
 	// } else {
-	// Gdx.app.log( this.getClass().getSimpleName(), "Aspect unchanged, not switching to same Aspect \"" +
-	// aspect.toString() + "\"" );
+	// Gdx.app.log(this.getClass().getSimpleName(), "Preset unchanged, not switching to same type \"" + preset.type.toString()
+	// + "\"");
 	// }
 	// }
-
-	// public void setModelType( CarPreset.Type type ) {
-	// if( model.type != type ) {
-	// model.toModelType( type );
-	// applyCarPhysics( carType, model );
-	// renderer.setAspect( aspect, model );
-	// Gdx.app.log( this.getClass().getSimpleName(), "Switched to car model \"" + model.type.toString() + "\"" );
-	// } else {
-	// Gdx.app.log( this.getClass().getSimpleName(), "Model unchanged, not switching to same CarModel \"" +
-	// model.type.toString() + "\"" );
-	// }
-	// }
-
-	// // TODO car customization, uracer2?
-	// public void setModel( CarModel carModel ) {
-	// if( model != null ) {
-	// model.set( carModel );
-	// applyCarPhysics( carType, model );
-	// renderer.setAspect( aspect, model );
-	// Gdx.app.log( this.getClass().getSimpleName(), "Switched to car model \"" + model.type.toString() + "\"" );
-	// }
-	// }
-
-	public void setPreset (CarPreset.Type presetType) {
-		if (preset.type != presetType) {
-			preset.setTo(presetType);
-			applyCarPhysics(carType, preset.model);
-			renderer.setAspect(preset.model, preset.type);
-			Gdx.app.log(this.getClass().getSimpleName(), "Switched to car model \"" + preset.model.presetType.toString() + "\"");
-		} else {
-			Gdx.app.log(this.getClass().getSimpleName(), "Preset unchanged, not switching to same type \"" + preset.type.toString()
-				+ "\"");
-		}
-	}
 
 	/** Returns the traveled distance, in meters, so far. Calling reset() will also reset the traveled distance. */
 	public float getTraveledDistance () {
@@ -230,10 +213,15 @@ public abstract strictfp class Car extends Box2DEntity {
 		return body.isActive();
 	}
 
-	public void resetDistanceAndSpeed () {
-		carTraveledDistance = 0;
-		accuDistCount = 0;
-		carInstantSpeedMtSec = 0;
+	public void resetDistanceAndSpeed (boolean resetDistance, boolean resetSpeed) {
+		if (resetDistance) {
+			carTraveledDistance = 0;
+			accuDistCount = 0;
+		}
+
+		if (resetSpeed) {
+			carInstantSpeedMtSec = 0;
+		}
 	}
 
 	public void resetPhysics () {
@@ -242,12 +230,14 @@ public abstract strictfp class Car extends Box2DEntity {
 		impacts = 0;
 	}
 
-	public void onCollide (Fixture other, Vector2 normalImpulses) {
+	public void onCollide (Fixture other, Vector2 normalImpulses, float frontRatio) {
 		impacts++;
 
+		// FIXME
+		// see the bug report at https://code.google.com/p/libgdx/issues/detail?id=1398
 		if (triggerEvents) {
-			event.data.setCollisionData(other, normalImpulses);
-			event.trigger(this, CarEvent.Type.onCollision);
+			GameEvents.playerCar.data.setCollisionData(other, normalImpulses, frontRatio);
+			GameEvents.playerCar.trigger(this, CarEvent.Type.onCollision);
 		}
 	}
 
@@ -265,10 +255,6 @@ public abstract strictfp class Car extends Box2DEntity {
 
 	@Override
 	public void onBeforePhysicsSubstep () {
-		// keeps track of the previous position to be able
-		// to compute the cumulative traveled distance
-		// previousPosition.set( body.getPosition() );
-
 		super.onBeforePhysicsSubstep();
 
 		// let's subclasses behave as needed, ask them to fill carForces with new data
@@ -276,8 +262,8 @@ public abstract strictfp class Car extends Box2DEntity {
 
 		// trigger event, new forces have been computed
 		if (triggerEvents) {
-			event.data.setForces(carForces);
-			event.trigger(this, CarEvent.Type.onComputeForces);
+			GameEvents.playerCar.data.setForces(carForces);
+			GameEvents.playerCar.trigger(this, CarEvent.Type.onPhysicsForcesReady);
 		}
 
 		// put newly computed forces into the system
@@ -309,15 +295,6 @@ public abstract strictfp class Car extends Box2DEntity {
 		}
 
 		// compute instant speed
-		carInstantSpeedMtSec = AMath.fixup(dist * Config.Physics.PhysicsTimestepHz);
-	}
-
-	@Override
-	public void onRender (SpriteBatch batch, Type type, Order order) {
-		if (order == ShadowsDrawingOrder) {
-			renderer.renderShadows(batch, stateRender);
-		} else if (order == drawingOrder) {
-			renderer.render(batch, stateRender);
-		}
+		carInstantSpeedMtSec = AMath.fixup(dist * Config.Physics.TimestepHz);
 	}
 }

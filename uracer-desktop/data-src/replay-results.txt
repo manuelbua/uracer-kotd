@@ -1,0 +1,5 @@
+	 Player: Car traveled 327.9311 m (1070) in 18.03323 s (18.184822 mt/s)  fpos=[80.69785:116.36078]
+GhostCar #0: Car traveled 327.93793 m (1070) in 18.03323 s (18.185202 mt/s)  fpos=[80.69554:116.36107]
+
+
+	 Player: Car traveled 283.1469m (662) in 11.033337s (25.662855mt/s)  fpos=[80.6374:117.06968]

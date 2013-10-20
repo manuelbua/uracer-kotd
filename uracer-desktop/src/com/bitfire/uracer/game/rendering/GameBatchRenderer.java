@@ -1,11 +1,11 @@
 
 package com.bitfire.uracer.game.rendering;
 
-import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.Camera;
 import com.badlogic.gdx.graphics.GL20;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.math.Matrix4;
+import com.bitfire.uracer.utils.ScaleUtils;
 
 public class GameBatchRenderer {
 	private SpriteBatch batch = null;
@@ -17,7 +17,7 @@ public class GameBatchRenderer {
 		// setup a top-left origin
 		// y-flip
 		topLeftOrigin = new Matrix4();
-		topLeftOrigin.setToOrtho(0, Gdx.graphics.getWidth(), Gdx.graphics.getHeight(), 0, 0, 10);
+		topLeftOrigin.setToOrtho(0, ScaleUtils.PlayWidth, ScaleUtils.PlayHeight, 0, 0, 10);
 		identity = new Matrix4();
 
 		// Issues may arise on Tegra2 (Asus Transformer) devices if the buffers'

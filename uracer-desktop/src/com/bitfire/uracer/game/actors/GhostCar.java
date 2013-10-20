@@ -1,10 +1,18 @@
 
 package com.bitfire.uracer.game.actors;
 
+import aurelienribon.tweenengine.Timeline;
+import aurelienribon.tweenengine.Tween;
+import aurelienribon.tweenengine.TweenEquation;
+
+import com.bitfire.uracer.configuration.Config;
+import com.bitfire.uracer.game.GameEvents;
+import com.bitfire.uracer.game.events.GhostCarEvent;
 import com.bitfire.uracer.game.logic.replaying.Replay;
-import com.bitfire.uracer.game.rendering.GameRendererEvent;
+import com.bitfire.uracer.game.tween.GameTweener;
 import com.bitfire.uracer.game.world.GameWorld;
-import com.bitfire.uracer.utils.CarUtils;
+import com.bitfire.uracer.utils.BoxedFloat;
+import com.bitfire.uracer.utils.BoxedFloatAccessor;
 
 /** Implements an automated Car, playing previously recorded events. It will ignore car-to-car collisions, but will respect
  * in-track collisions and responses.
@@ -14,113 +22,185 @@ import com.bitfire.uracer.utils.CarUtils;
 public final class GhostCar extends Car {
 	private static final int FadeEvents = 30;
 	private Replay replay;
+	private CarForces[] replayForces;
+	private int replayForcesCount;
 	private int indexPlay;
 	private boolean hasReplay;
+	private final int id;
+	private boolean fadeOutEventTriggered, startedEventTriggered;
+	private boolean started;
+	private BoxedFloat bfAlpha;
 
-	public GhostCar (GameWorld gameWorld, CarPreset.Type presetType) {
-		super(gameWorld, CarType.ReplayCar, InputMode.InputFromReplay, GameRendererEvent.Order.DEFAULT, presetType, false);
-		indexPlay = 0;
-		hasReplay = false;
-		replay = null;
-		this.renderer.setAlpha(0.5f);
-		// this.carState = new CarState( gameWorld, this );
-
-		setActive(false);
-		resetPhysics();
-		resetDistanceAndSpeed();
+	public GhostCar (int id, GameWorld gameWorld, CarPreset.Type presetType) {
+		super(gameWorld, null, CarType.ReplayCar, InputMode.InputFromReplay, presetType, false);
+		this.id = id;
+		started = false;
+		replay = new Replay();
+		resetDistanceAndSpeed(true, true);
+		removeReplay();
+		bfAlpha = new BoxedFloat(Config.Graphics.DefaultGhostCarOpacity);
+		stillModel.setAlpha(0);
+		getTrackState().ghostArrived = false;
 	}
 
-	// input data for this car cames from a Replay object
-	public void setReplay (Replay replay) {
-		this.replay = replay;
-		hasReplay = (replay != null && replay.getEventsCount() > 0);
+	public int getId () {
+		return id;
+	}
 
-		setActive(hasReplay);
-		resetPhysics();
+	public Replay getReplay () {
+		return replay;
+	}
+
+	/** starts playing the available Replay, if any */
+	public void start () {
+		if (!started) {
+			indexPlay = 0;
+			startedEventTriggered = false;
+			fadeOutEventTriggered = false;
+			stillModel.setAlpha(0);
+			resetWithTrackState();
+			setActive(true);
+			getTrackState().ghostArrived = false;
+			started = true;
+		}
+	}
+
+	/** stops playing the replay and returns to being idle */
+	public void stop () {
+		if (started) {
+			started = false;
+			stillModel.setAlpha(0);
+			setActive(false);
+			resetPhysics();
+		}
+	}
+
+	public boolean isPlaying () {
+		return started;
+	}
+
+	public void setAlpha (float alpha) {
+		bfAlpha.value = alpha;
+	}
+
+	public float getAlpha () {
+		return bfAlpha.value;
+	}
+
+	public void tweenAlphaTo (float value) {
+		tweenAlphaTo(value, Config.Graphics.DefaultGhostOpacityChangeMs, Config.Graphics.DefaultGhostOpacityChangeEq);
+	}
+
+	public void tweenAlphaTo (float value, float ms, TweenEquation eq) {
+		GameTweener.stop(bfAlpha);
+		Timeline timeline = Timeline.createSequence();
+		timeline.push(Tween.to(bfAlpha, BoxedFloatAccessor.VALUE, ms).target(value).ease(eq));
+		GameTweener.start(timeline);
+	}
+
+	public boolean isSsaoReady () {
+		return bfAlpha.value > 0.5f;
+	}
+
+	// input data for this car comes from a Replay object
+	public void setReplay (Replay replay) {
+		stop();
+
+		hasReplay = (replay != null && replay.getEventsCount() > 0 && replay.isValid());
+		replayForces = null;
+		replayForcesCount = 0;
 
 		if (hasReplay) {
-			setPreset(replay.carPresetType);
-			renderer.setAlpha(0);
-
-			// System.out.println( "Replaying " + replay.id );
-			restart(replay);
-			// Gdx.app.log( "GhostCar", "Replaying " + replay.trackTimeSeconds + "s" );
+			this.replay.copy(replay);
+		} else {
+			this.replay.reset();
 		}
 
-		// else
-		// {
-		// if(replay==null)
-		// System.out.println("Replay disabled");
-		// else
-		// System.out.println("Replay has no recorded events, disabling replaying.");
-		// }
+		if (hasReplay) {
+			replayForces = replay.getCarForces();
+			replayForcesCount = replay.getEventsCount();
+			resetWithTrackState();
+			indexPlay = 0;
+			fadeOutEventTriggered = false;
+			startedEventTriggered = false;
+			stillModel.setAlpha(0);
+		}
+	}
+
+	private void resetWithTrackState () {
+		getTrackState().ghostArrived = false;
+
+		resetPhysics();
+		resetDistanceAndSpeed(true, true);
+
+		if (hasReplay) {
+			setWorldPosMt(replay.getStartPosition(), replay.getStartOrientation());
+			gameTrack.resetTrackState(this);
+		}
+	}
+
+	public void removeReplay () {
+		stop();
+		setReplay(null);
 	}
 
 	public boolean hasReplay () {
 		return hasReplay;
 	}
 
-	private void restart (Replay replay) {
-		resetPhysics();
-		resetDistanceAndSpeed();
-		setWorldPosMt(replay.carWorldPositionMt, replay.carWorldOrientRads);
-		indexPlay = 0;
-
-		// Gdx.app.log( "GhostCar", "Set to " + body.getPosition() + ", " + body.getAngle() );
-	}
-
-	public void removeReplay () {
-		setReplay(null);
-		renderer.setAlpha(0);
+	@Override
+	public boolean isActive () {
+		return super.isActive() && hasReplay;
 	}
 
 	@Override
 	public boolean isVisible () {
-		return hasReplay && isActive() && renderer.getAlpha() > 0;
+		return isActive() && stillModel.getAlpha() > 0;
 	}
 
 	@Override
 	protected void onComputeCarForces (CarForces forces) {
+		// returns empty forces in case its not started nor ready
 		forces.reset();
 
-		if (hasReplay) {
+		if (started && hasReplay) {
 
-			// indexPlay is NOT updated here, we don't want
-			// to process a non-existent event when (indexPlay == replay.getEventsCount())
-			forces.set(replay.forces[indexPlay]);
-			// Gdx.app.log( "ghost", "index="+indexPlay + ", px=" + NumberString.formatVeryLong(body.getPosition().x) +
-			// ", py=" + NumberString.formatVeryLong(body.getPosition().y) );
+			if (!startedEventTriggered) {
+				startedEventTriggered = true;
+				GameEvents.ghostCars.trigger(this, GhostCarEvent.Type.ReplayStarted);
+			}
 
-			// Gdx.app.log( "", "cf=" +
-			// NumberString.formatVeryLong(forces.velocity_x) + ", " +
-			// NumberString.formatVeryLong(forces.velocity_y) + ", " +
-			// NumberString.formatVeryLong(forces.angularVelocity)
-			// );
+			if (indexPlay < replayForcesCount) {
+				forces.set(replayForces[indexPlay]);
+			}
 
-			// also change opacity, fade in/out based on
-			// events played, events remaining
+			stillModel.setAlpha(bfAlpha.value);
+
+			// also change opacity, fade in/out based on events played / total events
 			if (indexPlay <= FadeEvents) {
-				renderer.setAlpha(((float)indexPlay / (float)FadeEvents) * 0.5f);
+				stillModel.setAlpha(((float)indexPlay / (float)FadeEvents) * bfAlpha.value);
 			} else if (replay.getEventsCount() - indexPlay <= FadeEvents) {
 				float val = (float)(replay.getEventsCount() - indexPlay) / (float)FadeEvents;
-				renderer.setAlpha(val * 0.5f);
+				stillModel.setAlpha(val * bfAlpha.value);
+
+				if (!fadeOutEventTriggered) {
+					fadeOutEventTriggered = true;
+					GameEvents.ghostCars.trigger(this, GhostCarEvent.Type.onGhostFadingOut);
+				}
 			}
 		}
-		// else {
-		// Gdx.app.log( "GhostCar", "No replay, injecting null forces" );
-		// }
 	}
 
 	@Override
 	public void onAfterPhysicsSubstep () {
 		super.onAfterPhysicsSubstep();
+		if (!started) return;
 
 		if (hasReplay) {
 			indexPlay++;
 
-			if (indexPlay == replay.getEventsCount()) {
-				CarUtils.dumpSpeedInfo(" Ghost", this, replay.trackTimeSeconds);
-				restart(replay);
+			if (indexPlay == replayForcesCount) {
+				GameEvents.ghostCars.trigger(this, GhostCarEvent.Type.ReplayEnded);
 			}
 		}
 	}

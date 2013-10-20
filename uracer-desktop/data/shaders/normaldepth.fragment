@@ -1,0 +1,44 @@
+varying vec3 v_normal, v_position;
+uniform mat4 proj, view;
+uniform float near, far, inv_depth_scale;
+uniform mat3 nmat;
+
+#ifdef ENABLE_DIFFUSE
+	uniform sampler2D u_texture;
+	varying vec2 v_texcoord;
+#endif
+
+vec2 encode_normal(vec3 normal)
+{
+	float f = sqrt(8.0*normal.z+8.0);
+	return normal.xy / f + 0.5;
+}
+
+vec2 encode_depth(vec3 position){
+	float depth = (length(position)-near)/far;
+
+	depth *= inv_depth_scale;
+	depth = clamp(depth, 0.0, 1.0);
+
+	depth = depth*255.0*255.0;
+	return vec2(
+		mod(depth, 255.0)/255.0,
+		floor(depth/255.0)/255.0
+	);
+}
+
+void main(void){
+#ifdef ENABLE_DIFFUSE
+	vec4 texel = texture2D( u_texture, v_texcoord );
+	if(texel.a < 0.25) discard;
+#endif
+
+	vec3 normal = normalize(v_normal);
+
+	if(!gl_FrontFacing) {
+		normal *= -1.0;
+	}
+
+	vec3 position = (view * vec4(v_position, 1.0)).xyz;
+	gl_FragColor = vec4(encode_normal(normal), encode_depth(position));
+}

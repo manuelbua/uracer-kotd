@@ -1,0 +1,21 @@
+#ifdef GL_ES
+	precision mediump float;
+#endif
+
+uniform sampler2D u_texture;
+uniform sampler2D u_texture1;
+uniform float progress;
+
+varying vec2 v_TexCoord;
+varying vec4 v_color;
+
+void main()
+{
+	vec4 m = texture2D(u_texture1,v_TexCoord);
+	if( progress>0.0 && m.r<=progress) {
+		vec4 p = texture2D(u_texture,v_TexCoord) * v_color;
+		gl_FragColor = p;
+	} else {
+		gl_FragColor = vec4(0.0,0.0,0.0,0.0);
+	}
+}

@@ -15,47 +15,47 @@ public final class Box2DFactory {
 	private Box2DFactory () {
 	}
 
-// public static void init() {
-// Box2DFactory.tmp1 = new Vector2();
-// Box2DFactory.tmp2 = new Vector2();
-// Box2DFactory.from = new Vector2();
-// Box2DFactory.to = new Vector2();
-// }
+	// public static void init() {
+	// Box2DFactory.tmp1 = new Vector2();
+	// Box2DFactory.tmp2 = new Vector2();
+	// Box2DFactory.from = new Vector2();
+	// Box2DFactory.to = new Vector2();
+	// }
 
 	/** Creates a circle object with the given position and radius. Resitution defaults to 0.6. */
-// public static Body createCircle( World world, float x, float y, float radius, boolean isStatic ) {
-// CircleShape sd = new CircleShape();
-// sd.setRadius( radius );
-//
-// BodyDef bd = new BodyDef();
-// bd.bullet = false;
-// bd.allowSleep = true;
-// bd.position.set( x, y );
-// Body body = world.createBody( bd );
-//
-// if( isStatic ) {
-// body.setType( BodyDef.BodyType.StaticBody );
-// } else {
-// body.setType( BodyDef.BodyType.DynamicBody );
-// }
-//
-// FixtureDef fdef = new FixtureDef();
-// fdef.shape = sd;
-// fdef.density = 1.0f;
-// fdef.friction = 0.3f;
-// fdef.restitution = 0.6f;
-// body.createFixture( fdef );
-//
-// // MassData md = new MassData();
-// // md.mass = 1000f;
-// // md.I = 0f;
-// // md.center.x = md.center.y = 0f;
-// // body.setMassData( md );
-//
-// // System.out.println( "createCircle, mass=" + body.getMass() );
-//
-// return body;
-// }
+	// public static Body createCircle( World world, float x, float y, float radius, boolean isStatic ) {
+	// CircleShape sd = new CircleShape();
+	// sd.setRadius( radius );
+	//
+	// BodyDef bd = new BodyDef();
+	// bd.bullet = false;
+	// bd.allowSleep = true;
+	// bd.position.set( x, y );
+	// Body body = world.createBody( bd );
+	//
+	// if( isStatic ) {
+	// body.setType( BodyDef.BodyType.StaticBody );
+	// } else {
+	// body.setType( BodyDef.BodyType.DynamicBody );
+	// }
+	//
+	// FixtureDef fdef = new FixtureDef();
+	// fdef.shape = sd;
+	// fdef.density = 1.0f;
+	// fdef.friction = 0.3f;
+	// fdef.restitution = 0.6f;
+	// body.createFixture( fdef );
+	//
+	// // MassData md = new MassData();
+	// // md.mass = 1000f;
+	// // md.I = 0f;
+	// // md.center.x = md.center.y = 0f;
+	// // body.setMassData( md );
+	//
+	// // System.out.println( "createCircle, mass=" + body.getMass() );
+	//
+	// return body;
+	// }
 
 	/** Creates a wall by constructing a rectangle whose corners are (xmin,ymin) and (xmax,ymax), and rotating the box
 	 * counterclockwise through the given angle. Restitution defaults to 0. */

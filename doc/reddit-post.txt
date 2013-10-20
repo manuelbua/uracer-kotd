@@ -1,0 +1,92 @@
+uRacer: The King Of The Drift - "Simple" - WIP#2
+
+
+A preview of the single-player gameplay of uRacer, the top-down racer i'm working on.
+The initial idea was to produce an Android game targeting tablets and smartphones, but then it was too much fun and got me hooked up, so i decided to make a desktop version straight away (i'll eventually port it to Android but i'll see)
+
+Back in January (2012) i posted an early look of this game, when the whole concept was tailored to mobile devices (http://www.youtube.com/watch?v=OGUKLCTq6SY) take a look if you want to see the progress since then.
+
+Besides my daily life and work (that unfortunately doesn't include making games!), i'm slowly moving on and progressing with some heavy lifting on the graphics and the gameplay: one of the main features of the game will be "time dilation" (you can see it in action), where the player can slow down time and adjust the car trajectory to avoid collisions or perform drift overtakes; the more you drift, the more seconds you earn to spend in time dilation!
+
+I'm not going to reveal more at this time :) If you look carefully you could get an hint on what's to come, but i can definitely add that i'm going to support Linux from day one since i'm developing this on my Arch box.
+
+See also:
+Simple (http://www.youtube.com/watch?v=WmjD8sQnEk8)
+Naughty Curves (http://www.youtube.com/watch?v=trgWohHKiIc)
+
+
+
+
+
+
+http://www.reddit.com/r/gamedev/comments/o1f1v/xpost_randroiddev_im_developing_a_topdown_racer/
+
+(old)				http://www.youtube.com/watch?v=OGUKLCTq6SY
+
+Simple				http://www.youtube.com/watch?v=ivW6Q5ml8Ds
+Simple (night)		http://www.youtube.com/watch?v=TnZqGbWmv6s
+Overlap (night)		http://www.youtube.com/watch?v=75rHkQaSwjw
+Overlap (night/crt)	http://www.youtube.com/watch?v=mJ3Infpvjlk
+
+
+
+uRacer: The King Of The Drift - "Simple" track (PC/WIP)
+
+A gameplay video of uRacer, the top-down racer i'm (slowly.. sigh) working on.
+Back in January 2012 i posted an early look of this game, when the whole concept was tailored to mobile devices (http://www.youtube.com/watch?v=OGUKLCTq6SY).
+The initial idea was to produce an Android game targeting tablets and smartphones, but then it has been so much fun that got me hooked up, so i decided to target the desktop platform first :)
+
+
+-------------------
+
+[title]
+Hey /r/gamedev! Back in January i posted about uRacer, the top-down racer i'm working on: i decided to target the desktop platform first, so here is some progress on it, what's your thoughts about its chances?
+
+
+[text]
+Hey guys!
+
+I've been slowly working on uRacer on and off, at night, after my daily work, for slightly more than a year.
+
+It just started as an [Android project](http://www.reddit.com/r/androiddev/comments/nzufs/hey_randroiddev_im_developing_a_topdown_racer_and/), targeting tablets and smartphones, but then i liked the idea of a desktop version so much that i decided to target the PC first :)
+If you are curious about the initial Android prototype, i uploaded a video on [YouTube](http://www.youtube.com/watch?v=OGUKLCTq6SY) back then.
+
+Here instead is my latest dev build running on my desktop: despite running at 60fps, there is some stutter in the video at times because i had to encode it at 30fps for a better playing on YouTube: also the audio i had to mux it apart, so there could be some minor delay issues :)
+
+Anyway, please tell me what you think and, most especially, what's your thoughts about its chances!
+
+* *Simple* level [[YT]](http://www.youtube.com/watch?v=ivW6Q5ml8Ds)
+* *Simple* level in night mode [[YT]](http://www.youtube.com/watch?v=TnZqGbWmv6s)
+* *Overlap* level in night mode [[YT]](http://www.youtube.com/watch?v=75rHkQaSwjw)
+* *Overlap* level in "nostalgia" mode (crt emulation, but ugly due to YT compression) [[YT]](http://www.youtube.com/watch?v=mJ3Infpvjlk)
+
+--------
+
+The idea is to have a single-player mode for practicing the tracks and racing against yourself, and a multi-player mode for racing against other players' replays.
+
+After choosing the track, your vehicle choice will determine the class of racers that you'll race against to: faster cars are more difficult to drive and requires the track to be memorized first.
+
+The player performing the track in less time wins, but not only that: the more time you *drift*, the more time you *earn*: you can then consume it by activating the *time dilation mode* at any point in your race, to slow down time and perform minor adjustments to your car's trajectory.
+
+Multiplayer mode is similar, but your replays are being sync'd automatically at the end of each lap, then the player rank is updated accordingly.
+
+I'm thinking about the server-side architecture and the mechanisms: since i want it to be simple and scalable i'll have to at least try implement a couple of ideas and see how they perform. Code maintenance is a must and Python+WSGI looks like a pretty cool thing to experiment with, but i'll see because Node.js looks like a good candidate too, so if anyone has experience with something similar please let me know your impressions as well!
+
+
+**NOTE** *i'm currently experiencing DSL problems with my ISP (Tiscali/IT), so i'll probably not be able to respond or read this until my connection is back, it took me one hour to just post this!*
+
+
+
+
+-------------------
+
+
+
+
+--------------------
+UPDATED POST
+--------------------
+
+
+
+--------------------

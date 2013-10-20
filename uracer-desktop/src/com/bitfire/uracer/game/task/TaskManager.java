@@ -1,17 +1,18 @@
 
 package com.bitfire.uracer.game.task;
 
+import com.bitfire.uracer.game.GameEvents;
+import com.bitfire.uracer.game.events.TaskManagerEvent;
+
 public final class TaskManager {
-	protected static final TaskManagerEvent event = new TaskManagerEvent();
-
-	private TaskManager () {
+	public TaskManager () {
 	}
 
-	public static void dispose () {
-		event.removeAllListeners();
+	public void dispose () {
+		GameEvents.taskManager.removeAllListeners();
 	}
 
-	public static void dispatchTick () {
-		event.trigger(TaskManagerEvent.Type.onTick);
+	public void dispatchEvent (TaskManagerEvent.Type eventType) {
+		GameEvents.taskManager.trigger(this, eventType);
 	}
 }
