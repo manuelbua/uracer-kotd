@@ -52,7 +52,7 @@ public final class ReplayManager implements Disposable {
 			this.pruned.copy(o.pruned);
 			this.position = o.position;
 			this.reason = o.reason;
-			this.new_replay = o.new_replay;
+			this.new_replay = o.new_replay; // shallow copy
 		}
 	}
 
