@@ -147,13 +147,13 @@ public class SinglePlayer extends BaseLogic {
 				targetMode = false;
 				gameWorldRenderer.setTopMostGhostCar(null);
 				playerTasks.hudPlayer.unHighlightNextTarget();
-				messager.show("Target mode disabled", 1, Type.Information, Position.Bottom, Size.Big);
+				messager.show("Target mode disabled", 2, Type.Information, Position.Top, Size.Big);
 				Gdx.app.log("SinglePlayer", "Target mode disabled");
 			}
 		} else {
 			if (!targetMode) {
 				targetMode = true;
-				messager.show("Target mode enabled", 1, Type.Information, Position.Bottom, Size.Big);
+				messager.show("Target mode enabled", 3, Type.Information, Position.Top, Size.Big);
 				Gdx.app.log("SinglePlayer", "Target mode enabled");
 			}
 
