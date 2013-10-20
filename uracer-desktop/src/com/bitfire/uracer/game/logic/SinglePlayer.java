@@ -27,7 +27,6 @@ import com.bitfire.uracer.game.logic.gametasks.sounds.effects.PlayerEngineSoundE
 import com.bitfire.uracer.game.logic.gametasks.sounds.effects.PlayerTensiveMusic;
 import com.bitfire.uracer.game.logic.replaying.Replay;
 import com.bitfire.uracer.game.logic.replaying.ReplayInfo;
-import com.bitfire.uracer.game.logic.replaying.ReplayManager.DiscardReason;
 import com.bitfire.uracer.game.logic.replaying.ReplayManager.ReplayResult;
 import com.bitfire.uracer.game.logic.types.helpers.CameraShaker;
 import com.bitfire.uracer.game.rendering.GameRenderer;
@@ -331,24 +330,25 @@ public class SinglePlayer extends BaseLogic {
 			Replay replay = lapManager.stopRecording();
 
 			// check if better than current target
-			GhostCar target = getNextTarget();
-			boolean slowerThanTarget = (target != null) && (replay.compareTo(target.getReplay()) > -1);
-			if (slowerThanTarget) {
-				Replay treplay = target.getReplay();
-				ReplayInfo ri = replay.getInfo();
+			// GhostCar target = getNextTarget();
+			// boolean slowerThanTarget = (target != null) && (replay.compareTo(target.getReplay()) > -1);
+			// if (slowerThanTarget) {
+			// Replay treplay = target.getReplay();
+			// ReplayInfo ri = replay.getInfo();
+			//
+			// // early discard, slower than target
+			// lastRecorded.is_accepted = false;
+			// lastRecorded.discarded.copy(ri);
+			// lastRecorded.reason = DiscardReason.Slower;
+			//
+			// String diff = String.format("%.03f", (float)(ri.getMilliseconds() - treplay.getMilliseconds()) / 1000f);
+			// Gdx.app.log("ReplayManager", "Discarded replay #" + ri.getShortId() + " for " + diff + "secs");
+			// } else {
+			// // once added lastRecorded.new_replay should be used
+			// lastRecorded.copy(lapManager.addReplay(replay));
+			// }
 
-				// early discard, slower than target
-				lastRecorded.is_accepted = false;
-				lastRecorded.discarded.copy(ri);
-				lastRecorded.reason = DiscardReason.Slower;
-
-				String diff = String.format("%.03f", (float)(ri.getMilliseconds() - treplay.getMilliseconds()) / 1000f);
-				Gdx.app.log("ReplayManager", "Discarded replay #" + ri.getShortId() + " for " + diff + "secs");
-			} else {
-				// once added lastRecorded.new_replay should be used
-				lastRecorded.copy(lapManager.addReplay(replay));
-			}
-
+			lastRecorded.copy(lapManager.addReplay(replay));
 			if (lastRecorded.is_accepted) {
 				ReplayInfo ri = lastRecorded.accepted;
 
