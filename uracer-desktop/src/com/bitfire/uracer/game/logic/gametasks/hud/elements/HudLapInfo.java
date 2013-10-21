@@ -82,7 +82,7 @@ public class HudLapInfo extends HudElement {
 
 	@Override
 	public void onRender (SpriteBatch batch, float cameraZoom) {
-		// current time
+		// current lap time
 		if (isValid) {
 			String elapsed = String.format("%.03f", ReplayUtils.ticksToSeconds(lapManager.getCurrentReplayTicks()));
 			curr.setString(elapsed, true);

@@ -341,6 +341,8 @@ public abstract class CommonLogic implements GameLogic, GameLogicObserver {
 			}
 
 			if (!playerLapMonitor.isWarmUp()) {
+				// Time dilationTime = getTimeDilationTimer();
+				// Gdx.app.log("", "stopped=" + dilationTime.isStopped());
 				updateDriftSeconds();
 			}
 
@@ -415,7 +417,8 @@ public abstract class CommonLogic implements GameLogic, GameLogicObserver {
 
 			// lose wall-clock seconds while in time dilation
 			if (!dilationTime.isStopped()) {
-				accuDriftSeconds.value -= dilationTime.elapsed().lastAbsSeconds * 2;
+				float val = dilationTime.elapsed().lastAbsSeconds;
+				accuDriftSeconds.value -= val * 2;
 			}
 
 			// lose wall-clock seconds while out of track

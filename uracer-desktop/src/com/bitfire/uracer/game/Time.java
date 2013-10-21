@@ -17,6 +17,10 @@ public final class Time extends Task {
 		public float lastAbsSeconds;
 
 		public TimeValue () {
+			reset();
+		}
+
+		public void reset () {
 			ticks = 0;
 			tickSeconds = 0;
 			absSeconds = 0;
@@ -46,6 +50,8 @@ public final class Time extends Task {
 	/** Starts tracking */
 	public void start () {
 		reset();
+		nsStartTime = TimeUtils.nanoTime();
+		lastStartTime = nsStartTime;
 		stopped = false;
 	}
 
@@ -64,10 +70,11 @@ public final class Time extends Task {
 	public void reset () {
 		stopped = true;
 
-		// abs
-		nsStartTime = TimeUtils.nanoTime();
+		nsStartTime = 0;
 		nsStopTime = 0;
-		lastStartTime = nsStartTime;
+		lastStartTime = 0;
+
+		result.reset();
 
 		// ticks
 		ticks = 0;
@@ -78,26 +85,26 @@ public final class Time extends Task {
 	protected void onTick () {
 		if (!stopped) {
 			ticks++;
+
+			long now = (stopped ? nsStopTime : TimeUtils.nanoTime());
+
+			// plain number of ticks
+			result.ticks = ticks;
+
+			// number of ticks to seconds (in 1/dt increments)
+			result.tickSeconds = ticks * Config.Physics.Dt;
+
+			// last frame delta
+			result.lastAbsSeconds = (now - lastStartTime) * oneOnOneBillion;
+			if (!stopped) lastStartTime = TimeUtils.nanoTime();
+
+			// absolute seconds
+			result.absSeconds = (now - nsStartTime) * oneOnOneBillion;
 		}
 	};
 
 	/** Returns the elapsed time expressed in a number of useful units */
 	public TimeValue elapsed () {
-		long now = (stopped ? nsStopTime : TimeUtils.nanoTime());
-
-		// plain number of ticks
-		result.ticks = ticks;
-
-		// number of ticks to seconds (in 1/dt increments)
-		result.tickSeconds = ticks * Config.Physics.Dt;
-
-		// last frame delta
-		result.lastAbsSeconds = (now - lastStartTime) * oneOnOneBillion;
-		if (!stopped) lastStartTime = TimeUtils.nanoTime();
-
-		// absolute seconds
-		result.absSeconds = (now - nsStartTime) * oneOnOneBillion;
-
 		return result;
 	}
 }
