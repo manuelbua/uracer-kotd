@@ -36,7 +36,6 @@ import com.bitfire.uracer.game.logic.types.helpers.CameraShaker;
 import com.bitfire.uracer.game.rendering.GameRenderer;
 import com.bitfire.uracer.game.screens.GameScreensFactory.ScreenType;
 import com.bitfire.uracer.game.world.GameWorld;
-import com.bitfire.uracer.screen.TransitionFactory.TransitionType;
 import com.bitfire.uracer.utils.CarUtils;
 import com.bitfire.uracer.utils.Convert;
 import com.bitfire.uracer.utils.OrdinalUtils;
@@ -49,7 +48,8 @@ public class SinglePlayer extends BaseLogic {
 	private CameraShaker camShaker = new CameraShaker();
 	private int selectedBestReplayIdx = -1;
 	private ReplayResult lastRecorded = new ReplayResult();
-	private boolean targetMode = false;
+	private boolean canDisableTargetMode = false;
+	private boolean targetMode = !canDisableTargetMode; // always enabled if can't be disabled, else no target by default
 
 	public SinglePlayer (UserProfile userProfile, GameWorld gameWorld, GameRenderer gameRenderer) {
 		super(userProfile, gameWorld, gameRenderer);
@@ -148,11 +148,14 @@ public class SinglePlayer extends BaseLogic {
 			selectedBestReplayIdx++;
 		}
 
-		if (selectedBestReplayIdx < -1) selectedBestReplayIdx = maxreplays - 1;
-		if (selectedBestReplayIdx >= maxreplays) selectedBestReplayIdx = -1;
+		int limit = canDisableTargetMode ? -1 : 0;
+		if (selectedBestReplayIdx < limit) selectedBestReplayIdx = maxreplays - 1;
+		if (selectedBestReplayIdx >= maxreplays) selectedBestReplayIdx = limit;
+
+		// target mode disabled
 
 		if (selectedBestReplayIdx == -1) {
-			if (targetMode) {
+			if (canDisableTargetMode && targetMode) {
 				targetMode = false;
 				gameWorldRenderer.setTopMostGhostCar(null);
 				playerTasks.hudPlayer.unHighlightNextTarget();
@@ -161,14 +164,12 @@ public class SinglePlayer extends BaseLogic {
 				Gdx.app.log("SinglePlayer", "Target mode disabled");
 			}
 		} else {
-			if (!targetMode) {
+			if (canDisableTargetMode && !targetMode) {
 				targetMode = true;
 				setGhostAlphasFor(targetMode);
 				messager.show("Target mode enabled", 3, Type.Information, Position.Top, Size.Big);
 				Gdx.app.log("SinglePlayer", "Target mode enabled");
 			}
-
-			Gdx.app.log("SinglePlayer", "Next target #" + selectedBestReplayIdx);
 
 			if (!isWarmUp()) {
 				GhostCar next = getNextTarget();
@@ -179,7 +180,7 @@ public class SinglePlayer extends BaseLogic {
 			}
 		}
 
-		Gdx.app.log("SinglePlayer", "#" + selectedBestReplayIdx + " - " + targetMode);
+		Gdx.app.log("SinglePlayer", "Next target set to #" + selectedBestReplayIdx + " - " + targetMode);
 	}
 
 	private void saveReplay (final Replay replay) {
@@ -332,15 +333,13 @@ public class SinglePlayer extends BaseLogic {
 
 	@Override
 	public void playerLapCompleted () {
-		// The policy is to permit slower replays at loading time, but not at gameplay time, so that a player will not be able to
-		// save a slower replay. Slower replays may be loaded off disk just fine.
 		if (lapManager.isRecording()) {
 			lastRecorded.reset();
 
 			Replay replay = lapManager.stopRecording();
 
-			// check if better than current target
-			if (targetMode) {
+			if (canDisableTargetMode && targetMode) {
+				// only replays that are better than the current target are permitted
 				GhostCar target = getNextTarget();
 				boolean slowerThanTarget = (target != null) && (replay.compareTo(target.getReplay()) > -1);
 				if (slowerThanTarget) {
@@ -459,7 +458,7 @@ public class SinglePlayer extends BaseLogic {
 	public void doQuit () {
 		lapManager.abortRecording(false);
 
-		URacer.Screens.setScreen(ScreenType.MainScreen, TransitionType.Fader, 1000);
+		URacer.Game.show(ScreenType.MainScreen);
 		// URacer.Screens.setScreen(ScreenType.ExitScreen, TransitionType.Fader, 300);
 
 		getTimeModulator().reset();
@@ -505,16 +504,16 @@ public class SinglePlayer extends BaseLogic {
 			g++;
 		}
 
-		// if no nextTarget then take the best (first)
-		// if (getNextTarget() == null) {
-		// Gdx.app.log("SinglePlayer", "Automatically selecting best replay...");
-		// if (lapManager.getReplaysCount() > 0) {
-		// selectedBestReplayIdx = 0;
-		// Gdx.app.log("SinglePlayer", "Done selecting best replay!");
-		// } else {
-		// selectedBestReplayIdx = -1;
-		// Gdx.app.log("SinglePlayer", "Couldn't find any replay for this track.");
-		// }
-		// }
+		// auto-select the best replay in case target mode is mandatory and there is no target yet
+		if (!canDisableTargetMode && getNextTarget() == null) {
+			Gdx.app.log("SinglePlayer", "Automatically selecting best replay...");
+			if (lapManager.getReplaysCount() > 0) {
+				selectedBestReplayIdx = 0;
+				Gdx.app.log("SinglePlayer", "Done selecting best replay!");
+			} else {
+				selectedBestReplayIdx = -1;
+				Gdx.app.log("SinglePlayer", "Couldn't find any replay for this track.");
+			}
+		}
 	}
 }

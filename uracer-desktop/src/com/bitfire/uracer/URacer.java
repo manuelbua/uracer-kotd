@@ -169,7 +169,7 @@ public class URacer implements ApplicationListener {
 
 		isDesktop = (Gdx.app.getType() == ApplicationType.Desktop);
 
-		Screens.setScreen(ScreenType.MainScreen, TransitionType.CrossFader, 500);
+		Game.show(ScreenType.MainScreen);
 		// Screens.setScreen(ScreenType.GameScreen, TransitionType.Fader, 1000);
 		// Screens.setScreen(ScreenType.OptionsScreen, TransitionType.CrossFader, 500);
 	}
@@ -377,21 +377,15 @@ public class URacer implements ApplicationListener {
 		}
 
 		public static void show (ScreenType screenType) {
-			Screens.setScreen(screenType, TransitionType.Fader, 500);
+			screenMgr.setScreen(screenType, TransitionType.Fader, 500);
 		}
 
 		public static void show (ScreenType screenType, int durationMs) {
-			Screens.setScreen(screenType, TransitionType.Fader, durationMs);
+			screenMgr.setScreen(screenType, TransitionType.Fader, durationMs);
 		}
 
 		public static void quit () {
-			Screens.setScreen(ScreenType.ExitScreen, TransitionType.Fader, 500);
-		}
-	}
-
-	public static final class Screens {
-		public static void setScreen (ScreenType screenType, TransitionType transitionType, long transitionDurationMs) {
-			screenMgr.setScreen(screenType, transitionType, transitionDurationMs);
+			screenMgr.setScreen(ScreenType.ExitScreen, TransitionType.Fader, 500);
 		}
 	}
 
