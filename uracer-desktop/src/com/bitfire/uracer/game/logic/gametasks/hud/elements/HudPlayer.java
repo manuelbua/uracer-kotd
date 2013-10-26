@@ -78,6 +78,7 @@ public final class HudPlayer extends HudElement {
 	public void onReset () {
 		driftBar.hideSecondsLabel();
 		driftBar.reset();
+		trackProgress.resetPlayerToTarget();
 		highlightError.stop();
 		highlightNext.stop();
 		wrongWay.fadeOut(Config.Graphics.DefaultResetFadeMilliseconds);
