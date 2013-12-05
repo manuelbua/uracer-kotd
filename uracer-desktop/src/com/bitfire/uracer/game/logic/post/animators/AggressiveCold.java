@@ -157,12 +157,11 @@ public final class AggressiveCold implements PostProcessingAnimator {
 			// setup palettes
 
 			// default aspect to slot #0
+			// special effects palette on slot #1
 			// 6
 			// 13
 			// 16
-			vignette.setLutIndexVal(0, 6);
-
-			// special effects palette on slot #1
+			vignette.setLutIndexVal(0, 16);
 			vignette.setLutIndexVal(1, 12);
 
 			vignette.setLutIndexOffset(0);
@@ -328,6 +327,9 @@ public final class AggressiveCold implements PostProcessingAnimator {
 
 			float offset = MathUtils.clamp(cf * 3 + alertAmount.value, 0, 1);
 			vignette.setLutIndexOffset(offset);
+
+			// vignette.setLutIndexVal(0, 16);
+			// vignette.setLutIndexVal(1, 12);
 		}
 
 		//
