@@ -1,0 +1,13 @@
+# /home/manuel/dev/uracer-libgdx/uracer-desktop/src/com/bitfire/uracer/VersionInfo.java
+
+package com.bitfire.uracer;
+
+// MACHINE-GENERATED CODE, DO NOT TOUCH!
+//
+// Contains the latest uracer version
+public final class VersionInfo {
+	public static final String versionName = "v${CURR}";
+
+	private VersionInfo () {
+	}
+}
