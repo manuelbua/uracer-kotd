@@ -109,7 +109,7 @@ public final class PostProcessing {
 		}
 
 		if (UserPreferences.bool(Preference.CrtScreen)) {
-			int effects = Effect.LooseDetails.v | Effect.PhosphorVibrance.v | /* Effect.Scanlines.v | */Effect.Tint.v;
+			int effects = /* Effect.LooseDetails.v | */Effect.PhosphorVibrance.v | /* Effect.Scanlines.v | */Effect.Tint.v;
 			CrtMonitor crt = new CrtMonitor(ScaleUtils.PlayWidth, ScaleUtils.PlayHeight,
 				UserPreferences.bool(Preference.EarthCurvature), false, RgbMode.ChromaticAberrations, effects);
 			addEffect(Effects.Crt.name, crt);

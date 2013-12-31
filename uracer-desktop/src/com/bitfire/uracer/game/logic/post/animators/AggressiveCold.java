@@ -5,6 +5,7 @@ import aurelienribon.tweenengine.Timeline;
 import aurelienribon.tweenengine.Tween;
 import aurelienribon.tweenengine.equations.Quad;
 
+import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.math.MathUtils;
 import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.utils.TimeUtils;
@@ -260,7 +261,7 @@ public final class AggressiveCold implements PostProcessingAnimator {
 		}
 
 		float cf = collisionFactor;
-		// cf = 0.8f;
+		// cf = 1f;
 
 		if (zoom != null) {
 			if (hasPlayer) {
@@ -307,21 +308,18 @@ public final class AggressiveCold implements PostProcessingAnimator {
 			sat = AMath.lerp(sat, -0.25f, MathUtils.clamp(alertAmount.value * 2, 0, 1));
 			sat = AMath.lerp(sat, -0.25f, cf);
 
-			sat = MathUtils.clamp(sat, -1, 1);
-			bsat = MathUtils.clamp(bsat, 0, bsat);
+			sat = MathUtils.clamp(sat, 0, 1);
+			bsat = MathUtils.clamp(bsat, 0, 1);
 			bloom.setBaseSaturation(sat);
 			bloom.setBloomSaturation(bsat);
+			// bloom.setBaseSaturation(1);
+			// bloom.setBloomSaturation(1);
+
+			Gdx.app.log("", "base=" + sat + ", bloom=" + bsat);
 		}
 
 		if (vignette != null) {
-			if (vignette.controlSaturation) {
-				// go with the "poor man"'s time dilation fx
-				vignette.setSaturation(1 - timeModFactor * 0.25f);
-				vignette.setSaturationMul(1 + timeModFactor * 0.2f);
-			}
-
-			vignette.setIntensity(1f);
-			float lutIntensity = 0.25f + timeModFactor * 1 + alertAmount.value * 1 + cf * 1;
+			float lutIntensity = 0.15f + timeModFactor * 1 + alertAmount.value * 1 + cf * 1;
 			lutIntensity = MathUtils.clamp(lutIntensity, 0, 1);
 			vignette.setLutIntensity(lutIntensity);
 
@@ -350,7 +348,7 @@ public final class AggressiveCold implements PostProcessingAnimator {
 			}
 		}
 
-		// cf = 1;
+		// cf = 0;
 		if (crt != null) {
 			// modulates color offset by collision factor)
 			// crt.setColorOffset(MathUtils.clamp(0.025f * cf, 0, 0.008f));
