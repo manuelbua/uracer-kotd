@@ -1,0 +1,9 @@
+# /home/manuel/dev/python/userve/uracer_version.py
+#!/usr/bin/env python2
+# coding=utf-8
+
+# MACHINE-GENERATED CODE, DO NOT TOUCH!
+#
+# Contains the latest uracer version
+uracer_version = "${CURR}"
+uracer_build_id = "${FULL_BUILD_ID}"
