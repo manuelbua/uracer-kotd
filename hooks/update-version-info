@@ -1,28 +1,32 @@
 #!/bin/bash
 
+# [v]<major>.<minor>.<patch>[-<notes>]/<hash>
+
 URACER_DESKTOP="`pwd`/uracer-desktop"
 
 # update source files with version information
-BUILD_NAME="$(git describe --long | tr -d \"\n\")"
+BUILD_NAME=`git describe --long | tr -d "\n"`
 #BUILD_BRANCH="$(git name-rev --name-only HEAD)"
 BUILD_BRANCH="$(basename $(git symbolic-ref HEAD 2>/dev/null))"
+BUILD_ID="$(cat .git/$(git symbolic-ref HEAD 2>/dev/null)|tr -d '\n' | cut -c 1-8)"
 BUILD_CODE="${BUILD_NAME}/${BUILD_BRANCH}"
 URACER_VERSIONINFO="${URACER_DESKTOP}/src/com/bitfire/uracer/VersionInfo.java"
-cat <<EOF > $URACER_VERSIONINFO
 
-package com.bitfire.uracer;
+#cat <<EOF > $URACER_VERSIONINFO
 
-// MACHINE-GENERATED CODE, DO NOT TOUCH!
-//
-// Contains the latest uracer version
-public final class VersionInfo {
-	public static final String versionName = "$BUILD_CODE";
+#package com.bitfire.uracer;
 
-	private VersionInfo () {
-	}
-}
+#// MACHINE-GENERATED CODE, DO NOT TOUCH!
+#//
+#// Contains the latest uracer version
+#public final class VersionInfo {
+	#public static final String versionName = "$BUILD_CODE";
 
-EOF
+	#private VersionInfo () {
+	#}
+#}
+
+#EOF
 
 ## update userve with uracer version information
 #USERVE_VERSIONINFO="/home/manuel/dev/python/userve/uracer_version.py"

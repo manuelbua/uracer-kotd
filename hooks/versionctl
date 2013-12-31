@@ -1,0 +1,98 @@
+#!/bin/bash
+
+BUILD_ID="$(cat .git/$(git symbolic-ref HEAD 2>/dev/null)|tr -d '\n' | cut -c 1-8)"
+LAST_TAG_COMMIT="$(git rev-list --tags --max-count=1)"
+LAST_TAG="$(git describe --tags $LAST_TAG_COMMIT)"
+TAG_PREFIX="v"
+
+# extract current version
+#VERSION=0.9.4
+VERSION=`echo $LAST_TAG | sed "s/^$TAG_PREFIX//"`
+MAJOR=`echo $VERSION | sed "s/^\([0-9]*\).*/\1/"`
+MINOR=`echo $VERSION | sed "s/[0-9]*\.\([0-9]*\).*/\1/"`
+PATCH=`echo $VERSION | sed "s/[0-9]*\.[0-9]*\.\([0-9]*\).*/\1/"`
+NOTE=`echo $VERSION | grep -o "[a-zA-Z]*"`
+if [ ! -z $NOTE ]
+then
+	NOTE=-$NOTE
+fi
+
+COMMIT_COUNT=`git log --oneline $LAST_TAG..HEAD | wc -l`
+if [ $COMMIT_COUNT -eq 0 ]
+then
+	COMMIT_COUNT=""
+else
+	COMMIT_COUNT=-$COMMIT_COUNT
+fi
+
+# compute next versions
+NEXT_SUFFIX="SNAPSHOT"
+NEXT_MAJOR=$[MAJOR+1].0.0-$NEXT_SUFFIX
+NEXT_MINOR=$MAJOR.$[MINOR+1].0-$NEXT_SUFFIX
+NEXT_PATCH=$MAJOR.$MINOR.$[PATCH+1]-$NEXT_SUFFIX
+PENDING=$MAJOR.$MINOR.$PATCH
+
+case "$1" in
+	info)
+		# print info
+		echo Current tag: $LAST_TAG
+		echo Current version: v$MAJOR.$MINOR.$PATCH$NOTE$COMMIT_COUNT/$BUILD_ID
+		echo Possible next versions to bump to:
+		echo "  bump-major => v$NEXT_MAJOR"
+		echo "  bump-minor => v$NEXT_MINOR"
+		echo "  bump-patch => v$NEXT_PATCH"
+		if [ "$LAST_TAG" == "v$PENDING" ]
+		then
+			echo "Next version: idleing ($LAST_TAG)"
+		else
+			echo "Next version: $LAST_TAG => v$PENDING"
+		fi
+		;;
+
+	bump-major)
+		echo "Bumping from $LAST_TAG to $NEXT_MAJOR"
+		if [ -z "$NOTE" ]
+		then
+			git tag -a v$NEXT_MAJOR -m "Bumping from $LAST_TAG to v$NEXT_MAJOR"
+			echo "Done, `git describe --long`"
+		else
+			echo "Cannot bump $LAST_TAG"
+		fi
+		;;
+
+	bump-minor)
+		echo "Bumping from $LAST_TAG to $NEXT_MINOR"
+		if [ -z "$NOTE" ]
+		then
+			git tag -a v$NEXT_MINOR -m "Bumping from $LAST_TAG to v$NEXT_MINOR"
+			echo "Done, `git describe --long`"
+		else
+			echo "Cannot bump $LAST_TAG"
+		fi
+		;;
+
+	bump-patch)
+		echo "Bumping from $LAST_TAG to $NEXT_PATCH"
+		if [ -z "$NOTE" ]
+		then
+			git tag -a v$NEXT_PATCH -m "Bumping from $LAST_TAG to v$NEXT_PATCH"
+			echo "Done, `git describe --long`"
+		else
+			echo "Cannot bump $LAST_TAG"
+		fi
+		;;
+
+	finalize-bump)
+		if [ "$NOTE" == "-$NEXT_SUFFIX" ]
+		then
+			git tag -a v$PENDING -m "Bumping from $LAST_TAG to v$PENDING"
+			echo "Done, `git describe --long`"
+		else
+			echo "Cannot finalize $LAST_TAG, expected a valid suffix (-$NEXT_SUFFIX)"
+		fi
+		;;
+
+	*)
+		echo "usage: `basename $0` <info|bump-major|bump-minor|bump-patch|finalize-bump>"
+		;;
+esac
