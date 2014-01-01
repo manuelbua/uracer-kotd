@@ -19,7 +19,7 @@ import com.bitfire.uracer.URacer;
 import com.bitfire.uracer.configuration.Config;
 import com.bitfire.uracer.configuration.UserPreferences;
 import com.bitfire.uracer.configuration.UserPreferences.Preference;
-import com.bitfire.uracer.game.logic.post.animators.AggressiveCold;
+import com.bitfire.uracer.game.logic.post.animators.DefaultAnimator;
 import com.bitfire.uracer.game.logic.post.ssao.Ssao;
 import com.bitfire.uracer.game.player.PlayerCar;
 import com.bitfire.uracer.game.world.GameWorld;
@@ -62,7 +62,7 @@ public final class PostProcessing {
 			postProcessor.setBufferTextureWrap(TextureWrap.ClampToEdge, TextureWrap.ClampToEdge);
 			hasPostProcessor = true;
 			createEffects();
-			setAnimator(new AggressiveCold(this, gameWorld.isNightMode()));
+			setAnimator(new DefaultAnimator(this, gameWorld.isNightMode()));
 		}
 	}
 

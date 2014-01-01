@@ -30,9 +30,7 @@ import com.bitfire.uracer.utils.BoxedFloatAccessor;
 import com.bitfire.uracer.utils.InterpolatedFloat;
 import com.bitfire.uracer.utils.ScaleUtils;
 
-public final class AggressiveCold implements PostProcessingAnimator {
-	public static final String Name = "AggressiveCold";
-
+public final class DefaultAnimator implements PostProcessingAnimator {
 	private boolean nightMode = false;
 	private Bloom bloom = null;
 	private Zoomer zoom = null;
@@ -51,7 +49,7 @@ public final class AggressiveCold implements PostProcessingAnimator {
 	private InterpolatedFloat speed = new InterpolatedFloat();
 	private InterpolatedFloat blurStrength = new InterpolatedFloat();
 
-	public AggressiveCold (PostProcessing post, boolean nightMode) {
+	public DefaultAnimator (PostProcessing post, boolean nightMode) {
 		this.nightMode = nightMode;
 		bloom = (Bloom)post.getEffect(PostProcessing.Effects.Bloom.name);
 		zoom = (Zoomer)post.getEffect(PostProcessing.Effects.Zoomer.name);
