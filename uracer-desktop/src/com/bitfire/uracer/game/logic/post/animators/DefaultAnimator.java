@@ -232,7 +232,7 @@ public final class DefaultAnimator implements PostProcessingAnimator {
 			// crt.setColorOffset(MathUtils.clamp(0.025f * cf, 0, 0.008f));
 			float amount = MathUtils.clamp(cf + 0.14f, 0, 1) * -0.8f;
 			// float amount = MathUtils.clamp(cf + 0.1f, 0, 1) * -1.6f;
-			// amount -= 0.15f * AMath.fixup(curvature_factor - kdist);
+			amount -= 0.15f * AMath.fixup(curvature_factor - kdist);
 
 			// Gdx.app.log("", "" + amount);
 			crt.setChromaticDispersion(amount, amount);
@@ -250,15 +250,16 @@ public final class DefaultAnimator implements PostProcessingAnimator {
 				float sfactor = speed.get();
 				float z = 0;// (zoomCamera - (GameWorldRenderer.MinCameraZoom + GameWorldRenderer.ZoomWindow));
 				float v = -0.12f * sfactor - 0.09f * z - 0.3f * cf;
-				Gdx.app.log("", "v=" + v);
 
-				float strength = v + (-0.05f * timeModFactor * sfactor);
+				float strength = v + (-0.04f * timeModFactor) + (-0.025f * sfactor);
 				zoomBlurStrengthFactor.set(strength, 1f);
 			} else {
 				zoomBlurStrengthFactor.set(0, 0.05f);
 			}
 
 			float f = zoomBlurStrengthFactor.get();
+			Gdx.app.log("", "f=" + f);
+
 			autoEnableZoomBlur(f);
 			if (zoom.isEnabled()) {
 				zoom.setBlurStrength(f);
