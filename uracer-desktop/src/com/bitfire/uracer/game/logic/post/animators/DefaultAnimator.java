@@ -11,7 +11,6 @@ import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.utils.TimeUtils;
 import com.bitfire.postprocessing.effects.Bloom;
 import com.bitfire.postprocessing.effects.CrtMonitor;
-import com.bitfire.postprocessing.effects.Curvature;
 import com.bitfire.postprocessing.effects.Vignette;
 import com.bitfire.postprocessing.effects.Zoomer;
 import com.bitfire.uracer.URacer;
@@ -36,7 +35,6 @@ public final class DefaultAnimator implements PostProcessingAnimator {
 	private Zoomer zoom = null;
 	private Vignette vignette = null;
 	private CrtMonitor crt = null;
-	private Curvature curvature = null;
 	private Ssao ssao = null;
 	private PlayerCar player = null;
 	private boolean hasPlayer = false;
@@ -55,7 +53,6 @@ public final class DefaultAnimator implements PostProcessingAnimator {
 		zoom = (Zoomer)post.getEffect(PostProcessing.Effects.Zoomer.name);
 		vignette = (Vignette)post.getEffect(PostProcessing.Effects.Vignette.name);
 		crt = (CrtMonitor)post.getEffect(PostProcessing.Effects.Crt.name);
-		curvature = (Curvature)post.getEffect(PostProcessing.Effects.Curvature.name);
 		ssao = (Ssao)post.getEffect(PostProcessing.Effects.Ssao.name);
 		blurStrength.setFixup(false);
 		reset();
@@ -119,24 +116,12 @@ public final class DefaultAnimator implements PostProcessingAnimator {
 	public void reset () {
 		speed.reset(0, true);
 
-		//
-		// reset plain effects
-		//
-
 		if (ssao != null) {
 			ssao.setOcclusionThresholds(0.3f, 0.1f);
 			ssao.setRadius(0.001f, nightMode ? 0.08f : 0.12f);
-			ssao.setPower(nightMode ? 2f : 2f, 1);
-
-			// if (Ssao.Quality.valueOf(UserPreferences.string(Preference.SsaoQuality)) == Ssao.Quality.High) {
-			// ssao.setSampleCount(16);
-			// ssao.setPatternSize(4);
-			// } else {
+			ssao.setPower(nightMode ? 2f : 2f, 2);
 			ssao.setSampleCount(nightMode ? 8 : 9);
 			ssao.setPatternSize(nightMode ? 2 : 3);
-			// }
-
-			// ssao.enableDebug();
 		}
 
 		if (bloom != null) {
@@ -149,20 +134,14 @@ public final class DefaultAnimator implements PostProcessingAnimator {
 		if (vignette != null) {
 			vignette.setCoords(0.85f, 0.3f);
 			vignette.setIntensity(1);
-			// vignette.setCoords( 1.5f, 0.1f );
 			vignette.setCenter(ScaleUtils.PlayWidth / 2, ScaleUtils.PlayHeight / 2);
 			vignette.setLutTexture(Art.postXpro);
 
 			// setup palettes
-
 			// default aspect to slot #0
 			// special effects palette on slot #1
-			// 6
-			// 13
-			// 16
 			vignette.setLutIndexVal(0, 16);
 			vignette.setLutIndexVal(1, 12);
-
 			vignette.setLutIndexOffset(0);
 			vignette.setEnabled(true);
 		}
@@ -179,7 +158,7 @@ public final class DefaultAnimator implements PostProcessingAnimator {
 			startMs = TimeUtils.millis();
 			crt.setTime(0);
 
-			// note, a perfect color offset depends on screen size
+			// note: a perfect color offset depends on screen size
 			crt.setColorOffset(0.0005f);
 			crt.setChromaticDispersion(0.112f, 0.112f);
 			crt.setDistortion(0.125f);
@@ -187,12 +166,6 @@ public final class DefaultAnimator implements PostProcessingAnimator {
 
 			// tv.setTint( 0.95f, 0.8f, 1.0f );
 			crt.setTint(1, 1, 1);
-		}
-
-		if (curvature != null) {
-			float dist = 0.25f;
-			curvature.setDistortion(dist);
-			curvature.setZoom(1 - (dist / 2));
 		}
 
 		//
@@ -217,17 +190,6 @@ public final class DefaultAnimator implements PostProcessingAnimator {
 		}
 	}
 
-	private void autoEnableEarthCurvature (float curvatureAmount) {
-		boolean enabled = curvature.isEnabled();
-		boolean isZero = AMath.isZero(curvatureAmount);
-
-		if (isZero && enabled) {
-			curvature.setEnabled(false);
-		} else if (!isZero && !enabled) {
-			curvature.setEnabled(true);
-		}
-	}
-
 	@Override
 	public void update (float zoomCamera, float warmUpCompletion, float collisionFactor) {
 		float timeModFactor = URacer.Game.getTimeModFactor();
@@ -247,6 +209,9 @@ public final class DefaultAnimator implements PostProcessingAnimator {
 			playerScreenPos.set(0.5f, 0.5f);
 		}
 
+		float cf = collisionFactor;
+		// cf = 1f;
+
 		if (crt != null) {
 			// compute time (add noise)
 			float secs = (float)(TimeUtils.millis() - startMs) / 1000;
@@ -256,10 +221,27 @@ public final class DefaultAnimator implements PostProcessingAnimator {
 			} else {
 				crt.setTime(secs);
 			}
-		}
 
-		float cf = collisionFactor;
-		// cf = 1f;
+			float factor = MathUtils.clamp(((zoomCamera - 1) / GameWorldRenderer.ZoomRange), 0, 1);
+			float kdist = 0.20f;
+			float dist = kdist - kdist * factor;
+
+			// modulates color offset by collision factor)
+			// crt.setColorOffset(MathUtils.clamp(0.025f * cf, 0, 0.008f));
+
+			float amount = MathUtils.clamp(cf + 0.14f, 0, 1) * -0.8f;
+			// float amount = MathUtils.clamp(cf + 0.1f, 0, 1) * -1.6f;
+			amount -= 0.15f * AMath.fixup(factor - kdist);
+
+			// Gdx.app.log("", "" + amount);
+			crt.setChromaticDispersion(amount, amount);
+			// crt.setChromaticDispersion(0f, 0f);
+
+			// zoom+earth curvature
+			dist = AMath.fixup(dist);
+			crt.setDistortion(dist);
+			crt.setZoom(1 - (dist / 2));
+		}
 
 		if (zoom != null) {
 			if (hasPlayer) {
@@ -317,52 +299,12 @@ public final class DefaultAnimator implements PostProcessingAnimator {
 		}
 
 		if (vignette != null) {
-			float lutIntensity = 0.15f + timeModFactor * 1 + alertAmount.value * 1 + cf * 1;
-			lutIntensity = MathUtils.clamp(lutIntensity, 0, 1);
-			vignette.setLutIntensity(lutIntensity);
-
+			float lutIntensity = MathUtils.clamp(0.15f + timeModFactor * 1 + alertAmount.value * 1 + cf * 1, 0, 1);
 			float offset = MathUtils.clamp(cf * 3 + alertAmount.value, 0, 1);
+			vignette.setLutIntensity(lutIntensity);
 			vignette.setLutIndexOffset(offset);
-
 			// vignette.setLutIndexVal(0, 16);
 			// vignette.setLutIndexVal(1, 12);
-		}
-
-		//
-		// earth curvature (+ crt, optionally)
-		//
-
-		float factor = MathUtils.clamp(((zoomCamera - 1) / GameWorldRenderer.ZoomRange), 0, 1);
-		float kdist = 0.20f;
-		float dist = kdist - kdist * factor;
-
-		if (curvature != null) {
-			dist = AMath.fixup(dist);
-			autoEnableEarthCurvature(dist);
-			if (curvature.isEnabled()) {
-				curvature.setDistortion(dist);
-				float z = 1 - (dist / 2);
-				curvature.setZoom(z);
-			}
-		}
-
-		// cf = 0;
-		if (crt != null) {
-			// modulates color offset by collision factor)
-			// crt.setColorOffset(MathUtils.clamp(0.025f * cf, 0, 0.008f));
-
-			float amount = MathUtils.clamp(cf + 0.14f, 0, 1) * -0.8f;
-			// float amount = MathUtils.clamp(cf + 0.1f, 0, 1) * -1.6f;
-			amount -= 0.15f * AMath.fixup(factor - kdist);
-
-			// Gdx.app.log("", "" + amount);
-			crt.setChromaticDispersion(amount, amount);
-			// crt.setChromaticDispersion(0f, 0f);
-
-			// zoom+earth curvature
-			dist = AMath.fixup(dist);
-			crt.setDistortion(dist);
-			crt.setZoom(1 - (dist / 2));
 		}
 	}
 }

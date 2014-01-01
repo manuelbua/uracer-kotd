@@ -9,7 +9,6 @@ import com.bitfire.postprocessing.PostProcessor;
 import com.bitfire.postprocessing.PostProcessorEffect;
 import com.bitfire.postprocessing.effects.Bloom;
 import com.bitfire.postprocessing.effects.CrtMonitor;
-import com.bitfire.postprocessing.effects.Curvature;
 import com.bitfire.postprocessing.effects.Vignette;
 import com.bitfire.postprocessing.effects.Zoomer;
 import com.bitfire.postprocessing.filters.CrtScreen.Effect;
@@ -102,20 +101,15 @@ public final class PostProcessing {
 		}
 
 		if (UserPreferences.bool(Preference.Vignetting)) {
-			// if there is no bloom, let's control the final saturation via
-			// the vignette filter
-			addEffect(Effects.Vignette.name,
-				new Vignette(ScaleUtils.PlayWidth, ScaleUtils.PlayHeight, !UserPreferences.bool(Preference.Bloom)));
+			addEffect(Effects.Vignette.name, new Vignette(ScaleUtils.PlayWidth, ScaleUtils.PlayHeight, false));
 		}
 
 		if (UserPreferences.bool(Preference.CrtScreen)) {
-			int effects = /* Effect.LooseDetails.v | */Effect.PhosphorVibrance.v | /* Effect.Scanlines.v | */Effect.Tint.v;
+			int effects = /* Effect.LooseDetails.v | */Effect.PhosphorVibrance.v | Effect.Scanlines.v | Effect.Tint.v;
 			CrtMonitor crt = new CrtMonitor(ScaleUtils.PlayWidth, ScaleUtils.PlayHeight,
 				UserPreferences.bool(Preference.EarthCurvature), false, RgbMode.ChromaticAberrations, effects);
 			addEffect(Effects.Crt.name, crt);
 			crt.getCombinePass().setSource2Intensity(1f);
-		} else if (UserPreferences.bool(Preference.EarthCurvature)) {
-			addEffect(Effects.Curvature.name, new Curvature());
 		}
 
 		Gdx.app.log("PostProcessing", "Post-processing enabled and configured");
