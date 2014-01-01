@@ -99,12 +99,12 @@ echo -n "Cooking particle effects graphics..."
 	${TEX_PACKER} partfx/textures ${DEST}/partfx/textures >/dev/null
 echo "done!"
 
-# shaders
-echo -n "Merging GLSL shaders from libgdx-contribs/postprocessing to data-src..."
-	cp -r /home/manuel/dev/libgdx-contribs/postprocessing/src/main/resources/shaders/ ./
-echo "done!"
+# prepare shaders/
+echo -n "NOT Merging GLSL shaders from libgdx-contribs/postprocessing to data-src/shaders..."
+	#cp -r /home/manuel/dev/libgdx-contribs/postprocessing/src/main/resources/shaders/ ./
+#echo "done!"
 
-# shaders
+# copy shaders/ to a new dest/shaders
 echo -n "Cooking GLSL shaders..."
 	rm -rf "${DEST}/shaders/"
 	mkdir -p "${DEST}/shaders/"
