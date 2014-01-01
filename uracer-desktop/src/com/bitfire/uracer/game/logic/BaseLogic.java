@@ -141,16 +141,20 @@ public abstract class BaseLogic extends CommonLogic {
 		float maxZoom = GameWorldRenderer.MaxCameraZoom;
 
 		float cameraZoom = (minZoom + GameWorldRenderer.ZoomWindow);
-		// cameraZoom += GameWorldRenderer.ZoomRange * timeModFactor;
-		cameraZoom += 0.25f * GameWorldRenderer.ZoomWindow * driftStrength.get();
-		cameraZoom += (maxZoom - cameraZoom) * timeModFactor; // zoom in if slowing time down
-		cameraZoom -= (maxZoom - cameraZoom) * speed.get(); // zoom out if speedy
-
+		cameraZoom = maxZoom - 0.2f;
+		cameraZoom += 0.2f * timeModFactor; // zoom in if slowing time down
+		cameraZoom = AMath.lerp(cameraZoom, minZoom, speed.get() * 1.25f);
 		cameraZoom = AMath.lerp(prevZoom, cameraZoom, 0.1f);
 		cameraZoom = AMath.clampf(cameraZoom, minZoom, maxZoom);
-		cameraZoom = AMath.fixupTo(cameraZoom, minZoom + GameWorldRenderer.ZoomWindow);
+		// Gdx.app.log("BaseLogic", "cameraZoom=" + cameraZoom + " [" + minZoom + ", " + maxZoom + "]");
 
-		// Gdx.app.log("BaseLogic", "camz=" + cameraZoom);
+		// cameraZoom += GameWorldRenderer.ZoomRange * timeModFactor;
+		// cameraZoom += 0.25f * GameWorldRenderer.ZoomWindow * driftStrength.get();
+		// cameraZoom += (maxZoom - cameraZoom) * timeModFactor; // zoom in if slowing time down
+		// cameraZoom -= (maxZoom - cameraZoom) * speed.get(); // zoom out if speedy
+		// cameraZoom = AMath.lerp(prevZoom, cameraZoom, 0.1f);
+		// cameraZoom = AMath.clampf(cameraZoom, minZoom, maxZoom);
+		// cameraZoom = AMath.fixupTo(cameraZoom, minZoom + GameWorldRenderer.ZoomWindow);
 
 		prevZoom = cameraZoom;
 		return cameraZoom;

@@ -45,7 +45,7 @@ public final class DefaultAnimator implements PostProcessingAnimator {
 	private long startMs = 0;
 	private Vector2 playerScreenPos = new Vector2();
 	private InterpolatedFloat speed = new InterpolatedFloat();
-	private InterpolatedFloat blurStrength = new InterpolatedFloat();
+	private InterpolatedFloat zoomBlurStrengthFactor = new InterpolatedFloat();
 
 	public DefaultAnimator (PostProcessing post, boolean nightMode) {
 		this.nightMode = nightMode;
@@ -54,7 +54,7 @@ public final class DefaultAnimator implements PostProcessingAnimator {
 		vignette = (Vignette)post.getEffect(PostProcessing.Effects.Vignette.name);
 		crt = (CrtMonitor)post.getEffect(PostProcessing.Effects.Crt.name);
 		ssao = (Ssao)post.getEffect(PostProcessing.Effects.Ssao.name);
-		blurStrength.setFixup(false);
+		zoomBlurStrengthFactor.setFixup(false);
 		reset();
 	}
 
@@ -152,7 +152,7 @@ public final class DefaultAnimator implements PostProcessingAnimator {
 			zoom.setOrigin(playerScreenPos);
 			zoom.setBlurStrength(0);
 			zoom.setZoom(1);
-			blurStrength.reset(0, true);
+			zoomBlurStrengthFactor.reset(0, true);
 		}
 
 		if (crt != null) {
@@ -224,22 +224,22 @@ public final class DefaultAnimator implements PostProcessingAnimator {
 				crt.setTime(secs);
 			}
 
-			float factor = MathUtils.clamp(((zoomCamera - 1) / GameWorldRenderer.ZoomRange), 0, 1);
+			// needed variables
+			float curvature_factor = MathUtils.clamp(((zoomCamera - 1) / GameWorldRenderer.ZoomRange), 0, 1);
 			float kdist = 0.20f;
-			float dist = kdist - kdist * factor;
 
 			// modulates color offset by collision factor)
 			// crt.setColorOffset(MathUtils.clamp(0.025f * cf, 0, 0.008f));
-
 			float amount = MathUtils.clamp(cf + 0.14f, 0, 1) * -0.8f;
 			// float amount = MathUtils.clamp(cf + 0.1f, 0, 1) * -1.6f;
-			amount -= 0.15f * AMath.fixup(factor - kdist);
+			// amount -= 0.15f * AMath.fixup(curvature_factor - kdist);
 
 			// Gdx.app.log("", "" + amount);
 			crt.setChromaticDispersion(amount, amount);
 			// crt.setChromaticDispersion(0f, 0f);
 
 			// zoom+earth curvature
+			float dist = kdist - kdist * curvature_factor;
 			dist = AMath.fixup(dist);
 			crt.setDistortion(dist);
 			crt.setZoom(1 - (dist / 2));
@@ -248,56 +248,50 @@ public final class DefaultAnimator implements PostProcessingAnimator {
 		if (zoom != null) {
 			if (hasPlayer) {
 				float sfactor = speed.get();
-				float z = (zoomCamera - (GameWorldRenderer.MinCameraZoom + GameWorldRenderer.ZoomWindow));
-				float v = (-0.09f * sfactor) - 0.09f * z - 0.3f * cf;
-				// Gdx.app.log("", "zoom=" + z);
+				float z = 0;// (zoomCamera - (GameWorldRenderer.MinCameraZoom + GameWorldRenderer.ZoomWindow));
+				float v = -0.12f * sfactor - 0.09f * z - 0.3f * cf;
+				Gdx.app.log("", "v=" + v);
 
 				float strength = v + (-0.05f * timeModFactor * sfactor);
-				blurStrength.set(strength, 1f);
+				zoomBlurStrengthFactor.set(strength, 1f);
 			} else {
-				blurStrength.set(0, 0.05f);
+				zoomBlurStrengthFactor.set(0, 0.05f);
 			}
 
-			autoEnableZoomBlur(blurStrength.get());
+			float f = zoomBlurStrengthFactor.get();
+			autoEnableZoomBlur(f);
 			if (zoom.isEnabled()) {
-
+				zoom.setBlurStrength(f);
 				if (hasPlayer) {
 					zoom.setOrigin(playerScreenPos);
 				}
-
-				zoom.setBlurStrength(blurStrength.get());
 			}
 		}
 
-		float bsat = 0, sat = 0;
+		float bsat = 0f, sat = 0f;
 		if (bloom != null) {
-			float intensity = 1.4f + 4f * cf + (nightMode ? 4 * cf : 0);
+			float intensity = 1.4f + 4f * cf + (nightMode ? 4f * cf : 0f);
 			bloom.setBloomIntesity(intensity);
 
 			bsat = 1f;
-			if (vignette != null) {
-				bsat += 0.2f * timeModFactor;
-			} else {
-				bsat += 0.2f;
-			}
+			bsat += 0.2f * timeModFactor;
 
 			if (nightMode) bsat += 0.4f;
-			bsat *= 1 - cf * 3f;
+			bsat *= 1f - cf * 3f;
 
 			sat = 0.7f;
-			sat = sat - sat * timeModFactor;
-			sat = sat * (1 - cf);
-			sat = AMath.lerp(sat, -0.25f, MathUtils.clamp(alertAmount.value * 2, 0, 1));
+			sat = sat - sat * timeModFactor * 0.7f;
+			sat = sat * (1f - cf);
+			sat = AMath.lerp(sat, -0.25f, MathUtils.clamp(alertAmount.value * 2f, 0f, 1f));
 			sat = AMath.lerp(sat, -0.25f, cf);
 
-			sat = MathUtils.clamp(sat, 0, 1);
-			bsat = MathUtils.clamp(bsat, 0, 1);
+			sat = MathUtils.clamp(sat, 0f, 1f);
+			bsat = MathUtils.clamp(bsat, 0f, 1f);
 			bloom.setBaseSaturation(sat);
 			bloom.setBloomSaturation(bsat);
 			// bloom.setBaseSaturation(1);
 			// bloom.setBloomSaturation(1);
-
-			Gdx.app.log("", "base=" + sat + ", bloom=" + bsat);
+			// Gdx.app.log("", "sat=" + sat + ", bsat=" + bsat);
 		}
 
 		if (vignette != null) {

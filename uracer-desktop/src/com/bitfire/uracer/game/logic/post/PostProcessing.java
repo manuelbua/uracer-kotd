@@ -24,6 +24,7 @@ import com.bitfire.uracer.game.player.PlayerCar;
 import com.bitfire.uracer.game.world.GameWorld;
 import com.bitfire.uracer.utils.ScaleUtils;
 import com.bitfire.utils.Hash;
+import com.bitfire.utils.ShaderLoader;
 
 /** Encapsulates a post-processor animator that manages effects such as bloom and zoomblur to compose and enhance the gaming
  * experience. */
@@ -103,10 +104,13 @@ public final class PostProcessing {
 		}
 
 		if (UserPreferences.bool(Preference.CrtScreen)) {
-			int effects = /* Effect.LooseDetails.v | */Effect.PhosphorVibrance.v | Effect.Scanlines.v | Effect.Tint.v;
+			boolean scanlines = false;
+			ShaderLoader.Pedantic = false;
+			int effects = (scanlines ? Effect.PhosphorVibrance.v | Effect.Scanlines.v : 0) | Effect.Tint.v;
 			CrtMonitor crt = new CrtMonitor(ScaleUtils.PlayWidth, ScaleUtils.PlayHeight,
 				UserPreferences.bool(Preference.EarthCurvature), false, RgbMode.ChromaticAberrations, effects);
 			addEffect(Effects.Crt.name, crt);
+			ShaderLoader.Pedantic = true;
 		}
 
 		Gdx.app.log("PostProcessing", "Post-processing enabled and configured");
