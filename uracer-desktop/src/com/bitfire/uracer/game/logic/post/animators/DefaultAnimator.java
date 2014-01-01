@@ -151,6 +151,7 @@ public final class DefaultAnimator implements PostProcessingAnimator {
 			zoom.setEnabled(true);
 			zoom.setOrigin(playerScreenPos);
 			zoom.setBlurStrength(0);
+			zoom.setZoom(1);
 			blurStrength.reset(0, true);
 		}
 
@@ -166,6 +167,7 @@ public final class DefaultAnimator implements PostProcessingAnimator {
 
 			// tv.setTint( 0.95f, 0.8f, 1.0f );
 			crt.setTint(1, 1, 1);
+			crt.getCombinePass().setSource2Intensity(1f);
 		}
 
 		//

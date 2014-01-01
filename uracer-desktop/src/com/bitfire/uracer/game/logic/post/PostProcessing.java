@@ -89,8 +89,6 @@ public final class PostProcessing {
 		if (UserPreferences.bool(Preference.ZoomRadialBlur)) {
 			RadialBlur.Quality rbq = RadialBlur.Quality.valueOf(UserPreferences.string(Preference.ZoomRadialBlurQuality));
 			Zoomer z = new Zoomer(refW, refH, rbq);
-			z.setBlurStrength(0);
-			z.setZoom(1);
 			addEffect(Effects.Zoomer.name, z);
 		}
 
@@ -109,7 +107,6 @@ public final class PostProcessing {
 			CrtMonitor crt = new CrtMonitor(ScaleUtils.PlayWidth, ScaleUtils.PlayHeight,
 				UserPreferences.bool(Preference.EarthCurvature), false, RgbMode.ChromaticAberrations, effects);
 			addEffect(Effects.Crt.name, crt);
-			crt.getCombinePass().setSource2Intensity(1f);
 		}
 
 		Gdx.app.log("PostProcessing", "Post-processing enabled and configured");
