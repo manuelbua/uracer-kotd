@@ -105,10 +105,11 @@ public final class GameRenderer {
 		ambient.set(0.1f, 0.05f, 0.15f, 0.4f + 0.2f * URacer.Game.getTimeModFactor());
 		treesAmbient.set(ambient.r, ambient.g * 2f, ambient.b, 0.4f + 0.5f * URacer.Game.getTimeModFactor());
 
-		if (world.isNightMode() && postProcessing.hasEffect(Effects.Crt.name)) {
-			ambient.set(0.1f, 0.05f, 0.1f, 0.6f);
-			treesAmbient.set(0.1f, 0.05f, 0.1f, 0.6f + 0.2f * URacer.Game.getTimeModFactor());
-		} else if (world.isNightMode()) {
+		// if (world.isNightMode() && postProcessing.hasEffect(Effects.Crt.name)) {
+		// ambient.set(0.1f, 0.05f, 0.1f, 0.6f);
+		// treesAmbient.set(0.1f, 0.05f, 0.1f, 0.6f + 0.2f * URacer.Game.getTimeModFactor());
+		// } else
+		if (world.isNightMode()) {
 			ambient.set(0.1f, 0.05f, 0.1f, 0.4f + 0.2f * URacer.Game.getTimeModFactor());
 			treesAmbient.set(0.1f, 0.05f, 0.1f, 0.5f + 0.2f * URacer.Game.getTimeModFactor());
 		}
