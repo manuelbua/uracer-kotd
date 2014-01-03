@@ -5,7 +5,6 @@ import aurelienribon.tweenengine.Timeline;
 import aurelienribon.tweenengine.Tween;
 import aurelienribon.tweenengine.equations.Quad;
 
-import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.math.MathUtils;
 import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.utils.TimeUtils;
@@ -229,16 +228,13 @@ public final class DefaultAnimator implements PostProcessingAnimator {
 			float kdist = 0.20f;
 
 			// modulates color offset by collision factor)
-			// crt.setColorOffset(MathUtils.clamp(0.025f * cf, 0, 0.008f));
 			float amount = MathUtils.clamp(cf + 0.14f, 0, 1) * -0.8f;
-			// float amount = MathUtils.clamp(cf + 0.1f, 0, 1) * -1.6f;
 			amount -= 0.15f * AMath.fixup(curvature_factor - kdist);
 
 			// Gdx.app.log("", "" + amount);
 			crt.setChromaticDispersion(amount, amount);
-			// crt.setChromaticDispersion(0f, 0f);
 
-			// zoom+earth curvature
+			// earth curvature
 			float dist = kdist - kdist * curvature_factor;
 			dist = AMath.fixup(dist);
 			crt.setDistortion(dist);
@@ -258,7 +254,7 @@ public final class DefaultAnimator implements PostProcessingAnimator {
 			}
 
 			float f = zoomBlurStrengthFactor.get();
-			Gdx.app.log("", "f=" + f);
+			// Gdx.app.log("", "f=" + f);
 
 			autoEnableZoomBlur(f);
 			if (zoom.isEnabled()) {
