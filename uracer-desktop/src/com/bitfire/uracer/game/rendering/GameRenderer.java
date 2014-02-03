@@ -126,7 +126,7 @@ public final class GameRenderer {
 				float maxdist = 30;
 				maxdist *= maxdist;
 				dist = 1 - MathUtils.clamp(dist, 0, maxdist) / maxdist;
-				lights[l].setColor(1, 1, 1, AMath.fixup(0.3f + 0.3f * dist));
+				lights[l].setColor(1, 1, 1, AMath.fixup(0.9f * dist));
 			}
 		}
 	}
