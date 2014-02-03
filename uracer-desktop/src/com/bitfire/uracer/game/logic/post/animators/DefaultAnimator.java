@@ -117,7 +117,8 @@ public final class DefaultAnimator implements PostProcessingAnimator {
 
 		if (ssao != null) {
 			ssao.setOcclusionThresholds(0.3f, 0.1f);
-			ssao.setRadius(0.001f, nightMode ? 0.08f : 0.12f);
+			// ssao.setRadius(0.001f, nightMode ? 0.08f : 0.12f);
+			ssao.setRadius(0.001f, 0.12f);
 			ssao.setPower(nightMode ? 2f : 2f, 2);
 			ssao.setSampleCount(nightMode ? 8 : 9);
 			ssao.setPatternSize(nightMode ? 2 : 3);
