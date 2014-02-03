@@ -269,6 +269,7 @@ public final class DefaultAnimator implements PostProcessingAnimator {
 		float bsat = 0f, sat = 0f;
 		if (bloom != null) {
 			float intensity = 1.4f + 4f * cf + (nightMode ? 4f * cf : 0f);
+			// Gdx.app.log("", "bloom intensity=" + intensity);
 			bloom.setBloomIntesity(intensity);
 
 			bsat = 1f;
@@ -277,7 +278,7 @@ public final class DefaultAnimator implements PostProcessingAnimator {
 			if (nightMode) bsat += 0.4f;
 			bsat *= 1f - cf * 3f;
 
-			sat = 0.7f;
+			sat = 0.7f + (nightMode ? 0.3f : 0);
 			sat = sat - sat * timeModFactor * 0.7f;
 			sat = sat * (1f - cf);
 			sat = AMath.lerp(sat, -0.25f, MathUtils.clamp(alertAmount.value * 2f, 0f, 1f));
