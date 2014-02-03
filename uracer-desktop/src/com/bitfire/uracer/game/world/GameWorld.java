@@ -223,7 +223,7 @@ public final class GameWorld {
 			return;
 		}
 
-		float rttScale = 0.25f;
+		float rttScale = 0.5f;
 		int maxRays = 360;
 
 		if (!URacer.Game.isDesktop()) {
