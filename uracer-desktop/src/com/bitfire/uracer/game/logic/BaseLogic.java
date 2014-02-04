@@ -141,13 +141,14 @@ public abstract class BaseLogic extends CommonLogic {
 		float maxZoom = GameWorldRenderer.MaxCameraZoom;
 
 		float cameraZoom = (minZoom + GameWorldRenderer.ZoomWindow);
-		cameraZoom = maxZoom - 0.2f;
+		cameraZoom = maxZoom - 0.1f - 0.1f * collisionFactor.value;
 		// cameraZoom += 0.2f * timeModFactor; // zoom in if slowing time down
-		cameraZoom = AMath.lerp(cameraZoom, minZoom, speed.get() * 1.25f);
-		cameraZoom = AMath.lerp(cameraZoom, maxZoom, timeModFactor * 1.25f);
+		cameraZoom = AMath.lerp(cameraZoom, minZoom, speed.get() * 1f);
+		cameraZoom = AMath.lerp(cameraZoom, maxZoom, timeModFactor * 1f);
 		cameraZoom = AMath.lerp(prevZoom, cameraZoom, 0.1f);
 		cameraZoom = AMath.clampf(cameraZoom, minZoom, maxZoom);
-		// Gdx.app.log("BaseLogic", "cameraZoom=" + cameraZoom + " [" + minZoom + ", " + maxZoom + "]");
+		Gdx.app.log("BaseLogic", "cameraZoom=" + cameraZoom + " [" + minZoom + ", " + maxZoom + "]");
+		// Gdx.app.log("BaseLogic", "" + collisionFactor.value);
 
 		// cameraZoom += GameWorldRenderer.ZoomRange * timeModFactor;
 		// cameraZoom += 0.25f * GameWorldRenderer.ZoomWindow * driftStrength.get();

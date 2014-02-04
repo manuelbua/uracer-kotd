@@ -245,10 +245,8 @@ public final class DefaultAnimator implements PostProcessingAnimator {
 		if (zoom != null) {
 			if (hasPlayer) {
 				float sfactor = speed.get();
-				float z = 0;// (zoomCamera - (GameWorldRenderer.MinCameraZoom + GameWorldRenderer.ZoomWindow));
-				float v = -0.12f * sfactor - 0.09f * z - 0.3f * cf;
-
-				float strength = v + (-0.04f * timeModFactor) + (-0.025f * sfactor);
+				float strength = -0.05f * timeModFactor * sfactor + (-0.05f * sfactor) - 0.4f * cf;
+				// Gdx.app.log("", "strength=" + strength);
 				zoomBlurStrengthFactor.set(strength, 1f);
 			} else {
 				zoomBlurStrengthFactor.set(0, 0.05f);
@@ -288,6 +286,11 @@ public final class DefaultAnimator implements PostProcessingAnimator {
 			bsat = MathUtils.clamp(bsat, 0f, 1f);
 			bloom.setBaseSaturation(sat);
 			bloom.setBloomSaturation(bsat);
+
+			float bloomTh = AMath.lerp(bloomThreshold, bloomThreshold - 0.01f, timeModFactor);
+			bloom.setThreshold(bloomTh);
+			// Gdx.app.log("", "Bth=" + bloomTh);
+
 			// bloom.setBaseSaturation(1);
 			// bloom.setBloomSaturation(1);
 			// Gdx.app.log("", "sat=" + sat + ", bsat=" + bsat);
