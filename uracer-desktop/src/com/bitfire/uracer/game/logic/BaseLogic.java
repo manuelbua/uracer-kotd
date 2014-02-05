@@ -30,7 +30,7 @@ import com.bitfire.uracer.utils.InterpolatedFloat;
 
 public abstract class BaseLogic extends CommonLogic {
 	private Vector2 cameraPos = new Vector2();
-	private float prevZoom = GameWorldRenderer.MaxCameraZoom - 0.2f;
+	private float prevZoom = GameWorldRenderer.MaxCameraZoom - 0.1f;
 	private InterpolatedFloat driftStrength = new InterpolatedFloat();
 	private InterpolatedFloat speed = new InterpolatedFloat();
 	private TimeModulator timeMod = null;
