@@ -22,6 +22,7 @@ import com.bitfire.uracer.game.debug.DebugHelper.RenderFlags;
 import com.bitfire.uracer.game.debug.DebugMusicVolumes;
 import com.bitfire.uracer.game.debug.GameTrackDebugRenderer;
 import com.bitfire.uracer.game.debug.player.DebugPlayer;
+import com.bitfire.uracer.game.logic.gametasks.hud.elements.player.DriftBar;
 import com.bitfire.uracer.game.logic.gametasks.messager.Message;
 import com.bitfire.uracer.game.logic.gametasks.messager.Message.Position;
 import com.bitfire.uracer.game.logic.gametasks.messager.Message.Size;
@@ -326,6 +327,7 @@ public class SinglePlayer extends BaseLogic {
 		playerCar.resetDistanceAndSpeed(true, false);
 		lapManager.startRecording(playerCar, gameWorld.getLevelId(), userProfile.userId);
 		progressData.reset(true);
+		setAccuDriftSeconds(DriftBar.MaxSeconds);
 
 		rebindAllReplays();
 		restartAllReplays();

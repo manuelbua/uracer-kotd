@@ -30,7 +30,9 @@ import com.bitfire.uracer.utils.InterpolatedFloat;
 
 public abstract class BaseLogic extends CommonLogic {
 	private Vector2 cameraPos = new Vector2();
-	private float prevZoom = GameWorldRenderer.MaxCameraZoom - 0.1f;
+	private float ZoomNorm = 0.2f;
+
+	private float prevZoom = GameWorldRenderer.MaxCameraZoom - ZoomNorm;
 	private InterpolatedFloat driftStrength = new InterpolatedFloat();
 	private InterpolatedFloat speed = new InterpolatedFloat();
 	private TimeModulator timeMod = null;
@@ -140,14 +142,19 @@ public abstract class BaseLogic extends CommonLogic {
 		float minZoom = GameWorldRenderer.MinCameraZoom;
 		float maxZoom = GameWorldRenderer.MaxCameraZoom;
 
+		// dbg
+		// ZoomNorm = 0.2f;
+		// collisionFactor.value = 0f;
+
 		float cameraZoom = (minZoom + GameWorldRenderer.ZoomWindow);
-		cameraZoom = maxZoom - 0.1f - 0.1f * collisionFactor.value;
+		cameraZoom = maxZoom - ZoomNorm - collisionFactor.value * 0.1f;// (1 - ZoomNorm);
 		// cameraZoom += 0.2f * timeModFactor; // zoom in if slowing time down
-		cameraZoom = AMath.lerp(cameraZoom, minZoom, speed.get() * 1f);
-		cameraZoom = AMath.lerp(cameraZoom, maxZoom, timeModFactor * 1f);
+		cameraZoom = AMath.lerp(cameraZoom, minZoom, speed.get());
+		cameraZoom = AMath.lerp(cameraZoom, maxZoom, timeModFactor);
+		cameraZoom = AMath.lerp(cameraZoom, maxZoom, collisionFactor.value * 1.25f);
 		cameraZoom = AMath.lerp(prevZoom, cameraZoom, 0.1f);
 		cameraZoom = AMath.clampf(cameraZoom, minZoom, maxZoom);
-		Gdx.app.log("BaseLogic", "cameraZoom=" + cameraZoom + " [" + minZoom + ", " + maxZoom + "]");
+		// Gdx.app.log("BaseLogic", "cameraZoom=" + cameraZoom + " [" + minZoom + ", " + maxZoom + "]");
 		// Gdx.app.log("BaseLogic", "" + collisionFactor.value);
 
 		// cameraZoom += GameWorldRenderer.ZoomRange * timeModFactor;

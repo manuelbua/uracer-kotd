@@ -269,6 +269,10 @@ public abstract class CommonLogic implements GameLogic, GameLogicObserver {
 		GameEvents.logicEvent.trigger(this, GameLogicEvent.Type.GameReset);
 	}
 
+	protected void setAccuDriftSeconds (float value) {
+		accuDriftSeconds.value = value;
+	}
+
 	@Override
 	public void quitGame () {
 		quitPending = true;
@@ -418,7 +422,7 @@ public abstract class CommonLogic implements GameLogic, GameLogicObserver {
 			// lose wall-clock seconds while in time dilation
 			if (!dilationTime.isStopped()) {
 				float val = dilationTime.elapsed().lastAbsSeconds;
-				accuDriftSeconds.value -= val * 2;
+				accuDriftSeconds.value -= val;
 			}
 
 			// lose wall-clock seconds while out of track
