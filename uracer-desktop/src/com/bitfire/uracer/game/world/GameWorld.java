@@ -272,7 +272,7 @@ public final class GameWorld {
 //			 MathUtils.random(0,1),
 //			 MathUtils.random(0,1),
 //			 MathUtils.random(0,1),
-							1f, .85f, 0.6f, 0.55f
+							1f, .85f, 0.6f, 0.8f
 //				MathUtils.random(0.85f,1),
 //				MathUtils.random(0.8f,0.85f),
 //				MathUtils.random(0.6f,0.8f),

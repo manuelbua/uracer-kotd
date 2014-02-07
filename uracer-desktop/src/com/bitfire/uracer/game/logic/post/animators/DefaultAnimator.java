@@ -5,6 +5,7 @@ import aurelienribon.tweenengine.Timeline;
 import aurelienribon.tweenengine.Tween;
 import aurelienribon.tweenengine.equations.Quad;
 
+import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.math.MathUtils;
 import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.utils.TimeUtils;
@@ -273,27 +274,27 @@ public final class DefaultAnimator implements PostProcessingAnimator {
 			bsat = 1f;
 			bsat += 0.2f * timeModFactor;
 
-			if (nightMode) bsat += 0.4f;
-			bsat *= 1f - cf * 3f;
+			if (nightMode) bsat += 0.0f;
+			bsat *= (1f - (cf * 3f));
 
-			sat = 0.7f + (nightMode ? 0.3f : 0);
+			sat = 0.7f + (nightMode ? 0.5f : 0);
 			sat = sat - sat * timeModFactor * 0.7f;
 			sat = sat * (1f - cf);
 			sat = AMath.lerp(sat, -0.25f, MathUtils.clamp(alertAmount.value * 2f, 0f, 1f));
 			sat = AMath.lerp(sat, -0.25f, cf);
 
-			sat = MathUtils.clamp(sat, 0f, 1f);
-			bsat = MathUtils.clamp(bsat, 0f, 1f);
+			sat = MathUtils.clamp(sat, 0f, 3f);
+			bsat = MathUtils.clamp(bsat, 0f, 3f);
 			bloom.setBaseSaturation(sat);
 			bloom.setBloomSaturation(bsat);
 
-			float bloomTh = AMath.lerp(bloomThreshold, bloomThreshold - 0.01f, timeModFactor);
-			bloom.setThreshold(bloomTh);
+			// float bloomTh = AMath.lerp(bloomThreshold, bloomThreshold - 0.01f, timeModFactor);
+			// bloom.setThreshold(bloomTh);
 			// Gdx.app.log("", "Bth=" + bloomTh);
 
 			// bloom.setBaseSaturation(1);
 			// bloom.setBloomSaturation(1);
-			// Gdx.app.log("", "sat=" + sat + ", bsat=" + bsat);
+			Gdx.app.log("", "sat=" + sat + ", bsat=" + bsat);
 		}
 
 		if (vignette != null) {
