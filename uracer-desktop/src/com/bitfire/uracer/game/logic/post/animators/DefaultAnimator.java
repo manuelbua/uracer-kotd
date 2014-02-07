@@ -5,7 +5,6 @@ import aurelienribon.tweenengine.Timeline;
 import aurelienribon.tweenengine.Tween;
 import aurelienribon.tweenengine.equations.Quad;
 
-import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.math.MathUtils;
 import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.utils.TimeUtils;
@@ -294,7 +293,7 @@ public final class DefaultAnimator implements PostProcessingAnimator {
 
 			// bloom.setBaseSaturation(1);
 			// bloom.setBloomSaturation(1);
-			Gdx.app.log("", "sat=" + sat + ", bsat=" + bsat);
+			// Gdx.app.log("", "sat=" + sat + ", bsat=" + bsat);
 		}
 
 		if (vignette != null) {
