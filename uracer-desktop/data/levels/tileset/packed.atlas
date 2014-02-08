@@ -1,5 +1,5 @@
 
-packed.png
+packed-1.png
 format: RGBA8888
 filter: Nearest,Nearest
 repeat: none
@@ -116,7 +116,7 @@ packed
   offset: 0, 0
   index: 16
 
-packed2.png
+packed-2.png
 format: RGBA8888
 filter: Nearest,Nearest
 repeat: none
@@ -233,7 +233,7 @@ packed
   offset: 0, 0
   index: 32
 
-packed3.png
+packed-3.png
 format: RGBA8888
 filter: Nearest,Nearest
 repeat: none

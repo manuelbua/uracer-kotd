@@ -1,5 +1,5 @@
 
-skin.png
+skin-1.png
 format: RGBA8888
 filter: Nearest,Nearest
 repeat: none
@@ -204,7 +204,7 @@ white
   offset: 0, 0
   index: -1
 
-skin2.png
+skin-2.png
 format: RGBA8888
 filter: Nearest,Nearest
 repeat: none
@@ -216,7 +216,7 @@ sans13
   offset: 0, 0
   index: -1
 
-skin3.png
+skin-3.png
 format: RGBA8888
 filter: Nearest,Nearest
 repeat: none
@@ -228,7 +228,7 @@ sans14
   offset: 0, 0
   index: -1
 
-skin4.png
+skin-4.png
 format: RGBA8888
 filter: Nearest,Nearest
 repeat: none

@@ -1,5 +1,5 @@
 
-pack.png
+pack-1.png
 format: RGBA8888
 filter: Linear,Linear
 repeat: none
@@ -39,7 +39,7 @@ curse-big-white
   offset: 0, 0
   index: -1
 
-pack2.png
+pack-2.png
 format: RGBA8888
 filter: Linear,Linear
 repeat: none
@@ -72,7 +72,7 @@ curse-y-r-big
   offset: 0, 0
   index: -1
 
-pack3.png
+pack-3.png
 format: RGBA8888
 filter: Linear,Linear
 repeat: none
@@ -92,20 +92,20 @@ karmatic
   index: -1
 lcd
   rotate: false
-  xy: 512, 0
+  xy: 512, 512
   size: 512, 512
   orig: 512, 512
   offset: 0, 0
   index: -1
 lcd-white
   rotate: false
-  xy: 512, 512
+  xy: 512, 0
   size: 512, 512
   orig: 512, 512
   offset: 0, 0
   index: -1
 
-pack4.png
+pack-4.png
 format: RGBA8888
 filter: Linear,Linear
 repeat: none
