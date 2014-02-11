@@ -178,6 +178,7 @@ public class PlayerCar extends Car {
 			boolean kUp = input.isOn(Keys.UP);
 			boolean kLeft = input.isOn(Keys.LEFT);
 			boolean kRight = input.isOn(Keys.RIGHT);
+			boolean kDown = input.isOn(Keys.DOWN);
 
 			float maxsecs = 0.1f + AMath.fixup(1 * speed);
 			float dirtimeLeft = updateDirTime(Keys.LEFT, maxsecs);
@@ -194,6 +195,18 @@ public class PlayerCar extends Car {
 				carInput.throttle = preset.model.max_force;
 			} else {
 				carInput.throttle = 0;
+			}
+
+			carInput.brake = 0;
+
+			if (AMath.isZero(carInput.throttle)) {
+				if (Math.abs(carDesc.velocity_wc.x) > 0.5f || Math.abs(carDesc.velocity_wc.y) > 0.5f) {
+					carInput.brake = 200;
+				}
+			}
+
+			if (kDown) {
+				carInput.brake += preset.model.max_force;
 			}
 
 			float inertialThrust = 0;

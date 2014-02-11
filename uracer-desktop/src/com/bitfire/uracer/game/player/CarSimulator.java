@@ -38,6 +38,7 @@ public final class CarSimulator {
 		float maxForce = carDesc.carModel.max_force;
 		boolean hasDir = false, hasSteer = false;
 
+		carDesc.brake = input.brake;
 		if (input.updated) {
 			// throttle
 			if (AMath.fixup(input.throttle) > 0) {
@@ -48,7 +49,7 @@ public final class CarSimulator {
 					carDesc.throttle = maxForce;
 				}
 
-				carDesc.brake = 0;
+				// carDesc.brake = 0;
 				hasDir = true;
 			} else if (AMath.fixup(input.throttle) < 0) {
 				// deceleration
@@ -58,7 +59,7 @@ public final class CarSimulator {
 					carDesc.throttle = -maxForce;
 				}
 
-				carDesc.brake = 0;
+				// carDesc.brake = 0;
 				hasDir = true;
 			}
 
@@ -88,7 +89,11 @@ public final class CarSimulator {
 					carDesc.throttle *= DampingThrottle;
 				}
 
-				carDesc.brake = 350f;
+				if (!AMath.isZero(carDesc.brake)) {
+					carDesc.brake *= DampingThrottle;
+				}
+
+				// carDesc.brake = 200f;
 			} else {
 				carDesc.velocity_wc.set(0, 0);
 				carDesc.angularvelocity = 0;
@@ -102,6 +107,7 @@ public final class CarSimulator {
 		}
 
 		carDesc.throttle = AMath.clamp(carDesc.throttle, -maxForce, maxForce);
+		carDesc.brake = AMath.clamp(carDesc.brake, -maxForce * 2, maxForce * 2);
 	}
 
 	public void step (float dt, float bodyAngle) {
@@ -179,8 +185,9 @@ public final class CarSimulator {
 		flatr.y *= carDesc.carModel.weight;
 
 		// float s = SGN(velocity.x);
-		thisSign = AMath.lowpass(lastSign, AMath.sign(velocity.x), 0.2f);
-		lastSign = thisSign;
+		// thisSign = AMath.lowpass(lastSign, AMath.sign(velocity.x), 0.2f);
+		// lastSign = thisSign;
+		thisSign = AMath.sign(velocity.x);
 
 		ftraction.set(100f * (carDesc.throttle - carDesc.brake * thisSign), 0);
 
