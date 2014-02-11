@@ -206,7 +206,7 @@ public class PlayerCar extends Car {
 			}
 
 			if (kDown) {
-				carInput.brake += preset.model.max_force;
+				carInput.brake += preset.model.max_force * 0.75f;
 			}
 
 			float inertialThrust = 0;
