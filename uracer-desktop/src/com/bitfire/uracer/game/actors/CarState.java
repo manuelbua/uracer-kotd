@@ -18,6 +18,7 @@ public final class CarState {
 	public float currVelocityLenSquared = 0;
 	public float currThrottle = 0;
 	public float currSpeedFactor = 0;
+	// public float currBrakeFactor = 0;
 	public float currForceFactor = 0;
 
 	// temporaries
@@ -66,6 +67,7 @@ public final class CarState {
 		currVelocityLenSquared = carDescriptor.velocity_wc.len2();
 		currThrottle = carDescriptor.throttle;
 		currSpeedFactor = AMath.fixup(AMath.clamp(currVelocityLenSquared / CarMaxSpeedSquared, 0f, 1f));
+		// currBrakeFactor = AMath.fixup(AMath.clamp(carDescriptor.brake / CarMaxForce, 0f, 1f));
 		currForceFactor = AMath.fixup(AMath.clamp(currThrottle / CarMaxForce, 0f, 1f));
 	}
 
