@@ -159,7 +159,7 @@ public final class AMath {
 
 	//@off
 	/**
-	 *  Compute a timestep-independent damping factor from the specified arbitrary factor.
+	 *  Compute a timestep-dependent damping factor from the specified time-independent constant and arbitrary factor.
 	 *
 	 * This isn't the only way to compute it:
 	 *
