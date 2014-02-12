@@ -161,7 +161,7 @@ public abstract class BaseLogic extends CommonLogic {
 		cameraZoom = AMath.clampf(cameraZoom, minZoom, maxZoom * 2f); // relax max a bit
 
 		// cameraZoom = 1;
-		Gdx.app.log("BaseLogic", "cameraZoom=" + cameraZoom + " [" + minZoom + ", " + maxZoom + "]");
+		// Gdx.app.log("BaseLogic", "cameraZoom=" + cameraZoom + " [" + minZoom + ", " + maxZoom + "]");
 		// Gdx.app.log("BaseLogic", "" + collisionFactor.value);
 
 		// cameraZoom += GameWorldRenderer.ZoomRange * timeModFactor;
