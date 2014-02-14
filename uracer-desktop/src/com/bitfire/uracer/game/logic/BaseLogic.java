@@ -151,8 +151,8 @@ public abstract class BaseLogic extends CommonLogic {
 		// cameraZoom += 0.2f * timeModFactor; // zoom in if slowing time down
 		cameraZoom = AMath.lerp(cameraZoom, minZoom - 0.1f, speed.get()); // pretend minZoom to be less than it is
 
-		// TODO make it a tweakable option rather than hardcoding it the shitty way ;/
-		// cameraZoom = AMath.lerp(cameraZoom, maxZoom, timeModFactor);
+		// TODO make it a toggleable option
+		cameraZoom = AMath.lerp(cameraZoom, maxZoom, timeModFactor);
 
 		cameraZoom = AMath.clampf(cameraZoom, minZoom, maxZoom);
 
