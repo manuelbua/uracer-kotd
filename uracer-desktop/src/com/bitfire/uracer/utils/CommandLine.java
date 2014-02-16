@@ -91,8 +91,8 @@ public final class CommandLine {
 				break;
 			case 'h':
 				System.out.println("Valid command-line options:");
-				System.out.println("  -h, --help\t\tshows this help");
-				System.out.println("  -r, --resolution=RES\tspecify the resolution to use: you can either specify");
+				System.out.println("  --help\t\tshows this help");
+				System.out.println("  --resolution=RES\tspecify the resolution to use: you can either specify");
 				System.out.println("  \t\t\ta real resolution, e.g. --resolution=800x600, or use ");
 				System.out.println("  \t\t\ta built-in shortcut (one of \"low\", \"mid\" or \"high\").");
 				System.out.println("  \t\t\t(low=800x480, mid=1280x800, high=1920x1080)");
