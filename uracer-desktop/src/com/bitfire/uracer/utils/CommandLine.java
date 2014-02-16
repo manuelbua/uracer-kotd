@@ -31,7 +31,6 @@ public final class CommandLine {
 		int c;
 		String arg;
 
-		// TODO: --enable-feature && --disable-feature
 		//@off
 		LongOpt[] opts = {
 			new LongOpt("help", LongOpt.NO_ARGUMENT, null, 'h'),
@@ -94,7 +93,7 @@ public final class CommandLine {
 				System.out.println("Valid command-line options:");
 				System.out.println("  -h, --help\t\tshows this help");
 				System.out.println("  -r, --resolution=RES\tspecify the resolution to use: you can either specify");
-				System.out.println("  \t\t\ta real resolution =, e.g. --resolution=800x600, or use ");
+				System.out.println("  \t\t\ta real resolution, e.g. --resolution=800x600, or use ");
 				System.out.println("  \t\t\ta built-in shortcut (one of \"low\", \"mid\" or \"high\").");
 				System.out.println("  \t\t\t(low=800x480, mid=1280x800, high=1920x1080)");
 				System.out.println("  --enable-vsync, --disable-vsync\t\tenable/disable vertical sync");
