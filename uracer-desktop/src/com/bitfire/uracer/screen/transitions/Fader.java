@@ -20,9 +20,10 @@ import com.bitfire.utils.ShaderLoader;
 /** Implements a fader, transitioning from one screen to another by first transitioning the current screen to the specified color,
  * then transitioning from the specified color to the next screen. */
 public final class Fader extends ScreenTransition {
-	FrameBuffer from, to;
-	long duration, elapsed, half;
+	static final long MaxFrameStep = (long)(Config.Physics.Dt * 1000000000f);
+	long duration, elapsed, half; // in nanoseconds
 	float factor;
+	FrameBuffer from, to;
 	FullscreenQuad quad;
 	ShaderProgram fade;
 	Screen next;
@@ -34,7 +35,7 @@ public final class Fader extends ScreenTransition {
 		super(factory);
 		quad = new FullscreenQuad();
 		fade = ShaderLoader.fromFile("fade", "fade");
-		duration = 1000;
+		setDuration(1000);
 		reset();
 	}
 
@@ -56,7 +57,7 @@ public final class Fader extends ScreenTransition {
 		next = null;
 		factor = 0;
 		elapsed = 0;
-		setDuration(duration);
+		setDuration(duration / 1000000);
 		nextPrepared = false;
 		nextType = ScreenType.NoScreen;
 	}
@@ -85,11 +86,12 @@ public final class Fader extends ScreenTransition {
 	/** Sets the duration of the effect, in milliseconds. */
 	@Override
 	public void setDuration (long durationMs) {
-		duration = durationMs;
-		half = duration / 2;
 		if (durationMs == 0) {
 			throw new GdxRuntimeException("Invalid transition duration specified.");
 		}
+
+		duration = durationMs * 1000000;
+		half = duration / 2;
 	}
 
 	@Override
@@ -99,8 +101,9 @@ public final class Fader extends ScreenTransition {
 
 	@Override
 	public void update () {
-		long delta = (long)URacer.Game.getLastDeltaMs();
-		delta = AMath.clamp(delta, 0, (long)(Config.Physics.Dt * 1000));
+		long delta = (long)URacer.Game.getLastDeltaNs();
+		delta = AMath.clamp(delta, 0, MaxFrameStep);
+		// Gdx.app.log("Fader", "delta=" + URacer.Game.getLastDeltaNs() + ", e=" + elapsed + ", d=" + duration + ", f=" + factor);
 
 		elapsed += delta;
 

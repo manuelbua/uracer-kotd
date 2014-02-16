@@ -17,9 +17,10 @@ import com.bitfire.utils.ShaderLoader;
 
 /** Implements a cross fader, transitioning between the current and the next screen. */
 public final class CrossFader extends ScreenTransition {
-	FrameBuffer from, to;
-	long duration, elapsed;
+	static final long MaxFrameStep = (long)(Config.Physics.Dt * 1000000000f);
+	long duration, elapsed; // in nanoseconds
 	float factor;
+	FrameBuffer from, to;
 	FullscreenQuad quad;
 	ShaderProgram fade;
 	Screen next;
@@ -28,7 +29,7 @@ public final class CrossFader extends ScreenTransition {
 		super(factory);
 		quad = new FullscreenQuad();
 		fade = ShaderLoader.fromFile("fade", "fade");
-		duration = 1000;
+		setDuration(1000);
 		reset();
 	}
 
@@ -46,7 +47,7 @@ public final class CrossFader extends ScreenTransition {
 		next = null;
 		factor = 0;
 		elapsed = 0;
-		setDuration(duration);
+		setDuration(duration / 1000000);
 	}
 
 	@Override
@@ -87,8 +88,8 @@ public final class CrossFader extends ScreenTransition {
 
 	@Override
 	public void update () {
-		long delta = (long)URacer.Game.getLastDeltaMs();
-		delta = AMath.clamp(delta, 0, (long)(Config.Physics.Dt * 1000));
+		long delta = (long)URacer.Game.getLastDeltaNs();
+		delta = AMath.clamp(delta, 0, MaxFrameStep);
 
 		elapsed += delta;
 

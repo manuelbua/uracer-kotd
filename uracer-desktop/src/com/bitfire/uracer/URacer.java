@@ -233,6 +233,7 @@ public class URacer implements ApplicationListener {
 			// recompute them again and again
 			lastDeltaTimeMs = (float)lastDeltaTimeNs / 1000000f;
 			lastDeltaTimeSec = (float)lastDeltaTimeNs * oneOnOneBillion;
+			// Gdx.app.log("URacer", "lastdelta_ms=" + lastDeltaTimeMs);
 
 			// measure timings
 			long startTime;
@@ -350,6 +351,10 @@ public class URacer implements ApplicationListener {
 
 		public static float getLastDeltaMs () {
 			return lastDeltaTimeMs;
+		}
+
+		public static long getLastDeltaNs () {
+			return lastDeltaTimeNs;
 		}
 
 		public static float getTemporalAliasing () {
