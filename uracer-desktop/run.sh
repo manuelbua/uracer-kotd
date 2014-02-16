@@ -21,6 +21,7 @@ ${LIBGDX_CLASSPATH}/dist/gdx-backend-lwjgl-natives.jar"
 URACER="java -classpath ${JARS}:${URACER_CLASSPATH} com.bitfire.uracer.URacerDesktop"
 
 echo "Environment set to: " ${JARS}
+echo ""
 cd `dirname "$0"`
 ${URACER} "$@"
 cd -
