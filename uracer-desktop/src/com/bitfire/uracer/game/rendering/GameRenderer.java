@@ -23,7 +23,6 @@ import com.bitfire.uracer.game.logic.post.PostProcessing.Effects;
 import com.bitfire.uracer.game.logic.post.ssao.Ssao;
 import com.bitfire.uracer.game.player.PlayerCar;
 import com.bitfire.uracer.game.world.GameWorld;
-import com.bitfire.uracer.utils.AMath;
 import com.bitfire.uracer.utils.Convert;
 import com.bitfire.uracer.utils.ScaleUtils;
 
@@ -110,8 +109,8 @@ public final class GameRenderer {
 		// treesAmbient.set(0.1f, 0.05f, 0.1f, 0.6f + 0.2f * URacer.Game.getTimeModFactor());
 		// } else
 		if (world.isNightMode()) {
-			ambient.set(0.12f, 0.05f, 0.1f, 0.4f + 0.2f * URacer.Game.getTimeModFactor());
-			treesAmbient.set(0.12f, 0.05f, 0.1f, 0.4f + 0.2f * URacer.Game.getTimeModFactor());
+			ambient.set(0.1f, 0.05f, 0.2f, 0.4f + 0.2f * URacer.Game.getTimeModFactor());
+			treesAmbient.set(0.1f, 0.05f, 0.2f, 0.4f + 0.2f * URacer.Game.getTimeModFactor());
 		}
 
 		ambient.clamp();
@@ -126,7 +125,7 @@ public final class GameRenderer {
 				float maxdist = 30;
 				maxdist *= maxdist;
 				dist = 1 - MathUtils.clamp(dist, 0, maxdist) / maxdist;
-				lights[l].setColor(1, 1, 1, AMath.fixup(0.9f * dist));
+				lights[l].setColor(1, 0.9f, 0.7f, 0.7f);// + AMath.fixup(0.4f * dist));
 			}
 		}
 	}
