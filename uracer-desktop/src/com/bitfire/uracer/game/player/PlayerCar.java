@@ -143,6 +143,8 @@ public class PlayerCar extends Car {
 		final float speed = carState.currSpeedFactor;
 		isThrottling = false;
 
+		carInput.brake = 0;
+
 		if (!inputFromKeyboard) {
 
 			// mouse/pointer input
@@ -196,8 +198,6 @@ public class PlayerCar extends Car {
 			} else {
 				carInput.throttle = 0;
 			}
-
-			carInput.brake = 0;
 
 			if (AMath.isZero(carInput.throttle)) {
 				if (Math.abs(carDesc.velocity_wc.x) > 0.5f || Math.abs(carDesc.velocity_wc.y) > 0.5f) {
