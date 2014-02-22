@@ -249,7 +249,7 @@ public final class DefaultAnimator implements PostProcessingAnimator {
 		}
 
 		float cf = collisionFactor;
-		cf = 1f;
+		// cf = 1f;
 
 		updateLights(ambient, trees, cf);
 
