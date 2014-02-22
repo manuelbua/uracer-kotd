@@ -354,7 +354,7 @@ public final class GameWorldRenderer {
 		return cameraZoom;
 	}
 
-	public void updateCamera () {
+	public void updateCameraAndRays () {
 		// update orthographic camera
 
 		float zoom = 1f / cameraZoom;

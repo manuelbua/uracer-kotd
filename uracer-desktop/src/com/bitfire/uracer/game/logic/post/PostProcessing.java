@@ -2,6 +2,7 @@
 package com.bitfire.uracer.game.logic.post;
 
 import com.badlogic.gdx.Gdx;
+import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.GL20;
 import com.badlogic.gdx.graphics.Texture.TextureWrap;
 import com.badlogic.gdx.utils.LongMap;
@@ -61,8 +62,8 @@ public final class PostProcessing {
 			postProcessor.setEnabled(true);
 			postProcessor.setBufferTextureWrap(TextureWrap.ClampToEdge, TextureWrap.ClampToEdge);
 			hasPostProcessor = true;
-			createEffects();
-			setAnimator(new DefaultAnimator(this, gameWorld.isNightMode()));
+			createEffects(gameWorld);
+			setAnimator(new DefaultAnimator(this, gameWorld));
 		}
 	}
 
@@ -74,7 +75,7 @@ public final class PostProcessing {
 
 	/** Creates the effects that will be available to the animators/manipulators to use, remember that the ownership of the
 	 * instantiated objects is transfered to the PostProcessor when adding the effect to it. */
-	private void createEffects () {
+	private void createEffects (GameWorld gameWorld) {
 		if (UserPreferences.bool(Preference.Ssao)) {
 			addEffect(
 				Effects.Ssao.name,
@@ -104,7 +105,7 @@ public final class PostProcessing {
 		}
 
 		if (UserPreferences.bool(Preference.CrtScreen)) {
-			boolean scanlines = true;
+			boolean scanlines = false;
 			ShaderLoader.Pedantic = false;
 			int effects = (scanlines ? Effect.PhosphorVibrance.v | Effect.Scanlines.v : 0) | Effect.Tint.v;
 			CrtMonitor crt = new CrtMonitor(ScaleUtils.PlayWidth, ScaleUtils.PlayHeight,
@@ -163,9 +164,9 @@ public final class PostProcessing {
 		}
 	}
 
-	public void onBeforeRender (float zoom, float warmUpCompletion, float collisionFactor) {
+	public void onBeforeRender (Color ambient, Color trees, float zoom, float warmUpCompletion, float collisionFactor) {
 		if (hasPostProcessor && hasAnimator) {
-			animator.update(zoom, warmUpCompletion, collisionFactor);
+			animator.update(ambient, trees, zoom, warmUpCompletion, collisionFactor);
 		}
 	}
 

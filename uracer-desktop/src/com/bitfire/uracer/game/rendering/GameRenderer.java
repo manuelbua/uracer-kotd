@@ -1,14 +1,10 @@
 
 package com.bitfire.uracer.game.rendering;
 
-import box2dLight.PointLight;
-
 import com.badlogic.gdx.Gdx;
-import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.GL20;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.graphics.glutils.FrameBuffer;
-import com.badlogic.gdx.math.MathUtils;
 import com.badlogic.gdx.math.Matrix4;
 import com.badlogic.gdx.math.Rectangle;
 import com.badlogic.gdx.math.Vector2;
@@ -21,7 +17,6 @@ import com.bitfire.uracer.game.events.GameRendererEvent;
 import com.bitfire.uracer.game.logic.post.PostProcessing;
 import com.bitfire.uracer.game.logic.post.PostProcessing.Effects;
 import com.bitfire.uracer.game.logic.post.ssao.Ssao;
-import com.bitfire.uracer.game.player.PlayerCar;
 import com.bitfire.uracer.game.world.GameWorld;
 import com.bitfire.uracer.utils.Convert;
 import com.bitfire.uracer.utils.ScaleUtils;
@@ -96,48 +91,12 @@ public final class GameRenderer {
 		return worldRenderer.getNormalDepthMap();
 	}
 
-	private void updateLights () {
-		// update ambient lights
-		Color ambient = worldRenderer.getAmbientColor();
-		Color treesAmbient = worldRenderer.getTreesAmbientColor();
-
-		ambient.set(0.1f, 0.05f, 0.15f, 0.4f + 0.2f * URacer.Game.getTimeModFactor());
-		treesAmbient.set(ambient.r, ambient.g * 2f, ambient.b, 0.4f + 0.5f * URacer.Game.getTimeModFactor());
-
-		// if (world.isNightMode() && postProcessing.hasEffect(Effects.Crt.name)) {
-		// ambient.set(0.1f, 0.05f, 0.1f, 0.6f);
-		// treesAmbient.set(0.1f, 0.05f, 0.1f, 0.6f + 0.2f * URacer.Game.getTimeModFactor());
-		// } else
-		if (world.isNightMode()) {
-			ambient.set(0.1f, 0.05f, 0.2f, 0.4f + 0.2f * URacer.Game.getTimeModFactor());
-			treesAmbient.set(0.1f, 0.05f, 0.2f, 0.4f + 0.2f * URacer.Game.getTimeModFactor());
-		}
-
-		ambient.clamp();
-		treesAmbient.clamp();
-
-		// update point lights, more intensity from lights near the player
-		PlayerCar player = world.getPlayer();
-		PointLight[] lights = world.getLights();
-		if (lights != null && player != null) {
-			for (int l = 0; l < lights.length; l++) {
-				float dist = player.getWorldPosMt().dst2(lights[l].getPosition());
-				float maxdist = 30;
-				maxdist *= maxdist;
-				dist = 1 - MathUtils.clamp(dist, 0, maxdist) / maxdist;
-				lights[l].setColor(1, 0.9f, 0.7f, 0.55f);// + AMath.fixup(0.4f * dist));
-			}
-		}
-	}
-
 	private void interpolate (float timeAliasingFactor) {
 		GameEvents.gameRenderer.timeAliasingFactor = timeAliasingFactor;
 		GameEvents.gameRenderer.trigger(this, GameRendererEvent.Type.SubframeInterpolate);
 	}
 
 	private void beforeRender () {
-		updateLights();
-
 		// request freshdata before any rendering
 		GameEvents.gameRenderer.trigger(this, GameRendererEvent.Type.BeforeRender);
 
@@ -163,7 +122,6 @@ public final class GameRenderer {
 			// raise before render
 			beforeRender();
 		} else {
-			updateLights();
 			GameEvents.gameRenderer.trigger(this, GameRendererEvent.Type.BeforeRender);
 		}
 

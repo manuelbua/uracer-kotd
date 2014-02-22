@@ -4,7 +4,9 @@ package com.bitfire.uracer.game.logic.post.animators;
 import aurelienribon.tweenengine.Timeline;
 import aurelienribon.tweenengine.Tween;
 import aurelienribon.tweenengine.equations.Quad;
+import box2dLight.PointLight;
 
+import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.math.MathUtils;
 import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.utils.TimeUtils;
@@ -21,6 +23,7 @@ import com.bitfire.uracer.game.player.PlayerCar;
 import com.bitfire.uracer.game.rendering.GameRenderer;
 import com.bitfire.uracer.game.rendering.GameWorldRenderer;
 import com.bitfire.uracer.game.tween.GameTweener;
+import com.bitfire.uracer.game.world.GameWorld;
 import com.bitfire.uracer.resources.Art;
 import com.bitfire.uracer.utils.AMath;
 import com.bitfire.uracer.utils.BoxedFloat;
@@ -29,6 +32,7 @@ import com.bitfire.uracer.utils.InterpolatedFloat;
 import com.bitfire.uracer.utils.ScaleUtils;
 
 public final class DefaultAnimator implements PostProcessingAnimator {
+	private GameWorld world;
 	private boolean nightMode = false;
 	private Bloom bloom = null;
 	private Zoomer zoom = null;
@@ -46,8 +50,9 @@ public final class DefaultAnimator implements PostProcessingAnimator {
 	private InterpolatedFloat speed = new InterpolatedFloat();
 	private InterpolatedFloat zoomBlurStrengthFactor = new InterpolatedFloat();
 
-	public DefaultAnimator (PostProcessing post, boolean nightMode) {
-		this.nightMode = nightMode;
+	public DefaultAnimator (PostProcessing post, GameWorld gameWorld) {
+		this.world = gameWorld;
+		this.nightMode = gameWorld.isNightMode();
 		bloom = (Bloom)post.getEffect(PostProcessing.Effects.Bloom.name);
 		zoom = (Zoomer)post.getEffect(PostProcessing.Effects.Zoomer.name);
 		vignette = (Vignette)post.getEffect(PostProcessing.Effects.Vignette.name);
@@ -192,8 +197,40 @@ public final class DefaultAnimator implements PostProcessingAnimator {
 		}
 	}
 
+	private void updateLights (Color ambient, Color trees, float collisionFactor) {
+		ambient.set(0.1f, 0.05f, 0.15f, 0.4f + 0.2f * URacer.Game.getTimeModFactor());
+		// trees.set(ambient.r, ambient.g * 2f, ambient.b, 0.4f + 0.5f * URacer.Game.getTimeModFactor());
+
+		if (world.isNightMode()) {
+			ambient.set(0.1f, 0.05f, 0.2f, 0.4f + 0.2f * URacer.Game.getTimeModFactor());
+		}
+
+		float r_cf = collisionFactor;
+		ambient.r += r_cf;
+		ambient.g = ambient.g * 1 - collisionFactor;
+		ambient.b = ambient.b * 1 - collisionFactor;
+
+		ambient.clamp();
+		trees.set(ambient);
+
+		// Gdx.app.log("", "" + ambient);
+
+		// update point lights, more intensity from lights near the player
+		PlayerCar player = world.getPlayer();
+		PointLight[] lights = world.getLights();
+		if (lights != null && player != null) {
+			for (int l = 0; l < lights.length; l++) {
+				float dist = player.getWorldPosMt().dst2(lights[l].getPosition());
+				float maxdist = 30;
+				maxdist *= maxdist;
+				dist = 1 - MathUtils.clamp(dist, 0, maxdist) / maxdist;
+				lights[l].setColor(1, 0.9f, 0.7f, 0.55f);// + AMath.fixup(0.4f * dist));
+			}
+		}
+	}
+
 	@Override
-	public void update (float zoomCamera, float warmUpCompletion, float collisionFactor) {
+	public void update (Color ambient, Color trees, float zoomCamera, float warmUpCompletion, float collisionFactor) {
 		float timeModFactor = URacer.Game.getTimeModFactor();
 
 		// dbg
@@ -213,6 +250,8 @@ public final class DefaultAnimator implements PostProcessingAnimator {
 
 		float cf = collisionFactor;
 		// cf = 1f;
+
+		updateLights(ambient, trees, cf);
 
 		if (crt != null) {
 			// compute time (add noise)
@@ -266,7 +305,7 @@ public final class DefaultAnimator implements PostProcessingAnimator {
 
 		float bsat = 0f, sat = 0f;
 		if (bloom != null) {
-			float intensity = 1.4f + 4f * cf + (nightMode ? 4f * cf : 0f);
+			float intensity = 1.4f + 4f * cf;// + (nightMode ? 4f * cf : 0f);
 			// Gdx.app.log("", "bloom intensity=" + intensity);
 			bloom.setBloomIntesity(intensity);
 
@@ -274,7 +313,7 @@ public final class DefaultAnimator implements PostProcessingAnimator {
 			bsat += 0.2f * timeModFactor;
 
 			if (nightMode) bsat += 0.0f;
-			bsat *= (1f - (cf * 3f));
+			bsat *= (1f - (cf * 1f));
 
 			sat = 0.7f + (nightMode ? 0.5f : 0);
 			sat = sat - sat * timeModFactor * 0.7f;
