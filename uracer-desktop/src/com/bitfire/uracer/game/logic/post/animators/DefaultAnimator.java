@@ -198,13 +198,7 @@ public final class DefaultAnimator implements PostProcessingAnimator {
 	}
 
 	private void updateLights (Color ambient, Color trees, float collisionFactor) {
-		ambient.set(0.1f, 0.05f, 0.2f, 0.45f + 0.15f * URacer.Game.getTimeModFactor());
-
-		float r_cf = collisionFactor;
-		ambient.r += r_cf;
-		ambient.g = ambient.g * 1 - collisionFactor;
-		ambient.b = ambient.b * 1 - collisionFactor;
-
+		ambient.set(0.1f + collisionFactor, 0.05f, 0.2f, 0.5f + 0.1f * URacer.Game.getTimeModFactor());
 		ambient.clamp();
 		trees.set(ambient);
 
@@ -333,7 +327,7 @@ public final class DefaultAnimator implements PostProcessingAnimator {
 
 		// cf = 1;
 		if (vignette != null) {
-			float lutIntensity = MathUtils.clamp(0.5f + timeModFactor * 1 + alertAmount.value * 1 + cf * 1, 0, 1);
+			float lutIntensity = MathUtils.clamp(0.6f + timeModFactor * 1 + alertAmount.value * 1 + cf * 1, 0, 1);
 			float offset = MathUtils.clamp(cf * 3 + alertAmount.value, 0, 1);
 			vignette.setLutIntensity(lutIntensity);
 			vignette.setLutIndexOffset(offset);
