@@ -308,8 +308,8 @@ public final class DefaultAnimator implements PostProcessingAnimator {
 			// if (nightMode) bsat += 0.0f;
 			bsat *= (1f - (cf * 1f));
 
-			float progress = MathUtils.clamp(progressData.playerToTarget, 0, 1) * 3f;
-			sat = 0.7f + (nightMode ? 0.5f : 0) + progress;
+			// float progress = MathUtils.clamp(progressData.playerToTarget, 0, 1) * 3f;
+			sat = 0.7f + (nightMode ? 0.5f : 0);// + progress;
 			// sat = sat * (1 - timeModFactor);
 			sat = sat * (1f - cf);
 			sat = AMath.lerp(sat, -0.25f, MathUtils.clamp(alertAmount.value * 2f, 0f, 1f));
