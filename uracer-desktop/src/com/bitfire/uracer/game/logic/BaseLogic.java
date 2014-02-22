@@ -123,14 +123,14 @@ public abstract class BaseLogic extends CommonLogic {
 		// apply camera updates
 		gameWorldRenderer.setCameraZoom(zoom);
 		gameWorldRenderer.setCameraPosition(cameraPos);
+		gameWorldRenderer.updateCamera();
 
 		// update lights
 		// sync post-processing animators
 		postProcessing.onBeforeRender(gameWorldRenderer.getAmbientColor(), gameWorldRenderer.getTreesAmbientColor(), zoom,
 			playerLapMonitor.getWarmUpCompletion(), collisionFactor.value);
 
-		// finally update the camera
-		gameWorldRenderer.updateCameraAndRays();
+		gameWorldRenderer.updateRayHandler();
 
 		// game tweener step
 		GameTweener.update();

@@ -146,7 +146,7 @@ public final class DefaultAnimator implements PostProcessingAnimator {
 			// default aspect to slot #0
 			// special effects palette on slot #1
 			vignette.setLutIndexVal(0, 16);
-			vignette.setLutIndexVal(1, 12);
+			vignette.setLutIndexVal(1, 7);
 			vignette.setLutIndexOffset(0);
 			vignette.setEnabled(true);
 		}
@@ -249,7 +249,7 @@ public final class DefaultAnimator implements PostProcessingAnimator {
 		}
 
 		float cf = collisionFactor;
-		// cf = 1f;
+		cf = 1f;
 
 		updateLights(ambient, trees, cf);
 
@@ -305,7 +305,8 @@ public final class DefaultAnimator implements PostProcessingAnimator {
 
 		float bsat = 0f, sat = 0f;
 		if (bloom != null) {
-			float intensity = 1.4f + 4f * cf;// + (nightMode ? 4f * cf : 0f);
+			// float intensity = 1.4f + 4f * cf;// + (nightMode ? 4f * cf : 0f);
+			float intensity = 1f + 2f * cf;// + (nightMode ? 4f * cf : 0f);
 			// Gdx.app.log("", "bloom intensity=" + intensity);
 			bloom.setBloomIntesity(intensity);
 
@@ -335,13 +336,14 @@ public final class DefaultAnimator implements PostProcessingAnimator {
 			// Gdx.app.log("", "sat=" + sat + ", bsat=" + bsat);
 		}
 
+		// cf = 1;
 		if (vignette != null) {
-			float lutIntensity = MathUtils.clamp(0.15f + timeModFactor * 1 + alertAmount.value * 1 + cf * 1, 0, 1);
+			float lutIntensity = MathUtils.clamp(0.4f + timeModFactor * 1 + alertAmount.value * 1 + cf * 1, 0, 1);
 			float offset = MathUtils.clamp(cf * 3 + alertAmount.value, 0, 1);
 			vignette.setLutIntensity(lutIntensity);
 			vignette.setLutIndexOffset(offset);
 			// vignette.setLutIndexVal(0, 16);
-			// vignette.setLutIndexVal(1, 12);
+			// vignette.setLutIndexVal(1, 7);
 		}
 	}
 }

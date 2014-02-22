@@ -354,7 +354,7 @@ public final class GameWorldRenderer {
 		return cameraZoom;
 	}
 
-	public void updateCameraAndRays () {
+	public void updateCamera () {
 		// update orthographic camera
 
 		float zoom = 1f / cameraZoom;
@@ -399,11 +399,9 @@ public final class GameWorldRenderer {
 
 		camPerspInvProj.set(camPersp.projection);
 		Matrix4.inv(camPerspInvProj.val);
-
-		updateRayHandler();
 	}
 
-	private void updateRayHandler () {
+	public void updateRayHandler () {
 		if (rayHandler != null) {
 
 			rayHandler.setAmbientLight(ambientColor);
