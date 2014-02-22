@@ -199,7 +199,7 @@ public final class DefaultAnimator implements PostProcessingAnimator {
 	}
 
 	private void updateLights (TrackProgressData progressData, Color ambient, Color trees, float collisionFactor) {
-		ambient.set(0.1f + collisionFactor, 0.05f, 0.2f, 0.5f + 0.2f * URacer.Game.getTimeModFactor());
+		ambient.set(0.1f + collisionFactor * 0.5f, 0.05f, 0.2f, 0.5f + 0.2f * URacer.Game.getTimeModFactor());
 
 		ambient.clamp();
 		trees.set(ambient);
@@ -263,6 +263,8 @@ public final class DefaultAnimator implements PostProcessingAnimator {
 			float amount = MathUtils.clamp(cf + 0.14f, 0, 1) * -0.8f;
 			amount -= 0.15f * AMath.fixup(curvature_factor - kdist);
 
+			// amount = 0.2f + cf * 5f;
+
 			// Gdx.app.log("", "" + amount);
 			crt.setChromaticDispersion(amount, amount);
 
@@ -309,7 +311,7 @@ public final class DefaultAnimator implements PostProcessingAnimator {
 			bsat *= (1f - (cf * 1f));
 
 			// float progress = MathUtils.clamp(progressData.playerToTarget, 0, 1) * 3f;
-			sat = 0.7f + (nightMode ? 0.5f : 0);// + progress;
+			sat = 0.7f + (nightMode ? 0.6f : 0);// + progress;
 			// sat = sat * (1 - timeModFactor);
 			sat = sat * (1f - cf);
 			sat = AMath.lerp(sat, -0.25f, MathUtils.clamp(alertAmount.value * 2f, 0f, 1f));
