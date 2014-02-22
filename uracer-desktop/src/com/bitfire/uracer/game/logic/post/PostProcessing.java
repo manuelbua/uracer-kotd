@@ -19,6 +19,7 @@ import com.bitfire.uracer.URacer;
 import com.bitfire.uracer.configuration.Config;
 import com.bitfire.uracer.configuration.UserPreferences;
 import com.bitfire.uracer.configuration.UserPreferences.Preference;
+import com.bitfire.uracer.game.logic.helpers.TrackProgressData;
 import com.bitfire.uracer.game.logic.post.animators.DefaultAnimator;
 import com.bitfire.uracer.game.logic.post.ssao.Ssao;
 import com.bitfire.uracer.game.player.PlayerCar;
@@ -165,9 +166,10 @@ public final class PostProcessing {
 		}
 	}
 
-	public void onBeforeRender (Color ambient, Color trees, float zoom, float warmUpCompletion, float collisionFactor) {
+	public void onBeforeRender (TrackProgressData progressData, Color ambient, Color trees, float zoom, float warmUpCompletion,
+		float collisionFactor) {
 		if (hasPostProcessor && hasAnimator) {
-			animator.update(ambient, trees, zoom, warmUpCompletion, collisionFactor);
+			animator.update(progressData, ambient, trees, zoom, warmUpCompletion, collisionFactor);
 		}
 	}
 

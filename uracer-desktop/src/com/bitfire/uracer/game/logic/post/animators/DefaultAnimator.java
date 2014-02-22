@@ -16,6 +16,7 @@ import com.bitfire.postprocessing.effects.Vignette;
 import com.bitfire.postprocessing.effects.Zoomer;
 import com.bitfire.uracer.URacer;
 import com.bitfire.uracer.configuration.Config;
+import com.bitfire.uracer.game.logic.helpers.TrackProgressData;
 import com.bitfire.uracer.game.logic.post.PostProcessing;
 import com.bitfire.uracer.game.logic.post.PostProcessingAnimator;
 import com.bitfire.uracer.game.logic.post.ssao.Ssao;
@@ -197,8 +198,9 @@ public final class DefaultAnimator implements PostProcessingAnimator {
 		}
 	}
 
-	private void updateLights (Color ambient, Color trees, float collisionFactor) {
+	private void updateLights (TrackProgressData progressData, Color ambient, Color trees, float collisionFactor) {
 		ambient.set(0.1f + collisionFactor, 0.05f, 0.2f, 0.5f + 0.1f * URacer.Game.getTimeModFactor());
+
 		ambient.clamp();
 		trees.set(ambient);
 
@@ -219,7 +221,8 @@ public final class DefaultAnimator implements PostProcessingAnimator {
 	}
 
 	@Override
-	public void update (Color ambient, Color trees, float zoomCamera, float warmUpCompletion, float collisionFactor) {
+	public void update (TrackProgressData progressData, Color ambient, Color trees, float zoomCamera, float warmUpCompletion,
+		float collisionFactor) {
 		float timeModFactor = URacer.Game.getTimeModFactor();
 
 		// dbg
@@ -240,7 +243,7 @@ public final class DefaultAnimator implements PostProcessingAnimator {
 		float cf = collisionFactor;
 		// cf = 1f;
 
-		updateLights(ambient, trees, cf);
+		updateLights(progressData, ambient, trees, cf);
 
 		if (crt != null) {
 			// compute time (add noise)
@@ -305,7 +308,8 @@ public final class DefaultAnimator implements PostProcessingAnimator {
 			// if (nightMode) bsat += 0.0f;
 			bsat *= (1f - (cf * 1f));
 
-			sat = 0.7f + (nightMode ? 0.5f : 0);
+			float progress = MathUtils.clamp(progressData.playerToTarget, 0, 1) * 3f;
+			sat = 0.7f + (nightMode ? 0.5f : 0) + progress;
 			// sat = sat * (1 - timeModFactor);
 			sat = sat * (1f - cf);
 			sat = AMath.lerp(sat, -0.25f, MathUtils.clamp(alertAmount.value * 2f, 0f, 1f));
@@ -327,7 +331,7 @@ public final class DefaultAnimator implements PostProcessingAnimator {
 
 		// cf = 1;
 		if (vignette != null) {
-			float lutIntensity = MathUtils.clamp(0.6f + timeModFactor * 1 + alertAmount.value * 1 + cf * 1, 0, 1);
+			float lutIntensity = MathUtils.clamp(0.25f + timeModFactor * 1 + alertAmount.value * 1 + cf * 1, 0, 1);
 			float offset = MathUtils.clamp(cf * 3 + alertAmount.value, 0, 1);
 			vignette.setLutIntensity(lutIntensity);
 			vignette.setLutIndexOffset(offset);
