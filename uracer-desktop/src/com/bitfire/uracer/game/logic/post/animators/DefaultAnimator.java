@@ -198,12 +198,7 @@ public final class DefaultAnimator implements PostProcessingAnimator {
 	}
 
 	private void updateLights (Color ambient, Color trees, float collisionFactor) {
-		ambient.set(0.1f, 0.05f, 0.15f, 0.4f + 0.2f * URacer.Game.getTimeModFactor());
-		// trees.set(ambient.r, ambient.g * 2f, ambient.b, 0.4f + 0.5f * URacer.Game.getTimeModFactor());
-
-		if (world.isNightMode()) {
-			ambient.set(0.1f, 0.05f, 0.2f, 0.4f + 0.2f * URacer.Game.getTimeModFactor());
-		}
+		ambient.set(0.1f, 0.05f, 0.2f, 0.45f + 0.15f * URacer.Game.getTimeModFactor());
 
 		float r_cf = collisionFactor;
 		ambient.r += r_cf;
@@ -311,13 +306,13 @@ public final class DefaultAnimator implements PostProcessingAnimator {
 			bloom.setBloomIntesity(intensity);
 
 			bsat = 1f;
-			bsat += 0.2f * timeModFactor;
+			// bsat += 0.2f * timeModFactor;
 
-			if (nightMode) bsat += 0.0f;
+			// if (nightMode) bsat += 0.0f;
 			bsat *= (1f - (cf * 1f));
 
 			sat = 0.7f + (nightMode ? 0.5f : 0);
-			sat = sat - sat * timeModFactor * 0.7f;
+			// sat = sat * (1 - timeModFactor);
 			sat = sat * (1f - cf);
 			sat = AMath.lerp(sat, -0.25f, MathUtils.clamp(alertAmount.value * 2f, 0f, 1f));
 			sat = AMath.lerp(sat, -0.25f, cf);
@@ -338,7 +333,7 @@ public final class DefaultAnimator implements PostProcessingAnimator {
 
 		// cf = 1;
 		if (vignette != null) {
-			float lutIntensity = MathUtils.clamp(0.4f + timeModFactor * 1 + alertAmount.value * 1 + cf * 1, 0, 1);
+			float lutIntensity = MathUtils.clamp(0.5f + timeModFactor * 1 + alertAmount.value * 1 + cf * 1, 0, 1);
 			float offset = MathUtils.clamp(cf * 3 + alertAmount.value, 0, 1);
 			vignette.setLutIntensity(lutIntensity);
 			vignette.setLutIndexOffset(offset);
