@@ -186,7 +186,7 @@ public final class Art {
 	//
 
 	private static void loadMeshesGraphics (boolean mipmap) {
-		meshTrackWall = newTexture("data/track/wall_3.png", mipmap);
+		meshTrackWall = newTexture("data/track/wall_4.png", mipmap);
 		meshTrackWall.setWrap(TextureWrap.ClampToEdge, TextureWrap.ClampToEdge);
 
 		meshMissing = newTexture("data/3d/textures/missing-mesh.png", mipmap);
