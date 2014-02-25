@@ -85,7 +85,6 @@ public final class PostProcessing {
 			needNormalDepthMap = true;
 		}
 
-		// addEffect(Effects.MotionBlur.name, new CameraMotion());
 		int refW = Config.Graphics.ReferenceScreenWidth;
 		int refH = Config.Graphics.ReferenceScreenHeight;
 
