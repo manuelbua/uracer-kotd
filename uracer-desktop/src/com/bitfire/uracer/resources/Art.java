@@ -29,8 +29,6 @@ public final class Art {
 
 	// 3d
 	public static Texture meshMissing;
-	public static Texture meshPalm;
-	public static Texture meshTribune;
 	public static Texture meshTreeTrunk;
 	public static ObjectMap<String, Texture> meshCar;
 	public static Texture[] meshTreeLeavesSpring;
@@ -190,8 +188,6 @@ public final class Art {
 		meshTrackWall.setWrap(TextureWrap.ClampToEdge, TextureWrap.ClampToEdge);
 
 		meshMissing = newTexture("data/3d/textures/missing-mesh.png", mipmap);
-		meshPalm = newTexture("data/3d/textures/palm.png", mipmap);
-		meshTribune = newTexture("data/3d/textures/tribune.png", mipmap);
 
 		// car textures
 		meshCar = new ObjectMap<String, Texture>();
@@ -211,8 +207,6 @@ public final class Art {
 	private static void disposeMeshesGraphics () {
 		meshMissing.dispose();
 		meshTrackWall.dispose();
-		meshPalm.dispose();
-		meshTribune.dispose();
 
 		// car textures
 		for (Texture t : meshCar.values()) {
