@@ -263,7 +263,7 @@ public final class ModelFactory {
 					// y-forward, z-up
 					// ObjLoader l = new ObjLoader();
 					// m = l.loadObj(Gdx.files.internal(model), true);
-					// Gdx.app.log("ModelFactory", "Attention, using deprecated model format!");
+					Gdx.app.log("ModelFactory", "Attention, ignoring deprecated OBJ model!");
 				}
 
 				cachedStillModels.put(modelHash, m);
