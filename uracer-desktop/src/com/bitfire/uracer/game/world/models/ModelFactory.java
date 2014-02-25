@@ -20,7 +20,7 @@ import com.bitfire.utils.Hash;
 
 public final class ModelFactory {
 	public enum ModelMesh {
-		Missing, Tree_1, Tree_2, Tree_3, Tree_4, Tree_5, Tree_6, Tree_7, Tree_8, Tree_9, Tree_10, Car
+		Missing, Tree_1, Tree_2, Tree_3, Tree_4, Tree_5, Tree_6, Tree_7, Tree_8, Tree_9, Car
 	}
 
 	private ModelFactory () {
@@ -63,8 +63,6 @@ public final class ModelFactory {
 			return ModelMesh.Tree_8;
 		} else if (mesh.equalsIgnoreCase("tree-9")) {
 			return ModelMesh.Tree_9;
-		} else if (mesh.equalsIgnoreCase("tree-10")) {
-			return ModelMesh.Tree_10;
 		} else if (mesh.equalsIgnoreCase("car")) {
 			return ModelMesh.Car;
 		}
@@ -186,18 +184,12 @@ public final class ModelFactory {
 			leavesTexture = Art.meshTreeLeavesSpring[6];
 			break;
 
-		case Tree_10:
-			treeModelName = "test-wall.g3dt";
-			treeMeshName = "plane_";
-			leavesTexture = Art.meshTreeLeavesSpring[6];
-			break;
 		// missing mesh mesh
 		// case Missing:
 		// default:
 		// stillModel = new OrthographicAlignedStillModel( getModel(
 		// "data/3d/models/missing-mesh.g3dt" ), getMaterial(
 		// modelMesh, Art.meshMissing ) );
-
 		}
 
 		stillModel = new TreeStillModel(getStillModel("data/3d/models/" + treeModelName),
@@ -231,7 +223,6 @@ public final class ModelFactory {
 		} else {
 			TextureAttribute ta = new TextureAttribute(texture, 0, "u_texture");
 			m = new Material("default", ta);
-
 			cachedMaterials.put(materialHash, m);
 		}
 
