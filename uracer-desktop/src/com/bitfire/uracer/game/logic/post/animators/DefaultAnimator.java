@@ -199,7 +199,7 @@ public final class DefaultAnimator implements PostProcessingAnimator {
 	}
 
 	private void updateLights (TrackProgressData progressData, Color ambient, Color trees, float collisionFactor) {
-		ambient.set(0.1f + collisionFactor * 0.5f, 0.05f, 0.2f, 0.5f + 0.2f * URacer.Game.getTimeModFactor());
+		ambient.set(0.1f + collisionFactor * 0.5f, 0.05f, 0.2f, 0.5f + 0.1f * URacer.Game.getTimeModFactor());
 
 		ambient.clamp();
 		trees.set(ambient);
@@ -215,7 +215,7 @@ public final class DefaultAnimator implements PostProcessingAnimator {
 				float maxdist = 30;
 				maxdist *= maxdist;
 				dist = 1 - MathUtils.clamp(dist, 0, maxdist) / maxdist;
-				lights[l].setColor(1, 0.9f, 0.7f, 0.55f);// + AMath.fixup(0.4f * dist));
+				lights[l].setColor(1, 0.9f, 0.5f, 0.55f);// + AMath.fixup(0.4f * dist));
 			}
 		}
 	}
