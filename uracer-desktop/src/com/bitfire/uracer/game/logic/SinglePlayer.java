@@ -271,7 +271,7 @@ public class SinglePlayer extends BaseLogic {
 								msg = "too slow! (#" + ri.discarded.getShortId() + ")";
 								ReplayUtils.pruneReplay(ri.discarded);
 								break;
-							case NotDiscarded:
+							case Accepted:
 								break;
 							}
 
@@ -403,7 +403,7 @@ public class SinglePlayer extends BaseLogic {
 					msg = "Too slow!";
 					duration = 1.5f;
 					break;
-				case NotDiscarded:
+				case Accepted:
 					break;
 				}
 

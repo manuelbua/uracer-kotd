@@ -14,7 +14,7 @@ public final class ReplayManager implements Disposable {
 	private final ReplayResult replayInfo = new ReplayResult();
 
 	public enum DiscardReason {
-		Null, InvalidMinDuration, Invalid, WrongTrack, Slower, NotDiscarded
+		Null, InvalidMinDuration, Invalid, WrongTrack, Slower, Accepted
 	}
 
 	/** Describes Replay position and state */
@@ -123,7 +123,7 @@ public final class ReplayManager implements Disposable {
 				// replay accepted
 				replayInfo.is_accepted = true;
 				replayInfo.accepted.copy(new_replay.info);
-				replayInfo.reason = DiscardReason.NotDiscarded;
+				replayInfo.reason = DiscardReason.Accepted;
 				replayInfo.position = pos + 1;
 				replayInfo.new_replay = new_replay;
 
