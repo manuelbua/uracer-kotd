@@ -30,7 +30,7 @@ import com.bitfire.uracer.utils.URacerRuntimeException;
 public final class GameLevels {
 
 	private static final Map<String, GameLevelDescriptor> levelIdToDescriptor = new HashMap<String, GameLevelDescriptor>();
-	private static final AtlasTmxMapLoader mapLoader = new AtlasTmxMapLoader(); // new URacerTmxMapLoader();
+	private static final AtlasTmxMapLoader mapLoader = new AtlasTmxMapLoader();
 	private static final AtlasTmxMapLoader.AtlasTiledMapLoaderParameters mapLoaderParams = new AtlasTmxMapLoader.AtlasTiledMapLoaderParameters();
 	private static final XmlReader xml = new XmlReader();
 	private static final List<GameLevelDescriptor> levels = new ArrayList<GameLevels.GameLevelDescriptor>();
@@ -90,7 +90,7 @@ public final class GameLevels {
 			throw new URacerRuntimeException("Path not found (" + Storage.Levels + "), cannot check for available game levels.");
 		}
 
-		// check for any levels
+		// check for any level
 		FileHandle[] tracks = dirLevels.list("tmx");
 		if (tracks.length == 0) {
 			throw new URacerRuntimeException("Cannot find game levels.");
