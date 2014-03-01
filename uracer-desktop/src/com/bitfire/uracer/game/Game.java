@@ -94,4 +94,7 @@ public class Game implements Disposable {
 		gameLogic.restartGame();
 	}
 
+	public void quit () {
+		gameLogic.quitGame();
+	}
 }

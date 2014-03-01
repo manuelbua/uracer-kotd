@@ -51,9 +51,6 @@ public final class GameInput {
 		} else if (input.isPressed(Keys.T)) {
 			logic.resetGame();
 			logic.showMessage("Reset", 1.5f, Message.Type.Information, Position.Bottom, Size.Big);
-		} else if (input.isPressed(Keys.Q) || input.isPressed(Keys.ESCAPE) || input.isPressed(Keys.BACK)) {
-			logic.quitGame();
-			// return;
 		} else if (input.isPressed(Keys.TAB)) {
 			// choose next/prev best target
 			boolean backward = input.isOn(Keys.SHIFT_LEFT) || input.isOn(Keys.SHIFT_RIGHT);

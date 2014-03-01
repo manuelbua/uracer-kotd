@@ -2,7 +2,9 @@
 package com.bitfire.uracer.game.screens;
 
 import com.badlogic.gdx.Gdx;
+import com.badlogic.gdx.Input.Keys;
 import com.badlogic.gdx.graphics.glutils.FrameBuffer;
+import com.bitfire.uracer.Input;
 import com.bitfire.uracer.URacer;
 import com.bitfire.uracer.configuration.UserPreferences;
 import com.bitfire.uracer.configuration.UserPreferences.Preference;
@@ -14,12 +16,14 @@ import com.bitfire.uracer.screen.Screen;
 
 public class GameScreen extends Screen {
 	private Game game = null;
+	private Input input = null;
 
 	@Override
 	public void init () {
 		// simulate slowness
 		// try { Thread.sleep( 1000 ); } catch( InterruptedException e ) {}
 
+		input = URacer.Game.getInputSystem();
 		if (!GameLevels.levelIdExists(ScreensShared.selectedLevelId)) {
 			Gdx.app.error("GameScreen", "The specified track could not be found.");
 			URacer.Game.show(ScreenType.MainScreen);
@@ -41,6 +45,9 @@ public class GameScreen extends Screen {
 	@Override
 	public void tick () {
 		if (game != null) game.tick();
+		if (input.isPressed(Keys.Q) || input.isPressed(Keys.ESCAPE) || input.isPressed(Keys.BACK)) {
+			game.quit();
+		}
 	}
 
 	@Override
