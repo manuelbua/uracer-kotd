@@ -79,4 +79,8 @@ public abstract class SoundEffect extends PlayerClient implements Disposable {
 	public void gameResume () {
 		isPaused = false;
 	}
+
+	public boolean isPaused () {
+		return isPaused;
+	}
 }
