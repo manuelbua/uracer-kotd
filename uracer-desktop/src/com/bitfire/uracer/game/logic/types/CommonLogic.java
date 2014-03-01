@@ -321,8 +321,6 @@ public abstract class CommonLogic implements GameLogic, GameLogicObserver {
 
 	@Override
 	public void tick () {
-		// Gdx.app.log("CommonLogic", inputSystem.isOn(Keys.SPACE) + " / " + inputSystem.isTouching(MouseButton.Right));
-
 		if (quitPending) {
 			_doQuit();
 		} else {

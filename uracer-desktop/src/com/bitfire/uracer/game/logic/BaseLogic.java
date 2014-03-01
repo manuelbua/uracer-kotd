@@ -158,6 +158,7 @@ public abstract class BaseLogic extends CommonLogic {
 		// TODO make it a toggleable option
 		cameraZoom = AMath.lerp(cameraZoom, maxZoom, timeModFactor);
 		cameraZoom = AMath.clampf(cameraZoom, minZoom, maxZoom);
+
 		cameraZoom = AMath.lerp(cameraZoom, maxZoom, collisionFactor.value * 5f);
 		cameraZoom = AMath.lerp(prevZoom, cameraZoom, 0.1f);
 		cameraZoom = AMath.clampf(cameraZoom, minZoom, maxZoom * 2f); // relax max a bit
