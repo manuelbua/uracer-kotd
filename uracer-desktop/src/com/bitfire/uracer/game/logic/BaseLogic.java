@@ -198,7 +198,7 @@ public abstract class BaseLogic extends CommonLogic {
 
 		float clampedImpactForce = AMath.normalizeImpactForce(data.impulses.len());
 
-		// while busy, a new collision factor will be accepted *only* if stronger
+		// while busy, a new collision factor will be accepted *only* if stronger than the previous one
 		if (clampedImpactForce > 0 && clampedImpactForce > lastImpactForce) {
 			lastImpactForce = clampedImpactForce;
 
