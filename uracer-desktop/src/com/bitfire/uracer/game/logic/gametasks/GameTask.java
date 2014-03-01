@@ -14,7 +14,6 @@ import com.bitfire.uracer.utils.URacerRuntimeException;
 public abstract class GameTask extends Task implements Disposable {
 	protected PlayerCar player;
 	protected boolean hasPlayer = false;
-	protected boolean isPaused = false;
 
 	private GameLogicEvent.Listener logicListener = new GameLogicEvent.Listener() {
 		@Override
@@ -69,16 +68,6 @@ public abstract class GameTask extends Task implements Disposable {
 	public void onPlayer (PlayerCar player) {
 		this.player = player;
 		this.hasPlayer = (player != null);
-	}
-
-	@Override
-	protected void onGamePause () {
-		isPaused = true;
-	}
-
-	@Override
-	protected void onGameResume () {
-		isPaused = false;
 	}
 
 	public void onGameReset () {
