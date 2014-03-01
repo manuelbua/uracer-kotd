@@ -48,13 +48,17 @@ public class GameScreen extends Screen {
 		if (game != null) game.tick();
 
 		// debug
-		if (input.isPressed(Keys.Q) || input.isPressed(Keys.ESCAPE) || input.isPressed(Keys.BACK)) {
+		if (input.isPressed(Keys.ESCAPE)) {
 			paused = !paused;
 			if (paused) {
 				game.pause();
 			} else {
 				game.resume();
 			}
+		}
+
+		if (paused && input.isPressed(Keys.Q)) {
+			game.quit();
 		}
 	}
 
