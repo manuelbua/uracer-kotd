@@ -121,7 +121,7 @@ public final class PlayerEngineSoundEffect extends SoundEffect {
 
 	@Override
 	public void tick () {
-		if (!hasPlayer) return;
+		if (!hasPlayer || isPaused) return;
 
 		// if (outOfTrack) {
 		// soundset.shiftDown();
@@ -169,6 +169,18 @@ public final class PlayerEngineSoundEffect extends SoundEffect {
 	@Override
 	public void stop () {
 		soundset.stop();
+	}
+
+	@Override
+	public void gamePause () {
+		super.gamePause();
+		soundset.stop();
+	}
+
+	@Override
+	public void gameResume () {
+		super.gameResume();
+		soundset.start();
 	}
 
 	@Override
