@@ -22,7 +22,7 @@ public class PlayerSmokeTrails extends TrackEffect {
 
 	public PlayerSmokeTrails () {
 		super(TrackEffectType.CarSmokeTrails);
-		fx = new SmokeEffect();
+		fx = new SmokeEffect(this);
 		fx.setMaxParticleCount(MaxParticles);
 	}
 
@@ -105,6 +105,7 @@ public class PlayerSmokeTrails extends TrackEffect {
 	}
 
 	private static final class SmokeEffect {
+		private TrackEffect owner;
 		protected ParticleEffect effect;
 		private ParticleEmitter baseEmitter;
 
@@ -114,7 +115,8 @@ public class PlayerSmokeTrails extends TrackEffect {
 
 		// private final float MaxParticlesPerEmitterPerSec;
 
-		public SmokeEffect () {
+		public SmokeEffect (TrackEffect owner) {
+			this.owner = owner;
 			effect = new ParticleEffect();
 			effect.load(Gdx.files.internal("data/partfx/smoke-small.p"), Art.particles);
 
@@ -163,8 +165,9 @@ public class PlayerSmokeTrails extends TrackEffect {
 		// }
 
 		public void render (SpriteBatch batch, float x, float y) {
+			float delta = owner.isPaused() ? 0 : URacer.Game.getLastDeltaSecs() * URacer.timeMultiplier;
 			effect.setPosition(x, y);
-			effect.draw(batch, URacer.Game.getLastDeltaSecs() * URacer.timeMultiplier);
+			effect.draw(batch, delta);
 		}
 
 		public int getParticleCount () {
