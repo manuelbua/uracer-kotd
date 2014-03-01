@@ -64,6 +64,7 @@ public final class Time extends Task {
 	/** Resumes/continues tracking, without resetting the accumulated state (should be called "continue" but can't */
 	public void resume () {
 		stopped = false;
+		lastStartTime = TimeUtils.nanoTime();
 	}
 
 	/** Resets the internal state */

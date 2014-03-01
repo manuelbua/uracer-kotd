@@ -125,15 +125,17 @@ public abstract class BaseLogic extends CommonLogic {
 		gameWorldRenderer.setCameraPosition(cameraPos);
 		gameWorldRenderer.updateCamera();
 
-		// update lights
-		// sync post-processing animators
-		postProcessing.onBeforeRender(progressData, gameWorldRenderer.getAmbientColor(), gameWorldRenderer.getTreesAmbientColor(),
-			zoom, playerLapMonitor.getWarmUpCompletion(), collisionFactor.value);
+		if (!paused) {
+			// update lights
+			// sync post-processing animators
+			postProcessing.onBeforeRender(progressData, gameWorldRenderer.getAmbientColor(),
+				gameWorldRenderer.getTreesAmbientColor(), zoom, playerLapMonitor.getWarmUpCompletion(), collisionFactor.value);
+		}
 
 		gameWorldRenderer.updateRayHandler();
 
 		// game tweener step
-		GameTweener.update();
+		if (!paused) GameTweener.update();
 	}
 
 	@Override

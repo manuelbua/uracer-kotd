@@ -48,7 +48,6 @@ public class Game implements Disposable {
 		gameLogic.dispose();
 		gameRenderer.dispose();
 		gameWorld.dispose();
-
 		taskManager.dispose();
 	}
 
@@ -71,17 +70,19 @@ public class Game implements Disposable {
 	}
 
 	public void render (FrameBuffer dest) {
-		gameRenderer.render(dest, gameLogic.isQuitPending());
+		gameRenderer.render(dest, gameLogic.isQuitPending(), gameLogic.isPaused());
 	}
 
 	public void pause () {
 		taskManager.dispatchEvent(TaskManagerEvent.Type.onPause);
+		gameLogic.pauseGame();
 		Gdx.app.log("Game", "Paused");
 	}
 
 	public void resume () {
 		gameRenderer.rebind();
 		taskManager.dispatchEvent(TaskManagerEvent.Type.onResume);
+		gameLogic.resumeGame();
 		Gdx.app.log("Game", "Resumed");
 	}
 

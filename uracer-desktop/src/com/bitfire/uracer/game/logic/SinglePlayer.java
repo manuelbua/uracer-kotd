@@ -222,8 +222,10 @@ public class SinglePlayer extends BaseLogic {
 				gameWorldRenderer.updatePlayerHeadlights(playerCar);
 			}
 			positionPx.set(playerCar.state().position);
-			positionPx.add(camShaker.compute(getCollisionFactor()));
-			positionPx.add(camShaker.compute(getOutOfTrackFactor()));
+			if (!paused) {
+				positionPx.add(camShaker.compute(getCollisionFactor()));
+				positionPx.add(camShaker.compute(getOutOfTrackFactor()));
+			}
 		} else if (isGhostActive(0)) {
 			// FIXME use available/choosen replay
 			positionPx.set(getGhost(0).state().position);

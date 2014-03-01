@@ -30,12 +30,26 @@ public final class GameInput {
 		this.timeMode = mode;
 	}
 
+	public TimeDilateInputMode getInputMode () {
+		return this.timeMode;
+	}
+
 	public boolean isTimeDilating () {
 		return timeDilation;
 	}
 
 	public void resetTimeDilating () {
 		timeDilation = false;
+	}
+
+	public void ensureConsistenceAfterResume () {
+		// In case the input mode is set to TouchAndRelease then the keyup/button-released event may have
+		// been already triggered during the pause, check for it and disable time dilation if it's the case.
+		if (timeMode == TimeDilateInputMode.TouchAndRelease) {
+			if (!input.isOn(Keys.SPACE) && !input.isTouching(MouseButton.Right)) {
+				logic.endTimeDilation();
+			}
+		}
 	}
 
 	// public void reset () {

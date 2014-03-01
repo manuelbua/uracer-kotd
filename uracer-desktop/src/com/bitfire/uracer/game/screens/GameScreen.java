@@ -45,7 +45,7 @@ public class GameScreen extends Screen {
 
 	@Override
 	public void tick () {
-		if (game != null && !paused) game.tick();
+		if (game != null) game.tick();
 
 		// debug
 		if (input.isPressed(Keys.Q) || input.isPressed(Keys.ESCAPE) || input.isPressed(Keys.BACK)) {
@@ -60,7 +60,7 @@ public class GameScreen extends Screen {
 
 	@Override
 	public void tickCompleted () {
-		if (game != null && !paused) game.tickCompleted();
+		if (game != null) game.tickCompleted();
 	}
 
 	@Override

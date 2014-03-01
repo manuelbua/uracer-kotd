@@ -22,7 +22,13 @@ public interface GameLogic {
 
 	void quitGame ();
 
+	void pauseGame ();
+
+	void resumeGame ();
+
 	boolean isQuitPending ();
+
+	boolean isPaused ();
 
 	float getCollisionFactor ();
 
