@@ -185,7 +185,6 @@ public final class MainScreen extends Screen {
 			setupUI();
 			enable();
 		} else if (input.isPressed(Keys.S)) {
-			Gdx.app.log("", "here");
 			UserPreferences.string(Preference.LastPlayedTrack, ScreensShared.selectedLevelId);
 			UserPreferences.save();
 			URacer.Game.show(ScreenType.GameScreen);
