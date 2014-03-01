@@ -47,7 +47,7 @@ public class GameScreen extends Screen {
 	public void tick () {
 		if (game != null) game.tick();
 
-		// debug
+		// toggle in-game pause (even menus now!)
 		if (input.isPressed(Keys.ESCAPE)) {
 			paused = !paused;
 			if (paused) {
@@ -57,6 +57,7 @@ public class GameScreen extends Screen {
 			}
 		}
 
+		// quit shortcut
 		if (paused && input.isPressed(Keys.Q)) {
 			game.quit();
 		}
