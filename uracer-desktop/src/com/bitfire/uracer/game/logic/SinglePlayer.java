@@ -208,7 +208,7 @@ public class SinglePlayer extends BaseLogic {
 	}
 
 	private float getOutOfTrackFactor () {
-		float oot = MathUtils.clamp(getOutOfTrackTimer().elapsed().absSeconds, 0, 1);
+		float oot = MathUtils.clamp(getOutOfTrackTimer().elapsed().absSeconds, 0, 0.5f) * 2;
 		float s = MathUtils.clamp(playerCar.carState.currSpeedFactor * 100f, 0, 1);
 		// Gdx.app.log("", "oot=" + oot + ", s=" + s);
 		return 0.075f * oot * s;
