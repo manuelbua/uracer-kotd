@@ -17,6 +17,7 @@ import com.bitfire.uracer.screen.Screen;
 public class GameScreen extends Screen {
 	private Game game = null;
 	private Input input = null;
+	private boolean paused = false;
 
 	@Override
 	public void init () {
@@ -44,15 +45,22 @@ public class GameScreen extends Screen {
 
 	@Override
 	public void tick () {
-		if (game != null) game.tick();
+		if (game != null && !paused) game.tick();
+
+		// debug
 		if (input.isPressed(Keys.Q) || input.isPressed(Keys.ESCAPE) || input.isPressed(Keys.BACK)) {
-			game.quit();
+			paused = !paused;
+			if (paused) {
+				game.pause();
+			} else {
+				game.resume();
+			}
 		}
 	}
 
 	@Override
 	public void tickCompleted () {
-		if (game != null) game.tickCompleted();
+		if (game != null && !paused) game.tickCompleted();
 	}
 
 	@Override
