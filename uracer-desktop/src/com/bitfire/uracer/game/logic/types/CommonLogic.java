@@ -327,8 +327,8 @@ public abstract class CommonLogic implements GameLogic, GameLogicObserver {
 			_doQuit();
 		} else {
 			// compute the next-frame time multiplier
+			URacer.timeMultiplier = getTimeModulator().getTime();
 			if (!paused) {
-				URacer.timeMultiplier = getTimeModulator().getTime();
 				gameInput.update();
 				handleExtraInput();
 			}
