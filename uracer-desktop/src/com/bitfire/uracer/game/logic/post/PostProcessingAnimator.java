@@ -7,11 +7,15 @@ import com.bitfire.uracer.game.player.PlayerCar;
 
 public interface PostProcessingAnimator {
 	void update (TrackProgressData progressData, Color ambient, Color trees, float zoom, float warmUpCompletion,
-		float collisionFactor);
+		float collisionFactor, boolean paused);
 
 	void alertBegins (int milliseconds);
 
 	void alertEnds (int milliseconds);
+
+	void gamePause (int milliseconds);
+
+	void gameResume (int milliseconds);
 
 	public void alert (int milliseconds);
 

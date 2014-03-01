@@ -276,6 +276,7 @@ public abstract class CommonLogic implements GameLogic, GameLogicObserver {
 	@Override
 	public void pauseGame () {
 		paused = true;
+		postProcessing.gamePause(500);
 		if (gameInput.isTimeDilating()) {
 			getTimeDilationTimer().stop();
 			// endTimeDilation();
@@ -285,6 +286,7 @@ public abstract class CommonLogic implements GameLogic, GameLogicObserver {
 	@Override
 	public void resumeGame () {
 		paused = false;
+		postProcessing.gameResume(500);
 		if (gameInput.isTimeDilating()) {
 			getTimeDilationTimer().resume();
 			gameInput.ensureConsistenceAfterResume();
