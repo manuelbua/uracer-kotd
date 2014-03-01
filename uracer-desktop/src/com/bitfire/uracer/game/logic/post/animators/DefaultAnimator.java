@@ -333,7 +333,7 @@ public final class DefaultAnimator implements PostProcessingAnimator {
 
 		// cf = 1;
 		if (vignette != null) {
-			float lutIntensity = MathUtils.clamp(0.7f + timeModFactor * 1 + alertAmount.value * 1 + cf * 1, 0, 1);
+			float lutIntensity = MathUtils.clamp(0.7f + timeModFactor * 1 + alertAmount.value * 1 + cf * 1, 0, 1.25f);
 			float offset = MathUtils.clamp(cf * 3 + alertAmount.value, 0, 1);
 			vignette.setLutIntensity(lutIntensity);
 			vignette.setLutIndexOffset(offset);
