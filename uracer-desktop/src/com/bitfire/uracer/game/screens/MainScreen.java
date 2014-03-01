@@ -156,8 +156,6 @@ public final class MainScreen extends Screen {
 		if (levelIndex >= 0 && levelIndex < GameLevels.getLevels().length) {
 			GameLevelDescriptor desc = GameLevels.getLevels()[levelIndex];
 			ScreensShared.selectedLevelId = desc.getId();
-			UserPreferences.string(Preference.LastPlayedTrack, ScreensShared.selectedLevelId);
-			UserPreferences.save();
 		}
 	}
 
@@ -187,6 +185,9 @@ public final class MainScreen extends Screen {
 			setupUI();
 			enable();
 		} else if (input.isPressed(Keys.S)) {
+			Gdx.app.log("", "here");
+			UserPreferences.string(Preference.LastPlayedTrack, ScreensShared.selectedLevelId);
+			UserPreferences.save();
 			URacer.Game.show(ScreenType.GameScreen);
 		} else if (input.isPressed(Keys.O)) {
 			URacer.Game.show(ScreenType.OptionsScreen);
