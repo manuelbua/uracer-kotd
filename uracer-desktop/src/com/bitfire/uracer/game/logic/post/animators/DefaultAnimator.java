@@ -282,15 +282,17 @@ public final class DefaultAnimator implements PostProcessingAnimator {
 
 		updateLights(progressData, ambient, trees, cf);
 
-		if (!paused && crt != null) {
-			// compute time (add noise)
-			float secs = (float)(TimeUtils.millis() - startMs) / 1000;
-			// boolean randomNoiseInTime = false;
-			// if (randomNoiseInTime) {
-			// crt.setTime(secs + MathUtils.random() / (MathUtils.random() * 64f + 0.001f));
-			// } else {
-			crt.setTime(secs);
-			// }
+		if (crt != null) {
+			if (!paused) {
+				// compute time (add noise)
+				float secs = (float)(TimeUtils.millis() - startMs) / 1000;
+				// boolean randomNoiseInTime = false;
+				// if (randomNoiseInTime) {
+				// crt.setTime(secs + MathUtils.random() / (MathUtils.random() * 64f + 0.001f));
+				// } else {
+				crt.setTime(secs);
+				// }
+			}
 
 			// needed variables
 			float curvature_factor = MathUtils.clamp(((zoomCamera - 1) / GameWorldRenderer.ZoomRange), 0, 1);
@@ -312,7 +314,7 @@ public final class DefaultAnimator implements PostProcessingAnimator {
 			crt.setZoom(1 - (dist / 2));
 		}
 
-		if (!paused && zoom != null) {
+		if (zoom != null) {
 			if (hasPlayer) {
 				float sfactor = speed.get();
 				float strength = -0.05f * timeModFactor * sfactor + (-0.05f * sfactor) - 0.4f * cf;
