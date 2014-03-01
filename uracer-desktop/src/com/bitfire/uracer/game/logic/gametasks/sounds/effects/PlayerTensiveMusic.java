@@ -167,6 +167,8 @@ public final class PlayerTensiveMusic extends SoundEffect {
 
 	@Override
 	public void tick () {
+		if (isPaused) return;
+
 		float tgt_vol = 0;
 		// boolean isAheadByMeters = false;
 
