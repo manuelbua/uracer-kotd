@@ -98,7 +98,8 @@ public final class MainScreen extends Screen {
 				levels[idx++] = ld.toString();
 			}
 
-			trackList = UIUtils.newListBox(levels, new ChangeListener() {
+			trackList = UIUtils.newListBox(levels);
+			trackList.addListener(new ChangeListener() {
 				@Override
 				public void changed (ChangeEvent event, Actor actor) {
 					@SuppressWarnings("unchecked")
