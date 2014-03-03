@@ -35,7 +35,7 @@ public final class MainScreen extends Screen {
 	private Stage ui;
 	private Input input;
 	private Table root, ltable;
-	private List trackList;
+	private List<String> trackList;
 
 	@Override
 	public void init () {
@@ -92,10 +92,17 @@ public final class MainScreen extends Screen {
 		// track list
 		{
 			ScrollPane listPane = UIUtils.newScrollPane();
-			trackList = UIUtils.newListBox(GameLevels.getLevels(), new ChangeListener() {
+			String[] levels = new String[GameLevels.getLevels().length];
+			int idx = 0;
+			for (GameLevelDescriptor ld : GameLevels.getLevels()) {
+				levels[idx++] = ld.toString();
+			}
+
+			trackList = UIUtils.newListBox(levels, new ChangeListener() {
 				@Override
 				public void changed (ChangeEvent event, Actor actor) {
-					List source = (List)actor;
+					@SuppressWarnings("unchecked")
+					List<String> source = (List<String>)actor;
 					chooseLevel(source.getSelectedIndex());
 				}
 			});
@@ -106,7 +113,7 @@ public final class MainScreen extends Screen {
 			// restore previous user selection, if any
 			if (ScreensShared.selectedLevelId.length() > 0) {
 				if (GameLevels.levelIdExists(ScreensShared.selectedLevelId)) {
-					trackList.setSelection(GameLevels.getLevel(ScreensShared.selectedLevelId).toString());
+					trackList.getSelection().set(GameLevels.getLevel(ScreensShared.selectedLevelId).toString());
 				} else {
 					// level not found?
 					chooseFirstLevelAndSave(trackList);
@@ -159,7 +166,7 @@ public final class MainScreen extends Screen {
 		}
 	}
 
-	private void chooseFirstLevelAndSave (List trackList) {
+	private void chooseFirstLevelAndSave (List<String> trackList) {
 		trackList.setSelectedIndex(0);
 		GameLevelDescriptor desc = GameLevels.getLevels()[0];
 		ScreensShared.selectedLevelId = desc.getId();
@@ -191,12 +198,12 @@ public final class MainScreen extends Screen {
 		} else if (input.isPressed(Keys.O)) {
 			URacer.Game.show(ScreenType.OptionsScreen);
 		} else if (input.isPressed(Keys.UP)) {
-			int count = trackList.getItems().length;
+			int count = trackList.getItems().size;
 			int newidx = MathUtils.clamp(trackList.getSelectedIndex() - 1, 0, count - 1);
 			trackList.setSelectedIndex(newidx);
 			chooseLevel(newidx);
 		} else if (input.isPressed(Keys.DOWN)) {
-			int count = trackList.getItems().length;
+			int count = trackList.getItems().size;
 			int newidx = MathUtils.clamp(trackList.getSelectedIndex() + 1, 0, count - 1);
 			trackList.setSelectedIndex(newidx);
 			chooseLevel(newidx);

@@ -35,20 +35,6 @@ public class StillModel implements Model {
 	}
 
 	@Override
-	public void render () {
-		int len = subMeshes.length;
-		for (int i = 0; i < len; i++) {
-			StillSubMesh subMesh = subMeshes[i];
-			if (i == 0) {
-				subMesh.material.bind();
-			} else if (!subMeshes[i - 1].material.equals(subMesh.material)) {
-				subMesh.material.bind();
-			}
-			subMesh.mesh.render(subMesh.primitiveType);
-		}
-	}
-
-	@Override
 	public void render (ShaderProgram program) {
 		int len = subMeshes.length;
 		for (int i = 0; i < len; i++) {

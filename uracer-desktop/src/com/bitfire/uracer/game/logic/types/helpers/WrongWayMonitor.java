@@ -39,7 +39,7 @@ public class WrongWayMonitor {
 					GameEvents.wrongWay.trigger(null, WrongWayMonitorEvent.Type.onWrongWayBegins);
 					// Gdx.app.log("WrongWayMonitor", "--> wrong way detected, invalidating lap");
 				} else {
-					// Gdx.app.log("WrongWayMonitor", "--> " + wrongWayTimer.elapsed(Reference.TickSeconds));
+					// Gdx.app.log("WrongWayMonitor", "--> " + wrongWayTimer.elapsed().tickSeconds);
 				}
 			}
 

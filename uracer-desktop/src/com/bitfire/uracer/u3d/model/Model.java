@@ -16,18 +16,12 @@
 
 package com.bitfire.uracer.u3d.model;
 
-import com.badlogic.gdx.graphics.GL10;
 import com.badlogic.gdx.graphics.GL20;
 import com.badlogic.gdx.graphics.glutils.ShaderProgram;
 import com.badlogic.gdx.math.collision.BoundingBox;
 import com.bitfire.uracer.u3d.materials.Material;
 
 public interface Model {
-	/** Renders the model using the {@link GL10} pipeline.<br />
-	 * <br />
-	 * <strong>Important:</strong> This model must have materials set before you can use this render function. Do that by using
-	 * {@link Model#setMaterials(Material...)}. */
-	public void render ();
 
 	/** Renders this model using the {@link GL20} shader pipeline.<br />
 	 * <br />

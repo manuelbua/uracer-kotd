@@ -6,7 +6,6 @@ import java.util.Set;
 
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Input.Keys;
-import com.badlogic.gdx.graphics.GL10;
 import com.badlogic.gdx.graphics.GL20;
 import com.badlogic.gdx.graphics.PerspectiveCamera;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
@@ -604,7 +603,7 @@ public final class DebugHelper extends GameTask implements DisposableTasks {
 		Gdx.gl.glEnable(GL20.GL_BLEND);
 		Gdx.gl.glBlendFunc(GL20.GL_SRC_ALPHA, GL20.GL_ONE_MINUS_SRC_ALPHA);
 
-		dbg.begin(camPersp.combined, GL10.GL_TRIANGLES);
+		dbg.begin(camPersp.combined, GL20.GL_TRIANGLES);
 		{
 			dbg.color(r, g, b, alpha);
 			dbg.vertex(corners[0].x, corners[0].y, corners[0].z + offset);

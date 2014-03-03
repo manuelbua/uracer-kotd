@@ -3,7 +3,7 @@ package com.bitfire.uracer.game.logic.gametasks.hud.elements.player;
 
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.Color;
-import com.badlogic.gdx.graphics.GL10;
+import com.badlogic.gdx.graphics.GL20;
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.Sprite;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
@@ -152,7 +152,7 @@ public class TrackProgress extends Positionable {
 
 			// set mask
 			texMask.bind(1);
-			Gdx.gl.glActiveTexture(GL10.GL_TEXTURE0);
+			Gdx.gl.glActiveTexture(GL20.GL_TEXTURE0);
 			shProgress.setUniformi("u_texture1", 1);
 
 			scl += .07f * URacer.Game.getTimeModFactor();

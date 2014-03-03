@@ -22,7 +22,6 @@ public final class URacerDesktop {
 		// set to uracer defaults
 		config.addIcon("data/base/icon.png", FileType.Internal);
 		config.title = URacer.Name + " (" + URacer.versionInfo + ")";
-		config.useGL20 = true;
 		config.resizable = false;
 		config.samples = 0;
 		config.audioDeviceSimultaneousSources = 32;

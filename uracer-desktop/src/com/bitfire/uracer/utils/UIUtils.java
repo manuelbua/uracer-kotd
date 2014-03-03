@@ -44,27 +44,31 @@ public final class UIUtils {
 		return cb;
 	}
 
-	public static SelectBox newSelectBox (Object[] items) {
+	public static SelectBox<String> newSelectBox (String[] items) {
 		return newSelectBox(items, null);
 	}
 
-	public static SelectBox newSelectBox (Object[] items, ChangeListener listener) {
-		SelectBox sb = new SelectBox(items, Art.scrSkin);
+	public static SelectBox<String> newSelectBox (String[] items, ChangeListener listener) {
+		SelectBox<String> sb = new SelectBox<String>(Art.scrSkin);
 		if (listener != null) {
 			sb.addListener(listener);
 		}
+
+		sb.setItems(items);
 		return sb;
 	}
 
-	public static List newListBox (Object[] items) {
+	public static List<String> newListBox (String[] items) {
 		return newListBox(items, null);
 	}
 
-	public static List newListBox (Object[] items, ChangeListener listener) {
-		List list = new List(items, Art.scrSkin);
+	public static List<String> newListBox (String[] items, ChangeListener listener) {
+		List<String> list = new List<String>(Art.scrSkin);
 		if (listener != null) {
 			list.addListener(listener);
 		}
+
+		list.setItems(items);
 		return list;
 	}
 

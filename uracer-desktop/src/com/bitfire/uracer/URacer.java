@@ -9,7 +9,7 @@ import com.badlogic.gdx.Application;
 import com.badlogic.gdx.Application.ApplicationType;
 import com.badlogic.gdx.ApplicationListener;
 import com.badlogic.gdx.Gdx;
-import com.badlogic.gdx.graphics.GL10;
+import com.badlogic.gdx.graphics.GL20;
 import com.badlogic.gdx.utils.TimeUtils;
 import com.bitfire.uracer.configuration.BootConfig;
 import com.bitfire.uracer.configuration.Config;
@@ -135,8 +135,8 @@ public class URacer implements ApplicationListener {
 
 		System.out.println();
 		Gdx.app.log("URacer", "Booting version " + URacer.versionInfo);
-		Gdx.app.log("URacer", "GL vendor is " + Gdx.gl.glGetString(GL10.GL_VENDOR));
-		Gdx.app.log("URacer", "GL version is " + Gdx.gl.glGetString(GL10.GL_VERSION));
+		Gdx.app.log("URacer", "GL vendor is " + Gdx.gl.glGetString(GL20.GL_VENDOR));
+		Gdx.app.log("URacer", "GL version is " + Gdx.gl.glGetString(GL20.GL_VERSION));
 		Gdx.app.log("URacer", "Java vendor is " + System.getProperty("java.vendor"));
 		Gdx.app.log("URacer", "Java version is " + System.getProperty("java.version"));
 		Gdx.app.log("URacer", "Using real frametime: " + (useRealFrametime ? "YES" : "NO"));
