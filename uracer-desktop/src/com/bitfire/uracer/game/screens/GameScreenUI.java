@@ -4,10 +4,13 @@ package com.bitfire.uracer.game.screens;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Input.Keys;
 import com.badlogic.gdx.graphics.glutils.FrameBuffer;
+import com.badlogic.gdx.scenes.scene2d.Actor;
 import com.badlogic.gdx.scenes.scene2d.Stage;
 import com.badlogic.gdx.scenes.scene2d.ui.Dialog;
 import com.badlogic.gdx.scenes.scene2d.ui.Table;
+import com.badlogic.gdx.scenes.scene2d.ui.TextButton;
 import com.badlogic.gdx.scenes.scene2d.ui.Window;
+import com.badlogic.gdx.scenes.scene2d.utils.ChangeListener;
 import com.bitfire.uracer.Input;
 import com.bitfire.uracer.URacer;
 import com.bitfire.uracer.configuration.Config;
@@ -33,8 +36,17 @@ public class GameScreenUI {
 		root.invalidate();
 		ui.addActor(root);
 
+		// setup main window
 		win = new Window("Options - Press ESC to resume game", Art.scrSkin);
 		ui.addActor(win);
+		TextButton closeButton = new TextButton("X", Art.scrSkin);
+		closeButton.addListener(new ChangeListener() {
+			@Override
+			public void changed (ChangeEvent event, Actor actor) {
+				showQuit();
+			}
+		});
+		win.getButtonTable().add(closeButton).height(win.getPadTop());
 
 		// setup quit dialog
 		quit = new Dialog("Quit", Art.scrSkin, "dialog") {
@@ -58,6 +70,15 @@ public class GameScreenUI {
 		win.setPosition((Gdx.graphics.getWidth() - win.getWidth()) / 2, (Gdx.graphics.getHeight() - win.getHeight()) / 2);
 	}
 
+	public void showQuit () {
+		quit.show(ui);
+		quitShown = true;
+	}
+
+	//
+	//
+	//
+
 	public void dispose () {
 		ui.dispose();
 		disable();
@@ -78,8 +99,7 @@ public class GameScreenUI {
 		ui.act(Config.Physics.Dt);
 
 		if (input.isPressed(Keys.Q) && !quitShown) {
-			quit.show(ui);
-			quitShown = true;
+			showQuit();
 		}
 
 		if (input.isPressed(Keys.R)) {
