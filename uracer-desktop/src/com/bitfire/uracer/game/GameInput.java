@@ -58,7 +58,6 @@ public final class GameInput {
 	// }
 
 	public void update () {
-
 		if (input.isPressed(Keys.R)) {
 			logic.restartGame();
 			logic.showMessage("Restarted", 1.5f, Message.Type.Information, Position.Bottom, Size.Big);
