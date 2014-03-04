@@ -21,10 +21,8 @@ public class GameScreen extends Screen {
 
 	@Override
 	public void init () {
-		// simulate slowness
-		// try { Thread.sleep( 1000 ); } catch( InterruptedException e ) {}
-
 		input = URacer.Game.getInputSystem();
+
 		if (!GameLevels.levelIdExists(ScreensShared.selectedLevelId)) {
 			Gdx.app.error("GameScreen", "The specified track could not be found.");
 			URacer.Game.show(ScreenType.MainScreen);
