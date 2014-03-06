@@ -26,8 +26,10 @@ public class GameScreenUI {
 	private Window win;
 	private Dialog quit;
 	public boolean quitShown;
+	private final Game game;
 
 	public GameScreenUI (final Game game) {
+		this.game = game;
 		input = URacer.Game.getInputSystem();
 		ui = UIUtils.newScaledStage();
 		root = new Table();
@@ -54,7 +56,7 @@ public class GameScreenUI {
 			protected void result (Object quit) {
 				quitShown = false;
 				if ((Boolean)quit == true) {
-					game.quit();
+					quit();
 				}
 			};
 		}.text("Your current lap will not be saved, are you sure you want to quit?").button("Yes", true).button("No", false)
@@ -73,6 +75,11 @@ public class GameScreenUI {
 	public void showQuit () {
 		quit.show(ui);
 		quitShown = true;
+	}
+
+	private void quit () {
+		game.quit();
+		game.tick();
 	}
 
 	//

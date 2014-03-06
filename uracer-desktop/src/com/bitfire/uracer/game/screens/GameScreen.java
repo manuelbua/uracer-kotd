@@ -22,10 +22,7 @@ public class GameScreen extends Screen {
 
 	@Override
 	public void init () {
-		if (!GameLevels.levelIdExists(ScreensShared.selectedLevelId)) {
-			Gdx.app.error("GameScreen", "The specified track could not be found.");
-			URacer.Game.show(ScreenType.MainScreen);
-		} else {
+		if (GameLevels.levelIdExists(ScreensShared.selectedLevelId)) {
 			input = URacer.Game.getInputSystem();
 
 			// save as last played track
@@ -37,19 +34,29 @@ public class GameScreen extends Screen {
 			gameui = new GameScreenUI(game);
 
 			game.start();
+		} else {
+			Gdx.app.error("GameScreen", "The specified track could not be found.");
+			URacer.Game.show(ScreenType.MainScreen);
 		}
 	}
 
 	@Override
 	public void dispose () {
-		if (game != null) game.dispose();
+		game.dispose();
 		game = null;
+	}
+
+	public void unpause () {
+		paused = false;
 	}
 
 	@Override
 	public void tick () {
-		if (game != null) game.tick();
-		if (paused) gameui.tick();
+		if (paused) {
+			gameui.tick();
+		} else {
+			game.tick();
+		}
 
 		// toggle in-game menu, this shortcut shall be always available
 		if (input.isPressed(Keys.ESCAPE)) {
@@ -62,31 +69,26 @@ public class GameScreen extends Screen {
 				gameui.disable();
 			}
 		}
-
-		// quit shortcut
-		// if (paused && input.isPressed(Keys.Q)) {
-		// game.quit();
-		// }
 	}
 
 	@Override
 	public void tickCompleted () {
-		if (game != null) game.tickCompleted();
+		game.tickCompleted();
 	}
 
 	@Override
 	public void pause () {
-		if (game != null) game.pause();
+		game.pause();
 	}
 
 	@Override
 	public void resume () {
-		if (game != null) game.resume();
+		game.resume();
 	}
 
 	@Override
 	public void render (FrameBuffer dest) {
-		if (game != null) game.render(dest);
+		game.render(dest);
 
 		// overlay the whole in-game UI
 		if (paused) {
