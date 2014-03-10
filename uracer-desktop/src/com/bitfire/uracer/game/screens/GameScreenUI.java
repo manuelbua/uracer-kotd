@@ -27,9 +27,11 @@ public class GameScreenUI {
 	private Dialog quit;
 	public boolean quitShown;
 	private final Game game;
+	private boolean enabled;
 
 	public GameScreenUI (final Game game) {
 		this.game = game;
+		enabled = false;
 		input = URacer.Game.getInputSystem();
 		ui = UIUtils.newScaledStage();
 		root = new Table();
@@ -45,7 +47,10 @@ public class GameScreenUI {
 		closeButton.addListener(new ChangeListener() {
 			@Override
 			public void changed (ChangeEvent event, Actor actor) {
-				showQuit();
+				if (enabled) {
+					disable();
+					enabled = false;
+				}
 			}
 		});
 		win.getButtonTable().add(closeButton).height(win.getPadTop());
@@ -72,9 +77,16 @@ public class GameScreenUI {
 		win.setPosition((Gdx.graphics.getWidth() - win.getWidth()) / 2, (Gdx.graphics.getHeight() - win.getHeight()) / 2);
 	}
 
-	public void showQuit () {
+	// utilities
+
+	private void showQuit () {
 		quit.show(ui);
 		quitShown = true;
+	}
+
+	private void hideQuit () {
+		quitShown = false;
+		quit.hide();
 	}
 
 	private void quit () {
@@ -92,6 +104,7 @@ public class GameScreenUI {
 	}
 
 	public void enable () {
+		game.pause();
 		Gdx.input.setInputProcessor(ui);
 		setup();
 	}
@@ -99,22 +112,43 @@ public class GameScreenUI {
 	public void disable () {
 		Gdx.input.setInputProcessor(null);
 		Dialog.fadeDuration = 0f;
-		quit.hide();
+		hideQuit();
+		game.resume();
 	}
 
 	public void tick () {
-		ui.act(Config.Physics.Dt);
-
-		if (input.isPressed(Keys.Q) && !quitShown) {
-			showQuit();
+		if (enabled) {
+			ui.act(Config.Physics.Dt);
 		}
 
-		if (input.isPressed(Keys.R)) {
-			setup();
+		// toggle in-game menu, this shortcut shall be always available
+		if (input.isPressed(Keys.ESCAPE)) {
+			if (quitShown) {
+				hideQuit();
+			} else {
+				enabled = !enabled;
+				if (enabled) {
+					enable();
+				} else {
+					disable();
+				}
+			}
+		}
+
+		if (enabled) {
+			if (input.isPressed(Keys.Q) && !quitShown) {
+				showQuit();
+			}
+
+			if (input.isPressed(Keys.R)) {
+				setup();
+			}
 		}
 	}
 
 	public void render (FrameBuffer dest) {
+		if (!enabled) return;
+
 		boolean hasDest = (dest != null);
 		if (hasDest) {
 			dest.begin();

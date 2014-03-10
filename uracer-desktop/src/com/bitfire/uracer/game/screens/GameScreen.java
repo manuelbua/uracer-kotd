@@ -2,9 +2,7 @@
 package com.bitfire.uracer.game.screens;
 
 import com.badlogic.gdx.Gdx;
-import com.badlogic.gdx.Input.Keys;
 import com.badlogic.gdx.graphics.glutils.FrameBuffer;
-import com.bitfire.uracer.Input;
 import com.bitfire.uracer.URacer;
 import com.bitfire.uracer.configuration.UserPreferences;
 import com.bitfire.uracer.configuration.UserPreferences.Preference;
@@ -16,14 +14,13 @@ import com.bitfire.uracer.screen.Screen;
 
 public class GameScreen extends Screen {
 	private Game game = null;
-	private Input input = null;
-	private boolean paused = false;
+	// private Input input = null;
 	private GameScreenUI gameui;
 
 	@Override
 	public void init () {
 		if (GameLevels.levelIdExists(ScreensShared.selectedLevelId)) {
-			input = URacer.Game.getInputSystem();
+			// input = URacer.Game.getInputSystem();
 
 			// save as last played track
 			UserPreferences.string(Preference.LastPlayedTrack, ScreensShared.selectedLevelId);
@@ -43,32 +40,15 @@ public class GameScreen extends Screen {
 	@Override
 	public void dispose () {
 		game.dispose();
+		gameui.disable();
+		gameui.dispose();
 		game = null;
-	}
-
-	public void unpause () {
-		paused = false;
 	}
 
 	@Override
 	public void tick () {
-		if (paused) {
-			gameui.tick();
-		} else {
-			game.tick();
-		}
-
-		// toggle in-game menu, this shortcut shall be always available
-		if (input.isPressed(Keys.ESCAPE)) {
-			paused = !paused;
-			if (paused) {
-				game.pause();
-				gameui.enable();
-			} else {
-				game.resume();
-				gameui.disable();
-			}
-		}
+		gameui.tick();
+		game.tick();
 	}
 
 	@Override
@@ -91,8 +71,6 @@ public class GameScreen extends Screen {
 		game.render(dest);
 
 		// overlay the whole in-game UI
-		if (paused) {
-			gameui.render(dest);
-		}
+		gameui.render(dest);
 	}
 }
