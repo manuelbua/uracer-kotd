@@ -33,6 +33,17 @@ public class GameScreenUI {
 		this.game = game;
 		enabled = false;
 		input = URacer.Game.getInputSystem();
+		constructUI();
+	}
+
+	public void dispose () {
+		disable();
+		ui.dispose();
+	}
+
+	// utilities
+
+	private void constructUI () {
 		ui = UIUtils.newScaledStage();
 		root = new Table();
 		root.debug();
@@ -68,7 +79,7 @@ public class GameScreenUI {
 			.key(Keys.ENTER, true);
 	}
 
-	public void setup () {
+	private void setup () {
 		Dialog.fadeDuration = 0.4f;
 		quitShown = false;
 
@@ -76,8 +87,6 @@ public class GameScreenUI {
 		win.setHeight(200);
 		win.setPosition((Gdx.graphics.getWidth() - win.getWidth()) / 2, (Gdx.graphics.getHeight() - win.getHeight()) / 2);
 	}
-
-	// utilities
 
 	private void showQuit () {
 		quit.show(ui);
@@ -94,33 +103,20 @@ public class GameScreenUI {
 		game.tick();
 	}
 
-	//
-	//
-	//
-
-	public void dispose () {
-		ui.dispose();
-		disable();
-	}
-
-	public void enable () {
+	private void enable () {
 		game.pause();
 		Gdx.input.setInputProcessor(ui);
 		setup();
 	}
 
-	public void disable () {
+	private void disable () {
 		Gdx.input.setInputProcessor(null);
 		Dialog.fadeDuration = 0f;
 		hideQuit();
 		game.resume();
 	}
 
-	public void tick () {
-		if (enabled) {
-			ui.act(Config.Physics.Dt);
-		}
-
+	private void handleInput () {
 		// toggle in-game menu, this shortcut shall be always available
 		if (input.isPressed(Keys.ESCAPE)) {
 			if (quitShown) {
@@ -143,6 +139,16 @@ public class GameScreenUI {
 			if (input.isPressed(Keys.R)) {
 				setup();
 			}
+		}
+	}
+
+	//
+
+	public void tick () {
+		handleInput();
+
+		if (enabled) {
+			ui.act(Config.Physics.Dt);
 		}
 	}
 

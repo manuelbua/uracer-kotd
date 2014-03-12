@@ -40,7 +40,6 @@ public class GameScreen extends Screen {
 	@Override
 	public void dispose () {
 		game.dispose();
-		gameui.disable();
 		gameui.dispose();
 		game = null;
 	}
