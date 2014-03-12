@@ -3,18 +3,29 @@ package com.bitfire.uracer.game.screens;
 
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Input.Keys;
+import com.badlogic.gdx.graphics.Color;
+import com.badlogic.gdx.graphics.g2d.NinePatch;
 import com.badlogic.gdx.graphics.glutils.FrameBuffer;
 import com.badlogic.gdx.scenes.scene2d.Actor;
+import com.badlogic.gdx.scenes.scene2d.InputEvent;
 import com.badlogic.gdx.scenes.scene2d.Stage;
+import com.badlogic.gdx.scenes.scene2d.ui.Button;
 import com.badlogic.gdx.scenes.scene2d.ui.Dialog;
+import com.badlogic.gdx.scenes.scene2d.ui.Label;
+import com.badlogic.gdx.scenes.scene2d.ui.Slider;
 import com.badlogic.gdx.scenes.scene2d.ui.Table;
 import com.badlogic.gdx.scenes.scene2d.ui.TextButton;
 import com.badlogic.gdx.scenes.scene2d.ui.Window;
 import com.badlogic.gdx.scenes.scene2d.utils.ChangeListener;
+import com.badlogic.gdx.scenes.scene2d.utils.ClickListener;
+import com.badlogic.gdx.scenes.scene2d.utils.NinePatchDrawable;
 import com.bitfire.uracer.Input;
 import com.bitfire.uracer.URacer;
 import com.bitfire.uracer.configuration.Config;
+import com.bitfire.uracer.configuration.UserPreferences;
+import com.bitfire.uracer.configuration.UserPreferences.Preference;
 import com.bitfire.uracer.game.Game;
+import com.bitfire.uracer.game.logic.gametasks.SoundManager;
 import com.bitfire.uracer.resources.Art;
 import com.bitfire.uracer.utils.ScaleUtils;
 import com.bitfire.uracer.utils.UIUtils;
@@ -24,10 +35,17 @@ public class GameScreenUI {
 	private Stage ui;
 	private Table root;
 	private Window win;
-	private Dialog quit;
+	private Dialog dlg_quit;
 	public boolean quitShown;
 	private final Game game;
 	private boolean enabled;
+
+	// sound
+	private Slider sfx_slider, music_slider;
+	private Label sfx_label, music_label;
+
+	// quit
+	private Button btn_quit, btn_resume;
 
 	public GameScreenUI (final Game game) {
 		this.game = game;
@@ -51,8 +69,13 @@ public class GameScreenUI {
 		root.invalidate();
 		ui.addActor(root);
 
+		// panel background
+		NinePatch np = new NinePatch(Art.scrBrushed, 0, 0, 24, 24);
+		np.setColor(new Color(0.3f, 0.3f, 0.3f, 1f));
+		NinePatchDrawable brushed = new NinePatchDrawable(np);
+
 		// setup main window
-		win = new Window("Options - Press ESC to resume game", Art.scrSkin);
+		win = new Window("OPTIONS", Art.scrSkin);
 		ui.addActor(win);
 		TextButton closeButton = new TextButton("X", Art.scrSkin);
 		closeButton.addListener(new ChangeListener() {
@@ -66,8 +89,47 @@ public class GameScreenUI {
 		});
 		win.getButtonTable().add(closeButton).height(win.getPadTop());
 
-		// setup quit dialog
-		quit = new Dialog("Quit", Art.scrSkin, "dialog") {
+		Table content = new Table();
+		Table bottom = new Table();
+
+		// content.debug();
+		// bottom.debug();
+
+		win.row().fill().expand();
+		win.add(content);
+		win.row().fill().expand();
+		win.add(bottom);
+
+		content.row().expandX();
+
+		win.setBackground(brushed);
+
+		// quit button
+		btn_quit = UIUtils.newButton("Quit race (Q)", new ClickListener() {
+			@Override
+			public void clicked (InputEvent event, float x, float y) {
+				if (enabled && !quitShown) {
+					showQuit();
+				}
+			}
+		});
+
+		// resume button
+		btn_resume = UIUtils.newButton("Resume game (ESC)", new ClickListener() {
+			@Override
+			public void clicked (InputEvent event, float x, float y) {
+				if (enabled) {
+					disable();
+					enabled = false;
+				}
+			}
+		});
+		bottom.add(btn_resume);
+		bottom.add(btn_quit);
+		bottom.right();
+
+		// quit dialog
+		dlg_quit = new Dialog("Confirm", Art.scrSkin, "dialog") {
 			@Override
 			protected void result (Object quit) {
 				quitShown = false;
@@ -77,6 +139,32 @@ public class GameScreenUI {
 			};
 		}.text("Your current lap will not be saved, are you sure you want to quit?").button("Yes", true).button("No", false)
 			.key(Keys.ENTER, true);
+
+		// sound sliders
+		music_label = UIUtils.newLabel("Music volume", false);
+		sfx_label = UIUtils.newLabel("Sound effects volume", false);
+		sfx_slider = UIUtils.newSlider(0, 1, 0.01f, SoundManager.SfxVolumeMul, new ChangeListener() {
+			@Override
+			public void changed (ChangeEvent event, Actor actor) {
+				Slider source = (Slider)event.getListenerActor();
+				SoundManager.SfxVolumeMul = source.getValue();
+				UserPreferences.real(Preference.SfxVolume, SoundManager.SfxVolumeMul);
+			}
+		});
+		content.add(sfx_label).left();
+		content.add(sfx_slider);
+
+		music_slider = UIUtils.newSlider(0, 1, 0.01f, SoundManager.MusicVolumeMul, new ChangeListener() {
+			@Override
+			public void changed (ChangeEvent event, Actor actor) {
+				Slider source = (Slider)event.getListenerActor();
+				SoundManager.MusicVolumeMul = source.getValue();
+				UserPreferences.real(Preference.MusicVolume, SoundManager.MusicVolumeMul);
+			}
+		});
+		content.row();
+		content.add(music_label).left();
+		content.add(music_slider);
 	}
 
 	private void setup () {
@@ -89,16 +177,17 @@ public class GameScreenUI {
 	}
 
 	private void showQuit () {
-		quit.show(ui);
+		dlg_quit.show(ui);
 		quitShown = true;
 	}
 
 	private void hideQuit () {
 		quitShown = false;
-		quit.hide();
+		dlg_quit.hide();
 	}
 
 	private void quit () {
+		UserPreferences.save();
 		game.quit();
 		game.tick();
 	}
@@ -137,6 +226,11 @@ public class GameScreenUI {
 			}
 
 			if (input.isPressed(Keys.R)) {
+				Gdx.input.setInputProcessor(null);
+				hideQuit();
+				ui.dispose();
+				constructUI();
+				Gdx.input.setInputProcessor(ui);
 				setup();
 			}
 		}

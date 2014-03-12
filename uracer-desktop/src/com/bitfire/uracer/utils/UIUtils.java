@@ -7,6 +7,7 @@ import com.badlogic.gdx.scenes.scene2d.ui.Label;
 import com.badlogic.gdx.scenes.scene2d.ui.List;
 import com.badlogic.gdx.scenes.scene2d.ui.ScrollPane;
 import com.badlogic.gdx.scenes.scene2d.ui.SelectBox;
+import com.badlogic.gdx.scenes.scene2d.ui.Slider;
 import com.badlogic.gdx.scenes.scene2d.ui.Table;
 import com.badlogic.gdx.scenes.scene2d.ui.TextButton;
 import com.badlogic.gdx.scenes.scene2d.utils.ChangeListener;
@@ -72,6 +73,19 @@ public final class UIUtils {
 		return list;
 	}
 
+	public static Slider newSlider (float min, float max, float step, float value) {
+		return newSlider(min, max, step, value, null);
+	}
+
+	public static Slider newSlider (float min, float max, float step, float value, ChangeListener listener) {
+		Slider s = new Slider(min, max, step, false, Art.scrSkin);
+		s.setValue(value);
+		if (listener != null) {
+			s.addListener(listener);
+		}
+		return s;
+	}
+
 	public static Label newLabel (String text, boolean wrap) {
 		Label l = new Label(text, Art.scrSkin);
 		l.setWrap(wrap);
@@ -81,6 +95,18 @@ public final class UIUtils {
 	public static ScrollPane newScrollPane () {
 		ScrollPane pane = new ScrollPane(null, Art.scrSkin);
 		return pane;
+	}
+
+	public static TextButton newButton (String text) {
+		return newButton(text, null);
+	}
+
+	public static TextButton newButton (String text, ClickListener listener) {
+		TextButton b = new TextButton(text, Art.scrSkin);
+		if (listener != null) {
+			b.addListener(listener);
+		}
+		return b;
 	}
 
 	public static Table newVersionInfoTable () {

@@ -51,6 +51,7 @@ public final class Art {
 	// screens
 	public static Texture scrBackground;
 	public static Skin scrSkin;
+	public static Texture scrBrushed;
 	private static TextureAtlas skinAtlas;
 
 	// circle progress
@@ -64,6 +65,7 @@ public final class Art {
 	public static TextureAtlas particles;
 
 	public static void init () {
+		Texture.setEnforcePotImages(false);
 		ShaderLoader.BasePath = "data/shaders/";
 		loadFonts();
 		loadCarGraphics();
@@ -139,12 +141,15 @@ public final class Art {
 		skinAtlas = new TextureAtlas(Gdx.files.internal(skinPath + ".atlas"));
 		scrSkin = new Skin(Gdx.files.internal(skinPath + ".json"), skinAtlas);
 
+		// brushed texture
+		scrBrushed = newTexture("data/base/brushed.png", false);
 	}
 
 	private static void disposeScreensData () {
 		scrSkin.dispose();
 		scrBackground.dispose();
 		skinAtlas.dispose();
+		scrBrushed.dispose();
 	}
 
 	//
