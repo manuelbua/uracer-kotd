@@ -1,5 +1,5 @@
 
-pack-1.png
+pack.png
 format: RGBA8888
 filter: Linear,Linear
 repeat: none
@@ -39,7 +39,7 @@ curse-big-white
   offset: 0, 0
   index: -1
 
-pack-2.png
+pack2.png
 format: RGBA8888
 filter: Linear,Linear
 repeat: none
@@ -72,7 +72,7 @@ curse-y-r-big
   offset: 0, 0
   index: -1
 
-pack-3.png
+pack3.png
 format: RGBA8888
 filter: Linear,Linear
 repeat: none
@@ -105,7 +105,7 @@ lcd-white
   offset: 0, 0
   index: -1
 
-pack-4.png
+pack4.png
 format: RGBA8888
 filter: Linear,Linear
 repeat: none

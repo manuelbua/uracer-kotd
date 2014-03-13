@@ -3,7 +3,6 @@ package com.bitfire.uracer.game.screens;
 
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Input.Keys;
-import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.g2d.NinePatch;
 import com.badlogic.gdx.graphics.glutils.FrameBuffer;
 import com.badlogic.gdx.scenes.scene2d.Actor;
@@ -70,8 +69,8 @@ public class GameScreenUI {
 		ui.addActor(root);
 
 		// panel background
-		NinePatch np = new NinePatch(Art.scrPanel, 6, 6, 24, 38);
-		np.setColor(new Color(0.3f, 0.3f, 0.3f, 1f));
+		NinePatch np = new NinePatch(Art.scrPanel, 6, 6, 31, 13);
+		// np.setColor(new Color(0.3f, 0.3f, 0.3f, 1f));
 		NinePatchDrawable brushed = new NinePatchDrawable(np);
 
 		// setup main window

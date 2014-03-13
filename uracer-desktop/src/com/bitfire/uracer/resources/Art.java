@@ -142,7 +142,7 @@ public final class Art {
 		scrSkin = new Skin(Gdx.files.internal(skinPath + ".json"), skinAtlas);
 
 		// brushed texture
-		scrPanel = newTexture("data/base/brushed.png", false);
+		scrPanel = newTexture("data/base/panel.png", false);
 	}
 
 	private static void disposeScreensData () {
