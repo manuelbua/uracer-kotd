@@ -51,7 +51,7 @@ public final class Art {
 	// screens
 	public static Texture scrBackground;
 	public static Skin scrSkin;
-	public static Texture scrBrushed;
+	public static Texture scrPanel;
 	private static TextureAtlas skinAtlas;
 
 	// circle progress
@@ -142,14 +142,14 @@ public final class Art {
 		scrSkin = new Skin(Gdx.files.internal(skinPath + ".json"), skinAtlas);
 
 		// brushed texture
-		scrBrushed = newTexture("data/base/brushed.png", false);
+		scrPanel = newTexture("data/base/brushed.png", false);
 	}
 
 	private static void disposeScreensData () {
 		scrSkin.dispose();
 		scrBackground.dispose();
 		skinAtlas.dispose();
-		scrBrushed.dispose();
+		scrPanel.dispose();
 	}
 
 	//

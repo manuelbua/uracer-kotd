@@ -70,7 +70,7 @@ public class GameScreenUI {
 		ui.addActor(root);
 
 		// panel background
-		NinePatch np = new NinePatch(Art.scrBrushed, 0, 0, 24, 24);
+		NinePatch np = new NinePatch(Art.scrPanel, 6, 6, 24, 38);
 		np.setColor(new Color(0.3f, 0.3f, 0.3f, 1f));
 		NinePatchDrawable brushed = new NinePatchDrawable(np);
 
