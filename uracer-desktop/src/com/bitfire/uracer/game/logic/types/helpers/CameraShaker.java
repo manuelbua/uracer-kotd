@@ -1,7 +1,6 @@
 
 package com.bitfire.uracer.game.logic.types.helpers;
 
-import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.math.MathUtils;
 import com.badlogic.gdx.math.Vector2;
 import com.bitfire.uracer.utils.InterpolatedFloat;
@@ -33,7 +32,7 @@ public final class CameraShaker {
 		// result.clamp(-50, 50);
 
 		// result.set(noiseX.get(), noiseY.get());
-		Gdx.app.log("", result.toString() + " / " + factor);
+		// Gdx.app.log("", result.toString() + " / " + factor);
 		return result;
 	}
 }
