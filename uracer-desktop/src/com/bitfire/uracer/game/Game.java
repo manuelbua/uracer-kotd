@@ -86,6 +86,10 @@ public class Game implements Disposable {
 		Gdx.app.log("Game", "Resumed");
 	}
 
+	public boolean isPaused () {
+		return gameLogic.isPaused();
+	}
+
 	//
 	// OPERATIONS
 	//

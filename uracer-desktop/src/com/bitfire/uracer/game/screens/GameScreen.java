@@ -47,7 +47,7 @@ public class GameScreen extends Screen {
 	@Override
 	public void tick () {
 		gameui.tick();
-		game.tick();
+		if (!game.isPaused()) game.tick();
 	}
 
 	@Override
