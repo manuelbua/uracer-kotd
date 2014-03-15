@@ -280,8 +280,6 @@ public final class Art {
 	// flags
 	//
 
-	// FIXME memory leaks
-
 	public static Texture getFlag (String countryCode) {
 		String filename = countryCode + ".png";
 		FileHandle zip = Gdx.files.internal("data/flags.zip");
@@ -311,6 +309,7 @@ public final class Art {
 						t.setFilter(TextureFilter.Nearest, TextureFilter.Nearest);
 					}
 
+					px.dispose();
 					return t;
 				}
 			}
