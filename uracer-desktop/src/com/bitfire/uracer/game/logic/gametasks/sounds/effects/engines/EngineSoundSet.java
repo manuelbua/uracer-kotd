@@ -172,7 +172,7 @@ public abstract class EngineSoundSet {
 
 		if (volume >= 0 && volume <= 1) {
 			// TODO engine volume settings UI
-			setVolume(track, volume * SoundManager.SfxVolumeMul * 3);
+			setVolume(track, volume * SoundManager.SfxVolumeMul);
 
 			// dbg
 			// if (track == 1 || track == 4) {

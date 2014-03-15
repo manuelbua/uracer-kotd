@@ -245,7 +245,7 @@ public final class PlayerTensiveMusic extends SoundEffect {
 				}
 
 				// interpolate and set
-				volOut[i] = volTrack[i].get() * SoundManager.MusicVolumeMul;
+				volOut[i] = volTrack[i].get() * 1f * SoundManager.MusicVolumeMul;
 				setVolume(i, volOut[i]);
 			}
 		}
