@@ -72,6 +72,9 @@ public final class Ssao extends PostProcessorEffect {
 
 		// blur
 		blur = new Blur(occlusionMap.width, occlusionMap.height);
+		blur.setType(BlurType.Gaussian5x5b);
+		blur.setPasses(2);
+
 		createRandomField(16, 16, Format.RGBA8888);
 		// enableDebug();
 	}
@@ -164,16 +167,6 @@ public final class Ssao extends PostProcessorEffect {
 		shSsao.end();
 	}
 
-	// private void dbgTexture (SpriteBatch batch, float scale, Texture tex, int index) {
-	// if (tex == null) return;
-	//
-	// float w = (tex.getWidth() * scale);
-	// float h = (tex.getHeight() * scale);
-	// float x = Config.Graphics.ReferenceScreenWidth - w - 10;
-	// float y = index * 10;
-	// batch.draw(tex, x, y, w, h);
-	// }
-
 	private void dbgTextureW (SpriteBatch batch, float width, Texture tex, int index) {
 		if (tex == null) return;
 
@@ -234,8 +227,6 @@ public final class Ssao extends PostProcessorEffect {
 			shSsao.end();
 
 			// blur pass
-			blur.setType(BlurType.Gaussian5x5b);
-			blur.setPasses(2);
 			blur.render(occlusionMap);
 		}
 		occlusionMap.end();
