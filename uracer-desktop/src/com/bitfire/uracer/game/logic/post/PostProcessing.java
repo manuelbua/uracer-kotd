@@ -35,7 +35,7 @@ public final class PostProcessing {
 	public enum Effects {
 		Zoomer, Bloom, Vignette, Crt, Curvature, Ssao, MotionBlur;
 
-		public String name;
+		public final String name;
 
 		private Effects () {
 			name = this.toString();
