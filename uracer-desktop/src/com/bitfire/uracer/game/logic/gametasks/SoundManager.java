@@ -9,8 +9,8 @@ import com.bitfire.uracer.game.player.PlayerCar;
 import com.bitfire.utils.ItemsManager;
 
 public class SoundManager extends GameTask implements DisposableTasks {
-	public static final float SfxVolumeMul = UserPreferences.real(Preference.SfxVolume);
-	public static final float MusicVolumeMul = UserPreferences.real(Preference.MusicVolume);
+	public static float SfxVolumeMul = UserPreferences.real(Preference.SfxVolume);
+	public static float MusicVolumeMul = UserPreferences.real(Preference.MusicVolume);
 	private final ItemsManager<SoundEffect> manager = new ItemsManager<SoundEffect>();
 
 	public SoundManager () {

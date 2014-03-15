@@ -51,6 +51,7 @@ public final class Art {
 	// screens
 	public static Texture scrBackground;
 	public static Skin scrSkin;
+	public static Texture scrPanel;
 	private static TextureAtlas skinAtlas;
 
 	// circle progress
@@ -64,6 +65,7 @@ public final class Art {
 	public static TextureAtlas particles;
 
 	public static void init () {
+		Texture.setEnforcePotImages(false);
 		ShaderLoader.BasePath = "data/shaders/";
 		loadFonts();
 		loadCarGraphics();
@@ -117,7 +119,7 @@ public final class Art {
 	//
 	// screens
 	//
-	private static void loadScreensData () {
+	public static void loadScreensData () {
 		scrBackground = newTexture("data/base/titlescreen.png", true);
 
 		// the skin will automatically search and load the same filename+".atlas" extension
@@ -139,12 +141,15 @@ public final class Art {
 		skinAtlas = new TextureAtlas(Gdx.files.internal(skinPath + ".atlas"));
 		scrSkin = new Skin(Gdx.files.internal(skinPath + ".json"), skinAtlas);
 
+		// brushed texture
+		scrPanel = newTexture("data/base/panel.png", false);
 	}
 
-	private static void disposeScreensData () {
+	public static void disposeScreensData () {
 		scrSkin.dispose();
 		scrBackground.dispose();
 		skinAtlas.dispose();
+		scrPanel.dispose();
 	}
 
 	//
@@ -275,8 +280,6 @@ public final class Art {
 	// flags
 	//
 
-	// FIXME memory leaks
-
 	public static Texture getFlag (String countryCode) {
 		String filename = countryCode + ".png";
 		FileHandle zip = Gdx.files.internal("data/flags.zip");
@@ -306,6 +309,7 @@ public final class Art {
 						t.setFilter(TextureFilter.Nearest, TextureFilter.Nearest);
 					}
 
+					px.dispose();
 					return t;
 				}
 			}

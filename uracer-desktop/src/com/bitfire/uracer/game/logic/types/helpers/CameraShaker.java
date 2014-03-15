@@ -3,19 +3,18 @@ package com.bitfire.uracer.game.logic.types.helpers;
 
 import com.badlogic.gdx.math.MathUtils;
 import com.badlogic.gdx.math.Vector2;
-import com.bitfire.uracer.utils.AMath;
 import com.bitfire.uracer.utils.InterpolatedFloat;
 
 public final class CameraShaker {
-	// FIXME, it should be modulated by the virtualscreen-to-physicalscreen ratio
-	private static final int Pixels = 250;
+	private static final int Pixels = 256;
 
 	Vector2 result = new Vector2();
 	InterpolatedFloat noiseX = new InterpolatedFloat();
 	InterpolatedFloat noiseY = new InterpolatedFloat();
 
-	public Vector2 compute (float collisionFactor) {
-		float alpha = AMath.fixup(collisionFactor) * 0.05f;
+	public Vector2 compute (float factor) {
+		// collisionFactor = 0.25f;
+		float alpha = /* AMath.fixup */(factor) * 0.8f;
 		float px = Pixels;
 
 		// if (camshakeFactor.value > 0) {
@@ -26,7 +25,14 @@ public final class CameraShaker {
 		float radiusY = MathUtils.random(-px, px);
 		noiseX.set(radiusX, alpha);
 		noiseY.set(radiusY, alpha);
-		result.set(noiseX.get(), noiseY.get());
+		result.set(noiseX.get() * factor, noiseY.get() * factor);
+
+		result.x = MathUtils.clamp(result.x, -50, 50);
+		result.y = MathUtils.clamp(result.y, -50, 50);
+		// result.clamp(-50, 50);
+
+		// result.set(noiseX.get(), noiseY.get());
+		// Gdx.app.log("", result.toString() + " / " + factor);
 		return result;
 	}
 }

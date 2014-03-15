@@ -128,12 +128,12 @@ public abstract class BaseLogic extends CommonLogic {
 		// update lights
 		// sync post-processing animators
 		postProcessing.onBeforeRender(progressData, gameWorldRenderer.getAmbientColor(), gameWorldRenderer.getTreesAmbientColor(),
-			zoom, playerLapMonitor.getWarmUpCompletion(), collisionFactor.value);
+			zoom, playerLapMonitor.getWarmUpCompletion(), collisionFactor.value, paused);
 
 		gameWorldRenderer.updateRayHandler();
 
 		// game tweener step
-		GameTweener.update();
+		if (!paused) GameTweener.update();
 	}
 
 	@Override
@@ -158,6 +158,7 @@ public abstract class BaseLogic extends CommonLogic {
 		// TODO make it a toggleable option
 		cameraZoom = AMath.lerp(cameraZoom, maxZoom, timeModFactor);
 		cameraZoom = AMath.clampf(cameraZoom, minZoom, maxZoom);
+
 		cameraZoom = AMath.lerp(cameraZoom, maxZoom, collisionFactor.value * 5f);
 		cameraZoom = AMath.lerp(prevZoom, cameraZoom, 0.1f);
 		cameraZoom = AMath.clampf(cameraZoom, minZoom, maxZoom * 2f); // relax max a bit
@@ -196,7 +197,7 @@ public abstract class BaseLogic extends CommonLogic {
 
 		float clampedImpactForce = AMath.normalizeImpactForce(data.impulses.len());
 
-		// while busy, a new collision factor will be accepted *only* if stronger
+		// while busy, a new collision factor will be accepted *only* if stronger than the previous one
 		if (clampedImpactForce > 0 && clampedImpactForce > lastImpactForce) {
 			lastImpactForce = clampedImpactForce;
 

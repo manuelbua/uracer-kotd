@@ -17,7 +17,7 @@
 package com.bitfire.uracer.u3d.materials;
 
 import com.badlogic.gdx.Gdx;
-import com.badlogic.gdx.graphics.GL10;
+import com.badlogic.gdx.graphics.GL20;
 import com.badlogic.gdx.graphics.glutils.ShaderProgram;
 import com.badlogic.gdx.utils.Pool;
 
@@ -35,18 +35,13 @@ public class BlendingAttribute extends MaterialAttribute {
 	/** Utility constuctor for basic transparency blendSrcFunc = GL10.GL_SRC_ALPHA blendDstFunc = GL10.GL_ONE_MINUS_SRC_ALPHA
 	 * @param name */
 	public BlendingAttribute (String name) {
-		this(name, GL10.GL_SRC_ALPHA, GL10.GL_ONE_MINUS_SRC_ALPHA);
+		this(name, GL20.GL_SRC_ALPHA, GL20.GL_ONE_MINUS_SRC_ALPHA);
 	}
 
 	public BlendingAttribute (String name, int srcFunc, int dstFunc) {
 		super(name);
 		blendSrcFunc = srcFunc;
 		blendDstFunc = dstFunc;
-	}
-
-	@Override
-	public void bind () {
-		Gdx.gl.glBlendFunc(blendSrcFunc, blendDstFunc);
 	}
 
 	@Override

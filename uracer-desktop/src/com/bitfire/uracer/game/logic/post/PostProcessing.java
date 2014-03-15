@@ -166,9 +166,9 @@ public final class PostProcessing {
 	}
 
 	public void onBeforeRender (TrackProgressData progressData, Color ambient, Color trees, float zoom, float warmUpCompletion,
-		float collisionFactor) {
+		float collisionFactor, boolean paused) {
 		if (hasPostProcessor && hasAnimator) {
-			animator.update(progressData, ambient, trees, zoom, warmUpCompletion, collisionFactor);
+			animator.update(progressData, ambient, trees, zoom, warmUpCompletion, collisionFactor, paused);
 		}
 	}
 
@@ -195,4 +195,17 @@ public final class PostProcessing {
 			animator.alert(milliseconds);
 		}
 	}
+
+	public void gamePause (int milliseconds) {
+		if (hasPostProcessor && hasAnimator) {
+			animator.gamePause(milliseconds);
+		}
+	}
+
+	public void gameResume (int milliseconds) {
+		if (hasPostProcessor && hasAnimator) {
+			animator.gameResume(milliseconds);
+		}
+	}
+
 }

@@ -3,6 +3,7 @@ package com.bitfire.uracer.game.logic.post.animators;
 
 import aurelienribon.tweenengine.Timeline;
 import aurelienribon.tweenengine.Tween;
+import aurelienribon.tweenengine.equations.Linear;
 import aurelienribon.tweenengine.equations.Quad;
 import box2dLight.PointLight;
 
@@ -24,6 +25,7 @@ import com.bitfire.uracer.game.player.PlayerCar;
 import com.bitfire.uracer.game.rendering.GameRenderer;
 import com.bitfire.uracer.game.rendering.GameWorldRenderer;
 import com.bitfire.uracer.game.tween.GameTweener;
+import com.bitfire.uracer.game.tween.SysTweener;
 import com.bitfire.uracer.game.world.GameWorld;
 import com.bitfire.uracer.resources.Art;
 import com.bitfire.uracer.utils.AMath;
@@ -43,7 +45,8 @@ public final class DefaultAnimator implements PostProcessingAnimator {
 	private PlayerCar player = null;
 	private boolean hasPlayer = false;
 	private BoxedFloat alertAmount = new BoxedFloat(0);
-	private boolean alertBegan = false;
+	private BoxedFloat pauseAmount = new BoxedFloat(0);
+	private boolean alertBegan = false, pauseBegan = false;
 	private float bloomThreshold = 0.4f;
 
 	private long startMs = 0;
@@ -118,6 +121,34 @@ public final class DefaultAnimator implements PostProcessingAnimator {
 	}
 
 	@Override
+	public void gamePause (int milliseconds) {
+		if (!pauseBegan) {
+			pauseBegan = true;
+			SysTweener.stop(pauseAmount);
+			Timeline seq = Timeline.createSequence();
+
+			//@off
+			seq
+				.push(Tween.to(pauseAmount, BoxedFloatAccessor.VALUE, milliseconds).target(1f).ease(Linear.INOUT))
+			;
+			SysTweener.start(seq);
+			//@on
+		}
+	}
+
+	@Override
+	public void gameResume (int milliseconds) {
+		if (pauseBegan) {
+			pauseBegan = false;
+
+			SysTweener.stop(pauseAmount);
+			Timeline seq = Timeline.createSequence();
+			seq.push(Tween.to(pauseAmount, BoxedFloatAccessor.VALUE, milliseconds).target(0).ease(Linear.INOUT));
+			SysTweener.start(seq);
+		}
+	}
+
+	@Override
 	public void reset () {
 		speed.reset(0, true);
 
@@ -185,6 +216,12 @@ public final class DefaultAnimator implements PostProcessingAnimator {
 			alertBegan = true;
 			alertEnds(Config.Graphics.DefaultResetFadeMilliseconds);
 		}
+
+		// terminate pending, unfinished alert, if any
+		if (pauseAmount.value > 0) {
+			pauseBegan = true;
+			gameResume(Config.Graphics.DefaultResetFadeMilliseconds);
+		}
 	}
 
 	private void autoEnableZoomBlur (float blurStrength) {
@@ -222,7 +259,7 @@ public final class DefaultAnimator implements PostProcessingAnimator {
 
 	@Override
 	public void update (TrackProgressData progressData, Color ambient, Color trees, float zoomCamera, float warmUpCompletion,
-		float collisionFactor) {
+		float collisionFactor, boolean paused) {
 		float timeModFactor = URacer.Game.getTimeModFactor();
 
 		// dbg
@@ -246,13 +283,15 @@ public final class DefaultAnimator implements PostProcessingAnimator {
 		updateLights(progressData, ambient, trees, cf);
 
 		if (crt != null) {
-			// compute time (add noise)
-			float secs = (float)(TimeUtils.millis() - startMs) / 1000;
-			boolean randomNoiseInTime = false;
-			if (randomNoiseInTime) {
-				crt.setTime(secs + MathUtils.random() / (MathUtils.random() * 64f + 0.001f));
-			} else {
+			if (!paused) {
+				// compute time (add noise)
+				float secs = (float)(TimeUtils.millis() - startMs) / 1000;
+				// boolean randomNoiseInTime = false;
+				// if (randomNoiseInTime) {
+				// crt.setTime(secs + MathUtils.random() / (MathUtils.random() * 64f + 0.001f));
+				// } else {
 				crt.setTime(secs);
+				// }
 			}
 
 			// needed variables
@@ -300,7 +339,7 @@ public final class DefaultAnimator implements PostProcessingAnimator {
 		float bsat = 0f, sat = 0f;
 		if (bloom != null) {
 			// float intensity = 1.4f + 4f * cf;// + (nightMode ? 4f * cf : 0f);
-			float intensity = 1f + 2f * cf;// + (nightMode ? 4f * cf : 0f);
+			float intensity = 1f + 2f * cf + 2 * pauseAmount.value;// + (nightMode ? 4f * cf : 0f);
 			// Gdx.app.log("", "bloom intensity=" + intensity);
 			bloom.setBloomIntesity(intensity);
 
@@ -319,8 +358,12 @@ public final class DefaultAnimator implements PostProcessingAnimator {
 
 			sat = MathUtils.clamp(sat, 0f, 3f);
 			bsat = MathUtils.clamp(bsat, 0f, 3f);
-			bloom.setBaseSaturation(sat);
-			bloom.setBloomSaturation(bsat);
+
+			bloom.setBaseSaturation(sat * (1 - pauseAmount.value));
+			bloom.setBloomSaturation(bsat * (1 - pauseAmount.value));
+
+			// bloom.setBaseSaturation(0);
+			// bloom.setBloomSaturation(0);
 
 			// float bloomTh = AMath.lerp(bloomThreshold, bloomThreshold - 0.01f, timeModFactor);
 			// bloom.setThreshold(bloomTh);

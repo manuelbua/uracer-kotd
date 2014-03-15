@@ -60,14 +60,6 @@ public abstract class SoundEffect extends PlayerClient implements Disposable {
 		}
 	}
 
-	public void pause (Sound sound, long id) {
-		//
-	}
-
-	public void resume (Sound sound, float volume) {
-		//
-	}
-
 	public void stop () {
 	}
 
@@ -86,5 +78,9 @@ public abstract class SoundEffect extends PlayerClient implements Disposable {
 
 	public void gameResume () {
 		isPaused = false;
+	}
+
+	public boolean isPaused () {
+		return isPaused;
 	}
 }

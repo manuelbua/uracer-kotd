@@ -6,6 +6,7 @@ import com.badlogic.gdx.utils.Disposable;
 import com.bitfire.uracer.game.logic.gametasks.PlayerClient;
 
 public abstract class TrackEffect extends PlayerClient implements Disposable {
+	protected boolean isPaused = false;
 	public final TrackEffectType type;
 
 	public TrackEffect (TrackEffectType what) {
@@ -22,4 +23,16 @@ public abstract class TrackEffect extends PlayerClient implements Disposable {
 	public abstract int getParticleCount ();
 
 	public abstract int getMaxParticleCount ();
+
+	public void gamePause () {
+		isPaused = true;
+	}
+
+	public void gameResume () {
+		isPaused = false;
+	}
+
+	public boolean isPaused () {
+		return isPaused;
+	}
 }

@@ -171,7 +171,8 @@ public abstract class EngineSoundSet {
 		float volume = ((float)fuzzyEngine.getVariable("volume").getValue() / 100f);
 
 		if (volume >= 0 && volume <= 1) {
-			setVolume(track, volume);
+			// TODO engine volume settings UI
+			setVolume(track, volume * SoundManager.SfxVolumeMul);
 
 			// dbg
 			// if (track == 1 || track == 4) {

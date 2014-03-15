@@ -21,6 +21,7 @@ public class EngineF40 extends EngineSoundSet {
 		engine = Sounds.carEngine_f40;
 		rpm = 1000;
 		gear = MinGear;
+		ivolume.setFixup(false);
 	}
 
 	@Override
@@ -45,9 +46,10 @@ public class EngineF40 extends EngineSoundSet {
 		}
 
 		// return .025f + 0.025f * volmul;
-		ivolume.set(0.1f + 0.05f * target_vol * player.carState.currSpeedFactor, 0.05f);
+		// ivolume.set(0.1f + 0.05f * target_vol * player.carState.currSpeedFactor, 0.05f);
+		ivolume.set(0.05f + 0.1f * target_vol * player.carState.currSpeedFactor, 0.005f);
 
-		// Gdx.app.log("", "tv=" + target_vol);
+		// Gdx.app.log("", "tv=" + ivolume.get());
 
 		return ivolume.get();
 	}

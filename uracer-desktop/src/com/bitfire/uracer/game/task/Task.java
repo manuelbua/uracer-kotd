@@ -7,7 +7,7 @@ import com.bitfire.uracer.game.events.TaskManagerEvent.Order;
 import com.bitfire.uracer.game.events.TaskManagerEvent.Type;
 
 public abstract class Task implements TaskManagerEvent.Listener {
-
+	protected boolean isPaused = false;
 	private Order order;
 
 	public Task () {
@@ -35,19 +35,21 @@ public abstract class Task implements TaskManagerEvent.Listener {
 	}
 
 	protected void onGamePause () {
+		isPaused = true;
 	}
 
 	protected void onGameResume () {
+		isPaused = false;
 	}
 
 	@Override
 	public void handle (Object source, Type type, Order order) {
 		switch (type) {
 		case onTick:
-			onTick();
+			if (!isPaused) onTick();
 			break;
 		case onTickCompleted:
-			onTickCompleted();
+			if (!isPaused) onTickCompleted();
 			break;
 		case onPause:
 			onGamePause();

@@ -2,7 +2,7 @@
 package com.bitfire.uracer.game.logic.gametasks.hud.elements.player;
 
 import com.badlogic.gdx.Gdx;
-import com.badlogic.gdx.graphics.GL10;
+import com.badlogic.gdx.graphics.GL20;
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.Sprite;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
@@ -117,7 +117,7 @@ public class DriftBar extends Positionable {
 
 		batch.setShader(shDriftSecs);
 		texHalfMask.bind(1);
-		Gdx.gl.glActiveTexture(GL10.GL_TEXTURE0);
+		Gdx.gl.glActiveTexture(GL20.GL_TEXTURE0);
 		shDriftSecs.setUniformi("u_texture1", 1);
 
 		float alpha = 1;// 0.5f + 0.5f * URacer.Game.getTimeModFactor();

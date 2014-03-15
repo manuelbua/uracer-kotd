@@ -52,6 +52,7 @@ public final class Input implements Disposable {
 	}
 
 	public void releaseAllKeys () {
+		anyKeyButton = 0;
 		for (int i = 0; i < buttons.length; i++) {
 			buttons[i] = 0;
 		}

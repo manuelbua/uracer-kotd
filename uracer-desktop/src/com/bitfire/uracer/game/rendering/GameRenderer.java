@@ -114,10 +114,12 @@ public final class GameRenderer {
 		gl.glClear(GL20.GL_COLOR_BUFFER_BIT | GL20.GL_DEPTH_BUFFER_BIT);
 	}
 
-	public void render (FrameBuffer dest, boolean quitPending) {
+	public void render (FrameBuffer dest, boolean quitPending, boolean paused) {
 		if (!quitPending) {
-			// trigger interpolables to interpolate their position and orientation
-			interpolate(URacer.Game.getTemporalAliasing());
+			if (!paused) {
+				// trigger interpolables to interpolate their position and orientation
+				interpolate(URacer.Game.getTemporalAliasing());
+			}
 
 			// raise before render
 			beforeRender();

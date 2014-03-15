@@ -22,7 +22,7 @@ import java.io.InputStream;
 import java.io.InputStreamReader;
 
 import com.badlogic.gdx.files.FileHandle;
-import com.badlogic.gdx.graphics.GL10;
+import com.badlogic.gdx.graphics.GL20;
 import com.badlogic.gdx.graphics.Mesh;
 import com.badlogic.gdx.graphics.VertexAttribute;
 import com.badlogic.gdx.graphics.VertexAttributes;
@@ -105,7 +105,7 @@ public class G3dtLoader {
 		Mesh mesh = new Mesh(true, numVertices, indices.size, vertexAttributes);
 		mesh.setVertices(vertices);
 		mesh.setIndices(convertToShortArray(indices));
-		return new StillSubMesh(name, mesh, GL10.GL_TRIANGLES);
+		return new StillSubMesh(name, mesh, GL20.GL_TRIANGLES);
 	}
 
 	// private static float[] buildVertices (int numVertices, boolean hasNormals, Array<FloatArray> uvSets) {

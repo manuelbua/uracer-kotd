@@ -14,52 +14,62 @@ import com.bitfire.uracer.screen.Screen;
 
 public class GameScreen extends Screen {
 	private Game game = null;
+	// private Input input = null;
+	private GameScreenUI gameui;
 
 	@Override
 	public void init () {
-		// simulate slowness
-		// try { Thread.sleep( 1000 ); } catch( InterruptedException e ) {}
+		if (GameLevels.levelIdExists(ScreensShared.selectedLevelId)) {
+			// input = URacer.Game.getInputSystem();
 
-		if (!GameLevels.levelIdExists(ScreensShared.selectedLevelId)) {
-			Gdx.app.error("GameScreen", "The specified track could not be found.");
-			URacer.Game.show(ScreenType.MainScreen);
-		} else {
 			// save as last played track
 			UserPreferences.string(Preference.LastPlayedTrack, ScreensShared.selectedLevelId);
 			UserProfile userProfile = new UserProfile();
 			game = new Game(userProfile, ScreensShared.selectedLevelId);
+
+			// build in-game UI
+			gameui = new GameScreenUI(game);
+
 			game.start();
+		} else {
+			Gdx.app.error("GameScreen", "The specified track could not be found.");
+			URacer.Game.show(ScreenType.MainScreen);
 		}
 	}
 
 	@Override
 	public void dispose () {
-		if (game != null) game.dispose();
+		game.dispose();
+		gameui.dispose();
 		game = null;
 	}
 
 	@Override
 	public void tick () {
-		if (game != null) game.tick();
+		gameui.tick();
+		if (!game.isPaused()) game.tick();
 	}
 
 	@Override
 	public void tickCompleted () {
-		if (game != null) game.tickCompleted();
-	}
-
-	@Override
-	public void render (FrameBuffer dest) {
-		if (game != null) game.render(dest);
+		game.tickCompleted();
 	}
 
 	@Override
 	public void pause () {
-		if (game != null) game.pause();
+		game.pause();
 	}
 
 	@Override
 	public void resume () {
-		if (game != null) game.resume();
+		game.resume();
+	}
+
+	@Override
+	public void render (FrameBuffer dest) {
+		game.render(dest);
+
+		// overlay the whole in-game UI
+		gameui.render(dest);
 	}
 }

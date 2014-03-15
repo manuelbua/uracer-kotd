@@ -43,7 +43,7 @@ public abstract class CommonLogic implements GameLogic, GameLogicObserver {
 	// input
 	protected Input inputSystem = null;
 	protected GameInput gameInput = null;
-	protected boolean quitPending = false, quitScheduled = false;
+	protected boolean quitPending = false, quitScheduled = false, paused = false;
 
 	// world
 	protected GameWorld gameWorld = null;
@@ -274,6 +274,26 @@ public abstract class CommonLogic implements GameLogic, GameLogicObserver {
 	}
 
 	@Override
+	public void pauseGame () {
+		paused = true;
+		postProcessing.gamePause(500);
+		if (gameInput.isTimeDilating()) {
+			getTimeDilationTimer().stop();
+			// endTimeDilation();
+		}
+	}
+
+	@Override
+	public void resumeGame () {
+		paused = false;
+		postProcessing.gameResume(500);
+		if (gameInput.isTimeDilating()) {
+			getTimeDilationTimer().resume();
+			gameInput.ensureConsistenceAfterResume();
+		}
+	}
+
+	@Override
 	public void quitGame () {
 		quitPending = true;
 		Gdx.app.log("CommonLogic", "QUIT request scheduled");
@@ -282,6 +302,11 @@ public abstract class CommonLogic implements GameLogic, GameLogicObserver {
 	@Override
 	public boolean isQuitPending () {
 		return quitPending;
+	}
+
+	@Override
+	public boolean isPaused () {
+		return paused;
 	}
 
 	@Override
@@ -301,14 +326,16 @@ public abstract class CommonLogic implements GameLogic, GameLogicObserver {
 		} else {
 			// compute the next-frame time multiplier
 			URacer.timeMultiplier = getTimeModulator().getTime();
-			gameInput.update();
-			handleExtraInput();
+			if (!paused) {
+				gameInput.update();
+				handleExtraInput();
+			}
 		}
 	}
 
 	@Override
 	public void tickCompleted () {
-		if (!quitPending) {
+		if (!quitPending && !paused) {
 			updateLogic();
 		}
 	}
@@ -319,7 +346,7 @@ public abstract class CommonLogic implements GameLogic, GameLogicObserver {
 
 	private void _doQuit () {
 		if (quitPending && !quitScheduled) {
-			Gdx.app.log("CommonLogic", "Processing QUIT request");
+			Gdx.app.log("CommonLogic", "Scheduling QUIT request");
 			quitScheduled = true;
 			GameEvents.logicEvent.trigger(this, GameLogicEvent.Type.GameQuit);
 			doQuit();

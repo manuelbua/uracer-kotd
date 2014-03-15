@@ -10,7 +10,7 @@ import box2dLight.RayHandler;
 
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.Color;
-import com.badlogic.gdx.graphics.GL10;
+import com.badlogic.gdx.graphics.GL20;
 import com.badlogic.gdx.graphics.Mesh;
 import com.badlogic.gdx.graphics.Mesh.VertexDataType;
 import com.badlogic.gdx.graphics.Texture.TextureWrap;
@@ -463,7 +463,7 @@ public final class GameWorld {
 						Mesh mesh = buildWallMesh(points, mags);
 
 						StillSubMesh[] subMeshes = new StillSubMesh[1];
-						subMeshes[0] = new StillSubMesh("wall", mesh, GL10.GL_TRIANGLES);
+						subMeshes[0] = new StillSubMesh("wall", mesh, GL20.GL_TRIANGLES);
 
 						OrthographicAlignedStillModel model = new OrthographicAlignedStillModel(new StillModel(subMeshes), mat);
 

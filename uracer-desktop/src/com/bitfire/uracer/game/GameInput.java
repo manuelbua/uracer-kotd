@@ -30,6 +30,10 @@ public final class GameInput {
 		this.timeMode = mode;
 	}
 
+	public TimeDilateInputMode getInputMode () {
+		return this.timeMode;
+	}
+
 	public boolean isTimeDilating () {
 		return timeDilation;
 	}
@@ -38,22 +42,28 @@ public final class GameInput {
 		timeDilation = false;
 	}
 
+	public void ensureConsistenceAfterResume () {
+		// In case the input mode is set to TouchAndRelease then the keyup/button-released event may have
+		// been already triggered during the pause, check for it and disable time dilation if it's the case.
+		if (timeMode == TimeDilateInputMode.TouchAndRelease) {
+			if (!input.isOn(Keys.SPACE) && !input.isTouching(MouseButton.Right)) {
+				logic.endTimeDilation();
+			}
+		}
+	}
+
 	// public void reset () {
 	// resetTimeDilating();
 	// input.releaseAllKeys();
 	// }
 
 	public void update () {
-
 		if (input.isPressed(Keys.R)) {
 			logic.restartGame();
 			logic.showMessage("Restarted", 1.5f, Message.Type.Information, Position.Bottom, Size.Big);
 		} else if (input.isPressed(Keys.T)) {
 			logic.resetGame();
 			logic.showMessage("Reset", 1.5f, Message.Type.Information, Position.Bottom, Size.Big);
-		} else if (input.isPressed(Keys.Q) || input.isPressed(Keys.ESCAPE) || input.isPressed(Keys.BACK)) {
-			logic.quitGame();
-			// return;
 		} else if (input.isPressed(Keys.TAB)) {
 			// choose next/prev best target
 			boolean backward = input.isOn(Keys.SHIFT_LEFT) || input.isOn(Keys.SHIFT_RIGHT);

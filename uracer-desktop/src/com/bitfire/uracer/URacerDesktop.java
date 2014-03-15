@@ -22,7 +22,6 @@ public final class URacerDesktop {
 		// set to uracer defaults
 		config.addIcon("data/base/icon.png", FileType.Internal);
 		config.title = URacer.Name + " (" + URacer.versionInfo + ")";
-		config.useGL20 = true;
 		config.resizable = false;
 		config.samples = 0;
 		config.audioDeviceSimultaneousSources = 32;
@@ -31,8 +30,8 @@ public final class URacerDesktop {
 			config.backgroundFPS = 0;
 			config.foregroundFPS = 0;
 		} else {
-			config.backgroundFPS = -1;
-			config.foregroundFPS = -1;
+			config.backgroundFPS = 60;
+			config.foregroundFPS = 60;
 		}
 
 		// apply boot config

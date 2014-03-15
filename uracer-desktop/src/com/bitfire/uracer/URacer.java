@@ -9,7 +9,7 @@ import com.badlogic.gdx.Application;
 import com.badlogic.gdx.Application.ApplicationType;
 import com.badlogic.gdx.ApplicationListener;
 import com.badlogic.gdx.Gdx;
-import com.badlogic.gdx.graphics.GL10;
+import com.badlogic.gdx.graphics.GL20;
 import com.badlogic.gdx.utils.TimeUtils;
 import com.bitfire.uracer.configuration.BootConfig;
 import com.bitfire.uracer.configuration.Config;
@@ -135,8 +135,8 @@ public class URacer implements ApplicationListener {
 
 		System.out.println();
 		Gdx.app.log("URacer", "Booting version " + URacer.versionInfo);
-		Gdx.app.log("URacer", "GL vendor is " + Gdx.gl.glGetString(GL10.GL_VENDOR));
-		Gdx.app.log("URacer", "GL version is " + Gdx.gl.glGetString(GL10.GL_VERSION));
+		Gdx.app.log("URacer", "GL vendor is " + Gdx.gl.glGetString(GL20.GL_VENDOR));
+		Gdx.app.log("URacer", "GL version is " + Gdx.gl.glGetString(GL20.GL_VERSION));
 		Gdx.app.log("URacer", "Java vendor is " + System.getProperty("java.vendor"));
 		Gdx.app.log("URacer", "Java version is " + System.getProperty("java.version"));
 		Gdx.app.log("URacer", "Using real frametime: " + (useRealFrametime ? "YES" : "NO"));
@@ -169,8 +169,8 @@ public class URacer implements ApplicationListener {
 
 		isDesktop = (Gdx.app.getType() == ApplicationType.Desktop);
 
-		Game.show(ScreenType.MainScreen);
-		// Screens.setScreen(ScreenType.GameScreen, TransitionType.Fader, 1000);
+		// Game.show(ScreenType.MainScreen);
+		Game.show(ScreenType.GameScreen, 1000);
 		// Screens.setScreen(ScreenType.OptionsScreen, TransitionType.CrossFader, 500);
 	}
 
@@ -297,7 +297,7 @@ public class URacer implements ApplicationListener {
 	@Override
 	public void pause () {
 		if (Config.Debug.PauseDisabled) {
-			Gdx.app.log("URacer", "Ignoring pause request");
+			Gdx.app.log("URacer", "Ignoring pause request by focus lost");
 			return;
 		}
 
@@ -310,7 +310,7 @@ public class URacer implements ApplicationListener {
 	@Override
 	public void resume () {
 		if (Config.Debug.PauseDisabled) {
-			Gdx.app.log("URacer", "Ignoring resume request");
+			Gdx.app.log("URacer", "Ignoring resume request by focus gained");
 			return;
 		}
 

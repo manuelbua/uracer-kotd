@@ -16,9 +16,7 @@
 
 package com.bitfire.uracer.u3d.materials;
 
-import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.Color;
-import com.badlogic.gdx.graphics.GL10;
 import com.badlogic.gdx.graphics.glutils.ShaderProgram;
 import com.badlogic.gdx.utils.Pool;
 
@@ -43,15 +41,6 @@ public class ColorAttribute extends MaterialAttribute {
 	public ColorAttribute (Color color, String name) {
 		super(name);
 		this.color.set(color);
-	}
-
-	@Override
-	public void bind () {
-		if (Gdx.gl10 == null) throw new RuntimeException("Can't call ColorAttribute.bind() in a GL20 context");
-
-		// todo how about emissive or specular?
-		// TODO replace string equals with something more performant
-		if (diffuse.equals(diffuse)) Gdx.gl10.glColor4f(color.r, color.g, color.b, color.a);
 	}
 
 	@Override

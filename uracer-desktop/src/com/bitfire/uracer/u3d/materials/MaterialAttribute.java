@@ -32,8 +32,6 @@ public abstract class MaterialAttribute {
 		isPooled = false;
 	}
 
-	public abstract void bind ();
-
 	public abstract void bind (ShaderProgram program);
 
 	public abstract MaterialAttribute copy ();

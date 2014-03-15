@@ -90,6 +90,8 @@ public final class TrackEffects extends GameTask implements DisposableTasks {
 
 	@Override
 	public void onTick () {
+		if (isPaused) return;
+
 		for (TrackEffect e : managerBeforeCars) {
 			e.tick();
 		}
@@ -102,6 +104,32 @@ public final class TrackEffects extends GameTask implements DisposableTasks {
 	@Override
 	public void onGameRestart () {
 		onGameReset();
+	}
+
+	@Override
+	protected void onGamePause () {
+		super.onGamePause();
+
+		for (TrackEffect e : managerBeforeCars) {
+			e.gamePause();
+		}
+
+		for (TrackEffect e : managerAfterCars) {
+			e.gamePause();
+		}
+	}
+
+	@Override
+	protected void onGameResume () {
+		super.onGameResume();
+
+		for (TrackEffect e : managerBeforeCars) {
+			e.gameResume();
+		}
+
+		for (TrackEffect e : managerAfterCars) {
+			e.gameResume();
+		}
 	}
 
 	@Override

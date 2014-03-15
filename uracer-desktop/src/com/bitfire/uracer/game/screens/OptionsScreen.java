@@ -37,7 +37,7 @@ public class OptionsScreen extends Screen {
 	private Input input;
 	private Table root, ltable, rtable;
 	private CheckBox ppBloom, ppVignetting, ppZoomBlur, ppCrtScreen, ppCurvature, ppSsao;
-	private SelectBox ppZoomBlurQuality, ppSsaoQuality;
+	private SelectBox<String> ppZoomBlurQuality, ppSsaoQuality;
 
 	@Override
 	public void init () {
@@ -93,14 +93,15 @@ public class OptionsScreen extends Screen {
 			SelectBox box = UIUtils.newSelectBox(new String[] {"Touch to toggle", "Touch and release"}, new ChangeListener() {
 				@Override
 				public void changed (ChangeEvent event, Actor actor) {
-					int index = ((SelectBox)actor).getSelectionIndex();
+					@SuppressWarnings("unchecked")
+					int index = ((SelectBox<String>)actor).getSelectedIndex();
 					UserPreferences.string(Preference.TimeDilateInputMode, TimeDilateInputMode.values()[index].toString());
 					UserPreferences.save();
 				}
 			});
 
 			TimeDilateInputMode im = TimeDilateInputMode.valueOf(UserPreferences.string(Preference.TimeDilateInputMode));
-			box.setSelection(im.ordinal());
+			box.setSelectedIndex(im.ordinal());
 
 			Label desc = UIUtils.newLabel("Choose your preferred input mode for activating/deactivating "
 				+ "the time dilation feature", true);
@@ -221,7 +222,7 @@ public class OptionsScreen extends Screen {
 					new ChangeListener() {
 						@Override
 						public void changed (ChangeEvent event, Actor actor) {
-							int index = ((SelectBox)actor).getSelectionIndex();
+							int index = ((SelectBox)actor).getSelectedIndex();
 							UserPreferences.string(Preference.ZoomRadialBlurQuality, RadialBlur.Quality.values()[index].toString());
 							UserPreferences.save();
 						}
@@ -229,7 +230,7 @@ public class OptionsScreen extends Screen {
 				// ppZoomBlurQuality.setDisabled(!UserPreferences.bool(Preference.PostProcessing));
 
 				RadialBlur.Quality quality = RadialBlur.Quality.valueOf(UserPreferences.string(Preference.ZoomRadialBlurQuality));
-				ppZoomBlurQuality.setSelection(quality.ordinal());
+				ppZoomBlurQuality.setSelectedIndex(quality.ordinal());
 			}
 
 			// SSAO
@@ -243,10 +244,17 @@ public class OptionsScreen extends Screen {
 				});
 				ppSsao.setDisabled(!UserPreferences.bool(Preference.PostProcessing));
 
-				ppSsaoQuality = UIUtils.newSelectBox(Ssao.Quality.values(), new ChangeListener() {
+				String[] qualityList = new String[Ssao.Quality.values().length];
+				int idx = 0;
+				for (Ssao.Quality q : Ssao.Quality.values()) {
+					qualityList[idx++] = q.toString();
+				}
+
+				ppSsaoQuality = UIUtils.newSelectBox(qualityList, new ChangeListener() {
 					@Override
 					public void changed (ChangeEvent event, Actor actor) {
-						int index = ((SelectBox)actor).getSelectionIndex();
+						@SuppressWarnings("unchecked")
+						int index = ((SelectBox<String>)actor).getSelectedIndex();
 						UserPreferences.string(Preference.SsaoQuality, Ssao.Quality.values()[index].toString());
 						UserPreferences.save();
 					}
@@ -254,7 +262,7 @@ public class OptionsScreen extends Screen {
 				// ppSsaoQuality.setDisabled(!UserPreferences.bool(Preference.PostProcessing));
 
 				Ssao.Quality quality = Ssao.Quality.valueOf(UserPreferences.string(Preference.SsaoQuality));
-				ppSsaoQuality.setSelection(quality.ordinal());
+				ppSsaoQuality.setSelectedIndex(quality.ordinal());
 			}
 
 			// back button

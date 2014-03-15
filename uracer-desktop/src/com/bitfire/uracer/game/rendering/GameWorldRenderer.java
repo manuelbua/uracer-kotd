@@ -8,7 +8,6 @@ import box2dLight.RayHandler;
 
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.Color;
-import com.badlogic.gdx.graphics.GL10;
 import com.badlogic.gdx.graphics.GL20;
 import com.badlogic.gdx.graphics.Mesh;
 import com.badlogic.gdx.graphics.OrthographicCamera;
@@ -518,7 +517,7 @@ public final class GameWorldRenderer {
 		gl.glDisable(GL20.GL_DEPTH_TEST);
 		gl.glDisable(GL20.GL_CULL_FACE);
 		gl.glDisable(GL20.GL_BLEND);
-		gl.glActiveTexture(GL10.GL_TEXTURE0);
+		gl.glActiveTexture(GL20.GL_TEXTURE0);
 		tileMapRenderer.setView(camTilemap);
 		tileMapRenderer.getSpriteBatch().disableBlending();
 		tileMapRenderer.render();
