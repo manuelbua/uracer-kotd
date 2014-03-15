@@ -119,7 +119,7 @@ public final class Art {
 	//
 	// screens
 	//
-	private static void loadScreensData () {
+	public static void loadScreensData () {
 		scrBackground = newTexture("data/base/titlescreen.png", true);
 
 		// the skin will automatically search and load the same filename+".atlas" extension
@@ -145,7 +145,7 @@ public final class Art {
 		scrPanel = newTexture("data/base/panel.png", false);
 	}
 
-	private static void disposeScreensData () {
+	public static void disposeScreensData () {
 		scrSkin.dispose();
 		scrBackground.dispose();
 		skinAtlas.dispose();

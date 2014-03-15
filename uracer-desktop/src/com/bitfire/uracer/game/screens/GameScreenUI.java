@@ -228,6 +228,8 @@ public class GameScreenUI {
 				Gdx.input.setInputProcessor(null);
 				hideQuit();
 				ui.dispose();
+				Art.disposeScreensData();
+				Art.loadScreensData();
 				constructUI();
 				Gdx.input.setInputProcessor(ui);
 				setup();
