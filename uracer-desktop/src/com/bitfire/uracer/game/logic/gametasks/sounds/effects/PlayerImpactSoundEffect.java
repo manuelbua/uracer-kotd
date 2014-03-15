@@ -102,7 +102,7 @@ public final class PlayerImpactSoundEffect extends SoundEffect {
 			}
 
 			lastIdx = idx;
-			vol = volumeFactor * 0.8f * SoundManager.SfxVolumeMul;
+			vol = volumeFactor * 2 * SoundManager.SfxVolumeMul;
 			long result = play(impacts[idx], vol);
 
 			if (result == -1) {
