@@ -13,7 +13,6 @@ import com.badlogic.gdx.scenes.scene2d.ui.Dialog;
 import com.badlogic.gdx.scenes.scene2d.ui.Label;
 import com.badlogic.gdx.scenes.scene2d.ui.Slider;
 import com.badlogic.gdx.scenes.scene2d.ui.Table;
-import com.badlogic.gdx.scenes.scene2d.ui.TextButton;
 import com.badlogic.gdx.scenes.scene2d.ui.Window;
 import com.badlogic.gdx.scenes.scene2d.utils.ChangeListener;
 import com.badlogic.gdx.scenes.scene2d.utils.ClickListener;
@@ -69,30 +68,19 @@ public class GameScreenUI {
 		ui.addActor(root);
 
 		// panel background
-		NinePatch np = new NinePatch(Art.scrPanel, 6, 6, 31, 13);
+		NinePatch np = new NinePatch(Art.scrPanel, 6, 6, 24, 10);
 		// np.setColor(new Color(0.3f, 0.3f, 0.3f, 1f));
 		NinePatchDrawable brushed = new NinePatchDrawable(np);
 
 		// setup main window
 		win = new Window("OPTIONS", Art.scrSkin);
 		ui.addActor(win);
-		TextButton closeButton = new TextButton("X", Art.scrSkin);
-		closeButton.addListener(new ChangeListener() {
-			@Override
-			public void changed (ChangeEvent event, Actor actor) {
-				if (enabled) {
-					disable();
-					enabled = false;
-				}
-			}
-		});
-		win.getButtonTable().add(closeButton).height(win.getPadTop());
 
 		Table content = new Table();
 		Table bottom = new Table();
 
-		// content.debug();
-		// bottom.debug();
+		content.debug();
+		bottom.debug();
 
 		win.row().fill().expand();
 		win.add(content);
