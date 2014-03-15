@@ -1,9 +1,9 @@
 
 package com.bitfire.uracer.game.logic.types.helpers;
 
+import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.math.MathUtils;
 import com.badlogic.gdx.math.Vector2;
-import com.bitfire.uracer.utils.AMath;
 import com.bitfire.uracer.utils.InterpolatedFloat;
 
 public final class CameraShaker {
@@ -15,7 +15,7 @@ public final class CameraShaker {
 
 	public Vector2 compute (float factor) {
 		// collisionFactor = 0.25f;
-		float alpha = AMath.fixup(factor);
+		float alpha = /* AMath.fixup */(factor) * 0.8f;
 		float px = Pixels;
 
 		// if (camshakeFactor.value > 0) {
@@ -30,9 +30,10 @@ public final class CameraShaker {
 
 		result.x = MathUtils.clamp(result.x, -50, 50);
 		result.y = MathUtils.clamp(result.y, -50, 50);
+		// result.clamp(-50, 50);
 
 		// result.set(noiseX.get(), noiseY.get());
-		// Gdx.app.log("", result.toString() + " / " + factor);
+		Gdx.app.log("", result.toString() + " / " + factor);
 		return result;
 	}
 }
