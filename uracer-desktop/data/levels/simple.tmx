@@ -11,7 +11,7 @@
   </data>
  </layer>
  <objectgroup color="#55ffff" draworder="topdown" height="10" name="trees" width="12">
-  <object height="68" name="tree-2" type="tree-2" width="61" x="1888" y="650">
+  <object height="68" name="tree-2" type="tree-2" width="61" x="1895" y="683">
    <properties>
     <property name="scale" value="2"/>
    </properties>
@@ -101,13 +101,13 @@
   <object height="21" width="27" x="1458" y="1095"/>
   <object height="21" width="27" x="696" y="1162"/>
   <object height="21" width="27" x="1220" y="663"/>
-  <object height="21" width="27" x="2013" y="1145"/>
+  <object height="21" width="27" x="2069" y="1165"/>
   <object height="21" width="27" x="1580" y="659"/>
   <object height="21" width="27" x="1704" y="1558"/>
   <object x="831" y="795"/>
   <object x="778" y="1524"/>
   <object x="1848" y="1416"/>
-  <object x="1883" y="770"/>
+  <object x="1890" y="817"/>
   <object height="21" width="27" x="1045" y="1194"/>
   <object height="21" width="27" x="1213" y="1014"/>
   <object height="21" width="27" x="1616" y="1172"/>
