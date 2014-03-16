@@ -20,6 +20,7 @@ import com.bitfire.uracer.configuration.Config;
 import com.bitfire.uracer.game.logic.helpers.TrackProgressData;
 import com.bitfire.uracer.game.logic.post.PostProcessing;
 import com.bitfire.uracer.game.logic.post.PostProcessingAnimator;
+import com.bitfire.uracer.game.logic.post.lightshafts.LightShafts;
 import com.bitfire.uracer.game.logic.post.ssao.Ssao;
 import com.bitfire.uracer.game.player.PlayerCar;
 import com.bitfire.uracer.game.rendering.GameRenderer;
@@ -42,6 +43,7 @@ public final class DefaultAnimator implements PostProcessingAnimator {
 	private Vignette vignette = null;
 	private CrtMonitor crt = null;
 	private Ssao ssao = null;
+	private LightShafts shafts = null;
 	private PlayerCar player = null;
 	private boolean hasPlayer = false;
 	private BoxedFloat alertAmount = new BoxedFloat(0);
@@ -51,6 +53,7 @@ public final class DefaultAnimator implements PostProcessingAnimator {
 
 	private long startMs = 0;
 	private Vector2 playerScreenPos = new Vector2();
+	private Vector2 cameraScreenPos = new Vector2();
 	private InterpolatedFloat speed = new InterpolatedFloat();
 	private InterpolatedFloat zoomBlurStrengthFactor = new InterpolatedFloat();
 
@@ -62,6 +65,7 @@ public final class DefaultAnimator implements PostProcessingAnimator {
 		vignette = (Vignette)post.getEffect(PostProcessing.Effects.Vignette.name);
 		crt = (CrtMonitor)post.getEffect(PostProcessing.Effects.Crt.name);
 		ssao = (Ssao)post.getEffect(PostProcessing.Effects.Ssao.name);
+		shafts = (LightShafts)post.getEffect(PostProcessing.Effects.LightShafts.name);
 		zoomBlurStrengthFactor.setFixup(false);
 		reset();
 	}
@@ -207,6 +211,12 @@ public final class DefaultAnimator implements PostProcessingAnimator {
 			crt.getCombinePass().setSource2Intensity(1f);
 		}
 
+		if (shafts != null) {
+			shafts.setThreshold(0.65f);
+			shafts.setParams(30, 0.05f, 0.92f, 0.84f, 3.65f, 1f, 0, 0);
+			shafts.setLightScreenPositionN(0.5f, 0.5f);
+		}
+
 		//
 		// reset composed effects
 		//
@@ -236,7 +246,7 @@ public final class DefaultAnimator implements PostProcessingAnimator {
 	}
 
 	private void updateLights (TrackProgressData progressData, Color ambient, Color trees, float collisionFactor) {
-		ambient.set(0.1f + collisionFactor * 0.5f, 0.05f, 0.2f, 0.5f + 0.1f * URacer.Game.getTimeModFactor());
+		ambient.set(0.1f + collisionFactor * 0.5f, 0.05f, 0.2f, 0.5f + 0.0f * URacer.Game.getTimeModFactor());
 
 		ambient.clamp();
 		trees.set(ambient);
@@ -252,14 +262,14 @@ public final class DefaultAnimator implements PostProcessingAnimator {
 				float maxdist = 30;
 				maxdist *= maxdist;
 				dist = 1 - MathUtils.clamp(dist, 0, maxdist) / maxdist;
-				lights[l].setColor(1, 0.9f, 0.5f, 0.55f);// + AMath.fixup(0.4f * dist));
+				lights[l].setColor(1, 0.9f, 0.5f, 0.7f);// + AMath.fixup(0.4f * dist));
 			}
 		}
 	}
 
 	@Override
-	public void update (TrackProgressData progressData, Color ambient, Color trees, float zoomCamera, float warmUpCompletion,
-		float collisionFactor, boolean paused) {
+	public void update (Vector2 cameraPos, TrackProgressData progressData, Color ambient, Color trees, float zoomCamera,
+		float warmUpCompletion, float collisionFactor, boolean paused) {
 		float timeModFactor = URacer.Game.getTimeModFactor();
 
 		// dbg
@@ -270,12 +280,16 @@ public final class DefaultAnimator implements PostProcessingAnimator {
 		// ssao.setOcclusionThresholds(0.3f, 0.1f);
 		// dbg
 
+		// compute needed screen positions
 		if (hasPlayer) {
 			playerScreenPos.set(GameRenderer.ScreenUtils.worldPxToScreen(player.state().position));
 			speed.set(player.carState.currSpeedFactor, 0.25f);
 		} else {
 			playerScreenPos.set(0.5f, 0.5f);
 		}
+
+		cameraScreenPos.set(GameRenderer.ScreenUtils.worldPxToScreen(cameraPos));
+		// Gdx.app.log("", "campos=" + cameraPos);
 
 		float cf = collisionFactor;
 		// cf = 1f;
@@ -334,6 +348,18 @@ public final class DefaultAnimator implements PostProcessingAnimator {
 					zoom.setOrigin(playerScreenPos);
 				}
 			}
+		}
+
+		if (shafts != null) {
+			shafts.setThreshold(0.7f);
+			// shafts.setLightScreenPositionN(0.5f, 0.5f);
+			// shafts.setLightScreenPosition(cameraScreenPos.x, cameraScreenPos.y);
+			// shafts.setLightScreenPosition(playerScreenPos.x, playerScreenPos.y);
+			shafts.setDensity(0.84f);
+			shafts.setExposure(0.08f);
+			shafts.setWeight(1.75f);
+			shafts.setIlluminationDecay(1f);
+			// shafts.setLightScreenPositionN(0.5f, 0.3f);
 		}
 
 		float bsat = 0f, sat = 0f;
