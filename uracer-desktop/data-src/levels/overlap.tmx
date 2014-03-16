@@ -39,7 +39,7 @@
   </object>
   <object name="tree-1" type="tree-1" x="1326" y="1759" width="61" height="68">
    <properties>
-    <property name="scale" value="1.7"/>
+    <property name="scale" value="1.5"/>
    </properties>
   </object>
   <object name="tree-5" type="tree-5" x="1337" y="1504" width="61" height="68">

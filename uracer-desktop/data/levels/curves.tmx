@@ -10,7 +10,7 @@
    eJxjYBgFo2DoAR0K8ah9uO0TBGIhIBYGYhEixCm1TxSIxYBYHIgliBCn1D5GJLYkEEsBsTQQy+BQQ037ZIFYDojlgViBRvbB/KQKxOpQMWUorc2A6VdK7YP5iQmIOaA0Mkb361DLD8PRvlEwCgYDAADq5RzZ
   </data>
  </layer>
- <objectgroup color="#a40002" height="24" name="walls" width="28">
+ <objectgroup color="#a40002" draworder="topdown" height="24" name="walls" width="28">
   <object x="2884" y="3358">
    <polyline points="0,0 -138,5 -262,-8 -390,7 -494,-9 -585,-5"/>
   </object>
@@ -150,7 +150,7 @@
    <polyline points="0,0 101,-9 181,-4"/>
   </object>
  </objectgroup>
- <objectgroup color="#55ffff" height="24" name="trees" width="28">
+ <objectgroup color="#55ffff" draworder="topdown" height="24" name="trees" width="28">
   <object height="68" name="tree-2" type="tree-2" width="61" x="3568" y="2898">
    <properties>
     <property name="scale" value="2"/>
@@ -342,7 +342,7 @@
    </properties>
   </object>
  </objectgroup>
- <objectgroup color="#ffaa00" height="24" name="lights" width="28">
+ <objectgroup color="#ffaa00" draworder="topdown" height="24" name="lights" width="28">
   <object height="21" width="27" x="3120" y="3148"/>
   <object height="21" width="27" x="2449" y="2316"/>
   <object height="21" width="27" x="1928" y="2917"/>
@@ -362,8 +362,28 @@
   <object height="21" width="27" x="4288" y="2544"/>
   <object height="21" width="27" x="4045" y="2422"/>
   <object height="21" width="27" x="1947" y="2318"/>
+  <object height="21" width="27" x="2487" y="2506"/>
+  <object height="21" width="27" x="2507" y="2678"/>
+  <object height="21" width="27" x="2507" y="2902"/>
+  <object height="21" width="27" x="2787" y="2958"/>
+  <object height="21" width="27" x="3123" y="3014"/>
+  <object height="21" width="27" x="3347" y="2958"/>
+  <object height="21" width="27" x="3571" y="2902"/>
+  <object height="21" width="27" x="3683" y="2566"/>
+  <object height="21" width="27" x="3851" y="2510"/>
+  <object height="21" width="27" x="3851" y="2790"/>
+  <object height="21" width="27" x="3851" y="3014"/>
+  <object height="21" width="27" x="3011" y="3462"/>
+  <object height="21" width="27" x="3459" y="3462"/>
+  <object height="21" width="27" x="3739" y="3462"/>
+  <object height="21" width="27" x="4075" y="3406"/>
+  <object height="21" width="27" x="4243" y="3182"/>
+  <object height="21" width="27" x="2451" y="1894"/>
+  <object height="21" width="27" x="2899" y="2118"/>
+  <object height="21" width="27" x="3067" y="2510"/>
+  <object height="21" width="27" x="3739" y="1950"/>
  </objectgroup>
- <objectgroup color="#ecde0e" height="24" name="sectors" visible="0" width="28">
+ <objectgroup color="#ecde0e" draworder="topdown" height="24" name="sectors" visible="0" width="28">
   <object x="2688" y="3080">
    <polygon points="0,0 112,0 112,336 0,336"/>
   </object>
@@ -434,10 +454,10 @@
    <polygon points="0,0 -672,0 -672,336 56,280"/>
   </object>
  </objectgroup>
- <objectgroup color="#ffec18" height="24" name="route" visible="0" width="28">
+ <objectgroup color="#ffec18" draworder="topdown" height="24" name="route" visible="0" width="28">
   <object x="2801" y="3249">
    <polyline points="0,0 -112,-2 -448,-29 -617,-157 -669,-394 -651,-897 -496,-1083 -254,-1115 -58,-980 -5,-819 43,-624 259,-460 498,-491 641,-646 711,-948 893,-1100 1203,-1066 1322,-900 1346,-506 1297,-170 1104,-17 816,-11 112,0"/>
   </object>
  </objectgroup>
- <objectgroup height="24" name="static-meshes" visible="0" width="28"/>
+ <objectgroup draworder="topdown" height="24" name="static-meshes" visible="0" width="28"/>
 </map>

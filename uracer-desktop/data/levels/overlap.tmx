@@ -36,9 +36,9 @@
     <property name="scale" value="4"/>
    </properties>
   </object>
-  <object height="68" name="tree-1" type="tree-1" width="61" x="1371" y="1798">
+  <object height="68" name="tree-1" type="tree-1" width="61" x="1326" y="1759">
    <properties>
-    <property name="scale" value="1.25"/>
+    <property name="scale" value="1.5"/>
    </properties>
   </object>
   <object height="68" name="tree-5" type="tree-5" width="61" x="1337" y="1504">
@@ -86,7 +86,7 @@
   <object height="21" width="27" x="1554" y="2897"/>
   <object height="20" width="21" x="1078" y="2136"/>
   <object height="21" width="27" x="987" y="1298"/>
-  <object height="21" width="27" x="1764" y="1532"/>
+  <object height="21" width="27" x="1727" y="1480"/>
   <object height="21" width="27" x="1386" y="1127"/>
   <object height="21" width="27" x="2407" y="2924"/>
   <object x="891" y="1668"/>
@@ -98,19 +98,20 @@
   <object height="21" width="27" x="2041" y="3160"/>
   <object height="21" width="27" x="2209" y="2821"/>
   <object height="21" width="27" x="1877" y="1668"/>
-  <object height="14" width="15" x="1390" y="1826"/>
+  <object x="1345" y="1787"/>
   <object height="16" width="18" x="1357" y="1530"/>
-  <object height="14" width="15" x="1541" y="1490"/>
+  <object height="14" width="15" x="1572" y="1813"/>
   <object height="14" width="15" x="1870" y="2867"/>
   <object height="14" width="15" x="2453" y="2553"/>
   <object height="14" width="15" x="2007" y="2521"/>
   <object height="14" width="15" x="1321" y="2551"/>
   <object height="20" width="21" x="1260" y="2282"/>
   <object height="20" width="21" x="878" y="1976"/>
-  <object height="20" width="21" x="850" y="1356"/>
+  <object height="20" width="21" x="923" y="1259"/>
   <object height="20" width="21" x="1108" y="1032"/>
   <object height="20" width="21" x="1706" y="1166"/>
   <object height="21" width="27" x="2007" y="2702"/>
+  <object height="14" width="15" x="2461" y="2224"/>
  </objectgroup>
  <objectgroup color="#a40002" draworder="topdown" height="19" name="walls" width="15">
   <object x="860" y="1718">
