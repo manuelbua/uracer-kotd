@@ -358,7 +358,7 @@ public final class DefaultAnimator implements PostProcessingAnimator {
 			shafts.setDensity(0.84f);
 			shafts.setExposure(0.08f);
 			shafts.setWeight(2);
-			shafts.setDecay(0.95f);
+			shafts.setDecay(0.88f);
 			Combine combine = shafts.getCombinePass();
 
 			combine.setSource2Intensity(1);
