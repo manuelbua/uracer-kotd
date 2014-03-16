@@ -15,6 +15,7 @@ import com.bitfire.postprocessing.effects.Bloom;
 import com.bitfire.postprocessing.effects.CrtMonitor;
 import com.bitfire.postprocessing.effects.Vignette;
 import com.bitfire.postprocessing.effects.Zoomer;
+import com.bitfire.postprocessing.filters.Combine;
 import com.bitfire.uracer.URacer;
 import com.bitfire.uracer.configuration.Config;
 import com.bitfire.uracer.game.logic.helpers.TrackProgressData;
@@ -262,7 +263,7 @@ public final class DefaultAnimator implements PostProcessingAnimator {
 				float maxdist = 30;
 				maxdist *= maxdist;
 				dist = 1 - MathUtils.clamp(dist, 0, maxdist) / maxdist;
-				lights[l].setColor(1, 0.9f, 0.5f, 0.7f);// + AMath.fixup(0.4f * dist));
+				lights[l].setColor(1, 0.9f, 0.5f, 0.65f);// + AMath.fixup(0.4f * dist));
 			}
 		}
 	}
@@ -331,7 +332,7 @@ public final class DefaultAnimator implements PostProcessingAnimator {
 		if (zoom != null) {
 			if (hasPlayer) {
 				float sfactor = speed.get();
-				float strength = -0.05f * timeModFactor * sfactor + (-0.05f * sfactor) - 0.4f * cf;
+				float strength = -0.05f * timeModFactor + (-0.05f * sfactor) - 0.4f * cf;
 				// Gdx.app.log("", "strength=" + strength);
 				zoomBlurStrengthFactor.set(strength, 1f);
 			} else {
@@ -351,14 +352,18 @@ public final class DefaultAnimator implements PostProcessingAnimator {
 		}
 
 		if (shafts != null) {
-			shafts.setThreshold(0.7f);
-			// shafts.setLightScreenPositionN(0.5f, 0.5f);
-			// shafts.setLightScreenPosition(cameraScreenPos.x, cameraScreenPos.y);
-			// shafts.setLightScreenPosition(playerScreenPos.x, playerScreenPos.y);
+			float sfactor = speed.get();
+
+			shafts.setThreshold(0.95f);
 			shafts.setDensity(0.84f);
 			shafts.setExposure(0.08f);
-			shafts.setWeight(1.75f);
-			shafts.setIlluminationDecay(1f);
+			shafts.setWeight(2);
+			shafts.setDecay(1f);
+			Combine combine = shafts.getCombinePass();
+
+			combine.setSource2Intensity(1);
+			combine.setSource2Saturation(0.4f);
+			// Gdx.app.log("", "speed=" + sfactor);
 			// shafts.setLightScreenPositionN(0.5f, 0.3f);
 		}
 
