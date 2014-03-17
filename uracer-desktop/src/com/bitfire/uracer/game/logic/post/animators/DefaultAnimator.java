@@ -352,17 +352,27 @@ public final class DefaultAnimator implements PostProcessingAnimator {
 		}
 
 		if (shafts != null) {
-			float sfactor = speed.get();
+			// final float ScaleMt = 10;
+			// final float InvScaleMt = 1f / ScaleMt;
+			// // to normalized range
+			// float pdist = MathUtils.clamp(progressData.playerDistance.get() - progressData.targetDistance.get(), 0, ScaleMt);
+			// pdist *= InvScaleMt;
+			// float sfactor = speed.get();
+			// float lim_min = 0.7f;
+			// float lim_max = 0.8f;
+			// float th = lim_max - (lim_max - lim_min) * pdist;
 
-			shafts.setThreshold(0.8f);
+			// Gdx.app.log("", "p2t=" + progressData.playerToTarget + ", th=" + th + ", pdist=" + pdist);
+
+			shafts.setThreshold(0.85f);
 			shafts.setDensity(0.84f);
 			shafts.setExposure(0.08f);
-			shafts.setWeight(2);
-			shafts.setDecay(0.88f);
+			shafts.setWeight(1f);
+			shafts.setDecay(0.98f);
 			Combine combine = shafts.getCombinePass();
 
 			combine.setSource2Intensity(1);
-			combine.setSource2Saturation(1);
+			combine.setSource2Saturation(0.6f);
 			// Gdx.app.log("", "speed=" + sfactor);
 			// shafts.setLightScreenPositionN(0.5f, 0.3f);
 		}
