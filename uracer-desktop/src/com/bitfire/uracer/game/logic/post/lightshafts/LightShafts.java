@@ -216,9 +216,9 @@ public class LightShafts extends PostProcessorEffect {
 		}
 		occlusionMap.end();
 
-		// 3, combine
 		restoreViewport(dest);
 
+		// 3, combine
 		combine.setOutput(dest).setInput(tsrc, occlusionMap.getResultTexture()).render();
 	}
 
