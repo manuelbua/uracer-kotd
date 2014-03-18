@@ -370,7 +370,6 @@ public final class DefaultAnimator implements PostProcessingAnimator {
 			shafts.setWeight(1f);
 			shafts.setDecay(0.98f);
 			Combine combine = shafts.getCombinePass();
-
 			combine.setSource2Intensity(1);
 			combine.setSource2Saturation(0.6f);
 			// Gdx.app.log("", "speed=" + sfactor);

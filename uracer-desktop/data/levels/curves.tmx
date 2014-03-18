@@ -161,7 +161,7 @@
     <property name="scale" value="7"/>
    </properties>
   </object>
-  <object height="68" name="tree-5" type="tree-5" width="61" x="2452" y="2387">
+  <object height="68" name="tree-9" type="tree-9" width="61" x="2452" y="2387">
    <properties>
     <property name="scale" value="4"/>
    </properties>
@@ -176,7 +176,7 @@
     <property name="scale" value="6"/>
    </properties>
   </object>
-  <object height="68" name="tree-6" type="tree-6" width="61" x="3759" y="2341">
+  <object height="68" name="tree-9" type="tree-9" width="61" x="3759" y="2341">
    <properties>
     <property name="scale" value="4"/>
    </properties>
@@ -226,22 +226,22 @@
     <property name="scale" value="8"/>
    </properties>
   </object>
-  <object height="68" name="tree-6" type="tree-6" width="61" x="3012" y="2357">
+  <object height="68" name="tree-9" type="tree-9" width="61" x="3012" y="2357">
    <properties>
     <property name="scale" value="5"/>
    </properties>
   </object>
-  <object height="37" name="tree-6" type="tree-6" width="42" x="2407" y="1967">
+  <object height="37" name="tree-9" type="tree-9" width="42" x="2407" y="1967">
    <properties>
     <property name="scale" value="5"/>
    </properties>
   </object>
-  <object height="68" name="tree-6" type="tree-6" width="61" x="3844" y="2568">
+  <object height="68" name="tree-9" type="tree-9" width="61" x="3844" y="2568">
    <properties>
     <property name="scale" value="4"/>
    </properties>
   </object>
-  <object height="68" name="tree-6" type="tree-6" width="61" x="3863" y="2770">
+  <object height="68" name="tree-9" type="tree-9" width="61" x="3863" y="2770">
    <properties>
     <property name="scale" value="3"/>
    </properties>
@@ -256,7 +256,7 @@
     <property name="scale" value="4"/>
    </properties>
   </object>
-  <object height="68" name="tree-5" type="tree-5" width="61" x="3269" y="2361">
+  <object height="68" name="tree-9" type="tree-9" width="61" x="3269" y="2361">
    <properties>
     <property name="scale" value="3"/>
    </properties>
