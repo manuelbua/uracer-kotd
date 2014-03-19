@@ -66,7 +66,14 @@ public class LightShafts extends PostProcessorEffect {
 		// blur
 		blur = new Blur(occlusionMap.width, occlusionMap.height);
 		blur.setType(BlurType.Gaussian5x5b);
+
 		blur.setPasses(2);
+		int w = Gdx.graphics.getWidth();
+		if (w >= 1920)
+			blur.setPasses(8);
+		else if (w >= 1680)
+			blur.setPasses(6);
+		else if (w >= 1280) blur.setPasses(4);
 
 		setParams(16, 0.0034f, 1f, 0.84f, 5.65f, 1f, Config.Graphics.ReferenceScreenWidth / 2,
 			Config.Graphics.ReferenceScreenHeight / 2);
@@ -121,6 +128,7 @@ public class LightShafts extends PostProcessorEffect {
 		shShafts.setUniformf("density", density); // 0.84
 		shShafts.setUniformf("weight", weight); // 5.65
 		shShafts.setUniformf("illuminationDecay", illuminationDecay); // 1
+		// normalized position
 		vLightPos[0] = lightScreenPosX * oneOnW;
 		vLightPos[1] = 1 - lightScreenPosY * oneOnH;
 		shShafts.setUniform2fv("lightPositionOnScreen", vLightPos, 0, 2);

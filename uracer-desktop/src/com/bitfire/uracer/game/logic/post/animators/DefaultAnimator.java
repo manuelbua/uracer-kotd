@@ -54,7 +54,7 @@ public final class DefaultAnimator implements PostProcessingAnimator {
 
 	private long startMs = 0;
 	private Vector2 playerScreenPos = new Vector2();
-	private Vector2 cameraScreenPos = new Vector2();
+	// private Vector2 cameraScreenPos = new Vector2();
 	private InterpolatedFloat speed = new InterpolatedFloat();
 	private InterpolatedFloat zoomBlurStrengthFactor = new InterpolatedFloat();
 
@@ -214,7 +214,7 @@ public final class DefaultAnimator implements PostProcessingAnimator {
 
 		if (shafts != null) {
 			shafts.setThreshold(0.65f);
-			shafts.setParams(30, 0.05f, 0.92f, 0.84f, 3.65f, 1f, 0, 0);
+			shafts.setParams(24, 0.05f, 0.92f, 0.84f, 3.65f, 1f, 0, 0);
 			shafts.setLightScreenPositionN(0.5f, 0.5f);
 		}
 
@@ -289,7 +289,7 @@ public final class DefaultAnimator implements PostProcessingAnimator {
 			playerScreenPos.set(0.5f, 0.5f);
 		}
 
-		cameraScreenPos.set(GameRenderer.ScreenUtils.worldPxToScreen(cameraPos));
+		// cameraScreenPos.set(GameRenderer.ScreenUtils.worldPxToScreen(cameraPos));
 		// Gdx.app.log("", "campos=" + cameraPos);
 
 		float cf = collisionFactor;
@@ -368,14 +368,14 @@ public final class DefaultAnimator implements PostProcessingAnimator {
 
 			// Gdx.app.log("", "pdist=" + pdist);
 
-			shafts.setThreshold(0.9f);
-			shafts.setDensity(0.84f);
+			shafts.setThreshold(0.8f);
+			shafts.setDensity(1f);
 			shafts.setExposure(0.08f);
 			shafts.setWeight(1);
-			shafts.setDecay(0.96f);
+			shafts.setDecay(1f);
 			Combine combine = shafts.getCombinePass();
-			combine.setSource2Intensity(1);
-			combine.setSource2Saturation(0.75f);
+			combine.setSource2Intensity(1f);
+			combine.setSource2Saturation(1f);
 
 			// Gdx.app.log("", "speed=" + sfactor);
 			// shafts.setLightScreenPositionN(0.5f, 0.3f);
