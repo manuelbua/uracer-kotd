@@ -247,7 +247,7 @@ public final class DefaultAnimator implements PostProcessingAnimator {
 	}
 
 	private void updateLights (TrackProgressData progressData, Color ambient, Color trees, float collisionFactor) {
-		ambient.set(0.1f + collisionFactor * 0.5f, 0.05f, 0.2f, 0.5f + 0.0f * URacer.Game.getTimeModFactor());
+		ambient.set(0.1f + collisionFactor * 0.5f, 0.05f, 0.2f, 0.4f + 0.2f * URacer.Game.getTimeModFactor());
 
 		ambient.clamp();
 		trees.set(ambient);
@@ -368,7 +368,7 @@ public final class DefaultAnimator implements PostProcessingAnimator {
 
 			// Gdx.app.log("", "pdist=" + pdist);
 
-			shafts.setThreshold(0.8f);
+			shafts.setThreshold(0.9f);
 			shafts.setDensity(1f);
 			shafts.setExposure(0.08f);
 			shafts.setWeight(1);
