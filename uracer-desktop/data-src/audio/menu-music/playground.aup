@@ -1,0 +1,255 @@
+<?xml version="1.0" standalone="no" ?>
+<!DOCTYPE project PUBLIC "-//audacityproject-1.3.0//DTD//EN" "http://audacity.sourceforge.net/xml/audacityproject-1.3.0.dtd" >
+<project xmlns="http://audacity.sourceforge.net/xml/" projname="playground_data" version="1.3.0" audacityversion="2.0.5" sel0="0.0000000000" sel1="10.3775510204" vpos="0" h="0.0000000000" zoom="11.4440917969" rate="44100.0">
+	<tags/>
+	<wavetrack name="1" channel="0" linked="1" mute="0" solo="0" height="150" minimized="1" isSelected="0" rate="44100" gain="1.0" pan="0.0">
+		<waveclip offset="0.00000000">
+			<sequence maxsamples="262144" sampleformat="262159" numsamples="281611">
+				<waveblock start="0">
+					<simpleblockfile filename="e00009c4.au" len="262144" min="-1.0" max="0.999969" rms="0.197598"/>
+				</waveblock>
+				<waveblock start="262144">
+					<simpleblockfile filename="e00007b2.au" len="19467" min="-1.0" max="0.999969" rms="0.108399"/>
+				</waveblock>
+			</sequence>
+			<envelope numpoints="0"/>
+		</waveclip>
+	</wavetrack>
+	<wavetrack name="1" channel="1" linked="0" mute="0" solo="0" height="150" minimized="1" isSelected="0" rate="44100" gain="1.0" pan="0.0">
+		<waveclip offset="0.00000000">
+			<sequence maxsamples="262144" sampleformat="262159" numsamples="281611">
+				<waveblock start="0">
+					<simpleblockfile filename="e0000ccc.au" len="262144" min="-1.0" max="0.999969" rms="0.191304"/>
+				</waveblock>
+				<waveblock start="262144">
+					<simpleblockfile filename="e00002b7.au" len="19467" min="-1.0" max="0.999969" rms="0.10042"/>
+				</waveblock>
+			</sequence>
+			<envelope numpoints="0"/>
+		</waveclip>
+	</wavetrack>
+	<wavetrack name="2" channel="0" linked="1" mute="0" solo="0" height="150" minimized="1" isSelected="0" rate="44100" gain="1.0" pan="0.0">
+		<waveclip offset="6.38573696">
+			<sequence maxsamples="262144" sampleformat="262159" numsamples="282568">
+				<waveblock start="0">
+					<simpleblockfile filename="e00005a9.au" len="262144" min="-1.0" max="0.999969" rms="0.195318"/>
+				</waveblock>
+				<waveblock start="262144">
+					<simpleblockfile filename="e00003d1.au" len="20424" min="-0.949402" max="0.999969" rms="0.089886"/>
+				</waveblock>
+			</sequence>
+			<envelope numpoints="0"/>
+		</waveclip>
+	</wavetrack>
+	<wavetrack name="2" channel="1" linked="0" mute="0" solo="0" height="150" minimized="1" isSelected="0" rate="44100" gain="1.0" pan="0.0">
+		<waveclip offset="6.38573696">
+			<sequence maxsamples="262144" sampleformat="262159" numsamples="282568">
+				<waveblock start="0">
+					<simpleblockfile filename="e0000eef.au" len="262144" min="-1.0" max="0.999969" rms="0.183538"/>
+				</waveblock>
+				<waveblock start="262144">
+					<simpleblockfile filename="e0000722.au" len="20424" min="-0.800049" max="0.953186" rms="0.075108"/>
+				</waveblock>
+			</sequence>
+			<envelope numpoints="0"/>
+		</waveclip>
+	</wavetrack>
+	<wavetrack name="3" channel="0" linked="1" mute="0" solo="0" height="150" minimized="1" isSelected="0" rate="44100" gain="1.0" pan="0.0">
+		<waveclip offset="12.79317460">
+			<sequence maxsamples="262144" sampleformat="262159" numsamples="283697">
+				<waveblock start="0">
+					<simpleblockfile filename="e0000b6b.au" len="13391" min="-0.97348" max="0.980255" rms="0.101351"/>
+				</waveblock>
+				<waveblock start="13391">
+					<pcmaliasblockfile summaryfile="e000080d.auf" aliasfile="/home/manuel/Documents/bandcamp (clearside)/Clearside - Clearside/Clearside -  Clearside - 01 Sandblaster.flac" aliasstart="1310720" aliaslen="262144" aliaschannel="0" min="-1.0" max="0.999969" rms="0.196892"/>
+				</waveblock>
+				<waveblock start="275535">
+					<simpleblockfile filename="e0000474.au" len="8162" min="-0.834717" max="0.743378" rms="0.067551"/>
+				</waveblock>
+			</sequence>
+			<envelope numpoints="0"/>
+		</waveclip>
+	</wavetrack>
+	<wavetrack name="3" channel="1" linked="0" mute="0" solo="0" height="150" minimized="1" isSelected="0" rate="44100" gain="1.0" pan="0.0">
+		<waveclip offset="12.79317460">
+			<sequence maxsamples="262144" sampleformat="262159" numsamples="283697">
+				<waveblock start="0">
+					<simpleblockfile filename="e00009f3.au" len="13391" min="-0.884857" max="0.938354" rms="0.10033"/>
+				</waveblock>
+				<waveblock start="13391">
+					<pcmaliasblockfile summaryfile="e00008fc.auf" aliasfile="/home/manuel/Documents/bandcamp (clearside)/Clearside - Clearside/Clearside -  Clearside - 01 Sandblaster.flac" aliasstart="1310720" aliaslen="262144" aliaschannel="1" min="-1.0" max="0.999969" rms="0.201256"/>
+				</waveblock>
+				<waveblock start="275535">
+					<simpleblockfile filename="e0000451.au" len="8162" min="-0.760773" max="0.671204" rms="0.065316"/>
+				</waveblock>
+			</sequence>
+			<envelope numpoints="0"/>
+		</waveclip>
+	</wavetrack>
+	<wavetrack name="4" channel="0" linked="1" mute="0" solo="0" height="150" minimized="1" isSelected="0" rate="44100" gain="1.0" pan="0.0">
+		<waveclip offset="19.22621315">
+			<sequence maxsamples="262144" sampleformat="262159" numsamples="282232">
+				<waveblock start="0">
+					<simpleblockfile filename="e00007af.au" len="255096" min="-1.0" max="0.999969" rms="0.19585"/>
+				</waveblock>
+				<waveblock start="255096">
+					<simpleblockfile filename="e0000bfc.au" len="27136" min="-0.893646" max="0.999969" rms="0.161398"/>
+				</waveblock>
+			</sequence>
+			<envelope numpoints="0"/>
+		</waveclip>
+	</wavetrack>
+	<wavetrack name="4" channel="1" linked="0" mute="0" solo="0" height="150" minimized="1" isSelected="0" rate="44100" gain="1.0" pan="0.0">
+		<waveclip offset="19.22621315">
+			<sequence maxsamples="262144" sampleformat="262159" numsamples="282232">
+				<waveblock start="0">
+					<simpleblockfile filename="e0000074.au" len="255096" min="-1.0" max="0.999969" rms="0.19358"/>
+				</waveblock>
+				<waveblock start="255096">
+					<simpleblockfile filename="e0000340.au" len="27136" min="-0.919769" max="0.999969" rms="0.142807"/>
+				</waveblock>
+			</sequence>
+			<envelope numpoints="0"/>
+		</waveclip>
+	</wavetrack>
+	<wavetrack name="5" channel="0" linked="1" mute="0" solo="0" height="150" minimized="1" isSelected="0" rate="44100" gain="1.0" pan="0.0">
+		<waveclip offset="25.62603175">
+			<sequence maxsamples="262144" sampleformat="262159" numsamples="282289">
+				<waveblock start="0">
+					<simpleblockfile filename="e00004e4.au" len="235079" min="-1.0" max="0.999969" rms="0.210352"/>
+				</waveblock>
+				<waveblock start="235079">
+					<simpleblockfile filename="e00003ad.au" len="47210" min="-1.0" max="0.999969" rms="0.199896"/>
+				</waveblock>
+			</sequence>
+			<envelope numpoints="0"/>
+		</waveclip>
+	</wavetrack>
+	<wavetrack name="5" channel="1" linked="0" mute="0" solo="0" height="150" minimized="1" isSelected="0" rate="44100" gain="1.0" pan="0.0">
+		<waveclip offset="25.62603175">
+			<sequence maxsamples="262144" sampleformat="262159" numsamples="282289">
+				<waveblock start="0">
+					<simpleblockfile filename="e00007e4.au" len="235079" min="-1.0" max="0.999969" rms="0.201836"/>
+				</waveblock>
+				<waveblock start="235079">
+					<simpleblockfile filename="e0000c5c.au" len="47210" min="-1.0" max="0.999969" rms="0.19021"/>
+				</waveblock>
+			</sequence>
+			<envelope numpoints="0"/>
+		</waveclip>
+	</wavetrack>
+	<wavetrack name="inciso" channel="0" linked="1" mute="0" solo="0" height="119" minimized="1" isSelected="0" rate="44100" gain="1.0" pan="0.0">
+		<waveclip offset="32.02714286">
+			<sequence maxsamples="262144" sampleformat="262159" numsamples="2046261">
+				<waveblock start="0">
+					<simpleblockfile filename="e00004af.au" len="214934" min="-1.0" max="0.999969" rms="0.203392"/>
+				</waveblock>
+				<waveblock start="214934">
+					<pcmaliasblockfile summaryfile="e0000044.auf" aliasfile="/home/manuel/Documents/bandcamp (clearside)/Clearside - Clearside/Clearside -  Clearside - 01 Sandblaster.flac" aliasstart="2359296" aliaslen="262144" aliaschannel="0" min="-1.0" max="0.999969" rms="0.285364"/>
+				</waveblock>
+				<waveblock start="477078">
+					<pcmaliasblockfile summaryfile="e000004f.auf" aliasfile="/home/manuel/Documents/bandcamp (clearside)/Clearside - Clearside/Clearside -  Clearside - 01 Sandblaster.flac" aliasstart="2621440" aliaslen="262144" aliaschannel="0" min="-1.0" max="0.999969" rms="0.304542"/>
+				</waveblock>
+				<waveblock start="739222">
+					<pcmaliasblockfile summaryfile="e0000384.auf" aliasfile="/home/manuel/Documents/bandcamp (clearside)/Clearside - Clearside/Clearside -  Clearside - 01 Sandblaster.flac" aliasstart="2883584" aliaslen="262144" aliaschannel="0" min="-1.0" max="0.999969" rms="0.291177"/>
+				</waveblock>
+				<waveblock start="1001366">
+					<pcmaliasblockfile summaryfile="e0000d28.auf" aliasfile="/home/manuel/Documents/bandcamp (clearside)/Clearside - Clearside/Clearside -  Clearside - 01 Sandblaster.flac" aliasstart="3145728" aliaslen="262144" aliaschannel="0" min="-1.0" max="0.999969" rms="0.301739"/>
+				</waveblock>
+				<waveblock start="1263510">
+					<pcmaliasblockfile summaryfile="e0000bbb.auf" aliasfile="/home/manuel/Documents/bandcamp (clearside)/Clearside - Clearside/Clearside -  Clearside - 01 Sandblaster.flac" aliasstart="3407872" aliaslen="262144" aliaschannel="0" min="-1.0" max="0.999969" rms="0.300437"/>
+				</waveblock>
+				<waveblock start="1525654">
+					<pcmaliasblockfile summaryfile="e0000b91.auf" aliasfile="/home/manuel/Documents/bandcamp (clearside)/Clearside - Clearside/Clearside -  Clearside - 01 Sandblaster.flac" aliasstart="3670016" aliaslen="262144" aliaschannel="0" min="-1.0" max="0.999969" rms="0.253789"/>
+				</waveblock>
+				<waveblock start="1787798">
+					<simpleblockfile filename="e000019d.au" len="258463" min="-1.0" max="0.999969" rms="0.255696"/>
+				</waveblock>
+			</sequence>
+			<envelope numpoints="0"/>
+		</waveclip>
+	</wavetrack>
+	<wavetrack name="inciso" channel="1" linked="0" mute="0" solo="0" height="119" minimized="1" isSelected="0" rate="44100" gain="1.0" pan="0.0">
+		<waveclip offset="32.02714286">
+			<sequence maxsamples="262144" sampleformat="262159" numsamples="2046261">
+				<waveblock start="0">
+					<simpleblockfile filename="e00005ae.au" len="214934" min="-1.0" max="0.999969" rms="0.206445"/>
+				</waveblock>
+				<waveblock start="214934">
+					<pcmaliasblockfile summaryfile="e000048e.auf" aliasfile="/home/manuel/Documents/bandcamp (clearside)/Clearside - Clearside/Clearside -  Clearside - 01 Sandblaster.flac" aliasstart="2359296" aliaslen="262144" aliaschannel="1" min="-1.0" max="0.999969" rms="0.28926"/>
+				</waveblock>
+				<waveblock start="477078">
+					<pcmaliasblockfile summaryfile="e00005ef.auf" aliasfile="/home/manuel/Documents/bandcamp (clearside)/Clearside - Clearside/Clearside -  Clearside - 01 Sandblaster.flac" aliasstart="2621440" aliaslen="262144" aliaschannel="1" min="-1.0" max="0.999969" rms="0.312169"/>
+				</waveblock>
+				<waveblock start="739222">
+					<pcmaliasblockfile summaryfile="e0000792.auf" aliasfile="/home/manuel/Documents/bandcamp (clearside)/Clearside - Clearside/Clearside -  Clearside - 01 Sandblaster.flac" aliasstart="2883584" aliaslen="262144" aliaschannel="1" min="-1.0" max="0.999969" rms="0.309218"/>
+				</waveblock>
+				<waveblock start="1001366">
+					<pcmaliasblockfile summaryfile="e0000215.auf" aliasfile="/home/manuel/Documents/bandcamp (clearside)/Clearside - Clearside/Clearside -  Clearside - 01 Sandblaster.flac" aliasstart="3145728" aliaslen="262144" aliaschannel="1" min="-1.0" max="0.999969" rms="0.312102"/>
+				</waveblock>
+				<waveblock start="1263510">
+					<pcmaliasblockfile summaryfile="e0000856.auf" aliasfile="/home/manuel/Documents/bandcamp (clearside)/Clearside - Clearside/Clearside -  Clearside - 01 Sandblaster.flac" aliasstart="3407872" aliaslen="262144" aliaschannel="1" min="-1.0" max="0.999969" rms="0.293258"/>
+				</waveblock>
+				<waveblock start="1525654">
+					<pcmaliasblockfile summaryfile="e0000042.auf" aliasfile="/home/manuel/Documents/bandcamp (clearside)/Clearside - Clearside/Clearside -  Clearside - 01 Sandblaster.flac" aliasstart="3670016" aliaslen="262144" aliaschannel="1" min="-1.0" max="0.999969" rms="0.256637"/>
+				</waveblock>
+				<waveblock start="1787798">
+					<simpleblockfile filename="e00009c5.au" len="258463" min="-1.0" max="0.999969" rms="0.247376"/>
+				</waveblock>
+			</sequence>
+			<envelope numpoints="0"/>
+		</waveclip>
+	</wavetrack>
+	<wavetrack name="pre-final" channel="0" linked="1" mute="0" solo="0" height="150" minimized="1" isSelected="0" rate="44100" gain="1.0" pan="0.0">
+		<waveclip offset="78.42761905">
+			<sequence maxsamples="262144" sampleformat="262159" numsamples="282225">
+				<waveblock start="0">
+					<simpleblockfile filename="e0000a6f.au" len="245622" min="-1.0" max="0.999969" rms="0.233386"/>
+				</waveblock>
+				<waveblock start="245622">
+					<simpleblockfile filename="e0000356.au" len="36603" min="-1.0" max="0.999969" rms="0.234542"/>
+				</waveblock>
+			</sequence>
+			<envelope numpoints="0"/>
+		</waveclip>
+	</wavetrack>
+	<wavetrack name="pre-final" channel="1" linked="0" mute="0" solo="0" height="150" minimized="1" isSelected="0" rate="44100" gain="1.0" pan="0.0">
+		<waveclip offset="78.42761905">
+			<sequence maxsamples="262144" sampleformat="262159" numsamples="282225">
+				<waveblock start="0">
+					<simpleblockfile filename="e0000b85.au" len="245622" min="-1.0" max="0.999969" rms="0.266085"/>
+				</waveblock>
+				<waveblock start="245622">
+					<simpleblockfile filename="e0000f54.au" len="36603" min="-1.0" max="0.999969" rms="0.232101"/>
+				</waveblock>
+			</sequence>
+			<envelope numpoints="0"/>
+		</waveclip>
+	</wavetrack>
+	<wavetrack name="final" channel="0" linked="1" mute="0" solo="0" height="57" minimized="1" isSelected="0" rate="44100" gain="1.0" pan="0.0">
+		<waveclip offset="84.82727891">
+			<sequence maxsamples="262144" sampleformat="262159" numsamples="457650">
+				<waveblock start="0">
+					<simpleblockfile filename="e00000f7.au" len="225541" min="-1.0" max="0.999969" rms="0.211572"/>
+				</waveblock>
+				<waveblock start="225541">
+					<simpleblockfile filename="e0000bde.au" len="232109" min="-0.463684" max="0.513702" rms="0.077058"/>
+				</waveblock>
+			</sequence>
+			<envelope numpoints="0"/>
+		</waveclip>
+	</wavetrack>
+	<wavetrack name="final" channel="1" linked="0" mute="0" solo="0" height="57" minimized="1" isSelected="0" rate="44100" gain="1.0" pan="0.0">
+		<waveclip offset="84.82727891">
+			<sequence maxsamples="262144" sampleformat="262159" numsamples="457650">
+				<waveblock start="0">
+					<simpleblockfile filename="e000074b.au" len="225541" min="-1.0" max="0.999969" rms="0.219459"/>
+				</waveblock>
+				<waveblock start="225541">
+					<simpleblockfile filename="e00005a7.au" len="232109" min="-0.512268" max="0.616699" rms="0.101103"/>
+				</waveblock>
+			</sequence>
+			<envelope numpoints="0"/>
+		</waveclip>
+	</wavetrack>
+</project>

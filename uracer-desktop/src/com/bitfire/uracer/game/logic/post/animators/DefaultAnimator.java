@@ -247,7 +247,7 @@ public final class DefaultAnimator implements PostProcessingAnimator {
 	}
 
 	private void updateLights (TrackProgressData progressData, Color ambient, Color trees, float collisionFactor) {
-		ambient.set(0.1f + collisionFactor * 0.5f, 0.05f, 0.2f, 0.4f + 0.2f * URacer.Game.getTimeModFactor());
+		ambient.set(0.1f + collisionFactor * 0.5f, 0.05f, 0.2f, 0.45f + 0.2f * URacer.Game.getTimeModFactor());
 
 		ambient.clamp();
 		trees.set(ambient);
