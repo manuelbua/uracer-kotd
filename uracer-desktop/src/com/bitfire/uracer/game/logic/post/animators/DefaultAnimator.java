@@ -182,7 +182,8 @@ public final class DefaultAnimator implements PostProcessingAnimator {
 			// setup palettes
 			// default aspect to slot #0
 			// special effects palette on slot #1
-			vignette.setLutIndexVal(0, 16);
+			// vignette.setLutIndexVal(0, 16);
+			vignette.setLutIndexVal(0, 13);
 			vignette.setLutIndexVal(1, 7);
 			vignette.setLutIndexOffset(0);
 			vignette.setEnabled(true);
@@ -247,7 +248,7 @@ public final class DefaultAnimator implements PostProcessingAnimator {
 	}
 
 	private void updateLights (TrackProgressData progressData, Color ambient, Color trees, float collisionFactor) {
-		ambient.set(0.1f + collisionFactor * 0.5f, 0.05f, 0.2f, 0.45f + 0.2f * URacer.Game.getTimeModFactor());
+		ambient.set(0.1f + collisionFactor * 0.5f, 0.1f, 0.1f, 0.5f + 0.1f * URacer.Game.getTimeModFactor());
 
 		ambient.clamp();
 		trees.set(ambient);
@@ -421,11 +422,13 @@ public final class DefaultAnimator implements PostProcessingAnimator {
 
 		// cf = 1;
 		if (vignette != null) {
-			float lutIntensity = MathUtils.clamp(0.7f + timeModFactor * 1 + alertAmount.value * 1 + cf * 1, 0, 1.25f);
-			float offset = MathUtils.clamp(cf * 3 + alertAmount.value, 0, 1);
+			float lutIntensity = MathUtils.clamp(0.4f + timeModFactor * 0.25f + alertAmount.value * 1 + cf * 1, 0, 1.25f);
+			float offset = MathUtils.clamp(cf * 3 + alertAmount.value + timeModFactor * 0.25f, 0, 1);
 			vignette.setLutIntensity(lutIntensity);
 			vignette.setLutIndexOffset(offset);
-			// vignette.setLutIndexVal(0, 16);
+
+			// vignette.setLutIntensity(1);
+			// vignette.setLutIndexVal(0, 13);
 			// vignette.setLutIndexVal(1, 7);
 		}
 	}
