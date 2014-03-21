@@ -40,9 +40,10 @@ public class OptionsScreen extends Screen {
 	private SelectBox<String> ppZoomBlurQuality, ppSsaoQuality;
 
 	@Override
-	public void init () {
+	public boolean init () {
 		input = URacer.Game.getInputSystem();
 		setupUI();
+		return true;
 	}
 
 	@Override
