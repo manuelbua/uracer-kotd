@@ -183,7 +183,7 @@ public final class DefaultAnimator implements PostProcessingAnimator {
 			// default aspect to slot #0
 			// special effects palette on slot #1
 			// vignette.setLutIndexVal(0, 16);
-			vignette.setLutIndexVal(0, 13);
+			vignette.setLutIndexVal(0, 16);
 			vignette.setLutIndexVal(1, 7);
 			vignette.setLutIndexOffset(0);
 			vignette.setEnabled(true);
@@ -248,7 +248,14 @@ public final class DefaultAnimator implements PostProcessingAnimator {
 	}
 
 	private void updateLights (TrackProgressData progressData, Color ambient, Color trees, float collisionFactor) {
-		ambient.set(0.1f + collisionFactor * 0.5f, 0.1f, 0.1f, 0.5f + 0.1f * URacer.Game.getTimeModFactor());
+		float base = 0.1f;
+		//@off
+		ambient.set(
+			base * 1.5f + collisionFactor * 0.5f,
+			base,
+			base + base * 3f * URacer.Game.getTimeModFactor(),
+			0.5f + 0.1f * URacer.Game.getTimeModFactor());
+		//@on
 
 		ambient.clamp();
 		trees.set(ambient);
@@ -373,7 +380,7 @@ public final class DefaultAnimator implements PostProcessingAnimator {
 			shafts.setDensity(1f);
 			shafts.setExposure(0.08f);
 			shafts.setWeight(1);
-			shafts.setDecay(1f);
+			shafts.setDecay(0.98f);
 			Combine combine = shafts.getCombinePass();
 			combine.setSource2Intensity(1f);
 			combine.setSource2Saturation(1f);
@@ -422,14 +429,14 @@ public final class DefaultAnimator implements PostProcessingAnimator {
 
 		// cf = 1;
 		if (vignette != null) {
-			float lutIntensity = MathUtils.clamp(0.4f + timeModFactor * 0.25f + alertAmount.value * 1 + cf * 1, 0, 1.25f);
-			float offset = MathUtils.clamp(cf * 3 + alertAmount.value + timeModFactor * 0.25f, 0, 1);
+			float lutIntensity = MathUtils.clamp(0.75f + timeModFactor * 0.75f + alertAmount.value * 1 + cf * 1, 0, 1.5f);
+			float offset = MathUtils.clamp(cf * 3 + alertAmount.value /* + timeModFactor * 0.25f */, 0, 1);
 			vignette.setLutIntensity(lutIntensity);
 			vignette.setLutIndexOffset(offset);
 
 			// vignette.setLutIntensity(1);
 			// vignette.setLutIndexVal(0, 13);
-			// vignette.setLutIndexVal(1, 7);
+			vignette.setLutIndexVal(1, 7);
 		}
 	}
 }
