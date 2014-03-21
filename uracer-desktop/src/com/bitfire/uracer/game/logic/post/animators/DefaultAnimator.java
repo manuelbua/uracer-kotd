@@ -271,7 +271,11 @@ public final class DefaultAnimator implements PostProcessingAnimator {
 				float maxdist = 30;
 				maxdist *= maxdist;
 				dist = 1 - MathUtils.clamp(dist, 0, maxdist) / maxdist;
-				lights[l].setColor(1, 0.9f, 0.5f, 0.65f);// + AMath.fixup(0.4f * dist));
+				float r = 1;
+				float g = 1f;
+				float b = 1;
+				float a = 0.7f;
+				lights[l].setColor(r, g, b, a);// + AMath.fixup(0.4f * dist));
 			}
 		}
 	}
@@ -377,7 +381,7 @@ public final class DefaultAnimator implements PostProcessingAnimator {
 			// Gdx.app.log("", "pdist=" + pdist);
 
 			shafts.setThreshold(0.9f);
-			shafts.setDensity(1f);
+			shafts.setDensity(0.84f);
 			shafts.setExposure(0.08f);
 			shafts.setWeight(1);
 			shafts.setDecay(0.98f);

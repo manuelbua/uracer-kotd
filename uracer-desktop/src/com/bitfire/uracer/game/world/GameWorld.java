@@ -285,7 +285,7 @@ public final class GameWorld {
 			pos.y = worldSizePx.y - pos.y;
 			pos.set(Convert.px2mt(pos));// .scl(scalingStrategy.tileMapZoomFactor);
 
-			PointLight l = new PointLight(rayHandler, maxRays, c, MathUtils.random(15, 20), pos.x, pos.y);
+			PointLight l = new PointLight(rayHandler, maxRays, c, 18 /* MathUtils.random(15, 20) */, pos.x, pos.y);
 			l.setSoft(true);
 			l.setStaticLight(false);
 			l.setMaskBits(CollisionFilters.CategoryPlayer | CollisionFilters.CategoryTrackWalls);
