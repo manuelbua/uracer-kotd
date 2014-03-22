@@ -7,7 +7,6 @@ import aurelienribon.tweenengine.equations.Linear;
 import aurelienribon.tweenengine.equations.Quad;
 import box2dLight.PointLight;
 
-import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.math.MathUtils;
 import com.badlogic.gdx.math.Vector2;
@@ -446,7 +445,7 @@ public final class DefaultAnimator implements PostProcessingAnimator {
 			// vignette.setLutIndexVal(0, 13);
 			// vignette.setLutIndexVal(1, 7);
 
-			Gdx.app.log("", "li=" + lutIntensity + ", lo=" + offset);
+			// Gdx.app.log("", "li=" + lutIntensity + ", lo=" + offset);
 		}
 	}
 }
