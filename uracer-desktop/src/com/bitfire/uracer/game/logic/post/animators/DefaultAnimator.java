@@ -7,6 +7,7 @@ import aurelienribon.tweenengine.equations.Linear;
 import aurelienribon.tweenengine.equations.Quad;
 import box2dLight.PointLight;
 
+import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.math.MathUtils;
 import com.badlogic.gdx.math.Vector2;
@@ -181,7 +182,7 @@ public final class DefaultAnimator implements PostProcessingAnimator {
 
 			// setup palettes
 			// default aspect to slot #0
-			// special effects palette on slot #1
+			// damage effects palette on slot #1
 			// vignette.setLutIndexVal(0, 16);
 			vignette.setLutIndexVal(0, 16);
 			vignette.setLutIndexVal(1, 7);
@@ -249,12 +250,15 @@ public final class DefaultAnimator implements PostProcessingAnimator {
 
 	private void updateLights (TrackProgressData progressData, Color ambient, Color trees, float collisionFactor) {
 		float base = 0.1f;
+		float timeModFactor = URacer.Game.getTimeModFactor();
+
 		//@off
 		ambient.set(
 			base * 1.5f + collisionFactor * 0.5f,
 			base,
-			base + base * 3f * URacer.Game.getTimeModFactor(),
-			0.5f + 0.1f * URacer.Game.getTimeModFactor());
+			base + base * 3f * timeModFactor,
+			0.5f + 0.05f * timeModFactor
+		);
 		//@on
 
 		ambient.clamp();
@@ -271,10 +275,10 @@ public final class DefaultAnimator implements PostProcessingAnimator {
 				float maxdist = 30;
 				maxdist *= maxdist;
 				dist = 1 - MathUtils.clamp(dist, 0, maxdist) / maxdist;
-				float r = 1;
+				float r = 1f;
 				float g = 1f;
-				float b = 1;
-				float a = 0.7f;
+				float b = 1f;
+				float a = 0.65f;
 				lights[l].setColor(r, g, b, a);// + AMath.fixup(0.4f * dist));
 			}
 		}
@@ -440,7 +444,9 @@ public final class DefaultAnimator implements PostProcessingAnimator {
 
 			// vignette.setLutIntensity(1);
 			// vignette.setLutIndexVal(0, 13);
-			vignette.setLutIndexVal(1, 7);
+			// vignette.setLutIndexVal(1, 7);
+
+			Gdx.app.log("", "li=" + lutIntensity + ", lo=" + offset);
 		}
 	}
 }
