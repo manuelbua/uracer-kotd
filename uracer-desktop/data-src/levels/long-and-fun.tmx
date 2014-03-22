@@ -11,30 +11,7 @@
    eJztlOkKAjEMhLuuoH9UvO+D6rJe7/98TiGB0K0HShSXBD62CVM6TMs6Z1W3uv4Y82W+Av6NM1/Z84mvPhiAIRiJM3neBg2iK3Slsq8xmIApmCXmJzE7J3QavgqQ0XoPcnCkPruzJ+hayr74/DKx7glN8HoQff4lX3xHc7AAS7By1bfnoz2avsKd8Btagw3Ygp2rvj3WdZR9eZER319BX87sQn2cpXZenBH/C5r05cxiXTzX8sW5Peqf6bV8aWG+6u3L6n/rBiQLW6E=
   </data>
  </layer>
- <objectgroup color="#00ff00" name="static-meshes" width="38" height="24" visible="0"/>
- <objectgroup color="#55ffff" name="trees-" width="38" height="24" visible="0">
-  <object name="palm" type="palm" x="3346" y="2152" width="61" height="68">
-   <properties>
-    <property name="scale" value="4"/>
-   </properties>
-  </object>
-  <object name="palm" type="palm" x="3780" y="2167" width="61" height="68">
-   <properties>
-    <property name="scale" value="5"/>
-   </properties>
-  </object>
-  <object name="palm" type="palm" x="3576" y="2249" width="61" height="68">
-   <properties>
-    <property name="scale" value="5"/>
-   </properties>
-  </object>
-  <object name="palm" type="palm" x="3017" y="2380" width="61" height="68">
-   <properties>
-    <property name="scale" value="5"/>
-   </properties>
-  </object>
- </objectgroup>
- <objectgroup color="#55ffff" name="trees" width="38" height="24">
+ <objectgroup color="#55ffff" draworder="topdown" name="trees" width="38" height="24">
   <object name="tree-2" type="tree-2" x="5269" y="2743" width="61" height="68">
    <properties>
     <property name="scale" value="2"/>
@@ -206,7 +183,7 @@
    </properties>
   </object>
  </objectgroup>
- <objectgroup color="#ffff00" name="lights" width="38" height="24">
+ <objectgroup color="#ffff00" draworder="topdown" name="lights" width="38" height="24">
   <object x="3768" y="2485" width="27" height="21"/>
   <object x="3140" y="2248" width="27" height="21"/>
   <object x="3409" y="1879" width="27" height="21"/>
@@ -225,7 +202,7 @@
   <object x="5406" y="3582"/>
   <object x="5018" y="2808"/>
   <object x="3358" y="2584"/>
-  <object x="5043" y="2003"/>
+  <object x="5175" y="2127"/>
   <object x="2630" y="1839" width="15" height="15"/>
   <object x="2700" y="3020"/>
   <object x="5590" y="2854"/>
@@ -252,12 +229,12 @@
   <object x="4876" y="1796"/>
   <object x="4704" y="2024"/>
   <object x="3662" y="2138"/>
-  <object x="3912" y="1844"/>
+  <object x="3872" y="1842"/>
   <object x="3616" y="1604"/>
   <object x="5422" y="3102"/>
   <object x="5662" y="3466"/>
  </objectgroup>
- <objectgroup color="#a40002" name="walls" width="38" height="24">
+ <objectgroup color="#a40002" draworder="topdown" name="walls" width="38" height="24">
   <object x="4485" y="3075">
    <polyline points="0,0 50,-96 136,-152 298,-148 375,-84 414,-10 432,137"/>
   </object>
@@ -337,7 +314,7 @@
    <polyline points="0,0 -104,17 -218,6 -289,24"/>
   </object>
  </objectgroup>
- <objectgroup color="#e5f100" name="sectors" width="38" height="24" visible="0">
+ <objectgroup color="#e5f100" draworder="topdown" name="sectors" width="38" height="24" visible="0">
   <object x="4479" y="1747">
    <polygon points="113,-11 113,325 225,325 225,-11"/>
   </object>
@@ -459,7 +436,7 @@
    <polygon points="-6,0 106,0 106,-336 -6,-336"/>
   </object>
  </objectgroup>
- <objectgroup color="#e3e600" name="route" width="38" height="24" visible="0">
+ <objectgroup color="#e3e600" draworder="topdown" name="route" width="38" height="24" visible="0">
   <object x="4481" y="1899">
    <polyline points="111,5 223,5 895,0 1121,85 1218,248 1232,454 1231,1293 1147,1458 1054,1531 896,1568 674,1486 568,1299 536,1093 389,933 168,904 -19,1000 -88,1122 -117,1302 -181,1440 -332,1550 -532,1579 -1372,1566 -1608,1446 -1675,1292 -1676,286 -1597,118 -1467,22 -1317,2 -1127,82 -1008,312 -1004,787 -958,958 -790,1103 -536,1105 -397,983 -336,762 -327,258 -247,123 -108,18 -1,5"/>
   </object>
