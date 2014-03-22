@@ -256,7 +256,7 @@ public final class DefaultAnimator implements PostProcessingAnimator {
 			base * 1.5f + collisionFactor * 0.5f,
 			base,
 			base + base * 3f * timeModFactor,
-			0.5f + 0.05f * timeModFactor
+			0.55f + 0.05f * timeModFactor
 		);
 		//@on
 
@@ -436,7 +436,7 @@ public final class DefaultAnimator implements PostProcessingAnimator {
 
 		// cf = 1;
 		if (vignette != null) {
-			float lutIntensity = MathUtils.clamp(0.75f + timeModFactor * 0.75f + alertAmount.value * 1 + cf * 1, 0, 1.5f);
+			float lutIntensity = MathUtils.clamp(1f + timeModFactor * 0.75f + alertAmount.value * 1 + cf * 1, 0, 1.5f);
 			float offset = MathUtils.clamp(cf * 3 + alertAmount.value /* + timeModFactor * 0.25f */, 0, 1);
 			vignette.setLutIntensity(lutIntensity);
 			vignette.setLutIndexOffset(offset);
