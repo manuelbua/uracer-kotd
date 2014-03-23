@@ -94,7 +94,7 @@ public final class UserPreferences {
 		bool(Preference.CrtScreen, false);
 		bool(Preference.EarthCurvature, true);
 		bool(Preference.Ssao, true);
-		string(Preference.SsaoQuality, Ssao.Quality.Medium.toString());
+		string(Preference.SsaoQuality, Ssao.Quality.Normal.toString());
 
 		//
 		// rendering

@@ -33,7 +33,7 @@ import com.bitfire.utils.ShaderLoader;
 public final class Ssao extends PostProcessorEffect {
 
 	public enum Quality {
-		High(1), Medium(0.75f), Low(0.5f);
+		Ultra(1), High(0.75f), Normal(0.5f);
 		public final float scale;
 
 		Quality (float scale) {
@@ -60,7 +60,7 @@ public final class Ssao extends PostProcessorEffect {
 	};
 
 	public Ssao (int fboWidth, int fboHeight, Quality quality) {
-		Gdx.app.log("SsaoProcessor", "Quality profile = " + quality.toString());
+		// Gdx.app.log("SsaoProcessor", "Quality profile = " + quality.toString());
 		float oscale = quality.scale;
 
 		// maps
