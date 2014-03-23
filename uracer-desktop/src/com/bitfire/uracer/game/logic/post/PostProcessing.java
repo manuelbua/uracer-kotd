@@ -97,17 +97,16 @@ public final class PostProcessing {
 			addEffect(Effects.Zoomer.name, z);
 		}
 
-		if (UserPreferences.bool(Preference.Bloom)) {
-			int fboW = (int)((float)ScaleUtils.PlayWidth * Config.PostProcessing.FboRatio);
-			int fboH = (int)((float)ScaleUtils.PlayHeight * Config.PostProcessing.FboRatio);
-			addEffect(Effects.Bloom.name, new Bloom(fboW, fboH));
-		}
-
-		// dbg
 		int fboW = (int)((float)ScaleUtils.PlayWidth * Config.PostProcessing.FboRatio);
 		int fboH = (int)((float)ScaleUtils.PlayHeight * Config.PostProcessing.FboRatio);
-		addEffect(Effects.LightShafts.name, new LightShafts(fboW, fboH, Quality.High));
+
 		// dbg
+		addEffect(Effects.LightShafts.name, new LightShafts((int)(fboW * 0.75f), (int)(fboH * 0.75f), Quality.High));
+		// dbg
+
+		if (UserPreferences.bool(Preference.Bloom)) {
+			addEffect(Effects.Bloom.name, new Bloom(fboW, fboH));
+		}
 
 		if (UserPreferences.bool(Preference.Vignetting)) {
 			addEffect(Effects.Vignette.name, new Vignette(ScaleUtils.PlayWidth, ScaleUtils.PlayHeight, false));

@@ -220,7 +220,7 @@ public class LightShafts extends PostProcessorEffect {
 			shShafts.end();
 
 			// blur pass
-			blur.render(occlusionMap);
+			// blur.render(occlusionMap);
 		}
 		occlusionMap.end();
 
