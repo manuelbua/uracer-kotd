@@ -70,15 +70,15 @@ public class LightShafts extends PostProcessorEffect {
 		blur.setPasses(2);
 		int w = Gdx.graphics.getWidth();
 		if (w >= 1920)
-			blur.setPasses(8);
+			blur.setPasses(4);
 		else if (w >= 1680)
-			blur.setPasses(6);
-		else if (w >= 1280) blur.setPasses(4);
+			blur.setPasses(3);
+		else if (w >= 1280) blur.setPasses(2);
 
 		setParams(16, 0.0034f, 1f, 0.84f, 5.65f, 1f, Config.Graphics.ReferenceScreenWidth / 2,
 			Config.Graphics.ReferenceScreenHeight / 2);
 
-		enableDebug();
+		// enableDebug();
 	}
 
 	@Override
@@ -194,6 +194,8 @@ public class LightShafts extends PostProcessorEffect {
 	@Override
 	public void render (FrameBuffer src, FrameBuffer dest) {
 		Texture tsrc = src.getColorBufferTexture();
+
+		// blur.setPasses(2);
 
 		// 1, render occlusion map
 		occlusionMap.begin();

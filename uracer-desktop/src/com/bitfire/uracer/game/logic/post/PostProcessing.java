@@ -100,13 +100,13 @@ public final class PostProcessing {
 		int fboW = (int)((float)ScaleUtils.PlayWidth * Config.PostProcessing.FboRatio);
 		int fboH = (int)((float)ScaleUtils.PlayHeight * Config.PostProcessing.FboRatio);
 
-		// dbg
-		addEffect(Effects.LightShafts.name, new LightShafts((int)(fboW * 0.75f), (int)(fboH * 0.75f), Quality.High));
-		// dbg
-
 		if (UserPreferences.bool(Preference.Bloom)) {
 			addEffect(Effects.Bloom.name, new Bloom(fboW, fboH));
 		}
+
+		// dbg
+		addEffect(Effects.LightShafts.name, new LightShafts((int)(fboW * 0.75f), (int)(fboH * 0.75f), Quality.High));
+		// dbg
 
 		if (UserPreferences.bool(Preference.Vignetting)) {
 			addEffect(Effects.Vignette.name, new Vignette(ScaleUtils.PlayWidth, ScaleUtils.PlayHeight, false));

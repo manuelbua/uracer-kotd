@@ -60,7 +60,7 @@ public final class Ssao extends PostProcessorEffect {
 	};
 
 	public Ssao (int fboWidth, int fboHeight, Quality quality) {
-		// Gdx.app.log("SsaoProcessor", "Quality profile = " + quality.toString());
+		Gdx.app.log("SsaoProcessor", "Quality profile = " + quality.toString());
 		float oscale = quality.scale;
 
 		// maps
