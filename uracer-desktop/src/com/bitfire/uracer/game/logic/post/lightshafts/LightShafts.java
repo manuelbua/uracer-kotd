@@ -78,7 +78,7 @@ public class LightShafts extends PostProcessorEffect {
 		setParams(16, 0.0034f, 1f, 0.84f, 5.65f, 1f, Config.Graphics.ReferenceScreenWidth / 2,
 			Config.Graphics.ReferenceScreenHeight / 2);
 
-		// enableDebug();
+		enableDebug();
 	}
 
 	@Override
