@@ -383,7 +383,7 @@ public final class DefaultAnimator implements PostProcessingAnimator {
 
 			// Gdx.app.log("", "pdist=" + pdist);
 
-			shafts.setThreshold(0.85f);
+			shafts.setThreshold(0.9f);
 			shafts.setDensity(0.84f);
 			shafts.setExposure(0.08f);
 			shafts.setWeight(1);
