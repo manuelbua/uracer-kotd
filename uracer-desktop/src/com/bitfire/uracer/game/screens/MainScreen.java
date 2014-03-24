@@ -38,9 +38,10 @@ public final class MainScreen extends Screen {
 	private List<String> trackList;
 
 	@Override
-	public void init () {
+	public boolean init () {
 		input = URacer.Game.getInputSystem();
 		setupUI();
+		return true;
 	}
 
 	@Override

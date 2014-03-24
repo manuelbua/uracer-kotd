@@ -15,11 +15,13 @@ import com.bitfire.postprocessing.effects.Bloom;
 import com.bitfire.postprocessing.effects.CrtMonitor;
 import com.bitfire.postprocessing.effects.Vignette;
 import com.bitfire.postprocessing.effects.Zoomer;
+import com.bitfire.postprocessing.filters.Combine;
 import com.bitfire.uracer.URacer;
 import com.bitfire.uracer.configuration.Config;
 import com.bitfire.uracer.game.logic.helpers.TrackProgressData;
 import com.bitfire.uracer.game.logic.post.PostProcessing;
 import com.bitfire.uracer.game.logic.post.PostProcessingAnimator;
+import com.bitfire.uracer.game.logic.post.lightshafts.LightShafts;
 import com.bitfire.uracer.game.logic.post.ssao.Ssao;
 import com.bitfire.uracer.game.player.PlayerCar;
 import com.bitfire.uracer.game.rendering.GameRenderer;
@@ -42,6 +44,7 @@ public final class DefaultAnimator implements PostProcessingAnimator {
 	private Vignette vignette = null;
 	private CrtMonitor crt = null;
 	private Ssao ssao = null;
+	private LightShafts shafts = null;
 	private PlayerCar player = null;
 	private boolean hasPlayer = false;
 	private BoxedFloat alertAmount = new BoxedFloat(0);
@@ -51,6 +54,7 @@ public final class DefaultAnimator implements PostProcessingAnimator {
 
 	private long startMs = 0;
 	private Vector2 playerScreenPos = new Vector2();
+	// private Vector2 cameraScreenPos = new Vector2();
 	private InterpolatedFloat speed = new InterpolatedFloat();
 	private InterpolatedFloat zoomBlurStrengthFactor = new InterpolatedFloat();
 
@@ -62,6 +66,7 @@ public final class DefaultAnimator implements PostProcessingAnimator {
 		vignette = (Vignette)post.getEffect(PostProcessing.Effects.Vignette.name);
 		crt = (CrtMonitor)post.getEffect(PostProcessing.Effects.Crt.name);
 		ssao = (Ssao)post.getEffect(PostProcessing.Effects.Ssao.name);
+		shafts = (LightShafts)post.getEffect(PostProcessing.Effects.LightShafts.name);
 		zoomBlurStrengthFactor.setFixup(false);
 		reset();
 	}
@@ -176,7 +181,8 @@ public final class DefaultAnimator implements PostProcessingAnimator {
 
 			// setup palettes
 			// default aspect to slot #0
-			// special effects palette on slot #1
+			// damage effects palette on slot #1
+			// vignette.setLutIndexVal(0, 16);
 			vignette.setLutIndexVal(0, 16);
 			vignette.setLutIndexVal(1, 7);
 			vignette.setLutIndexOffset(0);
@@ -205,6 +211,12 @@ public final class DefaultAnimator implements PostProcessingAnimator {
 			// tv.setTint( 0.95f, 0.8f, 1.0f );
 			crt.setTint(1, 1, 1);
 			crt.getCombinePass().setSource2Intensity(1f);
+		}
+
+		if (shafts != null) {
+			shafts.setThreshold(0.65f);
+			shafts.setParams(24, 0.05f, 0.92f, 0.84f, 3.65f, 1f, 0, 0);
+			shafts.setLightScreenPositionN(0.5f, 0.5f);
 		}
 
 		//
@@ -236,7 +248,17 @@ public final class DefaultAnimator implements PostProcessingAnimator {
 	}
 
 	private void updateLights (TrackProgressData progressData, Color ambient, Color trees, float collisionFactor) {
-		ambient.set(0.1f + collisionFactor * 0.5f, 0.05f, 0.2f, 0.5f + 0.1f * URacer.Game.getTimeModFactor());
+		float base = 0.1f;
+		float timeModFactor = URacer.Game.getTimeModFactor();
+
+		//@off
+		ambient.set(
+			base * 1.5f + collisionFactor * 0.5f,
+			base,
+			base + base * 3f * timeModFactor,
+			0.55f + 0.05f * timeModFactor
+		);
+		//@on
 
 		ambient.clamp();
 		trees.set(ambient);
@@ -252,14 +274,18 @@ public final class DefaultAnimator implements PostProcessingAnimator {
 				float maxdist = 30;
 				maxdist *= maxdist;
 				dist = 1 - MathUtils.clamp(dist, 0, maxdist) / maxdist;
-				lights[l].setColor(1, 0.9f, 0.5f, 0.55f);// + AMath.fixup(0.4f * dist));
+				float r = 1f;
+				float g = 1f;
+				float b = 1f;
+				float a = 0.65f;
+				lights[l].setColor(r, g, b, a);// + AMath.fixup(0.4f * dist));
 			}
 		}
 	}
 
 	@Override
-	public void update (TrackProgressData progressData, Color ambient, Color trees, float zoomCamera, float warmUpCompletion,
-		float collisionFactor, boolean paused) {
+	public void update (Vector2 cameraPos, TrackProgressData progressData, Color ambient, Color trees, float zoomCamera,
+		float warmUpCompletion, float collisionFactor, boolean paused) {
 		float timeModFactor = URacer.Game.getTimeModFactor();
 
 		// dbg
@@ -270,12 +296,16 @@ public final class DefaultAnimator implements PostProcessingAnimator {
 		// ssao.setOcclusionThresholds(0.3f, 0.1f);
 		// dbg
 
+		// compute needed screen positions
 		if (hasPlayer) {
 			playerScreenPos.set(GameRenderer.ScreenUtils.worldPxToScreen(player.state().position));
 			speed.set(player.carState.currSpeedFactor, 0.25f);
 		} else {
 			playerScreenPos.set(0.5f, 0.5f);
 		}
+
+		// cameraScreenPos.set(GameRenderer.ScreenUtils.worldPxToScreen(cameraPos));
+		// Gdx.app.log("", "campos=" + cameraPos);
 
 		float cf = collisionFactor;
 		// cf = 1f;
@@ -317,7 +347,7 @@ public final class DefaultAnimator implements PostProcessingAnimator {
 		if (zoom != null) {
 			if (hasPlayer) {
 				float sfactor = speed.get();
-				float strength = -0.05f * timeModFactor * sfactor + (-0.05f * sfactor) - 0.4f * cf;
+				float strength = -0.05f * timeModFactor + (-0.05f * sfactor) - 0.4f * cf;
 				// Gdx.app.log("", "strength=" + strength);
 				zoomBlurStrengthFactor.set(strength, 1f);
 			} else {
@@ -334,6 +364,36 @@ public final class DefaultAnimator implements PostProcessingAnimator {
 					zoom.setOrigin(playerScreenPos);
 				}
 			}
+		}
+
+		if (shafts != null) {
+			// final float ScaleMt = 10;
+			// final float InvScaleMt = 1f / ScaleMt;
+			// float pdist = 0;
+			// // // to normalized range
+			// if (progressData.hasTarget) {
+			// pdist = MathUtils.clamp(progressData.playerDistance.get() - progressData.targetDistance.get(), 0, ScaleMt);
+			// pdist *= InvScaleMt;
+			// }
+
+			// float sfactor = speed.get();
+			// float lim_min = 0.7f;
+			// float lim_max = 0.8f;
+			// float th = lim_max - (lim_max - lim_min) * pdist;
+
+			// Gdx.app.log("", "pdist=" + pdist);
+
+			shafts.setThreshold(0.9f);
+			shafts.setDensity(0.84f);
+			shafts.setExposure(0.08f);
+			shafts.setWeight(1);
+			shafts.setDecay(0.95f);
+			Combine combine = shafts.getCombinePass();
+			combine.setSource2Intensity(1f);
+			combine.setSource2Saturation(1);
+
+			// Gdx.app.log("", "speed=" + sfactor);
+			// shafts.setLightScreenPositionN(0.5f, 0.3f);
 		}
 
 		float bsat = 0f, sat = 0f;
@@ -376,12 +436,16 @@ public final class DefaultAnimator implements PostProcessingAnimator {
 
 		// cf = 1;
 		if (vignette != null) {
-			float lutIntensity = MathUtils.clamp(0.7f + timeModFactor * 1 + alertAmount.value * 1 + cf * 1, 0, 1.25f);
-			float offset = MathUtils.clamp(cf * 3 + alertAmount.value, 0, 1);
+			float lutIntensity = MathUtils.clamp(1f + timeModFactor * 0.75f + alertAmount.value * 1 + cf * 1, 0, 1.5f);
+			float offset = MathUtils.clamp(cf * 3 + alertAmount.value /* + timeModFactor * 0.25f */, 0, 1);
 			vignette.setLutIntensity(lutIntensity);
 			vignette.setLutIndexOffset(offset);
-			// vignette.setLutIndexVal(0, 16);
+
+			// vignette.setLutIntensity(1);
+			// vignette.setLutIndexVal(0, 13);
 			// vignette.setLutIndexVal(1, 7);
+
+			// Gdx.app.log("", "li=" + lutIntensity + ", lo=" + offset);
 		}
 	}
 }

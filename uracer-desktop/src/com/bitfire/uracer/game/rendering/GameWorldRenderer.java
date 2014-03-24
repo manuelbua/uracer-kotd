@@ -340,6 +340,10 @@ public final class GameWorldRenderer {
 	private Vector2 cameraPos = new Vector2();
 	private float cameraZoom = 1;
 
+	public Vector2 getCameraPosition () {
+		return cameraPos;
+	}
+
 	public void setCameraPosition (Vector2 positionPx) {
 		cameraPos.set(camController.transform(positionPx, cameraZoom));
 	}

@@ -127,8 +127,8 @@ public abstract class BaseLogic extends CommonLogic {
 
 		// update lights
 		// sync post-processing animators
-		postProcessing.onBeforeRender(progressData, gameWorldRenderer.getAmbientColor(), gameWorldRenderer.getTreesAmbientColor(),
-			zoom, playerLapMonitor.getWarmUpCompletion(), collisionFactor.value, paused);
+		postProcessing.onBeforeRender(gameWorldRenderer.getCameraPosition(), progressData, gameWorldRenderer.getAmbientColor(),
+			gameWorldRenderer.getTreesAmbientColor(), zoom, playerLapMonitor.getWarmUpCompletion(), collisionFactor.value, paused);
 
 		gameWorldRenderer.updateRayHandler();
 

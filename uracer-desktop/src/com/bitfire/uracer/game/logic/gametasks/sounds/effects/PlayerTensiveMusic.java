@@ -189,7 +189,7 @@ public final class PlayerTensiveMusic extends SoundEffect {
 
 			if (!progressData.isWarmUp && progressData.hasTarget && !progressData.targetArrived) {
 
-				// slow down interpolation speed, but bring it up when slowing down time
+				// slow down interpolation speed, but bring it back when slowing down time
 				alpha_inc = 0.02f / URacer.timeMultiplier;
 
 				float v = progressData.playerDistance.get() - progressData.targetDistance.get();

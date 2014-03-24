@@ -5,6 +5,7 @@ import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.GL20;
 import com.badlogic.gdx.graphics.Texture.TextureWrap;
+import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.utils.LongMap;
 import com.bitfire.postprocessing.PostProcessor;
 import com.bitfire.postprocessing.PostProcessorEffect;
@@ -21,6 +22,8 @@ import com.bitfire.uracer.configuration.UserPreferences;
 import com.bitfire.uracer.configuration.UserPreferences.Preference;
 import com.bitfire.uracer.game.logic.helpers.TrackProgressData;
 import com.bitfire.uracer.game.logic.post.animators.DefaultAnimator;
+import com.bitfire.uracer.game.logic.post.lightshafts.LightShafts;
+import com.bitfire.uracer.game.logic.post.lightshafts.LightShafts.Quality;
 import com.bitfire.uracer.game.logic.post.ssao.Ssao;
 import com.bitfire.uracer.game.player.PlayerCar;
 import com.bitfire.uracer.game.world.GameWorld;
@@ -33,9 +36,9 @@ import com.bitfire.utils.ShaderLoader;
 public final class PostProcessing {
 
 	public enum Effects {
-		Zoomer, Bloom, Vignette, Crt, Curvature, Ssao, MotionBlur;
+		Zoomer, Bloom, Vignette, Crt, Curvature, Ssao, MotionBlur, LightShafts;
 
-		public String name;
+		public final String name;
 
 		private Effects () {
 			name = this.toString();
@@ -94,18 +97,23 @@ public final class PostProcessing {
 			addEffect(Effects.Zoomer.name, z);
 		}
 
+		int fboW = (int)((float)ScaleUtils.PlayWidth * Config.PostProcessing.FboRatio);
+		int fboH = (int)((float)ScaleUtils.PlayHeight * Config.PostProcessing.FboRatio);
+
 		if (UserPreferences.bool(Preference.Bloom)) {
-			int fboW = (int)((float)ScaleUtils.PlayWidth * Config.PostProcessing.FboRatio);
-			int fboH = (int)((float)ScaleUtils.PlayHeight * Config.PostProcessing.FboRatio);
 			addEffect(Effects.Bloom.name, new Bloom(fboW, fboH));
 		}
+
+		// dbg
+		addEffect(Effects.LightShafts.name, new LightShafts((int)(fboW * 0.75f), (int)(fboH * 0.75f), Quality.High));
+		// dbg
 
 		if (UserPreferences.bool(Preference.Vignetting)) {
 			addEffect(Effects.Vignette.name, new Vignette(ScaleUtils.PlayWidth, ScaleUtils.PlayHeight, false));
 		}
 
 		if (UserPreferences.bool(Preference.CrtScreen)) {
-			boolean scanlines = true;
+			boolean scanlines = false;
 
 			ShaderLoader.Pedantic = false;
 			int effects = (scanlines ? Effect.PhosphorVibrance.v | Effect.Scanlines.v : 0) | Effect.Tint.v;
@@ -165,10 +173,10 @@ public final class PostProcessing {
 		}
 	}
 
-	public void onBeforeRender (TrackProgressData progressData, Color ambient, Color trees, float zoom, float warmUpCompletion,
-		float collisionFactor, boolean paused) {
+	public void onBeforeRender (Vector2 cameraPos, TrackProgressData progressData, Color ambient, Color trees, float zoom,
+		float warmUpCompletion, float collisionFactor, boolean paused) {
 		if (hasPostProcessor && hasAnimator) {
-			animator.update(progressData, ambient, trees, zoom, warmUpCompletion, collisionFactor, paused);
+			animator.update(cameraPos, progressData, ambient, trees, zoom, warmUpCompletion, collisionFactor, paused);
 		}
 	}
 

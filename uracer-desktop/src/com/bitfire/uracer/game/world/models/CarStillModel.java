@@ -75,6 +75,7 @@ public class CarStillModel extends OrthographicAlignedStillModel {
 		boundingBox.set(localBoundingBox);
 	}
 
+	// TODO refactor collisionFactor, gameLogic shouldn't stay here!!!!
 	public void transform (PerspectiveCamera camPersp, OrthographicCamera camOrtho) {
 		// set position to car position
 		EntityRenderState state = car.state();

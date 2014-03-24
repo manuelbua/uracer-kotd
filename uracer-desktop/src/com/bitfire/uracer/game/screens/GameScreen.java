@@ -16,9 +16,10 @@ public class GameScreen extends Screen {
 	private Game game = null;
 	// private Input input = null;
 	private GameScreenUI gameui;
+	private boolean initialized = false;
 
 	@Override
-	public void init () {
+	public boolean init () {
 		if (GameLevels.levelIdExists(ScreensShared.selectedLevelId)) {
 			// input = URacer.Game.getInputSystem();
 
@@ -31,42 +32,67 @@ public class GameScreen extends Screen {
 			gameui = new GameScreenUI(game);
 
 			game.start();
+			initialized = true;
+			return true;
 		} else {
+			// last saved level doesn't exists, so reset it
+			ScreensShared.selectedLevelId = "";
+			UserPreferences.string(Preference.LastPlayedTrack, "");
+			UserPreferences.save();
+
 			Gdx.app.error("GameScreen", "The specified track could not be found.");
+
 			URacer.Game.show(ScreenType.MainScreen);
+			initialized = false;
+			return false;
 		}
 	}
 
 	@Override
 	public void dispose () {
+		if (!initialized) return;
+
 		game.dispose();
 		gameui.dispose();
+
+		// FIXME is this still needed to hint the VM at it?
 		game = null;
+		gameui = null;
 	}
 
 	@Override
 	public void tick () {
+		if (!initialized) return;
+
 		gameui.tick();
 		if (!game.isPaused()) game.tick();
 	}
 
 	@Override
 	public void tickCompleted () {
+		if (!initialized) return;
+
 		game.tickCompleted();
 	}
 
 	@Override
 	public void pause () {
+		if (!initialized) return;
+
 		game.pause();
 	}
 
 	@Override
 	public void resume () {
+		if (!initialized) return;
+
 		game.resume();
 	}
 
 	@Override
 	public void render (FrameBuffer dest) {
+		if (!initialized) return;
+
 		game.render(dest);
 
 		// overlay the whole in-game UI

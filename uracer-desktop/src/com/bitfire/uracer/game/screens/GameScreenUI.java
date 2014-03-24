@@ -79,8 +79,8 @@ public class GameScreenUI {
 		Table content = new Table();
 		Table bottom = new Table();
 
-		content.debug();
-		bottom.debug();
+		// content.debug();
+		// bottom.debug();
 
 		win.row().fill().expand();
 		win.add(content);

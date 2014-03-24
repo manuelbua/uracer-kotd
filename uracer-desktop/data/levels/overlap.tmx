@@ -10,25 +10,25 @@
    eJzt0csOgjAQheEKGzeEmyiogIiAXN7/+fxJhqTLjltYfGk3J53TWYwxy8F85OwUmRgJUlzwVWQzXHFDrpw1RCt3H5MiW+Au9xNmx9yAEhXOiOBZ3V3fbxCg/6P7W2ZedzRKd82fb90feCpyndW9xku5L82Me/ADhGctgw==
   </data>
  </layer>
- <objectgroup color="#55ffff" height="19" name="trees" width="15">
-  <object height="68" name="tree-2" type="tree-2" width="61" x="1999" y="2737">
+ <objectgroup color="#55ffff" draworder="topdown" height="19" name="trees" width="15">
+  <object height="68" name="tree-9" type="tree-9" width="61" x="2028" y="2696">
    <properties>
-    <property name="scale" value="1.2"/>
+    <property name="scale" value="6.5"/>
    </properties>
   </object>
-  <object height="68" name="tree-5" type="tree-5" width="61" x="2382" y="2982">
+  <object height="68" name="tree-9" type="tree-9" width="61" x="2406" y="2987">
    <properties>
     <property name="scale" value="5"/>
    </properties>
   </object>
-  <object height="68" name="tree-6" type="tree-6" width="61" x="1719" y="3093">
+  <object height="68" name="tree-9" type="tree-9" width="61" x="1714" y="3102">
    <properties>
     <property name="scale" value="6"/>
    </properties>
   </object>
   <object height="68" name="tree-9" type="tree-9" width="61" x="910" y="1230">
    <properties>
-    <property name="scale" value="8"/>
+    <property name="scale" value="7"/>
    </properties>
   </object>
   <object height="68" name="tree-9" type="tree-9" width="61" x="838" y="1778">
@@ -36,44 +36,44 @@
     <property name="scale" value="4"/>
    </properties>
   </object>
-  <object height="68" name="tree-1" type="tree-1" width="61" x="1371" y="1798">
-   <properties>
-    <property name="scale" value="1.25"/>
-   </properties>
-  </object>
-  <object height="68" name="tree-5" type="tree-5" width="61" x="1337" y="1504">
-   <properties>
-    <property name="scale" value="4"/>
-   </properties>
-  </object>
-  <object height="68" name="tree-6" type="tree-6" width="61" x="1281" y="2264">
-   <properties>
-    <property name="scale" value="4"/>
-   </properties>
-  </object>
-  <object height="68" name="tree-6" type="tree-6" width="61" x="2424" y="2202">
-   <properties>
-    <property name="scale" value="4"/>
-   </properties>
-  </object>
-  <object height="68" name="tree-9" type="tree-9" width="61" x="1882" y="1936">
-   <properties>
-    <property name="scale" value="4"/>
-   </properties>
-  </object>
-  <object height="68" name="tree-9" type="tree-9" width="61" x="1997" y="2509">
+  <object height="68" name="tree-9" type="tree-9" width="61" x="1309" y="1768">
    <properties>
     <property name="scale" value="6"/>
    </properties>
   </object>
-  <object height="68" name="tree-9" type="tree-9" width="61" x="1743" y="1235">
+  <object height="68" name="tree-9" type="tree-9" width="61" x="1328" y="1535">
+   <properties>
+    <property name="scale" value="5.8"/>
+   </properties>
+  </object>
+  <object height="33" name="tree-9" type="tree-9" width="33" x="1512" y="2276">
+   <properties>
+    <property name="scale" value="6"/>
+   </properties>
+  </object>
+  <object height="68" name="tree-9" type="tree-9" width="61" x="2408" y="2189">
+   <properties>
+    <property name="scale" value="6"/>
+   </properties>
+  </object>
+  <object height="68" name="tree-9" type="tree-9" width="61" x="1891" y="1916">
    <properties>
     <property name="scale" value="7"/>
    </properties>
   </object>
-  <object height="68" name="tree-9" type="tree-9" width="61" x="1509" y="2645">
+  <object height="68" name="tree-9" type="tree-9" width="61" x="1922" y="2402">
    <properties>
-    <property name="scale" value="4"/>
+    <property name="scale" value="6"/>
+   </properties>
+  </object>
+  <object height="68" name="tree-9" type="tree-9" width="61" x="1786" y="1216">
+   <properties>
+    <property name="scale" value="7"/>
+   </properties>
+  </object>
+  <object height="68" name="tree-9" type="tree-9" width="61" x="1532" y="2662">
+   <properties>
+    <property name="scale" value="5"/>
    </properties>
   </object>
   <object height="68" name="tree-9" type="tree-9" width="61" x="1316" y="2514">
@@ -81,37 +81,42 @@
     <property name="scale" value="8"/>
    </properties>
   </object>
+  <object height="68" name="tree-9" type="tree-9" width="61" x="1927" y="2546">
+   <properties>
+    <property name="scale" value="6"/>
+   </properties>
+  </object>
  </objectgroup>
- <objectgroup color="#55ff00" height="19" name="lights" width="15">
-  <object height="21" width="27" x="1554" y="2897"/>
+ <objectgroup color="#55ff00" draworder="topdown" height="19" name="lights" width="15">
+  <object height="21" width="27" x="1713" y="3128"/>
   <object height="20" width="21" x="1078" y="2136"/>
   <object height="21" width="27" x="987" y="1298"/>
-  <object height="21" width="27" x="1764" y="1532"/>
+  <object height="21" width="27" x="1727" y="1480"/>
   <object height="21" width="27" x="1386" y="1127"/>
-  <object height="21" width="27" x="2407" y="2924"/>
+  <object height="21" width="27" x="2428" y="3003"/>
   <object x="891" y="1668"/>
-  <object x="1825" y="1997"/>
-  <object x="2336" y="2177"/>
-  <object x="1588" y="2396"/>
-  <object height="21" width="27" x="1552" y="2022"/>
-  <object height="21" width="27" x="1854" y="2272"/>
-  <object height="21" width="27" x="2041" y="3160"/>
+  <object x="1809" y="2013"/>
+  <object x="2440" y="2197"/>
+  <object height="24" width="21" x="1524" y="2671"/>
+  <object height="21" width="27" x="1441" y="2045"/>
+  <object height="21" width="27" x="1943" y="2383"/>
   <object height="21" width="27" x="2209" y="2821"/>
-  <object height="21" width="27" x="1877" y="1668"/>
-  <object height="14" width="15" x="1390" y="1826"/>
-  <object height="16" width="18" x="1357" y="1530"/>
-  <object height="14" width="15" x="1541" y="1490"/>
+  <object height="21" width="27" x="1884" y="1713"/>
+  <object x="1318" y="1775"/>
+  <object height="16" width="18" x="1325" y="1537"/>
+  <object height="14" width="15" x="1572" y="1813"/>
   <object height="14" width="15" x="1870" y="2867"/>
   <object height="14" width="15" x="2453" y="2553"/>
-  <object height="14" width="15" x="2022" y="2538"/>
+  <object height="14" width="15" x="1891" y="2577"/>
   <object height="14" width="15" x="1321" y="2551"/>
-  <object height="20" width="21" x="1414" y="2284"/>
+  <object height="20" width="21" x="1465" y="2307"/>
   <object height="20" width="21" x="878" y="1976"/>
-  <object height="20" width="21" x="850" y="1356"/>
-  <object height="20" width="21" x="1108" y="1032"/>
+  <object height="20" width="21" x="923" y="1259"/>
   <object height="20" width="21" x="1706" y="1166"/>
+  <object height="21" width="27" x="2007" y="2702"/>
+  <object height="14" width="15" x="2542" y="2280"/>
  </objectgroup>
- <objectgroup color="#a40002" height="19" name="walls" width="15">
+ <objectgroup color="#a40002" draworder="topdown" height="19" name="walls" width="15">
   <object x="860" y="1718">
    <polyline points="0,0 23,-102 10,-175 43,-260"/>
   </object>
@@ -269,7 +274,7 @@
    <polyline points="0,0 37,32 69,81"/>
   </object>
  </objectgroup>
- <objectgroup color="#ecde0e" height="19" name="sectors" visible="0" width="15">
+ <objectgroup color="#ecde0e" draworder="topdown" height="19" name="sectors" visible="0" width="15">
   <object x="1346" y="2223">
    <polygon points="-2,17 110,17 110,-207 -2,-207"/>
   </object>
@@ -313,7 +318,7 @@
    <polygon points="9,31 345,-81 65,-249 -47,-25"/>
   </object>
  </objectgroup>
- <objectgroup color="#ffec18" height="19" name="route" visible="0" width="15">
+ <objectgroup color="#ffec18" draworder="topdown" height="19" name="route" visible="0" width="15">
   <object x="1457" y="2131">
    <polyline points="0,0 -113,1 -302,-67 -447,-367 -408,-725 -168,-898 130,-799 223,-535 249,669 386,839 715,857 894,625 829,113 661,17"/>
   </object>

@@ -1,0 +1,37 @@
+uniform sampler2D u_texture;
+uniform int samples;
+uniform vec2 lightPositionOnScreen;
+uniform float exposure;
+uniform float decay;
+uniform float density;
+uniform float weight;
+uniform float illuminationDecay;
+
+varying vec2 v_texCoords;
+
+void main()
+{
+   /* params are actually "hardcoded" but should be uniforms */
+   //float exposure =  0.0034;
+   //float decay =  1.0;
+   //float density =  0.84;
+   //float weight =  5.65;
+   //float illuminationDecay = 1.0;
+   //vec2 lightPositionOnScreen = vec2(0.5, 0.5);
+
+   float illDecay = illuminationDecay;
+   vec2 deltaTextCoord = vec2(v_texCoords - lightPositionOnScreen.xy);
+   vec2 textCoo = v_texCoords;
+   deltaTextCoord *= 1.0 / float(samples) * density;
+
+   vec4 result = vec4(0.0, 0.0, 0.0, 1.0);
+   for(int i=0; i < samples; i++) {
+      textCoo -= deltaTextCoord;
+      vec4 sample = texture2D(u_texture, textCoo);
+      sample *= illDecay * weight;
+      result += sample;
+      illDecay *= decay;
+   }
+
+   gl_FragColor = result * exposure;
+}

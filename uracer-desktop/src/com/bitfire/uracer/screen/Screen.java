@@ -7,7 +7,7 @@ import com.badlogic.gdx.utils.Disposable;
 
 public abstract class Screen implements Disposable {
 
-	public abstract void init ();
+	public abstract boolean init ();
 
 	public void enable () {
 	}
