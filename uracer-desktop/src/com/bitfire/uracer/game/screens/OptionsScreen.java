@@ -24,7 +24,7 @@ import com.bitfire.uracer.configuration.Config;
 import com.bitfire.uracer.configuration.UserPreferences;
 import com.bitfire.uracer.configuration.UserPreferences.Preference;
 import com.bitfire.uracer.game.GameplaySettings.TimeDilateInputMode;
-import com.bitfire.uracer.game.logic.post.ssao.Ssao;
+import com.bitfire.uracer.game.logic.post.effects.Ssao;
 import com.bitfire.uracer.game.screens.GameScreensFactory.ScreenType;
 import com.bitfire.uracer.resources.Art;
 import com.bitfire.uracer.screen.Screen;

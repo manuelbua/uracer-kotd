@@ -16,7 +16,7 @@ import com.bitfire.uracer.game.GameEvents;
 import com.bitfire.uracer.game.events.GameRendererEvent;
 import com.bitfire.uracer.game.logic.post.PostProcessing;
 import com.bitfire.uracer.game.logic.post.PostProcessing.Effects;
-import com.bitfire.uracer.game.logic.post.ssao.Ssao;
+import com.bitfire.uracer.game.logic.post.effects.Ssao;
 import com.bitfire.uracer.game.world.GameWorld;
 import com.bitfire.uracer.utils.Convert;
 import com.bitfire.uracer.utils.ScaleUtils;

@@ -1,5 +1,5 @@
 
-package com.bitfire.uracer.game.logic.post.lightshafts;
+package com.bitfire.uracer.game.logic.post.effects;
 
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.GL20;

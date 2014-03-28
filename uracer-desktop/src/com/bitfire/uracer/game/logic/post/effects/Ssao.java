@@ -1,5 +1,5 @@
 
-package com.bitfire.uracer.game.logic.post.ssao;
+package com.bitfire.uracer.game.logic.post.effects;
 
 import java.nio.ByteBuffer;
 

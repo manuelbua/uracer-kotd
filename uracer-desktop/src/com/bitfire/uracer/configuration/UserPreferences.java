@@ -6,7 +6,7 @@ import com.badlogic.gdx.Preferences;
 import com.bitfire.postprocessing.filters.RadialBlur;
 import com.bitfire.uracer.URacer;
 import com.bitfire.uracer.game.GameplaySettings.TimeDilateInputMode;
-import com.bitfire.uracer.game.logic.post.ssao.Ssao;
+import com.bitfire.uracer.game.logic.post.effects.Ssao;
 
 /** Represents user-configurable properties.
  * 
