@@ -12,3 +12,5 @@ VersionInfo.java
 pom.xml
 *.*~
 uracer-boot.cfg
+.idea
+*.iml
