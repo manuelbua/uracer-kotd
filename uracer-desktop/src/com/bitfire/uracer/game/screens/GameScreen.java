@@ -14,14 +14,12 @@ import com.bitfire.uracer.screen.Screen;
 
 public class GameScreen extends Screen {
 	private Game game = null;
-	// private Input input = null;
 	private GameScreenUI gameui;
 	private boolean initialized = false;
 
 	@Override
 	public boolean init () {
 		if (GameLevels.levelIdExists(ScreensShared.selectedLevelId)) {
-			// input = URacer.Game.getInputSystem();
 
 			// save as last played track
 			UserPreferences.string(Preference.LastPlayedTrack, ScreensShared.selectedLevelId);

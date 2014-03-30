@@ -25,7 +25,6 @@ import com.bitfire.uracer.configuration.UserPreferences.Preference;
 import com.bitfire.uracer.game.Game;
 import com.bitfire.uracer.game.logic.gametasks.SoundManager;
 import com.bitfire.uracer.resources.Art;
-import com.bitfire.uracer.utils.ScaleUtils;
 import com.bitfire.uracer.utils.UIUtils;
 
 public class GameScreenUI {
@@ -60,7 +59,7 @@ public class GameScreenUI {
 	// utilities
 
 	private void constructUI () {
-		ui = UIUtils.newScaledStage();
+		ui = UIUtils.newFittedStage();
 		root = new Table();
 		root.debug();
 		root.setBounds(0, 0, ui.getWidth(), ui.getHeight());
@@ -240,11 +239,10 @@ public class GameScreenUI {
 
 		boolean hasDest = (dest != null);
 		if (hasDest) {
+			ui.getViewport().update(dest.getWidth(), dest.getHeight(), true);
 			dest.begin();
-			ui.setViewport(ScaleUtils.PlayWidth, ScaleUtils.PlayHeight, false, 0, 0, ScaleUtils.PlayWidth, ScaleUtils.PlayHeight);
 		} else {
-			ui.setViewport(ScaleUtils.PlayWidth, ScaleUtils.PlayHeight, false, ScaleUtils.CropX, ScaleUtils.CropY,
-				ScaleUtils.PlayWidth, ScaleUtils.PlayHeight);
+			ui.getViewport().update(Gdx.graphics.getWidth(), Gdx.graphics.getHeight(), true);
 		}
 
 		ui.draw();

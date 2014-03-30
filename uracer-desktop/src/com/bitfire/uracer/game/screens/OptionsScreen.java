@@ -4,7 +4,6 @@ package com.bitfire.uracer.game.screens;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Input.Keys;
 import com.badlogic.gdx.graphics.GL20;
-import com.badlogic.gdx.graphics.glutils.FrameBuffer;
 import com.badlogic.gdx.scenes.scene2d.Actor;
 import com.badlogic.gdx.scenes.scene2d.InputEvent;
 import com.badlogic.gdx.scenes.scene2d.Stage;
@@ -18,7 +17,6 @@ import com.badlogic.gdx.scenes.scene2d.utils.Align;
 import com.badlogic.gdx.scenes.scene2d.utils.ChangeListener;
 import com.badlogic.gdx.scenes.scene2d.utils.ClickListener;
 import com.bitfire.postprocessing.filters.RadialBlur;
-import com.bitfire.uracer.Input;
 import com.bitfire.uracer.URacer;
 import com.bitfire.uracer.configuration.Config;
 import com.bitfire.uracer.configuration.UserPreferences;
@@ -27,32 +25,17 @@ import com.bitfire.uracer.game.GameplaySettings.TimeDilateInputMode;
 import com.bitfire.uracer.game.logic.post.effects.Ssao;
 import com.bitfire.uracer.game.screens.GameScreensFactory.ScreenType;
 import com.bitfire.uracer.resources.Art;
-import com.bitfire.uracer.screen.Screen;
-import com.bitfire.uracer.utils.ScaleUtils;
+import com.bitfire.uracer.screen.UIScreen;
 import com.bitfire.uracer.utils.UIUtils;
 
-public class OptionsScreen extends Screen {
+public class OptionsScreen extends UIScreen {
 
-	private Stage ui;
-	private Input input;
 	private Table root, ltable, rtable;
 	private CheckBox ppBloom, ppVignetting, ppZoomBlur, ppCrtScreen, ppCurvature, ppSsao;
 	private SelectBox<String> ppZoomBlurQuality, ppSsaoQuality;
 
 	@Override
-	public boolean init () {
-		input = URacer.Game.getInputSystem();
-		setupUI();
-		return true;
-	}
-
-	@Override
-	public void enable () {
-		Gdx.input.setInputProcessor(ui);
-	}
-
-	private void setupUI () {
-		ui = UIUtils.newScaledStage();
+	protected void setupUI (Stage ui) {
 		root = new Table();
 		root.debug();
 		root.setBounds(0, 0, ui.getWidth(), ui.getHeight());
@@ -308,10 +291,7 @@ public class OptionsScreen extends Screen {
 			URacer.Game.show(ScreenType.MainScreen);
 		}
 		if (input.isPressed(Keys.R)) {
-			disable();
-			ui.dispose();
-			setupUI();
-			enable();
+			reload();
 		} else {
 			ui.act(Config.Physics.Dt);
 		}
@@ -322,23 +302,10 @@ public class OptionsScreen extends Screen {
 	}
 
 	@Override
-	public void render (FrameBuffer dest) {
-		boolean hasDest = (dest != null);
-		if (hasDest) {
-			dest.begin();
-			ui.setViewport(ScaleUtils.PlayWidth, ScaleUtils.PlayHeight, false, 0, 0, ScaleUtils.PlayWidth, ScaleUtils.PlayHeight);
-		} else {
-			ui.setViewport(ScaleUtils.PlayWidth, ScaleUtils.PlayHeight, false, ScaleUtils.CropX, ScaleUtils.CropY,
-				ScaleUtils.PlayWidth, ScaleUtils.PlayHeight);
-		}
-
+	protected void draw () {
 		Gdx.gl.glClearColor(0, 0, 0, 1);
 		Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT);
 		ui.draw();
 		// Table.drawDebug(ui);
-
-		if (hasDest) {
-			dest.end();
-		}
 	}
 }

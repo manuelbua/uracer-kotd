@@ -12,17 +12,14 @@ import com.badlogic.gdx.scenes.scene2d.ui.Table;
 import com.badlogic.gdx.scenes.scene2d.ui.TextButton;
 import com.badlogic.gdx.scenes.scene2d.utils.ChangeListener;
 import com.badlogic.gdx.scenes.scene2d.utils.ClickListener;
+import com.badlogic.gdx.utils.viewport.FitViewport;
 import com.bitfire.uracer.URacer;
 import com.bitfire.uracer.resources.Art;
 
 public final class UIUtils {
 
-	public static Stage newScaledStage () {
-		Stage stage = new Stage(0, 0, false);
-		// UICamera cam = new UICamera();
-		// stage.setCamera(cam);
-		stage.setViewport(ScaleUtils.PlayWidth, ScaleUtils.PlayHeight, false, ScaleUtils.CropX, ScaleUtils.CropY,
-			ScaleUtils.PlayWidth, ScaleUtils.PlayHeight);
+	public static Stage newFittedStage () {
+		Stage stage = new Stage(new FitViewport(ScaleUtils.PlayWidth, ScaleUtils.PlayHeight));
 		return stage;
 	}
 
