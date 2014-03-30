@@ -65,7 +65,6 @@ public final class Art {
 	public static TextureAtlas particles;
 
 	public static void init () {
-		Texture.setEnforcePotImages(false);
 		ShaderLoader.BasePath = "data/shaders/";
 		loadFonts();
 		loadCarGraphics();

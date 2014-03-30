@@ -22,7 +22,8 @@ public class GameBatchRenderer {
 
 		// Issues may arise on Tegra2 (Asus Transformer) devices if the buffers'
 		// count is higher than 10
-		batch = new SpriteBatch(1000, 8);
+		// batch = new SpriteBatch(1000, 8);
+		batch = new SpriteBatch();
 		begin = false;
 		this.gl = gl;
 	}

@@ -13,17 +13,20 @@ public class UICamera extends OrthographicCamera {
 	private boolean prjForRtt = false;
 
 	@Override
-	public void unproject (Vector3 vec) {
+	public Vector3 unproject (Vector3 vec) {
 		super.unproject(vec, ScaleUtils.CropX, ScaleUtils.CropY, ScaleUtils.PlayWidth, ScaleUtils.PlayHeight);
+		return vec;
 	}
 
 	@Override
-	public void project (Vector3 vec) {
+	public Vector3 project (Vector3 vec) {
 		if (prjForRtt) {
 			super.project(vec, 0, 0, ScaleUtils.PlayWidth, ScaleUtils.PlayHeight);
 		} else {
 			super.project(vec, ScaleUtils.CropX, ScaleUtils.CropY, ScaleUtils.PlayWidth, ScaleUtils.PlayHeight);
 		}
+
+		return vec;
 	}
 
 	public void setProjectForFramebuffer (boolean enabled) {
