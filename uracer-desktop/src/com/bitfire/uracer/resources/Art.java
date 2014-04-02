@@ -134,11 +134,16 @@ public final class Art {
 		// scrSkin = new Skin(Gdx.files.internal(Storage.UI + "skin-big.json"), skinAtlas);
 		// }
 
+		// // holo
+		// String skinName = "Holo-dark-ldpi";
+		// String skinPath = Storage.UI + "holo/" + skinName;
+		// skinAtlas = new TextureAtlas(Gdx.files.internal(skinPath + ".atlas"));
+		// scrSkin = new Skin(Gdx.files.internal(skinPath + ".json"), skinAtlas);
+
 		// holo
-		String skinName = "Holo-dark-ldpi";
-		String skinPath = Storage.UI + "holo/" + skinName;
-		skinAtlas = new TextureAtlas(Gdx.files.internal(skinPath + ".atlas"));
-		scrSkin = new Skin(Gdx.files.internal(skinPath + ".json"), skinAtlas);
+		String skinPath = Storage.UI + "kenney/";
+		skinAtlas = new TextureAtlas(Gdx.files.internal(skinPath + "pack.atlas"));
+		scrSkin = new Skin(Gdx.files.internal(skinPath + "kenney.json"), skinAtlas);
 
 		// brushed texture
 		scrPanel = newTexture("data/base/panel.png", false);

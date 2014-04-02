@@ -1,0 +1,25 @@
+* check-off.png
+* check-on.png
+* cursor.9.png
+* default.png
+* default-pane.9.png
+* default-pane-noborder.9.png
+* default-rect.9.png		\
+* default-rect-down.9.png	 | nope ;P
+* default-rect-pad.9.png	/
+* default-round.9.png		\
+* default-round-down.9.png	 | button-up.9 / button-down.9
+* default-round-large.9.png	/
+* default-scroll.9.png
+* default-select.9.png
+* default-select-selection.9.png
+* default-slider.9.png
+* default-slider-knob.png
+* default-splitpane.9.png
+* default-splitpane-vertical.9.png
+* default-window.9.png
+* selection.png
+* textfield.9.png
+* tree-minus.png
+* tree-plus.png
+* white.png

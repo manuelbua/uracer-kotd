@@ -88,7 +88,7 @@ public class GameScreenUI {
 
 		content.row().expandX();
 
-		win.setBackground(brushed);
+		// win.setBackground(brushed);
 
 		// quit button
 		btn_quit = UIUtils.newButton("Quit race (Q)", new ClickListener() {

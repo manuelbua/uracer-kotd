@@ -128,13 +128,18 @@ echo -n "Baking default skin..."
 	cp ui/skin/sans12.fnt ${DEST}/ui/skin >/dev/null
 	cp ui/skin/sans13.fnt ${DEST}/ui/skin >/dev/null
 	cp ui/skin/sans15.fnt ${DEST}/ui/skin >/dev/null
-
 echo "done!"
-echo -n "Copying holo skin..."
 
+echo -n "Copying holo skin..."
 	mkdir -p "${DEST}/ui/holo"
 
 	# holo skin
 	cp ui/holo/* ${DEST}/ui/holo >/dev/null
+echo "done!"
 
+echo -n "Copying kenney skin..."
+	mkdir -p "${DEST}/ui/kenney"
+
+	# holo skin
+	cp ui/kenney/* ${DEST}/ui/kenney >/dev/null
 echo "done!"
