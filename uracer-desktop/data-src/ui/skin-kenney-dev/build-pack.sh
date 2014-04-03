@@ -10,4 +10,9 @@ DEST="./out"
 
 rm -rf "${DEST}"
 mkdir -p "${DEST}"
+
+# add fonts
+cp ../../font/kenney-thin.png sprites
+cp ../../font/kenney-thin.fnt .
+
 ${TEX_PACKER} sprites ${DEST}

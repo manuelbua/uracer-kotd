@@ -130,9 +130,9 @@ public final class MainScreen extends UIScreen {
 			});
 
 			ltable.add(listPane).colspan(3).width(400).height(200).left().padBottom(10).row();
-			ltable.add(start).width(150).height(40).row().expandX();
-			ltable.add(options).width(150).height(40).row();
-			ltable.add(quit).width(150).height(40).row();
+			ltable.add(start);
+			ltable.add(options);
+			ltable.add(quit);
 		}
 
 		/** right table */

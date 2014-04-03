@@ -110,7 +110,7 @@ public class GameScreenUI {
 				}
 			}
 		});
-		bottom.add(btn_resume);
+		bottom.add(btn_resume).padRight(5);
 		bottom.add(btn_quit);
 		bottom.right();
 

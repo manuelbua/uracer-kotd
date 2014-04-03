@@ -140,7 +140,7 @@ public final class Art {
 		// skinAtlas = new TextureAtlas(Gdx.files.internal(skinPath + ".atlas"));
 		// scrSkin = new Skin(Gdx.files.internal(skinPath + ".json"), skinAtlas);
 
-		// holo
+		// kenney
 		String skinPath = Storage.UI + "kenney/";
 		skinAtlas = new TextureAtlas(Gdx.files.internal(skinPath + "pack.atlas"));
 		scrSkin = new Skin(Gdx.files.internal(skinPath + "kenney.json"), skinAtlas);
