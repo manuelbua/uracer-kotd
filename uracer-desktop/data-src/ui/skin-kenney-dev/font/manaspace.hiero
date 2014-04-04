@@ -1,5 +1,5 @@
 font.name=Andale Mono
-font.size=15
+font.size=12
 font.bold=false
 font.italic=false
 
@@ -7,7 +7,7 @@ pad.top=0
 pad.right=0
 pad.bottom=0
 pad.left=0
-pad.advance.x=-2
+pad.advance.x=-1
 pad.advance.y=0
 
 glyph.native.rendering=false

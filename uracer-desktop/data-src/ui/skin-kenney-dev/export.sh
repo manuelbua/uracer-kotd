@@ -5,7 +5,12 @@ mkdir ../kenney
 
 # package at the upper level
 cp out/* ../kenney/
-cp *.fnt kenney.json ../kenney
+
+# export fonts
+cp font/*.fnt ../kenney
+
+# export skin def
+cp kenney.json ../kenney
 
 # also copy to the data folder (debug purposes)
 rm -rf ../../../data/ui/kenney

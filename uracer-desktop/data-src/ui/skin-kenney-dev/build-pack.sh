@@ -12,7 +12,6 @@ rm -rf "${DEST}"
 mkdir -p "${DEST}"
 
 # add fonts
-cp ../../font/kenney-thin.png sprites
-cp ../../font/kenney-thin.fnt .
+cp font/*.png sprites
 
 ${TEX_PACKER} sprites ${DEST}
