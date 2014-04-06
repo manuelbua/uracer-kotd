@@ -25,6 +25,7 @@ import com.bitfire.uracer.game.GameplaySettings.TimeDilateInputMode;
 import com.bitfire.uracer.game.logic.post.effects.Ssao;
 import com.bitfire.uracer.game.screens.GameScreensFactory.ScreenType;
 import com.bitfire.uracer.resources.Art;
+import com.bitfire.uracer.resources.Sounds;
 import com.bitfire.uracer.screen.UIScreen;
 import com.bitfire.uracer.utils.UIUtils;
 
@@ -52,9 +53,9 @@ public class OptionsScreen extends UIScreen {
 		int h = (int)(ui.getHeight() / 2);
 
 		// version info
-		Table infoTable = UIUtils.newVersionInfoTable();
-		root.addActor(infoTable);
-		root.bottom().padBottom(50);
+		// Table infoTable = UIUtils.newVersionInfoTable();
+		// root.addActor(infoTable);
+		// root.bottom().padBottom(50);
 
 		// layout tables
 		ltable = new Table();
@@ -74,15 +75,17 @@ public class OptionsScreen extends UIScreen {
 		{
 			// time dilation input mode
 
-			SelectBox box = UIUtils.newSelectBox(new String[] {"Touch to toggle", "Touch and release"}, new ChangeListener() {
-				@Override
-				public void changed (ChangeEvent event, Actor actor) {
-					@SuppressWarnings("unchecked")
-					int index = ((SelectBox<String>)actor).getSelectedIndex();
-					UserPreferences.string(Preference.TimeDilateInputMode, TimeDilateInputMode.values()[index].toString());
-					UserPreferences.save();
-				}
-			});
+			SelectBox<String> box = UIUtils.newSelectBox(new String[] {"Touch to toggle", "Touch and release"},
+				new ChangeListener() {
+					@Override
+					public void changed (ChangeEvent event, Actor actor) {
+						Sounds.menuRollover.play();
+						@SuppressWarnings("unchecked")
+						int index = ((SelectBox<String>)actor).getSelectedIndex();
+						UserPreferences.string(Preference.TimeDilateInputMode, TimeDilateInputMode.values()[index].toString());
+						UserPreferences.save();
+					}
+				});
 
 			TimeDilateInputMode im = TimeDilateInputMode.valueOf(UserPreferences.string(Preference.TimeDilateInputMode));
 			box.setSelectedIndex(im.ordinal());
@@ -100,6 +103,7 @@ public class OptionsScreen extends UIScreen {
 				new ChangeListener() {
 					@Override
 					public void changed (ChangeEvent event, Actor actor) {
+						Sounds.menuRollover.play();
 						UserPreferences.bool(Preference.NightMode, ((CheckBox)actor).isChecked());
 						UserPreferences.save();
 					}
@@ -119,6 +123,7 @@ public class OptionsScreen extends UIScreen {
 				new ChangeListener() {
 					@Override
 					public void changed (ChangeEvent event, Actor actor) {
+						Sounds.menuRollover.play();
 						boolean doPostprocess = ((CheckBox)actor).isChecked();
 						UserPreferences.bool(Preference.PostProcessing, doPostprocess);
 						UserPreferences.save();
@@ -152,6 +157,7 @@ public class OptionsScreen extends UIScreen {
 			ppBloom = UIUtils.newCheckBox("Full-scene bloom", UserPreferences.bool(Preference.Bloom), new ChangeListener() {
 				@Override
 				public void changed (ChangeEvent event, Actor actor) {
+					Sounds.menuRollover.play();
 					UserPreferences.bool(Preference.Bloom, ((CheckBox)actor).isChecked());
 					UserPreferences.save();
 				}
@@ -163,6 +169,7 @@ public class OptionsScreen extends UIScreen {
 				new ChangeListener() {
 					@Override
 					public void changed (ChangeEvent event, Actor actor) {
+						Sounds.menuRollover.play();
 						UserPreferences.bool(Preference.Vignetting, ((CheckBox)actor).isChecked());
 						UserPreferences.save();
 					}
@@ -174,6 +181,7 @@ public class OptionsScreen extends UIScreen {
 				new ChangeListener() {
 					@Override
 					public void changed (ChangeEvent event, Actor actor) {
+						Sounds.menuRollover.play();
 						UserPreferences.bool(Preference.CrtScreen, ((CheckBox)actor).isChecked());
 						UserPreferences.save();
 					}
@@ -185,6 +193,7 @@ public class OptionsScreen extends UIScreen {
 				new ChangeListener() {
 					@Override
 					public void changed (ChangeEvent event, Actor actor) {
+						Sounds.menuRollover.play();
 						UserPreferences.bool(Preference.EarthCurvature, ((CheckBox)actor).isChecked());
 						UserPreferences.save();
 					}
@@ -196,6 +205,7 @@ public class OptionsScreen extends UIScreen {
 				ppZoomBlur = UIUtils.newCheckBox("Zoom blur", UserPreferences.bool(Preference.ZoomRadialBlur), new ChangeListener() {
 					@Override
 					public void changed (ChangeEvent event, Actor actor) {
+						Sounds.menuRollover.play();
 						UserPreferences.bool(Preference.ZoomRadialBlur, ((CheckBox)actor).isChecked());
 						UserPreferences.save();
 					}
@@ -206,7 +216,9 @@ public class OptionsScreen extends UIScreen {
 					new ChangeListener() {
 						@Override
 						public void changed (ChangeEvent event, Actor actor) {
-							int index = ((SelectBox)actor).getSelectedIndex();
+							Sounds.menuRollover.play();
+							@SuppressWarnings("unchecked")
+							int index = ((SelectBox<String>)actor).getSelectedIndex();
 							UserPreferences.string(Preference.ZoomRadialBlurQuality, RadialBlur.Quality.values()[index].toString());
 							UserPreferences.save();
 						}
@@ -222,6 +234,7 @@ public class OptionsScreen extends UIScreen {
 				ppSsao = UIUtils.newCheckBox("SSAO (ambient occlusion)", UserPreferences.bool(Preference.Ssao), new ChangeListener() {
 					@Override
 					public void changed (ChangeEvent event, Actor actor) {
+						Sounds.menuRollover.play();
 						UserPreferences.bool(Preference.Ssao, ((CheckBox)actor).isChecked());
 						UserPreferences.save();
 					}
@@ -237,6 +250,7 @@ public class OptionsScreen extends UIScreen {
 				ppSsaoQuality = UIUtils.newSelectBox(qualityList, new ChangeListener() {
 					@Override
 					public void changed (ChangeEvent event, Actor actor) {
+						Sounds.menuRollover.play();
 						@SuppressWarnings("unchecked")
 						int index = ((SelectBox<String>)actor).getSelectedIndex();
 						UserPreferences.string(Preference.SsaoQuality, Ssao.Quality.values()[index].toString());
@@ -253,6 +267,7 @@ public class OptionsScreen extends UIScreen {
 			Button back = UIUtils.newTextButton("Back to main", new ClickListener() {
 				@Override
 				public void clicked (InputEvent event, float x, float y) {
+					Sounds.menuClick.play();
 					URacer.Game.show(ScreenType.MainScreen);
 				}
 			});

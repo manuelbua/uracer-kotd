@@ -13,7 +13,7 @@ import com.badlogic.gdx.scenes.scene2d.ui.List;
 import com.badlogic.gdx.scenes.scene2d.ui.ScrollPane;
 import com.badlogic.gdx.scenes.scene2d.ui.Table;
 import com.badlogic.gdx.scenes.scene2d.ui.TextButton;
-import com.badlogic.gdx.scenes.scene2d.utils.Align;
+import com.badlogic.gdx.scenes.scene2d.ui.Window;
 import com.badlogic.gdx.scenes.scene2d.utils.ChangeListener;
 import com.badlogic.gdx.scenes.scene2d.utils.ClickListener;
 import com.bitfire.uracer.URacer;
@@ -24,6 +24,7 @@ import com.bitfire.uracer.game.GameLevels;
 import com.bitfire.uracer.game.GameLevels.GameLevelDescriptor;
 import com.bitfire.uracer.game.screens.GameScreensFactory.ScreenType;
 import com.bitfire.uracer.resources.Art;
+import com.bitfire.uracer.resources.Sounds;
 import com.bitfire.uracer.screen.UIScreen;
 import com.bitfire.uracer.utils.UIUtils;
 
@@ -45,33 +46,29 @@ public final class MainScreen extends UIScreen {
 		bg.setFillParent(true);
 		root.addActor(bg);
 
-		// int w = (int)(ui.getWidth() / 3);
-		// int h = (int)(ui.getHeight() / 2);
+		Window win = new Window("Welcome!", Art.scrSkin);
+		win.setWidth(600);
+		win.setHeight(400);
+		win.setPosition((Gdx.graphics.getWidth() - win.getWidth()) / 2, (Gdx.graphics.getHeight() - win.getHeight()) / 2);
+		ui.addActor(win);
 
-		// version info
-		Table infoTable = UIUtils.newVersionInfoTable();
-		root.addActor(infoTable);
-		root.bottom().padBottom(25);
+		win.row().fill().expand();
 
-		// layout tables
-		ltable = new Table();
-		ltable.debug();
-		ltable.defaults();
-		ltable.align(Align.left | Align.top);
-		root.add(ltable).expandX();// .height(h);
+		Table content = new Table();
+		content.debug();
 
-		// rtable = new Table();
-		// rtable.debug();
-		// rtable.defaults().padRight(5);
-		// rtable.align(Align.right | Align.top);
-		// root.add(rtable).expandX().height(h);
+		Table buttons = new Table();
+		buttons.debug();
 
-		// buttonsTable = new Table();
-		// root.addActor(buttonsTable);
-		// buttonsTable.debug();
-		// buttonsTable.setFillParent(true);
+		Table bottom = new Table();
+		bottom.debug();
 
-		/** left table */
+		win.row().fill().expand();
+		win.add(content);
+		win.row().fill().expand();
+		win.add(buttons);
+		win.row().fill().expand();
+		win.add(bottom);
 
 		// track list
 		{
@@ -86,6 +83,7 @@ public final class MainScreen extends UIScreen {
 			trackList.addListener(new ChangeListener() {
 				@Override
 				public void changed (ChangeEvent event, Actor actor) {
+					Sounds.menuRollover.play();
 					@SuppressWarnings("unchecked")
 					List<String> source = (List<String>)actor;
 					chooseLevel(source.getSelectedIndex());
@@ -93,7 +91,8 @@ public final class MainScreen extends UIScreen {
 			});
 
 			listPane.setWidget(trackList);
-			// listPane.setFadeScrollBars(false);
+			listPane.setFadeScrollBars(false);
+			listPane.setScrollingDisabled(false, false);
 
 			// restore previous user selection, if any
 			if (ScreensShared.selectedLevelId.length() > 0) {
@@ -108,9 +107,10 @@ public final class MainScreen extends UIScreen {
 				chooseFirstLevelAndSave(trackList);
 			}
 
-			TextButton start = UIUtils.newTextButton("START", new ClickListener() {
+			TextButton start = UIUtils.newTextButton("RACE!", new ClickListener() {
 				@Override
 				public void clicked (InputEvent event, float x, float y) {
+					Sounds.menuClick.play();
 					URacer.Game.show(ScreenType.GameScreen);
 				}
 			});
@@ -118,6 +118,7 @@ public final class MainScreen extends UIScreen {
 			TextButton options = UIUtils.newTextButton("OPTIONS", new ClickListener() {
 				@Override
 				public void clicked (InputEvent event, float x, float y) {
+					Sounds.menuClick.play();
 					URacer.Game.show(ScreenType.OptionsScreen);
 				}
 			});
@@ -125,14 +126,26 @@ public final class MainScreen extends UIScreen {
 			TextButton quit = UIUtils.newTextButton("EXIT", new ClickListener() {
 				@Override
 				public void clicked (InputEvent event, float x, float y) {
+					Sounds.menuClick.play();
 					URacer.Game.quit();
 				}
 			});
 
-			ltable.add(listPane).colspan(3).width(400).height(100).left().padBottom(10).row();
-			ltable.add(start);
-			ltable.add(options);
-			ltable.add(quit);
+			content.row().expand();
+			content.add(listPane).width(200).height(150);
+
+			buttons.row();
+			buttons.add(start).pad(0, 2, 0, 2);
+			buttons.add(options).pad(0, 2, 0, 2);
+			buttons.add(quit).pad(0, 2, 0, 2);
+
+			bottom.left().bottom();
+			bottom.add(UIUtils.newVersionInfoLabel());
+
+			// ltable.add(listPane).colspan(3).width(400).height(200).left().padBottom(10).row();
+			// ltable.add(start);
+			// ltable.add(options);
+			// ltable.add(quit);
 		}
 
 		/** right table */
