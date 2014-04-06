@@ -46,7 +46,7 @@ public final class MainScreen extends UIScreen {
 		bg.setFillParent(true);
 		root.addActor(bg);
 
-		Window win = new Window("Welcome!", Art.scrSkin);
+		Window win = UIUtils.newWindow("Welcome!");
 		win.setWidth(600);
 		win.setHeight(400);
 		win.setPosition((Gdx.graphics.getWidth() - win.getWidth()) / 2, (Gdx.graphics.getHeight() - win.getHeight()) / 2);

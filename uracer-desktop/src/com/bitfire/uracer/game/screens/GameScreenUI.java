@@ -60,7 +60,7 @@ public class GameScreenUI {
 		ui = UIUtils.newFittedStage();
 
 		// setup main window
-		win = new Window("OPTIONS", Art.scrSkin);
+		win = UIUtils.newWindow("OPTIONS");
 		ui.addActor(win);
 
 		Table content = new Table();
