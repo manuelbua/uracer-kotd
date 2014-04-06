@@ -27,7 +27,7 @@ com.badlogic.gdx.scenes.scene2d.ui.TextButton$TextButtonStyle: {
 },
 
 com.badlogic.gdx.scenes.scene2d.ui.ScrollPane$ScrollPaneStyle: {
-	default: { background: pane, vScroll: scroll-v, vScrollKnob: scrollknob-v, hScroll: scroll-v, hScrollKnob: scrollknob-v }
+	default: { background: pane, vScroll: scroll-v, vScrollKnob: scrollknob-v, hScroll: scroll-h, hScrollKnob: scrollknob-h }
 },
 
 com.badlogic.gdx.scenes.scene2d.ui.SelectBox$SelectBoxStyle: {
