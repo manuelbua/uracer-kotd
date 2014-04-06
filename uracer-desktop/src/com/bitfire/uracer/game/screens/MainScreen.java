@@ -29,13 +29,11 @@ import com.bitfire.uracer.screen.UIScreen;
 import com.bitfire.uracer.utils.UIUtils;
 
 public final class MainScreen extends UIScreen {
-
-	private Table root, ltable;
 	private List<String> trackList;
 
 	@Override
 	protected void setupUI (Stage ui) {
-		root = new Table();
+		Table root = new Table();
 		root.debug();
 		root.setBounds(0, 0, ui.getWidth(), ui.getHeight());
 		root.invalidate();
