@@ -143,3 +143,10 @@ echo -n "Copying kenney skin..."
 	# holo skin
 	cp ui/kenney/* ${DEST}/ui/kenney >/dev/null
 echo "done!"
+
+echo -n "Copying menu sfx..."
+	mkdir -p "${DEST}/audio/menu-sfx"
+
+	# holo skin
+	cp audio/menu-sfx/* ${DEST}/audio/menu-sfx >/dev/null
+echo "done!"

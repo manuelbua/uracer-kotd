@@ -16,6 +16,7 @@ public final class Storage {
 	public static final String BootConfigFile = "uracer-boot.cfg";
 	public static final String Levels = "data/levels/";
 	public static final String UI = "data/ui/";
+	public static final String Audio = "data/audio/";
 
 	public static void init () {
 		// // determine user directories on UNIX-like OSes

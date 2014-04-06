@@ -8,7 +8,6 @@ import com.badlogic.gdx.scenes.scene2d.ui.List;
 import com.badlogic.gdx.scenes.scene2d.ui.ScrollPane;
 import com.badlogic.gdx.scenes.scene2d.ui.SelectBox;
 import com.badlogic.gdx.scenes.scene2d.ui.Slider;
-import com.badlogic.gdx.scenes.scene2d.ui.Table;
 import com.badlogic.gdx.scenes.scene2d.ui.TextButton;
 import com.badlogic.gdx.scenes.scene2d.utils.ChangeListener;
 import com.badlogic.gdx.scenes.scene2d.utils.ClickListener;
@@ -106,12 +105,9 @@ public final class UIUtils {
 		return b;
 	}
 
-	public static Table newVersionInfoTable () {
-		Table infoTable = new Table(Art.scrSkin);
-		infoTable.debug();
+	public static Label newVersionInfoLabel () {
 		Label versionLabel = UIUtils.newLabel("uRacer " + URacer.versionInfo, false);
-		infoTable.add(versionLabel).expand().bottom().left().padLeft(5);
-		return infoTable;
+		return versionLabel;
 	}
 
 	private UIUtils () {
