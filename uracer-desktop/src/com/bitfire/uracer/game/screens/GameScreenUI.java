@@ -3,7 +3,6 @@ package com.bitfire.uracer.game.screens;
 
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Input.Keys;
-import com.badlogic.gdx.graphics.g2d.NinePatch;
 import com.badlogic.gdx.graphics.glutils.FrameBuffer;
 import com.badlogic.gdx.scenes.scene2d.Actor;
 import com.badlogic.gdx.scenes.scene2d.InputEvent;
@@ -16,7 +15,6 @@ import com.badlogic.gdx.scenes.scene2d.ui.Table;
 import com.badlogic.gdx.scenes.scene2d.ui.Window;
 import com.badlogic.gdx.scenes.scene2d.utils.ChangeListener;
 import com.badlogic.gdx.scenes.scene2d.utils.ClickListener;
-import com.badlogic.gdx.scenes.scene2d.utils.NinePatchDrawable;
 import com.bitfire.uracer.Input;
 import com.bitfire.uracer.URacer;
 import com.bitfire.uracer.configuration.Config;
@@ -33,7 +31,7 @@ public class GameScreenUI {
 	private Table root;
 	private Window win;
 	private Dialog dlg_quit;
-	public boolean quitShown;
+	private boolean quitShown;
 	private final Game game;
 	private boolean enabled;
 
@@ -60,16 +58,6 @@ public class GameScreenUI {
 
 	private void constructUI () {
 		ui = UIUtils.newFittedStage();
-		root = new Table();
-		root.debug();
-		root.setBounds(0, 0, ui.getWidth(), ui.getHeight());
-		root.invalidate();
-		ui.addActor(root);
-
-		// panel background
-		NinePatch np = new NinePatch(Art.scrPanel, 6, 6, 24, 10);
-		// np.setColor(new Color(0.3f, 0.3f, 0.3f, 1f));
-		NinePatchDrawable brushed = new NinePatchDrawable(np);
 
 		// setup main window
 		win = new Window("OPTIONS", Art.scrSkin);
