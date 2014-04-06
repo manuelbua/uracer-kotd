@@ -13,7 +13,6 @@ import com.badlogic.gdx.scenes.scene2d.ui.List;
 import com.badlogic.gdx.scenes.scene2d.ui.ScrollPane;
 import com.badlogic.gdx.scenes.scene2d.ui.Table;
 import com.badlogic.gdx.scenes.scene2d.ui.TextButton;
-import com.badlogic.gdx.scenes.scene2d.ui.Window;
 import com.badlogic.gdx.scenes.scene2d.utils.ChangeListener;
 import com.badlogic.gdx.scenes.scene2d.utils.ClickListener;
 import com.bitfire.uracer.URacer;
@@ -27,6 +26,7 @@ import com.bitfire.uracer.resources.Art;
 import com.bitfire.uracer.resources.Sounds;
 import com.bitfire.uracer.screen.UIScreen;
 import com.bitfire.uracer.utils.UIUtils;
+import com.bitfire.uracer.utils.Window;
 
 public final class MainScreen extends UIScreen {
 	private List<String> trackList;
@@ -44,11 +44,10 @@ public final class MainScreen extends UIScreen {
 		bg.setFillParent(true);
 		root.addActor(bg);
 
-		Window win = UIUtils.newWindow("Welcome!");
-		win.setWidth(600);
-		win.setHeight(400);
-		win.setPosition((Gdx.graphics.getWidth() - win.getWidth()) / 2, (Gdx.graphics.getHeight() - win.getHeight()) / 2);
+		Window win = UIUtils.newWindow("SINGLE PLAYER");
 		ui.addActor(win);
+
+		win.debug();
 
 		win.row().fill().expand();
 
@@ -56,10 +55,10 @@ public final class MainScreen extends UIScreen {
 		content.debug();
 
 		Table buttons = new Table();
-		buttons.debug();
+		// buttons.debug();
 
 		Table bottom = new Table();
-		bottom.debug();
+		// bottom.debug();
 
 		win.row().fill().expand();
 		win.add(content);
@@ -139,14 +138,11 @@ public final class MainScreen extends UIScreen {
 
 			bottom.left().bottom();
 			bottom.add(UIUtils.newVersionInfoLabel());
-
-			// ltable.add(listPane).colspan(3).width(400).height(200).left().padBottom(10).row();
-			// ltable.add(start);
-			// ltable.add(options);
-			// ltable.add(quit);
 		}
 
-		/** right table */
+		win.setWidth(600);
+		win.setHeight(400);
+		win.setPosition((Gdx.graphics.getWidth() - win.getWidth()) / 2, (Gdx.graphics.getHeight() - win.getHeight()) / 2);
 	}
 
 	@Override

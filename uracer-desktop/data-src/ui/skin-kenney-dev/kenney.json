@@ -42,9 +42,9 @@ com.badlogic.gdx.scenes.scene2d.ui.SplitPane$SplitPaneStyle: {
 	default-horizontal: { handle: splitpane }
 },
 
-com.badlogic.gdx.scenes.scene2d.ui.Window$WindowStyle: {
-	default: { titleFont: default-font, background: window, titleFontColor: white },
-	dialog: { titleFont: default-font, background: window, titleFontColor: white, stageBackground: dialogDim }
+com.bitfire.uracer.utils.Window$WindowStyle: {
+	default: { titleFont: default-font, background: window-shadowed, titleFontColor: white },
+	dialog: { titleFont: default-font, background: window-shadowed, titleFontColor: white, stageBackground: dialogDim }
 },
 
 com.badlogic.gdx.scenes.scene2d.ui.Slider$SliderStyle: {

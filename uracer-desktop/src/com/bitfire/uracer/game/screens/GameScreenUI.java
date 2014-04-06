@@ -8,11 +8,9 @@ import com.badlogic.gdx.scenes.scene2d.Actor;
 import com.badlogic.gdx.scenes.scene2d.InputEvent;
 import com.badlogic.gdx.scenes.scene2d.Stage;
 import com.badlogic.gdx.scenes.scene2d.ui.Button;
-import com.badlogic.gdx.scenes.scene2d.ui.Dialog;
 import com.badlogic.gdx.scenes.scene2d.ui.Label;
 import com.badlogic.gdx.scenes.scene2d.ui.Slider;
 import com.badlogic.gdx.scenes.scene2d.ui.Table;
-import com.badlogic.gdx.scenes.scene2d.ui.Window;
 import com.badlogic.gdx.scenes.scene2d.utils.ChangeListener;
 import com.badlogic.gdx.scenes.scene2d.utils.ClickListener;
 import com.bitfire.uracer.Input;
@@ -23,12 +21,13 @@ import com.bitfire.uracer.configuration.UserPreferences.Preference;
 import com.bitfire.uracer.game.Game;
 import com.bitfire.uracer.game.logic.gametasks.SoundManager;
 import com.bitfire.uracer.resources.Art;
+import com.bitfire.uracer.utils.Dialog;
 import com.bitfire.uracer.utils.UIUtils;
+import com.bitfire.uracer.utils.Window;
 
 public class GameScreenUI {
 	private Input input = null;
 	private Stage ui;
-	private Table root;
 	private Window win;
 	private Dialog dlg_quit;
 	private boolean quitShown;
@@ -66,8 +65,8 @@ public class GameScreenUI {
 		Table content = new Table();
 		Table bottom = new Table();
 
-		// content.debug();
-		// bottom.debug();
+		content.debug();
+		bottom.debug();
 
 		win.row().fill().expand();
 		win.add(content);
@@ -79,7 +78,7 @@ public class GameScreenUI {
 		// win.setBackground(brushed);
 
 		// quit button
-		btn_quit = UIUtils.newButton("Quit race (Q)", new ClickListener() {
+		btn_quit = UIUtils.newButton("QUIT RACE (Q)", new ClickListener() {
 			@Override
 			public void clicked (InputEvent event, float x, float y) {
 				if (enabled && !quitShown) {
@@ -89,7 +88,7 @@ public class GameScreenUI {
 		});
 
 		// resume button
-		btn_resume = UIUtils.newButton("Resume game (ESC)", new ClickListener() {
+		btn_resume = UIUtils.newButton("RESUME GAME (ESC)", new ClickListener() {
 			@Override
 			public void clicked (InputEvent event, float x, float y) {
 				if (enabled) {
@@ -111,8 +110,8 @@ public class GameScreenUI {
 					quit();
 				}
 			};
-		}.text("Your current lap will not be saved, are you sure you want to quit?").button("Yes", true).button("No", false)
-			.key(Keys.ENTER, true);
+		}.text("Your current lap will not be saved, are you sure you want to quit?").button("YES (Y)", true)
+			.button("NO (N)", false).key(Keys.Y, true).key(Keys.N, false);
 
 		// sound sliders
 		music_label = UIUtils.newLabel("Music volume", false);
@@ -126,7 +125,7 @@ public class GameScreenUI {
 			}
 		});
 		content.add(sfx_label).left();
-		content.add(sfx_slider);
+		content.add(sfx_slider).right();
 
 		music_slider = UIUtils.newSlider(0, 1, 0.01f, SoundManager.MusicVolumeMul, new ChangeListener() {
 			@Override
@@ -138,19 +137,21 @@ public class GameScreenUI {
 		});
 		content.row();
 		content.add(music_label).left();
-		content.add(music_slider);
+		content.add(music_slider).right();
 	}
 
 	private void setup () {
 		Dialog.fadeDuration = 0.4f;
 		quitShown = false;
 
-		win.setWidth(400);
-		win.setHeight(200);
+		win.setWidth(480);
+		win.setHeight(280);
 		win.setPosition((Gdx.graphics.getWidth() - win.getWidth()) / 2, (Gdx.graphics.getHeight() - win.getHeight()) / 2);
 	}
 
 	private void showQuit () {
+		dlg_quit.getContentTable().padBottom(10);
+		dlg_quit.pack();
 		dlg_quit.show(ui);
 		quitShown = true;
 	}
