@@ -62,11 +62,8 @@ public class GameScreenUI {
 		win = UIUtils.newWindow("OPTIONS");
 		ui.addActor(win);
 
-		Table content = new Table();
-		Table bottom = new Table();
-
-		content.debug();
-		bottom.debug();
+		Table content = UIUtils.newTable();
+		Table bottom = UIUtils.newTable();
 
 		win.row().fill().expand();
 		win.add(content);

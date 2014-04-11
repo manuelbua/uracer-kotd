@@ -33,8 +33,7 @@ public final class MainScreen extends UIScreen {
 
 	@Override
 	protected void setupUI (Stage ui) {
-		Table root = new Table();
-		root.debug();
+		Table root = UIUtils.newTable();
 		root.setBounds(0, 0, ui.getWidth(), ui.getHeight());
 		root.invalidate();
 		ui.addActor(root);
@@ -47,18 +46,11 @@ public final class MainScreen extends UIScreen {
 		Window win = UIUtils.newWindow("SINGLE PLAYER");
 		ui.addActor(win);
 
-		win.debug();
-
 		win.row().fill().expand();
 
-		Table content = new Table();
-		content.debug();
-
-		Table buttons = new Table();
-		// buttons.debug();
-
-		Table bottom = new Table();
-		// bottom.debug();
+		Table content = UIUtils.newTable();
+		Table buttons = UIUtils.newTable();
+		Table bottom = UIUtils.newTable();
 
 		win.row().fill().expand();
 		win.add(content);

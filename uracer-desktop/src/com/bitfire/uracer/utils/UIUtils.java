@@ -8,6 +8,7 @@ import com.badlogic.gdx.scenes.scene2d.ui.List;
 import com.badlogic.gdx.scenes.scene2d.ui.ScrollPane;
 import com.badlogic.gdx.scenes.scene2d.ui.SelectBox;
 import com.badlogic.gdx.scenes.scene2d.ui.Slider;
+import com.badlogic.gdx.scenes.scene2d.ui.Table;
 import com.badlogic.gdx.scenes.scene2d.ui.TextButton;
 import com.badlogic.gdx.scenes.scene2d.utils.ChangeListener;
 import com.badlogic.gdx.scenes.scene2d.utils.ClickListener;
@@ -16,6 +17,8 @@ import com.bitfire.uracer.URacer;
 import com.bitfire.uracer.resources.Art;
 
 public final class UIUtils {
+
+	public static final boolean debug = false;
 
 	public static Stage newFittedStage () {
 		Stage stage = new Stage(new FitViewport(ScaleUtils.PlayWidth, ScaleUtils.PlayHeight));
@@ -105,8 +108,19 @@ public final class UIUtils {
 		return b;
 	}
 
+	public static Table newTable () {
+		Table t = new Table();
+		if (debug) {
+			t.debug();
+		}
+		return t;
+	}
+
 	public static Window newWindow (String title) {
 		Window w = new Window(title, Art.scrSkin);
+		if (debug) {
+			w.debug();
+		}
 		return w;
 	}
 
