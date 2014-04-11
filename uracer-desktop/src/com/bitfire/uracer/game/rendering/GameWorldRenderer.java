@@ -396,7 +396,7 @@ public final class GameWorldRenderer {
 		camPersp.position.set(cameraPos.x, cameraPos.y, CamPerspElevation);
 		camPersp.update(true);
 
-		// update inv proj view
+		// update inv matrices
 		camPerspInvView.set(camPersp.view);
 		Matrix4.inv(camPerspInvView.val);
 
