@@ -308,7 +308,7 @@ public final class DefaultAnimator implements PostProcessingAnimator {
 		// Gdx.app.log("", "campos=" + cameraPos);
 
 		float cf = collisionFactor;
-		// cf = 1f;
+		// cf = 0.2f;
 
 		updateLights(progressData, ambient, trees, cf);
 
@@ -334,7 +334,10 @@ public final class DefaultAnimator implements PostProcessingAnimator {
 
 			// amount = 0.2f + cf * 5f;
 
-			// Gdx.app.log("", "" + amount);
+			amount *= cf * 10;
+
+			// Gdx.app.log("", "amount=" + amount);
+			// Gdx.app.log("", "cf=" + cf);
 			crt.setChromaticDispersion(amount, amount);
 
 			// earth curvature
@@ -342,6 +345,9 @@ public final class DefaultAnimator implements PostProcessingAnimator {
 			dist = AMath.fixup(dist);
 			crt.setDistortion(dist);
 			crt.setZoom(1 - (dist / 2));
+
+			// crt.setEnabled(true);
+			// crt.setEnabled(false);
 		}
 
 		if (zoom != null) {
