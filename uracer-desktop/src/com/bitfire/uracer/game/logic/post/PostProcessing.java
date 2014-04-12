@@ -23,8 +23,8 @@ import com.bitfire.uracer.configuration.UserPreferences.Preference;
 import com.bitfire.uracer.game.logic.helpers.TrackProgressData;
 import com.bitfire.uracer.game.logic.post.animators.DefaultAnimator;
 import com.bitfire.uracer.game.logic.post.effects.LightShafts;
-import com.bitfire.uracer.game.logic.post.effects.Ssao;
 import com.bitfire.uracer.game.logic.post.effects.LightShafts.Quality;
+import com.bitfire.uracer.game.logic.post.effects.Ssao;
 import com.bitfire.uracer.game.player.PlayerCar;
 import com.bitfire.uracer.game.world.GameWorld;
 import com.bitfire.uracer.utils.ScaleUtils;
@@ -117,8 +117,11 @@ public final class PostProcessing {
 
 			ShaderLoader.Pedantic = false;
 			int effects = (scanlines ? Effect.PhosphorVibrance.v | Effect.Scanlines.v : 0) | Effect.Tint.v;
-			CrtMonitor crt = new CrtMonitor(ScaleUtils.PlayWidth, ScaleUtils.PlayHeight,
-				UserPreferences.bool(Preference.EarthCurvature), false, RgbMode.ChromaticAberrations, effects);
+			boolean earthCurvature = UserPreferences.bool(Preference.EarthCurvature);
+
+			CrtMonitor crt = new CrtMonitor(ScaleUtils.PlayWidth, ScaleUtils.PlayHeight, earthCurvature, false,
+				RgbMode.ChromaticAberrations, effects);
+
 			addEffect(Effects.Crt.name, crt);
 			ShaderLoader.Pedantic = true;
 		}
