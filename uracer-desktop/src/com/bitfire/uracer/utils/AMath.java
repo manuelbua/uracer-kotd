@@ -127,6 +127,16 @@ public final class AMath {
 		return (float)(1f / (1f + Math.pow(Math.E, -strength)));
 	}
 
+	// lookup the "sigmoid" IPython notebook for graphing
+	public static float sigmoidN (float x, float a) {
+		return (float)(2f / (1f + Math.exp(-a * x))) - 1.0f;
+	}
+
+	// lookup the "sigmoid" IPython notebook for graphing
+	public static float sigmoidN (float x) {
+		return sigmoidN(x, 1);
+	}
+
 	public static float truncate (float value, int decimal) {
 		float temp = value;
 
