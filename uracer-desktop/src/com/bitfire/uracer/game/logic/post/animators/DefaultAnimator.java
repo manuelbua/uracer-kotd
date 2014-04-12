@@ -257,11 +257,16 @@ public final class DefaultAnimator implements PostProcessingAnimator {
 		float base = 0.1f;
 		float timeModFactor = URacer.Game.getTimeModFactor();
 
+		// float redsigma = 0;
+		// redsigma = collisionFactor * 0.5f;
+		// redsigma = AMath.sigmoidN(collisionFactor);
+		// Gdx.app.log("", "" + redsigma);
+
 		//@off
 		ambient.set(
-			base * 1.5f + collisionFactor * 0.5f,
+			base * 1.5f,//+ redsigma,
 			base,
-			base + base * 3f * timeModFactor,
+			base + (base * 3f * timeModFactor) * (1-collisionFactor),
 			0.55f + 0.05f * timeModFactor
 		);
 		//@on
@@ -341,7 +346,8 @@ public final class DefaultAnimator implements PostProcessingAnimator {
 			case ChromaticAberrations:
 				amount = MathUtils.clamp(cf + 0.14f, 0, 1) * -0.8f;
 				amount -= 0.15f * AMath.fixup(curvature_factor - kdist);
-				amount *= cf * 10;
+				amount *= cf * 2.0f;
+				amount = MathUtils.clamp(amount, -0.5f, 0f);
 				crt.setChromaticDispersion(amount, amount);
 				break;
 			case RgbShift:
@@ -452,6 +458,7 @@ public final class DefaultAnimator implements PostProcessingAnimator {
 
 			// bloom.setBaseSaturation(1);
 			// bloom.setBloomSaturation(1);
+
 			// Gdx.app.log("", "sat=" + sat + ", bsat=" + bsat);
 		}
 
