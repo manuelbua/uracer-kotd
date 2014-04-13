@@ -30,15 +30,12 @@ import com.bitfire.uracer.utils.Window;
 
 public final class MainScreen extends UIScreen {
 	private List<String> trackList;
-	float trackListSize = 0;
 	ScrollPane listPane;
 	private Stage stage;
 
 	private void ensureScrollIsVisible () {
-		// stage.setScrollFocus(listPane);
-		float fidx = (float)(trackList.getSelectedIndex()) / (trackListSize - 1);
+		float fidx = (float)(trackList.getSelectedIndex()) / (float)(trackList.getItems().size - 1);
 		listPane.setScrollPercentY(fidx);
-		// Gdx.app.log("", "fidx=" + fidx);
 	}
 
 	@Override
@@ -81,14 +78,12 @@ public final class MainScreen extends UIScreen {
 			}
 
 			trackList = UIUtils.newListBox(levels);
-			trackListSize = trackList.getItems().size;
 
 			trackList.addListener(new ChangeListener() {
 				@Override
 				public void changed (ChangeEvent event, Actor actor) {
 					Sounds.menuRollover.play();
 					ensureScrollIsVisible();
-					Gdx.app.log("", "changed");
 				}
 			});
 
