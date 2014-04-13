@@ -127,6 +127,37 @@ public final class AMath {
 		return (float)(1f / (1f + Math.pow(Math.E, -strength)));
 	}
 
+	// lookup the "sigmoid" IPython notebook for graphing
+	public static float sigmoidN (float x, float a) {
+		return (float)(2f / (1f + Math.exp(-a * x))) - 1.0f;
+	}
+
+	// lookup the "sigmoid" IPython notebook for graphing
+	public static float sigmoidN (float x) {
+		return sigmoidN(x, 1);
+	}
+
+	private static final float SigmoidTAmplitude = 5; // good values in the range [3, 8]
+	private static final float SigmoidTStepSize = 3;
+
+	/** Tweakable normalized sigmoid function based on Dino Dini's implementation (see "sigmoid" IPython notebook)
+	 * 
+	 * Formulae: sign(x) * ( abs(x)*k / (1+k-abs(x)) )
+	 * 
+	 * @param x an input value in the range [-1,1]
+	 * @param k an amplitude modulation epsilon in the range [0,1]
+	 * @param up Whether the amplitude refers to the width or the height
+	 * @return the modulated input value x */
+	public static float sigmoidT (float x, float k, boolean up) {
+		float sgn = x >= 0 ? 1 : -1;
+		float absx = Math.abs(x);
+		float absk = Math.abs(k);
+		float n = absk * SigmoidTAmplitude;
+		float _k = (1.0f / (float)Math.pow(SigmoidTStepSize, n)) * SigmoidTAmplitude;
+		if (up) _k = -_k - 1;
+		return sgn * ((absx * _k) / (1 + _k - absx));
+	}
+
 	public static float truncate (float value, int decimal) {
 		float temp = value;
 

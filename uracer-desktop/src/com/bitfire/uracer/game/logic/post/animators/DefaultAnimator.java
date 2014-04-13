@@ -16,6 +16,7 @@ import com.bitfire.postprocessing.effects.CrtMonitor;
 import com.bitfire.postprocessing.effects.Vignette;
 import com.bitfire.postprocessing.effects.Zoomer;
 import com.bitfire.postprocessing.filters.Combine;
+import com.bitfire.postprocessing.filters.CrtScreen.RgbMode;
 import com.bitfire.uracer.URacer;
 import com.bitfire.uracer.configuration.Config;
 import com.bitfire.uracer.game.logic.helpers.TrackProgressData;
@@ -43,6 +44,7 @@ public final class DefaultAnimator implements PostProcessingAnimator {
 	private Zoomer zoom = null;
 	private Vignette vignette = null;
 	private CrtMonitor crt = null;
+	private RgbMode crtMode = RgbMode.None;
 	private Ssao ssao = null;
 	private LightShafts shafts = null;
 	private PlayerCar player = null;
@@ -65,6 +67,7 @@ public final class DefaultAnimator implements PostProcessingAnimator {
 		zoom = (Zoomer)post.getEffect(PostProcessing.Effects.Zoomer.name);
 		vignette = (Vignette)post.getEffect(PostProcessing.Effects.Vignette.name);
 		crt = (CrtMonitor)post.getEffect(PostProcessing.Effects.Crt.name);
+		crtMode = crt.getRgbMode();
 		ssao = (Ssao)post.getEffect(PostProcessing.Effects.Ssao.name);
 		shafts = (LightShafts)post.getEffect(PostProcessing.Effects.LightShafts.name);
 		zoomBlurStrengthFactor.setFixup(false);
@@ -199,6 +202,12 @@ public final class DefaultAnimator implements PostProcessingAnimator {
 		}
 
 		if (crt != null) {
+			Combine combine = crt.getCombinePass();
+			combine.setSource1Intensity(0f);
+			combine.setSource2Intensity(1f);
+			combine.setSource1Saturation(0f);
+			combine.setSource2Saturation(1f);
+
 			startMs = TimeUtils.millis();
 			crt.setTime(0);
 
@@ -207,10 +216,7 @@ public final class DefaultAnimator implements PostProcessingAnimator {
 			crt.setChromaticDispersion(0.112f, 0.112f);
 			crt.setDistortion(0.125f);
 			crt.setZoom(0.94f);
-
-			// tv.setTint( 0.95f, 0.8f, 1.0f );
 			crt.setTint(1, 1, 1);
-			crt.getCombinePass().setSource2Intensity(1f);
 		}
 
 		if (shafts != null) {
@@ -253,9 +259,9 @@ public final class DefaultAnimator implements PostProcessingAnimator {
 
 		//@off
 		ambient.set(
-			base * 1.5f + collisionFactor * 0.5f,
+			base * 1.5f,
 			base,
-			base + base * 3f * timeModFactor,
+			base + (base * 3f * timeModFactor) * (1-collisionFactor),
 			0.55f + 0.05f * timeModFactor
 		);
 		//@on
@@ -308,6 +314,8 @@ public final class DefaultAnimator implements PostProcessingAnimator {
 		// Gdx.app.log("", "campos=" + cameraPos);
 
 		float cf = collisionFactor;
+
+		// debug, simulate collision with values in range [0,1]
 		// cf = 1f;
 
 		updateLights(progressData, ambient, trees, cf);
@@ -328,20 +336,34 @@ public final class DefaultAnimator implements PostProcessingAnimator {
 			float curvature_factor = MathUtils.clamp(((zoomCamera - 1) / GameWorldRenderer.ZoomRange), 0, 1);
 			float kdist = 0.20f;
 
-			// modulates color offset by collision factor)
-			float amount = MathUtils.clamp(cf + 0.14f, 0, 1) * -0.8f;
-			amount -= 0.15f * AMath.fixup(curvature_factor - kdist);
+			float amount = 0;
+			switch (crtMode) {
+			case ChromaticAberrations:
+				amount = MathUtils.clamp(cf + 0.14f, 0, 1) * -0.8f;
+				amount -= 0.15f * AMath.fixup(curvature_factor - kdist);
+				amount *= cf * 2.0f;
+				amount = MathUtils.clamp(amount, -0.5f, 0f);
+				crt.setChromaticDispersion(amount, amount);
+				break;
+			case RgbShift:
+				amount = MathUtils.clamp(0.025f * cf, 0, 0.05f);
+				crt.setColorOffset(amount);
+				break;
+			case None:
+				break;
+			}
 
-			// amount = 0.2f + cf * 5f;
-
-			// Gdx.app.log("", "" + amount);
-			crt.setChromaticDispersion(amount, amount);
+			// Gdx.app.log("", "amount=" + amount + " (" + crt.getRgbMode().toString() + ")");
+			// Gdx.app.log("", "cf=" + cf);
 
 			// earth curvature
 			float dist = kdist - kdist * curvature_factor;
 			dist = AMath.fixup(dist);
 			crt.setDistortion(dist);
 			crt.setZoom(1 - (dist / 2));
+
+			// crt.setEnabled(true);
+			// crt.setEnabled(false);
 		}
 
 		if (zoom != null) {
@@ -431,6 +453,7 @@ public final class DefaultAnimator implements PostProcessingAnimator {
 
 			// bloom.setBaseSaturation(1);
 			// bloom.setBloomSaturation(1);
+
 			// Gdx.app.log("", "sat=" + sat + ", bsat=" + bsat);
 		}
 

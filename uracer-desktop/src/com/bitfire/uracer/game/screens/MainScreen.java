@@ -13,7 +13,6 @@ import com.badlogic.gdx.scenes.scene2d.ui.List;
 import com.badlogic.gdx.scenes.scene2d.ui.ScrollPane;
 import com.badlogic.gdx.scenes.scene2d.ui.Table;
 import com.badlogic.gdx.scenes.scene2d.ui.TextButton;
-import com.badlogic.gdx.scenes.scene2d.ui.Window;
 import com.badlogic.gdx.scenes.scene2d.utils.ChangeListener;
 import com.badlogic.gdx.scenes.scene2d.utils.ClickListener;
 import com.bitfire.uracer.URacer;
@@ -27,16 +26,23 @@ import com.bitfire.uracer.resources.Art;
 import com.bitfire.uracer.resources.Sounds;
 import com.bitfire.uracer.screen.UIScreen;
 import com.bitfire.uracer.utils.UIUtils;
+import com.bitfire.uracer.utils.Window;
 
 public final class MainScreen extends UIScreen {
-
-	private Table root, ltable;
 	private List<String> trackList;
+	ScrollPane listPane;
+	private Stage stage;
+
+	private void ensureScrollIsVisible () {
+		float fidx = (float)(trackList.getSelectedIndex()) / (float)(trackList.getItems().size - 1);
+		listPane.setScrollPercentY(fidx);
+	}
 
 	@Override
 	protected void setupUI (Stage ui) {
-		root = new Table();
-		root.debug();
+		stage = ui;
+
+		Table root = UIUtils.newTable();
 		root.setBounds(0, 0, ui.getWidth(), ui.getHeight());
 		root.invalidate();
 		ui.addActor(root);
@@ -46,22 +52,14 @@ public final class MainScreen extends UIScreen {
 		bg.setFillParent(true);
 		root.addActor(bg);
 
-		Window win = UIUtils.newWindow("Welcome!");
-		win.setWidth(600);
-		win.setHeight(400);
-		win.setPosition((Gdx.graphics.getWidth() - win.getWidth()) / 2, (Gdx.graphics.getHeight() - win.getHeight()) / 2);
+		Window win = UIUtils.newWindow("SINGLE PLAYER");
 		ui.addActor(win);
 
 		win.row().fill().expand();
 
-		Table content = new Table();
-		content.debug();
-
-		Table buttons = new Table();
-		buttons.debug();
-
-		Table bottom = new Table();
-		bottom.debug();
+		Table content = UIUtils.newTable();
+		Table buttons = UIUtils.newTable();
+		Table bottom = UIUtils.newTable();
 
 		win.row().fill().expand();
 		win.add(content);
@@ -72,7 +70,7 @@ public final class MainScreen extends UIScreen {
 
 		// track list
 		{
-			ScrollPane listPane = UIUtils.newScrollPane();
+			listPane = UIUtils.newScrollPane();
 			String[] levels = new String[GameLevels.getLevels().length];
 			int idx = 0;
 			for (GameLevelDescriptor ld : GameLevels.getLevels()) {
@@ -80,19 +78,18 @@ public final class MainScreen extends UIScreen {
 			}
 
 			trackList = UIUtils.newListBox(levels);
+
 			trackList.addListener(new ChangeListener() {
 				@Override
 				public void changed (ChangeEvent event, Actor actor) {
 					Sounds.menuRollover.play();
-					@SuppressWarnings("unchecked")
-					List<String> source = (List<String>)actor;
-					chooseLevel(source.getSelectedIndex());
+					ensureScrollIsVisible();
 				}
 			});
 
 			listPane.setWidget(trackList);
 			listPane.setFadeScrollBars(false);
-			listPane.setScrollingDisabled(false, false);
+			// listPane.setScrollingDisabled(false, false);
 
 			// restore previous user selection, if any
 			if (ScreensShared.selectedLevelId.length() > 0) {
@@ -100,11 +97,11 @@ public final class MainScreen extends UIScreen {
 					trackList.getSelection().set(GameLevels.getLevel(ScreensShared.selectedLevelId).toString());
 				} else {
 					// level not found?
-					chooseFirstLevelAndSave(trackList);
+					chooseLevel(0);
 				}
 			} else {
 				// first run?
-				chooseFirstLevelAndSave(trackList);
+				chooseLevel(0);
 			}
 
 			TextButton start = UIUtils.newTextButton("RACE!", new ClickListener() {
@@ -141,14 +138,11 @@ public final class MainScreen extends UIScreen {
 
 			bottom.left().bottom();
 			bottom.add(UIUtils.newVersionInfoLabel());
-
-			// ltable.add(listPane).colspan(3).width(400).height(200).left().padBottom(10).row();
-			// ltable.add(start);
-			// ltable.add(options);
-			// ltable.add(quit);
 		}
 
-		/** right table */
+		win.setWidth(600);
+		win.setHeight(400);
+		win.setPosition((Gdx.graphics.getWidth() - win.getWidth()) / 2, (Gdx.graphics.getHeight() - win.getHeight()) / 2);
 	}
 
 	@Override
@@ -161,15 +155,9 @@ public final class MainScreen extends UIScreen {
 		if (levelIndex >= 0 && levelIndex < GameLevels.getLevels().length) {
 			GameLevelDescriptor desc = GameLevels.getLevels()[levelIndex];
 			ScreensShared.selectedLevelId = desc.getId();
+			UserPreferences.string(Preference.LastPlayedTrack, ScreensShared.selectedLevelId);
+			UserPreferences.save();
 		}
-	}
-
-	private void chooseFirstLevelAndSave (List<String> trackList) {
-		trackList.setSelectedIndex(0);
-		GameLevelDescriptor desc = GameLevels.getLevels()[0];
-		ScreensShared.selectedLevelId = desc.getId();
-		UserPreferences.string(Preference.LastPlayedTrack, ScreensShared.selectedLevelId);
-		UserPreferences.save();
 	}
 
 	@Override
@@ -187,6 +175,7 @@ public final class MainScreen extends UIScreen {
 		} else if (input.isPressed(Keys.R)) {
 			reload();
 		} else if (input.isPressed(Keys.S)) {
+			chooseLevel(trackList.getSelectedIndex());
 			UserPreferences.string(Preference.LastPlayedTrack, ScreensShared.selectedLevelId);
 			UserPreferences.save();
 			URacer.Game.show(ScreenType.GameScreen);
@@ -196,12 +185,10 @@ public final class MainScreen extends UIScreen {
 			int count = trackList.getItems().size;
 			int newidx = MathUtils.clamp(trackList.getSelectedIndex() - 1, 0, count - 1);
 			trackList.setSelectedIndex(newidx);
-			chooseLevel(newidx);
 		} else if (input.isPressed(Keys.DOWN)) {
 			int count = trackList.getItems().size;
 			int newidx = MathUtils.clamp(trackList.getSelectedIndex() + 1, 0, count - 1);
 			trackList.setSelectedIndex(newidx);
-			chooseLevel(newidx);
 		} else {
 			ui.act(Config.Physics.Dt);
 		}

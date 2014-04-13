@@ -30,7 +30,7 @@ import com.bitfire.uracer.utils.InterpolatedFloat;
 
 public abstract class BaseLogic extends CommonLogic {
 	private Vector2 cameraPos = new Vector2();
-	private float ZoomNorm = 0.2f;
+	private static final float ZoomNorm = 0.35f;
 
 	private float prevZoom = GameWorldRenderer.MaxCameraZoom - ZoomNorm;
 	private InterpolatedFloat driftStrength = new InterpolatedFloat();
@@ -157,11 +157,11 @@ public abstract class BaseLogic extends CommonLogic {
 
 		// TODO make it a toggleable option
 		cameraZoom = AMath.lerp(cameraZoom, maxZoom, timeModFactor);
-		cameraZoom = AMath.clampf(cameraZoom, minZoom, maxZoom);
-
+		cameraZoom = AMath.clamp(cameraZoom, minZoom, maxZoom);
 		cameraZoom = AMath.lerp(cameraZoom, maxZoom, collisionFactor.value * 5f);
-		cameraZoom = AMath.lerp(prevZoom, cameraZoom, 0.1f);
-		cameraZoom = AMath.clampf(cameraZoom, minZoom, maxZoom * 2f); // relax max a bit
+
+		cameraZoom = AMath.lerp(prevZoom, cameraZoom, 0.025f);
+		cameraZoom = AMath.clamp(cameraZoom, minZoom, maxZoom * 2f); // relax max a bit
 
 		// cameraZoom = 1;
 		// Gdx.app.log("BaseLogic", "cameraZoom=" + cameraZoom + " [" + minZoom + ", " + maxZoom + "]");
@@ -191,9 +191,10 @@ public abstract class BaseLogic extends CommonLogic {
 
 	@Override
 	public void collision (CarEvent.Data data) {
-		if (gameInput.isTimeDilating()) {
-			endTimeDilation();
-		}
+		// stops time dilation
+		// if (gameInput.isTimeDilating()) {
+		// endTimeDilation();
+		// }
 
 		float clampedImpactForce = AMath.normalizeImpactForce(data.impulses.len());
 

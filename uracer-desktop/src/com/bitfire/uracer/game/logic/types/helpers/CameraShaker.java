@@ -4,6 +4,7 @@ package com.bitfire.uracer.game.logic.types.helpers;
 import com.badlogic.gdx.math.MathUtils;
 import com.badlogic.gdx.math.Vector2;
 import com.bitfire.uracer.utils.InterpolatedFloat;
+import com.bitfire.uracer.utils.ScaleUtils;
 
 public final class CameraShaker {
 	private static final int Pixels = 256;
@@ -13,26 +14,22 @@ public final class CameraShaker {
 	InterpolatedFloat noiseY = new InterpolatedFloat();
 
 	public Vector2 compute (float factor) {
-		// collisionFactor = 0.25f;
-		float alpha = /* AMath.fixup */(factor) * 0.8f;
 		float px = Pixels;
-
-		// if (camshakeFactor.value > 0) {
-		// Gdx.app.log("", "camshakeFactor=" + NumberString.formatLong(camshakeFactor.value));
-		// }
+		px *= ScaleUtils.Scale;
 
 		float radiusX = MathUtils.random(-px, px);
 		float radiusY = MathUtils.random(-px, px);
-		noiseX.set(radiusX, alpha);
-		noiseY.set(radiusY, alpha);
+		float noiseAlpha = 0.1f;// * factor;
+		noiseX.set(radiusX, noiseAlpha);
+		noiseY.set(radiusY, noiseAlpha);
 		result.set(noiseX.get() * factor, noiseY.get() * factor);
 
-		result.x = MathUtils.clamp(result.x, -50, 50);
-		result.y = MathUtils.clamp(result.y, -50, 50);
-		// result.clamp(-50, 50);
+		// int limit = 50;
+		// result.x = MathUtils.clamp(result.x, -limit, limit);
+		// result.y = MathUtils.clamp(result.y, -limit, limit);
 
-		// result.set(noiseX.get(), noiseY.get());
 		// Gdx.app.log("", result.toString() + " / " + factor);
+		// Gdx.app.log("", "pixels=" + px);
 		return result;
 	}
 }
