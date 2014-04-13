@@ -3,9 +3,8 @@ DEST="/home/manuel/dev/uracer-libgdx/uracer-desktop/data"
 
 CLASS_PATH="/home/manuel/dev/libgdx/dist"
 JARS="${CLASS_PATH}/gdx.jar:${CLASS_PATH}/gdx-natives.jar:${CLASS_PATH}/gdx-backend-lwjgl.jar:${CLASS_PATH}/gdx-backend-lwjgl-natives.jar"
-GDX_TILED_PREP_PATH="/home/manuel/dev/libgdx/dist/extensions/gdx-tiled-preprocessor/"
 GDX_TOOLS_PATH="/home/manuel/dev/libgdx/dist/extensions/gdx-tools/"
-TILED_PACKER="java -classpath ${JARS}:${GDX_TOOLS_PATH}/gdx-tools.jar:${GDX_TILED_PREP_PATH}/gdx-tiled-preprocessor.jar com.badlogic.gdx.tiledmappacker.TiledMapPacker"
+TILED_PACKER="java -classpath ${JARS}:${GDX_TOOLS_PATH}/gdx-tools.jar com.badlogic.gdx.tiledmappacker.TiledMapPacker"
 
 
 # tileset graphics and tmx levels
