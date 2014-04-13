@@ -31,7 +31,6 @@ import com.bitfire.uracer.utils.Window;
 public final class MainScreen extends UIScreen {
 	private List<String> trackList;
 	ScrollPane listPane;
-	private Stage stage;
 
 	private void ensureScrollIsVisible () {
 		float fidx = (float)(trackList.getSelectedIndex()) / (float)(trackList.getItems().size - 1);
@@ -41,8 +40,6 @@ public final class MainScreen extends UIScreen {
 
 	@Override
 	protected void setupUI (Stage ui) {
-		stage = ui;
-
 		Table root = UIUtils.newTable();
 		root.setBounds(0, 0, ui.getWidth(), ui.getHeight());
 		root.invalidate();
