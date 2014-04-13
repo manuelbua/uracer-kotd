@@ -1,6 +1,8 @@
 
 package com.bitfire.uracer;
 
+import java.util.Calendar;
+
 import org.lwjgl.opengl.Display;
 
 import com.badlogic.gdx.Files.FileType;
@@ -44,7 +46,8 @@ public final class URacerDesktop {
 	}
 
 	public static void main (String[] argv) {
-		System.out.print(URacer.Name + " (" + URacer.versionInfo + ")\nCopyright (c) 2011-2013 Manuel Bua.\n\n");
+		int year = Calendar.getInstance().get(Calendar.YEAR);
+		System.out.print(URacer.Name + " (" + URacer.versionInfo + ")\nCopyright (c) 2011-" + year + " Manuel Bua.\n\n");
 
 		// load boot configuration, either from file or from defaults
 		BootConfig boot = new BootConfig();
