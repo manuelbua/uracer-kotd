@@ -35,6 +35,7 @@ public final class MainScreen extends UIScreen {
 
 	private void ensureScrollIsVisible () {
 		float fidx = (float)(trackList.getSelectedIndex()) / (float)(trackList.getItems().size - 1);
+		listPane.validate();
 		listPane.setScrollPercentY(fidx);
 	}
 
