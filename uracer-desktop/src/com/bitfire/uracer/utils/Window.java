@@ -27,6 +27,7 @@ public class Window extends Table {
 	static private final Vector2 tmpSize = new Vector2();
 	static private final int MOVE = 1 << 5;
 
+	private Color tmpColor = new Color();
 	private WindowStyle style;
 	private String title;
 	protected BitmapFontCache titleCache;
@@ -109,8 +110,8 @@ public class Window extends Table {
 				float width = getWidth(), height = getHeight();
 				float windowX = getX(), windowY = getY();
 
-				float minWidth = getMinWidth(), maxWidth = getMaxWidth();
-				float minHeight = getMinHeight(), maxHeight = getMaxHeight();
+				float minWidth = getMinWidth();
+				float minHeight = getMinHeight();
 				Stage stage = getStage();
 				boolean clampPosition = keepWithinStage && getParent() == stage.getRoot();
 
@@ -252,8 +253,8 @@ public class Window extends Table {
 			else
 				y -= (padTop - bounds.height) / 2;
 		}
-		titleCache.setColors(Color.tmp.set(getColor()).mul(style.titleFontColor));
-		titleCache.setPosition((int)x, (int)y - 15); // HACK!
+		titleCache.setColors(tmpColor.set(getColor()).mul(style.titleFontColor));
+		titleCache.setPosition((int)x, (int)y - 15); // HACK for Kenney's skin only!!
 		titleCache.draw(batch, parentAlpha);
 	}
 

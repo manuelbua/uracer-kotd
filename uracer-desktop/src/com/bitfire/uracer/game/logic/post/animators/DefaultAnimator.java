@@ -257,14 +257,9 @@ public final class DefaultAnimator implements PostProcessingAnimator {
 		float base = 0.1f;
 		float timeModFactor = URacer.Game.getTimeModFactor();
 
-		// float redsigma = 0;
-		// redsigma = collisionFactor * 0.5f;
-		// redsigma = AMath.sigmoidN(collisionFactor);
-		// Gdx.app.log("", "" + redsigma);
-
 		//@off
 		ambient.set(
-			base * 1.5f,//+ redsigma,
+			base * 1.5f,
 			base,
 			base + (base * 3f * timeModFactor) * (1-collisionFactor),
 			0.55f + 0.05f * timeModFactor

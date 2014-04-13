@@ -32,7 +32,7 @@ public class Dialog extends Window {
 
 	Table contentTable, buttonTable;
 	private Skin skin;
-	ObjectMap<Actor, Object> values = new ObjectMap();
+	ObjectMap<Actor, Object> values = new ObjectMap<Actor, Object>();
 	boolean cancelHide;
 	Actor previousKeyboardFocus, previousScrollFocus;
 
