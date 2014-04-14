@@ -6,6 +6,7 @@ import com.badlogic.gdx.Input.Buttons;
 import com.badlogic.gdx.math.Rectangle;
 import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.utils.Disposable;
+import com.badlogic.gdx.utils.TimeUtils;
 import com.bitfire.uracer.configuration.Config;
 
 /** Encapsulates a buffered input state object that can be queried to know the individual key/button/pointer states.
@@ -26,7 +27,10 @@ public final class Input implements Disposable {
 
 	// keys
 	private final int[] buttons = new int[256];
+	private final long[] times = new long[256];
+	private final boolean[] repeated = new boolean[256];
 	private int anyKeyButton = 0;
+	private long repeatns = 0;
 
 	// mouse
 	private Pointer pointer = new Pointer();
@@ -43,6 +47,7 @@ public final class Input implements Disposable {
 	public Input (Rectangle viewport) {
 		this.viewport.set(viewport);
 		releaseAllKeys();
+		setRepeatedWait(100);
 		Gdx.input.setCatchBackKey(true);
 	}
 
@@ -55,6 +60,8 @@ public final class Input implements Disposable {
 		anyKeyButton = 0;
 		for (int i = 0; i < buttons.length; i++) {
 			buttons[i] = 0;
+			times[i] = 0;
+			repeated[i] = false;
 		}
 
 		pointer.reset();
@@ -94,6 +101,16 @@ public final class Input implements Disposable {
 	}
 
 	// keyboard
+
+	public void setRepeatedWait (long ms) {
+		repeatns = ms * 1000000;
+	}
+
+	// a time-masked proxy for the "isOn" method
+	public boolean isRepeatedOn (int keycode) {
+		return repeated[keycode];
+	}
+
 	public boolean isOn (int keycode) {
 		return ((buttons[keycode] & FLAG_CUR_ON) > 0) ? true : false;
 	}
@@ -182,10 +199,31 @@ public final class Input implements Disposable {
 
 	}
 
+	private void updateRepeated () {
+		for (int i = 0; i < buttons.length; i++) {
+			if (isOn(i)) {
+				long now = TimeUtils.nanoTime();
+				if (!repeated[i]) {
+					if (times[i] == -1) times[i] = now;
+					if (now - times[i] > repeatns) {
+						repeated[i] = true; // also to be switched off just after consumption (avoid multiple calls, just 1 on repeatms)
+						times[i] = now;
+					}
+				} else {
+					repeated[i] = false;
+				}
+			} else {
+				repeated[i] = false;
+				times[i] = -1;
+			}
+		}
+	}
+
 	// update key state and transform unbuffered to buffered
 	public void tick () {
 		updateKeyState();
 		updatePointerState();
+		updateRepeated();
 	}
 
 	/** Encapsulates the touch state for a pointer. */

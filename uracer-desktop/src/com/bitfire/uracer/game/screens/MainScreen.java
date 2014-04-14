@@ -168,6 +168,8 @@ public final class MainScreen extends UIScreen {
 
 	@Override
 	public void tick () {
+		input.setRepeatedWait(150);
+
 		if (input.isPressed(Keys.Q) || input.isPressed(Keys.BACK) || input.isPressed(Keys.ESCAPE)) {
 			URacer.Game.quit();
 		} else if (input.isPressed(Keys.R)) {
@@ -179,11 +181,11 @@ public final class MainScreen extends UIScreen {
 			URacer.Game.show(ScreenType.GameScreen);
 		} else if (input.isPressed(Keys.O)) {
 			URacer.Game.show(ScreenType.OptionsScreen);
-		} else if (input.isPressed(Keys.UP)) {
+		} else if (input.isPressed(Keys.UP) || input.isRepeatedOn(Keys.UP)) {
 			int count = trackList.getItems().size;
 			int newidx = MathUtils.clamp(trackList.getSelectedIndex() - 1, 0, count - 1);
 			trackList.setSelectedIndex(newidx);
-		} else if (input.isPressed(Keys.DOWN)) {
+		} else if (input.isPressed(Keys.DOWN) || input.isRepeatedOn(Keys.DOWN)) {
 			int count = trackList.getItems().size;
 			int newidx = MathUtils.clamp(trackList.getSelectedIndex() + 1, 0, count - 1);
 			trackList.setSelectedIndex(newidx);
