@@ -1,6 +1,7 @@
 
 package com.bitfire.uracer.game.logic.gametasks.sounds.effects.engines;
 
+import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.math.MathUtils;
 import com.bitfire.uracer.game.logic.helpers.TrackProgressData;
 import com.bitfire.uracer.resources.Sounds;
@@ -47,9 +48,10 @@ public class EngineF40 extends EngineSoundSet {
 
 		// return .025f + 0.025f * volmul;
 		// ivolume.set(0.1f + 0.05f * target_vol * player.carState.currSpeedFactor, 0.05f);
-		ivolume.set(0.05f + 0.1f * target_vol * player.carState.currSpeedFactor, 0.005f);
+		float computedTarget = 0.1f - 0.05f * target_vol * player.carState.currSpeedFactor;
+		ivolume.set(computedTarget, 0.005f);
 
-		// Gdx.app.log("", "tv=" + ivolume.get());
+		Gdx.app.log("", "tv=" + ivolume.get());
 
 		return ivolume.get();
 	}
