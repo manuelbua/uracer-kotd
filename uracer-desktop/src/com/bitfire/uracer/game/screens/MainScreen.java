@@ -168,8 +168,6 @@ public final class MainScreen extends UIScreen {
 
 	@Override
 	public void tick () {
-		input.setRepeatedWait(150);
-
 		if (input.isPressed(Keys.Q) || input.isPressed(Keys.BACK) || input.isPressed(Keys.ESCAPE)) {
 			URacer.Game.quit();
 		} else if (input.isPressed(Keys.R)) {

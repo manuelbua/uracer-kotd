@@ -29,8 +29,9 @@ public final class Input implements Disposable {
 	private final int[] buttons = new int[256];
 	private final long[] times = new long[256];
 	private final boolean[] repeated = new boolean[256];
+	private final boolean[] first_repeat = new boolean[256];
 	private int anyKeyButton = 0;
-	private long repeatns = 0;
+	private long repeatns = 0, firstrepeatns = 0;
 
 	// mouse
 	private Pointer pointer = new Pointer();
@@ -44,10 +45,10 @@ public final class Input implements Disposable {
 	// coordinates transform
 	private final Rectangle viewport = new Rectangle();
 
-	public Input (Rectangle viewport) {
+	public Input (Rectangle viewport, int keyFirstRepetitionDelayMs, int keyRepetitionSpeedMs) {
 		this.viewport.set(viewport);
 		releaseAllKeys();
-		setRepeatedWait(100);
+		setKeyRepetitionMs(keyFirstRepetitionDelayMs, keyRepetitionSpeedMs);
 		Gdx.input.setCatchBackKey(true);
 	}
 
@@ -62,6 +63,7 @@ public final class Input implements Disposable {
 			buttons[i] = 0;
 			times[i] = 0;
 			repeated[i] = false;
+			first_repeat[i] = true;
 		}
 
 		pointer.reset();
@@ -102,8 +104,9 @@ public final class Input implements Disposable {
 
 	// keyboard
 
-	public void setRepeatedWait (long ms) {
-		repeatns = ms * 1000000;
+	public void setKeyRepetitionMs (int firstDelayMs, int repetitionSpeedMs) {
+		repeatns = repetitionSpeedMs * 1000000;
+		firstrepeatns = firstDelayMs * 1000000;
 	}
 
 	// a time-masked proxy for the "isOn" method
@@ -204,10 +207,12 @@ public final class Input implements Disposable {
 			if (isOn(i)) {
 				long now = TimeUtils.nanoTime();
 				if (!repeated[i]) {
+					long comparens = first_repeat[i] ? firstrepeatns : repeatns;
 					if (times[i] == -1) times[i] = now;
-					if (now - times[i] > repeatns) {
-						repeated[i] = true; // also to be switched off just after consumption (avoid multiple calls, just 1 on repeatms)
+					if (now - times[i] > comparens) {
+						repeated[i] = true;
 						times[i] = now;
+						first_repeat[i] = false;
 					}
 				} else {
 					repeated[i] = false;
@@ -215,6 +220,7 @@ public final class Input implements Disposable {
 			} else {
 				repeated[i] = false;
 				times[i] = -1;
+				first_repeat[i] = true;
 			}
 		}
 	}

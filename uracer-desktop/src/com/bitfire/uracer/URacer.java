@@ -150,7 +150,7 @@ public class URacer implements ApplicationListener {
 		ScaleUtils.init(Gdx.graphics.getWidth(), Gdx.graphics.getHeight());
 
 		// create input system
-		input = new Input(ScaleUtils.PlayViewport);
+		input = new Input(ScaleUtils.PlayViewport, 350, 50);
 		Gdx.app.log("URacer", "Input system created.");
 
 		Art.init();
