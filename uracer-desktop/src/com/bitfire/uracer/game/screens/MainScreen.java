@@ -140,7 +140,7 @@ public final class MainScreen extends UIScreen {
 
 		win.setWidth(600);
 		win.setHeight(400);
-		win.setPosition((Gdx.graphics.getWidth() - win.getWidth()) / 2, (Gdx.graphics.getHeight() - win.getHeight()) / 2);
+		win.setPosition((ui.getWidth() - win.getWidth()) / 2, (ui.getHeight() - win.getHeight()) / 2);
 	}
 
 	@Override
