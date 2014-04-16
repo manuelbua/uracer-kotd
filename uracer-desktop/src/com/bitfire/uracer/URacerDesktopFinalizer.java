@@ -3,7 +3,7 @@ package com.bitfire.uracer;
 
 import org.lwjgl.opengl.Display;
 
-import com.badlogic.gdx.backends.openal.OpenALAudio;
+import com.badlogic.gdx.backends.lwjgl.audio.OpenALAudio;
 import com.bitfire.uracer.URacer.URacerFinalizer;
 import com.bitfire.uracer.configuration.BootConfig;
 

@@ -8,7 +8,7 @@ import org.lwjgl.opengl.Display;
 import com.badlogic.gdx.Files.FileType;
 import com.badlogic.gdx.backends.lwjgl.LwjglApplication;
 import com.badlogic.gdx.backends.lwjgl.LwjglApplicationConfiguration;
-import com.badlogic.gdx.backends.openal.OpenALAudio;
+import com.badlogic.gdx.backends.lwjgl.audio.OpenALAudio;
 import com.bitfire.uracer.configuration.BootConfig;
 import com.bitfire.uracer.configuration.BootConfig.BootConfigFlag;
 import com.bitfire.uracer.configuration.Config;
