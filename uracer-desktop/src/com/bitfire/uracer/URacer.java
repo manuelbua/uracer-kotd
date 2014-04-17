@@ -170,7 +170,7 @@ public class URacer implements ApplicationListener {
 		isDesktop = (Gdx.app.getType() == ApplicationType.Desktop);
 
 		Game.show(ScreenType.MainScreen);
-		// Game.show(ScreenType.GameScreen, 1000);
+		// Game.show(ScreenType.GameScreen);
 		// Screens.setScreen(ScreenType.OptionsScreen, TransitionType.CrossFader, 500);
 	}
 

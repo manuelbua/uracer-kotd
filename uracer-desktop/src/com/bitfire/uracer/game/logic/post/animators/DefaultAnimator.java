@@ -7,7 +7,6 @@ import aurelienribon.tweenengine.equations.Linear;
 import aurelienribon.tweenengine.equations.Quad;
 import box2dLight.PointLight;
 
-import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.math.MathUtils;
 import com.badlogic.gdx.math.Vector2;
@@ -374,7 +373,7 @@ public final class DefaultAnimator implements PostProcessingAnimator {
 				float targetStrength = speedStrength - 0.4f * cf;
 				float strength = targetStrength - (speedStrength * 0.5f) * timeModFactor;
 				strength = AMath.clamp(strength, -1, 0);
-				Gdx.app.log("", "strength=" + strength);
+				// Gdx.app.log("", "strength=" + strength);
 				zoomBlurStrengthFactor.set(strength, 1f);
 			} else {
 				zoomBlurStrengthFactor.set(0, 0.05f);
