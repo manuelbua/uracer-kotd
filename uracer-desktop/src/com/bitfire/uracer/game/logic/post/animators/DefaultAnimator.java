@@ -257,11 +257,14 @@ public final class DefaultAnimator implements PostProcessingAnimator {
 		float base = 0.1f;
 		float timeModFactor = URacer.Game.getTimeModFactor();
 
+		float blue = (base * 3f * timeModFactor) * (1 - AMath.sigmoidT(collisionFactor, 0.7f, true));
+		// Gdx.app.log("DefaultAnimator", "blue=" + blue);
+
 		//@off
 		ambient.set(
 			base * 1.5f,
 			base,
-			base + (base * 3f * timeModFactor) * (1-collisionFactor),
+			base + blue,
 			0.55f + 0.05f * timeModFactor
 		);
 		//@on
@@ -424,7 +427,7 @@ public final class DefaultAnimator implements PostProcessingAnimator {
 		float bsat = 0f, sat = 0f;
 		if (bloom != null) {
 			// float intensity = 1.4f + 4f * cf;// + (nightMode ? 4f * cf : 0f);
-			float intensity = 1f + 2f * cf + 2 * pauseAmount.value;// + (nightMode ? 4f * cf : 0f);
+			float intensity = 1f + 1.3f * cf + 0.5f * pauseAmount.value;// + (nightMode ? 4f * cf : 0f);
 			// Gdx.app.log("", "bloom intensity=" + intensity);
 			bloom.setBloomIntesity(intensity);
 
