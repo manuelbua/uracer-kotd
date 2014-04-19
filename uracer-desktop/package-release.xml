@@ -12,7 +12,7 @@
 		<jar destfile="./build/uracer-kotd.jar">
 			<manifest>
 				<attribute name="Main-Class" value="com.bitfire.uracer.URacerDesktop"/>
-				<attribute name="Class-Path" value=". libs/gdx.jar libs/gdx-backend-lwjgl.jar libs/gdx-backend-lwjgl-natives.jar libs/gdx-natives.jar libs/java-getopt-1.0.14.jar libs/jFuzzyLogic_v3.0.jar"/>
+				<attribute name="Class-Path" value=". libs/gdx.jar libs/gdx-box2d.jar libs/gdx-box2d-natives.jar libs/gdx-backend-lwjgl.jar libs/gdx-backend-lwjgl-natives.jar libs/gdx-natives.jar libs/java-getopt-1.0.14.jar libs/jFuzzyLogic_v3.0.jar"/>
 			</manifest>
 <!--
 			<fileset dir="/home/manuel/dev/libgdx/gdx/bin"/>
@@ -31,9 +31,10 @@
 		</copy>
 
 		<!-- libs -->
-
 		<copy file="/home/manuel/dev/libgdx/dist/gdx.jar" todir="./build/libs"/>
 		<copy file="/home/manuel/dev/libgdx/dist/gdx-natives.jar" todir="./build/libs"/>
+		<copy file="/home/manuel/dev/libgdx/dist/extensions/gdx-box2d/gdx-box2d.jar" todir="./build/libs"/>
+		<copy file="/home/manuel/dev/libgdx/dist/extensions/gdx-box2d/gdx-box2d-natives.jar" todir="./build/libs"/>
 		<copy file="/home/manuel/dev/libgdx/dist/gdx-backend-lwjgl.jar" todir="./build/libs"/>
 		<copy file="/home/manuel/dev/libgdx/dist/gdx-backend-lwjgl-natives.jar" todir="./build/libs"/>
 
