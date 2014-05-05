@@ -1,5 +1,6 @@
 
 packed.png
+size: 904,904
 format: RGBA8888
 filter: Nearest,Nearest
 repeat: none
@@ -117,6 +118,7 @@ packed
   index: 16
 
 packed2.png
+size: 904,904
 format: RGBA8888
 filter: Nearest,Nearest
 repeat: none
@@ -234,6 +236,7 @@ packed
   index: 32
 
 packed3.png
+size: 904,904
 format: RGBA8888
 filter: Nearest,Nearest
 repeat: none

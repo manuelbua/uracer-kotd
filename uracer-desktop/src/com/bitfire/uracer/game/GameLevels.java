@@ -15,13 +15,13 @@ import java.util.zip.Inflater;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.files.FileHandle;
 import com.badlogic.gdx.graphics.Texture.TextureFilter;
-import com.badlogic.gdx.maps.tiled.AtlasTmxMapLoader;
 import com.badlogic.gdx.maps.tiled.TiledMap;
 import com.badlogic.gdx.utils.Base64Coder;
 import com.badlogic.gdx.utils.XmlReader;
 import com.badlogic.gdx.utils.XmlReader.Element;
 import com.bitfire.uracer.configuration.Storage;
 import com.bitfire.uracer.utils.DigestUtils;
+import com.bitfire.uracer.utils.UAtlasTmxMapLoader;
 import com.bitfire.uracer.utils.URacerRuntimeException;
 
 /** Enumerates and maintains a list of available game tracks. FIXME add support for mini-screenshots
@@ -30,8 +30,8 @@ import com.bitfire.uracer.utils.URacerRuntimeException;
 public final class GameLevels {
 
 	private static final Map<String, GameLevelDescriptor> levelIdToDescriptor = new HashMap<String, GameLevelDescriptor>();
-	private static final AtlasTmxMapLoader mapLoader = new AtlasTmxMapLoader();
-	private static final AtlasTmxMapLoader.AtlasTiledMapLoaderParameters mapLoaderParams = new AtlasTmxMapLoader.AtlasTiledMapLoaderParameters();
+	private static final UAtlasTmxMapLoader mapLoader = new UAtlasTmxMapLoader();
+	private static final UAtlasTmxMapLoader.AtlasTiledMapLoaderParameters mapLoaderParams = new UAtlasTmxMapLoader.AtlasTiledMapLoaderParameters();
 	private static final XmlReader xml = new XmlReader();
 	private static final List<GameLevelDescriptor> levels = new ArrayList<GameLevels.GameLevelDescriptor>();
 
