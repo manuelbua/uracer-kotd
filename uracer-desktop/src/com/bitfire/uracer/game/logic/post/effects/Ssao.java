@@ -49,7 +49,7 @@ public final class Ssao extends PostProcessorEffect {
 	private Blur blur;
 
 	private Matrix3 mtxRot = new Matrix3();
-	private Matrix3 invRot = new Matrix3();
+	// private Matrix3 invRot = new Matrix3();
 	private Matrix4 invPrj = new Matrix4();
 
 	private GameRendererEvent.Listener gameRendererEvent = new GameRendererEvent.Listener() {
@@ -76,7 +76,7 @@ public final class Ssao extends PostProcessorEffect {
 		blur.setPasses(2);
 
 		createRandomField(16, 16, Format.RGBA8888);
-		// enableDebug();
+		enableDebug();
 	}
 
 	/** Computes random field for the ssao shader */
@@ -183,7 +183,7 @@ public final class Ssao extends PostProcessorEffect {
 		batch.disableBlending();
 
 		dbgTextureW(batch, 180, normalDepthMap, 12);
-		dbgTextureW(batch, 180, occlusionMap.getResultTexture(), 24);
+		dbgTextureW(batch, 360, occlusionMap.getResultTexture(), 24);
 	}
 
 	@Override
@@ -197,7 +197,7 @@ public final class Ssao extends PostProcessorEffect {
 
 		mtxRot.set(cam.view);
 		invPrj.set(cam.projection).inv();
-		invRot.set(mtxRot).inv();
+		// invRot.set(mtxRot).inv();
 
 		occlusionMap.begin();
 		occlusionMap.capture();
@@ -216,7 +216,7 @@ public final class Ssao extends PostProcessorEffect {
 
 				shSsao.setUniformMatrix("proj", cam.projection);
 				shSsao.setUniformMatrix("inv_proj", invPrj);
-				shSsao.setUniformMatrix("inv_rot", invRot);
+				// shSsao.setUniformMatrix("inv_rot", invRot);
 
 				shSsao.setUniformf("viewport", occlusionMap.width, occlusionMap.height);
 				shSsao.setUniformf("near", cam.near);
