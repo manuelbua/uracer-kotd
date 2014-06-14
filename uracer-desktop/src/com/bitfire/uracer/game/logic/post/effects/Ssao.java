@@ -76,7 +76,7 @@ public final class Ssao extends PostProcessorEffect {
 		blur.setPasses(2);
 
 		createRandomField(16, 16, Format.RGBA8888);
-		enableDebug();
+		// enableDebug();
 	}
 
 	/** Computes random field for the ssao shader */
