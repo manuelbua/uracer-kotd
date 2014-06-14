@@ -118,7 +118,7 @@ public class PlayerSmokeTrails extends TrackEffect {
 		public SmokeEffect (TrackEffect owner) {
 			this.owner = owner;
 			effect = new ParticleEffect();
-			effect.load(Gdx.files.internal("data/partfx/smoke-small.p"), Art.particles);
+			effect.load(Gdx.files.internal("data/partfx/smoke-small.p"), Art.particles, "");
 
 			baseEmitter = effect.getEmitters().get(0);
 
