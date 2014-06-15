@@ -49,7 +49,7 @@ public final class Ssao extends PostProcessorEffect {
 	private Blur blur;
 
 	private Matrix3 mtxRot = new Matrix3();
-	// private Matrix3 invRot = new Matrix3();
+	private Matrix3 invRot = new Matrix3();
 	private Matrix4 invPrj = new Matrix4();
 
 	private GameRendererEvent.Listener gameRendererEvent = new GameRendererEvent.Listener() {
@@ -216,7 +216,7 @@ public final class Ssao extends PostProcessorEffect {
 
 				shSsao.setUniformMatrix("proj", cam.projection);
 				shSsao.setUniformMatrix("inv_proj", invPrj);
-				// shSsao.setUniformMatrix("inv_rot", invRot);
+				shSsao.setUniformMatrix("inv_rot", invRot);
 
 				shSsao.setUniformf("viewport", occlusionMap.width, occlusionMap.height);
 				shSsao.setUniformf("near", cam.near);
