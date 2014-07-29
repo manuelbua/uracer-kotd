@@ -50,9 +50,9 @@ float occlusionFunction(float dist){
 }
 
 float testOcclusion(vec3 eye_normal, vec3 eye_pos, vec3 sample_offset){
-	// FIX nvidia driver bug
-	//sample_offset *= inv_rot;
-	sample_offset = sample_offset * inv_rot;
+	sample_offset *= inv_rot;
+	// OLD FIX nvidia driver bug
+	//sample_offset = sample_offset * inv_rot;
 
 	sample_offset *= sign(dot(eye_normal, sample_offset));
 	vec3 sample_pos = eye_pos + radius*sample_offset;
