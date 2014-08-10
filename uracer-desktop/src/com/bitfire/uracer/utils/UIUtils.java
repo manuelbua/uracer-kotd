@@ -22,6 +22,7 @@ public final class UIUtils {
 
 	public static Stage newFittedStage () {
 		Stage stage = new Stage(new FitViewport(ScaleUtils.PlayWidth, ScaleUtils.PlayHeight));
+		stage.setDebugAll(true);
 		return stage;
 	}
 

@@ -232,7 +232,6 @@ public class GameScreenUI {
 		}
 
 		ui.draw();
-		Table.drawDebug(ui);
 
 		if (hasDest) {
 			dest.end();
