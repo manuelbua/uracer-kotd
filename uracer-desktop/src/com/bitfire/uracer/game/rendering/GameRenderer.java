@@ -23,7 +23,7 @@ import com.bitfire.uracer.utils.ScaleUtils;
 
 /** Manages the high-level rendering of the whole world and triggers all the GameRendererEvent events associated with the rendering
  * timeline, realized with the event's renderqueue mechanism.
- * 
+ *
  * @author bmanuel */
 public final class GameRenderer {
 	private final GL20 gl;
@@ -109,8 +109,8 @@ public final class GameRenderer {
 	}
 
 	private void clear () {
-		gl.glClearDepthf(1);
-		gl.glClearColor(0, 0, 0, 1);
+		gl.glClearDepthf(0);
+		gl.glClearColor(0, 0, 0, 0);
 		gl.glClear(GL20.GL_COLOR_BUFFER_BIT | GL20.GL_DEPTH_BUFFER_BIT);
 	}
 
@@ -205,11 +205,10 @@ public final class GameRenderer {
 				worldRenderer.renderLigthMap(dest);
 				if (hasDest) dest.begin();
 			}
-			gl.glEnable(GL20.GL_DEPTH_TEST);
 		}
 
+		gl.glEnable(GL20.GL_DEPTH_TEST);
 		worldRenderer.renderTrees(false);
-
 		gl.glDisable(GL20.GL_DEPTH_TEST);
 
 		// ///////////////////////
