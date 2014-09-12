@@ -55,7 +55,7 @@ public final class GameWorldRenderer {
 		"	gl_Position = u_projTrans * a_position;	\n" +
 		"	v_TexCoord = a_texCoord0;						\n" +
 		"}															\n";
-	
+
 	private static final String treeFragmentShader =
 		"#ifdef GL_ES														\n" +
 		"precision mediump float;										\n" +
@@ -411,8 +411,8 @@ public final class GameWorldRenderer {
 
 			// @off
 			rayHandler.setCombinedMatrix(
-				camOrthoMvpMt, 
-				Convert.px2mt(camOrtho.position.x), 
+				camOrthoMvpMt,
+				Convert.px2mt(camOrtho.position.x),
 				Convert.px2mt(camOrtho.position.y),
 				Convert.px2mt(camOrtho.viewportWidth * camOrtho.zoom),
 				Convert.px2mt(camOrtho.viewportHeight * camOrtho.zoom));

@@ -58,7 +58,7 @@ import com.bitfire.uracer.utils.Convert;
 import com.bitfire.uracer.utils.ScaleUtils;
 
 /** Encapsulates the game's world. Yay!
- * 
+ *
  * @author bmanuel */
 public final class GameWorld {
 
@@ -194,8 +194,8 @@ public final class GameWorld {
 				// @off
 				OrthographicAlignedStillModel mesh = ModelFactory.create(
 					o.getProperties().get("type", String.class),
-					o.getProperties().get("x", Integer.class), 
-					o.getProperties().get("y", Integer.class), 
+					o.getProperties().get("x", Integer.class),
+					o.getProperties().get("y", Integer.class),
 					scale * pixelsPerMeterFactor
 				);
 				// @on
@@ -231,7 +231,7 @@ public final class GameWorld {
 			maxRays = 360;
 		}
 
-		RayHandler.setColorPrecisionMediump();
+		RayHandler.setColorPrecisionHighp();
 
 		rayHandler = new RayHandler(box2dWorld, maxRays, (int)(ScaleUtils.PlayWidth * rttScale),
 			(int)(ScaleUtils.PlayHeight * rttScale), true);
@@ -630,8 +630,8 @@ public final class GameWorld {
 		}
 
 		//@off
-		Mesh mesh = new Mesh(VertexDataType.VertexArray, true, vertexCount, indexCount, 
-			new VertexAttribute(Usage.Position, 3,ShaderProgram.POSITION_ATTRIBUTE), 
+		Mesh mesh = new Mesh(VertexDataType.VertexArray, true, vertexCount, indexCount,
+			new VertexAttribute(Usage.Position, 3,ShaderProgram.POSITION_ATTRIBUTE),
 			new VertexAttribute(Usage.Normal, 3, ShaderProgram.NORMAL_ATTRIBUTE),
 			new VertexAttribute(Usage.TextureCoordinates, 2, ShaderProgram.TEXCOORD_ATTRIBUTE + "0")
 		);
