@@ -57,13 +57,13 @@ public class RayHandler implements Disposable {
 
 	/**
 	 * This Array contain all the lights.
-	 * 
+	 *
 	 * NOTE: DO NOT MODIFY THIS LIST
 	 */
 	final public Array<Light> lightList = new Array<Light>( false, 16, Light.class );
 	/**
 	 * This Array contain all the disabled lights.
-	 * 
+	 *
 	 * NOTE: DO NOT MODIFY THIS LIST
 	 */
 	final public Array<Light> disabledLights = new Array<Light>( false, 16, Light.class );
@@ -75,16 +75,16 @@ public class RayHandler implements Disposable {
 	 * Construct handler that manages everything related to updating and
 	 * rendering the lights MINIMUM parameters needed are world where collision
 	 * geometry is taken.
-	 * 
+	 *
 	 * Default setting: culling = true, shadows = true, blur =
 	 * true(GL2.0),blurNum = 1, ambientLight = 0.0f;
-	 * 
+	 *
 	 * NOTE1: rays number per lights are capped to 1023. For different size use
 	 * other constructor
-	 * 
+	 *
 	 * NOTE2: On GL 2.0 FBO size is 1/4 * screen size and used by default. For
 	 * different sizes use other constructor
-	 * 
+	 *
 	 * @param world
 	 * @param camera
 	 */
@@ -96,11 +96,11 @@ public class RayHandler implements Disposable {
 	 * Construct handler that manages everything related to updating and
 	 * rendering the lights MINIMUM parameters needed are world where collision
 	 * geometry is taken.
-	 * 
+	 *
 	 * Default setting: culling = true, shadows = true, blur =
 	 * true(GL2.0),blurNum = 1, ambientLight = 0.0f;
-	 * 
-	 * 
+	 *
+	 *
 	 * @param world
 	 * @param camera
 	 * @param maxRayCount
@@ -126,16 +126,16 @@ public class RayHandler implements Disposable {
 	 * Set combined camera matrix. Matrix will be copied and used for rendering
 	 * lights, culling. Matrix must be set to work in box2d coordinates. Matrix
 	 * has to be updated every frame(if camera is changed)
-	 * 
-	 * 
+	 *
+	 *
 	 * NOTE: Matrix4 is assumed to be orthogonal for culling and directional
 	 * lights.
-	 * 
+	 *
 	 * If any problems detected Use: [public void setCombinedMatrix(Matrix4
 	 * combined, float x, float y, float viewPortWidth, float viewPortHeight)]
 	 * Instead
-	 * 
-	 * 
+	 *
+	 *
 	 * @param combined
 	 *            matrix that include projection and translation matrices
 	 */
@@ -163,12 +163,12 @@ public class RayHandler implements Disposable {
 	 * EXPERT USE Set combined camera matrix. Matrix will be copied and used for
 	 * rendering lights, culling. Matrix must be set to work in box2d
 	 * coordinates. Matrix has to be updated every frame(if camera is changed)
-	 * 
+	 *
 	 * NOTE: this work with rotated cameras.
-	 * 
+	 *
 	 * @param combined
 	 *            matrix that include projection and translation matrices
-	 * 
+	 *
 	 * @param x
 	 *            combined matrix position
 	 * @param y
@@ -199,7 +199,7 @@ public class RayHandler implements Disposable {
 
 	/**
 	 * Remember setCombinedMatrix(Matrix4 combined) before drawing.
-	 * 
+	 *
 	 * Don't call this inside of any begin/end statements. Call this method
 	 * after you have rendered background but before UI. Box2d bodies can be
 	 * rendered before or after depending how you want x-ray light interact with
@@ -224,11 +224,11 @@ public class RayHandler implements Disposable {
 
 	/**
 	 * Manual rendering method for all lights.
-	 * 
+	 *
 	 * NOTE! Remember to call updateRays if you use this method. * Remember
 	 * setCombinedMatrix(Matrix4 combined) before drawing.
-	 * 
-	 * 
+	 *
+	 *
 	 * Don't call this inside of any begin/end statements. Call this method
 	 * after you have rendered background but before UI. Box2d bodies can be
 	 * rendered before or after depending how you want x-ray light interact with
@@ -393,9 +393,9 @@ public class RayHandler implements Disposable {
 	/**
 	 * Disables/enables culling. This save cpu and gpu time when world is bigger
 	 * than screen.
-	 * 
+	 *
 	 * Default = true
-	 * 
+	 *
 	 * @param culling
 	 *            the culling to set
 	 */
@@ -407,9 +407,9 @@ public class RayHandler implements Disposable {
 	 * Disables/enables gaussian blur. This make lights much more softer and
 	 * realistic look but also cost some precious shader time. With default fbo
 	 * size on android cost around 1ms
-	 * 
+	 *
 	 * default = true;
-	 * 
+	 *
 	 * @param blur
 	 *            the blur to set
 	 */
@@ -421,9 +421,9 @@ public class RayHandler implements Disposable {
 	 * Set number of gaussian blur passes. Blurring can be pretty heavy weight
 	 * operation, 1-3 should be safe. Setting this to 0 is same as
 	 * setBlur(false)
-	 * 
+	 *
 	 * default = 1
-	 * 
+	 *
 	 * @param blurNum
 	 *            the blurNum to set
 	 */
@@ -434,7 +434,7 @@ public class RayHandler implements Disposable {
 	/**
 	 * Disables/enables shadows. NOTE: If gl1.1 android you need to change
 	 * render target to contain alpha channel* default = true
-	 * 
+	 *
 	 * @param shadows
 	 *            the shadows to set
 	 */
@@ -444,9 +444,9 @@ public class RayHandler implements Disposable {
 
 	/**
 	 * Ambient light is how dark are the shadows. clamped to 0-1
-	 * 
+	 *
 	 * default = 0;
-	 * 
+	 *
 	 * @param ambientLight
 	 *            the ambientLight to set
 	 */
@@ -461,7 +461,7 @@ public class RayHandler implements Disposable {
 	/**
 	 * Ambient light color is how dark and what colored the shadows are. clamped
 	 * to 0-1 NOTE: color is changed only in gles2.0 default = 0;
-	 * 
+	 *
 	 * @param ambientLight
 	 *            the ambientLight to set
 	 */
@@ -472,7 +472,7 @@ public class RayHandler implements Disposable {
 	/**
 	 * Ambient light color is how dark and what colored the shadows are. clamped
 	 * to 0-1 NOTE: color is changed only in gles2.0 default = 0,0,0,0;
-	 * 
+	 *
 	 * @param ambientLight
 	 *            the ambientLight to set
 	 */
@@ -520,7 +520,7 @@ public class RayHandler implements Disposable {
 	/**
 	 * return current color precision Note: if changed after RayHandler is
 	 * initialized, returned String is not what rayHandler is using
-	 * 
+	 *
 	 * @return colorPrecision
 	 */
 	public static String getColorPrecision() {
@@ -534,7 +534,7 @@ public class RayHandler implements Disposable {
 
 	/**
 	 * return is gamma correction enabled
-	 * 
+	 *
 	 * @return
 	 */
 	public static boolean getGammaCorrection() {
@@ -546,7 +546,7 @@ public class RayHandler implements Disposable {
 	 * rayHandler. NOTE: this do nothing on gles1.0. NOTE2: for match the
 	 * visuals with gamma uncorrected lights light distance parameters is
 	 * modified internal.
-	 * 
+	 *
 	 * @param gammeCorrectionWanted
 	 */
 	public static void setGammaCorrection( boolean gammeCorrectionWanted ) {
@@ -562,7 +562,7 @@ public class RayHandler implements Disposable {
 	 * algoritm. this preserve colors but might look bit darker. This is more
 	 * realistic model than normally used This might improve perfromance
 	 * slightly
-	 * 
+	 *
 	 * @param useDiffuse
 	 */
 	public static void useDiffuseLight( boolean useDiffuse ) {
