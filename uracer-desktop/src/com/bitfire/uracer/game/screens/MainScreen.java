@@ -106,6 +106,7 @@ public final class MainScreen extends UIScreen {
 				@Override
 				public void clicked (InputEvent event, float x, float y) {
 					Sounds.menuClick.play();
+					chooseLevel(trackList.getSelectedIndex());
 					URacer.Game.show(ScreenType.GameScreen);
 				}
 			});
@@ -173,9 +174,8 @@ public final class MainScreen extends UIScreen {
 		} else if (input.isPressed(Keys.R)) {
 			reload();
 		} else if (input.isPressed(Keys.S)) {
+			Sounds.menuClick.play();
 			chooseLevel(trackList.getSelectedIndex());
-			UserPreferences.string(Preference.LastPlayedTrack, ScreensShared.selectedLevelId);
-			UserPreferences.save();
 			URacer.Game.show(ScreenType.GameScreen);
 		} else if (input.isPressed(Keys.O)) {
 			URacer.Game.show(ScreenType.OptionsScreen);
