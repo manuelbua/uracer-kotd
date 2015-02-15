@@ -11,6 +11,7 @@ import com.bitfire.postprocessing.PostProcessor;
 import com.bitfire.postprocessing.PostProcessorEffect;
 import com.bitfire.postprocessing.effects.Bloom;
 import com.bitfire.postprocessing.effects.CrtMonitor;
+import com.bitfire.postprocessing.effects.LensFlare2;
 import com.bitfire.postprocessing.effects.Vignette;
 import com.bitfire.postprocessing.effects.Zoomer;
 import com.bitfire.postprocessing.filters.CrtScreen.Effect;
@@ -36,7 +37,7 @@ import com.bitfire.utils.ShaderLoader;
 public final class PostProcessing {
 
 	public enum Effects {
-		Zoomer, Bloom, Vignette, Crt, Curvature, Ssao, MotionBlur, LightShafts;
+		Zoomer, Bloom, Vignette, Crt, Curvature, Ssao, MotionBlur, LightShafts, LensFlare;
 
 		public final String name;
 
@@ -106,6 +107,10 @@ public final class PostProcessing {
 
 		// dbg
 		addEffect(Effects.LightShafts.name, new LightShafts((int)(fboW * 0.75f), (int)(fboH * 0.75f), Quality.High));
+		// dbg
+
+		// dbg
+		addEffect(Effects.LensFlare.name, new LensFlare2((int)(fboW * 0.5f), (int)(fboH * 0.5f)));
 		// dbg
 
 		if (UserPreferences.bool(Preference.Vignetting)) {

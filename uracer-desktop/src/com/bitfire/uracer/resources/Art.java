@@ -47,6 +47,7 @@ public final class Art {
 	// post-processor
 	// public static ShaderProgram depthMapGen, depthMapGenTransparent;
 	public static Texture postXpro;
+	public static Texture postLensFlare;
 
 	// screens
 	public static Texture scrBackground;
@@ -164,6 +165,9 @@ public final class Art {
 		postXpro = newTexture("data/base/xpro-lut.png", false);
 		postXpro.setWrap(TextureWrap.ClampToEdge, TextureWrap.ClampToEdge);
 
+		postLensFlare = newTexture("data/base/lenscolor.png", false);
+		postLensFlare.setWrap(TextureWrap.ClampToEdge, TextureWrap.ClampToEdge);
+
 		// depthMapGen = ShaderLoader.fromFile( "depth", "depth" );
 		// depthMapGenTransparent = ShaderLoader.fromFile( "depth-transparent",
 		// "depth-transparent" );
@@ -171,6 +175,7 @@ public final class Art {
 
 	private static void disposePostProcessorMaps () {
 		postXpro.dispose();
+		postLensFlare.dispose();
 		// depthMapGenTransparent.dispose();
 		// depthMapGen.dispose();
 	}

@@ -13,6 +13,7 @@ import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.utils.TimeUtils;
 import com.bitfire.postprocessing.effects.Bloom;
 import com.bitfire.postprocessing.effects.CrtMonitor;
+import com.bitfire.postprocessing.effects.LensFlare2;
 import com.bitfire.postprocessing.effects.Vignette;
 import com.bitfire.postprocessing.effects.Zoomer;
 import com.bitfire.postprocessing.filters.Combine;
@@ -47,6 +48,7 @@ public final class DefaultAnimator implements PostProcessingAnimator {
 	private RgbMode crtMode = RgbMode.None;
 	private Ssao ssao = null;
 	private LightShafts shafts = null;
+	private LensFlare2 flare = null;
 	private PlayerCar player = null;
 	private boolean hasPlayer = false;
 	private BoxedFloat alertAmount = new BoxedFloat(0);
@@ -70,6 +72,7 @@ public final class DefaultAnimator implements PostProcessingAnimator {
 		crtMode = crt.getRgbMode();
 		ssao = (Ssao)post.getEffect(PostProcessing.Effects.Ssao.name);
 		shafts = (LightShafts)post.getEffect(PostProcessing.Effects.LightShafts.name);
+		flare = (LensFlare2)post.getEffect(PostProcessing.Effects.LensFlare.name);
 		zoomBlurStrengthFactor.setFixup(false);
 		reset();
 	}
@@ -223,6 +226,10 @@ public final class DefaultAnimator implements PostProcessingAnimator {
 			shafts.setThreshold(0.65f);
 			shafts.setParams(24, 0.05f, 0.92f, 0.84f, 3.65f, 1f, 0, 0);
 			shafts.setLightScreenPositionN(0.5f, 0.5f);
+		}
+
+		if (flare != null) {
+			flare.setLensColorTexture(Art.postLensFlare);
 		}
 
 		//
@@ -428,6 +435,14 @@ public final class DefaultAnimator implements PostProcessingAnimator {
 
 			// Gdx.app.log("", "speed=" + sfactor);
 			// shafts.setLightScreenPositionN(0.5f, 0.3f);
+		}
+
+		if (flare != null) {
+			flare.setBlurPasses(8);
+			flare.setBias(-0.96f);
+			flare.setFlareIntesity(0.7f);
+			flare.setGhosts(8);
+			flare.setHaloWidth(0.5f);
 		}
 
 		float bsat = 0f, sat = 0f;
