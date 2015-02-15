@@ -411,14 +411,20 @@ public final class DefaultAnimator implements PostProcessingAnimator {
 
 			// Gdx.app.log("", "pdist=" + pdist);
 
-			shafts.setThreshold(0.9f);
-			shafts.setDensity(0.84f);
-			shafts.setExposure(0.08f);
-			shafts.setWeight(1);
-			shafts.setDecay(0.95f);
+			// shafts.setThreshold(0.9f);
+			// shafts.setDensity(0.84f);
+			// shafts.setExposure(0.08f);
+			// shafts.setWeight(1);
+			// shafts.setDecay(0.95f);
+			shafts.setThreshold(0.85f);
+			shafts.setDensity(0.9f);
+			shafts.setExposure(0.125f);
+			shafts.setWeight(0.5f);
+			shafts.setDecay(0.98f);
+
 			Combine combine = shafts.getCombinePass();
 			combine.setSource2Intensity(1f);
-			combine.setSource2Saturation(1);
+			combine.setSource2Saturation(0.75f);
 
 			// Gdx.app.log("", "speed=" + sfactor);
 			// shafts.setLightScreenPositionN(0.5f, 0.3f);
