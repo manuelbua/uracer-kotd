@@ -109,10 +109,6 @@ public final class PostProcessing {
 		addEffect(Effects.LightShafts.name, new LightShafts((int)(fboW * 0.75f), (int)(fboH * 0.75f), Quality.High));
 		// dbg
 
-		// dbg
-		addEffect(Effects.LensFlare.name, new LensFlare2((int)(fboW * 0.5f), (int)(fboH * 0.5f)));
-		// dbg
-
 		if (UserPreferences.bool(Preference.Vignetting)) {
 			addEffect(Effects.Vignette.name, new Vignette(ScaleUtils.PlayWidth, ScaleUtils.PlayHeight, false));
 		}
@@ -130,6 +126,10 @@ public final class PostProcessing {
 			addEffect(Effects.Crt.name, crt);
 			ShaderLoader.Pedantic = true;
 		}
+
+		// dbg
+		addEffect(Effects.LensFlare.name, new LensFlare2((int)(fboW * 1f), (int)(fboH * 1f)));
+		// dbg
 
 		Gdx.app.log("PostProcessing", "Post-processing enabled and configured");
 	}

@@ -438,11 +438,12 @@ public final class DefaultAnimator implements PostProcessingAnimator {
 		}
 
 		if (flare != null) {
-			flare.setBlurPasses(8);
-			flare.setBias(-0.96f);
+			flare.setBlurPasses(2);
+			flare.setBias(-0.9f);
 			flare.setFlareIntesity(0.7f);
+			flare.setFlareSaturation(1f);
 			flare.setGhosts(8);
-			flare.setHaloWidth(0.5f);
+			flare.setHaloWidth(0.6f);
 		}
 
 		float bsat = 0f, sat = 0f;
