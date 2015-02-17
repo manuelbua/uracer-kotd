@@ -128,7 +128,7 @@ public final class PostProcessing {
 		}
 
 		// dbg
-		addEffect(Effects.LensFlare.name, new LensFlare2((int)(fboW * 1f), (int)(fboH * 1f)));
+		addEffect(Effects.LensFlare.name, new LensFlare2((int)(fboW * 0.75f), (int)(fboH * 0.75f)));
 		// dbg
 
 		Gdx.app.log("PostProcessing", "Post-processing enabled and configured");
