@@ -1,8 +1,6 @@
 
 package com.bitfire.uracer.game.logic.gametasks.sounds.effects;
 
-import net.sourceforge.jFuzzyLogic.FIS;
-
 import com.badlogic.gdx.Files.FileType;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.math.MathUtils;
@@ -18,6 +16,8 @@ import com.bitfire.uracer.game.logic.gametasks.sounds.effects.engines.EngineSoun
 import com.bitfire.uracer.game.logic.helpers.TrackProgressData;
 import com.bitfire.uracer.game.player.PlayerCar;
 import com.bitfire.uracer.utils.AMath;
+
+import net.sourceforge.jFuzzyLogic.FIS;
 
 public final class PlayerEngineSoundEffect extends SoundEffect {
 
