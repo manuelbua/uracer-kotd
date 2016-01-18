@@ -15,7 +15,6 @@ import com.badlogic.gdx.scenes.scene2d.utils.ChangeListener;
 import com.badlogic.gdx.scenes.scene2d.utils.ClickListener;
 import com.bitfire.uracer.Input;
 import com.bitfire.uracer.URacer;
-import com.bitfire.uracer.configuration.Config;
 import com.bitfire.uracer.configuration.UserPreferences;
 import com.bitfire.uracer.configuration.UserPreferences.Preference;
 import com.bitfire.uracer.game.Game;
@@ -214,14 +213,11 @@ public class GameScreenUI {
 
 	public void tick () {
 		handleInput();
-
-		if (enabled) {
-			ui.act(Config.Physics.Dt);
-		}
 	}
 
 	public void render (FrameBuffer dest) {
 		if (!enabled) return;
+		ui.act(URacer.Game.getLastDeltaSecs() /* Config.Physics.Dt */);
 
 		boolean hasDest = (dest != null);
 		if (hasDest) {
