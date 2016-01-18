@@ -59,7 +59,8 @@ public final class PostProcessing {
 
 	public PostProcessing (GameWorld gameWorld) {
 		if (UserPreferences.bool(Preference.PostProcessing)) {
-			postProcessor = new PostProcessor(ScaleUtils.PlayViewport, true /* depth */, true /* alpha */, URacer.Game.isDesktop() /* supports32Bpp */);
+			postProcessor = new PostProcessor(ScaleUtils.PlayViewport, true /* depth */, true /* alpha */,
+				URacer.Game.isDesktop() /* supports32Bpp */);
 			PostProcessor.EnableQueryStates = false;
 			postProcessor.setClearBits(GL20.GL_COLOR_BUFFER_BIT | GL20.GL_DEPTH_BUFFER_BIT);
 			postProcessor.setClearColor(0, 0, 0, 1);
@@ -82,10 +83,8 @@ public final class PostProcessing {
 	 * instantiated objects is transfered to the PostProcessor when adding the effect to it. */
 	private void createEffects (GameWorld gameWorld) {
 		if (UserPreferences.bool(Preference.Ssao)) {
-			addEffect(
-				Effects.Ssao.name,
-				new Ssao(ScaleUtils.PlayWidth, ScaleUtils.PlayHeight, Ssao.Quality.valueOf(UserPreferences
-					.string(Preference.SsaoQuality))));
+			addEffect(Effects.Ssao.name, new Ssao(ScaleUtils.PlayWidth, ScaleUtils.PlayHeight,
+				Ssao.Quality.valueOf(UserPreferences.string(Preference.SsaoQuality))));
 			needNormalDepthMap = true;
 		}
 
@@ -104,6 +103,10 @@ public final class PostProcessing {
 		if (UserPreferences.bool(Preference.Bloom)) {
 			addEffect(Effects.Bloom.name, new Bloom(fboW, fboH));
 		}
+
+		// dbg
+		addEffect(Effects.LensFlare.name, new LensFlare2((int)(fboW * 0.75f), (int)(fboH * 0.75f)));
+		// dbg
 
 		// dbg
 		addEffect(Effects.LightShafts.name, new LightShafts((int)(fboW * 0.75f), (int)(fboH * 0.75f), Quality.High));
@@ -126,10 +129,6 @@ public final class PostProcessing {
 			addEffect(Effects.Crt.name, crt);
 			ShaderLoader.Pedantic = true;
 		}
-
-		// dbg
-		addEffect(Effects.LensFlare.name, new LensFlare2((int)(fboW * 0.75f), (int)(fboH * 0.75f)));
-		// dbg
 
 		Gdx.app.log("PostProcessing", "Post-processing enabled and configured");
 	}
