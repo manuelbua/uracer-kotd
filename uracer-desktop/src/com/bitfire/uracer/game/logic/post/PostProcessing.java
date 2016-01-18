@@ -117,7 +117,7 @@ public final class PostProcessing {
 		}
 
 		if (UserPreferences.bool(Preference.CrtScreen)) {
-			boolean scanlines = false;
+			boolean scanlines = true;
 
 			ShaderLoader.Pedantic = false;
 			int effects = (scanlines ? Effect.PhosphorVibrance.v | Effect.Scanlines.v : 0) | Effect.Tint.v;
