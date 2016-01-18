@@ -3,9 +3,6 @@ package com.bitfire.uracer.game.rendering;
 
 import java.util.List;
 
-import box2dLight.ConeLight;
-import box2dLight.RayHandler;
-
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.GL20;
@@ -42,6 +39,9 @@ import com.bitfire.uracer.utils.Convert;
 import com.bitfire.uracer.utils.ScaleUtils;
 import com.bitfire.uracer.utils.URacerRuntimeException;
 import com.bitfire.utils.ShaderLoader;
+
+import box2dLight.ConeLight;
+import box2dLight.RayHandler;
 
 public final class GameWorldRenderer {
 	// @off
@@ -193,8 +193,8 @@ public final class GameWorldRenderer {
 
 	// permit to the tilemap to appear as a flat surface with the normal pointing upward, towards the camera
 	private void createBackPlane () {
-		plane = new Mesh(true, 4, 4, new VertexAttribute(Usage.Position, 3, ShaderProgram.POSITION_ATTRIBUTE), new VertexAttribute(
-			Usage.Normal, 3, ShaderProgram.NORMAL_ATTRIBUTE));
+		plane = new Mesh(true, 4, 4, new VertexAttribute(Usage.Position, 3, ShaderProgram.POSITION_ATTRIBUTE),
+			new VertexAttribute(Usage.Normal, 3, ShaderProgram.NORMAL_ATTRIBUTE));
 
 		// @formatter:off
 		float size = 10f;
@@ -803,7 +803,8 @@ public final class GameWorldRenderer {
 	private Matrix3 nmat = new Matrix3();
 	private Matrix4 mtx2 = new Matrix4();
 
-	private int renderOrthographicAlignedModels (List<OrthographicAlignedStillModel> models, boolean depthOnly, boolean nightMode) {
+	private int renderOrthographicAlignedModels (List<OrthographicAlignedStillModel> models, boolean depthOnly,
+		boolean nightMode) {
 		int renderedCount = 0;
 		OrthographicAlignedStillModel m;
 		StillSubMesh submesh;
