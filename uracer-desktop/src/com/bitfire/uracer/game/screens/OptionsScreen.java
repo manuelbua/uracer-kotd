@@ -38,7 +38,7 @@ public class OptionsScreen extends UIScreen {
 	@Override
 	protected void setupUI (Stage ui) {
 		root = UIUtils.newTable();
-		root.debug();
+		// root.debug();
 		root.setBounds(0, 0, ui.getWidth(), ui.getHeight());
 		root.invalidate();
 		ui.addActor(root);
@@ -47,7 +47,7 @@ public class OptionsScreen extends UIScreen {
 		Image bg = new Image(Art.scrBackground);
 		bg.setFillParent(true);
 		root.addActor(bg);
-		root.debug();
+		// root.debug();
 
 		int w = (int)(ui.getWidth() / 2) - 20;
 		int h = (int)(ui.getHeight() / 2);
@@ -59,13 +59,13 @@ public class OptionsScreen extends UIScreen {
 
 		// layout tables
 		ltable = UIUtils.newTable();
-		ltable.debug();
+		// ltable.debug();
 		ltable.defaults().padLeft(5);
 		ltable.align(Align.left | Align.top);
 		root.add(ltable).expandX().left().height(h);
 
 		rtable = UIUtils.newTable();
-		rtable.debug();
+		// rtable.debug();
 		rtable.defaults().padRight(5);
 		rtable.align(Align.right | Align.top);
 		root.add(rtable).expandX().right().height(h);
