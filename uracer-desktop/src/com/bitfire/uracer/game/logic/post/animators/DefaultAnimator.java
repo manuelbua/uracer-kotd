@@ -69,7 +69,9 @@ public final class DefaultAnimator implements PostProcessingAnimator {
 		zoom = (Zoomer)post.getEffect(PostProcessing.Effects.Zoomer.name);
 		vignette = (Vignette)post.getEffect(PostProcessing.Effects.Vignette.name);
 		crt = (CrtMonitor)post.getEffect(PostProcessing.Effects.Crt.name);
-		crtMode = crt.getRgbMode();
+		if( crt != null ) {
+			crtMode = crt.getRgbMode();
+		}
 		ssao = (Ssao)post.getEffect(PostProcessing.Effects.Ssao.name);
 		shafts = (LightShafts)post.getEffect(PostProcessing.Effects.LightShafts.name);
 		flare = (LensFlare2)post.getEffect(PostProcessing.Effects.LensFlare.name);
