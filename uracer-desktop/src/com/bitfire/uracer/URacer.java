@@ -3,8 +3,6 @@ package com.bitfire.uracer;
 
 import java.lang.reflect.Field;
 
-import aurelienribon.tweenengine.Tween;
-
 import com.badlogic.gdx.Application;
 import com.badlogic.gdx.Application.ApplicationType;
 import com.badlogic.gdx.ApplicationListener;
@@ -42,6 +40,8 @@ import com.bitfire.uracer.utils.ScaleUtils;
 import com.bitfire.uracer.utils.SpriteBatchUtils;
 import com.bitfire.uracer.utils.URacerRuntimeException;
 import com.bitfire.utils.ShaderLoader;
+
+import aurelienribon.tweenengine.Tween;
 
 public class URacer implements ApplicationListener {
 	public static final String Name = "URacer: The King Of The Drift";
