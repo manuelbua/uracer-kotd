@@ -109,7 +109,7 @@ public final class GameRenderer {
 	}
 
 	private void clear () {
-		gl.glClearDepthf(0);
+		gl.glClearDepthf(1);
 		gl.glClearColor(0, 0, 0, 0);
 		gl.glClear(GL20.GL_COLOR_BUFFER_BIT | GL20.GL_DEPTH_BUFFER_BIT);
 	}
