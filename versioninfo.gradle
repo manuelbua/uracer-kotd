@@ -10,6 +10,11 @@ def getVersionInfo() {
     def versionBuildStr
     def versionMarkerStr
 
+    if( longVersionName.length() == 0 ) {
+        return [ null ];
+        // throw new GradleException("No version information detected.")
+    }
+
     if (hasVersionMarker) {
         (fullVersionTag, versionMarker, versionBuild, gitSha) = longVersionName.tokenize('-')
     } else {

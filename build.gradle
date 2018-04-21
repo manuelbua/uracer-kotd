@@ -30,16 +30,21 @@ jar {
 
 task versionUpdater() {
     def versionFilePath = "${rootDir}/uracer-desktop/src/com/bitfire/uracer/VersionInfo.java"
-    println "Version is " + versionName + " (" + versionCode.toString() + ")"
-    println "Writing to ${versionFilePath}"
-
     def versionFile = new File(versionFilePath)
-    versionFile.write "package com.bitfire.uracer;\n\n" +
-        "public final class VersionInfo {\n" +
-        "\tpublic static final String versionName = \"${versionName}\";\n" +
-        "\tpublic static final Integer versionCode = ${versionCode};\n\n" +
-        "\tprivate VersionInfo() {\n\t}\n" +
-        "}"
+    if( versionName) {
+        println "Version is " + versionName + " (" + versionCode.toString() + ")"
+        println "Writing to ${versionFilePath}"
+
+        versionFile.write "package com.bitfire.uracer;\n\n" +
+            "public final class VersionInfo {\n" +
+            "\tpublic static final String versionName = \"${versionName}\";\n" +
+            "\tpublic static final Integer versionCode = ${versionCode};\n\n" +
+            "\tprivate VersionInfo() {\n\t}\n" +
+            "}"
+    } else {
+        println "Unknown version, this will be an unversioned build"
+        versionFile.delete();
+    }
 }
 
 sourceSets {
