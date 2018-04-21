@@ -9,12 +9,12 @@ import com.bitfire.uracer.game.GameplaySettings.TimeDilateInputMode;
 import com.bitfire.uracer.game.logic.post.effects.Ssao;
 
 /** Represents user-configurable properties.
- * 
+ *
  * The functionalities can be safely accessed statically just after user preferences have been loaded.
- * 
+ *
  * Keep in mind that querying configuration values is time consuming so use it with care and use for initialization or one-off
  * stuff. If you really need to do that per-frame then think about caching the values and just refresh them once every n-frames.
- * 
+ *
  * On the desktop, user settings are stored in ~/.prefs/ while on mobile we are wrapping SharedPreferences. */
 public final class UserPreferences {
 
@@ -40,7 +40,7 @@ public final class UserPreferences {
 		TimeDilateInputMode,
 		NightMode,
 		LastPlayedTrack,
-		
+
 		// audio
 		SfxVolume,
 		MusicVolume,
@@ -87,14 +87,14 @@ public final class UserPreferences {
 		//
 
 		bool(Preference.PostProcessing, true);
-		bool(Preference.Vignetting, URacer.Game.isDesktop());
+		bool(Preference.Vignetting, true);
 		bool(Preference.Bloom, true);
 		bool(Preference.ZoomRadialBlur, true);
-		string(Preference.ZoomRadialBlurQuality, RadialBlur.Quality.Medium.toString());
-		bool(Preference.CrtScreen, false);
+		string(Preference.ZoomRadialBlurQuality, RadialBlur.Quality.VeryHigh.toString());
+		bool(Preference.CrtScreen, true);
 		bool(Preference.EarthCurvature, true);
 		bool(Preference.Ssao, true);
-		string(Preference.SsaoQuality, Ssao.Quality.Normal.toString());
+		string(Preference.SsaoQuality, Ssao.Quality.Ultra.toString());
 
 		//
 		// rendering
@@ -108,7 +108,7 @@ public final class UserPreferences {
 		//
 
 		string(Preference.TimeDilateInputMode, TimeDilateInputMode.TouchAndRelease.toString());
-		bool(Preference.NightMode, false);
+		bool(Preference.NightMode, true);
 		string(Preference.LastPlayedTrack, "");
 
 		//
