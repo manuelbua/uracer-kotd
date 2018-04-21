@@ -7,6 +7,13 @@ plugins {
 // Define the main class for the application
 mainClassName = 'com.bitfire.uracer.URacerDesktop'
 
+// import our simple git version tokenizer
+apply from: "${rootDir}/versioninfo.gradle"
+def (versionName, versionNameShort, versionCode) = getVersionInfo()
+
+// apply version
+version = versionName
+
 dependencies {
     compile fileTree(dir: 'libs/jars/', include: ['*.jar'])
     compile fileTree(dir: 'libs/jars/gdx', include: ['*.jar'])
@@ -16,15 +23,12 @@ jar {
     manifest {
         attributes(
             'Class-Path': configurations.compile.collect { 'lib/' + it.getName() }.join(' '),
-            'Main-Class': 'com.bitfire.uracer.URacerDesktop'
+            'Main-Class': mainClassName
         )
     }
 }
 
 task versionUpdater() {
-    apply from: "${rootDir}/versioninfo.gradle"
-    def (versionName, versionNameShort, versionCode) = getVersionInfo()
-
     def versionFilePath = "${rootDir}/uracer-desktop/src/com/bitfire/uracer/VersionInfo.java"
     println "Version is " + versionName + " (" + versionCode.toString() + ")"
     println "Writing to ${versionFilePath}"
@@ -50,6 +54,7 @@ sourceSets {
 
 distributions {
     main {
+        baseName = 'uracer-kotd'
         contents {
             from { 'uracer-desktop/res' }
         }

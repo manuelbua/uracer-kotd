@@ -1,9 +1,9 @@
 .gitver/
-/uracer-desktop/bin
-/uracer-android/bin
-/uracer-android/gen
-/uracer-desktop/target
-/uracer-desktop/build
+.gradle/
+bin/
+gen/
+target/
+build/
 AndroidManifest.xml
 VersionInfo.java
 *.so
@@ -14,3 +14,4 @@ pom.xml
 uracer-boot.cfg
 .idea
 *.iml
+.temp

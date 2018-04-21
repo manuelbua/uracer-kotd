@@ -32,8 +32,8 @@ def getVersionInfo() {
 //    println "versionNameShort: " + versionNameShort
 //    println "versionCode: " + versionCode.toInteger()
 
-//    return ['1.0.5-NEXT.30+481669f', '1.0.5', 105030]
-    return [versionName, versionNameShort, versionCode.toInteger()]
+//    return ['1.0.5-NEXT.30+481669f', '1.0.5', 105030, 481669f]
+    return [versionName, versionNameShort, versionCode.toInteger(), gitSha]
 }
 
 ext {
