@@ -1,4 +1,0 @@
-#!/bin/bash
-
-# use git-describe's for pretty versioning
-ant -f package-release.xml -Duracer.version="$(git describe)"
