@@ -1,7 +1,7 @@
 // This now supports Semantic Versioning
 // (see http://semver.org/ for more information)
 def getVersionInfo() {
-    def longVersionName = "git -C ${rootDir} describe --tags --long".execute().text.trim()
+    def longVersionName = ''
     def hasVersionMarker = longVersionName.count('-') > 2
     def fullVersionTag
     def versionMarker = ''
@@ -10,9 +10,13 @@ def getVersionInfo() {
     def versionBuildStr
     def versionMarkerStr
 
-    if( longVersionName.length() == 0 ) {
+    try {
+        longVersionName = "git -C ${rootDir} describe --tags --long".execute().text.trim()
+        if( longVersionName.length() == 0 ) {
+            throw new GradleException("No version information detected.")
+        }
+    } catch( Throwable e ) {
         return [ null ];
-        // throw new GradleException("No version information detected.")
     }
 
     if (hasVersionMarker) {

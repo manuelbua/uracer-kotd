@@ -42,7 +42,7 @@ task versionUpdater() {
             "\tprivate VersionInfo() {\n\t}\n" +
             "}"
     } else {
-        println "Unknown version, this will be an unversioned build"
+        println "Unknown uRacer version, this will be an unversioned build"
         versionFile.delete();
     }
 }
