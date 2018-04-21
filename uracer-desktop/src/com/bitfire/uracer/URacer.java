@@ -132,6 +132,7 @@ public class URacer implements ApplicationListener {
 	@Override
 	public void create () {
 		Gdx.app.setLogLevel(Application.LOG_DEBUG);
+		isDesktop = (Gdx.app.getType() == ApplicationType.Desktop);
 
 		System.out.println();
 		Gdx.app.log("URacer", "Booting version " + URacer.versionInfo);
@@ -166,8 +167,6 @@ public class URacer implements ApplicationListener {
 			Gdx.app.error("URacer", e.getMessage());
 			System.exit(-1);
 		}
-
-		isDesktop = (Gdx.app.getType() == ApplicationType.Desktop);
 
 		Game.show(ScreenType.MainScreen);
 		// Game.show(ScreenType.GameScreen);
