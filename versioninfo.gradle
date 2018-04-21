@@ -1,0 +1,41 @@
+// This now supports Semantic Versioning
+// (see http://semver.org/ for more information)
+def getVersionInfo() {
+    def longVersionName = "git -C ${rootDir} describe --tags --long".execute().text.trim()
+    def hasVersionMarker = longVersionName.count('-') > 2
+    def fullVersionTag
+    def versionMarker = ''
+    def versionBuild
+    def gitSha
+    def versionBuildStr
+    def versionMarkerStr
+
+    if (hasVersionMarker) {
+        (fullVersionTag, versionMarker, versionBuild, gitSha) = longVersionName.tokenize('-')
+    } else {
+        (fullVersionTag, versionBuild, gitSha) = longVersionName.tokenize('-')
+    }
+
+    def hasVersionBuild = versionBuild.toInteger() > 0
+    def (versionMajor, versionMinor, versionPatch) = fullVersionTag.tokenize('.')
+    gitSha = (gitSha.startsWith("g") ? gitSha.substring(1) : gitSha);
+    versionMajor = (versionMajor.startsWith("v") ? versionMajor.substring(1) : versionMajor );
+
+    versionBuildStr = hasVersionBuild ? ".$versionBuild" : ""
+    versionMarkerStr = hasVersionMarker ? "-$versionMarker" : ( hasVersionBuild ? "-NEXT" : "")
+
+    def versionName = "$versionMajor.$versionMinor.${versionPatch}${versionMarkerStr}${versionBuildStr}+$gitSha"
+    def versionNameShort = "$versionMajor.$versionMinor.$versionPatch"
+    def versionCode = versionMajor.toInteger() * 100000 + versionMinor.toInteger() * 10000 + versionPatch.toInteger() * 1000 + versionBuild.toInteger()
+
+//    println "versionName: " + versionName
+//    println "versionNameShort: " + versionNameShort
+//    println "versionCode: " + versionCode.toInteger()
+
+//    return ['1.0.5-NEXT.30+481669f', '1.0.5', 105030]
+    return [versionName, versionNameShort, versionCode.toInteger()]
+}
+
+ext {
+    getVersionInfo = this.&getVersionInfo
+}
