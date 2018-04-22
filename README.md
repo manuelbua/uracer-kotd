@@ -206,7 +206,7 @@ Thanks to [Philipp Matz](https://it.linkedin.com/in/philipp-matz-b1156833) for c
 
 I initially tried to develop a pitch-based car engine sound simulator, but i didn't like the sound as it was obviously too "synthesized".
 
-I realized that a *fuzzy logic inference system* was worth a try, but i never had any experience on that: after studying the subject for some weeks with the help of this [incredibly costly book](https://www.amazon.com/Introduction-Fuzzy-Logic-Practical-Applications/dp/0387948074), i found an interesting Assigment Report by Ptacek Mathias on the subject and i immediately loved it, thanks for sharing your work!
+I realized that a *fuzzy logic inference system* was worth a try, but i never had any experience on that: after studying the subject for some weeks with the help of this [incredibly costly book](https://www.amazon.com/Introduction-Fuzzy-Logic-Practical-Applications/dp/0387948074), i found an interesting [Assigment Report](/docs/car-engine-FUZZY_Assignment_Ptacek.pdf) by *Ptacek Mathias* on the subject and i immediately loved it, thanks for sharing your work!
 
 I implemented the system in Java by using the [jFuzzyLogic](http://jfuzzylogic.sourceforge.net) library.
 
