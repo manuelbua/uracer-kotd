@@ -227,3 +227,17 @@ In case i'm missing something or i'm overlooking something please let me know, t
 ## License
 
 This work is being distributed under the [Apache License 2.0](./LICENSE).
+
+## Donations
+
+There is **no need** for that, really.
+
+If you want to re-use ideas, code or whatever, please do it!
+
+If you really want to send me some gold you have some choices:
+- send **pennys** via [https://paypal.me/ManuelBua](https://paypal.me/ManuelBua)
+- send **bitcoins** to `1DBcRkXwSFsc21pCajkodFirjfcfpmi8Ek`
+- send **ethers** to `0x090C9c77865820CF146b5B6a297fC5A5505a6953`
+
+PS: if you want to send me some *real gold*, please contact me privately beforehand :D
+
