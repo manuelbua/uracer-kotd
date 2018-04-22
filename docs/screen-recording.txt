@@ -1,0 +1,110 @@
+  SIMPLESCREENRECORDER
+=========================
+
+Choose "Record OpenGL (experimental)", use this command line:
+
+	/home/manuel/dev/uracer-libgdx/uracer-desktop/run.sh --enable-vsync --resolution=1280x720
+
+Set FPS to 60, cursor, audio
+MP4 / h264 / CRF=16 / veryfast / no frame skipping
+
+
+
+MANUAL  SCREEN  RECORDING
+=========================
+
+
+apitrace trace -o /tmp/test ./launcher.sh --resolution=1920x1080
+
+glretrace -s - /tmp/test | /usr/bin/ffmpeg -xerror -loglevel info -r 60 -f image2pipe -vcodec ppm -i pipe: -vcodec libx264 -preset veryslow -y ./test.mkv
+
+libx264
+-------
+
+glretrace -w -s - /tmp/test | /usr/bin/ffmpeg -xerror -loglevel info -f image2pipe -vcodec ppm -r 60 -i pipe: -vcodec libx264 -preset slower -r 30 -pix_fmt yuv420p -y ./uracer-tkotd-teaser-wip2.mp4
+
+
+libvpx
+-------
+
+glretrace -w -s - /tmp/ur-simple | /usr/bin/ffmpeg -xerror -loglevel info -f image2pipe -vcodec ppm -r 60 -i pipe: -vcodec libvpx -quality good -cpu-used 0 -b:v 5000k -qmin 10 -qmax 42 -maxrate 5000k -bufsize 1000k -r 30 -pix_fmt yuv420p -threads 8 -y ./ur-simple.webm
+
+glretrace -w -s - /tmp/ur-simple | /usr/bin/ffmpeg -xerror -loglevel info -f image2pipe -vcodec ppm -r 60 -i pipe: -vcodec libvpx -quality good -cpu-used 0 -b:v 5000k -qmin 1 -qmax 30 -maxrate 5000k -bufsize 1000k -r 30 -pix_fmt yuv420p -threads 8 -y ./ur-simple.webm
+
+
+copy
+----
+
+ffmpeg -i ur-simple.webm -vcodec copy -ss 00:00:00 -t 00:00:05 trimmed.webm
+
+
+use devilspie to remove the window decoration if the window being captured is the same size of
+the one monitor of the desktop
+
+-------------8<---------------8<----------------8<
+
+(if (is (window_name) "glretrace")
+  (begin
+	(undecorate)
+  )
+)
+
+-------------8<---------------8<----------------8<
+
+
+
+./launcher.sh -c --resolution=1280x720 & ffmpeg -xerror -loglevel info -f x11grab -framerate 30 -video_size 1280x720 -i :0.0+640,200 -vcodec huffyuv -sameq -threads 8 -y /tmp/test.mkv
+
+ffmpeg -xerror -loglevel info -f x11grab -framerate 30 -video_size 1920x1080 -i :2.0+1920,0 -dcodec copy -vcodec huffyuv -sameq -threads 8 -y /home/manuel/Videos/uracer-teaser-2/test.mkv
+
+ffmpeg -xerror -loglevel info -f x11grab -framerate 30 -video_size 1280x750 -i :0.0+2240,180 -f alsa -ac 2 -i pulse -vcodec libx264 -preset ultrafast -acodec libmp3lame -ab 96k -y /tmp/test.mp4
+
+
+
+ffmpeg -xerror -loglevel info -f x11grab -framerate 60 -video_size 1280x800 -i :0.0+1280,346 -f alsa -ac 2 -i pulse -vcodec libx264 -preset ultrafast -qp 0 -acodec libmp3lame -ab 96k -ar 48000 -y /tmp/test.mp4
+
+
+cd .. && ant -f package-release.xml && cd build
+
+ffmpeg -xerror -loglevel info -f x11grab -framerate 30 -video_size 1280x750 -i :0.0+2240,180 -f alsa -ac 2 -i pulse -vcodec libx264 -preset ultrafast -acodec libmp3lame -ab 96k -y /tmp/test.mp4
+
+-- overcome 1920x1050 barrier (apitrace bug? ffmpeg bug? over 1050 it just grabs shit for the remaining lines..)
+
+apitrace trace -o /tmp/simple.trace ./launcher.sh --resolution=1920x1050
+cd ../ && cd build && apitrace trace -o /tmp/simple.trace ./launcher.sh --resolution=1920x1050
+
+glretrace -w -s - /tmp/test.trace | ffmpeg -r 60 -f image2pipe -vcodec ppm -i pipe: -s 1920x1080 -vcodec libx264 -r 30 -preset slower -threads 0 -y ./test.mp4
+
+cd ../ && ant -f package-release.xml && cd build
+
+
+-- nvidia, disable flipping
+./launcher.sh & ffmpeg -xerror -loglevel info -f x11grab -framerate 60 -video_size 1920x1080 -i :0.0+320,180 -f alsa -ac 2 -i pulse -vcodec libx264 -preset superfast -qp 0 -acodec libmp3lame -ab 96k -ar 48000 -y /tmp/test.mp4
+./launcher.sh & ffmpeg -xerror -loglevel info -f x11grab -framerate 60 -video_size 1920x1080 -i :0.0+320,180 -f alsa -ac 2 -i pulse -vcodec libx264 -r 30 -preset ultrafast -qp 0 -acodec libmp3lame -ab 96k -ar 48000 -y /tmp/test.mp4
+
+
+apitrace+audio
+---------------
+
+apitrace trace -o /tmp/simple.trace ./launcher.sh --resolution=1920x1050 --right-screen & ffmpeg -xerror -loglevel info -f alsa -ac 2 -i pulse -acodec libmp3lame -ab 96k -y /tmp/audio.mp3
+
+glretrace -w -s - /tmp/simple.trace | ffmpeg -f image2pipe -vcodec ppm -r 60 -i - -i /tmp/audio.mp3 -s 1920x1080 -vcodec libx264 -r 30 -preset ultrafast -threads 0 -qp 0 -acodec copy -map 0:0 -map 1:0 -y /tmp/simple.mp4
+
+ffmpeg -i /tmp/simple.mp4 -ss 2.5 -i /tmp/audio.mp3 -acodec copy -vcodec copy -y /tmp/simple-audio.mp4
+
+
+ffmpeg -ss 2.5 -i /tmp/audio.mp3 -i /tmp/simple.mp4 -acodec copy -vcodec libx264 -preset fast -qp 10 -threads 0 -y /home/manuel/Videos/uracer-teaser-2/1.mp4 && vlc ~/Videos/uracer-teaser-2/1.mp4
+
+
+----------------
+
+apitrace trace -o /tmp/simple.trace ./launcher.sh --resolution=1920x1050 & ffmpeg -xerror -loglevel info -f alsa -ac 2 -i pulse -acodec libmp3lame -ab 96k -y /tmp/audio.mp3
+
+glretrace -w -s - /tmp/simple.trace | ffmpeg -f image2pipe -vcodec ppm -r 60 -i pipe: -s 1920x1080 -vcodec libx264 -r 30 -preset ultrafast -threads 0 -qp 0 -y /tmp/simple.mp4
+
+ffmpeg -ss 2.7 -i /tmp/audio.mp3 -i /tmp/simple.mp4 -acodec copy -vcodec copy -y /home/manuel/Videos/uracer-teaser-2/1.mp4 && vlc ~/Videos/uracer-teaser-2/1.mp4
+ffmpeg -ss 2.7 -i /tmp/audio.mp3 -i /tmp/simple.mp4 -acodec copy -vcodec libx264 -preset slower -threads 0 -pix_fmt yuv420p -y /home/manuel/Videos/uracer-teaser-2/1.mp4 && vlc ~/Videos/uracer-teaser-2/1.mp4
+
+----------------
+
+./launcher.sh & ffmpeg -xerror -loglevel info -f x11grab -framerate 60 -video_size 1920x1080 -i :0.0+326,95 -f alsa -ac 2 -i pulse -vcodec libx264 -preset ultrafast -acodec libmp3lame -ab 96k -y /tmp/test.mp4

@@ -1,0 +1,27 @@
+A Replay should embed the following information:
+
+	- track level
+	- difficulty level
+	- car type (graphics)
+	- car model (physical properties)
+	- elapsed time to complete the track
+
+
+Object entities for a successfull replaying system:
+
+	- Recorder
+		* It will record the necessary per-tick information needed to replay
+		the player's car behavior at the most accurate level of precision.
+
+		* Any applied effect, such as skid marks, particles.. will NOT be
+		shown on the ghostcar.
+
+		* The recorded data should be encoded such as it will be fast to decode
+		and very light to transport.
+
+		* the produced output will be a serializable object, Replay, embedding
+		any information needed to successfully replay the car's behavior.
+
+	- Ghost
+		given one or more Replay objects, it will manage to decode and replay
+		the actions described by the supplied Replay data.
