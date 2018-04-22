@@ -14,8 +14,8 @@ public class BootConfig {
 	/** Available boot config flags */
 	public enum BootConfigFlag {
 		//@off
-		WIDTH("width", 800),
-		HEIGHT("height", 480),
+		WIDTH("width", 1280),
+		HEIGHT("height", 720),
 		VSYNC("vsync", true),
 		CPUSYNC("cpusync", false),
 		FULLSCREEN("fullscreen", false),

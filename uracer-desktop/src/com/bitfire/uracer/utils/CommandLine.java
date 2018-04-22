@@ -69,7 +69,7 @@ public final class CommandLine {
 						w = 1920;
 						h = 1080;
 					} else {
-						System.out.print("Invalid resolution specified (" + arg + "), defaulting to " + (w + "x" + h));
+						System.out.println("Invalid resolution specified (" + arg + ")");
 					}
 				}
 
