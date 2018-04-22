@@ -8,6 +8,8 @@ A GLES2 top-down racer, built on top of [libgdx](https://github.com/libgdx/libgd
 
 This project is now **unmaintained** and i don't plan to get back to working on it soon or in the foreseeable future.
 
+This is based on a very old version of libgdx: some missing features at the time made me implement things differently and since updating everything would mean to probably rewrite lot of stuff, i'm just leaving it at that.
+
 ## Why open sourcing it?
 
 Because there is no reason to not to.
@@ -92,6 +94,12 @@ The in-game HUD gives you information about a couple of things during the race:
 Historically, the project has been developed within the Eclipse IDE, thus the integrated toolchain has been used to easily make use of hot-swapping Java code.
 
 For this release i completely scratched that and refactored the dependencies as well, switching to a *Gradle-based* build.
+
+### Resources
+
+I'm providing also the original resource data (`uracer-desktop/data-src`) that has been used to produce the final resources that can be found in the directory `uracer-desktop/res/data`: the reason for this is to let you see how that data has been produced.
+
+Since i'm not sure the scripts there can still be used to produce valid resources, this is why i'm also providing them within this repository as well.
 
 ### Prerequisites
 
