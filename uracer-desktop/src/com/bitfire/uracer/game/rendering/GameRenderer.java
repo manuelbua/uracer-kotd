@@ -37,7 +37,7 @@ public final class GameRenderer {
 	private final Matrix4 identity = new Matrix4();
 	private final Matrix4 xform = new Matrix4();
 
-	private boolean debug = Config.Debug.UseDebugHelper;
+	private boolean debug = false;
 
 	public GameRenderer (GameWorld gameWorld) {
 		world = gameWorld;

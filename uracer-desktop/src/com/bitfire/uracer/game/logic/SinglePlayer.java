@@ -112,7 +112,9 @@ public class SinglePlayer extends BaseLogic {
 		} else if (i.isPressed(Keys.D)) {
 			boolean newstate = !gameRenderer.isDebugEnabled();
 			gameRenderer.setDebug(newstate);
-			debug.setEnabled(newstate);
+			if( debug != null ) {
+				debug.setEnabled(newstate);
+			}
 		}
 	}
 
