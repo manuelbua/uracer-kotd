@@ -210,6 +210,10 @@ I realized that a *fuzzy logic inference system* was worth a try, but i never ha
 
 I implemented the system in Java by using the [jFuzzyLogic](http://jfuzzylogic.sourceforge.net) library.
 
+### Car physics
+
+After *a lot of digging* i can finally credit *Marco Monster* as the author of the original car physics i've modified and now using. His [now archived post](http://www.asawicki.info/Mirror/Car%20Physics%20for%20Games/Car%20Physics%20for%20Games.html) dates back to 2003 and it's version 1.9, thanks for sharing that gem!
+
 ### 2D lighting system
 
 If i remember correctly, i'm using a modified version of the [box2dlights](https://github.com/libgdx/box2dlights) library by Kalle Hamalainen, thanks for building it!
