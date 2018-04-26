@@ -48,6 +48,8 @@ Every time you start playing a track, a warmup phase is initiated where you don'
 
 I've started working on a server prototype to handle clients to connect to and a live dashboard to keep track of the players and other information; the technology there is a **Twisted**-based server handling the networking protocol and a **Flask/Python** web application dashboard for controlling it, the client prototype was built on **Netty**.
 
+Please note that *no network client code* has made into uRacer yet, since i never had enough time to evolve the Netty-based client prototype.
+
 ## Controls
 
 The main menu interface is simple, you can obviously use your mouse to interact with the UI, or use the following keyboard shortcuts:
