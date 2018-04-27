@@ -149,7 +149,7 @@ unzip uracer-kotd-0.9.4-NEXT.39+153d31c8.zip
 
 At this point, move to the unpacked directory and execute the game with `--help` to look at the available command line parameters:
 ```bash
-cd uracer-kotd-0.9.4-NEXT.39+153d31c8/bin/
+cd uracer-kotd-0.9.4-NEXT.39+153d31c8/
 ./bin/uracer-kotd --help
 
 URacer: The King Of The Drift (0.9.4-NEXT.39+153d31c8)
