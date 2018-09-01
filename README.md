@@ -234,11 +234,9 @@ In case i'm missing something or i'm overlooking something please let me know, t
 
 This work is being distributed under the [Apache License 2.0](./LICENSE).
 
-## Donations
+## Code reuse
 
-There is **no need** for that, really.
-
-If you want to re-use ideas, code or whatever, please do it!
+If you want to re-use ideas, code or whatever, please do it! There is **no need** for licenses, donations or whatnot, really.
 
 If you really want to send me some gold you have some choices:
 - send **pennys** via [https://paypal.me/ManuelBua](https://paypal.me/ManuelBua)
