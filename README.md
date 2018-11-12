@@ -196,7 +196,7 @@ Happy hacking!
 
 ### In-game music
 
-Thanks to [Clearside](http://www.clearsidemusic.com/) for letting me use his music in the game: the track being used is [My Mind Is Going](https://soundcloud.com/clearside/clearside-my-mind-is-going).
+Thanks to [Clearside](http://www.clearsidemusic.com/) for letting me use his music in the game: the track being used is [My Mind Is Going](https://soundcloud.com/clearsidemusic/clearside-my-mind-is-going).
 
 *Note that i'm not using the track as-is, but i sliced it to better fit my use-case.*
 
